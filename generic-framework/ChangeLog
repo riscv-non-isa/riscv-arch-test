@@ -1,5 +1,9 @@
 2018-06-01  Jeremy Bennett  <jeremy.bennett@embecosm.com>
 
+	* README.md: Convert tabs to spaces in display.
+
+2018-06-01  Jeremy Bennett  <jeremy.bennett@embecosm.com>
+
 	* README.md: Note need to process INITIALIZE_STATE and
 	VALIDATE_STATE to generate pure assembler.
 

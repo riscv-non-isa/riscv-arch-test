@@ -17,21 +17,21 @@ combinations.  Each test has the form:
 ```
 INITIALIZE_STATE {
     default_reg = <val>
-	default_mem = <val>
-	x<n> = <val>
-	...
-	csr<n> = val
-	...
-	mem<n> = val
+    default_mem = <val>
+    x<n> = <val>
+    ...
+    csr<n> = val
+    ...
+    mem<n> = val
 }
-	<instruction being tested as assembler>
+    <instruction being tested as assembler>
 VALIDATE_STATE {
     x<n> = <val>
-	...
-	csr<n> = val
-	...
-	mem<n> = val
-	...
+    ...
+    csr<n> = val
+    ...
+    mem<n> = val
+    ...
 }
 ```
 Which will be processed (in Python) to generate pure assembler.  Depending on
