@@ -13,15 +13,30 @@ any assembler implementation, which is a matter for testing of the assembler.
 
 Almost all tests are of single instructions.  Some future tests may wish to
 consider pairs or even longer sequences of instructions to validate particular
-combinations.  Each test has the form (in assembler)
+combinations.  Each test has the form:
 ```
-	INITIALIZE_STATE
-	<instruction being tested>
-	VALIDATE_STATE
+INITIALIZE_STATE {
+    default_reg = <val>
+	default_mem = <val>
+	x<n> = <val>
+	...
+	csr<n> = val
+	...
+	mem<n> = val
+}
+	<instruction being tested as assembler>
+VALIDATE_STATE {
+    x<n> = <val>
+	...
+	csr<n> = val
+	...
+	mem<n> = val
+	...
+}
 ```
-Where `INITIALIZE_STATE` and `VALIDATE_STATE` are macros.  Depending on the
-approach `VALIDATE_STATE` can be used to produce a signature, compare with a
-reference signature or print output.
+Which will be processed (in Python) to generate pure assembler.  Depending on
+the approach `VALIDATE_STATE` can be used to produce a signature, compare with
+a reference signature or print output.
 
 It is intended that each instruction test is a standalone entity in its own
 right. Thus `INITIALIZE_STATE` can drive all setup required.
@@ -41,7 +56,7 @@ Since we will check for negatives, it is important that all unused state is
 initialized to some meaningful non-zero value, such as `0x55555555`.
 
 It is up to the specific implementation whether any non-state side-effects,
-such as output are caused by this macro.
+such as output are caused by the implementation of `INITIALIZE_STATE`
 
 ### `VALIDATE_STATE`
 
@@ -50,11 +65,11 @@ expected.  In particular it must check for negative behavior.  So for example:
 ```
 	add     x1,x2,x3
 ```
-should check not only that x1 has the expected new value, but that all other
+should check not only that `x1` has the expected new value, but that all other
 registers (and CSRs) have not changed and that memory has not been altered.
 
 It is up to the specific implementation whether any non-state side-effects,
-such as output are caused by this macro.
+such as output are triggered by `VALIDATE_STATE`.
 
 ### Supported tests
 
