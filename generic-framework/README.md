@@ -82,6 +82,11 @@ supplemented by optional instruction sets and RV32E and RV128I in due course.
 The objective is to find all the parameterization required for the compliance
 tests to be generic over the long term.
 
+### Implementation language
+
+The overall framework will use Python, to maximize portability between
+Windows, MAC, Linux and other environments.
+
 ## Useful considerations
 
 ### Grouping of tests
