@@ -1,0 +1,1075 @@
+= RISC-V Compliance Tests =
+Jeremy Bennett <jeremy.bennett@embecosm.com>; Mary Bennett <mary.bennett@embecosm.com>; Simon Davidmann <simond@imperas.com>; Radek Hajek <hajek@codasip.com>; Lee Moore <moore@imperas.com>; Milan Nostersky <nostersky@codasip.com>; Marcela Zachariasova <zachariasova@codasip.com>
+v1.2, 3 June 2018: Converted to AsciiDoc and restructured.
+:toc:
+:icons:
+:numbered:
+:source-highlighter: pygments
+
+[cols="<1,<2,<3,<4",options="header,pagewidth",]
+|================================================================================
+| _Revision_ | _Date_            | _Author_ | _Modification_
+| 1.2 Draft  |  3 June 2018      |
+
+jeremy.bennett@embecosm.com |
+
+Converted to AsciiDoc, cleaned up and restructured.
+
+| 1.1 Draft  |  1 June 2018      |
+
+simond@imperas.com
+moore@imperas.com |
+
+Revised format and expand to describe framework, usage of many tests groups,
+and different Targets
+
+|1.0         | 24 December 2018  |
+
+hajek@codasip.com
+nostersky@codasip.com
+zachariasova@codasip.com |
+
+First version of the document.
+
+|================================================================================
+
+[preface]
+== Preface
+=== About
+
+This document describes the RISC-V Compliance Testing framework that is used
+to test a RISC-V device is compliant to the different RISC-V specifications.
+
+* It explains the required structure of a test, the framework around the tests,
+  the running of individual tests, and the suites of tests.
+
+* It includes, as reference, details of the first suite of tests for the RV32I
+  and their reference signatures.
+
+* It explains how to set up different targets to run the tests.
+
+* It is an expansion of the work done by Codasip in the second half of 2017.
+
+=== Intended Audience
+
+This document is intended for design and verification engineers who wish to
+develop new compliance tests and also those who wish check if their
+implementation (simulation models, HDL models, etc.) of a RISC-V processor is
+compliant to the RISC-V specifications. [[_Toc463952678]][[_Toc463952679]]
+
+=== Feedback
+
+Comments on this document should be made through the RISC-V Compliance Task
+Group mailing list. Proposed changes may be submitted as git pull requests.
+
+[[introduction]]
+== Introduction
+=== Purpose of Compliance Tests
+
+The goal of compliance tests is to check whether the processor under
+development meets the open RISC-V standards or not. It is considered as
+non-functional testing meaning that it doesn’t substitute for design
+verification. This can be interpreted as testing to check all important
+aspects of the specification but without focusing on details, for example, on
+all possible values of instruction operands or all combinations of possible
+registers.
+
+The result that compliance tests provide to the user is an assurance that the
+specification has been interpreted correctly and the design under test (DUT)
+can be declared as RISC-V compliant.
+
+[[overall-structure]]
+== Overall structure
+=== The compliance Test
+
+At the heart of the testing infrastructure is the detailed compliance
+Test. This is the RISC-V assembler code that is executed on the processor and
+that provides results in a defined memory area (the Signature). The Test
+should only use the minimum of instructions and only those absolutely
+necessary. It should only use instructions and registers from the ISA
+instruction set that it is focused on.
+
+=== The Test Virtual Machine
+
+The Test runs in the context of a Test Virtual Machine as defined and
+available at https://github.com/riscv/riscv-tests. There will be a different
+TVM for each instruction subset and each profile.
+
+=== The Target Environment
+
+A specific target will need to be chosen and setup to run the Test. This can
+be an Instruction Set Simulator (ISS), full system simulator (emulator), HDL
+simulator, FPGA prototype, or a board/chip, etc. The Test runs in the context
+of a TVM and is setup to run on the specific target. The Target Environment
+controls the loading of the Test+TVM onto the Target, controls the execution,
+and then extracts the Signature.
+
+=== The Processor Configuration
+
+The RISC-V specification allows many optional instructions, registers, and
+other features. Many Targets have a fixed selection of these optional items
+which cannot be changed. For example, a chip is fixed in the mask. A simulator
+on the other hand may implement all known options and will need to be
+constrained to have only the required options available. There will need to be
+Processor Configuration for those Targets which need to be constrained to only
+reflect the features of the device being compliance tested. This is essential
+when writing compliance tests to ensure that only available options are used
+in the tests.
+
+=== The Test Signature
+
+The Test Signature is defined as reference data written into memory during the
+execution of the Test. It should record values and results of the operation of
+the Test.
+
+=== The Test Reference Signature
+
+The Test Reference Signature is the Test Signature saved from an execution run
+of the RISC‑V Golden Model. This is currently from a RISC-V ISS, but the
+intention is that the RISC-V Formal Model from the RISCV.org Formal Working
+Group will be used when it is complete, functional, and available.
+
+=== The Test Suites
+
+Tests are grouped into different functional Test Suites targeting the
+different subsets of the full RISC-V specifications. There will be ISA and
+privilege suites.
+
+Currently there is one Test Suite: the RV32I (developed by Codasip).
+
+Test Suites will be developed in this priority order: (tbd)
+
+RV32IM, RV32IC, RV32IA, RV32E, RV32IF, RV32ID
+
+RV64I, …
+
+=== The Test Framework
+
+This works at several levels. At the lowest level it runs a Test with a TVM on
+a specific configured Target and compares the Test’s output Test Signature
+against the Test Reference Signature and reports if there is any difference. A
+difference indicates that the Target has failed that specific compliance Test.
+
+The Test Framework allows different Test Suites to be run depending on the
+capabilities of the Target
+
+The Test Framework collates the results of all the Tests that comprise a Test
+Suite and reports the overall results.
+
+1.  [[developing-new-tests]]
+== Developing New Tests
+=== Structure
+
+* Clone directory structure of an existing Test Suite alongside the RV32I tree.
+
+* This must include Test and Reference Signature directories (src and
+  references).
+
+* Check the Target Environment setup files.
+
+* Check the Processor Configuration files.
+
+=== Process
+
+This description assumes the use of a configurable simulator with good trace
+and debug capabilities.
+
+* Work on one Test at a time.
+
+* Ensure that the Processor configuration is set appropriately.
+
+* Use the Test Trace macros to make it easy to see the details of a Test’s
+  execution.
+
+* Assuming you are developing the Test on a simulator, use the simulator’s
+  tracing capabilities, especially a register change mode to single step your
+  Test examining all changing registers etc. to ensure your test is
+  stimulating what is intending.
+
+* Make sure that the signature you generate at the end of the run shows
+  adequate internal test state such that any checks do report as fails if
+  wrong.
+
+* When you are satisfied that the Test does what is intended and that the Test
+  Signature is correct, copy this into a Test Reference Signature (in the
+  references directory).
+
+For a test suite to be complete it needs to have tests that exercise the full
+functionality of what it is intended to test. There are tools available to
+measure instruction and other resource coverage. These should be used to
+ensure that 100% of the intended instructions have been tested.
+
+[[test-framework]]
+==Test Framework
+
+For running compliance tests, Test Virtual Machine (TVM) “p” available at
+https://github.com/riscv/riscv-tests is utilized.
+
+In addition to using the basic functionality of TVM, the script for running
+compliance tests runs the Test on the Target and then performs comparison of
+the Target’s generated Test Signature to the manually reviewed Test Reference
+Signature.
+
+See the chapter below for selecting and setting up the Target (simulator, or
+hardware, etc.).
+
+If using a Target that requires the processor to be configured, see the
+chapter below on processor configuration.
+
+You will also need to have GCC software tools available and setup in you
+paths/environment.
+
+Tests are. run by command
+
+_./run_tests.sh_ <path_to_RISCV_tools/bin>
+
+[[setting-the-target-environment]]
+== Setting The Target Environment
+
+The Target Environment needs setting up to allow the compliance tests to be
+run on that Target. This can be used while developing compliance test suites
+or it can be used with new Targets to see if they correctly execute the
+compliance test suites and are compliant!
+
+This chapter provides information on the currently available Targets and includes a short tutorial on how to add a new Target.
+
+=== Imperas riscvOVPsim Compliance Simulator
+==== Macros [compliance_test.h] (tbd)
+
+
+- `#define RV_COMPLIANCE_HALT`
+- `#define RV_COMPLIANCE_DATA_BEGIN`
+- `#define RV_COMPLIANCE_DATA_END`
+- Others for trace
+
+==== Labels [compliance_test.h] (tbd)
+
+- `Imperas_signature_start`
+- `Imperas_signature_end`
+
+==== Makefiles (tbd)
+
+`RISCV_SIM riscvOVPsim.exe`
+
+Plus arguments…
+
+==== Scripts (tbd)
+
+Not sure?.…
+
+=== Codasip ISA Simulator
+
+tbd
+
+=== GNU CGEN
+==== Within GDB
+
+tbd
+
+==== Via GDB Remote Serial Protocol
+
+tbd
+
+=== Berkeley Spike ISA Simulator
+
+tbd
+
+=== SiFive Freedom Unleashed 540 board (tbd)
+
+tbd
+=== Verilator Verilog RI5CY RTL processor (tbd)
+==== With GDB Server
+
+tbd
+
+==== With testbench monitor
+
+tbd
+
+=== Adding a new Target
+
+In this section, a short tutorial how to add a user Target in TVM is provided.
+
+If you do not want to use TVM at all, it is recommended to just take the tests
+and references and incorporate them into your testing environment. The only
+requirement needed in this case is that there must be an option to dump the
+results from the Target in the test environment so as the comparison to Test
+Reference Signature is possible.
+
+The following steps demonstrate an example in which a Target was replaced by
+Codasip ISA simulator. In a similar way, any RISC-V ISA simulator can be
+connected or any RTL simulation model of the RISC-V processor can be
+connected.
+
+* Redefining macros in `ISA/src/compliance_test.h` and
+  `binary_coding/src/compliance_test.h`.
++
+For example, to support Codasip ISA simulator as Target, it was necessary to
+redefine `RV_COMPLIANCE_HALT macro`, `RV_COMPLIANCE_DATA_BEGIN` macro and
+`RV_COMPLIANCE_DATA_END` macro in `ISA/compliance_test.h` in the following
+way:
++
+[source,gas]
+----
+#define RV_COMPLIANCE_HALT
+        add     x31, x0, 1
+        sw      x31, codasip_syscall, t0
+----
+
+* It means that on the address defined by _codasip_syscall_, the 1 value is
+  stored and this is interpreted as `HALT` for Codasip ISA simulator.
++
+[source,gas]
+----
+#define RV_COMPLIANCE_DATA_BEGIN
+        .align  4;
+        .global codasip_signature_start;
+codasip_signature_start:
+----
++
+[source,gas]
+----
+#define RV_COMPLIANCE_DATA_END
+        .align  4;
+        .global codasip_signature_end;
+codasip_signature_end:
+----
+
+* Codasip ISA simulator dumps data from the addresses bounded by labels
+  codasip_signature_start and codasip_signature_end to stdout (dumped data
+  represent results of the tests).
+
+* Modifying Makefiles in `ISA/Makefile` and `binary_coding/Makefile`.
+  It is important to change tools that are evaluated and parameters that are
+  passed to the tools.
++
+For example, to support Codasip ISA simulator as DUT, it was necessary to
+change `RISCV_SIM` from `spike` to `codix_berkelium-ia-isimulator –r`
+and parameters for running the simulator from
+`+signature=$(work_dir)/$<_signature.output` to
+`–info 5` plus handle redirection to a file by
+`1>$(work_dir)/$<_signature.output`.
+
+[[configuring-the-processor-tbd]]
+== Configuring the processor (tbd)
+
+This section is for how to specify which optional parts are being used… for
+simulators primarily…
+
+[[appendix-a-one-binary-code-test]]
+[appendix]
+== One Binary Code Test
+
+A detailed description of one binary code test.
+
+* Header file including riscv-test.h from TVM, but in case you are not using TVM, header files of YOUR test environment should be included.
+
+#include "compliance_test.h"
+
+* Code region – selected instruction is checked for binary compatibility in
+  many its variants. The variants are selected based on the rules defined in
+  Section 3.1 of this document. So for example, instruction ADD is
+  Register-Register instruction, therefore, all source and destionation
+  operands are registers. It means that the algorithm for periodical exchange
+  of consequent registers is applied.
+
+# Test code region.
+
+RV_COMPLIANCE_CODE_BEGIN
+
+# ---------------------------------------------------------------------
+
+# ADD
+
+add x0, x1, x2
+
+add x1, x2, x3
+
+add x2, x3, x4
+
+add x3, x4, x5
+
+add x4, x5, x6
+
+add x5, x6, x7
+
+add x6, x7, x8
+
+add x7, x8, x9
+
+add x8, x9, x10
+
+add x9, x10, x11
+
+add x10, x11, x12
+
+add x11, x12, x13
+
+add x12, x13, x14
+
+add x13, x14, x15
+
+add x14, x15, x16
+
+add x15, x16, x17
+
+add x16, x17, x18
+
+add x17, x18, x19
+
+add x18, x19, x20
+
+add x19, x20, x21
+
+add x20, x21, x22
+
+add x21, x22, x23
+
+add x22, x23, x24
+
+add x23, x24, x25
+
+add x24, x25, x26
+
+add x25, x26, x27
+
+add x26, x27, x28
+
+add x27, x28, x29
+
+add x28, x29, x30
+
+add x29, x30, x31
+
+add x30, x31, x0
+
+add x31, x0, x1
+
+# CODE_END
+
+[[appendix-b---one-isa-test]]
+[appendix]
+== One ISA Test
+
+A detailed description of one ISA test.
+
+* Header file including riscv-test.h from TVM, but in case you are not using
+  TVM, header files of YOUR test environment should be included.
+
+#include "compliance_test.h"
+
+* TVM selection.
+
+# Test Virtual Machine (TVM) used by program.
+
+RV_COMPLIANCE_RV32M
+
+* Code region – ISA test is divided into several parts marked as
+  “A“,“B“,“C“, etc. These parts differenciate different logical tests.
+
+# Test code region.
+
+RV_COMPLIANCE_CODE_BEGIN
+
+* “A“ parts of this test focus on checking corner case values of the ADD
+  instruction. In particular, 0, 1, -1, 0x7FFFFFFF, 0x80000000 with 0, 1, -1,
+  MIN, MAX values.
+
+# ---------------------------------------------------------------------
+
+# Test part A1 - general test of value 0 with 0, 1, -1, MIN, MAX register values
+
+# Addresses for test data and results
+
+la x1, test_A1_data
+
+la x2, test_A1_res
+
+# Load testdata
+
+lw x3, 0(x1)
+
+# Register initialization
+
+li x4, 0
+
+li x5, 1
+
+li x6, -1
+
+li x7, 0x7FFFFFFF
+
+li x8, 0x80000000
+
+# Test
+
+add x4, x3, x4
+
+add x5, x3, x5
+
+add x6, x3, x6
+
+add x7, x3, x7
+
+add x8, x3, x8
+
+# Store results
+
+sw x3, 0(x2)
+
+sw x4, 4(x2)
+
+sw x5, 8(x2)
+
+sw x6, 12(x2)
+
+sw x7, 16(x2)
+
+sw x8, 20(x2)
+
+# ---------------------------------------------------------------------
+
+# Test part A2 - general test of value 1 with 0, 1, -1, MIN, MAX register values
+
+<similar code to A1>
+
+# ---------------------------------------------------------------------
+
+# Test part A3 - general test of value -1 with 0, 1, -1, MIN, MAX register values
+
+<similar code to A1>
+
+# ---------------------------------------------------------------------
+
+# Test part A4 - general test of value 0x7FFFFFFF with 0, 1, -1, MIN, MAX register values
+
+<similar code to A1>
+
+# ---------------------------------------------------------------------
+
+# Test part A5 - general test of value 0x80000000 with 0, 1, -1, MIN, MAX register values
+
+<similar code to A1>
+
+* “B“ part of this test focuses on forwarding between instruction. It means that result of one instruction is immediately passed to another instruction
+
+# ---------------------------------------------------------------------
+
+# Test part B - testing forwarding between instructions
+
+# Addresses for test data and results
+
+la x25, test_B_data
+
+la x26, test_B_res
+
+# Load testdata
+
+lw x28, 0(x25)
+
+# Register initialization
+
+li x27, 0x1
+
+# Test
+
+add x29, x28, x27
+
+add x30, x29, x27
+
+add x31, x30, x27
+
+add x1, x31, x27
+
+add x2, x1, x27
+
+add x3, x2, x27
+
+# store results
+
+sw x27, 0(x26)
+
+sw x28, 4(x26)
+
+sw x29, 8(x26)
+
+sw x30, 12(x26)
+
+sw x31, 16(x26)
+
+sw x1, 20(x26)
+
+sw x2, 24(x26)
+
+sw x3, 28(x26)
+
+* “C“ part of this test focuses on writing to x0. This register is hardwired to 0 value so it cannot happen in any RISC-V implementation that it is overwritten.
+
+# ---------------------------------------------------------------------
+
+# Test part C - testing writing to x0
+
+# Addresses for test data and results
+
+la x1, test_C_data
+
+la x2, test_C_res
+
+# Load testdata
+
+lw x28, 0(x1)
+
+# Register initialization
+
+li x27, 0xF7FF8818
+
+# Test
+
+add x0, x28, x27
+
+# store results
+
+sw x0, 0(x2)
+
+* “D“ part of this test focuses on forwarding through x0. This register is hardwired to 0 value, so temporary nonzero result cannot be passed to another instruction.
+
+# ---------------------------------------------------------------------
+
+# Test part D - testing forwarding throught x0
+
+# Addresses for test data and results
+
+la x1, test_D_data
+
+la x2, test_D_res
+
+# Load testdata
+
+lw x28, 0(x1)
+
+# Register initialization
+
+li x27, 0xF7FF8818
+
+# Test
+
+add x0, x28, x27
+
+add x5, x0, x0
+
+# store results
+
+sw x0, 0(x2)
+
+sw x5, 4(x2)
+
+* “E“ part of this test focuses on ADD with x0. The ADD instruction performs MOVE operation in that case.
+
+# ---------------------------------------------------------------------
+
+# Test part E - testing moving (add with x0)
+
+# Addresses for test data and results
+
+la x1, test_E_data
+
+la x2, test_E_res
+
+# Load testdata
+
+lw x3, 0(x1)
+
+# Test
+
+add x4, x3, x0
+
+add x5, x4, x0
+
+add x6, x0, x5
+
+add x14, x6, x0
+
+add x15, x14, x0
+
+add x16, x15, x0
+
+add x25, x0, x16
+
+add x26, x0, x25
+
+add x27, x26, x0
+
+# Store results
+
+sw x4, 0(x2)
+
+sw x26, 4(x2)
+
+sw x27, 8(x2)
+
+* Every test environment should implement HALT macro. When this macro is called, operation of DUT is stopped and comparison to the reference results can be performed.
+
+# ---------------------------------------------------------------------
+
+# HALT
+
+RV_COMPLIANCE_HALT
+
+RV_COMPLIANCE_CODE_END
+
+* Addresses used for storing input data.
+
+# Input data section.
+
+.data
+
+test_A1_data:
+
+.word 0
+
+test_A2_data:
+
+.word 1
+
+test_A3_data:
+
+.word -1
+
+test_A4_data:
+
+.word 0x7FFFFFFF
+
+test_A5_data:
+
+.word 0x80000000
+
+test_B_data:
+
+.word 0x0000ABCD
+
+test_C_data:
+
+.word 0x12345678
+
+test_D_data:
+
+.word 0xFEDCBA98
+
+test_E_data:
+
+.word 0x36925814
+
+* Addresses used for storing results.
+
+# Output data section.
+
+RV_COMPLIANCE_DATA_BEGIN
+
+test_A1_res:
+
+.fill 6, 4, -1
+
+test_A2_res:
+
+.fill 6, 4, -1
+
+test_A3_res:
+
+.fill 6, 4, -1
+
+test_A4_res:
+
+.fill 6, 4, -1
+
+test_A5_res:
+
+.fill 6, 4, -1
+
+test_B_res:
+
+.fill 8, 4, -1
+
+test_C_res:
+
+.fill 1, 4, -1
+
+test_D_res:
+
+.fill 2, 4, -1
+
+test_E_res:
+
+.fill 3, 4, -1
+
+RV_COMPLIANCE_DATA_END
+
+[[appendix-c---directory-structure]]
+[appendix]
+== Directory Structure
+
+The package contains compliance tests, reference signatures and documentation in the following hierarchy:
+
+*compliance-tests*
+
+*|-- rv32i*
+
+*|-- ISA* // tests dedicated to instructions behavior
+
+*|-- references* // reference results for ISA tests
+
+*|-- src* // assembler tests
+
+*|-- Makefile*
+
+*`-- Makefrag* // list of tests
+
+*`-- binary coding* // tests dedicated to binary coding
+
+*|-- references* // reference results for BC tests
+
+*|-- src* // assembler tests
+
+*|-- Makefile*
+
+*`-- Makefrag* // list of tests
+
+*|-- riscv-test-env* // TVM available at Foundation gitlab
+
+*|-- p*
+
+*`-- LICENCE*
+
+*|-- documentation* // this document
+
+*`-- RV32I_Compliance_Tests.docx*
+
+*`-- run_test.sh* // main running script
+
+[[appendix-d---rv32i-compliance-tests]]
+[appendix]
+== RV32I Compliance Tests
+
+Reference [1] RISC-V Foundation, May 2017. The RISC-V Instruction Set Manual
+Volume I: User-Level ISA, document Version 2.2, url:
+https://riscv.org/specifications/__.__[[_Toc456266733]]
+
+The current version of RV32I compliance tests has following limitations:
+
+* Most of the instruction aliases are not covered and have to be added to the
+  tests (avoid some mismatches caused by linker optimizations).
+* FENCE instruction is partially covered only in the binary coding test (fence
+  alias) and has to be extended. Moreover, ISA test should be added later, but
+  Section 2.7 of [1] is currently under revision).
+* FENCE.I instruction is covered, but changes may be required (Section 2.7 of
+  [1] is currently under revision).
+
+Tests should work with all implementations covering RV32I instructions. It may
+happen that when instructions are combined with other instruction extensions,
+there will be some dependencies involved. These are right now not covered in
+the tests as this will require a configuration layer above the tests. This
+will be solved in future test environment
+
+Two categories of tests are available in the package under BSD license protection:
+
+. Binary coding tests_ - checking whether assembler tool recognizes all
+  instructions. Prerequisites for this test are an assembler and a linker tool
+  (GCC or a proprietary assembler/linker).
+. ISA tests – checking whether instructions are implemented according to the
+  standard.
+
+Compliance tests should cover the specification as much as possible,
+therefore, links to the User-level RISC-V ISA specification are essential for
+tracking the *specification coverage*. For now there is no automated way of
+measuring specification coverage, therefore, mapping is done manually. It is
+expected that this will change in future versions of compliance tests when
+executable formal model able to process coverage is available.
+
+=== Binary Coding Tests and Coverage
+
+RV32I standard defines 6 formats of instructions: base instruction formats (R-type, I-type, S-type, U-type) and immediate variants (B-type, J-type). These are defined in Section 2.2 and 2.3 of [1], see also Fig. 1 and Fig. 2. Binary coding is defined in Chapter 20 of [1]: RISC-V Assembly Programmer’s Handbook.
+
+image:extracted-media/media/image3.png[image,width=531,height=148]
+
+Figure 1: RISC-V base instruction formats.
+
+image:extracted-media/media/image4.png[image,width=604,height=210]
+
+Figure 2: RISC-V base instruction formats showing immediate variants.
+
+In the compliance tests package, there are separate binary coding compliance tests available for every instruction. Moreover, in every test, instruction is present in more variants, because it is possible to combine different immediate values, values stored in registers, or values stored in the memory. In order to avoid all possible combinations of all possible values of immediates and operand resources, suitable representatives should be chosen (this should be enough for compliance purposes, we do not target verification goals). Following rules are applied for the selection of representatives:
+
+* For immediate values, an algorithm called „walking 1“ and „walking 0“ can be used together with all zeros and all ones values. Example:
+
+__________________________________________________________________________________________________
+…
+
+0010000000000000 +
+0100000000000000 +
+1000000000000000 +
+1111111111111111 +
+1111111111111110 +
+1111111111111101 +
+…
+
+But of course, for some instructions it is beneficial to focus on some specific corner case values.
+__________________________________________________________________________________________________
+
+* For register operands, an approach with always different registers in one instruction can be applied, while always different means a _periodical exchange of consequent registers_. Example:
+
+________________
+…
+
+ADD x16, x17, x18
+
+ADD x17, x18, x19
+
+ADD x18, x19, x20
+
+ADD x19, x20, x21
+
+…
+________________
+
+One example of complete binary coding test with explanation of its sections is available in Appendix A of this document.
+
+It is recommended to consider tests of this category as pre-requisite tests for ISA Tests. When binary codes are not matching it doesn’t make sense to continue with ISA tests.
+
+=== ISA Tests and Coverage
+
+RISC-V ISA defines several instructions categories. This document and tests delivered in the corresponding package consider only the RV32I instructions described in Chapter 2 of [1]. In the compliance tests package, there are separate tests available for every instruction. Aliases are not considered in version 1.0 of RV32I compliance tests. The naming convention of a single test is:
+
+<__ISA category__>-<__test objective__>-<__test number__>.S
+
+_ISA category_ – it is expected that for all instruction categories there will be dedicated compliance tests available. Such instruction categories are: “I” or “E” representing integer instructions, “M” representing multiplication and division extension, “F” representing floating point extension, “D” representing double-precision floating point extension, “Q” representing quad-precision floating point extension, “C” representing compressed instructions extension, or “A” representing atomic instructions extension. In this package, only “I” prefix is applied.
+
+_test objective –_ the aspect on which the test is focusing on, it can be instruction, exceptions, etc.
+
+_test number –_ number of the test, it is expected that there can be more tests specified per one instruction in the future.
+
+The list of tests with links to specific parts of the specification follows.
+
+* _compliance_test.h_ – the header file for all tests. It contains macros for defining halt of the test, the start and the end of the code section, the start and the end of the data section.
+
+image:extracted-media/media/image5.png[image,width=604,height=110]
+
+Figure 3: Part of the specification [1] describing registers.
+
+* _I-RF_size-01.S_ – test checking the size of the register file. It must be possible to approach all 32 registers.
+* _I-RF_width-01.S_ – test checking the width of the register file. It must be possible to approach all 32 bits of all 32 registers.
+* _I-RF_x0-01.S_ – test checking that register x0 is hardwired to 0. All instructions that can rewrite a value in a register are tested for that purpose: LUI, ADDI, ORI, ANDI, XORI, SLLI, SRAI, SRLI, AUIPC, ADD, OR, AND, XOR, SLL, SRA, SRL, SUB, SLT, SLTU, SLTI, SLTIU, JAL, JALR, LW, LH, LB, LBU.
+
+image:extracted-media/media/image6.png[image,width=604,height=290]
+
+Figure 4: Part of the specification [1] for instructions: ADD, SLT, SLTU, AND, OR, XOR, SLL, SRL, SUB, SRA.
+
+* _I-ADD-01.S_ – test checking ADD (_addition_) instruction according to Section 2.4 of [1]. This instruction belongs to register-register operations, which means that destination and source operands are registers. The ISA test focuses on checking corner case values: 0, 1, -1, 0x7FFFFFFF, 0x80000000 with 0, 1, -1, MIN, MAX, on forwarding between instructions, on writing to x0 register by ADD instruction (shouldn’t change its hardwired 0 value), on forwarding through x0 register, on move operation represented by ADD instruction (x0 register is used as one of the source operands).
+* _I-SLT-01.S_ – tests checking SLT (_set on less than_) instruction according to Section 2.4 of [1]. This instruction belongs to register-register operations, which means that destination and source operands are registers. The ISA test focuses on checking comparing corner case values: 0, 1, -1, 0x7FFFFFFF, 0x80000000 with 0, 1, -1, MIN, MAX, on comparing values with x0 register, on writing to x0 register by SLT instruction (shouldn’t change its hardwired 0 value), on forwarding between instructions.
+* _I-SLTU-01.S_ – unsigned version of SLT instruction, test is focusing on the same aspects.
+* _I-AND-01.S_ - tests checking AND (_logical and_) instruction according to Section 2.4 of [1]. This instruction belongs to register-register operations, which means that destination and source operands are registers. The ISA test focuses on checking logical operations over corner case values: 0, 1, -1, 0x7FFFFFFF, 0x80000000 with 0, 1, -1, MIN, MAX, on forwarding between instructions, on writing to x0 register by AND instruction (shouldn’t change its hardwired 0 value), on forwarding through x0 register and moving (AND with the register containing the value -1).
+* _I-OR-01.S_ - tests checking OR (_logical or_) instruction according to Section 2.4 of [1]. This instruction belongs to register-register operations, which means that destination and source operands are registers. The ISA test focuses on checking logical operations over corner case values: 0, 1, -1, 0x7FFFFFFF, 0x80000000 with 0, 1, -1, MIN, MAX, on forwarding between instructions, on writing to x0 register by OR instruction (shouldn’t change its hardwired 0 value), on forwarding through x0 register and moving (OR with x0).
+* _I-XOR-01.S_ - tests checking XOR (_logical xor_) instruction according to Section 2.4 of [1]. This instruction belongs to register-register operations, which means that destination and source operands are registers. The ISA test focuses on checking logical operations over corner case values: 0, 1, -1, 0x7FFFFFFF, 0x80000000 with 0, 1, -1, MIN, MAX, on forwarding between instructions, on writing to x0 register by XOR instruction (shouldn’t change its hardwired 0 value), on forwarding through x0 register and moving (XOR with x0).
+* _I-SLL-01.S_ - tests checking SLL (_shift left logical_) instruction according to Section 2.4 of [1]. This instruction belongs to register-register operations, which means that destination and source operands are registers. The ISA test focuses on checking shifts over corner case values: 0, 1, -1, 0x7FFFFFFF, 0x80000000 with 0, 1, -1, MIN, MAX (on 5 bits), on forwarding between instructions, on writing to x0 register by SLL instruction (shouldn’t change its hardwired 0 value), on forwarding through x0 register and shifting by value greater than 31 – only low 5 bits of the register value should be used.
+* _I-SRL-01.S_ - tests checking SRL (_shift right logical_) instruction according to Section 2.4 of [1]. This instruction belongs to register-register operations, which means that destination and source operands are registers. The ISA test focuses on checking shifts over corner case values: 0, 1, -1, 0x7FFFFFFF, 0x80000000 with 0, 1, -1, MIN, MAX (on 5 bits), on forwarding between instructions, on writing to x0 register by SRL instruction (shouldn’t change its hardwired 0 value), on forwarding through x0 register and shifting by value greater than 31 – only low 5 bits of the register value should be used.
+* _I-SUB-01.S_ - test checking SUB (_subtraction_) instruction according to Section 2.4 of [1]. This instruction belongs to register-register operations, which means that destination and source operands are registers. The ISA test focuses on checking corner case values: 0, 1, -1, 0x7FFFFFFF, 0x80000000 with 0, 1, -1, MIN, MAX, on forwarding between instructions, on writing to x0 register by SUB instruction (shouldn’t change its hardwired 0 value), on forwarding through x0 register, on move operation and negation (SUB with x0).
+* _I-SRA-01.S_ - tests checking SRA (_shift right arithmetic_) instruction according to Section 2.4 of [1]. This instruction belongs to register-register operations, which means that destination and source operands are registers. The ISA test focuses on checking shifts over corner case values: 0, 1, -1, 0x7FFFFFFF, 0x80000000 with 0, 1, -1, MIN, MAX (on 5 bits), on forwarding between instructions, on writing to x0 register by SRA instruction (shouldn’t change its hardwired 0 value), on forwarding through x0 register and shifting by value greater than 31 – only 5 low bits of the register value should be used.
+
+image:extracted-media/media/image7.png[image,width=604,height=227]
+
+image:extracted-media/media/image8.png[image,width=604,height=127]
+
+Figure 5: Part of the specification [1] for instructions: ADDI, SLTI, SLTIU, ANDI, ORI, XORI.
+
+* _I-ADDI-01.S_ – test checking ADDI (_addition with immediate_) instruction according to Section 2.4 of [1]. This instruction belongs to register-immediate operations, which means that destination and optionally one source operand are registers and second source operand is immediate. The ISA test focuses on checking corner case values: 0, 1, -1, 0x7FFFFFFF, 0x80000000 with 0, 1, -1, MIN, MAX immediates, on forwarding between instructions, on writing to x0 register by ADDI instruction (shouldn’t change its hardwired 0 value), on forwarding through x0 register, on move operation represented by ADDI instruction with the 0 immediate value.
+* _I-SLTI-01.S_ - tests checking SLTI (_set less than immediate_) instruction according to Section 2.4 of [1]. This instruction belongs to register-immediate operations, which means that destination and optionally one source operand are registers and second source operand is immediate. The ISA test focuses on checking comparing corner case values: 0, 1, -1, 0x7FFFFFFF, 0x80000000 with 0, 1, -1, MIN, MAX immediates, on comparing values with x0 register, on writing to x0 register by SLTI instruction (shouldn’t change its hardwired 0 value), on forwarding between instructions.
+* _I-SLTIU-01.S_ - unsigned version of SLTI instruction, test is focusing on the same aspects.
+* _I-ANDI-01.S_ - tests checking ANDI (_logical and with immediate_) instruction according to Section 2.4 of [1]. This instruction belongs to register-immediate operations, which means that destination and optionally one source operand are registers and second source operand is immediate. The ISA test focuses on checking logical operations over corner case values: 0, 1, -1, 0x7FFFFFFF, 0x80000000 with 0, 1, -1, MIN, MAX immediates, on forwarding between instructions, on writing to x0 register by ANDI instruction (shouldn’t change its hardwired 0 value), on forwarding through x0 register and moving (ANDI with the -1 immediate value).
+* _I-ORI-01.S_ - tests checking ORI (_logical or with immediate_) instruction according to Section 2.4 of [1]. This instruction belongs to register-immediate operations, which means that destination and optionally one source operand are registers and second source operand is immediate. The ISA test focuses on checking logical operations over corner case values: 0, 1, -1, 0x7FFFFFFF, 0x80000000 with 0, 1, -1, MIN, MAX immediates, on forwarding between instructions, on writing to x0 register by ORI instruction (shouldn’t change its hardwired 0 value), on forwarding through x0 register and moving (ORI with the 0 immediate value).
+* _I-XORI-01.S_ - tests checking XORI (_logical xor with immediate_) instruction according to Section 2.4 of [1]. This instruction belongs to register-immediate operations, which means that destination and optionally one source operand are registers and second source operand is immediate. The ISA test focuses on checking logical operations over corner case values: 0, 1, -1, 0x7FFFFFFF, 0x80000000 with 0, 1, -1, MIN, MAX immediates, on forwarding between instructions, on writing to x0 register by XORI instruction (shouldn’t change its hardwired 0 value), on forwarding through x0 register and moving (XORI with the 0 immediate value).
++
+image:extracted-media/media/image9.png[image,width=604,height=217]
+
+Figure 6: Part of the specification [1] for instructions: SLLI, SRLI, SRAI.
+
+* _I-SLLI-01.S_ - tests checking SLLI (_shift left logical by immediate_) instruction according to Section 2.4 of [1]. This instruction belongs to register-immediate operations, which means that destination and optionally one source operand are registers and second source operand is immediate. The ISA test focuses on checking shifts over corner case values: 0, 1, -1, 0x7FFFFFFF, 0x80000000 with 0, 1, -1, MIN, MAX (5 bits immediates), on forwarding between instructions, on writing to x0 register by SLLI instruction (shouldn’t change its hardwired 0 value), and on forwarding through x0.
+* _I-SRAI-01.S_ - tests checking SRAI (_shift right arithmetic by immediate_) instruction according to Section 2.4 of [1]. This instruction belongs to register-immediate operations, which means that destination and optionally one source operand are registers and second source operand is immediate. The ISA test focuses on checking shifts over corner case values: 0, 1, -1, 0x7FFFFFFF, 0x80000000 with 0, 1, -1, MIN, MAX (on 5 bits immediate), on forwarding between instructions, on writing to x0 register by SRAI instruction (shouldn’t change its hardwired 0 value), and on forwarding through x0.
+* _I-SRLI-01.S_ - tests checking SRLI (_shift right logical by immediate_) instruction according to Section 2.4 of [1]. This instruction belongs to register-immediate operations, which means that destination and optionally one source operand are registers and second source operand is immediate. The ISA test focuses on checking shifts over corner case values: 0, 1, -1, 0x7FFFFFFF, 0x80000000 with 0, 1, -1, MIN, MAX (on 5 bits immediate), on forwarding between instructions, on writing to x0 register by SRL instruction (shouldn’t change its hardwired 0 value), and on forwarding through x0 register.
+
+image:extracted-media/media/image10.png[image,width=604,height=233]
+
+Figure 7: Part of the specification [1] for LUI and AUIPC instructions.
+
+* _I-LUI-01.S_ - test checking LUI (_load upper immediate_) instruction according to Section 2.4 of [1]. This instruction belongs to register-immediate operations, which means that destination and optionally one source operand are registers and second source operand is immediate. The ISA test focuses on loading 0, 1, -1, MIN, MAX immediates to destination register, on using LUI to overwrite low bits and on loading immediate using LUI and ADDI, or LI alias.
+* _I-AUIPC-01.S_ - test checking AUIPC (_add upper immediate to pc_) instruction according to Section 2.4 of [1]. This instruction belongs to register-immediate operations, which means that destination and optionally one source operand are registers and second source operand is immediate. The ISA test focuses on adding 0, 1, -1, MIN, MAX immediates to the program counter and then storing the value to the destination register, on using AUIPC to overwrite low bits and on loading immediate using AUIPC and ADDI, or LA alias.
+
+image:extracted-media/media/image11.png[image,width=604,height=168]
+
+Figure 8: Part of the specification for NOP instruction.
+
+* _I-NOP-01.S_ - test checking NOP (_no operation_) instruction according to Section 2.4 of [1]. The ISA test focuses on checking whether it doesn’t influence values in registers (only program counter should be incremented).
+
+image:extracted-media/media/image12.png[image,width=604,height=100]
+
+image:extracted-media/media/image13.png[image,width=604,height=296]
+
+image:extracted-media/media/image14.png[image,width=604,height=51]
+
+Figure 9: Part of the specification describing JAL andf JALR instructions.
+
+* _I-JAL-01.S_ - test checking JAL (_jump and link_) instruction according to Section 2.5 of [1]. This instruction belongs to unconditional jumps. The ISA test focuses on jumps forward, jumps backward and on linking (correct return address is saved).
+* _I-JALR-01.S_ - test checking JALR (_jump and link register_) instruction according to Section 2.5 of [1]. This instruction belongs to unconditional jumps. The ISA test focuses on jumps forward, jumps backward, on linking (saving correct return address), on clearing low bit of the address – low bit of the address is not causing exception, and on jumps using immediate offset.
+* _I-DELAY_SLOTS-01.S_ – test checking delay slots of conditional or unconditional jumps.
+* I-MISALIGN_JMP-01.S – test checking exception caused by misaligned conditional or unconditional jumps.
+
+image:extracted-media/media/image15.png[image,width=604,height=326]
+
+Figure 10: Part of the specification describing BEQ, BNE, BLT, BLTU, BGE, BGEU.
+
+* _I-BEQ- 01.S_ - test checking BEQ (_branch if equal_) instruction according to Section 2.5 of [1]. This instruction belongs to conditional branches. The ISA test focuses on checking conditions over corner case values: 0, 1, -1, 0x7FFFFFFF, 0x80000000 with 0, 1, -1, MIN, MAX, on testing compare with x0, and on jumps forward and backward.
+* _I-BGE-01.S_ - test checking BGE (_branch if greater or equal_) instruction according to Section 2.5 of [1]. This instruction belongs to conditional branches. The ISA test focuses on checking conditions over corner case values: 0, 1, -1, 0x7FFFFFFF, 0x80000000 with 0, 1, -1, MIN, MAX, on testing compare with x0, and on jumps forward and backward.
+* _I-BGEU-01.S_ - unsigned version of BGE instruction, test is focusing on the same aspects.
+* _I-BLT-01.S_ - test checking BLT (_branch if less_) instruction according to Section 2.5 of [1]. This instruction belongs to conditional branches. The ISA test focuses on checking conditions over corner case values: 0, 1, -1, 0x7FFFFFFF, 0x80000000 with 0, 1, -1, MIN, MAX, on testing compare with x0, and on jumps forward and backward.
+* _I-BLTU-01.S_ - unsigned version of BGE instruction, test is focusing on the same aspects.
+* I-BNE-01.S - test checking BNE (_branch if not equal_) instruction according to Section 2.5 of [1]. This instruction belongs to conditional branches. The ISA test focuses on checking conditions over corner case values: 0, 1, -1, 0x7FFFFFFF, 0x80000000 with 0, 1, -1, MIN, MAX, on testing compare with x0, and on jumps forward and backward.
+
+image:extracted-media/media/image16.png[image,width=604,height=100]
+
+image:extracted-media/media/image17.png[image,width=604,height=513]
+
+Figure 11: Part of specification describing LOAD and STORE instructions and endianity.
+
+* I-LB-01.S - test checking LB (_load byte_) instruction according to Section 2.6 of [1]. This instruction belongs to load instructions. The ISA test focuses on checking <base address + 0> load, <base address -1> load, <base address + 1> load, <base address - 2048> load, <base address + 2047> load, <base address [from -4 to +7]> load, load to x0, forwarding, and consequent load and store with the same base and destination addresses.
+* I-LBU-01.S - unsigned version of LB instruction, test is focusing on the same aspects.
+* I-LH-01.S - test checking LH (_load word and sign-extend high bits_) instruction according to Section 2.6 of [1]. This instruction belongs to load instructions. The ISA test focuses on checking <base address + 0> load, <base address -1> load, <base address + 1> load, <base address - 2048> load, <base address + 2047> load, <base address [-4, -2, 0, +2, +4, +6]> load, load to x0, forwarding, and consequent load and store with the same base and destination addresses.
+* I-LHU-01.S - unsigned version of LH instruction, test is focusing on the same aspects.
+* I-LW-01.S - test checking LW (_load word_) instruction according to Section 2.6 of [1]. This instruction belongs to load instructions. The ISA test focuses on checking <base address + 0> load, <base address -1> load, <base address + 1> load, <base address - 2048> load, <base address + 2047> load, <base address [-4, 0, 4]> load, load to x0, forwarding, and consequent load and store with the same base and destination addresses.
+* I-SB-01.S - test checking SB (_store byte_) instruction according to Section 2.6 of [1]. This instruction belongs to store instructions. The ISA test focuses on checking <base address + 0> store, <base address -1> store, <base address + 1> store, <base address - 2048> store, <base address + 2047> store, <base address [from -4 to +7]> store, store from x0, forwarding to address an data register, WAR hazard with address and data register, RAW hazard in memory, and WAW hazard in memory.
+* I-SH-01.S - test checking SH (_store word and sign-extend high bits_) instruction according to Section 2.6 of [1]. This instruction belongs to store instructions. The ISA test focuses on checking <base address + 0> store, <base address -1> store, <base address + 1> store, <base address - 2048> store, <base address + 2047> store, <base address [-4, -2, 0, +2, +4, +6]> store, store from x0, forwarding to address an data register, WAR hazard with address and data register, RAW hazard in memory, and WAW hazard in memory.
+* I-SW-01.S - test checking SW (_store word_) instruction according to Section 2.6 of [1]. This instruction belongs to store instructions. The ISA test focuses on checking <base address + 0> store, <base address -1> store, <base address + 1> store, <base address - 2048> store, <base address + 2047> store, <base address [-4, 0, 4]> store, store from x0, forwarding to address an data register, WAR hazard with address and data register, RAW hazard in memory, and WAW hazard in memory.
+* I-MISALIGN-LDST-01.S – test checking misaligned load/store exception.
+* I-ENDIANESS-01.S – test checking correct endianity.
+
+image:extracted-media/media/image18.png[image,width=604,height=702]
+
+image:extracted-media/media/image19.png[image,width=604,height=304]
+
+Figure 12: Part of the specification [1] describing CSR instructions.
+
+* I-CSRRC-01.S - test checking CSRRC (_atomic read and clear bits in CSR_) instruction according to Section 2.8 of [1]. This instruction belongs to control and status register instructions. The ISA test focuses on checking base operation of CSRRC, on forwarding between instructions, on writing and reading to/from x0, on forwarding through x0, and on testing CSRRC with the same destination and source registers. This test is coupled with CSRRW instruction.
+* I-CSRRCI-01.S – variant of CSRRC with immediate. Test is focusing on the same aspects.
+* I-CSRRS-01.S - test checking CSRRS (_atomic read and set bits in CSR_) instruction according to Section 2.8 of [1]. This instruction belongs to control and status register instructions. The ISA test focuses on checking base operation of CSRRS, on forwarding between instructions, on writing and reading to/from x0, on forwarding through x0, and on testing CSRRS with the same destination and source registers. This test is coupled with CSRRW instruction.
+* I-CSRRSI-01.S - variant of CSRRS with immediate. Test is focusing on the same aspects.
+* I-CSRRW-01.S - test checking CSRRW (_atomic read/write CSR_) instruction according to Section 2.8 of [1]. This instruction belongs to control and status register instructions. The ISA test focuses on checking base operation of CSRRW, on forwarding between instructions, on writing to x0, on forwarding through x0, and on testing CSRRW with the same destination and source registers.
+* I-CSRRWI-01.S - variant of CSRRW with immediate. Test is focusing on the same aspects.
+
+image:extracted-media/media/image20.png[image,width=604,height=214]
+
+Figure 13: Part of the specification [1] describing ECALL and EBREAK instructions.
+
+* I-EBREAK-01.S - test checking EBREAK (_environment break_) instruction according to Section 2.9 of [1]. This instruction belongs to environment calls and breakpoints instructions. The ISA test focuses on checking base operation of EBREAK.
+* I-ECALL-01.S - test checking ECALL (_environment call_) instruction according to Section 2.9 of [1]. This instruction belongs to environment calls and breakpoints instructions. The ISA test focuses on checking base operation of ECALL.
+
+image:extracted-media/media/image21.png[image,width=604,height=308]
+
+* I-FENCE.I-01.S - test checking FENCE.I instruction according to Section 2.7 of [1]. This instruction belongs to environment calls and breakpoints instructions. The ISA test focuses on checking base operation of FENCE.I.
+
+One example of complete ISA test with explanation of its sections is available in Appendix B of this document.

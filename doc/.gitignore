@@ -1,0 +1,6 @@
+# Ignore editor backups
+*~
+# Generated files
+*.pdf
+*.xml
+*.html
