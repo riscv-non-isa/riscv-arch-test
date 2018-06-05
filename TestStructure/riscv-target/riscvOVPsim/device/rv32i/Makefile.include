@@ -1,0 +1,7 @@
+RUN_TARGET=\
+    riscvOVPsim.exe --variant RV32I --program $(work_dir_isa)/$< \
+        --signaturedump \
+        --override riscvOVPsim/cpu/sigdump/SignatureFile=$(work_dir_isa)/$(*)_signature.output \
+        --override riscvOVPsim/cpu/sigdump/ResultReg=3 \
+        --override riscvOVPsim/cpu/simulateexceptions=T \
+        --logfile $(work_dir_isa)/$@

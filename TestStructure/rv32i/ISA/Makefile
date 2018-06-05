@@ -1,0 +1,71 @@
+#=======================================================================
+# Makefile for riscv-tests/isa
+#-----------------------------------------------------------------------
+
+act_dir := .
+src_dir := $(act_dir)/src
+work_dir := $(act_dir)/../../work
+work_dir_isa := $(work_dir)/isa
+
+include $(act_dir)/Makefrag
+
+default: all
+
+#--------------------------------------------------------------------
+# Build rules
+#--------------------------------------------------------------------
+
+RISCV_PREFIX ?= riscv32-unknown-elf-
+RISCV_GCC ?= $(RISCV_PREFIX)gcc
+RISCV_OBJDUMP ?= $(RISCV_PREFIX)objdump
+RISCV_GCC_OPTS ?= -static -mcmodel=medany -fvisibility=hidden -nostdlib -nostartfiles
+
+#RUN_SPIKE  = spike
+#RUN_OVPSIM = riscvOVPsim.exe
+
+vpath %.S $(act_dir)
+
+-include ../../riscv-target/$(RISCV_TARGET)/device/$(RISCV_DEVICE)/Makefile.include
+
+#------------------------------------------------------------
+# Build and run assembly tests
+
+%.out32: %.elf
+	$(RUN_TARGET)
+
+
+define compile_template
+
+$$($(1)_tests): %.elf: $(src_dir)/%.S
+	mkdir -p $(work_dir_isa)/$$(@D)
+	$$(RISCV_GCC) $(2) $$(RISCV_GCC_OPTS) \
+		-I$(act_dir)/../../riscv-test-env/ \
+		-I$(act_dir)/../../riscv-test-env/p/ \
+		-I$(act_dir)/../../riscv-target/$(RISCV_TARGET)/ \
+		-T$(act_dir)/../../riscv-test-env/p/link.ld $$< \
+		-o $(work_dir_isa)/$$@
+	$$(RISCV_OBJDUMP) -D $(work_dir_isa)/$$@ > $(work_dir_isa)/$$@.objdump
+$(1)_tests += $$($(1)_p_tests)
+
+.PHONY: $(1)
+
+tests += $$($(1)_tests)
+
+endef
+
+$(eval $(call compile_template,rv32i,-march=rv32i -mabi=ilp32))
+
+tests32_out = $(patsubst %.elf,%.out32,$(target32_tests))
+
+run: $(tests32_out)
+
+#------------------------------------------------------------
+# Default
+
+all: $(tests_dump)
+
+#------------------------------------------------------------
+# Clean up
+
+clean:
+	rm -rf $(work_dir)
