@@ -183,7 +183,7 @@ For tracing the test the macros are defined in:
 - #define RVTEST_IO_ASSERT_EQ(_R, _I)
 
 
-An examaple of a test that uses the tracing macros is:
+An example of a test that uses the tracing macros is:
     rv32i/ISA/src/I-IO.S
 
 To configure the simulator for different Target Devices there needs to be a Makefile fragment in a 'device' directory.
