@@ -9,6 +9,11 @@ v1.2, 3 June 2018: Converted to AsciiDoc and restructured.
 [cols="<1,<2,<3,<4",options="header,pagewidth",]
 |================================================================================
 | _Revision_ | _Date_            | _Author_ | _Modification_
+| 1.3 Draft  |  5 June 2018      |
+
+simond@imperas.com |
+
+Update to reflect directory structure and trace macros.
 | 1.2 Draft  |  3 June 2018      |
 
 jeremy.bennett@embecosm.com |
@@ -172,12 +177,16 @@ This chapter provides information on the currently available Targets and include
 For tracing the test the macros are defined in:
     riscv-compliance/TestStructure/riscv-target/riscvOVPsim/compliance_io.h
 
-- `#define RVTEST_IO_INIT
-- `#define RVTEST_IO_PUTC(_R)
-- `#define RVTEST_IO_WRITE_STR(_STR)
-- `#define RVTEST_IO_ASSERT_EQ(_R, _I)
+- #define RVTEST_IO_INIT
+- #define RVTEST_IO_PUTC(_R)
+- #define RVTEST_IO_WRITE_STR(_STR)
+- #define RVTEST_IO_ASSERT_EQ(_R, _I)
 
-And to configure the simulator for different Target Devices there needs to be a Makefile fragment in a 'device' directory.
+
+An examaple of a test that uses the tracing macros is:
+    rv32i/ISA/src/I-IO.S
+
+To configure the simulator for different Target Devices there needs to be a Makefile fragment in a 'device' directory.
 
 The Makefile fragment for RV32I is in:
     riscv-compliance/TestStructure/riscv-target/riscvOVPsim/device/rv32i
