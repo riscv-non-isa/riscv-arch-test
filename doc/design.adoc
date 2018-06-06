@@ -73,11 +73,11 @@ The Test runs in the context of a Test Virtual Machine as defined and available 
 
 === The Target Environment
 
-A specific target will need to be chosen and setup to run the Test. This can be an Instruction Set Simulator (ISS), full system simulator (emulator), HDL simulator, FPGA prototype, or a board/chip, etc. The Test runs in the context of a TVM and is setup to run on the specific target. The Target Environment controls the loading of the Test+TVM onto the Target, controls the execution, and then extracts the Signature.
+A specific target will need to be chosen and setup to run the Test. This can be an Instruction Set Simulator (ISS), full system simulator (emulator), HDL simulator, FPGA prototype, or a board/chip, etc. The Test runs in the context of a TVM and is setup to run on the specific target. The Target Environment controls the loading of the Test+TVM onto the Target, configures the device if needed, controls the execution, and then extracts the Signature.
 
-=== The Processor Configuration
+=== The Processor Configuration (Device Configuration)
 
-The RISC-V specification allows many optional instructions, registers, and other features. Many Targets have a fixed selection of these optional items which cannot be changed. For example, a chip is fixed in the mask. A simulator on the other hand may implement all known options and will need to be constrained to have only the required options available. There will need to be Processor Configuration for those Targets which need to be constrained to only reflect the features of the device being compliance tested. This is essential when writing compliance tests to ensure that only available options are used in the tests.
+The RISC-V specification allows many optional instructions, registers, and other features. Many Targets have a fixed selection of these optional items which cannot be changed. For example, a chip is fixed in the mask. A simulator on the other hand may implement all known options and will need to be constrained to have only the required options available. There will need to be Processor Configuration for those Target Devices which need to be constrained to only reflect the features of the device being compliance tested. This is essential when writing compliance tests to ensure that only available options are used in the tests.
 
 === The Test Signature
 
@@ -95,13 +95,13 @@ Currently there is one Test Suite: the RV32I (developed by Codasip).
 
 Test Suites will be developed in this priority order: (tbd)
 
-RV32IM, RV32IC, RV32IA, RV32E, RV32IF, RV32ID
+RV32I, RV32IM, RV32IC, RV32IA, RV32E, RV32IF, RV32ID
 
 RV64I, …
 
 === The Test Framework
 
-This works at several levels. At the lowest level it runs a Test with a TVM on a specific configured Target and compares the Test’s output Test Signature against the Test Reference Signature and reports if there is any difference. A difference indicates that the Target has failed that specific compliance Test.
+This works at several levels. At the lowest level it runs a Test with a TVM on a specific configured Target device and compares the Test’s output Test Signature against the Test Reference Signature and reports if there is any difference. A difference indicates that the Target has failed that specific compliance Test.
 
 The Test Framework allows different Test Suites to be run depending on the capabilities of the Target
 
@@ -126,7 +126,7 @@ This description assumes the use of a configurable simulator with good trace and
 
 * Ensure that the Processor configuration is set appropriately.
 
-* Use the Test Trace macros to make it easy to see the details of a Test’s execution.
+* Use the RVTEST macros (defined in compliance_io.h) to make it easy to see the details of a Test’s execution. There are macros for assertions (RVTEST_IO_ASSERT_EQ) and tracing (RVTEST_IO_WRITE_STR) which are null on Targets that can not implement them.
 
 * Assuming you are developing the Test on a simulator, use the simulator’s tracing capabilities, especially a register change mode to single step your Test examining all changing registers etc. to ensure your test is stimulating what is intending.
 
@@ -148,11 +148,18 @@ If using a Target that requires the processor to be configured, see the chapter 
 
 You will also need to have GCC software tools available and setup in you paths/environment.
 
-Tests are. run by command
+Tests are run by commands in the top level Makefile which has targets for simulate and verify
 
 [source,shell]
 ----
- ./run_tests.sh_ <path_to_RISCV_tools/bin>
+RISCV_TARGET?=riscvOVPsim
+RISCV_DEVICE?=rv32i
+
+simulate:
+    make RISCV_TARGET=$(RISCV_TARGET) RISCV_DEVICE=$(RISCV_DEVICE) RISCV_PREFIX=riscv64-unknown-elf- run -C $(ISA)
+
+verify:
+    verify.sh
 ----
 
 == Setting The Target Environment
@@ -162,28 +169,25 @@ The Target Environment needs setting up to allow the compliance tests to be run 
 This chapter provides information on the currently available Targets and includes a short tutorial on how to add a new Target.
 
 === Imperas riscvOVPsim Compliance Simulator
-==== Macros [compliance_test.h] (tbd)
+For tracing the test the macros are defined in:
+    riscv-compliance/TestStructure/riscv-target/riscvOVPsim/compliance_io.h
 
+- `#define RVTEST_IO_INIT
+- `#define RVTEST_IO_PUTC(_R)
+- `#define RVTEST_IO_WRITE_STR(_STR)
+- `#define RVTEST_IO_ASSERT_EQ(_R, _I)
 
-- `#define RV_COMPLIANCE_HALT`
-- `#define RV_COMPLIANCE_DATA_BEGIN`
-- `#define RV_COMPLIANCE_DATA_END`
-- Others for trace
+And to configure the simulator for different Target Devices there needs to be a Makefile fragment in a 'device' directory.
 
-==== Labels [compliance_test.h] (tbd)
+The Makefile fragment for RV32I is in:
+    riscv-compliance/TestStructure/riscv-target/riscvOVPsim/device/rv32i
 
-- `Imperas_signature_start`
-- `Imperas_signature_end`
+And in the top level Makefile there needs to be a selection for the Target and Device:
+    RISCV_TARGET?=riscvOVPsim
+    RISCV_DEVICE?=rv32i
 
-==== Makefiles (tbd)
+Also in the top level Makefile, you will need to configure other variables like GCC_BIN, OVP_BIN, PATH etc...
 
-`RISCV_SIM riscvOVPsim.exe`
-
-Plus arguments…
-
-==== Scripts (tbd)
-
-Not sure?.…
 
 === Codasip ISA Simulator
 
@@ -199,12 +203,13 @@ tbd
 tbd
 
 === Berkeley Spike ISA Simulator
-
-tbd
+For spike the riscv-compliance/TestStructure/riscv-target/spike/compliance_io.h has the trace macros defined as null.
+The Makefile fragment in riscv-compliance/TestStructure/riscv-target/spike/device/rv32i has the spike run command for the RV32I device.
 
 === SiFive Freedom Unleashed 540 board (tbd)
 
 tbd
+
 === Verilator Verilog RI5CY RTL processor (tbd)
 ==== With GDB Server
 
@@ -257,9 +262,20 @@ codasip_signature_end:
 +
 For example, to support Codasip ISA simulator as DUT, it was necessary to change `RISCV_SIM` from `spike` to `codix_berkelium-ia-isimulator –r` and parameters for running the simulator from `+signature=$(work_dir)/$<_signature.output` to `–info 5` plus handle redirection to a file by `1>$(work_dir)/$<_signature.output`.
 
-== Configuring the processor (tbd)
+== Configuring the Target Device
 
 This section is for how to specify which optional parts are being used… for simulators primarily…
+
+In the directory riscv-compliance/TestStructure/riscv-target/*/device there are directories that have Makefile fragments that configuret he simulator to simulate only those parts of the riscv specification that is required for the specific Target Device being tested.
+
+For example for the riscvOVPsim to be configured to be a RV32I
+    RUN_TARGET=\
+        riscvOVPsim.exe --variant RV32I --program $(work_dir_isa)/$< \
+            --signaturedump \
+            --override riscvOVPsim/cpu/sigdump/SignatureFile=$(work_dir_isa)/$(*)_signature.output \
+            --override riscvOVPsim/cpu/sigdump/ResultReg=3 \
+            --override riscvOVPsim/cpu/simulateexceptions=T \
+            --logfile $(work_dir_isa)/$@
 
 [appendix]
 == One ISA Test
