@@ -8,7 +8,7 @@ for f in ${ISA}/references/*.reference_output;
 do 
     b=$(basename $f)
     RUN=$((${RUN} + 1))
-    diff --strip-trailing-cr $f ${WORK}/isa/${b//".reference_output"/"_signature.output"} #&> /dev/null
+    diff --strip-trailing-cr $f ${WORK}/ISA/${b//".reference_output"/"_signature.output"} #&> /dev/null
     if [ $? == 0 ]
     then
         echo "${b} ... OK"
