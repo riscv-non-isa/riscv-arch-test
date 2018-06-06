@@ -20,9 +20,6 @@ RISCV_GCC      ?= $(RISCV_PREFIX)gcc
 RISCV_OBJDUMP  ?= $(RISCV_PREFIX)objdump
 RISCV_GCC_OPTS ?= -static -mcmodel=medany -fvisibility=hidden -nostdlib -nostartfiles
 
-#RUN_SPIKE  = spike
-#RUN_OVPSIM = riscvOVPsim.exe
-
 vpath %.S $(act_dir)
 
 -include $(ROOTDIR)/riscv-target/$(RISCV_TARGET)/device/$(RISCV_DEVICE)/Makefile.include
