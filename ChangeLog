@@ -1,5 +1,9 @@
 2018-06-08  Jeremy Bennett  <jeremy.bennett@embecosm.com>
 
+	* README.md: Fix typo in link to AsciiDoc cheat sheet
+
+2018-06-08  Jeremy Bennett  <jeremy.bennett@embecosm.com>
+
 	* COPYING.BSD: Created.
 	* COPYING.CC: Created.
 	* README.md: Add git process, licensing and engineering process.
