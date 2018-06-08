@@ -1,11 +1,37 @@
 # RISC-V Compliance Task Group
 
-This is a repository for the work of the RISC-V Compliance Task Group.
-Current proposals are being driven by a team comprising:
-- Mary Bennett (Embecosm)
-- Lee Moore (Imperas)
+This is a repository for the work of the RISC-V Foundation Compliance Task Group. The repository owners are:
 - Jeremy Bennett (Embecosm)
-- Simon Davidmann (Imperas)
+- Lee Moore (Imperas)
+
+Details of the RISC-V Foundation, the work of its task groups, and how to become a member can be found at [riscv.org](https://riscv.org/).
+
+## Contribution process
+
+You are encouraged to contribute to this repository by submitting pull requests and by commenting on pull requests submitted by other people.
+
+- Where a pull request is non-controversial one of the repository owners will immediately merge it. The respository uses rebase merges to maintain a linear history.
+
+- Other pull requests will be publicised to the task group for comment and decision at a subsequent meeting of the group. Everyone is encouraged to comment on a pull request. Such pull requests will be merged by when a concensus/decision has been reached by the task group.
+
+## Licensing
+
+In general:
+- code is licensed under the BSD 3-clause license (SPDX license identifier `BSD-3-Clause`); while
+- documentation is licensed under the Creative Commons Attribution 4.0 International license (SPDX license identifier `CC-BY-4.0`).
+
+The files `COPYING.BSD` and `COPYING.CC` in the top level directory contain the complete text of these licenses.
+
+## Engineering practice
+
+- Documentation uses the structured text format _AsciiDoc_.  Usage is fairly self evident, there is a comprehensive information on the format on the [AsciiDoc website](http://www.methods.co.nz/asciidoc/) and on the tooling on the [AsciiDoctor website](https://asciidoctor.org/).  You may find this [cheat sheet)(https://asciidoctor.org/docs/asciidoc-syntax-quick-reference/) helpful.
+
+- Some directories use `ChangeLog` files to track changes in the code and documentation.  Please honor these, keeping them up to date and including the ChangeLog entry in the _git_ commit message.
+
+- Please include a comment with the SPDX license identifier in all source files, for example:
+```
+// SPDX-License-Identifier: BSD-3-Clause
+```
 
 ## Running the compliance tests
 
@@ -27,5 +53,3 @@ To run on rv32i on either riscvOVPsim or spike
     make RISCV_TARGET=spike RISCV_DEVICE=rv32i
 
 ### Accessing riscvOVPsim
-
-

@@ -1,5 +1,11 @@
 2018-06-08  Jeremy Bennett  <jeremy.bennett@embecosm.com>
 
+	* COPYING.BSD: Created.
+	* COPYING.CC: Created.
+	* README.md: Add git process, licensing and engineering process.
+
+2018-06-08  Jeremy Bennett  <jeremy.bennett@embecosm.com>
+
 	* README.md: Correct details for running the compliance tests and
 	directory for OVPsim.
 
