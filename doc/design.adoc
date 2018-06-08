@@ -291,7 +291,10 @@ This section is for how to specify which optional parts are being used… for si
 In the directory riscv-compliance/TestStructure/riscv-target/*/device there are directories that have Makefile fragments that configuret he simulator to simulate only those parts of the riscv specification that is required for the specific Target Device being tested.
 
 For example for the riscvOVPsim to be configured to be a RV32I
-    RUN_TARGET=\
++
+[source,c]
+----
+    RUN_TARGET= \
         riscvOVPsim.exe --variant RV32I --program $(work_dir_isa)/$< \
             --signaturedump \
             --override riscvOVPsim/cpu/sigdump/SignatureFile=$(work_dir_isa)/$(*)_signature.output \
@@ -299,6 +302,8 @@ For example for the riscvOVPsim to be configured to be a RV32I
             --override riscvOVPsim/cpu/simulateexceptions=T \
             --logfile $(work_dir_isa)/$@
 
+----
++
 [appendix]
 == One ISA Test
 
@@ -588,26 +593,47 @@ RV_COMPLIANCE_DATA_END
 The package contains compliance tests, reference signatures and documentation in the following hierarchy:
 
 ----
-*compliance-tests*
-*|-- rv32i*
+*riscv-compliance*
+*+-- doc*
+*| |-- design.adoc*     // This document
+*|*
+*+-- riscv-target*
+*| +-- riscvOVPsim*     // target that can runs the test suites
+*| | +-- device*        // devices to be tested
+*| | | +-- rv32i*       // configuration of the simulator for the specific device
+*| | | | |-- Makefile.include*     // specific run command 
+*| | | +-- compliance_io.h* // macro implementation for this target
+*| | *
+*| |*
+*| +-- spike*     // target that can runs the test suites
+*| | +-- device*        // devices to be tested
+*| | | +-- rv32i*       // configuration of the simulator for the specific device
+*| | | | |-- Makefile.include*     // specific run command 
+*| | | +-- compliance_io.h* // macro implementation for this target
+*| | *
+*|*
+*+-- riscv-test-env*    // TVM available at Foundation gitlab
+*| |-- p*
+*| *
+*+-- riscv-test-suite*  // where the tests live
+*| +-- rv32i*
 *| |-- ISA*             // tests dedicated to instructions behavior
 *| | |-- references*    // reference results for ISA tests
 *| | |-- src*           // assembler tests
 *| | |-- Makefile*
 *| | +--Makefrag*       // list of tests
 *| |*
-*| +-- binary coding*   // tests dedicated to binary coding
-*|  |-- references*     // reference results for BC tests
-*|  |-- src*            // assembler tests
-*|  |-- Makefile*
-*|  +-- Makefrag*       // list of tests
+*| *
+*| +-- rv32m*           // placeholder for more tests
+*| |-- ISA*             // tests dedicated to instructions behavior
+*| | |-- references*    // reference results for ISA tests
+*| | |-- src*           // assembler tests
+*| | |-- Makefile*
+*| | +--Makefrag*       // list of tests
+*| |*
+*| *
 *|*
-*|-- riscv-test-env*    // TVM available at Foundation gitlab
-*| |-- p*
 *| +--LICENCE*
-*|*
-*|-- doc*
-*| |-- design.adoc*     // This document
-*| +-- legacy.adoc*     // Legacy content from CodaSip's earlier work
-*|*
-*+-- run_test.sh*       // main running script
+*+-- Makefile*       // main makefile
+*+-- verify.sh*       // main verify script
+*
