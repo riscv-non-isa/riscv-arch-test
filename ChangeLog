@@ -1,5 +1,10 @@
 2018-06-08  Jeremy Bennett  <jeremy.bennett@embecosm.com>
 
+	* README.md: Move AsciiDoc details into new README.md in the doc
+	directory.
+
+2018-06-08  Jeremy Bennett  <jeremy.bennett@embecosm.com>
+
 	* README.md: Fix typo in link to AsciiDoc cheat sheet
 
 2018-06-08  Jeremy Bennett  <jeremy.bennett@embecosm.com>

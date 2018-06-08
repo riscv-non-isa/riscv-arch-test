@@ -24,7 +24,7 @@ The files `COPYING.BSD` and `COPYING.CC` in the top level directory contain the 
 
 ## Engineering practice
 
-- Documentation uses the structured text format _AsciiDoc_.  Usage is fairly self evident, there is a comprehensive information on the format on the [AsciiDoc website](http://www.methods.co.nz/asciidoc/) and on the tooling on the [AsciiDoctor website](https://asciidoctor.org/).  You may find this [cheat sheet](https://asciidoctor.org/docs/asciidoc-syntax-quick-reference/) helpful.
+- Documentation uses the structured text format _AsciiDoc_.  See the `doc` directory `README.md` for more details.
 
 - Some directories use `ChangeLog` files to track changes in the code and documentation.  Please honor these, keeping them up to date and including the ChangeLog entry in the _git_ commit message.
 
