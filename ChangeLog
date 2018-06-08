@@ -1,3 +1,28 @@
+2018-06-08  Jeremy Bennett  <jeremy.bennett@embecosm.com>
+
+	Clean restructuring to just the work of interest.
+
+	* thought-experiments: Directory removed.
+	* .gitignore: Merged with TestStructure/.gitignore
+	* Makefile: Renamed from TestStructure/Makefile.
+	* TestStructure/Makefile: Renamed as Makefile.
+	* README.md: Merged with TestStructure/README.md.
+	* TestStructure/.gitignore: Deleted and contents moved into
+	.gitignore.
+	* TestStructure/README.md: Deleted and contents moved into
+	README.md.
+	* TestStructure/doc: Directory deleted.
+	* TestStructure/riscv-target: Directory moved to riscv-target.
+	* riscv-target: Directory moved from TestStructure/riscv-target
+	* TestStructure/riscv-test-env: Directory moved to riscv-test-env.
+	* riscv-test-env: Directory moved from
+	TestStructure/riscv-test-env.
+	* TestStructure/riscv-test-suite: Directory moved to
+	riscv-test-suite.
+	* riscv-test-suite: Directory moved from
+	TestStructure/riscv-test-suite.
+	* thought-experiments: Directory deleted.
+
 2018-05-21  Jeremy Bennett  <jeremy.bennett@embecosm.com>
 
 	Initial commit to populate the repository.
