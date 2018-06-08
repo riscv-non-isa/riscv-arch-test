@@ -1,5 +1,10 @@
 2018-06-08  Jeremy Bennett  <jeremy.bennett@embecosm.com>
 
+	* README.md: Correct details for running the compliance tests and
+	directory for OVPsim.
+
+2018-06-08  Jeremy Bennett  <jeremy.bennett@embecosm.com>
+
 	Clean restructuring to just the work of interest.
 
 	* thought-experiments: Directory removed.

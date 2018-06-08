@@ -21,7 +21,11 @@ and assertion macros for sequential correctness
 
     RVTEST_IO_ASSERT_EQ(x3, 0x00000000)
 
-To run on rv32i on either riscOVPsim or spike
+To run on rv32i on either riscvOVPsim or spike
 
-    make RISCV_TARGET=riscOVPsim RISCV_DEVICE=rv32i
-    make RISCV_TARGET=riscOVPsim RISCV_DEVICE=rv32i
+    make RISCV_TARGET=riscvOVPsim RISCV_DEVICE=rv32i
+    make RISCV_TARGET=spike RISCV_DEVICE=rv32i
+
+### Accessing riscvOVPsim
+
+
