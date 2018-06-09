@@ -1,3 +1,7 @@
+2018-06-09  Jeremy Bennett  <jeremy.bennett@embecosm.com>
+
+	* README.md: Add better link to documentation README.md.
+
 2018-06-08  Jeremy Bennett  <jeremy.bennett@embecosm.com>
 
 	* README.md: Move AsciiDoc details into new README.md in the doc

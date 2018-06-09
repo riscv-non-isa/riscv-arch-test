@@ -24,7 +24,7 @@ The files `COPYING.BSD` and `COPYING.CC` in the top level directory contain the 
 
 ## Engineering practice
 
-- Documentation uses the structured text format _AsciiDoc_.  See the `doc` directory `README.md` for more details.
+- Documentation uses the structured text format _AsciiDoc_.  See [`doc/README.md`](doc/README.md) for more details.
 
 - Some directories use `ChangeLog` files to track changes in the code and documentation.  Please honor these, keeping them up to date and including the ChangeLog entry in the _git_ commit message.
 
@@ -54,5 +54,4 @@ To run on rv32i on either riscvOVPsim or spike
 
 ### Accessing riscvOVPsim
 
-Currently the Imperas developed riscvOVPsim compliance simulator is not yet publicly available on GitHub. Imperas is working on this. In the mean time if you would like early access to this fully functional RISC-V simulator please contact info@ovpworld.org or info@imperas.com
-
+Currently the Imperas developed _riscvOVPsim_ compliance simulator is not yet publicly available on GitHub. Imperas is working on this. In the mean time if you would like early access to this fully functional RISC-V simulator please contact info@ovpworld.org or info@imperas.com
