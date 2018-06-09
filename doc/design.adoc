@@ -339,7 +339,7 @@ In the directory `riscv-target/*/device` there are directories that have Makefil
 For example for the riscvOVPsim to be configured to be a RV32I
 [source,make]
 ----
-RUN_TARGET=\
+RUN_TARGET= \
         riscvOVPsim.exe --variant RV32I --program $(work_dir_isa)/$< \
             --signaturedump \
             --override riscvOVPsim/cpu/sigdump/SignatureFile=$(work_dir_isa)/$(*)_signature.output \

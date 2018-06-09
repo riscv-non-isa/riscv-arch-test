@@ -1,12 +1,17 @@
 2018-06-09  Jeremy Bennett  <jeremy.bennett@embecosm.com>
 
-	* .gitignore: Don't ignore .html or .xml
 	* Makefile: Add sanity check for version number and spell target.
+	* design.adoc: Fix trivial typo.
+	* design.html: Regenerated.
+
+2018-06-09  Jeremy Bennett  <jeremy.bennett@embecosm.com>
+
+	* .gitignore: Don't ignore .html or .xml
 	* README.md: Note location of old documentation, give link to HTML
 	and explain how to contribute.
 	* custom.wordlist: Created.
 	* design.adoc: Cleaned up from top to bottom and spell checked.
-	* design.html: Created.
+	* design.html: Generated.
 
 2018-06-08  Jeremy Bennett  <jeremy.bennett@embecosm.com>
 
