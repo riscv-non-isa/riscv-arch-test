@@ -7,7 +7,7 @@ The documentation is licensed under a [Creative Commons Attribution 4.0 Internat
 
 Versions of this documentation prior to issue 1.1 can be found as PDF in the RISC-V Compliance Task Group workspace.  Note that this is only accessible to RISC-V Task Group members.
 
-This is the (current documentation)[./design.html].
+This is the [current documentation](./design.html).
 
 ## Contributing
 

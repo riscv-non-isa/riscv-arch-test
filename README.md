@@ -20,7 +20,7 @@ In general:
 - code is licensed under the BSD 3-clause license (SPDX license identifier `BSD-3-Clause`); while
 - documentation is licensed under the Creative Commons Attribution 4.0 International license (SPDX license identifier `CC-BY-4.0`).
 
-The files `COPYING.BSD` and `COPYING.CC` in the top level directory contain the complete text of these licenses.
+The files [`COPYING.BSD`](./COPYING.BSD) and [`COPYING.CC`](./COPYING.CC) in the top level directory contain the complete text of these licenses.
 
 ## Engineering practice
 

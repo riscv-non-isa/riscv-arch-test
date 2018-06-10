@@ -1,3 +1,7 @@
+2018-06-10  Jeremy Bennett  <jeremy.bennett@embecosm.com>
+
+	* README.md: Make references to files in the repo into links.
+
 2018-06-09  Jeremy Bennett  <jeremy.bennett@embecosm.com>
 
 	* .gitignore: Ignore editor backup files.

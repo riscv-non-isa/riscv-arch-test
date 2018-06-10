@@ -1,3 +1,8 @@
+2018-06-10  Jeremy Bennett  <jeremy.bennett@embecosm.com>
+
+	* README.md: Fix link to generated documentation.
+	* design.html: Regenerated.
+
 2018-06-09  Jeremy Bennett  <jeremy.bennett@embecosm.com>
 
 	* Makefile: Add sanity check for version number and spell target.
