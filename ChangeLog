@@ -1,5 +1,13 @@
 2018-06-10  Jeremy Bennett  <jeremy.bennett@embecosm.com>
 
+	Put placeholders in empty directories to make sure they show in
+	the GitHub hierarchy.
+
+	* riscv-test-suite/rv32i/.gitignore: Created.
+	* riscv-test-suite/rv32m/.gitignore: Created.
+
+2018-06-10  Jeremy Bennett  <jeremy.bennett@embecosm.com>
+
 	* README.md: Make references to files in the repo into links.
 
 2018-06-09  Jeremy Bennett  <jeremy.bennett@embecosm.com>
