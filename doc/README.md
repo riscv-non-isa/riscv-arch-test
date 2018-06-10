@@ -59,3 +59,10 @@ To check the spelling (excludes any listing or code phrases)
 make spell
 ```
 Any custom words for spell checking should be added to `custom.wordlist`.
+
+To publish the HTML version of the documentation via GitHub Pages
+```shell
+make publish
+```
+
+**Note:** You can only publish from a clean fully committed master branch.

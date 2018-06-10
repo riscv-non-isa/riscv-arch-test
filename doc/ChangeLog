@@ -1,5 +1,11 @@
 2018-06-10  Jeremy Bennett  <jeremy.bennett@embecosm.com>
 
+	* README.md: Note about make publish.
+	* design.adoc (Overall structure): Make list or instruction sets
+	and extensions compact representation.
+
+2018-06-10  Jeremy Bennett  <jeremy.bennett@embecosm.com>
+
 	* publish.sh: Only publish from clean and committed master branch
 	to avoid difficult use of git stash.
 

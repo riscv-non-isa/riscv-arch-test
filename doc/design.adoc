@@ -1,6 +1,6 @@
 = RISC-V Compliance Tests =
 RISC-V Foundation Compliance Task Group
-Issue 1.5 Draft
+Issue 1.6 Draft
 :toc:
 :icons: font
 :numbered:
@@ -56,6 +56,12 @@ Jeremy Bennett, Mary Bennett, Simon Davidmann, Radek Hajek, Lee Moore, Milan Nos
 [cols="<1,<2,<3,<4",options="header,pagewidth",]
 |================================================================================
 | _Revision_ | _Date_            | _Author_ | _Modification_
+| 1.6 Draft  | 10 June 2018      |
+
+Jeremy Bennett |
+
+Tidy up areas that are flawed in HTML version.
+
 | 1.5 Draft  |  8 June 2018      |
 
 Jeremy Bennett |
@@ -130,23 +136,25 @@ Tests are grouped into different functional test suites targeting the different 
 Currently there is one test suite: the RV32I (developed by Codasip).
 
 Test suites will be developed in this priority order:
-- RV32I
-- RV64I
-- RV32IM
-- RV64IM
-- RV32IC
-- RV64IC
-- RV32IA
-- RV64IA
-- RV32IF
-- RV64IF
-- RV32ID
-- RV64ID
-- RV32E
-- RV32EC
-- RV32EA
-- RV32EF
-- RV32ED
+
+[options="compact"]
+* RV32I
+* RV64I
+* RV32IM
+* RV64IM
+* RV32IC
+* RV64IC
+* RV32IA
+* RV64IA
+* RV32IF
+* RV64IF
+* RV32ID
+* RV64ID
+* RV32E
+* RV32EC
+* RV32EA
+* RV32EF
+* RV32ED
 
 This order is subject to ratification by the Compliance Task Group
 
@@ -156,7 +164,7 @@ This works at several levels.  At the lowest level it runs a test with a TVM on 
 
 The test framework allows different test suites to be run depending on the capabilities of the target
 
-the test framework collates the results of all the Tests that comprise a Test Suite and reports the overall results.
+The test framework collates the results of all the Tests that comprise a Test Suite and reports the overall results.
 
 == Developing new tests
 === Structure
@@ -635,10 +643,9 @@ RV_COMPLIANCE_DATA_END
 
 The top level directory contains a `README.md` file giving an overview of the project, top level `Makefile`, `ChangeLog`, the `verify.sh` script and complete license files for the Creative Commons and BSD licenses used by the task group.  There are then four top level directories.
 
-[horizontal]
 `doc`:: All the documentation for the project, written using _AsciiDoc_.
 
-`riscv-target`:: contains a further subdirectory for each target, within which are placed the `compliance_io.h` header for that target and a `device` directory for all the devices of that target.
+`riscv-target`:: Contains a further subdirectory for each target, within which are placed the `compliance_io.h` header for that target and a `device` directory for all the devices of that target.
 
 `riscv-test-env`:: This contains headers common to all environments, and then a directory for each TVM variant, with `link.ld` linker script and `riscv_test.h` header.
 
