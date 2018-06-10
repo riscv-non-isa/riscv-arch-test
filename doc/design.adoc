@@ -8,9 +8,7 @@ Issue 1.5 Draft
 
 ////
 SPDX-License-Identifier: CC-BY-4.0
-////
 
-///
 Document conventions:
 - one line per paragraph (don't fill lines - this makes changes clearer)
 - Wikipedia heading conventions (First word only capitalized)

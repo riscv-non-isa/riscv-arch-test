@@ -1,4 +1,6 @@
 # Ignore editor backups
 *~
 # Generated files
-*.pdf
+design.pdf
+# Geneated HTML
+design.html

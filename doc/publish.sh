@@ -1,11 +1,9 @@
-# Makefile for RISC-V Compliance Task Group documentation
+# Script to publish the RISC-V Compliance Task Group documentation
 
 # This file is part of the RISC-V Foundation Compliance Task Group compliance
 # tool set and documentation.
 
-# Copyright (C) 2017 CodaSip Limited <www.codasip.com>
 # Copyright (C) 2018 Embecosm Limited <www.embecosm.com>.
-# Copyright (C) 2018 Imperas Limited <www.imperas.com>
 
 # All rights reserved.
 
@@ -35,51 +33,31 @@
 
 # SPDX-License-Identifier: BSD-3-Clause
 
-ROOT = design
-SRC = $(ROOT).adoc
-SRC_STRIPPED = $(ROOT)-stripped.adoc
+# Go to the root of the repo
 
-.PHONY: all
-all: pdf html
+cd $(basename $0)/..
 
-.PHONY: pdf
-pdf: $(ROOT).pdf
+# Only publish from the master branch
 
-$(ROOT).pdf: sanity-check $(SRC)
-	asciidoctor-pdf -d article $(SRC)
+if ! git branch | grep -q '\* master'
+then
+    echo "ERROR: Can only publish from master branch"
+    exit 1
+fi
 
-.PHONY: html
-html: $(ROOT).html
+if [ design.html -ot design.adoc ]
+then
+    echo "ERROR: design.html is out of date: regenerate before publishing"
+    exit 1
+fi
 
-$(ROOT).html: sanity-check $(SRC)
-	asciidoctor -d article -b html $(SRC)
+# Publish
 
-# It is all too easy for the document history and title page to have diverging
-# version numbers.  This target checks first.
-
-.PHONY: sanity-check
-sanity-check:
-	@s=$$(sed -n < $(SRC) -e '3s/Issue //p') ; \
-	t=$$(sed -n < $(SRC) -e "/== Document history/,/^$$/p" | \
-	           grep -c "$${s}") ; \
-	if [ $${t} -ne 1 ] ; \
-	then \
-	    echo "Version number of title and document history do not match" ; \
-	    exit 1 ; \
-	fi
-
-custom.dict: custom.wordlist
-	aspell --lang=en create master ./$@ < $<
-
-.PHONY: spell
-spell: custom.dict $(SRC)
-	sed < $(SRC) > $(SRC_STRIPPED) -e 's/`[^`]\+`//gp' -e '/^----$$/,/^----$$/d'
-	aspell --master=en_US --mode=none --add-extra-dicts=./custom.dict \
-	    -c $(SRC_STRIPPED)
-	$(RM) $(SRC_STRIPPED)
-
-publish: $(ROOT).html
-	./publish.sh
-
-clean:
-	rm -f $(ROOT).pdf $(ROOT).html custom.dict
+git stash save
+git checkout gh-pages
+cp doc/design.html index.html
+git add index.html
+git commit -m "Autopublish of the documentation"
+git push
+git checkout master
+git stash pop
