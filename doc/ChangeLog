@@ -1,5 +1,10 @@
 2018-06-10  Jeremy Bennett  <jeremy.bennett@embecosm.com>
 
+	* publish.sh: Only publish from clean and committed master branch
+	to avoid difficult use of git stash.
+
+2018-06-10  Jeremy Bennett  <jeremy.bennett@embecosm.com>
+
 	* publish.sh: Don't rely on doc directory being available on
 	gh-pages branch.
 

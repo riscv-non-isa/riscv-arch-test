@@ -51,14 +51,18 @@ then
     exit 1
 fi
 
+if ! git status | grep "nothing to commit, working tree clean"
+then
+    echo "ERROR: Must publish from clean fully committed master branch"
+    exit 1
+fi
+
 # Publish
 
 mv -f doc/design.html proto-index.html
-git stash save
 git checkout gh-pages
 mv proto-index.html index.html
 git add index.html
 git commit -m "Autopublish of the documentation"
 git push
 git checkout master
-git stash pop
