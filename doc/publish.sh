@@ -35,7 +35,7 @@
 
 # Go to the root of the repo
 
-cd $(basename $0)/..
+cd $(dirname $0)/..
 
 # Only publish from the master branch
 

@@ -1,5 +1,10 @@
 2018-06-10  Jeremy Bennett  <jeremy.bennett@embecosm.com>
 
+	* publish.sh: Make executable and correctly set top level
+	repository directory.
+
+2018-06-10  Jeremy Bennett  <jeremy.bennett@embecosm.com>
+
 	Add a mechanism to make the latest documentation available via
 	GitHub pages.  This means that design.html is no longer part of
 	the master branch, but is published by copying to index.html on
