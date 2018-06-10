@@ -35,7 +35,11 @@
 
 # Go to the root of the repo
 
+<<<<<<< Updated upstream
 cd $(dirname $0)/..
+=======
+cd $(basename $0)/..
+>>>>>>> Stashed changes
 
 # Only publish from the master branch
 
