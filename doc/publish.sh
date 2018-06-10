@@ -53,8 +53,8 @@ fi
 
 # Publish
 
+mv -f doc/design.html proto-index.html
 git stash save
-cp doc/design.html proto-index.html
 git checkout gh-pages
 mv proto-index.html index.html
 git add index.html
