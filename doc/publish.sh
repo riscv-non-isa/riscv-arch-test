@@ -35,11 +35,7 @@
 
 # Go to the root of the repo
 
-<<<<<<< Updated upstream
 cd $(dirname $0)/..
-=======
-cd $(basename $0)/..
->>>>>>> Stashed changes
 
 # Only publish from the master branch
 
@@ -58,8 +54,9 @@ fi
 # Publish
 
 git stash save
+cp doc/design.html proto-index.html
 git checkout gh-pages
-cp doc/design.html index.html
+mv proto-index.html index.html
 git add index.html
 git commit -m "Autopublish of the documentation"
 git push
