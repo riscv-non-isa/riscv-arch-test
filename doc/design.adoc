@@ -359,7 +359,7 @@ RUN_TARGET= \
 For a detailed description of one ISA test please have a look at the example: [`I-IO.S`](../risv-test-suite/rv32i/src/I-IO.S) 
 
 This includes use of all the logging and assertion macros and shows how a test is split into sections.
-----
+
 
 [appendix]
 == Repository structure
