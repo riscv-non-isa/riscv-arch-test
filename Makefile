@@ -11,9 +11,10 @@ OVP_BIN ?= /home/moore/Imperas/fixedPlatform/riscvOVPsim/bin/Linux32
 SPK_BIN ?= /scratch/install/20180201/bin
 PATH := $(PATH):$(GCC_BIN):$(OVP_BIN):$(SPK_BIN):.
 
-export ROOTDIR = $(shell pwd)
-export WORK    = $(ROOTDIR)/work
-export ISA     = $(ROOTDIR)/riscv-test-suite/rv32i/ISA
+export ROOTDIR  = $(shell pwd)
+export WORK     = $(ROOTDIR)/work
+export ISA      = rv32i
+export SUITEDIR = $(ROOTDIR)/riscv-test-suite/$(ISA)
 
 
 all: simulate verify
@@ -21,13 +22,13 @@ all: simulate verify
 simulate:
 	make \
 		RISCV_TARGET=$(RISCV_TARGET) RISCV_DEVICE=$(RISCV_DEVICE) \
-		RISCV_PREFIX=riscv64-unknown-elf- run -C $(ISA)
+		RISCV_PREFIX=riscv64-unknown-elf- run -C $(SUITEDIR)
 	
 verify:
 	riscv-test-env/verify.sh
 
 clean:
-	make clean -C $(ISA)
+	make clean -C $(SUITEDIR)
 	
 help:
 	@echo "make"
