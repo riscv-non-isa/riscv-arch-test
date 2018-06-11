@@ -27,8 +27,8 @@
 #
 # Description: Makefrag for RV32I compliance tests
 
-rv32m_sc_tests = 
+rv32im_sc_tests = 
 
-rv32m_tests = $(addsuffix .elf, $(rv32m_sc_tests))
+rv32im_tests = $(addsuffix .elf, $(rv32im_sc_tests))
 
-target32_tests += $(rv32m_tests)
+target32_tests += $(rv32im_tests)
