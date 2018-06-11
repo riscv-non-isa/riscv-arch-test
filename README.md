@@ -35,7 +35,7 @@ The files [`COPYING.BSD`](./COPYING.BSD) and [`COPYING.CC`](./COPYING.CC) in the
 
 ## Running the compliance tests
 
-The only setup required is to define where the toolchain is found, and where the fixed platform executable is found
+The only setup required is to define where the toolchain is found, and where the Target Device is found
 
 In the Makefile there are 2 entries to be defined for `GCC_BIN` & `OVP_BIN`
 
