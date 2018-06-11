@@ -33,8 +33,11 @@
 //#define RVTEST_IO_QUIET
 
 //-----------------------------------------------------------------------
-// RV IO Macros
+// RV IO Macros (Character transfer by custom instruction)
 //-----------------------------------------------------------------------
+#define STRINGIFY(x) #x
+#define TOSTRING(x)  STRINGIFY(x)
+
 #define RVTEST_CUSTOM1 0x0005200B
 
 #define LOCAL_RVTEST_IO_WRITE_A0                                        \
@@ -60,26 +63,31 @@
 
 #define RVTEST_IO_WRITE_STR(_STR)                                       \
     .section .data;                                                     \
-10002:                                                                  \
-    .string ## _STR;                                                    \
+20001:                                                                  \
+    .string _STR;                                                       \
     .align 4;                                                           \
     .section .text.init;                                                \
-    la a0, 10002b;                                                      \
+    la a0, 20001b;                                                      \
     jal FN_WriteStr;                                                    \
 
+// Assertion violation: file file.c, line 1234: (expr)
 #define RVTEST_IO_ASSERT_EQ(_R, _I)                                     \
     li          t0, _I;                                                 \
-    beq         _R, t0, 20001f;                                         \
-    RVTEST_IO_WRITE_STR("# ASSERT ");                                   \
+    beq         _R, t0, 20002f;                                         \
+    RVTEST_IO_WRITE_STR("Assertion violation: file ");                  \
+    RVTEST_IO_WRITE_STR(__FILE__);                                      \
+    RVTEST_IO_WRITE_STR(", line ");                                     \
+    RVTEST_IO_WRITE_STR(TOSTRING(__LINE__));                            \
+    RVTEST_IO_WRITE_STR(": ");                                          \
     RVTEST_IO_WRITE_STR(# _R);                                          \
     RVTEST_IO_WRITE_STR("(");                                           \
     LOCAL_RVTEST_IO_WRITE_REG(_R);                                      \
-    RVTEST_IO_WRITE_STR(")!=");                                         \
+    RVTEST_IO_WRITE_STR(") != ");                                       \
     RVTEST_IO_WRITE_STR(# _I);                                          \
     RVTEST_IO_WRITE_STR("\n");                                          \
     li TESTNUM, 100;                                                    \
     RVTEST_FAIL;                                                        \
-20001:
+20002:
 
 //
 // FN_WriteStr: Uses a0, t0

@@ -24,7 +24,7 @@ simulate:
 		RISCV_PREFIX=riscv64-unknown-elf- run -C $(ISA)
 	
 verify:
-	verify.sh
+	riscv-test-env/verify.sh
 
 clean:
 	make clean -C $(ISA)
