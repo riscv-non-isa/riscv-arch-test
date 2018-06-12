@@ -1,6 +1,6 @@
 = RISC-V Compliance Tests =
 RISC-V Foundation Compliance Task Group
-Issue 1.7 Draft
+Issue 1.8 Draft
 :toc:
 :icons: font
 :numbered:
@@ -41,7 +41,17 @@ The result that compliance tests provide to the user is an assurance that the sp
 
 === Intended audience
 
-This document is intended for design and verification engineers who wish to develop new compliance tests and also those who wish check if their implementation (simulation models, HDL models, etc.) of a RISC-V processor is compliant to the RISC-V specifications. [[_Toc463952678]][[_Toc463952679]]
+This document is intended for design and verification engineers who wish to develop new compliance tests and also those who wish check if their implementation (simulation models, HDL models, etc.) of a RISC-V processor is compliant to the RISC-V specifications.
+
+=== Future work
+
+This is a work in progress. A number of areas need resolving before the work is complete, and are recorded here so they do not get forgotten.
+
+Move `compliance_test.h` to a target directory :: This may be necessary for the complete solution, possibly with the header being split.  For the time being we wish to keep the current setup and learn all the areas of variance as the tests are applied to an ever wider set of platforms.  This will then inform the best location and partitioning of all headers.
+
+Generalize Makefile configuration :: At present each platform requires editing of the makefile, and many areas (for example choice of GCC or LLVM, native or cross-compile) are not even fully parameterized.  Again we wish to explore a wider range of platforms before deciding what needs parameterization.  We also know that with tools like _autotools_ and _cmake_ this is a well understood problem to solve.
+
+Free up all registers for compliance testing :: At present some platforms have macros which use some registers in set up and verification, thus excluding them from compliance testing. We believe careful structuring of the macros will mean this problem can be avoided in the future, thus avoiding any registers being excluded from compliance testing.
 
 === Feedback and how to contribute
 
@@ -111,6 +121,12 @@ Jeremy Bennett, Mary Bennett, Simon Davidmann, Radek Hajek, Lee Moore, Milan Nos
 [cols="<1,<2,<3,<4",options="header,pagewidth",]
 |================================================================================
 | _Revision_ | _Date_            | _Author_ | _Modification_
+| 1.8 Draft  | 12 June 2018      |
+
+Jeremy Bennett |
+
+Add Future work section.
+
 | 1.7 Draft  | 12 June 2018      |
 
 Jeremy Bennett |

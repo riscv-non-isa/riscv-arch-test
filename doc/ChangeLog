@@ -1,5 +1,13 @@
 2018-06-12  Jeremy Bennett  <jeremy.bennett@embecosm.com>
 
+	Document issue 1.8 Draft.
+
+	* README.adoc (Introduction): Add Future work section and bump
+	version.
+	* custom.wordlist: Add words needed for Future work section.
+
+2018-06-12  Jeremy Bennett  <jeremy.bennett@embecosm.com>
+
 	* README.adoc: Remove special apostrophe from "licensor's".
 	* custom.wordlist: Updated with more words to be ignored.
 

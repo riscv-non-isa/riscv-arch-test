@@ -3,7 +3,9 @@ asciidoc
 AsciiDoctor
 asciidoctor
 aspell
+autotools
 CGEN
+cmake
 Codasip
 creativecommons
 CY
@@ -40,6 +42,7 @@ merchantability
 Nostersky
 nz
 pagewidth
+parameterization
 pdf
 publicdomain
 Radek
