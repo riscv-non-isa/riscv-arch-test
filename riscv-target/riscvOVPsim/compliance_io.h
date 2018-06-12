@@ -23,7 +23,7 @@
 //
 // In general the following registers are reserved
 // ra, a0, t0
-// Additionally on a fail, t1, t2 are overwritten
+// Additionally on an assertion violation, t1, t2 are overwritten
 // x1, x10, x5, x6, x7 respectively
 //
 
@@ -39,9 +39,6 @@
 #define TOSTRING(x)  STRINGIFY(x)
 
 #define RVTEST_CUSTOM1 0x0005200B
-
-#define LOCAL_RVTEST_IO_WRITE_A0                                        \
-    RVTEST_IO_PUTC(a0);                                                 \
 
 #define LOCAL_RVTEST_IO_WRITE_REG(_R)                                   \
     mv          a0, _R;                                                 \
@@ -98,7 +95,7 @@ FN_WriteStr:
     lbu         a0, (t0);
     addi        t0, t0, 1;
     beq         a0, zero, 10000f;
-    LOCAL_RVTEST_IO_WRITE_A0
+    RVTEST_IO_PUTC(a0);
     j           10000b;
 10000:
     ret;
