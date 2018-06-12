@@ -1,5 +1,12 @@
 2018-06-11  Jeremy Bennett  <jeremy.bennett@embecosm.com>
 
+	* README-old.md: Deleted.
+	* README.adoc: Include details of how to contribute and installing
+	the tools from the old README and reference the licence as an
+	appendix.
+
+2018-06-11  Jeremy Bennett  <jeremy.bennett@embecosm.com>
+
 	This makes the document appear directly as the README of the doc
 	directory, so there is now no longer a need to publish to GitHub
 	pages.
