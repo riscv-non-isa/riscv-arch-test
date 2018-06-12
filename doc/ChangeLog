@@ -1,4 +1,9 @@
-2018-06-11  Jeremy Bennett  <jeremy.bennett@embecosm.com>
+2018-06-12  Jeremy Bennett  <jeremy.bennett@embecosm.com>
+
+	* README.adoc: Remove special apostrophe from "licensor's".
+	* custom.wordlist: Updated with more words to be ignored.
+
+2018-06-12  Jeremy Bennett  <jeremy.bennett@embecosm.com>
 
 	* README-old.md: Deleted.
 	* README.adoc: Include details of how to contribute and installing
