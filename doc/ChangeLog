@@ -1,5 +1,18 @@
 2018-06-11  Jeremy Bennett  <jeremy.bennett@embecosm.com>
 
+	This makes the document appear directly as the README of the doc
+	directory, so there is now no longer a need to publish to GitHub
+	pages.
+
+	* .gitignore: Change name of files ignored.
+	* Makefile: Remove publish target.
+	* README.adoc: Symbolic link removed and replaced by design.adoc,
+	to which the CC license text has been added.
+	* design.adoc: Renamed as README.adoc.
+	* publish.sh: Deleted.
+
+2018-06-11  Jeremy Bennett  <jeremy.bennett@embecosm.com>
+
 	* README.md: Previous version moved to README-old.md for the time
 	being.
 	* README.adoc: Created as symbolic link to design.adoc.

@@ -35,7 +35,7 @@
 
 # SPDX-License-Identifier: BSD-3-Clause
 
-ROOT = design
+ROOT = README
 SRC = $(ROOT).adoc
 SRC_STRIPPED = $(ROOT)-stripped.adoc
 
@@ -78,8 +78,5 @@ spell: custom.dict $(SRC)
 	    -c $(SRC_STRIPPED)
 	$(RM) $(SRC_STRIPPED)
 
-publish: $(ROOT).html
-	./publish.sh
-
 clean:
-	rm -f $(ROOT).pdf $(ROOT).html custom.dict
+	rm -f $(ROOT)-stripped.adoc $(ROOT).pdf $(ROOT).html custom.dict
