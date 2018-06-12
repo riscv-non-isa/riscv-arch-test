@@ -1,5 +1,9 @@
 2018-06-12  Jeremy Bennett  <jeremy.bennett@embecosm.com>
 
+	* .gitignore: Add custom.dict.
+
+2018-06-12  Jeremy Bennett  <jeremy.bennett@embecosm.com>
+
 	Document issue 1.8 Draft.
 
 	* README.adoc (Introduction): Add Future work section and bump
