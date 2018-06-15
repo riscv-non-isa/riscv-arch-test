@@ -9,6 +9,7 @@
 
 RISCV_TARGET ?= riscvOVPsim 
 RISCV_DEVICE ?= rv32i
+RISCV_PREFIX ?= riscv64-unknown-elf-
 
 export ROOTDIR  = $(shell pwd)
 export WORK     = $(ROOTDIR)/work
@@ -21,7 +22,7 @@ all: simulate verify
 simulate:
 	make \
 		RISCV_TARGET=$(RISCV_TARGET) RISCV_DEVICE=$(RISCV_DEVICE) \
-		RISCV_PREFIX=riscv64-unknown-elf- run -C $(SUITEDIR)
+		RISCV_PREFIX=$(RISCV_PREFIX) run -C $(SUITEDIR)
 	
 verify:
 	riscv-test-env/verify.sh

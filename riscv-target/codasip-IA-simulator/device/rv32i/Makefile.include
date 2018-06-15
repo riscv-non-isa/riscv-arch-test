@@ -1,6 +1,0 @@
-# TBD
-
-#RUN_TARGET=\
-#    spike --isa=rv32i \
-#        +signature=$(work_dir_isa)/$(*)_signature.output \
-#        $(work_dir_isa)/$< 2> $(work_dir_isa)/$@

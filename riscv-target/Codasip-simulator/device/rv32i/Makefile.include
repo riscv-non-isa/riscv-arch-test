@@ -1,0 +1,18 @@
+# TBD
+
+RUN_TARGET=\
+    codix_berkelium-ia-isimulator -r --info 5 \
+    $(work_dir_isa)/$< 2> $(work_dir_isa)/$@ 1>$(work_dir_isa)/$(*)_signature.output
+#        +signature=$(work_dir_isa)/$(*)_signature.output \
+#        $(work_dir_isa)/$< 2> $(work_dir_isa)/$@
+
+RISCV_PREFIX   ?= codix_berkelium-ia-
+RISCV_GCC      ?= $(RISCV_PREFIX)gcc
+RISCV_GCC_OPTS ?= -nostdlib -nodefaultlibs
+
+COMPILE_TARGET=\
+	$$(RISCV_GCC) $(2) $$(RISCV_GCC_OPTS) \
+		-I$(ROOTDIR)/riscv-test-env/ \
+		-I$(ROOTDIR)/riscv-test-env/p/ \
+		-I$(ROOTDIR)/riscv-target/$(RISCV_TARGET)/ \
+		$$< -o $(work_dir_isa)/$$@

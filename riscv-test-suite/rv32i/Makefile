@@ -15,11 +15,6 @@ default: all
 # Build rules
 #--------------------------------------------------------------------
 
-RISCV_PREFIX   ?= riscv32-unknown-elf-
-RISCV_GCC      ?= $(RISCV_PREFIX)gcc
-RISCV_OBJDUMP  ?= $(RISCV_PREFIX)objdump
-RISCV_GCC_OPTS ?= -static -mcmodel=medany -fvisibility=hidden -nostdlib -nostartfiles
-
 vpath %.S $(act_dir)
 
 -include $(ROOTDIR)/riscv-target/$(RISCV_TARGET)/device/$(RISCV_DEVICE)/Makefile.include
@@ -35,13 +30,7 @@ define compile_template
 
 $$($(1)_tests): %.elf: $(src_dir)/%.S
 	mkdir -p $(work_dir_isa)/$$(@D)
-	$$(RISCV_GCC) $(2) $$(RISCV_GCC_OPTS) \
-		-I$(ROOTDIR)/riscv-test-env/ \
-		-I$(ROOTDIR)/riscv-test-env/p/ \
-		-I$(ROOTDIR)/riscv-target/$(RISCV_TARGET)/ \
-		-T$(ROOTDIR)/riscv-test-env/p/link.ld $$< \
-		-o $(work_dir_isa)/$$@
-	$$(RISCV_OBJDUMP) -D $(work_dir_isa)/$$@ > $(work_dir_isa)/$$@.objdump
+	$(COMPILE_TARGET)
 $(1)_tests += $$($(1)_p_tests)
 
 .PHONY: $(1)
