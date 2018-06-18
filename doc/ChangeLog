@@ -1,3 +1,10 @@
+2018-06-18  Jeremy Bennett  <jeremy.bennett@embecosm.com>
+
+	* README.adoc (Future work): Reflect changes made to support
+	Codasip simulator.
+	(Repository structure): Diagrammatic representation of the file
+	structure deleted.
+
 2018-06-12  Jeremy Bennett  <jeremy.bennett@embecosm.com>
 
 	* .gitignore: Add custom.dict.
