@@ -1,5 +1,6 @@
 RUN_TARGET=\
-    riscvOVPsim.exe --variant RV32I --program $(work_dir_isa)/$< \
+    $(ROOTDIR)/riscv-ovpsim/bin/Linux64/riscvOVPsim.exe \
+        --variant RV32I --program $(work_dir_isa)/$< \
         --signaturedump \
         --override riscvOVPsim/cpu/sigdump/SignatureFile=$(work_dir_isa)/$(*)_signature.output \
         --override riscvOVPsim/cpu/sigdump/ResultReg=3 \
