@@ -16,13 +16,14 @@ export WORK     = $(ROOTDIR)/work
 export ISA      = rv32i
 export SUITEDIR = $(ROOTDIR)/riscv-test-suite/$(ISA)
 
-
 all: simulate verify
 
 simulate:
 	make \
-		RISCV_TARGET=$(RISCV_TARGET) RISCV_DEVICE=$(RISCV_DEVICE) \
-		RISCV_PREFIX=$(RISCV_PREFIX) run -C $(SUITEDIR)
+		RISCV_TARGET=$(RISCV_TARGET) \
+		RISCV_DEVICE=$(RISCV_DEVICE) \
+		RISCV_PREFIX=$(RISCV_PREFIX) \
+		run -C $(SUITEDIR)
 	
 verify:
 	riscv-test-env/verify.sh

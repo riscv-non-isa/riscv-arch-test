@@ -294,17 +294,18 @@ Tests are run by commands in the top level `Makefile` which has targets for simu
 
 [source,make]
 ----
-RISCV_TARGET?=riscvOVPsim
-RISCV_DEVICE?=rv32i
+RISCV_TARGET ?= riscvOVPsim
+RISCV_DEVICE ?= rv32i
+RISCV_PREFIX ?= riscv64-unknown-elf-
 
 simulate:
         make RISCV_TARGET=$(RISCV_TARGET) \
              RISCV_DEVICE=$(RISCV_DEVICE) \
-             RISCV_PREFIX=riscv64-unknown-elf- \
-             run -C $(ISA)
+             RISCV_PREFIX=$(RISCV_PREFIX) \
+             run -C $(SUITEDIR)
 
 verify:
-        verify.sh
+    riscv-test-env/verify.sh
 ----
 
 == Setting the target environment
@@ -320,7 +321,6 @@ For tracing the test the following  macros are defined in `riscv-target/riscvOVP
 [source,make]
 ----
 RVTEST_IO_INIT
-RVTEST_IO_PUTC(_R)
 RVTEST_IO_WRITE_STR(_STR)
 RVTEST_IO_ASSERT_EQ(_R, _I)
 ----
@@ -338,7 +338,7 @@ RISCV_TARGET?=riscvOVPsim
 RISCV_DEVICE?=rv32i
 ----
 
-Also in the top level Makefile, you will need to configure other variables like `GCC_BIN`, `OVP_BIN`, `PATH` etc...
+The path to the RUN_TARGET is defined within the riscv-target Makefile.include.
 
 
 === Codasip ISA simulator
@@ -455,6 +455,8 @@ The top level directory contains a `README.md` file giving an overview of the pr
 `riscv-test-env`:: This contains headers common to all environments, and then a directory for each TVM variant, with `link.ld` linker script and `riscv_test.h` header.
 
 `riscv-test-suite`:: This contains a subdirectory for each instruction set or instruction set extension.  Within each subdirectory the source code and reference output for each test are in the `ISA` directory.
+
+`riscv-ovpsim`:: This contains a copy of the Imperas OVP riscvOVPsim simulator for use in compliance testing. It includes a subdirectory of examples with pre-compiled .elf files and has binaries of the simulator for Linux64 and Windows64. This is referenced by the makefiles for developing and running the compliance suites. riscvOVPsim can run all the tracing and assertion macros used in the tests.
 
 [appendix]
 == Creative Commons Attribution 4.0 International License
