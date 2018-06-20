@@ -4,13 +4,13 @@ A Complete, Fully Functional, Configurable RISC-V Simulator
 ===
 
 Author: Imperas Software, Ltd., using OVP Open Standard APIs  
-Date   : 18 Jun 2018 
-Version: 20180618.0  
+Date   : 19 Jun 2018 
+Version: 20180619.0  
 License: Model source included under Apache 2.0 open source license  
 License: Simulator riscvOVPsim licensed under Open Virtual Platforms (OVP) Fixed Platform Kits license  
 RISC-V Specifications currently supported:
-- RISCV.org User 2.2, 2.3a (draft)  
-- RISCV.org Privilege 1.10, 1.11a (draft)[not hypervisors as currently in flux]
+- RISCV.org User 2.2, 2.3a (April 2018 draft)  
+- RISCV.org Privilege 1.10, 1.11a (April 2018 draft)[not hypervisors as currently in flux]
 
 About riscvOVPsim
 ---
@@ -22,7 +22,7 @@ The simulator is developed, licensed and maintained by [Imperas Software](http:/
 
 As a member of the RISC-V Foundation community of software and hardware innovators collaboratively driving RISC-V adoption, Imperas has developed the riscvOVPsim simulator to assist RISC-V adopters to become compliant to the RISC-V specifications. The latest RISC-V compliance test suite and framework can be downloaded from https://www.github.com/riscv/riscv-compliance . 
 
-riscvOVPsim includes an industrial quality model and simulator of RISC-V processors for use for compliance and test development. It has been developed for personal, academic, or commercial use, and the model is provided as open source.
+riscvOVPsim includes an industrial quality model and simulator of RISC-V processors for use for compliance and test development. It has been developed for personal, academic, or commercial use, and the model is provided as open source under the Apache 2.0 license. The simulator is provided under the under Open Virtual Platforms (OVP) Fixed Platform Kits license that enables download and usage. riscvOVPsim and Imperas RISC-V support is actively maintained and enhanced. To ensure you make use of the current version of riscvOVPsim this initial release will expire. Please download the latest version.
 
 Runtime configurable settings for all RISC-V specification options makes it very easy to compare run time results with any RTL implementations.
 
