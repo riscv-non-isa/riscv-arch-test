@@ -1,3 +1,3 @@
 # Accessing riscvOVPsim
 
-Currently the Imperas (www.imperas.com/riscv) developed riscvOVPsim compliance simulator is not yet publicly available on GitHub. Imperas is working on this. In the mean time if you would like early access to this fully functional RISC-V simulator please contact info@ovpworld.org or info@imperas.com
+As we create the RISCV.org compliance test suite, the Imperas developed _riscvOVPsim_ compliance simulator is included as part of this GitHub repository. For more information please contact info@ovpworld.org or info@imperas.com or visit http://www.imperas.com/riscv.

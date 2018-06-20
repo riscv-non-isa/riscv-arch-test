@@ -1,6 +1,6 @@
 = RISC-V Compliance Tests =
 RISC-V Foundation Compliance Task Group
-Issue 1.9 Draft
+Issue 1.10 Draft
 :toc:
 :icons: font
 :numbered:
@@ -121,6 +121,12 @@ Jeremy Bennett, Mary Bennett, Simon Davidmann, Radek Hajek, Lee Moore, Milan Nos
 [cols="<1,<2,<3,<4",options="header,pagewidth",]
 |================================================================================
 | _Revision_ | _Date_            | _Author_ | _Modification_
+| 1.10 Draft  | 20 June 2018      |
+
+Simon Davidmann, Lee Moore |
+
+Cleaned up description of updated framework and inclusion of riscvOVPsim.
+
 | 1.9 Draft  | 12 June 2018      |
 
 Jeremy Bennett |
@@ -177,7 +183,7 @@ Lee Moore |
 Revised format and expand to describe framework, usage of many tests groups,
 and different Targets
 
-|1.0         | 24 December 2018  |
+|1.0         | 24 December 2017  |
 
 Radek Hajek
 Milan Nostersky
