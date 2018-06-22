@@ -1,5 +1,16 @@
+ifeq ($(OS),Windows_NT)
+    ARCH := Windows64
+else
+    ARCH := Linux64
+endif
+
+TARGET_SIM ?= $(ROOTDIR)/riscv-ovpsim/bin/$(ARCH)/riscvOVPsim.exe
+ifeq ($(shell command -v $(TARGET_SIM) 2> /dev/null),)
+    $(error Target simulator executable '$(TARGET_SIM)` not found)
+endif
+
 RUN_TARGET=\
-    $(ROOTDIR)/riscv-ovpsim/bin/Linux64/riscvOVPsim.exe \
+    $(TARGET_SIM) \
         --variant RV32I --program $(work_dir_isa)/$< \
         --signaturedump \
         --override riscvOVPsim/cpu/sigdump/SignatureFile=$(work_dir_isa)/$(*)_signature.output \
