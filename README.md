@@ -24,7 +24,7 @@ The files [`COPYING.BSD`](./COPYING.BSD) and [`COPYING.CC`](./COPYING.CC) in the
 
 ## Engineering practice
 
-- Documentation uses the structured text format _AsciiDoc_.  See [`doc/README.md`](doc/README.md) for more details.
+- Documentation uses the structured text format _AsciiDoc_.  See [`doc/README.adoc`](doc/README.adoc) for more details.
 
 - Some directories use `ChangeLog` files to track changes in the code and documentation.  Please honor these, keeping them up to date and including the ChangeLog entry in the _git_ commit message.
 
