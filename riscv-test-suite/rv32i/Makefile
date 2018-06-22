@@ -17,7 +17,11 @@ default: all
 
 vpath %.S $(act_dir)
 
--include $(ROOTDIR)/riscv-target/$(RISCV_TARGET)/device/$(RISCV_DEVICE)/Makefile.include
+INCLUDE=$(ROOTDIR)/riscv-target/$(RISCV_TARGET)/device/$(RISCV_DEVICE)/Makefile.include
+ifeq ($(wildcard $(INCLUDE)),)
+    $(error Cannot find '$(INCLUDE)`. Check that RISCV_TARGET and RISCV_DEVICE are set correctly.)
+endif
+-include $(INCLUDE)
 
 #------------------------------------------------------------
 # Build and run assembly tests
@@ -29,7 +33,7 @@ vpath %.S $(act_dir)
 define compile_template
 
 $$($(1)_tests): %.elf: $(src_dir)/%.S
-	mkdir -p $(work_dir_isa)/$$(@D)
+	@mkdir -p $(work_dir_isa)/$$(@D)
 	$(COMPILE_TARGET)
 $(1)_tests += $$($(1)_p_tests)
 
