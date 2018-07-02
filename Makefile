@@ -29,8 +29,12 @@ verify:
 	riscv-test-env/verify.sh
 
 clean:
-	make clean -C $(SUITEDIR)
-	
+	make \
+		RISCV_TARGET=$(RISCV_TARGET) \
+		RISCV_DEVICE=$(RISCV_DEVICE) \
+		RISCV_PREFIX=$(RISCV_PREFIX) \
+		clean -C $(SUITEDIR)
+
 help:
 	@echo "make"
 	@echo "RISCV_TARGET='riscvOVPsim|spike'"
