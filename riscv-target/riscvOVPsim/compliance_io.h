@@ -40,22 +40,22 @@
 
 #define RVTEST_CUSTOM1 0x0005200B
 
-#define LOCAL_RVTEST_IO_WRITE_REG(_R)                                   \
+#define LOCAL_IO_WRITE_REG(_R)                                          \
     mv          a0, _R;                                                 \
     jal         FN_WriteA0;
 
 #ifdef RVTEST_IO_QUIET
 
 #define RVTEST_IO_INIT
-#define RVTEST_IO_PUTC(_R)
 #define RVTEST_IO_WRITE_STR(_STR)
 #define RVTEST_IO_ASSERT_EQ(_R, _I)
+#define RVTEST_IO_CHECK()
 
 #else
 
 #define RVTEST_IO_INIT
 
-#define RVTEST_IO_PUTC(_R)                                              \
+#define LOCAL_IO_PUTC(_R)                                               \
     .word RVTEST_CUSTOM1;                                               \
 
 #define RVTEST_IO_WRITE_STR(_STR)                                       \
@@ -78,13 +78,17 @@
     RVTEST_IO_WRITE_STR(": ");                                          \
     RVTEST_IO_WRITE_STR(# _R);                                          \
     RVTEST_IO_WRITE_STR("(");                                           \
-    LOCAL_RVTEST_IO_WRITE_REG(_R);                                      \
+    LOCAL_IO_WRITE_REG(_R);                                             \
     RVTEST_IO_WRITE_STR(") != ");                                       \
     RVTEST_IO_WRITE_STR(# _I);                                          \
     RVTEST_IO_WRITE_STR("\n");                                          \
     li TESTNUM, 100;                                                    \
     RVTEST_FAIL;                                                        \
 20002:
+
+// generate assertion listing
+#define RVTEST_IO_CHECK()                                               \
+    li zero, -1;                                                        \
 
 //
 // FN_WriteStr: Uses a0, t0
@@ -95,7 +99,7 @@ FN_WriteStr:
     lbu         a0, (t0);
     addi        t0, t0, 1;
     beq         a0, zero, 10000f;
-    RVTEST_IO_PUTC(a0);
+    LOCAL_IO_PUTC(a0);
     j           10000b;
 10000:
     ret;
@@ -142,7 +146,7 @@ FN_WriteA0_common:
         addi        a0, a0, 'a'-10
         j           10002f
 10001:  addi        a0, a0, '0'
-10002:  RVTEST_IO_PUTC(a0)
+10002:  LOCAL_IO_PUTC(a0)
         srli        t2, t2, 4
         addi        t1, t1, -1
         bnez        t1, 10000b
