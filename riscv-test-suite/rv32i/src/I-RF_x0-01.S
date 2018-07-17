@@ -29,6 +29,7 @@
 # Description: Testing x0 is hardwired 0.
 
 #include "compliance_test.h"
+#include "compliance_io.h"
 
 # Test Virtual Machine (TVM) used by program.
 RV_COMPLIANCE_RV32M
@@ -36,8 +37,12 @@ RV_COMPLIANCE_RV32M
 # Test code region
 RV_COMPLIANCE_CODE_BEGIN
 
+    RVTEST_IO_INIT
+    RVTEST_IO_ASSERT_EQ(x0, 0x00000000)
+    RVTEST_IO_WRITE_STR("# Test Begin Reserved regs ra(x1) a0(x10) t0(x5)\n")
+
     # ---------------------------------------------------------------------------------------------
-    # Test part A1 - test computational instructions - register-immediate
+    RVTEST_IO_WRITE_STR("# Test part A1 - test computational instructions - register-immediate\n");
 
     # Address for test results
     la      x31, test_A1_res
@@ -55,8 +60,16 @@ RV_COMPLIANCE_CODE_BEGIN
     # Store results
     sw      x0, 0(x31)
 
+    //
+    // Assert
+    //
+    RVTEST_IO_CHECK()
+    RVTEST_IO_ASSERT_EQ(x0, 0x00000000)
+
+    RVTEST_IO_WRITE_STR("# Test part A1  - Complete\n");
+
     # ---------------------------------------------------------------------------------------------
-    # Test part A2 - test computational instructions - register-register
+    RVTEST_IO_WRITE_STR("# Test part A2 - test computational instructions - register-register\n");
 
     # Address for test results
     la      x31, test_A2_res
@@ -85,8 +98,12 @@ RV_COMPLIANCE_CODE_BEGIN
     # Store results
     sw      x0, 0(x31)
 
+    RVTEST_IO_ASSERT_EQ(x0, 0x00000000)
+
+    RVTEST_IO_WRITE_STR("# Test part A2  - Complete\n");
+
     # ---------------------------------------------------------------------------------------------
-    # Test part A3 - test compare instructions
+    RVTEST_IO_WRITE_STR("# Test part A3 - test compare instructions\n");
 
     # Address for test results
     la      x31, test_A3_res
@@ -108,8 +125,10 @@ RV_COMPLIANCE_CODE_BEGIN
     sltiu   x0, x1, 2
     sw      x0, 12(x31)
 
+    RVTEST_IO_WRITE_STR("# Test part A3  - Complete\n");
+
     # ---------------------------------------------------------------------------------------------
-    # Test part A4 - test jump and link instructions
+    RVTEST_IO_WRITE_STR("# Test part A4 - test jump and link instructions\n");
 
     # Address for test results
     la      x31, test_A4_res
@@ -124,8 +143,10 @@ RV_COMPLIANCE_CODE_BEGIN
 1:
     sw      x0, 4(x31)
 
+    RVTEST_IO_WRITE_STR("# Test part A4  - Complete\n");
+
     # ---------------------------------------------------------------------------------------------
-    # Test part A5 - test load instructions
+    RVTEST_IO_WRITE_STR("# Test part A5 - test load instructions\n");
 
     # Addresses for test data and results
     la      x1, test_A5_data
@@ -144,7 +165,11 @@ RV_COMPLIANCE_CODE_BEGIN
     lbu     x0, 0(x1)
     sw      x0, 12(x31)
 
-    # ---------------------------------------------------------------------------------------------
+    RVTEST_IO_WRITE_STR("# Test part A5  - Complete\n");
+
+    RVTEST_IO_WRITE_STR("# Test End\n")
+
+ # ---------------------------------------------------------------------------------------------
     # HALT
     RV_COMPLIANCE_HALT
 
@@ -172,4 +197,3 @@ test_A5_res:
     .fill 4, 4, -1
 
 RV_COMPLIANCE_DATA_END
-

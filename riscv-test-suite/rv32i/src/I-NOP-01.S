@@ -29,6 +29,7 @@
 # Description: Testing pseudo instruction NOP.
 
 #include "compliance_test.h"
+#include "compliance_io.h"
 
 # Test Virtual Machine (TVM) used by program.
 RV_COMPLIANCE_RV32M
@@ -36,8 +37,12 @@ RV_COMPLIANCE_RV32M
 # Test code region.
 RV_COMPLIANCE_CODE_BEGIN
 
+    RVTEST_IO_INIT
+    RVTEST_IO_ASSERT_EQ(x0, 0x00000000)
+    RVTEST_IO_WRITE_STR("# Test Begin Reserved regs ra(x1) a0(x10) t0(x5)\n")
+
     # ---------------------------------------------------------------------------------------------
-    # Test part A1 - general test, instruction should not change any register
+    RVTEST_IO_WRITE_STR("# Test part A1 - general test, instruction should not change any register\n");
 
     # Addresses for test data and results
     la      x1, test_A1_res
@@ -115,9 +120,46 @@ RV_COMPLIANCE_CODE_BEGIN
     sw      x30, 116( x1 )
     sw      x31, 120( x1 )
 
+    //
+    // Assert
+    //
+    RVTEST_IO_CHECK()
+    RVTEST_IO_ASSERT_EQ(x0, 0x00000000)
+    RVTEST_IO_ASSERT_EQ(x2, 0x00000002)
+    RVTEST_IO_ASSERT_EQ(x3, 0x00000003)
+    RVTEST_IO_ASSERT_EQ(x4, 0x00000004)
+    RVTEST_IO_ASSERT_EQ(x5, 0x00000005)
+    RVTEST_IO_ASSERT_EQ(x6, 0x00000006)
+    RVTEST_IO_ASSERT_EQ(x7, 0x00000007)
+    RVTEST_IO_ASSERT_EQ(x8, 0x00000008)
+    RVTEST_IO_ASSERT_EQ(x9, 0x00000009)
+    #RVTEST_IO_ASSERT_EQ(x10, 0x00000000)
+    RVTEST_IO_ASSERT_EQ(x11, 0x0000000B)
+    RVTEST_IO_ASSERT_EQ(x12, 0x0000000C)
+    RVTEST_IO_ASSERT_EQ(x13, 0x0000000D)
+    RVTEST_IO_ASSERT_EQ(x14, 0x0000000E)
+    RVTEST_IO_ASSERT_EQ(x15, 0x0000000F)
+    RVTEST_IO_ASSERT_EQ(x16, 0x00000010)
+    RVTEST_IO_ASSERT_EQ(x17, 0x00000011)
+    RVTEST_IO_ASSERT_EQ(x18, 0x00000012)
+    RVTEST_IO_ASSERT_EQ(x19, 0x00000013)
+    RVTEST_IO_ASSERT_EQ(x20, 0x00000014)
+    RVTEST_IO_ASSERT_EQ(x21, 0x00000015)
+    RVTEST_IO_ASSERT_EQ(x22, 0x00000016)
+    RVTEST_IO_ASSERT_EQ(x23, 0x00000017)
+    RVTEST_IO_ASSERT_EQ(x24, 0x00000018)
+    RVTEST_IO_ASSERT_EQ(x25, 0x00000019)
+    RVTEST_IO_ASSERT_EQ(x26, 0x0000001A)
+    RVTEST_IO_ASSERT_EQ(x27, 0x0000001B)
+    RVTEST_IO_ASSERT_EQ(x28, 0x0000001C)
+    RVTEST_IO_ASSERT_EQ(x29, 0x0000001D)
+    RVTEST_IO_ASSERT_EQ(x30, 0x0000001E)
+    RVTEST_IO_ASSERT_EQ(x31, 0x0000001F)
+
+    RVTEST_IO_WRITE_STR("# Test part A1  - Complete\n");
 
     # ---------------------------------------------------------------------------------------------
-    # Test part A2 - general test, only 5 cycles are executed
+    RVTEST_IO_WRITE_STR("# Test part A2 - general test, only 5 cycles are executed\n");
 
     # Addresses for test data and results
     la          x3, test_A2_res
@@ -139,7 +181,13 @@ RV_COMPLIANCE_CODE_BEGIN
     # Store results
     sw      x9, 0( x3 )
 
-    # ---------------------------------------------------------------------------------------------
+    RVTEST_IO_ASSERT_EQ(x9, 0x00000018)
+
+    RVTEST_IO_WRITE_STR("# Test part A2  - Complete\n");
+
+    RVTEST_IO_WRITE_STR("# Test End\n")
+
+ # ---------------------------------------------------------------------------------------------
     # HALT
     RV_COMPLIANCE_HALT
 

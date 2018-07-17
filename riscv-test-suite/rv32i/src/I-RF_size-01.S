@@ -29,6 +29,7 @@
 # Description: Testing size of register file.
 
 #include "compliance_test.h"
+#include "compliance_io.h"
 
 # Test Virtual Machine (TVM) used by program.
 RV_COMPLIANCE_RV32M
@@ -36,8 +37,12 @@ RV_COMPLIANCE_RV32M
 # Test code region
 RV_COMPLIANCE_CODE_BEGIN
 
+    RVTEST_IO_INIT
+    RVTEST_IO_ASSERT_EQ(x0, 0x00000000)
+    #RVTEST_IO_WRITE_STR("# Test Begin Reserved regs ra(x1) a0(x10) t0(x5)\n")
+
     # ---------------------------------------------------------------------------------------------
-    # Test part A1 - test registers x0 - x15
+    #RVTEST_IO_WRITE_STR("# Test part A1 - test registers x0 - x15\n");
 
     # Address for test results
     la      x16, test_A1_res
@@ -78,8 +83,31 @@ RV_COMPLIANCE_CODE_BEGIN
     sw      x14, 56(x16)
     sw      x15, 60(x16)
 
+    //
+    // Assert
+    //
+    RVTEST_IO_CHECK()
+    RVTEST_IO_ASSERT_EQ(x0, 0x00000000)
+    #RVTEST_IO_ASSERT_EQ(x1, 0x80000370)
+    RVTEST_IO_ASSERT_EQ(x2, 0x2D562052)
+    RVTEST_IO_ASSERT_EQ(x3, 0x52697363)
+    RVTEST_IO_ASSERT_EQ(x4, 0x736B7920)
+    RVTEST_IO_ASSERT_EQ(x5, 0x6E204E6F)
+    RVTEST_IO_ASSERT_EQ(x6, 0x6E204E6F)
+    RVTEST_IO_ASSERT_EQ(x7, 0x4D696C61)
+    RVTEST_IO_ASSERT_EQ(x8, 0x6F646173)
+    RVTEST_IO_ASSERT_EQ(x9, 0x6B794063)
+    #RVTEST_IO_ASSERT_EQ(x10, 0x00000000)
+    RVTEST_IO_ASSERT_EQ(x11, 0x286E6F73)
+    RVTEST_IO_ASSERT_EQ(x12, 0x656B2048)
+    RVTEST_IO_ASSERT_EQ(x13, 0x20526164)
+    RVTEST_IO_ASSERT_EQ(x14, 0x6F6D292C)
+    RVTEST_IO_ASSERT_EQ(x15, 0x69702E63)
+
+    #RVTEST_IO_WRITE_STR("# Test part A1  - Complete\n");
+
     # ---------------------------------------------------------------------------------------------
-    # Test part A2 - test registers x16 - x31
+    #RVTEST_IO_WRITE_STR("# Test part A2 - test registers x16 - x31\n");
 
     # Address for test results
     la      x4, test_A2_res
@@ -120,8 +148,27 @@ RV_COMPLIANCE_CODE_BEGIN
     sw      x30, 56(x4)
     sw      x31, 60(x4)
 
+    RVTEST_IO_ASSERT_EQ(x16, 0x636F6461)
+    RVTEST_IO_ASSERT_EQ(x17, 0x6A656B40)
+    RVTEST_IO_ASSERT_EQ(x18, 0x20286861)
+    RVTEST_IO_ASSERT_EQ(x19, 0x616A656B)
+    RVTEST_IO_ASSERT_EQ(x20, 0x61766520)
+    RVTEST_IO_ASSERT_EQ(x21, 0x2E204C65)
+    RVTEST_IO_ASSERT_EQ(x22, 0x636F6D29)
+    RVTEST_IO_ASSERT_EQ(x23, 0x7369702E)
+    RVTEST_IO_ASSERT_EQ(x24, 0x6620796F)
+    RVTEST_IO_ASSERT_EQ(x25, 0x67652069)
+    RVTEST_IO_ASSERT_EQ(x26, 0x65737361)
+    RVTEST_IO_ASSERT_EQ(x27, 0x7573206D)
+    RVTEST_IO_ASSERT_EQ(x28, 0x3A290D0A)
+    RVTEST_IO_ASSERT_EQ(x29, 0x68697320)
+    RVTEST_IO_ASSERT_EQ(x30, 0x61642074)
+    RVTEST_IO_ASSERT_EQ(x31, 0x75207265)
+
+    #RVTEST_IO_WRITE_STR("# Test part A2  - Complete\n");
+
     # ---------------------------------------------------------------------------------------------
-    # Test part A3 - test registers x0 - x3 again (were not overwritten)
+    #RVTEST_IO_WRITE_STR("# Test part A3 - test registers x0 - x3 again (were not overwritten)\n");
 
     # Address for test results
     la      x4, test_A3_res
@@ -132,7 +179,11 @@ RV_COMPLIANCE_CODE_BEGIN
     sw      x2, 8(x4)
     sw      x3, 12(x4)
 
-    # ---------------------------------------------------------------------------------------------
+    #RVTEST_IO_WRITE_STR("# Test part A3  - Complete\n");
+
+    #RVTEST_IO_WRITE_STR("# Test End\n")
+
+ # ---------------------------------------------------------------------------------------------
     # HALT
     RV_COMPLIANCE_HALT
 
@@ -154,4 +205,3 @@ test_A3_res:
     .fill 4, 4, -1
 
 RV_COMPLIANCE_DATA_END
-

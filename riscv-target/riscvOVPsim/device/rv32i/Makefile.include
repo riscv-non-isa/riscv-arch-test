@@ -16,6 +16,7 @@ RUN_TARGET=\
         --override riscvOVPsim/cpu/sigdump/SignatureFile=$(work_dir_isa)/$(*)_signature.output \
         --override riscvOVPsim/cpu/sigdump/ResultReg=3 \
         --override riscvOVPsim/cpu/simulateexceptions=T \
+        --override riscvOVPsim/cpu/defaultsemihost=F \
         --logfile $(work_dir_isa)/$@
 
 RISCV_PREFIX   ?= riscv32-unknown-elf-

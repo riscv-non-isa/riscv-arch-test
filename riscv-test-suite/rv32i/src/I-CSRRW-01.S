@@ -29,6 +29,7 @@
 # Description: Testing instruction CSRRW.
 
 #include "compliance_test.h"
+#include "compliance_io.h"
 
 # Test Virtual Machine (TVM) used by program.
 RV_COMPLIANCE_RV32M
@@ -36,8 +37,12 @@ RV_COMPLIANCE_RV32M
 # Test code region.
 RV_COMPLIANCE_CODE_BEGIN
 
+    RVTEST_IO_INIT
+    RVTEST_IO_ASSERT_EQ(x0, 0x00000000)
+    RVTEST_IO_WRITE_STR("# Test Begin Reserved regs ra(x1) a0(x10) t0(x5)\n")
+
     # ---------------------------------------------------------------------------------------------
-    # Test part A - general test of CSRRW
+    RVTEST_IO_WRITE_STR("# Test part A - general test of CSRRW\n");
 
     # Address for test results
     la      x15, test_A_res
@@ -66,8 +71,21 @@ RV_COMPLIANCE_CODE_BEGIN
     sw      x30, 16(x15)
     sw      x31, 20(x15)
 
+    //
+    // Assert
+    //
+    RVTEST_IO_CHECK()
+    RVTEST_IO_ASSERT_EQ(x2, 0x00000000)
+    RVTEST_IO_ASSERT_EQ(x4, 0x00000001)
+    RVTEST_IO_ASSERT_EQ(x6, 0x00000000)
+    RVTEST_IO_ASSERT_EQ(x28, 0xFFFFFFFF)
+    RVTEST_IO_ASSERT_EQ(x30, 0x7FFFFFFF)
+    RVTEST_IO_ASSERT_EQ(x31, 0x80000000)
+
+    RVTEST_IO_WRITE_STR("# Test part A1  - Complete\n");
+
     # ---------------------------------------------------------------------------------------------
-    # Test part B - testing forwarding between instructions
+    RVTEST_IO_WRITE_STR("# Test part B - testing forwarding between instructions\n");
 
     # Address for test results
     la      x26, test_B_res
@@ -89,8 +107,15 @@ RV_COMPLIANCE_CODE_BEGIN
     sw      x5, 8(x26)
     sw      x6, 12(x26)
 
+    RVTEST_IO_ASSERT_EQ(x3, 0x12345678)
+    RVTEST_IO_ASSERT_EQ(x4, 0x9ABCDEF0)
+    RVTEST_IO_ASSERT_EQ(x5, 0x00000000)
+    RVTEST_IO_ASSERT_EQ(x6, 0x9ABCDEF0)
+
+    RVTEST_IO_WRITE_STR("# Test part A2  - Complete\n");
+
     # ---------------------------------------------------------------------------------------------
-    # Test part C - testing writing to x0
+    RVTEST_IO_WRITE_STR("# Test part C - testing writing to x0\n");
 
     # Address for test results
     la      x1, test_C_res
@@ -105,8 +130,12 @@ RV_COMPLIANCE_CODE_BEGIN
     # store results
     sw      x0, 0(x1)
 
+    RVTEST_IO_ASSERT_EQ(x0, 0x00000000)
+
+    RVTEST_IO_WRITE_STR("# Test part A3  - Complete\n");
+
     # ---------------------------------------------------------------------------------------------
-    # Test part D - testing forwarding throught x0
+    RVTEST_IO_WRITE_STR("# Test part D - testing forwarding throught x0\n");
 
     # Address for test results
     la      x2, test_D_res
@@ -125,8 +154,13 @@ RV_COMPLIANCE_CODE_BEGIN
     sw      x5, 4(x2)
 
 
+    RVTEST_IO_ASSERT_EQ(x0, 0x00000000)
+    RVTEST_IO_ASSERT_EQ(x5, 0x00000000)
+
+    RVTEST_IO_WRITE_STR("# Test part A4  - Complete\n");
+
     # ---------------------------------------------------------------------------------------------
-    # Test part E - testing csrrw with same dst and src registers
+    RVTEST_IO_WRITE_STR("# Test part E - testing csrrw with same dst and src registers\n");
 
     # Address for test results
     la      x2, test_E_res
@@ -147,7 +181,15 @@ RV_COMPLIANCE_CODE_BEGIN
     sw      x7, 4(x2)
     sw      x8, 8(x2)
 
-    # ---------------------------------------------------------------------------------------------
+    RVTEST_IO_ASSERT_EQ(x5, 0x00000000)
+    RVTEST_IO_ASSERT_EQ(x7, 0x96385274)
+    RVTEST_IO_ASSERT_EQ(x8, 0x32165498)
+
+    RVTEST_IO_WRITE_STR("# Test part A5  - Complete\n");
+
+    RVTEST_IO_WRITE_STR("# Test End\n")
+
+ # ---------------------------------------------------------------------------------------------
     # HALT
     RV_COMPLIANCE_HALT
 

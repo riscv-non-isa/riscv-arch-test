@@ -29,6 +29,7 @@
 # Description: Testing ENDIANESS of RISC-V processor.
 
 #include "compliance_test.h"
+#include "compliance_io.h"
 
 # Test Virtual Machine (TVM) used by program.
 RV_COMPLIANCE_RV32M
@@ -36,8 +37,12 @@ RV_COMPLIANCE_RV32M
 # Test code region
 RV_COMPLIANCE_CODE_BEGIN
 
+    RVTEST_IO_INIT
+    RVTEST_IO_ASSERT_EQ(x0, 0x00000000)
+    RVTEST_IO_WRITE_STR("# Test Begin Reserved regs ra(x1) a0(x10) t0(x5)\n")
+
     # ---------------------------------------------------------------------------------------------
-    # Test part A - test loading word by LW, LH, LB
+    RVTEST_IO_WRITE_STR("# Test part A - test loading word by LW, LH, LB\n");
 
     # Addresses for test data and results
     la      x16, test_A_data
@@ -63,7 +68,24 @@ RV_COMPLIANCE_CODE_BEGIN
     sw      x7, 24(x17)
     sw      x8, 28(x17)
 
-    # ---------------------------------------------------------------------------------------------
+    //
+    // Assert
+    //
+    RVTEST_IO_CHECK()
+    #RVTEST_IO_ASSERT_EQ(x1, 0x80000270)
+    RVTEST_IO_ASSERT_EQ(x2, 0x00004567)
+    RVTEST_IO_ASSERT_EQ(x3, 0x00000123)
+    RVTEST_IO_ASSERT_EQ(x4, 0x00000089)
+    RVTEST_IO_ASSERT_EQ(x5, 0x00000045)
+    RVTEST_IO_ASSERT_EQ(x6, 0x00000045)
+    RVTEST_IO_ASSERT_EQ(x7, 0x00000023)
+    RVTEST_IO_ASSERT_EQ(x8, 0x00000001)
+
+    RVTEST_IO_WRITE_STR("# Test part A1  - Complete\n");
+
+    RVTEST_IO_WRITE_STR("# Test End\n")
+
+ # ---------------------------------------------------------------------------------------------
     # HALT
     RV_COMPLIANCE_HALT
 
@@ -84,4 +106,3 @@ test_A_res:
     .fill 8, 4, -1
 
 RV_COMPLIANCE_DATA_END
-

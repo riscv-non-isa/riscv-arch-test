@@ -29,12 +29,17 @@
 # Description: Testing MISALIGNED JUMP exception.
 
 #include "compliance_test.h"
+#include "compliance_io.h"
 
 # Test Virtual Machine (TVM) used by program.
 RV_COMPLIANCE_RV32M
 
 # Test code region
 RV_COMPLIANCE_CODE_BEGIN
+
+    RVTEST_IO_INIT
+    RVTEST_IO_ASSERT_EQ(x0, 0x00000000)
+    RVTEST_IO_WRITE_STR("# Test Begin Reserved regs ra(x1) a0(x10) t0(x5)\n")
 
     # Save and set trap handler address
     la x1, _trap_handler
@@ -44,7 +49,7 @@ RV_COMPLIANCE_CODE_BEGIN
     csrrci   x0, misa, 4
 
     # ---------------------------------------------------------------------------------------------
-    # Test part A1 - test JAL
+    RVTEST_IO_WRITE_STR("# Test part A1 - test JAL\n");
 
     # Address for test results
     la      x1, test_A1_res_exc
@@ -55,8 +60,14 @@ RV_COMPLIANCE_CODE_BEGIN
     li      x2, 0
 1:
 
+    //
+    // Assert
+    //
+    RVTEST_IO_CHECK()
+    RVTEST_IO_WRITE_STR("# Test part A1  - Complete\n");
+
     # ---------------------------------------------------------------------------------------------
-    # Test part A2 - test JALR - NOT causing the exception
+    RVTEST_IO_WRITE_STR("# Test part A2 - test JALR - NOT causing the exception\n");
 
     # Address for test results
     la      x1, test_A2_res
@@ -87,8 +98,10 @@ RV_COMPLIANCE_CODE_BEGIN
 1:
     addi    x1, x1, 4
 
+    RVTEST_IO_WRITE_STR("# Test part A2  - Complete\n");
+
     # ---------------------------------------------------------------------------------------------
-    # Test part A3 - test JALR - causing the exception
+    RVTEST_IO_WRITE_STR("# Test part A3 - test JALR - causing the exception\n");
 
     # Address for test results
     la      x1, test_A3_res_exc
@@ -119,8 +132,10 @@ RV_COMPLIANCE_CODE_BEGIN
     li      x2, 0
 1:
 
+    RVTEST_IO_WRITE_STR("# Test part A3  - Complete\n");
+
     # ---------------------------------------------------------------------------------------------
-    # Test part B1 - test BEQ
+    RVTEST_IO_WRITE_STR("# Test part B1 - test BEQ\n");
 
     # Address for test results
     la      x1, test_B1_res_exc
@@ -139,8 +154,10 @@ RV_COMPLIANCE_CODE_BEGIN
     li      x2, 0
 1:
 
+    RVTEST_IO_WRITE_STR("# Test part A4  - Complete\n");
+
     # ---------------------------------------------------------------------------------------------
-    # Test part B2 - test BNE
+    RVTEST_IO_WRITE_STR("# Test part B2 - test BNE\n");
 
     # Address for test results
     la      x1, test_B2_res_exc
@@ -159,8 +176,10 @@ RV_COMPLIANCE_CODE_BEGIN
     li      x2, 0
 1:
 
+    RVTEST_IO_WRITE_STR("# Test part A5  - Complete\n");
+
     # ---------------------------------------------------------------------------------------------
-    # Test part B3 - test BLT
+    RVTEST_IO_WRITE_STR("# Test part B3 - test BLT\n");
 
     # Address for test results
     la      x1, test_B3_res_exc
@@ -179,8 +198,10 @@ RV_COMPLIANCE_CODE_BEGIN
     li      x2, 0
 1:
 
+    RVTEST_IO_WRITE_STR("# Test part B  - Complete\n");
+
     # ---------------------------------------------------------------------------------------------
-    # Test part B4 - test BLTU
+    RVTEST_IO_WRITE_STR("# Test part B4 - test BLTU\n");
 
     # Address for test results
     la      x1, test_B4_res_exc
@@ -199,8 +220,10 @@ RV_COMPLIANCE_CODE_BEGIN
     li      x2, 0
 1:
 
+    RVTEST_IO_WRITE_STR("# Test part C  - Complete\n");
+
     # ---------------------------------------------------------------------------------------------
-    # Test part B5 - test BGE
+    RVTEST_IO_WRITE_STR("# Test part B5 - test BGE\n");
 
     # Address for test results
     la      x1, test_B5_res_exc
@@ -219,8 +242,10 @@ RV_COMPLIANCE_CODE_BEGIN
     li      x2, 0
 1:
 
+    RVTEST_IO_WRITE_STR("# Test part D  - Complete\n");
+
     # ---------------------------------------------------------------------------------------------
-    # Test part B6 - test BGEU
+    RVTEST_IO_WRITE_STR("# Test part B6 - test BGEU\n");
 
     # Address for test results
     la      x1, test_B6_res_exc
@@ -239,10 +264,14 @@ RV_COMPLIANCE_CODE_BEGIN
     li      x2, 0
 1:
 
+    RVTEST_IO_WRITE_STR("# Test part E  - Complete\n");
+
     # ---------------------------------------------------------------------------------------------
     # restore mtvec and jump to the end
     csrw mtvec, x31
     jal x0, test_end
+
+    RVTEST_IO_WRITE_STR("# Test part A1  - Complete\n");
 
     # ---------------------------------------------------------------------------------------------
     # Exception handler
@@ -269,10 +298,16 @@ _trap_handler:
 
     # return
     mret
+    RVTEST_IO_WRITE_STR("# Test part A2  - Complete\n");
+
     # ---------------------------------------------------------------------------------------------
 
 test_end:
-    # ---------------------------------------------------------------------------------------------
+    RVTEST_IO_WRITE_STR("# Test part A3  - Complete\n");
+
+    RVTEST_IO_WRITE_STR("# Test End\n")
+
+ # ---------------------------------------------------------------------------------------------
     # HALT
     RV_COMPLIANCE_HALT
 
@@ -307,4 +342,3 @@ test_B6_res_exc:
     .fill 3, 4, -1
 
 RV_COMPLIANCE_DATA_END
-

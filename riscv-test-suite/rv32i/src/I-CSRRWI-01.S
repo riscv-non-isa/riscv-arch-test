@@ -29,6 +29,7 @@
 # Description: Testing instruction CSRRWI.
 
 #include "compliance_test.h"
+#include "compliance_io.h"
 
 # Test Virtual Machine (TVM) used by program.
 RV_COMPLIANCE_RV32M
@@ -36,8 +37,12 @@ RV_COMPLIANCE_RV32M
 # Test code region.
 RV_COMPLIANCE_CODE_BEGIN
 
+    RVTEST_IO_INIT
+    RVTEST_IO_ASSERT_EQ(x0, 0x00000000)
+    RVTEST_IO_WRITE_STR("# Test Begin Reserved regs ra(x1) a0(x10) t0(x5)\n")
+
     # ---------------------------------------------------------------------------------------------
-    # Test part A - general test of CSRRWI
+    RVTEST_IO_WRITE_STR("# Test part A - general test of CSRRWI\n");
 
     # Address for test results
     la      x15, test_A_res
@@ -62,8 +67,22 @@ RV_COMPLIANCE_CODE_BEGIN
     sw      x30, 20(x15)
     sw      x31, 24(x15)
 
+    //
+    // Assert
+    //
+    RVTEST_IO_CHECK()
+    RVTEST_IO_ASSERT_EQ(x0, 0x00000000)
+    RVTEST_IO_ASSERT_EQ(x2, 0x00000000)
+    RVTEST_IO_ASSERT_EQ(x4, 0x00000001)
+    RVTEST_IO_ASSERT_EQ(x6, 0x00000000)
+    RVTEST_IO_ASSERT_EQ(x28, 0x0000001F)
+    RVTEST_IO_ASSERT_EQ(x30, 0x0000000F)
+    RVTEST_IO_ASSERT_EQ(x31, 0x00000010)
+
+    RVTEST_IO_WRITE_STR("# Test part A1  - Complete\n");
+
     # ---------------------------------------------------------------------------------------------
-    # Test part B - testing writing to x0
+    RVTEST_IO_WRITE_STR("# Test part B - testing writing to x0\n");
 
     # Address for test results
     la      x1, test_B_res
@@ -75,7 +94,13 @@ RV_COMPLIANCE_CODE_BEGIN
     # store results
     sw      x0, 0(x1)
 
-    # ---------------------------------------------------------------------------------------------
+    RVTEST_IO_ASSERT_EQ(x0, 0x00000000)
+
+    RVTEST_IO_WRITE_STR("# Test part A2  - Complete\n");
+
+    RVTEST_IO_WRITE_STR("# Test End\n")
+
+ # ---------------------------------------------------------------------------------------------
     # HALT
     RV_COMPLIANCE_HALT
 

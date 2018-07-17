@@ -29,6 +29,7 @@
 # Description: Testing instruction FENCE.I.
 
 #include "compliance_test.h"
+#include "compliance_io.h"
 
 # Test Virtual Machine (TVM) used by program.
 RV_COMPLIANCE_RV32M
@@ -36,8 +37,12 @@ RV_COMPLIANCE_RV32M
 # Test code region
 RV_COMPLIANCE_CODE_BEGIN
 
+    RVTEST_IO_INIT
+    RVTEST_IO_ASSERT_EQ(x0, 0x00000000)
+    RVTEST_IO_WRITE_STR("# Test Begin Reserved regs ra(x1) a0(x10) t0(x5)\n")
+
     # ---------------------------------------------------------------------------------------------
-    # Test part A - test fence
+    RVTEST_IO_WRITE_STR("# Test part A - test fence\n");
 
     # Addresses for test data and results
     la      x16, test_A_data
@@ -65,7 +70,20 @@ instr_A_dst:
     sw      x3, 8(x17)
     sw      x15, 12(x17)
 
-    # ---------------------------------------------------------------------------------------------
+    //
+    // Assert
+    //
+    RVTEST_IO_CHECK()
+    #RVTEST_IO_ASSERT_EQ(x1, 0x8000026C)
+    RVTEST_IO_ASSERT_EQ(x2, 0x00000012)
+    RVTEST_IO_ASSERT_EQ(x3, 0x00000042)
+    RVTEST_IO_ASSERT_EQ(x15, 0x001101B3)
+
+    RVTEST_IO_WRITE_STR("# Test part A1  - Complete\n");
+
+    RVTEST_IO_WRITE_STR("# Test End\n")
+
+ # ---------------------------------------------------------------------------------------------
     # HALT
     RV_COMPLIANCE_HALT
 
@@ -91,4 +109,3 @@ test_A_res:
     .fill 4, 4, -1
 
 RV_COMPLIANCE_DATA_END
-

@@ -29,6 +29,7 @@
 # Description: Testing MISALIGNED LOAD/STORE exception.
 
 #include "compliance_test.h"
+#include "compliance_io.h"
 
 # Test Virtual Machine (TVM) used by program.
 RV_COMPLIANCE_RV32M
@@ -36,12 +37,16 @@ RV_COMPLIANCE_RV32M
 # Test code region
 RV_COMPLIANCE_CODE_BEGIN
 
+    RVTEST_IO_INIT
+    RVTEST_IO_ASSERT_EQ(x0, 0x00000000)
+    RVTEST_IO_WRITE_STR("# Test Begin Reserved regs ra(x1) a0(x10) t0(x5)\n")
+
     # Save and set trap handler address
     la x1, _trap_handler
     csrrw x31, mtvec, x1
 
     # ---------------------------------------------------------------------------------------------
-    # Test part A1 - test LW
+    RVTEST_IO_WRITE_STR("# Test part A1 - test LW\n");
 
     # Addresses for test data and results
     la      x3, test_A1_data
@@ -65,8 +70,16 @@ RV_COMPLIANCE_CODE_BEGIN
     lw      x4, 3(x3)
     sw      x4, 12(x2)
 
+    //
+    // Assert
+    //
+    RVTEST_IO_CHECK()
+    RVTEST_IO_ASSERT_EQ(x4, 0x91A1B1C1)
+
+    RVTEST_IO_WRITE_STR("# Test part A1  - Complete\n");
+
     # ---------------------------------------------------------------------------------------------
-    # Test part A2 - test LH and LHU
+    RVTEST_IO_WRITE_STR("# Test part A2 - test LH and LHU\n");
 
     # Addresses for test data and results
     la      x3, test_A2_data
@@ -102,8 +115,12 @@ RV_COMPLIANCE_CODE_BEGIN
     lhu     x4, 3(x3)
     sw      x4, 28(x2)
 
+    RVTEST_IO_ASSERT_EQ(x4, 0x0000D2E2)
+
+    RVTEST_IO_WRITE_STR("# Test part A2  - Complete\n");
+
     # ---------------------------------------------------------------------------------------------
-    # Test part B1 - test SW
+    RVTEST_IO_WRITE_STR("# Test part B1 - test SW\n");
 
     # Addresses for test data and results
     la      x2, test_B1_res
@@ -131,8 +148,12 @@ RV_COMPLIANCE_CODE_BEGIN
 
     sw      x6, 3(x2)
 
+    RVTEST_IO_ASSERT_EQ(x2, 0x800035D4)
+
+    RVTEST_IO_WRITE_STR("# Test part A3  - Complete\n");
+
     # ---------------------------------------------------------------------------------------------
-    # Test part B2 - test SH
+    RVTEST_IO_WRITE_STR("# Test part B2 - test SH\n");
 
     # Addresses for test data and results
     la      x2, test_B2_res
@@ -160,10 +181,14 @@ RV_COMPLIANCE_CODE_BEGIN
 
     sh      x6, 3(x2)
 
+    RVTEST_IO_WRITE_STR("# Test part A4  - Complete\n");
+
     # ---------------------------------------------------------------------------------------------
     # restore mtvec and jump to the end
     csrw mtvec, x31
     jal x0, test_end
+
+    RVTEST_IO_WRITE_STR("# Test part A5  - Complete\n");
 
     # ---------------------------------------------------------------------------------------------
     # Exception handler
@@ -188,10 +213,15 @@ _trap_handler:
     # return
     mret
 
+    RVTEST_IO_WRITE_STR("# Test part B  - Complete\n");
+
     # ---------------------------------------------------------------------------------------------
 
 test_end:
-    # ---------------------------------------------------------------------------------------------
+
+    RVTEST_IO_WRITE_STR("# Test End\n")
+
+ # ---------------------------------------------------------------------------------------------
     # HALT
     RV_COMPLIANCE_HALT
 
@@ -228,4 +258,3 @@ test_B2_res_exc:
     .fill 4, 4, -1
 
 RV_COMPLIANCE_DATA_END
-

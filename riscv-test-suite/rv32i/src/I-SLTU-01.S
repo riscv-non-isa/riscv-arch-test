@@ -29,6 +29,7 @@
 # Description: Testing instruction SLTU.
 
 #include "compliance_test.h"
+#include "compliance_io.h"
 
 # Test Virtual Machine (TVM) used by program.
 RV_COMPLIANCE_RV32M
@@ -36,8 +37,12 @@ RV_COMPLIANCE_RV32M
 # Test code region
 RV_COMPLIANCE_CODE_BEGIN
 
+    RVTEST_IO_INIT
+    RVTEST_IO_ASSERT_EQ(x0, 0x00000000)
+    RVTEST_IO_WRITE_STR("# Test Begin Reserved regs ra(x1) a0(x10) t0(x5)\n")
+
     # ---------------------------------------------------------------------------------------------
-    # Test part A1 - general test of value 0 with 0, 1, -1, MIN, MAX register values
+    RVTEST_IO_WRITE_STR("# Test part A1 - general test of value 0 with 0, 1, -1, MIN, MAX register values\n");
 
     # Addresses for test data and results
     la      x1, test_A1_data
@@ -68,8 +73,21 @@ RV_COMPLIANCE_CODE_BEGIN
     sw      x7, 16(x2)
     sw      x8, 20(x2)
 
+    //
+    // Assert
+    //
+    RVTEST_IO_CHECK()
+    RVTEST_IO_ASSERT_EQ(x3, 0x00000000)
+    RVTEST_IO_ASSERT_EQ(x4, 0x00000001)
+    RVTEST_IO_ASSERT_EQ(x5, 0x00000000)
+    RVTEST_IO_ASSERT_EQ(x6, 0x00000001)
+    RVTEST_IO_ASSERT_EQ(x7, 0x00000000)
+    RVTEST_IO_ASSERT_EQ(x8, 0x00000001)
+
+    RVTEST_IO_WRITE_STR("# Test part A1  - Complete\n");
+
     # ---------------------------------------------------------------------------------------------
-    # Test part A2 - general test of value 1 with 0, 1, -1, MIN, MAX register values
+    RVTEST_IO_WRITE_STR("# Test part A2 - general test of value 1 with 0, 1, -1, MIN, MAX register values\n");
 
     # Addresses for test data and results
     la      x1, test_A2_data
@@ -100,8 +118,17 @@ RV_COMPLIANCE_CODE_BEGIN
     sw      x12, 16(x2)
     sw      x13, 20(x2)
 
+    RVTEST_IO_ASSERT_EQ(x8, 0x00000001)
+    RVTEST_IO_ASSERT_EQ(x9, 0x00000000)
+    #RVTEST_IO_ASSERT_EQ(x10, 0x00000000)
+    RVTEST_IO_ASSERT_EQ(x11, 0x00000001)
+    RVTEST_IO_ASSERT_EQ(x12, 0x00000000)
+    RVTEST_IO_ASSERT_EQ(x13, 0x00000001)
+
+    RVTEST_IO_WRITE_STR("# Test part A2  - Complete\n");
+
     # ---------------------------------------------------------------------------------------------
-    # Test part A3 - general test of value -1 with 0, 1, -1, MIN, MAX register values
+    RVTEST_IO_WRITE_STR("# Test part A3 - general test of value -1 with 0, 1, -1, MIN, MAX register values\n");
 
     # Addresses for test data and results
     la      x1, test_A3_data
@@ -132,8 +159,17 @@ RV_COMPLIANCE_CODE_BEGIN
     sw      x17, 16(x2)
     sw      x18, 20(x2)
 
+    RVTEST_IO_ASSERT_EQ(x13, 0xFFFFFFFF)
+    RVTEST_IO_ASSERT_EQ(x14, 0x00000000)
+    RVTEST_IO_ASSERT_EQ(x15, 0x00000000)
+    RVTEST_IO_ASSERT_EQ(x16, 0x00000000)
+    RVTEST_IO_ASSERT_EQ(x17, 0x00000000)
+    RVTEST_IO_ASSERT_EQ(x18, 0x00000000)
+
+    RVTEST_IO_WRITE_STR("# Test part A3  - Complete\n");
+
     # ---------------------------------------------------------------------------------------------
-    # Test part A4 - general test of value 0x7FFFFFFF with 0, 1, -1, MIN, MAX register values
+    RVTEST_IO_WRITE_STR("# Test part A4 - general test of value 0x7FFFFFFF with 0, 1, -1, MIN, MAX register values\n");
 
     # Addresses for test data and results
     la      x1, test_A4_data
@@ -164,8 +200,17 @@ RV_COMPLIANCE_CODE_BEGIN
     sw      x22, 16(x2)
     sw      x23, 20(x2)
 
+    RVTEST_IO_ASSERT_EQ(x18, 0x7FFFFFFF)
+    RVTEST_IO_ASSERT_EQ(x19, 0x00000000)
+    RVTEST_IO_ASSERT_EQ(x20, 0x00000000)
+    RVTEST_IO_ASSERT_EQ(x21, 0x00000001)
+    RVTEST_IO_ASSERT_EQ(x22, 0x00000000)
+    RVTEST_IO_ASSERT_EQ(x23, 0x00000001)
+
+    RVTEST_IO_WRITE_STR("# Test part A4  - Complete\n");
+
     # ---------------------------------------------------------------------------------------------
-    # Test part A5 - general test of value 0x80000000 with 0, 1, -1, MIN, MAX register values
+    RVTEST_IO_WRITE_STR("# Test part A5 - general test of value 0x80000000 with 0, 1, -1, MIN, MAX register values\n");
 
     # Addresses for test data and results
     la      x1, test_A5_data
@@ -196,8 +241,17 @@ RV_COMPLIANCE_CODE_BEGIN
     sw      x27, 16(x2)
     sw      x28, 20(x2)
 
+    RVTEST_IO_ASSERT_EQ(x23, 0x80000000)
+    RVTEST_IO_ASSERT_EQ(x24, 0x00000000)
+    RVTEST_IO_ASSERT_EQ(x25, 0x00000000)
+    RVTEST_IO_ASSERT_EQ(x26, 0x00000001)
+    RVTEST_IO_ASSERT_EQ(x27, 0x00000000)
+    RVTEST_IO_ASSERT_EQ(x28, 0x00000000)
+
+    RVTEST_IO_WRITE_STR("# Test part A5  - Complete\n");
+
     # ---------------------------------------------------------------------------------------------
-    # Test part B - testing writing to x0
+    RVTEST_IO_WRITE_STR("# Test part B - testing writing to x0\n");
 
     # Addresses for test data and results
     la      x26, test_B_data
@@ -217,8 +271,14 @@ RV_COMPLIANCE_CODE_BEGIN
     sw      x1, 4(x27)
     sw      x2, 8(x27)
 
+    RVTEST_IO_ASSERT_EQ(x0, 0x00000000)
+    #RVTEST_IO_ASSERT_EQ(x1, 0x00000000)
+    RVTEST_IO_ASSERT_EQ(x2, 0xFFFFFFFF)
+
+    RVTEST_IO_WRITE_STR("# Test part B  - Complete\n");
+
     # ---------------------------------------------------------------------------------------------
-    # Test part C - testing compare x0
+    RVTEST_IO_WRITE_STR("# Test part C - testing compare x0\n");
 
     # Addresses for test data and results
     la      x31, test_C_res
@@ -254,8 +314,21 @@ RV_COMPLIANCE_CODE_BEGIN
     sw      x14, 32(x31)
     sw      x15, 36(x31)
 
+    RVTEST_IO_ASSERT_EQ(x6, 0x00000001)
+    RVTEST_IO_ASSERT_EQ(x7, 0x00000001)
+    RVTEST_IO_ASSERT_EQ(x8, 0x00000001)
+    RVTEST_IO_ASSERT_EQ(x9, 0x00000000)
+    #RVTEST_IO_ASSERT_EQ(x10, 0x00000000)
+    RVTEST_IO_ASSERT_EQ(x11, 0x00000000)
+    RVTEST_IO_ASSERT_EQ(x12, 0x00000000)
+    RVTEST_IO_ASSERT_EQ(x13, 0x00000000)
+    RVTEST_IO_ASSERT_EQ(x14, 0x00000000)
+    RVTEST_IO_ASSERT_EQ(x15, 0x00000000)
+
+    RVTEST_IO_WRITE_STR("# Test part C  - Complete\n");
+
     # ---------------------------------------------------------------------------------------------
-    # Test part D - testing forwarding between instructions
+    RVTEST_IO_WRITE_STR("# Test part D - testing forwarding between instructions\n");
 
     # Addresses for test data and results
     la      x31, test_D_res
@@ -277,7 +350,17 @@ RV_COMPLIANCE_CODE_BEGIN
     sw      x29, 12(x31)
     sw      x30, 16(x31)
 
-    # ---------------------------------------------------------------------------------------------
+    #RVTEST_IO_ASSERT_EQ(x1, 0x80001E50)
+    RVTEST_IO_ASSERT_EQ(x2, 0x00000000)
+    RVTEST_IO_ASSERT_EQ(x28, 0x00000001)
+    RVTEST_IO_ASSERT_EQ(x29, 0x00000000)
+    RVTEST_IO_ASSERT_EQ(x30, 0x00000001)
+
+    RVTEST_IO_WRITE_STR("# Test part D  - Complete\n");
+
+    RVTEST_IO_WRITE_STR("# Test End\n")
+
+ # ---------------------------------------------------------------------------------------------
     # HALT
     RV_COMPLIANCE_HALT
 

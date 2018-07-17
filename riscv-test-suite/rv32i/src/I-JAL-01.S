@@ -29,6 +29,7 @@
 # Description: Testing instruction JAL.
 
 #include "compliance_test.h"
+#include "compliance_io.h"
 
 # Test Virtual Machine (TVM) used by program.
 RV_COMPLIANCE_RV32M
@@ -36,8 +37,12 @@ RV_COMPLIANCE_RV32M
 # Test code region.
 RV_COMPLIANCE_CODE_BEGIN
 
+    RVTEST_IO_INIT
+    RVTEST_IO_ASSERT_EQ(x0, 0x00000000)
+    RVTEST_IO_WRITE_STR("# Test Begin Reserved regs ra(x1) a0(x10) t0(x5)\n")
+
     # ---------------------------------------------------------------------------------------------
-    # Test part A1 - general test of JAL
+    RVTEST_IO_WRITE_STR("# Test part A1 - general test of JAL\n");
 
     # Address for test results
     la      x1, test_A1_res
@@ -55,8 +60,17 @@ RV_COMPLIANCE_CODE_BEGIN
     sw      x0, 0(x1)
     sw      x2, 4(x1)
 
+    //
+    // Assert
+    //
+    RVTEST_IO_CHECK()
+    RVTEST_IO_ASSERT_EQ(x0, 0x00000000)
+    RVTEST_IO_ASSERT_EQ(x2, 0x12345678)
+
+    RVTEST_IO_WRITE_STR("# Test part A1  - Complete\n");
+
     # ---------------------------------------------------------------------------------------------
-    # Test part A2 - test of JAL - jumps forward, backward
+    RVTEST_IO_WRITE_STR("# Test part A2 - test of JAL - jumps forward, backward\n");
 
     # Address for test results
     la      x1, test_A2_res
@@ -94,8 +108,15 @@ RV_COMPLIANCE_CODE_BEGIN
     sw      x3, 8(x1)
     sw      x4, 12(x1)
 
+    RVTEST_IO_ASSERT_EQ(x0, 0x00000000)
+    RVTEST_IO_ASSERT_EQ(x2, 0x9ABCDEF0)
+    RVTEST_IO_ASSERT_EQ(x3, 0x87654321)
+    RVTEST_IO_ASSERT_EQ(x4, 0x0FEDCBA9)
+
+    RVTEST_IO_WRITE_STR("# Test part A2  - Complete\n");
+
     # ---------------------------------------------------------------------------------------------
-    # Test part B1 - test of JAL - linking
+    RVTEST_IO_WRITE_STR("# Test part B1 - test of JAL - linking\n");
 
     # Addresses for test data and results
     la      x9, test_B1_data
@@ -155,8 +176,18 @@ B1b_link:
     sw      x7, 20(x10)
     sw      x8, 24(x10)
 
+    RVTEST_IO_ASSERT_EQ(x2, 0x11111111)
+    RVTEST_IO_ASSERT_EQ(x3, 0x22222222)
+    RVTEST_IO_ASSERT_EQ(x4, 0x33333333)
+    RVTEST_IO_ASSERT_EQ(x5, 0x00000000)
+    RVTEST_IO_ASSERT_EQ(x6, 0x55555555)
+    RVTEST_IO_ASSERT_EQ(x7, 0x00000000)
+    RVTEST_IO_ASSERT_EQ(x8, 0x00000000)
+
+    RVTEST_IO_WRITE_STR("# Test part A3  - Complete\n");
+
     # ---------------------------------------------------------------------------------------------
-    # Test part B2 - test of JAL - linking
+    RVTEST_IO_WRITE_STR("# Test part B2 - test of JAL - linking\n");
 
     # Addresses for test data and results
     la      x9, test_B2_data
@@ -219,7 +250,19 @@ B2c_link:
     sw      x7, 20(x10)
     sw      x8, 24(x10)
 
-    # ---------------------------------------------------------------------------------------------
+    RVTEST_IO_ASSERT_EQ(x2, 0x66666666)
+    RVTEST_IO_ASSERT_EQ(x3, 0x77777777)
+    RVTEST_IO_ASSERT_EQ(x4, 0x88888888)
+    RVTEST_IO_ASSERT_EQ(x5, 0x00000000)
+    RVTEST_IO_ASSERT_EQ(x6, 0xAAAAAAAA)
+    RVTEST_IO_ASSERT_EQ(x7, 0x00000000)
+    RVTEST_IO_ASSERT_EQ(x8, 0x00000000)
+
+    RVTEST_IO_WRITE_STR("# Test part A4  - Complete\n");
+
+    RVTEST_IO_WRITE_STR("# Test End\n")
+
+ # ---------------------------------------------------------------------------------------------
     # HALT
     RV_COMPLIANCE_HALT
 

@@ -184,13 +184,13 @@ reset_vector:                                                           \
 //-----------------------------------------------------------------------
 
 #define RVTEST_PASS                                                     \
-        fence;                                                          \
+        fence.i;                                                          \
         li TESTNUM, 1;                                                  \
         ecall
 
 #define TESTNUM gp
 #define RVTEST_FAIL                                                     \
-        fence;                                                          \
+        fence.i;                                                          \
 1:      beqz TESTNUM, 1b;                                               \
         sll TESTNUM, TESTNUM, 1;                                        \
         or TESTNUM, TESTNUM, 1;                                         \
@@ -205,8 +205,8 @@ reset_vector:                                                           \
 #define RVTEST_DATA_BEGIN                                               \
         EXTRA_DATA                                                      \
         .pushsection .tohost,"aw",@progbits;                            \
-        .align 6; .global tohost; tohost: .dword 0;                     \
-        .align 6; .global fromhost; fromhost: .dword 0;                 \
+        .align 8; .global tohost; tohost: .dword 0;                     \
+        .align 8; .global fromhost; fromhost: .dword 0;                 \
         .popsection;                                                    \
         .align 4; .global begin_signature; begin_signature:
 

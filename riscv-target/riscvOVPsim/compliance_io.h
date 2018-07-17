@@ -59,10 +59,9 @@
     .word RVTEST_CUSTOM1;                                               \
 
 #define RVTEST_IO_WRITE_STR(_STR)                                       \
-    .section .data;                                                     \
+    .section .data.string;                                              \
 20001:                                                                  \
     .string _STR;                                                       \
-    .align 4;                                                           \
     .section .text.init;                                                \
     la a0, 20001b;                                                      \
     jal FN_WriteStr;                                                    \

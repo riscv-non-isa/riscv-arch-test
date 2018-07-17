@@ -29,6 +29,7 @@
 # Description: Testing instruction EBREAK.
 
 #include "compliance_test.h"
+#include "compliance_io.h"
 
 # Test Virtual Machine (TVM) used by program.
 RV_COMPLIANCE_RV32M
@@ -36,12 +37,20 @@ RV_COMPLIANCE_RV32M
 # Test code region
 RV_COMPLIANCE_CODE_BEGIN
 
+    RVTEST_IO_INIT
+    RVTEST_IO_ASSERT_EQ(x0, 0x00000000)
+    RVTEST_IO_WRITE_STR("# Test Begin Reserved regs ra(x1) a0(x10) t0(x5)\n")
+
     # Save and set trap handler address
     la x1, _trap_handler
     csrrw x31, mtvec, x1
 
+    //
+    // Assert
+    //
+    RVTEST_IO_CHECK()
     # ---------------------------------------------------------------------------------------------
-    # Test part A - test EBREAK
+    RVTEST_IO_WRITE_STR("# Test part A - test EBREAK\n");
 
     # Address for test results
     la      x1, test_A_res_exc
@@ -50,6 +59,10 @@ RV_COMPLIANCE_CODE_BEGIN
     li      x2, 0x11111111
     ebreak
     sw      x0, 0(x1)
+
+    RVTEST_IO_ASSERT_EQ(x0, 0x0000000)
+
+    RVTEST_IO_WRITE_STR("# Test part A1  - Complete\n");
 
     # ---------------------------------------------------------------------------------------------
     # restore mtvec and jump to the end
@@ -77,10 +90,16 @@ _trap_handler:
 
     # return
     mret
+
+    RVTEST_IO_WRITE_STR("# Test part A2  - Complete\n");
+
     # ---------------------------------------------------------------------------------------------
 
 test_end:
-    # ---------------------------------------------------------------------------------------------
+
+    RVTEST_IO_WRITE_STR("# Test End\n")
+
+ # ---------------------------------------------------------------------------------------------
     # HALT
     RV_COMPLIANCE_HALT
 
@@ -99,4 +118,3 @@ test_A_res_exc:
     .fill 4, 4, -1
 
 RV_COMPLIANCE_DATA_END
-
