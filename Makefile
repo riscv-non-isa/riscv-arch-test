@@ -10,11 +10,11 @@
 RISCV_TARGET ?= riscvOVPsim 
 RISCV_DEVICE ?= rv32i
 RISCV_PREFIX ?= riscv64-unknown-elf-
+RISCV_ISA    ?= rv32i
 
 export ROOTDIR  = $(shell pwd)
 export WORK     = $(ROOTDIR)/work
-export ISA      = rv32i
-export SUITEDIR = $(ROOTDIR)/riscv-test-suite/$(ISA)
+export SUITEDIR = $(ROOTDIR)/riscv-test-suite/$(RISCV_ISA)
 
 all: simulate verify
 
@@ -38,4 +38,6 @@ clean:
 help:
 	@echo "make"
 	@echo "RISCV_TARGET='riscvOVPsim|spike'"
-	@echo "RISCV_DEVICE='rv32i|...'"
+	@echo "RISCV_DEVICE='rv32i|rv32im|...'"
+	@echo "RISCV_ISA='rv32i|rv32im|...'"
+	
