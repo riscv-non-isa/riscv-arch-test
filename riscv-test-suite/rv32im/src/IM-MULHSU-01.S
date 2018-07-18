@@ -39,7 +39,7 @@ RV_COMPLIANCE_CODE_BEGIN
 
     RVTEST_IO_INIT
     RVTEST_IO_ASSERT_EQ(x0, 0x00000000)
-    RVTEST_IO_WRITE_STR("Test Begin Reserved regs ra(x1) a0(x10) t0(x5)\n")
+    RVTEST_IO_WRITE_STR("# Test Begin Reserved regs ra(x1) a0(x10) t0(x5)\n")
 
     # ---------------------------------------------------------------------------------------------
     RVTEST_IO_WRITE_STR("# Test part A1 - general test of value 0 with 0, 1, -1, MIN, MAX register values\n");
@@ -374,7 +374,7 @@ RV_COMPLIANCE_CODE_BEGIN
 
     RVTEST_IO_WRITE_STR("# Test part E  - Complete\n");
 
-    RVTEST_IO_WRITE_STR("Test End\n")
+    RVTEST_IO_WRITE_STR("# Test End\n")
 
  # ---------------------------------------------------------------------------------------------
     # HALT
