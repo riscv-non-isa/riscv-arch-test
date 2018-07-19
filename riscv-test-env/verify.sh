@@ -18,11 +18,15 @@ do
     fi
 done
 
+declare -i status=0
 if [ ${FAIL} == 0 ]
 then
     echo "--------------------------------"
     echo "OK: ${RUN}/${RUN}"
+    status=0
 else
     echo "--------------------------------"
     echo "FAIL: ${FAIL}/${RUN}"
+    status=1
 fi
+exit ${status}

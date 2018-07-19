@@ -18,6 +18,12 @@ export SUITEDIR = $(ROOTDIR)/riscv-test-suite/$(RISCV_ISA)
 
 all: simulate verify
 
+all_variant:
+	$(MAKE) RISCV_TARGET=riscvOVPsim RISCV_DEVICE=rv32i  RISCV_ISA=rv32i
+	$(MAKE) RISCV_TARGET=riscvOVPsim RISCV_DEVICE=rv32im RISCV_ISA=rv32im
+	$(MAKE) RISCV_TARGET=spike       RISCV_DEVICE=rv32i  RISCV_ISA=rv32i
+	$(MAKE) RISCV_TARGET=spike       RISCV_DEVICE=rv32im RISCV_ISA=rv32im
+
 simulate:
 	make \
 		RISCV_TARGET=$(RISCV_TARGET) \
@@ -40,4 +46,5 @@ help:
 	@echo "RISCV_TARGET='riscvOVPsim|spike'"
 	@echo "RISCV_DEVICE='rv32i|rv32im|...'"
 	@echo "RISCV_ISA='rv32i|rv32im|...'"
+	@echo "make all_variant // all combinations"
 	
