@@ -52,9 +52,11 @@ static void initModelCBs(riscvP riscv) {
     riscv->cb.getXlenMode        = riscvGetXlenMode;
     riscv->cb.getXlenArch        = riscvGetXlenArch;
     riscv->cb.getXRegName        = riscvGetXRegName;
+    riscv->cb.getFRegName        = riscvGetFRegName;
 
     // from riscvExceptions.h
     riscv->cb.illegalInstruction = riscvIllegalInstruction;
+    riscv->cb.takeException      = riscvTakeException;
 
     // from riscvMorph.h
     riscv->cb.instructionEnabled = riscvInstructionEnabled;

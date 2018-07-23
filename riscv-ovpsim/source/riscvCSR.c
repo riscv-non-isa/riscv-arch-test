@@ -2289,13 +2289,33 @@ Bool riscvWriteCSR(riscvCSRAttrsCP attrs, riscvP riscv, const void *buffer) {
         // get any write callback function
         riscvCSRWriteFn writeCB = getCSRWriteCB(attrs, riscv, bits);
 
-        // this function should only be used when there is a write callback
-        VMI_ASSERT(writeCB, "require write callback");
+        if(writeCB) {
 
-        // write value, indicating an artifact access
-        riscv->artifactAccess = True;
-        writeCB(attrs, riscv, newValue);
-        riscv->artifactAccess = False;
+            // write value using callback, indicating an artifact access
+            riscv->artifactAccess = True;
+            writeCB(attrs, riscv, newValue);
+            riscv->artifactAccess = False;
+
+        } else if(rawValue) {
+
+            // write value directly
+            Uns64 writeMask = getCSRWriteMask(attrs, riscv);
+            Uns64 oldValue;
+
+            if(is64Bit) {
+                oldValue = *(Uns64*)rawValue;
+            } else {
+                oldValue = *(Uns32*)rawValue;
+            }
+
+            newValue = (newValue & writeMask) | (oldValue & ~writeMask);
+
+            if(is64Bit) {
+                *(Uns64*)rawValue = newValue;
+            } else {
+                *(Uns32*)rawValue = newValue;
+            }
+        }
 
         // update raw value if register is implemented externally
         if(!rawValue) {

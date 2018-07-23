@@ -30,7 +30,6 @@
 
 //
 // Exception codes
-// (Note - please update rv32CpuHelper events.c when this changes)
 //
 typedef enum riscvExceptionS {
 
@@ -59,10 +58,11 @@ typedef enum riscvExceptionS {
     // INTERRUPTS
     ////////////////////////////////////////////////////////////////////
 
-    // this identifies interrupts (currently, we allow up to 32 non-interrupt
+    // this identifies interrupts (currently, we allow up to 64 non-interrupt
     // exceptions; this value is not architectural and can be increased if
     // required)
-    riscv_E_Interrupt          = 0x20,
+    // NOTE: please update rv32CpuHelper events.c if this changes
+    riscv_E_Interrupt          = 0x40,
 
     // these classify interrupt types
     riscv_E_SW                 = 0x00,

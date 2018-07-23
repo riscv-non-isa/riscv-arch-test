@@ -4,7 +4,7 @@ riscvOVPsim/examples/fibonacci/README.md
 Introduction
 ---
 
-This example shows the execution of a fibonacci sequence generator as a bare metal application, using semihosted printf, on the RISC-V processor using either RV32IMAC or RV64IMAC variants.
+This example shows the execution of a fibonacci sequence generator as a bare metal application, using semihosted write(), on the RISC-V processor using either RV32IMAC or RV64IMAC variants.
 
 Further scripts provided allow a GDB debug session to be launched or a signature file created from the execution.
 
@@ -15,9 +15,9 @@ Scripts are provided to configure the platform to generate a signature output af
 
 To run the example, execute one of the scripts. Note that there are scripts to run 32 bit (_RV32_) and 64 bit (_RV64_) RISC-V processors.
 
-The signature file is the content of a memory region and is written either at the end of execution or on a specific event.
+The signature file is the content of a memory region and is written during execution.
 
-The default usage (RISC-V compliant) is with tests built with the riscv environment that define symbols '_signature_begin_' and '_signature_end_' and is called on the call to the function '_write_tohost_'.
+The default usage (RISC-V compliant) is with tests built with the riscv environment that define symbols '_begin_signature_' and '_end_signature_' and is called on the call to the function '_write_tohost_'.
 
 However, parameters can be set allowing the definition of any region and the generation of the signature file at the end of simulation.
 
@@ -26,15 +26,15 @@ Configuration Parameters
 
   - SignatureFile   : The name of the file created containing the signature  
   - SignatureAtEnd  : Write the signature file at the end of simulation.
-  - ResultReg       : The register examined to indicate if the test passed or failed. Permitted values 3=gp, 10=a0, 28=t3 (default)
+  - ResultReg       : The register examined to indicate if the test passed or failed. Permitted index 3=gp, 10=a0, 28=t3 (default), 1=Pass 0=Fail
 
 Defining the Start of memory containing signature  
   - StartAddress    : The address of the memory
-  - StartSymbol     : The symbol, default 'signature_start'  
+  - StartSymbol     : The symbol, default 'begin_signature'  
 
 Defining the End of memory containing signature  
   - EndAddress      : The address of the memory  
-  - EndSymbol       : The symbol, default 'signature_end'  
+  - EndSymbol       : The symbol, default 'end_signature'  
   - ByteCount       : The size in bytes, from the StartAddress or StartSymbol
 
 Use the command line argument _-signaturedumphelp_ to see the list of commands
@@ -51,7 +51,7 @@ The _.elf_ files are created using a standard RISC-V gcc toolchain and the sourc
 
 The example application is a Fibonacci generator that writes some results into memory. This memory is then dumped at the end of simulation to a file and the log.
 
-A simulation extension library has been built into the simulator to perform the signature dumping. 
+A simulation extension library has been built for the simulator to perform the signature dumping. 
 In OVP releases an extension library is provided as source allowing modification to enable any signature dumping format/approach to be performed.
 
 Example run under Linux
@@ -122,3 +122,19 @@ Example run under Linux
 > dd28b57342311120f12fc26d55183ddb  
 > 0000000000000000000079b0c9e7e205  
 >  
+
+RISC-V Custom Instruction
+---
+
+When running basic tests on the processor without C libraries or hardware to provide character output e.g. a UART; a custom instruction can be used to provide character output in the simulation environment.
+The custom instruction is added to a test using a MACRO so that the test can be compiled without the custom instruction for execution on hardware or with the custom instruction for execution on the simulator. 
+Note: On hardware there is, therefore, no logging of the test execution and so only a pass/fail result can be obtained. On the simulator the logging can be used to indicate the flow of the test and where it diverges from the expected behavior.
+
+The intercept/extension library is enabled on the virtual platform
+simulation using the -customcontrol argument.
+
+> 
+> $ bin/Linux64/riscvOVPsim.exe -customcontrol  
+>
+
+If the program executes the custom instruction a character will be displayed on the simulator stdout

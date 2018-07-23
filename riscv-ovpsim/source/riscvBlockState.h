@@ -21,15 +21,17 @@
 
 // model header files
 #include "riscvTypes.h"
+#include "riscvTypeRefs.h"
 
 //
 // This structure holds state for a code block as it is morphed
 //
 typedef struct riscvBlockStateS {
 
-    Uns32       fpNaNBoxMask; // mask of registers known to hold single-precision
-    Bool        fpInstDone;   // has floating-point instruction already been seen?
-    riscvRMDesc fpActiveRMMT; // active floating-point rounding mode
+    riscvBlockStateP prevState;     // previous block state
+    Uns32            fpNaNBoxMask;  // mask of known single-precision FP registers
+    Bool             fpInstDone;    // floating-point instruction already seen?
+    riscvRMDesc      fpActiveRMMT;  // active floating-point rounding mode
 
 } riscvBlockState;
 

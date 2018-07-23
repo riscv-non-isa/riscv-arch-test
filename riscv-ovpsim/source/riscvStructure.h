@@ -119,6 +119,7 @@ typedef struct riscvS {
     riscvRMDesc        fpActiveRM;      // active floating-point rounding mode
     vmiFPFlags         fpFlags;         // floating point flags
     Uns64              jumpBase;        // address of jump instruction
+    Uns32              writtenXMask;    // mask of written X registers
 
     // Configuration and parameter definitions
     riscvParamValuesP  params;          // specified parameters (construction only)
@@ -175,6 +176,9 @@ typedef struct riscvS {
     Bool               warnAwayRM : 1;  // warned about fcsr.RM=RMM
     Bool               warnAwayOp : 1;  // warned about fcsr.RM=RMM in operation?
     riscvIntState      intState;        // for exception debug
+
+    // JIT code translation control
+    riscvBlockStateP   blockState;      // active block state
 
     // Enhanced model support callbacks
     riscvModelCB       cb;

@@ -45,10 +45,7 @@
 //
 // Generic JIT code emission callback
 //
-#define RISCV_MORPH_FN(_NAME) void _NAME( \
-    riscvMorphStateP state,     \
-    riscvBlockStateP blockState \
-)
+#define RISCV_MORPH_FN(_NAME) void _NAME(riscvMorphStateP state)
 typedef RISCV_MORPH_FN((*riscvMorphFn));
 
 //
@@ -487,7 +484,9 @@ static void emitTrapInstructionMask(
 //
 // Set mstatus.FS if this is the first floating point instruction in this block
 //
-static void updateFS(riscvBlockStateP blockState) {
+static void updateFS(riscvP riscv) {
+
+    riscvBlockStateP blockState = riscv->blockState;
 
     if(!blockState->fpInstDone) {
         blockState->fpInstDone = True;
@@ -589,12 +588,8 @@ inline static vmiReg getVMIReg(riscvP riscv, riscvRegDesc r) {
 // Do actions when a register is written (sign extending or NaN boxing, if
 // required)
 //
-void riscvWriteRegSize(
-    riscvBlockStateP blockState,
-    riscvP           riscv,
-    riscvRegDesc     r,
-    Uns32            srcBits
-) {
+void riscvWriteRegSize(riscvP riscv, riscvRegDesc r, Uns32 srcBits) {
+
     vmiReg dst = getVMIReg(riscv, r);
 
     if(isXReg(r)) {
@@ -604,10 +599,14 @@ void riscvWriteRegSize(
         // sign-extend result
         vmimtMoveExtendRR(dstBits, dst, srcBits, dst, True);
 
+        // add to record of X registers written by this instruction
+        riscv->writtenXMask |= getRegMask(r);
+
     } else if(isFReg(r)) {
 
-        Uns32 dstBits = riscvGetFlenArch(riscv);
-        Uns32 fprMask = getRegMask(r);
+        riscvBlockStateP blockState = riscv->blockState;
+        Uns32            dstBits    = riscvGetFlenArch(riscv);
+        Uns32            fprMask    = getRegMask(r);
 
         // NaN-box result
         if(dstBits>srcBits) {
@@ -618,7 +617,7 @@ void riscvWriteRegSize(
         }
 
         // set mstatus.FS
-        updateFS(blockState);
+        updateFS(riscv);
 
     } else {
 
@@ -630,37 +629,24 @@ void riscvWriteRegSize(
 // Do actions when a register is written (sign extending or NaN boxing, if
 // required)
 //
-inline static void writeRegSize(
-    riscvBlockStateP blockState,
-    riscvP           riscv,
-    riscvRegDesc     r,
-    Uns32            srcBits
-) {
-    riscvWriteRegSize(blockState, riscv, r, srcBits);
+inline static void writeRegSize(riscvP riscv, riscvRegDesc r, Uns32 srcBits) {
+    riscvWriteRegSize(riscv, r, srcBits);
 }
 
 //
 // Do actions when a register is written (sign extending or NaN boxing, if
 // required) using the derived register size
 //
-void riscvWriteReg(
-    riscvBlockStateP blockState,
-    riscvP           riscv,
-    riscvRegDesc     r
-) {
-    writeRegSize(blockState, riscv, r, getRBits(r));
+void riscvWriteReg(riscvP riscv, riscvRegDesc r) {
+    writeRegSize(riscv, r, getRBits(r));
 }
 
 //
 // Do actions when a register is written (sign extending or NaN boxing, if
 // required) using the derived register size
 //
-inline static void writeReg(
-    riscvBlockStateP blockState,
-    riscvP           riscv,
-    riscvRegDesc     r
-) {
-    riscvWriteReg(blockState, riscv, r);
+inline static void writeReg(riscvP riscv, riscvRegDesc r) {
+    riscvWriteReg(riscv, r);
 }
 
 
@@ -728,7 +714,7 @@ static RISCV_MORPH_FN(emitMoveRR) {
 
     vmimtMoveRR(bits, rd, rs);
 
-    writeReg(blockState, riscv, rdA);
+    writeReg(riscv, rdA);
 }
 
 //
@@ -744,7 +730,7 @@ static RISCV_MORPH_FN(emitMoveRC) {
 
     vmimtMoveRC(bits, rd, c);
 
-    writeReg(blockState, riscv, rdA);
+    writeReg(riscv, rdA);
 }
 
 //
@@ -767,7 +753,7 @@ static RISCV_MORPH_FN(emitMoveRPC) {
 
     vmimtBinopRC(bits, state->attrs->binop, rd, c, 0);
 
-    writeReg(blockState, riscv, rdA);
+    writeReg(riscv, rdA);
 }
 
 //
@@ -786,7 +772,7 @@ static RISCV_MORPH_FN(emitBinopRRR) {
 
     vmimtBinopRRR(bits, state->attrs->binop, rd, rs1, rs2, 0);
 
-    writeReg(blockState, riscv, rdA);
+    writeReg(riscv, rdA);
 }
 
 //
@@ -805,7 +791,7 @@ static RISCV_MORPH_FN(emitMulopHRRR) {
 
     vmimtMulopRRR(bits, state->attrs->binop, rd, VMI_NOREG, rs1, rs2, 0);
 
-    writeReg(blockState, riscv, rdA);
+    writeReg(riscv, rdA);
 }
 
 //
@@ -890,7 +876,7 @@ static RISCV_MORPH_FN(emitMULHSU) {
     // save result
     vmimtMoveRR(bits, rd, resultH);
 
-    writeReg(blockState, riscv, rdA);
+    writeReg(riscv, rdA);
 }
 
 //
@@ -909,7 +895,7 @@ static RISCV_MORPH_FN(emitCmpopRRR) {
 
     vmimtCompareRR(bits, state->attrs->cond, rs1, rs2, rd);
 
-    writeRegSize(blockState, riscv, rdA, 8);
+    writeRegSize(riscv, rdA, 8);
 }
 
 //
@@ -927,7 +913,7 @@ static RISCV_MORPH_FN(emitBinopRRC) {
 
     vmimtBinopRRC(bits, state->attrs->binop, rd, rs1, c, 0);
 
-    writeReg(blockState, riscv, rdA);
+    writeReg(riscv, rdA);
 }
 
 //
@@ -945,7 +931,7 @@ static RISCV_MORPH_FN(emitCmpopRRC) {
 
     vmimtCompareRC(bits, state->attrs->cond, rs1, c, rd);
 
-    writeRegSize(blockState, riscv, rdA, 8);
+    writeRegSize(riscv, rdA, 8);
 }
 
 //
@@ -992,7 +978,7 @@ static RISCV_MORPH_FN(emitLoad) {
     // call common code to perform load
     emitLoadCommon(state, rd, rdBits, ra, constraint);
 
-    writeReg(blockState, riscv, rdA);
+    writeReg(riscv, rdA);
 }
 
 //
@@ -1118,11 +1104,8 @@ typedef AMO_FN((*amoCB));
 //
 // Atomic memory operation using defined VMI binop
 //
-static void emitAMOCommonRRR(
-    riscvMorphStateP state,
-    riscvBlockStateP blockState,
-    amoCB            opCB
-) {
+static void emitAMOCommonRRR(riscvMorphStateP state, amoCB opCB) {
+
     riscvP        riscv      = state->riscv;
     riscvRegDesc  rdA        = getRVReg(state, 0);
     riscvRegDesc  rsA        = getRVReg(state, 1);
@@ -1150,7 +1133,7 @@ static void emitAMOCommonRRR(
     emitStoreCommon(state, tmp2, ra, constraint);
     vmimtMoveRR(bits, rd, tmp1);
 
-    writeReg(blockState, riscv, rdA);
+    writeReg(riscv, rdA);
 }
 
 //
@@ -1182,21 +1165,21 @@ static AMO_FN(emitAMOSwapRRRCB) {
 // Atomic memory operation using defined VMI binop
 //
 static RISCV_MORPH_FN(emitAMOBinopRRR) {
-    emitAMOCommonRRR(state, blockState, emitAMOBinopRRRCB);
+    emitAMOCommonRRR(state, emitAMOBinopRRRCB);
 }
 
 //
 // Atomic memory operation using defined VMI cmpop
 //
 static RISCV_MORPH_FN(emitAMOCmpopRRR) {
-    emitAMOCommonRRR(state, blockState, emitAMOCmpopRRRCB);
+    emitAMOCommonRRR(state, emitAMOCmpopRRRCB);
 }
 
 //
 // Atomic memory operation using swap
 //
 static RISCV_MORPH_FN(emitAMOSwapRRR) {
-    emitAMOCommonRRR(state, blockState, emitAMOSwapRRRCB);
+    emitAMOCommonRRR(state, emitAMOSwapRRRCB);
 }
 
 
@@ -1329,7 +1312,7 @@ static RISCV_MORPH_FN(emitLR) {
     // call common code to perform load
     emitLoadCommon(state, rd, rdBits, ra, constraint);
 
-    writeReg(blockState, riscv, rdA);
+    writeReg(riscv, rdA);
 }
 
 //
@@ -1359,7 +1342,7 @@ static RISCV_MORPH_FN(emitSC) {
     // complete SC attempt
     endEA(state, rd, rdBits, done);
 
-    writeReg(blockState, riscv, rdA);
+    writeReg(riscv, rdA);
 }
 
 
@@ -1540,12 +1523,8 @@ static Bool doCSRWriteImm(riscvMorphStateP state, Uns64 imm) {
 //
 // Implement CSR access, either with two GPRs or GPR and immediate
 //
-static void emitCSRRCommon(
-    riscvMorphStateP state,
-    riscvBlockStateP blockState,
-    vmiReg           rs1,
-    Bool             write
-) {
+static void emitCSRRCommon(riscvMorphStateP state, vmiReg rs1, Bool write) {
+
     riscvP          riscv = state->riscv;
     Uns32           csr   = state->info.csr;
     riscvRegDesc    rdA   = getRVReg(state, 0);
@@ -1609,18 +1588,19 @@ static void emitCSRRCommon(
 
             // do the write and update mstatus.FS if required
             if(riscvEmitCSRWrite(attrs, riscv, rs1Tmp, cbTmp) & ISA_DF) {
-                updateFS(blockState);
+                updateFS(riscv);
             }
 
             // handle writes that invalidate any morph-time assumptions about
             // the currently-active rounding mode (e.g. frm or fcsr)
             if(attrs->wEndRM) {
-                blockState->fpActiveRMMT = RV_RM_NA;
+                riscv->blockState->fpActiveRMMT = RV_RM_NA;
             }
         }
 
         // commit read value
         vmimtMoveRR(bits, rd, rdTmp);
+        writeReg(riscv, rdA);
     }
 }
 
@@ -1634,7 +1614,7 @@ static RISCV_MORPH_FN(emitCSRR) {
     vmiReg       rs1   = getVMIReg(riscv, rs1A);
     Bool         write = doCSRWriteRS1(state, rs1);
 
-    emitCSRRCommon(state, blockState, rs1, write);
+    emitCSRRCommon(state, rs1, write);
 }
 
 //
@@ -1644,7 +1624,7 @@ static RISCV_MORPH_FN(emitCSRRI) {
 
     Bool write = doCSRWriteImm(state, state->info.c);
 
-    emitCSRRCommon(state, blockState, VMI_NOREG, write);
+    emitCSRRCommon(state, VMI_NOREG, write);
 }
 
 
@@ -1827,12 +1807,8 @@ inline static Bool isSNaN64(Uns64 value) {
 // Return VMI register for the given abstract register which may require a NaN
 // box test if it is floating point
 //
-vmiReg riscvGetVMIRegFS(
-    riscvBlockStateP blockState,
-    riscvP           riscv,
-    riscvRegDesc     r,
-    vmiReg           tmp
-) {
+vmiReg riscvGetVMIRegFS(riscvP riscv, riscvRegDesc r, vmiReg tmp) {
+
     Uns32  bits   = getRBits(r);
     vmiReg result = getVMIReg(riscv, r);
 
@@ -1844,7 +1820,7 @@ vmiReg riscvGetVMIRegFS(
         // handle possible switch to QNaN-valued temporary if the source
         // register is smaller than the architectural register size and not
         // known to be NaN-boxed
-        if((archBits>bits) && !(blockState->fpNaNBoxMask&fprMask)) {
+        if((archBits>bits) && !(riscv->blockState->fpNaNBoxMask&fprMask)) {
 
             // use temporary corresponding to the input argument
             vmiReg upper = VMI_REG_DELTA(result,bits/8);
@@ -1868,13 +1844,8 @@ vmiReg riscvGetVMIRegFS(
 // Return VMI register for the given abstract register which may require a NaN
 // box test if it is floating point
 //
-inline static vmiReg getVMIRegFS(
-    riscvBlockStateP blockState,
-    riscvP           riscv,
-    riscvRegDesc     r,
-    vmiReg           tmp
-) {
-    return riscvGetVMIRegFS(blockState, riscv, r, tmp);
+inline static vmiReg getVMIRegFS(riscvP riscv, riscvRegDesc r, vmiReg tmp) {
+    return riscvGetVMIRegFS(riscv, r, tmp);
 }
 
 
@@ -2344,7 +2315,9 @@ static void refreshFPCW(riscvP riscv, riscvRMDesc rm) {
 //
 // Update current rounding mode if required
 //
-static void emitSetRM(riscvBlockStateP blockState, riscvP riscv, riscvRMDesc rm) {
+static void emitSetRM(riscvP riscv, riscvRMDesc rm) {
+
+    riscvBlockStateP blockState = riscv->blockState;
 
     if(rm == RV_RM_BAD) {
 
@@ -2410,16 +2383,16 @@ static RISCV_MORPH_FN(emitFUnop) {
     riscvRegDesc  fdA   = getRVReg(state, 0);
     riscvRegDesc  fs1A  = getRVReg(state, 1);
     vmiReg        fd    = getVMIReg(riscv, fdA);
-    vmiReg        fs1   = getVMIRegFS(blockState, riscv, fs1A, getTmp(1));
+    vmiReg        fs1   = getVMIRegFS(riscv, fs1A, getTmp(1));
     vmiFType      type  = getRegFType(fdA);
     vmiFUnop      op   = state->attrs->fpUnop;
     vmiFPConfigCP ctrl = getFPControl(state);
 
-    emitSetRM(blockState, riscv, state->info.rm);
+    emitSetRM(riscv, state->info.rm);
 
     vmimtFUnopRR(type, op, fd, fs1, RISCV_FP_FLAGS, ctrl);
 
-    writeReg(blockState, riscv, fdA);
+    writeReg(riscv, fdA);
 }
 
 //
@@ -2432,17 +2405,17 @@ static RISCV_MORPH_FN(emitFBinop) {
     riscvRegDesc  fs1A  = getRVReg(state, 1);
     riscvRegDesc  fs2A  = getRVReg(state, 2);
     vmiReg        fd    = getVMIReg(riscv, fdA);
-    vmiReg        fs1   = getVMIRegFS(blockState, riscv, fs1A, getTmp(1));
-    vmiReg        fs2   = getVMIRegFS(blockState, riscv, fs2A, getTmp(2));
+    vmiReg        fs1   = getVMIRegFS(riscv, fs1A, getTmp(1));
+    vmiReg        fs2   = getVMIRegFS(riscv, fs2A, getTmp(2));
     vmiFType      type  = getRegFType(fdA);
     vmiFBinop     op    = state->attrs->fpBinop;
     vmiFPConfigCP ctrl  = getFPControl(state);
 
-    emitSetRM(blockState, riscv, state->info.rm);
+    emitSetRM(riscv, state->info.rm);
 
     vmimtFBinopRRR(type, op, fd, fs1, fs2, RISCV_FP_FLAGS, ctrl);
 
-    writeReg(blockState, riscv, fdA);
+    writeReg(riscv, fdA);
 }
 
 //
@@ -2456,18 +2429,18 @@ static RISCV_MORPH_FN(emitFTernop) {
     riscvRegDesc  fs2A  = getRVReg(state, 2);
     riscvRegDesc  fs3A  = getRVReg(state, 3);
     vmiReg        fd    = getVMIReg(riscv, fdA);
-    vmiReg        fs1   = getVMIRegFS(blockState, riscv, fs1A, getTmp(1));
-    vmiReg        fs2   = getVMIRegFS(blockState, riscv, fs2A, getTmp(2));
-    vmiReg        fs3   = getVMIRegFS(blockState, riscv, fs3A, getTmp(3));
+    vmiReg        fs1   = getVMIRegFS(riscv, fs1A, getTmp(1));
+    vmiReg        fs2   = getVMIRegFS(riscv, fs2A, getTmp(2));
+    vmiReg        fs3   = getVMIRegFS(riscv, fs3A, getTmp(3));
     vmiFType      type  = getRegFType(fdA);
     vmiFTernop    op    = state->attrs->fpTernop;
     vmiFPConfigCP ctrl  = getFPControl(state);
 
-    emitSetRM(blockState, riscv, state->info.rm);
+    emitSetRM(riscv, state->info.rm);
 
     vmimtFTernopRRRR(type, op, fd, fs1, fs2, fs3, RISCV_FP_FLAGS, False, ctrl);
 
-    writeReg(blockState, riscv, fdA);
+    writeReg(riscv, fdA);
 }
 
 //
@@ -2479,7 +2452,7 @@ static RISCV_MORPH_FN(emitFConvert) {
     riscvRegDesc  fdA   = getRVReg(state, 0);
     riscvRegDesc  fsA   = getRVReg(state, 1);
     vmiReg        fd    = getVMIReg(riscv, fdA);
-    vmiReg        fs    = getVMIRegFS(blockState, riscv, fsA, getTmp(1));
+    vmiReg        fs    = getVMIRegFS(riscv, fsA, getTmp(1));
     vmiFType      typeD = getRegFType(fdA);
     vmiFType      typeS = getRegFType(fsA);
     Uns32         bitsD = getRBits(fdA);
@@ -2491,12 +2464,12 @@ static RISCV_MORPH_FN(emitFConvert) {
     // than source (conversion will be exact in this case) or if non-current
     // mode is specified (can be passed to the conversion primitive)
     if(((bitsD<=bitsS) || !VMI_FTYPE_IS_IEEE_754(typeD)) && (rc==vmi_FPR_CURRENT)) {
-        emitSetRM(blockState, riscv, state->info.rm);
+        emitSetRM(riscv, state->info.rm);
     }
 
     vmimtFConvertRR(typeD, fd, typeS, fs, rc, RISCV_FP_FLAGS, ctrl);
 
-    writeReg(blockState, riscv, fdA);
+    writeReg(riscv, fdA);
 }
 
 //
@@ -2509,8 +2482,8 @@ static RISCV_MORPH_FN(emitFCompare) {
     riscvRegDesc  fs1A      = getRVReg(state, 1);
     riscvRegDesc  fs2A      = getRVReg(state, 2);
     vmiReg        rd        = getVMIReg(riscv, rdA);
-    vmiReg        fs1       = getVMIRegFS(blockState, riscv, fs1A, getTmp(1));
-    vmiReg        fs2       = getVMIRegFS(blockState, riscv, fs2A, getTmp(2));
+    vmiReg        fs1       = getVMIRegFS(riscv, fs1A, getTmp(1));
+    vmiReg        fs2       = getVMIRegFS(riscv, fs2A, getTmp(2));
     vmiFType      typeS     = getRegFType(fs1A);
     vmiFPRelation relation  = state->attrs->fpRel;
     vmiFlags      flags     = {f:{[vmi_ZF]=rd}, negate:vmi_FN_ZF};
@@ -2521,7 +2494,7 @@ static RISCV_MORPH_FN(emitFCompare) {
     vmimtFCompareRR(typeS, rd, fs1, fs2, RISCV_FP_FLAGS, allowQNaN, ctrl);
     vmimtBinopRC(8, vmi_AND, rd, relation, &flags);
 
-    writeRegSize(blockState, riscv, rdA, 8);
+    writeRegSize(riscv, rdA, 8);
 }
 
 //
@@ -2534,8 +2507,8 @@ static RISCV_MORPH_FN(emitFSgn) {
     riscvRegDesc fs1A  = getRVReg(state, 1);
     riscvRegDesc fs2A  = getRVReg(state, 2);
     vmiReg       fd    = getVMIReg(riscv, fdA);
-    vmiReg       fs1   = getVMIRegFS(blockState, riscv, fs1A, getTmp(1));
-    vmiReg       fs2   = getVMIRegFS(blockState, riscv, fs2A, getTmp(2));
+    vmiReg       fs1   = getVMIRegFS(riscv, fs1A, getTmp(1));
+    vmiReg       fs2   = getVMIRegFS(riscv, fs2A, getTmp(2));
     Uns32        bits  = getRBits(fdA);
     Uns64        mask  = (-1ULL<<(bits-1));
     vmiReg       tmp   = getTmp(0);
@@ -2558,7 +2531,7 @@ static RISCV_MORPH_FN(emitFSgn) {
     // merge with tmp
     vmimtBinopRR(bits, vmi_XOR, fd, tmp, 0);
 
-    writeReg(blockState, riscv, fdA);
+    writeReg(riscv, fdA);
 }
 
 //
@@ -2636,7 +2609,7 @@ static RISCV_MORPH_FN(emitFClass) {
     riscvRegDesc rdA   = getRVReg(state, 0);
     riscvRegDesc fs1A  = getRVReg(state, 1);
     vmiReg       rd    = getVMIReg(riscv, rdA);
-    vmiReg       fs1   = getVMIRegFS(blockState, riscv, fs1A, getTmp(1));
+    vmiReg       fs1   = getVMIRegFS(riscv, fs1A, getTmp(1));
     Uns32        bitsD = 32;
     Uns32        bitsS = getRBits(fs1A);
     vmiCallFn    cb    = 0;
@@ -2654,7 +2627,7 @@ static RISCV_MORPH_FN(emitFClass) {
     vmimtArgReg(bitsS, fs1);
     vmimtCallResultAttrs(cb, bitsD, rd, VMCA_PURE);
 
-    writeRegSize(blockState, riscv, rdA, bitsD);
+    writeRegSize(riscv, rdA, bitsD);
 }
 
 
@@ -2791,18 +2764,40 @@ const static riscvMorphAttr dispatchTable[] = {
 //
 VMI_START_END_BLOCK_FN(riscvStartBlock) {
 
-    riscvP           riscv = (riscvP)processor;
-    riscvBlockStateP riscvBlockState = blockState;
+    riscvP           riscv     = (riscvP)processor;
+    riscvBlockStateP thisState = blockState;
+
+    // save currently-active block state and set new state
+    thisState->prevState = riscv->blockState;
+    riscv->blockState    = thisState;
 
     // no single-precision registers are known to be NaN-boxed initially
-    riscvBlockState->fpNaNBoxMask = 0;
+    thisState->fpNaNBoxMask = 0;
 
     // no floating-point instructions have been seen initially if management
     // of floating point state using mstatus.FS is required
-    riscvBlockState->fpInstDone = riscv->configInfo.fs_always_dirty;
+    thisState->fpInstDone = riscv->configInfo.fs_always_dirty;
 
     // active floating point rounding mode is initially unknown
-    riscvBlockState->fpActiveRMMT = RV_RM_NA;
+    thisState->fpActiveRMMT = RV_RM_NA;
+}
+
+//
+// Called at the end of a new code block
+//
+VMI_START_END_BLOCK_FN(riscvEndBlock) {
+
+    riscvP           riscv     = (riscvP)processor;
+    riscvBlockStateP thisState = blockState;
+
+    // sanity check that the current block is being ended
+    VMI_ASSERT(
+        thisState==riscv->blockState,
+        "unexpected mismatched blockState at end of block"
+    );
+
+    // restore previously-active block state
+    riscv->blockState = thisState->prevState;
 }
 
 //
@@ -2820,6 +2815,9 @@ VMI_MORPH_FN(riscvMorph) {
     state.riscv       = riscv;
     state.inDelaySlot = inDelaySlot;
 
+    // clear mask of X registers targeted by this instruction
+    riscv->writtenXMask = 0;
+
     if(disableMorph(&state)) {
 
         // no action if in disassembly mode
@@ -2835,9 +2833,19 @@ VMI_MORPH_FN(riscvMorph) {
 
     } else if(state.attrs->morph) {
 
+        // call derived model preMorph function if required
+        if(riscv->cb.preMorph) {
+            riscv->cb.preMorph(riscv);
+        }
+
         // translate the instruction
         vmimtInstructionClassAdd(state.attrs->iClass);
-        state.attrs->morph(&state, blockState);
+        state.attrs->morph(&state);
+
+        // call derived model postMorph function if required
+        if(riscv->cb.postMorph) {
+            riscv->cb.postMorph(riscv);
+        }
 
     } else {
 

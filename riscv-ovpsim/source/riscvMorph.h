@@ -87,33 +87,19 @@ vmiReg riscvGetVMIReg(riscvP riscv, riscvRegDesc r);
 // Return VMI register for the given abstract register which may require a NaN
 // box test if it is floating point
 //
-vmiReg riscvGetVMIRegFS(
-    riscvBlockStateP blockState,
-    riscvP           riscv,
-    riscvRegDesc     r,
-    vmiReg           tmp
-);
+vmiReg riscvGetVMIRegFS(riscvP riscv, riscvRegDesc r, vmiReg tmp);
 
 //
 // Do actions when a register is written (sign extending or NaN boxing, if
 // required)
 //
-void riscvWriteRegSize(
-    riscvBlockStateP blockState,
-    riscvP           riscv,
-    riscvRegDesc     r,
-    Uns32            srcBits
-);
+void riscvWriteRegSize(riscvP riscv, riscvRegDesc r, Uns32 srcBits);
 
 //
 // Do actions when a register is written (sign extending or NaN boxing, if
 // required) using the derived register size
 //
-void riscvWriteReg(
-    riscvBlockStateP blockState,
-    riscvP           riscv,
-    riscvRegDesc     r
-);
+void riscvWriteReg(riscvP riscv, riscvRegDesc r);
 
 
 ////////////////////////////////////////////////////////////////////////////////

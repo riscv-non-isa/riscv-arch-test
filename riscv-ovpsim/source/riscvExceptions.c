@@ -30,6 +30,7 @@
 // model header files
 #include "riscvDecode.h"
 #include "riscvExceptions.h"
+#include "riscvExceptionDefinitions.h"
 #include "riscvFunctions.h"
 #include "riscvMessage.h"
 #include "riscvStructure.h"
@@ -41,20 +42,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 // EXCEPTION DEFINITIONS
 ////////////////////////////////////////////////////////////////////////////////
-
-//
-// This describes exceptions implemented on the processor and any required
-// feature for them to be present
-//
-typedef struct riscvExceptionDescS {
-    vmiExceptionInfo  vmiInfo;      // VMI exception descriptor (MUST BE FIRST)
-    riscvArchitecture arch;         // required architecture
-} riscvExceptionDesc;
-
-//
-// Define type pointer
-//
-DEFINE_CS(riscvExceptionDesc);
 
 //
 // Fill one member of exceptions
@@ -187,6 +174,19 @@ inline static void clearEA(riscvP riscv) {
 ////////////////////////////////////////////////////////////////////////////////
 
 //
+// Return PC to which to return after taking an exception. For processors with
+// instruction table extensions, the address should be the original instruction,
+// not the table instruction.
+//
+static Uns64 getEPC(riscvP riscv) {
+
+    Uns8  dsOffset;
+    Uns64 eretPC = vmirtGetPCDS((vmiProcessorP)riscv, &dsOffset);
+
+    return dsOffset ? riscv->jumpBase : eretPC;
+}
+
+//
 // Return the mode to which to take the given exception or interrupt (mode X)
 //
 static riscvMode getModeX(
@@ -248,7 +248,7 @@ inline static Uns8 getIMode(Uns8 customMode, Uns8 tvecMode) {
 //
 // Update exception state when taking exception to mode X from mode Y
 //
-#define TARGET_MODE_X(_P, _X, _x, _IS_INT, _ECODE, _THISPC, _BASE, _MODE, _TVAL) { \
+#define TARGET_MODE_X(_P, _X, _x, _IS_INT, _ECODE, _EPC, _BASE, _MODE, _TVAL) { \
                                                                                 \
     /* get interrupt enable bit for mode X */                                   \
     Uns8 _IE = RD_CSR_FIELD(riscv, mstatus, _X##IE);                            \
@@ -263,7 +263,7 @@ inline static Uns8 getIMode(Uns8 customMode, Uns8 tvecMode) {
                                                                                 \
     /* update writable bits in epc register */                                  \
     Uns64 epcMask = RD_CSR_MASK(riscv, _x##epc);                                \
-    WR_CSR_FIELD(riscv, _x##epc, value, (_THISPC) & epcMask);                   \
+    WR_CSR_FIELD(riscv, _x##epc, value, (_EPC) & epcMask);                      \
                                                                                 \
     /* update tval register */                                                  \
     WR_CSR_FIELD(riscv, _x##tval, value, _TVAL);                                \
@@ -310,6 +310,26 @@ static Bool accessFaultCode(riscvException exception) {
 }
 
 //
+// Notify a derived model of trap entry or exception return if required
+//
+inline static void notifyTrapDerived(
+    riscvP              riscv,
+    riscvMode           mode,
+    riscvTrapNotifierFn notifier
+) {
+    if(notifier) {
+        notifier(riscv, mode);
+    }
+}
+
+//
+// Notify a derived model of exception return if required
+//
+inline static void notifyERETDerived(riscvP riscv, riscvMode mode) {
+    notifyTrapDerived(riscv, mode, riscv->cb.ERETNotifier);
+}
+
+//
 // Take processor exception
 //
 void riscvTakeException(
@@ -319,8 +339,8 @@ void riscvTakeException(
 ) {
     Bool      isInterrupt = IS_INTERRUPT(exception);
     Uns32     ecode       = GET_ECODE(exception);
-    Uns64     thisPC      = getPC(riscv);
-    Uns64     excPC       = 0;
+    Uns64     EPC         = getEPC(riscv);
+    Uns64     handlerPC   = 0;
     riscvMode modeY       = getCurrentMode(riscv);
     riscvMode modeX;
     Uns64     base;
@@ -353,26 +373,26 @@ void riscvTakeException(
     if(modeX==RISCV_MODE_USER) {
 
         // target user mode
-        TARGET_MODE_X(riscv, U, u, isInterrupt, ecode, thisPC, base, mode, tval);
+        TARGET_MODE_X(riscv, U, u, isInterrupt, ecode, EPC, base, mode, tval);
 
     } else if(modeX==RISCV_MODE_SUPERVISOR) {
 
         // target supervisor mode
-        TARGET_MODE_X(riscv, S, s, isInterrupt, ecode, thisPC, base, mode, tval);
+        TARGET_MODE_X(riscv, S, s, isInterrupt, ecode, EPC, base, mode, tval);
         WR_CSR_FIELD(riscv, mstatus, SPP, modeY);
 
     } else {
 
         // target machine mode
-        TARGET_MODE_X(riscv, M, m, isInterrupt, ecode, thisPC, base, mode, tval);
+        TARGET_MODE_X(riscv, M, m, isInterrupt, ecode, EPC, base, mode, tval);
         WR_CSR_FIELD(riscv, mstatus, MPP, modeY);
     }
 
     // handle direct or vectored exception
     if((mode == 0) || !isInterrupt) {
-        excPC = base;
+        handlerPC = base;
     } else {
-        excPC = base + (4 * ecode);
+        handlerPC = base + (4 * ecode);
     }
 
     // switch to target mode
@@ -382,7 +402,10 @@ void riscvTakeException(
     riscv->exception = exception;
 
     // set address at which to execute
-    vmirtSetPCException((vmiProcessorP)riscv, excPC);
+    vmirtSetPCException((vmiProcessorP)riscv, handlerPC);
+
+    // notify derived model of exception entry if required
+    notifyTrapDerived(riscv, modeX, riscv->cb.trapNotifier);
 }
 
 //
@@ -459,6 +482,9 @@ void riscvMRET(riscvP riscv) {
     // jump to exception address
     setPC(riscv, RD_CSR_FIELD(riscv, mepc, value));
 
+    // notify derived model of exception return if required
+    notifyERETDerived(riscv, RISCV_MODE_MACHINE);
+
     // check for pending interrupts
     riscvTestInterrupt(riscv);
 }
@@ -490,6 +516,9 @@ void riscvSRET(riscvP riscv) {
     // jump to exception address
     setPC(riscv, RD_CSR_FIELD(riscv, sepc, value));
 
+    // notify derived model of exception return if required
+    notifyERETDerived(riscv, RISCV_MODE_SUPERVISOR);
+
     // check for pending interrupts
     riscvTestInterrupt(riscv);
 }
@@ -515,6 +544,9 @@ void riscvURET(riscvP riscv) {
 
     // jump to exception address
     setPC(riscv, RD_CSR_FIELD(riscv, uepc, value));
+
+    // notify derived model of exception return if required
+    notifyERETDerived(riscv, RISCV_MODE_USER);
 
     // check for pending interrupts
     riscvTestInterrupt(riscv);
@@ -832,13 +864,56 @@ VMI_IFETCH_FN(riscvIFetchExcept) {
 }
 
 //
+// Return the number of distinct exceptions defined by this model
+//
+inline static Uns32 getNumExceptions(void) {
+    return sizeof(exceptions)/sizeof(exceptions[0]) - 1;
+}
+
+//
+// Is the exception descriptor the dummy terminator entry in this model?
+//
+static Bool isExceptionTerminator(riscvExceptionDescCP desc) {
+    return (desc-exceptions) == getNumExceptions();
+}
+
+//
 // Get last-activated exception
 //
 VMI_GET_EXCEPTION_FN(riscvGetException) {
 
-    riscvP riscv = (riscvP)processor;
+    riscvP               riscv     = (riscvP)processor;
+    riscvExceptionDescCP thisDesc  = &exceptions[0];
+    riscvException       exception = riscv->exception;
 
-    return &exceptions[riscv->exception].vmiInfo;
+    for(;;) {
+
+        // get the first exception with matching code
+        while(thisDesc->vmiInfo.name && (thisDesc->vmiInfo.code!=exception)) {
+            thisDesc++;
+        }
+
+        if(thisDesc->vmiInfo.name) {
+
+            // match found in this table
+            return &thisDesc->vmiInfo;
+
+        } else if(!isExceptionTerminator(thisDesc)) {
+
+            // no more exceptions and not local table
+            return 0;
+
+        } else if(!riscv->cb.firstException) {
+
+            // no derived model exceptions
+            return 0;
+
+        } else {
+
+            // try derived model if required
+            thisDesc = (riscvExceptionDescCP)riscv->cb.firstException(riscv);
+        }
+    }
 }
 
 //
@@ -862,16 +937,37 @@ VMI_EXCEPTION_INFO_FN(riscvExceptionInfo) {
     riscvExceptionDescCP prevDesc = (riscvExceptionDescCP)prev;
     riscvExceptionDescCP thisDesc = prevDesc ? prevDesc+1 : exceptions;
 
-    // skip to the next implemented exception
-    while(
-        (thisDesc->vmiInfo.name) &&
-        !hasException(riscv, thisDesc->vmiInfo.code)
-    ) {
-        thisDesc++;
-    }
+    for(;;) {
 
-    // return the next exception or NULL if at the list end
-    return thisDesc->vmiInfo.name ? &thisDesc->vmiInfo : 0;
+        // skip to the next implemented exception
+        while(
+            (thisDesc->vmiInfo.name) &&
+            !hasException(riscv, thisDesc->vmiInfo.code)
+        ) {
+            thisDesc++;
+        }
+
+        if(thisDesc->vmiInfo.name) {
+
+            // match found in this table
+            return &thisDesc->vmiInfo;
+
+        } else if(!isExceptionTerminator(thisDesc)) {
+
+            // no more exceptions and not local table
+            return 0;
+
+        } else if(!riscv->cb.firstException) {
+
+            // no derived model exceptions
+            return 0;
+
+        } else {
+
+            // try derived model if required
+            thisDesc = (riscvExceptionDescCP)riscv->cb.firstException(riscv);
+        }
+    }
 }
 
 //
@@ -1055,6 +1151,11 @@ void riscvReset(riscvP riscv) {
     // reset CSR state
     riscvCSRReset(riscv);
 
+    // notify dependent model of reset event
+    if(riscv->cb.resetNotifier) {
+        riscv->cb.resetNotifier(riscv);
+    }
+
     // indicate the taken exception
     riscv->exception = 0;
 
@@ -1077,7 +1178,7 @@ static void doNMI(riscvP riscv) {
     WR_CSR(riscv, mcause, 0);
 
     // update mepc to hold next instruction address
-    WR_CSR(riscv, mepc, getPC(riscv));
+    WR_CSR(riscv, mepc, getEPC(riscv));
 
     // indicate the taken exception
     riscv->exception = 0;

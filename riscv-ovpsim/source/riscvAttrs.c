@@ -68,6 +68,7 @@ const vmiIASAttr modelAttrs = {
     ////////////////////////////////////////////////////////////////////////
 
     .startBlockCB       = riscvStartBlock,
+    .endBlockCB         = riscvEndBlock,
     .morphCB            = riscvMorph,
     .fetchSnapCB        = riscvFetchSnap,
 

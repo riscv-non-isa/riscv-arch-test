@@ -12,7 +12,7 @@ endif
 RUN_TARGET=\
     $(TARGET_SIM) \
         --variant RV32I --program $(work_dir_isa)/$< \
-        --signaturedump \
+        --signaturedump -customcontrol \
         --override riscvOVPsim/cpu/sigdump/SignatureFile=$(work_dir_isa)/$(*)_signature.output \
         --override riscvOVPsim/cpu/sigdump/ResultReg=3 \
         --override riscvOVPsim/cpu/simulateexceptions=T \

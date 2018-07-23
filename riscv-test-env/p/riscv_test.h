@@ -182,15 +182,17 @@ reset_vector:                                                           \
 //-----------------------------------------------------------------------
 // Pass/Fail Macro
 //-----------------------------------------------------------------------
+//#define RVTEST_SYNC fence
+#define RVTEST_SYNC nop
 
 #define RVTEST_PASS                                                     \
-        fence.i;                                                          \
+        RVTEST_SYNC;                                                    \
         li TESTNUM, 1;                                                  \
         ecall
 
 #define TESTNUM gp
 #define RVTEST_FAIL                                                     \
-        fence.i;                                                          \
+        RVTEST_SYNC;                                                    \
 1:      beqz TESTNUM, 1b;                                               \
         sll TESTNUM, TESTNUM, 1;                                        \
         or TESTNUM, TESTNUM, 1;                                         \

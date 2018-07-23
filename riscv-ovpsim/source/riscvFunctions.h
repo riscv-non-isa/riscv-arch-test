@@ -35,6 +35,7 @@ VMI_DESTRUCTOR_FN(riscvDestructor);
 
 // morph function
 VMI_START_END_BLOCK_FN(riscvStartBlock);
+VMI_START_END_BLOCK_FN(riscvEndBlock);
 VMI_MORPH_FN(riscvMorph);
 VMI_FETCH_SNAP_FN(riscvFetchSnap);
 

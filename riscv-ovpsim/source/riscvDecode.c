@@ -304,7 +304,7 @@ typedef struct opAttrsS {
     rmSpec            rm       :  4;    // rounding mode specification
     Uns32             priDelta :  4;    // decode priority delta
     Bool              csrInOp  :  1;    // whether to emit CSR as part of opcode
-    Bool              xQuiet   :  1;    // are X register type-quiet?
+    Bool              xQuiet   :  1;    // are X registers type-quiet?
 } opAttrs;
 
 typedef const struct opAttrsS *opAttrsCP;
