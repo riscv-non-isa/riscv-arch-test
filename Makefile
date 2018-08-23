@@ -17,19 +17,31 @@ RISCV_ISA_OPT = $(subst $(space),$(pipe),$(RISCV_ISA_ALL))
 RISCV_TARGET ?= riscvOVPsim 
 RISCV_DEVICE ?= rv32i
 RISCV_PREFIX ?= riscv64-unknown-elf-
-RISCV_ISA    ?= rv32i
+
+ifeq ($(RISCV_ISA),)
+    RISCV_ISA = rv32i
+    DEFAULT_TARGET=all_variant
+else
+    DEFAULT_TARGET=variant
+endif
 
 export ROOTDIR  = $(shell pwd)
 export WORK     = $(ROOTDIR)/work
 export SUITEDIR = $(ROOTDIR)/riscv-test-suite/$(RISCV_ISA)
 
-all: simulate verify
+default: $(DEFAULT_TARGET)
+
+variant: simulate verify
 
 all_variant:
-	$(MAKE) RISCV_TARGET=riscvOVPsim RISCV_DEVICE=rv32i  RISCV_ISA=rv32i
-	$(MAKE) RISCV_TARGET=riscvOVPsim RISCV_DEVICE=rv32im RISCV_ISA=rv32im
-	$(MAKE) RISCV_TARGET=spike       RISCV_DEVICE=rv32i  RISCV_ISA=rv32i
-	$(MAKE) RISCV_TARGET=spike       RISCV_DEVICE=rv32im RISCV_ISA=rv32im
+	for isa in $(RISCV_ISA_ALL); do \
+		echo $$isa; \
+		$(MAKE) RISCV_TARGET=$(RISCV_TARGET) RISCV_DEVICE=$$isa RISCV_ISA=$$isa variant; \
+                rc=$$?; \
+                if [ $$rc -ne 0 ]; then \
+			exit $$rc; \
+		fi \
+	done
 
 simulate:
 	make \

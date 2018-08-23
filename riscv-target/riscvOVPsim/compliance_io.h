@@ -22,9 +22,7 @@
 
 //
 // In general the following registers are reserved
-// ra, a0, t0
-// Additionally on an assertion violation, t1, t2 are overwritten
-// x1, x10, x5, x6, x7 respectively
+// ra, a0, t0, t1
 //
 
 #ifndef _COMPLIANCE_IO_H
@@ -40,31 +38,18 @@
 
 #define RVTEST_CUSTOM1 0x0005200B
 
-#define LOCAL_IO_WRITE_REG(_R)                                          \
-    mv          a0, _R;                                                 \
-    jal         FN_WriteA0;
-
 #ifdef RVTEST_IO_QUIET
 
 #define RVTEST_IO_INIT
 #define RVTEST_IO_WRITE_STR(_STR)
-#define RVTEST_IO_ASSERT_EQ(_R, _I)
 #define RVTEST_IO_CHECK()
+#define LOCAL_IO_PUTC(_R)
+#define RVTEST_IO_ASSERT_EQ(_R, _I)
+#define RVTEST_FP_ASSERT_EQ(_F, _C, correctval)
+#define RVTEST_FP2_ASSERT_EQ(_F, _C, correctval)
+#define RVTEST_FPD_ASSERT_EQ(_F, _C, correctval)
 
 #else
-
-#define RVTEST_IO_INIT
-
-#define LOCAL_IO_PUTC(_R)                                               \
-    .word RVTEST_CUSTOM1;                                               \
-
-#define RVTEST_IO_WRITE_STR(_STR)                                       \
-    .section .data.string;                                              \
-20001:                                                                  \
-    .string _STR;                                                       \
-    .section .text.init;                                                \
-    la a0, 20001b;                                                      \
-    jal FN_WriteStr;                                                    \
 
 // Assertion violation: file file.c, line 1234: (expr)
 #define RVTEST_IO_ASSERT_EQ(_R, _I)                                     \
@@ -84,6 +69,73 @@
     li TESTNUM, 100;                                                    \
     RVTEST_FAIL;                                                        \
 20002:
+
+#define RVTEST_FP_ASSERT_EQ(_F, _C, correctval) \
+    fmv.x.s     t0, _F; \
+    beq         _C, t0, 20003f;                                         \
+    RVTEST_IO_WRITE_STR("Assertion violation: file ");                  \
+    RVTEST_IO_WRITE_STR(__FILE__);                                      \
+    RVTEST_IO_WRITE_STR(", line ");                                     \
+    RVTEST_IO_WRITE_STR(TOSTRING(__LINE__));                            \
+    RVTEST_IO_WRITE_STR(": ");                                          \
+    RVTEST_IO_WRITE_STR(# _F);                                          \
+    RVTEST_IO_WRITE_STR("(");                                           \
+    LOCAL_FP_WRITE_REG(_F);                                             \
+    RVTEST_IO_WRITE_STR(") != ");                                       \
+    RVTEST_IO_WRITE_STR(# correctval);                                  \
+    RVTEST_IO_WRITE_STR("\n");                                          \
+    li TESTNUM, 100;                                                    \
+    RVTEST_FAIL;                                                        \
+20003:
+
+#define RVTEST_FP2_ASSERT_EQ(_F, _C, correctval) \
+    mv     t0, _F; \
+    beq         _C, t0, 20004f;                                         \
+    RVTEST_IO_WRITE_STR("Assertion violation: file ");                  \
+    RVTEST_IO_WRITE_STR(__FILE__);                                      \
+    RVTEST_IO_WRITE_STR(", line ");                                     \
+    RVTEST_IO_WRITE_STR(TOSTRING(__LINE__));                            \
+    RVTEST_IO_WRITE_STR(": ");                                          \
+    RVTEST_IO_WRITE_STR(# _F);                                          \
+    RVTEST_IO_WRITE_STR("(");                                           \
+    LOCAL_IO_WRITE_REG(_F);                                             \
+    RVTEST_IO_WRITE_STR(") != ");                                       \
+    RVTEST_IO_WRITE_STR(# correctval);                                  \
+    RVTEST_IO_WRITE_STR("\n");                                          \
+    li TESTNUM, 100;                                                    \
+    RVTEST_FAIL;                                                        \
+20004:
+
+#define RVTEST_FPD_ASSERT_EQ(_F, _C, correctval) \
+    fmv.x.d     t0, _F; \
+    beq         _C, t0, 20005f;                                         \
+    RVTEST_IO_WRITE_STR("Assertion violation: file ");                  \
+    RVTEST_IO_WRITE_STR(__FILE__);                                      \
+    RVTEST_IO_WRITE_STR(", line ");                                     \
+    RVTEST_IO_WRITE_STR(TOSTRING(__LINE__));                            \
+    RVTEST_IO_WRITE_STR(": ");                                          \
+    RVTEST_IO_WRITE_STR(# _F);                                          \
+    RVTEST_IO_WRITE_STR("(");                                           \
+    LOCAL_FPD_WRITE_REG(_F);                                            \
+    RVTEST_IO_WRITE_STR(") != ");                                       \
+    RVTEST_IO_WRITE_STR(# correctval);                                  \
+    RVTEST_IO_WRITE_STR("\n");                                          \
+    li TESTNUM, 100;                                                    \
+    RVTEST_FAIL;                                                        \
+20005:
+
+#define LOCAL_IO_PUTC(_R)                                               \
+    .word RVTEST_CUSTOM1;                                               \
+
+#define RVTEST_IO_INIT
+
+#define RVTEST_IO_WRITE_STR(_STR)                                       \
+    .section .data.string;                                              \
+20001:                                                                  \
+    .string _STR;                                                       \
+    .section .text.init;                                                \
+    la a0, 20001b;                                                      \
+    jal FN_WriteStr;
 
 // generate assertion listing
 #define RVTEST_IO_CHECK()                                               \
@@ -152,4 +204,5 @@ FN_WriteA0_common:
         ret
 
 #endif // RVTEST_IO_QUIET
+
 #endif // _COMPLIANCE_IO_H
