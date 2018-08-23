@@ -7,6 +7,13 @@
 #
 #
 
+pipe:= |
+empty:=
+space:= $(empty) $(empty)
+
+RISCV_ISA_ALL = $(shell ls $(ROOTDIR)/riscv-test-suite)
+RISCV_ISA_OPT = $(subst $(space),$(pipe),$(RISCV_ISA_ALL))
+
 RISCV_TARGET ?= riscvOVPsim 
 RISCV_DEVICE ?= rv32i
 RISCV_PREFIX ?= riscv64-unknown-elf-
@@ -45,6 +52,6 @@ help:
 	@echo "make"
 	@echo "RISCV_TARGET='riscvOVPsim|spike'"
 	@echo "RISCV_DEVICE='rv32i|rv32im|...'"
-	@echo "RISCV_ISA='rv32i|rv32im|...'"
+	@echo "RISCV_ISA=$(RISCV_ISA_OPT)"
 	@echo "make all_variant // all combinations"
 	
