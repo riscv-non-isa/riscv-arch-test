@@ -262,6 +262,7 @@ typedef struct riscvCSRDetailsS {
     riscvMode       mode;
     Bool            rdRaw;
     Bool            wrRaw;
+    Bool            extension;
     vmiReg          raw;
     vmiRegAccess    access;
 } riscvCSRDetails, *riscvCSRDetailsP;

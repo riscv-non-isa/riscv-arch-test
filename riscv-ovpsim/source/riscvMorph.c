@@ -248,6 +248,13 @@ static void emitIllegalInstructionPresentArch(riscvArchitecture present) {
 }
 
 //
+// Emit code to indicate that a custom instruction is not present if verbose
+//
+static void emitCustomAbsent() {
+    emitIllegalInstructionAbsentArch(ISA_X);
+}
+
+//
 // Use block mask to validate the value of architectural features that can
 // change at run time
 //
@@ -2755,6 +2762,9 @@ const static riscvMorphAttr dispatchTable[] = {
     [RV_IT_FNMADD_R4]   = {fpRM:1, fpConfig:RVFP_NORMAL, morph:emitFTernop,  fpTernop: vmi_FNMADD},
     [RV_IT_FNMSUB_R4]   = {fpRM:1, fpConfig:RVFP_NORMAL, morph:emitFTernop,  fpTernop: vmi_FNMSUB},
 
+    // X-extension instructions
+    [RV_IT_CUSTOM]      = {morph:emitCustomAbsent },
+
     // KEEP LAST
     [RV_IT_LAST]        = {0}
 };
@@ -2825,7 +2835,7 @@ VMI_MORPH_FN(riscvMorph) {
     } else if(state.info.type==RV_IT_LAST) {
 
         // take Illegal Instruction exception
-        emitIllegalInstruction();
+        ILLEGAL_INSTRUCTION_MESSAGE(riscv, "UDEC", "Undecoded instruction");
 
     } else if(!riscvInstructionEnabled(riscv, state.info.arch)) {
 

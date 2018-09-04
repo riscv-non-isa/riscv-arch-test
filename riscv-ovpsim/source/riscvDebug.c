@@ -343,6 +343,7 @@ static vmiRegInfoCP getRegisters(riscvP riscv, Bool normal) {
             dst->writeCB       = csrDetails.wrRaw ? 0 : writeCSR;
             dst->userData      = (void *)attrs;
             dst->noTraceChange = attrs->noTraceChange;
+            dst->extension     = csrDetails.extension;
             dst++;
         }
 

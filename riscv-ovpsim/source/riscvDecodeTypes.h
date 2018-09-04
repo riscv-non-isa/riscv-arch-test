@@ -150,6 +150,9 @@ typedef enum riscvITypeE {
     RV_IT_FNMADD_R4,
     RV_IT_FNMSUB_R4,
 
+    // X-extension instructions
+    RV_IT_CUSTOM,
+
     // KEEP LAST
     RV_IT_LAST
 

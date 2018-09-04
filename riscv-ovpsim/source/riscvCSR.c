@@ -2563,6 +2563,9 @@ Bool riscvGetCSRDetails(riscvP riscv, riscvCSRDetailsP details, Bool normal) {
                 VMI_ISNOREG(getWriteMaskVArch(attrs, arch))
             );
 
+            // indicate whether this is an extension library register
+            details->extension = attrs->object;
+
             return True;
         }
     }

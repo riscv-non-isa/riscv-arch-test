@@ -649,6 +649,17 @@
 }
 
 //
+// Attribute entries for 32-bit custom instructions
+//
+#define ATTR32_CUSTOM(_NAME, _GENERIC, _ARCH, _OPCODE, _PATTERN) [IT32_##_NAME] = { \
+    opcode   : _OPCODE,             \
+    pattern  : _PATTERN,            \
+    format   : FMT_NONE,            \
+    type     : RV_IT_##_GENERIC,    \
+    arch     : _ARCH,               \
+}
+
+//
 // Attribute entries for 32-bit instructions like LAST
 //
 #define ATTR32_LAST(_NAME, _GENERIC, _OPCODE) [IT32_##_NAME] = { \

@@ -39,22 +39,47 @@
 //
 // Fetch two bytes from the given address
 //
-inline static Uns32 fetch2(riscvP riscv, riscvAddr thisPC) {
+inline static Uns16 fetch2(riscvP riscv, riscvAddr thisPC) {
     return vmicxtFetch2Byte((vmiProcessorP)riscv, thisPC);
 }
 
 //
-// Is the instruction a 4-byte instruction
+// Fetch four bytes from the given address
+//
+inline static Uns32 fetch4(riscvP riscv, riscvAddr thisPC) {
+    return vmicxtFetch4Byte((vmiProcessorP)riscv, thisPC);
+}
+
+//
+// Is the instruction a 4-byte instruction?
 //
 inline static Bool is4ByteInstruction(Uns32 instruction) {
     return ((instruction & 3) == 3);
 }
 
 //
+// Are compressed instructions present?
+//
+inline static Bool compressedPresent(riscvP riscv) {
+    return riscv->configInfo.arch & ISA_C;
+}
+
+//
 // Return size of the instruction at address thisPC
 //
 static Uns32 getInstructionSize(riscvP riscv, riscvAddr thisPC) {
-    return is4ByteInstruction(fetch2(riscv, thisPC)) ? 4 : 2;
+
+    Uns32 result;
+
+    if(!compressedPresent(riscv)) {
+        result = 4;
+    } else if(is4ByteInstruction(fetch2(riscv, thisPC))) {
+        result = 4;
+    } else {
+        result = 2;
+    }
+
+    return result;
 }
 
 //
@@ -490,6 +515,12 @@ typedef enum riscvIType32E {
     IT32_FSFLAGS_I,
     IT32_FSRM_I,
 
+    // Custom instructions
+    IT32_CUSTOM1,
+    IT32_CUSTOM2,
+    IT32_CUSTOM3,
+    IT32_CUSTOM4,
+
     // KEEP LAST
     IT32_LAST
 
@@ -670,6 +701,12 @@ const static opAttrs attrsArray32[] = {
     ATTR32_FSSR      (     FSSR_I,      CSRR_I, RVANY,  "fssr",       "|000000000011|.....|001|.....|1110011|"),
     ATTR32_FSSR      (  FSFLAGS_I,      CSRR_I, RVANY,  "fsflags",    "|000000000001|.....|001|.....|1110011|"),
     ATTR32_FSSR      (     FSRM_I,      CSRR_I, RVANY,  "fsrm",       "|000000000010|.....|001|.....|1110011|"),
+
+    // X-extension Type, custom instructions
+    ATTR32_CUSTOM    (    CUSTOM1,      CUSTOM, RVANY,  "custom1",    "|............|.....|...|.....|00010..|"),
+    ATTR32_CUSTOM    (    CUSTOM2,      CUSTOM, RVANY,  "custom2",    "|............|.....|...|.....|01010..|"),
+    ATTR32_CUSTOM    (    CUSTOM3,      CUSTOM, RVANY,  "custom3",    "|............|.....|...|.....|10110..|"),
+    ATTR32_CUSTOM    (    CUSTOM4,      CUSTOM, RVANY,  "custom4",    "|............|.....|...|.....|11110..|"),
 
     // dummy entry for undecoded instruction
     ATTR32_LAST      (       LAST,      LAST,           "undef")
@@ -1040,6 +1077,15 @@ static riscvCSRUDesc getCSRUpdate(
 }
 
 //
+// Force result to be undefined if shift amount >= XLEN
+//
+static void validateShift(riscvP riscv, riscvInstrInfoP info, Uns32 shift) {
+    if(shift>=getXLenBits(riscv)) {
+        info->arch &= ~getXLenArch(riscv);
+    }
+}
+
+//
 // Return a constant encoded within the instruction
 //
 static Uns64 getConstant(riscvP riscv, riscvInstrInfoP info, constSpec c) {
@@ -1062,10 +1108,7 @@ static Uns64 getConstant(riscvP riscv, riscvInstrInfoP info, constSpec c) {
             break;
         case CS_SHAMT_25_20:
             result = U_25_20(instr);
-            // undefined if shift amount >= XLEN
-            if(result>=getXLenBits(riscv)) {
-                info->arch &= ~getXLenArch(riscv);
-            }
+            validateShift(riscv, info, result);
             break;
         case CS_AUIPC:
             result = S_31_12(instr) << 12;
@@ -1091,6 +1134,7 @@ static Uns64 getConstant(riscvP riscv, riscvInstrInfoP info, constSpec c) {
         case CS_C_SLLI:
             result  = U_12(instr) << 5;
             result += U_6_2(instr);
+            validateShift(riscv, info, result);
             break;
         case CS_C_ADDI16SP:
             result  = S_12(instr)  << 9;
@@ -1514,7 +1558,7 @@ void riscvDecode(
     info->type        = RV_IT_LAST;
     info->thisPC      = thisPC;
     info->instruction = riscvGetInstruction(riscv, info->thisPC);
-    info->bytes       = is4ByteInstruction(fetch2(riscv, thisPC)) ? 4 : 2;
+    info->bytes       = is4ByteInstruction(info->instruction) ? 4 : 2;
 
     // decode based on instruction size
     if(info->bytes==4) {
@@ -1529,10 +1573,18 @@ void riscvDecode(
 //
 Uns32 riscvGetInstruction(riscvP riscv, riscvAddr thisPC) {
 
-    Uns32 result = fetch2(riscv, thisPC);
+    Uns32 result;
 
-    if(is4ByteInstruction(result)) {
+    if(!compressedPresent(riscv)) {
 
+        // compressed instructions absent: all instructions are 4 bytes, fetched
+        // in a single 4-byte operation
+        result = fetch4(riscv, thisPC);
+
+    } else if(is4ByteInstruction(result=fetch2(riscv, thisPC))) {
+
+        // compressed instructions present: instructions are 2 or 4 bytes,
+        // fetched in 2-byte parts
         riscvAddr highPC = thisPC + 2;
 
         // allow for highPC wrapping if XLEN is 32
