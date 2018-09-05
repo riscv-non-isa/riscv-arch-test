@@ -818,8 +818,14 @@ typedef enum riscvIType16E {
     IT16_FSW_I,
     IT16_FSWSP_I,
 
-    // explicitly undefined instructions
+    // explicitly undefined and reserved instructions
     IT16_UD1,
+    IT16_RES1,  // c.addi4spn/c.addi16sp when nzuimm=0
+    IT16_RES2,  // c.lui when nzimm=0
+    IT16_RES3,  // c.jr when rs=0
+    IT16_RES4,  // c.addiw when rd=0
+    IT16_RES5,  // c.lwsp when rd=0
+    IT16_RES6,  // c.ldsp when rd=0
 
     // KEEP LAST
     IT16_LAST
@@ -832,20 +838,20 @@ typedef enum riscvIType16E {
 const static opAttrs attrsArray16[] = {
 
     // base R-type instructions
-    ATTR16_ADD      (      ADD_R,     ADD_R, RVANYC,  "add",     "|100|1|.....|.....|10|"),
-    ATTR16_ADDW     (     ADDW_R,     ADD_R, RV64C,   "add",     "|100111|...|01|...|01|"),
-    ATTR16_AND      (      AND_R,     AND_R, RVANYC,  "and",     "|100011|...|11|...|01|"),
-    ATTR16_MV       (       MV_R,      MV_R, RVANYC,  "mv",      "|100|0|.....|.....|10|"),
-    ATTR16_AND      (       OR_R,      OR_R, RVANYC,  "or",      "|100011|...|10|...|01|"),
-    ATTR16_AND      (      SUB_R,     SUB_R, RVANYC,  "sub",     "|100011|...|00|...|01|"),
-    ATTR16_ADDW     (     SUBW_R,     SUB_R, RV64C,   "sub",     "|100111|...|00|...|01|"),
-    ATTR16_AND      (      XOR_R,     XOR_R, RVANYC,  "xor",     "|100011|...|01|...|01|"),
+    ATTR16_ADD      (       ADD_R,     ADD_R, RVANYC,  "add",    "|100|1|.....|.....|10|"),
+    ATTR16_ADDW     (      ADDW_R,     ADD_R, RV64C,   "add",    "|100111|...|01|...|01|"),
+    ATTR16_AND      (       AND_R,     AND_R, RVANYC,  "and",    "|100011|...|11|...|01|"),
+    ATTR16_MV       (        MV_R,      MV_R, RVANYC,  "mv",     "|100|0|.....|.....|10|"),
+    ATTR16_AND      (        OR_R,      OR_R, RVANYC,  "or",     "|100011|...|10|...|01|"),
+    ATTR16_AND      (       SUB_R,     SUB_R, RVANYC,  "sub",    "|100011|...|00|...|01|"),
+    ATTR16_ADDW     (      SUBW_R,     SUB_R, RV64C,   "sub",    "|100111|...|00|...|01|"),
+    ATTR16_AND      (       XOR_R,     XOR_R, RVANYC,  "xor",    "|100011|...|01|...|01|"),
 
     // base I-type instructions
     ATTR16_ADDI     (      ADDI_I,   ADDI_I, RVANYC,  "addi",    "|000|.|.....|.....|01|"),
     ATTR16_ADDI16SP (  ADDI16SP_I,   ADDI_I, RVANYC,  "addi",    "|011|.|00010|.....|01|"),
     ATTR16_ADDI4SPN (  ADDI4SPN_I,   ADDI_I, RVANYC,  "addi",    "|000|........|...|00|"),
-    ATTR16_ADDIW    (     ADDIW_I,   ADDI_I, RV64C,   "addi",    "|001|........|...|01|"),
+    ATTR16_ADDIW    (     ADDIW_I,   ADDI_I, RV64C,   "addi",    "|001|.|.....|.....|01|"),
     ATTR16_ANDI     (      ANDI_I,   ANDI_I, RVANYC,  "andi",    "|100|.|10...|.....|01|"),
     ATTR16_SLLI     (      SLLI_I,   SLLI_I, RVANYC,  "slli",    "|000|.|.....|.....|10|"),
     ATTR16_SRAI     (      SRAI_I,   SRAI_I, RVANYC,  "srai",    "|100|.|01...|.....|01|"),
@@ -864,7 +870,7 @@ const static opAttrs attrsArray16[] = {
     ATTR16_SWSP     (      SWSP_I,      S_I, RVANYC,  "s",       "|110|.|.....|.....|10|"),
 
     // miscellaneous system instructions
-    ATTR16_NOP       (   EBREAK_I, EBREAK_I, RVANYC,  "ebreak",  "|100|1|00000|00000|10|"),
+    ATTR16_NOP      (    EBREAK_I, EBREAK_I, RVANYC,  "ebreak",  "|100|1|00000|00000|10|"),
 
     // base B-type instructions
     ATTR16_BEQZ     (      BEQZ_B,    BEQ_B, RVANYC,  "beqz",    "|110|...|...|.....|01|"),
@@ -884,8 +890,14 @@ const static opAttrs attrsArray16[] = {
     ATTR16_FLW      (       FSW_I,      S_I, RV32CF,  "fs",      "|111|...|...|..|...|00|"),
     ATTR16_FSWSP    (     FSWSP_I,      S_I, RV32CF,  "fs",      "|111|......|.....|10|"),
 
-    // explicitly undefined instructions
+    // explicitly undefined and reserved instructions
     ATTR16_NOP      (         UD1,     LAST, RVANYC,  "illegal", "|000|0|00000|00000|00|"),
+    ATTR16_NOP      (        RES1,     LAST, RVANYC,  "res",     "|000|00000000|...|00|"),
+    ATTR16_NOP      (        RES2,     LAST, RVANYC,  "res",     "|011|0|.....|00000|01|"),
+    ATTR16_NOP      (        RES3,     LAST, RVANYC,  "res",     "|100|0|00000|00000|10|"),
+    ATTR16_NOP      (        RES4,     LAST, RV64C,   "res",     "|001|.|00000|.....|01|"),
+    ATTR16_NOP      (        RES5,     LAST, RVANYC,  "res",     "|010|.|00000|.....|10|"),
+    ATTR16_NOP      (        RES6,     LAST, RV64C,   "res",     "|011|.|00000|.....|10|"),
 
     // dummy entry for undecoded instruction
     ATTR16_LAST     (        LAST,     LAST,          "undef")
