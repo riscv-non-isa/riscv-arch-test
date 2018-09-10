@@ -2382,6 +2382,23 @@ static vmiFPConfigCP getFPControl(riscvMorphStateP state) {
 }
 
 //
+// Move floating point value (two registers)
+//
+static RISCV_MORPH_FN(emitFMoveRR) {
+
+    riscvP       riscv = state->riscv;
+    riscvRegDesc fdA   = getRVReg(state, 0);
+    riscvRegDesc fs1A  = getRVReg(state, 1);
+    vmiReg       fd    = getVMIReg(riscv, fdA);
+    vmiReg       fs1   = getVMIRegFS(riscv, fs1A, getTmp(0));
+    Uns32        bits  = getRBits(fdA);
+
+    vmimtMoveRR(bits, fd, fs1);
+
+    writeReg(riscv, fdA);
+}
+
+//
 // Implement floating point unop
 //
 static RISCV_MORPH_FN(emitFUnop) {
@@ -2738,6 +2755,7 @@ const static riscvMorphAttr dispatchTable[] = {
     [RV_IT_SC_R]        = {morph:emitSC, iClass:OCL_IC_EXCLUSIVE   },
 
     // F-extension and D-extension R-type instructions
+    [RV_IT_FMV_R]       = {                              morph:emitFMoveRR                                                      },
     [RV_IT_FABS_R]      = {fpRM:0, fpConfig:RVFP_NORMAL, morph:emitFUnop,    fpUnop  : vmi_FQABS                                },
     [RV_IT_FADD_R]      = {fpRM:1, fpConfig:RVFP_NORMAL, morph:emitFBinop,   fpBinop : vmi_FADD                                 },
     [RV_IT_FCLASS_R]    = {fpRM:0, fpConfig:RVFP_NORMAL, morph:emitFClass,                         iClass:OCL_IC_FLOAT          },

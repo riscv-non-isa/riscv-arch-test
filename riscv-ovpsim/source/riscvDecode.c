@@ -838,69 +838,69 @@ typedef enum riscvIType16E {
 const static opAttrs attrsArray16[] = {
 
     // base R-type instructions
-    ATTR16_ADD      (       ADD_R,     ADD_R, RVANYC,  "add",    "|100|1|.....|.....|10|"),
-    ATTR16_ADDW     (      ADDW_R,     ADD_R, RV64C,   "add",    "|100111|...|01|...|01|"),
-    ATTR16_AND      (       AND_R,     AND_R, RVANYC,  "and",    "|100011|...|11|...|01|"),
-    ATTR16_MV       (        MV_R,      MV_R, RVANYC,  "mv",     "|100|0|.....|.....|10|"),
-    ATTR16_AND      (        OR_R,      OR_R, RVANYC,  "or",     "|100011|...|10|...|01|"),
-    ATTR16_AND      (       SUB_R,     SUB_R, RVANYC,  "sub",    "|100011|...|00|...|01|"),
-    ATTR16_ADDW     (      SUBW_R,     SUB_R, RV64C,   "sub",    "|100111|...|00|...|01|"),
-    ATTR16_AND      (       XOR_R,     XOR_R, RVANYC,  "xor",    "|100011|...|01|...|01|"),
+    ATTR16_ADD      (      ADD_R,    ADD_R, RVANYC,  "add",     "|100|1|.....|.....|10|"),
+    ATTR16_ADDW     (     ADDW_R,    ADD_R, RV64C,   "add",     "|100111|...|01|...|01|"),
+    ATTR16_AND      (      AND_R,    AND_R, RVANYC,  "and",     "|100011|...|11|...|01|"),
+    ATTR16_MV       (       MV_R,     MV_R, RVANYC,  "mv",      "|100|0|.....|.....|10|"),
+    ATTR16_AND      (       OR_R,     OR_R, RVANYC,  "or",      "|100011|...|10|...|01|"),
+    ATTR16_AND      (      SUB_R,    SUB_R, RVANYC,  "sub",     "|100011|...|00|...|01|"),
+    ATTR16_ADDW     (     SUBW_R,    SUB_R, RV64C,   "sub",     "|100111|...|00|...|01|"),
+    ATTR16_AND      (      XOR_R,    XOR_R, RVANYC,  "xor",     "|100011|...|01|...|01|"),
 
     // base I-type instructions
-    ATTR16_ADDI     (      ADDI_I,   ADDI_I, RVANYC,  "addi",    "|000|.|.....|.....|01|"),
-    ATTR16_ADDI16SP (  ADDI16SP_I,   ADDI_I, RVANYC,  "addi",    "|011|.|00010|.....|01|"),
-    ATTR16_ADDI4SPN (  ADDI4SPN_I,   ADDI_I, RVANYC,  "addi",    "|000|........|...|00|"),
-    ATTR16_ADDIW    (     ADDIW_I,   ADDI_I, RV64C,   "addi",    "|001|.|.....|.....|01|"),
-    ATTR16_ANDI     (      ANDI_I,   ANDI_I, RVANYC,  "andi",    "|100|.|10...|.....|01|"),
-    ATTR16_SLLI     (      SLLI_I,   SLLI_I, RVANYC,  "slli",    "|000|.|.....|.....|10|"),
-    ATTR16_SRAI     (      SRAI_I,   SRAI_I, RVANYC,  "srai",    "|100|.|01...|.....|01|"),
-    ATTR16_SRAI     (      SRLI_I,   SRLI_I, RVANYC,  "srli",    "|100|.|00...|.....|01|"),
-    ATTR16_LI       (        LI_I,   ADDI_I, RVANYC,  "li",      "|010|.|.....|.....|01|"),
-    ATTR16_LUI      (       LUI_I,   ADDI_I, RVANYC,  "lui",     "|011|.|.....|.....|01|"),
-    ATTR16_JR       (        JR_I,   JALR_I, RVANYC,  "jr",      "|100|0|.....|00000|10|"),
-    ATTR16_JALR     (      JALR_I,   JALR_I, RVANYC,  "jalr",    "|100|1|.....|00000|10|"),
-    ATTR16_LD       (        LD_I,      L_I, RV64C,   "l",       "|011|...|...|..|...|00|"),
-    ATTR16_LDSP     (      LDSP_I,      L_I, RV64C,   "l",       "|011|.|.....|.....|10|"),
-    ATTR16_LW       (        LW_I,      L_I, RVANYC,  "l",       "|010|...|...|..|...|00|"),
-    ATTR16_LWSP     (      LWSP_I,      L_I, RVANYC,  "l",       "|010|.|.....|.....|10|"),
-    ATTR16_LD       (        SD_I,      S_I, RV64C,   "s",       "|111|...|...|..|...|00|"),
-    ATTR16_SDSP     (      SDSP_I,      S_I, RV64C,   "s",       "|111|.|.....|.....|10|"),
-    ATTR16_LW       (        SW_I,      S_I, RVANYC,  "s",       "|110|...|...|..|...|00|"),
-    ATTR16_SWSP     (      SWSP_I,      S_I, RVANYC,  "s",       "|110|.|.....|.....|10|"),
+    ATTR16_ADDI     (     ADDI_I,   ADDI_I, RVANYC,  "addi",    "|000|.|.....|.....|01|"),
+    ATTR16_ADDI16SP ( ADDI16SP_I,   ADDI_I, RVANYC,  "addi",    "|011|.|00010|.....|01|"),
+    ATTR16_ADDI4SPN ( ADDI4SPN_I,   ADDI_I, RVANYC,  "addi",    "|000|........|...|00|"),
+    ATTR16_ADDIW    (    ADDIW_I,   ADDI_I, RV64C,   "addi",    "|001|.|.....|.....|01|"),
+    ATTR16_ANDI     (     ANDI_I,   ANDI_I, RVANYC,  "andi",    "|100|.|10...|.....|01|"),
+    ATTR16_SLLI     (     SLLI_I,   SLLI_I, RVANYC,  "slli",    "|000|.|.....|.....|10|"),
+    ATTR16_SRAI     (     SRAI_I,   SRAI_I, RVANYC,  "srai",    "|100|.|01...|.....|01|"),
+    ATTR16_SRAI     (     SRLI_I,   SRLI_I, RVANYC,  "srli",    "|100|.|00...|.....|01|"),
+    ATTR16_LI       (       LI_I,   ADDI_I, RVANYC,  "li",      "|010|.|.....|.....|01|"),
+    ATTR16_LUI      (      LUI_I,   ADDI_I, RVANYC,  "lui",     "|011|.|.....|.....|01|"),
+    ATTR16_JR       (       JR_I,   JALR_I, RVANYC,  "jr",      "|100|0|.....|00000|10|"),
+    ATTR16_JALR     (     JALR_I,   JALR_I, RVANYC,  "jalr",    "|100|1|.....|00000|10|"),
+    ATTR16_LD       (       LD_I,      L_I, RV64C,   "l",       "|011|...|...|..|...|00|"),
+    ATTR16_LDSP     (     LDSP_I,      L_I, RV64C,   "l",       "|011|.|.....|.....|10|"),
+    ATTR16_LW       (       LW_I,      L_I, RVANYC,  "l",       "|010|...|...|..|...|00|"),
+    ATTR16_LWSP     (     LWSP_I,      L_I, RVANYC,  "l",       "|010|.|.....|.....|10|"),
+    ATTR16_LD       (       SD_I,      S_I, RV64C,   "s",       "|111|...|...|..|...|00|"),
+    ATTR16_SDSP     (     SDSP_I,      S_I, RV64C,   "s",       "|111|.|.....|.....|10|"),
+    ATTR16_LW       (       SW_I,      S_I, RVANYC,  "s",       "|110|...|...|..|...|00|"),
+    ATTR16_SWSP     (     SWSP_I,      S_I, RVANYC,  "s",       "|110|.|.....|.....|10|"),
 
     // miscellaneous system instructions
-    ATTR16_NOP      (    EBREAK_I, EBREAK_I, RVANYC,  "ebreak",  "|100|1|00000|00000|10|"),
+    ATTR16_NOP      (   EBREAK_I, EBREAK_I, RVANYC,  "ebreak",  "|100|1|00000|00000|10|"),
 
     // base B-type instructions
-    ATTR16_BEQZ     (      BEQZ_B,    BEQ_B, RVANYC,  "beqz",    "|110|...|...|.....|01|"),
-    ATTR16_BEQZ     (      BNEZ_B,    BNE_B, RVANYC,  "bnez",    "|111|...|...|.....|01|"),
+    ATTR16_BEQZ     (     BEQZ_B,    BEQ_B, RVANYC,  "beqz",    "|110|...|...|.....|01|"),
+    ATTR16_BEQZ     (     BNEZ_B,    BNE_B, RVANYC,  "bnez",    "|111|...|...|.....|01|"),
 
     // base J-type instructions
-    ATTR16_J        (         J_J,    JAL_J, RVANYC,  "j",       "|101|...........|01|"),
-    ATTR16_JAL      (       JAL_J,    JAL_J, RV32C,   "jal",     "|001|...........|01|"),
+    ATTR16_J        (        J_J,    JAL_J, RVANYC,  "j",       "|101|...........|01|"),
+    ATTR16_JAL      (      JAL_J,    JAL_J, RV32C,   "jal",     "|001|...........|01|"),
 
     // F-extension and D-extension I-type instructions
-    ATTR16_FLD      (       FLD_I,      L_I, RVANYCD, "fl",      "|001|...|...|..|...|00|"),
-    ATTR16_FLDSP    (     FLDSP_I,      L_I, RVANYCD, "fl",      "|001|.|.....|.....|10|"),
-    ATTR16_FLW      (       FLW_I,      L_I, RV32CF,  "fl",      "|011|...|...|..|...|00|"),
-    ATTR16_FLWSP    (     FLWSP_I,      L_I, RV32CF,  "fl",      "|011|.|.....|.....|10|"),
-    ATTR16_FLD      (       FSD_I,      S_I, RVANYCD, "fs",      "|101|...|...|..|...|00|"),
-    ATTR16_FSDSP    (     FSDSP_I,      S_I, RVANYCD, "fs",      "|101|......|.....|10|"),
-    ATTR16_FLW      (       FSW_I,      S_I, RV32CF,  "fs",      "|111|...|...|..|...|00|"),
-    ATTR16_FSWSP    (     FSWSP_I,      S_I, RV32CF,  "fs",      "|111|......|.....|10|"),
+    ATTR16_FLD      (      FLD_I,      L_I, RVANYCD, "fl",      "|001|...|...|..|...|00|"),
+    ATTR16_FLDSP    (    FLDSP_I,      L_I, RVANYCD, "fl",      "|001|.|.....|.....|10|"),
+    ATTR16_FLW      (      FLW_I,      L_I, RV32CF,  "fl",      "|011|...|...|..|...|00|"),
+    ATTR16_FLWSP    (    FLWSP_I,      L_I, RV32CF,  "fl",      "|011|.|.....|.....|10|"),
+    ATTR16_FLD      (      FSD_I,      S_I, RVANYCD, "fs",      "|101|...|...|..|...|00|"),
+    ATTR16_FSDSP    (    FSDSP_I,      S_I, RVANYCD, "fs",      "|101|......|.....|10|"),
+    ATTR16_FLW      (      FSW_I,      S_I, RV32CF,  "fs",      "|111|...|...|..|...|00|"),
+    ATTR16_FSWSP    (    FSWSP_I,      S_I, RV32CF,  "fs",      "|111|......|.....|10|"),
 
     // explicitly undefined and reserved instructions
-    ATTR16_NOP      (         UD1,     LAST, RVANYC,  "illegal", "|000|0|00000|00000|00|"),
-    ATTR16_NOP      (        RES1,     LAST, RVANYC,  "res",     "|000|00000000|...|00|"),
-    ATTR16_NOP      (        RES2,     LAST, RVANYC,  "res",     "|011|0|.....|00000|01|"),
-    ATTR16_NOP      (        RES3,     LAST, RVANYC,  "res",     "|100|0|00000|00000|10|"),
-    ATTR16_NOP      (        RES4,     LAST, RV64C,   "res",     "|001|.|00000|.....|01|"),
-    ATTR16_NOP      (        RES5,     LAST, RVANYC,  "res",     "|010|.|00000|.....|10|"),
-    ATTR16_NOP      (        RES6,     LAST, RV64C,   "res",     "|011|.|00000|.....|10|"),
+    ATTR16_NOP      (        UD1,     LAST, RVANYC,  "illegal", "|000|0|00000|00000|00|"),
+    ATTR16_NOP      (       RES1,     LAST, RVANYC,  "res",     "|000|00000000|...|00|"),
+    ATTR16_NOP      (       RES2,     LAST, RVANYC,  "res",     "|011|0|.....|00000|01|"),
+    ATTR16_NOP      (       RES3,     LAST, RVANYC,  "res",     "|100|0|00000|00000|10|"),
+    ATTR16_NOP      (       RES4,     LAST, RV64C,   "res",     "|001|.|00000|.....|01|"),
+    ATTR16_NOP      (       RES5,     LAST, RVANYC,  "res",     "|010|.|00000|.....|10|"),
+    ATTR16_NOP      (       RES6,     LAST, RV64C,   "res",     "|011|.|00000|.....|10|"),
 
     // dummy entry for undecoded instruction
-    ATTR16_LAST     (        LAST,     LAST,          "undef")
+    ATTR16_LAST     (       LAST,     LAST,          "undef")
 };
 
 //
@@ -1470,7 +1470,7 @@ static void fixFPPseudoInstructions(riscvInstrInfoP info) {
 
         case RV_IT_FSGNJ_R:
             if(info->r[1]==info->r[2]) {
-                info->type   = RV_IT_MV_R;
+                info->type   = RV_IT_FMV_R;
                 info->opcode = "fmv";
                 info->format = FMT_R1_R2;
             }
