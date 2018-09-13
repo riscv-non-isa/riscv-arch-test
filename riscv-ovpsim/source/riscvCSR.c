@@ -1266,8 +1266,8 @@ static const riscvCSRAttrs csrs[CSR_ID(LAST)] = {
 
     //                name          num    arch         attrs     description                                      rCB         rwCB   wCB
     CSR_ATTR_P__     (sstatus,      0x100, ISA_S,       0,0,0,0,  "Supervisor Status",                             sstatusR,   0,     sstatusW  ),
-    CSR_ATTR_TV_     (sedeleg,      0x102, ISA_N,       0,0,0,0,  "Supervisor Exception Delegation",               0,          0,     0         ),
-    CSR_ATTR_T__     (sideleg,      0x103, ISA_N,       1,0,0,0,  "Supervisor Interrupt Delegation",               0,          0,     sidelegW  ),
+    CSR_ATTR_TV_     (sedeleg,      0x102, ISA_SandN,   0,0,0,0,  "Supervisor Exception Delegation",               0,          0,     0         ),
+    CSR_ATTR_T__     (sideleg,      0x103, ISA_SandN,   1,0,0,0,  "Supervisor Interrupt Delegation",               0,          0,     sidelegW  ),
     CSR_ATTR_P__     (sie,          0x104, ISA_S,       1,0,0,0,  "Supervisor Interrupt Enable",                   sieR,       0,     sieW      ),
     CSR_ATTR_T__     (stvec,        0x105, ISA_S,       0,0,0,0,  "Supervisor Trap-Vector Base-Address",           0,          0,     stvecW    ),
     CSR_ATTR_TV_     (scounteren,   0x106, ISA_S,       0,0,0,0,  "Supervisor Counter Enable",                     0,          0,     0         ),
@@ -1285,11 +1285,11 @@ static const riscvCSRAttrs csrs[CSR_ID(LAST)] = {
     CSR_ATTR_T__     (mhartid,      0xF14, 0,           0,0,0,0,  "Hardware Thread ID",                            0,          0,     0         ),
     CSR_ATTR_TV_     (mstatus,      0x300, 0,           0,0,0,0,  "Machine Status",                                mstatusR,   0,     mstatusW  ),
     CSR_ATTR_T__     (misa,         0x301, 0,           1,0,0,0,  "ISA and Extensions",                            0,          0,     misaW     ),
-    CSR_ATTR_TV_     (medeleg,      0x302, ISA_S|ISA_N, 0,0,0,0,  "Machine Exception Delegation",                  0,          0,     0         ),
-    CSR_ATTR_T__     (mideleg,      0x303, ISA_S|ISA_N, 1,0,0,0,  "Machine Interrupt Delegation",                  0,          0,     midelegW  ),
+    CSR_ATTR_TV_     (medeleg,      0x302, ISA_SorN,    0,0,0,0,  "Machine Exception Delegation",                  0,          0,     0         ),
+    CSR_ATTR_T__     (mideleg,      0x303, ISA_SorN,    1,0,0,0,  "Machine Interrupt Delegation",                  0,          0,     midelegW  ),
     CSR_ATTR_T__     (mie,          0x304, 0,           1,0,0,0,  "Machine Interrupt Enable",                      0,          0,     mieW      ),
     CSR_ATTR_T__     (mtvec,        0x305, 0,           0,0,0,0,  "Machine Trap-Vector Base-Address",              0,          0,     mtvecW    ),
-    CSR_ATTR_TV_     (mcounteren,   0x306, ISA_S|ISA_U, 0,0,0,0,  "Machine Counter Enable",                        0,          0,     0         ),
+    CSR_ATTR_TV_     (mcounteren,   0x306, ISA_SorU,    0,0,0,0,  "Machine Counter Enable",                        0,          0,     0         ),
     CSR_ATTR_T__     (mscratch,     0x340, 0,           0,0,0,0,  "Machine Scratch",                               0,          0,     0         ),
     CSR_ATTR_TV_     (mepc,         0x341, 0,           0,0,0,0,  "Machine Exception Program Counter",             0,          0,     0         ),
     CSR_ATTR_TV_     (mcause,       0x342, 0,           0,0,0,0,  "Machine Cause",                                 0,          0,     0         ),
@@ -1373,12 +1373,31 @@ inline static vmiRegAccess getAccess(riscvCSRAttrsCP attrs) {
 // the purposes of a gdb access (if normal is False)? If not, return missing
 // but required architectural features
 //
-inline static riscvArchitecture getMissingCSRFeatures(
+static riscvArchitecture getMissingCSRFeatures(
     riscvCSRAttrsCP   attrs,
-    riscvArchitecture arch,
+    riscvArchitecture actual,
     Bool              normal
 ) {
-    return (normal && !(arch & attrs->arch)) ? attrs->arch : 0;
+    if(!normal) {
+
+        // gdb access always supported
+        return 0;
+
+    } else {
+
+        riscvArchitecture required = attrs->arch & ~ISA_and;
+
+        if(attrs->arch & ISA_and) {
+
+            // all specified features are required
+            return required & ~actual;
+
+        } else {
+
+            // one or more of the specified features is required
+            return !(actual & required) ? required : 0;
+        }
+    }
 }
 
 //
@@ -2099,6 +2118,15 @@ void riscvCSRInit(riscvP riscv, Uns32 index) {
     SET_CSR_MASK_V(riscv, sideleg, uInterrupts);
 
     //--------------------------------------------------------------------------
+    // sedeleg, sideleg initial values (N extension and no Supervisor mode)
+    //--------------------------------------------------------------------------
+
+    if((arch&ISA_SorN) == ISA_N) {
+        WR_CSR(riscv, sedeleg, -1);
+        WR_CSR(riscv, sideleg, -1);
+    }
+
+     //--------------------------------------------------------------------------
     // mtvec, stvec, utvec masks and initial value
     //--------------------------------------------------------------------------
 

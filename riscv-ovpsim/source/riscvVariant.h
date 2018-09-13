@@ -24,6 +24,7 @@
 //
 #define XLEN32_CHAR             ('Z'+1)
 #define XLEN64_CHAR             ('Z'+2)
+#define RISCV_FAND_CHAR         ('Z'+3)
 #define RISCV_FEATURE_INDEX(_C) ((_C)-'A')
 #define RISCV_FEATURE_BIT(_C)   (1<<RISCV_FEATURE_INDEX(_C))
 #define XLEN_SHIFT              RISCV_FEATURE_INDEX(XLEN32_CHAR)
@@ -39,19 +40,25 @@ typedef enum riscvArchitectureE {
     ISA_XLEN_64  = RISCV_FEATURE_BIT(XLEN64_CHAR),  // supported for XLEN=64
     ISA_XLEN_ANY = (ISA_XLEN_32|ISA_XLEN_64),
 
+    // FEATURES A AND B
+    ISA_and  = RISCV_FEATURE_BIT(RISCV_FAND_CHAR),
+
     // BASE ISA FEATURES
-    ISA_A  = RISCV_FEATURE_BIT('A'),    // atomic instructions
-    ISA_C  = RISCV_FEATURE_BIT('C'),    // compressed instructions
-    ISA_E  = RISCV_FEATURE_BIT('E'),    // embedded instructions
-    ISA_D  = RISCV_FEATURE_BIT('D'),    // double-precision floating point
-    ISA_F  = RISCV_FEATURE_BIT('F'),    // single-precision floating point
-    ISA_I  = RISCV_FEATURE_BIT('I'),    // RV32I/64I/128I base ISA
-    ISA_M  = RISCV_FEATURE_BIT('M'),    // integer multiply/divide instructions
-    ISA_N  = RISCV_FEATURE_BIT('N'),    // user-mode interrupts
-    ISA_S  = RISCV_FEATURE_BIT('S'),    // supervisor mode implemented
-    ISA_U  = RISCV_FEATURE_BIT('U'),    // user mode implemented
-    ISA_X  = RISCV_FEATURE_BIT('X'),    // non-standard extensions present
-    ISA_DF = ISA_D|ISA_F,               // either single or double precision
+    ISA_A     = RISCV_FEATURE_BIT('A'), // atomic instructions
+    ISA_C     = RISCV_FEATURE_BIT('C'), // compressed instructions
+    ISA_E     = RISCV_FEATURE_BIT('E'), // embedded instructions
+    ISA_D     = RISCV_FEATURE_BIT('D'), // double-precision floating point
+    ISA_F     = RISCV_FEATURE_BIT('F'), // single-precision floating point
+    ISA_I     = RISCV_FEATURE_BIT('I'), // RV32I/64I/128I base ISA
+    ISA_M     = RISCV_FEATURE_BIT('M'), // integer multiply/divide instructions
+    ISA_N     = RISCV_FEATURE_BIT('N'), // user-mode interrupts
+    ISA_S     = RISCV_FEATURE_BIT('S'), // supervisor mode implemented
+    ISA_U     = RISCV_FEATURE_BIT('U'), // user mode implemented
+    ISA_X     = RISCV_FEATURE_BIT('X'), // non-standard extensions present
+    ISA_DF    = ISA_D|ISA_F,            // either single or double precision
+    ISA_SorU  = ISA_S|ISA_U,            // either supervisor or user mode
+    ISA_SorN  = ISA_S|ISA_N,            // either supervisor or user interrupts
+    ISA_SandN = ISA_S|ISA_N|ISA_and,    // both supervisor and user interrupts
 
     RV32     = ISA_XLEN_32,
     RV32I    = ISA_XLEN_32  | ISA_I,
