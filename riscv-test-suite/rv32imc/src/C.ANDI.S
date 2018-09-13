@@ -37,7 +37,7 @@ RV_COMPLIANCE_RV32M
 RV_COMPLIANCE_CODE_BEGIN
 
 	RVTEST_IO_INIT
-	RVTEST_IO_ASSERT_EQ(x0, 0x00000000)
+	RVTEST_IO_ASSERT_GPR_EQ(x0, 0x00000000)
 	RVTEST_IO_WRITE_STR("Test Begin Reserved regs ra(x1) a0(x10) t0(x5)\n")
 
 	# ---------------------------------------------------------------------------------------------
@@ -99,11 +99,11 @@ RV_COMPLIANCE_CODE_BEGIN
 	# address for test results
 	la	x2, test_5_res
 
-	TEST_CI_OP(c.andi, x9, 0, 0x8000, 0x0, x2, 0)
-	TEST_CI_OP(c.andi, x11, 0, 0x8000, 0x1, x2, 4)
-	TEST_CI_OP(c.andi, x12, 0, 0x8000, 0xf, x2, 8)
-	TEST_CI_OP(c.andi, x13, 0, 0x8000, 0x10, x2, 12)
-	TEST_CI_OP(c.andi, x14, 0, 0x8000, 0x1f, x2, 16)
+	TEST_CI_OP(c.andi, x9, 0, 0x80000, 0x0, x2, 0)
+	TEST_CI_OP(c.andi, x11, 0, 0x80000, 0x1, x2, 4)
+	TEST_CI_OP(c.andi, x12, 0, 0x80000, 0xf, x2, 8)
+	TEST_CI_OP(c.andi, x13, 0, 0x80000, 0x10, x2, 12)
+	TEST_CI_OP(c.andi, x14, 0, 0x80000, 0x1f, x2, 16)
 
 	RVTEST_IO_WRITE_STR("Test End\n")
 

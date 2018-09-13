@@ -274,7 +274,7 @@ This description assumes the use of a configurable simulator with good trace and
 
 * Ensure that the processor configuration is set appropriately.
 
-* Use the `RVTEST` macros (defined in `compliance_io.h`) to make it easy to see the details of a Test’s execution. There are macros for assertions (`RVTEST_IO_ASSERT_EQ`) and tracing (`RVTEST_IO_WRITE_STR`) which are empty on targets that can not implement them.
+* Use the `RVTEST` macros (defined in `compliance_io.h`) to make it easy to see the details of a Test’s execution. There are macros for assertions (`RVTEST_IO_ASSERT_GPR_EQ`) and tracing (`RVTEST_IO_WRITE_STR`) which are empty on targets that can not implement them.
 
 * Assuming you are developing the test on a simulator, use the simulator’s tracing capabilities, especially a register change mode to single step your test examining all changing registers etc. to ensure your test is stimulating what is intending.
 
@@ -328,7 +328,7 @@ For tracing the test the following  macros are defined in `riscv-target/riscvOVP
 ----
 RVTEST_IO_INIT
 RVTEST_IO_WRITE_STR(_STR)
-RVTEST_IO_ASSERT_EQ(_R, _I)
+RVTEST_IO_ASSERT_GPR_EQ(_R, _I)
 ----
 
 An example of a test that uses the tracing macros is `riscv-test-suite/rv32i/ISA/src/I-IO.S`.

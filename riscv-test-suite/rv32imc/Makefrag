@@ -28,17 +28,24 @@
 # Description: Makefrag for RV32IMC compliance tests
 
 rv32imc_sc_tests =    \
+	C.JR \
 	C.ADD \
+	C.XOR \
 	C.OR \
-	C.SUB \
 	C.MV \
-	C.AND \
-	C.XOR \
-	C.LI \
-	C.LUI \
-	C.ADDI \
+	C.SRAI \
 	C.ANDI \
-	C.XOR \
+	C.LW \
+	C.SRLI \
+	C.ADDI4SPN \
+	C.ADDI16SP \
+	C.LUI \
+	C.LI \
+	C.ADDI \
+	C.AND \
+	C.SUB \
+	C.SLLI \
+	C.JALR \
 
 rv32imc_tests = $(addsuffix .elf, $(rv32imc_sc_tests))
 

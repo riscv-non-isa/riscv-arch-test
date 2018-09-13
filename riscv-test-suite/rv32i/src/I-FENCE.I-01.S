@@ -39,7 +39,7 @@ RV_COMPLIANCE_RV32M
 RV_COMPLIANCE_CODE_BEGIN
 
     RVTEST_IO_INIT
-    RVTEST_IO_ASSERT_EQ(x0, 0x00000000)
+    RVTEST_IO_ASSERT_GPR_EQ(x0, 0x00000000)
     RVTEST_IO_WRITE_STR("# Test Begin Reserved regs ra(x1) a0(x10) t0(x5)\n")
 
     # ---------------------------------------------------------------------------------------------
@@ -75,10 +75,10 @@ instr_A_dst:
     // Assert
     //
     RVTEST_IO_CHECK()
-    #RVTEST_IO_ASSERT_EQ(x1, 0x8000026C)
-    RVTEST_IO_ASSERT_EQ(x2, 0x00000012)
-    RVTEST_IO_ASSERT_EQ(x3, 0x00000042)
-    RVTEST_IO_ASSERT_EQ(x15, 0x001101B3)
+    #RVTEST_IO_ASSERT_GPR_EQ(x1, 0x8000026C)
+    RVTEST_IO_ASSERT_GPR_EQ(x2, 0x00000012)
+    RVTEST_IO_ASSERT_GPR_EQ(x3, 0x00000042)
+    RVTEST_IO_ASSERT_GPR_EQ(x15, 0x001101B3)
 
     RVTEST_IO_WRITE_STR("# Test part A1  - Complete\n");
 

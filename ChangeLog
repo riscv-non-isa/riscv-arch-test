@@ -1,3 +1,9 @@
+2018-09-10  Lee Moore  <moore@imperas.com>
+	* Added tests to improve coverage, usage of Imperas Mutating Fault Simulator to 
+	  identify untested usage cases
+	* macro renames to support GPR, (S)FPR, (D)FPR
+	
+	
 2018-06-15  Radek Hajek  <hajek@codasip.com>
 
 	Modifications to support Codasip simulator.

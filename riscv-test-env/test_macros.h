@@ -19,28 +19,6 @@
  *
  */
 
-
-//
-// In general the following registers are reserved
-// ra, a0, t0, t1
-// Additionally on an assertion violation, t1, t2 are overwritten
-// x1, x10, x5, x6, x7 respectively
-// Floating registers reserved
-// f5
-//
-
-#define LOCAL_IO_WRITE_REG(_R)                                          \
-    mv          a0, _R;                                                 \
-    jal         FN_WriteA0;
-
-#define LOCAL_FP_WRITE_REG(_F)                                          \
-    fmv.x.s     a0, _F;                                                 \
-    jal         FN_WriteA0;
-
-#define LOCAL_FPD_WRITE_REG(_F)                                         \
-    fmv.x.d     a0, _F;                                                 \
-    jal         FN_WriteA0;
-
 #define MASK_XLEN(x) ((x) & ((1 << (__riscv_xlen - 1) << 1) - 1))
 
 #define SEXT_IMM(x) ((x) | (-(((x) >> 11) & 1) << 11))
@@ -49,8 +27,9 @@
 #define TEST_CASE(destreg, correctval, swreg, offset, code... ) \
     code; \
     sw destreg, offset(swreg); \
-    RVTEST_IO_ASSERT_EQ(destreg, correctval) \
+    RVTEST_IO_ASSERT_GPR_EQ(destreg, correctval) \
 
+// Base functions for single precision floating point operations
 #define TEST_CASE_FP(test_num, destreg, reg1, reg2, correctval, val1, val2, swreg, offset, code... ) \
     la  a0, test_ ## test_num ## _data; \
     flw reg1, 0(a0); \
@@ -58,7 +37,7 @@
     lw t1, 8(a0); \
     code; \
     fsw destreg, offset(swreg); \
-    RVTEST_FP_ASSERT_EQ(destreg, t1, correctval) \
+    RVTEST_IO_ASSERT_SFPR_EQ(destreg, t1, correctval) \
     .pushsection .data; \
     .align 3; \
     test_ ## test_num ## _data: \
@@ -67,15 +46,14 @@
       .word correctval; \
     .popsection
 
-// Base functions for single precision floating point operations
 #define TEST_CASE_FP_I(test_num, destreg, reg, correctval, val, swreg, offset, code... ) \
     la  a0, test_ ## test_num ## _data; \
     lw t1, 0(a0); \
     code; \
     fsw destreg, offset(swreg); \
-    RVTEST_FP_ASSERT_EQ(destreg, t1, correctval) \
+    RVTEST_IO_ASSERT_SFPR_EQ(destreg, t1, correctval) \
     .pushsection .data; \
-    .align 2; \
+    .align 1; \
     test_ ## test_num ## _data: \
       .word correctval; \
     .popsection
@@ -86,7 +64,7 @@
     lw t1, 4(a0); \
     code; \
     sw destreg, offset(swreg); \
-    RVTEST_FP2_ASSERT_EQ(destreg, t1, correctval) \
+    RVTEST_IO_ASSERT_GPR_EQ(destreg, correctval) \
     .pushsection .data; \
     .align 2; \
     test_ ## test_num ## _data: \
@@ -102,7 +80,7 @@
     lw t1, 12(a0); \
     code; \
     fsw destreg, offset(swreg); \
-    RVTEST_FP_ASSERT_EQ(destreg, t1, correctval) \
+    RVTEST_IO_ASSERT_SFPR_EQ(destreg, t1, correctval) \
     .pushsection .data; \
     .align 4; \
     test_ ## test_num ## _data: \
@@ -112,21 +90,91 @@
       .word correctval; \
     .popsection
 
-// Base functions for double precision floating point operations
+// Base functions for double precision floating point operations - rv32d
 #define TEST_CASE_FPD(test_num, destreg, reg1, reg2, correctval, val1, val2, swreg, offset, code... ) \
     la  a0, test_ ## test_num ## _data; \
     fld reg1, 0(a0); \
     fld reg2, 8(a0); \
-    ld t1, 16(a0); \
     code; \
     fsd destreg, offset(swreg); \
-    RVTEST_FPD_ASSERT_EQ(destreg, t1, correctval) \
+    lw t1, 16(a0); \
+    lw t2, 20(a0); \
+    la a0, store_ ## test_num ## _data; \
+    fsd destreg, 0(a0); \
+    lw a1, 0(a0); \
+    lw a2, 4(a0); \
+    RVTEST_FPD_ASSERT_EQ(destreg, t2, t1, a2, a1, correctval) \
+    .pushsection .data; \
+    .align 3; \
+    test_ ## test_num ## _data: \
+      .double val1; \
+      .double val2; \
+      .dword correctval; \
+    .popsection; \
+    .pushsection .data; \
+    store_ ## test_num ## _data: \
+      .fill 1, 8, -1; \
+    .popsection
+
+#define TEST_CASE_FPD_I(test_num, destreg, reg, correctval, val, swreg, offset, code... ) \
+    la  a0, test_ ## test_num ## _data; \
+    code; \
+    fsd destreg, offset(swreg); \
+    lw t1, 0(a0); \
+    lw t2, 4(a0); \
+    la a0, store_ ## test_num ## _data; \
+    fsd destreg, 0(a0); \
+    lw a1, 0(a0); \
+    lw a2, 4(a0); \
+    RVTEST_FPD_ASSERT_EQ(destreg, t2, t1, a2, a1, correctval) \
+    .pushsection .data; \
+    .align 1; \
+    test_ ## test_num ## _data: \
+      .dword correctval; \
+    .popsection; \
+    store_ ## test_num ## _data: \
+      .fill 1, 8, -1; \
+    .popsection
+
+#define TEST_CASE_FPD_I2(test_num, destreg, reg, correctval, val, swreg, offset, code... ) \
+    la  a0, test_ ## test_num ## _data; \
+    fld reg, 0(a0); \
+    lw t1, 8(a0); \
+    code; \
+    sw destreg, offset(swreg); \
+    RVTEST_IO_ASSERT_GPR_EQ(destreg, correctval) \
+    .pushsection .data; \
+    .align 2; \
+    test_ ## test_num ## _data: \
+      .double val; \
+      .word correctval; \
+    .popsection
+
+#define TEST_CASE_FPD_4REG(test_num, destreg, reg1, reg2, reg3, correctval, val1, val2, val3, swreg, offset, code... ) \
+    la  a0, test_ ## test_num ## _data; \
+    fld reg1, 0(a0); \
+    fld reg2, 8(a0); \
+    fld reg3, 16(a0); \
+    code; \
+    fsd destreg, offset(swreg); \
+    lw t1, 24(a0); \
+    lw t2, 28(a0); \
+    la a0, store_ ## test_num ## _data; \
+    fsd destreg, 0(a0); \
+    lw a1, 0(a0); \
+    lw a2, 4(a0); \
+    RVTEST_FPD_ASSERT_EQ(destreg, t2, t1, a2, a1, correctval) \
     .pushsection .data; \
     .align 4; \
     test_ ## test_num ## _data: \
       .double val1; \
       .double val2; \
+      .double val3; \
       .dword correctval; \
+    .popsection; \
+    .pushsection .data; \
+    store_ ## test_num ## _data: \
+      .fill 1, 8, -1; \
     .popsection
 
 //Tests for a instructions with register-register operand
@@ -232,6 +280,11 @@
       inst destreg, SEXT_IMM(imm); \
       )
 
+#define TEST_CI_OP_NOREG(inst, correctval, imm, swreg, offset) \
+    TEST_CASE (x0, correctval, swreg, offset, \
+      inst SEXT_IMM(imm); \
+      )
+
 //Tests for floating point instructions - single precision
 #define TEST_FP_OP(test_num, inst, destreg, reg1, reg2, correctval, val1, val2, swreg, offset) \
       TEST_CASE_FP(test_num, destreg, reg1, reg2, correctval, val1, val2, swreg, offset, \
@@ -285,3 +338,36 @@
       TEST_CASE_FPD_I2(test_num, destreg, reg, correctval, val, swreg, offset, \
         inst destreg, reg; \
         )
+
+//Temporary macros for certain instructions which are not implemented yet
+#define TEST_CADDI16SP(correctval, imm, swreg, offset) \
+      TEST_CASE(x2, correctval, swreg, offset, \
+      addi x2, x2, SEXT_IMM(imm); \
+      )
+
+#define TEST_CADDI4SPN(destreg, correctval, imm, swreg, offset) \
+      TEST_CASE(destreg, correctval, swreg, offset, \
+        addi destreg, x2, SEXT_IMM(imm); \
+        )
+
+#define TEST_CJ(inst, reg, val, swreg, offset) \
+      li reg, val; \
+      la x10, 1f; \
+      inst x10; \
+      li reg, 0x123ab; \
+1: \
+      sw reg, offset(swreg); \
+      RVTEST_IO_ASSERT_GPR_EQ(x0, 0); \
+      RVTEST_IO_ASSERT_GPR_EQ(reg, val); \
+
+#define TEST_CL(test_num, inst, reg, val, swreg, offset) \
+      la x10, test_ ## test_num ## _data; \
+      inst reg, 0(x10); \
+      sw reg, offset(swreg); \
+      RVTEST_IO_ASSERT_GPR_EQ(reg, val); \
+      .pushsection .data; \
+      .align 1; \
+      test_ ## test_num ## _data: \
+        .word val; \
+      .popsection
+

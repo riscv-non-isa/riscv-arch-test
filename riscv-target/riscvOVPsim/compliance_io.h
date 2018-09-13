@@ -28,7 +28,7 @@
 #ifndef _COMPLIANCE_IO_H
 #define _COMPLIANCE_IO_H
 
-//#define RVTEST_IO_QUIET
+#define RVTEST_IO_QUIET
 
 //-----------------------------------------------------------------------
 // RV IO Macros (Character transfer by custom instruction)
@@ -43,16 +43,35 @@
 #define RVTEST_IO_INIT
 #define RVTEST_IO_WRITE_STR(_STR)
 #define RVTEST_IO_CHECK()
-#define LOCAL_IO_PUTC(_R)
-#define RVTEST_IO_ASSERT_EQ(_R, _I)
-#define RVTEST_FP_ASSERT_EQ(_F, _C, correctval)
-#define RVTEST_FP2_ASSERT_EQ(_F, _C, correctval)
-#define RVTEST_FPD_ASSERT_EQ(_F, _C, correctval)
+#define RVTEST_IO_ASSERT_GPR_EQ(_R, _I)
+#define RVTEST_IO_ASSERT_SFPR_EQ(_F, _R, _I)
+#define RVTEST_IO_ASSERT_DFPR_EQ(_D, _R, _I)
 
 #else
 
+#define LOCAL_IO_WRITE_GPR(_R)                                          \
+    mv          a0, _R;                                                 \
+    jal         FN_WriteA0;
+
+#define LOCAL_IO_WRITE_FPR(_F)                                          \
+    fmv.x.s     a0, _F;                                                 \
+    jal         FN_WriteA0;
+
+#define LOCAL_FPD_WRITE_REG(_V1, _V2)                                   \
+    mv          a0, _V1;                                                \
+    jal         FN_WriteA0; \
+    mv          a0, _V2; \
+    jal         FN_WriteA0; \
+
+#define LOCAL_IO_PUTC(_R)                                               \
+    .word RVTEST_CUSTOM1;                                               \
+
+#define RVTEST_IO_INIT
+
 // Assertion violation: file file.c, line 1234: (expr)
-#define RVTEST_IO_ASSERT_EQ(_R, _I)                                     \
+// _R = GPR
+// _I = Immediate
+#define RVTEST_IO_ASSERT_GPR_EQ(_R, _I)                                 \
     li          t0, _I;                                                 \
     beq         _R, t0, 20002f;                                         \
     RVTEST_IO_WRITE_STR("Assertion violation: file ");                  \
@@ -62,7 +81,7 @@
     RVTEST_IO_WRITE_STR(": ");                                          \
     RVTEST_IO_WRITE_STR(# _R);                                          \
     RVTEST_IO_WRITE_STR("(");                                           \
-    LOCAL_IO_WRITE_REG(_R);                                             \
+    LOCAL_IO_WRITE_GPR(_R);                                             \
     RVTEST_IO_WRITE_STR(") != ");                                       \
     RVTEST_IO_WRITE_STR(# _I);                                          \
     RVTEST_IO_WRITE_STR("\n");                                          \
@@ -70,7 +89,10 @@
     RVTEST_FAIL;                                                        \
 20002:
 
-#define RVTEST_FP_ASSERT_EQ(_F, _C, correctval) \
+// _F = FPR
+// _C = GPR
+// _I = Immediate
+#define RVTEST_IO_ASSERT_SFPR_EQ(_F, _C, _I) \
     fmv.x.s     t0, _F; \
     beq         _C, t0, 20003f;                                         \
     RVTEST_IO_WRITE_STR("Assertion violation: file ");                  \
@@ -80,54 +102,34 @@
     RVTEST_IO_WRITE_STR(": ");                                          \
     RVTEST_IO_WRITE_STR(# _F);                                          \
     RVTEST_IO_WRITE_STR("(");                                           \
-    LOCAL_FP_WRITE_REG(_F);                                             \
+    LOCAL_IO_WRITE_FPR(_F);                                             \
     RVTEST_IO_WRITE_STR(") != ");                                       \
-    RVTEST_IO_WRITE_STR(# correctval);                                  \
+    RVTEST_IO_WRITE_STR(# _I);                                          \
     RVTEST_IO_WRITE_STR("\n");                                          \
     li TESTNUM, 100;                                                    \
     RVTEST_FAIL;                                                        \
 20003:
 
-#define RVTEST_FP2_ASSERT_EQ(_F, _C, correctval) \
-    mv     t0, _F; \
-    beq         _C, t0, 20004f;                                         \
+// _D = DFPR
+// _R = GPR
+// _I = Immediate
+#define RVTEST_IO_ASSERT_DFPR_EQ(_D, _R, _I) \
+    fmv.x.d     t0, _D; \
+    beq         _R, t0, 20005f;                                         \
     RVTEST_IO_WRITE_STR("Assertion violation: file ");                  \
     RVTEST_IO_WRITE_STR(__FILE__);                                      \
     RVTEST_IO_WRITE_STR(", line ");                                     \
     RVTEST_IO_WRITE_STR(TOSTRING(__LINE__));                            \
     RVTEST_IO_WRITE_STR(": ");                                          \
-    RVTEST_IO_WRITE_STR(# _F);                                          \
+    RVTEST_IO_WRITE_STR(# _D);                                          \
     RVTEST_IO_WRITE_STR("(");                                           \
-    LOCAL_IO_WRITE_REG(_F);                                             \
+    LOCAL_FPD_WRITE_REG(_D);                                            \
     RVTEST_IO_WRITE_STR(") != ");                                       \
-    RVTEST_IO_WRITE_STR(# correctval);                                  \
-    RVTEST_IO_WRITE_STR("\n");                                          \
-    li TESTNUM, 100;                                                    \
-    RVTEST_FAIL;                                                        \
-20004:
-
-#define RVTEST_FPD_ASSERT_EQ(_F, _C, correctval) \
-    fmv.x.d     t0, _F; \
-    beq         _C, t0, 20005f;                                         \
-    RVTEST_IO_WRITE_STR("Assertion violation: file ");                  \
-    RVTEST_IO_WRITE_STR(__FILE__);                                      \
-    RVTEST_IO_WRITE_STR(", line ");                                     \
-    RVTEST_IO_WRITE_STR(TOSTRING(__LINE__));                            \
-    RVTEST_IO_WRITE_STR(": ");                                          \
-    RVTEST_IO_WRITE_STR(# _F);                                          \
-    RVTEST_IO_WRITE_STR("(");                                           \
-    LOCAL_FPD_WRITE_REG(_F);                                            \
-    RVTEST_IO_WRITE_STR(") != ");                                       \
-    RVTEST_IO_WRITE_STR(# correctval);                                  \
+    RVTEST_IO_WRITE_STR(# _I);                                          \
     RVTEST_IO_WRITE_STR("\n");                                          \
     li TESTNUM, 100;                                                    \
     RVTEST_FAIL;                                                        \
 20005:
-
-#define LOCAL_IO_PUTC(_R)                                               \
-    .word RVTEST_CUSTOM1;                                               \
-
-#define RVTEST_IO_INIT
 
 #define RVTEST_IO_WRITE_STR(_STR)                                       \
     .section .data.string;                                              \

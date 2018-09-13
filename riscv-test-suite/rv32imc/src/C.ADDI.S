@@ -37,7 +37,7 @@ RV_COMPLIANCE_RV32M
 RV_COMPLIANCE_CODE_BEGIN
 
 	RVTEST_IO_INIT
-	RVTEST_IO_ASSERT_EQ(x0, 0x00000000)
+	RVTEST_IO_ASSERT_GPR_EQ(x0, 0x00000000)
 	RVTEST_IO_WRITE_STR("Test Begin Reserved regs ra(x1) a0(x10) t0(x5)\n")
 
 	# ---------------------------------------------------------------------------------------------
@@ -47,11 +47,11 @@ RV_COMPLIANCE_CODE_BEGIN
 	# address for test results
 	la	x2, test_1_res
 
-	TEST_CI_OP(c.addi, x17, 0x1, 0x0, 0x1, x2, 0)
-	TEST_CI_OP(c.addi, x18, 0x2, 0x0, 0x2, x2, 4)
-	TEST_CI_OP(c.addi, x19, 0xf, 0x0, 0xf, x2, 8)
-	TEST_CI_OP(c.addi, x20, 0x10, 0x0, 0x10, x2, 12)
-	TEST_CI_OP(c.addi, x21, 0x1f, 0x0, 0x1f, x2, 16)
+	TEST_CI_OP(c.addi, x3, 0x1, 0x0, 0x1, x2, 0)
+	TEST_CI_OP(c.addi, x4, 0x2, 0x0, 0x2, x2, 4)
+	TEST_CI_OP(c.addi, x8, 0xf, 0x0, 0xf, x2, 8)
+	TEST_CI_OP(c.addi, x9, 0x10, 0x0, 0x10, x2, 12)
+	TEST_CI_OP(c.addi, x11, 0x1f, 0x0, 0x1f, x2, 16)
 
 	# ---------------------------------------------------------------------------------------------
 
@@ -60,11 +60,11 @@ RV_COMPLIANCE_CODE_BEGIN
 	# address for test results
 	la	x2, test_2_res
 
-	TEST_CI_OP(c.addi, x22, 0x2, 0x1, 0x1, x2, 0)
-	TEST_CI_OP(c.addi, x23, 0x3, 0x1, 0x2, x2, 4)
-	TEST_CI_OP(c.addi, x24, 0x10, 0x1, 0xf, x2, 8)
-	TEST_CI_OP(c.addi, x25, 0x11, 0x1, 0x10, x2, 12)
-	TEST_CI_OP(c.addi, x26, 0x20, 0x1, 0x1f, x2, 16)
+	TEST_CI_OP(c.addi, x12, 0x2, 0x1, 0x1, x2, 0)
+	TEST_CI_OP(c.addi, x13, 0x3, 0x1, 0x2, x2, 4)
+	TEST_CI_OP(c.addi, x14, 0x10, 0x1, 0xf, x2, 8)
+	TEST_CI_OP(c.addi, x15, 0x11, 0x1, 0x10, x2, 12)
+	TEST_CI_OP(c.addi, x16, 0x20, 0x1, 0x1f, x2, 16)
 
 	# ---------------------------------------------------------------------------------------------
 
@@ -73,11 +73,11 @@ RV_COMPLIANCE_CODE_BEGIN
 	# address for test results
 	la	x2, test_3_res
 
-	TEST_CI_OP(c.addi, x27, 0, -0x1, 0x1, x2, 0)
-	TEST_CI_OP(c.addi, x28, 0x1, -0x1, 0x2, x2, 4)
-	TEST_CI_OP(c.addi, x29, 0xe, -0x1, 0xf, x2, 8)
-	TEST_CI_OP(c.addi, x30, 0xf, -0x1, 0x10, x2, 12)
-	TEST_CI_OP(c.addi, x31, 0x1e, -0x1, 0x1f, x2, 16)
+	TEST_CI_OP(c.addi, x17, 0, -0x1, 0x1, x2, 0)
+	TEST_CI_OP(c.addi, x18, 0x1, -0x1, 0x2, x2, 4)
+	TEST_CI_OP(c.addi, x19, 0xe, -0x1, 0xf, x2, 8)
+	TEST_CI_OP(c.addi, x20, 0xf, -0x1, 0x10, x2, 12)
+	TEST_CI_OP(c.addi, x21, 0x1e, -0x1, 0x1f, x2, 16)
 
 	# ---------------------------------------------------------------------------------------------
 
@@ -86,11 +86,11 @@ RV_COMPLIANCE_CODE_BEGIN
 	# address for test results
 	la	x2, test_4_res
 
-	TEST_CI_OP(c.addi, x3, 0x80000, 0x7ffff, 0x1, x2, 0)
-	TEST_CI_OP(c.addi, x4, 0x80001, 0x7ffff, 0x2, x2, 4)
-	TEST_CI_OP(c.addi, x8, 0x8000e, 0x7ffff, 0xf, x2, 8)
-	TEST_CI_OP(c.addi, x9, 0x8000f, 0x7ffff, 0x10, x2, 12)
-	TEST_CI_OP(c.addi, x11, 0x8001e, 0x7ffff, 0x1f, x2, 16)
+	TEST_CI_OP(c.addi, x22, 0x80000, 0x7ffff, 0x1, x2, 0)
+	TEST_CI_OP(c.addi, x23, 0x80001, 0x7ffff, 0x2, x2, 4)
+	TEST_CI_OP(c.addi, x24, 0x8000e, 0x7ffff, 0xf, x2, 8)
+	TEST_CI_OP(c.addi, x25, 0x8000f, 0x7ffff, 0x10, x2, 12)
+	TEST_CI_OP(c.addi, x26, 0x8001e, 0x7ffff, 0x1f, x2, 16)
 
 	# ---------------------------------------------------------------------------------------------
 
@@ -99,11 +99,11 @@ RV_COMPLIANCE_CODE_BEGIN
 	# address for test results
 	la	x2, test_5_res
 
-	TEST_CI_OP(c.addi, x12, 0x8001, 0x8000, 0x1, x2, 0)
-	TEST_CI_OP(c.addi, x13, 0x8002, 0x8000, 0x2, x2, 4)
-	TEST_CI_OP(c.addi, x14, 0x800f, 0x8000, 0xf, x2, 8)
-	TEST_CI_OP(c.addi, x15, 0x8010, 0x8000, 0x10, x2, 12)
-	TEST_CI_OP(c.addi, x16, 0x801f, 0x8000, 0x1f, x2, 16)
+	TEST_CI_OP(c.addi, x27, 0x80001, 0x80000, 0x1, x2, 0)
+	TEST_CI_OP(c.addi, x28, 0x80002, 0x80000, 0x2, x2, 4)
+	TEST_CI_OP(c.addi, x29, 0x8000f, 0x80000, 0xf, x2, 8)
+	TEST_CI_OP(c.addi, x30, 0x80010, 0x80000, 0x10, x2, 12)
+	TEST_CI_OP(c.addi, x31, 0x8001f, 0x80000, 0x1f, x2, 16)
 
 	RVTEST_IO_WRITE_STR("Test End\n")
 
