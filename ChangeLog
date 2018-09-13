@@ -1,7 +1,11 @@
 2018-09-10  Lee Moore  <moore@imperas.com>
-	* Added tests to improve coverage, usage of Imperas Mutating Fault Simulator to 
+	* Added tests to RV32I to improve coverage, usage of Imperas Mutating Fault Simulator to 
 	  identify untested usage cases
-	* macro renames to support GPR, (S)FPR, (D)FPR
+	* Macro renames to support GPR, (S)FPR, (D)FPR
+	* Added test suite RV32IM to test 32 bit Multiply and Divide instructions 
+	* Added test suite RV32IMC to test 32 bit Compressed instructions
+	* Added test suite RV64I to test 64 bit Integer instructions
+	* Added test suite RV64IM to test 64 bit Multiply and Divide instructions 
 	
 	
 2018-06-15  Radek Hajek  <hajek@codasip.com>
