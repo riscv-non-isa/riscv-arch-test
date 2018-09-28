@@ -50,8 +50,8 @@ RV_COMPLIANCE_CODE_BEGIN
 	TEST_CI_OP(c.lui, x3, 0x1000, 0x0, 0x1, x2, 0)
 	TEST_CI_OP(c.lui, x4, 0x2000, 0x0, 0x2, x2, 4)
 	TEST_CI_OP(c.lui, x8, 0xf000, 0x0, 0xf, x2, 8)
-	TEST_CI_OP(c.lui, x9, 0x10000, 0x0, 0x10, x2, 12)
-	TEST_CI_OP(c.lui, x11, 0xf000, 0x0, 0xf, x2, 16)
+	TEST_CI_OP(c.lui, x9, 0x0001f000, 0x0, 0x1f, x2, 12)
+	TEST_CI_OP(c.lui, x11, 0xfffff000, 0x0, 0xfffff, x2, 16)
 
 	# ---------------------------------------------------------------------------------------------
 
@@ -63,8 +63,8 @@ RV_COMPLIANCE_CODE_BEGIN
 	TEST_CI_OP(c.lui, x12, 0x1000, 0x1, 0x1, x2, 0)
 	TEST_CI_OP(c.lui, x13, 0x2000, 0x1, 0x2, x2, 4)
 	TEST_CI_OP(c.lui, x14, 0xf000, 0x1, 0xf, x2, 8)
-	TEST_CI_OP(c.lui, x15, 0x10000, 0x1, 0x10, x2, 12)
-	TEST_CI_OP(c.lui, x16, 0xf000, 0x1, 0xf, x2, 16)
+	TEST_CI_OP(c.lui, x15, 0x0001f000, 0x1, 0x1f, x2, 12)
+	TEST_CI_OP(c.lui, x16, 0xfffff000, 0x1, 0xfffff, x2, 16)
 
 	# ---------------------------------------------------------------------------------------------
 
@@ -76,8 +76,8 @@ RV_COMPLIANCE_CODE_BEGIN
 	TEST_CI_OP(c.lui, x17, 0x1000, -0x1, 0x1, x2, 0)
 	TEST_CI_OP(c.lui, x18, 0x2000, -0x1, 0x2, x2, 4)
 	TEST_CI_OP(c.lui, x19, 0xf000, -0x1, 0xf, x2, 8)
-	TEST_CI_OP(c.lui, x20, 0x10000, -0x1, 0x10, x2, 12)
-	TEST_CI_OP(c.lui, x21, 0xf000, -0x1, 0xf, x2, 16)
+	TEST_CI_OP(c.lui, x20, 0x0001f000, -0x1, 0x1f, x2, 12)
+	TEST_CI_OP(c.lui, x21, 0xfffff000, -0x1, 0xfffff, x2, 16)
 
 	# ---------------------------------------------------------------------------------------------
 
@@ -89,8 +89,8 @@ RV_COMPLIANCE_CODE_BEGIN
 	TEST_CI_OP(c.lui, x22, 0x1000, 0x7ffff, 0x1, x2, 0)
 	TEST_CI_OP(c.lui, x23, 0x2000, 0x7ffff, 0x2, x2, 4)
 	TEST_CI_OP(c.lui, x24, 0xf000, 0x7ffff, 0xf, x2, 8)
-	TEST_CI_OP(c.lui, x25, 0x10000, 0x7ffff, 0x10, x2, 12)
-	TEST_CI_OP(c.lui, x26, 0xf000, 0x7ffff, 0xf, x2, 16)
+	TEST_CI_OP(c.lui, x25, 0x0001f000, 0x7ffff, 0x1f, x2, 12)
+	TEST_CI_OP(c.lui, x26, 0xfffff000, 0x7ffff, 0xfffff, x2, 16)
 
 	# ---------------------------------------------------------------------------------------------
 
@@ -102,8 +102,8 @@ RV_COMPLIANCE_CODE_BEGIN
 	TEST_CI_OP(c.lui, x27, 0x1000, 0x80000, 0x1, x2, 0)
 	TEST_CI_OP(c.lui, x28, 0x2000, 0x80000, 0x2, x2, 4)
 	TEST_CI_OP(c.lui, x29, 0xf000, 0x80000, 0xf, x2, 8)
-	TEST_CI_OP(c.lui, x30, 0x10000, 0x80000, 0x10, x2, 12)
-	TEST_CI_OP(c.lui, x31, 0xf000, 0x80000, 0xf, x2, 16)
+	TEST_CI_OP(c.lui, x30, 0x0001f000, 0x80000, 0x1f, x2, 12)
+	TEST_CI_OP(c.lui, x31, 0xfffff000, 0x80000, 0xfffff, x2, 16)
 
 	RVTEST_IO_WRITE_STR("Test End\n")
 
@@ -127,16 +127,6 @@ test_3_res:
 test_4_res:
 	.fill 5, 4, -1
 test_5_res:
-	.fill 5, 4, -1
-test_6_res:
-	.fill 5, 4, -1
-test_7_res:
-	.fill 5, 4, -1
-test_8_res:
-	.fill 5, 4, -1
-test_9_res:
-	.fill 5, 4, -1
-test_10_res:
 	.fill 5, 4, -1
 
 RV_COMPLIANCE_DATA_END

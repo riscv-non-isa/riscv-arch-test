@@ -47,7 +47,7 @@ RV_COMPLIANCE_CODE_BEGIN
 	# address for test results
 	la	x1, test_1_res
 
-	TEST_CADDI16SP( 0x1, 0x1, x1, 0)
+	TEST_CADDI16SP(0x10, 16, x1, 0)
 
 	# ---------------------------------------------------------------------------------------------
 
@@ -56,7 +56,7 @@ RV_COMPLIANCE_CODE_BEGIN
 	# address for test results
 	la	x1, test_2_res
 
-	TEST_CADDI16SP( 0, -0x1, x1, 0)
+	TEST_CADDI16SP(0x30, 32, x1, 0)
 
 	# ---------------------------------------------------------------------------------------------
 
@@ -65,7 +65,7 @@ RV_COMPLIANCE_CODE_BEGIN
 	# address for test results
 	la	x1, test_3_res
 
-	TEST_CADDI16SP( 0xf, 0xf, x1, 0)
+	TEST_CADDI16SP(0x70, 64, x1, 0)
 
 	# ---------------------------------------------------------------------------------------------
 
@@ -74,7 +74,7 @@ RV_COMPLIANCE_CODE_BEGIN
 	# address for test results
 	la	x1, test_4_res
 
-	TEST_CADDI16SP( 0x1f, 0x10, x1, 0)
+	TEST_CADDI16SP(0x260, 496, x1, 0)
 
 	# ---------------------------------------------------------------------------------------------
 
@@ -83,7 +83,7 @@ RV_COMPLIANCE_CODE_BEGIN
 	# address for test results
 	la	x1, test_5_res
 
-	TEST_CADDI16SP( 0x1e, 0x7ffff, x1, 0)
+	TEST_CADDI16SP(0x60, -512, x1, 0)
 
 	RVTEST_IO_WRITE_STR("Test End\n")
 
@@ -99,24 +99,14 @@ RV_COMPLIANCE_CODE_END
 # Output data section.
 RV_COMPLIANCE_DATA_BEGIN
 test_1_res:
-	.fill 5, 4, -1
+	.fill 1, 4, -1
 test_2_res:
-	.fill 5, 4, -1
+	.fill 1, 4, -1
 test_3_res:
-	.fill 5, 4, -1
+	.fill 1, 4, -1
 test_4_res:
-	.fill 5, 4, -1
+	.fill 1, 4, -1
 test_5_res:
-	.fill 5, 4, -1
-test_6_res:
-	.fill 5, 4, -1
-test_7_res:
-	.fill 5, 4, -1
-test_8_res:
-	.fill 5, 4, -1
-test_9_res:
-	.fill 5, 4, -1
-test_10_res:
-	.fill 5, 4, -1
+	.fill 1, 4, -1
 
 RV_COMPLIANCE_DATA_END

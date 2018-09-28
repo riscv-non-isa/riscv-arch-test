@@ -128,15 +128,5 @@ test_4_res:
 	.fill 5, 4, -1
 test_5_res:
 	.fill 5, 4, -1
-test_6_res:
-	.fill 5, 4, -1
-test_7_res:
-	.fill 5, 4, -1
-test_8_res:
-	.fill 5, 4, -1
-test_9_res:
-	.fill 5, 4, -1
-test_10_res:
-	.fill 5, 4, -1
 
 RV_COMPLIANCE_DATA_END

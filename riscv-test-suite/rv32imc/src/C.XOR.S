@@ -47,7 +47,7 @@ RV_COMPLIANCE_CODE_BEGIN
 	# address for test results
 	la	x2, test_1_res
 
-	TEST_CR_OP(c.xor, x8, x9, 0, 0x0, 0x0, x2, 0)
+	TEST_CR_OP(c.xor, x8, x9, 0x0, 0x0, 0x0, x2, 0)
 	TEST_CR_OP(c.xor, x11, x12, 0x1, 0x0, 0x1, x2, 4)
 	TEST_CR_OP(c.xor, x13, x14, 0xffffffff, 0x0, -0x1, x2, 8)
 	TEST_CR_OP(c.xor, x15, x8, 0x7fff, 0x0, 0x7fff, x2, 12)
@@ -61,7 +61,7 @@ RV_COMPLIANCE_CODE_BEGIN
 	la	x2, test_2_res
 
 	TEST_CR_OP(c.xor, x12, x13, 0x1, 0x1, 0x0, x2, 0)
-	TEST_CR_OP(c.xor, x14, x15, 0, 0x1, 0x1, x2, 4)
+	TEST_CR_OP(c.xor, x14, x15, 0x0, 0x1, 0x1, x2, 4)
 	TEST_CR_OP(c.xor, x8, x9, 0xfffffffe, 0x1, -0x1, x2, 8)
 	TEST_CR_OP(c.xor, x11, x12, 0x7ffe, 0x1, 0x7fff, x2, 12)
 	TEST_CR_OP(c.xor, x13, x14, 0x8001, 0x1, 0x8000, x2, 16)
@@ -75,7 +75,7 @@ RV_COMPLIANCE_CODE_BEGIN
 
 	TEST_CR_OP(c.xor, x15, x8, 0xffffffff, -0x1, 0x0, x2, 0)
 	TEST_CR_OP(c.xor, x9, x11, 0xfffffffe, -0x1, 0x1, x2, 4)
-	TEST_CR_OP(c.xor, x12, x13, 0, -0x1, -0x1, x2, 8)
+	TEST_CR_OP(c.xor, x12, x13, 0x0, -0x1, -0x1, x2, 8)
 	TEST_CR_OP(c.xor, x14, x15, 0xffff8000, -0x1, 0x7fff, x2, 12)
 	TEST_CR_OP(c.xor, x8, x9, 0xffff7fff, -0x1, 0x8000, x2, 16)
 
@@ -89,7 +89,7 @@ RV_COMPLIANCE_CODE_BEGIN
 	TEST_CR_OP(c.xor, x11, x12, 0x7fff, 0x7fff, 0x0, x2, 0)
 	TEST_CR_OP(c.xor, x13, x14, 0x7ffe, 0x7fff, 0x1, x2, 4)
 	TEST_CR_OP(c.xor, x15, x8, 0xffff8000, 0x7fff, -0x1, x2, 8)
-	TEST_CR_OP(c.xor, x9, x11, 0, 0x7fff, 0x7fff, x2, 12)
+	TEST_CR_OP(c.xor, x9, x11, 0x0, 0x7fff, 0x7fff, x2, 12)
 	TEST_CR_OP(c.xor, x12, x13, 0xffff, 0x7fff, 0x8000, x2, 16)
 
 	# ---------------------------------------------------------------------------------------------
@@ -103,7 +103,7 @@ RV_COMPLIANCE_CODE_BEGIN
 	TEST_CR_OP(c.xor, x8, x9, 0x8001, 0x8000, 0x1, x2, 4)
 	TEST_CR_OP(c.xor, x11, x12, 0xffff7fff, 0x8000, -0x1, x2, 8)
 	TEST_CR_OP(c.xor, x13, x14, 0xffff, 0x8000, 0x7fff, x2, 12)
-	TEST_CR_OP(c.xor, x15, x8, 0, 0x8000, 0x8000, x2, 16)
+	TEST_CR_OP(c.xor, x15, x8, 0x0, 0x8000, 0x8000, x2, 16)
 
 	RVTEST_IO_WRITE_STR("Test End\n")
 
@@ -127,16 +127,6 @@ test_3_res:
 test_4_res:
 	.fill 5, 4, -1
 test_5_res:
-	.fill 5, 4, -1
-test_6_res:
-	.fill 5, 4, -1
-test_7_res:
-	.fill 5, 4, -1
-test_8_res:
-	.fill 5, 4, -1
-test_9_res:
-	.fill 5, 4, -1
-test_10_res:
 	.fill 5, 4, -1
 
 RV_COMPLIANCE_DATA_END

@@ -47,11 +47,11 @@ RV_COMPLIANCE_CODE_BEGIN
 	# address for test results
 	la	x2, test_1_res
 
-	TEST_CR_OP(c.and, x9, x11, 0, 0x0, 0x0, x2, 0)
-	TEST_CR_OP(c.and, x12, x13, 0, 0x0, 0x1, x2, 4)
-	TEST_CR_OP(c.and, x14, x15, 0, 0x0, -0x1, x2, 8)
-	TEST_CR_OP(c.and, x8, x9, 0, 0x0, 0x7fff, x2, 12)
-	TEST_CR_OP(c.and, x11, x12, 0, 0x0, 0x8000, x2, 16)
+	TEST_CR_OP(c.and, x9, x11, 0x0, 0x0, 0x0, x2, 0)
+	TEST_CR_OP(c.and, x12, x13, 0x0, 0x0, 0x1, x2, 4)
+	TEST_CR_OP(c.and, x14, x15, 0x0, 0x0, -0x1, x2, 8)
+	TEST_CR_OP(c.and, x8, x9, 0x0, 0x0, 0x7fff, x2, 12)
+	TEST_CR_OP(c.and, x11, x12, 0x0, 0x0, 0x8000, x2, 16)
 
 	# ---------------------------------------------------------------------------------------------
 
@@ -60,11 +60,11 @@ RV_COMPLIANCE_CODE_BEGIN
 	# address for test results
 	la	x2, test_2_res
 
-	TEST_CR_OP(c.and, x13, x14, 0, 0x1, 0x0, x2, 0)
+	TEST_CR_OP(c.and, x13, x14, 0x0, 0x1, 0x0, x2, 0)
 	TEST_CR_OP(c.and, x15, x8, 0x1, 0x1, 0x1, x2, 4)
 	TEST_CR_OP(c.and, x9, x11, 0x1, 0x1, -0x1, x2, 8)
 	TEST_CR_OP(c.and, x12, x13, 0x1, 0x1, 0x7fff, x2, 12)
-	TEST_CR_OP(c.and, x14, x15, 0, 0x1, 0x8000, x2, 16)
+	TEST_CR_OP(c.and, x14, x15, 0x0, 0x1, 0x8000, x2, 16)
 
 	# ---------------------------------------------------------------------------------------------
 
@@ -73,7 +73,7 @@ RV_COMPLIANCE_CODE_BEGIN
 	# address for test results
 	la	x2, test_3_res
 
-	TEST_CR_OP(c.and, x8, x9, 0, -0x1, 0x0, x2, 0)
+	TEST_CR_OP(c.and, x8, x9, 0x0, -0x1, 0x0, x2, 0)
 	TEST_CR_OP(c.and, x11, x12, 0x1, -0x1, 0x1, x2, 4)
 	TEST_CR_OP(c.and, x13, x14, 0xffffffff, -0x1, -0x1, x2, 8)
 	TEST_CR_OP(c.and, x15, x8, 0x7fff, -0x1, 0x7fff, x2, 12)
@@ -86,11 +86,11 @@ RV_COMPLIANCE_CODE_BEGIN
 	# address for test results
 	la	x2, test_4_res
 
-	TEST_CR_OP(c.and, x12, x13, 0, 0x7fff, 0x0, x2, 0)
+	TEST_CR_OP(c.and, x12, x13, 0x0, 0x7fff, 0x0, x2, 0)
 	TEST_CR_OP(c.and, x14, x15, 0x1, 0x7fff, 0x1, x2, 4)
 	TEST_CR_OP(c.and, x8, x9, 0x7fff, 0x7fff, -0x1, x2, 8)
 	TEST_CR_OP(c.and, x11, x12, 0x7fff, 0x7fff, 0x7fff, x2, 12)
-	TEST_CR_OP(c.and, x13, x14, 0, 0x7fff, 0x8000, x2, 16)
+	TEST_CR_OP(c.and, x13, x14, 0x0, 0x7fff, 0x8000, x2, 16)
 
 	# ---------------------------------------------------------------------------------------------
 
@@ -99,10 +99,10 @@ RV_COMPLIANCE_CODE_BEGIN
 	# address for test results
 	la	x2, test_5_res
 
-	TEST_CR_OP(c.and, x15, x8, 0, 0x8000, 0x0, x2, 0)
-	TEST_CR_OP(c.and, x9, x11, 0, 0x8000, 0x1, x2, 4)
+	TEST_CR_OP(c.and, x15, x8, 0x0, 0x8000, 0x0, x2, 0)
+	TEST_CR_OP(c.and, x9, x11, 0x0, 0x8000, 0x1, x2, 4)
 	TEST_CR_OP(c.and, x12, x13, 0x8000, 0x8000, -0x1, x2, 8)
-	TEST_CR_OP(c.and, x14, x15, 0, 0x8000, 0x7fff, x2, 12)
+	TEST_CR_OP(c.and, x14, x15, 0x0, 0x8000, 0x7fff, x2, 12)
 	TEST_CR_OP(c.and, x8, x9, 0x8000, 0x8000, 0x8000, x2, 16)
 
 	RVTEST_IO_WRITE_STR("Test End\n")
@@ -127,16 +127,6 @@ test_3_res:
 test_4_res:
 	.fill 5, 4, -1
 test_5_res:
-	.fill 5, 4, -1
-test_6_res:
-	.fill 5, 4, -1
-test_7_res:
-	.fill 5, 4, -1
-test_8_res:
-	.fill 5, 4, -1
-test_9_res:
-	.fill 5, 4, -1
-test_10_res:
 	.fill 5, 4, -1
 
 RV_COMPLIANCE_DATA_END

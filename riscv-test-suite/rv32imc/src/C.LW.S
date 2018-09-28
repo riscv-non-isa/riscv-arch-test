@@ -47,7 +47,7 @@ RV_COMPLIANCE_CODE_BEGIN
 	# address for test results
 	la	x2, test_1_res
 
-	TEST_CL(0, c.lw, x8, 0x0, x2, 0)
+	TEST_CL(c.lw, x14, 0, x2, 0)
 
 	# ---------------------------------------------------------------------------------------------
 
@@ -56,7 +56,7 @@ RV_COMPLIANCE_CODE_BEGIN
 	# address for test results
 	la	x2, test_2_res
 
-	TEST_CL(1, c.lw, x9, 0x1, x2, 0)
+	TEST_CL(c.lw, x15, 4, x2, 0)
 
 	# ---------------------------------------------------------------------------------------------
 
@@ -65,7 +65,7 @@ RV_COMPLIANCE_CODE_BEGIN
 	# address for test results
 	la	x2, test_3_res
 
-	TEST_CL(2, c.lw, x11, -0x1, x2, 0)
+	TEST_CL(c.lw, x8, 8, x2, 0)
 
 	# ---------------------------------------------------------------------------------------------
 
@@ -74,7 +74,7 @@ RV_COMPLIANCE_CODE_BEGIN
 	# address for test results
 	la	x2, test_4_res
 
-	TEST_CL(3, c.lw, x12, 0x7fff, x2, 0)
+	TEST_CL(c.lw, x9, 100, x2, 0)
 
 	# ---------------------------------------------------------------------------------------------
 
@@ -83,7 +83,7 @@ RV_COMPLIANCE_CODE_BEGIN
 	# address for test results
 	la	x2, test_5_res
 
-	TEST_CL(4, c.lw, x13, 0x8000, x2, 0)
+	TEST_CL(c.lw, x13, 124, x2, 0)
 
 	RVTEST_IO_WRITE_STR("Test End\n")
 
@@ -99,24 +99,47 @@ RV_COMPLIANCE_CODE_END
 # Output data section.
 RV_COMPLIANCE_DATA_BEGIN
 test_1_res:
-	.fill 5, 4, -1
+	.fill 1, 4, -1
 test_2_res:
-	.fill 5, 4, -1
+	.fill 1, 4, -1
 test_3_res:
-	.fill 5, 4, -1
+	.fill 1, 4, -1
 test_4_res:
-	.fill 5, 4, -1
+	.fill 1, 4, -1
 test_5_res:
-	.fill 5, 4, -1
-test_6_res:
-	.fill 5, 4, -1
-test_7_res:
-	.fill 5, 4, -1
-test_8_res:
-	.fill 5, 4, -1
-test_9_res:
-	.fill 5, 4, -1
-test_10_res:
-	.fill 5, 4, -1
+	.fill 1, 4, -1
+test_data:
+	.word 0
+	.word 1
+	.word 2
+	.word 3
+	.word 4
+	.word 5
+	.word 6
+	.word 7
+	.word 8
+	.word 9
+	.word 10
+	.word 11
+	.word 12
+	.word 13
+	.word 14
+	.word 15
+	.word 16
+	.word 17
+	.word 18
+	.word 19
+	.word 20
+	.word 21
+	.word 22
+	.word 23
+	.word 24
+	.word 25
+	.word 26
+	.word 27
+	.word 28
+	.word 29
+	.word 30
+	.word 31
 
 RV_COMPLIANCE_DATA_END

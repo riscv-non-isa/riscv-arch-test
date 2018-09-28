@@ -36,107 +36,97 @@ RV_COMPLIANCE_RV32M
 
 RV_COMPLIANCE_CODE_BEGIN
 
-	RVTEST_IO_INIT
-	RVTEST_IO_ASSERT_GPR_EQ(x0, 0x00000000)
-	RVTEST_IO_WRITE_STR("Test Begin Reserved regs ra(x1) a0(x10) t0(x5)\n")
+    RVTEST_IO_INIT
+    RVTEST_IO_ASSERT_GPR_EQ(x0, 0x00000000)
+    RVTEST_IO_WRITE_STR("Test Begin Reserved regs ra(x1) a0(x10) t0(x5)\n")
 
-	# ---------------------------------------------------------------------------------------------
+    # ---------------------------------------------------------------------------------------------
 
-	RVTEST_IO_WRITE_STR("# Test number 1 - corner cases\n")
+RVTEST_IO_WRITE_STR("# Test number 1 - corner cases\n")
 
-	# address for test results
-	la	x2, test_1_res
+    # address for test results
+    la  x2, test_1_res
 
-	TEST_CR_OP(c.add, x3, x4, 0, 0x0, 0x0, x2, 0)
-	TEST_CR_OP(c.add, x8, x9, 0x1, 0x0, 0x1, x2, 4)
-	TEST_CR_OP(c.add, x11, x12, 0xffffffff, 0x0, -0x1, x2, 8)
-	TEST_CR_OP(c.add, x13, x14, 0x7fff, 0x0, 0x7fff, x2, 12)
-	TEST_CR_OP(c.add, x15, x16, 0x8000, 0x0, 0x8000, x2, 16)
+    TEST_CR_OP(c.add, x3, x4, 0, 0x0, 0x0, x2, 0)
+    TEST_CR_OP(c.add, x8, x9, 0x1, 0x0, 0x1, x2, 4)
+    TEST_CR_OP(c.add, x11, x12, 0xffffffff, 0x0, -0x1, x2, 8)
+    TEST_CR_OP(c.add, x13, x14, 0x7fff, 0x0, 0x7fff, x2, 12)
+    TEST_CR_OP(c.add, x15, x16, 0x8000, 0x0, 0x8000, x2, 16)
 
-	# ---------------------------------------------------------------------------------------------
+    # ---------------------------------------------------------------------------------------------
 
-	RVTEST_IO_WRITE_STR("# Test number 2 - corner cases\n")
+    RVTEST_IO_WRITE_STR("# Test number 2 - corner cases\n")
 
-	# address for test results
-	la	x2, test_2_res
+    # address for test results
+    la  x2, test_2_res
 
-	TEST_CR_OP(c.add, x17, x18, 0x1, 0x1, 0x0, x2, 0)
-	TEST_CR_OP(c.add, x19, x20, 0x2, 0x1, 0x1, x2, 4)
-	TEST_CR_OP(c.add, x21, x22, 0, 0x1, -0x1, x2, 8)
-	TEST_CR_OP(c.add, x23, x24, 0x8000, 0x1, 0x7fff, x2, 12)
-	TEST_CR_OP(c.add, x25, x26, 0x8001, 0x1, 0x8000, x2, 16)
+    TEST_CR_OP(c.add, x17, x18, 0x1, 0x1, 0x0, x2, 0)
+    TEST_CR_OP(c.add, x19, x20, 0x2, 0x1, 0x1, x2, 4)
+    TEST_CR_OP(c.add, x21, x22, 0, 0x1, -0x1, x2, 8)
+    TEST_CR_OP(c.add, x23, x24, 0x8000, 0x1, 0x7fff, x2, 12)
+    TEST_CR_OP(c.add, x25, x26, 0x8001, 0x1, 0x8000, x2, 16)
 
-	# ---------------------------------------------------------------------------------------------
+    # ---------------------------------------------------------------------------------------------
 
-	RVTEST_IO_WRITE_STR("# Test number 3 - corner cases\n")
+    RVTEST_IO_WRITE_STR("# Test number 3 - corner cases\n")
 
-	# address for test results
-	la	x2, test_3_res
+    # address for test results
+    la  x2, test_3_res
 
-	TEST_CR_OP(c.add, x27, x28, 0xffffffff, -0x1, 0x0, x2, 0)
-	TEST_CR_OP(c.add, x29, x30, 0, -0x1, 0x1, x2, 4)
-	TEST_CR_OP(c.add, x31, x3, 0xfffffffe, -0x1, -0x1, x2, 8)
-	TEST_CR_OP(c.add, x4, x8, 0x7ffe, -0x1, 0x7fff, x2, 12)
-	TEST_CR_OP(c.add, x9, x11, 0x7fff, -0x1, 0x8000, x2, 16)
+    TEST_CR_OP(c.add, x27, x28, 0xffffffff, -0x1, 0x0, x2, 0)
+    TEST_CR_OP(c.add, x29, x30, 0, -0x1, 0x1, x2, 4)
+    TEST_CR_OP(c.add, x31, x3, 0xfffffffe, -0x1, -0x1, x2, 8)
+    TEST_CR_OP(c.add, x4, x8, 0x7ffe, -0x1, 0x7fff, x2, 12)
+    TEST_CR_OP(c.add, x9, x11, 0x7fff, -0x1, 0x8000, x2, 16)
 
-	# ---------------------------------------------------------------------------------------------
+    # ---------------------------------------------------------------------------------------------
 
-	RVTEST_IO_WRITE_STR("# Test number 4 - corner cases\n")
+    RVTEST_IO_WRITE_STR("# Test number 4 - corner cases\n")
 
-	# address for test results
-	la	x2, test_4_res
+    # address for test results
+    la  x2, test_4_res
 
-	TEST_CR_OP(c.add, x12, x13, 0x7fff, 0x7fff, 0x0, x2, 0)
-	TEST_CR_OP(c.add, x14, x15, 0x8000, 0x7fff, 0x1, x2, 4)
-	TEST_CR_OP(c.add, x16, x17, 0x7ffe, 0x7fff, -0x1, x2, 8)
-	TEST_CR_OP(c.add, x18, x19, 0xfffe, 0x7fff, 0x7fff, x2, 12)
-	TEST_CR_OP(c.add, x20, x21, 0xffff, 0x7fff, 0x8000, x2, 16)
+    TEST_CR_OP(c.add, x12, x13, 0x7fff, 0x7fff, 0x0, x2, 0)
+    TEST_CR_OP(c.add, x14, x15, 0x8000, 0x7fff, 0x1, x2, 4)
+    TEST_CR_OP(c.add, x16, x17, 0x7ffe, 0x7fff, -0x1, x2, 8)
+    TEST_CR_OP(c.add, x18, x19, 0xfffe, 0x7fff, 0x7fff, x2, 12)
+    TEST_CR_OP(c.add, x20, x21, 0xffff, 0x7fff, 0x8000, x2, 16)
 
-	# ---------------------------------------------------------------------------------------------
+    # ---------------------------------------------------------------------------------------------
 
-	RVTEST_IO_WRITE_STR("# Test number 5 - corner cases\n")
+    RVTEST_IO_WRITE_STR("# Test number 5 - corner cases\n")
 
-	# address for test results
-	la	x2, test_5_res
+    # address for test results
+    la  x2, test_5_res
 
-	TEST_CR_OP(c.add, x22, x23, 0x8000, 0x8000, 0x0, x2, 0)
-	TEST_CR_OP(c.add, x24, x25, 0x8001, 0x8000, 0x1, x2, 4)
-	TEST_CR_OP(c.add, x26, x27, 0x7fff, 0x8000, -0x1, x2, 8)
-	TEST_CR_OP(c.add, x28, x29, 0xffff, 0x8000, 0x7fff, x2, 12)
-	TEST_CR_OP(c.add, x30, x31, 0x10000, 0x8000, 0x8000, x2, 16)
+    TEST_CR_OP(c.add, x22, x23, 0x8000, 0x8000, 0x0, x2, 0)
+    TEST_CR_OP(c.add, x24, x25, 0x8001, 0x8000, 0x1, x2, 4)
+    TEST_CR_OP(c.add, x26, x27, 0x7fff, 0x8000, -0x1, x2, 8)
+    TEST_CR_OP(c.add, x28, x29, 0xffff, 0x8000, 0x7fff, x2, 12)
+    TEST_CR_OP(c.add, x30, x31, 0x10000, 0x8000, 0x8000, x2, 16)
 
-	RVTEST_IO_WRITE_STR("Test End\n")
+    RVTEST_IO_WRITE_STR("Test End\n")
 
-	# ---------------------------------------------------------------------------------------------
+    # ---------------------------------------------------------------------------------------------
 
-	RV_COMPLIANCE_HALT
+    RV_COMPLIANCE_HALT
 
 RV_COMPLIANCE_CODE_END
 
 # Input data section.
-	.data
+    .data
 
 # Output data section.
 RV_COMPLIANCE_DATA_BEGIN
 test_1_res:
-	.fill 5, 4, -1
+    .fill 5, 4, -1
 test_2_res:
-	.fill 5, 4, -1
+    .fill 5, 4, -1
 test_3_res:
-	.fill 5, 4, -1
+    .fill 5, 4, -1
 test_4_res:
-	.fill 5, 4, -1
+    .fill 5, 4, -1
 test_5_res:
-	.fill 5, 4, -1
-test_6_res:
-	.fill 5, 4, -1
-test_7_res:
-	.fill 5, 4, -1
-test_8_res:
-	.fill 5, 4, -1
-test_9_res:
-	.fill 5, 4, -1
-test_10_res:
-	.fill 5, 4, -1
+    .fill 5, 4, -1
 
 RV_COMPLIANCE_DATA_END

@@ -47,7 +47,7 @@ RV_COMPLIANCE_CODE_BEGIN
 	# address for test results
 	la	x2, test_1_res
 
-	TEST_CR_OP(c.or, x15, x8, 0, 0x0, 0x0, x2, 0)
+	TEST_CR_OP(c.or, x15, x8, 0x0, 0x0, 0x0, x2, 0)
 	TEST_CR_OP(c.or, x9, x11, 0x1, 0x0, 0x1, x2, 4)
 	TEST_CR_OP(c.or, x12, x13, 0xffffffff, 0x0, -0x1, x2, 8)
 	TEST_CR_OP(c.or, x14, x15, 0x7fff, 0x0, 0x7fff, x2, 12)
@@ -127,16 +127,6 @@ test_3_res:
 test_4_res:
 	.fill 5, 4, -1
 test_5_res:
-	.fill 5, 4, -1
-test_6_res:
-	.fill 5, 4, -1
-test_7_res:
-	.fill 5, 4, -1
-test_8_res:
-	.fill 5, 4, -1
-test_9_res:
-	.fill 5, 4, -1
-test_10_res:
 	.fill 5, 4, -1
 
 RV_COMPLIANCE_DATA_END
