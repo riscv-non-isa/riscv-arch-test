@@ -1,0 +1,41 @@
+ifeq ($(OS),Windows_NT)
+    ARCH := Windows64
+else
+    ARCH := Linux64
+endif
+
+TARGET_SIM ?= $(ROOTDIR)/riscv-ovpsim/bin/$(ARCH)/riscvOVPsim.exe
+ifeq ($(shell command -v $(TARGET_SIM) 2> /dev/null),)
+    $(error Target simulator executable '$(TARGET_SIM)` not found)
+endif
+
+RUN_TARGET=\
+    $(TARGET_SIM) \
+        --variant RV32I --program $(work_dir_isa)/$< \
+        --signaturedump --customcontrol \
+        --override riscvOVPsim/cpu/sigdump/SignatureFile=$(work_dir_isa)/$(*)_signature.output \
+        --override riscvOVPsim/cpu/sigdump/ResultReg=3 \
+        --override riscvOVPsim/cpu/simulateexceptions=T \
+        --override riscvOVPsim/cpu/defaultsemihost=F \
+        --logfile $(work_dir_isa)/$@ \
+        --override riscvOVPsim/cpu/user_version=2.2 \
+        --override riscvOVPsim/cpu/priv_version=1.10 \
+
+#	--override riscvOVPsim/cpu/PMP_registers=0 \
+#	--trace --tracechange --tracemode \
+
+
+RISCV_PREFIX   ?= riscv32-unknown-elf-
+RISCV_GCC      ?= $(RISCV_PREFIX)gcc
+RISCV_OBJDUMP  ?= $(RISCV_PREFIX)objdump
+RISCV_GCC_OPTS ?= -static -mcmodel=medany -fvisibility=hidden -nostdlib -nostartfiles \
+                 -Werror -Wl,--fatal-warnings
+
+COMPILE_TARGET=\
+	$$(RISCV_GCC) $(2) $$(RISCV_GCC_OPTS) \
+		-I$(ROOTDIR)/riscv-test-env/ \
+		-I$(ROOTDIR)/riscv-test-env/p/ \
+		-I$(ROOTDIR)/riscv-target/$(RISCV_TARGET)/ \
+		-T$(ROOTDIR)/riscv-test-env/p/link.ld $$< \
+		-o $(work_dir_isa)/$$@; \
+	$$(RISCV_OBJDUMP) -D $(work_dir_isa)/$$@ > $(work_dir_isa)/$$@.objdump

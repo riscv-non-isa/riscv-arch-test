@@ -457,3 +457,5 @@
         fmv.s.x destreg, reg; \
         )
 
+#define SWSIG(a,b)
+

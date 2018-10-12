@@ -47,6 +47,11 @@ void riscvReset(riscvP riscv);
 void riscvIllegalInstruction(riscvP riscv);
 
 //
+// Take Instruction Address Misaligned exception
+//
+void riscvInstructionAddressMisaligned(riscvP riscv, Uns64 tval);
+
+//
 // Take ECALL exception
 //
 void riscvECALL(riscvP riscv);

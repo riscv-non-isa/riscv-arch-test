@@ -1,3 +1,7 @@
+2018-10-11 Simon Davidmann <simond@imperas.com>
+    * Ported github riscv/riscv-tests for RV32 processors to this compliance env
+    * rv32ua rv32uc rv32ud rv32uf rv32ud rv32ui
+
 2018-09-10  Lee Moore  <moore@imperas.com>
 	* Added tests to RV32I to improve coverage, usage of Imperas Mutating Fault Simulator to 
 	  identify untested usage cases

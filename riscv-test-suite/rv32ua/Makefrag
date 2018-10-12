@@ -1,0 +1,16 @@
+rv32ua_sc_tests =    \
+	amoadd_w \
+	amoand_w \
+	amomax_w \
+	amomin_w \
+	amominu_w \
+	amoxor_w \
+	amoswap_w \
+	lrsc \
+	amomaxu_w \
+        amoor_w
+
+rv32ua_tests = $(addsuffix .elf, $(rv32ua_sc_tests))
+
+target32_tests += $(rv32ua_tests)
+

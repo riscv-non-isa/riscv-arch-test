@@ -424,6 +424,13 @@ void riscvIllegalInstruction(riscvP riscv) {
 }
 
 //
+// Take Instruction Address Misaligned exception
+//
+void riscvInstructionAddressMisaligned(riscvP riscv, Uns64 tval) {
+    riscvTakeException(riscv, riscv_E_InstructionAddressMisaligned, tval & -2);
+}
+
+//
 // Take ECALL exception
 //
 void riscvECALL(riscvP riscv) {

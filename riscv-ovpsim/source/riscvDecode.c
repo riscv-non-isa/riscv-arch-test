@@ -1089,19 +1089,30 @@ static riscvCSRUDesc getCSRUpdate(
 }
 
 //
-// Force result to be undefined if shift amount >= XLEN
+// Force result to be undefined if shift amount >= XLEN or register size
 //
-static void validateShift(riscvP riscv, riscvInstrInfoP info, Uns32 shift) {
+static void validateShift(
+    riscvP          riscv,
+    riscvInstrInfoP info, 
+    Uns32           shift,
+    riscvRegDesc    wX
+) {
     if(shift>=getXLenBits(riscv)) {
         info->arch &= ~getXLenArch(riscv);
+    } else if(shift>=getRBits(wX)) {
+        info->type = RV_IT_LAST;
     }
 }
 
 //
 // Return a constant encoded within the instruction
 //
-static Uns64 getConstant(riscvP riscv, riscvInstrInfoP info, constSpec c) {
-
+static Uns64 getConstant(
+    riscvP          riscv,
+    riscvInstrInfoP info,
+    constSpec       c,
+    riscvRegDesc    wX
+) {
     Uns64 result = 0;
     Uns32 instr  = info->instruction;
 
@@ -1120,7 +1131,7 @@ static Uns64 getConstant(riscvP riscv, riscvInstrInfoP info, constSpec c) {
             break;
         case CS_SHAMT_25_20:
             result = U_25_20(instr);
-            validateShift(riscv, info, result);
+            validateShift(riscv, info, result, wX);
             break;
         case CS_AUIPC:
             result = S_31_12(instr) << 12;
@@ -1146,7 +1157,7 @@ static Uns64 getConstant(riscvP riscv, riscvInstrInfoP info, constSpec c) {
         case CS_C_SLLI:
             result  = U_12(instr) << 5;
             result += U_6_2(instr);
-            validateShift(riscv, info, result);
+            validateShift(riscv, info, result, wX);
             break;
         case CS_C_ADDI16SP:
             result  = S_12(instr)  << 9;
@@ -1521,7 +1532,7 @@ static void interpretInstruction(
     info->unsExt    = getUnsExt(info, attrs->unsExt);
     info->csr       = getCSR(riscv, info, attrs->csr);
     info->csrUpdate = getCSRUpdate(riscv, info, attrs->csrUpdate);
-    info->c         = getConstant(riscv, info, attrs->cs);
+    info->c         = getConstant(riscv, info, attrs->cs, wX);
     info->r[0]      = getRegister(riscv, info, attrs->r1, wX, wF, attrs->xQuiet);
     info->r[1]      = getRegister(riscv, info, attrs->r2, wX, wF, attrs->xQuiet);
     info->r[2]      = getRegister(riscv, info, attrs->r3, wX, wF, attrs->xQuiet);

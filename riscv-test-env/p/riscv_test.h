@@ -185,12 +185,13 @@ end_testcode:                                                           \
 //-----------------------------------------------------------------------
 // Pass/Fail Macro
 //-----------------------------------------------------------------------
-//#define RVTEST_SYNC fence
-#define RVTEST_SYNC nop
+#define RVTEST_SYNC fence
+//#define RVTEST_SYNC nop
 
 #define RVTEST_PASS                                                     \
         RVTEST_SYNC;                                                    \
         li TESTNUM, 1;                                                  \
+        SWSIG (0, TESTNUM);                                                   \
         ecall
 
 #define TESTNUM gp
@@ -199,6 +200,7 @@ end_testcode:                                                           \
 1:      beqz TESTNUM, 1b;                                               \
         sll TESTNUM, TESTNUM, 1;                                        \
         or TESTNUM, TESTNUM, 1;                                         \
+        SWSIG (0, TESTNUM);                                                   \
         ecall
 
 //-----------------------------------------------------------------------

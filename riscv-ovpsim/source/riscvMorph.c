@@ -276,6 +276,22 @@ static void emitBlockMask(riscvP riscv, riscvArchitecture feature) {
 }
 
 //
+// Determine if the given required feature is present and enabled (using
+// blockMask if necessary)
+//
+static Bool isFeaturePresentMT(riscvP riscv, riscvArchitecture feature) {
+
+    riscvArchitecture current = getCurrentArch(riscv);
+    riscvArchitecture actual  = current & feature;
+    riscvArchitecture present = feature & actual;
+
+    // validate values of fields that can change at run time
+    emitBlockMask(riscv, feature);
+
+    return present;
+}
+
+//
 // Validate that the given required feature is present and enabled (using
 // blockMask if necessary)
 //
@@ -1005,20 +1021,100 @@ static RISCV_MORPH_FN(emitStore) {
 }
 
 //
+// Is constant target address aligned?
+//
+static Bool isTargetAddressAlignedC(riscvP riscv, Uns64 tgt) {
+
+    if(!(tgt&0x2)) {
+
+        // address is aligned
+        return True;
+
+    } else if(isFeaturePresentMT(riscv, ISA_C)) {
+
+        // compressed instructions enabled
+        return True;
+
+    } else {
+
+        // address is not aligned
+        return False;
+    }
+}
+
+//
+// Take Instruction Address Misaligned exception
+//
+static void emitTargetAddressUnalignedC(riscvP riscv, Uns64 tgt) {
+
+    vmiCallFn exceptCB = (vmiCallFn)riscvInstructionAddressMisaligned;
+
+    // emit call generating Instruction Address Misaligned exception
+    vmimtArgProcessor();
+    vmimtArgUns64(tgt);
+    vmimtCallAttrs(exceptCB, VMCA_EXCEPTION);
+}
+
+//
+// Validate target address in register is aligned and take exception if not
+//
+static void checkTargetAddressAlignedR(riscvP riscv, Uns32 bits, vmiReg ra) {
+
+    if(!isFeaturePresentMT(riscv, ISA_C)) {
+
+        vmiLabelP ok       = vmimtNewLabel();
+        vmiCallFn exceptCB = (vmiCallFn)riscvInstructionAddressMisaligned;
+
+        // skip misaligned instruction exception if bit[1] is clear
+        vmimtTestRCJumpLabel(32, vmi_COND_Z, ra, 0x2, ok);
+
+        // extend target address to 64 bits
+        vmiReg tmp = getTmp(0);
+        vmimtMoveExtendRR(64, tmp, bits, ra, False);
+
+        // emit call generating Illegal Instruction exception
+        vmimtArgProcessor();
+        vmimtArgReg(64, ra);
+        vmimtCallAttrs(exceptCB, VMCA_EXCEPTION);
+
+        // here if access is legal
+        vmimtInsertLabel(ok);
+    }
+}
+
+//
 // Branch based on register comparison
 //
 static RISCV_MORPH_FN(emitBranchRR) {
 
-    riscvP       riscv  = state->riscv;
-    riscvRegDesc rs1A   = getRVReg(state, 0);
-    riscvRegDesc rs2A   = getRVReg(state, 1);
-    vmiReg       rs1    = getVMIReg(riscv, rs1A);
-    vmiReg       rs2    = getVMIReg(riscv, rs2A);
-    Uns32        bits   = getRBits(rs1A);
-    Uns64        tgt    = state->info.c;
-    vmiReg       tmp    = getTmp(0);
+    riscvP       riscv = state->riscv;
+    riscvRegDesc rs1A  = getRVReg(state, 0);
+    riscvRegDesc rs2A  = getRVReg(state, 1);
+    vmiReg       rs1   = getVMIReg(riscv, rs1A);
+    vmiReg       rs2   = getVMIReg(riscv, rs2A);
+    Uns32        bits  = getRBits(rs1A);
+    Uns64        tgt   = state->info.c;
+    vmiReg       tmp   = getTmp(0);
 
+    // do comparison
     vmimtCompareRR(bits, state->attrs->cond, rs1, rs2, tmp);
+
+    // validate target address alignment
+    if(!isTargetAddressAlignedC(riscv, tgt)) {
+
+        vmiLabelP noBranch = vmimtNewLabel();
+
+        // skip alignment test if condition is False
+        vmimtCondJumpLabel(tmp, False, noBranch);
+
+        // take Instruction Address Misaligned exception
+        emitTargetAddressUnalignedC(riscv, tgt);
+
+        // here if address is aligned
+        vmimtInsertLabel(noBranch);
+    }
+
+    // do branch
     vmimtCondJump(tmp, True, 0, tgt, VMI_NOREG, vmi_JH_RELATIVE);
 }
 
@@ -1051,6 +1147,11 @@ static RISCV_MORPH_FN(emitJAL) {
     Uns64        tgt    = state->info.c;
     vmiJumpHint  hint   = isLR(lr) ? vmi_JH_CALL : vmi_JH_NONE;
 
+    // validate target address alignment
+    if(!isTargetAddressAlignedC(riscv, tgt)) {
+        emitTargetAddressUnalignedC(riscv, tgt);
+    }
+
     // emit call using calculated linkPC and adjusted lr
     Uns64 linkPC = getLinkPC(state, &lr);
     vmimtUncondJump(linkPC, tgt, lr, hint|vmi_JH_RELATIVE);
@@ -1076,6 +1177,9 @@ static RISCV_MORPH_FN(emitJALR) {
         vmimtBinopRRC(bits, vmi_ADD, tmp, ra, offset, 0);
         ra = tmp;
     }
+
+    // validate target address alignment
+    checkTargetAddressAlignedR(riscv, bits, ra);
 
     // derive jump hint
     if(isLR(ra)) {

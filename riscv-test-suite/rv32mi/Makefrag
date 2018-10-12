@@ -1,0 +1,15 @@
+rv32mi_sc_tests =    \
+	breakpoint \
+	ma_fetch \
+	ma_addr \
+	scall \
+	sbreak \
+	shamt \
+	csr \
+	mcsr \
+ 	illegal
+
+
+rv32mi_tests = $(addsuffix .elf, $(rv32mi_sc_tests))
+
+target32_tests += $(rv32mi_tests)
