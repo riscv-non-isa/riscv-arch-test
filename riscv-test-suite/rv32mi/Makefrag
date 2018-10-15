@@ -9,6 +9,9 @@ rv32mi_sc_tests =    \
 	mcsr \
  	illegal
 
+ifeq ($(RISCV_TARGET),riscvOVPsim)
+    rv32mi_sc_tests := $(subst breakpoint,,$(rv32mi_sc_tests))
+endif
 
 rv32mi_tests = $(addsuffix .elf, $(rv32mi_sc_tests))
 

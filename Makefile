@@ -14,9 +14,9 @@ space:= $(empty) $(empty)
 RISCV_ISA_ALL = $(shell ls $(ROOTDIR)/riscv-test-suite)
 RISCV_ISA_OPT = $(subst $(space),$(pipe),$(RISCV_ISA_ALL))
 
-RISCV_TARGET ?= riscvOVPsim 
-RISCV_DEVICE ?= rv32i
-RISCV_PREFIX ?= riscv64-unknown-elf-
+export RISCV_TARGET ?= riscvOVPsim 
+export RISCV_DEVICE ?= rv32i
+export RISCV_PREFIX ?= riscv64-unknown-elf-
 
 ifeq ($(RISCV_ISA),)
     RISCV_ISA = rv32i
