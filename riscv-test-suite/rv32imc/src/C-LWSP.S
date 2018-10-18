@@ -95,6 +95,15 @@ RV_COMPLIANCE_CODE_END
 
 # Input data section.
 	.data
+.align 4
+test_data:
+    .word 0x11111111
+    .word 0x22222222
+    .word 0x33333333
+    .fill 28, 4, -1
+    .word 0x44444444
+    .fill 31, 4, -1
+    .word 0x55555555
 
 # Output data section.
 RV_COMPLIANCE_DATA_BEGIN
@@ -108,38 +117,6 @@ test_4_res:
 	.fill 1, 4, -1
 test_5_res:
 	.fill 1, 4, -1
-test_data:
-	.word 0
-	.word 1
-	.word 2
-	.word 3
-	.word 4
-	.word 5
-	.word 6
-	.word 7
-	.word 8
-	.word 9
-	.word 10
-	.word 11
-	.word 12
-	.word 13
-	.word 14
-	.word 15
-	.word 16
-	.word 17
-	.word 18
-	.word 19
-	.word 20
-	.word 21
-	.word 22
-	.word 23
-	.word 24
-	.word 25
-	.word 26
-	.word 27
-	.word 28
-	.word 29
-	.word 30
-	.word 31
 
 RV_COMPLIANCE_DATA_END
+
