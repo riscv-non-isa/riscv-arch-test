@@ -40,6 +40,9 @@ RV_COMPLIANCE_CODE_BEGIN
 	RVTEST_IO_ASSERT_GPR_EQ(x0, 0x00000000)
 	RVTEST_IO_WRITE_STR("Test Begin Reserved regs ra(x1) a0(x10) t0(x5)\n")
 
+    # initialize SP
+    li  x2, 0x0
+
 	# ---------------------------------------------------------------------------------------------
 
 	RVTEST_IO_WRITE_STR("# Test number 1 - corner cases\n")

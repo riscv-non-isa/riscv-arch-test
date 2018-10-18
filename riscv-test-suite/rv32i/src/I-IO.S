@@ -1,4 +1,4 @@
-# RISC-V Compliance Test I-ADD-01
+# RISC-V Compliance Test I-IO-01
 #
 # Additions Copyright (c) 2005-2018 Imperas Software Ltd., www.imperas.com
 #
