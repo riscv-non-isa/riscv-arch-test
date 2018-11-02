@@ -391,7 +391,7 @@
       inst reg; \
       li x10, 0x123ab; \
 1: \
-      sw reg, offset(swreg); \
+      sw x10, offset(swreg); \
       RVTEST_IO_ASSERT_GPR_EQ(x10, val); \
 
 #define ABS(x) ((x >> 11) ^ x) - (x >> 11)
