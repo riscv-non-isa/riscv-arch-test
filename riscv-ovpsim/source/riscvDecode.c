@@ -703,10 +703,10 @@ const static opAttrs attrsArray32[] = {
     ATTR32_FSSR      (     FSRM_I,      CSRR_I, RVANY,  "fsrm",       "|000000000010|.....|001|.....|1110011|"),
 
     // X-extension Type, custom instructions
-    ATTR32_CUSTOM    (    CUSTOM1,      CUSTOM, RVANY,  "custom1",    "|............|.....|...|.....|00010..|"),
-    ATTR32_CUSTOM    (    CUSTOM2,      CUSTOM, RVANY,  "custom2",    "|............|.....|...|.....|01010..|"),
-    ATTR32_CUSTOM    (    CUSTOM3,      CUSTOM, RVANY,  "custom3",    "|............|.....|...|.....|10110..|"),
-    ATTR32_CUSTOM    (    CUSTOM4,      CUSTOM, RVANY,  "custom4",    "|............|.....|...|.....|11110..|"),
+    ATTR32_CUSTOM    (    CUSTOM1,      CUSTOM, RVANY,  "custom1",    "|............|.....|...|.....|0001011|"),
+    ATTR32_CUSTOM    (    CUSTOM2,      CUSTOM, RVANY,  "custom2",    "|............|.....|...|.....|0101011|"),
+    ATTR32_CUSTOM    (    CUSTOM3,      CUSTOM, RVANY,  "custom3",    "|............|.....|...|.....|1011011|"),
+    ATTR32_CUSTOM    (    CUSTOM4,      CUSTOM, RVANY,  "custom4",    "|............|.....|...|.....|1111011|"),
 
     // dummy entry for undecoded instruction
     ATTR32_LAST      (       LAST,      LAST,           "undef")
@@ -1093,7 +1093,7 @@ static riscvCSRUDesc getCSRUpdate(
 //
 static void validateShift(
     riscvP          riscv,
-    riscvInstrInfoP info, 
+    riscvInstrInfoP info,
     Uns32           shift,
     riscvRegDesc    wX
 ) {
