@@ -408,9 +408,11 @@
       inst reg, imm(reg); \
       sw reg, offset(swreg); \
 
+// lw reg, imm(x2)
+// c.lwsp reg, imm(x2)
 #define TEST_CLWSP(reg, imm, swreg, offset) \
       la x2, test_data; \
-      lw reg, imm(x2); \
+      c.lwsp reg, imm(x2); \
       sw reg, offset(swreg); \
 
 #define TEST_CSW(test_data, inst, reg1, reg2, val, imm, swreg, offset) \
@@ -424,7 +426,7 @@
 #define TEST_CSWSP(test_data, reg, val, imm, swreg, offset) \
       la x2, test_data; \
       li reg, val; \
-      sw reg, imm(x2); \
+      c.swsp reg, imm(x2); \
       lw reg, imm(x2); \
       sw reg, offset(swreg); \
       RVTEST_IO_ASSERT_GPR_EQ(reg, val); \
