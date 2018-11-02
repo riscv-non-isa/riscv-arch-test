@@ -374,15 +374,14 @@
         inst destreg, reg; \
         )
 
-//Temporary macros for certain instructions which are not implemented yet
 #define TEST_CADDI16SP(correctval, imm, swreg, offset) \
       TEST_CASE(x2, correctval, swreg, offset, \
-      addi x2, x2, imm; \
+      c.addi16sp x2, imm; \
       )
 
 #define TEST_CADDI4SPN(destreg, correctval, imm, swreg, offset) \
       TEST_CASE(destreg, correctval, swreg, offset, \
-        addi destreg, x2, SEXT_IMM(imm); \
+        c.addi4spn destreg, x2, SEXT_IMM(imm); \
         )
 
 #define TEST_CJL(inst, reg, val, swreg, offset) \
