@@ -5,7 +5,7 @@
 act_dir := .
 src_dir := $(act_dir)/src
 work_dir := $(ROOTDIR)/work
-work_dir_isa := $(work_dir)/$(ISA)
+work_dir_isa := $(work_dir)/$(RISCV_ISA)
 
 include $(act_dir)/Makefrag
 
@@ -48,6 +48,7 @@ $(eval $(call compile_template,rv32ui,-march=rv32i -mabi=ilp32))
 tests32_out = $(patsubst %.elf,%.out32,$(target32_tests))
 
 run: $(tests32_out)
+	echo "+++ $^ +++"
 
 #------------------------------------------------------------
 # Default

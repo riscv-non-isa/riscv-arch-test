@@ -5,7 +5,7 @@ endif
 
 RUN_TARGET=\
     $(TARGET_SIM) --isa=rv32g \
-        +signature=$(work_dir_isa)/$(*)_signature.output \
+        +signature=$(work_dir_isa)/$(*).signature.output \
         $(work_dir_isa)/$< 2> $(work_dir_isa)/$@
 
 RISCV_PREFIX   ?= riscv32-unknown-elf-

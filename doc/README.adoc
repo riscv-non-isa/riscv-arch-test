@@ -420,8 +420,8 @@ codasip_signature_end:
 For example, to support the Codasip ISA simulator as the device under test
 (DUT), it was necessary to change `RISCV_SIM` from `spike` to
 `codix_berkelium-ia-isimulator –r` and parameters for running the simulator
-from `+signature=$(work_dir)/$<_signature.output` to `–info 5` plus handle
-redirection to a file by `1>$(work_dir)/$<_signature.output`.
+from `+signature=$(work_dir)/$<.signature.output` to `–info 5` plus handle
+redirection to a file by `1>$(work_dir)/$<.signature.output`.
 
 == Configuring the target device
 
@@ -437,7 +437,7 @@ For example for the riscvOVPsim to be configured to be a RV32I
 RUN_TARGET= \
         riscvOVPsim.exe --variant RV32I --program $(work_dir_isa)/$< \
             --signaturedump \
-            --override riscvOVPsim/cpu/sigdump/SignatureFile=$(work_dir_isa)/$(*)_signature.output \
+            --override riscvOVPsim/cpu/sigdump/SignatureFile=$(work_dir_isa)/$(*).signature.output \
             --override riscvOVPsim/cpu/sigdump/ResultReg=3 \
             --override riscvOVPsim/cpu/simulateexceptions=T \
             --logfile $(work_dir_isa)/$@

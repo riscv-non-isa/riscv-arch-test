@@ -13,7 +13,7 @@ RUN_TARGET=\
     $(TARGET_SIM) \
         --variant RV32IMAC --program $(work_dir_isa)/$< \
         --signaturedump --customcontrol \
-        --override riscvOVPsim/cpu/sigdump/SignatureFile=$(work_dir_isa)/$(*)_signature.output \
+        --override riscvOVPsim/cpu/sigdump/SignatureFile=$(work_dir_isa)/$(*).signature.output \
         --override riscvOVPsim/cpu/sigdump/ResultReg=3 \
         --override riscvOVPsim/cpu/simulateexceptions=T \
         --override riscvOVPsim/cpu/defaultsemihost=F \
