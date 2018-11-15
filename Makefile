@@ -11,12 +11,13 @@ pipe:= |
 empty:=
 space:= $(empty) $(empty)
 
-RISCV_ISA_ALL = $(shell ls $(ROOTDIR)/riscv-test-suite)
-RISCV_ISA_OPT = $(subst $(space),$(pipe),$(RISCV_ISA_ALL))
-
-export RISCV_TARGET ?= riscvOVPsim 
+export RISCV_TARGET ?= riscvOVPsim
 export RISCV_DEVICE ?= rv32i
 export RISCV_PREFIX ?= riscv64-unknown-elf-
+
+RISCV_ISA_ALL = $(shell ls $(ROOTDIR)/riscv-target/$(RISCV_TARGET)/device)
+RISCV_ISA_OPT = $(subst $(space),$(pipe),$(RISCV_ISA_ALL))
+
 
 ifeq ($(RISCV_ISA),)
     RISCV_ISA = rv32i
