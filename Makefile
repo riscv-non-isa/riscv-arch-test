@@ -29,6 +29,7 @@ endif
 export ROOTDIR  = $(shell pwd)
 export WORK     = $(ROOTDIR)/work
 export SUITEDIR = $(ROOTDIR)/riscv-test-suite/$(RISCV_ISA)
+export TARGETDIR ?= $(ROOTDIR)/riscv-target
 
 default: $(DEFAULT_TARGET)
 
@@ -50,7 +51,7 @@ simulate:
 		RISCV_DEVICE=$(RISCV_DEVICE) \
 		RISCV_PREFIX=$(RISCV_PREFIX) \
 		run -C $(SUITEDIR)
-	
+
 verify:
 	riscv-test-env/verify.sh
 
@@ -67,4 +68,4 @@ help:
 	@echo "RISCV_DEVICE='rv32i|rv32im|...'"
 	@echo "RISCV_ISA=$(RISCV_ISA_OPT)"
 	@echo "make all_variant // all combinations"
-	
+

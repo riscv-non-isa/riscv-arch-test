@@ -19,5 +19,5 @@ COMPILE_TARGET=\
 	$$(RISCV_GCC) $(2) $$(RISCV_GCC_OPTS) \
 		-I$(ROOTDIR)/riscv-test-env/ \
 		-I$(ROOTDIR)/riscv-test-env/p/ \
-		-I$(ROOTDIR)/riscv-target/$(RISCV_TARGET)/ \
+		-I$(TARGETDIR)/$(RISCV_TARGET)/ \
 		$$< -o $(work_dir_isa)/$$@
