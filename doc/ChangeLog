@@ -1,3 +1,7 @@
+2018-11-21 Olof Kindgren <olof.kindgren@gmail.com>
+
+	* README.adoc (Repository structure) Added documentation for the $TARGETDIR environmental variable
+
 2018-11-21  Neel Gala  <neelgala@incoresemi.com>
 	* README.adoc: Added new signature format spec.
 
