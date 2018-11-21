@@ -1,3 +1,11 @@
+2018-11-21 Neel Gala <neelgala@incoresemi.com>
+   	* changed signature format for all tests to include only 4-bytes per line starting with the
+  	  most significant on the left.
+    	* Added a patch for spike-device Makefiles where the old-signature format is post-processed 
+      	  to generate a signature in the new format at the end of each test.
+    	* default target for Makefile in root-dir is to run all tests supported by the target mentioned
+      	  in the RISCV_TARGET variable and not all the tests in the riscv-test-suite directory
+
 2018-10-11 Simon Davidmann <simond@imperas.com>
     * Ported github riscv/riscv-tests for RV32 processors to this compliance env
     * rv32ua rv32uc rv32ud rv32uf rv32ud rv32ui
