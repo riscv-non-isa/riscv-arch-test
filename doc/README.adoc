@@ -1,6 +1,6 @@
 = RISC-V Compliance Tests =
 RISC-V Foundation Compliance Task Group
-Issue 1.10 Draft
+Issue 1.11 Draft
 :toc:
 :icons: font
 :numbered:
@@ -121,6 +121,10 @@ Jeremy Bennett, Mary Bennett, Simon Davidmann, Radek Hajek, Lee Moore, Milan Nos
 [cols="<1,<2,<3,<4",options="header,pagewidth",]
 |================================================================================
 | _Revision_ | _Date_            | _Author_ | _Modification_
+| 1.11 Draft  | 21 November 2018      |
+Neel Gala |
+
+Added new signature format specs .
 | 1.10 Draft  | 20 June 2018      |
 
 Simon Davidmann, Lee Moore |
@@ -212,11 +216,11 @@ The RISC-V specification allows many optional instructions, registers, and other
 
 === The test signature
 
-The _test signature_ is defined as reference data written into memory during the execution of the test.  It should record values and results of the operation of the Test.
+The _test signature_ is defined as reference data written into memory during the execution of the test.  It should record values and results of the operation of the Test. It is expected that an implementation, at the end of a test, dumps the signature in to a file such that only 4-bytes are written per line, starting with the most-significant byte on the left.
 
 === The test reference signature
 
-The _test reference signature_ is the _test signature_ saved from an execution run of the RISC‑V _golden model_.  This is currently from a RISC-V ISS, but the intention is that the RISC-V Formal Model from the RISCV.org Formal Working Group will be used when it is complete, functional, and available.
+The _test reference signature_ is the _test signature_ saved from an execution run of the RISC‑V _golden model_.  This is currently from a RISC-V ISS, but the intention is that the RISC-V Formal Model from the RISCV.org Formal Working Group will be used when it is complete, functional, and available. 
 
 === The test suites
 
