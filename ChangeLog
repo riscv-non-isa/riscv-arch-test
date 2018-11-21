@@ -5,6 +5,7 @@
     	* riscv-target/spike/device/rv_/Makefile.include: Added a patch for 
 	  spike-device Makefiles where the old-signature format is post-processed 
       	  to generate a signature in the new format at the end of each test.
+	* riscv-target/riscvOVPsim/device/rv_/Makefile.include: same patch as above.
     	* Makefile: default target for Makefile is now to run all tests supported by 
 	  the target mentioned defined by RISCV_TARGET variable.
 
