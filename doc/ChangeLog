@@ -1,3 +1,6 @@
+2018-11-21  Neel Gala  <neelgala@incoresemi.com>
+	* README.adoc: Added new signature format spec.
+
 2018-06-18  Jeremy Bennett  <jeremy.bennett@embecosm.com>
 
 	* README.adoc (Future work): Reflect changes made to support
