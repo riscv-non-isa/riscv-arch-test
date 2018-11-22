@@ -20,7 +20,7 @@ COMPILE_TARGET=\
 	$$(RISCV_GCC) $(2) $$(RISCV_GCC_OPTS) \
 		-I$(ROOTDIR)/riscv-test-env/ \
 		-I$(ROOTDIR)/riscv-test-env/p/ \
-		-I$(ROOTDIR)/riscv-target/$(RISCV_TARGET)/ \
+		-I$(TARGETDIR)/$(RISCV_TARGET)/ \
 		-T$(ROOTDIR)/riscv-test-env/p/link.ld $$< \
 		-o $(work_dir_isa)/$$@; \
 	$$(RISCV_OBJDUMP) -D $(work_dir_isa)/$$@ > $(work_dir_isa)/$$@.objdump

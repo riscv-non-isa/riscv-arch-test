@@ -442,7 +442,7 @@ The top level directory contains a `README.md` file giving an overview of the pr
 
 `doc`:: All the documentation for the project, written using _AsciiDoc_.
 
-`riscv-target`:: Contains a further subdirectory for each target, within which are placed the `compliance_io.h` header for that target and a `device` directory for all the devices of that target.
+`riscv-target`:: Contains a further subdirectory for each target, within which are placed the `compliance_io.h` header for that target and a `device` directory for all the devices of that target. If the `$TARGETDIR` environment variable is set to another directory, the scripts will search this directory for targets instead.
 
 `riscv-test-env`:: This contains headers common to all environments, and then a directory for each TVM variant, with `link.ld` linker script and `riscv_test.h` header.
 
