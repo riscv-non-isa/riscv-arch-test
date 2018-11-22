@@ -207,7 +207,7 @@ The result that compliance tests give to the tester is knowledge that the specif
 
 ==== Motivation to use unified test suite format
 
-In the future, the compliance test suite shall become a comprehensive set of tests, very likely written by various authors. It is important to define the tests structure and form, which will be obligatory for all tests. Unification of tests will guarantee optimal test suite management and also better quality and readability of the tests. Last but not least, it will simplify the process of adding new tests into the existing test suite and revision process.
+In the future, the compliance test suite shall become a set of compliance tests for any legal RISC-V configuration, very likely written by various authors. It is important to define the tests structure and form, which will be obligatory for all tests. Unification of tests will guarantee optimal test suite management and also better quality and readability of the tests. Last but not least, it will simplify the process of adding new tests into the existing test suite and revision process.
 
 === The Test Virtual Machine
 
@@ -284,9 +284,12 @@ compliance-tests-suite (root)
 ===== _To Be Discussed:_
 
 . We suggest to separate user-level and privileged (user, supervisor and machine-mode) tests. ISA tests shall avoid dealing with the trap mechanism. Traps can be used for privileged modes.Summary of differences between ISA and Machine-mode shall be a part of this document.
-. How to handle C extension which is part of other extension (F)
+. How to handle C extension which is part of other extension (e.g. F)
+-  C extension set may depend on other extensions as it is not a fix set of instructions but it is rather extended by other extensions. In other words other extension may have "its own" C extension. For example there are C.FLWSP, C.FSWSP and other instructions in RV32ICF. Note that they are not present in RV32IC containing only C extension. We have to state the right location for these tests. Shall we put put them in hierarchy (RV32i/C/ISA, RV32i/F/ISA or somewhere else?).
 . Binary tests shall be a part of the suite. Binary tests are the only way to prove the compliance of a SDK.
-. Tests of emulation of instructions shall not be part of the compliance test suite. Emulation shall only use already tested instructions. Note that this kind of tests would only check for compliance of emulation library.
+- There were binary coding tests in the first compliance test set delivery. Their purpose was to check whether assembler tool recognizes all instructions and whether binary coding matches specification. Unfortunately the binary coding tests were later removed from the compliance test suite.
+In our opinion there shall be at least some compliance tests for binary coding as the binary coding is important part of the specification which shall be examined by compliance tests. The binary coding tests help to detect and localize binary code bugs in SDKs containing proprietary or accomodated compiler. Without binary coding tests SDK may produce wrong binary code for a DUT using the same wrong coding. Under these circumstances all compliance tests will pass but the RISC-V unit and SDK will be not compliant.
+. Tests of instructions interpreted using software emulation shall not be part of the compliance test suite. Emulation shall only use already tested instructions. Note that this kind of tests would only check for compliance of emulation library.
 
 === Test Naming
 
@@ -294,15 +297,30 @@ The Naming convention of a single test:
 
 <__test objective__>-<__test number__>.S
 
-* __test objective__ – an aspect that the test is focused on. It can be an instruction, exceptions, etc.
+* __test objective__ – an aspect that the test is focused on. Test_objective may be instruction for ISA tests (ADD, SUB, ...), exception event (misalign fetch, misalign load, store) and others.
 
-* __test number__ – number of the test. It is expected that multiple tests will be specified for one test objective in the future.
+* __test number__ – number of the test. It is expected that multiple tests will be specified for one test objective. We recommend to break down complex test to a bunch of small ones. Simple rule of thumb is one simple feature = one simple test. The code becomes more readable and the test of the objective can be improved just by adding atomic tests. The typical example are instruction tests for the F extension.
 
-Test names shall not include an ISA category (it was a part of the previous naming convention) as it can lead to very long names. An ISA category can be derived from the test suite path if necessary.
+===== _To Be Discussed:_
+
+. Test names shall not include an ISA category. We have learned from the first version of the naming convention that including ISA category in the test name led to very long test names. With respect to this fact we have introduced the <<Test Suite Structure,test suite structure>> where the long name information is composed of the test path in the <<Test Suite Structure,test suite structure>> and the simple test name. As the long names can be reconstructed easily it is not necessary to have them for each of the test anymore. 
 
 === Test Structure
 
-All tests must use a signature approach. Each test shall be written in the same style, with defined mandatory items. The test structure shall be as follows:
+All tests must use a signature approach. Each test shall be written in the same style, with defined mandatory items. There are user-defined macros which shall be used in every test to guarantee their portability. Note that they are already used in several compliance tests. 
+
+----
+//
+// User defined macros
+//
+RV_COMPLIANCE_HALT         //  defines halt mechanism of DUT
+RV_COMPLIANCE_CODE_BEGIN   //  start of code (test) section = startup routine
+RV_COMPLIANCE_CODE_END     //  end of code (test) section
+RV_COMPLIANCE_DATA_BEGIN   //  start of output data (signature) section
+RV_COMPLIANCE_DATA_END     //  end of output data (signature) section
+----
+
+The test structure shall be as follows:
 
 .  Header + license (including a specification link and a brief test description)
 .  Includes of header files (see Common Header Files section)
@@ -321,7 +339,7 @@ There are the following common rules that shall be applied to each test:
 . It is forbidden to include other tests (e. g. #include “../add.S”) to prevent non-complete tests, compilation issues, and problems with code maintenance.
 . Tests shall be skipped if not required for a specific model under test configuration. We do not recommend to use #ifdef method to prevent “empty” test data in the signature.
 . Tests shall not store absolute addresses from the program in the signature.
-. Tests shall not depend on tool specific features. For example test shall avoid usage of internal GCC macros (e.g. ____risc_xlen__), specific syntax (char 'a' instead of 'a), simulator features (e.g. tohost) etc.
+. Tests shall not depend on tool specific features. For example test shall avoid usage of internal GCC macros (e.g. ____risc_xlen__), specific syntax (char 'a' instead of 'a) or simulator features (e.g. tohost) etc.
 . Each test shall be ended by the “RV_COMPLIANCE_HALT“ macro.
 
 ===== _To Be Discussed_
@@ -329,6 +347,7 @@ There are the following common rules that shall be applied to each test:
 . We recommend to add macros for input data (“RV_COMPLIANCE_INDATA_BEGIN”) to support Harvard architectures. This would require renaming “RV_COMPLIANCE_DATA_BEGIN“ to “RV_COMPLIANCE_SIGNATURE_BEGIN“.
 
 . We allow the usage of macros, however, they shall only be defined in a single file, and once they are in use, they may be modified only if the function of all affected tests remains unchanged. It is acceptable that using macros may lead to operands repetition (register X is used every time).
+- The aim of this restriction is to have test code more readable and to avoid side effects which may occur when different contributors including tests and their updates in the common test suite. This measure shall avoid that the test suite or its part will work well only for one target but cannot be used for another ones.
 
 ==== Common Header Files
 
@@ -361,7 +380,7 @@ test:
 
 There shall be one master test reference document which shall contain a description of every single test of the test suite, including a version of the referred specification, a link to the documentation, configuration which the test applies to, and configuration which the test does not apply to. For example, the test MISALING_JMP is valid for the I configuration, but not valid to any configuration with the C extension.
 
-The aim is to improve the management and maintenance of implemented tests, and to have a test reference in case of doubt during examination of compliance test results.
+The aim is to improve the management and maintenance of implemented tests, and to have a test reference in case of doubt during examination of compliance test results.  Note that the document content may be generated if each of the tests include the information in well defined format.   Master test reference document can be seen as a table of content with the brief test, validity and status description and shall be automatically updated together with the test suite update.  Having it nobody will need to retrieve all tests to find out which tests are implemented and approved for certain option.
 
 ==== Example - test reference item
 
@@ -393,6 +412,198 @@ The aim is to improve the management and maintenance of implemented tests, and t
 | ...
 |===
 
+Detailed test example can be seen in  <<Example - ISA test _ADD-01.S_, ISA test _ADD-01.S_>>
+
+== Developing new tests
+=== Structure
+
+* Clone directory structure of an existing test suite alongside the RV32I tree.
+
+* This must include test and reference signature directories (`src` and `references`).
+
+* Check the target environment setup files.
+
+* Check the processor configuration files.
+
+=== Process
+
+This description assumes the use of a configurable simulator with good trace and debug capabilities.
+
+* Work on one test at a time.
+
+* Use test format as specified in the <<Compliance test suite specification,Compliance test suite specification>> chapter
+
+* Ensure that the processor configuration is set appropriately.
+
+* Use the `RVTEST` macros (defined in `compliance_io.h`) to make it easy to see the details of a Test’s execution. There are macros for assertions (`RVTEST_IO_ASSERT_GPR_EQ`) and tracing (`RVTEST_IO_WRITE_STR`) which are empty on targets that can not implement them.
+
+* Assuming you are developing the test on a simulator, use the simulator’s tracing capabilities, especially a register change mode to single step your test examining all changing registers etc. to ensure your test is stimulating what is intending.
+
+* Make sure that the signature you generate at the end of the run shows adequate internal test state such that any checks do report as fails if wrong.
+
+* When you are satisfied that the test does what is intended and that the test signature is correct, copy this into a test reference signature (in the references directory).
+
+For a test suite to be complete it needs to have tests that exercise the full functionality of what it is intended to test. There are tools available to measure instruction and other resource coverage. These should be used to ensure that 100% of the intended instructions have been tested.
+
+== Test framework
+
+For running compliance tests, the Test Virtual Machine (TVM) “p” available at https://github.com/riscv/riscv-tests is utilized.
+
+In addition to using the basic functionality of the TVM, the script for running compliance tests runs the test on the target and then performs comparison of the target’s generated test signature to the manually reviewed test reference signature.
+
+See the chapter below for selecting and setting up the target (simulator, or hardware, etc.).
+
+If using a target that requires the processor to be configured, see the chapter below on processor configuration.
+
+You will also need to have a suitable compiler tool chain (GCC or LLVM) installed in your environment and available on your path.
+
+Tests are run by commands in the top level `Makefile` which has targets for simulate and verify
+
+[source,make]
+----
+RISCV_TARGET ?= riscvOVPsim
+RISCV_DEVICE ?= rv32i
+RISCV_PREFIX ?= riscv64-unknown-elf-
+
+simulate:
+        make RISCV_TARGET=$(RISCV_TARGET) \
+             RISCV_DEVICE=$(RISCV_DEVICE) \
+             RISCV_PREFIX=$(RISCV_PREFIX) \
+             run -C $(SUITEDIR)
+
+verify:
+    riscv-test-env/verify.sh
+----
+
+== Setting the target environment
+
+The target environment needs setting up to allow the compliance tests to be run on the target.  This can be used while developing compliance test suites or it can be used with new targets to see if they correctly execute the compliance test suites and are compliant!
+
+This chapter provides information on the currently available targets and includes a short tutorial on how to add a new target.
+
+=== Imperas riscvOVPsim compliance simulator
+
+For tracing the test the following  macros are defined in `riscv-target/riscvOVPsim/compliance_io.h`:
+
+[source,make]
+----
+RVTEST_IO_INIT
+RVTEST_IO_WRITE_STR(_STR)
+RVTEST_IO_ASSERT_GPR_EQ(_R, _I)
+----
+
+An example of a test that uses the tracing macros is `riscv-test-suite/rv32i/ISA/src/I-IO.S`.
+
+To configure the simulator for different target devices there needs to be a Makefile fragment in the `device` directory.
+
+The Makefile fragment for RV32I is in `riscv-target/riscvOVPsim/device/rv32i`
+
+In the top level Makefile there needs to be a selection for the target and device:
+[source,make]
+----
+RISCV_TARGET?=riscvOVPsim
+RISCV_DEVICE?=rv32i
+----
+
+The path to the RUN_TARGET is defined within the riscv-target Makefile.include.
+
+
+=== Codasip ISA simulator
+
+tbd
+
+=== GNU CGEN ISS
+==== Within GDB
+
+tbd
+
+==== Via GDB Remote Serial Protocol
+
+tbd
+
+=== Berkeley Spike ISA simulator
+For spike the file `riscv-target/spike/compliance_io.h` has the trace macros defined as empty.  The Makefile fragment in `riscv-target/spike/device/rv32i` has the spike run command for the RV32I device.
+
+=== SiFive Freedom Unleashed 540 board (tbd)
+
+tbd
+
+=== Verilator Verilog RI5CY RTL processor
+==== With GDB Server
+
+tbd
+
+==== With testbench monitor
+
+tbd
+
+=== Adding a new Target
+
+In this section, a short tutorial how to add a user target in the TVM is provided.
+
+If you do not want to use the TVM at all, it is recommended to just take the tests and references and incorporate them into your testing environment.  The only requirement needed in this case is that there must be an option to dump the results from the target in the test environment so as the comparison to test reference signature is possible.
+
+The following steps demonstrate an example in which a target was replaced by Codasip ISA simulator. In a similar way, any RISC-V ISA simulator or any RTL simulation model of the RISC-V processor can be connected.
+
+* Redefine macros in `ISA/src/compliance_test.h` and `binary_coding/src/compliance_test.h`.
++
+For example, to support Codasip ISA simulator as Target, it was necessary to redefine `RV_COMPLIANCE_HALT macro`, `RV_COMPLIANCE_DATA_BEGIN` macro and `RV_COMPLIANCE_DATA_END` macro in `ISA/compliance_test.h` in the following way:
++
+[source,c]
+----
+#define RV_COMPLIANCE_HALT
+        add     x31, x0, 1
+        sw      x31, codasip_syscall, t0
+----
+
+* This means that on the address defined by `codasip_syscall`, the 1 value is stored and this is interpreted as `HALT` for the Codasip ISA simulator.
++
+[source,c]
+----
+#define RV_COMPLIANCE_DATA_BEGIN
+        .align  4;
+        .global codasip_signature_start;
+codasip_signature_start:
+----
++
+[source,c]
+----
+#define RV_COMPLIANCE_DATA_END
+        .align  4;
+        .global codasip_signature_end;
+codasip_signature_end:
+----
+
+* The Codasip ISA simulator dumps data from the addresses bounded by labels `codasip_signature_start` and `codasip_signature_end` to `stdout`.  The dumped data represent the results of the tests.
+
+* Modify Makefiles in `ISA/Makefile` and `binary_coding/Makefile`.  It is important to change tools that are evaluated and parameters that are passed to the tools.
++
+For example, to support the Codasip ISA simulator as the device under test
+(DUT), it was necessary to change `RISCV_SIM` from `spike` to
+`codix_berkelium-ia-isimulator –r` and parameters for running the simulator
+from `+signature=$(work_dir)/$<.signature.output` to `–info 5` plus handle
+redirection to a file by `1>$(work_dir)/$<.signature.output`.
+
+== Configuring the target device
+
+This section is for how to specify which optional parts are being used
+
+NOTE: This is primarily for simulators.
+
+In the directory `riscv-target/*/device` there are directories that have Makefile fragments that configure the simulator to simulate only those parts of the RISC-V specification that is required for the specific target device being tested.
+
+For example for the riscvOVPsim to be configured to be a RV32I
+[source,make]
+----
+RUN_TARGET= \
+        riscvOVPsim.exe --variant RV32I --program $(work_dir_isa)/$< \
+            --signaturedump \
+            --override riscvOVPsim/cpu/sigdump/SignatureFile=$(work_dir_isa)/$(*).signature.output \
+            --override riscvOVPsim/cpu/sigdump/ResultReg=3 \
+            --override riscvOVPsim/cpu/simulateexceptions=T \
+            --logfile $(work_dir_isa)/$@
+----
+[appendix]
 
 === Example - ISA test _ADD-01.S_
 
@@ -700,196 +911,6 @@ test_D_res:
 test_E_res:
 .fill 3, 4, -1
 RV_COMPLIANCE_DATA_END
-----
-
-== Developing new tests
-=== Structure
-
-* Clone directory structure of an existing test suite alongside the RV32I tree.
-
-* This must include test and reference signature directories (`src` and `references`).
-
-* Check the target environment setup files.
-
-* Check the processor configuration files.
-
-=== Process
-
-This description assumes the use of a configurable simulator with good trace and debug capabilities.
-
-* Work on one test at a time.
-
-* Use test format as specified in the <<Compliance test suite specification,Compliance test suite specification>> chapter
-
-* Ensure that the processor configuration is set appropriately.
-
-* Use the `RVTEST` macros (defined in `compliance_io.h`) to make it easy to see the details of a Test’s execution. There are macros for assertions (`RVTEST_IO_ASSERT_GPR_EQ`) and tracing (`RVTEST_IO_WRITE_STR`) which are empty on targets that can not implement them.
-
-* Assuming you are developing the test on a simulator, use the simulator’s tracing capabilities, especially a register change mode to single step your test examining all changing registers etc. to ensure your test is stimulating what is intending.
-
-* Make sure that the signature you generate at the end of the run shows adequate internal test state such that any checks do report as fails if wrong.
-
-* When you are satisfied that the test does what is intended and that the test signature is correct, copy this into a test reference signature (in the references directory).
-
-For a test suite to be complete it needs to have tests that exercise the full functionality of what it is intended to test. There are tools available to measure instruction and other resource coverage. These should be used to ensure that 100% of the intended instructions have been tested.
-
-== Test framework
-
-For running compliance tests, the Test Virtual Machine (TVM) “p” available at https://github.com/riscv/riscv-tests is utilized.
-
-In addition to using the basic functionality of the TVM, the script for running compliance tests runs the test on the target and then performs comparison of the target’s generated test signature to the manually reviewed test reference signature.
-
-See the chapter below for selecting and setting up the target (simulator, or hardware, etc.).
-
-If using a target that requires the processor to be configured, see the chapter below on processor configuration.
-
-You will also need to have a suitable compiler tool chain (GCC or LLVM) installed in your environment and available on your path.
-
-Tests are run by commands in the top level `Makefile` which has targets for simulate and verify
-
-[source,make]
-----
-RISCV_TARGET ?= riscvOVPsim
-RISCV_DEVICE ?= rv32i
-RISCV_PREFIX ?= riscv64-unknown-elf-
-
-simulate:
-        make RISCV_TARGET=$(RISCV_TARGET) \
-             RISCV_DEVICE=$(RISCV_DEVICE) \
-             RISCV_PREFIX=$(RISCV_PREFIX) \
-             run -C $(SUITEDIR)
-
-verify:
-    riscv-test-env/verify.sh
-----
-
-== Setting the target environment
-
-The target environment needs setting up to allow the compliance tests to be run on the target.  This can be used while developing compliance test suites or it can be used with new targets to see if they correctly execute the compliance test suites and are compliant!
-
-This chapter provides information on the currently available targets and includes a short tutorial on how to add a new target.
-
-=== Imperas riscvOVPsim compliance simulator
-
-For tracing the test the following  macros are defined in `riscv-target/riscvOVPsim/compliance_io.h`:
-
-[source,make]
-----
-RVTEST_IO_INIT
-RVTEST_IO_WRITE_STR(_STR)
-RVTEST_IO_ASSERT_GPR_EQ(_R, _I)
-----
-
-An example of a test that uses the tracing macros is `riscv-test-suite/rv32i/ISA/src/I-IO.S`.
-
-To configure the simulator for different target devices there needs to be a Makefile fragment in the `device` directory.
-
-The Makefile fragment for RV32I is in `riscv-target/riscvOVPsim/device/rv32i`
-
-In the top level Makefile there needs to be a selection for the target and device:
-[source,make]
-----
-RISCV_TARGET?=riscvOVPsim
-RISCV_DEVICE?=rv32i
-----
-
-The path to the RUN_TARGET is defined within the riscv-target Makefile.include.
-
-
-=== Codasip ISA simulator
-
-tbd
-
-=== GNU CGEN ISS
-==== Within GDB
-
-tbd
-
-==== Via GDB Remote Serial Protocol
-
-tbd
-
-=== Berkeley Spike ISA simulator
-For spike the file `riscv-target/spike/compliance_io.h` has the trace macros defined as empty.  The Makefile fragment in `riscv-target/spike/device/rv32i` has the spike run command for the RV32I device.
-
-=== SiFive Freedom Unleashed 540 board (tbd)
-
-tbd
-
-=== Verilator Verilog RI5CY RTL processor
-==== With GDB Server
-
-tbd
-
-==== With testbench monitor
-
-tbd
-
-=== Adding a new Target
-
-In this section, a short tutorial how to add a user target in the TVM is provided.
-
-If you do not want to use the TVM at all, it is recommended to just take the tests and references and incorporate them into your testing environment.  The only requirement needed in this case is that there must be an option to dump the results from the target in the test environment so as the comparison to test reference signature is possible.
-
-The following steps demonstrate an example in which a target was replaced by Codasip ISA simulator. In a similar way, any RISC-V ISA simulator or any RTL simulation model of the RISC-V processor can be connected.
-
-* Redefine macros in `ISA/src/compliance_test.h` and `binary_coding/src/compliance_test.h`.
-+
-For example, to support Codasip ISA simulator as Target, it was necessary to redefine `RV_COMPLIANCE_HALT macro`, `RV_COMPLIANCE_DATA_BEGIN` macro and `RV_COMPLIANCE_DATA_END` macro in `ISA/compliance_test.h` in the following way:
-+
-[source,c]
-----
-#define RV_COMPLIANCE_HALT
-        add     x31, x0, 1
-        sw      x31, codasip_syscall, t0
-----
-
-* This means that on the address defined by `codasip_syscall`, the 1 value is stored and this is interpreted as `HALT` for the Codasip ISA simulator.
-+
-[source,c]
-----
-#define RV_COMPLIANCE_DATA_BEGIN
-        .align  4;
-        .global codasip_signature_start;
-codasip_signature_start:
-----
-+
-[source,c]
-----
-#define RV_COMPLIANCE_DATA_END
-        .align  4;
-        .global codasip_signature_end;
-codasip_signature_end:
-----
-
-* The Codasip ISA simulator dumps data from the addresses bounded by labels `codasip_signature_start` and `codasip_signature_end` to `stdout`.  The dumped data represent the results of the tests.
-
-* Modify Makefiles in `ISA/Makefile` and `binary_coding/Makefile`.  It is important to change tools that are evaluated and parameters that are passed to the tools.
-+
-For example, to support the Codasip ISA simulator as the device under test
-(DUT), it was necessary to change `RISCV_SIM` from `spike` to
-`codix_berkelium-ia-isimulator –r` and parameters for running the simulator
-from `+signature=$(work_dir)/$<.signature.output` to `–info 5` plus handle
-redirection to a file by `1>$(work_dir)/$<.signature.output`.
-
-== Configuring the target device
-
-This section is for how to specify which optional parts are being used
-
-NOTE: This is primarily for simulators.
-
-In the directory `riscv-target/*/device` there are directories that have Makefile fragments that configure the simulator to simulate only those parts of the RISC-V specification that is required for the specific target device being tested.
-
-For example for the riscvOVPsim to be configured to be a RV32I
-[source,make]
-----
-RUN_TARGET= \
-        riscvOVPsim.exe --variant RV32I --program $(work_dir_isa)/$< \
-            --signaturedump \
-            --override riscvOVPsim/cpu/sigdump/SignatureFile=$(work_dir_isa)/$(*).signature.output \
-            --override riscvOVPsim/cpu/sigdump/ResultReg=3 \
-            --override riscvOVPsim/cpu/simulateexceptions=T \
-            --logfile $(work_dir_isa)/$@
 ----
 
 [appendix]
