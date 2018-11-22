@@ -19,11 +19,12 @@ RUN_TARGET=\
         --override riscvOVPsim/cpu/defaultsemihost=F \
         --logfile $(work_dir_isa)/$@ \
         --override riscvOVPsim/cpu/user_version=2.2 \
-        --override riscvOVPsim/cpu/priv_version=1.10 \
-        --trace --tracechange --traceshowicount; \
+        --override riscvOVPsim/cpu/priv_version=1.10 ; \
 				cat $(work_dir_isa)/$(*).signature.output | sed 's/.\{8\}/& /g' | \
 				awk '{print $$4 " " $$3 " " $$2 " " $$1}' | sed 's/ /\n/g' > temp; \
 				mv temp $(work_dir_isa)/$(*).signature.output;
+
+# --trace --tracechange --traceshowicount; 
 
 RISCV_PREFIX   ?= riscv32-unknown-elf-
 RISCV_GCC      ?= $(RISCV_PREFIX)gcc
