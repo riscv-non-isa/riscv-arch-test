@@ -1,3 +1,6 @@
+2018-11-22 Simon Davidmann <simond@imperas.com>
+    * added information on test suite status
+    
 2018-11-21 Olof Kindgren <olof.kindgren@gmail.com>
     * Added support for using external target directories with $TARGETDIR
 
