@@ -115,12 +115,16 @@ Any custom words for spell checking should be added to link:./custom.wordlist[`c
 This document has been created by the following people (in alphabetical order of surname).
 
 [quote]
-Jeremy Bennett, Mary Bennett, Simon Davidmann, Radek Hajek, Lee Moore, Milan Nostersky, Marcela Zachariasova.
+Jeremy Bennett, Mary Bennett, Simon Davidmann, Neel Gala, Radek Hajek, Lee Moore, Milan Nostersky, Marcela Zachariasova.
 
 === Document history
 [cols="<1,<2,<3,<4",options="header,pagewidth",]
 |================================================================================
 | _Revision_ | _Date_            | _Author_ | _Modification_
+| 1.12 Draft  | 22 November 2018      |
+Simon Davidmann |
+
+Updated notes on Test Suites.
 | 1.11 Draft  | 21 November 2018      |
 Neel Gala |
 
@@ -226,30 +230,8 @@ The _test reference signature_ is the _test signature_ saved from an execution r
 
 Tests are grouped into different functional test suites targeting the different subsets of the full RISC-V specifications.  There will be ISA and privilege suites.
 
-Currently there is one test suite: the RV32I (developed by Codasip).
+For information on the status of the different test suites, look here: link:../riscv-test-suite/README.md[../riscv-test-suite/README.md]
 
-Test suites will be developed in this priority order:
-
-[options="compact"]
-* RV32I
-* RV64I
-* RV32IM
-* RV64IM
-* RV32IC
-* RV64IC
-* RV32IA
-* RV64IA
-* RV32IF
-* RV64IF
-* RV32ID
-* RV64ID
-* RV32E
-* RV32EC
-* RV32EA
-* RV32EF
-* RV32ED
-
-This order is subject to ratification by the Compliance Task Group
 
 === The test framework
 
@@ -460,7 +442,7 @@ The top level directory contains a `README.md` file giving an overview of the pr
 
 `doc`:: All the documentation for the project, written using _AsciiDoc_.
 
-`riscv-target`:: Contains a further subdirectory for each target, within which are placed the `compliance_io.h` header for that target and a `device` directory for all the devices of that target.
+`riscv-target`:: Contains a further subdirectory for each target, within which are placed the `compliance_io.h` header for that target and a `device` directory for all the devices of that target. If the `$TARGETDIR` environment variable is set to another directory, the scripts will search this directory for targets instead.
 
 `riscv-test-env`:: This contains headers common to all environments, and then a directory for each TVM variant, with `link.ld` linker script and `riscv_test.h` header.
 

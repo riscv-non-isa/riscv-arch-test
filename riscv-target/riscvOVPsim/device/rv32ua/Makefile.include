@@ -19,11 +19,12 @@ RUN_TARGET=\
         --override riscvOVPsim/cpu/defaultsemihost=F \
         --logfile $(work_dir_isa)/$@ \
         --override riscvOVPsim/cpu/user_version=2.2 \
-        --override riscvOVPsim/cpu/priv_version=1.10 \
-        --trace --tracechange --traceshowicount; \
+        --override riscvOVPsim/cpu/priv_version=1.10 ; \
 				cat $(work_dir_isa)/$(*).signature.output | sed 's/.\{8\}/& /g' | \
 				awk '{print $$4 " " $$3 " " $$2 " " $$1}' | sed 's/ /\n/g' > temp; \
 				mv temp $(work_dir_isa)/$(*).signature.output;
+
+# --trace --tracechange --traceshowicount; 
 
 RISCV_PREFIX   ?= riscv32-unknown-elf-
 RISCV_GCC      ?= $(RISCV_PREFIX)gcc
@@ -34,7 +35,7 @@ COMPILE_TARGET=\
 	$$(RISCV_GCC) $(2) $$(RISCV_GCC_OPTS) \
 		-I$(ROOTDIR)/riscv-test-env/ \
 		-I$(ROOTDIR)/riscv-test-env/p/ \
-		-I$(ROOTDIR)/riscv-target/$(RISCV_TARGET)/ \
+		-I$(TARGETDIR)/$(RISCV_TARGET)/ \
 		-T$(ROOTDIR)/riscv-test-env/p/link.ld $$< \
 		-o $(work_dir_isa)/$$@; \
 	$$(RISCV_OBJDUMP) -D $(work_dir_isa)/$$@ > $(work_dir_isa)/$$@.objdump

@@ -1,3 +1,9 @@
+2018-11-22 Simon Davidmann <simond@imperas.com>
+    * added information on test suite status
+    
+2018-11-21 Olof Kindgren <olof.kindgren@gmail.com>
+    * Added support for using external target directories with $TARGETDIR
+
 2018-11-21 Neel Gala <neelgala@incoresemi.com>
    	* riscv-test-suite/rv_/references/_.reference_output: changed signature 
 	  format for all tests to include only 4-bytes per line starting with the

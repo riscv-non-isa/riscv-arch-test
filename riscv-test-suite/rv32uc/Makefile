@@ -17,7 +17,7 @@ default: all
 
 vpath %.S $(act_dir)
 
-INCLUDE=$(ROOTDIR)/riscv-target/$(RISCV_TARGET)/device/$(RISCV_DEVICE)/Makefile.include
+INCLUDE=$(TARGETDIR)/$(RISCV_TARGET)/device/$(RISCV_DEVICE)/Makefile.include
 ifeq ($(wildcard $(INCLUDE)),)
     $(error Cannot find '$(INCLUDE)`. Check that RISCV_TARGET and RISCV_DEVICE are set correctly.)
 endif
