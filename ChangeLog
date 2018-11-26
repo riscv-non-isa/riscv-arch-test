@@ -1,3 +1,10 @@
+2018-11-26 Neel Gala <neelgala@incoresemi.com>
+    * riscv-test-suite/rv32i/src/I-MISALIGN_LDST-02.S: New test added to check 
+    mis-aligned data accesses. This test uses only mtvec and mepc does not 
+    validate the trap mechanism.
+    * riscv-test-suite/rv32/references/I-MISALIGN_LDST-02.reference_output: 
+    Added reference for above mentioned test.
+
 2018-11-22 Simon Davidmann <simond@imperas.com>
     * added information on test suite status
     
