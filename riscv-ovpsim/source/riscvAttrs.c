@@ -120,9 +120,6 @@ const vmiIASAttr modelAttrs = {
     .getExceptionCB     = riscvGetException,
     .getModeCB          = riscvGetMode,
     .procDescCB         = riscvProcessorDescription,
-// TODO: Missing support for register tracing
-//    .debugCB            = riscvDumpRegisters,
-
 
     ////////////////////////////////////////////////////////////////////////
     // IMPERAS INTERCEPTED FUNCTION SUPPORT ROUTINES

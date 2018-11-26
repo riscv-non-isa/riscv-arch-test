@@ -2533,7 +2533,7 @@ riscvArchitecture riscvEmitCSRWrite(
         vmimtCallResult((vmiCallFn)writeCB, bits, raw);
 
         // terminate the current block if required
-        if(attrs->wEndBlock) {
+        if(attrs->wEndBlock || attrs->wEndRM) {
             vmimtEndBlock();
         }
 

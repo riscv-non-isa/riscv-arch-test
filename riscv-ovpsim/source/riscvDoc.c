@@ -633,14 +633,7 @@ void riscvDoc(riscvP riscv) {
             vmidocAddText(
                 Limitations,
                 "The processor fully supports the architecturally-specified "
-                "floating-point instructions with the exception of the round-"
-                "to-nearest, ties-to-max-magnitude rounding mode (RMM) which "
-                "is supported for fcvt instruction variants that convert to "
-                "long, unsigned long, word, or unsigned word only. In other "
-                "cases, this rounding mode is treated a round-to-nearest, ties-"
-                "to-even (RNE). Use of RMM rounding mode in any situation "
-                "other than rounding to an integral value is dubious because "
-                "it leads to cumulative bias towards larger-magnitude values."
+                "floating-point instructions."
             );
         }
 
