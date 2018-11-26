@@ -33,7 +33,7 @@ rv32i_sc_tests =    \
     I-RF_size-01 \
     I-RF_width-01 \
     I-MISALIGN_JMP-01 \
-    I-MISALIGN_LDST-01 \
+    I-MISALIGN_LDST-02 \
     I-DELAY_SLOTS-01 \
     I-JAL-01 \
     I-JALR-01 \
