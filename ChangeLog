@@ -4,6 +4,8 @@
     validate the trap mechanism.
     * riscv-test-suite/rv32/references/I-MISALIGN_LDST-02.reference_output: 
     Added reference for above mentioned test.
+    * riscv-test-suite/rv32i/Makefrag: replaced old MISALIGNED_LDST-01 test 
+    with new test.
 
 2018-11-22 Simon Davidmann <simond@imperas.com>
     * added information on test suite status
