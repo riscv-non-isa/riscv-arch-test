@@ -1,6 +1,6 @@
 = RISC-V Compliance Tests =
 RISC-V Foundation Compliance Task Group
-Issue 1.10 Draft
+Issue 1.11 Draft
 :toc:
 :icons: font
 :numbered:
@@ -110,17 +110,27 @@ Any custom words for spell checking should be added to link:./custom.wordlist[`c
 This document has been created by the following people (in alphabetical order of surname).
 
 [quote]
-Jeremy Bennett, Mary Bennett, Simon Davidmann, Radek Hajek, Lee Moore, Milan Nostersky, Premysl Vaclavik, Marcela Zachariasova.
+Jeremy Bennett, Mary Bennett, Simon Davidmann, Neel Gala, Radek Hajek, Lee Moore, Milan Nostersky, Premysl Vaclavik, Marcela Zachariasova.
 
 === Document history
 [cols="<1,<2,<3,<4",options="header,pagewidth",]
 |================================================================================
 | _Revision_ | _Date_            | _Author_ | _Modification_
-| 1.11 Draft  | 19 Nov 2018      |
+
+| 1.13 Draft  | 19 Nov 2018      |
 
 Radek Hajek, Premysl Vaclavik |
 
 Added test format description.
+
+| 1.12 Draft  | 22 November 2018      |
+Simon Davidmann |
+
+Updated notes on Test Suites.
+| 1.11 Draft  | 21 November 2018      |
+Neel Gala |
+
+Added new signature format specs .
 
 | 1.10 Draft  | 20 June 2018      |
 
@@ -223,40 +233,18 @@ The RISC-V specification allows many optional instructions, registers, and other
 
 === The test signature
 
-The _test signature_ is defined as reference data written into memory during the execution of the test.  It should record values and results of the operation of the Test.
+The _test signature_ is defined as reference data written into memory during the execution of the test.  It should record values and results of the operation of the Test. It is expected that an implementation, at the end of a test, dumps the signature in to a file such that only 4-bytes are written per line, starting with the most-significant byte on the left.
 
 === The test reference signature
 
-The _test reference signature_ is the _test signature_ saved from an execution run of the RISC‑V _golden model_.  This is currently from a RISC-V ISS, but the intention is that the RISC-V Formal Model from the RISCV.org Formal Working Group will be used when it is complete, functional, and available.
+The _test reference signature_ is the _test signature_ saved from an execution run of the RISC‑V _golden model_.  This is currently from a RISC-V ISS, but the intention is that the RISC-V Formal Model from the RISCV.org Formal Working Group will be used when it is complete, functional, and available. 
 
 === The test suites
 
 Tests are grouped into different functional test suites targeting the different subsets of the full RISC-V specifications.  There will be ISA and privilege suites.
 
-Currently there is one test suite: the RV32I (developed by Codasip).
+For information on the status of the different test suites, look here: link:../riscv-test-suite/README.md[../riscv-test-suite/README.md]
 
-Test suites will be developed in this priority order:
-
-[options="compact"]
-* RV32I
-* RV64I
-* RV32IM
-* RV64IM
-* RV32IC
-* RV64IC
-* RV32IA
-* RV64IA
-* RV32IF
-* RV64IF
-* RV32ID
-* RV64ID
-* RV32E
-* RV32EC
-* RV32EA
-* RV32EF
-* RV32ED
-
-This order is subject to ratification by the Compliance Task Group
 
 === The test framework
 
@@ -920,7 +908,7 @@ The top level directory contains a `README.md` file giving an overview of the pr
 
 `doc`:: All the documentation for the project, written using _AsciiDoc_.
 
-`riscv-target`:: Contains a further subdirectory for each target, within which are placed the `compliance_io.h` header for that target and a `device` directory for all the devices of that target.
+`riscv-target`:: Contains a further subdirectory for each target, within which are placed the `compliance_io.h` header for that target and a `device` directory for all the devices of that target. If the `$TARGETDIR` environment variable is set to another directory, the scripts will search this directory for targets instead.
 
 `riscv-test-env`:: This contains headers common to all environments, and then a directory for each TVM variant, with `link.ld` linker script and `riscv_test.h` header.
 
