@@ -2364,7 +2364,8 @@ static vmiFPRC mapRMDescToRC(riscvRMDesc rm) {
         [RV_RM_RDN]     = vmi_FPR_NEG_INF,
         [RV_RM_RUP]     = vmi_FPR_POS_INF,
         [RV_RM_RMM]     = vmi_FPR_AWAY,
-        [RV_RM_BAD]     = vmi_FPR_CURRENT
+        [RV_RM_BAD5]    = vmi_FPR_CURRENT,
+        [RV_RM_BAD6]    = vmi_FPR_CURRENT
     };
 
     return map[rm];
@@ -2488,18 +2489,30 @@ static Bool isRMMActive(riscvMorphStateP state) {
 }
 
 //
+// Validate the given rounding mode is legal and emit an Illegal Instruction
+// exception call if not
+//
+static Bool emitCheckLegalRM(riscvP riscv, riscvRMDesc rm) {
+
+    Bool ok = (rm < RV_RM_BAD5);
+
+    if(!ok) {
+        ILLEGAL_INSTRUCTION_MESSAGE(riscv, "IRM", "Illegal rounding mode");
+    }
+
+    return ok;
+}
+
+//
 // Update current rounding mode if required
 //
-static void emitSetRM(riscvP riscv, riscvRMDesc rm) {
+static void emitSetRM(riscvMorphStateP state) {
 
+    riscvP           riscv      = state->riscv;
     riscvBlockStateP blockState = riscv->blockState;
+    riscvRMDesc      rm         = state->info.rm;
 
-    if(rm == RV_RM_BAD) {
-
-        // illegal instruction if the rounding mode is invalid
-        ILLEGAL_INSTRUCTION_MESSAGE(riscv, "IRM", "Illegal rounding mode");
-
-    } else if(blockState->fpActiveRMMT != rm) {
+    if(emitCheckLegalRM(riscv, rm) && (blockState->fpActiveRMMT!=rm)) {
 
         // if using current rounding mode 0-3, use blockMask to detect if
         // emulation is required if the rounding mode ever switches to RMM
@@ -2733,7 +2746,7 @@ static RISCV_MORPH_FN(emitFUnop) {
     vmiFUnop      op    = isRMMActive(state) ? vmi_FUNUD : state->attrs->fpUnop;
     vmiFPConfigCP ctrl  = getFPControl(state);
 
-    emitSetRM(riscv, state->info.rm);
+    emitSetRM(state);
 
     vmimtFUnopRR(type, op, fd, fs1, RISCV_FP_FLAGS, ctrl);
 
@@ -2756,7 +2769,7 @@ static RISCV_MORPH_FN(emitFBinop) {
     vmiFBinop     op    = isRMMActive(state) ? vmi_FBINUD : state->attrs->fpBinop;
     vmiFPConfigCP ctrl  = getFPControl(state);
 
-    emitSetRM(riscv, state->info.rm);
+    emitSetRM(state);
 
     vmimtFBinopRRR(type, op, fd, fs1, fs2, RISCV_FP_FLAGS, ctrl);
 
@@ -2781,7 +2794,7 @@ static RISCV_MORPH_FN(emitFTernop) {
     vmiFTernop    op    = isRMMActive(state) ? vmi_FTERNUD : state->attrs->fpTernop;
     vmiFPConfigCP ctrl  = getFPControl(state);
 
-    emitSetRM(riscv, state->info.rm);
+    emitSetRM(state);
 
     vmimtFTernopRRRR(type, op, fd, fs1, fs2, fs3, RISCV_FP_FLAGS, False, ctrl);
 
@@ -2814,7 +2827,9 @@ static RISCV_MORPH_FN(emitFConvert) {
     // than source (conversion will be exact in this case) or if non-current
     // mode is specified (can be passed to the conversion primitive)
     if(((bitsD<=bitsS) || !VMI_FTYPE_IS_IEEE_754(typeD)) && (rc==vmi_FPR_CURRENT)) {
-        emitSetRM(riscv, state->info.rm);
+        emitSetRM(state);
+    } else {
+        emitCheckLegalRM(riscv, state->info.rm);
     }
 
     vmimtFConvertRR(typeD, fd, typeS, fs, rc, RISCV_FP_FLAGS, ctrl);

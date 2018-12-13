@@ -109,7 +109,6 @@ static void putUncookedKey(char **result, const char *key, Bool uncooked) {
 static void putInstruction(riscvInstrInfoP info, char **result) {
 
     const char *fmt;
-    char tmp[32];
 
     // select format string
     if(info->bytes==2) {
@@ -119,8 +118,7 @@ static void putInstruction(riscvInstrInfoP info, char **result) {
     }
 
     // emit basic opcode string
-    sprintf(tmp, fmt, info->instruction);
-    putString(result, tmp);
+    *result += sprintf(*result, fmt, info->instruction);
 }
 
 //
@@ -148,27 +146,21 @@ static void putComma(char **result, Bool uncooked) {
 // Emit signed argument
 //
 static void putD(char **result, Uns32 value) {
-    char tmp[32];
-    sprintf(tmp, "%d", value);
-    putString(result, tmp);
+    *result += sprintf(*result, "%d", value);
 }
 
 //
 // Emit hexadeximal argument
 //
 static void putX(char **result, Uns32 value) {
-    char tmp[32];
-    sprintf(tmp, "0x%x", value);
-    putString(result, tmp);
+    *result += sprintf(*result, "0x%x", value);
 }
 
 //
 // Emit target address argument
 //
 static void putTarget(char **result, Uns64 value) {
-    char tmp[32];
-    sprintf(tmp, FMT_Ax, value);
-    putString(result, tmp);
+    *result += sprintf(*result, FMT_Ax, value);
 }
 
 //
@@ -199,9 +191,7 @@ static void putCSR(char **result, riscvP riscv, Uns32 csr) {
     if(name) {
         putString(result, name);
     } else {
-        char tmp[32];
-        sprintf(tmp, "0x%03x", csr);
-        putString(result, tmp);
+        *result += sprintf(*result, "0x%03x", csr);
     }
 }
 
@@ -243,7 +233,8 @@ static void putRM(char ** result, riscvRMDesc rm, Bool uncooked) {
             [RV_RM_RDN]     = "rdn",
             [RV_RM_RUP]     = "rup",
             [RV_RM_RMM]     = "rmm",
-            [RV_RM_BAD]     = "rm?",
+            [RV_RM_BAD5]    = "rm5",
+            [RV_RM_BAD6]    = "rm6",
         };
 
         putString(result, map[rm]);
