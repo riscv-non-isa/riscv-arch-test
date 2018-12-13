@@ -76,6 +76,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     #define SOFTFLOAT_FAST_DIV64TO32
 #endif
 
+#define INLINE          inline
+#define INLINE_LEVEL    4
+
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -2036,6 +2039,7 @@ const uint_least8_t softfloat_countLeadingZeros8[256] = {
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
+#if ! defined INLINE_LEVEL && ! defined softfloat_countLeadingZeros32
 
 uint_fast8_t softfloat_countLeadingZeros32( uint32_t a )
 {
@@ -2054,6 +2058,8 @@ uint_fast8_t softfloat_countLeadingZeros32( uint32_t a )
     return count;
 
 }
+
+#endif
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -2098,6 +2104,8 @@ uint_fast8_t softfloat_countLeadingZeros64( uint64_t a )
 ////////////////////////////////////////////////////////////////////////////////
 
 
+#if ! defined INLINE_LEVEL
+
 uint32_t softfloat_shiftRightJam32( uint32_t a, uint_fast16_t dist )
 {
 
@@ -2105,6 +2113,8 @@ uint32_t softfloat_shiftRightJam32( uint32_t a, uint_fast16_t dist )
         (dist < 31) ? a>>dist | ((uint32_t) (a<<(-dist & 31)) != 0) : (a != 0);
 
 }
+
+#endif
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -2114,6 +2124,8 @@ uint32_t softfloat_shiftRightJam32( uint32_t a, uint_fast16_t dist )
 ////////////////////////////////////////////////////////////////////////////////
 
 
+#if ! defined INLINE_LEVEL
+
 uint64_t softfloat_shiftRightJam64( uint64_t a, uint_fast32_t dist )
 {
 
@@ -2121,6 +2133,8 @@ uint64_t softfloat_shiftRightJam64( uint64_t a, uint_fast32_t dist )
         (dist < 63) ? a>>dist | ((uint64_t) (a<<(-dist & 63)) != 0) : (a != 0);
 
 }
+
+#endif
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -2882,6 +2896,7 @@ uint32_t softfloat_approxRecip32_1( uint32_t a )
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
+#if ! defined INLINE_LEVEL
 
 uint64_t softfloat_shortShiftRightJam64( uint64_t a, uint_fast8_t dist )
 {
@@ -2889,6 +2904,8 @@ uint64_t softfloat_shortShiftRightJam64( uint64_t a, uint_fast8_t dist )
     return a>>dist | ((a & (((uint_fast64_t) 1<<dist) - 1)) != 0);
 
 }
+
+#endif
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -2982,7 +2999,7 @@ uint32_t softfloat_approxRecipSqrt32_1( unsigned int oddExpA, uint32_t a )
 ////////////////////////////////////////////////////////////////////////////////
 
 
-#ifdef SOFTFLOAT_FAST_INT64
+#if defined SOFTFLOAT_FAST_INT64 && ! defined INLINE_LEVEL
 
 struct uint128
  softfloat_add128( uint64_t a64, uint64_t a0, uint64_t b64, uint64_t b0 )
@@ -3005,7 +3022,7 @@ struct uint128
 ////////////////////////////////////////////////////////////////////////////////
 
 
-#ifdef SOFTFLOAT_FAST_INT64
+#if defined SOFTFLOAT_FAST_INT64 && ! defined INLINE_LEVEL
 
 struct uint128
  softfloat_sub128( uint64_t a64, uint64_t a0, uint64_t b64, uint64_t b0 )
@@ -3062,7 +3079,7 @@ struct uint128 softfloat_mul64To128( uint64_t a, uint64_t b )
 ////////////////////////////////////////////////////////////////////////////////
 
 
-#ifdef SOFTFLOAT_FAST_INT64
+#if defined SOFTFLOAT_FAST_INT64 && ! defined INLINE_LEVEL
 
 struct uint128
  softfloat_shortShiftLeft128( uint64_t a64, uint64_t a0, uint_fast8_t dist )
@@ -3122,7 +3139,7 @@ struct uint128
 ////////////////////////////////////////////////////////////////////////////////
 
 
-#ifdef SOFTFLOAT_FAST_INT64
+#if defined SOFTFLOAT_FAST_INT64 && ! defined INLINE_LEVEL
 
 struct uint128
  softfloat_shortShiftRightJam128(
@@ -3384,59 +3401,6 @@ void
             }
         }
         zPtr += indexMultiwordLo( size_words, wordDist );
-    } else {
-        wordDist = size_words;
-    }
-    do {
-        *zPtr++ = 0;
-        --wordDist;
-    } while ( wordDist );
-
-}
-
-
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-// INLINED FILE: s_shiftRightM.c
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-
-
-void
- softfloat_shiftRightM(
-     uint_fast8_t size_words,
-     const uint32_t *aPtr,
-     uint32_t dist,
-     uint32_t *zPtr
- )
-{
-    uint32_t wordDist;
-    uint_fast8_t innerDist;
-    uint32_t *destPtr;
-    uint_fast8_t i;
-
-    wordDist = dist>>5;
-    if ( wordDist < size_words ) {
-        aPtr += indexMultiwordHiBut( size_words, wordDist );
-        innerDist = dist & 31;
-        if ( innerDist ) {
-            softfloat_shortShiftRightM(
-                size_words - wordDist,
-                aPtr,
-                innerDist,
-                zPtr + indexMultiwordLoBut( size_words, wordDist )
-            );
-            if ( ! wordDist ) return;
-        } else {
-            aPtr += indexWordLo( size_words - wordDist );
-            destPtr = zPtr + indexWordLo( size_words );
-            for ( i = size_words - wordDist; i; --i ) {
-                *destPtr = *aPtr;
-                aPtr += wordIncr;
-                destPtr += wordIncr;
-            }
-        }
-        zPtr += indexMultiwordHi( size_words, wordDist );
     } else {
         wordDist = size_words;
     }
@@ -4547,7 +4511,7 @@ uint_fast64_t
 ////////////////////////////////////////////////////////////////////////////////
 
 
-#ifdef SOFTFLOAT_FAST_INT64
+#if defined SOFTFLOAT_FAST_INT64 && ! defined INLINE_LEVEL
 
 struct uint64_extra
  softfloat_shiftRightJam64Extra(
