@@ -1,3 +1,6 @@
+2018-12-20 Lee Moore <moore@imperas.com>
+    * fixed riscvOVPsim 
+
 2018-11-22 Simon Davidmann <simond@imperas.com>
     * added information on test suite status
     
