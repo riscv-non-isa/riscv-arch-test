@@ -14,7 +14,7 @@
 
 
 RVTEST_RV64UF
-RVTEST_CODE_BEGIN
+RV_COMPLIANCE_CODE_BEGIN
 
 #if __riscv_xlen == 32
     # Replace the functions with the 32-bit variants defined in test_macros.h
@@ -51,7 +51,7 @@ RVTEST_CODE_BEGIN
 
   TEST_PASSFAIL
 
-RVTEST_CODE_END
+RV_COMPLIANCE_CODE_END
 
   .data
 RV_COMPLIANCE_DATA_BEGIN

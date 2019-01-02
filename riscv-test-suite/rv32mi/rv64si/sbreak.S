@@ -14,7 +14,7 @@
 
 
 RVTEST_RV64S
-RVTEST_CODE_BEGIN
+RV_COMPLIANCE_CODE_BEGIN
 
 #ifdef __MACHINE_MODE
   #define sscratch mscratch
@@ -45,7 +45,7 @@ stvec_handler:
   bne t0, t1, fail
   j pass
 
-RVTEST_CODE_END
+RV_COMPLIANCE_CODE_END
 
   .data
 RV_COMPLIANCE_DATA_BEGIN

@@ -661,9 +661,9 @@ test_ ## testnum: \
 #define TEST_PASSFAIL \
         bne x0, TESTNUM, pass; \
 fail: \
-        RVTEST_FAIL; \
+        RV_COMPLIANCE_HALT; \
 pass: \
-        RVTEST_PASS \
+        RV_COMPLIANCE_HALT \
 
 
 #-----------------------------------------------------------------------

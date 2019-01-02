@@ -14,7 +14,7 @@
 
 
 RVTEST_RV64S
-RVTEST_CODE_BEGIN
+RV_COMPLIANCE_CODE_BEGIN
 
 #ifdef __MACHINE_MODE
   #define sscratch mscratch
@@ -108,7 +108,7 @@ RVTEST_CODE_BEGIN
 #endif
 
 finish:
-  RVTEST_PASS
+  RV_COMPLIANCE_HALT
 
   # We should only fall through to this if scall failed.
   TEST_PASSFAIL
@@ -124,11 +124,11 @@ stvec_handler:
   bleu TESTNUM, t0, privileged
 1:
 
-  # catch RVTEST_PASS and kick it up to M-mode
+  # catch RV_COMPLIANCE_HALT and kick it up to M-mode
   csrr t0, scause
   li t1, CAUSE_USER_ECALL
   bne t0, t1, fail
-  RVTEST_PASS
+  RV_COMPLIANCE_HALT
 
 privileged:
   # Make sure scause indicates a lack of privilege.
@@ -141,7 +141,7 @@ privileged:
   csrw sepc, t0
   sret
 
-RVTEST_CODE_END
+RV_COMPLIANCE_CODE_END
 
   .data
 

@@ -16,7 +16,7 @@
 #include "aw_test_macros.h"
 
 RVTEST_RV64UF
-RVTEST_CODE_BEGIN
+RV_COMPLIANCE_CODE_BEGIN
 
   # Make sure infinities with different mantissas compare as equal.
   fld f0, minf, a0
@@ -55,7 +55,7 @@ RVTEST_CODE_BEGIN
 
   TEST_PASSFAIL
 
-RVTEST_CODE_END
+RV_COMPLIANCE_CODE_END
 
   .data
 
