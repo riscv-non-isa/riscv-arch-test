@@ -14,7 +14,7 @@
 
 
 RVTEST_RV64M
-RVTEST_CODE_BEGIN
+RV_COMPLIANCE_CODE_BEGIN
 
   .align 2
   .option norvc
@@ -111,7 +111,7 @@ mtvec_handler:
   csrw mepc, t2
   mret
 
-RVTEST_CODE_END
+RV_COMPLIANCE_CODE_END
 
   .data
 

@@ -13,7 +13,7 @@
 #include "aw_test_macros.h"
 
 RVTEST_RV64M
-RVTEST_CODE_BEGIN
+RV_COMPLIANCE_CODE_BEGIN
 
   # Set up breakpoint to trap on M-mode fetches.
   li TESTNUM, 2
@@ -142,7 +142,7 @@ mtvec_handler:
   csrw mepc, t0
   mret
 
-RVTEST_CODE_END
+RV_COMPLIANCE_CODE_END
 
   .data
 data1: .word 0

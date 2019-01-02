@@ -13,7 +13,7 @@
 #include "aw_test_macros.h"
 
 RVTEST_RV32M
-RVTEST_CODE_BEGIN
+RV_COMPLIANCE_CODE_BEGIN
 
   # Make sure slli with shamt[4] set is legal.
   TEST_CASE( 2, a0, 65536, li a0, 1; slli a0, a0, 16);
@@ -36,7 +36,7 @@ mtvec_handler:
   bne t0, t1, fail
   j pass
 
-RVTEST_CODE_END
+RV_COMPLIANCE_CODE_END
 
   .data
 RV_COMPLIANCE_DATA_BEGIN

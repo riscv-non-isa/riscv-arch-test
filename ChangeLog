@@ -1,3 +1,6 @@
+2018-01-02 Radek Hajek <radek.hajek@codasip.com>
+    * unified macros in all compliance tests
+
 2018-12-20 Lee Moore <moore@imperas.com>
     * fixed riscvOVPsim 
 

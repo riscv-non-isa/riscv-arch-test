@@ -14,7 +14,7 @@
 
 
 RVTEST_RV64S
-RVTEST_CODE_BEGIN
+RV_COMPLIANCE_CODE_BEGIN
 
   # Make sure wfi doesn't halt the hart, even if interrupts are disabled
   csrc sstatus, SSTATUS_SIE
@@ -27,11 +27,11 @@ RVTEST_CODE_BEGIN
   li TESTNUM, 2
   SWSIG(2, TESTNUM)
 
-  RVTEST_PASS
+  RV_COMPLIANCE_HALT
 
   TEST_PASSFAIL
 
-RVTEST_CODE_END
+RV_COMPLIANCE_CODE_END
 
   .data
 RV_COMPLIANCE_DATA_BEGIN
