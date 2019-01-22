@@ -14,7 +14,7 @@
 
 
 RVTEST_RV64U
-RVTEST_CODE_BEGIN
+RV_COMPLIANCE_CODE_BEGIN
 
 # get a unique core id
 la a0, coreid
@@ -84,7 +84,7 @@ TEST_CASE( 5, a1, 1, \
 
 TEST_PASSFAIL
 
-RVTEST_CODE_END
+RV_COMPLIANCE_CODE_END
 
   .data
 

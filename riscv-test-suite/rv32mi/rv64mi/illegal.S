@@ -15,7 +15,7 @@
 #RVTEST_RV64S
 RVTEST_RV64M
 
-RVTEST_CODE_BEGIN
+RV_COMPLIANCE_CODE_BEGIN
 
   .align 2
   .option norvc
@@ -188,7 +188,7 @@ synchronous_exception:
 9:
   j 2b
 
-RVTEST_CODE_END
+RV_COMPLIANCE_CODE_END
 
   .data
 RV_COMPLIANCE_DATA_BEGIN

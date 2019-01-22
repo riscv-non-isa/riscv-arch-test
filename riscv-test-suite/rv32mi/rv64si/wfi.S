@@ -11,7 +11,7 @@
 #include "test_macros.h"
 
 RVTEST_RV64S
-RVTEST_CODE_BEGIN
+RV_COMPLIANCE_CODE_BEGIN
 
   # Make sure wfi doesn't halt the hart, even if interrupts are disabled
   csrc sstatus, SSTATUS_SIE
@@ -19,11 +19,11 @@ RVTEST_CODE_BEGIN
   csrs sip, SIP_SSIP
   wfi
 
-  RVTEST_PASS
+  RV_COMPLIANCE_HALT
 
   TEST_PASSFAIL
 
-RVTEST_CODE_END
+RV_COMPLIANCE_CODE_END
 
   .data
 RVTEST_DATA_BEGIN

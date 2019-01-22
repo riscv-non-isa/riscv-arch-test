@@ -11,7 +11,7 @@
 #include "test_macros.h"
 
 RVTEST_RV64M
-RVTEST_CODE_BEGIN
+RV_COMPLIANCE_CODE_BEGIN
 
   .align 2
 
@@ -60,7 +60,7 @@ mtvec_handler:
   csrw mepc, t3
   mret
 
-RVTEST_CODE_END
+RV_COMPLIANCE_CODE_END
 
   .data
 RVTEST_DATA_BEGIN

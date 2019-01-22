@@ -13,7 +13,7 @@
 #include "aw_test_macros.h"
 
 RVTEST_RV64U
-RVTEST_CODE_BEGIN
+RV_COMPLIANCE_CODE_BEGIN
 
   TEST_CASE(2, a4, 0xffffffff80000000, \
     li a0, 0xffffffff80000000; \
@@ -35,7 +35,7 @@ RVTEST_CODE_BEGIN
 
   TEST_PASSFAIL
 
-RVTEST_CODE_END
+RV_COMPLIANCE_CODE_END
 
   .bss
   .align 3

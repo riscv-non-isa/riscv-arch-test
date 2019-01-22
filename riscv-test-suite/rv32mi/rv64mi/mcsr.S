@@ -15,7 +15,7 @@
 #RVTEST_RV64S
 RVTEST_RV64M
 
-RVTEST_CODE_BEGIN
+RV_COMPLIANCE_CODE_BEGIN
   # Check that mcpuid reports the correct XLEN
 #if __riscv_xlen == 64
   TEST_CASE(2, a0, 0x2, csrr a0, misa; srl a0, a0, 62)
@@ -38,7 +38,7 @@ RVTEST_CODE_BEGIN
 
   TEST_PASSFAIL
 
-RVTEST_CODE_END
+RV_COMPLIANCE_CODE_END
 
   .data
 RV_COMPLIANCE_DATA_BEGIN

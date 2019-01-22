@@ -14,7 +14,7 @@
 
 
 RVTEST_RV64U
-RVTEST_CODE_BEGIN
+RV_COMPLIANCE_CODE_BEGIN
 
   #-------------------------------------------------------------
   # Logical tests
@@ -62,7 +62,7 @@ RVTEST_CODE_BEGIN
 
   TEST_PASSFAIL
 
-RVTEST_CODE_END
+RV_COMPLIANCE_CODE_END
 
   .data
 RV_COMPLIANCE_DATA_BEGIN

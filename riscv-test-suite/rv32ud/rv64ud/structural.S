@@ -12,7 +12,7 @@
 #include "test_macros.h"
 
 RVTEST_RV64UF
-RVTEST_CODE_BEGIN
+RV_COMPLIANCE_CODE_BEGIN
 
 li x25, 1
 
@@ -32,9 +32,9 @@ li x1, 0x3F800000
   fmv.x.d  x4, f4    ;\
   fmv.x.s  x5, f3    ;\
   beq     x1, x5, 2f  ;\
-  RVTEST_FAIL ;\
+  RV_COMPLIANCE_HALT ;\
 2:beq     x2, x4, 2f  ;\
-  RVTEST_FAIL; \
+  RV_COMPLIANCE_HALT; \
 2:fmv.d.x  f2, zero    ;\
   fmv.s.x  f1, zero    ;\
 
@@ -46,9 +46,9 @@ TEST(nop;nop;nop;nop,10)
 TEST(nop;nop;nop;nop;nop,12)
 TEST(nop;nop;nop;nop;nop;nop,14)
 
-RVTEST_PASS
+RV_COMPLIANCE_HALT
 
-RVTEST_CODE_END
+RV_COMPLIANCE_CODE_END
 
   .data
 RVTEST_DATA_BEGIN
