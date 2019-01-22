@@ -1,4 +1,11 @@
-2018-01-02 Radek Hajek <radek.hajek@codasip.com>
+2019-01-22 Premysl Vaclavik  <pvaclavik@codasip.com>
+    * feature: initial version of Compliance Test Format Specification
+        * This new document outlines how we should like the compliance
+          system to work going forward. By contrast the doc/README.adoc file
+          describes the current system as it is.
+        * Approved at Compliance TG meeting of 9 Jan 2019.
+
+2019-01-02 Radek Hajek <radek.hajek@codasip.com>
     * unified macros in all compliance tests
 
 2018-12-20 Lee Moore <moore@imperas.com>
