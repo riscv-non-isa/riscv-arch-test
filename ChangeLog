@@ -1,4 +1,4 @@
-2018-11-26 Neel Gala <neelgala@incoresemi.com>
+2019-01-24 Neel Gala <neelgala@incoresemi.com>
     * riscv-test-suite/rv32i/src/I-MISALIGN_LDST-02.S: New test added to check 
     mis-aligned data accesses. This test uses only mtvec and mepc does not 
     validate the trap mechanism.
@@ -6,6 +6,9 @@
     Added reference for above mentioned test.
     * riscv-test-suite/rv32i/Makefrag: replaced old MISALIGNED_LDST-01 test 
     with new test.
+    * riscv-test-suite/rv32i/src/I-MISALIGN_LDST-01.S: removed old test src
+		* riscv-test-suite/rv32i/references/I-MISALIGN_LDST-01.reference_output:
+		removed old test reference.
 
 2019-01-22 Premysl Vaclavik  <pvaclavik@codasip.com>
     * feature: initial version of Compliance Test Format Specification
