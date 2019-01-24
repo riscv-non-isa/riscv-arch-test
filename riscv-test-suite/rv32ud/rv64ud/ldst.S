@@ -14,7 +14,7 @@
 #include "aw_test_macros.h"
 
 RVTEST_RV64UF
-RVTEST_CODE_BEGIN
+RV_COMPLIANCE_CODE_BEGIN
 
   la s0, tdat
   TEST_CASE(2, a0, 0x40000000bf800000, fld f2, 0(s0); fsd f2, 16(s0); ld a0, 16(s0))
@@ -25,7 +25,7 @@ RVTEST_CODE_BEGIN
 
   TEST_PASSFAIL
 
-RVTEST_CODE_END
+RV_COMPLIANCE_CODE_END
 
   .data
 

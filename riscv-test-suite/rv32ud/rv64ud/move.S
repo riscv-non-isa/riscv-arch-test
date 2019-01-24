@@ -11,7 +11,7 @@
 #include "test_macros.h"
 
 RVTEST_RV64UF
-RVTEST_CODE_BEGIN
+RV_COMPLIANCE_CODE_BEGIN
 
 #TODO: make 32-bit compatible version
 #define TEST_FSGNJD(n, insn, new_sign, rs1_sign, rs2_sign) \
@@ -103,7 +103,7 @@ RVTEST_CODE_BEGIN
 
   TEST_PASSFAIL
 
-RVTEST_CODE_END
+RV_COMPLIANCE_CODE_END
 
   .data
 RVTEST_DATA_BEGIN

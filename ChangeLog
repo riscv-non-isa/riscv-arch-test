@@ -7,6 +7,19 @@
     * riscv-test-suite/rv32i/Makefrag: replaced old MISALIGNED_LDST-01 test 
     with new test.
 
+2019-01-22 Premysl Vaclavik  <pvaclavik@codasip.com>
+    * feature: initial version of Compliance Test Format Specification
+        * This new document outlines how we should like the compliance
+          system to work going forward. By contrast the doc/README.adoc file
+          describes the current system as it is.
+        * Approved at Compliance TG meeting of 9 Jan 2019.
+
+2019-01-02 Radek Hajek <radek.hajek@codasip.com>
+    * unified macros in all compliance tests
+
+2018-12-20 Lee Moore <moore@imperas.com>
+    * fixed riscvOVPsim 
+
 2018-11-22 Simon Davidmann <simond@imperas.com>
     * added information on test suite status
     

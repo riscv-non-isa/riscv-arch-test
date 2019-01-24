@@ -173,8 +173,6 @@ typedef struct riscvS {
     Bool               PTWBadAddr :  1;     // page table walk address was bad
 
     // Messages
-    Bool               warnAwayRM : 1;  // warned about fcsr.RM=RMM
-    Bool               warnAwayOp : 1;  // warned about fcsr.RM=RMM in operation?
     riscvIntState      intState;        // for exception debug
 
     // JIT code translation control

@@ -1446,8 +1446,8 @@ static riscvRMDesc getRM(riscvInstrInfoP info, rmSpec rm) {
     Uns32       instr  = info->instruction;
 
     const static riscvRMDesc map[] = {
-        RV_RM_RTE, RV_RM_RTZ, RV_RM_RDN, RV_RM_RUP,
-        RV_RM_RMM, RV_RM_BAD, RV_RM_BAD, RV_RM_CURRENT
+        RV_RM_RTE, RV_RM_RTZ,  RV_RM_RDN,  RV_RM_RUP,
+        RV_RM_RMM, RV_RM_BAD5, RV_RM_BAD6, RV_RM_CURRENT
     };
 
     switch(rm) {

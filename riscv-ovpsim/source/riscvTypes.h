@@ -39,7 +39,8 @@ typedef enum riscvRMDescE {
     RV_RM_RDN,      // round towards -infinity
     RV_RM_RUP,      // round towards +infinity
     RV_RM_RMM,      // round to nearest, ties away
-    RV_RM_BAD,      // illegal rounding mode
+    RV_RM_BAD5,     // illegal rounding mode 5
+    RV_RM_BAD6,     // illegal rounding mode 6
 
 } riscvRMDesc;
 

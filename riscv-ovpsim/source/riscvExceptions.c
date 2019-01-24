@@ -651,26 +651,6 @@ VMI_FETCH_SNAP_FN(riscvFetchSnap) {
 }
 
 //
-// Validate alignment of instruction fetch from the passed address
-//
-static Bool validateFetchAddressAlign(
-    riscvP riscv,
-    Uns64  thisPC,
-    Bool   complete
-) {
-    // bit 1 must be zero if compressed instructions are not implemented (bit 0
-    // can have any value, because it is always ignored)
-    Bool ok = (riscv->configInfo.arch&ISA_C) || !(thisPC&2);
-
-    // exception if alignment is bad
-    if(!ok && complete) {
-        riscvTakeException(riscv, riscv_E_InstructionAddressMisaligned, thisPC);
-    }
-
-    return ok;
-}
-
-//
 // Validate instruction fetch from the passed address
 //
 static Bool validateFetchAddressInt(
@@ -710,7 +690,8 @@ static Bool validateFetchAddressInt(
 }
 
 //
-// Validate that the passed address is a mapped fetch address
+// Validate that the passed address is a mapped fetch address (NOTE: address
+// alignment is not validated here but by the preceding branch instruction)
 //
 static Bool validateFetchAddress(
     riscvP     riscv,
@@ -718,12 +699,7 @@ static Bool validateFetchAddress(
     Uns64      thisPC,
     Bool       complete
 ) {
-    if(!validateFetchAddressAlign(riscv, thisPC, complete)) {
-
-        // fetch alignment exception (handled in validateFetchAddressAlign)
-        return False;
-
-    } else if(!validateFetchAddressInt(riscv, domain, thisPC, complete)) {
+    if(!validateFetchAddressInt(riscv, domain, thisPC, complete)) {
 
         // fetch exception (handled in validateFetchAddressInt)
         return False;

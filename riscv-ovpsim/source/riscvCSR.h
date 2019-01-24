@@ -514,7 +514,8 @@ typedef struct {
 CSR_REG_STRUCT_DECL_32(fcsr);
 
 // write masks
-#define WM32_fcsr 0xff
+#define WM32_fcsr         0xff
+#define WM32_fcsr_frm_msb 0x80
 
 // -----------------------------------------------------------------------------
 // misa         (id 0x301)

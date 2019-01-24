@@ -286,7 +286,15 @@ static void statusW(riscvP riscv, Uns64 newValue, Uns64 mask) {
     Uns32 newIE = newValue & WM_mstatus_IE;
 
     // update the CSR
+    Uns8 oldMPP = RD_CSR_FIELD(riscv, mstatus, MPP);
     WR_CSR(riscv, mstatus, newValue);
+    Uns8 newMPP = RD_CSR_FIELD(riscv, mstatus, MPP);
+
+    // revert mstatus.MPP if target mode is not implemented (this field changes
+    // from WLRL to WARL in privileged Specification version 1.11)
+    if(!riscvHasMode(riscv, newMPP)) {
+        WR_CSR_FIELD(riscv, mstatus, MPP, oldMPP);
+    }
 
     // update current architecture if required
     riscvSetCurrentArch(riscv);
@@ -2533,7 +2541,7 @@ riscvArchitecture riscvEmitCSRWrite(
         vmimtCallResult((vmiCallFn)writeCB, bits, raw);
 
         // terminate the current block if required
-        if(attrs->wEndBlock) {
+        if(attrs->wEndBlock || attrs->wEndRM) {
             vmimtEndBlock();
         }
 
