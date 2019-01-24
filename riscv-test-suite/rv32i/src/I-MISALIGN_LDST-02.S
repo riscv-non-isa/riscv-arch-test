@@ -60,11 +60,6 @@ RV_COMPLIANCE_CODE_BEGIN
     la      x3, test_data
     la      x2, test_A1_res
 
-    # Test - should pass on all implementations 
-    li      x4,  0
-    lw      x4, 0(x3)
-    sw      x4, 0(x2)
-
     # Test - mis-aligned by 1 byte
     li      x4,  0
     addi    x3,  x3,  0x1
@@ -96,24 +91,14 @@ RV_COMPLIANCE_CODE_BEGIN
     la      x3, test_data
     la      x2, test_A2_res
 
-    # Test - should pass on all implementations 
-    lh      x4, 0(x3)
-    sw      x4, 0(x2)
-
     # Test - mis-aligned by 1 byte
     addi    x3,  x3,  0x1
     li      x4,  0
     lh      x4, 0(x3)
     sw      x4, 4(x2)
 
-    # Test - should pass on all implementations 
-    addi    x3,  x3,  0x1
-    li      x4,  0
-    lh      x4, 0(x3)
-    sw      x4, 8(x2)
-
-    # Test - mis-aligned by 1 byte
-    addi    x3,  x3,  0x1
+    # Test - mis-aligned by 3 byte
+    addi    x3,  x3,  0x2
     li      x4,  0
     lh      x4, 0(x3)
     sw      x4, 12(x2)
@@ -131,24 +116,14 @@ RV_COMPLIANCE_CODE_BEGIN
     la      x3, test_data
     la      x2, test_A3_res
 
-    # Test - should pass on all implementations 
-    lhu     x4, 0(x3)
-    sw      x4, 0(x2)
-
     # Test - mis-aligned by 1 byte
     addi    x3,  x3,  0x1
     li      x4,  0
     lhu     x4, 0(x3)
     sw      x4, 4(x2)
 
-    # Test - should pass on all implementations 
-    addi    x3,  x3,  0x1
-    li      x4,  0
-    lhu     x4, 0(x3)
-    sw      x4, 8(x2)
-
-    # Test - mis-aligned by 1 byte
-    addi    x3,  x3,  0x1
+    # Test - mis-aligned by 3 byte
+    addi    x3,  x3,  0x2
     li      x4,  0
     lhu     x4, 0(x3)
     sw      x4, 12(x2)
@@ -176,15 +151,13 @@ RV_COMPLIANCE_CODE_BEGIN
     sw      x5, 16(x2)
 
     # Test
+    addi    x2, x2, 0x5
     sw      x6, 0(x2)
 
-    addi    x2, x2, 5
+    addi    x2, x2, 0x5
     sw      x6, 0(x2)
 
-    addi    x2, x2, 5
-    sw      x6, 0(x2)
-
-    addi    x2, x2, 5
+    addi    x2, x2, 0x5
     sw      x6, 0(x2)
 
     RVTEST_IO_WRITE_STR("# Test part B1  - Complete\n");
@@ -207,15 +180,10 @@ RV_COMPLIANCE_CODE_BEGIN
     sw      x5, 16(x2)
 
     # Test
+    addi    x2, x2, 0x5
     sh      x6, 0(x2)
 
-    addi    x2, x2, 5
-    sh      x6, 0(x2)
-
-    addi    x2, x2, 5
-    sh      x6, 0(x2)
-
-    addi    x2, x2, 5
+    addi    x2, x2, 0xA
     sh      x6, 0(x2)
 
     RVTEST_IO_WRITE_STR("# Test part B2  - Complete\n");
@@ -225,11 +193,11 @@ RV_COMPLIANCE_CODE_BEGIN
     csrw mtvec, x31
     jal x0, test_end
 
-    RVTEST_IO_WRITE_STR("# Test part A5  - Complete\n");
-
     # ---------------------------------------------------------------------------------------------
     # Exception handler
 lw_trap_handler:
+
+    bnez x4, test_end
     # load fourth byte
     lb x5, 3(x3)
     slli x5, x5, 24
