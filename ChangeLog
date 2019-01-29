@@ -1,3 +1,10 @@
+2019-01-29 Deborah Soung <debs@sifive.com>
+    * Added Rocket Chip generated cores as a target
+        * riscv-target/rocket/compliance_io.h created
+	* riscv-target/rocket/compliance_test.h created
+	* riscv-target/rocket/*/Makefile.include created for existing test suites
+	* README.adoc updated with instructions for using Rocket cores as targets
+	
 2019-01-22 Premysl Vaclavik  <pvaclavik@codasip.com>
     * feature: initial version of Compliance Test Format Specification
         * This new document outlines how we should like the compliance
