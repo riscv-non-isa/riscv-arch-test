@@ -74,7 +74,7 @@ RV_COMPLIANCE_CODE_BEGIN
 	# address for test results
 	la	x1, test_4_res
 
-	TEST_CLWSP(x31, 124, x1, 0)
+	TEST_CLWSP(x21, 124, x1, 0)
 
 	# ---------------------------------------------------------------------------------------------
 

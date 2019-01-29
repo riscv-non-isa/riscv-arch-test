@@ -45,7 +45,7 @@ RV_COMPLIANCE_CODE_BEGIN
 
     # Save and set trap handler address
     la x1, _trap_handler
-    csrrw x31, mtvec, x1
+    csrrw x21, mtvec, x1
 
     # ---------------------------------------------------------------------------------------------
     RVTEST_IO_WRITE_STR("# Test part A1 - test LW\n");
@@ -150,8 +150,6 @@ RV_COMPLIANCE_CODE_BEGIN
 
     sw      x6, 3(x2)
 
-    RVTEST_IO_ASSERT_GPR_EQ(x2, 0x800035D4)
-
     RVTEST_IO_WRITE_STR("# Test part A3  - Complete\n");
 
     # ---------------------------------------------------------------------------------------------
@@ -187,7 +185,7 @@ RV_COMPLIANCE_CODE_BEGIN
 
     # ---------------------------------------------------------------------------------------------
     # restore mtvec and jump to the end
-    csrw mtvec, x31
+    csrw mtvec, x21
     jal x0, test_end
 
     RVTEST_IO_WRITE_STR("# Test part A5  - Complete\n");
@@ -200,7 +198,7 @@ _trap_handler:
     addi    x30, x30, 4
     csrw    mepc, x30
 
-    # store low bits of MBADADDR
+    # store low bits of mbadaddr
     csrr    x30, mbadaddr
     andi    x30, x30, 3
     sw      x30, 0(x1)

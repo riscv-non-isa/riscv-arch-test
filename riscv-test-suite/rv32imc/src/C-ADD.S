@@ -75,7 +75,7 @@ RVTEST_IO_WRITE_STR("# Test number 1 - corner cases\n")
 
     TEST_CR_OP(c.add, x27, x28, 0xffffffff, -0x1, 0x0, x2, 0)
     TEST_CR_OP(c.add, x29, x30, 0, -0x1, 0x1, x2, 4)
-    TEST_CR_OP(c.add, x31, x3, 0xfffffffe, -0x1, -0x1, x2, 8)
+    TEST_CR_OP(c.add, x21, x3, 0xfffffffe, -0x1, -0x1, x2, 8)
     TEST_CR_OP(c.add, x4, x8, 0x7ffe, -0x1, 0x7fff, x2, 12)
     TEST_CR_OP(c.add, x9, x11, 0x7fff, -0x1, 0x8000, x2, 16)
 
@@ -103,7 +103,7 @@ RVTEST_IO_WRITE_STR("# Test number 1 - corner cases\n")
     TEST_CR_OP(c.add, x24, x25, 0x8001, 0x8000, 0x1, x2, 4)
     TEST_CR_OP(c.add, x26, x27, 0x7fff, 0x8000, -0x1, x2, 8)
     TEST_CR_OP(c.add, x28, x29, 0xffff, 0x8000, 0x7fff, x2, 12)
-    TEST_CR_OP(c.add, x30, x31, 0x10000, 0x8000, 0x8000, x2, 16)
+    TEST_CR_OP(c.add, x30, x21, 0x10000, 0x8000, 0x8000, x2, 16)
 
     RVTEST_IO_WRITE_STR("Test End\n")
 

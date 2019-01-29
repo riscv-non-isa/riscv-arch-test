@@ -45,7 +45,7 @@ RV_COMPLIANCE_CODE_BEGIN
 
     # Save and set trap handler address
     la x1, _trap_handler
-    csrrw x31, mtvec, x1
+    csrrw x21, mtvec, x1
 
     //
     // Assert
@@ -68,7 +68,7 @@ RV_COMPLIANCE_CODE_BEGIN
 
     # ---------------------------------------------------------------------------------------------
     # restore mtvec and jump to the end
-    csrw mtvec, x31
+    csrw mtvec, x21
     jal x0, test_end
 
     RVTEST_IO_WRITE_STR("# Test part A2  - Complete\n");

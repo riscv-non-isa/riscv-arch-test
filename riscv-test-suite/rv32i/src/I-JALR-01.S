@@ -84,8 +84,8 @@ RV_COMPLIANCE_CODE_BEGIN
     li      x4, 0x0FEDCBA9
 
     # Test
-    la      x31, 2f
-    jalr    x0, x31, 0
+    la      x21, 2f
+    jalr    x0, x21, 0
     li      x2, 0
     li      x3, 0
     li      x4, 0
@@ -146,7 +146,7 @@ RV_COMPLIANCE_CODE_BEGIN
 B1a_link:
     li      x3, 0x22222222
     la      x8, 2f
-    jalr    x31, x8, 0
+    jalr    x21, x8, 0
 
 B1b_link:
     li      x5, 0x44444444
@@ -164,7 +164,7 @@ B1b_link:
 
 2:
     li      x4, 0x33333333
-    jalr    x0, x31, 0
+    jalr    x0, x21, 0
     li      x2, 0
     li      x3, 0
     li      x4, 0
@@ -173,7 +173,7 @@ B1b_link:
 
 3:
     xor     x7, x1, x25
-    xor     x8, x31, x24
+    xor     x8, x21, x24
 
 
     # Store results
@@ -219,7 +219,7 @@ B1b_link:
 
 1:
     li      x3, 0x77777777
-    jalr    x0, x31, 1
+    jalr    x0, x21, 1
     li      x2, 0
     li      x3, 0
     li      x4, 0
@@ -228,8 +228,8 @@ B1b_link:
 
 2:
     li      x2, 0x66666666
-    la      x31, 1b + 1
-    jalr    x31, x31, 0
+    la      x21, 1b + 1
+    jalr    x21, x21, 0
 
 B2b_link:
     li      x4, 0x88888888
@@ -251,7 +251,7 @@ B2c_link:
     li      x6, 0
 
 4:
-    xor     x7, x31, x24
+    xor     x7, x21, x24
     xor     x8, x1, x25
 
     # Store results

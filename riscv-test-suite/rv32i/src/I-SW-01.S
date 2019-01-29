@@ -78,8 +78,8 @@ RV_COMPLIANCE_CODE_BEGIN
     la      x8, test_A3_res - 1
 
     # Test
-    li      x31, 0x55F5F666
-    sw      x31, +1(x8)
+    li      x9, 0x55F5F666
+    sw      x9, +1(x8)
 
     RVTEST_IO_WRITE_STR("# Test part A3  - Complete\n");
 

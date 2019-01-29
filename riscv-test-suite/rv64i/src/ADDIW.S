@@ -75,7 +75,7 @@ RV_COMPLIANCE_CODE_BEGIN
 
 	TEST_IMM_OP(addiw, x27, x28, 0xffffffffffffffff, -0x1, 0x0, x2, 0)
 	TEST_IMM_OP(addiw, x29, x30, 0, -0x1, 0x1, x2, 8)
-	TEST_IMM_OP(addiw, x31, x3, 0xfffffffffffffffe, -0x1, -0x1, x2, 16)
+	TEST_IMM_OP(addiw, x21, x3, 0xfffffffffffffffe, -0x1, -0x1, x2, 16)
 	TEST_IMM_OP(addiw, x4, x8, 0x7fe, -0x1, 0x7ff, x2, 24)
 	TEST_IMM_OP(addiw, x9, x11, 0xfffffffffffff7ff, -0x1, 0x800, x2, 32)
 
@@ -103,7 +103,7 @@ RV_COMPLIANCE_CODE_BEGIN
 	TEST_IMM_OP(addiw, x24, x25, 0x1, 0x8000000000000000, 0x1, x2, 8)
 	TEST_IMM_OP(addiw, x26, x27, 0xffffffffffffffff, 0x8000000000000000, -0x1, x2, 16)
 	TEST_IMM_OP(addiw, x28, x29, 0x7ff, 0x8000000000000000, 0x7ff, x2, 24)
-	TEST_IMM_OP(addiw, x30, x31, 0xfffffffffffff800, 0x8000000000000000, 0x800, x2, 32)
+	TEST_IMM_OP(addiw, x30, x21, 0xfffffffffffff800, 0x8000000000000000, 0x800, x2, 32)
 
 	RVTEST_IO_WRITE_STR("Test End\n")
 

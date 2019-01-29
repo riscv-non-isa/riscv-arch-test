@@ -273,8 +273,8 @@ RV_COMPLIANCE_CODE_BEGIN
     # Test
     xor     x29, x28, x4
     xor     x30, x29, x5
-    xor     x31, x30, x6
-    xor     x1, x31, x7
+    xor     x21, x30, x6
+    xor     x1, x21, x7
     xor     x2, x1, x8
     xor     x3, x2, x9
 
@@ -283,19 +283,19 @@ RV_COMPLIANCE_CODE_BEGIN
     sw      x28, 4(x26)
     sw      x29, 8(x26)
     sw      x30, 12(x26)
-    sw      x31, 16(x26)
+    sw      x21, 16(x26)
     sw      x1, 20(x26)
     sw      x2, 24(x26)
     sw      x3, 28(x26)
 
-    RVTEST_IO_ASSERT_GPR_EQ(x4, 0x0000007F)
+    RVTEST_IO_ASSERT_GPR_EQ(x4,  0x0000007F)
     RVTEST_IO_ASSERT_GPR_EQ(x28, 0xABCDFFFF)
     RVTEST_IO_ASSERT_GPR_EQ(x29, 0xABCDFF80)
     RVTEST_IO_ASSERT_GPR_EQ(x30, 0xABCDFFBF)
-    RVTEST_IO_ASSERT_GPR_EQ(x31, 0xABCDFFA0)
-    #RVTEST_IO_ASSERT_GPR_EQ(x1, 0x80001AC8)
-    RVTEST_IO_ASSERT_GPR_EQ(x2, 0xABCDFFA8)
-    RVTEST_IO_ASSERT_GPR_EQ(x3, 0xABCDFFAB)
+    RVTEST_IO_ASSERT_GPR_EQ(x21, 0xABCDFFA0)
+    RVTEST_IO_ASSERT_GPR_EQ(x1,  0xABCDFFAF)
+    RVTEST_IO_ASSERT_GPR_EQ(x2,  0xABCDFFA8)
+    RVTEST_IO_ASSERT_GPR_EQ(x3,  0xABCDFFAB)
 
     RVTEST_IO_WRITE_STR("# Test part B  - Complete\n");
 

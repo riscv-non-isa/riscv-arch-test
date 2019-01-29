@@ -75,7 +75,7 @@ RV_COMPLIANCE_CODE_BEGIN
 
 	TEST_RR_SRC2(sraw, x27, x28, 0xffffffffffffffff, -0x1, 0x0, x2, 0)
 	TEST_RR_SRC2(sraw, x29, x30, 0xffffffffffffffff, -0x1, 0x1, x2, 8)
-	TEST_RR_SRC2(sraw, x31, x3, 0xffffffffffffffff, -0x1, -0x1, x2, 16)
+	TEST_RR_SRC2(sraw, x21, x3, 0xffffffffffffffff, -0x1, -0x1, x2, 16)
 	TEST_RR_SRC2(sraw, x4, x8, 0xffffffffffffffff, -0x1, 0x7fffffffffffffff, x2, 24)
 	TEST_RR_SRC2(sraw, x9, x11, 0xffffffffffffffff, -0x1, 0x8000000000000000, x2, 32)
 
@@ -103,7 +103,7 @@ RV_COMPLIANCE_CODE_BEGIN
 	TEST_RR_SRC2(sraw, x24, x25, 0, 0x8000000000000000, 0x1, x2, 8)
 	TEST_RR_SRC2(sraw, x26, x27, 0, 0x8000000000000000, -0x1, x2, 16)
 	TEST_RR_SRC2(sraw, x28, x29, 0, 0x8000000000000000, 0x7fffffffffffffff, x2, 24)
-	TEST_RR_SRC2(sraw, x30, x31, 0, 0x8000000000000000, 0x8000000000000000, x2, 32)
+	TEST_RR_SRC2(sraw, x30, x21, 0, 0x8000000000000000, 0x8000000000000000, x2, 32)
 
 	RVTEST_IO_WRITE_STR("Test End\n")
 

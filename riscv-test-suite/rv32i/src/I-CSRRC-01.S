@@ -86,7 +86,7 @@ RV_COMPLIANCE_CODE_BEGIN
     //
     RVTEST_IO_CHECK()
     RVTEST_IO_ASSERT_GPR_EQ(x0, 0x00000000)
-    #RVTEST_IO_ASSERT_GPR_EQ(x1, 0x80000324)
+    RVTEST_IO_ASSERT_GPR_EQ(x1, 0xFFFFFFFE)
     RVTEST_IO_ASSERT_GPR_EQ(x2, 0xFFFFFFFF)
     RVTEST_IO_ASSERT_GPR_EQ(x3, 0x800F0000)
     RVTEST_IO_ASSERT_GPR_EQ(x4, 0x7FFFFFFF)
@@ -197,21 +197,21 @@ RV_COMPLIANCE_CODE_BEGIN
     la      x2, test_D_res
 
     # Register initialization
-    li      x31, 0xF7FF8818
-    csrrw   x0, mscratch, x31
+    li      x21, 0xF7FF8818
+    csrrw   x0, mscratch, x21
 
     # Test
     csrrc   x0, mscratch, x0
     csrrc   x0, mscratch, x0
-    csrrc   x31, mscratch, x0
+    csrrc   x21, mscratch, x0
 
     # store results
     sw      x0, 0(x2)
-    sw      x31, 4(x2)
+    sw      x21, 4(x2)
 
 
-    RVTEST_IO_ASSERT_GPR_EQ(x0, 0x00000000)
-    RVTEST_IO_ASSERT_GPR_EQ(x31, 0xF7FF8818)
+    RVTEST_IO_ASSERT_GPR_EQ(x0,  0x00000000)
+    RVTEST_IO_ASSERT_GPR_EQ(x21, 0xF7FF8818)
 
     RVTEST_IO_WRITE_STR("# Test part A5  - Complete\n");
 

@@ -106,9 +106,9 @@ RV_COMPLIANCE_CODE_BEGIN
     sw      x12, 16(x2)
     sw      x13, 20(x2)
 
-    RVTEST_IO_ASSERT_GPR_EQ(x8, 0x00000001)
-    RVTEST_IO_ASSERT_GPR_EQ(x9, 0x00000000)
-    #RVTEST_IO_ASSERT_GPR_EQ(x10, 0x00000000)
+    RVTEST_IO_ASSERT_GPR_EQ(x8,  0x00000001)
+    RVTEST_IO_ASSERT_GPR_EQ(x9,  0x00000000)
+    RVTEST_IO_ASSERT_GPR_EQ(x10, 0x00000001)
     RVTEST_IO_ASSERT_GPR_EQ(x11, 0x00000001)
     RVTEST_IO_ASSERT_GPR_EQ(x12, 0x00000000)
     RVTEST_IO_ASSERT_GPR_EQ(x13, 0x00000001)
@@ -235,7 +235,7 @@ RV_COMPLIANCE_CODE_BEGIN
     sw      x0, 4(x27)
 
 
-    #RVTEST_IO_ASSERT_GPR_EQ(x1, 0x8000161C)
+    RVTEST_IO_ASSERT_GPR_EQ(x1, 0x00000001)
     RVTEST_IO_ASSERT_GPR_EQ(x0, 0x00000000)
 
     RVTEST_IO_WRITE_STR("# Test part B  - Complete\n");
@@ -244,7 +244,7 @@ RV_COMPLIANCE_CODE_BEGIN
     RVTEST_IO_WRITE_STR("# Test part C - testing compare x0\n");
 
     # Addresses for test data and results
-    la      x31, test_C_res
+    la      x21, test_C_res
 
     # Test
     sltiu   x1, x0, 1
@@ -254,15 +254,15 @@ RV_COMPLIANCE_CODE_BEGIN
     sltiu   x5, x0, 0xFFFFF800
 
     # Store results
-    sw      x0, 0(x31)
-    sw      x1, 4(x31)
-    sw      x2, 8(x31)
-    sw      x3, 12(x31)
-    sw      x4, 16(x31)
-    sw      x5, 20(x31)
+    sw      x0, 0(x21)
+    sw      x1, 4(x21)
+    sw      x2, 8(x21)
+    sw      x3, 12(x21)
+    sw      x4, 16(x21)
+    sw      x5, 20(x21)
 
     RVTEST_IO_ASSERT_GPR_EQ(x0, 0x00000000)
-    #RVTEST_IO_ASSERT_GPR_EQ(x1, 0x800017A8)
+    RVTEST_IO_ASSERT_GPR_EQ(x1, 0x00000001)
     RVTEST_IO_ASSERT_GPR_EQ(x2, 0x00000001)
     RVTEST_IO_ASSERT_GPR_EQ(x3, 0x00000001)
     RVTEST_IO_ASSERT_GPR_EQ(x4, 0x00000000)
@@ -274,7 +274,7 @@ RV_COMPLIANCE_CODE_BEGIN
     RVTEST_IO_WRITE_STR("# Test part D - testing forwarding between instructions\n");
 
     # Addresses for test data and results
-    la      x31, test_D_res
+    la      x21, test_D_res
 
     # Test
     sltiu   x1, x0, 1
@@ -284,16 +284,16 @@ RV_COMPLIANCE_CODE_BEGIN
     sltiu   x30, x29, 1
 
     # Store results
-    sw      x0, 0(x31)
-    sw      x1, 4(x31)
-    sw      x2, 8(x31)
-    sw      x28, 12(x31)
-    sw      x29, 16(x31)
-    sw      x30, 20(x31)
+    sw      x0, 0(x21)
+    sw      x1, 4(x21)
+    sw      x2, 8(x21)
+    sw      x28, 12(x21)
+    sw      x29, 16(x21)
+    sw      x30, 20(x21)
 
-    RVTEST_IO_ASSERT_GPR_EQ(x0, 0x00000000)
-    #RVTEST_IO_ASSERT_GPR_EQ(x1, 0x00000000)
-    RVTEST_IO_ASSERT_GPR_EQ(x2, 0x00000000)
+    RVTEST_IO_ASSERT_GPR_EQ(x0,  0x00000000)
+    RVTEST_IO_ASSERT_GPR_EQ(x1,  0x00000001)
+    RVTEST_IO_ASSERT_GPR_EQ(x2,  0x00000000)
     RVTEST_IO_ASSERT_GPR_EQ(x28, 0x00000001)
     RVTEST_IO_ASSERT_GPR_EQ(x29, 0x00000000)
     RVTEST_IO_ASSERT_GPR_EQ(x30, 0x00000001)

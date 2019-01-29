@@ -140,7 +140,7 @@ RV_COMPLIANCE_CODE_BEGIN
 
 B1a_link:
     li      x3, 0x22222222
-    jal     x31, 2f
+    jal     x21, 2f
 
 B1b_link:
     li      x5, 0x44444444
@@ -157,7 +157,7 @@ B1b_link:
 
 2:
     li      x4, 0x33333333
-    jalr    x0, x31, 0
+    jalr    x0, x21, 0
     li      x2, 0
     li      x3, 0
     li      x4, 0
@@ -166,7 +166,7 @@ B1b_link:
 
 3:
     xor     x7, x1, x25
-    xor     x8, x31, x24
+    xor     x8, x21, x24
 
 
     # Store results
@@ -211,7 +211,7 @@ B1b_link:
 
 1:
     li      x3, 0x77777777
-    jalr    x0, x31, 0
+    jalr    x0, x21, 0
     li      x2, 0
     li      x3, 0
     li      x4, 0
@@ -220,7 +220,7 @@ B1b_link:
 
 2:
     li      x2, 0x66666666
-    jal     x31, 1b
+    jal     x21, 1b
 
 B2b_link:
     li      x4, 0x88888888
@@ -240,7 +240,7 @@ B2c_link:
     li      x6, 0
 
 4:
-    xor     x7, x31, x24
+    xor     x7, x21, x24
     xor     x8, x1, x25
 
     # Store results

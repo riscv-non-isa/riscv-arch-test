@@ -68,30 +68,30 @@ test_A:
     auipc   x7, 0x1
     auipc   x16, 0xFFFFF
     auipc   x29, 0x7FFFF
-    auipc   x31, 0x80000
+    auipc   x30, 0x80000
 
     xor     x6, x6, x1
     xor     x7, x7, x2
     xor     x16, x16, x3
     xor     x29, x29, x4
-    xor     x31, x31, x5
+    xor     x30, x30, x5
 
     # Store results
     sw      x6, 0(x15)
     sw      x7, 4(x15)
     sw      x16, 8(x15)
     sw      x29, 12(x15)
-    sw      x31, 16(x15)
+    sw      x30, 16(x15)
 
     //
     // Assert
     //
     RVTEST_IO_CHECK()
-    RVTEST_IO_ASSERT_GPR_EQ(x6, 0x00000000)
-    RVTEST_IO_ASSERT_GPR_EQ(x7, 0x00000000)
+    RVTEST_IO_ASSERT_GPR_EQ(x6,  0x00000000)
+    RVTEST_IO_ASSERT_GPR_EQ(x7,  0x00000000)
     RVTEST_IO_ASSERT_GPR_EQ(x16, 0x00000000)
     RVTEST_IO_ASSERT_GPR_EQ(x29, 0x00000000)
-    RVTEST_IO_ASSERT_GPR_EQ(x31, 0x00000000)
+    RVTEST_IO_ASSERT_GPR_EQ(x30, 0x00000000)
 
     RVTEST_IO_WRITE_STR("# Test part A1  - Complete\n");
 
@@ -143,8 +143,8 @@ test_B:
     sw      x28, 12(x16)
     sw      x30, 16(x16)
 
-    RVTEST_IO_ASSERT_GPR_EQ(x1, 0x00000000)
-    RVTEST_IO_ASSERT_GPR_EQ(x2, 0x00000000)
+    RVTEST_IO_ASSERT_GPR_EQ(x1,  0x00000000)
+    RVTEST_IO_ASSERT_GPR_EQ(x2,  0x00000000)
     RVTEST_IO_ASSERT_GPR_EQ(x15, 0x00000000)
     RVTEST_IO_ASSERT_GPR_EQ(x28, 0x00000000)
     RVTEST_IO_ASSERT_GPR_EQ(x30, 0x00000000)
@@ -167,7 +167,7 @@ test_C1:
     # Test
     la      x4,  test_C1
     la      x15, test_C2
-    la      x30, test_C3
+    la      x29, test_C3
 
     # C1
     auipc   x5, 0x0
@@ -179,31 +179,31 @@ test_C2:
     addi    x16, x16, 0x0
 
     # C3
-    auipc   x31, 0x0
-    addi    x31, x31, 0x28
+    auipc   x30, 0x0
+    addi    x30, x30, 0x28
 
     xor     x4, x4, x1
     xor     x15, x15, x2
-    xor     x30, x30, x3
+    xor     x29, x29, x3
     sub     x5, x5, x1
     xor     x16, x16, x2
-    xor     x31, x31, x3
+    xor     x30, x30, x3
 
     # Store results
     sw      x4, 0(x17)
     sw      x15, 4(x17)
 test_C3:
-    sw      x30, 8(x17)
+    sw      x29, 8(x17)
     sw      x5, 12(x17)
     sw      x16, 16(x17)
-    sw      x31, 20(x17)
+    sw      x30, 20(x17)
 
-    RVTEST_IO_ASSERT_GPR_EQ(x4, 0x00000000)
+    RVTEST_IO_ASSERT_GPR_EQ(x4,  0x00000000)
     RVTEST_IO_ASSERT_GPR_EQ(x15, 0x00000000)
-    RVTEST_IO_ASSERT_GPR_EQ(x30, 0x00000000)
-    RVTEST_IO_ASSERT_GPR_EQ(x5, 0x00000000)
+    RVTEST_IO_ASSERT_GPR_EQ(x29, 0x00000000)
+    RVTEST_IO_ASSERT_GPR_EQ(x5,  0x00000000)
     RVTEST_IO_ASSERT_GPR_EQ(x16, 0x00000000)
-    RVTEST_IO_ASSERT_GPR_EQ(x31, 0x00000000)
+    RVTEST_IO_ASSERT_GPR_EQ(x30, 0x00000000)
 
     RVTEST_IO_WRITE_STR("# Test part A3  - Complete\n");
 

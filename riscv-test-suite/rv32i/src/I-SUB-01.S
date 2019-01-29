@@ -268,8 +268,8 @@ RV_COMPLIANCE_CODE_BEGIN
     # Test
     sub     x29, x28, x27
     sub     x30, x29, x27
-    sub     x31, x30, x27
-    sub     x1, x31, x27
+    sub     x21, x30, x27
+    sub     x1, x21, x27
     sub     x2, x1, x27
     sub     x3, x2, x27
 
@@ -278,7 +278,7 @@ RV_COMPLIANCE_CODE_BEGIN
     sw      x28, 4(x26)
     sw      x29, 8(x26)
     sw      x30, 12(x26)
-    sw      x31, 16(x26)
+    sw      x21, 16(x26)
     sw      x1, 20(x26)
     sw      x2, 24(x26)
     sw      x3, 28(x26)
@@ -287,10 +287,10 @@ RV_COMPLIANCE_CODE_BEGIN
     RVTEST_IO_ASSERT_GPR_EQ(x28, 0x0000ABCD)
     RVTEST_IO_ASSERT_GPR_EQ(x29, 0x0000ABCC)
     RVTEST_IO_ASSERT_GPR_EQ(x30, 0x0000ABCB)
-    RVTEST_IO_ASSERT_GPR_EQ(x31, 0x0000ABCA)
-    #RVTEST_IO_ASSERT_GPR_EQ(x1, 0x00001AB4)
-    RVTEST_IO_ASSERT_GPR_EQ(x2, 0x0000ABC8)
-    RVTEST_IO_ASSERT_GPR_EQ(x3, 0x0000ABC7)
+    RVTEST_IO_ASSERT_GPR_EQ(x21, 0x0000ABCA)
+    RVTEST_IO_ASSERT_GPR_EQ(x1,  0x0000ABC9)
+    RVTEST_IO_ASSERT_GPR_EQ(x2,  0x0000ABC8)
+    RVTEST_IO_ASSERT_GPR_EQ(x3,  0x0000ABC7)
 
     RVTEST_IO_WRITE_STR("# Test part B  - Complete\n");
 

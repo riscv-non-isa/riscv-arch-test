@@ -28,15 +28,18 @@
 # Description: Makefrag for RV32IM compliance tests
 
 rv32im_sc_tests = \
-	MULHU \
-	MULH \
-	MULHSU \
+    MULHU \
+    MULH \
+    MULHSU \
+    DIV \
+    REM \
+    REMU \
+    MUL \
+    DIVU \
+    REMU \
+
+xx_rv32im_sc_tests = \
 	DIV \
-	REM \
-	REMU \
-	MUL \
-	DIVU \
-	REMU \
 
 rv32im_tests = $(addsuffix .elf, $(rv32im_sc_tests))
 

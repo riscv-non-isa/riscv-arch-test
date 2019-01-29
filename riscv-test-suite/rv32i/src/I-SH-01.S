@@ -50,8 +50,8 @@ RV_COMPLIANCE_CODE_BEGIN
     la      x1, test_A1_res
 
     # Set memory
-    li      x31, 0xAAAABBBB
-    sw      x31, 0(x1)
+    li      x9, 0xAAAABBBB
+    sw      x9, 0(x1)
 
     # Test
     li      x2, 0x11F1F222
@@ -62,7 +62,7 @@ RV_COMPLIANCE_CODE_BEGIN
     //
     RVTEST_IO_CHECK()
     RVTEST_IO_ASSERT_GPR_EQ(x2, 0x11F1F222)
-    RVTEST_IO_ASSERT_GPR_EQ(x31, 0xAAAABBBB)
+    RVTEST_IO_ASSERT_GPR_EQ(x9, 0xAAAABBBB)
 
     RVTEST_IO_WRITE_STR("# Test part A1  - Complete\n");
 
@@ -94,11 +94,11 @@ RV_COMPLIANCE_CODE_BEGIN
     sw      x0, 1(x8)
 
     # Test
-    li      x31, 0x55F5F666
-    sh      x31, +1(x8)
+    li      x9, 0x55F5F666
+    sh      x9, +1(x8)
 
     RVTEST_IO_ASSERT_GPR_EQ(x0, 0x00000000)
-    RVTEST_IO_ASSERT_GPR_EQ(x31, 0x55F5F666)
+    RVTEST_IO_ASSERT_GPR_EQ(x9, 0x55F5F666)
 
     RVTEST_IO_WRITE_STR("# Test part A3  - Complete\n");
 
@@ -258,7 +258,6 @@ RV_COMPLIANCE_CODE_BEGIN
     addi    x28, x28, -4
 
     RVTEST_IO_ASSERT_GPR_EQ(x27, 0x89ABCDEF)
-    RVTEST_IO_ASSERT_GPR_EQ(x28, 0x8000403C)
 
     RVTEST_IO_WRITE_STR("# Test part A2  - Complete\n");
 

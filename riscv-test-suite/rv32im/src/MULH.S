@@ -62,7 +62,7 @@ RV_COMPLIANCE_CODE_BEGIN
 
 	TEST_RR_SRC2(mulh, x27, x28, 0, 0x1, 0x0, x2, 0)
 	TEST_RR_SRC2(mulh, x29, x30, 0, 0x1, 0x1, x2, 4)
-	TEST_RR_SRC2(mulh, x31, x3, 0xffffffff, 0x1, -0x1, x2, 8)
+	TEST_RR_SRC2(mulh, x21, x3, 0xffffffff, 0x1, -0x1, x2, 8)
 	TEST_RR_SRC2(mulh, x4, x8, 0, 0x1, 0x7fffffff, x2, 12)
 	TEST_RR_SRC2(mulh, x9, x11, 0xffffffff, 0x1, 0x80000000, x2, 16)
 
@@ -90,7 +90,7 @@ RV_COMPLIANCE_CODE_BEGIN
 	TEST_RR_SRC2(mulh, x24, x25, 0, 0x7fffffff, 0x1, x2, 4)
 	TEST_RR_SRC2(mulh, x26, x27, 0xffffffff, 0x7fffffff, -0x1, x2, 8)
 	TEST_RR_SRC2(mulh, x28, x29, 0x3fffffff, 0x7fffffff, 0x7fffffff, x2, 12)
-	TEST_RR_SRC2(mulh, x30, x31, 0xc0000000, 0x7fffffff, 0x80000000, x2, 16)
+	TEST_RR_SRC2(mulh, x30, x21, 0xc0000000, 0x7fffffff, 0x80000000, x2, 16)
 
 	# ---------------------------------------------------------------------------------------------
 

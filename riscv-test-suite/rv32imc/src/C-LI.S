@@ -103,7 +103,7 @@ RV_COMPLIANCE_CODE_BEGIN
 	TEST_CI_OP(c.li, x28, 0x1, 0x80000, 0x1, x2, 4)
 	TEST_CI_OP(c.li, x29, 0x10, 0x80000, 0x10, x2, 8)
 	TEST_CI_OP(c.li, x30, 0x1f, 0x80000, 0x1f, x2, 12)
-	TEST_CI_OP(c.li, x31, 0xffffffe1, 0x80000, -0x1f, x2, 16)
+	TEST_CI_OP(c.li, x21, 0xffffffe1, 0x80000, -0x1f, x2, 16)
 
 	RVTEST_IO_WRITE_STR("Test End\n")
 

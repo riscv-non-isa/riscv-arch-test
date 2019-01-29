@@ -83,7 +83,7 @@ RV_COMPLIANCE_CODE_BEGIN
 	# address for test results
 	la	x1, test_5_res
 
-	TEST_CSWSP(test_data, x31, 0x8000, 252, x1, 0)
+	TEST_CSWSP(test_data, x21, 0x8000, 252, x1, 0)
 
 
 	RVTEST_IO_WRITE_STR("Test End\n")

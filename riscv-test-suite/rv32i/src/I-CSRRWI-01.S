@@ -58,7 +58,7 @@ RV_COMPLIANCE_CODE_BEGIN
     csrrwi  x6, mscratch, 0x1F
     csrrwi  x28, mscratch, 0x0F
     csrrwi  x30, mscratch, 0x10
-    csrrwi  x31, mscratch, 0
+    csrrwi  x21, mscratch, 0
 
     # Store results
     sw      x0, 0(x15)
@@ -67,19 +67,19 @@ RV_COMPLIANCE_CODE_BEGIN
     sw      x6, 12(x15)
     sw      x28, 16(x15)
     sw      x30, 20(x15)
-    sw      x31, 24(x15)
+    sw      x21, 24(x15)
 
     //
     // Assert
     //
     RVTEST_IO_CHECK()
-    RVTEST_IO_ASSERT_GPR_EQ(x0, 0x00000000)
-    RVTEST_IO_ASSERT_GPR_EQ(x2, 0x00000000)
-    RVTEST_IO_ASSERT_GPR_EQ(x4, 0x00000001)
-    RVTEST_IO_ASSERT_GPR_EQ(x6, 0x00000000)
+    RVTEST_IO_ASSERT_GPR_EQ(x0,  0x00000000)
+    RVTEST_IO_ASSERT_GPR_EQ(x2,  0x00000000)
+    RVTEST_IO_ASSERT_GPR_EQ(x4,  0x00000001)
+    RVTEST_IO_ASSERT_GPR_EQ(x6,  0x00000000)
     RVTEST_IO_ASSERT_GPR_EQ(x28, 0x0000001F)
     RVTEST_IO_ASSERT_GPR_EQ(x30, 0x0000000F)
-    RVTEST_IO_ASSERT_GPR_EQ(x31, 0x00000010)
+    RVTEST_IO_ASSERT_GPR_EQ(x21, 0x00000010)
 
     RVTEST_IO_WRITE_STR("# Test part A1  - Complete\n");
 
