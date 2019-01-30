@@ -33,6 +33,11 @@ The files [`COPYING.BSD`](./COPYING.BSD) and [`COPYING.CC`](./COPYING.CC) in the
 // SPDX-License-Identifier: BSD-3-Clause
 ```
 
+## Cloning
+
+This repository contains riscv-ovpsim as a submodule, so when cloning do not forget the following
+git --recurse-submodules clone https://github.com/riscv/riscv-compliance.git
+
 ## Running the compliance tests
 
 The only setup required is to define where the toolchain is found, and where the target / device is found.
