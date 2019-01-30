@@ -37,12 +37,12 @@ RV_COMPLIANCE_RV32M
 RV_COMPLIANCE_CODE_BEGIN
 
 	RVTEST_IO_INIT
-	RVTEST_IO_ASSERT_GPR_EQ(x0, 0x00000000)
-	RVTEST_IO_WRITE_STR("Test Begin Reserved regs ra(x1) a0(x10) t0(x5)\n")
+	RVTEST_IO_ASSERT_GPR_EQ(x31, x0, 0x00000000)
+	RVTEST_IO_WRITE_STR(x31, "Test Begin Reserved regs ra(x1) a0(x10) t0(x5)\n")
 
 	# ---------------------------------------------------------------------------------------------
 
-	RVTEST_IO_WRITE_STR("# Test number 1 - corner cases\n")
+	RVTEST_IO_WRITE_STR(x31, "# Test number 1 - corner cases\n")
 
 	# address for test results
 	la	x1, test_1_res
@@ -51,7 +51,7 @@ RV_COMPLIANCE_CODE_BEGIN
 
 	# ---------------------------------------------------------------------------------------------
 
-	RVTEST_IO_WRITE_STR("# Test number 2 - corner cases\n")
+	RVTEST_IO_WRITE_STR(x31, "# Test number 2 - corner cases\n")
 
 	# address for test results
 	la	x1, test_2_res
@@ -60,7 +60,7 @@ RV_COMPLIANCE_CODE_BEGIN
 
 	# ---------------------------------------------------------------------------------------------
 
-	RVTEST_IO_WRITE_STR("# Test number 3 - corner cases\n")
+	RVTEST_IO_WRITE_STR(x31, "# Test number 3 - corner cases\n")
 
 	# address for test results
 	la	x1, test_3_res
@@ -69,23 +69,23 @@ RV_COMPLIANCE_CODE_BEGIN
 
 	# ---------------------------------------------------------------------------------------------
 
-	RVTEST_IO_WRITE_STR("# Test number 4 - corner cases\n")
+	RVTEST_IO_WRITE_STR(x31, "# Test number 4 - corner cases\n")
 
 	# address for test results
 	la	x1, test_4_res
 
-	TEST_CLWSP(x31, 124, x1, 0)
+	TEST_CLWSP(x21, 124, x1, 0)
 
 	# ---------------------------------------------------------------------------------------------
 
-	RVTEST_IO_WRITE_STR("# Test number 5 - corner cases\n")
+	RVTEST_IO_WRITE_STR(x31, "# Test number 5 - corner cases\n")
 
 	# address for test results
 	la	x1, test_5_res
 
 	TEST_CLWSP(x21, 252, x1, 0)
 
-	RVTEST_IO_WRITE_STR("Test End\n")
+	RVTEST_IO_WRITE_STR(x31, "Test End\n")
 
 	# ---------------------------------------------------------------------------------------------
 

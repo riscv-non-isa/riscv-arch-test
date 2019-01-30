@@ -40,11 +40,11 @@ RV_COMPLIANCE_RV32M
 RV_COMPLIANCE_CODE_BEGIN
 
     RVTEST_IO_INIT
-    RVTEST_IO_ASSERT_GPR_EQ(x0, 0x00000000)
-    RVTEST_IO_WRITE_STR("# Test Begin Reserved regs ra(x1) a0(x10) t0(x5)\n")
+    RVTEST_IO_ASSERT_GPR_EQ(x31, x0, 0x00000000)
+    RVTEST_IO_WRITE_STR(x31, "# Test Begin Reserved regs ra(x1) a0(x10) t0(x5)\n")
 
     # ---------------------------------------------------------------------------------------------
-    RVTEST_IO_WRITE_STR("# Test part A - test loading word by LW, LH, LB\n");
+    RVTEST_IO_WRITE_STR(x31, "# Test part A - test loading word by LW, LH, LB\n");
 
     # Addresses for test data and results
     la      x16, test_A_data
@@ -74,18 +74,18 @@ RV_COMPLIANCE_CODE_BEGIN
     // Assert
     //
     RVTEST_IO_CHECK()
-    #RVTEST_IO_ASSERT_GPR_EQ(x1, 0x80000270)
-    RVTEST_IO_ASSERT_GPR_EQ(x2, 0x00004567)
-    RVTEST_IO_ASSERT_GPR_EQ(x3, 0x00000123)
-    RVTEST_IO_ASSERT_GPR_EQ(x4, 0x00000089)
-    RVTEST_IO_ASSERT_GPR_EQ(x5, 0x00000045)
-    RVTEST_IO_ASSERT_GPR_EQ(x6, 0x00000045)
-    RVTEST_IO_ASSERT_GPR_EQ(x7, 0x00000023)
-    RVTEST_IO_ASSERT_GPR_EQ(x8, 0x00000001)
+    RVTEST_IO_ASSERT_GPR_EQ(x31, x1, 0x01234567)
+    RVTEST_IO_ASSERT_GPR_EQ(x31, x2, 0x00004567)
+    RVTEST_IO_ASSERT_GPR_EQ(x31, x3, 0x00000123)
+    RVTEST_IO_ASSERT_GPR_EQ(x31, x4, 0x00000089)
+    RVTEST_IO_ASSERT_GPR_EQ(x31, x5, 0x00000045)
+    RVTEST_IO_ASSERT_GPR_EQ(x31, x6, 0x00000045)
+    RVTEST_IO_ASSERT_GPR_EQ(x31, x7, 0x00000023)
+    RVTEST_IO_ASSERT_GPR_EQ(x31, x8, 0x00000001)
 
-    RVTEST_IO_WRITE_STR("# Test part A1  - Complete\n");
+    RVTEST_IO_WRITE_STR(x31, "# Test part A1  - Complete\n");
 
-    RVTEST_IO_WRITE_STR("# Test End\n")
+    RVTEST_IO_WRITE_STR(x31, "# Test End\n")
 
  # ---------------------------------------------------------------------------------------------
     # HALT

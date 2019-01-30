@@ -317,8 +317,8 @@ For tracing the test the following  macros are defined in `riscv-target/riscvOVP
 [source,make]
 ----
 RVTEST_IO_INIT
-RVTEST_IO_WRITE_STR(_STR)
-RVTEST_IO_ASSERT_GPR_EQ(_R, _I)
+RVTEST_IO_WRITE_STR(_SP, _STR)
+RVTEST_IO_ASSERT_GPR_EQ(_SP, _R, _I)
 ----
 
 An example of a test that uses the tracing macros is `riscv-test-suite/rv32i/ISA/src/I-IO.S`.

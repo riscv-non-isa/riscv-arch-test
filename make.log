@@ -1,0 +1,19 @@
+for isa in rv32i rv32im rv32imc rv32mi rv32si rv32ua rv32uc rv32ud rv32uf rv32ui rv64i rv64im; do \
+	echo $isa; \
+	make RISCV_TARGET=riscvOVPsim RISCV_DEVICE=$isa RISCV_ISA=$isa variant; \
+                rc=$?; \
+                if [ $rc -ne 0 ]; then \
+		exit $rc; \
+	fi \
+done
+rv32i
+make[1]: Entering directory '/home/moore/git/riscv-compliance'
+make \
+	RISCV_TARGET=riscvOVPsim \
+	RISCV_DEVICE=rv32i \
+	RISCV_PREFIX=riscv64-unknown-elf- \
+	run -C /home/moore/git/riscv-compliance/riscv-test-suite/rv32i
+make[2]: Entering directory '/home/moore/git/riscv-compliance/riscv-test-suite/rv32i'
+riscv64-unknown-elf-gcc -march=rv32i -mabi=ilp32 -static -mcmodel=medany -fvisibility=hidden -nostdlib -nostartfiles -I/home/moore/git/riscv-compliance/riscv-test-env/ -I/home/moore/git/riscv-compliance/riscv-test-env/p/ -I/home/moore/git/riscv-compliance/riscv-target/riscvOVPsim/ -T/home/moore/git/riscv-compliance/riscv-test-env/p/link.ld src/I-ENDIANESS-01.S -o /home/moore/git/riscv-compliance/work/rv32i/I-ENDIANESS-01.elf; riscv64-unknown-elf-objdump -D /home/moore/git/riscv-compliance/work/rv32i/I-ENDIANESS-01.elf > /home/moore/git/riscv-compliance/work/rv32i/I-ENDIANESS-01.elf.objdump
+make[2]: Leaving directory '/home/moore/git/riscv-compliance/riscv-test-suite/rv32i'
+make[1]: Leaving directory '/home/moore/git/riscv-compliance'
