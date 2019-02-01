@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005-2018 Imperas Software Ltd., www.imperas.com
+ * Copyright (c) 2005-2019 Imperas Software Ltd., www.imperas.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -77,6 +77,9 @@ VMI_NET_PORT_SPECS_FN(riscvNetPortSpecs);
 VMI_INT_RETURN_FN(riscvIntReturn);
 VMI_INT_RESULT_FN(riscvIntResult);
 
-// Processor information support
+// processor information support
 VMI_PROC_INFO_FN(riscvProcInfo);
 
+// save/restore support
+VMI_SAVE_STATE_FN(riscvSaveState);
+VMI_RESTORE_STATE_FN(riscvRestoreState);

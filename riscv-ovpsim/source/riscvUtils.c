@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005-2018 Imperas Software Ltd., www.imperas.com
+ * Copyright (c) 2005-2019 Imperas Software Ltd., www.imperas.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,6 +32,13 @@
 #include "riscvVariant.h"
 #include "riscvVM.h"
 
+
+//
+// Return any chld of the passed processor
+//
+inline static riscvP getChild(riscvP riscv) {
+    return (riscvP)vmirtGetSMPChild((vmiProcessorP)riscv);
+}
 
 //
 // Update the currently-enabled architecture settings
@@ -69,11 +76,14 @@ Uns32 riscvGetXlenArch(riscvP riscv) {
 
     riscvArchitecture arch   = riscv->configInfo.arch;
     Uns32             result = 0;
+    riscvP            child;
 
     if(arch & ISA_XLEN_64) {
         result = 64;
     } else if(arch & ISA_XLEN_32) {
         result = 32;
+    } else if((child=getChild(riscv))) {
+        return riscvGetXlenArch(child);
     } else {
         VMI_ABORT("invalid XLEN"); // LCOV_EXCL_LINE
     }

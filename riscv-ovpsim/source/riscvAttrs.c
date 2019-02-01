@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005-2018 Imperas Software Ltd., www.imperas.com
+ * Copyright (c) 2005-2019 Imperas Software Ltd., www.imperas.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,6 +53,14 @@ const vmiIASAttr modelAttrs = {
     .dictNames          = dictNames,
     .cpuSize            = sizeof(riscv),
     .blockStateSize     = sizeof(riscvBlockState),
+
+    ////////////////////////////////////////////////////////////////////////
+    // SAVE/RESTORE ROUTINES
+    ////////////////////////////////////////////////////////////////////////
+
+    .saveCB             = riscvSaveState,
+    .restoreCB          = riscvRestoreState,
+    .srVersion          = 0,
 
     ////////////////////////////////////////////////////////////////////////
     // CONSTRUCTOR/DESTRUCTOR ROUTINES

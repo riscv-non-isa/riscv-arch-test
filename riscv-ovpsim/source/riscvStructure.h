@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005-2018 Imperas Software Ltd., www.imperas.com
+ * Copyright (c) 2005-2019 Imperas Software Ltd., www.imperas.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@
 
 // VMI header files
 #include "vmi/vmiTypes.h"
+#include "vmi/vmiPorts.h"
 
 // model header files
 #include "riscvConfig.h"
@@ -48,6 +49,14 @@
 #define RISCV_DEBUG_EXCEPT(_P) ((_P)->flags & RISCV_DEBUG_EXCEPT_MASK)
 
 //
+// Debug flags that should be disabled during save/restore
+//
+#define RISCV_DEBUG_UPDATE_MASK ( \
+    RISCV_DEBUG_MMU_MASK |  \
+    RISCV_DEBUG_EXCEPT_MASK \
+)
+
+//
 // Number of temporaries
 //
 #define NUM_TEMPS 4
@@ -59,6 +68,7 @@ typedef struct riscvNetValueS {
     Uns64 ip;       // bitmask of driven interrupt signals
     Bool  reset;    // level of reset signal
     Bool  nmi;      // level of NMI signal
+    Bool  _u1[6];   // (for alignment)
 } riscvNetValue;
 
 //
@@ -92,6 +102,23 @@ typedef struct riscvIntStateS {
 } riscvIntState;
 
 //
+// This holds processor and vector information for an interrupt
+//
+typedef struct riscvInterruptInfoS {
+    riscvP hart;
+    Uns32  userData;
+} riscvInterruptInfo, *riscvInterruptInfoP;
+
+//
+// Structure describing a port
+//
+typedef struct riscvNetPortS {
+    vmiNetPort         desc;
+    riscvInterruptInfo ii;
+    riscvNetPortP      next;
+} riscvNetPort;
+
+//
 // Processor model structure
 //
 typedef struct riscvS {
@@ -112,7 +139,9 @@ typedef struct riscvS {
     Bool               verbose;         // whether verbose output enabled
     Bool               artifactAccess;  // whether current access is an artifact
     Bool               externalActive;  // whether external CSR access active
+    Bool               inSaveRestore;   // is save/restore active?
     Uns32              flags;           // model control flags
+    Uns32              flagsRestore;    // saved flags during restore
     riscvConfig        configInfo;      // model configuration
     memEndian          dendian;         // data endianness
     memEndian          iendian;         // instruction endianness
@@ -122,7 +151,7 @@ typedef struct riscvS {
     Uns32              writtenXMask;    // mask of written X registers
 
     // Configuration and parameter definitions
-    riscvParamValuesP  params;          // specified parameters (construction only)
+    riscvParamValuesP  paramValues;     // specified parameters (construction only)
 
     // Interrupt and exception control
     Uns32              swip;            // software interrupt pending bits

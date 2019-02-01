@@ -40,11 +40,11 @@ RV_COMPLIANCE_RV32M
 RV_COMPLIANCE_CODE_BEGIN
 
     RVTEST_IO_INIT
-    RVTEST_IO_ASSERT_GPR_EQ(x0, 0x00000000)
-    RVTEST_IO_WRITE_STR("# Test Begin Reserved regs ra(x1) a0(x10) t0(x5)\n")
+    RVTEST_IO_ASSERT_GPR_EQ(x31, x0, 0x00000000)
+    RVTEST_IO_WRITE_STR(x31, "# Test Begin Reserved regs ra(x1) a0(x10) t0(x5)\n")
 
     # ---------------------------------------------------------------------------------------------
-    RVTEST_IO_WRITE_STR("# Test part A1 - test x1 - x15 are 32 bits\n");
+    RVTEST_IO_WRITE_STR(x31, "# Test part A1 - test x1 - x15 are 32 bits\n");
 
     # Address for test results
     la      x16, test_A1_res
@@ -167,27 +167,27 @@ RV_COMPLIANCE_CODE_BEGIN
     // Assert
     //
     RVTEST_IO_CHECK()
-    RVTEST_IO_ASSERT_GPR_EQ(x0, 0x00000000)
-    #RVTEST_IO_ASSERT_GPR_EQ(x1, 0x800003FC)
-    RVTEST_IO_ASSERT_GPR_EQ(x2, 0x80000000)
-    RVTEST_IO_ASSERT_GPR_EQ(x3, 0x80000000)
-    RVTEST_IO_ASSERT_GPR_EQ(x4, 0x80000000)
-    RVTEST_IO_ASSERT_GPR_EQ(x5, 0x80000000)
-    RVTEST_IO_ASSERT_GPR_EQ(x6, 0x80000000)
-    RVTEST_IO_ASSERT_GPR_EQ(x7, 0x80000000)
-    RVTEST_IO_ASSERT_GPR_EQ(x8, 0x80000000)
-    RVTEST_IO_ASSERT_GPR_EQ(x9, 0x80000000)
-    #RVTEST_IO_ASSERT_GPR_EQ(x10, 0x00000000)
-    RVTEST_IO_ASSERT_GPR_EQ(x11, 0x80000000)
-    RVTEST_IO_ASSERT_GPR_EQ(x12, 0x80000000)
-    RVTEST_IO_ASSERT_GPR_EQ(x13, 0x80000000)
-    RVTEST_IO_ASSERT_GPR_EQ(x14, 0x80000000)
-    RVTEST_IO_ASSERT_GPR_EQ(x15, 0x80000000)
+    RVTEST_IO_ASSERT_GPR_EQ(x31, x0,  0x00000000)
+    RVTEST_IO_ASSERT_GPR_EQ(x31, x1,  0x80000000)
+    RVTEST_IO_ASSERT_GPR_EQ(x31, x2,  0x80000000)
+    RVTEST_IO_ASSERT_GPR_EQ(x31, x3,  0x80000000)
+    RVTEST_IO_ASSERT_GPR_EQ(x31, x4,  0x80000000)
+    RVTEST_IO_ASSERT_GPR_EQ(x31, x5,  0x80000000)
+    RVTEST_IO_ASSERT_GPR_EQ(x31, x6,  0x80000000)
+    RVTEST_IO_ASSERT_GPR_EQ(x31, x7,  0x80000000)
+    RVTEST_IO_ASSERT_GPR_EQ(x31, x8,  0x80000000)
+    RVTEST_IO_ASSERT_GPR_EQ(x31, x9,  0x80000000)
+    RVTEST_IO_ASSERT_GPR_EQ(x31, x10, 0x80000000)
+    RVTEST_IO_ASSERT_GPR_EQ(x31, x11, 0x80000000)
+    RVTEST_IO_ASSERT_GPR_EQ(x31, x12, 0x80000000)
+    RVTEST_IO_ASSERT_GPR_EQ(x31, x13, 0x80000000)
+    RVTEST_IO_ASSERT_GPR_EQ(x31, x14, 0x80000000)
+    RVTEST_IO_ASSERT_GPR_EQ(x31, x15, 0x80000000)
 
-    RVTEST_IO_WRITE_STR("# Test part A1  - Complete\n");
+    RVTEST_IO_WRITE_STR(x31, "# Test part A1  - Complete\n");
 
     # ---------------------------------------------------------------------------------------------
-    RVTEST_IO_WRITE_STR("# Test part A2 - test x16 - x31 are 32 bits\n");
+    RVTEST_IO_WRITE_STR(x31, "# Test part A2 - test x16 - x30 are 32 bits\n");
 
     # Address for test results
     la      x1, test_A2_res
@@ -208,7 +208,6 @@ RV_COMPLIANCE_CODE_BEGIN
     li      x28, 1
     li      x29, 1
     li      x30, 1
-    li      x31, 1
 
     # Test
     slli    x16, x16, 31
@@ -286,11 +285,6 @@ RV_COMPLIANCE_CODE_BEGIN
     li      x30, 0
 
 1:
-    slli    x31, x31, 31
-    bltz    x31, 1f
-    li      x31, 0
-
-1:
 
     # Store results
     sw      x16, 0(x1)
@@ -308,28 +302,26 @@ RV_COMPLIANCE_CODE_BEGIN
     sw      x28, 48(x1)
     sw      x29, 52(x1)
     sw      x30, 56(x1)
-    sw      x31, 60(x1)
 
-    RVTEST_IO_ASSERT_GPR_EQ(x16, 0x80000000)
-    RVTEST_IO_ASSERT_GPR_EQ(x17, 0x80000000)
-    RVTEST_IO_ASSERT_GPR_EQ(x18, 0x80000000)
-    RVTEST_IO_ASSERT_GPR_EQ(x19, 0x80000000)
-    RVTEST_IO_ASSERT_GPR_EQ(x20, 0x80000000)
-    RVTEST_IO_ASSERT_GPR_EQ(x21, 0x80000000)
-    RVTEST_IO_ASSERT_GPR_EQ(x22, 0x80000000)
-    RVTEST_IO_ASSERT_GPR_EQ(x23, 0x80000000)
-    RVTEST_IO_ASSERT_GPR_EQ(x24, 0x80000000)
-    RVTEST_IO_ASSERT_GPR_EQ(x25, 0x80000000)
-    RVTEST_IO_ASSERT_GPR_EQ(x26, 0x80000000)
-    RVTEST_IO_ASSERT_GPR_EQ(x27, 0x80000000)
-    RVTEST_IO_ASSERT_GPR_EQ(x28, 0x80000000)
-    RVTEST_IO_ASSERT_GPR_EQ(x29, 0x80000000)
-    RVTEST_IO_ASSERT_GPR_EQ(x30, 0x80000000)
-    RVTEST_IO_ASSERT_GPR_EQ(x31, 0x80000000)
+    RVTEST_IO_ASSERT_GPR_EQ(x31, x16, 0x80000000)
+    RVTEST_IO_ASSERT_GPR_EQ(x31, x17, 0x80000000)
+    RVTEST_IO_ASSERT_GPR_EQ(x31, x18, 0x80000000)
+    RVTEST_IO_ASSERT_GPR_EQ(x31, x19, 0x80000000)
+    RVTEST_IO_ASSERT_GPR_EQ(x31, x20, 0x80000000)
+    RVTEST_IO_ASSERT_GPR_EQ(x31, x21, 0x80000000)
+    RVTEST_IO_ASSERT_GPR_EQ(x31, x22, 0x80000000)
+    RVTEST_IO_ASSERT_GPR_EQ(x31, x23, 0x80000000)
+    RVTEST_IO_ASSERT_GPR_EQ(x31, x24, 0x80000000)
+    RVTEST_IO_ASSERT_GPR_EQ(x31, x25, 0x80000000)
+    RVTEST_IO_ASSERT_GPR_EQ(x31, x26, 0x80000000)
+    RVTEST_IO_ASSERT_GPR_EQ(x31, x27, 0x80000000)
+    RVTEST_IO_ASSERT_GPR_EQ(x31, x28, 0x80000000)
+    RVTEST_IO_ASSERT_GPR_EQ(x31, x29, 0x80000000)
+    RVTEST_IO_ASSERT_GPR_EQ(x31, x30, 0x80000000)
 
-    RVTEST_IO_WRITE_STR("# Test part A2  - Complete\n");
+    RVTEST_IO_WRITE_STR(x31, "# Test part A2  - Complete\n");
 
-    RVTEST_IO_WRITE_STR("# Test End\n")
+    RVTEST_IO_WRITE_STR(x31, "# Test End\n")
 
  # ---------------------------------------------------------------------------------------------
     # HALT
