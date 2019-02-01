@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005-2018 Imperas Software Ltd., www.imperas.com
+ * Copyright (c) 2005-2019 Imperas Software Ltd., www.imperas.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,6 +48,7 @@ typedef struct riscvConfigS {
     riscvArchitecture archMask;         // read/write bits in architecture
     riscvUserVer      user_version;     // user-level ISA version
     riscvPrivVer      priv_version;     // privileged architecture version
+    const char      **members;          // cluster member variants
 
     // configuration not visible in CSR state
     Uns64             reset_address;    // reset vector address
@@ -55,6 +56,7 @@ typedef struct riscvConfigS {
     Uns32             local_int_num;    // number of local interrupts
     Uns32             lr_sc_grain;      // LR/SC region grain size
     Uns32             ASID_bits;        // number of implemented ASID bits
+    Uns32             PMP_grain;        // PMP region grain size
     Uns32             PMP_registers;    // number of implemented PMP registers
     Uns32             Sv_modes;         // bit mask of valid Sv modes
     Uns32             numHarts;         // number of hart contexts if MPCore

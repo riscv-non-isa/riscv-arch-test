@@ -217,6 +217,11 @@ end_testcode:                                                           \
         .popsection;                                                    \
         .align 4; .global begin_signature; begin_signature:
 
-#define RVTEST_DATA_END .align 4; .global end_signature; end_signature:
+#define RVTEST_DATA_END                                                 \
+        .align 4; .global end_signature; end_signature:                 \
+        .align 8; .global begin_regstate; begin_regstate:               \
+        .word 128;                                                      \
+        .align 8; .global end_regstate; end_regstate:                   \
+        .word 4;
 
 #endif

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005-2018 Imperas Software Ltd., www.imperas.com
+ * Copyright (c) 2005-2019 Imperas Software Ltd., www.imperas.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@
 #include "vmi/vmiAttrs.h"
 #include "vmi/vmiModelInfo.h"
 #include "vmi/vmiDoc.h"
+#include "vmi/vmiRt.h"
 
 // model header files
 #include "riscvDoc.h"
@@ -39,6 +40,13 @@
 // Define target of snprintf with correct size
 //
 #define SNPRINTF_TGT(_S) _S, sizeof(_S)
+
+//
+// Return any chld of the passed processor
+//
+inline static riscvP getChild(riscvP riscv) {
+    return (riscvP)vmirtGetSMPChild((vmiProcessorP)riscv);
+}
 
 //
 // Fill result with description string of a single Sv mode
@@ -86,10 +94,18 @@ static void fillSvModes(char *result, Uns32 Sv_modes) {
 //
 void riscvDoc(riscvP riscv) {
 
+    vmiDocNodeP   Root     = vmidocAddSection(0, "Root");
+    riscvP        child    = getChild(riscv);
+    riscvConfigCP cfg      = &riscv->configInfo;
+    Uns32         numHarts = cfg->numHarts;
+    Bool          isSMP    = numHarts && child && !cfg->members;
     char          string[1024];
-    Uns32         xlen = riscvGetXlenArch(riscv);
-    riscvConfigCP cfg  = &riscv->configInfo;
-    vmiDocNodeP   Root = vmidocAddSection(0, "Root");
+
+    // move to first child if an SMP object
+    if(isSMP) {
+        riscv = child;
+        cfg   = &riscv->configInfo;
+    }
 
     ////////////////////////////////////////////////////////////////////////////
     // DESCRIPTION
@@ -100,9 +116,9 @@ void riscvDoc(riscvP riscv) {
 
         snprintf(
             SNPRINTF_TGT(string),
-            "RISC-V %s %d-bit processor model",
+            "RISC-V %s %u-bit processor model",
             riscv->configInfo.name,
-            xlen
+            riscvGetXlenArch(riscv)
         );
         vmidocAddText(Description, string);
     }
@@ -159,13 +175,13 @@ void riscvDoc(riscvP riscv) {
         );
 
         // document multicore behavior
-        if(cfg->numHarts) {
+        if(isSMP) {
             snprintf(
                 SNPRINTF_TGT(string),
-                "This is a multicore variant with %d cores by default."
-                "The number of cores may be overridden with the"
+                "This is a multicore variant with %u cores by default. "
+                "The number of cores may be overridden with the "
                 "\"numHarts\" parameter.",
-                cfg->numHarts
+                numHarts
             );
             vmidocAddText(Features, string);
         }
@@ -392,15 +408,26 @@ void riscvDoc(riscvP riscv) {
 
         // document PMP regions
         if(cfg->PMP_registers) {
+
+            Uns64 grainBytes = 4ULL<<cfg->PMP_grain;
+
             snprintf(
                 SNPRINTF_TGT(string),
                 "%u PMP entries are implemented by this variant. Use parameter "
                 "\"PMP_registers\" to specify a different number of PMP "
-                "entries; set the parameter to 0 to disable the PMP unit.",
-                cfg->PMP_registers
+                "entries; set the parameter to 0 to disable the PMP unit. "
+                "The PMP grain size (G) is %u, meaning that PMP regions as "
+                "small as "FMT_Au" bytes are implemented. Use parameter "
+                "\"PMP_grain\" to specify a different grain size if required.",
+                cfg->PMP_registers,
+                cfg->PMP_grain,
+                grainBytes
             );
+
             vmidocAddText(Features, string);
+
         } else {
+
             vmidocAddText(
                 Features,
                 "A PMP unit is not implemented by this variant. Set parameter "

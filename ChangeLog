@@ -1,3 +1,7 @@
+2019-02-01 Lee Moore <moore@imperas.com>
+    * updated Infrastructure macros to support non-volatile registers
+    * updated riscvOVPsim
+
 2019-01-29 Deborah Soung <debs@sifive.com>
     * Added Rocket Chip generated cores as a target
         * riscv-target/rocket/compliance_io.h created

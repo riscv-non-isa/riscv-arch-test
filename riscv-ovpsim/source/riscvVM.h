@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005-2018 Imperas Software Ltd., www.imperas.com
+ * Copyright (c) 2005-2019 Imperas Software Ltd., www.imperas.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -99,3 +99,21 @@ void riscvVMResetPMP(riscvP riscv);
 // Refresh the current data domain to reflect current mstatus.MPRV setting
 //
 void riscvVMRefreshMPRVDomain(riscvP riscv);
+
+//
+// Save VM state not covered by register read/write API
+//
+void riscvVMSave(
+    riscvP              riscv,
+    vmiSaveContextP     cxt,
+    vmiSaveRestorePhase phase
+);
+
+//
+// Restore VM state not covered by register read/write API
+//
+void riscvVMRestore(
+    riscvP              riscv,
+    vmiRestoreContextP  cxt,
+    vmiSaveRestorePhase phase
+);

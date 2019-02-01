@@ -135,7 +135,7 @@ synchronous_exception:
   bne t0, t1, fail
   csrr t0, mepc
 
-  # Make sure mtval contains either 0 or the instruction word.
+  # Make sure mbadaddr contains either 0 or the instruction word.
   csrr t2, mbadaddr
   beqz t2, 1f
   lhu t3, 0(t0)
