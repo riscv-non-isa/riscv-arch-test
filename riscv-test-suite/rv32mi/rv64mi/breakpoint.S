@@ -22,13 +22,13 @@ RV_COMPLIANCE_CODE_BEGIN
   # Skip tselect if hard-wired.
   csrw tselect, x0
   csrr a1, tselect
-  bne x0, a1, pass
+  bne x0, a1, sign_pass
 
   # Make sure there's a breakpoint there.
   csrr a0, tdata1
   srli a0, a0, __riscv_xlen - 4
   li a1, 2
-  bne a0, a1, pass
+  bne a0, a1, sign_pass
 
   la a2, 1f
   csrw tdata2, a2
@@ -94,13 +94,13 @@ RV_COMPLIANCE_CODE_BEGIN
   li a0, 1
   csrw tselect, a0
   csrr a1, tselect
-  bne a0, a1, pass
+  bne a0, a1, sign_pass
 
   # Make sure there's a breakpoint there.
   csrr a0, tdata1
   srli a0, a0, __riscv_xlen - 4
   li a1, 2
-  bne a0, a1, pass
+  bne a0, a1, sign_pass
 
   li a0, MCONTROL_M | MCONTROL_LOAD
   csrw tdata1, a0
@@ -125,6 +125,25 @@ RV_COMPLIANCE_CODE_BEGIN
 
 2:
   TEST_PASSFAIL
+
+sign_pass:
+  li TESTNUM, 3
+  SWSIG(3, TESTNUM)
+  li TESTNUM, 4
+  SWSIG(4, TESTNUM)
+  li TESTNUM, 5
+  SWSIG(5, TESTNUM)
+  li TESTNUM, 6
+  SWSIG(6, TESTNUM)
+  li TESTNUM, 7
+  SWSIG(7, TESTNUM)
+  li TESTNUM, 8
+  SWSIG(8, TESTNUM)
+  li TESTNUM, 10
+  SWSIG(10, TESTNUM)
+  li TESTNUM, 11
+  SWSIG(11, TESTNUM)
+  j pass
 
   .align 2
   .global mtvec_handler
