@@ -1,3 +1,6 @@
+2019-02-05 Deborah Soung <debs@sifive.com>
+    * [Issue #33] fixing rv32si/ma_fetch.S test
+
 2019-02-01 Lee Moore <moore@imperas.com>
     * updated Infrastructure macros to support non-volatile registers
     * updated riscvOVPsim
