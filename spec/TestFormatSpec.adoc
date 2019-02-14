@@ -359,8 +359,8 @@ ISA test is divided into several test cases marked as “A“,“B“,“C“, e
 RV_COMPLIANCE_CODE_BEGIN
 
    RVTEST_IO_INIT
-   RVTEST_IO_ASSERT_GPR_EQ(x0, 0x00000000)
-   RVTEST_IO_WRITE_STR("// Test Begin Reserved regs ra(x1) a0(x10) t0(x5)\n")
+   RVTEST_IO_ASSERT_GPR_EQ(x31, x0, 0x00000000)
+   RVTEST_IO_WRITE_STR(x31, "// Test Begin Reserved regs ra(x1) a0(x10) t0(x5)\n")
 ----
 
 .d.A) Test code - test case A
@@ -369,7 +369,7 @@ Test case “A“ focuses on checking corner case values of the ADD instruction.
 
 ----
 // ---------------------------------------------------------------------------------------------
-RVTEST_IO_WRITE_STR("// Test case A1 - general test of value 0 with 0, 1, -1, MIN, MAX register values\n");
+RVTEST_IO_WRITE_STR(x31, "// Test case A1 - general test of value 0 with 0, 1, -1, MIN, MAX register values\n");
 // Addresses for test data and results
 la x1, test_A1_data
 la x2, test_A1_res
@@ -398,24 +398,24 @@ sw x8, 20(x2)
 // Assert
 //
 RVTEST_IO_CHECK()
-RVTEST_IO_ASSERT_GPR_EQ(x3, 0x00000000)
-RVTEST_IO_ASSERT_GPR_EQ(x4, 0x00000000)
-RVTEST_IO_ASSERT_GPR_EQ(x5, 0x00000000)
-RVTEST_IO_ASSERT_GPR_EQ(x6, 0xFFFFFFFF)
-RVTEST_IO_ASSERT_GPR_EQ(x7, 0x7FFFFFFF)
-RVTEST_IO_ASSERT_GPR_EQ(x8, 0x80000000)
-RVTEST_IO_WRITE_STR("// Test case A1 - Complete\n");
+RVTEST_IO_ASSERT_GPR_EQ(x31, x3, 0x00000000)
+RVTEST_IO_ASSERT_GPR_EQ(x31, x4, 0x00000000)
+RVTEST_IO_ASSERT_GPR_EQ(x31, x5, 0x00000000)
+RVTEST_IO_ASSERT_GPR_EQ(x31, x6, 0xFFFFFFFF)
+RVTEST_IO_ASSERT_GPR_EQ(x31, x7, 0x7FFFFFFF)
+RVTEST_IO_ASSERT_GPR_EQ(x31, x8, 0x80000000)
+RVTEST_IO_WRITE_STR(x31, "// Test case A1 - Complete\n");
 // ---------------------------------------------------------------------------------------------
-RVTEST_IO_WRITE_STR("// Test case A2 - general test of value 1 with 0, 1, -1, MIN, MAX register values\n");
+RVTEST_IO_WRITE_STR(x31, "// Test case A2 - general test of value 1 with 0, 1, -1, MIN, MAX register values\n");
 <similar code to A1>
 // ---------------------------------------------------------------------------------------------
-RVTEST_IO_WRITE_STR("// Test case A3 - general test of value -1 with 0, 1, -1, MIN, MAX register values\n");
+RVTEST_IO_WRITE_STR(x31, "// Test case A3 - general test of value -1 with 0, 1, -1, MIN, MAX register values\n");
 <similar code to A1>
 // ---------------------------------------------------------------------------------------------
-RVTEST_IO_WRITE_STR("// Test case A4 - general test of value 0x7FFFFFFF with 0, 1, -1, MIN, MAX register values\n");
+RVTEST_IO_WRITE_STR(x31, "// Test case A4 - general test of value 0x7FFFFFFF with 0, 1, -1, MIN, MAX register values\n");
 <similar code to A1>
 // ---------------------------------------------------------------------------------------------
-RVTEST_IO_WRITE_STR("// Test case A5 - general test of value 0x80000000 with 0, 1, -1, MIN, MAX register values\n");
+RVTEST_IO_WRITE_STR(x31, "// Test case A5 - general test of value 0x80000000 with 0, 1, -1, MIN, MAX register values\n");
 <similar code to A1>
 ----
 
@@ -425,7 +425,7 @@ Test case “B“ focuses on forwarding between instruction. It means that a res
 
 ----
 // ---------------------------------------------------------------------------------------------
-RVTEST_IO_WRITE_STR("// Test case B - testing forwarding between instructions\n");
+RVTEST_IO_WRITE_STR(x31, "// Test case B - testing forwarding between instructions\n");
 // Addresses for test data and results
 la x25, test_B_data
 la x26, test_B_res
@@ -449,15 +449,15 @@ sw x31, 16(x26)
 sw x1, 20(x26)
 sw x2, 24(x26)
 sw x3, 28(x26)
-RVTEST_IO_ASSERT_GPR_EQ(x27, 0x00000001)
-RVTEST_IO_ASSERT_GPR_EQ(x28, 0x0000ABCD)
-RVTEST_IO_ASSERT_GPR_EQ(x29, 0x0000ABCE)
-RVTEST_IO_ASSERT_GPR_EQ(x30, 0x0000ABCF)
-RVTEST_IO_ASSERT_GPR_EQ(x31, 0x0000ABD0)
-//RVTEST_IO_ASSERT_GPR_EQ(x1, 0x80001A18)
-RVTEST_IO_ASSERT_GPR_EQ(x2, 0x0000ABD2)
-RVTEST_IO_ASSERT_GPR_EQ(x3, 0x0000ABD3)
-RVTEST_IO_WRITE_STR("// Test case B - Complete\n");
+RVTEST_IO_ASSERT_GPR_EQ(x31, x27, 0x00000001)
+RVTEST_IO_ASSERT_GPR_EQ(x31, x28, 0x0000ABCD)
+RVTEST_IO_ASSERT_GPR_EQ(x31, x29, 0x0000ABCE)
+RVTEST_IO_ASSERT_GPR_EQ(x31, x30, 0x0000ABCF)
+RVTEST_IO_ASSERT_GPR_EQ(x31, x31, 0x0000ABD0)
+//RVTEST_IO_ASSERT_GPR_EQ(x31, x1, 0x80001A18)
+RVTEST_IO_ASSERT_GPR_EQ(x31, x2, 0x0000ABD2)
+RVTEST_IO_ASSERT_GPR_EQ(x31, x3, 0x0000ABD3)
+RVTEST_IO_WRITE_STR(x31, "// Test case B - Complete\n");
 ----
 
 .d.C) Test code - test case C
@@ -466,7 +466,7 @@ Test case “C“ focuses on writing to x0. This register is hardwired to the 0 
 
 ----
 // ---------------------------------------------------------------------------------------------
-RVTEST_IO_WRITE_STR("// Test case C - testing writing to x0\n");
+RVTEST_IO_WRITE_STR(x31, "// Test case C - testing writing to x0\n");
 // Addresses for test data and results
 la x1, test_C_data
 la x2, test_C_res
@@ -478,8 +478,8 @@ li x27, 0xF7FF8818
 add x0, x28, x27
 // store results
 sw x0, 0(x2)
-RVTEST_IO_ASSERT_GPR_EQ(x0, 0x00000000)
-RVTEST_IO_WRITE_STR("// Test case C - Complete\n");
+RVTEST_IO_ASSERT_GPR_EQ(x31, x0, 0x00000000)
+RVTEST_IO_WRITE_STR(x31, "// Test case C - Complete\n");
 ----
 
 .d.D) Test code - test case D
@@ -488,7 +488,7 @@ Test case “D“ focuses on forwarding through x0. This register is hardwired t
 
 ----
 // ---------------------------------------------------------------------------------------------
-RVTEST_IO_WRITE_STR("// Test case D - testing forwarding throught x0\n");
+RVTEST_IO_WRITE_STR(x31, "// Test case D - testing forwarding throught x0\n");
 // Addresses for test data and results
 la x1, test_D_data
 la x2, test_D_res
@@ -502,9 +502,9 @@ add x5, x0, x0
 // store results
 sw x0, 0(x2)
 sw x5, 4(x2)
-RVTEST_IO_ASSERT_GPR_EQ(x0, 0x00000000)
-RVTEST_IO_ASSERT_GPR_EQ(x5, 0x00000000)
-RVTEST_IO_WRITE_STR("// Test case D - Complete\n");
+RVTEST_IO_ASSERT_GPR_EQ(x31, x0, 0x00000000)
+RVTEST_IO_ASSERT_GPR_EQ(x31, x5, 0x00000000)
+RVTEST_IO_WRITE_STR(x31, "// Test case D - Complete\n");
 ----
 
 .d.E) Test code - test case E
@@ -513,7 +513,7 @@ Test case “E“ focuses on ADD with x0. The ADD instruction performs the MOVE 
 
 ----
 // ---------------------------------------------------------------------------------------------
-RVTEST_IO_WRITE_STR("// Test case E - testing moving (add with x0)\n");
+RVTEST_IO_WRITE_STR(x31, "// Test case E - testing moving (add with x0)\n");
 // Addresses for test data and results
 la x1, test_E_data
 la x2, test_E_res
@@ -533,10 +533,10 @@ add x27, x26, x0
 sw x4, 0(x2)
 sw x26, 4(x2)
 sw x27, 8(x2)
-RVTEST_IO_ASSERT_GPR_EQ(x4, 0x36925814)
-RVTEST_IO_ASSERT_GPR_EQ(x26, 0x36925814)
-RVTEST_IO_ASSERT_GPR_EQ(x27, 0x36925814)
-RVTEST_IO_WRITE_STR("// Test case E - Complete\n");
+RVTEST_IO_ASSERT_GPR_EQ(x31, x4, 0x36925814)
+RVTEST_IO_ASSERT_GPR_EQ(x31, x26, 0x36925814)
+RVTEST_IO_ASSERT_GPR_EQ(x31, x27, 0x36925814)
+RVTEST_IO_WRITE_STR(x31, "// Test case E - Complete\n");
 ----
 
 .d.F) Test code - section Test End
@@ -544,7 +544,7 @@ RVTEST_IO_WRITE_STR("// Test case E - Complete\n");
 Every test environment should implement the HALT macro. When the macro is called, operation of DUT is stopped and a comparison to the reference results can be performed.
 
 ----
-RVTEST_IO_WRITE_STR("// Test End\n")
+RVTEST_IO_WRITE_STR(x31, "// Test End\n")
 // ---------------------------------------------------------------------------------------------
 // HALT
 RV_COMPLIANCE_HALT

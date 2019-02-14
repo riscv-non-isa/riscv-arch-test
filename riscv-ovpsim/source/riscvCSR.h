@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005-2018 Imperas Software Ltd., www.imperas.com
+ * Copyright (c) 2005-2019 Imperas Software Ltd., www.imperas.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -277,6 +277,29 @@ Bool riscvGetCSRDetails(riscvP riscv, riscvCSRDetailsP details, Bool normal);
 // Register new CSR
 //
 void riscvNewCSR(riscvCSRAttrsCP attrs, riscvP riscv);
+
+
+////////////////////////////////////////////////////////////////////////////////
+// SAVE/RESTORE SUPPORT
+////////////////////////////////////////////////////////////////////////////////
+
+//
+// Save CSR state not covered by register read/write API
+//
+void riscvCSRSave(
+    riscvP              riscv,
+    vmiSaveContextP     cxt,
+    vmiSaveRestorePhase phase
+);
+
+//
+// Restore CSR state not covered by register read/write API
+//
+void riscvCSRRestore(
+    riscvP              riscv,
+    vmiRestoreContextP  cxt,
+    vmiSaveRestorePhase phase
+);
 
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005-2018 Imperas Software Ltd., www.imperas.com
+ * Copyright (c) 2005-2019 Imperas Software Ltd., www.imperas.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1983,6 +1983,32 @@ inline static Bool pmpLocked(riscvP riscv, Uns8 index) {
 }
 
 //
+// Return the effective value of a PMP address register, taking into account
+// grain size
+//
+static Uns64 getEffectivePMPAddr(riscvP riscv, Uns8 index) {
+
+    pmpcfgElem e      = getPMPCFGElem(riscv, index);
+    Uns32      G      = riscv->configInfo.PMP_grain;
+    Uns64      result = riscv->pmpaddr[index];
+
+    if((G>=2) && (e.mode==PMPM_NAPOT)) {
+
+        // when G>=2 and pmpcfgi.A[1] is set, i.e. the mode is NAPOT, then bits
+        // pmpaddri[G-2:0] read as all ones
+        result |= ((1ULL << (G-1)) - 1);
+
+    } else if((G>=1) && (e.mode!=PMPM_NAPOT)) {
+
+        // when G>=1 and pmpcfgi.A[1] is clear, i.e. the mode is OFF or TOR,
+        // then bits pmpaddri[G-1:0] read as all zeros
+        result &= (-1ULL << G);
+    }
+
+    return result;
+}
+
+//
 // Is the indexed PMP region active?
 //
 static Bool getPMPRegionActive(riscvP riscv, pmpcfgElem e, Uns8 index) {
@@ -2001,7 +2027,7 @@ static Bool getPMPRegionActive(riscvP riscv, pmpcfgElem e, Uns8 index) {
 
         // TOR region is effectively enabled only if the associated address is
         // non-zero (a zero address will always fail the bounds check)
-        return riscv->pmpaddr[index];
+        return getEffectivePMPAddr(riscv, index);
     }
 }
 
@@ -2072,7 +2098,7 @@ static void getPMPEntryBounds(
     Uns64 *highP
 ) {
     pmpcfgElem e   = getPMPCFGElem(riscv, index);
-    Uns64      low = riscv->pmpaddr[index]<<2;
+    Uns64      low = getEffectivePMPAddr(riscv, index)<<2;
     Uns64      high;
 
     if(e.mode==PMPM_NA4) {
@@ -2094,11 +2120,33 @@ static void getPMPEntryBounds(
         // top-of-range
         high = low-1;
         low  = index ? riscv->pmpaddr[index-1]<<2 : 0;
+
+        // mask low address to implemented grain size
+        low &= (-4ULL << riscv->configInfo.PMP_grain);
     }
 
     // assign results
     *lowP  = low;
     *highP = high;
+}
+
+//
+// Are any lower-priority PMP entries than the indexed entry locked?
+//
+static Bool lowerPriorityPMPEntryLocked(riscvP riscv, Uns32 index) {
+
+    Uns32 i;
+
+    for(i=index+1; i<NUM_PMPS; i++) {
+
+        pmpcfgElem e = getPMPCFGElem(riscv, i);
+
+        if(e.L && (e.mode!=PMPM_OFF)) {
+            return True;
+        }
+    }
+
+    return False;
 }
 
 //
@@ -2123,7 +2171,9 @@ static void invalidatePMPEntry(riscvP riscv, Uns32 index) {
             setPMPPriv(riscv, RISCV_MODE_SUPERVISOR, low, high, MEM_PRIV_NONE);
 
             // remove access in Machine address space if the entry is locked
-            if(e.L) {
+            // or if any lower-priority entry is locked (enabling or disabling
+            // this region may reveal or conceal that region)
+            if(e.L || lowerPriorityPMPEntryLocked(riscv, index)) {
                 setPMPPriv(riscv, RISCV_MODE_MACHINE, low, high, MEM_PRIV_NONE);
             }
         }
@@ -2146,6 +2196,7 @@ Uns64 riscvVMWritePMPCFG(riscvP riscv, Uns32 index, Uns64 newValue) {
     riscvArchitecture arch          = riscv->currentArch;
     Uns32             entriesPerCFG = (arch & ISA_XLEN_64) ? 8 : 4;
     Uns32             numPMP        = riscv->configInfo.PMP_registers;
+    Uns32             G             = riscv->configInfo.PMP_grain;
     Uns32             numCFG        = ((numPMP+entriesPerCFG-1)/entriesPerCFG);
 
     // get offset into PMP bank allowing for the fact that when in 64-bit mode
@@ -2173,13 +2224,20 @@ Uns64 riscvVMWritePMPCFG(riscvP riscv, Uns32 index, Uns64 newValue) {
         // invalidate any modified entries
         for(i=0; i<NUM_PMPS; i++) {
 
-            if(oldValue.u8[i]!=riscv->pmpcfg.u8[i]) {
+            // get old and new values
+            pmpcfgElem oldCFG = {u8:oldValue.u8[i]};
+            pmpcfgElem newCFG = {u8:riscv->pmpcfg.u8[i]};
 
-                // get new value
-                Uns8 newValue = riscv->pmpcfg.u8[i];
+            // when G>=1, the NA4 mode is not selectable
+            if(G && (newCFG.mode==PMPM_NA4)) {
+                newCFG.mode = oldCFG.mode;
+                riscv->pmpcfg.u8[i] = newCFG.u8;
+            }
+
+            if(oldCFG.u8!=newCFG.u8) {
 
                 // revert value (perhaps temporarily)
-                riscv->pmpcfg.u8[i] = oldValue.u8[i];
+                riscv->pmpcfg.u8[i] = oldCFG.u8;
 
                 if(!pmpLocked(riscv, i)) {
 
@@ -2187,7 +2245,7 @@ Uns64 riscvVMWritePMPCFG(riscvP riscv, Uns32 index, Uns64 newValue) {
                     invalidatePMPEntry(riscv, i);
 
                     // set new value
-                    riscv->pmpcfg.u8[i] = newValue;
+                    riscv->pmpcfg.u8[i] = newCFG.u8;
 
                     // invalidate entry using its new specification
                     invalidatePMPEntry(riscv, i);
@@ -2205,7 +2263,7 @@ Uns64 riscvVMWritePMPCFG(riscvP riscv, Uns32 index, Uns64 newValue) {
 //
 Uns64 riscvVMReadPMPAddr(riscvP riscv, Uns32 index) {
 
-    return riscv->pmpaddr[index];
+    return getEffectivePMPAddr(riscv, index);
 }
 
 //
@@ -2215,9 +2273,15 @@ Uns64 riscvVMReadPMPAddr(riscvP riscv, Uns32 index) {
 Uns64 riscvVMWritePMPAddr(riscvP riscv, Uns32 index, Uns64 newValue) {
 
     Uns32 numRegs = riscv->configInfo.PMP_registers;
+    Uns32 G       = riscv->configInfo.PMP_grain;
 
-    // mask writable bits
+    // mask writable bits to implemented external bits
     newValue &= (getAddressMask(riscv->extBits) >> 2);
+
+    // also mask writable bits if grain is set
+    if(G) {
+        newValue &= (-1ULL << (G-1));
+    }
 
     if((index<numRegs) && (riscv->pmpaddr[index]!=newValue)) {
 
@@ -2242,7 +2306,7 @@ Uns64 riscvVMWritePMPAddr(riscvP riscv, Uns32 index, Uns64 newValue) {
         }
     }
 
-    return riscv->pmpaddr[index];
+    return getEffectivePMPAddr(riscv, index);
 }
 
 //
@@ -2693,4 +2757,129 @@ void riscvVMRefreshMPRVDomain(riscvP riscv) {
         vmirtSetProcessorDataDomain((vmiProcessorP)riscv, domain);
     }
 }
+
+
+////////////////////////////////////////////////////////////////////////////////
+// TLB SAVE/RESTORE SUPPORT
+////////////////////////////////////////////////////////////////////////////////
+
+#define RISCV_TLB_ENTRY "TLB_ENTRY"
+#define RISCV_TLB_END   "TLB_END"
+
+//
+// Save contents of one TLB entry
+//
+static void saveTLBEntry(vmiSaveContextP cxt, tlbEntryP entry) {
+
+    // save entry
+    tlbEntry entryS = *entry;
+
+    // clear down properties used to manage mapping
+    entryS.isMapped = 0;
+    entryS.lutEntry = 0;
+
+    vmirtSaveElement(
+        cxt, RISCV_TLB_ENTRY, RISCV_TLB_END, &entryS, sizeof(entryS)
+    );
+}
+
+//
+// Restore contents of one TLB entry
+//
+static void restoreTLBEntry(riscvTLBP tlb, tlbEntryP new) {
+
+    tlbEntryP entry = newTLBEntry(tlb);
+
+    // copy entry contents
+    *entry = *new;
+
+    // insert it into the processor TLB table
+    insertTLBEntry(tlb, entry);
+}
+
+//
+// Save contents of the TLB
+//
+static void saveTLB(riscvP riscv, riscvTLBP tlb, vmiSaveContextP cxt) {
+
+    // save all non-artifact TLB entries
+    ITER_TLB_ENTRY_RANGE(
+        riscv, tlb, 0, RISCV_MAX_ADDR, entry,
+        if(!entry->artifact) {
+            saveTLBEntry(cxt, entry);
+        }
+    );
+
+    // save terminator
+    vmirtSaveElement(cxt, RISCV_TLB_ENTRY, RISCV_TLB_END, 0, 0);
+}
+
+//
+// Restore contents of the TLB
+//
+static void restoreTLB(riscvP riscv, riscvTLBP tlb, vmiRestoreContextP cxt) {
+
+    tlbEntry new;
+
+    // restore all TLB entries
+    while(
+        vmirtRestoreElement(
+            cxt, RISCV_TLB_ENTRY, RISCV_TLB_END, &new, sizeof(new)
+        ) == SRS_OK
+    ) {
+        restoreTLBEntry(tlb, &new);
+    }
+}
+
+//
+// Save VM state
+//
+static void saveVM(riscvP riscv, vmiSaveContextP cxt) {
+
+    riscvTLBP tlb = riscv->tlb;
+
+    if(tlb) {
+        saveTLB(riscv, tlb, cxt);
+    }
+}
+
+//
+// Restore VM state
+//
+static void restoreVM(riscvP riscv, vmiRestoreContextP cxt) {
+
+    riscvTLBP tlb = riscv->tlb;
+
+    if(tlb) {
+        invalidateTLBEntriesRange(riscv, tlb, 0, RISCV_MAX_ADDR, MM_ANY, 0);
+        restoreTLB(riscv, tlb, cxt);
+    }
+}
+
+//
+// Save VM state not covered by register read/write API
+//
+void riscvVMSave(
+    riscvP              riscv,
+    vmiSaveContextP     cxt,
+    vmiSaveRestorePhase phase
+) {
+    if(phase==SRT_END_CORE) {
+        saveVM(riscv, cxt);
+    }
+}
+
+//
+// Restore VM state not covered by register read/write API
+//
+void riscvVMRestore(
+    riscvP              riscv,
+    vmiRestoreContextP  cxt,
+    vmiSaveRestorePhase phase
+) {
+    if(phase==SRT_END_CORE) {
+        restoreVM(riscv, cxt);
+    }
+}
+
 

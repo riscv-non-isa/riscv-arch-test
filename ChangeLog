@@ -1,3 +1,17 @@
+2019-02-05 Deborah Soung <debs@sifive.com>
+    * [Issue #33] fixing rv32si/ma_fetch.S test
+
+2019-02-01 Lee Moore <moore@imperas.com>
+    * updated Infrastructure macros to support non-volatile registers
+    * updated riscvOVPsim
+
+2019-01-29 Deborah Soung <debs@sifive.com>
+    * Added Rocket Chip generated cores as a target
+        * riscv-target/rocket/compliance_io.h created
+	* riscv-target/rocket/compliance_test.h created
+	* riscv-target/rocket/*/Makefile.include created for existing test suites
+	* README.adoc updated with instructions for using Rocket cores as targets
+	
 2019-01-24 Neel Gala <neelgala@incoresemi.com>
     * riscv-test-suite/rv32i/src/I-MISALIGN_LDST-02.S: New test added to check 
     mis-aligned data accesses. This test uses only mtvec and mepc does not 

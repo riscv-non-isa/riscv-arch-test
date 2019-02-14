@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005-2018 Imperas Software Ltd., www.imperas.com
+ * Copyright (c) 2005-2019 Imperas Software Ltd., www.imperas.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@
 #include "vmi/vmiMessage.h"
 
 // model header files
+#include "riscvCluster.h"
 #include "riscvFunctions.h"
 #include "riscvMessage.h"
 #include "riscvParameters.h"
@@ -206,6 +207,7 @@ static RISCV_BOOL_PDEFAULT_CFG_FN(fs_always_dirty);
 static RISCV_UNS32_PDEFAULT_CFG_FN(numHarts);
 static RISCV_UNS32_PDEFAULT_CFG_FN(tvec_align);
 static RISCV_UNS32_PDEFAULT_CFG_FN(ASID_bits);
+static RISCV_UNS32_PDEFAULT_CFG_FN(PMP_grain)
 static RISCV_UNS32_PDEFAULT_CFG_FN(PMP_registers);
 static RISCV_UNS32_PDEFAULT_CFG_FN(local_int_num);
 
@@ -332,6 +334,7 @@ static riscvParameter formals[] = {
     {  RVPV_A,       default_lr_sc_grain,          VMI_UNS32_PARAM_SPEC (riscvParamValues, lr_sc_grain,          1, 1, (1<<16),   "Specify byte granularity of ll/sc lock region (constrained to a power of two)")},
     {  RVPV_ALL,     default_reset_address,        VMI_UNS64_PARAM_SPEC (riscvParamValues, reset_address,        0, 0, -1,        "Override reset vector address")},
     {  RVPV_ALL,     default_nmi_address,          VMI_UNS64_PARAM_SPEC (riscvParamValues, nmi_address,          0, 0, -1,        "Override NMI vector address")},
+    {  RVPV_ALL,     default_PMP_grain,            VMI_UNS32_PARAM_SPEC (riscvParamValues, PMP_grain,            0, 0, 29,        "Specify PMP region granularity, G (0 => 4 bytes, 1 => 8 bytes, etc)")},
     {  RVPV_ALL,     default_PMP_registers,        VMI_UNS32_PARAM_SPEC (riscvParamValues, PMP_registers,        0, 0, 16,        "Specify the number of implemented PMP address registers")},
     {  RVPV_S,       default_Sv_modes,             VMI_UNS32_PARAM_SPEC (riscvParamValues, Sv_modes,             0, 0, (1<<16)-1, "Specify bit mask of implemented Sv modes (e.g. 1<<8 is Sv39)")},
     {  RVPV_ALL,     default_local_int_num,        VMI_UNS32_PARAM_SPEC (riscvParamValues, local_int_num,        0, 0, 48,        "Specify number of supplemental local interrupts")},
@@ -356,6 +359,13 @@ static riscvParameter formals[] = {
 };
 
 //
+// Return any parent of the passed processor
+//
+inline static riscvP getParent(riscvP riscv) {
+    return (riscvP)vmirtGetSMPParent((vmiProcessorP)riscv);
+}
+
+//
 // Should this configuration be presented as a public one?
 //
 inline static Bool selectConfig(riscvConfigCP cfg) {
@@ -368,6 +378,13 @@ inline static Bool selectConfig(riscvConfigCP cfg) {
 static Bool selectParameter(riscvConfigCP cfg, riscvParameterP param) {
 
     if(cfg) {
+
+        Bool   isCluster = cfg->members;
+
+        // cluster exposes only variant parameter
+        if(!(param->variant & RVPV_VARIANT) && isCluster) {
+            return False;
+        }
 
         // include parameters that are only required when floating-point is
         // present
@@ -533,6 +550,29 @@ static vmiParameterP createParameterList(
 }
 
 //
+// Given a variant for the cluster root, infer the variant at a sublevel
+//
+static const char *refineVariant(riscvP riscv, const char *variant) {
+
+    if(riscv) {
+
+        riscvP parent;
+
+        while((parent=getParent(riscv))) {
+
+            if(riscvIsCluster(parent)) {
+                variant = riscvGetClusterVariant(parent, riscv);
+                break;
+            } else {
+                riscv = parent;
+            }
+        }
+    }
+
+    return variant;
+}
+
+//
 // Function to iterate the parameter specifications
 //
 VMI_PROC_PARAM_SPECS_FN(riscvGetParamSpec) {
@@ -540,7 +580,7 @@ VMI_PROC_PARAM_SPECS_FN(riscvGetParamSpec) {
     riscvP        riscv = (riscvP)processor;
     vmiParameterP this  = prev ? prev+1 : riscv->parameters;
 
-    return this->name ? this : NULL;
+    return this && this->name ? this : NULL;
 }
 
 //
@@ -548,17 +588,28 @@ VMI_PROC_PARAM_SPECS_FN(riscvGetParamSpec) {
 //
 VMI_PROC_PARAM_TABLE_SIZE_FN(riscvParamValueSize) {
 
-    riscvP        riscv = (riscvP)processor;
-    riscvConfigCP list  = riscvGetConfigList(riscv);
-    riscvConfigCP cfg   = getSelectedConfig(list, variant);
+    riscvP riscv    = (riscvP)processor;
+    riscvP parent = riscv ? getParent(riscv) : 0;
 
-    // create variant list
-    riscv->variantList = createVariantList(riscv, cfg);
+    if(parent && !riscvIsCluster(parent)) {
 
-    // create parameter definition list
-    riscv->parameters = createParameterList(riscv, list, cfg);
+        // allow parameterization of multiclusters and root level objects only
+        return 0;
 
-    return sizeof(riscvParamValues);
+    } else {
+
+        // refine variant in cluster if required
+        variant = refineVariant(riscv, variant);
+
+        // create parameter definition list
+        riscvConfigCP cfgList = riscvGetConfigList(riscv);
+        riscvConfigCP cfg     = getSelectedConfig(cfgList, variant);
+
+        riscv->variantList = createVariantList(riscv, cfg);
+        riscv->parameters  = createParameterList(riscv, cfgList, cfg);
+
+        return sizeof(riscvParamValues);
+    }
 }
 
 //
@@ -573,6 +624,13 @@ void riscvFreeParameters(riscvP riscv) {
     if(riscv->parameters) {
         STYPE_FREE(riscv->parameters);
     }
+}
+
+//
+// Get any configuration with the given name
+//
+riscvConfigCP riscvGetNamedConfig(riscvConfigCP cfgList, const char *variant) {
+    return getSelectedConfig(cfgList, variant);
 }
 
 //

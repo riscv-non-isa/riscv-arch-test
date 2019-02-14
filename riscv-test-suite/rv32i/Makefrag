@@ -27,7 +27,7 @@
 #
 # Description: Makefrag for RV32I compliance tests
 
-rv32i_sc_tests =    \
+rv32i_sc_tests = \
     I-ENDIANESS-01 \
     I-RF_x0-01 \
     I-RF_size-01 \

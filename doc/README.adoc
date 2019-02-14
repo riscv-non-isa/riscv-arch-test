@@ -121,6 +121,10 @@ Jeremy Bennett, Mary Bennett, Simon Davidmann, Neel Gala, Radek Hajek, Lee Moore
 [cols="<1,<2,<3,<4",options="header,pagewidth",]
 |================================================================================
 | _Revision_ | _Date_            | _Author_ | _Modification_
+| 1.13 Draft  | 29 January 2019      |
+Deborah Soung |
+
+Added documentation on how to use Rocket Chip generated cores as targets.
 | 1.12 Draft  | 22 November 2018      |
 Simon Davidmann |
 
@@ -313,8 +317,8 @@ For tracing the test the following  macros are defined in `riscv-target/riscvOVP
 [source,make]
 ----
 RVTEST_IO_INIT
-RVTEST_IO_WRITE_STR(_STR)
-RVTEST_IO_ASSERT_GPR_EQ(_R, _I)
+RVTEST_IO_WRITE_STR(_SP, _STR)
+RVTEST_IO_ASSERT_GPR_EQ(_SP, _R, _I)
 ----
 
 An example of a test that uses the tracing macros is `riscv-test-suite/rv32i/ISA/src/I-IO.S`.
@@ -348,6 +352,16 @@ tbd
 
 === Berkeley Spike ISA simulator
 For spike the file `riscv-target/spike/compliance_io.h` has the trace macros defined as empty.  The Makefile fragment in `riscv-target/spike/device/rv32i` has the spike run command for the RV32I device.
+
+=== Rocket Chip emulators
+Additional environment variables:
+
+* `ROCKET_DIR`: Specifies link:https://github.com/freechipsproject/rocket-chip[Rocket Chip] directory. Required.
+* `ROCKET_CONFIG`: Specifies Rocket Chip link:https://github.com/freechipsproject/rocket-chip/blob/master/src/main/scala/system/Configs.scala[configuration]. **Usually** defaults to `DefaultConfig` or `DefaultRV32Config`, unless the aforementioned configurations do not support a test suite's ISA extensions (for example, in the case of `rv32ud`).
+
+Before running the compliance test, make sure that the correct emulator is built, following the link:https://github.com/freechipsproject/rocket-chip#emulator[instructions in the Rocket Chip repository].
+
+**Note**: Rocket Chip's `DefaultRV32Config` is currently failing the following tests — link:https://github.com/riscv/riscv-compliance/issues/31[rv32i/I-MISALIGN_JMP-01.S], link:https://github.com/riscv/riscv-compliance/issues/32[rv32mi/breakpoint.S].
 
 === SiFive Freedom Unleashed 540 board (tbd)
 

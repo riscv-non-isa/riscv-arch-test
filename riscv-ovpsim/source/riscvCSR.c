@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005-2018 Imperas Software Ltd., www.imperas.com
+ * Copyright (c) 2005-2019 Imperas Software Ltd., www.imperas.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -403,8 +403,16 @@ inline static Uns32 getUIRMask(riscvP riscv) {
 // Common routine to read ip using mip, sip or uip alias (NOTE: if this is a
 // read/write operation, only software-writable bits are seen)
 //
-inline static Uns64 ipR(riscvP riscv, Uns64 rMask, Bool isWrite) {
-    return (isWrite ? riscv->swip : RD_CSR(riscv, mip)) & rMask;
+static Uns64 ipR(riscvP riscv, Uns64 rMask, Bool isWrite) {
+
+    Uns64 result = riscv->swip;
+
+    // in save/restore mode, return raw software-writable value
+    if(!riscv->inSaveRestore) {
+        result = (isWrite ? result : RD_CSR(riscv, mip)) & rMask;
+    }
+
+    return result;
 }
 
 //
@@ -413,10 +421,17 @@ inline static Uns64 ipR(riscvP riscv, Uns64 rMask, Bool isWrite) {
 static Uns64 ipW(riscvP riscv, Uns64 newValue, Uns64 rMask) {
 
     Uns32 oldValue = riscv->swip;
-    Uns32 wMask    = RD_CSR_MASK(riscv, mie) & rMask;
 
-    // update value using writable bit mask
-    riscv->swip = ((newValue & wMask) | (oldValue & ~wMask));
+    // in save/restore mode, update value unmasked
+    if(!riscv->inSaveRestore) {
+
+        Uns32 wMask = RD_CSR_MASK(riscv, mie) & rMask;
+
+        // update value using writable bit mask
+        newValue = ((newValue & wMask) | (oldValue & ~wMask));
+    }
+
+    riscv->swip = newValue;
 
     // handle any interrupts that are now pending and enabled
     if(oldValue!=newValue) {
@@ -439,6 +454,13 @@ static RISCV_CSR_READFN(mipRW) {
 //
 static RISCV_CSR_WRITEFN(mipW) {
     return ipW(riscv, newValue, WM32_mip);
+}
+
+//
+// Read mip
+//
+static RISCV_CSR_READFN(mipR) {
+    return ipR(riscv, -1, False);
 }
 
 //
@@ -799,7 +821,12 @@ static Uns64 cycleR(riscvP riscv) {
 // *before* the write)
 //
 static void cycleW(riscvP riscv, Uns64 newValue) {
-    riscv->baseCycles = getCycles(riscv) - newValue + 1;
+
+    riscv->baseCycles = getCycles(riscv) - newValue;
+
+    if(!riscv->artifactAccess) {
+        riscv->baseCycles++;
+    }
 }
 
 //
@@ -1312,7 +1339,7 @@ static const riscvCSRAttrs csrs[CSR_ID(LAST)] = {
     CSR_ATTR_TV_     (mepc,         0x341, 0,           0,0,0,0,  "Machine Exception Program Counter",             0,          0,     0         ),
     CSR_ATTR_TV_     (mcause,       0x342, 0,           0,0,0,0,  "Machine Cause",                                 0,          0,     0         ),
     CSR_ATTR_T__     (mtval,        0x343, 0,           0,0,0,0,  "Machine Trap Value",                            0,          0,     0         ),
-    CSR_ATTR_T__     (mip,          0x344, 0,           0,0,0,0,  "Machine Interrupt Pending",                     0,          mipRW, mipW      ),
+    CSR_ATTR_T__     (mip,          0x344, 0,           0,0,0,0,  "Machine Interrupt Pending",                     mipR,       mipRW, mipW      ),
 
     //                name          num    arch         attrs     description                                      rCB         rwCB   wCB
     CSR_ATTR_P__     (pmpcfg0,      0x3A0, 0,           0,0,0,0,  "Physical Memory Protection Configuration 0",    pmpcfgR,    0,     pmpcfgW   ),
@@ -2617,5 +2644,80 @@ Bool riscvGetCSRDetails(riscvP riscv, riscvCSRDetailsP details, Bool normal) {
     }
 
     return False;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// SAVE/RESTORE SUPPORT
+////////////////////////////////////////////////////////////////////////////////
+
+//
+// Save CSR state not covered by register read/write API
+//
+void riscvCSRSave(
+    riscvP              riscv,
+    vmiSaveContextP     cxt,
+    vmiSaveRestorePhase phase
+) {
+    switch(phase) {
+
+        case SRT_BEGIN:
+            // start of SMP cluster
+            break;
+
+        case SRT_BEGIN_CORE:
+            // start of individual core
+           break;
+
+        case SRT_END_CORE:
+            // end of individual core
+            VMIRT_SAVE_FIELD(cxt, riscv, baseCycles);
+            VMIRT_SAVE_FIELD(cxt, riscv, baseInstructions);
+            break;
+
+        case SRT_END:
+            // end of SMP cluster
+            break;
+
+        default:
+            // not reached
+            VMI_ABORT("unimplemented case"); // LCOV_EXCL_LINE
+            break;
+    }
+}
+
+//
+// Restore CSR state not covered by register read/write API
+//
+void riscvCSRRestore(
+    riscvP              riscv,
+    vmiRestoreContextP  cxt,
+    vmiSaveRestorePhase phase
+) {
+    switch(phase) {
+
+        case SRT_BEGIN:
+            // start of SMP cluster
+            break;
+
+        case SRT_BEGIN_CORE:
+            // start of individual core
+            break;
+
+        case SRT_END_CORE:
+            // end of individual core
+            VMIRT_RESTORE_FIELD(cxt, riscv, baseCycles);
+            VMIRT_RESTORE_FIELD(cxt, riscv, baseInstructions);
+            break;
+
+        case SRT_END:
+            // end of SMP cluster
+            break;
+
+        default:
+            // not reached
+            VMI_ABORT("unimplemented case"); // LCOV_EXCL_LINE
+            break;
+    }
 }
 

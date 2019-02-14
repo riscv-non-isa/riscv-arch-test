@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005-2018 Imperas Software Ltd., www.imperas.com
+ * Copyright (c) 2005-2019 Imperas Software Ltd., www.imperas.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -704,11 +704,6 @@ static Bool validateFetchAddress(
         // fetch exception (handled in validateFetchAddressInt)
         return False;
 
-    } else if((thisPC+2) & (RISCV_PAGE_SIZE-1)) {
-
-        // simPC isn't two bytes before page end - success
-        return True;
-
     } else if(riscvGetInstructionSize(riscv, thisPC) <= 2) {
 
         // instruction at simPC is a two-byte instruction
@@ -1037,15 +1032,12 @@ static void haltProcessor(riscvP riscv, riscvDisableReason reason) {
 //
 static void restartProcessor(riscvP riscv, riscvDisableReason reason) {
 
-    reason &= riscv->disable;
+    riscv->disable &= ~reason;
 
-    if(reason) {
-
-        riscv->disable &= ~reason;
-
-        if(!riscv->disable) {
-            vmirtRestartNext((vmiProcessorP)riscv);
-        }
+    // restart if no longer disabled (maybe from blocked state not visible in
+    // disable code)
+    if(!riscv->disable) {
+        vmirtRestartNext((vmiProcessorP)riscv);
     }
 }
 
@@ -1176,14 +1168,6 @@ static void doNMI(riscvP riscv) {
 ////////////////////////////////////////////////////////////////////////////////
 
 //
-// This holds processor and vector information for an interrupt
-//
-typedef struct riscvInterruptInfoS {
-    riscvP hart;
-    Uns32  userData;
-} riscvInterruptInfo, *riscvInterruptInfoP;
-
-//
 // Update interrupt state because of some pending state change (either from
 // external interrupt source or software pending register)
 //
@@ -1273,15 +1257,6 @@ static VMI_NET_CHANGE_FN(interruptPortCB) {
 ////////////////////////////////////////////////////////////////////////////////
 // NET PORT CREATION
 ////////////////////////////////////////////////////////////////////////////////
-
-//
-// Structure describing a port
-//
-typedef struct riscvNetPortS {
-    vmiNetPort         desc;
-    riscvInterruptInfo ii;
-    riscvNetPortP      next;
-} riscvNetPort;
 
 //
 // Allocate a new port and append to the tail of the list
@@ -1389,5 +1364,45 @@ VMI_NET_PORT_SPECS_FN(riscvNetPortSpecs) {
     }
 
     return this ? &this->desc : 0;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// SAVE/RESTORE SUPPORT
+////////////////////////////////////////////////////////////////////////////////
+
+//
+// Save net state not covered by register read/write API
+//
+void riscvNetSave(
+    riscvP              riscv,
+    vmiSaveContextP     cxt,
+    vmiSaveRestorePhase phase
+) {
+    if(phase==SRT_END_CORE) {
+
+        // save latched control input state
+        VMIRT_SAVE_FIELD(cxt, riscv, netValue);
+        VMIRT_SAVE_FIELD(cxt, riscv, intState);
+    }
+}
+
+//
+// Restore net state not covered by register read/write API
+//
+void riscvNetRestore(
+    riscvP              riscv,
+    vmiRestoreContextP  cxt,
+    vmiSaveRestorePhase phase
+) {
+    if(phase==SRT_END_CORE) {
+
+        // restore latched control input state
+        VMIRT_RESTORE_FIELD(cxt, riscv, netValue);
+        VMIRT_RESTORE_FIELD(cxt, riscv, intState);
+
+        // refresh core state
+        riscvTestInterrupt(riscv);
+    }
 }
 

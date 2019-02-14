@@ -1,3 +1,9 @@
+2019-02-05  Deborah Soung  <debs@sifive.com>
+	* README.adoc: Update documentation for rocket chip as target (fixed rv32si/ma_fetch.S).
+
+2019-01-29  Deborah Soung  <debs@sifive.com>
+	* README.adoc: Documentation for rocket chip as target.
+
 2018-11-21 Olof Kindgren <olof.kindgren@gmail.com>
 
 	* README.adoc (Repository structure) Added documentation for the $TARGETDIR environmental variable

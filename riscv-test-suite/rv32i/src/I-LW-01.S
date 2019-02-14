@@ -40,18 +40,18 @@ RV_COMPLIANCE_RV32M
 RV_COMPLIANCE_CODE_BEGIN
 
     RVTEST_IO_INIT
-    RVTEST_IO_ASSERT_GPR_EQ(x0, 0x00000000)
-    RVTEST_IO_WRITE_STR("# Test Begin Reserved regs ra(x1) a0(x10) t0(x5)\n")
+    RVTEST_IO_ASSERT_GPR_EQ(x31, x0, 0x00000000)
+    RVTEST_IO_WRITE_STR(x31, "# Test Begin Reserved regs ra(x1) a0(x10) t0(x5)\n")
 
     # ---------------------------------------------------------------------------------------------
-    RVTEST_IO_WRITE_STR("# Test part A1 - test base address + 0\n");
+    RVTEST_IO_WRITE_STR(x31, "# Test part A1 - test base address + 0\n");
 
     # Addresses for test data and results
-    la      x31, test_A1_data
+    la      x30, test_A1_data
     la      x2, test_A1_res
 
     # Test
-    lw      x3, 0(x31)
+    lw      x3, 0(x30)
 
     # Store results
     sw      x3, 0(x2)
@@ -60,12 +60,12 @@ RV_COMPLIANCE_CODE_BEGIN
     // Assert
     //
     RVTEST_IO_CHECK()
-    RVTEST_IO_ASSERT_GPR_EQ(x3, 0x11F1F222)
+    RVTEST_IO_ASSERT_GPR_EQ(x31, x3, 0x11F1F222)
 
-    RVTEST_IO_WRITE_STR("# Test part A1  - Complete\n");
+    RVTEST_IO_WRITE_STR(x31, "# Test part A1  - Complete\n");
 
     # ---------------------------------------------------------------------------------------------
-    RVTEST_IO_WRITE_STR("# Test part A2 - test base address - 1\n");
+    RVTEST_IO_WRITE_STR(x31, "# Test part A2 - test base address - 1\n");
 
     # Addresses for test data and results
     la      x24, test_A2_data + 1
@@ -77,29 +77,29 @@ RV_COMPLIANCE_CODE_BEGIN
     # Store results
     sw      x25, 0(x5)
 
-    RVTEST_IO_ASSERT_GPR_EQ(x25, 0xF33344F4)
+    RVTEST_IO_ASSERT_GPR_EQ(x31, x25, 0xF33344F4)
 
-    RVTEST_IO_WRITE_STR("# Test part A2  - Complete\n");
+    RVTEST_IO_WRITE_STR(x31, "# Test part A2  - Complete\n");
 
     # ---------------------------------------------------------------------------------------------
-    RVTEST_IO_WRITE_STR("# Test part A3 - test base address + 1\n");
+    RVTEST_IO_WRITE_STR(x31, "# Test part A3 - test base address + 1\n");
 
     # Addresses for test data and results
     la      x7, test_A3_data - 1
     la      x8, test_A3_res
 
     # Test
-    lw      x31, 1(x7)
+    lw      x30, 1(x7)
 
     # Store results
-    sw      x31, 0(x8)
+    sw      x30, 0(x8)
 
-    RVTEST_IO_ASSERT_GPR_EQ(x31, 0x55F5F666)
+    RVTEST_IO_ASSERT_GPR_EQ(x31, x30, 0x55F5F666)
 
-    RVTEST_IO_WRITE_STR("# Test part A3  - Complete\n");
+    RVTEST_IO_WRITE_STR(x31, "# Test part A3  - Complete\n");
 
     # ---------------------------------------------------------------------------------------------
-    RVTEST_IO_WRITE_STR("# Test part A4 - test base address - 2048\n");
+    RVTEST_IO_WRITE_STR(x31, "# Test part A4 - test base address - 2048\n");
 
     # Addresses for test data and results
     la      x10, test_A4_data + 2048
@@ -111,12 +111,12 @@ RV_COMPLIANCE_CODE_BEGIN
     # Store results
     sw      x12, 0(x11)
 
-    RVTEST_IO_ASSERT_GPR_EQ(x12, 0xF77788F8)
+    RVTEST_IO_ASSERT_GPR_EQ(x31, x12, 0xF77788F8)
 
-    RVTEST_IO_WRITE_STR("# Test part A4  - Complete\n");
+    RVTEST_IO_WRITE_STR(x31, "# Test part A4  - Complete\n");
 
     # ---------------------------------------------------------------------------------------------
-    RVTEST_IO_WRITE_STR("# Test part A5 - test base address + 2047\n");
+    RVTEST_IO_WRITE_STR(x31, "# Test part A5 - test base address + 2047\n");
 
     # Addresses for test data and results
     la      x13, test_A5_data - 2047
@@ -128,12 +128,12 @@ RV_COMPLIANCE_CODE_BEGIN
     # Store results
     sw      x15, 0(x14)
 
-    RVTEST_IO_ASSERT_GPR_EQ(x15, 0x99090AAA)
+    RVTEST_IO_ASSERT_GPR_EQ(x31, x15, 0x99090AAA)
 
-    RVTEST_IO_WRITE_STR("# Test part A5  - Complete\n");
+    RVTEST_IO_WRITE_STR(x31, "# Test part A5  - Complete\n");
 
     # ---------------------------------------------------------------------------------------------
-    RVTEST_IO_WRITE_STR("# Test part B - test base address + -4, 0, 4\n");
+    RVTEST_IO_WRITE_STR(x31, "# Test part B - test base address + -4, 0, 4\n");
 
     # Addresses for test data and results
     la      x16, test_B_data
@@ -149,14 +149,14 @@ RV_COMPLIANCE_CODE_BEGIN
     sw      x19, 4(x17)
     sw      x20, 8(x17)
 
-    RVTEST_IO_ASSERT_GPR_EQ(x18, 0x0BBBCC0C)
-    RVTEST_IO_ASSERT_GPR_EQ(x19, 0xDD0D0EEE)
-    RVTEST_IO_ASSERT_GPR_EQ(x20, 0x0FFF00F0)
+    RVTEST_IO_ASSERT_GPR_EQ(x31, x18, 0x0BBBCC0C)
+    RVTEST_IO_ASSERT_GPR_EQ(x31, x19, 0xDD0D0EEE)
+    RVTEST_IO_ASSERT_GPR_EQ(x31, x20, 0x0FFF00F0)
 
-    RVTEST_IO_WRITE_STR("# Test part B  - Complete\n");
+    RVTEST_IO_WRITE_STR(x31, "# Test part B  - Complete\n");
 
     # ---------------------------------------------------------------------------------------------
-    RVTEST_IO_WRITE_STR("# Test part C - test load to x0\n");
+    RVTEST_IO_WRITE_STR(x31, "# Test part C - test load to x0\n");
 
     # Addresses for test data and results
     la      x21, test_C_data
@@ -168,12 +168,12 @@ RV_COMPLIANCE_CODE_BEGIN
     # Store results
     sw      x0, 0(x22)
 
-    RVTEST_IO_ASSERT_GPR_EQ(x0, 0x00000000)
+    RVTEST_IO_ASSERT_GPR_EQ(x31, x0, 0x00000000)
 
-    RVTEST_IO_WRITE_STR("# Test part C  - Complete\n");
+    RVTEST_IO_WRITE_STR(x31, "# Test part C  - Complete\n");
 
     # ---------------------------------------------------------------------------------------------
-    RVTEST_IO_WRITE_STR("# Test part D - test for forwarding\n");
+    RVTEST_IO_WRITE_STR(x31, "# Test part D - test for forwarding\n");
 
     # Addresses for test data and results
     la      x21, test_D_data
@@ -187,12 +187,12 @@ RV_COMPLIANCE_CODE_BEGIN
     # Store results
     sw      x25, 0(x22)
 
-    RVTEST_IO_ASSERT_GPR_EQ(x25, 0x9ABCDEF0)
+    RVTEST_IO_ASSERT_GPR_EQ(x31, x25, 0x9ABCDEF0)
 
-    RVTEST_IO_WRITE_STR("# Test part D  - Complete\n");
+    RVTEST_IO_WRITE_STR(x31, "# Test part D  - Complete\n");
 
     # ---------------------------------------------------------------------------------------------
-    RVTEST_IO_WRITE_STR("# Test part E1 - test store with same base and destination address\n");
+    RVTEST_IO_WRITE_STR(x31, "# Test part E1 - test store with same base and destination address\n");
 
     # Addresses for test data and results
     la      x25, test_E1_data
@@ -204,12 +204,12 @@ RV_COMPLIANCE_CODE_BEGIN
     # Store results
     sw      x25, 0(x26)
 
-    RVTEST_IO_ASSERT_GPR_EQ(x25, 0x76543210)
+    RVTEST_IO_ASSERT_GPR_EQ(x31, x25, 0x76543210)
 
-    RVTEST_IO_WRITE_STR("# Test part E  - Complete\n");
+    RVTEST_IO_WRITE_STR(x31, "# Test part E  - Complete\n");
 
     # ---------------------------------------------------------------------------------------------
-    RVTEST_IO_WRITE_STR("# Test part E2 - test store with same base and destination address, base with offset\n");
+    RVTEST_IO_WRITE_STR(x31, "# Test part E2 - test store with same base and destination address, base with offset\n");
 
     # Addresses for test data and results
     la      x27, test_E2_data + 1
@@ -221,11 +221,11 @@ RV_COMPLIANCE_CODE_BEGIN
     # Store results
     sw      x27, 0(x28)
 
-    RVTEST_IO_ASSERT_GPR_EQ(x27, 0xFEDCBA98)
+    RVTEST_IO_ASSERT_GPR_EQ(x31, x27, 0xFEDCBA98)
 
-    RVTEST_IO_WRITE_STR("# Test part A1  - Complete\n");
+    RVTEST_IO_WRITE_STR(x31, "# Test part A1  - Complete\n");
 
-    RVTEST_IO_WRITE_STR("# Test End\n")
+    RVTEST_IO_WRITE_STR(x31, "# Test End\n")
 
  # ---------------------------------------------------------------------------------------------
     # HALT
