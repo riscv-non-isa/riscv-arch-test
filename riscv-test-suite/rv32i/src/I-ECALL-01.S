@@ -40,19 +40,19 @@ RV_COMPLIANCE_RV32M
 RV_COMPLIANCE_CODE_BEGIN
 
     RVTEST_IO_INIT
-    RVTEST_IO_ASSERT_GPR_EQ(x31, x0, 0x00000000)
-    RVTEST_IO_WRITE_STR(x31, "# Test Begin Reserved regs ra(x1) a0(x10) t0(x5)\n")
+    RVTEST_IO_ASSERT_GPR_EQ(x30, x0, 0x00000000)
+    RVTEST_IO_WRITE_STR(x30, "# Test Begin Reserved reg x31\n")
 
     # Save and set trap handler address
     la x1, _trap_handler
-    csrrw x21, mtvec, x1
+    csrrw x31, mtvec, x1
 
     //
     // Assert
     //
     RVTEST_IO_CHECK()
     # ---------------------------------------------------------------------------------------------
-    RVTEST_IO_WRITE_STR(x31, "# Test part A - test ECALL\n");
+    RVTEST_IO_WRITE_STR(x30, "# Test part A - test ECALL\n");
 
     # Address for test results
     la      x1, test_A_res_exc
@@ -62,16 +62,14 @@ RV_COMPLIANCE_CODE_BEGIN
     ecall
     sw      x0, 0(x1)
 
-    RVTEST_IO_ASSERT_GPR_EQ(x31, x0, 0x00000000)
-
-    RVTEST_IO_WRITE_STR(x31, "# Test part A1  - Complete\n");
+    RVTEST_IO_WRITE_STR(x30, "# Test part A1  - Complete\n");
 
     # ---------------------------------------------------------------------------------------------
     # restore mtvec and jump to the end
-    csrw mtvec, x21
+    csrw mtvec, x31
     jal x0, test_end
 
-    RVTEST_IO_WRITE_STR(x31, "# Test part A2  - Complete\n");
+    RVTEST_IO_WRITE_STR(x30, "# Test part A2  - Complete\n");
 
     # ---------------------------------------------------------------------------------------------
     # Exception handler
@@ -95,13 +93,11 @@ _trap_handler:
     # return
     mret
 
-    RVTEST_IO_WRITE_STR(x31, "# Test part A3  - Complete\n");
-
     # ---------------------------------------------------------------------------------------------
 
 test_end:
 
-    RVTEST_IO_WRITE_STR(x31, "# Test End\n")
+    RVTEST_IO_WRITE_STR(x30, "# Test End\n")
 
  # ---------------------------------------------------------------------------------------------
     # HALT

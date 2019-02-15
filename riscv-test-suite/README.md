@@ -11,8 +11,8 @@ If you are looking to check compliance of RV32I in user mode then run the suites
 Test suites status:
 
 Pretty Solid:
-* RV32I (originally developed by Codasip, updated significantly by Imperas to improve coverage)
-    * 54 focused tests, using the correct style/macros, excellent coverage of most instructions
+* RV32I (originally developed by Codasip, assertions and debug macros added by Imperas)
+    * 55 focused tests, using the correct style/macros, excellent coverage of most instructions
     * no coverage of fence, scall, sbreak, pseudo and csr instructions
 * RV32IM (developed by Imperas)
     * 7 focused tests, using the correct style/macros, excellent coverage

@@ -40,18 +40,18 @@ RV_COMPLIANCE_RV32M
 RV_COMPLIANCE_CODE_BEGIN
 
     RVTEST_IO_INIT
-    RVTEST_IO_ASSERT_GPR_EQ(x31, x0, 0x00000000)
-    RVTEST_IO_WRITE_STR(x31, "# Test Begin Reserved regs ra(x1) a0(x10) t0(x5)\n")
+    RVTEST_IO_ASSERT_GPR_EQ(x30, x0, 0x00000000)
+    RVTEST_IO_WRITE_STR(x30, "# Test Begin Reserved reg x31\n")
 
     # Save and set trap handler address
     la x1, _trap_handler
-    csrrw x21, mtvec, x1
+    csrrw x31, mtvec, x1
 
     # switch off C
     csrrci   x0, misa, 4
 
     # ---------------------------------------------------------------------------------------------
-    RVTEST_IO_WRITE_STR(x31, "# Test part A1 - test JAL\n");
+    RVTEST_IO_WRITE_STR(x30, "# Test part A1 - test JAL\n");
 
     # Address for test results
     la      x1, test_A1_res_exc
@@ -66,10 +66,10 @@ RV_COMPLIANCE_CODE_BEGIN
     // Assert
     //
     RVTEST_IO_CHECK()
-    RVTEST_IO_WRITE_STR(x31, "# Test part A1  - Complete\n");
+    RVTEST_IO_WRITE_STR(x30, "# Test part A1  - Complete\n");
 
     # ---------------------------------------------------------------------------------------------
-    RVTEST_IO_WRITE_STR(x31, "# Test part A2 - test JALR - NOT causing the exception\n");
+    RVTEST_IO_WRITE_STR(x30, "# Test part A2 - test JALR - NOT causing the exception\n");
 
     # Address for test results
     la      x1, test_A2_res
@@ -100,10 +100,10 @@ RV_COMPLIANCE_CODE_BEGIN
 1:
     addi    x1, x1, 4
 
-    RVTEST_IO_WRITE_STR(x31, "# Test part A2  - Complete\n");
+    RVTEST_IO_WRITE_STR(x30, "# Test part A2  - Complete\n");
 
     # ---------------------------------------------------------------------------------------------
-    RVTEST_IO_WRITE_STR(x31, "# Test part A3 - test JALR - causing the exception\n");
+    RVTEST_IO_WRITE_STR(x30, "# Test part A3 - test JALR - causing the exception\n");
 
     # Address for test results
     la      x1, test_A3_res_exc
@@ -134,10 +134,10 @@ RV_COMPLIANCE_CODE_BEGIN
     li      x2, 0
 1:
 
-    RVTEST_IO_WRITE_STR(x31, "# Test part A3  - Complete\n");
+    RVTEST_IO_WRITE_STR(x30, "# Test part A3  - Complete\n");
 
     # ---------------------------------------------------------------------------------------------
-    RVTEST_IO_WRITE_STR(x31, "# Test part B1 - test BEQ\n");
+    RVTEST_IO_WRITE_STR(x30, "# Test part B1 - test BEQ\n");
 
     # Address for test results
     la      x1, test_B1_res_exc
@@ -156,10 +156,10 @@ RV_COMPLIANCE_CODE_BEGIN
     li      x2, 0
 1:
 
-    RVTEST_IO_WRITE_STR(x31, "# Test part A4  - Complete\n");
+    RVTEST_IO_WRITE_STR(x30, "# Test part A4  - Complete\n");
 
     # ---------------------------------------------------------------------------------------------
-    RVTEST_IO_WRITE_STR(x31, "# Test part B2 - test BNE\n");
+    RVTEST_IO_WRITE_STR(x30, "# Test part B2 - test BNE\n");
 
     # Address for test results
     la      x1, test_B2_res_exc
@@ -178,10 +178,10 @@ RV_COMPLIANCE_CODE_BEGIN
     li      x2, 0
 1:
 
-    RVTEST_IO_WRITE_STR(x31, "# Test part A5  - Complete\n");
+    RVTEST_IO_WRITE_STR(x30, "# Test part A5  - Complete\n");
 
     # ---------------------------------------------------------------------------------------------
-    RVTEST_IO_WRITE_STR(x31, "# Test part B3 - test BLT\n");
+    RVTEST_IO_WRITE_STR(x30, "# Test part B3 - test BLT\n");
 
     # Address for test results
     la      x1, test_B3_res_exc
@@ -200,10 +200,10 @@ RV_COMPLIANCE_CODE_BEGIN
     li      x2, 0
 1:
 
-    RVTEST_IO_WRITE_STR(x31, "# Test part B  - Complete\n");
+    RVTEST_IO_WRITE_STR(x30, "# Test part B  - Complete\n");
 
     # ---------------------------------------------------------------------------------------------
-    RVTEST_IO_WRITE_STR(x31, "# Test part B4 - test BLTU\n");
+    RVTEST_IO_WRITE_STR(x30, "# Test part B4 - test BLTU\n");
 
     # Address for test results
     la      x1, test_B4_res_exc
@@ -222,10 +222,10 @@ RV_COMPLIANCE_CODE_BEGIN
     li      x2, 0
 1:
 
-    RVTEST_IO_WRITE_STR(x31, "# Test part C  - Complete\n");
+    RVTEST_IO_WRITE_STR(x30, "# Test part C  - Complete\n");
 
     # ---------------------------------------------------------------------------------------------
-    RVTEST_IO_WRITE_STR(x31, "# Test part B5 - test BGE\n");
+    RVTEST_IO_WRITE_STR(x30, "# Test part B5 - test BGE\n");
 
     # Address for test results
     la      x1, test_B5_res_exc
@@ -244,10 +244,10 @@ RV_COMPLIANCE_CODE_BEGIN
     li      x2, 0
 1:
 
-    RVTEST_IO_WRITE_STR(x31, "# Test part D  - Complete\n");
+    RVTEST_IO_WRITE_STR(x30, "# Test part D  - Complete\n");
 
     # ---------------------------------------------------------------------------------------------
-    RVTEST_IO_WRITE_STR(x31, "# Test part B6 - test BGEU\n");
+    RVTEST_IO_WRITE_STR(x30, "# Test part B6 - test BGEU\n");
 
     # Address for test results
     la      x1, test_B6_res_exc
@@ -266,14 +266,14 @@ RV_COMPLIANCE_CODE_BEGIN
     li      x2, 0
 1:
 
-    RVTEST_IO_WRITE_STR(x31, "# Test part E  - Complete\n");
+    RVTEST_IO_WRITE_STR(x30, "# Test part E  - Complete\n");
 
     # ---------------------------------------------------------------------------------------------
     # restore mtvec and jump to the end
-    csrw mtvec, x21
+    csrw mtvec, x31
     jal x0, test_end
 
-    RVTEST_IO_WRITE_STR(x31, "# Test part A1  - Complete\n");
+    RVTEST_IO_WRITE_STR(x30, "# Test part A1  - Complete\n");
 
     # ---------------------------------------------------------------------------------------------
     # Exception handler
@@ -300,14 +300,14 @@ _trap_handler:
 
     # return
     mret
-    RVTEST_IO_WRITE_STR(x31, "# Test part A2  - Complete\n");
+    RVTEST_IO_WRITE_STR(x30, "# Test part A2  - Complete\n");
 
     # ---------------------------------------------------------------------------------------------
 
 test_end:
-    RVTEST_IO_WRITE_STR(x31, "# Test part A3  - Complete\n");
+    RVTEST_IO_WRITE_STR(x30, "# Test part A3  - Complete\n");
 
-    RVTEST_IO_WRITE_STR(x31, "# Test End\n")
+    RVTEST_IO_WRITE_STR(x30, "# Test End\n")
 
  # ---------------------------------------------------------------------------------------------
     # HALT
