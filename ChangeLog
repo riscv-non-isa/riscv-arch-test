@@ -1,5 +1,6 @@
 2019-02-15 Radek Hajek <radek.hajek@codasip.com>
     * updated rv32i tests to support all registers (x31) with assertions
+    * updated spec/TestFormatSpec.adoc example ISA test with new assertions
 
 2019-02-05 Deborah Soung <debs@sifive.com>
     * [Issue #33] fixing rv32si/ma_fetch.S test
