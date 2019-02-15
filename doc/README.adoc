@@ -361,7 +361,7 @@ Additional environment variables:
 
 Before running the compliance test, make sure that the correct emulator is built, following the link:https://github.com/freechipsproject/rocket-chip#emulator[instructions in the Rocket Chip repository].
 
-**Note**: Rocket Chip's `DefaultRV32Config` is currently failing the following tests — link:https://github.com/riscv/riscv-compliance/issues/31[rv32i/I-MISALIGN_JMP-01.S], link:https://github.com/riscv/riscv-compliance/issues/32[rv32mi/breakpoint.S], link:https://github.com/riscv/riscv-compliance/issues/33[rv32si/ma_fetch.S].
+**Note**: Rocket Chip's `DefaultRV32Config` is currently failing the following tests — link:https://github.com/riscv/riscv-compliance/issues/31[rv32i/I-MISALIGN_JMP-01.S], link:https://github.com/riscv/riscv-compliance/issues/32[rv32mi/breakpoint.S].
 
 === SiFive Freedom Unleashed 540 board (tbd)
 

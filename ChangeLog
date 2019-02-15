@@ -1,5 +1,8 @@
-2019-02-01 Radek Hajek <radek.hajek@codasip.com>
+2019-02-15 Radek Hajek <radek.hajek@codasip.com>
     * updated rv32i tests to support all registers (x31) with assertions
+
+2019-02-05 Deborah Soung <debs@sifive.com>
+    * [Issue #33] fixing rv32si/ma_fetch.S test
 
 2019-02-01 Lee Moore <moore@imperas.com>
     * updated Infrastructure macros to support non-volatile registers
