@@ -58,6 +58,7 @@
     sw      x1,   (1*RSIZE)(_SP);                                       \
     sw      x5,   (5*RSIZE)(_SP);                                       \
     sw      x6,   (6*RSIZE)(_SP);                                       \
+    sw      x8,   (8*RSIZE)(_SP);                                       \
     sw      x10,  (10*RSIZE)(_SP);
 
 // _SP = (volatile register)
@@ -66,6 +67,7 @@
     lw      x1,   (1*RSIZE)(_SP);                                       \
     lw      x5,   (5*RSIZE)(_SP);                                       \
     lw      x6,   (6*RSIZE)(_SP);                                       \
+    lw      x8,   (8*RSIZE)(_SP);                                       \
     lw      x10,  (10*RSIZE)(_SP);
 
 #define LOCAL_IO_WRITE_GPR(_R)                                          \
@@ -93,8 +95,9 @@
 // _I = Immediate
 #define RVTEST_IO_ASSERT_GPR_EQ(_SP, _R, _I)                            \
     LOCAL_IO_PUSH(_SP)                                                  \
+    mv          s0, _R;                                                 \
     li          t0, _I;                                                 \
-    beq         _R, t0, 20002f;                                         \
+    beq         s0, t0, 20002f;                                         \
     LOCAL_IO_WRITE_STR("Assertion violation: file ");                   \
     LOCAL_IO_WRITE_STR(__FILE__);                                       \
     LOCAL_IO_WRITE_STR(", line ");                                      \
@@ -102,7 +105,7 @@
     LOCAL_IO_WRITE_STR(": ");                                           \
     LOCAL_IO_WRITE_STR(# _R);                                           \
     LOCAL_IO_WRITE_STR("(");                                            \
-    LOCAL_IO_WRITE_GPR(_R);                                             \
+    LOCAL_IO_WRITE_GPR(s0);                                             \
     LOCAL_IO_WRITE_STR(") != ");                                        \
     LOCAL_IO_WRITE_STR(# _I);                                           \
     LOCAL_IO_WRITE_STR("\n");                                           \
