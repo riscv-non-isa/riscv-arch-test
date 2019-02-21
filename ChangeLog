@@ -2,6 +2,9 @@
     * Fixed     bug in RVTEST_IO_ASSERT_GPR_EQ which was not preserving register t0
     * Corrected commit I-LUI-01.S, register target changed but missed assertion
 
+2019-02-21 Deborah Soung <debs@sifive.com>
+    * added RiscvFormalSpec as a target with its own unique environment
+
 2019-02-15 Radek Hajek <radek.hajek@codasip.com>
     * updated rv32i tests to support all registers (x31) with assertions
     * updated spec/TestFormatSpec.adoc example ISA test with new assertions
