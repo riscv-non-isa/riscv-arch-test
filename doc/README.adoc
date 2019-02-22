@@ -124,7 +124,7 @@ Jeremy Bennett, Mary Bennett, Simon Davidmann, Neel Gala, Radek Hajek, Lee Moore
 | 1.14 Draft  | 21 February 2019      |
 Deborah Soung |
 
-Documented how to use the RISC-V ISA Formal Specification model as a target.
+Documented how to use SiFive's RISC-V ISA Formal Specification model as a target.
 | 1.13 Draft  | 29 January 2019      |
 Deborah Soung |
 
@@ -357,7 +357,7 @@ tbd
 === Berkeley Spike ISA simulator
 For spike the file `riscv-target/spike/compliance_io.h` has the trace macros defined as empty.  The Makefile fragment in `riscv-target/spike/device/rv32i` has the spike run command for the RV32I device.
 
-=== Rocket Chip emulators
+=== Berkeley Rocket Chip emulators
 Additional environment variables:
 
 * `ROCKET_DIR`: Specifies link:https://github.com/freechipsproject/rocket-chip[Rocket Chip] directory. Required.
@@ -367,12 +367,12 @@ Before running the compliance test, make sure that the correct emulator is built
 
 **Note**: Rocket Chip's `DefaultRV32Config` is currently failing the following test — link:https://github.com/riscv/riscv-compliance/issues/31[rv32i/I-MISALIGN_JMP-01.S].
 
-=== RISC-V ISA Formal Specification
+=== SiFive RISC-V ISA Formal Specification
 Additional environment variables:
 
-* `FORMALSPEC_DIR`: Specifies link:https://github.com/sifive/RiscvSpecFormal[Formal Specification] directory. Required.
+* `FORMALSPEC_DIR`: Specifies link:https://github.com/sifive/RiscvSpecFormal[formal specification] directory. Required.
 
-Build the Verilator emulator for the formal model before running compliance tests. The formal model currently supports `RV32i` with `a`, `c`, and `f` extensions.
+Build the link:https://github.com/sifive/RiscvSpecFormal[formal model] before running compliance tests. The model currently supports `RV32i` with `a`, `c`, and `f` extensions.
 
 **Note**: Some tests in the `rv32i` suite will fail because privileged CSRs are not yet implemented in the formal specification.
 
