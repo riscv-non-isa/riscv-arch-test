@@ -4,7 +4,9 @@ ifeq ($(shell command -v $(TARGET_SIM) 2> /dev/null),)
 endif
 
 RUN_TARGET=\
-    $(TARGET_SIM) --arch=RV32I --mem-dump-begin=begin_signature --mem-dump-end=end_signature \
+    $(TARGET_SIM) --arch=RV32I \
+        --mem-dump-begin=begin_signature --mem-dump-end=end_signature \
+	--halt-pc=grift_stop_addr \
         $(work_dir_isa)/$< > $(work_dir_isa)/$(*).signature.output 2> $(work_dir_isa)/$@;
 
 RISCV_PREFIX   ?= riscv32-unknown-elf-
