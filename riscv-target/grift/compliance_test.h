@@ -14,6 +14,8 @@
 //-----------------------------------------------------------------------
 
 #define RV_COMPLIANCE_HALT                                                    \
+        .global grift_stop_addr;                                              \
+        grift_stop_addr:                                                      \
         RVTEST_PASS                                                           \
 
 #define RV_COMPLIANCE_RV32M                                                   \
@@ -26,9 +28,9 @@
         RVTEST_CODE_END                                                       \
 
 #define RV_COMPLIANCE_DATA_BEGIN                                              \
-        RVTEST_DATA_BEGIN                                                     \
+        RVTEST_DATA_BEGIN \
 
 #define RV_COMPLIANCE_DATA_END                                                \
-        RVTEST_DATA_END                                                       \
+        RVTEST_DATA_END \
 
 #endif
