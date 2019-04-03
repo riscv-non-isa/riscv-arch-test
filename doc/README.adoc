@@ -376,6 +376,24 @@ Build the link:https://github.com/sifive/RiscvSpecFormal[formal model] before ru
 
 **Note**: Some tests in the `rv32i` suite will fail because privileged CSRs are not yet implemented in the formal specification.
 
+=== GRIFT (Galois RISC-V Formal Tools) Simulator
+
+To run the compliance test suite on the GRIFT simulator, first build/install GRIFT (https://github.com/GaloisInc/grift). The GRIFT simulation tool `grift-sim` needs to be on your PATH.
+
+Then, we can run the compliance suite via:
+
+[source,make]
+----
+make RISCV_TARGET=grift
+----
+
+We have ported the rv32i, rv32im, rv32imc, rv64i, and rv64im tests. You can also run these individually, e.g.:
+
+[source,make]
+----
+make RISCV_TARGET=grift RISCV_ISA=rv64i RISCV_DEVICE=rv64i
+----
+
 === SiFive Freedom Unleashed 540 board (tbd)
 
 tbd
