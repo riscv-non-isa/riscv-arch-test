@@ -1,6 +1,7 @@
-2019-04-05 Allen Baum <allen.baum@esperantotech.com>
-    * rv32i/src/I-MISALIGN_JMP-01.S:  test supports aligned also with different signature
-
+2019-05-29 Allen Baum <allen.baum@esperantotech.com>
+    * spec/TestFormatSpec.adoc:  Adding details, minor corrections, ToBeDiscussed
+      items and clarifications to the specification of the future compliance test
+      suite. Also removing restrictions on having absolate addresses in signature
 2019-02-21 Lee Moore <moore@imperas.com>
     * Fixed     bug in RVTEST_IO_ASSERT_GPR_EQ which was not preserving register t0
     * Corrected commit I-LUI-01.S, register target changed but missed assertion
