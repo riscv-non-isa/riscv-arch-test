@@ -4,14 +4,18 @@ A Complete, Fully Functional, Configurable RISC-V Simulator
 ===
 
 Author: Imperas Software, Ltd., using OVP Open Standard APIs  
-Date   : 31 Jan 2019 
-Version: 20190131.0  
+Date   : 03 Apr 2019 
+Version: 20190403.0  
 License: Model source included under Apache 2.0 open source license  
 License: Simulator riscvOVPsim licensed under Open Virtual Platforms (OVP) Fixed Platform Kits license  
 RISC-V Specifications currently supported:
 - RISCV.org User 2.2, 2.3a (April 2018 draft)  
 - RISCV.org Privilege 1.10, 1.11a (April 2018 draft)[not hypervisors as currently in flux]
-
+- RISCV Extension B (Bit Manipulation)
+  - Run command: riscvOVPsim.exe --extensionb --showoverrides
+  - This will produce a formatted string, similar to
+  - **Info (RISCV_EXTB) extB Version(0.37-Draft) March 22 2019**
+  
 About riscvOVPsim
 ---
 The **riscvOVPsim** simulator implements the full and complete functionality of the RISC-V Foundation's public User and Privilege specifications.  
@@ -56,7 +60,7 @@ For example on Linux:
 > $ RUN_RV32_fibonacci.sh  
 > 
 > CpuManagerFixedPlatform (64-Bit) 20180425.0 Open Virtual Platform simulator from [www.IMPERAS.com](http://www.imperas.com).  
-> Copyright (c) 2005-2018 Imperas Software Ltd.  Contains Imperas Proprietary Information.  
+> Copyright (c) 2005-2019 Imperas Software Ltd.  Contains Imperas Proprietary Information.  
 > Licensed Software, All Rights Reserved.  
 > Visit [www.IMPERAS.com](http://www.imperas.com) for multicore debug, verification and analysis solutions.  
 >   

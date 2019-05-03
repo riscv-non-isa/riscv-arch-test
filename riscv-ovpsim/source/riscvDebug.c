@@ -54,7 +54,7 @@ typedef enum riscvRegGroupIdE {
     RV_RG_M_CSR,        // Machine mode CSR register group
     RV_RG_INTEGRATION,  // integration support registers
     RV_RG_LAST          // KEEP LAST: for sizing
-} armRegGroupId;
+} riscvRegGroupId;
 
 //
 // This provides information about each group
