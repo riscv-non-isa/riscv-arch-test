@@ -2209,7 +2209,7 @@ Uns64 riscvVMWritePMPCFG(riscvP riscv, Uns32 index, Uns64 newValue) {
         Uns32             numBytes = numPMP-(offset*entriesPerCFG);
         Uns64             mask     = (numBytes>=8) ? -1 : (1ULL<<(numBytes*8))-1;
         riscvPMPCFG       oldValue = riscv->pmpcfg;
-        Uns32             i;
+        Int32             i;
 
         // mask writable bits
         newValue &= (WM64_pmpcfg & mask);
@@ -2221,8 +2221,10 @@ Uns64 riscvVMWritePMPCFG(riscvP riscv, Uns32 index, Uns64 newValue) {
             riscv->pmpcfg.u32[offset] = newValue;
         }
 
-        // invalidate any modified entries
-        for(i=0; i<NUM_PMPS; i++) {
+        // invalidate any modified entries in lowest-to-highest priority order
+        // (required so that lowerPriorityPMPEntryLocked always returns valid
+        // results)
+        for(i=NUM_PMPS-1; i>=0; i--) {
 
             // get old and new values
             pmpcfgElem oldCFG = {u8:oldValue.u8[i]};
