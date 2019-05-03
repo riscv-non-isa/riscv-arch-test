@@ -49,7 +49,7 @@ VMI_PROC_INFO_FN(riscvProcInfo) {
         .elfCode          = 243,
         .endianFixed      = True,
         .endian           = MEM_ENDIAN_LITTLE,
-        .gdbPath          = "$IMPERAS_HOME/lib/$IMPERAS_ARCH/gdb/riscv64-unknown-elf-gdb" VMI_EXE_SUFFIX,
+        .gdbPath          = "$IMPERAS_HOME/lib/$IMPERAS_ARCH/gdb/riscv-none-embed-gdb" VMI_EXE_SUFFIX,
         .gdbInitCommands  = "set architecture riscv:rv32",
         .family           = "riscv",
         .QLQualified      = True
@@ -74,7 +74,7 @@ VMI_PROC_INFO_FN(riscvProcInfo) {
         .elfCode          = 243,
         .endianFixed      = True,
         .endian           = MEM_ENDIAN_LITTLE,
-        .gdbPath          = "$IMPERAS_HOME/lib/$IMPERAS_ARCH/gdb/riscv64-unknown-elf-gdb" VMI_EXE_SUFFIX,
+        .gdbPath          = "$IMPERAS_HOME/lib/$IMPERAS_ARCH/gdb/riscv-none-embed-gdb" VMI_EXE_SUFFIX,
         .gdbInitCommands  = "set architecture riscv:rv64",
         .family           = "riscv",
         .QLQualified      = True

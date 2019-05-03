@@ -1602,6 +1602,9 @@ static RISCV_MORPH_FN(emitSFENCE_VMA) {
     Bool         haveVADDRr = !VMI_ISNOREG(VADDRr);
     Bool         haveASIDr  = !VMI_ISNOREG(ASIDr);
 
+    // this instruction requires Supervisor mode to be implemented
+    checkHaveSModeMT(riscv);
+
     // this instruction must be executed in Machine mode or Supervisor mode
     requireModeMT(riscv, RISCV_MODE_SUPERVISOR);
 
@@ -2304,8 +2307,7 @@ static VMI_FP_64_RESULT_FN(doFMax64_2_3) {
     .fp32ResultCB            = _R32,                    \
     .fp64ResultCB            = _R64,                    \
     .suppressFlags           = {f:{D:1}},               \
-    .stickyFlags             = True,                    \
-    .tininessAfterRounding   = True,                    \
+    .stickyFlags             = True                     \
 }
 
 //

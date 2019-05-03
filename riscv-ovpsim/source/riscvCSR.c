@@ -1479,14 +1479,14 @@ inline static vmiReg getRawArch(riscvCSRAttrsCP attrs, riscvArchitecture arch) {
 //
 // Return constant write mask for the register
 //
-inline Uns64 getWriteMaskCArch(riscvCSRAttrsCP attrs, riscvArchitecture arch) {
+inline static Uns64 getWriteMaskCArch(riscvCSRAttrsCP attrs, riscvArchitecture arch) {
     return (arch&ISA_XLEN_64) ? attrs->writeMaskC64 : attrs->writeMaskC32;
 }
 
 //
 // Return configurable write mask for the register
 //
-inline vmiReg getWriteMaskVArch(riscvCSRAttrsCP attrs, riscvArchitecture arch) {
+inline static vmiReg getWriteMaskVArch(riscvCSRAttrsCP attrs, riscvArchitecture arch) {
     return (arch&ISA_XLEN_64) ? attrs->writeMaskV64 : attrs->writeMaskV32;
 }
 
@@ -2058,9 +2058,17 @@ void riscvCSRInit(riscvP riscv, Uns32 index) {
         }
     }
 
-    // initialize mstatus write mask (User mode)
     if(arch&ISA_U) {
+
+        // initialize mstatus write mask (User mode)
         SET_CSR_FIELD_MASK_1(riscv, mstatus, MPRV);
+
+        // from version 1.11, mstatus.TW is writable if any lower-level
+        // privilege mode is implemented (previously, it was just if Supervisor
+        // mode was implemented)
+        if(RISCV_PRIV_VERSION(riscv) >= RVPV_1_11) {
+            SET_CSR_FIELD_MASK_1(riscv, mstatus, TW);
+        }
     }
 
     // initialize N-extension write masks

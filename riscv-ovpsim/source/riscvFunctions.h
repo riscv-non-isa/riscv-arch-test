@@ -76,6 +76,8 @@ VMI_NET_PORT_SPECS_FN(riscvNetPortSpecs);
 // Imperas intercepted function support
 VMI_INT_RETURN_FN(riscvIntReturn);
 VMI_INT_RESULT_FN(riscvIntResult);
+VMI_INT_PAR_FN(riscvIntParCB);
+
 
 // processor information support
 VMI_PROC_INFO_FN(riscvProcInfo);

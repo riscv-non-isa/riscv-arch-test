@@ -615,14 +615,14 @@ const static opAttrs attrsArray32[] = {
     // miscellaneous system I-type instructions                        |          SY|b10_0|fun|b10_0| opcode|
     ATTR32_NOP       (   EBREAK_I,    EBREAK_I, RVANY,  "ebreak",     "|000000000001|00000|000|00000|1110011|"),
     ATTR32_NOP       (    ECALL_I,     ECALL_I, RVANY,  "ecall",      "|000000000000|00000|000|00000|1110011|"),
-    ATTR32_NOP       (   FENCEI_I,    FENCEI_I, RVANY,  "fence.i",    "|000000000000|00000|001|00000|0001111|"),
+    ATTR32_NOP       (   FENCEI_I,    FENCEI_I, RVANY,  "fence.i",    "|............|.....|001|.....|0001111|"),
     ATTR32_NOP       (     MRET_I,      MRET_I, RVANY,  "mret",       "|001100000010|00000|000|00000|1110011|"),
     ATTR32_NOP       (     SRET_I,      SRET_I, RVANY,  "sret",       "|000100000010|00000|000|00000|1110011|"),
     ATTR32_NOP       (     URET_I,      URET_I, RVANYN, "uret",       "|000000000010|00000|000|00000|1110011|"),
     ATTR32_NOP       (      WFI_I,       WFI_I, RVANY,  "wfi",        "|000100000101|00000|000|00000|1110011|"),
 
-    // system fence I-type instruction                                 |  FE|pred|succ|           FE| opcode|
-    ATTR32_FENCE     (    FENCE_I,     FENCE_I, RVANY,  "fence",      "|0000|....|....|0000000000000|0001111|"),
+    // system fence I-type instruction                                 |  fm|pred|succ|  rs1|fun|   rd| opcode|
+    ATTR32_FENCE     (    FENCE_I,     FENCE_I, RVANY,  "fence",      "|....|....|....|.....|000|.....|0001111|"),
 
     // system fence R-type instruction                                 | funct7|  rs2|  rs1|fun|   rd| opcode|
     ATTR32_FENCE_VMA (FENCE_VMA_R, FENCE_VMA_R, RVANY,  "sfence.vma", "|0001001|.....|.....|000|00000|1110011|"),
