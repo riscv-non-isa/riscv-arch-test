@@ -34,7 +34,9 @@ This document is intended for design and verification engineers who wish to deve
 
 === Future work
 
-Recently is this document under initial review and its content may change. However primary aim is to get a long term stable version. 
+This is a draft document; it partially documments what exists, and partially the longer-term goal.
+As such, this document still under review and its content will change.
+Its primary aim is to get a long term stable version and to give test authors suffient lead time to prepare test authoring tools and strategies.
 
 === Feedback and how to contribute
 
@@ -112,6 +114,7 @@ Allen Baum |
 More grammar wording, syntax corrections,
 Added detail regarding the 2 approaches for test selection: central database, or embedded conditions embedded in macros
 Added detail of proposed standard macros RV_SIGBASE, RVTEST_SIGUPDATE, RVTEST_PART
+Mre expanation of spec status in initial f\uture work paragraph (i.e. goal, not yet accomplished)
 
 | 1.2 Draft  | 09 May 2019      |
 
