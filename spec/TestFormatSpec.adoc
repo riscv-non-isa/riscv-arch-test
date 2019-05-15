@@ -115,6 +115,7 @@ More grammar wording, syntax corrections,
 Added detail regarding the 2 approaches for test selection: central database, or embedded conditions embedded in macros
 Added detail of proposed standard macros RV_SIGBASE, RVTEST_SIGUPDATE, RVTEST_PART
 More explanation of spec status in initial _future work_ paragraph (i.e. goal, not yet accomplished)
+grammatical,wording fixes, added detail on proposed macros and 2 methods for test selection
 
 | 1.2 Draft  | 09 May 2019      |
 
@@ -267,6 +268,7 @@ the <<The RISC-V compliance test pool,_compliance test pool_>>.
 This measure results from the negative experience, where the <<The RISC-V compliance test suite,_compliance test suite_>>
 could be used just for one target while the compliance test code changes were necessary to have it running also for other ones.
 
+
 ==== _To Be Discussed_
 Shall we standardize  3 proposed macros _RVTEST_SIGBASE()_, _RVTEST_SIGUPDATE()_, and _RVTEST_CASE_?
 
@@ -306,8 +308,8 @@ The framework must import YAML files that describe
 
 - the implemented, target-specific configuration parameters
 
-- the required, platform-specific  configuration parameters
 
+- the required, platform-specific  configuration parameters
 - the <<Common compliance test pool reference document, _Common compliance test pool reference document_>>.
 This  document contains the required conditions under which the framework will assemble and execute tests.
 The YAML files define both the values of those conditions and values that can be used by the framework to configure tests
@@ -327,7 +329,6 @@ For example, the test MISALIGN_JMP may be valid for the configuration with the I
 but is not valid to any configuration with the C extension.
 
 The aim is to improve the management and maintenance of implemented tests, and to have a test reference in case of doubt during examination of compliance test results.  Note that the document content may be generated if each of the tests include the information in well-defined format.   Master test reference document can be seen as a table of content with the brief test, validity and status description and shall be automatically updated as soon as a new or modified <<The compliance test,_compliance test_>> is added to the <<The RISC-V compliance test suite,_compliance test suite_>>.  Having it nobody will need to retrieve all compliance tests to find out which tests are implemented and approved for certain RISC-V option.
-
 
 ==== Example - test pool reference item
 
@@ -536,7 +537,8 @@ add x2, x1, x27
 add x3, x2, x27
 
 // store results
-sw x27, 0(x26)  // or use macro RVTEST_SIGUPDATE(X27, 0x00000001)                                  // this stores x27 at sig_base+sig_offset and increments sig_offset
+
+sw x27, 0(x26)  // or use macro RVTEST_SIGUPDATE(X27, 0x00000001) // this stores x27 at sig_base+sig_offset and increments sig_offset
 sw x28, 4(x26)  // or use macro RVTEST_SIGUPDATE(X28, 0x0000ABCD)
 sw x29, 8(x26)  // or use macro RVTEST_SIGUPDATE(X29, 0x0000ABCE)
 sw x30, 12(x26) // or use macro RVTEST_SIGUPDATE(X30, 0x0000ABCF)
