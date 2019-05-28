@@ -271,11 +271,10 @@ could be used just for one target while the compliance test code changes were ne
 Shall we standardize  3 proposed macros _RVTEST_SIGBASE()_, _RVTEST_SIGUPDATE()_, and _RVTEST_CASE_?
 
 - _RVTEST_SIGBASE( )_ labels a specific GPR as be the base register to which signature values will be stored, and
-optionally initializes it to a specific value ( or defaults it to the value of RV_COMPLIANCE_DATA_BEGIN_), 
-and initialize) the internal offset that will be used to store signature values.
+optionally initializes it to a specific value ( else defaults it to the value of RV_COMPLIANCE_DATA_BEGIN_)
+and initializes the internal offset from it that will be used to store signature values.
 
-- _RVTEST_SIGUPDATE( )_ automatically store values in the output signature area using the base register define by _RVTEST_SIGBASE_, with an internal displacement
-increments an internal displacement, and optionally test the resulting value against an assertion value?
+- _RVTEST_SIGUPDATE( )_ automatically store a values from a (list of?) registers into the output signature area using the base register defined by _RVTEST_SIGBASE_ and an internal displacement, increment the internal displacement, and optionally test the resulting value(s) against an assertion value(s)? 
 
 - _RVTEST_CASE( ) labels each <<The test case,_test cases_>> of a test along with the minimal architectural options required to run the test?
 
