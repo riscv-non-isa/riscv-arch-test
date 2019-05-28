@@ -1,4 +1,9 @@
 2019-04-05 Allen Baum <allen.baum@esperantotech.com>
+    * spec/TestFormatSpec.adoc:  more chances to test format, removing ToBeDiscussed
+    * items and making one option official. The "Common compliance test pool reference
+    * document" is now where test conditions will reside.
+	
+2019-04-05 Allen Baum <allen.baum@esperantotech.com>
     * spec/TestFormatSpec.adoc:  Adding details, minor corrections, ToBeDiscussed
       items and clarifications to the specification of the future compliance test
       suite. Also removing restrictions on having absolate addresses in signature
