@@ -202,7 +202,7 @@ Tests of instructions interpreted using software emulation shall not be included
 
 . How to handle C extension which is part of other extension (e.g. F)
 -  The C extension set may depend on other extensions as it is not a fixed set of instructions but it is rather extended by other extensions. In other words,  other extensions may have "their own" C extension. For example there are C.FLWSP, C.FSWSP and other instructions in RV32ICF. Note that they are not present in RV32IC without the F-extension. 
-- _[AJB] The current directory structure is if extension A requires extension B,thens that the test suite should be named <architecture><mode>BA._
+- _[AJB] The current directory structure is if extension A requires extension B, then that the test suite should be named <architecture><mode>BA._
 
 === Test naming
 
