@@ -194,6 +194,7 @@ compliance-tests-suite (root)
 Binary tests shall be a part of the suite. Binary tests are the only way to prove the compliance of a SDK.
 
 -  There were binary coding tests in the first compliance test set delivery. Their purpose was to check whether assembler tool recognizes all instructions and whether binary coding matches specification. Unfortunately, the binary coding tests were later removed from the compliance testing.
+
 In our opinion there shall be at least some compliance tests for binary coding as the binary coding is important part of the specification which shall be examined by compliance tests. The binary coding tests help to detect and localize binary code bugs in SDKs containing proprietary or accommodated compiler. Without binary coding tests, the SDK may produce incorrect binary code. Under these circumstances all compliance tests will pass yet the RISC-V unit and SDK may not be compliant.
 
 ==== _Emulated Instructions_
@@ -203,6 +204,7 @@ Tests of instructions interpreted using software emulation shall not be included
 
 . How to handle C extension which is part of other extension (e.g. F)
 -  The C extension set may depend on other extensions as it is not a fixed set of instructions but it is rather extended by other extensions. In other words,  other extensions may have "their own" C extension. For example there are C.FLWSP, C.FSWSP and other instructions in RV32ICF. Note that they are not present in RV32IC without the F-extension. 
+
 - _[AJB] The current directory structure is if extension A requires extension B, then that the test suite should be named <architecture><mode>BA._
 
 === Test naming
@@ -538,7 +540,6 @@ add x3, x2, x27
 // store results
 
 sw x27, 0(x26)  // or use macro RVTEST_SIGUPDATE(X27, 0x00000001) // this stores x27 at sig_base+sig_offset and increments sig_offset
-sw x28, 4(x26)  // or use macro RVTEST_SIGUPDATE(X28, 0x0000ABCD)
 sw x29, 8(x26)  // or use macro RVTEST_SIGUPDATE(X29, 0x0000ABCE)
 sw x30, 12(x26) // or use macro RVTEST_SIGUPDATE(X30, 0x0000ABCF)
 sw x31, 16(x26) // or use macro RVTEST_SIGUPDATE(X31, 0x0000ABD0)
