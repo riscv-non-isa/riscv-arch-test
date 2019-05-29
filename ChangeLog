@@ -1,8 +1,9 @@
 2019-05-29 Allen Baum <allen.baum@esperantotech.com>
-    * spec/TestFormatSpec.adoc:  more chances to test format, removing ToBeDiscussed
-    * items and making one option official. The "Common compliance test pool reference
-    * document" is now where test conditions will reside.
-    *  Also removing restrictions on having absolate addresses in signature
+	* spec/TestFormatSpec.adoc:  rmv ToBeDiscussed items & pick 1 official.
+	Make "Common compliance test pool reference document" the test conditions repository.
+	Remove restrictions on having absolate addresses in signature
+	Add details of new standard macros
+	* I-MISALIGN_JMP-01.S: fixed numerous bugs, changed comment char, add rvc/norvc around cmpressed ops
 
 	
 2019-04-05 Allen Baum <allen.baum@esperantotech.com>
