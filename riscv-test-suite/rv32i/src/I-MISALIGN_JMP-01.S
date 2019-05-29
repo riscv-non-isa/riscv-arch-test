@@ -412,20 +412,25 @@ test_end:
     RV_COMPLIANCE_HALT
 
     // ---------------------------------------------------------------------------------------------
-    // Exception handle  **FIXME** this should be in a trap handling macro variant where MTVAL+4->EPC
-    // **FIXME** this needs to be called	
+    // Exception handler
+    //**FIXME** this should part of in a trap handler macro variant where MEPC+12->EPC
+    // it requires x30 be a scratch register
 _non_halt_trap_handler:
-
+    csrw   mscratch, x30    //save x30
+	
     csrr    x30, mtval
     sw      x30, 4(x1)      //  store MTVAL as a trap signature
+	
     csrr    x30, mcause
     sw      x30, 12(x1)
-    csrr    x30, mepc       //  
+
+    csrr    x30, mepc       //  save x30 in MEPC and load MEPC
     sw      x30, 8(x1)      //  store old return addr as a trap signature
     andi    x30, x30, -3    //  clear 2 MSBs of bad branch address
-    addi    x30, x30, 12d   //  skip to 3rd next aligned instruction - tests need to expect this
+    addi    x30, x30, 12    //  skip to 3rd next aligned instruction - tests need to expect this
     csrw    mepc, x30       //  override trap handler return addr (can't use MTVAL because data addrs would mess it up)
 
+    csrr   x30, mscratch    //restore x30
     // Store MCAUSE
 
     // Store data from test
