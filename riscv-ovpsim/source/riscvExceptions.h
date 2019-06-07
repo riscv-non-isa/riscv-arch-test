@@ -37,6 +37,16 @@ void riscvTakeException(
 );
 
 //
+// Take processor exception because of memory access error which could be
+// suppressed for a fault-only-first instruction
+//
+void riscvTakeMemoryException(
+    riscvP         riscv,
+    riscvException exception,
+    Uns64          tval
+);
+
+//
 // Reset the processor
 //
 void riscvReset(riscvP riscv);
