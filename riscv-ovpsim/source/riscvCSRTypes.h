@@ -55,6 +55,20 @@ typedef RISCV_CSR_WRITEFN((*riscvCSRWriteFn));
 
 
 ////////////////////////////////////////////////////////////////////////////////
+// CSR JIT CODE MAINTENANCE CALLBACKS
+////////////////////////////////////////////////////////////////////////////////
+
+//
+// Function called to adjust JIT code generator state after a CSR write
+//
+#define RISCV_CSR_WSTATEFN(_NAME) void _NAME( \
+    riscvMorphStateP state,     \
+    Bool             useRS1     \
+)
+typedef RISCV_CSR_WSTATEFN((*riscvCSRWStateFn));
+
+
+////////////////////////////////////////////////////////////////////////////////
 // CSR DEFINITION TYPE
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -68,6 +82,7 @@ typedef struct riscvCSRAttrsS {
     void             *object;           // client-specific object
     Uns32             csrNum;           // CSR number (includes privilege and r/w access)
     riscvArchitecture arch;             // required architecture
+    riscvPrivVer      version;          // minimum specification version
     Bool              wEndBlock;        // whether write terminates this block
     Bool              wEndRM;           // whether write invalidates RM assumption
     Bool              noTraceChange;    // whether to exclude from trace change
@@ -75,6 +90,7 @@ typedef struct riscvCSRAttrsS {
     riscvCSRReadFn    readCB;           // read callback
     riscvCSRReadFn    readWriteCB;      // read callback (in r/w context)
     riscvCSRWriteFn   writeCB;          // write callback
+    riscvCSRWStateFn  wstateCB;         // adjust JIT code generator state
 
                                         // 32-BIT FIELDS
     vmiReg            reg32;            // register

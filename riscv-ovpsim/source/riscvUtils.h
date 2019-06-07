@@ -82,6 +82,17 @@ const char *riscvGetXRegName(Uns32 index);
 const char *riscvGetFRegName(Uns32 index);
 
 //
+// Return the indexed V register name
+//
+const char *riscvGetVRegName(Uns32 index);
+
+//
+// Utility function returning a vmiReg object to access the indexed vector
+// register
+//
+vmiReg riscvGetVReg(riscvP riscv, Uns32 index);
+
+//
 // Get character identifier for the first feature identified by the given
 // feature id
 //

@@ -40,6 +40,7 @@ typedef struct riscvParamValuesS {
     VMI_BOOL_PARAM(updatePTEA);
     VMI_BOOL_PARAM(updatePTED);
     VMI_BOOL_PARAM(unaligned);
+    VMI_BOOL_PARAM(unalignedAMO);
     VMI_BOOL_PARAM(wfi_is_nop);
     VMI_BOOL_PARAM(mtvec_is_ro);
     VMI_UNS32_PARAM(tvec_align);
@@ -53,6 +54,7 @@ typedef struct riscvParamValuesS {
     VMI_BOOL_PARAM(enable_CSR_bus);
     VMI_BOOL_PARAM(d_requires_f);
     VMI_BOOL_PARAM(fs_always_dirty);
+    VMI_BOOL_PARAM(xret_preserves_lr);
     VMI_UNS32_PARAM(ASID_bits);
     VMI_UNS32_PARAM(PMP_grain);
     VMI_UNS32_PARAM(PMP_registers);
@@ -70,13 +72,21 @@ typedef struct riscvParamValuesS {
     VMI_UNS32_PARAM(misa_MXL);
     VMI_UNS32_PARAM(misa_MXL_mask);
     VMI_UNS32_PARAM(misa_Extensions);
+    VMI_STRING_PARAM(add_Extensions);
     VMI_UNS32_PARAM(misa_Extensions_mask);
+    VMI_STRING_PARAM(add_Extensions_mask);
     VMI_UNS64_PARAM(mvendorid);
     VMI_UNS64_PARAM(marchid);
     VMI_UNS64_PARAM(mimpid);
     VMI_UNS64_PARAM(mhartid);
     VMI_UNS64_PARAM(mtvec);
     VMI_UNS32_PARAM(mstatus_FS);
+    VMI_UNS32_PARAM(ELEN);
+    VMI_UNS32_PARAM(SLEN);
+    VMI_UNS32_PARAM(VLEN);
+    VMI_BOOL_PARAM(Zvlsseg);
+    VMI_BOOL_PARAM(Zvamo);
+    VMI_BOOL_PARAM(Zvediv);
 
 } riscvParamValues;
 
@@ -99,3 +109,9 @@ const char *riscvGetPrivVersionDesc(riscvP riscv);
 // Return User Architecture description
 //
 const char *riscvGetUserVersionDesc(riscvP riscv);
+
+//
+// Return Vector Architecture description
+//
+const char *riscvGetVectorVersionDesc(riscvP riscv);
+

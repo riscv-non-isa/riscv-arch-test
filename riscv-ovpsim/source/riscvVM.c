@@ -1827,7 +1827,7 @@ static void handleInvalidAccess(
     riscvException exception
 ) {
     if(!MEM_AA_IS_ARTIFACT_ACCESS(attrs)) {
-        riscvTakeException(riscv, exception, VA);
+        riscvTakeMemoryException(riscv, exception, VA);
     }
 }
 
