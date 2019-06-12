@@ -165,12 +165,12 @@ static Uns64 powerOfTwo(Uns64 oldValue, const char *name) {
 
     Uns64 newValue = oldValue;
 
-    // adjust lr_sc_grain to a power of 2
+    // adjust newValue to a power of 2
     while(newValue & ~(newValue&-newValue)) {
         newValue &= ~(newValue&-newValue);
     }
 
-    // warn if given lr_sc_grain was not a power of 2
+    // warn if given oldValue was not a power of 2
     if(oldValue != newValue) {
         vmiMessage("W", CPU_PREFIX"_GNP2",
             "'%s' ("FMT_Au") is not a power of 2 - using "FMT_Au,
@@ -179,6 +179,37 @@ static Uns64 powerOfTwo(Uns64 oldValue, const char *name) {
     }
 
     return newValue;
+}
+
+//
+// Parse the extensions string
+//
+riscvArchitecture parseExtensions(const char *extensions) {
+
+    riscvArchitecture result = 0;
+
+    if(extensions) {
+
+        const char *tail = extensions;
+        Bool        ok   = True;
+        char        extension;
+
+        while(ok && (extension=*tail++)) {
+
+            ok = (extension>='A') && (extension<='Z');
+
+            if(!ok) {
+                vmiMessage("E", CPU_PREFIX"_ILLEXT",
+                    "Illegal extension string \"%s\" - letters A-Z required",
+                    extensions
+                );
+            } else {
+                result |= (1<<(extension-'A'));
+            }
+        }
+    }
+
+    return result;
 }
 
 //
@@ -229,6 +260,7 @@ static void applyParamsSMP(riscvP riscv, riscvParamValuesP params) {
     cfg->updatePTEA        = params->updatePTEA;
     cfg->updatePTED        = params->updatePTED;
     cfg->unaligned         = params->unaligned;
+    cfg->unalignedAMO      = params->unalignedAMO;
     cfg->wfi_is_nop        = params->wfi_is_nop;
     cfg->mtvec_is_ro       = params->mtvec_is_ro;
     cfg->tvec_align        = params->tvec_align;
@@ -239,6 +271,31 @@ static void applyParamsSMP(riscvP riscv, riscvParamValuesP params) {
     cfg->enable_CSR_bus    = params->enable_CSR_bus;
     cfg->d_requires_f      = params->d_requires_f;
     cfg->fs_always_dirty   = params->fs_always_dirty;
+    cfg->xret_preserves_lr = params->xret_preserves_lr;
+    cfg->ELEN              = powerOfTwo(params->ELEN, "ELEN");
+    cfg->SLEN              = powerOfTwo(params->SLEN, "SLEN");
+    cfg->VLEN              = powerOfTwo(params->VLEN, "VLEN");
+    cfg->Zvlsseg           = params->Zvlsseg;
+    cfg->Zvamo             = params->Zvamo;
+    cfg->Zvediv            = params->Zvediv;
+
+    // force VLEN >= ELEN
+    if(cfg->VLEN<cfg->ELEN) {
+        vmiMessage("W", CPU_PREFIX"_IVLEN",
+            "'VLEN' (%u) less than 'ELEN' (%u) - forcing VLEN=%u",
+            cfg->VLEN, cfg->ELEN, cfg->ELEN
+        );
+        cfg->VLEN = cfg->ELEN;
+    }
+
+    // force SLEN <= VLEN
+    if(cfg->SLEN>cfg->VLEN) {
+        vmiMessage("W", CPU_PREFIX"_ISLEN",
+            "'SLEN' (%u) exceeds 'VLEN' (%u) - forcing SLEN=%u",
+            cfg->SLEN, cfg->VLEN, cfg->VLEN
+        );
+        cfg->SLEN = cfg->VLEN;
+    }
 
     if(misa_MXL==1) {
 
@@ -278,15 +335,22 @@ static void applyParamsSMP(riscvP riscv, riscvParamValuesP params) {
         cfg->Sv_modes &= RISCV_VMM_64;
     }
 
-    // exactly one of I and E base ISA features must be present
+    // include extensions specified by letter
+    misa_Extensions      |= parseExtensions(params->add_Extensions);
+    misa_Extensions_mask |= parseExtensions(params->add_Extensions_mask);
+
+    // exactly one of I and E base ISA features must be present and initially
+    // enabled; if the E bit is initially enabled, the I bit must be read-only
+    // and zero
     if(misa_Extensions & ISA_E) {
-        misa_Extensions &= ~ISA_I;
+        misa_Extensions      &= ~ISA_I;
+        misa_Extensions_mask &= ~ISA_I;
     } else {
         misa_Extensions |= ISA_I;
     }
 
-    // base architecture bits are not writable
-    misa_Extensions_mask &= ~(ISA_I|ISA_E);
+    // the E bit is always read only (it is a complement of the I bit)
+    misa_Extensions_mask &= ~ISA_E;
 
     // only bits that are initially non-zero in misa_Extensions are writable
     misa_Extensions_mask &= misa_Extensions;
@@ -369,6 +433,9 @@ VMI_CONSTRUCTOR_FN(riscvConstructor) {
 
         // initialize FPU
         riscvConfigureFPU(riscv);
+
+        // initialize vector unit
+        riscvConfigureVector(riscv);
 
         // allocate net port descriptions
         riscvNewNetPorts(riscv);

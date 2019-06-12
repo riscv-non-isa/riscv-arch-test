@@ -20,6 +20,7 @@
 #pragma once
 
 // model header files
+#include "riscvBlockState.h"
 #include "riscvRegisterTypes.h"
 #include "riscvTypeRefs.h"
 
@@ -110,4 +111,29 @@ void riscvWriteReg(riscvP riscv, riscvRegDesc r);
 // Configure FPU
 //
 void riscvConfigureFPU(riscvP riscv);
+
+//
+// Adjust JIT code generator state after write of floating point register
+//
+void riscvWFS(riscvMorphStateP state, Bool useRS1);
+
+
+////////////////////////////////////////////////////////////////////////////////
+// VECTOR EXTENSION
+////////////////////////////////////////////////////////////////////////////////
+
+//
+// Configure vector extension
+//
+void riscvConfigureVector(riscvP riscv);
+
+//
+// Adjust JIT code generator state after write of vstart CSR
+//
+void riscvWVStart(riscvMorphStateP state, Bool useRS1);
+
+//
+// Is the specified SEW valid?
+//
+riscvSEWMt riscvValidSEW(riscvP riscv, Uns8 vsew);
 

@@ -16,6 +16,14 @@ Signature Dump
 ---
 If you want to see an example of the riscv compatible signature dumper, then look at the [fibonacci](fibonacci) example.
 
+Vector Extension
+---
+If you want to see an example of the riscv vector extension being used, then look at the [vector](vector) example.
+
+Bit Manipulation Extension
+---
+If you want to see an example of the riscv bit manipulation extension being used, then look at the [bitmanip](bitmanip) example.
+
 Notes
 ---
 You must ensure that the binary executable you try and execute is appropriate for your host computer.  

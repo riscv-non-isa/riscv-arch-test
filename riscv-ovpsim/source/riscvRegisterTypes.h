@@ -42,10 +42,11 @@ typedef enum riscvRegDescE {
                                             // REGISTER TYPE
     RV_RD_X          = RV_RD_64*2,          // integer (X) register
     RV_RD_F          = RV_RD_X*2,           // floating point register
-    RV_RD_TYPE_MASK  = (RV_RD_X|RV_RD_F|RV_RD_BITS_MASK),
+    RV_RD_V          = RV_RD_F*2,           // vector register
+    RV_RD_TYPE_MASK  = (RV_RD_X|RV_RD_F|RV_RD_V|RV_RD_BITS_MASK),
 
                                             // DISASSEMBLY CONTROL
-    RV_RD_Q          = RV_RD_F*2,           // quiet (don't show type)
+    RV_RD_Q          = RV_RD_V*2,           // quiet (don't show type)
     RV_RD_WL         = RV_RD_Q*2,           // explicit w/l type name
     RV_RD_FX         = RV_RD_WL*2,          // explicit x type name
     RV_RD_U          = RV_RD_FX*2,          // explicit u type name
@@ -64,6 +65,13 @@ inline static Bool isXReg(riscvRegDesc r) {
 //
 inline static Bool isFReg(riscvRegDesc r) {
     return (r&RV_RD_F) && True;
+}
+
+//
+// Is the register a V register?
+//
+inline static Bool isVReg(riscvRegDesc r) {
+    return (r&RV_RD_V) && True;
 }
 
 //
@@ -113,6 +121,13 @@ inline static Uns32 getRIndex(riscvRegDesc r) {
 //
 inline static Uns32 getRBits(riscvRegDesc r) {
     return (r&RV_RD_BITS_MASK)>>2;
+}
+
+//
+// Set register size in bits
+//
+inline static riscvRegDesc setRBits(riscvRegDesc r, Uns32 bits) {
+    return (r&~RV_RD_BITS_MASK) | (bits<<2);
 }
 
 //
