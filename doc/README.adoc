@@ -121,6 +121,10 @@ Jeremy Bennett, Mary Bennett, Simon Davidmann, Neel Gala, Radek Hajek, Lee Moore
 [cols="<1,<2,<3,<4",options="header,pagewidth",]
 |================================================================================
 | _Revision_ | _Date_            | _Author_ | _Modification_
+| 1.15 Draft | 14 March 2019     |
+Prashanth Mundkur |
+
+Added support and instructions for using the C and OCaml simulators from the Sail RISC-V formal model as targets.
 | 1.14 Draft  | 21 February 2019      |
 Deborah Soung |
 

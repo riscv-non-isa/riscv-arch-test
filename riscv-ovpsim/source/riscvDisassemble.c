@@ -45,7 +45,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 //
-// Append the character to to the result
+// Append the character to the result
 //
 static void putChar(char **result, char ch) {
 
@@ -63,7 +63,7 @@ static void putChar(char **result, char ch) {
 }
 
 //
-// Append the string to to the result
+// Append the string to the result
 //
 static void putString(char **result, const char *string) {
 
@@ -176,8 +176,31 @@ static void putReg(char **result, riscvRegDesc r, Bool opt, Bool uncooked) {
         putString(result, riscvGetXRegName(index));
     } else if(isFReg(r)) {
         putString(result, riscvGetFRegName(index));
+    } else if(isVReg(r)) {
+        putString(result, riscvGetVRegName(index));
     } else {
         VMI_ABORT("Bad register specifier 0x%x", r); // LCOV_EXCL_LINE
+    }
+}
+
+//
+// Emit optional mask register argument
+//
+static void putOptMask(
+    char       **result,
+    riscvRegDesc mask,
+    const char  *suffix,
+    Bool         uncooked
+) {
+    if(mask) {
+
+        putUncookedKey(result, " MASK", uncooked);
+
+        putString(result, riscvGetVRegName(getRIndex(mask)));
+
+        if(!uncooked) {
+            putString(result, suffix);
+        }
     }
 }
 
@@ -217,28 +240,44 @@ static void putFence(
 //
 // Emit rounding mode argument
 //
-static void putRM(char ** result, riscvRMDesc rm, Bool uncooked) {
+static void putOptRM(char **result, riscvRMDesc rm, Bool uncooked) {
 
-    if(uncooked && (rm==RV_RM_CURRENT)) {
+    if(rm) {
 
-        putString(result, "rmc");
+        putUncookedKey(result, " RM", uncooked);
 
-    } else {
+        if(uncooked && (rm==RV_RM_CURRENT)) {
 
-        static const char *map[] = {
-            [RV_RM_NA]      = "",
-            [RV_RM_CURRENT] = "",
-            [RV_RM_RTE]     = "rte",
-            [RV_RM_RTZ]     = "rtz",
-            [RV_RM_RDN]     = "rdn",
-            [RV_RM_RUP]     = "rup",
-            [RV_RM_RMM]     = "rmm",
-            [RV_RM_BAD5]    = "rm5",
-            [RV_RM_BAD6]    = "rm6",
-        };
+            putString(result, "rmc");
 
-        putString(result, map[rm]);
+        } else {
+
+            static const char *map[] = {
+                [RV_RM_NA]      = "",
+                [RV_RM_CURRENT] = "",
+                [RV_RM_RTE]     = "rte",
+                [RV_RM_RTZ]     = "rtz",
+                [RV_RM_RDN]     = "rdn",
+                [RV_RM_RUP]     = "rup",
+                [RV_RM_RMM]     = "rmm",
+                [RV_RM_BAD5]    = "rm5",
+                [RV_RM_BAD6]    = "rm6",
+            };
+
+            putString(result, map[rm]);
+        }
     }
+}
+
+//
+// Emit VType argument
+//
+static void putVType(char **result, Uns8 vsew, Uns8 vlmul) {
+
+    putChar(result, 'e');
+    putD(result, 8<<vsew);
+    putString(result, ",m");
+    putD(result, 1<<vlmul);
 }
 
 //
@@ -305,12 +344,19 @@ static void putOpcode(char **result, riscvP riscv, riscvInstrInfoP info) {
         type = putType(result, info, info->r[i], type);
     }
 
+    // emit number of fields if required
+    if(info->nf) {
+        putString(result, "seg");
+        putD(result, info->nf+1);
+    }
+
     // emit size modifier if required
     switch(info->memBits) {
         case 8:  putChar(result, 'b'); break;
         case 16: putChar(result, 'h'); break;
         case 32: putChar(result, 'w'); break;
         case 64: putChar(result, 'd'); break;
+        case -1: putChar(result, 'e'); break;
     }
 
     // emit unsigned modifier if required
@@ -323,8 +369,45 @@ static void putOpcode(char **result, riscvP riscv, riscvInstrInfoP info) {
         putCSR(result, riscv, info->csr);
     }
 
+    // emit ff suffix if required
+    if(info->isFF) {
+        putString(result, "ff");
+    }
+
+    // vector suffixes
+    static const char *viDescs[] = {
+        [RV_VIT_NA]  = "",
+        [RV_VIT_V]   = ".v",
+        [RV_VIT_VV]  = ".vv",
+        [RV_VIT_VI]  = ".vi",
+        [RV_VIT_VX]  = ".vx",
+        [RV_VIT_WV]  = ".wv",
+        [RV_VIT_WX]  = ".wx",
+        [RV_VIT_VF]  = ".vf",
+        [RV_VIT_WF]  = ".wf",
+        [RV_VIT_VS]  = ".vs",
+        [RV_VIT_M]   = ".m",
+        [RV_VIT_MM]  = ".mm",
+        [RV_VIT_VM]  = ".vm",
+        [RV_VIT_VVM] = ".vvm",
+        [RV_VIT_VXM] = ".vxm",
+        [RV_VIT_VIM] = ".vim",
+        [RV_VIT_VFM] = ".vfm",
+    };
+
+    // emit vector suffix
+    VMI_ASSERT(info->VIType<NUM_MEMBERS(viDescs), "bad VIType (%u)", info->VIType);
+    putString(result, viDescs[info->VIType]);
+
+    // acquire/release modifier suffixes
+    static const char *aqrlDescs[] = {
+        [RV_AQRL_NA]   = "",
+        [RV_AQRL_RL]   = ".rl",
+        [RV_AQRL_AQ]   = ".aq",
+        [RV_AQRL_AQRL] = ".aqrl"
+    };
+
     // emit acquire/release modifier
-    static const char *aqrlDescs[] = {"", ".rl", ".aq", ".aqrl"};
     VMI_ASSERT(info->aqrl<NUM_MEMBERS(aqrlDescs), "bad aqrl (%u)", info->aqrl);
     putString(result, aqrlDescs[info->aqrl]);
 }
@@ -426,6 +509,16 @@ static void disassembleFormat(
                     putUncookedKey(result, " SUCC", uncooked);
                     putFence(result, info->succ, info->pred, uncooked);
                     break;
+                case EMIT_VTYPE:
+                    putUncookedKey(result, " VTYPE", uncooked);
+                    putVType(result, info->vsew, info->vlmul);
+                    break;
+                case EMIT_RM:
+                    putOptMask(result, info->mask, ".t", uncooked);
+                    break;
+                case EMIT_RMR:
+                    putOptMask(result, info->mask, "", uncooked);
+                    break;
                 case '*':
                     nextOpt = True;
                     break;
@@ -443,10 +536,7 @@ static void disassembleFormat(
     }
 
     // emit optional rounding mode
-    if(info->rm) {
-        putUncookedKey(result, " RM", uncooked);
-        putRM(result, info->rm, uncooked);
-    }
+    putOptRM(result, info->rm, uncooked);
 
     // strip trailing whitespace and commas
     char *tail = (*result)-1;

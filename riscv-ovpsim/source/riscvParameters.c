@@ -66,8 +66,13 @@ static vmiEnumParameter privVariants[RVPV_LAST+1] = {
     },
     [RVPV_1_11] = {
         .name        = "1.11",
-        .value       = RVPV_1_11,
-        .description = "Privileged Architecture Version 1.11-draft",
+        .value       = RVPV_20190405,
+        .description = "Deprecated and equivalent to 20190405",
+    },
+    [RVPV_20190405] = {
+        .name        = "20190405",
+        .value       = RVPV_20190405,
+        .description = "Privileged Architecture Version 20190405-Priv-MSU-Ratification",
     },
     // KEEP LAST: terminator
     {0}
@@ -84,8 +89,26 @@ static vmiEnumParameter userVariants[RVUV_LAST+1] = {
     },
     [RVUV_2_3] = {
         .name        = "2.3",
-        .value       = RVUV_2_3,
-        .description = "User Architecture Version 2.3-draft",
+        .value       = RVUV_20190305,
+        .description = "Deprecated and equivalent to 20190305",
+    },
+    [RVUV_20190305] = {
+        .name        = "20190305",
+        .value       = RVUV_20190305,
+        .description = "User Architecture Version 20190305-Base-Ratification",
+    },
+    // KEEP LAST: terminator
+    {0}
+};
+
+//
+// Supported Vector Architecture variants
+//
+static vmiEnumParameter vectorVariants[RVVV_LAST+1] = {
+    [RVVV_20190605] = {
+        .name        = "0.7.1-draft-20190605",
+        .value       = RVVV_20190605,
+        .description = "Vector Architecture Version 0.7.1-draft-20190605",
     },
     // KEEP LAST: terminator
     {0}
@@ -191,6 +214,7 @@ static RISCV_ENUM_PDEFAULT_CFG_FN(priv_version);
 static RISCV_BOOL_PDEFAULT_CFG_FN(updatePTEA);
 static RISCV_BOOL_PDEFAULT_CFG_FN(updatePTED);
 static RISCV_BOOL_PDEFAULT_CFG_FN(unaligned);
+static RISCV_BOOL_PDEFAULT_CFG_FN(unalignedAMO);
 static RISCV_BOOL_PDEFAULT_CFG_FN(wfi_is_nop);
 static RISCV_BOOL_PDEFAULT_CFG_FN(mtvec_is_ro);
 static RISCV_BOOL_PDEFAULT_CFG_FN(tval_ii_code);
@@ -200,6 +224,7 @@ static RISCV_BOOL_PDEFAULT_CFG_FN(instret_undefined);
 static RISCV_BOOL_PDEFAULT_CFG_FN(enable_CSR_bus);
 static RISCV_BOOL_PDEFAULT_CFG_FN(d_requires_f);
 static RISCV_BOOL_PDEFAULT_CFG_FN(fs_always_dirty);
+static RISCV_BOOL_PDEFAULT_CFG_FN(xret_preserves_lr);
 
 //
 // Set default value of raw Uns32 parameters
@@ -264,8 +289,8 @@ static RISCV_PDEFAULT_FN(default_misa_Extensions) {
 //
 static RISCV_PDEFAULT_FN(default_misa_Extensions_mask) {
 
-    // if archMask is zero, assume all bits except I, E, S and U are writable
-    Uns32 mask = cfg->archMask ? : ~(ISA_XLEN_ANY|ISA_I|ISA_E|ISA_S|ISA_U);
+    // if archMask is zero, assume all bits except E, S and U are writable
+    Uns32 mask = cfg->archMask ? : ~(ISA_XLEN_ANY|ISA_E|ISA_S|ISA_U);
 
     // only bits that are non-zero in arch are writable
     setUns32ParamDefault(param, cfg->arch & mask);
@@ -304,55 +329,85 @@ static RISCV_CSR_PMDEFAULT_CFG_FN(stvec)
 static RISCV_CSR_PMDEFAULT_CFG_FN(utvec)
 
 //
+// Set default values of ELEN, SLEN and VLEN (vector extensions)
+//
+static RISCV_PDEFAULT_FN(default_ELEN) {
+    setUns32ParamDefault(param, cfg->ELEN ? cfg->ELEN : ELEN_DEFAULT);
+}
+static RISCV_PDEFAULT_FN(default_SLEN) {
+    setUns32ParamDefault(param, cfg->SLEN ? cfg->SLEN : SLEN_DEFAULT);
+}
+static RISCV_PDEFAULT_FN(default_VLEN) {
+    setUns32ParamDefault(param, cfg->VLEN ? cfg->VLEN : VLEN_DEFAULT);
+}
+
+//
+// Set default values of Zvlsseg, Zvamo and Zvediv (vector extensions)
+//
+static RISCV_BOOL_PDEFAULT_CFG_FN(Zvlsseg);
+static RISCV_BOOL_PDEFAULT_CFG_FN(Zvamo);
+static RISCV_BOOL_PDEFAULT_CFG_FN(Zvediv);
+
+//
 // Table of formal parameter specifications
 //
 static riscvParameter formals[] = {
 
     // simulation controls
-    {  RVPV_VARIANT, 0,                            VMI_ENUM_PARAM_SPEC  (riscvParamValues, variant,              0,               "Selects variant (either a generic UISA or a specific model)")},
-    {  RVPV_ALL,     default_user_version,         VMI_ENUM_PARAM_SPEC  (riscvParamValues, user_version,         userVariants,    "Specify required User Architecture version")},
-    {  RVPV_ALL,     default_priv_version,         VMI_ENUM_PARAM_SPEC  (riscvParamValues, priv_version,         privVariants,    "Specify required Privileged Architecture version")},
-    {  RVPV_ALL,     0,                            VMI_BOOL_PARAM_SPEC  (riscvParamValues, verbose,              True,            "Specify verbose output messages")},
-    {  RVPV_MPCORE,  default_numHarts,             VMI_UNS32_PARAM_SPEC (riscvParamValues, numHarts,             0, 0, 32,        "Specify the number of hart contexts in a multiprocessor")},
-    {  RVPV_S,       default_updatePTEA,           VMI_BOOL_PARAM_SPEC  (riscvParamValues, updatePTEA,           False,           "Specify whether hardware update of PTE A bit is supported")},
-    {  RVPV_S,       default_updatePTED,           VMI_BOOL_PARAM_SPEC  (riscvParamValues, updatePTED,           False,           "Specify whether hardware update of PTE D bit is supported")},
-    {  RVPV_ALL,     default_unaligned,            VMI_BOOL_PARAM_SPEC  (riscvParamValues, unaligned,            False,           "Specify whether the processor supports unaligned memory accesses")},
-    {  RVPV_ALL,     default_wfi_is_nop,           VMI_BOOL_PARAM_SPEC  (riscvParamValues, wfi_is_nop,           False,           "Specify whether WFI should be treated as a NOP (if not, halt while waiting for interrupts)")},
-    {  RVPV_ALL,     default_mtvec_is_ro,          VMI_BOOL_PARAM_SPEC  (riscvParamValues, mtvec_is_ro,          False,           "Specify whether mtvec CSR is read-only")},
-    {  RVPV_ALL,     default_tvec_align,           VMI_UNS32_PARAM_SPEC (riscvParamValues, tvec_align,           0, 0, (1<<16),   "Specify hardware-enforced alignment of mtvec/stvec/utvec when Vectored interrupt mode enabled")},
-    {  RVPV_ALL,     default_mtvec_mask,           VMI_UNS64_PARAM_SPEC (riscvParamValues, mtvec_mask,           0, 0, -1,        "Specify hardware-enforced mask of writable bits in mtvec register")},
-    {  RVPV_S,       default_stvec_mask,           VMI_UNS64_PARAM_SPEC (riscvParamValues, stvec_mask,           0, 0, -1,        "Specify hardware-enforced mask of writable bits in stvec register")},
-    {  RVPV_N,       default_utvec_mask,           VMI_UNS64_PARAM_SPEC (riscvParamValues, utvec_mask,           0, 0, -1,        "Specify hardware-enforced mask of writable bits in utvec register")},
-    {  RVPV_ALL,     default_tval_ii_code,         VMI_BOOL_PARAM_SPEC  (riscvParamValues, tval_ii_code,         False,           "Specify whether mtval/stval contain faulting instruction bits on illegal instruction exception")},
-    {  RVPV_ALL,     default_cycle_undefined,      VMI_BOOL_PARAM_SPEC  (riscvParamValues, cycle_undefined,      False,           "Specify that the cycle CSR is undefined (reads to it are emulated by a Machine mode trap)")},
-    {  RVPV_ALL,     default_time_undefined,       VMI_BOOL_PARAM_SPEC  (riscvParamValues, time_undefined,       False,           "Specify that the time CSR is undefined (reads to it are emulated by a Machine mode trap)")},
-    {  RVPV_ALL,     default_instret_undefined,    VMI_BOOL_PARAM_SPEC  (riscvParamValues, instret_undefined,    False,           "Specify that the instret CSR is undefined (reads to it are emulated by a Machine mode trap)")},
-    {  RVPV_ALL,     default_enable_CSR_bus,       VMI_BOOL_PARAM_SPEC  (riscvParamValues, enable_CSR_bus,       False,           "Add artifact CSR bus port, allowing CSR registers to be externally implemented")},
-    {  RVPV_FP,      default_d_requires_f,         VMI_BOOL_PARAM_SPEC  (riscvParamValues, d_requires_f,         False,           "If D and F extensions are separately enabled in the misa CSR, whether D is enabled only if F is enabled")},
-    {  RVPV_FP,      default_fs_always_dirty,      VMI_BOOL_PARAM_SPEC  (riscvParamValues, fs_always_dirty,      False,           "When FPU is enabled, whether mstatus.FS is always 3 (indicating dirty)")},
-    {  RVPV_S,       default_ASID_bits,            VMI_UNS32_PARAM_SPEC (riscvParamValues, ASID_bits,            0, 0, 16,        "Specify the number of implemented ASID bits")},
-    {  RVPV_A,       default_lr_sc_grain,          VMI_UNS32_PARAM_SPEC (riscvParamValues, lr_sc_grain,          1, 1, (1<<16),   "Specify byte granularity of ll/sc lock region (constrained to a power of two)")},
-    {  RVPV_ALL,     default_reset_address,        VMI_UNS64_PARAM_SPEC (riscvParamValues, reset_address,        0, 0, -1,        "Override reset vector address")},
-    {  RVPV_ALL,     default_nmi_address,          VMI_UNS64_PARAM_SPEC (riscvParamValues, nmi_address,          0, 0, -1,        "Override NMI vector address")},
-    {  RVPV_ALL,     default_PMP_grain,            VMI_UNS32_PARAM_SPEC (riscvParamValues, PMP_grain,            0, 0, 29,        "Specify PMP region granularity, G (0 => 4 bytes, 1 => 8 bytes, etc)")},
-    {  RVPV_ALL,     default_PMP_registers,        VMI_UNS32_PARAM_SPEC (riscvParamValues, PMP_registers,        0, 0, 16,        "Specify the number of implemented PMP address registers")},
-    {  RVPV_S,       default_Sv_modes,             VMI_UNS32_PARAM_SPEC (riscvParamValues, Sv_modes,             0, 0, (1<<16)-1, "Specify bit mask of implemented Sv modes (e.g. 1<<8 is Sv39)")},
-    {  RVPV_ALL,     default_local_int_num,        VMI_UNS32_PARAM_SPEC (riscvParamValues, local_int_num,        0, 0, 48,        "Specify number of supplemental local interrupts")},
+    {  RVPV_VARIANT, 0,                            VMI_ENUM_PARAM_SPEC  (riscvParamValues, variant,              0,                         "Selects variant (either a generic UISA or a specific model)")},
+    {  RVPV_ALL,     default_user_version,         VMI_ENUM_PARAM_SPEC  (riscvParamValues, user_version,         userVariants,              "Specify required User Architecture version")},
+    {  RVPV_ALL,     default_priv_version,         VMI_ENUM_PARAM_SPEC  (riscvParamValues, priv_version,         privVariants,              "Specify required Privileged Architecture version")},
+    {  RVPV_ALL,     0,                            VMI_BOOL_PARAM_SPEC  (riscvParamValues, verbose,              True,                      "Specify verbose output messages")},
+    {  RVPV_MPCORE,  default_numHarts,             VMI_UNS32_PARAM_SPEC (riscvParamValues, numHarts,             0, 0,          32,         "Specify the number of hart contexts in a multiprocessor")},
+    {  RVPV_S,       default_updatePTEA,           VMI_BOOL_PARAM_SPEC  (riscvParamValues, updatePTEA,           False,                     "Specify whether hardware update of PTE A bit is supported")},
+    {  RVPV_S,       default_updatePTED,           VMI_BOOL_PARAM_SPEC  (riscvParamValues, updatePTED,           False,                     "Specify whether hardware update of PTE D bit is supported")},
+    {  RVPV_ALL,     default_unaligned,            VMI_BOOL_PARAM_SPEC  (riscvParamValues, unaligned,            False,                     "Specify whether the processor supports unaligned memory accesses")},
+    {  RVPV_A,       default_unalignedAMO,         VMI_BOOL_PARAM_SPEC  (riscvParamValues, unalignedAMO,         False,                     "Specify whether the processor supports unaligned memory accesses for AMO instructions")},
+    {  RVPV_ALL,     default_wfi_is_nop,           VMI_BOOL_PARAM_SPEC  (riscvParamValues, wfi_is_nop,           False,                     "Specify whether WFI should be treated as a NOP (if not, halt while waiting for interrupts)")},
+    {  RVPV_ALL,     default_mtvec_is_ro,          VMI_BOOL_PARAM_SPEC  (riscvParamValues, mtvec_is_ro,          False,                     "Specify whether mtvec CSR is read-only")},
+    {  RVPV_ALL,     default_tvec_align,           VMI_UNS32_PARAM_SPEC (riscvParamValues, tvec_align,           0, 0,          (1<<16),    "Specify hardware-enforced alignment of mtvec/stvec/utvec when Vectored interrupt mode enabled")},
+    {  RVPV_ALL,     default_mtvec_mask,           VMI_UNS64_PARAM_SPEC (riscvParamValues, mtvec_mask,           0, 0,          -1,         "Specify hardware-enforced mask of writable bits in mtvec register")},
+    {  RVPV_S,       default_stvec_mask,           VMI_UNS64_PARAM_SPEC (riscvParamValues, stvec_mask,           0, 0,          -1,         "Specify hardware-enforced mask of writable bits in stvec register")},
+    {  RVPV_N,       default_utvec_mask,           VMI_UNS64_PARAM_SPEC (riscvParamValues, utvec_mask,           0, 0,          -1,         "Specify hardware-enforced mask of writable bits in utvec register")},
+    {  RVPV_ALL,     default_tval_ii_code,         VMI_BOOL_PARAM_SPEC  (riscvParamValues, tval_ii_code,         False,                     "Specify whether mtval/stval contain faulting instruction bits on illegal instruction exception")},
+    {  RVPV_ALL,     default_cycle_undefined,      VMI_BOOL_PARAM_SPEC  (riscvParamValues, cycle_undefined,      False,                     "Specify that the cycle CSR is undefined (reads to it are emulated by a Machine mode trap)")},
+    {  RVPV_ALL,     default_time_undefined,       VMI_BOOL_PARAM_SPEC  (riscvParamValues, time_undefined,       False,                     "Specify that the time CSR is undefined (reads to it are emulated by a Machine mode trap)")},
+    {  RVPV_ALL,     default_instret_undefined,    VMI_BOOL_PARAM_SPEC  (riscvParamValues, instret_undefined,    False,                     "Specify that the instret CSR is undefined (reads to it are emulated by a Machine mode trap)")},
+    {  RVPV_ALL,     default_enable_CSR_bus,       VMI_BOOL_PARAM_SPEC  (riscvParamValues, enable_CSR_bus,       False,                     "Add artifact CSR bus port, allowing CSR registers to be externally implemented")},
+    {  RVPV_FP,      default_d_requires_f,         VMI_BOOL_PARAM_SPEC  (riscvParamValues, d_requires_f,         False,                     "If D and F extensions are separately enabled in the misa CSR, whether D is enabled only if F is enabled")},
+    {  RVPV_FP,      default_fs_always_dirty,      VMI_BOOL_PARAM_SPEC  (riscvParamValues, fs_always_dirty,      False,                     "When FPU is enabled, whether mstatus.FS is always 3 (indicating dirty)")},
+    {  RVPV_A,       default_xret_preserves_lr,    VMI_BOOL_PARAM_SPEC  (riscvParamValues, xret_preserves_lr,    False,                     "Whether an xRET instruction preserves the value of LR")},
+    {  RVPV_S,       default_ASID_bits,            VMI_UNS32_PARAM_SPEC (riscvParamValues, ASID_bits,            0, 0,          16,         "Specify the number of implemented ASID bits")},
+    {  RVPV_A,       default_lr_sc_grain,          VMI_UNS32_PARAM_SPEC (riscvParamValues, lr_sc_grain,          1, 1,          (1<<16),    "Specify byte granularity of ll/sc lock region (constrained to a power of two)")},
+    {  RVPV_ALL,     default_reset_address,        VMI_UNS64_PARAM_SPEC (riscvParamValues, reset_address,        0, 0,          -1,         "Override reset vector address")},
+    {  RVPV_ALL,     default_nmi_address,          VMI_UNS64_PARAM_SPEC (riscvParamValues, nmi_address,          0, 0,          -1,         "Override NMI vector address")},
+    {  RVPV_ALL,     default_PMP_grain,            VMI_UNS32_PARAM_SPEC (riscvParamValues, PMP_grain,            0, 0,          29,         "Specify PMP region granularity, G (0 => 4 bytes, 1 => 8 bytes, etc)")},
+    {  RVPV_ALL,     default_PMP_registers,        VMI_UNS32_PARAM_SPEC (riscvParamValues, PMP_registers,        0, 0,          16,         "Specify the number of implemented PMP address registers")},
+    {  RVPV_S,       default_Sv_modes,             VMI_UNS32_PARAM_SPEC (riscvParamValues, Sv_modes,             0, 0,          (1<<16)-1,  "Specify bit mask of implemented Sv modes (e.g. 1<<8 is Sv39)")},
+    {  RVPV_ALL,     default_local_int_num,        VMI_UNS32_PARAM_SPEC (riscvParamValues, local_int_num,        0, 0,          48,         "Specify number of supplemental local interrupts")},
 
     // fundamental configuration
-    {  RVPV_ALL,     0,                            VMI_ENDIAN_PARAM_SPEC(riscvParamValues, endian,                                "Model endian")},
+    {  RVPV_ALL,     0,                            VMI_ENDIAN_PARAM_SPEC(riscvParamValues, endian,                                          "Model endian")},
 
     // ISA configuration
-    {  RVPV_ALL,     default_misa_MXL,             VMI_UNS32_PARAM_SPEC (riscvParamValues, misa_MXL,             1, 1, 2,         "Override default value of misa.MXL")},
-    {  RVPV_ALL,     0,                            VMI_UNS32_PARAM_SPEC (riscvParamValues, misa_MXL_mask,        0, 0, 3,         "Override mask of writable bits in misa.MXL")},
-    {  RVPV_ALL,     default_misa_Extensions,      VMI_UNS32_PARAM_SPEC (riscvParamValues, misa_Extensions,      0, 0, (1<<26)-1, "Override default value of misa.Extensions")},
-    {  RVPV_ALL,     default_misa_Extensions_mask, VMI_UNS32_PARAM_SPEC (riscvParamValues, misa_Extensions_mask, 0, 0, (1<<26)-1, "Override mask of writable bits in misa.Extensions")},
-    {  RVPV_ALL,     default_mvendorid,            VMI_UNS64_PARAM_SPEC (riscvParamValues, mvendorid,            0, 0, -1,        "Override mvendorid register")},
-    {  RVPV_ALL,     default_marchid,              VMI_UNS64_PARAM_SPEC (riscvParamValues, marchid,              0, 0, -1,        "Override marchid register")},
-    {  RVPV_ALL,     default_mimpid,               VMI_UNS64_PARAM_SPEC (riscvParamValues, mimpid,               0, 0, -1,        "Override mimpid register")},
-    {  RVPV_ALL,     default_mhartid,              VMI_UNS64_PARAM_SPEC (riscvParamValues, mhartid,              0, 0, -1,        "Override mhartid register")},
-    {  RVPV_ALL,     default_mtvec,                VMI_UNS64_PARAM_SPEC (riscvParamValues, mtvec,                0, 0, -1,        "Override mtvec register")},
-    {  RVPV_FP,      0,                            VMI_UNS32_PARAM_SPEC (riscvParamValues, mstatus_FS,           0, 0, 3,         "Override default value of mstatus.FS (initial state of floating point unit)")},
+    {  RVPV_ALL,     default_misa_MXL,             VMI_UNS32_PARAM_SPEC (riscvParamValues, misa_MXL,             1, 1,          2,          "Override default value of misa.MXL")},
+    {  RVPV_ALL,     0,                            VMI_UNS32_PARAM_SPEC (riscvParamValues, misa_MXL_mask,        0, 0,          3,          "Override mask of writable bits in misa.MXL")},
+    {  RVPV_ALL,     default_misa_Extensions,      VMI_UNS32_PARAM_SPEC (riscvParamValues, misa_Extensions,      0, 0,          (1<<26)-1,  "Override default value of misa.Extensions")},
+    {  RVPV_ALL,     0,                            VMI_STRING_PARAM_SPEC(riscvParamValues, add_Extensions,       "",                        "Add extensions specified by letters to misa.Extensions (for example, specify \"VD\" to add V and D features)")},
+    {  RVPV_ALL,     default_misa_Extensions_mask, VMI_UNS32_PARAM_SPEC (riscvParamValues, misa_Extensions_mask, 0, 0,          (1<<26)-1,  "Override mask of writable bits in misa.Extensions")},
+    {  RVPV_ALL,     0,                            VMI_STRING_PARAM_SPEC(riscvParamValues, add_Extensions_mask,  "",                        "Add extensions specified by letters to mask of writable bits in misa.Extensions (for example, specify \"VD\" to add V and D features)")},
+    {  RVPV_ALL,     default_mvendorid,            VMI_UNS64_PARAM_SPEC (riscvParamValues, mvendorid,            0, 0,          -1,         "Override mvendorid register")},
+    {  RVPV_ALL,     default_marchid,              VMI_UNS64_PARAM_SPEC (riscvParamValues, marchid,              0, 0,          -1,         "Override marchid register")},
+    {  RVPV_ALL,     default_mimpid,               VMI_UNS64_PARAM_SPEC (riscvParamValues, mimpid,               0, 0,          -1,         "Override mimpid register")},
+    {  RVPV_ALL,     default_mhartid,              VMI_UNS64_PARAM_SPEC (riscvParamValues, mhartid,              0, 0,          -1,         "Override mhartid register")},
+    {  RVPV_ALL,     default_mtvec,                VMI_UNS64_PARAM_SPEC (riscvParamValues, mtvec,                0, 0,          -1,         "Override mtvec register")},
+    {  RVPV_FP,      0,                            VMI_UNS32_PARAM_SPEC (riscvParamValues, mstatus_FS,           0, 0,          3,          "Override default value of mstatus.FS (initial state of floating point unit)")},
+    {  RVPV_ALL,     default_ELEN,                 VMI_UNS32_PARAM_SPEC (riscvParamValues, ELEN,                 0, ELEN_MIN,   ELEN_MAX,   "Override ELEN (vector extension)")},
+    {  RVPV_ALL,     default_SLEN,                 VMI_UNS32_PARAM_SPEC (riscvParamValues, SLEN,                 0, SLEN_MIN,   VLEN_MAX,   "Override SLEN (vector extension)")},
+    {  RVPV_ALL,     default_VLEN,                 VMI_UNS32_PARAM_SPEC (riscvParamValues, VLEN,                 0, SLEN_MIN,   VLEN_MAX,   "Override VLEN (vector extension)")},
+    {  RVPV_ALL,     default_Zvlsseg,              VMI_BOOL_PARAM_SPEC  (riscvParamValues, Zvlsseg,              False,                     "Specify that Zvlsseg is implemented (vector extension)")},
+    {  RVPV_ALL,     default_Zvamo,                VMI_BOOL_PARAM_SPEC  (riscvParamValues, Zvamo,                False,                     "Specify that Zvamo is implemented (vector extension)")},
+    {  RVPV_ALL,     default_Zvediv,               VMI_BOOL_PARAM_SPEC  (riscvParamValues, Zvediv,               False,                     "Specify that Zvediv is implemented (vector extension)")},
 
     // KEEP LAST
     {  RVPV_ALL,     0,                            VMI_END_PARAM}
@@ -645,5 +700,12 @@ const char *riscvGetPrivVersionDesc(riscvP riscv) {
 //
 const char *riscvGetUserVersionDesc(riscvP riscv) {
     return userVariants[RISCV_USER_VERSION(riscv)].description;
+}
+
+//
+// Return Vector Architecture description
+//
+const char *riscvGetVectorVersionDesc(riscvP riscv) {
+    return vectorVariants[RISCV_VECT_VERSION(riscv)].description;
 }
 

@@ -24,6 +24,57 @@
 #include "riscvTypeRefs.h"
 
 //
+// This indicates the known active vector standard element width (SEW)
+//
+typedef enum riscvSEWMtE {
+    SEWMT_UNKNOWN =    0,
+    SEWMT_8       =    8,
+    SEWMT_16      =   16,
+    SEWMT_32      =   32,
+    SEWMT_64      =   64,
+    SEWMT_128     =  128,
+    SEWMT_256     =  256,
+    SEWMT_512     =  512,
+    SEWMT_1024    = 1024
+} riscvSEWMt;
+
+//
+// This indicates the known active vector length multiplier (VLMUL)
+//
+typedef enum riscvVLMULMtE {
+    VLMULMT_UNKNOWN = 0,
+    VLMULMT_1       = 1,
+    VLMULMT_2       = 2,
+    VLMULMT_4       = 4,
+    VLMULMT_8       = 8,
+} riscvVLMULMt;
+
+//
+// This indicates the known active vector length zero/non-zero state
+//
+typedef enum riscvVLClassE {
+    VLCLASSMT_UNKNOWN = 0,
+    VLCLASSMT_ZERO    = 1,
+    VLCLASSMT_NONZERO = 2,
+    VLCLASSMT_MAX     = 3,
+} riscvVLClassMt;
+
+//
+// This indicates the VLMUL for which a vector register is known to have top
+// zero (either a single register, or a component of a group)
+//
+typedef enum riscvTZE {
+    VTZ_SINGLE,
+    VTZ_GROUP,
+} riscvTZ;
+
+//
+// This defines a bit in the polymorphic key indicating whether the current
+// rounding mode is valid
+//
+#define RM_VALID_MASK   (1<<6)
+
+//
 // This structure holds state for a code block as it is morphed
 //
 typedef struct riscvBlockStateS {
@@ -31,7 +82,11 @@ typedef struct riscvBlockStateS {
     riscvBlockStateP prevState;     // previous block state
     Uns32            fpNaNBoxMask;  // mask of known single-precision FP registers
     Bool             fpInstDone;    // floating-point instruction already seen?
-    riscvRMDesc      fpActiveRMMT;  // active floating-point rounding mode
+    riscvSEWMt       SEWMt;         // known active vector SEW
+    riscvVLMULMt     VLMULMt;       // known active vector VLMUL
+    riscvVLClassMt   VLClassMt;     // known active vector VL zero/non-zero/max
+    Uns32            VZeroTopMt[2]; // known vector registers with zero top
+    Bool             VStartZeroMt;  // vstart known to be zero?
 
 } riscvBlockState;
 

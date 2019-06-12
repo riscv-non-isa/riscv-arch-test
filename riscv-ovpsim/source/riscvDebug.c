@@ -48,6 +48,7 @@
 typedef enum riscvRegGroupIdE {
     RV_RG_CORE,         // core register group
     RV_RG_FP,           // floating point register group
+    RV_RG_V,            // vector register group
     RV_RG_U_CSR,        // User mode CSR register group
     RV_RG_S_CSR,        // Supervisor mode CSR register group
     RV_RG_R_CSR,        // (reserved)
@@ -62,6 +63,7 @@ typedef enum riscvRegGroupIdE {
 static const vmiRegGroup groups[RV_RG_LAST+1] = {
     [RV_RG_CORE]        = {name: "Core"},
     [RV_RG_FP]          = {name: "Floating_point"},
+    [RV_RG_V]           = {name: "Vector"},
     [RV_RG_U_CSR]       = {name: "User_Control_and_Status"},
     [RV_RG_S_CSR]       = {name: "Supervisor_Control_and_Status"},
     [RV_RG_R_CSR]       = {name: "Reserved"},
@@ -88,6 +90,11 @@ static const vmiRegGroup groups[RV_RG_LAST+1] = {
 // This is the index of the first ISR
 //
 #define RISCV_ISR0_INDEX        0x1000
+
+//
+// This is the index of the first vector register
+//
+#define RISCV_V0_INDEX          0x2000
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -245,8 +252,9 @@ static vmiRegInfoCP getRegisters(riscvP riscv, Bool normal) {
         Uns32             XLEN   = riscvGetXlenArch(riscv);
         Uns32             FLEN   = riscvGetFlenArch(riscv) ? : XLEN;
         riscvArchitecture arch   = riscv->configInfo.arch;
-        Uns32             gprNum = (!normal || (arch&ISA_I))  ? 32 : 16;
-        Uns32             fprNum = (!normal || (arch&ISA_DF)) ? 32 : 0;
+        Uns32             gprNum = (!normal || (arch&ISA_I))  ? 32       : 16;
+        Uns32             fprNum = (!normal || (arch&ISA_DF)) ? 32       : 0;
+        Uns32             vrNum  = ( normal && (arch&ISA_V))  ? VREG_NUM : 0;
         Uns32             regNum = 0;
         riscvCSRDetails   csrDetails;
         isrDetailsCP      isrDetails;
@@ -276,6 +284,9 @@ static vmiRegInfoCP getRegisters(riscvP riscv, Bool normal) {
 
         // count FPR entries
         regNum += fprNum;
+
+        // count VR entries
+        regNum += vrNum;
 
         // count visible CSRs
         csrDetails.attrs = 0;
@@ -325,6 +336,17 @@ static vmiRegInfoCP getRegisters(riscvP riscv, Bool normal) {
             dst->gdbIndex = i+RISCV_FPR0_INDEX;
             dst->access   = vmi_RA_RW;
             dst->raw      = RISCV_FPR(i);
+            dst++;
+        }
+
+        // fill VR entries
+        for(i=0; i<vrNum; i++) {
+            dst->name     = riscvGetVRegName(i);
+            dst->group    = RV_GROUP(V);
+            dst->bits     = riscv->configInfo.VLEN;
+            dst->gdbIndex = i+RISCV_V0_INDEX;
+            dst->access   = vmi_RA_RW;
+            dst->raw      = riscvGetVReg(riscv, i);
             dst++;
         }
 
@@ -508,7 +530,12 @@ VMI_REG_IMPL_FN(riscvRegImpl) {
     RISCV_FIELD_IMPL_RAW(fflags, fpFlags);
 
     // exclude artifact registers
-    RISCV_FIELD_IMPL_IGNORE(fpActiveRM);
+    RISCV_FIELD_IMPL_IGNORE(pmKey);
+    RISCV_FIELD_IMPL_IGNORE(vFirstFault);
+    RISCV_FIELD_IMPL_IGNORE(vBase);
+    RISCV_FIELD_IMPL_IGNORE(offsetsLMULx2);
+    RISCV_FIELD_IMPL_IGNORE(offsetsLMULx4);
+    RISCV_FIELD_IMPL_IGNORE(offsetsLMULx8);
 }
 
 
