@@ -1,10 +1,66 @@
-riscvOVPsim Fixed Platform Kit Change Log
-===
+###############################################################################
+#                       CHANGELOG.MODEL.RISCV.txt                             #
+#      Copyright (c) 2005-2019 Imperas Software Ltd., www.imperas.com         #
+# This CHANGELOG contains information specific to the RISCV processor model   #
+###############################################################################
+- Fixed bug that caused the Model Specific Documentation for the SiFive 
+  U54MC model to be missing the sections under Overview.
+- The vector extension is now implemented and enabled if the V bit is set in
+  the misa register. Variants RV32GCV and RV64GCV have been added which enable
+  this extension as standard. See the processor documentation for these variants
+  for more information.
+- New parameter 'add_Extensions' can be used to specify extensions to add to a
+  base variant, by misa letter. For example, value "VD" specifies that vector
+  and double-precision floating point extensions should be added.
+- New parameter 'add_Extensions_mask' can be used to specify that bits in the
+  misa register should be writable, by letter. For example, value "VD" specifies
+  that vector and double-precision floating point extensions can be dynamically
+  enabled.
+- Newlib semihost library for RiscV processors now support the naming convention 
+  for defining the start of the heap that is used by the linker scripts in
+  the BSPs provided in the SiFive freedom-e-sdk.
+- Semihosting of the _sbrk() function will now report an error if it is called 
+  and cannot find the expected symbol that defines the start of the heap area.
+- The Model Specific Information document for each variant now includes 
+  information on the extensions that are supported by the model but not enabled 
+  on the specific variant being documented. 
+- Various changes have been made to implement conformance with Privileged
+  Architecture specification 20190405-Priv-MSU-Ratification, as follows:
+  - The priority order of synchronous exceptions has been modified;
+  - A new parameter, xret_preserves_lr, allows specification that xRET
+    instructions should preserve the current value of LR (if False, LR is
+    cleared by these instructions);
+  - Behavior of misa and xepc registers on systems with variable IALIGN has been
+    changed to match the specification;
+  - misa.I is now writable if the write mask permits it. misa.E is read only and
+    always the complement of misa.I;
+  - The mcountinhibit CSR has been implemented.
+- Various changes have been made to implement conformance with Base Architecture
+  specification 20190303-User-Ratification, as follows:
+  - A new parameter, unalignedAMO, controls whether AMO instructions support
+    unaligned addresses. LR/SC instructions now never support unaligned
+    addresses.
+  - RV32E may now be used in conjunction with other extensions. misa.E is now
+    always a read-only complement of misa.I.
+- The SFENCE.VMA instruction is now only supported if Supervisor mode is
+  implemented.
+- When Privileged Level version 1.11 is enabled (see the priv_version parameter)
+  mstatus.TW is now writable if any Privilege Level other than Machine mode is
+  implemented. When Privileged Level version 1.10 is enabled, this field is
+  writable only if Supervisor mode is implemented.
+- A bug has been fixed which caused PMP privileges to be incorrectly set in some
+  cases (where a high priority unlocked region was disabled and covered the same
+  address range as a lower priority locked region).
+- The model has been simplified to use the built-in VMI RMM rounding mode
+  support.
 
-# Changes since last release
+###############################################################################
+## Date 2019-March-06                                                        ##
+## Release 20190306.0                                                        ##
+###############################################################################
 
-RISCV Processor Model
--------------------------------------------------------------------------------
+- Relaxed the fence instruction for finer grain as per specification of values
+  for imm[11:0], rs1 and rd fields
 - The model now supports save and restore.
 - Field mstatus.MPP has been changed from WLRL to WARL in accordance with
   version 1.11 of the Privileged Specification). When written with an illegal
@@ -23,15 +79,10 @@ RISCV Processor Model
   PMP region size is 32 bytes.
 
 ###############################################################################
-##                                                                           ##
 ## Date 2018-November-14                                                     ##
-##                                                                           ##
 ## Release 20181114.0                                                        ##
-##                                                                           ##
 ###############################################################################
 
-RISCV Processor Model
--------------------------------------------------------------------------------
 - A bug has been fixed which allowed User mode accesses to unimplemented
   hardware performance registers irrespective of the settings in the counter
   enable registers.
@@ -52,34 +103,16 @@ RISCV Processor Model
   registers should be present only if both supervisor mode and user-level
   interrupts are present.
 
-RISCV Processor Model Feature Usage Examples
--------------------------------------------------------------------------------
-- Two examples are provided to show the use of features of the RISCV model. these
-  are provided under Examples/Models/Processors/Feature_Usage as
-  RISCV_SignatureDump
-    Shows the use of the extension library to control the generation of a signature
-    file.
-  RISCV_CustomInstructionFlow
-    Shows how to extend a RISCV processor with a custom instruction.
-
 ###############################################################################
-##                                                                           ##
 ## Date 2018-August-03                                                       ##
-##                                                                           ##
 ## Release 20180716.2                                                        ##
-##                                                                           ##
 ###############################################################################
 
 ###############################################################################
-##                                                                           ##
 ## Date 2018-July-16                                                         ##
-##                                                                           ##
 ## Release 20180716.0                                                        ##
-##                                                                           ##
 ###############################################################################
 
-RISCV Processor Model
--------------------------------------------------------------------------------
 - The RISCV processor model has been changed to set the default initial PC at 
   simulation start to the value indicated by the processor model's reset_address
   parameter. Previously the default start address was 0x0.
@@ -89,83 +122,43 @@ RISCV Processor Model
   is defined to be an implementation dependent value by the RISCV specification.
   See the Model Specific Information document to see what value is implemented 
   for a specific variant.
-- A new SiFive variant 'U54MC' has been added, which implements a cluster of
-  U54 harts. By default 4 harts are implemented, which may be overridden using
-  the numHarts parameter which allows values from 1 to 32.
   
 ###############################################################################
-##                                                                           ##
 ## Date 2018-March-12                                                        ##
-##                                                                           ##
 ## Release 20180221.1                                                        ##
-##                                                                           ##
 ###############################################################################
 
 ###############################################################################
-##                                                                           ##
 ## Date 2018-February-21                                                     ##
-##                                                                           ##
 ## Release 20180221.0                                                        ##
-##                                                                           ##
 ###############################################################################
 
-RISCV Processor Model
--------------------------------------------------------------------------------
 - The model has been extensively rewritten to implement privilege levels and
   state consistent with Privileged Architecture version 1.10, including virtual
   memory and physical memory protection registers.
-- An intercept (extension) library can be loaded and a SignatureFile parameter 
-  specified to set the file into which a signature, compatible with that
-  generated by the Spike simulator, will be written. Load the intercept library
-  by adding 
-    --extlib riscv.ovpworld.org/intercept/spike/1.0
-  to the command line.
-- The riscv processor models for vendors Andes, SiFive and Microsemi have been 
-  renamed
-  To see the variants for a specific vendor you should now use
-    iss.exe --showvariants --processorvendor riscv.ovpworld.org     --processorname riscv
-    iss.exe --showvariants --processorvendor andes.ovpworld.org     --processorname riscv
-    iss.exe --showvariants --processorvendor sifive.ovpworld.org    --processorname riscv
-    iss.exe --showvariants --processorvendor microsemi.ovpworld.org --processorname riscv
 
 ###############################################################################
-##                                                                           ##
 ## Date 2017-September-19                                                    ##
-##                                                                           ##
 ## Release 20170919.0                                                        ##
-##                                                                           ##
 ###############################################################################
 
-RISC-V Processor Models
--------------------------------------------------------------------------------
-This is the first release of our collection of RISC-V models. There is a generic
+This is the first release of the RISC-V models. There is a generic
 model that implements the RISC-V ISA variants and there are vendor specific
-cores from Andes, SiFive, and Microsemi.
+cores.
 
 To see the available processor models use:
     iss.exe --showlibraryprocessors
 and to see the specific variants these contain use:
     iss.exe --showvariants --processorname riscv
-    iss.exe --showvariants --processorname andes_riscv
-    iss.exe --showvariants --processorname sifive_riscv
-    iss.exe --showvariants --processorname microsemi_riscv
 
 ###############################################################################
-##                                                                           ##
 ## Date 2017-May-12                                                          ##
-##                                                                           ##
 ## Release 20170511.0                                                        ##
-##                                                                           ##
 ###############################################################################
 
-RISCV Processor Model
--------------------------------------------------------------------------------
 - The model supporting variants RV32G, RV32I, RV64G and RV64I is released.
     
 ###############################################################################
-##                                                                           ##
 ## Date 2017-February-01                                                     ##
-##                                                                           ##
 ## Release 20170201.0                                                        ##
-##                                                                           ##
 ###############################################################################

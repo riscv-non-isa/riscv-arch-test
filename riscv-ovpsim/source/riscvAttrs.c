@@ -135,6 +135,7 @@ const vmiIASAttr modelAttrs = {
 
     .intReturnCB        = riscvIntReturn,
     .intResultCB        = riscvIntResult,
+    .intParCB           = riscvIntParCB,
 
     ////////////////////////////////////////////////////////////////////////
     // PROCESSOR INFO ROUTINE
