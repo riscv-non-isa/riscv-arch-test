@@ -1,3 +1,8 @@
+2016-06-21 Ben Selfridge <benselfridge@galois.com>
+    * Added support for using the the GRIFT simulator as a target.
+    * Added subdirectory riscv-target/grift
+    * updated README.md and doc/README.adoc
+
 2019-05-23 Prashanth Mundkur <prashanth.mundkur@gmail.com>
     * Added support and instructions for using the C and OCaml simulators from the Sail RISC-V formal model as targets.
 	* added subdirectories riscv-target/sail-riscv-c and riscv-target/sail-riscv-ocaml
