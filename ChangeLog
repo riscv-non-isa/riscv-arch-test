@@ -1,11 +1,16 @@
+2019-07-07 Allen Baum <allen.baum@esperantotech.com>
+	* I-MISALIGN_LDST-01.S: made all tests use fixed size signature slot,
+	changed trap handler to store into normal signature area
+	changed constants to defines , changed comments to not use poundsign
 
-2019-05-29 Allen Baum <allen.baum@esperantotech.com>
+2019-07-07 Allen Baum <allen.baum@esperantotech.com>
 	* spec/TestFormatSpec.adoc:  rmv ToBeDiscussed items & pick 1 official.
 	Make "Common compliance test pool reference document" the test conditions repository.
-	Remove restrictions on having absolate addresses in signature
+	Remove restrictions on having absolute addresses in signature
 	Add details of new standard macros
+	Change the test directory structure desription
 	* I-MISALIGN_JMP-01.S: fixed numerous bugs, changed comment char, add rvc/norvc around cmpressed ops
-	
+
 2019-05-23 Prashanth Mundkur <prashanth.mundkur@gmail.com>
     * Added support and instructions for using the C and OCaml simulators from the Sail RISC-V formal model as targets.
 	* added subdirectories riscv-target/sail-riscv-c and riscv-target/sail-riscv-ocaml

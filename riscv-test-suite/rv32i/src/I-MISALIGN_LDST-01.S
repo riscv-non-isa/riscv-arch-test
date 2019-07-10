@@ -33,224 +33,248 @@
 #include "compliance_io.h"
 #include "test_macros.h"
 
-# Test Virtual Machine (TVM) used by program.
+#define SIG_SLOT (XLEN*3)
+	
+//Test Virtual Machine (TVM) used by program.
 RV_COMPLIANCE_RV32M
 
-# Test code region
+// for RV64, need to add ld, sd
+// Test code region
 RV_COMPLIANCE_CODE_BEGIN
 
     RVTEST_IO_INIT
     RVTEST_IO_ASSERT_GPR_EQ(x30, x0, 0x00000000)
     RVTEST_IO_WRITE_STR(x30, "# Test Begin Reserved reg x31\n")
 
-    # Save and set trap handler address
+    // Save and set trap handler address
     la x1, _trap_handler
     csrrw x31, mtvec, x1
 
-    # ---------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     RVTEST_IO_WRITE_STR(x30, "# Test part A1 - test LW\n");
 
-    # Addresses for test data and results
+    // Addresses for test data and results
     la      x3, test_A1_data
     la      x2, test_A1_res
-    la      x1, test_A1_res_exc
+//  la      x1, test_A1_res_exc  don't use- store instead of non-trap data
 
-    # Register initialization
+    // Register initialization
     li      x5, 5
     li      x6, 6
 
-    # Test
+    // Test write at each byte offset within word, store aligned - add offsets 4-7 for RV64
     lw      x4, 0(x3)
     sw      x4, 0(x2)
-
-    lw      x4, 1(x3)
-    sw      x4, 4(x2)
+    addi    x2,x2,SIG_SLOT    //skip to next signature slot
+	
+    lw      x4, 1(x3)    //either stores unaligned ld data or epc,tval,mcause
+    sw      x4, 0(x2)
+    addi    x2,x2,SIG_SLOT    //skip to next signature slot
 
     lw      x4, 2(x3)
-    sw      x4, 8(x2)
+    sw      x4, 0(x2)
+    addi    x2,x2,SIG_SLOT    //skip to next signature slot
 
     lw      x4, 3(x3)
-    sw      x4, 12(x2)
+    sw      x4, 0(x2)
 
     //
     // Assert
     //
     RVTEST_IO_CHECK()
-    RVTEST_IO_WRITE_STR(x30, "# Test part A1  - Complete\n");
+	RVTEST_IO_WRITE_STR(x30, "# Test part A1  - Complete\n");
 
-    # ---------------------------------------------------------------------------------------------
+
+    // ---------------------------------------------------------------------------------------------
     RVTEST_IO_WRITE_STR(x30, "# Test part A2 - test LH and LHU\n");
 
-    # Addresses for test data and results
+    // Addresses for test data and results
     la      x3, test_A2_data
     la      x2, test_A2_res
-    la      x1, test_A2_res_exc
+//    la      x1, test_A2_res_exc //exception result pointer
 
-    # Register initialization
+    // Register initialization
     li      x5, 5
     li      x6, 6
 
-    # Test
-    lh      x4, 0(x3)
+	// Test loading from every byte alignment for halfword signed+unsigned, store aligned
+	// add offsets 4-7 for RV64
+    lh      x4, 0(x3)	//4byte aligned
     sw      x4, 0(x2)
+    addi    x2,x2,SIG_SLOT    //skip to next signature slot
 
     lh      x4, 1(x3)
-    sw      x4, 4(x2)
+    sw      x4, 0(x2)
+    addi    x2,x2,SIG_SLOT    //skip to next signature slot
 
     lh      x4, 2(x3)
-    sw      x4, 8(x2)
+    sw      x4, 0(x2)
+    addi    x2,x2,SIG_SLOT    //skip to next signature slot
 
     lh      x4, 3(x3)
-    sw      x4, 12(x2)
+    sw      x4, 0(x2)
+    addi    x2,x2,SIG_SLOT    //skip to next signature slot
 
     lhu     x4, 0(x3)
-    sw      x4, 16(x2)
+    sw      x4, 0(x2)
+    addi    x2,x2,SIG_SLOT    //skip to next signature slot
 
     lhu     x4, 1(x3)
-    sw      x4, 20(x2)
+    sw      x4, 0(x2)
+    addi    x2,x2,SIG_SLOT    //skip to next signature slot
 
     lhu     x4, 2(x3)
-    sw      x4, 24(x2)
+    sw      x4, 0(x2)
+    addi    x2,x2,SIG_SLOT    //skip to next signature slot
 
     lhu     x4, 3(x3)
-    sw      x4, 28(x2)
+    sw      x4, 0(x2)
 
     RVTEST_IO_WRITE_STR(x30, "# Test part A2  - Complete\n");
 
-    # ---------------------------------------------------------------------------------------------
+//------ add part A5 for lwu offsets 0-7 for RV64 --------
+//------ add part A6 for ld  offsets 0-7 for RV64 --------
+	
+    // ---------------------------------------------------------------------------------------------
     RVTEST_IO_WRITE_STR(x30, "# Test part B1 - test SW\n");
 
-    # Addresses for test data and results
+    // Addresses for test data and results
     la      x2, test_B1_res
-    la      x1, test_B1_res_exc
+//    la      x1, test_B1_res_exc
 
-    # Register initialization
+    // Register initialization
     li      x6, 0x0
     li      x5, 0x99999999
 
-    # Init memory
-    sw      x5, 0(x2)
-    sw      x5, 4(x2)
-    sw      x5, 8(x2)
-    sw      x5, 12(x2)
+    // Init memory
+    sw      x5, SIG_SLOT*0+0(x2) //4 3word slots; add offsets 4-7  for RV64 (8 slots total)
+    sw      x5, SIG_SLOT*0+4(x2)
+    sw      x5, SIG_SLOT*0+8(x2)
+    sw      x5, SIG_SLOT*1+0(x2)
+    sw      x5, SIG_SLOT*1+4(x2)
+    sw      x5, SIG_SLOT*1+8(x2)
+    sw      x5, SIG_SLOT*2+0(x2)
+    sw      x5, SIG_SLOT*2+4(x2)
+    sw      x5, SIG_SLOT*2+8(x2)
+    sw      x5, SIG_SLOT*3+0(x2)
+    sw      x5, SIG_SLOT*3+4(x2)
+    sw      x5, SIG_SLOT*3+8(x2)
 
-    # Test
+
+    // Test storing a wd at every byte alignment ; add wd 4-7 for RV64 (16 slots total)
     sw      x6, 0(x2)
-    addi    x2, x2, 4
+    addi    x2, x2, SIG_SLOT
 
     sw      x6, 1(x2)
-    addi    x2, x2, 4
+    addi    x2, x2, SIG_SLOT
 
     sw      x6, 2(x2)
-    addi    x2, x2, 4
+    addi    x2, x2, SIG_SLOT
 
     sw      x6, 3(x2)
 
     RVTEST_IO_WRITE_STR(x30, "# Test part A3  - Complete\n");
 
-    # ---------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     RVTEST_IO_WRITE_STR(x30, "# Test part B2 - test SH\n");
 
-    # Addresses for test data and results
+    // Addresses for test data and results
     la      x2, test_B2_res
-    la      x1, test_B2_res_exc
+//    la      x1, test_B2_res_exc
 
-    # Register initialization
+    // Register initialization
     li      x6, 0x0
     li      x5, 0x99999999
 
-    # Init memory
-    sw      x5, 0(x2)
-    sw      x5, 4(x2)
-    sw      x5, 8(x2)
-    sw      x5, 12(x2)
+    // Init memory
+    sw      x5, SIG_SLOT*0+0(x2)  //4 3word slots; add offsets 4-7 for RV64
+    sw      x5, SIG_SLOT*0+4(x2)
+    sw      x5, SIG_SLOT*0+8(x2)
+    sw      x5, SIG_SLOT*1+0(x2)
+    sw      x5, SIG_SLOT*1+4(x2)
+    sw      x5, SIG_SLOT*1+8(x2)
+    sw      x5, SIG_SLOT*2+0(x2)
+    sw      x5, SIG_SLOT*2+4(x2)
+    sw      x5, SIG_SLOT*2+8(x2)
+    sw      x5, SIG_SLOT*3+0(x2)
+    sw      x5, SIG_SLOT*3+4(x2)
+    sw      x5, SIG_SLOT*3+8(x2)
 
-    # Test
+    // Test writes of hw at every byte alignment - add offaets 4-7 for RV64
     sh      x6, 0(x2)
-    addi    x2, x2, 4
+    addi    x2, x2, SIG_SLOT
 
     sh      x6, 1(x2)
-    addi    x2, x2, 4
+    addi    x2, x2, SIG_SLOT
 
     sh      x6, 2(x2)
-    addi    x2, x2, 4
+    addi    x2, x2, SIG_SLOT
 
     sh      x6, 3(x2)
 
     RVTEST_IO_WRITE_STR(x30, "# Test part A4  - Complete\n");
 
-    # ---------------------------------------------------------------------------------------------
-    # restore mtvec and jump to the end
+//------ add part A7 for sd  offsets 0-7 for RV64 --------
+
+    // ---------------------------------------------------------------------------------------------
+    // restore mtvec and jump to the end
     csrw mtvec, x31
     jal x0, test_end
 
-    RVTEST_IO_WRITE_STR(x30, "# Test part A5  - Complete\n");
+    RVTEST_IO_WRITE_STR(x30, "# Test part end  - Complete\n");
 
-    # ---------------------------------------------------------------------------------------------
-    # Exception handler
+    // ---------------------------------------------------------------------------------------------
+    // Exception handler
 _trap_handler:
-    # increment return address
+    // increment return address
     csrr    x30, mepc
-    addi    x30, x30, 4
+    stw     x30  XLEN*0(x2)
+    addi    x30, x30, 4    //point to next instruction (all 4bytes in this test)
     csrw    mepc, x30
 
-    # store low bits of mbadaddr
+    // store  mbadaddr
     csrr    x30, mbadaddr
-    andi    x30, x30, 3
-    sw      x30, 0(x1)
-
-    # Store MCAUSE
+    stw     x30  XLEN*1(x2)
+    
+    // Store MCAUSE
     csrr    x30, mcause
-    sw      x30, 4(x1)
+    sw      x30, XLEN*2(x2)
 
-    # increment data_exc address
-    addi    x1, x1, 8
-
-    # return
+    // return
     mret
 
     RVTEST_IO_WRITE_STR(x30, "# Test part B  - Complete\n");
 
-    # ---------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
 
 test_end:
 
     RVTEST_IO_WRITE_STR(x30, "# Test End\n")
 
- # ---------------------------------------------------------------------------------------------
-    # HALT
+    // ---------------------------------------------------------------------------------------------
+    // HALT
     RV_COMPLIANCE_HALT
 
 RV_COMPLIANCE_CODE_END
 
-# Input data section.
+// Input data section.
     .data
-    .align 4
+    .align XLEN
 
 test_A1_data:
     .word 0x91A1B1C1
 test_A2_data:
     .word 0xD2E2F202
 
-# Output data section.
+// Output data section.
 RV_COMPLIANCE_DATA_BEGIN
-    .align 4
+    .align XLEN
 
-test_A1_res:
-    .fill 4, 4, -1
-test_A1_res_exc:
-    .fill 6, 4, -1
-test_A2_res:
-    .fill 8, 4, -1
-test_A2_res_exc:
-    .fill 8, 4, -1
-test_B1_res:
-    .fill 4, 4, -1
-test_B1_res_exc:
-    .fill 6, 4, -1
-test_B2_res:
-    .fill 4, 4, -1
-test_B2_res_exc:
-    .fill 4, 4, -1
+test_A1_res:    .fill 4, SIG_SLOT, -1	//4 byte unaligned lw    tests - dbl this for RV64
+test_A2_res:    .fill 8, SIG_SLOT, -1	//2 byte unaligned lh[u] tests- dbl this for RV64
+test_B1_res:    .fill 4, SIG_SLOT, -1	//2 byte unaligned sw    tests- dbl this for RV64
+test_B2_res:    .fill 4, SIG_SLOT, -1	//4 byte unaligned sh    tests- dbl this for RV64
+// for RV64, add 8 slots for unaligned ld A5 tests
+// for RV64, add 8 slots for unaligned sd A6 tests
 
 RV_COMPLIANCE_DATA_END
