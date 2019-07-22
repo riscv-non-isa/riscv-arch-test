@@ -1,4 +1,7 @@
-2016-06-21 Ben Selfridge <benselfridge@galois.com>
+2019-07-18 Paul Donahue <pdonahue@ventanamicro.com>
+    * Fix typos/grammar and use correct architectural terms.
+
+2019-06-21 Ben Selfridge <benselfridge@galois.com>
     * Added support for using the the GRIFT simulator as a target.
     * Added subdirectory riscv-target/grift
     * updated README.md and doc/README.adoc
