@@ -50,6 +50,12 @@ typedef RISCV_GET_XLEN_FN((*riscvGetXlenFn));
 typedef RISCV_GET_REG_NAME_FN((*riscvGetRegNameFn));
 
 //
+// Enable or disable transaction mode
+//
+#define RISCV_SET_TMODE_FN(_NAME) void _NAME(riscvP riscv, Bool enable)
+typedef RISCV_SET_TMODE_FN((*riscvSetTModeFn));
+
+//
 // Take Illegal Instruction exception
 //
 #define RISCV_ILLEGAL_INSTRUCTION_FN(_NAME) void _NAME(riscvP riscv)
@@ -143,6 +149,36 @@ typedef RISCV_RESET_NOTIFIER_FN((*riscvResetNotifierFn));
 typedef RISCV_FIRST_EXCEPTION_FN((*riscvFirstExceptionFn));
 
 //
+// Notifier called on a model context switch. 'state' describes the new state.
+//
+#define RISCV_IASSWITCH_FN(_NAME) void _NAME(riscvP riscv, vmiIASRunState state)
+typedef RISCV_IASSWITCH_FN((*riscvIASSwitchFn));
+
+//
+// Implement a load that is part of a transaction of the given size in bytes
+// from the given virtual address, writing the loaded value to the buffer
+//
+#define RISCV_TLOAD_FN(_NAME) void _NAME( \
+    riscvP riscv,       \
+    void  *buffer,      \
+    Addr   VA,          \
+    Uns32  bytes        \
+)
+typedef RISCV_TLOAD_FN((*riscvTLoadFn));
+
+//
+// Implement a store that is part of a transaction of the given size in bytes
+// to the given virtual address, taking the value from the buffer
+//
+#define RISCV_TSTORE_FN(_NAME) void _NAME( \
+    riscvP      riscv,  \
+    const void *buffer, \
+    Addr        VA,     \
+    Uns32       bytes   \
+)
+typedef RISCV_TSTORE_FN((*riscvTStoreFn));
+
+//
 // Container structure for all model callbacks
 //
 typedef struct riscvModelCBS {
@@ -156,6 +192,7 @@ typedef struct riscvModelCBS {
     riscvGetXlenFn            getXlenArch;
     riscvGetRegNameFn         getXRegName;
     riscvGetRegNameFn         getFRegName;
+    riscvSetTModeFn           setTMode;
 
     // from riscvExceptions.h
     riscvIllegalInstructionFn illegalInstruction;
@@ -187,6 +224,11 @@ typedef struct riscvModelCBS {
     // code generation actions
     riscvDerivedMorphFn       preMorph;
     riscvDerivedMorphFn       postMorph;
+
+    // transaction support actions
+    riscvIASSwitchFn          switchCB;
+    riscvTLoadFn              tLoad;
+    riscvTStoreFn             tStore;
 
 } riscvModelCB;
 

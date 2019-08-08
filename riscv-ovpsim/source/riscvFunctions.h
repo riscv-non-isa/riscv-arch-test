@@ -66,6 +66,8 @@ VMI_IFETCH_FN(riscvIFetchExcept);
 VMI_ARITH_RESULT_FN(riscvArithResult);
 
 // parameter support functions
+VMI_PROC_PARAM_SPECS_FN(riscvGetPreParamSpec);
+VMI_SET_PARAM_VALUES_FN(riscvGetPreParamValues);
 VMI_PROC_PARAM_SPECS_FN(riscvGetParamSpec);
 VMI_PROC_PARAM_TABLE_SIZE_FN(riscvParamValueSize);
 

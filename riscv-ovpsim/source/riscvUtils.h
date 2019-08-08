@@ -104,6 +104,11 @@ char riscvGetFeatureChar(riscvArchitecture feature);
 const char *riscvGetFeatureName(riscvArchitecture feature);
 
 //
+// Parse the extensions string
+//
+riscvArchitecture riscvParseExtensions(const char *extensions);
+
+//
 // Abort any active exclusive access
 //
 void riscvAbortExclusiveAccess(riscvP riscv);
@@ -112,3 +117,9 @@ void riscvAbortExclusiveAccess(riscvP riscv);
 // Install or remove the exclusive access monitor callback if required
 //
 void riscvUpdateExclusiveAccessCallback(riscvP riscv, Bool install);
+
+//
+// Enable or disable transaction mode
+//
+void riscvSetTMode(riscvP riscv, Bool enable);
+

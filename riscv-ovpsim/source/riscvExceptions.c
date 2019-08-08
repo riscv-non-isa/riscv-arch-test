@@ -210,7 +210,7 @@ static Bool handleFF(riscvP riscv) {
             riscvSetVL(riscv, RD_CSR(riscv, vstart));
 
             // set matching polymorphic key and clamped vl
-            riscvRefreshPMKey(riscv);
+            riscvRefreshVectorPMKey(riscv);
         }
     }
 

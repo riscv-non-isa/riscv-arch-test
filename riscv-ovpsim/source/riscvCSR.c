@@ -163,12 +163,29 @@ inline static vmiFPRC mapFRMToRC(Uns8 frm) {
 //
 static vmiFPRC updateCurrentRMValid(riscvP riscv) {
 
-    vmiFPRC rc = mapFRMToRC(RD_CSR_FIELD(riscv, fcsr, frm));
+    vmiFPRC rc         = mapFRMToRC(RD_CSR_FIELD(riscv, fcsr, frm));
+    Bool    oldInvalid = (riscv->currentArch & ISA_RM_INVALID);
+    Bool    newInvalid = (rc==-1);
 
-    if(rc==-1) {
-        riscv->pmKey &= ~RM_VALID_MASK;
-    } else {
-        riscv->pmKey |= RM_VALID_MASK;
+    if(oldInvalid != newInvalid) {
+
+        vmiProcessorP processor = (vmiProcessorP)riscv;
+
+        // enable rounding mode valid state check if required
+        if(!riscv->rmCheckValid) {
+            riscv->rmCheckValid = True;
+            vmirtFlushAllDicts(processor);
+        }
+
+        // update state to reflect invalid RM change
+        if(newInvalid) {
+            riscv->currentArch |= ISA_RM_INVALID;
+        } else {
+            riscv->currentArch &= ~ISA_RM_INVALID;
+        }
+
+        // update block mask to reflect invalid RM change
+        vmirtSetBlockMask(processor, riscv->currentArch);
     }
 
     return rc;
@@ -1293,9 +1310,9 @@ static RISCV_CSR_WRITEFN(vxrmW) {
 }
 
 //
-// Refresh the polymorphic block key
+// Refresh the vector polymorphic block key
 //
-void riscvRefreshPMKey(riscvP riscv) {
+void riscvRefreshVectorPMKey(riscvP riscv) {
 
     Uns32 vl       = RD_CSR(riscv, vl);
     Uns32 SEW      = 8<<RD_CSR_FIELD(riscv, vtype, vsew);
@@ -1319,11 +1336,8 @@ void riscvRefreshPMKey(riscvP riscv) {
         pmKey = VLCLASSMT_NONZERO | vtypeKey;
     }
 
-    // set initial polymorphic key
-    riscv->pmKey = pmKey;
-
-    // include rounding-mode-valid indication
-    updateCurrentRMValid(riscv);
+    // update polymorphic key
+    riscv->pmKey = (riscv->pmKey & ~PMK_VECTOR) | pmKey;
 }
 
 //
@@ -2522,16 +2536,19 @@ void riscvCSRInit(riscvP riscv, Uns32 index) {
 
     SET_CSR_MASK_V(riscv, fcsr, fcsrMask);
 
+    // set initial rounding-mode-valid state
+    updateCurrentRMValid(riscv);
+
     //--------------------------------------------------------------------------
-    // vstart mask and vector polymorphic key
+    // vstart mask and polymorphic key
     //--------------------------------------------------------------------------
 
     Uns32 vstartMask = (arch&ISA_V) ? cfg->VLEN-1 : 0;
 
     SET_CSR_MASK_V(riscv, vstart, vstartMask);
 
-    // set initial polymorphic key
-    riscvRefreshPMKey(riscv);
+    // set initial vector polymorphic key
+    riscvRefreshVectorPMKey(riscv);
 }
 
 //
@@ -3012,7 +3029,7 @@ void riscvCSRRestore(
             if(riscv->configInfo.arch & ISA_V) {
                 VMIRT_RESTORE_FIELD(cxt, riscv, csr.vl);
                 VMIRT_RESTORE_FIELD(cxt, riscv, csr.vtype);
-                riscvRefreshPMKey(riscv);
+                riscvRefreshVectorPMKey(riscv);
             }
 
             break;
