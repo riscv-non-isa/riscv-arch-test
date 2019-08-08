@@ -106,6 +106,8 @@ const vmiIASAttr modelAttrs = {
     // PARAMETER SUPPORT ROUTINES
     ////////////////////////////////////////////////////////////////////////
 
+    .preParamSpecsCB    = riscvGetPreParamSpec,
+    .preParamValuesCB   = riscvGetPreParamValues,
     .paramSpecsCB       = riscvGetParamSpec,
     .paramValueSizeCB   = riscvParamValueSize,
 

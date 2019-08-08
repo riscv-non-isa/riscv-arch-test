@@ -103,6 +103,29 @@
 #define EXTRA_INIT
 #define EXTRA_INIT_TIMER
 
+//
+// undefine some unusable CSR Accesses if no PRIV Mode present
+//
+#if defined(PRIV_MISA_S)
+#  if (PRIV_MISA_S==0)
+#    undef  INIT_SPTBR
+#    define INIT_SPTBR
+#    undef  INIT_PMP
+#    define INIT_PMP
+#    undef  DELEGATE_NO_TRAPS
+#    define DELEGATE_NO_TRAPS
+#    undef  RVTEST_ENABLE_SUPERVISOR
+#    define RVTEST_ENABLE_SUPERVISOR
+#  endif
+#endif
+#if defined(PRIV_MISA_U)
+#  if (PRIV_MISA_U==0)
+#  endif
+#endif
+#if defined(TRAPHANDLER)
+#include TRAPHANDLER
+#endif
+
 #define INTERRUPT_HANDLER j other_exception /* No interrupts should occur */
 
 #define RVTEST_CODE_BEGIN                                               \
@@ -191,7 +214,7 @@ end_testcode:                                                           \
 #define RVTEST_PASS                                                     \
         RVTEST_SYNC;                                                    \
         li TESTNUM, 1;                                                  \
-        SWSIG (0, TESTNUM);                                                   \
+        SWSIG (0, TESTNUM);                                             \
         ecall
 
 #define TESTNUM gp
@@ -200,7 +223,7 @@ end_testcode:                                                           \
 1:      beqz TESTNUM, 1b;                                               \
         sll TESTNUM, TESTNUM, 1;                                        \
         or TESTNUM, TESTNUM, 1;                                         \
-        SWSIG (0, TESTNUM);                                                   \
+        SWSIG (0, TESTNUM);                                             \
         ecall
 
 //-----------------------------------------------------------------------

@@ -19,6 +19,7 @@
 
 // standard header files
 #include <string.h>
+#include <stdio.h>
 
 // Imperas header files
 #include "hostapi/impAlloc.h"
@@ -34,6 +35,7 @@
 #include "riscvMessage.h"
 #include "riscvParameters.h"
 #include "riscvStructure.h"
+#include "riscvUtils.h"
 #include "riscvVariant.h"
 #include "riscvVMConstants.h"
 
@@ -46,12 +48,14 @@ typedef enum riscvParamVariantE {
     RVPV_ALL     = 0,           // present for all variants
 
                                 // PARAMETER IDENTIFIERS
+    RVPV_PRE     = (1<<0),      // identifies pre-parameter
     RVPV_VARIANT = (1<<1),      // identifies variant parameter
     RVPV_FP      = (1<<2),      // requires floating point unit
     RVPV_A       = (1<<3),      // requires atomic instructions
     RVPV_S       = (1<<4),      // requires Supervisor mode
     RVPV_N       = (1<<5),      // requires User mode interrupts
-    RVPV_MPCORE  = (1<<6),      // present for multicore variants
+    RVPV_V       = (1<<6),      // requires Vector extension
+    RVPV_MPCORE  = (1<<7),      // present for multicore variants
 
 } riscvParamVariant;
 
@@ -351,7 +355,7 @@ static RISCV_BOOL_PDEFAULT_CFG_FN(Zvediv);
 //
 // Table of formal parameter specifications
 //
-static riscvParameter formals[] = {
+static riscvParameter parameters[] = {
 
     // simulation controls
     {  RVPV_VARIANT, 0,                            VMI_ENUM_PARAM_SPEC  (riscvParamValues, variant,              0,                         "Selects variant (either a generic UISA or a specific model)")},
@@ -390,10 +394,10 @@ static riscvParameter formals[] = {
     {  RVPV_ALL,     0,                            VMI_ENDIAN_PARAM_SPEC(riscvParamValues, endian,                                          "Model endian")},
 
     // ISA configuration
-    {  RVPV_ALL,     default_misa_MXL,             VMI_UNS32_PARAM_SPEC (riscvParamValues, misa_MXL,             1, 1,          2,          "Override default value of misa.MXL")},
+    {  RVPV_PRE,     default_misa_MXL,             VMI_UNS32_PARAM_SPEC (riscvParamValues, misa_MXL,             1, 1,          2,          "Override default value of misa.MXL")},
     {  RVPV_ALL,     0,                            VMI_UNS32_PARAM_SPEC (riscvParamValues, misa_MXL_mask,        0, 0,          3,          "Override mask of writable bits in misa.MXL")},
-    {  RVPV_ALL,     default_misa_Extensions,      VMI_UNS32_PARAM_SPEC (riscvParamValues, misa_Extensions,      0, 0,          (1<<26)-1,  "Override default value of misa.Extensions")},
-    {  RVPV_ALL,     0,                            VMI_STRING_PARAM_SPEC(riscvParamValues, add_Extensions,       "",                        "Add extensions specified by letters to misa.Extensions (for example, specify \"VD\" to add V and D features)")},
+    {  RVPV_PRE,     default_misa_Extensions,      VMI_UNS32_PARAM_SPEC (riscvParamValues, misa_Extensions,      0, 0,          (1<<26)-1,  "Override default value of misa.Extensions")},
+    {  RVPV_PRE,     0,                            VMI_STRING_PARAM_SPEC(riscvParamValues, add_Extensions,       "",                        "Add extensions specified by letters to misa.Extensions (for example, specify \"VD\" to add V and D features)")},
     {  RVPV_ALL,     default_misa_Extensions_mask, VMI_UNS32_PARAM_SPEC (riscvParamValues, misa_Extensions_mask, 0, 0,          (1<<26)-1,  "Override mask of writable bits in misa.Extensions")},
     {  RVPV_ALL,     0,                            VMI_STRING_PARAM_SPEC(riscvParamValues, add_Extensions_mask,  "",                        "Add extensions specified by letters to mask of writable bits in misa.Extensions (for example, specify \"VD\" to add V and D features)")},
     {  RVPV_ALL,     default_mvendorid,            VMI_UNS64_PARAM_SPEC (riscvParamValues, mvendorid,            0, 0,          -1,         "Override mvendorid register")},
@@ -402,12 +406,12 @@ static riscvParameter formals[] = {
     {  RVPV_ALL,     default_mhartid,              VMI_UNS64_PARAM_SPEC (riscvParamValues, mhartid,              0, 0,          -1,         "Override mhartid register")},
     {  RVPV_ALL,     default_mtvec,                VMI_UNS64_PARAM_SPEC (riscvParamValues, mtvec,                0, 0,          -1,         "Override mtvec register")},
     {  RVPV_FP,      0,                            VMI_UNS32_PARAM_SPEC (riscvParamValues, mstatus_FS,           0, 0,          3,          "Override default value of mstatus.FS (initial state of floating point unit)")},
-    {  RVPV_ALL,     default_ELEN,                 VMI_UNS32_PARAM_SPEC (riscvParamValues, ELEN,                 0, ELEN_MIN,   ELEN_MAX,   "Override ELEN (vector extension)")},
-    {  RVPV_ALL,     default_SLEN,                 VMI_UNS32_PARAM_SPEC (riscvParamValues, SLEN,                 0, SLEN_MIN,   VLEN_MAX,   "Override SLEN (vector extension)")},
-    {  RVPV_ALL,     default_VLEN,                 VMI_UNS32_PARAM_SPEC (riscvParamValues, VLEN,                 0, SLEN_MIN,   VLEN_MAX,   "Override VLEN (vector extension)")},
-    {  RVPV_ALL,     default_Zvlsseg,              VMI_BOOL_PARAM_SPEC  (riscvParamValues, Zvlsseg,              False,                     "Specify that Zvlsseg is implemented (vector extension)")},
-    {  RVPV_ALL,     default_Zvamo,                VMI_BOOL_PARAM_SPEC  (riscvParamValues, Zvamo,                False,                     "Specify that Zvamo is implemented (vector extension)")},
-    {  RVPV_ALL,     default_Zvediv,               VMI_BOOL_PARAM_SPEC  (riscvParamValues, Zvediv,               False,                     "Specify that Zvediv is implemented (vector extension)")},
+    {  RVPV_V,       default_ELEN,                 VMI_UNS32_PARAM_SPEC (riscvParamValues, ELEN,                 0, ELEN_MIN,   ELEN_MAX,   "Override ELEN (vector extension)")},
+    {  RVPV_V,       default_SLEN,                 VMI_UNS32_PARAM_SPEC (riscvParamValues, SLEN,                 0, SLEN_MIN,   VLEN_MAX,   "Override SLEN (vector extension)")},
+    {  RVPV_V,       default_VLEN,                 VMI_UNS32_PARAM_SPEC (riscvParamValues, VLEN,                 0, SLEN_MIN,   VLEN_MAX,   "Override VLEN (vector extension)")},
+    {  RVPV_V,       default_Zvlsseg,              VMI_BOOL_PARAM_SPEC  (riscvParamValues, Zvlsseg,              False,                     "Specify that Zvlsseg is implemented (vector extension)")},
+    {  RVPV_V,       default_Zvamo,                VMI_BOOL_PARAM_SPEC  (riscvParamValues, Zvamo,                False,                     "Specify that Zvamo is implemented (vector extension)")},
+    {  RVPV_V,       default_Zvediv,               VMI_BOOL_PARAM_SPEC  (riscvParamValues, Zvediv,               False,                     "Specify that Zvediv is implemented (vector extension)")},
 
     // KEEP LAST
     {  RVPV_ALL,     0,                            VMI_END_PARAM}
@@ -428,13 +432,23 @@ inline static Bool selectConfig(riscvConfigCP cfg) {
 }
 
 //
+// Should this parameter be presented as a pre-parameter?
+//
+static Bool selectPreParameter(riscvParameterP param) {
+    return (
+        (param->variant & RVPV_VARIANT) ||
+        (param->variant & RVPV_PRE)
+    );
+}
+
+//
 // Should this parameter be presented as a public one for the selected variant?
 //
 static Bool selectParameter(riscvConfigCP cfg, riscvParameterP param) {
 
     if(cfg) {
 
-        Bool   isCluster = cfg->members;
+        Bool isCluster = cfg->members;
 
         // cluster exposes only variant parameter
         if(!(param->variant & RVPV_VARIANT) && isCluster) {
@@ -465,6 +479,12 @@ static Bool selectParameter(riscvConfigCP cfg, riscvParameterP param) {
             return False;
         }
 
+        // include parameters that are only required when Vector extension is
+        // implemented
+        if((param->variant & RVPV_V) && !(cfg->arch&ISA_V)) {
+            return False;
+        }
+
         // include parameters that are only required for multicore variants
         if((param->variant & RVPV_MPCORE) && !cfg->numHarts) {
             return False;
@@ -484,6 +504,25 @@ static Uns32 countVariants(riscvConfigCP cfg) {
     while(cfg->name) {
         i++;
         cfg++;
+    }
+
+    return i;
+}
+
+//
+// Count the number of visible pre-parameters
+//
+static Uns32 countPreParameters(riscvParameterP param) {
+
+    Uns32 i = 0;
+
+    while(param->parameter.name) {
+
+        if(selectPreParameter(param)) {
+            i++;
+        }
+
+        param++;
     }
 
     return i;
@@ -531,9 +570,10 @@ static riscvConfigCP getSelectedConfig(riscvConfigCP list, const char *variant) 
 // Create configuration list applicable to the indicated variant, or a superset
 // configuration list of no variant is specified
 //
-static vmiEnumParameterP createVariantList(riscvP riscv, riscvConfigCP cfg) {
+static vmiEnumParameterP createVariantList(riscvP riscv) {
 
     riscvConfigCP     cfgList = riscvGetConfigList(riscv);
+    riscvConfigCP     cfg;
     vmiEnumParameterP result;
     vmiEnumParameterP prm;
     Uns32             i;
@@ -561,6 +601,46 @@ static vmiEnumParameterP createVariantList(riscvP riscv, riscvConfigCP cfg) {
 }
 
 //
+// Create pre-parameter list
+//
+static vmiParameterP createPreParameterList(riscvP riscv, riscvConfigCP first) {
+
+    riscvParameterP src = parameters;
+    vmiParameterP   dst;
+    vmiParameterP   result;
+    Uns32           i;
+
+    // count the number of entries in the parameter list
+    Uns32 entries = countPreParameters(src);
+
+    // allocate the pre-parameter list, including NULL terminator
+    result = STYPE_CALLOC_N(vmiParameter, entries+1);
+
+    for(i=0, dst=result; src->parameter.name; i++, src++) {
+
+        if(selectPreParameter(src)) {
+
+            *dst = src->parameter;
+
+            // fill variant list
+            if(src->variant & RVPV_VARIANT) {
+                dst->u.enumParam.legalValues = riscv->variantList;
+            }
+
+            // override default if required
+            if(src->defaultCB) {
+                src->defaultCB(first, dst);
+            }
+
+            dst++;
+        }
+    }
+
+    // return resulting list
+    return result;
+}
+
+//
 // Create parameter list applicable to the indicated variant
 //
 static vmiParameterP createParameterList(
@@ -568,7 +648,7 @@ static vmiParameterP createParameterList(
     riscvConfigCP first,
     riscvConfigCP cfg
 ) {
-    riscvParameterP src = formals;
+    riscvParameterP src = parameters;
     vmiParameterP   dst;
     vmiParameterP   result;
     Uns32           i;
@@ -579,7 +659,6 @@ static vmiParameterP createParameterList(
     // allocate the parameter list, including NULL terminator
     result = STYPE_CALLOC_N(vmiParameter, entries+1);
 
-    // fill visible entries in the variant list
     for(i=0, dst=result; src->parameter.name; i++, src++) {
 
         if(selectParameter(cfg, src)) {
@@ -628,14 +707,86 @@ static const char *refineVariant(riscvP riscv, const char *variant) {
 }
 
 //
-// Function to iterate the parameter specifications
+// Function to iterate the pre-parameter specifications
 //
-VMI_PROC_PARAM_SPECS_FN(riscvGetParamSpec) {
+VMI_PROC_PARAM_SPECS_FN(riscvGetPreParamSpec) {
 
-    riscvP        riscv = (riscvP)processor;
-    vmiParameterP this  = prev ? prev+1 : riscv->parameters;
+    riscvP riscv  = (riscvP)processor;
+    riscvP parent = riscv ? getParent(riscv) : 0;
 
-    return this && this->name ? this : NULL;
+    if(parent && !riscvIsCluster(parent)) {
+
+        // allow parameterization of multiclusters and root level objects only
+        return 0;
+
+    } else if(!prev) {
+
+        riscvConfigCP cfgList = riscvGetConfigList(riscv);
+
+        // fill variants and create pre-parameter list
+        riscv->variantList = createVariantList(riscv);
+        riscv->parameters  = createPreParameterList(riscv, cfgList);
+
+        // return first pre-parameter
+        return riscv->parameters;
+
+    } else {
+
+        // return next pre-parameter
+        vmiParameterP this = prev+1;
+        return this && this->name ? this : NULL;
+    }
+}
+
+//
+// Function to apply pre-parameter values
+//
+VMI_SET_PARAM_VALUES_FN(riscvGetPreParamValues) {
+
+    riscvP riscv  = (riscvP)processor;
+    riscvP parent = riscv ? getParent(riscv) : 0;
+
+    if(parent && !riscvIsCluster(parent)) {
+
+        // no action
+
+    } else {
+
+        // get raw variant
+        riscvConfigCP     cfgList = riscvGetConfigList(riscv);
+        riscvParamValuesP params  = (riscvParamValuesP)parameterValues;
+        riscvConfigCP     match   = cfgList + params->variant;
+
+        // delete pre-parameter definitions
+        STYPE_FREE(riscv->parameters);
+
+        // refine variant in cluster if required
+        const char *variant = refineVariant(riscv, match->name);
+        riscv->configInfo = *getSelectedConfig(cfgList, variant);
+
+        // apply misa_Extensions override if required
+        if(SETBIT(params->misa_Extensions)) {
+            riscvArchitecture keep = riscv->configInfo.arch & (-1 << XLEN_SHIFT);
+            riscv->configInfo.arch  = params->misa_Extensions | keep;
+        }
+
+        // apply add_Extensions override if required
+        const char       *add_Extensions = params->add_Extensions;
+        riscvArchitecture addArch        = riscvParseExtensions(add_Extensions);
+        riscv->configInfo.arch |= addArch;
+
+        // modify variant to show added extensions if required
+        if(addArch) {
+            char tmp[strlen(variant)+strlen(add_Extensions)+2];
+            sprintf(tmp, "%s+%s", variant, add_Extensions);
+            vmirtSetProcessorVariant(processor, tmp);
+        }
+
+        // create full parameter list
+        riscv->parameters = createParameterList(
+            riscv, cfgList, &riscv->configInfo
+        );
+    }
 }
 
 //
@@ -643,7 +794,7 @@ VMI_PROC_PARAM_SPECS_FN(riscvGetParamSpec) {
 //
 VMI_PROC_PARAM_TABLE_SIZE_FN(riscvParamValueSize) {
 
-    riscvP riscv    = (riscvP)processor;
+    riscvP riscv  = (riscvP)processor;
     riscvP parent = riscv ? getParent(riscv) : 0;
 
     if(parent && !riscvIsCluster(parent)) {
@@ -653,18 +804,20 @@ VMI_PROC_PARAM_TABLE_SIZE_FN(riscvParamValueSize) {
 
     } else {
 
-        // refine variant in cluster if required
-        variant = refineVariant(riscv, variant);
-
-        // create parameter definition list
-        riscvConfigCP cfgList = riscvGetConfigList(riscv);
-        riscvConfigCP cfg     = getSelectedConfig(cfgList, variant);
-
-        riscv->variantList = createVariantList(riscv, cfg);
-        riscv->parameters  = createParameterList(riscv, cfgList, cfg);
-
+        // return structure size
         return sizeof(riscvParamValues);
     }
+}
+
+//
+// Function to iterate the parameter specifications
+//
+VMI_PROC_PARAM_SPECS_FN(riscvGetParamSpec) {
+
+    riscvP        riscv = (riscvP)processor;
+    vmiParameterP this  = prev ? prev+1 : riscv->parameters;
+
+    return this && this->name ? this : NULL;
 }
 
 //
