@@ -1296,6 +1296,17 @@ static RISCV_CSR_WRITEFN(pmpaddrW) {
 ////////////////////////////////////////////////////////////////////////////////
 
 //
+// Return maximum vector length for the current vector type settings
+//
+static Uns32 getMaxVL(riscvP riscv) {
+
+    Uns32 SEW  = 8<<RD_CSR_FIELD(riscv, vtype, vsew);
+    Uns32 LMUL = 1<<RD_CSR_FIELD(riscv, vtype, vlmul);
+
+    return riscv->configInfo.VLEN * LMUL/SEW;
+}
+
+//
 // Write vxrm register
 //
 static RISCV_CSR_WRITEFN(vxrmW) {
@@ -1315,22 +1326,16 @@ static RISCV_CSR_WRITEFN(vxrmW) {
 void riscvRefreshVectorPMKey(riscvP riscv) {
 
     Uns32 vl       = RD_CSR(riscv, vl);
-    Uns32 SEW      = 8<<RD_CSR_FIELD(riscv, vtype, vsew);
-    Uns32 VLMUL    = 1<<RD_CSR_FIELD(riscv, vtype, vlmul);
-    Uns32 vlMax    = riscv->configInfo.VLEN*VLMUL/SEW;
     Uns32 vtypeKey = RD_CSR(riscv, vtype)<<2;
     Uns32 villKey  = RD_CSR_FIELD(riscv, vtype, vill)<<2;
     Uns32 pmKey;
-
-    // set current maximum vl for SEW/VLMUL combination
-    riscv->vlMax = (vl>vlMax) ? vlMax : vl;
 
     // compose key
     if(villKey) {
         pmKey = VLCLASSMT_UNKNOWN | villKey;
     } else if(!vl) {
         pmKey = VLCLASSMT_ZERO;
-    } else if(riscv->vlMax==vlMax) {
+    } else if(vl==getMaxVL(riscv)) {
         pmKey = VLCLASSMT_MAX | vtypeKey;
     } else {
         pmKey = VLCLASSMT_NONZERO | vtypeKey;
@@ -1355,10 +1360,9 @@ void riscvSetVType(riscvP riscv, Bool vill, Uns32 vsew, Uns32 vlmul) {
 //
 void riscvSetVL(riscvP riscv, Uns32 vl) {
 
-    // get maximum supported vl
-    Uns32 maxVL = riscv->configInfo.VLEN * (LMUL_MAX/SEW_MIN);
+    Uns32 maxVL = getMaxVL(riscv);
 
-    // clamp rs1 to maximum supported number of 1-byte elements
+    // clamp vl to maximum supported number of elements
     if(vl > maxVL) {
         vl = maxVL;
     }

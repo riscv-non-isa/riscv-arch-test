@@ -152,9 +152,10 @@ typedef enum riscvPrivVerE {
 // Supported Vector Architecture versions
 //
 typedef enum riscvVectVerE {
-    RVVV_20190605,                  // version 0.7.1-draft-20190605
+    RVVV_0_71,                      // version 0.7.1-draft-20190605
+    RVVV_MASTER,                    // master branch
     RVVV_LAST,                      // for sizing
-    RVVV_DEFAULT = RVVV_20190605,   // default version
+    RVVV_DEFAULT = RVVV_0_71,       // default version
 } riscvVectVer;
 
 // macro returning User Architecture version

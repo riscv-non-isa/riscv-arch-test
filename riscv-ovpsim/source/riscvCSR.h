@@ -1072,7 +1072,7 @@ CSR_REG_STRUCT_DECL_32(vxrm);
 // -----------------------------------------------------------------------------
 
 // define alias types
-typedef CSR_REG_TYPE(generic32) CSR_REG_TYPE(vl);
+typedef CSR_REG_TYPE(genericXLEN) CSR_REG_TYPE(vl);
 
 // define write masks
 #define WM32_vl     0x00000000

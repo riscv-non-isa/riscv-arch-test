@@ -12,7 +12,27 @@
   used in general arithmetic operations, as per RISC-V.
 - A bug was fixed that could cause incorrect behavior when PMP region mappings
   change.
-  
+- Some vector extension issues have been corrected:
+  - Behavior of vsetvl and vsetvli instructions when requested vector size
+    exceeds the implementation limits has been corrected.
+  - Two decodes for non-existent vector compare instructions have been removed.
+  - The constraint on legal LMUL for segmented load/store operations has been
+    changed from requiring LMUL=1 to requiring LMUL*NFIELDS<=8. This corresponds
+    to a specification change made on 2019-June-06.
+- The model has a new parameter vector_version which can be used to select
+  either the stable 0.71 Vector Extension (the default) or the unstable master
+  branch. The master branch currently has the following changes compared to the
+  stable 0.71 branch:
+  - vext.s.v and vmford.vv instructions have been removed;
+  - vmv.s.x instruction has been added;
+  - encodings for vpopc.m, vfirst.m, vmsbf.m, vmsif.m, vmsof.m, viota.m and
+    vid.v instructions have changed;
+  - overlap constraints for slideup and slidedown instructions have been relaxed
+    to allow overlap of destination and mask when SEW=1.
+  - 64-bit vector AMO operations have been replaced with SEW-width vector AMO
+    operations.
+  This set of changes will increase as the master specification evolves.
+
 ###############################################################################
 ## Date 2019-June-28                                                         ##
 ## Release 20190628.0                                                        ##
