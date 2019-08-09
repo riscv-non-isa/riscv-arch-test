@@ -1,13 +1,10 @@
 2019-08-08 Lee Moore <moore@imperas.com>
     * Added support for lowRISC/ibex RTL as a target using Verilator.
-<<<<<<< HEAD
       In conjunction with Philipp Wagner of lowRISC phw@lowrisc.org
 
 2019-07-18 Paul Donahue <pdonahue@ventanamicro.com>
     * Fix typos/grammar and use correct architectural terms.
-=======
       In conjunction with Philipp Wagner of lowRISC imphil@philipp-wagner.com
->>>>>>> branch 'master' of https://github.com/eroom1966/riscv-compliance.git
 
 2019-06-21 Ben Selfridge <benselfridge@galois.com>
     * Added support for using the the GRIFT simulator as a target.
