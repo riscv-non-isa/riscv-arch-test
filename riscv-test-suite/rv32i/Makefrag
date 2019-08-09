@@ -84,7 +84,9 @@ rv32i_sc_tests = \
     I-EBREAK-01 \
     I-IO \
 
-
+rv32i_sc_tests = \
+    I-MISALIGN_JMP-01
+    
 rv32i_tests = $(addsuffix .elf, $(rv32i_sc_tests))
 
 target32_tests += $(rv32i_tests)

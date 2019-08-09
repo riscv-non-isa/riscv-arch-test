@@ -1,0 +1,54 @@
+ifeq ($(OS),Windows_NT)
+    ARCH := Windows64
+else
+    ARCH := Linux64
+endif
+
+IBEX        = $(ROOTDIR)/riscv-target/ibex/device/rv32imc
+LDSCRIPT    = $(IBEX)/link.ld
+TRAPHANDLER = $(IBEX)/handler.S
+DEFINES     = -DPRIV_MISA_S=0 -DPRIV_MISA_U=0 -DTRAPHANDLER="\"$(TRAPHANDLER)\""
+
+CONTROLFILE = $(ROOTDIR)/riscv-target/golden/device/ibex_rv32imc/isa_platform.ic
+
+TARGET_SIM  = $(ROOTDIR)/riscv-ovpsim/bin/$(ARCH)/riscvOVPsim.exe
+ifeq ($(shell command -v $(TARGET_SIM) 2> /dev/null),)
+    $(error Target simulator executable '$(TARGET_SIM)` not found)
+endif
+
+RUN_TARGET= \
+    $(TARGET_SIM) \
+        --controlfile $(CONTROLFILE) \
+        --trace \
+        --program $(work_dir_isa)/$< \
+        --signaturedump --customcontrol \
+        --override riscvOVPsim/cpu/sigdump/SignatureFile=$(work_dir_isa)/$(*).signature.output \
+        --override riscvOVPsim/cpu/sigdump/ResultReg=3 \
+        --override riscvOVPsim/cpu/simulateexceptions=T \
+        --override riscvOVPsim/cpu/defaultsemihost=F \
+        --logfile $(work_dir_isa)/$@; \
+                cat $(work_dir_isa)/$(*).signature.output | sed 's/.\{8\}/& /g' | \
+                awk '{print $$4 " " $$3 " " $$2 " " $$1}' | sed 's/ /\n/g' > temp; \
+                mv temp $(work_dir_isa)/$(*).signature.output;
+
+RISCV_PREFIX   ?= riscv32-unknown-elf-
+RISCV_GCC      ?= $(RISCV_PREFIX)gcc
+RISCV_OBJDUMP  ?= $(RISCV_PREFIX)objdump
+RISCV_OBJCOPY  ?= $(RISCV_PREFIX)objcopy
+RISCV_NM       ?= $(RISCV_PREFIX)nm
+RISCV_READELF  ?= $(RISCV_PREFIX)readelf
+RISCV_GCC_OPTS ?= -static -mcmodel=medany -fvisibility=hidden -nostdlib -nostartfiles
+
+COMPILE_TARGET=\
+	$$(RISCV_GCC) $(2) $$(RISCV_GCC_OPTS) \
+		-I$(ROOTDIR)/riscv-test-env/ \
+		-I$(ROOTDIR)/riscv-test-env/p/ \
+		-I$(TARGETDIR)/$(RISCV_TARGET)/ \
+		$(DEFINES) -T$(LDSCRIPT) $$< \
+		-o $(work_dir_isa)/$$@; \
+    $$(RISCV_OBJDUMP) -D $(work_dir_isa)/$$@ > $(work_dir_isa)/$$@.objdump; \
+    $$(RISCV_READELF) -a $(work_dir_isa)/$$@ > $(work_dir_isa)/$$@.readelf; \
+    $$(RISCV_NM) $(work_dir_isa)/$$@ > $(work_dir_isa)/$$@.nm; \
+    $$(RISCV_OBJCOPY) -O binary $(work_dir_isa)/$$@ $(work_dir_isa)/$$@.bin; \
+    srec_cat $(work_dir_isa)/$$@.bin -binary -offset 0x0000 -byte-swap 4 -o $(work_dir_isa)/$$@.vmem -vmem    
+    

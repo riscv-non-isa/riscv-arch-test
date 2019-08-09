@@ -728,7 +728,7 @@ typedef CSR_REG_TYPE(counteren) CSR_REG_TYPE(mcountinhibit);
 // mhpmevent    (id 0x323-0x33F)
 // -----------------------------------------------------------------------------
 
-typedef CSR_REG_TYPE(generic32) CSR_REG_TYPE(mhpmevent);
+typedef CSR_REG_TYPE(genericXLEN) CSR_REG_TYPE(mhpmevent);
 
 // -----------------------------------------------------------------------------
 // uscratch     (id 0x040)
@@ -1031,7 +1031,7 @@ typedef CSR_REG_TYPE(genericXLEN) CSR_REG_TYPE(dscratch);
 // -----------------------------------------------------------------------------
 
 // define alias types
-typedef CSR_REG_TYPE(generic32) CSR_REG_TYPE(vstart);
+typedef CSR_REG_TYPE(genericXLEN) CSR_REG_TYPE(vstart);
 
 // -----------------------------------------------------------------------------
 // vxsat        (id 0x009)

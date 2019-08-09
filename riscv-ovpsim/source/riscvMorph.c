@@ -4240,7 +4240,7 @@ static vmiLabelP handleNonZeroVStart(riscvMorphStateP state, Bool iterVStart) {
             vmimtCompareRRJumpLabel(32, vmi_COND_L, vstart, CSR_REG_MT(vl), doOp);
 
             // clamp vstart to vl if it is used as an iteration index
-            vmimtMoveRR(32, vstart, CSR_REG_MT(vl));
+            vmimtMoveExtendRR(64, vstart, 32, CSR_REG_MT(vl), False);
 
             // go to zero extension operation
             vmimtUncondJumpLabel(skip);
@@ -4894,6 +4894,14 @@ static vmiCallFn handleVSetVLArg1(Uns32 bits, vmiReg rs1) {
 }
 
 //
+// Indicate vtype and vl are written by this instruction
+//
+static void emitUpdateVTypeVL(void) {
+    vmimtRegWriteImpl("vtype");
+    vmimtRegWriteImpl("vl");
+}
+
+//
 // Implement VSetVL <rd>, <rs1>, <rs2> operation
 //
 static RISCV_MORPH_FN(emitVSetVLRRR) {
@@ -4906,6 +4914,9 @@ static RISCV_MORPH_FN(emitVSetVLRRR) {
     vmiReg       rs1   = getVMIReg(riscv, rs1A);
     vmiReg       rs2   = getVMIReg(riscv, rs2A);
     Uns32        bits  = 32;
+
+    // this instruction updates vtype and vl
+    emitUpdateVTypeVL();
 
     // call function (may cause exception for invalid SEW)
     vmimtArgProcessor();
@@ -4936,6 +4947,9 @@ static RISCV_MORPH_FN(emitVSetVLRRC) {
     Uns8         vsew  = state->info.vsew;
     Uns8         vlmul = state->info.vlmul;
     riscvSEWMt   SEW   = riscvValidSEW(riscv, vsew);
+
+    // this instruction updates vtype and vl
+    emitUpdateVTypeVL();
 
     if(!SEW) {
 
@@ -7388,6 +7402,12 @@ VMI_START_END_BLOCK_FN(riscvStartBlock) {
     thisState->VZeroTopMt[VTZ_SINGLE] = 0;
     thisState->VZeroTopMt[VTZ_GROUP]  = 0;
     thisState->VStartZeroMt           = False;
+
+    // inherit any previously-active SEW and VLMUL
+    if(thisState->prevState) {
+        thisState->SEWMt   = thisState->prevState->SEWMt;
+        thisState->VLMULMt = thisState->prevState->VLMULMt;
+    }
 }
 
 //

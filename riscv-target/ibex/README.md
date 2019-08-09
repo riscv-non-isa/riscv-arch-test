@@ -16,3 +16,13 @@ make clean
 make RISCV_ISA=rv32i
 make RISCV_ISA=rv32im
 make RISCV_ISA=rv32imc
+
+
+
+#
+# compare with golden
+#
+export RISCV_PREFIX=riscv-none-embed-
+export RISCV_DEVICE=ibex_rv32imc
+export RISCV_TARGET=golden
+make RISCV_ISA=rv32i

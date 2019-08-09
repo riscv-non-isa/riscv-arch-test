@@ -1,0 +1,28 @@
+# riscOVPsim configuration file converted from YAML for device: Ibex_RV32IMC_checked
+# device: Ibex_RV32IMC
+# vendor: lowRISC
+--override riscvOVPsim/cpu/add_Extensions=CM
+--variant RVB32I
+# --override riscvOVPsim/cpu/misa_undefined=F
+--override riscvOVPsim/cpu/misa_MXL=1
+--override riscvOVPsim/cpu/misa_MXL_mask=0x0 # 0
+--override riscvOVPsim/cpu/misa_Extensions_mask=0x0 # 0
+--override riscvOVPsim/cpu/misa_Extensions=0x1104 # 4356
+--override riscvOVPsim/cpu/unaligned=T # hw_data_misaligned_support
+--override riscvOVPsim/cpu/mtvec_mask=0x0 # 0
+--override riscvOVPsim/cpu/mtvec_is_ro=T
+--override riscvOVPsim/cpu/mtvec=0x0
+--override riscvOVPsim/cpu/user_version=2.3
+--override riscvOVPsim/cpu/priv_version=1.11
+--override riscvOVPsim/cpu/mvendorid=0
+--override riscvOVPsim/cpu/marchid=0
+--override riscvOVPsim/cpu/mimpid=0
+--override riscvOVPsim/cpu/mhartid=0
+--override riscvOVPsim/cpu/cycle_undefined=F
+--override riscvOVPsim/cpu/instret_undefined=F
+# xlen not currently used as = 32
+--override riscvOVPsim/cpu/time_undefined=T
+--override riscvOVPsim/cpu/nmi_address=0xfc # 2147483900
+--override riscvOVPsim/cpu/reset_address=0x0 # 2147483776
+# --override riscvOVPsim/cpu/tvec_align=0
+--override riscvOVPsim/cpu/simulateexceptions=T
