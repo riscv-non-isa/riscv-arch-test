@@ -119,6 +119,7 @@ typedef enum riscvVShapeE {
     RVVW_111_IP,    // SEW
 
                     // SLIDING ARGUMENTS
+    RVVW_111_GR,    // SEW, VRGATHER instructions
     RVVW_111_UP,    // SEW, VSLIDEUP instructions
     RVVW_111_DN,    // SEW, VSLIDEDOWN instructions
     RVVW_111_CMP,   // SEW, VCOMPRESS instruction
@@ -757,8 +758,20 @@ inline static Bool inTransactionMode(riscvMorphStateP state) {
         emitCheckPolymorphic();
     }
 
-    // is transaction mode enabled?
-    return (riscv->pmKey & PMK_TRANSACTION);
+    if ((riscv->pmKey & PMK_TRANSACTION)) {
+
+        // Assume any instruction that checks for transaction mode could
+        // result in a transaction abort that exits transaction mode, which
+        // changes the PMK_TRANSACTION polymorphic key, which requires an
+        // end block be issued. So emit it here.
+        vmimtEndBlock();
+        return True;
+
+    } else {
+
+        // Not in transaction mode
+        return False;
+    }
 }
 
 //
@@ -3415,14 +3428,17 @@ static riscvVLClassMt getVLClassMt(riscvMorphStateP state) {
 //
 typedef enum overlapTypeE {
 
-    OT_NA = 0x0,    // no special constraints
-    OT_S  = 0x1,    // destination must not overlap vector source
-    OT_M  = 0x2,    // destination must not overlap mask source
+    OT_NA  = 0x0,    // no special constraints
+    OT_S   = 0x1,    // destination must not overlap vector source
+    OT_M   = 0x2,    // destination must not overlap mask source
+    OT_M71 = 0x4,    // destination must not overlap mask source (0.71 only)
 
-    OT___ = OT_NA,
-    OT_S_ = OT_S,
-    OT__M = OT_M,
-    OT_SM = OT_S|OT_M,
+    OT___   = OT_NA,
+    OT_S_   = OT_S,
+    OT__M   = OT_M,
+    OT__M71 = OT_M71,
+    OT_SM   = OT_S|OT_M,
+    OT_SM71 = OT_S|OT_M71,
 
 } overlapType;
 
@@ -3447,37 +3463,38 @@ typedef struct shapeInfoS {
 // Information for each vector operation shape
 //
 static const shapeInfo shapeDetails[RVVW_LAST] = {
-    [RVVW_111_II]  = {{1,1,1}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, 0, 0, 0, 0, 0, OT___},
-    [RVVW_EXT_II]  = {{1,1,1}, {0,0,0}, {0,0,0}, {0,1,0}, {0,0,0}, 0, 0, 0, 0, 0, OT___},
-    [RVVW_111_PI]  = {{1,1,1}, {0,0,0}, {1,0,0}, {0,0,0}, {0,0,0}, 0, 0, 0, 0, 0, OT___},
-    [RVVW_111_SI]  = {{1,1,1}, {0,0,0}, {0,0,0}, {1,0,1}, {0,0,0}, 0, 0, 0, 0, 0, OT___},
-    [RVVW_CIN_II]  = {{1,1,1}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, 0, 0, 0, 0, 1, OT___},
-    [RVVW_CIN_PI]  = {{1,1,1}, {0,0,0}, {1,0,0}, {0,0,0}, {0,0,0}, 0, 0, 0, 0, 1, OT___},
-    [RVVW_212_SI]  = {{2,1,2}, {0,0,0}, {0,0,0}, {1,0,1}, {0,0,0}, 0, 0, 0, 0, 0, OT___},
-    [RVVW_121_II]  = {{1,2,1}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, 0, 0, 1, 0, 0, OT___},
-    [RVVW_121_IIS] = {{1,2,1}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, 0, 0, 1, 1, 0, OT___},
-    [RVVW_211_IIQ] = {{2,1,1}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, 0, 1, 0, 0, 0, OT___},
-    [RVVW_211_II]  = {{2,1,1}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, 0, 0, 0, 0, 0, OT___},
-    [RVVW_221_II]  = {{2,2,1}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, 0, 0, 0, 0, 0, OT___},
-    [RVVW_111_FF]  = {{1,1,1}, {1,1,1}, {0,0,0}, {0,0,0}, {0,0,0}, 0, 0, 0, 0, 0, OT___},
-    [RVVW_111_PF]  = {{1,1,1}, {1,1,1}, {1,0,0}, {0,0,0}, {0,0,0}, 0, 0, 0, 0, 0, OT___},
-    [RVVW_111_SF]  = {{1,1,1}, {1,1,1}, {0,0,0}, {1,0,1}, {0,0,0}, 0, 0, 0, 0, 0, OT___},
-    [RVVW_212_SF]  = {{2,1,2}, {1,1,1}, {0,0,0}, {1,0,1}, {0,0,0}, 0, 0, 0, 0, 0, OT___},
-    [RVVW_121_FFQ] = {{1,2,1}, {1,1,1}, {0,0,0}, {0,0,0}, {0,0,0}, 0, 1, 0, 0, 0, OT___},
-    [RVVW_211_FFQ] = {{2,1,1}, {1,1,1}, {0,0,0}, {0,0,0}, {0,0,0}, 0, 1, 0, 0, 0, OT___},
-    [RVVW_211_FF]  = {{2,1,1}, {1,1,1}, {0,0,0}, {0,0,0}, {0,0,0}, 0, 0, 0, 0, 0, OT___},
-    [RVVW_221_FF]  = {{2,2,1}, {1,1,1}, {0,0,0}, {0,0,0}, {0,0,0}, 0, 0, 0, 0, 0, OT___},
-    [RVVW_111_FI]  = {{1,1,1}, {1,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, 0, 0, 0, 0, 0, OT___},
-    [RVVW_111_IF]  = {{1,1,1}, {0,1,1}, {0,0,0}, {0,0,0}, {0,0,0}, 0, 0, 0, 0, 0, OT___},
-    [RVVW_211_FIQ] = {{2,1,1}, {1,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, 0, 1, 0, 0, 0, OT___},
-    [RVVW_211_IFQ] = {{2,1,1}, {0,1,1}, {0,0,0}, {0,0,0}, {0,0,0}, 0, 1, 0, 0, 0, OT___},
-    [RVVW_121_FIQ] = {{1,2,1}, {1,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, 0, 1, 0, 0, 0, OT___},
-    [RVVW_121_IFQ] = {{1,2,1}, {0,1,1}, {0,0,0}, {0,0,0}, {0,0,0}, 0, 1, 0, 0, 0, OT___},
-    [RVVW_111_PP]  = {{1,1,1}, {0,0,0}, {1,1,1}, {0,0,0}, {0,0,0}, 0, 0, 0, 0, 0, OT___},
-    [RVVW_111_IP]  = {{1,1,1}, {0,0,0}, {0,1,1}, {0,0,0}, {0,0,0}, 0, 0, 0, 0, 0, OT_SM},
-    [RVVW_111_UP]  = {{1,1,1}, {0,0,0}, {0,0,0}, {0,0,0}, {0,1,0}, 0, 0, 0, 0, 0, OT_SM},
-    [RVVW_111_DN]  = {{1,1,1}, {0,0,0}, {0,0,0}, {0,0,0}, {0,1,0}, 0, 0, 0, 0, 0, OT__M},
-    [RVVW_111_CMP] = {{1,1,1}, {0,0,0}, {0,0,0}, {0,0,0}, {1,0,0}, 0, 0, 0, 0, 0, OT_SM},
+    [RVVW_111_II]  = {{1,1,1}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, 0, 0, 0, 0, 0, OT___  },
+    [RVVW_EXT_II]  = {{1,1,1}, {0,0,0}, {0,0,0}, {0,1,0}, {0,0,0}, 0, 0, 0, 0, 0, OT___  },
+    [RVVW_111_PI]  = {{1,1,1}, {0,0,0}, {1,0,0}, {0,0,0}, {0,0,0}, 0, 0, 0, 0, 0, OT___  },
+    [RVVW_111_SI]  = {{1,1,1}, {0,0,0}, {0,0,0}, {1,0,1}, {0,0,0}, 0, 0, 0, 0, 0, OT___  },
+    [RVVW_CIN_II]  = {{1,1,1}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, 0, 0, 0, 0, 1, OT___  },
+    [RVVW_CIN_PI]  = {{1,1,1}, {0,0,0}, {1,0,0}, {0,0,0}, {0,0,0}, 0, 0, 0, 0, 1, OT___  },
+    [RVVW_212_SI]  = {{2,1,2}, {0,0,0}, {0,0,0}, {1,0,1}, {0,0,0}, 0, 0, 0, 0, 0, OT___  },
+    [RVVW_121_II]  = {{1,2,1}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, 0, 0, 1, 0, 0, OT___  },
+    [RVVW_121_IIS] = {{1,2,1}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, 0, 0, 1, 1, 0, OT___  },
+    [RVVW_211_IIQ] = {{2,1,1}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, 0, 1, 0, 0, 0, OT___  },
+    [RVVW_211_II]  = {{2,1,1}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, 0, 0, 0, 0, 0, OT___  },
+    [RVVW_221_II]  = {{2,2,1}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, 0, 0, 0, 0, 0, OT___  },
+    [RVVW_111_FF]  = {{1,1,1}, {1,1,1}, {0,0,0}, {0,0,0}, {0,0,0}, 0, 0, 0, 0, 0, OT___  },
+    [RVVW_111_PF]  = {{1,1,1}, {1,1,1}, {1,0,0}, {0,0,0}, {0,0,0}, 0, 0, 0, 0, 0, OT___  },
+    [RVVW_111_SF]  = {{1,1,1}, {1,1,1}, {0,0,0}, {1,0,1}, {0,0,0}, 0, 0, 0, 0, 0, OT___  },
+    [RVVW_212_SF]  = {{2,1,2}, {1,1,1}, {0,0,0}, {1,0,1}, {0,0,0}, 0, 0, 0, 0, 0, OT___  },
+    [RVVW_121_FFQ] = {{1,2,1}, {1,1,1}, {0,0,0}, {0,0,0}, {0,0,0}, 0, 1, 0, 0, 0, OT___  },
+    [RVVW_211_FFQ] = {{2,1,1}, {1,1,1}, {0,0,0}, {0,0,0}, {0,0,0}, 0, 1, 0, 0, 0, OT___  },
+    [RVVW_211_FF]  = {{2,1,1}, {1,1,1}, {0,0,0}, {0,0,0}, {0,0,0}, 0, 0, 0, 0, 0, OT___  },
+    [RVVW_221_FF]  = {{2,2,1}, {1,1,1}, {0,0,0}, {0,0,0}, {0,0,0}, 0, 0, 0, 0, 0, OT___  },
+    [RVVW_111_FI]  = {{1,1,1}, {1,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, 0, 0, 0, 0, 0, OT___  },
+    [RVVW_111_IF]  = {{1,1,1}, {0,1,1}, {0,0,0}, {0,0,0}, {0,0,0}, 0, 0, 0, 0, 0, OT___  },
+    [RVVW_211_FIQ] = {{2,1,1}, {1,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, 0, 1, 0, 0, 0, OT___  },
+    [RVVW_211_IFQ] = {{2,1,1}, {0,1,1}, {0,0,0}, {0,0,0}, {0,0,0}, 0, 1, 0, 0, 0, OT___  },
+    [RVVW_121_FIQ] = {{1,2,1}, {1,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, 0, 1, 0, 0, 0, OT___  },
+    [RVVW_121_IFQ] = {{1,2,1}, {0,1,1}, {0,0,0}, {0,0,0}, {0,0,0}, 0, 1, 0, 0, 0, OT___  },
+    [RVVW_111_PP]  = {{1,1,1}, {0,0,0}, {1,1,1}, {0,0,0}, {0,0,0}, 0, 0, 0, 0, 0, OT___  },
+    [RVVW_111_IP]  = {{1,1,1}, {0,0,0}, {0,1,1}, {0,0,0}, {0,0,0}, 0, 0, 0, 0, 0, OT_SM  },
+    [RVVW_111_GR]  = {{1,1,1}, {0,0,0}, {0,0,0}, {0,0,0}, {0,1,0}, 0, 0, 0, 0, 0, OT_SM  },
+    [RVVW_111_UP]  = {{1,1,1}, {0,0,0}, {0,0,0}, {0,0,0}, {0,1,0}, 0, 0, 0, 0, 0, OT_SM71},
+    [RVVW_111_DN]  = {{1,1,1}, {0,0,0}, {0,0,0}, {0,0,0}, {0,1,0}, 0, 0, 0, 0, 0, OT__M71},
+    [RVVW_111_CMP] = {{1,1,1}, {0,0,0}, {0,0,0}, {0,0,0}, {1,0,0}, 0, 0, 0, 0, 0, OT_SM  },
 };
 
 //
@@ -3694,6 +3711,12 @@ static Bool validateNoOverlap(riscvMorphStateP state, iterDescP id) {
         if(part<VREG_NUM) {
             badMask |= (1<<part);
         }
+    }
+
+    // destination must not overlap the mask for some instructions in version
+    // 0.71 only (constraint relaxed from 0.72)
+    if((ot&OT_M71) && (riscv->configInfo.vect_version==RVVV_0_71)) {
+        ot |= OT_M;
     }
 
     // validate overlap with mask if required
@@ -4138,28 +4161,28 @@ static void getIndexedVRegisters(riscvMorphStateP state, iterDescP id) {
 // Return the index number of the indexed successor register of the given
 // vector register
 //
-static Uns32 getSegmentRegisterIndex(riscvRegDesc rv, Uns32 i) {
-    return (getRIndex(rv)+i)%VREG_NUM;
+static Uns32 getSegmentRegisterIndex(iterDescP id, riscvRegDesc rv, Uns32 i) {
+    return (getRIndex(rv) + (i*id->VLMUL)) % VREG_NUM;
 }
 
 //
 // Return the descriptor of the indexed successor register of the given
 // vector register
 //
-static riscvRegDesc getSegmentRegister(riscvRegDesc rv, Uns32 i) {
-    return RV_RD_V|getSegmentRegisterIndex(rv, i);
+static riscvRegDesc getSegmentRegister(iterDescP id, riscvRegDesc rv, Uns32 i) {
+    return RV_RD_V|getSegmentRegisterIndex(id, rv, i);
 }
 
 //
-// Given a vmiReg for the first register accessed by a load/store segment
-// operation, return vmiReg for the indexed successor register
+// Return vmiReg for the indexed successor segment register of vector register 0
 //
-static vmiReg getSegmentRegisterV0(riscvMorphStateP state, vmiReg base, Uns32 i) {
+static vmiReg getSegmentRegisterV0(riscvMorphStateP state, iterDescP id, Uns32 i) {
 
+    vmiReg       base  = id->r[0];
     Int32        VLEN  = state->riscv->configInfo.VLEN;
     riscvRegDesc rv0   = getRVReg(state, 0);
-    Int32        i1    = getSegmentRegisterIndex(rv0, 0);
-    Int32        i2    = getSegmentRegisterIndex(rv0, i);
+    Int32        i1    = getSegmentRegisterIndex(id, rv0, 0);
+    Int32        i2    = getSegmentRegisterIndex(id, rv0, i);
     Int32        delta = (i2-i1)*(VLEN/8);
 
     return VMI_REG_DELTA(base, delta);
@@ -4206,7 +4229,7 @@ static vmiLabelP handleNonZeroVStart(riscvMorphStateP state, Bool iterVStart) {
         if(!iterVStart) {
 
             // skip operation if required, vstart clamp not required
-            vmimtCompareRRJumpLabel(32, vmi_COND_NL, vstart, RISCV_VLMAX, skip);
+            vmimtCompareRRJumpLabel(32, vmi_COND_NL, vstart, CSR_REG_MT(vl), skip);
 
         } else {
 
@@ -4214,10 +4237,10 @@ static vmiLabelP handleNonZeroVStart(riscvMorphStateP state, Bool iterVStart) {
             vmiLabelP doOp = vmimtNewLabel();
 
             // go if at least one element should be processed
-            vmimtCompareRRJumpLabel(32, vmi_COND_L, vstart, RISCV_VLMAX, doOp);
+            vmimtCompareRRJumpLabel(32, vmi_COND_L, vstart, CSR_REG_MT(vl), doOp);
 
-            // clamp vstart to maximum vl if it is used as an iteration index
-            vmimtMoveRR(32, vstart, RISCV_VLMAX);
+            // clamp vstart to vl if it is used as an iteration index
+            vmimtMoveRR(32, vstart, CSR_REG_MT(vl));
 
             // go to zero extension operation
             vmimtUncondJumpLabel(skip);
@@ -4361,7 +4384,7 @@ static void endVectorLoop(riscvMorphStateP state, iterDescP id, vmiLabelP loop) 
 
     // increment vstart and go if not done
     vmimtBinopRC(32, vmi_ADD, vstart, 1, 0);
-    vmimtCompareRRJumpLabel(32, vmi_COND_L, vstart, RISCV_VLMAX, loop);
+    vmimtCompareRRJumpLabel(32, vmi_COND_L, vstart, CSR_REG_MT(vl), loop);
 }
 
 //
@@ -4382,6 +4405,13 @@ static void updateScalarTopZero(riscvMorphStateP state, iterDescP id) {
 }
 
 //
+// Return mask to select the numbered successor of a base segment register
+//
+inline static Uns32 getTopZeroVdMask(Uns32 i) {
+    return (1<<i);
+}
+
+//
 // Fill top part of predicate and vector target registers with zero using
 // per-element algorithm
 //
@@ -4389,7 +4419,7 @@ static void zeroVdPdTopPE(
     riscvMorphStateP state,
     iterDescP        id,
     Bool             zeroPd,
-    Bool             zeroVd
+    Uns32            zeroVd
 ) {
     riscvP       riscv   = state->riscv;
     Uns32        VLEN    = riscv->configInfo.VLEN;
@@ -4421,12 +4451,24 @@ static void zeroVdPdTopPE(
 
     if(zeroVd) {
 
+        Uns32 i;
+
         // get indexed vector element
         getIndexedVRegister(state, id, 0);
 
-        // zero vector element
-        vmimtMoveRC(id->SEW, id->r[0], 0);
-    }
+        // iterate over all segment registers affected
+        for(i=0; i<=state->info.nf; i++) {
+
+            if(zeroVd & getTopZeroVdMask(i)) {
+
+                // get next segment register requiring top-zero
+                vmiReg vd = getSegmentRegisterV0(state, id, i);
+
+                // zero vector element
+                vmimtMoveRC(id->SEW, vd, 0);
+            }
+        }
+   }
 
     // kill base registers for this iteration
     killBaseRegistersAndTemps(state, id);
@@ -4434,13 +4476,6 @@ static void zeroVdPdTopPE(
     // increment vstart and repeat if not done
     vmimtBinopRC(32, vmi_ADD, vstart, 1, 0);
     vmimtCompareRCJumpLabel(32, vmi_COND_NE, vstart, elemNum, loop);
-}
-
-//
-// Return mask to select the numbered successor of a base segment register
-//
-inline static Uns32 getTopZeroVdMask(Uns32 i) {
-    return (1<<i);
 }
 
 //
@@ -4484,13 +4519,13 @@ static void zeroVdPdTopBLT(
         // calculate number of elements to clear
         vmimtBinopRCR(32, vmi_SUB, t0, elemNum, vstart, 0);
 
-        // index over all segment registers affected
+        // iterate over all segment registers affected
         for(i=0; i<=state->info.nf; i++) {
 
-            if(zeroVd && getTopZeroVdMask(i)) {
+            if(zeroVd & getTopZeroVdMask(i)) {
 
                 // get next segment register requiring top-zero
-                vmiReg vd = getSegmentRegisterV0(state, id->r[0], i);
+                vmiReg vd = getSegmentRegisterV0(state, id, i);
 
                 // zero register top part
                 vmimtZeroRV(VLENxN, vd, 32, t0, 0, id->SEW/8, vmi_CC_NONE);
@@ -4516,7 +4551,7 @@ static vmiLabelP zeroVdPdTop(riscvMorphStateP state, iterDescP id) {
     // require top-zero update
     if(VdA!=PdA) {
         for(i=0; i<=state->info.nf; i++) {
-            if(requireTopZero(riscv, getSegmentRegister(VdA, i), id->VLMUL)) {
+            if(requireTopZero(riscv, getSegmentRegister(id, VdA, i), id->VLMUL)) {
                 zeroVd |= getTopZeroVdMask(i);
             }
         }
@@ -4987,13 +5022,25 @@ inline static Bool legalVMemBits(riscvSEWMt SEW, Uns32 memBits) {
 }
 
 //
-// Is the specified SEW/memBits pair legal?
+// Return the number of vector registers affected by a vector load/store
 //
-inline static Bool legalV0Index(riscvMorphStateP state) {
+static Uns32 getVLdStRegNum(riscvMorphStateP state) {
 
-    riscvRegDesc rv0  = getRVReg(state, 0);
-    Uns32        nf   = state->info.nf;
-    Uns32        last = getRIndex(rv0)+nf;
+    Uns32        fieldNum = state->info.nf+1;
+    riscvVLMULMt VLMUL    = getVLMULMt(state->riscv);
+
+    return VLMUL*fieldNum;
+}
+
+//
+// Is the load/store vector register index legal (register numbers must not
+// increment past the last-supported vector register)
+//
+static Bool legalVLdStVRegIndex(riscvMorphStateP state) {
+
+    riscvRegDesc rv0     = getRVReg(state, 0);
+    Uns32        numRegs = getVLdStRegNum(state);
+    Uns32        last    = getRIndex(rv0)+numRegs-1;
 
     return last<VREG_NUM;
 }
@@ -5020,12 +5067,12 @@ static RISCV_MORPHV_FN(emitVLdStCheckCB) {
         // VLMUL must be 1 for load/store segment instructions
         ILLEGAL_INSTRUCTION_MESSAGE(riscv, "IVLSEG", "Zvlsseg extension not configured");
 
-    } else if(getVLMULMt(riscv)!=1) {
+    } else if(getVLdStRegNum(state)>8) {
 
-        // VLMUL must be 1 for load/store segment instructions
-        ILLEGAL_INSTRUCTION_MESSAGE(riscv, "IVLMUL", "Illegal VLMUL>1");
+        // VLMUL*NFIELDS must not exceed 8 for load/store segment instructions
+        ILLEGAL_INSTRUCTION_MESSAGE(riscv, "IVLMUL", "Illegal VLMUL*NFIELDS>8");
 
-    } else if(!legalV0Index(state)) {
+    } else if(!legalVLdStVRegIndex(state)) {
 
         // register indices must not wrap
         ILLEGAL_INSTRUCTION_MESSAGE(riscv, "IVWRAP", "Illegal vector index wrap-around");
@@ -5135,7 +5182,7 @@ static void emitVLdInt(riscvMorphStateP state, iterDescP id, vmiReg ra) {
 
     for(i=0; i<=state->info.nf; i++) {
 
-        vmiReg vd    = getSegmentRegisterV0(state, id->r[0], i);
+        vmiReg vd    = getSegmentRegisterV0(state, id, i);
         vmiReg vdTmp = skip ? getTmp(0) : vd;
 
         // do load (either directly to result location or to temporary)
@@ -5176,7 +5223,7 @@ static void emitVStInt(riscvMorphStateP state, iterDescP id, vmiReg ra) {
 
     for(i=0; i<=state->info.nf; i++) {
 
-        vmiReg vs = getSegmentRegisterV0(state, id->r[0], i);
+        vmiReg vs = getSegmentRegisterV0(state, id, i);
 
         // do store
         emitStoreCommonMBO(
@@ -6726,8 +6773,8 @@ static void emitVRSLIDEDOWNInt(
     // assume zero result is required
     vmimtMoveRC(id->SEW, id->r[0], 0);
 
-    // skip move from vector if index>=RISCV_VLMAX
-    vmimtCompareRRJumpLabel(xBits, vmi_COND_NB, index, RISCV_VLMAX, skip);
+    // skip move from vector if index>=vl
+    vmimtCompareRRJumpLabel(xBits, vmi_COND_NB, index, CSR_REG_MT(vl), skip);
 
     // do indexed move (if not skipped)
     moveIndexedVd0Vs1(state, id, index, skip);
@@ -6745,9 +6792,9 @@ static RISCV_MORPHV_FN(emitVRSLIDEDOWNCB) {
     Uns32  sBits      = (xBits<offsetBits) ? xBits : offsetBits;
     vmiReg index      = getTmp(0);
 
-    // move offset clamped to VLMAX to temporary
-    vmimtCompareRR(xBits, vmi_COND_B, offset, RISCV_VLMAX, index);
-    vmimtCondMoveRRR(xBits, index, True, index, offset, RISCV_VLMAX);
+    // move offset clamped to vl to temporary
+    vmimtCompareRR(xBits, vmi_COND_B, offset, CSR_REG_MT(vl), index);
+    vmimtCondMoveRRR(xBits, index, True, index, offset, CSR_REG_MT(vl));
 
     // calculate source index
     vmimtMoveExtendRR(offsetBits, index, sBits, index, False);
@@ -6825,8 +6872,8 @@ static RISCV_MORPHV_FN(emitVRSLIDE1DOWNCB) {
     // calculate source index
     vmimtBinopRRC(offsetBits, vmi_ADD, index, vstart, 1, 0);
 
-    // skip move from vector if index>=RISCV_VLMAX
-    vmimtCompareRRJumpLabel(32, vmi_COND_NB, index, RISCV_VLMAX, skip);
+    // skip move from vector if index>=vl
+    vmimtCompareRRJumpLabel(32, vmi_COND_NB, index, CSR_REG_MT(vl), skip);
 
     // do indexed move (if not skipped)
     moveIndexedVd0Vs1(state, id, index, skip);
@@ -6850,8 +6897,8 @@ static RISCV_MORPHV_FN(emitVRRGATHERCB) {
     // calculate source index
     vmimtMoveExtendRR(dBits, index, xBits, offset, False);
 
-    // skip move from vector if index>=RISCV_VLMAX
-    vmimtCompareRRJumpLabel(dBits, vmi_COND_NB, index, RISCV_VLMAX, skip);
+    // skip move from vector if index>=vl
+    vmimtCompareRRJumpLabel(dBits, vmi_COND_NB, index, CSR_REG_MT(vl), skip);
 
     // do indexed move (if not skipped)
     moveIndexedVd0Vs1(state, id, index, skip);
@@ -6870,8 +6917,8 @@ static RISCV_MORPHV_FN(emitVIRGATHERCB) {
     // assume zero result is required
     vmimtMoveRC(id->SEW, id->r[0], 0);
 
-    // skip move from vector if RISCV_VLMAX<=index
-    vmimtCompareRCJumpLabel(32, vmi_COND_BE, RISCV_VLMAX, offset, skip);
+    // skip move from vector if vl<=index
+    vmimtCompareRCJumpLabel(32, vmi_COND_BE, CSR_REG_MT(vl), offset, skip);
 
     // calculate source index
     vmimtMoveRC(offsetBits, index, offset);
@@ -7128,7 +7175,7 @@ const static riscvMorphAttr dispatchTable[] = {
     [RV_IT_VSLE_VR]          = {morph:emitVectorOp, opTCB:emitVRCmpIntCB,    cond :vmi_COND_LE,  vShape:RVVW_111_PI},
     [RV_IT_VSGTU_VR]         = {morph:emitVectorOp, opTCB:emitVRCmpIntCB,    cond :vmi_COND_NBE, vShape:RVVW_111_PI},
     [RV_IT_VSGT_VR]          = {morph:emitVectorOp, opTCB:emitVRCmpIntCB,    cond :vmi_COND_NLE, vShape:RVVW_111_PI},
-    [RV_IT_VRGATHER_VR]      = {morph:emitVectorOp, opTCB:emitVRRGATHERCB,                       vShape:RVVW_111_UP},
+    [RV_IT_VRGATHER_VR]      = {morph:emitVectorOp, opTCB:emitVRRGATHERCB,                       vShape:RVVW_111_GR},
     [RV_IT_VSLIDEUP_VR]      = {morph:emitVectorOp, opTCB:emitVRSLIDEUPCB,                       vShape:RVVW_111_UP},
     [RV_IT_VSLIDEDOWN_VR]    = {morph:emitVectorOp, opTCB:emitVRSLIDEDOWNCB,                     vShape:RVVW_111_DN},
     [RV_IT_VSADDU_VR]        = {morph:emitVectorOp, opTCB:emitVRSBinaryCB,   binop:vmi_ADDUQ,                         argType:RVVX_UU},
@@ -7279,7 +7326,7 @@ const static riscvMorphAttr dispatchTable[] = {
     [RV_IT_VAND_VI]          = {morph:emitVectorOp, opTCB:emitVIBinaryIntCB, binop:vmi_AND},
     [RV_IT_VOR_VI]           = {morph:emitVectorOp, opTCB:emitVIBinaryIntCB, binop:vmi_OR },
     [RV_IT_VXOR_VI]          = {morph:emitVectorOp, opTCB:emitVIBinaryIntCB, binop:vmi_XOR},
-    [RV_IT_VRGATHER_VI]      = {morph:emitVectorOp, opTCB:emitVIRGATHERCB,                       vShape:RVVW_111_UP},
+    [RV_IT_VRGATHER_VI]      = {morph:emitVectorOp, opTCB:emitVIRGATHERCB,                       vShape:RVVW_111_GR},
     [RV_IT_VSLIDEUP_VI]      = {morph:emitVectorOp, opTCB:emitVISLIDEUPCB,                       vShape:RVVW_111_UP},
     [RV_IT_VSLIDEDOWN_VI]    = {morph:emitVectorOp, opTCB:emitVISLIDEDOWNCB,                     vShape:RVVW_111_DN},
     [RV_IT_VADC_VI]          = {morph:emitVectorOp, opTCB:emitVIAdcIntCB,    binop:vmi_ADC,      vShape:RVVW_CIN_II},

@@ -1,4 +1,4 @@
-IBEX        = $(ROOTDIR)/riscv-target/lowRISC/device/ibex_rv32imc
+IBEX        = $(ROOTDIR)/riscv-target/ibex/device/rv32imc
 LDSCRIPT    = $(IBEX)/link.ld
 TRAPHANDLER = $(IBEX)/handler.S
 DEFINES     = -DPRIV_MISA_S=0 -DPRIV_MISA_U=0 -DTRAPHANDLER="\"$(TRAPHANDLER)\""

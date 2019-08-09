@@ -218,6 +218,7 @@ static void applyParamsSMP(riscvP riscv, riscvParamValuesP params) {
     // get uninterpreted architectural configuration parameters
     cfg->user_version      = params->user_version;
     cfg->priv_version      = params->priv_version;
+    cfg->vect_version      = params->vector_version;
     cfg->reset_address     = params->reset_address;
     cfg->nmi_address       = params->nmi_address;
     cfg->ASID_bits         = params->ASID_bits;

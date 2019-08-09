@@ -109,10 +109,15 @@ static vmiEnumParameter userVariants[RVUV_LAST+1] = {
 // Supported Vector Architecture variants
 //
 static vmiEnumParameter vectorVariants[RVVV_LAST+1] = {
-    [RVVV_20190605] = {
+    [RVVV_0_71] = {
         .name        = "0.7.1-draft-20190605",
-        .value       = RVVV_20190605,
+        .value       = RVVV_0_71,
         .description = "Vector Architecture Version 0.7.1-draft-20190605",
+    },
+    [RVVV_MASTER] = {
+        .name        = "master",
+        .value       = RVVV_MASTER,
+        .description = "Vector Architecture Master Branch (unstable)",
     },
     // KEEP LAST: terminator
     {0}
@@ -211,6 +216,7 @@ static void setUns64ParamDefault(vmiParameterP param, Uns64 value) {
 //
 static RISCV_ENUM_PDEFAULT_CFG_FN(user_version);
 static RISCV_ENUM_PDEFAULT_CFG_FN(priv_version);
+static RISCV_ENUM_PDEFAULT_CFG_FN(vect_version);
 
 //
 // Set default value of raw Bool parameters
@@ -361,6 +367,7 @@ static riscvParameter parameters[] = {
     {  RVPV_VARIANT, 0,                            VMI_ENUM_PARAM_SPEC  (riscvParamValues, variant,              0,                         "Selects variant (either a generic UISA or a specific model)")},
     {  RVPV_ALL,     default_user_version,         VMI_ENUM_PARAM_SPEC  (riscvParamValues, user_version,         userVariants,              "Specify required User Architecture version")},
     {  RVPV_ALL,     default_priv_version,         VMI_ENUM_PARAM_SPEC  (riscvParamValues, priv_version,         privVariants,              "Specify required Privileged Architecture version")},
+    {  RVPV_V,       default_vect_version,         VMI_ENUM_PARAM_SPEC  (riscvParamValues, vector_version,       vectorVariants,            "Specify required Vector Architecture version")},
     {  RVPV_ALL,     0,                            VMI_BOOL_PARAM_SPEC  (riscvParamValues, verbose,              True,                      "Specify verbose output messages")},
     {  RVPV_MPCORE,  default_numHarts,             VMI_UNS32_PARAM_SPEC (riscvParamValues, numHarts,             0, 0,          32,         "Specify the number of hart contexts in a multiprocessor")},
     {  RVPV_S,       default_updatePTEA,           VMI_BOOL_PARAM_SPEC  (riscvParamValues, updatePTEA,           False,                     "Specify whether hardware update of PTE A bit is supported")},
