@@ -1,3 +1,7 @@
+2019-08-08 Lee Moore <moore@imperas.com>
+    * Added support for lowRISC/ibex RTL as a target using Verilator.
+      In conjunction with Philipp Wagner of lowRISC phw@lowrisc.org
+
 2019-07-18 Paul Donahue <pdonahue@ventanamicro.com>
     * Fix typos/grammar and use correct architectural terms.
 
