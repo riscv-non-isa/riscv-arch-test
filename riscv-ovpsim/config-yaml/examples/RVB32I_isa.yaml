@@ -1,0 +1,63 @@
+# Copyright Imperas Software Ltd
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http:#www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+Vendor: Imperas
+Device: RVB32I
+ISA: RV32I
+User_Spec_Version: "2.3"
+Privilege_Spec_Version: "1.11"
+mtvec:
+  BASE:
+    range:
+      rangelist: [[0, 0x3fffffff]]
+  MODE:
+    range:
+      rangelist: [[0,1]]
+mstatus:
+  MPP:
+    range:
+      rangelist:
+      - - 3
+      mode: Unchanged
+  XS:
+    is_hardwired: false
+    hardwired_val: 0
+
+mvendorid:
+  implemented: true
+  id: 3
+marchid:
+  implemented: true
+  id: 1
+mimpid:
+  implemented: true
+  id: 2
+mhartid: 0
+
+# unaligned=F
+# wfi_is_nop=F
+# tval_ii_code=T
+# reset_address=0
+# nmi_address=0
+# local_int_num=0
+# misa_MXL=1
+
+# where to specify tvec_align 
+# In addition, when Vectored interrupt
+#   mode is enabled, parameter "tvec align" may be used to specify additional hardware-enforced base
+#   address alignment
+
+##
+misa:
+  implemented: true

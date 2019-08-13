@@ -36,6 +36,7 @@ typedef struct riscvParamValuesS {
     VMI_ENUM_PARAM(variant);
     VMI_ENUM_PARAM(user_version);
     VMI_ENUM_PARAM(priv_version);
+    VMI_ENUM_PARAM(vector_version);
     VMI_BOOL_PARAM(verbose);
     VMI_BOOL_PARAM(updatePTEA);
     VMI_BOOL_PARAM(updatePTED);

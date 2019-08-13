@@ -24,7 +24,8 @@
 //
 #define XLEN32_CHAR             ('Z'+1)
 #define XLEN64_CHAR             ('Z'+2)
-#define RISCV_FAND_CHAR         ('Z'+3)
+#define RM_INVALID_CHAR         ('Z'+3)
+#define RISCV_FAND_CHAR         ('Z'+4)
 #define RISCV_FEATURE_INDEX(_C) ((_C)-'A')
 #define RISCV_FEATURE_BIT(_C)   (1<<RISCV_FEATURE_INDEX(_C))
 #define XLEN_SHIFT              RISCV_FEATURE_INDEX(XLEN32_CHAR)
@@ -39,6 +40,9 @@ typedef enum riscvArchitectureE {
     ISA_XLEN_32  = RISCV_FEATURE_BIT(XLEN32_CHAR),  // supported for XLEN=32
     ISA_XLEN_64  = RISCV_FEATURE_BIT(XLEN64_CHAR),  // supported for XLEN=64
     ISA_XLEN_ANY = (ISA_XLEN_32|ISA_XLEN_64),
+
+    // ROUNDING MODE INVALID
+    ISA_RM_INVALID = RISCV_FEATURE_BIT(RM_INVALID_CHAR),
 
     // FEATURES A AND B
     ISA_and  = RISCV_FEATURE_BIT(RISCV_FAND_CHAR),
@@ -148,9 +152,10 @@ typedef enum riscvPrivVerE {
 // Supported Vector Architecture versions
 //
 typedef enum riscvVectVerE {
-    RVVV_20190605,                  // version 0.7.1-draft-20190605
+    RVVV_0_71,                      // version 0.7.1-draft-20190605
+    RVVV_MASTER,                    // master branch
     RVVV_LAST,                      // for sizing
-    RVVV_DEFAULT = RVVV_20190605,   // default version
+    RVVV_DEFAULT = RVVV_0_71,       // default version
 } riscvVectVer;
 
 // macro returning User Architecture version

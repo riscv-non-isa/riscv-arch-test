@@ -54,6 +54,7 @@ static void initModelCBs(riscvP riscv) {
     riscv->cb.getXlenArch        = riscvGetXlenArch;
     riscv->cb.getXRegName        = riscvGetXRegName;
     riscv->cb.getFRegName        = riscvGetFRegName;
+    riscv->cb.setTMode           = riscvSetTMode;
 
     // from riscvExceptions.h
     riscv->cb.illegalInstruction = riscvIllegalInstruction;
@@ -182,37 +183,6 @@ static Uns64 powerOfTwo(Uns64 oldValue, const char *name) {
 }
 
 //
-// Parse the extensions string
-//
-riscvArchitecture parseExtensions(const char *extensions) {
-
-    riscvArchitecture result = 0;
-
-    if(extensions) {
-
-        const char *tail = extensions;
-        Bool        ok   = True;
-        char        extension;
-
-        while(ok && (extension=*tail++)) {
-
-            ok = (extension>='A') && (extension<='Z');
-
-            if(!ok) {
-                vmiMessage("E", CPU_PREFIX"_ILLEXT",
-                    "Illegal extension string \"%s\" - letters A-Z required",
-                    extensions
-                );
-            } else {
-                result |= (1<<(extension-'A'));
-            }
-        }
-    }
-
-    return result;
-}
-
-//
 // Apply parameters applicable to SMP member
 //
 static void applyParamsSMP(riscvP riscv, riscvParamValuesP params) {
@@ -248,6 +218,7 @@ static void applyParamsSMP(riscvP riscv, riscvParamValuesP params) {
     // get uninterpreted architectural configuration parameters
     cfg->user_version      = params->user_version;
     cfg->priv_version      = params->priv_version;
+    cfg->vect_version      = params->vector_version;
     cfg->reset_address     = params->reset_address;
     cfg->nmi_address       = params->nmi_address;
     cfg->ASID_bits         = params->ASID_bits;
@@ -336,8 +307,8 @@ static void applyParamsSMP(riscvP riscv, riscvParamValuesP params) {
     }
 
     // include extensions specified by letter
-    misa_Extensions      |= parseExtensions(params->add_Extensions);
-    misa_Extensions_mask |= parseExtensions(params->add_Extensions_mask);
+    misa_Extensions      |= riscvParseExtensions(params->add_Extensions);
+    misa_Extensions_mask |= riscvParseExtensions(params->add_Extensions_mask);
 
     // exactly one of I and E base ISA features must be present and initially
     // enabled; if the E bit is initially enabled, the I bit must be read-only
