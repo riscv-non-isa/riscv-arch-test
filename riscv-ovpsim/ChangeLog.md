@@ -3,6 +3,41 @@
 #      Copyright (c) 2005-2019 Imperas Software Ltd., www.imperas.com         #
 # This CHANGELOG contains information specific to the RISCV processor model   #
 ###############################################################################
+
+- Corrected memory sizing in the riscvOVPsim fixed platform to use address 
+  range specified by argument addressbits.
+- Fixed bug when using new vmi_IMULSU operation.
+- Bug fixed which could cause incorrect results for floating point round or 
+  convert to unsigned operations when non-vmi_FPR_CURRENT rounding modes are
+  used in general arithmetic operations, as per RISC-V.
+- A bug was fixed that could cause incorrect behavior when PMP region mappings
+  change.
+- Some vector extension issues have been corrected:
+  - Behavior of vsetvl and vsetvli instructions when requested vector size
+    exceeds the implementation limits has been corrected.
+  - Two decodes for non-existent vector compare instructions have been removed.
+  - The constraint on legal LMUL for segmented load/store operations has been
+    changed from requiring LMUL=1 to requiring LMUL*NFIELDS<=8. This corresponds
+    to a specification change made on 2019-June-06.
+- The model has a new parameter vector_version which can be used to select
+  either the stable 0.71 Vector Extension (the default) or the unstable master
+  branch. The master branch currently has the following changes compared to the
+  stable 0.71 branch:
+  - vext.s.v and vmford.vv instructions have been removed;
+  - vmv.s.x instruction has been added;
+  - encodings for vpopc.m, vfirst.m, vmsbf.m, vmsif.m, vmsof.m, viota.m and
+    vid.v instructions have changed;
+  - overlap constraints for slideup and slidedown instructions have been relaxed
+    to allow overlap of destination and mask when SEW=1.
+  - 64-bit vector AMO operations have been replaced with SEW-width vector AMO
+    operations.
+  This set of changes will increase as the master specification evolves.
+
+###############################################################################
+## Date 2019-June-28                                                         ##
+## Release 20190628.0                                                        ##
+###############################################################################
+
 - Fixed bug that caused the Model Specific Documentation for the SiFive 
   U54MC model to be missing the sections under Overview.
 - The vector extension is now implemented and enabled if the V bit is set in

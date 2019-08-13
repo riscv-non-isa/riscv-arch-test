@@ -163,12 +163,29 @@ inline static vmiFPRC mapFRMToRC(Uns8 frm) {
 //
 static vmiFPRC updateCurrentRMValid(riscvP riscv) {
 
-    vmiFPRC rc = mapFRMToRC(RD_CSR_FIELD(riscv, fcsr, frm));
+    vmiFPRC rc         = mapFRMToRC(RD_CSR_FIELD(riscv, fcsr, frm));
+    Bool    oldInvalid = (riscv->currentArch & ISA_RM_INVALID);
+    Bool    newInvalid = (rc==-1);
 
-    if(rc==-1) {
-        riscv->pmKey &= ~RM_VALID_MASK;
-    } else {
-        riscv->pmKey |= RM_VALID_MASK;
+    if(oldInvalid != newInvalid) {
+
+        vmiProcessorP processor = (vmiProcessorP)riscv;
+
+        // enable rounding mode valid state check if required
+        if(!riscv->rmCheckValid) {
+            riscv->rmCheckValid = True;
+            vmirtFlushAllDicts(processor);
+        }
+
+        // update state to reflect invalid RM change
+        if(newInvalid) {
+            riscv->currentArch |= ISA_RM_INVALID;
+        } else {
+            riscv->currentArch &= ~ISA_RM_INVALID;
+        }
+
+        // update block mask to reflect invalid RM change
+        vmirtSetBlockMask(processor, riscv->currentArch);
     }
 
     return rc;
@@ -1279,6 +1296,17 @@ static RISCV_CSR_WRITEFN(pmpaddrW) {
 ////////////////////////////////////////////////////////////////////////////////
 
 //
+// Return maximum vector length for the current vector type settings
+//
+static Uns32 getMaxVL(riscvP riscv) {
+
+    Uns32 SEW  = 8<<RD_CSR_FIELD(riscv, vtype, vsew);
+    Uns32 LMUL = 1<<RD_CSR_FIELD(riscv, vtype, vlmul);
+
+    return riscv->configInfo.VLEN * LMUL/SEW;
+}
+
+//
 // Write vxrm register
 //
 static RISCV_CSR_WRITEFN(vxrmW) {
@@ -1293,37 +1321,28 @@ static RISCV_CSR_WRITEFN(vxrmW) {
 }
 
 //
-// Refresh the polymorphic block key
+// Refresh the vector polymorphic block key
 //
-void riscvRefreshPMKey(riscvP riscv) {
+void riscvRefreshVectorPMKey(riscvP riscv) {
 
     Uns32 vl       = RD_CSR(riscv, vl);
-    Uns32 SEW      = 8<<RD_CSR_FIELD(riscv, vtype, vsew);
-    Uns32 VLMUL    = 1<<RD_CSR_FIELD(riscv, vtype, vlmul);
-    Uns32 vlMax    = riscv->configInfo.VLEN*VLMUL/SEW;
     Uns32 vtypeKey = RD_CSR(riscv, vtype)<<2;
     Uns32 villKey  = RD_CSR_FIELD(riscv, vtype, vill)<<2;
     Uns32 pmKey;
-
-    // set current maximum vl for SEW/VLMUL combination
-    riscv->vlMax = (vl>vlMax) ? vlMax : vl;
 
     // compose key
     if(villKey) {
         pmKey = VLCLASSMT_UNKNOWN | villKey;
     } else if(!vl) {
         pmKey = VLCLASSMT_ZERO;
-    } else if(riscv->vlMax==vlMax) {
+    } else if(vl==getMaxVL(riscv)) {
         pmKey = VLCLASSMT_MAX | vtypeKey;
     } else {
         pmKey = VLCLASSMT_NONZERO | vtypeKey;
     }
 
-    // set initial polymorphic key
-    riscv->pmKey = pmKey;
-
-    // include rounding-mode-valid indication
-    updateCurrentRMValid(riscv);
+    // update polymorphic key
+    riscv->pmKey = (riscv->pmKey & ~PMK_VECTOR) | pmKey;
 }
 
 //
@@ -1341,10 +1360,9 @@ void riscvSetVType(riscvP riscv, Bool vill, Uns32 vsew, Uns32 vlmul) {
 //
 void riscvSetVL(riscvP riscv, Uns32 vl) {
 
-    // get maximum supported vl
-    Uns32 maxVL = riscv->configInfo.VLEN * (LMUL_MAX/SEW_MIN);
+    Uns32 maxVL = getMaxVL(riscv);
 
-    // clamp rs1 to maximum supported number of 1-byte elements
+    // clamp vl to maximum supported number of elements
     if(vl > maxVL) {
         vl = maxVL;
     }
@@ -1548,9 +1566,9 @@ static const riscvCSRAttrs csrs[CSR_ID(LAST)] = {
     CSR_ATTR_P__     (fcsr ,        0x003, ISA_DFV,     1_10,   1,0,0,  "Floating-Point Control and Status",             riscvWFS,    fcsrR,      0,     fcsrW         ),
     CSR_ATTR_P__     (uie,          0x004, ISA_N,       1_10,   1,0,0,  "User Interrupt Enable",                         0,           uieR,       0,     uieW          ),
     CSR_ATTR_T__     (utvec,        0x005, ISA_N,       1_10,   0,0,0,  "User Trap-Vector Base-Address",                 0,           0,          0,     utvecW        ),
-    CSR_ATTR_TV_     (vstart,       0x008, ISA_V,       1_11,   0,0,0,  "Vector Start Index",                            riscvWVStart,0,          0,     0             ),
-    CSR_ATTR_TC_     (vxsat,        0x009, ISA_V,       1_11,   0,0,0,  "Fixed-Point Saturate Flag",                     0,           0,          0,     0             ),
-    CSR_ATTR_TC_     (vxrm,         0x00A, ISA_V,       1_11,   0,0,0,  "Fixed-Point Rounding Mode",                     0,           0,          0,     vxrmW         ),
+    CSR_ATTR_TV_     (vstart,       0x008, ISA_V,       1_10,   0,0,0,  "Vector Start Index",                            riscvWVStart,0,          0,     0             ),
+    CSR_ATTR_TC_     (vxsat,        0x009, ISA_V,       1_10,   0,0,0,  "Fixed-Point Saturate Flag",                     0,           0,          0,     0             ),
+    CSR_ATTR_TC_     (vxrm,         0x00A, ISA_V,       1_10,   0,0,0,  "Fixed-Point Rounding Mode",                     0,           0,          0,     vxrmW         ),
     CSR_ATTR_T__     (uscratch,     0x040, ISA_N,       1_10,   0,0,0,  "User Scratch",                                  0,           0,          0,     0             ),
     CSR_ATTR_TV_     (uepc,         0x041, ISA_N,       1_10,   0,0,0,  "User Exception Program Counter",                0,           uepcR,      0,     0             ),
     CSR_ATTR_TV_     (ucause,       0x042, ISA_N,       1_10,   0,0,0,  "User Cause",                                    0,           0,          0,     0             ),
@@ -1560,8 +1578,8 @@ static const riscvCSRAttrs csrs[CSR_ID(LAST)] = {
     CSR_ATTR_P__     (time,         0xC01, 0,           1_10,   0,1,0,  "Timer",                                         0,           mtimeR,     0,     0             ),
     CSR_ATTR_P__     (instret,      0xC02, 0,           1_10,   0,1,0,  "Instructions Retired",                          0,           minstretR,  0,     0             ),
     CSR_ATTR_P__3_31 (hpmcounter,   0xC00, 0,           1_10,   0,0,0,  "Performance Monitor Counter ",                  0,           mhpmR,      0,     mhpmW         ),
-    CSR_ATTR_T__     (vl,           0xC20, ISA_V,       1_11,   0,0,0,  "Vector Length",                                 0,           0,          0,     0             ),
-    CSR_ATTR_T__     (vtype,        0xC21, ISA_V,       1_11,   0,0,0,  "Vector Type",                                   0,           0,          0,     0             ),
+    CSR_ATTR_T__     (vl,           0xC20, ISA_V,       1_10,   0,0,0,  "Vector Length",                                 0,           0,          0,     0             ),
+    CSR_ATTR_T__     (vtype,        0xC21, ISA_V,       1_10,   0,0,0,  "Vector Type",                                   0,           0,          0,     0             ),
     CSR_ATTR_P__     (cycleh,       0xC80, ISA_XLEN_32, 1_10,   0,1,0,  "Cycle Counter High",                            0,           mcyclehR,   0,     0             ),
     CSR_ATTR_P__     (timeh,        0xC81, ISA_XLEN_32, 1_10,   0,1,0,  "Timer High",                                    0,           mtimehR,    0,     0             ),
     CSR_ATTR_P__     (instreth,     0xC82, ISA_XLEN_32, 1_10,   0,1,0,  "Instructions Retired High",                     0,           minstrethR, 0,     0             ),
@@ -2522,16 +2540,19 @@ void riscvCSRInit(riscvP riscv, Uns32 index) {
 
     SET_CSR_MASK_V(riscv, fcsr, fcsrMask);
 
+    // set initial rounding-mode-valid state
+    updateCurrentRMValid(riscv);
+
     //--------------------------------------------------------------------------
-    // vstart mask and vector polymorphic key
+    // vstart mask and polymorphic key
     //--------------------------------------------------------------------------
 
     Uns32 vstartMask = (arch&ISA_V) ? cfg->VLEN-1 : 0;
 
     SET_CSR_MASK_V(riscv, vstart, vstartMask);
 
-    // set initial polymorphic key
-    riscvRefreshPMKey(riscv);
+    // set initial vector polymorphic key
+    riscvRefreshVectorPMKey(riscv);
 }
 
 //
@@ -3012,7 +3033,7 @@ void riscvCSRRestore(
             if(riscv->configInfo.arch & ISA_V) {
                 VMIRT_RESTORE_FIELD(cxt, riscv, csr.vl);
                 VMIRT_RESTORE_FIELD(cxt, riscv, csr.vtype);
-                riscvRefreshPMKey(riscv);
+                riscvRefreshVectorPMKey(riscv);
             }
 
             break;

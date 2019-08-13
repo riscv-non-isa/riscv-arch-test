@@ -313,9 +313,9 @@ void riscvCSRRestore(
 ////////////////////////////////////////////////////////////////////////////////
 
 //
-// Refresh the polymorphic block key
+// Refresh the vector polymorphic block key
 //
-void riscvRefreshPMKey(riscvP riscv);
+void riscvRefreshVectorPMKey(riscvP riscv);
 
 //
 // Update vtype CSR
@@ -728,7 +728,7 @@ typedef CSR_REG_TYPE(counteren) CSR_REG_TYPE(mcountinhibit);
 // mhpmevent    (id 0x323-0x33F)
 // -----------------------------------------------------------------------------
 
-typedef CSR_REG_TYPE(generic32) CSR_REG_TYPE(mhpmevent);
+typedef CSR_REG_TYPE(genericXLEN) CSR_REG_TYPE(mhpmevent);
 
 // -----------------------------------------------------------------------------
 // uscratch     (id 0x040)
@@ -1031,7 +1031,7 @@ typedef CSR_REG_TYPE(genericXLEN) CSR_REG_TYPE(dscratch);
 // -----------------------------------------------------------------------------
 
 // define alias types
-typedef CSR_REG_TYPE(generic32) CSR_REG_TYPE(vstart);
+typedef CSR_REG_TYPE(genericXLEN) CSR_REG_TYPE(vstart);
 
 // -----------------------------------------------------------------------------
 // vxsat        (id 0x009)
@@ -1072,7 +1072,7 @@ CSR_REG_STRUCT_DECL_32(vxrm);
 // -----------------------------------------------------------------------------
 
 // define alias types
-typedef CSR_REG_TYPE(generic32) CSR_REG_TYPE(vl);
+typedef CSR_REG_TYPE(genericXLEN) CSR_REG_TYPE(vl);
 
 // define write masks
 #define WM32_vl     0x00000000

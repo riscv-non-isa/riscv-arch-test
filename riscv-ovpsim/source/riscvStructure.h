@@ -171,11 +171,13 @@ typedef struct riscvS {
     riscvArchitecture  currentArch;     // current enabled features
     riscvDMode         mode;            // current processor mode
     riscvDisableReason disable;         // reason why processor is disabled
-    Bool               verbose;         // whether verbose output enabled
-    Bool               artifactAccess;  // whether current access is an artifact
-    Bool               externalActive;  // whether external CSR access active
-    Bool               inSaveRestore;   // is save/restore active?
-    Uns8               pmKey;           // polymorphic key
+    Bool               verbose       :1;// whether verbose output enabled
+    Bool               artifactAccess:1;// whether current access is an artifact
+    Bool               externalActive:1;// whether external CSR access active
+    Bool               inSaveRestore :1;// is save/restore active?
+    Bool               useTMode      :1;// has transaction mode been enabled?
+    Bool               rmCheckValid  :1;// whether RM valid check required
+    Uns16              pmKey;           // polymorphic key
     Uns32              flags;           // model control flags
     Uns32              flagsRestore;    // saved flags during restore
     riscvConfig        configInfo;      // model configuration
@@ -249,7 +251,6 @@ typedef struct riscvS {
     Uns8               vFieldMask;                  // vector field mask
     Uns8               vActiveMask;                 // vector active element mask
     Bool               vFirstFault;                 // vector first fault active?
-    Uns64              vlMax;                       // maximum vl element number
     Uns64              vTmp;                        // vector operation temporary
     riscvVRegBank      v;                           // vector registers (configurable size)
     UnsPS              vBase[NUM_BASE_REGS];        // indexed base registers
