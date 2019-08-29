@@ -1,3 +1,7 @@
+2019-08-29 Robert Balas <balasr@iis.ee.ethz.ch>
+    * Added support for using RI5CY as a target.
+    * Added subdirectory riscv-target/ri5cy
+
 2019-08-08 Lee Moore <moore@imperas.com>
     * Added support for lowRISC/ibex RTL as a target using Verilator.
       In conjunction with Philipp Wagner of lowRISC phw@lowrisc.org
