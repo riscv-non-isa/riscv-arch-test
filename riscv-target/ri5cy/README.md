@@ -1,11 +1,12 @@
 # Running the compliance tests with RI5CY
 Build RI5CY's core testbench by navigating to `riscv/tb/core` and calling `make
-vsim-all`. Note that only questasim was tested, but with some work other
-simulators can be used too.
+vsim-all` or if you prefer verilator `make verilate`.
 
 Set `TARGET_SIM` by providing the `vsim` executable and the work directory of
 the compiled model of RI5CY e.g.
 `export TARGET_SIM=vsim -work RI5CY_REPO/tb/core/work`
+or point `TARGET_SIM` to the compiled verilator testbench e.g.
+`export TARGET_SIM=RI5CY_REPO/tb/core/testbench_verilator`
 
 Now set the following variables:
 ```
