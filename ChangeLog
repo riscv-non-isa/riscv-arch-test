@@ -3,10 +3,14 @@
     * Support F extension on RV32 sail-riscv-c.
 
 2019-09-11 Allen Baum <allen.baum@esperantotech.com>
+	* spec/TestFormatSpec.adoc:   more grammar and typo corrections and changes
+	  clarified and added To Be Discussed issues
+	
+2019-09-11 Allen Baum <allen.baum@esperantotech.com>
     * spec/TestFormatSpec.adoc:   many grammar and typo corrections and changes
 	removed many "to Be Discussed items and made them official
 	Added wording to clarify spec intent (work in progress/goal rather than final)
-	Added macros to ease test authoring: RVTEST_SIGBASE, RVTEST_SIGUPDATE, RVTESTCASE
+	Added macros to ease test authoring: RVTEST_SIGBASE, RVTEST_SIGUPDATE, RVTEST_CASE
 	Added detail on proposals for connection to framework (how framework selects tests).
 	Expanded definition of signature format
 	Changed the (proposed) directory structure and naming convention to eliminate ambiguities, add consistancy and slightly better match existing structure

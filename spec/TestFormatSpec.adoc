@@ -266,25 +266,29 @@ The test structure of a compliance test shall have the following sections in the
 
 ==== _To Be discussed_
 
-Should we allow multiple code and data segments?
+How do we enable multiple code/data segments (desired for coverage when testing load/store and branch behovior) and do we, or how do we enable tests to query whether a particular address offset is legal (for the givien configuration) or not?
 
 ==== Common test format rules
 
 There are the following common rules that shall be applied to each <<The compliance test,_compliance test_>>:
 
 . For better readability, always use “//” as commentary. “#” should be used only for includes and defines.
-. A test shall be divided into logical blocks (<<The test case,_test cases_>>) according to the test goals. Test cases are enclosed in an monospace `#ifdef TEST_CASE<__CaseName__>, #endif` pair and begin with the RVTEST_CASE(CaseName,CondStr, DocString) macro that specifies the test case name, a string that defines the conditions under which that <<The test case,_Test case_>> can be selected for assembly and execution, a string that provides a clear description of its function, and a temporarary scratch register used in the macro. Those conditions will be collected and populate the test case's corresponding entry in the <<Common compliance test pool reference document, _Common compliance test pool reference document_>>. An invocation of this macro with no test case name will provide test selection conditions for all remaining test cases in the test.
+. A test shall be divided into logical blocks (<<The test case,_test cases_>>) according to the test goals. Test cases are enclosed in an monospace `#ifdef TEST_CASE<__CaseName__>, #endif` pair and begin with the RVTEST_CASE(CaseName,CondStr, DocString) macro that specifies the test case name, a string that defines the conditions under which that <<The test case,_Test case_>> can be selected for assembly and execution, a string that provides a clear description of its function, and a temporary scratch register used in the macro. Those conditions will be collected and populate the test case's corresponding entry in the <<Common compliance test pool reference document, _Common compliance test pool reference document_>>. An invocation of this macro with no test case name will provide test selection conditions for all remaining test cases in the test.
 . Tests shall use the RVTEST_SIGBASE(BaseReg,Val) macro to define the GPR used as a pointer to the output signature area, and its initial value. It can be used multiple times within a test to reassign the output area or change the base register.
 . Tests shall use the RVTEST_SIGUPD(BaseReg, Reg, ScratchReg, Value) macro to store signature values using (only) the base register defined in the most recently encountered RVRTEST_SIGBASE(BaseREg,Val) macro. Repeated uses will automatically have an increasing offset that is managed by the macro. Uses of RVTEST_SIGUPD shall always be preceded sometime in the test case by RVTEST_SIGBASE. Optionally, the macro can invoke a test assertion macro (e.g. RVTEST_IO_ASSERT_GPR_EQ) with an assertion value for debugging.
 . When macros for debug purposes are needed, only the macros from compliance_io.h shall be used. Note that using this feature shall have no impact on the test run.
 . Test shall not include tests (e. g. #include “../add.S”) inside other tests to prevent non-complete tests, compilation issues, and problems with code maintenance. 
 . Tests and test cases shall be skipped if not required for a specific model test configurations based on test conditions defined in the RVTEST_CASE macro, and/or the test case's entry in  <<Common compliance test pool reference document, _Common compliance test pool reference document_>>. Tests that are selected may be further configured using variables (e.g. XLEN) which are passed into the tests and used to compile them. In either case, those conditions and variables are derived from the YAML specification of the device and execution environment that are passed into the framework. The flow is to run a compliance test suite built by the <<The compliance test framework,_Compliance Test Framework_>> from the <<The RISC-V compliance test pool,_compliance test pool_>> to determine which tests and test cases to run. 
 . Tests shall not depend on tool specific features. For example test shall avoid usage of internal GCC macros (e..g. ____risc_xlen__), specific syntax (char 'a' instead of 'a) or simulator features (e.g. tohost) etc.
-. Each test shall be ended by the “RV_COMPLIANCE_HALT“ macro. Depending on branches in the test, there may be more than one instance of this in a test.
+. Each test shall be ended by the (target specific) “RV_COMPLIANCE_HALT“ macro. Depending on branches in the test, there may be more than one instance of this in a test.
 . We allow the usage of macros; however, they shall only be defined in specific predefined header files (see <<Common Header Files,_Common Header Files_>> below), and once they are in use, they may be modified only if the function of all affected tests remains unchanged.
 It is acceptable that using macros may lead to operands repetition (register X is used every time).
 - The aim of this restriction is to have test code more readable and to avoid side effects which may occur when different contributors will include new <<The compliance test,_compliance tests_>> or updates of existing ones in the <<The RISC-V compliance test pool,_compliance test pool_>>.
 This measure results from the negative experience, where the <<The RISC-V compliance test suite,_compliance test suite_>> could be used just for one target while the compliance test code changes were necessary to have it running also for other ones.
+
+==== _To Be discussed_
+
+RVTEST_CASE is almost always followed by RVTEST_IO_WRITE_STR; should the RVTEST_CASE macro be augmented (with the scratch register required by RVTEST_IO_WRITE_STR) to allow RVTEST_IO_WRITE_STR to be subsumed into it?
 
 ==== Common Header Files
 
@@ -317,6 +321,10 @@ The YAML files define both the values of those conditions and values that can be
 Tests should not have #if, #ifdef, etc. for conditional assembly.
 Instead, each of those should be a separate <<The test case,_test case_>> whose conditions are defined in
  the common reference document entry for that test and test case number.
+
+==== _To Be discussed_
+
+Should #ifdef be allowed to enable configurable tests, e.g. those that want to perform a walking-ones test between specific ranges?
  
 === Common compliance test pool reference document
 
