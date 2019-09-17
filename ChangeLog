@@ -1,3 +1,12 @@
+2019-10-07 Philipp Wagner <phw@lowrisc.org>
+    * When executing the test suite, Ibex always writes an instruction
+      log. Update the Makefile to write it to a test-specific location
+      (next to all other log files).
+    * On Ibex, provide an additional .objdump-noalias disassembly file
+      with no aliases and numeric register names (instead of ABI names).
+      This file matches the Ibex trace and can be used to debug the test
+      runs.
+
 2019-08-29 Robert Balas <balasr@iis.ee.ethz.ch>
     * Added support for using RI5CY as a target.
     * Added subdirectory riscv-target/ri5cy
