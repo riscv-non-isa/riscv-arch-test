@@ -192,18 +192,40 @@ static vmiFPRC updateCurrentRMValid(riscvP riscv) {
 }
 
 //
+// Return effective floating point flags from CSR and JIT flags
+//
+inline static vmiFPFlags getFPFlags(riscvP riscv) {
+
+    vmiFPFlags vmiFlags = {bits:riscv->fpFlagsCSR|riscv->fpFlagsMT};
+
+    return vmiFlags;
+}
+
+//
+// Set floating point CSR flags (and clear JIT flags)
+//
+inline static void setFPFlags(riscvP riscv, vmiFPFlags vmiFlags) {
+
+    riscv->fpFlagsCSR = vmiFlags.bits;
+    riscv->fpFlagsMT  = 0;
+}
+
+//
 // Read fflags
 //
 static RISCV_CSR_READFN(fflagsR) {
 
     CSR_REG_DECL(fflags) = {u32 : {bits:0}};
 
+    // construct effective flags from CSR and JIT flags
+    vmiFPFlags vmiFlags = getFPFlags(riscv);
+
     // compose register value
-    fflags.u32.fields.NX = riscv->fpFlags.f.P;
-    fflags.u32.fields.UF = riscv->fpFlags.f.U;
-    fflags.u32.fields.OF = riscv->fpFlags.f.O;
-    fflags.u32.fields.DZ = riscv->fpFlags.f.Z;
-    fflags.u32.fields.NV = riscv->fpFlags.f.I;
+    fflags.u32.fields.NX = vmiFlags.f.P;
+    fflags.u32.fields.UF = vmiFlags.f.U;
+    fflags.u32.fields.OF = vmiFlags.f.O;
+    fflags.u32.fields.DZ = vmiFlags.f.Z;
+    fflags.u32.fields.NV = vmiFlags.f.I;
 
     // return composed value
     return fflags.u32.bits;
@@ -215,13 +237,17 @@ static RISCV_CSR_READFN(fflagsR) {
 static RISCV_CSR_WRITEFN(fflagsW) {
 
     CSR_REG_DECL(fflags) = {u32 : {bits : newValue & WM32_fflags}};
+    vmiFPFlags vmiFlags  = {bits: 0};
 
     // extract flags
-    riscv->fpFlags.f.P = fflags.u32.fields.NX;
-    riscv->fpFlags.f.U = fflags.u32.fields.UF;
-    riscv->fpFlags.f.O = fflags.u32.fields.OF;
-    riscv->fpFlags.f.Z = fflags.u32.fields.DZ;
-    riscv->fpFlags.f.I = fflags.u32.fields.NV;
+    vmiFlags.f.P = fflags.u32.fields.NX;
+    vmiFlags.f.U = fflags.u32.fields.UF;
+    vmiFlags.f.O = fflags.u32.fields.OF;
+    vmiFlags.f.Z = fflags.u32.fields.DZ;
+    vmiFlags.f.I = fflags.u32.fields.NV;
+
+    // assign CSR flags and clear JIT flags
+    setFPFlags(riscv, vmiFlags);
 
     // return written value
     return fflags.u32.bits;
@@ -291,12 +317,15 @@ static RISCV_CSR_WRITEFN(frmW) {
 //
 static RISCV_CSR_READFN(fcsrR) {
 
+    // construct effective flags from CSR and JIT flags
+    vmiFPFlags vmiFlags = getFPFlags(riscv);
+
     // compose flags in register value
-    WR_CSR_FIELD(riscv, fcsr, NX, riscv->fpFlags.f.P);
-    WR_CSR_FIELD(riscv, fcsr, UF, riscv->fpFlags.f.U);
-    WR_CSR_FIELD(riscv, fcsr, OF, riscv->fpFlags.f.O);
-    WR_CSR_FIELD(riscv, fcsr, DZ, riscv->fpFlags.f.Z);
-    WR_CSR_FIELD(riscv, fcsr, NV, riscv->fpFlags.f.I);
+    WR_CSR_FIELD(riscv, fcsr, NX, vmiFlags.f.P);
+    WR_CSR_FIELD(riscv, fcsr, UF, vmiFlags.f.U);
+    WR_CSR_FIELD(riscv, fcsr, OF, vmiFlags.f.O);
+    WR_CSR_FIELD(riscv, fcsr, DZ, vmiFlags.f.Z);
+    WR_CSR_FIELD(riscv, fcsr, NV, vmiFlags.f.I);
 
     // compose vxsat in register value
     WR_CSR_FIELD(riscv, fcsr, vxsat, RD_CSR(riscv, vxsat));
@@ -310,18 +339,22 @@ static RISCV_CSR_READFN(fcsrR) {
 //
 static RISCV_CSR_WRITEFN(fcsrW) {
 
-    Uns64 mask  = RD_CSR_MASK(riscv, fcsr);
-    Uns8  oldRM = RD_CSR_FIELD(riscv, fcsr, frm);
+    Uns64      mask     = RD_CSR_MASK(riscv, fcsr);
+    Uns8       oldRM    = RD_CSR_FIELD(riscv, fcsr, frm);
+    vmiFPFlags vmiFlags = {bits: 0};
 
     // update the CSR
     WR_CSR(riscv, fcsr, newValue & mask);
 
     // extract flags from register value
-    riscv->fpFlags.f.P = RD_CSR_FIELD(riscv, fcsr, NX);
-    riscv->fpFlags.f.U = RD_CSR_FIELD(riscv, fcsr, UF);
-    riscv->fpFlags.f.O = RD_CSR_FIELD(riscv, fcsr, OF);
-    riscv->fpFlags.f.Z = RD_CSR_FIELD(riscv, fcsr, DZ);
-    riscv->fpFlags.f.I = RD_CSR_FIELD(riscv, fcsr, NV);
+    vmiFlags.f.P = RD_CSR_FIELD(riscv, fcsr, NX);
+    vmiFlags.f.U = RD_CSR_FIELD(riscv, fcsr, UF);
+    vmiFlags.f.O = RD_CSR_FIELD(riscv, fcsr, OF);
+    vmiFlags.f.Z = RD_CSR_FIELD(riscv, fcsr, DZ);
+    vmiFlags.f.I = RD_CSR_FIELD(riscv, fcsr, NV);
+
+    // assign CSR flags and clear JIT flags
+    setFPFlags(riscv, vmiFlags);
 
     // extract vxsat from register value
     WR_CSR(riscv, vxsat, RD_CSR_FIELD(riscv, fcsr, vxsat));
@@ -339,22 +372,67 @@ static RISCV_CSR_WRITEFN(fcsrW) {
 ////////////////////////////////////////////////////////////////////////////////
 
 //
+// This encodes possible extension states
+//
+typedef enum extStatusE {
+    ES_OFF     = 0,
+    ES_INITIAL = 1,
+    ES_CLEAN   = 2,
+    ES_DIRTY   = 3
+} extStatus;
+
+//
+// Consolidate floating point flags on CSR view
+//
+static void consolidateFPFlags(riscvP riscv) {
+
+    if(riscv->fpFlagsMT) {
+
+        riscvFSMode mode      = riscv->configInfo.mstatus_fs_mode;
+        Uns8        fpFlagsMT = riscv->fpFlagsMT;
+        Bool        setDirty  = False;
+
+        // consolidate flags on CSR view
+        riscv->fpFlagsCSR |= fpFlagsMT;
+        riscv->fpFlagsMT   = 0;
+
+        // determine whether mstatus.FS should be set to dirty
+        if(mode==RVFS_WRITE_ANY) {
+            // dirty state always set elsewhere
+        } else if(mode==RVFS_ALWAYS_DIRTY) {
+            setDirty = True;
+        } else if(mode==RVFS_WRITE_NZ) {
+            setDirty = fpFlagsMT;
+        }
+
+        // indicate floating point extension status is dirty if required
+        if(setDirty) {
+            WR_CSR_FIELD(riscv, mstatus, FS, ES_DIRTY);
+        }
+    }
+}
+
+//
 // Common routine to read status using mstatus, sstatus or ustatus alias
 //
 static Uns64 statusR(riscvP riscv) {
 
+    // consolidate floating point flags on CSR view
+    consolidateFPFlags(riscv);
+
+    // get FS and XS fields (after consolidation)
     Uns8 FS = RD_CSR_FIELD(riscv, mstatus, FS);
     Uns8 XS = RD_CSR_FIELD(riscv, mstatus, XS);
 
     // if fs_always_dirty is set, force mstatus.FS to be either 0 or 3 (so if
     // it is enabled, it is always seen as dirty)
-    if(FS && (FS!=3) && riscv->configInfo.fs_always_dirty) {
-        FS = 3;
+    if(FS && (riscv->configInfo.mstatus_fs_mode==RVFS_ALWAYS_DIRTY)) {
+        FS = ES_DIRTY;
         WR_CSR_FIELD(riscv, mstatus, FS, FS);
     }
 
-    // overall state is dirty if either FS==3 or XS==3
-    Bool SD = ((FS==3) || (XS==3));
+    // overall state is dirty if either FS or XS indicates dirty
+    Bool SD = ((FS==ES_DIRTY) || (XS==ES_DIRTY));
 
     // clear derived SD aliases (inconveniently changes location)
     riscv->csr.mstatus.u32.fields.SD = 0;
@@ -372,6 +450,10 @@ static Uns64 statusR(riscvP riscv) {
 //
 static void statusW(riscvP riscv, Uns64 newValue, Uns64 mask) {
 
+    // consolidate floating point flags on CSR view
+    consolidateFPFlags(riscv);
+
+    // get old value (after consolidation)
     Uns64 oldValue = RD_CSR(riscv, mstatus);
 
     // get new value using writable bit mask
@@ -1586,7 +1668,7 @@ static const riscvCSRAttrs csrs[CSR_ID(LAST)] = {
     CSR_ATTR_P__3_31 (hpmcounterh,  0xC80, ISA_XLEN_32, 1_10,   0,0,0,  "Performance Monitor High ",                     0,           mhpmR,      0,     mhpmW         ),
 
     //                name          num    arch         version attrs   description                                      wState       rCB         rwCB   wCB
-    CSR_ATTR_P__     (sstatus,      0x100, ISA_S,       1_10,   0,0,0,  "Supervisor Status",                             0,           sstatusR,   0,     sstatusW      ),
+    CSR_ATTR_P__     (sstatus,      0x100, ISA_S,       1_10,   0,0,0,  "Supervisor Status",                             riscvRstFS,  sstatusR,   0,     sstatusW      ),
     CSR_ATTR_TV_     (sedeleg,      0x102, ISA_SandN,   1_10,   0,0,0,  "Supervisor Exception Delegation",               0,           0,          0,     0             ),
     CSR_ATTR_T__     (sideleg,      0x103, ISA_SandN,   1_10,   1,0,0,  "Supervisor Interrupt Delegation",               0,           0,          0,     sidelegW      ),
     CSR_ATTR_P__     (sie,          0x104, ISA_S,       1_10,   1,0,0,  "Supervisor Interrupt Enable",                   0,           sieR,       0,     sieW          ),
@@ -1604,7 +1686,7 @@ static const riscvCSRAttrs csrs[CSR_ID(LAST)] = {
     CSR_ATTR_T__     (marchid,      0xF12, 0,           1_10,   0,0,0,  "Architecture ID",                               0,           0,          0,     0             ),
     CSR_ATTR_T__     (mimpid,       0xF13, 0,           1_10,   0,0,0,  "Implementation ID",                             0,           0,          0,     0             ),
     CSR_ATTR_T__     (mhartid,      0xF14, 0,           1_10,   0,0,0,  "Hardware Thread ID",                            0,           0,          0,     0             ),
-    CSR_ATTR_TV_     (mstatus,      0x300, 0,           1_10,   0,0,0,  "Machine Status",                                0,           mstatusR,   0,     mstatusW      ),
+    CSR_ATTR_TV_     (mstatus,      0x300, 0,           1_10,   0,0,0,  "Machine Status",                                riscvRstFS,  mstatusR,   0,     mstatusW      ),
     CSR_ATTR_T__     (misa,         0x301, 0,           1_10,   1,0,0,  "ISA and Extensions",                            0,           0,          0,     misaW         ),
     CSR_ATTR_TV_     (medeleg,      0x302, ISA_SorN,    1_10,   0,0,0,  "Machine Exception Delegation",                  0,           0,          0,     0             ),
     CSR_ATTR_T__     (mideleg,      0x303, ISA_SorN,    1_10,   1,0,0,  "Machine Interrupt Delegation",                  0,           0,          0,     midelegW      ),

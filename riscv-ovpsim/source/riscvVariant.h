@@ -133,7 +133,6 @@ typedef enum riscvUserVerE {
     RVUV_2_2,                       // version 2.2
     RVUV_2_3,                       // version 2.3 (legacy naming)
     RVUV_20190305,                  // version 20190305
-    RVUV_LAST,                      // for sizing
     RVUV_DEFAULT = RVUV_20190305,   // default version
 } riscvUserVer;
 
@@ -144,7 +143,6 @@ typedef enum riscvPrivVerE {
     RVPV_1_10,                      // version 1.10
     RVPV_1_11,                      // version 1.11 (legacy naming)
     RVPV_20190405,                  // version 20190405
-    RVPV_LAST,                      // for sizing
     RVPV_DEFAULT = RVPV_20190405,   // default version
 } riscvPrivVer;
 
@@ -152,18 +150,42 @@ typedef enum riscvPrivVerE {
 // Supported Vector Architecture versions
 //
 typedef enum riscvVectVerE {
-    RVVV_0_71,                      // version 0.7.1-draft-20190605
+    RVVV_0_7_1,                     // version 0.7.1-draft-20190605
     RVVV_MASTER,                    // master branch
     RVVV_LAST,                      // for sizing
-    RVVV_DEFAULT = RVVV_0_71,       // default version
+    RVVV_DEFAULT = RVVV_0_7_1,      // default version
 } riscvVectVer;
 
+//
+// Supported 16-bit floating point version
+//
+typedef enum riscvFP16VerE {
+    RVFP16_NA,                      // no 16-bit floating point (default)
+    RVFP16_IEEE754,                 // IEEE 754 half precision
+    RVFP16_BFLOAT16,                // BFLOAT16
+} riscvFP16Ver;
+
+//
+// Supported mstatus.FS update behavior
+//
+typedef enum riscvFSModeE {
+    RVFS_WRITE_NZ,                  // dirty set if exception only (default)
+    RVFS_WRITE_ANY,                 // any fflags write sets dirty
+    RVFS_ALWAYS_DIRTY,              // mstatus.FS is always off or dirty
+} riscvFSMode;
+
 // macro returning User Architecture version
-#define RISCV_USER_VERSION(_P) ((_P)->configInfo.user_version)
+#define RISCV_USER_VERSION(_P)  ((_P)->configInfo.user_version)
 
 // macro returning Privileged Architecture version
-#define RISCV_PRIV_VERSION(_P) ((_P)->configInfo.priv_version)
+#define RISCV_PRIV_VERSION(_P)  ((_P)->configInfo.priv_version)
 
 // macro returning Vector Architecture version
-#define RISCV_VECT_VERSION(_P) ((_P)->configInfo.vect_version)
+#define RISCV_VECT_VERSION(_P)  ((_P)->configInfo.vect_version)
+
+// macro returning 16-bit floating point version
+#define RISCV_FP16_VERSION(_P)  ((_P)->configInfo.fp16_version)
+
+// macro returning 16-bit floating point version
+#define RISCV_FS_MODE(_P)       ((_P)->configInfo.mstatus_fs_mode)
 

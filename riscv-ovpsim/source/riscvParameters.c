@@ -62,7 +62,7 @@ typedef enum riscvParamVariantE {
 //
 // Supported Privileged Architecture variants
 //
-static vmiEnumParameter privVariants[RVPV_LAST+1] = {
+static vmiEnumParameter privVariants[] = {
     [RVPV_1_10] = {
         .name        = "1.10",
         .value       = RVPV_1_10,
@@ -85,7 +85,7 @@ static vmiEnumParameter privVariants[RVPV_LAST+1] = {
 //
 // Supported User Architecture variants
 //
-static vmiEnumParameter userVariants[RVUV_LAST+1] = {
+static vmiEnumParameter userVariants[] = {
     [RVUV_2_2] = {
         .name        = "2.2",
         .value       = RVUV_2_2,
@@ -108,16 +108,62 @@ static vmiEnumParameter userVariants[RVUV_LAST+1] = {
 //
 // Supported Vector Architecture variants
 //
-static vmiEnumParameter vectorVariants[RVVV_LAST+1] = {
-    [RVVV_0_71] = {
+static vmiEnumParameter vectorVariants[] = {
+    [RVVV_0_7_1] = {
         .name        = "0.7.1-draft-20190605",
-        .value       = RVVV_0_71,
+        .value       = RVVV_0_7_1,
         .description = "Vector Architecture Version 0.7.1-draft-20190605",
     },
     [RVVV_MASTER] = {
         .name        = "master",
         .value       = RVVV_MASTER,
         .description = "Vector Architecture Master Branch (unstable)",
+    },
+    // KEEP LAST: terminator
+    {0}
+};
+
+//
+// Supported 16-bit floating point variants
+//
+static vmiEnumParameter fp16Variants[] = {
+    [RVFP16_NA] = {
+        .name        = "none",
+        .value       = RVFP16_NA,
+        .description = "No 16-bit floating point implemented",
+    },
+    [RVFP16_IEEE754] = {
+        .name        = "IEEE754",
+        .value       = RVFP16_IEEE754,
+        .description = "IEEE 754 half precision implemented",
+    },
+    [RVFP16_BFLOAT16] = {
+        .name        = "BFLOAT16",
+        .value       = RVFP16_BFLOAT16,
+        .description = "BFLOAT16 implemented",
+    },
+    // KEEP LAST: terminator
+    {0}
+};
+
+//
+// Supported 16-bit floating point variants
+//
+static vmiEnumParameter FSModes[] = {
+    [RVFS_WRITE_NZ] = {
+        .name        = "write_1",
+        .value       = RVFS_WRITE_NZ,
+        .description = "Any non-zero flag result sets mstatus.fs dirty",
+    },
+    [RVFS_WRITE_ANY] = {
+        .name        = "write_any",
+        .value       = RVFS_WRITE_ANY,
+        .description = "Any write of flags sets mstatus.fs dirty",
+    },
+    [RVFS_ALWAYS_DIRTY] = {
+        .name        = "always_dirty",
+        .value       = RVFS_ALWAYS_DIRTY,
+        .description = "mstatus.fs is either off or dirty",
     },
     // KEEP LAST: terminator
     {0}
@@ -217,6 +263,8 @@ static void setUns64ParamDefault(vmiParameterP param, Uns64 value) {
 static RISCV_ENUM_PDEFAULT_CFG_FN(user_version);
 static RISCV_ENUM_PDEFAULT_CFG_FN(priv_version);
 static RISCV_ENUM_PDEFAULT_CFG_FN(vect_version);
+static RISCV_ENUM_PDEFAULT_CFG_FN(fp16_version);
+static RISCV_ENUM_PDEFAULT_CFG_FN(mstatus_fs_mode);
 
 //
 // Set default value of raw Bool parameters
@@ -233,7 +281,6 @@ static RISCV_BOOL_PDEFAULT_CFG_FN(time_undefined);
 static RISCV_BOOL_PDEFAULT_CFG_FN(instret_undefined);
 static RISCV_BOOL_PDEFAULT_CFG_FN(enable_CSR_bus);
 static RISCV_BOOL_PDEFAULT_CFG_FN(d_requires_f);
-static RISCV_BOOL_PDEFAULT_CFG_FN(fs_always_dirty);
 static RISCV_BOOL_PDEFAULT_CFG_FN(xret_preserves_lr);
 
 //
@@ -368,6 +415,8 @@ static riscvParameter parameters[] = {
     {  RVPV_ALL,     default_user_version,         VMI_ENUM_PARAM_SPEC  (riscvParamValues, user_version,         userVariants,              "Specify required User Architecture version")},
     {  RVPV_ALL,     default_priv_version,         VMI_ENUM_PARAM_SPEC  (riscvParamValues, priv_version,         privVariants,              "Specify required Privileged Architecture version")},
     {  RVPV_V,       default_vect_version,         VMI_ENUM_PARAM_SPEC  (riscvParamValues, vector_version,       vectorVariants,            "Specify required Vector Architecture version")},
+    {  RVPV_FP,      default_fp16_version,         VMI_ENUM_PARAM_SPEC  (riscvParamValues, fp16_version,         fp16Variants,              "Specify required 16-bit floating point format")},
+    {  RVPV_FP,      default_mstatus_fs_mode,      VMI_ENUM_PARAM_SPEC  (riscvParamValues, mstatus_fs_mode,      FSModes,                   "Specify conditions causing update of mstatus.FS to dirty")},
     {  RVPV_ALL,     0,                            VMI_BOOL_PARAM_SPEC  (riscvParamValues, verbose,              True,                      "Specify verbose output messages")},
     {  RVPV_MPCORE,  default_numHarts,             VMI_UNS32_PARAM_SPEC (riscvParamValues, numHarts,             0, 0,          32,         "Specify the number of hart contexts in a multiprocessor")},
     {  RVPV_S,       default_updatePTEA,           VMI_BOOL_PARAM_SPEC  (riscvParamValues, updatePTEA,           False,                     "Specify whether hardware update of PTE A bit is supported")},
@@ -386,7 +435,6 @@ static riscvParameter parameters[] = {
     {  RVPV_ALL,     default_instret_undefined,    VMI_BOOL_PARAM_SPEC  (riscvParamValues, instret_undefined,    False,                     "Specify that the instret CSR is undefined (reads to it are emulated by a Machine mode trap)")},
     {  RVPV_ALL,     default_enable_CSR_bus,       VMI_BOOL_PARAM_SPEC  (riscvParamValues, enable_CSR_bus,       False,                     "Add artifact CSR bus port, allowing CSR registers to be externally implemented")},
     {  RVPV_FP,      default_d_requires_f,         VMI_BOOL_PARAM_SPEC  (riscvParamValues, d_requires_f,         False,                     "If D and F extensions are separately enabled in the misa CSR, whether D is enabled only if F is enabled")},
-    {  RVPV_FP,      default_fs_always_dirty,      VMI_BOOL_PARAM_SPEC  (riscvParamValues, fs_always_dirty,      False,                     "When FPU is enabled, whether mstatus.FS is always 3 (indicating dirty)")},
     {  RVPV_A,       default_xret_preserves_lr,    VMI_BOOL_PARAM_SPEC  (riscvParamValues, xret_preserves_lr,    False,                     "Whether an xRET instruction preserves the value of LR")},
     {  RVPV_S,       default_ASID_bits,            VMI_UNS32_PARAM_SPEC (riscvParamValues, ASID_bits,            0, 0,          16,         "Specify the number of implemented ASID bits")},
     {  RVPV_A,       default_lr_sc_grain,          VMI_UNS32_PARAM_SPEC (riscvParamValues, lr_sc_grain,          1, 1,          (1<<16),    "Specify byte granularity of ll/sc lock region (constrained to a power of two)")},
@@ -741,7 +789,7 @@ VMI_PROC_PARAM_SPECS_FN(riscvGetPreParamSpec) {
 
         // return next pre-parameter
         vmiParameterP this = prev+1;
-        return this && this->name ? this : NULL;
+        return this && this->name ? this : 0;
     }
 }
 
@@ -824,7 +872,7 @@ VMI_PROC_PARAM_SPECS_FN(riscvGetParamSpec) {
     riscvP        riscv = (riscvP)processor;
     vmiParameterP this  = prev ? prev+1 : riscv->parameters;
 
-    return this && this->name ? this : NULL;
+    return this && this->name ? this : 0;
 }
 
 //
@@ -867,5 +915,19 @@ const char *riscvGetUserVersionDesc(riscvP riscv) {
 //
 const char *riscvGetVectorVersionDesc(riscvP riscv) {
     return vectorVariants[RISCV_VECT_VERSION(riscv)].description;
+}
+
+//
+// Return 16-bit floating point description
+//
+const char *riscvGetFP16VersionDesc(riscvP riscv) {
+    return fp16Variants[RISCV_FP16_VERSION(riscv)].description;
+}
+
+//
+// Return mstatus.FS mode name
+//
+const char *riscvGetFSModeName(riscvP riscv) {
+    return FSModes[RISCV_FS_MODE(riscv)].name;
 }
 

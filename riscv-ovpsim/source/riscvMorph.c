@@ -115,10 +115,10 @@ typedef enum riscvVShapeE {
                     // MIXED ARGUMENTS
     RVVW_111_FI,    // SEW, Fd=Is
     RVVW_111_IF,    // SEW, Id=Fs
-    RVVW_211_FIQ,   // 2*SEW = SEW, Fd=Is
-    RVVW_211_IFQ,   // 2*SEW = SEW, Id=Fs
-    RVVW_121_FIQ,   // SEW = 2*SEW, implicit widening
-    RVVW_121_IFQ,   // SEW = 2*SEW, implicit widening
+    RVVW_21_FIQ,    // 2*SEW = SEW, Fd=Is
+    RVVW_21_IFQ,    // 2*SEW = SEW, Id=Fs
+    RVVW_12_FIQ,    // SEW = 2*SEW, implicit widening
+    RVVW_12_IFQ,    // SEW = 2*SEW, implicit widening
 
                     // MASK ARGUMENTS
     RVVW_111_PP,    // SEW
@@ -574,16 +574,43 @@ static void emitTrapInstructionMask(
 ////////////////////////////////////////////////////////////////////////////////
 
 //
-// Set mstatus.FS if this is the first floating point instruction in this block
+// Indicate that this instruction may update mstatus (by changing mstatus.FS)
+//
+inline static void mayWriteMStatus(riscvP riscv) {
+
+    if(riscv->configInfo.mstatus_fs_mode!=RVFS_ALWAYS_DIRTY) {
+        vmimtRegReadImpl("mstatus");
+        vmimtRegWriteImpl("mstatus");
+    }
+}
+
+//
+// Set mstatus.FS to Dirty if it is not known to be in that state already
 //
 static void updateFS(riscvP riscv) {
 
+    if(riscv->configInfo.mstatus_fs_mode!=RVFS_ALWAYS_DIRTY) {
+
+        riscvBlockStateP blockState = riscv->blockState;
+
+        // indicate that this instruction may update mstatus
+        mayWriteMStatus(riscv);
+
+        if(!blockState->FSDirty) {
+            blockState->FSDirty = True;
+            vmimtBinopRC(32, vmi_OR, RISCV_CPU_REG(csr.mstatus), WM_mstatus_FS, 0);
+        }
+    }
+}
+
+//
+// Reset JIT code generator state after possible write of mstatus.FS
+//
+static void resetFS(riscvP riscv) {
+
     riscvBlockStateP blockState = riscv->blockState;
 
-    if(!blockState->fpInstDone) {
-        blockState->fpInstDone = True;
-        vmimtBinopRC(32, vmi_OR, RISCV_CPU_REG(csr.mstatus), WM_mstatus_FS, 0);
-    }
+    blockState->FSDirty = False;
 }
 
 //
@@ -683,6 +710,36 @@ inline static vmiReg getVMIReg(riscvP riscv, riscvRegDesc r) {
 }
 
 //
+// Does the floating point register require NaN boxing?
+//
+static Bool requireNaNBox(
+    riscvP       riscv,
+    riscvRegDesc r,
+    Uns32        archBits,
+    Uns32        srcBits
+) {
+    riscvBlockStateP blockState = riscv->blockState;
+    Bool             doNaNBox   = False;
+
+    if(archBits>srcBits) {
+
+        Uns32 fpNaNBoxMask;
+
+        if(srcBits==16) {
+            fpNaNBoxMask = blockState->fpNaNBoxMask[0];
+        } else if(srcBits==32) {
+            fpNaNBoxMask = blockState->fpNaNBoxMask[1];
+        } else {
+            fpNaNBoxMask = -1;
+        }
+
+        doNaNBox = !(fpNaNBoxMask & getRegMask(r));
+    }
+
+    return doNaNBox;
+}
+
+//
 // Do actions when a register is written (sign extending or NaN boxing, if
 // required)
 //
@@ -705,13 +762,21 @@ void riscvWriteRegSize(riscvP riscv, riscvRegDesc r, Uns32 srcBits) {
         riscvBlockStateP blockState = riscv->blockState;
         Uns32            dstBits    = riscvGetFlenArch(riscv);
         Uns32            fprMask    = getRegMask(r);
+        Uns32            i;
 
-        // NaN-box result
-        if(dstBits>srcBits) {
+        // NaN-box result if required
+        if(requireNaNBox(riscv, r, dstBits, srcBits)) {
             vmimtMoveRC(dstBits-srcBits, VMI_REG_DELTA(dst,srcBits/8), -1);
-            blockState->fpNaNBoxMask |= fprMask;
-        } else {
-            blockState->fpNaNBoxMask &= ~fprMask;
+        }
+
+        // floating point views narrower than srcBits are now not NaN-boxed
+        for(i=0; (16<<i)<srcBits; i++) {
+            blockState->fpNaNBoxMask[i] &= ~fprMask;
+        }
+
+        // floating point views srcBits or wider are now NaN-boxed
+        for(; i<2; i++) {
+            blockState->fpNaNBoxMask[i] |= fprMask;
         }
 
         // set mstatus.FS
@@ -785,9 +850,15 @@ inline static Bool inTransactionMode(riscvMorphStateP state) {
 //
 static Uns64 doLoadTMode(riscvP riscv, Uns64 VA, Uns32 bytes) {
 
-    Uns64 result;
+    Uns64       result = 0;
+    riscvExtCBP extCB;
 
-    riscv->cb.tLoad(riscv, &result, VA, bytes);
+    // call derived model transaction load functions
+    for(extCB=riscv->extCBs; extCB; extCB=extCB->next) {
+        if(extCB->tLoad) {
+            extCB->tLoad(riscv, &result, VA, bytes, extCB->clientData);
+        }
+    }
 
     return result;
 }
@@ -797,7 +868,14 @@ static Uns64 doLoadTMode(riscvP riscv, Uns64 VA, Uns32 bytes) {
 //
 static void doStoreTMode(riscvP riscv, Uns64 VA, Uns64 value, Uns32 bytes) {
 
-    riscv->cb.tStore(riscv, &value, VA, bytes);
+    riscvExtCBP extCB;
+
+    // call derived model transaction store functions
+    for(extCB=riscv->extCBs; extCB; extCB=extCB->next) {
+        if(extCB->tStore) {
+            extCB->tStore(riscv, &value, VA, bytes, extCB->clientData);
+        }
+    }
 }
 
 //
@@ -1943,8 +2021,32 @@ static RISCV_MORPH_FN(emitCSRRI) {
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// FLOATING POINT DATA HANDLING UTILITIES
+// FLOATING POINT SUPPORT MACROS
 ////////////////////////////////////////////////////////////////////////////////
+
+//
+// Int8 macros
+//
+#define INT8_MIN           	0x80
+#define INT8_MAX           	0x7f
+
+//
+// Uns8 macros
+//
+#define UNS8_MIN           	0x00
+#define UNS8_MAX           	0xff
+
+//
+// Int16 macros
+//
+#define INT16_MIN           0x8000
+#define INT16_MAX           0x7fff
+
+//
+// Uns16 macros
+//
+#define UNS16_MIN           0x0000
+#define UNS16_MAX           0xffff
 
 //
 // Int32 macros
@@ -1969,6 +2071,30 @@ static RISCV_MORPH_FN(emitCSRRI) {
 //
 #define UNS64_MIN           0x0000000000000000ULL
 #define UNS64_MAX           0xffffffffffffffffULL
+
+//
+// Flt16 macros
+//
+#define FP16_EXP_ONES       0x1f
+#define FP16_EXP_SHIFT      10
+#define FP16_SIGN_SHIFT     15
+#define FP16_SIGN_MASK      (1<<FP16_SIGN_SHIFT)
+
+#define FP16_SIGN(_F)       (((_F) & FP16_SIGN_MASK) != 0)
+#define FP16_EXPONENT(_F)   (((_F) & 0x7c00) >> FP16_EXP_SHIFT)
+#define FP16_FRACTION(_F)   ((_F) & ((1<<FP16_EXP_SHIFT)-1))
+
+#define FP16_PLUS_ZERO      (0)
+#define FP16_MINUS_ZERO     (FP16_SIGN_MASK)
+#define FP16_ISZERO(_F)     (((_F) & ~0x8000) == 0)
+#define FP16_ZERO(_S)       ((_S) ? FP16_MINUS_ZERO : FP16_PLUS_ZERO)
+
+#define FP16_PLUS_INFINITY  (0x7c00)
+#define FP16_MINUS_INFINITY (0xfc00)
+#define FP16_INFINITY(_S)   ((_S) ? FP16_MINUS_INFINITY : FP16_PLUS_INFINITY)
+
+#define FP16_DEFAULT_QNAN   0x7e00
+#define FP16_QNAN_MASK      0x0200
 
 //
 // Flt32 macros
@@ -2019,18 +2145,69 @@ static RISCV_MORPH_FN(emitCSRRI) {
 #define FP64_QNAN_MASK      0x0008000000000000ULL
 
 
+////////////////////////////////////////////////////////////////////////////////
+// 16-BIT FLOATING POINT UTILITIES
+////////////////////////////////////////////////////////////////////////////////
+
+//
+// Is the Flt16 value a NaN or infinity?
+//
+inline static Bool isNaNorInf16(Uns16 value) {
+    return FP16_EXPONENT(value)==FP16_EXP_ONES;
+}
+
+//
+// Is the Flt16 value a NaN?
+//
+inline static Bool isNaN16(Uns16 value) {
+    return isNaNorInf16(value) && FP16_FRACTION(value);
+}
+
+//
+// Is the Flt16 value an infinity?
+//
+inline static Bool isInf16(Uns16 value) {
+    return isNaNorInf16(value) && !FP16_FRACTION(value);
+}
+
+//
+// Is the Flt16 value a denormal?
+//
+inline static Bool isDenorm16(Uns16 value) {
+    return !FP16_EXPONENT(value) && FP16_FRACTION(value);
+}
+
+//
+// Is the Flt16 value a zero?
+//
+inline static Bool isZero16(Uns16 value) {
+    return !(value & ~FP16_SIGN_MASK);
+}
+
+//
+// Is the Flt16 value a QNaN?
+//
+inline static Bool isQNaN16(Uns16 value) {
+    return isNaN16(value) && (value & FP16_QNAN_MASK);
+}
+
+//
+// Is the Flt16 value an SNaN?
+//
+inline static Bool isSNaN16(Uns16 value) {
+    return isNaN16(value) && !(value & FP16_QNAN_MASK);
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// 32-BIT FLOATING POINT UTILITIES
+////////////////////////////////////////////////////////////////////////////////
+
 //
 // Is the Flt32 value a NaN or infinity?
 //
 inline static Bool isNaNorInf32(Uns32 value) {
     return FP32_EXPONENT(value)==FP32_EXP_ONES;
-}
-
-//
-// Is the Flt64 value a NaN or infinity?
-//
-inline static Bool isNaNorInf64(Uns64 value) {
-    return FP64_EXPONENT(value)==FP64_EXP_ONES;
 }
 
 //
@@ -2041,24 +2218,10 @@ inline static Bool isNaN32(Uns32 value) {
 }
 
 //
-// Is the Flt64 value a NaN?
-//
-inline static Bool isNaN64(Uns64 value) {
-    return isNaNorInf64(value) && FP64_FRACTION(value);
-}
-
-//
 // Is the Flt32 value an infinity?
 //
 inline static Bool isInf32(Uns32 value) {
     return isNaNorInf32(value) && !FP32_FRACTION(value);
-}
-
-//
-// Is the Flt64 value an infinity?
-//
-inline static Bool isInf64(Uns64 value) {
-    return isNaNorInf64(value) && !FP64_FRACTION(value);
 }
 
 //
@@ -2069,24 +2232,10 @@ inline static Bool isDenorm32(Uns32 value) {
 }
 
 //
-// Is the Flt64 value a denormal?
-//
-inline static Bool isDenorm64(Uns64 value) {
-    return !FP64_EXPONENT(value) && FP64_FRACTION(value);
-}
-
-//
 // Is the Flt32 value a zero?
 //
 inline static Bool isZero32(Uns32 value) {
     return !(value & ~FP32_SIGN_MASK);
-}
-
-//
-// Is the Flt64 value a zero?
-//
-inline static Bool isZero64(Uns64 value) {
-    return !(value & ~FP64_SIGN_MASK);
 }
 
 //
@@ -2097,17 +2246,57 @@ inline static Bool isQNaN32(Uns32 value) {
 }
 
 //
-// Is the Flt64 value a QNaN?
-//
-inline static Bool isQNaN64(Uns64 value) {
-    return isNaN64(value) && (value & FP64_QNAN_MASK);
-}
-
-//
 // Is the Flt32 value an SNaN?
 //
 inline static Bool isSNaN32(Uns32 value) {
     return isNaN32(value) && !(value & FP32_QNAN_MASK);
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// 64-BIT FLOATING POINT UTILITIES
+////////////////////////////////////////////////////////////////////////////////
+
+//
+// Is the Flt64 value a NaN or infinity?
+//
+inline static Bool isNaNorInf64(Uns64 value) {
+    return FP64_EXPONENT(value)==FP64_EXP_ONES;
+}
+
+//
+// Is the Flt64 value a NaN?
+//
+inline static Bool isNaN64(Uns64 value) {
+    return isNaNorInf64(value) && FP64_FRACTION(value);
+}
+
+//
+// Is the Flt64 value an infinity?
+//
+inline static Bool isInf64(Uns64 value) {
+    return isNaNorInf64(value) && !FP64_FRACTION(value);
+}
+
+//
+// Is the Flt64 value a denormal?
+//
+inline static Bool isDenorm64(Uns64 value) {
+    return !FP64_EXPONENT(value) && FP64_FRACTION(value);
+}
+
+//
+// Is the Flt64 value a zero?
+//
+inline static Bool isZero64(Uns64 value) {
+    return !(value & ~FP64_SIGN_MASK);
+}
+
+//
+// Is the Flt64 value a QNaN?
+//
+inline static Bool isQNaN64(Uns64 value) {
+    return isNaN64(value) && (value & FP64_QNAN_MASK);
 }
 
 //
@@ -2116,6 +2305,11 @@ inline static Bool isSNaN32(Uns32 value) {
 inline static Bool isSNaN64(Uns64 value) {
     return isNaN64(value) && !(value & FP64_QNAN_MASK);
 }
+
+
+////////////////////////////////////////////////////////////////////////////////
+// FLOATING POINT REGISTER UTILITIES
+////////////////////////////////////////////////////////////////////////////////
 
 //
 // Return VMI register for the given abstract register which may require a NaN
@@ -2129,22 +2323,22 @@ vmiReg riscvGetVMIRegFS(riscvP riscv, riscvRegDesc r, vmiReg tmp) {
 
         Uns32 bits     = getRBits(r);
         Uns32 archBits = riscvGetFlenArch(riscv);
-        Uns32 fprMask  = getRegMask(r);
 
         // handle possible switch to QNaN-valued temporary if the source
         // register is smaller than the architectural register size and not
         // known to be NaN-boxed
-        if((archBits>bits) && !(riscv->blockState->fpNaNBoxMask&fprMask)) {
+        if(requireNaNBox(riscv, r, archBits, bits)) {
 
-            // use temporary corresponding to the input argument
-            vmiReg upper = VMI_REG_DELTA(result,bits/8);
+            // select default QNaN value
+            Uns32 QNaN  = (bits==16) ? FP16_DEFAULT_QNAN : FP32_DEFAULT_QNAN;
+            Uns64 upper = -1ULL << bits;
 
             // is the upper half all ones?
-            vmimtCompareRC(bits, vmi_COND_EQ, upper, -1, tmp);
+            vmimtCompareRC(archBits, vmi_COND_NB, result, upper, tmp);
 
             // seed the apparent value, depending on whether the source is
             // correctly NaN-boxed
-            vmimtCondMoveRRC(bits, tmp, True, tmp, result, FP32_DEFAULT_QNAN);
+            vmimtCondMoveRRC(bits, tmp, True, tmp, result, QNaN);
 
             // use the temporary as a source
             result = tmp;
@@ -2169,10 +2363,24 @@ void riscvWFS(riscvMorphStateP state, Bool useRS1) {
     updateFS(state->riscv);
 }
 
+//
+// Reset JIT code generator state after possible write of mstatus.FS
+//
+void riscvRstFS(riscvMorphStateP state, Bool useRS1) {
+    resetFS(state->riscv);
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // GENERAL QNAN/INDETERMINATE HANDLERS
 ////////////////////////////////////////////////////////////////////////////////
+
+//
+// 16-bit QNaN result - return default QNaN
+//
+static VMI_FP_QNAN16_RESULT_FN(handleQNaN16) {
+    return FP16_DEFAULT_QNAN;
+}
 
 //
 // 32-bit QNaN result - return default QNaN
@@ -2189,27 +2397,73 @@ static VMI_FP_QNAN64_RESULT_FN(handleQNaN64) {
 }
 
 //
+// Return the sign of the indeterminate value
+//
+static Bool getIndeterminateSign(vmiFPArg value) {
+
+    Bool sign = False;
+
+    if(value.type == vmi_FT_16_IEEE_754) {
+        sign = (value.f16Parts.sign && !isNaN16(value.u16));
+    } else if(value.type == vmi_FT_32_IEEE_754) {
+        sign = (value.f32Parts.sign && !isNaN32(value.u32));
+    } else if(value.type == vmi_FT_64_IEEE_754) {
+        sign = (value.f64Parts.sign && !isNaN64(value.u64));
+    } else if(value.type == vmi_FT_BFLOAT16) {
+        sign = (value.f32Parts.sign && !isNaN32(value.u32));
+    } else {
+        VMI_ABORT("unimplemented type %u", value.type); // LCOV_EXCL_LINE
+    }
+
+    return sign;
+}
+
+//
+// 8-bit indeterminate result (NOTE: signed and unsigned results have distinct
+// indeterminate patterns)
+//
+static VMI_FP_IND8_RESULT_FN(handleIndeterminate8) {
+
+    Uns8 result;
+
+    if(getIndeterminateSign(value)) {
+        result = isSigned ? INT8_MIN : UNS8_MIN;
+    } else {
+        result = isSigned ? INT8_MAX : UNS8_MAX;
+    }
+
+    return result;
+}
+
+//
+// 16-bit indeterminate result (NOTE: signed and unsigned results have distinct
+// indeterminate patterns)
+//
+static VMI_FP_IND16_RESULT_FN(handleIndeterminate16) {
+
+    Uns16 result;
+
+    if(getIndeterminateSign(value)) {
+        result = isSigned ? INT16_MIN : UNS16_MIN;
+    } else {
+        result = isSigned ? INT16_MAX : UNS16_MAX;
+    }
+
+    return result;
+}
+
+//
 // 32-bit indeterminate result (NOTE: signed and unsigned results have distinct
 // indeterminate patterns)
 //
 static VMI_FP_IND32_RESULT_FN(handleIndeterminate32) {
 
-    Uns32 result = 0;
+    Uns32 result;
 
-    if(value.type == vmi_FT_32_IEEE_754) {
-        if(value.f32Parts.sign && !isNaN32(value.u32)) {
-            result = isSigned ? INT32_MIN : UNS32_MIN;
-        } else {
-            result = isSigned ? INT32_MAX : UNS32_MAX;
-        }
-    } else if(value.type == vmi_FT_64_IEEE_754) {
-        if(value.f64Parts.sign && !isNaN64(value.u64)) {
-            result = isSigned ? INT32_MIN : UNS32_MIN;
-        } else {
-            result = isSigned ? INT32_MAX : UNS32_MAX;
-        }
+    if(getIndeterminateSign(value)) {
+        result = isSigned ? INT32_MIN : UNS32_MIN;
     } else {
-        VMI_ABORT("unimplemented type %u", value.type); // LCOV_EXCL_LINE
+        result = isSigned ? INT32_MAX : UNS32_MAX;
     }
 
     return result;
@@ -2221,22 +2475,12 @@ static VMI_FP_IND32_RESULT_FN(handleIndeterminate32) {
 //
 static VMI_FP_IND64_RESULT_FN(handleIndeterminate64) {
 
-    Uns64 result = 0;
+    Uns64 result;
 
-    if(value.type == vmi_FT_32_IEEE_754) {
-        if(value.f32Parts.sign && !isNaN32(value.u32)) {
-            result = isSigned ? INT64_MIN : UNS64_MIN;
-        } else {
-            result = isSigned ? INT64_MAX : UNS64_MAX;
-        }
-    } else if(value.type == vmi_FT_64_IEEE_754) {
-        if(value.f64Parts.sign && !isNaN64(value.u64)) {
-            result = isSigned ? INT64_MIN : UNS64_MIN;
-        } else {
-            result = isSigned ? INT64_MAX : UNS64_MAX;
-        }
+    if(getIndeterminateSign(value)) {
+        result = isSigned ? INT64_MIN : UNS64_MIN;
     } else {
-        VMI_ABORT("unimplemented type %u", value.type); // LCOV_EXCL_LINE
+        result = isSigned ? INT64_MAX : UNS64_MAX;
     }
 
     return result;
@@ -2246,6 +2490,31 @@ static VMI_FP_IND64_RESULT_FN(handleIndeterminate64) {
 ////////////////////////////////////////////////////////////////////////////////
 // ISA VERSION 2.2 MIN/MAX RESULT HANDLERS
 ////////////////////////////////////////////////////////////////////////////////
+
+//
+// Common routine for 16-bit FMIN/FMAX result
+//
+static Uns16 doMinMax16_2_2(
+    Uns16       result16,
+    vmiFPArgP   args,
+    vmiFPFlagsP setFlags
+) {
+    Uns16 arg0 = args[0].u16;
+    Uns16 arg1 = args[1].u16;
+
+    if(isSNaN16(arg0) || isSNaN16(arg1)) {
+        setFlags->f.I = 1;
+        result16 = FP16_DEFAULT_QNAN;
+    } else if(isNaN16(arg0) && isNaN16(arg1)) {
+        result16 = FP16_DEFAULT_QNAN;
+    } else if(isNaN16(arg0)) {
+        result16 = arg1;
+    } else if(isNaN16(arg1)) {
+        result16 = arg0;
+    }
+
+    return result16;
+}
 
 //
 // Common routine for 32-bit FMIN/FMAX result
@@ -2295,6 +2564,34 @@ static Uns64 doMinMax64_2_2(
     }
 
     return result64;
+}
+
+//
+// 16-bit FMIN result handler
+//
+static VMI_FP_16_RESULT_FN(doFMin16_2_2) {
+
+    if(isZero16(args[0].u16) && isZero16(args[1].u16)) {
+        result16 = args[1].u16;
+    } else if(isNaNorInf16(result16)) {
+        result16 = doMinMax16_2_2(result16, args, setFlags);
+    }
+
+    return result16;
+}
+
+//
+// 16-bit FMAX result handler
+//
+static VMI_FP_16_RESULT_FN(doFMax16_2_2) {
+
+    if(isZero16(args[0].u16) && isZero16(args[1].u16)) {
+        result16 = args[0].u16;
+    } else if(isNaNorInf16(result16)) {
+        result16 = doMinMax16_2_2(result16, args, setFlags);
+    }
+
+    return result16;
 }
 
 //
@@ -2359,6 +2656,32 @@ static VMI_FP_64_RESULT_FN(doFMax64_2_2) {
 ////////////////////////////////////////////////////////////////////////////////
 
 //
+// Common routine for 16-bit FMIN/FMAX result
+//
+static Uns16 doMinMax16_2_3(
+    Uns16       result16,
+    vmiFPArgP   args,
+    vmiFPFlagsP setFlags
+) {
+    Uns16 arg0 = args[0].u16;
+    Uns16 arg1 = args[1].u16;
+
+    if(isSNaN16(arg0) || isSNaN16(arg1)) {
+        setFlags->f.I = 1;
+    }
+
+    if(isNaN16(arg0) && isNaN16(arg1)) {
+        result16 = FP16_DEFAULT_QNAN;
+    } else if(isNaN16(arg0)) {
+        result16 = arg1;
+    } else if(isNaN16(arg1)) {
+        result16 = arg0;
+    }
+
+    return result16;
+}
+
+//
 // Common routine for 32-bit FMIN/FMAX result
 //
 static Uns32 doMinMax32_2_3(
@@ -2408,6 +2731,34 @@ static Uns64 doMinMax64_2_3(
     }
 
     return result64;
+}
+
+//
+// 16-bit FMIN result handler
+//
+static VMI_FP_16_RESULT_FN(doFMin16_2_3) {
+
+    if(isZero16(args[0].u16) && isZero16(args[1].u16)) {
+        result16 = args[0].u16 | args[1].u16;
+    } else if(isNaNorInf16(result16)) {
+        result16 = doMinMax16_2_3(result16, args, setFlags);
+    }
+
+    return result16;
+}
+
+//
+// 16-bit FMAX result handler
+//
+static VMI_FP_16_RESULT_FN(doFMax16_2_3) {
+
+    if(isZero16(args[0].u16) && isZero16(args[1].u16)) {
+        result16 = args[0].u16 & args[1].u16;
+    } else if(isNaNorInf16(result16)) {
+        result16 = doMinMax16_2_3(result16, args, setFlags);
+    }
+
+    return result16;
 }
 
 //
@@ -2474,13 +2825,18 @@ static VMI_FP_64_RESULT_FN(doFMax64_2_3) {
 //
 // Define one vmiFPConfig
 //
-#define FPU_CONFIG(_QH32, _QH64, _R32,  _R64) {         \
+#define FPU_CONFIG(_QH16, _QH32, _QH64, _R16, _R32, _R64) { \
+    .QNaN16                  = FP16_DEFAULT_QNAN,       \
     .QNaN32                  = FP32_DEFAULT_QNAN,       \
     .QNaN64                  = FP64_DEFAULT_QNAN,       \
+    .QNaN16ResultCB          = _QH16,                   \
     .QNaN32ResultCB          = _QH32,                   \
     .QNaN64ResultCB          = _QH64,                   \
+    .indeterminate8ResultCB  = handleIndeterminate8,    \
+    .indeterminate16ResultCB = handleIndeterminate16,   \
     .indeterminate32ResultCB = handleIndeterminate32,   \
     .indeterminate64ResultCB = handleIndeterminate64,   \
+    .fp16ResultCB            = _R16,                    \
     .fp32ResultCB            = _R32,                    \
     .fp64ResultCB            = _R64,                    \
     .suppressFlags           = {f:{D:1}},               \
@@ -2493,13 +2849,13 @@ static VMI_FP_64_RESULT_FN(doFMax64_2_3) {
 const static vmiFPConfig fpConfigs[RVFP_LAST] = {
 
     // normal native operation configuration
-    [RVFP_NORMAL]   = FPU_CONFIG(handleQNaN32, handleQNaN64, 0, 0),
+    [RVFP_NORMAL]   = FPU_CONFIG(handleQNaN16, handleQNaN32, handleQNaN64, 0, 0, 0),
 
     // FMIN/FMAX configurations
-    [RVFP_FMIN]     = FPU_CONFIG(0, 0, doFMin32_2_2, doFMin64_2_2),
-    [RVFP_FMAX]     = FPU_CONFIG(0, 0, doFMax32_2_2, doFMax64_2_2),
-    [RVFP_FMIN_2_3] = FPU_CONFIG(0, 0, doFMin32_2_3, doFMin64_2_3),
-    [RVFP_FMAX_2_3] = FPU_CONFIG(0, 0, doFMax32_2_3, doFMax64_2_3),
+    [RVFP_FMIN]     = FPU_CONFIG(0, 0, 0, doFMin16_2_2, doFMin32_2_2, doFMin64_2_2),
+    [RVFP_FMAX]     = FPU_CONFIG(0, 0, 0, doFMax16_2_2, doFMax32_2_2, doFMax64_2_2),
+    [RVFP_FMIN_2_3] = FPU_CONFIG(0, 0, 0, doFMin16_2_3, doFMin32_2_3, doFMin64_2_3),
+    [RVFP_FMAX_2_3] = FPU_CONFIG(0, 0, 0, doFMax16_2_3, doFMax32_2_3, doFMax64_2_3),
 };
 
 //
@@ -2528,10 +2884,34 @@ inline static vmiFPRC mapRMDescToRC(riscvRMDesc rm) {
     return map[rm];
 }
 
+//
+// Is BFLOAT16 16-bit floating point format enabled?
+//
+inline static Bool enableBFLOAT16(riscvP riscv) {
+	return riscv->configInfo.fp16_version==RVFP16_BFLOAT16;
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // FLOATING POINT INSTRUCTIONS
 ////////////////////////////////////////////////////////////////////////////////
+
+//
+// Return VMI register for floating point status flags when written (NOTE:
+// mstatus.FS might need to be updated as well)
+//
+static vmiReg getFPFlagsMT(riscvMorphStateP state) {
+
+    // indicate that this instruction may update mstatus
+    mayWriteMStatus(state->riscv);
+
+    // set mstatus.FS if required
+    if(state->riscv->configInfo.mstatus_fs_mode==RVFS_WRITE_ANY) {
+        updateFS(state->riscv);
+    }
+
+    return RISCV_FP_FLAGS;
+}
 
 //
 // Validate the given rounding mode is legal and emit an Illegal Instruction
@@ -2642,7 +3022,8 @@ static RISCV_MORPH_FN(emitFUnop) {
     vmiFPConfigCP ctrl  = getFPControl(state);
 
     if(emitSetOperationRM(state, state->info.rm)) {
-        vmimtFUnopRR(type, op, fd, fs1, RISCV_FP_FLAGS, ctrl);
+        vmiReg flags = getFPFlagsMT(state);
+        vmimtFUnopRR(type, op, fd, fs1, flags, ctrl);
         writeReg(riscv, fdA);
     }
 }
@@ -2664,7 +3045,8 @@ static RISCV_MORPH_FN(emitFBinop) {
     vmiFPConfigCP ctrl  = getFPControl(state);
 
     if(emitSetOperationRM(state, state->info.rm)) {
-        vmimtFBinopRRR(type, op, fd, fs1, fs2, RISCV_FP_FLAGS, ctrl);
+        vmiReg flags = getFPFlagsMT(state);
+        vmimtFBinopRRR(type, op, fd, fs1, fs2, flags, ctrl);
         writeReg(riscv, fdA);
     }
 }
@@ -2688,7 +3070,8 @@ static RISCV_MORPH_FN(emitFTernop) {
     vmiFPConfigCP ctrl  = getFPControl(state);
 
     if(emitSetOperationRM(state, state->info.rm)) {
-        vmimtFTernopRRRR(type, op, fd, fs1, fs2, fs3, RISCV_FP_FLAGS, False, ctrl);
+        vmiReg flags = getFPFlagsMT(state);
+        vmimtFTernopRRRR(type, op, fd, fs1, fs2, fs3, flags, False, ctrl);
         writeReg(riscv, fdA);
     }
 }
@@ -2709,7 +3092,8 @@ static RISCV_MORPH_FN(emitFConvert) {
     vmiFPConfigCP ctrl  = getFPControl(state);
 
     if(emitCheckLegalRM(riscv, state->info.rm)) {
-        vmimtFConvertRR(typeD, fd, typeS, fs, rc, RISCV_FP_FLAGS, ctrl);
+        vmiReg flags = getFPFlagsMT(state);
+        vmimtFConvertRR(typeD, fd, typeS, fs, rc, flags, ctrl);
         writeReg(riscv, fdA);
     }
 }
@@ -2727,12 +3111,13 @@ static void emitFCompareInt(
     riscvFPRelation fpRel     = state->attrs->fpRel;
     vmiFPRelation   relation  = fpRel & ~RVFCMP_QNOK;
     Bool            allowQNaN = fpRel &  RVFCMP_QNOK;
-    vmiFlags        flags     = {f:{[vmi_ZF]=rd}, negate:vmi_FN_ZF};
+    vmiReg          flags     = getFPFlagsMT(state);
+    vmiFlags        zf        = {f:{[vmi_ZF]=rd}, negate:vmi_FN_ZF};
     vmiFPConfigCP   ctrl      = getFPControl(state);
 
     // set least-significant byte of 'rd' with the required result
-    vmimtFCompareRR(typeS, rd, fs1, fs2, RISCV_FP_FLAGS, allowQNaN, ctrl);
-    vmimtBinopRC(8, vmi_AND, rd, relation, &flags);
+    vmimtFCompareRR(typeS, rd, fs1, fs2, flags, allowQNaN, ctrl);
+    vmimtBinopRC(8, vmi_AND, rd, relation, &zf);
 }
 
 //
@@ -2825,6 +3210,31 @@ typedef enum riscvFClassE {
 } riscvFClass;
 
 //
+// Implement 16-bit FClass operation
+//
+static riscvFClass doFClass16(Uns16 value) {
+
+    Bool        isSigned = (value & FP16_SIGN_MASK) && True;
+    riscvFClass result;
+
+    if(isSNaN16(value)) {
+        result = RVFC_SNAN;
+    } else if(isQNaN16(value)) {
+        result = RVFC_QNAN;
+    } else if(isInf16(value)) {
+        result = isSigned ? RVFC_NINF : RVFC_PINF;
+    } else if(isDenorm16(value)) {
+        result = isSigned ? RVFC_NDENORM : RVFC_PDENORM;
+    } else if(isZero16(value)) {
+        result = isSigned ? RVFC_NZERO : RVFC_PZERO;
+    } else {
+        result = isSigned ? RVFC_NNORM : RVFC_PNORM;
+    }
+
+    return result;
+}
+
+//
 // Implement 32-bit FClass operation
 //
 static riscvFClass doFClass32(Uns32 value) {
@@ -2875,9 +3285,17 @@ static riscvFClass doFClass64(Uns64 value) {
 }
 
 //
+// Implement BFLOAT FClass operation
+//
+static riscvFClass doFClassBFLOAT(Uns16 value) {
+    return doFClass32(value<<16);
+}
+
+//
 // Implement fclass operation, internal interface
 //
 static void emitFClassInt(
+    riscvP riscv,
     vmiReg rd,
     vmiReg fs1,
     Uns32  bitsS,
@@ -2893,8 +3311,12 @@ static void emitFClassInt(
         cb = (vmiCallFn)doFClass32;
     } else if(bitsS==64) {
         cb = (vmiCallFn)doFClass64;
-    } else {
+    } else if(bitsS!=16) {
         VMI_ABORT("unimplemented bits %u", bitsS); // LCOV_EXCL_LINE
+    } else if(enableBFLOAT16(riscv)) {
+        cb = (vmiCallFn)doFClassBFLOAT;
+    } else {
+        cb = (vmiCallFn)doFClass16;
     }
 
     // call function
@@ -2915,7 +3337,7 @@ static RISCV_MORPH_FN(emitFClass) {
     Uns32        bitsD = 32;
     Uns32        bitsS = getRBits(fs1A);
 
-    emitFClassInt(rd, fs1, bitsS, bitsD);
+    emitFClassInt(riscv, rd, fs1, bitsS, bitsD);
 
     writeRegSize(riscv, rdA, bitsD);
 }
@@ -3178,6 +3600,23 @@ inline static riscvSEWMt vsewToSEW(Uns32 vsew) {
 //
 inline static riscvVLMULMt vlmulToVLMUL(Uns32 vlmul) {
     return 1<<vlmul;
+}
+
+//
+// Is zeroing of tail elements required?
+// NOTE: after version 0.7.1, top parts are preserved, not zeroed
+//
+inline static Bool requireZeroTail(riscvP riscv) {
+    return (riscv->configInfo.vect_version==RVVV_0_7_1);
+}
+
+//
+// Zero tail elements of vector if required
+//
+static void zeroTail(riscvP riscv, Uns32 bits, vmiReg vd) {
+    if(requireZeroTail(riscv)) {
+        vmimtMoveRC(bits, vd, 0);
+    }
 }
 
 //
@@ -3491,10 +3930,10 @@ static const shapeInfo shapeDetails[RVVW_LAST] = {
     [RVVW_221_FF]  = {{2,2,1}, {1,1,1}, {0,0,0}, {0,0,0}, {0,0,0}, 0, 0, 0, 0, 0, OT___  },
     [RVVW_111_FI]  = {{1,1,1}, {1,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, 0, 0, 0, 0, 0, OT___  },
     [RVVW_111_IF]  = {{1,1,1}, {0,1,1}, {0,0,0}, {0,0,0}, {0,0,0}, 0, 0, 0, 0, 0, OT___  },
-    [RVVW_211_FIQ] = {{2,1,1}, {1,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, 0, 1, 0, 0, 0, OT___  },
-    [RVVW_211_IFQ] = {{2,1,1}, {0,1,1}, {0,0,0}, {0,0,0}, {0,0,0}, 0, 1, 0, 0, 0, OT___  },
-    [RVVW_121_FIQ] = {{1,2,1}, {1,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, 0, 1, 0, 0, 0, OT___  },
-    [RVVW_121_IFQ] = {{1,2,1}, {0,1,1}, {0,0,0}, {0,0,0}, {0,0,0}, 0, 1, 0, 0, 0, OT___  },
+    [RVVW_21_FIQ]  = {{2,1,0}, {1,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, 0, 1, 0, 0, 0, OT___  },
+    [RVVW_21_IFQ]  = {{2,1,0}, {0,1,0}, {0,0,0}, {0,0,0}, {0,0,0}, 0, 1, 0, 0, 0, OT___  },
+    [RVVW_12_FIQ]  = {{1,2,0}, {1,0,0}, {0,0,0}, {0,0,0}, {0,0,0}, 0, 1, 0, 0, 0, OT___  },
+    [RVVW_12_IFQ]  = {{1,2,0}, {0,1,0}, {0,0,0}, {0,0,0}, {0,0,0}, 0, 1, 0, 0, 0, OT___  },
     [RVVW_111_PP]  = {{1,1,1}, {0,0,0}, {1,1,1}, {0,0,0}, {0,0,0}, 0, 0, 0, 0, 0, OT___  },
     [RVVW_111_IP]  = {{1,1,1}, {0,0,0}, {0,1,1}, {0,0,0}, {0,0,0}, 0, 0, 0, 0, 0, OT_SM  },
     [RVVW_111_GR]  = {{1,1,1}, {0,0,0}, {0,0,0}, {0,0,0}, {0,1,0}, 0, 0, 0, 0, 0, OT_SM  },
@@ -3675,18 +4114,20 @@ inline static Bool indexInMask(Uns32 index, Uns32 mask) {
 //
 // Return floating point type for the given SEW
 //
-static vmiFType getSEWFType(Uns32 SEW) {
+static vmiFType getSEWFType(riscvMorphStateP state, Uns32 SEW) {
 
     vmiFType result = 0;
 
-    if(SEW==16) {
-        result = vmi_FT_16_IEEE_754;
-    } else if(SEW==32) {
+    if(SEW==32) {
         result = vmi_FT_32_IEEE_754;
     } else if(SEW==64) {
         result = vmi_FT_64_IEEE_754;
-    } else {
+    } else if(SEW!=16) {
         VMI_ABORT("Unexpected SEW %u", SEW); // LCOV_EXCL_LINE
+    } else if(enableBFLOAT16(state->riscv)) {
+        result = vmi_FT_BFLOAT16;
+    } else {
+        result = vmi_FT_16_IEEE_754;
     }
 
     return result;
@@ -3720,8 +4161,8 @@ static Bool validateNoOverlap(riscvMorphStateP state, iterDescP id) {
     }
 
     // destination must not overlap the mask for some instructions in version
-    // 0.71 only (constraint relaxed from 0.72)
-    if((ot&OT_M71) && (riscv->configInfo.vect_version==RVVV_0_71)) {
+    // 0.7.1 only (constraint relaxed from 0.7.2)
+    if((ot&OT_M71) && (riscv->configInfo.vect_version==RVVV_0_7_1)) {
         ot |= OT_M;
     }
 
@@ -3775,7 +4216,9 @@ static Bool validateFPArgWidth(riscvP riscv, Uns32 SEW) {
 
     Bool ok = False;
 
-    if(SEW==32) {
+    if(SEW==16) {
+        ok = riscv->configInfo.fp16_version;
+    } else if(SEW==32) {
         ok = riscv->configInfo.arch & ISA_F;
     } else if(SEW==64) {
         ok = riscv->configInfo.arch & ISA_D;
@@ -3890,14 +4333,15 @@ static void widenOperands(riscvMorphStateP state, iterDescP id) {
                 } else {
 
                     // floating point argument
-                    vmiFType      typeD = getSEWFType(dstSEW);
-                    vmiFType      typeS = getSEWFType(srcSEW);
+                    vmiReg        flags = getFPFlagsMT(state);
+                    vmiFType      typeD = getSEWFType(state, dstSEW);
+                    vmiFType      typeS = getSEWFType(state, srcSEW);
                     vmiFPRC       rc    = vmi_FPR_NEAREST;
                     vmiFPConfigCP ctrl  = getFPControl(state);
 
                     // convert to temporary
                     vmimtFConvertRR(
-                        typeD, tmpA, typeS, id->r[i], rc, RISCV_FP_FLAGS, ctrl
+                        typeD, tmpA, typeS, id->r[i], rc, flags, ctrl
                     );
                 }
 
@@ -4613,6 +5057,8 @@ static void endVectorOp(
     // zero register top parts when vl < vlmax if required
     if(vlClass==VLCLASSMT_MAX) {
         // no top zero state change
+    } else if(!requireZeroTail(state->riscv)) {
+        // after version 0.71, top parts are preserved, not zeroed
     } else if(isScalarN(state->attrs->vShape, 0)) {
         updateScalarTopZero(state, id);
     } else {
@@ -4786,7 +5232,7 @@ static RISCV_MORPH_FN(emitScalarOp) {
                 // do operation on one element
                 doPerElementOp(state, &id);
 
-                // end vector operaton
+                // end vector operation
                 endVectorOp(state, &id, vlClass);
             }
         }
@@ -4884,12 +5330,15 @@ static Uns32 setMaxVLSEWLMUL(riscvP riscv, Uns32 vtypeBits) {
 //
 // Handle the first source argument of VSetVL
 //
-static vmiCallFn handleVSetVLArg1(Uns32 bits, vmiReg rs1) {
+static vmiCallFn handleVSetVLArg1(riscvP riscv, Uns32 bits, vmiReg rs1) {
 
-    if(VMI_ISNOREG(rs1)) {
+    if(!VMI_ISNOREG(rs1)) {
+        vmimtArgReg(bits, rs1);
+        return (vmiCallFn)setVLSEWLMUL;
+    } else if(riscv->configInfo.vect_version==RVVV_0_7_1) {
         return (vmiCallFn)setMaxVLSEWLMUL;
     } else {
-        vmimtArgReg(bits, rs1);
+        vmimtArgReg(bits, CSR_REG_MT(vl));
         return (vmiCallFn)setVLSEWLMUL;
     }
 }
@@ -4921,7 +5370,7 @@ static RISCV_MORPH_FN(emitVSetVLRRR) {
 
     // call function (may cause exception for invalid SEW)
     vmimtArgProcessor();
-    vmiCallFn cb = handleVSetVLArg1(bits, rs1);
+    vmiCallFn cb = handleVSetVLArg1(riscv, bits, rs1);
     vmimtArgReg(bits, rs2);
     vmimtCallResultAttrs(cb, bits, rd, VMCA_EXCEPTION|VMCA_NO_INVALIDATE);
     writeRegSize(riscv, rdA, bits);
@@ -4971,7 +5420,7 @@ static RISCV_MORPH_FN(emitVSetVLRRC) {
 
         // call update function (SEW is known to be valid)
         vmimtArgProcessor();
-        vmiCallFn cb = handleVSetVLArg1(bits, rs1);
+        vmiCallFn cb = handleVSetVLArg1(riscv, bits, rs1);
         vmimtArgUns32((vsew<<2)+vlmul);
         vmimtCallResultAttrs(cb, bits, rd, VMCA_NO_INVALIDATE);
         writeRegSize(riscv, rdA, bits);
@@ -6263,7 +6712,8 @@ static RISCV_MORPHV_FN(emitVIRShiftIntCB) {
 }
 
 //
-// Per-element callback for averaging instructions with two register operands
+// Per-element callback for single-width fractional multiply with rounding and
+// saturation
 //
 static RISCV_MORPHV_FN(emitVRSMULCB) {
 
@@ -6381,7 +6831,7 @@ static RISCV_MORPHV_FN(endVRedCB) {
     Uns32       mulE   = getWidthMultiplierN(vShape, 0);
 
     // zero target register
-    vmimtMoveRC(riscv->configInfo.VLEN, id->r[0], 0);
+    zeroTail(riscv, riscv->configInfo.VLEN, id->r[0]);
 
     // set element 0 of target register
     vmimtMoveRR(id->SEW*mulE, id->r[0], RISCV_VTMP);
@@ -6400,12 +6850,13 @@ static RISCV_MORPHV_FN(emitVRUnaryFltCB) {
 
     vmiReg        fd   = id->r[0];
     vmiReg        fs1  = id->r[1];
-    vmiFType      type = getSEWFType(id->SEW);
+    vmiFType      type = getSEWFType(state, id->SEW);
     vmiFUnop      op   = state->attrs->fpUnop;
     vmiFPConfigCP ctrl = getFPControl(state);
 
     if(emitSetOperationRM(state, RV_RM_CURRENT)) {
-        vmimtFUnopRR(type, op, fd, fs1, RISCV_FP_FLAGS, ctrl);
+        vmiReg flags = getFPFlagsMT(state);
+        vmimtFUnopRR(type, op, fd, fs1, flags, ctrl);
     }
 }
 
@@ -6421,12 +6872,13 @@ static void emitVRBinaryFltInt(
     vmiReg        fd   = id->r[0];
     vmiReg        fs1  = id->r[arg1Index];
     vmiReg        fs2  = id->r[arg2Index];
-    vmiFType      type = getSEWFType(id->SEW);
+    vmiFType      type = getSEWFType(state, id->SEW);
     vmiFBinop     op   = state->attrs->fpBinop;
     vmiFPConfigCP ctrl = getFPControl(state);
 
     if(emitSetOperationRM(state, RV_RM_CURRENT)) {
-        vmimtFBinopRRR(type, op, fd, fs1, fs2, RISCV_FP_FLAGS, ctrl);
+        vmiReg flags = getFPFlagsMT(state);
+        vmimtFBinopRRR(type, op, fd, fs1, fs2, flags, ctrl);
     }
 }
 
@@ -6460,12 +6912,13 @@ static void emitVRMAddFltInt(
     vmiReg        fs1  = id->r[arg1Index];
     vmiReg        fs2  = id->r[arg2Index];
     vmiReg        fs3  = id->r[arg3Index];
-    vmiFType      type = getSEWFType(id->SEW);
+    vmiFType      type = getSEWFType(state, id->SEW);
     vmiFTernop    op   = state->attrs->fpTernop;
     vmiFPConfigCP ctrl = getFPControl(state);
 
     if(emitSetOperationRM(state, RV_RM_CURRENT)) {
-        vmimtFTernopRRRR(type, op, fd, fs1, fs2, fs3, RISCV_FP_FLAGS, False, ctrl);
+        vmiReg flags = getFPFlagsMT(state);
+        vmimtFTernopRRRR(type, op, fd, fs1, fs2, fs3, flags, False, ctrl);
     }
 }
 
@@ -6502,7 +6955,7 @@ static RISCV_MORPHV_FN(emitVRFCmpFltCB) {
     startCompare(state, id, &cxt);
 
     // do compare, setting temporary flag
-    emitFCompareInt(state, cxt.flag, id->r[1], arg2, getSEWFType(id->SEW));
+    emitFCompareInt(state, cxt.flag, id->r[1], arg2, getSEWFType(state, id->SEW));
 
     // emit code to complete compare operation
     endCompare(id, &cxt);
@@ -6516,7 +6969,7 @@ static RISCV_MORPHV_FN(emitVRFClassFltCB) {
     Uns32 bitsS = id->SEW;
     Uns32 bitsD = (bitsS<=32) ? bitsS : 32;
 
-    emitFClassInt(id->r[0], id->r[1], bitsS, bitsD);
+    emitFClassInt(state->riscv, id->r[0], id->r[1], bitsS, bitsD);
     vmimtMoveExtendRR(bitsS, id->r[0], bitsD, id->r[0], False);
 }
 
@@ -6542,7 +6995,14 @@ static vmiFType getVConvertType(
     }
 
     // include size
-    return result | SEWxN;
+    result |= SEWxN;
+
+    // use BFLOAT16 type if required
+    if((result==vmi_FT_16_IEEE_754) && enableBFLOAT16(state->riscv)) {
+    	result = vmi_FT_BFLOAT16;
+    }
+
+    return result;
 }
 
 //
@@ -6558,7 +7018,8 @@ static RISCV_MORPHV_FN(emitVRConvertFltCB) {
     vmiFPRC       rc    = vmi_FPR_CURRENT;
 
     if(emitSetOperationRM(state, RV_RM_CURRENT)) {
-        vmimtFConvertRR(typeD, fd, typeS, fs, rc, RISCV_FP_FLAGS, ctrl);
+        vmiReg flags = getFPFlagsMT(state);
+        vmimtFConvertRR(typeD, fd, typeS, fs, rc, flags, ctrl);
     }
 }
 
@@ -6575,12 +7036,13 @@ static RISCV_MORPHV_FN(emitVRedBinaryFltCB) {
     vmiReg        fd   = RISCV_VTMP;
     vmiReg        fs1  = RISCV_VTMP;
     vmiReg        fs2  = id->r[1];
-    vmiFType      type = getSEWFType(id->SEW);
+    vmiFType      type = getSEWFType(state, id->SEW);
     vmiFBinop     op   = state->attrs->fpBinop;
     vmiFPConfigCP ctrl = getFPControl(state);
 
     if(emitSetOperationRM(state, RV_RM_CURRENT)) {
-        vmimtFBinopRRR(type, op, fd, fs1, fs2, RISCV_FP_FLAGS, ctrl);
+        vmiReg flags = getFPFlagsMT(state);
+        vmimtFBinopRRR(type, op, fd, fs1, fs2, flags, ctrl);
     }
 }
 
@@ -6694,7 +7156,7 @@ static RISCV_MORPHV_FN(emitVMVSX) {
     Uns32        sBits = getMinBits(id, getRBits(rs1A));
 
     // zero target register
-    vmimtMoveRC(riscv->configInfo.VLEN, vd, 0);
+    zeroTail(riscv, riscv->configInfo.VLEN, vd);
 
     // assign element 0 of result
     vmimtMoveExtendRR(id->SEW, vd, sBits, rs1, False);
@@ -6730,7 +7192,7 @@ static RISCV_MORPHV_FN(emitVFMVSF) {
     Uns32        sBits = getMinBits(id, getRBits(fs1A));
 
     // zero target register
-    vmimtMoveRC(riscv->configInfo.VLEN, vd, 0);
+    zeroTail(riscv, riscv->configInfo.VLEN, vd);
 
     // assign element 0 of result
     vmimtMoveRR(sBits, vd, fs1);
@@ -6965,7 +7427,7 @@ static RISCV_MORPHV_FN(initVCOMPRESSCB) {
     riscvVLMULMt VLMUL      = getVLMULMtN(riscv, vShape, 0);
 
     // zero target register
-    vmimtMoveRC(riscv->configInfo.VLEN*VLMUL, id->r[0], 0);
+    zeroTail(riscv, riscv->configInfo.VLEN*VLMUL, id->r[0]);
 
     // zero target index
     vmimtMoveRC(offsetBits, RISCV_VTMP, 0);
@@ -7262,6 +7724,7 @@ const static riscvMorphAttr dispatchTable[] = {
     [RV_IT_VDOT_VV]          = {morph:emitVectorOp, checkCB:emitEDIVCheckCB},
 
     // V-extension FVV/FVF-type common instructions
+    [RV_IT_VFMERGE_VR]       = {fpConfig:RVFP_NORMAL, morph:emitVectorOp, opTCB:emitVRMERGETCB, opFCB:emitVRMERGEFCB,    vShape:RVVW_111_FF},
     [RV_IT_VFADD_VR]         = {fpConfig:RVFP_NORMAL, morph:emitVectorOp, opTCB:emitVRBinaryFltCB,  fpBinop: vmi_FADD,   vShape:RVVW_111_FF},
     [RV_IT_VFSUB_VR]         = {fpConfig:RVFP_NORMAL, morph:emitVectorOp, opTCB:emitVRBinaryFltCB,  fpBinop: vmi_FSUB,   vShape:RVVW_111_FF},
     [RV_IT_VFRSUB_VR]        = {fpConfig:RVFP_NORMAL, morph:emitVectorOp, opTCB:emitVRBinaryFltRCB, fpBinop: vmi_FSUB,   vShape:RVVW_111_FF},
@@ -7305,24 +7768,24 @@ const static riscvMorphAttr dispatchTable[] = {
     [RV_IT_VFREDMIN_VS]      = {fpConfig:RVFP_FMIN,   morph:emitVectorOp, opTCB:emitVRedBinaryFltCB, initCB:initVRedCB, endCB:endVRedCB, fpBinop:vmi_FMIN, vShape:RVVW_111_SF, vstart0:1},
     [RV_IT_VFREDMAX_VS]      = {fpConfig:RVFP_FMAX,   morph:emitVectorOp, opTCB:emitVRedBinaryFltCB, initCB:initVRedCB, endCB:endVRedCB, fpBinop:vmi_FMAX, vShape:RVVW_111_SF, vstart0:1},
     [RV_IT_VFMV_F_S]         = {                      morph:emitScalarOp, opTCB:emitVFMVFS},
-    [RV_IT_VFCVT_XUF_V]      = {fpConfig:RVFP_NORMAL, morph:emitVectorOp, opTCB:emitVRConvertFltCB, vShape:RVVW_111_IF,  argType:RVVX_UU},
-    [RV_IT_VFCVT_XF_V]       = {fpConfig:RVFP_NORMAL, morph:emitVectorOp, opTCB:emitVRConvertFltCB, vShape:RVVW_111_IF,  argType:RVVX_SS},
-    [RV_IT_VFCVT_FXU_V]      = {fpConfig:RVFP_NORMAL, morph:emitVectorOp, opTCB:emitVRConvertFltCB, vShape:RVVW_111_FI,  argType:RVVX_UU},
-    [RV_IT_VFCVT_FX_V]       = {fpConfig:RVFP_NORMAL, morph:emitVectorOp, opTCB:emitVRConvertFltCB, vShape:RVVW_111_FI,  argType:RVVX_SS},
-    [RV_IT_VFWCVT_XUF_V]     = {fpConfig:RVFP_NORMAL, morph:emitVectorOp, opTCB:emitVRConvertFltCB, vShape:RVVW_211_IFQ, argType:RVVX_UU},
-    [RV_IT_VFWCVT_XF_V]      = {fpConfig:RVFP_NORMAL, morph:emitVectorOp, opTCB:emitVRConvertFltCB, vShape:RVVW_211_IFQ, argType:RVVX_SS},
-    [RV_IT_VFWCVT_FXU_V]     = {fpConfig:RVFP_NORMAL, morph:emitVectorOp, opTCB:emitVRConvertFltCB, vShape:RVVW_211_FIQ, argType:RVVX_UU},
-    [RV_IT_VFWCVT_FX_V]      = {fpConfig:RVFP_NORMAL, morph:emitVectorOp, opTCB:emitVRConvertFltCB, vShape:RVVW_211_FIQ, argType:RVVX_SS},
-    [RV_IT_VFWCVT_FF_V]      = {fpConfig:RVFP_NORMAL, morph:emitVectorOp, opTCB:emitVRConvertFltCB, vShape:RVVW_211_FFQ                 },
-    [RV_IT_VFNCVT_XUF_V]     = {fpConfig:RVFP_NORMAL, morph:emitVectorOp, opTCB:emitVRConvertFltCB, vShape:RVVW_121_IFQ, argType:RVVX_UU},
-    [RV_IT_VFNCVT_XF_V]      = {fpConfig:RVFP_NORMAL, morph:emitVectorOp, opTCB:emitVRConvertFltCB, vShape:RVVW_121_IFQ, argType:RVVX_SS},
-    [RV_IT_VFNCVT_FXU_V]     = {fpConfig:RVFP_NORMAL, morph:emitVectorOp, opTCB:emitVRConvertFltCB, vShape:RVVW_121_FIQ, argType:RVVX_UU},
-    [RV_IT_VFNCVT_FX_V]      = {fpConfig:RVFP_NORMAL, morph:emitVectorOp, opTCB:emitVRConvertFltCB, vShape:RVVW_121_FIQ, argType:RVVX_SS},
-    [RV_IT_VFNCVT_FF_V]      = {fpConfig:RVFP_NORMAL, morph:emitVectorOp, opTCB:emitVRConvertFltCB, vShape:RVVW_121_FFQ                 },
-    [RV_IT_VFCLASS_V]        = {fpConfig:RVFP_NORMAL, morph:emitVectorOp, opTCB:emitVRFClassFltCB,  vShape:RVVW_111_FF                  },
+    [RV_IT_VFCVT_XUF_V]      = {fpConfig:RVFP_NORMAL, morph:emitVectorOp, opTCB:emitVRConvertFltCB, vShape:RVVW_111_IF, argType:RVVX_UU},
+    [RV_IT_VFCVT_XF_V]       = {fpConfig:RVFP_NORMAL, morph:emitVectorOp, opTCB:emitVRConvertFltCB, vShape:RVVW_111_IF, argType:RVVX_SS},
+    [RV_IT_VFCVT_FXU_V]      = {fpConfig:RVFP_NORMAL, morph:emitVectorOp, opTCB:emitVRConvertFltCB, vShape:RVVW_111_FI, argType:RVVX_UU},
+    [RV_IT_VFCVT_FX_V]       = {fpConfig:RVFP_NORMAL, morph:emitVectorOp, opTCB:emitVRConvertFltCB, vShape:RVVW_111_FI, argType:RVVX_SS},
+    [RV_IT_VFWCVT_XUF_V]     = {fpConfig:RVFP_NORMAL, morph:emitVectorOp, opTCB:emitVRConvertFltCB, vShape:RVVW_21_IFQ, argType:RVVX_UU},
+    [RV_IT_VFWCVT_XF_V]      = {fpConfig:RVFP_NORMAL, morph:emitVectorOp, opTCB:emitVRConvertFltCB, vShape:RVVW_21_IFQ, argType:RVVX_SS},
+    [RV_IT_VFWCVT_FXU_V]     = {fpConfig:RVFP_NORMAL, morph:emitVectorOp, opTCB:emitVRConvertFltCB, vShape:RVVW_21_FIQ, argType:RVVX_UU},
+    [RV_IT_VFWCVT_FX_V]      = {fpConfig:RVFP_NORMAL, morph:emitVectorOp, opTCB:emitVRConvertFltCB, vShape:RVVW_21_FIQ, argType:RVVX_SS},
+    [RV_IT_VFWCVT_FF_V]      = {fpConfig:RVFP_NORMAL, morph:emitVectorOp, opTCB:emitVRConvertFltCB, vShape:RVVW_211_FFQ                },
+    [RV_IT_VFNCVT_XUF_V]     = {fpConfig:RVFP_NORMAL, morph:emitVectorOp, opTCB:emitVRConvertFltCB, vShape:RVVW_12_IFQ, argType:RVVX_UU},
+    [RV_IT_VFNCVT_XF_V]      = {fpConfig:RVFP_NORMAL, morph:emitVectorOp, opTCB:emitVRConvertFltCB, vShape:RVVW_12_IFQ, argType:RVVX_SS},
+    [RV_IT_VFNCVT_FXU_V]     = {fpConfig:RVFP_NORMAL, morph:emitVectorOp, opTCB:emitVRConvertFltCB, vShape:RVVW_12_FIQ, argType:RVVX_UU},
+    [RV_IT_VFNCVT_FX_V]      = {fpConfig:RVFP_NORMAL, morph:emitVectorOp, opTCB:emitVRConvertFltCB, vShape:RVVW_12_FIQ, argType:RVVX_SS},
+    [RV_IT_VFNCVT_FF_V]      = {fpConfig:RVFP_NORMAL, morph:emitVectorOp, opTCB:emitVRConvertFltCB, vShape:RVVW_121_FFQ                },
+    [RV_IT_VFCLASS_V]        = {fpConfig:RVFP_NORMAL, morph:emitVectorOp, opTCB:emitVRFClassFltCB,  vShape:RVVW_111_FF                 },
     [RV_IT_VFWREDSUM_VS]     = {fpConfig:RVFP_NORMAL, morph:emitVectorOp, opTCB:emitVRedBinaryFltCB, initCB:initVRedCB, endCB:endVRedCB, fpBinop:vmi_FADD, vShape:RVVW_212_SF, vstart0:1},
     [RV_IT_VFWREDOSUM_VS]    = {fpConfig:RVFP_NORMAL, morph:emitVectorOp, opTCB:emitVRedBinaryFltCB, initCB:initVRedCB, endCB:endVRedCB, fpBinop:vmi_FADD, vShape:RVVW_212_SF, vstart0:1},
-    [RV_IT_VFDOT_VV]         = {fpConfig:RVFP_NORMAL, morph:emitVectorOp, checkCB:emitEDIVCheckCB,  vShape:RVVW_111_FF                  },
+    [RV_IT_VFDOT_VV]         = {fpConfig:RVFP_NORMAL, morph:emitVectorOp, checkCB:emitEDIVCheckCB,  vShape:RVVW_111_FF                 },
 
     // V-extension MVV-type instructions
     [RV_IT_VREDSUM_VS]       = {morph:emitVectorOp, opTCB:emitVRedBinaryIntCB, initCB:initVRedCB, endCB:endVRedCB, binop:vmi_ADD,  vShape:RVVW_111_SI,  vstart0:1},
@@ -7407,12 +7870,12 @@ VMI_START_END_BLOCK_FN(riscvStartBlock) {
     thisState->prevState = prevState;
     riscv->blockState    = thisState;
 
-    // no single-precision registers are known to be NaN-boxed initially
-    thisState->fpNaNBoxMask = 0;
+    // no floating point registers are known to be NaN-boxed initially
+    thisState->fpNaNBoxMask[0] = 0;
+    thisState->fpNaNBoxMask[1] = 0;
 
-    // no floating-point instructions have been seen initially if management
-    // of floating point state using mstatus.FS is required
-    thisState->fpInstDone = riscv->configInfo.fs_always_dirty;
+    // no floating-point instructions have been seen initially
+    thisState->FSDirty = False;
 
     // current vector configuration is not known initially
     thisState->SEWMt                  = SEWMT_UNKNOWN;
@@ -7481,18 +7944,24 @@ VMI_MORPH_FN(riscvMorph) {
 
     } else if(state.attrs->morph) {
 
-        // call derived model preMorph function if required
-        if(riscv->cb.preMorph) {
-            riscv->cb.preMorph(riscv);
+        riscvExtCBP extCB;
+
+        // call derived model preMorph functions if required
+        for(extCB=riscv->extCBs; extCB; extCB=extCB->next) {
+            if(extCB->preMorph) {
+                extCB->preMorph(riscv, extCB->clientData);
+            }
         }
 
         // translate the instruction
         vmimtInstructionClassAdd(state.attrs->iClass);
         state.attrs->morph(&state);
 
-        // call derived model postMorph function if required
-        if(riscv->cb.postMorph) {
-            riscv->cb.postMorph(riscv);
+        // call derived model postMorph functions if required
+        for(extCB=riscv->extCBs; extCB; extCB=extCB->next) {
+            if(extCB->postMorph) {
+                extCB->postMorph(riscv, extCB->clientData);
+            }
         }
 
     } else {

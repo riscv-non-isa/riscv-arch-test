@@ -364,10 +364,11 @@ static Bool accessFaultCode(riscvException exception) {
 inline static void notifyTrapDerived(
     riscvP              riscv,
     riscvMode           mode,
-    riscvTrapNotifierFn notifier
+    riscvTrapNotifierFn notifier,
+    void               *clientData
 ) {
     if(notifier) {
-        notifier(riscv, mode);
+        notifier(riscv, mode, clientData);
     }
 }
 
@@ -375,7 +376,13 @@ inline static void notifyTrapDerived(
 // Notify a derived model of exception return if required
 //
 inline static void notifyERETDerived(riscvP riscv, riscvMode mode) {
-    notifyTrapDerived(riscv, mode, riscv->cb.ERETNotifier);
+
+    riscvExtCBP extCB;
+
+    // call derived model preMorph functions if required
+    for(extCB=riscv->extCBs; extCB; extCB=extCB->next) {
+        notifyTrapDerived(riscv, mode, extCB->ERETNotifier, extCB->clientData);
+    }
 }
 
 //
@@ -386,14 +393,15 @@ void riscvTakeException(
     riscvException exception,
     Uns64          tval
 ) {
-    Bool      isInterrupt = IS_INTERRUPT(exception);
-    Uns32     ecode       = GET_ECODE(exception);
-    Uns64     EPC         = getEPC(riscv);
-    Uns64     handlerPC   = 0;
-    riscvMode modeY       = getCurrentMode(riscv);
-    riscvMode modeX;
-    Uns64     base;
-    Uns8      mode;
+    Bool        isInterrupt = IS_INTERRUPT(exception);
+    Uns32       ecode       = GET_ECODE(exception);
+    Uns64       EPC         = getEPC(riscv);
+    Uns64       handlerPC   = 0;
+    riscvMode   modeY       = getCurrentMode(riscv);
+    riscvMode   modeX;
+    riscvExtCBP extCB;
+    Uns64       base;
+    Uns8        mode;
 
     // adjust baseInstructions based on the exception code to take into account
     // whether the previous instruction has retired, unless inhibited
@@ -454,7 +462,9 @@ void riscvTakeException(
     vmirtSetPCException((vmiProcessorP)riscv, handlerPC);
 
     // notify derived model of exception entry if required
-    notifyTrapDerived(riscv, modeX, riscv->cb.trapNotifier);
+    for(extCB=riscv->extCBs; extCB; extCB=extCB->next) {
+        notifyTrapDerived(riscv, modeX, extCB->trapNotifier, extCB->clientData);
+    }
 }
 
 //
@@ -951,59 +961,6 @@ VMI_IFETCH_FN(riscvIFetchExcept) {
 }
 
 //
-// Return the number of distinct exceptions defined by this model
-//
-inline static Uns32 getNumExceptions(void) {
-    return sizeof(exceptions)/sizeof(exceptions[0]) - 1;
-}
-
-//
-// Is the exception descriptor the dummy terminator entry in this model?
-//
-static Bool isExceptionTerminator(riscvExceptionDescCP desc) {
-    return (desc-exceptions) == getNumExceptions();
-}
-
-//
-// Get last-activated exception
-//
-VMI_GET_EXCEPTION_FN(riscvGetException) {
-
-    riscvP               riscv     = (riscvP)processor;
-    riscvExceptionDescCP thisDesc  = &exceptions[0];
-    riscvException       exception = riscv->exception;
-
-    for(;;) {
-
-        // get the first exception with matching code
-        while(thisDesc->vmiInfo.name && (thisDesc->vmiInfo.code!=exception)) {
-            thisDesc++;
-        }
-
-        if(thisDesc->vmiInfo.name) {
-
-            // match found in this table
-            return &thisDesc->vmiInfo;
-
-        } else if(!isExceptionTerminator(thisDesc)) {
-
-            // no more exceptions and not local table
-            return 0;
-
-        } else if(!riscv->cb.firstException) {
-
-            // no derived model exceptions
-            return 0;
-
-        } else {
-
-            // try derived model if required
-            thisDesc = (riscvExceptionDescCP)riscv->cb.firstException(riscv);
-        }
-    }
-}
-
-//
 // Does the processor implement the exception or interrupt?
 //
 static Bool hasException(riscvP riscv, riscvException code) {
@@ -1016,45 +973,91 @@ static Bool hasException(riscvP riscv, riscvException code) {
 }
 
 //
+// Return all defined exceptions, including those from intercepts, in a null
+// terminated list
+//
+static vmiExceptionInfoCP getExceptions(riscvP riscv) {
+
+    if(!riscv->exceptions) {
+
+        Uns32       numExcept;
+        riscvExtCBP extCB;
+        Uns32       i;
+
+        // get number of exceptions in the base model
+        for(i=0, numExcept=0; exceptions[i].vmiInfo.name; i++) {
+            if(hasException(riscv, exceptions[i].vmiInfo.code)) {
+                numExcept++;
+            }
+        }
+
+        // include exceptions for derived model
+        for(extCB=riscv->extCBs; extCB; extCB=extCB->next) {
+            if(extCB->firstException) {
+                vmiExceptionInfoCP list = extCB->firstException(
+                    riscv, extCB->clientData
+                );
+                while(list && list->name) {
+                    numExcept++; list++;
+                }
+            }
+        }
+
+        // allocate list of exceptions including null terminator
+        vmiExceptionInfoP all = STYPE_CALLOC_N(vmiExceptionInfo, numExcept+1);
+
+        // fill exceptions from base model
+        for(i=0, numExcept=0; exceptions[i].vmiInfo.name; i++) {
+            if(hasException(riscv, exceptions[i].vmiInfo.code)) {
+                all[numExcept++] = exceptions[i].vmiInfo;
+            }
+        }
+
+        // fill exceptions from derived model
+        for(extCB=riscv->extCBs; extCB; extCB=extCB->next) {
+            if(extCB->firstException) {
+                vmiExceptionInfoCP list = extCB->firstException(
+                    riscv, extCB->clientData
+                );
+                while(list && list->name) {
+                    all[numExcept++] = *list++;
+                }
+            }
+        }
+
+        // save list on base model
+        riscv->exceptions = all;
+    }
+
+    return riscv->exceptions;
+}
+
+//
+// Get last-activated exception
+//
+VMI_GET_EXCEPTION_FN(riscvGetException) {
+
+    riscvP             riscv     = (riscvP)processor;
+    vmiExceptionInfoCP this      = getExceptions(riscv);
+    riscvException     exception = riscv->exception;
+
+    // get the first exception with matching code
+    while(this->name && (this->code!=exception)) {
+        this++;
+    }
+
+    return this->name ? this : 0;
+}
+
+//
 // Iterate exceptions implemented on this variant
 //
 VMI_EXCEPTION_INFO_FN(riscvExceptionInfo) {
 
-    riscvP               riscv    = (riscvP)processor;
-    riscvExceptionDescCP prevDesc = (riscvExceptionDescCP)prev;
-    riscvExceptionDescCP thisDesc = prevDesc ? prevDesc+1 : exceptions;
+    riscvP             riscv = (riscvP)processor;
+    vmiExceptionInfoCP this  = prev ? prev+1 : getExceptions(riscv);
 
-    for(;;) {
-
-        // skip to the next implemented exception
-        while(
-            (thisDesc->vmiInfo.name) &&
-            !hasException(riscv, thisDesc->vmiInfo.code)
-        ) {
-            thisDesc++;
-        }
-
-        if(thisDesc->vmiInfo.name) {
-
-            // match found in this table
-            return &thisDesc->vmiInfo;
-
-        } else if(!isExceptionTerminator(thisDesc)) {
-
-            // no more exceptions and not local table
-            return 0;
-
-        } else if(!riscv->cb.firstException) {
-
-            // no derived model exceptions
-            return 0;
-
-        } else {
-
-            // try derived model if required
-            thisDesc = (riscvExceptionDescCP)riscv->cb.firstException(riscv);
-        }
-    }
+    return this->name ? this : 0;
 }
 
 //
@@ -1096,6 +1099,17 @@ void riscvSetExceptionMask(riscvP riscv) {
 
     // save composed interrupt mask result (including extra local interrupts)
     riscv->interruptMask = interruptMask | riscvGetLocalIntMask(riscv);
+}
+
+//
+// Free exception state
+//
+void riscvExceptFree(riscvP riscv) {
+
+    if(riscv->exceptions) {
+        STYPE_FREE(riscv->exceptions);
+        riscv->exceptions = 0;
+    }
 }
 
 
@@ -1226,6 +1240,8 @@ void riscvTestInterrupt(riscvP riscv) {
 //
 void riscvReset(riscvP riscv) {
 
+    riscvExtCBP extCB;
+
     // restart the processor from any halted state
     restartProcessor(riscv, RVD_RESTART_RESET);
 
@@ -1236,8 +1252,10 @@ void riscvReset(riscvP riscv) {
     riscvCSRReset(riscv);
 
     // notify dependent model of reset event
-    if(riscv->cb.resetNotifier) {
-        riscv->cb.resetNotifier(riscv);
+    for(extCB=riscv->extCBs; extCB; extCB=extCB->next) {
+        if(extCB->resetNotifier) {
+            extCB->resetNotifier(riscv, extCB->clientData);
+        }
     }
 
     // indicate the taken exception

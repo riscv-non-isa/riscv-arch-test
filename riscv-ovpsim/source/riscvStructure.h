@@ -178,12 +178,13 @@ typedef struct riscvS {
     Bool               useTMode      :1;// has transaction mode been enabled?
     Bool               rmCheckValid  :1;// whether RM valid check required
     Uns16              pmKey;           // polymorphic key
+    Uns8               fpFlagsMT;       // flags set by JIT instructions
+    Uns8               fpFlagsCSR;      // flags set by CSR write
     Uns32              flags;           // model control flags
     Uns32              flagsRestore;    // saved flags during restore
     riscvConfig        configInfo;      // model configuration
     memEndian          dendian;         // data endianness
     memEndian          iendian;         // instruction endianness
-    vmiFPFlags         fpFlags;         // floating point flags
     Uns64              jumpBase;        // address of jump instruction
     Uns32              writtenXMask;    // mask of written X registers
 
@@ -191,6 +192,7 @@ typedef struct riscvS {
     riscvParamValuesP  paramValues;     // specified parameters (construction only)
 
     // Interrupt and exception control
+    vmiExceptionInfoCP exceptions;      // all exceptions (including extensions)
     Uns32              swip;            // software interrupt pending bits
     Uns64              exceptionMask;   // mask of all implemented exceptions
     Uns64              interruptMask;   // mask of all implemented interrupts
@@ -228,7 +230,7 @@ typedef struct riscvS {
     riscvBusPortP      csrPort;         // externally-implemented CSR port
 
     // Memory management support
-    memDomainP         vmDomains[RISCV_MODE_LAST][2];   // mapped domains
+    memDomainP         vmDomains  [RISCV_MODE_LAST][2]; // mapped domains
     memDomainP         pmpDomains [RISCV_MODE_LAST][2]; // pmp domains
     memDomainP         physDomains[RISCV_MODE_LAST][2]; // physical domains
     riscvPMPCFG        pmpcfg;              // pmpcfg registers
@@ -245,7 +247,8 @@ typedef struct riscvS {
     riscvBlockStateP   blockState;      // active block state
 
     // Enhanced model support callbacks
-    riscvModelCB       cb;
+    riscvModelCB       cb;                          // implemented by base model
+    riscvExtCBP        extCBs;                      // implemented in extension
 
     // Vector extension
     Uns8               vFieldMask;                  // vector field mask

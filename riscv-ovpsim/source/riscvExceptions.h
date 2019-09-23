@@ -102,6 +102,11 @@ Uns64 riscvGetLocalIntMask(riscvP riscv);
 void riscvSetExceptionMask(riscvP riscv);
 
 //
+// Free exception state
+//
+void riscvExceptFree(riscvP riscv);
+
+//
 // Update interrupt state because of some pending state change (either from
 // external interrupt source or software pending register)
 //

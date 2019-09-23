@@ -4,7 +4,12 @@
 set BATCHDIR=%~dp0%
 cd /d %BATCHDIR%
 
-..\..\bin\Windows64\riscvOVPsim.exe --program coremark.RISCV32.elf -variant RV32IMAC %* -argv 0 0 0x66
+..\..\bin\Windows64\riscvOVPsim.exe ^
+    --program coremark.RISCV32.elf ^
+    --variant RVB32I ^
+    --override riscvOVPsim/cpu/add_Extensions=MACSU ^
+    %* ^
+    -argv 0 0 0x66
 
 ;rem validate with args
 ;rem 0 0 0x66

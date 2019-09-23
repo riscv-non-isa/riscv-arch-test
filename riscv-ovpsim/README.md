@@ -4,18 +4,18 @@ A Complete, Fully Functional, Configurable RISC-V Simulator
 ===
 
 Author: Imperas Software, Ltd., using OVP Open Standard APIs  
-Date   : 12 Aug 2019 
-Version: 20190812.0  
+Date   : 23 Sep 2019 
+Version: 20190923.0  
 License: Model source included under Apache 2.0 open source license  
 License: Simulator riscvOVPsim licensed under Open Virtual Platforms (OVP) Fixed Platform Kits license  
 RISC-V Specifications currently supported:
 - RISC-V Instruction Set Manual, Volume I: User-Level ISA (User Architecture Version 20190305-Base-Ratification)
 - RISC-V Instruction Set Manual, Volume II: Privileged Architecture (Privileged Architecture Version 20190405-Priv-MSU-Ratification)
-- RISC-V Instruction Set Manual, RISC-V base vector extension, version 0.7.1 (draft-20190606)
+- RISC-V Instruction Set Manual, RISC-V base vector extension, version 0.91
 - RISCV Extension B (Bit Manipulation)
   - Run command: riscvOVPsim.exe --override riscvOVPsim/cpu/add_Extensions=B --showoverrides 
   - This will produce a formatted string, similar to
-  - **Info (RISCV_EXTB) extB Version(0.90) June 10 2019**
+  - **Info (Bit Manipulation) extB Version(0.91) August 29 2019**
   
 About riscvOVPsim
 ---
@@ -84,7 +84,7 @@ For example on Linux:
 > Info   
 > Info ---------------------------------------------------  
 > Info CPU 'riscvOVPsim/cpu' STATISTICS  
-> Info   Type                  : riscv (RV32IMAC)  
+> Info   Type                  : riscv (RVB32I+MACSU)  
 > Info   Nominal MIPS          : 100  
 > Info   Final program counter : 0x100ac  
 > Info   Simulated instructions: 4,400,537,204  

@@ -37,8 +37,3 @@ typedef struct riscvExceptionDescS {
     riscvArchitecture arch;         // required architecture
 } riscvExceptionDesc;
 
-//
-// Define type pointer
-//
-DEFINE_CS(riscvExceptionDesc);
-

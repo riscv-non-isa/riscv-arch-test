@@ -24,10 +24,11 @@ echo Selected Example %app%
 
 ; rem run example
 ..\..\bin\Windows64\riscvOVPsim.exe ^
-              --program %app% ^
-              --variant RV64GCV ^
-              --override riscvOVPsim/cpu/VLEN=512 ^
-              --override riscvOVPsim/cpu/SLEN=64 ^
-              %*
+    --program %app% ^
+    --variant RVB64I ^
+    --override riscvOVPsim/cpu/add_Extensions=MAFDCVSU ^
+    --override riscvOVPsim/cpu/VLEN=512 ^
+    --override riscvOVPsim/cpu/SLEN=64 ^
+    %*
 
 if not defined calledscript ( pause )
