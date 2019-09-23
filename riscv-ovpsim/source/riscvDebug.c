@@ -527,7 +527,7 @@ VMI_REG_IMPL_FN(riscvRegImpl) {
 
     // specify that fpFlags are in fflags
     vmiRegInfoCP fflags = vmirtGetRegByName(processor, "fflags");
-    RISCV_FIELD_IMPL_RAW(fflags, fpFlags);
+    RISCV_FIELD_IMPL_RAW(fflags, fpFlagsMT);
 
     // exclude artifact registers
     RISCV_FIELD_IMPL_IGNORE(pmKey);

@@ -90,16 +90,43 @@ static void fillSvModes(char *result, Uns32 Sv_modes) {
 }
 
 //
+// Add documentation using the optional documentation callback
+//
+inline static void addOptDoc(riscvP riscv, vmiDocNodeP node, riscvDocFn docCB) {
+    if(docCB) {
+        docCB(riscv, node);
+    }
+}
+
+//
+// Add documentation using an optional null-terminated string list
+//
+static void addOptDocList(vmiDocNodeP node, const char **specificDocs) {
+
+    if(specificDocs) {
+
+        const char *doc;
+
+        while((doc=*specificDocs++)) {
+            vmidocAddText(node, doc);
+        }
+    }
+}
+
+//
 // Create processor documentation
 //
 void riscvDoc(riscvP rootProcessor) {
 
-    vmiDocNodeP   Root     = vmidocAddSection(0, "Root");
-    riscvP        riscv    = rootProcessor;
-    riscvP        child    = getChild(rootProcessor);
-    riscvConfigCP cfg      = &riscv->configInfo;
-    Uns32         numHarts = cfg->numHarts;
-    Bool          isSMP    = numHarts && child && !cfg->members;
+    vmiDocNodeP      Root     = vmidocAddSection(0, "Root");
+    riscvP           riscv    = rootProcessor;
+    riscvP           child    = getChild(rootProcessor);
+    riscvConfigCP    cfg      = &riscv->configInfo;
+    Uns32            numHarts = cfg->numHarts;
+    Bool             isSMP    = numHarts && child && !cfg->members;
+    Uns32            extIndex;
+    riscvExtConfigCP extCfg;
+
     char          string[1024];
 
     // move to first child if an SMP object
@@ -253,7 +280,7 @@ void riscvDoc(riscvP rootProcessor) {
     ////////////////////////////////////////////////////////////////////////////
 
     {
-        vmiDocNodeP Features = vmidocAddSection(Root, "Features");
+        vmiDocNodeP Features = vmidocAddSection(Root, "General Features");
 
         // document multicore behavior
         if(isSMP) {
@@ -548,67 +575,100 @@ void riscvDoc(riscvP rootProcessor) {
             vmidocAddText(Features, string);
         }
 
-        // floating point configuration
-        if(cfg->arch&ISA_DF) {
+    }
 
-            // document mstatus_FS
+    ////////////////////////////////////////////////////////////////////////////
+    // FLOATING POINT
+    ////////////////////////////////////////////////////////////////////////////
+
+    // floating point configuration
+    if(cfg->arch&ISA_DF) {
+
+        vmiDocNodeP Features = vmidocAddSection(Root, "Floating Point Features");
+
+        // document d_requires_f
+        if((cfg->archMask&ISA_DF) != ISA_DF) {
+            // no action
+        } else if(cfg->d_requires_f) {
             vmidocAddText(
                 Features,
-                "By default, the processor starts with floating-point "
-                "instructions disabled (mstatus.FS=0). Use parameter "
-                "\"mstatus_FS\" to force mstatus.FS to a non-zero value "
-                "for floating-point to be enabled from the start."
+                "The D extension is enabled in this variant only if the "
+                "F extension is also enabled. Set parameter \"d_requires_f\""
+                "to \"F\" to allow D and F to be independently enabled."
             );
-
-            // document d_requires_f
-            if((cfg->archMask&ISA_DF) != ISA_DF) {
-                // no action
-            } else if(cfg->d_requires_f) {
-                vmidocAddText(
-                    Features,
-                    "The D extension is enabled in this variant only if the "
-                    "F extension is also enabled. Set parameter \"d_requires_f\""
-                    "to \"F\" to allow D and F to be independently enabled."
-                );
-            } else {
-                vmidocAddText(
-                    Features,
-                    "The D extension is enabled in this variant independently "
-                    "of the F extension. Set parameter \"d_requires_f\""
-                    "to \"T\" to specify that the D extension requires the "
-                    "F extension to be enabled."
-                );
-            }
-
-            // document fs_always_dirty
-            if(cfg->fs_always_dirty) {
-
-                vmidocAddText(
-                    Features,
-                    "This variant implements a simplified floating point "
-                    "status view in which mstatus.FS holds values 0 (Off) "
-                    "and 3 (Dirty) only; any write of values 1 (Initial) or "
-                    "2 (Clean) from privileged code behave as if value 3 was "
-                    "written. Set parameter \"fs_always_dirty\" to \"F\" to "
-                    "specify that mstatus.FS should instead behave according "
-                    "to the Privileged Architecture specification."
-                );
-
-            } else {
-
-                vmidocAddText(
-                    Features,
-                    "This variant implements floating point status in "
-                    "mstatus.FS as defined in the Privileged Architecture "
-                    "specification. To specify that a simpler mode supporting "
-                    "only values 0 (Off) and 3 (Dirty) should be used, Set "
-                    "parameter \"fs_always_dirty\" to \"T\". When this simpler "
-                    "mode is used, any write of values 1 (Initial) or 2 "
-                    "(Clean) from privileged code behave as if value 3 was "
-                    "written."
-                );
-            }
+        } else {
+            vmidocAddText(
+                Features,
+                "The D extension is enabled in this variant independently "
+                "of the F extension. Set parameter \"d_requires_f\""
+                "to \"T\" to specify that the D extension requires the "
+                "F extension to be enabled."
+            );
         }
+
+        // document 16-bit floating point support
+        if(cfg->fp16_version) {
+            snprintf(
+                SNPRINTF_TGT(string),
+                "16-bit floating point is implemented (%s format).",
+                riscvGetFP16VersionDesc(riscv)
+            );
+            vmidocAddText(Features, string);
+        }
+
+        // document mstatus_FS
+        vmidocAddText(
+            Features,
+            "By default, the processor starts with floating-point "
+            "instructions disabled (mstatus.FS=0). Use parameter "
+            "\"mstatus_FS\" to force mstatus.FS to a non-zero value "
+            "for floating-point to be enabled from the start."
+        );
+
+        // document mstatus_fs_mode options
+        vmidocAddText(
+            Features,
+            "The specification is imprecise regarding the conditions "
+            "under which mstatus.FS is set to Dirty state (3). Parameter "
+            "\"mstatus_fs_mode\" can be used to specify the required "
+            "behavior in this model, as described below."
+        );
+        vmidocAddText(
+            Features,
+            "If \"mstatus_fs_mode\" is set to \"always_dirty\" then the "
+            "model implements a simplified floating point status view in "
+            "which mstatus.FS holds values 0 (Off) and 3 (Dirty) only; "
+            "any write of values 1 (Initial) or 2 (Clean) from privileged "
+            "code behave as if value 3 was written."
+        );
+        vmidocAddText(
+            Features,
+            "If \"mstatus_fs_mode\" is set to \"write_1\" then mstatus.FS "
+            "will be set to 3 (Dirty) by any explicit write to the fflags, "
+            "frm or fcsr control registers, or by any executed instruction "
+            "that writes an FPR, or by any executed floating point "
+            "compare or conversion to integer/unsigned that signals "
+            "a floating point exception. Floating point compare or "
+            "conversion to integer/unsigned instructions that do not "
+            "signal an exception will not set mstatus.FS."
+        );
+        vmidocAddText(
+            Features,
+            "If \"mstatus_fs_mode\" is set to \"write_any\" then mstatus.FS "
+            "will be set to 3 (Dirty) by any explicit write to the fflags, "
+            "frm or fcsr control registers, or by any executed instruction "
+            "that writes an FPR, or by any executed floating point "
+            "compare or conversion even if those instructions do not "
+            "signal a floating point exception."
+        );
+
+        // document mstatus_fs_mode default
+        snprintf(
+            SNPRINTF_TGT(string),
+            "In this variant, \"mstatus_fs_mode\" is set to \"%s\".",
+            riscvGetFSModeName(riscv)
+        );
+        vmidocAddText(Features, string);
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -622,7 +682,10 @@ void riscvDoc(riscvP rootProcessor) {
         vmidocAddText(
             Vector,
             "This variant implements the RISC-V base vector extension with "
-            "version specified in the References section of this document."
+            "version specified in the References section of this document. "
+            "Note that parameter \"vector_version\" can be used to select "
+            "the required version, including the unstable \"master\" version "
+            "corresponding to the active specification."
         );
 
         vmiDocNodeP Parameters = vmidocAddSection(
@@ -891,9 +954,16 @@ void riscvDoc(riscvP rootProcessor) {
             );
         }
 
-        // add specific restrictions if required
-        if(cfg->restrictionsCB) {
-            cfg->restrictionsCB(riscv, Limitations);
+        // add custom restrictions if required
+        addOptDoc(riscv, Limitations, cfg->restrictionsCB);
+
+        // add extension-specific restrictions if required
+        for(
+            extIndex = 0;
+            (extCfg = riscvGetIndexedExtConfig(cfg, extIndex));
+            extIndex++
+        ) {
+            addOptDoc(riscv, Limitations, extCfg->restrictionsCB);
         }
     }
 
@@ -951,8 +1021,7 @@ void riscvDoc(riscvP rootProcessor) {
     ////////////////////////////////////////////////////////////////////////////
 
     {
-        vmiDocNodeP  References   = vmidocAddSection(Root, "References");
-        const char **specificDocs = cfg->specificDocs;
+        vmiDocNodeP References = vmidocAddSection(Root, "References");
 
         vmidocAddText(
             References,
@@ -984,13 +1053,16 @@ void riscvDoc(riscvP rootProcessor) {
             vmidocAddText(References, string);
         }
 
-        if(specificDocs) {
+        // add custom references if required
+        addOptDocList(References, cfg->specificDocs);
 
-            const char *doc;
-
-            while((doc=*specificDocs++)) {
-                vmidocAddText(References, doc);
-            }
+        // add extension-specific references if required
+        for(
+            extIndex = 0;
+            (extCfg = riscvGetIndexedExtConfig(cfg, extIndex));
+            extIndex++
+        ) {
+            addOptDocList(References, extCfg->specificDocs);
         }
     }
 

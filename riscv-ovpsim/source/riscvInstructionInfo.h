@@ -762,6 +762,21 @@
 }
 
 //
+// Attribute entries for 32-bit instructions like VMV.V.V
+//
+#define ATTR32_VMV_V_V(_NAME, _GENERIC, _ARCH, _OPCODE) [IT32_##_NAME] = { \
+    opcode   : _OPCODE,             \
+    format   : FMT_R1_R3,           \
+    type     : RV_IT_##_GENERIC,    \
+    arch     : _ARCH,               \
+    r1       : RS_V_11_7,           \
+    r2       : RS_V_24_20,          \
+    r3       : RS_V_19_15,          \
+    mask     : RS_V_M_25,           \
+    VIType   : RV_VIT_NA,           \
+}
+
+//
 // Attribute entries for 32-bit instructions like VMACC.VV
 //
 #define ATTR32_VV3(_NAME, _GENERIC, _ARCH, _OPCODE) [IT32_##_NAME] = { \
@@ -908,6 +923,21 @@
 }
 
 //
+// Attribute entries for 32-bit instructions like VMV.V.X
+//
+#define ATTR32_VMV_V_X(_NAME, _GENERIC, _ARCH, _OPCODE) [IT32_##_NAME] = { \
+    opcode   : _OPCODE,             \
+    format   : FMT_R1_R3,           \
+    type     : RV_IT_##_GENERIC,    \
+    arch     : _ARCH,               \
+    r1       : RS_V_11_7,           \
+    r2       : RS_V_24_20,          \
+    r3       : RS_X_19_15,          \
+    mask     : RS_V_M_25,           \
+    VIType   : RV_VIT_NA,           \
+}
+
+//
 // Attribute entries for 32-bit instructions like VMACC.VX
 //
 #define ATTR32_VX3(_NAME, _GENERIC, _ARCH, _OPCODE) [IT32_##_NAME] = { \
@@ -950,6 +980,21 @@
     r3       : RS_F_19_15,          \
     mask     : RS_V_M_25,           \
     VIType   : RV_VIT_VFM,          \
+}
+
+//
+// Attribute entries for 32-bit instructions like VFMV.V.F
+//
+#define ATTR32_VFMV_V_F(_NAME, _GENERIC, _ARCH, _OPCODE) [IT32_##_NAME] = { \
+    opcode   : _OPCODE,             \
+    format   : FMT_R1_R3,           \
+    type     : RV_IT_##_GENERIC,    \
+    arch     : _ARCH,               \
+    r1       : RS_V_11_7,           \
+    r2       : RS_V_24_20,          \
+    r3       : RS_F_19_15,          \
+    mask     : RS_V_M_25,           \
+    VIType   : RV_VIT_NA,           \
 }
 
 //
@@ -1025,6 +1070,21 @@
     cs       : CS_S_19_15,          \
     mask     : RS_V_M_25,           \
     VIType   : RV_VIT_VIM,          \
+}
+
+//
+// Attribute entries for 32-bit instructions like VMV.V.I
+//
+#define ATTR32_VMV_V_I(_NAME, _GENERIC, _ARCH, _OPCODE) [IT32_##_NAME] = { \
+    opcode   : _OPCODE,             \
+    format   : FMT_R1_SIMM,         \
+    type     : RV_IT_##_GENERIC,    \
+    arch     : _ARCH,               \
+    r1       : RS_V_11_7,           \
+    r2       : RS_V_24_20,          \
+    cs       : CS_S_19_15,          \
+    mask     : RS_V_M_25,           \
+    VIType   : RV_VIT_NA,           \
 }
 
 //

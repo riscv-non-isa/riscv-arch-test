@@ -28,9 +28,14 @@ DEFINE_S (riscvBusPort);
 DEFINE_S (riscvConfig);
 DEFINE_CS(riscvConfig);
 DEFINE_CS(riscvCSRAttrs);
+DEFINE_S (riscvExceptionDesc);
+DEFINE_CS(riscvExceptionDesc);
+DEFINE_S (riscvExtCB);
+DEFINE_CS(riscvExtConfig);
 DEFINE_S (riscvInstrInfo);
 DEFINE_S (riscvNetPort);
 DEFINE_CS(riscvMorphAttr);
 DEFINE_S (riscvMorphState);
 DEFINE_S (riscvParamValues);
 DEFINE_S (riscvTLB);
+

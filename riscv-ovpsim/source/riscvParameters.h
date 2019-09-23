@@ -37,6 +37,8 @@ typedef struct riscvParamValuesS {
     VMI_ENUM_PARAM(user_version);
     VMI_ENUM_PARAM(priv_version);
     VMI_ENUM_PARAM(vector_version);
+    VMI_ENUM_PARAM(fp16_version);
+    VMI_ENUM_PARAM(mstatus_fs_mode);
     VMI_BOOL_PARAM(verbose);
     VMI_BOOL_PARAM(updatePTEA);
     VMI_BOOL_PARAM(updatePTED);
@@ -54,7 +56,6 @@ typedef struct riscvParamValuesS {
     VMI_BOOL_PARAM(instret_undefined);
     VMI_BOOL_PARAM(enable_CSR_bus);
     VMI_BOOL_PARAM(d_requires_f);
-    VMI_BOOL_PARAM(fs_always_dirty);
     VMI_BOOL_PARAM(xret_preserves_lr);
     VMI_UNS32_PARAM(ASID_bits);
     VMI_UNS32_PARAM(PMP_grain);
@@ -116,3 +117,12 @@ const char *riscvGetUserVersionDesc(riscvP riscv);
 //
 const char *riscvGetVectorVersionDesc(riscvP riscv);
 
+//
+// Return 16-bit floating point description
+//
+const char *riscvGetFP16VersionDesc(riscvP riscv);
+
+//
+// Return mstatus.FS mode name
+//
+const char *riscvGetFSModeName(riscvP riscv);

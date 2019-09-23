@@ -117,6 +117,11 @@ void riscvConfigureFPU(riscvP riscv);
 //
 void riscvWFS(riscvMorphStateP state, Bool useRS1);
 
+//
+// Reset JIT code generator state after possible write of mstatus.FS
+//
+void riscvRstFS(riscvMorphStateP state, Bool useRS1);
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // VECTOR EXTENSION

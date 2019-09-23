@@ -4,7 +4,7 @@ riscvOVPsim/examples/vector/README.md
 Introduction
 ---
 
-This directory contains a number of examples executing the RISC-V vector instruction set on the RISC-V processor using the RV64GCV variant.
+This directory contains a number of examples executing the RISC-V vector instruction set on the RISC-V processor using the RVB64I variant with extensions MAFDCV and SU.
 
 The vector examples are all taken from the RISC-V Vector specification
 
@@ -33,7 +33,7 @@ Running the Example
 ---
 
 A script is provided RUN_RV64GC_VECTOR_EXAMPLE as both sh for Linux and bat for Windows hosts.
-The script configures the RISC-V processor for the variant RV64GCV and configures the vector extension.
+The script configures the RISC-V processor for the variant RVB64I, with extensions MAFDCV and SU and configures the vector extension.
 When executed a list of the available ELF files to execute will be provided and a selection should be made.
 By selecting an ELF file it will be loaded into the memory of the virtual platform and executed by the RISC-V processor.
 

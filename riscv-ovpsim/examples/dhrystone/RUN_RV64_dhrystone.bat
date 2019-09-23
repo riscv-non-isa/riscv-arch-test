@@ -4,6 +4,10 @@
 set BATCHDIR=%~dp0%
 cd /d %BATCHDIR%
 
-..\..\bin\Windows64\riscvOVPsim.exe --program dhrystone.RISCV64.elf -variant RV64IMAC %*
+..\..\bin\Windows64\riscvOVPsim.exe ^
+    --program dhrystone.RISCV64.elf ^
+    --variant RVB64I ^
+    --override riscvOVPsim/cpu/add_Extensions=MACSU ^
+    %*
 
 if not defined calledscript ( pause )

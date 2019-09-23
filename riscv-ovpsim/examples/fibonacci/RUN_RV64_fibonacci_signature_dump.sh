@@ -3,7 +3,10 @@
 cd $(dirname $0)
 bindir=$(dirname $(dirname $(pwd)))/bin/Linux64
 
-${bindir}/riscvOVPsim.exe --program fibonacci.RISCV64.elf -variant RV64IMAC \
+${bindir}/riscvOVPsim.exe \
+    --program fibonacci.RISCV64.elf \
+    --variant RVB64I \
+    --override riscvOVPsim/cpu/add_Extensions=MACSU \
     --signaturedump \
     --override riscvOVPsim/cpu/sigdump/SignatureFile=fib.sig.dat.txt \
     --override riscvOVPsim/cpu/sigdump/StartSymbol="resultArray" \

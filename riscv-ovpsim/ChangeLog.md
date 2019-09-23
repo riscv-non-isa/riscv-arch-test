@@ -1,9 +1,29 @@
 ###############################################################################
-#                       CHANGELOG.MODEL.RISCV.txt                             #
+#                       CHANGELOG.RISCVOVPSIM.txt                             #
 #      Copyright (c) 2005-2019 Imperas Software Ltd., www.imperas.com         #
-# This CHANGELOG contains information specific to the RISCV processor model   #
+# This CHANGELOG contains information for the riscvOVPsim fixed platform      #
+# which includes information of the OVP Simulator and RISCV processor model   #
 ###############################################################################
 
+###############################################################################
+## Date 2019-Sept-23                                                         ##
+## Release 20190923.0                                                        ##
+###############################################################################
+- Enhancements to the B Extensions to include the instructions as part of the
+  v0.91 specification, also added a parameter for version selection, currently
+  v0.90 and v 0.91. The default will always be the later specification
+- A bug has been fixed which caused some instructions that update the fcsr 
+  register not to also update mstatus.FS when required.
+- Parameter "fs_always_dirty" has been removed; new parameter "mstatus_fs_mode"
+  has been added to allow the conditions under which mstatus.FS is set to Dirty
+  to be specified more precisely. See processor variant documentation for a
+  detailed description of the available options.
+- A fix has been made to the cmix instruction so it no longer writes the t0 
+  register. Note this is not in the base model, but in the extB prototype bit 
+  manipulation extension library.
+- New functions to support modeling Transactional Memory features in an 
+  extension library have been added to the enhanced model support call backs in 
+  the base model. 
 - Corrected memory sizing in the riscvOVPsim fixed platform to use address 
   range specified by argument addressbits.
 - Fixed bug when using new vmi_IMULSU operation.
@@ -19,10 +39,26 @@
   - The constraint on legal LMUL for segmented load/store operations has been
     changed from requiring LMUL=1 to requiring LMUL*NFIELDS<=8. This corresponds
     to a specification change made on 2019-June-06.
+  - decodes for instructions which only exist in unmasked form have been
+    changed so that the vm field in the instruction must be 1 (previously, this
+    bit was treated as a don't-care).
+  - instruction disassembly has been improved for 'move' instructions (this
+    change does not affect model behavior).
+  - A bug has been fixed which caused an error when an attempt was made to
+    execute floating point instructions with a scalar argument and with SLEN
+    less than 32.
+  - A bug has been fixed which caused narrowing floating point/integer type
+    conversion instructions targeting integer types to raise illegal instruction
+    exceptions when the current SEW is smaller than the smallest supported
+    floating point SEW. These instructions should be legal when SEW*2 is the
+    smallest supported floating point SEW and SEW is legal for integer types.
 - The model has a new parameter vector_version which can be used to select
-  either the stable 0.71 Vector Extension (the default) or the unstable master
+  either the stable 0.7.1 Vector Extension (the default) or the unstable master
   branch. The master branch currently has the following changes compared to the
-  stable 0.71 branch:
+  stable 0.7.1 branch:
+  - behavior of vsetvl and vsetvli instructions when rs1 = x0 preserves the
+    current vl instead of selecting the maximum possible vl.
+  - tail vector and scalar elements are preserved, not zeroed.
   - vext.s.v and vmford.vv instructions have been removed;
   - vmv.s.x instruction has been added;
   - encodings for vpopc.m, vfirst.m, vmsbf.m, vmsif.m, vmsof.m, viota.m and

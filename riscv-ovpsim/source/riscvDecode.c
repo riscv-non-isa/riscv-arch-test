@@ -651,8 +651,8 @@ typedef enum riscvIType32E {
     IT32_VMADC_VV,
     IT32_VSBC_VV,
     IT32_VMSBC_VV,
-    IT32_VMERGEM_VV,
-    IT32_VMERGE0_VV,
+    IT32_VMERGE_VV,
+    IT32_VMV_V_V,
     IT32_VSEQ_VV,
     IT32_VSNE_VV,
     IT32_VSLTU_VV,
@@ -805,8 +805,8 @@ typedef enum riscvIType32E {
     IT32_VSLIDEDOWN_VI,
     IT32_VADC_VI,
     IT32_VMADC_VI,
-    IT32_VMERGEM_VI,
-    IT32_VMERGE0_VI,
+    IT32_VMERGE_VI,
+    IT32_VMV_V_I,
     IT32_VSEQ_VI,
     IT32_VSNE_VI,
     IT32_VSLEU_VI,
@@ -844,8 +844,8 @@ typedef enum riscvIType32E {
     IT32_VMADC_VX,
     IT32_VSBC_VX,
     IT32_VMSBC_VX,
-    IT32_VMERGEM_VX,
-    IT32_VMERGE0_VX,
+    IT32_VMERGE_VX,
+    IT32_VMV_V_X,
     IT32_VSEQ_VX,
     IT32_VSNE_VX,
     IT32_VSLTU_VX,
@@ -884,8 +884,8 @@ typedef enum riscvIType32E {
     IT32_VFSGNJN_VF,
     IT32_VFSGNJX_VF,
     IT32_VFMV_S_F,
-    IT32_VFMERGEM_VF,
-    IT32_VFMERGE0_VF,
+    IT32_VFMERGE_VF,
+    IT32_VFMV_V_F,
     IT32_VFEQ_VF,
     IT32_VFLTE_VF,
     IT32_VFORD_VF,
@@ -1249,8 +1249,8 @@ const static decodeEntry32 decodeCommon32[] = {
     DECODE32_ENTRY(       VMADC_VV, "|010001|1|.....|.....|000|.....|1010111|"),
     DECODE32_ENTRY(        VSBC_VV, "|010010|1|.....|.....|000|.....|1010111|"),
     DECODE32_ENTRY(       VMSBC_VV, "|010011|1|.....|.....|000|.....|1010111|"),
-    DECODE32_ENTRY(     VMERGEM_VV, "|010111|0|.....|.....|000|.....|1010111|"),
-    DECODE32_ENTRY(     VMERGE0_VV, "|010111|1|00000|.....|000|.....|1010111|"),
+    DECODE32_ENTRY(      VMERGE_VV, "|010111|0|.....|.....|000|.....|1010111|"),
+    DECODE32_ENTRY(        VMV_V_V, "|010111|1|00000|.....|000|.....|1010111|"),
     DECODE32_ENTRY(        VSEQ_VV, "|011000|.|.....|.....|000|.....|1010111|"),
     DECODE32_ENTRY(        VSNE_VV, "|011001|.|.....|.....|000|.....|1010111|"),
     DECODE32_ENTRY(       VSLTU_VV, "|011010|.|.....|.....|000|.....|1010111|"),
@@ -1294,7 +1294,6 @@ const static decodeEntry32 decodeCommon32[] = {
     DECODE32_ENTRY(      VFSGNJ_VV, "|001000|.|.....|.....|001|.....|1010111|"),
     DECODE32_ENTRY(     VFSGNJN_VV, "|001001|.|.....|.....|001|.....|1010111|"),
     DECODE32_ENTRY(     VFSGNJX_VV, "|001010|.|.....|.....|001|.....|1010111|"),
-    DECODE32_ENTRY(       VFMV_F_S, "|001100|.|.....|00000|001|.....|1010111|"),
     DECODE32_ENTRY(        VFEQ_VV, "|011000|.|.....|.....|001|.....|1010111|"),
     DECODE32_ENTRY(       VFLTE_VV, "|011001|.|.....|.....|001|.....|1010111|"),
     DECODE32_ENTRY(       VFORD_VV, "|011010|.|.....|.....|001|.....|1010111|"),
@@ -1375,15 +1374,15 @@ const static decodeEntry32 decodeCommon32[] = {
     DECODE32_ENTRY(     VREDMIN_VS, "|000101|.|.....|.....|010|.....|1010111|"),
     DECODE32_ENTRY(    VREDMAXU_VS, "|000110|.|.....|.....|010|.....|1010111|"),
     DECODE32_ENTRY(     VREDMAX_VS, "|000111|.|.....|.....|010|.....|1010111|"),
-    DECODE32_ENTRY(       VMAND_MM, "|011001|.|.....|.....|010|.....|1010111|"),
-    DECODE32_ENTRY(      VMNAND_MM, "|011101|.|.....|.....|010|.....|1010111|"),
-    DECODE32_ENTRY(    VMANDNOT_MM, "|011000|.|.....|.....|010|.....|1010111|"),
-    DECODE32_ENTRY(       VMXOR_MM, "|011011|.|.....|.....|010|.....|1010111|"),
-    DECODE32_ENTRY(        VMOR_MM, "|011010|.|.....|.....|010|.....|1010111|"),
-    DECODE32_ENTRY(       VMNOR_MM, "|011110|.|.....|.....|010|.....|1010111|"),
-    DECODE32_ENTRY(     VMORNOT_MM, "|011100|.|.....|.....|010|.....|1010111|"),
-    DECODE32_ENTRY(      VMXNOR_MM, "|011111|.|.....|.....|010|.....|1010111|"),
-    DECODE32_ENTRY(   VCOMPRESS_VM, "|010111|.|.....|.....|010|.....|1010111|"),
+    DECODE32_ENTRY(       VMAND_MM, "|011001|1|.....|.....|010|.....|1010111|"),
+    DECODE32_ENTRY(      VMNAND_MM, "|011101|1|.....|.....|010|.....|1010111|"),
+    DECODE32_ENTRY(    VMANDNOT_MM, "|011000|1|.....|.....|010|.....|1010111|"),
+    DECODE32_ENTRY(       VMXOR_MM, "|011011|1|.....|.....|010|.....|1010111|"),
+    DECODE32_ENTRY(        VMOR_MM, "|011010|1|.....|.....|010|.....|1010111|"),
+    DECODE32_ENTRY(       VMNOR_MM, "|011110|1|.....|.....|010|.....|1010111|"),
+    DECODE32_ENTRY(     VMORNOT_MM, "|011100|1|.....|.....|010|.....|1010111|"),
+    DECODE32_ENTRY(      VMXNOR_MM, "|011111|1|.....|.....|010|.....|1010111|"),
+    DECODE32_ENTRY(   VCOMPRESS_VM, "|010111|1|.....|.....|010|.....|1010111|"),
 
     // V-extension IVI-type instructions
     //                               |funct6|m|  vs2|simm5|IVI|  vs3| opcode|
@@ -1397,8 +1396,8 @@ const static decodeEntry32 decodeCommon32[] = {
     DECODE32_ENTRY(  VSLIDEDOWN_VI, "|001111|.|.....|.....|011|.....|1010111|"),
     DECODE32_ENTRY(        VADC_VI, "|010000|1|.....|.....|011|.....|1010111|"),
     DECODE32_ENTRY(       VMADC_VI, "|010001|1|.....|.....|011|.....|1010111|"),
-    DECODE32_ENTRY(     VMERGEM_VI, "|010111|0|.....|.....|011|.....|1010111|"),
-    DECODE32_ENTRY(     VMERGE0_VI, "|010111|1|00000|.....|011|.....|1010111|"),
+    DECODE32_ENTRY(      VMERGE_VI, "|010111|0|.....|.....|011|.....|1010111|"),
+    DECODE32_ENTRY(        VMV_V_I, "|010111|1|00000|.....|011|.....|1010111|"),
     DECODE32_ENTRY(        VSEQ_VI, "|011000|.|.....|.....|011|.....|1010111|"),
     DECODE32_ENTRY(        VSNE_VI, "|011001|.|.....|.....|011|.....|1010111|"),
     DECODE32_ENTRY(       VSLEU_VI, "|011100|.|.....|.....|011|.....|1010111|"),
@@ -1437,8 +1436,8 @@ const static decodeEntry32 decodeCommon32[] = {
     DECODE32_ENTRY(       VMADC_VX, "|010001|1|.....|.....|100|.....|1010111|"),
     DECODE32_ENTRY(        VSBC_VX, "|010010|1|.....|.....|100|.....|1010111|"),
     DECODE32_ENTRY(       VMSBC_VX, "|010011|1|.....|.....|100|.....|1010111|"),
-    DECODE32_ENTRY(     VMERGEM_VX, "|010111|0|.....|.....|100|.....|1010111|"),
-    DECODE32_ENTRY(     VMERGE0_VX, "|010111|1|00000|.....|100|.....|1010111|"),
+    DECODE32_ENTRY(      VMERGE_VX, "|010111|0|.....|.....|100|.....|1010111|"),
+    DECODE32_ENTRY(        VMV_V_X, "|010111|1|00000|.....|100|.....|1010111|"),
     DECODE32_ENTRY(        VSEQ_VX, "|011000|.|.....|.....|100|.....|1010111|"),
     DECODE32_ENTRY(        VSNE_VX, "|011001|.|.....|.....|100|.....|1010111|"),
     DECODE32_ENTRY(       VSLTU_VX, "|011010|.|.....|.....|100|.....|1010111|"),
@@ -1477,9 +1476,8 @@ const static decodeEntry32 decodeCommon32[] = {
     DECODE32_ENTRY(      VFSGNJ_VF, "|001000|.|.....|.....|101|.....|1010111|"),
     DECODE32_ENTRY(     VFSGNJN_VF, "|001001|.|.....|.....|101|.....|1010111|"),
     DECODE32_ENTRY(     VFSGNJX_VF, "|001010|.|.....|.....|101|.....|1010111|"),
-    DECODE32_ENTRY(       VFMV_S_F, "|001101|.|00000|.....|101|.....|1010111|"),
-    DECODE32_ENTRY(    VFMERGEM_VF, "|010111|0|.....|.....|101|.....|1010111|"),
-    DECODE32_ENTRY(    VFMERGE0_VF, "|010111|1|00000|.....|101|.....|1010111|"),
+    DECODE32_ENTRY(     VFMERGE_VF, "|010111|0|.....|.....|101|.....|1010111|"),
+    DECODE32_ENTRY(       VFMV_V_F, "|010111|1|00000|.....|101|.....|1010111|"),
     DECODE32_ENTRY(        VFEQ_VF, "|011000|.|.....|.....|101|.....|1010111|"),
     DECODE32_ENTRY(       VFLTE_VF, "|011001|.|.....|.....|101|.....|1010111|"),
     DECODE32_ENTRY(        VFLT_VF, "|011011|.|.....|.....|101|.....|1010111|"),
@@ -1510,7 +1508,6 @@ const static decodeEntry32 decodeCommon32[] = {
 
     // V-extension MVX-type instructions
     //                               |funct6|m|  vs2|  vs1|MVX|  vs3| opcode|
-    DECODE32_ENTRY(        VMV_S_X, "|001101|.|00000|.....|110|.....|1010111|"),
     DECODE32_ENTRY(   VSLIDE1UP_VX, "|001110|.|.....|.....|110|.....|1010111|"),
     DECODE32_ENTRY( VSLIDE1DOWN_VX, "|001111|.|.....|.....|110|.....|1010111|"),
     DECODE32_ENTRY(       VDIVU_VX, "|100000|.|.....|.....|110|.....|1010111|"),
@@ -1546,13 +1543,14 @@ const static decodeEntry32 decodeCommon32[] = {
 };
 
 //
-// This specifies decodes for 32-bit opcodes for vector extension version 0.71
+// This specifies decodes for 32-bit opcodes for vector extension version 0.7.1
 //
 const static decodeEntry32 decodeVectorV71[] = {
 
     // V-extension MVV-type instructions
     //                               |funct6|m|  vs2|  vs1|MVV|  vs3| opcode|
-    DECODE32_ENTRY(       VEXT_X_V, "|001100|.|.....|.....|010|.....|1010111|"),
+    DECODE32_ENTRY(       VEXT_X_V, "|001100|1|.....|.....|010|.....|1010111|"),
+    DECODE32_ENTRY(        VMV_X_S, "|001100|1|.....|00000|010|.....|1010111|"),
     DECODE32_ENTRY(        VPOPC_M, "|010100|.|.....|00000|010|.....|1010111|"),
     DECODE32_ENTRY(       VFIRST_M, "|010101|.|.....|00000|010|.....|1010111|"),
     DECODE32_ENTRY(        VMSBF_M, "|010110|.|.....|00001|010|.....|1010111|"),
@@ -1561,22 +1559,31 @@ const static decodeEntry32 decodeVectorV71[] = {
     DECODE32_ENTRY(        VIOTA_M, "|010110|.|.....|10000|010|.....|1010111|"),
     DECODE32_ENTRY(          VID_V, "|010110|.|00000|10001|010|.....|1010111|"),
 
+    // V-extension FVV-type instructions
+    //                               |funct6|m|  vs2|  vs1|FVV|  vs3| opcode|
+    DECODE32_ENTRY(       VFMV_F_S, "|001100|1|.....|00000|001|.....|1010111|"),
+
     // V-extension FVF-type instructions
     //                               |funct6|m|  vs2|  fs1|FVF|  vs3| opcode|
     DECODE32_ENTRY(       VFORD_VF, "|011010|.|.....|.....|101|.....|1010111|"),
+    DECODE32_ENTRY(       VFMV_S_F, "|001101|1|00000|.....|101|.....|1010111|"),
+
+    // V-extension MVX-type instructions
+    //                               |funct6|m|  vs2|  vs1|MVX|  vs3| opcode|
+    DECODE32_ENTRY(        VMV_S_X, "|001101|1|00000|.....|110|.....|1010111|"),
 
     // table termination entry
     {0}
 };
 
 //
-// This specifies decodes for 32-bit opcodes for vector extension version 0.72
+// This specifies decodes for 32-bit opcodes for vector extension version 0.7.2
 //
 const static decodeEntry32 decodeVectorV72[] = {
 
     // V-extension MVV-type instructions
     //                               |funct6|m|  vs2|  vs1|MVV|  vs3| opcode|
-    DECODE32_ENTRY(        VMV_X_S, "|010000|.|.....|00000|010|.....|1010111|"),
+    DECODE32_ENTRY(        VMV_X_S, "|010000|1|.....|00000|010|.....|1010111|"),
     DECODE32_ENTRY(        VPOPC_M, "|010000|.|.....|10000|010|.....|1010111|"),
     DECODE32_ENTRY(       VFIRST_M, "|010000|.|.....|10001|010|.....|1010111|"),
     DECODE32_ENTRY(        VMSBF_M, "|010100|.|.....|00001|010|.....|1010111|"),
@@ -1584,6 +1591,18 @@ const static decodeEntry32 decodeVectorV72[] = {
     DECODE32_ENTRY(        VMSIF_M, "|010100|.|.....|00011|010|.....|1010111|"),
     DECODE32_ENTRY(        VIOTA_M, "|010100|.|.....|10000|010|.....|1010111|"),
     DECODE32_ENTRY(          VID_V, "|010100|.|00000|10001|010|.....|1010111|"),
+
+    // V-extension FVV-type instructions
+    //                               |funct6|m|  vs2|  vs1|FVV|  vs3| opcode|
+    DECODE32_ENTRY(       VFMV_F_S, "|010000|1|.....|00000|001|.....|1010111|"),
+
+    // V-extension FVF-type instructions
+    //                               |funct6|m|  vs2|  vs1|FVF|  vs3| opcode|
+    DECODE32_ENTRY(       VFMV_S_F, "|010000|1|00000|.....|101|.....|1010111|"),
+
+    // V-extension MVX-type instructions
+    //                               |funct6|m|  vs2|  vs1|MVX|  vs3| opcode|
+    DECODE32_ENTRY(        VMV_S_X, "|010000|1|00000|.....|110|.....|1010111|"),
 
     // table termination entry
     {0}
@@ -1839,8 +1858,8 @@ const static opAttrs attrsArray32[] = {
     ATTR32_VVM_CIN   (      VMADC_VV,       VMADC_VR, RVANYV,  "vmadc"    ),
     ATTR32_VVM_CIN   (       VSBC_VV,        VSBC_VR, RVANYV,  "vsbc"     ),
     ATTR32_VVM_CIN   (      VMSBC_VV,       VMSBC_VR, RVANYV,  "vmsbc"    ),
-    ATTR32_VVM       (    VMERGEM_VV,      VMERGE_VR, RVANYV,  "vmerge"   ),
-    ATTR32_VVM       (    VMERGE0_VV,      VMERGE_VR, RVANYV,  "vmerge"   ),
+    ATTR32_VVM       (     VMERGE_VV,      VMERGE_VR, RVANYV,  "vmerge"   ),
+    ATTR32_VMV_V_V   (       VMV_V_V,      VMERGE_VR, RVANYV,  "vmv.v.v"  ),
     ATTR32_VV        (       VSEQ_VV,        VSEQ_VR, RVANYV,  "vmseq"    ),
     ATTR32_VV        (       VSNE_VV,        VSNE_VR, RVANYV,  "vmsne"    ),
     ATTR32_VV        (      VSLTU_VV,       VSLTU_VR, RVANYV,  "vmsltu"   ),
@@ -1993,8 +2012,8 @@ const static opAttrs attrsArray32[] = {
     ATTR32_VU        ( VSLIDEDOWN_VI,  VSLIDEDOWN_VI, RVANYV,  "vslidedown"),
     ATTR32_VIM_CIN   (       VADC_VI,        VADC_VI, RVANYV,  "vadc"      ),
     ATTR32_VIM_CIN   (      VMADC_VI,       VMADC_VI, RVANYV,  "vmadc"     ),
-    ATTR32_VIM       (    VMERGEM_VI,      VMERGE_VI, RVANYV,  "vmerge"    ),
-    ATTR32_VIM       (    VMERGE0_VI,      VMERGE_VI, RVANYV,  "vmerge"    ),
+    ATTR32_VIM       (     VMERGE_VI,      VMERGE_VI, RVANYV,  "vmerge"    ),
+    ATTR32_VMV_V_I   (       VMV_V_I,      VMERGE_VI, RVANYV,  "vmv.v.i"   ),
     ATTR32_VI        (       VSEQ_VI,        VSEQ_VI, RVANYV,  "vmseq"     ),
     ATTR32_VI        (       VSNE_VI,        VSNE_VI, RVANYV,  "vmsne"     ),
     ATTR32_VI        (      VSLEU_VI,       VSLEU_VI, RVANYV,  "vmsleu"    ),
@@ -2032,8 +2051,8 @@ const static opAttrs attrsArray32[] = {
     ATTR32_VXM_CIN   (      VMADC_VX,       VMADC_VR, RVANYV,  "vmadc"     ),
     ATTR32_VXM_CIN   (       VSBC_VX,        VSBC_VR, RVANYV,  "vsbc"      ),
     ATTR32_VXM_CIN   (      VMSBC_VX,       VMSBC_VR, RVANYV,  "vmsbc"     ),
-    ATTR32_VXM       (    VMERGEM_VX,      VMERGE_VR, RVANYV,  "vmerge"    ),
-    ATTR32_VXM       (    VMERGE0_VX,      VMERGE_VR, RVANYV,  "vmerge"    ),
+    ATTR32_VXM       (     VMERGE_VX,      VMERGE_VR, RVANYV,  "vmerge"    ),
+    ATTR32_VMV_V_X   (       VMV_V_X,      VMERGE_VR, RVANYV,  "vmv.v.x"   ),
     ATTR32_VX        (       VSEQ_VX,        VSEQ_VR, RVANYV,  "vmseq"     ),
     ATTR32_VX        (       VSNE_VX,        VSNE_VR, RVANYV,  "vmsne"     ),
     ATTR32_VX        (      VSLTU_VX,       VSLTU_VR, RVANYV,  "vmsltu"    ),
@@ -2072,8 +2091,8 @@ const static opAttrs attrsArray32[] = {
     ATTR32_VF        (    VFSGNJN_VF,     VFSGNJN_VR, RVANYV,  "vfsgnjn" ),
     ATTR32_VF        (    VFSGNJX_VF,     VFSGNJX_VR, RVANYV,  "vfsgnjx" ),
     ATTR32_VFMV_S_F  (      VFMV_S_F,       VFMV_S_F, RVANYV,  "vfmv.s.f"),
-    ATTR32_VFM       (   VFMERGEM_VF,      VMERGE_VR, RVANYV,  "vfmerge" ),
-    ATTR32_VFM       (   VFMERGE0_VF,      VMERGE_VR, RVANYV,  "vfmerge" ),
+    ATTR32_VFM       (    VFMERGE_VF,     VFMERGE_VR, RVANYV,  "vfmerge" ),
+    ATTR32_VFMV_V_F  (      VFMV_V_F,     VFMERGE_VR, RVANYV,  "vfmv.v.f"),
     ATTR32_VF        (       VFEQ_VF,        VFEQ_VR, RVANYV,  "vmfeq"   ),
     ATTR32_VF        (      VFLTE_VF,        VFLE_VR, RVANYV,  "vmfle"   ),
     ATTR32_VF        (      VFORD_VF,       VFORD_VR, RVANYV,  "vmford"  ),
@@ -2174,7 +2193,7 @@ static vmidDecodeTableP createDecodeTable32(riscvVectVer vect_version) {
     insertEntries32(table, &decodeCommon32[0]);
 
     // insert vector-extension-dependent 32-bit decode table entries
-    if(vect_version==RVVV_0_71) {
+    if(vect_version==RVVV_0_7_1) {
         insertEntries32(table, &decodeVectorV71[0]);
     } else {
         insertEntries32(table, &decodeVectorV72[0]);
@@ -2995,7 +3014,7 @@ static Uns32 getMemBits(
             result = 32<<U_12(instr);
             break;
         case MBS_12_VAMO:
-            if(vectorVersion(riscv)==RVVV_0_71) {
+            if(vectorVersion(riscv)==RVVV_0_7_1) {
                 result = 32<<U_12(instr);
             } else {
                 result = U_12(instr) ? -1 : 32;

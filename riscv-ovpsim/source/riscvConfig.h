@@ -37,6 +37,17 @@
 typedef RV_DOC_FN((*riscvDocFn));
 
 //
+// This is used to specify documentation and configuration for mandatory
+// extensions
+//
+typedef struct riscvExtConfigS {
+    Uns32        id;                    // unique extension ID
+    const char **specificDocs;          // extension-specific documentation
+    riscvDocFn   restrictionsCB;        // extension-specific restrictions
+    const void  *userData;              // extension-specific constant data
+} riscvExtConfig;
+
+//
 // This is used to define a processor configuration option
 //
 typedef struct riscvConfigS {
@@ -49,6 +60,8 @@ typedef struct riscvConfigS {
     riscvUserVer      user_version;     // user-level ISA version
     riscvPrivVer      priv_version;     // privileged architecture version
     riscvVectVer      vect_version;     // vector architecture version
+    riscvFP16Ver      fp16_version;     // 16-bit floating point version
+    riscvFSMode       mstatus_fs_mode;  // mstatus.FS update mode
     const char      **members;          // cluster member variants
 
     // configuration not visible in CSR state
@@ -78,7 +91,6 @@ typedef struct riscvConfigS {
     Bool              time_undefined;   // whether time CSR is undefined
     Bool              instret_undefined;// whether instret CSR is undefined
     Bool              d_requires_f;     // when misa D requires F to be set
-    Bool              fs_always_dirty;  // if mstatus.FS!=0, force it to 3
     Bool              xret_preserves_lr;// whether xRET preserves current LR
     Bool              enable_CSR_bus;   // enable CSR implementation bus
     Bool              tval_ii_code;     // instruction bits in [sm]tval for
@@ -101,10 +113,13 @@ typedef struct riscvConfigS {
         CSR_REG_DECL (cause);           // cause mask
     } csrMask;
 
-    // extension values
-    const char      **specificDocs;     // extension-specific documentation
-    riscvDocFn        restrictionsCB;   // extension-specific restrictions
-    const void       *extensionConfig;  // extension-specific configuration
+    // custom documentation
+    const char      **specificDocs;     // custom documentation
+    riscvDocFn        restrictionsCB;   // custom restrictions
+
+    // extension configuration information
+    riscvExtConfigCPP extensionConfigs; // null-terminated list of extension
+                                        // configurations
 
 } riscvConfig;
 
@@ -112,3 +127,14 @@ typedef struct riscvConfigS {
 // This returns the supported configuration list
 //
 riscvConfigCP riscvGetConfigList(riscvP riscv);
+
+//
+// Get the indexed extension configuration for the processor
+//
+inline static riscvExtConfigCP riscvGetIndexedExtConfig(
+    riscvConfigCP config,
+    Uns32         index
+) {
+    riscvExtConfigCPP extensionConfigs = config->extensionConfigs;
+    return extensionConfigs ? extensionConfigs[index] : 0;
+}
