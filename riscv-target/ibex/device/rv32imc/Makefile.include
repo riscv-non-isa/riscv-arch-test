@@ -3,10 +3,11 @@ LDSCRIPT    = $(IBEX)/link.ld
 TRAPHANDLER = $(IBEX)/handler.S
 DEFINES     = -DPRIV_MISA_S=0 -DPRIV_MISA_U=0 -DTRAPHANDLER="\"$(TRAPHANDLER)\""
 
-TARGET_SIM ?= Vibex_riscv_compliance
+TARGET_SIM   ?= Vibex_riscv_compliance
+TARGET_FLAGS ?= $(RISCV_TARGET_FLAGS)
 
 RUN_TARGET=\
-    $(TARGET_SIM) \
+    $(TARGET_SIM) $(TARGET_FLAGS) \
         --term-after-cycles=100000 \
         --raminit=$(work_dir_isa)/$<.vmem \
         > $(work_dir_isa)/$(*).stdout \

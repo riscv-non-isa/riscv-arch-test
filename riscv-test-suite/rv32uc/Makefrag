@@ -3,5 +3,5 @@ rv32uc_sc_tests =    \
 
 rv32uc_tests = $(addsuffix .elf, $(rv32uc_sc_tests))
 
-target32_tests += $(rv32uc_tests)
+target_tests += $(rv32uc_tests)
 

@@ -4,13 +4,14 @@ else
     ARCH := Linux64
 endif
 
-TARGET_SIM ?= $(ROOTDIR)/riscv-ovpsim/bin/$(ARCH)/riscvOVPsim.exe
+TARGET_SIM   ?= $(ROOTDIR)/riscv-ovpsim/bin/$(ARCH)/riscvOVPsim.exe
+TARGET_FLAGS ?= $(RISCV_TARGET_FLAGS)
 ifeq ($(shell command -v $(TARGET_SIM) 2> /dev/null),)
     $(error Target simulator executable '$(TARGET_SIM)` not found)
 endif
 
 RUN_TARGET=\
-    $(TARGET_SIM) \
+    $(TARGET_SIM) $(TARGET_FLAGS) \
         --variant RV32I --program $(work_dir_isa)/$< \
         --signaturedump --customcontrol \
         --override riscvOVPsim/cpu/sigdump/SignatureFile=$(work_dir_isa)/$(*).signature.output \
