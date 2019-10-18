@@ -1,11 +1,13 @@
-
 2020-02-07 Prashanth Mundkur <prashanth.mundkur@gmail.com>
     * Support F extension on RV32 sail-riscv-c.
+
+2019-10-16 Allen Baum <allen.baum@esperantotech.com>
+	* spec/TestFormatSpec.adoc: changed the format of the signature to fixed physical address size, fixed 32b data size extracted from COMPLIANCE_DATA_BEGIN/END range.
 
 2019-09-11 Allen Baum <allen.baum@esperantotech.com>
 	* spec/TestFormatSpec.adoc:   more grammar and typo corrections and changes
 	  clarified and added To Be Discussed issues
-	
+
 2019-09-11 Allen Baum <allen.baum@esperantotech.com>
     * spec/TestFormatSpec.adoc:   many grammar and typo corrections and changes
 	removed many "to Be Discussed items and made them official
