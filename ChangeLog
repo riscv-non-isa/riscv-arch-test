@@ -4,6 +4,9 @@
 2019-10-16 Allen Baum <allen.baum@esperantotech.com>
 	* spec/TestFormatSpec.adoc: changed the format of the signature to fixed physical address size, fixed 32b data size extracted from COMPLIANCE_DATA_BEGIN/END range.
 
+	* more gramatical fixes, clarifications added
+	* added To Be Discussed items regarding emulated instruction and binary tests
+
 2019-09-11 Allen Baum <allen.baum@esperantotech.com>
 	* spec/TestFormatSpec.adoc:   more grammar and typo corrections and changes
 	  clarified and added To Be Discussed issues
