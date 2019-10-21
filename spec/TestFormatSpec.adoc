@@ -100,7 +100,7 @@ Any custom words for spell checking should be added to link:./custom.wordlist[`c
 This document has been created by the following people (in alphabetical order of surname).
 
 [quote]
-Jeremy Bennett, Radek Hajek, Premysl Vaclavik, Allen Baum.
+Allen Baum, Jeremy Bennett, Radek Hajek, Premysl Vaclavik
 
 === Document history
 [cols="<1,<2,<3,<4",options="header,pagewidth",]
@@ -246,7 +246,7 @@ The naming convention of a single test:
 * __test number__ – number of the test. It is expected that multiple tests may be specified for one test objective. We recommend to break down complex tests into a set of small tests. A simple rule of thumb is one simple test objective = one simple test. The code becomes more readable and the test of the objective can be improved just by adding <<The test case,_test cases_>>. The typical example are instruction tests for the F extension. 
 
 ----
-Note: a single test can contain multiple <<The test case,_test cases_>>, each of which can have its own test inclusion condition (as defined in the <<Common compliance test pool reference document, _Common compliance test pool reference document_>>).
+Note: a single test can contain multiple test cases, each of which can have its own test inclusion condition (as defined in the Common compliance test pool reference document).
 ----
 
 Test names shall not include an ISA category as part of its name (i.e. the directory, subdirectory names). 
