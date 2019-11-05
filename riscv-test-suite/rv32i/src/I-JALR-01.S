@@ -288,7 +288,7 @@ B2c_link:
 1:
     li      x5, 0x22222222
     la      x3, 1f + 1
-    jalr    x0, x3, 0xFFFFFFFF
+    jalr    x0, x3, -1
     li      x5, 0
 
 1:
