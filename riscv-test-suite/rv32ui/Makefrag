@@ -19,4 +19,4 @@ rv32ui_sc_tests =    \
 
 rv32ui_tests = $(addsuffix .elf, $(rv32ui_sc_tests))
 
-target32_tests += $(rv32ui_tests)
+target_tests += $(rv32ui_tests)

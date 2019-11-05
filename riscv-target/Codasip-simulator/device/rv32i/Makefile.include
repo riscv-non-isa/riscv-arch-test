@@ -1,12 +1,14 @@
 # TBD
 
-TARGET_SIM ?= codix_berkelium-ia-isimulator
+TARGET_SIM   ?= codix_berkelium-ia-isimulator
+TARGET_FLAGS ?= $(RISCV_TARGET_FLAGS)
+
 ifeq ($(shell command -v $(TARGET_SIM) 2> /dev/null),)
     $(error Target simulator executable '$(TARGET_SIM)` not found)
 endif
 
 RUN_TARGET=\
-    $(TARGET_SIM) -r --info 5 \
+    $(TARGET_SIM) $(TARGET_FLAGS) -r --info 5 \
     $(work_dir_isa)/$< 2> $(work_dir_isa)/$@ 1>$(work_dir_isa)/$(*).signature.output
 #        +signature=$(work_dir_isa)/$(*).signature.output \
 #        $(work_dir_isa)/$< 2> $(work_dir_isa)/$@

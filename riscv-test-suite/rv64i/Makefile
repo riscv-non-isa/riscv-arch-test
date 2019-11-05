@@ -8,6 +8,9 @@ work_dir := $(ROOTDIR)/work
 work_dir_isa := $(work_dir)/$(RISCV_ISA)
 
 include $(act_dir)/Makefrag
+ifneq ($(RISCV_TEST),)
+    target_tests = $(RISCV_TEST).elf
+endif
 
 default: all
 
@@ -45,9 +48,9 @@ endef
 
 $(eval $(call compile_template,rv64i,-march=rv64i -mabi=lp64))
 
-tests64_out = $(patsubst %.elf,%.out64,$(target64_tests))
+test_log = $(patsubst %.elf,%.out64,$(target_tests))
 
-run: $(tests64_out)
+run: $(test_log)
 
 #------------------------------------------------------------
 # Default

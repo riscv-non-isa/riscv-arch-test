@@ -8,6 +8,9 @@ work_dir := $(ROOTDIR)/work
 work_dir_isa := $(work_dir)/$(RISCV_ISA)
 
 include $(act_dir)/Makefrag
+ifneq ($(RISCV_TEST),)
+    target_tests = $(RISCV_TEST).elf
+endif
 
 default: all
 
@@ -26,7 +29,7 @@ endif
 #------------------------------------------------------------
 # Build and run assembly tests
 
-%.out32: %.elf
+%.log: %.elf
 	$(RUN_TARGET)
 
 
@@ -45,9 +48,9 @@ endef
 
 $(eval $(call compile_template,rv32uf,-march=rv32g -mabi=ilp32))
 
-tests32_out = $(patsubst %.elf,%.out32,$(target32_tests))
+test_log = $(patsubst %.elf,%.log,$(target_tests))
 
-run: $(tests32_out)
+run: $(test_log)
 
 #------------------------------------------------------------
 # Default

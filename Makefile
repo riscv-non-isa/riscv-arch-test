@@ -11,13 +11,13 @@ pipe:= |
 empty:=
 space:= $(empty) $(empty)
 
-export RISCV_TARGET ?= riscvOVPsim
-export RISCV_DEVICE ?= rv32i
-export RISCV_PREFIX ?= riscv64-unknown-elf-
+export RISCV_TARGET       ?= riscvOVPsim
+export RISCV_DEVICE       ?= rv32i
+export RISCV_PREFIX       ?= riscv64-unknown-elf-
+export RISCV_TARGET_FLAGS ?=
 
 RISCV_ISA_ALL = $(shell ls $(ROOTDIR)/riscv-target/$(RISCV_TARGET)/device)
 RISCV_ISA_OPT = $(subst $(space),$(pipe),$(RISCV_ISA_ALL))
-
 
 ifeq ($(RISCV_ISA),)
     RISCV_ISA = rv32i
@@ -37,12 +37,11 @@ variant: simulate verify
 
 all_variant:
 	for isa in $(RISCV_ISA_ALL); do \
-		echo $$isa; \
-		$(MAKE) RISCV_TARGET=$(RISCV_TARGET) RISCV_DEVICE=$$isa RISCV_ISA=$$isa variant; \
-                rc=$$?; \
-                if [ $$rc -ne 0 ]; then \
-			exit $$rc; \
-		fi \
+		$(MAKE) RISCV_TARGET=$(RISCV_TARGET) RISCV_TARGET_FLAGS=$(RISCV_TARGET_FLAGS) RISCV_DEVICE=$$isa RISCV_ISA=$$isa variant; \
+			rc=$$?; \
+			if [ $$rc -ne 0 ]; then \
+				exit $$rc; \
+			fi \
 	done
 
 simulate:
@@ -63,9 +62,11 @@ clean:
 		clean -C $(SUITEDIR)
 
 help:
-	@echo "make"
+	@echo "eg, make"
 	@echo "RISCV_TARGET='riscvOVPsim|spike'"
+	@echo "RISCV_TARGET_FLAGS="
 	@echo "RISCV_DEVICE='rv32i|rv32im|...'"
-	@echo "RISCV_ISA=$(RISCV_ISA_OPT)"
+	@echo "RISCV_ISA='$(RISCV_ISA_OPT)'"
+	@echo "RISCV_TEST='I-ADD-01'"
 	@echo "make all_variant // all combinations"
 

@@ -3,10 +3,11 @@ LDSCRIPT    = $(RI5CY)/link.ld
 TRAPHANDLER = $(RI5CY)/handler.S
 DEFINES     = -DPRIV_MISA_S=0 -DPRIV_MISA_U=0 -DTRAPHANDLER="\"$(TRAPHANDLER)\""
 
-TARGET_SIM ?= vsim -work $(VSIM_WORK)
+TARGET_SIM   ?= vsim -work $(VSIM_WORK)
+TARGET_FLAGS ?= $(RISCV_TARGET_FLAGS)
 
 RUN_TARGET=\
-    $(TARGET_SIM) -c -quiet tb_top_vopt -do 'run -all; exit -f' \
+    $(TARGET_SIM) $(TARGET_FLAGS) -c -quiet tb_top_vopt -do 'run -all; exit -f' \
         +firmware=$(work_dir_isa)/$<.bin \
 	+maxcycles=10000 \
 	+signature=$(work_dir_isa)/$(*).signature.output

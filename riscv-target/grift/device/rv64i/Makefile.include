@@ -1,10 +1,11 @@
-TARGET_SIM ?= grift-sim
+TARGET_SIM   ?= grift-sim
+TARGET_FLAGS ?= $(RISCV_TARGET_FLAGS)
 ifeq ($(shell command -v $(TARGET_SIM) 2> /dev/null),)
     $(error Target simulator executable '$(TARGET_SIM)` not found)
 endif
 
 RUN_TARGET=\
-    $(TARGET_SIM) --arch=RV64I \
+    $(TARGET_SIM) $(TARGET_FLAGS) --arch=RV64I \
         --mem-dump-begin=begin_signature --mem-dump-end=end_signature \
 	--halt-pc=grift_stop_addr \
         $(work_dir_isa)/$< > $(work_dir_isa)/$(*).signature.output 2> $(work_dir_isa)/$@;
