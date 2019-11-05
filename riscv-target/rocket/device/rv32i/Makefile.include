@@ -4,13 +4,14 @@ endif
 
 ROCKET_CONFIG ?= DefaultRV32Config
 
-TARGET_SIM ?= $(ROCKET_DIR)/emulator/emulator-freechips.rocketchip.system-$(ROCKET_CONFIG)
+TARGET_SIM   ?= $(ROCKET_DIR)/emulator/emulator-freechips.rocketchip.system-$(ROCKET_CONFIG)
+TARGET_FLAGS ?= $(RISCV_TARGET_FLAGS)
 ifeq ($(shell command -v $(TARGET_SIM) 2> /dev/null),)
     $(error Target simulator executable '$(TARGET_SIM)` not found)
 endif
 
 RUN_TARGET=\
-	$(TARGET_SIM) \
+    $(TARGET_SIM) $(TARGET_FLAGS) \
   	+signature=$(work_dir_isa)/$(*).signature.output \
   	$(work_dir_isa)/$< 2> $(work_dir_isa)/$@; \
 		cat $(work_dir_isa)/$(*).signature.output | sed 's/.\{8\}/& /g' | \

@@ -41,4 +41,4 @@ rv64i_sc_tests =    \
 
 rv64i_tests = $(addsuffix .elf, $(rv64i_sc_tests))
 
-target64_tests += $(rv64i_tests)
+target_tests += $(rv64i_tests)

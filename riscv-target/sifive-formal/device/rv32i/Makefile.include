@@ -2,7 +2,8 @@ ifndef FORMALSPEC_DIR
     $(error FORMALSPEC_DIR is undefined)
 endif
 
-TARGET_SIM ?= $(FORMALSPEC_DIR)/obj_dir/Vsystem
+TARGET_SIM   ?= $(FORMALSPEC_DIR)/obj_dir/Vsystem
+TARGET_FLAGS ?= $(RISCV_TARGET_FLAGS)
 ifeq ($(shell command -v $(TARGET_SIM) 2> /dev/null),)
     $(error Target simulator executable '$(TARGET_SIM)` not found)
 endif
@@ -11,7 +12,7 @@ calc_sign_size=$$(expr $$(expr $$((16\#$$(grep end_signature $(work_dir_isa)/$<.
 							 - $$((16\#$$(grep begin_signature $(work_dir_isa)/$<.readelf | awk '{print $$2}')))) / 4)
 
 RUN_TARGET=\
-	$(TARGET_SIM) \
+	$(TARGET_SIM) $(TARGET_FLAGS) \
 		+pass_address=$$(grep pass $(work_dir_isa)/$<.readelf | awk '{print $$2}') \
 		+pass_address=$$(grep pass $(work_dir_isa)/$<.readelf | awk '{print $$2}') \
     +test_program=$(work_dir_isa)/$< \

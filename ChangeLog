@@ -1,3 +1,18 @@
+2019-11-05 Lee Moore <moore@imperas.com>
+    * Restructured RV32I to move Zicsr and Zifencei into their own suites
+
+2019-10-14 Lee Moore <moore@imperas.com>
+    * Added Ability to run a single test by using the Make Variable RISCV_TEST
+    for example, to only run the test I-ADD-01 from the rv32i suite
+        make RISCV_ISA=rv32i RISCV_TEST=I-ADD-01
+    * Added Top Level Variable to Makefile RISCV_TARGET_FLAGS, 
+    in the case of the RISCV_TARGET this can be passed and appended to the invocation
+    commandline configuration, for example to pass a command line flag to the RISCV_TARGET
+    to perform tracing. The value of this flag will be target specific
+        make RISCV_ISA=rv32i RISCV_TEST=I-ADD-01 RISCV_TARGET_FLAGS="--trace"
+    This is has also been added to all other targets to allow target configuration from
+    the commandline
+
 2019-10-07 Philipp Wagner <phw@lowrisc.org>
     * When executing the test suite, Ibex always writes an instruction
       log. Update the Makefile to write it to a test-specific location

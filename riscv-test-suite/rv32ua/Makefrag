@@ -15,5 +15,5 @@ rv32ua_sc_tests := $(subst lrsc,,$(rv32ua_sc_tests))
 
 rv32ua_tests = $(addsuffix .elf, $(rv32ua_sc_tests))
 
-target32_tests += $(rv32ua_tests)
+target_tests += $(rv32ua_tests)
 
