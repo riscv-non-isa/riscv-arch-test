@@ -49,7 +49,7 @@ RV_COMPLIANCE_CODE_BEGIN
     # address for test results
 	la	x5, test_1_res
     
- 
+  
     // Result = 0
     TEST_CASE(x6, x31, 0xcccc, x5, 0, \
       li x31, 0xcccc; \
@@ -58,7 +58,7 @@ RV_COMPLIANCE_CODE_BEGIN
       li x31, 0x123ab; \
 1: \
     )
- 
+  
     // Result = 0
     TEST_CASE(x6, x30, 0xcccc, x5, 4, \
       li x30, 0xcccc; \
@@ -67,7 +67,7 @@ RV_COMPLIANCE_CODE_BEGIN
       li x30, 0x123ab; \
 2: \
     )
- 
+  
 
     jal x0, 3f
 2:
@@ -82,7 +82,7 @@ RV_COMPLIANCE_CODE_BEGIN
 4: \
     )
 
- 
+  
     // Result = 0
     TEST_CASE(x6, x28, 0xcccc, x5, 12, \
       li x28, 0xcccc; \
@@ -91,7 +91,7 @@ RV_COMPLIANCE_CODE_BEGIN
       li x28, 0x123ab; \
 4: \
     )
- 
+  
     // Result = 0
     TEST_CASE(x6, x27, 0xcccc, x5, 16, \
       li x27, 0xcccc; \
@@ -109,7 +109,7 @@ RV_COMPLIANCE_CODE_BEGIN
     # address for test results
 	la	x1, test_2_res
     
- 
+  
     // Result = 0
     TEST_CASE(x2, x26, 0xcccc, x1, 0, \
       li x26, 0xcccc; \
@@ -118,7 +118,7 @@ RV_COMPLIANCE_CODE_BEGIN
       li x26, 0x123ab; \
 1: \
     )
- 
+  
     // Result = 0
     TEST_CASE(x2, x25, 0xcccc, x1, 4, \
       li x25, 0xcccc; \
@@ -127,7 +127,7 @@ RV_COMPLIANCE_CODE_BEGIN
       li x25, 0x123ab; \
 2: \
     )
- 
+  
 
     jal x0, 3f
 2:
@@ -142,7 +142,7 @@ RV_COMPLIANCE_CODE_BEGIN
 4: \
     )
 
- 
+  
     // Result = 0
     TEST_CASE(x2, x23, 0xcccc, x1, 12, \
       li x23, 0xcccc; \
@@ -151,7 +151,7 @@ RV_COMPLIANCE_CODE_BEGIN
       li x23, 0x123ab; \
 4: \
     )
- 
+  
     // Result = 0
     TEST_CASE(x2, x22, 0xcccc, x1, 16, \
       li x22, 0xcccc; \
@@ -169,7 +169,7 @@ RV_COMPLIANCE_CODE_BEGIN
     # address for test results
 	la	x1, test_3_res
     
- 
+  
     // Result = 0
     TEST_CASE(x7, x21, 0xcccc, x1, 0, \
       li x21, 0xcccc; \
@@ -178,7 +178,7 @@ RV_COMPLIANCE_CODE_BEGIN
       li x21, 0x123ab; \
 1: \
     )
- 
+  
     // Result = 0
     TEST_CASE(x7, x20, 0xcccc, x1, 4, \
       li x20, 0xcccc; \
@@ -187,7 +187,7 @@ RV_COMPLIANCE_CODE_BEGIN
       li x20, 0x123ab; \
 2: \
     )
- 
+  
 
     jal x0, 3f
 2:
@@ -202,7 +202,7 @@ RV_COMPLIANCE_CODE_BEGIN
 4: \
     )
 
- 
+  
     // Result = 0
     TEST_CASE(x7, x18, 0xcccc, x1, 12, \
       li x18, 0xcccc; \
@@ -211,7 +211,7 @@ RV_COMPLIANCE_CODE_BEGIN
       li x18, 0x123ab; \
 4: \
     )
- 
+  
     // Result = 0
     TEST_CASE(x7, x17, 0xcccc, x1, 16, \
       li x17, 0xcccc; \
@@ -229,7 +229,7 @@ RV_COMPLIANCE_CODE_BEGIN
     # address for test results
 	la	x2, test_4_res
     
- 
+  
     // Result = 0
     TEST_CASE(x3, x16, 0xcccc, x2, 0, \
       li x16, 0xcccc; \
@@ -238,16 +238,16 @@ RV_COMPLIANCE_CODE_BEGIN
       li x16, 0x123ab; \
 1: \
     )
- 
+  
     // Result = 0
     TEST_CASE(x3, x15, 0xcccc, x2, 4, \
       li x15, 0xcccc; \
-      la x0, 2f - 0; \
-      jalr x16, x0,  0; \
+      la x1, 2f - 0; \
+      jalr x16, x1,  0; \
       li x15, 0x123ab; \
 2: \
     )
- 
+  
 
     jal x0, 3f
 2:
@@ -262,7 +262,7 @@ RV_COMPLIANCE_CODE_BEGIN
 4: \
     )
 
- 
+  
     // Result = 0
     TEST_CASE(x3, x13, 0xcccc, x2, 12, \
       li x13, 0xcccc; \
@@ -271,7 +271,7 @@ RV_COMPLIANCE_CODE_BEGIN
       li x13, 0x123ab; \
 4: \
     )
- 
+  
     // Result = 0
     TEST_CASE(x3, x12, 0xcccc, x2, 16, \
       li x12, 0xcccc; \
@@ -289,7 +289,7 @@ RV_COMPLIANCE_CODE_BEGIN
     # address for test results
 	la	x1, test_5_res
     
- 
+  
     // Result = 0
     TEST_CASE(x2, x11, 0xcccc, x1, 0, \
       li x11, 0xcccc; \
@@ -298,7 +298,7 @@ RV_COMPLIANCE_CODE_BEGIN
       li x11, 0x123ab; \
 1: \
     )
- 
+  
     // Result = 0
     TEST_CASE(x2, x10, 0xcccc, x1, 4, \
       li x10, 0xcccc; \
@@ -307,7 +307,7 @@ RV_COMPLIANCE_CODE_BEGIN
       li x10, 0x123ab; \
 2: \
     )
- 
+  
 
     jal x0, 3f
 2:
@@ -322,7 +322,7 @@ RV_COMPLIANCE_CODE_BEGIN
 4: \
     )
 
- 
+  
     // Result = 0
     TEST_CASE(x2, x8, 0xcccc, x1, 12, \
       li x8, 0xcccc; \
@@ -331,7 +331,7 @@ RV_COMPLIANCE_CODE_BEGIN
       li x8, 0x123ab; \
 4: \
     )
- 
+  
     // Result = 0
     TEST_CASE(x2, x7, 0xcccc, x1, 16, \
       li x7, 0xcccc; \
@@ -349,7 +349,7 @@ RV_COMPLIANCE_CODE_BEGIN
     # address for test results
 	la	x1, test_6_res
     
- 
+  
     // Result = 0
     TEST_CASE(x7, x6, 0xcccc, x1, 0, \
       li x6, 0xcccc; \
@@ -358,7 +358,7 @@ RV_COMPLIANCE_CODE_BEGIN
       li x6, 0x123ab; \
 1: \
     )
- 
+  
     // Result = 0
     TEST_CASE(x7, x5, 0xcccc, x1, 4, \
       li x5, 0xcccc; \
@@ -367,7 +367,7 @@ RV_COMPLIANCE_CODE_BEGIN
       li x5, 0x123ab; \
 2: \
     )
- 
+  
 
     jal x0, 3f
 2:
@@ -382,7 +382,7 @@ RV_COMPLIANCE_CODE_BEGIN
 4: \
     )
 
- 
+  
     // Result = 0
     TEST_CASE(x7, x3, 0xcccc, x1, 12, \
       li x3, 0xcccc; \
@@ -391,7 +391,7 @@ RV_COMPLIANCE_CODE_BEGIN
       li x3, 0x123ab; \
 4: \
     )
- 
+  
     // Result = 0
     TEST_CASE(x7, x2, 0xcccc, x1, 16, \
       li x2, 0xcccc; \
@@ -409,7 +409,7 @@ RV_COMPLIANCE_CODE_BEGIN
     # address for test results
 	la	x2, test_7_res
     
- 
+  
     // Result = 0
     TEST_CASE(x3, x1, 0xcccc, x2, 0, \
       li x1, 0xcccc; \
@@ -418,7 +418,7 @@ RV_COMPLIANCE_CODE_BEGIN
       li x1, 0x123ab; \
 1: \
     )
- 
+  
     // Result = 0
     TEST_CASE(x3, x0, 0, x2, 4, \
       li x0, 0xcccc; \
