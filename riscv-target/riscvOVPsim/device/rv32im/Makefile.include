@@ -11,7 +11,7 @@ ifeq ($(shell command -v $(TARGET_SIM) 2> /dev/null),)
 endif
 
 RUN_TARGET=\
-    $(TARGET_SIM) \
+    $(TARGET_SIM) $(TARGET_FLAGS) \
         --variant RV32IM --program $(work_dir_isa)/$< \
         --signaturedump --customcontrol \
         --override riscvOVPsim/cpu/sigdump/SignatureFile=$(work_dir_isa)/$(*).signature.output \
