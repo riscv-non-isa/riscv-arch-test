@@ -393,7 +393,7 @@ A detailed test example can be seen in  <<Example - ISA test _ADD-01.S_, ISA tes
 
 [appendix]
 
-=== Example - ISA test _ADD-01.S_
+== Example - ISA test _ADD-01.S_
 
 .a) Header and license
 
