@@ -108,6 +108,19 @@ Allen Baum, Jeremy Bennett, Radek Hajek, Premysl Vaclavik
 | _Revision_ | _Date_            | _Author_ | _Modification_
 
 
+| 1.2.1 Draft  | 19 Nov 2019      |
+
+Allen Baum |
+
+        * spec/TestFormatSpec.adoc: changed the format of the signature to fixed 32b data size only extracted from COMPLIANCE_DATA_BEGIN/END range.
+        * made test suite subdirectories upper case, with sub-extensions camel case
+	* updated example to match most recent riscof implement macros
+	* fix format so Appendix is now in TOC
+	* moved note about multiple test cases in a test closer to definition
+	* fixed cut/paste error in example of test pool
+        * more gramatical fixes, clarifications added
+        * added To Be Discussed items regarding emulated instruction and binary tests
+
 | 1.2.1 Draft  | 12 Oct 2019      |
 
 Allen Baum |
