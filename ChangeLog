@@ -1,6 +1,19 @@
 2020-02-07 Prashanth Mundkur <prashanth.mundkur@gmail.com>
     * Support F extension on RV32 sail-riscv-c.
 
+2019-12-01 Allen Baum <allen.baum@esperantotech.com>
+        * modified macro names to conformn to riscof naming convention of model specific vs. pre-defined
+	* add more complete list of macros, their uses, parameters, and whether they are required or optional
+	* minor structural changes (moving sentences, renumbering) and typo fixes
+	* clarified impact of debug macros
+	* clarified how SIGUPD and BASEUPD must be used
+        * remove section about test taxonomy, binary tests, emulated ops
+        * clarify/fix  boundary between test target and framework responsibilities
+	   (split test target into test target and test shell)
+        * remove To Be discussed items that have been discussed
+	* remove default case condition; if conditions are unchanged, part of same case
+        *  minor grammatical changes related to the above
+
 2019-10-16 Allen Baum <allen.baum@esperantotech.com>
 	* spec/TestFormatSpec.adoc: changed the format of the signature to fixed physical address size, fixed 32b data size extracted from COMPLIANCE_DATA_BEGIN/END range.
 
