@@ -116,7 +116,7 @@ Allen Baum |
 	* add more complete list of macros, their uses, parameters, and whether they are required or optional
 	* minor structural changes (moving sentences, renumbering) and typo fixes
 	* clarified impact of debug macros
-	* clarified how SIGUPD and BASEUPD must be used
+	* clarified how SIGUPD and BASEUPD must be used, fixed parameter description
 
 | 1.2.2 Draft  | 21 Nov 2019      |
 
@@ -283,7 +283,7 @@ All tests shall use a signature approach. Each test shall be written in the same
 *Optional, Pre-defined Macros* +
   RVTEST_SIGBASE(BaseReg,Val)         // defines the base register used to update signature values +
   RVTEST_SIGUPD(BaseReg, SigReg [,Value]) // stores sig value sequentially, with optional value +
-  RVTEST_BASEUPD(BaseReg)       // updates signature base ptr past the last stored signature
+  RVTEST_BASEUPD(BaseReg[oldBase[,newOff]]) // [moves and] updates signature base ptr past last stored signature
 
 *Optional, Model-defined Macros* +
   RVMODEL_BOOT                       // contains boot code for model; may include emulation code or trap stub +
@@ -337,7 +337,7 @@ This measure results from the negative experience, where the <<The RISC-V compli
 
 ==== _To Be Discussed_
 
-add a new RVTEST_BASEUPD(BaseReg) macro to update the base with the hidden offset, and reset the offset. This alklows the macro to be used inside loops.
+add a new RVTEST_BASEUPD(BaseReg, OldBase, NewOffset) macro to update the base with the hidden offset, and reset the offset. This allows the macro to be used inside loops.
 
 
 ==== Common Header Files
