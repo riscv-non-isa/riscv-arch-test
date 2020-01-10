@@ -108,6 +108,17 @@ Allen Baum, Jeremy Bennett, Radek Hajek, Premysl Vaclavik
 | _Revision_ | _Date_            | _Author_ | _Modification_
 
 
+| 1.2.4 Draft  | 08 Jan 2020      |
+
+Allen Baum |
+
+        * typos fixed
+	* added RVTEST_BASEUPD macro
+	* added explanations for each macro
+	* clarified restrictions on #ifdefs
+	* added comment that test cases with identical conditions should be combined into a single case
+	* documented that test case first parameter should match the #ifdef parameter that precedes it
+
 | 1.2.3 Draft  | 02 Dec 2019      |
 
 Allen Baum |
@@ -247,7 +258,7 @@ compliance-tests-suite (root)
 
 Note that this structure is for organizational purposes, not functional purposes, although full test names will take advantage of it.
 
-Tests that will be executed in different modes, even if the results are identical, should be replicated in each mode directory, e.g. RV32I_M/, RV32I_MS/, and RV32I_MU/.
+Tests that will be executed in different modes, even if the results are identical, and so should be replicated in each mode directory, e.g. RV32I_M/, RV32I_MS/, and RV32I_MU/.
 
 === Test naming
 
@@ -270,27 +281,52 @@ All tests shall use a signature approach. Each test shall be written in the same
 
 *Required, Pre-defined Macros* +
   RVTEST_ISA(isa_str)          // defines the Test Virtual Machine (TVM, the ISA being tested) +
+  -  Empty macro to specify the isa required for compilation of the test. +
+  -  This is mandated to be present at the start of the test. +
   RVTEST_CODE_BEGIN            // start of code (test) section +
+  - Macro to indicate test code start add and where test startup routine is inserted. +
+  - No part of the code section should precede this macro +
   RVTEST_CODE_END              // end of code (test) section +
-  RVTEST_CASE(name, cond_str)  // execute this case only if condition in cond_str are met
+  = Macro to indicate test code end. +
+  - No part of the code section should follow after this macro. +
+  RVTEST_CASE(name, cond_str)  // execute this case only if condition in cond_str are met +
+- name is arbitrary string  +
+- cond_str is evaluated to determine if the test-case is enabled and sets name variable +
+- cond_Str can also define compile time macros required for the test-case to be enabled. +
+- the test-case must be delimited with an #ifdef name/#endif pair +
+- the format of cond-str can be found in https://riscof.readthedocs.io/en/latest/cond_spec.html#cond-spec
 
 *Required, Model-defined Macros* +
   RVMODEL_DATA_BEGIN            // start of output data (signature) section +
   RVMODEL_DATA_END              // end of output data (signature) section +
-  RVMODEL_DATA_SECTION          // TBD, model defined data area +
-?  RVMODEL_HALT                  // defines halt mechanism of DUT
+  RVMODEL_DATA_SECTION          // model defined data area +
+ - contains static input data and intermediate scratch area for the test (e.g. stack) +
+  RVMODEL_HALT                  // defines model halt mechanism, which starts signature saving
 
 *Optional, Pre-defined Macros* +
-  RVTEST_SIGBASE(BaseReg,Val)         // defines the base register used to update signature values +
-  RVTEST_SIGUPD(BaseReg, SigReg [,Value]) // stores sig value sequentially, with optional value +
-  RVTEST_BASEUPD(BaseReg[oldBase[,newOff]]) // [moves and] updates signature base ptr past last stored signature
+  RVTEST_SIGBASE(BaseReg,Val)   // defines the base register used to update signature values +
+ - Register BaseReg is loaded with value Val +
+ - hidden_offset is initialized to zero +
+  RVTEST_SIGUPD(BaseReg, SigReg [,Value]) // stores sig value, with optional value assertion +
+ - Register Val is stored in mem(reg_Base+hidden_offset) +
+ - hidden_offset is post incremented  so repeated uses store signature values sequentially +
+  RVTEST_BASEUPD(BaseReg[oldBase[,newOff]]) // [moves and] updates BaseReg past last stored signature +
+ - Register BaseReg is loaded with the oldReg+newOff+hidden_offset +
+ - BaseReg is used if oldBase isn't specified; 0 is used if newOff isn't specified +
+ - hidden_offset is re-initialized to 0 afterwards
 
 *Optional, Model-defined Macros* +
   RVMODEL_BOOT                       // contains boot code for model; may include emulation code or trap stub +
   RVMODEL_IO_INIT                    // initializes IO for debug output +
-? RVMODEL_IO_CHECK                   // checks IO for debug output +
-  RVMODEL_IO_ASSERT_GPR_EQ(ScrReg, gpr, value) // debug assertion that GPR should have value +
-  RVMODEL_IO_WRITE_STR(ScrReg, String) // output debug string, using a scratch register
+ - this must be invoked if any of the other RV_MODEL_IO_* macros are used +
+  RVMODEL_IO_CHECK                   // checks IO for debug output +
+ - <needs description of how this is used > +
+  RVMODEL_IO_ASSERT_GPR_EQ(ScrReg, Reg, Value) // debug assertion that GPR should have value +
+ - outputs a debug message if Reg!=Value +
+ - ScrReg is a scratch register used by the output routine; its final value cannot be guaranteed +
+  RVMODEL_IO_WRITE_STR(ScrReg, String) // output debug string, using a scratch register +
+ - outputs the message String
+ - ScrReg is a scratch register used by the output routine; its final value cannot be guaranteed +
 
 The test structure of a compliance test shall have the following sections in the order as follows:
 
@@ -298,27 +334,18 @@ The test structure of a compliance test shall have the following sections in the
 .  Includes of header files (see Common Header Files section)
 .  Test Virtual Machine (TVM) specification
 .  Test code between “RVTEST_CODE_BEGIN” and “RVTEST_CODE_END”
-.  Input data section
-.  Output data section between “RVMODEL_DATA_BEGIN” and +
-“RVMODEL_DATA_END”.
+.  Input data section, marked with "RVMODEL_DATA_SECTION"
+.  Output data section between “RVMODEL_DATA_BEGIN” and “RVMODEL_DATA_END”.
 
 
  Note that there is no a requirement that the code or scratch data sections must be contiguous in memory, or that they be located before or after data or code sections (configured by embedded directives recognized by the linker)
-
-
-==== _To Be Added_
-
-Describe the responsibilites of each of the required user defined macros, e.g. +
-* RVMODEL_HALT is responsible for halting the test and outputting the signature +
-Describe the user defined environment variables and code that are required outside the test, e.g. +
-* how does the process of assembling, linking, loading and starting execution get defined?
 
 ==== Common test format rules
 
 There are the following common rules that shall be applied to each <<The compliance test,_compliance test_>>:
 
 . For better readability, always use “//” as commentary. “#” should be used only for includes and defines.
-. A test shall be divided into logical blocks (<<The test case,_test cases_>>) according to the test goals. Test cases are enclosed in an monospace `#ifdef TEST_CASE<__CaseName__>, #endif` pair and begin with the RVTEST_CASE(CaseName,CondStr) macro that specifies the test case name, and a string that defines the conditions under which that <<The test case,_Test case_>> can be selected for assembly and execution. Those conditions will be collected and populate the test case's corresponding entry in the <<Common compliance test pool reference document, _Common compliance test pool reference document_>>.
+. A test shall be divided into logical blocks (<<The test case,_test cases_>>) according to the test goals. Test cases are enclosed in an `#ifdef TEST_CASE<__CaseName__>, #endif` pair and begin with the RVTEST_CASE(CaseName,CondStr) macro that specifies the test case name, and a string that defines the conditions under which that <<The test case,_Test case_>> can be selected for assembly and execution. Those conditions will be collected and populate the test case's corresponding entry in the <<Common compliance test pool reference document, _Common compliance test pool reference document_>>.
 . Tests should use the RVTEST_SIGBASE(BaseReg,Val) macro to define the GPR used as a pointer to the output signature area, and its initial value. It can be used multiple times within a test to reassign the output area or change the base register. This value will be used by the invocations of the RVTEST_SIGUPD macro.
 . Tests should use the RVTEST_SIGUPD(BaseReg, SigReg, ScratchReg, Value) macro to store signature values using (only) the base register defined in the most recently encountered RVTEST_SIGBASE(BaseReg,Val) macro. Repeated uses will automatically have an increasing offset that is managed by the macro. 
 .. Uses of RVTEST_SIGUPD shall always be preceded sometime in the test case by RVTEST_SIGBASE.
@@ -334,11 +361,6 @@ There are the following common rules that shall be applied to each <<The complia
 It is acceptable that using macros may lead to operand repetition (register X is used every time).
 - The aim of this restriction is to have test code more readable and to avoid side effects which may occur when different contributors will include new <<The compliance test,_compliance tests_>> or updates of existing ones in the <<The RISC-V compliance test pool,_compliance test pool_>>.
 This measure results from the negative experience, where the <<The RISC-V compliance test suite,_compliance test suite_>> could be used just for one target while the compliance test code changes were necessary to have it also running for other targets.
-
-==== _To Be Discussed_
-
-add a new RVTEST_BASEUPD(BaseReg, OldBase, NewOffset) macro to update the base with the hidden offset, and reset the offset. This allows the macro to be used inside loops.
-
 
 ==== Common Header Files
 
@@ -367,16 +389,16 @@ The framework will import files that describe
 
 The framework will also invoke the <<The target shell, _target shell_>> as appropriate to cause tests to be built, loaded, executed, and results reported.
 
-
 The YAML files define both the values of those conditions and values that can be used by the framework to configure tests (e.g. format of WARL CSR fields). 
-Tests should not have #if, #ifdef, etc. for conditional assembly.
+Tests should not have #if, #ifdef, etc. for conditional assembly except those that surround RVMODEL_CASE macros
 Instead, each of those should be a separate <<The test case,_test case_>> whose conditions are defined in
  the common reference document entry for that test and test case number.
 
-==== _To Be discussed_
+==== To be discussed: 
+Is the test pool reference document need to be defined i the spec? +
+It can be rebuilt every time the framework is invoked, or could be a file whose format is not exposed or speced, and that test creators don't need to be aware of.
+IF not, the above references to it and the next section can be deleted.
 
-Should #ifdef be allowed to enable configurable tests, e.g. those that want to perform a walking-ones test between specific ranges?
- 
 === Common compliance test pool reference document
 
 There shall be one master compliance _test pool reference_ document which shall contain the description of every 
@@ -470,8 +492,8 @@ A detailed test example can be seen in  <<Example - ISA test _ADD-01.S_, ISA tes
 
 ----
 #include "compliance_test.h"
-#include "compliance_io.h"
-#include "test_macros.h"
+#include "compliance_model.h"
+
 ----
 
 .c) TVM selection
@@ -543,7 +565,7 @@ RVMODEL_IO_WRITE_STR(x31, "// Test case A2 - general test of value 1 with 0, 1, 
 <similar code to A1>
 
 // ---------------------------------------------------------------------------
-RVMODEL_IO_WRITE_STR(x31, "// Test case A32 - general test of value -1 with 0, 1, -1, MIN, MAX register values\n");
+RVMODEL_IO_WRITE_STR(x31, "// Test case A3 - general test of value -1 with 0, 1, -1, MIN, MAX register values\n");
 
 <similar code to A1>
 
@@ -706,9 +728,11 @@ RVMODEL_IO_WRITE_STR(x31, "// Test case E - Complete\n");
 #endif
 ----
 
+Note that because all the test conditions in the above example are identical, they should have been combined into a single test case.
+
 .d.F) Test code - section Test End
 
-Every test environment should implement the HALT macro. When the macro is called, operation of DUT is stopped and a comparison to the reference results can be performed.
+Every test environment should implement at least one instance of the HALT macro. IMore than one would be implemented in cases where the test has branches or traps that cause it to end in different locations. When the macro is called, operation of DUT is stopped and a comparison to the reference results can be performed.
 
 ----
 RVMODEL_IO_WRITE_STR(x31, "// Test End\n")
