@@ -1,3 +1,6 @@
+2020-01-20 Jörg Mische <bobbl@gmx.de>
+    * Fix issue #76: fix I-AUIPC-01 to write signature to correct address
+
 2019-11-05 Lee Moore <moore@imperas.com>
     * Restructured RV32I to move Zicsr and Zifencei into their own suites
 
