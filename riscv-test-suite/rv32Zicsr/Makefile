@@ -30,7 +30,7 @@ endif
 # Build and run assembly tests
 
 %.log: %.elf
-	$(RUN_TARGET)
+	-$(RUN_TARGET)
 
 
 define compile_template
