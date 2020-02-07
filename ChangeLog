@@ -1,3 +1,6 @@
+2020-02-07 Prashanth Mundkur <prashanth.mundkur@gmail.com>
+    * Support F extension on RV32 sail-riscv-c.
+
 2019-11-05 Lee Moore <moore@imperas.com>
     * Restructured RV32I to move Zicsr and Zifencei into their own suites
 
