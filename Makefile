@@ -26,10 +26,33 @@ else
     DEFAULT_TARGET=variant
 endif
 
-export ROOTDIR  = $(shell pwd)
-export WORK     = $(ROOTDIR)/work
-export SUITEDIR = $(ROOTDIR)/riscv-test-suite/$(RISCV_ISA)
+export ROOTDIR    = $(shell pwd)
+export WORK       = $(ROOTDIR)/work
+export SUITEDIR   = $(ROOTDIR)/riscv-test-suite/$(RISCV_ISA)
 export TARGETDIR ?= $(ROOTDIR)/riscv-target
+
+VERBOSE ?= 0
+ifeq ($(VERBOSE),1)
+    export V=
+    export REDIR=
+else
+    export V=@
+    export REDIR=>/dev/null
+endif
+
+PARALLEL ?= 0
+ifeq ($(RISCV_TARGET),spike)
+	PARALLEL = 0
+endif
+ifeq ($(PARALLEL),0)
+    JOBS =
+else
+    ifeq ($(RISCV_TARGET),riscvOVPsim)
+        JOBS ?= -j8 --max-load=4
+    else
+        JOBS ?= -j4 --max-load=2
+    endif
+endif
 
 default: $(DEFAULT_TARGET)
 
@@ -37,7 +60,7 @@ variant: simulate verify
 
 all_variant:
 	for isa in $(RISCV_ISA_ALL); do \
-		$(MAKE) RISCV_TARGET=$(RISCV_TARGET) RISCV_TARGET_FLAGS=$(RISCV_TARGET_FLAGS) RISCV_DEVICE=$$isa RISCV_ISA=$$isa variant; \
+		$(MAKE) $(JOBS) RISCV_TARGET=$(RISCV_TARGET) RISCV_TARGET_FLAGS="$(RISCV_TARGET_FLAGS)" RISCV_DEVICE=$$isa RISCV_ISA=$$isa variant; \
 			rc=$$?; \
 			if [ $$rc -ne 0 ]; then \
 				exit $$rc; \
@@ -45,17 +68,17 @@ all_variant:
 	done
 
 simulate:
-	make \
+	$(MAKE) $(JOBS) \
 		RISCV_TARGET=$(RISCV_TARGET) \
 		RISCV_DEVICE=$(RISCV_DEVICE) \
 		RISCV_PREFIX=$(RISCV_PREFIX) \
 		run -C $(SUITEDIR)
 
-verify:
+verify: simulate
 	riscv-test-env/verify.sh
 
 clean:
-	make \
+	$(MAKE) $(JOBS) \
 		RISCV_TARGET=$(RISCV_TARGET) \
 		RISCV_DEVICE=$(RISCV_DEVICE) \
 		RISCV_PREFIX=$(RISCV_PREFIX) \
@@ -63,7 +86,7 @@ clean:
 
 help:
 	@echo "eg, make"
-	@echo "RISCV_TARGET='riscvOVPsim|spike'"
+	@echo "RISCV_TARGET='riscvOVPsim|spike|sid32'"
 	@echo "RISCV_TARGET_FLAGS="
 	@echo "RISCV_DEVICE='rv32i|rv32im|...'"
 	@echo "RISCV_ISA='$(RISCV_ISA_OPT)'"
