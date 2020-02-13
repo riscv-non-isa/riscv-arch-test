@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005-2019 Imperas Software Ltd., www.imperas.com
+ * Copyright (c) 2005-2020 Imperas Software Ltd., www.imperas.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,17 +47,38 @@ inline static riscvP getChild(riscvP riscv) {
 //
 void riscvSetCurrentArch(riscvP riscv) {
 
+    Uns32 MXL = RD_CSR_FIELD(riscv, misa, MXL);
+    Bool  FS  = (RD_CSR_FIELD(riscv, mstatus, FS) != 0);
+
     // derive new architecture value based on misa value, preserving rounding
     // mode invalid setting
     riscvArchitecture arch = (
         (riscv->currentArch & ISA_RM_INVALID) |
         RD_CSR_FIELD(riscv, misa, Extensions) |
-        (RD_CSR_FIELD(riscv, misa, MXL)<<XLEN_SHIFT)
+        (MXL<< XLEN_SHIFT)                    |
+        (FS << MSTATUS_FS_SHIFT)
     );
 
     // mstatus.FS=0 disables floating point extensions
-    if(!RD_CSR_FIELD(riscv, mstatus, FS)) {
+    if(!FS) {
         arch &= ~ISA_DF;
+    }
+
+    // mstatus.VS=0 disables vector extensions (if implemented)
+    if(arch & ISA_V) {
+
+        Uns32 WM_mstatus_VS = 0;
+
+        // get mask of dirty bits for mstatus.VS in either 0.8 or 0.9 location
+        if(riscvVFSupport(riscv, RVVF_VS_STATUS_8)) {
+            WM_mstatus_VS = WM_mstatus_VS_8;
+        } else if(riscvVFSupport(riscv, RVVF_VS_STATUS_9)) {
+            WM_mstatus_VS = WM_mstatus_VS_9;
+        }
+
+        if(WM_mstatus_VS && !(RD_CSR(riscv, mstatus) & WM_mstatus_VS)) {
+            arch &= ~ISA_V;
+        }
     }
 
     if(riscv->currentArch != arch) {

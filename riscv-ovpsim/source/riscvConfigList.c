@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005-2019 Imperas Software Ltd., www.imperas.com
+ * Copyright (c) 2005-2020 Imperas Software Ltd., www.imperas.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,6 +34,7 @@
     .Zvlsseg       = 1,                         \
     .Zvamo         = 1,                         \
     .Zvediv        = 0,                         \
+    .Zvqmac        = 1,                         \
     .PMP_registers = _PMP_REGS,                 \
     .tval_ii_code  = True,                      \
     .ASID_bits     = ((_ARCH)&RV64) ? 16 : 9    \

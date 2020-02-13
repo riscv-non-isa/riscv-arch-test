@@ -61,7 +61,7 @@ Example run under Linux
 > $ RUN_RV64_fibonacci_signature_dump.sh  
 > 
 > CpuManagerFixedPlatform (64-Bit) 20180425.0 Open Virtual Platform simulator from [www.IMPERAS.com](http://www.imperas.com).  
-> Copyright (c) 2005-2019 Imperas Software Ltd.  Contains Imperas Proprietary Information.  
+> Copyright (c) 2005-2020 Imperas Software Ltd.  Contains Imperas Proprietary Information.  
 > Licensed Software, All Rights Reserved.  
 > Visit [www.IMPERAS.com](http://www.imperas.com) for multicore debug, verification and analysis solutions.  
 >   

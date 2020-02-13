@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005-2019 Imperas Software Ltd., www.imperas.com
+ * Copyright (c) 2005-2020 Imperas Software Ltd., www.imperas.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -61,9 +61,7 @@
 //
 // Number of temporaries
 //
-#define NUM_TEMPS_WIDE  3
-#define NUM_TEMPS_BASIC 4
-#define NUM_TEMPS       (NUM_TEMPS_WIDE+NUM_TEMPS_BASIC)
+#define NUM_TEMPS 6
 
 //
 // Container for net values
@@ -180,6 +178,9 @@ typedef struct riscvS {
     Uns16              pmKey;           // polymorphic key
     Uns8               fpFlagsMT;       // flags set by JIT instructions
     Uns8               fpFlagsCSR;      // flags set by CSR write
+    Uns8               SFMT;            // SF set by JIT instructions
+    Uns8               SFCSR;           // SF set by CSR write
+    Uns8               SF;              // operation saturation flag
     Uns32              flags;           // model control flags
     Uns32              flagsRestore;    // saved flags during restore
     riscvConfig        configInfo;      // model configuration
@@ -201,8 +202,8 @@ typedef struct riscvS {
     Uns8               SIMode    :  2;  // custom S interrupt mode
     Uns8               HIMode    :  2;  // custom H interrupt mode
     Uns8               UIMode    :  2;  // custom U interrupt mode
-    riscvAccessFault   AFErrorIn :  2;  // input access fault error subtype
-    riscvAccessFault   AFErrorOut:  2;  // latched access fault error subtype
+    riscvAccessFault   AFErrorIn :  3;  // input access fault error subtype
+    riscvAccessFault   AFErrorOut:  3;  // latched access fault error subtype
 
     // LR/SC support
     Uns64              exclusiveTag;    // tag for active exclusive access

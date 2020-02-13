@@ -27,6 +27,7 @@ echo Selected Example %app%
     --program %app% ^
     --variant RVB64I ^
     --override riscvOVPsim/cpu/add_Extensions=MAFDCVSU ^
+    --override riscvOVPsim/cpu/vector_version=0.7.1-draft-20190605 ^
     --override riscvOVPsim/cpu/VLEN=512 ^
     --override riscvOVPsim/cpu/SLEN=64 ^
     %*

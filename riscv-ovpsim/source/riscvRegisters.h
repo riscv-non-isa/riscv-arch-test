@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005-2019 Imperas Software Ltd., www.imperas.com
+ * Copyright (c) 2005-2020 Imperas Software Ltd., www.imperas.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,9 +43,11 @@
 #define RISCV_CPU_VBASE(_I)     VMI_CPU_TEMP(riscvP, vBase[_I])
 #define RISCV_GPR(_I)           RISCV_CPU_REG(x[_I])
 #define RISCV_FPR(_I)           RISCV_CPU_REG(f[_I])
+#define RISCV_SF_TMP            RISCV_CPU_TEMP(SF)
 #define RISCV_LR                RISCV_CPU_REG(x[RV_REG_X_RA])
 #define RISCV_EA_TAG            RISCV_CPU_REG(exclusiveTag)
 #define RISCV_FP_FLAGS          RISCV_CPU_REG(fpFlagsMT)
+#define RISCV_SF_FLAGS          RISCV_CPU_REG(SFMT)
 #define RISCV_JUMP_BASE         RISCV_CPU_REG(jumpBase)
 #define RISCV_PM_KEY            RISCV_CPU_REG(pmKey)
 #define RISCV_VPRED_MASK        RISCV_CPU_TEMP(vFieldMask)

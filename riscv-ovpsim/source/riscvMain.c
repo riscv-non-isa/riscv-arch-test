@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005-2019 Imperas Software Ltd., www.imperas.com
+ * Copyright (c) 2005-2020 Imperas Software Ltd., www.imperas.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,6 +65,7 @@ static void initLeafModelCBs(riscvP riscv) {
     riscv->cb.getXlenArch        = riscvGetXlenArch;
     riscv->cb.getXRegName        = riscvGetXRegName;
     riscv->cb.getFRegName        = riscvGetFRegName;
+    riscv->cb.getVRegName        = riscvGetVRegName;
     riscv->cb.getTMode           = riscvGetTMode;
     riscv->cb.setTMode           = riscvSetTMode;
 
@@ -78,6 +79,9 @@ static void initLeafModelCBs(riscvP riscv) {
     riscv->cb.getVMIRegFS        = riscvGetVMIRegFS;
     riscv->cb.writeRegSize       = riscvWriteRegSize;
     riscv->cb.writeReg           = riscvWriteReg;
+    riscv->cb.getFPFlagsMt       = riscvGetFPFlagsMT;
+    riscv->cb.checkLegalRMMt     = riscvEmitCheckLegalRM;
+    riscv->cb.morphVOp           = riscvMorphVOp;
 
     // from riscvCSR.h
     riscv->cb.newCSR             = riscvNewCSR;
@@ -256,12 +260,16 @@ static void applyParamsSMP(riscvP riscv, riscvParamValuesP params) {
     cfg->enable_CSR_bus    = params->enable_CSR_bus;
     cfg->d_requires_f      = params->d_requires_f;
     cfg->xret_preserves_lr = params->xret_preserves_lr;
+    cfg->require_vstart0   = params->require_vstart0;
     cfg->ELEN              = powerOfTwo(params->ELEN, "ELEN");
     cfg->SLEN              = powerOfTwo(params->SLEN, "SLEN");
     cfg->VLEN              = powerOfTwo(params->VLEN, "VLEN");
     cfg->Zvlsseg           = params->Zvlsseg;
     cfg->Zvamo             = params->Zvamo;
     cfg->Zvediv            = params->Zvediv;
+
+    // Zvqmac extension is only available after version RVVV_0_8_20191004
+    cfg->Zvqmac = params->Zvqmac && (params->vector_version>RVVV_0_8_20191004);
 
     // force VLEN >= ELEN
     if(cfg->VLEN<cfg->ELEN) {

@@ -1,0 +1,7 @@
+gdb: License=GPLv3orlater
+
+libelf: Red Hat elfutils is free software;  GNU General Public License version 2
+   
+libdwarf: GNU lesser general public license Version 2.1
+
+Ref: https://www.gnu.org/licenses/license-list.html
