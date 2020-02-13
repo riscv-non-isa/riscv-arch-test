@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005-2019 Imperas Software Ltd., www.imperas.com
+ * Copyright (c) 2005-2020 Imperas Software Ltd., www.imperas.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,6 +57,7 @@ typedef struct riscvParamValuesS {
     VMI_BOOL_PARAM(enable_CSR_bus);
     VMI_BOOL_PARAM(d_requires_f);
     VMI_BOOL_PARAM(xret_preserves_lr);
+    VMI_BOOL_PARAM(require_vstart0);
     VMI_UNS32_PARAM(ASID_bits);
     VMI_UNS32_PARAM(PMP_grain);
     VMI_UNS32_PARAM(PMP_registers);
@@ -89,6 +90,7 @@ typedef struct riscvParamValuesS {
     VMI_BOOL_PARAM(Zvlsseg);
     VMI_BOOL_PARAM(Zvamo);
     VMI_BOOL_PARAM(Zvediv);
+    VMI_BOOL_PARAM(Zvqmac);
 
 } riscvParamValues;
 

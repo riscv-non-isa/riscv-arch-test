@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005-2019 Imperas Software Ltd., www.imperas.com
+ * Copyright (c) 2005-2020 Imperas Software Ltd., www.imperas.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -644,6 +644,7 @@
     mask     : RS_V_M_25,           \
     memBits  : MBS_14_12_V,         \
     unsExt   : _UNS ? USX_28 : 0,   \
+    whole    : WR_23,               \
     ff       : FF_24,               \
     nf       : NF_31_29,            \
     VIType   : RV_VIT_V,            \
@@ -1305,6 +1306,22 @@
     r2       : RS_F_19_15,          \
     VIType   : RV_VIT_NA,           \
     wF       : WF_ARCH,             \
+}
+
+//
+// Attribute entries for 32-bit instructions like VLB
+//
+#define ATTR32_VMVR(_NAME, _GENERIC, _ARCH, _OPCODE) [IT32_##_NAME] = { \
+    opcode   : _OPCODE,             \
+    format   : FMT_R1_R2,           \
+    type     : RV_IT_##_GENERIC,    \
+    arch     : _ARCH,               \
+    r1       : RS_V_11_7,           \
+    r2       : RS_V_24_20,          \
+    mask     : RS_V_M_25,           \
+    whole    : WR_T,                \
+    nf       : NF_17_15,            \
+    VIType   : RV_VIT_V,            \
 }
 
 //

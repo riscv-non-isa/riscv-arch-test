@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005-2019 Imperas Software Ltd., www.imperas.com
+ * Copyright (c) 2005-2020 Imperas Software Ltd., www.imperas.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -117,10 +117,42 @@ static vmiEnumParameter vectorVariants[] = {
         .value       = RVVV_0_7_1,
         .description = "Vector Architecture Version 0.7.1-draft-20190605",
     },
+    [RVVV_0_7_1_P] = {
+        .name        = "0.7.1-draft-20190605+",
+        .value       = RVVV_0_7_1_P,
+        .description = "Vector Architecture Version 0.7.1-draft-20190605 "
+                       "with custom features (not for general use)",
+    },
+    [RVVV_0_8_20190906] = {
+        .name        = "0.8-draft-20190906",
+        .value       = RVVV_0_8_20190906,
+        .description = "Vector Architecture Version 0.8-draft-20190906",
+    },
+    [RVVV_0_8_20191004] = {
+        .name        = "0.8-draft-20191004",
+        .value       = RVVV_0_8_20191004,
+        .description = "Vector Architecture Version 0.8-draft-20191004",
+    },
+    [RVVV_0_8_20191117] = {
+        .name        = "0.8-draft-20191117",
+        .value       = RVVV_0_8_20191117,
+        .description = "Vector Architecture Version 0.8-draft-20191117",
+    },
+    [RVVV_0_8_20191118] = {
+        .name        = "0.8-draft-20191118",
+        .value       = RVVV_0_8_20191118,
+        .description = "Vector Architecture Version 0.8-draft-20191118",
+    },
+    [RVVV_0_8] = {
+        .name        = "0.8",
+        .value       = RVVV_0_8,
+        .description = "Vector Architecture Version 0.8",
+    },
     [RVVV_MASTER] = {
         .name        = "master",
         .value       = RVVV_MASTER,
-        .description = "Vector Architecture Master Branch (unstable)",
+        .description = "Vector Architecture Master Branch as of commit "
+                       RVVV_MASTER_TAG" (this is subject to change)",
     },
     // KEEP LAST: terminator
     {0}
@@ -150,7 +182,7 @@ static vmiEnumParameter fp16Variants[] = {
 };
 
 //
-// Supported 16-bit floating point variants
+// Specify effect of flag writes on FS
 //
 static vmiEnumParameter FSModes[] = {
     [RVFS_WRITE_NZ] = {
@@ -285,6 +317,7 @@ static RISCV_BOOL_PDEFAULT_CFG_FN(instret_undefined);
 static RISCV_BOOL_PDEFAULT_CFG_FN(enable_CSR_bus);
 static RISCV_BOOL_PDEFAULT_CFG_FN(d_requires_f);
 static RISCV_BOOL_PDEFAULT_CFG_FN(xret_preserves_lr);
+static RISCV_BOOL_PDEFAULT_CFG_FN(require_vstart0);
 
 //
 // Set default value of raw Uns32 parameters
@@ -407,6 +440,7 @@ static RISCV_PDEFAULT_FN(default_VLEN) {
 static RISCV_BOOL_PDEFAULT_CFG_FN(Zvlsseg);
 static RISCV_BOOL_PDEFAULT_CFG_FN(Zvamo);
 static RISCV_BOOL_PDEFAULT_CFG_FN(Zvediv);
+static RISCV_BOOL_PDEFAULT_CFG_FN(Zvqmac);
 
 //
 // Table of formal parameter specifications
@@ -420,7 +454,7 @@ static riscvParameter parameters[] = {
     {  RVPV_V,       default_vect_version,         VMI_ENUM_PARAM_SPEC  (riscvParamValues, vector_version,       vectorVariants,            "Specify required Vector Architecture version")},
     {  RVPV_FPV,     default_fp16_version,         VMI_ENUM_PARAM_SPEC  (riscvParamValues, fp16_version,         fp16Variants,              "Specify required 16-bit floating point format")},
     {  RVPV_FP,      default_mstatus_fs_mode,      VMI_ENUM_PARAM_SPEC  (riscvParamValues, mstatus_fs_mode,      FSModes,                   "Specify conditions causing update of mstatus.FS to dirty")},
-    {  RVPV_ALL,     0,                            VMI_BOOL_PARAM_SPEC  (riscvParamValues, verbose,              True,                      "Specify verbose output messages")},
+    {  RVPV_ALL,     0,                            VMI_BOOL_PARAM_SPEC  (riscvParamValues, verbose,              False,                     "Specify verbose output messages")},
     {  RVPV_MPCORE,  default_numHarts,             VMI_UNS32_PARAM_SPEC (riscvParamValues, numHarts,             0, 0,          32,         "Specify the number of hart contexts in a multiprocessor")},
     {  RVPV_S,       default_updatePTEA,           VMI_BOOL_PARAM_SPEC  (riscvParamValues, updatePTEA,           False,                     "Specify whether hardware update of PTE A bit is supported")},
     {  RVPV_S,       default_updatePTED,           VMI_BOOL_PARAM_SPEC  (riscvParamValues, updatePTED,           False,                     "Specify whether hardware update of PTE D bit is supported")},
@@ -439,6 +473,7 @@ static riscvParameter parameters[] = {
     {  RVPV_ALL,     default_enable_CSR_bus,       VMI_BOOL_PARAM_SPEC  (riscvParamValues, enable_CSR_bus,       False,                     "Add artifact CSR bus port, allowing CSR registers to be externally implemented")},
     {  RVPV_FP,      default_d_requires_f,         VMI_BOOL_PARAM_SPEC  (riscvParamValues, d_requires_f,         False,                     "If D and F extensions are separately enabled in the misa CSR, whether D is enabled only if F is enabled")},
     {  RVPV_A,       default_xret_preserves_lr,    VMI_BOOL_PARAM_SPEC  (riscvParamValues, xret_preserves_lr,    False,                     "Whether an xRET instruction preserves the value of LR")},
+    {  RVPV_V,       default_require_vstart0,      VMI_BOOL_PARAM_SPEC  (riscvParamValues, require_vstart0,      False,                     "Whether CSR vstart must be 0 for non-interruptible vector instructions")},
     {  RVPV_S,       default_ASID_bits,            VMI_UNS32_PARAM_SPEC (riscvParamValues, ASID_bits,            0, 0,          16,         "Specify the number of implemented ASID bits")},
     {  RVPV_A,       default_lr_sc_grain,          VMI_UNS32_PARAM_SPEC (riscvParamValues, lr_sc_grain,          1, 1,          (1<<16),    "Specify byte granularity of ll/sc lock region (constrained to a power of two)")},
     {  RVPV_ALL,     default_reset_address,        VMI_UNS64_PARAM_SPEC (riscvParamValues, reset_address,        0, 0,          -1,         "Override reset vector address")},
@@ -470,6 +505,7 @@ static riscvParameter parameters[] = {
     {  RVPV_V,       default_Zvlsseg,              VMI_BOOL_PARAM_SPEC  (riscvParamValues, Zvlsseg,              False,                     "Specify that Zvlsseg is implemented (vector extension)")},
     {  RVPV_V,       default_Zvamo,                VMI_BOOL_PARAM_SPEC  (riscvParamValues, Zvamo,                False,                     "Specify that Zvamo is implemented (vector extension)")},
     {  RVPV_V,       default_Zvediv,               VMI_BOOL_PARAM_SPEC  (riscvParamValues, Zvediv,               False,                     "Specify that Zvediv is implemented (vector extension)")},
+    {  RVPV_V,       default_Zvqmac,               VMI_BOOL_PARAM_SPEC  (riscvParamValues, Zvqmac,               False,                     "Specify that Zvqmac is implemented (vector extension)")},
 
     // KEEP LAST
     {  RVPV_ALL,     0,                            VMI_END_PARAM}

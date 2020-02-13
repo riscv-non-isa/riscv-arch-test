@@ -63,7 +63,7 @@ This is used for simulation with riscvOVPsim.exe
 
     Imperas riscvOVPsim
     CpuManagerFixedPlatform (64-Bit) v20190802.0 Open Virtual Platform simulator from www.IMPERAS.com.
-    Copyright (c) 2005-2019 Imperas Software Ltd.  Contains Imperas Proprietary Information.
+    Copyright (c) 2005-2020 Imperas Software Ltd.  Contains Imperas Proprietary Information.
     Licensed Software, All Rights Reserved.
     Visit www.IMPERAS.com for multicore debug, verification and analysis solutions.
     CpuManagerFixedPlatform started: Fri Aug  2 19:05:59 2019

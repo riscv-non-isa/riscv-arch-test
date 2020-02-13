@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005-2019 Imperas Software Ltd., www.imperas.com
+ * Copyright (c) 2005-2020 Imperas Software Ltd., www.imperas.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -105,6 +105,7 @@ typedef enum riscvCSRIdE {
     CSR_ID      (vstart),       // 0x008
     CSR_ID      (vxsat),        // 0x009
     CSR_ID      (vxrm),         // 0x00A
+    CSR_ID      (vcsr),         // 0x00F
     CSR_ID      (uscratch),     // 0x040
     CSR_ID      (uepc),         // 0x041
     CSR_ID      (ucause),       // 0x042
@@ -116,6 +117,7 @@ typedef enum riscvCSRIdE {
     CSR_ID_3_31 (hpmcounter),   // 0xC03-0xC1F
     CSR_ID      (vl),           // 0xC20
     CSR_ID      (vtype),        // 0xC21
+    CSR_ID      (vlenb),        // 0xC22
     CSR_ID      (cycleh),       // 0xC80
     CSR_ID      (timeh),        // 0xC80
     CSR_ID      (instreth),     // 0xC80
@@ -325,7 +327,7 @@ void riscvSetVType(riscvP riscv, Bool vill, Uns32 vsew, Uns32 vlmul);
 //
 // Update vl CSR and aliases of it
 //
-void riscvSetVL(riscvP riscv, Uns32 vl);
+void riscvSetVL(riscvP riscv, Uns64 vl);
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -447,7 +449,7 @@ typedef struct {
     Uns32 _u1  : 1;
     Uns32 MPIE : 1;         // Machine mode interrupt enable (stacked)
     Uns32 SPP  : 1;         // Supervisor previous mode
-    Uns32 _u2  : 2;
+    Uns32 VS_9 : 2;         // Vector Extension dirty state (version 0.9)
     Uns32 MPP  : 2;         // Machine previous mode
     Uns32 FS   : 2;         // Floating point dirty state
     Uns32 XS   : 2;         // User extension dirty state
@@ -457,7 +459,8 @@ typedef struct {
     Uns32 TVM  : 1;         // Trap virtual memory (requires S extension)
     Uns32 TW   : 1;         // Timeout wait (requires S extension)
     Uns32 TSR  : 1;         // Trap SRET (requires S extension)
-    Uns32 _u3  : 8;
+    Uns32 VS_8 : 2;         // Vector Extension dirty state (version 0.8)
+    Uns32 _u3  : 6;
     Uns32 SD   : 1;         // Dirty state summary bit (read only)
 } CSR_REG_TYPE_32(status);
 
@@ -472,7 +475,7 @@ typedef struct {
     Uns64 _u1  :  1;
     Uns64 MPIE :  1;        // Machine mode interrupt enable (stacked)
     Uns64 SPP  :  1;        // Supervisor previous mode
-    Uns64 _u2  :  2;
+    Uns32 VS_9 :  2;         // Vector Extension dirty state (version 0.9)
     Uns64 MPP  :  2;        // Machine previous mode
     Uns64 FS   :  2;        // Floating point dirty state
     Uns64 XS   :  2;        // User extension dirty state
@@ -482,7 +485,8 @@ typedef struct {
     Uns64 TVM  :  1;        // Trap virtual memory (requires S extension)
     Uns64 TW   :  1;        // Timeout wait (requires S extension)
     Uns64 TSR  :  1;        // Trap SRET (requires S extension)
-    Uns64 _u3  :  9;
+    Uns32 VS_8 : 2;         // Vector Extension dirty state (version 0.8)
+    Uns64 _u3  :  7;
     Uns64 UXL  :  2;        // TODO: User mode XLEN
     Uns64 SXL  :  2;        // TODO: Supervisor mode XLEN
     Uns64 _u4  : 27;
@@ -498,15 +502,17 @@ typedef CSR_REG_TYPE(status) CSR_REG_TYPE(sstatus);
 typedef CSR_REG_TYPE(status) CSR_REG_TYPE(mstatus);
 
 // define alias masks
-#define sstatus_AMASK 0x80000003800de133ULL
+#define sstatus_AMASK 0x80000003818de133ULL
 #define ustatus_AMASK 0x0000000000000011ULL
 
 // define bit masks
-#define WM_mstatus_FS  (3<<13)
-#define WM_mstatus_TVM (1<<20)
-#define WM_mstatus_TW  (1<<21)
-#define WM_mstatus_TSR (1<<22)
-#define WM_mstatus_IE  0xf
+#define WM_mstatus_FS   (3<<13)
+#define WM_mstatus_TVM  (1<<20)
+#define WM_mstatus_TW   (1<<21)
+#define WM_mstatus_TSR  (1<<22)
+#define WM_mstatus_VS_8 (3<<23)
+#define WM_mstatus_VS_9 (3<<9)
+#define WM_mstatus_IE   0xf
 
 // -----------------------------------------------------------------------------
 // fflags       (id 0x001)
@@ -556,8 +562,8 @@ typedef struct {
     Uns32 DZ    :  1;
     Uns32 NV    :  1;
     Uns32 frm   :  3;
-    Uns32 vxsat :  1;
-    Uns32 vxrm  :  2;
+    Uns32 vxsat :  1;   // Vector Version 0.8 only
+    Uns32 vxrm  :  2;   // Vector Version 0.8 only
     Uns32 _u0   : 21;
 } CSR_REG_TYPE_32(fcsr);
 
@@ -1068,6 +1074,31 @@ CSR_REG_STRUCT_DECL_32(vxrm);
 #define WM64_vxrm   0x00000003
 
 // -----------------------------------------------------------------------------
+// vcsr         (id 0x00F)
+// -----------------------------------------------------------------------------
+
+// 32-bit view
+typedef struct {
+    Uns32 NX    :  1;
+    Uns32 UF    :  1;
+    Uns32 OF    :  1;
+    Uns32 DZ    :  1;
+    Uns32 NV    :  1;
+    Uns32 frm   :  3;
+    Uns32 vxsat :  1;
+    Uns32 vxrm  :  2;
+    Uns32 _u0   : 21;
+} CSR_REG_TYPE_32(vcsr);
+
+// define 32 bit type
+CSR_REG_STRUCT_DECL_32(vcsr);
+
+// write masks
+#define WM32_vcsr_f       0x0ff
+#define WM32_vcsr_v       0x700
+#define WM32_vcsr_frm_msb 0x080
+
+// -----------------------------------------------------------------------------
 // vl           (id 0xC20)
 // -----------------------------------------------------------------------------
 
@@ -1098,11 +1129,21 @@ typedef struct {
 } CSR_REG_TYPE_64(vtype);
 
 // define 32/64 bit type
-CSR_REG_STRUCT_DECL_32_64(vtype);
+CSR_REG_STRUCT_DECL_32_64_U(vtype);
 
 // define write masks
 #define WM32_vtype  0x00000000
 #define WM64_vtype  0x00000000
+
+// -----------------------------------------------------------------------------
+// vlenb        (id 0xC22)
+// -----------------------------------------------------------------------------
+
+// define alias types
+typedef CSR_REG_TYPE(genericXLEN) CSR_REG_TYPE(vlenb);
+
+// define write masks
+#define WM32_vlenb  0x00000000
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1127,12 +1168,14 @@ typedef struct riscvCSRsS {
     CSR_REG_DECL(vstart);       // 0x008
     CSR_REG_DECL(vxsat);        // 0x009
     CSR_REG_DECL(vxrm);         // 0x00A
+    CSR_REG_DECL(vcsr);         // 0x00E
     CSR_REG_DECL(uscratch);     // 0x040
     CSR_REG_DECL(uepc);         // 0x041
     CSR_REG_DECL(ucause);       // 0x042
     CSR_REG_DECL(utval);        // 0x043
     CSR_REG_DECL(vl);           // 0xC20
     CSR_REG_DECL(vtype);        // 0xC21
+    CSR_REG_DECL(vlenb);        // 0xC22
 
     // SUPERVISOR MODE CSRS
     CSR_REG_DECL(sedeleg);      // 0x102
@@ -1180,6 +1223,7 @@ typedef struct riscvCSRMasksS {
     CSR_REG_DECL(fcsr);         // 0x003
     CSR_REG_DECL(utvec);        // 0x005
     CSR_REG_DECL(vstart);       // 0x008
+    CSR_REG_DECL(vcsr);         // 0x00F
     CSR_REG_DECL(uepc);         // 0x041
     CSR_REG_DECL(ucause);       // 0x042
 
@@ -1249,6 +1293,12 @@ typedef struct riscvCSRMasksS {
     (RISCV_XLEN_IS_32(_CPU) ?                           \
         (_CPU)->csrMask._RNAME.u32.bits :               \
         (_CPU)->csrMask._RNAME.u64.bits)                \
+
+// get CSR mask field using current XLEN
+#define RD_CSR_MASK_FIELD(_CPU, _RNAME, _FIELD) \
+    (RISCV_XLEN_IS_32(_CPU) ?                           \
+        (_CPU)->csrMask._RNAME.u32.fields._FIELD :      \
+        (_CPU)->csrMask._RNAME.u64.fields._FIELD)       \
 
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005-2019 Imperas Software Ltd., www.imperas.com
+ * Copyright (c) 2005-2020 Imperas Software Ltd., www.imperas.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,8 +30,10 @@
 #include "riscvExceptionTypes.h"
 #include "riscvMode.h"
 #include "riscvRegisterTypes.h"
+#include "riscvTypes.h"
 #include "riscvTypeRefs.h"
 #include "riscvVariant.h"
+#include "riscvVectorTypes.h"
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -136,25 +138,59 @@ typedef RISCV_GET_VMI_REG_FN((*riscvGetVMIRegFn));
 typedef RISCV_GET_VMI_REG_FS_FN((*riscvGetVMIRegFSFn));
 
 //
-// Do actions when a register is written (sign extending or NaN boxing, if
+// Do actions when a register is written (extending or NaN boxing, if
 // required)
 //
 #define RISCV_WRITE_REG_SIZE_FN(_NAME) void _NAME( \
     riscvP       riscv,     \
     riscvRegDesc r,         \
-    Uns32        srcBits    \
+    Uns32        srcBits,   \
+    Bool         signExtend \
 )
 typedef RISCV_WRITE_REG_SIZE_FN((*riscvWriteRegSizeFn));
 
 //
-// Do actions when a register is written (sign extending or NaN boxing, if
+// Do actions when a register is written (extending or NaN boxing, if
 // required) using the derived register size
 //
 #define RISCV_WRITE_REG_FN(_NAME) void _NAME( \
     riscvP       riscv,     \
-    riscvRegDesc r          \
+    riscvRegDesc r,         \
+    Bool         signExtend \
 )
 typedef RISCV_WRITE_REG_FN((*riscvWriteRegFn));
+
+//
+// Return VMI register for floating point status flags when written
+//
+#define RISCV_GET_FP_FLAGS_MT_FN(_NAME) vmiReg _NAME(riscvP riscv)
+typedef RISCV_GET_FP_FLAGS_MT_FN((*riscvGetFPFlagsMtFn));
+
+//
+// Validate the given rounding mode is legal and emit an Illegal Instruction
+// exception call if not
+//
+#define RISCV_CHECK_LEGAL_RM_MT_FN(_NAME) Bool _NAME( \
+    riscvP      riscv,  \
+    riscvRMDesc rm      \
+)
+typedef RISCV_CHECK_LEGAL_RM_MT_FN((*riscvCheckLegalRMMtFn));
+
+//
+// Emit vector operation from extension library
+//
+#define RISCV_MORPH_VOP_FN(_NAME) void _NAME( \
+    riscvP           riscv,         \
+    Uns64            thisPC,        \
+    riscvRegDesc     r0,            \
+    riscvRegDesc     r1,            \
+    riscvRegDesc     r2,            \
+    riscvRegDesc     mask,          \
+    riscvVShape      shape,         \
+    riscvVExternalFn externalCB,    \
+    void            *userData       \
+)
+typedef RISCV_MORPH_VOP_FN((*riscvMorphVOpFn));
 
 //
 // Register new CSR
@@ -232,6 +268,19 @@ typedef RISCV_TLOAD_FN((*riscvTLoadFn));
 typedef RISCV_TSTORE_FN((*riscvTStoreFn));
 
 //
+// Implement PMA check for the given address range
+//
+#define RISCV_PMA_CHECK_FN(_NAME) void _NAME( \
+    riscvP    riscv,            \
+    riscvMode mode,             \
+    memPriv   requiredPriv,     \
+    Uns64     lowPA,            \
+    Uns64     highPA,           \
+    void     *clientData        \
+)
+typedef RISCV_PMA_CHECK_FN((*riscvPMACheckFn));
+
+//
 // Container structure for all callbacks implemented by the base model
 //
 typedef struct riscvModelCBS {
@@ -244,6 +293,7 @@ typedef struct riscvModelCBS {
     riscvGetXlenFn            getXlenArch;
     riscvGetRegNameFn         getXRegName;
     riscvGetRegNameFn         getFRegName;
+    riscvGetRegNameFn         getVRegName;
     riscvSetTModeFn           setTMode;
     riscvGetTModeFn           getTMode;
 
@@ -257,6 +307,9 @@ typedef struct riscvModelCBS {
     riscvGetVMIRegFSFn        getVMIRegFS;
     riscvWriteRegSizeFn       writeRegSize;
     riscvWriteRegFn           writeReg;
+    riscvGetFPFlagsMtFn       getFPFlagsMt;
+    riscvCheckLegalRMMtFn     checkLegalRMMt;
+    riscvMorphVOpFn           morphVOp;
 
     // from riscvCSR.h
     riscvNewCSRFn             newCSR;
@@ -289,6 +342,9 @@ typedef struct riscvExtCBS {
     riscvIASSwitchFn          switchCB;
     riscvTLoadFn              tLoad;
     riscvTStoreFn             tStore;
+
+    // PMA check actions
+    riscvPMACheckFn           PMACheck;
 
 } riscvExtCB;
 

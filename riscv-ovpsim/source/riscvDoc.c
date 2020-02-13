@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005-2019 Imperas Software Ltd., www.imperas.com
+ * Copyright (c) 2005-2020 Imperas Software Ltd., www.imperas.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -126,8 +126,7 @@ void riscvDoc(riscvP rootProcessor) {
     Bool             isSMP    = numHarts && child && !cfg->members;
     Uns32            extIndex;
     riscvExtConfigCP extCfg;
-
-    char          string[1024];
+    char             string[1024];
 
     // move to first child if an SMP object
     if(isSMP) {
@@ -685,7 +684,9 @@ void riscvDoc(riscvP rootProcessor) {
             "version specified in the References section of this document. "
             "Note that parameter \"vector_version\" can be used to select "
             "the required version, including the unstable \"master\" version "
-            "corresponding to the active specification."
+            "corresponding to the active specification. See section \"Vector "
+            "Extension Versions\" for detailed information about differences "
+            "between each supported version."
         );
 
         vmiDocNodeP Parameters = vmidocAddSection(
@@ -750,6 +751,26 @@ void riscvDoc(riscvP rootProcessor) {
         );
         vmidocAddText(Parameters, string);
 
+        // document Zvqmac
+        snprintf(
+            SNPRINTF_TGT(string),
+            "Parameter Zvqmac is used to specify whether the Zvqmac "
+            "extension is implemented (from version 0.8-draft-20191117 only). "
+            "By default, Zvqmac is set to %u in this variant.",
+            riscv->configInfo.Zvqmac
+        );
+        vmidocAddText(Parameters, string);
+
+        // document require_vstart0
+        snprintf(
+            SNPRINTF_TGT(string),
+            "Parameter require_vstart0 is used to specify whether non-"
+            "interruptible vector instructions require vstart=0. By default, "
+            "require_vstart0 is set to %u in this variant.",
+            riscv->configInfo.require_vstart0
+        );
+        vmidocAddText(Parameters, string);
+
         vmiDocNodeP Features = vmidocAddSection(
             Vector, "Vector Extension Features"
         );
@@ -783,6 +804,288 @@ void riscvDoc(riscvP rootProcessor) {
             "aligned to the memory element size. Unaligned accesses will "
             "cause a Load/Store Address Alignment exception."
         );
+
+        ////////////////////////////////////////////////////////////////////////
+        // VECTOR EXTENSION VERSIONS
+        ////////////////////////////////////////////////////////////////////////
+
+        {
+            vmiDocNodeP Versions = vmidocAddSection(
+                Vector, "Vector Extension Versions"
+            );
+
+            vmidocAddText(
+                Versions,
+                "The Vector Extension specification has been under active "
+                "development. To enable simulation of hardware that may be based "
+                "on an older version of the specification, the model implements "
+                "behavior for a number of previous versions of the specification. "
+                "The differing features of these are listed below, in "
+                "chronological order."
+            );
+        }
+
+        ////////////////////////////////////////////////////////////////////////
+        // VECTOR EXTENSION VERSION 0.7.1-draft-20190605
+        ////////////////////////////////////////////////////////////////////////
+
+        {
+            vmiDocNodeP Version = vmidocAddSection(
+                Vector, "Version 0.7.1-draft-20190605"
+            );
+
+            vmidocAddText(
+                Version,
+                "Stable 0.7.1 version of June 10 2019."
+            );
+        }
+
+        ////////////////////////////////////////////////////////////////////////
+        // VECTOR EXTENSION VERSION 0.7.1-draft-20190605+
+        ////////////////////////////////////////////////////////////////////////
+
+        {
+            vmiDocNodeP Version = vmidocAddSection(
+                Vector, "Version 0.7.1-draft-20190605+"
+            );
+
+            vmidocAddText(
+                Version,
+                "Version 0.7.1, with some 0.8 and custom features. Not "
+                "intended for general use."
+            );
+        }
+
+        ////////////////////////////////////////////////////////////////////////
+        // VECTOR EXTENSION VERSION 0.8-draft-20190906
+        ////////////////////////////////////////////////////////////////////////
+
+        {
+            vmiDocNodeP Version = vmidocAddSection(
+                Vector, "Version 0.8-draft-20190906"
+            );
+
+            vmidocAddText(
+                Version,
+                "Stable 0.8 draft of September 6 2019, with these changes "
+                "compared to version 0.7.1-draft-20190605:"
+            );
+            vmidocAddText(
+                Version,
+                "- tail vector and scalar elements preserved, not zeroed;"
+            );
+            vmidocAddText(
+                Version,
+                "- vext.s.v, vmford.vv and vmford.vf instructions removed;"
+            );
+            vmidocAddText(
+                Version,
+                "- encodings for vfmv.f.s, vfmv.s.f, vmv.s.x, vpopc.m, "
+                "vfirst.m, vmsbf.m, vmsif.m, vmsof.m, viota.m and vid.v "
+                "instructions changed;"
+            );
+            vmidocAddText(
+                Version,
+                "- overlap constraints for slideup and slidedown instructions "
+                "relaxed to allow overlap of destination and mask when SEW=1;"
+            );
+            vmidocAddText(
+                Version,
+                "- 64-bit vector AMO operations replaced with SEW-width vector "
+                "AMO operations;"
+            );
+            vmidocAddText(
+                Version,
+                "- vsetvl and vsetvli instructions when rs1 = x0 preserve the "
+                "current vl instead of selecting the maximum possible vl;"
+            );
+            vmidocAddText(
+                Version,
+                "- instruction vfncvt.rod.f.f.w added (to allow narrowing "
+                "floating point conversions with jamming semantics);"
+            );
+            vmidocAddText(
+                Version,
+                "- instructions that transfer values between vector registers "
+                "and general purpose registers (vmv.s.x and vmv.x.s) "
+                "sign-extend the source if required (previously, it was "
+                "zero-extended)."
+            );
+        }
+
+        ////////////////////////////////////////////////////////////////////////
+        // VECTOR EXTENSION VERSION 0.8-draft-20191004
+        ////////////////////////////////////////////////////////////////////////
+
+        {
+            vmiDocNodeP Version = vmidocAddSection(
+                Vector, "Version 0.8-draft-20191004"
+            );
+
+            vmidocAddText(
+                Version,
+                "Stable 0.8 draft of October 4 2019, with these changes "
+                "compared to version 0.8-draft-20190906:"
+            );
+            vmidocAddText(
+                Version,
+                "- vwmaccsu and vwmaccus instruction encodings exchanged;"
+            );
+            vmidocAddText(
+                Version,
+                "- vwsmaccsu and vwsmaccus instruction encodings exchanged."
+            );
+        }
+
+        ////////////////////////////////////////////////////////////////////////
+        // VECTOR EXTENSION VERSION 0.8-draft-20191117
+        ////////////////////////////////////////////////////////////////////////
+
+        {
+            vmiDocNodeP Version = vmidocAddSection(
+                Vector, "Version 0.8-draft-20191117"
+            );
+
+            vmidocAddText(
+                Version,
+                "Stable 0.8 draft of November 17 2019, with these changes "
+                "compared to version 0.8-draft-20191004:"
+            );
+            vmidocAddText(
+                Version,
+                "- indexed load/store instructions zero-extend offsets "
+                "(previously, they were sign-extended);"
+            );
+            vmidocAddText(
+                Version,
+                "- vslide1up/vslide1down instructions sign-extend XLEN values "
+                "to SEW length (previously, they were zero-extended);"
+            );
+            vmidocAddText(
+                Version,
+                "- vadc/vsbc instruction encodings require vm=0 (previously, "
+                "they required vm=1);"
+            );
+            vmidocAddText(
+                Version,
+                "- vmadc/vmsbc instruction encodings allow both vm=0, "
+                "implying carry input is used, and vm=1, implying carry input "
+                "is zero (previously, only vm=1 was permitted, implying carry "
+                "input is used);"
+            );
+            vmidocAddText(
+                Version,
+                "- vaaddu.vv, vaaddu.vx, vasubu.vv and vasubu.vx instructions "
+                "added;"
+            );
+            vmidocAddText(
+                Version,
+                "- vaadd.vv and vaadd.vx, instruction encodings changed;"
+            );
+            vmidocAddText(
+                Version,
+                "- vaadd.vi instruction removed;"
+            );
+            vmidocAddText(
+                Version,
+                "- all widening saturating scaled multiply-add instructions "
+                "removed;"
+            );
+            vmidocAddText(
+                Version,
+                "- vqmaccu.vv, vqmaccu.vx, vqmacc.vv, vqmacc.vx, vqmacc.vx, "
+                "vqmaccsu.vx and vqmaccus.vx instructions added;"
+            );
+            vmidocAddText(
+                Version,
+                "- CSR vlenb added (vector register length in bytes);"
+            );
+            vmidocAddText(
+                Version,
+                "- load/store whole register instructions added;"
+            );
+            vmidocAddText(
+                Version,
+                "- whole register move instructions added."
+            );
+        }
+
+        ////////////////////////////////////////////////////////////////////////
+        // VECTOR EXTENSION VERSION 0.8-draft-20191118
+        ////////////////////////////////////////////////////////////////////////
+
+        {
+            vmiDocNodeP Version = vmidocAddSection(
+                Vector, "Version 0.8-draft-20191118"
+            );
+
+            vmidocAddText(
+                Version,
+                "Stable 0.8 draft of November 18 2019, with these changes "
+                "compared to version 0.8-draft-20191117:"
+            );
+            vmidocAddText(
+                Version,
+                "- vsetvl/vsetvli with rd!=zero and rs1=zero sets vl to the "
+                "maximum vector length."
+            );
+        }
+
+        ////////////////////////////////////////////////////////////////////////
+        // VECTOR EXTENSION VERSION 0.8
+        ////////////////////////////////////////////////////////////////////////
+
+        {
+            vmiDocNodeP Version = vmidocAddSection(
+                Vector, "Version 0.8"
+            );
+
+            vmidocAddText(
+                Version,
+                "Stable 0.8 official release (commit 9a65519), with these "
+                "changes compared to version 0.8-draft-20191118:"
+            );
+            vmidocAddText(
+                Version,
+                "- vector context status in mstatus register is now "
+                "implemented;"
+            );
+            vmidocAddText(
+                Version,
+                "- whole register load and store operations have been "
+                "restricted to a single register only;"
+            );
+            vmidocAddText(
+                Version,
+                "- whole register move operations have been restricted to "
+                "aligned groups of 1, 2, 4 or 8 registers only."
+            );
+        }
+
+        ////////////////////////////////////////////////////////////////////////
+        // VECTOR EXTENSION VERSION master
+        ////////////////////////////////////////////////////////////////////////
+
+        {
+            vmiDocNodeP Version = vmidocAddSection(
+                Vector, "Version master"
+            );
+
+            vmidocAddText(
+                Version,
+                "Unstable master version as of 8 February 2020 (commit "
+                RVVV_MASTER_TAG"), with these changes compared to version 0.8:"
+            );
+            vmidocAddText(
+                Version,
+                "- mstatus.VS and sstatus.VS fields have moved to bits 10:9;"
+            );
+            vmidocAddText(
+                Version,
+                "- new CSR vcsr has been added and fields VXSAT and VXRM "
+                "fields relocated there from CSR fcsr."
+            );
+        }
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -990,17 +1293,17 @@ void riscvDoc(riscvP rootProcessor) {
             "https://github.com/ucb-bar/riscv-torture"
         );
         vmidocAddText(Verification,
-            "The Imperas OVPsim RISC-V models are used in the RISC-V Foundations"
+            "The Imperas OVPsim RISC-V models are used in the RISC-V Foundations "
             "Compliance Framework as a functional Golden Reference:"
         );
         vmidocAddText(Verification,
             "https://github.com/riscv/riscv-compliance"
         );
         vmidocAddText(Verification,
-            "where the simulated model is used to provide the reference signatures"
-            "for compliance testing."
-            "The Imperas OVPsim RISC-V models are used as reference in both open"
-            "source and commercial instruction stream test generators for hardware"
+            "where the simulated model is used to provide the reference signatures "
+            "for compliance testing. "
+            "The Imperas OVPsim RISC-V models are used as reference in both open "
+            "source and commercial instruction stream test generators for hardware "
             "design verification, for example:"
         );
         vmidocAddText(Verification,
@@ -1010,8 +1313,8 @@ void riscvDoc(riscvP rootProcessor) {
             "https://github.com/google/riscv-dv from Google"
         );
         vmidocAddText(Verification,
-            "The Imperas OVPsim RISC-V models are also used by commercial and open"
-            "source RISC-V Core RTL developers as a reference to ensure correct"
+            "The Imperas OVPsim RISC-V models are also used by commercial and open "
+            "source RISC-V Core RTL developers as a reference to ensure correct "
             "functionality of their IP."
         );
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005-2019 Imperas Software Ltd., www.imperas.com
+ * Copyright (c) 2005-2020 Imperas Software Ltd., www.imperas.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -85,6 +85,7 @@ typedef struct riscvBlockStateS {
     riscvBlockStateP prevState;     // previous block state
     Uns32            fpNaNBoxMask[2];// mask of known NaN-boxed registers
     Bool             FSDirty;       // is status.FS known to be dirty?
+    Bool             VSDirty;       // is status.VS known to be dirty?
     riscvSEWMt       SEWMt;         // known active vector SEW
     riscvVLMULMt     VLMULMt;       // known active vector VLMUL
     riscvVLClassMt   VLClassMt;     // known active vector VL zero/non-zero/max

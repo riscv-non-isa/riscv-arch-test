@@ -1,3 +1,21 @@
+/*
+ *
+ * Copyright (c) 2005-2020 Imperas Software Ltd., www.imperas.com
+ *
+ * The contents of this file are provided under the Software License
+ * Agreement that you accepted before downloading this file.
+ *
+ * This source forms part of the Software and can be used for educational,
+ * training, and demonstration purposes but cannot be used for derivative
+ * works except in cases where the derivative works require OVP technology
+ * to run.
+ *
+ * For open source models released under licenses that you can use for
+ * derivative works, please visit www.OVPworld.org or www.imperas.com
+ * for the location of the open source models.
+ *
+ */
+
 #include <stdio.h>
 #include <string.h>
 
@@ -63,20 +81,22 @@ int main () {
     v512P v2P0 = &v2[0];
     v512P v2P1 = &v2[1];
 
+    enableVEC();
+
     int i;
     for (i=0; i<VEC16; i++) {
         v0P->vu16[i] = i+1;
     }
-    vec_print(v0P, 16, "%d");
+    printVEC(v0P, 16, "%d");
     printf("REPORT: func1()\n");
     func1(32, v0P, v1P0, 16);
-    vec_print(v1P0, 32, "%d");
-    vec_print(v1P1, 32, "%d");
+    printVEC(v1P0, 32, "%d");
+    printVEC(v1P1, 32, "%d");
 
     printf("REPORT: func2()\n");
     func2(32, v0P, v2P0, 16);
-    vec_print(v2P0, 32, "%d");
-    vec_print(v2P1, 32, "%d");
+    printVEC(v2P0, 32, "%d");
+    printVEC(v2P1, 32, "%d");
 
     if (memcmp(v1P0, v2P0, (2*sizeof(v512T)))) {
         printf("REPORT: Memory Compare Failed\n");

@@ -51,12 +51,20 @@
 // INITIALIZE I/O
 ////////////////////////////////////////////////////////////////////////////////
 
+#undef SX
+#undef LX
+#ifdef XLEN32
+    #define SX sw
+    #define LX lw
+#else
+    #define SX sd
+    #define LX ld
+#endif
+
+
 .macro IO_INIT
-
 #if (USE_FU540_LOG==1)
-
     #ifdef SIFIVE_FU540
-
         // executing on board
         csrr    t0, mhartid     // 4-byte op
         li      t1, 4           // 2-byte op
@@ -64,20 +72,15 @@
         lui     t5, 0x10010     // 4-byte op
         li      a0, 0x1         // 2-byte op
         sw      a0, 8(t5)       // 4-byte op
-
     #else
-
         // board-compatible simulation
         .word 0x00000013        // 4-byte nop (match board code size)
         .word 0x00000013        // 4-byte nop (match board code size)
         .word 0x00000013        // 4-byte nop (match board code size)
         .word 0x00000013        // 4-byte nop (match board code size)
         .word 0x00000013        // 4-byte nop (match board code size)
-
     #endif
-
 #endif
-
 .endm
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -85,37 +88,42 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 .macro IO_PUTC _R
-
-#if (USE_FU540_LOG!=1)
-
-        // normal test case simulation
-        .word 0x0005200B
-
-#else
-
+#if (USE_FU540_LOG==1)
     #ifdef SIFIVE_FU540
-
         // executing on board
         lui         t5, 0x10010
         L1\@:
         lw          t6, (t5)
         bnez        t6, L1\@
         sw          \_R, (t5)
-
     #else
-
         // board-compatible simulation
         lui         t5, 0x10010
         lw          t6, (t5)
         .word 0x00000013    // 4-byte nop (match board code size)
         sw          \_R, (t5)
-//      .word 0x00000013    // 4-byte nop (match board code size)
-//      .word 0x00000013    // 4-byte nop (match board code size)
-//      .word 0x00000013    // 4-byte nop (match board code size)
-//      .word 0x0005200B
-
     #endif
-
+#elif (USE_ECALL_LOG==1) 
+    SX a0,-40(sp)
+    SX a1,-48(sp)
+    SX a2,-56(sp)
+    SX a3,-64(sp)
+    SX a7,-72(sp)
+    la a1, stdiobuf	// a1 = ptr to buffer
+    sb a0, 0(a1)
+    li a0, 1
+    li a2, 1		// a2 = character count
+    li a3, 0		// a3 = ?
+    li a7, 64 		// Write code
+    ecall
+    LX a0,-40(sp)
+    LX a1,-48(sp)
+    LX a2,-56(sp)
+    LX a3,-64(sp)
+    LX a7,-72(sp)
+#else
+        // normal test case simulation - custome instruction
+        .word 0x0005200B
 #endif
 .endm
 
@@ -127,6 +135,10 @@
 
 _start:
         IO_INIT
+#if (INSTALL_TRAPHANDLER==1)
+        la      a0, _traphandler
+        csrw    mtvec, a0
+#endif
         j       START_TEST
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -135,37 +147,39 @@ _start:
 ////////////////////////////////////////////////////////////////////////////////
 
 #if (USE_FU540_LOG==1)
-
     exit_test:
     #ifdef SIFIVE_FU540
-
         // executing on board
         j exit_test         // 2-byte op
         .word 0x00000013    // 4-byte nop (match simulator code size)
-
     #else
-
         // board-compatible simulation
         li          a0,0    // 2-byte op
         .word 0x0005200B    // 4-byte op
-
     #endif
-
 #endif
 
 .macro EXIT_TEST
 #if (USE_FU540_LOG==1)
-
         // executing on board or simulation of board
         j exit_test
+#elif (USE_ECALL_LOG==1) 
+        li a7, 93 // Exit code
+        ecall
 #else
-
         // normal test case simulation
         li          a0,0
         .word 0x0005200B
-
 #endif
 .endm
+
+////////////////////////////////////////////////////////////////////////////////
+// Install a trap handler to exit
+////////////////////////////////////////////////////////////////////////////////
+#if (INSTALL_TRAPHANDLER==1)
+_traphandler:
+	j shutDown
+#endif
 
 ////////////////////////////////////////////////////////////////////////////////
 // WRITE_A0: write character in a0
@@ -202,13 +216,24 @@ _start:
 
 ////////////////////////////////////////////////////////////////////////////////
 // WRITE_RAWS <gpr>: write raw register, short form with no leading zeros
-// (destroys a0, a1, a2, a3, lr)
+// (destroys a0, t0-t2, lr)
 ////////////////////////////////////////////////////////////////////////////////
 
 .macro WRITE_RAWS _R
 #ifndef SYS_QUIET
         mv          a0, \_R
         jal         writeA0Short
+#endif
+.endm
+
+////////////////////////////////////////////////////////////////////////////////
+// WRITE_RAW4 <gpr>: write 32-bit raw register (destroys a0, t0-t2, lr)
+////////////////////////////////////////////////////////////////////////////////
+
+.macro WRITE_RAW4 _R
+#ifndef SYS_QUIET
+        mv          a0, \_R
+        jal         writeA0_4
 #endif
 .endm
 
@@ -367,7 +392,9 @@ writeA0:
         srli        a0, a0, 1
         bnez        a0, writeA0_64
 
+#endif
 writeA0_32:
+#ifndef SYS_QUIET
 
         // reverse register when xlen is 32
         li          t1, 8
@@ -380,7 +407,9 @@ writeA0_32:
         li          t1, 8
         j           writeA0_common
 
+#endif
 writeA0_64:
+#ifndef SYS_QUIET
 
         // reverse register when xlen is 64
         li          t1, 16
@@ -409,6 +438,18 @@ writeA0_common:
 #endif
 
         ret
+
+////////////////////////////////////////////////////////////////////////////////
+// writeA0_4: write 32-bit register a0 (destroys a0, t0-t2)
+////////////////////////////////////////////////////////////////////////////////
+
+writeA0_4:
+
+#ifndef SYS_QUIET
+        mv          t0, a0
+        li          t2, 0
+#endif
+        j           writeA0_32
 
 // stabilize function size (WRITE_A0 implementation may change)
 .align 7
@@ -629,6 +670,7 @@ DEFINE_REG_LABEL     f31
 #define mtval           0x343
 #define vl              0xC20
 #define vtype           0xC21
+#define vlenb           0xC22
 
 .macro DEFINE_REG_LABEL_X _L, _S
         LABEL_\_L : .string "\_S"
@@ -883,6 +925,13 @@ DEFINE_REG_LABEL_X   vxsat,  "vxsat"    // not recognized by assembler
 DEFINE_REG_LABEL_X   vxrm,   "vxrm"     // not recognized by assembler
 DEFINE_REG_LABEL_X   vtype,  "vtype"    // not recognized by assembler
 DEFINE_REG_LABEL_X   vl,     "vl"       // not recognized by assembler
+DEFINE_REG_LABEL_X   vlenb,  "vlenb"    // not recognized by assembler
+
+#if (USE_ECALL_LOG==1) 
+.align 4
+stdiobuf:
+	.word 0x0
+#endif
 
 // leave space for new labels
 .align 11

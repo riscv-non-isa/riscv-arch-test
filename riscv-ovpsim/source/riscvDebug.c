@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005-2019 Imperas Software Ltd., www.imperas.com
+ * Copyright (c) 2005-2020 Imperas Software Ltd., www.imperas.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -525,9 +525,13 @@ void riscvFreeRegInfo(riscvP riscv) {
 //
 VMI_REG_IMPL_FN(riscvRegImpl) {
 
-    // specify that fpFlags are in fflags
+    // specify that fpFlags is in fflags
     vmiRegInfoCP fflags = vmirtGetRegByName(processor, "fflags");
     RISCV_FIELD_IMPL_RAW(fflags, fpFlagsMT);
+
+    // specify that SFMT is in vxsat
+    vmiRegInfoCP vxsat = vmirtGetRegByName(processor, "vxsat");
+    RISCV_FIELD_IMPL_RAW(vxsat, SFMT);
 
     // exclude artifact registers
     RISCV_FIELD_IMPL_IGNORE(pmKey);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005-2019 Imperas Software Ltd., www.imperas.com
+ * Copyright (c) 2005-2020 Imperas Software Ltd., www.imperas.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -154,6 +154,8 @@ typedef enum riscvExceptionS {
 typedef enum riscvAccessFaultS {
     riscv_AFault_None,      // not an access fault
     riscv_AFault_PMP,       // access fault because of PMP permission error
-    riscv_AFault_Bus,       // access fault because of bus permission error
+    riscv_AFault_Bus,       // access fault because of bus error
+    riscv_AFault_PMA_Code,  // access fault because of PMA fetch error
+    riscv_AFault_PMA_Data,  // access fault because of PMA load/store error
     riscv_AFault_Explicit,  // explicit Access Fault value
 } riscvAccessFault;
