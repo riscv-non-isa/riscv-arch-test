@@ -246,20 +246,20 @@ static void putOptRM(char **result, riscvRMDesc rm, Bool uncooked) {
 
         putUncookedKey(result, " RM", uncooked);
 
-        if(uncooked && (rm==RV_RM_CURRENT)) {
+        if(!uncooked && (rm==RV_RM_ROD)) {
 
-            putString(result, "rmc");
+            // rounding mode in opcode (not consistent with base architecture)
 
         } else {
 
             static const char *map[] = {
-                [RV_RM_NA]      = "",
                 [RV_RM_CURRENT] = "",
                 [RV_RM_RTE]     = "rte",
                 [RV_RM_RTZ]     = "rtz",
                 [RV_RM_RDN]     = "rdn",
                 [RV_RM_RUP]     = "rup",
                 [RV_RM_RMM]     = "rmm",
+                [RV_RM_ROD]     = "rod",
                 [RV_RM_BAD5]    = "rm5",
                 [RV_RM_BAD6]    = "rm6",
             };
@@ -378,10 +378,12 @@ static void putOpcode(char **result, riscvP riscv, riscvInstrInfoP info) {
     static const char *viDescs[] = {
         [RV_VIT_NA]  = "",
         [RV_VIT_V]   = ".v",
+        [RV_VIT_W]   = ".w",
         [RV_VIT_VV]  = ".vv",
         [RV_VIT_VI]  = ".vi",
         [RV_VIT_VX]  = ".vx",
         [RV_VIT_WV]  = ".wv",
+        [RV_VIT_WI]  = ".wi",
         [RV_VIT_WX]  = ".wx",
         [RV_VIT_VF]  = ".vf",
         [RV_VIT_WF]  = ".wf",

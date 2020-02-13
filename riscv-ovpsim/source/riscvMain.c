@@ -50,8 +50,9 @@
 static void initAllModelCBs(riscvP riscv) {
 
     // from riscvUtils.h
-    riscv->cb.registerExtCB = riscvRegisterExtCB;
-    riscv->cb.getExtConfig  = riscvGetExtConfig;
+    riscv->cb.registerExtCB    = riscvRegisterExtCB;
+    riscv->cb.getExtClientData = riscvGetExtClientData;
+    riscv->cb.getExtConfig     = riscvGetExtConfig;
 }
 
 //

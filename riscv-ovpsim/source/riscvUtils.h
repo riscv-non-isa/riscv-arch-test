@@ -55,7 +55,12 @@ Uns32 riscvGetXlenMode(riscvP riscv);
 //
 // Register extension callback block with the base model
 //
-void riscvRegisterExtCB(riscvP riscv, riscvExtCBP extCB);
+void riscvRegisterExtCB(riscvP riscv, riscvExtCBP extCB, Uns32 id);
+
+//
+// Return the indexed extension's extCB clientData
+//
+void *riscvGetExtClientData(riscvP riscv, Uns32 id);
 
 //
 // Return extension configuration with the given id

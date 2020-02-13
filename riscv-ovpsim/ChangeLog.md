@@ -6,9 +6,76 @@
 ###############################################################################
 
 ###############################################################################
+## Date 2019-October-09                                                      ##
+## Release 20191009.0                                                        ##
+###############################################################################
+
+- The model has a new parameter vector_version which can be used to select
+  either the stable 0.7.1 Vector Extension (the default) or the unstable master
+  branch. The master branch currently has the following changes compared to the
+  stable 0.7.1 branch:
+  - behavior of vsetvl and vsetvli instructions when rs1 = x0 preserves the
+    current vl instead of selecting the maximum possible vl.
+  - tail vector and scalar elements are preserved, not zeroed.
+  - vext.s.v, vmford.vv and vmford.vf instructions have been removed;
+  - encodings for vfmv.f.s, vfmv.s.f, vmv.s.x, vpopc.m, vfirst.m, vmsbf.m, 
+    vmsif.m, vmsof.m, viota.m and vid.v instructions have changed;
+  - overlap constraints for slideup and slidedown instructions have been relaxed
+    to allow overlap of destination and mask when SEW=1.
+  - 64-bit vector AMO operations have been replaced with SEW-width vector AMO
+    operations.
+  - The double-width source vector register group for narrowing operations is
+    now signified by a 'w' in the source operand suffix. Previously, a 'v' was
+    used.
+  - Instruction vfncvt.rod.f.f.w has been added (to allow narrowing floating
+    point conversions with jamming semantics).
+  This set of changes will increase as the master specification evolves.
+- Default semihosting has been changed to use the ecall and ebreak instruction
+  as the interception point for the host to implement the system call. This
+  uses the same set of syscall numbers which are defined as part of the proxy
+  kernel library for newlib.
+
+###############################################################################
 ## Date 2019-Sept-23                                                         ##
 ## Release 20190923.0                                                        ##
 ###############################################################################
+
+- The model has a new parameter vector_version which can be used to select
+  either the stable 0.7.1 Vector Extension (the default) or the unstable master
+  branch. The master branch currently has the following changes compared to the
+  stable 0.7.1 branch:
+  - behavior of vsetvl and vsetvli instructions when rs1 = x0 preserves the
+    current vl instead of selecting the maximum possible vl.
+  - tail vector and scalar elements are preserved, not zeroed.
+  - vext.s.v and vmford.vv instructions have been removed;
+  - vmv.s.x instruction has been added;
+  - encodings for vpopc.m, vfirst.m, vmsbf.m, vmsif.m, vmsof.m, viota.m and
+    vid.v instructions have changed;
+  - overlap constraints for slideup and slidedown instructions have been relaxed
+    to allow overlap of destination and mask when SEW=1.
+  - 64-bit vector AMO operations have been replaced with SEW-width vector AMO
+    operations.
+  This set of changes will increase as the master specification evolves.
+- Some vector extension issues have been corrected:
+  - Behavior of vsetvl and vsetvli instructions when requested vector size
+    exceeds the implementation limits has been corrected.
+  - Two decodes for non-existent vector compare instructions have been removed.
+  - The constraint on legal LMUL for segmented load/store operations has been
+    changed from requiring LMUL=1 to requiring LMUL*NFIELDS<=8. This corresponds
+    to a specification change made on 2019-June-06.
+  - decodes for instructions which only exist in unmasked form have been
+    changed so that the vm field in the instruction must be 1 (previously, this
+    bit was treated as a don't-care).
+  - instruction disassembly has been improved for 'move' instructions (this
+    change does not affect model behavior).
+  - A bug has been fixed which caused an error when an attempt was made to
+    execute floating point instructions with a scalar argument and with SLEN
+    less than 32.
+  - A bug has been fixed which caused narrowing floating point/integer type
+    conversion instructions targeting integer types to raise illegal instruction
+    exceptions when the current SEW is smaller than the smallest supported
+    floating point SEW. These instructions should be legal when SEW*2 is the
+    smallest supported floating point SEW and SEW is legal for integer types.
 - Enhancements to the B Extensions to include the instructions as part of the
   v0.91 specification, also added a parameter for version selection, currently
   v0.90 and v 0.91. The default will always be the later specification
@@ -32,42 +99,6 @@
   used in general arithmetic operations, as per RISC-V.
 - A bug was fixed that could cause incorrect behavior when PMP region mappings
   change.
-- Some vector extension issues have been corrected:
-  - Behavior of vsetvl and vsetvli instructions when requested vector size
-    exceeds the implementation limits has been corrected.
-  - Two decodes for non-existent vector compare instructions have been removed.
-  - The constraint on legal LMUL for segmented load/store operations has been
-    changed from requiring LMUL=1 to requiring LMUL*NFIELDS<=8. This corresponds
-    to a specification change made on 2019-June-06.
-  - decodes for instructions which only exist in unmasked form have been
-    changed so that the vm field in the instruction must be 1 (previously, this
-    bit was treated as a don't-care).
-  - instruction disassembly has been improved for 'move' instructions (this
-    change does not affect model behavior).
-  - A bug has been fixed which caused an error when an attempt was made to
-    execute floating point instructions with a scalar argument and with SLEN
-    less than 32.
-  - A bug has been fixed which caused narrowing floating point/integer type
-    conversion instructions targeting integer types to raise illegal instruction
-    exceptions when the current SEW is smaller than the smallest supported
-    floating point SEW. These instructions should be legal when SEW*2 is the
-    smallest supported floating point SEW and SEW is legal for integer types.
-- The model has a new parameter vector_version which can be used to select
-  either the stable 0.7.1 Vector Extension (the default) or the unstable master
-  branch. The master branch currently has the following changes compared to the
-  stable 0.7.1 branch:
-  - behavior of vsetvl and vsetvli instructions when rs1 = x0 preserves the
-    current vl instead of selecting the maximum possible vl.
-  - tail vector and scalar elements are preserved, not zeroed.
-  - vext.s.v and vmford.vv instructions have been removed;
-  - vmv.s.x instruction has been added;
-  - encodings for vpopc.m, vfirst.m, vmsbf.m, vmsif.m, vmsof.m, viota.m and
-    vid.v instructions have changed;
-  - overlap constraints for slideup and slidedown instructions have been relaxed
-    to allow overlap of destination and mask when SEW=1.
-  - 64-bit vector AMO operations have been replaced with SEW-width vector AMO
-    operations.
-  This set of changes will increase as the master specification evolves.
 
 ###############################################################################
 ## Date 2019-June-28                                                         ##

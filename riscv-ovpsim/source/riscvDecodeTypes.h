@@ -450,10 +450,12 @@ typedef enum riscvVITypeE {
 
     RV_VIT_NA,      // not a vector instruction
     RV_VIT_V,       // instruction type .v
+    RV_VIT_W,       // instruction type .w
     RV_VIT_VV,      // instruction type .vv
     RV_VIT_VI,      // instruction type .vi
     RV_VIT_VX,      // instruction type .vx
     RV_VIT_WV,      // instruction type .wv
+    RV_VIT_WI,      // instruction type .wi
     RV_VIT_WX,      // instruction type .wx
     RV_VIT_VF,      // instruction type .vf
     RV_VIT_WF,      // instruction type .wf
@@ -465,6 +467,10 @@ typedef enum riscvVITypeE {
     RV_VIT_VXM,     // instruction type .vxm
     RV_VIT_VIM,     // instruction type .vim
     RV_VIT_VFM,     // instruction type .vfm
+    RV_VIT_VN,      // instruction type .v/.w (version-dependent)
+    RV_VIT_VVN,     // instruction type .vv/.wv (version-dependent)
+    RV_VIT_VIN,     // instruction type .vi/.wi (version-dependent)
+    RV_VIT_VXN,     // instruction type .vx/.wx (version-dependent)
 
 } riscvVIType;
 
