@@ -25,7 +25,6 @@
 // model header files
 #include "riscvStructure.h"
 
-
 VMI_PROC_INFO_FN(riscvProcInfo) {
 
     riscvP riscv = (riscvP) processor;
@@ -38,7 +37,7 @@ VMI_PROC_INFO_FN(riscvProcInfo) {
 
         .semihost.vendor  = "riscv.ovpworld.org",
         .semihost.library = "semihosting",
-        .semihost.name    = "riscv32Newlib",
+        .semihost.name    = "pk",
         .semihost.version = "1.0",
 
         .helper.vendor    = "imperas.com",
@@ -63,7 +62,7 @@ VMI_PROC_INFO_FN(riscvProcInfo) {
 
         .semihost.vendor  = "riscv.ovpworld.org",
         .semihost.library = "semihosting",
-        .semihost.name    = "riscv64Newlib",
+        .semihost.name    = "pk",
         .semihost.version = "1.0",
 
         .helper.vendor    = "imperas.com",

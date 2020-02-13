@@ -2877,6 +2877,7 @@ inline static vmiFPRC mapRMDescToRC(riscvRMDesc rm) {
         [RV_RM_RDN]     = vmi_FPR_NEG_INF,
         [RV_RM_RUP]     = vmi_FPR_POS_INF,
         [RV_RM_RMM]     = vmi_FPR_AWAY,
+        [RV_RM_ROD]     = vmi_FPR_ODD,
         [RV_RM_BAD5]    = vmi_FPR_CURRENT,
         [RV_RM_BAD6]    = vmi_FPR_CURRENT
     };
@@ -2948,10 +2949,11 @@ static Bool emitCheckLegalRM(riscvP riscv, riscvRMDesc rm) {
 //
 // Update current rounding mode if required
 //
-static Bool emitSetOperationRM(riscvMorphStateP state, riscvRMDesc rm) {
+static Bool emitSetOperationRM(riscvMorphStateP state) {
 
-    riscvP riscv   = state->riscv;
-    Bool   validRM = emitCheckLegalRM(riscv, rm);
+    riscvP      riscv   = state->riscv;
+    riscvRMDesc rm      = state->info.rm;
+    Bool        validRM = emitCheckLegalRM(riscv, rm);
 
     if(validRM) {
         vmimtFSetRounding(mapRMDescToRC(rm));
@@ -3021,7 +3023,7 @@ static RISCV_MORPH_FN(emitFUnop) {
     vmiFUnop      op    = state->attrs->fpUnop;
     vmiFPConfigCP ctrl  = getFPControl(state);
 
-    if(emitSetOperationRM(state, state->info.rm)) {
+    if(emitSetOperationRM(state)) {
         vmiReg flags = getFPFlagsMT(state);
         vmimtFUnopRR(type, op, fd, fs1, flags, ctrl);
         writeReg(riscv, fdA);
@@ -3044,7 +3046,7 @@ static RISCV_MORPH_FN(emitFBinop) {
     vmiFBinop     op    = state->attrs->fpBinop;
     vmiFPConfigCP ctrl  = getFPControl(state);
 
-    if(emitSetOperationRM(state, state->info.rm)) {
+    if(emitSetOperationRM(state)) {
         vmiReg flags = getFPFlagsMT(state);
         vmimtFBinopRRR(type, op, fd, fs1, fs2, flags, ctrl);
         writeReg(riscv, fdA);
@@ -3069,7 +3071,7 @@ static RISCV_MORPH_FN(emitFTernop) {
     vmiFTernop    op    = state->attrs->fpTernop;
     vmiFPConfigCP ctrl  = getFPControl(state);
 
-    if(emitSetOperationRM(state, state->info.rm)) {
+    if(emitSetOperationRM(state)) {
         vmiReg flags = getFPFlagsMT(state);
         vmimtFTernopRRRR(type, op, fd, fs1, fs2, fs3, flags, False, ctrl);
         writeReg(riscv, fdA);
@@ -5352,9 +5354,9 @@ static void emitUpdateVTypeVL(void) {
 }
 
 //
-// Implement VSetVL <rd>, <rs1>, <rs2> operation
+// Emit VSetVL <rd>, <rs1>, <rs2> embedded function call
 //
-static RISCV_MORPH_FN(emitVSetVLRRR) {
+static void emitVSetVLRRRCB(riscvMorphStateP state) {
 
     riscvP       riscv = state->riscv;
     riscvRegDesc rdA   = getRVReg(state, 0);
@@ -5365,15 +5367,46 @@ static RISCV_MORPH_FN(emitVSetVLRRR) {
     vmiReg       rs2   = getVMIReg(riscv, rs2A);
     Uns32        bits  = 32;
 
-    // this instruction updates vtype and vl
-    emitUpdateVTypeVL();
-
     // call function (may cause exception for invalid SEW)
     vmimtArgProcessor();
     vmiCallFn cb = handleVSetVLArg1(riscv, bits, rs1);
     vmimtArgReg(bits, rs2);
     vmimtCallResultAttrs(cb, bits, rd, VMCA_EXCEPTION|VMCA_NO_INVALIDATE);
     writeRegSize(riscv, rdA, bits);
+}
+
+//
+// Emit VSetVL <rd>, <rs1>, <vtypei> embedded function call
+//
+static void emitVSetVLRRCCB(riscvMorphStateP state) {
+
+    riscvP       riscv = state->riscv;
+    riscvRegDesc rdA   = getRVReg(state, 0);
+    riscvRegDesc rs1A  = getRVReg(state, 1);
+    vmiReg       rd    = getVMIReg(riscv, rdA);
+    vmiReg       rs1   = getVMIReg(riscv, rs1A);
+    Uns8         vsew  = state->info.vsew;
+    Uns8         vlmul = state->info.vlmul;
+    Uns32        bits  = 32;
+
+    // call update function (SEW is known to be valid)
+    vmimtArgProcessor();
+    vmiCallFn cb = handleVSetVLArg1(riscv, bits, rs1);
+    vmimtArgUns32((vsew<<2)+vlmul);
+    vmimtCallResultAttrs(cb, bits, rd, VMCA_NO_INVALIDATE);
+    writeRegSize(riscv, rdA, bits);
+}
+
+//
+// Implement VSetVL <rd>, <rs1>, <rs2> operation
+//
+static RISCV_MORPH_FN(emitVSetVLRRR) {
+
+    // this instruction updates vtype and vl
+    emitUpdateVTypeVL();
+
+    // emit VSetVL <rd>, <rs1>, <rs2> embedded function call
+    emitVSetVLRRRCB(state);
 
     // zero vstart register on instruction completion
     setVStartZero(state);
@@ -5384,18 +5417,120 @@ static RISCV_MORPH_FN(emitVSetVLRRR) {
 }
 
 //
+// Implement VSetVL <rd>, <rs1>, <rs2> operation with invalid SEW
+//
+static void emitVSetVLRRCBadSEW(riscvMorphStateP state) {
+
+    riscvP       riscv = state->riscv;
+    riscvRegDesc rdA   = getRVReg(state, 0);
+    vmiReg       rd    = getVMIReg(riscv, rdA);
+    Uns8         vsew  = state->info.vsew;
+    Uns32        bits  = 32;
+
+    // update using invalid SEW
+    vmiCallFn cb = (vmiCallFn)setVLSEWLMULInt;
+
+    // use embedded call
+    vmimtArgProcessor();
+    vmimtArgUns32(0);       // vl (ignored)
+    vmimtArgUns32(vsew);    // sew
+    vmimtArgUns32(0);       // vlmul (ignored)
+    vmimtCallResultAttrs(cb, bits, rd, VMCA_NO_INVALIDATE);
+    writeRegSize(riscv, rdA, bits);
+}
+
+//
+// Implement VSetVL <rd>, zero, <rs2> operation using maximum vector length
+//
+static void emitVSetVLRR0MaxVL(riscvMorphStateP state) {
+
+    riscvP           riscv      = state->riscv;
+    riscvBlockStateP blockState = riscv->blockState;
+    Uns8             vsew       = state->info.vsew;
+    Uns8             vlmul      = state->info.vlmul;
+    riscvSEWMt       SEW        = riscvValidSEW(riscv, vsew);
+    riscvVLMULMt     VLMUL      = vlmulToVLMUL(vlmul);
+
+    if(
+        (blockState->SEWMt     == SEW)   &&
+        (blockState->VLMULMt   == VLMUL) &&
+        (blockState->VLClassMt == VLCLASSMT_MAX)
+    ) {
+        // no change to previous state
+        riscvRegDesc rdA  = getRVReg(state, 0);
+        vmiReg       rd   = getVMIReg(riscv, rdA);
+        Uns32        bits = 32;
+
+        // assign result
+        vmimtMoveRR(bits, rd, CSR_REG_MT(vl));
+        writeRegSize(riscv, rdA, bits);
+
+    } else {
+
+        // update to possibly different configuration
+        emitVSetVLRRCCB(state);
+
+        // reset knowledge of registers that have top parts zeroed unless
+        // previous configuration had the same VLMUL and was also set to
+        // maximum size
+        if(
+            (blockState->VLClassMt != VLCLASSMT_MAX) ||
+            (blockState->VLMULMt   != VLMUL)
+        ) {
+            blockState->VZeroTopMt[VTZ_SINGLE] = 0;
+            blockState->VZeroTopMt[VTZ_GROUP]  = 0;
+        }
+
+        // update morph-time VLClass, SEW and VLMUL, which are now known
+        blockState->VLClassMt = VLCLASSMT_MAX;
+        blockState->SEWMt     = SEW;
+        blockState->VLMULMt   = VLMUL;
+    }
+}
+
+//
+// Implement VSetVL <rd>, zero, <rs2> operation preserving vector length
+//
+static void emitVSetVLRR0SameVL(riscvMorphStateP state) {
+
+    riscvP           riscv      = state->riscv;
+    riscvBlockStateP blockState = riscv->blockState;
+    Uns8             vsew       = state->info.vsew;
+    Uns8             vlmul      = state->info.vlmul;
+    riscvSEWMt       SEW        = riscvValidSEW(riscv, vsew);
+    riscvVLMULMt     VLMUL      = vlmulToVLMUL(vlmul);
+
+    if((blockState->SEWMt == SEW) && (blockState->VLMULMt == VLMUL)) {
+
+        // no change to previous state
+        riscvRegDesc rdA  = getRVReg(state, 0);
+        vmiReg       rd   = getVMIReg(riscv, rdA);
+        Uns32        bits = 32;
+
+        // assign result
+        vmimtMoveRR(bits, rd, CSR_REG_MT(vl));
+        writeRegSize(riscv, rdA, bits);
+
+    } else {
+
+        // update to different configuration
+        emitVSetVLRRCCB(state);
+
+        // terminate the block after this instruction because VLClass is now
+        // unknown
+        vmimtEndBlock();
+    }
+}
+
+//
 // Implement VSetVL <rd>, <rs1>, <vtypei> operation
 //
 static RISCV_MORPH_FN(emitVSetVLRRC) {
 
     riscvP       riscv = state->riscv;
-    riscvRegDesc rdA   = getRVReg(state, 0);
     riscvRegDesc rs1A  = getRVReg(state, 1);
-    vmiReg       rd    = getVMIReg(riscv, rdA);
     vmiReg       rs1   = getVMIReg(riscv, rs1A);
-    Uns32        bits  = 32;
     Uns8         vsew  = state->info.vsew;
-    Uns8         vlmul = state->info.vlmul;
     riscvSEWMt   SEW   = riscvValidSEW(riscv, vsew);
 
     // this instruction updates vtype and vl
@@ -5403,56 +5538,30 @@ static RISCV_MORPH_FN(emitVSetVLRRC) {
 
     if(!SEW) {
 
-        vmiCallFn cb = (vmiCallFn)setVLSEWLMULInt;
-
         // update using invalid SEW
-        vmimtArgProcessor();
-        vmimtArgUns32(0);       // vl (ignored)
-        vmimtArgUns32(vsew);    // sew
-        vmimtArgUns32(0);       // vlmul (ignored)
-        vmimtCallResultAttrs(cb, bits, rd, VMCA_NO_INVALIDATE);
-        writeRegSize(riscv, rdA, bits);
+        emitVSetVLRRCBadSEW(state);
 
         // terminate the block after this instruction
         vmimtEndBlock();
 
+    } else if(!VMI_ISNOREG(rs1)) {
+
+        // update to unknown vector length
+        emitVSetVLRRCCB(state);
+
+        // terminate the block after this instruction because VLClass is now
+        // unknown
+        vmimtEndBlock();
+
+    } else if(riscv->configInfo.vect_version==RVVV_0_7_1) {
+
+        // update to maximum vector length
+        emitVSetVLRR0MaxVL(state);
+
     } else {
 
-        // call update function (SEW is known to be valid)
-        vmimtArgProcessor();
-        vmiCallFn cb = handleVSetVLArg1(riscv, bits, rs1);
-        vmimtArgUns32((vsew<<2)+vlmul);
-        vmimtCallResultAttrs(cb, bits, rd, VMCA_NO_INVALIDATE);
-        writeRegSize(riscv, rdA, bits);
-
-        if(VMI_ISNOREG(rs1)) {
-
-            riscvBlockStateP blockState = riscv->blockState;
-            riscvVLMULMt     VLMUL      = vlmulToVLMUL(vlmul);
-
-            // reset knowledge of registers that have top parts zeroed unless
-            // previous configuration had the same VLMUL and was also set to
-            // maximum size
-            if(
-                (blockState->VLClassMt != VLCLASSMT_MAX) ||
-                (blockState->VLMULMt   != VLMUL)
-            ) {
-                blockState->VZeroTopMt[VTZ_SINGLE] = 0;
-                blockState->VZeroTopMt[VTZ_GROUP]  = 0;
-            }
-
-            // update morph-time VLClass, SEW and VLMUL, which are now known,
-            // and reset record of vectors known to have top half zeroed
-            blockState->VLClassMt = VLCLASSMT_MAX;
-            blockState->SEWMt     = SEW;
-            blockState->VLMULMt   = VLMUL;
-
-        } else {
-
-            // terminate the block after this instruction because VLClass is now
-            // unknown
-            vmimtEndBlock();
-        }
+        // update preserving vector length
+        emitVSetVLRR0SameVL(state);
     }
 
     // zero vstart register on instruction completion
@@ -6468,24 +6577,22 @@ typedef enum vxrmE {
     Uns##_BITS discard                                      \
 ) {                                                         \
     Uns##_BITS msbMask = 1ULL<<((_BITS)-1);                 \
+    Bool       vd      = result & 1;                        \
+    Bool       vdm1    = discard & msbMask;                 \
     Bool       round;                                       \
                                                             \
     switch(fprm) {                                          \
         case VXRM_RNU:                                      \
-            round = discard & msbMask;                      \
+            round = vdm1;                                   \
             break;                                          \
         case VXRM_RNE:                                      \
-            if(discard==msbMask) {                          \
-                round = result & 1;                         \
-            } else {                                        \
-                round = discard & msbMask;                  \
-            }                                               \
+            round = (discard==msbMask) ? vd : vdm1;         \
             break;                                          \
         case VXRM_RDN:                                      \
             round = 0;                                      \
             break;                                          \
         case VXRM_ROD:                                      \
-            round = discard && !(result & 1);               \
+            round = !vd && discard;                         \
             break;                                          \
         default:                                            \
             VMI_ABORT("Unexpected rounding mode %u", fprm); \
@@ -6622,7 +6729,7 @@ static RISCV_MORPHV_FN(emitVRABinaryCB) {
 }
 
 //
-// Per-element callback for saturating instructions with register and constant
+// Per-element callback for averaging instructions with register and constant
 // operands
 //
 static RISCV_MORPHV_FN(emitVIABinaryCB) {
@@ -6854,7 +6961,7 @@ static RISCV_MORPHV_FN(emitVRUnaryFltCB) {
     vmiFUnop      op   = state->attrs->fpUnop;
     vmiFPConfigCP ctrl = getFPControl(state);
 
-    if(emitSetOperationRM(state, RV_RM_CURRENT)) {
+    if(emitSetOperationRM(state)) {
         vmiReg flags = getFPFlagsMT(state);
         vmimtFUnopRR(type, op, fd, fs1, flags, ctrl);
     }
@@ -6876,7 +6983,7 @@ static void emitVRBinaryFltInt(
     vmiFBinop     op   = state->attrs->fpBinop;
     vmiFPConfigCP ctrl = getFPControl(state);
 
-    if(emitSetOperationRM(state, RV_RM_CURRENT)) {
+    if(emitSetOperationRM(state)) {
         vmiReg flags = getFPFlagsMT(state);
         vmimtFBinopRRR(type, op, fd, fs1, fs2, flags, ctrl);
     }
@@ -6916,7 +7023,7 @@ static void emitVRMAddFltInt(
     vmiFTernop    op   = state->attrs->fpTernop;
     vmiFPConfigCP ctrl = getFPControl(state);
 
-    if(emitSetOperationRM(state, RV_RM_CURRENT)) {
+    if(emitSetOperationRM(state)) {
         vmiReg flags = getFPFlagsMT(state);
         vmimtFTernopRRRR(type, op, fd, fs1, fs2, fs3, flags, False, ctrl);
     }
@@ -7010,14 +7117,15 @@ static vmiFType getVConvertType(
 //
 static RISCV_MORPHV_FN(emitVRConvertFltCB) {
 
+    riscvP        riscv = state->riscv;
     vmiReg        fd    = id->r[0];
     vmiReg        fs    = id->r[1];
     vmiFType      typeD = getVConvertType(state, id, 0);
     vmiFType      typeS = getVConvertType(state, id, 1);
+    vmiFPRC       rc    = mapRMDescToRC(state->info.rm);
     vmiFPConfigCP ctrl  = getFPControl(state);
-    vmiFPRC       rc    = vmi_FPR_CURRENT;
 
-    if(emitSetOperationRM(state, RV_RM_CURRENT)) {
+    if(emitCheckLegalRM(riscv, state->info.rm)) {
         vmiReg flags = getFPFlagsMT(state);
         vmimtFConvertRR(typeD, fd, typeS, fs, rc, flags, ctrl);
     }
@@ -7040,7 +7148,7 @@ static RISCV_MORPHV_FN(emitVRedBinaryFltCB) {
     vmiFBinop     op   = state->attrs->fpBinop;
     vmiFPConfigCP ctrl = getFPControl(state);
 
-    if(emitSetOperationRM(state, RV_RM_CURRENT)) {
+    if(emitSetOperationRM(state)) {
         vmiReg flags = getFPFlagsMT(state);
         vmimtFBinopRRR(type, op, fd, fs1, fs2, flags, ctrl);
     }

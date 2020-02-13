@@ -114,9 +114,9 @@ Uns32 riscvGetFlenArch(riscvP riscv) {
 }
 
 //
-// Register extension callback block with the base model
+// Register extension callback block for the id with the base model
 //
-void riscvRegisterExtCB(riscvP riscv, riscvExtCBP extCB) {
+void riscvRegisterExtCB(riscvP riscv, riscvExtCBP extCB, Uns32 id) {
 
     riscvExtCBPP tail = &riscv->extCBs;
     riscvExtCBP  this;
@@ -127,6 +127,21 @@ void riscvRegisterExtCB(riscvP riscv, riscvExtCBP extCB) {
 
     *tail = extCB;
     extCB->next = 0;
+    extCB->id   = id;
+}
+
+//
+// Return the indexed extension's extCB clientData
+//
+void *riscvGetExtClientData(riscvP riscv, Uns32 id) {
+
+    riscvExtCBP this = riscv->extCBs;
+
+    while(this && (this->id!=id)) {
+        this = this->next;
+    }
+
+    return this ? this->clientData : 0;
 }
 
 //

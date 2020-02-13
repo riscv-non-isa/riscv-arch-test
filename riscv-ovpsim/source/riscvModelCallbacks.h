@@ -43,9 +43,19 @@
 //
 #define RISCV_REGISTER_EXT_CB_FN(_NAME) void _NAME( \
     riscvP      riscv,  \
-    riscvExtCBP extCB   \
+    riscvExtCBP extCB,  \
+    Uns32       id      \
 )
 typedef RISCV_REGISTER_EXT_CB_FN((*riscvRegisterExtCBFn));
+
+//
+// Return the indexed extension's extCB clientData
+//
+#define RISCV_GET_EXT_CLIENT_DATA_FN(_NAME) void * _NAME( \
+    riscvP riscv,      \
+    Uns32  id          \
+)
+typedef RISCV_GET_EXT_CLIENT_DATA_FN((*riscvGetExtClientDataFn));
 
 //
 // Return the indexed extension configuration
@@ -228,6 +238,7 @@ typedef struct riscvModelCBS {
 
     // from riscvUtils.h
     riscvRegisterExtCBFn      registerExtCB;
+    riscvGetExtClientDataFn   getExtClientData;
     riscvGetExtConfigFn       getExtConfig;
     riscvGetXlenFn            getXlenMode;
     riscvGetXlenFn            getXlenArch;
@@ -257,8 +268,9 @@ typedef struct riscvModelCBS {
 //
 typedef struct riscvExtCBS {
 
-    // link pointer (maintained by base model)
+    // link pointer and id (maintained by base model)
     riscvExtCBP               next;
+    Uns32                     id;
 
     // handle back to client data
     void                     *clientData;

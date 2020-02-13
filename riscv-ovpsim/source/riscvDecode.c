@@ -324,7 +324,8 @@ typedef enum aqrlSpecE {
 // Define the encoding of rounding mode specifier in an instruction
 //
 typedef enum rmSpecE {
-    RM_NA,              // no rounding mode
+    RM_NA,              // no rounding mode (or current mode)
+    RM_ROD,             // round to odd
     RM_14_12,           // rounding mode in bits 14:12
 } rmSpec;
 
@@ -384,8 +385,8 @@ typedef struct opAttrsS {
     memBitsSpec       memBits  :  4;    // load/store size specification
     unsExtSpec        unsExt   :  4;    // unsigned extend specification
     Uns32             priDelta :  4;    // decode priority delta
+    rmSpec            rm       :  4;    // rounding mode specification
     aqrlSpec          aqrl     :  1;    // acquire/release specification
-    rmSpec            rm       :  1;    // rounding mode specification
     vsewSpec          vsew     :  1;    // vsew specification
     vlmulSpec         vlmul    :  1;    // vlmul specification
     firstFaultSpec    ff       :  1;    // first fault specification
@@ -716,6 +717,7 @@ typedef enum riscvIType32E {
     IT32_VFNCVT_FXU_V,
     IT32_VFNCVT_FX_V,
     IT32_VFNCVT_FF_V,
+    IT32_VFNCVTROD_FF_V,
     IT32_VFSQRT_V,
     IT32_VFCLASS_V,
     IT32_VFMUL_VV,
@@ -1296,7 +1298,6 @@ const static decodeEntry32 decodeCommon32[] = {
     DECODE32_ENTRY(     VFSGNJX_VV, "|001010|.|.....|.....|001|.....|1010111|"),
     DECODE32_ENTRY(        VFEQ_VV, "|011000|.|.....|.....|001|.....|1010111|"),
     DECODE32_ENTRY(       VFLTE_VV, "|011001|.|.....|.....|001|.....|1010111|"),
-    DECODE32_ENTRY(       VFORD_VV, "|011010|.|.....|.....|001|.....|1010111|"),
     DECODE32_ENTRY(        VFLT_VV, "|011011|.|.....|.....|001|.....|1010111|"),
     DECODE32_ENTRY(        VFNE_VV, "|011100|.|.....|.....|001|.....|1010111|"),
     DECODE32_ENTRY(       VFDIV_VV, "|100000|.|.....|.....|001|.....|1010111|"),
@@ -1561,6 +1562,7 @@ const static decodeEntry32 decodeVectorV71[] = {
 
     // V-extension FVV-type instructions
     //                               |funct6|m|  vs2|  vs1|FVV|  vs3| opcode|
+    DECODE32_ENTRY(       VFORD_VV, "|011010|.|.....|.....|001|.....|1010111|"),
     DECODE32_ENTRY(       VFMV_F_S, "|001100|1|.....|00000|001|.....|1010111|"),
 
     // V-extension FVF-type instructions
@@ -1594,6 +1596,7 @@ const static decodeEntry32 decodeVectorV72[] = {
 
     // V-extension FVV-type instructions
     //                               |funct6|m|  vs2|  vs1|FVV|  vs3| opcode|
+    DECODE32_ENTRY( VFNCVTROD_FF_V, "|100010|.|.....|10101|001|.....|1010111|"),
     DECODE32_ENTRY(       VFMV_F_S, "|010000|1|.....|00000|001|.....|1010111|"),
 
     // V-extension FVF-type instructions
@@ -1878,10 +1881,10 @@ const static opAttrs attrsArray32[] = {
     ATTR32_VV        (       VSRA_VV,        VSRA_VR, RVANYV,  "vsra"     ),
     ATTR32_VV        (      VSSRL_VV,       VSSRL_VR, RVANYV,  "vssrl"    ),
     ATTR32_VV        (      VSSRA_VV,       VSSRA_VR, RVANYV,  "vssra"    ),
-    ATTR32_VV        (      VNSRL_VV,       VNSRL_VR, RVANYV,  "vnsrl"    ),
-    ATTR32_VV        (      VNSRA_VV,       VNSRA_VR, RVANYV,  "vnsra"    ),
-    ATTR32_VV        (    VNCLIPU_VV,     VNCLIPU_VR, RVANYV,  "vnclipu"  ),
-    ATTR32_VV        (     VNCLIP_VV,      VNCLIP_VR, RVANYV,  "vnclip"   ),
+    ATTR32_VVN       (      VNSRL_VV,       VNSRL_VR, RVANYV,  "vnsrl"    ),
+    ATTR32_VVN       (      VNSRA_VV,       VNSRA_VR, RVANYV,  "vnsra"    ),
+    ATTR32_VVN       (    VNCLIPU_VV,     VNCLIPU_VR, RVANYV,  "vnclipu"  ),
+    ATTR32_VVN       (     VNCLIP_VV,      VNCLIP_VR, RVANYV,  "vnclip"   ),
     ATTR32_VS        (  VWREDSUMU_VS,   VWREDSUMU_VS, RVANYV,  "vwredsumu"),
     ATTR32_VS        (   VWREDSUM_VS,    VWREDSUM_VS, RVANYV,  "vwredsum" ),
     ATTR32_VV        (      VDOTU_VV,       VDOTU_VV, RVANYV,  "vdotu"    ),
@@ -1918,11 +1921,12 @@ const static opAttrs attrsArray32[] = {
     ATTR32_V         (  VFWCVT_FXU_V,   VFWCVT_FXU_V, RVANYV,  "vfwcvt.f.xu"),
     ATTR32_V         (   VFWCVT_FX_V,    VFWCVT_FX_V, RVANYV,  "vfwcvt.f.x" ),
     ATTR32_V         (   VFWCVT_FF_V,    VFWCVT_FF_V, RVANYV,  "vfwcvt.f.f" ),
-    ATTR32_V         (  VFNCVT_XUF_V,   VFNCVT_XUF_V, RVANYV,  "vfncvt.xu.f"),
-    ATTR32_V         (   VFNCVT_XF_V,    VFNCVT_XF_V, RVANYV,  "vfncvt.x.f" ),
-    ATTR32_V         (  VFNCVT_FXU_V,   VFNCVT_FXU_V, RVANYV,  "vfncvt.f.xu"),
-    ATTR32_V         (   VFNCVT_FX_V,    VFNCVT_FX_V, RVANYV,  "vfncvt.f.x" ),
-    ATTR32_V         (   VFNCVT_FF_V,    VFNCVT_FF_V, RVANYV,  "vfncvt.f.f" ),
+    ATTR32_VN        (  VFNCVT_XUF_V,   VFNCVT_XUF_V, RVANYV,  "vfncvt.xu.f"),
+    ATTR32_VN        (   VFNCVT_XF_V,    VFNCVT_XF_V, RVANYV,  "vfncvt.x.f" ),
+    ATTR32_VN        (  VFNCVT_FXU_V,   VFNCVT_FXU_V, RVANYV,  "vfncvt.f.xu"),
+    ATTR32_VN        (   VFNCVT_FX_V,    VFNCVT_FX_V, RVANYV,  "vfncvt.f.x" ),
+    ATTR32_VN        (   VFNCVT_FF_V,    VFNCVT_FF_V, RVANYV,  "vfncvt.f.f" ),
+    ATTR32_W_ROD     (VFNCVTROD_FF_V,    VFNCVT_FF_V, RVANYV,  "vfncvt.rod.f.f"),
     ATTR32_V         (      VFSQRT_V,       VFSQRT_V, RVANYV,  "vfsqrt"     ),
     ATTR32_V         (     VFCLASS_V,      VFCLASS_V, RVANYV,  "vfclass"    ),
     ATTR32_VV        (      VFMUL_VV,       VFMUL_VR, RVANYV,  "vfmul"      ),
@@ -2028,10 +2032,10 @@ const static opAttrs attrsArray32[] = {
     ATTR32_VU        (       VSRA_VI,        VSRA_VI, RVANYV,  "vsra"      ),
     ATTR32_VU        (      VSSRL_VI,       VSSRL_VI, RVANYV,  "vssrl"     ),
     ATTR32_VU        (      VSSRA_VI,       VSSRA_VI, RVANYV,  "vssra"     ),
-    ATTR32_VU        (      VNSRL_VI,       VNSRL_VI, RVANYV,  "vnsrl"     ),
-    ATTR32_VU        (      VNSRA_VI,       VNSRA_VI, RVANYV,  "vnsra"     ),
-    ATTR32_VU        (    VNCLIPU_VI,     VNCLIPU_VI, RVANYV,  "vnclipu"   ),
-    ATTR32_VU        (     VNCLIP_VI,      VNCLIP_VI, RVANYV,  "vnclip"    ),
+    ATTR32_VUN       (      VNSRL_VI,       VNSRL_VI, RVANYV,  "vnsrl"     ),
+    ATTR32_VUN       (      VNSRA_VI,       VNSRA_VI, RVANYV,  "vnsra"     ),
+    ATTR32_VUN       (    VNCLIPU_VI,     VNCLIPU_VI, RVANYV,  "vnclipu"   ),
+    ATTR32_VUN       (     VNCLIP_VI,      VNCLIP_VI, RVANYV,  "vnclip"    ),
 
     // V-extension IVX-type instructions
     ATTR32_VX        (       VADD_VX,        VADD_VR, RVANYV,  "vadd"      ),
@@ -2073,10 +2077,10 @@ const static opAttrs attrsArray32[] = {
     ATTR32_VX        (       VSRA_VX,        VSRA_VR, RVANYV,  "vsra"      ),
     ATTR32_VX        (      VSSRL_VX,       VSSRL_VR, RVANYV,  "vssrl"     ),
     ATTR32_VX        (      VSSRA_VX,       VSSRA_VR, RVANYV,  "vssra"     ),
-    ATTR32_VX        (      VNSRL_VX,       VNSRL_VR, RVANYV,  "vnsrl"     ),
-    ATTR32_VX        (      VNSRA_VX,       VNSRA_VR, RVANYV,  "vnsra"     ),
-    ATTR32_VX        (    VNCLIPU_VX,     VNCLIPU_VR, RVANYV,  "vnclipu"   ),
-    ATTR32_VX        (     VNCLIP_VX,      VNCLIP_VR, RVANYV,  "vnclip"    ),
+    ATTR32_VXN       (      VNSRL_VX,       VNSRL_VR, RVANYV,  "vnsrl"     ),
+    ATTR32_VXN       (      VNSRA_VX,       VNSRA_VR, RVANYV,  "vnsra"     ),
+    ATTR32_VXN       (    VNCLIPU_VX,     VNCLIPU_VR, RVANYV,  "vnclipu"   ),
+    ATTR32_VXN       (     VNCLIP_VX,      VNCLIP_VR, RVANYV,  "vnclip"    ),
     ATTR32_VX3       (   VWSMACCU_VX,    VWSMACCU_VR, RVANYV,  "vwsmaccu"  ),
     ATTR32_VX3       (    VWSMACC_VX,     VWSMACC_VR, RVANYV,  "vwsmacc"   ),
     ATTR32_VX3       (  VWSMACCSU_VX,   VWSMACCSU_VR, RVANYV,  "vwsmaccsu" ),
@@ -3070,7 +3074,7 @@ static Bool getUnsExt(riscvInstrInfoP info, unsExtSpec unsExt) {
 //
 static riscvRMDesc getRM(riscvInstrInfoP info, rmSpec rm) {
 
-    riscvRMDesc result = RV_RM_NA;
+    riscvRMDesc result = RV_RM_CURRENT;
     Uns32       instr  = info->instruction;
 
     const static riscvRMDesc map[] = {
@@ -3080,6 +3084,9 @@ static riscvRMDesc getRM(riscvInstrInfoP info, rmSpec rm) {
 
     switch(rm) {
         case RM_NA:
+            break;
+        case RM_ROD:
+            result = RV_RM_ROD;
             break;
         case RM_14_12:
             result = map[U_14_12(instr)];
@@ -3217,6 +3224,37 @@ static void fixFPPseudoInstructions(riscvInstrInfoP info) {
 }
 
 //
+// Return VI type specification encoded in the instruction
+//
+static riscvVIType getVIType(
+    riscvP          riscv,
+    riscvInstrInfoP info,
+    riscvVIType     VIType
+) {
+    // select decode table depending on vector instruction version
+    Bool use071 = (vectorVersion(riscv)==RVVV_0_7_1);
+
+    switch(VIType) {
+        case RV_VIT_VN:
+            VIType = use071 ? RV_VIT_V : RV_VIT_W;
+            break;
+        case RV_VIT_VVN:
+            VIType = use071 ? RV_VIT_VV : RV_VIT_WV;
+            break;
+        case RV_VIT_VIN:
+            VIType = use071 ? RV_VIT_VI : RV_VIT_WI;
+            break;
+        case RV_VIT_VXN:
+            VIType = use071 ? RV_VIT_VX : RV_VIT_WX;
+            break;
+        default:
+            break;
+    }
+
+    return VIType;
+}
+
+//
 // Interpret an instruction using the given attributes
 //
 static void interpretInstruction(
@@ -3260,7 +3298,7 @@ static void interpretInstruction(
     info->rm        = getRM(info, attrs->rm);
     info->vsew      = getVSEW(info, attrs->vsew);
     info->vlmul     = getVLMUL(info, attrs->vlmul);
-    info->VIType    = attrs->VIType;
+    info->VIType    = getVIType(riscv, info, attrs->VIType);
     info->isFF      = getFirstFault(info, attrs->ff);
     info->nf        = getNumFields(info, attrs->nf);
 

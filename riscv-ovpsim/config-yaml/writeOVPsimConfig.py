@@ -305,7 +305,7 @@ def check_output_file (output_filename):
 
     override_str = "--override riscvOVPsim/cpu/"
 
-    # get overrides fmor created control file
+    # get overrides from created control file
     overrides = []
     with open(output_filename) as f:
         for line in f:
@@ -343,7 +343,8 @@ def check_output_file (output_filename):
             line = line.rstrip("\n\r")
             if not override_str in line: continue
             if not override_str in line: fatal ("check_output_file ("+str(logfile_filename)+") does not have at least one line with '"+override_str+"' in!")
-            if "riscv32Newlib" in line: continue
+            # if "riscv32Newlib" in line: continue # replaced
+            if "pk" in line: continue # ToDo UNTESTED
             override = line.split("/")[2]
             override = override.split("=")[0]
             full_overrides.append(override)
