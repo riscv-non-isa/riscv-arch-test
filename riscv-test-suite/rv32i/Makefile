@@ -30,32 +30,27 @@ endif
 # Build and run assembly tests
 
 %.log: %.elf
-	$(RUN_TARGET)
+	$(V) echo "Execute $(@)"
+	$(V) $(RUN_TARGET)
 
 
 define compile_template
 
-$$($(1)_tests): %.elf: $(src_dir)/%.S
-	@mkdir -p $(work_dir_isa)/$$(@D)
-	$(COMPILE_TARGET)
-$(1)_tests += $$($(1)_p_tests)
+$(work_dir_isa)/%.elf: $(src_dir)/%.S
+	$(V) echo "Compile $$(@)"
+	@mkdir -p $$(@D)
+	$(V) $(COMPILE_TARGET)
 
-.PHONY: $(1)
-
-tests += $$($(1)_tests)
+.PRECIOUS: $(work_dir_isa)/%.elf
 
 endef
 
-$(eval $(call compile_template,rv32i,-march=rv32i -mabi=ilp32))
+$(eval $(call compile_template,-march=rv32i -mabi=ilp32))
 
-test_log = $(patsubst %.elf,%.log,$(target_tests))
+target_elf = $(foreach e,$(target_tests),$(work_dir_isa)/$(e))
+target_log = $(patsubst %.elf,%.log,$(target_elf))
 
-run: $(test_log)
-
-#------------------------------------------------------------
-# Default
-
-all: $(tests_dump)
+run: $(target_log)
 
 #------------------------------------------------------------
 # Clean up

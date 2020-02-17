@@ -17,7 +17,10 @@
         RVTEST_PASS                                                           \
 
 #define RV_COMPLIANCE_RV32M                                                   \
-        RVTEST_RV32M                                                          \
+        RVTEST_RV32M       
+        
+#define RV_COMPLIANCE_RV64V                                                  \
+        RVTEST_RV64V                                                          \
 
 #define RV_COMPLIANCE_CODE_BEGIN                                              \
         RVTEST_CODE_BEGIN                                                     \

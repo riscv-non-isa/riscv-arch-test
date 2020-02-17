@@ -40,7 +40,7 @@ else
     export REDIR=>/dev/null
 endif
 
-PARALLEL ?= 0
+PARALLEL ?= 1
 ifeq ($(RISCV_TARGET),spike)
 	PARALLEL = 0
 endif
@@ -49,8 +49,6 @@ ifeq ($(PARALLEL),0)
 else
     ifeq ($(RISCV_TARGET),riscvOVPsim)
         JOBS ?= -j8 --max-load=4
-    else
-        JOBS ?= -j4 --max-load=2
     endif
 endif
 
