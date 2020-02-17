@@ -51,24 +51,34 @@
 
 #else
 
-#define RSIZE 4
+#if (__riscv_xlen==32)
+#    define RSIZE 4
+#    define SX sw
+#    define LX lw
+#endif
+#if (__riscv_xlen==64)
+#    define RSIZE 8
+#    define SX sd
+#    define LX ld
+#endif
+
 // _SP = (volatile register)
 #define LOCAL_IO_PUSH(_SP)                                              \
     la      _SP,  begin_regstate;                                       \
-    sw      x1,   (1*RSIZE)(_SP);                                       \
-    sw      x5,   (5*RSIZE)(_SP);                                       \
-    sw      x6,   (6*RSIZE)(_SP);                                       \
-    sw      x8,   (8*RSIZE)(_SP);                                       \
-    sw      x10,  (10*RSIZE)(_SP);
+    SX      x1,   (1*RSIZE)(_SP);                                       \
+    SX      x5,   (5*RSIZE)(_SP);                                       \
+    SX      x6,   (6*RSIZE)(_SP);                                       \
+    SX      x8,   (8*RSIZE)(_SP);                                       \
+    SX      x10,  (10*RSIZE)(_SP);
 
 // _SP = (volatile register)
 #define LOCAL_IO_POP(_SP)                                               \
     la      _SP,   begin_regstate;                                      \
-    lw      x1,   (1*RSIZE)(_SP);                                       \
-    lw      x5,   (5*RSIZE)(_SP);                                       \
-    lw      x6,   (6*RSIZE)(_SP);                                       \
-    lw      x8,   (8*RSIZE)(_SP);                                       \
-    lw      x10,  (10*RSIZE)(_SP);
+    LX      x1,   (1*RSIZE)(_SP);                                       \
+    LX      x5,   (5*RSIZE)(_SP);                                       \
+    LX      x6,   (6*RSIZE)(_SP);                                       \
+    LX      x8,   (8*RSIZE)(_SP);                                       \
+    LX      x10,  (10*RSIZE)(_SP);
 
 #define LOCAL_IO_WRITE_GPR(_R)                                          \
     mv          a0, _R;                                                 \
