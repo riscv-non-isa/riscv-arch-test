@@ -318,6 +318,16 @@ The target environment needs setting up to allow the compliance tests to be run 
 
 This chapter provides information on the currently available targets and includes a short tutorial on how to add a new target.
 
+== Support for parallel make
+
+In order to speed compilation and execution runs, make can be run in parallel using options to control parallelism.
+
+Two variables are of importance here PARALLEL=<0|1> and JOBS=<-jX --max-load=Y> whereby X and Y are integer values
+
+Additionally the target selected, must be coded in such a way to support parallel execution, unfortunately some targets use common intermediate files, rather than unique files, this makes them unsuitable for parallel execution, these targets will need to be re-coded.
+
+At the moment the riscvOVPsim target will support parallel execution by default, and will select the options -j8 --max-load=4 - these can be overridden either by disable (PARALLEL=0), or redefinition JOBS="-j2 --max-load=2"
+
 === Imperas riscvOVPsim compliance simulator
 
 For tracing the test the following  macros are defined in `riscv-target/riscvOVPsim/compliance_io.h`:
