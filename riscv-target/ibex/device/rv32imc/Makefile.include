@@ -9,30 +9,28 @@ TARGET_FLAGS ?= $(RISCV_TARGET_FLAGS)
 RUN_TARGET=\
     $(TARGET_SIM) $(TARGET_FLAGS) \
         --term-after-cycles=100000 \
-        --raminit=$(work_dir_isa)/$<.vmem \
-        > $(work_dir_isa)/$(*).stdout \
-        2> $(work_dir_isa)/$@; \
-        grep "^SIGNATURE: " $(work_dir_isa)/$(*).stdout | sed 's/SIGNATURE: 0x//' \
-        > $(work_dir_isa)/$(*).signature.output
+        --raminit=$(<).vmem \
+        > $(*).stdout \
+        2> $@; \
+        grep "^SIGNATURE: " $(*).stdout | sed 's/SIGNATURE: 0x//' \
+        > $(*).signature.output
 
 RISCV_PREFIX   ?= riscv32-unknown-elf-
 RISCV_GCC      ?= $(RISCV_PREFIX)gcc
 RISCV_OBJDUMP  ?= $(RISCV_PREFIX)objdump
 RISCV_OBJCOPY  ?= $(RISCV_PREFIX)objcopy
-RISCV_NM       ?= $(RISCV_PREFIX)nm
 RISCV_READELF  ?= $(RISCV_PREFIX)readelf
 RISCV_GCC_OPTS ?= -static -mcmodel=medany -fvisibility=hidden -nostdlib -nostartfiles
 
 COMPILE_TARGET=\
-	$$(RISCV_GCC) $(2) $$(RISCV_GCC_OPTS) \
+	$$(RISCV_GCC) $(1) $$(RISCV_GCC_OPTS) \
 		-I$(ROOTDIR)/riscv-test-env/ \
 		-I$(ROOTDIR)/riscv-test-env/p/ \
 		-I$(TARGETDIR)/$(RISCV_TARGET)/ \
-		$(DEFINES) -T$(LDSCRIPT) $$< \
-		-o $(work_dir_isa)/$$@; \
-    $$(RISCV_OBJDUMP) -D $(work_dir_isa)/$$@ > $(work_dir_isa)/$$@.objdump; \
-    $$(RISCV_READELF) -a $(work_dir_isa)/$$@ > $(work_dir_isa)/$$@.readelf; \
-    $$(RISCV_NM) $(work_dir_isa)/$$@ > $(work_dir_isa)/$$@.nm; \
-    $$(RISCV_OBJCOPY) -O binary $(work_dir_isa)/$$@ $(work_dir_isa)/$$@.bin; \
-    srec_cat $(work_dir_isa)/$$@.bin -binary -offset 0x0000 -byte-swap 4 -o $(work_dir_isa)/$$@.vmem -vmem    
+		$(DEFINES) -T$(LDSCRIPT) $$(<) \
+		-o $$(@); \
+    $$(RISCV_OBJDUMP) -D $$(@) > $$(@).objdump; \
+    $$(RISCV_READELF) -a $$(@) > $$(@).readelf; \
+    $$(RISCV_OBJCOPY) -O binary $$(@) $$(@).bin; \
+    srec_cat $$(@).bin -binary -offset 0x0000 -byte-swap 4 -o $$(@).vmem -vmem    
     
