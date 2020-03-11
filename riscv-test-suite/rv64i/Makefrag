@@ -37,7 +37,6 @@ rv64i_sc_tests =    \
 	SRAIW \
 	SRLIW \
 	SLLW \
-	SRAIW \
 
 rv64i_tests = $(addsuffix .elf, $(rv64i_sc_tests))
 
