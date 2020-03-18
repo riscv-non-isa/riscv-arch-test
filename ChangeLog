@@ -1,5 +1,5 @@
 2020-03-18 Neel Gala <neelgala@gmail.com>
-		* fixed doc/README.adoc with correct version to pass the sanity-check in the doc/Makefile
+    * fixed doc/README.adoc with correct version to pass the sanity-check in the doc/Makefile
 
 2020-02-07 Prashanth Mundkur <prashanth.mundkur@gmail.com>
     * Support F extension on RV32 sail-riscv-c.
