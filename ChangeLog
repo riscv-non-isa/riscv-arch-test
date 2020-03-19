@@ -7,7 +7,7 @@
     * renamed rv32i/I-IO.S to rv32i/I-IO-01.S along with necessary changes to the reference files
       and Makefrag
     * renamed mbadaddr csr to mtval as raised in issue #31
-		* C.SWSP-01.S test updated to fix issue #37
+    * C.SWSP-01.S test updated to fix issue #37
 
 2020-03-18 Neel Gala <neelgala@gmail.com>
     * fixed doc/README.adoc with correct version to pass the sanity-check in the doc/Makefile
