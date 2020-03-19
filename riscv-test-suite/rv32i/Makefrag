@@ -75,7 +75,7 @@ rv32i_sc_tests = \
     I-NOP-01 \
     I-ECALL-01 \
     I-EBREAK-01 \
-    I-IO \
+    I-IO-01 \
 
 
 rv32i_tests = $(addsuffix .elf, $(rv32i_sc_tests))
