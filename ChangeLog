@@ -4,6 +4,8 @@
     * based on the above fixed the directory structure for riscv-targets where-ever applicable. Only
       tested riscvOVPsim and spike.
     * fixed script bugs for spike as well
+    * renamed rv32i/I-IO.S to rv32i/I-IO-01.S along with necessary changes to the reference files
+      and Makefrag
 
 2020-03-18 Neel Gala <neelgala@gmail.com>
     * fixed doc/README.adoc with correct version to pass the sanity-check in the doc/Makefile
