@@ -279,12 +279,12 @@ RV_COMPLIANCE_CODE_BEGIN
     # Exception handler
 _trap_handler:
     # increment return address
-    csrr    x30, mbadaddr
+    csrr    x30, mtval
     addi    x30, x30, -2
     csrw    mepc, x30
 
-    # store low bits of mbadaddr
-    csrr    x30, mbadaddr
+    # store low bits of mtval
+    csrr    x30, mtval
     andi    x30, x30, 3
     sw      x30, 0(x1)
 
