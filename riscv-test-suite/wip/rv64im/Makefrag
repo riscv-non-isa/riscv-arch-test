@@ -32,7 +32,6 @@ rv64im_sc_tests =    \
 	REMW \
 	REMUW \
 	DIVW \
-	REMUW \
 
 rv64im_tests = $(addsuffix .elf, $(rv64im_sc_tests))
 
