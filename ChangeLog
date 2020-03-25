@@ -1,3 +1,14 @@
+2020-03-19 Neel Gala <neelgala@gmail.com>
+    * restructuring the riscv-test-suite to indicate clearly what is deprecated, wip and usable
+      tests.
+    * based on the above fixed the directory structure for riscv-targets where-ever applicable. Only
+      tested riscvOVPsim and spike.
+    * fixed script bugs for spike as well
+    * renamed rv32i/I-IO.S to rv32i/I-IO-01.S along with necessary changes to the reference files
+      and Makefrag
+    * renamed mbadaddr csr to mtval as raised in issue #31
+    * C.SWSP-01.S test updated to fix issue #37
+
 2020-03-18 Neel Gala <neelgala@gmail.com>
     * fixed doc/README.adoc with correct version to pass the sanity-check in the doc/Makefile
 
