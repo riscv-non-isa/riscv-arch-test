@@ -408,7 +408,7 @@ RV_COMPLIANCE_CODE_END
 
 # Output data section.
 RV_COMPLIANCE_DATA_BEGIN
-
+	.fill 5, 4, -1   //padded for neg offset
 test_1_res:
 	.fill 5, 4, -1
 test_2_res:
