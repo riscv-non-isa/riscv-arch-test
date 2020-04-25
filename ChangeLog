@@ -1,3 +1,8 @@
+
+2020-04-24 Allen Baum <allen.baum@esperantotech.com>
+	* fixed the I-SB-01.S and I-SH-01.S tests and associated reference signatures to account
+	of tests with negative offsets (which causes stores outside the signature area)
+  
 2020-03-19 Neel Gala <neelgala@gmail.com>
     * restructuring the riscv-test-suite to indicate clearly what is deprecated, wip and usable
       tests.
