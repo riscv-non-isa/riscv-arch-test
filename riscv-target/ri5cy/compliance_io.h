@@ -30,7 +30,11 @@
 #ifndef _COMPLIANCE_IO_H
 #define _COMPLIANCE_IO_H
 
-/* #define RVTEST_IO_QUIET */
+#ifdef  RVTEST_ASSERT
+#  define RVTEST_IO_QUIET 0
+#else
+#  define RVTEST_IO_QUIET 1
+#endif
 
 //-----------------------------------------------------------------------
 // RV IO Macros (Character transfer by custom instruction)

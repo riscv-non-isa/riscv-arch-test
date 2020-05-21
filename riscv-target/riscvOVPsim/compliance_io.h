@@ -30,7 +30,11 @@
 #ifndef _COMPLIANCE_IO_H
 #define _COMPLIANCE_IO_H
 
-#define RVTEST_IO_QUIET
+#ifdef  RVTEST_ASSERT
+#  define RVTEST_IO_QUIET 0
+#else
+#  define RVTEST_IO_QUIET 1
+#endif
 
 //-----------------------------------------------------------------------
 // RV IO Macros (Character transfer by custom instruction)
@@ -40,7 +44,7 @@
 
 #define RVTEST_CUSTOM1 0x0005200B
 
-#ifdef RVTEST_IO_QUIET
+#if(RVTEST_IO_QUIET==1)
 
 #define RVTEST_IO_INIT
 #define RVTEST_IO_WRITE_STR(_SP, _STR)
@@ -82,7 +86,8 @@
 
 #define LOCAL_IO_WRITE_GPR(_R)                                          \
     mv          a0, _R;                                                 \
-    jal         FN_WriteA0;
+    la          t0, FN_WriteA0;                                         \
+    jalr         t0;
 
 #define LOCAL_IO_WRITE_FPR(_F)                                          \
     fmv.x.s     a0, _F;                                                 \
@@ -109,7 +114,13 @@
     li          t0, _I;                                                 \
     beq         s0, t0, 20002f;                                         \
     LOCAL_IO_WRITE_STR("Assertion violation: file ");                   \
-    LOCAL_IO_WRITE_STR(__FILE__);                                       \
+    li TESTNUM, 100;                                                    \
+    RVTEST_FAIL;                                                        \
+20002:                                                                  \
+    LOCAL_IO_POP(_SP)
+
+
+// LOCAL_IO_WRITE_STR(__FILE__);                                       \
     LOCAL_IO_WRITE_STR(", line ");                                      \
     LOCAL_IO_WRITE_STR(TOSTRING(__LINE__));                             \
     LOCAL_IO_WRITE_STR(": ");                                           \
@@ -118,11 +129,7 @@
     LOCAL_IO_WRITE_GPR(s0);                                             \
     LOCAL_IO_WRITE_STR(") != ");                                        \
     LOCAL_IO_WRITE_STR(# _I);                                           \
-    LOCAL_IO_WRITE_STR("\n");                                           \
-    li TESTNUM, 100;                                                    \
-    RVTEST_FAIL;                                                        \
-20002:                                                                  \
-    LOCAL_IO_POP(_SP)
+    LOCAL_IO_WRITE_STR("\n");                                           
 
 // _F = FPR
 // _C = GPR
@@ -175,7 +182,8 @@
     .string _STR;                                                       \
     .section .text.init;                                                \
     la a0, 20001b;                                                      \
-    jal FN_WriteStr;                                                    \
+    la t0, FN_WriteStr;                                                \
+    jalr t0;                                                          \
     LOCAL_IO_POP(_SP)
 
 // generate assertion listing
