@@ -15,6 +15,7 @@ export RISCV_TARGET       ?= riscvOVPsim
 export RISCV_DEVICE       ?= rv32i
 export RISCV_PREFIX       ?= riscv64-unknown-elf-
 export RISCV_TARGET_FLAGS ?=
+export RISCV_ASSERT       ?= 0
 
 RISCV_ISA_ALL = $(shell ls $(ROOTDIR)/riscv-target/$(RISCV_TARGET)/device)
 RISCV_ISA_OPT = $(subst $(space),$(pipe),$(RISCV_ISA_ALL))
@@ -25,6 +26,12 @@ ifeq ($(RISCV_ISA),)
 else
     DEFAULT_TARGET=variant
 endif
+
+RVTEST_DEFINES = 
+ifeq ($(RISCV_ASSERT),1)
+	RVTEST_DEFINES += -DRVTEST_ASSERT
+endif
+export RVTEST_DEFINES
 
 export ROOTDIR    = $(shell pwd)
 export WORK       = $(ROOTDIR)/work
@@ -84,10 +91,11 @@ clean:
 
 help:
 	@echo "eg, make"
-	@echo "RISCV_TARGET='riscvOVPsim|spike|sid32'"
+	@echo "RISCV_TARGET='riscvOVPsim|spike'"
 	@echo "RISCV_TARGET_FLAGS="
 	@echo "RISCV_DEVICE='rv32i|rv32im|...'"
 	@echo "RISCV_ISA='$(RISCV_ISA_OPT)'"
 	@echo "RISCV_TEST='I-ADD-01'"
+	@echo "RISCV_ASSERT=0|1"
 	@echo "make all_variant // all combinations"
 
