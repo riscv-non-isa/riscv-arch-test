@@ -66,6 +66,7 @@ const vmiIASAttr modelAttrs = {
     // CONSTRUCTOR/DESTRUCTOR ROUTINES
     ////////////////////////////////////////////////////////////////////////
 
+    .smpNameCB          = riscvGetSMPName,
     .constructorCB      = riscvConstructor,
     .postConstructorCB  = riscvPostConstructor,
     .vmInitCB           = riscvVMInit,
@@ -79,6 +80,8 @@ const vmiIASAttr modelAttrs = {
     .endBlockCB         = riscvEndBlock,
     .morphCB            = riscvMorph,
     .fetchSnapCB        = riscvFetchSnap,
+    .rdSnapCB           = riscvRdSnap,
+    .wrSnapCB           = riscvWrSnap,
 
     ////////////////////////////////////////////////////////////////////////
     // SIMULATION SUPPORT ROUTINES
@@ -99,6 +102,8 @@ const vmiIASAttr modelAttrs = {
     .wrAlignExceptCB    = riscvWrAlignExcept,
     .rdAbortExceptCB    = riscvRdAbortExcept,
     .wrAbortExceptCB    = riscvWrAbortExcept,
+    .rdDeviceExceptCB   = riscvRdDeviceExcept,
+    .wrDeviceExceptCB   = riscvWrDeviceExcept,
     .ifetchExceptCB     = riscvIFetchExcept,
     .arithResultCB      = riscvArithResult,
 

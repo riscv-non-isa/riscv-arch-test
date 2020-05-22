@@ -100,8 +100,10 @@ typedef struct riscvCSRAttrsS {
     riscvPrivVer      version;          // minimum specification version
     Bool              wEndBlock;        // whether write terminates this block
     Bool              wEndRM;           // whether write invalidates RM assumption
+    Bool              noSaveRestore;    // whether to exclude from save/restore
     Bool              noTraceChange;    // whether to exclude from trace change
     Bool              TVMT;             // whether trapped by mstatus.TVM
+    Bool              writeRd;          // whether write updates Rd
     riscvCSRPresentFn presentCB;        // CSR present callback
     riscvCSRReadFn    readCB;           // read callback
     riscvCSRReadFn    readWriteCB;      // read callback (in r/w context)

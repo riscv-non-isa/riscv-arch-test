@@ -38,4 +38,4 @@ Bool riscvIsClusterMember(riscvP riscv);
 //
 // Return the processor variant to use for the given member of an AMP cluster
 //
-const char *riscvGetClusterVariant(riscvP cluster, riscvP member);
+const char *riscvGetClusterVariant(riscvP member);

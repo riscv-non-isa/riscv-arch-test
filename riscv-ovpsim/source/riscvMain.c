@@ -66,10 +66,14 @@ static void initLeafModelCBs(riscvP riscv) {
     riscv->cb.getXRegName        = riscvGetXRegName;
     riscv->cb.getFRegName        = riscvGetFRegName;
     riscv->cb.getVRegName        = riscvGetVRegName;
-    riscv->cb.getTMode           = riscvGetTMode;
     riscv->cb.setTMode           = riscvSetTMode;
+    riscv->cb.getTMode           = riscvGetTMode;
+    riscv->cb.getDataEndian      = riscvGetDataEndian;
+    riscv->cb.readBaseCSR        = riscvReadBaseCSR;
+    riscv->cb.writeBaseCSR       = riscvWriteBaseCSR;
 
     // from riscvExceptions.h
+    riscv->cb.testInterrupt      = riscvTestInterrupt;
     riscv->cb.illegalInstruction = riscvIllegalInstruction;
     riscv->cb.takeException      = riscvTakeException;
 
@@ -80,6 +84,7 @@ static void initLeafModelCBs(riscvP riscv) {
     riscv->cb.writeRegSize       = riscvWriteRegSize;
     riscv->cb.writeReg           = riscvWriteReg;
     riscv->cb.getFPFlagsMt       = riscvGetFPFlagsMT;
+    riscv->cb.getDataEndianMt    = riscvGetCurrentDataEndianMT;
     riscv->cb.checkLegalRMMt     = riscvEmitCheckLegalRM;
     riscv->cb.morphVOp           = riscvMorphVOp;
 
@@ -92,15 +97,12 @@ static void initLeafModelCBs(riscvP riscv) {
 //
 static riscvConfigCP getConfigVariantArg(riscvP riscv, riscvParamValuesP params) {
 
-    riscvP        parent  = riscv->parent;
     riscvConfigCP cfgList = riscvGetConfigList(riscv);
     riscvConfigCP match;
 
-    if(parent && riscvIsCluster(parent)) {
+    if(riscvIsClusterMember(riscv)) {
 
-        match = riscvGetNamedConfig(
-            cfgList, riscvGetClusterVariant(parent, riscv)
-        );
+        match = riscvGetNamedConfig(cfgList, riscvGetClusterVariant(riscv));
 
     } else {
 
@@ -121,58 +123,33 @@ static riscvConfigCP getConfigVariantArg(riscvP riscv, riscvParamValuesP params)
 }
 
 //
-// Return the number of child processors of he give processor
+// Return the number of child processors of the given processor
 //
 inline static riscvP getParent(riscvP riscv) {
     return (riscvP)vmirtGetSMPParent((vmiProcessorP)riscv);
 }
 
 //
-// Return the number of child processors of he give processor
+// Return the number of child processors of the given processor
 //
 inline static Uns32 getNumChildren(riscvP riscv) {
-    return riscv->parent ? 0 : riscv->configInfo.numHarts;
+    return riscv->configInfo.numHarts;
 }
 
 //
-// Is the processor a cluster container?
+// Give each sub-processor a unique name
 //
-inline static Bool isCluster(riscvP riscv) {
-    return getNumChildren(riscv) && riscv->configInfo.members;
-}
+VMI_SMP_NAME_FN(riscvGetSMPName) {
 
-//
-// Is the processor a cluster container?
-//
-inline static void setName(riscvP hart, const char *name) {
-    vmirtSetProcessorName((vmiProcessorP)hart, name);
-}
+    const char   *baseName = vmirtProcessorName(parent);
+    riscvP        rvParent = (riscvP)parent;
+    riscvConfigCP cfg      = &rvParent->configInfo;
 
-//
-// Set name for an AMP cluster member
-//
-static void setAMPMemberName(riscvP hart, riscvP parent, const char *AMPName) {
-
-    const char *baseName = vmirtProcessorName((vmiProcessorP)parent);
-    char        name[strlen(baseName)+strlen(AMPName)+2];
-
-    sprintf(name, "%s_%s", baseName, AMPName);
-
-    setName(hart, name);
-}
-
-//
-// Set name for a cluster member
-//
-static void setClusterMemberName(riscvP hart, riscvP cluster) {
-
-    const char *baseName = vmirtProcessorName((vmiProcessorP)cluster);
-    Uns32       index    = RD_CSR(hart, mhartid);
-    char        name[strlen(baseName)+16];
-
-    sprintf(name, "%s_hart%u", baseName, index);
-
-    setName(hart, name);
+    if(riscvIsCluster(rvParent)) {
+        sprintf(name, "%s_%s", baseName, cfg->members[smpIndex]);
+    } else {
+        sprintf(name, "%s_hart%u", baseName, cfg->csr.mhartid.u32.bits+smpIndex);
+    }
 }
 
 //
@@ -225,11 +202,15 @@ static void applyParamsSMP(riscvP riscv, riscvParamValuesP params) {
     cfg->csr.mhartid.u64.bits      = params->mhartid;
     cfg->csr.mtvec.u64.bits        = params->mtvec;
     cfg->csr.mstatus.u64.fields.FS = params->mstatus_FS;
+    cfg->csr.mclicbase.u64.bits    = params->mclicbase;
 
     // get uninterpreted CSR mask configuration parameters
     cfg->csrMask.mtvec.u64.bits = params->mtvec_mask;
     cfg->csrMask.stvec.u64.bits = params->stvec_mask;
     cfg->csrMask.utvec.u64.bits = params->utvec_mask;
+    cfg->csrMask.mtvt.u64.bits  = params->mtvt_mask;
+    cfg->csrMask.stvt.u64.bits  = params->stvt_mask;
+    cfg->csrMask.utvt.u64.bits  = params->utvt_mask;
 
     // get uninterpreted architectural configuration parameters
     cfg->user_version      = params->user_version;
@@ -244,15 +225,25 @@ static void applyParamsSMP(riscvP riscv, riscvParamValuesP params) {
     cfg->PMP_registers     = params->PMP_registers;
     cfg->Sv_modes          = params->Sv_modes | RISCV_VMM_BARE;
     cfg->local_int_num     = params->local_int_num;
+    cfg->unimp_int_mask    = params->unimp_int_mask;
+    cfg->ecode_mask        = params->ecode_mask;
+    cfg->ecode_nmi         = params->ecode_nmi;
+    cfg->external_int_id   = params->external_int_id;
+    cfg->no_ideleg         = params->no_ideleg;
+    cfg->no_edeleg         = params->no_edeleg;
     cfg->lr_sc_grain       = powerOfTwo(params->lr_sc_grain, "lr_sc_grain");
-    cfg->numHarts          = params->numHarts;
+    cfg->debug_mode        = params->debug_mode;
+    cfg->debug_address     = params->debug_address;
+    cfg->dexc_address      = params->dexc_address;
     cfg->updatePTEA        = params->updatePTEA;
     cfg->updatePTED        = params->updatePTED;
     cfg->unaligned         = params->unaligned;
     cfg->unalignedAMO      = params->unalignedAMO;
     cfg->wfi_is_nop        = params->wfi_is_nop;
     cfg->mtvec_is_ro       = params->mtvec_is_ro;
+    cfg->counteren_mask    = params->counteren_mask;
     cfg->tvec_align        = params->tvec_align;
+    cfg->tval_zero         = params->tval_zero;
     cfg->tval_ii_code      = params->tval_ii_code;
     cfg->cycle_undefined   = params->cycle_undefined;
     cfg->time_undefined    = params->time_undefined;
@@ -264,9 +255,23 @@ static void applyParamsSMP(riscvP riscv, riscvParamValuesP params) {
     cfg->ELEN              = powerOfTwo(params->ELEN, "ELEN");
     cfg->SLEN              = powerOfTwo(params->SLEN, "SLEN");
     cfg->VLEN              = powerOfTwo(params->VLEN, "VLEN");
+    cfg->SEW_min           = powerOfTwo(params->SEW_min, "SEW_min");
     cfg->Zvlsseg           = params->Zvlsseg;
     cfg->Zvamo             = params->Zvamo;
     cfg->Zvediv            = params->Zvediv;
+    cfg->CLICLEVELS        = params->CLICLEVELS;
+    cfg->CLICANDBASIC      = params->CLICANDBASIC;
+    cfg->CLICVERSION       = params->CLICVERSION;
+    cfg->CLICINTCTLBITS    = params->CLICINTCTLBITS;
+    cfg->CLICCFGMBITS      = params->CLICCFGMBITS;
+    cfg->CLICCFGLBITS      = params->CLICCFGLBITS;
+    cfg->CLICSELHVEC       = params->CLICSELHVEC;
+    cfg->CLICMNXTI         = params->CLICMNXTI;
+    cfg->CLICMCSW          = params->CLICMCSW;
+
+    // set number of children
+    Bool isSMPMember = riscv->parent && !riscvIsCluster(riscv->parent);
+    cfg->numHarts = isSMPMember ? 0 : params->numHarts;
 
     // Zvqmac extension is only available after version RVVV_0_8_20191004
     cfg->Zvqmac = params->Zvqmac && (params->vector_version>RVVV_0_8_20191004);
@@ -289,32 +294,19 @@ static void applyParamsSMP(riscvP riscv, riscvParamValuesP params) {
         cfg->SLEN = cfg->VLEN;
     }
 
+    // force SEW_min <= ELEN
+    if(cfg->SEW_min>cfg->ELEN) {
+        vmiMessage("W", CPU_PREFIX"_ISEW",
+            "'SEW_min' (%u) exceeds 'ELEN' (%u) - forcing SEW_min=%u",
+            cfg->SEW_min, cfg->ELEN, cfg->ELEN
+        );
+        cfg->SEW_min = cfg->ELEN;
+    }
+
     if(misa_MXL==1) {
 
-        // modify configuration for 32-bit cores
-        Uns32 max_ASID_bits     =  9;
-        Uns32 max_local_int_num = 16;
-
-        // misa_MXL is not writable
+        // modify configuration for 32-bit cores - misa_MXL is not writable
         misa_MXL_mask = 0;
-
-        // clamp ASID_bits to maximum
-        if(cfg->ASID_bits>max_ASID_bits) {
-            vmiMessage("W", CPU_PREFIX"_IASB",
-                "'ASID_bits' (%u) exceeds maximum %u - using %u",
-                cfg->ASID_bits, max_ASID_bits, max_ASID_bits
-            );
-            cfg->ASID_bits = max_ASID_bits;
-        }
-
-        // clamp max_local_int_num to maximum
-        if(cfg->local_int_num>max_local_int_num) {
-            vmiMessage("W", CPU_PREFIX"_ILIN",
-                "'local_int_num' (%u) exceeds maximum %u - using %u",
-                cfg->local_int_num, max_local_int_num, max_local_int_num
-            );
-            cfg->local_int_num = max_local_int_num;
-        }
 
         // mask valid VM modes
         cfg->Sv_modes &= RISCV_VMM_32;
@@ -380,6 +372,10 @@ VMI_CONSTRUCTOR_FN(riscvConstructor) {
     riscvP riscv  = (riscvP)processor;
     riscvP parent = getParent(riscv);
 
+    // indicate no interrupts are pending and enabled initially
+    riscv->pendEnab.id  = RV_NO_INT;
+    riscv->clicState.id = RV_NO_INT;
+
     // initialize enhanced model support callbacks that apply at all levels
     initAllModelCBs(riscv);
 
@@ -408,6 +404,9 @@ VMI_CONSTRUCTOR_FN(riscvConstructor) {
 
         // save parameters for use in child
         riscv->paramValues = parameterValues;
+
+        // save the number of child harts
+        riscv->numHarts = numChildren;
 
     } else {
 
@@ -438,17 +437,14 @@ VMI_CONSTRUCTOR_FN(riscvConstructor) {
         // create root level bus port specifications for leaf level ports
         riscvNewLeafBusPorts(riscv);
 
+        // allocate timers
+        riscvNewTimers(riscv);
+
+        // allocate CLIC data structures
+        riscvNewCLIC(riscv, smpContext->index);
+
         // do initial reset
         riscvReset(riscv);
-    }
-
-    // set name if this is a cluster member
-    if(!parent) {
-        // not a cluster member
-    } else if(riscvIsCluster(parent)) {
-        setAMPMemberName(riscv, parent, riscv->configInfo.name);
-    } else {
-        setClusterMemberName(riscv, parent);
     }
 }
 
@@ -493,6 +489,15 @@ VMI_DESTRUCTOR_FN(riscvDestructor) {
 
     // free exception state
     riscvExceptFree(riscv);
+
+    // free vector extension data structures
+    riscvFreeVector(riscv);
+
+    // free timers
+    riscvFreeTimers(riscv);
+
+    // free CLIC data structures
+    riscvFreeCLIC(riscv);
 }
 
 
@@ -606,6 +611,9 @@ VMI_SAVE_STATE_FN(riscvSaveState) {
     // save net state not covered by register read/write API
     riscvNetSave(riscv, cxt, phase);
 
+    // save timer state not covered by register read/write API
+    riscvTimerSave(riscv, cxt, phase);
+
     // end of SMP cluster
     if(phase==SRT_END) {
         vmirtIterAllProcessors(processor, endSave, 0);
@@ -657,6 +665,9 @@ VMI_RESTORE_STATE_FN(riscvRestoreState) {
 
     // restore net state not covered by register read/write API
     riscvNetRestore(riscv, cxt, phase);
+
+    // restore timer state not covered by register read/write API
+    riscvTimerRestore(riscv, cxt, phase);
 
     // end of SMP cluster
     if(phase==SRT_END) {

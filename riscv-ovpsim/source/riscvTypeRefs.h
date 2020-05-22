@@ -25,6 +25,8 @@
 DEFINE_S (riscv);
 DEFINE_S (riscvBlockState);
 DEFINE_S (riscvBusPort);
+DEFINE_U (riscvCLICIntState);
+DEFINE_S (riscvCLICOutState);
 DEFINE_S (riscvConfig);
 DEFINE_CS(riscvConfig);
 DEFINE_CS(riscvCSRAttrs);
@@ -37,5 +39,6 @@ DEFINE_S (riscvNetPort);
 DEFINE_CS(riscvMorphAttr);
 DEFINE_S (riscvMorphState);
 DEFINE_S (riscvParamValues);
+DEFINE_S (riscvPendEnab);
 DEFINE_S (riscvTLB);
 

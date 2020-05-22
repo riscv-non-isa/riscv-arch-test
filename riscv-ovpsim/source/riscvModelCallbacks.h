@@ -26,6 +26,7 @@
 #include "vmi/vmiDbg.h"
 
 // model header files
+#include "riscvCSR.h"
 #include "riscvDerivedMorph.h"
 #include "riscvExceptionTypes.h"
 #include "riscvMode.h"
@@ -89,10 +90,25 @@ typedef RISCV_GET_REG_NAME_FN((*riscvGetRegNameFn));
 typedef RISCV_GET_TMODE_FN((*riscvGetTModeFn));
 
 //
+// Return data endianness in the given processor mode
+//
+#define RISCV_GET_DATA_ENDIAN_FN(_NAME) memEndian _NAME( \
+    riscvP    riscv,    \
+    riscvMode mode      \
+)
+typedef RISCV_GET_DATA_ENDIAN_FN((*riscvGetDataEndianFn));
+
+//
 // Enable or disable transaction mode
 //
 #define RISCV_SET_TMODE_FN(_NAME) void _NAME(riscvP riscv, Bool enable)
 typedef RISCV_SET_TMODE_FN((*riscvSetTModeFn));
+
+//
+// Check for pending interrupts
+//
+#define RISCV_TEST_INTERRUPT_FN(_NAME) void _NAME(riscvP riscv)
+typedef RISCV_TEST_INTERRUPT_FN((*riscvTestInterruptFn));
 
 //
 // Take Illegal Instruction exception
@@ -167,6 +183,12 @@ typedef RISCV_WRITE_REG_FN((*riscvWriteRegFn));
 typedef RISCV_GET_FP_FLAGS_MT_FN((*riscvGetFPFlagsMtFn));
 
 //
+// Return data endianness in the current processor mode at morph time
+//
+#define RISCV_GET_DATA_ENDIAN_MT_FN(_NAME) memEndian _NAME(riscvP riscv)
+typedef RISCV_GET_DATA_ENDIAN_MT_FN((*riscvGetDataEndianMtFn));
+
+//
 // Validate the given rounding mode is legal and emit an Illegal Instruction
 // exception call if not
 //
@@ -204,6 +226,21 @@ typedef RISCV_NEW_CSR_FN((*riscvNewCSRFn));
 ////////////////////////////////////////////////////////////////////////////////
 
 //
+// Callback to handle misaligned read or write accesses when these should either
+// cause the read/write address to be snapped or cause the read/written value to
+// be rotated, or both. The return value should be constructed using the
+// MEM_SNAP macro defined in vmiTypes.h. A return value of zero indicates no
+// address snapping or rotation is required and that the read alignment
+// exception handler should be called.
+//
+#define RISCV_RD_WR_SNAP_FN(_NAME) Uns32 _NAME( \
+    riscvP riscv,               \
+    Addr   address,             \
+    Uns32  bytes                \
+)
+typedef RISCV_RD_WR_SNAP_FN((*riscvRdWrSnapFn));
+
+//
 // Notifier called on trap entry or exception return
 //
 #define RISCV_TRAP_NOTIFIER_FN(_NAME) void _NAME( \
@@ -230,6 +267,15 @@ typedef RISCV_RESET_NOTIFIER_FN((*riscvResetNotifierFn));
     void  *clientData           \
 )
 typedef RISCV_FIRST_EXCEPTION_FN((*riscvFirstExceptionFn));
+
+//
+// Called when core has either halted or restarted
+//
+#define RISCV_HR_NOTIFIER_FN(_NAME) void _NAME( \
+    riscvP riscv,               \
+    void  *clientData           \
+)
+typedef RISCV_HR_NOTIFIER_FN((*riscvHRNotifierFn));
 
 //
 // Notifier called on a model context switch. 'state' describes the new state.
@@ -281,6 +327,25 @@ typedef RISCV_TSTORE_FN((*riscvTStoreFn));
 typedef RISCV_PMA_CHECK_FN((*riscvPMACheckFn));
 
 //
+// Read a CSR in the base model given its id
+//
+#define RISCV_READ_BASE_CSR_FN(_NAME) Uns64 _NAME( \
+    riscvP     riscv,           \
+    riscvCSRId id               \
+)
+typedef RISCV_READ_BASE_CSR_FN((*riscvReadBaseCSRFn));
+
+//
+// Write a CSR in the base model given its id
+//
+#define RISCV_WRITE_BASE_CSR_FN(_NAME) Uns64 _NAME( \
+    riscvP     riscv,           \
+    riscvCSRId id,              \
+    Uns64      newValue         \
+)
+typedef RISCV_WRITE_BASE_CSR_FN((*riscvWriteBaseCSRFn));
+
+//
 // Container structure for all callbacks implemented by the base model
 //
 typedef struct riscvModelCBS {
@@ -296,8 +361,12 @@ typedef struct riscvModelCBS {
     riscvGetRegNameFn         getVRegName;
     riscvSetTModeFn           setTMode;
     riscvGetTModeFn           getTMode;
+    riscvGetDataEndianFn      getDataEndian;
+    riscvReadBaseCSRFn        readBaseCSR;
+    riscvWriteBaseCSRFn       writeBaseCSR;
 
     // from riscvExceptions.h
+    riscvTestInterruptFn      testInterrupt;
     riscvIllegalInstructionFn illegalInstruction;
     riscvTakeExceptionFn      takeException;
 
@@ -308,6 +377,7 @@ typedef struct riscvModelCBS {
     riscvWriteRegSizeFn       writeRegSize;
     riscvWriteRegFn           writeReg;
     riscvGetFPFlagsMtFn       getFPFlagsMt;
+    riscvGetDataEndianMtFn    getDataEndianMt;
     riscvCheckLegalRMMtFn     checkLegalRMMt;
     riscvMorphVOpFn           morphVOp;
 
@@ -328,11 +398,18 @@ typedef struct riscvExtCBS {
     // handle back to client data
     void                     *clientData;
 
+    // exception modification
+    riscvRdWrSnapFn           rdSnapCB;
+    riscvRdWrSnapFn           wrSnapCB;
+
     // exception actions
     riscvTrapNotifierFn       trapNotifier;
     riscvTrapNotifierFn       ERETNotifier;
     riscvResetNotifierFn      resetNotifier;
     riscvFirstExceptionFn     firstException;
+
+    // halt/restart actions
+    riscvHRNotifierFn         haltRestartNotifier;
 
     // code generation actions
     riscvDerivedMorphFn       preMorph;

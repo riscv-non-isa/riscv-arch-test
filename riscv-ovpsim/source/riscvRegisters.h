@@ -45,7 +45,10 @@
 #define RISCV_FPR(_I)           RISCV_CPU_REG(f[_I])
 #define RISCV_SF_TMP            RISCV_CPU_TEMP(SF)
 #define RISCV_LR                RISCV_CPU_REG(x[RV_REG_X_RA])
+#define RISCV_EA_ADDR           RISCV_CPU_REG(exclusiveAddr)
 #define RISCV_EA_TAG            RISCV_CPU_REG(exclusiveTag)
+#define RISCV_DM                RISCV_CPU_REG(DM)
+#define RISCV_DM_STALL          RISCV_CPU_REG(DMStall)
 #define RISCV_FP_FLAGS          RISCV_CPU_REG(fpFlagsMT)
 #define RISCV_SF_FLAGS          RISCV_CPU_REG(SFMT)
 #define RISCV_JUMP_BASE         RISCV_CPU_REG(jumpBase)
@@ -59,3 +62,4 @@
 #define RISCV_OFFSETS_LMULx2    RISCV_CPU_REG(offsetsLMULx2)
 #define RISCV_OFFSETS_LMULx4    RISCV_CPU_REG(offsetsLMULx4)
 #define RISCV_OFFSETS_LMULx8    RISCV_CPU_REG(offsetsLMULx8)
+

@@ -44,3 +44,26 @@ typedef enum riscvRMDescE {
 
 } riscvRMDesc;
 
+//
+// This holds field information for the VSETVLI instruction
+//
+typedef union riscvVTypeU {
+    Uns32 u32;
+    struct {
+        Uns32 vlmul  :  2;
+        Uns32 vsew   :  3;
+        Uns32 vlmulf :  1;
+        Uns32 vta    :  1;
+        Uns32 vma    :  1;
+        Uns32 _u1    : 24;
+    };
+} riscvVType;
+
+//
+// Form signed vlmul from unsigned base and fractional indication
+//
+inline static Int32 getSignedVLMUL(Uns32 vlmul, Bool vlmulf) {
+    return vlmul | (vlmulf ? -4 : 0);
+}
+
+

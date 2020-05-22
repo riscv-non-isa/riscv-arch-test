@@ -33,6 +33,7 @@
 #define RM_INVALID_CHAR         ('Z'+3)
 #define RISCV_FAND_CHAR         ('Z'+4)
 #define MSTATUS_FS_CHAR         ('Z'+5)
+#define MSTATUS_BE_CHAR         ('Z'+6)
 #define RISCV_FEATURE_INDEX(_C) ((_C)-'A')
 #define RISCV_FEATURE_BIT(_C)   (1<<RISCV_FEATURE_INDEX(_C))
 #define XLEN_SHIFT              RISCV_FEATURE_INDEX(XLEN32_CHAR)
@@ -54,12 +55,14 @@ typedef enum riscvArchitectureE {
 
     // MSTATUS FIELDS
     ISA_FS     = RISCV_FEATURE_BIT(MSTATUS_FS_CHAR),
+    ISA_BE     = RISCV_FEATURE_BIT(MSTATUS_BE_CHAR),
 
     // FEATURES A AND B
     ISA_and    = RISCV_FEATURE_BIT(RISCV_FAND_CHAR),
 
     // BASE ISA FEATURES
     ISA_A      = RISCV_FEATURE_BIT('A'),    // atomic instructions
+    ISA_B      = RISCV_FEATURE_BIT('B'),    // bit manipulation instructions
     ISA_C      = RISCV_FEATURE_BIT('C'),    // compressed instructions
     ISA_E      = RISCV_FEATURE_BIT('E'),    // embedded instructions
     ISA_D      = RISCV_FEATURE_BIT('D'),    // double-precision floating point
@@ -73,7 +76,6 @@ typedef enum riscvArchitectureE {
     ISA_X      = RISCV_FEATURE_BIT('X'),    // non-standard extensions present
     ISA_DF     = (ISA_D|ISA_F),             // either single or double precision
     ISA_DFV    = (ISA_D|ISA_F|ISA_V),       // either floating point or vector
-    ISA_SorU   = (ISA_S|ISA_U),             // either supervisor or user mode
     ISA_SorN   = (ISA_S|ISA_N),             // either supervisor or user interrupts
     ISA_SandN  = (ISA_S|ISA_N|ISA_and),     // both supervisor and user interrupts
     ISA_FSandV = (ISA_FS|ISA_V|ISA_and),    // both FS and vector extension
@@ -138,6 +140,9 @@ typedef enum riscvArchitectureE {
 // macro indicating if current XLEN is 64
 #define RISCV_XLEN_IS_64(_CPU) ((_CPU)->currentArch & ISA_XLEN_64)
 
+// macro returning XLEN in bytes
+#define RISCV_XLEN_BYTES(_CPU) (RISCV_XLEN_IS_32(_CPU) ? 4 : 8)
+
 //
 // Supported User Architecture versions
 //
@@ -155,13 +160,16 @@ typedef enum riscvPrivVerE {
     RVPV_1_10,                          // version 1.10
     RVPV_1_11,                          // version 1.11 (legacy naming)
     RVPV_20190405,                      // version 20190405
+    RVPV_1_12,                          // version 1.12 (placeholder)
+    RVPV_MASTER  = RVPV_1_12,           // master branch
     RVPV_DEFAULT = RVPV_20190405,       // default version
 } riscvPrivVer;
 
 //
-// Tag of master version
+// date and tag of master version
 //
-#define RVVV_MASTER_TAG "f92ae2c"
+#define RVVV_MASTER_DATE    "15 May 2020"
+#define RVVV_MASTER_TAG     "72a8e0c"
 
 //
 // Supported Vector Architecture versions
@@ -174,9 +182,10 @@ typedef enum riscvVectVerE {
     RVVV_0_8_20191117,                  // version 0.8-draft-20191117
     RVVV_0_8_20191118,                  // version 0.8-draft-20191118
     RVVV_0_8,                           // version 0.8
+    RVVV_0_9,                           // version 0.9
     RVVV_MASTER,                        // master branch
     RVVV_LAST,                          // for sizing
-    RVVV_DEFAULT = RVVV_0_8,            // default version
+    RVVV_DEFAULT = RVVV_0_9,            // default version
 } riscvVectVer;
 
 //
@@ -192,10 +201,29 @@ typedef enum riscvFP16VerE {
 // Supported mstatus.FS update behavior
 //
 typedef enum riscvFSModeE {
-    RVFS_WRITE_NZ,                  // dirty set if exception only (default)
-    RVFS_WRITE_ANY,                 // any fflags write sets dirty
-    RVFS_ALWAYS_DIRTY,              // mstatus.FS is always off or dirty
+    RVFS_WRITE_NZ,                      // dirty set if exception only (default)
+    RVFS_WRITE_ANY,                     // any fflags write sets dirty
+    RVFS_ALWAYS_DIRTY,                  // mstatus.FS is always off or dirty
 } riscvFSMode;
+
+//
+// Supported interrupt configuration
+//
+typedef enum riscvIntCfgE {
+    RVCP_ORIG,                          // original (CLIC absent)
+    RVCP_CLIC,                          // CLIC present
+    RVCP_BOTH                           // both originl and CLIC present
+} riscvIntCfg;
+
+//
+// Supported Debug mode implementation options
+//
+typedef enum riscvDMModeE {
+    RVDM_NONE,                          // Debug mode not implemented
+    RVDM_VECTOR,                        // Debug mode causes execution at vector
+    RVDM_INTERRUPT,                     // Debug mode implemented as interrupt
+    RVDM_HALT,                          // Debug mode implemented as halt
+} riscvDMMode;
 
 // macro returning User Architecture version
 #define RISCV_USER_VERSION(_P)  ((_P)->configInfo.user_version)
@@ -232,8 +260,9 @@ typedef enum riscvVFeatureE {
     RVVF_VS_STATUS_8,       // is [ms]status.VS field in version 0.8 location?
     RVVF_VS_STATUS_9,       // is [ms]status.VS field in version 0.9 location?
     RVVF_FP_RESTRICT_WHOLE, // whole register load/store/move restricted?
-    RVVF_UNIT_STRIDE_ONLY,  // only unit-stride load/store supported?
-    RVVF_VSTART_Z,          // is vstart forced to zero?
+    RVVF_FRACT_LMUL,        // is fractional LMUL implemented?
+    RVVF_AGNOSTIC,          // are agnostic bits implemented?
+    RVVF_MLEN1,             // is MLEN always 1?
     RVVF_LAST,              // for sizing
 } riscvVFeature;
 

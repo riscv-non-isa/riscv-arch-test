@@ -27,6 +27,7 @@
 #include "riscvMode.h"
 #include "riscvRegisters.h"
 #include "riscvTypeRefs.h"
+#include "riscvTypes.h"
 #include "riscvVariant.h"
 
 
@@ -102,6 +103,7 @@ typedef enum riscvCSRIdE {
     CSR_ID      (fcsr),         // 0x003
     CSR_ID      (uie),          // 0x004
     CSR_ID      (utvec),        // 0x005
+    CSR_ID      (utvt),         // 0x007
     CSR_ID      (vstart),       // 0x008
     CSR_ID      (vxsat),        // 0x009
     CSR_ID      (vxrm),         // 0x00A
@@ -111,6 +113,11 @@ typedef enum riscvCSRIdE {
     CSR_ID      (ucause),       // 0x042
     CSR_ID      (utval),        // 0x043
     CSR_ID      (uip),          // 0x044
+    CSR_ID      (unxti),        // 0x045
+    CSR_ID      (uintstatus),   // 0xC46
+    CSR_ID      (uscratchcswl), // 0x049
+    CSR_ID      (uintthresh),   // 0x04A
+
     CSR_ID      (cycle),        // 0xC00
     CSR_ID      (time),         // 0xC01
     CSR_ID      (instret),      // 0xC02
@@ -129,11 +136,17 @@ typedef enum riscvCSRIdE {
     CSR_ID      (sie),          // 0x104
     CSR_ID      (stvec),        // 0x105
     CSR_ID      (scounteren),   // 0x106
+    CSR_ID      (stvt),         // 0x107
     CSR_ID      (sscratch),     // 0x140
     CSR_ID      (sepc),         // 0x141
     CSR_ID      (scause),       // 0x142
     CSR_ID      (stval),        // 0x143
     CSR_ID      (sip),          // 0x144
+    CSR_ID      (snxti),        // 0x145
+    CSR_ID      (sintstatus),   // 0xD46
+    CSR_ID      (sscratchcsw),  // 0x148
+    CSR_ID      (sscratchcswl), // 0x149
+    CSR_ID      (sintthresh),   // 0x14A
     CSR_ID      (satp),         // 0x180
 
     CSR_ID      (mvendorid),    // 0xF11
@@ -147,12 +160,20 @@ typedef enum riscvCSRIdE {
     CSR_ID      (mie),          // 0x304
     CSR_ID      (mtvec),        // 0x305
     CSR_ID      (mcounteren),   // 0x306
+    CSR_ID      (mtvt),         // 0x307
+    CSR_ID      (mstatush),     // 0x310
     CSR_ID      (mcountinhibit),// 0x320
     CSR_ID      (mscratch),     // 0x340
     CSR_ID      (mepc),         // 0x341
     CSR_ID      (mcause),       // 0x342
     CSR_ID      (mtval),        // 0x343
     CSR_ID      (mip),          // 0x344
+    CSR_ID      (mnxti),        // 0x345
+    CSR_ID      (mintstatus),   // 0xF46
+    CSR_ID      (mscratchcsw),  // 0x348
+    CSR_ID      (mscratchcswl), // 0x349
+    CSR_ID      (mintthresh),   // 0x34A
+    CSR_ID      (mclicbase),    // 0x34B
     CSR_ID_0_3  (pmpcfg),       // 0x3A0-0x3A3
     CSR_ID_0_15 (pmpaddr),      // 0x3B0-0x3BF
     CSR_ID      (mcycle),       // 0xB00
@@ -167,14 +188,23 @@ typedef enum riscvCSRIdE {
     CSR_ID      (tdata1),       // 0x7A1
     CSR_ID      (tdata2),       // 0x7A2
     CSR_ID      (tdata3),       // 0x7A3
+
     CSR_ID      (dcsr),         // 0x7B0
     CSR_ID      (dpc),          // 0x7B1
-    CSR_ID      (dscratch),     // 0x7B2
+    CSR_ID      (dscratch0),    // 0x7B2
+    CSR_ID      (dscratch1),    // 0x7B3
 
     // keep last (used to define size of the enumeration)
     CSR_ID      (LAST)
 
 } riscvCSRId;
+
+//
+// CSRs in this range are accessible only in debug mode
+//
+#define CSR_DEGUG_START     0x7B0
+#define CSR_DEGUG_END       0x7BF
+#define IS_DEBUG_CSR(_NUM)  (((_NUM)>=CSR_DEGUG_START) && ((_NUM)<=CSR_DEGUG_END))
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -223,6 +253,21 @@ Bool riscvWriteCSR(riscvCSRAttrsCP attrs, riscvP riscv, const void *buffer);
 
 
 ////////////////////////////////////////////////////////////////////////////////
+// LINKED MODEL ACCESS FUNCTIONS
+////////////////////////////////////////////////////////////////////////////////
+
+//
+// Read a CSR in the base model given its id
+//
+Uns64 riscvReadBaseCSR(riscvP riscv, riscvCSRId id);
+
+//
+// Write a CSR in the base model given its id
+//
+Uns64 riscvWriteBaseCSR(riscvP riscv, riscvCSRId id, Uns64 newValue);
+
+
+////////////////////////////////////////////////////////////////////////////////
 // MORPH-TIME INTERFACE ACCESS FUNCTIONS
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -253,6 +298,7 @@ void riscvEmitCSRRead(
 void riscvEmitCSRWrite(
     riscvCSRAttrsCP attrs,
     riscvP          riscv,
+    vmiReg          rd,
     vmiReg          rs,
     vmiReg          tmp
 );
@@ -285,6 +331,41 @@ Bool riscvGetCSRDetails(riscvP riscv, riscvCSRDetailsP details, Bool normal);
 // Register new CSR
 //
 void riscvNewCSR(riscvCSRAttrsCP attrs, riscvP riscv);
+
+
+////////////////////////////////////////////////////////////////////////////////
+// COUNTER INHIBIT
+////////////////////////////////////////////////////////////////////////////////
+
+//
+// Structure used when updating state when inhibit values change
+//
+typedef struct riscvCountStateS {
+    Bool  inhibitCycle;     // old value of cycle count inhibit
+    Bool  inhibitInstret;   // old value of retired instruction inhibit
+    Uns64 cycle;            // cycle count before update
+    Uns64 instret;          // retired instruction count before update
+} riscvCountState, *riscvCountStateP;
+
+//
+// Get state before possible inhibit update
+//
+void riscvPreInhibit(riscvP riscv, riscvCountStateP state);
+
+//
+// Update state after possible inhibit update
+//
+void riscvPostInhibit(riscvP riscv, riscvCountStateP state, Bool preIncrement);
+
+//
+// Is cycle count inhibited?
+//
+Bool riscvInhibitCycle(riscvP riscv);
+
+//
+// Is retired instruction count inhibited?
+//
+Bool riscvInhibitInstret(riscvP riscv);
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -322,7 +403,7 @@ void riscvRefreshVectorPMKey(riscvP riscv);
 //
 // Update vtype CSR
 //
-void riscvSetVType(riscvP riscv, Bool vill, Uns32 vsew, Uns32 vlmul);
+void riscvSetVType(riscvP riscv, Bool vill, riscvVType vtype);
 
 //
 // Update vl CSR and aliases of it
@@ -446,7 +527,7 @@ typedef struct {
     Uns32 MIE  : 1;         // Machine mode interrupt enable
     Uns32 UPIE : 1;         // User mode interrupt enable (stacked), N only
     Uns32 SPIE : 1;         // Supervisor mode interrupt enable (stacked)
-    Uns32 _u1  : 1;
+    Uns32 UBE  : 1;         // User mode big-endian
     Uns32 MPIE : 1;         // Machine mode interrupt enable (stacked)
     Uns32 SPP  : 1;         // Supervisor previous mode
     Uns32 VS_9 : 2;         // Vector Extension dirty state (version 0.9)
@@ -472,10 +553,10 @@ typedef struct {
     Uns64 MIE  :  1;        // Machine mode interrupt enable
     Uns64 UPIE :  1;        // User mode interrupt enable (stacked), N only
     Uns64 SPIE :  1;        // Supervisor mode interrupt enable (stacked)
-    Uns64 _u1  :  1;
+    Uns64 UBE  :  1;        // User mode big-endian
     Uns64 MPIE :  1;        // Machine mode interrupt enable (stacked)
     Uns64 SPP  :  1;        // Supervisor previous mode
-    Uns32 VS_9 :  2;         // Vector Extension dirty state (version 0.9)
+    Uns32 VS_9 :  2;        // Vector Extension dirty state (version 0.9)
     Uns64 MPP  :  2;        // Machine previous mode
     Uns64 FS   :  2;        // Floating point dirty state
     Uns64 XS   :  2;        // User extension dirty state
@@ -485,11 +566,13 @@ typedef struct {
     Uns64 TVM  :  1;        // Trap virtual memory (requires S extension)
     Uns64 TW   :  1;        // Timeout wait (requires S extension)
     Uns64 TSR  :  1;        // Trap SRET (requires S extension)
-    Uns32 VS_8 : 2;         // Vector Extension dirty state (version 0.8)
+    Uns32 VS_8 :  2;        // Vector Extension dirty state (version 0.8)
     Uns64 _u3  :  7;
     Uns64 UXL  :  2;        // TODO: User mode XLEN
     Uns64 SXL  :  2;        // TODO: Supervisor mode XLEN
-    Uns64 _u4  : 27;
+    Uns64 SBE  :  1;        // Supervisor mode big-endian
+    Uns64 MBE  :  1;        // Machine mode big-endian
+    Uns64 _u4  : 25;
     Uns64 SD   :  1;        // Dirty state summary bit (read only)
 } CSR_REG_TYPE_64(status);
 
@@ -513,6 +596,30 @@ typedef CSR_REG_TYPE(status) CSR_REG_TYPE(mstatus);
 #define WM_mstatus_VS_8 (3<<23)
 #define WM_mstatus_VS_9 (3<<9)
 #define WM_mstatus_IE   0xf
+#define WM_mstatus_UBE  (1<<6)
+#define WM_mstatus_SBE  (1ULL<<36)
+#define WM_mstatus_MBE  (1ULL<<37)
+#define WM_mstatus_BE   (WM_mstatus_UBE|WM_mstatus_SBE|WM_mstatus_MBE)
+
+// -----------------------------------------------------------------------------
+// mstatush     (id 0x310)
+// -----------------------------------------------------------------------------
+
+// 32-bit view
+typedef struct {
+    Uns32 _u0 :  4;
+    Uns32 SBE :  1;
+    Uns32 MBE :  1;
+    Uns32 _u1 : 26;
+} CSR_REG_TYPE_32(mstatush);
+
+// define 32 bit type
+CSR_REG_STRUCT_DECL_32(mstatush);
+
+// write masks
+#define WM_mstatush_SBE (1ULL<<4)
+#define WM_mstatush_MBE (1ULL<<5)
+#define WM_mstatush_BE  (WM_mstatush_SBE|WM_mstatush_MBE)
 
 // -----------------------------------------------------------------------------
 // fflags       (id 0x001)
@@ -690,12 +797,8 @@ typedef CSR_REG_TYPE(tvec) CSR_REG_TYPE(stvec);
 typedef CSR_REG_TYPE(tvec) CSR_REG_TYPE(mtvec);
 
 // define write masks
-#define WM32_utvec -3
-#define WM32_stvec -3
-#define WM32_mtvec -3
-#define WM64_utvec -3
-#define WM64_stvec -3
-#define WM64_mtvec -3
+#define WM64_tvec_orig -3
+#define WM64_tvec_clic -2
 
 // -----------------------------------------------------------------------------
 // scounteren   (id 0x106)
@@ -722,6 +825,19 @@ typedef CSR_REG_TYPE(counteren) CSR_REG_TYPE(mcounteren);
 #define WM32_counteren_TM  0x00000002
 #define WM32_counteren_IR  0x00000004
 #define WM32_counteren_HPM 0xfffffff8
+
+// -----------------------------------------------------------------------------
+// utvt         (id 0x007)
+// stvt         (id 0x107)
+// mtvt         (id 0x307)
+// -----------------------------------------------------------------------------
+
+typedef CSR_REG_TYPE(genericXLEN) CSR_REG_TYPE(utvt);
+typedef CSR_REG_TYPE(genericXLEN) CSR_REG_TYPE(stvt);
+typedef CSR_REG_TYPE(genericXLEN) CSR_REG_TYPE(mtvt);
+
+// define write masks
+#define WM64_tvt -0x40
 
 // -----------------------------------------------------------------------------
 // mcountinhibit (id 0x320)
@@ -766,13 +882,24 @@ typedef CSR_REG_TYPE(genericXLEN) CSR_REG_TYPE(mepc);
 
 // 32-bit view
 typedef struct {
-    Uns32 ExceptionCode : 31;
+    Uns32 ExceptionCode : 16;
+    Uns32 pil           : 8;
+    Uns32 _u1           : 3;
+    Uns32 pie           : 1;
+    Uns32 pp            : 2;
+    Uns32 inhv          : 1;
     Uns32 Interrupt     : 1;
 } CSR_REG_TYPE_32(cause);
 
 // 64-bit view
 typedef struct {
-    Uns64 ExceptionCode : 63;
+    Uns64 ExceptionCode : 16;
+    Uns64 pil           : 8;
+    Uns64 _u1           : 3;
+    Uns64 pie           : 1;
+    Uns64 pp            : 2;
+    Uns64 inhv          : 1;
+    Uns64 _u2           : 32;
     Uns64 Interrupt     : 1;
 } CSR_REG_TYPE_64(cause);
 
@@ -832,6 +959,83 @@ typedef CSR_REG_TYPE(ip) CSR_REG_TYPE(mip);
 #define WM32_mip 0x00000333
 #define WM32_sip 0x00000103
 #define WM32_uip 0x00000001
+
+// -----------------------------------------------------------------------------
+// uintstatus   (id 0xC46)
+// sintstatus   (id 0xD46)
+// mintstatus   (id 0xF46)
+// -----------------------------------------------------------------------------
+
+// 32-bit view
+typedef struct {
+    Uns32 uil  : 8;
+    Uns32 sil  : 8;
+    Uns32 _u1  : 8;
+    Uns32 mil  : 8;
+} CSR_REG_TYPE_32(mintstatus);
+
+// define 32 bit type
+CSR_REG_STRUCT_DECL_32(mintstatus);
+
+// define write masks
+#define WM32_mintstatus 0x00000000
+#define WM32_sintstatus 0x00000000
+#define WM32_uintstatus 0x00000000
+
+// define read masks
+#define RM32_sintstatus 0x0000ffff
+#define RM32_uintstatus 0x000000ff
+
+// -----------------------------------------------------------------------------
+// sscratchcsw (id 0x148)
+// mscratchcsw (id 0x348)
+// -----------------------------------------------------------------------------
+
+// define alias types
+typedef CSR_REG_TYPE(genericXLEN) CSR_REG_TYPE(sscratchcsw);
+typedef CSR_REG_TYPE(genericXLEN) CSR_REG_TYPE(mscratchcsw);
+
+// -----------------------------------------------------------------------------
+// uscratchcswl (id 0x049)
+// sscratchcswl (id 0x149)
+// mscratchcswl (id 0x349)
+// -----------------------------------------------------------------------------
+
+// define alias types
+typedef CSR_REG_TYPE(genericXLEN) CSR_REG_TYPE(uscratchcswl);
+typedef CSR_REG_TYPE(genericXLEN) CSR_REG_TYPE(sscratchcswl);
+typedef CSR_REG_TYPE(genericXLEN) CSR_REG_TYPE(mscratchcswl);
+
+// -----------------------------------------------------------------------------
+// uintthresh   (id 0x04A)
+// sintthresh   (id 0x14A)
+// mintthresh   (id 0x34A)
+// -----------------------------------------------------------------------------
+
+// 32-bit view
+typedef struct {
+    Uns32 th  :  8;
+    Uns32 _u1 : 24;
+} CSR_REG_TYPE_32(intthresh);
+
+// define 32 bit type
+CSR_REG_STRUCT_DECL_32(intthresh);
+
+// define alias types
+typedef CSR_REG_TYPE(intthresh) CSR_REG_TYPE(uintthresh);
+typedef CSR_REG_TYPE(intthresh) CSR_REG_TYPE(sintthresh);
+typedef CSR_REG_TYPE(intthresh) CSR_REG_TYPE(mintthresh);
+
+// -----------------------------------------------------------------------------
+// mclicbase    (id 0x34B)
+// -----------------------------------------------------------------------------
+
+// define alias types
+typedef CSR_REG_TYPE(genericXLEN) CSR_REG_TYPE(mclicbase);
+
+// define write masks
+#define WM32_mclicbase 0x00000000
+#define WM64_mclicbase 0x00000000
 
 // -----------------------------------------------------------------------------
 // pmpcfg       (id 0x3A0-0x3A3)
@@ -1015,8 +1219,41 @@ typedef CSR_REG_TYPE(genericXLEN) CSR_REG_TYPE(tdata);
 // dcsr         (id 0x7B0)
 // -----------------------------------------------------------------------------
 
-// define alias types
-typedef CSR_REG_TYPE(genericXLEN) CSR_REG_TYPE(dcsr);
+// cause for entry to Debug mode
+typedef enum dmCauseE {
+    DMC_NONE         = 0,
+    DMC_EBREAK       = 1,
+    DMC_TRIGGER      = 2,
+    DMC_HALTREQ      = 3,
+    DMC_STEP         = 4,
+    DMC_RESETHALTREQ = 5,
+    DMC_HALTGROUP    = 6,
+} dmCause;
+
+// 32-bit view
+typedef struct {
+    Uns32   prv       :  2;
+    Uns32   step      :  1;
+    Uns32   nmip      :  1;
+    Uns32   mprven    :  1;
+    Uns32   _u0       :  1;
+    dmCause cause     :  3;
+    Uns32   stoptime  :  1;
+    Uns32   stopcount :  1;
+    Uns32   stepie    :  1;
+    Uns32   ebreaku   :  1;
+    Uns32   ebreaks   :  1;
+    Uns32   _u1       :  1;
+    Uns32   ebreakm   :  1;
+    Uns32   _u2       : 12;
+    Uns32   xdebugver :  4;
+} CSR_REG_TYPE_32(dcsr);
+
+// define 32 bit type
+CSR_REG_STRUCT_DECL_32(dcsr);
+
+#define WM32_dcsr_nmip  0x008
+#define WM32_dcsr_cause 0x1c0
 
 // -----------------------------------------------------------------------------
 // dpc          (id 0x7B1)
@@ -1025,12 +1262,31 @@ typedef CSR_REG_TYPE(genericXLEN) CSR_REG_TYPE(dcsr);
 // define alias types
 typedef CSR_REG_TYPE(genericXLEN) CSR_REG_TYPE(dpc);
 
+// define write masks
+#define WM32_dpc -2
+#define WM64_dpc -2
+
 // -----------------------------------------------------------------------------
-// dscratch     (id 0x7B2)
+// dscratch0    (id 0x7B2)
 // -----------------------------------------------------------------------------
 
 // define alias types
-typedef CSR_REG_TYPE(genericXLEN) CSR_REG_TYPE(dscratch);
+typedef CSR_REG_TYPE(genericXLEN) CSR_REG_TYPE(dscratch0);
+
+// define write masks
+#define WM32_dscratch0 -1
+#define WM64_dscratch0 -1
+
+// -----------------------------------------------------------------------------
+// dscratch1    (id 0x7B3)
+// -----------------------------------------------------------------------------
+
+// define alias types
+typedef CSR_REG_TYPE(genericXLEN) CSR_REG_TYPE(dscratch1);
+
+// define write masks
+#define WM32_dscratch1 -1
+#define WM64_dscratch1 -1
 
 // -----------------------------------------------------------------------------
 // vstart       (id 0x008)
@@ -1079,24 +1335,16 @@ CSR_REG_STRUCT_DECL_32(vxrm);
 
 // 32-bit view
 typedef struct {
-    Uns32 NX    :  1;
-    Uns32 UF    :  1;
-    Uns32 OF    :  1;
-    Uns32 DZ    :  1;
-    Uns32 NV    :  1;
-    Uns32 frm   :  3;
     Uns32 vxsat :  1;
     Uns32 vxrm  :  2;
-    Uns32 _u0   : 21;
+    Uns32 _u0   : 29;
 } CSR_REG_TYPE_32(vcsr);
 
 // define 32 bit type
 CSR_REG_STRUCT_DECL_32(vcsr);
 
 // write masks
-#define WM32_vcsr_f       0x0ff
-#define WM32_vcsr_v       0x700
-#define WM32_vcsr_frm_msb 0x080
+#define WM32_vcsr   0x00000007
 
 // -----------------------------------------------------------------------------
 // vl           (id 0xC20)
@@ -1114,18 +1362,24 @@ typedef CSR_REG_TYPE(genericXLEN) CSR_REG_TYPE(vl);
 
 // 32-bit view
 typedef struct {
-    Uns32 vlmul :  2;
-    Uns32 vsew  :  3;
-    Uns32 _u1   : 26;
-    Uns32 vill  :  1;
+    Uns32 vlmul  :  2;
+    Uns32 vsew   :  3;
+    Uns32 vlmulf :  1;
+    Uns32 vta    :  1;
+    Uns32 vma    :  1;
+    Uns32 _u1    : 23;
+    Uns32 vill   :  1;
 } CSR_REG_TYPE_32(vtype);
 
 // 64-bit view
 typedef struct {
-    Uns64 vlmul :  2;
-    Uns64 vsew  :  3;
-    Uns64 _u1   : 58;
-    Uns64 vill  :  1;
+    Uns64 vlmul  :  2;
+    Uns64 vsew   :  3;
+    Uns32 vlmulf :  1;
+    Uns32 vta    :  1;
+    Uns32 vma    :  1;
+    Uns64 _u1    : 55;
+    Uns64 vill   :  1;
 } CSR_REG_TYPE_64(vtype);
 
 // define 32/64 bit type
@@ -1151,8 +1405,7 @@ typedef CSR_REG_TYPE(genericXLEN) CSR_REG_TYPE(vlenb);
 ////////////////////////////////////////////////////////////////////////////////
 
 //
-// Use this to define a register entry in riscvCSRs
-// below
+// Use this to define a register entry in riscvCSRs below
 //
 #define CSR_REG_DECL(_N)    CSR_REG_TYPE(_N) _N
 
@@ -1165,6 +1418,7 @@ typedef struct riscvCSRsS {
     // USER MODE CSRS
     CSR_REG_DECL(fcsr);         // 0x003
     CSR_REG_DECL(utvec);        // 0x005
+    CSR_REG_DECL(utvt);         // 0x007
     CSR_REG_DECL(vstart);       // 0x008
     CSR_REG_DECL(vxsat);        // 0x009
     CSR_REG_DECL(vxrm);         // 0x00A
@@ -1173,6 +1427,7 @@ typedef struct riscvCSRsS {
     CSR_REG_DECL(uepc);         // 0x041
     CSR_REG_DECL(ucause);       // 0x042
     CSR_REG_DECL(utval);        // 0x043
+    CSR_REG_DECL(uintthresh);   // 0x04A
     CSR_REG_DECL(vl);           // 0xC20
     CSR_REG_DECL(vtype);        // 0xC21
     CSR_REG_DECL(vlenb);        // 0xC22
@@ -1182,10 +1437,12 @@ typedef struct riscvCSRsS {
     CSR_REG_DECL(sideleg);      // 0x103
     CSR_REG_DECL(stvec);        // 0x105
     CSR_REG_DECL(scounteren);   // 0x106
+    CSR_REG_DECL(stvt);         // 0x107
     CSR_REG_DECL(sscratch);     // 0x140
     CSR_REG_DECL(sepc);         // 0x141
     CSR_REG_DECL(scause);       // 0x142
     CSR_REG_DECL(stval);        // 0x143
+    CSR_REG_DECL(sintthresh);   // 0x14A
     CSR_REG_DECL(satp);         // 0x180
 
     // MACHINE MODE CSRS
@@ -1200,12 +1457,23 @@ typedef struct riscvCSRsS {
     CSR_REG_DECL(mie);          // 0x304
     CSR_REG_DECL(mtvec);        // 0x305
     CSR_REG_DECL(mcounteren);   // 0x306
+    CSR_REG_DECL(mtvt);         // 0x307
+    CSR_REG_DECL(mstatush);     // 0x310
     CSR_REG_DECL(mcountinhibit);// 0x320
     CSR_REG_DECL(mscratch);     // 0x340
     CSR_REG_DECL(mepc);         // 0x341
     CSR_REG_DECL(mcause);       // 0x342
     CSR_REG_DECL(mtval);        // 0x343
     CSR_REG_DECL(mip);          // 0x344
+    CSR_REG_DECL(mintthresh);   // 0x34A
+    CSR_REG_DECL(mclicbase);    // 0x34B
+    CSR_REG_DECL(mintstatus);   // 0xF46
+
+    // DEBUG MODE CSRS
+    CSR_REG_DECL(dcsr);         // 0x7B0
+    CSR_REG_DECL(dpc);          // 0x7B1
+    CSR_REG_DECL(dscratch0);    // 0x7B2
+    CSR_REG_DECL(dscratch1);    // 0x7B3
 
 } riscvCSRs;
 
@@ -1222,18 +1490,21 @@ typedef struct riscvCSRMasksS {
     // USER MODE CSRS
     CSR_REG_DECL(fcsr);         // 0x003
     CSR_REG_DECL(utvec);        // 0x005
+    CSR_REG_DECL(utvt);         // 0x007
     CSR_REG_DECL(vstart);       // 0x008
-    CSR_REG_DECL(vcsr);         // 0x00F
     CSR_REG_DECL(uepc);         // 0x041
     CSR_REG_DECL(ucause);       // 0x042
+    CSR_REG_DECL(utval);        // 0x043
 
     // SUPERVISOR MODE CSRS
     CSR_REG_DECL(sedeleg);      // 0x102
     CSR_REG_DECL(sideleg);      // 0x103
     CSR_REG_DECL(stvec);        // 0x105
+    CSR_REG_DECL(stvt);         // 0x107
     CSR_REG_DECL(scounteren);   // 0x106
     CSR_REG_DECL(sepc);         // 0x141
     CSR_REG_DECL(scause);       // 0x142
+    CSR_REG_DECL(stval);        // 0x143
 
     // MACHINE MODE CSRS
     CSR_REG_DECL(mstatus);      // 0x300
@@ -1242,10 +1513,16 @@ typedef struct riscvCSRMasksS {
     CSR_REG_DECL(mideleg);      // 0x303
     CSR_REG_DECL(mie);          // 0x304
     CSR_REG_DECL(mtvec);        // 0x305
+    CSR_REG_DECL(mtvt);         // 0x307
     CSR_REG_DECL(mcounteren);   // 0x306
+    CSR_REG_DECL(mstatush);     // 0x310
     CSR_REG_DECL(mcountinhibit);// 0x320
     CSR_REG_DECL(mepc);         // 0x341
     CSR_REG_DECL(mcause);       // 0x342
+    CSR_REG_DECL(mtval);        // 0x343
+
+    // DEBUG MODE CSRS
+    CSR_REG_DECL(dcsr);         // 0x7B0
 
 } riscvCSRMasks;
 
@@ -1282,6 +1559,20 @@ typedef struct riscvCSRMasksS {
         (_CPU)->csr._RNAME.u64.fields._FIELD = _VALUE;  \
     }
 
+// get CSR field using current XLEN from 32/64 bit alternate registers
+#define RD_CSR_FIELD_ALT(_CPU, _RNAME32, _RNAME64, _FIELD) \
+    (RISCV_XLEN_IS_32(_CPU) ?                          \
+        (_CPU)->csr._RNAME32.u32.fields._FIELD :       \
+        (_CPU)->csr._RNAME64.u64.fields._FIELD)        \
+
+// set CSR field using current XLEN from 32/64 bit alternate registers
+#define WR_CSR_FIELD_ALT(_CPU, _RNAME32, _RNAME64, _FIELD, _VALUE) \
+    if(RISCV_XLEN_IS_32(_CPU)) {                            \
+        (_CPU)->csr._RNAME32.u32.fields._FIELD = _VALUE;    \
+    } else {                                                \
+        (_CPU)->csr._RNAME64.u64.fields._FIELD = _VALUE;    \
+    }
+
 // set CSR field when XLEN is 64
 #define WR_CSR64_FIELD(_CPU, _RNAME, _FIELD, _VALUE) \
     if(RISCV_XLEN_IS_64(_CPU)) {                        \
@@ -1299,6 +1590,10 @@ typedef struct riscvCSRMasksS {
     (RISCV_XLEN_IS_32(_CPU) ?                           \
         (_CPU)->csrMask._RNAME.u32.fields._FIELD :      \
         (_CPU)->csrMask._RNAME.u64.fields._FIELD)       \
+
+// mask CSR using variable mask
+#define MASK_CSR(_CPU, _RNAME) \
+    (_CPU)->csr._RNAME.u64.bits &= (_CPU)->csrMask._RNAME.u64.bits
 
 
 ////////////////////////////////////////////////////////////////////////////////

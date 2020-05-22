@@ -53,6 +53,21 @@ Uns32 riscvGetFlenArch(riscvP riscv);
 Uns32 riscvGetXlenMode(riscvP riscv);
 
 //
+// Does the processor support configurable endianness?
+//
+Bool riscvSupportEndian(riscvP riscv);
+
+//
+// Return endianness for data access in the given mode
+//
+memEndian riscvGetDataEndian(riscvP riscv, riscvMode mode);
+
+//
+// Return endianness for data access in the current mode
+//
+memEndian riscvGetCurrentDataEndian(riscvP riscv);
+
+//
 // Register extension callback block with the base model
 //
 void riscvRegisterExtCB(riscvP riscv, riscvExtCBP extCB, Uns32 id);

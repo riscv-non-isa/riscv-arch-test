@@ -89,6 +89,7 @@ typedef enum riscvITypeE {
     RV_IT_MRET_I,
     RV_IT_SRET_I,
     RV_IT_URET_I,
+    RV_IT_DRET_I,
     RV_IT_WFI_I,
 
     // system fence I-type instruction
@@ -393,19 +394,15 @@ typedef enum riscvITypeE {
 
     // V-extension FVF-type instructions
     RV_IT_VFMV_S_F,
+    RV_IT_VFSLIDE1UP_VF,
+    RV_IT_VFSLIDE1DOWN_VF,
 
     // V-extension MVX-type instructions
     RV_IT_VMV_S_X,
     RV_IT_VSLIDE1UP_VX,
     RV_IT_VSLIDE1DOWN_VX,
-    RV_IT_VWADDU_VX,
-    RV_IT_VWADD_VX,
-    RV_IT_VWSUBU_VX,
-    RV_IT_VWSUB_VX,
-    RV_IT_VWADDU_WX,
-    RV_IT_VWADD_WX,
-    RV_IT_VWSUBU_WX,
-    RV_IT_VWSUB_WX,
+    RV_IT_VZEXT_V,
+    RV_IT_VSEXT_V,
 
     // KEEP LAST
     RV_IT_LAST
@@ -483,6 +480,17 @@ typedef enum riscvVITypeE {
 } riscvVIType;
 
 //
+// This is used to categorize CSR update semantics
+//
+typedef enum riscvWholeDescE {
+
+    RV_WD_NA,       // not a whole register instruction
+    RV_WD_LD_ST,    // whole register load/store
+    RV_WD_MV,       // whole register move
+
+} riscvWholeDesc;
+
+//
 // This defines the maximum number of argument registers
 //
 #define RV_MAX_AREGS 4
@@ -506,6 +514,7 @@ typedef struct riscvInstrInfoS {
     Bool              unsExt;           // whether to extend unsigned
     Bool              csrInOp;          // whether to emit CSR as part of opcode
     Uns32             memBits;          // load/store size
+    Uns32             eew;              // explicit EEW encoding
 
     Uns64             c;                // constant value
     riscvRegDesc      r[RV_MAX_AREGS];  // argument registers
@@ -515,11 +524,11 @@ typedef struct riscvInstrInfoS {
     riscvFenceDesc    succ;             // successor fence
     riscvRMDesc       rm;               // rounding mode
     riscvCSRUDesc     csrUpdate;        // CSR update semantics
+    riscvWholeDesc    isWhole;          // is this a whole-register instruction?
+    riscvVType        vtype;            // vector type information
     Uns32             csr;              // CSR index
-    Uns8              vsew;             // vsew value
-    Uns8              vlmul;            // vmul value
     Uns8              nf;               // nf value
-    Bool              isWhole;          // is this a whole-register instruction?
+    Uns8              eewDiv;           // explicit EEW divisor
     Bool              isFF;             // is this a first-fault instruction?
 
 } riscvInstrInfo;

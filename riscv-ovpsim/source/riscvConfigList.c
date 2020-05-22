@@ -26,18 +26,21 @@
 // Specify named variant
 //
 #define RISC_VARIANT(_NAME, _PMP_REGS, _ARCH) { \
-    .name          = _NAME,                     \
-    .arch          = _ARCH,                     \
-    .user_version  = RVUV_DEFAULT,              \
-    .priv_version  = RVPV_DEFAULT,              \
-    .vect_version  = RVVV_DEFAULT,              \
-    .Zvlsseg       = 1,                         \
-    .Zvamo         = 1,                         \
-    .Zvediv        = 0,                         \
-    .Zvqmac        = 1,                         \
-    .PMP_registers = _PMP_REGS,                 \
-    .tval_ii_code  = True,                      \
-    .ASID_bits     = ((_ARCH)&RV64) ? 16 : 9    \
+    .name           = _NAME,                    \
+    .arch           = _ARCH,                    \
+    .archMask       = RV_ARCH_MASK_DEFAULT,     \
+    .counteren_mask = -1,                       \
+    .user_version   = RVUV_DEFAULT,             \
+    .priv_version   = RVPV_DEFAULT,             \
+    .vect_version   = RVVV_DEFAULT,             \
+    .Zvlsseg        = 1,                        \
+    .Zvamo          = 1,                        \
+    .Zvediv         = 0,                        \
+    .Zvqmac         = 1,                        \
+    .PMP_registers  = _PMP_REGS,                \
+    .tval_ii_code   = True,                     \
+    .ASID_bits      = ((_ARCH)&RV64) ? 16 : 9,  \
+    .numHarts       = RV_NUMHARTS_0             \
 }
 
 //

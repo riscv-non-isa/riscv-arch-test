@@ -31,10 +31,20 @@
 #include "riscvVariant.h"
 
 //
+// This default value indicates all bits writable in arch except E, S and U
+//
+#define RV_ARCH_MASK_DEFAULT (~(ISA_XLEN_ANY|ISA_E|ISA_S|ISA_U))
+
+//
 // Function type for adding documentation
 //
 #define RV_DOC_FN(_NAME) void _NAME(riscvP riscv, vmiDocNodeP node)
 typedef RV_DOC_FN((*riscvDocFn));
+
+//
+// value indicating numHarts is 0 but configurable
+//
+#define RV_NUMHARTS_0 -1
 
 //
 // This is used to specify documentation and configuration for mandatory
@@ -62,11 +72,20 @@ typedef struct riscvConfigS {
     riscvVectVer      vect_version;     // vector architecture version
     riscvFP16Ver      fp16_version;     // 16-bit floating point version
     riscvFSMode       mstatus_fs_mode;  // mstatus.FS update mode
+    riscvDMMode       debug_mode;       // is Debug mode implemented?
     const char      **members;          // cluster member variants
 
     // configuration not visible in CSR state
     Uns64             reset_address;    // reset vector address
     Uns64             nmi_address;      // NMI address
+    Uns64             debug_address;    // debug vector address
+    Uns64             dexc_address;     // debug exception address
+    Uns64             unimp_int_mask;   // mask of unimplemented interrupts
+    Uns64             no_ideleg;        // non-delegated interrupts
+    Uns64             no_edeleg;        // non-delegated exceptions
+    Uns64             ecode_mask;       // implemented bits in xcause.ecode
+    Uns64             ecode_nmi;        // exception code for NMI
+    Uns32             counteren_mask;   // counter-enable implemented mask
     Uns32             local_int_num;    // number of local interrupts
     Uns32             lr_sc_grain;      // LR/SC region grain size
     Uns32             ASID_bits;        // number of implemented ASID bits
@@ -78,10 +97,13 @@ typedef struct riscvConfigS {
     Uns32             ELEN;             // ELEN (vector extension)
     Uns32             SLEN;             // SLEN (vector extension)
     Uns32             VLEN;             // VLEN (vector extension)
+    Uns32             SEW_min;          // minimum SEW (vector extension)
     Bool              Zvlsseg;          // Zvlsseg implemented?
     Bool              Zvamo;            // Zvamo implemented?
     Bool              Zvediv;           // Zvediv implemented?
     Bool              Zvqmac;           // Zvqmac implemented?
+    Bool              unitStrideOnly;   // only unit-stride operations supported
+    Bool              noFaultOnlyFirst; // fault-only-first instructions absent?
     Bool              updatePTEA;       // hardware update of PTE A bit?
     Bool              updatePTED;       // hardware update of PTE D bit?
     Bool              unaligned;        // whether unaligned accesses supported
@@ -95,8 +117,22 @@ typedef struct riscvConfigS {
     Bool              xret_preserves_lr;// whether xRET preserves current LR
     Bool              require_vstart0;  // require vstart 0 if uninterruptible?
     Bool              enable_CSR_bus;   // enable CSR implementation bus
-    Bool              tval_ii_code;     // instruction bits in [sm]tval for
+    Bool              external_int_id;  // enable external interrupt ID ports
+    Bool              tval_zero;        // whether [smu]tval are always zero
+    Bool              tval_ii_code;     // instruction bits in [smu]tval for
                                         // illegal instruction exception?
+
+    // CLIC configuration
+    Uns32             CLICLEVELS;       // number of CLIC interrupt levels
+    Bool              CLICANDBASIC;		// whether implements basic mode also
+    Uns8              CLICVERSION;      // CLIC version
+    Uns8              CLICINTCTLBITS;   // bits implemented in clicintctl[i]
+    Uns8              CLICCFGMBITS;     // bits implemented for cliccfg.nmbits
+    Uns8              CLICCFGLBITS;     // bits implemented for cliccfg.nlbits
+    Bool              CLICSELHVEC;		// selective hardware vectoring?
+    Bool              CLICMNXTI;		// mnxti CSR implemented?
+    Bool              CLICMCSW;			// mscratchcs* CSRs implemented?
+
     // CSR register values
     struct {
         CSR_REG_DECL (mvendorid);       // mvendorid value
@@ -105,6 +141,7 @@ typedef struct riscvConfigS {
         CSR_REG_DECL (mhartid);         // mhartid value
         CSR_REG_DECL (mtvec);           // mtvec value
         CSR_REG_DECL (mstatus);         // mstatus reset value
+        CSR_REG_DECL (mclicbase);       // mclicbase value
     } csr;
 
     // CSR register masks
@@ -112,7 +149,9 @@ typedef struct riscvConfigS {
         CSR_REG_DECL (mtvec);           // mtvec mask
         CSR_REG_DECL (stvec);           // stvec mask
         CSR_REG_DECL (utvec);           // utvec mask
-        CSR_REG_DECL (cause);           // cause mask
+        CSR_REG_DECL (mtvt);            // mtvec mask
+        CSR_REG_DECL (stvt);            // stvec mask
+        CSR_REG_DECL (utvt);            // utvec mask
     } csrMask;
 
     // custom documentation

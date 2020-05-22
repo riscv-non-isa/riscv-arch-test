@@ -43,13 +43,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 //
-// Get the first child of a processor
-//
-inline static riscvP getChild(riscvP riscv) {
-    return (riscvP)vmirtGetSMPChild((vmiProcessorP)riscv);
-}
-
-//
 // Return any parent of the passed processor
 //
 inline static riscvP getParent(riscvP riscv) {
@@ -57,10 +50,10 @@ inline static riscvP getParent(riscvP riscv) {
 }
 
 //
-// Get the next sibling of a processor
+// Get the SMP index of the passed processor
 //
-inline static riscvP getSibling(riscvP riscv) {
-    return (riscvP)vmirtGetSMPNextSibling((vmiProcessorP)riscv);
+inline static Uns32 getSMPIndex(riscvP riscv) {
+    return vmirtGetSMPIndex((vmiProcessorP)riscv);
 }
 
 
@@ -79,26 +72,15 @@ Bool riscvIsCluster(riscvP riscv) {
 // Is the processor a cluster-member-level object?
 //
 Bool riscvIsClusterMember(riscvP riscv) {
-
     riscvP parent = getParent(riscv);
-
     return parent && riscvIsCluster(parent);
 }
 
 //
 // Return the processor variant to use for the given member of an AMP cluster
 //
-const char *riscvGetClusterVariant(riscvP cluster, riscvP member) {
-
-    Uns32 i = 0;
-    riscvP  try;
-
-    // get index of next variant string
-    for(try=getChild(cluster); try!=member; try=getSibling(try)) {
-        i++;
-    }
-
-    // return indexed variant
-    return cluster->configInfo.members[i];
+const char *riscvGetClusterVariant(riscvP member) {
+    riscvP cluster = getParent(member);
+    return cluster->configInfo.members[getSMPIndex(member)];
 }
 

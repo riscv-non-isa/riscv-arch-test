@@ -117,8 +117,13 @@ static void putInstruction(riscvInstrInfoP info, char **result) {
         fmt = "%08x ";
     }
 
+    // mask raw instruction pattern to instruction byte size (prevents
+    // misleading disassembly when compressed instruction encountered by
+    // processor that does not support such instructions)
+    Uns32 instruction = info->instruction & ((1ULL<<(info->bytes*8))-1);
+
     // emit basic opcode string
-    *result += sprintf(*result, fmt, info->instruction);
+    *result += sprintf(*result, fmt, instruction);
 }
 
 //
@@ -272,12 +277,25 @@ static void putOptRM(char **result, riscvRMDesc rm, Bool uncooked) {
 //
 // Emit VType argument
 //
-static void putVType(char **result, Uns8 vsew, Uns8 vlmul) {
+static void putVType(char **result, riscvP riscv, riscvVType vtype) {
 
+    const char *mulString = vtype.vlmulf ? "mf" : "m";
+    Uns32       vlmul     = vtype.vlmulf ? 4-vtype.vlmul : vtype.vlmul;
+
+    // put common fields
     putChar(result, 'e');
-    putD(result, 8<<vsew);
-    putString(result, ",m");
+    putD(result, 8<<vtype.vsew);
+    putChar(result, ',');
+    putString(result, mulString);
     putD(result, 1<<vlmul);
+
+    // add agnostic indications if implemented
+    if(riscvVFSupport(riscv, RVVF_AGNOSTIC)) {
+        putChar(result, ',');
+        putString(result, vtype.vta ? "ta" : "tu");
+        putChar(result, ',');
+        putString(result, vtype.vma ? "ma" : "mu");
+    }
 }
 
 //
@@ -358,8 +376,16 @@ static void putOpcode(char **result, riscvP riscv, riscvInstrInfoP info) {
             putD(result, info->nf+1);
         }
 
-        // emit size modifier if required
-        switch(info->memBits) {
+        if(info->eew) {
+
+            // version 0.9 EEW
+            putChar(result, 'e');
+            if(info->memBits==-1) {putChar(result, 'i');}
+            putD(result, info->eew);
+
+        } else switch(info->memBits) {
+
+            // version 0.8 memBits
             case 8:  putChar(result, 'b'); break;
             case 16: putChar(result, 'h'); break;
             case 32: putChar(result, 'w'); break;
@@ -419,6 +445,12 @@ static void putOpcode(char **result, riscvP riscv, riscvInstrInfoP info) {
     // add additional 'm' if mask is specified
     if(viDescs[info->VIType].addMaskM && info->mask) {
         putChar(result, 'm');
+    }
+
+    // add EEW divisor if specified
+    if(info->eewDiv) {
+        putChar(result, 'f');
+        putD(result, info->eewDiv);
     }
 
     // acquire/release modifier suffixes
@@ -533,7 +565,7 @@ static void disassembleFormat(
                     break;
                 case EMIT_VTYPE:
                     putUncookedKey(result, " VTYPE", uncooked);
-                    putVType(result, info->vsew, info->vlmul);
+                    putVType(result, riscv, info->vtype);
                     break;
                 case EMIT_RM:
                     putOptMask(result, info->mask, ".t", uncooked);

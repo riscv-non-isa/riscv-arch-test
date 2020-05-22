@@ -626,8 +626,7 @@
     arch     : _ARCH,               \
     r1       : RS_X_11_7,           \
     r2       : RS_X_19_15,          \
-    vsew     : VSEW_24_22,          \
-    vlmul    : VLMUL_21_20,         \
+    vtype    : VTYPE_30_20,         \
     wX       : WX_3,                \
 }
 
@@ -704,6 +703,79 @@
 }
 
 //
+// Attribute entries for 32-bit instructions like VLE8
+//
+#define ATTR32_VLE(_NAME, _GENERIC, _ARCH, _OPCODE) [IT32_##_NAME] = { \
+    opcode   : _OPCODE,             \
+    format   : FMT_R1_MEM2_RM,      \
+    type     : RV_IT_##_GENERIC,    \
+    arch     : _ARCH,               \
+    r1       : RS_V_11_7,           \
+    r2       : RS_X_19_15,          \
+    mask     : RS_V_M_25,           \
+    memBits  : MBS_EEW,             \
+    whole    : WR_23,               \
+    ff       : FF_24,               \
+    nf       : NF_31_29,            \
+    VIType   : RV_VIT_V,            \
+    eew      : EEW_28_14_12,        \
+}
+
+//
+// Attribute entries for 32-bit instructions like VLSE8
+//
+#define ATTR32_VLSE(_NAME, _GENERIC, _ARCH, _OPCODE) [IT32_##_NAME] = { \
+    opcode   : _OPCODE,             \
+    format   : FMT_R1_MEM2_R3_RM,   \
+    type     : RV_IT_##_GENERIC,    \
+    arch     : _ARCH,               \
+    r1       : RS_V_11_7,           \
+    r2       : RS_X_19_15,          \
+    r3       : RS_X_24_20,          \
+    mask     : RS_V_M_25,           \
+    memBits  : MBS_EEW,             \
+    nf       : NF_31_29,            \
+    VIType   : RV_VIT_V,            \
+    eew      : EEW_28_14_12,        \
+}
+
+//
+// Attribute entries for 32-bit instructions like VLXEI8
+//
+#define ATTR32_VLXEI(_NAME, _GENERIC, _ARCH, _OPCODE) [IT32_##_NAME] = { \
+    opcode   : _OPCODE,             \
+    format   : FMT_R1_MEM2_R3_RM,   \
+    type     : RV_IT_##_GENERIC,    \
+    arch     : _ARCH,               \
+    r1       : RS_V_11_7,           \
+    r2       : RS_X_19_15,          \
+    r3       : RS_V_24_20,          \
+    mask     : RS_V_M_25,           \
+    memBits  : MBS_SEW,             \
+    nf       : NF_31_29,            \
+    VIType   : RV_VIT_V,            \
+    eew      : EEW_28_14_12,        \
+}
+
+//
+// Attribute entries for 32-bit instructions like VAMOADDEI8
+//
+#define ATTR32_VAMOADDEI(_NAME, _GENERIC, _ARCH, _OPCODE) [IT32_##_NAME] = { \
+    opcode   : _OPCODE,             \
+    format   : FMT_R1_R3_MEM2_R4_RM,\
+    type     : RV_IT_##_GENERIC,    \
+    arch     : _ARCH,               \
+    r1       : RS_V_11_7_Z26,       \
+    r2       : RS_X_19_15,          \
+    r3       : RS_V_24_20,          \
+    r4       : RS_V_11_7,           \
+    mask     : RS_V_M_25,           \
+    memBits  : MBS_SEW,             \
+    VIType   : RV_VIT_V,            \
+    eew      : EEW_14_12,           \
+}
+
+//
 // Attribute entries for 32-bit instructions like VFSQRT.V
 //
 #define ATTR32_V(_NAME, _GENERIC, _ARCH, _OPCODE) [IT32_##_NAME] = { \
@@ -715,6 +787,21 @@
     r2       : RS_V_24_20,          \
     mask     : RS_V_M_25,           \
     VIType   : RV_VIT_V,            \
+}
+
+//
+// Attribute entries for 32-bit instructions like VFCVT.RTZ.X.F.V
+//
+#define ATTR32_V_RTZ(_NAME, _GENERIC, _ARCH, _OPCODE) [IT32_##_NAME] = { \
+    opcode   : _OPCODE,             \
+    format   : FMT_R1_R2_RM,        \
+    type     : RV_IT_##_GENERIC,    \
+    arch     : _ARCH,               \
+    r1       : RS_V_11_7,           \
+    r2       : RS_V_24_20,          \
+    mask     : RS_V_M_25,           \
+    VIType   : RV_VIT_V,            \
+    rm       : RM_RTZ,              \
 }
 
 //
@@ -733,9 +820,24 @@
 }
 
 //
+// Attribute entries for 32-bit instructions like VFNCVT.RTZ.X.F.W
+//
+#define ATTR32_VN_RTZ(_NAME, _GENERIC, _ARCH, _OPCODE) [IT32_##_NAME] = { \
+    opcode   : _OPCODE,             \
+    format   : FMT_R1_R2_RM,        \
+    type     : RV_IT_##_GENERIC,    \
+    arch     : _ARCH,               \
+    r1       : RS_V_11_7,           \
+    r2       : RS_V_24_20,          \
+    mask     : RS_V_M_25,           \
+    VIType   : RV_VIT_W,            \
+    rm       : RM_RTZ,              \
+}
+
+//
 // Attribute entries for 32-bit instructions like VFNCVT.ROD.F.F.W
 //
-#define ATTR32_W_ROD(_NAME, _GENERIC, _ARCH, _OPCODE) [IT32_##_NAME] = { \
+#define ATTR32_VN_ROD(_NAME, _GENERIC, _ARCH, _OPCODE) [IT32_##_NAME] = { \
     opcode   : _OPCODE,             \
     format   : FMT_R1_R2_RM,        \
     type     : RV_IT_##_GENERIC,    \
@@ -1309,7 +1411,7 @@
 }
 
 //
-// Attribute entries for 32-bit instructions like VLB
+// Attribute entries for 32-bit instructions like VMVR
 //
 #define ATTR32_VMVR(_NAME, _GENERIC, _ARCH, _OPCODE) [IT32_##_NAME] = { \
     opcode   : _OPCODE,             \
@@ -1321,6 +1423,21 @@
     mask     : RS_V_M_25,           \
     whole    : WR_T,                \
     nf       : NF_17_15,            \
+    VIType   : RV_VIT_V,            \
+}
+
+//
+// Attribute entries for 32-bit instructions like VADD.VX
+//
+#define ATTR32_VEXT_V(_NAME, _GENERIC, _ARCH, _OPCODE) [IT32_##_NAME] = { \
+    opcode   : _OPCODE,             \
+    format   : FMT_R1_R2_RM,        \
+    type     : RV_IT_##_GENERIC,    \
+    arch     : _ARCH,               \
+    r1       : RS_V_11_7,           \
+    r2       : RS_V_24_20,          \
+    mask     : RS_V_M_25,           \
+    eewDiv   : EEWD_17_16,          \
     VIType   : RV_VIT_V,            \
 }
 
