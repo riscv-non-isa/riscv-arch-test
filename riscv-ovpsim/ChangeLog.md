@@ -6,12 +6,113 @@ This CHANGELOG contains information for the riscvOVPsim fixed platform which inc
 
 ---
 
-NOTE: X-commit messages below refer to git commits in the following 
-      Risc-V specification document repositories:                                  
-  I-commit: https://github.com/riscv/riscv-isa-manual                        
-  V-commit: https://github.com/riscv/riscv-v-spec                            
+NOTE: X-commit messages below refer to git commits in the following
+      Risc-V specification document repositories:
+  I-commit: https://github.com/riscv/riscv-isa-manual
+  V-commit: https://github.com/riscv/riscv-v-spec
+
+- Memory accesses that straddle PMP region boundaries are now disallowed.
+- EBREAK now sets tval to 0 if priv_version is set to master.
+- Some Vector Extension issues have been corrected:
+  - Encodings of VFUNARY0/VFUNARY1 instructions have been corrected for Vector
+    Extension version 0.9.
+  - Alignment of vector register groups when explicit EEW is being used has been
+    corrected for Vector Extension version 0.9.
+
+Date 2020-May-19
+Release 20200518.0
+===
+
+- EBREAK and ECALL no longer count as retired instructions if priv_version
+  is set to master.
+- SC instruction behavior has been changed so that store address alignment is
+  validated even if the reservation check fails (previously, alignment was
+  validated only if the reservation check succeeded).
+- Masking of the mcountinhibit CSR has been corrected - previously, bit 1 and
+  bits 63...32 were writeable when they should have been 0.
+- The nmi signal has been corrected to match the documented behavior, execution
+  resumes at the nmi_address parameter value when the nmi signal goes high
+- The optional Core-Local Interrupt Controller (CLIC) has been implemented
+  (version 0.9-draft-20191208).
+- Vector version 0.9 has been added, and is now used by default. Differences
+  compared to the previous 0.8 version are as follows (with the associated
+  specification V-commit identifiers):
+  - V-commit bdb8b55: mstatus.VS and sstatus.VS fields have moved to bits 10:9;
+  - V-commit b25b643: new CSR vcsr has been added and fields VXSAT and VXRM
+    fields relocated there from CSR fcsr;
+  - V-commit 951b64f: mirrors of fcsr fields have been removed from vcsr.
+  - V-commit 1aceea2: vfslide1up.vf and vfslide1down.vf instructions added.
+  - V-commit e256d65: vfcvt.rtz.xu.f.v, vfcvt.rtz.x.f.v, vfwcvt.rtz.xu.f.v,
+    vfwcvt.rtz.x.f.v, vfncvt.rtz.xu.f.v and vfncvt.rtz.x.f.v instructions added;
+  - V-commit 8a9fbce (and others): fractional LMUL support added, controlled by
+    an extended vtype.vlmul CSR field;
+  - V-commit f414f4d (and others): vector tail agnostic and vector mask agnostic
+    fields added to the vtype CSR;
+  - V-commit a526fb9 (and others): all vector load/store instructions replaced
+    with new instructions that explicitly encode EEW of data or index;
+  - V-commit ef531ea: whole register load and store operation encodings changed;
+  - V-commit bdc85cd: vzext.vf2, vsext.vf2, vzext.vf4, vsext.vf4, vzext.vf8 and
+     vsext.vf8 instructions added;
+  - V-commit 9a77e12: MLEN is always 1.
+- Some Vector Extension issues have been corrected:
+  - Instructions vfmv.s.f and vfmv.f.s now require that SEW is a supported
+    floating point size (pending vector specification clarification).
+
+Date 2020-March-31
+Release 20200330.0
+===
+
+- The priority order for handling simultaneous interrupts destined for the
+  same privilege level has been corrected (previously, these were handled so
+  that higher interrupt numbers were higher priority).
+- Some Vector Extension issues have been corrected:
+  - All vector floating point instructions now generate Illegal Instruction
+    exceptions if the current rounding mode is invalid, even if those
+    instructions do not use the rounding mode.
+
+Date 2020-March-13
+Release 20200312.0
+===
+
+- Support for Debug mode has been added; see RISCV processor documentation for
+  more details.
+- The priv_version parameter now includes a choice of 'master', which specifies
+  that the evolving 1.12 Privileged Architecture Specification should be used.
+  This has the following changes compared to the ratified 1.11 version:
+  - MRET and SRET instruction clear mstatus.MPRV when leaving M-mode;
+  - For RV32, a new mstatush CSR has been added;
+  - Data endian is now configurable using UBE, SBE and MBE fields in mstatus
+    and the new mstatush CSR.
+- New parameter SEW_min has been added to specify the minimum SEW supported when
+  the Vector Extension is implemented; the default is 8 bits.
+- When the Vector Extension is implemented, the maximum VLEN value supported
+  has increased from 2048 to 65536 bits.
+- Some Vector Extension issues have been corrected:
+  - Behavior of vslidedown has been corrected in cases when vl<vlmax. Previously
+    elements where source element i satisfied vl<=i+offset were being zeroed;
+    now, elements where source element i satisfies vlmax<=i+offset are zeroed.
+- Some Vector Extension specification changes have been implemented:
+  - V-commit 951b64f: Mirrors of fcsr fields have been removed from vcsr.
+  - V-commit 45da90d: segment loads and stores have been restricted to SEW
+    element size only.
+
+Date 2020-February-19
+Release 20200218.0
+===
 
 ---
+
+- Some Vector Extension issues have been corrected:
+  - Behavior of vmv.x.s and vfmv.f.s has been corrected when vstart>=vl so that
+    the result register is correctly updated (previously it was left unchanged 
+    in this case).
+  - Behavior of whole-register operations when vtype.vill=1 has been corrected
+    (these instructions should execute even when vtype.vill=1).
+  - Behavior of vid.v has been corrected when vstart!=0.
+
+Date 2020-February-13
+Release 20200212.0
+===
 
 - Some details of CSR access behavior have been corrected:
   - For Vector Extension version 0.8, access to vxsat and vxrm now requires both

@@ -24,6 +24,7 @@
 
 // model header files
 #include "riscvFunctions.h"
+#include "riscvMorph.h"
 #include "riscvRegisters.h"
 #include "riscvStructure.h"
 
@@ -57,8 +58,8 @@ static Uns32 push4ByteArg(vmiProcessorP processor, Uns32 paramNum) {
 
     } else {
 
-        riscvP riscv = (riscvP)processor;
-        memEndian endian = riscv->dendian;
+        riscvP    riscv  = (riscvP)processor;
+        memEndian endian = riscvGetCurrentDataEndianMT(riscv);
 
         // argument on the stack - fetch into a temporary
         vmimtLoadRRO(
@@ -97,8 +98,8 @@ static Uns32 push8ByteArg(vmiProcessorP processor, Uns32 paramNum) {
 
     } else {
 
-        riscvP riscv = (riscvP)processor;
-        memEndian endian = riscv->dendian;
+        riscvP    riscv  = (riscvP)processor;
+        memEndian endian = riscvGetCurrentDataEndianMT(riscv);
 
         // argument on the stack - fetch into a temporary
         vmimtLoadRRO(
@@ -131,8 +132,8 @@ static Uns32 pushAddressArg(vmiProcessorP processor, Uns32 paramNum) {
 
     } else {
 
-        riscvP riscv = (riscvP)processor;
-        memEndian endian = riscv->dendian;
+        riscvP    riscv  = (riscvP)processor;
+        memEndian endian = riscvGetCurrentDataEndianMT(riscv);
 
         // argument on the stack - fetch into a temporary
         vmimtLoadRRO(

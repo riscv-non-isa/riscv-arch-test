@@ -27,60 +27,69 @@
 
 
 //
-// Vector width control
+// Vector shape description. Each name is composed of:
+// - prefix (RVVW)
+// - two or three operand descriptors, each three letters:
+//      1. argument type (V=vector, S=scalar, P=predicate);
+//      2. VLMUL multiplier (1, 2 or 4);
+//      3. element type (I=integer, F=float)
+// - an optional generic suffix
 //
 typedef enum riscvVShapeE {
 
-                    // INTEGER ARGUMENTS
-    RVVW_111_II,    // SEW
-    RVVW_111_IIXSM, // SEW, no overlap if segmented
-    RVVW_111_IIS,   // SEW, saturating result
-    RVVW_111_IIX,   // SEW, uses vxrm
-    RVVW_BBB_II,    // SEW8
-    RVVW_111_IS,    // SEW, src1 is scalar
-    RVVW_111_SI,    // SEW, Vd is scalar
-    RVVW_111_PI,    // SEW, Vd is predicate
-    RVVW_111_SIS,   // SEW, Vd and src2 are scalar
-    RVVW_CIN_II,    // SEW, mask is carry-in (VADC etc)
-    RVVW_CIN_PI,    // SEW, Vd is predicate, mask is carry-in (VMADC etc)
-    RVVW_212_SIS,   // 2*SEW = SEW   op 2*SEW, Vd and src2 are scalar
-    RVVW_121_II,    // SEW   = 2*SEW op SEW
-    RVVW_121_IIS,   // SEW   = 2*SEW op SEW, saturating result
-    RVVW_211_IIQ,   // 2*SEW = SEW   op SEW, implicit widening
-    RVVW_211_II,    // 2*SEW = SEW   op SEW
-    RVVW_211_IIS,   // 2*SEW = SEW   op SEW, saturating result
-    RVVW_411_II,    // 4*SEW = SEW   op SEW
-    RVVW_221_II,    // 2*SEW = 2*SEW op SEW
+                            // INTEGER ARGUMENTS
+    RVVW_V1I_V1I_V1I,       // SEW = SEW op SEW
+    RVVW_V1I_V1I_V1I_XSM,   // no overlap if segmented
+    RVVW_V1I_V1I_V1I_SAT,   // saturating result
+    RVVW_V1I_V1I_V1I_VXRM,  // uses vxrm
+    RVVW_V1I_V1I_V1I_SEW8,  // uses SEW8
+    RVVW_V1I_S1I_V1I,       // src1 is scalar
+    RVVW_S1I_V1I_V1I,       // Vd is scalar
+    RVVW_P1I_V1I_V1I,       // Vd is predicate
+    RVVW_S1I_V1I_S1I,       // Vd and src2 are scalar
+    RVVW_V1I_V1I_V1I_CIN,   // mask is carry-in (VADC etc)
+    RVVW_P1I_V1I_V1I_CIN,   // Vd is predicate, mask is carry-in (VMADC etc)
+    RVVW_S2I_V1I_S2I,       // 2*SEW = SEW   op 2*SEW, Vd and src2 are scalar
+    RVVW_V1I_V2I_V1I,       // SEW   = 2*SEW op SEW
+    RVVW_V1I_V2I_V1I_SAT,   // SEW   = 2*SEW op SEW, saturating result
+    RVVW_V2I_V1I_V1I_IW,    // 2*SEW = SEW   op SEW, implicit widening
+    RVVW_V2I_V1I_V1I,       // 2*SEW = SEW   op SEW
+    RVVW_V2I_V1I_V1I_SAT,   // 2*SEW = SEW   op SEW, saturating result
+    RVVW_V4I_V1I_V1I,       // 4*SEW = SEW   op SEW
+    RVVW_V2I_V2I_V1I,       // 2*SEW = 2*SEW op SEW
+    RVVW_V1I_V2I_FN,        // SEW = SEW/FN
 
-                    // FLOATING POINT ARGUMENTS
-    RVVW_111_FF,    // SEW
-    RVVW_111_PF,    // SEW, Vd is predicate
-    RVVW_111_SFS,   // SEW, Vd and src2 are scalar
-    RVVW_212_SFS,   // 2*SEW = SEW   op 2*SEW, Vd and src2 are scalar
-    RVVW_121_FFQ,   // SEW   = 2*SEW op SEW, implicit widening
-    RVVW_211_FFQ,   // 2*SEW = SEW   op SEW, implicit widening
-    RVVW_211_FF,    // 2*SEW = SEW   op SEW
-    RVVW_221_FF,    // 2*SEW = 2*SEW op SEW
+                            // FLOATING POINT ARGUMENTS
+    RVVW_V1F_V1F_V1F,       // SEW = SEW op SEW
+    RVVW_V1F_S1F_V1F,       // src1 is scalar
+    RVVW_S1F_V1I_V1I,       // Vd is scalar
+    RVVW_P1I_V1F_V1F,       // Vd is predicate
+    RVVW_S1F_V1F_S1F,       // Vd and src2 are scalar
+    RVVW_S2F_V1F_S2F,       // 2*SEW = SEW   op 2*SEW, Vd and src2 are scalar
+    RVVW_V1F_V2F_V1F_IW,    // SEW   = 2*SEW op SEW, implicit widening
+    RVVW_V2F_V1F_V1F_IW,    // 2*SEW = SEW   op SEW, implicit widening
+    RVVW_V2F_V1F_V1F,       // 2*SEW = SEW   op SEW
+    RVVW_V2F_V2F_V1F,       // 2*SEW = 2*SEW op SEW
 
-                    // MIXED ARGUMENTS
-    RVVW_111_FI,    // SEW, Fd=Is
-    RVVW_111_IF,    // SEW, Id=Fs
-    RVVW_21_FIQ,    // 2*SEW = SEW, Fd=Is
-    RVVW_21_IFQ,    // 2*SEW = SEW, Id=Fs
-    RVVW_12_FIQ,    // SEW = 2*SEW, implicit widening
-    RVVW_12_IFQ,    // SEW = 2*SEW, implicit widening
+                            // CONVERSIONS
+    RVVW_V1F_V1I,           // SEW   = SEW,   Fd=Is
+    RVVW_V1I_V1F,           // SEW   = SEW,   Id=Fs
+    RVVW_V2F_V1I,           // 2*SEW = SEW,   Fd=Is
+    RVVW_V2I_V1F,           // 2*SEW = SEW,   Id=Fs
+    RVVW_V1F_V2I_IW,        // SEW   = 2*SEW, Fd=Is, implicit widening
+    RVVW_V1I_V2F_IW,        // SEW   = 2*SEW, Id=Fs, implicit widening
 
-                    // MASK ARGUMENTS
-    RVVW_111_PP,    // SEW
-    RVVW_111_IP,    // SEW
+                            // MASK ARGUMENTS
+    RVVW_P1I_P1I_P1I,       // SEW = SEW op SEW
+    RVVW_V1I_P1I_P1I,       // SEW = SEW op SEW
 
-                    // SLIDING ARGUMENTS
-    RVVW_111_GR,    // SEW, VRGATHER instructions
-    RVVW_111_UP,    // SEW, VSLIDEUP instructions
-    RVVW_111_DN,    // SEW, VSLIDEDOWN instructions
-    RVVW_111_CMP,   // SEW, VCOMPRESS instruction
+                            // SLIDING ARGUMENTS
+    RVVW_V1I_V1I_V1I_GR,    // SEW, VRGATHER instructions
+    RVVW_V1I_V1I_V1I_UP,    // SEW, VSLIDEUP instructions
+    RVVW_V1I_V1I_V1I_DN,    // SEW, VSLIDEDOWN instructions
+    RVVW_V1I_V1I_V1I_CMP,   // SEW, VCOMPRESS instruction
 
-    RVVW_LAST       // KEEP LAST: for sizing
+    RVVW_LAST               // KEEP LAST: for sizing
 
 } riscvVShape;
 

@@ -1,6 +1,6 @@
 /*
  *
- * Copyright (c) 2005-2019 Imperas Software Ltd., www.imperas.com
+ * Copyright (c) 2005-2020 Imperas Software Ltd., www.imperas.com
  *
  * The contents of this file are provided under the Software License
  * Agreement that you accepted before downloading this file.
@@ -46,6 +46,12 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
+//
+// USE_FU540_LOG - logging via UART on FU540 Board
+// USE_ECALL_LOG - logging via write syscall
+// USE_STORE_LOG - logging via Store to memory location
+// _default_     - logging via custom instruction
+//
 
 ////////////////////////////////////////////////////////////////////////////////
 // INITIALIZE I/O
@@ -81,6 +87,9 @@
         .word 0x00000013        // 4-byte nop (match board code size)
     #endif
 #endif
+#if ((USE_ECALL_LOG==1) || (USE_STORE_LOG==1))
+        li      sp, 0x10000000
+#endif
 .endm
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -103,24 +112,32 @@
         .word 0x00000013    // 4-byte nop (match board code size)
         sw          \_R, (t5)
     #endif
-#elif (USE_ECALL_LOG==1) 
+
+#elif ((USE_ECALL_LOG==1) || (USE_STORE_LOG==1))
     SX a0,-40(sp)
     SX a1,-48(sp)
     SX a2,-56(sp)
     SX a3,-64(sp)
     SX a7,-72(sp)
-    la a1, stdiobuf	// a1 = ptr to buffer
+    la a1, _test_stdout // a1 = ptr to buffer
     sb a0, 0(a1)
     li a0, 1
-    li a2, 1		// a2 = character count
-    li a3, 0		// a3 = ?
-    li a7, 64 		// Write code
-    ecall
+    li a2, 1        // a2 = character count
+    li a3, 0        // a3 = ?
+    li a7, 64       // Write code
+    #if (USE_ECALL_LOG==1)
+        ecall
+    #endif
+    #if (USE_STORE_LOG==1)
+        nop
+        nop
+    #endif
     LX a0,-40(sp)
     LX a1,-48(sp)
     LX a2,-56(sp)
     LX a3,-64(sp)
     LX a7,-72(sp)
+
 #else
         // normal test case simulation - custome instruction
         .word 0x0005200B
@@ -147,25 +164,33 @@ _start:
 ////////////////////////////////////////////////////////////////////////////////
 
 #if (USE_FU540_LOG==1)
-    exit_test:
+    _test_exit:
     #ifdef SIFIVE_FU540
         // executing on board
-        j exit_test         // 2-byte op
+        j _test_exit         // 2-byte op
         .word 0x00000013    // 4-byte nop (match simulator code size)
     #else
         // board-compatible simulation
         li          a0,0    // 2-byte op
         .word 0x0005200B    // 4-byte op
     #endif
+#else
+        _test_exit:
+            j _test_exit
 #endif
 
 .macro EXIT_TEST
 #if (USE_FU540_LOG==1)
         // executing on board or simulation of board
-        j exit_test
-#elif (USE_ECALL_LOG==1) 
+        j _test_exit
+
+#elif (USE_ECALL_LOG==1)
         li a7, 93 // Exit code
         ecall
+
+#elif (USE_STORE_LOG==1)
+        j _test_exit
+
 #else
         // normal test case simulation
         li          a0,0
@@ -358,6 +383,9 @@ _traphandler:
 // writeS: write string in a0 (destroys a0, t0)
 ////////////////////////////////////////////////////////////////////////////////
 
+// stabilize function size (WRITE_A0 implementation may change)
+.align 7
+
 writeS:
 
 #ifndef SYS_QUIET
@@ -439,6 +467,9 @@ writeA0_common:
 
         ret
 
+// stabilize function size (WRITE_A0 implementation may change)
+.align 8
+
 ////////////////////////////////////////////////////////////////////////////////
 // writeA0_4: write 32-bit register a0 (destroys a0, t0-t2)
 ////////////////////////////////////////////////////////////////////////////////
@@ -450,9 +481,6 @@ writeA0_4:
         li          t2, 0
 #endif
         j           writeA0_32
-
-// stabilize function size (WRITE_A0 implementation may change)
-.align 7
 
 ////////////////////////////////////////////////////////////////////////////////
 // writeA0Short: write register a0 with no leading zeros (destroys a0, t0-t2)
@@ -657,6 +685,7 @@ DEFINE_REG_LABEL     f31
 #define vstart          0x008
 #define vxsat           0x009
 #define vxrm            0x00A
+#define vcsr            0x00F
 #define uscratch        0x040
 #define uepc            0x041
 #define ucause          0x042
@@ -926,10 +955,11 @@ DEFINE_REG_LABEL_X   vxrm,   "vxrm"     // not recognized by assembler
 DEFINE_REG_LABEL_X   vtype,  "vtype"    // not recognized by assembler
 DEFINE_REG_LABEL_X   vl,     "vl"       // not recognized by assembler
 DEFINE_REG_LABEL_X   vlenb,  "vlenb"    // not recognized by assembler
+DEFINE_REG_LABEL_X   vcsr,   "vcsr"    // not recognized by assembler
 
-#if (USE_ECALL_LOG==1) 
+#if ((USE_ECALL_LOG==1) || (USE_STORE_LOG==1))
 .align 4
-stdiobuf:
+_test_stdout:
 	.word 0x0
 #endif
 
@@ -962,7 +992,7 @@ stdiobuf:
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
-.include "extB.S.include"
+#include "extB.S.include"
 
 # use s0(r8)  - s1(r9)
 # use s2(r18) - s11(r27)

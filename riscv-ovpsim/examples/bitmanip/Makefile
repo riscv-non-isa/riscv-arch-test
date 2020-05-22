@@ -7,24 +7,27 @@ SRC     = $(wildcard *.S)
 ELF     = $(SRC:.S=.elf)
 OD      = $(SRC:.S=.od)
 
-PATH          := $(PATH):$(IMPERAS_HOME)/lib/$(IMPERAS_ARCH)/CrossCompiler/riscv-none-embed/bin
+RISCV_ROOT    ?= $(IMPERAS_HOME)/lib/$(IMPERAS_ARCH)/CrossCompiler/riscv-none-embed/bin
 RISCV_PREFIX  ?= riscv-none-embed-
-RISCV_CC      ?= $(RISCV_PREFIX)gcc
-RISCV_OBJDUMP ?= $(RISCV_PREFIX)objdump
+RISCV_CC      ?= $(RISCV_ROOT)/$(RISCV_PREFIX)gcc
+RISCV_OBJDUMP ?= $(RISCV_ROOT)/$(RISCV_PREFIX)objdump
 
 OPT_CC  = -mabi=lp64 -march=rv64im -DXLEN64
 OPT_CC += -Wl,-Ttext=0x80000000 -nostartfiles
 
-
 all: $(ELF) $(OD)
 
-%.elf: %.S
+%.elf: %.S extB.S.include
 	@echo "# Build $@"
-	$(RISCV_CC)  $(OPT_CC) -o $@ $<
+	$(V) $(RISCV_CC)  $(OPT_CC) -o $@ $<
 
 %.od: %.elf
 	@echo "# Objdump $<"
-	$(RISCV_OBJDUMP) -D $< > $@
+	$(V) $(RISCV_OBJDUMP) -D $< > $@
+
+extB.S.include: $(IMPERAS_HOME)/ImperasLib/source/riscv.ovpworld.org/intercept/extB/1.0/model/extB.S.include
+	@echo "# Copy $<"
+	$(V) cp $< $@
 
 clean:
 	rm -f $(ELF) $(OD)

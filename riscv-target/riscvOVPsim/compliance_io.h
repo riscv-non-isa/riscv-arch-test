@@ -30,10 +30,8 @@
 #ifndef _COMPLIANCE_IO_H
 #define _COMPLIANCE_IO_H
 
-#ifdef  RVTEST_ASSERT
-#  define RVTEST_IO_QUIET 0
-#else
-#  define RVTEST_IO_QUIET 1
+#ifndef  RVTEST_ASSERT
+#  define RVTEST_IO_QUIET
 #endif
 
 //-----------------------------------------------------------------------
@@ -44,7 +42,7 @@
 
 #define RVTEST_CUSTOM1 0x0005200B
 
-#if(RVTEST_IO_QUIET==1)
+#ifdef RVTEST_IO_QUIET
 
 #define RVTEST_IO_INIT
 #define RVTEST_IO_WRITE_STR(_SP, _STR)
@@ -114,13 +112,7 @@
     li          t0, _I;                                                 \
     beq         s0, t0, 20002f;                                         \
     LOCAL_IO_WRITE_STR("Assertion violation: file ");                   \
-    li TESTNUM, 100;                                                    \
-    RVTEST_FAIL;                                                        \
-20002:                                                                  \
-    LOCAL_IO_POP(_SP)
-
-
-// LOCAL_IO_WRITE_STR(__FILE__);                                       \
+    LOCAL_IO_WRITE_STR(__FILE__);                                       \
     LOCAL_IO_WRITE_STR(", line ");                                      \
     LOCAL_IO_WRITE_STR(TOSTRING(__LINE__));                             \
     LOCAL_IO_WRITE_STR(": ");                                           \
@@ -129,7 +121,12 @@
     LOCAL_IO_WRITE_GPR(s0);                                             \
     LOCAL_IO_WRITE_STR(") != ");                                        \
     LOCAL_IO_WRITE_STR(# _I);                                           \
-    LOCAL_IO_WRITE_STR("\n");                                           
+    LOCAL_IO_WRITE_STR("\n");                                           \
+    li TESTNUM, 100;                                                    \
+    RVTEST_FAIL;                                                        \
+20002:                                                                  \
+    LOCAL_IO_POP(_SP)
+
 
 // _F = FPR
 // _C = GPR
