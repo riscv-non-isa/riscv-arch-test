@@ -1,4 +1,4 @@
-﻿= RISC-V Compliance Test Format Specification =
+= RISC-V Compliance Test Format Specification =
 RISC-V Foundation Compliance Task Group
 Issue 1.0 Draft
 :toc:
