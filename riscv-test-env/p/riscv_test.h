@@ -203,7 +203,8 @@ begin_testcode:
 
 #define RVTEST_CODE_END                                                 \
 end_testcode:                                                           \
-        unimp
+        ecall;                                                          \
+        unimp;
 
 //-----------------------------------------------------------------------
 // Pass/Fail Macro
@@ -224,7 +225,8 @@ end_testcode:                                                           \
         sll TESTNUM, TESTNUM, 1;                                        \
         or TESTNUM, TESTNUM, 1;                                         \
         SWSIG (0, TESTNUM);                                             \
-        ecall
+        la x1, end_testcode;                                            \
+        jr x1;
 
 //-----------------------------------------------------------------------
 // Data Section Macro

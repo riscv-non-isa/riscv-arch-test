@@ -98,13 +98,6 @@ typedef struct riscvBlockStateS {
 } riscvBlockState;
 
 //
-// Convert vsew value to riscvSEWMt type
-//
-inline static riscvSEWMt vsewToSEW(Uns32 vsew) {
-    return 8<<vsew;
-}
-
-//
 // Convert signed vlmul value to riscvVLMULx8Mt type
 //
 inline static riscvVLMULx8Mt svlmulToVLMULx8(Int32 svlmul) {
@@ -115,7 +108,7 @@ inline static riscvVLMULx8Mt svlmulToVLMULx8(Int32 svlmul) {
 // Get riscvVLMULx8Mt for vtype
 //
 inline static riscvVLMULx8Mt vtypeToVLMULx8(riscvVType vtype) {
-    return svlmulToVLMULx8(getSignedVLMUL(vtype.vlmul, vtype.vlmulf));
+    return svlmulToVLMULx8(getVTypeSVLMUL(vtype));
 }
 
 

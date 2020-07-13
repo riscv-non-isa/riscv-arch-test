@@ -11,6 +11,78 @@ NOTE: X-commit messages below refer to git commits in the following
   I-commit: https://github.com/riscv/riscv-isa-manual
   V-commit: https://github.com/riscv/riscv-v-spec
 
+- First release of Imperas Instruction Functional Coverage engine to provide coverage of
+  RISC-V Compliance Test Suites.
+- mintstatus, sintstatus and uintstatus CSRs have been reassigned to addresses
+  0x346, 0x146 and 0x046, respectively.
+
+Date 2020-July-09
+Release 20200708.0
+===
+
+- Reads of instret and cycle CSRs now exclude the current instruction from the
+  reported count.
+- The vector version master branch currently has these differences compared to
+  the previous 0.9 version:
+  - SLEN=VLEN register layout is mandatory;
+  - ELEN>VLEN is now supported for LMUL>1;
+  - Whole register moves and load/stores now have element size hints;
+  - Instructions vfrsqrte7.v and vfrece7.v added, with candidate implementations
+    (precise behavior is not yet defined).
+
+Date 2020-June-30
+Release 20200629.0
+===
+
+- Vector Extension
+  - behavior of vslidedown.vx and vslidedown.vi with a slide of 0 when source
+    and destination vector registers are the same has been corrected.
+
+Date 2020-June-22
+Release 20200619.0
+===
+
+- Vector Extension
+  - sstatus.VS field alias has been implemented in its new position (from
+    specification version 0.9).
+
+Date 2020-June-17
+Release 20200616.0
+===
+
+- Core-Local Interrupt Controller (CLIC)
+  - address for xintthresh CSRs have been changed to 0xm47 (previously 0xm4A)
+- Vector Extension
+  - Checking of overlap of vector registers for vector indexed segment loads and
+    stores has been corrected.
+
+Date 2020-June-09
+Release 20200608.0
+===
+
+- The Bit-Manipulation Extension is now implemented in the model, with version
+  defined by parameter bitmanip_version.
+- Some Vector Extension issues have been corrected:
+  - Parameter order shown by disassembly of vector AMO instructions has been
+    corrected. Model behavior is not affected by this change.
+  - Encodings of integer extension instructions have been corrected for Vector
+    Extension version 0.9.
+- The vector version master branch currently has these differences compared to
+  the previous 0.9 version:
+  - V-commit 443ce5b: overlap constraints for different source/destination EEW
+    changed.
+
+Date 2020-May-27
+Release 20200526.0
+===
+
+- Memory accesses that straddle PMP region boundaries are now disallowed for
+  M-mode, even if those regions imply full M-mode access.
+
+Date 2020-May-22
+Release 20200521.0
+===
+
 - Memory accesses that straddle PMP region boundaries are now disallowed.
 - EBREAK now sets tval to 0 if priv_version is set to master.
 - Some Vector Extension issues have been corrected:

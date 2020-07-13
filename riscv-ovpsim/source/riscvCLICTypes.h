@@ -22,6 +22,10 @@
 // VMI header files
 #include "vmi/vmiTypes.h"
 
+// model header files
+#include "riscvMode.h"
+#include "riscvTypeRefs.h"
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // REGISTER DEFINITIONS
@@ -91,4 +95,33 @@ CLIC_REG_STRUCT_DECL(clicintattr);
 // Use this to define a CLIC register
 //
 #define CLIC_REG_DECL(_N)   CLIC_REG_TYPE(_N) _N
+
+
+////////////////////////////////////////////////////////////////////////////////
+// INTERRUPT MANAGEMENT STRUCTURES
+////////////////////////////////////////////////////////////////////////////////
+
+//
+// This holds state for a pending CLIC interrupt
+//
+typedef struct riscvCLICOutStateS {
+    riscvMode priv;     // privilege mode
+    Int32     id;       // interrupt id
+    Uns8      level;    // interrupt level
+    Bool      shv;      // whether selectively hardware vectored
+    Bool      _u1[6];   // (for alignment)
+} riscvCLICOutState;
+
+//
+// This holds CLIC state
+//
+typedef struct riscvCLICS {
+    riscvCLICOutState  sel;         // selected interrupt state
+    CLIC_REG_DECL     (cliccfg);    // cliccfg register value
+    CLIC_REG_DECL     (clicinfo);   // clicinfo register value
+    riscvPP            harts;       // member harts
+    riscvCLICIntStateP intState;    // state for each interrupt
+    Uns64             *ipe;         // mask of pending-and-enabled interrupts
+} riscvCLIC;
+
 

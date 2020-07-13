@@ -52,10 +52,11 @@ typedef enum riscvParamVariantE {
     RVPV_VARIANT = (1<<1),      // identifies variant parameter
     RVPV_FP      = (1<<2),      // requires floating point unit
     RVPV_A       = (1<<3),      // requires atomic instructions
-    RVPV_S       = (1<<4),      // requires Supervisor mode
-    RVPV_N       = (1<<5),      // requires User mode interrupts
-    RVPV_V       = (1<<6),      // requires Vector extension
-    RVPV_MPCORE  = (1<<7),      // present for multicore variants
+    RVPV_B       = (1<<4),      // requires bitmanip instructions
+    RVPV_S       = (1<<5),      // requires Supervisor mode
+    RVPV_N       = (1<<6),      // requires User mode interrupts
+    RVPV_V       = (1<<7),      // requires Vector extension
+    RVPV_MPCORE  = (1<<8),      // present for multicore variants
     RVPV_CLIC    = (1<<9),      // present if CLIC enabled
     RVPV_NMBITS  = (1<<10),     // present if CLICCFGMBITS can be > 0
 
@@ -169,6 +170,34 @@ static vmiEnumParameter vectorVariants[] = {
         .value       = RVVV_MASTER,
         .description = "Vector Architecture Master Branch as of commit "
                        RVVV_MASTER_TAG" (this is subject to change)",
+    },
+    // KEEP LAST: terminator
+    {0}
+};
+
+//
+// Supported Bit Manipulation Architecture variants
+//
+static vmiEnumParameter bitmanipVariants[] = {
+    [RVBV_0_90] = {
+        .name        = "0.90",
+        .value       = RVBV_0_90,
+        .description = "Bit Manipulation Architecture Version v0.90-20190610",
+    },
+    [RVBV_0_91] = {
+        .name        = "0.91",
+        .value       = RVBV_0_91,
+        .description = "Bit Manipulation Architecture Version v0.91-20190829",
+    },
+    [RVBV_0_92] = {
+        .name        = "0.92",
+        .value       = RVBV_0_92,
+        .description = "Bit Manipulation Architecture Version v0.92-20191108",
+    },
+    [RVBV_0_93] = {
+        .name        = "0.93",
+        .value       = RVBV_0_93,
+        .description = "Bit Manipulation Architecture Version draft-20200129",
     },
     // KEEP LAST: terminator
     {0}
@@ -357,6 +386,7 @@ static void setUns32ParamMax(vmiParameterP param, Uns32 value) {
 static RISCV_ENUM_PDEFAULT_CFG_FN(user_version);
 static RISCV_ENUM_PDEFAULT_CFG_FN(priv_version);
 static RISCV_ENUM_PDEFAULT_CFG_FN(vect_version);
+static RISCV_ENUM_PDEFAULT_CFG_FN(bitmanip_version);
 static RISCV_ENUM_PDEFAULT_CFG_FN(fp16_version);
 static RISCV_ENUM_PDEFAULT_CFG_FN(mstatus_fs_mode);
 static RISCV_ENUM_PDEFAULT_CFG_FN(debug_mode);
@@ -382,8 +412,12 @@ static RISCV_BOOL_PDEFAULT_CFG_FN(require_vstart0);
 static RISCV_BOOL_PDEFAULT_CFG_FN(external_int_id);
 static RISCV_BOOL_PDEFAULT_CFG_FN(CLICANDBASIC);
 static RISCV_BOOL_PDEFAULT_CFG_FN(CLICSELHVEC);
-static RISCV_BOOL_PDEFAULT_CFG_FN(CLICMNXTI);
-static RISCV_BOOL_PDEFAULT_CFG_FN(CLICMCSW);
+static RISCV_BOOL_PDEFAULT_CFG_FN(CLICXNXTI);
+static RISCV_BOOL_PDEFAULT_CFG_FN(CLICXCSW);
+static RISCV_BOOL_PDEFAULT_CFG_FN(externalCLIC);
+static RISCV_BOOL_PDEFAULT_CFG_FN(tvt_undefined);
+static RISCV_BOOL_PDEFAULT_CFG_FN(intthresh_undefined);
+static RISCV_BOOL_PDEFAULT_CFG_FN(mclicbase_undefined);
 
 //
 // Set default value of raw Uns32 parameters
@@ -391,7 +425,6 @@ static RISCV_BOOL_PDEFAULT_CFG_FN(CLICMCSW);
 static RISCV_UNS32_PDEFAULT_CFG_FN(tvec_align);
 static RISCV_UNS32_PDEFAULT_CFG_FN(counteren_mask);
 static RISCV_UNS32_PDEFAULT_CFG_FN(PMP_grain)
-static RISCV_UNS32_PDEFAULT_CFG_FN(PMP_registers);
 static RISCV_UNS32_PDEFAULT_CFG_FN(CLICLEVELS);
 static RISCV_UNS32_PDEFAULT_CFG_FN(CLICCFGLBITS);
 
@@ -403,8 +436,20 @@ static RISCV_UNS64_PDEFAULT_CFG_FN(nmi_address)
 static RISCV_UNS64_PDEFAULT_CFG_FN(debug_address)
 static RISCV_UNS64_PDEFAULT_CFG_FN(dexc_address)
 static RISCV_UNS64_PDEFAULT_CFG_FN(unimp_int_mask)
+static RISCV_UNS64_PDEFAULT_CFG_FN(force_mideleg)
+static RISCV_UNS64_PDEFAULT_CFG_FN(force_sideleg)
 static RISCV_UNS64_PDEFAULT_CFG_FN(no_ideleg)
 static RISCV_UNS64_PDEFAULT_CFG_FN(no_edeleg)
+
+
+//
+// Set default number of PMP registers
+//
+static RISCV_PDEFAULT_FN(default_PMP_registers) {
+
+    setUns32ParamDefault(param, cfg->PMP_registers);
+    setUns32ParamMax(param, (cfg->priv_version>=RVPV_1_12) ? 64 : 16);
+}
 
 //
 // Set default value of numHarts
@@ -617,15 +662,51 @@ static RISCV_BOOL_PDEFAULT_CFG_FN(Zvediv);
 static RISCV_BOOL_PDEFAULT_CFG_FN(Zvqmac);
 
 //
+// Set bit manipulation extension subset option parameter default
+//
+static void setBMSetParamDefault(
+    riscvConfigCP    cfg,
+    vmiParameterP    param,
+    riscvBitManipSet option
+) {
+    CHECK_PARAM_TYPE(param, vmi_PT_BOOL, "Bool");
+    param->u.boolParam.defaultValue = !(cfg->bitmanip_absent & option);
+}
+
+//
+// Macro to define a function to set a raw Bool bit manipulation subset
+// parameter value from the configuration
+//
+#define RISCV_BMSET_PDEFAULT_CFG_FN(_NAME) RISCV_PDEFAULT_FN(default_##_NAME) { \
+    setBMSetParamDefault(cfg, param, RVBS_##_NAME); \
+}
+
+//
+// Set default values of bit manipulation extension subset options
+//
+static RISCV_BMSET_PDEFAULT_CFG_FN(Zba);
+static RISCV_BMSET_PDEFAULT_CFG_FN(Zbb);
+static RISCV_BMSET_PDEFAULT_CFG_FN(Zbc);
+static RISCV_BMSET_PDEFAULT_CFG_FN(Zbe);
+static RISCV_BMSET_PDEFAULT_CFG_FN(Zbf);
+static RISCV_BMSET_PDEFAULT_CFG_FN(Zbm);
+static RISCV_BMSET_PDEFAULT_CFG_FN(Zbp);
+static RISCV_BMSET_PDEFAULT_CFG_FN(Zbr);
+static RISCV_BMSET_PDEFAULT_CFG_FN(Zbs);
+static RISCV_BMSET_PDEFAULT_CFG_FN(Zbt);
+
+
+//
 // Table of formal parameter specifications
 //
 static riscvParameter parameters[] = {
 
     // simulation controls
     {  RVPV_VARIANT, 0,                            VMI_ENUM_PARAM_SPEC  (riscvParamValues, variant,              0,                         "Selects variant (either a generic UISA or a specific model)")},
-    {  RVPV_ALL,     default_user_version,         VMI_ENUM_PARAM_SPEC  (riscvParamValues, user_version,         userVariants,              "Specify required User Architecture version")},
-    {  RVPV_ALL,     default_priv_version,         VMI_ENUM_PARAM_SPEC  (riscvParamValues, priv_version,         privVariants,              "Specify required Privileged Architecture version")},
+    {  RVPV_PRE,     default_user_version,         VMI_ENUM_PARAM_SPEC  (riscvParamValues, user_version,         userVariants,              "Specify required User Architecture version")},
+    {  RVPV_PRE,     default_priv_version,         VMI_ENUM_PARAM_SPEC  (riscvParamValues, priv_version,         privVariants,              "Specify required Privileged Architecture version")},
     {  RVPV_V,       default_vect_version,         VMI_ENUM_PARAM_SPEC  (riscvParamValues, vector_version,       vectorVariants,            "Specify required Vector Architecture version")},
+    {  RVPV_B,       default_bitmanip_version,     VMI_ENUM_PARAM_SPEC  (riscvParamValues, bitmanip_version,     bitmanipVariants,          "Specify required Bit Manipulation Architecture version")},
     {  RVPV_FPV,     default_fp16_version,         VMI_ENUM_PARAM_SPEC  (riscvParamValues, fp16_version,         fp16Variants,              "Specify required 16-bit floating point format")},
     {  RVPV_FP,      default_mstatus_fs_mode,      VMI_ENUM_PARAM_SPEC  (riscvParamValues, mstatus_fs_mode,      FSModes,                   "Specify conditions causing update of mstatus.FS to dirty")},
     {  RVPV_ALL,     default_debug_mode,           VMI_ENUM_PARAM_SPEC  (riscvParamValues, debug_mode,           DMModes,                   "Specify how Debug mode is implemented")},
@@ -655,6 +736,7 @@ static riscvParameter parameters[] = {
     {  RVPV_ALL,     default_time_undefined,       VMI_BOOL_PARAM_SPEC  (riscvParamValues, time_undefined,       False,                     "Specify that the time CSR is undefined (reads to it are emulated by a Machine mode trap)")},
     {  RVPV_ALL,     default_instret_undefined,    VMI_BOOL_PARAM_SPEC  (riscvParamValues, instret_undefined,    False,                     "Specify that the instret CSR is undefined (reads to it are emulated by a Machine mode trap)")},
     {  RVPV_ALL,     default_enable_CSR_bus,       VMI_BOOL_PARAM_SPEC  (riscvParamValues, enable_CSR_bus,       False,                     "Add artifact CSR bus port, allowing CSR registers to be externally implemented")},
+    {  RVPV_ALL,     0,                            VMI_STRING_PARAM_SPEC(riscvParamValues, CSR_remap,            "",                        "Comma-separated list of CSR number mappings, each of the form <csrName>=<number>")},
     {  RVPV_FP,      default_d_requires_f,         VMI_BOOL_PARAM_SPEC  (riscvParamValues, d_requires_f,         False,                     "If D and F extensions are separately enabled in the misa CSR, whether D is enabled only if F is enabled")},
     {  RVPV_ALL,     default_xret_preserves_lr,    VMI_BOOL_PARAM_SPEC  (riscvParamValues, xret_preserves_lr,    False,                     "Whether an xRET instruction preserves the value of LR")},
     {  RVPV_V,       default_require_vstart0,      VMI_BOOL_PARAM_SPEC  (riscvParamValues, require_vstart0,      False,                     "Whether CSR vstart must be 0 for non-interruptible vector instructions")},
@@ -663,10 +745,12 @@ static riscvParameter parameters[] = {
     {  RVPV_ALL,     default_reset_address,        VMI_UNS64_PARAM_SPEC (riscvParamValues, reset_address,        0, 0,          -1,         "Override reset vector address")},
     {  RVPV_ALL,     default_nmi_address,          VMI_UNS64_PARAM_SPEC (riscvParamValues, nmi_address,          0, 0,          -1,         "Override NMI vector address")},
     {  RVPV_ALL,     default_PMP_grain,            VMI_UNS32_PARAM_SPEC (riscvParamValues, PMP_grain,            0, 0,          29,         "Specify PMP region granularity, G (0 => 4 bytes, 1 => 8 bytes, etc)")},
-    {  RVPV_ALL,     default_PMP_registers,        VMI_UNS32_PARAM_SPEC (riscvParamValues, PMP_registers,        0, 0,          16,         "Specify the number of implemented PMP address registers")},
+    {  RVPV_ALL,     default_PMP_registers,        VMI_UNS32_PARAM_SPEC (riscvParamValues, PMP_registers,        0, 0,          0,          "Specify the number of implemented PMP address registers")},
     {  RVPV_S,       default_Sv_modes,             VMI_UNS32_PARAM_SPEC (riscvParamValues, Sv_modes,             0, 0,          (1<<16)-1,  "Specify bit mask of implemented Sv modes (e.g. 1<<8 is Sv39)")},
     {  RVPV_ALL,     default_local_int_num,        VMI_UNS32_PARAM_SPEC (riscvParamValues, local_int_num,        0, 0,          0,          "Specify number of supplemental local interrupts")},
     {  RVPV_ALL,     default_unimp_int_mask,       VMI_UNS64_PARAM_SPEC (riscvParamValues, unimp_int_mask,       0, 0,          -1,         "Specify mask of unimplemented interrupts (e.g. 1<<9 indicates Supervisor external interrupt unimplemented)")},
+    {  RVPV_ALL,     default_force_mideleg,        VMI_UNS64_PARAM_SPEC (riscvParamValues, force_mideleg,        0, 0,          -1,         "Specify mask of interrupts always delegated to lower-priority execution level from Machine execution level")},
+    {  RVPV_S,       default_force_sideleg,        VMI_UNS64_PARAM_SPEC (riscvParamValues, force_sideleg,        0, 0,          -1,         "Specify mask of interrupts always delegated to User execution level from Supervisor execution level")},
     {  RVPV_ALL,     default_no_ideleg,            VMI_UNS64_PARAM_SPEC (riscvParamValues, no_ideleg,            0, 0,          -1,         "Specify mask of interrupts that cannot be delegated to lower-priority execution levels")},
     {  RVPV_ALL,     default_no_edeleg,            VMI_UNS64_PARAM_SPEC (riscvParamValues, no_edeleg,            0, 0,          -1,         "Specify mask of exceptions that cannot be delegated to lower-priority execution levels")},
     {  RVPV_ALL,     default_external_int_id,      VMI_BOOL_PARAM_SPEC  (riscvParamValues, external_int_id,      False,                     "Whether to add nets allowing External Interrupt ID codes to be forced")},
@@ -688,14 +772,25 @@ static riscvParameter parameters[] = {
     {  RVPV_ALL,     default_mtvec,                VMI_UNS64_PARAM_SPEC (riscvParamValues, mtvec,                0, 0,          -1,         "Override mtvec register")},
     {  RVPV_CLIC,    default_mclicbase,            VMI_UNS64_PARAM_SPEC (riscvParamValues, mclicbase,            0, 0,          -1,         "Override mclicbase register")},
     {  RVPV_FP,      0,                            VMI_UNS32_PARAM_SPEC (riscvParamValues, mstatus_FS,           0, 0,          3,          "Override default value of mstatus.FS (initial state of floating point unit)")},
+    {  RVPV_V,       0,                            VMI_UNS32_PARAM_SPEC (riscvParamValues, mstatus_VS,           0, 0,          3,          "Override default value of mstatus.VS (initial state of vector unit)")},
     {  RVPV_V,       default_ELEN,                 VMI_UNS32_PARAM_SPEC (riscvParamValues, ELEN,                 0, ELEN_MIN,   ELEN_MAX,   "Override ELEN (vector extension)")},
-    {  RVPV_V,       default_SLEN,                 VMI_UNS32_PARAM_SPEC (riscvParamValues, SLEN,                 0, SLEN_MIN,   VLEN_MAX,   "Override SLEN (vector extension)")},
+    {  RVPV_V,       default_SLEN,                 VMI_UNS32_PARAM_SPEC (riscvParamValues, SLEN,                 0, SLEN_MIN,   VLEN_MAX,   "Override SLEN (vector extension before version 1.0 only)")},
     {  RVPV_V,       default_VLEN,                 VMI_UNS32_PARAM_SPEC (riscvParamValues, VLEN,                 0, SLEN_MIN,   VLEN_MAX,   "Override VLEN (vector extension)")},
     {  RVPV_V,       default_SEW_min,              VMI_UNS32_PARAM_SPEC (riscvParamValues, SEW_min,              0, SEW_MIN,    ELEN_MAX,   "Override minimum supported SEW (vector extension)")},
     {  RVPV_V,       default_Zvlsseg,              VMI_BOOL_PARAM_SPEC  (riscvParamValues, Zvlsseg,              False,                     "Specify that Zvlsseg is implemented (vector extension)")},
     {  RVPV_V,       default_Zvamo,                VMI_BOOL_PARAM_SPEC  (riscvParamValues, Zvamo,                False,                     "Specify that Zvamo is implemented (vector extension)")},
     {  RVPV_V,       default_Zvediv,               VMI_BOOL_PARAM_SPEC  (riscvParamValues, Zvediv,               False,                     "Specify that Zvediv is implemented (vector extension)")},
     {  RVPV_V,       default_Zvqmac,               VMI_BOOL_PARAM_SPEC  (riscvParamValues, Zvqmac,               False,                     "Specify that Zvqmac is implemented (vector extension)")},
+    {  RVPV_B,       default_Zba,                  VMI_BOOL_PARAM_SPEC  (riscvParamValues, Zba,                  False,                     "Specify that Zba is implemented (bit manipulation extension)")},
+    {  RVPV_B,       default_Zbb,                  VMI_BOOL_PARAM_SPEC  (riscvParamValues, Zbb,                  False,                     "Specify that Zbb is implemented (bit manipulation extension)")},
+    {  RVPV_B,       default_Zbc,                  VMI_BOOL_PARAM_SPEC  (riscvParamValues, Zbc,                  False,                     "Specify that Zbc is implemented (bit manipulation extension)")},
+    {  RVPV_B,       default_Zbe,                  VMI_BOOL_PARAM_SPEC  (riscvParamValues, Zbe,                  False,                     "Specify that Zbe is implemented (bit manipulation extension)")},
+    {  RVPV_B,       default_Zbf,                  VMI_BOOL_PARAM_SPEC  (riscvParamValues, Zbf,                  False,                     "Specify that Zbf is implemented (bit manipulation extension)")},
+    {  RVPV_B,       default_Zbm,                  VMI_BOOL_PARAM_SPEC  (riscvParamValues, Zbm,                  False,                     "Specify that Zbm is implemented (bit manipulation extension)")},
+    {  RVPV_B,       default_Zbp,                  VMI_BOOL_PARAM_SPEC  (riscvParamValues, Zbp,                  False,                     "Specify that Zbp is implemented (bit manipulation extension)")},
+    {  RVPV_B,       default_Zbr,                  VMI_BOOL_PARAM_SPEC  (riscvParamValues, Zbr,                  False,                     "Specify that Zbr is implemented (bit manipulation extension)")},
+    {  RVPV_B,       default_Zbs,                  VMI_BOOL_PARAM_SPEC  (riscvParamValues, Zbs,                  False,                     "Specify that Zbs is implemented (bit manipulation extension)")},
+    {  RVPV_B,       default_Zbt,                  VMI_BOOL_PARAM_SPEC  (riscvParamValues, Zbt,                  False,                     "Specify that Zbt is implemented (bit manipulation extension)")},
 
     // CLIC configuration
     {  RVPV_INT_CFG, default_CLICLEVELS,           VMI_UNS32_PARAM_SPEC (riscvParamValues, CLICLEVELS,           0, 0,          256,        "Specify number of interrupt levels implemented by CLIC, or 0 if CLIC absent")},
@@ -705,8 +800,12 @@ static riscvParameter parameters[] = {
     {  RVPV_CLIC_NM, default_CLICCFGMBITS,         VMI_UNS32_PARAM_SPEC (riscvParamValues, CLICCFGMBITS,         0, 0,          0,          "Specify number of bits implemented for cliccfg.nmbits (also defines CLICPRIVMODES)")},
     {  RVPV_CLIC,    default_CLICCFGLBITS,         VMI_UNS32_PARAM_SPEC (riscvParamValues, CLICCFGLBITS,         0, 0,          8,          "Specify number of bits implemented for cliccfg.nlbits")},
     {  RVPV_CLIC,    default_CLICSELHVEC,          VMI_BOOL_PARAM_SPEC  (riscvParamValues, CLICSELHVEC,          False,                     "Whether selective hardware vectoring supported")},
-    {  RVPV_CLIC,    default_CLICMNXTI,            VMI_BOOL_PARAM_SPEC  (riscvParamValues, CLICMNXTI,            False,                     "Whether xnxti CSRs implemented")},
-    {  RVPV_CLIC,    default_CLICMCSW,             VMI_BOOL_PARAM_SPEC  (riscvParamValues, CLICMCSW,             False,                     "Whether xscratchcsw/xscratchcswl CSRs implemented")},
+    {  RVPV_CLIC,    default_CLICXNXTI,            VMI_BOOL_PARAM_SPEC  (riscvParamValues, CLICXNXTI,            False,                     "Whether xnxti CSRs implemented")},
+    {  RVPV_CLIC,    default_CLICXCSW,             VMI_BOOL_PARAM_SPEC  (riscvParamValues, CLICXCSW,             False,                     "Whether xscratchcsw/xscratchcswl CSRs implemented")},
+    {  RVPV_CLIC,    default_externalCLIC,         VMI_BOOL_PARAM_SPEC  (riscvParamValues, externalCLIC,         False,                     "Whether CLIC is implemented externally (if False, then use implementation in this model)")},
+    {  RVPV_CLIC,    default_tvt_undefined,        VMI_BOOL_PARAM_SPEC  (riscvParamValues, tvt_undefined,        False,                     "Specify that mtvt, stvt and utvt CSRs are undefined")},
+    {  RVPV_CLIC,    default_intthresh_undefined,  VMI_BOOL_PARAM_SPEC  (riscvParamValues, intthresh_undefined,  False,                     "Specify that mintthreash, sintthresh and uintthresh CSRs are undefined")},
+    {  RVPV_CLIC,    default_mclicbase_undefined,  VMI_BOOL_PARAM_SPEC  (riscvParamValues, mclicbase_undefined,  False,                     "Specify that mclicbase CSR is undefined")},
 
     // KEEP LAST
     {  RVPV_ALL,     0,                            VMI_END_PARAM}
@@ -775,6 +874,12 @@ static Bool selectParameter(
         // include parameters that are only required when atomic extension is
         // present
         if((param->variant & RVPV_A) && !(cfg->arch&ISA_A)) {
+            return False;
+        }
+
+        // include parameters that are only required when bitmanip extension is
+        // present
+        if((param->variant & RVPV_B) && !(cfg->arch&ISA_B)) {
             return False;
         }
 
@@ -1076,6 +1181,10 @@ VMI_SET_PARAM_VALUES_FN(riscvGetPreParamValues) {
         const char *variant = refineVariant(riscv, match->name);
         riscv->configInfo = *getSelectedConfig(cfgList, variant);
 
+        // override architecture versions if required
+        riscv->configInfo.user_version = params->user_version;
+        riscv->configInfo.priv_version = params->priv_version;
+
         // apply misa_Extensions override if required
         if(SETBIT(params->misa_Extensions)) {
             riscvArchitecture keep = riscv->configInfo.arch & (-1 << XLEN_SHIFT);
@@ -1167,6 +1276,13 @@ const char *riscvGetUserVersionDesc(riscvP riscv) {
 //
 const char *riscvGetVectorVersionDesc(riscvP riscv) {
     return vectorVariants[RISCV_VECT_VERSION(riscv)].description;
+}
+
+//
+// Return Bit Manipulation Architecture description
+//
+const char *riscvGetBitManipVersionDesc(riscvP riscv) {
+    return bitmanipVariants[RISCV_BITMANIP_VERSION(riscv)].description;
 }
 
 //

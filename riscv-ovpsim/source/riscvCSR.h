@@ -93,6 +93,21 @@
     CSR_ID(_R##15)
 
 //
+// Construct enumeration member names from the given base and indices 0..63
+//
+#define CSR_ID_0_63(_R) \
+    CSR_ID_0_9(_R),     \
+    CSR_ID_0_9(_R##1),  \
+    CSR_ID_0_9(_R##2),  \
+    CSR_ID_0_9(_R##3),  \
+    CSR_ID_0_9(_R##4),  \
+    CSR_ID_0_9(_R##5),  \
+    CSR_ID(_R##60),     \
+    CSR_ID(_R##61),     \
+    CSR_ID(_R##62),     \
+    CSR_ID(_R##63)
+
+//
 // Identifiers for each implemented CSR
 //
 typedef enum riscvCSRIdE {
@@ -115,8 +130,8 @@ typedef enum riscvCSRIdE {
     CSR_ID      (uip),          // 0x044
     CSR_ID      (unxti),        // 0x045
     CSR_ID      (uintstatus),   // 0xC46
+    CSR_ID      (uintthresh),   // 0x047
     CSR_ID      (uscratchcswl), // 0x049
-    CSR_ID      (uintthresh),   // 0x04A
 
     CSR_ID      (cycle),        // 0xC00
     CSR_ID      (time),         // 0xC01
@@ -144,9 +159,9 @@ typedef enum riscvCSRIdE {
     CSR_ID      (sip),          // 0x144
     CSR_ID      (snxti),        // 0x145
     CSR_ID      (sintstatus),   // 0xD46
+    CSR_ID      (sintthresh),   // 0x147
     CSR_ID      (sscratchcsw),  // 0x148
     CSR_ID      (sscratchcswl), // 0x149
-    CSR_ID      (sintthresh),   // 0x14A
     CSR_ID      (satp),         // 0x180
 
     CSR_ID      (mvendorid),    // 0xF11
@@ -170,12 +185,12 @@ typedef enum riscvCSRIdE {
     CSR_ID      (mip),          // 0x344
     CSR_ID      (mnxti),        // 0x345
     CSR_ID      (mintstatus),   // 0xF46
+    CSR_ID      (mintthresh),   // 0x347
     CSR_ID      (mscratchcsw),  // 0x348
     CSR_ID      (mscratchcswl), // 0x349
-    CSR_ID      (mintthresh),   // 0x34A
     CSR_ID      (mclicbase),    // 0x34B
-    CSR_ID_0_3  (pmpcfg),       // 0x3A0-0x3A3
-    CSR_ID_0_15 (pmpaddr),      // 0x3B0-0x3BF
+    CSR_ID_0_15 (pmpcfg),       // 0x3A0-0x3AF
+    CSR_ID_0_63 (pmpaddr),      // 0x3B0-0x3EF
     CSR_ID      (mcycle),       // 0xB00
     CSR_ID      (minstret),     // 0xB02
     CSR_ID_3_31 (mhpmcounter),  // 0xB03-0xB1F
@@ -226,6 +241,11 @@ void riscvCSRFree(riscvP riscv);
 //
 void riscvCSRReset(riscvP riscv);
 
+//
+// Allocate CSR remap list
+//
+void riscvNewCSRRemaps(riscvP riscv, const char *remaps);
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // DISASSEMBLER INTERFACE ACCESS FUNCTIONS
@@ -255,6 +275,16 @@ Bool riscvWriteCSR(riscvCSRAttrsCP attrs, riscvP riscv, const void *buffer);
 ////////////////////////////////////////////////////////////////////////////////
 // LINKED MODEL ACCESS FUNCTIONS
 ////////////////////////////////////////////////////////////////////////////////
+
+//
+// Read a CSR in the model given its number
+//
+Uns64 riscvReadCSRNum(riscvP riscv, Uns32 csrNum);
+
+//
+// Write a CSR in the model given its number
+//
+Uns64 riscvWriteCSRNum(riscvP riscv, riscvCSRId csrNum, Uns64 newValue);
 
 //
 // Read a CSR in the base model given its id
@@ -325,12 +355,22 @@ typedef struct riscvCSRDetailsS {
 // Iterator filling 'details' with the next CSR register details -
 // 'details.name' should be initialized to NULL prior to the first call
 //
-Bool riscvGetCSRDetails(riscvP riscv, riscvCSRDetailsP details, Bool normal);
+Bool riscvGetCSRDetails(
+    riscvP           riscv,
+    riscvCSRDetailsP details,
+    Uns32           *csrNumP,
+    Bool             normal
+);
 
 //
-// Register new CSR
+// Register new externally-implemented CSR
 //
-void riscvNewCSR(riscvCSRAttrsCP attrs, riscvP riscv);
+void riscvNewCSR(
+    riscvCSRAttrsP  attrs,
+    riscvCSRAttrsCP src,
+    riscvP          riscv,
+    vmiosObjectP    object
+);
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -584,8 +624,8 @@ typedef CSR_REG_TYPE(status) CSR_REG_TYPE(ustatus);
 typedef CSR_REG_TYPE(status) CSR_REG_TYPE(sstatus);
 typedef CSR_REG_TYPE(status) CSR_REG_TYPE(mstatus);
 
-// define alias masks
-#define sstatus_AMASK 0x80000003818de133ULL
+// define alias masks (include sstatus.VS field in both 0.8 and 0.9 positions)
+#define sstatus_AMASK 0x80000003818de733ULL
 #define ustatus_AMASK 0x0000000000000011ULL
 
 // define bit masks
@@ -987,6 +1027,26 @@ CSR_REG_STRUCT_DECL_32(mintstatus);
 #define RM32_uintstatus 0x000000ff
 
 // -----------------------------------------------------------------------------
+// uintthresh   (id 0x047)
+// sintthresh   (id 0x147)
+// mintthresh   (id 0x347)
+// -----------------------------------------------------------------------------
+
+// 32-bit view
+typedef struct {
+    Uns32 th  :  8;
+    Uns32 _u1 : 24;
+} CSR_REG_TYPE_32(intthresh);
+
+// define 32 bit type
+CSR_REG_STRUCT_DECL_32(intthresh);
+
+// define alias types
+typedef CSR_REG_TYPE(intthresh) CSR_REG_TYPE(uintthresh);
+typedef CSR_REG_TYPE(intthresh) CSR_REG_TYPE(sintthresh);
+typedef CSR_REG_TYPE(intthresh) CSR_REG_TYPE(mintthresh);
+
+// -----------------------------------------------------------------------------
 // sscratchcsw (id 0x148)
 // mscratchcsw (id 0x348)
 // -----------------------------------------------------------------------------
@@ -1005,26 +1065,6 @@ typedef CSR_REG_TYPE(genericXLEN) CSR_REG_TYPE(mscratchcsw);
 typedef CSR_REG_TYPE(genericXLEN) CSR_REG_TYPE(uscratchcswl);
 typedef CSR_REG_TYPE(genericXLEN) CSR_REG_TYPE(sscratchcswl);
 typedef CSR_REG_TYPE(genericXLEN) CSR_REG_TYPE(mscratchcswl);
-
-// -----------------------------------------------------------------------------
-// uintthresh   (id 0x04A)
-// sintthresh   (id 0x14A)
-// mintthresh   (id 0x34A)
-// -----------------------------------------------------------------------------
-
-// 32-bit view
-typedef struct {
-    Uns32 th  :  8;
-    Uns32 _u1 : 24;
-} CSR_REG_TYPE_32(intthresh);
-
-// define 32 bit type
-CSR_REG_STRUCT_DECL_32(intthresh);
-
-// define alias types
-typedef CSR_REG_TYPE(intthresh) CSR_REG_TYPE(uintthresh);
-typedef CSR_REG_TYPE(intthresh) CSR_REG_TYPE(sintthresh);
-typedef CSR_REG_TYPE(intthresh) CSR_REG_TYPE(mintthresh);
 
 // -----------------------------------------------------------------------------
 // mclicbase    (id 0x34B)
@@ -1362,23 +1402,13 @@ typedef CSR_REG_TYPE(genericXLEN) CSR_REG_TYPE(vl);
 
 // 32-bit view
 typedef struct {
-    Uns32 vlmul  :  2;
-    Uns32 vsew   :  3;
-    Uns32 vlmulf :  1;
-    Uns32 vta    :  1;
-    Uns32 vma    :  1;
-    Uns32 _u1    : 23;
+    Uns32 _u1    : 31;
     Uns32 vill   :  1;
 } CSR_REG_TYPE_32(vtype);
 
 // 64-bit view
 typedef struct {
-    Uns64 vlmul  :  2;
-    Uns64 vsew   :  3;
-    Uns32 vlmulf :  1;
-    Uns32 vta    :  1;
-    Uns32 vma    :  1;
-    Uns64 _u1    : 55;
+    Uns64 _u1    : 63;
     Uns64 vill   :  1;
 } CSR_REG_TYPE_64(vtype);
 

@@ -9,6 +9,7 @@
 
 pipe:= |
 empty:=
+comma:= ,
 space:= $(empty) $(empty)
 
 export RISCV_TARGET       ?= riscvOVPsim
@@ -81,6 +82,9 @@ simulate:
 
 verify: simulate
 	riscv-test-env/verify.sh
+
+cover:
+	riscv-test-env/cover.sh
 
 clean:
 	$(MAKE) $(JOBS) \

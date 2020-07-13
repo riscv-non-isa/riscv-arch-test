@@ -25,7 +25,9 @@
 //
 // Prefix for messages
 //
-#define CPU_PREFIX "RISCV"
+#ifndef CPU_PREFIX
+    #define CPU_PREFIX "RISCV"
+#endif
 
 //
 // Macros for emission of messages without source references

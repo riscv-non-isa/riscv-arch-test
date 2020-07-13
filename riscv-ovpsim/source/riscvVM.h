@@ -91,6 +91,16 @@ Uns64 riscvVMReadPMPAddr(riscvP riscv, Uns32 index);
 Uns64 riscvVMWritePMPAddr(riscvP riscv, Uns32 index, Uns64 newValue);
 
 //
+// Allocate PMP structures
+//
+void riscvVMNewPMP(riscvP riscv);
+
+//
+// Free PMP structures
+//
+void riscvVMFreePMP(riscvP riscv);
+
+//
 // Reset PMP unit
 //
 void riscvVMResetPMP(riscvP riscv);

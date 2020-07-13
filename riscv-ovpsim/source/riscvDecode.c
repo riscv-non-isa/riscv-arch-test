@@ -140,12 +140,14 @@ static riscvArchitecture getXLenArch(riscvP riscv) {
 #define U_13_12(_I)         UBITS(2, (_I)>>12)
 #define U_14(_I)            UBITS(1, (_I)>>14)
 #define U_14_12(_I)         UBITS(3, (_I)>>12)
+#define U_14_13(_I)         UBITS(2, (_I)>>13)
 #define U_17_15(_I)         UBITS(3, (_I)>>15)
 #define U_17_16(_I)         UBITS(2, (_I)>>16)
 #define U_19_12(_I)         UBITS(8, (_I)>>12)
 #define U_19_15(_I)         UBITS(5, (_I)>>15)
 #define U_20(_I)            UBITS(1, (_I)>>20)
 #define U_21(_I)            UBITS(1, (_I)>>21)
+#define U_21_20(_I)         UBITS(2, (_I)>>20)
 #define U_23_20(_I)         UBITS(4, (_I)>>20)
 #define U_23(_I)            UBITS(1, (_I)>>23)
 #define U_24(_I)            UBITS(1, (_I)>>24)
@@ -153,6 +155,7 @@ static riscvArchitecture getXLenArch(riscvP riscv) {
 #define U_25(_I)            UBITS(1, (_I)>>25)
 #define U_25_20(_I)         UBITS(6, (_I)>>20)
 #define U_26(_I)            UBITS(1, (_I)>>26)
+#define U_26_20(_I)         UBITS(7, (_I)>>20)
 #define U_26_25(_I)         UBITS(2, (_I)>>25)
 #define U_27_24(_I)         UBITS(4, (_I)>>24)
 #define U_28(_I)            UBITS(1, (_I)>>28)
@@ -238,6 +241,7 @@ typedef enum memBitsSpecE {
 //
 typedef enum unsExtSpecE {
     USX_NA,             // instruction has no extension specification
+    USX_T,              // extension always unsigned
     USX_14,             // extension specification in bit 14
     USX_28,             // extension specification in bit 28
 } unsExtSpec;
@@ -248,6 +252,7 @@ typedef enum unsExtSpecE {
 typedef enum constSpecE {
     CS_NA,              // instruction has no constant
     CS_U_19_15,         // unsigned value in 19:15
+    CS_U_26_20,         // unsigned value in 26:20
     CS_S_19_15,         // signed value in 19:15
     CS_S_31_20,         // signed value in 31:20
     CS_S_31_25_11_7,    // signed value in 31:25,11:7
@@ -282,7 +287,9 @@ typedef enum rSpecE {
     RS_X_6_2,           // X register in 6:2
     RS_X_11_7,          // X register in 11:7
     RS_X_19_15,         // X register in 19:15
+    RS_X_19_15_S_21_20, // X register in 19:15, B/H/W/D in bits 21:20
     RS_X_24_20,         // X register in 24:20
+    RS_X_31_27,         // X register in 31:27
     RS_X_9_7_P8,        // X register in 9:7 + 8
     RS_XWL_11_7,        // X register in 11:7 (use W/L name)
     RS_XWL_19_15,       // X register in 19:15 (use W/L name)
@@ -309,7 +316,7 @@ typedef enum rSpecE {
 //
 typedef enum wxSpecE {
     WX_NA,              // no width
-    WX_3,               // W in bit 3 (implicit in disassembly)
+    WX_3,               // W in bit 3 (explicit in disassembly)
     WX_12,              // !W in bit 12 (explicit in disassembly)
     WX_25,              // !W in bit 25 (implicit in disassembly)
     WX_21_U_20,         // !W in bit 21 and unsigned in bit 20
@@ -410,6 +417,7 @@ typedef struct opAttrsS {
     aqrlSpec          aqrl     :  1;    // acquire/release specification
     firstFaultSpec    ff       :  1;    // first fault specification
     eewDivSpec        eewDiv   :  1;    // EEW divisor specification
+    Bool              shN      :  1;    // shN prefix specification
     Bool              csrInOp  :  1;    // whether to emit CSR as part of opcode
     Bool              xQuiet   :  1;    // are X registers type-quiet?
 } opAttrs;
@@ -604,6 +612,75 @@ typedef enum riscvIType32E {
     IT32_CUSTOM3,
     IT32_CUSTOM4,
 
+    // B-extension R-type instructions
+    IT32_ANDN_R,
+    IT32_ORN_R,
+    IT32_XNOR_R,
+    IT32_SLO_R,
+    IT32_SRO_R,
+    IT32_ROL_R,
+    IT32_ROR_R,
+    IT32_SBCLR_R,
+    IT32_SBSET_R,
+    IT32_SBINV_R,
+    IT32_SBEXT_R,
+    IT32_GORC_R,
+    IT32_GREV_R,
+    IT32_CLZ_R,
+    IT32_CTZ_R,
+    IT32_PCNT_R,
+    IT32_SEXT_R,
+    IT32_CRC32_R,
+    IT32_CRC32C_R,
+    IT32_CLMUL_R,
+    IT32_CLMULR_R,
+    IT32_CLMULH_R,
+    IT32_MIN_R,
+    IT32_MAX_R,
+    IT32_MINU_R,
+    IT32_MAXU_R,
+    IT32_SHFL_R,
+    IT32_UNSHFL_R,
+    IT32_BDEP_R,
+    IT32_BEXT_R,
+    IT32_PACK_R,
+    IT32_PACKH_R,
+    IT32_PACKU_R,
+    IT32_BMATFLIP_R,
+    IT32_BMATOR_R,
+    IT32_BMATXOR_R,
+    IT32_BFP_R,
+    IT32_ADDWU_R,
+    IT32_SUBWU_R,
+    IT32_ADDU_W_R,
+    IT32_SUBU_W_R,
+    IT32_SHADD_R,
+    IT32_SHADDU_W_R,
+
+    // B-extension I-type instructions
+    IT32_SLOI_I,
+    IT32_SROI_I,
+    IT32_RORI_I,
+    IT32_SBCLRI_I,
+    IT32_SBSETI_I,
+    IT32_SBINVI_I,
+    IT32_SBEXTI_I,
+    IT32_GORCI_I,
+    IT32_GREVI_I,
+    IT32_SHFLI_I,
+    IT32_UNSHFLI_I,
+    IT32_ADDIWU_I,
+    IT32_SLLIU_W_I,
+
+    // B-extension R4-type instructions
+    IT32_CMIX_R4,
+    IT32_CMOV_R4,
+    IT32_FSL_R4,
+    IT32_FSR_R4,
+
+    // B-extension R3I-type instructions
+    IT32_FSRI_R3I,
+
     // V-extension R-type instructions
     IT32_VSETVL_R,
 
@@ -740,6 +817,8 @@ typedef enum riscvIType32E {
     IT32_VFNCVT_FF_V,
     IT32_VFNCVTROD_FF_V,
     IT32_VFSQRT_V,
+    IT32_VFRSQRTE7_V,
+    IT32_VFRECE7_V,
     IT32_VFCLASS_V,
     IT32_VFMUL_VV,
     IT32_VFMADD_VV,
@@ -1211,6 +1290,67 @@ const static decodeEntry32 decodeCommon32[] = {
     DECODE32_ENTRY(        CUSTOM3, "|............|.....|...|.....|1011011|"),
     DECODE32_ENTRY(        CUSTOM4, "|............|.....|...|.....|1111011|"),
 
+    // B-extension R-type instructions
+    //                               | funct7|  rs2|  rs1|fun|   rd| opcode|
+    DECODE32_ENTRY(         ANDN_R, "|0100000|.....|.....|111|.....|0110011|"),
+    DECODE32_ENTRY(          ORN_R, "|0100000|.....|.....|110|.....|0110011|"),
+    DECODE32_ENTRY(         XNOR_R, "|0100000|.....|.....|100|.....|0110011|"),
+    DECODE32_ENTRY(          SLO_R, "|0010000|.....|.....|001|.....|011.011|"),
+    DECODE32_ENTRY(          SRO_R, "|0010000|.....|.....|101|.....|011.011|"),
+    DECODE32_ENTRY(          ROL_R, "|0110000|.....|.....|001|.....|011.011|"),
+    DECODE32_ENTRY(          ROR_R, "|0110000|.....|.....|101|.....|011.011|"),
+    DECODE32_ENTRY(        SBCLR_R, "|0100100|.....|.....|001|.....|011.011|"),
+    DECODE32_ENTRY(        SBSET_R, "|0010100|.....|.....|001|.....|011.011|"),
+    DECODE32_ENTRY(        SBINV_R, "|0110100|.....|.....|001|.....|011.011|"),
+    DECODE32_ENTRY(        SBEXT_R, "|0100100|.....|.....|101|.....|011.011|"),
+    DECODE32_ENTRY(          CLZ_R, "|0110000|00000|.....|001|.....|001.011|"),
+    DECODE32_ENTRY(          CTZ_R, "|0110000|00001|.....|001|.....|001.011|"),
+    DECODE32_ENTRY(         PCNT_R, "|0110000|00010|.....|001|.....|001.011|"),
+    DECODE32_ENTRY(        CRC32_R, "|0110000|100..|.....|001|.....|0010011|"),
+    DECODE32_ENTRY(       CRC32C_R, "|0110000|110..|.....|001|.....|0010011|"),
+    DECODE32_ENTRY(        CLMUL_R, "|0000101|.....|.....|001|.....|011.011|"),
+    DECODE32_ENTRY(       CLMULR_R, "|0000101|.....|.....|010|.....|011.011|"),
+    DECODE32_ENTRY(       CLMULH_R, "|0000101|.....|.....|011|.....|011.011|"),
+    DECODE32_ENTRY(          MIN_R, "|0000101|.....|.....|100|.....|0110011|"),
+    DECODE32_ENTRY(          MAX_R, "|0000101|.....|.....|101|.....|0110011|"),
+    DECODE32_ENTRY(         MINU_R, "|0000101|.....|.....|110|.....|0110011|"),
+    DECODE32_ENTRY(         MAXU_R, "|0000101|.....|.....|111|.....|0110011|"),
+    DECODE32_ENTRY(         SHFL_R, "|0000100|.....|.....|001|.....|011.011|"),
+    DECODE32_ENTRY(       UNSHFL_R, "|0000100|.....|.....|101|.....|011.011|"),
+    DECODE32_ENTRY(         BEXT_R, "|0000100|.....|.....|110|.....|011.011|"),
+    DECODE32_ENTRY(         PACK_R, "|0000100|.....|.....|100|.....|011.011|"),
+    DECODE32_ENTRY(     BMATFLIP_R, "|0110000|00011|.....|001|.....|0010011|"),
+    DECODE32_ENTRY(       BMATOR_R, "|0000100|.....|.....|011|.....|0110011|"),
+    DECODE32_ENTRY(        ADDWU_R, "|0000101|.....|.....|000|.....|0111011|"),
+    DECODE32_ENTRY(        SUBWU_R, "|0100101|.....|.....|000|.....|0111011|"),
+    DECODE32_ENTRY(       ADDU_W_R, "|0000100|.....|.....|000|.....|0111011|"),
+    DECODE32_ENTRY(       SUBU_W_R, "|0100100|.....|.....|000|.....|0111011|"),
+
+    // B-extension I-type instructions
+    //                               |       imm32|  rs1|fun|   rd| opcode|
+    DECODE32_ENTRY(        SLOI_I,  "|001000......|.....|001|.....|001.011|"),
+    DECODE32_ENTRY(        SROI_I,  "|001000......|.....|101|.....|001.011|"),
+    DECODE32_ENTRY(        RORI_I,  "|011000......|.....|101|.....|001.011|"),
+    DECODE32_ENTRY(       SBCLRI_I, "|010010......|.....|001|.....|001.011|"),
+    DECODE32_ENTRY(       SBSETI_I, "|001010......|.....|001|.....|001.011|"),
+    DECODE32_ENTRY(       SBINVI_I, "|011010......|.....|001|.....|001.011|"),
+    DECODE32_ENTRY(       SBEXTI_I, "|010010......|.....|101|.....|0010011|"),
+    DECODE32_ENTRY(        SHFLI_I, "|000010......|.....|001|.....|0010011|"),
+    DECODE32_ENTRY(      UNSHFLI_I, "|000010......|.....|101|.....|0010011|"),
+    DECODE32_ENTRY(       ADDIWU_I, "|............|.....|100|.....|0011011|"),
+    DECODE32_ENTRY(      SLLIU_W_I, "|00001.......|.....|001|.....|0011011|"),
+
+    // B-extension R4-type instructions
+    //                               | rs3 |f1|  rs2|  rs1|f2 |   rd| opcode|
+    DECODE32_ENTRY(        CMIX_R4, "|.....|11|.....|.....|001|.....|0110011|"),
+    DECODE32_ENTRY(        CMOV_R4, "|.....|11|.....|.....|101|.....|0110011|"),
+    DECODE32_ENTRY(         FSL_R4, "|.....|10|.....|.....|001|.....|011.011|"),
+    DECODE32_ENTRY(         FSR_R4, "|.....|10|.....|.....|101|.....|011.011|"),
+
+    // B-extension R3I-type instructions
+    //                               | rs3 |f| shift|  rs1|f2 |   rd| opcode|
+    DECODE32_ENTRY(       FSRI_R3I, "|.....|1|......|.....|101|.....|001.011|"),
+
     // V-extension R-type
     //                               | funct7|  rs2|  rs1|fun|   rd| opcode|
     DECODE32_ENTRY(       VSETVL_R, "|1000000|.....|.....|111|.....|1010111|"),
@@ -1481,13 +1621,114 @@ const static decodeEntry32 decodeCommon32[] = {
     DECODE32_ENTRY(       VWMUL_VX, "|111011|.|.....|.....|110|.....|1010111|"),
     DECODE32_ENTRY(     VWMACCU_VX, "|111100|.|.....|.....|110|.....|1010111|"),
     DECODE32_ENTRY(      VWMACC_VX, "|111101|.|.....|.....|110|.....|1010111|"),
+    // table termination entry
+    {0}
+};
+
+//
+// This specifies decodes for 32-bit opcodes for Bit manipulation Extension
+// until version 0.90
+//
+const static decodeEntry32 decodeBitmanipUntilV090[] = {
+
+    // B-extension R-type instructions
+    //                               | funct7|  rs2|  rs1|fun|   rd| opcode|
+    DECODE32_ENTRY(         GREV_R, "|0100000|.....|.....|001|.....|011.011|"),
+    DECODE32_ENTRY(      BMATXOR_R, "|0000100|.....|.....|111|.....|0110011|"),
+
+    // B-extension I-type instructions
+    //                               |       imm32|  rs1|fun|   rd| opcode|
+    DECODE32_ENTRY(        GREVI_I, "|01000.......|.....|001|.....|001.011|"),
 
     // table termination entry
     {0}
 };
 
 //
-// This specifies decodes for 32-bit opcodes for vector extension version 0.8
+// This specifies decodes for 32-bit opcodes for Bit manipulation Extension
+// after version 0.90
+//
+const static decodeEntry32 decodeBitmanipPostV090[] = {
+
+    // B-extension R-type instructions
+    //                               | funct7|  rs2|  rs1|fun|   rd| opcode|
+    DECODE32_ENTRY(         GORC_R, "|0010100|.....|.....|101|.....|011.011|"),
+    DECODE32_ENTRY(         GREV_R, "|0110100|.....|.....|101|.....|011.011|"),
+    DECODE32_ENTRY(      BMATXOR_R, "|0100100|.....|.....|011|.....|0110011|"),
+
+    // B-extension I-type instructions
+    //                               |       imm32|  rs1|fun|   rd| opcode|
+    DECODE32_ENTRY(        GORCI_I, "|001010......|.....|101|.....|001.011|"),
+    DECODE32_ENTRY(        GREVI_I, "|011010......|.....|101|.....|001.011|"),
+
+    // table termination entry
+    {0}
+};
+
+//
+// This specifies decodes for 32-bit opcodes for Bit manipulation Extension
+// until version 0.91
+//
+const static decodeEntry32 decodeBitmanipUntilV091[] = {
+
+    // B-extension R-type instructions
+    //                               | funct7|  rs2|  rs1|fun|   rd| opcode|
+    DECODE32_ENTRY(         BDEP_R, "|0000100|.....|.....|010|.....|011.011|"),
+
+    // table termination entry
+    {0}
+};
+
+//
+// This specifies decodes for 32-bit opcodes for Bit manipulation Extension 0.91
+//
+const static decodeEntry32 decodeBitmanipV091[] = {
+
+    // B-extension R-type instructions
+    //                               | funct7|  rs2|  rs1|fun|   rd| opcode|
+    DECODE32_ENTRY(          BFP_R, "|0000100|.....|.....|111|.....|011.011|"),
+
+    // table termination entry
+    {0}
+};
+
+//
+// This specifies decodes for 32-bit opcodes for Bit manipulation Extension
+// after version 0.91
+//
+const static decodeEntry32 decodeBitmanipPostV091[] = {
+
+    // B-extension R-type instructions
+    //                               | funct7|  rs2|  rs1|fun|   rd| opcode|
+    DECODE32_ENTRY(         BDEP_R, "|0100100|.....|.....|110|.....|011.011|"),
+    DECODE32_ENTRY(        PACKH_R, "|0000100|.....|.....|111|.....|0110011|"),
+    DECODE32_ENTRY(        PACKU_R, "|0100100|.....|.....|100|.....|011.011|"),
+    DECODE32_ENTRY(          BFP_R, "|0100100|.....|.....|111|.....|011.011|"),
+    DECODE32_ENTRY(         SEXT_R, "|0110000|0010.|.....|001|.....|0010011|"),
+
+    // table termination entry
+    {0}
+};
+
+//
+// This specifies decodes for 32-bit opcodes for Bit manipulation Extension
+// after version 0.92
+//
+const static decodeEntry32 decodeBitmanipPostV092[] = {
+
+    // B-extension R-type instructions
+    //                               | funct7|  rs2|  rs1|fun|   rd| opcode|
+    DECODE32_ENTRY(        SHADD_R, "|0010000|.....|.....|010|.....|0110011|"),
+    DECODE32_ENTRY(        SHADD_R, "|0010000|.....|.....|1.0|.....|0110011|"),
+    DECODE32_ENTRY(     SHADDU_W_R, "|0010000|.....|.....|010|.....|0111011|"),
+    DECODE32_ENTRY(     SHADDU_W_R, "|0010000|.....|.....|1.0|.....|0111011|"),
+
+    // table termination entry
+    {0}
+};
+
+//
+// This specifies decodes for 32-bit opcodes for Vector Extension version 0.8
 //
 const static decodeEntry32 decodeVectorV08[] = {
 
@@ -1519,7 +1760,7 @@ const static decodeEntry32 decodeVectorV08[] = {
 };
 
 //
-// This specifies decodes for 32-bit opcodes for vector extension version 0.7.1
+// This specifies decodes for 32-bit opcodes for Vector Extension version 0.7.1
 //
 const static decodeEntry32 decodeVectorV071[] = {
 
@@ -1554,7 +1795,7 @@ const static decodeEntry32 decodeVectorV071[] = {
 };
 
 //
-// This specifies decodes for 32-bit opcodes for vector extension version 0.8
+// This specifies decodes for 32-bit opcodes for Vector Extension version 0.8
 //
 const static decodeEntry32 decodeVectorV071P[] = {
 
@@ -1836,25 +2077,15 @@ const static decodeEntry32 decodeInitial09[] = {
     DECODE32_ENTRY(        VSXEI_I, "|...|.11|.|.....|.....|101|.....|0100111|"),
     DECODE32_ENTRY(       VSUXEI_I, "|...|.01|.|.....|.....|101|.....|0100111|"),
 
-    // V-extension load/store instructions (32/512-bit elements)
+    // V-extension load/store instructions (32/64/512/1024-bit elements)
     //                               | nf|mop|m|  xs2|  rs1|wth|  vs3| opcode|
-    DECODE32_ENTRY(          VLE_I, "|...|.00|.|.0000|.....|110|.....|0000111|"),
-    DECODE32_ENTRY(         VLSE_I, "|...|.10|.|.....|.....|110|.....|0000111|"),
-    DECODE32_ENTRY(        VLXEI_I, "|...|.11|.|.....|.....|110|.....|0000111|"),
-    DECODE32_ENTRY(          VSE_I, "|...|.00|.|00000|.....|110|.....|0100111|"),
-    DECODE32_ENTRY(         VSSE_I, "|...|.10|.|.....|.....|110|.....|0100111|"),
-    DECODE32_ENTRY(        VSXEI_I, "|...|.11|.|.....|.....|110|.....|0100111|"),
-    DECODE32_ENTRY(       VSUXEI_I, "|...|.01|.|.....|.....|110|.....|0100111|"),
-
-    // V-extension load/store instructions (64/1024-bit elements)
-    //                               | nf|mop|m|  xs2|  rs1|wth|  vs3| opcode|
-    DECODE32_ENTRY(          VLE_I, "|...|.00|.|.0000|.....|111|.....|0000111|"),
-    DECODE32_ENTRY(         VLSE_I, "|...|.10|.|.....|.....|111|.....|0000111|"),
-    DECODE32_ENTRY(        VLXEI_I, "|...|.11|.|.....|.....|111|.....|0000111|"),
-    DECODE32_ENTRY(          VSE_I, "|...|.00|.|00000|.....|111|.....|0100111|"),
-    DECODE32_ENTRY(         VSSE_I, "|...|.10|.|.....|.....|111|.....|0100111|"),
-    DECODE32_ENTRY(        VSXEI_I, "|...|.11|.|.....|.....|111|.....|0100111|"),
-    DECODE32_ENTRY(       VSUXEI_I, "|...|.01|.|.....|.....|111|.....|0100111|"),
+    DECODE32_ENTRY(          VLE_I, "|...|.00|.|.0000|.....|11.|.....|0000111|"),
+    DECODE32_ENTRY(         VLSE_I, "|...|.10|.|.....|.....|11.|.....|0000111|"),
+    DECODE32_ENTRY(        VLXEI_I, "|...|.11|.|.....|.....|11.|.....|0000111|"),
+    DECODE32_ENTRY(          VSE_I, "|...|.00|.|00000|.....|11.|.....|0100111|"),
+    DECODE32_ENTRY(         VSSE_I, "|...|.10|.|.....|.....|11.|.....|0100111|"),
+    DECODE32_ENTRY(        VSXEI_I, "|...|.11|.|.....|.....|11.|.....|0100111|"),
+    DECODE32_ENTRY(       VSUXEI_I, "|...|.01|.|.....|.....|11.|.....|0100111|"),
 
     // V-extension AMO operations (8-bit elements, Zvamo)
     //                               |amoop|dm|  xs2|  rs1|wth|  vs3| opcode|
@@ -1880,29 +2111,17 @@ const static decodeEntry32 decodeInitial09[] = {
     DECODE32_ENTRY(   VAMOSWAPEI_R, "|00001|..|.....|.....|101|.....|0101111|"),
     DECODE32_ENTRY(    VAMOXOREI_R, "|00100|..|.....|.....|101|.....|0101111|"),
 
-    // V-extension AMO operations (32-bit elements, Zvamo)
+    // V-extension AMO operations (32/64-bit elements, Zvamo)
     //                               |amoop|dm|  xs2|  rs1|wth|  vs3| opcode|
-    DECODE32_ENTRY(    VAMOADDEI_R, "|00000|..|.....|.....|110|.....|0101111|"),
-    DECODE32_ENTRY(    VAMOANDEI_R, "|01100|..|.....|.....|110|.....|0101111|"),
-    DECODE32_ENTRY(    VAMOMAXEI_R, "|10100|..|.....|.....|110|.....|0101111|"),
-    DECODE32_ENTRY(   VAMOMAXUEI_R, "|11100|..|.....|.....|110|.....|0101111|"),
-    DECODE32_ENTRY(    VAMOMINEI_R, "|10000|..|.....|.....|110|.....|0101111|"),
-    DECODE32_ENTRY(   VAMOMINUEI_R, "|11000|..|.....|.....|110|.....|0101111|"),
-    DECODE32_ENTRY(     VAMOOREI_R, "|01000|..|.....|.....|110|.....|0101111|"),
-    DECODE32_ENTRY(   VAMOSWAPEI_R, "|00001|..|.....|.....|110|.....|0101111|"),
-    DECODE32_ENTRY(    VAMOXOREI_R, "|00100|..|.....|.....|110|.....|0101111|"),
-
-    // V-extension AMO operations (64-bit elements, Zvamo)
-    //                               |amoop|dm|  xs2|  rs1|wth|  vs3| opcode|
-    DECODE32_ENTRY(    VAMOADDEI_R, "|00000|..|.....|.....|111|.....|0101111|"),
-    DECODE32_ENTRY(    VAMOANDEI_R, "|01100|..|.....|.....|111|.....|0101111|"),
-    DECODE32_ENTRY(    VAMOMAXEI_R, "|10100|..|.....|.....|111|.....|0101111|"),
-    DECODE32_ENTRY(   VAMOMAXUEI_R, "|11100|..|.....|.....|111|.....|0101111|"),
-    DECODE32_ENTRY(    VAMOMINEI_R, "|10000|..|.....|.....|111|.....|0101111|"),
-    DECODE32_ENTRY(   VAMOMINUEI_R, "|11000|..|.....|.....|111|.....|0101111|"),
-    DECODE32_ENTRY(     VAMOOREI_R, "|01000|..|.....|.....|111|.....|0101111|"),
-    DECODE32_ENTRY(   VAMOSWAPEI_R, "|00001|..|.....|.....|111|.....|0101111|"),
-    DECODE32_ENTRY(    VAMOXOREI_R, "|00100|..|.....|.....|111|.....|0101111|"),
+    DECODE32_ENTRY(    VAMOADDEI_R, "|00000|..|.....|.....|11.|.....|0101111|"),
+    DECODE32_ENTRY(    VAMOANDEI_R, "|01100|..|.....|.....|11.|.....|0101111|"),
+    DECODE32_ENTRY(    VAMOMAXEI_R, "|10100|..|.....|.....|11.|.....|0101111|"),
+    DECODE32_ENTRY(   VAMOMAXUEI_R, "|11100|..|.....|.....|11.|.....|0101111|"),
+    DECODE32_ENTRY(    VAMOMINEI_R, "|10000|..|.....|.....|11.|.....|0101111|"),
+    DECODE32_ENTRY(   VAMOMINUEI_R, "|11000|..|.....|.....|11.|.....|0101111|"),
+    DECODE32_ENTRY(     VAMOOREI_R, "|01000|..|.....|.....|11.|.....|0101111|"),
+    DECODE32_ENTRY(   VAMOSWAPEI_R, "|00001|..|.....|.....|11.|.....|0101111|"),
+    DECODE32_ENTRY(    VAMOXOREI_R, "|00100|..|.....|.....|11.|.....|0101111|"),
 
     // V-extension FVV-type instructions
     //                               |funct6|m|  vs2|  vs1|FVV|  vs3| opcode|
@@ -1935,12 +2154,38 @@ const static decodeEntry32 decodeInitial09[] = {
     DECODE32_ENTRY(  VFSLIDE1UP_VF, "|001110|.|.....|.....|101|.....|1010111|"),
     DECODE32_ENTRY(VFSLIDE1DOWN_VF, "|001111|.|.....|.....|101|.....|1010111|"),
 
-    // V-extension MVX-type instructions
-    //                               |funct6|m|  vs2|  vs1|MVX|  vs3| opcode|
-    DECODE32_ENTRY(        VZEXT_V, "|010010|.|.....|00010|110|.....|1010111|"),
-    DECODE32_ENTRY(        VZEXT_V, "|010010|.|.....|001.0|110|.....|1010111|"),
-    DECODE32_ENTRY(        VSEXT_V, "|010010|.|.....|00011|110|.....|1010111|"),
-    DECODE32_ENTRY(        VSEXT_V, "|010010|.|.....|001.1|110|.....|1010111|"),
+    // V-extension MVV-type instructions
+    //                               |funct6|m|  vs2|  vs1|MVV|  vs3| opcode|
+    DECODE32_ENTRY(        VZEXT_V, "|010010|.|.....|00010|010|.....|1010111|"),
+    DECODE32_ENTRY(        VZEXT_V, "|010010|.|.....|001.0|010|.....|1010111|"),
+    DECODE32_ENTRY(        VSEXT_V, "|010010|.|.....|00011|010|.....|1010111|"),
+    DECODE32_ENTRY(        VSEXT_V, "|010010|.|.....|001.1|010|.....|1010111|"),
+
+    // table termination entry
+    {0}
+};
+
+//
+// This specifies decodes *after* release 0.9
+//
+const static decodeEntry32 decodeInitial10[] = {
+
+    // V-extension load/store instructions (whole registers, 8/128-bit hint)
+    //                               | nf|mop|m|  xs2|  rs1|wth|  vs3| opcode|
+    DECODE32_ENTRY(          VLE_I, "|...|.00|1|01000|.....|000|.....|0000111|"),
+
+    // V-extension load/store instructions (whole registers, 16/256-bit hint)
+    //                               | nf|mop|m|  xs2|  rs1|wth|  vs3| opcode|
+    DECODE32_ENTRY(          VLE_I, "|...|.00|1|01000|.....|101|.....|0000111|"),
+
+    // V-extension load/store instructions (whole registers, 32/64/512/1024-bit hint)
+    //                               | nf|mop|m|  xs2|  rs1|wth|  vs3| opcode|
+    DECODE32_ENTRY(          VLE_I, "|...|.00|1|01000|.....|11.|.....|0000111|"),
+
+    // V-extension FVV-type instructions
+    //                               |funct6|m|  vs2|  vs1|FVV|  vs3| opcode|
+    DECODE32_ENTRY(    VFRSQRTE7_V, "|010011|.|.....|00100|001|.....|1010111|"),
+    DECODE32_ENTRY(      VFRECE7_V, "|010011|.|.....|00101|001|.....|1010111|"),
 
     // table termination entry
     {0}
@@ -1952,566 +2197,637 @@ const static decodeEntry32 decodeInitial09[] = {
 const static opAttrs attrsArray32[] = {
 
     // base R-type
-    ATTR32_ADD       (          ADD_R,           ADD_R, RVANY,   "add" ),
-    ATTR32_ADD       (          AND_R,           AND_R, RVANY,   "and" ),
-    ATTR32_NEG       (          NEG_R,           SUB_R, RVANY,   "neg" ),
-    ATTR32_ADD       (           OR_R,            OR_R, RVANY,   "or"  ),
-    ATTR32_NEG       (         SGTZ_R,           SLT_R, RVANY,   "sgtz"),
-    ATTR32_ADD       (          SLL_R,           SLL_R, RVANY,   "sll" ),
-    ATTR32_ADD       (          SLT_R,           SLT_R, RVANY,   "slt" ),
-    ATTR32_ADD       (         SLTU_R,          SLTU_R, RVANY,   "sltu"),
-    ATTR32_SLTZ      (         SLTZ_R,           SLT_R, RVANY,   "sltz"),
-    ATTR32_NEG       (         SNEZ_R,          SLTU_R, RVANY,   "snez"),
-    ATTR32_ADD       (          SRA_R,           SRA_R, RVANY,   "sra" ),
-    ATTR32_ADD       (          SRL_R,           SRL_R, RVANY,   "srl" ),
-    ATTR32_ADD       (          SUB_R,           SUB_R, RVANY,   "sub" ),
-    ATTR32_ADD       (          XOR_R,           XOR_R, RVANY,   "xor" ),
+    ATTR32_RD_RS1_RS2       (          ADD_R,           ADD_R, RVANY,   "add" ),
+    ATTR32_RD_RS1_RS2       (          AND_R,           AND_R, RVANY,   "and" ),
+    ATTR32_RD_rs1_RS2       (          NEG_R,           SUB_R, RVANY,   "neg" ),
+    ATTR32_RD_RS1_RS2       (           OR_R,            OR_R, RVANY,   "or"  ),
+    ATTR32_RD_rs1_RS2       (         SGTZ_R,           SLT_R, RVANY,   "sgtz"),
+    ATTR32_RD_RS1_RS2       (          SLL_R,           SLL_R, RVANY,   "sll" ),
+    ATTR32_RD_RS1_RS2       (          SLT_R,           SLT_R, RVANY,   "slt" ),
+    ATTR32_RD_RS1_RS2       (         SLTU_R,          SLTU_R, RVANY,   "sltu"),
+    ATTR32_RD_RS1_rs2       (         SLTZ_R,           SLT_R, RVANY,   "sltz"),
+    ATTR32_RD_rs1_RS2       (         SNEZ_R,          SLTU_R, RVANY,   "snez"),
+    ATTR32_RD_RS1_RS2       (          SRA_R,           SRA_R, RVANY,   "sra" ),
+    ATTR32_RD_RS1_RS2       (          SRL_R,           SRL_R, RVANY,   "srl" ),
+    ATTR32_RD_RS1_RS2       (          SUB_R,           SUB_R, RVANY,   "sub" ),
+    ATTR32_RD_RS1_RS2       (          XOR_R,           XOR_R, RVANY,   "xor" ),
 
     // M-extension R-type
-    ATTR32_ADD       (          DIV_R,           DIV_R, RVANYM,  "div"   ),
-    ATTR32_ADD       (         DIVU_R,          DIVU_R, RVANYM,  "divu"  ),
-    ATTR32_ADD       (          MUL_R,           MUL_R, RVANYM,  "mul"   ),
-    ATTR32_ADD       (         MULH_R,          MULH_R, RVANYM,  "mulh"  ),
-    ATTR32_ADD       (       MULHSU_R,        MULHSU_R, RVANYM,  "mulhsu"),
-    ATTR32_ADD       (        MULHU_R,         MULHU_R, RVANYM,  "mulhu" ),
-    ATTR32_ADD       (          REM_R,           REM_R, RVANYM,  "rem"   ),
-    ATTR32_ADD       (         REMU_R,          REMU_R, RVANYM,  "remu"  ),
+    ATTR32_RD_RS1_RS2       (          DIV_R,           DIV_R, RVANYM,  "div"   ),
+    ATTR32_RD_RS1_RS2       (         DIVU_R,          DIVU_R, RVANYM,  "divu"  ),
+    ATTR32_RD_RS1_RS2       (          MUL_R,           MUL_R, RVANYM,  "mul"   ),
+    ATTR32_RD_RS1_RS2       (         MULH_R,          MULH_R, RVANYM,  "mulh"  ),
+    ATTR32_RD_RS1_RS2       (       MULHSU_R,        MULHSU_R, RVANYM,  "mulhsu"),
+    ATTR32_RD_RS1_RS2       (        MULHU_R,         MULHU_R, RVANYM,  "mulhu" ),
+    ATTR32_RD_RS1_RS2       (          REM_R,           REM_R, RVANYM,  "rem"   ),
+    ATTR32_RD_RS1_RS2       (         REMU_R,          REMU_R, RVANYM,  "remu"  ),
 
     // base I-type
-    ATTR32_ADDI      (         ADDI_I,          ADDI_I, RVANY,   "addi" ),
-    ATTR32_ADDI      (         ANDI_I,          ANDI_I, RVANY,   "andi" ),
-    ATTR32_JR        (           JR_I,          JALR_I, RVANY,   "jr"   ),
-    ATTR32_JR0       (          JR0_I,          JALR_I, RVANY,   "jr"   ),
-    ATTR32_JALR      (         JALR_I,          JALR_I, RVANY,   "jalr" ),
-    ATTR32_NOT       (        JALR0_I,          JALR_I, RVANY,   "jalr" ),
-    ATTR32_NOT       (           MV_I,            MV_R, RVANY,   "mv"   ),
-    ATTR32_NOPI      (          NOP_I,          ADDI_I, RVANY,   "nop"  ),
-    ATTR32_NOT       (          NOT_I,          XORI_I, RVANY,   "not"  ),
-    ATTR32_ADDI      (          ORI_I,           ORI_I, RVANY,   "ori"  ),
-    ATTR32_NOPI      (          RET_I,          JALR_I, RVANY,   "ret"  ),
-    ATTR32_NOT       (         SEQZ_I,         SLTIU_I, RVANY,   "seqz" ),
-    ATTR32_NOT       (        SEXTW_I,          ADDI_I, RVANY,   "sext."),
-    ATTR32_SLLI      (         SLLI_I,          SLLI_I, RVANY,   "slli" ),
-    ATTR32_ADDI      (         SLTI_I,          SLTI_I, RVANY,   "slti" ),
-    ATTR32_ADDI      (        SLTIU_I,         SLTIU_I, RVANY,   "sltiu"),
-    ATTR32_SLLI      (         SRAI_I,          SRAI_I, RVANY,   "srai" ),
-    ATTR32_SLLI      (         SRLI_I,          SRLI_I, RVANY,   "srli" ),
-    ATTR32_ADDI      (         XORI_I,          XORI_I, RVANY,   "xori" ),
+    ATTR32_RD_RS1_SI        (         ADDI_I,          ADDI_I, RVANY,   "addi" ),
+    ATTR32_RD_RS1_SI        (         ANDI_I,          ANDI_I, RVANY,   "andi" ),
+    ATTR32_rd_OFF_RS1       (           JR_I,          JALR_I, RVANY,   "jr"   ),
+    ATTR32_rd_off_RS1       (          JR0_I,          JALR_I, RVANY,   "jr"   ),
+    ATTR32_RD_OFF_RS1       (         JALR_I,          JALR_I, RVANY,   "jalr" ),
+    ATTR32_RD_RS1_si        (        JALR0_I,          JALR_I, RVANY,   "jalr" ),
+    ATTR32_RD_RS1_si        (           MV_I,            MV_R, RVANY,   "mv"   ),
+    ATTR32_rd_rs1_si        (          NOP_I,          ADDI_I, RVANY,   "nop"  ),
+    ATTR32_RD_RS1_si        (          NOT_I,          XORI_I, RVANY,   "not"  ),
+    ATTR32_RD_RS1_SI        (          ORI_I,           ORI_I, RVANY,   "ori"  ),
+    ATTR32_rd_rs1_si        (          RET_I,          JALR_I, RVANY,   "ret"  ),
+    ATTR32_RD_RS1_si        (         SEQZ_I,         SLTIU_I, RVANY,   "seqz" ),
+    ATTR32_RD_RS1_si        (        SEXTW_I,          ADDI_I, RVANY,   "sext."),
+    ATTR32_RD_RS1_XSHIFT    (         SLLI_I,          SLLI_I, RVANY,   "slli" ),
+    ATTR32_RD_RS1_SI        (         SLTI_I,          SLTI_I, RVANY,   "slti" ),
+    ATTR32_RD_RS1_SI        (        SLTIU_I,         SLTIU_I, RVANY,   "sltiu"),
+    ATTR32_RD_RS1_XSHIFT    (         SRAI_I,          SRAI_I, RVANY,   "srai" ),
+    ATTR32_RD_RS1_XSHIFT    (         SRLI_I,          SRLI_I, RVANY,   "srli" ),
+    ATTR32_RD_RS1_SI        (         XORI_I,          XORI_I, RVANY,   "xori" ),
 
     // base I-type instructions for load
-    ATTR32_LB        (           LB_I,             L_I, RVANY,   "l"),
-    ATTR32_LB        (          LBU_I,             L_I, RVANY,   "l"),
-    ATTR32_LB        (           LH_I,             L_I, RVANY,   "l"),
-    ATTR32_LB        (          LHU_I,             L_I, RVANY,   "l"),
-    ATTR32_LB        (           LW_I,             L_I, RVANY,   "l"),
-    ATTR32_LB        (          LWU_I,             L_I, RV64,    "l"),
-    ATTR32_LB        (           LD_I,             L_I, RV64,    "l"),
+    ATTR32_RD_MEM_RS1       (           LB_I,             L_I, RVANY,   "l"),
+    ATTR32_RD_MEM_RS1       (          LBU_I,             L_I, RVANY,   "l"),
+    ATTR32_RD_MEM_RS1       (           LH_I,             L_I, RVANY,   "l"),
+    ATTR32_RD_MEM_RS1       (          LHU_I,             L_I, RVANY,   "l"),
+    ATTR32_RD_MEM_RS1       (           LW_I,             L_I, RVANY,   "l"),
+    ATTR32_RD_MEM_RS1       (          LWU_I,             L_I, RV64,    "l"),
+    ATTR32_RD_MEM_RS1       (           LD_I,             L_I, RV64,    "l"),
 
     // base S-type instructions for store
-    ATTR32_SB        (           SB_I,             S_I, RVANY,   "s"),
-    ATTR32_SB        (           SH_I,             S_I, RVANY,   "s"),
-    ATTR32_SB        (           SW_I,             S_I, RVANY,   "s"),
-    ATTR32_SB        (           SD_I,             S_I, RV64,    "s"),
+    ATTR32_RS2_MEM_RS1      (           SB_I,             S_I, RVANY,   "s"),
+    ATTR32_RS2_MEM_RS1      (           SH_I,             S_I, RVANY,   "s"),
+    ATTR32_RS2_MEM_RS1      (           SW_I,             S_I, RVANY,   "s"),
+    ATTR32_RS2_MEM_RS1      (           SD_I,             S_I, RV64,    "s"),
 
     // base I-type instructions for CSR access (register)
-    ATTR32_CSRRC     (        CSRRC_I,          CSRR_I, RVANY,   "csrrc"),
-    ATTR32_CSRRC     (        CSRRS_I,          CSRR_I, RVANY,   "csrrs"),
-    ATTR32_CSRRC     (        CSRRW_I,          CSRR_I, RVANY,   "csrrw"),
-    ATTR32_CSRR      (         CSRR_I,          CSRR_I, RVANY,   "csrr" ),
-    ATTR32_CSRC      (         CSRC_I,          CSRR_I, RVANY,   "csrc" ),
-    ATTR32_CSRC      (         CSRS_I,          CSRR_I, RVANY,   "csrs" ),
-    ATTR32_CSRC      (         CSRW_I,          CSRR_I, RVANY,   "csrw" ),
-    ATTR32_RDX1      (         RDX1_I,          CSRR_I, RVANY,   "rd"   ),
-    ATTR32_RDX1      (         RDX2_I,          CSRR_I, RVANY,   "rd"   ),
+    ATTR32_RD_CSR_RS1       (        CSRRC_I,          CSRR_I, RVANY,   "csrrc"),
+    ATTR32_RD_CSR_RS1       (        CSRRS_I,          CSRR_I, RVANY,   "csrrs"),
+    ATTR32_RD_CSR_RS1       (        CSRRW_I,          CSRR_I, RVANY,   "csrrw"),
+    ATTR32_RD_CSR_rs1       (         CSRR_I,          CSRR_I, RVANY,   "csrr" ),
+    ATTR32_rd_CSR_RS1       (         CSRC_I,          CSRR_I, RVANY,   "csrc" ),
+    ATTR32_rd_CSR_RS1       (         CSRS_I,          CSRR_I, RVANY,   "csrs" ),
+    ATTR32_rd_CSR_RS1       (         CSRW_I,          CSRR_I, RVANY,   "csrw" ),
+    ATTR32_OPCSR_RD_csr_rs1 (         RDX1_I,          CSRR_I, RVANY,   "rd"   ),
+    ATTR32_OPCSR_RD_csr_rs1 (         RDX2_I,          CSRR_I, RVANY,   "rd"   ),
 
     // base I-type instructions for CSR access (constant)
-    ATTR32_CSRRCI    (       CSRRCI_I,         CSRRI_I, RVANY,   "csrrci"),
-    ATTR32_CSRRCI    (       CSRRSI_I,         CSRRI_I, RVANY,   "csrrsi"),
-    ATTR32_CSRRCI    (       CSRRWI_I,         CSRRI_I, RVANY,   "csrrwi"),
-    ATTR32_CSRCI     (        CSRCI_I,         CSRRI_I, RVANY,   "csrci" ),
-    ATTR32_CSRCI     (        CSRSI_I,         CSRRI_I, RVANY,   "csrsi" ),
-    ATTR32_CSRCI     (        CSRWI_I,         CSRRI_I, RVANY,   "csrwi" ),
+    ATTR32_RD_CSR_IMM       (       CSRRCI_I,         CSRRI_I, RVANY,   "csrrci"),
+    ATTR32_RD_CSR_IMM       (       CSRRSI_I,         CSRRI_I, RVANY,   "csrrsi"),
+    ATTR32_RD_CSR_IMM       (       CSRRWI_I,         CSRRI_I, RVANY,   "csrrwi"),
+    ATTR32_rd_CSR_IMM       (        CSRCI_I,         CSRRI_I, RVANY,   "csrci" ),
+    ATTR32_rd_CSR_IMM       (        CSRSI_I,         CSRRI_I, RVANY,   "csrsi" ),
+    ATTR32_rd_CSR_IMM       (        CSRWI_I,         CSRRI_I, RVANY,   "csrwi" ),
 
     // miscellaneous system I-type instructions
-    ATTR32_NOP       (       EBREAK_I,        EBREAK_I, RVANY,   "ebreak" ),
-    ATTR32_NOP       (        ECALL_I,         ECALL_I, RVANY,   "ecall"  ),
-    ATTR32_NOP       (       FENCEI_I,        FENCEI_I, RVANY,   "fence.i"),
-    ATTR32_NOP       (         MRET_I,          MRET_I, RVANY,   "mret"   ),
-    ATTR32_NOP       (         SRET_I,          SRET_I, RVANY,   "sret"   ),
-    ATTR32_NOP       (         URET_I,          URET_I, RVANYN,  "uret"   ),
-    ATTR32_NOP       (         DRET_I,          DRET_I, RVANY,   "dret"   ),
-    ATTR32_NOP       (          WFI_I,           WFI_I, RVANY,   "wfi"    ),
+    ATTR32_NOP              (       EBREAK_I,        EBREAK_I, RVANY,   "ebreak" ),
+    ATTR32_NOP              (        ECALL_I,         ECALL_I, RVANY,   "ecall"  ),
+    ATTR32_NOP              (       FENCEI_I,        FENCEI_I, RVANY,   "fence.i"),
+    ATTR32_NOP              (         MRET_I,          MRET_I, RVANY,   "mret"   ),
+    ATTR32_NOP              (         SRET_I,          SRET_I, RVANY,   "sret"   ),
+    ATTR32_NOP              (         URET_I,          URET_I, RVANYN,  "uret"   ),
+    ATTR32_NOP              (         DRET_I,          DRET_I, RVANY,   "dret"   ),
+    ATTR32_NOP              (          WFI_I,           WFI_I, RVANY,   "wfi"    ),
 
     // system fence I-type instruction
-    ATTR32_FENCE     (        FENCE_I,         FENCE_I, RVANY,   "fence"),
+    ATTR32_FENCE            (        FENCE_I,         FENCE_I, RVANY,   "fence"),
 
     // system fence R-type instruction
-    ATTR32_FENCE_VMA (    FENCE_VMA_R,     FENCE_VMA_R, RVANY,   "sfence.vma"),
+    ATTR32_FENCE_VMA        (    FENCE_VMA_R,     FENCE_VMA_R, RVANY,   "sfence.vma"),
 
     // base U-type
-    ATTR32_AUIPC     (        AUIPC_U,         AUIPC_U, RVANY,   "auipc"),
-    ATTR32_AUIPC     (          LUI_U,            MV_C, RVANY,   "lui"  ),
+    ATTR32_RD_UIPC          (        AUIPC_U,         AUIPC_U, RVANY,   "auipc"),
+    ATTR32_RD_UIPC          (          LUI_U,            MV_C, RVANY,   "lui"  ),
 
     // base B-type
-    ATTR32_BEQ       (          BEQ_B,           BEQ_B, RVANY,   "beq" ),
-    ATTR32_BEQZ      (         BEQZ_B,           BEQ_B, RVANY,   "beqz"),
-    ATTR32_BEQ       (          BGE_B,           BGE_B, RVANY,   "bge" ),
-    ATTR32_BEQZ      (         BGEZ_B,           BGE_B, RVANY,   "bgez"),
-    ATTR32_BGTZ      (         BLEZ_B,           BGE_B, RVANY,   "blez"),
-    ATTR32_BEQ       (         BGEU_B,          BGEU_B, RVANY,   "bgeu"),
-    ATTR32_BEQ       (          BLT_B,           BLT_B, RVANY,   "blt" ),
-    ATTR32_BEQZ      (         BLTZ_B,           BLT_B, RVANY,   "bltz"),
-    ATTR32_BGTZ      (         BGTZ_B,           BLT_B, RVANY,   "bgtz"),
-    ATTR32_BEQ       (         BLTU_B,          BLTU_B, RVANY,   "bltu"),
-    ATTR32_BEQ       (          BNE_B,           BNE_B, RVANY,   "bne" ),
-    ATTR32_BEQZ      (         BNEZ_B,           BNE_B, RVANY,   "bnez"),
+    ATTR32_RS1_RS2_TB       (          BEQ_B,           BEQ_B, RVANY,   "beq" ),
+    ATTR32_RS1_rs2_TB       (         BEQZ_B,           BEQ_B, RVANY,   "beqz"),
+    ATTR32_RS1_RS2_TB       (          BGE_B,           BGE_B, RVANY,   "bge" ),
+    ATTR32_RS1_rs2_TB       (         BGEZ_B,           BGE_B, RVANY,   "bgez"),
+    ATTR32_rs1_RS2_TB       (         BLEZ_B,           BGE_B, RVANY,   "blez"),
+    ATTR32_RS1_RS2_TB       (         BGEU_B,          BGEU_B, RVANY,   "bgeu"),
+    ATTR32_RS1_RS2_TB       (          BLT_B,           BLT_B, RVANY,   "blt" ),
+    ATTR32_RS1_rs2_TB       (         BLTZ_B,           BLT_B, RVANY,   "bltz"),
+    ATTR32_rs1_RS2_TB       (         BGTZ_B,           BLT_B, RVANY,   "bgtz"),
+    ATTR32_RS1_RS2_TB       (         BLTU_B,          BLTU_B, RVANY,   "bltu"),
+    ATTR32_RS1_RS2_TB       (          BNE_B,           BNE_B, RVANY,   "bne" ),
+    ATTR32_RS1_rs2_TB       (         BNEZ_B,           BNE_B, RVANY,   "bnez"),
 
     // base J-type
-    ATTR32_J         (            J_J,           JAL_J, RVANY,   "j"  ),
-    ATTR32_JAL       (          JAL_J,           JAL_J, RVANY,   "jal"),
+    ATTR32_rd_TJ            (            J_J,           JAL_J, RVANY,   "j"  ),
+    ATTR32_RD_TJ            (          JAL_J,           JAL_J, RVANY,   "jal"),
 
     // A-extension R-type
-    ATTR32_AMOADD    (       AMOADD_R,        AMOADD_R, RVANYA,  "amoadd" ),
-    ATTR32_AMOADD    (       AMOAND_R,        AMOAND_R, RVANYA,  "amoand" ),
-    ATTR32_AMOADD    (       AMOMAX_R,        AMOMAX_R, RVANYA,  "amomax" ),
-    ATTR32_AMOADD    (      AMOMAXU_R,       AMOMAXU_R, RVANYA,  "amomaxu"),
-    ATTR32_AMOADD    (       AMOMIN_R,        AMOMIN_R, RVANYA,  "amomin" ),
-    ATTR32_AMOADD    (      AMOMINU_R,       AMOMINU_R, RVANYA,  "amominu"),
-    ATTR32_AMOADD    (        AMOOR_R,         AMOOR_R, RVANYA,  "amoor"  ),
-    ATTR32_AMOADD    (      AMOSWAP_R,       AMOSWAP_R, RVANYA,  "amoswap"),
-    ATTR32_AMOADD    (       AMOXOR_R,        AMOXOR_R, RVANYA,  "amoxor" ),
-    ATTR32_LR        (           LR_R,            LR_R, RVANYA,  "lr"     ),
-    ATTR32_AMOADD    (           SC_R,            SC_R, RVANYA,  "sc"     ),
+    ATTR32_AMOADD           (       AMOADD_R,        AMOADD_R, RVANYA,  "amoadd" ),
+    ATTR32_AMOADD           (       AMOAND_R,        AMOAND_R, RVANYA,  "amoand" ),
+    ATTR32_AMOADD           (       AMOMAX_R,        AMOMAX_R, RVANYA,  "amomax" ),
+    ATTR32_AMOADD           (      AMOMAXU_R,       AMOMAXU_R, RVANYA,  "amomaxu"),
+    ATTR32_AMOADD           (       AMOMIN_R,        AMOMIN_R, RVANYA,  "amomin" ),
+    ATTR32_AMOADD           (      AMOMINU_R,       AMOMINU_R, RVANYA,  "amominu"),
+    ATTR32_AMOADD           (        AMOOR_R,         AMOOR_R, RVANYA,  "amoor"  ),
+    ATTR32_AMOADD           (      AMOSWAP_R,       AMOSWAP_R, RVANYA,  "amoswap"),
+    ATTR32_AMOADD           (       AMOXOR_R,        AMOXOR_R, RVANYA,  "amoxor" ),
+    ATTR32_LR               (           LR_R,            LR_R, RVANYA,  "lr"     ),
+    ATTR32_AMOADD           (           SC_R,            SC_R, RVANYA,  "sc"     ),
 
     // F-extension and D-extension R-type instructions
-    ATTR32_FADD      (         FADD_R,          FADD_R, RVANY,   "fadd"  ),
-    ATTR32_FCLASS    (       FCLASS_R,        FCLASS_R, RVANY,   "fclass"),
-    ATTR32_FCVT      (     FCVT_F_X_R,          FCVT_R, RVANY,   "fcvt", F,   XWL),
-    ATTR32_FCVT      (     FCVT_X_F_R,          FCVT_R, RVANY,   "fcvt", XWL, F  ),
-    ATTR32_FCVT      (     FCVT_D_S_R,          FCVT_R, RVANY,   "fcvt", F,   S  ),
-    ATTR32_FCVT      (     FCVT_S_D_R,          FCVT_R, RVANY,   "fcvt", F,   D  ),
-    ATTR32_FADD      (         FDIV_R,          FDIV_R, RVANY,   "fdiv"  ),
-    ATTR32_FEQ       (          FEQ_R,           FEQ_R, RVANY,   "feq"   ),
-    ATTR32_FEQ       (          FLE_R,           FLE_R, RVANY,   "fle"   ),
-    ATTR32_FEQ       (          FLT_R,           FLT_R, RVANY,   "flt"   ),
-    ATTR32_FMAX      (         FMAX_R,          FMAX_R, RVANY,   "fmax"  ),
-    ATTR32_FMAX      (         FMIN_R,          FMIN_R, RVANY,   "fmin"  ),
-    ATTR32_FADD      (         FMUL_R,          FMUL_R, RVANY,   "fmul"  ),
-    ATTR32_FMAX      (        FSGNJ_R,         FSGNJ_R, RVANY,   "fsgnj" ),
-    ATTR32_FMAX      (       FSGNJN_R,        FSGNJN_R, RVANY,   "fsgnjn"),
-    ATTR32_FMAX      (       FSGNJX_R,        FSGNJX_R, RVANY,   "fsgnjx"),
-    ATTR32_FMVFX     (        FMVFX_R,            MV_R, RVANY,   "fmv"   ),
-    ATTR32_FMVXF     (        FMVXF_R,            MV_R, RVANY,   "fmv"   ),
-    ATTR32_FSQRT     (        FSQRT_R,         FSQRT_R, RVANY,   "fsqrt" ),
-    ATTR32_FADD      (         FSUB_R,          FSUB_R, RVANY,   "fsub"  ),
+    ATTR32_FD_FS1_FS2_R     (         FADD_R,          FADD_R, RVANY,   "fadd"  ),
+    ATTR32_RD_FS1           (       FCLASS_R,        FCLASS_R, RVANY,   "fclass"),
+    ATTR32_FCVT             (     FCVT_F_X_R,          FCVT_R, RVANY,   "fcvt", F,   XWL),
+    ATTR32_FCVT             (     FCVT_X_F_R,          FCVT_R, RVANY,   "fcvt", XWL, F  ),
+    ATTR32_FCVT             (     FCVT_D_S_R,          FCVT_R, RVANY,   "fcvt", F,   S  ),
+    ATTR32_FCVT             (     FCVT_S_D_R,          FCVT_R, RVANY,   "fcvt", F,   D  ),
+    ATTR32_FD_FS1_FS2_R     (         FDIV_R,          FDIV_R, RVANY,   "fdiv"  ),
+    ATTR32_RD_FS1_FS2       (          FEQ_R,           FEQ_R, RVANY,   "feq"   ),
+    ATTR32_RD_FS1_FS2       (          FLE_R,           FLE_R, RVANY,   "fle"   ),
+    ATTR32_RD_FS1_FS2       (          FLT_R,           FLT_R, RVANY,   "flt"   ),
+    ATTR32_FD_FS1_FS2       (         FMAX_R,          FMAX_R, RVANY,   "fmax"  ),
+    ATTR32_FD_FS1_FS2       (         FMIN_R,          FMIN_R, RVANY,   "fmin"  ),
+    ATTR32_FD_FS1_FS2_R     (         FMUL_R,          FMUL_R, RVANY,   "fmul"  ),
+    ATTR32_FD_FS1_FS2       (        FSGNJ_R,         FSGNJ_R, RVANY,   "fsgnj" ),
+    ATTR32_FD_FS1_FS2       (       FSGNJN_R,        FSGNJN_R, RVANY,   "fsgnjn"),
+    ATTR32_FD_FS1_FS2       (       FSGNJX_R,        FSGNJX_R, RVANY,   "fsgnjx"),
+    ATTR32_FMVFX            (        FMVFX_R,            MV_R, RVANY,   "fmv"   ),
+    ATTR32_FMVXF            (        FMVXF_R,            MV_R, RVANY,   "fmv"   ),
+    ATTR32_FD_FS1           (        FSQRT_R,         FSQRT_R, RVANY,   "fsqrt" ),
+    ATTR32_FD_FS1_FS2_R     (         FSUB_R,          FSUB_R, RVANY,   "fsub"  ),
 
     // F-extension and D-extension R4-type instructions
-    ATTR32_FMADD     (       FMADD_R4,        FMADD_R4, RVANY,   "fmadd" ),
-    ATTR32_FMADD     (       FMSUB_R4,        FMSUB_R4, RVANY,   "fmsub" ),
-    ATTR32_FMADD     (      FNMADD_R4,       FNMADD_R4, RVANY,   "fnmadd"),
-    ATTR32_FMADD     (      FNMSUB_R4,       FNMSUB_R4, RVANY,   "fnmsub"),
+    ATTR32_FD_FS1_FS2_FS3_R (       FMADD_R4,        FMADD_R4, RVANY,   "fmadd" ),
+    ATTR32_FD_FS1_FS2_FS3_R (       FMSUB_R4,        FMSUB_R4, RVANY,   "fmsub" ),
+    ATTR32_FD_FS1_FS2_FS3_R (      FNMADD_R4,       FNMADD_R4, RVANY,   "fnmadd"),
+    ATTR32_FD_FS1_FS2_FS3_R (      FNMSUB_R4,       FNMSUB_R4, RVANY,   "fnmsub"),
 
     // F-extension and D-extension I-type instructions
-    ATTR32_FL        (           FL_I,             L_I, RVANY,   "fl"),
-    ATTR32_FS        (           FS_I,             S_I, RVANY,   "fs"),
+    ATTR32_FD_MEM_RS1       (           FL_I,             L_I, RVANY,   "fl"),
+    ATTR32_FS2_MEM_RS1      (           FS_I,             S_I, RVANY,   "fs"),
 
     // F-extension and D-extension I-type instructions for CSR access
-    ATTR32_FRSR      (         FRSR_I,          CSRR_I, RVANY,   "frsr"   ),
-    ATTR32_FRSR      (      FRFLAGS_I,          CSRR_I, RVANY,   "frflags"),
-    ATTR32_FRSR      (         FRRM_I,          CSRR_I, RVANY,   "frrm"   ),
-    ATTR32_FSSR      (         FSSR_I,          CSRR_I, RVANY,   "fssr"   ),
-    ATTR32_FSSR      (      FSFLAGS_I,          CSRR_I, RVANY,   "fsflags"),
-    ATTR32_FSSR      (         FSRM_I,          CSRR_I, RVANY,   "fsrm"   ),
+    ATTR32_RD_csr_rs1       (         FRSR_I,          CSRR_I, RVANY,   "frsr"   ),
+    ATTR32_RD_csr_rs1       (      FRFLAGS_I,          CSRR_I, RVANY,   "frflags"),
+    ATTR32_RD_csr_rs1       (         FRRM_I,          CSRR_I, RVANY,   "frrm"   ),
+    ATTR32_RDNZ_csr_RS1     (         FSSR_I,          CSRR_I, RVANY,   "fssr"   ),
+    ATTR32_RDNZ_csr_RS1     (      FSFLAGS_I,          CSRR_I, RVANY,   "fsflags"),
+    ATTR32_RDNZ_csr_RS1     (         FSRM_I,          CSRR_I, RVANY,   "fsrm"   ),
 
     // X-extension Type, custom instructions
-    ATTR32_CUSTOM    (        CUSTOM1,          CUSTOM, RVANY,   "custom1"),
-    ATTR32_CUSTOM    (        CUSTOM2,          CUSTOM, RVANY,   "custom2"),
-    ATTR32_CUSTOM    (        CUSTOM3,          CUSTOM, RVANY,   "custom3"),
-    ATTR32_CUSTOM    (        CUSTOM4,          CUSTOM, RVANY,   "custom4"),
+    ATTR32_NOP              (        CUSTOM1,          CUSTOM, RVANY,   "custom1"),
+    ATTR32_NOP              (        CUSTOM2,          CUSTOM, RVANY,   "custom2"),
+    ATTR32_NOP              (        CUSTOM3,          CUSTOM, RVANY,   "custom3"),
+    ATTR32_NOP              (        CUSTOM4,          CUSTOM, RVANY,   "custom4"),
+
+    // B-extension R-type instructions
+    ATTR32_RD_RS1_RS2       (         ANDN_R,          ANDN_R, RVANYB,  "andn"    ),
+    ATTR32_RD_RS1_RS2       (          ORN_R,           ORN_R, RVANYB,  "orn"     ),
+    ATTR32_RD_RS1_RS2       (         XNOR_R,          XNOR_R, RVANYB,  "xnor"    ),
+    ATTR32_RD_RS1_RS2       (          SLO_R,           SLO_R, RVANYB,  "slo"     ),
+    ATTR32_RD_RS1_RS2       (          SRO_R,           SRO_R, RVANYB,  "sro"     ),
+    ATTR32_RD_RS1_RS2       (          ROL_R,           ROL_R, RVANYB,  "rol"     ),
+    ATTR32_RD_RS1_RS2       (          ROR_R,           ROR_R, RVANYB,  "ror"     ),
+    ATTR32_RD_RS1_RS2       (        SBCLR_R,         SBCLR_R, RVANYB,  "sbclr"   ),
+    ATTR32_RD_RS1_RS2       (        SBSET_R,         SBSET_R, RVANYB,  "sbset"   ),
+    ATTR32_RD_RS1_RS2       (        SBINV_R,         SBINV_R, RVANYB,  "sbinv"   ),
+    ATTR32_RD_RS1_RS2       (        SBEXT_R,         SBEXT_R, RVANYB,  "sbext"   ),
+    ATTR32_RD_RS1_RS2       (         GORC_R,          GORC_R, RVANYB,  "gorc"    ),
+    ATTR32_RD_RS1_RS2       (         GREV_R,          GREV_R, RVANYB,  "grev"    ),
+    ATTR32_RD_RS1_rs2       (          CLZ_R,           CLZ_R, RVANYB,  "clz"     ),
+    ATTR32_RD_RS1_rs2       (          CTZ_R,           CTZ_R, RVANYB,  "ctz"     ),
+    ATTR32_RD_RS1_rs2       (         PCNT_R,          PCNT_R, RVANYB,  "pcnt"    ),
+    ATTR32_CRC32            (         SEXT_R,          SEXT_R, RVANYB,  "sext"    ),
+    ATTR32_CRC32            (        CRC32_R,         CRC32_R, RVANYB,  "crc32"   ),
+    ATTR32_CRC32            (       CRC32C_R,        CRC32C_R, RVANYB,  "crc32c"  ),
+    ATTR32_RD_RS1_RS2       (        CLMUL_R,         CLMUL_R, RVANYB,  "clmul"   ),
+    ATTR32_RD_RS1_RS2       (       CLMULR_R,        CLMULR_R, RVANYB,  "clmulr"  ),
+    ATTR32_RD_RS1_RS2       (       CLMULH_R,        CLMULH_R, RVANYB,  "clmulh"  ),
+    ATTR32_RD_RS1_RS2       (          MIN_R,           MIN_R, RVANYB,  "min"     ),
+    ATTR32_RD_RS1_RS2       (          MAX_R,           MAX_R, RVANYB,  "max"     ),
+    ATTR32_RD_RS1_RS2       (         MINU_R,          MINU_R, RVANYB,  "minu"    ),
+    ATTR32_RD_RS1_RS2       (         MAXU_R,          MAXU_R, RVANYB,  "maxu"    ),
+    ATTR32_RD_RS1_RS2       (         SHFL_R,          SHFL_R, RVANYB,  "shfl"    ),
+    ATTR32_RD_RS1_RS2       (       UNSHFL_R,        UNSHFL_R, RVANYB,  "unshfl"  ),
+    ATTR32_RD_RS1_RS2       (         BDEP_R,          BDEP_R, RVANYB,  "bdep"    ),
+    ATTR32_RD_RS1_RS2       (         BEXT_R,          BEXT_R, RVANYB,  "bext"    ),
+    ATTR32_RD_RS1_RS2       (         PACK_R,          PACK_R, RVANYB,  "pack"    ),
+    ATTR32_RD_RS1_RS2       (        PACKH_R,         PACKH_R, RVANYB,  "packh"   ),
+    ATTR32_RD_RS1_RS2       (        PACKU_R,         PACKU_R, RVANYB,  "packu"   ),
+    ATTR32_RD_RS1_rs2       (     BMATFLIP_R,      BMATFLIP_R, RV64B,   "bmatflip"),
+    ATTR32_RD_RS1_RS2       (       BMATOR_R,        BMATOR_R, RV64B,   "bmator"  ),
+    ATTR32_RD_RS1_RS2       (      BMATXOR_R,       BMATXOR_R, RV64B,   "bmatxor" ),
+    ATTR32_RD_RS1_RS2       (          BFP_R,           BFP_R, RVANYB,  "bfp"     ),
+    ATTR32_RD_RS1_RS2_U     (        ADDWU_R,         ADDWU_R, RVANYB,  "add"     ),
+    ATTR32_RD_RS1_RS2_U     (        SUBWU_R,         SUBWU_R, RVANYB,  "sub"     ),
+    ATTR32_RD_RS1_RS2       (       ADDU_W_R,        ADDU_W_R, RVANYB,  "addu."   ),
+    ATTR32_RD_RS1_RS2       (       SUBU_W_R,        SUBU_W_R, RVANYB,  "subu."   ),
+    ATTR32_RD_RS1_RS2_SHN   (        SHADD_R,         SHADD_R, RVANYB,  "add"     ),
+    ATTR32_RD_RS1_RS2_SHN   (     SHADDU_W_R,         SHADD_R, RVANYB,  "addu."   ),
+
+    // B-extension I-type instructions
+    ATTR32_RD_RS1_SSHIFT    (         SLOI_I,          SLOI_I, RVANYB,  "sloi"    ),
+    ATTR32_RD_RS1_SSHIFT    (         SROI_I,          SROI_I, RVANYB,  "sroi"    ),
+    ATTR32_RD_RS1_SSHIFT    (         RORI_I,          RORI_I, RVANYB,  "rori"    ),
+    ATTR32_RD_RS1_SSHIFT    (       SBCLRI_I,        SBCLRI_I, RVANYB,  "sbclri"  ),
+    ATTR32_RD_RS1_SSHIFT    (       SBSETI_I,        SBSETI_I, RVANYB,  "sbseti"  ),
+    ATTR32_RD_RS1_SSHIFT    (       SBINVI_I,        SBINVI_I, RVANYB,  "sbinvi"  ),
+    ATTR32_RD_RS1_SSHIFT    (       SBEXTI_I,        SBEXTI_I, RVANYB,  "sbexti"  ),
+    ATTR32_RD_RS1_USHIFT    (        GORCI_I,         GORCI_I, RVANYB,  "gorci"   ),
+    ATTR32_RD_RS1_USHIFT    (        GREVI_I,         GREVI_I, RVANYB,  "grevi"   ),
+    ATTR32_RD_RS1_SSHIFT    (        SHFLI_I,         SHFLI_I, RVANYB,  "shfli"   ),
+    ATTR32_RD_RS1_SSHIFT    (      UNSHFLI_I,       UNSHFLI_I, RVANYB,  "unshfli" ),
+    ATTR32_RD_RS1_SI_U      (       ADDIWU_I,        ADDIWU_I, RVANYB,  "addi"    ),
+    ATTR32_RD_RS1_USHIFT    (      SLLIU_W_I,       SLLIU_W_I, RVANYB,  "slliu."  ),
+
+    // B-extension R4-type instructions
+    ATTR32_RD_RS1_RS2_RS3   (        CMIX_R4,         CMIX_R4, RVANYB,  "cmix"),
+    ATTR32_RD_RS1_RS2_RS3   (        CMOV_R4,         CMOV_R4, RVANYB,  "cmov"),
+    ATTR32_RD_RS1_RS2_RS3   (         FSL_R4,          FSL_R4, RVANYB,  "fsl" ),
+    ATTR32_RD_RS1_RS2_RS3   (         FSR_R4,          FSR_R4, RVANYB,  "fsr" ),
+
+    // B-extension R3I-type instructions
+    ATTR32_RD_RS1_RS3_SSHIFT(       FSRI_R3I,        FSRI_R3I, RVANYB,  "fsri"),
 
     // V-extension R-type
-    ATTR32_ADD       (       VSETVL_R,        VSETVL_R, RVANYV,  "vsetvl"),
+    ATTR32_RD_RS1_RS2       (       VSETVL_R,        VSETVL_R, RVANYV,  "vsetvl"),
 
     // V-extension I-type
-    ATTR32_VSETVLI   (       VSETVL_I,        VSETVL_I, RVANYV,  "vsetvli"),
+    ATTR32_VSETVLI          (       VSETVL_I,        VSETVL_I, RVANYV,  "vsetvli"),
 
     // V-extension load/store instructions (pre-0.9)
-    ATTR32_VL        (           VL_I,            VL_I, RVANYV,  "vl",   1),
-    ATTR32_VLS       (          VLS_I,           VLS_I, RVANYV,  "vls",  1),
-    ATTR32_VLX       (          VLX_I,           VLX_I, RVANYV,  "vlx",  1),
-    ATTR32_VL        (           VS_I,            VS_I, RVANYV,  "vs",   0),
-    ATTR32_VLS       (          VSS_I,           VSS_I, RVANYV,  "vss",  0),
-    ATTR32_VLX       (          VSX_I,           VSX_I, RVANYV,  "vsx",  0),
-    ATTR32_VLX       (         VSUX_I,           VSX_I, RVANYV,  "vsux", 0),
+    ATTR32_VL               (           VL_I,            VL_I, RVANYV,  "vl",   1),
+    ATTR32_VLS              (          VLS_I,           VLS_I, RVANYV,  "vls",  1),
+    ATTR32_VLX              (          VLX_I,           VLX_I, RVANYV,  "vlx",  1),
+    ATTR32_VL               (           VS_I,            VS_I, RVANYV,  "vs",   0),
+    ATTR32_VLS              (          VSS_I,           VSS_I, RVANYV,  "vss",  0),
+    ATTR32_VLX              (          VSX_I,           VSX_I, RVANYV,  "vsx",  0),
+    ATTR32_VLX              (         VSUX_I,           VSX_I, RVANYV,  "vsux", 0),
 
     // V-extension load/store instructions (0.9 and later)
-    ATTR32_VLE       (          VLE_I,            VL_I, RVANYV,  "vl"  ),
-    ATTR32_VLSE      (         VLSE_I,           VLS_I, RVANYV,  "vls" ),
-    ATTR32_VLXEI     (        VLXEI_I,           VLX_I, RVANYV,  "vlx" ),
-    ATTR32_VLE       (          VSE_I,            VS_I, RVANYV,  "vs"  ),
-    ATTR32_VLSE      (         VSSE_I,           VSS_I, RVANYV,  "vss" ),
-    ATTR32_VLXEI     (        VSXEI_I,           VSX_I, RVANYV,  "vsx" ),
-    ATTR32_VLXEI     (       VSUXEI_I,           VSX_I, RVANYV,  "vsux"),
+    ATTR32_VLE              (          VLE_I,            VL_I, RVANYV,  "vl"  ),
+    ATTR32_VLSE             (         VLSE_I,           VLS_I, RVANYV,  "vls" ),
+    ATTR32_VLXEI            (        VLXEI_I,           VLX_I, RVANYV,  "vlx" ),
+    ATTR32_VLE              (          VSE_I,            VS_I, RVANYV,  "vs"  ),
+    ATTR32_VLSE             (         VSSE_I,           VSS_I, RVANYV,  "vss" ),
+    ATTR32_VLXEI            (        VSXEI_I,           VSX_I, RVANYV,  "vsx" ),
+    ATTR32_VLXEI            (       VSUXEI_I,           VSX_I, RVANYV,  "vsux"),
 
     // V-extension AMO operations (Zvamo, pre-0.9)
-    ATTR32_VAMOADD   (      VAMOADD_R,       VAMOADD_R, RVANYVA, "vamoadd" ),
-    ATTR32_VAMOADD   (      VAMOAND_R,       VAMOAND_R, RVANYVA, "vamoand" ),
-    ATTR32_VAMOADD   (      VAMOMAX_R,       VAMOMAX_R, RVANYVA, "vamomax" ),
-    ATTR32_VAMOADD   (     VAMOMAXU_R,      VAMOMAXU_R, RVANYVA, "vamomaxu"),
-    ATTR32_VAMOADD   (      VAMOMIN_R,       VAMOMIN_R, RVANYVA, "vamomin" ),
-    ATTR32_VAMOADD   (     VAMOMINU_R,      VAMOMINU_R, RVANYVA, "vamominu"),
-    ATTR32_VAMOADD   (       VAMOOR_R,        VAMOOR_R, RVANYVA, "vamoor"  ),
-    ATTR32_VAMOADD   (     VAMOSWAP_R,      VAMOSWAP_R, RVANYVA, "vamoswap"),
-    ATTR32_VAMOADD   (      VAMOXOR_R,       VAMOXOR_R, RVANYVA, "vamoxor" ),
+    ATTR32_VAMOADD          (      VAMOADD_R,       VAMOADD_R, RVANYVA, "vamoadd" ),
+    ATTR32_VAMOADD          (      VAMOAND_R,       VAMOAND_R, RVANYVA, "vamoand" ),
+    ATTR32_VAMOADD          (      VAMOMAX_R,       VAMOMAX_R, RVANYVA, "vamomax" ),
+    ATTR32_VAMOADD          (     VAMOMAXU_R,      VAMOMAXU_R, RVANYVA, "vamomaxu"),
+    ATTR32_VAMOADD          (      VAMOMIN_R,       VAMOMIN_R, RVANYVA, "vamomin" ),
+    ATTR32_VAMOADD          (     VAMOMINU_R,      VAMOMINU_R, RVANYVA, "vamominu"),
+    ATTR32_VAMOADD          (       VAMOOR_R,        VAMOOR_R, RVANYVA, "vamoor"  ),
+    ATTR32_VAMOADD          (     VAMOSWAP_R,      VAMOSWAP_R, RVANYVA, "vamoswap"),
+    ATTR32_VAMOADD          (      VAMOXOR_R,       VAMOXOR_R, RVANYVA, "vamoxor" ),
 
     // V-extension AMO operations (Zvamo, 0.9 and later)
-    ATTR32_VAMOADDEI (    VAMOADDEI_R,       VAMOADD_R, RVANYVA, "vamoadd" ),
-    ATTR32_VAMOADDEI (    VAMOANDEI_R,       VAMOAND_R, RVANYVA, "vamoand" ),
-    ATTR32_VAMOADDEI (    VAMOMAXEI_R,       VAMOMAX_R, RVANYVA, "vamomax" ),
-    ATTR32_VAMOADDEI (   VAMOMAXUEI_R,      VAMOMAXU_R, RVANYVA, "vamomaxu"),
-    ATTR32_VAMOADDEI (    VAMOMINEI_R,       VAMOMIN_R, RVANYVA, "vamomin" ),
-    ATTR32_VAMOADDEI (   VAMOMINUEI_R,      VAMOMINU_R, RVANYVA, "vamominu"),
-    ATTR32_VAMOADDEI (     VAMOOREI_R,        VAMOOR_R, RVANYVA, "vamoor"  ),
-    ATTR32_VAMOADDEI (   VAMOSWAPEI_R,      VAMOSWAP_R, RVANYVA, "vamoswap"),
-    ATTR32_VAMOADDEI (    VAMOXOREI_R,       VAMOXOR_R, RVANYVA, "vamoxor" ),
+    ATTR32_VAMOADDEI        (    VAMOADDEI_R,       VAMOADD_R, RVANYVA, "vamoadd" ),
+    ATTR32_VAMOADDEI        (    VAMOANDEI_R,       VAMOAND_R, RVANYVA, "vamoand" ),
+    ATTR32_VAMOADDEI        (    VAMOMAXEI_R,       VAMOMAX_R, RVANYVA, "vamomax" ),
+    ATTR32_VAMOADDEI        (   VAMOMAXUEI_R,      VAMOMAXU_R, RVANYVA, "vamomaxu"),
+    ATTR32_VAMOADDEI        (    VAMOMINEI_R,       VAMOMIN_R, RVANYVA, "vamomin" ),
+    ATTR32_VAMOADDEI        (   VAMOMINUEI_R,      VAMOMINU_R, RVANYVA, "vamominu"),
+    ATTR32_VAMOADDEI        (     VAMOOREI_R,        VAMOOR_R, RVANYVA, "vamoor"  ),
+    ATTR32_VAMOADDEI        (   VAMOSWAPEI_R,      VAMOSWAP_R, RVANYVA, "vamoswap"),
+    ATTR32_VAMOADDEI        (    VAMOXOREI_R,       VAMOXOR_R, RVANYVA, "vamoxor" ),
 
     // V-extension IVV-type instructions
-    ATTR32_VV        (        VADD_VV,         VADD_VR, RVANYV,  "vadd"     ),
-    ATTR32_VV        (        VSUB_VV,         VSUB_VR, RVANYV,  "vsub"     ),
-    ATTR32_VV        (       VMINU_VV,        VMINU_VR, RVANYV,  "vminu"    ),
-    ATTR32_VV        (        VMIN_VV,         VMIN_VR, RVANYV,  "vmin"     ),
-    ATTR32_VV        (       VMAXU_VV,        VMAXU_VR, RVANYV,  "vmaxu"    ),
-    ATTR32_VV        (        VMAX_VV,         VMAX_VR, RVANYV,  "vmax"     ),
-    ATTR32_VV        (        VAND_VV,         VAND_VR, RVANYV,  "vand"     ),
-    ATTR32_VV        (         VOR_VV,          VOR_VR, RVANYV,  "vor"      ),
-    ATTR32_VV        (        VXOR_VV,         VXOR_VR, RVANYV,  "vxor"     ),
-    ATTR32_VV        (    VRGATHER_VV,     VRGATHER_VR, RVANYV,  "vrgather" ),
-    ATTR32_VVM_CIN   (        VADC_VV,         VADC_VR, RVANYV,  "vadc"     ),
-    ATTR32_VVM_CIN   (       VMADC_VV,        VMADC_VR, RVANYV,  "vmadc"    ),
-    ATTR32_VVM_CIN   (        VSBC_VV,         VSBC_VR, RVANYV,  "vsbc"     ),
-    ATTR32_VVM_CIN   (       VMSBC_VV,        VMSBC_VR, RVANYV,  "vmsbc"    ),
-    ATTR32_VVM       (      VMERGE_VV,       VMERGE_VR, RVANYV,  "vmerge"   ),
-    ATTR32_VMV_V_V   (        VMV_V_V,       VMERGE_VR, RVANYV,  "vmv.v.v"  ),
-    ATTR32_VV        (        VSEQ_VV,         VSEQ_VR, RVANYV,  "vmseq"    ),
-    ATTR32_VV        (        VSNE_VV,         VSNE_VR, RVANYV,  "vmsne"    ),
-    ATTR32_VV        (       VSLTU_VV,        VSLTU_VR, RVANYV,  "vmsltu"   ),
-    ATTR32_VV        (        VSLT_VV,         VSLT_VR, RVANYV,  "vmslt"    ),
-    ATTR32_VV        (       VSLEU_VV,        VSLEU_VR, RVANYV,  "vmsleu"   ),
-    ATTR32_VV        (        VSLE_VV,         VSLE_VR, RVANYV,  "vmsle"    ),
-    ATTR32_VV        (      VSADDU_VV,       VSADDU_VR, RVANYV,  "vsaddu"   ),
-    ATTR32_VV        (       VSADD_VV,        VSADD_VR, RVANYV,  "vsadd"    ),
-    ATTR32_VV        (      VSSUBU_VV,       VSSUBU_VR, RVANYV,  "vssubu"   ),
-    ATTR32_VV        (       VSSUB_VV,        VSSUB_VR, RVANYV,  "vssub"    ),
-    ATTR32_VV        (      VAADDU_VV,       VAADDU_VR, RVANYV,  "vaaddu"   ),
-    ATTR32_VV        (       VAADD_VV,        VAADD_VR, RVANYV,  "vaadd"    ),
-    ATTR32_VV        (        VSLL_VV,         VSLL_VR, RVANYV,  "vsll"     ),
-    ATTR32_VV        (      VASUBU_VV,       VASUBU_VR, RVANYV,  "vasubu"   ),
-    ATTR32_VV        (       VASUB_VV,        VASUB_VR, RVANYV,  "vasub"    ),
-    ATTR32_VV        (       VSMUL_VV,        VSMUL_VR, RVANYV,  "vsmul"    ),
-    ATTR32_VV        (        VSRL_VV,         VSRL_VR, RVANYV,  "vsrl"     ),
-    ATTR32_VV        (        VSRA_VV,         VSRA_VR, RVANYV,  "vsra"     ),
-    ATTR32_VV        (       VSSRL_VV,        VSSRL_VR, RVANYV,  "vssrl"    ),
-    ATTR32_VV        (       VSSRA_VV,        VSSRA_VR, RVANYV,  "vssra"    ),
-    ATTR32_VVN       (       VNSRL_VV,        VNSRL_VR, RVANYV,  "vnsrl"    ),
-    ATTR32_VVN       (       VNSRA_VV,        VNSRA_VR, RVANYV,  "vnsra"    ),
-    ATTR32_VVN       (     VNCLIPU_VV,      VNCLIPU_VR, RVANYV,  "vnclipu"  ),
-    ATTR32_VVN       (      VNCLIP_VV,       VNCLIP_VR, RVANYV,  "vnclip"   ),
-    ATTR32_VS        (   VWREDSUMU_VS,    VWREDSUMU_VS, RVANYV,  "vwredsumu"),
-    ATTR32_VS        (    VWREDSUM_VS,     VWREDSUM_VS, RVANYV,  "vwredsum" ),
-    ATTR32_VV        (       VDOTU_VV,        VDOTU_VV, RVANYV,  "vdotu"    ),
-    ATTR32_VV        (        VDOT_VV,         VDOT_VV, RVANYV,  "vdot"     ),
-    ATTR32_VV3       (    VWSMACCU_VV,     VWSMACCU_VR, RVANYV,  "vwsmaccu" ),
-    ATTR32_VV3       (     VWSMACC_VV,      VWSMACC_VR, RVANYV,  "vwsmacc"  ),
-    ATTR32_VV3       (   VWSMACCSU_VV,    VWSMACCSU_VR, RVANYV,  "vwsmaccsu"),
-    ATTR32_VV3       (     VQMACCU_VV,      VQMACCU_VR, RVANYV,  "vqmaccu"  ),
-    ATTR32_VV3       (      VQMACC_VV,       VQMACC_VR, RVANYV,  "vqmacc"   ),
-    ATTR32_VV3       (    VQMACCSU_VV,     VQMACCSU_VR, RVANYV,  "vqmaccsu" ),
+    ATTR32_VD_VS1_VS2_M_VV  (        VADD_VV,         VADD_VR, RVANYV,  "vadd"     ),
+    ATTR32_VD_VS1_VS2_M_VV  (        VSUB_VV,         VSUB_VR, RVANYV,  "vsub"     ),
+    ATTR32_VD_VS1_VS2_M_VV  (       VMINU_VV,        VMINU_VR, RVANYV,  "vminu"    ),
+    ATTR32_VD_VS1_VS2_M_VV  (        VMIN_VV,         VMIN_VR, RVANYV,  "vmin"     ),
+    ATTR32_VD_VS1_VS2_M_VV  (       VMAXU_VV,        VMAXU_VR, RVANYV,  "vmaxu"    ),
+    ATTR32_VD_VS1_VS2_M_VV  (        VMAX_VV,         VMAX_VR, RVANYV,  "vmax"     ),
+    ATTR32_VD_VS1_VS2_M_VV  (        VAND_VV,         VAND_VR, RVANYV,  "vand"     ),
+    ATTR32_VD_VS1_VS2_M_VV  (         VOR_VV,          VOR_VR, RVANYV,  "vor"      ),
+    ATTR32_VD_VS1_VS2_M_VV  (        VXOR_VV,         VXOR_VR, RVANYV,  "vxor"     ),
+    ATTR32_VD_VS1_VS2_M_VV  (    VRGATHER_VV,     VRGATHER_VR, RVANYV,  "vrgather" ),
+    ATTR32_VD_VS1_VS2_VVM   (        VADC_VV,         VADC_VR, RVANYV,  "vadc"     ),
+    ATTR32_VD_VS1_VS2_VVM   (       VMADC_VV,        VMADC_VR, RVANYV,  "vmadc"    ),
+    ATTR32_VD_VS1_VS2_VVM   (        VSBC_VV,         VSBC_VR, RVANYV,  "vsbc"     ),
+    ATTR32_VD_VS1_VS2_VVM   (       VMSBC_VV,        VMSBC_VR, RVANYV,  "vmsbc"    ),
+    ATTR32_VD_VS1_VS2_M_VVM (      VMERGE_VV,       VMERGE_VR, RVANYV,  "vmerge"   ),
+    ATTR32_VD_vs1_VS2_M_V_V (        VMV_V_V,       VMERGE_VR, RVANYV,  "vmv"      ),
+    ATTR32_VD_VS1_VS2_M_VV  (        VSEQ_VV,         VSEQ_VR, RVANYV,  "vmseq"    ),
+    ATTR32_VD_VS1_VS2_M_VV  (        VSNE_VV,         VSNE_VR, RVANYV,  "vmsne"    ),
+    ATTR32_VD_VS1_VS2_M_VV  (       VSLTU_VV,        VSLTU_VR, RVANYV,  "vmsltu"   ),
+    ATTR32_VD_VS1_VS2_M_VV  (        VSLT_VV,         VSLT_VR, RVANYV,  "vmslt"    ),
+    ATTR32_VD_VS1_VS2_M_VV  (       VSLEU_VV,        VSLEU_VR, RVANYV,  "vmsleu"   ),
+    ATTR32_VD_VS1_VS2_M_VV  (        VSLE_VV,         VSLE_VR, RVANYV,  "vmsle"    ),
+    ATTR32_VD_VS1_VS2_M_VV  (      VSADDU_VV,       VSADDU_VR, RVANYV,  "vsaddu"   ),
+    ATTR32_VD_VS1_VS2_M_VV  (       VSADD_VV,        VSADD_VR, RVANYV,  "vsadd"    ),
+    ATTR32_VD_VS1_VS2_M_VV  (      VSSUBU_VV,       VSSUBU_VR, RVANYV,  "vssubu"   ),
+    ATTR32_VD_VS1_VS2_M_VV  (       VSSUB_VV,        VSSUB_VR, RVANYV,  "vssub"    ),
+    ATTR32_VD_VS1_VS2_M_VV  (      VAADDU_VV,       VAADDU_VR, RVANYV,  "vaaddu"   ),
+    ATTR32_VD_VS1_VS2_M_VV  (       VAADD_VV,        VAADD_VR, RVANYV,  "vaadd"    ),
+    ATTR32_VD_VS1_VS2_M_VV  (        VSLL_VV,         VSLL_VR, RVANYV,  "vsll"     ),
+    ATTR32_VD_VS1_VS2_M_VV  (      VASUBU_VV,       VASUBU_VR, RVANYV,  "vasubu"   ),
+    ATTR32_VD_VS1_VS2_M_VV  (       VASUB_VV,        VASUB_VR, RVANYV,  "vasub"    ),
+    ATTR32_VD_VS1_VS2_M_VV  (       VSMUL_VV,        VSMUL_VR, RVANYV,  "vsmul"    ),
+    ATTR32_VD_VS1_VS2_M_VV  (        VSRL_VV,         VSRL_VR, RVANYV,  "vsrl"     ),
+    ATTR32_VD_VS1_VS2_M_VV  (        VSRA_VV,         VSRA_VR, RVANYV,  "vsra"     ),
+    ATTR32_VD_VS1_VS2_M_VV  (       VSSRL_VV,        VSSRL_VR, RVANYV,  "vssrl"    ),
+    ATTR32_VD_VS1_VS2_M_VV  (       VSSRA_VV,        VSSRA_VR, RVANYV,  "vssra"    ),
+    ATTR32_VD_VS1_VS2_M_VVN (       VNSRL_VV,        VNSRL_VR, RVANYV,  "vnsrl"    ),
+    ATTR32_VD_VS1_VS2_M_VVN (       VNSRA_VV,        VNSRA_VR, RVANYV,  "vnsra"    ),
+    ATTR32_VD_VS1_VS2_M_VVN (     VNCLIPU_VV,      VNCLIPU_VR, RVANYV,  "vnclipu"  ),
+    ATTR32_VD_VS1_VS2_M_VVN (      VNCLIP_VV,       VNCLIP_VR, RVANYV,  "vnclip"   ),
+    ATTR32_VD_VS1_VS2_M_VS  (   VWREDSUMU_VS,    VWREDSUMU_VS, RVANYV,  "vwredsumu"),
+    ATTR32_VD_VS1_VS2_M_VS  (    VWREDSUM_VS,     VWREDSUM_VS, RVANYV,  "vwredsum" ),
+    ATTR32_VD_VS1_VS2_M_VV  (       VDOTU_VV,        VDOTU_VV, RVANYV,  "vdotu"    ),
+    ATTR32_VD_VS1_VS2_M_VV  (        VDOT_VV,         VDOT_VV, RVANYV,  "vdot"     ),
+    ATTR32_VD_VS2_VS1_M_VV  (    VWSMACCU_VV,     VWSMACCU_VR, RVANYV,  "vwsmaccu" ),
+    ATTR32_VD_VS2_VS1_M_VV  (     VWSMACC_VV,      VWSMACC_VR, RVANYV,  "vwsmacc"  ),
+    ATTR32_VD_VS2_VS1_M_VV  (   VWSMACCSU_VV,    VWSMACCSU_VR, RVANYV,  "vwsmaccsu"),
+    ATTR32_VD_VS2_VS1_M_VV  (     VQMACCU_VV,      VQMACCU_VR, RVANYV,  "vqmaccu"  ),
+    ATTR32_VD_VS2_VS1_M_VV  (      VQMACC_VV,       VQMACC_VR, RVANYV,  "vqmacc"   ),
+    ATTR32_VD_VS2_VS1_M_VV  (    VQMACCSU_VV,     VQMACCSU_VR, RVANYV,  "vqmaccsu" ),
 
     // V-extension FVV-type instructions
-    ATTR32_VV        (       VFADD_VV,        VFADD_VR, RVANYV,  "vfadd"          ),
-    ATTR32_VS        (    VFREDSUM_VS,     VFREDSUM_VS, RVANYV,  "vfredsum"       ),
-    ATTR32_VV        (       VFSUB_VV,        VFSUB_VR, RVANYV,  "vfsub"          ),
-    ATTR32_VS        (   VFREDOSUM_VS,    VFREDOSUM_VS, RVANYV,  "vfredosum"      ),
-    ATTR32_VV        (       VFMIN_VV,        VFMIN_VR, RVANYV,  "vfmin"          ),
-    ATTR32_VS        (    VFREDMIN_VS,     VFREDMIN_VS, RVANYV,  "vfredmin"       ),
-    ATTR32_VV        (       VFMAX_VV,        VFMAX_VR, RVANYV,  "vfmax"          ),
-    ATTR32_VS        (    VFREDMAX_VS,     VFREDMAX_VS, RVANYV,  "vfredmax"       ),
-    ATTR32_VV        (      VFSGNJ_VV,       VFSGNJ_VR, RVANYV,  "vfsgnj"         ),
-    ATTR32_VV        (     VFSGNJN_VV,      VFSGNJN_VR, RVANYV,  "vfsgnjn"        ),
-    ATTR32_VV        (     VFSGNJX_VV,      VFSGNJX_VR, RVANYV,  "vfsgnjx"        ),
-    ATTR32_VFMV_F_S  (       VFMV_F_S,        VFMV_F_S, RVANYV,  "vfmv.f.s"       ),
-    ATTR32_VV        (        VFEQ_VV,         VFEQ_VR, RVANYV,  "vmfeq"          ),
-    ATTR32_VV        (       VFLTE_VV,         VFLE_VR, RVANYV,  "vmfle"          ),
-    ATTR32_VV        (       VFORD_VV,        VFORD_VR, RVANYV,  "vmford"         ),
-    ATTR32_VV        (        VFLT_VV,         VFLT_VR, RVANYV,  "vmflt"          ),
-    ATTR32_VV        (        VFNE_VV,         VFNE_VR, RVANYV,  "vmfne"          ),
-    ATTR32_VV        (       VFDIV_VV,        VFDIV_VR, RVANYV,  "vfdiv"          ),
-    ATTR32_V         (    VFCVT_XUF_V,     VFCVT_XUF_V, RVANYV,  "vfcvt.xu.f"     ),
-    ATTR32_V_RTZ     ( VFCVTRTZ_XUF_V,     VFCVT_XUF_V, RVANYV,  "vfcvt.rtz.xu.f" ),
-    ATTR32_V         (     VFCVT_XF_V,      VFCVT_XF_V, RVANYV,  "vfcvt.x.f"      ),
-    ATTR32_V_RTZ     (  VFCVTRTZ_XF_V,      VFCVT_XF_V, RVANYV,  "vfcvt.rtz.x.f"  ),
-    ATTR32_V         (    VFCVT_FXU_V,     VFCVT_FXU_V, RVANYV,  "vfcvt.f.xu"     ),
-    ATTR32_V         (     VFCVT_FX_V,      VFCVT_FX_V, RVANYV,  "vfcvt.f.x"      ),
-    ATTR32_V         (   VFWCVT_XUF_V,    VFWCVT_XUF_V, RVANYV,  "vfwcvt.xu.f"    ),
-    ATTR32_V_RTZ     (VFWCVTRTZ_XUF_V,    VFWCVT_XUF_V, RVANYV,  "vfwcvt.rtz.xu.f"),
-    ATTR32_V         (    VFWCVT_XF_V,     VFWCVT_XF_V, RVANYV,  "vfwcvt.x.f"     ),
-    ATTR32_V_RTZ     ( VFWCVTRTZ_XF_V,     VFWCVT_XF_V, RVANYV,  "vfwcvt.rtz.x.f" ),
-    ATTR32_V         (   VFWCVT_FXU_V,    VFWCVT_FXU_V, RVANYV,  "vfwcvt.f.xu"    ),
-    ATTR32_V         (    VFWCVT_FX_V,     VFWCVT_FX_V, RVANYV,  "vfwcvt.f.x"     ),
-    ATTR32_V         (    VFWCVT_FF_V,     VFWCVT_FF_V, RVANYV,  "vfwcvt.f.f"     ),
-    ATTR32_VN        (   VFNCVT_XUF_V,    VFNCVT_XUF_V, RVANYV,  "vfncvt.xu.f"    ),
-    ATTR32_VN_RTZ    (VFNCVTRTZ_XUF_V,    VFNCVT_XUF_V, RVANYV,  "vfncvt.rtz.xu.f"),
-    ATTR32_VN        (    VFNCVT_XF_V,     VFNCVT_XF_V, RVANYV,  "vfncvt.x.f"     ),
-    ATTR32_VN_RTZ    ( VFNCVTRTZ_XF_V,     VFNCVT_XF_V, RVANYV,  "vfncvt.rtz.x.f" ),
-    ATTR32_VN        (   VFNCVT_FXU_V,    VFNCVT_FXU_V, RVANYV,  "vfncvt.f.xu"    ),
-    ATTR32_VN        (    VFNCVT_FX_V,     VFNCVT_FX_V, RVANYV,  "vfncvt.f.x"     ),
-    ATTR32_VN        (    VFNCVT_FF_V,     VFNCVT_FF_V, RVANYV,  "vfncvt.f.f"     ),
-    ATTR32_VN_ROD    ( VFNCVTROD_FF_V,     VFNCVT_FF_V, RVANYV,  "vfncvt.rod.f.f" ),
-    ATTR32_V         (       VFSQRT_V,        VFSQRT_V, RVANYV,  "vfsqrt"         ),
-    ATTR32_V         (      VFCLASS_V,       VFCLASS_V, RVANYV,  "vfclass"        ),
-    ATTR32_VV        (       VFMUL_VV,        VFMUL_VR, RVANYV,  "vfmul"          ),
-    ATTR32_VV3       (      VFMADD_VV,       VFMADD_VR, RVANYV,  "vfmadd"         ),
-    ATTR32_VV3       (     VFNMADD_VV,      VFNMADD_VR, RVANYV,  "vfnmadd"        ),
-    ATTR32_VV3       (      VFMSUB_VV,       VFMSUB_VR, RVANYV,  "vfmsub"         ),
-    ATTR32_VV3       (     VFNMSUB_VV,      VFNMSUB_VR, RVANYV,  "vfnmsub"        ),
-    ATTR32_VV3       (      VFMACC_VV,       VFMACC_VR, RVANYV,  "vfmacc"         ),
-    ATTR32_VV3       (     VFNMACC_VV,      VFNMACC_VR, RVANYV,  "vfnmacc"        ),
-    ATTR32_VV3       (      VFMSAC_VV,       VFMSAC_VR, RVANYV,  "vfmsac"         ),
-    ATTR32_VV3       (     VFNMSAC_VV,      VFNMSAC_VR, RVANYV,  "vfnmsac"        ),
-    ATTR32_VV        (      VFWADD_VV,       VFWADD_VR, RVANYV,  "vfwadd"         ),
-    ATTR32_VS        (   VFWREDSUM_VS,    VFWREDSUM_VS, RVANYV,  "vfwredsum"      ),
-    ATTR32_VV        (      VFWSUB_VV,       VFWSUB_VR, RVANYV,  "vfwsub"         ),
-    ATTR32_VS        (  VFWREDOSUM_VS,   VFWREDOSUM_VS, RVANYV,  "vfwredosum"     ),
-    ATTR32_WV        (      VFWADD_WV,       VFWADD_WR, RVANYV,  "vfwadd"         ),
-    ATTR32_WV        (      VFWSUB_WV,       VFWSUB_WR, RVANYV,  "vfwsub"         ),
-    ATTR32_VV        (      VFWMUL_VV,       VFWMUL_VR, RVANYV,  "vfwmul"         ),
-    ATTR32_VV        (       VFDOT_VV,        VFDOT_VV, RVANYV,  "vfdot"          ),
-    ATTR32_VV3       (     VFWMACC_VV,      VFWMACC_VR, RVANYV,  "vfwmacc"        ),
-    ATTR32_VV3       (    VFWNMACC_VV,     VFWNMACC_VR, RVANYV,  "vfwnmacc"       ),
-    ATTR32_VV3       (     VFWMSAC_VV,      VFWMSAC_VR, RVANYV,  "vfwmsac"        ),
-    ATTR32_VV3       (    VFWNMSAC_VV,     VFWNMSAC_VR, RVANYV,  "vfwnmsac"       ),
+    ATTR32_VD_VS1_VS2_M_VV  (       VFADD_VV,        VFADD_VR, RVANYV,  "vfadd"          ),
+    ATTR32_VD_VS1_VS2_M_VS  (    VFREDSUM_VS,     VFREDSUM_VS, RVANYV,  "vfredsum"       ),
+    ATTR32_VD_VS1_VS2_M_VV  (       VFSUB_VV,        VFSUB_VR, RVANYV,  "vfsub"          ),
+    ATTR32_VD_VS1_VS2_M_VS  (   VFREDOSUM_VS,    VFREDOSUM_VS, RVANYV,  "vfredosum"      ),
+    ATTR32_VD_VS1_VS2_M_VV  (       VFMIN_VV,        VFMIN_VR, RVANYV,  "vfmin"          ),
+    ATTR32_VD_VS1_VS2_M_VS  (    VFREDMIN_VS,     VFREDMIN_VS, RVANYV,  "vfredmin"       ),
+    ATTR32_VD_VS1_VS2_M_VV  (       VFMAX_VV,        VFMAX_VR, RVANYV,  "vfmax"          ),
+    ATTR32_VD_VS1_VS2_M_VS  (    VFREDMAX_VS,     VFREDMAX_VS, RVANYV,  "vfredmax"       ),
+    ATTR32_VD_VS1_VS2_M_VV  (      VFSGNJ_VV,       VFSGNJ_VR, RVANYV,  "vfsgnj"         ),
+    ATTR32_VD_VS1_VS2_M_VV  (     VFSGNJN_VV,      VFSGNJN_VR, RVANYV,  "vfsgnjn"        ),
+    ATTR32_VD_VS1_VS2_M_VV  (     VFSGNJX_VV,      VFSGNJX_VR, RVANYV,  "vfsgnjx"        ),
+    ATTR32_FD_VS1           (       VFMV_F_S,        VFMV_F_S, RVANYV,  "vfmv.f.s"       ),
+    ATTR32_VD_VS1_VS2_M_VV  (        VFEQ_VV,         VFEQ_VR, RVANYV,  "vmfeq"          ),
+    ATTR32_VD_VS1_VS2_M_VV  (       VFLTE_VV,         VFLE_VR, RVANYV,  "vmfle"          ),
+    ATTR32_VD_VS1_VS2_M_VV  (       VFORD_VV,        VFORD_VR, RVANYV,  "vmford"         ),
+    ATTR32_VD_VS1_VS2_M_VV  (        VFLT_VV,         VFLT_VR, RVANYV,  "vmflt"          ),
+    ATTR32_VD_VS1_VS2_M_VV  (        VFNE_VV,         VFNE_VR, RVANYV,  "vmfne"          ),
+    ATTR32_VD_VS1_VS2_M_VV  (       VFDIV_VV,        VFDIV_VR, RVANYV,  "vfdiv"          ),
+    ATTR32_VD_VS1_M_V       (    VFCVT_XUF_V,     VFCVT_XUF_V, RVANYV,  "vfcvt.xu.f"     ),
+    ATTR32_VD_VS1_M_V_RTZ   ( VFCVTRTZ_XUF_V,     VFCVT_XUF_V, RVANYV,  "vfcvt.rtz.xu.f" ),
+    ATTR32_VD_VS1_M_V       (     VFCVT_XF_V,      VFCVT_XF_V, RVANYV,  "vfcvt.x.f"      ),
+    ATTR32_VD_VS1_M_V_RTZ   (  VFCVTRTZ_XF_V,      VFCVT_XF_V, RVANYV,  "vfcvt.rtz.x.f"  ),
+    ATTR32_VD_VS1_M_V       (    VFCVT_FXU_V,     VFCVT_FXU_V, RVANYV,  "vfcvt.f.xu"     ),
+    ATTR32_VD_VS1_M_V       (     VFCVT_FX_V,      VFCVT_FX_V, RVANYV,  "vfcvt.f.x"      ),
+    ATTR32_VD_VS1_M_V       (   VFWCVT_XUF_V,    VFWCVT_XUF_V, RVANYV,  "vfwcvt.xu.f"    ),
+    ATTR32_VD_VS1_M_V_RTZ   (VFWCVTRTZ_XUF_V,    VFWCVT_XUF_V, RVANYV,  "vfwcvt.rtz.xu.f"),
+    ATTR32_VD_VS1_M_V       (    VFWCVT_XF_V,     VFWCVT_XF_V, RVANYV,  "vfwcvt.x.f"     ),
+    ATTR32_VD_VS1_M_V_RTZ   ( VFWCVTRTZ_XF_V,     VFWCVT_XF_V, RVANYV,  "vfwcvt.rtz.x.f" ),
+    ATTR32_VD_VS1_M_V       (   VFWCVT_FXU_V,    VFWCVT_FXU_V, RVANYV,  "vfwcvt.f.xu"    ),
+    ATTR32_VD_VS1_M_V       (    VFWCVT_FX_V,     VFWCVT_FX_V, RVANYV,  "vfwcvt.f.x"     ),
+    ATTR32_VD_VS1_M_V       (    VFWCVT_FF_V,     VFWCVT_FF_V, RVANYV,  "vfwcvt.f.f"     ),
+    ATTR32_VD_VS1_M_VN      (   VFNCVT_XUF_V,    VFNCVT_XUF_V, RVANYV,  "vfncvt.xu.f"    ),
+    ATTR32_VD_VS1_M_W_RTZ   (VFNCVTRTZ_XUF_V,    VFNCVT_XUF_V, RVANYV,  "vfncvt.rtz.xu.f"),
+    ATTR32_VD_VS1_M_VN      (    VFNCVT_XF_V,     VFNCVT_XF_V, RVANYV,  "vfncvt.x.f"     ),
+    ATTR32_VD_VS1_M_W_RTZ   ( VFNCVTRTZ_XF_V,     VFNCVT_XF_V, RVANYV,  "vfncvt.rtz.x.f" ),
+    ATTR32_VD_VS1_M_VN      (   VFNCVT_FXU_V,    VFNCVT_FXU_V, RVANYV,  "vfncvt.f.xu"    ),
+    ATTR32_VD_VS1_M_VN      (    VFNCVT_FX_V,     VFNCVT_FX_V, RVANYV,  "vfncvt.f.x"     ),
+    ATTR32_VD_VS1_M_VN      (    VFNCVT_FF_V,     VFNCVT_FF_V, RVANYV,  "vfncvt.f.f"     ),
+    ATTR32_VD_VS1_M_W_ROD   ( VFNCVTROD_FF_V,     VFNCVT_FF_V, RVANYV,  "vfncvt.rod.f.f" ),
+    ATTR32_VD_VS1_M_V       (       VFSQRT_V,        VFSQRT_V, RVANYV,  "vfsqrt"         ),
+    ATTR32_VD_VS1_M_V       (    VFRSQRTE7_V,     VFRSQRTE7_V, RVANYV,  "vfrsqrte7"      ),
+    ATTR32_VD_VS1_M_V       (      VFRECE7_V,       VFRECE7_V, RVANYV,  "vfrece7"        ),
+    ATTR32_VD_VS1_M_V       (      VFCLASS_V,       VFCLASS_V, RVANYV,  "vfclass"        ),
+    ATTR32_VD_VS1_VS2_M_VV  (       VFMUL_VV,        VFMUL_VR, RVANYV,  "vfmul"          ),
+    ATTR32_VD_VS2_VS1_M_VV  (      VFMADD_VV,       VFMADD_VR, RVANYV,  "vfmadd"         ),
+    ATTR32_VD_VS2_VS1_M_VV  (     VFNMADD_VV,      VFNMADD_VR, RVANYV,  "vfnmadd"        ),
+    ATTR32_VD_VS2_VS1_M_VV  (      VFMSUB_VV,       VFMSUB_VR, RVANYV,  "vfmsub"         ),
+    ATTR32_VD_VS2_VS1_M_VV  (     VFNMSUB_VV,      VFNMSUB_VR, RVANYV,  "vfnmsub"        ),
+    ATTR32_VD_VS2_VS1_M_VV  (      VFMACC_VV,       VFMACC_VR, RVANYV,  "vfmacc"         ),
+    ATTR32_VD_VS2_VS1_M_VV  (     VFNMACC_VV,      VFNMACC_VR, RVANYV,  "vfnmacc"        ),
+    ATTR32_VD_VS2_VS1_M_VV  (      VFMSAC_VV,       VFMSAC_VR, RVANYV,  "vfmsac"         ),
+    ATTR32_VD_VS2_VS1_M_VV  (     VFNMSAC_VV,      VFNMSAC_VR, RVANYV,  "vfnmsac"        ),
+    ATTR32_VD_VS1_VS2_M_VV  (      VFWADD_VV,       VFWADD_VR, RVANYV,  "vfwadd"         ),
+    ATTR32_VD_VS1_VS2_M_VS  (   VFWREDSUM_VS,    VFWREDSUM_VS, RVANYV,  "vfwredsum"      ),
+    ATTR32_VD_VS1_VS2_M_VV  (      VFWSUB_VV,       VFWSUB_VR, RVANYV,  "vfwsub"         ),
+    ATTR32_VD_VS1_VS2_M_VS  (  VFWREDOSUM_VS,   VFWREDOSUM_VS, RVANYV,  "vfwredosum"     ),
+    ATTR32_VD_VS1_VS2_M_WV  (      VFWADD_WV,       VFWADD_WR, RVANYV,  "vfwadd"         ),
+    ATTR32_VD_VS1_VS2_M_WV  (      VFWSUB_WV,       VFWSUB_WR, RVANYV,  "vfwsub"         ),
+    ATTR32_VD_VS1_VS2_M_VV  (      VFWMUL_VV,       VFWMUL_VR, RVANYV,  "vfwmul"         ),
+    ATTR32_VD_VS1_VS2_M_VV  (       VFDOT_VV,        VFDOT_VV, RVANYV,  "vfdot"          ),
+    ATTR32_VD_VS2_VS1_M_VV  (     VFWMACC_VV,      VFWMACC_VR, RVANYV,  "vfwmacc"        ),
+    ATTR32_VD_VS2_VS1_M_VV  (    VFWNMACC_VV,     VFWNMACC_VR, RVANYV,  "vfwnmacc"       ),
+    ATTR32_VD_VS2_VS1_M_VV  (     VFWMSAC_VV,      VFWMSAC_VR, RVANYV,  "vfwmsac"        ),
+    ATTR32_VD_VS2_VS1_M_VV  (    VFWNMSAC_VV,     VFWNMSAC_VR, RVANYV,  "vfwnmsac"       ),
 
     // V-extension MVV-type instructions
-    ATTR32_VV        (       VWADD_VV,        VWADD_VR, RVANYV,  "vwadd"    ),
-    ATTR32_VV        (      VWADDU_VV,       VWADDU_VR, RVANYV,  "vwaddu"   ),
-    ATTR32_VV        (       VWSUB_VV,        VWSUB_VR, RVANYV,  "vwsub"    ),
-    ATTR32_VV        (      VWSUBU_VV,       VWSUBU_VR, RVANYV,  "vwsubu"   ),
-    ATTR32_WV        (       VWADD_WV,        VWADD_WR, RVANYV,  "vwadd"    ),
-    ATTR32_WV        (      VWADDU_WV,       VWADDU_WR, RVANYV,  "vwaddu"   ),
-    ATTR32_WV        (       VWSUB_WV,        VWSUB_WR, RVANYV,  "vwsub"    ),
-    ATTR32_WV        (      VWSUBU_WV,       VWSUBU_WR, RVANYV,  "vwsubu"   ),
-    ATTR32_VV        (        VMUL_VV,         VMUL_VR, RVANYV,  "vmul"     ),
-    ATTR32_VV        (       VMULH_VV,        VMULH_VR, RVANYV,  "vmulh"    ),
-    ATTR32_VV        (      VMULHU_VV,       VMULHU_VR, RVANYV,  "vmulhu"   ),
-    ATTR32_VV        (     VMULHSU_VV,      VMULHSU_VR, RVANYV,  "vmulhsu"  ),
-    ATTR32_VV        (       VWMUL_VV,        VWMUL_VR, RVANYV,  "vwmul"    ),
-    ATTR32_VV        (      VWMULU_VV,       VWMULU_VR, RVANYV,  "vwmulu"   ),
-    ATTR32_VV        (     VWMULSU_VV,      VWMULSU_VR, RVANYV,  "vwmulsu"  ),
-    ATTR32_VV3       (       VMACC_VV,        VMACC_VR, RVANYV,  "vmacc"    ),
-    ATTR32_VV3       (      VNMSAC_VV,       VNMSAC_VR, RVANYV,  "vnmsac"   ),
-    ATTR32_VV3       (       VMADD_VV,        VMADD_VR, RVANYV,  "vmadd"    ),
-    ATTR32_VV3       (      VNMSUB_VV,       VNMSUB_VR, RVANYV,  "vnmsub"   ),
-    ATTR32_VV3       (     VWMACCU_VV,      VWMACCU_VR, RVANYV,  "vwmaccu"  ),
-    ATTR32_VV3       (      VWMACC_VV,       VWMACC_VR, RVANYV,  "vwmacc"   ),
-    ATTR32_VV3       (    VWMACCSU_VV,     VWMACCSU_VR, RVANYV,  "vwmaccsu" ),
-    ATTR32_VV        (       VDIVU_VV,        VDIVU_VR, RVANYV,  "vdivu"    ),
-    ATTR32_VV        (        VDIV_VV,         VDIV_VR, RVANYV,  "vdiv"     ),
-    ATTR32_VV        (       VREMU_VV,        VREMU_VR, RVANYV,  "vremu"    ),
-    ATTR32_VV        (        VREM_VV,         VREM_VR, RVANYV,  "vrem"     ),
-    ATTR32_VS        (     VREDSUM_VS,      VREDSUM_VS, RVANYV,  "vredsum"  ),
-    ATTR32_VS        (     VREDAND_VS,      VREDAND_VS, RVANYV,  "vredand"  ),
-    ATTR32_VS        (      VREDOR_VS,       VREDOR_VS, RVANYV,  "vredor"   ),
-    ATTR32_VS        (     VREDXOR_VS,      VREDXOR_VS, RVANYV,  "vredxor"  ),
-    ATTR32_VS        (    VREDMINU_VS,     VREDMINU_VS, RVANYV,  "vredminu" ),
-    ATTR32_VS        (     VREDMIN_VS,      VREDMIN_VS, RVANYV,  "vredmin"  ),
-    ATTR32_VS        (    VREDMAXU_VS,     VREDMAXU_VS, RVANYV,  "vredmaxu" ),
-    ATTR32_VS        (     VREDMAX_VS,      VREDMAX_VS, RVANYV,  "vredmax"  ),
-    ATTR32_MM        (       VMAND_MM,        VMAND_MM, RVANYV,  "vmand"    ),
-    ATTR32_MM        (      VMNAND_MM,       VMNAND_MM, RVANYV,  "vmnand"   ),
-    ATTR32_MM        (    VMANDNOT_MM,     VMANDNOT_MM, RVANYV,  "vmandnot" ),
-    ATTR32_MM        (       VMXOR_MM,        VMXOR_MM, RVANYV,  "vmxor"    ),
-    ATTR32_MM        (        VMOR_MM,         VMOR_MM, RVANYV,  "vmor"     ),
-    ATTR32_MM        (       VMNOR_MM,        VMNOR_MM, RVANYV,  "vmnor"    ),
-    ATTR32_MM        (     VMORNOT_MM,      VMORNOT_MM, RVANYV,  "vmornot"  ),
-    ATTR32_MM        (      VMXNOR_MM,       VMXNOR_MM, RVANYV,  "vmxnor"   ),
-    ATTR32_MX        (        VPOPC_M,         VPOPC_M, RVANYV,  "vpopc"    ),
-    ATTR32_MX        (       VFIRST_M,        VFIRST_M, RVANYV,  "vfirst"   ),
-    ATTR32_MV        (        VMSBF_M,         VMSBF_M, RVANYV,  "vmsbf"    ),
-    ATTR32_MV        (        VMSIF_M,         VMSIF_M, RVANYV,  "vmsif"    ),
-    ATTR32_MV        (        VMSOF_M,         VMSOF_M, RVANYV,  "vmsof"    ),
-    ATTR32_MV        (        VIOTA_M,         VIOTA_M, RVANYV,  "viota"    ),
-    ATTR32_VID       (          VID_V,           VID_V, RVANYV,  "vid"      ),
-    ATTR32_VMV_X_S   (        VMV_X_S,        VEXT_X_V, RVANYV,  "vmv.x.s"  ),
-    ATTR32_VEXT      (       VEXT_X_V,        VEXT_X_V, RVANYV,  "vext.x"   ),
-    ATTR32_VM        (   VCOMPRESS_VM,    VCOMPRESS_VM, RVANYV,  "vcompress"),
+    ATTR32_VD_VS1_VS2_M_VV  (       VWADD_VV,        VWADD_VR, RVANYV,  "vwadd"    ),
+    ATTR32_VD_VS1_VS2_M_VV  (      VWADDU_VV,       VWADDU_VR, RVANYV,  "vwaddu"   ),
+    ATTR32_VD_VS1_VS2_M_VV  (       VWSUB_VV,        VWSUB_VR, RVANYV,  "vwsub"    ),
+    ATTR32_VD_VS1_VS2_M_VV  (      VWSUBU_VV,       VWSUBU_VR, RVANYV,  "vwsubu"   ),
+    ATTR32_VD_VS1_VS2_M_WV  (       VWADD_WV,        VWADD_WR, RVANYV,  "vwadd"    ),
+    ATTR32_VD_VS1_VS2_M_WV  (      VWADDU_WV,       VWADDU_WR, RVANYV,  "vwaddu"   ),
+    ATTR32_VD_VS1_VS2_M_WV  (       VWSUB_WV,        VWSUB_WR, RVANYV,  "vwsub"    ),
+    ATTR32_VD_VS1_VS2_M_WV  (      VWSUBU_WV,       VWSUBU_WR, RVANYV,  "vwsubu"   ),
+    ATTR32_VD_VS1_VS2_M_VV  (        VMUL_VV,         VMUL_VR, RVANYV,  "vmul"     ),
+    ATTR32_VD_VS1_VS2_M_VV  (       VMULH_VV,        VMULH_VR, RVANYV,  "vmulh"    ),
+    ATTR32_VD_VS1_VS2_M_VV  (      VMULHU_VV,       VMULHU_VR, RVANYV,  "vmulhu"   ),
+    ATTR32_VD_VS1_VS2_M_VV  (     VMULHSU_VV,      VMULHSU_VR, RVANYV,  "vmulhsu"  ),
+    ATTR32_VD_VS1_VS2_M_VV  (       VWMUL_VV,        VWMUL_VR, RVANYV,  "vwmul"    ),
+    ATTR32_VD_VS1_VS2_M_VV  (      VWMULU_VV,       VWMULU_VR, RVANYV,  "vwmulu"   ),
+    ATTR32_VD_VS1_VS2_M_VV  (     VWMULSU_VV,      VWMULSU_VR, RVANYV,  "vwmulsu"  ),
+    ATTR32_VD_VS2_VS1_M_VV  (       VMACC_VV,        VMACC_VR, RVANYV,  "vmacc"    ),
+    ATTR32_VD_VS2_VS1_M_VV  (      VNMSAC_VV,       VNMSAC_VR, RVANYV,  "vnmsac"   ),
+    ATTR32_VD_VS2_VS1_M_VV  (       VMADD_VV,        VMADD_VR, RVANYV,  "vmadd"    ),
+    ATTR32_VD_VS2_VS1_M_VV  (      VNMSUB_VV,       VNMSUB_VR, RVANYV,  "vnmsub"   ),
+    ATTR32_VD_VS2_VS1_M_VV  (     VWMACCU_VV,      VWMACCU_VR, RVANYV,  "vwmaccu"  ),
+    ATTR32_VD_VS2_VS1_M_VV  (      VWMACC_VV,       VWMACC_VR, RVANYV,  "vwmacc"   ),
+    ATTR32_VD_VS2_VS1_M_VV  (    VWMACCSU_VV,     VWMACCSU_VR, RVANYV,  "vwmaccsu" ),
+    ATTR32_VD_VS1_VS2_M_VV  (       VDIVU_VV,        VDIVU_VR, RVANYV,  "vdivu"    ),
+    ATTR32_VD_VS1_VS2_M_VV  (        VDIV_VV,         VDIV_VR, RVANYV,  "vdiv"     ),
+    ATTR32_VD_VS1_VS2_M_VV  (       VREMU_VV,        VREMU_VR, RVANYV,  "vremu"    ),
+    ATTR32_VD_VS1_VS2_M_VV  (        VREM_VV,         VREM_VR, RVANYV,  "vrem"     ),
+    ATTR32_VD_VS1_VS2_M_VS  (     VREDSUM_VS,      VREDSUM_VS, RVANYV,  "vredsum"  ),
+    ATTR32_VD_VS1_VS2_M_VS  (     VREDAND_VS,      VREDAND_VS, RVANYV,  "vredand"  ),
+    ATTR32_VD_VS1_VS2_M_VS  (      VREDOR_VS,       VREDOR_VS, RVANYV,  "vredor"   ),
+    ATTR32_VD_VS1_VS2_M_VS  (     VREDXOR_VS,      VREDXOR_VS, RVANYV,  "vredxor"  ),
+    ATTR32_VD_VS1_VS2_M_VS  (    VREDMINU_VS,     VREDMINU_VS, RVANYV,  "vredminu" ),
+    ATTR32_VD_VS1_VS2_M_VS  (     VREDMIN_VS,      VREDMIN_VS, RVANYV,  "vredmin"  ),
+    ATTR32_VD_VS1_VS2_M_VS  (    VREDMAXU_VS,     VREDMAXU_VS, RVANYV,  "vredmaxu" ),
+    ATTR32_VD_VS1_VS2_M_VS  (     VREDMAX_VS,      VREDMAX_VS, RVANYV,  "vredmax"  ),
+    ATTR32_VD_VS1_VS2_MM    (       VMAND_MM,        VMAND_MM, RVANYV,  "vmand"    ),
+    ATTR32_VD_VS1_VS2_MM    (      VMNAND_MM,       VMNAND_MM, RVANYV,  "vmnand"   ),
+    ATTR32_VD_VS1_VS2_MM    (    VMANDNOT_MM,     VMANDNOT_MM, RVANYV,  "vmandnot" ),
+    ATTR32_VD_VS1_VS2_MM    (       VMXOR_MM,        VMXOR_MM, RVANYV,  "vmxor"    ),
+    ATTR32_VD_VS1_VS2_MM    (        VMOR_MM,         VMOR_MM, RVANYV,  "vmor"     ),
+    ATTR32_VD_VS1_VS2_MM    (       VMNOR_MM,        VMNOR_MM, RVANYV,  "vmnor"    ),
+    ATTR32_VD_VS1_VS2_MM    (     VMORNOT_MM,      VMORNOT_MM, RVANYV,  "vmornot"  ),
+    ATTR32_VD_VS1_VS2_MM    (      VMXNOR_MM,       VMXNOR_MM, RVANYV,  "vmxnor"   ),
+    ATTR32_RD_VS1_M_M       (        VPOPC_M,         VPOPC_M, RVANYV,  "vpopc"    ),
+    ATTR32_RD_VS1_M_M       (       VFIRST_M,        VFIRST_M, RVANYV,  "vfirst"   ),
+    ATTR32_VD_VS1_M_M       (        VMSBF_M,         VMSBF_M, RVANYV,  "vmsbf"    ),
+    ATTR32_VD_VS1_M_M       (        VMSIF_M,         VMSIF_M, RVANYV,  "vmsif"    ),
+    ATTR32_VD_VS1_M_M       (        VMSOF_M,         VMSOF_M, RVANYV,  "vmsof"    ),
+    ATTR32_VD_VS1_M_M       (        VIOTA_M,         VIOTA_M, RVANYV,  "viota"    ),
+    ATTR32_VD_M_V           (          VID_V,           VID_V, RVANYV,  "vid"      ),
+    ATTR32_RD_VS1           (        VMV_X_S,        VEXT_X_V, RVANYV,  "vmv.x.s"  ),
+    ATTR32_RD_VS1_RS2_V     (       VEXT_X_V,        VEXT_X_V, RVANYV,  "vext.x"   ),
+    ATTR32_VD_VS1_M_VM      (   VCOMPRESS_VM,    VCOMPRESS_VM, RVANYV,  "vcompress"),
 
     // V-extension IVI-type instructions
-    ATTR32_VI        (        VADD_VI,         VADD_VI, RVANYV,  "vadd"      ),
-    ATTR32_VI        (       VRSUB_VI,        VRSUB_VI, RVANYV,  "vrsub"     ),
-    ATTR32_VI        (        VAND_VI,         VAND_VI, RVANYV,  "vand"      ),
-    ATTR32_VI        (         VOR_VI,          VOR_VI, RVANYV,  "vor"       ),
-    ATTR32_VI        (        VXOR_VI,         VXOR_VI, RVANYV,  "vxor"      ),
-    ATTR32_VU        (    VRGATHER_VI,     VRGATHER_VI, RVANYV,  "vrgather"  ),
-    ATTR32_VU        (    VSLIDEUP_VI,     VSLIDEUP_VI, RVANYV,  "vslideup"  ),
-    ATTR32_VU        (  VSLIDEDOWN_VI,   VSLIDEDOWN_VI, RVANYV,  "vslidedown"),
-    ATTR32_VIM_CIN   (        VADC_VI,         VADC_VI, RVANYV,  "vadc"      ),
-    ATTR32_VIM_CIN   (       VMADC_VI,        VMADC_VI, RVANYV,  "vmadc"     ),
-    ATTR32_VIM       (      VMERGE_VI,       VMERGE_VI, RVANYV,  "vmerge"    ),
-    ATTR32_VMV_V_I   (        VMV_V_I,       VMERGE_VI, RVANYV,  "vmv.v.i"   ),
-    ATTR32_VI        (        VSEQ_VI,         VSEQ_VI, RVANYV,  "vmseq"     ),
-    ATTR32_VI        (        VSNE_VI,         VSNE_VI, RVANYV,  "vmsne"     ),
-    ATTR32_VI        (       VSLEU_VI,        VSLEU_VI, RVANYV,  "vmsleu"    ),
-    ATTR32_VI        (        VSLE_VI,         VSLE_VI, RVANYV,  "vmsle"     ),
-    ATTR32_VI        (       VSGTU_VI,        VSGTU_VI, RVANYV,  "vmsgtu"    ),
-    ATTR32_VI        (        VSGT_VI,         VSGT_VI, RVANYV,  "vmsgt"     ),
-    ATTR32_VI        (      VSADDU_VI,       VSADDU_VI, RVANYV,  "vsaddu"    ),
-    ATTR32_VI        (       VSADD_VI,        VSADD_VI, RVANYV,  "vsadd"     ),
-    ATTR32_VI        (       VAADD_VI,        VAADD_VI, RVANYV,  "vaadd"     ),
-    ATTR32_VU        (        VSLL_VI,         VSLL_VI, RVANYV,  "vsll"      ),
-    ATTR32_VMVR      (        VMVR_VI,         VMVR_VI, RVANYV,  "vmv"       ),
-    ATTR32_VU        (        VSRL_VI,         VSRL_VI, RVANYV,  "vsrl"      ),
-    ATTR32_VU        (        VSRA_VI,         VSRA_VI, RVANYV,  "vsra"      ),
-    ATTR32_VU        (       VSSRL_VI,        VSSRL_VI, RVANYV,  "vssrl"     ),
-    ATTR32_VU        (       VSSRA_VI,        VSSRA_VI, RVANYV,  "vssra"     ),
-    ATTR32_VUN       (       VNSRL_VI,        VNSRL_VI, RVANYV,  "vnsrl"     ),
-    ATTR32_VUN       (       VNSRA_VI,        VNSRA_VI, RVANYV,  "vnsra"     ),
-    ATTR32_VUN       (     VNCLIPU_VI,      VNCLIPU_VI, RVANYV,  "vnclipu"   ),
-    ATTR32_VUN       (      VNCLIP_VI,       VNCLIP_VI, RVANYV,  "vnclip"    ),
+    ATTR32_VD_VS1_SI_M_VI   (        VADD_VI,         VADD_VI, RVANYV,  "vadd"      ),
+    ATTR32_VD_VS1_SI_M_VI   (       VRSUB_VI,        VRSUB_VI, RVANYV,  "vrsub"     ),
+    ATTR32_VD_VS1_SI_M_VI   (        VAND_VI,         VAND_VI, RVANYV,  "vand"      ),
+    ATTR32_VD_VS1_SI_M_VI   (         VOR_VI,          VOR_VI, RVANYV,  "vor"       ),
+    ATTR32_VD_VS1_SI_M_VI   (        VXOR_VI,         VXOR_VI, RVANYV,  "vxor"      ),
+    ATTR32_VD_VS1_UI_M_VI   (    VRGATHER_VI,     VRGATHER_VI, RVANYV,  "vrgather"  ),
+    ATTR32_VD_VS1_UI_M_VI   (    VSLIDEUP_VI,     VSLIDEUP_VI, RVANYV,  "vslideup"  ),
+    ATTR32_VD_VS1_UI_M_VI   (  VSLIDEDOWN_VI,   VSLIDEDOWN_VI, RVANYV,  "vslidedown"),
+    ATTR32_VD_VS1_SI_M0_VIM (        VADC_VI,         VADC_VI, RVANYV,  "vadc"      ),
+    ATTR32_VD_VS1_SI_M0_VIM (       VMADC_VI,        VMADC_VI, RVANYV,  "vmadc"     ),
+    ATTR32_VD_VS1_UI_M_VIM  (      VMERGE_VI,       VMERGE_VI, RVANYV,  "vmerge"    ),
+    ATTR32_VD_VS1_SI_M      (        VMV_V_I,       VMERGE_VI, RVANYV,  "vmv.v.i"   ),
+    ATTR32_VD_VS1_SI_M_VI   (        VSEQ_VI,         VSEQ_VI, RVANYV,  "vmseq"     ),
+    ATTR32_VD_VS1_SI_M_VI   (        VSNE_VI,         VSNE_VI, RVANYV,  "vmsne"     ),
+    ATTR32_VD_VS1_SI_M_VI   (       VSLEU_VI,        VSLEU_VI, RVANYV,  "vmsleu"    ),
+    ATTR32_VD_VS1_SI_M_VI   (        VSLE_VI,         VSLE_VI, RVANYV,  "vmsle"     ),
+    ATTR32_VD_VS1_SI_M_VI   (       VSGTU_VI,        VSGTU_VI, RVANYV,  "vmsgtu"    ),
+    ATTR32_VD_VS1_SI_M_VI   (        VSGT_VI,         VSGT_VI, RVANYV,  "vmsgt"     ),
+    ATTR32_VD_VS1_SI_M_VI   (      VSADDU_VI,       VSADDU_VI, RVANYV,  "vsaddu"    ),
+    ATTR32_VD_VS1_SI_M_VI   (       VSADD_VI,        VSADD_VI, RVANYV,  "vsadd"     ),
+    ATTR32_VD_VS1_SI_M_VI   (       VAADD_VI,        VAADD_VI, RVANYV,  "vaadd"     ),
+    ATTR32_VD_VS1_UI_M_VI   (        VSLL_VI,         VSLL_VI, RVANYV,  "vsll"      ),
+    ATTR32_VD_VS1_M_W_V     (        VMVR_VI,         VMVR_VI, RVANYV,  "vmv"       ),
+    ATTR32_VD_VS1_UI_M_VI   (        VSRL_VI,         VSRL_VI, RVANYV,  "vsrl"      ),
+    ATTR32_VD_VS1_UI_M_VI   (        VSRA_VI,         VSRA_VI, RVANYV,  "vsra"      ),
+    ATTR32_VD_VS1_UI_M_VI   (       VSSRL_VI,        VSSRL_VI, RVANYV,  "vssrl"     ),
+    ATTR32_VD_VS1_UI_M_VI   (       VSSRA_VI,        VSSRA_VI, RVANYV,  "vssra"     ),
+    ATTR32_VD_VS1_UI_M_VIN  (       VNSRL_VI,        VNSRL_VI, RVANYV,  "vnsrl"     ),
+    ATTR32_VD_VS1_UI_M_VIN  (       VNSRA_VI,        VNSRA_VI, RVANYV,  "vnsra"     ),
+    ATTR32_VD_VS1_UI_M_VIN  (     VNCLIPU_VI,      VNCLIPU_VI, RVANYV,  "vnclipu"   ),
+    ATTR32_VD_VS1_UI_M_VIN  (      VNCLIP_VI,       VNCLIP_VI, RVANYV,  "vnclip"    ),
 
     // V-extension IVX-type instructions
-    ATTR32_VX        (        VADD_VX,         VADD_VR, RVANYV,  "vadd"      ),
-    ATTR32_VX        (        VSUB_VX,         VSUB_VR, RVANYV,  "vsub"      ),
-    ATTR32_VX        (       VRSUB_VX,        VRSUB_VR, RVANYV,  "vrsub"     ),
-    ATTR32_VX        (       VMINU_VX,        VMINU_VR, RVANYV,  "vminu"     ),
-    ATTR32_VX        (        VMIN_VX,         VMIN_VR, RVANYV,  "vmin"      ),
-    ATTR32_VX        (       VMAXU_VX,        VMAXU_VR, RVANYV,  "vmaxu"     ),
-    ATTR32_VX        (        VMAX_VX,         VMAX_VR, RVANYV,  "vmax"      ),
-    ATTR32_VX        (        VAND_VX,         VAND_VR, RVANYV,  "vand"      ),
-    ATTR32_VX        (         VOR_VX,          VOR_VR, RVANYV,  "vor"       ),
-    ATTR32_VX        (        VXOR_VX,         VXOR_VR, RVANYV,  "vxor"      ),
-    ATTR32_VX        (    VRGATHER_VX,     VRGATHER_VR, RVANYV,  "vrgather"  ),
-    ATTR32_VX        (    VSLIDEUP_VX,     VSLIDEUP_VR, RVANYV,  "vslideup"  ),
-    ATTR32_VX        (  VSLIDEDOWN_VX,   VSLIDEDOWN_VR, RVANYV,  "vslidedown"),
-    ATTR32_VXM_CIN   (        VADC_VX,         VADC_VR, RVANYV,  "vadc"      ),
-    ATTR32_VXM_CIN   (       VMADC_VX,        VMADC_VR, RVANYV,  "vmadc"     ),
-    ATTR32_VXM_CIN   (        VSBC_VX,         VSBC_VR, RVANYV,  "vsbc"      ),
-    ATTR32_VXM_CIN   (       VMSBC_VX,        VMSBC_VR, RVANYV,  "vmsbc"     ),
-    ATTR32_VXM       (      VMERGE_VX,       VMERGE_VR, RVANYV,  "vmerge"    ),
-    ATTR32_VMV_V_X   (        VMV_V_X,       VMERGE_VR, RVANYV,  "vmv.v.x"   ),
-    ATTR32_VX        (        VSEQ_VX,         VSEQ_VR, RVANYV,  "vmseq"     ),
-    ATTR32_VX        (        VSNE_VX,         VSNE_VR, RVANYV,  "vmsne"     ),
-    ATTR32_VX        (       VSLTU_VX,        VSLTU_VR, RVANYV,  "vmsltu"    ),
-    ATTR32_VX        (        VSLT_VX,         VSLT_VR, RVANYV,  "vmslt"     ),
-    ATTR32_VX        (       VSLEU_VX,        VSLEU_VR, RVANYV,  "vmsleu"    ),
-    ATTR32_VX        (        VSLE_VX,         VSLE_VR, RVANYV,  "vmsle"     ),
-    ATTR32_VX        (       VSGTU_VX,        VSGTU_VR, RVANYV,  "vmsgtu"    ),
-    ATTR32_VX        (        VSGT_VX,         VSGT_VR, RVANYV,  "vmsgt"     ),
-    ATTR32_VX        (      VSADDU_VX,       VSADDU_VR, RVANYV,  "vsaddu"    ),
-    ATTR32_VX        (       VSADD_VX,        VSADD_VR, RVANYV,  "vsadd"     ),
-    ATTR32_VX        (      VSSUBU_VX,       VSSUBU_VR, RVANYV,  "vssubu"    ),
-    ATTR32_VX        (       VSSUB_VX,        VSSUB_VR, RVANYV,  "vssub"     ),
-    ATTR32_VX        (      VAADDU_VX,       VAADDU_VR, RVANYV,  "vaaddu"    ),
-    ATTR32_VX        (       VAADD_VX,        VAADD_VR, RVANYV,  "vaadd"     ),
-    ATTR32_VX        (        VSLL_VX,         VSLL_VR, RVANYV,  "vsll"      ),
-    ATTR32_VX        (      VASUBU_VX,       VASUBU_VR, RVANYV,  "vasubu"    ),
-    ATTR32_VX        (       VASUB_VX,        VASUB_VR, RVANYV,  "vasub"     ),
-    ATTR32_VX        (       VSMUL_VX,        VSMUL_VR, RVANYV,  "vsmul"     ),
-    ATTR32_VX        (        VSRL_VX,         VSRL_VR, RVANYV,  "vsrl"      ),
-    ATTR32_VX        (        VSRA_VX,         VSRA_VR, RVANYV,  "vsra"      ),
-    ATTR32_VX        (       VSSRL_VX,        VSSRL_VR, RVANYV,  "vssrl"     ),
-    ATTR32_VX        (       VSSRA_VX,        VSSRA_VR, RVANYV,  "vssra"     ),
-    ATTR32_VXN       (       VNSRL_VX,        VNSRL_VR, RVANYV,  "vnsrl"     ),
-    ATTR32_VXN       (       VNSRA_VX,        VNSRA_VR, RVANYV,  "vnsra"     ),
-    ATTR32_VXN       (     VNCLIPU_VX,      VNCLIPU_VR, RVANYV,  "vnclipu"   ),
-    ATTR32_VXN       (      VNCLIP_VX,       VNCLIP_VR, RVANYV,  "vnclip"    ),
-    ATTR32_VX3       (    VWSMACCU_VX,     VWSMACCU_VR, RVANYV,  "vwsmaccu"  ),
-    ATTR32_VX3       (     VWSMACC_VX,      VWSMACC_VR, RVANYV,  "vwsmacc"   ),
-    ATTR32_VX3       (   VWSMACCSU_VX,    VWSMACCSU_VR, RVANYV,  "vwsmaccsu" ),
-    ATTR32_VX3       (   VWSMACCUS_VX,    VWSMACCUS_VR, RVANYV,  "vwsmaccus" ),
-    ATTR32_VX3       (     VQMACCU_VX,      VQMACCU_VR, RVANYV,  "vqmaccu"   ),
-    ATTR32_VX3       (      VQMACC_VX,       VQMACC_VR, RVANYV,  "vqmacc"    ),
-    ATTR32_VX3       (    VQMACCSU_VX,     VQMACCSU_VR, RVANYV,  "vqmaccsu"  ),
-    ATTR32_VX3       (    VQMACCUS_VX,     VQMACCUS_VR, RVANYV,  "vqmaccus"  ),
+    ATTR32_VD_VS1_RS2_M_VX  (        VADD_VX,         VADD_VR, RVANYV,  "vadd"      ),
+    ATTR32_VD_VS1_RS2_M_VX  (        VSUB_VX,         VSUB_VR, RVANYV,  "vsub"      ),
+    ATTR32_VD_VS1_RS2_M_VX  (       VRSUB_VX,        VRSUB_VR, RVANYV,  "vrsub"     ),
+    ATTR32_VD_VS1_RS2_M_VX  (       VMINU_VX,        VMINU_VR, RVANYV,  "vminu"     ),
+    ATTR32_VD_VS1_RS2_M_VX  (        VMIN_VX,         VMIN_VR, RVANYV,  "vmin"      ),
+    ATTR32_VD_VS1_RS2_M_VX  (       VMAXU_VX,        VMAXU_VR, RVANYV,  "vmaxu"     ),
+    ATTR32_VD_VS1_RS2_M_VX  (        VMAX_VX,         VMAX_VR, RVANYV,  "vmax"      ),
+    ATTR32_VD_VS1_RS2_M_VX  (        VAND_VX,         VAND_VR, RVANYV,  "vand"      ),
+    ATTR32_VD_VS1_RS2_M_VX  (         VOR_VX,          VOR_VR, RVANYV,  "vor"       ),
+    ATTR32_VD_VS1_RS2_M_VX  (        VXOR_VX,         VXOR_VR, RVANYV,  "vxor"      ),
+    ATTR32_VD_VS1_RS2_M_VX  (    VRGATHER_VX,     VRGATHER_VR, RVANYV,  "vrgather"  ),
+    ATTR32_VD_VS1_RS2_M_VX  (    VSLIDEUP_VX,     VSLIDEUP_VR, RVANYV,  "vslideup"  ),
+    ATTR32_VD_VS1_RS2_M_VX  (  VSLIDEDOWN_VX,   VSLIDEDOWN_VR, RVANYV,  "vslidedown"),
+    ATTR32_VD_VS1_RS2_M0_VXM(        VADC_VX,         VADC_VR, RVANYV,  "vadc"      ),
+    ATTR32_VD_VS1_RS2_M0_VXM(       VMADC_VX,        VMADC_VR, RVANYV,  "vmadc"     ),
+    ATTR32_VD_VS1_RS2_M0_VXM(        VSBC_VX,         VSBC_VR, RVANYV,  "vsbc"      ),
+    ATTR32_VD_VS1_RS2_M0_VXM(       VMSBC_VX,        VMSBC_VR, RVANYV,  "vmsbc"     ),
+    ATTR32_VD_VS1_RS2_M_VXM (      VMERGE_VX,       VMERGE_VR, RVANYV,  "vmerge"    ),
+    ATTR32_VD_vs1_RS2       (        VMV_V_X,       VMERGE_VR, RVANYV,  "vmv.v.x"   ),
+    ATTR32_VD_VS1_RS2_M_VX  (        VSEQ_VX,         VSEQ_VR, RVANYV,  "vmseq"     ),
+    ATTR32_VD_VS1_RS2_M_VX  (        VSNE_VX,         VSNE_VR, RVANYV,  "vmsne"     ),
+    ATTR32_VD_VS1_RS2_M_VX  (       VSLTU_VX,        VSLTU_VR, RVANYV,  "vmsltu"    ),
+    ATTR32_VD_VS1_RS2_M_VX  (        VSLT_VX,         VSLT_VR, RVANYV,  "vmslt"     ),
+    ATTR32_VD_VS1_RS2_M_VX  (       VSLEU_VX,        VSLEU_VR, RVANYV,  "vmsleu"    ),
+    ATTR32_VD_VS1_RS2_M_VX  (        VSLE_VX,         VSLE_VR, RVANYV,  "vmsle"     ),
+    ATTR32_VD_VS1_RS2_M_VX  (       VSGTU_VX,        VSGTU_VR, RVANYV,  "vmsgtu"    ),
+    ATTR32_VD_VS1_RS2_M_VX  (        VSGT_VX,         VSGT_VR, RVANYV,  "vmsgt"     ),
+    ATTR32_VD_VS1_RS2_M_VX  (      VSADDU_VX,       VSADDU_VR, RVANYV,  "vsaddu"    ),
+    ATTR32_VD_VS1_RS2_M_VX  (       VSADD_VX,        VSADD_VR, RVANYV,  "vsadd"     ),
+    ATTR32_VD_VS1_RS2_M_VX  (      VSSUBU_VX,       VSSUBU_VR, RVANYV,  "vssubu"    ),
+    ATTR32_VD_VS1_RS2_M_VX  (       VSSUB_VX,        VSSUB_VR, RVANYV,  "vssub"     ),
+    ATTR32_VD_VS1_RS2_M_VX  (      VAADDU_VX,       VAADDU_VR, RVANYV,  "vaaddu"    ),
+    ATTR32_VD_VS1_RS2_M_VX  (       VAADD_VX,        VAADD_VR, RVANYV,  "vaadd"     ),
+    ATTR32_VD_VS1_RS2_M_VX  (        VSLL_VX,         VSLL_VR, RVANYV,  "vsll"      ),
+    ATTR32_VD_VS1_RS2_M_VX  (      VASUBU_VX,       VASUBU_VR, RVANYV,  "vasubu"    ),
+    ATTR32_VD_VS1_RS2_M_VX  (       VASUB_VX,        VASUB_VR, RVANYV,  "vasub"     ),
+    ATTR32_VD_VS1_RS2_M_VX  (       VSMUL_VX,        VSMUL_VR, RVANYV,  "vsmul"     ),
+    ATTR32_VD_VS1_RS2_M_VX  (        VSRL_VX,         VSRL_VR, RVANYV,  "vsrl"      ),
+    ATTR32_VD_VS1_RS2_M_VX  (        VSRA_VX,         VSRA_VR, RVANYV,  "vsra"      ),
+    ATTR32_VD_VS1_RS2_M_VX  (       VSSRL_VX,        VSSRL_VR, RVANYV,  "vssrl"     ),
+    ATTR32_VD_VS1_RS2_M_VX  (       VSSRA_VX,        VSSRA_VR, RVANYV,  "vssra"     ),
+    ATTR32_VD_VS1_RS2_M_VXN (       VNSRL_VX,        VNSRL_VR, RVANYV,  "vnsrl"     ),
+    ATTR32_VD_VS1_RS2_M_VXN (       VNSRA_VX,        VNSRA_VR, RVANYV,  "vnsra"     ),
+    ATTR32_VD_VS1_RS2_M_VXN (     VNCLIPU_VX,      VNCLIPU_VR, RVANYV,  "vnclipu"   ),
+    ATTR32_VD_VS1_RS2_M_VXN (      VNCLIP_VX,       VNCLIP_VR, RVANYV,  "vnclip"    ),
+    ATTR32_VD_RS2_VS1_M_VX  (    VWSMACCU_VX,     VWSMACCU_VR, RVANYV,  "vwsmaccu"  ),
+    ATTR32_VD_RS2_VS1_M_VX  (     VWSMACC_VX,      VWSMACC_VR, RVANYV,  "vwsmacc"   ),
+    ATTR32_VD_RS2_VS1_M_VX  (   VWSMACCSU_VX,    VWSMACCSU_VR, RVANYV,  "vwsmaccsu" ),
+    ATTR32_VD_RS2_VS1_M_VX  (   VWSMACCUS_VX,    VWSMACCUS_VR, RVANYV,  "vwsmaccus" ),
+    ATTR32_VD_RS2_VS1_M_VX  (     VQMACCU_VX,      VQMACCU_VR, RVANYV,  "vqmaccu"   ),
+    ATTR32_VD_RS2_VS1_M_VX  (      VQMACC_VX,       VQMACC_VR, RVANYV,  "vqmacc"    ),
+    ATTR32_VD_RS2_VS1_M_VX  (    VQMACCSU_VX,     VQMACCSU_VR, RVANYV,  "vqmaccsu"  ),
+    ATTR32_VD_RS2_VS1_M_VX  (    VQMACCUS_VX,     VQMACCUS_VR, RVANYV,  "vqmaccus"  ),
 
     // V-extension FVF-type instructions
-    ATTR32_VF        (       VFADD_VF,        VFADD_VR, RVANYV,  "vfadd"       ),
-    ATTR32_VF        (       VFSUB_VF,        VFSUB_VR, RVANYV,  "vfsub"       ),
-    ATTR32_VF        (       VFMIN_VF,        VFMIN_VR, RVANYV,  "vfmin"       ),
-    ATTR32_VF        (       VFMAX_VF,        VFMAX_VR, RVANYV,  "vfmax"       ),
-    ATTR32_VF        (      VFSGNJ_VF,       VFSGNJ_VR, RVANYV,  "vfsgnj"      ),
-    ATTR32_VF        (     VFSGNJN_VF,      VFSGNJN_VR, RVANYV,  "vfsgnjn"     ),
-    ATTR32_VF        (     VFSGNJX_VF,      VFSGNJX_VR, RVANYV,  "vfsgnjx"     ),
-    ATTR32_VF        (  VFSLIDE1UP_VF,   VFSLIDE1UP_VF, RVANYV,  "vfslide1up"  ),
-    ATTR32_VF        (VFSLIDE1DOWN_VF, VFSLIDE1DOWN_VF, RVANYV,  "vfslide1down"),
-    ATTR32_VF        (     VFSGNJX_VF,      VFSGNJX_VR, RVANYV,  "vfsgnjx"     ),
-    ATTR32_VFMV_S_F  (       VFMV_S_F,        VFMV_S_F, RVANYV,  "vfmv.s.f"    ),
-    ATTR32_VFM       (     VFMERGE_VF,      VFMERGE_VR, RVANYV,  "vfmerge"     ),
-    ATTR32_VFMV_V_F  (       VFMV_V_F,      VFMERGE_VR, RVANYV,  "vfmv.v.f"    ),
-    ATTR32_VF        (        VFEQ_VF,         VFEQ_VR, RVANYV,  "vmfeq"       ),
-    ATTR32_VF        (       VFLTE_VF,         VFLE_VR, RVANYV,  "vmfle"       ),
-    ATTR32_VF        (       VFORD_VF,        VFORD_VR, RVANYV,  "vmford"      ),
-    ATTR32_VF        (        VFLT_VF,         VFLT_VR, RVANYV,  "vmflt"       ),
-    ATTR32_VF        (        VFNE_VF,         VFNE_VR, RVANYV,  "vmfne"       ),
-    ATTR32_VF        (        VFGT_VF,         VFGT_VR, RVANYV,  "vmfgt"       ),
-    ATTR32_VF        (       VFGTE_VF,         VFGE_VR, RVANYV,  "vmfge"       ),
-    ATTR32_VF        (       VFDIV_VF,        VFDIV_VR, RVANYV,  "vfdiv"       ),
-    ATTR32_VF        (      VFRDIV_VF,       VFRDIV_VR, RVANYV,  "vfrdiv"      ),
-    ATTR32_VF        (       VFMUL_VF,        VFMUL_VR, RVANYV,  "vfmul"       ),
-    ATTR32_VF        (      VFRSUB_VF,       VFRSUB_VR, RVANYV,  "vfrsub"      ),
-    ATTR32_VF3       (      VFMADD_VF,       VFMADD_VR, RVANYV,  "vfmadd"      ),
-    ATTR32_VF3       (     VFNMADD_VF,      VFNMADD_VR, RVANYV,  "vfnmadd"     ),
-    ATTR32_VF3       (      VFMSUB_VF,       VFMSUB_VR, RVANYV,  "vfmsub"      ),
-    ATTR32_VF3       (     VFNMSUB_VF,      VFNMSUB_VR, RVANYV,  "vfnmsub"     ),
-    ATTR32_VF3       (      VFMACC_VF,       VFMACC_VR, RVANYV,  "vfmacc"      ),
-    ATTR32_VF3       (     VFNMACC_VF,      VFNMACC_VR, RVANYV,  "vfnmacc"     ),
-    ATTR32_VF3       (      VFMSAC_VF,       VFMSAC_VR, RVANYV,  "vfmsac"      ),
-    ATTR32_VF3       (     VFNMSAC_VF,      VFNMSAC_VR, RVANYV,  "vfnmsac"     ),
-    ATTR32_VF        (      VFWADD_VF,       VFWADD_VR, RVANYV,  "vfwadd"      ),
-    ATTR32_VF        (      VFWSUB_VF,       VFWSUB_VR, RVANYV,  "vfwsub"      ),
-    ATTR32_WF        (      VFWADD_WF,       VFWADD_WR, RVANYV,  "vfwadd"      ),
-    ATTR32_WF        (      VFWSUB_WF,       VFWSUB_WR, RVANYV,  "vfwsub"      ),
-    ATTR32_VF        (      VFWMUL_VF,       VFWMUL_VR, RVANYV,  "vfwmul"      ),
-    ATTR32_VF3       (     VFWMACC_VF,      VFWMACC_VR, RVANYV,  "vfwmacc"     ),
-    ATTR32_VF3       (    VFWNMACC_VF,     VFWNMACC_VR, RVANYV,  "vfwnmacc"    ),
-    ATTR32_VF3       (     VFWMSAC_VF,      VFWMSAC_VR, RVANYV,  "vfwmsac"     ),
-    ATTR32_VF3       (    VFWNMSAC_VF,     VFWNMSAC_VR, RVANYV,  "vfwnmsac"    ),
+    ATTR32_VD_VS1_FS2_M_VF  (       VFADD_VF,        VFADD_VR, RVANYV,  "vfadd"       ),
+    ATTR32_VD_VS1_FS2_M_VF  (       VFSUB_VF,        VFSUB_VR, RVANYV,  "vfsub"       ),
+    ATTR32_VD_VS1_FS2_M_VF  (       VFMIN_VF,        VFMIN_VR, RVANYV,  "vfmin"       ),
+    ATTR32_VD_VS1_FS2_M_VF  (       VFMAX_VF,        VFMAX_VR, RVANYV,  "vfmax"       ),
+    ATTR32_VD_VS1_FS2_M_VF  (      VFSGNJ_VF,       VFSGNJ_VR, RVANYV,  "vfsgnj"      ),
+    ATTR32_VD_VS1_FS2_M_VF  (     VFSGNJN_VF,      VFSGNJN_VR, RVANYV,  "vfsgnjn"     ),
+    ATTR32_VD_VS1_FS2_M_VF  (     VFSGNJX_VF,      VFSGNJX_VR, RVANYV,  "vfsgnjx"     ),
+    ATTR32_VD_VS1_FS2_M_VF  (  VFSLIDE1UP_VF,   VFSLIDE1UP_VF, RVANYV,  "vfslide1up"  ),
+    ATTR32_VD_VS1_FS2_M_VF  (VFSLIDE1DOWN_VF, VFSLIDE1DOWN_VF, RVANYV,  "vfslide1down"),
+    ATTR32_VD_VS1_FS2_M_VF  (     VFSGNJX_VF,      VFSGNJX_VR, RVANYV,  "vfsgnjx"     ),
+    ATTR32_VD_FS2           (       VFMV_S_F,        VFMV_S_F, RVANYV,  "vfmv.s.f"    ),
+    ATTR32_VD_VS1_FS2_M_VFM (     VFMERGE_VF,      VFMERGE_VR, RVANYV,  "vfmerge"     ),
+    ATTR32_VD_vs1_FS2_M     (       VFMV_V_F,      VFMERGE_VR, RVANYV,  "vfmv.v.f"    ),
+    ATTR32_VD_VS1_FS2_M_VF  (        VFEQ_VF,         VFEQ_VR, RVANYV,  "vmfeq"       ),
+    ATTR32_VD_VS1_FS2_M_VF  (       VFLTE_VF,         VFLE_VR, RVANYV,  "vmfle"       ),
+    ATTR32_VD_VS1_FS2_M_VF  (       VFORD_VF,        VFORD_VR, RVANYV,  "vmford"      ),
+    ATTR32_VD_VS1_FS2_M_VF  (        VFLT_VF,         VFLT_VR, RVANYV,  "vmflt"       ),
+    ATTR32_VD_VS1_FS2_M_VF  (        VFNE_VF,         VFNE_VR, RVANYV,  "vmfne"       ),
+    ATTR32_VD_VS1_FS2_M_VF  (        VFGT_VF,         VFGT_VR, RVANYV,  "vmfgt"       ),
+    ATTR32_VD_VS1_FS2_M_VF  (       VFGTE_VF,         VFGE_VR, RVANYV,  "vmfge"       ),
+    ATTR32_VD_VS1_FS2_M_VF  (       VFDIV_VF,        VFDIV_VR, RVANYV,  "vfdiv"       ),
+    ATTR32_VD_VS1_FS2_M_VF  (      VFRDIV_VF,       VFRDIV_VR, RVANYV,  "vfrdiv"      ),
+    ATTR32_VD_VS1_FS2_M_VF  (       VFMUL_VF,        VFMUL_VR, RVANYV,  "vfmul"       ),
+    ATTR32_VD_VS1_FS2_M_VF  (      VFRSUB_VF,       VFRSUB_VR, RVANYV,  "vfrsub"      ),
+    ATTR32_VD_FS2_VS1_M_VF  (      VFMADD_VF,       VFMADD_VR, RVANYV,  "vfmadd"      ),
+    ATTR32_VD_FS2_VS1_M_VF  (     VFNMADD_VF,      VFNMADD_VR, RVANYV,  "vfnmadd"     ),
+    ATTR32_VD_FS2_VS1_M_VF  (      VFMSUB_VF,       VFMSUB_VR, RVANYV,  "vfmsub"      ),
+    ATTR32_VD_FS2_VS1_M_VF  (     VFNMSUB_VF,      VFNMSUB_VR, RVANYV,  "vfnmsub"     ),
+    ATTR32_VD_FS2_VS1_M_VF  (      VFMACC_VF,       VFMACC_VR, RVANYV,  "vfmacc"      ),
+    ATTR32_VD_FS2_VS1_M_VF  (     VFNMACC_VF,      VFNMACC_VR, RVANYV,  "vfnmacc"     ),
+    ATTR32_VD_FS2_VS1_M_VF  (      VFMSAC_VF,       VFMSAC_VR, RVANYV,  "vfmsac"      ),
+    ATTR32_VD_FS2_VS1_M_VF  (     VFNMSAC_VF,      VFNMSAC_VR, RVANYV,  "vfnmsac"     ),
+    ATTR32_VD_VS1_FS2_M_VF  (      VFWADD_VF,       VFWADD_VR, RVANYV,  "vfwadd"      ),
+    ATTR32_VD_VS1_FS2_M_VF  (      VFWSUB_VF,       VFWSUB_VR, RVANYV,  "vfwsub"      ),
+    ATTR32_VD_VS1_FS2_M_WF  (      VFWADD_WF,       VFWADD_WR, RVANYV,  "vfwadd"      ),
+    ATTR32_VD_VS1_FS2_M_WF  (      VFWSUB_WF,       VFWSUB_WR, RVANYV,  "vfwsub"      ),
+    ATTR32_VD_VS1_FS2_M_VF  (      VFWMUL_VF,       VFWMUL_VR, RVANYV,  "vfwmul"      ),
+    ATTR32_VD_FS2_VS1_M_VF  (     VFWMACC_VF,      VFWMACC_VR, RVANYV,  "vfwmacc"     ),
+    ATTR32_VD_FS2_VS1_M_VF  (    VFWNMACC_VF,     VFWNMACC_VR, RVANYV,  "vfwnmacc"    ),
+    ATTR32_VD_FS2_VS1_M_VF  (     VFWMSAC_VF,      VFWMSAC_VR, RVANYV,  "vfwmsac"     ),
+    ATTR32_VD_FS2_VS1_M_VF  (    VFWNMSAC_VF,     VFWNMSAC_VR, RVANYV,  "vfwnmsac"    ),
 
     // V-extension MVX-type instructions
-    ATTR32_VMV_S_X   (        VMV_S_X,         VMV_S_X, RVANYV,  "vmv.s.x"    ),
-    ATTR32_VX        (   VSLIDE1UP_VX,    VSLIDE1UP_VX, RVANYV,  "vslide1up"  ),
-    ATTR32_VX        ( VSLIDE1DOWN_VX,  VSLIDE1DOWN_VX, RVANYV,  "vslide1down"),
-    ATTR32_VEXT_V    (        VZEXT_V,         VZEXT_V, RVANYV,  "vzext"      ),
-    ATTR32_VEXT_V    (        VSEXT_V,         VSEXT_V, RVANYV,  "vsext"      ),
-    ATTR32_VX        (       VDIVU_VX,        VDIVU_VR, RVANYV,  "vdivu"      ),
-    ATTR32_VX        (        VDIV_VX,         VDIV_VR, RVANYV,  "vdiv"       ),
-    ATTR32_VX        (       VREMU_VX,        VREMU_VR, RVANYV,  "vremu"      ),
-    ATTR32_VX        (        VREM_VX,         VREM_VR, RVANYV,  "vrem"       ),
-    ATTR32_VX        (      VMULHU_VX,       VMULHU_VR, RVANYV,  "vmulhu"     ),
-    ATTR32_VX        (        VMUL_VX,         VMUL_VR, RVANYV,  "vmul"       ),
-    ATTR32_VX        (     VMULHSU_VX,      VMULHSU_VR, RVANYV,  "vmulhsu"    ),
-    ATTR32_VX        (       VMULH_VX,        VMULH_VR, RVANYV,  "vmulh"      ),
-    ATTR32_VX3       (       VMADD_VX,        VMADD_VR, RVANYV,  "vmadd"      ),
-    ATTR32_VX3       (      VNMSUB_VX,       VNMSUB_VR, RVANYV,  "vnmsub"     ),
-    ATTR32_VX3       (       VMACC_VX,        VMACC_VR, RVANYV,  "vmacc"      ),
-    ATTR32_VX3       (      VNMSAC_VX,       VNMSAC_VR, RVANYV,  "vnmsac"     ),
-    ATTR32_VX        (      VWADDU_VX,       VWADDU_VR, RVANYV,  "vwaddu"     ),
-    ATTR32_VX        (       VWADD_VX,        VWADD_VR, RVANYV,  "vwadd"      ),
-    ATTR32_VX        (      VWSUBU_VX,       VWSUBU_VR, RVANYV,  "vwsubu"     ),
-    ATTR32_VX        (       VWSUB_VX,        VWSUB_VR, RVANYV,  "vwsub"      ),
-    ATTR32_WX        (      VWADDU_WX,       VWADDU_WR, RVANYV,  "vwaddu"     ),
-    ATTR32_WX        (       VWADD_WX,        VWADD_WR, RVANYV,  "vwadd"      ),
-    ATTR32_WX        (      VWSUBU_WX,       VWSUBU_WR, RVANYV,  "vwsubu"     ),
-    ATTR32_WX        (       VWSUB_WX,        VWSUB_WR, RVANYV,  "vwsub"      ),
-    ATTR32_VX        (      VWMULU_VX,       VWMULU_VR, RVANYV,  "vwmulu"     ),
-    ATTR32_VX        (     VWMULSU_VX,      VWMULSU_VR, RVANYV,  "vwmulsu"    ),
-    ATTR32_VX        (       VWMUL_VX,        VWMUL_VR, RVANYV,  "vwmul"      ),
-    ATTR32_VX3       (     VWMACCU_VX,      VWMACCU_VR, RVANYV,  "vwmaccu"    ),
-    ATTR32_VX3       (      VWMACC_VX,       VWMACC_VR, RVANYV,  "vwmacc"     ),
-    ATTR32_VX3       (    VWMACCSU_VX,     VWMACCSU_VR, RVANYV,  "vwmaccsu"   ),
-    ATTR32_VX3       (    VWMACCUS_VX,     VWMACCUS_VR, RVANYV,  "vwmaccus"   ),
+    ATTR32_VD_RS2           (        VMV_S_X,         VMV_S_X, RVANYV,  "vmv.s.x"    ),
+    ATTR32_VD_VS1_RS2_M_VX  (   VSLIDE1UP_VX,    VSLIDE1UP_VX, RVANYV,  "vslide1up"  ),
+    ATTR32_VD_VS1_RS2_M_VX  ( VSLIDE1DOWN_VX,  VSLIDE1DOWN_VX, RVANYV,  "vslide1down"),
+    ATTR32_VEXT_V           (        VZEXT_V,         VZEXT_V, RVANYV,  "vzext"      ),
+    ATTR32_VEXT_V           (        VSEXT_V,         VSEXT_V, RVANYV,  "vsext"      ),
+    ATTR32_VD_VS1_RS2_M_VX  (       VDIVU_VX,        VDIVU_VR, RVANYV,  "vdivu"      ),
+    ATTR32_VD_VS1_RS2_M_VX  (        VDIV_VX,         VDIV_VR, RVANYV,  "vdiv"       ),
+    ATTR32_VD_VS1_RS2_M_VX  (       VREMU_VX,        VREMU_VR, RVANYV,  "vremu"      ),
+    ATTR32_VD_VS1_RS2_M_VX  (        VREM_VX,         VREM_VR, RVANYV,  "vrem"       ),
+    ATTR32_VD_VS1_RS2_M_VX  (      VMULHU_VX,       VMULHU_VR, RVANYV,  "vmulhu"     ),
+    ATTR32_VD_VS1_RS2_M_VX  (        VMUL_VX,         VMUL_VR, RVANYV,  "vmul"       ),
+    ATTR32_VD_VS1_RS2_M_VX  (     VMULHSU_VX,      VMULHSU_VR, RVANYV,  "vmulhsu"    ),
+    ATTR32_VD_VS1_RS2_M_VX  (       VMULH_VX,        VMULH_VR, RVANYV,  "vmulh"      ),
+    ATTR32_VD_RS2_VS1_M_VX  (       VMADD_VX,        VMADD_VR, RVANYV,  "vmadd"      ),
+    ATTR32_VD_RS2_VS1_M_VX  (      VNMSUB_VX,       VNMSUB_VR, RVANYV,  "vnmsub"     ),
+    ATTR32_VD_RS2_VS1_M_VX  (       VMACC_VX,        VMACC_VR, RVANYV,  "vmacc"      ),
+    ATTR32_VD_RS2_VS1_M_VX  (      VNMSAC_VX,       VNMSAC_VR, RVANYV,  "vnmsac"     ),
+    ATTR32_VD_VS1_RS2_M_VX  (      VWADDU_VX,       VWADDU_VR, RVANYV,  "vwaddu"     ),
+    ATTR32_VD_VS1_RS2_M_VX  (       VWADD_VX,        VWADD_VR, RVANYV,  "vwadd"      ),
+    ATTR32_VD_VS1_RS2_M_VX  (      VWSUBU_VX,       VWSUBU_VR, RVANYV,  "vwsubu"     ),
+    ATTR32_VD_VS1_RS2_M_VX  (       VWSUB_VX,        VWSUB_VR, RVANYV,  "vwsub"      ),
+    ATTR32_VD_VS1_RS2_M_WX  (      VWADDU_WX,       VWADDU_WR, RVANYV,  "vwaddu"     ),
+    ATTR32_VD_VS1_RS2_M_WX  (       VWADD_WX,        VWADD_WR, RVANYV,  "vwadd"      ),
+    ATTR32_VD_VS1_RS2_M_WX  (      VWSUBU_WX,       VWSUBU_WR, RVANYV,  "vwsubu"     ),
+    ATTR32_VD_VS1_RS2_M_WX  (       VWSUB_WX,        VWSUB_WR, RVANYV,  "vwsub"      ),
+    ATTR32_VD_VS1_RS2_M_VX  (      VWMULU_VX,       VWMULU_VR, RVANYV,  "vwmulu"     ),
+    ATTR32_VD_VS1_RS2_M_VX  (     VWMULSU_VX,      VWMULSU_VR, RVANYV,  "vwmulsu"    ),
+    ATTR32_VD_VS1_RS2_M_VX  (       VWMUL_VX,        VWMUL_VR, RVANYV,  "vwmul"      ),
+    ATTR32_VD_RS2_VS1_M_VX  (     VWMACCU_VX,      VWMACCU_VR, RVANYV,  "vwmaccu"    ),
+    ATTR32_VD_RS2_VS1_M_VX  (      VWMACC_VX,       VWMACC_VR, RVANYV,  "vwmacc"     ),
+    ATTR32_VD_RS2_VS1_M_VX  (    VWMACCSU_VX,     VWMACCSU_VR, RVANYV,  "vwmaccsu"   ),
+    ATTR32_VD_RS2_VS1_M_VX  (    VWMACCUS_VX,     VWMACCUS_VR, RVANYV,  "vwmaccus"   ),
 
     // dummy entry for undecoded instruction
-    ATTR32_LAST      (           LAST,            LAST,          "undef")
+    ATTR32_LAST             (           LAST,            LAST,          "undef")
 };
 
 //
@@ -2541,12 +2857,46 @@ static void insertEntries32(vmidDecodeTableP table, decodeEntry32CP decEntries) 
 //
 // Create the 32-bit instruction decode table
 //
-static vmidDecodeTableP createDecodeTable32(riscvVectVer vect_version) {
-
+static vmidDecodeTableP createExtDecodeTable32(
+    riscvVectVer     vect_version,
+    riscvBitManipVer bitmanip_version
+) {
     vmidDecodeTableP table = vmidNewDecodeTable(32, IT32_LAST);
 
     // insert common table entries
     insertEntries32(table, &decodeCommon32[0]);
+
+    ////////////////////////////////////////////////////////////////////////////
+    // VERSION-DEPENDENT BIT MANIPULATION EXTENSION ENTRIES
+    ////////////////////////////////////////////////////////////////////////////
+
+    // handle bitmanip-extension-dependent table entries until/after 0.90
+    if(bitmanip_version<=RVBV_0_90) {
+        insertEntries32(table, &decodeBitmanipUntilV090[0]);
+    } else {
+        insertEntries32(table, &decodeBitmanipPostV090[0]);
+    }
+
+    // handle bitmanip-extension-dependent table entries until/after 0.91
+    if(bitmanip_version<=RVBV_0_91) {
+        insertEntries32(table, &decodeBitmanipUntilV091[0]);
+    } else {
+        insertEntries32(table, &decodeBitmanipPostV091[0]);
+    }
+
+    // handle bitmanip-extension-dependent table entries for version 0.91 only
+    if(bitmanip_version==RVBV_0_91) {
+        insertEntries32(table, &decodeBitmanipV091[0]);
+    }
+
+    // handle bitmanip-extension-dependent table entries after version 0.92
+    if(bitmanip_version>RVBV_0_92) {
+        insertEntries32(table, &decodeBitmanipPostV092[0]);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // VERSION-DEPENDENT VECTOR EXTENSION ENTRIES
+    ////////////////////////////////////////////////////////////////////////////
 
     // insert vector-extension-dependent table entries before/after 0.7.1
     if(vect_version>RVVV_0_7_1) {
@@ -2593,6 +2943,11 @@ static vmidDecodeTableP createDecodeTable32(riscvVectVer vect_version) {
         insertEntries32(table, &decodeInitial09[0]);
     }
 
+    // insert vector-extension-dependent table entries after 0.9
+    if(vect_version>RVVV_0_9) {
+        insertEntries32(table, &decodeInitial10[0]);
+    }
+
     return table;
 }
 
@@ -2601,18 +2956,23 @@ static vmidDecodeTableP createDecodeTable32(riscvVectVer vect_version) {
 //
 static riscvIType32 getInstructionType32(riscvP riscv, riscvInstrInfoP info) {
 
-    static vmidDecodeTableP decodeTables[RVVV_LAST];
+    static vmidDecodeTableP decodeTables[RVVV_LAST][RVBV_LAST];
 
     // select decode table depending on vector instruction version
-    riscvVectVer vect_version = riscv->configInfo.vect_version;
+    riscvVectVer     vect_version     = riscv->configInfo.vect_version;
+    riscvBitManipVer bitmanip_version = riscv->configInfo.bitmanip_version;
+
+    // get table, if it already exists
+    vmidDecodeTableP table = decodeTables[vect_version][bitmanip_version];
 
     // create instruction decode table if required
-    if(!decodeTables[vect_version]) {
-        decodeTables[vect_version] = createDecodeTable32(vect_version);
+    if(!table) {
+        table = createExtDecodeTable32(vect_version, bitmanip_version);
+        decodeTables[vect_version][bitmanip_version] = table;
     }
 
     // decode the instruction using decode table
-    return vmidDecode(decodeTables[vect_version], info->instruction);
+    return vmidDecode(table, info->instruction);
 }
 
 
@@ -2889,7 +3249,7 @@ static void insertEntries16(
 //
 // Create the 16-bit instruction decode table
 //
-static vmidDecodeTableP createDecodeTable16(Bool is64BitMode) {
+static vmidDecodeTableP createExtDecodeTable16(Bool is64BitMode) {
 
     vmidDecodeTableP table = vmidNewDecodeTable(16, IT16_LAST);
 
@@ -2911,7 +3271,7 @@ static riscvIType16 getInstructionType16(riscvP riscv, riscvInstrInfoP info) {
 
     // create instruction decode table if required
     if(!decodeTables[is64BitMode]) {
-        decodeTables[is64BitMode] = createDecodeTable16(is64BitMode);
+        decodeTables[is64BitMode] = createExtDecodeTable16(is64BitMode);
     }
 
     // decode the instruction using decode table
@@ -2924,6 +3284,13 @@ static riscvIType16 getInstructionType16(riscvP riscv, riscvInstrInfoP info) {
 ////////////////////////////////////////////////////////////////////////////////
 
 //
+// Force result to be an Illegal Instruction
+//
+static void forceIllegalInstruction(riscvP riscv, riscvInstrInfoP info) {
+    info->arch &= ~getXLenArch(riscv);
+}
+
+//
 // Force register width to 32 (when XLEN is 64 only)
 //
 static riscvRegDesc forceWidth32(riscvInstrInfoP info) {
@@ -2932,6 +3299,22 @@ static riscvRegDesc forceWidth32(riscvInstrInfoP info) {
     info->explicitW = True;
 
     return RV_RD_32;
+}
+
+//
+// Is the instruction in the custom space?
+//
+static Bool isCustom(Uns32 instr) {
+
+    switch(instr&0x7f) {
+        case 0x0b:      // CUSTOM0 : 0001011
+        case 0x2b:      // CUSTOM1 : 0101011
+        case 0x6b:      // CUSTOM2 : 1011011
+        case 0x7b:      // CUSTOM3 : 1111011
+            return True;
+        default:
+            return False;
+    }
 }
 
 //
@@ -2948,12 +3331,12 @@ static riscvRegDesc getXWidth(riscvP riscv, riscvInstrInfoP info, wxSpec w) {
             result = current;
             break;
         case WX_3:
-            result = !U_3(instr) ? current : forceWidth32(info);
+            result = !U_3(instr) || isCustom(instr) ? current : forceWidth32(info);
             break;
         case WX_12:
             result = U_12(instr) ? RV_RD_64 : RV_RD_32;
             // explicitly show operand types
-            info->explicitType = True;
+            info->explicitType = 1;
             break;
         case WX_25:
             result = U_25(instr) ? RV_RD_64 : RV_RD_32;
@@ -2963,7 +3346,7 @@ static riscvRegDesc getXWidth(riscvP riscv, riscvInstrInfoP info, wxSpec w) {
             // include signed/unsigned indication
             result += U_20(instr) ? RV_RD_U : 0;
             // explicitly show operand types
-            info->explicitType = True;
+            info->explicitType = 1;
             break;
         case WX_W1:
             result = forceWidth32(info);
@@ -3007,7 +3390,7 @@ static riscvRegDesc getFWidth(riscvP riscv, riscvInstrInfoP info, wfSpec w) {
         case WF_25:
             result = U_25(instr) ? RV_RD_64 : RV_RD_32;
             // explicitly show operand types
-            info->explicitType = True;
+            info->explicitType = 1;
             break;
         case WF_MEM:
             result = getFWidthBits(info->memBits);
@@ -3071,7 +3454,7 @@ static riscvCSRUDesc getCSRUpdate(
 }
 
 //
-// Force result to be undefined if shift amount >= XLEN or register size
+// Force result to be undefined if shift amount >= register size
 //
 static void validateShift(
     riscvP          riscv,
@@ -3079,10 +3462,8 @@ static void validateShift(
     Uns32           shift,
     riscvRegDesc    wX
 ) {
-    if(shift>=getXLenBits(riscv)) {
-        info->arch &= ~getXLenArch(riscv);
-    } else if(shift>=getRBits(wX)) {
-        info->type = RV_IT_LAST;
+    if(shift>=getRBits(wX)) {
+        forceIllegalInstruction(riscv, info);
     }
 }
 
@@ -3103,6 +3484,9 @@ static Uns64 getConstant(
             break;
         case CS_U_19_15:
             result = U_19_15(instr);
+            break;
+        case CS_U_26_20:
+            result = U_26_20(instr);
             break;
         case CS_S_19_15:
             result = S_19_15(instr);
@@ -3259,8 +3643,16 @@ static riscvRegDesc getRegister(
         case RS_X_19_15:
             result = RV_RD_X | U_19_15(instr);
             break;
+        case RS_X_19_15_S_21_20:
+            result = RV_RD_X | U_19_15(instr) | (RV_RD_8<<U_21_20(instr));
+            // explicitly show operand types
+            info->explicitType = 2;
+            break;
         case RS_X_24_20:
             result = RV_RD_X | U_24_20(instr);
+            break;
+        case RS_X_31_27:
+            result = RV_RD_X | U_31_27(instr);
             break;
         case RS_X_9_7_P8:
             result = RV_RD_X | (U_9_7(instr)+8);
@@ -3339,7 +3731,7 @@ static riscvRegDesc getRegister(
     // validate X register width if required (floating-point registers require
     // dynamic width validation)
     if(isXReg(result) && (getRBits(result)>getXLenBits(riscv))) {
-        info->arch &= ~getXLenArch(riscv);
+        forceIllegalInstruction(riscv, info);
     }
 
     return result;
@@ -3490,6 +3882,9 @@ static Bool getUnsExt(riscvInstrInfoP info, unsExtSpec unsExt) {
     switch(unsExt) {
         case USX_NA:
             break;
+        case USX_T:
+            result = True;
+            break;
         case USX_14:
             result = U_14(instr);
             break;
@@ -3511,6 +3906,7 @@ static riscvRMDesc getRM(riscvInstrInfoP info, rmSpec rm) {
 
     riscvRMDesc result = RV_RM_CURRENT;
     Uns32       instr  = info->instruction;
+    Bool        emitRM = False;
 
     const static riscvRMDesc map[] = {
         RV_RM_RTE, RV_RM_RTZ,  RV_RM_RDN,  RV_RM_RUP,
@@ -3528,11 +3924,14 @@ static riscvRMDesc getRM(riscvInstrInfoP info, rmSpec rm) {
             break;
         case RM_14_12:
             result = map[U_14_12(instr)];
+            emitRM = True;
             break;
         default:
             VMI_ABORT("unimplemented case"); // LCOV_EXCL_LINE
             break;
     }
+
+    info->explicitRM = !emitRM;
 
     return result;
 }
@@ -3554,7 +3953,7 @@ static riscvVType getVType(
             break;
 
         case VTYPE_30_20:
-            result.u32 = U_30_20(instr);
+            result = composeVType(riscv, U_30_20(instr));
             break;
 
         default:
@@ -3566,7 +3965,7 @@ static riscvVType getVType(
 }
 
 //
-// Return while-register specification encoded in the instruction
+// Return whole-register specification encoded in the instruction
 //
 static riscvWholeDesc getWholeReg(riscvInstrInfoP info, wholeSpec wr) {
 
@@ -3660,9 +4059,17 @@ static Uns32 getEEWDivisor(riscvInstrInfoP info, eewDivSpec eewDiv) {
 }
 
 //
-// Fix floating point instructions that cannot be determined by decode alone
+// Return shN prefix specification encoded in the instruction
 //
-static void fixFPPseudoInstructions(riscvInstrInfoP info) {
+static Uns32 getShN(riscvInstrInfoP info, Bool shN) {
+
+    return shN ? U_14_13(info->instruction) : 0;
+}
+
+//
+// Fix instructions that cannot be determined by decode alone
+//
+static void fixPseudoInstructions(riscvInstrInfoP info) {
 
     switch(info->type) {
 
@@ -3687,6 +4094,22 @@ static void fixFPPseudoInstructions(riscvInstrInfoP info) {
                 info->type   = RV_IT_FNEG_R;
                 info->opcode = "fneg";
                 info->format = FMT_R1_R2;
+            }
+            break;
+
+        case RV_IT_GREVI_I:
+            if((info->c&0x1f)==0x1f) {
+                info->type = RV_IT_REV_I;
+            } else if((info->c&0x1f)==0x18) {
+                info->type = RV_IT_REV8_I;
+            }
+            break;
+
+        case RV_IT_GORCI_I:
+            if(info->c==0x07) {
+                info->type = RV_IT_ORCB_I;
+            } else if((info->c&0x1f)==0x10) {
+                info->type = RV_IT_ORC16_I;
             }
             break;
 
@@ -3741,7 +4164,7 @@ static void interpretInstruction(
     info->arch   = attrs->arch;
 
     // indicate whether operand types should be explicitly listed
-    info->explicitType = False;
+    info->explicitType = 0;
     info->explicitW    = False;
 
     // some attributes are copied directly
@@ -3775,9 +4198,7 @@ static void interpretInstruction(
     info->isFF      = getFirstFault(info, attrs->ff);
     info->nf        = getNumFields(info, attrs->nf);
     info->eewDiv    = getEEWDivisor(info, attrs->eewDiv);
-
-    // fix up floating point pseudo-instructions
-    fixFPPseudoInstructions(info);
+    info->shN       = getShN(info, attrs->shN);
 }
 
 //
@@ -3814,8 +4235,7 @@ void riscvDecode(
 ) {
     info->type        = RV_IT_LAST;
     info->thisPC      = thisPC;
-    info->instruction = riscvGetInstruction(riscv, info->thisPC);
-    info->bytes       = is4ByteInstruction(info->instruction) ? 4 : 2;
+    info->instruction = riscvFetchInstruction(riscv, info->thisPC, &info->bytes);
 
     // decode based on instruction size
     if(info->bytes==4) {
@@ -3823,12 +4243,15 @@ void riscvDecode(
     } else {
         decode16(riscv, info);
     }
+
+    // fix up pseudo-instructions
+    fixPseudoInstructions(info);
 }
 
 //
-// Return instruction at address thisPC
+// Fetch instruction at address thisPC
 //
-Uns32 riscvGetInstruction(riscvP riscv, riscvAddr thisPC) {
+Uns32 riscvFetchInstruction(riscvP riscv, riscvAddr thisPC, Uns8 *bytesP) {
 
     Uns32 result;
 
@@ -3852,6 +4275,11 @@ Uns32 riscvGetInstruction(riscvP riscv, riscvAddr thisPC) {
         // get full instruction pattern
         result |= (fetch2(riscv, highPC) << 16);
     }
+    
+    // return instruction size (irrespective of whether compressed present)
+    if(bytesP) {
+        *bytesP = is4ByteInstruction(result) ? 4 : 2;
+    }
 
     return result;
 }
@@ -3863,4 +4291,148 @@ Uns32 riscvGetInstructionSize(riscvP riscv, riscvAddr thisPC) {
     return getInstructionSize(riscv, thisPC);
 }
 
+
+////////////////////////////////////////////////////////////////////////////////
+// EXTERNALLY-IMPLEMENTED INSTRUCTIONS
+////////////////////////////////////////////////////////////////////////////////
+
+//
+// Create externally-implemented instruction decode table
+//
+static vmidDecodeTableP createExtDecodeTable(
+    riscvExtInstrAttrsCP attrs,
+    Uns32                last,
+    Uns32                bits
+) {
+    // create the table
+    vmidDecodeTableP table = vmidNewDecodeTable(bits, last);
+    Uns32            i;
+
+    for(i=0; i<last; i++) {
+
+        const char *opcode = attrs[i].opcode;
+        const char *decode = attrs[i].decode;
+
+        VMI_ASSERT(decode && opcode, "invalid attribute entry (index %u)", i);
+
+        vmidNewEntryFmtBin(table, opcode, i, decode, 0);
+    }
+
+    return table;
+}
+
+//
+// Decode externally-implemented instruction
+//
+static Uns32 decodeExtInstruction(
+    vmidDecodeTablePP    tableP,
+    riscvExtInstrInfoP   info,
+    riscvExtInstrAttrsCP attrs,
+    Uns32                last,
+    Uns32                bits
+) {
+    // create instruction decode table if required
+    if(!*tableP) {
+        *tableP = createExtDecodeTable(attrs, last, bits);
+    }
+
+    // decode the instruction using decode table
+    return vmidDecode(*tableP, info->instruction);
+}
+
+//
+// Unpack instruction fields using standard pattern
+//
+static void unpackExtInstruction(
+    riscvP               riscv,
+    riscvExtInstrInfoP   instrInfo,
+    riscvExtInstrPattern pattern
+) {
+    static const riscvIType32 map[] = {
+
+        // GPR INSTRUCTIONS
+        [RVIP_RD_RS1_RS2]        = IT32_ADD_R,
+        [RVIP_RD_RS1_SI]         = IT32_ADDI_I,
+        [RVIP_RD_RS1_SHIFT]      = IT32_SLLI_I,
+        [RVIP_RD_RS1_RS2_RS3]    = IT32_CMIX_R4,
+        [RVIP_RD_RS1_RS3_SHIFT]  = IT32_FSRI_R3I,
+
+        // FPR INSTRUCTIONS
+        [RVIP_FD_FS1_FS2]        = IT32_FMAX_R,
+        [RVIP_FD_FS1_FS2_RM]     = IT32_FADD_R,
+        [RVIP_FD_FS1_FS2_FS3_RM] = IT32_FMADD_R4,
+        [RVIP_RD_FS1_FS2]        = IT32_FEQ_R,
+
+        // VECTOR INSTRUCTIONS
+        [RVIP_VD_VS1_VS2_M]      = IT32_VADD_VV,
+        [RVIP_VD_VS1_SI_M]       = IT32_VADD_VI,
+        [RVIP_VD_VS1_UI_M]       = IT32_VSLL_VI,
+        [RVIP_VD_VS1_RS2_M]      = IT32_VADD_VX,
+        [RVIP_VD_VS1_FS2_M]      = IT32_VFADD_VF,
+        [RVIP_RD_VS1_RS2]        = IT32_VEXT_X_V,
+        [RVIP_RD_VS1_M]          = IT32_VPOPC_M,
+        [RVIP_VD_RS2]            = IT32_VMV_S_X,
+        [RVIP_FD_VS1]            = IT32_VFMV_F_S,
+        [RVIP_VD_FS2]            = IT32_VFMV_S_F,
+    };
+
+    // seed fields from the client instruction information
+    riscvInstrInfo info = {
+        thisPC      : instrInfo->thisPC,
+        instruction : instrInfo->instruction,
+        bytes       : instrInfo->bytes,
+    };
+
+    // interpret instruction fields
+    interpretInstruction(riscv, &info, &attrsArray32[map[pattern]]);
+
+    // fill result with interpreted fields
+    instrInfo->arch = info.arch;
+    instrInfo->r[0] = info.r[0];
+    instrInfo->r[1] = info.r[1];
+    instrInfo->r[2] = info.r[2];
+    instrInfo->r[3] = info.r[3];
+    instrInfo->mask = info.mask;
+    instrInfo->rm   = info.rm;
+    instrInfo->c    = info.c;
+}
+
+//
+// Fetch an instruction at the given simulated address and if it matches a
+// decode pattern in the given instruction table unpack the instruction fields
+// into 'info'
+//
+Uns32 riscvExtFetchInstruction(
+    riscvP               riscv,
+    riscvAddr            thisPC,
+    riscvExtInstrInfoP   info,
+    vmidDecodeTablePP    tableP,
+    riscvExtInstrAttrsCP attrs,
+    Uns32                last,
+    Uns32                bits
+) {
+    Uns32 result = last;
+
+    // fetch instruction
+    info->thisPC      = thisPC;
+    info->instruction = riscvFetchInstruction(riscv, thisPC, &info->bytes);
+
+    // decode based on instruction size
+    if((info->bytes*8)==bits) {
+        result = decodeExtInstruction(tableP, info, attrs, result, bits);
+    }
+
+    // unpack the instruction if it was successfully decoded
+    if(result!=last) {
+
+        riscvExtInstrAttrsCP match = &attrs[result];
+
+        info->opcode = match->opcode;
+        info->format = match->format;
+
+        unpackExtInstruction(riscv, info, match->pattern);
+    }
+
+    return result;
+}
 

@@ -88,12 +88,14 @@ typedef enum riscvArchitectureE {
     RV32E    = ISA_XLEN_32  |                                 ISA_E,
     RV32F    = ISA_XLEN_32  |                                         ISA_F,
     RV32D    = ISA_XLEN_32  |                                                 ISA_D,
+    RV32B    = ISA_XLEN_32  |                                                                         ISA_B,
     RV32IM   = ISA_XLEN_32  | ISA_I | ISA_M,
     RV32IMA  = ISA_XLEN_32  | ISA_I | ISA_M | ISA_A,
     RV32IMC  = ISA_XLEN_32  | ISA_I | ISA_M |         ISA_C,
     RV32IMAC = ISA_XLEN_32  | ISA_I | ISA_M | ISA_A | ISA_C,
     RV32G    = ISA_XLEN_32  | ISA_I | ISA_M | ISA_A |                 ISA_F | ISA_D,
     RV32GC   = ISA_XLEN_32  | ISA_I | ISA_M | ISA_A | ISA_C |         ISA_F | ISA_D,
+    RV32GCB  = ISA_XLEN_32  | ISA_I | ISA_M | ISA_A | ISA_C |         ISA_F | ISA_D                 | ISA_B,
     RV32GCN  = ISA_XLEN_32  | ISA_I | ISA_M | ISA_A | ISA_C |         ISA_F | ISA_D | ISA_N,
     RV32GCV  = ISA_XLEN_32  | ISA_I | ISA_M | ISA_A | ISA_C |         ISA_F | ISA_D         | ISA_V,
     RV32EC   = ISA_XLEN_32  |                         ISA_C | ISA_E,
@@ -108,12 +110,14 @@ typedef enum riscvArchitectureE {
     RV64E    = ISA_XLEN_64  |                                 ISA_E,
     RV64F    = ISA_XLEN_64  |                                         ISA_F,
     RV64D    = ISA_XLEN_64  |                                                 ISA_D,
+    RV64B    = ISA_XLEN_64  |                                                                         ISA_B,
     RV64IM   = ISA_XLEN_64  | ISA_I | ISA_M,
     RV64IMA  = ISA_XLEN_64  | ISA_I | ISA_M | ISA_A,
     RV64IMC  = ISA_XLEN_64  | ISA_I | ISA_M |         ISA_C,
     RV64IMAC = ISA_XLEN_64  | ISA_I | ISA_M | ISA_A | ISA_C,
     RV64G    = ISA_XLEN_64  | ISA_I | ISA_M | ISA_A |                 ISA_F | ISA_D,
     RV64GC   = ISA_XLEN_64  | ISA_I | ISA_M | ISA_A | ISA_C |         ISA_F | ISA_D,
+    RV64GCB  = ISA_XLEN_64  | ISA_I | ISA_M | ISA_A | ISA_C |         ISA_F | ISA_D                 | ISA_B,
     RV64GCN  = ISA_XLEN_64  | ISA_I | ISA_M | ISA_A | ISA_C |         ISA_F | ISA_D | ISA_N,
     RV64GCV  = ISA_XLEN_64  | ISA_I | ISA_M | ISA_A | ISA_C |         ISA_F | ISA_D         | ISA_V,
 
@@ -127,6 +131,7 @@ typedef enum riscvArchitectureE {
     RVANYD   = ISA_XLEN_ANY |                                                 ISA_D,
     RVANYN   = ISA_XLEN_ANY |                                                         ISA_N,
     RVANYV   = ISA_XLEN_ANY |                                                                 ISA_V,
+    RVANYB   = ISA_XLEN_ANY |                                                                         ISA_B,
 
     RVANYDF  = RVANYD|RVANYF,
     RVANYCD  = RVANYC|RVANYD,
@@ -166,10 +171,10 @@ typedef enum riscvPrivVerE {
 } riscvPrivVer;
 
 //
-// date and tag of master version
+// Date and tag of master version
 //
-#define RVVV_MASTER_DATE    "15 May 2020"
-#define RVVV_MASTER_TAG     "72a8e0c"
+#define RVVV_MASTER_DATE    "3 July 2020"
+#define RVVV_MASTER_TAG     "2144559"
 
 //
 // Supported Vector Architecture versions
@@ -187,6 +192,35 @@ typedef enum riscvVectVerE {
     RVVV_LAST,                          // for sizing
     RVVV_DEFAULT = RVVV_0_9,            // default version
 } riscvVectVer;
+
+//
+// Supported Bit Manipulation Architecture versions
+//
+typedef enum riscvBitManipVerE {
+    RVBV_0_90,                          // version 0.90
+    RVBV_0_91,                          // version 0.91
+    RVBV_0_92,                          // version 0.92
+    RVBV_0_93,                          // version 0.93
+    RVBV_LAST,                          // for sizing
+    RVBV_DEFAULT = RVBV_0_92,           // default version
+} riscvBitManipVer;
+
+//
+// Bit Manipulation Architecture subsets
+//
+typedef enum riscvBitManipSetE {
+    RVBS_Zba  = (1<<0),                 // address calculation
+    RVBS_Zbb  = (1<<1),                 // base set
+    RVBS_Zbc  = (1<<2),                 // carryless operations
+    RVBS_Zbe  = (1<<3),                 // bit deposit/extract
+    RVBS_Zbf  = (1<<4),                 // bit field place
+    RVBS_Zbm  = (1<<5),                 // bit matrix operations
+    RVBS_Zbp  = (1<<6),                 // permutation instructions
+    RVBS_Zbr  = (1<<7),                 // CSR32 operations
+    RVBS_Zbs  = (1<<8),                 // single bit instructions
+    RVBS_Zbt  = (1<<9),                 // ternary instructions
+    RVBS_Zbbp = RVBS_Zbb|RVBS_Zbp,      // base or permutation
+} riscvBitManipSet;
 
 //
 // Supported 16-bit floating point version
@@ -226,19 +260,22 @@ typedef enum riscvDMModeE {
 } riscvDMMode;
 
 // macro returning User Architecture version
-#define RISCV_USER_VERSION(_P)  ((_P)->configInfo.user_version)
+#define RISCV_USER_VERSION(_P)      ((_P)->configInfo.user_version)
 
 // macro returning Privileged Architecture version
-#define RISCV_PRIV_VERSION(_P)  ((_P)->configInfo.priv_version)
+#define RISCV_PRIV_VERSION(_P)      ((_P)->configInfo.priv_version)
 
 // macro returning Vector Architecture version
-#define RISCV_VECT_VERSION(_P)  ((_P)->configInfo.vect_version)
+#define RISCV_VECT_VERSION(_P)      ((_P)->configInfo.vect_version)
+
+// macro returning Bit Manipulation Architecture version
+#define RISCV_BITMANIP_VERSION(_P)  ((_P)->configInfo.bitmanip_version)
 
 // macro returning 16-bit floating point version
-#define RISCV_FP16_VERSION(_P)  ((_P)->configInfo.fp16_version)
+#define RISCV_FP16_VERSION(_P)      ((_P)->configInfo.fp16_version)
 
 // macro returning 16-bit floating point version
-#define RISCV_FS_MODE(_P)       ((_P)->configInfo.mstatus_fs_mode)
+#define RISCV_FS_MODE(_P)           ((_P)->configInfo.mstatus_fs_mode)
 
 //
 // Supported version-dependent architectural features
@@ -263,6 +300,10 @@ typedef enum riscvVFeatureE {
     RVVF_FRACT_LMUL,        // is fractional LMUL implemented?
     RVVF_AGNOSTIC,          // are agnostic bits implemented?
     RVVF_MLEN1,             // is MLEN always 1?
+    RVVF_EEW_OVERLAP,       // use relaxed EEW overlap rules?
+    RVVF_SLEN_IS_VLEN,      // is SLEN==VLEN?
+    RVVF_ELEN_GT_VLEN,      // is ELEN>VLEN legal?
+    RVVF_VLR_HINT,          // do VLR instructions encode hints?
     RVVF_LAST,              // for sizing
 } riscvVFeature;
 

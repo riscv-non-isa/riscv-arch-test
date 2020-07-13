@@ -37,6 +37,15 @@
 
 
 //
+// Write a net port
+//
+inline static void writeNet(riscvP riscv, Uns32 handle, Uns32 value) {
+    if(handle) {
+        vmirtWriteNetPort((vmiProcessorP)riscv, handle, value);
+    }
+}
+
+//
 // Update the currently-enabled architecture settings
 //
 void riscvSetCurrentArch(riscvP riscv) {
@@ -350,6 +359,9 @@ void riscvSetMode(riscvP riscv, riscvMode mode) {
 
     // set step breakpoint if required
     riscvSetStepBreakpoint(riscv);
+
+    // update active mode output signal (external CLIC)
+    writeNet(riscv, riscv->sec_lvl_Handle, mode);
 }
 
 //
@@ -596,7 +608,7 @@ const char *riscvGetFeatureName(riscvArchitecture feature) {
         [RISCV_FEATURE_INDEX(XLEN32_CHAR)] = "32-bit XLEN",
         [RISCV_FEATURE_INDEX(XLEN64_CHAR)] = "64-bit XLEN",
         [RISCV_FEATURE_INDEX('A')]         = "extension A (atomic instructions)",
-        [RISCV_FEATURE_INDEX('B')]         = "extension B (Tentatively reserved for Bit-Manipulation extension)",
+        [RISCV_FEATURE_INDEX('B')]         = "extension B (bit manipulation extension)",
         [RISCV_FEATURE_INDEX('C')]         = "extension C (compressed instructions)",
         [RISCV_FEATURE_INDEX('E')]         = "RV32E base ISA",
         [RISCV_FEATURE_INDEX('D')]         = "extension D (double-precision floating point)",
@@ -606,7 +618,7 @@ const char *riscvGetFeatureName(riscvArchitecture feature) {
         [RISCV_FEATURE_INDEX('N')]         = "extension N (user-level interrupts)",
         [RISCV_FEATURE_INDEX('S')]         = "extension S (Supervisor mode)",
         [RISCV_FEATURE_INDEX('U')]         = "extension U (User mode)",
-        [RISCV_FEATURE_INDEX('V')]         = "extension V (vector instructions)",
+        [RISCV_FEATURE_INDEX('V')]         = "extension V (vector extension)",
         [RISCV_FEATURE_INDEX('X')]         = "extension X (non-standard extensions present)"
     };
 

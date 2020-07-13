@@ -24,6 +24,10 @@ Bit Manipulation Extension
 ---
 If you want to see an example of the riscv bit manipulation extension being used, then look at the [bitmanip](bitmanip) example.
 
+Instruction Functional Coverage
+---
+If you want to see an example of the Imperas instruction functional coverage being used, then look at the [coverage](coverage) example.
+
 Notes
 ---
 You must ensure that the binary executable you try and execute is appropriate for your host computer.  
