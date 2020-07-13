@@ -45,25 +45,72 @@ typedef enum riscvRMDescE {
 } riscvRMDesc;
 
 //
+// This describes format of  riscvVType values
+//
+typedef enum riscvVTypeFmtE {
+    RV_VTF_0_9,     // 0.9 format (and previous)
+} riscvVTypeFmt;
+
+//
 // This holds field information for the VSETVLI instruction
 //
-typedef union riscvVTypeU {
-    Uns32 u32;
-    struct {
-        Uns32 vlmul  :  2;
-        Uns32 vsew   :  3;
-        Uns32 vlmulf :  1;
-        Uns32 vta    :  1;
-        Uns32 vma    :  1;
-        Uns32 _u1    : 24;
-    };
+typedef struct riscvVTypeS {
+
+    // register format
+    riscvVTypeFmt format;
+
+    // register value
+    union {
+
+        // value as Uns32
+        Uns32 u32;
+
+        // 0.9 format (and previous)
+        struct {
+            Uns32 vlmul  :  2;
+            Uns32 vsew   :  3;
+            Uns32 vlmulf :  1;
+            Bool  vta    :  1;
+            Bool  vma    :  1;
+            Uns32 _u1    : 24;
+        };
+    } u;
+
 } riscvVType;
 
 //
-// Form signed vlmul from unsigned base and fractional indication
+// Return value of always-zero fields in vtype
 //
-inline static Int32 getSignedVLMUL(Uns32 vlmul, Bool vlmulf) {
-    return vlmul | (vlmulf ? -4 : 0);
+inline static Uns32 getVTypeZero(riscvVType vtype) {
+    return vtype.u._u1;
+}
+
+//
+// Get SEW for vtype
+//
+inline static Uns32 getVTypeSEW(riscvVType vtype) {
+    return 8<<vtype.u.vsew;
+}
+
+//
+// Get VTA for vtype
+//
+inline static Bool getVTypeVTA(riscvVType vtype) {
+    return vtype.u.vta;
+}
+
+//
+// Get VMA for vtype
+//
+inline static Bool getVTypeVMA(riscvVType vtype) {
+    return vtype.u.vma;
+}
+
+//
+// Get signed VLMUL for vtype
+//
+inline static Int32 getVTypeSVLMUL(riscvVType vtype) {
+    return vtype.u.vlmul | (vtype.u.vlmulf ? -4 : 0);
 }
 
 

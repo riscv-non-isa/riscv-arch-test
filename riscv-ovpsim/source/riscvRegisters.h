@@ -49,6 +49,7 @@
 #define RISCV_EA_TAG            RISCV_CPU_REG(exclusiveTag)
 #define RISCV_DM                RISCV_CPU_REG(DM)
 #define RISCV_DM_STALL          RISCV_CPU_REG(DMStall)
+#define RISCV_COMMERCIAL        RISCV_CPU_REG(commercial)
 #define RISCV_FP_FLAGS          RISCV_CPU_REG(fpFlagsMT)
 #define RISCV_SF_FLAGS          RISCV_CPU_REG(SFMT)
 #define RISCV_JUMP_BASE         RISCV_CPU_REG(jumpBase)

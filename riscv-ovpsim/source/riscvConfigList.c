@@ -26,21 +26,22 @@
 // Specify named variant
 //
 #define RISC_VARIANT(_NAME, _PMP_REGS, _ARCH) { \
-    .name           = _NAME,                    \
-    .arch           = _ARCH,                    \
-    .archMask       = RV_ARCH_MASK_DEFAULT,     \
-    .counteren_mask = -1,                       \
-    .user_version   = RVUV_DEFAULT,             \
-    .priv_version   = RVPV_DEFAULT,             \
-    .vect_version   = RVVV_DEFAULT,             \
-    .Zvlsseg        = 1,                        \
-    .Zvamo          = 1,                        \
-    .Zvediv         = 0,                        \
-    .Zvqmac         = 1,                        \
-    .PMP_registers  = _PMP_REGS,                \
-    .tval_ii_code   = True,                     \
-    .ASID_bits      = ((_ARCH)&RV64) ? 16 : 9,  \
-    .numHarts       = RV_NUMHARTS_0             \
+    .name             = _NAME,                      \
+    .arch             = _ARCH,                      \
+    .archMask         = RV_ARCH_MASK_DEFAULT,       \
+    .counteren_mask   = -1,                         \
+    .user_version     = RVUV_DEFAULT,               \
+    .priv_version     = RVPV_DEFAULT,               \
+    .bitmanip_version = RVBV_DEFAULT,               \
+    .vect_version     = RVVV_DEFAULT,               \
+    .Zvlsseg          = 1,                          \
+    .Zvamo            = 1,                          \
+    .Zvediv           = 0,                          \
+    .Zvqmac           = 1,                          \
+    .PMP_registers    = _PMP_REGS,                  \
+    .tval_ii_code     = True,                       \
+    .ASID_bits        = ((_ARCH)&RV64) ? 16 : 9,    \
+    .numHarts         = RV_NUMHARTS_0               \
 }
 
 //
@@ -55,6 +56,7 @@ static const riscvConfig configList[] = {
     RISC_VARIANT("RV32IMAC", 16, ISA_U|ISA_S|RV32IMAC),
     RISC_VARIANT("RV32G",    16, ISA_U|ISA_S|RV32G   ),
     RISC_VARIANT("RV32GC",   16, ISA_U|ISA_S|RV32GC  ),
+    RISC_VARIANT("RV32GCB",  16, ISA_U|ISA_S|RV32GCB ),
     RISC_VARIANT("RV32GCN",  16, ISA_U|ISA_S|RV32GCN ),
     RISC_VARIANT("RV32GCV",  16, ISA_U|ISA_S|RV32GCV ),
     RISC_VARIANT("RV32E",    16, ISA_U|ISA_S|RV32E   ),
@@ -67,6 +69,7 @@ static const riscvConfig configList[] = {
     RISC_VARIANT("RV64IMAC", 16, ISA_U|ISA_S|RV64IMAC),
     RISC_VARIANT("RV64G",    16, ISA_U|ISA_S|RV64G   ),
     RISC_VARIANT("RV64GC",   16, ISA_U|ISA_S|RV64GC  ),
+    RISC_VARIANT("RV64GCB",  16, ISA_U|ISA_S|RV64GCB ),
     RISC_VARIANT("RV64GCN",  16, ISA_U|ISA_S|RV64GCN ),
     RISC_VARIANT("RV64GCV",  16, ISA_U|ISA_S|RV64GCV ),
 

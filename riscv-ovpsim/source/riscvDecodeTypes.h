@@ -155,6 +155,78 @@ typedef enum riscvITypeE {
     // X-extension instructions
     RV_IT_CUSTOM,
 
+    // B-extension R-type instructions
+    RV_IT_ANDN_R,
+    RV_IT_ORN_R,
+    RV_IT_XNOR_R,
+    RV_IT_SLO_R,
+    RV_IT_SRO_R,
+    RV_IT_ROL_R,
+    RV_IT_ROR_R,
+    RV_IT_SBCLR_R,
+    RV_IT_SBSET_R,
+    RV_IT_SBINV_R,
+    RV_IT_SBEXT_R,
+    RV_IT_GORC_R,
+    RV_IT_GREV_R,
+    RV_IT_CLZ_R,
+    RV_IT_CTZ_R,
+    RV_IT_PCNT_R,
+    RV_IT_SEXT_R,
+    RV_IT_CRC32_R,
+    RV_IT_CRC32C_R,
+    RV_IT_CLMUL_R,
+    RV_IT_CLMULR_R,
+    RV_IT_CLMULH_R,
+    RV_IT_MIN_R,
+    RV_IT_MAX_R,
+    RV_IT_MINU_R,
+    RV_IT_MAXU_R,
+    RV_IT_SHFL_R,
+    RV_IT_UNSHFL_R,
+    RV_IT_BDEP_R,
+    RV_IT_BEXT_R,
+    RV_IT_PACK_R,
+    RV_IT_PACKH_R,
+    RV_IT_PACKU_R,
+    RV_IT_BMATFLIP_R,
+    RV_IT_BMATOR_R,
+    RV_IT_BMATXOR_R,
+    RV_IT_BFP_R,
+    RV_IT_ADDWU_R,
+    RV_IT_SUBWU_R,
+    RV_IT_ADDU_W_R,
+    RV_IT_SUBU_W_R,
+    RV_IT_SHADD_R,
+
+    // B-extension I-type instructions
+    RV_IT_SLOI_I,
+    RV_IT_SROI_I,
+    RV_IT_RORI_I,
+    RV_IT_SBCLRI_I,
+    RV_IT_SBSETI_I,
+    RV_IT_SBINVI_I,
+    RV_IT_SBEXTI_I,
+    RV_IT_GORCI_I,
+    RV_IT_ORCB_I,
+    RV_IT_ORC16_I,
+    RV_IT_GREVI_I,
+    RV_IT_REV8_I,
+    RV_IT_REV_I,
+    RV_IT_SHFLI_I,
+    RV_IT_UNSHFLI_I,
+    RV_IT_ADDIWU_I,
+    RV_IT_SLLIU_W_I,
+
+    // B-extension R4-type instructions
+    RV_IT_CMIX_R4,
+    RV_IT_CMOV_R4,
+    RV_IT_FSL_R4,
+    RV_IT_FSR_R4,
+
+    // B-extension R3I-type instructions
+    RV_IT_FSRI_R3I,
+
     // V-extension R-type instructions
     RV_IT_VSETVL_R,
 
@@ -328,6 +400,8 @@ typedef enum riscvITypeE {
     RV_IT_VFNCVT_FX_V,
     RV_IT_VFNCVT_FF_V,
     RV_IT_VFSQRT_V,
+    RV_IT_VFRSQRTE7_V,
+    RV_IT_VFRECE7_V,
     RV_IT_VFCLASS_V,
     RV_IT_VFWREDSUM_VS,
     RV_IT_VFWREDOSUM_VS,
@@ -475,6 +549,7 @@ typedef enum riscvVITypeE {
     RV_VIT_VVN,     // instruction type .vv/.wv (version-dependent)
     RV_VIT_VIN,     // instruction type .vi/.wi (version-dependent)
     RV_VIT_VXN,     // instruction type .vx/.wx (version-dependent)
+    RV_VIT_V_V,     // instruction type .v.v
     RV_VIT_LAST     // KEEP LAST: for sizing
 
 } riscvVIType;
@@ -509,13 +584,8 @@ typedef struct riscvInstrInfoS {
     riscvIType        type;             // instruction type
     riscvArchitecture arch;             // architecture requirements
     riscvVIType       VIType;           // vector instruction type
-    Bool              explicitType;     // whether types are explicit in opcode
-    Bool              explicitW;        // whether 'w' explicit in opcode
-    Bool              unsExt;           // whether to extend unsigned
-    Bool              csrInOp;          // whether to emit CSR as part of opcode
     Uns32             memBits;          // load/store size
     Uns32             eew;              // explicit EEW encoding
-
     Uns64             c;                // constant value
     riscvRegDesc      r[RV_MAX_AREGS];  // argument registers
     riscvRegDesc      mask;             // mask register
@@ -529,6 +599,12 @@ typedef struct riscvInstrInfoS {
     Uns32             csr;              // CSR index
     Uns8              nf;               // nf value
     Uns8              eewDiv;           // explicit EEW divisor
+    Uns8              shN;              // shN prefix
+    Uns8              explicitType;     // whether types are explicit in opcode
+    Bool              explicitW;        // whether 'w' explicit in opcode
+    Bool              explicitRM;       // whether rounding explicit in opcode
+    Bool              unsExt;           // whether to extend unsigned
+    Bool              csrInOp;          // whether to emit CSR as part of opcode
     Bool              isFF;             // is this a first-fault instruction?
 
 } riscvInstrInfo;

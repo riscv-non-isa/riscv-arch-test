@@ -30,6 +30,7 @@
 #include "riscvDerivedMorph.h"
 #include "riscvExceptionTypes.h"
 #include "riscvMode.h"
+#include "riscvModelCallbackTypes.h"
 #include "riscvRegisterTypes.h"
 #include "riscvTypes.h"
 #include "riscvTypeRefs.h"
@@ -82,6 +83,12 @@ typedef RISCV_GET_XLEN_FN((*riscvGetXlenFn));
 typedef RISCV_GET_REG_NAME_FN((*riscvGetRegNameFn));
 
 //
+// Enable or disable transaction mode
+//
+#define RISCV_SET_TMODE_FN(_NAME) void _NAME(riscvP riscv, Bool enable)
+typedef RISCV_SET_TMODE_FN((*riscvSetTModeFn));
+
+//
 // Return true if in transaction mode
 // Use at morph time only - assumes instruction checking this could
 // abort a transaction so emits end block if in TM
@@ -99,10 +106,42 @@ typedef RISCV_GET_TMODE_FN((*riscvGetTModeFn));
 typedef RISCV_GET_DATA_ENDIAN_FN((*riscvGetDataEndianFn));
 
 //
-// Enable or disable transaction mode
+// Read a CSR in the base model given its number
 //
-#define RISCV_SET_TMODE_FN(_NAME) void _NAME(riscvP riscv, Bool enable)
-typedef RISCV_SET_TMODE_FN((*riscvSetTModeFn));
+#define RISCV_READ_CSR_NUM_FN(_NAME) Uns64 _NAME( \
+    riscvP riscv,               \
+    Uns32  csrNum               \
+)
+typedef RISCV_READ_CSR_NUM_FN((*riscvReadCSRNumFn));
+
+//
+// Write a CSR in the base model given its number
+//
+#define RISCV_WRITE_CSR_NUM_FN(_NAME) Uns64 _NAME( \
+    riscvP riscv,               \
+    Uns32  csrNum,              \
+    Uns64  newValue             \
+)
+typedef RISCV_WRITE_CSR_NUM_FN((*riscvWriteCSRNumFn));
+
+//
+// Read a CSR in the base model given its id
+//
+#define RISCV_READ_BASE_CSR_FN(_NAME) Uns64 _NAME( \
+    riscvP     riscv,           \
+    riscvCSRId id               \
+)
+typedef RISCV_READ_BASE_CSR_FN((*riscvReadBaseCSRFn));
+
+//
+// Write a CSR in the base model given its id
+//
+#define RISCV_WRITE_BASE_CSR_FN(_NAME) Uns64 _NAME( \
+    riscvP     riscv,           \
+    riscvCSRId id,              \
+    Uns64      newValue         \
+)
+typedef RISCV_WRITE_BASE_CSR_FN((*riscvWriteBaseCSRFn));
 
 //
 // Check for pending interrupts
@@ -127,6 +166,32 @@ typedef RISCV_ILLEGAL_INSTRUCTION_FN((*riscvIllegalInstructionFn));
 typedef RISCV_TAKE_EXCEPTION_FN((*riscvTakeExceptionFn));
 
 //
+// Fetch an instruction at the given simulated address and if it matches a
+// decode pattern in the given instruction table unpack the instruction fields
+// into 'info'
+//
+#define RISCV_FETCH_INSTRUCTION_FN(_NAME) Uns32 _NAME( \
+    riscvP               riscv,     \
+    riscvAddr            thisPC,    \
+    riscvExtInstrInfoP   info,      \
+    vmidDecodeTablePP    tableP,    \
+    riscvExtInstrAttrsCP attrs,     \
+    Uns32                last,      \
+    Uns32                bits       \
+)
+typedef RISCV_FETCH_INSTRUCTION_FN((*riscvFetchInstructionFn));
+
+//
+// Disassemble unpacked instruction using the given format
+//
+#define RISCV_DISASS_INSTRUCTION_FN(_NAME) const char *_NAME( \
+    riscvP             riscv,       \
+    riscvExtInstrInfoP instrInfo,   \
+    vmiDisassAttrs     attrs        \
+)
+typedef RISCV_DISASS_INSTRUCTION_FN((*riscvDisassInstructionFn));
+
+//
 // Validate that the instruction is supported and enabled and take an Illegal
 // Instruction exception if not
 //
@@ -135,6 +200,25 @@ typedef RISCV_TAKE_EXCEPTION_FN((*riscvTakeExceptionFn));
     riscvArchitecture requiredVariant   \
 )
 typedef RISCV_INSTRUCTION_ENABLED_FN((*riscvInstructionEnabledFn));
+
+//
+// Translate externally-implemented instruction
+//
+#define RISCV_MORPH_EXTERNAL_FN(_NAME) void _NAME( \
+    riscvExtMorphStateP state,          \
+    const char         *disableReason,  \
+    Bool               *opaque          \
+);
+typedef RISCV_MORPH_EXTERNAL_FN((*riscvMorphExternalFn));
+
+//
+// Emit code to take an illegal instruction exception with the given reason
+//
+#define RISCV_MORPH_ILLEGAL_FN(_NAME) void _NAME( \
+    riscvP      riscv,  \
+    const char *reason  \
+)
+typedef RISCV_MORPH_ILLEGAL_FN((*riscvMorphIllegalFn));
 
 //
 // Return VMI register for the given abstract register
@@ -217,7 +301,12 @@ typedef RISCV_MORPH_VOP_FN((*riscvMorphVOpFn));
 //
 // Register new CSR
 //
-#define RISCV_NEW_CSR_FN(_NAME) void _NAME(riscvCSRAttrsCP attrs, riscvP riscv)
+#define RISCV_NEW_CSR_FN(_NAME) void _NAME( \
+    riscvCSRAttrsP  attrs,          \
+    riscvCSRAttrsCP src,            \
+    riscvP          riscv,          \
+    vmiosObjectP    object          \
+)
 typedef RISCV_NEW_CSR_FN((*riscvNewCSRFn));
 
 
@@ -239,6 +328,26 @@ typedef RISCV_NEW_CSR_FN((*riscvNewCSRFn));
     Uns32  bytes                \
 )
 typedef RISCV_RD_WR_SNAP_FN((*riscvRdWrSnapFn));
+
+//
+// Should a memory exception of the given type be suppressed or raised as
+// normal?
+//
+#define RISCV_SUPPRESS_MEM_EXCEPT_FN(_NAME) Bool _NAME( \
+    riscvP         riscv,       \
+    riscvException exception,   \
+    void          *clientData   \
+)
+typedef RISCV_SUPPRESS_MEM_EXCEPT_FN((*riscvSuppressMemExceptFn));
+
+//
+// Implementation-specific NMI
+//
+#define RISCV_CUSTOM_NMI_FN(_NAME) Bool _NAME( \
+    riscvP riscv,               \
+    void  *clientData           \
+)
+typedef RISCV_CUSTOM_NMI_FN((*riscvCustomNMIFn));
 
 //
 // Notifier called on trap entry or exception return
@@ -267,6 +376,16 @@ typedef RISCV_RESET_NOTIFIER_FN((*riscvResetNotifierFn));
     void  *clientData           \
 )
 typedef RISCV_FIRST_EXCEPTION_FN((*riscvFirstExceptionFn));
+
+//
+// Return priority for the indexed custom interrupt
+//
+#define RISCV_GET_INTERRUPT_PRI_FN(_NAME) riscvExceptionPriority _NAME( \
+    riscvP riscv,               \
+    Uns32  intNum,              \
+    void  *clientData           \
+)
+typedef RISCV_GET_INTERRUPT_PRI_FN((*riscvGetInterruptPriFn));
 
 //
 // Called when core has either halted or restarted
@@ -327,23 +446,14 @@ typedef RISCV_TSTORE_FN((*riscvTStoreFn));
 typedef RISCV_PMA_CHECK_FN((*riscvPMACheckFn));
 
 //
-// Read a CSR in the base model given its id
+// Document extension-specific restrictions
 //
-#define RISCV_READ_BASE_CSR_FN(_NAME) Uns64 _NAME( \
-    riscvP     riscv,           \
-    riscvCSRId id               \
+#define RISCV_RESTRICTIONS_FN(_NAME) void _NAME( \
+    riscvP      riscv,          \
+    vmiDocNodeP node,           \
+    void       *clientData      \
 )
-typedef RISCV_READ_BASE_CSR_FN((*riscvReadBaseCSRFn));
-
-//
-// Write a CSR in the base model given its id
-//
-#define RISCV_WRITE_BASE_CSR_FN(_NAME) Uns64 _NAME( \
-    riscvP     riscv,           \
-    riscvCSRId id,              \
-    Uns64      newValue         \
-)
-typedef RISCV_WRITE_BASE_CSR_FN((*riscvWriteBaseCSRFn));
+typedef RISCV_RESTRICTIONS_FN((*riscvRestrictionsFn));
 
 //
 // Container structure for all callbacks implemented by the base model
@@ -362,6 +472,8 @@ typedef struct riscvModelCBS {
     riscvSetTModeFn           setTMode;
     riscvGetTModeFn           getTMode;
     riscvGetDataEndianFn      getDataEndian;
+    riscvReadCSRNumFn         readCSR;
+    riscvWriteCSRNumFn        writeCSR;
     riscvReadBaseCSRFn        readBaseCSR;
     riscvWriteBaseCSRFn       writeBaseCSR;
 
@@ -370,8 +482,16 @@ typedef struct riscvModelCBS {
     riscvIllegalInstructionFn illegalInstruction;
     riscvTakeExceptionFn      takeException;
 
+    // from riscvDecode.h
+    riscvFetchInstructionFn   fetchInstruction;
+
+    // from riscvDisassemble.h
+    riscvDisassInstructionFn  disassInstruction;
+
     // from riscvMorph.h
     riscvInstructionEnabledFn instructionEnabled;
+    riscvMorphExternalFn      morphExternal;
+    riscvMorphIllegalFn       morphIllegal;
     riscvGetVMIRegFn          getVMIReg;
     riscvGetVMIRegFSFn        getVMIRegFS;
     riscvWriteRegSizeFn       writeRegSize;
@@ -403,10 +523,13 @@ typedef struct riscvExtCBS {
     riscvRdWrSnapFn           wrSnapCB;
 
     // exception actions
+    riscvSuppressMemExceptFn  suppressMemExcept;
+    riscvCustomNMIFn          customNMI;
     riscvTrapNotifierFn       trapNotifier;
     riscvTrapNotifierFn       ERETNotifier;
     riscvResetNotifierFn      resetNotifier;
     riscvFirstExceptionFn     firstException;
+    riscvGetInterruptPriFn    getInterruptPri;
 
     // halt/restart actions
     riscvHRNotifierFn         haltRestartNotifier;
@@ -422,6 +545,10 @@ typedef struct riscvExtCBS {
 
     // PMA check actions
     riscvPMACheckFn           PMACheck;
+
+    // documentation
+    const char              **specificDocs;
+    riscvRestrictionsFn       restrictionsCB;
 
 } riscvExtCB;
 

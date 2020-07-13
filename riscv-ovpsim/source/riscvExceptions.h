@@ -37,6 +37,15 @@ void riscvTakeException(
 );
 
 //
+// Take asynchronous processor exception
+//
+void riscvTakeAsynchonousException(
+    riscvP         riscv,
+    riscvException exception,
+    Uns64          tval
+);
+
+//
 // Take processor exception because of memory access error which could be
 // suppressed for a fault-only-first instruction
 //
@@ -112,9 +121,14 @@ void riscvSetStepBreakpoint(riscvP riscv);
 void riscvWFI(riscvP riscv);
 
 //
-// Return mask of implemented local interrupts
+// Does the processor implement the exception or interrupt?
 //
-Uns64 riscvGetLocalIntMask(riscvP riscv);
+Bool riscvHasException(riscvP riscv, riscvException code);
+
+//
+// Return total number of interrupts (including 0 to 15)
+//
+Uns32 riscvGetIntNum(riscvP riscv);
 
 //
 // Initialize mask of implemented exceptions
@@ -131,6 +145,11 @@ void riscvExceptFree(riscvP riscv);
 // external interrupt source or software pending register)
 //
 void riscvUpdatePending(riscvP riscv);
+
+//
+// Refresh pending-and-enabled interrupt state
+//
+void riscvRefreshPendingAndEnabled(riscvP riscv);
 
 //
 // Check for pending interrupts
@@ -156,26 +175,6 @@ void riscvNewTimers(riscvP riscv);
 // Free timers
 //
 void riscvFreeTimers(riscvP riscv);
-
-//
-// Acknowledge CLIC-sourced interrupt
-//
-void riscvAcknowledgeCLICInt(riscvP hart, Uns32 intIndex);
-
-//
-// Create CLIC memory-mapped block and data structures
-//
-void riscvMapCLICDomain(riscvP root, memDomainP CLICDomain);
-
-//
-// Allocate CLIC data structures
-//
-void riscvNewCLIC(riscvP riscv, Uns32 index);
-
-//
-// Free CLIC data structures
-//
-void riscvFreeCLIC(riscvP riscv);
 
 //
 // Save net state not covered by register read/write API

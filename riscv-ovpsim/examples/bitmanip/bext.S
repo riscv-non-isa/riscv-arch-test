@@ -492,15 +492,54 @@ writeA0Short:
 
         mv          t0, a0
 
-        // reverse register
-        mv          t2, zero
+        // determine architectural register width
+        li          a0, -1
+        srli        a0, a0, 31
+        srli        a0, a0, 1
+        bnez        a0, writeA0Short_64
+
+#endif
+writeA0Short_32:
+#ifndef SYS_QUIET
+
+        // reverse register when xlen is 32
+        li          t1, 8
 10000:  slli        t2, t2, 4
         andi        a0, t0, 0xf
         srli        t0, t0, 4
         or          t2, t2, a0
-        bnez        t0, 10000b
+        addi        t1, t1, -1
+        bnez        t1, 10000b
+        li          t1, 8
+        j           writeA0Short_common
+
+#endif
+writeA0Short_64:
+#ifndef SYS_QUIET
+
+        // reverse register when xlen is 64
+        li          t1, 16
+10000:  slli        t2, t2, 4
+        andi        a0, t0, 0xf
+        srli        t0, t0, 4
+        or          t2, t2, a0
+        addi        t1, t1, -1
+        bnez        t1, 10000b
+        li          t1, 16
+
+writeA0Short_common:
+
+        // skip leading zeros
+10000:  andi        a0, t2, 0xf
+        bnez        a0, 10001f
+        li          a0, 1
+        beq         a0, t1, 10001f
+        srli        t2, t2, 4
+        addi        t1, t1, -1
+        j           10000b
 
         // write reversed characters
+10001:
         li          t0, 10
 10000:  andi        a0, t2, 0xf
         blt         a0, t0, 10001f
@@ -509,7 +548,8 @@ writeA0Short:
 10001:  addi        a0, a0, '0'
 10002:  WRITE_A0
         srli        t2, t2, 4
-        bnez        t2, 10000b
+        addi        t1, t1, -1
+        bnez        t1, 10000b
 
 #endif
 
@@ -695,11 +735,14 @@ DEFINE_REG_LABEL     f31
 #define sideleg         0x103
 #define stval           0x143
 #define satp            0x180
+#define mstatush        0x310
 #define mcountinhibit   0x320
 #define mtval           0x343
 #define vl              0xC20
 #define vtype           0xC21
 #define vlenb           0xC22
+#define dscratch0       0x7B2
+#define dscratch1       0x7B3
 
 .macro DEFINE_REG_LABEL_X _L, _S
         LABEL_\_L : .string "\_S"
@@ -828,6 +871,7 @@ DEFINE_REG_LABEL     mcycleh
 DEFINE_REG_LABEL     minstret
 DEFINE_REG_LABEL     minstreth
 DEFINE_REG_LABEL     mcounteren
+DEFINE_REG_LABEL_X   mstatush, "mstatush"   // not recognized by assembler
 
 // Machine Trap Handling
 DEFINE_REG_LABEL     mscratch
@@ -955,13 +999,76 @@ DEFINE_REG_LABEL_X   vxrm,   "vxrm"     // not recognized by assembler
 DEFINE_REG_LABEL_X   vtype,  "vtype"    // not recognized by assembler
 DEFINE_REG_LABEL_X   vl,     "vl"       // not recognized by assembler
 DEFINE_REG_LABEL_X   vlenb,  "vlenb"    // not recognized by assembler
-DEFINE_REG_LABEL_X   vcsr,   "vcsr"    // not recognized by assembler
+DEFINE_REG_LABEL_X   vcsr,   "vcsr"     // not recognized by assembler
 
+// Why is this here???
 #if ((USE_ECALL_LOG==1) || (USE_STORE_LOG==1))
 .align 4
 _test_stdout:
 	.word 0x0
 #endif
+
+// Debug/Trace
+DEFINE_REG_LABEL     tselect
+DEFINE_REG_LABEL     tdata1
+DEFINE_REG_LABEL     tdata2
+DEFINE_REG_LABEL     tdata3
+
+// Debug
+DEFINE_REG_LABEL     dcsr
+DEFINE_REG_LABEL     dpc
+DEFINE_REG_LABEL_X   dscratch0, "dscratch0" // not recognized by assembler
+DEFINE_REG_LABEL_X   dscratch1, "dscratch1" // not recognized by assembler
+
+////////////////////////////////////////////////////////////////////////////////
+// CLIC CSR INDICES (where assembler does not recognize them)
+////////////////////////////////////////////////////////////////////////////////
+
+#define utvt            0x007
+#define unxti           0x045
+#define uintstatus      0xC46
+#define uscratchcswl    0x049
+#define uintthresh      0x04A
+
+#define stvt            0x107
+#define snxti           0x145
+#define sintstatus      0xD46
+#define sscratchcsw     0x148
+#define sscratchcswl    0x149
+#define sintthresh      0x14A
+
+#define mtvt            0x307
+#define mnxti           0x345
+#define mintstatus      0xF46
+#define mscratchcsw     0x348
+#define mscratchcswl    0x349
+#define mintthresh      0x34A
+#define mclicbase       0x34B
+
+////////////////////////////////////////////////////////////////////////////////
+// CLIC LABELS
+////////////////////////////////////////////////////////////////////////////////
+
+DEFINE_REG_LABEL_X   utvt,         "utvt"           // not recognized by assembler
+DEFINE_REG_LABEL_X   unxti,        "unxti"          // not recognized by assembler
+DEFINE_REG_LABEL_X   uintstatus,   "uintstatus"     // not recognized by assembler
+DEFINE_REG_LABEL_X   uscratchcswl, "uscratchcswl"   // not recognized by assembler
+DEFINE_REG_LABEL_X   uintthresh,   "uintthresh"     // not recognized by assembler
+
+DEFINE_REG_LABEL_X   stvt,         "stvt"           // not recognized by assembler
+DEFINE_REG_LABEL_X   snxti,        "snxti"          // not recognized by assembler
+DEFINE_REG_LABEL_X   sintstatus,   "sintstatus"     // not recognized by assembler
+DEFINE_REG_LABEL_X   sscratchcsw,  "sscratchcsw"    // not recognized by assembler
+DEFINE_REG_LABEL_X   sscratchcswl, "sscratchcswl"   // not recognized by assembler
+DEFINE_REG_LABEL_X   sintthresh,   "sintthresh"     // not recognized by assembler
+
+DEFINE_REG_LABEL_X   mtvt,         "mtvt"           // not recognized by assembler
+DEFINE_REG_LABEL_X   mnxti,        "mnxti"          // not recognized by assembler
+DEFINE_REG_LABEL_X   mintstatus,   "mintstatus"     // not recognized by assembler
+DEFINE_REG_LABEL_X   mscratchcsw,  "mscratchcsw"    // not recognized by assembler
+DEFINE_REG_LABEL_X   mscratchcswl, "mscratchcswl"   // not recognized by assembler
+DEFINE_REG_LABEL_X   mintthresh,   "mintthresh"     // not recognized by assembler
+DEFINE_REG_LABEL_X   mclicbase,    "mclicbase"      // not recognized by assembler
 
 // leave space for new labels
 .align 11

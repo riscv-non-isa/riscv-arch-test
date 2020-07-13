@@ -25,9 +25,5 @@ all: $(ELF) $(OD)
 	@echo "# Objdump $<"
 	$(V) $(RISCV_OBJDUMP) -D $< > $@
 
-extB.S.include: $(IMPERAS_HOME)/ImperasLib/source/riscv.ovpworld.org/intercept/extB/1.0/model/extB.S.include
-	@echo "# Copy $<"
-	$(V) cp $< $@
-
 clean:
 	rm -f $(ELF) $(OD)

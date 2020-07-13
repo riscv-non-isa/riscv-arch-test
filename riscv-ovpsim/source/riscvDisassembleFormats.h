@@ -69,13 +69,14 @@
 #define FMT_R1_R2_R3_R4         EMIT_R1_S "," EMIT_R2_S "," EMIT_R3_S "," EMIT_R4_S
 #define FMT_R1_R2_R3_RMR        EMIT_R1_S "," EMIT_R2_S "," EMIT_R3_S "," EMIT_RMR_S
 #define FMT_R1_R2_SIMM          EMIT_R1_S "," EMIT_R2_S "," EMIT_CS_S
+#define FMT_R1_R2_R3_SIMM       EMIT_R1_S "," EMIT_R2_S "," EMIT_R3_S "," EMIT_CS_S
 #define FMT_R1_R2_XIMM          EMIT_R1_S "," EMIT_R2_S "," EMIT_CX_S
 #define FMT_R1_R2_TGT           EMIT_R1_S "," EMIT_R2_S "," EMIT_TGT_S
 #define FMT_R1_R2_VTYPE         EMIT_R1_S "," EMIT_R2_S "," EMIT_VTYPE_S
 #define FMT_R1_MEM2             EMIT_R1_S ",(" EMIT_R2_S ")"
 #define FMT_R1_MEM2_RM          EMIT_R1_S ",(" EMIT_R2_S ")," EMIT_RM_S
 #define FMT_R1_MEM2_R3_RM       EMIT_R1_S ",(" EMIT_R2_S ")," EMIT_R3_S "," EMIT_RM_S
-#define FMT_R1_R3_MEM2_R4_RM    EMIT_R1_S "," EMIT_R3_S ",(" EMIT_R2_S ")," EMIT_R4_S "," EMIT_RM_S
+#define FMT_R1_MEM2_R3_R4_RM    EMIT_R1_S ",(" EMIT_R2_S ")," EMIT_R3_S "," EMIT_R4_S "," EMIT_RM_S
 #define FMT_R1_RM               EMIT_R1_S "," EMIT_RM_S
 #define FMT_R1_R2_RM            EMIT_R1_S "," EMIT_R2_S "," EMIT_RM_S
 #define FMT_R1_R2_R3_RM         EMIT_R1_S "," EMIT_R2_S "," EMIT_R3_S "," EMIT_RM_S

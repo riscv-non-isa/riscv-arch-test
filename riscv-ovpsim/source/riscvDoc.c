@@ -115,6 +115,28 @@ static void addOptDocList(vmiDocNodeP node, const char **specificDocs) {
 }
 
 //
+// Add documentation of a B-extension subset parameter
+//
+static void addBFeature(
+    riscvConfigCP    cfg,
+    vmiDocNodeP      Parameters,
+    char            *string,
+    Uns32            stringLen,
+    riscvBitManipSet feature,
+    const char      *name,
+    const char      *desc
+) {
+    snprintf(
+        string, stringLen,
+        "Parameter %s is used to specify that %s instructions are present. "
+        "By default, %s is set to %u in this variant. Updates to this "
+        "parameter require a commercial product license.",
+        name, desc, name, !(cfg->bitmanip_absent & feature)
+    );
+    vmidocAddText(Parameters, string);
+}
+
+//
 // Create processor documentation
 //
 void riscvDoc(riscvP rootProcessor) {
@@ -125,8 +147,7 @@ void riscvDoc(riscvP rootProcessor) {
     riscvConfigCP    cfg      = &riscv->configInfo;
     Bool             isSMP    = child && !riscvIsCluster(riscv);
     Uns32            numHarts = cfg->numHarts;
-    Uns32            extIndex;
-    riscvExtConfigCP extCfg;
+    riscvExtCBP      extCB;
     char             string[1024];
 
     // move to first child if an SMP object
@@ -672,10 +693,187 @@ void riscvDoc(riscvP rootProcessor) {
     }
 
     ////////////////////////////////////////////////////////////////////////////
+    // BIT-MANIPULATION EXTENSION
+    ////////////////////////////////////////////////////////////////////////////
+
+    if(cfg->arch&ISA_B) {
+
+        vmiDocNodeP extB = vmidocAddSection(Root, "Bit-Manipulation Extension");
+
+        vmidocAddText(
+            extB,
+            "This variant implements the Bit-Manipulation extension with "
+            "version specified in the References section of this document. "
+            "Note that parameter \"bitmanip_version\" can be used to select "
+            "the required version of this extension. See section "
+            "\"Bit-Manipulation Extension Versions\" for detailed information "
+            "about differences between each supported version."
+        );
+
+        vmiDocNodeP Parameters = vmidocAddSection(
+            extB, "Bit-Manipulation Extension Parameters"
+        );
+
+        // add subset control parameter description
+        addBFeature(
+            cfg, Parameters, SNPRINTF_TGT(string), RVBS_Zbb, "Zbb",
+            "the base"
+        );
+        addBFeature(
+            cfg, Parameters, SNPRINTF_TGT(string), RVBS_Zba, "Zba",
+            "address calculation"
+        );
+        addBFeature(
+            cfg, Parameters, SNPRINTF_TGT(string), RVBS_Zbc, "Zbc",
+            "carryless operation"
+        );
+        addBFeature(
+            cfg, Parameters, SNPRINTF_TGT(string), RVBS_Zbe, "Zbe",
+            "bit deposit/extract"
+        );
+        addBFeature(
+            cfg, Parameters, SNPRINTF_TGT(string), RVBS_Zbf, "Zbf",
+            "bit field place"
+        );
+        addBFeature(
+            cfg, Parameters, SNPRINTF_TGT(string), RVBS_Zbm, "Zbm",
+            "bit matrix operation"
+        );
+        addBFeature(
+            cfg, Parameters, SNPRINTF_TGT(string), RVBS_Zbp, "Zbp",
+            "permutation"
+        );
+        addBFeature(
+            cfg, Parameters, SNPRINTF_TGT(string), RVBS_Zbr, "Zbr",
+            "CRC32"
+        );
+        addBFeature(
+            cfg, Parameters, SNPRINTF_TGT(string), RVBS_Zbs, "Zbs",
+            "single bit"
+        );
+        addBFeature(
+            cfg, Parameters, SNPRINTF_TGT(string), RVBS_Zbt, "Zbt",
+            "ternary"
+        );
+
+        ////////////////////////////////////////////////////////////////////////
+        // BIT-MANIPULATION EXTENSION VERSIONS
+        ////////////////////////////////////////////////////////////////////////
+
+        {
+            vmiDocNodeP Versions = vmidocAddSection(
+                extB, "Bit-Manipulation Extension Versions"
+            );
+
+            vmidocAddText(
+                Versions,
+                "The Bit-Manipulation Extension specification has been under "
+                "active development. To enable simulation of hardware that may "
+                "be based on an older version of the specification, the model "
+                "implements behavior for a number of previous versions of the "
+                "specification. The differing features of these are listed "
+                "below, in chronological order."
+            );
+        }
+
+        ////////////////////////////////////////////////////////////////////////
+        // BIT-MANIPULATION EXTENSION VERSION 0.90
+        ////////////////////////////////////////////////////////////////////////
+
+        {
+            vmiDocNodeP Version = vmidocAddSection(extB, "Version 0.90");
+
+            vmidocAddText(
+                Version,
+                "Stable 0.90 version of June 10 2019."
+            );
+        }
+
+        ////////////////////////////////////////////////////////////////////////
+        // BIT-MANIPULATION EXTENSION VERSION 0.91
+        ////////////////////////////////////////////////////////////////////////
+
+        {
+            vmiDocNodeP Version = vmidocAddSection(extB, "Version 0.91");
+
+            vmidocAddText(
+                Version,
+                "Stable 0.91 version of August 29 2019, with these changes "
+                "compared to version 0.90:"
+            );
+            vmidocAddText(
+                Version,
+                "- change encodings of bmatxor, grev, grevw, grevi and greviw;"
+            );
+            vmidocAddText(
+                Version,
+                "- add gorc, gorcw, gorci, gorciw, bfp and bfpw instructions."
+            );
+        }
+
+        ////////////////////////////////////////////////////////////////////////
+        // BIT-MANIPULATION EXTENSION VERSION 0.92
+        ////////////////////////////////////////////////////////////////////////
+
+        {
+            vmiDocNodeP Version = vmidocAddSection(extB, "Version 0.92");
+
+            vmidocAddText(
+                Version,
+                "Stable 0.92 version of November 8 2019, with these changes "
+                "compared to version 0.91:"
+            );
+            vmidocAddText(
+                Version,
+                "- add packh, packu and packuw instructions;"
+            );
+            vmidocAddText(
+                Version,
+                "- add sext.b and sext.h instructions;"
+            );
+            vmidocAddText(
+                Version,
+                "- change encoding and behavior of bfp and bfpw instructions;"
+            );
+            vmidocAddText(
+                Version,
+                "- change encoding of bdep and bdepw instructions."
+            );
+        }
+
+        ////////////////////////////////////////////////////////////////////////
+        // BIT-MANIPULATION EXTENSION VERSION 0.92
+        ////////////////////////////////////////////////////////////////////////
+
+        {
+            vmiDocNodeP Version = vmidocAddSection(extB, "Version 0.93 (draft)");
+
+            vmidocAddText(
+                Version,
+                "Draft 0.93 version of January 29 2020, with these changes "
+                "compared to version 0.92:"
+            );
+            vmidocAddText(
+                Version,
+                "- add sh1add, sh2add, sh3add, sh1addu, sh2addu and sh3addu"
+                "instructions;"
+            );
+            vmidocAddText(
+                Version,
+                "- move slo, sloi, sro and sroi to Zbp subset;"
+            );
+            vmidocAddText(
+                Version,
+                "- add orc16 to Zbb subset."
+            );
+         }
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
     // VECTOR EXTENSION
     ////////////////////////////////////////////////////////////////////////////
 
-    if(cfg->archMask&ISA_V) {
+    if(cfg->arch&ISA_V) {
 
         vmiDocNodeP Vector = vmidocAddSection(Root, "Vector Extension");
 
@@ -690,131 +888,143 @@ void riscvDoc(riscvP rootProcessor) {
             "between each supported version."
         );
 
-        vmiDocNodeP Parameters = vmidocAddSection(
-            Vector, "Vector Extension Parameters"
-        );
+        ////////////////////////////////////////////////////////////////////////
+        // VECTOR EXTENSION PARAMETERS
+        ////////////////////////////////////////////////////////////////////////
 
-        // document ELEN
-        snprintf(
-            SNPRINTF_TGT(string),
-            "Parameter ELEN is used to specify the maximum size of a single "
-            "vector element in bits (32 or 64). By default, ELEN is set to %u "
-            "in this variant.",
-            riscv->configInfo.ELEN
-        );
-        vmidocAddText(Parameters, string);
+        {
+            vmiDocNodeP Parameters = vmidocAddSection(
+                Vector, "Vector Extension Parameters"
+            );
 
-        // document VLEN
-        snprintf(
-            SNPRINTF_TGT(string),
-            "Parameter VLEN is used to specify the number of bits in a vector "
-            "register (a power of two in the range 32 to %u). By default, "
-            "VLEN is set to %u in this variant.",
-            VLEN_MAX, riscv->configInfo.VLEN
-        );
-        vmidocAddText(Parameters, string);
+            // document ELEN
+            snprintf(
+                SNPRINTF_TGT(string),
+                "Parameter ELEN is used to specify the maximum size of a single "
+                "vector element in bits (32 or 64). By default, ELEN is set to "
+                "%u in this variant.",
+                riscv->configInfo.ELEN
+            );
+            vmidocAddText(Parameters, string);
 
-        // document SLEN
-        snprintf(
-            SNPRINTF_TGT(string),
-            "Parameter SLEN is used to specify the striping distance (a power "
-            "of two in the range 32 to %u). By default, SLEN is set to %u "
-            "in this variant.",
-            VLEN_MAX, riscv->configInfo.SLEN
-        );
-        vmidocAddText(Parameters, string);
+            // document VLEN
+            snprintf(
+                SNPRINTF_TGT(string),
+                "Parameter VLEN is used to specify the number of bits in a "
+                "vector register (a power of two in the range 32 to %u). By "
+                "default, VLEN is set to %u in this variant.",
+                VLEN_MAX, riscv->configInfo.VLEN
+            );
+            vmidocAddText(Parameters, string);
 
-        // document SEW_min
-        snprintf(
-            SNPRINTF_TGT(string),
-            "Parameter SEW_min is used to specify the minimum supported SEW (a "
-            "power of two in the range 8 to ELEN). By default, SEW_min is set "
-            "to %u in this variant.",
-            riscv->configInfo.SEW_min
-        );
-        vmidocAddText(Parameters, string);
+            // document SLEN
+            snprintf(
+                SNPRINTF_TGT(string),
+                "Parameter SLEN is used to specify the striping distance (a "
+                "power of two in the range 32 to %u). By default, SLEN is set "
+                "to %u in this variant.",
+                VLEN_MAX, riscv->configInfo.SLEN
+            );
+            vmidocAddText(Parameters, string);
 
-        // document Zvlsseg
-        snprintf(
-            SNPRINTF_TGT(string),
-            "Parameter Zvlsseg is used to specify whether the Zvlsseg "
-            "extension is implemented. By default, Zvlsseg is set to %u in "
-            "this variant.",
-            riscv->configInfo.Zvlsseg
-        );
-        vmidocAddText(Parameters, string);
+            // document SEW_min
+            snprintf(
+                SNPRINTF_TGT(string),
+                "Parameter SEW_min is used to specify the minimum supported "
+                "SEW (a power of two in the range 8 to ELEN). By default, "
+                "SEW_min is set to %u in this variant.",
+                riscv->configInfo.SEW_min
+            );
+            vmidocAddText(Parameters, string);
 
-        // document Zvamo
-        snprintf(
-            SNPRINTF_TGT(string),
-            "Parameter Zvamo is used to specify whether the Zvamo "
-            "extension is implemented. By default, Zvamo is set to %u in "
-            "this variant.",
-            riscv->configInfo.Zvamo
-        );
-        vmidocAddText(Parameters, string);
+            // document Zvlsseg
+            snprintf(
+                SNPRINTF_TGT(string),
+                "Parameter Zvlsseg is used to specify whether the Zvlsseg "
+                "extension is implemented. By default, Zvlsseg is set to %u in "
+                "this variant.",
+                riscv->configInfo.Zvlsseg
+            );
+            vmidocAddText(Parameters, string);
 
-        // document Zvediv
-        snprintf(
-            SNPRINTF_TGT(string),
-            "Parameter Zvediv will be used to specify whether the Zvediv "
-            "extension is implemented. This is not currently supported."
-        );
-        vmidocAddText(Parameters, string);
+            // document Zvamo
+            snprintf(
+                SNPRINTF_TGT(string),
+                "Parameter Zvamo is used to specify whether the Zvamo "
+                "extension is implemented. By default, Zvamo is set to %u in "
+                "this variant.",
+                riscv->configInfo.Zvamo
+            );
+            vmidocAddText(Parameters, string);
 
-        // document Zvqmac
-        snprintf(
-            SNPRINTF_TGT(string),
-            "Parameter Zvqmac is used to specify whether the Zvqmac "
-            "extension is implemented (from version 0.8-draft-20191117 only). "
-            "By default, Zvqmac is set to %u in this variant.",
-            riscv->configInfo.Zvqmac
-        );
-        vmidocAddText(Parameters, string);
+            // document Zvediv
+            snprintf(
+                SNPRINTF_TGT(string),
+                "Parameter Zvediv will be used to specify whether the Zvediv "
+                "extension is implemented. This is not currently supported."
+            );
+            vmidocAddText(Parameters, string);
 
-        // document require_vstart0
-        snprintf(
-            SNPRINTF_TGT(string),
-            "Parameter require_vstart0 is used to specify whether non-"
-            "interruptible vector instructions require vstart=0. By default, "
-            "require_vstart0 is set to %u in this variant.",
-            riscv->configInfo.require_vstart0
-        );
-        vmidocAddText(Parameters, string);
+            // document Zvqmac
+            snprintf(
+                SNPRINTF_TGT(string),
+                "Parameter Zvqmac is used to specify whether the Zvqmac "
+                "extension is implemented (from version 0.8-draft-20191117 "
+                "only). By default, Zvqmac is set to %u in this variant.",
+                riscv->configInfo.Zvqmac
+            );
+            vmidocAddText(Parameters, string);
 
-        vmiDocNodeP Features = vmidocAddSection(
-            Vector, "Vector Extension Features"
-        );
+            // document require_vstart0
+            snprintf(
+                SNPRINTF_TGT(string),
+                "Parameter require_vstart0 is used to specify whether non-"
+                "interruptible vector instructions require vstart=0. By "
+                "default, require_vstart0 is set to %u in this variant.",
+                riscv->configInfo.require_vstart0
+            );
+            vmidocAddText(Parameters, string);
+        }
 
-        vmidocAddText(
-            Features,
-            "The model implements the base vector extension with a maximum "
-            "ELEN of 64. Striping, masking and polymorphism are all fully "
-            "supported. Zvlsseg and Zvamo extensions are fully supported. "
-            "The Zvediv extension specification is subject to change and "
-            "therefore not yet supported."
-        );
+        ////////////////////////////////////////////////////////////////////////
+        // VECTOR EXTENSION FEATURES
+        ////////////////////////////////////////////////////////////////////////
 
-        vmidocAddText(
-            Features,
-            "Single precision and double precision floating point types are "
-            "supported if those types are also supported in the base "
-            "architecture (i.e. the corresponding D and F features must be "
-            "present and enabled). Presently, the interaction of vector "
-            "floating point with the Privileged Architecture is not well "
-            "defined; this model assumes that vector floating point operations "
-            "may only be executed if the base floating point unit is also "
-            "enabled (i.e. mstatus.FS must be non-zero). Attempting to "
-            "execute vector floating point instructions when mstatus.FS is 0 "
-            "will cause an Illegal Instruction exception."
-        );
+        {
+            vmiDocNodeP Features = vmidocAddSection(
+                Vector, "Vector Extension Features"
+            );
 
-        vmidocAddText(
-            Features,
-            "The model assumes that all vector memory operations must be "
-            "aligned to the memory element size. Unaligned accesses will "
-            "cause a Load/Store Address Alignment exception."
-        );
+            vmidocAddText(
+                Features,
+                "The model implements the base vector extension with a maximum "
+                "ELEN of 64. Striping, masking and polymorphism are all fully "
+                "supported. Zvlsseg and Zvamo extensions are fully supported. "
+                "The Zvediv extension specification is subject to change and "
+                "therefore not yet supported."
+            );
+
+            vmidocAddText(
+                Features,
+                "Single precision and double precision floating point types "
+                "are supported if those types are also supported in the base "
+                "architecture (i.e. the corresponding D and F features must be "
+                "present and enabled). Presently, the interaction of vector "
+                "floating point with the Privileged Architecture is not well "
+                "defined; this model assumes that vector floating point "
+                "operations may only be executed if the base floating point "
+                "unit is also enabled (i.e. mstatus.FS must be non-zero). "
+                "Attempting to execute vector floating point instructions when "
+                "mstatus.FS is 0 will cause an Illegal Instruction exception."
+            );
+
+            vmidocAddText(
+                Features,
+                "The model assumes that all vector memory operations must be "
+                "aligned to the memory element size. Unaligned accesses will "
+                "cause a Load/Store Address Alignment exception."
+            );
+        }
 
         ////////////////////////////////////////////////////////////////////////
         // VECTOR EXTENSION VERSIONS
@@ -828,11 +1038,11 @@ void riscvDoc(riscvP rootProcessor) {
             vmidocAddText(
                 Versions,
                 "The Vector Extension specification has been under active "
-                "development. To enable simulation of hardware that may be based "
-                "on an older version of the specification, the model implements "
-                "behavior for a number of previous versions of the specification. "
-                "The differing features of these are listed below, in "
-                "chronological order."
+                "development. To enable simulation of hardware that may be "
+                "based on an older version of the specification, the model "
+                "implements behavior for a number of previous versions of the "
+                "specification. The differing features of these are listed "
+                "below, in chronological order."
             );
         }
 
@@ -1150,7 +1360,31 @@ void riscvDoc(riscvP rootProcessor) {
             vmidocAddText(
                 Version,
                 "Unstable master version as of "RVVV_MASTER_DATE" (commit "
-                RVVV_MASTER_TAG"). This is currently identical to version 0.9."
+                RVVV_MASTER_TAG"), with these changes compared to version 0.9:"
+            );
+            vmidocAddText(
+                Version,
+                "- SLEN=VLEN register layout is mandatory;"
+            );
+            vmidocAddText(
+                Version,
+                "- ELEN>VLEN is now supported for LMUL>1;"
+            );
+            vmidocAddText(
+                Version,
+                "- whole register moves and load/stores now have element size "
+                "hints;"
+            );
+            vmidocAddText(
+                Version,
+                "- overlap constraints for different source/destination EEW "
+                "changed;"
+            );
+            vmidocAddText(
+                Version,
+                "- instructions vfrsqrte7.v and vfrece7.v added, with "
+                "candidate implementations (precise behavior is not yet "
+                "defined)."
             );
         }
     }
@@ -1168,52 +1402,192 @@ void riscvDoc(riscvP rootProcessor) {
             "Controller (CLIC) using parameter \"CLICLEVELS\"; when non-zero, "
             "the CLIC is present with the specified number of interrupt "
             "levels (2-256), as described in the RISC-V Core-Local Interrupt "
-            "Controller specification (see references). When non-zero, "
-            "further parameters are made available to configure other aspects "
-            "of the CLIC. These are:"
+            "Controller specification (see references). When \"CLICLEVELS\" is "
+            "non-zero, further parameters are made available to configure "
+            "other aspects of the CLIC, as described below."
         );
+
         vmidocAddText(
             CLIC,
-            "\"CLICANDBASIC\": this Boolean parameter indicates whether both "
-            "CLIC and basic interrupt controller are present (if True) or "
-            "whether only the CLIC is present (if False)."
+            "The model can configured either to use an internal CLIC model "
+            "(if parameter \"externalCLIC\" is False) or to present a net "
+            "interface to allow the CLIC to be implemented externally in a "
+            "platform component (if parameter \"externalCLIC\" is True). "
+            "When the CLIC is implemented internally, net ports for standard "
+            "interrupts and additional local interrupts are available. When "
+            "the CLIC is implemented externally, a net port interface allowing "
+            "the highest-priority pending interrupt to be delivered is instead "
+            "present. This is described below."
         );
-        vmidocAddText(
-            CLIC,
-            "\"CLICCFGMBITS\": this Uns32 parameter indicates the number of "
-            "bits implemented in cliccfg.nmbits, and also indirectly defines "
-            "CLICPRIVMODES. For cores which implement only Machine mode, "
-            "or which implement Machine and User modes but not the N "
-            "extension, the parameter is absent (\"CLICCFGMBITS\" must be "
-            "zero in these cases)."
-        );
-        vmidocAddText(
-            CLIC,
-            "\"CLICCFGLBITS\": this Uns32 parameter indicates the number of "
-            "bits implemented in cliccfg.nlbits."
-        );
-        vmidocAddText(
-            CLIC,
-            "\"CLICSELHVEC\": this Boolean parameter indicates whether "
-            "Selective Hardware Vectoring is supported (if True) or "
-            "unsupported (if False)."
-        );
-        vmidocAddText(
-            CLIC,
-            "\"CLICMNXTI\": this Boolean parameter indicates whether mnxti "
-            "CSRs are implemented (if True) or unimplemented (if False)."
-        );
-        vmidocAddText(
-            CLIC,
-            "\"CLICMCSW\": this Boolean parameter indicates whether "
-            "xscratchcsw and xscratchcswl CSRs registers are implemented "
-            "(if True) or unimplemented (if False)."
-        );
-        vmidocAddText(
-            CLIC,
-            "\"mclicbase\": this parameter specifies the CLIC base address  "
-            "in physical memory."
-        );
+
+        ////////////////////////////////////////////////////////////////////////
+        // CLIC COMMON PARAMETERS
+        /////////////////////////////////////////////////////////////////////////
+
+        {
+            vmiDocNodeP Parameters = vmidocAddSection(
+                CLIC, "CLIC Common Parameters"
+            );
+
+            vmidocAddText(
+                Parameters,
+                "This section describes parameters applicable whether the CLIC "
+                "is implemented internally or externally. These are:"
+            );
+            vmidocAddText(
+                Parameters,
+                "\"CLICANDBASIC\": this Boolean parameter indicates whether "
+                "both CLIC and basic interrupt controller are present (if "
+                "True) or whether only the CLIC is present (if False)."
+            );
+            vmidocAddText(
+                Parameters,
+                "\"CLICXNXTI\": this Boolean parameter indicates whether xnxti "
+                "CSRs are implemented (if True) or unimplemented (if False)."
+            );
+            vmidocAddText(
+                Parameters,
+                "\"CLICXCSW\": this Boolean parameter indicates whether "
+                "xscratchcsw and xscratchcswl CSRs registers are implemented "
+                "(if True) or unimplemented (if False)."
+            );
+            vmidocAddText(
+                Parameters,
+                "\"mclicbase\": this parameter specifies the CLIC base address "
+                "in physical memory."
+            );
+            vmidocAddText(
+                Parameters,
+                "\"tvt_undefined\": this Boolean parameter indicates whether "
+                "xtvt CSRs registers are implemented (if True) or unimplemented "
+                "(if False). If the registers are unimplemented then the model "
+                "will use basic mode vectored interrupt semantics based on the "
+                "xtvec CSRs instead of Selective Hardware Vectoring semantics "
+                "described in the specification."
+            );
+            vmidocAddText(
+                Parameters,
+                "\"intthresh_undefined\": this Boolean parameter indicates "
+                "whether xintthresh CSRs registers are implemented (if True) "
+                "or unimplemented (if False)."
+            );
+            vmidocAddText(
+                Parameters,
+                "\"mclicbase_undefined\": this Boolean parameter indicates "
+                "whether the mclicbase CSR register is implemented (if True) "
+                "or unimplemented (if False)."
+            );
+        }
+
+        ////////////////////////////////////////////////////////////////////////
+        // CLIC INTERNAL-IMPLEMENTATION PARAMETERS
+        /////////////////////////////////////////////////////////////////////////
+
+        {
+            vmiDocNodeP Parameters = vmidocAddSection(
+                CLIC, "CLIC Internal-Implementation Parameters"
+            );
+
+            vmidocAddText(
+                Parameters,
+                "This section describes parameters applicable only when the "
+                "CLIC is implemented internally. These are:"
+            );
+            vmidocAddText(
+                Parameters,
+                "\"CLICCFGMBITS\": this Uns32 parameter indicates the number "
+                "of bits implemented in cliccfg.nmbits, and also indirectly "
+                "defines CLICPRIVMODES. For cores which implement only Machine "
+                "mode, or which implement Machine and User modes but not the N "
+                "extension, the parameter is absent (\"CLICCFGMBITS\" must be "
+                "zero in these cases)."
+            );
+            vmidocAddText(
+                Parameters,
+                "\"CLICCFGLBITS\": this Uns32 parameter indicates the number "
+                "of bits implemented in cliccfg.nlbits."
+            );
+            vmidocAddText(
+                Parameters,
+                "\"CLICSELHVEC\": this Boolean parameter indicates whether "
+                "Selective Hardware Vectoring is supported (if True) or "
+                "unsupported (if False)."
+            );
+        }
+
+        ////////////////////////////////////////////////////////////////////////
+        // CLIC EXTERNAL-IMPLEMENTATION NET PORT INTERFACE
+        /////////////////////////////////////////////////////////////////////////
+
+        {
+            vmiDocNodeP External = vmidocAddSection(
+                CLIC, "CLIC External-Implementation Net Port Interface"
+            );
+
+            vmidocAddText(
+                External,
+                "When the CLIC is externally implemented, net ports are "
+                "present allowing the external CLIC model to supply the "
+                "highest-priority pending interrupt and to be notified when "
+                "interrupts are handled. These are:"
+            );
+            vmidocAddText(
+                External,
+                "\"irq_id_i\": this input should be written with the id of the "
+                "highest-priority pending interrupt."
+            );
+            vmidocAddText(
+                External,
+                "\"irq_lev_i\": this input should be written with the "
+                "highest-priority interrupt level."
+            );
+            vmidocAddText(
+                External,
+                "\"irq_sec_i\": this 2-bit input should be written with the "
+                "highest-priority interrupt security state (00:User, "
+                "01:Supervisor, 11:Machine)."
+            );
+            vmidocAddText(
+                External,
+                "\"irq_shv_i\": this input port should be written to indicate "
+                "whether the highest-priority interrupt should be direct (0) "
+                "or vectored (1). If the \"tvt_undefined parameter\" is False, "
+                "vectored interrupts will use selective hardware vectoring, "
+                "as described in the CLIC specification. If \"tvt_undefined\" "
+                "is True, vectored interrupts will behave like basic mode "
+                "vectored interrupts."
+            );
+            vmidocAddText(
+                External,
+                "\"irq_id_i\": this input should be written with the id of the "
+                "highest-priority pending interrupt."
+            );
+            vmidocAddText(
+                External,
+                "\"irq_i\": this input should be written with 1 to indicate "
+                "that the external CLIC is presenting an interrupt, or 0 if "
+                "no interrupt is being presented."
+            );
+            vmidocAddText(
+                External,
+                "\"irq_ack_o\": this output is written by the model on entry "
+                "to the interrupt handler (i.e. when the interrupt is taken). "
+                "It will be written as an instantaneous pulse (i.e. written to "
+                "1, then immediately 0)."
+            );
+            vmidocAddText(
+                External,
+                "\"irq_id_o\": this output is written by the model with the id "
+                "of the interrupt currently being handled. It is valid during "
+                "the instantaneous irq_ack_o pulse."
+            );
+            vmidocAddText(
+                External,
+                "\"sec_lvl_o\": this output signal indicates the current "
+                "secure status of the processor, as a 2-bit value (00=User, "
+                "01:Supervisor, 11=Machine)."
+            );
+        }
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -1754,12 +2128,10 @@ void riscvDoc(riscvP rootProcessor) {
         addOptDoc(riscv, Limitations, cfg->restrictionsCB);
 
         // add extension-specific restrictions if required
-        for(
-            extIndex = 0;
-            (extCfg = riscvGetIndexedExtConfig(cfg, extIndex));
-            extIndex++
-        ) {
-            addOptDoc(riscv, Limitations, extCfg->restrictionsCB);
+        for(extCB=riscv->extCBs; extCB; extCB=extCB->next) {
+            if(extCB->restrictionsCB) {
+                extCB->restrictionsCB(riscv, Limitations, extCB->clientData);
+            }
         }
     }
 
@@ -1840,11 +2212,20 @@ void riscvDoc(riscvP rootProcessor) {
         );
         vmidocAddText(References, string);
 
-        if(cfg->archMask&ISA_V) {
+        if(cfg->arch&ISA_V) {
             snprintf(
                 SNPRINTF_TGT(string),
                 "RISC-V \"V\" Vector Extension (%s)",
                 riscvGetVectorVersionDesc(riscv)
+            );
+            vmidocAddText(References, string);
+        }
+
+        if(cfg->arch&ISA_B) {
+            snprintf(
+                SNPRINTF_TGT(string),
+                "RISC-V \"B\" Bit Manipulation Extension (%s)",
+                riscvGetBitManipVersionDesc(riscv)
             );
             vmidocAddText(References, string);
         }
@@ -1864,12 +2245,8 @@ void riscvDoc(riscvP rootProcessor) {
         addOptDocList(References, cfg->specificDocs);
 
         // add extension-specific references if required
-        for(
-            extIndex = 0;
-            (extCfg = riscvGetIndexedExtConfig(cfg, extIndex));
-            extIndex++
-        ) {
-            addOptDocList(References, extCfg->specificDocs);
+        for(extCB=riscv->extCBs; extCB; extCB=extCB->next) {
+            addOptDocList(References, extCB->specificDocs);
         }
     }
 

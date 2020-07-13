@@ -31,7 +31,7 @@
 //
 // Exception codes
 //
-typedef enum riscvExceptionS {
+typedef enum riscvExceptionE {
 
     ////////////////////////////////////////////////////////////////////
     // EXCEPTIONS
@@ -102,6 +102,25 @@ typedef enum riscvExceptionS {
     riscv_E_Last = riscv_E_LocalInterrupt
 
 } riscvException;
+
+//
+// Exception priorities for standard exceptions (implementation-dependent
+// local interrupts may be interleaved with these, but by default are highest
+// priority starting with riscv_E_LocalPriority and increasing for higher
+// numbered interrupts)
+//
+typedef enum riscvExceptionPriorityE {
+    riscv_E_UTimerPriority    = 10,
+    riscv_E_USWPriority       = 20,
+    riscv_E_UExternalPriority = 30,
+    riscv_E_STimerPriority    = 40,
+    riscv_E_SSWPriority       = 50,
+    riscv_E_SExternalPriority = 60,
+    riscv_E_MTimerPriority    = 70,
+    riscv_E_MSWPriority       = 80,
+    riscv_E_MExternalPriority = 90,
+    riscv_E_LocalPriority     = 100
+} riscvExceptionPriority;
 
 //
 // Detail of Access Fault

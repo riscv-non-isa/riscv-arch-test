@@ -65,6 +65,11 @@ typedef struct illegalDescS {
 void riscvEmitIllegalInstructionMode(riscvP riscv);
 
 //
+// Emit code to take an Illegal Instruction exception for the given reason
+//
+void riscvEmitIllegalInstructionMessage(riscvP riscv, const char *reason);
+
+//
 // Emit Illegal Instruction message and take Illegal Instruction exception
 //
 void riscvEmitIllegalInstructionMessageDesc(riscvP riscv, illegalDescP desc);
@@ -208,6 +213,15 @@ Uns32 riscvGetMaxVL(riscvP riscv, riscvVType vtype);
 // SEWMT_UNKNOWN
 //
 riscvSEWMt riscvValidVType(riscvP riscv, riscvVType vtype);
+
+//
+// Translate externally-implemented instruction
+//
+void riscvMorphExternal(
+    riscvExtMorphStateP state,
+    const char         *disableReason,
+    Bool               *opaque
+);
 
 //
 // Emit externally-implemented vector operation

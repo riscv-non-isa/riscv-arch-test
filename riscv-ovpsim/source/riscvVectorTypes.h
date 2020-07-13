@@ -39,7 +39,8 @@ typedef enum riscvVShapeE {
 
                             // INTEGER ARGUMENTS
     RVVW_V1I_V1I_V1I,       // SEW = SEW op SEW
-    RVVW_V1I_V1I_V1I_XSM,   // no overlap if segmented
+    RVVW_V1I_V1I_V1I_LD,    // vector load operations
+    RVVW_V1I_V1I_V1I_ST,    // vector store operations
     RVVW_V1I_V1I_V1I_SAT,   // saturating result
     RVVW_V1I_V1I_V1I_VXRM,  // uses vxrm
     RVVW_V1I_V1I_V1I_SEW8,  // uses SEW8
