@@ -14,7 +14,7 @@ RUN_TARGET=\
     $(TARGET_SIM) $(TARGET_FLAGS) \
         --variant RV32IMC --program $(<) \
         --signaturedump --customcontrol \
-        --cover extended \
+        --cover basic \
         --outputfile $(*).coverage.yaml \
         --extensions RVIC,RV32IC \
         --override riscvOVPsim/cpu/sigdump/SignatureFile=$(*).signature.output \

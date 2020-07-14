@@ -36,15 +36,15 @@ for ISA in ${ALL_ISA}; do
         --showuncovered \
         --nosimulation
     
-    ${ROOTDIR}/riscv-ovpsim/bin/Linux64/riscvOVPsim.exe \
-        --cover extended \
-        --extensions ${RISCV_CVG} \
-        --inputfiles ${INPUT} \
-        --outputfile work/${RISCV_ISA}/coverage_extended.yaml \
-        --reportfile work/${RISCV_ISA}/coverage_extended.txt \
-        --countthreshold 1 \
-        --showuncovered \
-        --nosimulation    
+#    ${ROOTDIR}/riscv-ovpsim/bin/Linux64/riscvOVPsim.exe \
+#        --cover extended \
+#        --extensions ${RISCV_CVG} \
+#        --inputfiles ${INPUT} \
+#        --outputfile work/${RISCV_ISA}/coverage_extended.yaml \
+#        --reportfile work/${RISCV_ISA}/coverage_extended.txt \
+#        --countthreshold 1 \
+#        --showuncovered \
+#        --nosimulation    
 done
 
 
