@@ -129,7 +129,7 @@ typedef enum riscvCSRIdE {
     CSR_ID      (utval),        // 0x043
     CSR_ID      (uip),          // 0x044
     CSR_ID      (unxti),        // 0x045
-    CSR_ID      (uintstatus),   // 0xC46
+    CSR_ID      (uintstatus),   // 0x046
     CSR_ID      (uintthresh),   // 0x047
     CSR_ID      (uscratchcswl), // 0x049
 
@@ -158,7 +158,7 @@ typedef enum riscvCSRIdE {
     CSR_ID      (stval),        // 0x143
     CSR_ID      (sip),          // 0x144
     CSR_ID      (snxti),        // 0x145
-    CSR_ID      (sintstatus),   // 0xD46
+    CSR_ID      (sintstatus),   // 0x146
     CSR_ID      (sintthresh),   // 0x147
     CSR_ID      (sscratchcsw),  // 0x148
     CSR_ID      (sscratchcswl), // 0x149
@@ -184,7 +184,7 @@ typedef enum riscvCSRIdE {
     CSR_ID      (mtval),        // 0x343
     CSR_ID      (mip),          // 0x344
     CSR_ID      (mnxti),        // 0x345
-    CSR_ID      (mintstatus),   // 0xF46
+    CSR_ID      (mintstatus),   // 0x346
     CSR_ID      (mintthresh),   // 0x347
     CSR_ID      (mscratchcsw),  // 0x348
     CSR_ID      (mscratchcswl), // 0x349
@@ -1001,9 +1001,9 @@ typedef CSR_REG_TYPE(ip) CSR_REG_TYPE(mip);
 #define WM32_uip 0x00000001
 
 // -----------------------------------------------------------------------------
-// uintstatus   (id 0xC46)
-// sintstatus   (id 0xD46)
-// mintstatus   (id 0xF46)
+// uintstatus   (id 0x046)
+// sintstatus   (id 0x146)
+// mintstatus   (id 0x346)
 // -----------------------------------------------------------------------------
 
 // 32-bit view
@@ -1019,8 +1019,11 @@ CSR_REG_STRUCT_DECL_32(mintstatus);
 
 // define write masks
 #define WM32_mintstatus 0x00000000
+#define WM64_mintstatus 0x00000000
 #define WM32_sintstatus 0x00000000
+#define WM64_sintstatus 0x00000000
 #define WM32_uintstatus 0x00000000
+#define WM64_uintstatus 0x00000000
 
 // define read masks
 #define RM32_sintstatus 0x0000ffff
@@ -1495,9 +1498,9 @@ typedef struct riscvCSRsS {
     CSR_REG_DECL(mcause);       // 0x342
     CSR_REG_DECL(mtval);        // 0x343
     CSR_REG_DECL(mip);          // 0x344
+    CSR_REG_DECL(mintstatus);   // 0x346
     CSR_REG_DECL(mintthresh);   // 0x34A
     CSR_REG_DECL(mclicbase);    // 0x34B
-    CSR_REG_DECL(mintstatus);   // 0xF46
 
     // DEBUG MODE CSRS
     CSR_REG_DECL(dcsr);         // 0x7B0

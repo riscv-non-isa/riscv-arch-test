@@ -1109,12 +1109,28 @@ static RISCV_CSR_WRITEFN(mcauseW) {
     WR_CSR(riscv, mcause, newValue & RD_CSR_MASK(riscv, mcause));
 
     if(!CLICPresent(riscv)) {
+
         // no further action
+
     } else if(useCLICM(riscv)) {
-        // mirror mcause.pp and mcause.pie to masters in mstatus
-        WR_CSR_FIELD(riscv, mstatus, MPP,  RD_CSR_FIELD(riscv, mcause, pp));
+
+        // get old and new values of PP field
+        Uns32 PPMask = RD_CSR_MASK_FIELD(riscv, mstatus, MPP);
+        Uns32 oldPP  = RD_CSR_FIELD(riscv, mstatus, MPP);
+        Uns32 newPP  = RD_CSR_FIELD(riscv, mcause, pp);
+
+        // get new PP value using writable bit mask
+        newPP = ((newPP & PPMask) | (oldPP & ~PPMask));
+
+        // mirror PP and IE fields to masters in mstatus
+        WR_CSR_FIELD(riscv, mstatus, MPP,  newPP);
         WR_CSR_FIELD(riscv, mstatus, MPIE, RD_CSR_FIELD(riscv, mcause, pie));
+
+        // adjust cause alias to match status master
+        WR_CSR_FIELD(riscv, mcause, pp, newPP);
+
     } else if(!riscv->inSaveRestore) {
+
         // clear fields that appear hard-wired to zero in basic mode
         WR_CSR_FIELD(riscv, mcause, inhv, 0);
         WR_CSR_FIELD(riscv, mcause, pp,   0);
@@ -1156,12 +1172,28 @@ static RISCV_CSR_WRITEFN(scauseW) {
     WR_CSR(riscv, scause, newValue & RD_CSR_MASK(riscv, scause));
 
     if(!CLICPresent(riscv)) {
+
         // no further action
+
     } else if(useCLICS(riscv)) {
-        // mirror scause.pp and scause.pie to masters in mstatus
-        WR_CSR_FIELD(riscv, mstatus, SPP,  RD_CSR_FIELD(riscv, scause, pp));
+
+        // get old and new values of PP field
+        Uns32 PPMask = RD_CSR_MASK_FIELD(riscv, mstatus, SPP);
+        Uns32 oldPP  = RD_CSR_FIELD(riscv, mstatus, SPP);
+        Uns32 newPP  = RD_CSR_FIELD(riscv, scause, pp);
+
+        // get new PP value using writable bit mask
+        newPP = ((newPP & PPMask) | (oldPP & ~PPMask));
+
+        // mirror PP and IE fields to masters in mstatus
+        WR_CSR_FIELD(riscv, mstatus, SPP,  newPP);
         WR_CSR_FIELD(riscv, mstatus, SPIE, RD_CSR_FIELD(riscv, scause, pie));
+
+        // adjust cause alias to match status master
+        WR_CSR_FIELD(riscv, scause, pp, newPP);
+
     } else if(!riscv->inSaveRestore) {
+
         // clear fields that appear hard-wired to zero in basic mode
         WR_CSR_FIELD(riscv, scause, inhv, 0);
         WR_CSR_FIELD(riscv, scause, pp,   0);
@@ -1668,12 +1700,20 @@ static RISCV_CSR_WRITEFN(utvecW) {
 ////////////////////////////////////////////////////////////////////////////////
 
 //
+// Is mcounteren present?
+//
+inline static RISCV_CSR_PRESENTFN(mcounterenP) {
+    riscvArchitecture arch = riscv->configInfo.arch;
+    return riscv->configInfo.mcounteren_present || (arch&ISA_U);
+}
+
+//
 // Return mask of Performance Monitor registers accessible in the current mode
 //
 static Uns32 getHPMMask(riscvP riscv) {
 
     riscvMode mode  = getCurrentMode(riscv);
-    Uns32     valid = RD_CSR_MASK(riscv, mcounteren);
+    Uns32     valid = riscv->configInfo.counteren_mask;
 
     if(mode<RISCV_MODE_MACHINE) {
         valid &= RD_CSR(riscv, mcounteren);
@@ -1710,7 +1750,7 @@ static Bool hpmAccessValid(riscvCSRAttrsCP attrs, riscvP riscv) {
         // report the disabled instruction
         if(!riscv->verbose) {
             // no action
-        } else if(mask & RD_CSR_MASK(riscv, mcounteren)) {
+        } else if(mask & riscv->configInfo.counteren_mask) {
             vmiMessage("W", CPU_PREFIX "_IHPMA",
                 SRCREF_FMT "Illegal instruction (access disallowed in current mode)",
                 SRCREF_ARGS(riscv, getPC(riscv))
@@ -2174,17 +2214,24 @@ inline static Uns32 pmpaddrIndex(riscvCSRAttrsCP attrs) {
 }
 
 //
+// Are PMP registers undefined?
+//
+inline static Bool PMPUndefined(riscvP riscv) {
+    return riscv->configInfo.PMP_undefined;
+}
+
+//
 // Is pmpcfg register present?
 //
 inline static RISCV_CSR_PRESENTFN(pmpcfgP) {
-    return pmpcfgIndex(attrs) < (getMaxPMPRegs(riscv)/4);
+    return !PMPUndefined(riscv) && (pmpcfgIndex(attrs) < (getMaxPMPRegs(riscv)/4));
 }
 
 //
 // Is pmpaddr register present?
 //
 inline static RISCV_CSR_PRESENTFN(pmpaddrP) {
-    return pmpaddrIndex(attrs) < getMaxPMPRegs(riscv);
+    return !PMPUndefined(riscv) && (pmpaddrIndex(attrs) < getMaxPMPRegs(riscv));
 }
 
 //
@@ -2492,7 +2539,9 @@ static RISCV_CSR_WRITEFN(dcsrW) {
     writeCB       : _WCB,                   \
     wstateCB      : _WSTATE,                \
     reg32         : CSR_REG32_MT(_ID),      \
-    reg64         : CSR_REG64_MT(_ID)       \
+    writeMaskC32  : -1,                     \
+    reg64         : CSR_REG64_MT(_ID),      \
+    writeMaskC64  : -1                      \
 }
 
 //
@@ -2578,7 +2627,9 @@ static RISCV_CSR_WRITEFN(dcsrW) {
     readCB        : _RCB,                   \
     readWriteCB   : _RWCB,                  \
     writeCB       : _WCB,                   \
-    wstateCB      : _WSTATE                 \
+    wstateCB      : _WSTATE,                \
+    writeMaskC32  : -1,                     \
+    writeMaskC64  : -1                      \
 }
 
 //
@@ -2656,125 +2707,125 @@ static RISCV_CSR_WRITEFN(dcsrW) {
 //
 static const riscvCSRAttrs csrs[CSR_ID(LAST)] = {
 
-    //                name          num    arch         access      version   attrs    description                                      present   wState       rCB           rwCB      wCB
-    CSR_ATTR_P__     (ustatus,      0x000, ISA_N,       0,          1_10,   0,0,0,0,1, "User Status",                                   0,        0,           ustatusR,     0,        ustatusW      ),
-    CSR_ATTR_P__     (fflags,       0x001, ISA_DF,      0,          1_10,   0,0,0,0,0, "Floating-Point Flags",                          0,        riscvWFS,    fflagsR,      0,        fflagsW       ),
-    CSR_ATTR_P__     (frm,          0x002, ISA_DF,      0,          1_10,   1,0,0,0,0, "Floating-Point Rounding Mode",                  0,        riscvWFS,    frmR,         0,        frmW          ),
-    CSR_ATTR_P__     (fcsr,         0x003, ISA_DFV,     ISA_FS,     1_10,   1,0,0,0,0, "Floating-Point Control and Status",             0,        riscvWFS,    fcsrR,        0,        fcsrW         ),
-    CSR_ATTR_P__     (uie,          0x004, ISA_N,       0,          1_10,   1,0,0,0,0, "User Interrupt Enable",                         0,        0,           uieR,         0,        uieW          ),
-    CSR_ATTR_T__     (utvec,        0x005, ISA_N,       0,          1_10,   0,0,0,0,0, "User Trap-Vector Base-Address",                 0,        0,           0,            0,        utvecW        ),
-    CSR_ATTR_TV_     (utvt,         0x007, ISA_N,       0,          1_10,   0,0,0,0,0, "User CLIC Trap-Vector Base-Address",            clicTVTP, 0,           0,            0,        0             ),
-    CSR_ATTR_TV_     (vstart,       0x008, ISA_V,       0,          1_10,   0,0,0,0,0, "Vector Start Index",                            0,        riscvWVStart,0,            0,        0             ),
-    CSR_ATTR_TC_     (vxsat,        0x009, ISA_V,       ISA_FSandV, 1_10,   0,0,0,0,0, "Fixed-Point Saturate Flag",                     0,        riscvWFSVS,  vxsatR,       0,        vxsatW        ),
-    CSR_ATTR_TC_     (vxrm,         0x00A, ISA_V,       ISA_FSandV, 1_10,   0,0,0,0,0, "Fixed-Point Rounding Mode",                     0,        riscvWFSVS,  0,            0,        vxrmW         ),
-    CSR_ATTR_T__     (vcsr,         0x00F, ISA_V,       0,          1_10,   1,0,0,0,0, "Vector Control and Status",                     vcsrP,    riscvWVCSR,  vcsrR,        0,        vcsrW         ),
-    CSR_ATTR_T__     (uscratch,     0x040, ISA_N,       0,          1_10,   0,0,0,0,0, "User Scratch",                                  0,        0,           0,            0,        0             ),
-    CSR_ATTR_TV_     (uepc,         0x041, ISA_N,       0,          1_10,   0,0,0,0,0, "User Exception Program Counter",                0,        0,           uepcR,        0,        0             ),
-    CSR_ATTR_T__     (ucause,       0x042, ISA_N,       0,          1_10,   0,0,0,0,0, "User Cause",                                    0,        0,           ucauseR,      0,        ucauseW       ),
-    CSR_ATTR_TV_     (utval,        0x043, ISA_N,       0,          1_10,   0,0,0,0,0, "User Trap Value",                               0,        0,           0,            0,        0             ),
-    CSR_ATTR_P__     (uip,          0x044, ISA_N,       0,          1_10,   0,0,0,0,0, "User Interrupt Pending",                        0,        0,           uipR,         uipRW,    uipW          ),
-    CSR_ATTR_P__     (unxti,        0x045, ISA_N,       0,          1_10,   0,0,0,1,1, "User Interrupt Handler Address/Enable",         clicNXTP, 0,           unxtiR,       ustatusR, unxtiW        ),
-    CSR_ATTR_P__     (uintstatus,   0x046, ISA_N,       0,          1_10,   0,0,0,0,0, "User Interrupt Status",                         clicP,    0,           uintstatusR,  0,        0             ),
-    CSR_ATTR_T__     (uintthresh,   0x047, ISA_N,       0,          1_10,   0,0,0,0,0, "User Interrupt Level Threshold",                clicITP,  0,           0,            0,        uintthreshW   ),
-    CSR_ATTR_P__     (uscratchcswl, 0x049, ISA_N,       0,          1_10,   0,1,0,1,1, "User Conditional Scratch Swap, Level",          clicSWP,  0,           uscratchcswlR,0,        uscratchcswlW ),
-    CSR_ATTR_P__     (cycle,        0xC00, 0,           0,          1_10,   0,1,0,0,0, "Cycle Counter",                                 0,        0,           mcycleR,      0,        0             ),
-    CSR_ATTR_P__     (time,         0xC01, 0,           0,          1_10,   0,1,0,0,0, "Timer",                                         0,        0,           mtimeR,       0,        0             ),
-    CSR_ATTR_P__     (instret,      0xC02, 0,           0,          1_10,   0,1,0,0,0, "Instructions Retired",                          0,        0,           minstretR,    0,        0             ),
-    CSR_ATTR_P__3_31 (hpmcounter,   0xC00, 0,           0,          1_10,   0,0,0,0,0, "Performance Monitor Counter ",                  0,        0,           mhpmR,        0,        0             ),
-    CSR_ATTR_T__     (vl,           0xC20, ISA_V,       0,          1_10,   0,0,0,0,0, "Vector Length",                                 0,        0,           0,            0,        0             ),
-    CSR_ATTR_T__     (vtype,        0xC21, ISA_V,       0,          1_10,   0,0,0,0,0, "Vector Type",                                   0,        0,           0,            0,        0             ),
-    CSR_ATTR_T__     (vlenb,        0xC22, ISA_V,       0,          1_10,   0,0,0,0,0, "Vector Length in Bytes",                        vlenbP,   0,           0,            0,        0             ),
-    CSR_ATTR_P__     (cycleh,       0xC80, ISA_XLEN_32, 0,          1_10,   0,1,0,0,0, "Cycle Counter High",                            0,        0,           mcyclehR,     0,        0             ),
-    CSR_ATTR_P__     (timeh,        0xC81, ISA_XLEN_32, 0,          1_10,   0,1,0,0,0, "Timer High",                                    0,        0,           mtimehR,      0,        0             ),
-    CSR_ATTR_P__     (instreth,     0xC82, ISA_XLEN_32, 0,          1_10,   0,1,0,0,0, "Instructions Retired High",                     0,        0,           minstrethR,   0,        0             ),
-    CSR_ATTR_P__3_31 (hpmcounterh,  0xC80, ISA_XLEN_32, 0,          1_10,   0,0,0,0,0, "Performance Monitor High ",                     0,        0,           mhpmR,        0,        0             ),
+    //                name          num    arch         access      version   attrs    description                                      present      wState       rCB           rwCB      wCB
+    CSR_ATTR_P__     (ustatus,      0x000, ISA_N,       0,          1_10,   0,0,0,0,1, "User Status",                                   0,           0,           ustatusR,     0,        ustatusW      ),
+    CSR_ATTR_P__     (fflags,       0x001, ISA_DF,      0,          1_10,   0,0,0,0,0, "Floating-Point Flags",                          0,           riscvWFS,    fflagsR,      0,        fflagsW       ),
+    CSR_ATTR_P__     (frm,          0x002, ISA_DF,      0,          1_10,   1,0,0,0,0, "Floating-Point Rounding Mode",                  0,           riscvWFS,    frmR,         0,        frmW          ),
+    CSR_ATTR_P__     (fcsr,         0x003, ISA_DFV,     ISA_FS,     1_10,   1,0,0,0,0, "Floating-Point Control and Status",             0,           riscvWFS,    fcsrR,        0,        fcsrW         ),
+    CSR_ATTR_P__     (uie,          0x004, ISA_N,       0,          1_10,   1,0,0,0,0, "User Interrupt Enable",                         0,           0,           uieR,         0,        uieW          ),
+    CSR_ATTR_T__     (utvec,        0x005, ISA_N,       0,          1_10,   0,0,0,0,0, "User Trap-Vector Base-Address",                 0,           0,           0,            0,        utvecW        ),
+    CSR_ATTR_TV_     (utvt,         0x007, ISA_N,       0,          1_10,   0,0,0,0,0, "User CLIC Trap-Vector Base-Address",            clicTVTP,    0,           0,            0,        0             ),
+    CSR_ATTR_TV_     (vstart,       0x008, ISA_V,       0,          1_10,   0,0,0,0,0, "Vector Start Index",                            0,           riscvWVStart,0,            0,        0             ),
+    CSR_ATTR_TC_     (vxsat,        0x009, ISA_V,       ISA_FSandV, 1_10,   0,0,0,0,0, "Fixed-Point Saturate Flag",                     0,           riscvWFSVS,  vxsatR,       0,        vxsatW        ),
+    CSR_ATTR_TC_     (vxrm,         0x00A, ISA_V,       ISA_FSandV, 1_10,   0,0,0,0,0, "Fixed-Point Rounding Mode",                     0,           riscvWFSVS,  0,            0,        vxrmW         ),
+    CSR_ATTR_T__     (vcsr,         0x00F, ISA_V,       0,          1_10,   1,0,0,0,0, "Vector Control and Status",                     vcsrP,       riscvWVCSR,  vcsrR,        0,        vcsrW         ),
+    CSR_ATTR_T__     (uscratch,     0x040, ISA_N,       0,          1_10,   0,0,0,0,0, "User Scratch",                                  0,           0,           0,            0,        0             ),
+    CSR_ATTR_TV_     (uepc,         0x041, ISA_N,       0,          1_10,   0,0,0,0,0, "User Exception Program Counter",                0,           0,           uepcR,        0,        0             ),
+    CSR_ATTR_T__     (ucause,       0x042, ISA_N,       0,          1_10,   0,0,0,0,0, "User Cause",                                    0,           0,           ucauseR,      0,        ucauseW       ),
+    CSR_ATTR_TV_     (utval,        0x043, ISA_N,       0,          1_10,   0,0,0,0,0, "User Trap Value",                               0,           0,           0,            0,        0             ),
+    CSR_ATTR_P__     (uip,          0x044, ISA_N,       0,          1_10,   0,0,0,0,0, "User Interrupt Pending",                        0,           0,           uipR,         uipRW,    uipW          ),
+    CSR_ATTR_P__     (unxti,        0x045, ISA_N,       0,          1_10,   0,0,0,1,1, "User Interrupt Handler Address/Enable",         clicNXTP,    0,           unxtiR,       ustatusR, unxtiW        ),
+    CSR_ATTR_P__     (uintstatus,   0x046, ISA_N,       0,          1_10,   0,0,0,0,0, "User Interrupt Status",                         clicP,       0,           uintstatusR,  0,        0             ),
+    CSR_ATTR_T__     (uintthresh,   0x047, ISA_N,       0,          1_10,   0,0,0,0,0, "User Interrupt Level Threshold",                clicITP,     0,           0,            0,        uintthreshW   ),
+    CSR_ATTR_P__     (uscratchcswl, 0x049, ISA_N,       0,          1_10,   0,1,0,1,1, "User Conditional Scratch Swap, Level",          clicSWP,     0,           uscratchcswlR,0,        uscratchcswlW ),
+    CSR_ATTR_P__     (cycle,        0xC00, 0,           0,          1_10,   0,1,0,0,0, "Cycle Counter",                                 0,           0,           mcycleR,      0,        0             ),
+    CSR_ATTR_P__     (time,         0xC01, 0,           0,          1_10,   0,1,0,0,0, "Timer",                                         0,           0,           mtimeR,       0,        0             ),
+    CSR_ATTR_P__     (instret,      0xC02, 0,           0,          1_10,   0,1,0,0,0, "Instructions Retired",                          0,           0,           minstretR,    0,        0             ),
+    CSR_ATTR_P__3_31 (hpmcounter,   0xC00, 0,           0,          1_10,   0,0,0,0,0, "Performance Monitor Counter ",                  0,           0,           mhpmR,        0,        0             ),
+    CSR_ATTR_T__     (vl,           0xC20, ISA_V,       0,          1_10,   0,0,0,0,0, "Vector Length",                                 0,           0,           0,            0,        0             ),
+    CSR_ATTR_T__     (vtype,        0xC21, ISA_V,       0,          1_10,   0,0,0,0,0, "Vector Type",                                   0,           0,           0,            0,        0             ),
+    CSR_ATTR_T__     (vlenb,        0xC22, ISA_V,       0,          1_10,   0,0,0,0,0, "Vector Length in Bytes",                        vlenbP,      0,           0,            0,        0             ),
+    CSR_ATTR_P__     (cycleh,       0xC80, ISA_XLEN_32, 0,          1_10,   0,1,0,0,0, "Cycle Counter High",                            0,           0,           mcyclehR,     0,        0             ),
+    CSR_ATTR_P__     (timeh,        0xC81, ISA_XLEN_32, 0,          1_10,   0,1,0,0,0, "Timer High",                                    0,           0,           mtimehR,      0,        0             ),
+    CSR_ATTR_P__     (instreth,     0xC82, ISA_XLEN_32, 0,          1_10,   0,1,0,0,0, "Instructions Retired High",                     0,           0,           minstrethR,   0,        0             ),
+    CSR_ATTR_P__3_31 (hpmcounterh,  0xC80, ISA_XLEN_32, 0,          1_10,   0,0,0,0,0, "Performance Monitor High ",                     0,           0,           mhpmR,        0,        0             ),
 
-    //                name          num    arch         access      version   attrs    description                                      present   wState       rCB           rwCB      wCB
-    CSR_ATTR_P__     (sstatus,      0x100, ISA_S,       0,          1_10,   0,0,0,0,1, "Supervisor Status",                             0,        riscvRstFS,  sstatusR,     0,        sstatusW      ),
-    CSR_ATTR_TV_     (sedeleg,      0x102, ISA_SandN,   0,          1_10,   0,0,0,0,0, "Supervisor Exception Delegation",               0,        0,           0,            0,        0             ),
-    CSR_ATTR_T__     (sideleg,      0x103, ISA_SandN,   0,          1_10,   1,0,0,0,0, "Supervisor Interrupt Delegation",               0,        0,           0,            0,        sidelegW      ),
-    CSR_ATTR_P__     (sie,          0x104, ISA_S,       0,          1_10,   1,0,0,0,0, "Supervisor Interrupt Enable",                   0,        0,           sieR,         0,        sieW          ),
-    CSR_ATTR_T__     (stvec,        0x105, ISA_S,       0,          1_10,   0,0,0,0,0, "Supervisor Trap-Vector Base-Address",           0,        0,           0,            0,        stvecW        ),
-    CSR_ATTR_TV_     (scounteren,   0x106, ISA_S,       0,          1_10,   0,0,0,0,0, "Supervisor Counter Enable",                     0,        0,           0,            0,        0             ),
-    CSR_ATTR_TV_     (stvt,         0x107, ISA_S,       0,          1_10,   0,0,0,0,0, "Supervisor CLIC Trap-Vector Base-Address",      clicTVTP, 0,           0,            0,        0             ),
-    CSR_ATTR_T__     (sscratch,     0x140, ISA_S,       0,          1_10,   0,0,0,0,0, "Supervisor Scratch",                            0,        0,           0,            0,        0             ),
-    CSR_ATTR_TV_     (sepc,         0x141, ISA_S,       0,          1_10,   0,0,0,0,0, "Supervisor Exception Program Counter",          0,        0,           sepcR,        0,        0             ),
-    CSR_ATTR_T__     (scause,       0x142, ISA_S,       0,          1_10,   0,0,0,0,0, "Supervisor Cause",                              0,        0,           scauseR,      0,        scauseW       ),
-    CSR_ATTR_TV_     (stval,        0x143, ISA_S,       0,          1_10,   0,0,0,0,0, "Supervisor Trap Value",                         0,        0,           0,            0,        0             ),
-    CSR_ATTR_P__     (sip,          0x144, ISA_S,       0,          1_10,   0,0,0,0,0, "Supervisor Interrupt Pending",                  0,        0,           sipR,         sipRW,    sipW          ),
-    CSR_ATTR_P__     (snxti,        0x145, ISA_S,       0,          1_10,   0,0,0,1,1, "Supervisor Interrupt Handler Address/Enable",   clicNXTP, 0,           snxtiR,       sstatusR, snxtiW        ),
-    CSR_ATTR_P__     (sintstatus,   0x146, ISA_S,       0,          1_10,   0,0,0,0,0, "Supervisor Interrupt Status",                   clicP,    0,           sintstatusR,  0,        0             ),
-    CSR_ATTR_T__     (sintthresh,   0x147, ISA_S,       0,          1_10,   0,0,0,0,0, "Supervisor Interrupt Level Threshold",          clicITP,  0,           0,            0,        sintthreshW   ),
-    CSR_ATTR_P__     (sscratchcsw,  0x148, ISA_S,       0,          1_10,   0,1,0,1,1, "Supervisor Conditional Scratch Swap, Priv",     clicSWP,  0,           sscratchcswR, 0,        sscratchcswW  ),
-    CSR_ATTR_P__     (sscratchcswl, 0x149, ISA_S,       0,          1_10,   0,1,0,1,1, "Supervisor Conditional Scratch Swap, Level",    clicSWP,  0,           sscratchcswlR,0,        sscratchcswlW ),
-    CSR_ATTR_T__     (satp,         0x180, ISA_S,       0,          1_10,   0,0,1,0,0, "Supervisor Address Translation and Protection", 0,        0,           0,            0,        satpW         ),
+    //                name          num    arch         access      version   attrs    description                                      present      wState       rCB           rwCB      wCB
+    CSR_ATTR_P__     (sstatus,      0x100, ISA_S,       0,          1_10,   0,0,0,0,1, "Supervisor Status",                             0,           riscvRstFS,  sstatusR,     0,        sstatusW      ),
+    CSR_ATTR_TV_     (sedeleg,      0x102, ISA_SandN,   0,          1_10,   0,0,0,0,0, "Supervisor Exception Delegation",               0,           0,           0,            0,        0             ),
+    CSR_ATTR_T__     (sideleg,      0x103, ISA_SandN,   0,          1_10,   1,0,0,0,0, "Supervisor Interrupt Delegation",               0,           0,           0,            0,        sidelegW      ),
+    CSR_ATTR_P__     (sie,          0x104, ISA_S,       0,          1_10,   1,0,0,0,0, "Supervisor Interrupt Enable",                   0,           0,           sieR,         0,        sieW          ),
+    CSR_ATTR_T__     (stvec,        0x105, ISA_S,       0,          1_10,   0,0,0,0,0, "Supervisor Trap-Vector Base-Address",           0,           0,           0,            0,        stvecW        ),
+    CSR_ATTR_TV_     (scounteren,   0x106, ISA_S,       0,          1_10,   0,0,0,0,0, "Supervisor Counter Enable",                     0,           0,           0,            0,        0             ),
+    CSR_ATTR_TV_     (stvt,         0x107, ISA_S,       0,          1_10,   0,0,0,0,0, "Supervisor CLIC Trap-Vector Base-Address",      clicTVTP,    0,           0,            0,        0             ),
+    CSR_ATTR_T__     (sscratch,     0x140, ISA_S,       0,          1_10,   0,0,0,0,0, "Supervisor Scratch",                            0,           0,           0,            0,        0             ),
+    CSR_ATTR_TV_     (sepc,         0x141, ISA_S,       0,          1_10,   0,0,0,0,0, "Supervisor Exception Program Counter",          0,           0,           sepcR,        0,        0             ),
+    CSR_ATTR_T__     (scause,       0x142, ISA_S,       0,          1_10,   0,0,0,0,0, "Supervisor Cause",                              0,           0,           scauseR,      0,        scauseW       ),
+    CSR_ATTR_TV_     (stval,        0x143, ISA_S,       0,          1_10,   0,0,0,0,0, "Supervisor Trap Value",                         0,           0,           0,            0,        0             ),
+    CSR_ATTR_P__     (sip,          0x144, ISA_S,       0,          1_10,   0,0,0,0,0, "Supervisor Interrupt Pending",                  0,           0,           sipR,         sipRW,    sipW          ),
+    CSR_ATTR_P__     (snxti,        0x145, ISA_S,       0,          1_10,   0,0,0,1,1, "Supervisor Interrupt Handler Address/Enable",   clicNXTP,    0,           snxtiR,       sstatusR, snxtiW        ),
+    CSR_ATTR_P__     (sintstatus,   0x146, ISA_S,       0,          1_10,   0,0,0,0,0, "Supervisor Interrupt Status",                   clicP,       0,           sintstatusR,  0,        0             ),
+    CSR_ATTR_T__     (sintthresh,   0x147, ISA_S,       0,          1_10,   0,0,0,0,0, "Supervisor Interrupt Level Threshold",          clicITP,     0,           0,            0,        sintthreshW   ),
+    CSR_ATTR_P__     (sscratchcsw,  0x148, ISA_S,       0,          1_10,   0,1,0,1,1, "Supervisor Conditional Scratch Swap, Priv",     clicSWP,     0,           sscratchcswR, 0,        sscratchcswW  ),
+    CSR_ATTR_P__     (sscratchcswl, 0x149, ISA_S,       0,          1_10,   0,1,0,1,1, "Supervisor Conditional Scratch Swap, Level",    clicSWP,     0,           sscratchcswlR,0,        sscratchcswlW ),
+    CSR_ATTR_T__     (satp,         0x180, ISA_S,       0,          1_10,   0,0,1,0,0, "Supervisor Address Translation and Protection", 0,           0,           0,            0,        satpW         ),
 
-    //                name          num    arch         access      version   attrs    description                                      present   wState       rCB           rwCB      wCB
-    CSR_ATTR_T__     (mvendorid,    0xF11, 0,           0,          1_10,   0,0,0,0,0, "Vendor ID",                                     0,        0,           0,            0,        0             ),
-    CSR_ATTR_T__     (marchid,      0xF12, 0,           0,          1_10,   0,0,0,0,0, "Architecture ID",                               0,        0,           0,            0,        0             ),
-    CSR_ATTR_T__     (mimpid,       0xF13, 0,           0,          1_10,   0,0,0,0,0, "Implementation ID",                             0,        0,           0,            0,        0             ),
-    CSR_ATTR_T__     (mhartid,      0xF14, 0,           0,          1_10,   0,0,0,0,0, "Hardware Thread ID",                            0,        0,           0,            0,        0             ),
-    CSR_ATTR_TV_     (mstatus,      0x300, 0,           0,          1_10,   0,0,0,0,0, "Machine Status",                                0,        riscvRstFS,  mstatusR,     0,        mstatusW      ),
-    CSR_ATTR_T__     (misa,         0x301, 0,           0,          1_10,   1,0,0,0,0, "ISA and Extensions",                            0,        0,           0,            0,        misaW         ),
-    CSR_ATTR_TV_     (medeleg,      0x302, ISA_SorN,    0,          1_10,   0,0,0,0,0, "Machine Exception Delegation",                  0,        0,           0,            0,        0             ),
-    CSR_ATTR_T__     (mideleg,      0x303, ISA_SorN,    0,          1_10,   1,0,0,0,0, "Machine Interrupt Delegation",                  0,        0,           0,            0,        midelegW      ),
-    CSR_ATTR_T__     (mie,          0x304, 0,           0,          1_10,   1,0,0,0,0, "Machine Interrupt Enable",                      0,        0,           mieR,         0,        mieW          ),
-    CSR_ATTR_T__     (mtvec,        0x305, 0,           0,          1_10,   0,0,0,0,0, "Machine Trap-Vector Base-Address",              0,        0,           0,            0,        mtvecW        ),
-    CSR_ATTR_TV_     (mcounteren,   0x306, ISA_U,       0,          1_10,   0,0,0,0,0, "Machine Counter Enable",                        0,        0,           0,            0,        0             ),
-    CSR_ATTR_TV_     (mtvt,         0x307, 0,           0,          1_10,   0,0,0,0,0, "Machine CLIC Trap-Vector Base-Address",         clicTVTP, 0,           0,            0,        0             ),
-    CSR_ATTR_TV_     (mstatush,     0x310, ISA_XLEN_32, 0,          1_12,   0,0,0,0,0, "Machine Status High",                           0,        0,           0,            0,        mstatushW     ),
-    CSR_ATTR_TV_     (mcountinhibit,0x320, 0,           0,          1_11,   0,0,0,0,0, "Machine Counter Inhibit",                       0,        0,           0,            0,        mcountinhibitW),
-    CSR_ATTR_T__     (mscratch,     0x340, 0,           0,          1_10,   0,0,0,0,0, "Machine Scratch",                               0,        0,           0,            0,        0             ),
-    CSR_ATTR_TV_     (mepc,         0x341, 0,           0,          1_10,   0,0,0,0,0, "Machine Exception Program Counter",             0,        0,           mepcR,        0,        0             ),
-    CSR_ATTR_T__     (mcause,       0x342, 0,           0,          1_10,   0,0,0,0,0, "Machine Cause",                                 0,        0,           mcauseR,      0,        mcauseW       ),
-    CSR_ATTR_TV_     (mtval,        0x343, 0,           0,          1_10,   0,0,0,0,0, "Machine Trap Value",                            0,        0,           0,            0,        0             ),
-    CSR_ATTR_T__     (mip,          0x344, 0,           0,          1_10,   0,0,0,0,0, "Machine Interrupt Pending",                     0,        0,           mipR,         mipRW,    mipW          ),
-    CSR_ATTR_P__     (mnxti,        0x345, 0,           0,          1_10,   0,0,0,1,1, "Machine Interrupt Handler Address/Enable",      clicNXTP, 0,           mnxtiR,       mstatusR, mnxtiW        ),
-    CSR_ATTR_T__     (mintstatus,   0x346, 0,           0,          1_10,   0,0,0,0,0, "Machine Interrupt Status",                      clicP,    0,           0,            0,        0             ),
-    CSR_ATTR_T__     (mintthresh,   0x347, 0,           0,          1_10,   0,0,0,0,0, "Machine Interrupt Level Threshold",             clicITP,  0,           0,            0,        mintthreshW   ),
-    CSR_ATTR_P__     (mscratchcsw,  0x348, ISA_U,       0,          1_10,   0,1,0,1,1, "Machine Conditional Scratch Swap, Priv",        clicSWP,  0,           mscratchcswR, 0,        mscratchcswW  ),
-    CSR_ATTR_P__     (mscratchcswl, 0x349, 0,           0,          1_10,   0,1,0,1,1, "Machine Conditional Scratch Swap, Level",       clicSWP,  0,           mscratchcswlR,0,        mscratchcswlW ),
-    CSR_ATTR_T__     (mclicbase,    0x34B, 0,           0,          1_10,   0,0,0,0,0, "Machine CLIC Base Address",                     clicMCBP, 0,           0,            0,        mclicbaseW    ),
+    //                name          num    arch         access      version   attrs    description                                      present      wState       rCB           rwCB      wCB
+    CSR_ATTR_T__     (mvendorid,    0xF11, 0,           0,          1_10,   0,0,0,0,0, "Vendor ID",                                     0,           0,           0,            0,        0             ),
+    CSR_ATTR_T__     (marchid,      0xF12, 0,           0,          1_10,   0,0,0,0,0, "Architecture ID",                               0,           0,           0,            0,        0             ),
+    CSR_ATTR_T__     (mimpid,       0xF13, 0,           0,          1_10,   0,0,0,0,0, "Implementation ID",                             0,           0,           0,            0,        0             ),
+    CSR_ATTR_T__     (mhartid,      0xF14, 0,           0,          1_10,   0,0,0,0,0, "Hardware Thread ID",                            0,           0,           0,            0,        0             ),
+    CSR_ATTR_TV_     (mstatus,      0x300, 0,           0,          1_10,   0,0,0,0,0, "Machine Status",                                0,           riscvRstFS,  mstatusR,     0,        mstatusW      ),
+    CSR_ATTR_T__     (misa,         0x301, 0,           0,          1_10,   1,0,0,0,0, "ISA and Extensions",                            0,           0,           0,            0,        misaW         ),
+    CSR_ATTR_TV_     (medeleg,      0x302, ISA_SorN,    0,          1_10,   0,0,0,0,0, "Machine Exception Delegation",                  0,           0,           0,            0,        0             ),
+    CSR_ATTR_T__     (mideleg,      0x303, ISA_SorN,    0,          1_10,   1,0,0,0,0, "Machine Interrupt Delegation",                  0,           0,           0,            0,        midelegW      ),
+    CSR_ATTR_T__     (mie,          0x304, 0,           0,          1_10,   1,0,0,0,0, "Machine Interrupt Enable",                      0,           0,           mieR,         0,        mieW          ),
+    CSR_ATTR_T__     (mtvec,        0x305, 0,           0,          1_10,   0,0,0,0,0, "Machine Trap-Vector Base-Address",              0,           0,           0,            0,        mtvecW        ),
+    CSR_ATTR_TV_     (mcounteren,   0x306, 0,           0,          1_10,   0,0,0,0,0, "Machine Counter Enable",                        mcounterenP, 0,           0,            0,        0             ),
+    CSR_ATTR_TV_     (mtvt,         0x307, 0,           0,          1_10,   0,0,0,0,0, "Machine CLIC Trap-Vector Base-Address",         clicTVTP,    0,           0,            0,        0             ),
+    CSR_ATTR_TV_     (mstatush,     0x310, ISA_XLEN_32, 0,          1_12,   0,0,0,0,0, "Machine Status High",                           0,           0,           0,            0,        mstatushW     ),
+    CSR_ATTR_TV_     (mcountinhibit,0x320, 0,           0,          1_11,   0,0,0,0,0, "Machine Counter Inhibit",                       0,           0,           0,            0,        mcountinhibitW),
+    CSR_ATTR_T__     (mscratch,     0x340, 0,           0,          1_10,   0,0,0,0,0, "Machine Scratch",                               0,           0,           0,            0,        0             ),
+    CSR_ATTR_TV_     (mepc,         0x341, 0,           0,          1_10,   0,0,0,0,0, "Machine Exception Program Counter",             0,           0,           mepcR,        0,        0             ),
+    CSR_ATTR_T__     (mcause,       0x342, 0,           0,          1_10,   0,0,0,0,0, "Machine Cause",                                 0,           0,           mcauseR,      0,        mcauseW       ),
+    CSR_ATTR_TV_     (mtval,        0x343, 0,           0,          1_10,   0,0,0,0,0, "Machine Trap Value",                            0,           0,           0,            0,        0             ),
+    CSR_ATTR_T__     (mip,          0x344, 0,           0,          1_10,   0,0,0,0,0, "Machine Interrupt Pending",                     0,           0,           mipR,         mipRW,    mipW          ),
+    CSR_ATTR_P__     (mnxti,        0x345, 0,           0,          1_10,   0,0,0,1,1, "Machine Interrupt Handler Address/Enable",      clicNXTP,    0,           mnxtiR,       mstatusR, mnxtiW        ),
+    CSR_ATTR_TC_     (mintstatus,   0x346, 0,           0,          1_10,   0,0,0,0,0, "Machine Interrupt Status",                      clicP,       0,           0,            0,        0             ),
+    CSR_ATTR_T__     (mintthresh,   0x347, 0,           0,          1_10,   0,0,0,0,0, "Machine Interrupt Level Threshold",             clicITP,     0,           0,            0,        mintthreshW   ),
+    CSR_ATTR_P__     (mscratchcsw,  0x348, ISA_U,       0,          1_10,   0,1,0,1,1, "Machine Conditional Scratch Swap, Priv",        clicSWP,     0,           mscratchcswR, 0,        mscratchcswW  ),
+    CSR_ATTR_P__     (mscratchcswl, 0x349, 0,           0,          1_10,   0,1,0,1,1, "Machine Conditional Scratch Swap, Level",       clicSWP,     0,           mscratchcswlR,0,        mscratchcswlW ),
+    CSR_ATTR_T__     (mclicbase,    0x34B, 0,           0,          1_10,   0,0,0,0,0, "Machine CLIC Base Address",                     clicMCBP,    0,           0,            0,        mclicbaseW    ),
 
-    //                name          num    arch         access      version   attrs    description                                      present   wState       rCB           rwCB      wCB
-    CSR_ATTR_P__     (pmpcfg0,      0x3A0, 0,           0,          1_10,   0,0,0,0,0, "Physical Memory Protection Configuration 0",    pmpcfgP,  0,           pmpcfgR,      0,        pmpcfgW       ),
-    CSR_ATTR_P__     (pmpcfg1,      0x3A1, ISA_XLEN_32, 0,          1_10,   0,0,0,0,0, "Physical Memory Protection Configuration 1",    pmpcfgP,  0,           pmpcfgR,      0,        pmpcfgW       ),
-    CSR_ATTR_P__     (pmpcfg2,      0x3A2, 0,           0,          1_10,   0,0,0,0,0, "Physical Memory Protection Configuration 2",    pmpcfgP,  0,           pmpcfgR,      0,        pmpcfgW       ),
-    CSR_ATTR_P__     (pmpcfg3,      0x3A3, ISA_XLEN_32, 0,          1_10,   0,0,0,0,0, "Physical Memory Protection Configuration 3",    pmpcfgP,  0,           pmpcfgR,      0,        pmpcfgW       ),
-    CSR_ATTR_P__     (pmpcfg4,      0x3A4, 0,           0,          1_10,   0,0,0,0,0, "Physical Memory Protection Configuration 4",    pmpcfgP,  0,           pmpcfgR,      0,        pmpcfgW       ),
-    CSR_ATTR_P__     (pmpcfg5,      0x3A5, ISA_XLEN_32, 0,          1_10,   0,0,0,0,0, "Physical Memory Protection Configuration 5",    pmpcfgP,  0,           pmpcfgR,      0,        pmpcfgW       ),
-    CSR_ATTR_P__     (pmpcfg6,      0x3A6, 0,           0,          1_10,   0,0,0,0,0, "Physical Memory Protection Configuration 6",    pmpcfgP,  0,           pmpcfgR,      0,        pmpcfgW       ),
-    CSR_ATTR_P__     (pmpcfg7,      0x3A7, ISA_XLEN_32, 0,          1_10,   0,0,0,0,0, "Physical Memory Protection Configuration 7",    pmpcfgP,  0,           pmpcfgR,      0,        pmpcfgW       ),
-    CSR_ATTR_P__     (pmpcfg8,      0x3A8, 0,           0,          1_10,   0,0,0,0,0, "Physical Memory Protection Configuration 8",    pmpcfgP,  0,           pmpcfgR,      0,        pmpcfgW       ),
-    CSR_ATTR_P__     (pmpcfg9,      0x3A9, ISA_XLEN_32, 0,          1_10,   0,0,0,0,0, "Physical Memory Protection Configuration 9",    pmpcfgP,  0,           pmpcfgR,      0,        pmpcfgW       ),
-    CSR_ATTR_P__     (pmpcfg10,     0x3AA, 0,           0,          1_10,   0,0,0,0,0, "Physical Memory Protection Configuration 10",   pmpcfgP,  0,           pmpcfgR,      0,        pmpcfgW       ),
-    CSR_ATTR_P__     (pmpcfg11,     0x3AB, ISA_XLEN_32, 0,          1_10,   0,0,0,0,0, "Physical Memory Protection Configuration 11",   pmpcfgP,  0,           pmpcfgR,      0,        pmpcfgW       ),
-    CSR_ATTR_P__     (pmpcfg12,     0x3AC, 0,           0,          1_10,   0,0,0,0,0, "Physical Memory Protection Configuration 12",   pmpcfgP,  0,           pmpcfgR,      0,        pmpcfgW       ),
-    CSR_ATTR_P__     (pmpcfg13,     0x3AD, ISA_XLEN_32, 0,          1_10,   0,0,0,0,0, "Physical Memory Protection Configuration 13",   pmpcfgP,  0,           pmpcfgR,      0,        pmpcfgW       ),
-    CSR_ATTR_P__     (pmpcfg14,     0x3AE, 0,           0,          1_10,   0,0,0,0,0, "Physical Memory Protection Configuration 14",   pmpcfgP,  0,           pmpcfgR,      0,        pmpcfgW       ),
-    CSR_ATTR_P__     (pmpcfg15,     0x3AF, ISA_XLEN_32, 0,          1_10,   0,0,0,0,0, "Physical Memory Protection Configuration 15",   pmpcfgP,  0,           pmpcfgR,      0,        pmpcfgW       ),
-    CSR_ATTR_P__0_63 (pmpaddr,      0x3B0, 0,           0,          1_10,   0,0,0,0,0, "Physical Memory Protection Address ",           pmpaddrP, 0,           pmpaddrR,     0,        pmpaddrW      ),
+    //                name          num    arch         access      version   attrs    description                                      present      wState       rCB           rwCB      wCB
+    CSR_ATTR_P__     (pmpcfg0,      0x3A0, 0,           0,          1_10,   0,0,0,0,0, "Physical Memory Protection Configuration 0",    pmpcfgP,     0,           pmpcfgR,      0,        pmpcfgW       ),
+    CSR_ATTR_P__     (pmpcfg1,      0x3A1, ISA_XLEN_32, 0,          1_10,   0,0,0,0,0, "Physical Memory Protection Configuration 1",    pmpcfgP,     0,           pmpcfgR,      0,        pmpcfgW       ),
+    CSR_ATTR_P__     (pmpcfg2,      0x3A2, 0,           0,          1_10,   0,0,0,0,0, "Physical Memory Protection Configuration 2",    pmpcfgP,     0,           pmpcfgR,      0,        pmpcfgW       ),
+    CSR_ATTR_P__     (pmpcfg3,      0x3A3, ISA_XLEN_32, 0,          1_10,   0,0,0,0,0, "Physical Memory Protection Configuration 3",    pmpcfgP,     0,           pmpcfgR,      0,        pmpcfgW       ),
+    CSR_ATTR_P__     (pmpcfg4,      0x3A4, 0,           0,          1_10,   0,0,0,0,0, "Physical Memory Protection Configuration 4",    pmpcfgP,     0,           pmpcfgR,      0,        pmpcfgW       ),
+    CSR_ATTR_P__     (pmpcfg5,      0x3A5, ISA_XLEN_32, 0,          1_10,   0,0,0,0,0, "Physical Memory Protection Configuration 5",    pmpcfgP,     0,           pmpcfgR,      0,        pmpcfgW       ),
+    CSR_ATTR_P__     (pmpcfg6,      0x3A6, 0,           0,          1_10,   0,0,0,0,0, "Physical Memory Protection Configuration 6",    pmpcfgP,     0,           pmpcfgR,      0,        pmpcfgW       ),
+    CSR_ATTR_P__     (pmpcfg7,      0x3A7, ISA_XLEN_32, 0,          1_10,   0,0,0,0,0, "Physical Memory Protection Configuration 7",    pmpcfgP,     0,           pmpcfgR,      0,        pmpcfgW       ),
+    CSR_ATTR_P__     (pmpcfg8,      0x3A8, 0,           0,          1_10,   0,0,0,0,0, "Physical Memory Protection Configuration 8",    pmpcfgP,     0,           pmpcfgR,      0,        pmpcfgW       ),
+    CSR_ATTR_P__     (pmpcfg9,      0x3A9, ISA_XLEN_32, 0,          1_10,   0,0,0,0,0, "Physical Memory Protection Configuration 9",    pmpcfgP,     0,           pmpcfgR,      0,        pmpcfgW       ),
+    CSR_ATTR_P__     (pmpcfg10,     0x3AA, 0,           0,          1_10,   0,0,0,0,0, "Physical Memory Protection Configuration 10",   pmpcfgP,     0,           pmpcfgR,      0,        pmpcfgW       ),
+    CSR_ATTR_P__     (pmpcfg11,     0x3AB, ISA_XLEN_32, 0,          1_10,   0,0,0,0,0, "Physical Memory Protection Configuration 11",   pmpcfgP,     0,           pmpcfgR,      0,        pmpcfgW       ),
+    CSR_ATTR_P__     (pmpcfg12,     0x3AC, 0,           0,          1_10,   0,0,0,0,0, "Physical Memory Protection Configuration 12",   pmpcfgP,     0,           pmpcfgR,      0,        pmpcfgW       ),
+    CSR_ATTR_P__     (pmpcfg13,     0x3AD, ISA_XLEN_32, 0,          1_10,   0,0,0,0,0, "Physical Memory Protection Configuration 13",   pmpcfgP,     0,           pmpcfgR,      0,        pmpcfgW       ),
+    CSR_ATTR_P__     (pmpcfg14,     0x3AE, 0,           0,          1_10,   0,0,0,0,0, "Physical Memory Protection Configuration 14",   pmpcfgP,     0,           pmpcfgR,      0,        pmpcfgW       ),
+    CSR_ATTR_P__     (pmpcfg15,     0x3AF, ISA_XLEN_32, 0,          1_10,   0,0,0,0,0, "Physical Memory Protection Configuration 15",   pmpcfgP,     0,           pmpcfgR,      0,        pmpcfgW       ),
+    CSR_ATTR_P__0_63 (pmpaddr,      0x3B0, 0,           0,          1_10,   0,0,0,0,0, "Physical Memory Protection Address ",           pmpaddrP,    0,           pmpaddrR,     0,        pmpaddrW      ),
 
-    //                name          num    arch         access      version   attrs    description                                      present   wState       rCB           rwCB      wCB
-    CSR_ATTR_P__     (mcycle,       0xB00, 0,           0,          1_10,   0,1,0,0,0, "Machine Cycle Counter",                         0,        0,           mcycleR,      0,        mcycleW       ),
-    CSR_ATTR_P__     (minstret,     0xB02, 0,           0,          1_10,   0,1,0,0,0, "Machine Instructions Retired",                  0,        0,           minstretR,    0,        minstretW     ),
-    CSR_ATTR_P__3_31 (mhpmcounter,  0xB00, 0,           0,          1_10,   0,0,0,0,0, "Machine Performance Monitor Counter ",          0,        0,           mhpmR,        0,        mhpmW         ),
-    CSR_ATTR_P__     (mcycleh,      0xB80, ISA_XLEN_32, 0,          1_10,   0,1,0,0,0, "Machine Cycle Counter High",                    0,        0,           mcyclehR,     0,        mcyclehW      ),
-    CSR_ATTR_P__     (minstreth,    0xB82, ISA_XLEN_32, 0,          1_10,   0,1,0,0,0, "Machine Instructions Retired High",             0,        0,           minstrethR,   0,        minstrethW    ),
-    CSR_ATTR_P__3_31 (mhpmcounterh, 0xB80, ISA_XLEN_32, 0,          1_10,   0,0,0,0,0, "Machine Performance Monitor Counter High ",     0,        0,           mhpmR,        0,        mhpmW         ),
-    CSR_ATTR_P__3_31 (mhpmevent,    0x320, 0,           0,          1_10,   0,0,0,0,0, "Machine Performance Monitor Event Select ",     0,        0,           mhpmR,        0,        mhpmW         ),
+    //                name          num    arch         access      version   attrs    description                                      present      wState       rCB           rwCB      wCB
+    CSR_ATTR_P__     (mcycle,       0xB00, 0,           0,          1_10,   0,1,0,0,0, "Machine Cycle Counter",                         0,           0,           mcycleR,      0,        mcycleW       ),
+    CSR_ATTR_P__     (minstret,     0xB02, 0,           0,          1_10,   0,1,0,0,0, "Machine Instructions Retired",                  0,           0,           minstretR,    0,        minstretW     ),
+    CSR_ATTR_P__3_31 (mhpmcounter,  0xB00, 0,           0,          1_10,   0,0,0,0,0, "Machine Performance Monitor Counter ",          0,           0,           mhpmR,        0,        mhpmW         ),
+    CSR_ATTR_P__     (mcycleh,      0xB80, ISA_XLEN_32, 0,          1_10,   0,1,0,0,0, "Machine Cycle Counter High",                    0,           0,           mcyclehR,     0,        mcyclehW      ),
+    CSR_ATTR_P__     (minstreth,    0xB82, ISA_XLEN_32, 0,          1_10,   0,1,0,0,0, "Machine Instructions Retired High",             0,           0,           minstrethR,   0,        minstrethW    ),
+    CSR_ATTR_P__3_31 (mhpmcounterh, 0xB80, ISA_XLEN_32, 0,          1_10,   0,0,0,0,0, "Machine Performance Monitor Counter High ",     0,           0,           mhpmR,        0,        mhpmW         ),
+    CSR_ATTR_P__3_31 (mhpmevent,    0x320, 0,           0,          1_10,   0,0,0,0,0, "Machine Performance Monitor Event Select ",     0,           0,           mhpmR,        0,        mhpmW         ),
 
-    //                name          num    arch         access      version   attrs    description                                      present   wState       rCB           rwCB      wCB
-    CSR_ATTR_NIP     (tselect,      0x7A0, 0,           0,          1_10,   0,0,0,0,0, "Debug/Trace Trigger Register Select"                                                                         ),
-    CSR_ATTR_NIP     (tdata1,       0x7A1, 0,           0,          1_10,   0,0,0,0,0, "Debug/Trace Trigger Data 1"                                                                                  ),
-    CSR_ATTR_NIP     (tdata2,       0x7A2, 0,           0,          1_10,   0,0,0,0,0, "Debug/Trace Trigger Data 2"                                                                                  ),
-    CSR_ATTR_NIP     (tdata3,       0x7A3, 0,           0,          1_10,   0,0,0,0,0, "Debug/Trace Trigger Data 3"                                                                                  ),
+    //                name          num    arch         access      version   attrs    description                                      present      wState       rCB           rwCB      wCB
+    CSR_ATTR_NIP     (tselect,      0x7A0, 0,           0,          1_10,   0,0,0,0,0, "Debug/Trace Trigger Register Select"                                                                            ),
+    CSR_ATTR_NIP     (tdata1,       0x7A1, 0,           0,          1_10,   0,0,0,0,0, "Debug/Trace Trigger Data 1"                                                                                     ),
+    CSR_ATTR_NIP     (tdata2,       0x7A2, 0,           0,          1_10,   0,0,0,0,0, "Debug/Trace Trigger Data 2"                                                                                     ),
+    CSR_ATTR_NIP     (tdata3,       0x7A3, 0,           0,          1_10,   0,0,0,0,0, "Debug/Trace Trigger Data 3"                                                                                     ),
 
-    //                name          num    arch         access      version   attrs    description                                      present   wState       rCB           rwCB      wCB
-    CSR_ATTR_TV_     (dcsr,         0x7B0, 0,           0,          1_10,   0,0,0,0,0, "Debug Control and Status",                      debugP,   0,           0,            0,        dcsrW         ),
-    CSR_ATTR_T__     (dpc,          0x7B1, 0,           0,          1_10,   0,0,0,0,0, "Debug PC",                                      debugP,   0,           0,            0,        0             ),
-    CSR_ATTR_T__     (dscratch0,    0x7B2, 0,           0,          1_10,   0,0,0,0,0, "Debug Scratch 0",                               debugP,   0,           0,            0,        0             ),
-    CSR_ATTR_T__     (dscratch1,    0x7B3, 0,           0,          1_10,   0,0,0,0,0, "Debug Scratch 1",                               debugP,   0,           0,            0,        0             ),
+    //                name          num    arch         access      version   attrs    description                                      present      wState       rCB           rwCB      wCB
+    CSR_ATTR_TV_     (dcsr,         0x7B0, 0,           0,          1_10,   0,0,0,0,0, "Debug Control and Status",                      debugP,      0,           0,            0,        dcsrW         ),
+    CSR_ATTR_T__     (dpc,          0x7B1, 0,           0,          1_10,   0,0,0,0,0, "Debug PC",                                      debugP,      0,           0,            0,        0             ),
+    CSR_ATTR_T__     (dscratch0,    0x7B2, 0,           0,          1_10,   0,0,0,0,0, "Debug Scratch 0",                               debugP,      0,           0,            0,        0             ),
+    CSR_ATTR_T__     (dscratch1,    0x7B3, 0,           0,          1_10,   0,0,0,0,0, "Debug Scratch 1",                               debugP,      0,           0,            0,        0             ),
 };
 
 
@@ -3090,7 +3141,7 @@ static Int32 getCSRWriteMask32(riscvCSRAttrsCP attrs, riscvP riscv) {
     vmiReg writeMaskV = attrs->writeMaskV32;
 
     if(VMI_ISNOREG(writeMaskV)) {
-        return attrs->writeMaskC32 ? : -1;
+        return attrs->writeMaskC32;
     } else {
         return *getVMIRegValue32(writeMaskV, riscv);
     }
@@ -3104,7 +3155,7 @@ static Uns64 getCSRWriteMask64(riscvCSRAttrsCP attrs, riscvP riscv) {
     vmiReg writeMaskV = attrs->writeMaskV64;
 
     if(VMI_ISNOREG(writeMaskV)) {
-        return attrs->writeMaskC64 ? : -1;
+        return attrs->writeMaskC64;
     } else {
         return *getVMIRegValue64(writeMaskV, riscv);
     }
@@ -3608,7 +3659,7 @@ static Uns64 getInterruptMask(riscvException code) {
 //
 void riscvCSRInit(riscvP riscv, Uns32 index) {
 
-    riscvConfigCP     cfg         = &riscv->configInfo;
+    riscvConfigP      cfg         = &riscv->configInfo;
     riscvArchitecture arch        = cfg->arch;
     riscvArchitecture archMask    = cfg->archMask;
     Bool              haveBasicIC = basicICPresent(riscv);
@@ -3960,10 +4011,12 @@ void riscvCSRInit(riscvP riscv, Uns32 index) {
         SET_CSR_FIELD_MASK_V(riscv, scause, pie, -1);
         SET_CSR_FIELD_MASK_V(riscv, ucause, pie, -1);
 
-        // enable inhv bits
-        SET_CSR_FIELD_MASK_V(riscv, mcause, inhv, -1);
-        SET_CSR_FIELD_MASK_V(riscv, scause, inhv, -1);
-        SET_CSR_FIELD_MASK_V(riscv, ucause, inhv, -1);
+        // enable inhv bits (if selective hardware vectoring implemented)
+        if(cfg->CLICSELHVEC) {
+            SET_CSR_FIELD_MASK_V(riscv, mcause, inhv, -1);
+            SET_CSR_FIELD_MASK_V(riscv, scause, inhv, -1);
+            SET_CSR_FIELD_MASK_V(riscv, ucause, inhv, -1);
+        }
 
         // enable pp bits
         SET_CSR_FIELD_MASK_V(riscv, mcause, pp, 3);
@@ -3974,7 +4027,8 @@ void riscvCSRInit(riscvP riscv, Uns32 index) {
     // mcounteren, scounteren masks
     //--------------------------------------------------------------------------
 
-    Uns32 counterenMask = cfg->counteren_mask & WM32_counteren_HPM;
+    Uns32 counterenMask    = cfg->counteren_mask & WM32_counteren_HPM;
+    Uns32 countinhibitMask = ~cfg->noinhibit_mask;
 
     // CY, TM and IR bits are writable only if the cycle, time and instret
     // registers are defined
@@ -3988,10 +4042,20 @@ void riscvCSRInit(riscvP riscv, Uns32 index) {
         counterenMask |= WM32_counteren_IR;
     }
 
-    // set mcounteren, scounteren, mcountinhibit masks
-    SET_CSR_MASK_V(riscv, mcounteren,    counterenMask);
-    SET_CSR_MASK_V(riscv, scounteren,    counterenMask);
-    SET_CSR_MASK_V(riscv, mcountinhibit, counterenMask & ~WM32_counteren_TM);
+    // assign modified mask of present counters
+    cfg->counteren_mask = counterenMask;
+
+    // get mask of counters that can be inhibited
+    countinhibitMask = countinhibitMask & counterenMask & ~WM32_counteren_TM;
+
+    // set mcountinhibit mask
+    SET_CSR_MASK_V(riscv, mcountinhibit, countinhibitMask);
+
+    // set mcounteren and scounteren if User mode is present
+    if(arch&ISA_U) {
+        SET_CSR_MASK_V(riscv, mcounteren, counterenMask);
+        SET_CSR_MASK_V(riscv, scounteren, counterenMask);
+    }
 
     //--------------------------------------------------------------------------
     // scounteren implied value

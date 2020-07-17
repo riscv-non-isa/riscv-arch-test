@@ -642,7 +642,7 @@ void riscvTakeException(
         if(isInt) {
             writeNet(riscv, riscv->irq_id_Handle, ecodeMod);
             writeNet(riscv, riscv->irq_ack_Handle, 1);
-            writeNet(riscv, riscv->irq_ack_Handle, 0);
+            riscv->netValue.irq_ack = True;
         }
     }
 }
@@ -1752,6 +1752,12 @@ VMI_IFETCH_FN(riscvIFetchExcept) {
     riscvP riscv   = (riscvP)processor;
     Uns64  thisPC  = address;
     Bool   fetchOK = False;
+
+    // clear interrupt acknowledge signal if it is asserted
+    if(riscv->netValue.irq_ack) {
+        writeNet(riscv, riscv->irq_ack_Handle, 0);
+        riscv->netValue.irq_ack = False;
+    }
 
     if(riscv->netValue.resethaltreqS) {
 

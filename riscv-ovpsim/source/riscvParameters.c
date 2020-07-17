@@ -424,6 +424,7 @@ static RISCV_BOOL_PDEFAULT_CFG_FN(mclicbase_undefined);
 //
 static RISCV_UNS32_PDEFAULT_CFG_FN(tvec_align);
 static RISCV_UNS32_PDEFAULT_CFG_FN(counteren_mask);
+static RISCV_UNS32_PDEFAULT_CFG_FN(noinhibit_mask);
 static RISCV_UNS32_PDEFAULT_CFG_FN(PMP_grain)
 static RISCV_UNS32_PDEFAULT_CFG_FN(CLICLEVELS);
 static RISCV_UNS32_PDEFAULT_CFG_FN(CLICCFGLBITS);
@@ -722,6 +723,7 @@ static riscvParameter parameters[] = {
     {  RVPV_ALL,     default_mtvec_is_ro,          VMI_BOOL_PARAM_SPEC  (riscvParamValues, mtvec_is_ro,          False,                     "Specify whether mtvec CSR is read-only")},
     {  RVPV_ALL,     default_tvec_align,           VMI_UNS32_PARAM_SPEC (riscvParamValues, tvec_align,           0, 0,          (1<<16),    "Specify hardware-enforced alignment of mtvec/stvec/utvec when Vectored interrupt mode enabled")},
     {  RVPV_ALL,     default_counteren_mask,       VMI_UNS32_PARAM_SPEC (riscvParamValues, counteren_mask,       0, 0,          -1,         "Specify hardware-enforced mask of writable bits in mcounteren/scounteren registers")},
+    {  RVPV_ALL,     default_noinhibit_mask,       VMI_UNS32_PARAM_SPEC (riscvParamValues, noinhibit_mask,       0, 0,          -1,         "Specify hardware-enforced mask of always-zero bits in mcountinhibit register")},
     {  RVPV_ALL,     default_mtvec_mask,           VMI_UNS64_PARAM_SPEC (riscvParamValues, mtvec_mask,           0, 0,          -1,         "Specify hardware-enforced mask of writable bits in mtvec register")},
     {  RVPV_S,       default_stvec_mask,           VMI_UNS64_PARAM_SPEC (riscvParamValues, stvec_mask,           0, 0,          -1,         "Specify hardware-enforced mask of writable bits in stvec register")},
     {  RVPV_N,       default_utvec_mask,           VMI_UNS64_PARAM_SPEC (riscvParamValues, utvec_mask,           0, 0,          -1,         "Specify hardware-enforced mask of writable bits in utvec register")},

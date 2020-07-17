@@ -52,6 +52,7 @@ typedef struct riscvParamValuesS {
     VMI_BOOL_PARAM(wfi_is_nop);
     VMI_BOOL_PARAM(mtvec_is_ro);
     VMI_UNS32_PARAM(counteren_mask);
+    VMI_UNS32_PARAM(noinhibit_mask);
     VMI_UNS32_PARAM(tvec_align);
     VMI_UNS64_PARAM(mtvec_mask);
     VMI_UNS64_PARAM(stvec_mask);
