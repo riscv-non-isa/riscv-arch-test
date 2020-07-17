@@ -22,6 +22,8 @@ In general:
 
 The files [`COPYING.BSD`](./COPYING.BSD) and [`COPYING.CC`](./COPYING.CC) in the top level directory contain the complete text of these licenses.
 
+The riscv-ovpsim simulator is licensed under an Imperas license. There is no dependency on this and it is included as a convenience to users.
+
 ## Engineering practice
 
 - Documentation uses the structured text format _AsciiDoc_.  See [`doc/README.adoc`](doc/README.adoc) for more details.
