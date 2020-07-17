@@ -270,6 +270,7 @@ static void applyParamsSMP(riscvP riscv, riscvParamValuesP params) {
     cfg->wfi_is_nop          = params->wfi_is_nop;
     cfg->mtvec_is_ro         = params->mtvec_is_ro;
     cfg->counteren_mask      = params->counteren_mask;
+    cfg->noinhibit_mask      = params->noinhibit_mask;
     cfg->tvec_align          = params->tvec_align;
     cfg->tval_zero           = params->tval_zero;
     cfg->tval_ii_code        = params->tval_ii_code;

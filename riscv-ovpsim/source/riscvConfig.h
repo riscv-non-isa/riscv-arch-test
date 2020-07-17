@@ -88,6 +88,7 @@ typedef struct riscvConfigS {
     Uns64             ecode_mask;       // implemented bits in xcause.ecode
     Uns64             ecode_nmi;        // exception code for NMI
     Uns32             counteren_mask;   // counter-enable implemented mask
+    Uns32             noinhibit_mask;	// counter no-inhibit mask
     Uns32             local_int_num;    // number of local interrupts
     Uns32             lr_sc_grain;      // LR/SC region grain size
     Uns32             ASID_bits;        // number of implemented ASID bits
@@ -119,6 +120,8 @@ typedef struct riscvConfigS {
     Bool              xret_preserves_lr;// whether xRET preserves current LR
     Bool              require_vstart0;  // require vstart 0 if uninterruptible?
     Bool              enable_CSR_bus;   // enable CSR implementation bus
+    Bool              mcounteren_present;// force mcounteren to be present
+    Bool              PMP_undefined;    // force all PMP registers undefined
     Bool              external_int_id;  // enable external interrupt ID ports
     Bool              tval_zero;        // whether [smu]tval are always zero
     Bool              tval_ii_code;     // instruction bits in [smu]tval for

@@ -9,5 +9,5 @@ ${bindir}/riscvOVPsim.exe \
     --override riscvOVPsim/cpu/add_Extensions=MACSU \
     --cover extended --reportfile coverage_extended.log --outputfile coverage_extended.yaml \
     --extensions RVI --showuncovered \
-    --finishafter 1000000 \
+    --finishafter 10000 \
     "$@"

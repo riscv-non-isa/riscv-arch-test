@@ -210,7 +210,9 @@ DEFINE_CS(extCSRAttrs);
         readWriteCB   : _RWCB,                      \
         writeCB       : _WCB,                       \
         reg32         : XCSR_REG32_MT(_ID),         \
-        reg64         : XCSR_REG64_MT(_ID)          \
+        writeMaskC32  : -1,                         \
+        reg64         : XCSR_REG64_MT(_ID),         \
+        writeMaskC32  : -1                          \
     }                                               \
 }
 
@@ -266,6 +268,30 @@ DEFINE_CS(extCSRAttrs);
     }                                               \
 }
 
+//
+// Implemented using optional callbacks, no mask
+//
+#define XCSR_ATTR_P__( \
+    _ID, _NUM, _ARCH, _EXT, _ENDB,_ENDRM,_NOTR,_TVMT, _DESC, _RCB, _RWCB, _WCB \
+) [XCSR_ID(_ID)] = { \
+    .extension = _EXT,                              \
+    .baseAttrs = {                                  \
+        name          : #_ID,                       \
+        desc          : _DESC,                      \
+        csrNum        : _NUM,                       \
+        arch          : _ARCH,                      \
+        wEndBlock     : _ENDB,                      \
+        wEndRM        : _ENDRM,                     \
+        noTraceChange : _NOTR,                      \
+        TVMT          : _TVMT,                      \
+        readCB        : _RCB,                       \
+        readWriteCB   : _RWCB,                      \
+        writeCB       : _WCB,                       \
+        writeMaskC32  : -1,                         \
+        writeMaskC64  : -1                          \
+    }                                               \
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // CSR ACCESS MACROS
@@ -316,5 +342,11 @@ DEFINE_CS(extCSRAttrs);
 #define XCSR_REG_MT(_ID)    EXT_REG(csr._ID)
 #define XCSR_REG32_MT(_ID)  EXT_REG(csr._ID.u32)
 #define XCSR_REG64_MT(_ID)  EXT_REG(csr._ID.u64)
+
+//
+// Morph-time macros to access a CSR register mask by id
+//
+#define XCSR_MASK32_MT(_ID) EXT_REG(csrMask._ID.u32)
+#define XCSR_MASK64_MT(_ID) EXT_REG(csrMask._ID.u64)
 
 

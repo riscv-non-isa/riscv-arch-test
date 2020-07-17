@@ -10,7 +10,7 @@ cd /d %BATCHDIR%
     --override riscvOVPsim/cpu/add_Extensions=MACSU ^
     --cover extended --reportfile coverage_extended.log --outputfile coverage_extended.yaml ^
     --extensions RVI --showuncovered ^
-    --finishafter 1000000 ^
+    --finishafter 10000 ^
     %*
 
 if not defined calledscript ( pause )

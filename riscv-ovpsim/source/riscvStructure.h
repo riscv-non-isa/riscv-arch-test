@@ -72,7 +72,7 @@ typedef struct riscvNetValueS {
     Bool resethaltreqS; // resethaltreq (Debug mode, sampled at reset)
     Bool deferint;      // defer taking interrupts (artifact)
     Bool enableCLIC;    // is CLIC enabled?
-    Bool _u1;           // (for alignment)
+    Bool irq_ack;       // IRQ acknowledge (output)
     Bool _u2;           // (for alignment)
 } riscvNetValue;
 
