@@ -6,7 +6,7 @@ ifeq ($(shell command -v $(TARGET_SIM) 2> /dev/null),)
 endif
 
 RUN_TARGET=\
-    $(TARGET_SIM) $(TARGET_FLAGS) -isa=rv32 \
+    $(TARGET_SIM) $(TARGET_FLAGS) -isa=rv32 -disable-rvc \
         -test-signature=$(*).signature.output \
         $(<) 2> $@
 
