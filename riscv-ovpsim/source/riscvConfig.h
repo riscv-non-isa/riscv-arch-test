@@ -142,6 +142,9 @@ typedef struct riscvConfigS {
     Bool              intthresh_undefined;// whether *intthresh CSRs undefined
     Bool              mclicbase_undefined;// whether mclicbase CSR is undefined
 
+    // Hypervisor configuration
+    Uns8              GEILEN;           // number of guest external interrupts
+
     // CSR register values
     struct {
         CSR_REG_DECL (mvendorid);       // mvendorid value

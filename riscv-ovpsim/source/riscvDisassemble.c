@@ -433,7 +433,7 @@ static void putOpcode(char **result, riscvP riscv, riscvInstrInfoP info) {
 
             // version 0.9 EEW
             putChar(result, 'e');
-            if(info->memBits==-1) {putChar(result, 'i');}
+            if(info->memBits<=0) {putChar(result, 'i');}
             putD(result, info->eew);
 
         } else switch(info->memBits) {

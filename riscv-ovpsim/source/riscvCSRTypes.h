@@ -90,7 +90,6 @@ typedef RISCV_CSR_PRESENTFN((*riscvCSRPresentFn));
 // This structure records information about each CSR
 //
 typedef struct riscvCSRAttrsS {
-                                        // COMMON FIELDS
     const char       *name;             // register name
     const char       *desc;             // register description
     void             *object;           // client-specific object
@@ -104,21 +103,15 @@ typedef struct riscvCSRAttrsS {
     Bool              noTraceChange;    // whether to exclude from trace change
     Bool              TVMT;             // whether trapped by mstatus.TVM
     Bool              writeRd;          // whether write updates Rd
+    Bool              aliasV;           // whether CSR has virtual alias
     riscvCSRPresentFn presentCB;        // CSR present callback
     riscvCSRReadFn    readCB;           // read callback
     riscvCSRReadFn    readWriteCB;      // read callback (in r/w context)
     riscvCSRWriteFn   writeCB;          // write callback
     riscvCSRWStateFn  wstateCB;         // adjust JIT code generator state
-
-                                        // 32-BIT FIELDS
-    vmiReg            reg32;            // register
-    vmiReg            writeMaskV32;     // variable write mask
-    Uns32             writeMaskC32;     // constant write mask
-
-                                        // 64-BIT FIELDS
-    vmiReg            reg64;            // register
-    vmiReg            writeMaskV64;     // variable writable bit mask
-    Uns64             writeMaskC64;     // constant writable bit mask
-
+    vmiReg            reg;              // register
+    vmiReg            writeMaskV;       // variable write mask
+    Uns32             writeMaskC32;     // constant 32-bit write mask
+    Uns64             writeMaskC64;     // constant 64-bit write mask
 } riscvCSRAttrs;
 

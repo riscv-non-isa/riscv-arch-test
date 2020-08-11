@@ -35,5 +35,6 @@
 typedef struct riscvExceptionDescS {
     vmiExceptionInfo  vmiInfo;      // VMI exception descriptor (MUST BE FIRST)
     riscvArchitecture arch;         // required architecture
+    Bool              hasNetPort;   // add net port for this exception?
 } riscvExceptionDesc;
 

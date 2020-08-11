@@ -1,0 +1,973 @@
+Imperas RISC-V Instruction Coverage Report
+
+Instructions: 25
+    c_add          
+        rd             
+            gpr            
+                a0           0/1 :   0.00% ZERO
+                a1           1/1 : 100.00%
+                a2           1/1 : 100.00%
+                a3           1/1 : 100.00%
+                a4           1/1 : 100.00%
+                a5           1/1 : 100.00%
+                a6           1/1 : 100.00%
+                a7           1/1 : 100.00%
+                gp           1/1 : 100.00%
+                ra           0/1 :   0.00% ZERO
+                s0           1/1 : 100.00%
+                s1           1/1 : 100.00%
+                s10          1/1 : 100.00%
+                s11          1/1 : 100.00%
+                s2           1/1 : 100.00%
+                s3           1/1 : 100.00%
+                s4           1/1 : 100.00%
+                s5           2/1 : 100.00%
+                s6           1/1 : 100.00%
+                s7           1/1 : 100.00%
+                s8           1/1 : 100.00%
+                s9           1/1 : 100.00%
+                sp           0/1 :   0.00% ZERO
+                t0           0/1 :   0.00% ZERO
+                t1           0/1 :   0.00% ZERO
+                t2           0/1 :   0.00% ZERO
+                t3           1/1 : 100.00%
+                t4           1/1 : 100.00%
+                t5           1/1 : 100.00%
+                t6           0/1 :   0.00% ZERO
+                tp           1/1 : 100.00%
+                zero         0/1 :   0.00% ZERO
+            gpr 24/32 :  75.00%
+        rd 24/32 :  75.00%
+        rs2            
+            gpr            
+                a0           0/1 :   0.00% ZERO
+                a1           1/1 : 100.00%
+                a2           1/1 : 100.00%
+                a3           1/1 : 100.00%
+                a4           1/1 : 100.00%
+                a5           1/1 : 100.00%
+                a6           1/1 : 100.00%
+                a7           1/1 : 100.00%
+                gp           1/1 : 100.00%
+                ra           0/1 :   0.00% ZERO
+                s0           1/1 : 100.00%
+                s1           1/1 : 100.00%
+                s10          1/1 : 100.00%
+                s11          1/1 : 100.00%
+                s2           1/1 : 100.00%
+                s3           1/1 : 100.00%
+                s4           1/1 : 100.00%
+                s5           2/1 : 100.00%
+                s6           1/1 : 100.00%
+                s7           1/1 : 100.00%
+                s8           1/1 : 100.00%
+                s9           1/1 : 100.00%
+                sp           0/1 :   0.00% ZERO
+                t0           0/1 :   0.00% ZERO
+                t1           0/1 :   0.00% ZERO
+                t2           0/1 :   0.00% ZERO
+                t3           1/1 : 100.00%
+                t4           1/1 : 100.00%
+                t5           1/1 : 100.00%
+                t6           0/1 :   0.00% ZERO
+                tp           1/1 : 100.00%
+                zero         0/1 :   0.00% ZERO
+            gpr 24/32 :  75.00%
+            sign           
+                neg          5/1 : 100.00%
+                pos         20/1 : 100.00%
+            sign 2/2 : 100.00%
+        rs2 26/34 :  76.47%
+    c_add 50/66 :  75.76%
+    c_addi         
+        imm            
+            sign           
+                neg        104/1 : 100.00%
+                pos         34/1 : 100.00%
+            sign 2/2 : 100.00%
+        imm 2/2 : 100.00%
+        rd             
+            gpr            
+                a0           2/1 : 100.00%
+                a1          10/1 : 100.00%
+                a2          14/1 : 100.00%
+                a3          15/1 : 100.00%
+                a4          13/1 : 100.00%
+                a5          14/1 : 100.00%
+                a6           1/1 : 100.00%
+                a7           2/1 : 100.00%
+                gp           1/1 : 100.00%
+                ra           0/1 :   0.00% ZERO
+                s0          11/1 : 100.00%
+                s1           8/1 : 100.00%
+                s10          5/1 : 100.00%
+                s11          1/1 : 100.00%
+                s2           2/1 : 100.00%
+                s3           2/1 : 100.00%
+                s4           1/1 : 100.00%
+                s5           3/1 : 100.00%
+                s6           5/1 : 100.00%
+                s7           6/1 : 100.00%
+                s8           6/1 : 100.00%
+                s9           5/1 : 100.00%
+                sp           5/1 : 100.00%
+                t0           0/1 :   0.00% ZERO
+                t1           0/1 :   0.00% ZERO
+                t2           0/1 :   0.00% ZERO
+                t3           2/1 : 100.00%
+                t4           1/1 : 100.00%
+                t5           1/1 : 100.00%
+                t6           0/1 :   0.00% ZERO
+                tp           2/1 : 100.00%
+                zero         0/1 :   0.00% ZERO
+            gpr 26/32 :  81.25%
+        rd 26/32 :  81.25%
+    c_addi 28/34 :  82.35%
+    c_and          
+        rdp            
+            gprp           
+                a0           0/1 :   0.00% ZERO
+                a1           3/1 : 100.00%
+                a2           4/1 : 100.00%
+                a3           3/1 : 100.00%
+                a4           4/1 : 100.00%
+                a5           3/1 : 100.00%
+                s0           4/1 : 100.00%
+                s1           4/1 : 100.00%
+            gprp 7/8 :  87.50%
+        rdp 7/8 :  87.50%
+        rs2p           
+            gprp           
+                a0           0/1 :   0.00% ZERO
+                a1           3/1 : 100.00%
+                a2           4/1 : 100.00%
+                a3           3/1 : 100.00%
+                a4           4/1 : 100.00%
+                a5           3/1 : 100.00%
+                s0           4/1 : 100.00%
+                s1           4/1 : 100.00%
+            gprp 7/8 :  87.50%
+        rs2p 7/8 :  87.50%
+    c_and 14/16 :  87.50%
+    c_andi         
+        imm            
+            sign           
+                neg          5/1 : 100.00%
+                pos         20/1 : 100.00%
+            sign 2/2 : 100.00%
+        imm 2/2 : 100.00%
+        rdp            
+            gprp           
+                a0           0/1 :   0.00% ZERO
+                a1           4/1 : 100.00%
+                a2           4/1 : 100.00%
+                a3           4/1 : 100.00%
+                a4           4/1 : 100.00%
+                a5           3/1 : 100.00%
+                s0           3/1 : 100.00%
+                s1           3/1 : 100.00%
+            gprp 7/8 :  87.50%
+        rdp 7/8 :  87.50%
+    c_andi 9/10 :  90.00%
+    c_beqz         
+        offset         
+            sign           
+                neg          0/1 :   0.00% ZERO
+                pos          5/1 : 100.00%
+                zero         0/1 :   0.00% ZERO
+            sign 1/3 :  33.33%
+        offset 1/3 :  33.33%
+        rs1p           
+            gprp           
+                a0           0/1 :   0.00% ZERO
+                a1           1/1 : 100.00%
+                a2           1/1 : 100.00%
+                a3           0/1 :   0.00% ZERO
+                a4           0/1 :   0.00% ZERO
+                a5           1/1 : 100.00%
+                s0           1/1 : 100.00%
+                s1           1/1 : 100.00%
+            gprp 5/8 :  62.50%
+        rs1p 5/8 :  62.50%
+    c_beqz 6/11 :  54.55%
+    c_bnez         
+        offset         
+            sign           
+                neg          0/1 :   0.00% ZERO
+                pos          5/1 : 100.00%
+                zero         0/1 :   0.00% ZERO
+            sign 1/3 :  33.33%
+        offset 1/3 :  33.33%
+        rs1p           
+            gprp           
+                a0           0/1 :   0.00% ZERO
+                a1           0/1 :   0.00% ZERO
+                a2           0/1 :   0.00% ZERO
+                a3           1/1 : 100.00%
+                a4           1/1 : 100.00%
+                a5           1/1 : 100.00%
+                s0           1/1 : 100.00%
+                s1           1/1 : 100.00%
+            gprp 5/8 :  62.50%
+        rs1p 5/8 :  62.50%
+    c_bnez 6/11 :  54.55%
+    c_ebreak       
+    c_ebreak 0/1 :   0.00%
+    c_j            
+        offset         
+            sign           
+                neg          0/1 :   0.00% ZERO
+                pos          5/1 : 100.00%
+                zero         0/1 :   0.00% ZERO
+            sign 1/3 :  33.33%
+        offset 1/3 :  33.33%
+    c_j 1/3 :  33.33%
+    c_jal          
+        offset         
+            sign           
+                neg          0/1 :   0.00% ZERO
+                pos          5/1 : 100.00%
+                zero         0/1 :   0.00% ZERO
+            sign 1/3 :  33.33%
+        offset 1/3 :  33.33%
+    c_jal 1/3 :  33.33%
+    c_jalr         
+        rs1            
+            gpr            
+                a0           0/1 :   0.00% ZERO
+                a1           0/1 :   0.00% ZERO
+                a2           1/1 : 100.00%
+                a3           1/1 : 100.00%
+                a4           1/1 : 100.00%
+                a5           1/1 : 100.00%
+                a6           1/1 : 100.00%
+                a7           0/1 :   0.00% ZERO
+                gp           0/1 :   0.00% ZERO
+                ra           0/1 :   0.00% ZERO
+                s0           0/1 :   0.00% ZERO
+                s1           0/1 :   0.00% ZERO
+                s10          0/1 :   0.00% ZERO
+                s11          0/1 :   0.00% ZERO
+                s2           0/1 :   0.00% ZERO
+                s3           0/1 :   0.00% ZERO
+                s4           0/1 :   0.00% ZERO
+                s5           0/1 :   0.00% ZERO
+                s6           0/1 :   0.00% ZERO
+                s7           0/1 :   0.00% ZERO
+                s8           0/1 :   0.00% ZERO
+                s9           0/1 :   0.00% ZERO
+                sp           0/1 :   0.00% ZERO
+                t0           0/1 :   0.00% ZERO
+                t1           0/1 :   0.00% ZERO
+                t2           0/1 :   0.00% ZERO
+                t3           0/1 :   0.00% ZERO
+                t4           0/1 :   0.00% ZERO
+                t5           0/1 :   0.00% ZERO
+                t6           0/1 :   0.00% ZERO
+                tp           0/1 :   0.00% ZERO
+                zero         0/1 :   0.00% ZERO
+            gpr 5/32 :  15.62%
+            sign           
+                neg          5/1 : 100.00%
+                pos          0/1 :   0.00% ZERO
+            sign 1/2 :  50.00%
+        rs1 6/34 :  17.65%
+    c_jalr 6/34 :  17.65%
+    c_jr           
+        rs1            
+            gpr            
+                a0           0/1 :   0.00% ZERO
+                a1           1/1 : 100.00%
+                a2           0/1 :   0.00% ZERO
+                a3           0/1 :   0.00% ZERO
+                a4           0/1 :   0.00% ZERO
+                a5           0/1 :   0.00% ZERO
+                a6           0/1 :   0.00% ZERO
+                a7           0/1 :   0.00% ZERO
+                gp           1/1 : 100.00%
+                ra           0/1 :   0.00% ZERO
+                s0           1/1 : 100.00%
+                s1           1/1 : 100.00%
+                s10          0/1 :   0.00% ZERO
+                s11          0/1 :   0.00% ZERO
+                s2           0/1 :   0.00% ZERO
+                s3           0/1 :   0.00% ZERO
+                s4           0/1 :   0.00% ZERO
+                s5           0/1 :   0.00% ZERO
+                s6           0/1 :   0.00% ZERO
+                s7           0/1 :   0.00% ZERO
+                s8           0/1 :   0.00% ZERO
+                s9           0/1 :   0.00% ZERO
+                sp           0/1 :   0.00% ZERO
+                t0           0/1 :   0.00% ZERO
+                t1           0/1 :   0.00% ZERO
+                t2           0/1 :   0.00% ZERO
+                t3           0/1 :   0.00% ZERO
+                t4           0/1 :   0.00% ZERO
+                t5           0/1 :   0.00% ZERO
+                t6           0/1 :   0.00% ZERO
+                tp           1/1 : 100.00%
+                zero         0/1 :   0.00% ZERO
+            gpr 5/32 :  15.62%
+        rs1 5/32 :  15.62%
+    c_jr 5/32 :  15.62%
+    c_li           
+        imm            
+            sign           
+                neg         13/1 : 100.00%
+                pos        329/1 : 100.00%
+            sign 2/2 : 100.00%
+        imm 2/2 : 100.00%
+        rd             
+            gpr            
+                a0           7/1 : 100.00%
+                a1          27/1 : 100.00%
+                a2          27/1 : 100.00%
+                a3          27/1 : 100.00%
+                a4          25/1 : 100.00%
+                a5          26/1 : 100.00%
+                a6           7/1 : 100.00%
+                a7           2/1 : 100.00%
+                gp          32/1 : 100.00%
+                ra           0/1 :   0.00% ZERO
+                s0          27/1 : 100.00%
+                s1          27/1 : 100.00%
+                s10          2/1 : 100.00%
+                s11          2/1 : 100.00%
+                s2           2/1 : 100.00%
+                s3           2/1 : 100.00%
+                s4           2/1 : 100.00%
+                s5           2/1 : 100.00%
+                s6           3/1 : 100.00%
+                s7           1/1 : 100.00%
+                s8           3/1 : 100.00%
+                s9           1/1 : 100.00%
+                sp           2/1 : 100.00%
+                t0           0/1 :   0.00% ZERO
+                t1           0/1 :   0.00% ZERO
+                t2           0/1 :   0.00% ZERO
+                t3           1/1 : 100.00%
+                t4           2/1 : 100.00%
+                t5           1/1 : 100.00%
+                t6          75/1 : 100.00%
+                tp           7/1 : 100.00%
+                zero         0/1 :   0.00% ZERO
+            gpr 27/32 :  84.38%
+        rd 27/32 :  84.38%
+    c_li 29/34 :  85.29%
+    c_lui          
+        rd             
+            gpr            
+                a0           4/1 : 100.00%
+                a1          16/1 : 100.00%
+                a2          16/1 : 100.00%
+                a3          19/1 : 100.00%
+                a4          17/1 : 100.00%
+                a5          20/1 : 100.00%
+                a6           1/1 : 100.00%
+                a7           2/1 : 100.00%
+                gp           1/1 : 100.00%
+                ra           0/1 :   0.00% ZERO
+                s0          17/1 : 100.00%
+                s1          17/1 : 100.00%
+                s10          1/1 : 100.00%
+                s11          2/1 : 100.00%
+                s2           2/1 : 100.00%
+                s3           2/1 : 100.00%
+                s4           2/1 : 100.00%
+                s5           5/1 : 100.00%
+                s6           1/1 : 100.00%
+                s7           3/1 : 100.00%
+                s8           2/1 : 100.00%
+                s9           3/1 : 100.00%
+                sp           0/1 :   0.00% ZERO
+                t0           0/1 :   0.00% ZERO
+                t1           0/1 :   0.00% ZERO
+                t2           0/1 :   0.00% ZERO
+                t3           2/1 : 100.00%
+                t4           2/1 : 100.00%
+                t5           2/1 : 100.00%
+                t6           0/1 :   0.00% ZERO
+                tp           2/1 : 100.00%
+                zero         0/1 :   0.00% ZERO
+            gpr 25/32 :  78.12%
+        rd 25/32 :  78.12%
+    c_lui 25/32 :  78.12%
+    c_lw           
+        rdp            
+            gprp           
+                a0           1/1 : 100.00%
+                a1           0/1 :   0.00% ZERO
+                a2           0/1 :   0.00% ZERO
+                a3           2/1 : 100.00%
+                a4           1/1 : 100.00%
+                a5           2/1 : 100.00%
+                s0           2/1 : 100.00%
+                s1           2/1 : 100.00%
+            gprp 6/8 :  75.00%
+        rdp 6/8 :  75.00%
+        rs1p           
+            gprp           
+                a0           0/1 :   0.00% ZERO
+                a1           0/1 :   0.00% ZERO
+                a2           2/1 : 100.00%
+                a3           1/1 : 100.00%
+                a4           2/1 : 100.00%
+                a5           2/1 : 100.00%
+                s0           1/1 : 100.00%
+                s1           2/1 : 100.00%
+            gprp 6/8 :  75.00%
+        rs1p 6/8 :  75.00%
+    c_lw 12/16 :  75.00%
+    c_lwsp         
+        rd             
+            gpr            
+                a0           0/1 :   0.00% ZERO
+                a1           0/1 :   0.00% ZERO
+                a2           0/1 :   0.00% ZERO
+                a3           0/1 :   0.00% ZERO
+                a4           0/1 :   0.00% ZERO
+                a5           0/1 :   0.00% ZERO
+                a6           2/1 : 100.00%
+                a7           0/1 :   0.00% ZERO
+                gp           1/1 : 100.00%
+                ra           0/1 :   0.00% ZERO
+                s0           1/1 : 100.00%
+                s1           0/1 :   0.00% ZERO
+                s10          0/1 :   0.00% ZERO
+                s11          0/1 :   0.00% ZERO
+                s2           0/1 :   0.00% ZERO
+                s3           0/1 :   0.00% ZERO
+                s4           0/1 :   0.00% ZERO
+                s5           3/1 : 100.00%
+                s6           0/1 :   0.00% ZERO
+                s7           0/1 :   0.00% ZERO
+                s8           1/1 : 100.00%
+                s9           0/1 :   0.00% ZERO
+                sp           0/1 :   0.00% ZERO
+                t0           0/1 :   0.00% ZERO
+                t1           0/1 :   0.00% ZERO
+                t2           0/1 :   0.00% ZERO
+                t3           0/1 :   0.00% ZERO
+                t4           0/1 :   0.00% ZERO
+                t5           0/1 :   0.00% ZERO
+                t6           0/1 :   0.00% ZERO
+                tp           2/1 : 100.00%
+                zero         0/1 :   0.00% ZERO
+            gpr 6/32 :  18.75%
+        rd 6/32 :  18.75%
+    c_lwsp 6/32 :  18.75%
+    c_mv           
+        rd             
+            gpr            
+                a0           0/1 :   0.00% ZERO
+                a1           4/1 : 100.00%
+                a2           3/1 : 100.00%
+                a3           4/1 : 100.00%
+                a4           3/1 : 100.00%
+                a5           4/1 : 100.00%
+                a6           0/1 :   0.00% ZERO
+                a7           0/1 :   0.00% ZERO
+                gp           0/1 :   0.00% ZERO
+                ra           0/1 :   0.00% ZERO
+                s0           3/1 : 100.00%
+                s1           4/1 : 100.00%
+                s10          0/1 :   0.00% ZERO
+                s11          0/1 :   0.00% ZERO
+                s2           0/1 :   0.00% ZERO
+                s3           0/1 :   0.00% ZERO
+                s4           0/1 :   0.00% ZERO
+                s5           0/1 :   0.00% ZERO
+                s6           0/1 :   0.00% ZERO
+                s7           0/1 :   0.00% ZERO
+                s8           0/1 :   0.00% ZERO
+                s9           0/1 :   0.00% ZERO
+                sp           0/1 :   0.00% ZERO
+                t0           0/1 :   0.00% ZERO
+                t1           0/1 :   0.00% ZERO
+                t2           0/1 :   0.00% ZERO
+                t3           0/1 :   0.00% ZERO
+                t4           0/1 :   0.00% ZERO
+                t5           0/1 :   0.00% ZERO
+                t6           0/1 :   0.00% ZERO
+                tp           0/1 :   0.00% ZERO
+                zero         0/1 :   0.00% ZERO
+            gpr 7/32 :  21.88%
+        rd 7/32 :  21.88%
+        rs2            
+            gpr            
+                a0           0/1 :   0.00% ZERO
+                a1           4/1 : 100.00%
+                a2           4/1 : 100.00%
+                a3           3/1 : 100.00%
+                a4           4/1 : 100.00%
+                a5           3/1 : 100.00%
+                a6           0/1 :   0.00% ZERO
+                a7           0/1 :   0.00% ZERO
+                gp           0/1 :   0.00% ZERO
+                ra           0/1 :   0.00% ZERO
+                s0           4/1 : 100.00%
+                s1           3/1 : 100.00%
+                s10          0/1 :   0.00% ZERO
+                s11          0/1 :   0.00% ZERO
+                s2           0/1 :   0.00% ZERO
+                s3           0/1 :   0.00% ZERO
+                s4           0/1 :   0.00% ZERO
+                s5           0/1 :   0.00% ZERO
+                s6           0/1 :   0.00% ZERO
+                s7           0/1 :   0.00% ZERO
+                s8           0/1 :   0.00% ZERO
+                s9           0/1 :   0.00% ZERO
+                sp           0/1 :   0.00% ZERO
+                t0           0/1 :   0.00% ZERO
+                t1           0/1 :   0.00% ZERO
+                t2           0/1 :   0.00% ZERO
+                t3           0/1 :   0.00% ZERO
+                t4           0/1 :   0.00% ZERO
+                t5           0/1 :   0.00% ZERO
+                t6           0/1 :   0.00% ZERO
+                tp           0/1 :   0.00% ZERO
+                zero         0/1 :   0.00% ZERO
+            gpr 7/32 :  21.88%
+            sign           
+                neg          5/1 : 100.00%
+                pos         20/1 : 100.00%
+            sign 2/2 : 100.00%
+        rs2 9/34 :  26.47%
+    c_mv 16/66 :  24.24%
+    c_nop          
+    c_nop 0/1 :   0.00%
+    c_or           
+        rdp            
+            gprp           
+                a0           0/1 :   0.00% ZERO
+                a1           3/1 : 100.00%
+                a2           4/1 : 100.00%
+                a3           3/1 : 100.00%
+                a4           4/1 : 100.00%
+                a5           4/1 : 100.00%
+                s0           3/1 : 100.00%
+                s1           4/1 : 100.00%
+            gprp 7/8 :  87.50%
+        rdp 7/8 :  87.50%
+        rs2p           
+            gprp           
+                a0           0/1 :   0.00% ZERO
+                a1           3/1 : 100.00%
+                a2           4/1 : 100.00%
+                a3           3/1 : 100.00%
+                a4           4/1 : 100.00%
+                a5           4/1 : 100.00%
+                s0           3/1 : 100.00%
+                s1           4/1 : 100.00%
+            gprp 7/8 :  87.50%
+        rs2p 7/8 :  87.50%
+    c_or 14/16 :  87.50%
+    c_slli         
+        rd             
+            gpr            
+                a0           0/1 :   0.00% ZERO
+                a1           1/1 : 100.00%
+                a2           1/1 : 100.00%
+                a3           1/1 : 100.00%
+                a4           1/1 : 100.00%
+                a5           1/1 : 100.00%
+                a6           1/1 : 100.00%
+                a7           1/1 : 100.00%
+                gp           1/1 : 100.00%
+                ra           0/1 :   0.00% ZERO
+                s0           1/1 : 100.00%
+                s1           1/1 : 100.00%
+                s10          1/1 : 100.00%
+                s11          1/1 : 100.00%
+                s2           1/1 : 100.00%
+                s3           1/1 : 100.00%
+                s4           1/1 : 100.00%
+                s5           2/1 : 100.00%
+                s6           1/1 : 100.00%
+                s7           1/1 : 100.00%
+                s8           1/1 : 100.00%
+                s9           1/1 : 100.00%
+                sp           0/1 :   0.00% ZERO
+                t0           0/1 :   0.00% ZERO
+                t1           0/1 :   0.00% ZERO
+                t2           0/1 :   0.00% ZERO
+                t3           1/1 : 100.00%
+                t4           1/1 : 100.00%
+                t5           1/1 : 100.00%
+                t6           0/1 :   0.00% ZERO
+                tp           1/1 : 100.00%
+                zero         0/1 :   0.00% ZERO
+            gpr 24/32 :  75.00%
+        rd 24/32 :  75.00%
+    c_slli 24/32 :  75.00%
+    c_srai         
+        rdp            
+            gprp           
+                a0           0/1 :   0.00% ZERO
+                a1           4/1 : 100.00%
+                a2           4/1 : 100.00%
+                a3           4/1 : 100.00%
+                a4           3/1 : 100.00%
+                a5           3/1 : 100.00%
+                s0           3/1 : 100.00%
+                s1           4/1 : 100.00%
+            gprp 7/8 :  87.50%
+        rdp 7/8 :  87.50%
+    c_srai 7/8 :  87.50%
+    c_srli         
+        rdp            
+            gprp           
+                a0           0/1 :   0.00% ZERO
+                a1           3/1 : 100.00%
+                a2           3/1 : 100.00%
+                a3           3/1 : 100.00%
+                a4           4/1 : 100.00%
+                a5           4/1 : 100.00%
+                s0           4/1 : 100.00%
+                s1           4/1 : 100.00%
+            gprp 7/8 :  87.50%
+        rdp 7/8 :  87.50%
+    c_srli 7/8 :  87.50%
+    c_sub          
+        rdp            
+            gprp           
+                a0           0/1 :   0.00% ZERO
+                a1           4/1 : 100.00%
+                a2           5/1 : 100.00%
+                a3           3/1 : 100.00%
+                a4           4/1 : 100.00%
+                a5           4/1 : 100.00%
+                s0           5/1 : 100.00%
+                s1           5/1 : 100.00%
+            gprp 7/8 :  87.50%
+        rdp 7/8 :  87.50%
+        rs2p           
+            gprp           
+                a0           0/1 :   0.00% ZERO
+                a1           4/1 : 100.00%
+                a2           5/1 : 100.00%
+                a3           3/1 : 100.00%
+                a4           4/1 : 100.00%
+                a5           4/1 : 100.00%
+                s0           5/1 : 100.00%
+                s1           5/1 : 100.00%
+            gprp 7/8 :  87.50%
+        rs2p 7/8 :  87.50%
+    c_sub 14/16 :  87.50%
+    c_sw           
+        rs1p           
+            gprp           
+                a0           0/1 :   0.00% ZERO
+                a1           0/1 :   0.00% ZERO
+                a2           2/1 : 100.00%
+                a3           0/1 :   0.00% ZERO
+                a4           1/1 : 100.00%
+                a5           1/1 : 100.00%
+                s0           0/1 :   0.00% ZERO
+                s1           1/1 : 100.00%
+            gprp 4/8 :  50.00%
+        rs1p 4/8 :  50.00%
+        rs2p           
+            gprp           
+                a0           1/1 : 100.00%
+                a1           0/1 :   0.00% ZERO
+                a2           0/1 :   0.00% ZERO
+                a3           1/1 : 100.00%
+                a4           0/1 :   0.00% ZERO
+                a5           1/1 : 100.00%
+                s0           1/1 : 100.00%
+                s1           1/1 : 100.00%
+            gprp 5/8 :  62.50%
+        rs2p 5/8 :  62.50%
+    c_sw 9/16 :  56.25%
+    c_swsp         
+        rs2            
+            gpr            
+                a0          11/1 : 100.00%
+                a1          36/1 : 100.00%
+                a2          37/1 : 100.00%
+                a3          38/1 : 100.00%
+                a4          37/1 : 100.00%
+                a5          38/1 : 100.00%
+                a6           6/1 : 100.00%
+                a7           5/1 : 100.00%
+                gp           6/1 : 100.00%
+                ra           0/1 :   0.00% ZERO
+                s0          38/1 : 100.00%
+                s1          40/1 : 100.00%
+                s10          5/1 : 100.00%
+                s11          5/1 : 100.00%
+                s2           5/1 : 100.00%
+                s3           5/1 : 100.00%
+                s4           5/1 : 100.00%
+                s5          11/1 : 100.00%
+                s6           5/1 : 100.00%
+                s7           5/1 : 100.00%
+                s8           6/1 : 100.00%
+                s9           5/1 : 100.00%
+                sp           0/1 :   0.00% ZERO
+                t0           0/1 :   0.00% ZERO
+                t1           0/1 :   0.00% ZERO
+                t2           0/1 :   0.00% ZERO
+                t3           5/1 : 100.00%
+                t4           5/1 : 100.00%
+                t5           5/1 : 100.00%
+                t6           0/1 :   0.00% ZERO
+                tp           6/1 : 100.00%
+                zero         0/1 :   0.00% ZERO
+            gpr 25/32 :  78.12%
+        rs2 25/32 :  78.12%
+    c_swsp 25/32 :  78.12%
+    c_xor          
+        rdp            
+            gprp           
+                a0           0/1 :   0.00% ZERO
+                a1           4/1 : 100.00%
+                a2           3/1 : 100.00%
+                a3           4/1 : 100.00%
+                a4           3/1 : 100.00%
+                a5           4/1 : 100.00%
+                s0           4/1 : 100.00%
+                s1           3/1 : 100.00%
+            gprp 7/8 :  87.50%
+        rdp 7/8 :  87.50%
+        rs2p           
+            gprp           
+                a0           0/1 :   0.00% ZERO
+                a1           4/1 : 100.00%
+                a2           3/1 : 100.00%
+                a3           4/1 : 100.00%
+                a4           3/1 : 100.00%
+                a5           4/1 : 100.00%
+                s0           4/1 : 100.00%
+                s1           3/1 : 100.00%
+            gprp 7/8 :  87.50%
+        rs2p 7/8 :  87.50%
+    c_xor 14/16 :  87.50%
+Coverage points missed:
+  c_add/rd/gpr/a0
+  c_add/rd/gpr/ra
+  c_add/rd/gpr/sp
+  c_add/rd/gpr/t0
+  c_add/rd/gpr/t1
+  c_add/rd/gpr/t2
+  c_add/rd/gpr/t6
+  c_add/rd/gpr/zero
+  c_add/rs2/gpr/a0
+  c_add/rs2/gpr/ra
+  c_add/rs2/gpr/sp
+  c_add/rs2/gpr/t0
+  c_add/rs2/gpr/t1
+  c_add/rs2/gpr/t2
+  c_add/rs2/gpr/t6
+  c_add/rs2/gpr/zero
+  c_addi/rd/gpr/ra
+  c_addi/rd/gpr/t0
+  c_addi/rd/gpr/t1
+  c_addi/rd/gpr/t2
+  c_addi/rd/gpr/t6
+  c_addi/rd/gpr/zero
+  c_and/rdp/gprp/a0
+  c_and/rs2p/gprp/a0
+  c_andi/rdp/gprp/a0
+  c_beqz/offset/sign/neg
+  c_beqz/offset/sign/zero
+  c_beqz/rs1p/gprp/a0
+  c_beqz/rs1p/gprp/a3
+  c_beqz/rs1p/gprp/a4
+  c_bnez/offset/sign/neg
+  c_bnez/offset/sign/zero
+  c_bnez/rs1p/gprp/a0
+  c_bnez/rs1p/gprp/a1
+  c_bnez/rs1p/gprp/a2
+  c_ebreak
+  c_j/offset/sign/neg
+  c_j/offset/sign/zero
+  c_jal/offset/sign/neg
+  c_jal/offset/sign/zero
+  c_jalr/rs1/gpr/a0
+  c_jalr/rs1/gpr/a1
+  c_jalr/rs1/gpr/a7
+  c_jalr/rs1/gpr/gp
+  c_jalr/rs1/gpr/ra
+  c_jalr/rs1/gpr/s0
+  c_jalr/rs1/gpr/s1
+  c_jalr/rs1/gpr/s10
+  c_jalr/rs1/gpr/s11
+  c_jalr/rs1/gpr/s2
+  c_jalr/rs1/gpr/s3
+  c_jalr/rs1/gpr/s4
+  c_jalr/rs1/gpr/s5
+  c_jalr/rs1/gpr/s6
+  c_jalr/rs1/gpr/s7
+  c_jalr/rs1/gpr/s8
+  c_jalr/rs1/gpr/s9
+  c_jalr/rs1/gpr/sp
+  c_jalr/rs1/gpr/t0
+  c_jalr/rs1/gpr/t1
+  c_jalr/rs1/gpr/t2
+  c_jalr/rs1/gpr/t3
+  c_jalr/rs1/gpr/t4
+  c_jalr/rs1/gpr/t5
+  c_jalr/rs1/gpr/t6
+  c_jalr/rs1/gpr/tp
+  c_jalr/rs1/gpr/zero
+  c_jalr/rs1/sign/pos
+  c_jr/rs1/gpr/a0
+  c_jr/rs1/gpr/a2
+  c_jr/rs1/gpr/a3
+  c_jr/rs1/gpr/a4
+  c_jr/rs1/gpr/a5
+  c_jr/rs1/gpr/a6
+  c_jr/rs1/gpr/a7
+  c_jr/rs1/gpr/ra
+  c_jr/rs1/gpr/s10
+  c_jr/rs1/gpr/s11
+  c_jr/rs1/gpr/s2
+  c_jr/rs1/gpr/s3
+  c_jr/rs1/gpr/s4
+  c_jr/rs1/gpr/s5
+  c_jr/rs1/gpr/s6
+  c_jr/rs1/gpr/s7
+  c_jr/rs1/gpr/s8
+  c_jr/rs1/gpr/s9
+  c_jr/rs1/gpr/sp
+  c_jr/rs1/gpr/t0
+  c_jr/rs1/gpr/t1
+  c_jr/rs1/gpr/t2
+  c_jr/rs1/gpr/t3
+  c_jr/rs1/gpr/t4
+  c_jr/rs1/gpr/t5
+  c_jr/rs1/gpr/t6
+  c_jr/rs1/gpr/zero
+  c_li/rd/gpr/ra
+  c_li/rd/gpr/t0
+  c_li/rd/gpr/t1
+  c_li/rd/gpr/t2
+  c_li/rd/gpr/zero
+  c_lui/rd/gpr/ra
+  c_lui/rd/gpr/sp
+  c_lui/rd/gpr/t0
+  c_lui/rd/gpr/t1
+  c_lui/rd/gpr/t2
+  c_lui/rd/gpr/t6
+  c_lui/rd/gpr/zero
+  c_lw/rdp/gprp/a1
+  c_lw/rdp/gprp/a2
+  c_lw/rs1p/gprp/a0
+  c_lw/rs1p/gprp/a1
+  c_lwsp/rd/gpr/a0
+  c_lwsp/rd/gpr/a1
+  c_lwsp/rd/gpr/a2
+  c_lwsp/rd/gpr/a3
+  c_lwsp/rd/gpr/a4
+  c_lwsp/rd/gpr/a5
+  c_lwsp/rd/gpr/a7
+  c_lwsp/rd/gpr/ra
+  c_lwsp/rd/gpr/s1
+  c_lwsp/rd/gpr/s10
+  c_lwsp/rd/gpr/s11
+  c_lwsp/rd/gpr/s2
+  c_lwsp/rd/gpr/s3
+  c_lwsp/rd/gpr/s4
+  c_lwsp/rd/gpr/s6
+  c_lwsp/rd/gpr/s7
+  c_lwsp/rd/gpr/s9
+  c_lwsp/rd/gpr/sp
+  c_lwsp/rd/gpr/t0
+  c_lwsp/rd/gpr/t1
+  c_lwsp/rd/gpr/t2
+  c_lwsp/rd/gpr/t3
+  c_lwsp/rd/gpr/t4
+  c_lwsp/rd/gpr/t5
+  c_lwsp/rd/gpr/t6
+  c_lwsp/rd/gpr/zero
+  c_mv/rd/gpr/a0
+  c_mv/rd/gpr/a6
+  c_mv/rd/gpr/a7
+  c_mv/rd/gpr/gp
+  c_mv/rd/gpr/ra
+  c_mv/rd/gpr/s10
+  c_mv/rd/gpr/s11
+  c_mv/rd/gpr/s2
+  c_mv/rd/gpr/s3
+  c_mv/rd/gpr/s4
+  c_mv/rd/gpr/s5
+  c_mv/rd/gpr/s6
+  c_mv/rd/gpr/s7
+  c_mv/rd/gpr/s8
+  c_mv/rd/gpr/s9
+  c_mv/rd/gpr/sp
+  c_mv/rd/gpr/t0
+  c_mv/rd/gpr/t1
+  c_mv/rd/gpr/t2
+  c_mv/rd/gpr/t3
+  c_mv/rd/gpr/t4
+  c_mv/rd/gpr/t5
+  c_mv/rd/gpr/t6
+  c_mv/rd/gpr/tp
+  c_mv/rd/gpr/zero
+  c_mv/rs2/gpr/a0
+  c_mv/rs2/gpr/a6
+  c_mv/rs2/gpr/a7
+  c_mv/rs2/gpr/gp
+  c_mv/rs2/gpr/ra
+  c_mv/rs2/gpr/s10
+  c_mv/rs2/gpr/s11
+  c_mv/rs2/gpr/s2
+  c_mv/rs2/gpr/s3
+  c_mv/rs2/gpr/s4
+  c_mv/rs2/gpr/s5
+  c_mv/rs2/gpr/s6
+  c_mv/rs2/gpr/s7
+  c_mv/rs2/gpr/s8
+  c_mv/rs2/gpr/s9
+  c_mv/rs2/gpr/sp
+  c_mv/rs2/gpr/t0
+  c_mv/rs2/gpr/t1
+  c_mv/rs2/gpr/t2
+  c_mv/rs2/gpr/t3
+  c_mv/rs2/gpr/t4
+  c_mv/rs2/gpr/t5
+  c_mv/rs2/gpr/t6
+  c_mv/rs2/gpr/tp
+  c_mv/rs2/gpr/zero
+  c_nop
+  c_or/rdp/gprp/a0
+  c_or/rs2p/gprp/a0
+  c_slli/rd/gpr/a0
+  c_slli/rd/gpr/ra
+  c_slli/rd/gpr/sp
+  c_slli/rd/gpr/t0
+  c_slli/rd/gpr/t1
+  c_slli/rd/gpr/t2
+  c_slli/rd/gpr/t6
+  c_slli/rd/gpr/zero
+  c_srai/rdp/gprp/a0
+  c_srli/rdp/gprp/a0
+  c_sub/rdp/gprp/a0
+  c_sub/rs2p/gprp/a0
+  c_sw/rs1p/gprp/a0
+  c_sw/rs1p/gprp/a1
+  c_sw/rs1p/gprp/a3
+  c_sw/rs1p/gprp/s0
+  c_sw/rs2p/gprp/a1
+  c_sw/rs2p/gprp/a2
+  c_sw/rs2p/gprp/a4
+  c_swsp/rs2/gpr/ra
+  c_swsp/rs2/gpr/sp
+  c_swsp/rs2/gpr/t0
+  c_swsp/rs2/gpr/t1
+  c_swsp/rs2/gpr/t2
+  c_swsp/rs2/gpr/t6
+  c_swsp/rs2/gpr/zero
+  c_xor/rdp/gprp/a0
+  c_xor/rs2p/gprp/a0
+Coverage points missed: 218/546
+
+Info TOTAL INSTRUCTION COVERAGE : 
+Info   Threshold             : 1
+Info   Instructions counted  : 0
+Info   Unique instructions   : 23/25 :  92.00%
+Info   Coverage points hit   : 328/546 :  60.07%

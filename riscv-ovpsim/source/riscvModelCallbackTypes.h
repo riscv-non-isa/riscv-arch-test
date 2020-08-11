@@ -150,6 +150,10 @@ typedef struct riscvExtMorphStateS {
 #define EXT_OFFSET(_R)  VMI_CPU_OFFSET(vmiosObjectP, _R)
 #define EXT_REG(_R)     VMI_CPU_REG(vmiosObjectP, _R)
 
+// morph-time macros to calculate offset to the high part of a 64-bit register
+#define EXT_OFFSETH(_R) VMI_CPU_OFFSET_DELTA(vmiosObjectP, _R, 4)
+#define EXT_REGH(_R)    VMI_CPU_REG_CONST_DELTA(vmiosObjectP, _R, 4)
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // CSR DEFINITIONS
@@ -209,9 +213,8 @@ DEFINE_CS(extCSRAttrs);
         readCB        : _RCB,                       \
         readWriteCB   : _RWCB,                      \
         writeCB       : _WCB,                       \
-        reg32         : XCSR_REG32_MT(_ID),         \
+        reg           : XCSR_REG_MT(_ID),           \
         writeMaskC32  : -1,                         \
-        reg64         : XCSR_REG64_MT(_ID),         \
         writeMaskC32  : -1                          \
     }                                               \
 }
@@ -235,9 +238,8 @@ DEFINE_CS(extCSRAttrs);
         readCB        : _RCB,                       \
         readWriteCB   : _RWCB,                      \
         writeCB       : _WCB,                       \
-        reg32         : XCSR_REG32_MT(_ID),         \
+        reg           : XCSR_REG_MT(_ID),           \
         writeMaskC32  : WM32_##_ID,                 \
-        reg64         : XCSR_REG64_MT(_ID),         \
         writeMaskC64  : WM64_##_ID                  \
     }                                               \
 }
@@ -261,10 +263,8 @@ DEFINE_CS(extCSRAttrs);
         readCB        : _RCB,                       \
         readWriteCB   : _RWCB,                      \
         writeCB       : _WCB,                       \
-        reg32         : XCSR_REG32_MT(_ID),         \
-        writeMaskV32  : XCSR_MASK32_MT(_ID),        \
-        reg64         : XCSR_REG64_MT(_ID),         \
-        writeMaskV64  : XCSR_MASK64_MT(_ID)         \
+        reg           : XCSR_REG_MT(_ID),           \
+        writeMaskV    : XCSR_MASK_MT(_ID)           \
     }                                               \
 }
 
@@ -289,6 +289,29 @@ DEFINE_CS(extCSRAttrs);
         writeCB       : _WCB,                       \
         writeMaskC32  : -1,                         \
         writeMaskC64  : -1                          \
+    }                                               \
+}
+
+//
+// Implemented using vmiReg and optional callbacks, no mask, high half
+//
+#define XCSR_ATTR_TH_( \
+    _ID, _ID2, _NUM, _ARCH, _EXT, _ENDB,_ENDRM,_NOTR,_TVMT, _DESC, _RCB, _RWCB, _WCB \
+) [XCSR_ID(_ID)] = { \
+    .extension = _EXT,                              \
+    .baseAttrs = {                                  \
+        name          : #_ID,                       \
+        desc          : _DESC,                      \
+        csrNum        : _NUM,                       \
+        arch          : _ARCH,                      \
+        wEndBlock     : _ENDB,                      \
+        wEndRM        : _ENDRM,                     \
+        noTraceChange : _NOTR,                      \
+        TVMT          : _TVMT,                      \
+        readCB        : _RCB,                       \
+        readWriteCB   : _RWCB,                      \
+        writeCB       : _WCB,                       \
+        reg           : XCSR_REG64H_MT(_ID2),       \
     }                                               \
 }
 
@@ -317,6 +340,10 @@ DEFINE_CS(extCSRAttrs);
         (_OBJ)->csr._RNAME.u32.fields._FIELD :          \
         (_OBJ)->csr._RNAME.u64.fields._FIELD)           \
 
+// set 64-bit CSR value
+#define WR_XCSR64(_OBJ, _RNAME, _VALUE) \
+    (_OBJ)->csr._RNAME.u64.bits = _VALUE;               \
+
 // set CSR field using current XLEN
 #define WR_XCSR_FIELD(_OBJ, _RNAME, _FIELD, _VALUE) \
     if(RISCV_XLEN_IS_32((_OBJ)->riscv)) {               \
@@ -331,6 +358,28 @@ DEFINE_CS(extCSRAttrs);
         (_OBJ)->csr._RNAME.u64.fields._FIELD = _VALUE;  \
     }
 
+// set CSR mask to the given value
+#define SET_XCSR_MASK_V(_OBJ, _RNAME, _VALUE) \
+    if(RISCV_XLEN_IS_32((_OBJ)->riscv)) {               \
+        (_OBJ)->csrMask._RNAME.u32.bits = _VALUE;       \
+    } else {                                            \
+        (_OBJ)->csrMask._RNAME.u64.bits = _VALUE;       \
+    }
+
+// get CSR mask
+#define RD_XCSR_MASK(_OBJ, _RNAME) \
+    (_OBJ)->csrMask._RNAME.u64.bits
+
+// get CSR mask field using current XLEN
+#define RD_XCSR_MASK_FIELD(_OBJ, _RNAME, _FIELD) \
+    (RISCV_XLEN_IS_32((_OBJ)->riscv) ?                  \
+        (_OBJ)->csrMask._RNAME.u32.fields._FIELD :      \
+        (_OBJ)->csrMask._RNAME.u64.fields._FIELD)
+
+// mask CSR using variable mask
+#define MASK_XCSR(_OBJ, _RNAME) \
+    (_OBJ)->csr._RNAME.u64.bits &= (_OBJ)->csrMask._RNAME.u64.bits
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // MORPH-TIME CSR ACCESS MACROS
@@ -340,13 +389,11 @@ DEFINE_CS(extCSRAttrs);
 // Morph-time macros to access a CSR register by id
 //
 #define XCSR_REG_MT(_ID)    EXT_REG(csr._ID)
-#define XCSR_REG32_MT(_ID)  EXT_REG(csr._ID.u32)
-#define XCSR_REG64_MT(_ID)  EXT_REG(csr._ID.u64)
+#define XCSR_REG64H_MT(_ID) EXT_REGH(csr._ID)
 
 //
 // Morph-time macros to access a CSR register mask by id
 //
-#define XCSR_MASK32_MT(_ID) EXT_REG(csrMask._ID.u32)
-#define XCSR_MASK64_MT(_ID) EXT_REG(csrMask._ID.u64)
+#define XCSR_MASK_MT(_ID)   EXT_REG(csrMask._ID.u64)
 
 

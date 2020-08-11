@@ -293,6 +293,13 @@ void riscvDoc(riscvP rootProcessor) {
                 "CSR Extensions field, replacing any value defined in the base "
                 "variant."
             );
+
+            vmidocAddText(
+                AvailExt,
+                "Note that the Hypervisor extension (H) is currently under "
+                "development and not yet fully supported: it should not be "
+                "enabled until this work is complete."
+            );
         }
     }
 
@@ -1384,7 +1391,15 @@ void riscvDoc(riscvP rootProcessor) {
                 Version,
                 "- instructions vfrsqrte7.v and vfrece7.v added, with "
                 "candidate implementations (precise behavior is not yet "
-                "defined)."
+                "defined);"
+            );
+            vmidocAddText(
+                Version,
+                "- instruction vrgatherei16.vv added;"
+            );
+            vmidocAddText(
+                Version,
+                "- CSR vtype format changed to make vlmul bits contiguous."
             );
         }
     }
@@ -2088,7 +2103,7 @@ void riscvDoc(riscvP rootProcessor) {
             Limitations,
             "Caches and write buffers are not modeled in any way. All loads, "
             "fetches and stores complete immediately and in order, and are "
-            "fully synchronous. Data barrier instructions (e.g. fence)  are "
+            "fully synchronous. Data barrier instructions (e.g. fence) are "
             "treated as NOPs, with the exception of any Illegal Instruction "
             "behavior, which is modeled."
         );
@@ -2099,19 +2114,10 @@ void riscvDoc(riscvP rootProcessor) {
             "assumed to complete in a single cycle."
         );
 
-        // floating point configuration
-        if(cfg->arch&(ISA_DF)) {
-            vmidocAddText(
-                Limitations,
-                "The processor fully supports the architecturally-specified "
-                "floating-point instructions."
-            );
-        }
-
         vmidocAddText(
             Limitations,
-            "Hardware Performance Monitor and Debug registers are not "
-            "implemented and hardwired to zero."
+            "Hardware Performance Monitor registers are not implemented and "
+            "hardwired to zero."
         );
 
         if(cfg->arch&ISA_S) {
@@ -2148,39 +2154,48 @@ void riscvDoc(riscvP rootProcessor) {
             "using tests generated specifically for this model and also "
             "reference tests from https://github.com/riscv/riscv-tests."
         );
-        vmidocAddText(Verification,
+        vmidocAddText(
+            Verification,
             "Also reference tests have been used from various sources including:"
         );
-        vmidocAddText(Verification,
+        vmidocAddText(
+            Verification,
             "https://github.com/riscv/riscv-tests"
         );
-        vmidocAddText(Verification,
+        vmidocAddText(
+           Verification,
             "https://github.com/ucb-bar/riscv-torture"
         );
-        vmidocAddText(Verification,
-            "The Imperas OVPsim RISC-V models are used in the RISC-V Foundations "
-            "Compliance Framework as a functional Golden Reference:"
+        vmidocAddText(
+            Verification,
+            "The Imperas OVPsim RISC-V models are used in the RISC-V "
+            "Foundation Compliance Framework as a functional Golden Reference:"
         );
-        vmidocAddText(Verification,
+        vmidocAddText(
+            Verification,
             "https://github.com/riscv/riscv-compliance"
         );
-        vmidocAddText(Verification,
-            "where the simulated model is used to provide the reference signatures "
-            "for compliance testing. "
-            "The Imperas OVPsim RISC-V models are used as reference in both open "
-            "source and commercial instruction stream test generators for hardware "
-            "design verification, for example:"
+        vmidocAddText(
+            Verification,
+            "where the simulated model is used to provide the reference "
+            "signatures for compliance testing.  The Imperas OVPsim RISC-V "
+            "models are used as reference in both open source and commercial "
+            "instruction stream test generators for hardware design "
+            "verification, for example:"
         );
-        vmidocAddText(Verification,
-            "http://valtrix.in/sting/ from Valtrix"
+        vmidocAddText(
+            Verification,
+            "http://valtrix.in/sting from Valtrix"
         );
-        vmidocAddText(Verification,
+        vmidocAddText(
+            Verification,
             "https://github.com/google/riscv-dv from Google"
         );
-        vmidocAddText(Verification,
-            "The Imperas OVPsim RISC-V models are also used by commercial and open "
-            "source RISC-V Core RTL developers as a reference to ensure correct "
-            "functionality of their IP."
+        vmidocAddText(
+            Verification,
+            "The Imperas OVPsim RISC-V models are also used by commercial and "
+            "open source RISC-V Core RTL developers as a reference to ensure "
+            "correct functionality of their IP."
         );
     }
 
@@ -2243,11 +2258,6 @@ void riscvDoc(riscvP rootProcessor) {
 
         // add custom references if required
         addOptDocList(References, cfg->specificDocs);
-
-        // add extension-specific references if required
-        for(extCB=riscv->extCBs; extCB; extCB=extCB->next) {
-            addOptDocList(References, extCB->specificDocs);
-        }
     }
 
     vmidocProcessor((vmiProcessorP)rootProcessor, Root);

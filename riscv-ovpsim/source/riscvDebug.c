@@ -54,7 +54,7 @@ typedef enum riscvRegGroupIdE {
     RV_RG_V,            // vector register group
     RV_RG_U_CSR,        // User mode CSR register group
     RV_RG_S_CSR,        // Supervisor mode CSR register group
-    RV_RG_R_CSR,        // (reserved)
+    RV_RG_H_CSR,        // Hypervisor mode CSR register group
     RV_RG_M_CSR,        // Machine mode CSR register group
     RV_RG_INTEGRATION,  // integration support registers
     RV_RG_LAST          // KEEP LAST: for sizing
@@ -69,7 +69,7 @@ static const vmiRegGroup groups[RV_RG_LAST+1] = {
     [RV_RG_V]           = {name: "Vector"},
     [RV_RG_U_CSR]       = {name: "User_Control_and_Status"},
     [RV_RG_S_CSR]       = {name: "Supervisor_Control_and_Status"},
-    [RV_RG_R_CSR]       = {name: "Reserved"},
+    [RV_RG_H_CSR]       = {name: "Hypervisor_Control_and_Status"},
     [RV_RG_M_CSR]       = {name: "Machine_Control_and_Status"},
     [RV_RG_INTEGRATION] = {name: "Integration_support"},
 };
@@ -452,7 +452,7 @@ static Bool isCSRGroup(vmiRegGroupCP group) {
     return (
         (group==RV_GROUP(U_CSR)) ||
         (group==RV_GROUP(S_CSR)) ||
-        (group==RV_GROUP(R_CSR)) ||
+        (group==RV_GROUP(H_CSR)) ||
         (group==RV_GROUP(M_CSR))
     );
 }

@@ -139,6 +139,9 @@ typedef struct riscvParamValuesS {
     VMI_BOOL_PARAM(intthresh_undefined);
     VMI_BOOL_PARAM(mclicbase_undefined);
 
+    // Hypervisor configuration
+    VMI_UNS32_PARAM(GEILEN);
+
 } riscvParamValues;
 
 //

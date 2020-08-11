@@ -78,7 +78,7 @@ static void initLeafModelCBs(riscvP riscv) {
     riscv->cb.writeBaseCSR       = riscvWriteBaseCSR;
 
     // from riscvExceptions.h
-    riscv->cb.testInterrupt      = riscvTestInterrupt;
+    riscv->cb.testInterrupt      = riscvUpdatePending;
     riscv->cb.illegalInstruction = riscvIllegalInstruction;
     riscv->cb.takeException      = riscvTakeAsynchonousException;
 
@@ -300,6 +300,7 @@ static void applyParamsSMP(riscvP riscv, riscvParamValuesP params) {
     cfg->tvt_undefined       = params->tvt_undefined;
     cfg->intthresh_undefined = params->intthresh_undefined;
     cfg->mclicbase_undefined = params->mclicbase_undefined;
+    cfg->GEILEN              = params->GEILEN;
 
     // handle SLEN (always the same as VLEN from version 1.0)
     if(!riscvVFSupport(riscv, RVVF_SLEN_IS_VLEN)) {
@@ -319,7 +320,11 @@ static void applyParamsSMP(riscvP riscv, riscvParamValuesP params) {
     }
 
     // initialise vector-version-dependent vtype format
-    riscv->vtypeFormat = RV_VTF_0_9;
+    if(riscvVFSupport(riscv, RVVF_VTYPE_10)) {
+        riscv->vtypeFormat = RV_VTF_1_0;
+    } else {
+        riscv->vtypeFormat = RV_VTF_0_9;
+    }
 
     // handle bit manipulation subset parameters
     cfg->bitmanip_absent = 0;
@@ -388,12 +393,16 @@ static void applyParamsSMP(riscvP riscv, riscvParamValuesP params) {
     misa_Extensions      |= riscvParseExtensions(params->add_Extensions);
     misa_Extensions_mask |= riscvParseExtensions(params->add_Extensions_mask);
 
+    // if the H extension is implemented then S and U must also be present
+    if(misa_Extensions & ISA_H) {
+        misa_Extensions |= (ISA_S|ISA_U);
+    }
+
     // exactly one of I and E base ISA features must be present and initially
     // enabled; if the E bit is initially enabled, the I bit must be read-only
     // and zero
     if(misa_Extensions & ISA_E) {
-        misa_Extensions      &= ~ISA_I;
-        misa_Extensions_mask &= ~ISA_I;
+        misa_Extensions &= ~ISA_I;
     } else {
         misa_Extensions |= ISA_I;
     }
@@ -482,9 +491,6 @@ VMI_CONSTRUCTOR_FN(riscvConstructor) {
 
         // initialize enhanced model support callbacks that apply at leaf levels
         initLeafModelCBs(riscv);
-
-        // set initial mode
-        riscvSetMode(riscv, RISCV_MODE_MACHINE);
 
         // indicate no LR/SC is active initially
         riscv->exclusiveTag = RISCV_NO_TAG;
@@ -635,13 +641,14 @@ static VMI_SMP_ITER_FN(endRestore) {
 }
 
 //
-// Refresh mode on a restore (ensuring that apparent mode always changes)
+// Refresh mode on a restore (ensuring that apparent dictionary mode always
+// changes)
 //
 static void refreshModeRestore(riscvP riscv) {
 
-    riscvDMode mode = getCurrentMode(riscv);
+    riscvMode mode = getCurrentMode5(riscv);
 
-    riscv->mode = ~mode;
+    riscv->mode = -1;
 
     riscvSetMode(riscv, mode);
 }

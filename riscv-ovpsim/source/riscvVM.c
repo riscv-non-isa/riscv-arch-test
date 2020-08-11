@@ -85,14 +85,15 @@ typedef struct tlbEntryS {
     riscvSimASID simASID;
 
     // entry attributes
-    Uns8  isMapped :  4;    // TLB entry mapped (per mode)
+    Uns8  isMapped :  4;    // TLB entry mapped (per base mode)
     Uns32 priv     :  3;    // access privilege
     Uns32 U        :  1;    // user accessible?
     Uns32 G        :  1;    // global bit
     Uns32 A        :  1;    // accessed bit (read or written)
     Uns32 D        :  1;    // dirty bit (written)
     Bool  artifact :  1;    // entry created by artifact lookup (do not match)
-    Uns32 _u1      : 20;    // spare bits
+    Bool  V        :  1;    // is TLB entry virtual?
+    Uns32 _u1      : 19;    // spare bits
 
     // range LUT entry (for fast lookup by address)
     union {
@@ -245,7 +246,7 @@ inline static Uns32 getEntryASIDMask(tlbEntryP entry, riscvMode mode) {
 
     // include U field only if this entry is user-accessible and in Supervisor
     // mode
-    if(entry->U && (mode==RISCV_MODE_SUPERVISOR)) {
+    if(entry->U && (mode==RISCV_MODE_S)) {
         ASIDMask.f.SUM = 1;
     }
 
@@ -291,8 +292,11 @@ inline static riscvMode getMPP(riscvP riscv) {
 //
 // Get effective value of SATP.ASID
 //
-static Uns32 getActiveASID(riscvP riscv) {
-    return RD_CSR_FIELD(riscv, satp, ASID);
+static Uns32 getActiveASID(riscvP riscv, riscvMode mode) {
+
+    Bool V = modeIsVirtual(mode);
+
+    return RD_CSR_FIELD_V(riscv, satp, V, ASID);
 }
 
 //
@@ -315,9 +319,12 @@ inline static Bool matchASID(Uns32 ASID, tlbEntryP entry) {
 // affect whether entries are used
 //
 static riscvSimASID getSimASID(riscvP riscv) {
+
+    riscvMode mode = getCurrentMode5(riscv);
+
     return (riscvSimASID){
         f: {
-            ASID : getActiveASID(riscv),
+            ASID : getActiveASID(riscv, mode),
             MXR  : getMXR(riscv),
             SUM  : getSUM(riscv)
         }
@@ -334,8 +341,11 @@ inline static Uns64 getPTETableAddress(Uns64 PPN) {
 //
 // Get root page table address
 //
-static Uns64 getRootTableAddress(riscvP riscv) {
-    return getPTETableAddress(RD_CSR_FIELD(riscv, satp, PPN));
+static Uns64 getRootTableAddress(riscvP riscv, riscvMode mode) {
+
+    Bool V = modeIsVirtual(mode);
+
+    return getPTETableAddress(RD_CSR_FIELD_V(riscv, satp, V, PPN));
 }
 
 //
@@ -356,7 +366,7 @@ static memPriv checkEntryPermission(
         priv |= MEM_PRIV_R;
     }
 
-    if(mode==RISCV_MODE_USER) {
+    if(mode==RISCV_MODE_U) {
 
         // no access in user mode unless U=1
         if(!entry->U) {
@@ -387,17 +397,46 @@ static Bool validVA(Int64 VPN, Int32 VPNextend) {
 }
 
 //
+// Return the physical memory domain to use for the passed code/data access
+//
+static memDomainP getPhysDomainCorD(riscvP riscv, riscvMode mode, Bool isCode) {
+    return riscv->physDomains[getBaseMode(mode)][isCode];
+}
+
+//
+// Return the PMA memory domain to use for the passed code/data access
+//
+static memDomainP getPMADomainCorD(riscvP riscv, riscvMode mode, Bool isCode) {
+    return riscv->pmaDomains[getBaseMode(mode)][isCode];
+}
+
+//
+// Return the PMP memory domain to use for the passed code/data access
+//
+static memDomainP getPMPDomainCorD(riscvP riscv, riscvMode mode, Bool isCode) {
+    return riscv->pmpDomains[getBaseMode(mode)][isCode];
+}
+
+//
+// Return the virtual memory domain to use for the passed code/data access
+//
+static memDomainP getVirtDomainCorD(riscvP riscv, riscvMode mode, Bool isCode) {
+    riscvVMMode vmMode = modeToVMMode(mode);
+    return (vmMode==RISCV_VMMODE_LAST) ? 0 : riscv->vmDomains[vmMode][isCode];
+}
+
+//
 // Return the PMP memory domain to use for the passed memory access type
 //
 static memDomainP getPMPDomainPriv(riscvP riscv, riscvMode mode, memPriv priv) {
-    return riscv->pmpDomains[mode][isFetch(priv)];
+    return getPMPDomainCorD(riscv, mode, isFetch(priv));
 }
 
 //
 // Return the memory domain to use for page table walk accesses
 //
 inline static memDomainP getPTWDomain(riscvP riscv) {
-    return getPMPDomainPriv(riscv, RISCV_MODE_SUPERVISOR, MEM_PRIV_RW);
+    return getPMPDomainPriv(riscv, RISCV_MODE_S, MEM_PRIV_RW);
 }
 
 //
@@ -411,7 +450,7 @@ static Uns64 readPageTableEntry(
     Uns32          entryBytes,
     memAccessAttrs attrs
 ) {
-    memEndian endian = riscvGetDataEndian(riscv, RISCV_MODE_SUPERVISOR);
+    memEndian endian = riscvGetDataEndian(riscv, RISCV_MODE_S);
     Uns64     result;
 
     // enter PTW context
@@ -442,7 +481,7 @@ static void writePageTableEntry(
     memAccessAttrs attrs,
     Uns64          value
 ) {
-    memEndian endian = riscvGetDataEndian(riscv, RISCV_MODE_SUPERVISOR);
+    memEndian endian = riscvGetDataEndian(riscv, RISCV_MODE_S);
 
     // enter PTW context
     riscv->PTWActive  = True;
@@ -703,7 +742,7 @@ static riscvException tlbLookupSv32(
 
     // do table walk to find ultimate PTE
     for(
-        i=1, a=getRootTableAddress(riscv);
+        i=1, a=getRootTableAddress(riscv, mode);
         i>=0;
         i--, a=getPTETableAddress(PTE.fields.PPN)
     ) {
@@ -757,6 +796,7 @@ static riscvException tlbLookupSv32(
     entry->G    = getG(riscv, PTE.fields.G);
     entry->A    = PTE.fields.A;
     entry->D    = PTE.fields.D;
+    entry->V    = modeIsVirtual(mode);
 
     // return with page-fault exception if permissions are invalid
     if(!checkEntryPermission(riscv, mode, entry, requiredPriv)) {
@@ -895,7 +935,7 @@ static riscvException tlbLookupSv39(
 
     // do table walk to find ultimate PTE
     for(
-        i=2, a=getRootTableAddress(riscv);
+        i=2, a=getRootTableAddress(riscv, mode);
         i>=0;
         i--, a=getPTETableAddress(PTE.fields.PPN)
     ) {
@@ -949,6 +989,7 @@ static riscvException tlbLookupSv39(
     entry->G    = getG(riscv, PTE.fields.G);
     entry->A    = PTE.fields.A;
     entry->D    = PTE.fields.D;
+    entry->V    = modeIsVirtual(mode);
 
     // return with page-fault exception if permissions are invalid
     if(!checkEntryPermission(riscv, mode, entry, requiredPriv)) {
@@ -1087,7 +1128,7 @@ static riscvException tlbLookupSv48(
 
     // do table walk to find ultimate PTE
     for(
-        i=3, a=getRootTableAddress(riscv);
+        i=3, a=getRootTableAddress(riscv, mode);
         i>=0;
         i--, a=getPTETableAddress(PTE.fields.PPN)
     ) {
@@ -1141,6 +1182,7 @@ static riscvException tlbLookupSv48(
     entry->G    = getG(riscv, PTE.fields.G);
     entry->A    = PTE.fields.A;
     entry->D    = PTE.fields.D;
+    entry->V    = modeIsVirtual(mode);
 
     // return with page-fault exception if permissions are invalid
     if(!checkEntryPermission(riscv, mode, entry, requiredPriv)) {
@@ -1193,10 +1235,10 @@ static riscvException tlbLookupSv48(
 ////////////////////////////////////////////////////////////////////////////////
 
 //
-// Return mask for current mode
+// Return mask for current base mode
 //
 inline static Uns32 getModeMask(riscvMode mode) {
-    return 1<<mode;
+    return 1<<getBaseMode(mode);
 }
 
 //
@@ -1212,8 +1254,8 @@ static void deleteTLBEntryMappingsMode(
     // action is only needed if the TLB entry is mapped in this mode
     if(entry->isMapped & modeMask) {
 
-        memDomainP dataDomain = riscv->vmDomains[mode][0];
-        memDomainP codeDomain = riscv->vmDomains[mode][1];
+        memDomainP dataDomain = getVirtDomainCorD(riscv, mode, False);
+        memDomainP codeDomain = getVirtDomainCorD(riscv, mode, True);
         Uns64      lowVA      = getEntryLowVA(entry);
         Uns64      highVA     = getEntryHighVA(entry);
         Uns32      fullASID   = getEntrySimASID(entry);
@@ -1233,6 +1275,17 @@ static void deleteTLBEntryMappingsMode(
 }
 
 //
+// Is the mode a virtually-mapped mode with the same virtualization satate as
+// TLB entry?
+//
+static Bool matchTLBEntryVirtual(tlbEntryP entry, riscvMode mode) {
+    return (
+        (getBaseMode(mode)<=RISCV_MODE_S) &&
+        (entry->V==modeIsVirtual(mode))
+    );
+}
+
+//
 // Unmap a TLB entry
 //
 static void unmapTLBEntry(riscvP riscv, tlbEntryP entry) {
@@ -1241,7 +1294,9 @@ static void unmapTLBEntry(riscvP riscv, tlbEntryP entry) {
 
     // delete mappings in all privilege levels
     for(mode=0; mode<RISCV_MODE_LAST; mode++) {
-        deleteTLBEntryMappingsMode(riscv, entry, mode);
+        if(matchTLBEntryVirtual(entry, mode)) {
+            deleteTLBEntryMappingsMode(riscv, entry, mode);
+        }
     }
 }
 
@@ -1258,13 +1313,16 @@ static void unmapTLBEntryNewASID(
 
     for(mode=0; mode<RISCV_MODE_LAST; mode++) {
 
-        Uns32 ASIDMask   = getEntryASIDMask(entry, mode);
-        Uns32 oldASIDU32 = ASIDMask & getEntrySimASID(entry);
-        Uns32 newASIDU32 = ASIDMask & newASID.u32;
+        if(matchTLBEntryVirtual(entry, mode)) {
 
-        // action is only needed if effective ASID in the given mode changes
-        if(oldASIDU32 != newASIDU32) {
-            deleteTLBEntryMappingsMode(riscv, entry, mode);
+            Uns32 ASIDMask   = getEntryASIDMask(entry, mode);
+            Uns32 oldASIDU32 = ASIDMask & getEntrySimASID(entry);
+            Uns32 newASIDU32 = ASIDMask & newASID.u32;
+
+            // action is only needed if effective ASID in the given mode changes
+            if(oldASIDU32 != newASIDU32) {
+                deleteTLBEntryMappingsMode(riscv, entry, mode);
+            }
         }
     }
 }
@@ -1606,7 +1664,7 @@ static memDomainP createDomain(
     Bool        isCode,
     Bool        unified
 ) {
-    char name[32];
+    char name[64];
 
     // fill domain name
     getDomainName(name, mode, type, isCode, unified);
@@ -1648,8 +1706,8 @@ static Bool createPMADomain(
 //
 static Bool createPMPDomain(riscvP riscv, riscvMode mode, Bool isCode) {
 
-    memDomainP pmaDomain   = riscv->pmaDomains[mode][isCode];
-    memDomainP otherDomain = riscv->pmaDomains[mode][!isCode];
+    memDomainP pmaDomain   = getPMADomainCorD(riscv, mode,  isCode);
+    memDomainP otherDomain = getPMADomainCorD(riscv, mode, !isCode);
     Bool       unified     = (pmaDomain==otherDomain);
     Uns32      pmpBits     = 64;
     Uns32      numRegs     = getNumPMPs(riscv);
@@ -1680,8 +1738,8 @@ static Bool createPMPDomain(riscvP riscv, riscvMode mode, Bool isCode) {
 //
 static Bool createPhysicalDomain(riscvP riscv, riscvMode mode, Bool isCode) {
 
-    memDomainP pmpDomain   = riscv->pmpDomains[mode][isCode];
-    memDomainP otherDomain = riscv->pmpDomains[mode][!isCode];
+    memDomainP pmpDomain   = getPMPDomainCorD(riscv, mode,  isCode);
+    memDomainP otherDomain = getPMPDomainCorD(riscv, mode, !isCode);
     Bool       unified     = (pmpDomain==otherDomain);
     Uns32      physBits    = riscvGetXlenArch(riscv);
     Uns64      physMask    = getAddressMask(physBits);
@@ -1703,12 +1761,15 @@ static Bool createPhysicalDomain(riscvP riscv, riscvMode mode, Bool isCode) {
 //
 // Create new virtual domain for the given mode
 //
-static Bool createVirtualDomain(riscvP riscv, riscvMode mode, Bool isCode) {
+static Bool createVirtualDomain(riscvP riscv, riscvVMMode vmMode, Bool isCode) {
 
-    Bool  unified  = (riscv->pmpDomains[mode][0]==riscv->pmpDomains[mode][1]);
-    Uns32 xlenBits = riscvGetXlenArch(riscv);
+    riscvMode  mode     = vmmodeToMode(vmMode);
+    memDomainP pmpCode  = getPMPDomainCorD(riscv, mode, True);
+    memDomainP pmpData  = getPMPDomainCorD(riscv, mode, False);
+    Bool       unified  = (pmpCode==pmpData);
+    Uns32      xlenBits = riscvGetXlenArch(riscv);
 
-    riscv->vmDomains[mode][isCode] = createDomain(
+    riscv->vmDomains[vmMode][isCode] = createDomain(
         mode, "Virtual", xlenBits, isCode, unified
     );
 
@@ -1730,7 +1791,7 @@ static memDomainP createCLICDomain(riscvP riscv, memDomainP dataDomain) {
 
         // create domain of width bits
         memDomainP CLICDomain = createDomain(
-            RISCV_MODE_MACHINE, "CLIC", bits, False, False
+            RISCV_MODE_M, "CLIC", bits, False, False
         );
 
         // create mapping to data domain
@@ -1744,6 +1805,48 @@ static memDomainP createCLICDomain(riscvP riscv, memDomainP dataDomain) {
     }
 
     return root->CLICDomain;
+}
+
+//
+// Do transaction load
+//
+static VMI_MEM_READ_FN(doLoadTMode) {
+
+    riscvP      riscv = (riscvP)processor;
+    riscvExtCBP extCB;
+
+    // call derived model transaction load functions
+    for(extCB=riscv->extCBs; extCB; extCB=extCB->next) {
+        if(extCB->tLoad) {
+            extCB->tLoad(riscv, value, VA, bytes, extCB->clientData);
+        }
+    }
+}
+
+//
+// Do transaction store
+//
+static VMI_MEM_WRITE_FN(doStoreTMode) {
+
+    riscvP      riscv = (riscvP)processor;
+    riscvExtCBP extCB;
+
+    // call derived model transaction store functions
+    for(extCB=riscv->extCBs; extCB; extCB=extCB->next) {
+        if(extCB->tStore) {
+            extCB->tStore(riscv, value, VA, bytes, extCB->clientData);
+        }
+    }
+}
+
+//
+// Create transaction mode domain
+//
+static void createTMDomain(riscvP riscv) {
+
+    riscv->tmDomain = vmirtNewDomain("Transaction", riscvGetXlenArch(riscv));
+
+    vmirtMapCallbacks(riscv->tmDomain, 0, -1, doLoadTMode, doStoreTMode, 0);
 }
 
 //
@@ -1769,6 +1872,7 @@ VMI_VMINIT_FN(riscvVMInit) {
     Uns32      codeBits   = vmirtGetDomainAddressBits(codeDomain);
     Uns32      dataBits   = vmirtGetDomainAddressBits(dataDomain);
     riscvMode  mode;
+    riscvDMode dMode;
 
     // use core context for domain creation
     vmirtSetCreateDomainContext(processor);
@@ -1781,27 +1885,35 @@ VMI_VMINIT_FN(riscvVMInit) {
         dataDomain = createCLICDomain(riscv, dataDomain);
     }
 
-    for(mode=RISCV_MODE_S; mode<RISCV_MODE_LAST; mode++) {
+    // create per-base-mode domains
+    for(mode=RISCV_MODE_S; mode<RISCV_MODE_LAST_BASE; mode++) {
 
-        // create PMA data and code domains for this mode
-        if(createPMADomain(riscv, mode, False, dataDomain, codeDomain)) {
-            riscv->pmaDomains[mode][1] = riscv->pmaDomains[mode][0];
-        } else {
-            createPMADomain(riscv, mode, True, codeDomain, dataDomain);
-        }
+        if(mode==RISCV_MODE_H) {
 
-        // create PMP data and code domains for this mode
-        if(createPMPDomain(riscv, mode, False)) {
-            riscv->pmpDomains[mode][1] = riscv->pmpDomains[mode][0];
-        } else {
-            createPMPDomain(riscv, mode, True);
-        }
+            // ignore artifact H mode
 
-        // create physical data and code domains for this mode
-        if(createPhysicalDomain(riscv, mode, False)) {
-            riscv->physDomains[mode][1] = riscv->physDomains[mode][0];
         } else {
-            createPhysicalDomain(riscv, mode, True);
+
+            // create PMA data and code domains for this mode
+            if(createPMADomain(riscv, mode, False, dataDomain, codeDomain)) {
+                riscv->pmaDomains[mode][1] = riscv->pmaDomains[mode][0];
+            } else {
+                createPMADomain(riscv, mode, True, codeDomain, dataDomain);
+            }
+
+            // create PMP data and code domains for this mode
+            if(createPMPDomain(riscv, mode, False)) {
+                riscv->pmpDomains[mode][1] = riscv->pmpDomains[mode][0];
+            } else {
+                createPMPDomain(riscv, mode, True);
+            }
+
+            // create physical data and code domains for this mode
+            if(createPhysicalDomain(riscv, mode, False)) {
+                riscv->physDomains[mode][1] = riscv->physDomains[mode][0];
+            } else {
+                createPhysicalDomain(riscv, mode, True);
+            }
         }
     }
 
@@ -1813,31 +1925,41 @@ VMI_VMINIT_FN(riscvVMInit) {
     riscv->physDomains[RISCV_MODE_U][0] = riscv->physDomains[RISCV_MODE_S][0];
     riscv->physDomains[RISCV_MODE_U][1] = riscv->physDomains[RISCV_MODE_S][1];
 
-    // initialize physical domains
-    for(mode=0; mode<RISCV_MODE_LAST; mode++) {
-        dataDomains[mode] = riscv->physDomains[mode][0];
-        codeDomains[mode] = riscv->physDomains[mode][1];
-    }
+    for(dMode=0; dMode<RISCV_DMODE_LAST; dMode++) {
 
-    for(mode=0; mode<RISCV_MODE_LAST; mode++) {
+        mode = dmodeToMode5(dMode);
 
-        riscvDMode dMode = mode | RISCV_DMODE_VM;
+        // initialize physical domains
+        dataDomains[dMode] = getPhysDomainCorD(riscv, mode, False);
+        codeDomains[dMode] = getPhysDomainCorD(riscv, mode, True);
 
-        // only handle dictionary modes that allow virtual mappings
-        if(dMode<RISCV_DMODE_LAST) {
+        if(!dmodeIsVM(dMode)) {
+
+            // not a virtual memory mode
+
+        } else if(dmodeIsVirtual(dMode) && !hypervisorPresent(riscv)) {
+
+            // virtualized mode and hypervisor absent
+
+        } else {
+
+            riscvVMMode vmMode = dmodeToVMMode(dMode);
 
             // create virtual data and code domains for this mode
-            if(createVirtualDomain(riscv, mode, False)) {
-                riscv->vmDomains[mode][1] = riscv->vmDomains[mode][0];
+            if(createVirtualDomain(riscv, vmMode, False)) {
+                riscv->vmDomains[vmMode][1] = riscv->vmDomains[vmMode][0];
             } else {
-                createVirtualDomain(riscv, mode, True);
+                createVirtualDomain(riscv, vmMode, True);
             }
 
             // initialize virtual domains
-            dataDomains[dMode] = riscv->vmDomains[mode][0];
-            codeDomains[dMode] = riscv->vmDomains[mode][1];
+            dataDomains[dMode] = riscv->vmDomains[vmMode][0];
+            codeDomains[dMode] = riscv->vmDomains[vmMode][1];
         }
     }
+
+    // create transaction mode domain
+    createTMDomain(riscv);
 
     if(riscvHasMode(riscv, RISCV_MODE_S)) {
 
@@ -1858,9 +1980,13 @@ VMI_VMINIT_FN(riscvVMInit) {
 //
 // Return any TLB entry for the passed address which matches the current ASID
 //
-static tlbEntryP findTLBEntry(riscvP riscv, riscvTLBP tlb, Uns64 VA) {
-
-    Uns32 ASID = getActiveASID(riscv);
+static tlbEntryP findTLBEntry(
+    riscvP    riscv,
+    riscvMode mode,
+    riscvTLBP tlb,
+    Uns64     VA
+) {
+    Uns32 ASID = getActiveASID(riscv, mode);
 
     // return any entry with matching MVA, ASID and VMID
     ITER_TLB_ENTRY_RANGE(
@@ -1892,7 +2018,8 @@ static riscvException tlbLookup(
     memPriv        requiredPriv,
     memAccessAttrs attrs
 ) {
-    VAMode         vaMode = RD_CSR_FIELD(riscv, satp, MODE);
+    Bool           V      = modeIsVirtual(mode);
+    VAMode         vaMode = RD_CSR_FIELD_V(riscv, satp, V, MODE);
     riscvException result = 0;
 
     if(vaMode==VAM_Sv32) {
@@ -1979,7 +2106,7 @@ static tlbEntryP findOrCreateTLBEntry(
     memPriv   requiredPriv = miP->priv;
 
     // get any existing entry for this VA
-    tlbEntryP entry = findTLBEntry(riscv, tlb, VA);
+    tlbEntryP entry = findTLBEntry(riscv, mode, tlb, VA);
 
     // if entry exists, validate permissions (NOTE: this may delete the entry
     // if a write and D=0)
@@ -2202,8 +2329,8 @@ static void setPMPPriv(
     memPriv   priv,
     Bool      updatePriv
 ) {
-    memDomainP dataDomain = riscv->pmpDomains[mode][0];
-    memDomainP codeDomain = riscv->pmpDomains[mode][1];
+    memDomainP dataDomain = getPMPDomainCorD(riscv, mode, False);
+    memDomainP codeDomain = getPMPDomainCorD(riscv, mode, True);
 
     // emit debug if required
     if(updatePriv && RISCV_DEBUG_MMU(riscv)) {
@@ -2530,7 +2657,7 @@ static void refinePMPRegionRange(
             *highPAP = highPAEntry;
 
             // refine privilege
-            if((mode!=RISCV_MODE_MACHINE) || e.L) {
+            if((mode!=RISCV_MODE_M) || e.L) {
                 *privP = e.priv;
             } else {
                 *privP = MEM_PRIV_RWX;
@@ -2760,11 +2887,13 @@ static domainType getDomainType(
 ) {
     domainType dt = DT_NONE;
 
-    if(domain==riscv->physDomains[mode][isCode]) {
+    if(modeIsVirtual(mode) && !hypervisorPresent(riscv)) {
+        // virtualized mode and hypervisor absent
+    } else if(domain==getPhysDomainCorD(riscv, mode, isCode)) {
         dt = DT_PHYS;
-    } else if(domain==riscv->vmDomains[mode][isCode]) {
+    } else if(domain==getVirtDomainCorD(riscv, mode, isCode)) {
         dt = DT_VIRT;
-    } else if(domain==riscv->pmpDomains[mode][isCode]) {
+    } else if(domain==getPMPDomainCorD(riscv, mode, isCode)) {
         dt = DT_PMP;
     }
 
@@ -2906,8 +3035,9 @@ void riscvVMInvalidateVAASID(riscvP riscv, Uns64 VA, Uns32 ASID) {
 void riscvVMRefreshMPRVDomain(riscvP riscv) {
 
     // get current VM enable and mode
-    Bool       VM     = RD_CSR_FIELD(riscv, satp, MODE);
-    riscvMode  mode   = getCurrentMode(riscv);
+    riscvMode  mode   = getCurrentMode5(riscv);
+    Bool       V      = modeIsVirtual(mode);
+    Bool       VM     = RD_CSR_FIELD_V(riscv, satp, V, MODE);
     memDomainP domain = 0;
 
     // if mstatus.MPRV is set, use that mode
@@ -2937,23 +3067,26 @@ void riscvVMRefreshMPRVDomain(riscvP riscv) {
     }
 
     // record data access mode (affects endianness)
-    riscv->dmode = mode;
+    riscv->dataMode = mode;
 
     // look for virtual domain for this mode if required
     if(VM) {
-        domain = riscv->vmDomains[mode][0];
+        domain = getVirtDomainCorD(riscv, mode, False);
     }
 
     // look for physical domain for this mode if MMU is not enabled or the
     // domain is not VM-managed
     if(!domain) {
-        domain = riscv->physDomains[mode][0];
+        domain = getPhysDomainCorD(riscv, mode, False);
     }
 
     // switch to the indicated domain if it is not current
     if(domain && (domain!=vmirtGetProcessorDataDomain((vmiProcessorP)riscv))) {
         vmirtSetProcessorDataDomain((vmiProcessorP)riscv, domain);
     }
+
+    // update current architecture to take into account new dataMode
+    riscvSetCurrentArch(riscv);
 }
 
 

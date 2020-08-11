@@ -205,12 +205,13 @@ typedef enum fenceSpecE {
 } fenceSpec;
 
 //
-// Define the encoding of EEW in an instruction
+// Define the encoding of EEW in an instruction (vector instructions)
 //
 typedef enum eewSpecE {
     EEW_NA,             // instruction has no EEW
-    EEW_14_12,          // EEW in bits 14:12 (vector instructions)
-    EEW_28_14_12,       // EEW in bits 28,14:12 (vector instructions)
+    EEW_16,             // EEW 16
+    EEW_14_12,          // EEW in bits 14:12
+    EEW_28_14_12,       // EEW in bits 28,14:12
 } eewSpec;
 
 //
@@ -738,6 +739,7 @@ typedef enum riscvIType32E {
     IT32_VOR_VV,
     IT32_VXOR_VV,
     IT32_VRGATHER_VV,
+    IT32_VRGATHEREI16_VV,
     IT32_VADC_VV,
     IT32_VMADC_VV,
     IT32_VSBC_VV,
@@ -1813,9 +1815,11 @@ const static decodeEntry32 decodeVectorV071P[] = {
 const static decodeEntry32 decodePost20190906[] = {
 
     // V-extension MVV-type instructions
+    //                               |funct6|m|  vs2|  vs1|MVV|  vs3| opcode|
     DECODE32_ENTRY(    VWMACCSU_VV, "|111111|.|.....|.....|010|.....|1010111|"),
 
     // V-extension MVX-type instructions
+    //                               |funct6|m|  vs2|  vs1|MVX|  vs3| opcode|
     DECODE32_ENTRY(    VWMACCSU_VX, "|111111|.|.....|.....|110|.....|1010111|"),
     DECODE32_ENTRY(    VWMACCUS_VX, "|111110|.|.....|.....|110|.....|1010111|"),
 
@@ -1833,6 +1837,7 @@ const static decodeEntry32 decodePre20190906[] = {
     DECODE32_ENTRY(   VWSMACCSU_VV, "|111110|.|.....|.....|000|.....|1010111|"),
 
     // V-extension MVV-type instructions
+    //                               |funct6|m|  vs2|  vs1|MVV|  vs3| opcode|
     DECODE32_ENTRY(    VWMACCSU_VV, "|111110|.|.....|.....|010|.....|1010111|"),
 
     // V-extension IVX-type instructions
@@ -1841,6 +1846,7 @@ const static decodeEntry32 decodePre20190906[] = {
     DECODE32_ENTRY(   VWSMACCUS_VX, "|111111|.|.....|.....|100|.....|1010111|"),
 
     // V-extension MVX-type instructions
+    //                               |funct6|m|  vs2|  vs1|MVX|  vs3| opcode|
     DECODE32_ENTRY(    VWMACCSU_VX, "|111110|.|.....|.....|110|.....|1010111|"),
     DECODE32_ENTRY(    VWMACCUS_VX, "|111111|.|.....|.....|110|.....|1010111|"),
 
@@ -2182,6 +2188,10 @@ const static decodeEntry32 decodeInitial10[] = {
     //                               | nf|mop|m|  xs2|  rs1|wth|  vs3| opcode|
     DECODE32_ENTRY(          VLE_I, "|...|.00|1|01000|.....|11.|.....|0000111|"),
 
+    // V-extension IVV-type instructions
+    //                               |funct6|m|  vs2|  vs1|IVV|  vs3| opcode|
+    DECODE32_ENTRY(VRGATHEREI16_VV, "|001110|.|.....|.....|000|.....|1010111|"),
+
     // V-extension FVV-type instructions
     //                               |funct6|m|  vs2|  vs1|FVV|  vs3| opcode|
     DECODE32_ENTRY(    VFRSQRTE7_V, "|010011|.|.....|00100|001|.....|1010111|"),
@@ -2500,6 +2510,7 @@ const static opAttrs attrsArray32[] = {
     ATTR32_VD_VS1_VS2_M_VV  (         VOR_VV,          VOR_VR, RVANYV,  "vor"      ),
     ATTR32_VD_VS1_VS2_M_VV  (        VXOR_VV,         VXOR_VR, RVANYV,  "vxor"     ),
     ATTR32_VD_VS1_VS2_M_VV  (    VRGATHER_VV,     VRGATHER_VR, RVANYV,  "vrgather" ),
+    ATTR32_VD_VS1_EI16_M_VV (VRGATHEREI16_VV,     VRGATHER_VR, RVANYV,  "vrgather" ),
     ATTR32_VD_VS1_VS2_VVM   (        VADC_VV,         VADC_VR, RVANYV,  "vadc"     ),
     ATTR32_VD_VS1_VS2_VVM   (       VMADC_VV,        VMADC_VR, RVANYV,  "vmadc"    ),
     ATTR32_VD_VS1_VS2_VVM   (        VSBC_VV,         VSBC_VR, RVANYV,  "vsbc"     ),
@@ -3800,6 +3811,9 @@ static Uns32 getEEW(riscvInstrInfoP info, eewSpec eew) {
 
     switch(eew) {
         case EEW_NA:
+            break;
+        case EEW_16:
+            result = 16;
             break;
         case EEW_14_12:
             result = mapVectorBits09[U_14_12(instr)];
