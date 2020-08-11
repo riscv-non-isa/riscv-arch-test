@@ -984,6 +984,22 @@
 }
 
 //
+// Vd, Vs1, Vs2(EI16), Vm (VV)
+//
+#define ATTR32_VD_VS1_EI16_M_VV(_NAME, _GENERIC, _ARCH, _OPCODE) [IT32_##_NAME] = { \
+    opcode   : _OPCODE,             \
+    format   : FMT_R1_R2_R3_RM,     \
+    type     : RV_IT_##_GENERIC,    \
+    arch     : _ARCH,               \
+    r1       : RS_V_11_7,           \
+    r2       : RS_V_24_20,          \
+    r3       : RS_V_19_15,          \
+    mask     : RS_V_M_25,           \
+    VIType   : RV_VIT_VV,           \
+    eew      : EEW_16,              \
+}
+
+//
 // Vd, Vs2, Vs1, Vm (VV)
 //
 #define ATTR32_VD_VS2_VS1_M_VV(_NAME, _GENERIC, _ARCH, _OPCODE) [IT32_##_NAME] = { \

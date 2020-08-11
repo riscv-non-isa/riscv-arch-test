@@ -29,17 +29,20 @@
 static const char *dictNames[] = {
 
     // VM-disabled modes
-    [RISCV_DMODE_USER]          = "USER",
-    [RISCV_DMODE_SUPERVISOR]    = "SUPERVISOR",
-    [RISCV_DMODE_HYPERVISOR]    = "HYPERVISOR",
-    [RISCV_DMODE_MACHINE]       = "MACHINE",
+    [RISCV_DMODE_U]     = "USER",
+    [RISCV_DMODE_S]     = "SUPERVISOR",
+    [RISCV_DMODE_M]     = "MACHINE",
+    [RISCV_DMODE_VU]    = "VIRTUAL USER",
+    [RISCV_DMODE_VS]    = "VIRTUAL SUPERVISOR",
 
     // VM-enabled modes
-    [RISCV_DMODE_USER_VM]       = "USER (VM)",
-    [RISCV_DMODE_SUPERVISOR_VM] = "SUPERVISOR (VM)",
+    [RISCV_DMODE_U_VM]  = "USER (VM)",
+    [RISCV_DMODE_S_VM]  = "SUPERVISOR (VM)",
+    [RISCV_DMODE_VU_VM] = "VIRTUAL USER (VM)",
+    [RISCV_DMODE_VS_VM] = "VIRTUAL SUPERVISOR (VM)",
 
     // terminator
-    [RISCV_DMODE_LAST]          = 0
+    [RISCV_DMODE_LAST]  = 0
 };
 
 const vmiIASAttr modelAttrs = {

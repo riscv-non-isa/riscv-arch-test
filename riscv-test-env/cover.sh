@@ -1,5 +1,8 @@
 #!/bin/bash
 
+
+# NEED TO CHECK THAT TARGET IS riscvOVPsim or exit
+
 # mapping
 # RVI         rv32i
 # RVM         rv32im
@@ -13,38 +16,46 @@ map[rv32im]=RVM
 map[rv32imc]=RVIC,RV32IC
 map[rv32Zicsr]=RVZicsr
 map[rv32Zifencei]=RVZifencei
+map[rv64i]=RV64I
+map[rv64im]=RV64M
+map[rv64imc]=RV64IC
+
+declare -A varMap
+varMap[rv32i]=RV32I
+varMap[rv32im]=RV32IM
+varMap[rv32imc]=RV32IMC
+varMap[rv32Zicsr]=RVI
+varMap[rv32Zifencei]=RVI
+varMap[rv64i]=RV64I
+varMap[rv64im]=RV64IM
+varMap[rv64imc]=RV64IMC
+
+if [[ ${COVERTYPE} == "" ]]; then
+    COVERTYPE=basic
+fi
 
 ALL_ISA=$(ls -1 work)
 for ISA in ${ALL_ISA}; do
     echo "Running $ISA"
     RISCV_ISA=${ISA}
     RISCV_CVG=${map[${RISCV_ISA}]}
-    YAML="work/${RISCV_ISA}/*.yaml"
-    INPUT=$(echo ${YAML} | sed 's/ /,/g')
+    RISCV_VARIANT=${varMap[${RISCV_ISA}]}
 
     if [ -z "${RISCV_CVG}" ]; then
         echo "Skipping $ISA"
         continue
     fi
     ${ROOTDIR}/riscv-ovpsim/bin/Linux64/riscvOVPsim.exe \
-        --cover basic \
+        --cover ${COVERTYPE} \
+        --variant ${RISCV_VARIANT} \
         --extensions ${RISCV_CVG} \
-        --inputfiles ${INPUT} \
-        --outputfile work/${RISCV_ISA}/coverage_basic.yaml \
-        --reportfile work/${RISCV_ISA}/coverage_basic.txt \
+        --inputfiles work/${RISCV_ISA} \
+        --outputfile work/${RISCV_ISA}/${COVERTYPE}.coverage.yaml \
+        --reportfile work/${RISCV_ISA}/${COVERTYPE}.coverage.txt \
         --countthreshold 1 \
         --showuncovered \
-        --nosimulation
+        --nosimulation --logfile work/${RISCV_ISA}/${COVERTYPE}.coverage.run.log
     
-#    ${ROOTDIR}/riscv-ovpsim/bin/Linux64/riscvOVPsim.exe \
-#        --cover extended \
-#        --extensions ${RISCV_CVG} \
-#        --inputfiles ${INPUT} \
-#        --outputfile work/${RISCV_ISA}/coverage_extended.yaml \
-#        --reportfile work/${RISCV_ISA}/coverage_extended.txt \
-#        --countthreshold 1 \
-#        --showuncovered \
-#        --nosimulation    
 done
 
 

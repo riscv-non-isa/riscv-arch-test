@@ -66,6 +66,11 @@ void riscvReset(riscvP riscv);
 void riscvIllegalInstruction(riscvP riscv);
 
 //
+// Take Virtual Instruction exception
+//
+void riscvVirtualInstruction(riscvP riscv);
+
+//
 // Take Instruction Address Misaligned exception
 //
 void riscvInstructionAddressMisaligned(riscvP riscv, Uns64 tval);
@@ -86,14 +91,24 @@ void riscvEBREAK(riscvP riscv);
 void riscvMRET(riscvP riscv);
 
 //
-// Return from S-mode exception
+// Return from HS-mode exception
 //
-void riscvSRET(riscvP riscv);
+void riscvHSRET(riscvP riscv);
+
+//
+// Return from VS-mode exception
+//
+void riscvVSRET(riscvP riscv);
 
 //
 // Return from U-mode exception
 //
 void riscvURET(riscvP riscv);
+
+//
+// Return from VU-mode exception
+//
+void riscvVURET(riscvP riscv);
 
 //
 // Return from Debug mode

@@ -50,6 +50,15 @@ typedef struct illegalDescS {
 }
 
 //
+// Macro used to define illegalDesc structure and emit an Virtual Instruction
+// using it
+//
+#define VIRTUAL_INSTRUCTION_MESSAGE(_RISCV, _ID, _DETAIL) { \
+    static illegalDesc _DESC = { .id=CPU_PREFIX"_"_ID, .detail=_DETAIL};    \
+    riscvEmitVirtualInstructionMessageDesc(_RISCV, &_DESC);                 \
+}
+
+//
 // Macro used to define illegalDesc structure and emit an Illegal Instruction
 // using it (operand check)
 //
@@ -65,6 +74,12 @@ typedef struct illegalDescS {
 void riscvEmitIllegalInstructionMode(riscvP riscv);
 
 //
+// Emit Illegal Instruction because the current virtual mode has insufficient
+// privilege
+//
+void riscvEmitVirtualInstructionMode(riscvP riscv);
+
+//
 // Emit code to take an Illegal Instruction exception for the given reason
 //
 void riscvEmitIllegalInstructionMessage(riscvP riscv, const char *reason);
@@ -73,6 +88,11 @@ void riscvEmitIllegalInstructionMessage(riscvP riscv, const char *reason);
 // Emit Illegal Instruction message and take Illegal Instruction exception
 //
 void riscvEmitIllegalInstructionMessageDesc(riscvP riscv, illegalDescP desc);
+
+//
+// Emit Illegal Instruction message and take Virtual Instruction exception
+//
+void riscvEmitVirtualInstructionMessageDesc(riscvP riscv, illegalDescP desc);
 
 //
 // Emit Illegal Operand message and take Illegal Instruction exception

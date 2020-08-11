@@ -49,9 +49,10 @@
 //
 // Fill one member of exceptions
 //
-#define RISCV_EXCEPTION(_NAME, _ARCH, _DESC) { \
-    vmiInfo : {name:#_NAME, code:riscv_E_##_NAME, description:_DESC},    \
-    arch    : _ARCH                                                      \
+#define RISCV_EXCEPTION(_NAME, _PORT, _ARCH, _DESC) { \
+    vmiInfo    : {name:#_NAME, code:riscv_E_##_NAME, description:_DESC},    \
+    arch       : _ARCH,                                                     \
+    hasNetPort : _PORT                                                      \
 }
 
 //
@@ -63,40 +64,49 @@ static const riscvExceptionDesc exceptions[] = {
     // EXCEPTIONS
     ////////////////////////////////////////////////////////////////////
 
-    RISCV_EXCEPTION (InstructionAddressMisaligned, 0,     "Fetch from unaligned address"),
-    RISCV_EXCEPTION (InstructionAccessFault,       0,     "No access permission for fetch"),
-    RISCV_EXCEPTION (IllegalInstruction,           0,     "Undecoded, unimplemented or disabled instruction"),
-    RISCV_EXCEPTION (Breakpoint,                   0,     "EBREAK instruction executed"),
-    RISCV_EXCEPTION (LoadAddressMisaligned,        0,     "Load from unaligned address"),
-    RISCV_EXCEPTION (LoadAccessFault,              0,     "No access permission for load"),
-    RISCV_EXCEPTION (StoreAMOAddressMisaligned,    0,     "Store/atomic memory operation at unaligned address"),
-    RISCV_EXCEPTION (StoreAMOAccessFault,          0,     "No access permission for store/atomic memory operation"),
-    RISCV_EXCEPTION (EnvironmentCallFromUMode,     ISA_U, "ECALL instruction executed in User mode"),
-    RISCV_EXCEPTION (EnvironmentCallFromSMode,     ISA_S, "ECALL instruction executed in Supervisor mode"),
-    RISCV_EXCEPTION (EnvironmentCallFromMMode,     0,     "ECALL instruction executed in Machine mode"),
-    RISCV_EXCEPTION (InstructionPageFault,         0,     "Page fault at fetch address"),
-    RISCV_EXCEPTION (LoadPageFault,                0,     "Page fault at load address"),
-    RISCV_EXCEPTION (StoreAMOPageFault,            0,     "Page fault at store/atomic memory operation address"),
+    RISCV_EXCEPTION (InstructionAddressMisaligned, 0, 0,     "Fetch from unaligned address"),
+    RISCV_EXCEPTION (InstructionAccessFault,       0, 0,     "No access permission for fetch"),
+    RISCV_EXCEPTION (IllegalInstruction,           0, 0,     "Undecoded, unimplemented or disabled instruction"),
+    RISCV_EXCEPTION (Breakpoint,                   0, 0,     "EBREAK instruction executed"),
+    RISCV_EXCEPTION (LoadAddressMisaligned,        0, 0,     "Load from unaligned address"),
+    RISCV_EXCEPTION (LoadAccessFault,              0, 0,     "No access permission for load"),
+    RISCV_EXCEPTION (StoreAMOAddressMisaligned,    0, 0,     "Store/atomic memory operation at unaligned address"),
+    RISCV_EXCEPTION (StoreAMOAccessFault,          0, 0,     "No access permission for store/atomic memory operation"),
+    RISCV_EXCEPTION (EnvironmentCallFromUMode,     0, ISA_U, "ECALL instruction executed in User mode"),
+    RISCV_EXCEPTION (EnvironmentCallFromSMode,     0, ISA_S, "ECALL instruction executed in Supervisor mode"),
+    RISCV_EXCEPTION (EnvironmentCallFromVSMode,    0, ISA_H, "ECALL instruction executed in Virtual Supervisor mode"),
+    RISCV_EXCEPTION (EnvironmentCallFromMMode,     0, 0,     "ECALL instruction executed in Machine mode"),
+    RISCV_EXCEPTION (InstructionPageFault,         0, 0,     "Page fault at fetch address"),
+    RISCV_EXCEPTION (LoadPageFault,                0, 0,     "Page fault at load address"),
+    RISCV_EXCEPTION (StoreAMOPageFault,            0, 0,     "Page fault at store/atomic memory operation address"),
+    RISCV_EXCEPTION (InstructionGuestPageFault,    0, ISA_H, "Guest page fault at fetch address"),
+    RISCV_EXCEPTION (LoadGuestPageFault,           0, ISA_H, "Guest page fault at load address"),
+    RISCV_EXCEPTION (VirtualInstruction,           0, ISA_H, "Virtual instruction fault"),
+    RISCV_EXCEPTION (StoreAMOGuestPageFault,       0, ISA_H, "Guest page fault at store/atomic memory operation address"),
 
     ////////////////////////////////////////////////////////////////////
     // STANDARD INTERRUPTS
     ////////////////////////////////////////////////////////////////////
 
-    RISCV_EXCEPTION (USWInterrupt,                 ISA_N, "User software interrupt"),
-    RISCV_EXCEPTION (SSWInterrupt,                 ISA_S, "Supervisor software interrupt"),
-    RISCV_EXCEPTION (MSWInterrupt,                 0,     "Machine software interrupt"),
-    RISCV_EXCEPTION (UTimerInterrupt,              ISA_N, "User timer interrupt"),
-    RISCV_EXCEPTION (STimerInterrupt,              ISA_S, "Supervisor timer interrupt"),
-    RISCV_EXCEPTION (MTimerInterrupt,              0,     "Machine timer interrupt"),
-    RISCV_EXCEPTION (UExternalInterrupt,           ISA_N, "User external interrupt"),
-    RISCV_EXCEPTION (SExternalInterrupt,           ISA_S, "Supervisor external interrupt"),
-    RISCV_EXCEPTION (MExternalInterrupt,           0,     "Machine external interrupt"),
+    RISCV_EXCEPTION (USWInterrupt,                 1, ISA_N, "User software interrupt"),
+    RISCV_EXCEPTION (SSWInterrupt,                 1, ISA_S, "Supervisor software interrupt"),
+    RISCV_EXCEPTION (VSSWInterrupt,                1, ISA_H, "Virtual supervisor software interrupt"),
+    RISCV_EXCEPTION (MSWInterrupt,                 1, 0,     "Machine software interrupt"),
+    RISCV_EXCEPTION (UTimerInterrupt,              1, ISA_N, "User timer interrupt"),
+    RISCV_EXCEPTION (STimerInterrupt,              1, ISA_S, "Supervisor timer interrupt"),
+    RISCV_EXCEPTION (VSTimerInterrupt,             1, ISA_H, "Virtual supervisor timer interrupt"),
+    RISCV_EXCEPTION (MTimerInterrupt,              1, 0,     "Machine timer interrupt"),
+    RISCV_EXCEPTION (UExternalInterrupt,           1, ISA_N, "User external interrupt"),
+    RISCV_EXCEPTION (SExternalInterrupt,           1, ISA_S, "Supervisor external interrupt"),
+    RISCV_EXCEPTION (VSExternalInterrupt,          1, ISA_H, "Virtual supervisor external interrupt"),
+    RISCV_EXCEPTION (MExternalInterrupt,           1, 0,     "Machine external interrupt"),
+    RISCV_EXCEPTION (SGEIInterrupt,                0, ISA_H, "Guest external interrupt"),
 
     ////////////////////////////////////////////////////////////////////
     // CLIC INTERRUPTS
     ////////////////////////////////////////////////////////////////////
 
-    RISCV_EXCEPTION (CSIP,                         0,     "CLIC software interrupt"),
+    RISCV_EXCEPTION (CSIP,                         1, 0,     "CLIC software interrupt"),
 
     ////////////////////////////////////////////////////////////////////
     // TERMINATOR
@@ -276,38 +286,63 @@ static Uns64 getEPC(riscvP riscv) {
 //
 static riscvMode getModeX(
     riscvP         riscv,
-    Uns32          mMask,
-    Uns32          sMask,
+    Uns32          toHSMask,
+    Uns32          toVSMask,
+    Uns32          toUMask,
     riscvException ecode
 ) {
-    riscvMode modeY = getCurrentMode(riscv);
+    Uns32     ecodeMask = (1<<ecode);
+    riscvMode modeY     = getCurrentMode5(riscv);
     riscvMode modeX;
 
-    // get mode X implied by delegation registers
-    if(!(mMask & (1<<ecode))) {
-        modeX = RISCV_MODE_MACHINE;
-    } else if(!(sMask & (1<<ecode))) {
-        modeX = RISCV_MODE_SUPERVISOR;
+    // handle trap delegation
+    if(!(toHSMask & ecodeMask)) {
+        modeX = RISCV_MODE_M;
+    } else if(!inVMode(riscv)) {
+        modeX = (toUMask & ecodeMask) ? RISCV_MODE_U : RISCV_MODE_S;
+    } else if(!(toVSMask & ecodeMask)) {
+        modeX = RISCV_MODE_S;
     } else {
-        modeX = RISCV_MODE_USER;
+        modeX = (toUMask & ecodeMask) ? RISCV_MODE_VU : RISCV_MODE_VS;
     }
 
+    // map from processor mode to mode priority
+    static const Uns8 priMap[] = {
+        [RISCV_MODE_M]  = 3,
+        [RISCV_MODE_S]  = 2,
+        [RISCV_MODE_VS] = 1,
+        [RISCV_MODE_U]  = 0,
+        [RISCV_MODE_VU] = 0,
+    };
+
     // exception cannot be taken to lower-privilege mode
-    return (modeX>modeY) ? modeX : modeY;
+    return (priMap[modeX]>priMap[modeY]) ? modeX : modeY;
 }
 
 //
 // Return the mode to which to take the given interrupt (mode X)
 //
 static riscvMode getInterruptModeX(riscvP riscv, riscvException ecode) {
-    return getModeX(riscv, RD_CSR(riscv, mideleg), RD_CSR(riscv, sideleg), ecode);
+    return getModeX(
+        riscv,
+        RD_CSR(riscv, mideleg),
+        RD_CSR(riscv, hideleg),
+        RD_CSR(riscv, sideleg),
+        ecode
+    );
 }
 
 //
 // Return the mode to which to take the given exception (mode X)
 //
 static riscvMode getExceptionModeX(riscvP riscv, riscvException ecode) {
-    return getModeX(riscv, RD_CSR(riscv, medeleg), RD_CSR(riscv, sedeleg), ecode);
+    return getModeX(
+        riscv,
+        RD_CSR(riscv, medeleg),
+        RD_CSR(riscv, hedeleg),
+        RD_CSR(riscv, sedeleg),
+        ecode
+    );
 }
 
 //
@@ -321,80 +356,262 @@ inline static riscvICMode getIMode(riscvICMode customMode, riscvICMode tvecMode)
 }
 
 //
-// Update exception state when taking exception to mode X from mode Y
+// Structure holding trap context
 //
-#define TARGET_MODE_X( \
-    _P, _X, _x, _IS_INT, _ECODE, _EPC, _BASE, _MODE, _TVAL, _LEVEL              \
-) {                                                                             \
-    /* get interrupt enable and level bits for mode X */                        \
-    Uns8 _IE = RD_CSR_FIELD(_P, mstatus,    _X##IE);                            \
-    Uns8 _IL = RD_CSR_FIELD(_P, mintstatus, _x##il);                            \
-                                                                                \
-    /* update interrupt enable and interrupt enable stack */                    \
-    WR_CSR_FIELD(_P, mstatus, _X##PIE, _IE);                                    \
-    WR_CSR_FIELD(_P, mstatus, _X##IE, 0);                                       \
-                                                                                \
-    /* clear cause register if not in CLIC mode */                              \
-    if(!useCLICM(_P)) {                                                         \
-        WR_CSR(_P, _x##cause, 0);                                               \
-    }                                                                           \
-                                                                                \
-    /* update cause register */                                                 \
-    WR_CSR_FIELD(_P, _x##cause, ExceptionCode, _ECODE);                         \
-    WR_CSR_FIELD(_P, _x##cause, Interrupt,     _IS_INT);                        \
-    WR_CSR_FIELD(_P, _x##cause, pil,           _IL);                            \
-                                                                                \
-    /* update writable bits in epc register */                                  \
-    Uns64 epcMask = RD_CSR_MASK(_P, _x##epc);                                   \
-    WR_CSR_FIELD(_P, _x##epc, value, (_EPC) & epcMask);                         \
-                                                                                \
-    /* update tval register */                                                  \
-    WR_CSR_FIELD(_P, _x##tval, value, _TVAL);                                   \
-                                                                                \
-    /* get exception base address and mode */                                   \
-    _BASE = (Addr)RD_CSR_FIELD(_P, _x##tvec, BASE) << 2;                        \
-    _MODE = getIMode(_P->_X##IMode, RD_CSR_FIELD(_P, _x##tvec, MODE));          \
-                                                                                \
-    /* update exception level */                                                \
-    if(_LEVEL>=0) {                                                             \
-        WR_CSR_FIELD(_P, mintstatus, _x##il, _LEVEL);                           \
-    }                                                                           \
+typedef struct trapCxtS {
+    Uns64       tval;       // trap value code
+    Uns64       EPC;        // exception program counter
+    Uns64       handlerPC;  // trap handler PC
+    Uns64       base;       // trap base address
+    riscvICMode mode;       // interrupt mode
+    Uns32       ecodeMod;   // exception code
+    Int32       level;      // interrupt level
+    riscvMode   modeX;      // target operating mode
+    riscvMode   modeY;      // source operating mode
+    Bool        isInt;      // is trap an interrupt?
+} trapCxt, *trapCxtP;
+
+//
+// When taking an interrupt to VS mode, map virtual interrupt code to the
+// equivalent Supervisor code
+//
+static Uns32 mapVSIntCode(trapCxtP cxt) {
+
+    Uns32 result = cxt->ecodeMod;
+
+    if(cxt->isInt) {
+        switch(intToException(result)) {
+           case riscv_E_VSSWInterrupt:
+           case riscv_E_VSTimerInterrupt:
+           case riscv_E_VSExternalInterrupt:
+               result--;
+               break;
+           default:
+               break;
+        }
+    }
+
+    return result;
 }
 
 //
-// Handle CLIC Vectored Interrupt
+// Take trap to U mode
 //
-#define GET_CLIC_VECTORED_HANDLER_PC(_P, _HANDLER_PC, _X, _x, _INTNUM, _MODE) { \
-                                                                                \
-    Uns64 TBASE = RD_CSR(_P, _x##tvt);                                          \
-                                                                                \
-    /* set xcause.inhv=1 before vector lookup */                                \
-    WR_CSR_FIELD(_P, _x##cause, inhv, 1);                                       \
-                                                                                \
-    /* validate the memory access */                                            \
-    if(!readCLICVectorTableEntry(_P, _INTNUM, _MODE, TBASE, &_HANDLER_PC)) {    \
-        return;                                                                 \
-    }                                                                           \
-                                                                                \
-    /* set xcause.inhv=0 after vector lookup */                                 \
-    WR_CSR_FIELD(_P, _x##cause, inhv, 0);                                       \
+static void trapU(riscvP riscv, trapCxtP cxt) {
+
+    // get interrupt enable and level bits for mode X
+    Uns8 IE = RD_CSR_FIELD(riscv, mstatus,    UIE);
+    Uns8 IL = RD_CSR_FIELD(riscv, mintstatus, uil);
+
+    // update interrupt enable and interrupt enable stack
+    WR_CSR_FIELD(riscv, mstatus, UPIE, IE);
+    WR_CSR_FIELD(riscv, mstatus, UIE, 0);
+
+    // clear cause register if not in CLIC mode
+    if(!useCLICM(riscv)) {
+        WR_CSR(riscv, ucause, 0);
+    }
+
+    // update cause register */
+    WR_CSR_FIELD(riscv, ucause, ExceptionCode, cxt->ecodeMod);
+    WR_CSR_FIELD(riscv, ucause, Interrupt,     cxt->isInt);
+    WR_CSR_FIELD(riscv, ucause, pil,           IL);
+
+    // update writable bits in epc register
+    Uns64 epcMask = RD_CSR_MASK(riscv, uepc);
+    WR_CSR_FIELD(riscv, uepc, value, cxt->EPC & epcMask);
+
+    // update tval register
+    WR_CSR_FIELD(riscv, utval, value, cxt->tval);
+
+    // get exception base address and mode
+    cxt->base = (Addr)RD_CSR_FIELD(riscv, utvec, BASE) << 2;
+    cxt->mode = getIMode(riscv->UIMode, RD_CSR_FIELD(riscv, utvec, MODE));
+
+    // update exception level
+    if(cxt->level>=0) {
+        WR_CSR_FIELD(riscv, mintstatus, uil, cxt->level);
+    }
+}
+
+//
+// Take trap to VU mode
+//
+static void trapVU(riscvP riscv, trapCxtP cxt) {
+
+    // get interrupt enable and level bits for mode X
+    Uns8 IE = RD_CSR_FIELD(riscv, vsstatus, UIE);
+
+    // update interrupt enable and interrupt enable stack
+    WR_CSR_FIELD(riscv, vsstatus, UPIE, IE);
+    WR_CSR_FIELD(riscv, vsstatus, UIE, 0);
+
+    // clear ucause register if not in CLIC mode
+    if(!useCLICM(riscv)) {
+        WR_CSR(riscv, ucause, 0);
+    }
+
+    // update ucause register */
+    WR_CSR_FIELD(riscv, ucause, ExceptionCode, cxt->ecodeMod);
+    WR_CSR_FIELD(riscv, ucause, Interrupt,     cxt->isInt);
+
+    // update writable bits in uepc register
+    Uns64 epcMask = RD_CSR_MASK(riscv, uepc);
+    WR_CSR_FIELD(riscv, uepc, value, cxt->EPC & epcMask);
+
+    // update utval register
+    WR_CSR_FIELD(riscv, utval, value, cxt->tval);
+
+    // get exception base address and mode
+    cxt->base = (Addr)RD_CSR_FIELD(riscv, utvec, BASE) << 2;
+    cxt->mode = getIMode(riscv->UIMode, RD_CSR_FIELD(riscv, utvec, MODE));
+}
+
+//
+// Take trap to HS mode
+//
+static void trapHS(riscvP riscv, trapCxtP cxt) {
+
+    // get virtual state of source mode (modeY)
+    Bool VY = modeIsVirtual(cxt->modeY);
+
+    // get interrupt enable and level bits for mode X
+    Uns8 IE = RD_CSR_FIELD(riscv, mstatus,    SIE);
+    Uns8 IL = RD_CSR_FIELD(riscv, mintstatus, sil);
+
+    // update interrupt enable and interrupt enable stack
+    WR_CSR_FIELD(riscv, mstatus, SPIE, IE);
+    WR_CSR_FIELD(riscv, mstatus, SIE, 0);
+
+    // clear scause register if not in CLIC mode
+    if(!useCLICM(riscv)) {
+        WR_CSR(riscv, scause, 0);
+    }
+
+    // update scause register
+    WR_CSR_FIELD(riscv, scause, ExceptionCode, cxt->ecodeMod);
+    WR_CSR_FIELD(riscv, scause, Interrupt,     cxt->isInt);
+    WR_CSR_FIELD(riscv, scause, pil,           IL);
+
+    // update writable bits in sepc register
+    Uns64 epcMask = RD_CSR_MASK(riscv, sepc);
+    WR_CSR_FIELD(riscv, sepc, value, cxt->EPC & epcMask);
+
+    // update stval register
+    WR_CSR_FIELD(riscv, stval, value, cxt->tval);
+
+    // get exception base address and mode
+    cxt->base = (Addr)RD_CSR_FIELD(riscv, stvec, BASE) << 2;
+    cxt->mode = getIMode(riscv->SIMode, RD_CSR_FIELD(riscv, stvec, MODE));
+
+    // update exception level
+    if(cxt->level>=0) {
+        WR_CSR_FIELD(riscv, mintstatus, sil, cxt->level);
+    }
+
+    // update previous mode
+    WR_CSR_FIELD(riscv, mstatus, SPP, cxt->modeY);
+    WR_CSR_FIELD(riscv, hstatus, SPV, VY);
+
+    // if access is from a virtual mode, update SPVP with that mode
+    if(VY) {
+        WR_CSR_FIELD(riscv, hstatus, SPVP, cxt->modeY);
+    }
+}
+
+//
+// Take trap to VS mode
+//
+static void trapVS(riscvP riscv, trapCxtP cxt) {
+
+    // get interrupt enable and level bits for mode X
+    Uns8 IE = RD_CSR_FIELD(riscv, vsstatus, SIE);
+
+    // update interrupt enable and interrupt enable stack
+    WR_CSR_FIELD(riscv, vsstatus, SPIE, IE);
+    WR_CSR_FIELD(riscv, vsstatus, SIE, 0);
+
+    // clear vscause register if not in CLIC mode
+    if(!useCLICM(riscv)) {
+        WR_CSR(riscv, vscause, 0);
+    }
+
+    // update vscause register
+    WR_CSR_FIELD(riscv, vscause, ExceptionCode, mapVSIntCode(cxt));
+    WR_CSR_FIELD(riscv, vscause, Interrupt,     cxt->isInt);
+
+    // update writable bits in vsepc register
+    Uns64 epcMask = RD_CSR_MASK(riscv, sepc);
+    WR_CSR_FIELD(riscv, vsepc, value, cxt->EPC & epcMask);
+
+    // update vstval register
+    WR_CSR_FIELD(riscv, vstval, value, cxt->tval);
+
+    // get exception base address and mode
+    cxt->base = (Addr)RD_CSR_FIELD(riscv, vstvec, BASE) << 2;
+    cxt->mode = getIMode(riscv->SIMode, RD_CSR_FIELD(riscv, vstvec, MODE));
+
+    // update previous mode
+    WR_CSR_FIELD(riscv, vsstatus, SPP, cxt->modeY);
+}
+
+//
+// Take trap to M mode
+//
+static void trapM(riscvP riscv, trapCxtP cxt) {
+
+    // get virtual state of source mode (modeY)
+    Bool VY = modeIsVirtual(cxt->modeY);
+
+    // get interrupt enable and level bits for mode X
+    Uns8 IE = RD_CSR_FIELD(riscv, mstatus,    MIE);
+    Uns8 IL = RD_CSR_FIELD(riscv, mintstatus, mil);
+
+    // update interrupt enable and interrupt enable stack
+    WR_CSR_FIELD(riscv, mstatus, MPIE, IE);
+    WR_CSR_FIELD(riscv, mstatus, MIE, 0);
+
+    // clear mcause register if not in CLIC mode
+    if(!useCLICM(riscv)) {
+        WR_CSR(riscv, mcause, 0);
+    }
+
+    // update mcause register
+    WR_CSR_FIELD(riscv, mcause, ExceptionCode, cxt->ecodeMod);
+    WR_CSR_FIELD(riscv, mcause, Interrupt,     cxt->isInt);
+    WR_CSR_FIELD(riscv, mcause, pil,           IL);
+
+    // update writable bits in mepc register
+    Uns64 epcMask = RD_CSR_MASK(riscv, mepc);
+    WR_CSR_FIELD(riscv, mepc, value, cxt->EPC & epcMask);
+
+    // update mtval register
+    WR_CSR_FIELD(riscv, mtval, value, cxt->tval);
+
+    // get exception base address and mode
+    cxt->base = (Addr)RD_CSR_FIELD(riscv, mtvec, BASE) << 2;
+    cxt->mode = getIMode(riscv->MIMode, RD_CSR_FIELD(riscv, mtvec, MODE));
+
+    // update exception level
+    if(cxt->level>=0) {
+        WR_CSR_FIELD(riscv, mintstatus, mil, cxt->level);
+    }
+
+    // update previous mode
+    WR_CSR_FIELD(riscv, mstatus, MPP, cxt->modeY);
+    WR_CSR_FIELD_ALT(riscv, mstatush, mstatus, MPV, VY);
 }
 
 //
 // Get CLIC Vectored Interrupt table entry
 //
-static Bool readCLICVectorTableEntry(
-    riscvP    riscv,
-    Uns32     intNum,
-    riscvMode mode,
-    Uns64     TBASE,
-    Uns64    *handlerPCP
-) {
-    memEndian      endian   = riscvGetDataEndian(riscv, mode);
+static Bool readCLICVectorTableEntry(riscvP riscv, trapCxtP cxt, Uns64 TBASE) {
+
+    memEndian      endian   = riscvGetDataEndian(riscv, cxt->modeX);
     memDomainP     domain   = getDataDomain(riscv);
     memAccessAttrs memAttrs = MEM_AA_TRUE;
     Uns32          ptrBytes = riscvGetXlenArch(riscv)/8;
-    Uns64          address  = TBASE + (ptrBytes*intNum);
+    Uns64          address  = TBASE + (ptrBytes*cxt->ecodeMod);
     Uns64          handlerPC;
 
     // read 4-byte or 8-byte entry
@@ -405,10 +622,67 @@ static Bool readCLICVectorTableEntry(
     }
 
     // mask off LSB
-    *handlerPCP = handlerPC & -2;
+    cxt->handlerPC = handlerPC & -2;
 
     // indicate whether there was a nested exception
     return isInterrupt(riscv->exception);
+}
+
+//
+// Get U mode vectored handler address
+//
+static Bool getCLICVHandlerPCU(riscvP riscv, trapCxtP cxt) {
+
+    // set xcause.inhv=1 before vector lookup
+    WR_CSR_FIELD(riscv, ucause, inhv, 1);
+
+    // validate the memory access
+    Bool ok = readCLICVectorTableEntry(riscv, cxt, RD_CSR(riscv, utvt));
+
+    // set xcause.inhv=0 after vector lookup
+    if(ok) {
+        WR_CSR_FIELD(riscv, ucause, inhv, 0);
+    }
+
+    return ok;
+}
+
+//
+// Get S mode vectored handler address
+//
+static Bool getCLICVHandlerPCS(riscvP riscv, trapCxtP cxt) {
+
+    // set xcause.inhv=1 before vector lookup
+    WR_CSR_FIELD(riscv, scause, inhv, 1);
+
+    // validate the memory access
+    Bool ok = readCLICVectorTableEntry(riscv, cxt, RD_CSR(riscv, stvt));
+
+    // set xcause.inhv=0 after vector lookup
+    if(ok) {
+        WR_CSR_FIELD(riscv, scause, inhv, 0);
+    }
+
+    return ok;
+}
+
+//
+// Get M mode vectored handler address
+//
+static Bool getCLICVHandlerPCM(riscvP riscv, trapCxtP cxt) {
+
+    // set xcause.inhv=1 before vector lookup
+    WR_CSR_FIELD(riscv, mcause, inhv, 1);
+
+    // validate the memory access
+    Bool ok = readCLICVectorTableEntry(riscv, cxt, RD_CSR(riscv, mtvt));
+
+    // set xcause.inhv=0 after vector lookup
+    if(ok) {
+        WR_CSR_FIELD(riscv, mcause, inhv, 0);
+    }
+
+    return ok;
 }
 
 //
@@ -421,7 +695,7 @@ static Bool retiredCode(riscvP riscv, riscvException exception) {
         case riscv_E_Breakpoint:
         case riscv_E_EnvironmentCallFromUMode:
         case riscv_E_EnvironmentCallFromSMode:
-        case riscv_E_EnvironmentCallFromHMode:
+        case riscv_E_EnvironmentCallFromVSMode:
         case riscv_E_EnvironmentCallFromMMode:
             return (RISCV_PRIV_VERSION(riscv)<RVPV_1_12);
 
@@ -499,18 +773,20 @@ void riscvTakeException(
 
     } else {
 
-        Bool        shv       = riscv->clic.sel.shv;
-        Bool        isInt     = isInterrupt(exception);
-        Uns32       ecode     = getExceptionCode(exception);
-        Uns32       ecodeMod  = ecode;
-        Uns64       EPC       = getEPC(riscv);
-        Uns64       handlerPC = 0;
-        Int32       level     = -1;
-        riscvMode   modeY     = getCurrentMode(riscv);
-        riscvMode   modeX;
+        Bool        shv   = riscv->clic.sel.shv;
+        Uns32       ecode = getExceptionCode(exception);
         riscvExtCBP extCB;
-        Uns64       base;
-        riscvICMode mode;
+
+        // see trap context information
+        trapCxt cxt = {
+            handlerPC : 0,
+            EPC       : getEPC(riscv),
+            tval      : tval,
+            ecodeMod  : ecode,
+            level     : -1,
+            modeY     : getCurrentMode5(riscv),
+            isInt     : isInterrupt(exception)
+        };
 
         // adjust baseInstructions based on the exception code to take into
         // account whether the previous instruction has retired, unless
@@ -530,18 +806,18 @@ void riscvTakeException(
         clearEA(riscv);
 
         // get exception target mode (X)
-        if(!isInt) {
-            modeX = getExceptionModeX(riscv, ecode);
+        if(!cxt.isInt) {
+            cxt.modeX = getExceptionModeX(riscv, ecode);
         } else if(riscv->pendEnab.isCLIC) {
-            modeX = riscv->pendEnab.priv;
+            cxt.modeX = riscv->pendEnab.priv;
         } else {
-            modeX = getInterruptModeX(riscv, ecode);
+            cxt.modeX = getInterruptModeX(riscv, ecode);
         }
 
         // modify code reported for external interrupts if required
         if(isExternalInterrupt(exception)) {
             Uns32 offset = exception-riscv_E_ExternalInterrupt;
-            ecodeMod = riscv->extInt[offset] ? : ecode;
+            cxt.ecodeMod = riscv->extInt[offset] ? : ecode;
         }
 
         // CLIC mode: horizontal synchronous exception traps, which stay within
@@ -549,10 +825,10 @@ void riscvTakeException(
         // instruction that raised the exception. Vertical synchronous exception
         // traps, which are serviced at a higher privilege mode, are taken at
         // interrupt level 0 in the higher privilege mode.
-        if(isInt) {
-            level = riscv->pendEnab.level;
-        } else if(modeX != modeY) {
-            level = 0;
+        if(cxt.isInt) {
+            cxt.level = riscv->pendEnab.level;
+        } else if(cxt.modeX != cxt.modeY) {
+            cxt.level = 0;
         }
 
         // force trap value to zero if required
@@ -561,86 +837,79 @@ void riscvTakeException(
         }
 
         // update state dependent on target exception level
-        if(modeX==RISCV_MODE_USER) {
-
-            // target user mode
-            TARGET_MODE_X(
-                riscv, U, u, isInt, ecodeMod, EPC, base, mode, tval, level
-            );
-
-        } else if(modeX==RISCV_MODE_SUPERVISOR) {
-
-            // target supervisor mode
-            TARGET_MODE_X(
-                riscv, S, s, isInt, ecodeMod, EPC, base, mode, tval, level
-            );
-
-            WR_CSR_FIELD(riscv, mstatus, SPP, modeY);
-
-        } else {
-
-            // target machine mode
-            TARGET_MODE_X(
-                riscv, M, m, isInt, ecodeMod, EPC, base, mode, tval, level
-            );
-
-            WR_CSR_FIELD(riscv, mstatus, MPP, modeY);
+        if(cxt.modeX==RISCV_MODE_U) {
+            trapU(riscv, &cxt);
+        } else if(cxt.modeX==RISCV_MODE_VU) {
+            trapVU(riscv, &cxt);
+        } else if(cxt.modeX==RISCV_MODE_S) {
+            trapHS(riscv, &cxt);
+        } else if(cxt.modeX==RISCV_MODE_VS) {
+            trapVS(riscv, &cxt);
+        } else if(cxt.modeX==RISCV_MODE_M) {
+            trapM(riscv, &cxt);
+        } else {                                    // LCOV_EXCL_LINE
+            VMI_ABORT("TODO: virtualized mode");    // LCOV_EXCL_LINE
         }
 
         // switch to target mode
-        riscvSetMode(riscv, modeX);
+        riscvSetMode(riscv, cxt.modeX);
 
         // indicate the taken exception
         riscv->exception = exception;
 
         // handle direct or vectored exception
-        if((mode == riscv_int_Direct) || !isInt) {
+        if((cxt.mode == riscv_int_Direct) || !cxt.isInt) {
 
-            handlerPC = base;
+            cxt.handlerPC = cxt.base;
 
-        } else if(mode!=riscv_int_CLIC) {
+        } else if(cxt.mode!=riscv_int_CLIC) {
 
-            handlerPC = base + (4 * ecode);
+            cxt.handlerPC = cxt.base + (4 * ecode);
 
         } else if(!shv) {
 
-            handlerPC = base & -64;
+            cxt.handlerPC = cxt.base & -64;
 
         } else if(riscv->configInfo.tvt_undefined) {
 
-            handlerPC = base + (4 * ecode);
+            cxt.handlerPC = cxt.base + (4 * ecode);
 
         } else {
+
+            Bool ok;
 
             // SHV interrupts are acknowledged automatically
             riscvAcknowledgeCLICInt(riscv, ecode);
 
-            if(modeX==RISCV_MODE_USER) {
-                GET_CLIC_VECTORED_HANDLER_PC(
-                    riscv, handlerPC, U, u, ecodeMod, modeX
-                );
-            } else if(modeX==RISCV_MODE_SUPERVISOR) {
-                GET_CLIC_VECTORED_HANDLER_PC(
-                    riscv, handlerPC, S, s, ecodeMod, modeX
-                );
-            } else {
-                GET_CLIC_VECTORED_HANDLER_PC(
-                    riscv, handlerPC, M, m, ecodeMod, modeX
-                );
+            if(cxt.modeX==RISCV_MODE_U) {
+                ok = getCLICVHandlerPCU(riscv, &cxt);
+            } else if(cxt.modeX==RISCV_MODE_S) {
+                ok = getCLICVHandlerPCS(riscv, &cxt);
+            } else if(cxt.modeX==RISCV_MODE_M) {
+                ok = getCLICVHandlerPCM(riscv, &cxt);
+            } else {                                    // LCOV_EXCL_LINE
+                VMI_ABORT("TODO: virtualized mode");    // LCOV_EXCL_LINE
+            }
+
+            // abort further action if handler address lookup failed
+            if(!ok) {
+                return;
             }
         }
 
         // set address at which to execute
-        setPCException(riscv, handlerPC);
+        setPCException(riscv, cxt.handlerPC);
 
         // notify derived model of exception entry if required
         for(extCB=riscv->extCBs; extCB; extCB=extCB->next) {
-            notifyTrapDerived(riscv, modeX, extCB->trapNotifier, extCB->clientData);
+            notifyTrapDerived(
+                riscv, cxt.modeX, extCB->trapNotifier, extCB->clientData
+            );
         }
 
         // acknowledge interrupt if required
-        if(isInt) {
-            writeNet(riscv, riscv->irq_id_Handle, ecodeMod);
+        if(cxt.isInt) {
+            writeNet(riscv, riscv->irq_id_Handle, cxt.ecodeMod);
             writeNet(riscv, riscv->irq_ack_Handle, 1);
             riscv->netValue.irq_ack = True;
         }
@@ -758,9 +1027,9 @@ void riscvTakeMemoryException(
 }
 
 //
-// Take Illegal Instruction exception
+// Take the given instruction exception trap
 //
-void riscvIllegalInstruction(riscvP riscv) {
+static void takeInstructionException(riscvP riscv, riscvException exception) {
 
     Uns64 tval = 0;
 
@@ -769,7 +1038,22 @@ void riscvIllegalInstruction(riscvP riscv) {
         tval = riscvFetchInstruction(riscv, getPC(riscv), 0);
     }
 
-    riscvTakeException(riscv, riscv_E_IllegalInstruction, tval);
+    riscvTakeException(riscv, exception, tval);
+
+}
+
+//
+// Take Illegal Instruction exception
+//
+void riscvIllegalInstruction(riscvP riscv) {
+    takeInstructionException(riscv, riscv_E_IllegalInstruction);
+}
+
+//
+// Take Virtual Instruction exception
+//
+void riscvVirtualInstruction(riscvP riscv) {
+    takeInstructionException(riscv, riscv_E_VirtualInstruction);
 }
 
 //
@@ -788,10 +1072,16 @@ void riscvInstructionAddressMisaligned(riscvP riscv, Uns64 tval) {
 //
 void riscvECALL(riscvP riscv) {
 
-    riscvMode      mode      = getCurrentMode(riscv);
-    riscvException exception = riscv_E_EnvironmentCallFromUMode + mode;
+    // map from processor mode to mode priority
+    static const riscvException reasonMap[] = {
+        [RISCV_MODE_M]  = riscv_E_EnvironmentCallFromMMode,
+        [RISCV_MODE_S]  = riscv_E_EnvironmentCallFromSMode,
+        [RISCV_MODE_VS] = riscv_E_EnvironmentCallFromVSMode,
+        [RISCV_MODE_U]  = riscv_E_EnvironmentCallFromUMode,
+        [RISCV_MODE_VU] = riscv_E_EnvironmentCallFromUMode,
+    };
 
-    riscvTakeException(riscv, exception, 0);
+    riscvTakeException(riscv, reasonMap[getCurrentMode5(riscv)], 0);
 }
 
 
@@ -813,10 +1103,7 @@ static riscvMode getERETMode(riscvP riscv, riscvMode newMode, riscvMode minMode)
 // is less privileged than M-mode
 //
 static void clearMPRV(riscvP riscv, riscvMode newMode) {
-    if(
-        (RISCV_PRIV_VERSION(riscv)>RVPV_20190405) &&
-        (newMode!=RISCV_MODE_MACHINE)
-    ) {
+    if((RISCV_PRIV_VERSION(riscv)>RVPV_20190405) && (newMode!=RISCV_MODE_M)) {
         WR_CSR_FIELD(riscv, mstatus, MPRV, 0);
     }
 }
@@ -824,12 +1111,10 @@ static void clearMPRV(riscvP riscv, riscvMode newMode) {
 //
 // Do common actions when returning from an exception
 //
-static void doERETCommon(
-    riscvP    riscv,
-    riscvMode retMode,
-    riscvMode newMode,
-    Uns64     epc
-) {
+static void doERETCommon(riscvP riscv, riscvMode newMode, Uns64 epc) {
+
+    riscvMode oldMode = getCurrentMode5(riscv);
+
     // switch to target mode
     riscvSetMode(riscv, newMode);
 
@@ -837,86 +1122,139 @@ static void doERETCommon(
     setPCxRET(riscv, epc);
 
     // notify derived model of exception return if required
-    notifyERETDerived(riscv, retMode);
+    notifyERETDerived(riscv, oldMode);
 
     // check for pending interrupts
     riscvTestInterrupt(riscv);
 }
 
 //
+// Perform any special actions when exception return is executed in Debug mode
+// (currently a NOP in this model)
+//
+#define HANDLE_DMODE_RET(_P) if(inDebugMode(_P)) {return;}
+
+//
 // Return from M-mode exception
 //
 void riscvMRET(riscvP riscv) {
 
-    // undefined behavior in Debug mode - NOP in this model
-    if(!inDebugMode(riscv)) {
+    // handle exception return in Debug mode
+    HANDLE_DMODE_RET(riscv);
 
-        Uns32     MPP     = RD_CSR_FIELD(riscv, mstatus, MPP);
-        riscvMode minMode = riscvGetMinMode(riscv);
-        riscvMode newMode = getERETMode(riscv, MPP, minMode);
-        riscvMode retMode = RISCV_MODE_MACHINE;
+    Uns32     MPP     = RD_CSR_FIELD(riscv, mstatus, MPP);
+    Bool      MPV     = RD_CSR_FIELD_ALT(riscv, mstatush, mstatus, MPV);
+    riscvMode minMode = riscvGetMinMode(riscv);
+    riscvMode newMode = getERETMode(riscv, MPP, minMode);
 
-        // clear any active exclusive access
-        clearEAxRET(riscv);
-
-        // restore previous mintstatus.mil (CLIC mode)
-        if(useCLICM(riscv)) {
-            WR_CSR_FIELD(riscv, mintstatus, mil, RD_CSR_FIELD(riscv, mcause, pil));
-        }
-
-        // restore previous MIE
-        WR_CSR_FIELD(riscv, mstatus, MIE, RD_CSR_FIELD(riscv, mstatus, MPIE))
-
-        // MPIE=1
-        WR_CSR_FIELD(riscv, mstatus, MPIE, 1);
-
-        // MPP=<minimum_supported_mode>
-        WR_CSR_FIELD(riscv, mstatus, MPP, minMode);
-
-        // clear mstatus.MPRV if required
-        clearMPRV(riscv, newMode);
-
-        // do common return actions
-        doERETCommon(riscv, retMode, newMode, RD_CSR_FIELD(riscv, mepc, value));
+    // handle return to virtual mode if H extension is enabled
+    if(MPV && (newMode!=RISCV_MODE_M) && hypervisorEnabled(riscv)) {
+        newMode |= RISCV_MODE_V;
     }
+
+    // clear any active exclusive access
+    clearEAxRET(riscv);
+
+    // restore previous mintstatus.mil (CLIC mode)
+    if(useCLICM(riscv)) {
+        WR_CSR_FIELD(riscv, mintstatus, mil, RD_CSR_FIELD(riscv, mcause, pil));
+    }
+
+    // restore previous MIE
+    WR_CSR_FIELD(riscv, mstatus, MIE, RD_CSR_FIELD(riscv, mstatus, MPIE))
+
+    // MPIE=1
+    WR_CSR_FIELD(riscv, mstatus, MPIE, 1);
+
+    // MPP=<minimum_supported_mode>
+    WR_CSR_FIELD(riscv, mstatus, MPP, minMode);
+
+    // MPV=0
+    WR_CSR_FIELD_ALT(riscv, mstatush, mstatus, MPV, 0);
+
+    // clear mstatus.MPRV if required
+    clearMPRV(riscv, newMode);
+
+    // do common return actions
+    doERETCommon(riscv, newMode, RD_CSR_FIELD(riscv, mepc, value));
 }
 
 //
-// Return from S-mode exception
+// Return from HS-mode exception
 //
-void riscvSRET(riscvP riscv) {
+void riscvHSRET(riscvP riscv) {
 
-    // undefined behavior in Debug mode - NOP in this model
-    if(!inDebugMode(riscv)) {
+    // handle exception return in Debug mode
+    HANDLE_DMODE_RET(riscv);
 
-        Uns32     SPP     = RD_CSR_FIELD(riscv, mstatus, SPP);
-        riscvMode minMode = riscvGetMinMode(riscv);
-        riscvMode newMode = getERETMode(riscv, SPP, minMode);
-        riscvMode retMode = RISCV_MODE_SUPERVISOR;
+    Uns32     SPP     = RD_CSR_FIELD(riscv, mstatus, SPP);
+    riscvMode minMode = riscvGetMinMode(riscv);
+    riscvMode newMode = getERETMode(riscv, SPP, minMode);
 
-        // clear any active exclusive access
-        clearEAxRET(riscv);
-
-        // restore previous mintstatus.sil (CLIC mode)
-        if(useCLICS(riscv)) {
-            WR_CSR_FIELD(riscv, mintstatus, sil, RD_CSR_FIELD(riscv, scause, pil));
-        }
-
-        // restore previous SIE
-        WR_CSR_FIELD(riscv, mstatus, SIE, RD_CSR_FIELD(riscv, mstatus, SPIE))
-
-        // SPIE=1
-        WR_CSR_FIELD(riscv, mstatus, SPIE, 1);
-
-        // SPP=<minimum_supported_mode>
-        WR_CSR_FIELD(riscv, mstatus, SPP, minMode);
-
-        // clear mstatus.MPRV if required
-        clearMPRV(riscv, newMode);
-
-        // do common return actions
-        doERETCommon(riscv, retMode, newMode, RD_CSR_FIELD(riscv, sepc, value));
+    // handle return to virtual mode
+    if(RD_CSR_FIELD(riscv, hstatus, SPV)) {
+        newMode |= RISCV_MODE_V;
     }
+
+    // clear any active exclusive access
+    clearEAxRET(riscv);
+
+    // restore previous mintstatus.sil (CLIC mode)
+    if(useCLICS(riscv)) {
+        WR_CSR_FIELD(riscv, mintstatus, sil, RD_CSR_FIELD(riscv, scause, pil));
+    }
+
+    // restore previous SIE
+    WR_CSR_FIELD(riscv, mstatus, SIE, RD_CSR_FIELD(riscv, mstatus, SPIE))
+
+    // SPIE=1
+    WR_CSR_FIELD(riscv, mstatus, SPIE, 1);
+
+    // SPP=<minimum_supported_mode>
+    WR_CSR_FIELD(riscv, mstatus, SPP, minMode);
+
+    // SPV=0
+    WR_CSR_FIELD(riscv, hstatus, SPV, 0);
+
+    // clear mstatus.MPRV if required
+    clearMPRV(riscv, newMode);
+
+    // do common return actions
+    doERETCommon(riscv, newMode, RD_CSR_FIELD(riscv, sepc, value));
+}
+
+//
+// Return from VS-mode exception
+//
+void riscvVSRET(riscvP riscv) {
+
+    // handle exception return in Debug mode
+    HANDLE_DMODE_RET(riscv);
+
+    Uns32     SPP     = RD_CSR_FIELD(riscv, vsstatus, SPP);
+    riscvMode minMode = riscvGetMinMode(riscv);
+    riscvMode newMode = getERETMode(riscv, SPP, minMode);
+
+    // always return to virtual mode
+    newMode |= RISCV_MODE_V;
+
+    // clear any active exclusive access
+    clearEAxRET(riscv);
+
+    // restore previous SIE
+    WR_CSR_FIELD(riscv, vsstatus, SIE, RD_CSR_FIELD(riscv, vsstatus, SPIE))
+
+    // SPIE=1
+    WR_CSR_FIELD(riscv, vsstatus, SPIE, 1);
+
+    // SPP=<minimum_supported_mode>
+    WR_CSR_FIELD(riscv, vsstatus, SPP, minMode);
+
+    // clear mstatus.MPRV if required
+    clearMPRV(riscv, newMode);
+
+    // do common return actions
+    doERETCommon(riscv, newMode, RD_CSR_FIELD(riscv, vsepc, value));
 }
 
 //
@@ -924,29 +1262,50 @@ void riscvSRET(riscvP riscv) {
 //
 void riscvURET(riscvP riscv) {
 
-    // undefined behavior in Debug mode - NOP in this model
-    if(!inDebugMode(riscv)) {
+    // handle exception return in Debug mode
+    HANDLE_DMODE_RET(riscv);
 
-        riscvMode newMode = RISCV_MODE_USER;
-        riscvMode retMode = RISCV_MODE_USER;
+    riscvMode newMode = RISCV_MODE_U;
 
-        // clear any active exclusive access
-        clearEAxRET(riscv);
+    // clear any active exclusive access
+    clearEAxRET(riscv);
 
-        // restore previous mintstatus.uil (CLIC mode)
-        if(useCLICU(riscv)) {
-            WR_CSR_FIELD(riscv, mintstatus, uil, RD_CSR_FIELD(riscv, ucause, pil));
-        }
-
-        // restore previous UIE
-        WR_CSR_FIELD(riscv, mstatus, UIE, RD_CSR_FIELD(riscv, mstatus, UPIE))
-
-        // UPIE=1
-        WR_CSR_FIELD(riscv, mstatus, UPIE, 1);
-
-        // do common return actions
-        doERETCommon(riscv, retMode, newMode, RD_CSR_FIELD(riscv, uepc, value));
+    // restore previous mintstatus.uil (CLIC mode)
+    if(useCLICU(riscv)) {
+        WR_CSR_FIELD(riscv, mintstatus, uil, RD_CSR_FIELD(riscv, ucause, pil));
     }
+
+    // restore previous UIE
+    WR_CSR_FIELD(riscv, mstatus, UIE, RD_CSR_FIELD(riscv, mstatus, UPIE))
+
+    // UPIE=1
+    WR_CSR_FIELD(riscv, mstatus, UPIE, 1);
+
+    // do common return actions
+    doERETCommon(riscv, newMode, RD_CSR_FIELD(riscv, uepc, value));
+}
+
+//
+// Return from VU-mode exception
+//
+void riscvVURET(riscvP riscv) {
+
+    // handle exception return in Debug mode
+    HANDLE_DMODE_RET(riscv);
+
+    riscvMode newMode = RISCV_MODE_VU;
+
+    // clear any active exclusive access
+    clearEAxRET(riscv);
+
+    // restore previous UIE
+    WR_CSR_FIELD(riscv, vsstatus, UIE, RD_CSR_FIELD(riscv, vsstatus, UPIE))
+
+    // UPIE=1
+    WR_CSR_FIELD(riscv, vsstatus, UPIE, 1);
+
+    // do common return actions
+    doERETCommon(riscv, newMode, RD_CSR_FIELD(riscv, uepc, value));
 }
 
 
@@ -1001,7 +1360,7 @@ static void enterDM(riscvP riscv, dmCause cause) {
         setDM(riscv, True);
 
         // save current mode
-        WR_CSR_FIELD(riscv, dcsr, prv, getCurrentMode(riscv));
+        WR_CSR_FIELD(riscv, dcsr, prv, getCurrentMode3(riscv));
 
         // save cause
         WR_CSR_FIELD(riscv, dcsr, cause, cause);
@@ -1047,7 +1406,6 @@ static void enterDM(riscvP riscv, dmCause cause) {
 static void leaveDM(riscvP riscv) {
 
     riscvMode       newMode = RD_CSR_FIELD(riscv, dcsr, prv);
-    riscvMode       retMode = RISCV_MODE_MACHINE;
     riscvCountState state;
 
     // get state before possible inhibit update
@@ -1060,7 +1418,7 @@ static void leaveDM(riscvP riscv) {
     clearMPRV(riscv, newMode);
 
     // do common return actions
-    doERETCommon(riscv, retMode, newMode, RD_CSR_FIELD(riscv, dpc, value));
+    doERETCommon(riscv, newMode, RD_CSR_FIELD(riscv, dpc, value));
 
     // refresh state after possible inhibit update
     riscvPostInhibit(riscv, &state, False);
@@ -1144,7 +1502,7 @@ void riscvDRET(riscvP riscv) {
 //
 void riscvEBREAK(riscvP riscv) {
 
-    riscvMode mode  = getCurrentMode(riscv);
+    riscvMode mode  = getCurrentMode3(riscv);
     Bool      useDM = False;
 
     // determine whether ebreak should cause debug module entry
@@ -1416,9 +1774,18 @@ static Bool validateFetchAddress(
 //
 static Bool getIE(riscvP riscv, Bool IE, riscvMode modeIE, Bool useCLIC) {
 
-    riscvMode mode = getCurrentMode(riscv);
+    Uns8 curPri = mode5Priority(getCurrentMode5(riscv));
+    Uns8 IEPri  = mode5Priority(modeIE);
 
-    return useCLIC ? False : (mode<modeIE) ? True : (mode>modeIE) ? False : IE;
+    if(useCLIC) {
+        IE = False;
+    } else if(curPri<IEPri) {
+        IE = True;
+    } else if(curPri>IEPri) {
+        IE = False;
+    }
+
+    return IE;
 }
 
 //
@@ -1465,9 +1832,13 @@ static Uns32 getIntPri(riscvP riscv, Uns32 intNum) {
         INT_PRI_ENTRY(STimer),
         INT_PRI_ENTRY(SSW),
         INT_PRI_ENTRY(SExternal),
+        INT_PRI_ENTRY(VSTimer),
+        INT_PRI_ENTRY(VSSW),
+        INT_PRI_ENTRY(VSExternal),
         INT_PRI_ENTRY(MTimer),
         INT_PRI_ENTRY(MSW),
         INT_PRI_ENTRY(MExternal),
+        INT_PRI_ENTRY(SGEI),
     };
     
     if(intNum<INT_INDEX(Local)) {
@@ -1507,26 +1878,35 @@ static void refreshPendingAndEnabledBasic(riscvP riscv) {
     if(pendingEnabled) {
 
         // get raw interrupt enable bits
-        Bool MIE = RD_CSR_FIELD(riscv, mstatus, MIE);
-        Bool SIE = RD_CSR_FIELD(riscv, mstatus, SIE);
-        Bool UIE = RD_CSR_FIELD(riscv, mstatus, UIE);
+        Bool MIE  = RD_CSR_FIELD(riscv, mstatus,  MIE);
+        Bool HSIE = RD_CSR_FIELD(riscv, mstatus,  SIE);
+        Bool HUIE = RD_CSR_FIELD(riscv, mstatus,  UIE);
+        Bool VSIE = RD_CSR_FIELD(riscv, vsstatus, SIE);
+        Bool VUIE = RD_CSR_FIELD(riscv, vsstatus, UIE);
 
         // modify effective interrupt enables based on current mode
-        MIE = getIE(riscv, MIE, RISCV_MODE_MACHINE,    useCLICM(riscv));
-        SIE = getIE(riscv, SIE, RISCV_MODE_SUPERVISOR, useCLICS(riscv));
-        UIE = getIE(riscv, UIE, RISCV_MODE_USER,       useCLICU(riscv));
+        MIE  = getIE(riscv, MIE,  RISCV_MODE_M,  useCLICM(riscv));
+        HSIE = getIE(riscv, HSIE, RISCV_MODE_S,  useCLICS(riscv));
+        HUIE = getIE(riscv, HUIE, RISCV_MODE_U,  useCLICU(riscv));
+        VSIE = getIE(riscv, VSIE, RISCV_MODE_VS, useCLICVS(riscv));
+        VUIE = getIE(riscv, VUIE, RISCV_MODE_VU, useCLICVU(riscv));
 
         // get interrupt mask applicable for each mode
         Uns64 mideleg = RD_CSR(riscv, mideleg);
         Uns64 sideleg = RD_CSR(riscv, sideleg) & mideleg;
+        Uns64 hideleg = RD_CSR(riscv, hideleg) & mideleg;
         Uns64 mMask   = ~mideleg;
-        Uns64 sMask   = mideleg & ~sideleg;
-        Uns64 uMask   = sideleg;
+        Uns64 hsMask  = mideleg & ~(hideleg|sideleg);
+        Uns64 huMask  = sideleg;
+        Uns64 vsMask  = hideleg;
+        Uns64 vuMask  = 0;
 
         // handle masked interrupts
-        if(!MIE) {pendingEnabled &= ~mMask;}
-        if(!SIE) {pendingEnabled &= ~sMask;}
-        if(!UIE) {pendingEnabled &= ~uMask;}
+        if(!MIE)  {pendingEnabled &= ~mMask;}
+        if(!HSIE) {pendingEnabled &= ~hsMask;}
+        if(!HUIE) {pendingEnabled &= ~huMask;}
+        if(!VSIE) {pendingEnabled &= ~vsMask;}
+        if(!VUIE) {pendingEnabled &= ~vuMask;}
     }
 
     // print exception status
@@ -1575,6 +1955,7 @@ static void refreshPendingAndEnabledBasic(riscvP riscv) {
 
         riscvPendEnabP selected = &riscv->pendEnab;
         Int32          id       = 0;
+        Uns8           selPri   = 0;
 
         do {
 
@@ -1585,17 +1966,19 @@ static void refreshPendingAndEnabledBasic(riscvP riscv) {
                     priv : getInterruptModeX(riscv, id)
                 };
 
-                if(selected->id==RV_NO_INT) {
-                    // first pending-and-enabled interrupt
-                    *selected = try;
-                } else if(selected->priv < try.priv) {
+                // get relative priority of candidate interrupt
+                Uns8 tryPri = mode5Priority(try.priv);
+
+                if(selPri < tryPri) {
                     // higher destination privilege mode
                     *selected = try;
-                } else if(selected->priv > try.priv) {
+                    selPri    = tryPri;
+                } else if(selPri > tryPri) {
                     // lower destination privilege mode
                 } else if(getIntPri(riscv, selected->id)<=getIntPri(riscv, try.id)) {
                     // higher fixed priority order and same destination mode
                     *selected = try;
+                    selPri    = tryPri;
                 }
             }
 
@@ -1639,7 +2022,7 @@ static void refreshPendingAndEnabledCLIC(riscvP hart) {
         riscvMode priv   = hart->clic.sel.priv;
         Uns8      level  = hart->clic.sel.level;
         Bool      enable = False;
-        riscvMode mode   = getCurrentMode(hart);
+        riscvMode mode   = getCurrentMode3(hart);
 
         // determine whether presented interrupt is enabled
         if(hart->pendEnab.priv>priv) {
@@ -1812,13 +2195,26 @@ VMI_IFETCH_FN(riscvIFetchExcept) {
 //
 Bool riscvHasException(riscvP riscv, riscvException code) {
 
-    if(code==riscv_E_CSIP) {
-        return CLICPresent(riscv);
+    if((code==riscv_E_CSIP) && CLICPresent(riscv)) {
+        return True;
     } else if(!isInterrupt(code)) {
         return riscv->exceptionMask & (1ULL<<code);
     } else {
         return riscv->interruptMask & (1ULL<<exceptionToInt(code));
     }
+}
+
+//
+// Does the processor implement the standard exception or interrupt?
+//
+static Bool hasStandardException(riscvP riscv, riscvExceptionDescCP desc) {
+
+    return (
+        // validate feature requirements
+        ((riscv->configInfo.arch&desc->arch)==desc->arch) &&
+        // validate trap code
+        riscvHasException(riscv, desc->vmiInfo.code)
+    );
 }
 
 //
@@ -1829,13 +2225,24 @@ Uns32 riscvGetIntNum(riscvP riscv) {
 }
 
 //
+// Is the RISC-V object a Hart (not a container)
+//
+inline static Bool isHart(riscvP riscv) {
+    return !vmirtGetSMPChild((vmiProcessorP)riscv);
+}
+
+//
 // Return number of local interrupts
 //
-static Uns32 getLocalIntNum(riscvP riscv) {
+inline static Uns32 getLocalIntNum(riscvP riscv) {
+    return isHart(riscv) ? riscv->configInfo.local_int_num : 0;
+}
 
-    Bool isContainer = vmirtGetSMPChild((vmiProcessorP)riscv);
-
-    return isContainer ? 0 : riscv->configInfo.local_int_num;
+//
+// Return number of guest external interrupts
+//
+inline static Uns32 getGuestExternalIntNum(riscvP riscv) {
+    return isHart(riscv) ? getGEILEN(riscv) : 0;
 }
 
 //
@@ -1853,7 +2260,7 @@ static vmiExceptionInfoCP getExceptions(riscvP riscv) {
 
         // get number of exceptions and standard interrupts in the base model
         for(i=0, numExcept=0; exceptions[i].vmiInfo.name; i++) {
-            if(riscvHasException(riscv, exceptions[i].vmiInfo.code)) {
+            if(hasStandardException(riscv, &exceptions[i])) {
                 numExcept++;
             }
         }
@@ -1885,7 +2292,7 @@ static vmiExceptionInfoCP getExceptions(riscvP riscv) {
 
         // fill exceptions and standard interrupts from base model
         for(i=0, numExcept=0; exceptions[i].vmiInfo.name; i++) {
-            if(riscvHasException(riscv, exceptions[i].vmiInfo.code)) {
+            if(hasStandardException(riscv, &exceptions[i])) {
                 all[numExcept++] = exceptions[i].vmiInfo;
             }
         }
@@ -1982,12 +2389,15 @@ void riscvSetExceptionMask(riscvP riscv) {
     // architecture
     for(thisDesc=exceptions; thisDesc->vmiInfo.name; thisDesc++) {
 
-        riscvException code = thisDesc->vmiInfo.code;
+        riscvException    code     = thisDesc->vmiInfo.code;
+        riscvArchitecture required = thisDesc->arch;
 
-        if(code==riscv_E_CSIP) {
-            // never present in interrupt mask
-        } else if((arch&thisDesc->arch)!=thisDesc->arch) {
+        if((arch&required)!=required) {
             // not implemented by this variant
+        } else if((code==riscv_E_SGEIInterrupt) && !getGEILEN(riscv)) {
+            // absent if GEILEN=0
+        } else if((code==riscv_E_CSIP) && CLICPresent(riscv)) {
+            // never present in interrupt mask
         } else if(!isInterrupt(code)) {
             exceptionMask |= 1ULL<<code;
         } else {
@@ -2244,6 +2654,21 @@ static VMI_NET_CHANGE_FN(irqPortCB) {
 ////////////////////////////////////////////////////////////////////////////////
 
 //
+// Return derived value of SGEI and VSEI interrupts
+//
+static Uns32 getGuestEIP(riscvP riscv) {
+
+    Uns64 mask       = (1ULL<<RD_CSR_FIELD(riscv, hstatus, VGEIN));
+    Bool  selectSGEI = RD_CSR(riscv, hgeip) & RD_CSR(riscv, hgeie);
+    Bool  selectVSEI = RD_CSR(riscv, hgeip) & mask;
+
+    return (
+        (selectSGEI ? 1<<exceptionToInt(riscv_E_SGEIInterrupt)       : 0) |
+        (selectVSEI ? 1<<exceptionToInt(riscv_E_VSExternalInterrupt) : 0)
+    );
+}
+
+//
 // Update interrupt state because of some pending state change (either from
 // external interrupt source or software pending register)
 //
@@ -2252,7 +2677,7 @@ void riscvUpdatePending(riscvP riscv) {
     Uns64 oldValue = RD_CSR(riscv, mip);
 
     // compose new value from discrete sources
-    Uns64 newValue = (riscv->ip[0] | riscv->swip);
+    Uns64 newValue = (riscv->ip[0] | riscv->swip | getGuestEIP(riscv));
 
     // update register value and exception state on a change
     if(oldValue != newValue) {
@@ -2381,6 +2806,40 @@ static VMI_NET_CHANGE_FN(interruptPortCB) {
 }
 
 //
+// Guest external interrupt signal
+//
+static VMI_NET_CHANGE_FN(guestExternalInterruptPortCB) {
+
+    riscvInterruptInfoP ii       = userData;
+    riscvP              riscv    = ii->hart;
+    Uns32               index    = ii->userData;
+    Uns64               mask     = 1ULL << index;
+    Uns64               oldHGEIP = RD_CSR(riscv, hgeip);
+    Uns64               newHGEIP = oldHGEIP;
+
+    // update pending bit
+    if(newValue) {
+        newHGEIP |= mask;
+    } else {
+        newHGEIP &= ~mask;
+    }
+
+    // update hgeip
+    WR_CSR(riscv, hgeip, newHGEIP);
+
+    // restart the processor from WFI state if a guest external interrupt has
+    // been asserted, even if this does not propagate to visible pending state
+    if(newHGEIP&~oldHGEIP) {
+        restartProcessor(riscv, RVD_RESTART_WFI);
+    }
+
+    // update basic interrupt controller if required
+    if(oldHGEIP!=newHGEIP) {
+        riscvUpdatePending(riscv);
+    }
+}
+
+//
 // Generic interrupt ID signal
 //
 static VMI_NET_CHANGE_FN(interruptIDPortCB) {
@@ -2477,7 +2936,7 @@ static riscvNetPortPP addInterruptNetPorts(riscvP riscv, riscvNetPortPP tail) {
         vmiExceptionInfoCP info = &this->vmiInfo;
         riscvException     code = info->code;
 
-        if(isInterrupt(code) && riscvHasException(riscv, code)) {
+        if(this->hasNetPort && hasStandardException(riscv, this)) {
 
             tail = newNetPort(
                 riscv,
@@ -2502,10 +2961,10 @@ static riscvNetPortPP addInterruptNetPorts(riscvP riscv, riscvNetPortPP tail) {
 
                 // port names for each mode
                 static const char *map[] = {
-                    [RISCV_MODE_USER]       = "UExternalInterruptID",
-                    [RISCV_MODE_SUPERVISOR] = "SExternalInterruptID",
-                    [RISCV_MODE_HYPERVISOR] = "HExternalInterruptID",
-                    [RISCV_MODE_MACHINE]    = "MExternalInterruptID",
+                    [RISCV_MODE_U] = "UExternalInterruptID",
+                    [RISCV_MODE_S] = "SExternalInterruptID",
+                    [RISCV_MODE_H] = "HExternalInterruptID",
+                    [RISCV_MODE_M] = "MExternalInterruptID",
                 };
 
                 Uns32 offset = code-riscv_E_ExternalInterrupt;
@@ -2627,6 +3086,40 @@ static riscvNetPortPP addCLICNetPorts(riscvP riscv, riscvNetPortPP tail) {
 }
 
 //
+// Add net ports for guest external interrupts
+//
+static riscvNetPortPP addGuestExternaIInterruptNetPorts(
+    riscvP         riscv,
+    riscvNetPortPP tail
+) {
+    // add local interrupt ports
+    Uns32 guestExternalIntNum = getGuestExternalIntNum(riscv);
+    Uns32 i;
+
+    for(i=1; i<=guestExternalIntNum; i++) {
+
+        // construct name and description
+        char name[32];
+        char desc[32];
+        sprintf(name, "GuestExternalInterrupt%u", i);
+        sprintf(desc, "Guest External Interrupt %u", i);
+
+        tail = newNetPort(
+            riscv,
+            tail,
+            name,
+            vmi_NP_INPUT,
+            guestExternalInterruptPortCB,
+            desc,
+            i,
+            0
+        );
+    }
+
+    return tail;
+}
+
+//
 // Allocate ports for this variant
 //
 void riscvNewNetPorts(riscvP riscv) {
@@ -2669,6 +3162,11 @@ void riscvNewNetPorts(riscvP riscv) {
     // add CLIC interrupt ports if required
     if(CLICExternal(riscv)) {
         tail = addCLICNetPorts(riscv, tail);
+    }
+
+    // add guest external interrupt ports if required
+    if(getGuestExternalIntNum(riscv)) {
+        tail = addGuestExternaIInterruptNetPorts(riscv, tail);
     }
 
     // allocate irq_ack_o port
@@ -2909,14 +3407,19 @@ void riscvNetSave(
         // save latched control input state
         VMIRT_SAVE_FIELD(cxt, riscv, netValue);
 
-        // restore basic-mode interrupt state
+        // save basic-mode interrupt state
         if(basicICPresent(riscv)) {
             VMIRT_SAVE_FIELD(cxt, riscv, intState);
         }
 
-        // restore CLIC-mode interrupt state
+        // save CLIC-mode interrupt state
         if(CLICInternal(riscv)) {
             riscvSaveCLIC(riscv, cxt, phase);
+        }
+
+        // save guest external interrupt state
+        if(getGEILEN(riscv)) {
+            VMIRT_SAVE_FIELD(cxt, riscv, csr.hgeip);
         }
     }
 }
@@ -2947,8 +3450,13 @@ void riscvNetRestore(
             riscvRestoreCLIC(riscv, cxt, phase);
         }
 
+        // restore guest external interrupt state
+        if(getGEILEN(riscv)) {
+            VMIRT_RESTORE_FIELD(cxt, riscv, csr.hgeip);
+        }
+
         // refresh core state
-        riscvTestInterrupt(riscv);
+        riscvUpdatePending(riscv);
     }
 }
 
