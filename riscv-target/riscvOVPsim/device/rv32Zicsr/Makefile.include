@@ -10,12 +10,14 @@ ifeq ($(shell command -v $(TARGET_SIM) 2> /dev/null),)
     $(error Target simulator executable '$(TARGET_SIM)` not found)
 endif
 
+COVERTYPE ?= basic
+
 RUN_TARGET=\
     $(TARGET_SIM) $(TARGET_FLAGS) \
         --variant RV32I --program $(<) \
         --signaturedump --customcontrol \
-        --cover basic \
-        --outputfile $(*).coverage.yaml \
+        --cover ${COVERTYPE} \
+        --outputfile $(*).${COVERTYPE}.coverage.yaml \
         --extensions RVZicsr \
         --override riscvOVPsim/cpu/sigdump/SignatureFile=$(*).signature.output \
         --override riscvOVPsim/cpu/sigdump/ResultReg=3 \

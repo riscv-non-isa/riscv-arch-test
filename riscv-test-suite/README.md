@@ -27,8 +27,12 @@ Pretty Solid:
     * Extended Coverage (2,586 coverpoints): 18.83%
 * RV32ICSR
     * 6 focused tests
+    * Basic Coverage (288 coverpoints): 47.22%
+    * Extended Coverage (882 coverpoints): 19.39%
 * RV32IFENCEI
     * 1 test
+    * Basic Coverage (1 coverpoint): 100.00%
+    * Extended Coverage (1 coverpoint): 100.00%
     
 Work in progress (64-bit tests):
 * RV64I (developed by Imperas)

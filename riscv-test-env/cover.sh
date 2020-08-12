@@ -24,8 +24,8 @@ declare -A varMap
 varMap[rv32i]=RV32I
 varMap[rv32im]=RV32IM
 varMap[rv32imc]=RV32IMC
-varMap[rv32Zicsr]=RVI
-varMap[rv32Zifencei]=RVI
+varMap[rv32Zicsr]=RV32I
+varMap[rv32Zifencei]=RV32I
 varMap[rv64i]=RV64I
 varMap[rv64im]=RV64IM
 varMap[rv64imc]=RV64IMC
