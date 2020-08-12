@@ -55,8 +55,6 @@ As we create the RISCV.org compliance test suite, the Imperas developed _riscvOV
 
 For more information on riscvOVPsim look here: [riscv-ovpsim/README.md](riscv-ovpsim/README.md) and here: [riscv-ovpsim/doc/riscvOVPsim_User_Guide.pdf](riscv-ovpsim/doc/riscvOVPsim_User_Guide.pdf).
 
-As we create the RISCV.org compliance test suite, the Imperas developed _riscvOVPsim_ compliance simulator is included as part of this GitHub repository. For more information please contact info@ovpworld.org or info@imperas.com.
-
 ### Running Instruction Functional Coverage with riscvOVPsim
 
 As you develop tests you can measure their coverage with the built-in features of riscvOVPsim. Please see chapter 9 in the [riscv-ovpsim/doc/riscvOVPsim_User_Guide.pdf](riscv-ovpsim/doc/riscvOVPsim_User_Guide.pdf) for full details.
