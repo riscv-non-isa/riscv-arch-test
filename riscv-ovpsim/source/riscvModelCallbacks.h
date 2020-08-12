@@ -55,7 +55,7 @@ typedef RISCV_REGISTER_EXT_CB_FN((*riscvRegisterExtCBFn));
 //
 // Return the indexed extension's extCB clientData
 //
-#define RISCV_GET_EXT_CLIENT_DATA_FN(_NAME) void * _NAME( \
+#define RISCV_GET_EXT_CLIENT_DATA_FN(_NAME) void *_NAME( \
     riscvP riscv,      \
     Uns32  id          \
 )
@@ -90,8 +90,6 @@ typedef RISCV_SET_TMODE_FN((*riscvSetTModeFn));
 
 //
 // Return true if in transaction mode
-// Use at morph time only - assumes instruction checking this could
-// abort a transaction so emits end block if in TM
 //
 #define RISCV_GET_TMODE_FN(_NAME) Bool _NAME(riscvP riscv)
 typedef RISCV_GET_TMODE_FN((*riscvGetTModeFn));
@@ -547,7 +545,6 @@ typedef struct riscvExtCBS {
     riscvPMACheckFn           PMACheck;
 
     // documentation
-    const char              **specificDocs;
     riscvRestrictionsFn       restrictionsCB;
 
 } riscvExtCB;

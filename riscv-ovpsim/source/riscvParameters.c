@@ -54,11 +54,12 @@ typedef enum riscvParamVariantE {
     RVPV_A       = (1<<3),      // requires atomic instructions
     RVPV_B       = (1<<4),      // requires bitmanip instructions
     RVPV_S       = (1<<5),      // requires Supervisor mode
-    RVPV_N       = (1<<6),      // requires User mode interrupts
-    RVPV_V       = (1<<7),      // requires Vector extension
-    RVPV_MPCORE  = (1<<8),      // present for multicore variants
-    RVPV_CLIC    = (1<<9),      // present if CLIC enabled
-    RVPV_NMBITS  = (1<<10),     // present if CLICCFGMBITS can be > 0
+    RVPV_H       = (1<<6),      // requires Hypervisor mode
+    RVPV_N       = (1<<7),      // requires User mode interrupts
+    RVPV_V       = (1<<8),      // requires Vector extension
+    RVPV_MPCORE  = (1<<9),      // present for multicore variants
+    RVPV_CLIC    = (1<<10),     // present if CLIC enabled
+    RVPV_NMBITS  = (1<<11),     // present if CLICCFGMBITS can be > 0
 
                                 // COMPOSITE PARAMETER IDENTIFIERS
     RVPV_INT_CFG = RVPV_PRE,
@@ -696,6 +697,13 @@ static RISCV_BMSET_PDEFAULT_CFG_FN(Zbr);
 static RISCV_BMSET_PDEFAULT_CFG_FN(Zbs);
 static RISCV_BMSET_PDEFAULT_CFG_FN(Zbt);
 
+//
+// Set default value and range of GEILEN
+//
+static RISCV_PDEFAULT_FN(default_GEILEN) {
+    setUns32ParamDefault(param, cfg->GEILEN);
+    setUns32ParamMax(param, (cfg->arch&ISA_XLEN_64)?63:31);
+}
 
 //
 // Table of formal parameter specifications
@@ -809,8 +817,11 @@ static riscvParameter parameters[] = {
     {  RVPV_CLIC,    default_intthresh_undefined,  VMI_BOOL_PARAM_SPEC  (riscvParamValues, intthresh_undefined,  False,                     "Specify that mintthreash, sintthresh and uintthresh CSRs are undefined")},
     {  RVPV_CLIC,    default_mclicbase_undefined,  VMI_BOOL_PARAM_SPEC  (riscvParamValues, mclicbase_undefined,  False,                     "Specify that mclicbase CSR is undefined")},
 
+    // Hypervisor configuration
+    {  RVPV_H,       default_GEILEN,               VMI_UNS32_PARAM_SPEC (riscvParamValues, GEILEN,               0, 0,          0,          "Specify number of guest external interrupts")},
+
     // KEEP LAST
-    {  RVPV_ALL,     0,                            VMI_END_PARAM}
+    {  RVPV_ALL,      0,                           VMI_END_PARAM}
 };
 
 //
@@ -888,6 +899,12 @@ static Bool selectParameter(
         // include parameters that are only required when Supervisor mode is
         // present
         if((param->variant & RVPV_S) && !(cfg->arch&ISA_S)) {
+            return False;
+        }
+
+        // include parameters that are only required when Hypervisor mode is
+        // present
+        if((param->variant & RVPV_H) && !(cfg->arch&ISA_H)) {
             return False;
         }
 

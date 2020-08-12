@@ -55,6 +55,22 @@ As we create the RISCV.org compliance test suite, the Imperas developed _riscvOV
 
 For more information on riscvOVPsim look here: [riscv-ovpsim/README.md](riscv-ovpsim/README.md) and here: [riscv-ovpsim/doc/riscvOVPsim_User_Guide.pdf](riscv-ovpsim/doc/riscvOVPsim_User_Guide.pdf).
 
+### Running Instruction Functional Coverage with riscvOVPsim
+
+As you develop tests you can measure their coverage with the built-in features of riscvOVPsim. Please see chapter 9 in the [riscv-ovpsim/doc/riscvOVPsim_User_Guide.pdf](riscv-ovpsim/doc/riscvOVPsim_User_Guide.pdf) for full details.
+
+To run basic coverage on a suite:
+
+     make clean
+     make RISCV_TARGET=riscvOVPsim RISCV_DEVICE=rv32i RISCV_ISA=rv32i COVERTYPE=basic
+     make RISCV_TARGET=riscvOVPsim RISCV_DEVICE=rv32i RISCV_ISA=rv32i COVERTYPE=basic cover
+
+To run extended coverage on a suite:
+
+     make clean
+     make RISCV_TARGET=riscvOVPsim RISCV_DEVICE=rv32i RISCV_ISA=rv32i COVERTYPE=extended
+     make RISCV_TARGET=riscvOVPsim RISCV_DEVICE=rv32i RISCV_ISA=rv32i COVERTYPE=extended cover
+
 ### Using the simulators from the Sail RISC-V formal model
 
 The [Sail RISC-V formal model](https://github.com/rems-project/sail-riscv) generates two

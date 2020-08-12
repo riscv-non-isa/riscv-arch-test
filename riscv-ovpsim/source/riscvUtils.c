@@ -50,8 +50,11 @@ inline static void writeNet(riscvP riscv, Uns32 handle, Uns32 value) {
 //
 void riscvSetCurrentArch(riscvP riscv) {
 
-    Uns32 MXL = RD_CSR_FIELD(riscv, misa, MXL);
-    Bool  FS  = (RD_CSR_FIELD(riscv, mstatus, FS) != 0);
+    Uns32 MXL   = RD_CSR_FIELD(riscv, misa, MXL);
+    Bool  V     = inVMode(riscv);
+    Bool  FS_HS = RD_CSR_FIELD(riscv, mstatus,  FS);
+    Bool  FS_VS = RD_CSR_FIELD(riscv, vsstatus, FS) || !V;
+    Bool  FS    = FS_HS && FS_VS;
 
     // derive new architecture value based on misa value, preserving rounding
     // mode invalid setting
@@ -79,7 +82,13 @@ void riscvSetCurrentArch(riscvP riscv) {
             WM_mstatus_VS = WM_mstatus_VS_9;
         }
 
-        if(WM_mstatus_VS && !(RD_CSR(riscv, mstatus) & WM_mstatus_VS)) {
+        if(!WM_mstatus_VS) {
+            // no action
+        } else if(!(RD_CSR(riscv, mstatus) & WM_mstatus_VS)) {
+            arch &= ~ISA_V;
+        } else if(!V) {
+            // no action
+        } else if(!(RD_CSR(riscv, vsstatus) & WM_mstatus_VS)) {
             arch &= ~ISA_V;
         }
     }
@@ -222,12 +231,16 @@ memEndian riscvGetDataEndian(riscvP riscv, riscvMode mode) {
 
     if(!riscvSupportEndian(riscv)) {
         // no action
-    } else if(mode==RISCV_MODE_USER) {
+    } else if(mode==RISCV_MODE_U) {
         result = RD_CSR_FIELD(riscv, mstatus, UBE);
-    } else if(mode==RISCV_MODE_SUPERVISOR) {
+    } else if(mode==RISCV_MODE_S) {
         result = RD_CSR_FIELD_ALT(riscv, mstatush, mstatus, SBE);
-    } else if(mode==RISCV_MODE_MACHINE) {
+    } else if(mode==RISCV_MODE_M) {
         result = RD_CSR_FIELD_ALT(riscv, mstatush, mstatus, MBE);
+    } else if(mode==RISCV_MODE_VU) {
+        result = RD_CSR_FIELD(riscv, vsstatus, UBE);
+    } else if(mode==RISCV_MODE_VS) {
+        result = RD_CSR_FIELD(riscv, hstatus, VSBE);
     } else {
         VMI_ABORT("invalid mode"); // LCOV_EXCL_LINE
     }
@@ -239,7 +252,7 @@ memEndian riscvGetDataEndian(riscvP riscv, riscvMode mode) {
 // Return endianness for data access in the current mode
 //
 memEndian riscvGetCurrentDataEndian(riscvP riscv) {
-    return riscvGetDataEndian(riscv, riscv->dmode);
+    return riscvGetDataEndian(riscv, riscv->dataMode);
 }
 
 //
@@ -282,33 +295,45 @@ VMI_NEXT_PC_FN(riscvNextPC) {
 //
 static const vmiModeInfo modes[] = {
 
-    [RISCV_MODE_USER] = {
+    [RISCV_MODE_U] = {
         .name        = "User",
-        .code        = RISCV_MODE_USER,
+        .code        = RISCV_MODE_U,
         .description = "User mode"
     },
 
-    [RISCV_MODE_SUPERVISOR] = {
+    [RISCV_MODE_S] = {
         .name        = "Supervisor",
-        .code        = RISCV_MODE_SUPERVISOR,
+        .code        = RISCV_MODE_S,
         .description = "Supervisor mode"
     },
 
-    [RISCV_MODE_HYPERVISOR] = {
+    [RISCV_MODE_H] = {
         .name        = "Hypervisor",
-        .code        = RISCV_MODE_HYPERVISOR,
+        .code        = RISCV_MODE_H,
         .description = "Hypervisor mode"
     },
 
-    [RISCV_MODE_MACHINE] = {
+    [RISCV_MODE_M] = {
         .name        = "Machine",
-        .code        = RISCV_MODE_MACHINE,
+        .code        = RISCV_MODE_M,
         .description = "Machine mode"
     },
 
-    [RISCV_MODE_DEBUG] = {
+    [RISCV_MODE_VU] = {
+        .name        = "Virtual User",
+        .code        = RISCV_MODE_VU,
+        .description = "User mode"
+    },
+
+    [RISCV_MODE_VS] = {
+        .name        = "Virtual Supervisor",
+        .code        = RISCV_MODE_VS,
+        .description = "Supervisor mode"
+    },
+
+    [RISCV_MODE_D] = {
         .name        = "Debug",
-        .code        = RISCV_MODE_DEBUG,
+        .code        = RISCV_MODE_D,
         .description = "Debug mode"
     },
 
@@ -330,7 +355,7 @@ VMI_GET_MODE_FN(riscvGetMode) {
 
     riscvP riscv = (riscvP)processor;
 
-    return &modes[inDebugMode(riscv) ? RISCV_MODE_DEBUG : getCurrentMode(riscv)];
+    return &modes[inDebugMode(riscv) ? RISCV_MODE_D : getCurrentMode5(riscv)];
 }
 
 //
@@ -338,13 +363,16 @@ VMI_GET_MODE_FN(riscvGetMode) {
 //
 void riscvSetMode(riscvP riscv, riscvMode mode) {
 
-    riscvDMode dMode = mode;
+    riscvDMode dMode = modeToDMode(mode);
+    Bool       V     = modeIsVirtual(mode);
+
+    // consolidate floating point flags on CSR view (in case of switch between
+    // normal and virtual modes)
+    riscvConsolidateFPFlags(riscv);
 
     // if executing in supervisor or user mode, include VM-enabled indication
-    if((mode<=RISCV_MODE_SUPERVISOR) && (RD_CSR_FIELD(riscv, satp, MODE))) {
+    if((mode!=RISCV_MODE_M) && (RD_CSR_FIELD_V(riscv, satp, V, MODE))) {
         dMode |= RISCV_DMODE_VM;
-    } else {
-        dMode &= ~RISCV_DMODE_VM;
     }
 
     // update mode if it has changed
@@ -370,11 +398,11 @@ void riscvSetMode(riscvP riscv, riscvMode mode) {
 riscvMode riscvGetMinMode(riscvP riscv) {
 
     if(riscv->configInfo.arch & ISA_U) {
-        return RISCV_MODE_USER;
+        return RISCV_MODE_U;
     } else if(riscv->configInfo.arch & ISA_S) {
-        return RISCV_MODE_SUPERVISOR;
+        return RISCV_MODE_S;
     } else {
-        return RISCV_MODE_MACHINE;
+        return RISCV_MODE_M;
     }
 }
 
@@ -384,13 +412,17 @@ riscvMode riscvGetMinMode(riscvP riscv) {
 Bool riscvHasMode(riscvP riscv, riscvMode mode) {
 
     switch(mode) {
-        case RISCV_MODE_USER:
+        case RISCV_MODE_U:
             return riscv->configInfo.arch & ISA_U;
-        case RISCV_MODE_SUPERVISOR:
+        case RISCV_MODE_S:
             return riscv->configInfo.arch & ISA_S;
-        case RISCV_MODE_MACHINE:
+        case RISCV_MODE_VU:
+            return (riscv->configInfo.arch & ISA_VU) == ISA_VU;
+        case RISCV_MODE_VS:
+            return (riscv->configInfo.arch & ISA_VS) == ISA_VS;
+        case RISCV_MODE_M:
             return True;
-        case RISCV_MODE_DEBUG:
+        case RISCV_MODE_D:
             return riscv->configInfo.debug_mode;
         default:
             return False;
@@ -613,6 +645,7 @@ const char *riscvGetFeatureName(riscvArchitecture feature) {
         [RISCV_FEATURE_INDEX('E')]         = "RV32E base ISA",
         [RISCV_FEATURE_INDEX('D')]         = "extension D (double-precision floating point)",
         [RISCV_FEATURE_INDEX('F')]         = "extension F (single-precision floating point)",
+        [RISCV_FEATURE_INDEX('H')]         = "extension H (hypervisor)",
         [RISCV_FEATURE_INDEX('I')]         = "RV32I/64I/128I base ISA",
         [RISCV_FEATURE_INDEX('M')]         = "extension M (integer multiply/divide instructions)",
         [RISCV_FEATURE_INDEX('N')]         = "extension N (user-level interrupts)",

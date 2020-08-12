@@ -67,6 +67,7 @@ typedef enum riscvArchitectureE {
     ISA_E      = RISCV_FEATURE_BIT('E'),    // embedded instructions
     ISA_D      = RISCV_FEATURE_BIT('D'),    // double-precision floating point
     ISA_F      = RISCV_FEATURE_BIT('F'),    // single-precision floating point
+    ISA_H      = RISCV_FEATURE_BIT('H'),    // hypervisor extension
     ISA_I      = RISCV_FEATURE_BIT('I'),    // RV32I/64I/128I base ISA
     ISA_M      = RISCV_FEATURE_BIT('M'),    // integer multiply/divide instructions
     ISA_N      = RISCV_FEATURE_BIT('N'),    // user-mode interrupts
@@ -79,6 +80,8 @@ typedef enum riscvArchitectureE {
     ISA_SorN   = (ISA_S|ISA_N),             // either supervisor or user interrupts
     ISA_SandN  = (ISA_S|ISA_N|ISA_and),     // both supervisor and user interrupts
     ISA_FSandV = (ISA_FS|ISA_V|ISA_and),    // both FS and vector extension
+    ISA_VU     = (ISA_U|ISA_H),             // virtual user mode
+    ISA_VS     = (ISA_S|ISA_H),             // virtual user mode
 
     RV32     = ISA_XLEN_32,
     RV32I    = ISA_XLEN_32  | ISA_I,
@@ -173,8 +176,8 @@ typedef enum riscvPrivVerE {
 //
 // Date and tag of master version
 //
-#define RVVV_MASTER_DATE    "3 July 2020"
-#define RVVV_MASTER_TAG     "2144559"
+#define RVVV_MASTER_DATE    "22 July 2020"
+#define RVVV_MASTER_TAG     "b8cd98b"
 
 //
 // Supported Vector Architecture versions
@@ -304,6 +307,7 @@ typedef enum riscvVFeatureE {
     RVVF_SLEN_IS_VLEN,      // is SLEN==VLEN?
     RVVF_ELEN_GT_VLEN,      // is ELEN>VLEN legal?
     RVVF_VLR_HINT,          // do VLR instructions encode hints?
+    RVVF_VTYPE_10,          // is vtype in 1.0 format?
     RVVF_LAST,              // for sizing
 } riscvVFeature;
 

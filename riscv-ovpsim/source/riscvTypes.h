@@ -49,6 +49,7 @@ typedef enum riscvRMDescE {
 //
 typedef enum riscvVTypeFmtE {
     RV_VTF_0_9,     // 0.9 format (and previous)
+    RV_VTF_1_0,     // 1.0 format (and subsequent)
 } riscvVTypeFmt;
 
 //
@@ -65,31 +66,52 @@ typedef struct riscvVTypeS {
         // value as Uns32
         Uns32 u32;
 
+        // common format
+        struct {
+            Uns32 _u1    :  6;
+            Bool  vta    :  1;
+            Bool  vma    :  1;
+            Uns32 zero   : 24;
+        };
+
         // 0.9 format (and previous)
         struct {
             Uns32 vlmul  :  2;
             Uns32 vsew   :  3;
             Uns32 vlmulf :  1;
-            Bool  vta    :  1;
-            Bool  vma    :  1;
-            Uns32 _u1    : 24;
-        };
+            Uns32 _u1    : 26;
+        } v0_9;
+
+        // 1.0 format (and subsequent)
+        struct {
+            Int32 vlmul  :  3;
+            Uns32 vsew   :  3;
+            Uns32 _u1    : 26;
+        } v1_0;
     } u;
 
 } riscvVType;
 
 //
+// Should v0.9-format vtype be used?
+//
+inline static Bool isVType0_9(riscvVType vtype) {
+    return vtype.format==RV_VTF_0_9;
+}
+
+//
 // Return value of always-zero fields in vtype
 //
 inline static Uns32 getVTypeZero(riscvVType vtype) {
-    return vtype.u._u1;
+    return vtype.u.zero;
 }
 
 //
 // Get SEW for vtype
 //
 inline static Uns32 getVTypeSEW(riscvVType vtype) {
-    return 8<<vtype.u.vsew;
+    Uns32 vsew = isVType0_9(vtype) ? vtype.u.v0_9.vsew : vtype.u.v1_0.vsew;
+    return 8<<vsew;
 }
 
 //
@@ -110,7 +132,11 @@ inline static Bool getVTypeVMA(riscvVType vtype) {
 // Get signed VLMUL for vtype
 //
 inline static Int32 getVTypeSVLMUL(riscvVType vtype) {
-    return vtype.u.vlmul | (vtype.u.vlmulf ? -4 : 0);
+    if(isVType0_9(vtype)) {
+        return vtype.u.v0_9.vlmul | (vtype.u.v0_9.vlmulf ? -4 : 0);
+    } else {
+        return vtype.u.v1_0.vlmul;
+    }
 }
 
 

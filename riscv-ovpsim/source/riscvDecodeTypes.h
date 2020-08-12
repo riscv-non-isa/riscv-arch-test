@@ -584,7 +584,7 @@ typedef struct riscvInstrInfoS {
     riscvIType        type;             // instruction type
     riscvArchitecture arch;             // architecture requirements
     riscvVIType       VIType;           // vector instruction type
-    Uns32             memBits;          // load/store size
+    Int32             memBits;          // load/store size
     Uns32             eew;              // explicit EEW encoding
     Uns64             c;                // constant value
     riscvRegDesc      r[RV_MAX_AREGS];  // argument registers

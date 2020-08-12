@@ -134,10 +134,16 @@ typedef struct riscvNetPortS {
 } riscvNetPort;
 
 //
-// Set of domains of a particular type
+// Set of domains, per processor physical mode
 //
-typedef memDomainP riscvDomainSet [RISCV_MODE_LAST][2];
-typedef riscvDomainSet *riscvDomainSetP;
+typedef memDomainP riscvDomainSetP[RISCV_MODE_LAST_BASE][2];
+typedef riscvDomainSetP *riscvDomainSetPP;
+
+//
+// Set of domains, per processor virtual mode
+//
+typedef memDomainP riscvDomainSetVM[RISCV_VMMODE_LAST][2];
+typedef riscvDomainSetVM *riscvDomainSetVMP;
 
 //
 // Maximum supported value of VLEN and number of vector registers (vector
@@ -171,7 +177,7 @@ typedef struct riscvS {
     riscvP             smpRoot;         // root of SMP cluster
     riscvP             parent;          // parent (if not root)
     riscvArchitecture  currentArch;     // current enabled features
-    riscvDMode         mode;            // current processor mode
+    riscvDMode         mode;            // current processor dictionary mode
     riscvDisableReason disable;         // reason why processor is disabled
     Uns32              numHarts;        // number of hart contexts in container
     Bool               verbose       :1;// whether verbose output enabled
@@ -194,7 +200,7 @@ typedef struct riscvS {
     Uns32              flags;           // model control flags
     Uns32              flagsRestore;    // saved flags during restore
     riscvConfig        configInfo;      // model configuration
-    riscvMode          dmode;           // mode in which to access data
+    riscvMode          dataMode;        // mode in which to access data
     memEndian          dendian;         // data endianness
     memEndian          iendian;         // instruction endianness
     Uns64              jumpBase;        // address of jump instruction
@@ -259,10 +265,11 @@ typedef struct riscvS {
     riscvCSRRemapP     csrRemap;        // CSR remap list
 
     // Memory management support
-    riscvDomainSet     pmaDomains;      // pma domains
-    riscvDomainSet     pmpDomains;      // pmp domains
-    riscvDomainSet     physDomains;     // physical domains
-    riscvDomainSet     vmDomains;       // mapped domains
+    riscvDomainSetP    pmaDomains;      // pma domains (per physical mode)
+    riscvDomainSetP    pmpDomains;      // pmp domains (per physical mode)
+    riscvDomainSetP    physDomains;     // physical domains (per physical mode)
+    riscvDomainSetVM   vmDomains;       // mapped domains (per virtual mode)
+    memDomainP         tmDomain;        // transaction mode domain
     memDomainP         CLICDomain;      // CLIC domain
     riscvPMPCFG        pmpcfg;          // pmpcfg registers
     Uns64             *pmpaddr;         // pmpaddr registers
@@ -298,10 +305,45 @@ typedef struct riscvS {
 #define RISCV_NO_TAG -1
 
 //
-// Return current operating mode
+// Return current 5-state riscvMode (M, HS, HU, VS or VU)
 //
-inline static riscvMode getCurrentMode(riscvP riscv) {
-    return riscv->mode & RISCV_MODE_MACHINE;
+inline static riscvMode getCurrentMode5(riscvP riscv) {
+    return dmodeToMode5(riscv->mode);
+}
+
+//
+// Return current 4-state riscvMode (M, H, S or U)
+//
+inline static riscvMode getCurrentMode4(riscvP riscv) {
+    return dmodeToMode4(riscv->mode);
+}
+
+//
+// Return current 3-state riscvMode (M, S or U)
+//
+inline static riscvMode getCurrentMode3(riscvP riscv) {
+    return dmodeToMode3(riscv->mode);
+}
+
+//
+// Is the processor in a virtual mode?
+//
+inline static Bool inVMode(riscvP riscv) {
+    return dmodeIsVirtual(riscv->mode);
+}
+
+//
+// Is the processor in a virtual mode for a non-artifact access?
+//
+inline static Bool inVModeNotArtifact(riscvP riscv) {
+    return !riscv->artifactAccess && inVMode(riscv);
+}
+
+//
+// Is the processor in Debug mode?
+//
+inline static Bool inDebugMode(riscvP riscv) {
+    return riscv->DM;
 }
 
 //
@@ -319,10 +361,10 @@ inline static Uns64 getAddressMask(Uns32 bits) {
 }
 
 //
-// Is the processor in Debug mode?
+// Return implemented guest external interrupts
 //
-inline static Bool inDebugMode(riscvP riscv) {
-    return riscv->DM;
+inline static Uns32 getGEILEN(riscvP riscv) {
+    return riscv->configInfo.GEILEN;
 }
 
 //
@@ -375,6 +417,27 @@ inline static Bool useCLICU(riscvP riscv) {
 }
 
 //
+// Should CLIC be used for H-mode interrupts?
+//
+inline static Bool useCLICH(riscvP riscv) {
+    return False;
+}
+
+//
+// Should CLIC be used for VS-mode interrupts?
+//
+inline static Bool useCLICVS(riscvP riscv) {
+    return False;
+}
+
+//
+// Should CLIC be used for VU-mode interrupts?
+//
+inline static Bool useCLICVU(riscvP riscv) {
+    return False;
+}
+
+//
 // Compose vtype
 //
 inline static riscvVType composeVType(riscvP riscv, Uns32 vtypeBits) {
@@ -401,6 +464,20 @@ inline static Uns32 getCurrentSEW(riscvP riscv) {
 //
 inline static Int32 getCurrentSVLMUL(riscvP riscv) {
     return getVTypeSVLMUL(getCurrentVType(riscv));
+}
+
+//
+// Are hypervisor extensions present?
+//
+inline static Bool hypervisorPresent(riscvP riscv) {
+    return riscv->configInfo.arch & ISA_H;
+}
+
+//
+// Are hypervisor extensions enabled?
+//
+inline static Bool hypervisorEnabled(riscvP riscv) {
+    return riscv->currentArch & ISA_H;
 }
 
 

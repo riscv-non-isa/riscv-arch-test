@@ -311,6 +311,14 @@ static void emitIllegalInstruction(void) {
 }
 
 //
+// Emit call to take Virtual Instruction exception
+//
+static void emitVirtualInstruction(void) {
+    vmimtArgProcessor();
+    vmimtCallAttrs((vmiCallFn)riscvVirtualInstruction, VMCA_EXCEPTION);
+}
+
+//
 // Emit Illegal Instruction description message
 //
 static void illegalInstructionMessage(riscvP riscv, const char *reason) {
@@ -362,6 +370,22 @@ void riscvEmitIllegalInstructionMessageDesc(riscvP riscv, illegalDescP desc) {
 
     // take Illegal Instruction exception
     emitIllegalInstruction();
+}
+
+//
+// Emit Illegal Instruction message and take Virtual Instruction exception
+//
+void riscvEmitVirtualInstructionMessageDesc(riscvP riscv, illegalDescP desc) {
+
+    // emit message in verbose mode
+    if(riscv->verbose) {
+        vmimtArgProcessor();
+        vmimtArgNatAddress(desc);
+        vmimtCall((vmiCallFn)illegalInstructionMessageDesc);
+    }
+
+    // take Virtual Instruction exception
+    emitVirtualInstruction();
 }
 
 //
@@ -605,14 +629,53 @@ Bool riscvInstructionEnabled(riscvP riscv, riscvArchitecture requiredVariant) {
 //
 void riscvEmitIllegalInstructionMode(riscvP riscv) {
 
-    riscvMode mode = getCurrentMode(riscv);
+    riscvMode mode = getCurrentMode5(riscv);
 
     switch(mode) {
-        case RISCV_MODE_SUPERVISOR:
-            ILLEGAL_INSTRUCTION_MESSAGE(riscv, "UDM", "Illegal in Supervisor mode");
+        case RISCV_MODE_S:
+            ILLEGAL_INSTRUCTION_MESSAGE(
+                riscv, "UDM", "Illegal in Supervisor mode"
+            );
             break;
-        case RISCV_MODE_USER:
-            ILLEGAL_INSTRUCTION_MESSAGE(riscv, "UDM", "Illegal in User mode");
+        case RISCV_MODE_U:
+            ILLEGAL_INSTRUCTION_MESSAGE(
+                riscv, "UDM", "Illegal in User mode"
+            );
+            break;
+        case RISCV_MODE_VS:
+            ILLEGAL_INSTRUCTION_MESSAGE(
+                riscv, "UDM", "Illegal in Virtual Supervisor mode"
+            );
+            break;
+        case RISCV_MODE_VU:
+            ILLEGAL_INSTRUCTION_MESSAGE(
+                riscv, "UDM", "Illegal in Virtual User mode"
+            );
+            break;
+        default:
+            VMI_ABORT("Unexpected mode %u", mode); // LCOV_EXCL_LINE
+            break;
+    }
+}
+
+//
+// Emit Illegal Instruction because the current virtual mode has insufficient
+// privilege
+//
+void riscvEmitVirtualInstructionMode(riscvP riscv) {
+
+    riscvMode mode = getCurrentMode5(riscv);
+
+    switch(mode) {
+        case RISCV_MODE_VS:
+            VIRTUAL_INSTRUCTION_MESSAGE(
+                riscv, "UDM", "Illegal in Virtual Supervisor mode"
+            );
+            break;
+        case RISCV_MODE_VU:
+            VIRTUAL_INSTRUCTION_MESSAGE(
+                riscv, "UDM", "Illegal in Virtual User mode"
+            );
             break;
         default:
             VMI_ABORT("Unexpected mode %u", mode); // LCOV_EXCL_LINE
@@ -625,14 +688,18 @@ void riscvEmitIllegalInstructionMode(riscvP riscv) {
 //
 static Bool requireModeMT(riscvP riscv, riscvMode required) {
 
-    riscvMode actual = getCurrentMode(riscv);
+    riscvMode actual = getCurrentMode3(riscv);
+    Bool      ok     = (actual>=required);
 
-    if(actual<required) {
+    if(ok) {
+        // no action
+    } else if((required==RISCV_MODE_M) || !inVMode(riscv)) {
         riscvEmitIllegalInstructionMode(riscv);
-        return False;
     } else {
-        return True;
+        riscvEmitVirtualInstructionMode(riscv);
     }
+
+    return ok;
 }
 
 //
@@ -640,9 +707,9 @@ static Bool requireModeMT(riscvP riscv, riscvMode required) {
 //
 static Bool checkHaveSModeMT(riscvP riscv) {
 
-    riscvMode actual = getCurrentMode(riscv);
+    riscvMode actual = getCurrentMode3(riscv);
 
-    if(actual==RISCV_MODE_SUPERVISOR) {
+    if(actual==RISCV_MODE_S) {
 
         // always ok if currently in Supervisor mode
         return True;
@@ -659,9 +726,9 @@ static Bool checkHaveSModeMT(riscvP riscv) {
 //
 static Bool checkHaveUModeMT(riscvP riscv) {
 
-    riscvMode actual = getCurrentMode(riscv);
+    riscvMode actual = getCurrentMode3(riscv);
 
-    if(actual==RISCV_MODE_USER) {
+    if(actual==RISCV_MODE_U) {
 
         // always ok if currently in User mode
         return True;
@@ -679,11 +746,11 @@ static Bool checkHaveUModeMT(riscvP riscv) {
 ////////////////////////////////////////////////////////////////////////////////
 
 //
-// Macro encapsulating test for trapped instruction from Supervisor to Monitor
+// Macro encapsulating test for trapped instruction from any non-Machine
 // mode when a bit is set or clear in a register
 //
-#define EMIT_TRAP_MASK_FIELD(_RISCV, _R, _BIT, _VALUE) \
-    emitTrapInstructionMask(                \
+#define EMIT_TRAP_MASK_FIELD_NOT_M(_RISCV, _R, _BIT, _VALUE) \
+    emitTrapInstructionMaskNotM(            \
         _RISCV,                             \
         CSR_REG_MT(_R),                     \
         WM_##_R##_##_BIT,                   \
@@ -692,9 +759,43 @@ static Bool checkHaveUModeMT(riscvP riscv) {
     )
 
 //
-// Function called when instruction is trapped
+// Macro encapsulating test for trapped instruction in VS mode mode when a bit
+// is set or clear in a register
 //
-static void trapInstruction(riscvP riscv, const char *reason) {
+#define EMIT_TRAP_MASK_FIELD_VS(_RISCV, _R, _BIT, _VALUE) \
+    emitTrapInstructionMaskVS(              \
+        _RISCV,                             \
+        CSR_REG_MT(_R),                     \
+        WM_##_R##_##_BIT,                   \
+        _VALUE ? vmi_COND_Z : vmi_COND_NZ,  \
+        #_R"."#_BIT"="#_VALUE               \
+    )
+
+//
+// Macro encapsulating test for either Illegal Instruction or Virtual
+// Instruction trap when a bit is set or clear in a register
+//
+#define EMIT_TRAP_MASK_FIELD_HS_OR_VS(_RISCV, _RHS, _RVS, _BIT, _VALUE) \
+    emitTrapInstructionMaskHSorVS(          \
+        _RISCV,                             \
+        CSR_REG_MT(_RHS),                   \
+        CSR_REG_MT(_RVS),                   \
+        WM_##_RHS##_##_BIT,                 \
+        _VALUE ? vmi_COND_Z : vmi_COND_NZ,  \
+        #_RHS"."#_BIT"="#_VALUE,            \
+        #_RVS"."#_BIT"="#_VALUE             \
+    )
+
+//
+// Type of function called when instruction is trapped
+//
+#define TRAP_FN(_NAME) void _NAME(riscvP riscv, const char *reason)
+typedef TRAP_FN((*trapFn));
+
+//
+// Function called when instruction causes an Illegal Instruction trap
+//
+static TRAP_FN(trapIllegal) {
 
     // report the absent or disabled feature by name
     if(riscv->verbose) {
@@ -705,35 +806,105 @@ static void trapInstruction(riscvP riscv, const char *reason) {
         );
     }
 
-    // take Illegal Instruction exception
+    // take Illegal Instruction trap
     riscvIllegalInstruction(riscv);
 }
 
 //
-// Emit test for Illegal Instruction instruction when a bit is set or clear in a
-// register
+// Function called when instruction causes a Virtual Instruction trap
 //
-static void emitTrapInstructionMask(
+static TRAP_FN(trapVirtual) {
+
+    // report the absent or disabled feature by name
+    if(riscv->verbose) {
+        vmiMessage("W", CPU_PREFIX "_TI",
+            SRCREF_FMT "Trapped because %s",
+            SRCREF_ARGS(riscv, getPC(riscv)),
+            reason
+        );
+    }
+
+    // take Virtual Instruction trap
+    riscvVirtualInstruction(riscv);
+}
+
+//
+// Emit test for Illegal Instruction or Virtual Instruction trap when a bit is
+// set or clear in a register
+//
+static void emitTrapInstructionMaskInt(
+    vmiReg       r,
+    Uns32        mask,
+    vmiCondition cond,
+    const char  *reason,
+    trapFn       trapCB
+) {
+    if(!VMI_ISNOREG(r)) {
+
+        vmiLabelP ok = vmimtNewLabel();
+
+        // skip trap if bit is set or clear
+        vmimtTestRCJumpLabel(32, cond, r, mask, ok);
+
+        // emit call generating trap
+        vmimtArgProcessor();
+        vmimtArgNatAddress(reason);
+        vmimtCallAttrs((vmiCallFn)trapCB, VMCA_EXCEPTION);
+
+        // here if access is legal
+        vmimtInsertLabel(ok);
+    }
+}
+
+//
+// Emit test for Illegal Instruction instruction when a bit is set or clear in a
+// register in any non-Machine mode
+//
+static void emitTrapInstructionMaskNotM(
     riscvP       riscv,
     vmiReg       r,
     Uns32        mask,
     vmiCondition cond,
     const char  *reason
 ) {
-    if(getCurrentMode(riscv)!=RISCV_MODE_MACHINE) {;
+    if(getCurrentMode5(riscv)!=RISCV_MODE_M) {
+        emitTrapInstructionMaskInt(r, mask, cond, reason, trapIllegal);
+    }
+}
 
-        vmiLabelP ok = vmimtNewLabel();
+//
+// Emit test for Virtual Instruction trap when a bit is set or clear in a
+// register in VS mode
+//
+static void emitTrapInstructionMaskVS(
+    riscvP       riscv,
+    vmiReg       r,
+    Uns32        mask,
+    vmiCondition cond,
+    const char  *reason
+) {
+    if(inVMode(riscv)) {
+        emitTrapInstructionMaskInt(r, mask, cond, reason, trapVirtual);
+    }
+}
 
-        // skip undefined instruction exception if bit is set
-        vmimtTestRCJumpLabel(32, cond, r, mask, ok);
-
-        // emit call generating Illegal Instruction exception
-        vmimtArgProcessor();
-        vmimtArgNatAddress(reason);
-        vmimtCallAttrs((vmiCallFn)trapInstruction, VMCA_EXCEPTION);
-
-        // here if access is legal
-        vmimtInsertLabel(ok);
+//
+// Emit test for for either Illegal Instruction or Virtual Instruction trap when
+// a bit is set or clear in a register
+//
+static void emitTrapInstructionMaskHSorVS(
+    riscvP       riscv,
+    vmiReg       rHS,
+    vmiReg       rVS,
+    Uns32        mask,
+    vmiCondition cond,
+    const char  *reasonHS,
+    const char  *reasonVS
+) {
+    if(inVMode(riscv)) {
+        emitTrapInstructionMaskInt(rVS, mask, cond, reasonVS, trapVirtual);
+    } else if(getCurrentMode5(riscv)!=RISCV_MODE_M) {
+        emitTrapInstructionMaskInt(rHS, mask, cond, reasonHS, trapIllegal);
     }
 }
 
@@ -771,24 +942,52 @@ inline static Bool statusVS9(riscvP riscv) {
 }
 
 //
+// Indicate that this instruction may updates mstatus (and possibly the virtual
+// alias vsstatus)
+//
+static void updateMStatusFS(riscvP riscv) {
+
+    vmimtRegReadImpl("mstatus");
+    vmimtRegWriteImpl("mstatus");
+
+    if(inVMode(riscv)) {
+        vmimtRegReadImpl("vsstatus");
+        vmimtRegWriteImpl("vsstatus");
+    }
+}
+
+//
 // Indicate that this instruction may update mstatus (by changing mstatus.FS)
 //
-inline static void mayWriteMStatusFS(riscvP riscv) {
+static void mayUpdateMStatusFS(riscvP riscv) {
 
     if(!alwaysDirtyFS(riscv)) {
-        vmimtRegReadImpl("mstatus");
-        vmimtRegWriteImpl("mstatus");
+        updateMStatusFS(riscv);
     }
 }
 
 //
 // Indicate that this instruction may update mstatus (by changing mstatus.VS)
 //
-inline static void mayWriteMStatusVS(riscvP riscv) {
+static void mayUpdateMStatusVS(riscvP riscv) {
 
     if((statusVS8(riscv) || statusVS9(riscv)) && !alwaysDirtyFS(riscv)) {
-        vmimtRegReadImpl("mstatus");
-        vmimtRegWriteImpl("mstatus");
+        updateMStatusFS(riscv);
+    }
+}
+
+//
+// Emit code to set bits corresponding to the given mask in mstatus and
+// possibly vsstatus
+//
+inline static void emitSetMStatusMask(riscvP riscv, Uns32 mask) {
+
+    // always set mstatus mask
+    vmimtBinopRC(32, vmi_OR, RISCV_CPU_REG(csr.mstatus), mask, 0);
+
+    // set vsstatus mask if in a virtual mode
+    if(inVMode(riscv)) {
+        vmimtBinopRC(32, vmi_OR, RISCV_CPU_REG(csr.vsstatus), mask, 0);
     }
 }
 
@@ -802,11 +1001,11 @@ static void updateFS(riscvP riscv) {
         riscvBlockStateP blockState = riscv->blockState;
 
         // indicate that this instruction may update mstatus
-        mayWriteMStatusFS(riscv);
+        mayUpdateMStatusFS(riscv);
 
         if(!blockState->FSDirty) {
             blockState->FSDirty = True;
-            vmimtBinopRC(32, vmi_OR, RISCV_CPU_REG(csr.mstatus), WM_mstatus_FS, 0);
+            emitSetMStatusMask(riscv, WM_mstatus_FS);
         }
     }
 }
@@ -830,11 +1029,11 @@ static void updateVS(riscvP riscv) {
         riscvBlockStateP blockState = riscv->blockState;
 
         // indicate that this instruction may update mstatus
-        mayWriteMStatusVS(riscv);
+        mayUpdateMStatusVS(riscv);
 
         if(!blockState->VSDirty) {
             blockState->VSDirty = True;
-            vmimtBinopRC(32, vmi_OR, RISCV_CPU_REG(csr.mstatus), WM_mstatus_VS, 0);
+            emitSetMStatusMask(riscv, WM_mstatus_VS);
         }
     }
 }
@@ -1406,13 +1605,13 @@ inline static void writeUnpackedSize(unpackedReg rd, Uns32 srcBits) {
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// TRANSACTIONAL LOAD/STORE UTILITIES
+// LOAD/STORE UTILITIES
 ////////////////////////////////////////////////////////////////////////////////
 
 //
 // Return a Boolean indicating if transaction mode is enabled
 //
-inline static Bool inTransactionMode(riscvMorphStateP state) {
+inline static Bool inTransactionModeMT(riscvMorphStateP state) {
 
     riscvP riscv = state->riscv;
 
@@ -1438,166 +1637,10 @@ inline static Bool inTransactionMode(riscvMorphStateP state) {
 }
 
 //
-// Do transaction load of up to 8 bytes
+// Return domain to use for load/store (default or transaction)
 //
-static Uns64 doLoadTMode(riscvP riscv, Uns64 VA, Uns32 bytes) {
-
-    Uns64       result = 0;
-    riscvExtCBP extCB;
-
-    // call derived model transaction load functions
-    for(extCB=riscv->extCBs; extCB; extCB=extCB->next) {
-        if(extCB->tLoad) {
-            extCB->tLoad(riscv, &result, VA, bytes, extCB->clientData);
-        }
-    }
-
-    return result;
-}
-
-//
-// Do transaction store of up to 8 bytes
-//
-static void doStoreTMode(riscvP riscv, Uns64 VA, Uns64 value, Uns32 bytes) {
-
-    riscvExtCBP extCB;
-
-    // call derived model transaction store functions
-    for(extCB=riscv->extCBs; extCB; extCB=extCB->next) {
-        if(extCB->tStore) {
-            extCB->tStore(riscv, &value, VA, bytes, extCB->clientData);
-        }
-    }
-}
-
-//
-// Create address for transaction load or store
-//
-static vmiReg emitTransactionVA(
-    riscvMorphStateP state,
-    vmiReg           ra,
-    Addr             offset
-) {
-    vmiReg raTmp    = newTmp(state);
-    Uns32  raBits   = riscvGetXlenMode(state->riscv);
-    Uns32  addrBits = 64;
-
-    // include offset
-    vmimtBinopRRC(raBits, vmi_ADD, raTmp, ra, offset, 0);
-
-    // extend address to 64 bits if required
-    if(raBits<addrBits) {
-        vmimtMoveExtendRR(addrBits, raTmp, raBits, raTmp, False);
-    }
-
-    return raTmp;
-}
-
-//
-// Transaction load value from memory for explicit memBits and offset
-//
-static void emitLoadTModeMBO(
-    riscvMorphStateP state,
-    Uns32            rdBits,
-    Uns32            memBits,
-    Addr             offset,
-    vmiReg           rd,
-    vmiReg           ra,
-    memConstraint    constraint
-) {
-    Bool      sExtend = !state->info.unsExt;
-    memEndian endian  = riscvGetCurrentDataEndianMT(state->riscv);
-    vmiCallFn cb      = (vmiCallFn)doLoadTMode;
-
-    // extend address to 64 bits if required
-    ra = emitTransactionVA(state, ra, offset);
-
-    // emit code to perform transaction load
-    vmimtArgProcessor();
-    vmimtArgReg(64, ra);
-    vmimtArgUns32(memBits/8);
-    vmimtCallResultAttrs(cb, memBits, rd, VMCA_FP_RESTORE);
-
-    // byte swap result if required (here for completeness, but not expected
-    // to be executed)
-    if(endian==MEM_ENDIAN_BIG) {                        // LCOV_EXCL_LINE
-        vmimtUnopR(memBits, vmi_SWP, rd, 0);            // LCOV_EXCL_LINE
-    }                                                   // LCOV_EXCL_LINE
-
-    // extend result if required
-    vmimtMoveExtendRR(rdBits, rd, memBits, rd, sExtend);
-}
-
-//
-// Transaction store value to memory for explicit memBits and offset
-//
-static void emitStoreTModeMBO(
-    riscvMorphStateP state,
-    Uns32            memBits,
-    Addr             offset,
-    vmiReg           ra,
-    vmiReg           rs,
-    memConstraint    constraint
-) {
-    memEndian endian = riscvGetCurrentDataEndianMT(state->riscv);
-    vmiCallFn cb     = (vmiCallFn)doStoreTMode;
-
-    // extend address to 64 bits if required
-    ra = emitTransactionVA(state, ra, offset);
-
-    // byte swap source if required (here for completeness, but not expected
-    // to be executed)
-    if(endian==MEM_ENDIAN_BIG) {                        // LCOV_EXCL_LINE
-        vmiReg rsTmp = newTmp(state);                   // LCOV_EXCL_LINE
-        vmimtUnopRR(memBits, vmi_SWP, rsTmp, rs, 0);    // LCOV_EXCL_LINE
-        rs = rsTmp;                                     // LCOV_EXCL_LINE
-    }                                                   // LCOV_EXCL_LINE
-
-    // emit code to perform transaction store
-    vmimtArgProcessor();
-    vmimtArgReg(64, ra);
-    vmimtArgReg(64, rs);
-    vmimtArgUns32(memBits/8);
-    vmimtCallAttrs(cb, VMCA_FP_RESTORE);
-}
-
-
-////////////////////////////////////////////////////////////////////////////////
-// LOAD/STORE UTILITIES
-////////////////////////////////////////////////////////////////////////////////
-
-//
-// Normal load value from memory for explicit memBits and offset
-//
-static void emitLoadNormalMBO(
-    riscvMorphStateP state,
-    Uns32            rdBits,
-    Uns32            memBits,
-    Addr             offset,
-    vmiReg           rd,
-    vmiReg           ra,
-    memConstraint    constraint
-) {
-    Bool      sExtend = !state->info.unsExt;
-    memEndian endian  = riscvGetCurrentDataEndianMT(state->riscv);
-
-    vmimtLoadRRO(rdBits, memBits, offset, rd, ra, endian, sExtend, constraint);
-}
-
-//
-// Normal store value to memory for explicit memBits and offset
-//
-static void emitStoreNormalMBO(
-    riscvMorphStateP state,
-    Uns32            memBits,
-    Addr             offset,
-    vmiReg           ra,
-    vmiReg           rs,
-    memConstraint    constraint
-) {
-    memEndian endian = riscvGetCurrentDataEndianMT(state->riscv);
-
-    vmimtStoreRRO(memBits, offset, ra, rs, endian, constraint);
+inline static memDomainP getLoadStoreDomainMT(riscvMorphStateP state) {
+    return inTransactionModeMT(state) ? state->riscv->tmDomain : 0;
 }
 
 //
@@ -1612,11 +1655,20 @@ static void emitLoadCommonMBO(
     Uns64            offset,
     memConstraint    constraint
 ) {
-    if(inTransactionMode(state)) {
-        emitLoadTModeMBO(state, rdBits, memBits, offset, rd, ra, constraint);
-    } else {
-        emitLoadNormalMBO(state, rdBits, memBits, offset, rd, ra, constraint);
+    Bool       sExtend = !state->info.unsExt;
+    memDomainP domain  = getLoadStoreDomainMT(state);
+    memEndian  endian  = riscvGetCurrentDataEndianMT(state->riscv);
+
+    // if a transactional domain access, perform try-load in current data
+    // domain (to update VM and PMP structures and generate access exceptions)
+    if(domain) {
+        vmimtTryLoadRC(memBits, offset, ra, constraint);
     }
+
+    // emit code to perform load
+    vmimtLoadRRODomain(
+        domain, rdBits, memBits, offset, rd, ra, endian, sExtend, constraint
+    );
 }
 
 //
@@ -1630,11 +1682,19 @@ static void emitStoreCommonMBO(
     Uns64            offset,
     memConstraint    constraint
 ) {
-    if(inTransactionMode(state)) {
-        emitStoreTModeMBO(state, memBits, offset, ra, rs, constraint);
-    } else {
-        emitStoreNormalMBO(state, memBits, offset, ra, rs, constraint);
+    memDomainP domain = getLoadStoreDomainMT(state);
+    memEndian  endian = riscvGetCurrentDataEndianMT(state->riscv);
+
+    // if a transactional domain access, perform try-store in current data
+    // domain (to update VM and PMP structures and generate access exceptions)
+    if(domain) {
+        vmimtTryStoreRC(memBits, offset, ra, constraint);
     }
+
+    // emit code to perform store
+    vmimtStoreRRODomain(
+        domain, memBits, offset, ra, rs, endian, constraint
+    );
 }
 
 //
@@ -2543,7 +2603,7 @@ static RISCV_MORPH_FN(emitMRET) {
     riscvP riscv = state->riscv;
 
     // this instruction must be executed in Machine mode
-    requireModeMT(riscv, RISCV_MODE_MACHINE);
+    requireModeMT(riscv, RISCV_MODE_M);
 
     emitException(riscvMRET);
 }
@@ -2556,7 +2616,7 @@ static RISCV_MORPH_FN(emitDRET) {
     riscvP riscv = state->riscv;
 
     // this instruction must be executed in Machine mode
-    requireModeMT(riscv, RISCV_MODE_MACHINE);
+    requireModeMT(riscv, RISCV_MODE_M);
 
     emitException(riscvDRET);
 }
@@ -2572,12 +2632,12 @@ static RISCV_MORPH_FN(emitSRET) {
     checkHaveSModeMT(riscv);
 
     // this instruction must be executed in Machine mode or Supervisor mode
-    requireModeMT(riscv, RISCV_MODE_SUPERVISOR);
+    requireModeMT(riscv, RISCV_MODE_S);
 
     // instruction is trapped if mstatus.TSR=1
-    EMIT_TRAP_MASK_FIELD(riscv, mstatus, TSR, 1);
+    EMIT_TRAP_MASK_FIELD_HS_OR_VS(riscv, mstatus, hstatus, TSR, 1);
 
-    emitException(riscvSRET);
+    emitException(inVMode(riscv) ? riscvVSRET : riscvHSRET);
 }
 
 //
@@ -2590,7 +2650,7 @@ static RISCV_MORPH_FN(emitURET) {
     // this instruction requires User mode to be implemented
     checkHaveUModeMT(riscv);
 
-    emitException(riscvURET);
+    emitException(inVMode(riscv) ? riscvVURET : riscvURET);
 }
 
 //
@@ -2598,17 +2658,27 @@ static RISCV_MORPH_FN(emitURET) {
 //
 static RISCV_MORPH_FN(emitWFI) {
 
-    riscvP            riscv = state->riscv;
-    riscvArchitecture arch  = getCurrentArch(riscv);
+    riscvP riscv = state->riscv;
 
     // this instruction must be executed in Machine mode or Supervisor mode
     // unless User mode interrupts are implemented
-    if(!(arch&ISA_N)) {
-        requireModeMT(riscv, RISCV_MODE_SUPERVISOR);
+    if(getCurrentMode3(riscv)==RISCV_MODE_U) {
+
+        riscvArchitecture arch = getCurrentArch(riscv);
+
+        // in User mode, behavior of the instruction changes if N extension can
+        // be dynamically enabled
+        emitBlockMask(riscv, ISA_N);
+
+        // validate at least Supervisor mode if N extension is disabled
+        if(!(arch&ISA_N)) {
+            requireModeMT(riscv, RISCV_MODE_S);
+        }
     }
 
-    // instruction is trapped if mstatus.TW=1
-    EMIT_TRAP_MASK_FIELD(riscv, mstatus, TW, 1);
+    // instruction is trapped if mstatus.TW=1 in any non-Machine mode
+    EMIT_TRAP_MASK_FIELD_NOT_M(riscv, mstatus, TW, 1);
+    EMIT_TRAP_MASK_FIELD_VS(riscv, hstatus, TW, 1);
 
     // wait for interrupt (unless this is treated as a NOP)
     if(!riscv->configInfo.wfi_is_nop) {
@@ -2633,10 +2703,10 @@ static RISCV_MORPH_FN(emitSFENCE_VMA) {
     checkHaveSModeMT(riscv);
 
     // this instruction must be executed in Machine mode or Supervisor mode
-    requireModeMT(riscv, RISCV_MODE_SUPERVISOR);
+    requireModeMT(riscv, RISCV_MODE_S);
 
     // instruction is trapped if mstatus.TVM=1
-    EMIT_TRAP_MASK_FIELD(riscv, mstatus, TVM, 1);
+    EMIT_TRAP_MASK_FIELD_HS_OR_VS(riscv, mstatus, hstatus, TVM, 1);
 
     // emit processor argument
     vmimtArgProcessor();
@@ -2710,7 +2780,7 @@ static void emitCSRRCommon(riscvMorphStateP state, vmiReg rs1, Bool write) {
 
         // handle traps if mstatus.TVM=1 (e.g. satp register)
         if(attrs->TVMT) {
-            EMIT_TRAP_MASK_FIELD(riscv, mstatus, TVM, 1);
+            EMIT_TRAP_MASK_FIELD_HS_OR_VS(riscv, mstatus, hstatus, TVM, 1);
         }
 
         // emit code to read the CSR if required
@@ -3488,7 +3558,7 @@ inline static Bool enableBFLOAT16(riscvP riscv) {
 vmiReg riscvGetFPFlagsMT(riscvP riscv) {
 
     // indicate that this instruction may update mstatus
-    mayWriteMStatusFS(riscv);
+    mayUpdateMStatusFS(riscv);
 
     // set mstatus.FS if required
     if(writeAnyFS(riscv)) {
@@ -5831,7 +5901,7 @@ static void getVectorOpRegisters(riscvMorphStateP state, iterDescP id) {
                 // no encoded EEW
             } else if(state->info.isWhole) {
                 // encoded EEW is a hint but otherwise ignored
-            } else if((i==2) || (state->info.memBits!=-1)) {
+            } else if((i==2) || (state->info.memBits>0)) {
                 vr->forceEEW = True;
                 mulNx8 = (mulNx8*eew)/vr->EEW;
             }
@@ -8893,7 +8963,7 @@ static Uns32 getRVBits(riscvMorphStateP state, iterDescP id, Uns32 index) {
 
     riscvRegDesc rsA = getRVReg(state, index);
 
-    return isVReg(rsA) ? id->SEW : getRBits(rsA);
+    return isVReg(rsA) ? getEEW(id, index) : getRBits(rsA);
 }
 
 //

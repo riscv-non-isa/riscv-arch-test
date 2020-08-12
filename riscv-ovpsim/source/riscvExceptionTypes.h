@@ -47,12 +47,15 @@ typedef enum riscvExceptionE {
     riscv_E_StoreAMOAccessFault          =  7,
     riscv_E_EnvironmentCallFromUMode     =  8,
     riscv_E_EnvironmentCallFromSMode     =  9,
-    riscv_E_EnvironmentCallFromHMode     = 10,  // not currently in use
+    riscv_E_EnvironmentCallFromVSMode    = 10,
     riscv_E_EnvironmentCallFromMMode     = 11,
     riscv_E_InstructionPageFault         = 12,
     riscv_E_LoadPageFault                = 13,
-    riscv_E_Reserved14                   = 14,  // not currently in use
     riscv_E_StoreAMOPageFault            = 15,
+    riscv_E_InstructionGuestPageFault    = 20,
+    riscv_E_LoadGuestPageFault           = 21,
+    riscv_E_VirtualInstruction           = 22,
+    riscv_E_StoreAMOGuestPageFault       = 23,
 
     ////////////////////////////////////////////////////////////////////
     // INTERRUPTS
@@ -62,35 +65,38 @@ typedef enum riscvExceptionE {
     // exceptions; this value is not architectural and can be increased if
     // required)
     // NOTE: please update rv32CpuHelper events.c if this changes
-    riscv_E_Interrupt          = 0x40,
+    riscv_E_Interrupt           = 0x40,
 
     // these classify interrupt types
-    riscv_E_SW                 = 0x00,
-    riscv_E_Timer              = 0x04,
-    riscv_E_External           = 0x08,
-    riscv_E_CLIC               = 0x0c,
-    riscv_E_Local              = 0x10,
+    riscv_E_SW                  = 0x00,
+    riscv_E_Timer               = 0x04,
+    riscv_E_External            = 0x08,
+    riscv_E_Guest               = 0x0c,
+    riscv_E_CLIC                = 0x0c,
+    riscv_E_Local               = 0x10,
 
     // these are interrupt type groups
-    riscv_E_SWInterrupt        = riscv_E_SW       | riscv_E_Interrupt,
-    riscv_E_TimerInterrupt     = riscv_E_Timer    | riscv_E_Interrupt,
-    riscv_E_ExternalInterrupt  = riscv_E_External | riscv_E_Interrupt,
-    riscv_E_CLICInterrupt      = riscv_E_CLIC     | riscv_E_Interrupt,
-    riscv_E_LocalInterrupt     = riscv_E_Local    | riscv_E_Interrupt,
+    riscv_E_SWInterrupt         = riscv_E_SW       | riscv_E_Interrupt,
+    riscv_E_TimerInterrupt      = riscv_E_Timer    | riscv_E_Interrupt,
+    riscv_E_ExternalInterrupt   = riscv_E_External | riscv_E_Interrupt,
+    riscv_E_CLICInterrupt       = riscv_E_CLIC     | riscv_E_Interrupt,
+    riscv_E_LocalInterrupt      = riscv_E_Local    | riscv_E_Interrupt,
+    riscv_E_GuestInterrupt      = riscv_E_Guest    | riscv_E_Interrupt,
 
     // interrupts defined by architectural specification
-    riscv_E_USWInterrupt       = riscv_E_SWInterrupt       | RISCV_MODE_USER,
-    riscv_E_SSWInterrupt       = riscv_E_SWInterrupt       | RISCV_MODE_SUPERVISOR,
-    riscv_E_HSWInterrupt       = riscv_E_SWInterrupt       | RISCV_MODE_HYPERVISOR,
-    riscv_E_MSWInterrupt       = riscv_E_SWInterrupt       | RISCV_MODE_MACHINE,
-    riscv_E_UTimerInterrupt    = riscv_E_TimerInterrupt    | RISCV_MODE_USER,
-    riscv_E_STimerInterrupt    = riscv_E_TimerInterrupt    | RISCV_MODE_SUPERVISOR,
-    riscv_E_HTimerInterrupt    = riscv_E_TimerInterrupt    | RISCV_MODE_HYPERVISOR,
-    riscv_E_MTimerInterrupt    = riscv_E_TimerInterrupt    | RISCV_MODE_MACHINE,
-    riscv_E_UExternalInterrupt = riscv_E_ExternalInterrupt | RISCV_MODE_USER,
-    riscv_E_SExternalInterrupt = riscv_E_ExternalInterrupt | RISCV_MODE_SUPERVISOR,
-    riscv_E_HExternalInterrupt = riscv_E_ExternalInterrupt | RISCV_MODE_HYPERVISOR,
-    riscv_E_MExternalInterrupt = riscv_E_ExternalInterrupt | RISCV_MODE_MACHINE,
+    riscv_E_USWInterrupt        = riscv_E_SWInterrupt       | RISCV_MODE_U,
+    riscv_E_SSWInterrupt        = riscv_E_SWInterrupt       | RISCV_MODE_S,
+    riscv_E_VSSWInterrupt       = riscv_E_SWInterrupt       | RISCV_MODE_H,
+    riscv_E_MSWInterrupt        = riscv_E_SWInterrupt       | RISCV_MODE_M,
+    riscv_E_UTimerInterrupt     = riscv_E_TimerInterrupt    | RISCV_MODE_U,
+    riscv_E_STimerInterrupt     = riscv_E_TimerInterrupt    | RISCV_MODE_S,
+    riscv_E_VSTimerInterrupt    = riscv_E_TimerInterrupt    | RISCV_MODE_H,
+    riscv_E_MTimerInterrupt     = riscv_E_TimerInterrupt    | RISCV_MODE_M,
+    riscv_E_UExternalInterrupt  = riscv_E_ExternalInterrupt | RISCV_MODE_U,
+    riscv_E_SExternalInterrupt  = riscv_E_ExternalInterrupt | RISCV_MODE_S,
+    riscv_E_VSExternalInterrupt = riscv_E_ExternalInterrupt | RISCV_MODE_H,
+    riscv_E_MExternalInterrupt  = riscv_E_ExternalInterrupt | RISCV_MODE_M,
+    riscv_E_SGEIInterrupt       = riscv_E_GuestInterrupt,
 
     // interrupts defined when CLIC is present
     riscv_E_CSIP               = riscv_E_CLICInterrupt,
@@ -110,16 +116,20 @@ typedef enum riscvExceptionE {
 // numbered interrupts)
 //
 typedef enum riscvExceptionPriorityE {
-    riscv_E_UTimerPriority    = 10,
-    riscv_E_USWPriority       = 20,
-    riscv_E_UExternalPriority = 30,
-    riscv_E_STimerPriority    = 40,
-    riscv_E_SSWPriority       = 50,
-    riscv_E_SExternalPriority = 60,
-    riscv_E_MTimerPriority    = 70,
-    riscv_E_MSWPriority       = 80,
-    riscv_E_MExternalPriority = 90,
-    riscv_E_LocalPriority     = 100
+    riscv_E_UTimerPriority     = 10,
+    riscv_E_USWPriority        = 20,
+    riscv_E_UExternalPriority  = 30,
+    riscv_E_VSTimerPriority    = 40,
+    riscv_E_VSSWPriority       = 50,
+    riscv_E_VSExternalPriority = 60,
+    riscv_E_SGEIPriority       = 70,
+    riscv_E_STimerPriority     = 80,
+    riscv_E_SSWPriority        = 90,
+    riscv_E_SExternalPriority  = 100,
+    riscv_E_MTimerPriority     = 110,
+    riscv_E_MSWPriority        = 120,
+    riscv_E_MExternalPriority  = 130,
+    riscv_E_LocalPriority      = 140
 } riscvExceptionPriority;
 
 //

@@ -164,6 +164,31 @@ typedef enum riscvCSRIdE {
     CSR_ID      (sscratchcswl), // 0x149
     CSR_ID      (satp),         // 0x180
 
+    CSR_ID      (hstatus),      // 0x600
+    CSR_ID      (hedeleg),      // 0x602
+    CSR_ID      (hideleg),      // 0x603
+    CSR_ID      (hie),          // 0x604
+    CSR_ID      (hcounteren),   // 0x606
+    CSR_ID      (hgeie),        // 0x607
+    CSR_ID      (htval),        // 0x643
+    CSR_ID      (hip),          // 0x644
+    CSR_ID      (hvip),         // 0x645
+    CSR_ID      (htinst),       // 0x64A
+    CSR_ID      (hgeip),        // 0xE12
+    CSR_ID      (hgatp),        // 0x680
+    CSR_ID      (htimedelta),   // 0x605
+    CSR_ID      (htimedeltah),  // 0x615
+
+    CSR_ID      (vsstatus),     // 0x200
+    CSR_ID      (vsie),         // 0x204
+    CSR_ID      (vstvec),       // 0x205
+    CSR_ID      (vsscratch),    // 0x240
+    CSR_ID      (vsepc),        // 0x241
+    CSR_ID      (vscause),      // 0x242
+    CSR_ID      (vstval),       // 0x243
+    CSR_ID      (vsip),         // 0x244
+    CSR_ID      (vsatp),        // 0x280
+
     CSR_ID      (mvendorid),    // 0xF11
     CSR_ID      (marchid),      // 0xF12
     CSR_ID      (mimpid),       // 0xF13
@@ -452,6 +477,16 @@ void riscvSetVL(riscvP riscv, Uns64 vl);
 
 
 ////////////////////////////////////////////////////////////////////////////////
+// FLAG MANAGEMENT
+////////////////////////////////////////////////////////////////////////////////
+
+//
+// Consolidate floating point and fixed point flags on CSR view
+//
+void riscvConsolidateFPFlags(riscvP riscv);
+
+
+////////////////////////////////////////////////////////////////////////////////
 // REGISTER DEFINITIONS
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -502,22 +537,7 @@ void riscvSetVL(riscvP riscv, Uns64 vl);
 //
 // Use this to declare a register with distinct 32/64 bit views
 //
-#define CSR_REG_STRUCT_DECL_32_64(_N) typedef struct { \
-    union {                             \
-        Uns32               bits;       \
-        CSR_REG_TYPE_32(_N) fields;     \
-    } u32;                              \
-    union {                             \
-        Uns64               bits;       \
-        CSR_REG_TYPE_64(_N) fields;     \
-    } u64;                              \
-} CSR_REG_TYPE(_N)
-
-//
-// Use this to declare a register with distinct 32/64 bit views handled as a
-// union
-//
-#define CSR_REG_STRUCT_DECL_32_64_U(_N) typedef union { \
+#define CSR_REG_STRUCT_DECL_32_64(_N) typedef union { \
     union {                             \
         Uns32               bits;       \
         CSR_REG_TYPE_32(_N) fields;     \
@@ -556,6 +576,7 @@ CSR_REG_STRUCT_DECL_64(genericXLEN);
 // -----------------------------------------------------------------------------
 // ustatus      (id 0x000)
 // sstatus      (id 0x100)
+// vsstatus     (id 0x200)
 // mstatus      (id 0x300)
 // -----------------------------------------------------------------------------
 
@@ -612,12 +633,14 @@ typedef struct {
     Uns64 SXL  :  2;        // TODO: Supervisor mode XLEN
     Uns64 SBE  :  1;        // Supervisor mode big-endian
     Uns64 MBE  :  1;        // Machine mode big-endian
-    Uns64 _u4  : 25;
+    Uns64 GVA  :  1;        // Guest virtual address
+    Uns64 MPV  :  1;        // Machine previous virtualization mode
+    Uns64 _u4  : 23;
     Uns64 SD   :  1;        // Dirty state summary bit (read only)
 } CSR_REG_TYPE_64(status);
 
 // define 32/64 bit type
-CSR_REG_STRUCT_DECL_32_64_U(status);
+CSR_REG_STRUCT_DECL_32_64(status);
 
 // define alias types
 typedef CSR_REG_TYPE(status) CSR_REG_TYPE(ustatus);
@@ -625,7 +648,7 @@ typedef CSR_REG_TYPE(status) CSR_REG_TYPE(sstatus);
 typedef CSR_REG_TYPE(status) CSR_REG_TYPE(mstatus);
 
 // define alias masks (include sstatus.VS field in both 0.8 and 0.9 positions)
-#define sstatus_AMASK 0x80000003818de733ULL
+#define sstatus_AMASK 0x80000003818de773ULL
 #define ustatus_AMASK 0x0000000000000011ULL
 
 // define bit masks
@@ -640,6 +663,8 @@ typedef CSR_REG_TYPE(status) CSR_REG_TYPE(mstatus);
 #define WM_mstatus_SBE  (1ULL<<36)
 #define WM_mstatus_MBE  (1ULL<<37)
 #define WM_mstatus_BE   (WM_mstatus_UBE|WM_mstatus_SBE|WM_mstatus_MBE)
+#define WM_mstatus_GVA  (1ULL<<38)
+#define WM_mstatus_MPV  (1ULL<<39)
 
 // -----------------------------------------------------------------------------
 // mstatush     (id 0x310)
@@ -648,18 +673,74 @@ typedef CSR_REG_TYPE(status) CSR_REG_TYPE(mstatus);
 // 32-bit view
 typedef struct {
     Uns32 _u0 :  4;
-    Uns32 SBE :  1;
-    Uns32 MBE :  1;
-    Uns32 _u1 : 26;
+    Uns32 SBE :  1;        // Supervisor mode big-endian
+    Uns32 MBE :  1;        // Machine mode big-endian
+    Uns32 GVA :  1;        // Guest virtual address
+    Uns32 MPV :  1;        // Machine previous virtualization mode
+    Uns32 _u1 : 24;
 } CSR_REG_TYPE_32(mstatush);
 
 // define 32 bit type
 CSR_REG_STRUCT_DECL_32(mstatush);
 
-// write masks
-#define WM_mstatush_SBE (1ULL<<4)
-#define WM_mstatush_MBE (1ULL<<5)
+// define write masks
+#define WM_mstatush_SBE (1<<4)
+#define WM_mstatush_MBE (1<<5)
 #define WM_mstatush_BE  (WM_mstatush_SBE|WM_mstatush_MBE)
+#define WM_mstatush_GVA (1<<6)
+#define WM_mstatush_MPV (1<<7)
+
+// -----------------------------------------------------------------------------
+// hstatus      (id 0x600)
+// -----------------------------------------------------------------------------
+
+// 32-bit view
+typedef struct {
+    Uns32 _u1   : 5;
+    Uns32 VSBE  : 1;        // VS mode big-endian
+    Uns32 GVA   : 1;        // TODO: Guest virtual address
+    Uns32 SPV   : 1;        // Supervisor previous virtualization mode
+    Uns32 SPVP  : 1;        // Supervisor previous virtual privilege
+    Uns32 HU    : 1;        // Hypervisor user mode
+    Uns32 _u2   : 2;
+    Uns32 VGEIN : 6;        // TODO: Virtual guest external interrupt number
+    Uns32 _u3   : 2;
+    Uns32 VTVM  : 1;        // Trap virtual memory
+    Uns32 VTW   : 1;        // Timeout wait
+    Uns32 VTSR  : 1;        // Trap SRET
+    Uns32 _u4   : 9;
+} CSR_REG_TYPE_32(hstatus);
+
+// 64-bit view
+typedef struct {
+    Uns64 _u1   :  5;
+    Uns64 VSBE  :  1;       // VS mode big-endian
+    Uns64 GVA   :  1;       // TODO: Guest virtual address
+    Uns64 SPV   :  1;       // Supervisor previous virtualization mode
+    Uns64 SPVP  :  1;       // Supervisor previous virtual privilege
+    Uns64 HU    :  1;       // Hypervisor user mode
+    Uns64 _u2   :  2;
+    Uns64 VGEIN :  6;       // TODO: Virtual guest external interrupt number
+    Uns64 _u3   :  2;
+    Uns64 VTVM  :  1;       // Trap virtual memory
+    Uns64 VTW   :  1;       // Timeout wait
+    Uns64 VTSR  :  1;       // Trap SRET
+    Uns64 _u4   :  9;
+    Uns64 VSXL  :  2;       // TODO: VS mode XLEN
+    Uns64 _u5   : 30;
+} CSR_REG_TYPE_64(hstatus);
+
+// define 32/64 bit type
+CSR_REG_STRUCT_DECL_32_64(hstatus);
+
+// define write masks
+#define WM_hstatus 0x007003c0
+
+// define bit masks
+#define WM_hstatus_VSBE (1<<5)
+#define WM_hstatus_SPV  (1<<7)
+#define WM_hstatus_HU   (1<<9)
+#define WM_hstatus_TW   (1<<21)
 
 // -----------------------------------------------------------------------------
 // fflags       (id 0x001)
@@ -678,7 +759,7 @@ typedef struct {
 // define 32 bit type
 CSR_REG_STRUCT_DECL_32(fflags);
 
-// write masks
+// define write masks
 #define WM32_fflags 0x1f
 
 // -----------------------------------------------------------------------------
@@ -694,7 +775,7 @@ typedef struct {
 // define 32 bit type
 CSR_REG_STRUCT_DECL_32(frm);
 
-// write masks
+// define write masks
 #define WM32_frm 0x7
 
 // -----------------------------------------------------------------------------
@@ -717,7 +798,7 @@ typedef struct {
 // define 32 bit type
 CSR_REG_STRUCT_DECL_32(fcsr);
 
-// write masks
+// define write masks
 #define WM32_fcsr_f       0x0ff
 #define WM32_fcsr_v       0x700
 #define WM32_fcsr_frm_msb 0x080
@@ -748,6 +829,7 @@ typedef CSR_REG_TYPE(isa) CSR_REG_TYPE(misa);
 
 // -----------------------------------------------------------------------------
 // sedeleg      (id 0x102)
+// hedeleg      (id 0x602)
 // medeleg      (id 0x302)
 // -----------------------------------------------------------------------------
 
@@ -761,10 +843,12 @@ CSR_REG_STRUCT_DECL_32(edeleg);
 
 // define alias types
 typedef CSR_REG_TYPE(edeleg) CSR_REG_TYPE(sedeleg);
+typedef CSR_REG_TYPE(edeleg) CSR_REG_TYPE(hedeleg);
 typedef CSR_REG_TYPE(edeleg) CSR_REG_TYPE(medeleg);
 
 // -----------------------------------------------------------------------------
 // sideleg      (id 0x103)
+// hideleg      (id 0x603)
 // mideleg      (id 0x303)
 // -----------------------------------------------------------------------------
 
@@ -778,28 +862,31 @@ CSR_REG_STRUCT_DECL_32(ideleg);
 
 // define alias types
 typedef CSR_REG_TYPE(ideleg) CSR_REG_TYPE(sideleg);
+typedef CSR_REG_TYPE(ideleg) CSR_REG_TYPE(hideleg);
 typedef CSR_REG_TYPE(ideleg) CSR_REG_TYPE(mideleg);
 
 // -----------------------------------------------------------------------------
 // uie          (id 0x004)
 // sie          (id 0x104)
+// vsie         (id 0x204)
+// hie          (id 0x604)
 // mie          (id 0x304)
 // -----------------------------------------------------------------------------
 
 // 32-bit view
 typedef struct {
-    Uns32 USIE : 1;
-    Uns32 SSIE : 1;
-    Uns32 _u0  : 1;
-    Uns32 MSIE : 1;
-    Uns32 UTIE : 1;
-    Uns32 STIE : 1;
-    Uns32 _u1  : 1;
-    Uns32 MTIE : 1;
-    Uns32 UEIE : 1;
-    Uns32 SEIE : 1;
-    Uns32 _u2  : 1;
-    Uns32 MEIE : 1;
+    Uns32 USIE  : 1;
+    Uns32 SSIE  : 1;
+    Uns32 VSSIE : 1;
+    Uns32 MSIE  : 1;
+    Uns32 UTIE  : 1;
+    Uns32 STIE  : 1;
+    Uns32 VSTIE : 1;
+    Uns32 MTIE  : 1;
+    Uns32 UEIE  : 1;
+    Uns32 SEIE  : 1;
+    Uns32 VSEIE : 1;
+    Uns32 MEIE  : 1;
 } CSR_REG_TYPE_32(ie);
 
 // define 32 bit type
@@ -810,9 +897,13 @@ typedef CSR_REG_TYPE(ie) CSR_REG_TYPE(uie);
 typedef CSR_REG_TYPE(ie) CSR_REG_TYPE(sie);
 typedef CSR_REG_TYPE(ie) CSR_REG_TYPE(mie);
 
+// define write masks
+#define WM32_hie 0x1444
+
 // -----------------------------------------------------------------------------
 // utvec        (id 0x005)
 // stvec        (id 0x105)
+// vstvec       (id 0x205)
 // mtvec        (id 0x305)
 // -----------------------------------------------------------------------------
 
@@ -829,7 +920,7 @@ typedef struct {
 } CSR_REG_TYPE_64(tvec);
 
 // define 32/64 bit type
-CSR_REG_STRUCT_DECL_32_64_U(tvec);
+CSR_REG_STRUCT_DECL_32_64(tvec);
 
 // define alias types
 typedef CSR_REG_TYPE(tvec) CSR_REG_TYPE(utvec);
@@ -842,6 +933,7 @@ typedef CSR_REG_TYPE(tvec) CSR_REG_TYPE(mtvec);
 
 // -----------------------------------------------------------------------------
 // scounteren   (id 0x106)
+// hcounteren   (id 0x606)
 // mcounteren   (id 0x306)
 // -----------------------------------------------------------------------------
 
@@ -858,6 +950,7 @@ CSR_REG_STRUCT_DECL_32(counteren);
 
 // define alias types
 typedef CSR_REG_TYPE(counteren) CSR_REG_TYPE(scounteren);
+typedef CSR_REG_TYPE(counteren) CSR_REG_TYPE(hcounteren);
 typedef CSR_REG_TYPE(counteren) CSR_REG_TYPE(mcounteren);
 
 // define write masks
@@ -895,6 +988,7 @@ typedef CSR_REG_TYPE(genericXLEN) CSR_REG_TYPE(mhpmevent);
 // -----------------------------------------------------------------------------
 // uscratch     (id 0x040)
 // sscratch     (id 0x140)
+// vsscratch    (id 0x240)
 // mscratch     (id 0x340)
 // -----------------------------------------------------------------------------
 
@@ -906,6 +1000,7 @@ typedef CSR_REG_TYPE(genericXLEN) CSR_REG_TYPE(mscratch);
 // -----------------------------------------------------------------------------
 // uepc         (id 0x041)
 // sepc         (id 0x141)
+// vsepc        (id 0x241)
 // mepc         (id 0x341)
 // -----------------------------------------------------------------------------
 
@@ -917,6 +1012,7 @@ typedef CSR_REG_TYPE(genericXLEN) CSR_REG_TYPE(mepc);
 // -----------------------------------------------------------------------------
 // ucause       (id 0x042)
 // scause       (id 0x142)
+// vscause      (id 0x242)
 // mcause       (id 0x342)
 // -----------------------------------------------------------------------------
 
@@ -952,9 +1048,10 @@ typedef CSR_REG_TYPE(cause) CSR_REG_TYPE(scause);
 typedef CSR_REG_TYPE(cause) CSR_REG_TYPE(mcause);
 
 // -----------------------------------------------------------------------------
-// utval        (id 0x041)
-// stval        (id 0x141)
-// mtval        (id 0x341)
+// utval        (id 0x043)
+// stval        (id 0x143)
+// vstval       (id 0x243)
+// mtval        (id 0x343)
 // -----------------------------------------------------------------------------
 
 // define alias types
@@ -965,25 +1062,29 @@ typedef CSR_REG_TYPE(genericXLEN) CSR_REG_TYPE(mtval);
 // -----------------------------------------------------------------------------
 // uip          (id 0x044)
 // sip          (id 0x144)
+// vsip         (id 0x244)
+// hip          (id 0x644)
+// hvip         (id 0x645)
 // mip          (id 0x344)
 // -----------------------------------------------------------------------------
 
 // 64-bit view
 typedef struct {
-    Uns32 USIP :  1;
-    Uns32 SSIP :  1;
-    Uns32 _u0  :  1;
-    Uns32 MSIP :  1;
-    Uns32 UTIP :  1;
-    Uns32 STIP :  1;
-    Uns32 _u1  :  1;
-    Uns32 MTIP :  1;
-    Uns32 UEIP :  1;
-    Uns32 SEIP :  1;
-    Uns32 _u2  :  1;
-    Uns32 MEIP :  1;
-    Uns32 _u3  :  4;
-    Uns64 LI   : 48;
+    Uns32 USIP  :  1;
+    Uns32 SSIP  :  1;
+    Uns32 VSSIP :  1;
+    Uns32 MSIP  :  1;
+    Uns32 UTIP  :  1;
+    Uns32 STIP  :  1;
+    Uns32 VSTIP :  1;
+    Uns32 MTIP  :  1;
+    Uns32 UEIP  :  1;
+    Uns32 SEIP  :  1;
+    Uns32 VSEIP :  1;
+    Uns32 MEIP  :  1;
+    Uns32 SGEIP :  1;
+    Uns32 _u3   :  3;
+    Uns64 LI    : 48;
 } CSR_REG_TYPE_64(ip);
 
 // define 32 bit type
@@ -992,13 +1093,32 @@ CSR_REG_STRUCT_DECL_64(ip);
 // define alias types
 typedef CSR_REG_TYPE(ip) CSR_REG_TYPE(uip);
 typedef CSR_REG_TYPE(ip) CSR_REG_TYPE(sip);
+typedef CSR_REG_TYPE(ip) CSR_REG_TYPE(vsip);
+typedef CSR_REG_TYPE(ip) CSR_REG_TYPE(hip);
+typedef CSR_REG_TYPE(ip) CSR_REG_TYPE(hvip);
 typedef CSR_REG_TYPE(ip) CSR_REG_TYPE(mip);
 
 // define write masks
-#define WM32_ip  0x00000fff
-#define WM32_mip 0x00000333
-#define WM32_sip 0x00000103
-#define WM32_uip 0x00000001
+#define WM32_ip   0x00000fff
+#define WM32_uip  0x00000001
+#define WM32_sip  0x00000103
+#define WM32_vsip 0x00000002
+#define WM32_hip  0x00000004
+#define WM32_hvip 0x00000222
+#define WM32_mip  0x00000337
+
+// -----------------------------------------------------------------------------
+// hgeip (id 0xE12)
+// hgeie (id 0x607)
+// -----------------------------------------------------------------------------
+
+// define alias types
+typedef CSR_REG_TYPE(genericXLEN) CSR_REG_TYPE(hgeip);
+typedef CSR_REG_TYPE(genericXLEN) CSR_REG_TYPE(hgeie);
+
+// define write masks
+#define WM32_hgeip 0x00000000
+#define WM64_hgeip 0x00000000
 
 // -----------------------------------------------------------------------------
 // uintstatus   (id 0x046)
@@ -1093,6 +1213,7 @@ typedef CSR_REG_TYPE(genericXLEN) CSR_REG_TYPE(mclicbase);
 
 // -----------------------------------------------------------------------------
 // satp         (id 0x180)
+// vsatp        (id 0x280)
 // -----------------------------------------------------------------------------
 
 // 32-bit view
@@ -1386,7 +1507,7 @@ typedef struct {
 // define 32 bit type
 CSR_REG_STRUCT_DECL_32(vcsr);
 
-// write masks
+// define write masks
 #define WM32_vcsr   0x00000007
 
 // -----------------------------------------------------------------------------
@@ -1416,7 +1537,7 @@ typedef struct {
 } CSR_REG_TYPE_64(vtype);
 
 // define 32/64 bit type
-CSR_REG_STRUCT_DECL_32_64_U(vtype);
+CSR_REG_STRUCT_DECL_32_64(vtype);
 
 // define write masks
 #define WM32_vtype  0x00000000
@@ -1443,70 +1564,93 @@ typedef CSR_REG_TYPE(genericXLEN) CSR_REG_TYPE(vlenb);
 #define CSR_REG_DECL(_N)    CSR_REG_TYPE(_N) _N
 
 //
+// Use this to define a register entry in riscvCSRs below with normal and
+// virtual aliases
+//
+#define CSR_REG_DECL_V(_N) CSR_REG_TYPE(_N) _N, v##_N
+
+//
+// Use this to define a register entry in riscvCSRs below with virtual alias
+// only
+//
+#define CSR_REG_DECL_v(_N) CSR_REG_TYPE(_N) v##_N
+
+//
 // This type defines the CSRs implemented as true registers in the processor
 // structure
 //
 typedef struct riscvCSRsS {
 
     // USER MODE CSRS
-    CSR_REG_DECL(fcsr);         // 0x003
-    CSR_REG_DECL(utvec);        // 0x005
-    CSR_REG_DECL(utvt);         // 0x007
-    CSR_REG_DECL(vstart);       // 0x008
-    CSR_REG_DECL(vxsat);        // 0x009
-    CSR_REG_DECL(vxrm);         // 0x00A
-    CSR_REG_DECL(vcsr);         // 0x00E
-    CSR_REG_DECL(uscratch);     // 0x040
-    CSR_REG_DECL(uepc);         // 0x041
-    CSR_REG_DECL(ucause);       // 0x042
-    CSR_REG_DECL(utval);        // 0x043
-    CSR_REG_DECL(uintthresh);   // 0x04A
-    CSR_REG_DECL(vl);           // 0xC20
-    CSR_REG_DECL(vtype);        // 0xC21
-    CSR_REG_DECL(vlenb);        // 0xC22
+    CSR_REG_DECL  (fcsr);           // 0x003
+    CSR_REG_DECL  (utvec);          // 0x005
+    CSR_REG_DECL  (utvt);           // 0x007
+    CSR_REG_DECL  (vstart);         // 0x008
+    CSR_REG_DECL  (vxsat);          // 0x009
+    CSR_REG_DECL  (vxrm);           // 0x00A
+    CSR_REG_DECL  (vcsr);           // 0x00E
+    CSR_REG_DECL  (uscratch);       // 0x040
+    CSR_REG_DECL  (uepc);           // 0x041
+    CSR_REG_DECL  (ucause);         // 0x042
+    CSR_REG_DECL  (utval);          // 0x043
+    CSR_REG_DECL  (uintthresh);     // 0x04A
+    CSR_REG_DECL  (vl);             // 0xC20
+    CSR_REG_DECL  (vtype);          // 0xC21
+    CSR_REG_DECL  (vlenb);          // 0xC22
 
     // SUPERVISOR MODE CSRS
-    CSR_REG_DECL(sedeleg);      // 0x102
-    CSR_REG_DECL(sideleg);      // 0x103
-    CSR_REG_DECL(stvec);        // 0x105
-    CSR_REG_DECL(scounteren);   // 0x106
-    CSR_REG_DECL(stvt);         // 0x107
-    CSR_REG_DECL(sscratch);     // 0x140
-    CSR_REG_DECL(sepc);         // 0x141
-    CSR_REG_DECL(scause);       // 0x142
-    CSR_REG_DECL(stval);        // 0x143
-    CSR_REG_DECL(sintthresh);   // 0x14A
-    CSR_REG_DECL(satp);         // 0x180
+    CSR_REG_DECL  (sedeleg);        // 0x102
+    CSR_REG_DECL  (sideleg);        // 0x103
+    CSR_REG_DECL_V(stvec);          // 0x105
+    CSR_REG_DECL  (scounteren);     // 0x106
+    CSR_REG_DECL  (stvt);           // 0x107
+    CSR_REG_DECL_V(sscratch);       // 0x140
+    CSR_REG_DECL_V(sepc);           // 0x141
+    CSR_REG_DECL_V(scause);         // 0x142
+    CSR_REG_DECL_V(stval);          // 0x143
+    CSR_REG_DECL  (sintthresh);     // 0x14A
+    CSR_REG_DECL_V(satp);           // 0x180
+
+    // HYPERVISOR MODE CSRS
+    CSR_REG_DECL  (hstatus);        // 0x600
+    CSR_REG_DECL  (hedeleg);        // 0x602
+    CSR_REG_DECL  (hideleg);        // 0x603
+    CSR_REG_DECL  (hcounteren);     // 0x606
+    CSR_REG_DECL  (hgeie);          // 0x607
+    CSR_REG_DECL  (hgeip);          // 0xE12
+
+    // VIRTUAL MODE CSRS
+    CSR_REG_DECL_v(sstatus);        // 0x600
 
     // MACHINE MODE CSRS
-    CSR_REG_DECL(mvendorid);    // 0xF11
-    CSR_REG_DECL(marchid);      // 0xF12
-    CSR_REG_DECL(mimpid);       // 0xF13
-    CSR_REG_DECL(mhartid);      // 0xF14
-    CSR_REG_DECL(mstatus);      // 0x300
-    CSR_REG_DECL(misa);         // 0x301
-    CSR_REG_DECL(medeleg);      // 0x302
-    CSR_REG_DECL(mideleg);      // 0x303
-    CSR_REG_DECL(mie);          // 0x304
-    CSR_REG_DECL(mtvec);        // 0x305
-    CSR_REG_DECL(mcounteren);   // 0x306
-    CSR_REG_DECL(mtvt);         // 0x307
-    CSR_REG_DECL(mstatush);     // 0x310
-    CSR_REG_DECL(mcountinhibit);// 0x320
-    CSR_REG_DECL(mscratch);     // 0x340
-    CSR_REG_DECL(mepc);         // 0x341
-    CSR_REG_DECL(mcause);       // 0x342
-    CSR_REG_DECL(mtval);        // 0x343
-    CSR_REG_DECL(mip);          // 0x344
-    CSR_REG_DECL(mintstatus);   // 0x346
-    CSR_REG_DECL(mintthresh);   // 0x34A
-    CSR_REG_DECL(mclicbase);    // 0x34B
+    CSR_REG_DECL  (mvendorid);      // 0xF11
+    CSR_REG_DECL  (marchid);        // 0xF12
+    CSR_REG_DECL  (mimpid);         // 0xF13
+    CSR_REG_DECL  (mhartid);        // 0xF14
+    CSR_REG_DECL  (mstatus);        // 0x300
+    CSR_REG_DECL  (misa);           // 0x301
+    CSR_REG_DECL  (medeleg);        // 0x302
+    CSR_REG_DECL  (mideleg);        // 0x303
+    CSR_REG_DECL  (mie);            // 0x304
+    CSR_REG_DECL  (mtvec);          // 0x305
+    CSR_REG_DECL  (mcounteren);     // 0x306
+    CSR_REG_DECL  (mtvt);           // 0x307
+    CSR_REG_DECL  (mstatush);       // 0x310
+    CSR_REG_DECL  (mcountinhibit);  // 0x320
+    CSR_REG_DECL  (mscratch);       // 0x340
+    CSR_REG_DECL  (mepc);           // 0x341
+    CSR_REG_DECL  (mcause);         // 0x342
+    CSR_REG_DECL  (mtval);          // 0x343
+    CSR_REG_DECL  (mip);            // 0x344
+    CSR_REG_DECL  (mintstatus);     // 0x346
+    CSR_REG_DECL  (mintthresh);     // 0x34A
+    CSR_REG_DECL  (mclicbase);      // 0x34B
 
     // DEBUG MODE CSRS
-    CSR_REG_DECL(dcsr);         // 0x7B0
-    CSR_REG_DECL(dpc);          // 0x7B1
-    CSR_REG_DECL(dscratch0);    // 0x7B2
-    CSR_REG_DECL(dscratch1);    // 0x7B3
+    CSR_REG_DECL  (dcsr);           // 0x7B0
+    CSR_REG_DECL  (dpc);            // 0x7B1
+    CSR_REG_DECL  (dscratch0);      // 0x7B2
+    CSR_REG_DECL  (dscratch1);      // 0x7B3
 
 } riscvCSRs;
 
@@ -1521,41 +1665,47 @@ typedef struct riscvCSRsS {
 typedef struct riscvCSRMasksS {
 
     // USER MODE CSRS
-    CSR_REG_DECL(fcsr);         // 0x003
-    CSR_REG_DECL(utvec);        // 0x005
-    CSR_REG_DECL(utvt);         // 0x007
-    CSR_REG_DECL(vstart);       // 0x008
-    CSR_REG_DECL(uepc);         // 0x041
-    CSR_REG_DECL(ucause);       // 0x042
-    CSR_REG_DECL(utval);        // 0x043
+    CSR_REG_DECL  (fcsr);           // 0x003
+    CSR_REG_DECL  (utvec);          // 0x005
+    CSR_REG_DECL  (utvt);           // 0x007
+    CSR_REG_DECL  (vstart);         // 0x008
+    CSR_REG_DECL  (uepc);           // 0x041
+    CSR_REG_DECL  (ucause);         // 0x042
+    CSR_REG_DECL  (utval);          // 0x043
 
     // SUPERVISOR MODE CSRS
-    CSR_REG_DECL(sedeleg);      // 0x102
-    CSR_REG_DECL(sideleg);      // 0x103
-    CSR_REG_DECL(stvec);        // 0x105
-    CSR_REG_DECL(stvt);         // 0x107
-    CSR_REG_DECL(scounteren);   // 0x106
-    CSR_REG_DECL(sepc);         // 0x141
-    CSR_REG_DECL(scause);       // 0x142
-    CSR_REG_DECL(stval);        // 0x143
+    CSR_REG_DECL  (sedeleg);        // 0x102
+    CSR_REG_DECL  (sideleg);        // 0x103
+    CSR_REG_DECL_V(stvec);          // 0x105
+    CSR_REG_DECL  (stvt);           // 0x107
+    CSR_REG_DECL  (scounteren);     // 0x106
+    CSR_REG_DECL_V(sepc);           // 0x141
+    CSR_REG_DECL  (scause);         // 0x142
+    CSR_REG_DECL_V(stval);          // 0x143
+
+    // HYPERVISOR MODE CSRS
+    CSR_REG_DECL  (hstatus);        // 0x600
+    CSR_REG_DECL  (hedeleg);        // 0x602
+    CSR_REG_DECL  (hideleg);        // 0x603
+    CSR_REG_DECL  (hcounteren);     // 0x606
 
     // MACHINE MODE CSRS
-    CSR_REG_DECL(mstatus);      // 0x300
-    CSR_REG_DECL(misa);         // 0x301
-    CSR_REG_DECL(medeleg);      // 0x302
-    CSR_REG_DECL(mideleg);      // 0x303
-    CSR_REG_DECL(mie);          // 0x304
-    CSR_REG_DECL(mtvec);        // 0x305
-    CSR_REG_DECL(mtvt);         // 0x307
-    CSR_REG_DECL(mcounteren);   // 0x306
-    CSR_REG_DECL(mstatush);     // 0x310
-    CSR_REG_DECL(mcountinhibit);// 0x320
-    CSR_REG_DECL(mepc);         // 0x341
-    CSR_REG_DECL(mcause);       // 0x342
-    CSR_REG_DECL(mtval);        // 0x343
+    CSR_REG_DECL  (mstatus);        // 0x300
+    CSR_REG_DECL  (misa);           // 0x301
+    CSR_REG_DECL  (medeleg);        // 0x302
+    CSR_REG_DECL  (mideleg);        // 0x303
+    CSR_REG_DECL  (mie);            // 0x304
+    CSR_REG_DECL  (mtvec);          // 0x305
+    CSR_REG_DECL  (mtvt);           // 0x307
+    CSR_REG_DECL  (mcounteren);     // 0x306
+    CSR_REG_DECL  (mstatush);       // 0x310
+    CSR_REG_DECL  (mcountinhibit);  // 0x320
+    CSR_REG_DECL  (mepc);           // 0x341
+    CSR_REG_DECL  (mcause);         // 0x342
+    CSR_REG_DECL  (mtval);          // 0x343
 
     // DEBUG MODE CSRS
-    CSR_REG_DECL(dcsr);         // 0x7B0
+    CSR_REG_DECL  (dcsr);           // 0x7B0
 
 } riscvCSRMasks;
 
@@ -1565,68 +1715,146 @@ typedef struct riscvCSRMasksS {
 ////////////////////////////////////////////////////////////////////////////////
 
 // get CSR value using current XLEN
-#define RD_CSR(_CPU, _RNAME) \
-    (RISCV_XLEN_IS_32(_CPU) ?                           \
-        (_CPU)->csr._RNAME.u32.bits :                   \
-        (_CPU)->csr._RNAME.u64.bits)                    \
+#define RD_CSR(_CPU, _RNAME) ( \
+    (RISCV_XLEN_IS_32(_CPU) ?                               \
+        (_CPU)->csr._RNAME.u32.bits :                       \
+        (_CPU)->csr._RNAME.u64.bits)                        \
+)
 
 // set CSR value using current XLEN
 #define WR_CSR(_CPU, _RNAME, _VALUE) \
-    if(RISCV_XLEN_IS_32(_CPU)) {                        \
-        (_CPU)->csr._RNAME.u32.bits = _VALUE;           \
-    } else {                                            \
-        (_CPU)->csr._RNAME.u64.bits = _VALUE;           \
+    if(RISCV_XLEN_IS_32(_CPU)) {                            \
+        (_CPU)->csr._RNAME.u32.bits = _VALUE;               \
+    } else {                                                \
+        (_CPU)->csr._RNAME.u64.bits = _VALUE;               \
+    }
+
+// get raw field using current XLEN
+#define RD_RAW_FIELD(_CPU, _R, _FIELD) ( \
+    (RISCV_XLEN_IS_32(_CPU) ?                               \
+        _R.u32.fields._FIELD :                              \
+        _R.u64.fields._FIELD)                               \
+)
+
+// set raw field using current XLEN
+#define WR_RAW_FIELD(_CPU, _R, _FIELD, _VALUE) \
+    if(RISCV_XLEN_IS_32(_CPU)) {                            \
+        _R.u32.fields._FIELD = _VALUE;                      \
+    } else {                                                \
+        _R.u64.fields._FIELD = _VALUE;                      \
     }
 
 // get CSR field using current XLEN
 #define RD_CSR_FIELD(_CPU, _RNAME, _FIELD) \
-    (RISCV_XLEN_IS_32(_CPU) ?                           \
-        (_CPU)->csr._RNAME.u32.fields._FIELD :          \
-        (_CPU)->csr._RNAME.u64.fields._FIELD)           \
+    RD_RAW_FIELD(_CPU, (_CPU)->csr._RNAME, _FIELD)
 
 // set CSR field using current XLEN
 #define WR_CSR_FIELD(_CPU, _RNAME, _FIELD, _VALUE) \
-    if(RISCV_XLEN_IS_32(_CPU)) {                        \
-        (_CPU)->csr._RNAME.u32.fields._FIELD = _VALUE;  \
-    } else {                                            \
-        (_CPU)->csr._RNAME.u64.fields._FIELD = _VALUE;  \
+    WR_RAW_FIELD(_CPU, (_CPU)->csr._RNAME, _FIELD, _VALUE)
+
+// get CSR field in XLEN=64 view
+#define RD_CSR_FIELD64(_CPU, _RNAME, _FIELD) \
+    (_CPU)->csr._RNAME.u64.fields._FIELD
+
+// set raw field in XLEN=32 view
+#define WR_RAW_FIELD32(_R, _FIELD, _VALUE) \
+    _R.u32.fields._FIELD = _VALUE
+
+// set raw field in XLEN=64 view
+#define WR_RAW_FIELD64(_R, _FIELD, _VALUE) \
+    _R.u64.fields._FIELD = _VALUE
+
+// set CSR field in XLEN=32 view
+#define WR_CSR_FIELD32(_CPU, _RNAME, _FIELD, _VALUE) \
+    WR_RAW_FIELD32((_CPU)->csr._RNAME, _FIELD, _VALUE)
+
+// set CSR field in XLEN=64 view
+#define WR_CSR_FIELD64(_CPU, _RNAME, _FIELD, _VALUE) \
+    WR_RAW_FIELD64((_CPU)->csr._RNAME, _FIELD, _VALUE)
+
+// get raw field using current XLEN from 32/64 bit alternate registers
+#define RD_RAW_FIELD_ALT(_CPU, _R32, _R64, _FIELD) ( \
+    (RISCV_XLEN_IS_32(_CPU) ?                               \
+        _R32.u32.fields._FIELD :                            \
+        _R64.u64.fields._FIELD)                             \
+)
+
+// set raw field using current XLEN from 32/64 bit alternate registers
+#define WR_RAW_FIELD_ALT(_CPU, _R32, _R64, _FIELD, _VALUE) \
+    if(RISCV_XLEN_IS_32(_CPU)) {                            \
+        _R32.u32.fields._FIELD = _VALUE;                    \
+    } else {                                                \
+        _R64.u64.fields._FIELD = _VALUE;                    \
     }
 
 // get CSR field using current XLEN from 32/64 bit alternate registers
 #define RD_CSR_FIELD_ALT(_CPU, _RNAME32, _RNAME64, _FIELD) \
-    (RISCV_XLEN_IS_32(_CPU) ?                          \
-        (_CPU)->csr._RNAME32.u32.fields._FIELD :       \
-        (_CPU)->csr._RNAME64.u64.fields._FIELD)        \
+    RD_RAW_FIELD_ALT(                                       \
+        _CPU,                                               \
+        (_CPU)->csr._RNAME32,                               \
+        (_CPU)->csr._RNAME64,                               \
+        _FIELD                                              \
+    )
 
 // set CSR field using current XLEN from 32/64 bit alternate registers
 #define WR_CSR_FIELD_ALT(_CPU, _RNAME32, _RNAME64, _FIELD, _VALUE) \
-    if(RISCV_XLEN_IS_32(_CPU)) {                            \
-        (_CPU)->csr._RNAME32.u32.fields._FIELD = _VALUE;    \
-    } else {                                                \
-        (_CPU)->csr._RNAME64.u64.fields._FIELD = _VALUE;    \
-    }
+    WR_RAW_FIELD_ALT(                                       \
+        _CPU,                                               \
+        (_CPU)->csr._RNAME32,                               \
+        (_CPU)->csr._RNAME64,                               \
+        _FIELD,                                             \
+        _VALUE                                              \
+    )
 
-// set CSR field when XLEN is 64
-#define WR_CSR64_FIELD(_CPU, _RNAME, _FIELD, _VALUE) \
-    if(RISCV_XLEN_IS_64(_CPU)) {                        \
-        (_CPU)->csr._RNAME.u64.fields._FIELD = _VALUE;  \
-    }
-
-// get CSR mask using current XLEN
+// get CSR mask
 #define RD_CSR_MASK(_CPU, _RNAME) \
-    (RISCV_XLEN_IS_32(_CPU) ?                           \
-        (_CPU)->csrMask._RNAME.u32.bits :               \
-        (_CPU)->csrMask._RNAME.u64.bits)                \
+    (_CPU)->csrMask._RNAME.u64.bits
 
 // get CSR mask field using current XLEN
-#define RD_CSR_MASK_FIELD(_CPU, _RNAME, _FIELD) \
-    (RISCV_XLEN_IS_32(_CPU) ?                           \
-        (_CPU)->csrMask._RNAME.u32.fields._FIELD :      \
-        (_CPU)->csrMask._RNAME.u64.fields._FIELD)       \
+#define RD_CSR_MASK_FIELD(_CPU, _RNAME, _FIELD) ( \
+    (RISCV_XLEN_IS_32(_CPU) ?                               \
+        (_CPU)->csrMask._RNAME.u32.fields._FIELD :          \
+        (_CPU)->csrMask._RNAME.u64.fields._FIELD)           \
+)
 
 // mask CSR using variable mask
 #define MASK_CSR(_CPU, _RNAME) \
     (_CPU)->csr._RNAME.u64.bits &= (_CPU)->csrMask._RNAME.u64.bits
+
+
+////////////////////////////////////////////////////////////////////////////////
+// SYSTEM REGISTER ACCESS MACROS (NORMAL OR VIRTUAL ALIAS)
+////////////////////////////////////////////////////////////////////////////////
+
+// get CSR value using current XLEN
+#define RD_CSR_V(_CPU, _RNAME, _V) ( \
+    (_V) ?                                                  \
+        RD_CSR(_CPU, v##_RNAME) :                           \
+        RD_CSR(_CPU, _RNAME)                                \
+)
+
+// set CSR value using current XLEN
+#define WR_CSR_V(_CPU, _RNAME, _V, _VALUE) \
+    if(_V) {                                                \
+        WR_CSR(_CPU, v##_RNAME, _VALUE);                    \
+    } else {                                                \
+        WR_CSR(_CPU, _RNAME, _VALUE);                       \
+    }
+
+// get CSR field using current XLEN
+#define RD_CSR_FIELD_V(_CPU, _RNAME, _V, _FIELD) ( \
+    (_V) ?                                                  \
+        RD_CSR_FIELD(_CPU, v##_RNAME, _FIELD) :             \
+        RD_CSR_FIELD(_CPU, _RNAME, _FIELD)                  \
+)
+
+// set CSR field using current XLEN
+#define WR_CSR_FIELD_V(_CPU, _RNAME, _V, _FIELD, _VALUE) \
+    if(_V) {                                                \
+        WR_CSR_FIELD(_CPU, v##_RNAME, _FIELD, _VALUE);      \
+    } else {                                                \
+        WR_CSR_FIELD(_CPU, _RNAME, _FIELD, _VALUE);         \
+    }
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1637,13 +1865,9 @@ typedef struct riscvCSRMasksS {
 // Morph-time macros to access a CSR register by id
 //
 #define CSR_REG_MT(_ID)     RISCV_CPU_REG(csr._ID)
-#define CSR_REG32_MT(_ID)   RISCV_CPU_REG(csr._ID.u32)
-#define CSR_REG64_MT(_ID)   RISCV_CPU_REG(csr._ID.u64)
 
 //
 // Morph-time macros to access a CSR register mask by id
 //
 #define CSR_MASK_MT(_ID)    RISCV_CPU_REG(csrMask._ID)
-#define CSR_MASK32_MT(_ID)  RISCV_CPU_REG(csrMask._ID.u32)
-#define CSR_MASK64_MT(_ID)  RISCV_CPU_REG(csrMask._ID.u64)
 
