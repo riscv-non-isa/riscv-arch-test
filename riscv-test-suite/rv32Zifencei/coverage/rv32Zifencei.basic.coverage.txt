@@ -1,0 +1,12 @@
+Imperas RISC-V Instruction Coverage Report
+
+Extension : RVZifencei, instructions: 1
+    fence_i        
+    fence_i 1/1 : 100.00%
+Coverage points missed: 0/1
+
+Info TOTAL INSTRUCTION COVERAGE : RVZifencei
+Info   Threshold             : 1
+Info   Instructions counted  : 0
+Info   Unique instructions   : 1/1 : 100.00%
+Info   Coverage points hit   : 1/1 : 100.00%
