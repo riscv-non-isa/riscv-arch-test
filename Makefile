@@ -42,10 +42,12 @@ export TARGETDIR ?= $(ROOTDIR)/riscv-target
 VERBOSE ?= 0
 ifeq ($(VERBOSE),1)
     export V=
-    export REDIR=
+    export REDIR1 =
+    export REDIR2 =
 else
     export V=@
-    export REDIR=>/dev/null
+    export REDIR1 = 1>/dev/null
+    export REDIR2 = 2>/dev/null
 endif
 
 PARALLEL ?= 1
