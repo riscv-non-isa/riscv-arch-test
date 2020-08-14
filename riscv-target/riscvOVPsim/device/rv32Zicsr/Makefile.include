@@ -25,7 +25,7 @@ RUN_TARGET=\
         --override riscvOVPsim/cpu/defaultsemihost=F \
         --logfile $(@) \
         --override riscvOVPsim/cpu/user_version=2.3 \
-        --override riscvOVPsim/cpu/priv_version=1.11 $(REDIR); \
+        --override riscvOVPsim/cpu/priv_version=1.11 $(REDIR1); \
             cat $(*).signature.output | \
             sed 's/.\{8\}/& /g' | \
             awk '{print $$4 " " $$3 " " $$2 " " $$1}' | \

@@ -27,13 +27,11 @@
 #
 # Description: Makefrag for RV32I compliance tests
 
-rv32i_sc_tests = \
+rv32i_sc_tests_notrap = \
     I-ENDIANESS-01 \
     I-RF_x0-01 \
     I-RF_size-01 \
     I-RF_width-01 \
-    I-MISALIGN_JMP-01 \
-    I-MISALIGN_LDST-01 \
     I-DELAY_SLOTS-01 \
     I-JAL-01 \
     I-JALR-01 \
@@ -73,10 +71,18 @@ rv32i_sc_tests = \
     I-SLT-01 \
     I-SLTU-01 \
     I-NOP-01 \
-    I-ECALL-01 \
-    I-EBREAK-01 \
-    I-IO-01 \
+    I-IO-01
 
+# these tests will trap and require privilege support
+ifneq ($(NOTRAPS),1)
+    rv32i_sc_tests_trap = \
+        I-MISALIGN_JMP-01 \
+        I-MISALIGN_LDST-01 \
+        I-ECALL-01 \
+        I-EBREAK-01
+endif
+
+rv32i_sc_tests = $(rv32i_sc_tests_trap) $(rv32i_sc_tests_notrap)
 
 rv32i_tests = $(addsuffix .elf, $(rv32i_sc_tests))
 
