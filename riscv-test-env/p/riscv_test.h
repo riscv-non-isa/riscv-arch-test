@@ -203,8 +203,7 @@ begin_testcode:
 
 #define RVTEST_CODE_END                                                 \
 end_testcode:                                                           \
-        ecall;                                                          \
-        unimp;
+        ecall;
 
 //-----------------------------------------------------------------------
 // Pass/Fail Macro
