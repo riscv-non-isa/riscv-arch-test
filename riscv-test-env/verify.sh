@@ -8,7 +8,7 @@ for ref in ${SUITEDIR}/references/*.reference_output;
 do 
     base=$(basename ${ref})
     stub=${base//".reference_output"/}
-    sig=${WORK}/${RISCV_ISA}/${stub}.signature.output
+    sig=${WORK}/rv${XLEN}i_m/${RISCV_ISA}/${stub}.signature.output
 
     RUN=$((${RUN} + 1))
     
@@ -32,7 +32,7 @@ do
 done
 
 # warn on missing reverse reference
-for sig in ${WORK}/${RISCV_ISA}/*.signature.output; 
+for sig in ${WORK}/rv${XLEN}i_m/${RISCV_ISA}/*.signature.output; 
 do
     base=$(basename ${sig})
     stub=${base//".signature.output"/}
