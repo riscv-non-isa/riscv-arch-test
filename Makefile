@@ -12,17 +12,18 @@ empty:=
 comma:= ,
 space:= $(empty) $(empty)
 
-export RISCV_TARGET       ?= riscvOVPsim
-export RISCV_DEVICE       ?= rv32i
-export RISCV_PREFIX       ?= riscv64-unknown-elf-
-export RISCV_TARGET_FLAGS ?=
+export XLEN 							?= 32
+export RISCV_TARGET       ?= spike
+export RISCV_DEVICE       ?= I
+export RISCV_PREFIX       ?= riscv$(XLEN)-unknown-elf-
+export RISCV_TARGET_FLAGS ?= 
 export RISCV_ASSERT       ?= 0
 
-RISCV_ISA_ALL = $(shell ls $(ROOTDIR)/riscv-target/$(RISCV_TARGET)/device)
+RISCV_ISA_ALL = $(shell ls $(ROOTDIR)/riscv-target/$(RISCV_TARGET)/device/rv$(XLEN)i_m)
 RISCV_ISA_OPT = $(subst $(space),$(pipe),$(RISCV_ISA_ALL))
 
 ifeq ($(RISCV_ISA),)
-    RISCV_ISA = rv32i
+    RISCV_ISA = I
     DEFAULT_TARGET=all_variant
 else
     DEFAULT_TARGET=variant
@@ -36,7 +37,7 @@ export RVTEST_DEFINES
 
 export ROOTDIR    = $(shell pwd)
 export WORK       = $(ROOTDIR)/work
-export SUITEDIR   = $(ROOTDIR)/riscv-test-suite/$(RISCV_ISA)
+export SUITEDIR   = $(ROOTDIR)/riscv-test-suite/rv$(XLEN)i_m/$(RISCV_ISA)
 export TARGETDIR ?= $(ROOTDIR)/riscv-target
 
 VERBOSE ?= 0
