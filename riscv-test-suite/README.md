@@ -13,6 +13,7 @@ at: [CTG](https://gitlab.com/incoresemi/riscv-compliance/riscv_ctg).
 The reference signatures are generated using Spike.
 
 Directory structure
+```
 
 ├── env                       # contains the compliance test header files
 └── rv32i_m                   # top level folder indicate rv32 tests for machine mode
@@ -25,4 +26,14 @@ Directory structure
     └── M                     # include tests and references for "M" extension
         ├── references        # static references signatures for "M" extension
         └── src               # assembly tests for "M" extension
-
+└── rv64i_m                   # top level folder indicate rv64 tests for machine mode
+    ├── C                     # include tests and references for "C" extension
+    │   ├── references        # static references signatures for "C" extension
+    │   └── src               # assembly tests for "C" extension
+    ├── I                     # include tests and references for "I" extension
+    │   ├── references        # static references signatures for "I" extension
+    │   └── src               # assembly tests for "I" extension
+    └── M                     # include tests and references for "M" extension
+        ├── references        # static references signatures for "M" extension
+        └── src               # assembly tests for "M" extension
+```
