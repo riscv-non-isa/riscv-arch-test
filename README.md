@@ -35,61 +35,58 @@ The riscv-ovpsim simulator is licensed under an Imperas license. There is no dep
 // SPDX-License-Identifier: BSD-3-Clause
 ```
 
+## Directory Structure
+
+```
+.
+├── coverage              # folder containing coverage information of the test suite
+├── doc                   # contaitns docs on the test format spec.
+├── riscv-target          # folder containing targets for compliance
+├── riscv-test-env        # header files used by the test-suites
+├── riscv-test-suite      # the actual test-suite
+```
+
 ## Running the compliance tests
 
-The only setup required is to define where the toolchain is found, and where the target / device is found.
+The compliance tests available in this repository only require setting up a target/device on which
+the tests are to be run. These targets/devices are found in the `riscv-target` folder.
 
-For the toolchain, the binaries must be in the search path and the compiler prefix is defined on the make line. The default value for this is
+### Creating Targets for compliance
 
-    RISCV_PREFIX ?= riscv64-unknown-elf-
+The following steps need to be followed to create a target for compliance
 
-The path to the RUN_TARGET is defined within the riscv-target Makefile.include.
+1. Create a folder under riscv-target with the name of the target/device. Eg. spike
+2. Inside riscv-target/spike create a ``compliance_model.h`` file which defines the various target
+   based assembly macros. The details of these macros are available in the 
+   [TestFormat Spec](spec/TestFormatSpec.adoc)
+3. Anyother files required for execution of the target like: linker scripts, configuration scripts,
+   etc can also be placed here.
+4. craete a folder device under riscv-target/spike
+5. If its a 32-bit target create a folder ``rv32i_m``. If its a 64-bit target create a folder ``rv64i_m``
+6. Based on the configuration of the target/device you will need to create one or more of the
+   following folder:
+   ```
+   - rv32i_m/I
+   - rv32i_m/M
+   - rv32i_m/C
+   - rv64i_m/I
+   - rv64i_m/M
+   - rv64i_m/C
+   ```
+7. Each of the above folders need to provide a ``Makefile.include`` file which defines the following
+   make variables
+   - ``RUN_TARGET``: This variable needs to include commands and steps to execute an ELF on target.
+   - ``COMPILE_TARGET``: This variable should include the commands and steps required to compile an
+     assembly test for the target under each extension mentioned above. 
 
-To run the rv32i test suite on riscvOVPsim
+### Running Compliance on Target
 
-    make RISCV_TARGET=riscvOVPsim RISCV_DEVICE=rv32i
+Once you have followed the above steps to create a target you run the compliance suite using the
+following steps:
 
-### Accessing riscvOVPsim
-
-As we create the RISCV.org compliance test suite, the Imperas developed _riscvOVPsim_ compliance simulator is included as part of this GitHub repository. For more information please contact info@ovpworld.org or info@imperas.com.
-
-For more information on riscvOVPsim look here: [riscv-ovpsim/README.md](riscv-ovpsim/README.md) and here: [riscv-ovpsim/doc/riscvOVPsim_User_Guide.pdf](riscv-ovpsim/doc/riscvOVPsim_User_Guide.pdf).
-
-### Using the simulators from the Sail RISC-V formal model
-
-The [Sail RISC-V formal model](https://github.com/rems-project/sail-riscv) generates two
-simulators, in C and OCaml.  They can be used as test targets for this compliance suite.
-
-For this purpose, the Sail model needs to be checked out and built on
-the machine running the compliance suite.  Follow the build
-instructions described the README for building the RV32 and RV64
-models.  Once built, please add `$SAIL_RISCV/c_emulator` and
-`$SAIL_RISCV/ocaml_emulator` to your path, where $SAIL_RISCV is the
-top-level directory containing the model.
-
-To test the compliance of the C simulator for the current RV32 and RV64 tests, use
-
-    make RISCV_TARGET=sail-riscv-c all_variant
-
-while the corresponding command for the OCaml simulator is
-
-    make RISCV_TARGET=sail-riscv-ocaml all_variant
-
-### Using the GRIFT simulator
-
-The [GRIFT](https://github.com/GaloisInc/grift) formal model and simulation tool
-can be used as a test target for this compliance suite.
-
-GRIFT needs to be cloned and built on the machine running the compliance
-suite. Follow the build instructions described in the README for building the
-GRIFT simulator. Once build, add the generated `grift-sim` executable to your
-path.
-
-To test the compliance of the GRIFT simulator for the current RV32 and RV64
-tests, use
-
-    make RISCV_TARGET=grift all_variant
-
-Note that the I-MISALIGN_LDST test fails for GRIFT because GRIFT currently
-supports misaligned loads and stores in hardware, while the test is specifically
-written for systems that trap on misaligned loads and stores.
+1. cd riscv-compliance
+2. in the Makefile available in the root folder make the following changes:
+   - change XLEN to the default XLEN value of the target/device. Eg. 32 or 64
+   - change ``RISCV_TARGET`` to the name of your target. Eg. spike
+3. save the changes
+4. type ``make``

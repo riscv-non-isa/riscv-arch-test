@@ -5,7 +5,7 @@ The tests strictly follow the [Test format](../spec/TestFormatSpec.adoc) specifi
 
 
 The coverage report (in html format) of the tests available in this suite is generated through
-[RISCOF](https://gitlab.com/incoresemi/riscof) and is available here: [Coverage Report](../coverage/coverage.html).
+[RISCOF](https://gitlab.com/incoresemi/riscof) and is available here: [Coverage Report](../coverage/).
 
 These tests have been generated using the open source Compliance Test Generator from InCore Semiconductors available 
 at: [CTG](https://gitlab.com/incoresemi/riscv-compliance/riscv_ctg).
