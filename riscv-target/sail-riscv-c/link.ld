@@ -1,5 +1,5 @@
 OUTPUT_ARCH( "riscv" )
-ENTRY(_start)
+ENTRY(rvtest_start)
 
 SECTIONS
 {
@@ -11,6 +11,7 @@ SECTIONS
   .text : { *(.text) }
   . = ALIGN(0x1000);
   .data : { *(.data) }
+  .data.string : { *(.data.string)}
   .bss : { *(.bss) }
   _end = .;
 }
