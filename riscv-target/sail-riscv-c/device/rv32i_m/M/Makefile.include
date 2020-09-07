@@ -1,4 +1,4 @@
-TARGET_SIM   ?= timeout 5s /scratch/git-repo/github/sail-riscv/c_emulator/riscv_sim_RV32 -V
+TARGET_SIM   ?= /scratch/git-repo/github/sail-riscv/c_emulator/riscv_sim_RV32 -V
 TARGET_FLAGS ?= $(RISCV_TARGET_FLAGS)
 ifeq ($(shell command -v $(TARGET_SIM) 2> /dev/null),)
     $(error Target simulator executable '$(TARGET_SIM)` not found)
