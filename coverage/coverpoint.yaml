@@ -255,6 +255,21 @@ datasets:
     'walking_zeros("imm_val", 12,False)': 0
     'alternate("imm_val",12,False)': 0
 
+ecall:
+  config: check ISA:=regex(.*I.*Zicsr.*); def rvtest_mtrap_routine=True 
+  opcode: 
+    ecall: 0
+
+ebreak:
+  config: check ISA:=regex(.*I.*Zicsr.*); def rvtest_mtrap_routine=True 
+  opcode: 
+    ebreak: 0
+
+fence.i:
+  config: check ISA:=regex(.*I.*Zifencei.*);
+  opcode: 
+    fence.i: 0
+
 caddi4spn:
     config: check ISA:=regex(.*I.*C.*)
     opcode: 

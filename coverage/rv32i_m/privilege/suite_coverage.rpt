@@ -1,0 +1,12 @@
+ecall:
+  coverage: 1/1
+  opcode:
+    coverage: 1/1
+    detail:
+      - ecall: 1
+ebreak:
+  coverage: 1/1
+  opcode:
+    coverage: 1/1
+    detail:
+      - ebreak: 1

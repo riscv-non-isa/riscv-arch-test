@@ -136,11 +136,8 @@
   #define mhandler			\
     csrrw   sp, mscratch, sp;	\
     SREG      t6, 6*REGWIDTH(sp);	\
-  	auipc	t6, 0;			\
-  	LREG	t6, 16(t6);		\
+  	la t6, common_mhandler; \
   	jalr	t6, t6;			\
-    nop; \
-  	.dword	common_mhandler		\
   
   /**********************************************************************/
   /**** This is the entry point for all m-modetraps, vectored or not.****/
