@@ -265,7 +265,7 @@ ebreak:
   opcode: 
     ebreak: 0
 
-fence.i:
+fencei:
   config: check ISA:=regex(.*I.*Zifencei.*);
   opcode: 
     fence.i: 0

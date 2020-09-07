@@ -23,9 +23,15 @@ Directory structure
     ├── I                     # include tests and references for "I" extension
     │   ├── references        # static references signatures for "I" extension
     │   └── src               # assembly tests for "I" extension
-    └── M                     # include tests and references for "M" extension
-        ├── references        # static references signatures for "M" extension
-        └── src               # assembly tests for "M" extension
+    ├── M                     # include tests and references for "M" extension
+    │   ├── references        # static references signatures for "M" extension
+    │   └── src               # assembly tests for "M" extension
+    ├── privilege             # include tests and references for tests which require Privilege Spec 
+    │   ├── references        # static references signatures for tests which require Privilege Spec
+    │   └── src               # assembly tests for tests which require Privilege Spec
+    └── Zifencei              # include tests and references for "Zifencei" extension
+        ├── references        # static references signatures for "Zifencei" extension
+        └── src               # assembly tests for "Zifencei" extension
 └── rv64i_m                   # top level folder indicate rv64 tests for machine mode
     ├── C                     # include tests and references for "C" extension
     │   ├── references        # static references signatures for "C" extension
@@ -33,7 +39,13 @@ Directory structure
     ├── I                     # include tests and references for "I" extension
     │   ├── references        # static references signatures for "I" extension
     │   └── src               # assembly tests for "I" extension
-    └── M                     # include tests and references for "M" extension
-        ├── references        # static references signatures for "M" extension
-        └── src               # assembly tests for "M" extension
+    ├── M                     # include tests and references for "M" extension
+    │   ├── references        # static references signatures for "M" extension
+    │   └── src               # assembly tests for "M" extension
+    ├── privilege             # include tests and references for tests which require Privilege Spec 
+    │   ├── references        # static references signatures for tests which require Privilege Spec
+    │   └── src               # assembly tests for tests which require Privilege Spec
+    └── Zifencei              # include tests and references for "Zifencei" extension
+        ├── references        # static references signatures for "Zifencei" extension
+        └── src               # assembly tests for "Zifencei" extension
 ```
