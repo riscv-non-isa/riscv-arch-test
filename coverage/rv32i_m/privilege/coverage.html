@@ -2778,5 +2778,309 @@ opcode:
         - ebreak: 1
 </br></div></td>
         </tr></tbody>
-      </table>
+
+        <tbody class= "  results-table-row" >
+        <tr>
+          <td class="col-name">misalign-lh</td>
+          <td class="col-result">2/2</td>
+          <td class="col-percentage">100.00%
+            <div class="meter">
+              <span style="width: 100.00%"></span>
+            </div>
+          </td>          
+        <tr>
+          <td class="extra" colspan="2">
+          <div class="log">coverage: 2/2
+opcode:
+     coverage: 1/1
+     detail:
+        - lh: 4
+val_comb:
+     coverage: 1/1
+     detail:
+        - ea_align == 1: 1
+</br></div></td>
+        </tr></tbody>
+        
+        <tbody class= "  results-table-row" >
+        <tr>
+          <td class="col-name">misalign-lhu</td>
+          <td class="col-result">2/2</td>
+          <td class="col-percentage">100.00%
+            <div class="meter">
+              <span style="width: 100.00%"></span>
+            </div>
+          </td>          
+        <tr>
+          <td class="extra" colspan="2">
+          <div class="log">coverage: 2/2
+opcode:
+     coverage: 1/1
+     detail:
+        - lhu: 4
+val_comb:
+     coverage: 1/1
+     detail:
+        - ea_align == 1: 1
+</br></div></td>
+        </tr></tbody>
+        
+        <tbody class= "  results-table-row" >
+        <tr>
+          <td class="col-name">misalign-lw</td>
+          <td class="col-result">4/4</td>
+          <td class="col-percentage">100.00%
+            <div class="meter">
+              <span style="width: 100.00%"></span>
+            </div>
+          </td>          
+        <tr>
+          <td class="extra" colspan="2">
+          <div class="log">coverage: 4/4
+opcode:
+     coverage: 1/1
+     detail:
+        - lw: 4
+val_comb:
+     coverage: 3/3
+     detail:
+        - ea_align == 1: 1
+        - ea_align == 2: 1
+        - ea_align == 3: 1
+</br></div></td>
+        </tr></tbody>
+        
+        <tbody class= "  results-table-row" >
+        <tr>
+          <td class="col-name">misalign-sh</td>
+          <td class="col-result">2/2</td>
+          <td class="col-percentage">100.00%
+            <div class="meter">
+              <span style="width: 100.00%"></span>
+            </div>
+          </td>          
+        <tr>
+          <td class="extra" colspan="2">
+          <div class="log">coverage: 2/2
+opcode:
+     coverage: 1/1
+     detail:
+        - sh: 4
+val_comb:
+     coverage: 1/1
+     detail:
+        - ea_align == 1: 1
+</br></div></td>
+        </tr></tbody>
+        
+        <tbody class= "  results-table-row" >
+        <tr>
+          <td class="col-name">misalign-sw</td>
+          <td class="col-result">4/4</td>
+          <td class="col-percentage">100.00%
+            <div class="meter">
+              <span style="width: 100.00%"></span>
+            </div>
+          </td>          
+        <tr>
+          <td class="extra" colspan="2">
+          <div class="log">coverage: 4/4
+opcode:
+     coverage: 1/1
+     detail:
+        - sw: 44
+val_comb:
+     coverage: 3/3
+     detail:
+        - ea_align == 1: 1
+        - ea_align == 2: 1
+        - ea_align == 3: 11
+</br></div></td>
+        </tr></tbody>
+        
+        <tbody class= "  results-table-row" >
+        <tr>
+          <td class="col-name">misalign-jalr</td>
+          <td class="col-result">3/3</td>
+          <td class="col-percentage">100.00%
+            <div class="meter">
+              <span style="width: 100.00%"></span>
+            </div>
+          </td>          
+        <tr>
+          <td class="extra" colspan="2">
+          <div class="log">coverage: 3/3
+opcode:
+     coverage: 1/1
+     detail:
+        - jalr: 15
+val_comb:
+     coverage: 2/2
+     detail:
+        - rs1_val % 4 == 2: 3
+        - rs1_val % 2 == 1: 5
+</br></div></td>
+        </tr></tbody>
+        
+        <tbody class= "  results-table-row" >
+        <tr>
+          <td class="col-name">misalign-jal</td>
+          <td class="col-result">2/2</td>
+          <td class="col-percentage">100.00%
+            <div class="meter">
+              <span style="width: 100.00%"></span>
+            </div>
+          </td>          
+        <tr>
+          <td class="extra" colspan="2">
+          <div class="log">coverage: 2/2
+opcode:
+     coverage: 1/1
+     detail:
+        - jal: 23
+val_comb:
+     coverage: 1/1
+     detail:
+        - ea_align == 2: 1
+</br></div></td>
+        </tr></tbody>
+        
+        <tbody class= "  results-table-row" >
+        <tr>
+          <td class="col-name">misalign-bge</td>
+          <td class="col-result">2/2</td>
+          <td class="col-percentage">100.00%
+            <div class="meter">
+              <span style="width: 100.00%"></span>
+            </div>
+          </td>          
+        <tr>
+          <td class="extra" colspan="2">
+          <div class="log">coverage: 2/2
+opcode:
+     coverage: 1/1
+     detail:
+        - bge: 1
+val_comb:
+     coverage: 1/1
+     detail:
+        - ea_align == 2: 1
+</br></div></td>
+        </tr></tbody>
+        
+        <tbody class= "  results-table-row" >
+        <tr>
+          <td class="col-name">misalign-bgeu</td>
+          <td class="col-result">2/2</td>
+          <td class="col-percentage">100.00%
+            <div class="meter">
+              <span style="width: 100.00%"></span>
+            </div>
+          </td>          
+        <tr>
+          <td class="extra" colspan="2">
+          <div class="log">coverage: 2/2
+opcode:
+     coverage: 1/1
+     detail:
+        - bgeu: 1
+val_comb:
+     coverage: 1/1
+     detail:
+        - ea_align == 2: 1
+</br></div></td>
+        </tr></tbody>
+        
+        <tbody class= "  results-table-row" >
+        <tr>
+          <td class="col-name">misalign-blt</td>
+          <td class="col-result">2/2</td>
+          <td class="col-percentage">100.00%
+            <div class="meter">
+              <span style="width: 100.00%"></span>
+            </div>
+          </td>          
+        <tr>
+          <td class="extra" colspan="2">
+          <div class="log">coverage: 2/2
+opcode:
+     coverage: 1/1
+     detail:
+        - blt: 1
+val_comb:
+     coverage: 1/1
+     detail:
+        - ea_align == 2: 1
+</br></div></td>
+        </tr></tbody>
+        
+        <tbody class= "  results-table-row" >
+        <tr>
+          <td class="col-name">misalign-bltu</td>
+          <td class="col-result">2/2</td>
+          <td class="col-percentage">100.00%
+            <div class="meter">
+              <span style="width: 100.00%"></span>
+            </div>
+          </td>          
+        <tr>
+          <td class="extra" colspan="2">
+          <div class="log">coverage: 2/2
+opcode:
+     coverage: 1/1
+     detail:
+        - bltu: 1
+val_comb:
+     coverage: 1/1
+     detail:
+        - ea_align == 2: 1
+</br></div></td>
+        </tr></tbody>
+        
+        <tbody class= "  results-table-row" >
+        <tr>
+          <td class="col-name">misalign-bne</td>
+          <td class="col-result">2/2</td>
+          <td class="col-percentage">100.00%
+            <div class="meter">
+              <span style="width: 100.00%"></span>
+            </div>
+          </td>          
+        <tr>
+          <td class="extra" colspan="2">
+          <div class="log">coverage: 2/2
+opcode:
+     coverage: 1/1
+     detail:
+        - bne: 1
+val_comb:
+     coverage: 1/1
+     detail:
+        - ea_align == 2: 1
+</br></div></td>
+        </tr></tbody>
+        
+        <tbody class= "  results-table-row" >
+        <tr>
+          <td class="col-name">misalign-beq</td>
+          <td class="col-result">2/2</td>
+          <td class="col-percentage">100.00%
+            <div class="meter">
+              <span style="width: 100.00%"></span>
+            </div>
+          </td>          
+        <tr>
+          <td class="extra" colspan="2">
+          <div class="log">coverage: 2/2
+opcode:
+     coverage: 1/1
+     detail:
+        - beq: 1
+val_comb:
+     coverage: 1/1
+     detail:
+        - ea_align == 2: 1
+</br></div></td>
+        </tr></tbody>
+    </table>
       </body></html>

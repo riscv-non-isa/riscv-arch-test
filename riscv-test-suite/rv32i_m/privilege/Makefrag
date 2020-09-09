@@ -29,7 +29,9 @@
 
 rv32i_sc_tests = \
   Ecall \
-  Ebreak
+  Ebreak \
+  misalign-jmp \
+  misalign-ldst 
 
 rv32i_tests = $(addsuffix .elf, $(rv32i_sc_tests))
 

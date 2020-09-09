@@ -29,7 +29,9 @@
 
 rv64i_sc_tests = \
   Ecall\
-  Ebreak
+  Ebreak\
+  misalign-jmp\
+  misalign-ldst
 
 
 rv64i_tests = $(addsuffix .elf, $(rv64i_sc_tests))
