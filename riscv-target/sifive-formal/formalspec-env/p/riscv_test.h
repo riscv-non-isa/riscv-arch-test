@@ -119,7 +119,7 @@ begin_testcode:
 
 #define RVTEST_CODE_END                                                 \
 end_testcode:                                                           \
-        unimp
+        csrrw x0, cycle, x0
 
 //-----------------------------------------------------------------------
 // Pass/Fail Macro
