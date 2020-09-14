@@ -69,9 +69,13 @@ The following steps need to be followed to create a target for compliance
    - rv32i_m/I
    - rv32i_m/M
    - rv32i_m/C
+   - rv32i_m/privilege
+   - rv32i_m/Zifencei
    - rv64i_m/I
    - rv64i_m/M
    - rv64i_m/C
+   - rv64i_m/privilege
+   - rv64i_m/Zifencei
    ```
 7. Each of the above folders need to provide a ``Makefile.include`` file which defines the following
    make variables

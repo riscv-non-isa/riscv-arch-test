@@ -383,7 +383,7 @@ misalign2-jalr:
 
 misalign1-jalr:
   config: 
-    - check ISA:=regex(.*I.*)
+    - check ISA:=regex(.*I.*); def rvtest_mtrap_routine=True
   opcode:
     jalr: 0
   val_comb:
