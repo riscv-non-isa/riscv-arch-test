@@ -45,7 +45,7 @@ $(work_dir_isa)/%.elf: $(src_dir)/%.S
 
 endef
 
-$(eval $(call compile_template,-march=rv64i -mabi=lp64))
+$(eval $(call compile_template,-march=rv64i -mabi=lp64 -Drvtest_mtrap_routine=True))
 
 target_elf = $(foreach e,$(target_tests),$(work_dir_isa)/$(e))
 target_log = $(patsubst %.elf,%.log,$(target_elf))

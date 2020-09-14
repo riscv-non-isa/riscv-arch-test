@@ -33,6 +33,9 @@ function find_all(selector, elem) {
 
 function sort_column(elem) {
     toggle_sort_states(elem);
+    name = ((elem).closest('table')).id;
+    console.log("Hi");
+    console.log(name);
     var colIndex = toArray(elem.parentNode.childNodes).indexOf(elem);
     var key;
     if (elem.classList.contains('numeric')) {
@@ -42,7 +45,7 @@ function sort_column(elem) {
     } else {
         key = key_alpha;
     }
-    sort_table(elem, key(colIndex));
+    sort_table(elem, key(colIndex), name);
 }
 
 function show_all_extras() {
@@ -155,26 +158,27 @@ function init () {
                                   sort_column(elem);
                               }, false)
     });
+    hide_all_extras();
     hide_all_extras1();
 
 };
 
-function sort_table(clicked, key_func) {
-    var rows = find_all('.results-table-row');
+function sort_table(clicked, key_func, tname) {
+    var rows = find_all('.'+tname+'-row');
     var reversed = !clicked.classList.contains('asc');
     var sorted_rows = sort(rows, key_func, reversed);
     /* Whole table is removed here because browsers acts much slower
      * when appending existing elements.
      */
-    var thead = document.getElementById("results-table-head");
-    document.getElementById('results-table').remove();
+    var thead = document.getElementById(tname+"-head");
+    document.getElementById(tname).remove();
     var parent = document.createElement("table");
-    parent.id = "results-table";
+    parent.id = tname;
     parent.appendChild(thead);
     sorted_rows.forEach(function(elem) {
         parent.appendChild(elem);
     });
-    document.getElementsByTagName("BODY")[0].appendChild(parent);
+    document.getElementsByTagName(tname+"-BODY")[0].appendChild(parent);
 }
 
 function sort(items, key_func, reversed) {
@@ -247,25 +251,9 @@ function is_all_rows_hidden(value) {
   return value.hidden == false;
 }
 
-function filter_table(elem) {
-    var outcome_att = "data-test-result";
-    var outcome = elem.getAttribute(outcome_att);
-    class_outcome = outcome + " results-table-row";
-    var outcome_rows = document.getElementsByClassName(class_outcome);
-
-    for(var i = 0; i < outcome_rows.length; i++){
-        outcome_rows[i].hidden = !elem.checked;
-    }
-
-    var rows = find_all('.results-table-row').filter(is_all_rows_hidden);
-    var all_rows_hidden = rows.length == 0 ? true : false;
-    var not_found_message = document.getElementById("not-found-message");
-    not_found_message.hidden = !all_rows_hidden;
-}
-
 </script>
     <h1></h1>
-    <p>Report generated on 2020-09-07 13:58 GMT by <a href="https://pypi.python.org/pypi/riscof">riscof</a> v1.16.0</p>
+    <p>Report generated on 2020-09-14 06:08 GMT by <a href="https://pypi.python.org/pypi/riscof">riscof</a> v1.16.0</p>
     <h2>Environment</h2>
     <table id="environment">
       <tr>
@@ -276,13 +264,13 @@ function filter_table(elem) {
         <td>sail c simulator</td></tr>
       <tr>
         <td>ISA</td>
-        <td>RV32IMACZicsr_Zifencei</td></tr>
+        <td>RV32IMCZicsr_Zifencei</td></tr>
       <tr>
         <td>User Spec Version</td>
         <td>2.3</td></tr>
       <tr>
         <td>Privilege Spec Version</td>
-        <td>1.11</td></tr>
+        <td>1.10</td></tr>
      </table>
      <h2>Yaml</h2>
       <table id="yaml-table">
@@ -293,38 +281,18 @@ function filter_table(elem) {
       </thead>
       <tbody>
           <tr>
-            <td class="col-yname">/home/sharder/git/incoresemi/riscof/riscof_work/ovpsim_isa_checked.yaml</td></tr>
-                <tr>
+            <td class="col-yname">/scratch/git-repo/incoresemi/riscof/riscof_work/sail_isa_checked.yaml</td></tr>
+          <tr>
             <td class="extra" colspan="1">
-          <div class="log">ISA: RV32IMACZicsr_Zifencei
+              <div class="log">ISA: RV32IMCZicsr_Zifencei
 User_Spec_Version: '2.3'
 supported_xlen:
 - 32
+Privilege_Spec_Version: '1.10'
+hw_data_misaligned_support: false
 misa:
-  reset-val: 0x40001105
   rv32:
-    mxl:
-      implemented: true
-      type:
-        ro_constant: [0x01]
-      description: Encodes the native base integer ISA width.
-      shadow: none
-      msb: 31
-      lsb: 30
-    extensions:
-      implemented: true
-      type:
-        warl:
-          dependency_fields: []
-          legal:
-          - extensions[25:0] in [0x01105,0x01104,0x105,0x104,0x100,0x1100,0x1101,0x101]
-          wr_illegal:
-          - Unchanged
-      description: Encodes the presence of the standard extensions, with a single
-        bit per letter of the alphabet.
-      shadow: none
-      msb: 25
-      lsb: 0
+    accessible: true
     fields:
     - mxl
     - extensions
@@ -332,93 +300,46 @@ misa:
       -
         - 26
         - 29
-    accessible: true
+    mxl:
+      implemented: false
+      description: Encodes the native base integer ISA width.
+      shadow: none
+      msb: 31
+      lsb: 30
+    extensions:
+      implemented: false
+      description: Encodes the presence of the standard extensions, with a single
+        bit per letter of the alphabet.
+      shadow: none
+      msb: 25
+      lsb: 0
+  rv64:
+    accessible: false
   description: misa is a read-write register reporting the ISA supported by the hart.
   address: 769
   priv_mode: M
-  rv64:
-    accessible: false
-mvendorid:
-  reset-val: 0xdeadbeef
-  rv32:
-    type:
-      ro_constant:
-      - 0xdeadbeef
-    accessible: true
-    fields: []
-    shadow: none
-    msb: 31
-    lsb: 0
-  rv64:
-    accessible: false
-  description: 32-bit read-only register providing the JEDEC manufacturer ID of the
-    provider of the core.
-  address: 3857
-  priv_mode: M
-mtvec:
-  reset-val: 0x80010000
-  rv32:
-    base:
-      implemented: true
-      type:
-        warl:
-          dependency_fields: [mtvec::mode]
-          legal:
-          - '[0] -> base[29:0] in [0x20000000, 0x20004000]'               # can take only 2 fixed values in direct mode.
-          - '[1] -> base[29:6] in [0x000000:0xF00000] base[5:0] in [0x00]'   # 256 byte aligned values only in vectored mode.
-          wr_illegal:
-          - '[0] -> Unchanged'
-          - '[1] wr_val in [0x2000000:0x4000000] -> 0x2000000'
-          - '[1] wr_val in [0x4000001:0x3FFFFFFF] -> Unchanged'
-      description: Vector base address.
-      shadow: none
-      msb: 31
-      lsb: 2
-    mode:
-      implemented: true
-      type:
-        warl:
-          dependency_fields: []
-          legal:
-          - 'mode[1:0] in [0x0:0x1] # Range of 0 to 1 (inclusive)'
-          wr_illegal:
-          - Unchanged
-      description: Vector mode.
-      shadow: none
-      msb: 1
-      lsb: 0
-    accessible: true
-    fields:
-    - base
-    - mode
-  description: MXLEN-bit read/write register that holds trap vector configuration.
-  address: 773
-  priv_mode: M
-  rv64:
-    accessible: false
-Privilege_Spec_Version: '1.10'
-hw_data_misaligned_support: false
+  reset-val: 0
 mstatus:
   rv32:
     accessible: true
     fields:
+    - mie
+    - tvm
+    - tw
+    - upie
+    - mpp
+    - sum
     - uie
-    - mxr
+    - sd
+    - spp
+    - xs
+    - mpie
+    - fs
     - tsr
     - spie
     - mprv
-    - mpie
+    - mxr
     - sie
-    - tw
-    - spp
-    - fs
-    - sd
-    - upie
-    - sum
-    - mie
-    - mpp
-    - tvm
-    - xs
     -
       -
         - 2
@@ -556,6 +477,23 @@ mstatus:
   address: 768
   priv_mode: M
   reset-val: 0
+mvendorid:
+  rv32:
+    accessible: true
+    fields: []
+    shadow: none
+    msb: 31
+    lsb: 0
+    type:
+      ro_constant:
+      - 0
+  rv64:
+    accessible: false
+  description: 32-bit read-only register providing the JEDEC manufacturer ID of the
+    provider of the core.
+  address: 3857
+  priv_mode: M
+  reset-val: 0
 marchid:
   rv32:
     accessible: true
@@ -606,6 +544,15 @@ mhartid:
   address: 3860
   priv_mode: M
   reset-val: 0
+mtvec:
+  rv32:
+    accessible: true
+    fields: []
+  rv64:
+    accessible: false
+  description: MXLEN-bit read/write register that holds trap vector configuration.
+  address: 773
+  priv_mode: M
 mideleg:
   rv32:
     accessible: false
@@ -628,15 +575,15 @@ mip:
   rv32:
     accessible: true
     fields:
+    - usip
+    - msip
+    - stip
+    - utip
     - mtip
     - seip
-    - msip
+    - ueip
     - ssip
     - meip
-    - usip
-    - utip
-    - ueip
-    - stip
     -
       -
         - 2
@@ -718,15 +665,15 @@ mie:
   rv32:
     accessible: true
     fields:
+    - mtie
     - stie
     - meie
-    - utie
-    - ueie
     - msie
-    - usie
-    - seie
-    - mtie
+    - ueie
     - ssie
+    - usie
+    - utie
+    - seie
     -
       -
         - 2
@@ -2706,19 +2653,17 @@ mhpmcounter31h:
           </tbody>
           <tbody>
           <tr>
-            <td class="col-yname">/home/sharder/git/incoresemi/riscof/riscof_work/ovpsim_platform_checked.yaml</td></tr>
+            <td class="col-yname">/scratch/git-repo/incoresemi/riscof/riscof_work/sail_platform_checked.yaml</td></tr>
           <tr>
             <td class="extra" colspan="1">
-              <div class="log">mtime:
-  implemented: true
-  address: 0xbff8
-mtimecmp:
-  implemented: true
-  address: 0x4000
-nmi:
+              <div class="log">nmi:
   label: nmi_vector
 reset:
   label: reset_vector
+mtime:
+  implemented: false
+mtimecmp:
+  implemented: false
 mcause_non_standard:
   implemented: true
 mtval_condition_writes:
@@ -2727,11 +2672,34 @@ scause_non_standard:
   implemented: false
 stval_condition_writes:
   implemented: false
-</br></div></td>          </tr>
+</br></div></td>
+          </tr>
           </tbody></table>
     <p>Please visit <a href="https://riscv-config.readthedocs.io/en/latest/yaml-specs.html">YAML specifications</a> for more information. </p>
+    
+    <sizes-table-body>
+    <h2>Test Stats</h2>
+    <table id ="sizes-table">
+      <thead id="sizes-table-head">
+        <tr>
+          <th class="sortable name initial-sort" col="tname">Test Name</th>
+          <th class="sortable numeric initial-sort" col="tsize">Size (Bytes)</th>
+          <th col="tcov">Covergroups</th>
+        </tr>
+      </thead>
+        
+        <tbody class= "  sizes-table-row" >
+        <tr>
+          <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv32i_m/Zifencei/src/Fencei.S</td>
+          <td class="col-tsize">13896</td>          
+          <td class="col-tcov">['fencei']</td>          
+        </tr></tbody>
+        
+      </table>
 
-    <h2>Results</h2>
+    </sizes-table-body>
+    <results-table-body>
+    <h2>Coverage Report ( Total Coverpoints: 1 )</h2>
     <table id="results-table">
       <thead id="results-table-head">
         <tr>
@@ -2740,6 +2708,7 @@ stval_condition_writes:
           <th class="sortable numeric initial-sort" col="percentage">Percentage</th>
           </tr>
         </thead>
+        
         <tbody class= "  results-table-row" >
         <tr>
           <td class="col-name">fencei</td>
@@ -2760,4 +2729,5 @@ opcode:
         </tr></tbody>
         
       </table>
+        </results-table-body>
       </body></html>

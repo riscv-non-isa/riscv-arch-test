@@ -33,6 +33,9 @@ function find_all(selector, elem) {
 
 function sort_column(elem) {
     toggle_sort_states(elem);
+    name = ((elem).closest('table')).id;
+    console.log("Hi");
+    console.log(name);
     var colIndex = toArray(elem.parentNode.childNodes).indexOf(elem);
     var key;
     if (elem.classList.contains('numeric')) {
@@ -42,7 +45,7 @@ function sort_column(elem) {
     } else {
         key = key_alpha;
     }
-    sort_table(elem, key(colIndex));
+    sort_table(elem, key(colIndex), name);
 }
 
 function show_all_extras() {
@@ -155,26 +158,27 @@ function init () {
                                   sort_column(elem);
                               }, false)
     });
+    hide_all_extras();
     hide_all_extras1();
 
 };
 
-function sort_table(clicked, key_func) {
-    var rows = find_all('.results-table-row');
+function sort_table(clicked, key_func, tname) {
+    var rows = find_all('.'+tname+'-row');
     var reversed = !clicked.classList.contains('asc');
     var sorted_rows = sort(rows, key_func, reversed);
     /* Whole table is removed here because browsers acts much slower
      * when appending existing elements.
      */
-    var thead = document.getElementById("results-table-head");
-    document.getElementById('results-table').remove();
+    var thead = document.getElementById(tname+"-head");
+    document.getElementById(tname).remove();
     var parent = document.createElement("table");
-    parent.id = "results-table";
+    parent.id = tname;
     parent.appendChild(thead);
     sorted_rows.forEach(function(elem) {
         parent.appendChild(elem);
     });
-    document.getElementsByTagName("BODY")[0].appendChild(parent);
+    document.getElementsByTagName(tname+"-BODY")[0].appendChild(parent);
 }
 
 function sort(items, key_func, reversed) {
@@ -247,25 +251,9 @@ function is_all_rows_hidden(value) {
   return value.hidden == false;
 }
 
-function filter_table(elem) {
-    var outcome_att = "data-test-result";
-    var outcome = elem.getAttribute(outcome_att);
-    class_outcome = outcome + " results-table-row";
-    var outcome_rows = document.getElementsByClassName(class_outcome);
-
-    for(var i = 0; i < outcome_rows.length; i++){
-        outcome_rows[i].hidden = !elem.checked;
-    }
-
-    var rows = find_all('.results-table-row').filter(is_all_rows_hidden);
-    var all_rows_hidden = rows.length == 0 ? true : false;
-    var not_found_message = document.getElementById("not-found-message");
-    not_found_message.hidden = !all_rows_hidden;
-}
-
 </script>
     <h1></h1>
-    <p>Report generated on 2020-09-01 09:05 GMT by <a href="https://pypi.python.org/pypi/riscof">riscof</a> v1.16.0</p>
+    <p>Report generated on 2020-09-14 06:00 GMT by <a href="https://pypi.python.org/pypi/riscof">riscof</a> v1.16.0</p>
     <h2>Environment</h2>
     <table id="environment">
       <tr>
@@ -273,10 +261,10 @@ function filter_table(elem) {
         <td>1.16.0</td></tr>
       <tr>
         <td>Reference</td>
-        <td>Spike</td></tr>
+        <td>sail c simulator</td></tr>
       <tr>
         <td>ISA</td>
-        <td>RV32IMACZicsr_Zifencei</td></tr>
+        <td>RV32IM</td></tr>
       <tr>
         <td>User Spec Version</td>
         <td>2.3</td></tr>
@@ -293,132 +281,65 @@ function filter_table(elem) {
       </thead>
       <tbody>
           <tr>
-            <td class="col-yname">/scratch/git-repo/incoresemi/riscof/riscof_work/spike_parallel_isa32_checked.yaml</td></tr>
+            <td class="col-yname">/scratch/git-repo/incoresemi/riscof/riscof_work/sail_isa_checked.yaml</td></tr>
           <tr>
             <td class="extra" colspan="1">
-              <div class="log">ISA: RV32IMACZicsr_Zifencei
+              <div class="log">ISA: RV32IM
 User_Spec_Version: '2.3'
 supported_xlen:
 - 32
+Privilege_Spec_Version: '1.10'
+hw_data_misaligned_support: false
 misa:
-  reset-val: 0x40001105
   rv32:
+    accessible: true
+    fields:
+    - extensions
+    - mxl
+    -
+      -
+        - 26
+        - 29
     mxl:
-      implemented: true
-      type:
-        ro_constant: [0x01]
+      implemented: false
       description: Encodes the native base integer ISA width.
       shadow: none
       msb: 31
       lsb: 30
     extensions:
-      implemented: true
-      type:
-        warl:
-          dependency_fields: []
-          legal:
-          - extensions[25:0] in [0x01105,0x01104,0x105,0x104,0x100,0x1100,0x1101,0x101]
-          wr_illegal:
-          - Unchanged
+      implemented: false
       description: Encodes the presence of the standard extensions, with a single
         bit per letter of the alphabet.
       shadow: none
       msb: 25
       lsb: 0
-    fields:
-    - mxl
-    - extensions
-    -
-      -
-        - 26
-        - 29
-    accessible: true
+  rv64:
+    accessible: false
   description: misa is a read-write register reporting the ISA supported by the hart.
   address: 769
   priv_mode: M
-  rv64:
-    accessible: false
-mvendorid:
-  reset-val: 0xdeadbeef
-  rv32:
-    type:
-      ro_constant:
-      - 0xdeadbeef
-    accessible: true
-    fields: []
-    shadow: none
-    msb: 31
-    lsb: 0
-  rv64:
-    accessible: false
-  description: 32-bit read-only register providing the JEDEC manufacturer ID of the
-    provider of the core.
-  address: 3857
-  priv_mode: M
-mtvec:
-  reset-val: 0x80010000
-  rv32:
-    base:
-      implemented: true
-      type:
-        warl:
-          dependency_fields: [mtvec::mode]
-          legal:
-          - '[0] -> base[29:0] in [0x20000000, 0x20004000]'               # can take only 2 fixed values in direct mode.
-          - '[1] -> base[29:6] in [0x000000:0xF00000] base[5:0] in [0x00]'   # 256 byte aligned values only in vectored mode.
-          wr_illegal:
-          - '[0] -> Unchanged'
-          - '[1] wr_val in [0x2000000:0x4000000] -> 0x2000000'
-          - '[1] wr_val in [0x4000001:0x3FFFFFFF] -> Unchanged'
-      description: Vector base address.
-      shadow: none
-      msb: 31
-      lsb: 2
-    mode:
-      implemented: true
-      type:
-        warl:
-          dependency_fields: []
-          legal:
-          - 'mode[1:0] in [0x0:0x1] # Range of 0 to 1 (inclusive)'
-          wr_illegal:
-          - Unchanged
-      description: Vector mode.
-      shadow: none
-      msb: 1
-      lsb: 0
-    accessible: true
-    fields:
-    - base
-    - mode
-  description: MXLEN-bit read/write register that holds trap vector configuration.
-  address: 773
-  priv_mode: M
-  rv64:
-    accessible: false
-Privilege_Spec_Version: '1.10'
-hw_data_misaligned_support: false
+  reset-val: 0
 mstatus:
   rv32:
     accessible: true
     fields:
-    - uie
+    - mie
     - mxr
-    - tsr
-    - spie
     - mprv
     - mpie
-    - sie
-    - tw
-    - spp
-    - fs
-    - sd
-    - upie
-    - sum
-    - mie
-    - mpp
     - tvm
     - xs
+    - sie
+    - tw
+    - sum
+    - sd
+    - spp
+    - uie
+    - tsr
+    - spie
+    - mpp
+    - upie
+    - fs
     -
       -
         - 2
@@ -556,6 +477,23 @@ mstatus:
   address: 768
   priv_mode: M
   reset-val: 0
+mvendorid:
+  rv32:
+    accessible: true
+    fields: []
+    shadow: none
+    msb: 31
+    lsb: 0
+    type:
+      ro_constant:
+      - 0
+  rv64:
+    accessible: false
+  description: 32-bit read-only register providing the JEDEC manufacturer ID of the
+    provider of the core.
+  address: 3857
+  priv_mode: M
+  reset-val: 0
 marchid:
   rv32:
     accessible: true
@@ -606,6 +544,15 @@ mhartid:
   address: 3860
   priv_mode: M
   reset-val: 0
+mtvec:
+  rv32:
+    accessible: true
+    fields: []
+  rv64:
+    accessible: false
+  description: MXLEN-bit read/write register that holds trap vector configuration.
+  address: 773
+  priv_mode: M
 mideleg:
   rv32:
     accessible: false
@@ -628,15 +575,15 @@ mip:
   rv32:
     accessible: true
     fields:
-    - mtip
+    - meip
+    - stip
+    - usip
     - seip
+    - ueip
+    - utip
     - msip
     - ssip
-    - meip
-    - usip
-    - utip
-    - ueip
-    - stip
+    - mtip
     -
       -
         - 2
@@ -718,14 +665,14 @@ mie:
   rv32:
     accessible: true
     fields:
-    - stie
-    - meie
-    - utie
+    - mtie
     - ueie
     - msie
+    - utie
     - usie
+    - stie
     - seie
-    - mtie
+    - meie
     - ssie
     -
       -
@@ -2706,19 +2653,17 @@ mhpmcounter31h:
           </tbody>
           <tbody>
           <tr>
-            <td class="col-yname">/scratch/git-repo/incoresemi/riscof/riscof_work/spike_parallel_platform_checked.yaml</td></tr>
+            <td class="col-yname">/scratch/git-repo/incoresemi/riscof/riscof_work/sail_platform_checked.yaml</td></tr>
           <tr>
             <td class="extra" colspan="1">
-              <div class="log">mtime:
-  implemented: true
-  address: 0xbff8
-mtimecmp:
-  implemented: true
-  address: 0x4000
-nmi:
+              <div class="log">nmi:
   label: nmi_vector
 reset:
   label: reset_vector
+mtime:
+  implemented: false
+mtimecmp:
+  implemented: false
 mcause_non_standard:
   implemented: true
 mtval_condition_writes:
@@ -2731,8 +2676,79 @@ stval_condition_writes:
           </tr>
           </tbody></table>
     <p>Please visit <a href="https://riscv-config.readthedocs.io/en/latest/yaml-specs.html">YAML specifications</a> for more information. </p>
+    
+    <sizes-table-body>
+    <h2>Test Stats</h2>
+    <table id ="sizes-table">
+      <thead id="sizes-table-head">
+        <tr>
+          <th class="sortable name initial-sort" col="tname">Test Name</th>
+          <th class="sortable numeric initial-sort" col="tsize">Size (Bytes)</th>
+          <th col="tcov">Covergroups</th>
+        </tr>
+      </thead>
+        
+        <tbody class= "  sizes-table-row" >
+        <tr>
+          <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv32i_m/M/src/div-01.S</td>
+          <td class="col-tsize">14324</td>          
+          <td class="col-tcov">['div']</td>          
+        </tr></tbody>
+        
+        <tbody class= "  sizes-table-row" >
+        <tr>
+          <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv32i_m/M/src/divu-01.S</td>
+          <td class="col-tsize">14308</td>          
+          <td class="col-tcov">['divu']</td>          
+        </tr></tbody>
+        
+        <tbody class= "  sizes-table-row" >
+        <tr>
+          <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv32i_m/M/src/mul-01.S</td>
+          <td class="col-tsize">14328</td>          
+          <td class="col-tcov">['mul']</td>          
+        </tr></tbody>
+        
+        <tbody class= "  sizes-table-row" >
+        <tr>
+          <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv32i_m/M/src/mulh-01.S</td>
+          <td class="col-tsize">14292</td>          
+          <td class="col-tcov">['mulh']</td>          
+        </tr></tbody>
+        
+        <tbody class= "  sizes-table-row" >
+        <tr>
+          <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv32i_m/M/src/mulhsu-01.S</td>
+          <td class="col-tsize">14324</td>          
+          <td class="col-tcov">['mulhsu']</td>          
+        </tr></tbody>
+        
+        <tbody class= "  sizes-table-row" >
+        <tr>
+          <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv32i_m/M/src/mulhu-01.S</td>
+          <td class="col-tsize">14328</td>          
+          <td class="col-tcov">['mulhu']</td>          
+        </tr></tbody>
+        
+        <tbody class= "  sizes-table-row" >
+        <tr>
+          <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv32i_m/M/src/rem-01.S</td>
+          <td class="col-tsize">14308</td>          
+          <td class="col-tcov">['rem']</td>          
+        </tr></tbody>
+        
+        <tbody class= "  sizes-table-row" >
+        <tr>
+          <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv32i_m/M/src/remu-01.S</td>
+          <td class="col-tsize">14296</td>          
+          <td class="col-tcov">['remu']</td>          
+        </tr></tbody>
+        
+      </table>
 
-    <h2>Results</h2>
+    </sizes-table-body>
+    <results-table-body>
+    <h2>Coverage Report ( Total Coverpoints: 1968 )</h2>
     <table id="results-table">
       <thead id="results-table-head">
         <tr>
@@ -2757,7 +2773,7 @@ stval_condition_writes:
 opcode:
      coverage: 1/1
      detail:
-        - mul: 140
+        - mul: 106
 rs1:
      coverage: 32/32
      detail:
@@ -2771,79 +2787,9 @@ rs1:
         - x7: 1
         - x8: 1
         - x9: 1
-        - x10: 105
+        - x10: 75
         - x11: 1
         - x12: 1
-        - x13: 1
-        - x14: 1
-        - x15: 1
-        - x16: 1
-        - x17: 1
-        - x18: 1
-        - x19: 1
-        - x20: 1
-        - x21: 1
-        - x22: 1
-        - x23: 1
-        - x24: 1
-        - x25: 1
-        - x26: 1
-        - x27: 1
-        - x28: 1
-        - x29: 1
-        - x30: 3
-        - x31: 3
-rs2:
-     coverage: 32/32
-     detail:
-        - x0: 1
-        - x1: 1
-        - x2: 1
-        - x3: 1
-        - x4: 1
-        - x5: 1
-        - x6: 1
-        - x7: 1
-        - x8: 1
-        - x9: 1
-        - x10: 1
-        - x11: 105
-        - x12: 1
-        - x13: 1
-        - x14: 1
-        - x15: 1
-        - x16: 1
-        - x17: 1
-        - x18: 1
-        - x19: 1
-        - x20: 1
-        - x21: 1
-        - x22: 1
-        - x23: 1
-        - x24: 1
-        - x25: 1
-        - x26: 1
-        - x27: 1
-        - x28: 1
-        - x29: 1
-        - x30: 3
-        - x31: 3
-rd:
-     coverage: 32/32
-     detail:
-        - x0: 1
-        - x1: 1
-        - x2: 1
-        - x3: 1
-        - x4: 1
-        - x5: 1
-        - x6: 1
-        - x7: 1
-        - x8: 1
-        - x9: 1
-        - x10: 1
-        - x11: 1
-        - x12: 105
         - x13: 1
         - x14: 1
         - x15: 1
@@ -2862,7 +2808,77 @@ rd:
         - x28: 1
         - x29: 1
         - x30: 1
-        - x31: 5
+        - x31: 1
+rs2:
+     coverage: 32/32
+     detail:
+        - x0: 1
+        - x1: 1
+        - x2: 1
+        - x3: 1
+        - x4: 1
+        - x5: 1
+        - x6: 1
+        - x7: 1
+        - x8: 1
+        - x9: 1
+        - x10: 1
+        - x11: 75
+        - x12: 1
+        - x13: 1
+        - x14: 1
+        - x15: 1
+        - x16: 1
+        - x17: 1
+        - x18: 1
+        - x19: 1
+        - x20: 1
+        - x21: 1
+        - x22: 1
+        - x23: 1
+        - x24: 1
+        - x25: 1
+        - x26: 1
+        - x27: 1
+        - x28: 1
+        - x29: 1
+        - x30: 1
+        - x31: 1
+rd:
+     coverage: 32/32
+     detail:
+        - x0: 1
+        - x1: 1
+        - x2: 1
+        - x3: 1
+        - x4: 1
+        - x5: 1
+        - x6: 1
+        - x7: 1
+        - x8: 1
+        - x9: 1
+        - x10: 1
+        - x11: 1
+        - x12: 75
+        - x13: 1
+        - x14: 1
+        - x15: 1
+        - x16: 1
+        - x17: 1
+        - x18: 1
+        - x19: 1
+        - x20: 1
+        - x21: 1
+        - x22: 1
+        - x23: 1
+        - x24: 1
+        - x25: 1
+        - x26: 1
+        - x27: 1
+        - x28: 1
+        - x29: 1
+        - x30: 1
+        - x31: 1
 op_comb:
      coverage: 5/5
      detail:
@@ -2870,37 +2886,37 @@ op_comb:
         - rs1 == rd != rs2: 1
         - rs2 == rd != rs1: 1
         - rs1 == rs2 == rd: 1
-        - rs1 != rs2  and rs1 != rd and rs2 != rd: 136
+        - rs1 != rs2  and rs1 != rd and rs2 != rd: 102
 val_comb:
      coverage: 144/144
      detail:
-        - rs1_val > 0 and rs2_val > 0: 1
-        - rs1_val > 0 and rs2_val < 0: 36
-        - rs1_val < 0 and rs2_val < 0: 66
-        - rs1_val < 0 and rs2_val > 0: 33
+        - rs1_val > 0 and rs2_val > 0: 26
+        - rs1_val > 0 and rs2_val < 0: 26
+        - rs1_val < 0 and rs2_val < 0: 28
+        - rs1_val < 0 and rs2_val > 0: 20
         - rs1_val == rs2_val: 3
-        - rs1_val != rs2_val: 137
-        - rs2_val == (-2**(xlen-1)): 1
+        - rs1_val != rs2_val: 103
+        - rs2_val == (-2**(xlen-1)): 4
         - rs2_val == 0: 2
         - rs2_val == (2**(xlen-1)-1): 1
-        - rs2_val == 1: 1
-        - rs1_val == (-2**(xlen-1)): 1
-        - rs1_val == 0: 2
-        - rs1_val == (2**(xlen-1)-1): 1
-        - rs1_val == 1: 1
+        - rs2_val == 1: 2
+        - rs1_val == (-2**(xlen-1)): 2
+        - rs1_val == 0: 4
+        - rs1_val == (2**(xlen-1)-1): 2
+        - rs1_val == 1: 2
         - rs2_val == 2: 1
-        - rs2_val == 4: 1
+        - rs2_val == 4: 2
         - rs2_val == 8: 1
         - rs2_val == 16: 1
         - rs2_val == 32: 1
-        - rs2_val == 64: 1
+        - rs2_val == 64: 2
         - rs2_val == 128: 1
         - rs2_val == 256: 1
         - rs2_val == 512: 1
         - rs2_val == 1024: 1
         - rs2_val == 2048: 1
         - rs2_val == 4096: 1
-        - rs2_val == 8192: 1
+        - rs2_val == 8192: 2
         - rs2_val == 16384: 1
         - rs2_val == 32768: 1
         - rs2_val == 65536: 1
@@ -2908,20 +2924,20 @@ val_comb:
         - rs2_val == 262144: 1
         - rs2_val == 524288: 1
         - rs2_val == 1048576: 1
-        - rs2_val == 2097152: 1
-        - rs2_val == 4194304: 1
+        - rs2_val == 2097152: 2
+        - rs2_val == 4194304: 3
         - rs2_val == 8388608: 1
         - rs2_val == 16777216: 1
         - rs2_val == 33554432: 1
         - rs2_val == 67108864: 1
         - rs2_val == 134217728: 1
         - rs2_val == 268435456: 1
-        - rs2_val == 536870912: 1
-        - rs2_val == 1073741824: 1
-        - rs2_val == -2147483648: 1
+        - rs2_val == 536870912: 2
+        - rs2_val == 1073741824: 2
+        - rs2_val == -2147483648: 4
         - rs2_val == -2: 1
         - rs2_val == -3: 1
-        - rs2_val == -5: 1
+        - rs2_val == -5: 2
         - rs2_val == -9: 1
         - rs2_val == -17: 1
         - rs2_val == -33: 1
@@ -2929,93 +2945,93 @@ val_comb:
         - rs2_val == -129: 1
         - rs2_val == -257: 1
         - rs2_val == -513: 1
-        - rs2_val == -1025: 1
+        - rs2_val == -1025: 4
         - rs2_val == -2049: 1
-        - rs2_val == -4097: 1
+        - rs2_val == -4097: 2
         - rs2_val == -8193: 1
         - rs2_val == -16385: 1
-        - rs2_val == -32769: 1
+        - rs2_val == -32769: 2
         - rs2_val == -65537: 1
         - rs2_val == -131073: 1
         - rs2_val == -262145: 1
-        - rs2_val == -524289: 1
-        - rs2_val == -1048577: 1
+        - rs2_val == -524289: 2
+        - rs2_val == -1048577: 2
         - rs2_val == -2097153: 1
         - rs2_val == -4194305: 1
         - rs2_val == -8388609: 1
-        - rs2_val == -16777217: 72
+        - rs2_val == -16777217: 1
         - rs2_val == -33554433: 1
-        - rs2_val == -67108865: 1
+        - rs2_val == -67108865: 2
         - rs2_val == -134217729: 1
-        - rs2_val == -268435457: 1
+        - rs2_val == -268435457: 2
         - rs2_val == -536870913: 1
-        - rs2_val == -1073741825: 1
+        - rs2_val == -1073741825: 2
         - rs2_val == 2147483647: 1
         - rs2_val == 1431655765: 1
         - rs2_val == -1431655766: 1
-        - rs1_val == 2: 1
+        - rs1_val == 2: 3
         - rs1_val == 4: 1
-        - rs1_val == 8: 1
+        - rs1_val == 8: 3
         - rs1_val == 16: 1
-        - rs1_val == 32: 1
+        - rs1_val == 32: 2
         - rs1_val == 64: 1
         - rs1_val == 128: 1
         - rs1_val == 256: 1
         - rs1_val == 512: 1
-        - rs1_val == 1024: 1
+        - rs1_val == 1024: 2
         - rs1_val == 2048: 1
         - rs1_val == 4096: 1
-        - rs1_val == 8192: 1
+        - rs1_val == 8192: 2
         - rs1_val == 16384: 1
-        - rs1_val == 32768: 1
+        - rs1_val == 32768: 2
         - rs1_val == 65536: 1
-        - rs1_val == 131072: 1
-        - rs1_val == 262144: 1
+        - rs1_val == 131072: 2
+        - rs1_val == 262144: 2
         - rs1_val == 524288: 1
         - rs1_val == 1048576: 1
-        - rs1_val == 2097152: 2
-        - rs1_val == 4194304: 1
-        - rs1_val == 8388608: 2
+        - rs1_val == 2097152: 4
+        - rs1_val == 4194304: 3
+        - rs1_val == 8388608: 1
         - rs1_val == 16777216: 1
-        - rs1_val == 33554432: 2
-        - rs1_val == 67108864: 2
-        - rs1_val == 134217728: 1
+        - rs1_val == 33554432: 1
+        - rs1_val == 67108864: 1
+        - rs1_val == 134217728: 2
         - rs1_val == 268435456: 1
-        - rs1_val == 536870912: 1
+        - rs1_val == 536870912: 2
         - rs1_val == 1073741824: 1
-        - rs1_val == -2147483648: 1
+        - rs1_val == -2147483648: 2
         - rs1_val == -2: 1
-        - rs1_val == -3: 1
-        - rs1_val == -5: 1
-        - rs1_val == -9: 1
+        - rs1_val == -3: 2
+        - rs1_val == -5: 2
+        - rs1_val == -9: 2
         - rs1_val == -17: 1
-        - rs1_val == -33: 1
+        - rs1_val == -33: 2
         - rs1_val == -65: 1
-        - rs1_val == -129: 1
+        - rs1_val == -129: 3
         - rs1_val == -257: 1
         - rs1_val == -513: 1
-        - rs1_val == -1025: 1
+        - rs1_val == -1025: 2
         - rs1_val == -2049: 1
         - rs1_val == -4097: 1
-        - rs1_val == -8193: 1
+        - rs1_val == -8193: 2
         - rs1_val == -16385: 1
         - rs1_val == -32769: 1
         - rs1_val == -65537: 1
         - rs1_val == -131073: 1
         - rs1_val == -262145: 1
-        - rs1_val == -524289: 1
+        - rs1_val == -524289: 2
         - rs1_val == -1048577: 1
         - rs1_val == -2097153: 1
-        - rs1_val == -4194305: 1
+        - rs1_val == -4194305: 2
         - rs1_val == -8388609: 1
-        - rs1_val == -16777217: 68
+        - rs1_val == -16777217: 1
         - rs1_val == -33554433: 1
         - rs1_val == -67108865: 1
         - rs1_val == -134217729: 1
         - rs1_val == -268435457: 1
         - rs1_val == -536870913: 1
         - rs1_val == -1073741825: 1
-        - rs1_val == 2147483647: 1
+        - rs1_val == 2147483647: 2
         - rs1_val == 1431655765: 1
         - rs1_val == -1431655766: 1
 </br></div></td>
@@ -3036,7 +3052,7 @@ val_comb:
 opcode:
      coverage: 1/1
      detail:
-        - mulh: 140
+        - mulh: 100
 rs1:
      coverage: 32/32
      detail:
@@ -3050,79 +3066,9 @@ rs1:
         - x7: 1
         - x8: 1
         - x9: 1
-        - x10: 105
+        - x10: 69
         - x11: 1
         - x12: 1
-        - x13: 1
-        - x14: 1
-        - x15: 1
-        - x16: 1
-        - x17: 1
-        - x18: 1
-        - x19: 1
-        - x20: 1
-        - x21: 1
-        - x22: 1
-        - x23: 1
-        - x24: 1
-        - x25: 1
-        - x26: 1
-        - x27: 1
-        - x28: 1
-        - x29: 1
-        - x30: 3
-        - x31: 3
-rs2:
-     coverage: 32/32
-     detail:
-        - x0: 1
-        - x1: 1
-        - x2: 1
-        - x3: 1
-        - x4: 1
-        - x5: 1
-        - x6: 1
-        - x7: 1
-        - x8: 1
-        - x9: 1
-        - x10: 1
-        - x11: 105
-        - x12: 1
-        - x13: 1
-        - x14: 1
-        - x15: 1
-        - x16: 1
-        - x17: 1
-        - x18: 1
-        - x19: 1
-        - x20: 1
-        - x21: 1
-        - x22: 1
-        - x23: 1
-        - x24: 1
-        - x25: 1
-        - x26: 1
-        - x27: 1
-        - x28: 1
-        - x29: 1
-        - x30: 3
-        - x31: 3
-rd:
-     coverage: 32/32
-     detail:
-        - x0: 1
-        - x1: 1
-        - x2: 1
-        - x3: 1
-        - x4: 1
-        - x5: 1
-        - x6: 1
-        - x7: 1
-        - x8: 1
-        - x9: 1
-        - x10: 1
-        - x11: 1
-        - x12: 105
         - x13: 1
         - x14: 1
         - x15: 1
@@ -3141,7 +3087,77 @@ rd:
         - x28: 1
         - x29: 1
         - x30: 1
-        - x31: 5
+        - x31: 1
+rs2:
+     coverage: 32/32
+     detail:
+        - x0: 1
+        - x1: 1
+        - x2: 1
+        - x3: 1
+        - x4: 1
+        - x5: 1
+        - x6: 1
+        - x7: 1
+        - x8: 1
+        - x9: 1
+        - x10: 1
+        - x11: 69
+        - x12: 1
+        - x13: 1
+        - x14: 1
+        - x15: 1
+        - x16: 1
+        - x17: 1
+        - x18: 1
+        - x19: 1
+        - x20: 1
+        - x21: 1
+        - x22: 1
+        - x23: 1
+        - x24: 1
+        - x25: 1
+        - x26: 1
+        - x27: 1
+        - x28: 1
+        - x29: 1
+        - x30: 1
+        - x31: 1
+rd:
+     coverage: 32/32
+     detail:
+        - x0: 1
+        - x1: 1
+        - x2: 1
+        - x3: 1
+        - x4: 1
+        - x5: 1
+        - x6: 1
+        - x7: 1
+        - x8: 1
+        - x9: 1
+        - x10: 1
+        - x11: 1
+        - x12: 69
+        - x13: 1
+        - x14: 1
+        - x15: 1
+        - x16: 1
+        - x17: 1
+        - x18: 1
+        - x19: 1
+        - x20: 1
+        - x21: 1
+        - x22: 1
+        - x23: 1
+        - x24: 1
+        - x25: 1
+        - x26: 1
+        - x27: 1
+        - x28: 1
+        - x29: 1
+        - x30: 1
+        - x31: 1
 op_comb:
      coverage: 5/5
      detail:
@@ -3149,22 +3165,22 @@ op_comb:
         - rs1 == rd != rs2: 1
         - rs2 == rd != rs1: 1
         - rs1 == rs2 == rd: 1
-        - rs1 != rs2  and rs1 != rd and rs2 != rd: 136
+        - rs1 != rs2  and rs1 != rd and rs2 != rd: 96
 val_comb:
      coverage: 144/144
      detail:
-        - rs1_val > 0 and rs2_val > 0: 1
-        - rs1_val > 0 and rs2_val < 0: 36
-        - rs1_val < 0 and rs2_val < 0: 66
-        - rs1_val < 0 and rs2_val > 0: 33
+        - rs1_val > 0 and rs2_val > 0: 22
+        - rs1_val > 0 and rs2_val < 0: 26
+        - rs1_val < 0 and rs2_val < 0: 22
+        - rs1_val < 0 and rs2_val > 0: 25
         - rs1_val == rs2_val: 3
-        - rs1_val != rs2_val: 137
-        - rs2_val == (-2**(xlen-1)): 1
+        - rs1_val != rs2_val: 97
+        - rs2_val == (-2**(xlen-1)): 2
         - rs2_val == 0: 2
         - rs2_val == (2**(xlen-1)-1): 1
-        - rs2_val == 1: 1
-        - rs1_val == (-2**(xlen-1)): 1
-        - rs1_val == 0: 2
+        - rs2_val == 1: 2
+        - rs1_val == (-2**(xlen-1)): 2
+        - rs1_val == 0: 3
         - rs1_val == (2**(xlen-1)-1): 1
         - rs1_val == 1: 1
         - rs2_val == 2: 1
@@ -3172,57 +3188,57 @@ val_comb:
         - rs2_val == 8: 1
         - rs2_val == 16: 1
         - rs2_val == 32: 1
-        - rs2_val == 64: 1
+        - rs2_val == 64: 2
         - rs2_val == 128: 1
-        - rs2_val == 256: 1
+        - rs2_val == 256: 2
         - rs2_val == 512: 1
         - rs2_val == 1024: 1
         - rs2_val == 2048: 1
         - rs2_val == 4096: 1
         - rs2_val == 8192: 1
-        - rs2_val == 16384: 1
+        - rs2_val == 16384: 3
         - rs2_val == 32768: 1
         - rs2_val == 65536: 1
-        - rs2_val == 131072: 1
+        - rs2_val == 131072: 2
         - rs2_val == 262144: 1
-        - rs2_val == 524288: 1
+        - rs2_val == 524288: 2
         - rs2_val == 1048576: 1
         - rs2_val == 2097152: 1
         - rs2_val == 4194304: 1
         - rs2_val == 8388608: 1
-        - rs2_val == 16777216: 1
+        - rs2_val == 16777216: 2
         - rs2_val == 33554432: 1
-        - rs2_val == 67108864: 1
+        - rs2_val == 67108864: 2
         - rs2_val == 134217728: 1
         - rs2_val == 268435456: 1
         - rs2_val == 536870912: 1
         - rs2_val == 1073741824: 1
-        - rs2_val == -2147483648: 1
-        - rs2_val == -2: 1
+        - rs2_val == -2147483648: 2
+        - rs2_val == -2: 3
         - rs2_val == -3: 1
         - rs2_val == -5: 1
         - rs2_val == -9: 1
         - rs2_val == -17: 1
-        - rs2_val == -33: 1
+        - rs2_val == -33: 2
         - rs2_val == -65: 1
-        - rs2_val == -129: 1
+        - rs2_val == -129: 2
         - rs2_val == -257: 1
         - rs2_val == -513: 1
         - rs2_val == -1025: 1
-        - rs2_val == -2049: 1
+        - rs2_val == -2049: 2
         - rs2_val == -4097: 1
         - rs2_val == -8193: 1
         - rs2_val == -16385: 1
         - rs2_val == -32769: 1
-        - rs2_val == -65537: 1
+        - rs2_val == -65537: 2
         - rs2_val == -131073: 1
         - rs2_val == -262145: 1
         - rs2_val == -524289: 1
-        - rs2_val == -1048577: 1
-        - rs2_val == -2097153: 1
-        - rs2_val == -4194305: 1
+        - rs2_val == -1048577: 2
+        - rs2_val == -2097153: 4
+        - rs2_val == -4194305: 2
         - rs2_val == -8388609: 1
-        - rs2_val == -16777217: 72
+        - rs2_val == -16777217: 1
         - rs2_val == -33554433: 1
         - rs2_val == -67108865: 1
         - rs2_val == -134217729: 1
@@ -3233,69 +3249,69 @@ val_comb:
         - rs2_val == 1431655765: 1
         - rs2_val == -1431655766: 1
         - rs1_val == 2: 1
-        - rs1_val == 4: 1
-        - rs1_val == 8: 1
+        - rs1_val == 4: 3
+        - rs1_val == 8: 3
         - rs1_val == 16: 1
-        - rs1_val == 32: 1
-        - rs1_val == 64: 1
+        - rs1_val == 32: 2
+        - rs1_val == 64: 4
         - rs1_val == 128: 1
         - rs1_val == 256: 1
         - rs1_val == 512: 1
         - rs1_val == 1024: 1
         - rs1_val == 2048: 1
-        - rs1_val == 4096: 1
+        - rs1_val == 4096: 2
         - rs1_val == 8192: 1
         - rs1_val == 16384: 1
-        - rs1_val == 32768: 1
+        - rs1_val == 32768: 2
         - rs1_val == 65536: 1
         - rs1_val == 131072: 1
         - rs1_val == 262144: 1
         - rs1_val == 524288: 1
         - rs1_val == 1048576: 1
-        - rs1_val == 2097152: 2
+        - rs1_val == 2097152: 1
         - rs1_val == 4194304: 1
-        - rs1_val == 8388608: 2
+        - rs1_val == 8388608: 1
         - rs1_val == 16777216: 1
-        - rs1_val == 33554432: 2
-        - rs1_val == 67108864: 2
+        - rs1_val == 33554432: 1
+        - rs1_val == 67108864: 1
         - rs1_val == 134217728: 1
         - rs1_val == 268435456: 1
         - rs1_val == 536870912: 1
-        - rs1_val == 1073741824: 1
-        - rs1_val == -2147483648: 1
-        - rs1_val == -2: 1
+        - rs1_val == 1073741824: 2
+        - rs1_val == -2147483648: 2
+        - rs1_val == -2: 2
         - rs1_val == -3: 1
         - rs1_val == -5: 1
         - rs1_val == -9: 1
-        - rs1_val == -17: 1
-        - rs1_val == -33: 1
-        - rs1_val == -65: 1
+        - rs1_val == -17: 2
+        - rs1_val == -33: 2
+        - rs1_val == -65: 2
         - rs1_val == -129: 1
         - rs1_val == -257: 1
         - rs1_val == -513: 1
-        - rs1_val == -1025: 1
+        - rs1_val == -1025: 2
         - rs1_val == -2049: 1
-        - rs1_val == -4097: 1
+        - rs1_val == -4097: 2
         - rs1_val == -8193: 1
         - rs1_val == -16385: 1
         - rs1_val == -32769: 1
         - rs1_val == -65537: 1
-        - rs1_val == -131073: 1
+        - rs1_val == -131073: 3
         - rs1_val == -262145: 1
         - rs1_val == -524289: 1
         - rs1_val == -1048577: 1
         - rs1_val == -2097153: 1
         - rs1_val == -4194305: 1
-        - rs1_val == -8388609: 1
-        - rs1_val == -16777217: 68
+        - rs1_val == -8388609: 3
+        - rs1_val == -16777217: 1
         - rs1_val == -33554433: 1
-        - rs1_val == -67108865: 1
+        - rs1_val == -67108865: 2
         - rs1_val == -134217729: 1
         - rs1_val == -268435457: 1
         - rs1_val == -536870913: 1
         - rs1_val == -1073741825: 1
         - rs1_val == 2147483647: 1
-        - rs1_val == 1431655765: 1
+        - rs1_val == 1431655765: 2
         - rs1_val == -1431655766: 1
 </br></div></td>
         </tr></tbody>
@@ -3315,7 +3331,7 @@ val_comb:
 opcode:
      coverage: 1/1
      detail:
-        - mulhu: 140
+        - mulhu: 105
 rs1:
      coverage: 32/32
      detail:
@@ -3329,79 +3345,9 @@ rs1:
         - x7: 1
         - x8: 1
         - x9: 1
-        - x10: 105
+        - x10: 74
         - x11: 1
         - x12: 1
-        - x13: 1
-        - x14: 1
-        - x15: 1
-        - x16: 1
-        - x17: 1
-        - x18: 1
-        - x19: 1
-        - x20: 1
-        - x21: 1
-        - x22: 1
-        - x23: 1
-        - x24: 1
-        - x25: 1
-        - x26: 1
-        - x27: 1
-        - x28: 1
-        - x29: 1
-        - x30: 3
-        - x31: 3
-rs2:
-     coverage: 32/32
-     detail:
-        - x0: 1
-        - x1: 1
-        - x2: 1
-        - x3: 1
-        - x4: 1
-        - x5: 1
-        - x6: 1
-        - x7: 1
-        - x8: 1
-        - x9: 1
-        - x10: 1
-        - x11: 105
-        - x12: 1
-        - x13: 1
-        - x14: 1
-        - x15: 1
-        - x16: 1
-        - x17: 1
-        - x18: 1
-        - x19: 1
-        - x20: 1
-        - x21: 1
-        - x22: 1
-        - x23: 1
-        - x24: 1
-        - x25: 1
-        - x26: 1
-        - x27: 1
-        - x28: 1
-        - x29: 1
-        - x30: 3
-        - x31: 3
-rd:
-     coverage: 32/32
-     detail:
-        - x0: 1
-        - x1: 1
-        - x2: 1
-        - x3: 1
-        - x4: 1
-        - x5: 1
-        - x6: 1
-        - x7: 1
-        - x8: 1
-        - x9: 1
-        - x10: 1
-        - x11: 1
-        - x12: 105
         - x13: 1
         - x14: 1
         - x15: 1
@@ -3420,7 +3366,77 @@ rd:
         - x28: 1
         - x29: 1
         - x30: 1
-        - x31: 5
+        - x31: 1
+rs2:
+     coverage: 32/32
+     detail:
+        - x0: 1
+        - x1: 1
+        - x2: 1
+        - x3: 1
+        - x4: 1
+        - x5: 1
+        - x6: 1
+        - x7: 1
+        - x8: 1
+        - x9: 1
+        - x10: 1
+        - x11: 74
+        - x12: 1
+        - x13: 1
+        - x14: 1
+        - x15: 1
+        - x16: 1
+        - x17: 1
+        - x18: 1
+        - x19: 1
+        - x20: 1
+        - x21: 1
+        - x22: 1
+        - x23: 1
+        - x24: 1
+        - x25: 1
+        - x26: 1
+        - x27: 1
+        - x28: 1
+        - x29: 1
+        - x30: 1
+        - x31: 1
+rd:
+     coverage: 32/32
+     detail:
+        - x0: 1
+        - x1: 1
+        - x2: 1
+        - x3: 1
+        - x4: 1
+        - x5: 1
+        - x6: 1
+        - x7: 1
+        - x8: 1
+        - x9: 1
+        - x10: 1
+        - x11: 1
+        - x12: 74
+        - x13: 1
+        - x14: 1
+        - x15: 1
+        - x16: 1
+        - x17: 1
+        - x18: 1
+        - x19: 1
+        - x20: 1
+        - x21: 1
+        - x22: 1
+        - x23: 1
+        - x24: 1
+        - x25: 1
+        - x26: 1
+        - x27: 1
+        - x28: 1
+        - x29: 1
+        - x30: 1
+        - x31: 1
 op_comb:
      coverage: 5/5
      detail:
@@ -3428,44 +3444,44 @@ op_comb:
         - rs1 == rd != rs2: 1
         - rs2 == rd != rs1: 1
         - rs1 == rs2 == rd: 1
-        - rs1 != rs2  and rs1 != rd and rs2 != rd: 136
+        - rs1 != rs2  and rs1 != rd and rs2 != rd: 101
 val_comb:
      coverage: 144/144
      detail:
-        - rs1_val > 0 and rs2_val > 0: 1
-        - rs1_val > 0 and rs2_val < 0: 36
-        - rs1_val < 0 and rs2_val < 0: 66
-        - rs1_val < 0 and rs2_val > 0: 33
-        - rs1_val == rs2_val: 3
-        - rs1_val != rs2_val: 137
-        - rs2_val == (-2**(xlen-1)): 1
-        - rs2_val == 0: 2
+        - rs1_val > 0 and rs2_val > 0: 25
+        - rs1_val > 0 and rs2_val < 0: 27
+        - rs1_val < 0 and rs2_val < 0: 26
+        - rs1_val < 0 and rs2_val > 0: 19
+        - rs1_val == rs2_val: 5
+        - rs1_val != rs2_val: 100
+        - rs2_val == (-2**(xlen-1)): 4
+        - rs2_val == 0: 4
         - rs2_val == (2**(xlen-1)-1): 1
         - rs2_val == 1: 1
         - rs1_val == (-2**(xlen-1)): 1
-        - rs1_val == 0: 2
-        - rs1_val == (2**(xlen-1)-1): 1
+        - rs1_val == 0: 4
+        - rs1_val == (2**(xlen-1)-1): 2
         - rs1_val == 1: 1
         - rs2_val == 2: 1
         - rs2_val == 4: 1
-        - rs2_val == 8: 1
+        - rs2_val == 8: 2
         - rs2_val == 16: 1
         - rs2_val == 32: 1
         - rs2_val == 64: 1
-        - rs2_val == 128: 1
+        - rs2_val == 128: 2
         - rs2_val == 256: 1
         - rs2_val == 512: 1
-        - rs2_val == 1024: 1
+        - rs2_val == 1024: 2
         - rs2_val == 2048: 1
-        - rs2_val == 4096: 1
+        - rs2_val == 4096: 2
         - rs2_val == 8192: 1
         - rs2_val == 16384: 1
         - rs2_val == 32768: 1
-        - rs2_val == 65536: 1
+        - rs2_val == 65536: 2
         - rs2_val == 131072: 1
         - rs2_val == 262144: 1
-        - rs2_val == 524288: 1
-        - rs2_val == 1048576: 1
+        - rs2_val == 524288: 2
+        - rs2_val == 1048576: 2
         - rs2_val == 2097152: 1
         - rs2_val == 4194304: 1
         - rs2_val == 8388608: 1
@@ -3476,15 +3492,15 @@ val_comb:
         - rs2_val == 268435456: 1
         - rs2_val == 536870912: 1
         - rs2_val == 1073741824: 1
-        - rs2_val == -2147483648: 1
+        - rs2_val == -2147483648: 4
         - rs2_val == -2: 1
         - rs2_val == -3: 1
-        - rs2_val == -5: 1
-        - rs2_val == -9: 1
+        - rs2_val == -5: 3
+        - rs2_val == -9: 2
         - rs2_val == -17: 1
         - rs2_val == -33: 1
         - rs2_val == -65: 1
-        - rs2_val == -129: 1
+        - rs2_val == -129: 3
         - rs2_val == -257: 1
         - rs2_val == -513: 1
         - rs2_val == -1025: 1
@@ -3497,67 +3513,67 @@ val_comb:
         - rs2_val == -131073: 1
         - rs2_val == -262145: 1
         - rs2_val == -524289: 1
-        - rs2_val == -1048577: 1
+        - rs2_val == -1048577: 2
         - rs2_val == -2097153: 1
-        - rs2_val == -4194305: 1
+        - rs2_val == -4194305: 6
         - rs2_val == -8388609: 1
-        - rs2_val == -16777217: 72
+        - rs2_val == -16777217: 2
         - rs2_val == -33554433: 1
         - rs2_val == -67108865: 1
         - rs2_val == -134217729: 1
-        - rs2_val == -268435457: 1
-        - rs2_val == -536870913: 1
-        - rs2_val == -1073741825: 1
+        - rs2_val == -268435457: 3
+        - rs2_val == -536870913: 2
+        - rs2_val == -1073741825: 2
         - rs2_val == 2147483647: 1
-        - rs2_val == 1431655765: 1
+        - rs2_val == 1431655765: 3
         - rs2_val == -1431655766: 1
         - rs1_val == 2: 1
-        - rs1_val == 4: 1
-        - rs1_val == 8: 1
+        - rs1_val == 4: 3
+        - rs1_val == 8: 2
         - rs1_val == 16: 1
-        - rs1_val == 32: 1
+        - rs1_val == 32: 2
         - rs1_val == 64: 1
-        - rs1_val == 128: 1
-        - rs1_val == 256: 1
+        - rs1_val == 128: 2
+        - rs1_val == 256: 2
         - rs1_val == 512: 1
-        - rs1_val == 1024: 1
+        - rs1_val == 1024: 2
         - rs1_val == 2048: 1
-        - rs1_val == 4096: 1
+        - rs1_val == 4096: 2
         - rs1_val == 8192: 1
-        - rs1_val == 16384: 1
+        - rs1_val == 16384: 3
         - rs1_val == 32768: 1
-        - rs1_val == 65536: 1
-        - rs1_val == 131072: 1
+        - rs1_val == 65536: 3
+        - rs1_val == 131072: 2
         - rs1_val == 262144: 1
         - rs1_val == 524288: 1
-        - rs1_val == 1048576: 1
+        - rs1_val == 1048576: 2
         - rs1_val == 2097152: 2
         - rs1_val == 4194304: 1
-        - rs1_val == 8388608: 2
-        - rs1_val == 16777216: 1
-        - rs1_val == 33554432: 2
-        - rs1_val == 67108864: 2
+        - rs1_val == 8388608: 1
+        - rs1_val == 16777216: 3
+        - rs1_val == 33554432: 1
+        - rs1_val == 67108864: 1
         - rs1_val == 134217728: 1
         - rs1_val == 268435456: 1
         - rs1_val == 536870912: 1
-        - rs1_val == 1073741824: 1
+        - rs1_val == 1073741824: 2
         - rs1_val == -2147483648: 1
         - rs1_val == -2: 1
         - rs1_val == -3: 1
         - rs1_val == -5: 1
         - rs1_val == -9: 1
-        - rs1_val == -17: 1
-        - rs1_val == -33: 1
+        - rs1_val == -17: 2
+        - rs1_val == -33: 2
         - rs1_val == -65: 1
-        - rs1_val == -129: 1
-        - rs1_val == -257: 1
+        - rs1_val == -129: 2
+        - rs1_val == -257: 2
         - rs1_val == -513: 1
         - rs1_val == -1025: 1
-        - rs1_val == -2049: 1
+        - rs1_val == -2049: 2
         - rs1_val == -4097: 1
-        - rs1_val == -8193: 1
-        - rs1_val == -16385: 1
-        - rs1_val == -32769: 1
+        - rs1_val == -8193: 2
+        - rs1_val == -16385: 2
+        - rs1_val == -32769: 2
         - rs1_val == -65537: 1
         - rs1_val == -131073: 1
         - rs1_val == -262145: 1
@@ -3565,15 +3581,15 @@ val_comb:
         - rs1_val == -1048577: 1
         - rs1_val == -2097153: 1
         - rs1_val == -4194305: 1
-        - rs1_val == -8388609: 1
-        - rs1_val == -16777217: 68
+        - rs1_val == -8388609: 2
+        - rs1_val == -16777217: 1
         - rs1_val == -33554433: 1
         - rs1_val == -67108865: 1
-        - rs1_val == -134217729: 1
-        - rs1_val == -268435457: 1
+        - rs1_val == -134217729: 2
+        - rs1_val == -268435457: 2
         - rs1_val == -536870913: 1
         - rs1_val == -1073741825: 1
-        - rs1_val == 2147483647: 1
+        - rs1_val == 2147483647: 2
         - rs1_val == 1431655765: 1
         - rs1_val == -1431655766: 1
 </br></div></td>
@@ -3594,7 +3610,7 @@ val_comb:
 opcode:
      coverage: 1/1
      detail:
-        - mulhsu: 140
+        - mulhsu: 107
 rs1:
      coverage: 32/32
      detail:
@@ -3608,79 +3624,9 @@ rs1:
         - x7: 1
         - x8: 1
         - x9: 1
-        - x10: 105
+        - x10: 76
         - x11: 1
         - x12: 1
-        - x13: 1
-        - x14: 1
-        - x15: 1
-        - x16: 1
-        - x17: 1
-        - x18: 1
-        - x19: 1
-        - x20: 1
-        - x21: 1
-        - x22: 1
-        - x23: 1
-        - x24: 1
-        - x25: 1
-        - x26: 1
-        - x27: 1
-        - x28: 1
-        - x29: 1
-        - x30: 3
-        - x31: 3
-rs2:
-     coverage: 32/32
-     detail:
-        - x0: 1
-        - x1: 1
-        - x2: 1
-        - x3: 1
-        - x4: 1
-        - x5: 1
-        - x6: 1
-        - x7: 1
-        - x8: 1
-        - x9: 1
-        - x10: 1
-        - x11: 105
-        - x12: 1
-        - x13: 1
-        - x14: 1
-        - x15: 1
-        - x16: 1
-        - x17: 1
-        - x18: 1
-        - x19: 1
-        - x20: 1
-        - x21: 1
-        - x22: 1
-        - x23: 1
-        - x24: 1
-        - x25: 1
-        - x26: 1
-        - x27: 1
-        - x28: 1
-        - x29: 1
-        - x30: 3
-        - x31: 3
-rd:
-     coverage: 32/32
-     detail:
-        - x0: 1
-        - x1: 1
-        - x2: 1
-        - x3: 1
-        - x4: 1
-        - x5: 1
-        - x6: 1
-        - x7: 1
-        - x8: 1
-        - x9: 1
-        - x10: 1
-        - x11: 1
-        - x12: 105
         - x13: 1
         - x14: 1
         - x15: 1
@@ -3699,7 +3645,77 @@ rd:
         - x28: 1
         - x29: 1
         - x30: 1
-        - x31: 5
+        - x31: 1
+rs2:
+     coverage: 32/32
+     detail:
+        - x0: 1
+        - x1: 1
+        - x2: 1
+        - x3: 1
+        - x4: 1
+        - x5: 1
+        - x6: 1
+        - x7: 1
+        - x8: 1
+        - x9: 1
+        - x10: 1
+        - x11: 76
+        - x12: 1
+        - x13: 1
+        - x14: 1
+        - x15: 1
+        - x16: 1
+        - x17: 1
+        - x18: 1
+        - x19: 1
+        - x20: 1
+        - x21: 1
+        - x22: 1
+        - x23: 1
+        - x24: 1
+        - x25: 1
+        - x26: 1
+        - x27: 1
+        - x28: 1
+        - x29: 1
+        - x30: 1
+        - x31: 1
+rd:
+     coverage: 32/32
+     detail:
+        - x0: 1
+        - x1: 1
+        - x2: 1
+        - x3: 1
+        - x4: 1
+        - x5: 1
+        - x6: 1
+        - x7: 1
+        - x8: 1
+        - x9: 1
+        - x10: 1
+        - x11: 1
+        - x12: 76
+        - x13: 1
+        - x14: 1
+        - x15: 1
+        - x16: 1
+        - x17: 1
+        - x18: 1
+        - x19: 1
+        - x20: 1
+        - x21: 1
+        - x22: 1
+        - x23: 1
+        - x24: 1
+        - x25: 1
+        - x26: 1
+        - x27: 1
+        - x28: 1
+        - x29: 1
+        - x30: 1
+        - x31: 1
 op_comb:
      coverage: 5/5
      detail:
@@ -3707,28 +3723,28 @@ op_comb:
         - rs1 == rd != rs2: 1
         - rs2 == rd != rs1: 1
         - rs1 == rs2 == rd: 1
-        - rs1 != rs2  and rs1 != rd and rs2 != rd: 136
+        - rs1 != rs2  and rs1 != rd and rs2 != rd: 103
 val_comb:
      coverage: 144/144
      detail:
-        - rs1_val > 0 and rs2_val > 0: 1
-        - rs1_val > 0 and rs2_val < 0: 36
-        - rs1_val < 0 and rs2_val < 0: 66
-        - rs1_val < 0 and rs2_val > 0: 33
-        - rs1_val == rs2_val: 3
-        - rs1_val != rs2_val: 137
-        - rs2_val == (-2**(xlen-1)): 1
-        - rs2_val == 0: 2
+        - rs1_val > 0 and rs2_val > 0: 28
+        - rs1_val > 0 and rs2_val < 0: 28
+        - rs1_val < 0 and rs2_val < 0: 24
+        - rs1_val < 0 and rs2_val > 0: 21
+        - rs1_val == rs2_val: 4
+        - rs1_val != rs2_val: 103
+        - rs2_val == (-2**(xlen-1)): 3
+        - rs2_val == 0: 3
         - rs2_val == (2**(xlen-1)-1): 1
         - rs2_val == 1: 1
-        - rs1_val == (-2**(xlen-1)): 1
-        - rs1_val == 0: 2
+        - rs1_val == (-2**(xlen-1)): 2
+        - rs1_val == 0: 3
         - rs1_val == (2**(xlen-1)-1): 1
         - rs1_val == 1: 1
         - rs2_val == 2: 1
-        - rs2_val == 4: 1
+        - rs2_val == 4: 2
         - rs2_val == 8: 1
-        - rs2_val == 16: 1
+        - rs2_val == 16: 4
         - rs2_val == 32: 1
         - rs2_val == 64: 1
         - rs2_val == 128: 1
@@ -3736,17 +3752,17 @@ val_comb:
         - rs2_val == 512: 1
         - rs2_val == 1024: 1
         - rs2_val == 2048: 1
-        - rs2_val == 4096: 1
+        - rs2_val == 4096: 6
         - rs2_val == 8192: 1
         - rs2_val == 16384: 1
-        - rs2_val == 32768: 1
+        - rs2_val == 32768: 2
         - rs2_val == 65536: 1
         - rs2_val == 131072: 1
         - rs2_val == 262144: 1
-        - rs2_val == 524288: 1
+        - rs2_val == 524288: 2
         - rs2_val == 1048576: 1
-        - rs2_val == 2097152: 1
-        - rs2_val == 4194304: 1
+        - rs2_val == 2097152: 3
+        - rs2_val == 4194304: 2
         - rs2_val == 8388608: 1
         - rs2_val == 16777216: 1
         - rs2_val == 33554432: 1
@@ -3755,12 +3771,12 @@ val_comb:
         - rs2_val == 268435456: 1
         - rs2_val == 536870912: 1
         - rs2_val == 1073741824: 1
-        - rs2_val == -2147483648: 1
-        - rs2_val == -2: 1
+        - rs2_val == -2147483648: 3
+        - rs2_val == -2: 4
         - rs2_val == -3: 1
         - rs2_val == -5: 1
         - rs2_val == -9: 1
-        - rs2_val == -17: 1
+        - rs2_val == -17: 2
         - rs2_val == -33: 1
         - rs2_val == -65: 1
         - rs2_val == -129: 1
@@ -3769,18 +3785,18 @@ val_comb:
         - rs2_val == -1025: 1
         - rs2_val == -2049: 1
         - rs2_val == -4097: 1
-        - rs2_val == -8193: 1
+        - rs2_val == -8193: 2
         - rs2_val == -16385: 1
         - rs2_val == -32769: 1
         - rs2_val == -65537: 1
         - rs2_val == -131073: 1
-        - rs2_val == -262145: 1
-        - rs2_val == -524289: 1
+        - rs2_val == -262145: 2
+        - rs2_val == -524289: 2
         - rs2_val == -1048577: 1
         - rs2_val == -2097153: 1
         - rs2_val == -4194305: 1
         - rs2_val == -8388609: 1
-        - rs2_val == -16777217: 72
+        - rs2_val == -16777217: 1
         - rs2_val == -33554433: 1
         - rs2_val == -67108865: 1
         - rs2_val == -134217729: 1
@@ -3790,62 +3806,62 @@ val_comb:
         - rs2_val == 2147483647: 1
         - rs2_val == 1431655765: 1
         - rs2_val == -1431655766: 1
-        - rs1_val == 2: 1
+        - rs1_val == 2: 2
         - rs1_val == 4: 1
-        - rs1_val == 8: 1
-        - rs1_val == 16: 1
+        - rs1_val == 8: 2
+        - rs1_val == 16: 3
         - rs1_val == 32: 1
         - rs1_val == 64: 1
         - rs1_val == 128: 1
         - rs1_val == 256: 1
-        - rs1_val == 512: 1
-        - rs1_val == 1024: 1
-        - rs1_val == 2048: 1
+        - rs1_val == 512: 2
+        - rs1_val == 1024: 2
+        - rs1_val == 2048: 2
         - rs1_val == 4096: 1
         - rs1_val == 8192: 1
         - rs1_val == 16384: 1
         - rs1_val == 32768: 1
-        - rs1_val == 65536: 1
-        - rs1_val == 131072: 1
+        - rs1_val == 65536: 3
+        - rs1_val == 131072: 2
         - rs1_val == 262144: 1
-        - rs1_val == 524288: 1
+        - rs1_val == 524288: 3
         - rs1_val == 1048576: 1
         - rs1_val == 2097152: 2
         - rs1_val == 4194304: 1
         - rs1_val == 8388608: 2
-        - rs1_val == 16777216: 1
+        - rs1_val == 16777216: 4
         - rs1_val == 33554432: 2
-        - rs1_val == 67108864: 2
+        - rs1_val == 67108864: 1
         - rs1_val == 134217728: 1
         - rs1_val == 268435456: 1
         - rs1_val == 536870912: 1
         - rs1_val == 1073741824: 1
-        - rs1_val == -2147483648: 1
+        - rs1_val == -2147483648: 2
         - rs1_val == -2: 1
-        - rs1_val == -3: 1
-        - rs1_val == -5: 1
+        - rs1_val == -3: 3
+        - rs1_val == -5: 2
         - rs1_val == -9: 1
         - rs1_val == -17: 1
-        - rs1_val == -33: 1
+        - rs1_val == -33: 2
         - rs1_val == -65: 1
-        - rs1_val == -129: 1
-        - rs1_val == -257: 1
-        - rs1_val == -513: 1
+        - rs1_val == -129: 3
+        - rs1_val == -257: 2
+        - rs1_val == -513: 2
         - rs1_val == -1025: 1
         - rs1_val == -2049: 1
         - rs1_val == -4097: 1
         - rs1_val == -8193: 1
-        - rs1_val == -16385: 1
+        - rs1_val == -16385: 2
         - rs1_val == -32769: 1
-        - rs1_val == -65537: 1
+        - rs1_val == -65537: 2
         - rs1_val == -131073: 1
         - rs1_val == -262145: 1
         - rs1_val == -524289: 1
         - rs1_val == -1048577: 1
         - rs1_val == -2097153: 1
-        - rs1_val == -4194305: 1
+        - rs1_val == -4194305: 2
         - rs1_val == -8388609: 1
-        - rs1_val == -16777217: 68
+        - rs1_val == -16777217: 1
         - rs1_val == -33554433: 1
         - rs1_val == -67108865: 1
         - rs1_val == -134217729: 1
@@ -3873,21 +3889,21 @@ val_comb:
 opcode:
      coverage: 1/1
      detail:
-        - div: 140
+        - div: 107
 rs1:
      coverage: 32/32
      detail:
         - x0: 1
         - x1: 1
         - x2: 1
-        - x3: 1
+        - x3: 2
         - x4: 1
         - x5: 1
         - x6: 1
         - x7: 1
         - x8: 1
         - x9: 1
-        - x10: 105
+        - x10: 74
         - x11: 1
         - x12: 1
         - x13: 1
@@ -3902,19 +3918,19 @@ rs1:
         - x22: 1
         - x23: 1
         - x24: 1
-        - x25: 1
+        - x25: 2
         - x26: 1
         - x27: 1
         - x28: 1
         - x29: 1
-        - x30: 3
-        - x31: 3
+        - x30: 1
+        - x31: 1
 rs2:
      coverage: 32/32
      detail:
         - x0: 1
         - x1: 1
-        - x2: 1
+        - x2: 2
         - x3: 1
         - x4: 1
         - x5: 1
@@ -3923,47 +3939,12 @@ rs2:
         - x8: 1
         - x9: 1
         - x10: 1
-        - x11: 105
+        - x11: 74
         - x12: 1
         - x13: 1
         - x14: 1
         - x15: 1
-        - x16: 1
-        - x17: 1
-        - x18: 1
-        - x19: 1
-        - x20: 1
-        - x21: 1
-        - x22: 1
-        - x23: 1
-        - x24: 1
-        - x25: 1
-        - x26: 1
-        - x27: 1
-        - x28: 1
-        - x29: 1
-        - x30: 3
-        - x31: 3
-rd:
-     coverage: 32/32
-     detail:
-        - x0: 1
-        - x1: 1
-        - x2: 1
-        - x3: 1
-        - x4: 1
-        - x5: 1
-        - x6: 1
-        - x7: 1
-        - x8: 1
-        - x9: 1
-        - x10: 1
-        - x11: 1
-        - x12: 105
-        - x13: 1
-        - x14: 1
-        - x15: 1
-        - x16: 1
+        - x16: 2
         - x17: 1
         - x18: 1
         - x19: 1
@@ -3978,7 +3959,42 @@ rd:
         - x28: 1
         - x29: 1
         - x30: 1
-        - x31: 5
+        - x31: 1
+rd:
+     coverage: 32/32
+     detail:
+        - x0: 2
+        - x1: 1
+        - x2: 1
+        - x3: 1
+        - x4: 1
+        - x5: 1
+        - x6: 1
+        - x7: 1
+        - x8: 1
+        - x9: 1
+        - x10: 1
+        - x11: 1
+        - x12: 74
+        - x13: 1
+        - x14: 1
+        - x15: 1
+        - x16: 1
+        - x17: 1
+        - x18: 1
+        - x19: 1
+        - x20: 1
+        - x21: 1
+        - x22: 1
+        - x23: 1
+        - x24: 1
+        - x25: 1
+        - x26: 1
+        - x27: 2
+        - x28: 1
+        - x29: 1
+        - x30: 1
+        - x31: 1
 op_comb:
      coverage: 5/5
      detail:
@@ -3986,34 +4002,34 @@ op_comb:
         - rs1 == rd != rs2: 1
         - rs2 == rd != rs1: 1
         - rs1 == rs2 == rd: 1
-        - rs1 != rs2  and rs1 != rd and rs2 != rd: 136
+        - rs1 != rs2  and rs1 != rd and rs2 != rd: 103
 val_comb:
      coverage: 144/144
      detail:
-        - rs1_val > 0 and rs2_val > 0: 1
-        - rs1_val > 0 and rs2_val < 0: 36
-        - rs1_val < 0 and rs2_val < 0: 66
-        - rs1_val < 0 and rs2_val > 0: 33
-        - rs1_val == rs2_val: 3
-        - rs1_val != rs2_val: 137
-        - rs2_val == (-2**(xlen-1)): 1
+        - rs1_val > 0 and rs2_val > 0: 30
+        - rs1_val > 0 and rs2_val < 0: 25
+        - rs1_val < 0 and rs2_val < 0: 25
+        - rs1_val < 0 and rs2_val > 0: 21
+        - rs1_val == rs2_val: 4
+        - rs1_val != rs2_val: 103
+        - rs2_val == (-2**(xlen-1)): 2
         - rs2_val == 0: 2
-        - rs2_val == (2**(xlen-1)-1): 1
-        - rs2_val == 1: 1
+        - rs2_val == (2**(xlen-1)-1): 3
+        - rs2_val == 1: 2
         - rs1_val == (-2**(xlen-1)): 1
-        - rs1_val == 0: 2
-        - rs1_val == (2**(xlen-1)-1): 1
-        - rs1_val == 1: 1
+        - rs1_val == 0: 4
+        - rs1_val == (2**(xlen-1)-1): 2
+        - rs1_val == 1: 2
         - rs2_val == 2: 1
         - rs2_val == 4: 1
         - rs2_val == 8: 1
         - rs2_val == 16: 1
         - rs2_val == 32: 1
         - rs2_val == 64: 1
-        - rs2_val == 128: 1
+        - rs2_val == 128: 2
         - rs2_val == 256: 1
-        - rs2_val == 512: 1
-        - rs2_val == 1024: 1
+        - rs2_val == 512: 3
+        - rs2_val == 1024: 2
         - rs2_val == 2048: 1
         - rs2_val == 4096: 1
         - rs2_val == 8192: 1
@@ -4022,28 +4038,28 @@ val_comb:
         - rs2_val == 65536: 1
         - rs2_val == 131072: 1
         - rs2_val == 262144: 1
-        - rs2_val == 524288: 1
+        - rs2_val == 524288: 3
         - rs2_val == 1048576: 1
         - rs2_val == 2097152: 1
         - rs2_val == 4194304: 1
         - rs2_val == 8388608: 1
-        - rs2_val == 16777216: 1
+        - rs2_val == 16777216: 4
         - rs2_val == 33554432: 1
         - rs2_val == 67108864: 1
         - rs2_val == 134217728: 1
         - rs2_val == 268435456: 1
         - rs2_val == 536870912: 1
         - rs2_val == 1073741824: 1
-        - rs2_val == -2147483648: 1
+        - rs2_val == -2147483648: 2
         - rs2_val == -2: 1
         - rs2_val == -3: 1
         - rs2_val == -5: 1
         - rs2_val == -9: 1
         - rs2_val == -17: 1
         - rs2_val == -33: 1
-        - rs2_val == -65: 1
+        - rs2_val == -65: 4
         - rs2_val == -129: 1
-        - rs2_val == -257: 1
+        - rs2_val == -257: 2
         - rs2_val == -513: 1
         - rs2_val == -1025: 1
         - rs2_val == -2049: 1
@@ -4054,84 +4070,84 @@ val_comb:
         - rs2_val == -65537: 1
         - rs2_val == -131073: 1
         - rs2_val == -262145: 1
-        - rs2_val == -524289: 1
-        - rs2_val == -1048577: 1
+        - rs2_val == -524289: 2
+        - rs2_val == -1048577: 3
         - rs2_val == -2097153: 1
-        - rs2_val == -4194305: 1
+        - rs2_val == -4194305: 2
         - rs2_val == -8388609: 1
-        - rs2_val == -16777217: 72
+        - rs2_val == -16777217: 1
         - rs2_val == -33554433: 1
         - rs2_val == -67108865: 1
-        - rs2_val == -134217729: 1
-        - rs2_val == -268435457: 1
+        - rs2_val == -134217729: 2
+        - rs2_val == -268435457: 2
         - rs2_val == -536870913: 1
-        - rs2_val == -1073741825: 1
-        - rs2_val == 2147483647: 1
-        - rs2_val == 1431655765: 1
-        - rs2_val == -1431655766: 1
-        - rs1_val == 2: 1
+        - rs2_val == -1073741825: 2
+        - rs2_val == 2147483647: 3
+        - rs2_val == 1431655765: 2
+        - rs2_val == -1431655766: 2
+        - rs1_val == 2: 2
         - rs1_val == 4: 1
         - rs1_val == 8: 1
-        - rs1_val == 16: 1
+        - rs1_val == 16: 2
         - rs1_val == 32: 1
-        - rs1_val == 64: 1
+        - rs1_val == 64: 2
         - rs1_val == 128: 1
         - rs1_val == 256: 1
         - rs1_val == 512: 1
-        - rs1_val == 1024: 1
-        - rs1_val == 2048: 1
-        - rs1_val == 4096: 1
+        - rs1_val == 1024: 3
+        - rs1_val == 2048: 2
+        - rs1_val == 4096: 3
         - rs1_val == 8192: 1
         - rs1_val == 16384: 1
-        - rs1_val == 32768: 1
+        - rs1_val == 32768: 2
         - rs1_val == 65536: 1
-        - rs1_val == 131072: 1
+        - rs1_val == 131072: 2
         - rs1_val == 262144: 1
-        - rs1_val == 524288: 1
+        - rs1_val == 524288: 2
         - rs1_val == 1048576: 1
         - rs1_val == 2097152: 2
-        - rs1_val == 4194304: 1
-        - rs1_val == 8388608: 2
-        - rs1_val == 16777216: 1
+        - rs1_val == 4194304: 2
+        - rs1_val == 8388608: 1
+        - rs1_val == 16777216: 2
         - rs1_val == 33554432: 2
         - rs1_val == 67108864: 2
         - rs1_val == 134217728: 1
-        - rs1_val == 268435456: 1
-        - rs1_val == 536870912: 1
-        - rs1_val == 1073741824: 1
+        - rs1_val == 268435456: 2
+        - rs1_val == 536870912: 2
+        - rs1_val == 1073741824: 2
         - rs1_val == -2147483648: 1
-        - rs1_val == -2: 1
+        - rs1_val == -2: 2
         - rs1_val == -3: 1
-        - rs1_val == -5: 1
-        - rs1_val == -9: 1
+        - rs1_val == -5: 2
+        - rs1_val == -9: 2
         - rs1_val == -17: 1
         - rs1_val == -33: 1
-        - rs1_val == -65: 1
+        - rs1_val == -65: 2
         - rs1_val == -129: 1
         - rs1_val == -257: 1
         - rs1_val == -513: 1
-        - rs1_val == -1025: 1
-        - rs1_val == -2049: 1
-        - rs1_val == -4097: 1
+        - rs1_val == -1025: 3
+        - rs1_val == -2049: 2
+        - rs1_val == -4097: 2
         - rs1_val == -8193: 1
-        - rs1_val == -16385: 1
+        - rs1_val == -16385: 2
         - rs1_val == -32769: 1
         - rs1_val == -65537: 1
-        - rs1_val == -131073: 1
+        - rs1_val == -131073: 2
         - rs1_val == -262145: 1
         - rs1_val == -524289: 1
         - rs1_val == -1048577: 1
         - rs1_val == -2097153: 1
         - rs1_val == -4194305: 1
         - rs1_val == -8388609: 1
-        - rs1_val == -16777217: 68
+        - rs1_val == -16777217: 1
         - rs1_val == -33554433: 1
         - rs1_val == -67108865: 1
         - rs1_val == -134217729: 1
         - rs1_val == -268435457: 1
         - rs1_val == -536870913: 1
         - rs1_val == -1073741825: 1
-        - rs1_val == 2147483647: 1
+        - rs1_val == 2147483647: 2
         - rs1_val == 1431655765: 1
         - rs1_val == -1431655766: 1
 </br></div></td>
@@ -4152,7 +4168,7 @@ val_comb:
 opcode:
      coverage: 1/1
      detail:
-        - divu: 140
+        - divu: 103
 rs1:
      coverage: 32/32
      detail:
@@ -4166,79 +4182,9 @@ rs1:
         - x7: 1
         - x8: 1
         - x9: 1
-        - x10: 105
+        - x10: 72
         - x11: 1
         - x12: 1
-        - x13: 1
-        - x14: 1
-        - x15: 1
-        - x16: 1
-        - x17: 1
-        - x18: 1
-        - x19: 1
-        - x20: 1
-        - x21: 1
-        - x22: 1
-        - x23: 1
-        - x24: 1
-        - x25: 1
-        - x26: 1
-        - x27: 1
-        - x28: 1
-        - x29: 1
-        - x30: 3
-        - x31: 3
-rs2:
-     coverage: 32/32
-     detail:
-        - x0: 1
-        - x1: 1
-        - x2: 1
-        - x3: 1
-        - x4: 1
-        - x5: 1
-        - x6: 1
-        - x7: 1
-        - x8: 1
-        - x9: 1
-        - x10: 1
-        - x11: 105
-        - x12: 1
-        - x13: 1
-        - x14: 1
-        - x15: 1
-        - x16: 1
-        - x17: 1
-        - x18: 1
-        - x19: 1
-        - x20: 1
-        - x21: 1
-        - x22: 1
-        - x23: 1
-        - x24: 1
-        - x25: 1
-        - x26: 1
-        - x27: 1
-        - x28: 1
-        - x29: 1
-        - x30: 3
-        - x31: 3
-rd:
-     coverage: 32/32
-     detail:
-        - x0: 1
-        - x1: 1
-        - x2: 1
-        - x3: 1
-        - x4: 1
-        - x5: 1
-        - x6: 1
-        - x7: 1
-        - x8: 1
-        - x9: 1
-        - x10: 1
-        - x11: 1
-        - x12: 105
         - x13: 1
         - x14: 1
         - x15: 1
@@ -4257,7 +4203,77 @@ rd:
         - x28: 1
         - x29: 1
         - x30: 1
-        - x31: 5
+        - x31: 1
+rs2:
+     coverage: 32/32
+     detail:
+        - x0: 1
+        - x1: 1
+        - x2: 1
+        - x3: 1
+        - x4: 1
+        - x5: 1
+        - x6: 1
+        - x7: 1
+        - x8: 1
+        - x9: 1
+        - x10: 1
+        - x11: 72
+        - x12: 1
+        - x13: 1
+        - x14: 1
+        - x15: 1
+        - x16: 1
+        - x17: 1
+        - x18: 1
+        - x19: 1
+        - x20: 1
+        - x21: 1
+        - x22: 1
+        - x23: 1
+        - x24: 1
+        - x25: 1
+        - x26: 1
+        - x27: 1
+        - x28: 1
+        - x29: 1
+        - x30: 1
+        - x31: 1
+rd:
+     coverage: 32/32
+     detail:
+        - x0: 1
+        - x1: 1
+        - x2: 1
+        - x3: 1
+        - x4: 1
+        - x5: 1
+        - x6: 1
+        - x7: 1
+        - x8: 1
+        - x9: 1
+        - x10: 1
+        - x11: 1
+        - x12: 72
+        - x13: 1
+        - x14: 1
+        - x15: 1
+        - x16: 1
+        - x17: 1
+        - x18: 1
+        - x19: 1
+        - x20: 1
+        - x21: 1
+        - x22: 1
+        - x23: 1
+        - x24: 1
+        - x25: 1
+        - x26: 1
+        - x27: 1
+        - x28: 1
+        - x29: 1
+        - x30: 1
+        - x31: 1
 op_comb:
      coverage: 5/5
      detail:
@@ -4265,33 +4281,33 @@ op_comb:
         - rs1 == rd != rs2: 1
         - rs2 == rd != rs1: 1
         - rs1 == rs2 == rd: 1
-        - rs1 != rs2  and rs1 != rd and rs2 != rd: 136
+        - rs1 != rs2  and rs1 != rd and rs2 != rd: 99
 val_comb:
      coverage: 144/144
      detail:
-        - rs1_val > 0 and rs2_val > 0: 1
-        - rs1_val > 0 and rs2_val < 0: 36
-        - rs1_val < 0 and rs2_val < 0: 66
-        - rs1_val < 0 and rs2_val > 0: 33
-        - rs1_val == rs2_val: 3
-        - rs1_val != rs2_val: 137
-        - rs2_val == (-2**(xlen-1)): 1
+        - rs1_val > 0 and rs2_val > 0: 25
+        - rs1_val > 0 and rs2_val < 0: 28
+        - rs1_val < 0 and rs2_val < 0: 19
+        - rs1_val < 0 and rs2_val > 0: 26
+        - rs1_val == rs2_val: 6
+        - rs1_val != rs2_val: 97
+        - rs2_val == (-2**(xlen-1)): 3
         - rs2_val == 0: 2
-        - rs2_val == (2**(xlen-1)-1): 1
-        - rs2_val == 1: 1
+        - rs2_val == (2**(xlen-1)-1): 2
+        - rs2_val == 1: 2
         - rs1_val == (-2**(xlen-1)): 1
-        - rs1_val == 0: 2
-        - rs1_val == (2**(xlen-1)-1): 1
-        - rs1_val == 1: 1
+        - rs1_val == 0: 3
+        - rs1_val == (2**(xlen-1)-1): 3
+        - rs1_val == 1: 2
         - rs2_val == 2: 1
-        - rs2_val == 4: 1
+        - rs2_val == 4: 2
         - rs2_val == 8: 1
         - rs2_val == 16: 1
         - rs2_val == 32: 1
         - rs2_val == 64: 1
         - rs2_val == 128: 1
         - rs2_val == 256: 1
-        - rs2_val == 512: 1
+        - rs2_val == 512: 3
         - rs2_val == 1024: 1
         - rs2_val == 2048: 1
         - rs2_val == 4096: 1
@@ -4305,25 +4321,25 @@ val_comb:
         - rs2_val == 1048576: 1
         - rs2_val == 2097152: 1
         - rs2_val == 4194304: 1
-        - rs2_val == 8388608: 1
+        - rs2_val == 8388608: 3
         - rs2_val == 16777216: 1
         - rs2_val == 33554432: 1
         - rs2_val == 67108864: 1
-        - rs2_val == 134217728: 1
+        - rs2_val == 134217728: 2
         - rs2_val == 268435456: 1
-        - rs2_val == 536870912: 1
-        - rs2_val == 1073741824: 1
-        - rs2_val == -2147483648: 1
+        - rs2_val == 536870912: 2
+        - rs2_val == 1073741824: 3
+        - rs2_val == -2147483648: 3
         - rs2_val == -2: 1
         - rs2_val == -3: 1
         - rs2_val == -5: 1
-        - rs2_val == -9: 1
+        - rs2_val == -9: 2
         - rs2_val == -17: 1
         - rs2_val == -33: 1
         - rs2_val == -65: 1
         - rs2_val == -129: 1
         - rs2_val == -257: 1
-        - rs2_val == -513: 1
+        - rs2_val == -513: 2
         - rs2_val == -1025: 1
         - rs2_val == -2049: 1
         - rs2_val == -4097: 1
@@ -4334,57 +4350,57 @@ val_comb:
         - rs2_val == -131073: 1
         - rs2_val == -262145: 1
         - rs2_val == -524289: 1
-        - rs2_val == -1048577: 1
-        - rs2_val == -2097153: 1
+        - rs2_val == -1048577: 2
+        - rs2_val == -2097153: 2
         - rs2_val == -4194305: 1
-        - rs2_val == -8388609: 1
-        - rs2_val == -16777217: 72
+        - rs2_val == -8388609: 2
+        - rs2_val == -16777217: 3
         - rs2_val == -33554433: 1
-        - rs2_val == -67108865: 1
+        - rs2_val == -67108865: 2
         - rs2_val == -134217729: 1
-        - rs2_val == -268435457: 1
+        - rs2_val == -268435457: 2
         - rs2_val == -536870913: 1
         - rs2_val == -1073741825: 1
-        - rs2_val == 2147483647: 1
+        - rs2_val == 2147483647: 2
         - rs2_val == 1431655765: 1
         - rs2_val == -1431655766: 1
         - rs1_val == 2: 1
         - rs1_val == 4: 1
-        - rs1_val == 8: 1
+        - rs1_val == 8: 2
         - rs1_val == 16: 1
         - rs1_val == 32: 1
         - rs1_val == 64: 1
         - rs1_val == 128: 1
         - rs1_val == 256: 1
-        - rs1_val == 512: 1
-        - rs1_val == 1024: 1
-        - rs1_val == 2048: 1
+        - rs1_val == 512: 3
+        - rs1_val == 1024: 2
+        - rs1_val == 2048: 2
         - rs1_val == 4096: 1
         - rs1_val == 8192: 1
         - rs1_val == 16384: 1
         - rs1_val == 32768: 1
-        - rs1_val == 65536: 1
-        - rs1_val == 131072: 1
+        - rs1_val == 65536: 2
+        - rs1_val == 131072: 2
         - rs1_val == 262144: 1
         - rs1_val == 524288: 1
-        - rs1_val == 1048576: 1
-        - rs1_val == 2097152: 2
+        - rs1_val == 1048576: 2
+        - rs1_val == 2097152: 1
         - rs1_val == 4194304: 1
-        - rs1_val == 8388608: 2
-        - rs1_val == 16777216: 1
-        - rs1_val == 33554432: 2
-        - rs1_val == 67108864: 2
-        - rs1_val == 134217728: 1
-        - rs1_val == 268435456: 1
-        - rs1_val == 536870912: 1
+        - rs1_val == 8388608: 1
+        - rs1_val == 16777216: 3
+        - rs1_val == 33554432: 1
+        - rs1_val == 67108864: 1
+        - rs1_val == 134217728: 2
+        - rs1_val == 268435456: 2
+        - rs1_val == 536870912: 2
         - rs1_val == 1073741824: 1
         - rs1_val == -2147483648: 1
         - rs1_val == -2: 1
         - rs1_val == -3: 1
-        - rs1_val == -5: 1
-        - rs1_val == -9: 1
+        - rs1_val == -5: 3
+        - rs1_val == -9: 2
         - rs1_val == -17: 1
-        - rs1_val == -33: 1
+        - rs1_val == -33: 2
         - rs1_val == -65: 1
         - rs1_val == -129: 1
         - rs1_val == -257: 1
@@ -4394,24 +4410,24 @@ val_comb:
         - rs1_val == -4097: 1
         - rs1_val == -8193: 1
         - rs1_val == -16385: 1
-        - rs1_val == -32769: 1
+        - rs1_val == -32769: 2
         - rs1_val == -65537: 1
         - rs1_val == -131073: 1
-        - rs1_val == -262145: 1
+        - rs1_val == -262145: 2
         - rs1_val == -524289: 1
-        - rs1_val == -1048577: 1
-        - rs1_val == -2097153: 1
-        - rs1_val == -4194305: 1
+        - rs1_val == -1048577: 2
+        - rs1_val == -2097153: 2
+        - rs1_val == -4194305: 2
         - rs1_val == -8388609: 1
-        - rs1_val == -16777217: 68
-        - rs1_val == -33554433: 1
-        - rs1_val == -67108865: 1
+        - rs1_val == -16777217: 1
+        - rs1_val == -33554433: 2
+        - rs1_val == -67108865: 2
         - rs1_val == -134217729: 1
         - rs1_val == -268435457: 1
         - rs1_val == -536870913: 1
         - rs1_val == -1073741825: 1
-        - rs1_val == 2147483647: 1
-        - rs1_val == 1431655765: 1
+        - rs1_val == 2147483647: 3
+        - rs1_val == 1431655765: 2
         - rs1_val == -1431655766: 1
 </br></div></td>
         </tr></tbody>
@@ -4431,7 +4447,7 @@ val_comb:
 opcode:
      coverage: 1/1
      detail:
-        - rem: 140
+        - rem: 102
 rs1:
      coverage: 32/32
      detail:
@@ -4445,79 +4461,9 @@ rs1:
         - x7: 1
         - x8: 1
         - x9: 1
-        - x10: 105
+        - x10: 71
         - x11: 1
         - x12: 1
-        - x13: 1
-        - x14: 1
-        - x15: 1
-        - x16: 1
-        - x17: 1
-        - x18: 1
-        - x19: 1
-        - x20: 1
-        - x21: 1
-        - x22: 1
-        - x23: 1
-        - x24: 1
-        - x25: 1
-        - x26: 1
-        - x27: 1
-        - x28: 1
-        - x29: 1
-        - x30: 3
-        - x31: 3
-rs2:
-     coverage: 32/32
-     detail:
-        - x0: 1
-        - x1: 1
-        - x2: 1
-        - x3: 1
-        - x4: 1
-        - x5: 1
-        - x6: 1
-        - x7: 1
-        - x8: 1
-        - x9: 1
-        - x10: 1
-        - x11: 105
-        - x12: 1
-        - x13: 1
-        - x14: 1
-        - x15: 1
-        - x16: 1
-        - x17: 1
-        - x18: 1
-        - x19: 1
-        - x20: 1
-        - x21: 1
-        - x22: 1
-        - x23: 1
-        - x24: 1
-        - x25: 1
-        - x26: 1
-        - x27: 1
-        - x28: 1
-        - x29: 1
-        - x30: 3
-        - x31: 3
-rd:
-     coverage: 32/32
-     detail:
-        - x0: 1
-        - x1: 1
-        - x2: 1
-        - x3: 1
-        - x4: 1
-        - x5: 1
-        - x6: 1
-        - x7: 1
-        - x8: 1
-        - x9: 1
-        - x10: 1
-        - x11: 1
-        - x12: 105
         - x13: 1
         - x14: 1
         - x15: 1
@@ -4536,7 +4482,77 @@ rd:
         - x28: 1
         - x29: 1
         - x30: 1
-        - x31: 5
+        - x31: 1
+rs2:
+     coverage: 32/32
+     detail:
+        - x0: 1
+        - x1: 1
+        - x2: 1
+        - x3: 1
+        - x4: 1
+        - x5: 1
+        - x6: 1
+        - x7: 1
+        - x8: 1
+        - x9: 1
+        - x10: 1
+        - x11: 71
+        - x12: 1
+        - x13: 1
+        - x14: 1
+        - x15: 1
+        - x16: 1
+        - x17: 1
+        - x18: 1
+        - x19: 1
+        - x20: 1
+        - x21: 1
+        - x22: 1
+        - x23: 1
+        - x24: 1
+        - x25: 1
+        - x26: 1
+        - x27: 1
+        - x28: 1
+        - x29: 1
+        - x30: 1
+        - x31: 1
+rd:
+     coverage: 32/32
+     detail:
+        - x0: 1
+        - x1: 1
+        - x2: 1
+        - x3: 1
+        - x4: 1
+        - x5: 1
+        - x6: 1
+        - x7: 1
+        - x8: 1
+        - x9: 1
+        - x10: 1
+        - x11: 1
+        - x12: 71
+        - x13: 1
+        - x14: 1
+        - x15: 1
+        - x16: 1
+        - x17: 1
+        - x18: 1
+        - x19: 1
+        - x20: 1
+        - x21: 1
+        - x22: 1
+        - x23: 1
+        - x24: 1
+        - x25: 1
+        - x26: 1
+        - x27: 1
+        - x28: 1
+        - x29: 1
+        - x30: 1
+        - x31: 1
 op_comb:
      coverage: 5/5
      detail:
@@ -4544,34 +4560,34 @@ op_comb:
         - rs1 == rd != rs2: 1
         - rs2 == rd != rs1: 1
         - rs1 == rs2 == rd: 1
-        - rs1 != rs2  and rs1 != rd and rs2 != rd: 136
+        - rs1 != rs2  and rs1 != rd and rs2 != rd: 98
 val_comb:
      coverage: 144/144
      detail:
-        - rs1_val > 0 and rs2_val > 0: 1
-        - rs1_val > 0 and rs2_val < 0: 36
-        - rs1_val < 0 and rs2_val < 0: 66
-        - rs1_val < 0 and rs2_val > 0: 33
-        - rs1_val == rs2_val: 3
-        - rs1_val != rs2_val: 137
-        - rs2_val == (-2**(xlen-1)): 1
-        - rs2_val == 0: 2
-        - rs2_val == (2**(xlen-1)-1): 1
-        - rs2_val == 1: 1
+        - rs1_val > 0 and rs2_val > 0: 29
+        - rs1_val > 0 and rs2_val < 0: 21
+        - rs1_val < 0 and rs2_val < 0: 29
+        - rs1_val < 0 and rs2_val > 0: 17
+        - rs1_val == rs2_val: 4
+        - rs1_val != rs2_val: 98
+        - rs2_val == (-2**(xlen-1)): 2
+        - rs2_val == 0: 3
+        - rs2_val == (2**(xlen-1)-1): 2
+        - rs2_val == 1: 3
         - rs1_val == (-2**(xlen-1)): 1
-        - rs1_val == 0: 2
-        - rs1_val == (2**(xlen-1)-1): 1
-        - rs1_val == 1: 1
+        - rs1_val == 0: 3
+        - rs1_val == (2**(xlen-1)-1): 2
+        - rs1_val == 1: 2
         - rs2_val == 2: 1
         - rs2_val == 4: 1
         - rs2_val == 8: 1
         - rs2_val == 16: 1
-        - rs2_val == 32: 1
+        - rs2_val == 32: 3
         - rs2_val == 64: 1
         - rs2_val == 128: 1
         - rs2_val == 256: 1
         - rs2_val == 512: 1
-        - rs2_val == 1024: 1
+        - rs2_val == 1024: 2
         - rs2_val == 2048: 1
         - rs2_val == 4096: 1
         - rs2_val == 8192: 1
@@ -4582,7 +4598,7 @@ val_comb:
         - rs2_val == 262144: 1
         - rs2_val == 524288: 1
         - rs2_val == 1048576: 1
-        - rs2_val == 2097152: 1
+        - rs2_val == 2097152: 2
         - rs2_val == 4194304: 1
         - rs2_val == 8388608: 1
         - rs2_val == 16777216: 1
@@ -4592,10 +4608,10 @@ val_comb:
         - rs2_val == 268435456: 1
         - rs2_val == 536870912: 1
         - rs2_val == 1073741824: 1
-        - rs2_val == -2147483648: 1
+        - rs2_val == -2147483648: 2
         - rs2_val == -2: 1
         - rs2_val == -3: 1
-        - rs2_val == -5: 1
+        - rs2_val == -5: 2
         - rs2_val == -9: 1
         - rs2_val == -17: 1
         - rs2_val == -33: 1
@@ -4606,7 +4622,7 @@ val_comb:
         - rs2_val == -1025: 1
         - rs2_val == -2049: 1
         - rs2_val == -4097: 1
-        - rs2_val == -8193: 1
+        - rs2_val == -8193: 2
         - rs2_val == -16385: 1
         - rs2_val == -32769: 1
         - rs2_val == -65537: 1
@@ -4615,47 +4631,47 @@ val_comb:
         - rs2_val == -524289: 1
         - rs2_val == -1048577: 1
         - rs2_val == -2097153: 1
-        - rs2_val == -4194305: 1
+        - rs2_val == -4194305: 2
         - rs2_val == -8388609: 1
-        - rs2_val == -16777217: 72
+        - rs2_val == -16777217: 1
         - rs2_val == -33554433: 1
-        - rs2_val == -67108865: 1
-        - rs2_val == -134217729: 1
+        - rs2_val == -67108865: 2
+        - rs2_val == -134217729: 2
         - rs2_val == -268435457: 1
-        - rs2_val == -536870913: 1
+        - rs2_val == -536870913: 6
         - rs2_val == -1073741825: 1
-        - rs2_val == 2147483647: 1
+        - rs2_val == 2147483647: 2
         - rs2_val == 1431655765: 1
         - rs2_val == -1431655766: 1
-        - rs1_val == 2: 1
-        - rs1_val == 4: 1
+        - rs1_val == 2: 2
+        - rs1_val == 4: 2
         - rs1_val == 8: 1
-        - rs1_val == 16: 1
-        - rs1_val == 32: 1
-        - rs1_val == 64: 1
-        - rs1_val == 128: 1
+        - rs1_val == 16: 2
+        - rs1_val == 32: 2
+        - rs1_val == 64: 2
+        - rs1_val == 128: 2
         - rs1_val == 256: 1
-        - rs1_val == 512: 1
+        - rs1_val == 512: 2
         - rs1_val == 1024: 1
         - rs1_val == 2048: 1
         - rs1_val == 4096: 1
         - rs1_val == 8192: 1
         - rs1_val == 16384: 1
         - rs1_val == 32768: 1
-        - rs1_val == 65536: 1
+        - rs1_val == 65536: 2
         - rs1_val == 131072: 1
         - rs1_val == 262144: 1
         - rs1_val == 524288: 1
         - rs1_val == 1048576: 1
-        - rs1_val == 2097152: 2
-        - rs1_val == 4194304: 1
-        - rs1_val == 8388608: 2
+        - rs1_val == 2097152: 1
+        - rs1_val == 4194304: 4
+        - rs1_val == 8388608: 1
         - rs1_val == 16777216: 1
         - rs1_val == 33554432: 2
-        - rs1_val == 67108864: 2
-        - rs1_val == 134217728: 1
-        - rs1_val == 268435456: 1
-        - rs1_val == 536870912: 1
+        - rs1_val == 67108864: 1
+        - rs1_val == 134217728: 2
+        - rs1_val == 268435456: 2
+        - rs1_val == 536870912: 2
         - rs1_val == 1073741824: 1
         - rs1_val == -2147483648: 1
         - rs1_val == -2: 1
@@ -4671,25 +4687,25 @@ val_comb:
         - rs1_val == -1025: 1
         - rs1_val == -2049: 1
         - rs1_val == -4097: 1
-        - rs1_val == -8193: 1
-        - rs1_val == -16385: 1
-        - rs1_val == -32769: 1
+        - rs1_val == -8193: 2
+        - rs1_val == -16385: 3
+        - rs1_val == -32769: 2
         - rs1_val == -65537: 1
         - rs1_val == -131073: 1
-        - rs1_val == -262145: 1
+        - rs1_val == -262145: 2
         - rs1_val == -524289: 1
         - rs1_val == -1048577: 1
-        - rs1_val == -2097153: 1
-        - rs1_val == -4194305: 1
+        - rs1_val == -2097153: 2
+        - rs1_val == -4194305: 2
         - rs1_val == -8388609: 1
-        - rs1_val == -16777217: 68
+        - rs1_val == -16777217: 1
         - rs1_val == -33554433: 1
         - rs1_val == -67108865: 1
         - rs1_val == -134217729: 1
         - rs1_val == -268435457: 1
-        - rs1_val == -536870913: 1
-        - rs1_val == -1073741825: 1
-        - rs1_val == 2147483647: 1
+        - rs1_val == -536870913: 2
+        - rs1_val == -1073741825: 2
+        - rs1_val == 2147483647: 2
         - rs1_val == 1431655765: 1
         - rs1_val == -1431655766: 1
 </br></div></td>
@@ -4710,7 +4726,7 @@ val_comb:
 opcode:
      coverage: 1/1
      detail:
-        - remu: 140
+        - remu: 100
 rs1:
      coverage: 32/32
      detail:
@@ -4720,83 +4736,13 @@ rs1:
         - x3: 1
         - x4: 1
         - x5: 1
-        - x6: 1
+        - x6: 2
         - x7: 1
         - x8: 1
-        - x9: 1
-        - x10: 105
+        - x9: 2
+        - x10: 67
         - x11: 1
         - x12: 1
-        - x13: 1
-        - x14: 1
-        - x15: 1
-        - x16: 1
-        - x17: 1
-        - x18: 1
-        - x19: 1
-        - x20: 1
-        - x21: 1
-        - x22: 1
-        - x23: 1
-        - x24: 1
-        - x25: 1
-        - x26: 1
-        - x27: 1
-        - x28: 1
-        - x29: 1
-        - x30: 3
-        - x31: 3
-rs2:
-     coverage: 32/32
-     detail:
-        - x0: 1
-        - x1: 1
-        - x2: 1
-        - x3: 1
-        - x4: 1
-        - x5: 1
-        - x6: 1
-        - x7: 1
-        - x8: 1
-        - x9: 1
-        - x10: 1
-        - x11: 105
-        - x12: 1
-        - x13: 1
-        - x14: 1
-        - x15: 1
-        - x16: 1
-        - x17: 1
-        - x18: 1
-        - x19: 1
-        - x20: 1
-        - x21: 1
-        - x22: 1
-        - x23: 1
-        - x24: 1
-        - x25: 1
-        - x26: 1
-        - x27: 1
-        - x28: 1
-        - x29: 1
-        - x30: 3
-        - x31: 3
-rd:
-     coverage: 32/32
-     detail:
-        - x0: 1
-        - x1: 1
-        - x2: 1
-        - x3: 1
-        - x4: 1
-        - x5: 1
-        - x6: 1
-        - x7: 1
-        - x8: 1
-        - x9: 1
-        - x10: 1
-        - x11: 1
-        - x12: 105
         - x13: 1
         - x14: 1
         - x15: 1
@@ -4815,7 +4761,77 @@ rd:
         - x28: 1
         - x29: 1
         - x30: 1
-        - x31: 5
+        - x31: 1
+rs2:
+     coverage: 32/32
+     detail:
+        - x0: 1
+        - x1: 1
+        - x2: 1
+        - x3: 1
+        - x4: 1
+        - x5: 2
+        - x6: 1
+        - x7: 1
+        - x8: 1
+        - x9: 1
+        - x10: 1
+        - x11: 67
+        - x12: 1
+        - x13: 1
+        - x14: 1
+        - x15: 1
+        - x16: 1
+        - x17: 1
+        - x18: 1
+        - x19: 1
+        - x20: 1
+        - x21: 1
+        - x22: 2
+        - x23: 1
+        - x24: 1
+        - x25: 1
+        - x26: 1
+        - x27: 1
+        - x28: 1
+        - x29: 1
+        - x30: 1
+        - x31: 1
+rd:
+     coverage: 32/32
+     detail:
+        - x0: 1
+        - x1: 1
+        - x2: 1
+        - x3: 1
+        - x4: 1
+        - x5: 1
+        - x6: 1
+        - x7: 1
+        - x8: 1
+        - x9: 1
+        - x10: 1
+        - x11: 1
+        - x12: 67
+        - x13: 1
+        - x14: 1
+        - x15: 1
+        - x16: 1
+        - x17: 1
+        - x18: 1
+        - x19: 1
+        - x20: 1
+        - x21: 1
+        - x22: 1
+        - x23: 1
+        - x24: 1
+        - x25: 1
+        - x26: 2
+        - x27: 1
+        - x28: 1
+        - x29: 1
+        - x30: 1
+        - x31: 2
 op_comb:
      coverage: 5/5
      detail:
@@ -4823,33 +4839,33 @@ op_comb:
         - rs1 == rd != rs2: 1
         - rs2 == rd != rs1: 1
         - rs1 == rs2 == rd: 1
-        - rs1 != rs2  and rs1 != rd and rs2 != rd: 136
+        - rs1 != rs2  and rs1 != rd and rs2 != rd: 96
 val_comb:
      coverage: 144/144
      detail:
-        - rs1_val > 0 and rs2_val > 0: 1
-        - rs1_val > 0 and rs2_val < 0: 36
-        - rs1_val < 0 and rs2_val < 0: 66
-        - rs1_val < 0 and rs2_val > 0: 33
-        - rs1_val == rs2_val: 3
-        - rs1_val != rs2_val: 137
-        - rs2_val == (-2**(xlen-1)): 1
-        - rs2_val == 0: 2
-        - rs2_val == (2**(xlen-1)-1): 1
-        - rs2_val == 1: 1
-        - rs1_val == (-2**(xlen-1)): 1
-        - rs1_val == 0: 2
+        - rs1_val > 0 and rs2_val > 0: 21
+        - rs1_val > 0 and rs2_val < 0: 26
+        - rs1_val < 0 and rs2_val < 0: 29
+        - rs1_val < 0 and rs2_val > 0: 19
+        - rs1_val == rs2_val: 6
+        - rs1_val != rs2_val: 94
+        - rs2_val == (-2**(xlen-1)): 4
+        - rs2_val == 0: 3
+        - rs2_val == (2**(xlen-1)-1): 2
+        - rs2_val == 1: 3
+        - rs1_val == (-2**(xlen-1)): 2
+        - rs1_val == 0: 3
         - rs1_val == (2**(xlen-1)-1): 1
         - rs1_val == 1: 1
         - rs2_val == 2: 1
-        - rs2_val == 4: 1
+        - rs2_val == 4: 2
         - rs2_val == 8: 1
         - rs2_val == 16: 1
         - rs2_val == 32: 1
         - rs2_val == 64: 1
         - rs2_val == 128: 1
         - rs2_val == 256: 1
-        - rs2_val == 512: 1
+        - rs2_val == 512: 2
         - rs2_val == 1024: 1
         - rs2_val == 2048: 1
         - rs2_val == 4096: 1
@@ -4862,7 +4878,7 @@ val_comb:
         - rs2_val == 524288: 1
         - rs2_val == 1048576: 1
         - rs2_val == 2097152: 1
-        - rs2_val == 4194304: 1
+        - rs2_val == 4194304: 2
         - rs2_val == 8388608: 1
         - rs2_val == 16777216: 1
         - rs2_val == 33554432: 1
@@ -4870,109 +4886,110 @@ val_comb:
         - rs2_val == 134217728: 1
         - rs2_val == 268435456: 1
         - rs2_val == 536870912: 1
-        - rs2_val == 1073741824: 1
-        - rs2_val == -2147483648: 1
+        - rs2_val == 1073741824: 2
+        - rs2_val == -2147483648: 4
         - rs2_val == -2: 1
         - rs2_val == -3: 1
-        - rs2_val == -5: 1
+        - rs2_val == -5: 2
         - rs2_val == -9: 1
         - rs2_val == -17: 1
         - rs2_val == -33: 1
         - rs2_val == -65: 1
-        - rs2_val == -129: 1
+        - rs2_val == -129: 2
         - rs2_val == -257: 1
-        - rs2_val == -513: 1
+        - rs2_val == -513: 2
         - rs2_val == -1025: 1
         - rs2_val == -2049: 1
         - rs2_val == -4097: 1
-        - rs2_val == -8193: 1
+        - rs2_val == -8193: 5
         - rs2_val == -16385: 1
         - rs2_val == -32769: 1
         - rs2_val == -65537: 1
         - rs2_val == -131073: 1
-        - rs2_val == -262145: 1
-        - rs2_val == -524289: 1
-        - rs2_val == -1048577: 1
+        - rs2_val == -262145: 2
+        - rs2_val == -524289: 3
+        - rs2_val == -1048577: 2
         - rs2_val == -2097153: 1
         - rs2_val == -4194305: 1
         - rs2_val == -8388609: 1
-        - rs2_val == -16777217: 72
+        - rs2_val == -16777217: 1
         - rs2_val == -33554433: 1
-        - rs2_val == -67108865: 1
-        - rs2_val == -134217729: 1
-        - rs2_val == -268435457: 1
+        - rs2_val == -67108865: 2
+        - rs2_val == -134217729: 3
+        - rs2_val == -268435457: 2
         - rs2_val == -536870913: 1
         - rs2_val == -1073741825: 1
-        - rs2_val == 2147483647: 1
+        - rs2_val == 2147483647: 2
         - rs2_val == 1431655765: 1
         - rs2_val == -1431655766: 1
         - rs1_val == 2: 1
         - rs1_val == 4: 1
-        - rs1_val == 8: 1
-        - rs1_val == 16: 1
-        - rs1_val == 32: 1
-        - rs1_val == 64: 1
+        - rs1_val == 8: 3
+        - rs1_val == 16: 2
+        - rs1_val == 32: 2
+        - rs1_val == 64: 2
         - rs1_val == 128: 1
-        - rs1_val == 256: 1
+        - rs1_val == 256: 2
         - rs1_val == 512: 1
         - rs1_val == 1024: 1
-        - rs1_val == 2048: 1
+        - rs1_val == 2048: 3
         - rs1_val == 4096: 1
         - rs1_val == 8192: 1
         - rs1_val == 16384: 1
         - rs1_val == 32768: 1
-        - rs1_val == 65536: 1
+        - rs1_val == 65536: 2
         - rs1_val == 131072: 1
-        - rs1_val == 262144: 1
+        - rs1_val == 262144: 2
         - rs1_val == 524288: 1
         - rs1_val == 1048576: 1
-        - rs1_val == 2097152: 2
-        - rs1_val == 4194304: 1
+        - rs1_val == 2097152: 1
+        - rs1_val == 4194304: 2
         - rs1_val == 8388608: 2
-        - rs1_val == 16777216: 1
-        - rs1_val == 33554432: 2
+        - rs1_val == 16777216: 2
+        - rs1_val == 33554432: 1
         - rs1_val == 67108864: 2
         - rs1_val == 134217728: 1
         - rs1_val == 268435456: 1
         - rs1_val == 536870912: 1
         - rs1_val == 1073741824: 1
-        - rs1_val == -2147483648: 1
-        - rs1_val == -2: 1
-        - rs1_val == -3: 1
+        - rs1_val == -2147483648: 2
+        - rs1_val == -2: 2
+        - rs1_val == -3: 2
         - rs1_val == -5: 1
         - rs1_val == -9: 1
         - rs1_val == -17: 1
         - rs1_val == -33: 1
-        - rs1_val == -65: 1
-        - rs1_val == -129: 1
+        - rs1_val == -65: 2
+        - rs1_val == -129: 2
         - rs1_val == -257: 1
         - rs1_val == -513: 1
-        - rs1_val == -1025: 1
-        - rs1_val == -2049: 1
+        - rs1_val == -1025: 2
+        - rs1_val == -2049: 2
         - rs1_val == -4097: 1
         - rs1_val == -8193: 1
         - rs1_val == -16385: 1
-        - rs1_val == -32769: 1
-        - rs1_val == -65537: 1
+        - rs1_val == -32769: 2
+        - rs1_val == -65537: 2
         - rs1_val == -131073: 1
         - rs1_val == -262145: 1
         - rs1_val == -524289: 1
         - rs1_val == -1048577: 1
         - rs1_val == -2097153: 1
-        - rs1_val == -4194305: 1
+        - rs1_val == -4194305: 2
         - rs1_val == -8388609: 1
-        - rs1_val == -16777217: 68
-        - rs1_val == -33554433: 1
+        - rs1_val == -16777217: 1
+        - rs1_val == -33554433: 2
         - rs1_val == -67108865: 1
-        - rs1_val == -134217729: 1
+        - rs1_val == -134217729: 2
         - rs1_val == -268435457: 1
-        - rs1_val == -536870913: 1
+        - rs1_val == -536870913: 2
         - rs1_val == -1073741825: 1
         - rs1_val == 2147483647: 1
         - rs1_val == 1431655765: 1
-        - rs1_val == -1431655766: 1
+        - rs1_val == -1431655766: 2
 </br></div></td>
         </tr></tbody>
         
       </table>
+        </results-table-body>
       </body></html>

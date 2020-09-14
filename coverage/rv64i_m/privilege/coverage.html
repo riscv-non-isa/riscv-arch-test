@@ -33,6 +33,9 @@ function find_all(selector, elem) {
 
 function sort_column(elem) {
     toggle_sort_states(elem);
+    name = ((elem).closest('table')).id;
+    console.log("Hi");
+    console.log(name);
     var colIndex = toArray(elem.parentNode.childNodes).indexOf(elem);
     var key;
     if (elem.classList.contains('numeric')) {
@@ -42,7 +45,7 @@ function sort_column(elem) {
     } else {
         key = key_alpha;
     }
-    sort_table(elem, key(colIndex));
+    sort_table(elem, key(colIndex), name);
 }
 
 function show_all_extras() {
@@ -155,26 +158,27 @@ function init () {
                                   sort_column(elem);
                               }, false)
     });
+    hide_all_extras();
     hide_all_extras1();
 
 };
 
-function sort_table(clicked, key_func) {
-    var rows = find_all('.results-table-row');
+function sort_table(clicked, key_func, tname) {
+    var rows = find_all('.'+tname+'-row');
     var reversed = !clicked.classList.contains('asc');
     var sorted_rows = sort(rows, key_func, reversed);
     /* Whole table is removed here because browsers acts much slower
      * when appending existing elements.
      */
-    var thead = document.getElementById("results-table-head");
-    document.getElementById('results-table').remove();
+    var thead = document.getElementById(tname+"-head");
+    document.getElementById(tname).remove();
     var parent = document.createElement("table");
-    parent.id = "results-table";
+    parent.id = tname;
     parent.appendChild(thead);
     sorted_rows.forEach(function(elem) {
         parent.appendChild(elem);
     });
-    document.getElementsByTagName("BODY")[0].appendChild(parent);
+    document.getElementsByTagName(tname+"-BODY")[0].appendChild(parent);
 }
 
 function sort(items, key_func, reversed) {
@@ -247,25 +251,9 @@ function is_all_rows_hidden(value) {
   return value.hidden == false;
 }
 
-function filter_table(elem) {
-    var outcome_att = "data-test-result";
-    var outcome = elem.getAttribute(outcome_att);
-    class_outcome = outcome + " results-table-row";
-    var outcome_rows = document.getElementsByClassName(class_outcome);
-
-    for(var i = 0; i < outcome_rows.length; i++){
-        outcome_rows[i].hidden = !elem.checked;
-    }
-
-    var rows = find_all('.results-table-row').filter(is_all_rows_hidden);
-    var all_rows_hidden = rows.length == 0 ? true : false;
-    var not_found_message = document.getElementById("not-found-message");
-    not_found_message.hidden = !all_rows_hidden;
-}
-
 </script>
     <h1></h1>
-    <p>Report generated on 2020-09-07 13:54 GMT by <a href="https://pypi.python.org/pypi/riscof">riscof</a> v1.16.0</p>
+    <p>Report generated on 2020-09-14 07:41 GMT by <a href="https://pypi.python.org/pypi/riscof">riscof</a> v1.16.0</p>
     <h2>Environment</h2>
     <table id="environment">
       <tr>
@@ -276,13 +264,13 @@ function filter_table(elem) {
         <td>sail c simulator</td></tr>
       <tr>
         <td>ISA</td>
-        <td>RV64IMACZicsr_Zifencei</td></tr>
+        <td>RV64IZicsr</td></tr>
       <tr>
         <td>User Spec Version</td>
         <td>2.3</td></tr>
       <tr>
         <td>Privilege Spec Version</td>
-        <td>1.11</td></tr>
+        <td>1.10</td></tr>
      </table>
      <h2>Yaml</h2>
       <table id="yaml-table">
@@ -293,111 +281,69 @@ function filter_table(elem) {
       </thead>
       <tbody>
           <tr>
-            <td class="col-yname">/home/sharder/git/incoresemi/riscof/riscof_work/ovpsim_isa_checked.yaml</td></tr>
-                <tr>
+            <td class="col-yname">/scratch/git-repo/incoresemi/riscof/riscof_work/sail_isa_checked.yaml</td></tr>
+          <tr>
             <td class="extra" colspan="1">
-            <div class="log">ISA: RV64IMACZicsr_Zifencei
+              <div class="log">ISA: RV64IZicsr
 User_Spec_Version: '2.3'
 supported_xlen:
 - 64
+Privilege_Spec_Version: '1.10'
+hw_data_misaligned_support: false
 misa:
-  reset-val: 0x0
+  rv32:
+    accessible: false
   rv64:
+    accessible: true
+    fields:
+    - extensions
+    - mxl
+    -
+      -
+        - 26
+        - 61
     mxl:
-      implemented: true
-      type:
-        ro_constant: [0x00]
+      implemented: false
       description: Encodes the native base integer ISA width.
       shadow: none
       msb: 63
       lsb: 62
     extensions:
-      implemented: true
-      type:
-        ro_constant: [0x0]
+      implemented: false
       description: Encodes the presence of the standard extensions, with a single
         bit per letter of the alphabet.
       shadow: none
       msb: 25
       lsb: 0
-    accessible: true
-    fields:
-    - mxl
-    - extensions
-    -
-      -
-        - 26
-        - 61
-  rv32:
-    accessible: false
   description: misa is a read-write register reporting the ISA supported by the hart.
   address: 769
   priv_mode: M
-mtvec:
-  reset-val: 0x80000000
-  rv64:
-    base:
-      implemented: true
-      type:
-        warl:
-          dependency_fields: []
-          legal:
-          - base[29:0] in [0x20000000]
-          wr_illegal:
-          - Unchanged
-      description: Vector base address.
-      shadow: none
-      msb: 63
-      lsb: 2
-    mode:
-      implemented: true
-      type:
-        warl:
-          dependency_fields: []
-          legal:
-          - mode[1:0] in [0x0]
-          wr_illegal:
-          - Unchanged
-      description: Vector mode.
-      shadow: none
-      msb: 1
-      lsb: 0
-    accessible: true
-    fields:
-    - base
-    - mode
-  description: MXLEN-bit read/write register that holds trap vector configuration.
-  address: 773
-  priv_mode: M
-  rv32:
-    accessible: false
-Privilege_Spec_Version: '1.10'
-hw_data_misaligned_support: false
+  reset-val: 0
 mstatus:
   rv32:
     accessible: false
   rv64:
     accessible: true
     fields:
+    - spp
     - mie
-    - sxl
-    - mpie
-    - tw
-    - uxl
     - sie
     - xs
-    - sd
-    - tsr
+    - tvm
+    - tw
+    - sxl
+    - uxl
     - spie
+    - mxr
+    - tsr
+    - mpie
+    - mprv
     - mpp
-    - spp
+    - sd
+    - upie
     - sum
     - fs
     - uie
-    - tvm
-    - mxr
-    - mprv
-    - upie
     -
       -
         - 2
@@ -615,6 +561,26 @@ mhartid:
   address: 3860
   priv_mode: M
   reset-val: 0
+mtvec:
+  rv32:
+    accessible: false
+  rv64:
+    accessible: true
+    fields:
+    - base
+    -
+      -
+        - 0
+        - 1
+    base:
+      implemented: true
+      description: Vector base address.
+      shadow: none
+      msb: 63
+      lsb: 2
+  description: MXLEN-bit read/write register that holds trap vector configuration.
+  address: 773
+  priv_mode: M
 mideleg:
   rv32:
     accessible: false
@@ -639,15 +605,15 @@ mip:
   rv64:
     accessible: true
     fields:
-    - ssip
-    - seip
-    - stip
-    - msip
-    - mtip
-    - usip
     - utip
+    - seip
+    - mtip
     - ueip
+    - ssip
+    - usip
+    - stip
     - meip
+    - msip
     -
       -
         - 2
@@ -729,15 +695,15 @@ mie:
   rv64:
     accessible: true
     fields:
-    - usie
-    - ueie
+    - seie
+    - utie
     - stie
     - msie
-    - seie
-    - ssie
-    - utie
-    - mtie
     - meie
+    - ssie
+    - usie
+    - mtie
+    - ueie
     -
       -
         - 2
@@ -2397,19 +2363,17 @@ mhpmcounter31h:
           </tbody>
           <tbody>
           <tr>
-            <td class="col-yname">/home/sharder/git/incoresemi/riscof/riscof_work/ovpsim_platform_checked.yaml</td></tr>
+            <td class="col-yname">/scratch/git-repo/incoresemi/riscof/riscof_work/sail_platform_checked.yaml</td></tr>
           <tr>
             <td class="extra" colspan="1">
-              <div class="log">mtime:
-  implemented: true
-  address: 0xbff8
-mtimecmp:
-  implemented: true
-  address: 0x4000
-nmi:
+              <div class="log">nmi:
   label: nmi_vector
 reset:
   label: reset_vector
+mtime:
+  implemented: false
+mtimecmp:
+  implemented: false
 mcause_non_standard:
   implemented: true
 mtval_condition_writes:
@@ -2422,8 +2386,156 @@ stval_condition_writes:
           </tr>
           </tbody></table>
     <p>Please visit <a href="https://riscv-config.readthedocs.io/en/latest/yaml-specs.html">YAML specifications</a> for more information. </p>
+    
+    <sizes-table-body>
+    <h2>Test Stats</h2>
+    <table id ="sizes-table">
+      <thead id="sizes-table-head">
+        <tr>
+          <th class="sortable name initial-sort" col="tname">Test Name</th>
+          <th class="sortable numeric initial-sort" col="tsize">Size (Bytes)</th>
+          <th col="tcov">Covergroups</th>
+        </tr>
+      </thead>
+        
+        <tbody class= "  sizes-table-row" >
+        <tr>
+          <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv64i_m/privilege/src/ebreak.S</td>
+          <td class="col-tsize">15344</td>          
+          <td class="col-tcov">['ebreak']</td>          
+        </tr></tbody>
+        
+        <tbody class= "  sizes-table-row" >
+        <tr>
+          <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv64i_m/privilege/src/ecall.S</td>
+          <td class="col-tsize">15344</td>          
+          <td class="col-tcov">['ecall']</td>          
+        </tr></tbody>
+        
+        <tbody class= "  sizes-table-row" >
+        <tr>
+          <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv64i_m/privilege/src/misalign-beq-01.S</td>
+          <td class="col-tsize">15952</td>          
+          <td class="col-tcov">['misalign-beq', 'misalign-beq']</td>          
+        </tr></tbody>
+        
+        <tbody class= "  sizes-table-row" >
+        <tr>
+          <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv64i_m/privilege/src/misalign-bge-01.S</td>
+          <td class="col-tsize">15952</td>          
+          <td class="col-tcov">['misalign-bge', 'misalign-bge']</td>          
+        </tr></tbody>
+        
+        <tbody class= "  sizes-table-row" >
+        <tr>
+          <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv64i_m/privilege/src/misalign-bgeu-01.S</td>
+          <td class="col-tsize">15952</td>          
+          <td class="col-tcov">['misalign-bgeu', 'misalign-bgeu']</td>          
+        </tr></tbody>
+        
+        <tbody class= "  sizes-table-row" >
+        <tr>
+          <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv64i_m/privilege/src/misalign-blt-01.S</td>
+          <td class="col-tsize">15952</td>          
+          <td class="col-tcov">['misalign-blt', 'misalign-blt']</td>          
+        </tr></tbody>
+        
+        <tbody class= "  sizes-table-row" >
+        <tr>
+          <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv64i_m/privilege/src/misalign-bltu-01.S</td>
+          <td class="col-tsize">15952</td>          
+          <td class="col-tcov">['misalign-bltu', 'misalign-bltu']</td>          
+        </tr></tbody>
+        
+        <tbody class= "  sizes-table-row" >
+        <tr>
+          <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv64i_m/privilege/src/misalign-bne-01.S</td>
+          <td class="col-tsize">15952</td>          
+          <td class="col-tcov">['misalign-bne', 'misalign-bne']</td>          
+        </tr></tbody>
+        
+        <tbody class= "  sizes-table-row" >
+        <tr>
+          <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv64i_m/privilege/src/misalign-jal-01.S</td>
+          <td class="col-tsize">716368</td>          
+          <td class="col-tcov">['misalign-jal', 'misalign-jal']</td>          
+        </tr></tbody>
+        
+        <tbody class= "  sizes-table-row" >
+        <tr>
+          <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv64i_m/privilege/src/misalign-ld-01.S</td>
+          <td class="col-tsize">15968</td>          
+          <td class="col-tcov">['misalign-ld', 'misalign-ld']</td>          
+        </tr></tbody>
+        
+        <tbody class= "  sizes-table-row" >
+        <tr>
+          <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv64i_m/privilege/src/misalign-lh-01.S</td>
+          <td class="col-tsize">15920</td>          
+          <td class="col-tcov">['misalign-lh', 'misalign-lh']</td>          
+        </tr></tbody>
+        
+        <tbody class= "  sizes-table-row" >
+        <tr>
+          <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv64i_m/privilege/src/misalign-lhu-01.S</td>
+          <td class="col-tsize">15920</td>          
+          <td class="col-tcov">['misalign-lhu', 'misalign-lhu']</td>          
+        </tr></tbody>
+        
+        <tbody class= "  sizes-table-row" >
+        <tr>
+          <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv64i_m/privilege/src/misalign-lw-01.S</td>
+          <td class="col-tsize">15936</td>          
+          <td class="col-tcov">['misalign-lw', 'misalign-lw']</td>          
+        </tr></tbody>
+        
+        <tbody class= "  sizes-table-row" >
+        <tr>
+          <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv64i_m/privilege/src/misalign-lwu-01.S</td>
+          <td class="col-tsize">15936</td>          
+          <td class="col-tcov">['misalign-lwu', 'misalign-lwu']</td>          
+        </tr></tbody>
+        
+        <tbody class= "  sizes-table-row" >
+        <tr>
+          <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv64i_m/privilege/src/misalign-sd-01.S</td>
+          <td class="col-tsize">15968</td>          
+          <td class="col-tcov">['misalign-sd', 'misalign-sd']</td>          
+        </tr></tbody>
+        
+        <tbody class= "  sizes-table-row" >
+        <tr>
+          <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv64i_m/privilege/src/misalign-sh-01.S</td>
+          <td class="col-tsize">15920</td>          
+          <td class="col-tcov">['misalign-sh', 'misalign-sh']</td>          
+        </tr></tbody>
+        
+        <tbody class= "  sizes-table-row" >
+        <tr>
+          <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv64i_m/privilege/src/misalign-sw-01.S</td>
+          <td class="col-tsize">15936</td>          
+          <td class="col-tcov">['misalign-sw', 'misalign-sw']</td>          
+        </tr></tbody>
+        
+        <tbody class= "  sizes-table-row" >
+        <tr>
+          <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv64i_m/privilege/src/misalign1-jalr-01.S</td>
+          <td class="col-tsize">15920</td>          
+          <td class="col-tcov">['misalign1-jalr']</td>          
+        </tr></tbody>
+        
+        <tbody class= "  sizes-table-row" >
+        <tr>
+          <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv64i_m/privilege/src/misalign2-jalr-01.S</td>
+          <td class="col-tsize">15920</td>          
+          <td class="col-tcov">['misalign2-jalr', 'misalign2-jalr']</td>          
+        </tr></tbody>
+        
+      </table>
 
-    <h2>Results</h2>
+    </sizes-table-body>
+    <results-table-body>
+    <h2>Coverage Report ( Total Coverpoints: 54 )</h2>
     <table id="results-table">
       <thead id="results-table-head">
         <tr>
@@ -2470,7 +2582,7 @@ opcode:
         - ebreak: 1
 </br></div></td>
         </tr></tbody>
-
+        
         <tbody class= "  results-table-row" >
         <tr>
           <td class="col-name">misalign-lh</td>
@@ -2486,7 +2598,7 @@ opcode:
 opcode:
      coverage: 1/1
      detail:
-        - lh: 4
+        - lh: 1
 val_comb:
      coverage: 1/1
      detail:
@@ -2509,7 +2621,7 @@ val_comb:
 opcode:
      coverage: 1/1
      detail:
-        - lhu: 4
+        - lhu: 1
 val_comb:
      coverage: 1/1
      detail:
@@ -2532,7 +2644,7 @@ val_comb:
 opcode:
      coverage: 1/1
      detail:
-        - lwu: 4
+        - lwu: 3
 val_comb:
      coverage: 3/3
      detail:
@@ -2545,28 +2657,28 @@ val_comb:
         <tbody class= "  results-table-row" >
         <tr>
           <td class="col-name">misalign-sd</td>
-          <td class="col-result">7/8</td>
-          <td class="col-percentage">87.50%
+          <td class="col-result">8/8</td>
+          <td class="col-percentage">100.00%
             <div class="meter">
-              <span style="width: 87.50%"></span>
+              <span style="width: 100.00%"></span>
             </div>
           </td>          
         <tr>
           <td class="extra" colspan="2">
-          <div class="log">coverage: 7/8
+          <div class="log">coverage: 8/8
 opcode:
      coverage: 1/1
      detail:
-        - sd: 53
+        - sd: 7
 val_comb:
-     coverage: 6/7
+     coverage: 7/7
      detail:
         - ea_align == 1: 1
         - ea_align == 2: 1
-        - ea_align == 3: 0
+        - ea_align == 3: 1
         - ea_align == 4: 1
         - ea_align == 5: 1
-        - ea_align == 6: 3
+        - ea_align == 6: 1
         - ea_align == 7: 1
 </br></div></td>
         </tr></tbody>
@@ -2586,7 +2698,7 @@ val_comb:
 opcode:
      coverage: 1/1
      detail:
-        - ld: 8
+        - ld: 7
 val_comb:
      coverage: 7/7
      detail:
@@ -2615,7 +2727,7 @@ val_comb:
 opcode:
      coverage: 1/1
      detail:
-        - lw: 7
+        - lw: 3
 val_comb:
      coverage: 3/3
      detail:
@@ -2640,7 +2752,7 @@ val_comb:
 opcode:
      coverage: 1/1
      detail:
-        - sh: 4
+        - sh: 1
 val_comb:
      coverage: 1/1
      detail:
@@ -2663,13 +2775,13 @@ val_comb:
 opcode:
      coverage: 1/1
      detail:
-        - sw: 24
+        - sw: 3
 val_comb:
      coverage: 3/3
      detail:
         - ea_align == 1: 1
         - ea_align == 2: 1
-        - ea_align == 3: 11
+        - ea_align == 3: 1
 </br></div></td>
         </tr></tbody>
         
@@ -2688,14 +2800,14 @@ val_comb:
 opcode:
      coverage: 1/1
      detail:
-        - jalr: 15
+        - jalr: 1
 val_comb:
      coverage: 1/1
      detail:
-        - ea_align == 2: 3
+        - ea_align == 2: 1
 </br></div></td>
         </tr></tbody>
- 
+        
         <tbody class= "  results-table-row" >
         <tr>
           <td class="col-name">misalign1-jalr</td>
@@ -2711,11 +2823,11 @@ val_comb:
 opcode:
      coverage: 1/1
      detail:
-        - jalr: 15
+        - jalr: 1
 val_comb:
      coverage: 1/1
      detail:
-        - ea_align == 1: 5
+        - ea_align == 1: 1
 </br></div></td>
         </tr></tbody>
         
@@ -2734,7 +2846,7 @@ val_comb:
 opcode:
      coverage: 1/1
      detail:
-        - jal: 23
+        - jal: 2
 val_comb:
      coverage: 1/1
      detail:
@@ -2761,7 +2873,7 @@ opcode:
 val_comb:
      coverage: 1/1
      detail:
-        - ea_align == 2: 1
+        - rs1_val>rs2_val and ea_align == 2: 1
 </br></div></td>
         </tr></tbody>
         
@@ -2784,7 +2896,7 @@ opcode:
 val_comb:
      coverage: 1/1
      detail:
-        - ea_align == 2: 1
+        - rs1_val>rs2_val and ea_align == 2: 1
 </br></div></td>
         </tr></tbody>
         
@@ -2807,7 +2919,7 @@ opcode:
 val_comb:
      coverage: 1/1
      detail:
-        - ea_align == 2: 1
+        - rs1_val<rs2_val and ea_align == 2: 1
 </br></div></td>
         </tr></tbody>
         
@@ -2830,7 +2942,7 @@ opcode:
 val_comb:
      coverage: 1/1
      detail:
-        - ea_align == 2: 1
+        - rs1_val<rs2_val and ea_align == 2: 1
 </br></div></td>
         </tr></tbody>
         
@@ -2853,7 +2965,7 @@ opcode:
 val_comb:
      coverage: 1/1
      detail:
-        - ea_align == 2: 1
+        - rs1_val!=rs2_val and ea_align == 2: 1
 </br></div></td>
         </tr></tbody>
         
@@ -2876,8 +2988,10 @@ opcode:
 val_comb:
      coverage: 1/1
      detail:
-        - ea_align == 2: 1
+        - rs1_val==rs2_val and ea_align == 2: 1
 </br></div></td>
         </tr></tbody>
-    </table>
+        
+      </table>
+        </results-table-body>
       </body></html>

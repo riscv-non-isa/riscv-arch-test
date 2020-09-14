@@ -66,14 +66,10 @@
 
   //trap_handler_prolog; enter with t1..t6 available
   
-  // TODO: The initial piece of code kept the mscratch to point to mtrap_sigptr. I have modified it to
-  // point to the trapreg_sv. The first entry of the trapreg_sv holds the pointer to the mtrap_sigptr
-  // + OFFSET. This allows the trapreg_sv to be outside the signature and independent of relative
-  // position from the mtrap_sigptr
   init_mscratch:
   	la	t1, trapreg_sv
   	csrrw	t1, mscratch, t1	// swap old mscratch. mscratch not points to trapreg_sv
-  	la	t2, mscratch_save   // TODO Lost t2 here
+  	la	t2, mscratch_save    
   	SREG	t1, 0(t2)		        // save old mscratch in mscratch_save region
     csrr t1, mscratch       // read the trapreg_sv address
     la  t2, mtrap_sigptr    // locate the start of the trap signature
@@ -92,11 +88,6 @@
   /****************************************************************/
   
   init_tramp:	/**** copy trampoline at mtvec tgt ****/
-  // TODO: its possible that the mtvec is at reset value and not initialized by
-  // the Boot-code. But you reached here because the trampoline address does not 
-  // satify the alignment constraints of the mtvec. restoring with t2 doesn't 
-  // achieve anything. What could be done here is to load the mtvec with a legal 
-  // value from the WARL field of the YAML.
   
   	csrw	mtvec, t2		// restore orig mtvec, will now attemp to copy trampoline to it
   	la	t3, tramptbl_sv		// addr of save area
@@ -130,14 +121,13 @@
   	
   	j	rvtest_code_end			  // failure to replace trampoline
   
-  // TODO: All the above needs to be put up in a separate macro of subsumed inside the
-  // RVTEST_CODE_BEGIN macro but before the rvtest_code_begin
 
   #define mhandler			\
     csrrw   sp, mscratch, sp;	\
     SREG      t6, 6*REGWIDTH(sp);	\
   	la t6, common_mhandler; \
   	jalr	t6, t6;			\
+    nop; \
   
   /**********************************************************************/
   /**** This is the entry point for all m-modetraps, vectored or not.****/
@@ -147,7 +137,6 @@
   /**** to a return for anything above that (which causes a mismatch)****/
   /**********************************************************************/
   mtrampoline:		// 64 or 32 entry table
-  // TODO: Earlier routine did not iterate the way expected.
   value = 0
   .rept NUM_SPECD_INTCAUSES     	  // located at each possible int vectors
      j	mtrap_handler + 32*(value)  //offset < +/- 1MB
@@ -200,8 +189,6 @@
   /**** is relocated by code start, and restored adjusted depending****/ 
   /**** on op alignment so trapped op isn't re-executed.           ****/ 
   /********************************************************************/ 
-  // TODO: the sigptr also grows downwards (i.e. increments from the previous value) just like the
-  // rest of the signature.
   common_mexcpt_handler:
           csrr   t2, mepc
   sv_mepc:	
@@ -258,7 +245,6 @@
           li      t3, 1
           sll     t3, t3, t2      /* create mask 1<<mcause */
           csrrc   t4, mip, t3     /* read, then attempt to clear int pend bit */
-          // TODO added the following to ensure the same interrupt is not taken again.
           csrrc   t4, mie, t3     /* read, then attempt to clear int pend bit */
   sv_mip:	/* note: clear has no effect on MxIP */
           SREG      t4, 2*REGWIDTH(t1) /* save 3rd sig value, (mip)  */
@@ -270,7 +256,6 @@
   	LREG	t3, 0(t3)       
   	jr	t3
   
-  // TODO: do we need to add DUT specific intrrupt clearing macros ??
   clr_sw_int:
           RVMODEL_CLEAR_MSW_INT
           j       resto_rtn   
@@ -317,8 +302,6 @@
   	.dword	resto_rtn	/* int cause 1D is reserved, just return */
   	.dword	resto_rtn	/* int cause 1E is reserved, just return */
   	.dword	resto_rtn	/* int cause 1F is reserved, just return */
-  // TODO: Maybe ensure we allocate enough space for the upcoming extensions like hypervisor
-  /* Note: add more entries if mcause>=16 are ratified */
   	
   1:	// xtvec_installed:
   ret
@@ -328,9 +311,6 @@
   // ----------------------------------------------------------------------------------------------
   // ----------------------------------------------------------------------------------------------
 
-  // TODO: The following 2 labels need to be put under the RVTEST_CODE_END. Need to ensure its after
-  // rvtest_code_end so that the entire test is within the rvtest_code_begin and rvtest_code_end and
-  // none of the boot, trap, etc. routines are part of this region.
   exit_cleanup://COMPLIANCE_HALT should get here
   	la	t3, tramptbl_sv+ 64+NUM_SPECD_INTCAUSES*8	// end of save area
   
@@ -395,28 +375,48 @@ mscratch_save:
 
 #define SEXT_IMM(x) ((x) | (-(((x) >> 11) & 1) << 11))
 
-#define TEST_JALR_OP(tempreg, rd, rs1, imm, swreg, offset) \
+#define TEST_JALR_OP(tempreg, rd, rs1, imm, swreg, offset,adj) \
 5:                                            ;\
-    la rs1, 3f-imm                         ;\
-    j 2f                                      ;\
-                                              ;\
-2:  jalr rd, imm(rs1)                         ;\
+    la rd,5b                                  ;\
+    .if adj & 1 == 1                          ;\
+    la rs1, 3f-imm+adj-1                      ;\
+    jalr rd, imm+1(rs1)                      ;\
+    .else                                     ;\
+    la rs1, 3f-imm+adj                        ;\
+    .endif                                    ;\
+    jalr rd, imm(rs1)                         ;\
+    nop                                       ;\
+    nop                                       ;\
     xori rd,rd, 0x2                           ;\
     j 4f                                      ;\
                                               ;\
-3:  xori rd,rd, 0x3                           ;\
+3:  .if adj & 2 == 2                              ;\
+    .fill 2,1,0x00                          ;\
+    .endif                                    ;\
+    xori rd,rd, 0x3                           ;\
+    j 4f                                      ;\
+    .if adj&2 == 2                              ;\
+    .fill 2,1,0x00                     ;\
+    .endif                                    ;\
                                               ;\
 4: la tempreg, 5b                             ;\
    andi tempreg,tempreg,~(3)                  ;\
     sub rd,rd,tempreg                          ;\
   SREG rd, offset(swreg);
 
-#define TEST_JAL_OP(tempreg, rd, imm, label, swreg, offset) \
+#define TEST_JAL_OP(tempreg, rd, imm, label, swreg, offset, adj)\
 5:                                           ;\
+    la rd,5b                                  ;\
     la tempreg, 2f                           ;\
     jalr x0,0(tempreg)                       ;\
-1:  xori rd,rd, 0x1                           ;\
+1:  .if adj & 2 == 2                         ;\
+    .fill 2,1,0x00                          ;\
+    .endif                                    ;\
+    xori rd,rd, 0x1                           ;\
     j 4f                                      ;\
+    .if adj & 2 == 2                              ;\
+    .fill 2,1,0x00                          ;\
+    .endif                                    ;\
     .if (imm/2) - 2 >= 0                      ;\
         .set num,(imm/2)-2                    ;\
     .else                                     ;\
@@ -429,7 +429,11 @@ mscratch_save:
     nop                                       ;\
     .endr                                     ;\
                                               ;\
-2:  jal rd, label                       ;\
+2:  jal rd, label+(adj)                    ;\
+    .if adj & 2 == 2                              ;\
+    nop                                       ;\
+    nop                                       ;\
+    .endif                                    ;\
     xori rd,rd, 0x2                           ;\
     j 4f                                      ;\
     .if (imm/2) - 3 >= 0                      ;\
@@ -443,23 +447,34 @@ mscratch_save:
     .rept num                                 ;\
     nop                                       ;\
     .endr                                     ;\
-                                              ;\
-3:  xori rd,rd, 0x3                           ;\
-                                              ;\
+3:  .if adj & 2 == 2                              ;\
+    .fill 2,1,0x00                          ;\
+    .endif                                    ;\
+    xori rd,rd, 0x3                           ;\
+    j 4f                                      ;\
+    .if adj&2 == 2                              ;\
+    .fill 2,1,0x00                     ;\
+    .endif                                    ;\
 4: la tempreg, 5b                             ;\
    andi tempreg,tempreg,~(3)                  ;\
     sub rd,rd,tempreg                          ;\
   SREG rd, offset(swreg);
 
-#define TEST_BRANCH_OP(inst, tempreg, reg1, reg2, val1, val2, imm, label, swreg, offset) \
+#define TEST_BRANCH_OP(inst, tempreg, reg1, reg2, val1, val2, imm, label, swreg, offset,adj) \
     li reg1, MASK_XLEN(val1)                  ;\
     li reg2, MASK_XLEN(val2)                  ;\
     j 2f                                      ;\
                                               ;\
-1:  li tempreg, 0x1                           ;\
+1:  .if adj & 2 == 2                         ;\
+    .fill 2,1,0x00                          ;\
+    .endif                                    ;\
+    li tempreg, 0x1                           ;\
     j 4f                                      ;\
-    .if (imm/4) - 2 >= 0                      ;\
-        .set num,(imm/4)-2                    ;\
+    .if adj & 2 == 2                              ;\
+    .fill 2,1,0x00                          ;\
+    .endif                                    ;\
+    .if (imm/2) - 2 >= 0                      ;\
+        .set num,(imm/2)-2                    ;\
     .else                                     ;\
         .set num,0                            ;\
     .endif                                    ;\
@@ -470,7 +485,7 @@ mscratch_save:
     nop                                       ;\
     .endr                                     ;\
                                               ;\
-2:  inst reg1, reg2, label                    ;\
+2:  inst reg1, reg2, label+adj                ;\
     li tempreg, 0x2                           ;\
     j 4f                                      ;\
     .if (imm/4) - 3 >= 0                      ;\
@@ -485,7 +500,14 @@ mscratch_save:
     nop                                       ;\
     .endr                                     ;\
                                               ;\
-3:  li tempreg, 0x3                           ;\
+3:  .if adj & 2 == 2                              ;\
+    .fill 2,1,0x00                          ;\
+    .endif                                    ;\
+    li tempreg, 0x3                           ;\
+    j 4f                                      ;\
+    .if adj&2 == 2                              ;\
+    .fill 2,1,0x00                     ;\
+    .endif                                    ;\
                                               ;\
 4:  SREG tempreg, offset(swreg);                
 
@@ -494,11 +516,15 @@ li rs2,rs2_val                                                             ;\
 addi rs1,swreg,offset+adj                                                     ;\
 li testreg,imm_val                                                         ;\
 sub rs1,rs1,testreg                                                          ;\
-inst rs2, imm_val(rs1)                                                   
+inst rs2, imm_val(rs1)                                                      ;\
+nop                                                                         ;\
+nop                                                                         
 
 #define TEST_LOAD(swreg,testreg,index,rs1,destreg,imm_val,offset,inst,adj)   ;\
 la rs1,rvtest_data+(index*4)+adj-imm_val                                      ;\
 inst destreg, imm_val(rs1)                                                   ;\
+nop                                                                         ;\
+nop                                                                         ;\
 SREG destreg, offset(swreg);
 
 #define TEST_CSR_FIELD(ADDRESS,TEMP_REG,MASK_REG,NEG_MASK_REG,VAL,DEST_REG,OFFSET,BASE_REG) \
@@ -514,8 +540,9 @@ SREG destreg, offset(swreg);
 
 #define TEST_CASE(testreg, destreg, correctval, swreg, offset, code... ) \
     code; \
-    SREG destreg, offset(swreg); \
-    RVMODEL_IO_ASSERT_GPR_EQ(testreg, destreg, correctval) \
+    SREG destreg, offset(swreg); 
+
+//   RVMODEL_IO_ASSERT_GPR_EQ(testreg, destreg, correctval)
 
 
 #define TEST_AUIPC(inst, destreg, correctval, imm, swreg, offset, testreg) \

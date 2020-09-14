@@ -29,19 +29,19 @@
 # Description: Makefrag for RV64IM compliance tests
 
 rv64im_sc_tests = \
-  Div \
-  Divu \
-  Divuw \
-  Divw \
-  Mul \
-  Mulh \
-  Mulhsu \
-  Mulhu \
-  Mulw \
-  Rem \
-  Remu \
-  Remuw \
-  Remw 
+  div-01 \
+  divu-01 \
+  divuw-01 \
+  divw-01 \
+  mul-01 \
+  mulh-01 \
+  mulhsu-01 \
+  mulhu-01 \
+  mulw-01 \
+  rem-01 \
+  remu-01 \
+  remuw-01 \
+  remw-01 
 
 rv64im_tests = $(addsuffix .elf, $(rv64im_sc_tests))
 

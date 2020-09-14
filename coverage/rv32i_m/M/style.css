@@ -85,6 +85,22 @@ span.failed, .failed .col-result {
 	font-weight: bold
 }
 
+#sizes-table {
+	border: 1px solid #cccccc;
+	color: #313131;
+	font-size: 12px;
+	width: 100%
+}
+
+#sizes-table th, #sizes-table td {
+	padding: 5px;
+	border: 1px solid #E6E6E6;
+	text-align: left
+}
+#sizes-table th {
+	font-weight: bold
+}
+
 #yaml-table {
 	border: 1px solid #cccccc;
 	color: #313131;

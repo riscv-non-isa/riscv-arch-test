@@ -28,32 +28,32 @@
 # Description: Makefrag for RV32I compliance tests
 
 rv32i_sc_tests = \
-  Cadd \
-  Caddi \
-  Caddi16sp \
-  Caddi4spn \
-  Cand \
-  Candi \
-  Cbeqz \
-  Cbnez \
-  Cj \
-  Cjal \
-  Cjalr \
-  Cjr \
-  Cli \
-  Clui \
-  Clw \
-  Clwsp \
-  Cmv \
-  Cnop \
-  Cor \
-  Cslli \
-  Csrai \
-  Csrli \
-  Csub \
-  Csw \
-  Cswsp \
-  Cxor
+  cadd-01 \
+  caddi-01 \
+  caddi16sp-01 \
+  caddi4spn-01 \
+  cand-01 \
+  candi-01 \
+  cbeqz-01 \
+  cbnez-01 \
+  cj-01 \
+  cjal-01 \
+  cjalr-01 \
+  cjr-01 \
+  cli-01 \
+  clui-01 \
+  clw-01 \
+  clwsp-01 \
+  cmv-01 \
+  cnop-01 \
+  cor-01 \
+  cslli-01 \
+  csrai-01 \
+  csrli-01 \
+  csub-01 \
+  csw-01 \
+  cswsp-01 \
+  cxor-01
 
 
 rv32i_tests = $(addsuffix .elf, $(rv32i_sc_tests))

@@ -28,43 +28,43 @@
 # Description: Makefrag for RV32I compliance tests
 
 rv32i_sc_tests = \
-  Add \
-  Addi \
-  And \
-  Andi \
-  Auipc \
-  Beq \
-  Bge \
-  Bgeu \
-  Blt \
-  Bltu \
-  Bne \
-  Jal \
-  Jalr \
-  Lb-align \
-  Lbu-align \
-  Lh-align \
-  Lhu-align \
-  Lui \
-  Lw-align \
-  Or \
-  Ori \
-  Sb-align \
-  Sh-align \
-  Sll \
-  Slli \
-  Slt \
-  Slti \
-  Sltiu \
-  Sltu \
-  Sra \
-  Srai \
-  Srl \
-  Srli \
-  Sub \
-  Sw-align \
-  Xor \
-  Xori
+  add-01 \
+  addi-01 \
+  and-01 \
+  andi-01 \
+  auipc-01 \
+  beq-01 \
+  bge-01 \
+  bgeu-01 \
+  blt-01 \
+  bltu-01 \
+  bne-01 \
+  jal-01 \
+  jalr-01 \
+  lb-align-01 \
+  lbu-align-01 \
+  lh-align-01 \
+  lhu-align-01 \
+  lui-01 \
+  lw-align-01 \
+  or-01 \
+  ori-01 \
+  sb-align-01 \
+  sh-align-01 \
+  sll-01 \
+  slli-01 \
+  slt-01 \
+  slti-01 \
+  sltiu-01 \
+  sltu-01 \
+  sra-01 \
+  srai-01 \
+  srl-01 \
+  srli-01 \
+  sub-01 \
+  sw-align-01 \
+  xor-01 \
+  xori-01
 
 
 rv32i_tests = $(addsuffix .elf, $(rv32i_sc_tests))

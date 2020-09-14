@@ -15,7 +15,7 @@ misalign-lh:
   opcode:
     coverage: 1/1
     detail:
-      - lh: 4
+      - lh: 1
   val_comb:
     coverage: 1/1
     detail:
@@ -25,7 +25,7 @@ misalign-lhu:
   opcode:
     coverage: 1/1
     detail:
-      - lhu: 4
+      - lhu: 1
   val_comb:
     coverage: 1/1
     detail:
@@ -35,7 +35,7 @@ misalign-lw:
   opcode:
     coverage: 1/1
     detail:
-      - lw: 4
+      - lw: 3
   val_comb:
     coverage: 3/3
     detail:
@@ -47,7 +47,7 @@ misalign-sh:
   opcode:
     coverage: 1/1
     detail:
-      - sh: 4
+      - sh: 1
   val_comb:
     coverage: 1/1
     detail:
@@ -57,39 +57,39 @@ misalign-sw:
   opcode:
     coverage: 1/1
     detail:
-      - sw: 44
+      - sw: 3
   val_comb:
     coverage: 3/3
     detail:
       - ea_align == 1: 1
       - ea_align == 2: 1
-      - ea_align == 3: 11
+      - ea_align == 3: 1
 misalign2-jalr:
   coverage: 2/2
   opcode:
     coverage: 1/1
     detail:
-      - jalr: 15
+      - jalr: 1
   val_comb:
     coverage: 1/1
     detail:
-      - ea_align == 2: 3
+      - ea_align == 2: 1
 misalign1-jalr:
   coverage: 2/2
   opcode:
     coverage: 1/1
     detail:
-      - jalr: 15
+      - jalr: 1
   val_comb:
     coverage: 1/1
     detail:
-      - ea_align == 1: 5
+      - ea_align == 1: 1
 misalign-jal:
   coverage: 2/2
   opcode:
     coverage: 1/1
     detail:
-      - jal: 23
+      - jal: 2
   val_comb:
     coverage: 1/1
     detail:
@@ -103,7 +103,7 @@ misalign-bge:
   val_comb:
     coverage: 1/1
     detail:
-      - ea_align == 2: 1
+      -  rs1_val>rs2_val and ea_align == 2: 1
 misalign-bgeu:
   coverage: 2/2
   opcode:
@@ -113,7 +113,7 @@ misalign-bgeu:
   val_comb:
     coverage: 1/1
     detail:
-      - ea_align == 2: 1
+      -  rs1_val>rs2_val and ea_align == 2: 1
 misalign-blt:
   coverage: 2/2
   opcode:
@@ -123,7 +123,7 @@ misalign-blt:
   val_comb:
     coverage: 1/1
     detail:
-      - ea_align == 2: 1
+      -  rs1_val<rs2_val and ea_align == 2: 1
 misalign-bltu:
   coverage: 2/2
   opcode:
@@ -133,7 +133,7 @@ misalign-bltu:
   val_comb:
     coverage: 1/1
     detail:
-      - ea_align == 2: 1
+      -  rs1_val<rs2_val and ea_align == 2: 1
 misalign-bne:
   coverage: 2/2
   opcode:
@@ -143,7 +143,7 @@ misalign-bne:
   val_comb:
     coverage: 1/1
     detail:
-      - ea_align == 2: 1
+      -  rs1_val!=rs2_val and ea_align == 2: 1
 misalign-beq:
   coverage: 2/2
   opcode:
@@ -153,5 +153,4 @@ misalign-beq:
   val_comb:
     coverage: 1/1
     detail:
-      - ea_align == 2: 1
-
+      -  rs1_val==rs2_val and ea_align == 2: 1
