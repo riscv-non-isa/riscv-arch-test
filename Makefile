@@ -12,7 +12,7 @@ empty:=
 comma:= ,
 space:= $(empty) $(empty)
 
-export XLEN 							?= 32
+export XLEN 							?= 64
 export RISCV_TARGET       ?= spike
 export RISCV_DEVICE       ?= I
 export RISCV_PREFIX       ?= riscv$(XLEN)-unknown-elf-
