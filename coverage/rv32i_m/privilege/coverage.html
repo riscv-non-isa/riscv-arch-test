@@ -2900,8 +2900,8 @@ val_comb:
         
         <tbody class= "  results-table-row" >
         <tr>
-          <td class="col-name">misalign-jalr</td>
-          <td class="col-result">3/3</td>
+          <td class="col-name">misalign2-jalr</td>
+          <td class="col-result">2/2</td>
           <td class="col-percentage">100.00%
             <div class="meter">
               <span style="width: 100.00%"></span>
@@ -2909,19 +2909,40 @@ val_comb:
           </td>          
         <tr>
           <td class="extra" colspan="2">
-          <div class="log">coverage: 3/3
+          <div class="log">coverage: 2/2
 opcode:
      coverage: 1/1
      detail:
         - jalr: 15
 val_comb:
-     coverage: 2/2
+     coverage: 1/1
      detail:
-        - rs1_val % 4 == 2: 3
-        - rs1_val % 2 == 1: 5
+        - ea_align == 2: 3
 </br></div></td>
         </tr></tbody>
-        
+ 
+        <tbody class= "  results-table-row" >
+        <tr>
+          <td class="col-name">misalign1-jalr</td>
+          <td class="col-result">2/2</td>
+          <td class="col-percentage">100.00%
+            <div class="meter">
+              <span style="width: 100.00%"></span>
+            </div>
+          </td>          
+        <tr>
+          <td class="extra" colspan="2">
+          <div class="log">coverage: 2/2
+opcode:
+     coverage: 1/1
+     detail:
+        - jalr: 15
+val_comb:
+     coverage: 1/1
+     detail:
+        - ea_align == 1: 5
+</br></div></td>
+        </tr></tbody>       
         <tbody class= "  results-table-row" >
         <tr>
           <td class="col-name">misalign-jal</td>

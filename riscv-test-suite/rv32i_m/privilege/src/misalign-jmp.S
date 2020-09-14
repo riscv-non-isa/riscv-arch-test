@@ -76,8 +76,8 @@ RVTEST_CODE_BEGIN
 #                 difficult for the golden model to replicate the behaviour of DUT.
 
 #ifdef TEST_CASE_1
-    RVTEST_CASE(1,"// check ISA:=regex(.*32.*); check ISA:=regex(.*I.*C.*); def TEST_CASE_1=True;", misalign-jal, misalign-beq, misalign-bge, misalign-bgeu, misalign-blt, misalign-bltu, misalign-bne, misalign-jalr)
-    RVTEST_CASE(2,"// check ISA:=regex(.*32.*); check ISA:=regex(.*I.*Zicsr.*); check ISA:=regex(^[^C]+$); def TEST_CASE_1=True;def rvtest_mtrap_routine=True;", misalign-jal, misalign-beq, misalign-bge, misalign-bgeu, misalign-blt, misalign-bltu, misalign-bne, misalign-jalr)
+    RVTEST_CASE(1,"// check ISA:=regex(.*32.*); check ISA:=regex(.*I.*C.*); def TEST_CASE_1=True;", misalign-jal, misalign-beq, misalign-bge, misalign-bgeu, misalign-blt, misalign-bltu, misalign-bne, misalign2-jalr)
+    RVTEST_CASE(2,"// check ISA:=regex(.*32.*); check ISA:=regex(.*I.*Zicsr.*); check ISA:=regex(^[^C]+$); def TEST_CASE_1=True;def rvtest_mtrap_routine=True;", misalign-jal, misalign-beq, misalign-bge, misalign-bgeu, misalign-blt, misalign-bltu, misalign-bne, misalign2-jalr)
     # ---------------------------------------------------------------------------------------------
     RVMODEL_IO_WRITE_STR(x30, "# Test part A1 - test JALR\n");
 
@@ -376,7 +376,7 @@ RVTEST_CODE_BEGIN
 #            bit of the result to zero.  
  
 #ifdef TEST_CASE_3
-    RVTEST_CASE(3,"// check ISA:=regex(.*32.*); check ISA:=regex(.*I.*); def TEST_CASE_3=True;", misalign-jalr)
+    RVTEST_CASE(3,"// check ISA:=regex(.*32.*); check ISA:=regex(.*I.*); def TEST_CASE_3=True;", misalign2-jalr)
     # ---------------------------------------------------------------------------------------------
     RVMODEL_IO_WRITE_STR(x30, "# Test part A1 - test JALR without exception\n");
 
