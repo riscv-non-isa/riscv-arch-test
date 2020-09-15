@@ -11,32 +11,32 @@ RVTEST_CODE_BEGIN
 
 #ifdef TEST_CASE_1
 
-RVTEST_CASE(0,"//check ISA:=regex(.*64.*);check ISA:=regex(.*I.*); check hw_data_misaligned_support:=True;def TEST_CASE_1=True;",misalign-sd)
+RVTEST_CASE(0,"//check ISA:=regex(.*64.*);check ISA:=regex(.*I.*); check hw_data_misaligned_support:=True; def rvtest_mtrap_routine=True;def TEST_CASE_1=True;",misalign-sd)
 
 RVTEST_CASE(1,"//check ISA:=regex(.*64.*);check ISA:=regex(.*I.*Zicsr.*); check hw_data_misaligned_support:=False; def rvtest_mtrap_routine=True;def TEST_CASE_1=True;",misalign-sd)
 
 la x1,signature_x1_1
 
-# opcode: sd; op1:x10; op2:x11; op2val:0x0000010000000000; immval: -129; align:1
-TEST_STORE(x1,x2,0,x10,x11,0x0000010000000000,-129,0,sd,1)
+# opcode: sd; op1:x10; op2:x11; op2val:0x0000000000000005; immval: 64; align:1
+TEST_STORE(x1,x2,0,x10,x11,0x0000000000000005,64,0,sd,1)
 
-# opcode: sd; op1:x10; op2:x11; op2val:0xffffffdfffffffff; immval: 2047; align:2
-TEST_STORE(x1,x2,0,x10,x11,0xffffffdfffffffff,2047,8,sd,2)
+# opcode: sd; op1:x10; op2:x11; op2val:0xfffffffffff7ffff; immval: 7; align:2
+TEST_STORE(x1,x2,0,x10,x11,0xfffffffffff7ffff,7,8,sd,2)
 
-# opcode: sd; op1:x10; op2:x11; op2val:0xffffffff7fffffff; immval: -1; align:3
-TEST_STORE(x1,x2,0,x10,x11,0xffffffff7fffffff,-1,16,sd,3)
+# opcode: sd; op1:x10; op2:x11; op2val:0x0000000000200000; immval: 5; align:3
+TEST_STORE(x1,x2,0,x10,x11,0x0000000000200000,5,16,sd,3)
 
-# opcode: sd; op1:x10; op2:x11; op2val:0x0000000000000002; immval: 64; align:4
-TEST_STORE(x1,x2,0,x10,x11,0x0000000000000002,64,24,sd,4)
+# opcode: sd; op1:x10; op2:x11; op2val:0xffffffffffffbfff; immval: -9; align:4
+TEST_STORE(x1,x2,0,x10,x11,0xffffffffffffbfff,-9,24,sd,4)
 
-# opcode: sd; op1:x10; op2:x11; op2val:0x0000000000000020; immval: -5; align:5
-TEST_STORE(x1,x2,0,x10,x11,0x0000000000000020,-5,32,sd,5)
+# opcode: sd; op1:x10; op2:x11; op2val:0xfeffffffffffffff; immval: 1; align:5
+TEST_STORE(x1,x2,0,x10,x11,0xfeffffffffffffff,1,32,sd,5)
 
-# opcode: sd; op1:x10; op2:x11; op2val:0xfffeffffffffffff; immval: 16; align:6
-TEST_STORE(x1,x2,0,x10,x11,0xfffeffffffffffff,16,40,sd,6)
+# opcode: sd; op1:x10; op2:x11; op2val:0x0000000000002000; immval: -8; align:6
+TEST_STORE(x1,x2,0,x10,x11,0x0000000000002000,-8,40,sd,6)
 
-# opcode: sd; op1:x10; op2:x11; op2val:0xfffffeffffffffff; immval: -257; align:7
-TEST_STORE(x1,x2,0,x10,x11,0xfffffeffffffffff,-257,48,sd,7)
+# opcode: sd; op1:x10; op2:x11; op2val:0xffffffffffffffbf; immval: -8; align:7
+TEST_STORE(x1,x2,0,x10,x11,0xffffffffffffffbf,-8,48,sd,7)
 #endif
 
 

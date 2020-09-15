@@ -11,14 +11,14 @@ RVTEST_CODE_BEGIN
 
 #ifdef TEST_CASE_1
 
-RVTEST_CASE(0,"//check ISA:=regex(.*32.*);check ISA:=regex(.*I.*C.*);def TEST_CASE_1=True;",misalign2-jalr)
+RVTEST_CASE(0,"//check ISA:=regex(.*32.*);check ISA:=regex(.*I.*C.*); def rvtest_mtrap_routine=True;def TEST_CASE_1=True;",misalign2-jalr)
 
 RVTEST_CASE(1,"//check ISA:=regex(.*32.*);check ISA:=regex(.*I.*Zicsr.*); check ISA:=regex(^[^C]+$); def rvtest_mtrap_routine=True;def TEST_CASE_1=True;",misalign2-jalr)
 
 la x1,signature_x1_1
 
-# opcode: jalr; op1:x10; dest:x11; immval:64; align: 2 
-TEST_JALR_OP(x2, x11, x10, 64, x1, 0,2)
+# opcode: jalr; op1:x10; dest:x11; immval:0; align: 2 
+TEST_JALR_OP(x2, x11, x10, 0, x1, 0,2)
 #endif
 
 

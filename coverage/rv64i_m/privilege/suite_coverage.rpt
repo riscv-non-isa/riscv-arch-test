@@ -10,12 +10,6 @@ ebreak:
     coverage: 1/1
     detail:
       - ebreak: 1
-fencei:
-  coverage: 0/1
-  opcode:
-    coverage: 0/1
-    detail:
-      - fence.i: 0
 misalign-lh:
   coverage: 2/2
   opcode:

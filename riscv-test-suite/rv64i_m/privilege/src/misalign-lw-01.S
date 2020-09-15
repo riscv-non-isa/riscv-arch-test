@@ -11,20 +11,20 @@ RVTEST_CODE_BEGIN
 
 #ifdef TEST_CASE_1
 
-RVTEST_CASE(0,"//check ISA:=regex(.*64.*);check ISA:=regex(.*I.*); check hw_data_misaligned_support:=True;def TEST_CASE_1=True;",misalign-lw)
+RVTEST_CASE(0,"//check ISA:=regex(.*64.*);check ISA:=regex(.*I.*); check hw_data_misaligned_support:=True; def rvtest_mtrap_routine=True;def TEST_CASE_1=True;",misalign-lw)
 
 RVTEST_CASE(1,"//check ISA:=regex(.*64.*);check ISA:=regex(.*I.*Zicsr.*); check hw_data_misaligned_support:=False; def rvtest_mtrap_routine=True;def TEST_CASE_1=True;",misalign-lw)
 
 la x1,signature_x1_1
 
-# opcode:lw op1:x10; dest:x11; immval:-257; align:1
-TEST_LOAD(x1,x2,0,x10,x11,-257,0,lw,1)
+# opcode:lw op1:x10; dest:x11; immval:1365; align:1
+TEST_LOAD(x1,x2,0,x10,x11,1365,0,lw,1)
 
-# opcode:lw op1:x10; dest:x11; immval:2047; align:2
-TEST_LOAD(x1,x2,0,x10,x11,2047,8,lw,2)
+# opcode:lw op1:x10; dest:x11; immval:128; align:2
+TEST_LOAD(x1,x2,0,x10,x11,128,8,lw,2)
 
-# opcode:lw op1:x10; dest:x11; immval:1024; align:3
-TEST_LOAD(x1,x2,0,x10,x11,1024,16,lw,3)
+# opcode:lw op1:x10; dest:x11; immval:-17; align:3
+TEST_LOAD(x1,x2,0,x10,x11,-17,16,lw,3)
 #endif
 
 

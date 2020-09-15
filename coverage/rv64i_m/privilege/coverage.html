@@ -253,7 +253,7 @@ function is_all_rows_hidden(value) {
 
 </script>
     <h1></h1>
-    <p>Report generated on 2020-09-15 12:54 GMT by <a href="https://pypi.python.org/pypi/riscof">riscof</a> v1.16.0</p>
+    <p>Report generated on 2020-09-15 13:07 GMT by <a href="https://pypi.python.org/pypi/riscof">riscof</a> v1.16.0</p>
     <h2>Environment</h2>
     <table id="environment">
       <tr>
@@ -264,7 +264,7 @@ function is_all_rows_hidden(value) {
         <td>sail c simulator</td></tr>
       <tr>
         <td>ISA</td>
-        <td>RV64IMCZicsr</td></tr>
+        <td>RV64IMCZicsr_Zifencei</td></tr>
       <tr>
         <td>User Spec Version</td>
         <td>2.3</td></tr>
@@ -284,7 +284,7 @@ function is_all_rows_hidden(value) {
             <td class="col-yname">/scratch/git-repo/incoresemi/riscof/riscof_work/sail_isa_checked.yaml</td></tr>
           <tr>
             <td class="extra" colspan="1">
-              <div class="log">ISA: RV64IMCZicsr
+              <div class="log">ISA: RV64IMCZicsr_Zifencei
 User_Spec_Version: '2.3'
 supported_xlen:
 - 64
@@ -296,8 +296,8 @@ misa:
   rv64:
     accessible: true
     fields:
-    - extensions
     - mxl
+    - extensions
     -
       -
         - 26
@@ -325,25 +325,25 @@ mstatus:
   rv64:
     accessible: true
     fields:
-    - xs
-    - sxl
-    - uie
-    - tw
-    - mxr
     - tvm
-    - mpie
     - mie
-    - sum
-    - tsr
     - spp
+    - sd
+    - sie
+    - sxl
+    - mprv
+    - tw
     - spie
     - mpp
-    - mprv
-    - sie
-    - sd
+    - sum
+    - uie
     - uxl
-    - fs
     - upie
+    - xs
+    - mpie
+    - fs
+    - mxr
+    - tsr
     -
       -
         - 2
@@ -605,15 +605,15 @@ mip:
   rv64:
     accessible: true
     fields:
+    - ueip
     - meip
-    - ssip
-    - usip
     - stip
-    - utip
+    - msip
+    - usip
     - seip
     - mtip
-    - ueip
-    - msip
+    - utip
+    - ssip
     -
       -
         - 2
@@ -695,14 +695,14 @@ mie:
   rv64:
     accessible: true
     fields:
-    - seie
+    - ssie
+    - utie
     - usie
+    - stie
     - mtie
     - msie
-    - utie
-    - ssie
+    - seie
     - ueie
-    - stie
     - meie
     -
       -
@@ -2424,70 +2424,70 @@ stval_condition_writes:
         <tbody class= "  sizes-table-row" >
         <tr>
           <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv64i_m/privilege/src/misalign-beq-01.S</td>
-          <td class="col-tfprint">4744</td>          
-          <td class="col-tcode">80</td>          
-          <td class="col-tdata">4</td>          
-          <td class="col-tsign">16</td>          
+          <td class="col-tfprint">6600</td>          
+          <td class="col-tcode">84</td>          
+          <td class="col-tdata">148</td>          
+          <td class="col-tsign">528</td>          
           <td class="col-tcov">{'misalign-beq'}</td>          
         </tr></tbody>
         
         <tbody class= "  sizes-table-row" >
         <tr>
           <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv64i_m/privilege/src/misalign-bge-01.S</td>
-          <td class="col-tfprint">4772</td>          
-          <td class="col-tcode">112</td>          
-          <td class="col-tdata">4</td>          
-          <td class="col-tsign">16</td>          
+          <td class="col-tfprint">6596</td>          
+          <td class="col-tcode">68</td>          
+          <td class="col-tdata">148</td>          
+          <td class="col-tsign">528</td>          
           <td class="col-tcov">{'misalign-bge'}</td>          
         </tr></tbody>
         
         <tbody class= "  sizes-table-row" >
         <tr>
           <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv64i_m/privilege/src/misalign-bgeu-01.S</td>
-          <td class="col-tfprint">4724</td>          
-          <td class="col-tcode">64</td>          
-          <td class="col-tdata">4</td>          
-          <td class="col-tsign">16</td>          
+          <td class="col-tfprint">6612</td>          
+          <td class="col-tcode">84</td>          
+          <td class="col-tdata">148</td>          
+          <td class="col-tsign">528</td>          
           <td class="col-tcov">{'misalign-bgeu'}</td>          
         </tr></tbody>
         
         <tbody class= "  sizes-table-row" >
         <tr>
           <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv64i_m/privilege/src/misalign-blt-01.S</td>
-          <td class="col-tfprint">4736</td>          
-          <td class="col-tcode">80</td>          
-          <td class="col-tdata">4</td>          
-          <td class="col-tsign">16</td>          
+          <td class="col-tfprint">6608</td>          
+          <td class="col-tcode">84</td>          
+          <td class="col-tdata">148</td>          
+          <td class="col-tsign">528</td>          
           <td class="col-tcov">{'misalign-blt'}</td>          
         </tr></tbody>
         
         <tbody class= "  sizes-table-row" >
         <tr>
           <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv64i_m/privilege/src/misalign-bltu-01.S</td>
-          <td class="col-tfprint">4724</td>          
-          <td class="col-tcode">64</td>          
-          <td class="col-tdata">4</td>          
-          <td class="col-tsign">16</td>          
+          <td class="col-tfprint">6592</td>          
+          <td class="col-tcode">68</td>          
+          <td class="col-tdata">148</td>          
+          <td class="col-tsign">528</td>          
           <td class="col-tcov">{'misalign-bltu'}</td>          
         </tr></tbody>
         
         <tbody class= "  sizes-table-row" >
         <tr>
           <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv64i_m/privilege/src/misalign-bne-01.S</td>
-          <td class="col-tfprint">4736</td>          
-          <td class="col-tcode">80</td>          
-          <td class="col-tdata">4</td>          
-          <td class="col-tsign">16</td>          
+          <td class="col-tfprint">6592</td>          
+          <td class="col-tcode">68</td>          
+          <td class="col-tdata">148</td>          
+          <td class="col-tsign">528</td>          
           <td class="col-tcov">{'misalign-bne'}</td>          
         </tr></tbody>
         
         <tbody class= "  sizes-table-row" >
         <tr>
           <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv64i_m/privilege/src/misalign-jal-01.S</td>
-          <td class="col-tfprint">4760</td>          
-          <td class="col-tcode">96</td>          
-          <td class="col-tdata">4</td>          
-          <td class="col-tsign">16</td>          
+          <td class="col-tfprint">6616</td>          
+          <td class="col-tcode">100</td>          
+          <td class="col-tdata">148</td>          
+          <td class="col-tsign">528</td>          
           <td class="col-tcov">{'misalign-jal'}</td>          
         </tr></tbody>
         
@@ -2544,8 +2544,8 @@ stval_condition_writes:
         <tbody class= "  sizes-table-row" >
         <tr>
           <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv64i_m/privilege/src/misalign-sd-01.S</td>
-          <td class="col-tfprint">6820</td>          
-          <td class="col-tcode">244</td>          
+          <td class="col-tfprint">6792</td>          
+          <td class="col-tcode">228</td>          
           <td class="col-tdata">148</td>          
           <td class="col-tsign">576</td>          
           <td class="col-tcov">{'misalign-sd'}</td>          
@@ -2554,8 +2554,8 @@ stval_condition_writes:
         <tbody class= "  sizes-table-row" >
         <tr>
           <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv64i_m/privilege/src/misalign-sh-01.S</td>
-          <td class="col-tfprint">6572</td>          
-          <td class="col-tcode">52</td>          
+          <td class="col-tfprint">6560</td>          
+          <td class="col-tcode">36</td>          
           <td class="col-tdata">148</td>          
           <td class="col-tsign">528</td>          
           <td class="col-tcov">{'misalign-sh'}</td>          
@@ -2564,7 +2564,7 @@ stval_condition_writes:
         <tbody class= "  sizes-table-row" >
         <tr>
           <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv64i_m/privilege/src/misalign-sw-01.S</td>
-          <td class="col-tfprint">6648</td>          
+          <td class="col-tfprint">6652</td>          
           <td class="col-tcode">116</td>          
           <td class="col-tdata">148</td>          
           <td class="col-tsign">544</td>          
@@ -2584,10 +2584,10 @@ stval_condition_writes:
         <tbody class= "  sizes-table-row" >
         <tr>
           <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv64i_m/privilege/src/misalign2-jalr-01.S</td>
-          <td class="col-tfprint">4744</td>          
-          <td class="col-tcode">80</td>          
-          <td class="col-tdata">4</td>          
-          <td class="col-tsign">16</td>          
+          <td class="col-tfprint">6600</td>          
+          <td class="col-tcode">84</td>          
+          <td class="col-tdata">148</td>          
+          <td class="col-tsign">528</td>          
           <td class="col-tcov">{'misalign2-jalr'}</td>          
         </tr></tbody>
         

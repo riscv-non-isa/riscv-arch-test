@@ -11,14 +11,14 @@ RVTEST_CODE_BEGIN
 
 #ifdef TEST_CASE_1
 
-RVTEST_CASE(0,"//check ISA:=regex(.*32.*);check ISA:=regex(.*I.*); check hw_data_misaligned_support:=True;def TEST_CASE_1=True;",misalign-sh)
+RVTEST_CASE(0,"//check ISA:=regex(.*32.*);check ISA:=regex(.*I.*); check hw_data_misaligned_support:=True; def rvtest_mtrap_routine=True;def TEST_CASE_1=True;",misalign-sh)
 
 RVTEST_CASE(1,"//check ISA:=regex(.*32.*);check ISA:=regex(.*I.*Zicsr.*); check hw_data_misaligned_support:=False; def rvtest_mtrap_routine=True;def TEST_CASE_1=True;",misalign-sh)
 
 la x1,signature_x1_1
 
-# opcode: sh; op1:x10; op2:x11; op2val:0x3fffffff; immval: 1; align:1
-TEST_STORE(x1,x2,0,x10,x11,0x3fffffff,1,0,sh,1)
+# opcode: sh; op1:x10; op2:x11; op2val:0xffffffef; immval: -65; align:1
+TEST_STORE(x1,x2,0,x10,x11,0xffffffef,-65,0,sh,1)
 #endif
 
 

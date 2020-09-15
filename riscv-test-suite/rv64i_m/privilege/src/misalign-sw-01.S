@@ -11,20 +11,20 @@ RVTEST_CODE_BEGIN
 
 #ifdef TEST_CASE_1
 
-RVTEST_CASE(0,"//check ISA:=regex(.*64.*);check ISA:=regex(.*I.*); check hw_data_misaligned_support:=True;def TEST_CASE_1=True;",misalign-sw)
+RVTEST_CASE(0,"//check ISA:=regex(.*64.*);check ISA:=regex(.*I.*); check hw_data_misaligned_support:=True; def rvtest_mtrap_routine=True;def TEST_CASE_1=True;",misalign-sw)
 
 RVTEST_CASE(1,"//check ISA:=regex(.*64.*);check ISA:=regex(.*I.*Zicsr.*); check hw_data_misaligned_support:=False; def rvtest_mtrap_routine=True;def TEST_CASE_1=True;",misalign-sw)
 
 la x1,signature_x1_1
 
-# opcode: sw; op1:x10; op2:x11; op2val:0xffffffbfffffffff; immval: -17; align:1
-TEST_STORE(x1,x2,0,x10,x11,0xffffffbfffffffff,-17,0,sw,1)
+# opcode: sw; op1:x10; op2:x11; op2val:0x0000080000000000; immval: -513; align:1
+TEST_STORE(x1,x2,0,x10,x11,0x0000080000000000,-513,0,sw,1)
 
-# opcode: sw; op1:x10; op2:x11; op2val:0x7fffffffffffffff; immval: 256; align:2
-TEST_STORE(x1,x2,0,x10,x11,0x7fffffffffffffff,256,8,sw,2)
+# opcode: sw; op1:x10; op2:x11; op2val:0x0100000000000000; immval: -2; align:2
+TEST_STORE(x1,x2,0,x10,x11,0x0100000000000000,-2,8,sw,2)
 
-# opcode: sw; op1:x10; op2:x11; op2val:0x0000000000800000; immval: 32; align:3
-TEST_STORE(x1,x2,0,x10,x11,0x0000000000800000,32,16,sw,3)
+# opcode: sw; op1:x10; op2:x11; op2val:0xfffffffffbffffff; immval: -129; align:3
+TEST_STORE(x1,x2,0,x10,x11,0xfffffffffbffffff,-129,16,sw,3)
 #endif
 
 
