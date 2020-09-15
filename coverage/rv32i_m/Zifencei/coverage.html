@@ -253,7 +253,7 @@ function is_all_rows_hidden(value) {
 
 </script>
     <h1></h1>
-    <p>Report generated on 2020-09-14 06:08 GMT by <a href="https://pypi.python.org/pypi/riscof">riscof</a> v1.16.0</p>
+    <p>Report generated on 2020-09-15 12:49 GMT by <a href="https://pypi.python.org/pypi/riscof">riscof</a> v1.16.0</p>
     <h2>Environment</h2>
     <table id="environment">
       <tr>
@@ -294,8 +294,8 @@ misa:
   rv32:
     accessible: true
     fields:
-    - mxl
     - extensions
+    - mxl
     -
       -
         - 26
@@ -323,23 +323,23 @@ mstatus:
   rv32:
     accessible: true
     fields:
-    - mie
-    - tvm
-    - tw
     - upie
-    - mpp
-    - sum
-    - uie
-    - sd
+    - sie
     - spp
-    - xs
-    - mpie
-    - fs
-    - tsr
+    - sd
+    - mie
     - spie
+    - tw
+    - uie
+    - tsr
+    - fs
+    - sum
     - mprv
     - mxr
-    - sie
+    - mpp
+    - tvm
+    - xs
+    - mpie
     -
       -
         - 2
@@ -575,14 +575,14 @@ mip:
   rv32:
     accessible: true
     fields:
-    - usip
     - msip
-    - stip
-    - utip
-    - mtip
     - seip
     - ueip
+    - stip
     - ssip
+    - usip
+    - mtip
+    - utip
     - meip
     -
       -
@@ -665,15 +665,15 @@ mie:
   rv32:
     accessible: true
     fields:
+    - usie
+    - meie
+    - seie
+    - utie
+    - msie
+    - ssie
     - mtie
     - stie
-    - meie
-    - msie
     - ueie
-    - ssie
-    - usie
-    - utie
-    - seie
     -
       -
         - 2
@@ -2683,7 +2683,10 @@ stval_condition_writes:
       <thead id="sizes-table-head">
         <tr>
           <th class="sortable name initial-sort" col="tname">Test Name</th>
-          <th class="sortable numeric initial-sort" col="tsize">Size (Bytes)</th>
+          <th class="sortable numeric initial-sort" col="tfprint">Mem Footprint (Bytes)</th>
+          <th class="sortable numeric initial-sort" col="tcode">Code size (Bytes)</th>
+          <th class="sortable numeric initial-sort" col="tdata">Data size (Bytes)</th>
+          <th class="sortable numeric initial-sort" col="tsign">Sign size (Bytes)</th>
           <th col="tcov">Covergroups</th>
         </tr>
       </thead>
@@ -2691,8 +2694,11 @@ stval_condition_writes:
         <tbody class= "  sizes-table-row" >
         <tr>
           <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv32i_m/Zifencei/src/Fencei.S</td>
-          <td class="col-tsize">13896</td>          
-          <td class="col-tcov">['fencei']</td>          
+          <td class="col-tfprint">4744</td>          
+          <td class="col-tcode">96</td>          
+          <td class="col-tdata">0</td>          
+          <td class="col-tsign">16</td>          
+          <td class="col-tcov">{'fencei'}</td>          
         </tr></tbody>
         
       </table>
