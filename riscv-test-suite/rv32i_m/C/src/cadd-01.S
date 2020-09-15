@@ -13,305 +13,314 @@ RVTEST_CODE_BEGIN
 
 RVTEST_CASE(0,"//check ISA:=regex(.*32.*);check ISA:=regex(.*I.*C.*);def TEST_CASE_1=True;",cadd)
 
-la x8,signature_x8_1
+la x19,signature_x19_1
 
-# opcode: c.add; op1:x14; op2:x14; op1val:0xfffffff6; op2val:0x00001000
-TEST_CR_OP( c.add, x14, x14, 0x00000000, 0xfffffff6, 0x00001000, x8, 0, x2)
+# opcode: c.add; op1:x3; op2:x3; op1val:0xffefffff; op2val:0x00100000
+TEST_CR_OP( c.add, x3, x3, 0x00000000, 0xffefffff, 0x00100000, x19, 0, x21)
 
-# opcode: c.add; op1:x16; op2:x4; op1val:0x00040000; op2val:0xfffffeff
-TEST_CR_OP( c.add, x16, x4, 0x00000000, 0x00040000, 0xfffffeff, x8, 4, x2)
+# opcode: c.add; op1:x5; op2:x22; op1val:0xffffffff; op2val:0xfeffffff
+TEST_CR_OP( c.add, x5, x22, 0x00000000, 0xffffffff, 0xfeffffff, x19, 4, x21)
 
-# opcode: c.add; op1:x13; op2:x26; op1val:0x80000000; op2val:0x00080000
-TEST_CR_OP( c.add, x13, x26, 0x00000000, 0x80000000, 0x00080000, x8, 8, x2)
+# opcode: c.add; op1:x8; op2:x1; op1val:0x80000000; op2val:0x00000004
+TEST_CR_OP( c.add, x8, x1, 0x00000000, 0x80000000, 0x00000004, x19, 8, x21)
 
-# opcode: c.add; op1:x1; op2:x24; op1val:0x00000000; op2val:0xffffff7f
-TEST_CR_OP( c.add, x1, x24, 0x00000000, 0x00000000, 0xffffff7f, x8, 12, x2)
+# opcode: c.add; op1:x10; op2:x12; op1val:0x00000000; op2val:0x08000000
+TEST_CR_OP( c.add, x10, x12, 0x00000000, 0x00000000, 0x08000000, x19, 12, x21)
 
-# opcode: c.add; op1:x25; op2:x20; op1val:0x7fffffff; op2val:0xffffefff
-TEST_CR_OP( c.add, x25, x20, 0x00000000, 0x7fffffff, 0xffffefff, x8, 16, x2)
+# opcode: c.add; op1:x7; op2:x24; op1val:0x7fffffff; op2val:0x00000001
+TEST_CR_OP( c.add, x7, x24, 0x00000000, 0x7fffffff, 0x00000001, x19, 16, x21)
 
-# opcode: c.add; op1:x6; op2:x18; op1val:0x00000001; op2val:0xfdffffff
-TEST_CR_OP( c.add, x6, x18, 0x00000000, 0x00000001, 0xfdffffff, x8, 20, x2)
+# opcode: c.add; op1:x14; op2:x26; op1val:0x00000001; op2val:0x3fffffff
+TEST_CR_OP( c.add, x14, x26, 0x00000000, 0x00000001, 0x3fffffff, x19, 20, x21)
 
-# opcode: c.add; op1:x30; op2:x15; op1val:0xc0000000; op2val:0x80000000
-TEST_CR_OP( c.add, x30, x15, 0x00000000, 0xc0000000, 0x80000000, x8, 24, x2)
+# opcode: c.add; op1:x18; op2:x2; op1val:0xfffffffe; op2val:0x80000000
+TEST_CR_OP( c.add, x18, x2, 0x00000000, 0xfffffffe, 0x80000000, x19, 24, x21)
 
-# opcode: c.add; op1:x21; op2:x16; op1val:0xfffffffa; op2val:0x00000000
-TEST_CR_OP( c.add, x21, x16, 0x00000000, 0xfffffffa, 0x00000000, x8, 28, x2)
+# opcode: c.add; op1:x17; op2:x11; op1val:0xffffffef; op2val:0x00000000
+TEST_CR_OP( c.add, x17, x11, 0x00000000, 0xffffffef, 0x00000000, x19, 28, x21)
 
-# opcode: c.add; op1:x27; op2:x3; op1val:0xaaaaaaaa; op2val:0x7fffffff
-TEST_CR_OP( c.add, x27, x3, 0x00000000, 0xaaaaaaaa, 0x7fffffff, x8, 32, x2)
+# opcode: c.add; op1:x16; op2:x28; op1val:0xfffffffb; op2val:0x7fffffff
+TEST_CR_OP( c.add, x16, x28, 0x00000000, 0xfffffffb, 0x7fffffff, x19, 32, x21)
 
-# opcode: c.add; op1:x9; op2:x31; op1val:0x00000800; op2val:0x00000001
-TEST_CR_OP( c.add, x9, x31, 0x00000000, 0x00000800, 0x00000001, x8, 36, x2)
+# opcode: c.add; op1:x30; op2:x4; op1val:0x00000002; op2val:0xffdfffff
+TEST_CR_OP( c.add, x30, x4, 0x00000000, 0x00000002, 0xffdfffff, x19, 36, x21)
 
-# opcode: c.add; op1:x5; op2:x10; op1val:0x00000002; op2val:0x02000000
-TEST_CR_OP( c.add, x5, x10, 0x00000000, 0x00000002, 0x02000000, x8, 40, x2)
+# opcode: c.add; op1:x12; op2:x17; op1val:0x00000004; op2val:0x00000200
+TEST_CR_OP( c.add, x12, x17, 0x00000000, 0x00000004, 0x00000200, x19, 40, x21)
 
-# opcode: c.add; op1:x4; op2:x28; op1val:0x00000004; op2val:0xfffffff9
-TEST_CR_OP( c.add, x4, x28, 0x00000000, 0x00000004, 0xfffffff9, x8, 44, x2)
+# opcode: c.add; op1:x13; op2:x6; op1val:0x00000008; op2val:0x00000008
+TEST_CR_OP( c.add, x13, x6, 0x00000000, 0x00000008, 0x00000008, x19, 44, x21)
 
-# opcode: c.add; op1:x11; op2:x12; op1val:0x00000008; op2val:0x00000800
-TEST_CR_OP( c.add, x11, x12, 0x00000000, 0x00000008, 0x00000800, x8, 48, x2)
+# opcode: c.add; op1:x25; op2:x30; op1val:0x00000010; op2val:0x00000200
+TEST_CR_OP( c.add, x25, x30, 0x00000000, 0x00000010, 0x00000200, x19, 48, x21)
 
-# opcode: c.add; op1:x3; op2:x29; op1val:0x00000010; op2val:0xffff7fff
-TEST_CR_OP( c.add, x3, x29, 0x00000000, 0x00000010, 0xffff7fff, x8, 52, x2)
+# opcode: c.add; op1:x20; op2:x14; op1val:0x00000020; op2val:0xffffffbf
+TEST_CR_OP( c.add, x20, x14, 0x00000000, 0x00000020, 0xffffffbf, x19, 52, x21)
 
-# opcode: c.add; op1:x31; op2:x11; op1val:0x00000020; op2val:0x00000020
-TEST_CR_OP( c.add, x31, x11, 0x00000000, 0x00000020, 0x00000020, x8, 56, x2)
+# opcode: c.add; op1:x29; op2:x15; op1val:0x00000040; op2val:0xfffffff6
+TEST_CR_OP( c.add, x29, x15, 0x00000000, 0x00000040, 0xfffffff6, x19, 56, x21)
 
-# opcode: c.add; op1:x12; op2:x23; op1val:0x00000040; op2val:0xfdffffff
-TEST_CR_OP( c.add, x12, x23, 0x00000000, 0x00000040, 0xfdffffff, x8, 60, x2)
+# opcode: c.add; op1:x24; op2:x10; op1val:0x00000080; op2val:0x08000000
+TEST_CR_OP( c.add, x24, x10, 0x00000000, 0x00000080, 0x08000000, x19, 60, x21)
 
-# opcode: c.add; op1:x10; op2:x19; op1val:0x00000080; op2val:0x00000200
-TEST_CR_OP( c.add, x10, x19, 0x00000000, 0x00000080, 0x00000200, x8, 64, x2)
+# opcode: c.add; op1:x11; op2:x16; op1val:0x00000100; op2val:0x20000000
+TEST_CR_OP( c.add, x11, x16, 0x00000000, 0x00000100, 0x20000000, x19, 64, x21)
 
-# opcode: c.add; op1:x29; op2:x21; op1val:0x00000100; op2val:0xfdffffff
-TEST_CR_OP( c.add, x29, x21, 0x00000000, 0x00000100, 0xfdffffff, x8, 68, x2)
+# opcode: c.add; op1:x4; op2:x23; op1val:0x00000200; op2val:0x00100000
+TEST_CR_OP( c.add, x4, x23, 0x00000000, 0x00000200, 0x00100000, x19, 68, x21)
 
-# opcode: c.add; op1:x24; op2:x30; op1val:0x00000200; op2val:0xbfffffff
-TEST_CR_OP( c.add, x24, x30, 0x00000000, 0x00000200, 0xbfffffff, x8, 72, x2)
+# opcode: c.add; op1:x9; op2:x18; op1val:0x00000400; op2val:0xffffefff
+TEST_CR_OP( c.add, x9, x18, 0x00000000, 0x00000400, 0xffffefff, x19, 72, x21)
 
-# opcode: c.add; op1:x7; op2:x1; op1val:0x00000400; op2val:0xfffdffff
-TEST_CR_OP( c.add, x7, x1, 0x00000000, 0x00000400, 0xfffdffff, x8, 76, x2)
+# opcode: c.add; op1:x6; op2:x9; op1val:0x00000800; op2val:0x00000000
+TEST_CR_OP( c.add, x6, x9, 0x00000000, 0x00000800, 0x00000000, x19, 76, x4)
 
-# opcode: c.add; op1:x28; op2:x27; op1val:0x00001000; op2val:0x00010000
-TEST_CR_OP( c.add, x28, x27, 0x00000000, 0x00001000, 0x00010000, x8, 80, x3)
+# opcode: c.add; op1:x15; op2:x20; op1val:0x00001000; op2val:0x20000000
+TEST_CR_OP( c.add, x15, x20, 0x00000000, 0x00001000, 0x20000000, x19, 80, x4)
 
-# opcode: c.add; op1:x20; op2:x7; op1val:0x00002000; op2val:0xfffbffff
-TEST_CR_OP( c.add, x20, x7, 0x00000000, 0x00002000, 0xfffbffff, x8, 84, x3)
+# opcode: c.add; op1:x27; op2:x21; op1val:0x00002000; op2val:0xffffefff
+TEST_CR_OP( c.add, x27, x21, 0x00000000, 0x00002000, 0xffffefff, x19, 84, x4)
+la x3,signature_x3_0
 
-# opcode: c.add; op1:x0; op2:x2; op1val:0x00004000; op2val:0xffbfffff
-TEST_CR_OP( c.add, x0, x2, 0x00000000, 0x00004000, 0xffbfffff, x8, 88, x3)
-la x1,signature_x1_0
+# opcode: c.add; op1:x26; op2:x19; op1val:0x00004000; op2val:0xfffffffe
+TEST_CR_OP( c.add, x26, x19, 0x00000000, 0x00004000, 0xfffffffe, x3, 0, x4)
 
-# opcode: c.add; op1:x19; op2:x17; op1val:0x00008000; op2val:0x00002000
-TEST_CR_OP( c.add, x19, x17, 0x00000000, 0x00008000, 0x00002000, x1, 0, x3)
+# opcode: c.add; op1:x2; op2:x29; op1val:0x00008000; op2val:0x00000010
+TEST_CR_OP( c.add, x2, x29, 0x00000000, 0x00008000, 0x00000010, x3, 4, x4)
 
-# opcode: c.add; op1:x23; op2:x13; op1val:0x00010000; op2val:0xaaaaaaaa
-TEST_CR_OP( c.add, x23, x13, 0x00000000, 0x00010000, 0xaaaaaaaa, x1, 4, x3)
+# opcode: c.add; op1:x31; op2:x27; op1val:0x00010000; op2val:0xfeffffff
+TEST_CR_OP( c.add, x31, x27, 0x00000000, 0x00010000, 0xfeffffff, x3, 8, x4)
 
-# opcode: c.add; op1:x15; op2:x9; op1val:0x00020000; op2val:0x00000005
-TEST_CR_OP( c.add, x15, x9, 0x00000000, 0x00020000, 0x00000005, x1, 8, x3)
+# opcode: c.add; op1:x0; op2:x25; op1val:0x00020000; op2val:0xfbffffff
+TEST_CR_OP( c.add, x0, x25, 0x00000000, 0x00020000, 0xfbffffff, x3, 12, x4)
 
-# opcode: c.add; op1:x18; op2:x8; op1val:0x00080000; op2val:0xffffbfff
-TEST_CR_OP( c.add, x18, x8, 0x00000000, 0x00080000, 0xffffbfff, x1, 12, x3)
+# opcode: c.add; op1:x28; op2:x5; op1val:0x00040000; op2val:0x00200000
+TEST_CR_OP( c.add, x28, x5, 0x00000000, 0x00040000, 0x00200000, x3, 16, x4)
 
-# opcode: c.add; op1:x8; op2:x5; op1val:0x00100000; op2val:0xfeffffff
-TEST_CR_OP( c.add, x8, x5, 0x00000000, 0x00100000, 0xfeffffff, x1, 16, x3)
+# opcode: c.add; op1:x21; op2:x13; op1val:0x00080000; op2val:0xffffff7f
+TEST_CR_OP( c.add, x21, x13, 0x00000000, 0x00080000, 0xffffff7f, x3, 20, x4)
 
-# opcode: c.add; op1:x2; op2:x22; op1val:0x00200000; op2val:0x00000009
-TEST_CR_OP( c.add, x2, x22, 0x00000000, 0x00200000, 0x00000009, x1, 20, x3)
+# opcode: c.add; op1:x19; op2:x8; op1val:0x00100000; op2val:0x00001000
+TEST_CR_OP( c.add, x19, x8, 0x00000000, 0x00100000, 0x00001000, x3, 24, x4)
 
-# opcode: c.add; op1:x26; op2:x25; op1val:0x00400000; op2val:0x80000000
-TEST_CR_OP( c.add, x26, x25, 0x00000000, 0x00400000, 0x80000000, x1, 24, x3)
+# opcode: c.add; op1:x1; op2:x31; op1val:0x00200000; op2val:0x00000003
+TEST_CR_OP( c.add, x1, x31, 0x00000000, 0x00200000, 0x00000003, x3, 28, x4)
 
-# opcode: c.add; op1:x17; op2:x6; op1val:0x00800000; op2val:0xffffbfff
-TEST_CR_OP( c.add, x17, x6, 0x00000000, 0x00800000, 0xffffbfff, x1, 28, x3)
+# opcode: c.add; op1:x23; op2:x7; op1val:0x00400000; op2val:0xffffbfff
+TEST_CR_OP( c.add, x23, x7, 0x00000000, 0x00400000, 0xffffbfff, x3, 32, x4)
 
-# opcode: c.add; op1:x22; op2:x15; op1val:0x01000000; op2val:0xfdffffff
-TEST_CR_OP( c.add, x22, x15, 0x00000000, 0x01000000, 0xfdffffff, x1, 32, x3)
+# opcode: c.add; op1:x22; op2:x7; op1val:0x00800000; op2val:0x00000005
+TEST_CR_OP( c.add, x22, x7, 0x00000000, 0x00800000, 0x00000005, x3, 36, x4)
 
-# opcode: c.add; op1:x10; op2:x11; op1val:0x02000000; op2val:0x00010000
-TEST_CR_OP( c.add, x10, x11, 0x00000000, 0x02000000, 0x00010000, x1, 36, x3)
+# opcode: c.add; op1:x10; op2:x11; op1val:0x01000000; op2val:0xefffffff
+TEST_CR_OP( c.add, x10, x11, 0x00000000, 0x01000000, 0xefffffff, x3, 40, x4)
 
-# opcode: c.add; op1:x10; op2:x11; op1val:0x04000000; op2val:0xf7ffffff
-TEST_CR_OP( c.add, x10, x11, 0x00000000, 0x04000000, 0xf7ffffff, x1, 40, x3)
+# opcode: c.add; op1:x10; op2:x11; op1val:0x02000000; op2val:0xfffffff6
+TEST_CR_OP( c.add, x10, x11, 0x00000000, 0x02000000, 0xfffffff6, x3, 44, x4)
 
-# opcode: c.add; op1:x10; op2:x11; op1val:0x08000000; op2val:0xc0000000
-TEST_CR_OP( c.add, x10, x11, 0x00000000, 0x08000000, 0xc0000000, x1, 44, x3)
+# opcode: c.add; op1:x10; op2:x11; op1val:0x04000000; op2val:0xfffffffb
+TEST_CR_OP( c.add, x10, x11, 0x00000000, 0x04000000, 0xfffffffb, x3, 48, x4)
 
-# opcode: c.add; op1:x10; op2:x11; op1val:0x10000000; op2val:0x80000000
-TEST_CR_OP( c.add, x10, x11, 0x00000000, 0x10000000, 0x80000000, x1, 48, x3)
+# opcode: c.add; op1:x10; op2:x11; op1val:0x08000000; op2val:0x20000000
+TEST_CR_OP( c.add, x10, x11, 0x00000000, 0x08000000, 0x20000000, x3, 52, x4)
 
-# opcode: c.add; op1:x10; op2:x11; op1val:0x20000000; op2val:0x00002000
-TEST_CR_OP( c.add, x10, x11, 0x00000000, 0x20000000, 0x00002000, x1, 52, x3)
+# opcode: c.add; op1:x10; op2:x11; op1val:0x10000000; op2val:0xffffffef
+TEST_CR_OP( c.add, x10, x11, 0x00000000, 0x10000000, 0xffffffef, x3, 56, x4)
 
-# opcode: c.add; op1:x10; op2:x11; op1val:0x40000000; op2val:0x00000200
-TEST_CR_OP( c.add, x10, x11, 0x00000000, 0x40000000, 0x00000200, x1, 56, x3)
+# opcode: c.add; op1:x10; op2:x11; op1val:0x20000000; op2val:0xfffffffc
+TEST_CR_OP( c.add, x10, x11, 0x00000000, 0x20000000, 0xfffffffc, x3, 60, x4)
 
-# opcode: c.add; op1:x10; op2:x11; op1val:0xfffffffe; op2val:0xfffffff9
-TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xfffffffe, 0xfffffff9, x1, 60, x3)
+# opcode: c.add; op1:x10; op2:x11; op1val:0x40000000; op2val:0xfffffff8
+TEST_CR_OP( c.add, x10, x11, 0x00000000, 0x40000000, 0xfffffff8, x3, 64, x4)
 
-# opcode: c.add; op1:x10; op2:x11; op1val:0xfffffffd; op2val:0xffffff7f
-TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xfffffffd, 0xffffff7f, x1, 64, x3)
+# opcode: c.add; op1:x10; op2:x11; op1val:0xfffffffd; op2val:0xfffffffb
+TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xfffffffd, 0xfffffffb, x3, 68, x4)
 
-# opcode: c.add; op1:x10; op2:x11; op1val:0xfffffffb; op2val:0x00000002
-TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xfffffffb, 0x00000002, x1, 68, x3)
+# opcode: c.add; op1:x10; op2:x11; op1val:0xfffffff7; op2val:0x02000000
+TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xfffffff7, 0x02000000, x3, 72, x4)
 
-# opcode: c.add; op1:x10; op2:x11; op1val:0xfffffff7; op2val:0xfffbffff
-TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xfffffff7, 0xfffbffff, x1, 72, x3)
+# opcode: c.add; op1:x10; op2:x11; op1val:0xffffffdf; op2val:0x40000000
+TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xffffffdf, 0x40000000, x3, 76, x4)
 
-# opcode: c.add; op1:x10; op2:x11; op1val:0xffffffef; op2val:0x00800000
-TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xffffffef, 0x00800000, x1, 76, x3)
+# opcode: c.add; op1:x10; op2:x11; op1val:0xffffffbf; op2val:0x00000002
+TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xffffffbf, 0x00000002, x3, 80, x4)
 
-# opcode: c.add; op1:x10; op2:x11; op1val:0xffffffdf; op2val:0xfdffffff
-TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xffffffdf, 0xfdffffff, x1, 80, x3)
+# opcode: c.add; op1:x10; op2:x11; op1val:0xffffff7f; op2val:0xfffffff9
+TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xffffff7f, 0xfffffff9, x3, 84, x4)
 
-# opcode: c.add; op1:x10; op2:x11; op1val:0xffffffbf; op2val:0x10000000
-TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xffffffbf, 0x10000000, x1, 84, x3)
+# opcode: c.add; op1:x10; op2:x11; op1val:0xfffffeff; op2val:0xffffffff
+TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xfffffeff, 0xffffffff, x3, 88, x4)
 
-# opcode: c.add; op1:x10; op2:x11; op1val:0xffffff7f; op2val:0xbfffffff
-TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xffffff7f, 0xbfffffff, x1, 88, x3)
+# opcode: c.add; op1:x10; op2:x11; op1val:0x55555555; op2val:0xffbfffff
+TEST_CR_OP( c.add, x10, x11, 0x00000000, 0x55555555, 0xffbfffff, x3, 92, x4)
 
-# opcode: c.add; op1:x10; op2:x11; op1val:0xfffffeff; op2val:0xff7fffff
-TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xfffffeff, 0xff7fffff, x1, 92, x3)
+# opcode: c.add; op1:x10; op2:x11; op1val:0x00002000; op2val:0xff7fffff
+TEST_CR_OP( c.add, x10, x11, 0x00000000, 0x00002000, 0xff7fffff, x3, 96, x4)
 
-# opcode: c.add; op1:x10; op2:x11; op1val:0xfeffffff; op2val:0xfbffffff
-TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xfeffffff, 0xfbffffff, x1, 96, x3)
+# opcode: c.add; op1:x10; op2:x11; op1val:0x00000100; op2val:0xfdffffff
+TEST_CR_OP( c.add, x10, x11, 0x00000000, 0x00000100, 0xfdffffff, x3, 100, x4)
 
-# opcode: c.add; op1:x10; op2:x11; op1val:0x00000007; op2val:0xefffffff
-TEST_CR_OP( c.add, x10, x11, 0x00000000, 0x00000007, 0xefffffff, x1, 100, x3)
+# opcode: c.add; op1:x10; op2:x11; op1val:0xfffeffff; op2val:0xf7ffffff
+TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xfffeffff, 0xf7ffffff, x3, 104, x4)
 
-# opcode: c.add; op1:x10; op2:x11; op1val:0x00100000; op2val:0xdfffffff
-TEST_CR_OP( c.add, x10, x11, 0x00000000, 0x00100000, 0xdfffffff, x1, 104, x3)
+# opcode: c.add; op1:x10; op2:x11; op1val:0xfffdffff; op2val:0xdfffffff
+TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xfffdffff, 0xdfffffff, x3, 108, x4)
 
-# opcode: c.add; op1:x10; op2:x11; op1val:0xfffffdff; op2val:0x55555555
-TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xfffffdff, 0x55555555, x1, 108, x3)
+# opcode: c.add; op1:x10; op2:x11; op1val:0x00000080; op2val:0xbfffffff
+TEST_CR_OP( c.add, x10, x11, 0x00000000, 0x00000080, 0xbfffffff, x3, 112, x4)
 
-# opcode: c.add; op1:x10; op2:x11; op1val:0xfffffbff; op2val:0xffffdfff
-TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xfffffbff, 0xffffdfff, x1, 112, x3)
+# opcode: c.add; op1:x10; op2:x11; op1val:0x00100000; op2val:0x55555555
+TEST_CR_OP( c.add, x10, x11, 0x00000000, 0x00100000, 0x55555555, x3, 116, x4)
 
-# opcode: c.add; op1:x10; op2:x11; op1val:0xfffff7ff; op2val:0x00100000
-TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xfffff7ff, 0x00100000, x1, 116, x3)
+# opcode: c.add; op1:x10; op2:x11; op1val:0xc0000000; op2val:0xaaaaaaaa
+TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xc0000000, 0xaaaaaaaa, x3, 120, x4)
 
-# opcode: c.add; op1:x10; op2:x11; op1val:0xffffefff; op2val:0x00800000
-TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xffffefff, 0x00800000, x1, 120, x3)
+# opcode: c.add; op1:x10; op2:x11; op1val:0xfffffdff; op2val:0xffffbfff
+TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xfffffdff, 0xffffbfff, x3, 124, x4)
 
-# opcode: c.add; op1:x10; op2:x11; op1val:0xffffdfff; op2val:0x00001000
-TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xffffdfff, 0x00001000, x1, 124, x3)
+# opcode: c.add; op1:x10; op2:x11; op1val:0xfffffbff; op2val:0xfffffffa
+TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xfffffbff, 0xfffffffa, x3, 128, x4)
 
-# opcode: c.add; op1:x10; op2:x11; op1val:0xffffbfff; op2val:0x80000000
-TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xffffbfff, 0x80000000, x1, 128, x3)
+# opcode: c.add; op1:x10; op2:x11; op1val:0xfffff7ff; op2val:0xffbfffff
+TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xfffff7ff, 0xffbfffff, x3, 132, x4)
 
-# opcode: c.add; op1:x10; op2:x11; op1val:0xffff7fff; op2val:0xfffffffd
-TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xffff7fff, 0xfffffffd, x1, 132, x3)
+# opcode: c.add; op1:x10; op2:x11; op1val:0xffffefff; op2val:0xffefffff
+TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xffffefff, 0xffefffff, x3, 136, x4)
 
-# opcode: c.add; op1:x10; op2:x11; op1val:0xfffeffff; op2val:0xfffdffff
-TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xfffeffff, 0xfffdffff, x1, 136, x3)
+# opcode: c.add; op1:x10; op2:x11; op1val:0xffffdfff; op2val:0xffffffbf
+TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xffffdfff, 0xffffffbf, x3, 140, x4)
 
-# opcode: c.add; op1:x10; op2:x11; op1val:0xfffdffff; op2val:0xfffeffff
-TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xfffdffff, 0xfffeffff, x1, 140, x3)
+# opcode: c.add; op1:x10; op2:x11; op1val:0xffffbfff; op2val:0x40000000
+TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xffffbfff, 0x40000000, x3, 144, x4)
 
-# opcode: c.add; op1:x10; op2:x11; op1val:0xfffbffff; op2val:0x00080000
-TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xfffbffff, 0x00080000, x1, 144, x3)
+# opcode: c.add; op1:x10; op2:x11; op1val:0xffff7fff; op2val:0xffffbfff
+TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xffff7fff, 0xffffbfff, x3, 148, x4)
 
-# opcode: c.add; op1:x10; op2:x11; op1val:0xfff7ffff; op2val:0x02000000
-TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xfff7ffff, 0x02000000, x1, 148, x3)
+# opcode: c.add; op1:x10; op2:x11; op1val:0xfffbffff; op2val:0xfbffffff
+TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xfffbffff, 0xfbffffff, x3, 152, x4)
 
-# opcode: c.add; op1:x10; op2:x11; op1val:0xffefffff; op2val:0xffffffdf
-TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xffefffff, 0xffffffdf, x1, 152, x3)
+# opcode: c.add; op1:x10; op2:x11; op1val:0xfff7ffff; op2val:0x00000200
+TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xfff7ffff, 0x00000200, x3, 156, x4)
 
-# opcode: c.add; op1:x10; op2:x11; op1val:0xffdfffff; op2val:0xfffffff7
-TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xffdfffff, 0xfffffff7, x1, 156, x3)
+# opcode: c.add; op1:x10; op2:x11; op1val:0xffdfffff; op2val:0xfffffffb
+TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xffdfffff, 0xfffffffb, x3, 160, x4)
 
-# opcode: c.add; op1:x10; op2:x11; op1val:0xffbfffff; op2val:0x00000007
-TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xffbfffff, 0x00000007, x1, 160, x3)
+# opcode: c.add; op1:x10; op2:x11; op1val:0xffbfffff; op2val:0x00020000
+TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xffbfffff, 0x00020000, x3, 164, x4)
 
-# opcode: c.add; op1:x10; op2:x11; op1val:0xff7fffff; op2val:0xfffffffb
-TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xff7fffff, 0xfffffffb, x1, 164, x3)
+# opcode: c.add; op1:x10; op2:x11; op1val:0xff7fffff; op2val:0x20000000
+TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xff7fffff, 0x20000000, x3, 168, x4)
 
-# opcode: c.add; op1:x10; op2:x11; op1val:0xfdffffff; op2val:0x00004000
-TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xfdffffff, 0x00004000, x1, 168, x3)
+# opcode: c.add; op1:x10; op2:x11; op1val:0xfeffffff; op2val:0x00000010
+TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xfeffffff, 0x00000010, x3, 172, x4)
 
-# opcode: c.add; op1:x10; op2:x11; op1val:0xfbffffff; op2val:0xfffffffc
-TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xfbffffff, 0xfffffffc, x1, 172, x3)
+# opcode: c.add; op1:x10; op2:x11; op1val:0xfdffffff; op2val:0xfffffffd
+TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xfdffffff, 0xfffffffd, x3, 176, x4)
 
-# opcode: c.add; op1:x10; op2:x11; op1val:0xf7ffffff; op2val:0x00000800
-TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xf7ffffff, 0x00000800, x1, 176, x3)
+# opcode: c.add; op1:x10; op2:x11; op1val:0xfbffffff; op2val:0x00002000
+TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xfbffffff, 0x00002000, x3, 180, x4)
 
-# opcode: c.add; op1:x10; op2:x11; op1val:0xefffffff; op2val:0x00004000
-TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xefffffff, 0x00004000, x1, 180, x3)
+# opcode: c.add; op1:x10; op2:x11; op1val:0xf7ffffff; op2val:0x00000005
+TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xf7ffffff, 0x00000005, x3, 184, x4)
 
-# opcode: c.add; op1:x10; op2:x11; op1val:0xdfffffff; op2val:0xfbffffff
-TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xdfffffff, 0xfbffffff, x1, 184, x3)
+# opcode: c.add; op1:x10; op2:x11; op1val:0xefffffff; op2val:0xffbfffff
+TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xefffffff, 0xffbfffff, x3, 188, x4)
 
-# opcode: c.add; op1:x10; op2:x11; op1val:0xbfffffff; op2val:0xfffff7ff
-TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xbfffffff, 0xfffff7ff, x1, 188, x3)
+# opcode: c.add; op1:x10; op2:x11; op1val:0xdfffffff; op2val:0x02000000
+TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xdfffffff, 0x02000000, x3, 192, x4)
 
-# opcode: c.add; op1:x10; op2:x11; op1val:0x55555555; op2val:0x00100000
-TEST_CR_OP( c.add, x10, x11, 0x00000000, 0x55555555, 0x00100000, x1, 192, x3)
+# opcode: c.add; op1:x10; op2:x11; op1val:0xbfffffff; op2val:0x00000400
+TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xbfffffff, 0x00000400, x3, 196, x4)
 
-# opcode: c.add; op1:x10; op2:x11; op1val:0xfbffffff; op2val:0x00000004
-TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xfbffffff, 0x00000004, x1, 196, x3)
+# opcode: c.add; op1:x10; op2:x11; op1val:0xaaaaaaaa; op2val:0x00000008
+TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xaaaaaaaa, 0x00000008, x3, 200, x4)
 
-# opcode: c.add; op1:x10; op2:x11; op1val:0x00000004; op2val:0x00000008
-TEST_CR_OP( c.add, x10, x11, 0x00000000, 0x00000004, 0x00000008, x1, 200, x3)
+# opcode: c.add; op1:x10; op2:x11; op1val:0xfffffff9; op2val:0x00000020
+TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xfffffff9, 0x00000020, x3, 204, x4)
 
-# opcode: c.add; op1:x10; op2:x11; op1val:0xffffffdf; op2val:0x00000010
-TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xffffffdf, 0x00000010, x1, 204, x3)
+# opcode: c.add; op1:x10; op2:x11; op1val:0xfffdffff; op2val:0x00000040
+TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xfffdffff, 0x00000040, x3, 208, x4)
 
-# opcode: c.add; op1:x10; op2:x11; op1val:0xf7ffffff; op2val:0x00000040
-TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xf7ffffff, 0x00000040, x1, 208, x3)
+# opcode: c.add; op1:x10; op2:x11; op1val:0xffffffbf; op2val:0x00000080
+TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xffffffbf, 0x00000080, x3, 212, x4)
 
-# opcode: c.add; op1:x10; op2:x11; op1val:0x00000100; op2val:0x00000080
-TEST_CR_OP( c.add, x10, x11, 0x00000000, 0x00000100, 0x00000080, x1, 212, x3)
+# opcode: c.add; op1:x10; op2:x11; op1val:0x3fffffff; op2val:0x00000100
+TEST_CR_OP( c.add, x10, x11, 0x00000000, 0x3fffffff, 0x00000100, x3, 216, x4)
 
-# opcode: c.add; op1:x10; op2:x11; op1val:0xfffdffff; op2val:0x00000100
-TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xfffdffff, 0x00000100, x1, 216, x3)
+# opcode: c.add; op1:x10; op2:x11; op1val:0x00000040; op2val:0x00000800
+TEST_CR_OP( c.add, x10, x11, 0x00000000, 0x00000040, 0x00000800, x3, 220, x4)
 
-# opcode: c.add; op1:x10; op2:x11; op1val:0xfffffff8; op2val:0x00000400
-TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xfffffff8, 0x00000400, x1, 220, x3)
+# opcode: c.add; op1:x10; op2:x11; op1val:0xffffffbf; op2val:0x00004000
+TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xffffffbf, 0x00004000, x3, 224, x4)
 
-# opcode: c.add; op1:x10; op2:x11; op1val:0x00400000; op2val:0x00008000
-TEST_CR_OP( c.add, x10, x11, 0x00000000, 0x00400000, 0x00008000, x1, 224, x3)
+# opcode: c.add; op1:x10; op2:x11; op1val:0xfffffffa; op2val:0x00008000
+TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xfffffffa, 0x00008000, x3, 228, x4)
 
-# opcode: c.add; op1:x10; op2:x11; op1val:0x00000010; op2val:0x00020000
-TEST_CR_OP( c.add, x10, x11, 0x00000000, 0x00000010, 0x00020000, x1, 228, x3)
+# opcode: c.add; op1:x10; op2:x11; op1val:0xfffffffc; op2val:0x00010000
+TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xfffffffc, 0x00010000, x3, 232, x4)
 
-# opcode: c.add; op1:x10; op2:x11; op1val:0xbfffffff; op2val:0x00040000
-TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xbfffffff, 0x00040000, x1, 232, x3)
+# opcode: c.add; op1:x10; op2:x11; op1val:0x7fffffff; op2val:0x00040000
+TEST_CR_OP( c.add, x10, x11, 0x00000000, 0x7fffffff, 0x00040000, x3, 236, x4)
 
-# opcode: c.add; op1:x10; op2:x11; op1val:0x00001000; op2val:0x00400000
-TEST_CR_OP( c.add, x10, x11, 0x00000000, 0x00001000, 0x00400000, x1, 236, x3)
+# opcode: c.add; op1:x10; op2:x11; op1val:0x00000400; op2val:0x00080000
+TEST_CR_OP( c.add, x10, x11, 0x00000000, 0x00000400, 0x00080000, x3, 240, x4)
 
-# opcode: c.add; op1:x10; op2:x11; op1val:0xfffeffff; op2val:0x01000000
-TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xfffeffff, 0x01000000, x1, 240, x3)
+# opcode: c.add; op1:x10; op2:x11; op1val:0x00000008; op2val:0x00400000
+TEST_CR_OP( c.add, x10, x11, 0x00000000, 0x00000008, 0x00400000, x3, 244, x4)
 
-# opcode: c.add; op1:x10; op2:x11; op1val:0xfffdffff; op2val:0x04000000
-TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xfffdffff, 0x04000000, x1, 244, x3)
+# opcode: c.add; op1:x10; op2:x11; op1val:0xfff7ffff; op2val:0x00800000
+TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xfff7ffff, 0x00800000, x3, 248, x4)
 
-# opcode: c.add; op1:x10; op2:x11; op1val:0x00800000; op2val:0x08000000
-TEST_CR_OP( c.add, x10, x11, 0x00000000, 0x00800000, 0x08000000, x1, 248, x3)
+# opcode: c.add; op1:x10; op2:x11; op1val:0x00800000; op2val:0x01000000
+TEST_CR_OP( c.add, x10, x11, 0x00000000, 0x00800000, 0x01000000, x3, 252, x4)
 
-# opcode: c.add; op1:x10; op2:x11; op1val:0xfffffffb; op2val:0x20000000
-TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xfffffffb, 0x20000000, x1, 252, x3)
+# opcode: c.add; op1:x10; op2:x11; op1val:0xffffbfff; op2val:0x04000000
+TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xffffbfff, 0x04000000, x3, 256, x4)
 
-# opcode: c.add; op1:x10; op2:x11; op1val:0xffffffef; op2val:0x40000000
-TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xffffffef, 0x40000000, x1, 256, x3)
+# opcode: c.add; op1:x10; op2:x11; op1val:0x55555555; op2val:0x10000000
+TEST_CR_OP( c.add, x10, x11, 0x00000000, 0x55555555, 0x10000000, x3, 260, x4)
 
-# opcode: c.add; op1:x10; op2:x11; op1val:0x00002000; op2val:0xfffffffe
-TEST_CR_OP( c.add, x10, x11, 0x00000000, 0x00002000, 0xfffffffe, x1, 260, x3)
+# opcode: c.add; op1:x10; op2:x11; op1val:0x00000100; op2val:0xfffffff7
+TEST_CR_OP( c.add, x10, x11, 0x00000000, 0x00000100, 0xfffffff7, x3, 264, x4)
 
-# opcode: c.add; op1:x10; op2:x11; op1val:0xffffffdf; op2val:0xffffffef
-TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xffffffdf, 0xffffffef, x1, 264, x3)
+# opcode: c.add; op1:x10; op2:x11; op1val:0x00010000; op2val:0xffffffdf
+TEST_CR_OP( c.add, x10, x11, 0x00000000, 0x00010000, 0xffffffdf, x3, 268, x4)
 
-# opcode: c.add; op1:x10; op2:x11; op1val:0xfffffffc; op2val:0xffffffbf
-TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xfffffffc, 0xffffffbf, x1, 268, x3)
+# opcode: c.add; op1:x10; op2:x11; op1val:0x00000400; op2val:0xfffffeff
+TEST_CR_OP( c.add, x10, x11, 0x00000000, 0x00000400, 0xfffffeff, x3, 272, x4)
 
-# opcode: c.add; op1:x10; op2:x11; op1val:0xffdfffff; op2val:0xfffffdff
-TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xffdfffff, 0xfffffdff, x1, 272, x3)
+# opcode: c.add; op1:x10; op2:x11; op1val:0x00000200; op2val:0xfffffdff
+TEST_CR_OP( c.add, x10, x11, 0x00000000, 0x00000200, 0xfffffdff, x3, 276, x4)
 
-# opcode: c.add; op1:x10; op2:x11; op1val:0x01000000; op2val:0xfffffbff
-TEST_CR_OP( c.add, x10, x11, 0x00000000, 0x01000000, 0xfffffbff, x1, 276, x3)
+# opcode: c.add; op1:x10; op2:x11; op1val:0x55555555; op2val:0xfffffbff
+TEST_CR_OP( c.add, x10, x11, 0x00000000, 0x55555555, 0xfffffbff, x3, 280, x4)
 
-# opcode: c.add; op1:x10; op2:x11; op1val:0x00000006; op2val:0x00200000
-TEST_CR_OP( c.add, x10, x11, 0x00000000, 0x00000006, 0x00200000, x1, 280, x3)
+# opcode: c.add; op1:x10; op2:x11; op1val:0xfffffeff; op2val:0xfffff7ff
+TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xfffffeff, 0xfffff7ff, x3, 284, x4)
 
-# opcode: c.add; op1:x10; op2:x11; op1val:0xffffffef; op2val:0xfff7ffff
-TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xffffffef, 0xfff7ffff, x1, 284, x3)
+# opcode: c.add; op1:x10; op2:x11; op1val:0x00004000; op2val:0xffffdfff
+TEST_CR_OP( c.add, x10, x11, 0x00000000, 0x00004000, 0xffffdfff, x3, 288, x4)
 
-# opcode: c.add; op1:x10; op2:x11; op1val:0x02000000; op2val:0xffefffff
-TEST_CR_OP( c.add, x10, x11, 0x00000000, 0x02000000, 0xffefffff, x1, 288, x3)
+# opcode: c.add; op1:x10; op2:x11; op1val:0x00000100; op2val:0xffff7fff
+TEST_CR_OP( c.add, x10, x11, 0x00000000, 0x00000100, 0xffff7fff, x3, 292, x4)
 
-# opcode: c.add; op1:x10; op2:x11; op1val:0xfffdffff; op2val:0xffdfffff
-TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xfffdffff, 0xffdfffff, x1, 292, x3)
+# opcode: c.add; op1:x10; op2:x11; op1val:0x02000000; op2val:0xfffeffff
+TEST_CR_OP( c.add, x10, x11, 0x00000000, 0x02000000, 0xfffeffff, x3, 296, x4)
 
-# opcode: c.add; op1:x10; op2:x11; op1val:0xfffffff6; op2val:0x00001000
-TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xfffffff6, 0x00001000, x1, 296, x3)
+# opcode: c.add; op1:x10; op2:x11; op1val:0x20000000; op2val:0xfffdffff
+TEST_CR_OP( c.add, x10, x11, 0x00000000, 0x20000000, 0xfffdffff, x3, 300, x4)
 
-# opcode: c.add; op1:x10; op2:x11; op1val:0x00004000; op2val:0xffbfffff
-TEST_CR_OP( c.add, x10, x11, 0x00000000, 0x00004000, 0xffbfffff, x1, 300, x3)
+# opcode: c.add; op1:x10; op2:x11; op1val:0x00080000; op2val:0xfffbffff
+TEST_CR_OP( c.add, x10, x11, 0x00000000, 0x00080000, 0xfffbffff, x3, 304, x4)
+
+# opcode: c.add; op1:x10; op2:x11; op1val:0xffefffff; op2val:0xfff7ffff
+TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xffefffff, 0xfff7ffff, x3, 308, x4)
+
+# opcode: c.add; op1:x10; op2:x11; op1val:0xffefffff; op2val:0x00100000
+TEST_CR_OP( c.add, x10, x11, 0x00000000, 0xffefffff, 0x00100000, x3, 312, x4)
+
+# opcode: c.add; op1:x10; op2:x11; op1val:0x00020000; op2val:0xfbffffff
+TEST_CR_OP( c.add, x10, x11, 0x00000000, 0x00020000, 0xfbffffff, x3, 316, x4)
 #endif
 
 
@@ -328,16 +337,16 @@ RVTEST_DATA_END
 RVMODEL_DATA_BEGIN
 .align 4
 
-signature_x8_0:
+signature_x19_0:
     .fill 0*(XLEN/32),4,0xafacadee
 
 
-signature_x8_1:
-    .fill 23*(XLEN/32),4,0xafacadee
+signature_x19_1:
+    .fill 22*(XLEN/32),4,0xafacadee
 
 
-signature_x1_0:
-    .fill 76*(XLEN/32),4,0xafacadee
+signature_x3_0:
+    .fill 80*(XLEN/32),4,0xafacadee
 
 #ifdef rvtest_mtrap_routine
 

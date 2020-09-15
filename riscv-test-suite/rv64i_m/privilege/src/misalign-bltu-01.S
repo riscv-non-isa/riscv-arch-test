@@ -17,8 +17,8 @@ RVTEST_CASE(1,"//check ISA:=regex(.*64.*);check ISA:=regex(.*I.*Zicsr.*); check 
 
 la x1,signature_x1_1
 
-# opcode: bltu, op1:x10; op2:x11; op1val:0x0008000000000000; op2val:0xfeffffffffffffff; immval:10; align: 2
-TEST_BRANCH_OP(bltu, x2, x10, x11, 0x0008000000000000, 0xfeffffffffffffff, 10, 1b, x1, 0,2)
+# opcode: bltu, op1:x10; op2:x11; op1val:0xfffffffffffdffff; op2val:0xfffffffffffffbff; immval:0; align: 2
+TEST_BRANCH_OP(bltu, x2, x10, x11, 0xfffffffffffdffff, 0xfffffffffffffbff, 0, 3f, x1, 0,2)
 #endif
 
 

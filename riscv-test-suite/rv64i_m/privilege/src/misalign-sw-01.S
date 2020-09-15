@@ -17,14 +17,14 @@ RVTEST_CASE(1,"//check ISA:=regex(.*64.*);check ISA:=regex(.*I.*Zicsr.*); check 
 
 la x1,signature_x1_1
 
-# opcode: sw; op1:x10; op2:x11; op2val:0xffffffbfffffffff; immval: 1023; align:1
-TEST_STORE(x1,x2,0,x10,x11,0xffffffbfffffffff,1023,0,sw,1)
+# opcode: sw; op1:x10; op2:x11; op2val:0xffffffbfffffffff; immval: -17; align:1
+TEST_STORE(x1,x2,0,x10,x11,0xffffffbfffffffff,-17,0,sw,1)
 
-# opcode: sw; op1:x10; op2:x11; op2val:0x0000000000000008; immval: -4; align:2
-TEST_STORE(x1,x2,0,x10,x11,0x0000000000000008,-4,8,sw,2)
+# opcode: sw; op1:x10; op2:x11; op2val:0x7fffffffffffffff; immval: 256; align:2
+TEST_STORE(x1,x2,0,x10,x11,0x7fffffffffffffff,256,8,sw,2)
 
-# opcode: sw; op1:x10; op2:x11; op2val:0xffffffffffdfffff; immval: -1; align:3
-TEST_STORE(x1,x2,0,x10,x11,0xffffffffffdfffff,-1,16,sw,3)
+# opcode: sw; op1:x10; op2:x11; op2val:0x0000000000800000; immval: 32; align:3
+TEST_STORE(x1,x2,0,x10,x11,0x0000000000800000,32,16,sw,3)
 #endif
 
 

@@ -17,8 +17,8 @@ RVTEST_CASE(1,"//check ISA:=regex(.*32.*);check ISA:=regex(.*I.*Zicsr.*); check 
 
 la x1,signature_x1_1
 
-# opcode:lhu op1:x10; dest:x11; immval:7; align:1
-TEST_LOAD(x1,x2,0,x10,x11,7,0,lhu,1)
+# opcode:lhu op1:x10; dest:x11; immval:-3; align:1
+TEST_LOAD(x1,x2,0,x10,x11,-3,0,lhu,1)
 #endif
 
 

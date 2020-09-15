@@ -15,29 +15,29 @@ RVTEST_CASE(0,"//check ISA:=regex(.*32.*);check ISA:=regex(.*I.*C.*);def TEST_CA
 
 la x1,signature_x1_1
 
-#opcode:c.addi4spn; dest:x14; immval:1012
-TEST_CADDI4SPN_OP( c.addi4spn, x14, 0x00000000, 1012, x1, 0, x2)
+#opcode:c.addi4spn; dest:x15; immval:1012
+TEST_CADDI4SPN_OP( c.addi4spn, x15, 0x00000000, 1012, x1, 0, x2)
 
-#opcode:c.addi4spn; dest:x11; immval:1020
-TEST_CADDI4SPN_OP( c.addi4spn, x11, 0x00000000, 1020, x1, 4, x2)
+#opcode:c.addi4spn; dest:x13; immval:1020
+TEST_CADDI4SPN_OP( c.addi4spn, x13, 0x00000000, 1020, x1, 4, x2)
 
-#opcode:c.addi4spn; dest:x9; immval:4
-TEST_CADDI4SPN_OP( c.addi4spn, x9, 0x00000000, 4, x1, 8, x2)
+#opcode:c.addi4spn; dest:x8; immval:4
+TEST_CADDI4SPN_OP( c.addi4spn, x8, 0x00000000, 4, x1, 8, x2)
 
-#opcode:c.addi4spn; dest:x12; immval:8
-TEST_CADDI4SPN_OP( c.addi4spn, x12, 0x00000000, 8, x1, 12, x2)
+#opcode:c.addi4spn; dest:x9; immval:8
+TEST_CADDI4SPN_OP( c.addi4spn, x9, 0x00000000, 8, x1, 12, x2)
 
-#opcode:c.addi4spn; dest:x10; immval:16
-TEST_CADDI4SPN_OP( c.addi4spn, x10, 0x00000000, 16, x1, 16, x2)
+#opcode:c.addi4spn; dest:x11; immval:16
+TEST_CADDI4SPN_OP( c.addi4spn, x11, 0x00000000, 16, x1, 16, x2)
 
-#opcode:c.addi4spn; dest:x15; immval:32
-TEST_CADDI4SPN_OP( c.addi4spn, x15, 0x00000000, 32, x1, 20, x2)
+#opcode:c.addi4spn; dest:x12; immval:32
+TEST_CADDI4SPN_OP( c.addi4spn, x12, 0x00000000, 32, x1, 20, x2)
 
-#opcode:c.addi4spn; dest:x13; immval:64
-TEST_CADDI4SPN_OP( c.addi4spn, x13, 0x00000000, 64, x1, 24, x2)
+#opcode:c.addi4spn; dest:x14; immval:64
+TEST_CADDI4SPN_OP( c.addi4spn, x14, 0x00000000, 64, x1, 24, x2)
 
-#opcode:c.addi4spn; dest:x8; immval:128
-TEST_CADDI4SPN_OP( c.addi4spn, x8, 0x00000000, 128, x1, 28, x2)
+#opcode:c.addi4spn; dest:x10; immval:128
+TEST_CADDI4SPN_OP( c.addi4spn, x10, 0x00000000, 128, x1, 28, x2)
 
 #opcode:c.addi4spn; dest:x10; immval:256
 TEST_CADDI4SPN_OP( c.addi4spn, x10, 0x00000000, 256, x1, 32, x2)

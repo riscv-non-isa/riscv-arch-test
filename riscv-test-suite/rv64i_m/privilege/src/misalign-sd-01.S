@@ -17,26 +17,26 @@ RVTEST_CASE(1,"//check ISA:=regex(.*64.*);check ISA:=regex(.*I.*Zicsr.*); check 
 
 la x1,signature_x1_1
 
-# opcode: sd; op1:x10; op2:x11; op2val:0x0000010000000000; immval: 128; align:1
-TEST_STORE(x1,x2,0,x10,x11,0x0000010000000000,128,0,sd,1)
+# opcode: sd; op1:x10; op2:x11; op2val:0x0000010000000000; immval: -129; align:1
+TEST_STORE(x1,x2,0,x10,x11,0x0000010000000000,-129,0,sd,1)
 
-# opcode: sd; op1:x10; op2:x11; op2val:0x0000000800000000; immval: 5; align:2
-TEST_STORE(x1,x2,0,x10,x11,0x0000000800000000,5,8,sd,2)
+# opcode: sd; op1:x10; op2:x11; op2val:0xffffffdfffffffff; immval: 2047; align:2
+TEST_STORE(x1,x2,0,x10,x11,0xffffffdfffffffff,2047,8,sd,2)
 
-# opcode: sd; op1:x10; op2:x11; op2val:0x0040000000000000; immval: 16; align:3
-TEST_STORE(x1,x2,0,x10,x11,0x0040000000000000,16,16,sd,3)
+# opcode: sd; op1:x10; op2:x11; op2val:0xffffffff7fffffff; immval: -1; align:3
+TEST_STORE(x1,x2,0,x10,x11,0xffffffff7fffffff,-1,16,sd,3)
 
-# opcode: sd; op1:x10; op2:x11; op2val:0xefffffffffffffff; immval: -17; align:4
-TEST_STORE(x1,x2,0,x10,x11,0xefffffffffffffff,-17,24,sd,4)
+# opcode: sd; op1:x10; op2:x11; op2val:0x0000000000000002; immval: 64; align:4
+TEST_STORE(x1,x2,0,x10,x11,0x0000000000000002,64,24,sd,4)
 
-# opcode: sd; op1:x10; op2:x11; op2val:0xfffffffffffffff9; immval: 6; align:5
-TEST_STORE(x1,x2,0,x10,x11,0xfffffffffffffff9,6,32,sd,5)
+# opcode: sd; op1:x10; op2:x11; op2val:0x0000000000000020; immval: -5; align:5
+TEST_STORE(x1,x2,0,x10,x11,0x0000000000000020,-5,32,sd,5)
 
-# opcode: sd; op1:x10; op2:x11; op2val:0xffffffffffffefff; immval: -1024; align:6
-TEST_STORE(x1,x2,0,x10,x11,0xffffffffffffefff,-1024,40,sd,6)
+# opcode: sd; op1:x10; op2:x11; op2val:0xfffeffffffffffff; immval: 16; align:6
+TEST_STORE(x1,x2,0,x10,x11,0xfffeffffffffffff,16,40,sd,6)
 
-# opcode: sd; op1:x10; op2:x11; op2val:0x0000000000008000; immval: -1024; align:7
-TEST_STORE(x1,x2,0,x10,x11,0x0000000000008000,-1024,48,sd,7)
+# opcode: sd; op1:x10; op2:x11; op2val:0xfffffeffffffffff; immval: -257; align:7
+TEST_STORE(x1,x2,0,x10,x11,0xfffffeffffffffff,-257,48,sd,7)
 #endif
 
 

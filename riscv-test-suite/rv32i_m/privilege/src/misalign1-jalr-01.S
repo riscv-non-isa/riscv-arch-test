@@ -1,6 +1,7 @@
 
 #This assembly file tests the jalr instruction of the RISC-V I extension for the misalign1-jalr covergroup.
 
+
 #include "compliance_model.h"
 #include "compliance_test.h"
 RVTEST_ISA("RV32I")
@@ -14,8 +15,8 @@ RVTEST_CASE(0,"//check ISA:=regex(.*32.*);check ISA:=regex(.*I.*);def TEST_CASE_
 
 la x1,signature_x1_1
 
-# opcode: jalr; op1:x10; dest:x11; immval:-5; align: 1 
-TEST_JALR_OP(x2, x11, x10, -5, x1, 0,1)
+# opcode: jalr; op1:x10; dest:x11; immval:-1; align: 1 
+TEST_JALR_OP(x2, x11, x10, -1, x1, 0,1)
 #endif
 
 

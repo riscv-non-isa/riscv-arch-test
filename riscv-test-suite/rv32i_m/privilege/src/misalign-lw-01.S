@@ -17,14 +17,14 @@ RVTEST_CASE(1,"//check ISA:=regex(.*32.*);check ISA:=regex(.*I.*Zicsr.*); check 
 
 la x1,signature_x1_1
 
-# opcode:lw op1:x10; dest:x11; immval:16; align:1
-TEST_LOAD(x1,x2,0,x10,x11,16,0,lw,1)
+# opcode:lw op1:x10; dest:x11; immval:-9; align:1
+TEST_LOAD(x1,x2,0,x10,x11,-9,0,lw,1)
 
-# opcode:lw op1:x10; dest:x11; immval:-17; align:2
-TEST_LOAD(x1,x2,0,x10,x11,-17,4,lw,2)
+# opcode:lw op1:x10; dest:x11; immval:-5; align:2
+TEST_LOAD(x1,x2,0,x10,x11,-5,4,lw,2)
 
-# opcode:lw op1:x10; dest:x11; immval:2047; align:3
-TEST_LOAD(x1,x2,0,x10,x11,2047,8,lw,3)
+# opcode:lw op1:x10; dest:x11; immval:-1366; align:3
+TEST_LOAD(x1,x2,0,x10,x11,-1366,8,lw,3)
 #endif
 
 

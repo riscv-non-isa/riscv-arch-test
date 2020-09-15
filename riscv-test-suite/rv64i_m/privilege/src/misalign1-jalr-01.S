@@ -15,8 +15,8 @@ RVTEST_CASE(0,"//check ISA:=regex(.*64.*);check ISA:=regex(.*I.*); def rvtest_mt
 
 la x1,signature_x1_1
 
-# opcode: jalr; op1:x10; dest:x11; immval:-129; align: 1 
-TEST_JALR_OP(x2, x11, x10, -129, x1, 0,1)
+# opcode: jalr; op1:x10; dest:x11; immval:256; align: 1 
+TEST_JALR_OP(x2, x11, x10, 256, x1, 0,1)
 #endif
 
 

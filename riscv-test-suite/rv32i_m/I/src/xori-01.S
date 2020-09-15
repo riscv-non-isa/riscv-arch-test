@@ -13,242 +13,242 @@ RVTEST_CODE_BEGIN
 
 RVTEST_CASE(0,"//check ISA:=regex(.*32.*);check ISA:=regex(.*I.*);def TEST_CASE_1=True;",xori)
 
-la x16,signature_x16_1
+la x18,signature_x18_1
 
-# opcode: xori ; op1:x0; dest:x17; op1val:0x00000400;  immval:1024
-TEST_IMM_OP( xori, x17, x0, 0x0, 0x00000400, 1024, x16, 0, x5)
+# opcode: xori ; op1:x12; dest:x10; op1val:0x00000100;  immval:256
+TEST_IMM_OP( xori, x10, x12, 0x0, 0x00000100, 256, x18, 0, x19)
 
-# opcode: xori ; op1:x1; dest:x1; op1val:0x00800000;  immval:-3
-TEST_IMM_OP( xori, x1, x1, 0xff7ffffd, 0x00800000, -3, x16, 4, x5)
+# opcode: xori ; op1:x25; dest:x25; op1val:0x00000009;  immval:3
+TEST_IMM_OP( xori, x25, x25, 0xa, 0x00000009, 3, x18, 4, x19)
 
-# opcode: xori ; op1:x13; dest:x4; op1val:0xdfffffff;  immval:4
-TEST_IMM_OP( xori, x4, x13, 0xdffffffb, 0xdfffffff, 4, x16, 8, x5)
+# opcode: xori ; op1:x10; dest:x13; op1val:0x00020000;  immval:-4
+TEST_IMM_OP( xori, x13, x10, 0xfffdfffc, 0x00020000, -4, x18, 8, x19)
 
-# opcode: xori ; op1:x2; dest:x20; op1val:0xc0000000;  immval:-1024
-TEST_IMM_OP( xori, x20, x2, 0x3ffffc00, 0xc0000000, -1024, x16, 12, x5)
+# opcode: xori ; op1:x14; dest:x12; op1val:0xc0000000;  immval:2047
+TEST_IMM_OP( xori, x12, x14, 0xc00007ff, 0xc0000000, 2047, x18, 12, x19)
 
-# opcode: xori ; op1:x12; dest:x26; op1val:0x80000000;  immval:-1024
-TEST_IMM_OP( xori, x26, x12, 0x7ffffc00, 0x80000000, -1024, x16, 16, x5)
+# opcode: xori ; op1:x23; dest:x16; op1val:0xfffffbff;  immval:-5
+TEST_IMM_OP( xori, x16, x23, 0x404, 0xfffffbff, -5, x18, 16, x19)
 
-# opcode: xori ; op1:x21; dest:x12; op1val:0x00000000;  immval:3
-TEST_IMM_OP( xori, x12, x21, 0x3, 0x00000000, 3, x16, 20, x5)
+# opcode: xori ; op1:x26; dest:x22; op1val:0x80000000;  immval:-10
+TEST_IMM_OP( xori, x22, x26, 0x7ffffff6, 0x80000000, -10, x18, 20, x19)
 
-# opcode: xori ; op1:x14; dest:x19; op1val:0x7fffffff;  immval:-1366
-TEST_IMM_OP( xori, x19, x14, 0x80000555, 0x7fffffff, -1366, x16, 24, x5)
+# opcode: xori ; op1:x5; dest:x23; op1val:0x00000000;  immval:-7
+TEST_IMM_OP( xori, x23, x5, 0xfffffff9, 0x00000000, -7, x18, 24, x19)
 
-# opcode: xori ; op1:x17; dest:x31; op1val:0x00000001;  immval:6
-TEST_IMM_OP( xori, x31, x17, 0x7, 0x00000001, 6, x16, 28, x5)
+# opcode: xori ; op1:x31; dest:x11; op1val:0x7fffffff;  immval:-2
+TEST_IMM_OP( xori, x11, x31, 0x80000001, 0x7fffffff, -2, x18, 28, x19)
 
-# opcode: xori ; op1:x6; dest:x27; op1val:0x55555555;  immval:-2048
-TEST_IMM_OP( xori, x27, x6, 0xaaaaad55, 0x55555555, -2048, x16, 32, x5)
+# opcode: xori ; op1:x2; dest:x21; op1val:0x00000001;  immval:6
+TEST_IMM_OP( xori, x21, x2, 0x7, 0x00000001, 6, x18, 32, x19)
 
-# opcode: xori ; op1:x24; dest:x28; op1val:0xff7fffff;  immval:0
-TEST_IMM_OP( xori, x28, x24, 0xff7fffff, 0xff7fffff, 0, x16, 36, x5)
+# opcode: xori ; op1:x16; dest:x8; op1val:0xffffffbf;  immval:-2048
+TEST_IMM_OP( xori, x8, x16, 0x7bf, 0xffffffbf, -2048, x18, 36, x19)
 
-# opcode: xori ; op1:x27; dest:x13; op1val:0xdfffffff;  immval:2047
-TEST_IMM_OP( xori, x13, x27, 0xdffff800, 0xdfffffff, 2047, x16, 40, x5)
+# opcode: xori ; op1:x29; dest:x4; op1val:0x01000000;  immval:0
+TEST_IMM_OP( xori, x4, x29, 0x1000000, 0x01000000, 0, x18, 40, x19)
 
-# opcode: xori ; op1:x22; dest:x18; op1val:0x00002000;  immval:1
-TEST_IMM_OP( xori, x18, x22, 0x2001, 0x00002000, 1, x16, 44, x5)
+# opcode: xori ; op1:x7; dest:x17; op1val:0xffffff7f;  immval:1
+TEST_IMM_OP( xori, x17, x7, 0xffffff7e, 0xffffff7f, 1, x18, 44, x19)
 
-# opcode: xori ; op1:x23; dest:x8; op1val:0x00000002;  immval:2
-TEST_IMM_OP( xori, x8, x23, 0x0, 0x00000002, 2, x16, 48, x5)
+# opcode: xori ; op1:x20; dest:x15; op1val:0x00000002;  immval:8
+TEST_IMM_OP( xori, x15, x20, 0xa, 0x00000002, 8, x18, 48, x19)
 
-# opcode: xori ; op1:x20; dest:x0; op1val:0x00000004;  immval:4
-TEST_IMM_OP( xori, x0, x20, 0x0, 0x00000004, 4, x16, 52, x5)
+# opcode: xori ; op1:x11; dest:x14; op1val:0x00000004;  immval:-1366
+TEST_IMM_OP( xori, x14, x11, 0xfffffaae, 0x00000004, -1366, x18, 52, x19)
 
-# opcode: xori ; op1:x7; dest:x9; op1val:0x00000008;  immval:512
-TEST_IMM_OP( xori, x9, x7, 0x208, 0x00000008, 512, x16, 56, x5)
+# opcode: xori ; op1:x28; dest:x5; op1val:0x00000008;  immval:-17
+TEST_IMM_OP( xori, x5, x28, 0xffffffe7, 0x00000008, -17, x18, 56, x19)
 
-# opcode: xori ; op1:x10; dest:x14; op1val:0x00000010;  immval:-6
-TEST_IMM_OP( xori, x14, x10, 0xffffffea, 0x00000010, -6, x16, 60, x5)
+# opcode: xori ; op1:x9; dest:x6; op1val:0x00000010;  immval:-1366
+TEST_IMM_OP( xori, x6, x9, 0xfffffaba, 0x00000010, -1366, x18, 60, x19)
 
-# opcode: xori ; op1:x15; dest:x3; op1val:0x00000020;  immval:1365
-TEST_IMM_OP( xori, x3, x15, 0x575, 0x00000020, 1365, x16, 64, x5)
+# opcode: xori ; op1:x24; dest:x26; op1val:0x00000020;  immval:1
+TEST_IMM_OP( xori, x26, x24, 0x21, 0x00000020, 1, x18, 64, x19)
 
-# opcode: xori ; op1:x8; dest:x11; op1val:0x00000040;  immval:-4
-TEST_IMM_OP( xori, x11, x8, 0xffffffbc, 0x00000040, -4, x16, 68, x5)
+# opcode: xori ; op1:x15; dest:x28; op1val:0x00000040;  immval:512
+TEST_IMM_OP( xori, x28, x15, 0x240, 0x00000040, 512, x18, 68, x19)
 
-# opcode: xori ; op1:x29; dest:x6; op1val:0x00000080;  immval:-33
-TEST_IMM_OP( xori, x6, x29, 0xffffff5f, 0x00000080, -33, x16, 72, x5)
+# opcode: xori ; op1:x17; dest:x7; op1val:0x00000080;  immval:-513
+TEST_IMM_OP( xori, x7, x17, 0xfffffd7f, 0x00000080, -513, x18, 72, x19)
 
-# opcode: xori ; op1:x3; dest:x5; op1val:0x00000100;  immval:-7
-TEST_IMM_OP( xori, x5, x3, 0xfffffef9, 0x00000100, -7, x16, 76, x6)
-la x1,signature_x1_0
+# opcode: xori ; op1:x21; dest:x29; op1val:0x00000200;  immval:-513
+TEST_IMM_OP( xori, x29, x21, 0xffffffff, 0x00000200, -513, x18, 76, x19)
 
-# opcode: xori ; op1:x30; dest:x29; op1val:0x00000200;  immval:-2048
-TEST_IMM_OP( xori, x29, x30, 0xfffffa00, 0x00000200, -2048, x1, 0, x6)
+# opcode: xori ; op1:x27; dest:x20; op1val:0x00000400;  immval:8
+TEST_IMM_OP( xori, x20, x27, 0x408, 0x00000400, 8, x18, 80, x19)
 
-# opcode: xori ; op1:x5; dest:x15; op1val:0x00000800;  immval:256
-TEST_IMM_OP( xori, x15, x5, 0x900, 0x00000800, 256, x1, 4, x6)
+# opcode: xori ; op1:x0; dest:x9; op1val:0x00000800;  immval:-1025
+TEST_IMM_OP( xori, x9, x0, 0xfffff3ff, 0x00000800, -1025, x18, 84, x19)
 
-# opcode: xori ; op1:x9; dest:x30; op1val:0x00001000;  immval:-6
-TEST_IMM_OP( xori, x30, x9, 0xffffeffa, 0x00001000, -6, x1, 8, x6)
+# opcode: xori ; op1:x3; dest:x1; op1val:0x00001000;  immval:512
+TEST_IMM_OP( xori, x1, x3, 0x1200, 0x00001000, 512, x18, 88, x19)
+la x5,signature_x5_0
 
-# opcode: xori ; op1:x11; dest:x7; op1val:0x00004000;  immval:9
-TEST_IMM_OP( xori, x7, x11, 0x4009, 0x00004000, 9, x1, 12, x6)
+# opcode: xori ; op1:x13; dest:x27; op1val:0x00002000;  immval:-6
+TEST_IMM_OP( xori, x27, x13, 0xffffdffa, 0x00002000, -6, x5, 0, x7)
 
-# opcode: xori ; op1:x16; dest:x25; op1val:0x00008000;  immval:-7
-TEST_IMM_OP( xori, x25, x16, 0xffff7ff9, 0x00008000, -7, x1, 16, x6)
+# opcode: xori ; op1:x18; dest:x31; op1val:0x00004000;  immval:-8
+TEST_IMM_OP( xori, x31, x18, 0xffffbff8, 0x00004000, -8, x5, 4, x7)
 
-# opcode: xori ; op1:x25; dest:x2; op1val:0x00010000;  immval:-4
-TEST_IMM_OP( xori, x2, x25, 0xfffefffc, 0x00010000, -4, x1, 20, x6)
+# opcode: xori ; op1:x8; dest:x18; op1val:0x00008000;  immval:6
+TEST_IMM_OP( xori, x18, x8, 0x8006, 0x00008000, 6, x5, 8, x7)
 
-# opcode: xori ; op1:x19; dest:x16; op1val:0x00020000;  immval:-8
-TEST_IMM_OP( xori, x16, x19, 0xfffdfff8, 0x00020000, -8, x1, 24, x6)
+# opcode: xori ; op1:x30; dest:x2; op1val:0x00010000;  immval:0
+TEST_IMM_OP( xori, x2, x30, 0x10000, 0x00010000, 0, x5, 12, x7)
 
-# opcode: xori ; op1:x4; dest:x10; op1val:0x00040000;  immval:1
-TEST_IMM_OP( xori, x10, x4, 0x40001, 0x00040000, 1, x1, 28, x6)
+# opcode: xori ; op1:x1; dest:x30; op1val:0x00040000;  immval:9
+TEST_IMM_OP( xori, x30, x1, 0x40009, 0x00040000, 9, x5, 16, x7)
 
-# opcode: xori ; op1:x26; dest:x23; op1val:0x00080000;  immval:-129
-TEST_IMM_OP( xori, x23, x26, 0xfff7ff7f, 0x00080000, -129, x1, 32, x6)
+# opcode: xori ; op1:x19; dest:x0; op1val:0x00080000;  immval:-65
+TEST_IMM_OP( xori, x0, x19, 0xfff7ffbf, 0x00080000, -65, x5, 20, x7)
 
-# opcode: xori ; op1:x31; dest:x22; op1val:0x00100000;  immval:-17
-TEST_IMM_OP( xori, x22, x31, 0xffefffef, 0x00100000, -17, x1, 36, x6)
+# opcode: xori ; op1:x4; dest:x19; op1val:0x00100000;  immval:5
+TEST_IMM_OP( xori, x19, x4, 0x100005, 0x00100000, 5, x5, 24, x7)
 
-# opcode: xori ; op1:x18; dest:x21; op1val:0x00200000;  immval:-65
-TEST_IMM_OP( xori, x21, x18, 0xffdfffbf, 0x00200000, -65, x1, 40, x6)
+# opcode: xori ; op1:x6; dest:x3; op1val:0x00200000;  immval:-1024
+TEST_IMM_OP( xori, x3, x6, 0xffdffc00, 0x00200000, -1024, x5, 28, x7)
 
-# opcode: xori ; op1:x28; dest:x24; op1val:0x00400000;  immval:-17
-TEST_IMM_OP( xori, x24, x28, 0xffbfffef, 0x00400000, -17, x1, 44, x6)
+# opcode: xori ; op1:x22; dest:x24; op1val:0x00400000;  immval:256
+TEST_IMM_OP( xori, x24, x22, 0x400100, 0x00400000, 256, x5, 32, x7)
 
-# opcode: xori ; op1:x10; dest:x11; op1val:0x01000000;  immval:-8
-TEST_IMM_OP( xori, x11, x10, 0xfefffff8, 0x01000000, -8, x1, 48, x6)
+# opcode: xori ; op1:x10; dest:x11; op1val:0x00800000;  immval:2047
+TEST_IMM_OP( xori, x11, x10, 0x8007ff, 0x00800000, 2047, x5, 36, x7)
 
-# opcode: xori ; op1:x10; dest:x11; op1val:0x02000000;  immval:128
-TEST_IMM_OP( xori, x11, x10, 0x2000080, 0x02000000, 128, x1, 52, x6)
+# opcode: xori ; op1:x10; dest:x11; op1val:0x02000000;  immval:-9
+TEST_IMM_OP( xori, x11, x10, 0xfdfffff7, 0x02000000, -9, x5, 40, x7)
 
-# opcode: xori ; op1:x10; dest:x11; op1val:0x04000000;  immval:3
-TEST_IMM_OP( xori, x11, x10, 0x4000003, 0x04000000, 3, x1, 56, x6)
+# opcode: xori ; op1:x10; dest:x11; op1val:0x04000000;  immval:9
+TEST_IMM_OP( xori, x11, x10, 0x4000009, 0x04000000, 9, x5, 44, x7)
 
-# opcode: xori ; op1:x10; dest:x11; op1val:0x08000000;  immval:5
-TEST_IMM_OP( xori, x11, x10, 0x8000005, 0x08000000, 5, x1, 60, x6)
+# opcode: xori ; op1:x10; dest:x11; op1val:0x08000000;  immval:-8
+TEST_IMM_OP( xori, x11, x10, 0xf7fffff8, 0x08000000, -8, x5, 48, x7)
 
-# opcode: xori ; op1:x10; dest:x11; op1val:0x10000000;  immval:256
-TEST_IMM_OP( xori, x11, x10, 0x10000100, 0x10000000, 256, x1, 64, x6)
+# opcode: xori ; op1:x10; dest:x11; op1val:0x10000000;  immval:1023
+TEST_IMM_OP( xori, x11, x10, 0x100003ff, 0x10000000, 1023, x5, 52, x7)
 
-# opcode: xori ; op1:x10; dest:x11; op1val:0x20000000;  immval:-7
-TEST_IMM_OP( xori, x11, x10, 0xdffffff9, 0x20000000, -7, x1, 68, x6)
+# opcode: xori ; op1:x10; dest:x11; op1val:0x20000000;  immval:-1025
+TEST_IMM_OP( xori, x11, x10, 0xdffffbff, 0x20000000, -1025, x5, 56, x7)
 
-# opcode: xori ; op1:x10; dest:x11; op1val:0x40000000;  immval:1024
-TEST_IMM_OP( xori, x11, x10, 0x40000400, 0x40000000, 1024, x1, 72, x6)
+# opcode: xori ; op1:x10; dest:x11; op1val:0x40000000;  immval:-10
+TEST_IMM_OP( xori, x11, x10, 0xbffffff6, 0x40000000, -10, x5, 60, x7)
 
-# opcode: xori ; op1:x10; dest:x11; op1val:0xfffffffe;  immval:1365
-TEST_IMM_OP( xori, x11, x10, 0xfffffaab, 0xfffffffe, 1365, x1, 76, x6)
+# opcode: xori ; op1:x10; dest:x11; op1val:0xfffffffe;  immval:6
+TEST_IMM_OP( xori, x11, x10, 0xfffffff8, 0xfffffffe, 6, x5, 64, x7)
 
-# opcode: xori ; op1:x10; dest:x11; op1val:0xfffffffd;  immval:5
-TEST_IMM_OP( xori, x11, x10, 0xfffffff8, 0xfffffffd, 5, x1, 80, x6)
+# opcode: xori ; op1:x10; dest:x11; op1val:0xfffffffd;  immval:256
+TEST_IMM_OP( xori, x11, x10, 0xfffffefd, 0xfffffffd, 256, x5, 68, x7)
 
-# opcode: xori ; op1:x10; dest:x11; op1val:0xfffffffb;  immval:1023
-TEST_IMM_OP( xori, x11, x10, 0xfffffc04, 0xfffffffb, 1023, x1, 84, x6)
+# opcode: xori ; op1:x10; dest:x11; op1val:0xfffffffb;  immval:-17
+TEST_IMM_OP( xori, x11, x10, 0x14, 0xfffffffb, -17, x5, 72, x7)
 
-# opcode: xori ; op1:x10; dest:x11; op1val:0xfffffff7;  immval:-10
-TEST_IMM_OP( xori, x11, x10, 0x1, 0xfffffff7, -10, x1, 88, x6)
+# opcode: xori ; op1:x10; dest:x11; op1val:0xfffffff7;  immval:-5
+TEST_IMM_OP( xori, x11, x10, 0xc, 0xfffffff7, -5, x5, 76, x7)
 
-# opcode: xori ; op1:x10; dest:x11; op1val:0xffffffef;  immval:0
-TEST_IMM_OP( xori, x11, x10, 0xffffffef, 0xffffffef, 0, x1, 92, x6)
+# opcode: xori ; op1:x10; dest:x11; op1val:0xffffffef;  immval:1024
+TEST_IMM_OP( xori, x11, x10, 0xfffffbef, 0xffffffef, 1024, x5, 80, x7)
 
-# opcode: xori ; op1:x10; dest:x11; op1val:0xffffffdf;  immval:-1366
-TEST_IMM_OP( xori, x11, x10, 0x575, 0xffffffdf, -1366, x1, 96, x6)
+# opcode: xori ; op1:x10; dest:x11; op1val:0xffffffdf;  immval:8
+TEST_IMM_OP( xori, x11, x10, 0xffffffd7, 0xffffffdf, 8, x5, 84, x7)
 
-# opcode: xori ; op1:x10; dest:x11; op1val:0xffffffbf;  immval:1365
-TEST_IMM_OP( xori, x11, x10, 0xfffffaea, 0xffffffbf, 1365, x1, 100, x6)
+# opcode: xori ; op1:x10; dest:x11; op1val:0xfffffeff;  immval:9
+TEST_IMM_OP( xori, x11, x10, 0xfffffef6, 0xfffffeff, 9, x5, 88, x7)
 
-# opcode: xori ; op1:x10; dest:x11; op1val:0xffffff7f;  immval:-10
-TEST_IMM_OP( xori, x11, x10, 0x89, 0xffffff7f, -10, x1, 104, x6)
+# opcode: xori ; op1:x10; dest:x11; op1val:0xfffffdff;  immval:2
+TEST_IMM_OP( xori, x11, x10, 0xfffffdfd, 0xfffffdff, 2, x5, 92, x7)
 
-# opcode: xori ; op1:x10; dest:x11; op1val:0xfffffeff;  immval:4
-TEST_IMM_OP( xori, x11, x10, 0xfffffefb, 0xfffffeff, 4, x1, 108, x6)
+# opcode: xori ; op1:x10; dest:x11; op1val:0xfffff7ff;  immval:-513
+TEST_IMM_OP( xori, x11, x10, 0xa00, 0xfffff7ff, -513, x5, 96, x7)
 
-# opcode: xori ; op1:x10; dest:x11; op1val:0xfff7ffff;  immval:-7
-TEST_IMM_OP( xori, x11, x10, 0x80006, 0xfff7ffff, -7, x1, 112, x6)
+# opcode: xori ; op1:x10; dest:x11; op1val:0xfff7ffff;  immval:-3
+TEST_IMM_OP( xori, x11, x10, 0x80002, 0xfff7ffff, -3, x5, 100, x7)
 
-# opcode: xori ; op1:x10; dest:x11; op1val:0xffefffff;  immval:256
-TEST_IMM_OP( xori, x11, x10, 0xffeffeff, 0xffefffff, 256, x1, 116, x6)
+# opcode: xori ; op1:x10; dest:x11; op1val:0xffefffff;  immval:-9
+TEST_IMM_OP( xori, x11, x10, 0x100008, 0xffefffff, -9, x5, 104, x7)
 
-# opcode: xori ; op1:x10; dest:x11; op1val:0xffdfffff;  immval:-8
-TEST_IMM_OP( xori, x11, x10, 0x200007, 0xffdfffff, -8, x1, 120, x6)
+# opcode: xori ; op1:x10; dest:x11; op1val:0xffdfffff;  immval:7
+TEST_IMM_OP( xori, x11, x10, 0xffdffff8, 0xffdfffff, 7, x5, 108, x7)
 
-# opcode: xori ; op1:x10; dest:x11; op1val:0xffbfffff;  immval:6
-TEST_IMM_OP( xori, x11, x10, 0xffbffff9, 0xffbfffff, 6, x1, 124, x6)
+# opcode: xori ; op1:x10; dest:x11; op1val:0xffbfffff;  immval:-513
+TEST_IMM_OP( xori, x11, x10, 0x400200, 0xffbfffff, -513, x5, 112, x7)
 
-# opcode: xori ; op1:x10; dest:x11; op1val:0xfeffffff;  immval:1024
-TEST_IMM_OP( xori, x11, x10, 0xfefffbff, 0xfeffffff, 1024, x1, 128, x6)
+# opcode: xori ; op1:x10; dest:x11; op1val:0xff7fffff;  immval:4
+TEST_IMM_OP( xori, x11, x10, 0xff7ffffb, 0xff7fffff, 4, x5, 116, x7)
 
-# opcode: xori ; op1:x10; dest:x11; op1val:0xfdffffff;  immval:-257
-TEST_IMM_OP( xori, x11, x10, 0x2000100, 0xfdffffff, -257, x1, 132, x6)
+# opcode: xori ; op1:x10; dest:x11; op1val:0xfeffffff;  immval:6
+TEST_IMM_OP( xori, x11, x10, 0xfefffff9, 0xfeffffff, 6, x5, 120, x7)
 
-# opcode: xori ; op1:x10; dest:x11; op1val:0xfbffffff;  immval:5
-TEST_IMM_OP( xori, x11, x10, 0xfbfffffa, 0xfbffffff, 5, x1, 136, x6)
+# opcode: xori ; op1:x10; dest:x11; op1val:0xfdffffff;  immval:-1025
+TEST_IMM_OP( xori, x11, x10, 0x2000400, 0xfdffffff, -1025, x5, 124, x7)
 
-# opcode: xori ; op1:x10; dest:x11; op1val:0xf7ffffff;  immval:-257
-TEST_IMM_OP( xori, x11, x10, 0x8000100, 0xf7ffffff, -257, x1, 140, x6)
+# opcode: xori ; op1:x10; dest:x11; op1val:0xfbffffff;  immval:16
+TEST_IMM_OP( xori, x11, x10, 0xfbffffef, 0xfbffffff, 16, x5, 128, x7)
 
-# opcode: xori ; op1:x10; dest:x11; op1val:0xefffffff;  immval:2047
-TEST_IMM_OP( xori, x11, x10, 0xeffff800, 0xefffffff, 2047, x1, 144, x6)
+# opcode: xori ; op1:x10; dest:x11; op1val:0xf7ffffff;  immval:32
+TEST_IMM_OP( xori, x11, x10, 0xf7ffffdf, 0xf7ffffff, 32, x5, 132, x7)
 
-# opcode: xori ; op1:x10; dest:x11; op1val:0xbfffffff;  immval:-6
-TEST_IMM_OP( xori, x11, x10, 0x40000005, 0xbfffffff, -6, x1, 148, x6)
+# opcode: xori ; op1:x10; dest:x11; op1val:0xefffffff;  immval:512
+TEST_IMM_OP( xori, x11, x10, 0xeffffdff, 0xefffffff, 512, x5, 136, x7)
 
-# opcode: xori ; op1:x10; dest:x11; op1val:0xaaaaaaaa;  immval:64
-TEST_IMM_OP( xori, x11, x10, 0xaaaaaaea, 0xaaaaaaaa, 64, x1, 152, x6)
+# opcode: xori ; op1:x10; dest:x11; op1val:0xdfffffff;  immval:0
+TEST_IMM_OP( xori, x11, x10, 0xdfffffff, 0xdfffffff, 0, x5, 140, x7)
 
-# opcode: xori ; op1:x10; dest:x11; op1val:0x00010000;  immval:8
-TEST_IMM_OP( xori, x11, x10, 0x10008, 0x00010000, 8, x1, 156, x6)
+# opcode: xori ; op1:x10; dest:x11; op1val:0xbfffffff;  immval:-5
+TEST_IMM_OP( xori, x11, x10, 0x40000004, 0xbfffffff, -5, x5, 144, x7)
 
-# opcode: xori ; op1:x10; dest:x11; op1val:0xfffffbff;  immval:16
-TEST_IMM_OP( xori, x11, x10, 0xfffffbef, 0xfffffbff, 16, x1, 160, x6)
+# opcode: xori ; op1:x10; dest:x11; op1val:0x00000009;  immval:-129
+TEST_IMM_OP( xori, x11, x10, 0xffffff76, 0x00000009, -129, x5, 148, x7)
 
-# opcode: xori ; op1:x10; dest:x11; op1val:0xbfffffff;  immval:32
-TEST_IMM_OP( xori, x11, x10, 0xbfffffdf, 0xbfffffff, 32, x1, 164, x6)
+# opcode: xori ; op1:x10; dest:x11; op1val:0x00010000;  immval:-257
+TEST_IMM_OP( xori, x11, x10, 0xfffefeff, 0x00010000, -257, x5, 152, x7)
 
-# opcode: xori ; op1:x10; dest:x11; op1val:0xfffffffd;  immval:-513
-TEST_IMM_OP( xori, x11, x10, 0x202, 0xfffffffd, -513, x1, 168, x6)
+# opcode: xori ; op1:x10; dest:x11; op1val:0x00000200;  immval:1365
+TEST_IMM_OP( xori, x11, x10, 0x755, 0x00000200, 1365, x5, 156, x7)
+
+# opcode: xori ; op1:x10; dest:x11; op1val:0x55555555;  immval:-2
+TEST_IMM_OP( xori, x11, x10, 0xaaaaaaab, 0x55555555, -2, x5, 160, x7)
+
+# opcode: xori ; op1:x10; dest:x11; op1val:0xaaaaaaaa;  immval:8
+TEST_IMM_OP( xori, x11, x10, 0xaaaaaaa2, 0xaaaaaaaa, 8, x5, 164, x7)
+
+# opcode: xori ; op1:x10; dest:x11; op1val:0xfffffffc;  immval:64
+TEST_IMM_OP( xori, x11, x10, 0xffffffbc, 0xfffffffc, 64, x5, 168, x7)
+
+# opcode: xori ; op1:x10; dest:x11; op1val:0xfffbffff;  immval:8
+TEST_IMM_OP( xori, x11, x10, 0xfffbfff7, 0xfffbffff, 8, x5, 172, x7)
+
+# opcode: xori ; op1:x10; dest:x11; op1val:0x00000000;  immval:128
+TEST_IMM_OP( xori, x11, x10, 0x80, 0x00000000, 128, x5, 176, x7)
+
+# opcode: xori ; op1:x10; dest:x11; op1val:0xffffefff;  immval:-6
+TEST_IMM_OP( xori, x11, x10, 0x1005, 0xffffefff, -6, x5, 180, x7)
+
+# opcode: xori ; op1:x10; dest:x11; op1val:0xffffdfff;  immval:-257
+TEST_IMM_OP( xori, x11, x10, 0x2100, 0xffffdfff, -257, x5, 184, x7)
+
+# opcode: xori ; op1:x10; dest:x11; op1val:0xffffbfff;  immval:-129
+TEST_IMM_OP( xori, x11, x10, 0x4080, 0xffffbfff, -129, x5, 188, x7)
+
+# opcode: xori ; op1:x10; dest:x11; op1val:0xffff7fff;  immval:-1366
+TEST_IMM_OP( xori, x11, x10, 0x8555, 0xffff7fff, -1366, x5, 192, x7)
+
+# opcode: xori ; op1:x10; dest:x11; op1val:0xfffeffff;  immval:1023
+TEST_IMM_OP( xori, x11, x10, 0xfffefc00, 0xfffeffff, 1023, x5, 196, x7)
 
 # opcode: xori ; op1:x10; dest:x11; op1val:0xfffdffff;  immval:-1025
-TEST_IMM_OP( xori, x11, x10, 0x20400, 0xfffdffff, -1025, x1, 172, x6)
+TEST_IMM_OP( xori, x11, x10, 0x20400, 0xfffdffff, -1025, x5, 200, x7)
 
-# opcode: xori ; op1:x10; dest:x11; op1val:0xffffdfff;  immval:-6
-TEST_IMM_OP( xori, x11, x10, 0x2005, 0xffffdfff, -6, x1, 176, x6)
+# opcode: xori ; op1:x10; dest:x11; op1val:0x00000003;  immval:-33
+TEST_IMM_OP( xori, x11, x10, 0xffffffdc, 0x00000003, -33, x5, 204, x7)
 
-# opcode: xori ; op1:x10; dest:x11; op1val:0x00100000;  immval:-5
-TEST_IMM_OP( xori, x11, x10, 0xffeffffb, 0x00100000, -5, x1, 180, x6)
+# opcode: xori ; op1:x10; dest:x11; op1val:0x00000009;  immval:3
+TEST_IMM_OP( xori, x11, x10, 0xa, 0x00000009, 3, x5, 208, x7)
 
-# opcode: xori ; op1:x10; dest:x11; op1val:0xfffeffff;  immval:256
-TEST_IMM_OP( xori, x11, x10, 0xfffefeff, 0xfffeffff, 256, x1, 184, x6)
+# opcode: xori ; op1:x10; dest:x11; op1val:0x00000800;  immval:-1025
+TEST_IMM_OP( xori, x11, x10, 0xfffff3ff, 0x00000800, -1025, x5, 212, x7)
 
-# opcode: xori ; op1:x10; dest:x11; op1val:0xfffffdff;  immval:-1024
-TEST_IMM_OP( xori, x11, x10, 0x1ff, 0xfffffdff, -1024, x1, 188, x6)
-
-# opcode: xori ; op1:x10; dest:x11; op1val:0xfffff7ff;  immval:512
-TEST_IMM_OP( xori, x11, x10, 0xfffff5ff, 0xfffff7ff, 512, x1, 192, x6)
-
-# opcode: xori ; op1:x10; dest:x11; op1val:0xffffefff;  immval:-2048
-TEST_IMM_OP( xori, x11, x10, 0x17ff, 0xffffefff, -2048, x1, 196, x6)
-
-# opcode: xori ; op1:x10; dest:x11; op1val:0x00000100;  immval:-2
-TEST_IMM_OP( xori, x11, x10, 0xfffffefe, 0x00000100, -2, x1, 200, x6)
-
-# opcode: xori ; op1:x10; dest:x11; op1val:0xffffbfff;  immval:-4
-TEST_IMM_OP( xori, x11, x10, 0x4003, 0xffffbfff, -4, x1, 204, x6)
-
-# opcode: xori ; op1:x10; dest:x11; op1val:0xffff7fff;  immval:8
-TEST_IMM_OP( xori, x11, x10, 0xffff7ff7, 0xffff7fff, 8, x1, 208, x6)
-
-# opcode: xori ; op1:x10; dest:x11; op1val:0xfffffeff;  immval:-9
-TEST_IMM_OP( xori, x11, x10, 0x108, 0xfffffeff, -9, x1, 212, x6)
-
-# opcode: xori ; op1:x10; dest:x11; op1val:0xfffbffff;  immval:-1024
-TEST_IMM_OP( xori, x11, x10, 0x403ff, 0xfffbffff, -1024, x1, 216, x6)
-
-# opcode: xori ; op1:x10; dest:x11; op1val:0x00000400;  immval:1024
-TEST_IMM_OP( xori, x11, x10, 0x0, 0x00000400, 1024, x1, 220, x6)
-
-# opcode: xori ; op1:x10; dest:x11; op1val:0x00800000;  immval:-3
-TEST_IMM_OP( xori, x11, x10, 0xff7ffffd, 0x00800000, -3, x1, 224, x6)
-
-# opcode: xori ; op1:x10; dest:x11; op1val:0x00000004;  immval:4
-TEST_IMM_OP( xori, x11, x10, 0x0, 0x00000004, 4, x1, 228, x6)
+# opcode: xori ; op1:x10; dest:x11; op1val:0x00080000;  immval:-65
+TEST_IMM_OP( xori, x11, x10, 0xfff7ffbf, 0x00080000, -65, x5, 216, x7)
 #endif
 
 
@@ -265,16 +265,16 @@ RVTEST_DATA_END
 RVMODEL_DATA_BEGIN
 .align 4
 
-signature_x16_0:
+signature_x18_0:
     .fill 0*(XLEN/32),4,0xafacadee
 
 
-signature_x16_1:
-    .fill 20*(XLEN/32),4,0xafacadee
+signature_x18_1:
+    .fill 23*(XLEN/32),4,0xafacadee
 
 
-signature_x1_0:
-    .fill 58*(XLEN/32),4,0xafacadee
+signature_x5_0:
+    .fill 55*(XLEN/32),4,0xafacadee
 
 #ifdef rvtest_mtrap_routine
 

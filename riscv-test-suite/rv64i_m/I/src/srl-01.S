@@ -13,428 +13,435 @@ RVTEST_CODE_BEGIN
 
 RVTEST_CASE(0,"//check ISA:=regex(.*64.*);check ISA:=regex(.*I.*);def TEST_CASE_1=True;",srl)
 
-la x13,signature_x13_1
+la x17,signature_x17_1
 
-# opcode: srl ; op1:x30; op2:x19; dest:x5; op1val:0xfffffeffffffffff;  op2val:0x0000000000000008
-TEST_RR_OP(srl, x5, x30, x19, 0xffffff, 0xfffffeffffffffff, 0x0000000000000008, x13, 0, x11)
+# opcode: srl ; op1:x1; op2:x2; dest:x1; op1val:0xffffffff7fffffff;  op2val:0x000000000000000e
+TEST_RR_OP(srl, x1, x1, x2, 0x1ffff, 0xffffffff7fffffff, 0x000000000000000e, x17, 0, x18)
 
-# opcode: srl ; op1:x16; op2:x16; dest:x16; op1val:0x0000000004000000;  op2val:0x000000000000003b
-TEST_RR_OP(srl, x16, x16, x16, 0x0, 0x0000000004000000, 0x000000000000003b, x13, 8, x11)
+# opcode: srl ; op1:x22; op2:x13; dest:x26; op1val:0x0000000080000000;  op2val:0x0000000000000010
+TEST_RR_OP(srl, x26, x22, x13, 0x8000, 0x0000000080000000, 0x0000000000000010, x17, 8, x18)
 
-# opcode: srl ; op1:x28; op2:x31; dest:x31; op1val:0xffffffffdfffffff;  op2val:0x0000000000000000
-TEST_RR_OP(srl, x31, x28, x31, 0xdfffffff, 0xffffffffdfffffff, 0x0000000000000000, x13, 16, x11)
+# opcode: srl ; op1:x5; op2:x5; dest:x31; op1val:0xfff7ffffffffffff;  op2val:0x0000000000000000
+TEST_RR_OP(srl, x31, x5, x5, 0xffffffff, 0xfff7ffffffffffff, 0x0000000000000000, x17, 16, x18)
 
-# opcode: srl ; op1:x2; op2:x14; dest:x2; op1val:0x4000000000000000;  op2val:0x0000000000000000
-TEST_RR_OP(srl, x2, x2, x14, 0x0, 0x4000000000000000, 0x0000000000000000, x13, 24, x11)
+# opcode: srl ; op1:x3; op2:x28; dest:x28; op1val:0x4000000000000000;  op2val:0x0000000000000000
+TEST_RR_OP(srl, x28, x3, x28, 0x0, 0x4000000000000000, 0x0000000000000000, x17, 24, x18)
 
-# opcode: srl ; op1:x1; op2:x1; dest:x26; op1val:0x0000000000000003;  op2val:0x0000000000000003
-TEST_RR_OP(srl, x26, x1, x1, 0x0, 0x0000000000000003, 0x0000000000000003, x13, 32, x11)
+# opcode: srl ; op1:x24; op2:x24; dest:x24; op1val:0x0000000000000003;  op2val:0x0000000000000003
+TEST_RR_OP(srl, x24, x24, x24, 0x0, 0x0000000000000003, 0x0000000000000003, x17, 32, x18)
 
-# opcode: srl ; op1:x26; op2:x5; dest:x19; op1val:0x8000000000000000;  op2val:0x0000000000000013
-TEST_RR_OP(srl, x19, x26, x5, 0x0, 0x8000000000000000, 0x0000000000000013, x13, 40, x11)
+# opcode: srl ; op1:x20; op2:x27; dest:x8; op1val:0x8000000000000000;  op2val:0x0000000000000010
+TEST_RR_OP(srl, x8, x20, x27, 0x0, 0x8000000000000000, 0x0000000000000010, x17, 40, x18)
 
-# opcode: srl ; op1:x8; op2:x7; dest:x23; op1val:0x0000000000000000;  op2val:0x000000000000000c
-TEST_RR_OP(srl, x23, x8, x7, 0x0, 0x0000000000000000, 0x000000000000000c, x13, 48, x11)
+# opcode: srl ; op1:x31; op2:x7; dest:x6; op1val:0x0000000000000000;  op2val:0x0000000000000003
+TEST_RR_OP(srl, x6, x31, x7, 0x0, 0x0000000000000000, 0x0000000000000003, x17, 48, x18)
 
-# opcode: srl ; op1:x25; op2:x18; dest:x4; op1val:0x7fffffffffffffff;  op2val:0x000000000000000e
-TEST_RR_OP(srl, x4, x25, x18, 0x3ffff, 0x7fffffffffffffff, 0x000000000000000e, x13, 56, x11)
+# opcode: srl ; op1:x11; op2:x1; dest:x16; op1val:0x7fffffffffffffff;  op2val:0x0000000000000009
+TEST_RR_OP(srl, x16, x11, x1, 0x7fffff, 0x7fffffffffffffff, 0x0000000000000009, x17, 56, x18)
 
-# opcode: srl ; op1:x15; op2:x17; dest:x0; op1val:0x0000000000000001;  op2val:0x0000000000000013
-TEST_RR_OP(srl, x0, x15, x17, 0x0, 0x0000000000000001, 0x0000000000000013, x13, 64, x11)
+# opcode: srl ; op1:x19; op2:x26; dest:x21; op1val:0x0000000000000001;  op2val:0x000000000000003e
+TEST_RR_OP(srl, x21, x19, x26, 0x0, 0x0000000000000001, 0x000000000000003e, x17, 64, x18)
 
-# opcode: srl ; op1:x14; op2:x24; dest:x1; op1val:0x0000000010000000;  op2val:0x0000000000000001
-TEST_RR_OP(srl, x1, x14, x24, 0x8000000, 0x0000000010000000, 0x0000000000000001, x13, 72, x11)
+# opcode: srl ; op1:x0; op2:x12; dest:x4; op1val:0xffffffffffffefff;  op2val:0x0000000000000001
+TEST_RR_OP(srl, x4, x0, x12, 0x7ffff7ff, 0xffffffffffffefff, 0x0000000000000001, x17, 72, x18)
 
-# opcode: srl ; op1:x10; op2:x21; dest:x27; op1val:0xffdfffffffffffff;  op2val:0x0000000000000002
-TEST_RR_OP(srl, x27, x10, x21, 0x3fffffff, 0xffdfffffffffffff, 0x0000000000000002, x13, 80, x11)
+# opcode: srl ; op1:x10; op2:x25; dest:x12; op1val:0xfeffffffffffffff;  op2val:0x0000000000000002
+TEST_RR_OP(srl, x12, x10, x25, 0x3fffffff, 0xfeffffffffffffff, 0x0000000000000002, x17, 80, x18)
 
-# opcode: srl ; op1:x9; op2:x26; dest:x20; op1val:0x0000000100000000;  op2val:0x0000000000000004
-TEST_RR_OP(srl, x20, x9, x26, 0x0, 0x0000000100000000, 0x0000000000000004, x13, 88, x11)
+# opcode: srl ; op1:x25; op2:x23; dest:x9; op1val:0x0000000000040000;  op2val:0x0000000000000004
+TEST_RR_OP(srl, x9, x25, x23, 0x4000, 0x0000000000040000, 0x0000000000000004, x17, 88, x18)
 
-# opcode: srl ; op1:x5; op2:x3; dest:x12; op1val:0xfffffffffffffff7;  op2val:0x0000000000000010
-TEST_RR_OP(srl, x12, x5, x3, 0xffff, 0xfffffffffffffff7, 0x0000000000000010, x13, 96, x11)
+# opcode: srl ; op1:x14; op2:x21; dest:x27; op1val:0x0000000000800000;  op2val:0x0000000000000008
+TEST_RR_OP(srl, x27, x14, x21, 0x8000, 0x0000000000800000, 0x0000000000000008, x17, 96, x18)
 
-# opcode: srl ; op1:x6; op2:x23; dest:x25; op1val:0x0000000001000000;  op2val:0x0000000000000020
-TEST_RR_OP(srl, x25, x6, x23, 0x1000000, 0x0000000001000000, 0x0000000000000020, x13, 104, x11)
+# opcode: srl ; op1:x15; op2:x9; dest:x22; op1val:0xffffffff7fffffff;  op2val:0x0000000000000020
+TEST_RR_OP(srl, x22, x15, x9, 0x7fffffff, 0xffffffff7fffffff, 0x0000000000000020, x17, 104, x18)
 
-# opcode: srl ; op1:x11; op2:x25; dest:x10; op1val:0xffffff7fffffffff;  op2val:0x000000000000003e
-TEST_RR_OP(srl, x10, x11, x25, 0x3, 0xffffff7fffffffff, 0x000000000000003e, x13, 112, x5)
+# opcode: srl ; op1:x28; op2:x29; dest:x20; op1val:0x0040000000000000;  op2val:0x000000000000003d
+TEST_RR_OP(srl, x20, x28, x29, 0x0, 0x0040000000000000, 0x000000000000003d, x17, 112, x15)
 la x1,signature_x1_0
 
-# opcode: srl ; op1:x12; op2:x0; dest:x7; op1val:0xfffffeffffffffff;  op2val:0x000000000000003d
-TEST_RR_OP(srl, x7, x12, x0, 0x7, 0xfffffeffffffffff, 0x000000000000003d, x1, 0, x5)
+# opcode: srl ; op1:x23; op2:x31; dest:x29; op1val:0x0000000000000200;  op2val:0x000000000000003b
+TEST_RR_OP(srl, x29, x23, x31, 0x0, 0x0000000000000200, 0x000000000000003b, x1, 0, x15)
 
-# opcode: srl ; op1:x23; op2:x10; dest:x6; op1val:0xbfffffffffffffff;  op2val:0x0000000000000037
-TEST_RR_OP(srl, x6, x23, x10, 0x1ff, 0xbfffffffffffffff, 0x0000000000000037, x1, 8, x5)
+# opcode: srl ; op1:x2; op2:x22; dest:x23; op1val:0x0000000000000005;  op2val:0x0000000000000037
+TEST_RR_OP(srl, x23, x2, x22, 0x0, 0x0000000000000005, 0x0000000000000037, x1, 8, x15)
 
-# opcode: srl ; op1:x3; op2:x28; dest:x13; op1val:0xfffffffffffffffd;  op2val:0x000000000000002f
-TEST_RR_OP(srl, x13, x3, x28, 0x1ffff, 0xfffffffffffffffd, 0x000000000000002f, x1, 16, x5)
+# opcode: srl ; op1:x12; op2:x6; dest:x19; op1val:0x0000000200000000;  op2val:0x000000000000002f
+TEST_RR_OP(srl, x19, x12, x6, 0x0, 0x0000000200000000, 0x000000000000002f, x1, 16, x15)
 
-# opcode: srl ; op1:x31; op2:x6; dest:x28; op1val:0xffffffffff7fffff;  op2val:0x000000000000001f
-TEST_RR_OP(srl, x28, x31, x6, 0x1, 0xffffffffff7fffff, 0x000000000000001f, x1, 24, x5)
+# opcode: srl ; op1:x6; op2:x20; dest:x2; op1val:0xffffffffffff7fff;  op2val:0x000000000000001f
+TEST_RR_OP(srl, x2, x6, x20, 0x1, 0xffffffffffff7fff, 0x000000000000001f, x1, 24, x15)
 
-# opcode: srl ; op1:x20; op2:x2; dest:x11; op1val:0x0000001000000000;  op2val:0x0000000000000015
-TEST_RR_OP(srl, x11, x20, x2, 0x0, 0x0000001000000000, 0x0000000000000015, x1, 32, x5)
+# opcode: srl ; op1:x8; op2:x17; dest:x14; op1val:0xfffffffffffffdff;  op2val:0x0000000000000015
+TEST_RR_OP(srl, x14, x8, x17, 0x7ff, 0xfffffffffffffdff, 0x0000000000000015, x1, 32, x15)
 
-# opcode: srl ; op1:x7; op2:x12; dest:x3; op1val:0x0000000000800000;  op2val:0x000000000000002a
-TEST_RR_OP(srl, x3, x7, x12, 0x2000, 0x0000000000800000, 0x000000000000002a, x1, 40, x5)
+# opcode: srl ; op1:x7; op2:x3; dest:x13; op1val:0x0000000000800000;  op2val:0x000000000000002a
+TEST_RR_OP(srl, x13, x7, x3, 0x2000, 0x0000000000800000, 0x000000000000002a, x1, 40, x15)
 
-# opcode: srl ; op1:x17; op2:x22; dest:x30; op1val:0x0000000000000002;  op2val:0x0000000000000005
-TEST_RR_OP(srl, x30, x17, x22, 0x0, 0x0000000000000002, 0x0000000000000005, x1, 48, x5)
+# opcode: srl ; op1:x13; op2:x14; dest:x30; op1val:0x0000000000000002;  op2val:0x0000000000000013
+TEST_RR_OP(srl, x30, x13, x14, 0x0, 0x0000000000000002, 0x0000000000000013, x1, 48, x15)
 
-# opcode: srl ; op1:x21; op2:x29; dest:x14; op1val:0x0000000000000004;  op2val:0x000000000000000f
-TEST_RR_OP(srl, x14, x21, x29, 0x0, 0x0000000000000004, 0x000000000000000f, x1, 56, x5)
+# opcode: srl ; op1:x17; op2:x10; dest:x25; op1val:0x0000000000000004;  op2val:0x000000000000000b
+TEST_RR_OP(srl, x25, x17, x10, 0x0, 0x0000000000000004, 0x000000000000000b, x1, 56, x15)
 
-# opcode: srl ; op1:x19; op2:x15; dest:x9; op1val:0x0000000000000008;  op2val:0x0000000000000005
-TEST_RR_OP(srl, x9, x19, x15, 0x0, 0x0000000000000008, 0x0000000000000005, x1, 64, x5)
+# opcode: srl ; op1:x9; op2:x8; dest:x11; op1val:0x0000000000000008;  op2val:0x0000000000000037
+TEST_RR_OP(srl, x11, x9, x8, 0x0, 0x0000000000000008, 0x0000000000000037, x1, 64, x15)
 
-# opcode: srl ; op1:x13; op2:x4; dest:x18; op1val:0x0000000000000010;  op2val:0x0000000000000008
-TEST_RR_OP(srl, x18, x13, x4, 0x0, 0x0000000000000010, 0x0000000000000008, x1, 72, x5)
+# opcode: srl ; op1:x16; op2:x30; dest:x7; op1val:0x0000000000000010;  op2val:0x000000000000000b
+TEST_RR_OP(srl, x7, x16, x30, 0x0, 0x0000000000000010, 0x000000000000000b, x1, 72, x15)
 
-# opcode: srl ; op1:x4; op2:x27; dest:x17; op1val:0x0000000000000020;  op2val:0x0000000000000007
-TEST_RR_OP(srl, x17, x4, x27, 0x0, 0x0000000000000020, 0x0000000000000007, x1, 80, x5)
+# opcode: srl ; op1:x21; op2:x19; dest:x5; op1val:0x0000000000000020;  op2val:0x000000000000003d
+TEST_RR_OP(srl, x5, x21, x19, 0x0, 0x0000000000000020, 0x000000000000003d, x1, 80, x15)
 
-# opcode: srl ; op1:x24; op2:x8; dest:x21; op1val:0x0000000000000040;  op2val:0x0000000000000006
-TEST_RR_OP(srl, x21, x24, x8, 0x1, 0x0000000000000040, 0x0000000000000006, x1, 88, x5)
+# opcode: srl ; op1:x26; op2:x11; dest:x10; op1val:0x0000000000000040;  op2val:0x000000000000000c
+TEST_RR_OP(srl, x10, x26, x11, 0x0, 0x0000000000000040, 0x000000000000000c, x1, 88, x15)
 
-# opcode: srl ; op1:x29; op2:x11; dest:x8; op1val:0x0000000000000080;  op2val:0x0000000000000007
-TEST_RR_OP(srl, x8, x29, x11, 0x1, 0x0000000000000080, 0x0000000000000007, x1, 96, x2)
+# opcode: srl ; op1:x4; op2:x18; dest:x3; op1val:0x0000000000000080;  op2val:0x0000000000000001
+TEST_RR_OP(srl, x3, x4, x18, 0x40, 0x0000000000000080, 0x0000000000000001, x1, 96, x15)
 
-# opcode: srl ; op1:x0; op2:x20; dest:x24; op1val:0x0000000000000100;  op2val:0x0000000000000008
-TEST_RR_OP(srl, x24, x0, x20, 0x1, 0x0000000000000100, 0x0000000000000008, x1, 104, x2)
+# opcode: srl ; op1:x29; op2:x4; dest:x15; op1val:0x0000000000000100;  op2val:0x0000000000000037
+TEST_RR_OP(srl, x15, x29, x4, 0x0, 0x0000000000000100, 0x0000000000000037, x1, 104, x2)
 
-# opcode: srl ; op1:x22; op2:x13; dest:x15; op1val:0x0000000000000200;  op2val:0x0000000000000000
-TEST_RR_OP(srl, x15, x22, x13, 0x200, 0x0000000000000200, 0x0000000000000000, x1, 112, x2)
+# opcode: srl ; op1:x18; op2:x16; dest:x0; op1val:0x0000000000000400;  op2val:0x000000000000000e
+TEST_RR_OP(srl, x0, x18, x16, 0x0, 0x0000000000000400, 0x000000000000000e, x1, 112, x2)
 
-# opcode: srl ; op1:x18; op2:x9; dest:x22; op1val:0x0000000000000400;  op2val:0x0000000000000011
-TEST_RR_OP(srl, x22, x18, x9, 0x0, 0x0000000000000400, 0x0000000000000011, x1, 120, x2)
+# opcode: srl ; op1:x27; op2:x0; dest:x18; op1val:0x0000000000000800;  op2val:0x0000000000000012
+TEST_RR_OP(srl, x18, x27, x0, 0x0, 0x0000000000000800, 0x0000000000000012, x1, 120, x2)
+la x1,signature_x1_1
 
-# opcode: srl ; op1:x27; op2:x30; dest:x29; op1val:0x0000000000000800;  op2val:0x0000000000000009
-TEST_RR_OP(srl, x29, x27, x30, 0x4, 0x0000000000000800, 0x0000000000000009, x1, 128, x2)
+# opcode: srl ; op1:x30; op2:x15; dest:x17; op1val:0x0000000000001000;  op2val:0x000000000000000b
+TEST_RR_OP(srl, x17, x30, x15, 0x2, 0x0000000000001000, 0x000000000000000b, x1, 0, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0000000000001000;  op2val:0x0000000000000004
-TEST_RR_OP(srl, x12, x10, x11, 0x100, 0x0000000000001000, 0x0000000000000004, x1, 136, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0000000000002000;  op2val:0x000000000000000d
+TEST_RR_OP(srl, x12, x10, x11, 0x1, 0x0000000000002000, 0x000000000000000d, x1, 8, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0000000000002000;  op2val:0x000000000000002a
-TEST_RR_OP(srl, x12, x10, x11, 0x8, 0x0000000000002000, 0x000000000000002a, x1, 144, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0000000000004000;  op2val:0x0000000000000001
+TEST_RR_OP(srl, x12, x10, x11, 0x2000, 0x0000000000004000, 0x0000000000000001, x1, 16, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0000000000004000;  op2val:0x0000000000000000
-TEST_RR_OP(srl, x12, x10, x11, 0x4000, 0x0000000000004000, 0x0000000000000000, x1, 152, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0000000000008000;  op2val:0x0000000000000037
+TEST_RR_OP(srl, x12, x10, x11, 0x0, 0x0000000000008000, 0x0000000000000037, x1, 24, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0000000000008000;  op2val:0x000000000000000b
-TEST_RR_OP(srl, x12, x10, x11, 0x10, 0x0000000000008000, 0x000000000000000b, x1, 160, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0000000000010000;  op2val:0x0000000000000012
+TEST_RR_OP(srl, x12, x10, x11, 0x0, 0x0000000000010000, 0x0000000000000012, x1, 32, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0000000000010000;  op2val:0x0000000000000037
-TEST_RR_OP(srl, x12, x10, x11, 0x0, 0x0000000000010000, 0x0000000000000037, x1, 168, x2)
-
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0000000000020000;  op2val:0x000000000000000d
-TEST_RR_OP(srl, x12, x10, x11, 0x10, 0x0000000000020000, 0x000000000000000d, x1, 176, x2)
-
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0000000000040000;  op2val:0x0000000000000012
-TEST_RR_OP(srl, x12, x10, x11, 0x1, 0x0000000000040000, 0x0000000000000012, x1, 184, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0000000000020000;  op2val:0x000000000000003b
+TEST_RR_OP(srl, x12, x10, x11, 0x0, 0x0000000000020000, 0x000000000000003b, x1, 40, x2)
 
 # opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0000000000080000;  op2val:0x000000000000000d
-TEST_RR_OP(srl, x12, x10, x11, 0x40, 0x0000000000080000, 0x000000000000000d, x1, 192, x2)
+TEST_RR_OP(srl, x12, x10, x11, 0x40, 0x0000000000080000, 0x000000000000000d, x1, 48, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0000000000100000;  op2val:0x0000000000000006
-TEST_RR_OP(srl, x12, x10, x11, 0x4000, 0x0000000000100000, 0x0000000000000006, x1, 200, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0000000000100000;  op2val:0x0000000000000000
+TEST_RR_OP(srl, x12, x10, x11, 0x100000, 0x0000000000100000, 0x0000000000000000, x1, 56, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0000000000200000;  op2val:0x000000000000001f
-TEST_RR_OP(srl, x12, x10, x11, 0x0, 0x0000000000200000, 0x000000000000001f, x1, 208, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0000000000200000;  op2val:0x000000000000000d
+TEST_RR_OP(srl, x12, x10, x11, 0x100, 0x0000000000200000, 0x000000000000000d, x1, 64, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0000000000400000;  op2val:0x0000000000000010
-TEST_RR_OP(srl, x12, x10, x11, 0x40, 0x0000000000400000, 0x0000000000000010, x1, 216, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0000000000400000;  op2val:0x000000000000003e
+TEST_RR_OP(srl, x12, x10, x11, 0x0, 0x0000000000400000, 0x000000000000003e, x1, 72, x2)
+
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0000000001000000;  op2val:0x000000000000000b
+TEST_RR_OP(srl, x12, x10, x11, 0x2000, 0x0000000001000000, 0x000000000000000b, x1, 80, x2)
 
 # opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0000000002000000;  op2val:0x0000000000000008
-TEST_RR_OP(srl, x12, x10, x11, 0x20000, 0x0000000002000000, 0x0000000000000008, x1, 224, x2)
+TEST_RR_OP(srl, x12, x10, x11, 0x20000, 0x0000000002000000, 0x0000000000000008, x1, 88, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0000000008000000;  op2val:0x0000000000000003
-TEST_RR_OP(srl, x12, x10, x11, 0x1000000, 0x0000000008000000, 0x0000000000000003, x1, 232, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0000000004000000;  op2val:0x0000000000000011
+TEST_RR_OP(srl, x12, x10, x11, 0x200, 0x0000000004000000, 0x0000000000000011, x1, 96, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0000000020000000;  op2val:0x0000000000000010
-TEST_RR_OP(srl, x12, x10, x11, 0x2000, 0x0000000020000000, 0x0000000000000010, x1, 240, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0000000008000000;  op2val:0x0000000000000020
+TEST_RR_OP(srl, x12, x10, x11, 0x8000000, 0x0000000008000000, 0x0000000000000020, x1, 104, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0000000040000000;  op2val:0x0000000000000001
-TEST_RR_OP(srl, x12, x10, x11, 0x20000000, 0x0000000040000000, 0x0000000000000001, x1, 248, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0000000010000000;  op2val:0x000000000000003b
+TEST_RR_OP(srl, x12, x10, x11, 0x2, 0x0000000010000000, 0x000000000000003b, x1, 112, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0000000080000000;  op2val:0x0000000000000020
-TEST_RR_OP(srl, x12, x10, x11, 0x80000000, 0x0000000080000000, 0x0000000000000020, x1, 256, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0000000020000000;  op2val:0x000000000000003b
+TEST_RR_OP(srl, x12, x10, x11, 0x4, 0x0000000020000000, 0x000000000000003b, x1, 120, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0000000200000000;  op2val:0x000000000000002a
-TEST_RR_OP(srl, x12, x10, x11, 0x0, 0x0000000200000000, 0x000000000000002a, x1, 264, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0000000040000000;  op2val:0x000000000000000a
+TEST_RR_OP(srl, x12, x10, x11, 0x100000, 0x0000000040000000, 0x000000000000000a, x1, 128, x2)
+
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0000000100000000;  op2val:0x0000000000000002
+TEST_RR_OP(srl, x12, x10, x11, 0x0, 0x0000000100000000, 0x0000000000000002, x1, 136, x2)
 
 # opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0000000400000000;  op2val:0x0000000000000008
-TEST_RR_OP(srl, x12, x10, x11, 0x0, 0x0000000400000000, 0x0000000000000008, x1, 272, x2)
+TEST_RR_OP(srl, x12, x10, x11, 0x0, 0x0000000400000000, 0x0000000000000008, x1, 144, x2)
 
 # opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0000000800000000;  op2val:0x000000000000000a
-TEST_RR_OP(srl, x12, x10, x11, 0x0, 0x0000000800000000, 0x000000000000000a, x1, 280, x2)
+TEST_RR_OP(srl, x12, x10, x11, 0x0, 0x0000000800000000, 0x000000000000000a, x1, 152, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0000002000000000;  op2val:0x0000000000000012
-TEST_RR_OP(srl, x12, x10, x11, 0x0, 0x0000002000000000, 0x0000000000000012, x1, 288, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0000001000000000;  op2val:0x0000000000000013
+TEST_RR_OP(srl, x12, x10, x11, 0x0, 0x0000001000000000, 0x0000000000000013, x1, 160, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0000004000000000;  op2val:0x0000000000000012
-TEST_RR_OP(srl, x12, x10, x11, 0x0, 0x0000004000000000, 0x0000000000000012, x1, 296, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0000002000000000;  op2val:0x0000000000000004
+TEST_RR_OP(srl, x12, x10, x11, 0x0, 0x0000002000000000, 0x0000000000000004, x1, 168, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0000008000000000;  op2val:0x000000000000000d
-TEST_RR_OP(srl, x12, x10, x11, 0x0, 0x0000008000000000, 0x000000000000000d, x1, 304, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0000004000000000;  op2val:0x000000000000003d
+TEST_RR_OP(srl, x12, x10, x11, 0x0, 0x0000004000000000, 0x000000000000003d, x1, 176, x2)
+
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0000008000000000;  op2val:0x000000000000001f
+TEST_RR_OP(srl, x12, x10, x11, 0x0, 0x0000008000000000, 0x000000000000001f, x1, 184, x2)
 
 # opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0000010000000000;  op2val:0x0000000000000005
-TEST_RR_OP(srl, x12, x10, x11, 0x0, 0x0000010000000000, 0x0000000000000005, x1, 312, x2)
+TEST_RR_OP(srl, x12, x10, x11, 0x0, 0x0000010000000000, 0x0000000000000005, x1, 192, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0000020000000000;  op2val:0x0000000000000005
-TEST_RR_OP(srl, x12, x10, x11, 0x0, 0x0000020000000000, 0x0000000000000005, x1, 320, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0000020000000000;  op2val:0x000000000000000e
+TEST_RR_OP(srl, x12, x10, x11, 0x0, 0x0000020000000000, 0x000000000000000e, x1, 200, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0000040000000000;  op2val:0x000000000000003e
-TEST_RR_OP(srl, x12, x10, x11, 0x0, 0x0000040000000000, 0x000000000000003e, x1, 328, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0000040000000000;  op2val:0x0000000000000001
+TEST_RR_OP(srl, x12, x10, x11, 0x0, 0x0000040000000000, 0x0000000000000001, x1, 208, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0000080000000000;  op2val:0x000000000000002a
-TEST_RR_OP(srl, x12, x10, x11, 0x0, 0x0000080000000000, 0x000000000000002a, x1, 336, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0000080000000000;  op2val:0x0000000000000006
+TEST_RR_OP(srl, x12, x10, x11, 0x0, 0x0000080000000000, 0x0000000000000006, x1, 216, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0000100000000000;  op2val:0x0000000000000006
-TEST_RR_OP(srl, x12, x10, x11, 0x0, 0x0000100000000000, 0x0000000000000006, x1, 344, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0000100000000000;  op2val:0x000000000000000f
+TEST_RR_OP(srl, x12, x10, x11, 0x0, 0x0000100000000000, 0x000000000000000f, x1, 224, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0000200000000000;  op2val:0x000000000000002a
-TEST_RR_OP(srl, x12, x10, x11, 0x0, 0x0000200000000000, 0x000000000000002a, x1, 352, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0000200000000000;  op2val:0x000000000000000c
+TEST_RR_OP(srl, x12, x10, x11, 0x0, 0x0000200000000000, 0x000000000000000c, x1, 232, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0000400000000000;  op2val:0x0000000000000020
-TEST_RR_OP(srl, x12, x10, x11, 0x0, 0x0000400000000000, 0x0000000000000020, x1, 360, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0000400000000000;  op2val:0x000000000000002f
+TEST_RR_OP(srl, x12, x10, x11, 0x0, 0x0000400000000000, 0x000000000000002f, x1, 240, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0000800000000000;  op2val:0x000000000000002a
-TEST_RR_OP(srl, x12, x10, x11, 0x0, 0x0000800000000000, 0x000000000000002a, x1, 368, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0000800000000000;  op2val:0x000000000000002f
+TEST_RR_OP(srl, x12, x10, x11, 0x0, 0x0000800000000000, 0x000000000000002f, x1, 248, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0001000000000000;  op2val:0x0000000000000010
-TEST_RR_OP(srl, x12, x10, x11, 0x0, 0x0001000000000000, 0x0000000000000010, x1, 376, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0001000000000000;  op2val:0x000000000000002f
+TEST_RR_OP(srl, x12, x10, x11, 0x0, 0x0001000000000000, 0x000000000000002f, x1, 256, x2)
 
 # opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0002000000000000;  op2val:0x000000000000000e
-TEST_RR_OP(srl, x12, x10, x11, 0x0, 0x0002000000000000, 0x000000000000000e, x1, 384, x2)
+TEST_RR_OP(srl, x12, x10, x11, 0x0, 0x0002000000000000, 0x000000000000000e, x1, 264, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0004000000000000;  op2val:0x0000000000000037
-TEST_RR_OP(srl, x12, x10, x11, 0x0, 0x0004000000000000, 0x0000000000000037, x1, 392, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0004000000000000;  op2val:0x0000000000000015
+TEST_RR_OP(srl, x12, x10, x11, 0x0, 0x0004000000000000, 0x0000000000000015, x1, 272, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0008000000000000;  op2val:0x0000000000000007
-TEST_RR_OP(srl, x12, x10, x11, 0x0, 0x0008000000000000, 0x0000000000000007, x1, 400, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0008000000000000;  op2val:0x000000000000003e
+TEST_RR_OP(srl, x12, x10, x11, 0x0, 0x0008000000000000, 0x000000000000003e, x1, 280, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0010000000000000;  op2val:0x0000000000000001
-TEST_RR_OP(srl, x12, x10, x11, 0x0, 0x0010000000000000, 0x0000000000000001, x1, 408, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0010000000000000;  op2val:0x0000000000000007
+TEST_RR_OP(srl, x12, x10, x11, 0x0, 0x0010000000000000, 0x0000000000000007, x1, 288, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0020000000000000;  op2val:0x0000000000000012
-TEST_RR_OP(srl, x12, x10, x11, 0x0, 0x0020000000000000, 0x0000000000000012, x1, 416, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0020000000000000;  op2val:0x0000000000000001
+TEST_RR_OP(srl, x12, x10, x11, 0x0, 0x0020000000000000, 0x0000000000000001, x1, 296, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0040000000000000;  op2val:0x0000000000000001
-TEST_RR_OP(srl, x12, x10, x11, 0x0, 0x0040000000000000, 0x0000000000000001, x1, 424, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0080000000000000;  op2val:0x000000000000002a
+TEST_RR_OP(srl, x12, x10, x11, 0x0, 0x0080000000000000, 0x000000000000002a, x1, 304, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0080000000000000;  op2val:0x000000000000002f
-TEST_RR_OP(srl, x12, x10, x11, 0x0, 0x0080000000000000, 0x000000000000002f, x1, 432, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0100000000000000;  op2val:0x000000000000003d
+TEST_RR_OP(srl, x12, x10, x11, 0x0, 0x0100000000000000, 0x000000000000003d, x1, 312, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xfffffdffffffffff;  op2val:0x000000000000000b
-TEST_RR_OP(srl, x12, x10, x11, 0x1fffff, 0xfffffdffffffffff, 0x000000000000000b, x1, 440, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0200000000000000;  op2val:0x0000000000000020
+TEST_RR_OP(srl, x12, x10, x11, 0x0, 0x0200000000000000, 0x0000000000000020, x1, 320, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xfffffbffffffffff;  op2val:0x0000000000000037
-TEST_RR_OP(srl, x12, x10, x11, 0x1ff, 0xfffffbffffffffff, 0x0000000000000037, x1, 448, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xfffffdffffffffff;  op2val:0x0000000000000007
+TEST_RR_OP(srl, x12, x10, x11, 0x1ffffff, 0xfffffdffffffffff, 0x0000000000000007, x1, 328, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xfffff7ffffffffff;  op2val:0x0000000000000009
-TEST_RR_OP(srl, x12, x10, x11, 0x7fffff, 0xfffff7ffffffffff, 0x0000000000000009, x1, 456, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xfffffbffffffffff;  op2val:0x0000000000000005
+TEST_RR_OP(srl, x12, x10, x11, 0x7ffffff, 0xfffffbffffffffff, 0x0000000000000005, x1, 336, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xffffefffffffffff;  op2val:0x0000000000000001
-TEST_RR_OP(srl, x12, x10, x11, 0x7fffffff, 0xffffefffffffffff, 0x0000000000000001, x1, 464, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xfffff7ffffffffff;  op2val:0x000000000000000a
+TEST_RR_OP(srl, x12, x10, x11, 0x3fffff, 0xfffff7ffffffffff, 0x000000000000000a, x1, 344, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xffffdfffffffffff;  op2val:0x000000000000003f
-TEST_RR_OP(srl, x12, x10, x11, 0x1, 0xffffdfffffffffff, 0x000000000000003f, x1, 472, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xffffefffffffffff;  op2val:0x000000000000000e
+TEST_RR_OP(srl, x12, x10, x11, 0x3ffff, 0xffffefffffffffff, 0x000000000000000e, x1, 352, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xffffbfffffffffff;  op2val:0x000000000000001f
-TEST_RR_OP(srl, x12, x10, x11, 0x1, 0xffffbfffffffffff, 0x000000000000001f, x1, 480, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xffffdfffffffffff;  op2val:0x0000000000000009
+TEST_RR_OP(srl, x12, x10, x11, 0x7fffff, 0xffffdfffffffffff, 0x0000000000000009, x1, 360, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xffff7fffffffffff;  op2val:0x000000000000000b
-TEST_RR_OP(srl, x12, x10, x11, 0x1fffff, 0xffff7fffffffffff, 0x000000000000000b, x1, 488, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xffffbfffffffffff;  op2val:0x000000000000000c
+TEST_RR_OP(srl, x12, x10, x11, 0xfffff, 0xffffbfffffffffff, 0x000000000000000c, x1, 368, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xfffeffffffffffff;  op2val:0x0000000000000009
-TEST_RR_OP(srl, x12, x10, x11, 0x7fffff, 0xfffeffffffffffff, 0x0000000000000009, x1, 496, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xffff7fffffffffff;  op2val:0x0000000000000015
+TEST_RR_OP(srl, x12, x10, x11, 0x7ff, 0xffff7fffffffffff, 0x0000000000000015, x1, 376, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xfffdffffffffffff;  op2val:0x0000000000000020
-TEST_RR_OP(srl, x12, x10, x11, 0xffffffff, 0xfffdffffffffffff, 0x0000000000000020, x1, 504, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xfffeffffffffffff;  op2val:0x0000000000000005
+TEST_RR_OP(srl, x12, x10, x11, 0x7ffffff, 0xfffeffffffffffff, 0x0000000000000005, x1, 384, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xfffbffffffffffff;  op2val:0x0000000000000004
-TEST_RR_OP(srl, x12, x10, x11, 0xfffffff, 0xfffbffffffffffff, 0x0000000000000004, x1, 512, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xfffdffffffffffff;  op2val:0x000000000000001f
+TEST_RR_OP(srl, x12, x10, x11, 0x1, 0xfffdffffffffffff, 0x000000000000001f, x1, 392, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xfff7ffffffffffff;  op2val:0x000000000000003e
-TEST_RR_OP(srl, x12, x10, x11, 0x3, 0xfff7ffffffffffff, 0x000000000000003e, x1, 520, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xfffbffffffffffff;  op2val:0x000000000000003d
+TEST_RR_OP(srl, x12, x10, x11, 0x7, 0xfffbffffffffffff, 0x000000000000003d, x1, 400, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xffefffffffffffff;  op2val:0x000000000000000b
-TEST_RR_OP(srl, x12, x10, x11, 0x1fffff, 0xffefffffffffffff, 0x000000000000000b, x1, 528, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xffefffffffffffff;  op2val:0x0000000000000012
+TEST_RR_OP(srl, x12, x10, x11, 0x3fff, 0xffefffffffffffff, 0x0000000000000012, x1, 408, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xffbfffffffffffff;  op2val:0x000000000000003f
-TEST_RR_OP(srl, x12, x10, x11, 0x1, 0xffbfffffffffffff, 0x000000000000003f, x1, 536, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xffdfffffffffffff;  op2val:0x0000000000000010
+TEST_RR_OP(srl, x12, x10, x11, 0xffff, 0xffdfffffffffffff, 0x0000000000000010, x1, 416, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xff7fffffffffffff;  op2val:0x0000000000000009
-TEST_RR_OP(srl, x12, x10, x11, 0x7fffff, 0xff7fffffffffffff, 0x0000000000000009, x1, 544, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xffbfffffffffffff;  op2val:0x000000000000000f
+TEST_RR_OP(srl, x12, x10, x11, 0x1ffff, 0xffbfffffffffffff, 0x000000000000000f, x1, 424, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xfeffffffffffffff;  op2val:0x0000000000000003
-TEST_RR_OP(srl, x12, x10, x11, 0x1fffffff, 0xfeffffffffffffff, 0x0000000000000003, x1, 552, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xff7fffffffffffff;  op2val:0x0000000000000001
+TEST_RR_OP(srl, x12, x10, x11, 0x7fffffff, 0xff7fffffffffffff, 0x0000000000000001, x1, 432, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xfdffffffffffffff;  op2val:0x0000000000000012
-TEST_RR_OP(srl, x12, x10, x11, 0x3fff, 0xfdffffffffffffff, 0x0000000000000012, x1, 560, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xfdffffffffffffff;  op2val:0x000000000000002a
+TEST_RR_OP(srl, x12, x10, x11, 0x3fffff, 0xfdffffffffffffff, 0x000000000000002a, x1, 440, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xfbffffffffffffff;  op2val:0x0000000000000004
-TEST_RR_OP(srl, x12, x10, x11, 0xfffffff, 0xfbffffffffffffff, 0x0000000000000004, x1, 568, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xfbffffffffffffff;  op2val:0x0000000000000037
+TEST_RR_OP(srl, x12, x10, x11, 0x1ff, 0xfbffffffffffffff, 0x0000000000000037, x1, 448, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xf7ffffffffffffff;  op2val:0x0000000000000003
-TEST_RR_OP(srl, x12, x10, x11, 0x1fffffff, 0xf7ffffffffffffff, 0x0000000000000003, x1, 576, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xf7ffffffffffffff;  op2val:0x000000000000001f
+TEST_RR_OP(srl, x12, x10, x11, 0x1, 0xf7ffffffffffffff, 0x000000000000001f, x1, 456, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xefffffffffffffff;  op2val:0x0000000000000005
-TEST_RR_OP(srl, x12, x10, x11, 0x7ffffff, 0xefffffffffffffff, 0x0000000000000005, x1, 584, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xefffffffffffffff;  op2val:0x000000000000002f
+TEST_RR_OP(srl, x12, x10, x11, 0x1ffff, 0xefffffffffffffff, 0x000000000000002f, x1, 464, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xdfffffffffffffff;  op2val:0x0000000000000009
-TEST_RR_OP(srl, x12, x10, x11, 0x7fffff, 0xdfffffffffffffff, 0x0000000000000009, x1, 592, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xdfffffffffffffff;  op2val:0x000000000000003f
+TEST_RR_OP(srl, x12, x10, x11, 0x1, 0xdfffffffffffffff, 0x000000000000003f, x1, 472, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x5555555555555555;  op2val:0x000000000000000c
-TEST_RR_OP(srl, x12, x10, x11, 0x55555, 0x5555555555555555, 0x000000000000000c, x1, 600, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xbfffffffffffffff;  op2val:0x000000000000000f
+TEST_RR_OP(srl, x12, x10, x11, 0x1ffff, 0xbfffffffffffffff, 0x000000000000000f, x1, 480, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xaaaaaaaaaaaaaaaa;  op2val:0x000000000000000a
-TEST_RR_OP(srl, x12, x10, x11, 0x2aaaaa, 0xaaaaaaaaaaaaaaaa, 0x000000000000000a, x1, 608, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x5555555555555555;  op2val:0x000000000000003d
+TEST_RR_OP(srl, x12, x10, x11, 0x2, 0x5555555555555555, 0x000000000000003d, x1, 488, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0100000000000000;  op2val:0x0000000000000001
-TEST_RR_OP(srl, x12, x10, x11, 0x0, 0x0100000000000000, 0x0000000000000001, x1, 616, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xaaaaaaaaaaaaaaaa;  op2val:0x0000000000000015
+TEST_RR_OP(srl, x12, x10, x11, 0x555, 0xaaaaaaaaaaaaaaaa, 0x0000000000000015, x1, 496, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0200000000000000;  op2val:0x000000000000003f
-TEST_RR_OP(srl, x12, x10, x11, 0x0, 0x0200000000000000, 0x000000000000003f, x1, 624, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0400000000000000;  op2val:0x000000000000000e
+TEST_RR_OP(srl, x12, x10, x11, 0x0, 0x0400000000000000, 0x000000000000000e, x1, 504, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0400000000000000;  op2val:0x0000000000000012
-TEST_RR_OP(srl, x12, x10, x11, 0x0, 0x0400000000000000, 0x0000000000000012, x1, 632, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0800000000000000;  op2val:0x0000000000000020
+TEST_RR_OP(srl, x12, x10, x11, 0x0, 0x0800000000000000, 0x0000000000000020, x1, 512, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0800000000000000;  op2val:0x000000000000003b
-TEST_RR_OP(srl, x12, x10, x11, 0x0, 0x0800000000000000, 0x000000000000003b, x1, 640, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x1000000000000000;  op2val:0x0000000000000002
+TEST_RR_OP(srl, x12, x10, x11, 0x0, 0x1000000000000000, 0x0000000000000002, x1, 520, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x1000000000000000;  op2val:0x000000000000000a
-TEST_RR_OP(srl, x12, x10, x11, 0x0, 0x1000000000000000, 0x000000000000000a, x1, 648, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x2000000000000000;  op2val:0x000000000000000e
+TEST_RR_OP(srl, x12, x10, x11, 0x0, 0x2000000000000000, 0x000000000000000e, x1, 528, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x2000000000000000;  op2val:0x000000000000003b
-TEST_RR_OP(srl, x12, x10, x11, 0x0, 0x2000000000000000, 0x000000000000003b, x1, 656, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xfffffffffffffffe;  op2val:0x000000000000003e
+TEST_RR_OP(srl, x12, x10, x11, 0x3, 0xfffffffffffffffe, 0x000000000000003e, x1, 536, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xfffffffffffffffe;  op2val:0x0000000000000010
-TEST_RR_OP(srl, x12, x10, x11, 0xffff, 0xfffffffffffffffe, 0x0000000000000010, x1, 664, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xfffffffffffffffd;  op2val:0x0000000000000006
+TEST_RR_OP(srl, x12, x10, x11, 0x3ffffff, 0xfffffffffffffffd, 0x0000000000000006, x1, 544, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xfffffffffffffffb;  op2val:0x000000000000003f
-TEST_RR_OP(srl, x12, x10, x11, 0x1, 0xfffffffffffffffb, 0x000000000000003f, x1, 672, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xfffffffffffffffb;  op2val:0x0000000000000002
+TEST_RR_OP(srl, x12, x10, x11, 0x3ffffffe, 0xfffffffffffffffb, 0x0000000000000002, x1, 552, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xffffffffffffffef;  op2val:0x000000000000000b
-TEST_RR_OP(srl, x12, x10, x11, 0x1fffff, 0xffffffffffffffef, 0x000000000000000b, x1, 680, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xfffffffffffffff7;  op2val:0x000000000000003d
+TEST_RR_OP(srl, x12, x10, x11, 0x7, 0xfffffffffffffff7, 0x000000000000003d, x1, 560, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xffffffffffffffdf;  op2val:0x000000000000000d
-TEST_RR_OP(srl, x12, x10, x11, 0x7ffff, 0xffffffffffffffdf, 0x000000000000000d, x1, 688, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xffffffffffffffef;  op2val:0x000000000000000c
+TEST_RR_OP(srl, x12, x10, x11, 0xfffff, 0xffffffffffffffef, 0x000000000000000c, x1, 568, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xffffffffffffffbf;  op2val:0x0000000000000015
-TEST_RR_OP(srl, x12, x10, x11, 0x7ff, 0xffffffffffffffbf, 0x0000000000000015, x1, 696, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xffffffffffffffdf;  op2val:0x000000000000000e
+TEST_RR_OP(srl, x12, x10, x11, 0x3ffff, 0xffffffffffffffdf, 0x000000000000000e, x1, 576, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xffffffffffffff7f;  op2val:0x0000000000000012
-TEST_RR_OP(srl, x12, x10, x11, 0x3fff, 0xffffffffffffff7f, 0x0000000000000012, x1, 704, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xffffffffffffffbf;  op2val:0x000000000000002a
+TEST_RR_OP(srl, x12, x10, x11, 0x3fffff, 0xffffffffffffffbf, 0x000000000000002a, x1, 584, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xfffffffffffffeff;  op2val:0x0000000000000011
-TEST_RR_OP(srl, x12, x10, x11, 0x7fff, 0xfffffffffffffeff, 0x0000000000000011, x1, 712, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xffffffffffffff7f;  op2val:0x0000000000000006
+TEST_RR_OP(srl, x12, x10, x11, 0x3fffffd, 0xffffffffffffff7f, 0x0000000000000006, x1, 592, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xfffffffffffffdff;  op2val:0x0000000000000005
-TEST_RR_OP(srl, x12, x10, x11, 0x7ffffef, 0xfffffffffffffdff, 0x0000000000000005, x1, 720, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xfffffffffffffeff;  op2val:0x0000000000000020
+TEST_RR_OP(srl, x12, x10, x11, 0xfffffeff, 0xfffffffffffffeff, 0x0000000000000020, x1, 600, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xfffffffffffffbff;  op2val:0x0000000000000001
-TEST_RR_OP(srl, x12, x10, x11, 0x7ffffdff, 0xfffffffffffffbff, 0x0000000000000001, x1, 728, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xfffffffffffffbff;  op2val:0x000000000000000a
+TEST_RR_OP(srl, x12, x10, x11, 0x3ffffe, 0xfffffffffffffbff, 0x000000000000000a, x1, 608, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xfffffffffffff7ff;  op2val:0x0000000000000037
-TEST_RR_OP(srl, x12, x10, x11, 0x1ff, 0xfffffffffffff7ff, 0x0000000000000037, x1, 736, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xfffffffffffff7ff;  op2val:0x0000000000000007
+TEST_RR_OP(srl, x12, x10, x11, 0x1ffffef, 0xfffffffffffff7ff, 0x0000000000000007, x1, 616, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xffffffffffffefff;  op2val:0x0000000000000020
-TEST_RR_OP(srl, x12, x10, x11, 0xffffefff, 0xffffffffffffefff, 0x0000000000000020, x1, 744, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xffffffffffffdfff;  op2val:0x0000000000000002
+TEST_RR_OP(srl, x12, x10, x11, 0x3ffff7ff, 0xffffffffffffdfff, 0x0000000000000002, x1, 624, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xffffffffffffdfff;  op2val:0x000000000000000f
-TEST_RR_OP(srl, x12, x10, x11, 0x1ffff, 0xffffffffffffdfff, 0x000000000000000f, x1, 752, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xffffffffffffbfff;  op2val:0x000000000000003e
+TEST_RR_OP(srl, x12, x10, x11, 0x3, 0xffffffffffffbfff, 0x000000000000003e, x1, 632, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xffffffffffffbfff;  op2val:0x000000000000000f
-TEST_RR_OP(srl, x12, x10, x11, 0x1ffff, 0xffffffffffffbfff, 0x000000000000000f, x1, 760, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xfffffffffffeffff;  op2val:0x0000000000000010
+TEST_RR_OP(srl, x12, x10, x11, 0xfffe, 0xfffffffffffeffff, 0x0000000000000010, x1, 640, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xffffffffffff7fff;  op2val:0x000000000000000f
-TEST_RR_OP(srl, x12, x10, x11, 0x1fffe, 0xffffffffffff7fff, 0x000000000000000f, x1, 768, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xfffffffffffdffff;  op2val:0x000000000000003d
+TEST_RR_OP(srl, x12, x10, x11, 0x7, 0xfffffffffffdffff, 0x000000000000003d, x1, 648, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xfffffffffffeffff;  op2val:0x000000000000003d
-TEST_RR_OP(srl, x12, x10, x11, 0x7, 0xfffffffffffeffff, 0x000000000000003d, x1, 776, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xfffffffffffbffff;  op2val:0x0000000000000004
+TEST_RR_OP(srl, x12, x10, x11, 0xfffbfff, 0xfffffffffffbffff, 0x0000000000000004, x1, 656, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xfffffffffffdffff;  op2val:0x0000000000000002
-TEST_RR_OP(srl, x12, x10, x11, 0x3fff7fff, 0xfffffffffffdffff, 0x0000000000000002, x1, 784, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xfffffffffff7ffff;  op2val:0x000000000000000c
+TEST_RR_OP(srl, x12, x10, x11, 0xfff7f, 0xfffffffffff7ffff, 0x000000000000000c, x1, 664, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xfffffffffffbffff;  op2val:0x000000000000000f
-TEST_RR_OP(srl, x12, x10, x11, 0x1fff7, 0xfffffffffffbffff, 0x000000000000000f, x1, 792, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xffffffffffefffff;  op2val:0x0000000000000001
+TEST_RR_OP(srl, x12, x10, x11, 0x7ff7ffff, 0xffffffffffefffff, 0x0000000000000001, x1, 672, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xfffffffffff7ffff;  op2val:0x0000000000000015
-TEST_RR_OP(srl, x12, x10, x11, 0x7ff, 0xfffffffffff7ffff, 0x0000000000000015, x1, 800, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xffffffffffdfffff;  op2val:0x0000000000000004
+TEST_RR_OP(srl, x12, x10, x11, 0xffdffff, 0xffffffffffdfffff, 0x0000000000000004, x1, 680, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xffffffffffefffff;  op2val:0x0000000000000010
-TEST_RR_OP(srl, x12, x10, x11, 0xffef, 0xffffffffffefffff, 0x0000000000000010, x1, 808, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xffffffffffbfffff;  op2val:0x000000000000000b
+TEST_RR_OP(srl, x12, x10, x11, 0x1ff7ff, 0xffffffffffbfffff, 0x000000000000000b, x1, 688, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xffffffffffdfffff;  op2val:0x000000000000000c
-TEST_RR_OP(srl, x12, x10, x11, 0xffdff, 0xffffffffffdfffff, 0x000000000000000c, x1, 816, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xffffffffff7fffff;  op2val:0x0000000000000015
+TEST_RR_OP(srl, x12, x10, x11, 0x7fb, 0xffffffffff7fffff, 0x0000000000000015, x1, 696, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xffffffffffbfffff;  op2val:0x0000000000000011
-TEST_RR_OP(srl, x12, x10, x11, 0x7fdf, 0xffffffffffbfffff, 0x0000000000000011, x1, 824, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xfffffffffeffffff;  op2val:0x0000000000000012
+TEST_RR_OP(srl, x12, x10, x11, 0x3fbf, 0xfffffffffeffffff, 0x0000000000000012, x1, 704, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xfffffffffeffffff;  op2val:0x000000000000003b
-TEST_RR_OP(srl, x12, x10, x11, 0x1f, 0xfffffffffeffffff, 0x000000000000003b, x1, 832, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xfffffffffdffffff;  op2val:0x0000000000000008
+TEST_RR_OP(srl, x12, x10, x11, 0xfdffff, 0xfffffffffdffffff, 0x0000000000000008, x1, 712, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xfffffffffdffffff;  op2val:0x0000000000000002
-TEST_RR_OP(srl, x12, x10, x11, 0x3f7fffff, 0xfffffffffdffffff, 0x0000000000000002, x1, 840, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xfffffffffbffffff;  op2val:0x0000000000000009
+TEST_RR_OP(srl, x12, x10, x11, 0x7dffff, 0xfffffffffbffffff, 0x0000000000000009, x1, 720, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xfffffffffbffffff;  op2val:0x000000000000003d
-TEST_RR_OP(srl, x12, x10, x11, 0x7, 0xfffffffffbffffff, 0x000000000000003d, x1, 848, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xfffffffff7ffffff;  op2val:0x0000000000000012
+TEST_RR_OP(srl, x12, x10, x11, 0x3dff, 0xfffffffff7ffffff, 0x0000000000000012, x1, 728, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xfffffffff7ffffff;  op2val:0x0000000000000000
-TEST_RR_OP(srl, x12, x10, x11, 0xf7ffffff, 0xfffffffff7ffffff, 0x0000000000000000, x1, 856, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xffffffffefffffff;  op2val:0x0000000000000004
+TEST_RR_OP(srl, x12, x10, x11, 0xeffffff, 0xffffffffefffffff, 0x0000000000000004, x1, 736, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xffffffffefffffff;  op2val:0x000000000000003b
-TEST_RR_OP(srl, x12, x10, x11, 0x1d, 0xffffffffefffffff, 0x000000000000003b, x1, 864, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xffffffffdfffffff;  op2val:0x0000000000000007
+TEST_RR_OP(srl, x12, x10, x11, 0x1bfffff, 0xffffffffdfffffff, 0x0000000000000007, x1, 744, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xffffffffbfffffff;  op2val:0x0000000000000012
-TEST_RR_OP(srl, x12, x10, x11, 0x2fff, 0xffffffffbfffffff, 0x0000000000000012, x1, 872, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xffffffffbfffffff;  op2val:0x0000000000000001
+TEST_RR_OP(srl, x12, x10, x11, 0x5fffffff, 0xffffffffbfffffff, 0x0000000000000001, x1, 752, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xffffffff7fffffff;  op2val:0x0000000000000013
-TEST_RR_OP(srl, x12, x10, x11, 0xfff, 0xffffffff7fffffff, 0x0000000000000013, x1, 880, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xfffffffeffffffff;  op2val:0x000000000000000c
+TEST_RR_OP(srl, x12, x10, x11, 0xfffff, 0xfffffffeffffffff, 0x000000000000000c, x1, 760, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xfffffffeffffffff;  op2val:0x0000000000000008
-TEST_RR_OP(srl, x12, x10, x11, 0xffffff, 0xfffffffeffffffff, 0x0000000000000008, x1, 888, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xfffffffdffffffff;  op2val:0x000000000000002a
+TEST_RR_OP(srl, x12, x10, x11, 0x3fffff, 0xfffffffdffffffff, 0x000000000000002a, x1, 768, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xfffffffdffffffff;  op2val:0x000000000000000f
-TEST_RR_OP(srl, x12, x10, x11, 0x1ffff, 0xfffffffdffffffff, 0x000000000000000f, x1, 896, x2)
-
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xfffffffbffffffff;  op2val:0x0000000000000009
-TEST_RR_OP(srl, x12, x10, x11, 0x7fffff, 0xfffffffbffffffff, 0x0000000000000009, x1, 904, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xfffffffbffffffff;  op2val:0x0000000000000015
+TEST_RR_OP(srl, x12, x10, x11, 0x7ff, 0xfffffffbffffffff, 0x0000000000000015, x1, 776, x2)
 
 # opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xfffffff7ffffffff;  op2val:0x0000000000000011
-TEST_RR_OP(srl, x12, x10, x11, 0x7fff, 0xfffffff7ffffffff, 0x0000000000000011, x1, 912, x2)
+TEST_RR_OP(srl, x12, x10, x11, 0x7fff, 0xfffffff7ffffffff, 0x0000000000000011, x1, 784, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xffffffefffffffff;  op2val:0x000000000000000c
-TEST_RR_OP(srl, x12, x10, x11, 0xfffff, 0xffffffefffffffff, 0x000000000000000c, x1, 920, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xffffffefffffffff;  op2val:0x0000000000000007
+TEST_RR_OP(srl, x12, x10, x11, 0x1ffffff, 0xffffffefffffffff, 0x0000000000000007, x1, 792, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xffffffdfffffffff;  op2val:0x0000000000000008
-TEST_RR_OP(srl, x12, x10, x11, 0xffffff, 0xffffffdfffffffff, 0x0000000000000008, x1, 928, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xffffffdfffffffff;  op2val:0x000000000000002f
+TEST_RR_OP(srl, x12, x10, x11, 0x1ffff, 0xffffffdfffffffff, 0x000000000000002f, x1, 800, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xffffffbfffffffff;  op2val:0x0000000000000008
-TEST_RR_OP(srl, x12, x10, x11, 0xffffff, 0xffffffbfffffffff, 0x0000000000000008, x1, 936, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xffffffbfffffffff;  op2val:0x0000000000000003
+TEST_RR_OP(srl, x12, x10, x11, 0x1fffffff, 0xffffffbfffffffff, 0x0000000000000003, x1, 808, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0000000004000000;  op2val:0x000000000000003b
-TEST_RR_OP(srl, x12, x10, x11, 0x0, 0x0000000004000000, 0x000000000000003b, x1, 944, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xffffff7fffffffff;  op2val:0x000000000000000f
+TEST_RR_OP(srl, x12, x10, x11, 0x1ffff, 0xffffff7fffffffff, 0x000000000000000f, x1, 816, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xffffffffdfffffff;  op2val:0x0000000000000000
-TEST_RR_OP(srl, x12, x10, x11, 0xdfffffff, 0xffffffffdfffffff, 0x0000000000000000, x1, 952, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xfffffeffffffffff;  op2val:0x000000000000000b
+TEST_RR_OP(srl, x12, x10, x11, 0x1fffff, 0xfffffeffffffffff, 0x000000000000000b, x1, 824, x2)
+
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xffffffff7fffffff;  op2val:0x000000000000000e
+TEST_RR_OP(srl, x12, x10, x11, 0x1ffff, 0xffffffff7fffffff, 0x000000000000000e, x1, 832, x2)
+
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xfff7ffffffffffff;  op2val:0x0000000000000000
+TEST_RR_OP(srl, x12, x10, x11, 0xffffffff, 0xfff7ffffffffffff, 0x0000000000000000, x1, 840, x2)
 
 # opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x4000000000000000;  op2val:0x0000000000000000
-TEST_RR_OP(srl, x12, x10, x11, 0x0, 0x4000000000000000, 0x0000000000000000, x1, 960, x2)
+TEST_RR_OP(srl, x12, x10, x11, 0x0, 0x4000000000000000, 0x0000000000000000, x1, 848, x2)
 
 # opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0000000000000003;  op2val:0x0000000000000003
-TEST_RR_OP(srl, x12, x10, x11, 0x0, 0x0000000000000003, 0x0000000000000003, x1, 968, x2)
+TEST_RR_OP(srl, x12, x10, x11, 0x0, 0x0000000000000003, 0x0000000000000003, x1, 856, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0000000000000001;  op2val:0x0000000000000013
-TEST_RR_OP(srl, x12, x10, x11, 0x0, 0x0000000000000001, 0x0000000000000013, x1, 976, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xffffffffffffefff;  op2val:0x0000000000000001
+TEST_RR_OP(srl, x12, x10, x11, 0x7ffff7ff, 0xffffffffffffefff, 0x0000000000000001, x1, 864, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0xfffffeffffffffff;  op2val:0x000000000000003d
-TEST_RR_OP(srl, x12, x10, x11, 0x7, 0xfffffeffffffffff, 0x000000000000003d, x1, 984, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0000000000000400;  op2val:0x000000000000000e
+TEST_RR_OP(srl, x12, x10, x11, 0x0, 0x0000000000000400, 0x000000000000000e, x1, 872, x2)
 
-# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0000000000000100;  op2val:0x0000000000000008
-TEST_RR_OP(srl, x12, x10, x11, 0x1, 0x0000000000000100, 0x0000000000000008, x1, 992, x2)
+# opcode: srl ; op1:x10; op2:x11; dest:x12; op1val:0x0000000000000800;  op2val:0x0000000000000012
+TEST_RR_OP(srl, x12, x10, x11, 0x0, 0x0000000000000800, 0x0000000000000012, x1, 880, x2)
 #endif
 
 
@@ -451,16 +458,20 @@ RVTEST_DATA_END
 RVMODEL_DATA_BEGIN
 .align 4
 
-signature_x13_0:
+signature_x17_0:
     .fill 0*(XLEN/32),4,0xafacadee
 
 
-signature_x13_1:
+signature_x17_1:
     .fill 15*(XLEN/32),4,0xafacadee
 
 
 signature_x1_0:
-    .fill 125*(XLEN/32),4,0xafacadee
+    .fill 16*(XLEN/32),4,0xafacadee
+
+
+signature_x1_1:
+    .fill 111*(XLEN/32),4,0xafacadee
 
 #ifdef rvtest_mtrap_routine
 

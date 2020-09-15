@@ -17,8 +17,8 @@ RVTEST_CASE(1,"//check ISA:=regex(.*64.*);check ISA:=regex(.*I.*Zicsr.*); check 
 
 la x1,signature_x1_1
 
-# opcode: jalr; op1:x10; dest:x11; immval:8; align: 2 
-TEST_JALR_OP(x2, x11, x10, 8, x1, 0,2)
+# opcode: jalr; op1:x10; dest:x11; immval:64; align: 2 
+TEST_JALR_OP(x2, x11, x10, 64, x1, 0,2)
 #endif
 
 
