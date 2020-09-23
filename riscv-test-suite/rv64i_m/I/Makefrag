@@ -76,7 +76,8 @@ rv64i_sc_tests = \
   subw-01 \
   sw-align-01 \
   xor-01 \
-  xori-01 
+  xori-01 \
+  fence-01 
 
 
 rv64i_tests = $(addsuffix .elf, $(rv64i_sc_tests))

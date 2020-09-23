@@ -64,7 +64,9 @@ rv32i_sc_tests = \
   sub-01 \
   sw-align-01 \
   xor-01 \
-  xori-01
+  xori-01 \
+  fence-01
+
 
 
 rv32i_tests = $(addsuffix .elf, $(rv32i_sc_tests))

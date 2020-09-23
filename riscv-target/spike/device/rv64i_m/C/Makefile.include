@@ -1,4 +1,4 @@
-TARGET_SIM   ?= /software/cov_spike/bin/spike
+TARGET_SIM   ?= spike
 TARGET_FLAGS ?= $(RISCV_TARGET_FLAGS)
 ifeq ($(shell command -v $(TARGET_SIM) 2> /dev/null),)
     $(error Target simulator executable '$(TARGET_SIM)` not found)
