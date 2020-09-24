@@ -1,4 +1,4 @@
-= RISC-V Compliance Test Format Specification =
+= RISC-V Architecture Test Format Specification =
 RISC-V Foundation Compliance Task Group
 Issue 1.0 Draft
 :toc:
@@ -21,16 +21,16 @@ Document conventions:
 == Introduction
 === About
 
-This document contains the RISC-V <<The RISC-V compliance test pool,_compliance test pool_>> structure and <<The compliance test,_compliance test_>> format specification which shall be used as a reference document for those who write or are going to write tests for the RISC-V compliance test pool and for those who are going to use the <<The RISC-V compliance test pool,_compliance test pool_>> in their own compliance test framework.
+This document contains the RISC-V <<The RISC-V architectural test pool,_architectural test pool_>> structure and <<The architectural test,_architectural test_>> format specification which shall be used as a reference document for those who write or are going to write tests for the RISC-V architectural test pool and for those who are going to use the <<The RISC-V architectural test pool,_architectural test pool_>> in their own architectural test framework.
 
-* It includes, as example, source code listing and detailed description of one <<The compliance test,_compliance test_>>
+* It includes, as example, source code listing and detailed description of one <<The architectural test,_architectural test_>>
 
-Framework specification which includes description of how the <<The RISC-V compliance test suite,_compliance test suites_>> are built and used for the appropriate RISC-V configurations is given in the complementary Framework Specification document. This document is made freely available under a <<app_cc_by_4.0>>.
+Framework specification which includes description of how the <<The RISC-V architectural test suite,_architectural test suites_>> are built and used for the appropriate RISC-V configurations is given in the complementary Framework Specification document. This document is made freely available under a <<app_cc_by_4.0>>.
 
 
 === Intended audience
 
-This document is intended for design and verification engineers who wish to develop new compliance tests and also for those who wish to write or adapt their own test framework. 
+This document is intended for design and verification engineers who wish to develop new architectural tests and also for those who wish to write or adapt their own test framework. 
 
 === Future work
 
@@ -38,75 +38,22 @@ This is a draft document; it partially documents what exists, and partially docu
 As such, this document still under review and its content will change.
 Its primary aim is to get a long-term stable version of the spec and to give test authors sufficient lead time to prepare test authoring tools and strategies.
 
-=== Feedback and how to contribute
-
-Comments on this document should be made through the RISC-V Compliance Task Group mailing list. Proposed changes may be submitted as git pull requests.
-
-You are encouraged to contribute to this repository by submitting pull requests and by commenting on pull requests submitted by other people as described in the link:../README.md[`README.md`] file in the top level directory.
-
-NOTE: Don't forget to add your own name to the list of contributors in the document.
-
-==== AsciiDoc
-
-This is a structured text format used by this document.  Simple usage should be fairly self evident.
-
-* Comprehensive information on the format is on the http://www.methods.co.nz/asciidoc/[AsciiDoc website].
-
-* Comprehensive information on the tooling on the https://asciidoctor.org/[AsciiDoctor website].
-
-* You may find this https://asciidoctor.org/docs/asciidoc-syntax-quick-reference/[cheat sheet] helpful.
-
-==== Installing tools
-
-To generate the documentation as HTML you need _asciidoctor_ and to generate as
-PDF you need _asciidoctor-pdf_.
-
-* These are the https://asciidoctor.org/docs/install-toolchain/[installation instructions for asciidoctor].
-
-* These are the https://asciidoctor.org/docs/asciidoctor-pdf/#install-the-published-gem[installation instructions for asciidoctor-pdf].
-
-To spell check you need _aspell_ installed.
-
-==== Building the documentation
-
-To build HTML:
-[source,make]
-----
-make html
-----
-
-To build PDF:
-[source,make]
-----
-make pdf
-----
-
-To build both:
-[source,make]
-----
-make
-----
-
-To check the spelling (excludes any listing or code phrases):
-[source,make]
-----
-make spell
-----
-
-Any custom words for spell checking should be added to link:./custom.wordlist[`custom.wordlist`].
-
 === Contributors
 
 This document has been created by the following people (in alphabetical order of surname).
 
-[quote]
-Allen Baum, Jeremy Bennett, Radek Hajek, Premysl Vaclavik
+
+* Allen Baum
+* Jeremy Bennett
+* Radek Hajek
+* Premysl Vaclavik
 
 === Document history
 [cols="<1,<2,<3,<4",options="header,pagewidth",]
 |================================================================================
 | _Revision_ | _Date_            | _Author_ | _Modification_
 
+| 1.2.6 Draft | 24 September 2020 | Neel Gala | Replaced Compliance with Architecture/Architectural. Minor beautification in macro definitions.
 
 | 1.2.5 Draft  | 22 Jan 2020      |
 
@@ -200,22 +147,22 @@ First version of the document under this file name. Document may contain some se
 |================================================================================
 <<<
 == Foreword
-The compliance test pool shall become a complete set of compliance tests which will allow developers to build a compliance test suite for any legal RISC-V configuration. The compliance tests will be very likely written by various authors and therefore it is very important to define the compliance test pool structure and compliance test form, which will be obligatory for all tests. Unification of tests will guarantee optimal compliance test pool management and also better quality and readability of the tests. Last but not least, it will simplify the process of adding new tests into the existing compliance test pool and the formal revision process.
+The architectural test pool shall become a complete set of architectural tests which will allow developers to build an architectural test suite for any legal RISC-V configuration. The architectural tests will be very likely written by various authors and therefore it is very important to define the architectural test pool structure and architectural test form, which will be obligatory for all tests. Unification of tests will guarantee optimal architectural test pool management and also better quality and readability of the tests. Last but not least, it will simplify the process of adding new tests into the existing architectural test pool and the formal revision process.
 
 == Vocabulary
-=== The compliance test
-The compliance test is a nonfunctional testing technique which is done to validate whether the system developed meets the prescribed standard or not. In this particular case the golden reference is the RISC-V ISA standard. 
+=== The architectural test
+The architectural test is a nonfunctional testing technique which is done to validate whether the system developed meets the prescribed standard or not. In this particular case the golden reference is the RISC-V ISA standard. 
 
-For purpose of this document we understand that the compliance test is a single test which represents the minimum test code that can be compiled and run. It is written in assembler code and its product is a <<The test signature,_test signature_>>. A compliance test may consist of several <<The test case,_test cases_>>.
+For purpose of this document we understand that the architectural test is a single test which represents the minimum test code that can be compiled and run. It is written in assembler code and its product is a <<The test signature,_test signature_>>. A architectural test may consist of several <<The test case,_test cases_>>.
 
-=== The RISC-V compliance test pool
-The RISC-V compliance test pool consists of all approved <<The compliance test,_compliance tests_>> that can be assembled by the test framework, forming the <<The RISC-V compliance test suite,_compliance test suite_>>. The RISC-V compliance test pool must be test target independent (so, should correctly run on any compliant target). Note that this nonfunctional testing is not a substitute for verification or device test.
+=== The RISC-V architectural test pool
+The RISC-V architectural test pool consists of all approved <<The architectural test,_architectural tests_>> that can be assembled by the test framework, forming the <<The RISC-V architectural test suite,_architectural test suite_>>. The RISC-V architectural test pool must be test target independent (so, should correctly run on any compliant target). Note that this nonfunctional testing is not a substitute for verification or device test.
 
-=== The RISC-V compliance test suite
-The RISC-V compliance test suite is a group of tests selected from the <<The RISC-V compliance test pool,_compliance test pool_>> to test compliance for the specific RISC-V configuration. Test results are obtained in the form of a <<The test suite signature,_test suite signature_>>. Selection of tests is performed based on the target's asserted configuration, and the spec,  Execution Environment or platform requirements. Compliant processor or processor models shall exhibit the same test suite signature as the golden reference test suite signature for the specific configuration being tested.
+=== The RISC-V architectural test suite
+The RISC-V architectural test suite is a group of tests selected from the <<The RISC-V architectural test pool,_architectural test pool_>> to test adherence for the specific RISC-V configuration. Test results are obtained in the form of a <<The test suite signature,_test suite signature_>>. Selection of tests is performed based on the target's asserted configuration, and the spec,  Execution Environment or platform requirements. Compliant processor or processor models shall exhibit the same test suite signature as the golden reference test suite signature for the specific configuration being tested.
 
 === The test case
-A _test case_ is part of the compliance test that tests just one feature of the specification.
+A _test case_ is part of the architectural test that tests just one feature of the specification.
 
 ----
 Note: a single test can contain multiple test cases, each of which can have its own test inclusion condition (as defined by the cond_str parameter of the RVTEST_CASE macro.
@@ -229,32 +176,32 @@ image::./testpool.jpg[testStruct]
 The _test case signature_ is represented by single or multiple values. Values are written to memory at the address starting at the address specified by the RVMODEL_DATA_BEGIN and ending at RVMODEL_DATA_END. Signatures can be generated most easily using the RVTEST_SIGUPD macro.
 
 === The test signature
-The <<The test signature,_test signature_>> is a characteristic value which is generated by the compliance test run. The <<The test signature,_test signature_>> may consist of several <<The test case signature,_test case signatures_>>, prefixed with a separate line containing the name of the test and a unique value indicating its version (e.g. git checkin hash). The test target is responsible for extracting values from memory and properly formatting them, using metadata provided to it by the framework using the RVMODEL_DATA_BEGIN and RVMODEL_DATA_END macros. Test case signature values are written one per line, starting with the most-significant byte on the left-hand side with the format <hex_value> where the length of value will be 32 bits (so 8 characters), regardless of the actual value length computed by the test.
+The <<The test signature,_test signature_>> is a characteristic value which is generated by the architectural test run. The <<The test signature,_test signature_>> may consist of several <<The test case signature,_test case signatures_>>, prefixed with a separate line containing the name of the test and a unique value indicating its version (e.g. git checkin hash). The test target is responsible for extracting values from memory and properly formatting them, using metadata provided to it by the framework using the RVMODEL_DATA_BEGIN and RVMODEL_DATA_END macros. Test case signature values are written one per line, starting with the most-significant byte on the left-hand side with the format <hex_value> where the length of value will be 32 bits (so 8 characters), regardless of the actual value length computed by the test.
  
 === The test suite signature
-The _test suite signature_ is defined as a set of <<The test signature,_test signatures_>> valid for given <<The RISC-V compliance test suite,_compliance test suite_>>. It represents the test signature of the particular RISC-V configuration selected for the compliance test. 
+The _test suite signature_ is defined as a set of <<The test signature,_test signatures_>> valid for given <<The RISC-V architectural test suite,_architectural test suite_>>. It represents the test signature of the particular RISC-V configuration selected for the architectural test. 
 
 === The target shell
-The <<The target shell, _target shell_>> is the software and hardware environment around the <<The test target,_test target_>> that enables it to communicate with the framework, including assembling and linking tests, loading tests into memory, executing tests, and extracting the signature. The input to the <<The target shell, _target shell_>> is a .S <<The compliance test,_compliance test_>> file, and the output is a <<The test signature,_test signature_>>.
+The <<The target shell, _target shell_>> is the software and hardware environment around the <<The test target,_test target_>> that enables it to communicate with the framework, including assembling and linking tests, loading tests into memory, executing tests, and extracting the signature. The input to the <<The target shell, _target shell_>> is a .S <<The architectural test,_architectural test_>> file, and the output is a <<The test signature,_test signature_>>.
 
 === The test target
-The <<The test target,_test target_>> can be either a RISC-V Instruction Set Simulator (ISS), a RISC-V emulator, a RISC-V RTL model running on an HDL simulator, a RISC-V FPGA implementation or a physical chip. Each of the target types offers specific features and represents specific interface challenges. It is a role of the  <<The target shell, _target shell_>> to handle different targets while using the same <<The RISC-V compliance test pool,_compliance test pool_>> as a test source.
+The <<The test target,_test target_>> can be either a RISC-V Instruction Set Simulator (ISS), a RISC-V emulator, a RISC-V RTL model running on an HDL simulator, a RISC-V FPGA implementation or a physical chip. Each of the target types offers specific features and represents specific interface challenges. It is a role of the  <<The target shell, _target shell_>> to handle different targets while using the same <<The RISC-V architectural test pool,_architectural test pool_>> as a test source.
 
 === The RISC-V processor (device) configuration
-The RISC-V ISA specification allows many optional instructions, registers, and other features. Production directed targets typically have a fixed subset of available options. A simulator, on the other hand, may implement all known options which may be constrained to mimic the behavior of the RISC-V processor with the particular configuration.  It is a role of the Compliance Test Framework to build and use the <<The RISC-V compliance test suite,_compliance test suite_>> suitable for the selected RISC-V configuration. 
+The RISC-V ISA specification allows many optional instructions, registers, and other features. Production directed targets typically have a fixed subset of available options. A simulator, on the other hand, may implement all known options which may be constrained to mimic the behavior of the RISC-V processor with the particular configuration.  It is a role of the Architectural Test Framework to build and use the <<The RISC-V architectural test suite,_architectural test suite_>> suitable for the selected RISC-V configuration. 
 
 
-=== The compliance test framework
-The <<The compliance test framework,_compliance test framework_>> selects and configures the <<The RISC-V compliance test suite,_compliance test suite_>> from the <<The RISC-V compliance test pool,_compliance test pool_>> for the selected <<The test target,_test target_>> based on both the specific architectural choices made by an implementation and those required by the Execution Environment It causes the <<The target shell, _target shell_>> to build, execute, and report a signature. The <<The compliance test framework,_compliance test framework_>> then compares reported signatures, inserts test part names and version numbers and summarizes differences (or lack of them) into a RISC-V compliance report. The primary role of the well-defined <<The RISC-V compliance test pool,_compliance test pool_>> structure is to provide the tests in a form suitable for the Compliance Test Framework selection engine. 
+=== The architectural test framework
+The <<The architectural test framework,_architectural test framework_>> selects and configures the <<The RISC-V architectural test suite,_architectural test suite_>> from the <<The RISC-V architectural test pool,_architectural test pool_>> for the selected <<The test target,_test target_>> based on both the specific architectural choices made by an implementation and those required by the Execution Environment It causes the <<The target shell, _target shell_>> to build, execute, and report a signature. The <<The architectural test framework,_architectural test framework_>> then compares reported signatures, inserts test part names and version numbers and summarizes differences (or lack of them) into a RISC-V test report. The primary role of the well-defined <<The RISC-V architectural test pool,_architectural test pool_>> structure is to provide the tests in a form suitable for the Architectural Test Framework selection engine. 
 
 <<<
-== Compliance test pool 
+== Architectural test pool 
 === Test pool structure
 
-The structure of <<The compliance test,_compliance tests_>> in the <<The RISC-V compliance test pool,_compliance test pool_>> shall be based on defined RISC-V extensions and privileged mode selection. This will provide a good overview of which parts of the ISA specification are already covered in the <<The RISC-V compliance test suite,_compliance test suite_>>, and which tests are suitable for certain configurations. The compliance test pool has this structure:
+The structure of <<The architectural test,_architectural tests_>> in the <<The RISC-V architectural test pool,_architectural test pool_>> shall be based on defined RISC-V extensions and privileged mode selection. This will provide a good overview of which parts of the ISA specification are already covered in the <<The RISC-V architectural test suite,_architectural test suite_>>, and which tests are suitable for certain configurations. The architectural test pool has this structure:
 
 ----
-compliance-tests-suite (root)
+architectural-tests-suite (root)
 |-- <architecture>_<mode>/<feature(s)>, where
 <architecture> is [ RV32I | RV64I | RV32E ]
 <mode> is [ M | MU | MS | MSU ], where
@@ -284,60 +231,93 @@ The naming convention of a single test:
 Experience has shown that including ISA category in the test name leads to very long test names. Instead, we have introduced the <<Test pool structure,test pool structure>> where the full name is composed of the test path in the <<Test pool structure,test pool structure>> and the simple test name. +
 Since full names can be reconstructed easily it is not necessary to include the path in test names.
 
-=== The test structure of a compliance test
+=== The test structure of an architectural test
 
 All tests shall use a signature approach. Each test shall be written in the same style, with defined mandatory items. There are both pre-defined and model-specific macros which shall be used in every test to guarantee their portability. In addition, there are both pre-defined and model specific macros that are not required, but may be used in tests.
 
-*Required, Pre-defined Macros* +
-  RVTEST_ISA(isa_str)          // defines the Test Virtual Machine (TVM, the ISA being tested) +
-  -  Empty macro to specify the isa required for compilation of the test. +
-  -  This is mandated to be present at the start of the test. +
-  RVTEST_CODE_BEGIN            // start of code (test) section +
-  - Macro to indicate test code start add and where test startup routine is inserted. +
-  - No part of the code section should precede this macro +
-  RVTEST_CODE_END              // end of code (test) section +
-  = Macro to indicate test code end. +
-  - No part of the code section should follow after this macro. +
-  RVTEST_CASE(CaseName, CondStr)  // execute this case only if condition in cond_str are met +
-- CaseName is arbitrary string  +
-- CondStr is evaluated to determine if the test-case is enabled and sets name variable +
-- CondStr can also define compile time macros required for the test-case to be enabled. +
-- the test-case must be delimited with an #ifdef CaseName/#endif pair +
-- the format of CondStr can be found in https://riscof.readthedocs.io/en/latest/cond_spec.html#cond-spec
+==== *Required, Pre-defined Macros* 
 
-*Required, Model-defined Macros* +
-  RVMODEL_DATA_BEGIN            // start of output data (signature) section +
-  RVMODEL_DATA_END              // end of output data (signature) section +
-  RVMODEL_DATA_SECTION          // model defined data area +
- - contains static input data and intermediate scratch area for the test (e.g. stack) +
-  RVMODEL_HALT                  // defines model halt mechanism, which starts signature saving
+  `RVTEST_ISA(isa_str)`::          
+  
+    - defines the Test Virtual Machine (TVM, the ISA being tested) +
+    - Empty macro to specify the isa required for compilation of the test. +
+    - This is mandated to be present at the start of the test.
+    
+  `RVTEST_CODE_BEGIN`::
+    - start of code (test) section
+    - Macro to indicate test code start add and where test startup routine is inserted. +
+    - No part of the code section should precede this macro
+    
+  `RVTEST_CODE_END`::
+    - end of code (test) section +
+    - Macro to indicate test code end. +
+    - No part of the code section should follow after this macro.
+    
+  `RVTEST_CASE(CaseName, CondStr)`::  
+    - execute this case only if condition in cond_str are met +
+    - CaseName is arbitrary string  +
+    - CondStr is evaluated to determine if the test-case is enabled and sets name variable +
+    - CondStr can also define compile time macros required for the test-case to be enabled. +
+    - the test-case must be delimited with an #ifdef CaseName/#endif pair +
+    - the format of CondStr can be found in https://riscof.readthedocs.io/en/latest/cond_spec.html#cond-spec
 
-*Optional, Pre-defined Macros* +
-  RVTEST_SIGBASE(BaseReg,Val)   // defines the base register used to update signature values +
- - Register BaseReg is loaded with value Val +
- - hidden_offset is initialized to zero +
-  RVTEST_SIGUPD(BaseReg, SigReg [,Value]) // stores sig value, with optional value assertion +
- - Register Val is stored in mem(reg_Base+hidden_offset) +
- - hidden_offset is post incremented  so repeated uses store signature values sequentially +
-  RVTEST_BASEUPD(BaseReg[oldBase[,newOff]]) // [moves &] updates BaseReg past stored signature +
- - Register BaseReg is loaded with the oldReg+newOff+hidden_offset +
- - BaseReg is used if oldBase isn't specified; 0 is used if newOff isn't specified +
- - hidden_offset is re-initialized to 0 afterwards
+==== *Required, Model-defined Macros* 
 
-*Optional, Model-defined Macros* +
-  RVMODEL_BOOT                       // contains boot code for model; may include emulation code or trap stub +
-  RVMODEL_IO_INIT                    // initializes IO for debug output +
- - this must be invoked if any of the other RV_MODEL_IO_* macros are used +
-  RVMODEL_IO_CHECK                   // checks IO for debug output +
- - <needs description of how this is used > +
-  RVMODEL_IO_ASSERT_GPR_EQ(ScrReg, Reg, Value) // debug assertion that GPR should have value +
- - outputs a debug message if Reg!=Value +
- - ScrReg is a scratch register used by the output routine; its final value cannot be guaranteed +
-  RVMODEL_IO_WRITE_STR(ScrReg, String) // output debug string, using a scratch register +
- - outputs the message String
- - ScrReg is a scratch register used by the output routine; its final value cannot be guaranteed +
+  `RVMODEL_DATA_BEGIN`::            
+    - start of output data (signature) section
+    
+  `RVMODEL_DATA_END`::              
+    - end of output data (signature) section
+    
+  `RVMODEL_DATA_SECTION`::          
+    - model defined data area
+    - contains static input data and intermediate scratch area for the test (e.g. stack) 
+    
+  `RVMODEL_HALT`::                  
+    - defines model halt mechanism, which starts signature saving
 
-The test structure of a compliance test shall have the following sections in the order as follows:
+==== *Optional, Pre-defined Macros* 
+
+  `RVTEST_SIGBASE(BaseReg,Val)`::   
+    - defines the base register used to update signature values +
+    - Register BaseReg is loaded with value Val +
+    - hidden_offset is initialized to zero 
+    
+  `RVTEST_SIGUPD(BaseReg, SigReg [,Value])`:: 
+    - stores sig value, with optional value assertion +
+    - Register Val is stored in mem(reg_Base+hidden_offset) +
+    - hidden_offset is post incremented  so repeated uses store signature values sequentially 
+    
+  `RVTEST_BASEUPD(BaseReg[oldBase[,newOff]])`:: 
+    - [moves &] updates BaseReg past stored signature +
+    - Register BaseReg is loaded with the oldReg+newOff+hidden_offset +
+    - BaseReg is used if oldBase isn't specified; 0 is used if newOff isn't specified +
+    - hidden_offset is re-initialized to 0 afterwards
+
+==== *Optional, Model-defined Macros*
+
+  `RVMODEL_BOOT`::                       
+    - contains boot code for model; may include emulation code or trap stub
+    
+  `RVMODEL_IO_INIT`::                    
+    - initializes IO for debug output
+    - this must be invoked if any of the other RV_MODEL_IO_* macros are used
+    
+  `RVMODEL_IO_CHECK`::                   
+    - checks IO for debug output
+    - <needs description of how this is used > 
+    
+  `RVMODEL_IO_ASSERT_GPR_EQ(ScrReg, Reg, Value)`:: 
+    - debug assertion that GPR should have value +
+    - outputs a debug message if Reg!=Value +
+    - ScrReg is a scratch register used by the output routine; its final value cannot be guaranteed
+    
+  `RVMODEL_IO_WRITE_STR(ScrReg, String)`::
+    - output debug string, using a scratch register +
+    - outputs the message String
+    - ScrReg is a scratch register used by the output routine; its final value cannot be guaranteed 
+
+The test structure of an architectural test shall have the following sections in the order as follows:
 
 .  Header + license (including a specification link, a brief test description and RVTEST_ISA macro))
 .  Includes of header files (see Common Header Files section)
@@ -351,7 +331,7 @@ The test structure of a compliance test shall have the following sections in the
 
 ==== Common test format rules
 
-There are the following common rules that shall be applied to each <<The compliance test,_compliance test_>>:
+There are the following common rules that shall be applied to each <<The architectural test,_architectural test_>>:
 
 . Always use “//” as commentary. “#” should be used only for includes and defines.
 . A test shall be divided into logical blocks (<<The test case,_test cases_>>) according to the test goals. Test cases are enclosed in an `#ifdef <__CaseName__>, #endif` pair and begin with the RVTEST_CASE(CaseName,CondStr) macro that specifies the test case name, and a string that defines the conditions under which that <<The test case,_Test case_>> can be selected for assembly and execution. Those conditions will be collected and used to generate the database which in turn is used to select tests for inclusion in the test suite for this target.
@@ -363,13 +343,13 @@ There are the following common rules that shall be applied to each <<The complia
 . When macros are needed for debug purposes, only macros from compliance_model.h shall be used. 
    Note that using this feature shall not affect the signature results of the test run.
 . Test shall not include other tests (e.g. #include “../add.S”) to prevent non-complete tests, compilation issues, and problems with code maintenance. 
-. Tests and test cases shall be skipped if not required for a specific model test configuration based on test conditions defined in the RVTEST_CASE macro. Tests that are selected may be further configured using variables (e.g. XLEN) which are passed into the tests and used to compile them. In either case, those conditions and variables are derived from the YAML specification of the device and execution environment that are passed into the framework. The flow is to run a compliance test suite built by the <<The compliance test framework,_Compliance Test Framework_>> from the <<The RISC-V compliance test pool,_compliance test pool_>> to determine which tests and test cases to run. 
+. Tests and test cases shall be skipped if not required for a specific model test configuration based on test conditions defined in the RVTEST_CASE macro. Tests that are selected may be further configured using variables (e.g. XLEN) which are passed into the tests and used to compile them. In either case, those conditions and variables are derived from the YAML specification of the device and execution environment that are passed into the framework. The flow is to run an architectural test suite built by the <<The architectural test framework,_Architectural Test Framework_>> from the <<The RISC-V architectural test pool,_architectural test pool_>> to determine which tests and test cases to run. 
 . Tests shall not depend on tool specific features. For example, tests shall avoid usage of internal GCC macros (e..g. ____risc_xlen__), specific syntax (char 'a' instead of 'a) or simulator features (e.g. tohost) etc.
 . Each test shall be ended by the (target specific) “RVMODEL_HALT“ macro. Depending on branches in the test, there may be more than one instance of this in a test.
 . Macros defined outside of a test shall only be defined in specific predefined header files (see <<Common Header Files,_Common Header Files_>> below), and once they are in use, they may be modified only if the function of all affected tests remains unchanged.
 It is acceptable that macros use may lead to operand repetition (register X is used every time).
-- The aim of this restriction is to have test code more readable and to avoid side effects which may occur when different contributors will include new <<The compliance test,_compliance tests_>> or updates of existing ones in the <<The RISC-V compliance test pool,_compliance test pool_>>.
-This measure results from the negative experience, where the <<The RISC-V compliance test suite,_compliance test suite_>> could be used just for one target while the compliance test code changes were necessary to have it also running for other targets.
+- The aim of this restriction is to have test code more readable and to avoid side effects which may occur when different contributors will include new <<The architectural test,_architectural tests_>> or updates of existing ones in the <<The RISC-V architectural test pool,_architectural test pool_>>.
+This measure results from the negative experience, where the <<The RISC-V architectural test suite,_architectural test suite_>> could be used just for one target while the architectural test code changes were necessary to have it also running for other targets.
 
 ==== Common Header Files
 
@@ -413,7 +393,7 @@ Instead, each of those should be a separate <<The test case,_test case_>> whose 
 .a) Header and license
 
 ----
-// RISC-V Compliance Test ADD-01
+// RISC-V Architectural Test ADD-01
 //
 // Copyright (c) 2017, Codasip Ltd.
 // Copyright (c) 2018, Imperas Software Ltd. Additions
