@@ -283,10 +283,10 @@ All tests shall use a signature approach. Each test shall be written in the same
     - Register BaseReg is loaded with value Val +
     - hidden_offset is initialized to zero 
     
-  `RVTEST_SIGUPD(BaseReg, SigReg [,Value])`:: 
-    - stores sig value, with optional value assertion +
-    - Register Val is stored in mem(reg_Base+hidden_offset) +
-    - hidden_offset is post incremented  so repeated uses store signature values sequentially 
+  `RVTEST_SIGUPD(BaseReg, SigReg [,Value, TmpReg])`:: 
+    - Register SigReg is stored in mem(BaseReg+hidden_offset) +
+    - hidden_offset is post incremented so repeated uses store signature values sequentially +
+    - Optionally, if Value and TmpReg are specified and assertions are enabled, RVMODEL_IO_ASSERT_GPR_EQ(SigReg, TmpReg, Value) is enabled.
     
   `RVTEST_BASEUPD(BaseReg[oldBase[,newOff]])`:: 
     - [moves &] updates BaseReg past stored signature +
