@@ -254,7 +254,7 @@ There are then five top level directories.
 
 `doc`:: All the documentation for the project, written using _AsciiDoc_.
 
-`coverage`:: This directory contains the coverage reports of each test-suite organized using the test-pool structure guideline highlighted above. The reports are available in the html and yaml formatd. The directory also contains the `coverpoint.yaml` file which indicates all the coverpoints of interest which are covered by the tests in the `riscv-test-suite` directory.
+`coverage`:: This directory contains a sub-directory structure similar to the `riscv-test-suite` directory. The coverage reports of each test-suite are available in the corresponding directories. The reports are available in the html and yaml formats. The directory also contains the `coverpoint.yaml` file which indicates all the coverpoints of interest which are covered by all the tests in the `riscv-test-suite` directory.
 
 `riscv-target`:: Contains a further subdirectory for each target, within which are placed the `compliance_model.h` header for that target and a `device` directory for all the devices of that target. If the `$TARGETDIR` environment variable is set to another directory, the scripts will search this directory for targets instead.
 
@@ -386,7 +386,7 @@ In this section, a short tutorial on how to add a user target to the RISC-V Arch
 
 The following steps demonstrate an example in which a target was replaced by the RISCV-ISA-SIM (a.k.a Spike). In a similar way, any RISC-V ISA simulator or any RTL simulation model of the RISC-V processor can be ported as a potential target for testing.
 
-1. Create a folder under the `riscv-target` diretory with the name of the target/device. In our case it would be : `riscv-target/spike`
+1. Create a folder under the `riscv-target` directory with the name of the target/device. In our case it would be : `riscv-target/spike`
 2. Inside `riscv-target/spike` create a `compliance_model.h` file which defines the various target based assembly macros i.e. `RVMODEL_*`. The details and expectations of these macros are available in the link:../spec/TestFormatSpec.adoc[Test Format Specification]
 3. Any other files required for execution of the target like: linker scripts, configuration scripts, etc can also be placed here. For spike we have also added the linker script : link:../riscv-target/spike/link.ld[`link.ld`].
 4. Next, create a directory named `device` under `riscv-target/spike`
@@ -436,7 +436,7 @@ Based on the `XLEN` value set in the Makfile either the `rv32i_m` test-suite or 
 
 In order to speed compilation and execution runs, make can be run in parallel using options to control parallelism.
 
-Two variables are of importance here PARALLEL=<0|1> and JOBS=<-jX --max-load=Y> whereby X and Y are integer values
+Two variables are of importance here PARALLEL=<0|1> and JOBS=< -jX --max-load=Y > whereby X and Y are integer values
 
 Additionally the target selected, must be coded in such a way to support parallel execution, unfortunately some targets use common intermediate files, rather than unique files, this makes them unsuitable for parallel execution, these targets will need to be re-coded.
 
