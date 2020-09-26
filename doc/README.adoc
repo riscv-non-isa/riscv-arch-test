@@ -391,8 +391,7 @@ The following steps demonstrate an example in which a target was replaced by the
 3. Any other files required for execution of the target like: linker scripts, configuration scripts, etc can also be placed here. For spike we have also added the linker script : link:../riscv-target/spike/link.ld[`link.ld`].
 4. Next, create a directory named `device` under `riscv-target/spike`
 5. For 32-bit targets create a subdirectory named `rv32i_m` under `riscv-target/spike/device` and for a 64-bit target create a subdirectory named `rv64i_m` under `riscv-target/spike/device`. Since Spike is an ISS and can be configured as 32 or 64 bits we will create both `rv32i_m` and `rv64i_m` subdirectories.
-6. Based on the configuration of the target/device you will need to create one or more of the
-   following folder:
+6. Based on the configuration of the target/device you will need to create one or more of the following folder:
 
    ---
    - rv32i_m/I
@@ -411,6 +410,13 @@ The following steps demonstrate an example in which a target was replaced by the
 7. Each of the above leaf folders will need to include a `Makefile.include` file which defines the following make variables:
     `RUN_TARGET`:: This variable needs to include commands and steps to execute an ELF on target device. Note here that this variable should include all the necessary steps and arguments to run that specific test-suite. For example, in case of spike for the `rv32i_m/C` test-suite the corresponding `Makefile.include` has the `--isa=rv32ic` argument as oppsed to just `--isa=rv32i` for the base `rv32i_m/I` test-suite. This variable should also include other steps to extract and sanitize the signature file as well for each test. The only argument available to this variable if the compiled `elf` file.
     `COMPILE_TARGET`:: This variable should include the commands and steps required to compile an assembly test for the target under each extension mentioned above. Note currently only the GCC compiler is supported which takes `march` and `mabi` arguments from the corresponding architectural suite framework. This variable will more or less be the same across test-suites. The only argument available to this variable is the assembly file of one architectural test.
+
+The following figure depicts the final directory structure of a target device that should get craeted at the end of the above steps:
+
+[#img-testStruct]
+.File Structure of the Target directory
+image::./file-struct.pdf[TargetStruct]
+
 
 === Generating Signature
 
