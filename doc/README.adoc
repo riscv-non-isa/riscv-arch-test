@@ -415,7 +415,7 @@ The following figure depicts the final directory structure of a target device th
 
 [#img-testStruct]
 .File Structure of the Target directory
-image::./file-struct.pdf[TargetStruct]
+image::./file-struct.jpg[TargetStruct]
 
 
 === Generating Signature
