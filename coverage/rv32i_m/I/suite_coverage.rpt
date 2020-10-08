@@ -1,3 +1,9 @@
+fence:
+  coverage: 1/1
+  opcode:
+    coverage: 1/1
+    detail:
+      - fence: 1
 addi:
   coverage: 171/171
   opcode:
