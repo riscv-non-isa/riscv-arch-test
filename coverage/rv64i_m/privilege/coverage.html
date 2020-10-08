@@ -253,7 +253,7 @@ function is_all_rows_hidden(value) {
 
 </script>
     <h1></h1>
-    <p>Report generated on 2020-09-15 13:07 GMT by <a href="https://pypi.python.org/pypi/riscof">riscof</a> v1.16.0</p>
+    <p>Report generated on 2020-10-08 13:13 GMT by <a href="https://pypi.python.org/pypi/riscof">riscof</a> v1.16.0</p>
     <h2>Environment</h2>
     <table id="environment">
       <tr>
@@ -284,2080 +284,2456 @@ function is_all_rows_hidden(value) {
             <td class="col-yname">/scratch/git-repo/incoresemi/riscof/riscof_work/sail_isa_checked.yaml</td></tr>
           <tr>
             <td class="extra" colspan="1">
-              <div class="log">ISA: RV64IMCZicsr_Zifencei
-User_Spec_Version: '2.3'
-supported_xlen:
-- 64
-Privilege_Spec_Version: '1.10'
-hw_data_misaligned_support: false
-misa:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: true
-    fields:
-    - mxl
-    - extensions
-    -
-      -
-        - 26
-        - 61
-    mxl:
-      implemented: false
-      description: Encodes the native base integer ISA width.
-      shadow: none
-      msb: 63
-      lsb: 62
-    extensions:
-      implemented: false
-      description: Encodes the presence of the standard extensions, with a single
-        bit per letter of the alphabet.
-      shadow: none
-      msb: 25
-      lsb: 0
-  description: misa is a read-write register reporting the ISA supported by the hart.
-  address: 769
-  priv_mode: M
-  reset-val: 0
-mstatus:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: true
-    fields:
-    - tvm
-    - mie
-    - spp
-    - sd
-    - sie
-    - sxl
-    - mprv
-    - tw
-    - spie
-    - mpp
-    - sum
-    - uie
-    - uxl
-    - upie
-    - xs
-    - mpie
-    - fs
-    - mxr
-    - tsr
-    -
-      -
-        - 2
-      -
-        - 6
-      -
-        - 9
-        - 10
-      -
-        - 23
-        - 31
-      -
-        - 36
-        - 62
-    uie:
-      implemented: false
-      description: Stores the state of the user mode interrupts.
-      shadow: none
-      msb: 0
-      lsb: 0
-    sie:
-      implemented: false
-      description: Stores the state of the supervisor mode interrupts.
-      shadow: none
-      msb: 1
-      lsb: 1
+              <div class="log">hart_ids: [0]
+hart0:
+    ISA: RV64IMCZicsr_Zifencei
+    User_Spec_Version: '2.3'
+    supported_xlen:
+      - 64
+    Privilege_Spec_Version: '1.10'
+    hw_data_misaligned_support: false
+    misa:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields:
+              - extensions
+              - mxl
+              -
+                  -
+                      - 26
+                      - 61
+            mxl:
+                implemented: false
+                description: Encodes the native base integer ISA width.
+                shadow:
+                msb: 63
+                lsb: 62
+            extensions:
+                implemented: false
+                description: Encodes the presence of the standard extensions, with
+                    a single bit per letter of the alphabet.
+                shadow:
+                msb: 25
+                lsb: 0
+        description: misa is a read-write register reporting the ISA supported by
+            the hart.
+        address: 769
+        priv_mode: M
+        reset-val: 0
+    mstatus:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields:
+              - mprv
+              - uie
+              - sxl
+              - mxr
+              - upie
+              - tsr
+              - sd
+              - spp
+              - tw
+              - mpp
+              - uxl
+              - xs
+              - sum
+              - tvm
+              - fs
+              - spie
+              - mpie
+              - sie
+              - mie
+              -
+                  -
+                      - 2
+                  -
+                      - 6
+                  -
+                      - 9
+                      - 10
+                  -
+                      - 23
+                      - 31
+                  -
+                      - 36
+                      - 62
+            uie:
+                implemented: false
+                description: Stores the state of the user mode interrupts.
+                shadow:
+                msb: 0
+                lsb: 0
+            sie:
+                implemented: false
+                description: Stores the state of the supervisor mode interrupts.
+                shadow:
+                msb: 1
+                lsb: 1
+            mie:
+                implemented: true
+                description: Stores the state of the machine mode interrupts.
+                shadow:
+                msb: 3
+                lsb: 3
+                type:
+                    wlrl:
+                      - 0:1
+            upie:
+                implemented: false
+                description: Stores the state of the user mode interrupts prior to
+                    the trap.
+                shadow:
+                msb: 4
+                lsb: 4
+            spie:
+                implemented: false
+                description: Stores the state of the supervisor mode interrupts prior
+                    to the trap.
+                shadow:
+                msb: 5
+                lsb: 5
+            mpie:
+                implemented: true
+                description: Stores the state of the machine mode interrupts prior
+                    to the trap.
+                shadow:
+                msb: 7
+                lsb: 7
+                type:
+                    wlrl:
+                      - 0:1
+            spp:
+                implemented: false
+                description: Stores the previous priority mode for supervisor.
+                shadow:
+                msb: 8
+                lsb: 8
+            mpp:
+                implemented: true
+                description: Stores the previous priority mode for machine.
+                shadow:
+                msb: 12
+                lsb: 11
+                type:
+                    wlrl:
+                      - '0'
+            fs:
+                implemented: false
+                description: Encodes the status of the floating-point unit, including
+                    the CSR fcsr and floating-point data registers.
+                shadow:
+                msb: 14
+                lsb: 13
+            xs:
+                implemented: false
+                description: Encodes the status of additional user-mode extensions
+                    and associated state.
+                shadow:
+                msb: 16
+                lsb: 15
+            mprv:
+                implemented: false
+                description: Modifies the privilege level at which loads and stores
+                    execute in all privilege modes.
+                shadow:
+                msb: 17
+                lsb: 17
+            sum:
+                implemented: false
+                description: Modifies the privilege with which S-mode loads and stores
+                    access virtual memory.
+                shadow:
+                msb: 18
+                lsb: 18
+            mxr:
+                implemented: false
+                description: Modifies the privilege with which loads access virtual
+                    memory.
+                shadow:
+                msb: 19
+                lsb: 19
+            tvm:
+                implemented: false
+                description: Supports intercepting supervisor virtual-memory management
+                    operations.
+                shadow:
+                msb: 20
+                lsb: 20
+            tw:
+                implemented: false
+                description: Supports intercepting the WFI instruction.
+                shadow:
+                msb: 21
+                lsb: 21
+            tsr:
+                implemented: false
+                description: Supports intercepting the supervisor exception return
+                    instruction.
+                shadow:
+                msb: 22
+                lsb: 22
+            sxl:
+                implemented: false
+                description: Controls the value of xlen for Supervisor mode.
+                shadow:
+                msb: 35
+                lsb: 34
+            uxl:
+                implemented: false
+                description: Controls the xlen for User mode.
+                shadow:
+                msb: 33
+                lsb: 32
+            sd:
+                implemented: true
+                description: Read-only bit that summarizes whether either the FS field
+                    or XS field signals the presence of some dirty state.
+                shadow:
+                msb: 63
+                lsb: 63
+                type:
+                    ro_variable: true
+        description: The mstatus register keeps track of and controls the hart’s current
+            operating state.
+        address: 768
+        priv_mode: M
+        reset-val: 0
+    mvendorid:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 63
+            lsb: 0
+            type:
+                ro_constant: 0
+        description: 32-bit read-only register providing the JEDEC manufacturer ID
+            of the provider of the core.
+        address: 3857
+        priv_mode: M
+        reset-val: 0
+    marchid:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 63
+            lsb: 0
+            type:
+                ro_constant: 0
+        description: MXLEN-bit read-only register encoding the base microarchitecture
+            of the hart.
+        address: 3858
+        priv_mode: M
+        reset-val: 0
+    mimpid:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 63
+            lsb: 0
+            type:
+                ro_constant: 0
+        description: Provides a unique encoding of the version of the processor implementation.
+        address: 3859
+        priv_mode: M
+        reset-val: 0
+    mhartid:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 63
+            lsb: 0
+            type:
+                ro_constant: 0
+        description: MXLEN-bit read-only register containing the integer ID of the
+            hardware thread running the code.
+        address: 3860
+        priv_mode: M
+        reset-val: 0
+    mtvec:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields:
+              - base
+              -
+                  -
+                      - 0
+                      - 1
+            base:
+                implemented: true
+                description: Vector base address.
+                shadow:
+                msb: 63
+                lsb: 2
+        description: MXLEN-bit read/write register that holds trap vector configuration.
+        address: 773
+        priv_mode: M
+    mideleg:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        description: Machine Interrupt delegation Register.
+        address: 771
+        priv_mode: M
+        reset-val: 0
+    medeleg:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        description: Machine Exception delegation Register.
+        address: 770
+        priv_mode: M
+        reset-val: 0
+    mip:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields:
+              - ueip
+              - stip
+              - msip
+              - usip
+              - utip
+              - seip
+              - ssip
+              - mtip
+              - meip
+              -
+                  -
+                      - 2
+                  -
+                      - 6
+                  -
+                      - 10
+                  -
+                      - 12
+                      - 63
+            usip:
+                implemented: false
+                description: User Software Interrupt Pending.
+                shadow:
+                msb: 0
+                lsb: 0
+            ssip:
+                implemented: false
+                description: Supervisor Software Interrupt Pending.
+                shadow:
+                msb: 1
+                lsb: 1
+            msip:
+                implemented: true
+                description: Machine Software Interrupt Pending.
+                shadow:
+                msb: 3
+                lsb: 3
+                type:
+                    ro_variable: true
+            utip:
+                implemented: false
+                description: User Timer Interrupt Pending.
+                shadow:
+                msb: 4
+                lsb: 4
+            stip:
+                implemented: false
+                description: Supervisor Timer Interrupt Pending.
+                shadow:
+                msb: 5
+                lsb: 5
+            mtip:
+                implemented: true
+                description: Machine Timer Interrupt Pending.
+                shadow:
+                msb: 7
+                lsb: 7
+                type:
+                    ro_variable: true
+            ueip:
+                implemented: false
+                description: User External Interrupt Pending.
+                shadow:
+                msb: 8
+                lsb: 8
+            seip:
+                implemented: false
+                description: Supervisor External Interrupt Pending.
+                shadow:
+                msb: 9
+                lsb: 9
+            meip:
+                implemented: true
+                description: Machine External Interrupt Pending.
+                shadow:
+                msb: 11
+                lsb: 11
+                type:
+                    ro_variable: true
+        description: The mip register is an MXLEN-bit read/write register containing
+            information on pending interrupts.
+        address: 836
+        priv_mode: M
+        reset-val: 0
     mie:
-      implemented: true
-      description: Stores the state of the machine mode interrupts.
-      shadow: none
-      msb: 3
-      lsb: 3
-      type:
-        wlrl:
-        - 0:1
-    upie:
-      implemented: false
-      description: Stores the state of the user mode interrupts prior to the trap.
-      shadow: none
-      msb: 4
-      lsb: 4
-    spie:
-      implemented: false
-      description: Stores the state of the supervisor mode interrupts prior to the
-        trap.
-      shadow: none
-      msb: 5
-      lsb: 5
-    mpie:
-      implemented: true
-      description: Stores the state of the machine mode interrupts prior to the trap.
-      shadow: none
-      msb: 7
-      lsb: 7
-      type:
-        wlrl:
-        - 0:1
-    spp:
-      implemented: false
-      description: Stores the previous priority mode for supervisor.
-      shadow: none
-      msb: 8
-      lsb: 8
-    mpp:
-      implemented: true
-      description: Stores the previous priority mode for machine.
-      shadow: none
-      msb: 12
-      lsb: 11
-      type:
-        wlrl:
-        - '0'
-    fs:
-      implemented: false
-      description: Encodes the status of the floating-point unit, including the CSR
-        fcsr and floating-point data registers.
-      shadow: none
-      msb: 14
-      lsb: 13
-    xs:
-      implemented: false
-      description: Encodes the status of additional user-mode extensions and associated
-        state.
-      shadow: none
-      msb: 16
-      lsb: 15
-    mprv:
-      implemented: false
-      description: Modifies the privilege level at which loads and stores execute
-        in all privilege modes.
-      shadow: none
-      msb: 17
-      lsb: 17
-    sum:
-      implemented: false
-      description: Modifies the privilege with which S-mode loads and stores access
-        virtual memory.
-      shadow: none
-      msb: 18
-      lsb: 18
-    mxr:
-      implemented: false
-      description: Modifies the privilege with which loads access virtual memory.
-      shadow: none
-      msb: 19
-      lsb: 19
-    tvm:
-      implemented: false
-      description: Supports intercepting supervisor virtual-memory management operations.
-      shadow: none
-      msb: 20
-      lsb: 20
-    tw:
-      implemented: false
-      description: Supports intercepting the WFI instruction.
-      shadow: none
-      msb: 21
-      lsb: 21
-    tsr:
-      implemented: false
-      description: Supports intercepting the supervisor exception return instruction.
-      shadow: none
-      msb: 22
-      lsb: 22
-    sxl:
-      implemented: false
-      description: Controls the value of xlen for Supervisor mode.
-      shadow: none
-      msb: 35
-      lsb: 34
-    uxl:
-      implemented: false
-      description: Controls the xlen for User mode.
-      shadow: none
-      msb: 33
-      lsb: 32
-    sd:
-      implemented: true
-      description: Read-only bit that summarizes whether either the FS field or XS
-        field signals the presence of some dirty state.
-      shadow: none
-      msb: 63
-      lsb: 63
-      type:
-        ro_variable: true
-  description: The mstatus register keeps track of and controls the hart’s current
-    operating state.
-  address: 768
-  priv_mode: M
-  reset-val: 0
-mvendorid:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: true
-    fields: []
-    shadow: none
-    msb: 63
-    lsb: 0
-    type:
-      ro_constant:
-      - 0
-  description: 32-bit read-only register providing the JEDEC manufacturer ID of the
-    provider of the core.
-  address: 3857
-  priv_mode: M
-  reset-val: 0
-marchid:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: true
-    fields: []
-    shadow: none
-    msb: 63
-    lsb: 0
-    type:
-      ro_constant:
-      - 0
-  description: MXLEN-bit read-only register encoding the base microarchitecture of
-    the hart.
-  address: 3858
-  priv_mode: M
-  reset-val: 0
-mimpid:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: true
-    fields: []
-    shadow: none
-    msb: 63
-    lsb: 0
-    type:
-      ro_constant:
-      - 0
-  description: Provides a unique encoding of the version of the processor implementation.
-  address: 3859
-  priv_mode: M
-  reset-val: 0
-mhartid:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: true
-    fields: []
-    shadow: none
-    msb: 63
-    lsb: 0
-    type:
-      ro_constant:
-      - 0
-  description: MXLEN-bit read-only register containing the integer ID of the hardware
-    thread running the code.
-  address: 3860
-  priv_mode: M
-  reset-val: 0
-mtvec:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: true
-    fields:
-    - base
-    -
-      -
-        - 0
-        - 1
-    base:
-      implemented: true
-      description: Vector base address.
-      shadow: none
-      msb: 63
-      lsb: 2
-  description: MXLEN-bit read/write register that holds trap vector configuration.
-  address: 773
-  priv_mode: M
-mideleg:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: false
-  description: Machine Interrupt delegation Register.
-  address: 771
-  priv_mode: M
-  reset-val: 0
-medeleg:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: false
-  description: Machine Exception delegation Register.
-  address: 770
-  priv_mode: M
-  reset-val: 0
-mip:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: true
-    fields:
-    - ueip
-    - meip
-    - stip
-    - msip
-    - usip
-    - seip
-    - mtip
-    - utip
-    - ssip
-    -
-      -
-        - 2
-      -
-        - 6
-      -
-        - 10
-      -
-        - 12
-        - 63
-    usip:
-      implemented: false
-      description: User Software Interrupt Pending.
-      shadow: none
-      msb: 0
-      lsb: 0
-    ssip:
-      implemented: false
-      description: Supervisor Software Interrupt Pending.
-      shadow: none
-      msb: 1
-      lsb: 1
-    msip:
-      implemented: true
-      description: Machine Software Interrupt Pending.
-      shadow: none
-      msb: 3
-      lsb: 3
-      type:
-        ro_variable: true
-    utip:
-      implemented: false
-      description: User Timer Interrupt Pending.
-      shadow: none
-      msb: 4
-      lsb: 4
-    stip:
-      implemented: false
-      description: Supervisor Timer Interrupt Pending.
-      shadow: none
-      msb: 5
-      lsb: 5
-    mtip:
-      implemented: true
-      description: Machine Timer Interrupt Pending.
-      shadow: none
-      msb: 7
-      lsb: 7
-      type:
-        ro_variable: true
-    ueip:
-      implemented: false
-      description: User External Interrupt Pending.
-      shadow: none
-      msb: 8
-      lsb: 8
-    seip:
-      implemented: false
-      description: Supervisor External Interrupt Pending.
-      shadow: none
-      msb: 9
-      lsb: 9
-    meip:
-      implemented: true
-      description: Machine External Interrupt Pending.
-      shadow: none
-      msb: 11
-      lsb: 11
-      type:
-        ro_variable: true
-  description: The mip register is an MXLEN-bit read/write register containing information
-    on pending interrupts.
-  address: 836
-  priv_mode: M
-  reset-val: 0
-mie:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: true
-    fields:
-    - ssie
-    - utie
-    - usie
-    - stie
-    - mtie
-    - msie
-    - seie
-    - ueie
-    - meie
-    -
-      -
-        - 2
-      -
-        - 6
-      -
-        - 10
-      -
-        - 12
-        - 63
-    usie:
-      implemented: false
-      description: User Software Interrupt enable.
-      shadow: none
-      msb: 0
-      lsb: 0
-    ssie:
-      implemented: false
-      description: Supervisor Software Interrupt enable.
-      shadow: none
-      msb: 1
-      lsb: 1
-    msie:
-      implemented: true
-      description: Machine Software Interrupt enable.
-      shadow: none
-      msb: 3
-      lsb: 3
-      type:
-        wlrl:
-        - 0x0:0x1
-    utie:
-      implemented: false
-      description: User Timer Interrupt enable.
-      shadow: none
-      msb: 4
-      lsb: 4
-    stie:
-      implemented: false
-      description: Supervisor Timer Interrupt enable.
-      shadow: none
-      msb: 5
-      lsb: 5
-    mtie:
-      implemented: true
-      description: Machine Timer Interrupt enable.
-      shadow: none
-      msb: 7
-      lsb: 7
-      type:
-        wlrl:
-        - 0:1
-    ueie:
-      implemented: false
-      description: User External Interrupt enable.
-      shadow: none
-      msb: 8
-      lsb: 8
-    seie:
-      implemented: false
-      description: Supervisor External Interrupt enable.
-      shadow: none
-      msb: 9
-      lsb: 9
-    meie:
-      implemented: true
-      description: Machine External Interrupt enable.
-      shadow: none
-      msb: 11
-      lsb: 11
-      type:
-        wlrl:
-        - 0:1
-  description: The mie register is an MXLEN-bit read/write register containing interrupt
-    enable bits.
-  address: 772
-  priv_mode: M
-  reset-val: 0
-mscratch:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: true
-    fields: []
-    shadow: none
-    msb: 63
-    lsb: 0
-    type:
-      warl:
-        dependency_fields: []
-        legal:
-        - mscratch[63:0] in [0x00000000:0xFFFFFFFFFFFFFFFF]
-        wr_illegal:
-        - unchanged
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields:
+              - seie
+              - utie
+              - ssie
+              - msie
+              - meie
+              - mtie
+              - usie
+              - ueie
+              - stie
+              -
+                  -
+                      - 2
+                  -
+                      - 6
+                  -
+                      - 10
+                  -
+                      - 12
+                      - 63
+            usie:
+                implemented: false
+                description: User Software Interrupt enable.
+                shadow:
+                msb: 0
+                lsb: 0
+            ssie:
+                implemented: false
+                description: Supervisor Software Interrupt enable.
+                shadow:
+                msb: 1
+                lsb: 1
+            msie:
+                implemented: true
+                description: Machine Software Interrupt enable.
+                shadow:
+                msb: 3
+                lsb: 3
+                type:
+                    wlrl:
+                      - 0x0:0x1
+            utie:
+                implemented: false
+                description: User Timer Interrupt enable.
+                shadow:
+                msb: 4
+                lsb: 4
+            stie:
+                implemented: false
+                description: Supervisor Timer Interrupt enable.
+                shadow:
+                msb: 5
+                lsb: 5
+            mtie:
+                implemented: true
+                description: Machine Timer Interrupt enable.
+                shadow:
+                msb: 7
+                lsb: 7
+                type:
+                    wlrl:
+                      - 0:1
+            ueie:
+                implemented: false
+                description: User External Interrupt enable.
+                shadow:
+                msb: 8
+                lsb: 8
+            seie:
+                implemented: false
+                description: Supervisor External Interrupt enable.
+                shadow:
+                msb: 9
+                lsb: 9
+            meie:
+                implemented: true
+                description: Machine External Interrupt enable.
+                shadow:
+                msb: 11
+                lsb: 11
+                type:
+                    wlrl:
+                      - 0:1
+        description: The mie register is an MXLEN-bit read/write register containing
+            interrupt enable bits.
+        address: 772
+        priv_mode: M
+        reset-val: 0
+    mscratch:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 63
+            lsb: 0
+            type:
+                warl:
+                    dependency_fields: []
+                    legal:
+                      - mscratch[63:0] in [0x00000000:0xFFFFFFFFFFFFFFFF]
+                    wr_illegal:
+                      - unchanged
 
-  description: The mscratch register is an MXLEN-bit read/write register dedicated
-    for use by machine mode.
-  address: 832
-  priv_mode: M
-  reset-val: 0
-mepc:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: true
-    fields: []
-    shadow: none
-    msb: 63
-    lsb: 0
-    type:
-      warl:
-        dependency_fields: []
-        legal:
-        - mepc[63:0] in [0x00000000:0xFFFFFFFFFFFFFFFF]
-        wr_illegal:
-        - unchanged
-  description: The mepc is a warl register that must be able to hold all valid physical
-    and virtual addresses.
-  address: 0x341
-  priv_mode: M
-  reset-val: 0
-mtval:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: true
-    fields: []
-    shadow: none
-    msb: 63
-    lsb: 0
-    type:
-      warl:
-        dependency_fields: []
-        legal:
-        - mtval[63:0] in [0x00000000:0xFFFFFFFFFFFFFFFF]
-        wr_illegal:
-        - unchanged
-  description: The mtval is a warl register that holds the address of the instruction
-    which caused the exception.
-  address: 835
-  priv_mode: M
-  reset-val: 0
-mcause:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: true
-    fields:
-    - interrupt
-    - exception_code
-    interrupt:
-      implemented: true
-      description: Indicates whether the trap was due to an interrupt.
-      shadow: none
-      msb: 63
-      lsb: 63
-      type:
-        wlrl:
-        - 0:1
-    exception_code:
-      implemented: true
-      description: Encodes the exception code.
-      shadow: none
-      msb: 62
-      lsb: 0
-      type:
-        wlrl:
-        - 0:15
-  description: The mcause register stores the information regarding the trap.
-  address: 834
-  priv_mode: M
-  reset-val: 0
-mcounteren:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: false
-  description: The mcounteren is a 32-bit register that controls the availability
-    of the hardware performance-monitoring counters to the next-lowest privileged
-    mode.
-  address: 0x306
-  priv_mode: M
-  reset-val: 0
-mcountinhibit:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: true
-    fields: []
-    shadow: none
-    msb: 31
-    lsb: 0
-    type:
-      warl:
-        dependency_fields: []
-        legal:
-        - mcounterinhibit[31:0] in [0x00000000]
-        wr_illegal:
-        - unchanged
-  description: The mcountinhibit is a 32-bit WARL register that controls which of
-    the hardware performance-monitoring counters increment.
-  address: 0x320
-  priv_mode: M
-  reset-val: 0
-mhpmevent3:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: true
-    fields: []
-    shadow: none
-    msb: 63
-    lsb: 0
-    type:
-      warl:
-        dependency_fields: []
-        legal:
-        - mhpmevent3[63:0] in [0x00000000]
-        wr_illegal:
-        - unchanged
-  description: The mhpmevent3 is a MXLEN-bit event register which controls mhpmcounter3.
-  address: 0x323
-  priv_mode: M
-  reset-val: 0
-mhpmcounter3:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: true
-    fields: []
-    shadow: none
-    msb: 63
-    lsb: 0
-    type:
-      warl:
-        dependency_fields: []
-        legal:
-        - mhpmcounter3[63:0] in [0x00000000]
-        wr_illegal:
-        - unchanged
-  description: The mhpmcounter3 is a 64-bit counter. Returns lower 32 bits in RV32I
-    mode.
-  address: 0xB03
-  priv_mode: M
-  reset-val: 0
-mhpmcounter3h:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: false
-  description: The mhpmcounter3h returns the upper half word in RV32I systems.
-  address: 0xB83
-  priv_mode: M
-  reset-val: 0
-mhpmevent4:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: true
-    fields: []
-    shadow: none
-    msb: 63
-    lsb: 0
-    type:
-      warl:
-        dependency_fields: []
-        legal:
-        - mhpmevent4[63:0] in [0x00000000]
-        wr_illegal:
-        - unchanged
-  description: The mhpmevent4 is a MXLEN-bit event register which controls mhpmcounter4.
-  address: 0x324
-  priv_mode: M
-  reset-val: 0
-mhpmcounter4:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: true
-    fields: []
-    shadow: none
-    msb: 63
-    lsb: 0
-    type:
-      warl:
-        dependency_fields: []
-        legal:
-        - mhpmcountet4[63:0] in [0x00000000]
-        wr_illegal:
-        - unchanged
-  description: The mhpmcounter4 is a 64-bit counter. Returns lower 42 bits in RV42I
-    mode.
-  address: 0xB04
-  priv_mode: M
-  reset-val: 0
-mhpmcounter4h:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: false
-  description: The mhpmcounter4h returns the upper half word in RV42I systems.
-  address: 0xB84
-  priv_mode: M
-  reset-val: 0
-mhpmevent5:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: true
-    fields: []
-    shadow: none
-    msb: 63
-    lsb: 0
-    type:
-      warl:
-        dependency_fields: []
-        legal:
-        - mhpmevent5[63:0] in [0x00000000]
-        wr_illegal:
-        - unchanged
-  description: The mhpmevent5 is a MXLEN-bit event register which controls mhpmcounter5.
-  address: 0x325
-  priv_mode: M
-  reset-val: 0
-mhpmcounter5:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: true
-    fields: []
-    shadow: none
-    msb: 63
-    lsb: 0
-    type:
-      warl:
-        dependency_fields: []
-        legal:
-        - mhpmcountet5[63:0] in [0x00000000]
-        wr_illegal:
-        - unchanged
-  description: The mhpmcounter5 is a 64-bit counter. Returns lower 52 bits in RV52I
-    mode.
-  address: 0xB05
-  priv_mode: M
-  reset-val: 0
-mhpmcounter5h:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: false
-  description: The mhpmcounter5h returns the upper half word in RV52I systems.
-  address: 0xB85
-  priv_mode: M
-  reset-val: 0
-mhpmevent6:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: true
-    fields: []
-    shadow: none
-    msb: 63
-    lsb: 0
-    type:
-      warl:
-        dependency_fields: []
-        legal:
-        - mhpmevent6[63:0] in [0x00000000]
-        wr_illegal:
-        - unchanged
-  description: The mhpmevent6 is a MXLEN-bit event register which controls mhpmcounter6.
-  address: 0x326
-  priv_mode: M
-  reset-val: 0
-mhpmcounter6:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: true
-    fields: []
-    shadow: none
-    msb: 63
-    lsb: 0
-    type:
-      warl:
-        dependency_fields: []
-        legal:
-        - mhpmcountet6[63:0] in [0x00000000]
-        wr_illegal:
-        - unchanged
-  description: The mhpmcounter6 is a 64-bit counter. Returns lower 62 bits in RV62I
-    mode.
-  address: 0xB06
-  priv_mode: M
-  reset-val: 0
-mhpmcounter6h:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: false
-  description: The mhpmcounter6h returns the upper half word in RV62I systems.
-  address: 0xB86
-  priv_mode: M
-  reset-val: 0
-mhpmevent7:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: true
-    fields: []
-    shadow: none
-    msb: 63
-    lsb: 0
-    type:
-      warl:
-        dependency_fields: []
-        legal:
-        - mhpmevent7[63:0] in [0x00000000]
-        wr_illegal:
-        - unchanged
-  description: The mhpmevent7 is a MXLEN-bit event register which controls mhpmcounter7.
-  address: 0x327
-  priv_mode: M
-  reset-val: 0
-mhpmcounter7:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: true
-    fields: []
-    shadow: none
-    msb: 63
-    lsb: 0
-    type:
-      warl:
-        dependency_fields: []
-        legal:
-        - mhpmcountet7[63:0] in [0x00000000]
-        wr_illegal:
-        - unchanged
-  description: The mhpmcounter7 is a 64-bit counter. Returns lower 72 bits in RV72I
-    mode.
-  address: 0xB07
-  priv_mode: M
-  reset-val: 0
-mhpmcounter7h:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: false
-  description: The mhpmcounter7h returns the upper half word in RV72I systems.
-  address: 0xB87
-  priv_mode: M
-  reset-val: 0
-mhpmevent8:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: true
-    fields: []
-    shadow: none
-    msb: 63
-    lsb: 0
-    type:
-      warl:
-        dependency_fields: []
-        legal:
-        - mhpmevent8[63:0] in [0x00000000]
-        wr_illegal:
-        - unchanged
-  description: The mhpmevent8 is a MXLEN-bit event register which controls mhpmcounter8.
-  address: 0x328
-  priv_mode: M
-  reset-val: 0
-mhpmcounter8:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: true
-    fields: []
-    shadow: none
-    msb: 63
-    lsb: 0
-    type:
-      warl:
-        dependency_fields: []
-        legal:
-        - mhpmcountet8[63:0] in [0x00000000]
-        wr_illegal:
-        - unchanged
-  description: The mhpmcounter8 is a 64-bit counter. Returns lower 82 bits in RV82I
-    mode.
-  address: 0xB08
-  priv_mode: M
-  reset-val: 0
-mhpmcounter8h:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: false
-  description: The mhpmcounter8h returns the upper half word in RV82I systems.
-  address: 0xB88
-  priv_mode: M
-  reset-val: 0
-mhpmevent9:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: true
-    fields: []
-    shadow: none
-    msb: 63
-    lsb: 0
-    type:
-      warl:
-        dependency_fields: []
-        legal:
-        - mhpmevent9[63:0] in [0x00000000]
-        wr_illegal:
-        - unchanged
-  description: The mhpmevent9 is a MXLEN-bit event register which controls mhpmcounter9.
-  address: 0x329
-  priv_mode: M
-  reset-val: 0
-mhpmcounter9:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: true
-    fields: []
-    shadow: none
-    msb: 63
-    lsb: 0
-    type:
-      warl:
-        dependency_fields: []
-        legal:
-        - mhpmcountet9[63:0] in [0x00000000]
-        wr_illegal:
-        - unchanged
-  description: The mhpmcounter9 is a 64-bit counter. Returns lower 92 bits in RV92I
-    mode.
-  address: 0xB09
-  priv_mode: M
-  reset-val: 0
-mhpmcounter9h:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: false
-  description: The mhpmcounter9h returns the upper half word in RV92I systems.
-  address: 0xB89
-  priv_mode: M
-  reset-val: 0
-mhpmevent10:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: true
-    fields: []
-    shadow: none
-    msb: 63
-    lsb: 0
-    type:
-      warl:
-        dependency_fields: []
-        legal:
-        - mhpmevent10[63:0] in [0x00000000]
-        wr_illegal:
-        - unchanged
-  description: The mhpmevent10 is a MXLEN-bit event register which controls mhpmcounter10.
-  address: 0x32a
-  priv_mode: M
-  reset-val: 0
-mhpmcounter10:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: true
-    fields: []
-    shadow: none
-    msb: 63
-    lsb: 0
-    type:
-      warl:
-        dependency_fields: []
-        legal:
-        - mhpmcountet10[63:0] in [0x00000000]
-        wr_illegal:
-        - unchanged
-  description: The mhpmcounter10 is a 64-bit counter. Returns lower 102 bits in RV102I
-    mode.
-  address: 0xB0A
-  priv_mode: M
-  reset-val: 0
-mhpmcounter10h:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: false
-  description: The mhpmcounter10h returns the upper half word in RV102I systems.
-  address: 0xB8A
-  priv_mode: M
-  reset-val: 0
-mhpmevent11:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: true
-    fields: []
-    shadow: none
-    msb: 63
-    lsb: 0
-    type:
-      warl:
-        dependency_fields: []
-        legal:
-        - mhpmevent11[63:0] in [0x00000000]
-        wr_illegal:
-        - unchanged
-  description: The mhpmevent11 is a MXLEN-bit event register which controls mhpmcounter11.
-  address: 0x32b
-  priv_mode: M
-  reset-val: 0
-mhpmcounter11:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: true
-    fields: []
-    shadow: none
-    msb: 63
-    lsb: 0
-    type:
-      warl:
-        dependency_fields: []
-        legal:
-        - mhpmcountet11[63:0] in [0x00000000]
-        wr_illegal:
-        - unchanged
-  description: The mhpmcounter11 is a 64-bit counter. Returns lower 112 bits in RV112I
-    mode.
-  address: 0xB0B
-  priv_mode: M
-  reset-val: 0
-mhpmcounter11h:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: false
-  description: The mhpmcounter11h returns the upper half word in RV112I systems.
-  address: 0xB8B
-  priv_mode: M
-  reset-val: 0
-mhpmevent12:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: true
-    fields: []
-    shadow: none
-    msb: 63
-    lsb: 0
-    type:
-      warl:
-        dependency_fields: []
-        legal:
-        - mhpmevent12[63:0] in [0x00000000]
-        wr_illegal:
-        - unchanged
-  description: The mhpmevent12 is a MXLEN-bit event register which controls mhpmcounter12.
-  address: 0x32c
-  priv_mode: M
-  reset-val: 0
-mhpmcounter12:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: true
-    fields: []
-    shadow: none
-    msb: 63
-    lsb: 0
-    type:
-      warl:
-        dependency_fields: []
-        legal:
-        - mhpmcountet12[63:0] in [0x00000000]
-        wr_illegal:
-        - unchanged
-  description: The mhpmcounter12 is a 64-bit counter. Returns lower 122 bits in RV122I
-    mode.
-  address: 0xB0C
-  priv_mode: M
-  reset-val: 0
-mhpmcounter12h:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: false
-  description: The mhpmcounter12h returns the upper half word in RV122I systems.
-  address: 0xB8C
-  priv_mode: M
-  reset-val: 0
-mhpmevent13:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: true
-    fields: []
-    shadow: none
-    msb: 63
-    lsb: 0
-    type:
-      warl:
-        dependency_fields: []
-        legal:
-        - mhpmevent13[63:0] in [0x00000000]
-        wr_illegal:
-        - unchanged
-  description: The mhpmevent13 is a MXLEN-bit event register which controls mhpmcounter13.
-  address: 0x32d
-  priv_mode: M
-  reset-val: 0
-mhpmcounter13:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: true
-    fields: []
-    shadow: none
-    msb: 63
-    lsb: 0
-    type:
-      warl:
-        dependency_fields: []
-        legal:
-        - mhpmcountet13[63:0] in [0x00000000]
-        wr_illegal:
-        - unchanged
-  description: The mhpmcounter13 is a 64-bit counter. Returns lower 132 bits in RV132I
-    mode.
-  address: 0xB0D
-  priv_mode: M
-  reset-val: 0
-mhpmcounter13h:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: false
-  description: The mhpmcounter13h returns the upper half word in RV132I systems.
-  address: 0xB8D
-  priv_mode: M
-  reset-val: 0
-mhpmevent14:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: true
-    fields: []
-    shadow: none
-    msb: 63
-    lsb: 0
-    type:
-      warl:
-        dependency_fields: []
-        legal:
-        - mhpmevent14[63:0] in [0x00000000]
-        wr_illegal:
-        - unchanged
-  description: The mhpmevent14 is a MXLEN-bit event register which controls mhpmcounter14.
-  address: 0x32e
-  priv_mode: M
-  reset-val: 0
-mhpmcounter14:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: true
-    fields: []
-    shadow: none
-    msb: 63
-    lsb: 0
-    type:
-      warl:
-        dependency_fields: []
-        legal:
-        - mhpmcountet14[63:0] in [0x00000000]
-        wr_illegal:
-        - unchanged
-  description: The mhpmcounter14 is a 64-bit counter. Returns lower 142 bits in RV142I
-    mode.
-  address: 0xB0E
-  priv_mode: M
-  reset-val: 0
-mhpmcounter14h:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: false
-  description: The mhpmcounter14h returns the upper half word in RV142I systems.
-  address: 0xB8E
-  priv_mode: M
-  reset-val: 0
-mhpmevent15:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: true
-    fields: []
-    shadow: none
-    msb: 63
-    lsb: 0
-    type:
-      warl:
-        dependency_fields: []
-        legal:
-        - mhpmevent15[63:0] in [0x00000000]
-        wr_illegal:
-        - unchanged
-  description: The mhpmevent15 is a MXLEN-bit event register which controls mhpmcounter15.
-  address: 0x32f
-  priv_mode: M
-  reset-val: 0
-mhpmcounter15:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: true
-    fields: []
-    shadow: none
-    msb: 63
-    lsb: 0
-    type:
-      warl:
-        dependency_fields: []
-        legal:
-        - mhpmcountet15[63:0] in [0x00000000]
-        wr_illegal:
-        - unchanged
-  description: The mhpmcounter15 is a 64-bit counter. Returns lower 152 bits in RV152I
-    mode.
-  address: 0xB0F
-  priv_mode: M
-  reset-val: 0
-mhpmcounter15h:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: false
-  description: The mhpmcounter15h returns the upper half word in RV152I systems.
-  address: 0xB8F
-  priv_mode: M
-  reset-val: 0
-mhpmevent16:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: true
-    fields: []
-    shadow: none
-    msb: 63
-    lsb: 0
-    type:
-      warl:
-        dependency_fields: []
-        legal:
-        - mhpmevent16[63:0] in [0x00000000]
-        wr_illegal:
-        - unchanged
-  description: The mhpmevent16 is a MXLEN-bit event register which controls mhpmcounter16.
-  address: 0x330
-  priv_mode: M
-  reset-val: 0
-mhpmcounter16:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: true
-    fields: []
-    shadow: none
-    msb: 63
-    lsb: 0
-    type:
-      warl:
-        dependency_fields: []
-        legal:
-        - mhpmcountet16[63:0] in [0x00000000]
-        wr_illegal:
-        - unchanged
-  description: The mhpmcounter16 is a 64-bit counter. Returns lower 162 bits in RV162I
-    mode.
-  address: 0xB10
-  priv_mode: M
-  reset-val: 0
-mhpmcounter16h:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: false
-  description: The mhpmcounter16h returns the upper half word in RV162I systems.
-  address: 0xB90
-  priv_mode: M
-  reset-val: 0
-mhpmevent17:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: true
-    fields: []
-    shadow: none
-    msb: 63
-    lsb: 0
-    type:
-      warl:
-        dependency_fields: []
-        legal:
-        - mhpmevent17[63:0] in [0x00000000]
-        wr_illegal:
-        - unchanged
-  description: The mhpmevent17 is a MXLEN-bit event register which controls mhpmcounter17.
-  address: 0x331
-  priv_mode: M
-  reset-val: 0
-mhpmcounter17:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: true
-    fields: []
-    shadow: none
-    msb: 63
-    lsb: 0
-    type:
-      warl:
-        dependency_fields: []
-        legal:
-        - mhpmcountet17[63:0] in [0x00000000]
-        wr_illegal:
-        - unchanged
-  description: The mhpmcounter17 is a 64-bit counter. Returns lower 172 bits in RV172I
-    mode.
-  address: 0xB11
-  priv_mode: M
-  reset-val: 0
-mhpmcounter17h:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: false
-  description: The mhpmcounter17h returns the upper half word in RV172I systems.
-  address: 0xB91
-  priv_mode: M
-  reset-val: 0
-mhpmevent18:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: true
-    fields: []
-    shadow: none
-    msb: 63
-    lsb: 0
-    type:
-      warl:
-        dependency_fields: []
-        legal:
-        - mhpmevent18[63:0] in [0x00000000]
-        wr_illegal:
-        - unchanged
-  description: The mhpmevent18 is a MXLEN-bit event register which controls mhpmcounter18.
-  address: 0x332
-  priv_mode: M
-  reset-val: 0
-mhpmcounter18:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: true
-    fields: []
-    shadow: none
-    msb: 63
-    lsb: 0
-    type:
-      warl:
-        dependency_fields: []
-        legal:
-        - mhpmcountet18[63:0] in [0x00000000]
-        wr_illegal:
-        - unchanged
-  description: The mhpmcounter18 is a 64-bit counter. Returns lower 182 bits in RV182I
-    mode.
-  address: 0xB12
-  priv_mode: M
-  reset-val: 0
-mhpmcounter18h:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: false
-  description: The mhpmcounter18h returns the upper half word in RV182I systems.
-  address: 0xB92
-  priv_mode: M
-  reset-val: 0
-mhpmevent19:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: true
-    fields: []
-    shadow: none
-    msb: 63
-    lsb: 0
-    type:
-      warl:
-        dependency_fields: []
-        legal:
-        - mhpmevent19[63:0] in [0x00000000]
-        wr_illegal:
-        - unchanged
-  description: The mhpmevent19 is a MXLEN-bit event register which controls mhpmcounter19.
-  address: 0x333
-  priv_mode: M
-  reset-val: 0
-mhpmcounter19:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: true
-    fields: []
-    shadow: none
-    msb: 63
-    lsb: 0
-    type:
-      warl:
-        dependency_fields: []
-        legal:
-        - mhpmcountet19[63:0] in [0x00000000]
-        wr_illegal:
-        - unchanged
-  description: The mhpmcounter19 is a 64-bit counter. Returns lower 192 bits in RV192I
-    mode.
-  address: 0xB13
-  priv_mode: M
-  reset-val: 0
-mhpmcounter19h:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: false
-  description: The mhpmcounter19h returns the upper half word in RV192I systems.
-  address: 0xB93
-  priv_mode: M
-  reset-val: 0
-mhpmevent20:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: true
-    fields: []
-    shadow: none
-    msb: 63
-    lsb: 0
-    type:
-      warl:
-        dependency_fields: []
-        legal:
-        - mhpmevent20[63:0] in [0x00000000]
-        wr_illegal:
-        - unchanged
-  description: The mhpmevent20 is a MXLEN-bit event register which controls mhpmcounter20.
-  address: 0x334
-  priv_mode: M
-  reset-val: 0
-mhpmcounter20:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: true
-    fields: []
-    shadow: none
-    msb: 63
-    lsb: 0
-    type:
-      warl:
-        dependency_fields: []
-        legal:
-        - mhpmcountet20[63:0] in [0x00000000]
-        wr_illegal:
-        - unchanged
-  description: The mhpmcounter20 is a 64-bit counter. Returns lower 202 bits in RV202I
-    mode.
-  address: 0xB14
-  priv_mode: M
-  reset-val: 0
-mhpmcounter20h:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: false
-  description: The mhpmcounter20h returns the upper half word in RV202I systems.
-  address: 0xB94
-  priv_mode: M
-  reset-val: 0
-mhpmevent21:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: true
-    fields: []
-    shadow: none
-    msb: 63
-    lsb: 0
-    type:
-      warl:
-        dependency_fields: []
-        legal:
-        - mhpmevent21[63:0] in [0x00000000]
-        wr_illegal:
-        - unchanged
-  description: The mhpmevent21 is a MXLEN-bit event register which controls mhpmcounter21.
-  address: 0x335
-  priv_mode: M
-  reset-val: 0
-mhpmcounter21:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: true
-    fields: []
-    shadow: none
-    msb: 63
-    lsb: 0
-    type:
-      warl:
-        dependency_fields: []
-        legal:
-        - mhpmcountet21[63:0] in [0x00000000]
-        wr_illegal:
-        - unchanged
-  description: The mhpmcounter21 is a 64-bit counter. Returns lower 212 bits in RV212I
-    mode.
-  address: 0xB15
-  priv_mode: M
-  reset-val: 0
-mhpmcounter21h:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: false
-  description: The mhpmcounter21h returns the upper half word in RV212I systems.
-  address: 0xB95
-  priv_mode: M
-  reset-val: 0
-mhpmevent22:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: true
-    fields: []
-    shadow: none
-    msb: 63
-    lsb: 0
-    type:
-      warl:
-        dependency_fields: []
-        legal:
-        - mhpmevent22[63:0] in [0x00000000]
-        wr_illegal:
-        - unchanged
-  description: The mhpmevent22 is a MXLEN-bit event register which controls mhpmcounter22.
-  address: 0x336
-  priv_mode: M
-  reset-val: 0
-mhpmcounter22:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: true
-    fields: []
-    shadow: none
-    msb: 63
-    lsb: 0
-    type:
-      warl:
-        dependency_fields: []
-        legal:
-        - mhpmcountet22[63:0] in [0x00000000]
-        wr_illegal:
-        - unchanged
-  description: The mhpmcounter22 is a 64-bit counter. Returns lower 222 bits in RV222I
-    mode.
-  address: 0xB16
-  priv_mode: M
-  reset-val: 0
-mhpmcounter22h:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: false
-  description: The mhpmcounter22h returns the upper half word in RV222I systems.
-  address: 0xB96
-  priv_mode: M
-  reset-val: 0
-mhpmevent23:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: true
-    fields: []
-    shadow: none
-    msb: 63
-    lsb: 0
-    type:
-      warl:
-        dependency_fields: []
-        legal:
-        - mhpmevent23[63:0] in [0x00000000]
-        wr_illegal:
-        - unchanged
-  description: The mhpmevent23 is a MXLEN-bit event register which controls mhpmcounter23.
-  address: 0x337
-  priv_mode: M
-  reset-val: 0
-mhpmcounter23:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: true
-    fields: []
-    shadow: none
-    msb: 63
-    lsb: 0
-    type:
-      warl:
-        dependency_fields: []
-        legal:
-        - mhpmcountet23[63:0] in [0x00000000]
-        wr_illegal:
-        - unchanged
-  description: The mhpmcounter23 is a 64-bit counter. Returns lower 232 bits in RV232I
-    mode.
-  address: 0xB17
-  priv_mode: M
-  reset-val: 0
-mhpmcounter23h:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: false
-  description: The mhpmcounter23h returns the upper half word in RV232I systems.
-  address: 0xB97
-  priv_mode: M
-  reset-val: 0
-mhpmevent24:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: true
-    fields: []
-    shadow: none
-    msb: 63
-    lsb: 0
-    type:
-      warl:
-        dependency_fields: []
-        legal:
-        - mhpmevent24[63:0] in [0x00000000]
-        wr_illegal:
-        - unchanged
-  description: The mhpmevent24 is a MXLEN-bit event register which controls mhpmcounter24.
-  address: 0x338
-  priv_mode: M
-  reset-val: 0
-mhpmcounter24:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: true
-    fields: []
-    shadow: none
-    msb: 63
-    lsb: 0
-    type:
-      warl:
-        dependency_fields: []
-        legal:
-        - mhpmcountet24[63:0] in [0x00000000]
-        wr_illegal:
-        - unchanged
-  description: The mhpmcounter24 is a 64-bit counter. Returns lower 242 bits in RV242I
-    mode.
-  address: 0xB18
-  priv_mode: M
-  reset-val: 0
-mhpmcounter24h:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: false
-  description: The mhpmcounter24h returns the upper half word in RV242I systems.
-  address: 0xB98
-  priv_mode: M
-  reset-val: 0
-mhpmevent25:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: true
-    fields: []
-    shadow: none
-    msb: 63
-    lsb: 0
-    type:
-      warl:
-        dependency_fields: []
-        legal:
-        - mhpmevent25[63:0] in [0x00000000]
-        wr_illegal:
-        - unchanged
-  description: The mhpmevent25 is a MXLEN-bit event register which controls mhpmcounter25.
-  address: 0x339
-  priv_mode: M
-  reset-val: 0
-mhpmcounter25:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: true
-    fields: []
-    shadow: none
-    msb: 63
-    lsb: 0
-    type:
-      warl:
-        dependency_fields: []
-        legal:
-        - mhpmcountet25[63:0] in [0x00000000]
-        wr_illegal:
-        - unchanged
-  description: The mhpmcounter25 is a 64-bit counter. Returns lower 252 bits in RV252I
-    mode.
-  address: 0xB19
-  priv_mode: M
-  reset-val: 0
-mhpmcounter25h:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: false
-  description: The mhpmcounter25h returns the upper half word in RV252I systems.
-  address: 0xB99
-  priv_mode: M
-  reset-val: 0
-mhpmevent26:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: true
-    fields: []
-    shadow: none
-    msb: 63
-    lsb: 0
-    type:
-      warl:
-        dependency_fields: []
-        legal:
-        - mhpmevent26[63:0] in [0x00000000]
-        wr_illegal:
-        - unchanged
-  description: The mhpmevent26 is a MXLEN-bit event register which controls mhpmcounter26.
-  address: 0x33a
-  priv_mode: M
-  reset-val: 0
-mhpmcounter26:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: true
-    fields: []
-    shadow: none
-    msb: 63
-    lsb: 0
-    type:
-      warl:
-        dependency_fields: []
-        legal:
-        - mhpmcountet26[63:0] in [0x00000000]
-        wr_illegal:
-        - unchanged
-  description: The mhpmcounter26 is a 64-bit counter. Returns lower 262 bits in RV262I
-    mode.
-  address: 0xB1A
-  priv_mode: M
-  reset-val: 0
-mhpmcounter26h:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: false
-  description: The mhpmcounter26h returns the upper half word in RV262I systems.
-  address: 0xB9A
-  priv_mode: M
-  reset-val: 0
-mhpmevent27:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: true
-    fields: []
-    shadow: none
-    msb: 63
-    lsb: 0
-    type:
-      warl:
-        dependency_fields: []
-        legal:
-        - mhpmevent27[63:0] in [0x00000000]
-        wr_illegal:
-        - unchanged
-  description: The mhpmevent27 is a MXLEN-bit event register which controls mhpmcounter27.
-  address: 0x33b
-  priv_mode: M
-  reset-val: 0
-mhpmcounter27:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: true
-    fields: []
-    shadow: none
-    msb: 63
-    lsb: 0
-    type:
-      warl:
-        dependency_fields: []
-        legal:
-        - mhpmcountet27[63:0] in [0x00000000]
-        wr_illegal:
-        - unchanged
-  description: The mhpmcounter27 is a 64-bit counter. Returns lower 272 bits in RV272I
-    mode.
-  address: 0xB1B
-  priv_mode: M
-  reset-val: 0
-mhpmcounter27h:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: false
-  description: The mhpmcounter27h returns the upper half word in RV272I systems.
-  address: 0xB9B
-  priv_mode: M
-  reset-val: 0
-mhpmevent28:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: true
-    fields: []
-    shadow: none
-    msb: 63
-    lsb: 0
-    type:
-      warl:
-        dependency_fields: []
-        legal:
-        - mhpmevent28[63:0] in [0x00000000]
-        wr_illegal:
-        - unchanged
-  description: The mhpmevent28 is a MXLEN-bit event register which controls mhpmcounter28.
-  address: 0x33c
-  priv_mode: M
-  reset-val: 0
-mhpmcounter28:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: true
-    fields: []
-    shadow: none
-    msb: 63
-    lsb: 0
-    type:
-      warl:
-        dependency_fields: []
-        legal:
-        - mhpmcountet28[63:0] in [0x00000000]
-        wr_illegal:
-        - unchanged
-  description: The mhpmcounter28 is a 64-bit counter. Returns lower 282 bits in RV282I
-    mode.
-  address: 0xB1C
-  priv_mode: M
-  reset-val: 0
-mhpmcounter28h:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: false
-  description: The mhpmcounter28h returns the upper half word in RV282I systems.
-  address: 0xB9C
-  priv_mode: M
-  reset-val: 0
-mhpmevent29:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: true
-    fields: []
-    shadow: none
-    msb: 63
-    lsb: 0
-    type:
-      warl:
-        dependency_fields: []
-        legal:
-        - mhpmevent29[63:0] in [0x00000000]
-        wr_illegal:
-        - unchanged
-  description: The mhpmevent29 is a MXLEN-bit event register which controls mhpmcounter29.
-  address: 0x33d
-  priv_mode: M
-  reset-val: 0
-mhpmcounter29:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: true
-    fields: []
-    shadow: none
-    msb: 63
-    lsb: 0
-    type:
-      warl:
-        dependency_fields: []
-        legal:
-        - mhpmcountet29[63:0] in [0x00000000]
-        wr_illegal:
-        - unchanged
-  description: The mhpmcounter29 is a 64-bit counter. Returns lower 292 bits in RV292I
-    mode.
-  address: 0xB1D
-  priv_mode: M
-  reset-val: 0
-mhpmcounter29h:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: false
-  description: The mhpmcounter29h returns the upper half word in RV292I systems.
-  address: 0xB9D
-  priv_mode: M
-  reset-val: 0
-mhpmevent30:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: true
-    fields: []
-    shadow: none
-    msb: 63
-    lsb: 0
-    type:
-      warl:
-        dependency_fields: []
-        legal:
-        - mhpmevent30[63:0] in [0x00000000]
-        wr_illegal:
-        - unchanged
-  description: The mhpmevent30 is a MXLEN-bit event register which controls mhpmcounter30.
-  address: 0x33e
-  priv_mode: M
-  reset-val: 0
-mhpmcounter30:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: true
-    fields: []
-    shadow: none
-    msb: 63
-    lsb: 0
-    type:
-      warl:
-        dependency_fields: []
-        legal:
-        - mhpmcountet30[63:0] in [0x00000000]
-        wr_illegal:
-        - unchanged
-  description: The mhpmcounter30 is a 64-bit counter. Returns lower 302 bits in RV302I
-    mode.
-  address: 0xB1E
-  priv_mode: M
-  reset-val: 0
-mhpmcounter30h:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: false
-  description: The mhpmcounter30h returns the upper half word in RV302I systems.
-  address: 0xB9E
-  priv_mode: M
-  reset-val: 0
-mhpmevent31:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: true
-    fields: []
-    shadow: none
-    msb: 63
-    lsb: 0
-    type:
-      warl:
-        dependency_fields: []
-        legal:
-        - mhpmevent31[63:0] in [0x00000000]
-        wr_illegal:
-        - unchanged
-  description: The mhpmevent31 is a MXLEN-bit event register which controls mhpmcounter31.
-  address: 0x33f
-  priv_mode: M
-  reset-val: 0
-mhpmcounter31:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: true
-    fields: []
-    shadow: none
-    msb: 63
-    lsb: 0
-    type:
-      warl:
-        dependency_fields: []
-        legal:
-        - mhpmcountet31[63:0] in [0x00000000]
-        wr_illegal:
-        - unchanged
-  description: The mhpmcounter31 is a 64-bit counter. Returns lower 312 bits in RV312I
-    mode.
-  address: 0xB1F
-  priv_mode: M
-  reset-val: 0
-mhpmcounter31h:
-  rv32:
-    accessible: false
-  rv64:
-    accessible: false
-  description: The mhpmcounter31h returns the upper half word in RV312I systems.
-  address: 0xB9F
-  priv_mode: M
-  reset-val: 0
+        description: The mscratch register is an MXLEN-bit read/write register dedicated
+            for use by machine mode.
+        address: 832
+        priv_mode: M
+        reset-val: 0
+    mepc:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 63
+            lsb: 0
+            type:
+                warl:
+                    dependency_fields: []
+                    legal:
+                      - mepc[63:0] in [0x00000000:0xFFFFFFFFFFFFFFFF]
+                    wr_illegal:
+                      - unchanged
+        description: The mepc is a warl register that must be able to hold all valid
+            physical and virtual addresses.
+        address: 0x341
+        priv_mode: M
+        reset-val: 0
+    mtval:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 63
+            lsb: 0
+            type:
+                warl:
+                    dependency_fields: []
+                    legal:
+                      - mtval[63:0] in [0x00000000:0xFFFFFFFFFFFFFFFF]
+                    wr_illegal:
+                      - unchanged
+        description: The mtval is a warl register that holds the address of the instruction
+            which caused the exception.
+        address: 835
+        priv_mode: M
+        reset-val: 0
+    mcause:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields:
+              - interrupt
+              - exception_code
+            interrupt:
+                implemented: true
+                description: Indicates whether the trap was due to an interrupt.
+                shadow:
+                msb: 63
+                lsb: 63
+                type:
+                    wlrl:
+                      - 0:1
+            exception_code:
+                implemented: true
+                description: Encodes the exception code.
+                shadow:
+                msb: 62
+                lsb: 0
+                type:
+                    wlrl:
+                      - 0:15
+        description: The mcause register stores the information regarding the trap.
+        address: 834
+        priv_mode: M
+        reset-val: 0
+    pmpcfg0:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields:
+              - pmp7cfg
+              - pmp0cfg
+              - pmp6cfg
+              - pmp4cfg
+              - pmp2cfg
+              - pmp3cfg
+              - pmp1cfg
+              - pmp5cfg
+            pmp0cfg:
+                implemented: true
+                description: pmp configuration bits
+                shadow:
+                msb: 7
+                lsb: 0
+                type: &id001
+                    ro_constant: 0
+            pmp1cfg:
+                implemented: true
+                description: pmp configuration bits
+                shadow:
+                msb: 15
+                lsb: 8
+                type: &id002
+                    ro_constant: 0
+            pmp2cfg:
+                implemented: true
+                description: pmp configuration bits
+                shadow:
+                msb: 23
+                lsb: 16
+                type: &id003
+                    ro_constant: 0
+            pmp3cfg:
+                implemented: true
+                description: pmp configuration bits
+                shadow:
+                msb: 31
+                lsb: 24
+                type: &id004
+                    ro_constant: 0
+            pmp4cfg:
+                implemented: true
+                description: pmp configuration bits
+                shadow:
+                msb: 39
+                lsb: 32
+                type: &id005
+                    ro_constant: 0
+            pmp5cfg:
+                implemented: true
+                description: pmp configuration bits
+                shadow:
+                msb: 47
+                lsb: 40
+                type: &id006
+                    ro_constant: 0
+            pmp6cfg:
+                implemented: true
+                description: pmp configuration bits
+                shadow:
+                msb: 55
+                lsb: 48
+                type: &id007
+                    ro_constant: 0
+            pmp7cfg:
+                implemented: true
+                description: pmp configuration bits
+                shadow:
+                msb: 63
+                lsb: 56
+                type: &id008
+                    ro_constant: 0
+        description: PMP configuration register
+        address: 0x3A0
+        priv_mode: M
+        reset-val: 0
+    pmpcfg1:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        description: PMP configuration register
+        address: 0x3A1
+        priv_mode: M
+        reset-val: 0
+    pmpcfg2:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields:
+              - pmp8cfg
+              - pmp10cfg
+              - pmp14cfg
+              - pmp9cfg
+              - pmp13cfg
+              - pmp11cfg
+              - pmp12cfg
+              - pmp15cfg
+            pmp8cfg:
+                implemented: true
+                description: pmp configuration bits
+                shadow:
+                msb: 7
+                lsb: 0
+                type: *id001
+            pmp9cfg:
+                implemented: true
+                description: pmp configuration bits
+                shadow:
+                msb: 15
+                lsb: 8
+                type: *id002
+            pmp10cfg:
+                implemented: true
+                description: pmp configuration bits
+                shadow:
+                msb: 23
+                lsb: 16
+                type: *id003
+            pmp11cfg:
+                implemented: true
+                description: pmp configuration bits
+                shadow:
+                msb: 31
+                lsb: 24
+                type: *id004
+            pmp12cfg:
+                implemented: true
+                description: pmp configuration bits
+                shadow:
+                msb: 39
+                lsb: 32
+                type: *id005
+            pmp13cfg:
+                implemented: true
+                description: pmp configuration bits
+                shadow:
+                msb: 47
+                lsb: 40
+                type: *id006
+            pmp14cfg:
+                implemented: true
+                description: pmp configuration bits
+                shadow:
+                msb: 55
+                lsb: 48
+                type: *id007
+            pmp15cfg:
+                implemented: true
+                description: pmp configuration bits
+                shadow:
+                msb: 63
+                lsb: 56
+                type: *id008
+        description: PMP configuration register
+        address: 0x3A1
+        priv_mode: M
+        reset-val: 0
+    pmpcfg3:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        description: PMP configuration register
+        address: 0x3A1
+        priv_mode: M
+        reset-val: 0
+    pmpcfg4:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields:
+              - pmp20cfg
+              - pmp23cfg
+              - pmp19cfg
+              - pmp21cfg
+              - pmp22cfg
+              - pmp17cfg
+              - pmp18cfg
+              - pmp16cfg
+            pmp16cfg:
+                implemented: true
+                description: pmp configuration bits
+                shadow:
+                msb: 7
+                lsb: 0
+                type: *id001
+            pmp17cfg:
+                implemented: true
+                description: pmp configuration bits
+                shadow:
+                msb: 15
+                lsb: 8
+                type: *id002
+            pmp18cfg:
+                implemented: true
+                description: pmp configuration bits
+                shadow:
+                msb: 23
+                lsb: 16
+                type: *id003
+            pmp19cfg:
+                implemented: true
+                description: pmp configuration bits
+                shadow:
+                msb: 31
+                lsb: 24
+                type: *id004
+            pmp20cfg:
+                implemented: true
+                description: pmp configuration bits
+                shadow:
+                msb: 39
+                lsb: 32
+                type: *id005
+            pmp21cfg:
+                implemented: true
+                description: pmp configuration bits
+                shadow:
+                msb: 47
+                lsb: 40
+                type: *id006
+            pmp22cfg:
+                implemented: true
+                description: pmp configuration bits
+                shadow:
+                msb: 55
+                lsb: 48
+                type: *id007
+            pmp23cfg:
+                implemented: true
+                description: pmp configuration bits
+                shadow:
+                msb: 63
+                lsb: 56
+                type: *id008
+        description: PMP configuration register
+        address: 0x3A1
+        priv_mode: M
+        reset-val: 0
+    pmpcfg5:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        description: PMP configuration register
+        address: 0x3A1
+        priv_mode: M
+        reset-val: 0
+    pmpcfg6:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields:
+              - pmp30cfg
+              - pmp24cfg
+              - pmp26cfg
+              - pmp31cfg
+              - pmp27cfg
+              - pmp25cfg
+              - pmp28cfg
+              - pmp29cfg
+            pmp24cfg:
+                implemented: true
+                description: pmp configuration bits
+                shadow:
+                msb: 7
+                lsb: 0
+                type: *id001
+            pmp25cfg:
+                implemented: true
+                description: pmp configuration bits
+                shadow:
+                msb: 15
+                lsb: 8
+                type: *id002
+            pmp26cfg:
+                implemented: true
+                description: pmp configuration bits
+                shadow:
+                msb: 23
+                lsb: 16
+                type: *id003
+            pmp27cfg:
+                implemented: true
+                description: pmp configuration bits
+                shadow:
+                msb: 31
+                lsb: 24
+                type: *id004
+            pmp28cfg:
+                implemented: true
+                description: pmp configuration bits
+                shadow:
+                msb: 39
+                lsb: 32
+                type: *id005
+            pmp29cfg:
+                implemented: true
+                description: pmp configuration bits
+                shadow:
+                msb: 47
+                lsb: 40
+                type: *id006
+            pmp30cfg:
+                implemented: true
+                description: pmp configuration bits
+                shadow:
+                msb: 55
+                lsb: 48
+                type: *id007
+            pmp31cfg:
+                implemented: true
+                description: pmp configuration bits
+                shadow:
+                msb: 63
+                lsb: 56
+                type: *id008
+        description: PMP configuration register
+        address: 0x3A1
+        priv_mode: M
+        reset-val: 0
+    pmpcfg7:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        description: PMP configuration register
+        address: 0x3A1
+        priv_mode: M
+        reset-val: 0
+    pmpcfg8:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields:
+              - pmp35cfg
+              - pmp39cfg
+              - pmp34cfg
+              - pmp32cfg
+              - pmp36cfg
+              - pmp37cfg
+              - pmp38cfg
+              - pmp33cfg
+            pmp32cfg:
+                implemented: true
+                description: pmp configuration bits
+                shadow:
+                msb: 7
+                lsb: 0
+                type: *id001
+            pmp33cfg:
+                implemented: true
+                description: pmp configuration bits
+                shadow:
+                msb: 15
+                lsb: 8
+                type: *id002
+            pmp34cfg:
+                implemented: true
+                description: pmp configuration bits
+                shadow:
+                msb: 23
+                lsb: 16
+                type: *id003
+            pmp35cfg:
+                implemented: true
+                description: pmp configuration bits
+                shadow:
+                msb: 31
+                lsb: 24
+                type: *id004
+            pmp36cfg:
+                implemented: true
+                description: pmp configuration bits
+                shadow:
+                msb: 39
+                lsb: 32
+                type: *id005
+            pmp37cfg:
+                implemented: true
+                description: pmp configuration bits
+                shadow:
+                msb: 47
+                lsb: 40
+                type: *id006
+            pmp38cfg:
+                implemented: true
+                description: pmp configuration bits
+                shadow:
+                msb: 55
+                lsb: 48
+                type: *id007
+            pmp39cfg:
+                implemented: true
+                description: pmp configuration bits
+                shadow:
+                msb: 63
+                lsb: 56
+                type: *id008
+        description: PMP configuration register
+        address: 0x3A1
+        priv_mode: M
+        reset-val: 0
+    pmpcfg9:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        description: PMP configuration register
+        address: 0x3A1
+        priv_mode: M
+        reset-val: 0
+    pmpcfg10:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields:
+              - pmp41cfg
+              - pmp47cfg
+              - pmp42cfg
+              - pmp46cfg
+              - pmp40cfg
+              - pmp43cfg
+              - pmp44cfg
+              - pmp45cfg
+            pmp40cfg:
+                implemented: true
+                description: pmp configuration bits
+                shadow:
+                msb: 7
+                lsb: 0
+                type: *id001
+            pmp41cfg:
+                implemented: true
+                description: pmp configuration bits
+                shadow:
+                msb: 15
+                lsb: 8
+                type: *id002
+            pmp42cfg:
+                implemented: true
+                description: pmp configuration bits
+                shadow:
+                msb: 23
+                lsb: 16
+                type: *id003
+            pmp43cfg:
+                implemented: true
+                description: pmp configuration bits
+                shadow:
+                msb: 31
+                lsb: 24
+                type: *id004
+            pmp44cfg:
+                implemented: true
+                description: pmp configuration bits
+                shadow:
+                msb: 39
+                lsb: 32
+                type: *id005
+            pmp45cfg:
+                implemented: true
+                description: pmp configuration bits
+                shadow:
+                msb: 47
+                lsb: 40
+                type: *id006
+            pmp46cfg:
+                implemented: true
+                description: pmp configuration bits
+                shadow:
+                msb: 55
+                lsb: 48
+                type: *id007
+            pmp47cfg:
+                implemented: true
+                description: pmp configuration bits
+                shadow:
+                msb: 63
+                lsb: 56
+                type: *id008
+        description: PMP configuration register
+        address: 0x3A1
+        priv_mode: M
+        reset-val: 0
+    pmpcfg11:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        description: PMP configuration register
+        address: 0x3A1
+        priv_mode: M
+        reset-val: 0
+    pmpcfg12:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields:
+              - pmp50cfg
+              - pmp51cfg
+              - pmp53cfg
+              - pmp49cfg
+              - pmp52cfg
+              - pmp55cfg
+              - pmp54cfg
+              - pmp48cfg
+            pmp48cfg:
+                implemented: true
+                description: pmp configuration bits
+                shadow:
+                msb: 7
+                lsb: 0
+                type: *id001
+            pmp49cfg:
+                implemented: true
+                description: pmp configuration bits
+                shadow:
+                msb: 15
+                lsb: 8
+                type: *id002
+            pmp50cfg:
+                implemented: true
+                description: pmp configuration bits
+                shadow:
+                msb: 23
+                lsb: 16
+                type: *id003
+            pmp51cfg:
+                implemented: true
+                description: pmp configuration bits
+                shadow:
+                msb: 31
+                lsb: 24
+                type: *id004
+            pmp52cfg:
+                implemented: true
+                description: pmp configuration bits
+                shadow:
+                msb: 39
+                lsb: 32
+                type: *id005
+            pmp53cfg:
+                implemented: true
+                description: pmp configuration bits
+                shadow:
+                msb: 47
+                lsb: 40
+                type: *id006
+            pmp54cfg:
+                implemented: true
+                description: pmp configuration bits
+                shadow:
+                msb: 55
+                lsb: 48
+                type: *id007
+            pmp55cfg:
+                implemented: true
+                description: pmp configuration bits
+                shadow:
+                msb: 63
+                lsb: 56
+                type: *id008
+        description: PMP configuration register
+        address: 0x3A1
+        priv_mode: M
+        reset-val: 0
+    pmpcfg13:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        description: PMP configuration register
+        address: 0x3A1
+        priv_mode: M
+        reset-val: 0
+    pmpcfg14:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields:
+              - pmp57cfg
+              - pmp60cfg
+              - pmp59cfg
+              - pmp62cfg
+              - pmp63cfg
+              - pmp58cfg
+              - pmp56cfg
+              - pmp61cfg
+            pmp56cfg:
+                implemented: true
+                description: pmp configuration bits
+                shadow:
+                msb: 7
+                lsb: 0
+                type: *id001
+            pmp57cfg:
+                implemented: true
+                description: pmp configuration bits
+                shadow:
+                msb: 15
+                lsb: 8
+                type: *id002
+            pmp58cfg:
+                implemented: true
+                description: pmp configuration bits
+                shadow:
+                msb: 23
+                lsb: 16
+                type: *id003
+            pmp59cfg:
+                implemented: true
+                description: pmp configuration bits
+                shadow:
+                msb: 31
+                lsb: 24
+                type: *id004
+            pmp60cfg:
+                implemented: true
+                description: pmp configuration bits
+                shadow:
+                msb: 39
+                lsb: 32
+                type: *id005
+            pmp61cfg:
+                implemented: true
+                description: pmp configuration bits
+                shadow:
+                msb: 47
+                lsb: 40
+                type: *id006
+            pmp62cfg:
+                implemented: true
+                description: pmp configuration bits
+                shadow:
+                msb: 55
+                lsb: 48
+                type: *id007
+            pmp63cfg:
+                implemented: true
+                description: pmp configuration bits
+                shadow:
+                msb: 63
+                lsb: 56
+                type: *id008
+        description: PMP configuration register
+        address: 0x3A1
+        priv_mode: M
+        reset-val: 0
+    pmpcfg15:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        description: PMP configuration register
+        address: 0x3A1
+        priv_mode: M
+        reset-val: 0
+    mcounteren:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        description: The mcounteren is a 32-bit register that controls the availability
+            of the hardware performance-monitoring counters to the next-lowest privileged
+            mode.
+        address: 0x306
+        priv_mode: M
+        reset-val: 0
+    mcountinhibit:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 31
+            lsb: 0
+            type:
+                ro_constant: 0
+        description: The mcountinhibit is a 32-bit WARL register that controls which
+            of the hardware performance-monitoring counters increment.
+        address: 0x320
+        priv_mode: M
+        reset-val: 0
+    mcycle:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 63
+            lsb: 0
+            type: &id009
+                ro_constant: 0
+        description: Counts the number of clock cycles executed from an arbitrary
+            point in time.
+        address: 0xB00
+        priv_mode: M
+        reset-val: 0
+    minstret:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 63
+            lsb: 0
+            type: *id009
+        description: Counts the number of instructions completed from an arbitrary
+            point in time.
+        address: 0xB02
+        priv_mode: M
+        reset-val: 0
+    mhpmevent3:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 63
+            lsb: 0
+            type: *id009
+        description: The mhpmevent3 is a MXLEN-bit event register which controls mhpmcounter3.
+        address: 0x323
+        priv_mode: M
+        reset-val: 0
+    mhpmcounter3:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 63
+            lsb: 0
+            type: *id009
+        description: The mhpmcounter3 is a 64-bit counter. Returns lower 32 bits in
+            RV32I mode.
+        address: 0xB03
+        priv_mode: M
+        reset-val: 0
+    mhpmcounter3h:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        description: The mhpmcounter3h returns the upper half word in RV32I systems.
+        address: 0xB83
+        priv_mode: M
+        reset-val: 0
+    mhpmevent4:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 63
+            lsb: 0
+            type: *id009
+        description: The mhpmevent4 is a MXLEN-bit event register which controls mhpmcounter4.
+        address: 0x324
+        priv_mode: M
+        reset-val: 0
+    mhpmcounter4:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 63
+            lsb: 0
+            type: *id009
+        description: The mhpmcounter4 is a 64-bit counter. Returns lower 42 bits in
+            RV42I mode.
+        address: 0xB04
+        priv_mode: M
+        reset-val: 0
+    mhpmcounter4h:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        description: The mhpmcounter4h returns the upper half word in RV42I systems.
+        address: 0xB84
+        priv_mode: M
+        reset-val: 0
+    mhpmevent5:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 63
+            lsb: 0
+            type: *id009
+        description: The mhpmevent5 is a MXLEN-bit event register which controls mhpmcounter5.
+        address: 0x325
+        priv_mode: M
+        reset-val: 0
+    mhpmcounter5:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 63
+            lsb: 0
+            type: *id009
+        description: The mhpmcounter5 is a 64-bit counter. Returns lower 52 bits in
+            RV52I mode.
+        address: 0xB05
+        priv_mode: M
+        reset-val: 0
+    mhpmcounter5h:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        description: The mhpmcounter5h returns the upper half word in RV52I systems.
+        address: 0xB85
+        priv_mode: M
+        reset-val: 0
+    mhpmevent6:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 63
+            lsb: 0
+            type: *id009
+        description: The mhpmevent6 is a MXLEN-bit event register which controls mhpmcounter6.
+        address: 0x326
+        priv_mode: M
+        reset-val: 0
+    mhpmcounter6:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 63
+            lsb: 0
+            type: *id009
+        description: The mhpmcounter6 is a 64-bit counter. Returns lower 62 bits in
+            RV62I mode.
+        address: 0xB06
+        priv_mode: M
+        reset-val: 0
+    mhpmcounter6h:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        description: The mhpmcounter6h returns the upper half word in RV62I systems.
+        address: 0xB86
+        priv_mode: M
+        reset-val: 0
+    mhpmevent7:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 63
+            lsb: 0
+            type: *id009
+        description: The mhpmevent7 is a MXLEN-bit event register which controls mhpmcounter7.
+        address: 0x327
+        priv_mode: M
+        reset-val: 0
+    mhpmcounter7:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 63
+            lsb: 0
+            type: *id009
+        description: The mhpmcounter7 is a 64-bit counter. Returns lower 72 bits in
+            RV72I mode.
+        address: 0xB07
+        priv_mode: M
+        reset-val: 0
+    mhpmcounter7h:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        description: The mhpmcounter7h returns the upper half word in RV72I systems.
+        address: 0xB87
+        priv_mode: M
+        reset-val: 0
+    mhpmevent8:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 63
+            lsb: 0
+            type: *id009
+        description: The mhpmevent8 is a MXLEN-bit event register which controls mhpmcounter8.
+        address: 0x328
+        priv_mode: M
+        reset-val: 0
+    mhpmcounter8:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 63
+            lsb: 0
+            type: *id009
+        description: The mhpmcounter8 is a 64-bit counter. Returns lower 82 bits in
+            RV82I mode.
+        address: 0xB08
+        priv_mode: M
+        reset-val: 0
+    mhpmcounter8h:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        description: The mhpmcounter8h returns the upper half word in RV82I systems.
+        address: 0xB88
+        priv_mode: M
+        reset-val: 0
+    mhpmevent9:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 63
+            lsb: 0
+            type: *id009
+        description: The mhpmevent9 is a MXLEN-bit event register which controls mhpmcounter9.
+        address: 0x329
+        priv_mode: M
+        reset-val: 0
+    mhpmcounter9:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 63
+            lsb: 0
+            type: *id009
+        description: The mhpmcounter9 is a 64-bit counter. Returns lower 32 bits in
+            RV32I mode.
+        address: 0xB09
+        priv_mode: M
+        reset-val: 0
+    mhpmcounter9h:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        description: The mhpmcounter9h returns the upper half word in RV32I systems.
+        address: 0xB89
+        priv_mode: M
+        reset-val: 0
+    mhpmevent10:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 63
+            lsb: 0
+            type: *id009
+        description: The mhpmevent10 is a MXLEN-bit event register which controls
+            mhpmcounter10.
+        address: 0x32a
+        priv_mode: M
+        reset-val: 0
+    mhpmcounter10:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 63
+            lsb: 0
+            type: *id009
+        description: The mhpmcounter10 is a 64-bit counter. Returns lower 102 bits
+            in RV102I mode.
+        address: 0xB0A
+        priv_mode: M
+        reset-val: 0
+    mhpmcounter10h:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        description: The mhpmcounter10h returns the upper half word in RV102I systems.
+        address: 0xB8A
+        priv_mode: M
+        reset-val: 0
+    mhpmevent11:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 63
+            lsb: 0
+            type: *id009
+        description: The mhpmevent11 is a MXLEN-bit event register which controls
+            mhpmcounter11.
+        address: 0x32b
+        priv_mode: M
+        reset-val: 0
+    mhpmcounter11:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 63
+            lsb: 0
+            type: *id009
+        description: The mhpmcounter11 is a 64-bit counter. Returns lower 112 bits
+            in RV112I mode.
+        address: 0xB0B
+        priv_mode: M
+        reset-val: 0
+    mhpmcounter11h:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        description: The mhpmcounter11h returns the upper half word in RV112I systems.
+        address: 0xB8B
+        priv_mode: M
+        reset-val: 0
+    mhpmevent12:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 63
+            lsb: 0
+            type: *id009
+        description: The mhpmevent12 is a MXLEN-bit event register which controls
+            mhpmcounter12.
+        address: 0x32c
+        priv_mode: M
+        reset-val: 0
+    mhpmcounter12:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 63
+            lsb: 0
+            type: *id009
+        description: The mhpmcounter12 is a 64-bit counter. Returns lower 122 bits
+            in RV122I mode.
+        address: 0xB0C
+        priv_mode: M
+        reset-val: 0
+    mhpmcounter12h:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        description: The mhpmcounter12h returns the upper half word in RV122I systems.
+        address: 0xB8C
+        priv_mode: M
+        reset-val: 0
+    mhpmevent13:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 63
+            lsb: 0
+            type: *id009
+        description: The mhpmevent13 is a MXLEN-bit event register which controls
+            mhpmcounter13.
+        address: 0x32d
+        priv_mode: M
+        reset-val: 0
+    mhpmcounter13:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 63
+            lsb: 0
+            type: *id009
+        description: The mhpmcounter13 is a 64-bit counter. Returns lower 132 bits
+            in RV132I mode.
+        address: 0xB0D
+        priv_mode: M
+        reset-val: 0
+    mhpmcounter13h:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        description: The mhpmcounter13h returns the upper half word in RV132I systems.
+        address: 0xB8D
+        priv_mode: M
+        reset-val: 0
+    mhpmevent14:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 63
+            lsb: 0
+            type: *id009
+        description: The mhpmevent14 is a MXLEN-bit event register which controls
+            mhpmcounter14.
+        address: 0x32e
+        priv_mode: M
+        reset-val: 0
+    mhpmcounter14:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 63
+            lsb: 0
+            type: *id009
+        description: The mhpmcounter14 is a 64-bit counter. Returns lower 142 bits
+            in RV142I mode.
+        address: 0xB0E
+        priv_mode: M
+        reset-val: 0
+    mhpmcounter14h:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        description: The mhpmcounter14h returns the upper half word in RV142I systems.
+        address: 0xB8E
+        priv_mode: M
+        reset-val: 0
+    mhpmevent15:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 63
+            lsb: 0
+            type: *id009
+        description: The mhpmevent15 is a MXLEN-bit event register which controls
+            mhpmcounter15.
+        address: 0x32f
+        priv_mode: M
+        reset-val: 0
+    mhpmcounter15:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 63
+            lsb: 0
+            type: *id009
+        description: The mhpmcounter15 is a 64-bit counter. Returns lower 152 bits
+            in RV152I mode.
+        address: 0xB0F
+        priv_mode: M
+        reset-val: 0
+    mhpmcounter15h:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        description: The mhpmcounter15h returns the upper half word in RV152I systems.
+        address: 0xB8F
+        priv_mode: M
+        reset-val: 0
+    mhpmevent16:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 63
+            lsb: 0
+            type: *id009
+        description: The mhpmevent16 is a MXLEN-bit event register which controls
+            mhpmcounter16.
+        address: 0x330
+        priv_mode: M
+        reset-val: 0
+    mhpmcounter16:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 63
+            lsb: 0
+            type: *id009
+        description: The mhpmcounter16 is a 64-bit counter. Returns lower 162 bits
+            in RV162I mode.
+        address: 0xB10
+        priv_mode: M
+        reset-val: 0
+    mhpmcounter16h:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        description: The mhpmcounter16h returns the upper half word in RV162I systems.
+        address: 0xB90
+        priv_mode: M
+        reset-val: 0
+    mhpmevent17:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 63
+            lsb: 0
+            type: *id009
+        description: The mhpmevent17 is a MXLEN-bit event register which controls
+            mhpmcounter17.
+        address: 0x331
+        priv_mode: M
+        reset-val: 0
+    mhpmcounter17:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 63
+            lsb: 0
+            type: *id009
+        description: The mhpmcounter17 is a 64-bit counter. Returns lower 172 bits
+            in RV172I mode.
+        address: 0xB11
+        priv_mode: M
+        reset-val: 0
+    mhpmcounter17h:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        description: The mhpmcounter17h returns the upper half word in RV172I systems.
+        address: 0xB91
+        priv_mode: M
+        reset-val: 0
+    mhpmevent18:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 63
+            lsb: 0
+            type: *id009
+        description: The mhpmevent18 is a MXLEN-bit event register which controls
+            mhpmcounter18.
+        address: 0x332
+        priv_mode: M
+        reset-val: 0
+    mhpmcounter18:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 63
+            lsb: 0
+            type: *id009
+        description: The mhpmcounter18 is a 64-bit counter. Returns lower 182 bits
+            in RV182I mode.
+        address: 0xB12
+        priv_mode: M
+        reset-val: 0
+    mhpmcounter18h:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        description: The mhpmcounter18h returns the upper half word in RV182I systems.
+        address: 0xB92
+        priv_mode: M
+        reset-val: 0
+    mhpmevent19:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 63
+            lsb: 0
+            type: *id009
+        description: The mhpmevent19 is a MXLEN-bit event register which controls
+            mhpmcounter19.
+        address: 0x333
+        priv_mode: M
+        reset-val: 0
+    mhpmcounter19:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 63
+            lsb: 0
+            type: *id009
+        description: The mhpmcounter19 is a 64-bit counter. Returns lower 32 bits
+            in RV32I mode.
+        address: 0xB13
+        priv_mode: M
+        reset-val: 0
+    mhpmcounter19h:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        description: The mhpmcounter19h returns the upper half word in RV32I systems.
+        address: 0xB93
+        priv_mode: M
+        reset-val: 0
+    mhpmevent20:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 63
+            lsb: 0
+            type: *id009
+        description: The mhpmevent20 is a MXLEN-bit event register which controls
+            mhpmcounter20.
+        address: 0x334
+        priv_mode: M
+        reset-val: 0
+    mhpmcounter20:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 63
+            lsb: 0
+            type: *id009
+        description: The mhpmcounter20 is a 64-bit counter. Returns lower 202 bits
+            in RV202I mode.
+        address: 0xB14
+        priv_mode: M
+        reset-val: 0
+    mhpmcounter20h:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        description: The mhpmcounter20h returns the upper half word in RV202I systems.
+        address: 0xB94
+        priv_mode: M
+        reset-val: 0
+    mhpmevent21:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 63
+            lsb: 0
+            type: *id009
+        description: The mhpmevent21 is a MXLEN-bit event register which controls
+            mhpmcounter21.
+        address: 0x335
+        priv_mode: M
+        reset-val: 0
+    mhpmcounter21:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 63
+            lsb: 0
+            type: *id009
+        description: The mhpmcounter21 is a 64-bit counter. Returns lower 212 bits
+            in RV212I mode.
+        address: 0xB15
+        priv_mode: M
+        reset-val: 0
+    mhpmcounter21h:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        description: The mhpmcounter21h returns the upper half word in RV212I systems.
+        address: 0xB95
+        priv_mode: M
+        reset-val: 0
+    mhpmevent22:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 63
+            lsb: 0
+            type: *id009
+        description: The mhpmevent22 is a MXLEN-bit event register which controls
+            mhpmcounter22.
+        address: 0x336
+        priv_mode: M
+        reset-val: 0
+    mhpmcounter22:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 63
+            lsb: 0
+            type: *id009
+        description: The mhpmcounter22 is a 64-bit counter. Returns lower 222 bits
+            in RV222I mode.
+        address: 0xB16
+        priv_mode: M
+        reset-val: 0
+    mhpmcounter22h:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        description: The mhpmcounter22h returns the upper half word in RV222I systems.
+        address: 0xB96
+        priv_mode: M
+        reset-val: 0
+    mhpmevent23:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 63
+            lsb: 0
+            type: *id009
+        description: The mhpmevent23 is a MXLEN-bit event register which controls
+            mhpmcounter23.
+        address: 0x337
+        priv_mode: M
+        reset-val: 0
+    mhpmcounter23:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 63
+            lsb: 0
+            type: *id009
+        description: The mhpmcounter23 is a 64-bit counter. Returns lower 232 bits
+            in RV232I mode.
+        address: 0xB17
+        priv_mode: M
+        reset-val: 0
+    mhpmcounter23h:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        description: The mhpmcounter23h returns the upper half word in RV232I systems.
+        address: 0xB97
+        priv_mode: M
+        reset-val: 0
+    mhpmevent24:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 63
+            lsb: 0
+            type: *id009
+        description: The mhpmevent24 is a MXLEN-bit event register which controls
+            mhpmcounter24.
+        address: 0x338
+        priv_mode: M
+        reset-val: 0
+    mhpmcounter24:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 63
+            lsb: 0
+            type: *id009
+        description: The mhpmcounter24 is a 64-bit counter. Returns lower 242 bits
+            in RV242I mode.
+        address: 0xB18
+        priv_mode: M
+        reset-val: 0
+    mhpmcounter24h:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        description: The mhpmcounter24h returns the upper half word in RV242I systems.
+        address: 0xB98
+        priv_mode: M
+        reset-val: 0
+    mhpmevent25:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 63
+            lsb: 0
+            type: *id009
+        description: The mhpmevent25 is a MXLEN-bit event register which controls
+            mhpmcounter25.
+        address: 0x339
+        priv_mode: M
+        reset-val: 0
+    mhpmcounter25:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 63
+            lsb: 0
+            type: *id009
+        description: The mhpmcounter25 is a 64-bit counter. Returns lower 252 bits
+            in RV252I mode.
+        address: 0xB19
+        priv_mode: M
+        reset-val: 0
+    mhpmcounter25h:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        description: The mhpmcounter25h returns the upper half word in RV252I systems.
+        address: 0xB99
+        priv_mode: M
+        reset-val: 0
+    mhpmevent26:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 63
+            lsb: 0
+            type: *id009
+        description: The mhpmevent26 is a MXLEN-bit event register which controls
+            mhpmcounter26.
+        address: 0x33a
+        priv_mode: M
+        reset-val: 0
+    mhpmcounter26:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 63
+            lsb: 0
+            type: *id009
+        description: The mhpmcounter26 is a 64-bit counter. Returns lower 262 bits
+            in RV262I mode.
+        address: 0xB1A
+        priv_mode: M
+        reset-val: 0
+    mhpmcounter26h:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        description: The mhpmcounter26h returns the upper half word in RV262I systems.
+        address: 0xB9A
+        priv_mode: M
+        reset-val: 0
+    mhpmevent27:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 63
+            lsb: 0
+            type: *id009
+        description: The mhpmevent27 is a MXLEN-bit event register which controls
+            mhpmcounter27.
+        address: 0x33b
+        priv_mode: M
+        reset-val: 0
+    mhpmcounter27:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 63
+            lsb: 0
+            type: *id009
+        description: The mhpmcounter27 is a 64-bit counter. Returns lower 272 bits
+            in RV272I mode.
+        address: 0xB1B
+        priv_mode: M
+        reset-val: 0
+    mhpmcounter27h:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        description: The mhpmcounter27h returns the upper half word in RV272I systems.
+        address: 0xB9B
+        priv_mode: M
+        reset-val: 0
+    mhpmevent28:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 63
+            lsb: 0
+            type: *id009
+        description: The mhpmevent28 is a MXLEN-bit event register which controls
+            mhpmcounter28.
+        address: 0x33c
+        priv_mode: M
+        reset-val: 0
+    mhpmcounter28:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 63
+            lsb: 0
+            type: *id009
+        description: The mhpmcounter28 is a 64-bit counter. Returns lower 282 bits
+            in RV282I mode.
+        address: 0xB1C
+        priv_mode: M
+        reset-val: 0
+    mhpmcounter28h:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        description: The mhpmcounter28h returns the upper half word in RV282I systems.
+        address: 0xB9C
+        priv_mode: M
+        reset-val: 0
+    mhpmevent29:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 63
+            lsb: 0
+            type: *id009
+        description: The mhpmevent29 is a MXLEN-bit event register which controls
+            mhpmcounter29.
+        address: 0x33d
+        priv_mode: M
+        reset-val: 0
+    mhpmcounter29:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 63
+            lsb: 0
+            type: *id009
+        description: The mhpmcounter29 is a 64-bit counter. Returns lower 32 bits
+            in RV32I mode.
+        address: 0xB1D
+        priv_mode: M
+        reset-val: 0
+    mhpmcounter29h:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        description: The mhpmcounter29h returns the upper half word in RV32I systems.
+        address: 0xB9D
+        priv_mode: M
+        reset-val: 0
+    mhpmevent30:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 63
+            lsb: 0
+            type: *id009
+        description: The mhpmevent30 is a MXLEN-bit event register which controls
+            mhpmcounter30.
+        address: 0x33e
+        priv_mode: M
+        reset-val: 0
+    mhpmcounter30:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 63
+            lsb: 0
+            type: *id009
+        description: The mhpmcounter30 is a 64-bit counter. Returns lower 302 bits
+            in RV302I mode.
+        address: 0xB1E
+        priv_mode: M
+        reset-val: 0
+    mhpmcounter30h:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        description: The mhpmcounter30h returns the upper half word in RV302I systems.
+        address: 0xB9E
+        priv_mode: M
+        reset-val: 0
+    mhpmevent31:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 63
+            lsb: 0
+            type: *id009
+        description: The mhpmevent31 is a MXLEN-bit event register which controls
+            mhpmcounter31.
+        address: 0x33f
+        priv_mode: M
+        reset-val: 0
+    mhpmcounter31:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 63
+            lsb: 0
+            type: *id009
+        description: The mhpmcounter31 is a 64-bit counter. Returns lower 312 bits
+            in RV312I mode.
+        address: 0xB1F
+        priv_mode: M
+        reset-val: 0
+    mhpmcounter31h:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        description: The mhpmcounter31h returns the upper half word in RV312I systems.
+        address: 0xB9F
+        priv_mode: M
+        reset-val: 0
 </br></div></td>
           </tr>
           </tbody>
@@ -2367,21 +2743,21 @@ mhpmcounter31h:
           <tr>
             <td class="extra" colspan="1">
               <div class="log">nmi:
-  label: nmi_vector
+    label: nmi_vector
 reset:
-  label: reset_vector
+    label: reset_vector
 mtime:
-  implemented: false
+    implemented: false
 mtimecmp:
-  implemented: false
+    implemented: false
 mcause_non_standard:
-  implemented: true
+    implemented: true
 mtval_condition_writes:
-  implemented: false
+    implemented: false
 scause_non_standard:
-  implemented: false
+    implemented: false
 stval_condition_writes:
-  implemented: false
+    implemented: false
 </br></div></td>
           </tr>
           </tbody></table>
