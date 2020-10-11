@@ -30,6 +30,15 @@
 
 #define RVTEST_ISA(_STR)
 
+#ifndef DATA_REL_TVAL_MSK
+  #define DATA_REL_TVAL_MSK 0x0F05 << (REGWIDTH*8-16)
+#endif
+
+#ifndef CODE_REL_TVAL_MSK
+  #define CODE_REL_TVAL_MSK 0xF0D8 << (REGWIDTH*8-16)
+#endif
+
+
 // ----------------------------------- CODE BEGIN w/ TRAP HANDLER START ------------------------ //
 .macro RVTEST_CODE_BEGIN
   .section .text.init;
@@ -209,23 +218,44 @@
   
   /* masks are bit reversed, so mcause==0 bit is in MSB (so different for RV32 and RV64) */
   
-  //adj_mtval:
-  //      	csrr   t2, mcause  /* code begin adjustment amount already in t3 */
-  //
-  //        li      t4, CODE_REL_TVAL_MSK   /* trap#s 12, 3,1,0, -- adjust w/ code_begin */
-  //        sll     t4, t4, t2		/* put bit# in MSB */
-  //        bltz    t4, sv_mtval		/* correct adjustment is data_begin in t3 */
-  //
-  //        la      t3, signature_start     /* adjustment for data_begin */
-  //        li      t4, DATA_REL_TVAL_MSK   /* trap#s not 14, 11..8, 2 adjust w/ data_begin */
-  //        sll     t4, t4, t2		/* put bit# in MSB */
-  //        bltz    t4, sv_mtval		/* correct adjustment is data_begin in t3 */
-  //
-  //        li      t3, 0			/* else zero adjustment amt */
+  adj_mtval:
+        	csrr   t2, mcause  /* code begin adjustment amount already in t3 */
+  
+          li      t4, CODE_REL_TVAL_MSK   /* trap#s 12, 3,1,0, -- adjust w/ code_begin */
+          sll     t4, t4, t2		          /* put bit# in MSB */
+          bltz    t4, sv_mtval		        /* correct adjustment is data_begin in t3 */
+  
+          la      t3, rvtest_code_begin   /* adjustment for data_begin */
+          li      t4, DATA_REL_TVAL_MSK   /* trap#s not 14, 11..8, 2 adjust w/ data_begin */
+          sll     t4, t4, t2		          /* put bit# in MSB */
+          bltz    t4, sv_mtval		        /* correct adjustment is data_begin in t3 */
+  
+          li      t3, 0			/* else zero adjustment amt */
+
+  // For Illegal op handling
+          addi    t3, t2, -2            /* check if mcause==2 (illegal op) */
+          bnez    t3, sv_mtval          /* not illegal op, no special treatment */
+          csrr    t2, mtval
+          bnez    t2, sv_mtval          /* mtval isn’t zero, no special treatment */
+  illop:
+          li      t5, 0x20000           /* get mprv mask */
+          csrrs   t5, mstatus, t5       /* set mprv while saving the old value */
+          csrr    t3, mepc
+          lhu     t2, 0(t3)             /* load 1st 16b of opc w/ old priv, endianess*/
+          andi    t4, t2,  0x3
+          addi    t4, t4, -0x3          /* does opcode[1:0]==0b11? (Meaning >16b op) */
+          bnez    t4, sv_mtval          /* entire mtval is in tt2, adj amt will be set to zero */
+          lhu     t4, 2(t3)           
+          sll     t4, t4, 16
+          or      t3, t3, t4            /* get 2nd  hwd, align it & insert it into opcode */
+
+/*******FIXME: this will not handle 48 or 64b opcodes in an RV64) ********/
+
+          csrw    mstatus, t5           /* restore mstatus */
   sv_mtval:
           csrr   t2, mtval
-          sub     t2, t2, t3		/* perform mtval adjust by either code or data position or zero*/
-          SREG      t2, 3*REGWIDTH(t1)	/* save 4th sig value, (rel mtval) into trap signature area */
+          sub    t2, t2, t3		/* perform mtval adjust by either code or data position or zero*/
+          SREG   t2, 3*REGWIDTH(t1)	/* save 4th sig value, (rel mtval) into trap signature area */
   
   resto_rtn:		/* restore and return */
           addi    t1, t1,4*REGWIDTH		/* adjust trap signature ptr (traps always save 4 words) */
@@ -338,28 +368,27 @@
 
 
 .macro RVTEST_DATA_BEGIN
-.data
-.align 4
-.global rvtest_data_begin
-rvtest_data_begin:
-#ifdef rvtest_mtrap_routine
-trapreg_sv:	
-  .fill    7, REGWIDTH, 0xdeaddead     /* handler reg save area, 1 extra wd just in case */
-tramptbl_sv:	// save area of existing trampoline table
-.rept NUM_SPECD_INTCAUSES
-	J	.+0		  /* prototype jump instruction, offset to be filled in */
-.endr
-mtvec_save:
-	.dword	0		  /* save area for incoming mtvec */
-mscratch_save:	
-	.dword  0		  /* save area for incoming mscratch */
-#endif
-
+  .data
+  .align 4
+  .global rvtest_data_begin
+  rvtest_data_begin:
+  #ifdef rvtest_mtrap_routine
+    trapreg_sv:	
+      .fill    7, REGWIDTH, 0xdeadbeef     /* handler reg save area, 1 extra wd just in case */
+    tramptbl_sv:	// save area of existing trampoline table
+    .rept NUM_SPECD_INTCAUSES
+    	J	.+0		  /* prototype jump instruction, offset to be filled in */
+    .endr
+    mtvec_save:
+    	.dword	0		  /* save area for incoming mtvec */
+    mscratch_save:	
+    	.dword  0		  /* save area for incoming mscratch */
+  #endif
 .endm
-
+  
 .macro RVTEST_DATA_END
-.global rvtest_data_end
-rvtest_data_end:
+  .global rvtest_data_end
+  rvtest_data_end:
 .endm
 
 
