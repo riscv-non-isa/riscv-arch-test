@@ -22,6 +22,8 @@ RVTEST_CODE_BEGIN
     
     li      x2, 0x11111111
     ebreak
+    nop
+    nop
     sw      x0, 0(x1)
     sw      x2, 4(x1)
     
