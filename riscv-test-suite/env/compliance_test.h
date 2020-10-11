@@ -1,4 +1,3 @@
-// See License.incore for details.
 #ifndef _COMPLIANCE_TEST_H
 #define _COMPLIANCE_TEST_H
 
@@ -8,7 +7,10 @@
 #define NUM_SPECD_INTCAUSES 16
 #endif
 
-#define TEST_CASE_1
+#ifndef rvtest_gpr_save
+  #define rvtest_gpr_save
+#endif
+
 
 //-----------------------------------------------------------------------
 // RV Compliance Macros
@@ -47,7 +49,39 @@
 #ifdef rvtest_mtrap_routine
   la x1, rvtest_trap_prolog  
   jalr ra, x1
+  rvtest_prolog_done:
 #endif
+    addi x1, x0, 0
+    addi x2, x0, 0
+    addi x3, x0, 0
+    addi x4, x0, 0
+    addi x5, x0, 0
+    addi x6, x0, 0
+    addi x7, x0, 0
+    addi x8, x0, 0
+    addi x9, x0, 0
+    addi x10, x0, 0
+    addi x11, x0, 0
+    addi x12, x0, 0
+    addi x13, x0, 0
+    addi x14, x0, 0
+    addi x15, x0, 0
+    addi x16, x0, 0
+    addi x17, x0, 0
+    addi x18, x0, 0
+    addi x19, x0, 0
+    addi x20, x0, 0
+    addi x21, x0, 0
+    addi x22, x0, 0
+    addi x23, x0, 0
+    addi x24, x0, 0
+    addi x25, x0, 0
+    addi x26, x0, 0
+    addi x27, x0, 0
+    addi x28, x0, 0
+    addi x29, x0, 0
+    addi x30, x0, 0
+    addi x31, x0, 0
   .globl rvtest_code_begin
   rvtest_code_begin:
 .endm
@@ -90,7 +124,7 @@
   	csrrw	t2, mtvec, t1		          // swap mtvec and trap_trampoline
   	SREG	t2, 0(t4)		              // save orig mtvec
   	csrr	t3, mtvec		              // now read new_mtval back
-  	beq	t3, t1, rvtest_code_begin	  // if mtvec==trap_trampoline, mtvec is writable, continue
+  	beq	t3, t1, rvtest_prolog_done // if mtvec==trap_trampoline, mtvec is writable, continue
   	
   /****************************************************************/
   /**** fixed mtvec, can't move it so move trampoline instead  ****/
@@ -114,7 +148,7 @@
   	addi	t2, t2, 4		          // next tgt  index
   	addi	t3, t3, 4		          // next save index
   	bne	t3, t4, overwrite_tt		// not done,  loop
-  	j rvtest_code_begin
+  	j rvtest_prolog_done 
   
   resto_tramp:			                      // vector table not writeable, restore
   	LREG	t4, -80-NUM_SPECD_INTCAUSES*8(t5) // load mtvec_SAVE (used as end of loop marker)
@@ -129,13 +163,13 @@
   	addi	t3, t3, -4		    // prev save index
   	bne	t2, t4, resto_loop  // didn't restore to begining yet,  loop
   	
-  	j	rvtest_code_end			  // failure to replace trampoline
+  	j	rvtest_end // failure to replace trampoline
   
 
   #define mhandler			\
     csrrw   sp, mscratch, sp;	\
     SREG      t6, 6*REGWIDTH(sp);	\
-  	la t6, common_mhandler; \
+  	la t6, common_mhandler;		\
   	jalr	t6, t6;			\
     nop; \
   
@@ -202,7 +236,7 @@
   common_mexcpt_handler:
           csrr   t2, mepc
   sv_mepc:	
-          la      t3, rvtest_code_begin /* offset to compensate for different loader offsets */
+          la      t3, rvtest_prolog_done /* offset to compensate for different loader offsets */
           sub     t4, t2, t3      /* convert mepc to rel offset of beginning of test*/
           SREG      t4, 2*REGWIDTH(t1) /* save 3rd sig value, (rel mepc) into trap signature area */
   adj_mepc:   		//adj mepc so there is padding after op, and its 8B aligned
@@ -212,7 +246,6 @@
         csrw    mepc, t2	/* restore adjusted value, has 1,2, or 3 bytes of padding */
   
   
-  // TODO: skipped this since not completely convinced.
   /* calculate relative mtval if it’s an address  (by code_begin or data_begin amt)  */
   /* note that masks that determine this are implementation specific from YAML */
   
@@ -225,7 +258,7 @@
           sll     t4, t4, t2		          /* put bit# in MSB */
           bltz    t4, sv_mtval		        /* correct adjustment is data_begin in t3 */
   
-          la      t3, rvtest_code_begin   /* adjustment for data_begin */
+          la      t3, rvtest_prolog_done/* adjustment for data_begin */
           li      t4, DATA_REL_TVAL_MSK   /* trap#s not 14, 11..8, 2 adjust w/ data_begin */
           sll     t4, t4, t2		          /* put bit# in MSB */
           bltz    t4, sv_mtval		        /* correct adjustment is data_begin in t3 */
@@ -254,8 +287,8 @@
           csrw    mstatus, t5           /* restore mstatus */
   sv_mtval:
           csrr   t2, mtval
-          sub    t2, t2, t3		/* perform mtval adjust by either code or data position or zero*/
-          SREG   t2, 3*REGWIDTH(t1)	/* save 4th sig value, (rel mtval) into trap signature area */
+          sub     t2, t2, t3		/* perform mtval adjust by either code or data position or zero*/
+          SREG      t2, 3*REGWIDTH(t1)	/* save 4th sig value, (rel mtval) into trap signature area */
   
   resto_rtn:		/* restore and return */
           addi    t1, t1,4*REGWIDTH		/* adjust trap signature ptr (traps always save 4 words) */
@@ -364,31 +397,69 @@
   rvtest_end:
   .option pop
 #endif
+#ifdef rvtest_gpr_save
+  csrw mscratch, x31       //save x31, get temp pointer
+  la x31, gpr_save
+  SREG x0, 0*REGWIDTH(x31)
+  SREG x1, 1*REGWIDTH(x31)
+  SREG x2, 2*REGWIDTH(x31)
+  SREG x3, 3*REGWIDTH(x31)
+  SREG x4, 4*REGWIDTH(x31)
+  SREG x5, 5*REGWIDTH(x31)
+  SREG x6, 6*REGWIDTH(x31)
+  SREG x7, 7*REGWIDTH(x31)
+  SREG x8, 8*REGWIDTH(x31)
+  SREG x9, 9*REGWIDTH(x31)
+  SREG x10, 10*REGWIDTH(x31)
+  SREG x11, 11*REGWIDTH(x31)
+  SREG x12, 12*REGWIDTH(x31)
+  SREG x13, 13*REGWIDTH(x31)
+  SREG x14, 14*REGWIDTH(x31)
+  SREG x15, 15*REGWIDTH(x31)
+  SREG x16, 16*REGWIDTH(x31)
+  SREG x17, 17*REGWIDTH(x31)
+  SREG x18, 18*REGWIDTH(x31)
+  SREG x19, 19*REGWIDTH(x31)
+  SREG x20, 20*REGWIDTH(x31)
+  SREG x21, 21*REGWIDTH(x31)
+  SREG x22, 22*REGWIDTH(x31)
+  SREG x23, 23*REGWIDTH(x31)
+  SREG x24, 24*REGWIDTH(x31)
+  SREG x25, 25*REGWIDTH(x31)
+  SREG x26, 26*REGWIDTH(x31)
+  SREG x27, 27*REGWIDTH(x31)
+  SREG x28, 28*REGWIDTH(x31)
+  SREG x29, 29*REGWIDTH(x31)
+  SREG x30, 30*REGWIDTH(x31)
+  addi x30, x31, 0                // mv gpr pointer to x30
+  csrr x31, mscratch              // restore value of x31
+  SREG x31, 31*REGWIDTH(x30)      // store x31
+#endif
 .endm
 
 
 .macro RVTEST_DATA_BEGIN
-  .data
-  .align 4
-  .global rvtest_data_begin
-  rvtest_data_begin:
-  #ifdef rvtest_mtrap_routine
-    trapreg_sv:	
+.data
+.align 4
+.global rvtest_data_begin
+rvtest_data_begin:
+#ifdef rvtest_mtrap_routine
+trapreg_sv:	
       .fill    7, REGWIDTH, 0xdeadbeef     /* handler reg save area, 1 extra wd just in case */
-    tramptbl_sv:	// save area of existing trampoline table
-    .rept NUM_SPECD_INTCAUSES
-    	J	.+0		  /* prototype jump instruction, offset to be filled in */
-    .endr
-    mtvec_save:
-    	.dword	0		  /* save area for incoming mtvec */
-    mscratch_save:	
-    	.dword  0		  /* save area for incoming mscratch */
-  #endif
+tramptbl_sv:	// save area of existing trampoline table
+.rept NUM_SPECD_INTCAUSES
+	J	.+0		  /* prototype jump instruction, offset to be filled in */
+.endr
+mtvec_save:
+	.dword	0		  /* save area for incoming mtvec */
+mscratch_save:	
+	.dword  0		  /* save area for incoming mscratch */
+#endif
 .endm
-  
+
 .macro RVTEST_DATA_END
-  .global rvtest_data_end
-  rvtest_data_end:
+.global rvtest_data_end
+rvtest_data_end:
 .endm
 
 
@@ -475,7 +546,7 @@
     .else                                     ;\
         .set num,0                            ;\
     .endif                                    ;\
-     .if label == 1b                          ;\
+    .if label == 1b                          ;\
         .set num,0                            ;\
     .endif                                    ;\
     .rept num                                 ;\
@@ -512,7 +583,7 @@
     .else                                     ;\
         .set num,0                            ;\
     .endif                                    ;\
-    .if label == 3f                           ;\
+     .if label == 3f                          ;\
         .set num,0                            ;\
     .endif                                    ;\
     .rept num                                 ;\
