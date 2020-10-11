@@ -35,9 +35,9 @@ RVTEST_CODE_BEGIN
 
  # ---------------------------------------------------------------------------------------------
     # HALT
-    RVMODEL_HALT
 
 RVTEST_CODE_END
+RVMODEL_HALT
 
 RVTEST_DATA_BEGIN
 # Input data section.
