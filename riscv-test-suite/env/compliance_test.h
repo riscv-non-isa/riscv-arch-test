@@ -11,6 +11,7 @@
   #define rvtest_gpr_save
 #endif
 
+#define TEST_CASE_1
 
 //-----------------------------------------------------------------------
 // RV Compliance Macros
