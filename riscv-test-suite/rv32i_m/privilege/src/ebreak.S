@@ -46,12 +46,17 @@ RVTEST_DATA_END
 
 # Output data section.
 RVMODEL_DATA_BEGIN
-    .align 4
+  .align 4
 
 test_A_res:
-    .fill 2, 4, 0xafacadee
+  .fill 2, 4, 0xafacadee
 
 mtrap_sigptr:
   .fill 4, 4, 0xdeaddead
+
+#ifdef rvtest_gpr_save
+gpr_save:
+  .fill XLEN, 4, 0xdeadbeef
+#endif
 
 RVMODEL_DATA_END

@@ -253,7 +253,7 @@ function is_all_rows_hidden(value) {
 
 </script>
     <h1></h1>
-    <p>Report generated on 2020-10-08 13:04 GMT by <a href="https://pypi.python.org/pypi/riscof">riscof</a> v1.16.0</p>
+    <p>Report generated on 2020-10-11 10:41 GMT by <a href="https://pypi.python.org/pypi/riscof">riscof</a> v1.16.0</p>
     <h2>Environment</h2>
     <table id="environment">
       <tr>
@@ -264,7 +264,7 @@ function is_all_rows_hidden(value) {
         <td>sail c simulator</td></tr>
       <tr>
         <td>ISA</td>
-        <td>RV32IMCZicsr_Zifencei</td></tr>
+        <td>RV32IMCZicsr</td></tr>
       <tr>
         <td>User Spec Version</td>
         <td>2.3</td></tr>
@@ -286,7 +286,7 @@ function is_all_rows_hidden(value) {
             <td class="extra" colspan="1">
               <div class="log">hart_ids: [0]
 hart0:
-    ISA: RV32IMCZicsr_Zifencei
+    ISA: RV32IMCZicsr
     User_Spec_Version: '2.3'
     supported_xlen:
       - 32
@@ -326,22 +326,22 @@ hart0:
         rv32:
             accessible: true
             fields:
-              - sie
+              - xs
+              - mprv
+              - upie
               - mxr
               - mpp
-              - uie
-              - upie
-              - xs
               - spie
-              - tvm
-              - tsr
-              - sum
-              - spp
-              - mie
-              - sd
-              - fs
               - mpie
-              - mprv
+              - spp
+              - sum
+              - fs
+              - sie
+              - uie
+              - tvm
+              - mie
+              - tsr
+              - sd
               - tw
               -
                   -
@@ -579,15 +579,15 @@ hart0:
         rv32:
             accessible: true
             fields:
-              - ueip
-              - utip
-              - usip
               - ssip
-              - mtip
+              - msip
+              - utip
+              - ueip
+              - usip
+              - stip
               - seip
               - meip
-              - msip
-              - stip
+              - mtip
               -
                   -
                       - 2
@@ -669,15 +669,15 @@ hart0:
         rv32:
             accessible: true
             fields:
-              - ssie
-              - stie
-              - meie
-              - msie
-              - ueie
-              - utie
               - seie
-              - mtie
+              - msie
+              - utie
+              - ssie
               - usie
+              - stie
+              - ueie
+              - meie
+              - mtie
               -
                   -
                       - 2
@@ -825,8 +825,8 @@ hart0:
         rv32:
             accessible: true
             fields:
-              - exception_code
               - interrupt
+              - exception_code
             interrupt:
                 implemented: true
                 description: Indicates whether the trap was due to an interrupt.
@@ -855,10 +855,10 @@ hart0:
         rv32:
             accessible: true
             fields:
-              - pmp3cfg
+              - pmp0cfg
               - pmp2cfg
               - pmp1cfg
-              - pmp0cfg
+              - pmp3cfg
             pmp0cfg:
                 implemented: true
                 description: pmp configuration bits
@@ -901,9 +901,9 @@ hart0:
         rv32:
             accessible: true
             fields:
+              - pmp5cfg
               - pmp4cfg
               - pmp6cfg
-              - pmp5cfg
               - pmp7cfg
             pmp4cfg:
                 implemented: true
@@ -943,10 +943,10 @@ hart0:
         rv32:
             accessible: true
             fields:
-              - pmp8cfg
               - pmp9cfg
               - pmp10cfg
               - pmp11cfg
+              - pmp8cfg
             pmp8cfg:
                 implemented: true
                 description: pmp configuration bits
@@ -985,10 +985,10 @@ hart0:
         rv32:
             accessible: true
             fields:
-              - pmp15cfg
               - pmp13cfg
-              - pmp14cfg
               - pmp12cfg
+              - pmp14cfg
+              - pmp15cfg
             pmp12cfg:
                 implemented: true
                 description: pmp configuration bits
@@ -1027,9 +1027,9 @@ hart0:
         rv32:
             accessible: true
             fields:
-              - pmp16cfg
-              - pmp19cfg
               - pmp17cfg
+              - pmp19cfg
+              - pmp16cfg
               - pmp18cfg
             pmp16cfg:
                 implemented: true
@@ -1069,10 +1069,10 @@ hart0:
         rv32:
             accessible: true
             fields:
-              - pmp20cfg
               - pmp21cfg
-              - pmp22cfg
               - pmp23cfg
+              - pmp22cfg
+              - pmp20cfg
             pmp20cfg:
                 implemented: true
                 description: pmp configuration bits
@@ -1111,10 +1111,10 @@ hart0:
         rv32:
             accessible: true
             fields:
+              - pmp25cfg
+              - pmp24cfg
               - pmp27cfg
               - pmp26cfg
-              - pmp24cfg
-              - pmp25cfg
             pmp24cfg:
                 implemented: true
                 description: pmp configuration bits
@@ -1153,10 +1153,10 @@ hart0:
         rv32:
             accessible: true
             fields:
-              - pmp28cfg
-              - pmp29cfg
               - pmp31cfg
               - pmp30cfg
+              - pmp29cfg
+              - pmp28cfg
             pmp28cfg:
                 implemented: true
                 description: pmp configuration bits
@@ -1195,10 +1195,10 @@ hart0:
         rv32:
             accessible: true
             fields:
-              - pmp32cfg
+              - pmp35cfg
               - pmp34cfg
               - pmp33cfg
-              - pmp35cfg
+              - pmp32cfg
             pmp32cfg:
                 implemented: true
                 description: pmp configuration bits
@@ -1237,10 +1237,10 @@ hart0:
         rv32:
             accessible: true
             fields:
-              - pmp38cfg
-              - pmp39cfg
-              - pmp37cfg
               - pmp36cfg
+              - pmp37cfg
+              - pmp39cfg
+              - pmp38cfg
             pmp36cfg:
                 implemented: true
                 description: pmp configuration bits
@@ -1279,10 +1279,10 @@ hart0:
         rv32:
             accessible: true
             fields:
-              - pmp42cfg
-              - pmp40cfg
               - pmp43cfg
+              - pmp40cfg
               - pmp41cfg
+              - pmp42cfg
             pmp40cfg:
                 implemented: true
                 description: pmp configuration bits
@@ -1322,9 +1322,9 @@ hart0:
             accessible: true
             fields:
               - pmp47cfg
-              - pmp44cfg
-              - pmp46cfg
               - pmp45cfg
+              - pmp46cfg
+              - pmp44cfg
             pmp44cfg:
                 implemented: true
                 description: pmp configuration bits
@@ -1363,10 +1363,10 @@ hart0:
         rv32:
             accessible: true
             fields:
+              - pmp48cfg
+              - pmp51cfg
               - pmp50cfg
               - pmp49cfg
-              - pmp51cfg
-              - pmp48cfg
             pmp48cfg:
                 implemented: true
                 description: pmp configuration bits
@@ -1405,10 +1405,10 @@ hart0:
         rv32:
             accessible: true
             fields:
-              - pmp52cfg
-              - pmp55cfg
               - pmp53cfg
               - pmp54cfg
+              - pmp52cfg
+              - pmp55cfg
             pmp52cfg:
                 implemented: true
                 description: pmp configuration bits
@@ -1447,10 +1447,10 @@ hart0:
         rv32:
             accessible: true
             fields:
-              - pmp58cfg
-              - pmp59cfg
               - pmp57cfg
               - pmp56cfg
+              - pmp58cfg
+              - pmp59cfg
             pmp56cfg:
                 implemented: true
                 description: pmp configuration bits
@@ -1489,10 +1489,10 @@ hart0:
         rv32:
             accessible: true
             fields:
+              - pmp60cfg
+              - pmp63cfg
               - pmp62cfg
               - pmp61cfg
-              - pmp63cfg
-              - pmp60cfg
             pmp60cfg:
                 implemented: true
                 description: pmp configuration bits
@@ -2900,160 +2900,160 @@ stval_condition_writes:
         <tbody class= "  sizes-table-row" >
         <tr>
           <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv32i_m/privilege/src/ebreak.S</td>
-          <td class="col-tfprint">5928</td>          
-          <td class="col-tcode">52</td>          
+          <td class="col-tfprint">6440</td>          
+          <td class="col-tcode">40</td>          
           <td class="col-tdata">112</td>          
-          <td class="col-tsign">32</td>          
+          <td class="col-tsign">160</td>          
           <td class="col-tcov">{'ebreak'}</td>          
         </tr></tbody>
         
         <tbody class= "  sizes-table-row" >
         <tr>
           <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv32i_m/privilege/src/ecall.S</td>
-          <td class="col-tfprint">5928</td>          
-          <td class="col-tcode">52</td>          
+          <td class="col-tfprint">6440</td>          
+          <td class="col-tcode">40</td>          
           <td class="col-tdata">112</td>          
-          <td class="col-tsign">32</td>          
+          <td class="col-tsign">160</td>          
           <td class="col-tcov">{'ecall'}</td>          
         </tr></tbody>
         
         <tbody class= "  sizes-table-row" >
         <tr>
           <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv32i_m/privilege/src/misalign-beq-01.S</td>
-          <td class="col-tfprint">6716</td>          
-          <td class="col-tcode">580</td>          
+          <td class="col-tfprint">6720</td>          
+          <td class="col-tcode">72</td>          
           <td class="col-tdata">116</td>          
-          <td class="col-tsign">272</td>          
+          <td class="col-tsign">400</td>          
           <td class="col-tcov">{'misalign-beq'}</td>          
         </tr></tbody>
         
         <tbody class= "  sizes-table-row" >
         <tr>
           <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv32i_m/privilege/src/misalign-bge-01.S</td>
-          <td class="col-tfprint">8252</td>          
-          <td class="col-tcode">2116</td>          
+          <td class="col-tfprint">6728</td>          
+          <td class="col-tcode">88</td>          
           <td class="col-tdata">116</td>          
-          <td class="col-tsign">272</td>          
+          <td class="col-tsign">400</td>          
           <td class="col-tcov">{'misalign-bge'}</td>          
         </tr></tbody>
         
         <tbody class= "  sizes-table-row" >
         <tr>
           <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv32i_m/privilege/src/misalign-bgeu-01.S</td>
-          <td class="col-tfprint">6200</td>          
-          <td class="col-tcode">68</td>          
+          <td class="col-tfprint">6716</td>          
+          <td class="col-tcode">72</td>          
           <td class="col-tdata">116</td>          
-          <td class="col-tsign">272</td>          
+          <td class="col-tsign">400</td>          
           <td class="col-tcov">{'misalign-bgeu'}</td>          
         </tr></tbody>
         
         <tbody class= "  sizes-table-row" >
         <tr>
           <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv32i_m/privilege/src/misalign-blt-01.S</td>
-          <td class="col-tfprint">6200</td>          
-          <td class="col-tcode">68</td>          
+          <td class="col-tfprint">6720</td>          
+          <td class="col-tcode">72</td>          
           <td class="col-tdata">116</td>          
-          <td class="col-tsign">272</td>          
+          <td class="col-tsign">400</td>          
           <td class="col-tcov">{'misalign-blt'}</td>          
         </tr></tbody>
         
         <tbody class= "  sizes-table-row" >
         <tr>
           <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv32i_m/privilege/src/misalign-bltu-01.S</td>
-          <td class="col-tfprint">6208</td>          
-          <td class="col-tcode">68</td>          
+          <td class="col-tfprint">9436</td>          
+          <td class="col-tcode">2792</td>          
           <td class="col-tdata">116</td>          
-          <td class="col-tsign">272</td>          
+          <td class="col-tsign">400</td>          
           <td class="col-tcov">{'misalign-bltu'}</td>          
         </tr></tbody>
         
         <tbody class= "  sizes-table-row" >
         <tr>
           <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv32i_m/privilege/src/misalign-bne-01.S</td>
-          <td class="col-tfprint">6200</td>          
-          <td class="col-tcode">68</td>          
+          <td class="col-tfprint">6720</td>          
+          <td class="col-tcode">72</td>          
           <td class="col-tdata">116</td>          
-          <td class="col-tsign">272</td>          
+          <td class="col-tsign">400</td>          
           <td class="col-tcov">{'misalign-bne'}</td>          
         </tr></tbody>
         
         <tbody class= "  sizes-table-row" >
         <tr>
           <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv32i_m/privilege/src/misalign-jal-01.S</td>
-          <td class="col-tfprint">6240</td>          
-          <td class="col-tcode">100</td>          
+          <td class="col-tfprint">6752</td>          
+          <td class="col-tcode">104</td>          
           <td class="col-tdata">116</td>          
-          <td class="col-tsign">272</td>          
+          <td class="col-tsign">400</td>          
           <td class="col-tcov">{'misalign-jal'}</td>          
         </tr></tbody>
         
         <tbody class= "  sizes-table-row" >
         <tr>
           <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv32i_m/privilege/src/misalign-lh-01.S</td>
-          <td class="col-tfprint">6180</td>          
-          <td class="col-tcode">36</td>          
+          <td class="col-tfprint">6684</td>          
+          <td class="col-tcode">40</td>          
           <td class="col-tdata">116</td>          
-          <td class="col-tsign">272</td>          
+          <td class="col-tsign">400</td>          
           <td class="col-tcov">{'misalign-lh'}</td>          
         </tr></tbody>
         
         <tbody class= "  sizes-table-row" >
         <tr>
           <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv32i_m/privilege/src/misalign-lhu-01.S</td>
-          <td class="col-tfprint">6180</td>          
-          <td class="col-tcode">36</td>          
+          <td class="col-tfprint">6684</td>          
+          <td class="col-tcode">40</td>          
           <td class="col-tdata">116</td>          
-          <td class="col-tsign">272</td>          
+          <td class="col-tsign">400</td>          
           <td class="col-tcov">{'misalign-lhu'}</td>          
         </tr></tbody>
         
         <tbody class= "  sizes-table-row" >
         <tr>
           <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv32i_m/privilege/src/misalign-lw-01.S</td>
-          <td class="col-tfprint">6228</td>          
-          <td class="col-tcode">84</td>          
+          <td class="col-tfprint">6732</td>          
+          <td class="col-tcode">88</td>          
           <td class="col-tdata">116</td>          
-          <td class="col-tsign">272</td>          
+          <td class="col-tsign">400</td>          
           <td class="col-tcov">{'misalign-lw'}</td>          
         </tr></tbody>
         
         <tbody class= "  sizes-table-row" >
         <tr>
           <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv32i_m/privilege/src/misalign-sh-01.S</td>
-          <td class="col-tfprint">6176</td>          
-          <td class="col-tcode">36</td>          
+          <td class="col-tfprint">6680</td>          
+          <td class="col-tcode">40</td>          
           <td class="col-tdata">116</td>          
-          <td class="col-tsign">272</td>          
+          <td class="col-tsign">400</td>          
           <td class="col-tcov">{'misalign-sh'}</td>          
         </tr></tbody>
         
         <tbody class= "  sizes-table-row" >
         <tr>
           <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv32i_m/privilege/src/misalign-sw-01.S</td>
-          <td class="col-tfprint">6244</td>          
-          <td class="col-tcode">100</td>          
+          <td class="col-tfprint">6748</td>          
+          <td class="col-tcode">104</td>          
           <td class="col-tdata">116</td>          
-          <td class="col-tsign">272</td>          
+          <td class="col-tsign">400</td>          
           <td class="col-tcov">{'misalign-sw'}</td>          
         </tr></tbody>
         
         <tbody class= "  sizes-table-row" >
         <tr>
           <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv32i_m/privilege/src/misalign1-jalr-01.S</td>
-          <td class="col-tfprint">6216</td>          
-          <td class="col-tcode">84</td>          
+          <td class="col-tfprint">6736</td>          
+          <td class="col-tcode">88</td>          
           <td class="col-tdata">116</td>          
-          <td class="col-tsign">272</td>          
+          <td class="col-tsign">400</td>          
           <td class="col-tcov">{'misalign1-jalr'}</td>          
         </tr></tbody>
         
         <tbody class= "  sizes-table-row" >
         <tr>
           <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv32i_m/privilege/src/misalign2-jalr-01.S</td>
-          <td class="col-tfprint">6216</td>          
-          <td class="col-tcode">84</td>          
+          <td class="col-tfprint">6736</td>          
+          <td class="col-tcode">88</td>          
           <td class="col-tdata">116</td>          
-          <td class="col-tsign">272</td>          
+          <td class="col-tsign">400</td>          
           <td class="col-tcov">{'misalign2-jalr'}</td>          
         </tr></tbody>
         

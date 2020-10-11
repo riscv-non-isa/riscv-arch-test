@@ -44,6 +44,11 @@ RVMODEL_DATA_BEGIN
 .align 4
 
 signature_x9_1:
-    .fill 2,4,0xafacadee
+    .fill 2,4,0xdeadbeef
+
+#ifdef rvtest_gpr_save
+gpr_save:
+    .fill 32*(XLEN/32), 4, 0xdeadbeef
+#endif
 
 RVMODEL_DATA_END

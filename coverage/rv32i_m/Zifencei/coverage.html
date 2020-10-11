@@ -253,7 +253,7 @@ function is_all_rows_hidden(value) {
 
 </script>
     <h1></h1>
-    <p>Report generated on 2020-10-08 13:02 GMT by <a href="https://pypi.python.org/pypi/riscof">riscof</a> v1.16.0</p>
+    <p>Report generated on 2020-10-11 10:43 GMT by <a href="https://pypi.python.org/pypi/riscof">riscof</a> v1.16.0</p>
     <h2>Environment</h2>
     <table id="environment">
       <tr>
@@ -264,7 +264,7 @@ function is_all_rows_hidden(value) {
         <td>sail c simulator</td></tr>
       <tr>
         <td>ISA</td>
-        <td>RV32IMCZifencei</td></tr>
+        <td>RV32IMCZicsr_Zifencei</td></tr>
       <tr>
         <td>User Spec Version</td>
         <td>2.3</td></tr>
@@ -286,7 +286,7 @@ function is_all_rows_hidden(value) {
             <td class="extra" colspan="1">
               <div class="log">hart_ids: [0]
 hart0:
-    ISA: RV32IMCZifencei
+    ISA: RV32IMCZicsr_Zifencei
     User_Spec_Version: '2.3'
     supported_xlen:
       - 32
@@ -326,23 +326,23 @@ hart0:
         rv32:
             accessible: true
             fields:
-              - uie
-              - sum
-              - fs
-              - tvm
-              - sie
-              - mpie
-              - mie
-              - spie
-              - mxr
-              - tw
-              - tsr
-              - spp
-              - sd
-              - xs
-              - mprv
-              - mpp
               - upie
+              - tvm
+              - fs
+              - mie
+              - mpp
+              - sie
+              - spp
+              - mxr
+              - uie
+              - tsr
+              - mprv
+              - mpie
+              - tw
+              - xs
+              - sum
+              - sd
+              - spie
               -
                   -
                       - 2
@@ -580,13 +580,13 @@ hart0:
             accessible: true
             fields:
               - usip
-              - meip
               - utip
               - mtip
-              - ssip
-              - seip
-              - ueip
+              - meip
               - stip
+              - ueip
+              - seip
+              - ssip
               - msip
               -
                   -
@@ -669,15 +669,15 @@ hart0:
         rv32:
             accessible: true
             fields:
-              - stie
-              - msie
-              - utie
-              - mtie
-              - ueie
-              - seie
               - usie
               - meie
+              - msie
               - ssie
+              - ueie
+              - seie
+              - stie
+              - utie
+              - mtie
               -
                   -
                       - 2
@@ -855,10 +855,10 @@ hart0:
         rv32:
             accessible: true
             fields:
-              - pmp0cfg
-              - pmp2cfg
               - pmp1cfg
               - pmp3cfg
+              - pmp2cfg
+              - pmp0cfg
             pmp0cfg:
                 implemented: true
                 description: pmp configuration bits
@@ -901,10 +901,10 @@ hart0:
         rv32:
             accessible: true
             fields:
-              - pmp6cfg
               - pmp5cfg
-              - pmp4cfg
               - pmp7cfg
+              - pmp4cfg
+              - pmp6cfg
             pmp4cfg:
                 implemented: true
                 description: pmp configuration bits
@@ -944,8 +944,8 @@ hart0:
             accessible: true
             fields:
               - pmp8cfg
-              - pmp10cfg
               - pmp11cfg
+              - pmp10cfg
               - pmp9cfg
             pmp8cfg:
                 implemented: true
@@ -985,10 +985,10 @@ hart0:
         rv32:
             accessible: true
             fields:
-              - pmp13cfg
               - pmp12cfg
-              - pmp15cfg
               - pmp14cfg
+              - pmp13cfg
+              - pmp15cfg
             pmp12cfg:
                 implemented: true
                 description: pmp configuration bits
@@ -1028,9 +1028,9 @@ hart0:
             accessible: true
             fields:
               - pmp18cfg
-              - pmp19cfg
               - pmp17cfg
               - pmp16cfg
+              - pmp19cfg
             pmp16cfg:
                 implemented: true
                 description: pmp configuration bits
@@ -1069,10 +1069,10 @@ hart0:
         rv32:
             accessible: true
             fields:
-              - pmp21cfg
-              - pmp23cfg
               - pmp20cfg
+              - pmp23cfg
               - pmp22cfg
+              - pmp21cfg
             pmp20cfg:
                 implemented: true
                 description: pmp configuration bits
@@ -1111,10 +1111,10 @@ hart0:
         rv32:
             accessible: true
             fields:
-              - pmp27cfg
-              - pmp24cfg
               - pmp26cfg
               - pmp25cfg
+              - pmp27cfg
+              - pmp24cfg
             pmp24cfg:
                 implemented: true
                 description: pmp configuration bits
@@ -1153,10 +1153,10 @@ hart0:
         rv32:
             accessible: true
             fields:
-              - pmp28cfg
-              - pmp29cfg
-              - pmp31cfg
               - pmp30cfg
+              - pmp29cfg
+              - pmp28cfg
+              - pmp31cfg
             pmp28cfg:
                 implemented: true
                 description: pmp configuration bits
@@ -1195,9 +1195,9 @@ hart0:
         rv32:
             accessible: true
             fields:
+              - pmp34cfg
               - pmp32cfg
               - pmp35cfg
-              - pmp34cfg
               - pmp33cfg
             pmp32cfg:
                 implemented: true
@@ -1237,10 +1237,10 @@ hart0:
         rv32:
             accessible: true
             fields:
-              - pmp37cfg
               - pmp38cfg
               - pmp36cfg
               - pmp39cfg
+              - pmp37cfg
             pmp36cfg:
                 implemented: true
                 description: pmp configuration bits
@@ -1279,10 +1279,10 @@ hart0:
         rv32:
             accessible: true
             fields:
-              - pmp41cfg
-              - pmp43cfg
               - pmp40cfg
               - pmp42cfg
+              - pmp41cfg
+              - pmp43cfg
             pmp40cfg:
                 implemented: true
                 description: pmp configuration bits
@@ -1323,8 +1323,8 @@ hart0:
             fields:
               - pmp46cfg
               - pmp47cfg
-              - pmp45cfg
               - pmp44cfg
+              - pmp45cfg
             pmp44cfg:
                 implemented: true
                 description: pmp configuration bits
@@ -1363,9 +1363,9 @@ hart0:
         rv32:
             accessible: true
             fields:
-              - pmp51cfg
-              - pmp50cfg
               - pmp48cfg
+              - pmp50cfg
+              - pmp51cfg
               - pmp49cfg
             pmp48cfg:
                 implemented: true
@@ -1405,10 +1405,10 @@ hart0:
         rv32:
             accessible: true
             fields:
-              - pmp53cfg
-              - pmp54cfg
               - pmp52cfg
+              - pmp53cfg
               - pmp55cfg
+              - pmp54cfg
             pmp52cfg:
                 implemented: true
                 description: pmp configuration bits
@@ -1448,9 +1448,9 @@ hart0:
             accessible: true
             fields:
               - pmp56cfg
+              - pmp59cfg
               - pmp57cfg
               - pmp58cfg
-              - pmp59cfg
             pmp56cfg:
                 implemented: true
                 description: pmp configuration bits
@@ -1490,9 +1490,9 @@ hart0:
             accessible: true
             fields:
               - pmp61cfg
+              - pmp63cfg
               - pmp60cfg
               - pmp62cfg
-              - pmp63cfg
             pmp60cfg:
                 implemented: true
                 description: pmp configuration bits
@@ -2900,10 +2900,10 @@ stval_condition_writes:
         <tbody class= "  sizes-table-row" >
         <tr>
           <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv32i_m/Zifencei/src/Fencei.S</td>
-          <td class="col-tfprint">4744</td>          
-          <td class="col-tcode">96</td>          
+          <td class="col-tfprint">5148</td>          
+          <td class="col-tcode">100</td>          
           <td class="col-tdata">0</td>          
-          <td class="col-tsign">16</td>          
+          <td class="col-tsign">144</td>          
           <td class="col-tcov">{'fencei'}</td>          
         </tr></tbody>
         

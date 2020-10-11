@@ -15,7 +15,8 @@ RVTEST_CASE(0,"//check ISA:=regex(.*32.*);check ISA:=regex(.*I.*); def rvtest_mt
 
 la x1,signature_x1_1
 
-# opcode: jalr; op1:x10; dest:x11; immval:-2048; align: 1 
+# ea_align == 1, 
+# opcode: jalr; op1:x10; dest:x11; immval:-2048; align:1 
 TEST_JALR_OP(x2, x11, x10, -2048, x1, 0,1)
 #endif
 
@@ -34,16 +35,23 @@ RVMODEL_DATA_BEGIN
 .align 4
 
 signature_x1_0:
-    .fill 0*(XLEN/32),4,0xafacadee
+    .fill 0*(XLEN/32),4,0xdeadbeef
 
 
 signature_x1_1:
-    .fill 1*(XLEN/32),4,0xafacadee
+    .fill 1*(XLEN/32),4,0xdeadbeef
 
 #ifdef rvtest_mtrap_routine
 
 mtrap_sigptr:
-    .fill 64*(XLEN/32),4,0xafacadee
+    .fill 64*(XLEN/32),4,0xdeadbeef
+
+#endif
+
+#ifdef rvtest_gpr_save
+
+gpr_save:
+    .fill 32*(XLEN/32),4,0xdeadbeef
 
 #endif
 

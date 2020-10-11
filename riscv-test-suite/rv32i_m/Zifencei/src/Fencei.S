@@ -112,6 +112,11 @@ RVMODEL_DATA_BEGIN
     .align 4
 
 test_A_res:
-    .fill 4, 4, -1
+    .fill 4, 4, 0xdeadbeef
+
+#ifdef rvtest_gpr_save
+gpr_save:
+    .fill 32*(XLEN/32), 4, 0xdeadbeef
+#endif
 
 RVMODEL_DATA_END

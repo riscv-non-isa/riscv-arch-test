@@ -17,8 +17,9 @@ RVTEST_CASE(1,"//check ISA:=regex(.*32.*);check ISA:=regex(.*I.*Zicsr.*); check 
 
 la x1,signature_x1_1
 
-# opcode: bgeu, op1:x10; op2:x11; op1val:0x00008000; op2val:0x00000000; immval:0; align: 2
-TEST_BRANCH_OP(bgeu, x2, x10, x11, 0x00008000, 0x00000000, 0, 1b, x1, 0,2)
+#  rs1_val>rs2_val and ea_align == 2, 
+# opcode: bgeu, op1:x10; op2:x11; op1val:0xffffffbf; op2val:0xfffbffff; immval:0; align:2
+TEST_BRANCH_OP(bgeu, x2, x10, x11, 0xffffffbf, 0xfffbffff, 0, 1b, x1, 0,2)
 #endif
 
 
@@ -36,16 +37,23 @@ RVMODEL_DATA_BEGIN
 .align 4
 
 signature_x1_0:
-    .fill 0*(XLEN/32),4,0xafacadee
+    .fill 0*(XLEN/32),4,0xdeadbeef
 
 
 signature_x1_1:
-    .fill 1*(XLEN/32),4,0xafacadee
+    .fill 1*(XLEN/32),4,0xdeadbeef
 
 #ifdef rvtest_mtrap_routine
 
 mtrap_sigptr:
-    .fill 64*(XLEN/32),4,0xafacadee
+    .fill 64*(XLEN/32),4,0xdeadbeef
+
+#endif
+
+#ifdef rvtest_gpr_save
+
+gpr_save:
+    .fill 32*(XLEN/32),4,0xdeadbeef
 
 #endif
 

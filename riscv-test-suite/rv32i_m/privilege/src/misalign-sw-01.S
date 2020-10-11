@@ -17,14 +17,17 @@ RVTEST_CASE(1,"//check ISA:=regex(.*32.*);check ISA:=regex(.*I.*Zicsr.*); check 
 
 la x1,signature_x1_1
 
-# opcode: sw; op1:x10; op2:x11; op2val:0x40000000; immval: 1365; align:1
-TEST_STORE(x1,x2,0,x10,x11,0x40000000,1365,0,sw,1)
+# ea_align == 1, 
+# opcode: sw; op1:x10; op2:x11; op2val:0xf7ffffff; immval:-1; align:1
+TEST_STORE(x1,x2,0,x10,x11,0xf7ffffff,-1,0,sw,1)
 
-# opcode: sw; op1:x10; op2:x11; op2val:0x00000800; immval: 3; align:2
-TEST_STORE(x1,x2,0,x10,x11,0x00000800,3,4,sw,2)
+# ea_align == 2, 
+# opcode: sw; op1:x10; op2:x11; op2val:0x00000000; immval:0; align:2
+TEST_STORE(x1,x2,0,x10,x11,0x00000000,0,4,sw,2)
 
-# opcode: sw; op1:x10; op2:x11; op2val:0xfffffffe; immval: -4; align:3
-TEST_STORE(x1,x2,0,x10,x11,0xfffffffe,-4,8,sw,3)
+# ea_align == 3, 
+# opcode: sw; op1:x10; op2:x11; op2val:0x00100000; immval:5; align:3
+TEST_STORE(x1,x2,0,x10,x11,0x00100000,5,8,sw,3)
 #endif
 
 
@@ -42,16 +45,23 @@ RVMODEL_DATA_BEGIN
 .align 4
 
 signature_x1_0:
-    .fill 0*(XLEN/32),4,0xafacadee
+    .fill 0*(XLEN/32),4,0xdeadbeef
 
 
 signature_x1_1:
-    .fill 3*(XLEN/32),4,0xafacadee
+    .fill 3*(XLEN/32),4,0xdeadbeef
 
 #ifdef rvtest_mtrap_routine
 
 mtrap_sigptr:
-    .fill 64*(XLEN/32),4,0xafacadee
+    .fill 64*(XLEN/32),4,0xdeadbeef
+
+#endif
+
+#ifdef rvtest_gpr_save
+
+gpr_save:
+    .fill 32*(XLEN/32),4,0xdeadbeef
 
 #endif
 
