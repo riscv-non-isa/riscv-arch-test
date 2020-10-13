@@ -21,11 +21,35 @@
   #define SREG sd
   #define LREG ld
   #define REGWIDTH 8
+  #define LI(reg,val)\
+      li reg,val;
+/*        lui reg, val>>44;\
+        slli reg,reg,32;\
+        srli reg,reg,32;\
+        addi reg,reg, (val>>32 & 0x07ff);\
+        addi reg,reg, (((val>>32 & 0x0fff) - (val>>32 & 0x07ff))-1);\
+        addi reg,reg, 1;\
+        slli reg,reg, 12;\
+        addi reg,reg, (val>>20 & 0x07ff);\
+        addi reg,reg, (((val>>20 & 0x0fff) - (val>>20 & 0x07ff))-1);\
+        addi reg,reg, 1;\
+        slli reg,reg, 12;\
+        addi reg,reg, (val>>8 & 0x07ff);\
+        addi reg,reg, (((val>>8 & 0x0fff) - (val>>8 & 0x07ff))-1);\
+        addi reg,reg, 1;\
+        slli reg,reg, 8;\
+        addi reg,reg, val&0x0ff;*/
 #else 
   #if XLEN==32
     #define SREG sw
     #define LREG lw
     #define REGWIDTH 4
+    #define LI(reg, val)\
+        li reg,val;
+/*        lui reg,(val>>12);\
+        addi reg,reg, (val & 0x07ff);\
+        addi reg,reg, (((val & 0x0fff) - (val & 0x07ff))-1);\
+        addi reg,reg, 1; */
   #endif
 #endif
 #define MMODE_SIG 3
@@ -255,16 +279,16 @@
   adj_mtval:
         	csrr   t2, mcause  /* code begin adjustment amount already in t3 */
   
-          li      t4, CODE_REL_TVAL_MSK   /* trap#s 12, 3,1,0, -- adjust w/ code_begin */
+          LI(t4, CODE_REL_TVAL_MSK)   /* trap#s 12, 3,1,0, -- adjust w/ code_begin */
           sll     t4, t4, t2		          /* put bit# in MSB */
           bltz    t4, sv_mtval		        /* correct adjustment is data_begin in t3 */
   
           la      t3, rvtest_prolog_done/* adjustment for data_begin */
-          li      t4, DATA_REL_TVAL_MSK   /* trap#s not 14, 11..8, 2 adjust w/ data_begin */
+          LI(t4, DATA_REL_TVAL_MSK)   /* trap#s not 14, 11..8, 2 adjust w/ data_begin */
           sll     t4, t4, t2		          /* put bit# in MSB */
           bltz    t4, sv_mtval		        /* correct adjustment is data_begin in t3 */
   
-          li      t3, 0			/* else zero adjustment amt */
+          LI(t3, 0)			/* else zero adjustment amt */
 
   // For Illegal op handling
           addi    t3, t2, -2            /* check if mcause==2 (illegal op) */
@@ -272,7 +296,7 @@
           csrr    t2, mtval
           bnez    t2, sv_mtval          /* mtval isn’t zero, no special treatment */
   illop:
-          li      t5, 0x20000           /* get mprv mask */
+          LI(t5, 0x20000)           /* get mprv mask */
           csrrs   t5, mstatus, t5       /* set mprv while saving the old value */
           csrr    t3, mepc
           lhu     t2, 0(t3)             /* load 1st 16b of opc w/ old priv, endianess*/
@@ -307,7 +331,7 @@
   
   common_mint_handler:    /* t1 has sig ptr, t2 has mcause */
   
-          li      t3, 1
+          LI(t3, 1)
           sll     t3, t3, t2      /* create mask 1<<mcause */
           csrrc   t4, mip, t3     /* read, then attempt to clear int pend bit */
           csrrc   t4, mie, t3     /* read, then attempt to clear int pend bit */
@@ -456,6 +480,7 @@ mtvec_save:
 mscratch_save:	
 	.dword  0		  /* save area for incoming mscratch */
 #endif
+
 .endm
 
 .macro RVTEST_DATA_END
@@ -470,9 +495,41 @@ rvtest_data_end:
   la _R,_TAG;\
   .set offset,0;
 
-#define RVTEST_SIGUPD(_BR,_R,_TAG)\
-  SREG _R,offset(_BR);\
-  .set offset,offset+REGWIDTH;
+.set offset,0;
+#define _ARG5(_1ST,_2ND, _3RD,_4TH,_5TH,...) _5TH
+#define _ARG4(_1ST,_2ND, _3RD,_4TH,...) _4TH
+#define _ARG3(_1ST,_2ND, _3RD, ...) _3RD
+#define _ARG2(_1ST,_2ND, ...) _2ND
+#define _ARG1(_1ST,...) _1ST
+#define NARG(...) _ARG5(__VA_ARGS__,3,2,1,0)
+#define RVTEST_SIGUPD(_BR,_R,...)\
+  .if NARG(__VA_ARGS__) == 1;\
+    SREG _R,_ARG1(__VA_ARGS__,0)(_BR);\
+    .set offset,_ARG1(__VA_ARGS__,0)+REGWIDTH;\
+  .endif;\
+  .if NARG(__VA_ARGS__) == 0;\
+    SREG _R,offset(_BR);\
+  .set offset,offset+REGWIDTH;\
+  .endif;
+
+/*
+ * RVTEST_BASEUPD(base reg) - updates the base register the last signature address + REGWIDTH
+ * RVTEST_BASEUPD(base reg, new reg) - moves value of the next signature region to update into new reg
+ * The hidden variable offset is reset always
+*/
+
+#define RVTEST_BASEUPD(_BR,...)\
+    .if NARG(__VA_ARGS__) == 0;\
+        addi _BR,_BR,offset;\
+    .endif;\
+    .if NARG(__VA_ARGS__) == 1;\
+        addi _ARG1(__VA_ARGS__,x0),_BR,offset;\
+    .endif;\
+    .set offset,0;
+
+/* #define RVTEST_SIGUPD(_BR,_R,_OFF)\ */
+/*     SREG _R, _OFF(_BR);\ */
+/*     .set offset,_OFF+REGWIDTH; */
 
 #endif //_COMPLIANCE_TEST_H
 
@@ -508,7 +565,8 @@ rvtest_data_end:
 4: la tempreg, 5b                             ;\
    andi tempreg,tempreg,~(3)                  ;\
     sub rd,rd,tempreg                          ;\
-  SREG rd, offset(swreg);
+    RVTEST_SIGUPD(swreg,rd,offset) 
+//SREG rd, offset(swreg);
 
 #define TEST_JAL_OP(tempreg, rd, imm, label, swreg, offset, adj)\
 5:                                           ;\
@@ -564,17 +622,18 @@ rvtest_data_end:
 4: la tempreg, 5b                             ;\
    andi tempreg,tempreg,~(3)                  ;\
     sub rd,rd,tempreg                          ;\
-  SREG rd, offset(swreg);
+    RVTEST_SIGUPD(swreg,rd,offset) 
+//SREG rd, offset(swreg);
 
 #define TEST_BRANCH_OP(inst, tempreg, reg1, reg2, val1, val2, imm, label, swreg, offset,adj) \
-    li reg1, MASK_XLEN(val1)                  ;\
-    li reg2, MASK_XLEN(val2)                  ;\
+    LI(reg1, MASK_XLEN(val1))                  ;\
+    LI(reg2, MASK_XLEN(val2))                  ;\
     j 2f                                      ;\
                                               ;\
 1:  .if adj & 2 == 2                         ;\
     .fill 2,1,0x00                          ;\
     .endif                                    ;\
-    li tempreg, 0x1                           ;\
+    LI(tempreg, 0x1)                           ;\
     j 4f                                      ;\
     .if adj & 2 == 2                              ;\
     .fill 2,1,0x00                          ;\
@@ -592,7 +651,7 @@ rvtest_data_end:
     .endr                                     ;\
                                               ;\
 2:  inst reg1, reg2, label+adj                ;\
-    li tempreg, 0x2                           ;\
+    LI(tempreg, 0x2)                           ;\
     j 4f                                      ;\
     .if (imm/4) - 3 >= 0                      ;\
         .set num,(imm/4)-3                    ;\
@@ -609,18 +668,19 @@ rvtest_data_end:
 3:  .if adj & 2 == 2                              ;\
     .fill 2,1,0x00                          ;\
     .endif                                    ;\
-    li tempreg, 0x3                           ;\
+    LI(tempreg, 0x3)                           ;\
     j 4f                                      ;\
     .if adj&2 == 2                              ;\
     .fill 2,1,0x00                     ;\
     .endif                                    ;\
                                               ;\
-4:  SREG tempreg, offset(swreg);                
+4:   RVTEST_SIGUPD(swreg,tempreg,offset) 
+//SREG tempreg, offset(swreg);                
 
 #define TEST_STORE(swreg,testreg,index,rs1,rs2,rs2_val,imm_val,offset,inst,adj)   ;\
-li rs2,rs2_val                                                             ;\
+LI(rs2,rs2_val)                                                             ;\
 addi rs1,swreg,offset+adj                                                     ;\
-li testreg,imm_val                                                         ;\
+LI(testreg,imm_val)                                                         ;\
 sub rs1,rs1,testreg                                                          ;\
 inst rs2, imm_val(rs1)                                                      ;\
 nop                                                                         ;\
@@ -631,10 +691,11 @@ la rs1,rvtest_data+(index*4)+adj-imm_val                                      ;\
 inst destreg, imm_val(rs1)                                                   ;\
 nop                                                                         ;\
 nop                                                                         ;\
-SREG destreg, offset(swreg);
+RVTEST_SIGUPD(swreg,destreg,offset) 
+//SREG destreg, offset(swreg);
 
 #define TEST_CSR_FIELD(ADDRESS,TEMP_REG,MASK_REG,NEG_MASK_REG,VAL,DEST_REG,OFFSET,BASE_REG) \
-    li TEMP_REG,VAL;\
+    LI(TEMP_REG,VAL);\
     and TEMP_REG,TEMP_REG,MASK_REG;\
     csrr DEST_REG,ADDRESS;\
     and DEST_REG,DEST_REG,NEG_MASK_REG;\
@@ -646,7 +707,8 @@ SREG destreg, offset(swreg);
 
 #define TEST_CASE(testreg, destreg, correctval, swreg, offset, code... ) \
     code; \
-    SREG destreg, offset(swreg); 
+    RVTEST_SIGUPD(swreg,destreg,offset) 
+//SREG destreg, offset(swreg); 
 
 //   RVMODEL_IO_ASSERT_GPR_EQ(testreg, destreg, correctval)
 
@@ -662,15 +724,15 @@ SREG destreg, offset(swreg);
 //Tests for a instructions with register-immediate operand
 #define TEST_IMM_OP( inst, destreg, reg, correctval, val, imm, swreg, offset, testreg) \
     TEST_CASE(testreg, destreg, correctval, swreg, offset, \
-      li reg, MASK_XLEN(val); \
+      LI(reg, MASK_XLEN(val)); \
       inst destreg, reg, SEXT_IMM(imm); \
     )
 
 //Tests for a instructions with register-register operand
 #define TEST_RR_OP(inst, destreg, reg1, reg2, correctval, val1, val2, swreg, offset, testreg) \
     TEST_CASE(testreg, destreg, correctval, swreg, offset, \
-      li  reg1, MASK_XLEN(val1); \
-      li  reg2, MASK_XLEN(val2); \
+      LI(reg1, MASK_XLEN(val1)); \
+      LI(reg2, MASK_XLEN(val2)); \
       inst destreg, reg1, reg2; \
     )
 
@@ -681,36 +743,36 @@ SREG destreg, offset(swreg);
 
 #define TEST_CMV_OP( inst, destreg, reg, correctval, val2, swreg, offset, testreg) \
     TEST_CASE(testreg, destreg, correctval, swreg, offset, \
-      li reg, MASK_XLEN(val2); \
+      LI(reg, MASK_XLEN(val2)); \
       inst destreg, reg; \
       )
 
 #define TEST_CR_OP( inst, destreg, reg, correctval, val1, val2, swreg, offset, testreg) \
     TEST_CASE(testreg, destreg, correctval, swreg, offset, \
-      li reg, MASK_XLEN(val2); \
-      li destreg, MASK_XLEN(val1); \
+      LI(reg, MASK_XLEN(val2)); \
+      LI(destreg, MASK_XLEN(val1)); \
       inst destreg, reg; \
       )
 
 #define TEST_CI_OP( inst, destreg, correctval, val, imm, swreg, offset, testreg) \
     TEST_CASE(testreg, destreg, correctval, swreg, offset, \
-      li destreg, MASK_XLEN(val); \
+      LI(destreg, MASK_XLEN(val)); \
       inst destreg, imm; \
       )
 
 #define TEST_CADDI4SPN_OP( inst, destreg, correctval, imm, swreg, offset, testreg) \
     TEST_CASE(testreg, destreg, correctval, swreg, offset, \
-      li x2, 0; \
+      LI(x2, 0); \
       inst destreg, x2,imm; \
       )
 
 #define TEST_CBRANCH_OP(inst, tempreg, reg2, val2, imm, label, swreg, offset) \
-    li reg2, MASK_XLEN(val2)                  ;\
+    LI(reg2, MASK_XLEN(val2))                  ;\
     j 2f                                      ;\
                                               ;\
     .option push                              ;\
     .option norvc                             ;\
-1:  li tempreg, 0x1                           ;\
+1:  LI(tempreg, 0x1)                           ;\
     j 4f                                      ;\
     .option pop                               ;\
     .if (imm/2) - 4 >= 0                      ;\
@@ -727,7 +789,7 @@ SREG destreg, offset(swreg);
 2:  inst reg2, label                          ;\
     .option push                              ;\
     .option norvc                             ;\
-    li tempreg, 0x2                           ;\
+    LI(tempreg, 0x2)                           ;\
     j 4f                                      ;\
     .option pop                               ;\
     .if (imm/2) - 5 >= 0                      ;\
@@ -742,9 +804,10 @@ SREG destreg, offset(swreg);
     c.nop                                     ;\
     .endr                                     ;\
                                               ;\
-3:  li tempreg, 0x3                           ;\
+3:  LI(tempreg, 0x3)                           ;\
                                               ;\
-4:  SREG tempreg, offset(swreg);              
+4:  RVTEST_SIGUPD(swreg,tempreg,offset) 
+//SREG tempreg, offset(swreg);              
 
 
 #define TEST_CJ_OP(inst, tempreg, imm, label, swreg, offset) \
@@ -752,7 +815,7 @@ SREG destreg, offset(swreg);
                                               ;\
     .option push                              ;\
     .option norvc                             ;\
-1:  li tempreg, 0x1                           ;\
+1:  LI(tempreg, 0x1)                           ;\
     j 4f                                      ;\
     .option pop                               ;\
     .if (imm/2) - 4 >= 0                      ;\
@@ -769,7 +832,7 @@ SREG destreg, offset(swreg);
 2:  inst label                          ;\
     .option push                              ;\
     .option norvc                             ;\
-    li tempreg, 0x2                           ;\
+    LI(tempreg, 0x2)                           ;\
     j 4f                                      ;\
     .option pop                               ;\
     .if (imm/2) - 5 >= 0                      ;\
@@ -784,9 +847,10 @@ SREG destreg, offset(swreg);
     c.nop                                     ;\
     .endr                                     ;\
                                               ;\
-3:  li tempreg, 0x3                           ;\
+3:  LI(tempreg, 0x3)                           ;\
                                               ;\
-4:  SREG tempreg, offset(swreg);
+4:  RVTEST_SIGUPD(swreg,tempreg,offset) 
+//SREG tempreg, offset(swreg);
 
 #define TEST_CJAL_OP(inst, tempreg, imm, label, swreg, offset) \
 5:                                            ;\
@@ -831,7 +895,8 @@ SREG destreg, offset(swreg);
 4: la tempreg, 5b                             ;\
    andi tempreg,tempreg,~(3)                  ;\
     sub x1,x1,tempreg                          ;\
-  SREG x1, offset(swreg);
+  RVTEST_SIGUPD(swreg,x1,offset) 
+//SREG x1, offset(swreg);
 
 #define TEST_CJR_OP(tempreg, rs1, swreg, offset) \
 5:                                            ;\
@@ -846,7 +911,8 @@ SREG destreg, offset(swreg);
 4: la tempreg, 5b                             ;\
    andi tempreg,tempreg,~(3)                  ;\
     sub rs1,rs1,tempreg                          ;\
-  SREG rs1, offset(swreg);
+    RVTEST_SIGUPD(swreg,rs1,offset) 
+//SREG rs1, offset(swreg);
 
 #define TEST_CJALR_OP(tempreg, rs1, swreg, offset) \
 5:                                            ;\
@@ -861,4 +927,5 @@ SREG destreg, offset(swreg);
 4: la tempreg, 5b                             ;\
    andi tempreg,tempreg,~(3)                  ;\
     sub x1,x1,tempreg                          ;\
-  SREG x1, offset(swreg);
+    RVTEST_SIGUPD(swreg,x1,offset) 
+//SREG x1, offset(swreg);
