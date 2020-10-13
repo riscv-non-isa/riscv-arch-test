@@ -53,7 +53,8 @@ rv32i_sc_tests = \
   csub-01 \
   csw-01 \
   cswsp-01 \
-  cxor-01
+  cxor-01 \
+  cebreak-01
 
 
 rv32i_tests = $(addsuffix .elf, $(rv32i_sc_tests))

@@ -1,3 +1,9 @@
+cebreak:
+  coverage: 1/1
+  opcode:
+    coverage: 1/1
+    detail:
+      - c.ebreak: 1
 caddi4spn:
   coverage: 29/29
   opcode:
