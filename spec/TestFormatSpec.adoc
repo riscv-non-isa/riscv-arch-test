@@ -345,11 +345,16 @@ There are the following common rules that shall be applied to each <<The archite
 . Test shall not include other tests (e.g. #include “../add.S”) to prevent non-complete tests, compilation issues, and problems with code maintenance. 
 . Tests and test cases shall be skipped if not required for a specific model test configuration based on test conditions defined in the RVTEST_CASE macro. Tests that are selected may be further configured using variables (e.g. XLEN) which are passed into the tests and used to compile them. In either case, those conditions and variables are derived from the YAML specification of the device and execution environment that are passed into the framework. The flow is to run an architectural test suite built by the <<The architectural test framework,_Architectural Test Framework_>> from the <<The RISC-V architectural test pool,_architectural test pool_>> to determine which tests and test cases to run. 
 . Tests shall not depend on tool specific features. For example, tests shall avoid usage of internal GCC macros (e..g. ____risc_xlen__), specific syntax (char 'a' instead of 'a) or simulator features (e.g. tohost) etc.
-. A test will end by either jumping to or implicitly reaching the "RVTEST_CODE_END" macro (i.e. rvtest_code_end label). The RVTEST_CODE_END macro is always followed by the "RVMODEL_HALT" macro. 
+. A test will end by either jumping to or implicitly reaching the `RVTEST_CODE_END` macro (i.e. rvtest_code_end label). The `RVTEST_CODE_END` macro is always followed by the "RVMODEL_HALT" macro. 
 . Macros defined outside of a test shall only be defined in specific predefined header files (see <<Common Header Files,_Common Header Files_>> below), and once they are in use, they may be modified only if the function of all affected tests remains unchanged.
 It is acceptable that macros use may lead to operand repetition (register X is used every time).
 - The aim of this restriction is to have test code more readable and to avoid side effects which may occur when different contributors will include new <<The architectural test,_architectural tests_>> or updates of existing ones in the <<The RISC-V architectural test pool,_architectural test pool_>>.
 This measure results from the negative experience, where the <<The RISC-V architectural test suite,_architectural test suite_>> could be used just for one target while the architectural test code changes were necessary to have it also running for other targets.
+. All contents of the signature region must always be initialized to `0xdeadbeef`.
+. The result of no operation (that is going to be stored in the signature) should be `0xdeadbeef`.
+. Pseudo ops other than `li` and `la` which can map to multiple standard instruction sequences
+  should not be used.
+. The actual test-section of the assembly must always start with the `RVTEST_CODE_BEGIN` which contains a routine to initialize the registers to specific values.
 
 ==== Common Header Files
 
