@@ -15,11 +15,11 @@ RVTEST_CASE(0,"//check ISA:=regex(.*32.*);check ISA:=regex(.*I.*C.*); def rvtest
 
 RVTEST_CASE(1,"//check ISA:=regex(.*32.*);check ISA:=regex(.*I.*Zicsr.*); check ISA:=regex(^[^C]+$); def rvtest_mtrap_routine=True;def TEST_CASE_1=True;",misalign-blt)
 
-la x1,signature_x1_1
+RVTEST_SIGBASE( x1,signature_x1_1)
 
 #  rs1_val<rs2_val and ea_align == 2, 
-# opcode: blt, op1:x10; op2:x11; op1val:0xffffffff; op2val:0x40000000; immval:2; align:2
-TEST_BRANCH_OP(blt, x2, x10, x11, 0xffffffff, 0x40000000, 2, 1b, x1, 0,2)
+# opcode: blt, op1:x10; op2:x11; op1val:0xffbfffff; op2val:0xffffdfff; immval:0; align:2
+TEST_BRANCH_OP(blt, x2, x10, x11, 0xffbfffff, 0xffffdfff, 0, 1b, x1, 0,2)
 #endif
 
 

@@ -13,11 +13,11 @@ RVTEST_CODE_BEGIN
 
 RVTEST_CASE(0,"//check ISA:=regex(.*32.*);check ISA:=regex(.*I.*); def rvtest_mtrap_routine=True;def TEST_CASE_1=True;",misalign1-jalr)
 
-la x1,signature_x1_1
+RVTEST_SIGBASE( x1,signature_x1_1)
 
 # ea_align == 1, 
-# opcode: jalr; op1:x10; dest:x11; immval:-2048; align:1 
-TEST_JALR_OP(x2, x11, x10, -2048, x1, 0,1)
+# opcode: jalr; op1:x10; dest:x11; immval:32; align:1 
+TEST_JALR_OP(x2, x11, x10, 32, x1, 0,1)
 #endif
 
 

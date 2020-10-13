@@ -13,7 +13,7 @@ RVTEST_CODE_BEGIN
 
 RVTEST_CASE(0,"//check ISA:=regex(.*32.*);check ISA:=regex(.*I.*C.*);def TEST_CASE_1=True;",cnop)
 
-la x1,signature_x1_1
+RVTEST_SIGBASE( x1,signature_x1_1)
 
 # imm_val == 1, 
 # opcode:c.nop; immval:1

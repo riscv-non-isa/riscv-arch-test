@@ -13,403 +13,539 @@ RVTEST_CODE_BEGIN
 
 RVTEST_CASE(0,"//check ISA:=regex(.*64.*);check ISA:=regex(.*I.*C.*);def TEST_CASE_1=True;",candi)
 
-la x1,signature_x1_1
+RVTEST_SIGBASE( x1,signature_x1_1)
 
-# opcode: c.andi; op1:x9; immval:-17
-TEST_CI_OP( c.andi, x9, 0x0000000000000000, 0x8000000000000000, -17, x1, 0, x2)
+# rs1==x15, rs1_val == (-2**(xlen-1)), rs1_val != imm_val, rs1_val < 0 and imm_val > 0, rs1_val == -9223372036854775808
+# opcode: c.andi; op1:x15; immval:9
+TEST_CI_OP( c.andi, x15, 0x0000000000000000, 0x8000000000000000, 9, x1, 0, x2)
 
-# opcode: c.andi; op1:x14; immval:3
-TEST_CI_OP( c.andi, x14, 0x0000000000000000, 0x0000000000000000, 3, x1, 8, x2)
+# rs1==x12, rs1_val == 0, imm_val == 2
+# opcode: c.andi; op1:x12; immval:2
+TEST_CI_OP( c.andi, x12, 0x0000000000000000, 0x0000000000000000, 2, x1, 8, x2)
 
-# opcode: c.andi; op1:x12; immval:4
-TEST_CI_OP( c.andi, x12, 0x0000000000000000, 0x7fffffffffffffff, 4, x1, 16, x2)
+# rs1==x10, rs1_val == (2**(xlen-1)-1), rs1_val > 0 and imm_val < 0, rs1_val == 9223372036854775807
+# opcode: c.andi; op1:x10; immval:-1
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x7fffffffffffffff, -1, x1, 16, x2)
 
-# opcode: c.andi; op1:x13; immval:-7
-TEST_CI_OP( c.andi, x13, 0x0000000000000000, 0x0000000000000001, -7, x1, 24, x2)
+# rs1==x11, rs1_val == 1, 
+# opcode: c.andi; op1:x11; immval:-6
+TEST_CI_OP( c.andi, x11, 0x0000000000000000, 0x0000000000000001, -6, x1, 24, x2)
 
-# opcode: c.andi; op1:x10; immval:-32
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xfffffdffffffffff, -32, x1, 32, x2)
+# rs1==x13, imm_val == (-2**(6-1)), rs1_val == -33, imm_val == -32, rs1_val < 0 and imm_val < 0
+# opcode: c.andi; op1:x13; immval:-32
+TEST_CI_OP( c.andi, x13, 0x0000000000000000, 0xffffffffffffffdf, -32, x1, 32, x2)
 
-# opcode: c.andi; op1:x15; immval:0
-TEST_CI_OP( c.andi, x15, 0x0000000000000000, 0xfffffffff7ffffff, 0, x1, 40, x2)
+# rs1==x8, imm_val == 0, rs1_val == -18014398509481985
+# opcode: c.andi; op1:x8; immval:0
+TEST_CI_OP( c.andi, x8, 0x0000000000000000, 0xffbfffffffffffff, 0, x1, 40, x2)
 
-# opcode: c.andi; op1:x8; immval:31
-TEST_CI_OP( c.andi, x8, 0x0000000000000000, 0x0000100000000000, 31, x1, 48, x2)
+# rs1==x14, imm_val == (2**(6-1)-1), imm_val == 31, rs1_val == -3
+# opcode: c.andi; op1:x14; immval:31
+TEST_CI_OP( c.andi, x14, 0x0000000000000000, 0xfffffffffffffffd, 31, x1, 48, x2)
 
-# opcode: c.andi; op1:x11; immval:1
-TEST_CI_OP( c.andi, x11, 0x0000000000000000, 0x0000000000000080, 1, x1, 56, x2)
+# rs1==x9, imm_val == 1, rs1_val > 0 and imm_val > 0
+# opcode: c.andi; op1:x9; immval:1
+TEST_CI_OP( c.andi, x9, 0x0000000000000000, 0x0000000000000005, 1, x1, 56, x2)
 
-# opcode: c.andi; op1:x10; immval:3
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000000000000003, 3, x1, 64, x2)
-
-# opcode: c.andi; op1:x10; immval:9
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xfffffffffffffffe, 9, x1, 72, x2)
-
-# opcode: c.andi; op1:x10; immval:-6
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000000000000002, -6, x1, 80, x2)
-
-# opcode: c.andi; op1:x10; immval:31
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000000000000004, 31, x1, 88, x2)
-
-# opcode: c.andi; op1:x10; immval:31
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000000000000008, 31, x1, 96, x2)
-
-# opcode: c.andi; op1:x10; immval:6
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000000000000010, 6, x1, 104, x2)
-
-# opcode: c.andi; op1:x10; immval:9
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000000000000020, 9, x1, 112, x2)
-
-# opcode: c.andi; op1:x10; immval:-9
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000000000000040, -9, x1, 120, x2)
-
-# opcode: c.andi; op1:x10; immval:6
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000000000000100, 6, x1, 128, x2)
-
-# opcode: c.andi; op1:x10; immval:7
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000000000000200, 7, x1, 136, x2)
-
-# opcode: c.andi; op1:x10; immval:-2
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000000000000400, -2, x1, 144, x2)
-
-# opcode: c.andi; op1:x10; immval:-22
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000000000000800, -22, x1, 152, x2)
-
-# opcode: c.andi; op1:x10; immval:-16
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000000000001000, -16, x1, 160, x2)
-
-# opcode: c.andi; op1:x10; immval:7
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000000000002000, 7, x1, 168, x2)
-
-# opcode: c.andi; op1:x10; immval:31
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000000000004000, 31, x1, 176, x2)
-
-# opcode: c.andi; op1:x10; immval:-17
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000000000008000, -17, x1, 184, x2)
-
-# opcode: c.andi; op1:x10; immval:-4
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000000000010000, -4, x1, 192, x2)
-
-# opcode: c.andi; op1:x10; immval:31
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000000000020000, 31, x1, 200, x2)
-
-# opcode: c.andi; op1:x10; immval:0
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000000000040000, 0, x1, 208, x2)
-
+# rs1_val == imm_val, rs1_val == 8, imm_val == 8
 # opcode: c.andi; op1:x10; immval:8
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000000000080000, 8, x1, 216, x2)
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000000000000008, 8, x1, 64, x2)
 
-# opcode: c.andi; op1:x10; immval:-8
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000000000100000, -8, x1, 224, x2)
-
-# opcode: c.andi; op1:x10; immval:9
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000000000200000, 9, x1, 232, x2)
-
-# opcode: c.andi; op1:x10; immval:2
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000000000400000, 2, x1, 240, x2)
-
-# opcode: c.andi; op1:x10; immval:-5
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000000000800000, -5, x1, 248, x2)
-
-# opcode: c.andi; op1:x10; immval:-1
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000000001000000, -1, x1, 256, x2)
-
-# opcode: c.andi; op1:x10; immval:-9
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000000002000000, -9, x1, 264, x2)
-
-# opcode: c.andi; op1:x10; immval:5
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000000004000000, 5, x1, 272, x2)
-
-# opcode: c.andi; op1:x10; immval:16
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000000008000000, 16, x1, 280, x2)
-
-# opcode: c.andi; op1:x10; immval:3
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000000010000000, 3, x1, 288, x2)
-
-# opcode: c.andi; op1:x10; immval:-1
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000000020000000, -1, x1, 296, x2)
-
-# opcode: c.andi; op1:x10; immval:-22
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000000040000000, -22, x1, 304, x2)
-
-# opcode: c.andi; op1:x10; immval:-1
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000000080000000, -1, x1, 312, x2)
-
-# opcode: c.andi; op1:x10; immval:6
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000000100000000, 6, x1, 320, x2)
-
-# opcode: c.andi; op1:x10; immval:-3
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000000200000000, -3, x1, 328, x2)
-
-# opcode: c.andi; op1:x10; immval:-5
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000000400000000, -5, x1, 336, x2)
-
-# opcode: c.andi; op1:x10; immval:-16
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000000800000000, -16, x1, 344, x2)
-
-# opcode: c.andi; op1:x10; immval:21
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000001000000000, 21, x1, 352, x2)
-
-# opcode: c.andi; op1:x10; immval:-5
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000002000000000, -5, x1, 360, x2)
-
-# opcode: c.andi; op1:x10; immval:-22
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000004000000000, -22, x1, 368, x2)
-
-# opcode: c.andi; op1:x10; immval:8
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000008000000000, 8, x1, 376, x2)
-
-# opcode: c.andi; op1:x10; immval:31
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000010000000000, 31, x1, 384, x2)
-
-# opcode: c.andi; op1:x10; immval:15
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000020000000000, 15, x1, 392, x2)
-
-# opcode: c.andi; op1:x10; immval:5
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000040000000000, 5, x1, 400, x2)
-
-# opcode: c.andi; op1:x10; immval:1
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000080000000000, 1, x1, 408, x2)
-
-# opcode: c.andi; op1:x10; immval:21
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000200000000000, 21, x1, 416, x2)
-
-# opcode: c.andi; op1:x10; immval:-9
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000400000000000, -9, x1, 424, x2)
-
-# opcode: c.andi; op1:x10; immval:16
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000800000000000, 16, x1, 432, x2)
-
-# opcode: c.andi; op1:x10; immval:31
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0001000000000000, 31, x1, 440, x2)
-
-# opcode: c.andi; op1:x10; immval:5
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0002000000000000, 5, x1, 448, x2)
-
-# opcode: c.andi; op1:x10; immval:9
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0004000000000000, 9, x1, 456, x2)
-
-# opcode: c.andi; op1:x10; immval:4
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0008000000000000, 4, x1, 464, x2)
-
-# opcode: c.andi; op1:x10; immval:-2
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0010000000000000, -2, x1, 472, x2)
-
-# opcode: c.andi; op1:x10; immval:-5
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0020000000000000, -5, x1, 480, x2)
-
-# opcode: c.andi; op1:x10; immval:16
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0040000000000000, 16, x1, 488, x2)
-
-# opcode: c.andi; op1:x10; immval:-1
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0080000000000000, -1, x1, 496, x2)
-
+# rs1_val == 2, 
 # opcode: c.andi; op1:x10; immval:-6
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0100000000000000, -6, x1, 504, x2)
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000000000000002, -6, x1, 72, x2)
 
-# opcode: c.andi; op1:x10; immval:-6
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0200000000000000, -6, x1, 512, x2)
-
-# opcode: c.andi; op1:x10; immval:2
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0400000000000000, 2, x1, 520, x2)
-
-# opcode: c.andi; op1:x10; immval:3
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0800000000000000, 3, x1, 528, x2)
-
-# opcode: c.andi; op1:x10; immval:-8
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x1000000000000000, -8, x1, 536, x2)
-
-# opcode: c.andi; op1:x10; immval:-3
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x2000000000000000, -3, x1, 544, x2)
-
-# opcode: c.andi; op1:x10; immval:-8
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xfff7ffffffffffff, -8, x1, 552, x2)
-
-# opcode: c.andi; op1:x10; immval:4
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xffefffffffffffff, 4, x1, 560, x2)
-
-# opcode: c.andi; op1:x10; immval:-3
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xffdfffffffffffff, -3, x1, 568, x2)
-
-# opcode: c.andi; op1:x10; immval:8
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xffbfffffffffffff, 8, x1, 576, x2)
-
-# opcode: c.andi; op1:x10; immval:-17
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xff7fffffffffffff, -17, x1, 584, x2)
-
-# opcode: c.andi; op1:x10; immval:15
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xfeffffffffffffff, 15, x1, 592, x2)
-
-# opcode: c.andi; op1:x10; immval:0
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xfdffffffffffffff, 0, x1, 600, x2)
-
-# opcode: c.andi; op1:x10; immval:-17
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xfbffffffffffffff, -17, x1, 608, x2)
-
-# opcode: c.andi; op1:x10; immval:-4
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xf7ffffffffffffff, -4, x1, 616, x2)
-
-# opcode: c.andi; op1:x10; immval:5
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xefffffffffffffff, 5, x1, 624, x2)
-
-# opcode: c.andi; op1:x10; immval:-32
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xdfffffffffffffff, -32, x1, 632, x2)
-
-# opcode: c.andi; op1:x10; immval:-1
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xbfffffffffffffff, -1, x1, 640, x2)
-
-# opcode: c.andi; op1:x10; immval:1
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x5555555555555555, 1, x1, 648, x2)
-
-# opcode: c.andi; op1:x10; immval:9
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xaaaaaaaaaaaaaaaa, 9, x1, 656, x2)
-
-# opcode: c.andi; op1:x10; immval:9
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x4000000000000000, 9, x1, 664, x2)
-
-# opcode: c.andi; op1:x10; immval:-2
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xfffffffffffffffd, -2, x1, 672, x2)
-
-# opcode: c.andi; op1:x10; immval:-1
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xfffffffffffffffb, -1, x1, 680, x2)
-
-# opcode: c.andi; op1:x10; immval:15
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xfffffffffffffff7, 15, x1, 688, x2)
-
-# opcode: c.andi; op1:x10; immval:7
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xffffffffffffffef, 7, x1, 696, x2)
-
-# opcode: c.andi; op1:x10; immval:16
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xffffffffffffffdf, 16, x1, 704, x2)
-
-# opcode: c.andi; op1:x10; immval:4
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xffffffffffffffbf, 4, x1, 712, x2)
-
-# opcode: c.andi; op1:x10; immval:7
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xffffffffffffff7f, 7, x1, 720, x2)
-
-# opcode: c.andi; op1:x10; immval:16
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xfffffffffffffeff, 16, x1, 728, x2)
-
+# rs1_val == 4, 
 # opcode: c.andi; op1:x10; immval:-10
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xfffffffffffffdff, -10, x1, 736, x2)
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000000000000004, -10, x1, 80, x2)
 
-# opcode: c.andi; op1:x10; immval:-8
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xfffffffffffffbff, -8, x1, 744, x2)
+# rs1_val == 16, 
+# opcode: c.andi; op1:x10; immval:6
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000000000000010, 6, x1, 88, x2)
 
-# opcode: c.andi; op1:x10; immval:-22
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xfffffffffffff7ff, -22, x1, 752, x2)
-
-# opcode: c.andi; op1:x10; immval:-17
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xffffffffffffefff, -17, x1, 760, x2)
-
-# opcode: c.andi; op1:x10; immval:15
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xffffffffffffdfff, 15, x1, 768, x2)
-
-# opcode: c.andi; op1:x10; immval:-22
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xffffffffffffbfff, -22, x1, 776, x2)
-
-# opcode: c.andi; op1:x10; immval:-6
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xffffffffffff7fff, -6, x1, 784, x2)
-
-# opcode: c.andi; op1:x10; immval:-10
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xfffffffffffeffff, -10, x1, 792, x2)
-
-# opcode: c.andi; op1:x10; immval:-16
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xfffffffffffdffff, -16, x1, 800, x2)
-
-# opcode: c.andi; op1:x10; immval:8
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xfffffffffffbffff, 8, x1, 808, x2)
-
-# opcode: c.andi; op1:x10; immval:5
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xfffffffffff7ffff, 5, x1, 816, x2)
-
-# opcode: c.andi; op1:x10; immval:-16
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xffffffffffefffff, -16, x1, 824, x2)
-
-# opcode: c.andi; op1:x10; immval:-8
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xffffffffffdfffff, -8, x1, 832, x2)
-
-# opcode: c.andi; op1:x10; immval:15
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xffffffffffbfffff, 15, x1, 840, x2)
-
-# opcode: c.andi; op1:x10; immval:-5
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xffffffffff7fffff, -5, x1, 848, x2)
-
-# opcode: c.andi; op1:x10; immval:15
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xfffffffffeffffff, 15, x1, 856, x2)
-
-# opcode: c.andi; op1:x10; immval:2
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xfffffffffdffffff, 2, x1, 864, x2)
-
+# rs1_val == 32, 
 # opcode: c.andi; op1:x10; immval:-32
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xfffffffffbffffff, -32, x1, 872, x2)
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000000000000020, -32, x1, 96, x2)
 
-# opcode: c.andi; op1:x10; immval:-6
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xffffffffefffffff, -6, x1, 880, x2)
+# rs1_val == 64, 
+# opcode: c.andi; op1:x10; immval:2
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000000000000040, 2, x1, 104, x2)
 
-# opcode: c.andi; op1:x10; immval:4
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xffffffffdfffffff, 4, x1, 888, x2)
-
-# opcode: c.andi; op1:x10; immval:7
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xffffffffbfffffff, 7, x1, 896, x2)
-
+# rs1_val == 128, imm_val == -22
 # opcode: c.andi; op1:x10; immval:-22
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xffffffff7fffffff, -22, x1, 904, x2)
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000000000000080, -22, x1, 112, x2)
 
-# opcode: c.andi; op1:x10; immval:-6
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xfffffffeffffffff, -6, x1, 912, x2)
+# rs1_val == 256, 
+# opcode: c.andi; op1:x10; immval:0
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000000000000100, 0, x1, 120, x2)
 
-# opcode: c.andi; op1:x10; immval:8
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xfffffffdffffffff, 8, x1, 920, x2)
-
-# opcode: c.andi; op1:x10; immval:21
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xfffffffbffffffff, 21, x1, 928, x2)
-
-# opcode: c.andi; op1:x10; immval:-8
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xfffffff7ffffffff, -8, x1, 936, x2)
-
-# opcode: c.andi; op1:x10; immval:5
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xffffffefffffffff, 5, x1, 944, x2)
-
+# rs1_val == 512, 
 # opcode: c.andi; op1:x10; immval:3
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xffffffdfffffffff, 3, x1, 952, x2)
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000000000000200, 3, x1, 128, x2)
 
+# rs1_val == 1024, 
+# opcode: c.andi; op1:x10; immval:9
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000000000000400, 9, x1, 136, x2)
+
+# rs1_val == 2048, imm_val == 21
+# opcode: c.andi; op1:x10; immval:21
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000000000000800, 21, x1, 144, x2)
+
+# rs1_val == 4096, 
+# opcode: c.andi; op1:x10; immval:3
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000000000001000, 3, x1, 152, x2)
+
+# rs1_val == 8192, 
+# opcode: c.andi; op1:x10; immval:1
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000000000002000, 1, x1, 160, x2)
+
+# rs1_val == 16384, imm_val == -5
+# opcode: c.andi; op1:x10; immval:-5
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000000000004000, -5, x1, 168, x2)
+
+# rs1_val == 32768, 
+# opcode: c.andi; op1:x10; immval:-7
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000000000008000, -7, x1, 176, x2)
+
+# rs1_val == 65536, 
+# opcode: c.andi; op1:x10; immval:-10
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000000000010000, -10, x1, 184, x2)
+
+# rs1_val == 131072, 
+# opcode: c.andi; op1:x10; immval:21
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000000000020000, 21, x1, 192, x2)
+
+# rs1_val == 262144, 
+# opcode: c.andi; op1:x10; immval:5
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000000000040000, 5, x1, 200, x2)
+
+# rs1_val == 524288, 
+# opcode: c.andi; op1:x10; immval:15
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000000000080000, 15, x1, 208, x2)
+
+# rs1_val == 1048576, imm_val == 16
+# opcode: c.andi; op1:x10; immval:16
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000000000100000, 16, x1, 216, x2)
+
+# rs1_val == 2097152, imm_val == -3
+# opcode: c.andi; op1:x10; immval:-3
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000000000200000, -3, x1, 224, x2)
+
+# rs1_val == 4194304, 
+# opcode: c.andi; op1:x10; immval:-32
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000000000400000, -32, x1, 232, x2)
+
+# rs1_val == 8388608, 
+# opcode: c.andi; op1:x10; immval:-1
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000000000800000, -1, x1, 240, x2)
+
+# rs1_val == 16777216, imm_val == -2
+# opcode: c.andi; op1:x10; immval:-2
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000000001000000, -2, x1, 248, x2)
+
+# rs1_val == 33554432, 
+# opcode: c.andi; op1:x10; immval:6
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000000002000000, 6, x1, 256, x2)
+
+# rs1_val == 67108864, 
+# opcode: c.andi; op1:x10; immval:-1
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000000004000000, -1, x1, 264, x2)
+
+# rs1_val == 134217728, 
+# opcode: c.andi; op1:x10; immval:-2
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000000008000000, -2, x1, 272, x2)
+
+# rs1_val == 268435456, 
+# opcode: c.andi; op1:x10; immval:2
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000000010000000, 2, x1, 280, x2)
+
+# rs1_val == 536870912, 
+# opcode: c.andi; op1:x10; immval:3
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000000020000000, 3, x1, 288, x2)
+
+# rs1_val == 1073741824, 
+# opcode: c.andi; op1:x10; immval:-22
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000000040000000, -22, x1, 296, x2)
+
+# rs1_val == 2147483648, 
+# opcode: c.andi; op1:x10; immval:-32
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000000080000000, -32, x1, 304, x2)
+
+# rs1_val == 4294967296, 
+# opcode: c.andi; op1:x10; immval:-3
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000000100000000, -3, x1, 312, x2)
+
+# rs1_val == 8589934592, 
+# opcode: c.andi; op1:x10; immval:21
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000000200000000, 21, x1, 320, x2)
+
+# rs1_val == 17179869184, 
+# opcode: c.andi; op1:x10; immval:-16
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000000400000000, -16, x1, 328, x2)
+
+# rs1_val == 34359738368, 
+# opcode: c.andi; op1:x10; immval:21
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000000800000000, 21, x1, 336, x2)
+
+# rs1_val == 68719476736, imm_val == -9
+# opcode: c.andi; op1:x10; immval:-9
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000001000000000, -9, x1, 344, x2)
+
+# rs1_val == 137438953472, 
+# opcode: c.andi; op1:x10; immval:2
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000002000000000, 2, x1, 352, x2)
+
+# rs1_val == 274877906944, 
+# opcode: c.andi; op1:x10; immval:1
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000004000000000, 1, x1, 360, x2)
+
+# rs1_val == 549755813888, 
+# opcode: c.andi; op1:x10; immval:-4
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000008000000000, -4, x1, 368, x2)
+
+# rs1_val == 1099511627776, 
+# opcode: c.andi; op1:x10; immval:-8
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000010000000000, -8, x1, 376, x2)
+
+# rs1_val == 2199023255552, 
+# opcode: c.andi; op1:x10; immval:-6
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000020000000000, -6, x1, 384, x2)
+
+# rs1_val == 4398046511104, 
+# opcode: c.andi; op1:x10; immval:-22
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000040000000000, -22, x1, 392, x2)
+
+# rs1_val == 8796093022208, 
+# opcode: c.andi; op1:x10; immval:31
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000080000000000, 31, x1, 400, x2)
+
+# rs1_val == 17592186044416, 
+# opcode: c.andi; op1:x10; immval:1
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000100000000000, 1, x1, 408, x2)
+
+# rs1_val == 35184372088832, 
+# opcode: c.andi; op1:x10; immval:-10
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000200000000000, -10, x1, 416, x2)
+
+# rs1_val == 70368744177664, 
+# opcode: c.andi; op1:x10; immval:9
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000400000000000, 9, x1, 424, x2)
+
+# rs1_val == 140737488355328, 
+# opcode: c.andi; op1:x10; immval:-1
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0000800000000000, -1, x1, 432, x2)
+
+# rs1_val == 281474976710656, 
+# opcode: c.andi; op1:x10; immval:-5
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0001000000000000, -5, x1, 440, x2)
+
+# rs1_val == 562949953421312, 
+# opcode: c.andi; op1:x10; immval:-6
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0002000000000000, -6, x1, 448, x2)
+
+# rs1_val == 1125899906842624, 
+# opcode: c.andi; op1:x10; immval:-22
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0004000000000000, -22, x1, 456, x2)
+
+# rs1_val == 2251799813685248, 
+# opcode: c.andi; op1:x10; immval:3
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0008000000000000, 3, x1, 464, x2)
+
+# rs1_val == 4503599627370496, 
+# opcode: c.andi; op1:x10; immval:0
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0010000000000000, 0, x1, 472, x2)
+
+# rs1_val == 9007199254740992, 
+# opcode: c.andi; op1:x10; immval:-7
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0020000000000000, -7, x1, 480, x2)
+
+# rs1_val == 18014398509481984, 
+# opcode: c.andi; op1:x10; immval:-16
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0040000000000000, -16, x1, 488, x2)
+
+# rs1_val == 36028797018963968, 
+# opcode: c.andi; op1:x10; immval:3
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0080000000000000, 3, x1, 496, x2)
+
+# rs1_val == 72057594037927936, 
+# opcode: c.andi; op1:x10; immval:2
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0100000000000000, 2, x1, 504, x2)
+
+# rs1_val == 144115188075855872, 
+# opcode: c.andi; op1:x10; immval:6
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0200000000000000, 6, x1, 512, x2)
+
+# rs1_val == 288230376151711744, 
+# opcode: c.andi; op1:x10; immval:-8
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0400000000000000, -8, x1, 520, x2)
+
+# rs1_val == 576460752303423488, imm_val == 4
+# opcode: c.andi; op1:x10; immval:4
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x0800000000000000, 4, x1, 528, x2)
+
+# rs1_val == 1152921504606846976, 
+# opcode: c.andi; op1:x10; immval:-2
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x1000000000000000, -2, x1, 536, x2)
+
+# rs1_val == 2305843009213693952, 
+# opcode: c.andi; op1:x10; immval:-5
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x2000000000000000, -5, x1, 544, x2)
+
+# rs1_val == 4611686018427387904, 
+# opcode: c.andi; op1:x10; immval:5
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x4000000000000000, 5, x1, 552, x2)
+
+# rs1_val == -2251799813685249, 
+# opcode: c.andi; op1:x10; immval:-22
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xfff7ffffffffffff, -22, x1, 560, x2)
+
+# rs1_val == -4503599627370497, 
+# opcode: c.andi; op1:x10; immval:16
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xffefffffffffffff, 16, x1, 568, x2)
+
+# rs1_val == -9007199254740993, 
+# opcode: c.andi; op1:x10; immval:-6
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xffdfffffffffffff, -6, x1, 576, x2)
+
+# rs1_val == -36028797018963969, 
+# opcode: c.andi; op1:x10; immval:-32
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xff7fffffffffffff, -32, x1, 584, x2)
+
+# rs1_val == -72057594037927937, 
+# opcode: c.andi; op1:x10; immval:3
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xfeffffffffffffff, 3, x1, 592, x2)
+
+# rs1_val == -144115188075855873, 
+# opcode: c.andi; op1:x10; immval:-8
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xfdffffffffffffff, -8, x1, 600, x2)
+
+# rs1_val == -288230376151711745, 
+# opcode: c.andi; op1:x10; immval:-9
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xfbffffffffffffff, -9, x1, 608, x2)
+
+# rs1_val == -576460752303423489, 
+# opcode: c.andi; op1:x10; immval:9
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xf7ffffffffffffff, 9, x1, 616, x2)
+
+# rs1_val == -1152921504606846977, 
+# opcode: c.andi; op1:x10; immval:-16
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xefffffffffffffff, -16, x1, 624, x2)
+
+# rs1_val == -2305843009213693953, 
+# opcode: c.andi; op1:x10; immval:6
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xdfffffffffffffff, 6, x1, 632, x2)
+
+# rs1_val == -4611686018427387905, 
+# opcode: c.andi; op1:x10; immval:7
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xbfffffffffffffff, 7, x1, 640, x2)
+
+# rs1_val == 6148914691236517205, 
+# opcode: c.andi; op1:x10; immval:8
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0x5555555555555555, 8, x1, 648, x2)
+
+# rs1_val == -6148914691236517206, 
+# opcode: c.andi; op1:x10; immval:31
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xaaaaaaaaaaaaaaaa, 31, x1, 656, x2)
+
+# imm_val == -17, 
+# opcode: c.andi; op1:x10; immval:-17
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xf7ffffffffffffff, -17, x1, 664, x2)
+
+# rs1_val == -2, 
+# opcode: c.andi; op1:x10; immval:8
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xfffffffffffffffe, 8, x1, 672, x2)
+
+# rs1_val == -5, 
+# opcode: c.andi; op1:x10; immval:-22
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xfffffffffffffffb, -22, x1, 680, x2)
+
+# rs1_val == -9, 
+# opcode: c.andi; op1:x10; immval:-1
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xfffffffffffffff7, -1, x1, 688, x2)
+
+# rs1_val == -17, 
+# opcode: c.andi; op1:x10; immval:3
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xffffffffffffffef, 3, x1, 696, x2)
+
+# rs1_val == -65, 
+# opcode: c.andi; op1:x10; immval:8
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xffffffffffffffbf, 8, x1, 704, x2)
+
+# rs1_val == -129, 
+# opcode: c.andi; op1:x10; immval:-1
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xffffffffffffff7f, -1, x1, 712, x2)
+
+# rs1_val == -257, 
+# opcode: c.andi; op1:x10; immval:-22
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xfffffffffffffeff, -22, x1, 720, x2)
+
+# rs1_val == -513, 
+# opcode: c.andi; op1:x10; immval:16
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xfffffffffffffdff, 16, x1, 728, x2)
+
+# rs1_val == -1025, 
+# opcode: c.andi; op1:x10; immval:-3
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xfffffffffffffbff, -3, x1, 736, x2)
+
+# rs1_val == -2049, 
+# opcode: c.andi; op1:x10; immval:0
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xfffffffffffff7ff, 0, x1, 744, x2)
+
+# rs1_val == -4097, 
+# opcode: c.andi; op1:x10; immval:-1
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xffffffffffffefff, -1, x1, 752, x2)
+
+# rs1_val == -8193, 
+# opcode: c.andi; op1:x10; immval:1
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xffffffffffffdfff, 1, x1, 760, x2)
+
+# rs1_val == -16385, 
+# opcode: c.andi; op1:x10; immval:6
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xffffffffffffbfff, 6, x1, 768, x2)
+
+# rs1_val == -32769, 
+# opcode: c.andi; op1:x10; immval:0
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xffffffffffff7fff, 0, x1, 776, x2)
+
+# rs1_val == -65537, 
+# opcode: c.andi; op1:x10; immval:0
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xfffffffffffeffff, 0, x1, 784, x2)
+
+# rs1_val == -131073, 
+# opcode: c.andi; op1:x10; immval:4
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xfffffffffffdffff, 4, x1, 792, x2)
+
+# rs1_val == -262145, 
+# opcode: c.andi; op1:x10; immval:7
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xfffffffffffbffff, 7, x1, 800, x2)
+
+# rs1_val == -524289, 
+# opcode: c.andi; op1:x10; immval:-3
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xfffffffffff7ffff, -3, x1, 808, x2)
+
+# rs1_val == -1048577, 
+# opcode: c.andi; op1:x10; immval:-3
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xffffffffffefffff, -3, x1, 816, x2)
+
+# rs1_val == -2097153, 
+# opcode: c.andi; op1:x10; immval:15
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xffffffffffdfffff, 15, x1, 824, x2)
+
+# rs1_val == -4194305, 
+# opcode: c.andi; op1:x10; immval:31
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xffffffffffbfffff, 31, x1, 832, x2)
+
+# rs1_val == -8388609, 
+# opcode: c.andi; op1:x10; immval:2
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xffffffffff7fffff, 2, x1, 840, x2)
+
+# rs1_val == -16777217, 
+# opcode: c.andi; op1:x10; immval:-4
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xfffffffffeffffff, -4, x1, 848, x2)
+
+# rs1_val == -33554433, 
+# opcode: c.andi; op1:x10; immval:0
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xfffffffffdffffff, 0, x1, 856, x2)
+
+# rs1_val == -67108865, 
+# opcode: c.andi; op1:x10; immval:0
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xfffffffffbffffff, 0, x1, 864, x2)
+
+# rs1_val == -134217729, 
+# opcode: c.andi; op1:x10; immval:-2
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xfffffffff7ffffff, -2, x1, 872, x2)
+
+# rs1_val == -268435457, 
+# opcode: c.andi; op1:x10; immval:-5
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xffffffffefffffff, -5, x1, 880, x2)
+
+# rs1_val == -536870913, 
+# opcode: c.andi; op1:x10; immval:-8
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xffffffffdfffffff, -8, x1, 888, x2)
+
+# rs1_val == -1073741825, 
+# opcode: c.andi; op1:x10; immval:-17
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xffffffffbfffffff, -17, x1, 896, x2)
+
+# rs1_val == -2147483649, 
+# opcode: c.andi; op1:x10; immval:3
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xffffffff7fffffff, 3, x1, 904, x2)
+
+# rs1_val == -4294967297, 
+# opcode: c.andi; op1:x10; immval:15
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xfffffffeffffffff, 15, x1, 912, x2)
+
+# rs1_val == -8589934593, 
+# opcode: c.andi; op1:x10; immval:-2
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xfffffffdffffffff, -2, x1, 920, x2)
+
+# rs1_val == -17179869185, 
+# opcode: c.andi; op1:x10; immval:2
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xfffffffbffffffff, 2, x1, 928, x2)
+
+# rs1_val == -34359738369, 
+# opcode: c.andi; op1:x10; immval:2
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xfffffff7ffffffff, 2, x1, 936, x2)
+
+# rs1_val == -68719476737, 
+# opcode: c.andi; op1:x10; immval:9
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xffffffefffffffff, 9, x1, 944, x2)
+
+# rs1_val == -137438953473, 
+# opcode: c.andi; op1:x10; immval:-6
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xffffffdfffffffff, -6, x1, 952, x2)
+
+# rs1_val == -274877906945, 
 # opcode: c.andi; op1:x10; immval:-9
 TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xffffffbfffffffff, -9, x1, 960, x2)
 
+# rs1_val == -549755813889, 
 # opcode: c.andi; op1:x10; immval:9
 TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xffffff7fffffffff, 9, x1, 968, x2)
 
-# opcode: c.andi; op1:x10; immval:-2
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xfffffeffffffffff, -2, x1, 976, x2)
+# rs1_val == -1099511627777, 
+# opcode: c.andi; op1:x10; immval:16
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xfffffeffffffffff, 16, x1, 976, x2)
 
-# opcode: c.andi; op1:x10; immval:-6
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xfffffbffffffffff, -6, x1, 984, x2)
-
-# opcode: c.andi; op1:x10; immval:8
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xfffff7ffffffffff, 8, x1, 992, x2)
-
-# opcode: c.andi; op1:x10; immval:-17
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xffffefffffffffff, -17, x1, 1000, x2)
-
-# opcode: c.andi; op1:x10; immval:-22
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xffffdfffffffffff, -22, x1, 1008, x2)
-
-# opcode: c.andi; op1:x10; immval:-2
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xffffbfffffffffff, -2, x1, 1016, x2)
-
-# opcode: c.andi; op1:x10; immval:9
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xffff7fffffffffff, 9, x1, 1024, x2)
-
-# opcode: c.andi; op1:x10; immval:6
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xfffeffffffffffff, 6, x1, 1032, x2)
-
+# rs1_val == -2199023255553, 
 # opcode: c.andi; op1:x10; immval:-9
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xfffdffffffffffff, -9, x1, 1040, x2)
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xfffffdffffffffff, -9, x1, 984, x2)
 
-# opcode: c.andi; op1:x10; immval:15
-TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xfffbffffffffffff, 15, x1, 1048, x2)
+# rs1_val == -4398046511105, 
+# opcode: c.andi; op1:x10; immval:-10
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xfffffbffffffffff, -10, x1, 992, x2)
+
+# rs1_val == -8796093022209, 
+# opcode: c.andi; op1:x10; immval:5
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xfffff7ffffffffff, 5, x1, 1000, x2)
+
+# rs1_val == -17592186044417, 
+# opcode: c.andi; op1:x10; immval:0
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xffffefffffffffff, 0, x1, 1008, x2)
+
+# rs1_val == -35184372088833, 
+# opcode: c.andi; op1:x10; immval:-17
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xffffdfffffffffff, -17, x1, 1016, x2)
+
+# rs1_val == -70368744177665, 
+# opcode: c.andi; op1:x10; immval:-1
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xffffbfffffffffff, -1, x1, 1024, x2)
+
+# rs1_val == -140737488355329, 
+# opcode: c.andi; op1:x10; immval:-5
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xffff7fffffffffff, -5, x1, 1032, x2)
+
+# rs1_val == -281474976710657, 
+# opcode: c.andi; op1:x10; immval:-4
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xfffeffffffffffff, -4, x1, 1040, x2)
+
+# rs1_val == -562949953421313, 
+# opcode: c.andi; op1:x10; immval:-7
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xfffdffffffffffff, -7, x1, 1048, x2)
+
+# rs1_val == -1125899906842625, 
+# opcode: c.andi; op1:x10; immval:-8
+TEST_CI_OP( c.andi, x10, 0x0000000000000000, 0xfffbffffffffffff, -8, x1, 1056, x2)
 #endif
 
 
@@ -427,16 +563,23 @@ RVMODEL_DATA_BEGIN
 .align 4
 
 signature_x1_0:
-    .fill 0*(XLEN/32),4,0xafacadee
+    .fill 0*(XLEN/32),4,0xdeadbeef
 
 
 signature_x1_1:
-    .fill 132*(XLEN/32),4,0xafacadee
+    .fill 133*(XLEN/32),4,0xdeadbeef
 
 #ifdef rvtest_mtrap_routine
 
 mtrap_sigptr:
-    .fill 64*(XLEN/32),4,0xafacadee
+    .fill 64*(XLEN/32),4,0xdeadbeef
+
+#endif
+
+#ifdef rvtest_gpr_save
+
+gpr_save:
+    .fill 32*(XLEN/32),4,0xdeadbeef
 
 #endif
 

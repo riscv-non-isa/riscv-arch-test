@@ -15,19 +15,19 @@ RVTEST_CASE(0,"//check ISA:=regex(.*32.*);check ISA:=regex(.*I.*); check hw_data
 
 RVTEST_CASE(1,"//check ISA:=regex(.*32.*);check ISA:=regex(.*I.*Zicsr.*); check hw_data_misaligned_support:=False; def rvtest_mtrap_routine=True;def TEST_CASE_1=True;",misalign-sw)
 
-la x1,signature_x1_1
+RVTEST_SIGBASE( x1,signature_x1_1)
 
 # ea_align == 1, 
-# opcode: sw; op1:x10; op2:x11; op2val:0xf7ffffff; immval:-1; align:1
-TEST_STORE(x1,x2,0,x10,x11,0xf7ffffff,-1,0,sw,1)
+# opcode: sw; op1:x10; op2:x11; op2val:0x00000200; immval:5; align:1
+TEST_STORE(x1,x2,0,x10,x11,0x00000200,5,0,sw,1)
 
 # ea_align == 2, 
-# opcode: sw; op1:x10; op2:x11; op2val:0x00000000; immval:0; align:2
-TEST_STORE(x1,x2,0,x10,x11,0x00000000,0,4,sw,2)
+# opcode: sw; op1:x10; op2:x11; op2val:0xff7fffff; immval:-3; align:2
+TEST_STORE(x1,x2,0,x10,x11,0xff7fffff,-3,4,sw,2)
 
 # ea_align == 3, 
-# opcode: sw; op1:x10; op2:x11; op2val:0x00100000; immval:5; align:3
-TEST_STORE(x1,x2,0,x10,x11,0x00100000,5,8,sw,3)
+# opcode: sw; op1:x10; op2:x11; op2val:0xff7fffff; immval:5; align:3
+TEST_STORE(x1,x2,0,x10,x11,0xff7fffff,5,8,sw,3)
 #endif
 
 

@@ -15,10 +15,11 @@ RVTEST_CASE(0,"//check ISA:=regex(.*64.*);check ISA:=regex(.*I.*C.*); def rvtest
 
 RVTEST_CASE(1,"//check ISA:=regex(.*64.*);check ISA:=regex(.*I.*Zicsr.*); check ISA:=regex(^[^C]+$); def rvtest_mtrap_routine=True;def TEST_CASE_1=True;",misalign-bne)
 
-la x1,signature_x1_1
+RVTEST_SIGBASE( x1,signature_x1_1)
 
-# opcode: bne, op1:x10; op2:x11; op1val:0xffffffffbfffffff; op2val:0x0000000000000005; immval:16; align: 2
-TEST_BRANCH_OP(bne, x2, x10, x11, 0xffffffffbfffffff, 0x0000000000000005, 16, 3f, x1, 0,2)
+#  rs1_val!=rs2_val and ea_align == 2, 
+# opcode: bne, op1:x10; op2:x11; op1val:0x0000000000000400; op2val:0x0020000000000000; immval:64; align:2
+TEST_BRANCH_OP(bne, x2, x10, x11, 0x0000000000000400, 0x0020000000000000, 64, 3f, x1, 0,2)
 #endif
 
 
@@ -36,16 +37,23 @@ RVMODEL_DATA_BEGIN
 .align 4
 
 signature_x1_0:
-    .fill 0*(XLEN/32),4,0xafacadee
+    .fill 0*(XLEN/32),4,0xdeadbeef
 
 
 signature_x1_1:
-    .fill 1*(XLEN/32),4,0xafacadee
+    .fill 1*(XLEN/32),4,0xdeadbeef
 
 #ifdef rvtest_mtrap_routine
 
 mtrap_sigptr:
-    .fill 64*(XLEN/32),4,0xafacadee
+    .fill 64*(XLEN/32),4,0xdeadbeef
+
+#endif
+
+#ifdef rvtest_gpr_save
+
+gpr_save:
+    .fill 32*(XLEN/32),4,0xdeadbeef
 
 #endif
 

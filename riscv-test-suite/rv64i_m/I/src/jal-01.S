@@ -13,107 +13,140 @@ RVTEST_CODE_BEGIN
 
 RVTEST_CASE(0,"//check ISA:=regex(.*64.*);check ISA:=regex(.*I.*);def TEST_CASE_1=True;",jal)
 
-la x3,signature_x3_1
+RVTEST_SIGBASE( x5,signature_x5_1)
 
-# opcode: jal; dest:x29; immval:4; align: 0
-TEST_JAL_OP(x6, x29, 4, 1b, x3, 0,0)
+# rd==x14, imm_val < 0, 
+# opcode: jal; dest:x14; immval:6; align:0
+TEST_JAL_OP(x12, x14, 6, 1b, x5, 0,0)
 
-# opcode: jal; dest:x27; immval:8; align: 0
-TEST_JAL_OP(x6, x27, 8, 3f, x3, 8,0)
+# rd==x8, imm_val > 0, 
+# opcode: jal; dest:x8; immval:16384; align:0
+TEST_JAL_OP(x12, x8, 16384, 3f, x5, 8,0)
 
-# opcode: jal; dest:x17; immval:262144; align: 0
-TEST_JAL_OP(x6, x17, 262144, 1b, x3, 16,0)
+# rd==x0, imm_val == (-(2**(18))), 
+# opcode: jal; dest:x0; immval:262144; align:0
+TEST_JAL_OP(x12, x0, 262144, 1b, x5, 16,0)
 
-# opcode: jal; dest:x19; immval:262144; align: 0
-TEST_JAL_OP(x6, x19, 262144, 3f, x3, 24,0)
+# rd==x1, imm_val == ((2**(18))), 
+# opcode: jal; dest:x1; immval:262144; align:0
+TEST_JAL_OP(x12, x1, 262144, 3f, x5, 24,0)
 
-# opcode: jal; dest:x15; immval:0; align: 0
-TEST_JAL_OP(x6, x15, 0, 3f, x3, 32,0)
+# rd==x7, 
+# opcode: jal; dest:x7; immval:0; align:0
+TEST_JAL_OP(x12, x7, 0, 3f, x5, 32,0)
 
-# opcode: jal; dest:x13; immval:0; align: 0
-TEST_JAL_OP(x6, x13, 0, 3f, x3, 40,0)
+# rd==x27, 
+# opcode: jal; dest:x27; immval:0; align:0
+TEST_JAL_OP(x12, x27, 0, 3f, x5, 40,0)
 
-# opcode: jal; dest:x24; immval:0; align: 0
-TEST_JAL_OP(x6, x24, 0, 3f, x3, 48,0)
+# rd==x2, 
+# opcode: jal; dest:x2; immval:0; align:0
+TEST_JAL_OP(x12, x2, 0, 3f, x5, 48,0)
 
-# opcode: jal; dest:x22; immval:0; align: 0
-TEST_JAL_OP(x6, x22, 0, 3f, x3, 56,0)
+# rd==x4, 
+# opcode: jal; dest:x4; immval:0; align:0
+TEST_JAL_OP(x12, x4, 0, 3f, x5, 56,0)
 
-# opcode: jal; dest:x2; immval:0; align: 0
-TEST_JAL_OP(x6, x2, 0, 3f, x3, 64,0)
+# rd==x18, 
+# opcode: jal; dest:x18; immval:0; align:0
+TEST_JAL_OP(x12, x18, 0, 3f, x5, 64,0)
 
-# opcode: jal; dest:x0; immval:0; align: 0
-TEST_JAL_OP(x6, x0, 0, 3f, x3, 72,0)
+# rd==x29, 
+# opcode: jal; dest:x29; immval:0; align:0
+TEST_JAL_OP(x12, x29, 0, 3f, x5, 72,0)
 
-# opcode: jal; dest:x31; immval:0; align: 0
-TEST_JAL_OP(x6, x31, 0, 3f, x3, 80,0)
+# rd==x10, 
+# opcode: jal; dest:x10; immval:0; align:0
+TEST_JAL_OP(x12, x10, 0, 3f, x5, 80,0)
 
-# opcode: jal; dest:x28; immval:0; align: 0
-TEST_JAL_OP(x6, x28, 0, 3f, x3, 88,0)
+# rd==x3, 
+# opcode: jal; dest:x3; immval:0; align:0
+TEST_JAL_OP(x12, x3, 0, 3f, x5, 88,0)
 
-# opcode: jal; dest:x7; immval:0; align: 0
-TEST_JAL_OP(x6, x7, 0, 3f, x3, 96,0)
+# rd==x6, 
+# opcode: jal; dest:x6; immval:0; align:0
+TEST_JAL_OP(x12, x6, 0, 3f, x5, 96,0)
 
-# opcode: jal; dest:x30; immval:0; align: 0
-TEST_JAL_OP(x6, x30, 0, 3f, x3, 104,0)
+# rd==x24, 
+# opcode: jal; dest:x24; immval:0; align:0
+TEST_JAL_OP(x12, x24, 0, 3f, x5, 104,0)
 
-# opcode: jal; dest:x1; immval:0; align: 0
-TEST_JAL_OP(x6, x1, 0, 3f, x3, 112,0)
+# rd==x17, 
+# opcode: jal; dest:x17; immval:0; align:0
+TEST_JAL_OP(x12, x17, 0, 3f, x5, 112,0)
 
-# opcode: jal; dest:x5; immval:0; align: 0
-TEST_JAL_OP(x6, x5, 0, 3f, x3, 120,0)
+# rd==x23, 
+# opcode: jal; dest:x23; immval:0; align:0
+TEST_JAL_OP(x12, x23, 0, 3f, x5, 120,0)
 
-# opcode: jal; dest:x23; immval:0; align: 0
-TEST_JAL_OP(x6, x23, 0, 3f, x3, 128,0)
+# rd==x19, 
+# opcode: jal; dest:x19; immval:0; align:0
+TEST_JAL_OP(x12, x19, 0, 3f, x5, 128,0)
 
-# opcode: jal; dest:x20; immval:0; align: 0
-TEST_JAL_OP(x6, x20, 0, 3f, x3, 136,0)
+# rd==x13, 
+# opcode: jal; dest:x13; immval:0; align:0
+TEST_JAL_OP(x12, x13, 0, 3f, x5, 136,0)
 
-# opcode: jal; dest:x8; immval:0; align: 0
-TEST_JAL_OP(x6, x8, 0, 3f, x3, 144,0)
+# rd==x28, 
+# opcode: jal; dest:x28; immval:0; align:0
+TEST_JAL_OP(x12, x28, 0, 3f, x5, 144,0)
 
-# opcode: jal; dest:x10; immval:0; align: 0
-TEST_JAL_OP(x6, x10, 0, 3f, x3, 152,0)
+# rd==x25, 
+# opcode: jal; dest:x25; immval:0; align:0
+TEST_JAL_OP(x12, x25, 0, 3f, x5, 152,0)
 
-# opcode: jal; dest:x12; immval:0; align: 0
-TEST_JAL_OP(x6, x12, 0, 3f, x3, 160,0)
+# rd==x26, 
+# opcode: jal; dest:x26; immval:0; align:0
+TEST_JAL_OP(x12, x26, 0, 3f, x5, 160,0)
 
-# opcode: jal; dest:x9; immval:0; align: 0
-TEST_JAL_OP(x6, x9, 0, 3f, x3, 168,0)
+# rd==x16, 
+# opcode: jal; dest:x16; immval:0; align:0
+TEST_JAL_OP(x12, x16, 0, 3f, x5, 168,0)
 
-# opcode: jal; dest:x14; immval:0; align: 0
-TEST_JAL_OP(x6, x14, 0, 3f, x3, 176,0)
+# rd==x9, 
+# opcode: jal; dest:x9; immval:0; align:0
+TEST_JAL_OP(x12, x9, 0, 3f, x5, 176,0)
 
-# opcode: jal; dest:x4; immval:0; align: 0
-TEST_JAL_OP(x6, x4, 0, 3f, x3, 184,0)
+# rd==x15, 
+# opcode: jal; dest:x15; immval:0; align:0
+TEST_JAL_OP(x12, x15, 0, 3f, x5, 184,0)
 
-# opcode: jal; dest:x16; immval:0; align: 0
-TEST_JAL_OP(x6, x16, 0, 3f, x3, 192,0)
+# rd==x21, 
+# opcode: jal; dest:x21; immval:0; align:0
+TEST_JAL_OP(x12, x21, 0, 3f, x5, 192,0)
 
-# opcode: jal; dest:x25; immval:0; align: 0
-TEST_JAL_OP(x6, x25, 0, 3f, x3, 200,0)
+# rd==x30, 
+# opcode: jal; dest:x30; immval:0; align:0
+TEST_JAL_OP(x12, x30, 0, 3f, x5, 200,0)
 
-# opcode: jal; dest:x11; immval:0; align: 0
-TEST_JAL_OP(x6, x11, 0, 3f, x3, 208,0)
+# rd==x11, 
+# opcode: jal; dest:x11; immval:0; align:0
+TEST_JAL_OP(x12, x11, 0, 3f, x5, 208,0)
 
-# opcode: jal; dest:x21; immval:0; align: 0
-TEST_JAL_OP(x6, x21, 0, 3f, x3, 216,0)
+# rd==x31, 
+# opcode: jal; dest:x31; immval:0; align:0
+TEST_JAL_OP(x12, x31, 0, 3f, x5, 216,0)
 
-# opcode: jal; dest:x18; immval:0; align: 0
-TEST_JAL_OP(x2, x18, 0, 3f, x3, 224,0)
-la x1,signature_x1_0
+# rd==x12, 
+# opcode: jal; dest:x12; immval:0; align:0
+TEST_JAL_OP(x2, x12, 0, 3f, x5, 224,0)
+RVTEST_SIGBASE( x1,signature_x1_0)
 
-# opcode: jal; dest:x6; immval:0; align: 0
-TEST_JAL_OP(x2, x6, 0, 3f, x1, 0,0)
+# rd==x22, 
+# opcode: jal; dest:x22; immval:0; align:0
+TEST_JAL_OP(x2, x22, 0, 3f, x1, 0,0)
 
-# opcode: jal; dest:x26; immval:0; align: 0
-TEST_JAL_OP(x2, x26, 0, 3f, x1, 8,0)
+# rd==x20, 
+# opcode: jal; dest:x20; immval:0; align:0
+TEST_JAL_OP(x2, x20, 0, 3f, x1, 8,0)
 
-# opcode: jal; dest:x3; immval:0; align: 0
-TEST_JAL_OP(x2, x3, 0, 3f, x1, 16,0)
+# rd==x5, 
+# opcode: jal; dest:x5; immval:0; align:0
+TEST_JAL_OP(x2, x5, 0, 3f, x1, 16,0)
 
-# opcode: jal; dest:x10; immval:0; align: 0
-TEST_JAL_OP(x2, x10, 0, 3f, x1, 24,0)
+# imm_val == (-(2**(18))), 
+# opcode: jal; dest:x10; immval:262144; align:0
+TEST_JAL_OP(x2, x10, 262144, 1b, x1, 24,0)
 #endif
 
 
@@ -130,21 +163,28 @@ RVTEST_DATA_END
 RVMODEL_DATA_BEGIN
 .align 4
 
-signature_x3_0:
-    .fill 0*(XLEN/32),4,0xafacadee
+signature_x5_0:
+    .fill 0*(XLEN/32),4,0xdeadbeef
 
 
-signature_x3_1:
-    .fill 29*(XLEN/32),4,0xafacadee
+signature_x5_1:
+    .fill 29*(XLEN/32),4,0xdeadbeef
 
 
 signature_x1_0:
-    .fill 4*(XLEN/32),4,0xafacadee
+    .fill 4*(XLEN/32),4,0xdeadbeef
 
 #ifdef rvtest_mtrap_routine
 
 mtrap_sigptr:
-    .fill 64*(XLEN/32),4,0xafacadee
+    .fill 64*(XLEN/32),4,0xdeadbeef
+
+#endif
+
+#ifdef rvtest_gpr_save
+
+gpr_save:
+    .fill 32*(XLEN/32),4,0xdeadbeef
 
 #endif
 

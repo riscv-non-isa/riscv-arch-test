@@ -13,15 +13,15 @@ RVTEST_CODE_BEGIN
 
 RVTEST_CASE(0,"//check ISA:=regex(.*32.*);check ISA:=regex(.*I.*C.*);def TEST_CASE_1=True;",cj)
 
-la x1,signature_x1_1
+RVTEST_SIGBASE( x1,signature_x1_1)
 
-# imm_val > 0, imm_val == 1364
-# opcode:c.j; immval:1364
-TEST_CJ_OP(c.j, x2, 1364, 3f, x1, 0)
+# imm_val > 0, 
+# opcode:c.j; immval:18
+TEST_CJ_OP(c.j, x2, 18, 3f, x1, 0)
 
-# imm_val < 0, 
-# opcode:c.j; immval:8
-TEST_CJ_OP(c.j, x2, 8, 1b, x1, 4)
+# imm_val < 0, imm_val == -66
+# opcode:c.j; immval:66
+TEST_CJ_OP(c.j, x2, 66, 1b, x1, 4)
 
 # imm_val == 16, 
 # opcode:c.j; immval:16
@@ -67,13 +67,13 @@ TEST_CJ_OP(c.j, x2, 1026, 1b, x1, 44)
 # opcode:c.j; immval:1366
 TEST_CJ_OP(c.j, x2, 1366, 1b, x1, 48)
 
+# imm_val == 1364, 
+# opcode:c.j; immval:1364
+TEST_CJ_OP(c.j, x2, 1364, 3f, x1, 52)
+
 # imm_val == -34, 
 # opcode:c.j; immval:34
-TEST_CJ_OP(c.j, x2, 34, 1b, x1, 52)
-
-# imm_val == -66, 
-# opcode:c.j; immval:66
-TEST_CJ_OP(c.j, x2, 66, 1b, x1, 56)
+TEST_CJ_OP(c.j, x2, 34, 1b, x1, 56)
 
 # imm_val == -130, 
 # opcode:c.j; immval:130

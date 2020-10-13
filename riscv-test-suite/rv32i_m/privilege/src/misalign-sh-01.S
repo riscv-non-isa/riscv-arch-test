@@ -15,11 +15,11 @@ RVTEST_CASE(0,"//check ISA:=regex(.*32.*);check ISA:=regex(.*I.*); check hw_data
 
 RVTEST_CASE(1,"//check ISA:=regex(.*32.*);check ISA:=regex(.*I.*Zicsr.*); check hw_data_misaligned_support:=False; def rvtest_mtrap_routine=True;def TEST_CASE_1=True;",misalign-sh)
 
-la x1,signature_x1_1
+RVTEST_SIGBASE( x1,signature_x1_1)
 
 # ea_align == 1, 
-# opcode: sh; op1:x10; op2:x11; op2val:0xfffffffc; immval:512; align:1
-TEST_STORE(x1,x2,0,x10,x11,0xfffffffc,512,0,sh,1)
+# opcode: sh; op1:x10; op2:x11; op2val:0xfffffff6; immval:6; align:1
+TEST_STORE(x1,x2,0,x10,x11,0xfffffff6,6,0,sh,1)
 #endif
 
 

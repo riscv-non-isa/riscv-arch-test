@@ -15,16 +15,19 @@ RVTEST_CASE(0,"//check ISA:=regex(.*64.*);check ISA:=regex(.*I.*); check hw_data
 
 RVTEST_CASE(1,"//check ISA:=regex(.*64.*);check ISA:=regex(.*I.*Zicsr.*); check hw_data_misaligned_support:=False; def rvtest_mtrap_routine=True;def TEST_CASE_1=True;",misalign-lwu)
 
-la x1,signature_x1_1
+RVTEST_SIGBASE( x1,signature_x1_1)
 
-# opcode:lwu op1:x10; dest:x11; immval:-6; align:1
-TEST_LOAD(x1,x2,0,x10,x11,-6,0,lwu,1)
+# ea_align == 1, 
+# opcode:lwu op1:x10; dest:x11; immval:3; align:1
+TEST_LOAD(x1,x2,0,x10,x11,3,0,lwu,1)
 
-# opcode:lwu op1:x10; dest:x11; immval:8; align:2
-TEST_LOAD(x1,x2,0,x10,x11,8,8,lwu,2)
+# ea_align == 2, 
+# opcode:lwu op1:x10; dest:x11; immval:-65; align:2
+TEST_LOAD(x1,x2,0,x10,x11,-65,8,lwu,2)
 
-# opcode:lwu op1:x10; dest:x11; immval:-1025; align:3
-TEST_LOAD(x1,x2,0,x10,x11,-1025,16,lwu,3)
+# ea_align == 3, 
+# opcode:lwu op1:x10; dest:x11; immval:9; align:3
+TEST_LOAD(x1,x2,0,x10,x11,9,16,lwu,3)
 #endif
 
 
@@ -42,16 +45,23 @@ RVMODEL_DATA_BEGIN
 .align 4
 
 signature_x1_0:
-    .fill 0*(XLEN/32),4,0xafacadee
+    .fill 0*(XLEN/32),4,0xdeadbeef
 
 
 signature_x1_1:
-    .fill 3*(XLEN/32),4,0xafacadee
+    .fill 3*(XLEN/32),4,0xdeadbeef
 
 #ifdef rvtest_mtrap_routine
 
 mtrap_sigptr:
-    .fill 64*(XLEN/32),4,0xafacadee
+    .fill 64*(XLEN/32),4,0xdeadbeef
+
+#endif
+
+#ifdef rvtest_gpr_save
+
+gpr_save:
+    .fill 32*(XLEN/32),4,0xdeadbeef
 
 #endif
 

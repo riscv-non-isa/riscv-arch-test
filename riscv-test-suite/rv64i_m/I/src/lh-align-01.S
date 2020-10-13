@@ -13,110 +13,144 @@ RVTEST_CODE_BEGIN
 
 RVTEST_CASE(0,"//check ISA:=regex(.*64.*);check ISA:=regex(.*I.*);def TEST_CASE_1=True;",lh-align)
 
-la x10,signature_x10_1
+RVTEST_SIGBASE( x9,signature_x9_1)
 
-# opcode:lh op1:x2; dest:x2; immval:16; align:0
-TEST_LOAD(x10,x12,0,x2,x2,16,0,lh,0)
+# rs1 == rd, rs1==x18, rd==x18, ea_align == 0 and (imm_val % 4) == 0, imm_val < 0
+# opcode:lh op1:x18; dest:x18; immval:-4; align:0
+TEST_LOAD(x9,x11,0,x18,x18,-4,0,lh,0)
 
-# opcode:lh op1:x1; dest:x18; immval:1; align:0
-TEST_LOAD(x10,x12,0,x1,x18,1,8,lh,0)
+# rs1 != rd, rs1==x8, rd==x23, ea_align == 0 and (imm_val % 4) == 1, 
+# opcode:lh op1:x8; dest:x23; immval:-3; align:0
+TEST_LOAD(x9,x11,0,x8,x23,-3,8,lh,0)
 
-# opcode:lh op1:x26; dest:x3; immval:6; align:0
-TEST_LOAD(x10,x12,0,x26,x3,6,16,lh,0)
+# rs1==x5, rd==x7, ea_align == 0 and (imm_val % 4) == 2, 
+# opcode:lh op1:x5; dest:x7; immval:-1366; align:0
+TEST_LOAD(x9,x11,0,x5,x7,-1366,16,lh,0)
 
-# opcode:lh op1:x24; dest:x9; immval:-1; align:0
-TEST_LOAD(x10,x12,0,x24,x9,-1,24,lh,0)
+# rs1==x23, rd==x4, ea_align == 0 and (imm_val % 4) == 3, 
+# opcode:lh op1:x23; dest:x4; immval:-17; align:0
+TEST_LOAD(x9,x11,0,x23,x4,-17,24,lh,0)
 
-# opcode:lh op1:x28; dest:x29; immval:-4; align:2
-TEST_LOAD(x10,x12,0,x28,x29,-4,32,lh,2)
+# rs1==x10, rd==x22, ea_align == 2 and (imm_val % 4) == 0, imm_val > 0
+# opcode:lh op1:x10; dest:x22; immval:512; align:2
+TEST_LOAD(x9,x11,0,x10,x22,512,32,lh,2)
 
-# opcode:lh op1:x19; dest:x16; immval:0; align:0
-TEST_LOAD(x10,x12,0,x19,x16,0,40,lh,0)
+# rs1==x2, rd==x29, imm_val == 0, 
+# opcode:lh op1:x2; dest:x29; immval:0; align:0
+TEST_LOAD(x9,x11,0,x2,x29,0,40,lh,0)
 
-# opcode:lh op1:x30; dest:x11; immval:1365; align:2
-TEST_LOAD(x10,x12,0,x30,x11,1365,48,lh,2)
+# rs1==x20, rd==x12, ea_align == 2 and (imm_val % 4) == 1, 
+# opcode:lh op1:x20; dest:x12; immval:9; align:2
+TEST_LOAD(x9,x11,0,x20,x12,9,48,lh,2)
 
-# opcode:lh op1:x8; dest:x19; immval:-2; align:2
-TEST_LOAD(x10,x12,0,x8,x19,-2,56,lh,2)
+# rs1==x26, rd==x13, ea_align == 2 and (imm_val % 4) == 2, 
+# opcode:lh op1:x26; dest:x13; immval:-6; align:2
+TEST_LOAD(x9,x11,0,x26,x13,-6,56,lh,2)
 
-# opcode:lh op1:x29; dest:x23; immval:-257; align:2
-TEST_LOAD(x10,x12,0,x29,x23,-257,64,lh,2)
+# rs1==x19, rd==x30, ea_align == 2 and (imm_val % 4) == 3, 
+# opcode:lh op1:x19; dest:x30; immval:7; align:2
+TEST_LOAD(x9,x11,0,x19,x30,7,64,lh,2)
 
-# opcode:lh op1:x7; dest:x1; immval:-2048; align:0
-TEST_LOAD(x10,x12,0,x7,x1,-2048,72,lh,0)
+# rs1==x7, rd==x16, 
+# opcode:lh op1:x7; dest:x16; immval:-2048; align:0
+TEST_LOAD(x9,x11,0,x7,x16,-2048,72,lh,0)
 
-# opcode:lh op1:x18; dest:x26; immval:-2048; align:0
-TEST_LOAD(x10,x12,0,x18,x26,-2048,80,lh,0)
+# rs1==x27, rd==x5, 
+# opcode:lh op1:x27; dest:x5; immval:-2048; align:0
+TEST_LOAD(x9,x11,0,x27,x5,-2048,80,lh,0)
 
-# opcode:lh op1:x4; dest:x5; immval:-2048; align:0
-TEST_LOAD(x10,x12,0,x4,x5,-2048,88,lh,0)
+# rs1==x3, rd==x2, 
+# opcode:lh op1:x3; dest:x2; immval:-2048; align:0
+TEST_LOAD(x9,x11,0,x3,x2,-2048,88,lh,0)
 
-# opcode:lh op1:x14; dest:x15; immval:-2048; align:0
-TEST_LOAD(x10,x12,0,x14,x15,-2048,96,lh,0)
+# rs1==x1, rd==x26, 
+# opcode:lh op1:x1; dest:x26; immval:-2048; align:0
+TEST_LOAD(x9,x11,0,x1,x26,-2048,96,lh,0)
 
-# opcode:lh op1:x6; dest:x14; immval:-2048; align:0
-TEST_LOAD(x10,x12,0,x6,x14,-2048,104,lh,0)
+# rs1==x12, rd==x31, 
+# opcode:lh op1:x12; dest:x31; immval:-2048; align:0
+TEST_LOAD(x9,x11,0,x12,x31,-2048,104,lh,0)
 
-# opcode:lh op1:x25; dest:x13; immval:-2048; align:0
-TEST_LOAD(x10,x12,0,x25,x13,-2048,112,lh,0)
+# rs1==x4, rd==x28, 
+# opcode:lh op1:x4; dest:x28; immval:-2048; align:0
+TEST_LOAD(x9,x11,0,x4,x28,-2048,112,lh,0)
 
-# opcode:lh op1:x15; dest:x27; immval:-2048; align:0
-TEST_LOAD(x10,x12,0,x15,x27,-2048,120,lh,0)
+# rs1==x25, rd==x1, 
+# opcode:lh op1:x25; dest:x1; immval:-2048; align:0
+TEST_LOAD(x9,x11,0,x25,x1,-2048,120,lh,0)
 
-# opcode:lh op1:x20; dest:x21; immval:-2048; align:0
-TEST_LOAD(x10,x12,0,x20,x21,-2048,128,lh,0)
+# rs1==x24, rd==x27, 
+# opcode:lh op1:x24; dest:x27; immval:-2048; align:0
+TEST_LOAD(x9,x11,0,x24,x27,-2048,128,lh,0)
 
-# opcode:lh op1:x22; dest:x31; immval:-2048; align:0
-TEST_LOAD(x10,x12,0,x22,x31,-2048,136,lh,0)
-la x1,signature_x1_0
+# rs1==x17, rd==x25, 
+# opcode:lh op1:x17; dest:x25; immval:-2048; align:0
+TEST_LOAD(x9,x11,0,x17,x25,-2048,136,lh,0)
 
-# opcode:lh op1:x12; dest:x7; immval:-2048; align:0
-TEST_LOAD(x1,x14,0,x12,x7,-2048,0,lh,0)
+# rs1==x30, rd==x6, 
+# opcode:lh op1:x30; dest:x6; immval:-2048; align:0
+TEST_LOAD(x9,x11,0,x30,x6,-2048,144,lh,0)
 
-# opcode:lh op1:x5; dest:x20; immval:-2048; align:0
-TEST_LOAD(x1,x14,0,x5,x20,-2048,8,lh,0)
+# rs1==x16, rd==x15, 
+# opcode:lh op1:x16; dest:x15; immval:-2048; align:0
+TEST_LOAD(x9,x11,0,x16,x15,-2048,152,lh,0)
 
-# opcode:lh op1:x10; dest:x24; immval:-2048; align:0
-TEST_LOAD(x1,x14,0,x10,x24,-2048,16,lh,0)
+# rs1==x15, rd==x11, 
+# opcode:lh op1:x15; dest:x11; immval:-2048; align:0
+TEST_LOAD(x9,x2,0,x15,x11,-2048,160,lh,0)
+RVTEST_SIGBASE( x1,signature_x1_0)
 
-# opcode:lh op1:x27; dest:x8; immval:-2048; align:0
-TEST_LOAD(x1,x14,0,x27,x8,-2048,24,lh,0)
+# rs1==x22, rd==x0, 
+# opcode:lh op1:x22; dest:x0; immval:-2048; align:0
+TEST_LOAD(x1,x2,0,x22,x0,-2048,0,lh,0)
 
-# opcode:lh op1:x23; dest:x12; immval:-2048; align:0
-TEST_LOAD(x1,x14,0,x23,x12,-2048,32,lh,0)
+# rs1==x28, rd==x19, 
+# opcode:lh op1:x28; dest:x19; immval:-2048; align:0
+TEST_LOAD(x1,x2,0,x28,x19,-2048,8,lh,0)
 
-# opcode:lh op1:x3; dest:x22; immval:-2048; align:0
-TEST_LOAD(x1,x14,0,x3,x22,-2048,40,lh,0)
+# rs1==x31, rd==x20, 
+# opcode:lh op1:x31; dest:x20; immval:-2048; align:0
+TEST_LOAD(x1,x2,0,x31,x20,-2048,16,lh,0)
 
-# opcode:lh op1:x17; dest:x0; immval:-2048; align:0
-TEST_LOAD(x1,x14,0,x17,x0,-2048,48,lh,0)
+# rs1==x29, rd==x24, 
+# opcode:lh op1:x29; dest:x24; immval:-2048; align:0
+TEST_LOAD(x1,x2,0,x29,x24,-2048,24,lh,0)
 
-# opcode:lh op1:x9; dest:x6; immval:-2048; align:0
-TEST_LOAD(x1,x14,0,x9,x6,-2048,56,lh,0)
+# rs1==x6, rd==x17, 
+# opcode:lh op1:x6; dest:x17; immval:-2048; align:0
+TEST_LOAD(x1,x2,0,x6,x17,-2048,32,lh,0)
 
-# opcode:lh op1:x13; dest:x10; immval:-2048; align:0
-TEST_LOAD(x1,x14,0,x13,x10,-2048,64,lh,0)
+# rs1==x21, rd==x14, 
+# opcode:lh op1:x21; dest:x14; immval:-2048; align:0
+TEST_LOAD(x1,x2,0,x21,x14,-2048,40,lh,0)
 
-# opcode:lh op1:x31; dest:x30; immval:-2048; align:0
-TEST_LOAD(x1,x14,0,x31,x30,-2048,72,lh,0)
+# rs1==x11, rd==x8, 
+# opcode:lh op1:x11; dest:x8; immval:-2048; align:0
+TEST_LOAD(x1,x2,0,x11,x8,-2048,48,lh,0)
 
-# opcode:lh op1:x21; dest:x25; immval:-2048; align:0
-TEST_LOAD(x1,x14,0,x21,x25,-2048,80,lh,0)
+# rs1==x13, rd==x9, 
+# opcode:lh op1:x13; dest:x9; immval:-2048; align:0
+TEST_LOAD(x1,x2,0,x13,x9,-2048,56,lh,0)
 
-# opcode:lh op1:x11; dest:x4; immval:-2048; align:0
-TEST_LOAD(x1,x14,0,x11,x4,-2048,88,lh,0)
+# rs1==x9, rd==x3, 
+# opcode:lh op1:x9; dest:x3; immval:-2048; align:0
+TEST_LOAD(x1,x2,0,x9,x3,-2048,64,lh,0)
 
-# opcode:lh op1:x16; dest:x17; immval:-2048; align:0
-TEST_LOAD(x1,x14,0,x16,x17,-2048,96,lh,0)
+# rs1==x14, rd==x21, 
+# opcode:lh op1:x14; dest:x21; immval:-2048; align:0
+TEST_LOAD(x1,x2,0,x14,x21,-2048,72,lh,0)
 
-# opcode:lh op1:x2; dest:x28; immval:-2048; align:0
-TEST_LOAD(x1,x14,0,x2,x28,-2048,104,lh,0)
+# rd==x10, 
+# opcode:lh op1:x15; dest:x10; immval:-2048; align:0
+TEST_LOAD(x1,x2,0,x15,x10,-2048,80,lh,0)
 
-# opcode:lh op1:x10; dest:x11; immval:16; align:0
-TEST_LOAD(x1,x14,0,x10,x11,16,112,lh,0)
+# ea_align == 0 and (imm_val % 4) == 0, imm_val < 0
+# opcode:lh op1:x10; dest:x11; immval:-4; align:0
+TEST_LOAD(x1,x2,0,x10,x11,-4,88,lh,0)
 
+# 
 # opcode:lh op1:x10; dest:x11; immval:-2048; align:0
-TEST_LOAD(x1,x14,0,x10,x11,-2048,120,lh,0)
+TEST_LOAD(x1,x2,0,x10,x11,-2048,96,lh,0)
 #endif
 
 
@@ -133,21 +167,28 @@ RVTEST_DATA_END
 RVMODEL_DATA_BEGIN
 .align 4
 
-signature_x10_0:
-    .fill 0*(XLEN/32),4,0xafacadee
+signature_x9_0:
+    .fill 0*(XLEN/32),4,0xdeadbeef
 
 
-signature_x10_1:
-    .fill 18*(XLEN/32),4,0xafacadee
+signature_x9_1:
+    .fill 21*(XLEN/32),4,0xdeadbeef
 
 
 signature_x1_0:
-    .fill 16*(XLEN/32),4,0xafacadee
+    .fill 13*(XLEN/32),4,0xdeadbeef
 
 #ifdef rvtest_mtrap_routine
 
 mtrap_sigptr:
-    .fill 64*(XLEN/32),4,0xafacadee
+    .fill 64*(XLEN/32),4,0xdeadbeef
+
+#endif
+
+#ifdef rvtest_gpr_save
+
+gpr_save:
+    .fill 32*(XLEN/32),4,0xdeadbeef
 
 #endif
 

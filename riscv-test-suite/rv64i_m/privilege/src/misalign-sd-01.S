@@ -15,28 +15,35 @@ RVTEST_CASE(0,"//check ISA:=regex(.*64.*);check ISA:=regex(.*I.*); check hw_data
 
 RVTEST_CASE(1,"//check ISA:=regex(.*64.*);check ISA:=regex(.*I.*Zicsr.*); check hw_data_misaligned_support:=False; def rvtest_mtrap_routine=True;def TEST_CASE_1=True;",misalign-sd)
 
-la x1,signature_x1_1
+RVTEST_SIGBASE( x1,signature_x1_1)
 
-# opcode: sd; op1:x10; op2:x11; op2val:0x0000000000000005; immval: 64; align:1
-TEST_STORE(x1,x2,0,x10,x11,0x0000000000000005,64,0,sd,1)
+# ea_align == 1, 
+# opcode: sd; op1:x10; op2:x11; op2val:0xffffffffdfffffff; immval:-257; align:1
+TEST_STORE(x1,x2,0,x10,x11,0xffffffffdfffffff,-257,0,sd,1)
 
-# opcode: sd; op1:x10; op2:x11; op2val:0xfffffffffff7ffff; immval: 7; align:2
-TEST_STORE(x1,x2,0,x10,x11,0xfffffffffff7ffff,7,8,sd,2)
+# ea_align == 2, 
+# opcode: sd; op1:x10; op2:x11; op2val:0xfffffffffffff7ff; immval:2047; align:2
+TEST_STORE(x1,x2,0,x10,x11,0xfffffffffffff7ff,2047,8,sd,2)
 
-# opcode: sd; op1:x10; op2:x11; op2val:0x0000000000200000; immval: 5; align:3
-TEST_STORE(x1,x2,0,x10,x11,0x0000000000200000,5,16,sd,3)
+# ea_align == 3, 
+# opcode: sd; op1:x10; op2:x11; op2val:0xffffffffffffffff; immval:-129; align:3
+TEST_STORE(x1,x2,0,x10,x11,0xffffffffffffffff,-129,16,sd,3)
 
-# opcode: sd; op1:x10; op2:x11; op2val:0xffffffffffffbfff; immval: -9; align:4
-TEST_STORE(x1,x2,0,x10,x11,0xffffffffffffbfff,-9,24,sd,4)
+# ea_align == 4, 
+# opcode: sd; op1:x10; op2:x11; op2val:0xfffffffffffffeff; immval:-17; align:4
+TEST_STORE(x1,x2,0,x10,x11,0xfffffffffffffeff,-17,24,sd,4)
 
-# opcode: sd; op1:x10; op2:x11; op2val:0xfeffffffffffffff; immval: 1; align:5
-TEST_STORE(x1,x2,0,x10,x11,0xfeffffffffffffff,1,32,sd,5)
+# ea_align == 5, 
+# opcode: sd; op1:x10; op2:x11; op2val:0xfffffffffffffffe; immval:6; align:5
+TEST_STORE(x1,x2,0,x10,x11,0xfffffffffffffffe,6,32,sd,5)
 
-# opcode: sd; op1:x10; op2:x11; op2val:0x0000000000002000; immval: -8; align:6
-TEST_STORE(x1,x2,0,x10,x11,0x0000000000002000,-8,40,sd,6)
+# ea_align == 6, 
+# opcode: sd; op1:x10; op2:x11; op2val:0xfffffffffffffdff; immval:8; align:6
+TEST_STORE(x1,x2,0,x10,x11,0xfffffffffffffdff,8,40,sd,6)
 
-# opcode: sd; op1:x10; op2:x11; op2val:0xffffffffffffffbf; immval: -8; align:7
-TEST_STORE(x1,x2,0,x10,x11,0xffffffffffffffbf,-8,48,sd,7)
+# ea_align == 7, 
+# opcode: sd; op1:x10; op2:x11; op2val:0x0200000000000000; immval:2047; align:7
+TEST_STORE(x1,x2,0,x10,x11,0x0200000000000000,2047,48,sd,7)
 #endif
 
 
@@ -54,16 +61,23 @@ RVMODEL_DATA_BEGIN
 .align 4
 
 signature_x1_0:
-    .fill 0*(XLEN/32),4,0xafacadee
+    .fill 0*(XLEN/32),4,0xdeadbeef
 
 
 signature_x1_1:
-    .fill 7*(XLEN/32),4,0xafacadee
+    .fill 7*(XLEN/32),4,0xdeadbeef
 
 #ifdef rvtest_mtrap_routine
 
 mtrap_sigptr:
-    .fill 64*(XLEN/32),4,0xafacadee
+    .fill 64*(XLEN/32),4,0xdeadbeef
+
+#endif
+
+#ifdef rvtest_gpr_save
+
+gpr_save:
+    .fill 32*(XLEN/32),4,0xdeadbeef
 
 #endif
 

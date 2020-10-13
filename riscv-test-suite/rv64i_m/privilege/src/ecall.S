@@ -22,6 +22,8 @@ RVTEST_CODE_BEGIN
     
     li      x2, 0x11111111
     ecall
+    nop
+    nop
     sw      x0, 0(x1)
     sw      x2, 4(x1)
     
@@ -33,9 +35,9 @@ RVTEST_CODE_BEGIN
 
  # ---------------------------------------------------------------------------------------------
     # HALT
-    RVMODEL_HALT
 
 RVTEST_CODE_END
+RVMODEL_HALT
 
 RVTEST_DATA_BEGIN
 # Input data section.
@@ -48,9 +50,14 @@ RVMODEL_DATA_BEGIN
     .align 4
 
 test_A_res:
-    .fill 2, 4, 0xafacadee
+    .fill 2, 4, 0xdeadbeef
 
 mtrap_sigptr:
-  .fill 4, 4, 0xdeaddead
+  .fill 4, 4, 0xdeadbeef
+
+#ifdef rvtest_gpr_save
+gpr_save:
+  .fill 32*(XLEN/32), 4, 0xdeadbeef
+#endif
 
 RVMODEL_DATA_END

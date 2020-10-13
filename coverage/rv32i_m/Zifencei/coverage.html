@@ -253,7 +253,7 @@ function is_all_rows_hidden(value) {
 
 </script>
     <h1></h1>
-    <p>Report generated on 2020-10-11 10:43 GMT by <a href="https://pypi.python.org/pypi/riscof">riscof</a> v1.16.0</p>
+    <p>Report generated on 2020-10-13 05:04 GMT by <a href="https://pypi.python.org/pypi/riscof">riscof</a> v1.16.0</p>
     <h2>Environment</h2>
     <table id="environment">
       <tr>
@@ -296,8 +296,8 @@ hart0:
         rv32:
             accessible: true
             fields:
-              - extensions
               - mxl
+              - extensions
               -
                   -
                       - 26
@@ -326,23 +326,23 @@ hart0:
         rv32:
             accessible: true
             fields:
+              - spp
+              - mie
+              - mpie
+              - sie
+              - mprv
+              - tw
+              - uie
+              - spie
+              - mpp
+              - mxr
               - upie
+              - sum
+              - tsr
+              - xs
+              - sd
               - tvm
               - fs
-              - mie
-              - mpp
-              - sie
-              - spp
-              - mxr
-              - uie
-              - tsr
-              - mprv
-              - mpie
-              - tw
-              - xs
-              - sum
-              - sd
-              - spie
               -
                   -
                       - 2
@@ -579,15 +579,15 @@ hart0:
         rv32:
             accessible: true
             fields:
-              - usip
-              - utip
-              - mtip
-              - meip
-              - stip
-              - ueip
               - seip
-              - ssip
+              - stip
               - msip
+              - utip
+              - ssip
+              - meip
+              - ueip
+              - usip
+              - mtip
               -
                   -
                       - 2
@@ -669,15 +669,15 @@ hart0:
         rv32:
             accessible: true
             fields:
-              - usie
-              - meie
-              - msie
-              - ssie
-              - ueie
               - seie
+              - msie
               - stie
+              - ssie
+              - meie
+              - ueie
               - utie
               - mtie
+              - usie
               -
                   -
                       - 2
@@ -855,10 +855,10 @@ hart0:
         rv32:
             accessible: true
             fields:
-              - pmp1cfg
-              - pmp3cfg
-              - pmp2cfg
               - pmp0cfg
+              - pmp3cfg
+              - pmp1cfg
+              - pmp2cfg
             pmp0cfg:
                 implemented: true
                 description: pmp configuration bits
@@ -902,9 +902,9 @@ hart0:
             accessible: true
             fields:
               - pmp5cfg
+              - pmp6cfg
               - pmp7cfg
               - pmp4cfg
-              - pmp6cfg
             pmp4cfg:
                 implemented: true
                 description: pmp configuration bits
@@ -943,10 +943,10 @@ hart0:
         rv32:
             accessible: true
             fields:
-              - pmp8cfg
-              - pmp11cfg
               - pmp10cfg
               - pmp9cfg
+              - pmp8cfg
+              - pmp11cfg
             pmp8cfg:
                 implemented: true
                 description: pmp configuration bits
@@ -985,9 +985,9 @@ hart0:
         rv32:
             accessible: true
             fields:
-              - pmp12cfg
-              - pmp14cfg
               - pmp13cfg
+              - pmp14cfg
+              - pmp12cfg
               - pmp15cfg
             pmp12cfg:
                 implemented: true
@@ -1027,10 +1027,10 @@ hart0:
         rv32:
             accessible: true
             fields:
+              - pmp19cfg
+              - pmp16cfg
               - pmp18cfg
               - pmp17cfg
-              - pmp16cfg
-              - pmp19cfg
             pmp16cfg:
                 implemented: true
                 description: pmp configuration bits
@@ -1069,10 +1069,10 @@ hart0:
         rv32:
             accessible: true
             fields:
-              - pmp20cfg
-              - pmp23cfg
               - pmp22cfg
+              - pmp23cfg
               - pmp21cfg
+              - pmp20cfg
             pmp20cfg:
                 implemented: true
                 description: pmp configuration bits
@@ -1153,8 +1153,8 @@ hart0:
         rv32:
             accessible: true
             fields:
-              - pmp30cfg
               - pmp29cfg
+              - pmp30cfg
               - pmp28cfg
               - pmp31cfg
             pmp28cfg:
@@ -1195,10 +1195,10 @@ hart0:
         rv32:
             accessible: true
             fields:
-              - pmp34cfg
-              - pmp32cfg
-              - pmp35cfg
               - pmp33cfg
+              - pmp34cfg
+              - pmp35cfg
+              - pmp32cfg
             pmp32cfg:
                 implemented: true
                 description: pmp configuration bits
@@ -1238,8 +1238,8 @@ hart0:
             accessible: true
             fields:
               - pmp38cfg
-              - pmp36cfg
               - pmp39cfg
+              - pmp36cfg
               - pmp37cfg
             pmp36cfg:
                 implemented: true
@@ -1279,10 +1279,10 @@ hart0:
         rv32:
             accessible: true
             fields:
-              - pmp40cfg
+              - pmp43cfg
               - pmp42cfg
               - pmp41cfg
-              - pmp43cfg
+              - pmp40cfg
             pmp40cfg:
                 implemented: true
                 description: pmp configuration bits
@@ -1323,8 +1323,8 @@ hart0:
             fields:
               - pmp46cfg
               - pmp47cfg
-              - pmp44cfg
               - pmp45cfg
+              - pmp44cfg
             pmp44cfg:
                 implemented: true
                 description: pmp configuration bits
@@ -1363,10 +1363,10 @@ hart0:
         rv32:
             accessible: true
             fields:
-              - pmp48cfg
-              - pmp50cfg
               - pmp51cfg
               - pmp49cfg
+              - pmp48cfg
+              - pmp50cfg
             pmp48cfg:
                 implemented: true
                 description: pmp configuration bits
@@ -1405,9 +1405,9 @@ hart0:
         rv32:
             accessible: true
             fields:
-              - pmp52cfg
               - pmp53cfg
               - pmp55cfg
+              - pmp52cfg
               - pmp54cfg
             pmp52cfg:
                 implemented: true
@@ -1447,10 +1447,10 @@ hart0:
         rv32:
             accessible: true
             fields:
-              - pmp56cfg
-              - pmp59cfg
               - pmp57cfg
               - pmp58cfg
+              - pmp56cfg
+              - pmp59cfg
             pmp56cfg:
                 implemented: true
                 description: pmp configuration bits
@@ -1490,9 +1490,9 @@ hart0:
             accessible: true
             fields:
               - pmp61cfg
-              - pmp63cfg
-              - pmp60cfg
               - pmp62cfg
+              - pmp60cfg
+              - pmp63cfg
             pmp60cfg:
                 implemented: true
                 description: pmp configuration bits

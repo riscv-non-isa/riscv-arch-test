@@ -13,15 +13,15 @@ RVTEST_CODE_BEGIN
 
 RVTEST_CASE(0,"//check ISA:=regex(.*32.*);check ISA:=regex(.*RV32.*I.*C.*);def TEST_CASE_1=True;",cjal)
 
-la x2,signature_x2_1
+RVTEST_SIGBASE( x2,signature_x2_1)
 
 # imm_val > 0, imm_val == 512
 # opcode:c.jal; immval:512
 TEST_CJAL_OP(c.jal, x3, 512, 3f, x2, 0)
 
-# imm_val < 0, imm_val == -130
-# opcode:c.jal; immval:130
-TEST_CJAL_OP(c.jal, x3, 130, 1b, x2, 4)
+# imm_val < 0, imm_val == -258
+# opcode:c.jal; immval:258
+TEST_CJAL_OP(c.jal, x3, 258, 1b, x2, 4)
 
 # imm_val == 16, 
 # opcode:c.jal; immval:16
@@ -75,9 +75,9 @@ TEST_CJAL_OP(c.jal, x3, 34, 1b, x2, 52)
 # opcode:c.jal; immval:66
 TEST_CJAL_OP(c.jal, x3, 66, 1b, x2, 56)
 
-# imm_val == -258, 
-# opcode:c.jal; immval:258
-TEST_CJAL_OP(c.jal, x3, 258, 1b, x2, 60)
+# imm_val == -130, 
+# opcode:c.jal; immval:130
+TEST_CJAL_OP(c.jal, x3, 130, 1b, x2, 60)
 
 # imm_val == -514, 
 # opcode:c.jal; immval:514

@@ -15,19 +15,19 @@ RVTEST_CASE(0,"//check ISA:=regex(.*32.*);check ISA:=regex(.*I.*); check hw_data
 
 RVTEST_CASE(1,"//check ISA:=regex(.*32.*);check ISA:=regex(.*I.*Zicsr.*); check hw_data_misaligned_support:=False; def rvtest_mtrap_routine=True;def TEST_CASE_1=True;",misalign-lw)
 
-la x1,signature_x1_1
+RVTEST_SIGBASE( x1,signature_x1_1)
 
 # ea_align == 1, 
-# opcode:lw op1:x10; dest:x11; immval:1023; align:1
-TEST_LOAD(x1,x2,0,x10,x11,1023,0,lw,1)
+# opcode:lw op1:x10; dest:x11; immval:2; align:1
+TEST_LOAD(x1,x2,0,x10,x11,2,0,lw,1)
 
 # ea_align == 2, 
-# opcode:lw op1:x10; dest:x11; immval:-1; align:2
-TEST_LOAD(x1,x2,0,x10,x11,-1,4,lw,2)
+# opcode:lw op1:x10; dest:x11; immval:128; align:2
+TEST_LOAD(x1,x2,0,x10,x11,128,4,lw,2)
 
 # ea_align == 3, 
-# opcode:lw op1:x10; dest:x11; immval:64; align:3
-TEST_LOAD(x1,x2,0,x10,x11,64,8,lw,3)
+# opcode:lw op1:x10; dest:x11; immval:2; align:3
+TEST_LOAD(x1,x2,0,x10,x11,2,8,lw,3)
 #endif
 
 
