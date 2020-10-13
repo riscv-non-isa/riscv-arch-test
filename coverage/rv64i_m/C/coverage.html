@@ -253,7 +253,7 @@ function is_all_rows_hidden(value) {
 
 </script>
     <h1></h1>
-    <p>Report generated on 2020-10-13 05:11 GMT by <a href="https://pypi.python.org/pypi/riscof">riscof</a> v1.16.0</p>
+    <p>Report generated on 2020-10-13 09:59 GMT by <a href="https://pypi.python.org/pypi/riscof">riscof</a> v1.16.0</p>
     <h2>Environment</h2>
     <table id="environment">
       <tr>
@@ -328,25 +328,25 @@ hart0:
         rv64:
             accessible: true
             fields:
-              - upie
-              - spie
-              - sxl
-              - tsr
-              - tw
-              - spp
               - mpp
-              - tvm
-              - uie
-              - mprv
-              - sie
-              - xs
-              - sd
-              - mxr
-              - sum
-              - uxl
               - mpie
-              - fs
+              - spie
+              - sie
               - mie
+              - sum
+              - tw
+              - mxr
+              - sd
+              - mprv
+              - upie
+              - uie
+              - fs
+              - sxl
+              - tvm
+              - xs
+              - uxl
+              - spp
+              - tsr
               -
                   -
                       - 2
@@ -609,15 +609,15 @@ hart0:
         rv64:
             accessible: true
             fields:
-              - usip
-              - msip
-              - ueip
               - utip
-              - seip
+              - msip
               - meip
-              - stip
               - ssip
               - mtip
+              - usip
+              - seip
+              - stip
+              - ueip
               -
                   -
                       - 2
@@ -699,15 +699,15 @@ hart0:
         rv64:
             accessible: true
             fields:
-              - seie
+              - msie
               - meie
               - ssie
-              - usie
-              - mtie
-              - msie
-              - ueie
               - utie
+              - mtie
               - stie
+              - usie
+              - seie
+              - ueie
               -
                   -
                       - 2
@@ -856,8 +856,8 @@ hart0:
         rv64:
             accessible: true
             fields:
-              - exception_code
               - interrupt
+              - exception_code
             interrupt:
                 implemented: true
                 description: Indicates whether the trap was due to an interrupt.
@@ -886,14 +886,14 @@ hart0:
         rv64:
             accessible: true
             fields:
-              - pmp6cfg
-              - pmp3cfg
-              - pmp7cfg
               - pmp2cfg
               - pmp1cfg
+              - pmp3cfg
               - pmp4cfg
-              - pmp5cfg
               - pmp0cfg
+              - pmp6cfg
+              - pmp7cfg
+              - pmp5cfg
             pmp0cfg:
                 implemented: true
                 description: pmp configuration bits
@@ -977,13 +977,13 @@ hart0:
         rv64:
             accessible: true
             fields:
-              - pmp13cfg
-              - pmp8cfg
-              - pmp12cfg
-              - pmp14cfg
-              - pmp9cfg
-              - pmp11cfg
               - pmp10cfg
+              - pmp13cfg
+              - pmp14cfg
+              - pmp12cfg
+              - pmp11cfg
+              - pmp9cfg
+              - pmp8cfg
               - pmp15cfg
             pmp8cfg:
                 implemented: true
@@ -1060,14 +1060,14 @@ hart0:
         rv64:
             accessible: true
             fields:
-              - pmp18cfg
               - pmp22cfg
               - pmp17cfg
-              - pmp21cfg
-              - pmp20cfg
               - pmp16cfg
+              - pmp20cfg
               - pmp23cfg
+              - pmp18cfg
               - pmp19cfg
+              - pmp21cfg
             pmp16cfg:
                 implemented: true
                 description: pmp configuration bits
@@ -1143,14 +1143,14 @@ hart0:
         rv64:
             accessible: true
             fields:
-              - pmp28cfg
-              - pmp25cfg
-              - pmp26cfg
-              - pmp29cfg
-              - pmp30cfg
               - pmp31cfg
-              - pmp24cfg
+              - pmp26cfg
               - pmp27cfg
+              - pmp25cfg
+              - pmp29cfg
+              - pmp24cfg
+              - pmp30cfg
+              - pmp28cfg
             pmp24cfg:
                 implemented: true
                 description: pmp configuration bits
@@ -1226,14 +1226,14 @@ hart0:
         rv64:
             accessible: true
             fields:
+              - pmp39cfg
+              - pmp33cfg
+              - pmp38cfg
+              - pmp34cfg
+              - pmp37cfg
+              - pmp32cfg
               - pmp35cfg
               - pmp36cfg
-              - pmp38cfg
-              - pmp39cfg
-              - pmp37cfg
-              - pmp33cfg
-              - pmp34cfg
-              - pmp32cfg
             pmp32cfg:
                 implemented: true
                 description: pmp configuration bits
@@ -1309,14 +1309,14 @@ hart0:
         rv64:
             accessible: true
             fields:
-              - pmp44cfg
-              - pmp40cfg
-              - pmp41cfg
-              - pmp45cfg
-              - pmp46cfg
               - pmp43cfg
-              - pmp47cfg
+              - pmp46cfg
+              - pmp41cfg
               - pmp42cfg
+              - pmp40cfg
+              - pmp45cfg
+              - pmp47cfg
+              - pmp44cfg
             pmp40cfg:
                 implemented: true
                 description: pmp configuration bits
@@ -1392,14 +1392,14 @@ hart0:
         rv64:
             accessible: true
             fields:
-              - pmp49cfg
-              - pmp51cfg
-              - pmp53cfg
               - pmp54cfg
-              - pmp48cfg
-              - pmp55cfg
-              - pmp50cfg
               - pmp52cfg
+              - pmp48cfg
+              - pmp50cfg
+              - pmp53cfg
+              - pmp51cfg
+              - pmp55cfg
+              - pmp49cfg
             pmp48cfg:
                 implemented: true
                 description: pmp configuration bits
@@ -1475,14 +1475,14 @@ hart0:
         rv64:
             accessible: true
             fields:
+              - pmp56cfg
+              - pmp61cfg
+              - pmp63cfg
+              - pmp59cfg
+              - pmp58cfg
+              - pmp57cfg
               - pmp60cfg
               - pmp62cfg
-              - pmp58cfg
-              - pmp63cfg
-              - pmp56cfg
-              - pmp59cfg
-              - pmp61cfg
-              - pmp57cfg
             pmp56cfg:
                 implemented: true
                 description: pmp configuration bits
@@ -2879,6 +2879,16 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
+          <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv64i_m/C/src/cebreak-01.S</td>
+          <td class="col-tfprint">6688</td>          
+          <td class="col-tcode">40</td>          
+          <td class="col-tdata">112</td>          
+          <td class="col-tsign">280</td>          
+          <td class="col-tcov">{'cebreak'}</td>          
+        </tr></tbody>
+        
+        <tbody class= "  sizes-table-row" >
+        <tr>
           <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv64i_m/C/src/cj-01.S</td>
           <td class="col-tfprint">12434</td>          
           <td class="col-tcode">7124</td>          
@@ -3101,7 +3111,7 @@ stval_condition_writes:
 
     </sizes-table-body>
     <results-table-body>
-    <h2>Coverage Report ( Total Coverpoints: 4811 )</h2>
+    <h2>Coverage Report ( Total Coverpoints: 4812 )</h2>
     <table id="results-table">
       <thead id="results-table-head">
         <tr>
@@ -3110,6 +3120,25 @@ stval_condition_writes:
           <th class="sortable numeric initial-sort" col="percentage">Percentage</th>
           </tr>
         </thead>
+        
+        <tbody class= "  results-table-row" >
+        <tr>
+          <td class="col-name">cebreak</td>
+          <td class="col-result">1/1</td>
+          <td class="col-percentage">100.00%
+            <div class="meter">
+              <span style="width: 100.00%"></span>
+            </div>
+          </td>          
+        <tr>
+          <td class="extra" colspan="2">
+          <div class="log">coverage: 1/1
+opcode:
+     coverage: 1/1
+     detail:
+        - c.ebreak: 1
+</br></div></td>
+        </tr></tbody>
         
         <tbody class= "  results-table-row" >
         <tr>
