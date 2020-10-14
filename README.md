@@ -22,8 +22,6 @@ In general:
 
 The files [`COPYING.BSD`](./COPYING.BSD) and [`COPYING.CC`](./COPYING.CC) in the top level directory contain the complete text of these licenses.
 
-The riscv-ovpsim simulator is licensed under an Imperas license. There is no dependency on this and it is included as a convenience to users.
-
 ## Engineering practice
 
 - Documentation uses the structured text format _AsciiDoc_.  See [`doc/README.adoc`](doc/README.adoc) for more details.
@@ -45,19 +43,25 @@ For the toolchain, the binaries must be in the search path and the compiler pref
 
 The path to the RUN_TARGET is defined within the riscv-target Makefile.include.
 
-To run the rv32i test suite on riscvOVPsim
+To run the rv32i test suite on riscvOVPsim after cloning riscvOVPsim from its repo [github.com/riscv-ovpsim](https://github.com/riscv-ovpsim/imperas-riscv-tests) :
 
     make RISCV_TARGET=riscvOVPsim RISCV_DEVICE=rv32i
 
 ### Accessing riscvOVPsim
 
-As we create the RISCV.org compliance test suite, the Imperas developed _riscvOVPsim_ compliance simulator is included as part of this GitHub repository. For more information please contact info@ovpworld.org or info@imperas.com.
+**riscvOVPsim** was created by Imperas in 2018 to assist in the development of compliance tests and to provide a free, high quality, configurable reference simulator of the RISC-V specifications. 
 
-For more information on riscvOVPsim look here: [riscv-ovpsim/README.md](riscv-ovpsim/README.md) and here: [riscv-ovpsim/doc/riscvOVPsim_User_Guide.pdf](riscv-ovpsim/doc/riscvOVPsim_User_Guide.pdf).
+It was provided in this repository as a convenience. It has now evolved and has been enchanced and moved to its own repository.
+
+There are now two flavors: _riscvOVPsim_ from [github.com/riscv-ovpsim](https://github.com/riscv-ovpsim/imperas-riscv-tests) which is useful for running compliance tests and generating the required signatures, and _riscvOVPsimPlus_ from [ovpworld.org/riscv-ovpsim-plus](https://www.ovpworld.org/riscv-ovpsim-plus) which is used for test development and verification. 
+
+Please contact info@ovpworld.org or info@imperas.com for more information.
+
+For details on riscvOVPsim look here: [github.com/riscv-ovpsim](https://github.com/riscv-ovpsim/imperas-riscv-tests) and here: [riscv-ovpsim/doc/riscvOVPsim_User_Guide.pdf](https://github.com/riscv-ovpsim/imperas-riscv-tests/blob/main/riscv-ovpsim/doc/riscvOVPsim_User_Guide.pdf).
 
 ### Running Instruction Functional Coverage with riscvOVPsim
 
-As you develop tests you can measure their coverage with the built-in features of riscvOVPsim. Please see chapter 9 in the [riscv-ovpsim/doc/riscvOVPsim_User_Guide.pdf](riscv-ovpsim/doc/riscvOVPsim_User_Guide.pdf) for full details.
+As you develop tests you can measure their coverage with the built-in features of riscvOVPsim. Please see chapter 7 in the [riscv-ovpsim/doc/riscvOVPsim_User_Guide.pdf](https://github.com/riscv-ovpsim/imperas-riscv-tests/blob/main/riscv-ovpsim/doc/riscvOVPsim_User_Guide.pdf) for full details.
 
 To run basic coverage on a suite:
 
