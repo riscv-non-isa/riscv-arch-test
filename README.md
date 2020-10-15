@@ -43,7 +43,10 @@ For the toolchain, the binaries must be in the search path and the compiler pref
 
 The path to the RUN_TARGET is defined within the riscv-target Makefile.include.
 
-To run the rv32i test suite on riscvOVPsim after cloning riscvOVPsim from its repo [github.com/riscv-ovpsim](https://github.com/riscv-ovpsim/imperas-riscv-tests) :
+To run the rv32i test suite on riscvOVPsim you must first download riscvOVPsim, and install in a directory parallel to riscv-compliance
+Simply clone [github.com/riscv-ovpsim](https://github.com/riscv-ovpsim/imperas-riscv-tests)
+Set the environment variable TARGET_SIM to point to the executable <install-dir>riscv-ovpsim/bin/Linux64/riscvOVPsim.exe
+Now run the command
 
     make RISCV_TARGET=riscvOVPsim RISCV_DEVICE=rv32i
 
