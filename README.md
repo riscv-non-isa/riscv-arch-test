@@ -51,7 +51,7 @@ To run the rv32i test suite on riscvOVPsim after cloning riscvOVPsim from its re
 
 **riscvOVPsim** was created by Imperas in 2018 to assist in the development of compliance tests and to provide a free, high quality, configurable reference simulator of the RISC-V specifications. 
 
-It was provided in this repository as a convenience. It has now evolved and has been enchanced and moved to its own repository.
+It was provided in this repository as a convenience. It has now evolved and has been enhanced and moved to its own repository.
 
 There are now two flavors: _riscvOVPsim_ from [github.com/riscv-ovpsim](https://github.com/riscv-ovpsim/imperas-riscv-tests) which is useful for running compliance tests and generating the required signatures, and _riscvOVPsimPlus_ from [ovpworld.org/riscv-ovpsim-plus](https://www.ovpworld.org/riscv-ovpsim-plus) which is used for test development and verification. 
 
