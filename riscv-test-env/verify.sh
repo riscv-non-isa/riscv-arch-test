@@ -8,7 +8,7 @@ for ref in ${SUITEDIR}/references/*.reference_output;
 do 
     base=$(basename ${ref})
     stub=${base//".reference_output"/}
-    sig=${WORK}/rv${XLEN}i_m/${RISCV_ISA}/${stub}.signature.output
+    sig=${WORK}/rv${XLEN}i_m/${RISCV_DEVICE}/${stub}.signature.output
 
     RUN=$((${RUN} + 1))
     
@@ -32,7 +32,7 @@ do
 done
 
 # warn on missing reverse reference
-for sig in ${WORK}/rv${XLEN}i_m/${RISCV_ISA}/*.signature.output; 
+for sig in ${WORK}/rv${XLEN}i_m/${RISCV_DEVICE}/*.signature.output; 
 do
     base=$(basename ${sig})
     stub=${base//".signature.output"/}
@@ -54,6 +54,6 @@ else
     echo -n "FAIL: ${FAIL}/${RUN} "
     status=1
 fi
-echo "RISCV_TARGET=${RISCV_TARGET} RISCV_DEVICE=${RISCV_DEVICE} RISCV_ISA=${RISCV_ISA}"
+echo "RISCV_TARGET=${RISCV_TARGET} RISCV_DEVICE=${RISCV_DEVICE}"
 echo
 exit ${status}
