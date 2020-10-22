@@ -21,6 +21,7 @@
   #define SREG sd
   #define LREG ld
   #define REGWIDTH 8
+  #define MASK 0xFFFFFFFFFFFFFFFF
   #define LI(reg,val)\
       li reg,val;
 /*        lui reg, val>>44;\
@@ -44,6 +45,7 @@
     #define SREG sw
     #define LREG lw
     #define REGWIDTH 4
+  #define MASK 0xFFFFFFFF
     #define LI(reg, val)\
         li reg,val;
 /*        lui reg,(val>>12);\
@@ -76,37 +78,37 @@
   jalr ra, x1
   rvtest_prolog_done:
 #endif
-    addi x1, x0, 0
-    addi x2, x0, 0
-    addi x3, x0, 0
-    addi x4, x0, 0
-    addi x5, x0, 0
-    addi x6, x0, 0
-    addi x7, x0, 0
-    addi x8, x0, 0
-    addi x9, x0, 0
-    addi x10, x0, 0
-    addi x11, x0, 0
-    addi x12, x0, 0
-    addi x13, x0, 0
-    addi x14, x0, 0
-    addi x15, x0, 0
-    addi x16, x0, 0
-    addi x17, x0, 0
-    addi x18, x0, 0
-    addi x19, x0, 0
-    addi x20, x0, 0
-    addi x21, x0, 0
-    addi x22, x0, 0
-    addi x23, x0, 0
-    addi x24, x0, 0
-    addi x25, x0, 0
-    addi x26, x0, 0
-    addi x27, x0, 0
-    addi x28, x0, 0
-    addi x29, x0, 0
-    addi x30, x0, 0
-    addi x31, x0, 0
+    li x1,  (0xFEEDBEADFEEDBEAD & MASK)
+    li x2,  (0xFF76DF56FF76DF56 & MASK)
+    li x3,  (0x7FBB6FAB7FBB6FAB & MASK)
+    li x4,  (0xBFDDB7D5BFDDB7D5 & MASK)
+    la x5, rvtest_code_begin
+    la x6, rvtest_data_begin
+    li x7,  (0xB7FBB6FAB7FBB6FA & MASK)
+    li x8,  (0x5BFDDB7D5BFDDB7D & MASK)
+    li x9,  (0xADFEEDBEADFEEDBE & MASK)
+    li x10, (0x56FF76DF56FF76DF & MASK)
+    li x11, (0xAB7FBB6FAB7FBB6F & MASK)
+    li x12, (0xD5BFDDB7D5BFDDB7 & MASK)
+    li x13, (0xEADFEEDBEADFEEDB & MASK)
+    li x14, (0xF56FF76DF56FF76D & MASK)
+    li x15, (0xFAB7FBB6FAB7FBB6 & MASK)
+    li x16, (0x7D5BFDDB7D5BFDDB & MASK)
+    li x17, (0xBEADFEEDBEADFEED & MASK)
+    li x18, (0xDF56FF76DF56FF76 & MASK)
+    li x19, (0x6FAB7FBB6FAB7FBB & MASK)
+    li x20, (0xB7D5BFDDB7D5BFDD & MASK)
+    li x21, (0xDBEADFEEDBEADFEE & MASK)
+    li x22, (0x6DF56FF76DF56FF7 & MASK)
+    li x23, (0xB6FAB7FBB6FAB7FB & MASK)
+    li x24, (0xDB7D5BFDDB7D5BFD & MASK)
+    li x25, (0xEDBEADFEEDBEADFE & MASK)
+    li x26, (0x76DF56FF76DF56FF & MASK)
+    li x27, (0xBB6FAB7FBB6FAB7F & MASK)
+    li x28, (0xDDB7D5BFDDB7D5BF & MASK)
+    li x29, (0xEEDBEADFEEDBEADF & MASK)
+    li x30, (0xF76DF56FF76DF56F & MASK)
+    li x31, (0xFBB6FAB7FBB6FAB7 & MASK)
   .globl rvtest_code_begin
   rvtest_code_begin:
 .endm

@@ -13,280 +13,284 @@ RVTEST_CODE_BEGIN
 
 RVTEST_CASE(0,"//check ISA:=regex(.*32.*);check ISA:=regex(.*I.*);def TEST_CASE_1=True;",sw-align)
 
-RVTEST_SIGBASE( x5,signature_x5_1)
+RVTEST_SIGBASE( x17,signature_x17_1)
 
-# rs1 != rs2, rs1==x22, rs2==x29, ea_align == 0 and (imm_val % 4) == 0, rs2_val == -513, imm_val < 0
-# opcode: sw; op1:x22; op2:x29; op2val:0xfffffdff; immval:-2048; align:0
-TEST_STORE(x5,x3,0,x22,x29,0xfffffdff,-2048,0,sw,0)
+# rs1 != rs2, rs1==x5, rs2==x24, ea_align == 0 and (imm_val % 4) == 0, rs2_val == 2147483647, rs2_val == (2**(xlen-1)-1), imm_val > 0
+# opcode: sw; op1:x5; op2:x24; op2val:0x7fffffff; immval:8; align:0
+TEST_STORE(x17,x19,0,x5,x24,0x7fffffff,8,0,sw,0)
 
-# rs1==x28, rs2==x7, ea_align == 0 and (imm_val % 4) == 1, rs2_val == -1048577
-# opcode: sw; op1:x28; op2:x7; op2val:0xffefffff; immval:-7; align:0
-TEST_STORE(x5,x3,0,x28,x7,0xffefffff,-7,4,sw,0)
+# rs1==x3, rs2==x29, ea_align == 0 and (imm_val % 4) == 1, rs2_val == -3, imm_val < 0
+# opcode: sw; op1:x3; op2:x29; op2val:0xfffffffd; immval:-3; align:0
+TEST_STORE(x17,x19,0,x3,x29,0xfffffffd,-3,4,sw,0)
 
-# rs1==x30, rs2==x0, ea_align == 0 and (imm_val % 4) == 2, imm_val > 0, rs2_val == 1048576
-# opcode: sw; op1:x30; op2:x0; op2val:0x00100000; immval:6; align:0
-TEST_STORE(x5,x3,0,x30,x0,0x00100000,6,8,sw,0)
+# rs1==x14, rs2==x30, ea_align == 0 and (imm_val % 4) == 2, rs2_val == 268435456
+# opcode: sw; op1:x14; op2:x30; op2val:0x10000000; immval:-1366; align:0
+TEST_STORE(x17,x19,0,x14,x30,0x10000000,-1366,8,sw,0)
 
-# rs1==x16, rs2==x22, ea_align == 0 and (imm_val % 4) == 3, rs2_val == 131072
-# opcode: sw; op1:x16; op2:x22; op2val:0x00020000; immval:-5; align:0
-TEST_STORE(x5,x3,0,x16,x22,0x00020000,-5,12,sw,0)
+# rs1==x18, rs2==x4, ea_align == 0 and (imm_val % 4) == 3, 
+# opcode: sw; op1:x18; op2:x4; op2val:0x00000003; immval:-1025; align:0
+TEST_STORE(x17,x19,0,x18,x4,0x00000003,-1025,12,sw,0)
 
-# rs1==x2, rs2==x20, imm_val == 0, rs2_val == 33554432
-# opcode: sw; op1:x2; op2:x20; op2val:0x02000000; immval:0; align:0
-TEST_STORE(x5,x3,0,x2,x20,0x02000000,0,16,sw,0)
+# rs1==x11, rs2==x26, imm_val == 0, rs2_val == -524289
+# opcode: sw; op1:x11; op2:x26; op2val:0xfff7ffff; immval:0; align:0
+TEST_STORE(x17,x19,0,x11,x26,0xfff7ffff,0,16,sw,0)
 
-# rs1==x21, rs2==x9, rs2_val == (-2**(xlen-1)), rs2_val == -2147483648
-# opcode: sw; op1:x21; op2:x9; op2val:0x80000000; immval:2047; align:0
-TEST_STORE(x5,x3,0,x21,x9,0x80000000,2047,20,sw,0)
+# rs1==x15, rs2==x21, rs2_val == (-2**(xlen-1)), rs2_val == -2147483648
+# opcode: sw; op1:x15; op2:x21; op2val:0x80000000; immval:0; align:0
+TEST_STORE(x17,x19,0,x15,x21,0x80000000,0,20,sw,0)
 
-# rs1==x9, rs2==x14, rs2_val == 0, 
-# opcode: sw; op1:x9; op2:x14; op2val:0x00000000; immval:-33; align:0
-TEST_STORE(x5,x3,0,x9,x14,0x00000000,-33,24,sw,0)
+# rs1==x29, rs2==x3, rs2_val == 0, 
+# opcode: sw; op1:x29; op2:x3; op2val:0x00000000; immval:0; align:0
+TEST_STORE(x17,x19,0,x29,x3,0x00000000,0,24,sw,0)
 
-# rs1==x31, rs2==x19, rs2_val == (2**(xlen-1)-1), rs2_val == 2147483647
-# opcode: sw; op1:x31; op2:x19; op2val:0x7fffffff; immval:-65; align:0
-TEST_STORE(x5,x3,0,x31,x19,0x7fffffff,-65,28,sw,0)
+# rs1==x20, rs2==x1, rs2_val == 1, 
+# opcode: sw; op1:x20; op2:x1; op2val:0x00000001; immval:-1024; align:0
+TEST_STORE(x17,x19,0,x20,x1,0x00000001,-1024,28,sw,0)
 
-# rs1==x14, rs2==x28, rs2_val == 1, 
-# opcode: sw; op1:x14; op2:x28; op2val:0x00000001; immval:128; align:0
-TEST_STORE(x5,x3,0,x14,x28,0x00000001,128,32,sw,0)
+# rs1==x6, rs2==x20, rs2_val == 2, 
+# opcode: sw; op1:x6; op2:x20; op2val:0x00000002; immval:5; align:0
+TEST_STORE(x17,x19,0,x6,x20,0x00000002,5,32,sw,0)
 
-# rs1==x12, rs2==x26, rs2_val == 2, 
-# opcode: sw; op1:x12; op2:x26; op2val:0x00000002; immval:-8; align:0
-TEST_STORE(x5,x3,0,x12,x26,0x00000002,-8,36,sw,0)
+# rs1==x26, rs2==x22, rs2_val == 4, 
+# opcode: sw; op1:x26; op2:x22; op2val:0x00000004; immval:64; align:0
+TEST_STORE(x17,x19,0,x26,x22,0x00000004,64,36,sw,0)
 
-# rs1==x18, rs2==x25, rs2_val == 4, 
-# opcode: sw; op1:x18; op2:x25; op2val:0x00000004; immval:-3; align:0
-TEST_STORE(x5,x3,0,x18,x25,0x00000004,-3,40,sw,0)
+# rs1==x7, rs2==x11, rs2_val == 8, 
+# opcode: sw; op1:x7; op2:x11; op2val:0x00000008; immval:32; align:0
+TEST_STORE(x17,x19,0,x7,x11,0x00000008,32,40,sw,0)
 
-# rs1==x24, rs2==x21, rs2_val == 8, 
-# opcode: sw; op1:x24; op2:x21; op2val:0x00000008; immval:1024; align:0
-TEST_STORE(x5,x3,0,x24,x21,0x00000008,1024,44,sw,0)
+# rs1==x30, rs2==x15, rs2_val == 16, 
+# opcode: sw; op1:x30; op2:x15; op2val:0x00000010; immval:7; align:0
+TEST_STORE(x17,x19,0,x30,x15,0x00000010,7,44,sw,0)
 
-# rs1==x20, rs2==x23, rs2_val == 16, 
-# opcode: sw; op1:x20; op2:x23; op2val:0x00000010; immval:-129; align:0
-TEST_STORE(x5,x3,0,x20,x23,0x00000010,-129,48,sw,0)
+# rs1==x2, rs2==x13, rs2_val == 32, 
+# opcode: sw; op1:x2; op2:x13; op2val:0x00000020; immval:-4; align:0
+TEST_STORE(x17,x19,0,x2,x13,0x00000020,-4,48,sw,0)
 
-# rs1==x17, rs2==x18, rs2_val == 32, 
-# opcode: sw; op1:x17; op2:x18; op2val:0x00000020; immval:-129; align:0
-TEST_STORE(x5,x3,0,x17,x18,0x00000020,-129,52,sw,0)
+# rs1==x9, rs2==x5, rs2_val == 64, 
+# opcode: sw; op1:x9; op2:x5; op2val:0x00000040; immval:6; align:0
+TEST_STORE(x17,x19,0,x9,x5,0x00000040,6,52,sw,0)
 
-# rs1==x15, rs2==x24, rs2_val == 64, 
-# opcode: sw; op1:x15; op2:x24; op2val:0x00000040; immval:8; align:0
-TEST_STORE(x5,x3,0,x15,x24,0x00000040,8,56,sw,0)
+# rs1==x23, rs2==x28, rs2_val == 128, 
+# opcode: sw; op1:x23; op2:x28; op2val:0x00000080; immval:-2; align:0
+TEST_STORE(x17,x19,0,x23,x28,0x00000080,-2,56,sw,0)
 
-# rs1==x19, rs2==x4, rs2_val == 128, 
-# opcode: sw; op1:x19; op2:x4; op2val:0x00000080; immval:512; align:0
-TEST_STORE(x5,x3,0,x19,x4,0x00000080,512,60,sw,0)
+# rs1==x22, rs2==x16, rs2_val == 256, 
+# opcode: sw; op1:x22; op2:x16; op2val:0x00000100; immval:-10; align:0
+TEST_STORE(x17,x19,0,x22,x16,0x00000100,-10,60,sw,0)
 
-# rs1==x1, rs2==x12, rs2_val == 256, 
-# opcode: sw; op1:x1; op2:x12; op2val:0x00000100; immval:-6; align:0
-TEST_STORE(x5,x3,0,x1,x12,0x00000100,-6,64,sw,0)
+# rs1==x8, rs2==x2, rs2_val == 512, 
+# opcode: sw; op1:x8; op2:x2; op2val:0x00000200; immval:256; align:0
+TEST_STORE(x17,x19,0,x8,x2,0x00000200,256,64,sw,0)
 
-# rs1==x7, rs2==x6, rs2_val == 512, 
-# opcode: sw; op1:x7; op2:x6; op2val:0x00000200; immval:-129; align:0
-TEST_STORE(x5,x3,0,x7,x6,0x00000200,-129,68,sw,0)
+# rs1==x4, rs2==x25, rs2_val == 1024, 
+# opcode: sw; op1:x4; op2:x25; op2val:0x00000400; immval:8; align:0
+TEST_STORE(x17,x19,0,x4,x25,0x00000400,8,68,sw,0)
 
-# rs1==x13, rs2==x8, rs2_val == 1024, 
-# opcode: sw; op1:x13; op2:x8; op2val:0x00000400; immval:-2; align:0
-TEST_STORE(x5,x3,0,x13,x8,0x00000400,-2,72,sw,0)
+# rs1==x16, rs2==x10, rs2_val == 2048, 
+# opcode: sw; op1:x16; op2:x10; op2val:0x00000800; immval:-4; align:0
+TEST_STORE(x17,x19,0,x16,x10,0x00000800,-4,72,sw,0)
 
-# rs1==x10, rs2==x15, rs2_val == 2048, 
-# opcode: sw; op1:x10; op2:x15; op2val:0x00000800; immval:0; align:0
-TEST_STORE(x5,x3,0,x10,x15,0x00000800,0,76,sw,0)
+# rs1==x12, rs2==x14, rs2_val == 4096, 
+# opcode: sw; op1:x12; op2:x14; op2val:0x00001000; immval:-1025; align:0
+TEST_STORE(x17,x19,0,x12,x14,0x00001000,-1025,76,sw,0)
 
-# rs1==x3, rs2==x10, rs2_val == 4096, 
-# opcode: sw; op1:x3; op2:x10; op2val:0x00001000; immval:1365; align:0
-TEST_STORE(x5,x9,0,x3,x10,0x00001000,1365,80,sw,0)
-RVTEST_SIGBASE( x7,signature_x7_0)
+# rs1==x28, rs2==x12, rs2_val == 8192, 
+# opcode: sw; op1:x28; op2:x12; op2val:0x00002000; immval:5; align:0
+TEST_STORE(x17,x3,0,x28,x12,0x00002000,5,80,sw,0)
 
-# rs1==x4, rs2==x27, rs2_val == 8192, 
-# opcode: sw; op1:x4; op2:x27; op2val:0x00002000; immval:-3; align:0
-TEST_STORE(x7,x9,0,x4,x27,0x00002000,-3,0,sw,0)
+# rs1==x27, rs2==x0, rs2_val == 16384, 
+# opcode: sw; op1:x27; op2:x0; op2val:0x00004000; immval:-65; align:0
+TEST_STORE(x17,x3,0,x27,x0,0x00004000,-65,84,sw,0)
+RVTEST_SIGBASE( x2,signature_x2_0)
 
-# rs1==x29, rs2==x30, rs2_val == 16384, 
-# opcode: sw; op1:x29; op2:x30; op2val:0x00004000; immval:9; align:0
-TEST_STORE(x7,x9,0,x29,x30,0x00004000,9,4,sw,0)
+# rs1==x1, rs2==x8, rs2_val == 32768, 
+# opcode: sw; op1:x1; op2:x8; op2val:0x00008000; immval:-10; align:0
+TEST_STORE(x2,x3,0,x1,x8,0x00008000,-10,0,sw,0)
 
-# rs1==x5, rs2==x31, rs2_val == 32768, 
-# opcode: sw; op1:x5; op2:x31; op2val:0x00008000; immval:1; align:0
-TEST_STORE(x7,x9,0,x5,x31,0x00008000,1,8,sw,0)
+# rs1==x10, rs2==x17, rs2_val == 65536, 
+# opcode: sw; op1:x10; op2:x17; op2val:0x00010000; immval:-10; align:0
+TEST_STORE(x2,x3,0,x10,x17,0x00010000,-10,4,sw,0)
 
-# rs1==x26, rs2==x2, rs2_val == 65536, 
-# opcode: sw; op1:x26; op2:x2; op2val:0x00010000; immval:-257; align:0
-TEST_STORE(x7,x9,0,x26,x2,0x00010000,-257,12,sw,0)
+# rs1==x13, rs2==x7, rs2_val == 131072, 
+# opcode: sw; op1:x13; op2:x7; op2val:0x00020000; immval:32; align:0
+TEST_STORE(x2,x3,0,x13,x7,0x00020000,32,8,sw,0)
 
-# rs1==x6, rs2==x13, rs2_val == 262144, 
-# opcode: sw; op1:x6; op2:x13; op2val:0x00040000; immval:-1025; align:0
-TEST_STORE(x7,x9,0,x6,x13,0x00040000,-1025,16,sw,0)
+# rs1==x19, rs2==x23, rs2_val == 262144, 
+# opcode: sw; op1:x19; op2:x23; op2val:0x00040000; immval:-17; align:0
+TEST_STORE(x2,x3,0,x19,x23,0x00040000,-17,12,sw,0)
 
-# rs1==x27, rs2==x16, rs2_val == 524288, 
-# opcode: sw; op1:x27; op2:x16; op2val:0x00080000; immval:-2048; align:0
-TEST_STORE(x7,x9,0,x27,x16,0x00080000,-2048,20,sw,0)
+# rs1==x21, rs2==x6, rs2_val == 524288, 
+# opcode: sw; op1:x21; op2:x6; op2val:0x00080000; immval:9; align:0
+TEST_STORE(x2,x3,0,x21,x6,0x00080000,9,16,sw,0)
 
-# rs1==x8, rs2==x11, rs2_val == 2097152, 
-# opcode: sw; op1:x8; op2:x11; op2val:0x00200000; immval:9; align:0
-TEST_STORE(x7,x9,0,x8,x11,0x00200000,9,24,sw,0)
+# rs1==x17, rs2==x27, rs2_val == 1048576, 
+# opcode: sw; op1:x17; op2:x27; op2val:0x00100000; immval:16; align:0
+TEST_STORE(x2,x3,0,x17,x27,0x00100000,16,20,sw,0)
 
-# rs1==x23, rs2==x3, rs2_val == 4194304, 
-# opcode: sw; op1:x23; op2:x3; op2val:0x00400000; immval:-1366; align:0
-TEST_STORE(x7,x9,0,x23,x3,0x00400000,-1366,28,sw,0)
+# rs1==x31, rs2==x18, rs2_val == 2097152, 
+# opcode: sw; op1:x31; op2:x18; op2val:0x00200000; immval:2; align:0
+TEST_STORE(x2,x3,0,x31,x18,0x00200000,2,24,sw,0)
 
-# rs1==x11, rs2==x17, rs2_val == 8388608, 
-# opcode: sw; op1:x11; op2:x17; op2val:0x00800000; immval:16; align:0
-TEST_STORE(x7,x9,0,x11,x17,0x00800000,16,32,sw,0)
+# rs1==x24, rs2==x19, rs2_val == 4194304, 
+# opcode: sw; op1:x24; op2:x19; op2val:0x00400000; immval:4; align:0
+TEST_STORE(x2,x3,0,x24,x19,0x00400000,4,28,sw,0)
 
-# rs1==x25, rs2==x5, rs2_val == 16777216, 
-# opcode: sw; op1:x25; op2:x5; op2val:0x01000000; immval:16; align:0
-TEST_STORE(x7,x9,0,x25,x5,0x01000000,16,36,sw,0)
+# rs1==x25, rs2==x31, rs2_val == 8388608, 
+# opcode: sw; op1:x25; op2:x31; op2val:0x00800000; immval:-6; align:0
+TEST_STORE(x2,x3,0,x25,x31,0x00800000,-6,32,sw,0)
 
-# rs2==x1, rs2_val == 67108864, 
-# opcode: sw; op1:x2; op2:x1; op2val:0x04000000; immval:7; align:0
-TEST_STORE(x7,x9,0,x2,x1,0x04000000,7,40,sw,0)
+# rs2==x9, rs2_val == 16777216, 
+# opcode: sw; op1:x25; op2:x9; op2val:0x01000000; immval:-2; align:0
+TEST_STORE(x2,x3,0,x25,x9,0x01000000,-2,36,sw,0)
+
+# rs2_val == 33554432, 
+# opcode: sw; op1:x10; op2:x11; op2val:0x02000000; immval:-257; align:0
+TEST_STORE(x2,x3,0,x10,x11,0x02000000,-257,40,sw,0)
+
+# rs2_val == 67108864, 
+# opcode: sw; op1:x10; op2:x11; op2val:0x04000000; immval:-3; align:0
+TEST_STORE(x2,x3,0,x10,x11,0x04000000,-3,44,sw,0)
 
 # rs2_val == 134217728, 
-# opcode: sw; op1:x10; op2:x11; op2val:0x08000000; immval:-1; align:0
-TEST_STORE(x7,x9,0,x10,x11,0x08000000,-1,44,sw,0)
-
-# rs2_val == 268435456, 
-# opcode: sw; op1:x10; op2:x11; op2val:0x10000000; immval:1365; align:0
-TEST_STORE(x7,x9,0,x10,x11,0x10000000,1365,48,sw,0)
+# opcode: sw; op1:x10; op2:x11; op2val:0x08000000; immval:32; align:0
+TEST_STORE(x2,x3,0,x10,x11,0x08000000,32,48,sw,0)
 
 # rs2_val == 536870912, 
-# opcode: sw; op1:x10; op2:x11; op2val:0x20000000; immval:6; align:0
-TEST_STORE(x7,x9,0,x10,x11,0x20000000,6,52,sw,0)
+# opcode: sw; op1:x10; op2:x11; op2val:0x20000000; immval:-17; align:0
+TEST_STORE(x2,x3,0,x10,x11,0x20000000,-17,52,sw,0)
 
 # rs2_val == 1073741824, 
-# opcode: sw; op1:x10; op2:x11; op2val:0x40000000; immval:-65; align:0
-TEST_STORE(x7,x9,0,x10,x11,0x40000000,-65,56,sw,0)
+# opcode: sw; op1:x10; op2:x11; op2val:0x40000000; immval:-2048; align:0
+TEST_STORE(x2,x3,0,x10,x11,0x40000000,-2048,56,sw,0)
 
 # rs2_val == -4194305, 
-# opcode: sw; op1:x10; op2:x11; op2val:0xffbfffff; immval:7; align:0
-TEST_STORE(x7,x9,0,x10,x11,0xffbfffff,7,60,sw,0)
+# opcode: sw; op1:x10; op2:x11; op2val:0xffbfffff; immval:4; align:0
+TEST_STORE(x2,x3,0,x10,x11,0xffbfffff,4,60,sw,0)
 
 # rs2_val == -8388609, 
-# opcode: sw; op1:x10; op2:x11; op2val:0xff7fffff; immval:-2; align:0
-TEST_STORE(x7,x9,0,x10,x11,0xff7fffff,-2,64,sw,0)
+# opcode: sw; op1:x10; op2:x11; op2val:0xff7fffff; immval:-9; align:0
+TEST_STORE(x2,x3,0,x10,x11,0xff7fffff,-9,64,sw,0)
 
 # rs2_val == -16777217, 
-# opcode: sw; op1:x10; op2:x11; op2val:0xfeffffff; immval:1024; align:0
-TEST_STORE(x7,x9,0,x10,x11,0xfeffffff,1024,68,sw,0)
+# opcode: sw; op1:x10; op2:x11; op2val:0xfeffffff; immval:16; align:0
+TEST_STORE(x2,x3,0,x10,x11,0xfeffffff,16,68,sw,0)
 
 # rs2_val == -33554433, 
-# opcode: sw; op1:x10; op2:x11; op2val:0xfdffffff; immval:-6; align:0
-TEST_STORE(x7,x9,0,x10,x11,0xfdffffff,-6,72,sw,0)
+# opcode: sw; op1:x10; op2:x11; op2val:0xfdffffff; immval:-1366; align:0
+TEST_STORE(x2,x3,0,x10,x11,0xfdffffff,-1366,72,sw,0)
 
 # rs2_val == -67108865, 
-# opcode: sw; op1:x10; op2:x11; op2val:0xfbffffff; immval:1024; align:0
-TEST_STORE(x7,x9,0,x10,x11,0xfbffffff,1024,76,sw,0)
+# opcode: sw; op1:x10; op2:x11; op2val:0xfbffffff; immval:-2048; align:0
+TEST_STORE(x2,x3,0,x10,x11,0xfbffffff,-2048,76,sw,0)
 
 # rs2_val == -134217729, 
-# opcode: sw; op1:x10; op2:x11; op2val:0xf7ffffff; immval:6; align:0
-TEST_STORE(x7,x9,0,x10,x11,0xf7ffffff,6,80,sw,0)
+# opcode: sw; op1:x10; op2:x11; op2val:0xf7ffffff; immval:64; align:0
+TEST_STORE(x2,x3,0,x10,x11,0xf7ffffff,64,80,sw,0)
 
 # rs2_val == -268435457, 
-# opcode: sw; op1:x10; op2:x11; op2val:0xefffffff; immval:2047; align:0
-TEST_STORE(x7,x9,0,x10,x11,0xefffffff,2047,84,sw,0)
+# opcode: sw; op1:x10; op2:x11; op2val:0xefffffff; immval:3; align:0
+TEST_STORE(x2,x3,0,x10,x11,0xefffffff,3,84,sw,0)
 
 # rs2_val == -536870913, 
-# opcode: sw; op1:x10; op2:x11; op2val:0xdfffffff; immval:-7; align:0
-TEST_STORE(x7,x9,0,x10,x11,0xdfffffff,-7,88,sw,0)
+# opcode: sw; op1:x10; op2:x11; op2val:0xdfffffff; immval:1365; align:0
+TEST_STORE(x2,x3,0,x10,x11,0xdfffffff,1365,88,sw,0)
 
 # rs2_val == -1073741825, 
 # opcode: sw; op1:x10; op2:x11; op2val:0xbfffffff; immval:-5; align:0
-TEST_STORE(x7,x9,0,x10,x11,0xbfffffff,-5,92,sw,0)
+TEST_STORE(x2,x3,0,x10,x11,0xbfffffff,-5,92,sw,0)
 
 # rs2_val == 1431655765, 
-# opcode: sw; op1:x10; op2:x11; op2val:0x55555555; immval:-2; align:0
-TEST_STORE(x7,x9,0,x10,x11,0x55555555,-2,96,sw,0)
+# opcode: sw; op1:x10; op2:x11; op2val:0x55555555; immval:2047; align:0
+TEST_STORE(x2,x3,0,x10,x11,0x55555555,2047,96,sw,0)
 
 # rs2_val == -1431655766, 
-# opcode: sw; op1:x10; op2:x11; op2val:0xaaaaaaaa; immval:1024; align:0
-TEST_STORE(x7,x9,0,x10,x11,0xaaaaaaaa,1024,100,sw,0)
+# opcode: sw; op1:x10; op2:x11; op2val:0xaaaaaaaa; immval:-8; align:0
+TEST_STORE(x2,x3,0,x10,x11,0xaaaaaaaa,-8,100,sw,0)
 
 # rs2_val == -2, 
-# opcode: sw; op1:x10; op2:x11; op2val:0xfffffffe; immval:-33; align:0
-TEST_STORE(x7,x9,0,x10,x11,0xfffffffe,-33,104,sw,0)
-
-# rs2_val == -3, 
-# opcode: sw; op1:x10; op2:x11; op2val:0xfffffffd; immval:-4; align:0
-TEST_STORE(x7,x9,0,x10,x11,0xfffffffd,-4,108,sw,0)
+# opcode: sw; op1:x10; op2:x11; op2val:0xfffffffe; immval:256; align:0
+TEST_STORE(x2,x3,0,x10,x11,0xfffffffe,256,104,sw,0)
 
 # rs2_val == -5, 
-# opcode: sw; op1:x10; op2:x11; op2val:0xfffffffb; immval:64; align:0
-TEST_STORE(x7,x9,0,x10,x11,0xfffffffb,64,112,sw,0)
+# opcode: sw; op1:x10; op2:x11; op2val:0xfffffffb; immval:-4; align:0
+TEST_STORE(x2,x3,0,x10,x11,0xfffffffb,-4,108,sw,0)
 
 # rs2_val == -9, 
-# opcode: sw; op1:x10; op2:x11; op2val:0xfffffff7; immval:64; align:0
-TEST_STORE(x7,x9,0,x10,x11,0xfffffff7,64,116,sw,0)
+# opcode: sw; op1:x10; op2:x11; op2val:0xfffffff7; immval:-4; align:0
+TEST_STORE(x2,x3,0,x10,x11,0xfffffff7,-4,112,sw,0)
 
 # rs2_val == -17, 
-# opcode: sw; op1:x10; op2:x11; op2val:0xffffffef; immval:-6; align:0
-TEST_STORE(x7,x9,0,x10,x11,0xffffffef,-6,120,sw,0)
+# opcode: sw; op1:x10; op2:x11; op2val:0xffffffef; immval:8; align:0
+TEST_STORE(x2,x3,0,x10,x11,0xffffffef,8,116,sw,0)
 
 # rs2_val == -33, 
-# opcode: sw; op1:x10; op2:x11; op2val:0xffffffdf; immval:7; align:0
-TEST_STORE(x7,x9,0,x10,x11,0xffffffdf,7,124,sw,0)
+# opcode: sw; op1:x10; op2:x11; op2val:0xffffffdf; immval:1024; align:0
+TEST_STORE(x2,x3,0,x10,x11,0xffffffdf,1024,120,sw,0)
 
 # rs2_val == -65, 
-# opcode: sw; op1:x10; op2:x11; op2val:0xffffffbf; immval:2; align:0
-TEST_STORE(x7,x9,0,x10,x11,0xffffffbf,2,128,sw,0)
+# opcode: sw; op1:x10; op2:x11; op2val:0xffffffbf; immval:-1025; align:0
+TEST_STORE(x2,x3,0,x10,x11,0xffffffbf,-1025,124,sw,0)
 
 # rs2_val == -129, 
-# opcode: sw; op1:x10; op2:x11; op2val:0xffffff7f; immval:1024; align:0
-TEST_STORE(x7,x9,0,x10,x11,0xffffff7f,1024,132,sw,0)
+# opcode: sw; op1:x10; op2:x11; op2val:0xffffff7f; immval:-2; align:0
+TEST_STORE(x2,x3,0,x10,x11,0xffffff7f,-2,128,sw,0)
 
 # rs2_val == -257, 
-# opcode: sw; op1:x10; op2:x11; op2val:0xfffffeff; immval:-9; align:0
-TEST_STORE(x7,x9,0,x10,x11,0xfffffeff,-9,136,sw,0)
+# opcode: sw; op1:x10; op2:x11; op2val:0xfffffeff; immval:0; align:0
+TEST_STORE(x2,x3,0,x10,x11,0xfffffeff,0,132,sw,0)
+
+# rs2_val == -513, 
+# opcode: sw; op1:x10; op2:x11; op2val:0xfffffdff; immval:128; align:0
+TEST_STORE(x2,x3,0,x10,x11,0xfffffdff,128,136,sw,0)
 
 # rs2_val == -1025, 
-# opcode: sw; op1:x10; op2:x11; op2val:0xfffffbff; immval:16; align:0
-TEST_STORE(x7,x9,0,x10,x11,0xfffffbff,16,140,sw,0)
+# opcode: sw; op1:x10; op2:x11; op2val:0xfffffbff; immval:-33; align:0
+TEST_STORE(x2,x3,0,x10,x11,0xfffffbff,-33,140,sw,0)
 
 # rs2_val == -2049, 
-# opcode: sw; op1:x10; op2:x11; op2val:0xfffff7ff; immval:-1366; align:0
-TEST_STORE(x7,x9,0,x10,x11,0xfffff7ff,-1366,144,sw,0)
+# opcode: sw; op1:x10; op2:x11; op2val:0xfffff7ff; immval:32; align:0
+TEST_STORE(x2,x3,0,x10,x11,0xfffff7ff,32,144,sw,0)
 
 # rs2_val == -4097, 
-# opcode: sw; op1:x10; op2:x11; op2val:0xffffefff; immval:-9; align:0
-TEST_STORE(x7,x9,0,x10,x11,0xffffefff,-9,148,sw,0)
+# opcode: sw; op1:x10; op2:x11; op2val:0xffffefff; immval:-2048; align:0
+TEST_STORE(x2,x3,0,x10,x11,0xffffefff,-2048,148,sw,0)
 
 # rs2_val == -8193, 
-# opcode: sw; op1:x10; op2:x11; op2val:0xffffdfff; immval:-7; align:0
-TEST_STORE(x7,x9,0,x10,x11,0xffffdfff,-7,152,sw,0)
+# opcode: sw; op1:x10; op2:x11; op2val:0xffffdfff; immval:-2; align:0
+TEST_STORE(x2,x3,0,x10,x11,0xffffdfff,-2,152,sw,0)
 
 # rs2_val == -16385, 
-# opcode: sw; op1:x10; op2:x11; op2val:0xffffbfff; immval:-33; align:0
-TEST_STORE(x7,x9,0,x10,x11,0xffffbfff,-33,156,sw,0)
+# opcode: sw; op1:x10; op2:x11; op2val:0xffffbfff; immval:-8; align:0
+TEST_STORE(x2,x3,0,x10,x11,0xffffbfff,-8,156,sw,0)
 
 # rs2_val == -32769, 
-# opcode: sw; op1:x10; op2:x11; op2val:0xffff7fff; immval:16; align:0
-TEST_STORE(x7,x9,0,x10,x11,0xffff7fff,16,160,sw,0)
+# opcode: sw; op1:x10; op2:x11; op2val:0xffff7fff; immval:-129; align:0
+TEST_STORE(x2,x3,0,x10,x11,0xffff7fff,-129,160,sw,0)
 
 # rs2_val == -65537, 
-# opcode: sw; op1:x10; op2:x11; op2val:0xfffeffff; immval:512; align:0
-TEST_STORE(x7,x9,0,x10,x11,0xfffeffff,512,164,sw,0)
+# opcode: sw; op1:x10; op2:x11; op2val:0xfffeffff; immval:64; align:0
+TEST_STORE(x2,x3,0,x10,x11,0xfffeffff,64,164,sw,0)
 
 # rs2_val == -131073, 
-# opcode: sw; op1:x10; op2:x11; op2val:0xfffdffff; immval:-513; align:0
-TEST_STORE(x7,x9,0,x10,x11,0xfffdffff,-513,168,sw,0)
+# opcode: sw; op1:x10; op2:x11; op2val:0xfffdffff; immval:-9; align:0
+TEST_STORE(x2,x3,0,x10,x11,0xfffdffff,-9,168,sw,0)
 
 # rs2_val == -262145, 
-# opcode: sw; op1:x10; op2:x11; op2val:0xfffbffff; immval:1023; align:0
-TEST_STORE(x7,x9,0,x10,x11,0xfffbffff,1023,172,sw,0)
+# opcode: sw; op1:x10; op2:x11; op2val:0xfffbffff; immval:-7; align:0
+TEST_STORE(x2,x3,0,x10,x11,0xfffbffff,-7,172,sw,0)
 
-# rs2_val == -524289, 
-# opcode: sw; op1:x10; op2:x11; op2val:0xfff7ffff; immval:2047; align:0
-TEST_STORE(x7,x9,0,x10,x11,0xfff7ffff,2047,176,sw,0)
+# rs2_val == -1048577, 
+# opcode: sw; op1:x10; op2:x11; op2val:0xffefffff; immval:2047; align:0
+TEST_STORE(x2,x3,0,x10,x11,0xffefffff,2047,176,sw,0)
 
 # rs2_val == -2097153, 
-# opcode: sw; op1:x10; op2:x11; op2val:0xffdfffff; immval:1365; align:0
-TEST_STORE(x7,x9,0,x10,x11,0xffdfffff,1365,180,sw,0)
+# opcode: sw; op1:x10; op2:x11; op2val:0xffdfffff; immval:6; align:0
+TEST_STORE(x2,x3,0,x10,x11,0xffdfffff,6,180,sw,0)
 
-# ea_align == 0 and (imm_val % 4) == 2, imm_val > 0, rs2_val == 1048576
-# opcode: sw; op1:x10; op2:x11; op2val:0x00100000; immval:6; align:0
-TEST_STORE(x7,x9,0,x10,x11,0x00100000,6,184,sw,0)
+# rs2_val == 16384, 
+# opcode: sw; op1:x10; op2:x11; op2val:0x00004000; immval:-65; align:0
+TEST_STORE(x2,x3,0,x10,x11,0x00004000,-65,184,sw,0)
 #endif
 
 
@@ -303,15 +307,15 @@ RVTEST_DATA_END
 RVMODEL_DATA_BEGIN
 .align 4
 
-signature_x5_0:
+signature_x17_0:
     .fill 0*(XLEN/32),4,0xdeadbeef
 
 
-signature_x5_1:
-    .fill 21*(XLEN/32),4,0xdeadbeef
+signature_x17_1:
+    .fill 22*(XLEN/32),4,0xdeadbeef
 
 
-signature_x7_0:
+signature_x2_0:
     .fill 47*(XLEN/32),4,0xdeadbeef
 
 #ifdef rvtest_mtrap_routine

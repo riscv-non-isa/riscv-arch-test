@@ -513,7 +513,7 @@ cnop:
   opcode:
     coverage: 1/1
     detail:
-      - c.nop: 14
+      - c.nop: 15
   val_comb:
     coverage: 14/14
     detail:

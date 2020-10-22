@@ -95,6 +95,7 @@ instr_A_dst:
 
 RVTEST_CODE_END
 
+RVTEST_DATA_BEGIN
 # Input data section.
     .data
     .align 4
@@ -105,7 +106,7 @@ instr_A_src:
 test_A_data:
     .word 0x30
     .word 0x12
-
+RVTEST_DATA_END
 
 # Output data section.
 RVMODEL_DATA_BEGIN

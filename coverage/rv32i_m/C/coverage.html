@@ -253,7 +253,7 @@ function is_all_rows_hidden(value) {
 
 </script>
     <h1></h1>
-    <p>Report generated on 2020-10-13 10:05 GMT by <a href="https://pypi.python.org/pypi/riscof">riscof</a> v1.16.0</p>
+    <p>Report generated on 2020-10-22 08:19 GMT by <a href="https://pypi.python.org/pypi/riscof">riscof</a> v1.16.0</p>
     <h2>Environment</h2>
     <table id="environment">
       <tr>
@@ -296,8 +296,8 @@ hart0:
         rv32:
             accessible: true
             fields:
-              - mxl
               - extensions
+              - mxl
               -
                   -
                       - 26
@@ -327,22 +327,22 @@ hart0:
             accessible: true
             fields:
               - uie
-              - sum
               - sie
-              - mpie
-              - upie
-              - sd
-              - mprv
-              - mxr
-              - xs
               - mie
+              - upie
               - spie
+              - mpie
               - spp
-              - tw
               - mpp
               - fs
+              - xs
+              - mprv
+              - sum
+              - mxr
               - tvm
+              - tw
               - tsr
+              - sd
               -
                   -
                       - 2
@@ -411,9 +411,7 @@ hart0:
                 shadow:
                 msb: 12
                 lsb: 11
-                type:
-                    wlrl:
-                      - '0'
+                type: {ro_constant: 0}
             fs:
                 implemented: false
                 description: Encodes the status of the floating-point unit, including
@@ -551,12 +549,29 @@ hart0:
     mtvec:
         rv32:
             accessible: true
-            fields: []
+            fields:
+              - mode
+              - base
+            base:
+                implemented: true
+                description: Vector base address.
+                shadow:
+                msb: 31
+                lsb: 2
+                type: {ro_constant: 0}
+            mode:
+                implemented: true
+                description: Vector mode.
+                shadow:
+                msb: 1
+                lsb: 0
+                type: {ro_constant: 0}
         rv64:
             accessible: false
         description: MXLEN-bit read/write register that holds trap vector configuration.
         address: 773
         priv_mode: M
+        reset-val: 0
     mideleg:
         rv32:
             accessible: false
@@ -579,15 +594,15 @@ hart0:
         rv32:
             accessible: true
             fields:
-              - utip
-              - seip
-              - msip
               - usip
-              - stip
-              - ueip
               - ssip
-              - meip
+              - msip
+              - utip
+              - stip
               - mtip
+              - ueip
+              - seip
+              - meip
               -
                   -
                       - 2
@@ -669,14 +684,14 @@ hart0:
         rv32:
             accessible: true
             fields:
-              - stie
-              - ssie
-              - mtie
-              - utie
-              - msie
-              - seie
-              - ueie
               - usie
+              - ssie
+              - msie
+              - utie
+              - stie
+              - mtie
+              - ueie
+              - seie
               - meie
               -
                   -
@@ -855,10 +870,10 @@ hart0:
         rv32:
             accessible: true
             fields:
-              - pmp3cfg
               - pmp0cfg
-              - pmp2cfg
               - pmp1cfg
+              - pmp2cfg
+              - pmp3cfg
             pmp0cfg:
                 implemented: true
                 description: pmp configuration bits
@@ -901,9 +916,9 @@ hart0:
         rv32:
             accessible: true
             fields:
-              - pmp6cfg
               - pmp4cfg
               - pmp5cfg
+              - pmp6cfg
               - pmp7cfg
             pmp4cfg:
                 implemented: true
@@ -943,10 +958,10 @@ hart0:
         rv32:
             accessible: true
             fields:
-              - pmp9cfg
-              - pmp11cfg
               - pmp8cfg
+              - pmp9cfg
               - pmp10cfg
+              - pmp11cfg
             pmp8cfg:
                 implemented: true
                 description: pmp configuration bits
@@ -978,17 +993,17 @@ hart0:
         rv64:
             accessible: false
         description: PMP configuration register
-        address: 0x3A1
+        address: 0x3A2
         priv_mode: M
         reset-val: 0
     pmpcfg3:
         rv32:
             accessible: true
             fields:
-              - pmp15cfg
-              - pmp14cfg
               - pmp12cfg
               - pmp13cfg
+              - pmp14cfg
+              - pmp15cfg
             pmp12cfg:
                 implemented: true
                 description: pmp configuration bits
@@ -1020,17 +1035,17 @@ hart0:
         rv64:
             accessible: false
         description: PMP configuration register
-        address: 0x3A1
+        address: 0x3A3
         priv_mode: M
         reset-val: 0
     pmpcfg4:
         rv32:
             accessible: true
             fields:
+              - pmp16cfg
               - pmp17cfg
               - pmp18cfg
               - pmp19cfg
-              - pmp16cfg
             pmp16cfg:
                 implemented: true
                 description: pmp configuration bits
@@ -1062,17 +1077,17 @@ hart0:
         rv64:
             accessible: false
         description: PMP configuration register
-        address: 0x3A1
+        address: 0x3A4
         priv_mode: M
         reset-val: 0
     pmpcfg5:
         rv32:
             accessible: true
             fields:
-              - pmp23cfg
-              - pmp22cfg
               - pmp20cfg
               - pmp21cfg
+              - pmp22cfg
+              - pmp23cfg
             pmp20cfg:
                 implemented: true
                 description: pmp configuration bits
@@ -1104,15 +1119,15 @@ hart0:
         rv64:
             accessible: false
         description: PMP configuration register
-        address: 0x3A1
+        address: 0x3A5
         priv_mode: M
         reset-val: 0
     pmpcfg6:
         rv32:
             accessible: true
             fields:
-              - pmp25cfg
               - pmp24cfg
+              - pmp25cfg
               - pmp26cfg
               - pmp27cfg
             pmp24cfg:
@@ -1146,17 +1161,17 @@ hart0:
         rv64:
             accessible: false
         description: PMP configuration register
-        address: 0x3A1
+        address: 0x3A6
         priv_mode: M
         reset-val: 0
     pmpcfg7:
         rv32:
             accessible: true
             fields:
-              - pmp29cfg
               - pmp28cfg
-              - pmp31cfg
+              - pmp29cfg
               - pmp30cfg
+              - pmp31cfg
             pmp28cfg:
                 implemented: true
                 description: pmp configuration bits
@@ -1188,17 +1203,17 @@ hart0:
         rv64:
             accessible: false
         description: PMP configuration register
-        address: 0x3A1
+        address: 0x3A7
         priv_mode: M
         reset-val: 0
     pmpcfg8:
         rv32:
             accessible: true
             fields:
-              - pmp35cfg
+              - pmp32cfg
               - pmp33cfg
               - pmp34cfg
-              - pmp32cfg
+              - pmp35cfg
             pmp32cfg:
                 implemented: true
                 description: pmp configuration bits
@@ -1230,16 +1245,16 @@ hart0:
         rv64:
             accessible: false
         description: PMP configuration register
-        address: 0x3A1
+        address: 0x3A8
         priv_mode: M
         reset-val: 0
     pmpcfg9:
         rv32:
             accessible: true
             fields:
-              - pmp38cfg
-              - pmp37cfg
               - pmp36cfg
+              - pmp37cfg
+              - pmp38cfg
               - pmp39cfg
             pmp36cfg:
                 implemented: true
@@ -1272,17 +1287,17 @@ hart0:
         rv64:
             accessible: false
         description: PMP configuration register
-        address: 0x3A1
+        address: 0x3A9
         priv_mode: M
         reset-val: 0
     pmpcfg10:
         rv32:
             accessible: true
             fields:
-              - pmp42cfg
-              - pmp41cfg
-              - pmp43cfg
               - pmp40cfg
+              - pmp41cfg
+              - pmp42cfg
+              - pmp43cfg
             pmp40cfg:
                 implemented: true
                 description: pmp configuration bits
@@ -1314,17 +1329,17 @@ hart0:
         rv64:
             accessible: false
         description: PMP configuration register
-        address: 0x3A1
+        address: 0x3AA
         priv_mode: M
         reset-val: 0
     pmpcfg11:
         rv32:
             accessible: true
             fields:
+              - pmp44cfg
               - pmp45cfg
               - pmp46cfg
               - pmp47cfg
-              - pmp44cfg
             pmp44cfg:
                 implemented: true
                 description: pmp configuration bits
@@ -1356,7 +1371,7 @@ hart0:
         rv64:
             accessible: false
         description: PMP configuration register
-        address: 0x3A1
+        address: 0x3AB
         priv_mode: M
         reset-val: 0
     pmpcfg12:
@@ -1364,9 +1379,9 @@ hart0:
             accessible: true
             fields:
               - pmp48cfg
-              - pmp51cfg
-              - pmp50cfg
               - pmp49cfg
+              - pmp50cfg
+              - pmp51cfg
             pmp48cfg:
                 implemented: true
                 description: pmp configuration bits
@@ -1398,17 +1413,17 @@ hart0:
         rv64:
             accessible: false
         description: PMP configuration register
-        address: 0x3A1
+        address: 0x3AC
         priv_mode: M
         reset-val: 0
     pmpcfg13:
         rv32:
             accessible: true
             fields:
-              - pmp55cfg
               - pmp52cfg
               - pmp53cfg
               - pmp54cfg
+              - pmp55cfg
             pmp52cfg:
                 implemented: true
                 description: pmp configuration bits
@@ -1440,17 +1455,17 @@ hart0:
         rv64:
             accessible: false
         description: PMP configuration register
-        address: 0x3A1
+        address: 0x3AD
         priv_mode: M
         reset-val: 0
     pmpcfg14:
         rv32:
             accessible: true
             fields:
-              - pmp58cfg
               - pmp56cfg
-              - pmp59cfg
               - pmp57cfg
+              - pmp58cfg
+              - pmp59cfg
             pmp56cfg:
                 implemented: true
                 description: pmp configuration bits
@@ -1482,17 +1497,17 @@ hart0:
         rv64:
             accessible: false
         description: PMP configuration register
-        address: 0x3A1
+        address: 0x3AE
         priv_mode: M
         reset-val: 0
     pmpcfg15:
         rv32:
             accessible: true
             fields:
-              - pmp62cfg
               - pmp60cfg
-              - pmp63cfg
               - pmp61cfg
+              - pmp62cfg
+              - pmp63cfg
             pmp60cfg:
                 implemented: true
                 description: pmp configuration bits
@@ -1524,7 +1539,904 @@ hart0:
         rv64:
             accessible: false
         description: PMP configuration register
-        address: 0x3A1
+        address: 0x3AF
+        priv_mode: M
+        reset-val: 0
+    pmpaddr0:
+        rv32:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 31
+            lsb: 0
+            type: &id005
+                ro_constant: 0
+        rv64:
+            accessible: false
+        description: Physical memory protection address register
+        address: 0x3B0
+        priv_mode: M
+        reset-val: 0
+    pmpaddr1:
+        rv32:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 31
+            lsb: 0
+            type: *id005
+        rv64:
+            accessible: false
+        description: Physical memory protection address register
+        address: 0x3B1
+        priv_mode: M
+        reset-val: 0
+    pmpaddr2:
+        rv32:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 31
+            lsb: 0
+            type: *id005
+        rv64:
+            accessible: false
+        description: Physical memory protection address register
+        address: 0x3B2
+        priv_mode: M
+        reset-val: 0
+    pmpaddr3:
+        rv32:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 31
+            lsb: 0
+            type: *id005
+        rv64:
+            accessible: false
+        description: Physical memory protection address register
+        address: 0x3B3
+        priv_mode: M
+        reset-val: 0
+    pmpaddr4:
+        rv32:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 31
+            lsb: 0
+            type: *id005
+        rv64:
+            accessible: false
+        description: Physical memory protection address register
+        address: 0x3B4
+        priv_mode: M
+        reset-val: 0
+    pmpaddr5:
+        rv32:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 31
+            lsb: 0
+            type: *id005
+        rv64:
+            accessible: false
+        description: Physical memory protection address register
+        address: 0x3B5
+        priv_mode: M
+        reset-val: 0
+    pmpaddr6:
+        rv32:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 31
+            lsb: 0
+            type: *id005
+        rv64:
+            accessible: false
+        description: Physical memory protection address register
+        address: 0x3B6
+        priv_mode: M
+        reset-val: 0
+    pmpaddr7:
+        rv32:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 31
+            lsb: 0
+            type: *id005
+        rv64:
+            accessible: false
+        description: Physical memory protection address register
+        address: 0x3B7
+        priv_mode: M
+        reset-val: 0
+    pmpaddr8:
+        rv32:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 31
+            lsb: 0
+            type: *id005
+        rv64:
+            accessible: false
+        description: Physical memory protection address register
+        address: 0x3B8
+        priv_mode: M
+        reset-val: 0
+    pmpaddr9:
+        rv32:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 31
+            lsb: 0
+            type: *id005
+        rv64:
+            accessible: false
+        description: Physical memory protection address register
+        address: 0x3B9
+        priv_mode: M
+        reset-val: 0
+    pmpaddr10:
+        rv32:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 31
+            lsb: 0
+            type: *id005
+        rv64:
+            accessible: false
+        description: Physical memory protection address register
+        address: 0x3BA
+        priv_mode: M
+        reset-val: 0
+    pmpaddr11:
+        rv32:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 31
+            lsb: 0
+            type: *id005
+        rv64:
+            accessible: false
+        description: Physical memory protection address register
+        address: 0x3BB
+        priv_mode: M
+        reset-val: 0
+    pmpaddr12:
+        rv32:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 31
+            lsb: 0
+            type: *id005
+        rv64:
+            accessible: false
+        description: Physical memory protection address register
+        address: 0x3BC
+        priv_mode: M
+        reset-val: 0
+    pmpaddr13:
+        rv32:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 31
+            lsb: 0
+            type: *id005
+        rv64:
+            accessible: false
+        description: Physical memory protection address register
+        address: 0x3BD
+        priv_mode: M
+        reset-val: 0
+    pmpaddr14:
+        rv32:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 31
+            lsb: 0
+            type: *id005
+        rv64:
+            accessible: false
+        description: Physical memory protection address register
+        address: 0x3BE
+        priv_mode: M
+        reset-val: 0
+    pmpaddr15:
+        rv32:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 31
+            lsb: 0
+            type: *id005
+        rv64:
+            accessible: false
+        description: Physical memory protection address register
+        address: 0x3BF
+        priv_mode: M
+        reset-val: 0
+    pmpaddr16:
+        rv32:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 31
+            lsb: 0
+            type: *id005
+        rv64:
+            accessible: false
+        description: Physical memory protection address register
+        address: 0x3C0
+        priv_mode: M
+        reset-val: 0
+    pmpaddr17:
+        rv32:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 31
+            lsb: 0
+            type: *id005
+        rv64:
+            accessible: false
+        description: Physical memory protection address register
+        address: 0x3C1
+        priv_mode: M
+        reset-val: 0
+    pmpaddr18:
+        rv32:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 31
+            lsb: 0
+            type: *id005
+        rv64:
+            accessible: false
+        description: Physical memory protection address register
+        address: 0x3C2
+        priv_mode: M
+        reset-val: 0
+    pmpaddr19:
+        rv32:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 31
+            lsb: 0
+            type: *id005
+        rv64:
+            accessible: false
+        description: Physical memory protection address register
+        address: 0x3C3
+        priv_mode: M
+        reset-val: 0
+    pmpaddr20:
+        rv32:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 31
+            lsb: 0
+            type: *id005
+        rv64:
+            accessible: false
+        description: Physical memory protection address register
+        address: 0x3C4
+        priv_mode: M
+        reset-val: 0
+    pmpaddr21:
+        rv32:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 31
+            lsb: 0
+            type: *id005
+        rv64:
+            accessible: false
+        description: Physical memory protection address register
+        address: 0x3C5
+        priv_mode: M
+        reset-val: 0
+    pmpaddr22:
+        rv32:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 31
+            lsb: 0
+            type: *id005
+        rv64:
+            accessible: false
+        description: Physical memory protection address register
+        address: 0x3C6
+        priv_mode: M
+        reset-val: 0
+    pmpaddr23:
+        rv32:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 31
+            lsb: 0
+            type: *id005
+        rv64:
+            accessible: false
+        description: Physical memory protection address register
+        address: 0x3C7
+        priv_mode: M
+        reset-val: 0
+    pmpaddr24:
+        rv32:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 31
+            lsb: 0
+            type: *id005
+        rv64:
+            accessible: false
+        description: Physical memory protection address register
+        address: 0x3C8
+        priv_mode: M
+        reset-val: 0
+    pmpaddr25:
+        rv32:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 31
+            lsb: 0
+            type: *id005
+        rv64:
+            accessible: false
+        description: Physical memory protection address register
+        address: 0x3C9
+        priv_mode: M
+        reset-val: 0
+    pmpaddr26:
+        rv32:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 31
+            lsb: 0
+            type: *id005
+        rv64:
+            accessible: false
+        description: Physical memory protection address register
+        address: 0x3CA
+        priv_mode: M
+        reset-val: 0
+    pmpaddr27:
+        rv32:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 31
+            lsb: 0
+            type: *id005
+        rv64:
+            accessible: false
+        description: Physical memory protection address register
+        address: 0x3CB
+        priv_mode: M
+        reset-val: 0
+    pmpaddr28:
+        rv32:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 31
+            lsb: 0
+            type: *id005
+        rv64:
+            accessible: false
+        description: Physical memory protection address register
+        address: 0x3CC
+        priv_mode: M
+        reset-val: 0
+    pmpaddr29:
+        rv32:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 31
+            lsb: 0
+            type: *id005
+        rv64:
+            accessible: false
+        description: Physical memory protection address register
+        address: 0x3CD
+        priv_mode: M
+        reset-val: 0
+    pmpaddr30:
+        rv32:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 31
+            lsb: 0
+            type: *id005
+        rv64:
+            accessible: false
+        description: Physical memory protection address register
+        address: 0x3CE
+        priv_mode: M
+        reset-val: 0
+    pmpaddr31:
+        rv32:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 31
+            lsb: 0
+            type: *id005
+        rv64:
+            accessible: false
+        description: Physical memory protection address register
+        address: 0x3CF
+        priv_mode: M
+        reset-val: 0
+    pmpaddr32:
+        rv32:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 31
+            lsb: 0
+            type: *id005
+        rv64:
+            accessible: false
+        description: Physical memory protection address register
+        address: 0x3D0
+        priv_mode: M
+        reset-val: 0
+    pmpaddr33:
+        rv32:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 31
+            lsb: 0
+            type: *id005
+        rv64:
+            accessible: false
+        description: Physical memory protection address register
+        address: 0x3D1
+        priv_mode: M
+        reset-val: 0
+    pmpaddr34:
+        rv32:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 31
+            lsb: 0
+            type: *id005
+        rv64:
+            accessible: false
+        description: Physical memory protection address register
+        address: 0x3D2
+        priv_mode: M
+        reset-val: 0
+    pmpaddr35:
+        rv32:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 31
+            lsb: 0
+            type: *id005
+        rv64:
+            accessible: false
+        description: Physical memory protection address register
+        address: 0x3D3
+        priv_mode: M
+        reset-val: 0
+    pmpaddr36:
+        rv32:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 31
+            lsb: 0
+            type: *id005
+        rv64:
+            accessible: false
+        description: Physical memory protection address register
+        address: 0x3D4
+        priv_mode: M
+        reset-val: 0
+    pmpaddr37:
+        rv32:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 31
+            lsb: 0
+            type: *id005
+        rv64:
+            accessible: false
+        description: Physical memory protection address register
+        address: 0x3D5
+        priv_mode: M
+        reset-val: 0
+    pmpaddr38:
+        rv32:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 31
+            lsb: 0
+            type: *id005
+        rv64:
+            accessible: false
+        description: Physical memory protection address register
+        address: 0x3D6
+        priv_mode: M
+        reset-val: 0
+    pmpaddr39:
+        rv32:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 31
+            lsb: 0
+            type: *id005
+        rv64:
+            accessible: false
+        description: Physical memory protection address register
+        address: 0x3D7
+        priv_mode: M
+        reset-val: 0
+    pmpaddr40:
+        rv32:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 31
+            lsb: 0
+            type: *id005
+        rv64:
+            accessible: false
+        description: Physical memory protection address register
+        address: 0x3D8
+        priv_mode: M
+        reset-val: 0
+    pmpaddr41:
+        rv32:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 31
+            lsb: 0
+            type: *id005
+        rv64:
+            accessible: false
+        description: Physical memory protection address register
+        address: 0x3D9
+        priv_mode: M
+        reset-val: 0
+    pmpaddr42:
+        rv32:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 31
+            lsb: 0
+            type: *id005
+        rv64:
+            accessible: false
+        description: Physical memory protection address register
+        address: 0x3DA
+        priv_mode: M
+        reset-val: 0
+    pmpaddr43:
+        rv32:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 31
+            lsb: 0
+            type: *id005
+        rv64:
+            accessible: false
+        description: Physical memory protection address register
+        address: 0x3DB
+        priv_mode: M
+        reset-val: 0
+    pmpaddr44:
+        rv32:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 31
+            lsb: 0
+            type: *id005
+        rv64:
+            accessible: false
+        description: Physical memory protection address register
+        address: 0x3DC
+        priv_mode: M
+        reset-val: 0
+    pmpaddr45:
+        rv32:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 31
+            lsb: 0
+            type: *id005
+        rv64:
+            accessible: false
+        description: Physical memory protection address register
+        address: 0x3DD
+        priv_mode: M
+        reset-val: 0
+    pmpaddr46:
+        rv32:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 31
+            lsb: 0
+            type: *id005
+        rv64:
+            accessible: false
+        description: Physical memory protection address register
+        address: 0x3DE
+        priv_mode: M
+        reset-val: 0
+    pmpaddr47:
+        rv32:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 31
+            lsb: 0
+            type: *id005
+        rv64:
+            accessible: false
+        description: Physical memory protection address register
+        address: 0x3DF
+        priv_mode: M
+        reset-val: 0
+    pmpaddr48:
+        rv32:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 31
+            lsb: 0
+            type: *id005
+        rv64:
+            accessible: false
+        description: Physical memory protection address register
+        address: 0x3E0
+        priv_mode: M
+        reset-val: 0
+    pmpaddr49:
+        rv32:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 31
+            lsb: 0
+            type: *id005
+        rv64:
+            accessible: false
+        description: Physical memory protection address register
+        address: 0x3E1
+        priv_mode: M
+        reset-val: 0
+    pmpaddr50:
+        rv32:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 31
+            lsb: 0
+            type: *id005
+        rv64:
+            accessible: false
+        description: Physical memory protection address register
+        address: 0x3E2
+        priv_mode: M
+        reset-val: 0
+    pmpaddr51:
+        rv32:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 31
+            lsb: 0
+            type: *id005
+        rv64:
+            accessible: false
+        description: Physical memory protection address register
+        address: 0x3E3
+        priv_mode: M
+        reset-val: 0
+    pmpaddr52:
+        rv32:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 31
+            lsb: 0
+            type: *id005
+        rv64:
+            accessible: false
+        description: Physical memory protection address register
+        address: 0x3E4
+        priv_mode: M
+        reset-val: 0
+    pmpaddr53:
+        rv32:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 31
+            lsb: 0
+            type: *id005
+        rv64:
+            accessible: false
+        description: Physical memory protection address register
+        address: 0x3E5
+        priv_mode: M
+        reset-val: 0
+    pmpaddr54:
+        rv32:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 31
+            lsb: 0
+            type: *id005
+        rv64:
+            accessible: false
+        description: Physical memory protection address register
+        address: 0x3E6
+        priv_mode: M
+        reset-val: 0
+    pmpaddr55:
+        rv32:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 31
+            lsb: 0
+            type: *id005
+        rv64:
+            accessible: false
+        description: Physical memory protection address register
+        address: 0x3E7
+        priv_mode: M
+        reset-val: 0
+    pmpaddr56:
+        rv32:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 31
+            lsb: 0
+            type: *id005
+        rv64:
+            accessible: false
+        description: Physical memory protection address register
+        address: 0x3E8
+        priv_mode: M
+        reset-val: 0
+    pmpaddr57:
+        rv32:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 31
+            lsb: 0
+            type: *id005
+        rv64:
+            accessible: false
+        description: Physical memory protection address register
+        address: 0x3E9
+        priv_mode: M
+        reset-val: 0
+    pmpaddr58:
+        rv32:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 31
+            lsb: 0
+            type: *id005
+        rv64:
+            accessible: false
+        description: Physical memory protection address register
+        address: 0x3EA
+        priv_mode: M
+        reset-val: 0
+    pmpaddr59:
+        rv32:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 31
+            lsb: 0
+            type: *id005
+        rv64:
+            accessible: false
+        description: Physical memory protection address register
+        address: 0x3EB
+        priv_mode: M
+        reset-val: 0
+    pmpaddr60:
+        rv32:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 31
+            lsb: 0
+            type: *id005
+        rv64:
+            accessible: false
+        description: Physical memory protection address register
+        address: 0x3EC
+        priv_mode: M
+        reset-val: 0
+    pmpaddr61:
+        rv32:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 31
+            lsb: 0
+            type: *id005
+        rv64:
+            accessible: false
+        description: Physical memory protection address register
+        address: 0x3ED
+        priv_mode: M
+        reset-val: 0
+    pmpaddr62:
+        rv32:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 31
+            lsb: 0
+            type: *id005
+        rv64:
+            accessible: false
+        description: Physical memory protection address register
+        address: 0x3EE
+        priv_mode: M
+        reset-val: 0
+    pmpaddr63:
+        rv32:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 31
+            lsb: 0
+            type: *id005
+        rv64:
+            accessible: false
+        description: Physical memory protection address register
+        address: 0x3EF
         priv_mode: M
         reset-val: 0
     mcounteren:
@@ -1560,13 +2472,27 @@ hart0:
             shadow:
             msb: 31
             lsb: 0
-            type: &id005
-                ro_constant: 0
+            type: *id005
         rv64:
             accessible: false
         description: Counts the number of clock cycles executed from an arbitrary
             point in time.
         address: 0xB00
+        priv_mode: M
+        reset-val: 0
+    mcycleh:
+        rv32:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 31
+            lsb: 0
+            type: &id006
+                ro_constant: 0
+        rv64:
+            accessible: false
+        description: upper 32 bits of mcycle
+        address: 0xB80
         priv_mode: M
         reset-val: 0
     minstret:
@@ -1582,6 +2508,20 @@ hart0:
         description: Counts the number of instructions completed from an arbitrary
             point in time.
         address: 0xB02
+        priv_mode: M
+        reset-val: 0
+    minstreth:
+        rv32:
+            accessible: true
+            fields: []
+            shadow:
+            msb: 31
+            lsb: 0
+            type: *id006
+        rv64:
+            accessible: false
+        description: Upper 32 bits of minstret.
+        address: 0xB82
         priv_mode: M
         reset-val: 0
     mhpmevent3:
@@ -1620,8 +2560,7 @@ hart0:
             shadow:
             msb: 31
             lsb: 0
-            type: &id006
-                ro_constant: 0
+            type: *id006
         rv64:
             accessible: false
         description: The mhpmcounter3h returns the upper half word in RV32I systems.
@@ -2854,6 +3793,719 @@ hart0:
         address: 0xB9F
         priv_mode: M
         reset-val: 0
+    fflags:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        description: 32-bit register to hold floating point accrued exceptions.
+        address: 001
+        priv_mode: U
+        reset-val: 0
+    frm:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        description: 32-bit register to hold Floating-Point Dynamic Rounding Mode.
+        address: 002
+        priv_mode: U
+        reset-val: 0
+    fcsr:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        description: 32-bit register to hold Floating-Point Control and Status Register.
+        address: 003
+        priv_mode: U
+        reset-val: 0
+    cycle:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        description: Captures the number of cycles executed from an arbitrary point
+            in time.
+        priv_mode: U
+        address: 0xC00
+        reset-val: 0
+    cycleh:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        description: Upper 32-bits of the mcycle counter; only for rv32.
+        address: 0xC80
+        priv_mode: U
+        reset-val: 0
+    time:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        description: Timer for RDTIME instruction and RTC in the processor.
+        priv_mode: U
+        address: 0xC01
+        reset-val: 0
+    timeh:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        description: Upper 32-bits of the Timer for RDTIME instruction and RTC in
+            the processor; only for rv32.
+        address: 0xC81
+        priv_mode: U
+        reset-val: 0
+    instret:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        description: Captures the number of instructions executed from an arbitrary
+            point in time.
+        priv_mode: U
+        address: 0xC02
+        reset-val: 0
+    instreth:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        description: Upper 32-bits of the minstret counter; only for rv32.
+        address: 0xC82
+        priv_mode: U
+        reset-val: 0
+    hpmcounter3:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        priv_mode: U
+        reset-val: 0
+        description: The hpmcounter3 is a 64-bit counter. Returns lower 32 bits in
+            RV32UI mode.
+        address: 0xC03
+    hpmcounter4:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        priv_mode: U
+        reset-val: 0
+        description: The hpmcounter4 is a 64-bit counter. Returns lower 32 bits in
+            RV32UI mode.
+        address: 0xC04
+    hpmcounter5:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        priv_mode: U
+        reset-val: 0
+        description: The hpmcounter5 is a 64-bit counter. Returns lower 32 bits in
+            RV32UI mode.
+        address: 0xC05
+    hpmcounter6:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        priv_mode: U
+        reset-val: 0
+        description: The hpmcounter6 is a 64-bit counter. Returns lower 32 bits in
+            RV32UI mode.
+        address: 0xC06
+    hpmcounter7:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        priv_mode: U
+        reset-val: 0
+        description: The hpmcounter7 is a 64-bit counter. Returns lower 32 bits in
+            RV32UI mode.
+        address: 0xC07
+    hpmcounter8:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        priv_mode: U
+        reset-val: 0
+        description: The hpmcounter8 is a 64-bit counter. Returns lower 32 bits in
+            RV32UI mode.
+        address: 0xC08
+    hpmcounter9:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        priv_mode: U
+        reset-val: 0
+        description: The hpmcounter9 is a 64-bit counter. Returns lower 32 bits in
+            RV32UI mode.
+        address: 0xC09
+    hpmcounter10:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        priv_mode: U
+        reset-val: 0
+        description: The hpmcounter10 is a 64-bit counter. Returns lower 32 bits in
+            RV32UI mode.
+        address: 0xC0A
+    hpmcounter11:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        priv_mode: U
+        reset-val: 0
+        description: The hpmcounter11 is a 64-bit counter. Returns lower 32 bits in
+            RV32UI mode.
+        address: 0xC0B
+    hpmcounter12:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        priv_mode: U
+        reset-val: 0
+        description: The hpmcounter12 is a 64-bit counter. Returns lower 32 bits in
+            RV32UI mode.
+        address: 0xC0C
+    hpmcounter13:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        priv_mode: U
+        reset-val: 0
+        description: The hpmcounter13 is a 64-bit counter. Returns lower 32 bits in
+            RV32UI mode.
+        address: 0xC0D
+    hpmcounter14:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        priv_mode: U
+        reset-val: 0
+        description: The hpmcounter14 is a 64-bit counter. Returns lower 32 bits in
+            RV32UI mode.
+        address: 0xC0E
+    hpmcounter15:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        priv_mode: U
+        reset-val: 0
+        description: The hpmcounter15 is a 64-bit counter. Returns lower 32 bits in
+            RV32UI mode.
+        address: 0xC0F
+    hpmcounter16:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        priv_mode: U
+        reset-val: 0
+        description: The hpmcounter16 is a 64-bit counter. Returns lower 32 bits in
+            RV32UI mode.
+        address: 0xC10
+    hpmcounter17:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        priv_mode: U
+        reset-val: 0
+        description: The hpmcounter17 is a 64-bit counter. Returns lower 32 bits in
+            RV32UI mode.
+        address: 0xC11
+    hpmcounter18:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        priv_mode: U
+        reset-val: 0
+        description: The hpmcounter18 is a 64-bit counter. Returns lower 32 bits in
+            RV32UI mode.
+        address: 0xC12
+    hpmcounter19:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        priv_mode: U
+        reset-val: 0
+        description: The hpmcounter19 is a 64-bit counter. Returns lower 32 bits in
+            RV32UI mode.
+        address: 0xC13
+    hpmcounter20:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        priv_mode: U
+        reset-val: 0
+        description: The hpmcounter20 is a 64-bit counter. Returns lower 32 bits in
+            RV32UI mode.
+        address: 0xC14
+    hpmcounter21:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        priv_mode: U
+        reset-val: 0
+        description: The hpmcounter21 is a 64-bit counter. Returns lower 32 bits in
+            RV32UI mode.
+        address: 0xC15
+    hpmcounter22:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        priv_mode: U
+        reset-val: 0
+        description: The hpmcounter22 is a 64-bit counter. Returns lower 32 bits in
+            RV32UI mode.
+        address: 0xC16
+    hpmcounter23:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        priv_mode: U
+        reset-val: 0
+        description: The hpmcounter23 is a 64-bit counter. Returns lower 32 bits in
+            RV32UI mode.
+        address: 0xC17
+    hpmcounter24:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        priv_mode: U
+        reset-val: 0
+        description: The hpmcounter24 is a 64-bit counter. Returns lower 32 bits in
+            RV32UI mode.
+        address: 0xC18
+    hpmcounter25:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        priv_mode: U
+        reset-val: 0
+        description: The hpmcounter25 is a 64-bit counter. Returns lower 32 bits in
+            RV32UI mode.
+        address: 0xC19
+    hpmcounter26:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        priv_mode: U
+        reset-val: 0
+        description: The hpmcounter26 is a 64-bit counter. Returns lower 32 bits in
+            RV32UI mode.
+        address: 0xC1A
+    hpmcounter27:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        priv_mode: U
+        reset-val: 0
+        description: The hpmcounter27 is a 64-bit counter. Returns lower 32 bits in
+            RV32UI mode.
+        address: 0xC1B
+    hpmcounter28:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        priv_mode: U
+        reset-val: 0
+        description: The hpmcounter28 is a 64-bit counter. Returns lower 32 bits in
+            RV32UI mode.
+        address: 0xC1C
+    hpmcounter29:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        priv_mode: U
+        reset-val: 0
+        description: The hpmcounter29 is a 64-bit counter. Returns lower 32 bits in
+            RV32UI mode.
+        address: 0xC1D
+    hpmcounter30:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        priv_mode: U
+        reset-val: 0
+        description: The hpmcounter30 is a 64-bit counter. Returns lower 32 bits in
+            RV32UI mode.
+        address: 0xC1E
+    hpmcounter31:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        priv_mode: U
+        reset-val: 0
+        description: The hpmcounter31 is a 64-bit counter. Returns lower 32 bits in
+            RV32UI mode.
+        address: 0xC1F
+    hpmcounter3h:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        priv_mode: U
+        reset-val: 0
+        description: The hpmcounter3h returns the upper half word in RV32I systems.
+        address: 0xC83
+    hpmcounter4h:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        priv_mode: U
+        reset-val: 0
+        description: The hpmcounter4h returns the upper half word in RV32I systems.
+        address: 0xC84
+    hpmcounter5h:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        priv_mode: U
+        reset-val: 0
+        description: The hpmcounter5h returns the upper half word in RV32I systems.
+        address: 0xC85
+    hpmcounter6h:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        priv_mode: U
+        reset-val: 0
+        description: The hpmcounter6h returns the upper half word in RV32I systems.
+        address: 0xC86
+    hpmcounter7h:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        priv_mode: U
+        reset-val: 0
+        description: The hpmcounter7h returns the upper half word in RV32I systems.
+        address: 0xC87
+    hpmcounter8h:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        priv_mode: U
+        reset-val: 0
+        description: The hpmcounter8h returns the upper half word in RV32I systems.
+        address: 0xC88
+    hpmcounter9h:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        priv_mode: U
+        reset-val: 0
+        description: The hpmcounter9h returns the upper half word in RV32I systems.
+        address: 0xC89
+    hpmcounter10h:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        priv_mode: U
+        reset-val: 0
+        description: The hpmcounter10h returns the upper half word in RV32I systems.
+        address: 0xC8A
+    hpmcounter11h:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        priv_mode: U
+        reset-val: 0
+        description: The hpmcounter11h returns the upper half word in RV32I systems.
+        address: 0xC8B
+    hpmcounter12h:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        priv_mode: U
+        reset-val: 0
+        description: The hpmcounter12h returns the upper half word in RV32I systems.
+        address: 0xC8C
+    hpmcounter13h:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        priv_mode: U
+        reset-val: 0
+        description: The hpmcounter13h returns the upper half word in RV32I systems.
+        address: 0xC8D
+    hpmcounter14h:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        priv_mode: U
+        reset-val: 0
+        description: The hpmcounter14h returns the upper half word in RV32I systems.
+        address: 0xC8E
+    hpmcounter15h:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        priv_mode: U
+        reset-val: 0
+        description: The hpmcounter15h returns the upper half word in RV32I systems.
+        address: 0xC8F
+    hpmcounter16h:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        priv_mode: U
+        reset-val: 0
+        description: The hpmcounter16h returns the upper half word in RV32I systems.
+        address: 0xC90
+    hpmcounter17h:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        priv_mode: U
+        reset-val: 0
+        description: The hpmcounter17h returns the upper half word in RV32I systems.
+        address: 0xC91
+    hpmcounter18h:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        priv_mode: U
+        reset-val: 0
+        description: The hpmcounter18h returns the upper half word in RV32I systems.
+        address: 0xC92
+    hpmcounter19h:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        priv_mode: U
+        reset-val: 0
+        description: The hpmcounter19h returns the upper half word in RV32I systems.
+        address: 0xC93
+    hpmcounter20h:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        priv_mode: U
+        reset-val: 0
+        description: The hpmcounter20h returns the upper half word in RV32I systems.
+        address: 0xC94
+    hpmcounter21h:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        priv_mode: U
+        reset-val: 0
+        description: The hpmcounter21h returns the upper half word in RV32I systems.
+        address: 0xC95
+    hpmcounter22h:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        priv_mode: U
+        reset-val: 0
+        description: The hpmcounter22h returns the upper half word in RV32I systems.
+        address: 0xC96
+    hpmcounter23h:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        priv_mode: U
+        reset-val: 0
+        description: The hpmcounter23h returns the upper half word in RV32I systems.
+        address: 0xC97
+    hpmcounter24h:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        priv_mode: U
+        reset-val: 0
+        description: The hpmcounter24h returns the upper half word in RV32I systems.
+        address: 0xC98
+    hpmcounter25h:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        priv_mode: U
+        reset-val: 0
+        description: The hpmcounter25h returns the upper half word in RV32I systems.
+        address: 0xC99
+    hpmcounter26h:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        priv_mode: U
+        reset-val: 0
+        description: The hpmcounter26h returns the upper half word in RV32I systems.
+        address: 0xC9A
+    hpmcounter27h:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        priv_mode: U
+        reset-val: 0
+        description: The hpmcounter27h returns the upper half word in RV32I systems.
+        address: 0xC9B
+    hpmcounter28h:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        priv_mode: U
+        reset-val: 0
+        description: The hpmcounter28h returns the upper half word in RV32I systems.
+        address: 0xC9C
+    hpmcounter29h:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        priv_mode: U
+        reset-val: 0
+        description: The hpmcounter29h returns the upper half word in RV32I systems.
+        address: 0xC9D
+    hpmcounter30h:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        priv_mode: U
+        reset-val: 0
+        description: The hpmcounter30h returns the upper half word in RV32I systems.
+        address: 0xC9E
+    hpmcounter31h:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        priv_mode: U
+        reset-val: 0
+        description: The hpmcounter31h returns the upper half word in RV32I systems.
+        address: 0xC9F
+    sstatus:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        description: The sstatus register keeps track of the processor’s current operating
+            state.
+        address: 0x100
+        priv_mode: S
+        reset-val: 0
+    sie:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        description: The sie register is an SXLEN-bit read/write register containing
+            interrupt enable bits.
+        address: 0x104
+        priv_mode: S
+        reset-val: 0
+    sip:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        description: The sip register is an SXLEN-bit read/write register containing
+            interrupt pending bits.
+        address: 0x144
+        priv_mode: S
+        reset-val: 0
+    sepc:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        description: The sepc is a warl register that must be able to hold all valid
+            physical and virtual addresses.
+        address: 0x141
+        priv_mode: S
+        reset-val: 0
+    stval:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        description: The stval is a warl register that holds the address of the instruction
+            which caused the exception.
+        address: 0x143
+        priv_mode: S
+        reset-val: 0
+    scause:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        description: The scause register stores the information regarding the trap.
+        address: 0x142
+        priv_mode: M
+        reset-val: 0
+    stvec:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        description: SXLEN-bit read/write register that holds trap vector configuration.
+        address: 0x105
+        priv_mode: S
+        reset-val: 0
+    satp:
+        rv32:
+            accessible: false
+        rv64:
+            accessible: false
+        description: SXLEN-bit register which controls supervisor-mode address translation
+            and protection
+        address: 0x180
+        priv_mode: S
+        reset-val: 0
 </br></div></td>
           </tr>
           </tbody>
@@ -2900,8 +4552,8 @@ stval_condition_writes:
         <tbody class= "  sizes-table-row" >
         <tr>
           <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv32i_m/C/src/cadd-01.S</td>
-          <td class="col-tfprint">6842</td>          
-          <td class="col-tcode">1380</td>          
+          <td class="col-tfprint">6946</td>          
+          <td class="col-tcode">1372</td>          
           <td class="col-tdata">4</td>          
           <td class="col-tsign">540</td>          
           <td class="col-tcov">{'cadd'}</td>          
@@ -2910,8 +4562,8 @@ stval_condition_writes:
         <tbody class= "  sizes-table-row" >
         <tr>
           <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv32i_m/C/src/caddi-01.S</td>
-          <td class="col-tfprint">6076</td>          
-          <td class="col-tcode">756</td>          
+          <td class="col-tfprint">6196</td>          
+          <td class="col-tcode">748</td>          
           <td class="col-tdata">4</td>          
           <td class="col-tsign">412</td>          
           <td class="col-tcov">{'caddi'}</td>          
@@ -2920,8 +4572,8 @@ stval_condition_writes:
         <tbody class= "  sizes-table-row" >
         <tr>
           <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv32i_m/C/src/caddi16sp-01.S</td>
-          <td class="col-tfprint">6076</td>          
-          <td class="col-tcode">756</td>          
+          <td class="col-tfprint">6212</td>          
+          <td class="col-tcode">764</td>          
           <td class="col-tdata">4</td>          
           <td class="col-tsign">408</td>          
           <td class="col-tcov">{'caddi16sp'}</td>          
@@ -2930,8 +4582,8 @@ stval_condition_writes:
         <tbody class= "  sizes-table-row" >
         <tr>
           <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv32i_m/C/src/caddi4spn-01.S</td>
-          <td class="col-tfprint">5282</td>          
-          <td class="col-tcode">164</td>          
+          <td class="col-tfprint">5418</td>          
+          <td class="col-tcode">172</td>          
           <td class="col-tdata">4</td>          
           <td class="col-tsign">204</td>          
           <td class="col-tcov">{'caddi4spn'}</td>          
@@ -2940,8 +4592,8 @@ stval_condition_writes:
         <tbody class= "  sizes-table-row" >
         <tr>
           <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv32i_m/C/src/cand-01.S</td>
-          <td class="col-tfprint">6928</td>          
-          <td class="col-tcode">1476</td>          
+          <td class="col-tfprint">7048</td>          
+          <td class="col-tcode">1484</td>          
           <td class="col-tdata">4</td>          
           <td class="col-tsign">536</td>          
           <td class="col-tcov">{'cand'}</td>          
@@ -2950,8 +4602,8 @@ stval_condition_writes:
         <tbody class= "  sizes-table-row" >
         <tr>
           <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv32i_m/C/src/candi-01.S</td>
-          <td class="col-tfprint">6046</td>          
-          <td class="col-tcode">724</td>          
+          <td class="col-tfprint">6150</td>          
+          <td class="col-tcode">716</td>          
           <td class="col-tdata">4</td>          
           <td class="col-tsign">404</td>          
           <td class="col-tcov">{'candi'}</td>          
@@ -2960,8 +4612,8 @@ stval_condition_writes:
         <tbody class= "  sizes-table-row" >
         <tr>
           <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv32i_m/C/src/cbeqz-01.S</td>
-          <td class="col-tfprint">10310</td>          
-          <td class="col-tcode">4996</td>          
+          <td class="col-tfprint">10446</td>          
+          <td class="col-tcode">5004</td>          
           <td class="col-tdata">4</td>          
           <td class="col-tsign">400</td>          
           <td class="col-tcov">{'cbeqz'}</td>          
@@ -2970,8 +4622,8 @@ stval_condition_writes:
         <tbody class= "  sizes-table-row" >
         <tr>
           <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv32i_m/C/src/cbnez-01.S</td>
-          <td class="col-tfprint">10346</td>          
-          <td class="col-tcode">5028</td>          
+          <td class="col-tfprint">10482</td>          
+          <td class="col-tcode">5036</td>          
           <td class="col-tdata">4</td>          
           <td class="col-tsign">408</td>          
           <td class="col-tcov">{'cbnez'}</td>          
@@ -2980,8 +4632,8 @@ stval_condition_writes:
         <tbody class= "  sizes-table-row" >
         <tr>
           <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv32i_m/C/src/cebreak-01.S</td>
-          <td class="col-tfprint">6436</td>          
-          <td class="col-tcode">40</td>          
+          <td class="col-tfprint">6540</td>          
+          <td class="col-tcode">32</td>          
           <td class="col-tdata">80</td>          
           <td class="col-tsign">152</td>          
           <td class="col-tcov">{'cebreak'}</td>          
@@ -2990,8 +4642,8 @@ stval_condition_writes:
         <tbody class= "  sizes-table-row" >
         <tr>
           <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv32i_m/C/src/cj-01.S</td>
-          <td class="col-tfprint">12272</td>          
-          <td class="col-tcode">7156</td>          
+          <td class="col-tfprint">12392</td>          
+          <td class="col-tcode">7164</td>          
           <td class="col-tdata">4</td>          
           <td class="col-tsign">200</td>          
           <td class="col-tcov">{'cj'}</td>          
@@ -3000,8 +4652,8 @@ stval_condition_writes:
         <tbody class= "  sizes-table-row" >
         <tr>
           <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv32i_m/C/src/cjal-01.S</td>
-          <td class="col-tfprint">12510</td>          
-          <td class="col-tcode">7396</td>          
+          <td class="col-tfprint">12614</td>          
+          <td class="col-tcode">7388</td>          
           <td class="col-tdata">4</td>          
           <td class="col-tsign">196</td>          
           <td class="col-tcov">{'cjal'}</td>          
@@ -3010,8 +4662,8 @@ stval_condition_writes:
         <tbody class= "  sizes-table-row" >
         <tr>
           <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv32i_m/C/src/cjalr-01.S</td>
-          <td class="col-tfprint">6404</td>          
-          <td class="col-tcode">1236</td>          
+          <td class="col-tfprint">6540</td>          
+          <td class="col-tcode">1244</td>          
           <td class="col-tdata">4</td>          
           <td class="col-tsign">256</td>          
           <td class="col-tcov">{'cjalr'}</td>          
@@ -3020,8 +4672,8 @@ stval_condition_writes:
         <tbody class= "  sizes-table-row" >
         <tr>
           <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv32i_m/C/src/cjr-01.S</td>
-          <td class="col-tfprint">6406</td>          
-          <td class="col-tcode">1236</td>          
+          <td class="col-tfprint">6542</td>          
+          <td class="col-tcode">1244</td>          
           <td class="col-tdata">4</td>          
           <td class="col-tsign">256</td>          
           <td class="col-tcov">{'cjr'}</td>          
@@ -3030,8 +4682,8 @@ stval_condition_writes:
         <tbody class= "  sizes-table-row" >
         <tr>
           <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv32i_m/C/src/cli-01.S</td>
-          <td class="col-tfprint">5392</td>          
-          <td class="col-tcode">212</td>          
+          <td class="col-tfprint">5496</td>          
+          <td class="col-tcode">204</td>          
           <td class="col-tdata">4</td>          
           <td class="col-tsign">260</td>          
           <td class="col-tcov">{'cli'}</td>          
@@ -3040,8 +4692,8 @@ stval_condition_writes:
         <tbody class= "  sizes-table-row" >
         <tr>
           <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv32i_m/C/src/clui-01.S</td>
-          <td class="col-tfprint">5432</td>          
-          <td class="col-tcode">260</td>          
+          <td class="col-tfprint">5552</td>          
+          <td class="col-tcode">268</td>          
           <td class="col-tdata">4</td>          
           <td class="col-tsign">256</td>          
           <td class="col-tcov">{'clui'}</td>          
@@ -3050,8 +4702,8 @@ stval_condition_writes:
         <tbody class= "  sizes-table-row" >
         <tr>
           <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv32i_m/C/src/clw-01.S</td>
-          <td class="col-tfprint">5354</td>          
-          <td class="col-tcode">260</td>          
+          <td class="col-tfprint">5490</td>          
+          <td class="col-tcode">268</td>          
           <td class="col-tdata">4</td>          
           <td class="col-tsign">184</td>          
           <td class="col-tcov">{'clw'}</td>          
@@ -3060,8 +4712,8 @@ stval_condition_writes:
         <tbody class= "  sizes-table-row" >
         <tr>
           <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv32i_m/C/src/clwsp-01.S</td>
-          <td class="col-tfprint">5746</td>          
-          <td class="col-tcode">580</td>          
+          <td class="col-tfprint">5882</td>          
+          <td class="col-tcode">588</td>          
           <td class="col-tdata">4</td>          
           <td class="col-tsign">256</td>          
           <td class="col-tcov">{'clwsp'}</td>          
@@ -3070,8 +4722,8 @@ stval_condition_writes:
         <tbody class= "  sizes-table-row" >
         <tr>
           <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv32i_m/C/src/cmv-01.S</td>
-          <td class="col-tfprint">6050</td>          
-          <td class="col-tcode">724</td>          
+          <td class="col-tfprint">6154</td>          
+          <td class="col-tcode">716</td>          
           <td class="col-tdata">4</td>          
           <td class="col-tsign">404</td>          
           <td class="col-tcov">{'cmv'}</td>          
@@ -3080,8 +4732,8 @@ stval_condition_writes:
         <tbody class= "  sizes-table-row" >
         <tr>
           <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv32i_m/C/src/cnop-01.S</td>
-          <td class="col-tfprint">5202</td>          
-          <td class="col-tcode">100</td>          
+          <td class="col-tfprint">5306</td>          
+          <td class="col-tcode">92</td>          
           <td class="col-tdata">4</td>          
           <td class="col-tsign">184</td>          
           <td class="col-tcov">{'cnop'}</td>          
@@ -3090,8 +4742,8 @@ stval_condition_writes:
         <tbody class= "  sizes-table-row" >
         <tr>
           <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv32i_m/C/src/cor-01.S</td>
-          <td class="col-tfprint">6888</td>          
-          <td class="col-tcode">1444</td>          
+          <td class="col-tfprint">7008</td>          
+          <td class="col-tcode">1452</td>          
           <td class="col-tdata">4</td>          
           <td class="col-tsign">528</td>          
           <td class="col-tcov">{'cor'}</td>          
@@ -3100,8 +4752,8 @@ stval_condition_writes:
         <tbody class= "  sizes-table-row" >
         <tr>
           <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv32i_m/C/src/cslli-01.S</td>
-          <td class="col-tfprint">6070</td>          
-          <td class="col-tcode">740</td>          
+          <td class="col-tfprint">6174</td>          
+          <td class="col-tcode">732</td>          
           <td class="col-tdata">4</td>          
           <td class="col-tsign">412</td>          
           <td class="col-tcov">{'cslli'}</td>          
@@ -3110,8 +4762,8 @@ stval_condition_writes:
         <tbody class= "  sizes-table-row" >
         <tr>
           <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv32i_m/C/src/csrai-01.S</td>
-          <td class="col-tfprint">6046</td>          
-          <td class="col-tcode">724</td>          
+          <td class="col-tfprint">6182</td>          
+          <td class="col-tcode">732</td>          
           <td class="col-tdata">4</td>          
           <td class="col-tsign">408</td>          
           <td class="col-tcov">{'csrai'}</td>          
@@ -3120,8 +4772,8 @@ stval_condition_writes:
         <tbody class= "  sizes-table-row" >
         <tr>
           <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv32i_m/C/src/csrli-01.S</td>
-          <td class="col-tfprint">6064</td>          
-          <td class="col-tcode">740</td>          
+          <td class="col-tfprint">6200</td>          
+          <td class="col-tcode">748</td>          
           <td class="col-tdata">4</td>          
           <td class="col-tsign">412</td>          
           <td class="col-tcov">{'csrli'}</td>          
@@ -3130,8 +4782,8 @@ stval_condition_writes:
         <tbody class= "  sizes-table-row" >
         <tr>
           <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv32i_m/C/src/csub-01.S</td>
-          <td class="col-tfprint">6860</td>          
-          <td class="col-tcode">1428</td>          
+          <td class="col-tfprint">6980</td>          
+          <td class="col-tcode">1420</td>          
           <td class="col-tdata">4</td>          
           <td class="col-tsign">524</td>          
           <td class="col-tcov">{'csub'}</td>          
@@ -3140,8 +4792,8 @@ stval_condition_writes:
         <tbody class= "  sizes-table-row" >
         <tr>
           <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv32i_m/C/src/csw-01.S</td>
-          <td class="col-tfprint">6942</td>          
-          <td class="col-tcode">1604</td>          
+          <td class="col-tfprint">7046</td>          
+          <td class="col-tcode">1596</td>          
           <td class="col-tdata">4</td>          
           <td class="col-tsign">420</td>          
           <td class="col-tcov">{'csw'}</td>          
@@ -3150,8 +4802,8 @@ stval_condition_writes:
         <tbody class= "  sizes-table-row" >
         <tr>
           <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv32i_m/C/src/cswsp-01.S</td>
-          <td class="col-tfprint">6936</td>          
-          <td class="col-tcode">1604</td>          
+          <td class="col-tfprint">7072</td>          
+          <td class="col-tcode">1612</td>          
           <td class="col-tdata">4</td>          
           <td class="col-tsign">420</td>          
           <td class="col-tcov">{'cswsp'}</td>          
@@ -3160,8 +4812,8 @@ stval_condition_writes:
         <tbody class= "  sizes-table-row" >
         <tr>
           <td class="col-tname">/scratch/git-repo/incoresemi/riscv-compliance/deliverable1/riscv-compliance/riscv-test-suite/rv32i_m/C/src/cxor-01.S</td>
-          <td class="col-tfprint">6792</td>          
-          <td class="col-tcode">1364</td>          
+          <td class="col-tfprint">6896</td>          
+          <td class="col-tcode">1356</td>          
           <td class="col-tdata">4</td>          
           <td class="col-tsign">508</td>          
           <td class="col-tcov">{'cxor'}</td>          
