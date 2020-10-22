@@ -6,11 +6,8 @@ endif
 
 RUN_TARGET=\
     $(TARGET_SIM) $(TARGET_FLAGS) --isa=rv64im \
-        +signature=$(*).signature.output \
-        $< 2> $@; \
-				cat $(*).signature.output | sed 's/.\{8\}/& /g' | \
-				awk '{print $$4 " " $$3 " " $$2 " " $$1}' | sed 's/ /\n/g' > temp; \
-				mv temp $(*).signature.output;
+        +signature=$(*).signature.output +signature-granularity=4\
+        $< 2> $@;
 
 
 RISCV_PREFIX   ?= riscv64-unknown-elf-

@@ -4,8 +4,8 @@
 
 act_dir := .
 src_dir := $(act_dir)/src
-work_dir := $(ROOTDIR)/work
-work_dir_isa := $(work_dir)/rv$(XLEN)i_m/$(RISCV_ISA)
+work_dir := $(WORK)
+work_dir_isa := $(work_dir)/rv$(XLEN)i_m/$(RISCV_DEVICE)
 
 include $(act_dir)/Makefrag
 ifneq ($(RISCV_TEST),)
@@ -50,6 +50,7 @@ $(eval $(call compile_template,-march=rv64im -mabi=lp64))
 target_elf = $(foreach e,$(target_tests),$(work_dir_isa)/$(e))
 target_log = $(patsubst %.elf,%.log,$(target_elf))
 
+compile: $(target_elf)
 run: $(target_log)
 
 #------------------------------------------------------------

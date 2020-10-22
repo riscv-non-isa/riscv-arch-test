@@ -54,6 +54,6 @@ else
     echo -n "FAIL: ${FAIL}/${RUN} "
     status=1
 fi
-echo "RISCV_TARGET=${RISCV_TARGET} RISCV_DEVICE=${RISCV_DEVICE}"
+echo "RISCV_TARGET=${RISCV_TARGET} RISCV_DEVICE=${RISCV_DEVICE} XLEN=${XLEN}"
 echo
 exit ${status}
