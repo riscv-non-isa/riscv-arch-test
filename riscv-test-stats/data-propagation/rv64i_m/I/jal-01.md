@@ -1,0 +1,73 @@
+
+## Data Propagation Report
+
+| Param       | Value    |
+|-------------|----------|
+| XLEN        | 64      |
+| TEST_REGION | [('0x80000390', '0x80101050')]      |
+| SIG_REGION  | [('0x80103210', '0x80103418')]      |
+| COV_LABELS  | ('jal',)      |
+| TEST_NAME   | /scratch/git-repo/incoresemi/riscof/riscof_work/jal-01.S/jal-01.S    |
+
+## Report Table
+
+- The first column indicates the signature address and the data at that location in hexadecimal in the following format: 
+  ```
+  [Address]
+  Data
+  ```
+
+- The second column captures all the coverpoints which have been captured by that particular signature location
+
+- The third column captures all the insrtuctions since the time a coverpoint was
+  hit to the point when a store to the signature was performed. Each line has
+  the following format:
+  ```
+  [PC of instruction] : mnemonic
+  ```
+
+<style>
+table th:first-of-type {
+    width: 5%;
+}
+table th:nth-of-type(2) {
+    width: 40%;
+}
+table th:nth-of-type(3) {
+    width: 55%;
+}
+</style>
+
+|            signature             |                                         coverpoints                                         |                                                                                                                    code                                                                                                                    |
+|----------------------------------|---------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|[0x80103210]<br>0x0000000000080019|- rd : 17<br> - imm_val < 0<br> - imm_val == (-(2**(18)))<br> - rd : 0<br> - imm_val > 0<br> |[0x800803ac]:jal a7, 1572864<br> [0x800003ac]:xori a7, a7, 1<br> [0x800003b0]:jal zero, 524304<br> [0x800803c0]:auipc tp, 1048448<br> [0x800803c4]:addi tp, tp, 4056<br> [0x800803c8]:andi tp, tp, 4092<br> [0x800803cc]:sub a7, a7, tp<br> |
+|[0x80103218]<br>0x0000000000000023|- rd : 11<br>                                                                                |[0x800803f0]:jal a1, 1024<br> [0x800807f0]:xori a1, a1, 3<br> [0x800807f4]:jal zero, 4<br> [0x800807f8]:auipc tp, 0<br> [0x800807fc]:addi tp, tp, 3036<br> [0x80080800]:andi tp, tp, 4092<br> [0x80080804]:sub a1, a1, tp<br>               |
+|[0x80103220]<br>0x0000000000000023|- rd : 20<br> - imm_val == ((2**(18)))<br>                                                   |[0x80080828]:jal s4, 524288<br> [0x80100828]:xori s4, s4, 3<br> [0x8010082c]:jal zero, 4<br> [0x80100830]:auipc tp, 1048448<br> [0x80100834]:addi tp, tp, 4060<br> [0x80100838]:andi tp, tp, 4092<br> [0x8010083c]:sub s4, s4, tp<br>       |
+|[0x80103228]<br>0x0000000000000023|- rd : 13<br>                                                                                |[0x80100860]:jal a3, 12<br> [0x8010086c]:xori a3, a3, 3<br> [0x80100870]:jal zero, 4<br> [0x80100874]:auipc tp, 0<br> [0x80100878]:addi tp, tp, 4048<br> [0x8010087c]:andi tp, tp, 4092<br> [0x80100880]:sub a3, a3, tp<br>                 |
+|[0x80103230]<br>0x0000000000000023|- rd : 8<br>                                                                                 |[0x801008a4]:jal fp, 12<br> [0x801008b0]:xori fp, fp, 3<br> [0x801008b4]:jal zero, 4<br> [0x801008b8]:auipc tp, 0<br> [0x801008bc]:addi tp, tp, 4048<br> [0x801008c0]:andi tp, tp, 4092<br> [0x801008c4]:sub fp, fp, tp<br>                 |
+|[0x80103238]<br>0x0000000000000023|- rd : 22<br>                                                                                |[0x801008e8]:jal s6, 12<br> [0x801008f4]:xori s6, s6, 3<br> [0x801008f8]:jal zero, 4<br> [0x801008fc]:auipc tp, 0<br> [0x80100900]:addi tp, tp, 4048<br> [0x80100904]:andi tp, tp, 4092<br> [0x80100908]:sub s6, s6, tp<br>                 |
+|[0x80103240]<br>0x0000000000000023|- rd : 29<br>                                                                                |[0x8010092c]:jal t4, 12<br> [0x80100938]:xori t4, t4, 3<br> [0x8010093c]:jal zero, 4<br> [0x80100940]:auipc tp, 0<br> [0x80100944]:addi tp, tp, 4048<br> [0x80100948]:andi tp, tp, 4092<br> [0x8010094c]:sub t4, t4, tp<br>                 |
+|[0x80103248]<br>0x0000000000000023|- rd : 28<br>                                                                                |[0x80100970]:jal t3, 12<br> [0x8010097c]:xori t3, t3, 3<br> [0x80100980]:jal zero, 4<br> [0x80100984]:auipc tp, 0<br> [0x80100988]:addi tp, tp, 4048<br> [0x8010098c]:andi tp, tp, 4092<br> [0x80100990]:sub t3, t3, tp<br>                 |
+|[0x80103250]<br>0x0000000000000023|- rd : 7<br>                                                                                 |[0x801009b4]:jal t2, 12<br> [0x801009c0]:xori t2, t2, 3<br> [0x801009c4]:jal zero, 4<br> [0x801009c8]:auipc tp, 0<br> [0x801009cc]:addi tp, tp, 4048<br> [0x801009d0]:andi tp, tp, 4092<br> [0x801009d4]:sub t2, t2, tp<br>                 |
+|[0x80103258]<br>0x0000000000000023|- rd : 18<br>                                                                                |[0x801009f8]:jal s2, 12<br> [0x80100a04]:xori s2, s2, 3<br> [0x80100a08]:jal zero, 4<br> [0x80100a0c]:auipc tp, 0<br> [0x80100a10]:addi tp, tp, 4048<br> [0x80100a14]:andi tp, tp, 4092<br> [0x80100a18]:sub s2, s2, tp<br>                 |
+|[0x80103260]<br>0x0000000000000023|- rd : 10<br>                                                                                |[0x80100a3c]:jal a0, 12<br> [0x80100a48]:xori a0, a0, 3<br> [0x80100a4c]:jal zero, 4<br> [0x80100a50]:auipc tp, 0<br> [0x80100a54]:addi tp, tp, 4048<br> [0x80100a58]:andi tp, tp, 4092<br> [0x80100a5c]:sub a0, a0, tp<br>                 |
+|[0x80103268]<br>0x0000000000000023|- rd : 24<br>                                                                                |[0x80100a80]:jal s8, 12<br> [0x80100a8c]:xori s8, s8, 3<br> [0x80100a90]:jal zero, 4<br> [0x80100a94]:auipc tp, 0<br> [0x80100a98]:addi tp, tp, 4048<br> [0x80100a9c]:andi tp, tp, 4092<br> [0x80100aa0]:sub s8, s8, tp<br>                 |
+|[0x80103270]<br>0x0000000000000023|- rd : 5<br>                                                                                 |[0x80100ac4]:jal t0, 12<br> [0x80100ad0]:xori t0, t0, 3<br> [0x80100ad4]:jal zero, 4<br> [0x80100ad8]:auipc tp, 0<br> [0x80100adc]:addi tp, tp, 4048<br> [0x80100ae0]:andi tp, tp, 4092<br> [0x80100ae4]:sub t0, t0, tp<br>                 |
+|[0x80103278]<br>0x0000000000000023|- rd : 3<br>                                                                                 |[0x80100b08]:jal gp, 12<br> [0x80100b14]:xori gp, gp, 3<br> [0x80100b18]:jal zero, 4<br> [0x80100b1c]:auipc tp, 0<br> [0x80100b20]:addi tp, tp, 4048<br> [0x80100b24]:andi tp, tp, 4092<br> [0x80100b28]:sub gp, gp, tp<br>                 |
+|[0x80103280]<br>0x0000000000000023|- rd : 26<br>                                                                                |[0x80100b4c]:jal s10, 12<br> [0x80100b58]:xori s10, s10, 3<br> [0x80100b5c]:jal zero, 4<br> [0x80100b60]:auipc tp, 0<br> [0x80100b64]:addi tp, tp, 4048<br> [0x80100b68]:andi tp, tp, 4092<br> [0x80100b6c]:sub s10, s10, tp<br>            |
+|[0x80103288]<br>0x0000000000000023|- rd : 2<br>                                                                                 |[0x80100b90]:jal sp, 12<br> [0x80100b9c]:xori sp, sp, 3<br> [0x80100ba0]:jal zero, 4<br> [0x80100ba4]:auipc tp, 0<br> [0x80100ba8]:addi tp, tp, 4048<br> [0x80100bac]:andi tp, tp, 4092<br> [0x80100bb0]:sub sp, sp, tp<br>                 |
+|[0x80103290]<br>0x0000000000000023|- rd : 27<br>                                                                                |[0x80100bd4]:jal s11, 12<br> [0x80100be0]:xori s11, s11, 3<br> [0x80100be4]:jal zero, 4<br> [0x80100be8]:auipc tp, 0<br> [0x80100bec]:addi tp, tp, 4048<br> [0x80100bf0]:andi tp, tp, 4092<br> [0x80100bf4]:sub s11, s11, tp<br>            |
+|[0x80103298]<br>0x0000000000000023|- rd : 16<br>                                                                                |[0x80100c18]:jal a6, 12<br> [0x80100c24]:xori a6, a6, 3<br> [0x80100c28]:jal zero, 4<br> [0x80100c2c]:auipc tp, 0<br> [0x80100c30]:addi tp, tp, 4048<br> [0x80100c34]:andi tp, tp, 4092<br> [0x80100c38]:sub a6, a6, tp<br>                 |
+|[0x801032a0]<br>0x0000000000000023|- rd : 14<br>                                                                                |[0x80100c5c]:jal a4, 12<br> [0x80100c68]:xori a4, a4, 3<br> [0x80100c6c]:jal zero, 4<br> [0x80100c70]:auipc tp, 0<br> [0x80100c74]:addi tp, tp, 4048<br> [0x80100c78]:andi tp, tp, 4092<br> [0x80100c7c]:sub a4, a4, tp<br>                 |
+|[0x801032a8]<br>0x0000000000000023|- rd : 21<br>                                                                                |[0x80100ca0]:jal s5, 12<br> [0x80100cac]:xori s5, s5, 3<br> [0x80100cb0]:jal zero, 4<br> [0x80100cb4]:auipc tp, 0<br> [0x80100cb8]:addi tp, tp, 4048<br> [0x80100cbc]:andi tp, tp, 4092<br> [0x80100cc0]:sub s5, s5, tp<br>                 |
+|[0x801032b0]<br>0x0000000000000023|- rd : 31<br>                                                                                |[0x80100ce4]:jal t6, 12<br> [0x80100cf0]:xori t6, t6, 3<br> [0x80100cf4]:jal zero, 4<br> [0x80100cf8]:auipc tp, 0<br> [0x80100cfc]:addi tp, tp, 4048<br> [0x80100d00]:andi tp, tp, 4092<br> [0x80100d04]:sub t6, t6, tp<br>                 |
+|[0x801032b8]<br>0x0000000000000023|- rd : 15<br>                                                                                |[0x80100d28]:jal a5, 12<br> [0x80100d34]:xori a5, a5, 3<br> [0x80100d38]:jal zero, 4<br> [0x80100d3c]:auipc tp, 0<br> [0x80100d40]:addi tp, tp, 4048<br> [0x80100d44]:andi tp, tp, 4092<br> [0x80100d48]:sub a5, a5, tp<br>                 |
+|[0x801032c0]<br>0x0000000000000023|- rd : 1<br>                                                                                 |[0x80100d6c]:jal ra, 12<br> [0x80100d78]:xori ra, ra, 3<br> [0x80100d7c]:jal zero, 4<br> [0x80100d80]:auipc tp, 0<br> [0x80100d84]:addi tp, tp, 4048<br> [0x80100d88]:andi tp, tp, 4092<br> [0x80100d8c]:sub ra, ra, tp<br>                 |
+|[0x801032c8]<br>0x0000000000000023|- rd : 30<br>                                                                                |[0x80100db0]:jal t5, 12<br> [0x80100dbc]:xori t5, t5, 3<br> [0x80100dc0]:jal zero, 4<br> [0x80100dc4]:auipc tp, 0<br> [0x80100dc8]:addi tp, tp, 4048<br> [0x80100dcc]:andi tp, tp, 4092<br> [0x80100dd0]:sub t5, t5, tp<br>                 |
+|[0x801032d0]<br>0x0000000000000023|- rd : 12<br>                                                                                |[0x80100df4]:jal a2, 12<br> [0x80100e00]:xori a2, a2, 3<br> [0x80100e04]:jal zero, 4<br> [0x80100e08]:auipc tp, 0<br> [0x80100e0c]:addi tp, tp, 4048<br> [0x80100e10]:andi tp, tp, 4092<br> [0x80100e14]:sub a2, a2, tp<br>                 |
+|[0x801032d8]<br>0x0000000000000023|- rd : 19<br>                                                                                |[0x80100e38]:jal s3, 12<br> [0x80100e44]:xori s3, s3, 3<br> [0x80100e48]:jal zero, 4<br> [0x80100e4c]:auipc tp, 0<br> [0x80100e50]:addi tp, tp, 4048<br> [0x80100e54]:andi tp, tp, 4092<br> [0x80100e58]:sub s3, s3, tp<br>                 |
+|[0x801032e8]<br>0x0000000000000023|- rd : 23<br>                                                                                |[0x80100ec0]:jal s7, 12<br> [0x80100ecc]:xori s7, s7, 3<br> [0x80100ed0]:jal zero, 4<br> [0x80100ed4]:auipc tp, 0<br> [0x80100ed8]:addi tp, tp, 4048<br> [0x80100edc]:andi tp, tp, 4092<br> [0x80100ee0]:sub s7, s7, tp<br>                 |
+|[0x801032f0]<br>0x0000000000000023|- rd : 4<br>                                                                                 |[0x80100f04]:jal tp, 12<br> [0x80100f10]:xori tp, tp, 3<br> [0x80100f14]:jal zero, 4<br> [0x80100f18]:auipc sp, 0<br> [0x80100f1c]:addi sp, sp, 4048<br> [0x80100f20]:andi sp, sp, 4092<br> [0x80100f24]:sub tp, tp, sp<br>                 |
+|[0x801032f8]<br>0x0000000000000023|- rd : 6<br>                                                                                 |[0x80100f50]:jal t1, 12<br> [0x80100f5c]:xori t1, t1, 3<br> [0x80100f60]:jal zero, 4<br> [0x80100f64]:auipc sp, 0<br> [0x80100f68]:addi sp, sp, 4048<br> [0x80100f6c]:andi sp, sp, 4092<br> [0x80100f70]:sub t1, t1, sp<br>                 |
+|[0x80103300]<br>0x0000000000000023|- rd : 25<br>                                                                                |[0x80100f94]:jal s9, 12<br> [0x80100fa0]:xori s9, s9, 3<br> [0x80100fa4]:jal zero, 4<br> [0x80100fa8]:auipc sp, 0<br> [0x80100fac]:addi sp, sp, 4048<br> [0x80100fb0]:andi sp, sp, 4092<br> [0x80100fb4]:sub s9, s9, sp<br>                 |
+|[0x80103308]<br>0x0000000000000023|- rd : 9<br>                                                                                 |[0x80100fd8]:jal s1, 12<br> [0x80100fe4]:xori s1, s1, 3<br> [0x80100fe8]:jal zero, 4<br> [0x80100fec]:auipc sp, 0<br> [0x80100ff0]:addi sp, sp, 4048<br> [0x80100ff4]:andi sp, sp, 4092<br> [0x80100ff8]:sub s1, s1, sp<br>                 |

@@ -1,0 +1,221 @@
+
+## Data Propagation Report
+
+| Param       | Value    |
+|-------------|----------|
+| XLEN        | 64      |
+| TEST_REGION | [('0x800002ce', '0x80000ec0')]      |
+| SIG_REGION  | [('0x80002210', '0x800028a8')]      |
+| COV_LABELS  | ('cor',)      |
+| TEST_NAME   | /scratch/git-repo/incoresemi/riscof/riscof_work/cor-01.S/cor-01.S    |
+
+## Report Table
+
+- The first column indicates the signature address and the data at that location in hexadecimal in the following format: 
+  ```
+  [Address]
+  Data
+  ```
+
+- The second column captures all the coverpoints which have been captured by that particular signature location
+
+- The third column captures all the insrtuctions since the time a coverpoint was
+  hit to the point when a store to the signature was performed. Each line has
+  the following format:
+  ```
+  [PC of instruction] : mnemonic
+  ```
+
+<style>
+table th:first-of-type {
+    width: 5%;
+}
+table th:nth-of-type(2) {
+    width: 40%;
+}
+table th:nth-of-type(3) {
+    width: 55%;
+}
+</style>
+
+|            signature             |                                                                 coverpoints                                                                 |            code             |
+|----------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------|
+|[0x80002210]<br>0xDFFFFFFFFFFFFFFF|- rs1 : 11<br> - rs2 : 11<br> - rs1 == rs2<br> - rs2_val < 0<br> - rs2_val == -2305843009213693953<br> - rs1_val == -2305843009213693953<br> |[0x800002e2]:c.or a1, a1<br> |
+|[0x80002218]<br>0xFFFFFFFFFFFFFFFF|- rs1 : 10<br> - rs2 : 13<br> - rs1 != rs2<br> - rs1_val == -2049<br>                                                                        |[0x800002f0]:c.or a0, a3<br> |
+|[0x80002220]<br>0x8000000000004000|- rs1 : 14<br> - rs2 : 12<br> - rs1_val == (-2**(xlen-1))<br> - rs2_val > 0<br> - rs2_val == 16384<br> - rs1_val == -9223372036854775808<br> |[0x800002fe]:c.or a4, a2<br> |
+|[0x80002228]<br>0xFFFFFFFFBFFFFFFF|- rs1 : 9<br> - rs2 : 14<br> - rs1_val == 0<br> - rs2_val == -1073741825<br>                                                                 |[0x8000030c]:c.or s1, a4<br> |
+|[0x80002230]<br>0xFFFFFFFFFFFFFFFF|- rs1 : 15<br> - rs2 : 8<br> - rs1_val == (2**(xlen-1)-1)<br> - rs2_val == -262145<br> - rs1_val == 9223372036854775807<br>                  |[0x80000320]:c.or a5, s0<br> |
+|[0x80002238]<br>0xFFFFFFF7FFFFFFFF|- rs1 : 8<br> - rs2 : 9<br> - rs1_val == 1<br> - rs2_val == -34359738369<br>                                                                 |[0x80000330]:c.or s0, s1<br> |
+|[0x80002240]<br>0x8000000000010000|- rs1 : 13<br> - rs2 : 15<br> - rs2_val == (-2**(xlen-1))<br> - rs2_val == -9223372036854775808<br> - rs1_val == 65536<br>                   |[0x8000033e]:c.or a3, a5<br> |
+|[0x80002248]<br>0x0000000100000000|- rs1 : 12<br> - rs2 : 10<br> - rs2_val == 0<br> - rs1_val == 4294967296<br>                                                                 |[0x8000034c]:c.or a2, a0<br> |
+|[0x80002250]<br>0x7FFFFFFFFFFFFFFF|- rs2_val == (2**(xlen-1)-1)<br> - rs2_val == 9223372036854775807<br> - rs1_val == 140737488355328<br>                                       |[0x80000360]:c.or a0, a1<br> |
+|[0x80002258]<br>0x0000008000000001|- rs2_val == 1<br> - rs1_val == 549755813888<br>                                                                                             |[0x8000036e]:c.or a0, a1<br> |
+|[0x80002260]<br>0x0000000000200002|- rs2_val == 2097152<br> - rs1_val == 2<br>                                                                                                  |[0x8000037a]:c.or a0, a1<br> |
+|[0x80002268]<br>0x0000000000200004|- rs1_val == 4<br>                                                                                                                           |[0x80000386]:c.or a0, a1<br> |
+|[0x80002270]<br>0x0000000400000008|- rs2_val == 17179869184<br> - rs1_val == 8<br>                                                                                              |[0x80000394]:c.or a0, a1<br> |
+|[0x80002278]<br>0xFFFFFFEFFFFFFFFF|- rs2_val == -68719476737<br> - rs1_val == 16<br>                                                                                            |[0x800003a4]:c.or a0, a1<br> |
+|[0x80002280]<br>0x0000000000000120|- rs2_val == 256<br> - rs1_val == 32<br>                                                                                                     |[0x800003b2]:c.or a0, a1<br> |
+|[0x80002288]<br>0xFFFFFFFFFFFFFFF6|- rs1_val == 64<br>                                                                                                                          |[0x800003be]:c.or a0, a1<br> |
+|[0x80002290]<br>0xFFFFFFFFFFFFFBFF|- rs2_val == -1025<br> - rs1_val == 128<br>                                                                                                  |[0x800003cc]:c.or a0, a1<br> |
+|[0x80002298]<br>0x0004000000000100|- rs2_val == 1125899906842624<br> - rs1_val == 256<br>                                                                                       |[0x800003dc]:c.or a0, a1<br> |
+|[0x800022a0]<br>0xFFFFFFFFFFFFFFFB|- rs2_val == -5<br> - rs1_val == 512<br>                                                                                                     |[0x800003e8]:c.or a0, a1<br> |
+|[0x800022a8]<br>0xFFFFFFF7FFFFFFFF|- rs1_val == 1024<br>                                                                                                                        |[0x800003fa]:c.or a0, a1<br> |
+|[0x800022b0]<br>0xFFFFFFFBFFFFFFFF|- rs2_val == -17179869185<br> - rs1_val == 2048<br>                                                                                          |[0x8000040e]:c.or a0, a1<br> |
+|[0x800022b8]<br>0xFFFFFFFFFFFFFFFB|- rs1_val == 4096<br>                                                                                                                        |[0x80000418]:c.or a0, a1<br> |
+|[0x800022c0]<br>0x0008000000002000|- rs2_val == 2251799813685248<br> - rs1_val == 8192<br>                                                                                      |[0x80000426]:c.or a0, a1<br> |
+|[0x800022c8]<br>0x0000000002004000|- rs2_val == 33554432<br> - rs1_val == 16384<br>                                                                                             |[0x80000432]:c.or a0, a1<br> |
+|[0x800022d0]<br>0x0000000200008000|- rs2_val == 8589934592<br> - rs1_val == 32768<br>                                                                                           |[0x80000440]:c.or a0, a1<br> |
+|[0x800022d8]<br>0xFFFFFFF7FFFFFFFF|- rs1_val == 131072<br>                                                                                                                      |[0x80000452]:c.or a0, a1<br> |
+|[0x800022e0]<br>0x0008000000040000|- rs1_val == 262144<br>                                                                                                                      |[0x80000462]:c.or a0, a1<br> |
+|[0x800022e8]<br>0xC000000000080000|- rs1_val == 524288<br>                                                                                                                      |[0x80000472]:c.or a0, a1<br> |
+|[0x800022f0]<br>0x0080000000100000|- rs2_val == 36028797018963968<br> - rs1_val == 1048576<br>                                                                                  |[0x80000482]:c.or a0, a1<br> |
+|[0x800022f8]<br>0xFFFFFFFFFFFFFF7F|- rs2_val == -129<br> - rs1_val == 2097152<br>                                                                                               |[0x80000490]:c.or a0, a1<br> |
+|[0x80002300]<br>0x0000000000400020|- rs2_val == 32<br> - rs1_val == 4194304<br>                                                                                                 |[0x8000049e]:c.or a0, a1<br> |
+|[0x80002308]<br>0x0000010000800000|- rs2_val == 1099511627776<br> - rs1_val == 8388608<br>                                                                                      |[0x800004ae]:c.or a0, a1<br> |
+|[0x80002310]<br>0x0000200001000000|- rs2_val == 35184372088832<br> - rs1_val == 16777216<br>                                                                                    |[0x800004be]:c.or a0, a1<br> |
+|[0x80002318]<br>0xFFFFFFFFFFEFFFFF|- rs2_val == -1048577<br> - rs1_val == 33554432<br>                                                                                          |[0x800004ce]:c.or a0, a1<br> |
+|[0x80002320]<br>0xFFFFFFFFFFFFFDFF|- rs2_val == -513<br> - rs1_val == 67108864<br>                                                                                              |[0x800004dc]:c.or a0, a1<br> |
+|[0x80002328]<br>0xFFFFFFFFFFFFFFFC|- rs1_val == 134217728<br>                                                                                                                   |[0x800004e8]:c.or a0, a1<br> |
+|[0x80002330]<br>0xFFFFFFFDFFFFFFFF|- rs2_val == -8589934593<br> - rs1_val == 268435456<br>                                                                                      |[0x800004fa]:c.or a0, a1<br> |
+|[0x80002338]<br>0xFFFFFFFFFF7FFFFF|- rs2_val == -8388609<br> - rs1_val == 536870912<br>                                                                                         |[0x8000050a]:c.or a0, a1<br> |
+|[0x80002340]<br>0xFFFFFEFFFFFFFFFF|- rs2_val == -1099511627777<br> - rs1_val == 1073741824<br>                                                                                  |[0x8000051c]:c.or a0, a1<br> |
+|[0x80002348]<br>0x0000000080000080|- rs2_val == 128<br> - rs1_val == 2147483648<br>                                                                                             |[0x8000052c]:c.or a0, a1<br> |
+|[0x80002350]<br>0x0000000280000000|- rs2_val == 2147483648<br> - rs1_val == 8589934592<br>                                                                                      |[0x8000053e]:c.or a0, a1<br> |
+|[0x80002358]<br>0x0004000400000000|- rs1_val == 17179869184<br>                                                                                                                 |[0x80000550]:c.or a0, a1<br> |
+|[0x80002360]<br>0x0000000800000800|- rs2_val == 2048<br> - rs1_val == 34359738368<br>                                                                                           |[0x80000562]:c.or a0, a1<br> |
+|[0x80002368]<br>0xF7FFFFFFFFFFFFFF|- rs2_val == -576460752303423489<br> - rs1_val == 68719476736<br>                                                                            |[0x80000576]:c.or a0, a1<br> |
+|[0x80002370]<br>0x0000082000000000|- rs2_val == 8796093022208<br> - rs1_val == 137438953472<br>                                                                                 |[0x80000588]:c.or a0, a1<br> |
+|[0x80002378]<br>0xFFFFFFFFFFFFFFEF|- rs2_val == -17<br> - rs1_val == 274877906944<br>                                                                                           |[0x80000596]:c.or a0, a1<br> |
+|[0x80002380]<br>0xFFFFFFFDFFFFFFFF|- rs1_val == 1099511627776<br>                                                                                                               |[0x800005aa]:c.or a0, a1<br> |
+|[0x80002388]<br>0xFFFFFBFFFFFFFFFF|- rs2_val == -4398046511105<br> - rs1_val == 2199023255552<br>                                                                               |[0x800005be]:c.or a0, a1<br> |
+|[0x80002390]<br>0x0000040000001000|- rs2_val == 4096<br> - rs1_val == 4398046511104<br>                                                                                         |[0x800005cc]:c.or a0, a1<br> |
+|[0x80002398]<br>0x0000080010000000|- rs2_val == 268435456<br> - rs1_val == 8796093022208<br>                                                                                    |[0x800005dc]:c.or a0, a1<br> |
+|[0x800023a0]<br>0x8000100000000000|- rs1_val == 17592186044416<br>                                                                                                              |[0x800005ee]:c.or a0, a1<br> |
+|[0x800023a8]<br>0xFFF7FFFFFFFFFFFF|- rs2_val == -2251799813685249<br> - rs1_val == 35184372088832<br>                                                                           |[0x80000602]:c.or a0, a1<br> |
+|[0x800023b0]<br>0x0000600000000000|- rs1_val == 70368744177664<br>                                                                                                              |[0x80000614]:c.or a0, a1<br> |
+|[0x800023b8]<br>0xFBFFFFFFFFFFFFFF|- rs2_val == -288230376151711745<br> - rs1_val == 281474976710656<br>                                                                        |[0x80000628]:c.or a0, a1<br> |
+|[0x800023c0]<br>0x0002000002000000|- rs1_val == 562949953421312<br>                                                                                                             |[0x80000638]:c.or a0, a1<br> |
+|[0x800023c8]<br>0x0004002000000000|- rs2_val == 137438953472<br> - rs1_val == 1125899906842624<br>                                                                              |[0x8000064a]:c.or a0, a1<br> |
+|[0x800023d0]<br>0x0008000100000000|- rs2_val == 4294967296<br> - rs1_val == 2251799813685248<br>                                                                                |[0x8000065c]:c.or a0, a1<br> |
+|[0x800023d8]<br>0x0010080000000000|- rs1_val == 4503599627370496<br>                                                                                                            |[0x8000066e]:c.or a0, a1<br> |
+|[0x800023e0]<br>0x0020000000000006|- rs1_val == 9007199254740992<br>                                                                                                            |[0x8000067c]:c.or a0, a1<br> |
+|[0x800023e8]<br>0x0040000000000002|- rs2_val == 2<br> - rs1_val == 18014398509481984<br>                                                                                        |[0x8000068a]:c.or a0, a1<br> |
+|[0x800023f0]<br>0xEFFFFFFFFFFFFFFF|- rs2_val == -1152921504606846977<br> - rs1_val == 36028797018963968<br>                                                                     |[0x8000069e]:c.or a0, a1<br> |
+|[0x800023f8]<br>0xFFFFFFF7FFFFFFFF|- rs1_val == 72057594037927936<br>                                                                                                           |[0x800006b2]:c.or a0, a1<br> |
+|[0x80002400]<br>0x0201000000000000|- rs2_val == 281474976710656<br> - rs1_val == 144115188075855872<br>                                                                         |[0x800006c4]:c.or a0, a1<br> |
+|[0x80002408]<br>0xF7FFFFFFFFFFFFFF|- rs1_val == 288230376151711744<br>                                                                                                          |[0x800006d8]:c.or a0, a1<br> |
+|[0x80002410]<br>0x0800000000000100|- rs1_val == 576460752303423488<br>                                                                                                          |[0x800006e8]:c.or a0, a1<br> |
+|[0x80002418]<br>0xFFFFFFFFFFFFF7FF|- rs2_val == -2049<br> - rs1_val == 1152921504606846976<br>                                                                                  |[0x800006fa]:c.or a0, a1<br> |
+|[0x80002420]<br>0x2000010000000000|- rs1_val == 2305843009213693952<br>                                                                                                         |[0x8000070c]:c.or a0, a1<br> |
+|[0x80002428]<br>0xFFFFFFFFFFFFFFFE|- rs2_val == -2<br> - rs1_val == 4611686018427387904<br>                                                                                     |[0x8000071a]:c.or a0, a1<br> |
+|[0x80002430]<br>0xFFFFFFFFFFFFFFFF|- rs2_val == -33<br> - rs1_val == -2<br>                                                                                                     |[0x80000726]:c.or a0, a1<br> |
+|[0x80002438]<br>0xFFFFFFFFFFFFFFFD|- rs2_val == 34359738368<br> - rs1_val == -3<br>                                                                                             |[0x80000734]:c.or a0, a1<br> |
+|[0x80002440]<br>0xFFFFFFFFFFFFFFFB|- rs2_val == 70368744177664<br> - rs1_val == -5<br>                                                                                          |[0x80000742]:c.or a0, a1<br> |
+|[0x80002448]<br>0xFFFFFFFFFFFFFFFF|- rs1_val == -9<br>                                                                                                                          |[0x80000752]:c.or a0, a1<br> |
+|[0x80002450]<br>0xFFFFFFFFFFFFFFFF|- rs2_val == -2199023255553<br> - rs1_val == -17<br>                                                                                         |[0x80000762]:c.or a0, a1<br> |
+|[0x80002458]<br>0xFFFFFFFFFFFFFFDF|- rs1_val == -33<br>                                                                                                                         |[0x8000076e]:c.or a0, a1<br> |
+|[0x80002460]<br>0xFFFFFFFFFFFFFFBF|- rs2_val == 1073741824<br> - rs1_val == -65<br>                                                                                             |[0x8000077c]:c.or a0, a1<br> |
+|[0x80002468]<br>0xFFFFFFFFFFFFFF7F|- rs2_val == 9007199254740992<br> - rs1_val == -129<br>                                                                                      |[0x8000078c]:c.or a0, a1<br> |
+|[0x80002470]<br>0xFFFFFFFFFFFFFFFF|- rs2_val == -8796093022209<br> - rs1_val == -257<br>                                                                                        |[0x8000079e]:c.or a0, a1<br> |
+|[0x80002478]<br>0xFFFFFFFFFFFFFFFF|- rs2_val == -3<br> - rs1_val == -513<br>                                                                                                    |[0x800007aa]:c.or a0, a1<br> |
+|[0x80002480]<br>0xFFFFFFFFFFFFFBFF|- rs2_val == 1048576<br> - rs1_val == -1025<br>                                                                                              |[0x800007b8]:c.or a0, a1<br> |
+|[0x80002488]<br>0xFFFFFFFFFFFFFFFF|- rs2_val == -18014398509481985<br> - rs1_val == -1073741825<br>                                                                             |[0x800007cc]:c.or a0, a1<br> |
+|[0x80002490]<br>0xFF7FFFFFFFFFFFFF|- rs2_val == -36028797018963969<br>                                                                                                          |[0x800007de]:c.or a0, a1<br> |
+|[0x80002498]<br>0xFEFFFFFFFFFFFFFF|- rs2_val == -72057594037927937<br>                                                                                                          |[0x800007f2]:c.or a0, a1<br> |
+|[0x800024a0]<br>0xFFFFFFFFFFFFFFFF|- rs2_val == -144115188075855873<br> - rs1_val == -16385<br>                                                                                 |[0x80000804]:c.or a0, a1<br> |
+|[0x800024a8]<br>0xBFFFFFFFFFFFFFFF|- rs2_val == -4611686018427387905<br>                                                                                                        |[0x80000816]:c.or a0, a1<br> |
+|[0x800024b0]<br>0x5555555555555555|- rs2_val == 6148914691236517205<br>                                                                                                         |[0x8000083a]:c.or a0, a1<br> |
+|[0x800024b8]<br>0xFFFFFFFFFFFFFBFF|- rs2_val == -6148914691236517206<br>                                                                                                        |[0x8000085e]:c.or a0, a1<br> |
+|[0x800024c0]<br>0xFFFFFFFFFFFFFFFF|- rs1_val == -4097<br>                                                                                                                       |[0x8000086a]:c.or a0, a1<br> |
+|[0x800024c8]<br>0xFFFFFFFFFFFFDFFF|- rs1_val == -8193<br>                                                                                                                       |[0x8000087a]:c.or a0, a1<br> |
+|[0x800024d0]<br>0xFFFFFFFFFFFF7FFF|- rs2_val == 8<br> - rs1_val == -32769<br>                                                                                                   |[0x80000886]:c.or a0, a1<br> |
+|[0x800024d8]<br>0xFFFFFFFFFFFEFFFF|- rs2_val == 274877906944<br> - rs1_val == -65537<br>                                                                                        |[0x80000896]:c.or a0, a1<br> |
+|[0x800024e0]<br>0xFFFFFFFFFFFDFFFF|- rs2_val == 18014398509481984<br> - rs1_val == -131073<br>                                                                                  |[0x800008a6]:c.or a0, a1<br> |
+|[0x800024e8]<br>0xFFFFFFFFFFFFFFFF|- rs2_val == -257<br> - rs1_val == -262145<br>                                                                                               |[0x800008b6]:c.or a0, a1<br> |
+|[0x800024f0]<br>0xFFFFFFFFFFF7FFFF|- rs1_val == -524289<br>                                                                                                                     |[0x800008c8]:c.or a0, a1<br> |
+|[0x800024f8]<br>0xFFFFFFFFFFEFFFFF|- rs1_val == -1048577<br>                                                                                                                    |[0x800008d6]:c.or a0, a1<br> |
+|[0x80002500]<br>0xFFFFFFFFFFDFFFFF|- rs1_val == -2097153<br>                                                                                                                    |[0x800008e8]:c.or a0, a1<br> |
+|[0x80002508]<br>0xFFFFFFFFFFFFFFFF|- rs2_val == -32769<br> - rs1_val == -4194305<br>                                                                                            |[0x800008f8]:c.or a0, a1<br> |
+|[0x80002510]<br>0xFFFFFFFFFF7FFFFF|- rs2_val == 549755813888<br> - rs1_val == -8388609<br>                                                                                      |[0x8000090a]:c.or a0, a1<br> |
+|[0x80002518]<br>0xFFFFFFFFFFFFFFFF|- rs2_val == -549755813889<br> - rs1_val == -16777217<br>                                                                                    |[0x8000091e]:c.or a0, a1<br> |
+|[0x80002520]<br>0xFFFFFFFFFFFFFFFF|- rs1_val == -33554433<br>                                                                                                                   |[0x8000092c]:c.or a0, a1<br> |
+|[0x80002528]<br>0xFFFFFFFFFBFFFFFF|- rs1_val == -67108865<br>                                                                                                                   |[0x8000093a]:c.or a0, a1<br> |
+|[0x80002530]<br>0xFFFFFFFFFFFFFFFF|- rs2_val == -8193<br> - rs1_val == -134217729<br>                                                                                           |[0x8000094a]:c.or a0, a1<br> |
+|[0x80002538]<br>0xFFFFFFFFEFFFFFFF|- rs2_val == 8192<br> - rs1_val == -268435457<br>                                                                                            |[0x80000958]:c.or a0, a1<br> |
+|[0x80002540]<br>0xFFFFFFFFFFFFFFFF|- rs1_val == -536870913<br>                                                                                                                  |[0x80000966]:c.or a0, a1<br> |
+|[0x80002548]<br>0xFFFFFFFFFFFFFFFF|- rs2_val == -17592186044417<br> - rs1_val == -2147483649<br>                                                                                |[0x8000097c]:c.or a0, a1<br> |
+|[0x80002550]<br>0xFFFFFFFFFFFFFFFF|- rs1_val == -4294967297<br>                                                                                                                 |[0x8000098c]:c.or a0, a1<br> |
+|[0x80002558]<br>0xFFFFFFFDFFFFFFFF|- rs2_val == 17592186044416<br> - rs1_val == -8589934593<br>                                                                                 |[0x800009a0]:c.or a0, a1<br> |
+|[0x80002560]<br>0xFFFFFFFFFFFFFFFF|- rs1_val == -17179869185<br>                                                                                                                |[0x800009b6]:c.or a0, a1<br> |
+|[0x80002568]<br>0xFFFFFFF7FFFFFFFF|- rs2_val == 576460752303423488<br> - rs1_val == -34359738369<br>                                                                            |[0x800009ca]:c.or a0, a1<br> |
+|[0x80002570]<br>0xFFFFFFEFFFFFFFFF|- rs1_val == -68719476737<br>                                                                                                                |[0x800009da]:c.or a0, a1<br> |
+|[0x80002578]<br>0xFFFFFFFFFFFFFFFF|- rs1_val == -137438953473<br>                                                                                                               |[0x800009ea]:c.or a0, a1<br> |
+|[0x80002580]<br>0xFFFFFFBFFFFFFFFF|- rs1_val == -274877906945<br>                                                                                                               |[0x800009fc]:c.or a0, a1<br> |
+|[0x80002588]<br>0xFFFFFF7FFFFFFFFF|- rs2_val == 2199023255552<br> - rs1_val == -549755813889<br>                                                                                |[0x80000a10]:c.or a0, a1<br> |
+|[0x80002590]<br>0xFFFFFFFFFFFFFFFF|- rs2_val == -67108865<br> - rs1_val == -1099511627777<br>                                                                                   |[0x80000a24]:c.or a0, a1<br> |
+|[0x80002598]<br>0xFFFFFDFFFFFFFFFF|- rs1_val == -2199023255553<br>                                                                                                              |[0x80000a38]:c.or a0, a1<br> |
+|[0x800025a0]<br>0xFFFFFBFFFFFFFFFF|- rs1_val == -4398046511105<br>                                                                                                              |[0x80000a48]:c.or a0, a1<br> |
+|[0x800025a8]<br>0xFFFFFFFFFFFFFFFF|- rs2_val == -524289<br> - rs1_val == -8796093022209<br>                                                                                     |[0x80000a5c]:c.or a0, a1<br> |
+|[0x800025b0]<br>0xFFFFEFFFFFFFFFFF|- rs1_val == -17592186044417<br>                                                                                                             |[0x80000a6c]:c.or a0, a1<br> |
+|[0x800025b8]<br>0xFFFFDFFFFFFFFFFF|- rs2_val == 65536<br> - rs1_val == -35184372088833<br>                                                                                      |[0x80000a7c]:c.or a0, a1<br> |
+|[0x800025c0]<br>0xFFFFFFFFFFFFFFFF|- rs1_val == -70368744177665<br>                                                                                                             |[0x80000a90]:c.or a0, a1<br> |
+|[0x800025c8]<br>0xFFFF7FFFFFFFFFFF|- rs2_val == 144115188075855872<br> - rs1_val == -140737488355329<br>                                                                        |[0x80000aa4]:c.or a0, a1<br> |
+|[0x800025d0]<br>0xFFFEFFFFFFFFFFFF|- rs2_val == 262144<br> - rs1_val == -281474976710657<br>                                                                                    |[0x80000ab6]:c.or a0, a1<br> |
+|[0x800025d8]<br>0xFFFDFFFFFFFFFFFF|- rs2_val == 4<br> - rs1_val == -562949953421313<br>                                                                                         |[0x80000ac6]:c.or a0, a1<br> |
+|[0x800025e0]<br>0xFFFFFFFFFFFFFFFF|- rs1_val == -36028797018963969<br>                                                                                                          |[0x80000adc]:c.or a0, a1<br> |
+|[0x800025e8]<br>0xFEFFFFFFFFFFFFFF|- rs2_val == 288230376151711744<br> - rs1_val == -72057594037927937<br>                                                                      |[0x80000af0]:c.or a0, a1<br> |
+|[0x800025f0]<br>0xFFFFFFFFFFFFFFFF|- rs2_val == -70368744177665<br> - rs1_val == -144115188075855873<br>                                                                        |[0x80000b06]:c.or a0, a1<br> |
+|[0x800025f8]<br>0xFBFFFFFFFFFFFFFF|- rs1_val == -288230376151711745<br>                                                                                                         |[0x80000b18]:c.or a0, a1<br> |
+|[0x80002600]<br>0xFFFFFFFFFFFFFFFF|- rs2_val == -9007199254740993<br>                                                                                                           |[0x80000b2a]:c.or a0, a1<br> |
+|[0x80002608]<br>0xF7FFFFFFFFFFFFFF|- rs2_val == 536870912<br> - rs1_val == -576460752303423489<br>                                                                              |[0x80000b3c]:c.or a0, a1<br> |
+|[0x80002610]<br>0xEFFFFFFFFFFFFFFF|- rs1_val == -1152921504606846977<br>                                                                                                        |[0x80000b4c]:c.or a0, a1<br> |
+|[0x80002618]<br>0xFFFFFFFFFFFFFFFF|- rs1_val == -4611686018427387905<br>                                                                                                        |[0x80000b60]:c.or a0, a1<br> |
+|[0x80002620]<br>0xF7FFFFFFFFFFFFFF|- rs1_val == 6148914691236517205<br>                                                                                                         |[0x80000b88]:c.or a0, a1<br> |
+|[0x80002628]<br>0xFFFFFFFFFFFFFFFB|- rs1_val == -6148914691236517206<br>                                                                                                        |[0x80000baa]:c.or a0, a1<br> |
+|[0x80002630]<br>0xBFFFFFFFFFFFFFFF|- rs2_val == 16<br>                                                                                                                          |[0x80000bba]:c.or a0, a1<br> |
+|[0x80002638]<br>0x0000000000800040|- rs2_val == 64<br>                                                                                                                          |[0x80000bc8]:c.or a0, a1<br> |
+|[0x80002640]<br>0x0000000000010200|- rs2_val == 512<br>                                                                                                                         |[0x80000bd4]:c.or a0, a1<br> |
+|[0x80002648]<br>0x0001000000000400|- rs2_val == 1024<br>                                                                                                                        |[0x80000be4]:c.or a0, a1<br> |
+|[0x80002650]<br>0x0020000000008000|- rs2_val == 32768<br>                                                                                                                       |[0x80000bf2]:c.or a0, a1<br> |
+|[0x80002658]<br>0xBFFFFFFFFFFFFFFF|- rs2_val == 131072<br>                                                                                                                      |[0x80000c04]:c.or a0, a1<br> |
+|[0x80002660]<br>0xC000000000080000|- rs2_val == 524288<br>                                                                                                                      |[0x80000c14]:c.or a0, a1<br> |
+|[0x80002668]<br>0xFFFFFFFFDFFFFFFF|- rs2_val == 4194304<br>                                                                                                                     |[0x80000c24]:c.or a0, a1<br> |
+|[0x80002670]<br>0xFFFFFFFFFFFFFFFE|- rs2_val == 16777216<br>                                                                                                                    |[0x80000c30]:c.or a0, a1<br> |
+|[0x80002678]<br>0x0000200004000000|- rs2_val == 67108864<br>                                                                                                                    |[0x80000c40]:c.or a0, a1<br> |
+|[0x80002680]<br>0x0008000008000000|- rs2_val == 134217728<br>                                                                                                                   |[0x80000c50]:c.or a0, a1<br> |
+|[0x80002688]<br>0xFFFFFFFFFFFFFFFB|- rs2_val == 68719476736<br>                                                                                                                 |[0x80000c5e]:c.or a0, a1<br> |
+|[0x80002690]<br>0x0000040000000002|- rs2_val == 4398046511104<br>                                                                                                               |[0x80000c6c]:c.or a0, a1<br> |
+|[0x80002698]<br>0xFFFFFFFFFFFFFFF8|- rs2_val == 140737488355328<br>                                                                                                             |[0x80000c7a]:c.or a0, a1<br> |
+|[0x800026a0]<br>0xFFBFFFFFFFFFFFFF|- rs2_val == 562949953421312<br> - rs1_val == -18014398509481985<br>                                                                         |[0x80000c8e]:c.or a0, a1<br> |
+|[0x800026a8]<br>0xFFFF7FFFFFFFFFFF|- rs2_val == 4503599627370496<br>                                                                                                            |[0x80000ca2]:c.or a0, a1<br> |
+|[0x800026b0]<br>0x0100000000080000|- rs2_val == 72057594037927936<br>                                                                                                           |[0x80000cb2]:c.or a0, a1<br> |
+|[0x800026b8]<br>0x1000000000200000|- rs2_val == 1152921504606846976<br>                                                                                                         |[0x80000cc2]:c.or a0, a1<br> |
+|[0x800026c0]<br>0x2000000020000000|- rs2_val == 2305843009213693952<br>                                                                                                         |[0x80000cd2]:c.or a0, a1<br> |
+|[0x800026c8]<br>0xFFFBFFFFFFFFFFFF|- rs2_val == 4611686018427387904<br> - rs1_val == -1125899906842625<br>                                                                      |[0x80000ce6]:c.or a0, a1<br> |
+|[0x800026d0]<br>0xFFFFFFFFFFFFFFF7|- rs2_val == -9<br>                                                                                                                          |[0x80000cf2]:c.or a0, a1<br> |
+|[0x800026d8]<br>0xFFFFFFFFFFFFFFBF|- rs2_val == -65<br>                                                                                                                         |[0x80000cfe]:c.or a0, a1<br> |
+|[0x800026e0]<br>0xFFEFFFFFFFFFFFFF|- rs2_val == -4503599627370497<br>                                                                                                           |[0x80000d12]:c.or a0, a1<br> |
+|[0x800026e8]<br>0xFFFFFFFFFFFFEFFF|- rs2_val == -4097<br>                                                                                                                       |[0x80000d1e]:c.or a0, a1<br> |
+|[0x800026f0]<br>0xFFFFFFFFFFFFBFFF|- rs2_val == -16385<br>                                                                                                                      |[0x80000d2c]:c.or a0, a1<br> |
+|[0x800026f8]<br>0xFFFFFFFFFFFFFFFF|- rs2_val == -65537<br>                                                                                                                      |[0x80000d3a]:c.or a0, a1<br> |
+|[0x80002700]<br>0xFFFFFFFFFFFDFFFF|- rs2_val == -131073<br>                                                                                                                     |[0x80000d46]:c.or a0, a1<br> |
+|[0x80002708]<br>0xFFFFFFFFFFFFFFFF|- rs2_val == -2097153<br>                                                                                                                    |[0x80000d56]:c.or a0, a1<br> |
+|[0x80002710]<br>0xFFFFFFFFFFBFFFFF|- rs2_val == -4194305<br>                                                                                                                    |[0x80000d68]:c.or a0, a1<br> |
+|[0x80002718]<br>0xFFFFFFFFFEFFFFFF|- rs2_val == -16777217<br>                                                                                                                   |[0x80000d7a]:c.or a0, a1<br> |
+|[0x80002720]<br>0xFFFFFFFFFFFFFFFF|- rs2_val == -33554433<br>                                                                                                                   |[0x80000d88]:c.or a0, a1<br> |
+|[0x80002728]<br>0xFFFFFFFFFFFFFFFF|- rs2_val == -134217729<br>                                                                                                                  |[0x80000d96]:c.or a0, a1<br> |
+|[0x80002730]<br>0xFFFFFFFFFFFFFFFF|- rs2_val == -268435457<br>                                                                                                                  |[0x80000daa]:c.or a0, a1<br> |
+|[0x80002738]<br>0xFFFFFFFFDFFFFFFF|- rs2_val == -536870913<br>                                                                                                                  |[0x80000dba]:c.or a0, a1<br> |
+|[0x80002740]<br>0xFFFFFFFFFFFFFFFF|- rs2_val == -2147483649<br>                                                                                                                 |[0x80000dce]:c.or a0, a1<br> |
+|[0x80002748]<br>0xFFFFFFFEFFFFFFFF|- rs2_val == -4294967297<br>                                                                                                                 |[0x80000de2]:c.or a0, a1<br> |
+|[0x80002750]<br>0xFFFFFFDFFFFFFFFF|- rs2_val == -137438953473<br>                                                                                                               |[0x80000df6]:c.or a0, a1<br> |
+|[0x80002758]<br>0xFFFFFFBFFFFFFFFF|- rs2_val == -274877906945<br>                                                                                                               |[0x80000e0a]:c.or a0, a1<br> |
+|[0x80002760]<br>0xFFFBFFFFFFFFFFFF|- rs2_val == -1125899906842625<br>                                                                                                           |[0x80000e1e]:c.or a0, a1<br> |
+|[0x80002768]<br>0xFFFFDFFFFFFFFFFF|- rs2_val == -35184372088833<br>                                                                                                             |[0x80000e32]:c.or a0, a1<br> |
+|[0x80002770]<br>0xFFFF7FFFFFFFFFFF|- rs2_val == -140737488355329<br>                                                                                                            |[0x80000e46]:c.or a0, a1<br> |
+|[0x80002778]<br>0xFFFEFFFFFFFFFFFF|- rs2_val == -281474976710657<br>                                                                                                            |[0x80000e5a]:c.or a0, a1<br> |
+|[0x80002780]<br>0xFFFFFFFFFFFFFFFF|- rs2_val == -562949953421313<br>                                                                                                            |[0x80000e6e]:c.or a0, a1<br> |
+|[0x80002788]<br>0xFFF7FFFFFFFFFFFF|- rs1_val == -2251799813685249<br>                                                                                                           |[0x80000e82]:c.or a0, a1<br> |
+|[0x80002790]<br>0xFFEFFFFFFFFFFFFF|- rs1_val == -4503599627370497<br>                                                                                                           |[0x80000e94]:c.or a0, a1<br> |
+|[0x80002798]<br>0xFFDFFFFFFFFFFFFF|- rs1_val == -9007199254740993<br>                                                                                                           |[0x80000ea8]:c.or a0, a1<br> |
+|[0x800027a0]<br>0xDFFFFFFFFFFFFFFF|- rs2_val == 8388608<br>                                                                                                                     |[0x80000eba]:c.or a0, a1<br> |

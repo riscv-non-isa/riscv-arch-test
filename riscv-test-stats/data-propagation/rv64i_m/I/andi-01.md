@@ -1,0 +1,175 @@
+
+## Data Propagation Report
+
+| Param       | Value    |
+|-------------|----------|
+| XLEN        | 64      |
+| TEST_REGION | [('0x80000390', '0x80000c20')]      |
+| SIG_REGION  | [('0x80002210', '0x80002748')]      |
+| COV_LABELS  | ('andi',)      |
+| TEST_NAME   | /scratch/git-repo/incoresemi/riscof/riscof_work/andi-01.S/andi-01.S    |
+
+## Report Table
+
+- The first column indicates the signature address and the data at that location in hexadecimal in the following format: 
+  ```
+  [Address]
+  Data
+  ```
+
+- The second column captures all the coverpoints which have been captured by that particular signature location
+
+- The third column captures all the insrtuctions since the time a coverpoint was
+  hit to the point when a store to the signature was performed. Each line has
+  the following format:
+  ```
+  [PC of instruction] : mnemonic
+  ```
+
+<style>
+table th:first-of-type {
+    width: 5%;
+}
+table th:nth-of-type(2) {
+    width: 40%;
+}
+table th:nth-of-type(3) {
+    width: 55%;
+}
+</style>
+
+|            signature             |                                                                  coverpoints                                                                  |                code                |
+|----------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------|
+|[0x80002210]<br>0x0000000000000020|- rs1 : 29<br> - rd : 4<br> - rs1 != rd<br> - rs1_val == imm_val<br> - rs1_val > 0 and imm_val > 0<br> - imm_val == 32<br> - rs1_val == 32<br> |[0x8000039c]:andi tp, t4, 32<br>    |
+|[0x80002218]<br>0x0000000000000000|- rs1 : 13<br> - rd : 13<br> - rs1 == rd<br> - rs1_val != imm_val<br> - rs1_val == 4096<br>                                                    |[0x800003a8]:andi a3, a3, 7<br>     |
+|[0x80002220]<br>0x0000000400000000|- rs1 : 28<br> - rd : 24<br> - rs1_val > 0 and imm_val < 0<br> - rs1_val == 17179869184<br>                                                    |[0x800003b8]:andi s8, t3, 4092<br>  |
+|[0x80002228]<br>0x0000000000000400|- rs1 : 3<br> - rd : 29<br> - rs1_val < 0 and imm_val > 0<br> - imm_val == 1024<br> - rs1_val == -16777217<br>                                 |[0x800003c8]:andi t4, gp, 1024<br>  |
+|[0x80002230]<br>0xFFFFFFFFFFEFFFF7|- rs1 : 5<br> - rd : 17<br> - rs1_val < 0 and imm_val < 0<br> - imm_val == -9<br> - rs1_val == -1048577<br>                                    |[0x800003d8]:andi a7, t0, 4087<br>  |
+|[0x80002238]<br>0x8000000000000000|- rs1 : 24<br> - rd : 2<br> - rs1_val == (-2**(xlen-1))<br> - imm_val == -17<br> - rs1_val == -9223372036854775808<br>                         |[0x800003e8]:andi sp, s8, 4079<br>  |
+|[0x80002240]<br>0x0000000000000000|- rs1 : 12<br> - rd : 21<br> - rs1_val == 0<br>                                                                                                |[0x800003f4]:andi s5, a2, 1024<br>  |
+|[0x80002248]<br>0x0000000000000005|- rs1 : 26<br> - rd : 28<br> - rs1_val == (2**(xlen-1)-1)<br> - rs1_val == 9223372036854775807<br>                                             |[0x80000408]:andi t3, s10, 5<br>    |
+|[0x80002250]<br>0x0000000000000001|- rs1 : 30<br> - rd : 27<br> - rs1_val == 1<br> - imm_val == -513<br>                                                                          |[0x80000414]:andi s11, t5, 3583<br> |
+|[0x80002258]<br>0x0200000000000000|- rs1 : 14<br> - rd : 1<br> - imm_val == (-2**(12-1))<br> - imm_val == -2048<br> - rs1_val == 144115188075855872<br>                           |[0x80000424]:andi ra, a4, 2048<br>  |
+|[0x80002260]<br>0x0000000000000000|- rs1 : 9<br> - rd : 30<br> - imm_val == 0<br> - rs1_val == -1073741825<br>                                                                    |[0x80000434]:andi t5, s1, 0<br>     |
+|[0x80002268]<br>0x0000000000000000|- rs1 : 1<br> - rd : 11<br> - imm_val == (2**(12-1)-1)<br> - imm_val == 2047<br> - rs1_val == 1073741824<br>                                   |[0x80000440]:andi a1, ra, 2047<br>  |
+|[0x80002270]<br>0x0000000000000000|- rs1 : 18<br> - rd : 0<br> - imm_val == 1<br> - rs1_val == -67108865<br>                                                                      |[0x80000450]:andi zero, s2, 1<br>   |
+|[0x80002278]<br>0x0000000000000002|- rs1 : 22<br> - rd : 10<br> - rs1_val == 2<br>                                                                                                |[0x8000045c]:andi a0, s6, 4090<br>  |
+|[0x80002280]<br>0x0000000000000000|- rs1 : 2<br> - rd : 8<br> - imm_val == -1366<br> - rs1_val == 4<br>                                                                           |[0x80000468]:andi fp, sp, 2730<br>  |
+|[0x80002288]<br>0x0000000000000000|- rs1 : 27<br> - rd : 15<br> - imm_val == 2<br> - rs1_val == 8<br>                                                                             |[0x80000474]:andi a5, s11, 2<br>    |
+|[0x80002290]<br>0x0000000000000000|- rs1 : 15<br> - rd : 22<br> - rs1_val == 16<br>                                                                                               |[0x80000480]:andi s6, a5, 1<br>     |
+|[0x80002298]<br>0x0000000000000000|- rs1 : 11<br> - rd : 23<br> - rs1_val == 64<br>                                                                                               |[0x8000048c]:andi s7, a1, 1<br>     |
+|[0x800022a0]<br>0x0000000000000000|- rs1 : 19<br> - rd : 31<br> - imm_val == 512<br> - rs1_val == 128<br>                                                                         |[0x80000498]:andi t6, s3, 512<br>   |
+|[0x800022a8]<br>0x0000000000000000|- rs1 : 31<br> - rd : 18<br> - imm_val == 8<br> - rs1_val == 256<br>                                                                           |[0x800004a4]:andi s2, t6, 8<br>     |
+|[0x800022b0]<br>0x0000000000000200|- rs1 : 25<br> - rd : 6<br> - rs1_val == 512<br>                                                                                               |[0x800004b0]:andi t1, s9, 1023<br>  |
+|[0x800022b8]<br>0x0000000000000400|- rs1 : 8<br> - rd : 16<br> - rs1_val == 1024<br>                                                                                              |[0x800004c4]:andi a6, fp, 2047<br>  |
+|[0x800022c0]<br>0x0000000000000800|- rs1 : 23<br> - rd : 20<br> - imm_val == -257<br> - rs1_val == 2048<br>                                                                       |[0x800004d4]:andi s4, s7, 3839<br>  |
+|[0x800022c8]<br>0x0000000000000000|- rs1 : 6<br> - rd : 5<br> - rs1_val == 8192<br>                                                                                               |[0x800004e0]:andi t0, t1, 3<br>     |
+|[0x800022d0]<br>0x0000000000004000|- rs1 : 7<br> - rd : 3<br> - rs1_val == 16384<br>                                                                                              |[0x800004ec]:andi gp, t2, 3583<br>  |
+|[0x800022d8]<br>0x0000000000008000|- rs1 : 10<br> - rd : 19<br> - rs1_val == 32768<br>                                                                                            |[0x800004f8]:andi s3, a0, 4086<br>  |
+|[0x800022e0]<br>0x0000000000000000|- rs1 : 21<br> - rd : 14<br> - rs1_val == 65536<br>                                                                                            |[0x80000504]:andi a4, s5, 1<br>     |
+|[0x800022e8]<br>0x0000000000000000|- rs1 : 17<br> - rd : 7<br> - imm_val == 64<br> - rs1_val == 131072<br>                                                                        |[0x80000510]:andi t2, a7, 64<br>    |
+|[0x800022f0]<br>0x0000000000040000|- rs1 : 20<br> - rd : 9<br> - rs1_val == 262144<br>                                                                                            |[0x8000051c]:andi s1, s4, 3583<br>  |
+|[0x800022f8]<br>0x0000000000080000|- rs1 : 4<br> - rd : 26<br> - imm_val == -3<br> - rs1_val == 524288<br>                                                                        |[0x80000528]:andi s10, tp, 4093<br> |
+|[0x80002300]<br>0x0000000000100000|- rs1 : 16<br> - rd : 25<br> - rs1_val == 1048576<br>                                                                                          |[0x80000534]:andi s9, a6, 4095<br>  |
+|[0x80002308]<br>0x0000000000000000|- rs1 : 0<br> - rd : 12<br>                                                                                                                    |[0x80000544]:andi a2, zero, 9<br>   |
+|[0x80002310]<br>0x0000000000000000|- rs1_val == 4194304<br>                                                                                                                       |[0x80000550]:andi a1, a0, 0<br>     |
+|[0x80002318]<br>0x0000000000000000|- rs1_val == 8388608<br>                                                                                                                       |[0x8000055c]:andi a1, a0, 3<br>     |
+|[0x80002320]<br>0x0000000001000000|- rs1_val == 16777216<br>                                                                                                                      |[0x80000568]:andi a1, a0, 4087<br>  |
+|[0x80002328]<br>0x0000000000000000|- imm_val == 256<br> - rs1_val == 33554432<br>                                                                                                 |[0x80000574]:andi a1, a0, 256<br>   |
+|[0x80002330]<br>0x0000000004000000|- imm_val == -129<br> - rs1_val == 67108864<br>                                                                                                |[0x80000580]:andi a1, a0, 3967<br>  |
+|[0x80002338]<br>0x0000000000000000|- rs1_val == 134217728<br>                                                                                                                     |[0x8000058c]:andi a1, a0, 5<br>     |
+|[0x80002340]<br>0x0000000000000000|- rs1_val == 268435456<br>                                                                                                                     |[0x80000598]:andi a1, a0, 256<br>   |
+|[0x80002348]<br>0x0000000000000000|- imm_val == 1365<br> - rs1_val == 536870912<br>                                                                                               |[0x800005a4]:andi a1, a0, 1365<br>  |
+|[0x80002350]<br>0x0000000080000000|- rs1_val == 2147483648<br>                                                                                                                    |[0x800005b4]:andi a1, a0, 4093<br>  |
+|[0x80002358]<br>0x0000000100000000|- rs1_val == 4294967296<br>                                                                                                                    |[0x800005c4]:andi a1, a0, 4089<br>  |
+|[0x80002360]<br>0x0000000200000000|- imm_val == -33<br> - rs1_val == 8589934592<br>                                                                                               |[0x800005d4]:andi a1, a0, 4063<br>  |
+|[0x80002368]<br>0x0000000800000000|- rs1_val == 34359738368<br>                                                                                                                   |[0x800005e4]:andi a1, a0, 2048<br>  |
+|[0x80002370]<br>0x0000000000000000|- rs1_val == 68719476736<br>                                                                                                                   |[0x800005f4]:andi a1, a0, 8<br>     |
+|[0x80002378]<br>0x0000000000000000|- rs1_val == 137438953472<br>                                                                                                                  |[0x80000604]:andi a1, a0, 512<br>   |
+|[0x80002380]<br>0x0000000000000000|- rs1_val == 274877906944<br>                                                                                                                  |[0x80000614]:andi a1, a0, 1024<br>  |
+|[0x80002388]<br>0x0000008000000000|- rs1_val == 549755813888<br>                                                                                                                  |[0x80000624]:andi a1, a0, 2730<br>  |
+|[0x80002390]<br>0x0000000000000000|- imm_val == 128<br> - rs1_val == 1099511627776<br>                                                                                            |[0x80000634]:andi a1, a0, 128<br>   |
+|[0x80002398]<br>0x0000000000000000|- rs1_val == 2199023255552<br>                                                                                                                 |[0x80000644]:andi a1, a0, 3<br>     |
+|[0x800023a0]<br>0x0000000000000000|- rs1_val == 4398046511104<br>                                                                                                                 |[0x80000654]:andi a1, a0, 9<br>     |
+|[0x800023a8]<br>0x0000080000000000|- rs1_val == 8796093022208<br>                                                                                                                 |[0x80000664]:andi a1, a0, 4088<br>  |
+|[0x800023b0]<br>0x0000000000000000|- imm_val == 4<br> - rs1_val == 17592186044416<br>                                                                                             |[0x80000674]:andi a1, a0, 4<br>     |
+|[0x800023b8]<br>0x0000000000000000|- rs1_val == 35184372088832<br>                                                                                                                |[0x80000684]:andi a1, a0, 512<br>   |
+|[0x800023c0]<br>0x0000000000000000|- imm_val == 16<br> - rs1_val == 70368744177664<br>                                                                                            |[0x80000694]:andi a1, a0, 16<br>    |
+|[0x800023c8]<br>0x0000000000000000|- rs1_val == 140737488355328<br>                                                                                                               |[0x800006a4]:andi a1, a0, 2047<br>  |
+|[0x800023d0]<br>0x0001000000000000|- rs1_val == 281474976710656<br>                                                                                                               |[0x800006b4]:andi a1, a0, 2048<br>  |
+|[0x800023d8]<br>0x0000000000000000|- rs1_val == 562949953421312<br>                                                                                                               |[0x800006c4]:andi a1, a0, 1023<br>  |
+|[0x800023e0]<br>0x0000000000000000|- rs1_val == 1125899906842624<br>                                                                                                              |[0x800006d4]:andi a1, a0, 5<br>     |
+|[0x800023e8]<br>0x0008000000000000|- rs1_val == 2251799813685248<br>                                                                                                              |[0x800006e4]:andi a1, a0, 4093<br>  |
+|[0x800023f0]<br>0x0000000000000000|- rs1_val == 4503599627370496<br>                                                                                                              |[0x800006f4]:andi a1, a0, 2047<br>  |
+|[0x800023f8]<br>0x0020000000000000|- rs1_val == 9007199254740992<br>                                                                                                              |[0x80000704]:andi a1, a0, 4095<br>  |
+|[0x80002400]<br>0x0000000000000000|- rs1_val == 18014398509481984<br>                                                                                                             |[0x80000714]:andi a1, a0, 5<br>     |
+|[0x80002408]<br>0x0080000000000000|- rs1_val == 36028797018963968<br>                                                                                                             |[0x80000724]:andi a1, a0, 4095<br>  |
+|[0x80002410]<br>0x0100000000000000|- imm_val == -5<br> - rs1_val == 72057594037927936<br>                                                                                         |[0x80000734]:andi a1, a0, 4091<br>  |
+|[0x80002418]<br>0x0000000000000000|- rs1_val == 288230376151711744<br>                                                                                                            |[0x80000744]:andi a1, a0, 6<br>     |
+|[0x80002420]<br>0x0800000000000000|- imm_val == -65<br> - rs1_val == 576460752303423488<br>                                                                                       |[0x80000754]:andi a1, a0, 4031<br>  |
+|[0x80002428]<br>0x1000000000000000|- rs1_val == 1152921504606846976<br>                                                                                                           |[0x80000764]:andi a1, a0, 4091<br>  |
+|[0x80002430]<br>0x2000000000000000|- rs1_val == 2305843009213693952<br>                                                                                                           |[0x80000774]:andi a1, a0, 3839<br>  |
+|[0x80002438]<br>0x0000000000000000|- rs1_val == 4611686018427387904<br>                                                                                                           |[0x80000784]:andi a1, a0, 256<br>   |
+|[0x80002440]<br>0x0000000000000009|- rs1_val == -2251799813685249<br>                                                                                                             |[0x80000798]:andi a1, a0, 9<br>     |
+|[0x80002448]<br>0x00000000000003FF|- rs1_val == -4503599627370497<br>                                                                                                             |[0x800007ac]:andi a1, a0, 1023<br>  |
+|[0x80002450]<br>0xFFDFFFFFFFFFFDFF|- rs1_val == -9007199254740993<br>                                                                                                             |[0x800007c0]:andi a1, a0, 3583<br>  |
+|[0x80002458]<br>0x0000000000000100|- rs1_val == -18014398509481985<br>                                                                                                            |[0x800007d4]:andi a1, a0, 256<br>   |
+|[0x80002460]<br>0xFF7FFFFFFFFFF800|- rs1_val == -36028797018963969<br>                                                                                                            |[0x800007e8]:andi a1, a0, 2048<br>  |
+|[0x80002468]<br>0xFEFFFFFFFFFFFFF8|- rs1_val == -72057594037927937<br>                                                                                                            |[0x800007fc]:andi a1, a0, 4088<br>  |
+|[0x80002470]<br>0x0000000000000002|- rs1_val == -144115188075855873<br>                                                                                                           |[0x80000810]:andi a1, a0, 2<br>     |
+|[0x80002478]<br>0x0000000000000010|- rs1_val == -288230376151711745<br>                                                                                                           |[0x80000824]:andi a1, a0, 16<br>    |
+|[0x80002480]<br>0x0000000000000006|- rs1_val == -576460752303423489<br>                                                                                                           |[0x80000838]:andi a1, a0, 6<br>     |
+|[0x80002488]<br>0x0000000000000005|- rs1_val == -1152921504606846977<br>                                                                                                          |[0x8000084c]:andi a1, a0, 5<br>     |
+|[0x80002490]<br>0x0000000000000003|- rs1_val == -2305843009213693953<br>                                                                                                          |[0x80000860]:andi a1, a0, 3<br>     |
+|[0x80002498]<br>0xBFFFFFFFFFFFFFF8|- rs1_val == -4611686018427387905<br>                                                                                                          |[0x80000874]:andi a1, a0, 4088<br>  |
+|[0x800024a0]<br>0x5555555555555155|- imm_val == -1025<br> - rs1_val == 6148914691236517205<br>                                                                                    |[0x8000089c]:andi a1, a0, 3071<br>  |
+|[0x800024a8]<br>0xAAAAAAAAAAAAAAAA|- rs1_val == -6148914691236517206<br>                                                                                                          |[0x800008c4]:andi a1, a0, 2730<br>  |
+|[0x800024b0]<br>0x0000000001000000|- imm_val == -2<br>                                                                                                                            |[0x800008d0]:andi a1, a0, 4094<br>  |
+|[0x800024b8]<br>0xFFFFFFFFFFFFFBFE|- rs1_val == -2<br>                                                                                                                            |[0x800008dc]:andi a1, a0, 3071<br>  |
+|[0x800024c0]<br>0xFFFFFFFFFFFFFFFD|- rs1_val == -3<br>                                                                                                                            |[0x800008e8]:andi a1, a0, 4093<br>  |
+|[0x800024c8]<br>0x0000000000000100|- rs1_val == -5<br>                                                                                                                            |[0x800008f4]:andi a1, a0, 256<br>   |
+|[0x800024d0]<br>0x0000000000000001|- rs1_val == -9<br>                                                                                                                            |[0x80000900]:andi a1, a0, 1<br>     |
+|[0x800024d8]<br>0xFFFFFFFFFFFFFFEE|- rs1_val == -17<br>                                                                                                                           |[0x8000090c]:andi a1, a0, 4094<br>  |
+|[0x800024e0]<br>0xFFFFFFFFFFFFFFDC|- rs1_val == -33<br>                                                                                                                           |[0x80000918]:andi a1, a0, 4092<br>  |
+|[0x800024e8]<br>0x0000000000000000|- rs1_val == -65<br>                                                                                                                           |[0x80000924]:andi a1, a0, 64<br>    |
+|[0x800024f0]<br>0xFFFFFFFFFFFFFB7F|- rs1_val == -129<br>                                                                                                                          |[0x80000930]:andi a1, a0, 3071<br>  |
+|[0x800024f8]<br>0xFFFFFFFFFFFFFEDF|- rs1_val == -257<br>                                                                                                                          |[0x8000093c]:andi a1, a0, 4063<br>  |
+|[0x80002500]<br>0xFFFFFFFFFFFFFDFF|- rs1_val == -513<br>                                                                                                                          |[0x80000948]:andi a1, a0, 4095<br>  |
+|[0x80002508]<br>0xFFFFFFFFFFFFFBBF|- rs1_val == -1025<br>                                                                                                                         |[0x80000954]:andi a1, a0, 4031<br>  |
+|[0x80002510]<br>0x0000000000000000|- rs1_val == -2049<br>                                                                                                                         |[0x80000964]:andi a1, a0, 0<br>     |
+|[0x80002518]<br>0xFFFFFFFFFFFFEFEF|- rs1_val == -4097<br>                                                                                                                         |[0x80000974]:andi a1, a0, 4079<br>  |
+|[0x80002520]<br>0xFFFFFFFFFFFFDDFF|- rs1_val == -8193<br>                                                                                                                         |[0x80000984]:andi a1, a0, 3583<br>  |
+|[0x80002528]<br>0xFFFFFFFFFFFFBFFD|- rs1_val == -16385<br>                                                                                                                        |[0x80000994]:andi a1, a0, 4093<br>  |
+|[0x80002530]<br>0xFFFFFFFFFFFF7AAA|- rs1_val == -32769<br>                                                                                                                        |[0x800009a4]:andi a1, a0, 2730<br>  |
+|[0x80002538]<br>0xFFFFFFFFFFFEFFBF|- rs1_val == -65537<br>                                                                                                                        |[0x800009b4]:andi a1, a0, 4031<br>  |
+|[0x80002540]<br>0x0000000000000100|- rs1_val == -131073<br>                                                                                                                       |[0x800009c4]:andi a1, a0, 256<br>   |
+|[0x80002548]<br>0x0000000000000003|- rs1_val == -262145<br>                                                                                                                       |[0x800009d4]:andi a1, a0, 3<br>     |
+|[0x80002550]<br>0x0000000000000040|- rs1_val == -524289<br>                                                                                                                       |[0x800009e4]:andi a1, a0, 64<br>    |
+|[0x80002558]<br>0x0000000000000009|- rs1_val == -2097153<br>                                                                                                                      |[0x800009f4]:andi a1, a0, 9<br>     |
+|[0x80002560]<br>0xFFFFFFFFFFBFFAAA|- rs1_val == -4194305<br>                                                                                                                      |[0x80000a04]:andi a1, a0, 2730<br>  |
+|[0x80002568]<br>0x0000000000000007|- rs1_val == -8388609<br>                                                                                                                      |[0x80000a14]:andi a1, a0, 7<br>     |
+|[0x80002570]<br>0xFFFFFFFFFDFFFFFE|- rs1_val == -33554433<br>                                                                                                                     |[0x80000a24]:andi a1, a0, 4094<br>  |
+|[0x80002578]<br>0x0000000000000005|- rs1_val == -134217729<br>                                                                                                                    |[0x80000a34]:andi a1, a0, 5<br>     |
+|[0x80002580]<br>0xFFFFFFFFEFFFFFBF|- rs1_val == -268435457<br>                                                                                                                    |[0x80000a44]:andi a1, a0, 4031<br>  |
+|[0x80002588]<br>0xFFFFFFFFDFFFFFFA|- rs1_val == -536870913<br>                                                                                                                    |[0x80000a54]:andi a1, a0, 4090<br>  |
+|[0x80002590]<br>0xFFFFFFFF7FFFFEFF|- rs1_val == -2147483649<br>                                                                                                                   |[0x80000a68]:andi a1, a0, 3839<br>  |
+|[0x80002598]<br>0xFFFFFFFEFFFFFC00|- rs1_val == -4294967297<br>                                                                                                                   |[0x80000a7c]:andi a1, a0, 3072<br>  |
+|[0x800025a0]<br>0xFFFFFFFDFFFFFFBF|- rs1_val == -8589934593<br>                                                                                                                   |[0x80000a90]:andi a1, a0, 4031<br>  |
+|[0x800025a8]<br>0x0000000000000040|- rs1_val == -17179869185<br>                                                                                                                  |[0x80000aa4]:andi a1, a0, 64<br>    |
+|[0x800025b0]<br>0x0000000000000040|- rs1_val == -34359738369<br>                                                                                                                  |[0x80000ab8]:andi a1, a0, 64<br>    |
+|[0x800025b8]<br>0xFFFFFFEFFFFFFFDF|- rs1_val == -68719476737<br>                                                                                                                  |[0x80000acc]:andi a1, a0, 4063<br>  |
+|[0x800025c0]<br>0xFFFFFFDFFFFFFC00|- rs1_val == -137438953473<br>                                                                                                                 |[0x80000ae0]:andi a1, a0, 3072<br>  |
+|[0x800025c8]<br>0x0000000000000004|- rs1_val == -274877906945<br>                                                                                                                 |[0x80000af4]:andi a1, a0, 4<br>     |
+|[0x800025d0]<br>0xFFFFFF7FFFFFFFFF|- rs1_val == -549755813889<br>                                                                                                                 |[0x80000b08]:andi a1, a0, 4095<br>  |
+|[0x800025d8]<br>0xFFFFFEFFFFFFFBFF|- rs1_val == -1099511627777<br>                                                                                                                |[0x80000b1c]:andi a1, a0, 3071<br>  |
+|[0x800025e0]<br>0xFFFFFDFFFFFFFFF9|- rs1_val == -2199023255553<br>                                                                                                                |[0x80000b30]:andi a1, a0, 4089<br>  |
+|[0x800025e8]<br>0xFFFFFBFFFFFFFFF6|- rs1_val == -4398046511105<br>                                                                                                                |[0x80000b44]:andi a1, a0, 4086<br>  |
+|[0x800025f0]<br>0xFFFFF7FFFFFFFFDF|- rs1_val == -8796093022209<br>                                                                                                                |[0x80000b58]:andi a1, a0, 4063<br>  |
+|[0x800025f8]<br>0x0000000000000100|- rs1_val == -17592186044417<br>                                                                                                               |[0x80000b6c]:andi a1, a0, 256<br>   |
+|[0x80002600]<br>0xFFFFDFFFFFFFFFF7|- rs1_val == -35184372088833<br>                                                                                                               |[0x80000b80]:andi a1, a0, 4087<br>  |
+|[0x80002608]<br>0xFFFFBFFFFFFFFDFF|- rs1_val == -70368744177665<br>                                                                                                               |[0x80000b94]:andi a1, a0, 3583<br>  |
+|[0x80002610]<br>0xFFFF7FFFFFFFFFFB|- rs1_val == -140737488355329<br>                                                                                                              |[0x80000ba8]:andi a1, a0, 4091<br>  |
+|[0x80002618]<br>0xFFFEFFFFFFFFFAAA|- rs1_val == -281474976710657<br>                                                                                                              |[0x80000bbc]:andi a1, a0, 2730<br>  |
+|[0x80002620]<br>0xFFFDFFFFFFFFFFDF|- rs1_val == -562949953421313<br>                                                                                                              |[0x80000bd0]:andi a1, a0, 4063<br>  |
+|[0x80002628]<br>0x0000000000000400|- rs1_val == -1125899906842625<br>                                                                                                             |[0x80000be4]:andi a1, a0, 1024<br>  |
+|[0x80002640]<br>0x0000000000000000|- rs1_val == 2097152<br>                                                                                                                       |[0x80000c0c]:andi a1, a0, 9<br>     |
