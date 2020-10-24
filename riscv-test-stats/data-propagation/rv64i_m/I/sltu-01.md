@@ -26,21 +26,9 @@
   [PC of instruction] : mnemonic
   ```
 
-<style>
-table th:first-of-type {
-    width: 5%;
-}
-table th:nth-of-type(2) {
-    width: 40%;
-}
-table th:nth-of-type(3) {
-    width: 55%;
-}
-</style>
-
 |            signature             |                                                                                    coverpoints                                                                                    |                code                |
 |----------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------|
-|[0x80003210]<br>0x0000000000000001|- rs1 : 7<br> - rs2 : 1<br> - rd : 7<br> - rs1 == rd != rs2<br> - rs1_val == 0<br> - rs2_val == 512<br>                                                                            |[0x800003a0]:sltu t2, t2, ra<br>    |
+|[0x80003210]<br>0x0000000000000001|- opcode : sltu<br> - rs1 : 7<br> - rs2 : 1<br> - rd : 7<br> - rs1 == rd != rs2<br> - rs1_val == 0<br> - rs2_val == 512<br>                                                        |[0x800003a0]:sltu t2, t2, ra<br>    |
 |[0x80003218]<br>0x0000000000000000|- rs1 : 17<br> - rs2 : 17<br> - rd : 28<br> - rs1 == rs2 != rd<br> - rs1_val > 0 and rs2_val > 0<br> - rs1_val == rs2_val and rs1_val > 0 and rs2_val > 0<br> - rs1_val == 512<br> |[0x800003b0]:sltu t3, a7, a7<br>    |
 |[0x80003220]<br>0x0000000000000001|- rs1 : 12<br> - rs2 : 27<br> - rd : 27<br> - rs2 == rd != rs1<br> - rs1_val != rs2_val and rs1_val > 0 and rs2_val > 0<br> - rs1_val == 1<br> - rs2_val == 34359738368<br>        |[0x800003c4]:sltu s11, a2, s11<br>  |
 |[0x80003228]<br>0x0000000000000000|- rs1 : 26<br> - rs2 : 26<br> - rd : 26<br> - rs1 == rs2 == rd<br> - rs2_val == 0<br>                                                                                              |[0x800003dc]:sltu s10, s10, s10<br> |

@@ -26,17 +26,6 @@
   [PC of instruction] : mnemonic
   ```
 
-<style>
-table th:first-of-type {
-    width: 5%;
-}
-table th:nth-of-type(2) {
-    width: 40%;
-}
-table th:nth-of-type(3) {
-    width: 55%;
-}
-</style>
-
-|signature|coverpoints|code|
-|---------|-----------|----|
+|        signature         |                        coverpoints                         |                                                code                                                |
+|--------------------------|------------------------------------------------------------|----------------------------------------------------------------------------------------------------|
+|[0x80002210]<br>0x00000001|- opcode : bge<br> -  rs1_val>rs2_val and ea_align == 2<br> |[0x80000920]:bge a0, a1, 6142<br> [0x8000011e]:addi sp, zero, 1<br> [0x80000122]:jal zero, 2070<br> |

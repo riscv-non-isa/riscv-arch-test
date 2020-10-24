@@ -26,21 +26,9 @@
   [PC of instruction] : mnemonic
   ```
 
-<style>
-table th:first-of-type {
-    width: 5%;
-}
-table th:nth-of-type(2) {
-    width: 40%;
-}
-table th:nth-of-type(3) {
-    width: 55%;
-}
-</style>
-
 |            signature             |                                                                                     coverpoints                                                                                      |               code                |
 |----------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------|
-|[0x80002210]<br>0x3FFFFFFFFFFFFFFE|- rs1 : 24<br> - rd : 14<br> - rs1 != rd<br> - rs1_val < 0 and imm_val > 0 and imm_val < xlen<br> - imm_val == 2<br>                                                                  |[0x8000039c]:srli a4, s8, 2<br>    |
+|[0x80002210]<br>0x3FFFFFFFFFFFFFFE|- opcode : srli<br> - rs1 : 24<br> - rd : 14<br> - rs1 != rd<br> - rs1_val < 0 and imm_val > 0 and imm_val < xlen<br> - imm_val == 2<br>                                              |[0x8000039c]:srli a4, s8, 2<br>    |
 |[0x80002218]<br>0x0000000000000000|- rs1 : 25<br> - rd : 25<br> - rs1 == rd<br> - rs1_val > 0 and imm_val > 0 and imm_val < xlen<br>                                                                                     |[0x800003a8]:srli s9, s9, 6<br>    |
 |[0x80002220]<br>0x0000000000000000|- rs1 : 8<br> - rd : 0<br> - rs1_val < 0 and imm_val == 0<br> - rs1_val == -4194305<br>                                                                                               |[0x800003b8]:srli zero, fp, 0<br>  |
 |[0x80002228]<br>0x0000000000000080|- rs1 : 17<br> - rd : 29<br> - rs1_val > 0 and imm_val == 0<br> - rs1_val == 128<br>                                                                                                  |[0x800003c4]:srli t4, a7, 0<br>    |

@@ -26,21 +26,9 @@
   [PC of instruction] : mnemonic
   ```
 
-<style>
-table th:first-of-type {
-    width: 5%;
-}
-table th:nth-of-type(2) {
-    width: 40%;
-}
-table th:nth-of-type(3) {
-    width: 55%;
-}
-</style>
-
 |            signature             |                                                                                   coverpoints                                                                                    |               code               |
 |----------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------|
-|[0x80002210]<br>0x007FFFFFFFFFFFFF|- rs1 : 14<br> - rs2 : 6<br> - rd : 14<br> - rs1 == rd != rs2<br> - rs1_val < 0 and rs2_val > 0 and rs2_val < xlen<br> - rs1_val == -3<br>                                        |[0x800003a0]:srl a4, a4, t1<br>   |
+|[0x80002210]<br>0x007FFFFFFFFFFFFF|- opcode : srl<br> - rs1 : 14<br> - rs2 : 6<br> - rd : 14<br> - rs1 == rd != rs2<br> - rs1_val < 0 and rs2_val > 0 and rs2_val < xlen<br> - rs1_val == -3<br>                     |[0x800003a0]:srl a4, a4, t1<br>   |
 |[0x80002218]<br>0x0000000000000000|- rs1 : 4<br> - rs2 : 4<br> - rd : 25<br> - rs1 == rs2 != rd<br> - rs1_val > 0 and rs2_val > 0 and rs2_val < xlen<br> - rs1_val == rs2_val and rs2_val > 0 and rs2_val < xlen<br> |[0x800003b0]:srl s9, tp, tp<br>   |
 |[0x80002220]<br>0xFFFFFF7FFFFFFFFF|- rs1 : 6<br> - rs2 : 3<br> - rd : 3<br> - rs2 == rd != rs1<br> - rs1_val < 0 and rs2_val == 0<br> - rs1_val == -549755813889<br>                                                 |[0x800003c8]:srl gp, t1, gp<br>   |
 |[0x80002228]<br>0x0000000000000000|- rs1 : 21<br> - rs2 : 21<br> - rd : 21<br> - rs1 == rs2 == rd<br> - rs1_val == 0 and rs2_val >= 0 and rs2_val < xlen<br>                                                         |[0x800003dc]:srl s5, s5, s5<br>   |

@@ -26,21 +26,9 @@
   [PC of instruction] : mnemonic
   ```
 
-<style>
-table th:first-of-type {
-    width: 5%;
-}
-table th:nth-of-type(2) {
-    width: 40%;
-}
-table th:nth-of-type(3) {
-    width: 55%;
-}
-</style>
-
 |            signature             |                                                                                                         coverpoints                                                                                                         |                                                code                                                |
 |----------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------|
-|[0x80016210]<br>0x0000000000000002|- rs1 : 11<br> - rs2 : 11<br> - rs1 == rs2<br> - rs2_val == 65536<br> - rs1_val == 65536<br>                                                                                                                                 |[0x800003b0]:bne a1, a1, 12<br> [0x800003b4]:addi gp, zero, 2<br> [0x800003b8]:jal zero, 12<br>     |
+|[0x80016210]<br>0x0000000000000002|- opcode : bne<br> - rs1 : 11<br> - rs2 : 11<br> - rs1 == rs2<br> - rs2_val == 65536<br> - rs1_val == 65536<br>                                                                                                              |[0x800003b0]:bne a1, a1, 12<br> [0x800003b4]:addi gp, zero, 2<br> [0x800003b8]:jal zero, 12<br>     |
 |[0x80016218]<br>0x0000000000000003|- rs1 : 1<br> - rs2 : 8<br> - rs1 != rs2<br> - rs1_val > 0 and rs2_val < 0 and imm_val & 0x03 == 0<br> - rs1_val > rs2_val and imm_val > 0 and imm_val & 0x03 == 0<br> - rs2_val == -513<br> - rs1_val == 4<br>              |[0x800003dc]:bne ra, fp, 16<br> [0x800003ec]:addi gp, zero, 3<br> [0x800003f0]:jal zero, 4<br>      |
 |[0x80016220]<br>0x0000000000000003|- rs1 : 26<br> - rs2 : 31<br> - rs1_val < 0 and rs2_val < 0 and imm_val & 0x03 == 0<br> - rs1_val == -2305843009213693953<br>                                                                                                |[0x80000418]:bne s10, t6, 16<br> [0x80000428]:addi gp, zero, 3<br> [0x8000042c]:jal zero, 4<br>     |
 |[0x80016228]<br>0x0000000000000003|- rs1 : 24<br> - rs2 : 9<br> - rs1_val < 0 and rs2_val > 0 and imm_val & 0x03 == 0<br> - rs1_val < rs2_val and imm_val > 0 and imm_val & 0x03 == 0<br> - rs2_val == 512<br> - rs1_val == -513<br>                            |[0x80000448]:bne s8, s1, 128<br> [0x800004c8]:addi gp, zero, 3<br> [0x800004cc]:jal zero, 4<br>     |

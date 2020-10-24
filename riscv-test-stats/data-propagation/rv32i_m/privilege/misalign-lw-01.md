@@ -26,17 +26,8 @@
   [PC of instruction] : mnemonic
   ```
 
-<style>
-table th:first-of-type {
-    width: 5%;
-}
-table th:nth-of-type(2) {
-    width: 40%;
-}
-table th:nth-of-type(3) {
-    width: 55%;
-}
-</style>
-
-|signature|coverpoints|code|
-|---------|-----------|----|
+|        signature         |             coverpoints              |                                code                                |
+|--------------------------|--------------------------------------|--------------------------------------------------------------------|
+|[0x80002210]<br>0x00000000|- opcode : lw<br> - ea_align == 1<br> |[0x80000114]:lw a1, 2(a0)<br> [0x8000011c]:addi zero, zero, 0<br>   |
+|[0x80002214]<br>0x00000000|- ea_align == 2<br>                   |[0x8000012c]:lw a1, 128(a0)<br> [0x80000134]:addi zero, zero, 0<br> |
+|[0x80002218]<br>0x00000000|- ea_align == 3<br>                   |[0x80000144]:lw a1, 2(a0)<br> [0x8000014c]:addi zero, zero, 0<br>   |

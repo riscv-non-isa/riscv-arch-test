@@ -26,21 +26,9 @@
   [PC of instruction] : mnemonic
   ```
 
-<style>
-table th:first-of-type {
-    width: 5%;
-}
-table th:nth-of-type(2) {
-    width: 40%;
-}
-table th:nth-of-type(3) {
-    width: 55%;
-}
-</style>
-
 |            signature             |                                                                   coverpoints                                                                    |                                                                     code                                                                     |
 |----------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------|
-|[0x80002210]<br>0xFFFFFFFFFFFFFFFE|- rs1 : 16<br> - rd : 9<br> - rs1 != rd<br> - rs1_val == imm_val<br> - rs1_val < 0 and imm_val < 0<br>                                            |[0x8000039c]:addiw s1, a6, 4095<br>                                                                                                           |
+|[0x80002210]<br>0xFFFFFFFFFFFFFFFE|- opcode : addiw<br> - rs1 : 16<br> - rd : 9<br> - rs1 != rd<br> - rs1_val == imm_val<br> - rs1_val < 0 and imm_val < 0<br>                       |[0x8000039c]:addiw s1, a6, 4095<br>                                                                                                           |
 |[0x80002218]<br>0xFFFFFFFFFFFFFDF5|- rs1 : 25<br> - rd : 25<br> - rs1 == rd<br> - rs1_val != imm_val<br> - imm_val == -513<br>                                                       |[0x800003a8]:addiw s9, s9, 3583<br>                                                                                                           |
 |[0x80002220]<br>0x0000000000000028|- rs1 : 13<br> - rd : 27<br> - rs1_val > 0 and imm_val > 0<br> - imm_val == 32<br> - rs1_val == 8<br>                                             |[0x800003b4]:addiw s11, a3, 32<br>                                                                                                            |
 |[0x80002228]<br>0x000000001FFFFFFE|- rs1 : 1<br> - rd : 31<br> - rs1_val > 0 and imm_val < 0<br> - imm_val == -2<br> - rs1_val == 536870912<br>                                      |[0x800003c0]:addiw t6, ra, 4094<br>                                                                                                           |

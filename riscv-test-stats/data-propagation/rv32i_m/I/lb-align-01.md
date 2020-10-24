@@ -26,17 +26,37 @@
   [PC of instruction] : mnemonic
   ```
 
-<style>
-table th:first-of-type {
-    width: 5%;
-}
-table th:nth-of-type(2) {
-    width: 40%;
-}
-table th:nth-of-type(3) {
-    width: 55%;
-}
-</style>
-
-|signature|coverpoints|code|
-|---------|-----------|----|
+|        signature         |                                                        coverpoints                                                         |                                                   code                                                   |
+|--------------------------|----------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------|
+|[0x80002210]<br>0xFFFFFFFE|- opcode : lb<br> - rs1 : 31<br> - rd : 15<br> - rs1 != rd<br> - ea_align == 0 and (imm_val % 4) == 0<br> - imm_val > 0<br> |[0x80000108]:lb a5, 512(t6)<br> [0x8000010c]:addi zero, zero, 0<br> [0x80000110]:addi zero, zero, 0<br>   |
+|[0x80002214]<br>0xFFFFFFFE|- rs1 : 8<br> - rd : 8<br> - rs1 == rd<br> - ea_align == 0 and (imm_val % 4) == 1<br>                                       |[0x80000120]:lb fp, 5(fp)<br> [0x80000124]:addi zero, zero, 0<br> [0x80000128]:addi zero, zero, 0<br>     |
+|[0x80002218]<br>0xFFFFFFFE|- rs1 : 3<br> - rd : 25<br> - ea_align == 0 and (imm_val % 4) == 2<br>                                                      |[0x80000138]:lb s9, 6(gp)<br> [0x8000013c]:addi zero, zero, 0<br> [0x80000140]:addi zero, zero, 0<br>     |
+|[0x8000221c]<br>0xFFFFFFFE|- rs1 : 6<br> - rd : 10<br> - ea_align == 0 and (imm_val % 4) == 3<br> - imm_val < 0<br>                                    |[0x80000150]:lb a0, 4063(t1)<br> [0x80000154]:addi zero, zero, 0<br> [0x80000158]:addi zero, zero, 0<br>  |
+|[0x80002220]<br>0xFFFFFFBE|- rs1 : 4<br> - rd : 18<br> - ea_align == 2 and (imm_val % 4) == 0<br>                                                      |[0x80000168]:lb s2, 4088(tp)<br> [0x8000016c]:addi zero, zero, 0<br> [0x80000170]:addi zero, zero, 0<br>  |
+|[0x80002224]<br>0xFFFFFFBE|- rs1 : 16<br> - rd : 14<br> - ea_align == 2 and (imm_val % 4) == 1<br>                                                     |[0x80000180]:lb a4, 9(a6)<br> [0x80000184]:addi zero, zero, 0<br> [0x80000188]:addi zero, zero, 0<br>     |
+|[0x80002228]<br>0xFFFFFFBE|- rs1 : 28<br> - rd : 21<br> - ea_align == 2 and (imm_val % 4) == 2<br>                                                     |[0x80000198]:lb s5, 4086(t3)<br> [0x8000019c]:addi zero, zero, 0<br> [0x800001a0]:addi zero, zero, 0<br>  |
+|[0x8000222c]<br>0xFFFFFFBE|- rs1 : 7<br> - rd : 31<br> - ea_align == 2 and (imm_val % 4) == 3<br>                                                      |[0x800001b0]:lb t6, 1023(t2)<br> [0x800001b4]:addi zero, zero, 0<br> [0x800001b8]:addi zero, zero, 0<br>  |
+|[0x80002230]<br>0xFFFFFFCA|- rs1 : 25<br> - rd : 7<br> - ea_align == 1 and (imm_val % 4) == 0<br>                                                      |[0x800001c8]:lb t2, 128(s9)<br> [0x800001cc]:addi zero, zero, 0<br> [0x800001d0]:addi zero, zero, 0<br>   |
+|[0x80002234]<br>0xFFFFFFCA|- rs1 : 24<br> - rd : 16<br> - ea_align == 1 and (imm_val % 4) == 1<br>                                                     |[0x800001e0]:lb a6, 9(s8)<br> [0x800001e4]:addi zero, zero, 0<br> [0x800001e8]:addi zero, zero, 0<br>     |
+|[0x80002238]<br>0x00000000|- rs1 : 10<br> - rd : 0<br> - imm_val == 0<br>                                                                              |[0x800001f8]:lb zero, 0(a0)<br> [0x800001fc]:addi zero, zero, 0<br> [0x80000200]:addi zero, zero, 0<br>   |
+|[0x8000223c]<br>0xFFFFFFCA|- rs1 : 14<br> - rd : 19<br> - ea_align == 1 and (imm_val % 4) == 2<br>                                                     |[0x80000210]:lb s3, 4090(a4)<br> [0x80000214]:addi zero, zero, 0<br> [0x80000218]:addi zero, zero, 0<br>  |
+|[0x80002240]<br>0xFFFFFFCA|- rs1 : 15<br> - rd : 27<br> - ea_align == 1 and (imm_val % 4) == 3<br>                                                     |[0x80000228]:lb s11, 4087(a5)<br> [0x8000022c]:addi zero, zero, 0<br> [0x80000230]:addi zero, zero, 0<br> |
+|[0x80002244]<br>0xFFFFFFBA|- rs1 : 5<br> - rd : 12<br> - ea_align == 3 and (imm_val % 4) == 0<br>                                                      |[0x80000240]:lb a2, 256(t0)<br> [0x80000244]:addi zero, zero, 0<br> [0x80000248]:addi zero, zero, 0<br>   |
+|[0x80002248]<br>0xFFFFFFBA|- rs1 : 21<br> - rd : 4<br> - ea_align == 3 and (imm_val % 4) == 1<br>                                                      |[0x80000258]:lb tp, 4093(s5)<br> [0x8000025c]:addi zero, zero, 0<br> [0x80000260]:addi zero, zero, 0<br>  |
+|[0x8000224c]<br>0xFFFFFFBA|- rs1 : 9<br> - rd : 6<br> - ea_align == 3 and (imm_val % 4) == 2<br>                                                       |[0x80000270]:lb t1, 6(s1)<br> [0x80000274]:addi zero, zero, 0<br> [0x80000278]:addi zero, zero, 0<br>     |
+|[0x80002250]<br>0xFFFFFFBA|- rs1 : 23<br> - rd : 1<br> - ea_align == 3 and (imm_val % 4) == 3<br>                                                      |[0x80000288]:lb ra, 2047(s7)<br> [0x8000028c]:addi zero, zero, 0<br> [0x80000290]:addi zero, zero, 0<br>  |
+|[0x80002254]<br>0xFFFFFFFE|- rs1 : 2<br> - rd : 5<br>                                                                                                  |[0x800002a0]:lb t0, 2048(sp)<br> [0x800002a4]:addi zero, zero, 0<br> [0x800002a8]:addi zero, zero, 0<br>  |
+|[0x80002258]<br>0xFFFFFFFE|- rs1 : 27<br> - rd : 20<br>                                                                                                |[0x800002b8]:lb s4, 2048(s11)<br> [0x800002bc]:addi zero, zero, 0<br> [0x800002c0]:addi zero, zero, 0<br> |
+|[0x8000225c]<br>0xFFFFFFFE|- rs1 : 20<br> - rd : 24<br>                                                                                                |[0x800002d0]:lb s8, 2048(s4)<br> [0x800002d4]:addi zero, zero, 0<br> [0x800002d8]:addi zero, zero, 0<br>  |
+|[0x80002260]<br>0xFFFFFFFE|- rs1 : 17<br> - rd : 13<br>                                                                                                |[0x800002e8]:lb a3, 2048(a7)<br> [0x800002ec]:addi zero, zero, 0<br> [0x800002f0]:addi zero, zero, 0<br>  |
+|[0x80002264]<br>0xFFFFFFFE|- rs1 : 26<br> - rd : 9<br>                                                                                                 |[0x80000300]:lb s1, 2048(s10)<br> [0x80000304]:addi zero, zero, 0<br> [0x80000308]:addi zero, zero, 0<br> |
+|[0x80002268]<br>0xFFFFFFFE|- rs1 : 11<br> - rd : 17<br>                                                                                                |[0x80000318]:lb a7, 2048(a1)<br> [0x8000031c]:addi zero, zero, 0<br> [0x80000320]:addi zero, zero, 0<br>  |
+|[0x8000226c]<br>0xFFFFFFFE|- rs1 : 30<br> - rd : 11<br>                                                                                                |[0x80000338]:lb a1, 2048(t5)<br> [0x8000033c]:addi zero, zero, 0<br> [0x80000340]:addi zero, zero, 0<br>  |
+|[0x80002270]<br>0xFFFFFFFE|- rs1 : 1<br> - rd : 26<br>                                                                                                 |[0x80000350]:lb s10, 2048(ra)<br> [0x80000354]:addi zero, zero, 0<br> [0x80000358]:addi zero, zero, 0<br> |
+|[0x80002274]<br>0xFFFFFFFE|- rs1 : 29<br> - rd : 2<br>                                                                                                 |[0x80000368]:lb sp, 2048(t4)<br> [0x8000036c]:addi zero, zero, 0<br> [0x80000370]:addi zero, zero, 0<br>  |
+|[0x80002278]<br>0xFFFFFFFE|- rs1 : 22<br> - rd : 29<br>                                                                                                |[0x80000380]:lb t4, 2048(s6)<br> [0x80000384]:addi zero, zero, 0<br> [0x80000388]:addi zero, zero, 0<br>  |
+|[0x8000227c]<br>0xFFFFFFFE|- rs1 : 19<br> - rd : 28<br>                                                                                                |[0x80000398]:lb t3, 2048(s3)<br> [0x8000039c]:addi zero, zero, 0<br> [0x800003a0]:addi zero, zero, 0<br>  |
+|[0x80002280]<br>0xFFFFFFFE|- rs1 : 12<br> - rd : 23<br>                                                                                                |[0x800003b0]:lb s7, 2048(a2)<br> [0x800003b4]:addi zero, zero, 0<br> [0x800003b8]:addi zero, zero, 0<br>  |
+|[0x80002284]<br>0xFFFFFFFE|- rs1 : 13<br> - rd : 22<br>                                                                                                |[0x800003c8]:lb s6, 2048(a3)<br> [0x800003cc]:addi zero, zero, 0<br> [0x800003d0]:addi zero, zero, 0<br>  |
+|[0x80002288]<br>0xFFFFFFFE|- rs1 : 18<br> - rd : 30<br>                                                                                                |[0x800003e0]:lb t5, 2048(s2)<br> [0x800003e4]:addi zero, zero, 0<br> [0x800003e8]:addi zero, zero, 0<br>  |
+|[0x8000228c]<br>0xFFFFFFFE|- rd : 3<br>                                                                                                                |[0x800003f8]:lb gp, 2048(s7)<br> [0x800003fc]:addi zero, zero, 0<br> [0x80000400]:addi zero, zero, 0<br>  |

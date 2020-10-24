@@ -26,20 +26,8 @@
   [PC of instruction] : mnemonic
   ```
 
-<style>
-table th:first-of-type {
-    width: 5%;
-}
-table th:nth-of-type(2) {
-    width: 40%;
-}
-table th:nth-of-type(3) {
-    width: 55%;
-}
-</style>
-
-|            signature             |    coverpoints     |                                code                                 |
-|----------------------------------|--------------------|---------------------------------------------------------------------|
-|[0x80002210]<br>0x0000000000000000|- ea_align == 1<br> |[0x800003ac]:lw a1, 4063(a0)<br> [0x800003b4]:addi zero, zero, 0<br> |
-|[0x80002218]<br>0x0000000000000000|- ea_align == 2<br> |[0x800003c4]:lw a1, 2730(a0)<br> [0x800003cc]:addi zero, zero, 0<br> |
-|[0x80002220]<br>0x0000000000000000|- ea_align == 3<br> |[0x800003dc]:lw a1, 2(a0)<br> [0x800003e4]:addi zero, zero, 0<br>    |
+|            signature             |             coverpoints              |                                code                                 |
+|----------------------------------|--------------------------------------|---------------------------------------------------------------------|
+|[0x80002210]<br>0x0000000000000000|- opcode : lw<br> - ea_align == 1<br> |[0x800003ac]:lw a1, 4063(a0)<br> [0x800003b4]:addi zero, zero, 0<br> |
+|[0x80002218]<br>0x0000000000000000|- ea_align == 2<br>                   |[0x800003c4]:lw a1, 2730(a0)<br> [0x800003cc]:addi zero, zero, 0<br> |
+|[0x80002220]<br>0x0000000000000000|- ea_align == 3<br>                   |[0x800003dc]:lw a1, 2(a0)<br> [0x800003e4]:addi zero, zero, 0<br>    |

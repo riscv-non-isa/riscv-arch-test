@@ -26,21 +26,9 @@
   [PC of instruction] : mnemonic
   ```
 
-<style>
-table th:first-of-type {
-    width: 5%;
-}
-table th:nth-of-type(2) {
-    width: 40%;
-}
-table th:nth-of-type(3) {
-    width: 55%;
-}
-</style>
-
 |            signature             |                                                                      coverpoints                                                                      |               code                |
 |----------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------|
-|[0x80002210]<br>0xFFFFFFFFFFFFF7FF|- rs1 : 26<br> - rd : 17<br> - rs1 != rd<br> - rs1_val < 0 and imm_val > 0 and imm_val < xlen<br> - rs1_val == -16385<br>                              |[0x800003a0]:srai a7, s10, 3<br>   |
+|[0x80002210]<br>0xFFFFFFFFFFFFF7FF|- opcode : srai<br> - rs1 : 26<br> - rd : 17<br> - rs1 != rd<br> - rs1_val < 0 and imm_val > 0 and imm_val < xlen<br> - rs1_val == -16385<br>          |[0x800003a0]:srai a7, s10, 3<br>   |
 |[0x80002218]<br>0x0000000010000000|- rs1 : 10<br> - rd : 10<br> - rs1 == rd<br> - rs1_val > 0 and imm_val > 0 and imm_val < xlen<br> - rs1_val == 562949953421312<br> - imm_val == 21<br> |[0x800003b0]:srai a0, a0, 21<br>   |
 |[0x80002220]<br>0xFFFFFFFFEFFFFFFF|- rs1 : 2<br> - rd : 1<br> - rs1_val < 0 and imm_val == 0<br> - rs1_val == -268435457<br>                                                              |[0x800003c0]:srai ra, sp, 0<br>    |
 |[0x80002228]<br>0x0000000800000000|- rs1 : 23<br> - rd : 15<br> - rs1_val > 0 and imm_val == 0<br> - rs1_val == 34359738368<br>                                                           |[0x800003d0]:srai a5, s7, 0<br>    |

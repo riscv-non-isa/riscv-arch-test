@@ -26,21 +26,9 @@
   [PC of instruction] : mnemonic
   ```
 
-<style>
-table th:first-of-type {
-    width: 5%;
-}
-table th:nth-of-type(2) {
-    width: 40%;
-}
-table th:nth-of-type(3) {
-    width: 55%;
-}
-</style>
-
 |            signature             |                                                                                                            coverpoints                                                                                                             |                                                code                                                 |
 |----------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------|
-|[0x80002210]<br>0xFFFFFFFFFFFFEC00|- rs1 : 8<br> - rd : 14<br> - rs1 != rd<br> - rs1_val < 0 and imm_val > 0 and imm_val < xlen<br>                                                                                                                                    |[0x8000039c]:slli a4, fp, 9<br>                                                                      |
+|[0x80002210]<br>0xFFFFFFFFFFFFEC00|- opcode : slli<br> - rs1 : 8<br> - rd : 14<br> - rs1 != rd<br> - rs1_val < 0 and imm_val > 0 and imm_val < xlen<br>                                                                                                                |[0x8000039c]:slli a4, fp, 9<br>                                                                      |
 |[0x80002218]<br>0x0000000000000000|- rs1 : 17<br> - rd : 17<br> - rs1 == rd<br> - rs1_val > 0 and imm_val > 0 and imm_val < xlen<br> - rs1_val == 1 and imm_val >= 0 and imm_val < xlen<br> - rs1_val == 1<br> - rs1_val == 144115188075855872<br> - imm_val == 61<br> |[0x800003a8]:slli a7, a7, 57<br> [0x800003ac]:slli a7, a7, 61<br>                                    |
 |[0x80002220]<br>0xFFFFFFFFFFFFEFFF|- rs1 : 1<br> - rd : 24<br> - rs1_val < 0 and imm_val == 0<br> - rs1_val == -4097<br>                                                                                                                                               |[0x800003bc]:slli s8, ra, 0<br>                                                                      |
 |[0x80002228]<br>0x0000000000000008|- rs1 : 7<br> - rd : 19<br> - rs1_val > 0 and imm_val == 0<br> - rs1_val == 8<br>                                                                                                                                                   |[0x800003c8]:slli s3, t2, 0<br>                                                                      |

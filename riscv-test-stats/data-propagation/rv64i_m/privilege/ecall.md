@@ -26,17 +26,6 @@
   [PC of instruction] : mnemonic
   ```
 
-<style>
-table th:first-of-type {
-    width: 5%;
-}
-table th:nth-of-type(2) {
-    width: 40%;
-}
-table th:nth-of-type(3) {
-    width: 55%;
-}
-</style>
-
-|signature|coverpoints|code|
-|---------|-----------|----|
+|            signature             |     coverpoints     |                           code                            |
+|----------------------------------|---------------------|-----------------------------------------------------------|
+|[0x80002210]<br>0x0000000000000000|- opcode : ecall<br> |[0x800003ac]:ecall<br> [0x800003b4]:addi zero, zero, 0<br> |

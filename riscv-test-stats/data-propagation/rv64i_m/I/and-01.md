@@ -26,21 +26,9 @@
   [PC of instruction] : mnemonic
   ```
 
-<style>
-table th:first-of-type {
-    width: 5%;
-}
-table th:nth-of-type(2) {
-    width: 40%;
-}
-table th:nth-of-type(3) {
-    width: 55%;
-}
-</style>
-
 |            signature             |                                                                                                    coverpoints                                                                                                    |                code                |
 |----------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------|
-|[0x80003210]<br>0x0000000000000000|- rs1 : 0<br> - rs2 : 12<br> - rd : 0<br> - rs1 == rd != rs2<br> - rs1_val != rs2_val<br> - rs1_val == 0<br>                                                                                                       |[0x800003a4]:and zero, zero, a2<br> |
+|[0x80003210]<br>0x0000000000000000|- opcode : and<br> - rs1 : 0<br> - rs2 : 12<br> - rd : 0<br> - rs1 == rd != rs2<br> - rs1_val != rs2_val<br> - rs1_val == 0<br>                                                                                    |[0x800003a4]:and zero, zero, a2<br> |
 |[0x80003218]<br>0xFFFFFFFDFFFFFFFF|- rs1 : 19<br> - rs2 : 19<br> - rd : 16<br> - rs1 == rs2 != rd<br> - rs1_val < 0 and rs2_val < 0<br> - rs1_val == rs2_val<br> - rs2_val == -8589934593<br> - rs1_val == -8589934593<br>                            |[0x800003bc]:and a6, s3, s3<br>     |
 |[0x80003220]<br>0x0000000001000000|- rs1 : 26<br> - rs2 : 14<br> - rd : 14<br> - rs2 == rd != rs1<br> - rs1_val > 0 and rs2_val > 0<br> - rs1_val == (2**(xlen-1)-1)<br> - rs2_val == 16777216<br> - rs1_val == 9223372036854775807<br>               |[0x800003d4]:and a4, s10, a4<br>    |
 |[0x80003228]<br>0xFFFFFFFFFFFFBFFF|- rs1 : 7<br> - rs2 : 7<br> - rd : 7<br> - rs1 == rs2 == rd<br> - rs2_val == -16385<br> - rs1_val == -16385<br>                                                                                                    |[0x800003e8]:and t2, t2, t2<br>     |

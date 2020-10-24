@@ -26,21 +26,9 @@
   [PC of instruction] : mnemonic
   ```
 
-<style>
-table th:first-of-type {
-    width: 5%;
-}
-table th:nth-of-type(2) {
-    width: 40%;
-}
-table th:nth-of-type(3) {
-    width: 55%;
-}
-</style>
-
 |            signature             |                                                                                                      coverpoints                                                                                                      |               code                |
 |----------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------|
-|[0x80003210]<br>0x0000000000000000|- rs1 : 6<br> - rs2 : 7<br> - rd : 6<br> - rs1 == rd != rs2<br> - rs1_val < 0 and rs2_val < 0<br> - rs1_val != rs2_val<br> - rs1_val == (-2**(xlen-1))<br> - rs1_val == -9223372036854775808<br>                       |[0x800003a4]:remw t1, t1, t2<br>   |
+|[0x80003210]<br>0x0000000000000000|- opcode : remw<br> - rs1 : 6<br> - rs2 : 7<br> - rd : 6<br> - rs1 == rd != rs2<br> - rs1_val < 0 and rs2_val < 0<br> - rs1_val != rs2_val<br> - rs1_val == (-2**(xlen-1))<br> - rs1_val == -9223372036854775808<br>   |[0x800003a4]:remw t1, t1, t2<br>   |
 |[0x80003218]<br>0x0000000000000000|- rs1 : 13<br> - rs2 : 25<br> - rd : 25<br> - rs2 == rd != rs1<br> - rs1_val == rs2_val<br> - rs2_val == 0<br> - rs1_val == 0<br>                                                                                      |[0x800003b4]:remw s9, a3, s9<br>   |
 |[0x80003220]<br>0xFFFFFFFFFFFFFFFF|- rs1 : 2<br> - rs2 : 12<br> - rd : 20<br> - rs1 != rs2  and rs1 != rd and rs2 != rd<br> - rs1_val > 0 and rs2_val < 0<br> - rs1_val == (2**(xlen-1)-1)<br> - rs2_val == -257<br> - rs1_val == 9223372036854775807<br> |[0x800003cc]:remw s4, sp, a2<br>   |
 |[0x80003228]<br>0x0000000000000000|- rs1 : 14<br> - rs2 : 14<br> - rd : 16<br> - rs1 == rs2 != rd<br> - rs2_val == -576460752303423489<br> - rs1_val == -576460752303423489<br>                                                                           |[0x800003e4]:remw a6, a4, a4<br>   |

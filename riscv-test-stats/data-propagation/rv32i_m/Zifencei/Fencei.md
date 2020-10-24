@@ -26,17 +26,6 @@
   [PC of instruction] : mnemonic
   ```
 
-<style>
-table th:first-of-type {
-    width: 5%;
-}
-table th:nth-of-type(2) {
-    width: 40%;
-}
-table th:nth-of-type(3) {
-    width: 55%;
-}
-</style>
-
-|signature|coverpoints|code|
-|---------|-----------|----|
+|        signature         |      coverpoints      |                          code                           |
+|--------------------------|-----------------------|---------------------------------------------------------|
+|[0x80002210]<br>0x00000030|- opcode : fence.i<br> |[0x8000012c]:fence.i<br> [0x80000130]:add gp, sp, ra<br> |

@@ -26,17 +26,19 @@
   [PC of instruction] : mnemonic
   ```
 
-<style>
-table th:first-of-type {
-    width: 5%;
-}
-table th:nth-of-type(2) {
-    width: 40%;
-}
-table th:nth-of-type(3) {
-    width: 55%;
-}
-</style>
-
-|signature|coverpoints|code|
-|---------|-----------|----|
+|        signature         |              coverpoints               |             code              |
+|--------------------------|----------------------------------------|-------------------------------|
+|[0x80002210]<br>0x00000000|- opcode : c.nop<br> - imm_val == 1<br> |[0x800000fc]:c.nop.hint.1<br>  |
+|[0x80002214]<br>0x00000000|- imm_val == 2<br>                      |[0x80000102]:c.nop.hint.2<br>  |
+|[0x80002218]<br>0x00000000|- imm_val == 4<br>                      |[0x80000108]:c.nop.hint.4<br>  |
+|[0x8000221c]<br>0x00000000|- imm_val == 8<br>                      |[0x8000010e]:c.nop.hint.8<br>  |
+|[0x80002220]<br>0x00000000|- imm_val == 16<br>                     |[0x80000114]:c.nop.hint.16<br> |
+|[0x80002224]<br>0x00000000|- imm_val == -32<br>                    |[0x8000011a]:c.nop.hint.32<br> |
+|[0x80002228]<br>0x00000000|- imm_val == -2<br>                     |[0x80000120]:c.nop.hint.62<br> |
+|[0x8000222c]<br>0x00000000|- imm_val == -3<br>                     |[0x80000126]:c.nop.hint.61<br> |
+|[0x80002230]<br>0x00000000|- imm_val == -5<br>                     |[0x8000012c]:c.nop.hint.59<br> |
+|[0x80002234]<br>0x00000000|- imm_val == -9<br>                     |[0x80000132]:c.nop.hint.55<br> |
+|[0x80002238]<br>0x00000000|- imm_val == -17<br>                    |[0x80000138]:c.nop.hint.47<br> |
+|[0x8000223c]<br>0x00000000|- imm_val == 31<br>                     |[0x8000013e]:c.nop.hint.31<br> |
+|[0x80002240]<br>0x00000000|- imm_val == 21<br>                     |[0x80000144]:c.nop.hint.21<br> |
+|[0x80002244]<br>0x00000000|- imm_val == -22<br>                    |[0x8000014a]:c.nop.hint.42<br> |

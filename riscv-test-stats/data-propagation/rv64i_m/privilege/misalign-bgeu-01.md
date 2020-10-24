@@ -26,18 +26,6 @@
   [PC of instruction] : mnemonic
   ```
 
-<style>
-table th:first-of-type {
-    width: 5%;
-}
-table th:nth-of-type(2) {
-    width: 40%;
-}
-table th:nth-of-type(3) {
-    width: 55%;
-}
-</style>
-
-|            signature             |               coverpoints               |                                               code                                                |
-|----------------------------------|-----------------------------------------|---------------------------------------------------------------------------------------------------|
-|[0x80002210]<br>0x0000000000000001|-  rs1_val>rs2_val and ea_align == 2<br> |[0x800003c4]:bgeu a0, a1, 8182<br> [0x800003ba]:addi sp, zero, 1<br> [0x800003be]:jal zero, 30<br> |
+|            signature             |                         coverpoints                         |                                               code                                                |
+|----------------------------------|-------------------------------------------------------------|---------------------------------------------------------------------------------------------------|
+|[0x80002210]<br>0x0000000000000001|- opcode : bgeu<br> -  rs1_val>rs2_val and ea_align == 2<br> |[0x800003c4]:bgeu a0, a1, 8182<br> [0x800003ba]:addi sp, zero, 1<br> [0x800003be]:jal zero, 30<br> |

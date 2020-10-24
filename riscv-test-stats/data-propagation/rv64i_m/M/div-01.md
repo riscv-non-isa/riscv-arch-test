@@ -26,21 +26,9 @@
   [PC of instruction] : mnemonic
   ```
 
-<style>
-table th:first-of-type {
-    width: 5%;
-}
-table th:nth-of-type(2) {
-    width: 40%;
-}
-table th:nth-of-type(3) {
-    width: 55%;
-}
-</style>
-
 |            signature             |                                                                                                         coverpoints                                                                                                          |               code               |
 |----------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------|
-|[0x80003210]<br>0xEAAAAAAAAAAAAAAB|- rs1 : 23<br> - rs2 : 18<br> - rd : 23<br> - rs1 == rd != rs2<br> - rs1_val < 0 and rs2_val > 0<br> - rs1_val != rs2_val<br> - rs1_val == (-2**(xlen-1))<br> - rs1_val == -9223372036854775808<br>                           |[0x800003a4]:div s7, s7, s2<br>   |
+|[0x80003210]<br>0xEAAAAAAAAAAAAAAB|- opcode : div<br> - rs1 : 23<br> - rs2 : 18<br> - rd : 23<br> - rs1 == rd != rs2<br> - rs1_val < 0 and rs2_val > 0<br> - rs1_val != rs2_val<br> - rs1_val == (-2**(xlen-1))<br> - rs1_val == -9223372036854775808<br>        |[0x800003a4]:div s7, s7, s2<br>   |
 |[0x80003218]<br>0x0000000000000000|- rs1 : 8<br> - rs2 : 26<br> - rd : 26<br> - rs2 == rd != rs1<br> - rs1_val == 0<br>                                                                                                                                          |[0x800003b4]:div s10, fp, s10<br> |
 |[0x80003220]<br>0xFFFFFFFE00000008|- rs1 : 11<br> - rs2 : 15<br> - rd : 3<br> - rs1 != rs2  and rs1 != rd and rs2 != rd<br> - rs1_val > 0 and rs2_val < 0<br> - rs1_val == (2**(xlen-1)-1)<br> - rs2_val == -1073741825<br> - rs1_val == 9223372036854775807<br> |[0x800003d0]:div gp, a1, a5<br>   |
 |[0x80003228]<br>0x0000000000000001|- rs1 : 22<br> - rs2 : 22<br> - rd : 19<br> - rs1 == rs2 != rd<br> - rs1_val > 0 and rs2_val > 0<br> - rs1_val == rs2_val<br> - rs2_val == 134217728<br> - rs1_val == 134217728<br>                                           |[0x800003e0]:div s3, s6, s6<br>   |

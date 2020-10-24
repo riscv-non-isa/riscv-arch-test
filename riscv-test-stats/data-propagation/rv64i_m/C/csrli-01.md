@@ -26,21 +26,9 @@
   [PC of instruction] : mnemonic
   ```
 
-<style>
-table th:first-of-type {
-    width: 5%;
-}
-table th:nth-of-type(2) {
-    width: 40%;
-}
-table th:nth-of-type(3) {
-    width: 55%;
-}
-</style>
-
 |            signature             |                                                                coverpoints                                                                |             code              |
 |----------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------|
-|[0x80002210]<br>0x0000000000000001|- rs1 : 13<br> - rs1_val < 0 and imm_val < xlen<br> - rs1_val == -2<br>                                                                    |[0x800002d8]:c.srli a3, 63<br> |
+|[0x80002210]<br>0x0000000000000001|- opcode : c.srli<br> - rs1 : 13<br> - rs1_val < 0 and imm_val < xlen<br> - rs1_val == -2<br>                                              |[0x800002d8]:c.srli a3, 63<br> |
 |[0x80002218]<br>0x0000001000000000|- rs1 : 14<br> - rs1_val > 0 and imm_val < xlen<br> - rs1_val == 18014398509481984<br>                                                     |[0x800002e4]:c.srli a4, 18<br> |
 |[0x80002220]<br>0x0000000000000000|- rs1 : 10<br> - rs1_val == imm_val and imm_val != 0  and imm_val < xlen<br> - rs1_val == 16<br> - imm_val == 16<br>                       |[0x800002ec]:c.srli a0, 16<br> |
 |[0x80002228]<br>0x4000000000000000|- rs1 : 9<br> - rs1_val == (-2**(xlen-1)) and imm_val != 0 and imm_val < xlen<br> - rs1_val == -9223372036854775808<br> - imm_val == 1<br> |[0x800002f8]:c.srli s1, 1<br>  |

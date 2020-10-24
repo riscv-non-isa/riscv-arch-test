@@ -26,21 +26,9 @@
   [PC of instruction] : mnemonic
   ```
 
-<style>
-table th:first-of-type {
-    width: 5%;
-}
-table th:nth-of-type(2) {
-    width: 40%;
-}
-table th:nth-of-type(3) {
-    width: 55%;
-}
-</style>
-
 |            signature             |                                                                                                        coverpoints                                                                                                        |                code                |
 |----------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------|
-|[0x80003210]<br>0x0000000000000000|- rs1 : 17<br> - rs2 : 8<br> - rd : 17<br> - rs1 == rd != rs2<br> - rs1_val < 0 and rs2_val > 0<br> - rs1_val != rs2_val<br> - rs1_val == (-2**(xlen-1))<br> - rs1_val == -9223372036854775808<br>                         |[0x800003a4]:mulw a7, a7, fp<br>    |
+|[0x80003210]<br>0x0000000000000000|- opcode : mulw<br> - rs1 : 17<br> - rs2 : 8<br> - rd : 17<br> - rs1 == rd != rs2<br> - rs1_val < 0 and rs2_val > 0<br> - rs1_val != rs2_val<br> - rs1_val == (-2**(xlen-1))<br> - rs1_val == -9223372036854775808<br>     |[0x800003a4]:mulw a7, a7, fp<br>    |
 |[0x80003218]<br>0x0000000000000000|- rs1 : 3<br> - rs2 : 24<br> - rd : 24<br> - rs2 == rd != rs1<br> - rs1_val == 0<br> - rs2_val == 137438953472<br>                                                                                                         |[0x800003b8]:mulw s8, gp, s8<br>    |
 |[0x80003220]<br>0xFFFFFFFFFF000000|- rs1 : 22<br> - rs2 : 1<br> - rd : 30<br> - rs1 != rs2  and rs1 != rd and rs2 != rd<br> - rs1_val > 0 and rs2_val > 0<br> - rs1_val == (2**(xlen-1)-1)<br> - rs2_val == 16777216<br> - rs1_val == 9223372036854775807<br> |[0x800003d0]:mulw t5, s6, ra<br>    |
 |[0x80003228]<br>0x0000000000000001|- rs1 : 9<br> - rs2 : 9<br> - rd : 6<br> - rs1 == rs2 != rd<br> - rs1_val < 0 and rs2_val < 0<br> - rs1_val == rs2_val<br> - rs2_val == -140737488355329<br> - rs1_val == -140737488355329<br>                             |[0x800003e8]:mulw t1, s1, s1<br>    |

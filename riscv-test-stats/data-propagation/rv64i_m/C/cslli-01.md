@@ -26,21 +26,9 @@
   [PC of instruction] : mnemonic
   ```
 
-<style>
-table th:first-of-type {
-    width: 5%;
-}
-table th:nth-of-type(2) {
-    width: 40%;
-}
-table th:nth-of-type(3) {
-    width: 55%;
-}
-</style>
-
 |            signature             |                                                                                   coverpoints                                                                                   |                                            code                                            |
 |----------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|
-|[0x80002210]<br>0xFFFEFFFFFFFFFFE0|- rd : 8<br> - rs1_val < 0 and imm_val < xlen<br> - rs1_val == -8796093022209<br>                                                                                                |[0x800002da]:c.slli fp, 43<br> [0x800002dc]:c.addi fp, 63<br> [0x800002de]:c.slli fp, 5<br> |
+|[0x80002210]<br>0xFFFEFFFFFFFFFFE0|- opcode : c.slli<br> - rd : 8<br> - rs1_val < 0 and imm_val < xlen<br> - rs1_val == -8796093022209<br>                                                                          |[0x800002da]:c.slli fp, 43<br> [0x800002dc]:c.addi fp, 63<br> [0x800002de]:c.slli fp, 5<br> |
 |[0x80002218]<br>0x0080000000000000|- rd : 9<br> - rs1_val > 0 and imm_val < xlen<br> - rs1_val == 1 and imm_val != 0 and imm_val < xlen<br> - rs1_val == 1<br> - rs1_val == 2251799813685248<br> - imm_val == 4<br> |[0x800002e8]:c.slli s1, 51<br> [0x800002ea]:c.slli s1, 4<br>                                |
 |[0x80002220]<br>0x0000000000000040|- rd : 14<br> - rs1_val == imm_val and imm_val != 0  and imm_val < xlen<br> - rs1_val == 4<br>                                                                                   |[0x800002f2]:c.slli a4, 4<br>                                                               |
 |[0x80002228]<br>0x0000000000000000|- rd : 11<br> - rs1_val == (-2**(xlen-1)) and imm_val != 0 and imm_val < xlen<br> - rs1_val == -9223372036854775808<br> - imm_val == 62<br>                                      |[0x800002fc]:c.slli a1, 63<br> [0x800002fe]:c.slli a1, 62<br>                               |

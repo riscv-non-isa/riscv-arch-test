@@ -26,21 +26,9 @@
   [PC of instruction] : mnemonic
   ```
 
-<style>
-table th:first-of-type {
-    width: 5%;
-}
-table th:nth-of-type(2) {
-    width: 40%;
-}
-table th:nth-of-type(3) {
-    width: 55%;
-}
-</style>
-
 |            signature             |                                                                                                          coverpoints                                                                                                          |                code                |
 |----------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------|
-|[0x80003210]<br>0x7FFFFFFFFFFFFFFB|- rs1 : 16<br> - rs2 : 19<br> - rd : 16<br> - rs1 == rd != rs2<br> - rs1_val < 0 and rs2_val < 0<br> - rs1_val != rs2_val<br> - rs1_val == (-2**(xlen-1))<br> - rs1_val == -9223372036854775808<br>                            |[0x800003a4]:mulhu a6, a6, s3<br>   |
+|[0x80003210]<br>0x7FFFFFFFFFFFFFFB|- opcode : mulhu<br> - rs1 : 16<br> - rs2 : 19<br> - rd : 16<br> - rs1 == rd != rs2<br> - rs1_val < 0 and rs2_val < 0<br> - rs1_val != rs2_val<br> - rs1_val == (-2**(xlen-1))<br> - rs1_val == -9223372036854775808<br>       |[0x800003a4]:mulhu a6, a6, s3<br>   |
 |[0x80003218]<br>0x0000000000000000|- rs1 : 30<br> - rs2 : 5<br> - rd : 5<br> - rs2 == rd != rs1<br> - rs1_val == 0<br> - rs2_val == -1025<br>                                                                                                                     |[0x800003b4]:mulhu t0, t5, t0<br>   |
 |[0x80003220]<br>0x0000001FFFFFFFFF|- rs1 : 15<br> - rs2 : 20<br> - rd : 6<br> - rs1 != rs2  and rs1 != rd and rs2 != rd<br> - rs1_val > 0 and rs2_val > 0<br> - rs1_val == (2**(xlen-1)-1)<br> - rs2_val == 274877906944<br> - rs1_val == 9223372036854775807<br> |[0x800003d0]:mulhu t1, a5, s4<br>   |
 |[0x80003228]<br>0x1C71C71C71C71C71|- rs1 : 1<br> - rs2 : 1<br> - rd : 23<br> - rs1 == rs2 != rd<br> - rs1_val == rs2_val<br> - rs2_val == 6148914691236517205<br> - rs1_val == 6148914691236517205<br>                                                            |[0x800003fc]:mulhu s7, ra, ra<br>   |

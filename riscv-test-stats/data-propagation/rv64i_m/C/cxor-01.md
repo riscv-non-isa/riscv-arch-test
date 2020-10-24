@@ -26,21 +26,9 @@
   [PC of instruction] : mnemonic
   ```
 
-<style>
-table th:first-of-type {
-    width: 5%;
-}
-table th:nth-of-type(2) {
-    width: 40%;
-}
-table th:nth-of-type(3) {
-    width: 55%;
-}
-</style>
-
 |            signature             |                                                           coverpoints                                                           |             code             |
 |----------------------------------|---------------------------------------------------------------------------------------------------------------------------------|------------------------------|
-|[0x80002210]<br>0x0000000000000000|- rs1 : 13<br> - rs2 : 13<br> - rs1 == rs2<br> - rs2_val > 0<br>                                                                 |[0x800002da]:c.xor a3, a3<br> |
+|[0x80002210]<br>0x0000000000000000|- opcode : c.xor<br> - rs1 : 13<br> - rs2 : 13<br> - rs1 == rs2<br> - rs2_val > 0<br>                                            |[0x800002da]:c.xor a3, a3<br> |
 |[0x80002218]<br>0x0800000080000000|- rs1 : 9<br> - rs2 : 8<br> - rs1 != rs2<br> - rs2_val < 0<br> - rs2_val == -576460752303423489<br> - rs1_val == -2147483649<br> |[0x800002f0]:c.xor s1, s0<br> |
 |[0x80002220]<br>0x8000000004000000|- rs1 : 15<br> - rs2 : 10<br> - rs1_val == (-2**(xlen-1))<br> - rs2_val == 67108864<br> - rs1_val == -9223372036854775808<br>    |[0x80000300]:c.xor a5, a0<br> |
 |[0x80002228]<br>0xFFFFDFFFFFFFFFFF|- rs1 : 10<br> - rs2 : 9<br> - rs1_val == 0<br> - rs2_val == -35184372088833<br>                                                 |[0x80000310]:c.xor a0, s1<br> |
