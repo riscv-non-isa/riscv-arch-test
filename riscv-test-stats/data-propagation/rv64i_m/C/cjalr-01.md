@@ -8,9 +8,9 @@
 | SIG_REGION                | [('0x80002210', '0x80002410')]      |
 | COV_LABELS                | ('cjalr',)      |
 | TEST_NAME                 | /scratch/git-repo/incoresemi/riscof/riscof_work/cjalr-01.S/cjalr-01.S    |
-| Total Unique Coverpoints  | 29      |
-| Total Signature Updates   | 56      |
-| Ops w/o unique coverpoints | 0      |
+| Total Unique Coverpoints  | 32      |
+| Total Signature Updates   | 62      |
+| Ops w/o unique coverpoints | 1      |
 | Sig Updates w/o Coverpoints | 0    |
 
 ## Report Table
@@ -60,3 +60,6 @@
 |  26|[0x800022d8]<br>0x0000000000000009|- rs1 : x14<br>                      |[0x80000694]:c.jalr a4<br> [0x8000069c]:xori ra, ra, 3<br> [0x800006a0]:auipc a3, 0<br> [0x800006a4]:addi a3, a3, 4076<br> [0x800006a8]:c.andi a3, 60<br> [0x800006aa]:sub ra, ra, a3<br>     |
 |  27|[0x800022e0]<br>0x000000000000000F|- rs1 : x20<br>                      |[0x800006ba]:c.jalr s4<br> [0x800006c2]:xori ra, ra, 3<br> [0x800006c6]:auipc a3, 0<br> [0x800006ca]:addi a3, a3, 4076<br> [0x800006ce]:c.andi a3, 60<br> [0x800006d0]:sub ra, ra, a3<br>     |
 |  28|[0x800022e8]<br>0x0000000000000009|- rs1 : x19<br>                      |[0x800006e0]:c.jalr s3<br> [0x800006e8]:xori ra, ra, 3<br> [0x800006ec]:auipc gp, 0<br> [0x800006f0]:addi gp, gp, 4076<br> [0x800006f4]:andi gp, gp, 4092<br> [0x800006f8]:sub ra, ra, gp<br> |
+|  29|[0x800022f0]<br>0x0000000000000009|- rs1 : x23<br>                      |[0x80000710]:c.jalr s7<br> [0x80000718]:xori ra, ra, 3<br> [0x8000071c]:auipc gp, 0<br> [0x80000720]:addi gp, gp, 4076<br> [0x80000724]:andi gp, gp, 4092<br> [0x80000728]:sub ra, ra, gp<br> |
+|  30|[0x800022f8]<br>0x000000000000000F|- rs1 : x13<br>                      |[0x80000736]:c.jalr a3<br> [0x8000073e]:xori ra, ra, 3<br> [0x80000742]:auipc gp, 0<br> [0x80000746]:addi gp, gp, 4076<br> [0x8000074a]:andi gp, gp, 4092<br> [0x8000074e]:sub ra, ra, gp<br> |
+|  31|[0x80002300]<br>0x0000000000000009|- rs1 : x10<br>                      |[0x8000075c]:c.jalr a0<br> [0x80000764]:xori ra, ra, 3<br> [0x80000768]:auipc gp, 0<br> [0x8000076c]:addi gp, gp, 4076<br> [0x80000770]:andi gp, gp, 4092<br> [0x80000774]:sub ra, ra, gp<br> |
