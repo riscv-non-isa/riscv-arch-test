@@ -16,13 +16,13 @@ Each leaf folder contains the following 3 files:
 
 HTML preview of the reports can be accessed directly through the following links:
 
-- [rv32i_m/I](https://htmlpreview.github.io/?https://github.com/incoresemi/riscv-compliance/blob/dev/coverage/rv32i_m/I/coverage.html)
-- [rv32i_m/M](https://htmlpreview.github.io/?https://github.com/incoresemi/riscv-compliance/blob/dev/coverage/rv32i_m/M/coverage.html)
-- [rv32i_m/C](https://htmlpreview.github.io/?https://github.com/incoresemi/riscv-compliance/blob/dev/coverage/rv32i_m/C/coverage.html)
-- [rv32i_m/privilege](https://htmlpreview.github.io/?https://github.com/incoresemi/riscv-compliance/blob/dev/coverage/rv32i_m/privilege/coverage.html)
-- [rv32i_m/Zifencei](https://htmlpreview.github.io/?https://github.com/incoresemi/riscv-compliance/blob/dev/coverage/rv32i_m/Zifencei/coverage.html)
-- [rv64i_m/I](https://htmlpreview.github.io/?https://github.com/incoresemi/riscv-compliance/blob/dev/coverage/rv64i_m/I/coverage.html)
-- [rv64i_m/M](https://htmlpreview.github.io/?https://github.com/incoresemi/riscv-compliance/blob/dev/coverage/rv64i_m/M/coverage.html)
-- [rv64i_m/C](https://htmlpreview.github.io/?https://github.com/incoresemi/riscv-compliance/blob/dev/coverage/rv64i_m/C/coverage.html)
-- [rv64i_m/privilege](https://htmlpreview.github.io/?https://github.com/incoresemi/riscv-compliance/blob/dev/coverage/rv64i_m/privilege/coverage.html)
-- [rv64i_m/Zifencei](https://htmlpreview.github.io/?https://github.com/incoresemi/riscv-compliance/blob/dev/coverage/rv64i_m/Zifencei/coverage.html)
+- [rv32i_m/I](https://htmlpreview.github.io/?https://github.com/incoresemi/riscv-compliance/blob/dev/riscv-test-stats/coverage/rv32i_m/I/coverage.html)
+- [rv32i_m/M](https://htmlpreview.github.io/?https://github.com/incoresemi/riscv-compliance/blob/dev/riscv-test-stats/coverage/rv32i_m/M/coverage.html)
+- [rv32i_m/C](https://htmlpreview.github.io/?https://github.com/incoresemi/riscv-compliance/blob/dev/riscv-test-stats/coverage/rv32i_m/C/coverage.html)
+- [rv32i_m/privilege](https://htmlpreview.github.io/?https://github.com/incoresemi/riscv-compliance/blob/dev/riscv-test-stats/coverage/rv32i_m/privilege/coverage.html)
+- [rv32i_m/Zifencei](https://htmlpreview.github.io/?https://github.com/incoresemi/riscv-compliance/blob/dev/riscv-test-stats/coverage/rv32i_m/Zifencei/coverage.html)
+- [rv64i_m/I](https://htmlpreview.github.io/?https://github.com/incoresemi/riscv-compliance/blob/dev/riscv-test-stats/coverage/rv64i_m/I/coverage.html)
+- [rv64i_m/M](https://htmlpreview.github.io/?https://github.com/incoresemi/riscv-compliance/blob/dev/riscv-test-stats/coverage/rv64i_m/M/coverage.html)
+- [rv64i_m/C](https://htmlpreview.github.io/?https://github.com/incoresemi/riscv-compliance/blob/dev/riscv-test-stats/coverage/rv64i_m/C/coverage.html)
+- [rv64i_m/privilege](https://htmlpreview.github.io/?https://github.com/incoresemi/riscv-compliance/blob/dev/riscv-test-stats/coverage/rv64i_m/privilege/coverage.html)
+- [rv64i_m/Zifencei](https://htmlpreview.github.io/?https://github.com/incoresemi/riscv-compliance/blob/dev/riscv-test-stats/coverage/rv64i_m/Zifencei/coverage.html)
