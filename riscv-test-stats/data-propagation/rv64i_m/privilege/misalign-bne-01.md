@@ -1,13 +1,17 @@
 
 ## Data Propagation Report
 
-| Param       | Value    |
-|-------------|----------|
-| XLEN        | 64      |
-| TEST_REGION | [('0x8000039c', '0x80000410')]      |
-| SIG_REGION  | [('0x80002210', '0x80002518')]      |
-| COV_LABELS  | ('misalign-bne', 'misalign-bne')      |
-| TEST_NAME   | /scratch/git-repo/incoresemi/riscof/riscof_work/misalign-bne-01.S/misalign-bne-01.S    |
+| Param                     | Value    |
+|---------------------------|----------|
+| XLEN                      | 64      |
+| TEST_REGION               | [('0x8000039c', '0x80000410')]      |
+| SIG_REGION                | [('0x80002210', '0x80002518')]      |
+| COV_LABELS                | ('misalign-bne', 'misalign-bne')      |
+| TEST_NAME                 | /scratch/git-repo/incoresemi/riscof/riscof_work/misalign-bne-01.S/misalign-bne-01.S    |
+| Total Unique Coverpoints  | 2      |
+| Total Signature Updates   | 2      |
+| Ops w/o unique coverpoints | 0      |
+| Sig Updates w/o Coverpoints | 0    |
 
 ## Report Table
 
@@ -26,6 +30,6 @@
   [PC of instruction] : mnemonic
   ```
 
-|            signature             |                         coverpoints                         |                                             code                                              |
-|----------------------------------|-------------------------------------------------------------|-----------------------------------------------------------------------------------------------|
-|[0x80002210]<br>0x0000000000000003|- opcode : bne<br> -  rs1_val!=rs2_val and ea_align == 2<br> |[0x800003c0]:bne a0, a1, 66<br> [0x80000402]:addi sp, zero, 3<br> [0x80000406]:jal zero, 6<br> |
+|s.no|            signature             |                         coverpoints                         |                                             code                                              |
+|---:|----------------------------------|-------------------------------------------------------------|-----------------------------------------------------------------------------------------------|
+|   1|[0x80002210]<br>0x0000000000000003|- opcode : bne<br> -  rs1_val!=rs2_val and ea_align == 2<br> |[0x800003c0]:bne a0, a1, 66<br> [0x80000402]:addi sp, zero, 3<br> [0x80000406]:jal zero, 6<br> |

@@ -1,13 +1,17 @@
 
 ## Data Propagation Report
 
-| Param       | Value    |
-|-------------|----------|
-| XLEN        | 64      |
-| TEST_REGION | [('0x8000039c', '0x800003c0')]      |
-| SIG_REGION  | [('0x80002210', '0x80002328')]      |
-| COV_LABELS  | ('ecall',)      |
-| TEST_NAME   | /scratch/git-repo/incoresemi/riscof/riscof_work/ecall.S/ecall.S    |
+| Param                     | Value    |
+|---------------------------|----------|
+| XLEN                      | 64      |
+| TEST_REGION               | [('0x8000039c', '0x800003c0')]      |
+| SIG_REGION                | [('0x80002210', '0x80002328')]      |
+| COV_LABELS                | ('ecall',)      |
+| TEST_NAME                 | /scratch/git-repo/incoresemi/riscof/riscof_work/ecall.S/ecall.S    |
+| Total Unique Coverpoints  | 1      |
+| Total Signature Updates   | 2      |
+| Ops w/o unique coverpoints | 0      |
+| Sig Updates w/o Coverpoints | 1    |
 
 ## Report Table
 
@@ -26,6 +30,6 @@
   [PC of instruction] : mnemonic
   ```
 
-|            signature             |     coverpoints     |                           code                            |
-|----------------------------------|---------------------|-----------------------------------------------------------|
-|[0x80002210]<br>0x0000000000000000|- opcode : ecall<br> |[0x800003ac]:ecall<br> [0x800003b4]:addi zero, zero, 0<br> |
+|s.no|            signature             |     coverpoints     |                           code                            |
+|---:|----------------------------------|---------------------|-----------------------------------------------------------|
+|   1|[0x80002210]<br>0x0000000000000000|- opcode : ecall<br> |[0x800003ac]:ecall<br> [0x800003b4]:addi zero, zero, 0<br> |

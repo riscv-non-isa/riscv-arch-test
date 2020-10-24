@@ -1,13 +1,17 @@
 
 ## Data Propagation Report
 
-| Param       | Value    |
-|-------------|----------|
-| XLEN        | 64      |
-| TEST_REGION | [('0x8000039c', '0x800003f0')]      |
-| SIG_REGION  | [('0x80002210', '0x80002518')]      |
-| COV_LABELS  | ('misalign1-jalr',)      |
-| TEST_NAME   | /scratch/git-repo/incoresemi/riscof/riscof_work/misalign1-jalr-01.S/misalign1-jalr-01.S    |
+| Param                     | Value    |
+|---------------------------|----------|
+| XLEN                      | 64      |
+| TEST_REGION               | [('0x8000039c', '0x800003f0')]      |
+| SIG_REGION                | [('0x80002210', '0x80002518')]      |
+| COV_LABELS                | ('misalign1-jalr',)      |
+| TEST_NAME                 | /scratch/git-repo/incoresemi/riscof/riscof_work/misalign1-jalr-01.S/misalign1-jalr-01.S    |
+| Total Unique Coverpoints  | 2      |
+| Total Signature Updates   | 2      |
+| Ops w/o unique coverpoints | 0      |
+| Sig Updates w/o Coverpoints | 0    |
 
 ## Report Table
 
@@ -26,6 +30,6 @@
   [PC of instruction] : mnemonic
   ```
 
-|            signature             |              coverpoints               |                                                                                                              code                                                                                                              |
-|----------------------------------|----------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|[0x80002210]<br>0x0000000000000017|- opcode : jalr<br> - ea_align == 1<br> |[0x800003b4]:jalr a1, a0, 5<br> [0x800003cc]:xori a1, a1, 3<br> [0x800003d0]:jal zero, 4<br> [0x800003d4]:auipc sp, 0<br> [0x800003d8]:addi sp, sp, 4048<br> [0x800003dc]:andi sp, sp, 4092<br> [0x800003e0]:sub a1, a1, sp<br> |
+|s.no|            signature             |              coverpoints               |                                                                                                              code                                                                                                              |
+|---:|----------------------------------|----------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|   1|[0x80002210]<br>0x0000000000000017|- opcode : jalr<br> - ea_align == 1<br> |[0x800003b4]:jalr a1, a0, 5<br> [0x800003cc]:xori a1, a1, 3<br> [0x800003d0]:jal zero, 4<br> [0x800003d4]:auipc sp, 0<br> [0x800003d8]:addi sp, sp, 4048<br> [0x800003dc]:andi sp, sp, 4092<br> [0x800003e0]:sub a1, a1, sp<br> |

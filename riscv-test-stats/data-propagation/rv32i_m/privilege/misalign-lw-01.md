@@ -1,13 +1,17 @@
 
 ## Data Propagation Report
 
-| Param       | Value    |
-|-------------|----------|
-| XLEN        | 32      |
-| TEST_REGION | [('0x80000104', '0x80000160')]      |
-| SIG_REGION  | [('0x80002210', '0x8000239c')]      |
-| COV_LABELS  | ('misalign-lw', 'misalign-lw')      |
-| TEST_NAME   | /scratch/git-repo/incoresemi/riscof/riscof_work/misalign-lw-01.S/misalign-lw-01.S    |
+| Param                     | Value    |
+|---------------------------|----------|
+| XLEN                      | 32      |
+| TEST_REGION               | [('0x80000104', '0x80000160')]      |
+| SIG_REGION                | [('0x80002210', '0x8000239c')]      |
+| COV_LABELS                | ('misalign-lw', 'misalign-lw')      |
+| TEST_NAME                 | /scratch/git-repo/incoresemi/riscof/riscof_work/misalign-lw-01.S/misalign-lw-01.S    |
+| Total Unique Coverpoints  | 4      |
+| Total Signature Updates   | 3      |
+| Ops w/o unique coverpoints | 0      |
+| Sig Updates w/o Coverpoints | 0    |
 
 ## Report Table
 
@@ -26,8 +30,8 @@
   [PC of instruction] : mnemonic
   ```
 
-|        signature         |             coverpoints              |                                code                                |
-|--------------------------|--------------------------------------|--------------------------------------------------------------------|
-|[0x80002210]<br>0x00000000|- opcode : lw<br> - ea_align == 1<br> |[0x80000114]:lw a1, 2(a0)<br> [0x8000011c]:addi zero, zero, 0<br>   |
-|[0x80002214]<br>0x00000000|- ea_align == 2<br>                   |[0x8000012c]:lw a1, 128(a0)<br> [0x80000134]:addi zero, zero, 0<br> |
-|[0x80002218]<br>0x00000000|- ea_align == 3<br>                   |[0x80000144]:lw a1, 2(a0)<br> [0x8000014c]:addi zero, zero, 0<br>   |
+|s.no|        signature         |             coverpoints              |                                code                                |
+|---:|--------------------------|--------------------------------------|--------------------------------------------------------------------|
+|   1|[0x80002210]<br>0x00000000|- opcode : lw<br> - ea_align == 1<br> |[0x80000114]:lw a1, 2(a0)<br> [0x8000011c]:addi zero, zero, 0<br>   |
+|   2|[0x80002214]<br>0x00000000|- ea_align == 2<br>                   |[0x8000012c]:lw a1, 128(a0)<br> [0x80000134]:addi zero, zero, 0<br> |
+|   3|[0x80002218]<br>0x00000000|- ea_align == 3<br>                   |[0x80000144]:lw a1, 2(a0)<br> [0x8000014c]:addi zero, zero, 0<br>   |

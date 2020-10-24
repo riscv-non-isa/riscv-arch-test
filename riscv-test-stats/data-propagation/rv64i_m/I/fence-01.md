@@ -1,13 +1,17 @@
 
 ## Data Propagation Report
 
-| Param       | Value    |
-|-------------|----------|
-| XLEN        | 64      |
-| TEST_REGION | [('0x80000390', '0x800003e0')]      |
-| SIG_REGION  | [('0x80002210', '0x80002318')]      |
-| COV_LABELS  | ('fence',)      |
-| TEST_NAME   | /scratch/git-repo/incoresemi/riscof/riscof_work/fence-01.S/fence-01.S    |
+| Param                     | Value    |
+|---------------------------|----------|
+| XLEN                      | 64      |
+| TEST_REGION               | [('0x80000390', '0x800003e0')]      |
+| SIG_REGION                | [('0x80002210', '0x80002318')]      |
+| COV_LABELS                | ('fence',)      |
+| TEST_NAME                 | /scratch/git-repo/incoresemi/riscof/riscof_work/fence-01.S/fence-01.S    |
+| Total Unique Coverpoints  | 1      |
+| Total Signature Updates   | 2      |
+| Ops w/o unique coverpoints | 0      |
+| Sig Updates w/o Coverpoints | 1    |
 
 ## Report Table
 
@@ -26,6 +30,6 @@
   [PC of instruction] : mnemonic
   ```
 
-|            signature             |     coverpoints     |                                                                             code                                                                             |
-|----------------------------------|---------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|[0x80002210]<br>0xFFFFFFFFAAAAAAAA|- opcode : fence<br> |[0x800003bc]:fence iorw, iorw<br> [0x800003c0]:lw gp, 0(s1)<br> [0x800003c4]:lw tp, 4(s1)<br> [0x800003c8]:auipc s1, 2<br> [0x800003cc]:addi s1, s1, 3656<br> |
+|s.no|            signature             |     coverpoints     |                                                                             code                                                                             |
+|---:|----------------------------------|---------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|   1|[0x80002210]<br>0xFFFFFFFFAAAAAAAA|- opcode : fence<br> |[0x800003bc]:fence iorw, iorw<br> [0x800003c0]:lw gp, 0(s1)<br> [0x800003c4]:lw tp, 4(s1)<br> [0x800003c8]:auipc s1, 2<br> [0x800003cc]:addi s1, s1, 3656<br> |

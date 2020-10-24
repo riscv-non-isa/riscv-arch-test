@@ -1,13 +1,17 @@
 
 ## Data Propagation Report
 
-| Param       | Value    |
-|-------------|----------|
-| XLEN        | 32      |
-| TEST_REGION | [('0x800000f4', '0x80001dd0')]      |
-| SIG_REGION  | [('0x80003210', '0x800032d4')]      |
-| COV_LABELS  | ('cjal',)      |
-| TEST_NAME   | /scratch/git-repo/incoresemi/riscof/riscof_work/cjal-01.S/cjal-01.S    |
+| Param                     | Value    |
+|---------------------------|----------|
+| XLEN                      | 32      |
+| TEST_REGION               | [('0x800000f4', '0x80001dd0')]      |
+| SIG_REGION                | [('0x80003210', '0x800032d4')]      |
+| COV_LABELS                | ('cjal',)      |
+| TEST_NAME                 | /scratch/git-repo/incoresemi/riscof/riscof_work/cjal-01.S/cjal-01.S    |
+| Total Unique Coverpoints  | 0      |
+| Total Signature Updates   | 0      |
+| Ops w/o unique coverpoints | 0      |
+| Sig Updates w/o Coverpoints | 0    |
 
 ## Report Table
 
@@ -26,5 +30,5 @@
   [PC of instruction] : mnemonic
   ```
 
-|signature|coverpoints|code|
-|---------|-----------|----|
+|s.no|signature|coverpoints|code|
+|----|---------|-----------|----|

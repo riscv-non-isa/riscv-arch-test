@@ -1,13 +1,17 @@
 
 ## Data Propagation Report
 
-| Param       | Value    |
-|-------------|----------|
-| XLEN        | 64      |
-| TEST_REGION | [('0x80000390', '0x80001470')]      |
-| SIG_REGION  | [('0x80003210', '0x80003740')]      |
-| COV_LABELS  | ('sb-align',)      |
-| TEST_NAME   | /scratch/git-repo/incoresemi/riscof/riscof_work/sb-align-01.S/sb-align-01.S    |
+| Param                     | Value    |
+|---------------------------|----------|
+| XLEN                      | 64      |
+| TEST_REGION               | [('0x80000390', '0x80001470')]      |
+| SIG_REGION                | [('0x80003210', '0x80003740')]      |
+| COV_LABELS                | ('sb-align',)      |
+| TEST_NAME                 | /scratch/git-repo/incoresemi/riscof/riscof_work/sb-align-01.S/sb-align-01.S    |
+| Total Unique Coverpoints  | 0      |
+| Total Signature Updates   | 0      |
+| Ops w/o unique coverpoints | 0      |
+| Sig Updates w/o Coverpoints | 0    |
 
 ## Report Table
 
@@ -26,5 +30,5 @@
   [PC of instruction] : mnemonic
   ```
 
-|signature|coverpoints|code|
-|---------|-----------|----|
+|s.no|signature|coverpoints|code|
+|----|---------|-----------|----|

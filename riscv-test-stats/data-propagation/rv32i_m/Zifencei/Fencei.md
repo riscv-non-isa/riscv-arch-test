@@ -1,13 +1,17 @@
 
 ## Data Propagation Report
 
-| Param       | Value    |
-|-------------|----------|
-| XLEN        | 32      |
-| TEST_REGION | [('0x800000f8', '0x80000160')]      |
-| SIG_REGION  | [('0x80002210', '0x800022a0')]      |
-| COV_LABELS  | ('fencei',)      |
-| TEST_NAME   | /scratch/git-repo/incoresemi/riscof/riscof_work/Fencei.S/Fencei.S    |
+| Param                     | Value    |
+|---------------------------|----------|
+| XLEN                      | 32      |
+| TEST_REGION               | [('0x800000f8', '0x80000160')]      |
+| SIG_REGION                | [('0x80002210', '0x800022a0')]      |
+| COV_LABELS                | ('fencei',)      |
+| TEST_NAME                 | /scratch/git-repo/incoresemi/riscof/riscof_work/Fencei.S/Fencei.S    |
+| Total Unique Coverpoints  | 1      |
+| Total Signature Updates   | 1      |
+| Ops w/o unique coverpoints | 0      |
+| Sig Updates w/o Coverpoints | 3    |
 
 ## Report Table
 
@@ -26,6 +30,6 @@
   [PC of instruction] : mnemonic
   ```
 
-|        signature         |      coverpoints      |                          code                           |
-|--------------------------|-----------------------|---------------------------------------------------------|
-|[0x80002210]<br>0x00000030|- opcode : fence.i<br> |[0x8000012c]:fence.i<br> [0x80000130]:add gp, sp, ra<br> |
+|s.no|        signature         |      coverpoints      |                          code                           |
+|---:|--------------------------|-----------------------|---------------------------------------------------------|
+|   1|[0x80002210]<br>0x00000030|- opcode : fence.i<br> |[0x8000012c]:fence.i<br> [0x80000130]:add gp, sp, ra<br> |

@@ -1,13 +1,17 @@
 
 ## Data Propagation Report
 
-| Param       | Value    |
-|-------------|----------|
-| XLEN        | 64      |
-| TEST_REGION | [('0x800002da', '0x80000300')]      |
-| SIG_REGION  | [('0x80002210', '0x80002328')]      |
-| COV_LABELS  | ('cebreak',)      |
-| TEST_NAME   | /scratch/git-repo/incoresemi/riscof/riscof_work/cebreak-01.S/cebreak-01.S    |
+| Param                     | Value    |
+|---------------------------|----------|
+| XLEN                      | 64      |
+| TEST_REGION               | [('0x800002da', '0x80000300')]      |
+| SIG_REGION                | [('0x80002210', '0x80002328')]      |
+| COV_LABELS                | ('cebreak',)      |
+| TEST_NAME                 | /scratch/git-repo/incoresemi/riscof/riscof_work/cebreak-01.S/cebreak-01.S    |
+| Total Unique Coverpoints  | 1      |
+| Total Signature Updates   | 2      |
+| Ops w/o unique coverpoints | 0      |
+| Sig Updates w/o Coverpoints | 1    |
 
 ## Report Table
 
@@ -26,6 +30,6 @@
   [PC of instruction] : mnemonic
   ```
 
-|            signature             |      coverpoints       |           code           |
-|----------------------------------|------------------------|--------------------------|
-|[0x80002210]<br>0x0000000000000000|- opcode : c.ebreak<br> |[0x800002ea]:c.ebreak<br> |
+|s.no|            signature             |      coverpoints       |           code           |
+|---:|----------------------------------|------------------------|--------------------------|
+|   1|[0x80002210]<br>0x0000000000000000|- opcode : c.ebreak<br> |[0x800002ea]:c.ebreak<br> |

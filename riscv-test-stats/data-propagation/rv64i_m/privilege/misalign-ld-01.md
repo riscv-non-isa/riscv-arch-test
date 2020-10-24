@@ -1,13 +1,17 @@
 
 ## Data Propagation Report
 
-| Param       | Value    |
-|-------------|----------|
-| XLEN        | 64      |
-| TEST_REGION | [('0x8000039c', '0x80000450')]      |
-| SIG_REGION  | [('0x80002210', '0x80002548')]      |
-| COV_LABELS  | ('misalign-ld', 'misalign-ld')      |
-| TEST_NAME   | /scratch/git-repo/incoresemi/riscof/riscof_work/misalign-ld-01.S/misalign-ld-01.S    |
+| Param                     | Value    |
+|---------------------------|----------|
+| XLEN                      | 64      |
+| TEST_REGION               | [('0x8000039c', '0x80000450')]      |
+| SIG_REGION                | [('0x80002210', '0x80002548')]      |
+| COV_LABELS                | ('misalign-ld', 'misalign-ld')      |
+| TEST_NAME                 | /scratch/git-repo/incoresemi/riscof/riscof_work/misalign-ld-01.S/misalign-ld-01.S    |
+| Total Unique Coverpoints  | 8      |
+| Total Signature Updates   | 14      |
+| Ops w/o unique coverpoints | 0      |
+| Sig Updates w/o Coverpoints | 0    |
 
 ## Report Table
 
@@ -26,12 +30,12 @@
   [PC of instruction] : mnemonic
   ```
 
-|            signature             |             coverpoints              |                                code                                 |
-|----------------------------------|--------------------------------------|---------------------------------------------------------------------|
-|[0x80002210]<br>0x0000000000000000|- opcode : ld<br> - ea_align == 1<br> |[0x800003ac]:ld a1, 4086(a0)<br> [0x800003b4]:addi zero, zero, 0<br> |
-|[0x80002218]<br>0x0000000000000000|- ea_align == 2<br>                   |[0x800003c4]:ld a1, 3967(a0)<br> [0x800003cc]:addi zero, zero, 0<br> |
-|[0x80002220]<br>0x0000000000000000|- ea_align == 3<br>                   |[0x800003dc]:ld a1, 4089(a0)<br> [0x800003e4]:addi zero, zero, 0<br> |
-|[0x80002228]<br>0x0000000000000000|- ea_align == 4<br>                   |[0x800003f4]:ld a1, 4093(a0)<br> [0x800003fc]:addi zero, zero, 0<br> |
-|[0x80002230]<br>0x0000000000000000|- ea_align == 5<br>                   |[0x8000040c]:ld a1, 4086(a0)<br> [0x80000414]:addi zero, zero, 0<br> |
-|[0x80002238]<br>0x0000000000000000|- ea_align == 6<br>                   |[0x80000424]:ld a1, 1023(a0)<br> [0x8000042c]:addi zero, zero, 0<br> |
-|[0x80002240]<br>0x0000000000000000|- ea_align == 7<br>                   |[0x8000043c]:ld a1, 2730(a0)<br> [0x80000444]:addi zero, zero, 0<br> |
+|s.no|            signature             |             coverpoints              |                                code                                 |
+|---:|----------------------------------|--------------------------------------|---------------------------------------------------------------------|
+|   1|[0x80002210]<br>0x0000000000000000|- opcode : ld<br> - ea_align == 1<br> |[0x800003ac]:ld a1, 4086(a0)<br> [0x800003b4]:addi zero, zero, 0<br> |
+|   2|[0x80002218]<br>0x0000000000000000|- ea_align == 2<br>                   |[0x800003c4]:ld a1, 3967(a0)<br> [0x800003cc]:addi zero, zero, 0<br> |
+|   3|[0x80002220]<br>0x0000000000000000|- ea_align == 3<br>                   |[0x800003dc]:ld a1, 4089(a0)<br> [0x800003e4]:addi zero, zero, 0<br> |
+|   4|[0x80002228]<br>0x0000000000000000|- ea_align == 4<br>                   |[0x800003f4]:ld a1, 4093(a0)<br> [0x800003fc]:addi zero, zero, 0<br> |
+|   5|[0x80002230]<br>0x0000000000000000|- ea_align == 5<br>                   |[0x8000040c]:ld a1, 4086(a0)<br> [0x80000414]:addi zero, zero, 0<br> |
+|   6|[0x80002238]<br>0x0000000000000000|- ea_align == 6<br>                   |[0x80000424]:ld a1, 1023(a0)<br> [0x8000042c]:addi zero, zero, 0<br> |
+|   7|[0x80002240]<br>0x0000000000000000|- ea_align == 7<br>                   |[0x8000043c]:ld a1, 2730(a0)<br> [0x80000444]:addi zero, zero, 0<br> |
