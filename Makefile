@@ -55,6 +55,10 @@ all_variant:
 			fi \
 	done
 
+build: compile
+run: simulate
+clean_all: clean
+
 compile:
 	$(MAKE) $(JOBS) \
 		RISCV_TARGET=$(RISCV_TARGET) \
@@ -91,8 +95,9 @@ help:
 	@echo "     -- RISCV_TEST='<name of the test. eg. I-ADD-01'"
 	@echo "    "
 	@echo "  Makefile targets available"
-	@echo "     -- compile: To compile all the tests within the RISCV_DEVICE suite and generate the elfs. Note this will default to running on the I extension alone if RISCV_DEVICE is empty"
-	@echo "     -- simulate: To run cmopiled tests on the target model and generate signatures. Note this will default to running on the I extension alone if RISCV_DEVICE is empty"
+	@echo "     -- build: To compile all the tests within the RISCV_DEVICE suite and generate the elfs. Note this will default to running on the I extension alone if RISCV_DEVICE is empty"
+	@echo "     -- run: To run compiled tests on the target model and generate signatures. Note this will default to running on the I extension alone if RISCV_DEVICE is empty"
 	@echo "     -- verify: To verify if the generated signatures match the corresponding reference signatures. Note this will default to running on the I extension alone if RISCV_DEVICE is empty"
-	@echo "     -- default: run compile, simulate, and verify on all devices enabled"
+	@echo "     -- clean : removes the working directory from the root folder and also from the respective device folders of the target"
+	@echo "     -- default: build, run, and verify on all devices enabled"
 
