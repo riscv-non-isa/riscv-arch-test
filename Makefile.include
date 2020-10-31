@@ -7,8 +7,8 @@ export XLEN 							?= 32
 # name of the target. Note a folder of the same name must exist in the TARGETDIR directory
 export RISCV_TARGET       ?= spike
 
-# set the RISCV_DEVICE environment to the extension you want to compile, simulate and verify. Leave
-# this blank if you want to iterate through all the supported extensions of the target
+# set the RISCV_DEVICE environment to a single extension you want to compile, simulate and/or verify. 
+# Leave this blank if you want to iterate through all the supported extensions available in the target
 export RISCV_DEVICE       ?= 
 
 # set this to a string which needs to be passed to your target Makefile.include files
