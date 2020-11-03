@@ -1,19 +1,89 @@
 
-## Data Propagation Report
+# Data Propagation Report
+
+STAT1 : Number of unique coverpoint hits that have updated the signature
+
+STAT2 : Number of covepoints hits which are not unique but still update the signature
+
+STAT3 : Number of instructions that contribute to a unique coverpoint but do not update signature
+
+STAT4 : Number of Multiple signature updates for the same coverpoint
+
+STAT5 : Number of times the signature was overwritten
 
 | Param                     | Value    |
 |---------------------------|----------|
 | XLEN                      | 64      |
 | TEST_REGION               | [('0x8000039c', '0x800003c0')]      |
-| SIG_REGION                | [('0x80002210', '0x80002518')]      |
-| COV_LABELS                | ('misalign-lhu', 'misalign-lhu')      |
+| SIG_REGION                | [('0x80003204', '0x80003418', '66 dwords')]      |
+| COV_LABELS                | misalign-lhu      |
 | TEST_NAME                 | /scratch/git-repo/incoresemi/riscof/riscof_work/misalign-lhu-01.S/misalign-lhu-01.S    |
-| Total Unique Coverpoints  | 2      |
-| Total Signature Updates   | 2      |
-| Ops w/o unique coverpoints | 0      |
-| Sig Updates w/o Coverpoints | 0    |
+| Total Number of coverpoints| 2     |
+| Total Signature Updates   | 5      |
+| Total Coverpoints Covered | 2      |
+| STAT1                     | 1      |
+| STAT2                     | 0      |
+| STAT3                     | 0     |
+| STAT4                     | 4     |
+| STAT5                     | 0     |
 
-## Report Table
+## Details for STAT2:
+
+```
+
+
+```
+
+## Details of STAT3
+
+```
+
+
+```
+
+## Details of STAT4:
+
+```
+Last Coverpoint : ['opcode : lhu', 'ea_align == 1']
+Last Code Sequence : 
+	-[0x800003ac]:lhu a1, 4086(a0)
+Current Store : [0x80000668] : sd t2, 8(t1) -- Store: [0x80003220]:0x0000000000000004
+
+
+
+
+Last Coverpoint : ['opcode : lhu', 'ea_align == 1']
+Last Code Sequence : 
+	-[0x800003ac]:lhu a1, 4086(a0)
+Current Store : [0x80000680] : sd t4, 16(t1) -- Store: [0x80003228]:0x00000000000003A0
+
+
+
+
+Last Coverpoint : ['opcode : lhu', 'ea_align == 1']
+Last Code Sequence : 
+	-[0x800003ac]:lhu a1, 4086(a0)
+Current Store : [0x8000070c] : sd t2, 24(t1) -- Store: [0x80003230]:0x0000000000003085
+
+
+
+
+Last Coverpoint : ['opcode : lhu', 'ea_align == 1']
+Last Code Sequence : 
+	-[0x800003ac]:lhu a1, 4086(a0)
+Current Store : [0x800003b8] : sd a1, 0(ra) -- Store: [0x80003210]:0xAB7FBB6FAB7FBB6F
+
+
+
+
+
+```
+
+## Details of STAT5:
+
+
+
+## Details of STAT1:
 
 - The first column indicates the signature address and the data at that location in hexadecimal in the following format: 
   ```
@@ -29,7 +99,10 @@
   ```
   [PC of instruction] : mnemonic
   ```
+- The order in the table is based on the order of signatures occuring in the
+  test. These need not necessarily be in increasing or decreasing order of the
+  address in the signature region.
 
-|s.no|            signature             |              coverpoints              |                                 code                                 |
-|---:|----------------------------------|---------------------------------------|----------------------------------------------------------------------|
-|   1|[0x80002210]<br>0x0000000000000000|- opcode : lhu<br> - ea_align == 1<br> |[0x800003ac]:lhu a1, 4063(a0)<br> [0x800003b4]:addi zero, zero, 0<br> |
+|s.no|            signature             |              coverpoints              |               code               |
+|---:|----------------------------------|---------------------------------------|----------------------------------|
+|   1|[0x80003218]<br>0x000000000000010F|- opcode : lhu<br> - ea_align == 1<br> |[0x800003ac]:lhu a1, 4086(a0)<br> |

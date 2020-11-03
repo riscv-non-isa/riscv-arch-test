@@ -18,32 +18,32 @@ RVTEST_CASE(1,"//check ISA:=regex(.*64.*);check ISA:=regex(.*I.*Zicsr.*); check 
 RVTEST_SIGBASE( x1,signature_x1_1)
 
 # ea_align == 1, 
-# opcode: sd; op1:x10; op2:x11; op2val:0xffffffffdfffffff; immval:-257; align:1
-TEST_STORE(x1,x2,0,x10,x11,0xffffffffdfffffff,-257,0,sd,1)
+# opcode: sd; op1:x10; op2:x11; op2val:0xffff7fffffffffff; immval:2; align:1
+TEST_STORE(x1,x2,0,x10,x11,0xffff7fffffffffff,2,0,sd,1)
 
 # ea_align == 2, 
-# opcode: sd; op1:x10; op2:x11; op2val:0xfffffffffffff7ff; immval:2047; align:2
-TEST_STORE(x1,x2,0,x10,x11,0xfffffffffffff7ff,2047,8,sd,2)
+# opcode: sd; op1:x10; op2:x11; op2val:0xf7ffffffffffffff; immval:-513; align:2
+TEST_STORE(x1,x2,0,x10,x11,0xf7ffffffffffffff,-513,8,sd,2)
 
 # ea_align == 3, 
-# opcode: sd; op1:x10; op2:x11; op2val:0xffffffffffffffff; immval:-129; align:3
-TEST_STORE(x1,x2,0,x10,x11,0xffffffffffffffff,-129,16,sd,3)
+# opcode: sd; op1:x10; op2:x11; op2val:0xfffffffffffffffd; immval:1024; align:3
+TEST_STORE(x1,x2,0,x10,x11,0xfffffffffffffffd,1024,16,sd,3)
 
 # ea_align == 4, 
-# opcode: sd; op1:x10; op2:x11; op2val:0xfffffffffffffeff; immval:-17; align:4
-TEST_STORE(x1,x2,0,x10,x11,0xfffffffffffffeff,-17,24,sd,4)
+# opcode: sd; op1:x10; op2:x11; op2val:0x0000000080000000; immval:6; align:4
+TEST_STORE(x1,x2,0,x10,x11,0x0000000080000000,6,24,sd,4)
 
 # ea_align == 5, 
-# opcode: sd; op1:x10; op2:x11; op2val:0xfffffffffffffffe; immval:6; align:5
-TEST_STORE(x1,x2,0,x10,x11,0xfffffffffffffffe,6,32,sd,5)
+# opcode: sd; op1:x10; op2:x11; op2val:0x0000000000400000; immval:16; align:5
+TEST_STORE(x1,x2,0,x10,x11,0x0000000000400000,16,32,sd,5)
 
 # ea_align == 6, 
-# opcode: sd; op1:x10; op2:x11; op2val:0xfffffffffffffdff; immval:8; align:6
-TEST_STORE(x1,x2,0,x10,x11,0xfffffffffffffdff,8,40,sd,6)
+# opcode: sd; op1:x10; op2:x11; op2val:0xfffffffffffffffd; immval:16; align:6
+TEST_STORE(x1,x2,0,x10,x11,0xfffffffffffffffd,16,40,sd,6)
 
 # ea_align == 7, 
-# opcode: sd; op1:x10; op2:x11; op2val:0x0200000000000000; immval:2047; align:7
-TEST_STORE(x1,x2,0,x10,x11,0x0200000000000000,2047,48,sd,7)
+# opcode: sd; op1:x10; op2:x11; op2val:0x0000080000000000; immval:5; align:7
+TEST_STORE(x1,x2,0,x10,x11,0x0000080000000000,5,48,sd,7)
 #endif
 
 
@@ -51,7 +51,6 @@ RVTEST_CODE_END
 RVMODEL_HALT
 
 RVTEST_DATA_BEGIN
-.align 4
 .align 4
 rvtest_data:
 .word 0xbabecafe

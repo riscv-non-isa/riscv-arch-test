@@ -15,13 +15,13 @@ RVTEST_CASE(0,"//check ISA:=regex(.*32.*);check ISA:=regex(.*I.*C.*);def TEST_CA
 
 RVTEST_SIGBASE( x1,signature_x1_1)
 
-# imm_val > 0, 
-# opcode:c.j; immval:18
-TEST_CJ_OP(c.j, x2, 18, 3f, x1, 0)
+# imm_val > 0, imm_val == 64
+# opcode:c.j; immval:64
+TEST_CJ_OP(c.j, x2, 64, 3f, x1, 0)
 
-# imm_val < 0, imm_val == -66
-# opcode:c.j; immval:66
-TEST_CJ_OP(c.j, x2, 66, 1b, x1, 4)
+# imm_val < 0, 
+# opcode:c.j; immval:20
+TEST_CJ_OP(c.j, x2, 20, 1b, x1, 4)
 
 # imm_val == 16, 
 # opcode:c.j; immval:16
@@ -31,33 +31,33 @@ TEST_CJ_OP(c.j, x2, 16, 3f, x1, 8)
 # opcode:c.j; immval:32
 TEST_CJ_OP(c.j, x2, 32, 3f, x1, 12)
 
-# imm_val == 64, 
-# opcode:c.j; immval:64
-TEST_CJ_OP(c.j, x2, 64, 3f, x1, 16)
-
 # imm_val == 128, 
 # opcode:c.j; immval:128
-TEST_CJ_OP(c.j, x2, 128, 3f, x1, 20)
+TEST_CJ_OP(c.j, x2, 128, 3f, x1, 16)
 
 # imm_val == 256, 
 # opcode:c.j; immval:256
-TEST_CJ_OP(c.j, x2, 256, 3f, x1, 24)
+TEST_CJ_OP(c.j, x2, 256, 3f, x1, 20)
 
 # imm_val == 512, 
 # opcode:c.j; immval:512
-TEST_CJ_OP(c.j, x2, 512, 3f, x1, 28)
+TEST_CJ_OP(c.j, x2, 512, 3f, x1, 24)
 
 # imm_val == 1024, 
 # opcode:c.j; immval:1024
-TEST_CJ_OP(c.j, x2, 1024, 3f, x1, 32)
+TEST_CJ_OP(c.j, x2, 1024, 3f, x1, 28)
 
 # imm_val == -10, 
 # opcode:c.j; immval:10
-TEST_CJ_OP(c.j, x2, 10, 1b, x1, 36)
+TEST_CJ_OP(c.j, x2, 10, 1b, x1, 32)
 
 # imm_val == -18, 
 # opcode:c.j; immval:18
-TEST_CJ_OP(c.j, x2, 18, 1b, x1, 40)
+TEST_CJ_OP(c.j, x2, 18, 1b, x1, 36)
+
+# imm_val == -34, 
+# opcode:c.j; immval:34
+TEST_CJ_OP(c.j, x2, 34, 1b, x1, 40)
 
 # imm_val == -1026, 
 # opcode:c.j; immval:1026
@@ -71,9 +71,9 @@ TEST_CJ_OP(c.j, x2, 1366, 1b, x1, 48)
 # opcode:c.j; immval:1364
 TEST_CJ_OP(c.j, x2, 1364, 3f, x1, 52)
 
-# imm_val == -34, 
-# opcode:c.j; immval:34
-TEST_CJ_OP(c.j, x2, 34, 1b, x1, 56)
+# imm_val == -66, 
+# opcode:c.j; immval:66
+TEST_CJ_OP(c.j, x2, 66, 1b, x1, 56)
 
 # imm_val == -130, 
 # opcode:c.j; immval:130
@@ -93,7 +93,6 @@ RVTEST_CODE_END
 RVMODEL_HALT
 
 RVTEST_DATA_BEGIN
-.align 4
 .align 4
 rvtest_data:
 .word 0xbabecafe

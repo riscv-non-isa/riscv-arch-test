@@ -24,8 +24,11 @@ RVTEST_CODE_BEGIN
     
     li      x2, 0x11111111
     c.ebreak
+    .align 2
+    .option push
+    .option norvc
     nop
-    nop
+    .option pop
     sw      x0, 0(x1)
     sw      x2, 4(x1)
     

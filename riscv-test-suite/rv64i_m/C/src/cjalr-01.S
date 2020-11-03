@@ -15,132 +15,128 @@ RVTEST_CASE(0,"//check ISA:=regex(.*64.*);check ISA:=regex(.*I.*C.*);def TEST_CA
 
 RVTEST_SIGBASE( x10,signature_x10_1)
 
-# rs1==x2, 
-# opcode:c.jalr; op1:x2
-TEST_CJALR_OP(x13, x2, x10, 0)
-
-# rs1==x4, 
-# opcode:c.jalr; op1:x4
-TEST_CJALR_OP(x13, x4, x10, 8)
-
-# rs1==x8, 
-# opcode:c.jalr; op1:x8
-TEST_CJALR_OP(x13, x8, x10, 16)
-
-# rs1==x11, 
-# opcode:c.jalr; op1:x11
-TEST_CJALR_OP(x13, x11, x10, 24)
-
-# rs1==x15, 
-# opcode:c.jalr; op1:x15
-TEST_CJALR_OP(x13, x15, x10, 32)
-
-# rs1==x9, 
-# opcode:c.jalr; op1:x9
-TEST_CJALR_OP(x13, x9, x10, 40)
-
-# rs1==x29, 
-# opcode:c.jalr; op1:x29
-TEST_CJALR_OP(x13, x29, x10, 48)
-
-# rs1==x3, 
-# opcode:c.jalr; op1:x3
-TEST_CJALR_OP(x13, x3, x10, 56)
-
-# rs1==x16, 
-# opcode:c.jalr; op1:x16
-TEST_CJALR_OP(x13, x16, x10, 64)
-
 # rs1==x22, 
 # opcode:c.jalr; op1:x22
-TEST_CJALR_OP(x13, x22, x10, 72)
-
-# rs1==x31, 
-# opcode:c.jalr; op1:x31
-TEST_CJALR_OP(x13, x31, x10, 80)
-
-# rs1==x24, 
-# opcode:c.jalr; op1:x24
-TEST_CJALR_OP(x13, x24, x10, 88)
-
-# rs1==x5, 
-# opcode:c.jalr; op1:x5
-TEST_CJALR_OP(x13, x5, x10, 96)
-
-# rs1==x25, 
-# opcode:c.jalr; op1:x25
-TEST_CJALR_OP(x13, x25, x10, 104)
-
-# rs1==x27, 
-# opcode:c.jalr; op1:x27
-TEST_CJALR_OP(x13, x27, x10, 112)
-
-# rs1==x18, 
-# opcode:c.jalr; op1:x18
-TEST_CJALR_OP(x13, x18, x10, 120)
-
-# rs1==x28, 
-# opcode:c.jalr; op1:x28
-TEST_CJALR_OP(x13, x28, x10, 128)
-
-# rs1==x17, 
-# opcode:c.jalr; op1:x17
-TEST_CJALR_OP(x13, x17, x10, 136)
-
-# rs1==x1, 
-# opcode:c.jalr; op1:x1
-TEST_CJALR_OP(x13, x1, x10, 144)
-
-# rs1==x12, 
-# opcode:c.jalr; op1:x12
-TEST_CJALR_OP(x13, x12, x10, 152)
-
-# rs1==x7, 
-# opcode:c.jalr; op1:x7
-TEST_CJALR_OP(x13, x7, x10, 160)
-
-# rs1==x21, 
-# opcode:c.jalr; op1:x21
-TEST_CJALR_OP(x13, x21, x10, 168)
-
-# rs1==x30, 
-# opcode:c.jalr; op1:x30
-TEST_CJALR_OP(x13, x30, x10, 176)
-
-# rs1==x6, 
-# opcode:c.jalr; op1:x6
-TEST_CJALR_OP(x13, x6, x10, 184)
-
-# rs1==x26, 
-# opcode:c.jalr; op1:x26
-TEST_CJALR_OP(x13, x26, x10, 192)
-
-# rs1==x14, 
-# opcode:c.jalr; op1:x14
-TEST_CJALR_OP(x13, x14, x10, 200)
+TEST_CJALR_OP(x15, x22, x10, 0)
 
 # rs1==x20, 
 # opcode:c.jalr; op1:x20
-TEST_CJALR_OP(x13, x20, x10, 208)
+TEST_CJALR_OP(x15, x20, x10, 8)
+
+# rs1==x3, 
+# opcode:c.jalr; op1:x3
+TEST_CJALR_OP(x15, x3, x10, 16)
 
 # rs1==x19, 
 # opcode:c.jalr; op1:x19
-TEST_CJALR_OP(x3, x19, x10, 216)
-RVTEST_SIGBASE( x2,signature_x2_0)
+TEST_CJALR_OP(x15, x19, x10, 24)
+
+# rs1==x25, 
+# opcode:c.jalr; op1:x25
+TEST_CJALR_OP(x15, x25, x10, 32)
+
+# rs1==x29, 
+# opcode:c.jalr; op1:x29
+TEST_CJALR_OP(x15, x29, x10, 40)
+
+# rs1==x14, 
+# opcode:c.jalr; op1:x14
+TEST_CJALR_OP(x15, x14, x10, 48)
+
+# rs1==x4, 
+# opcode:c.jalr; op1:x4
+TEST_CJALR_OP(x15, x4, x10, 56)
+
+# rs1==x17, 
+# opcode:c.jalr; op1:x17
+TEST_CJALR_OP(x15, x17, x10, 64)
+
+# rs1==x11, 
+# opcode:c.jalr; op1:x11
+TEST_CJALR_OP(x15, x11, x10, 72)
+
+# rs1==x18, 
+# opcode:c.jalr; op1:x18
+TEST_CJALR_OP(x15, x18, x10, 80)
+
+# rs1==x31, 
+# opcode:c.jalr; op1:x31
+TEST_CJALR_OP(x15, x31, x10, 88)
+
+# rs1==x8, 
+# opcode:c.jalr; op1:x8
+TEST_CJALR_OP(x15, x8, x10, 96)
+
+# rs1==x2, 
+# opcode:c.jalr; op1:x2
+TEST_CJALR_OP(x15, x2, x10, 104)
+
+# rs1==x5, 
+# opcode:c.jalr; op1:x5
+TEST_CJALR_OP(x15, x5, x10, 112)
+
+# rs1==x30, 
+# opcode:c.jalr; op1:x30
+TEST_CJALR_OP(x15, x30, x10, 120)
+
+# rs1==x26, 
+# opcode:c.jalr; op1:x26
+TEST_CJALR_OP(x15, x26, x10, 128)
+
+# rs1==x21, 
+# opcode:c.jalr; op1:x21
+TEST_CJALR_OP(x15, x21, x10, 136)
+
+# rs1==x27, 
+# opcode:c.jalr; op1:x27
+TEST_CJALR_OP(x15, x27, x10, 144)
+
+# rs1==x9, 
+# opcode:c.jalr; op1:x9
+TEST_CJALR_OP(x15, x9, x10, 152)
 
 # rs1==x23, 
 # opcode:c.jalr; op1:x23
-TEST_CJALR_OP(x3, x23, x2, 0)
+TEST_CJALR_OP(x15, x23, x10, 160)
+
+# rs1==x28, 
+# opcode:c.jalr; op1:x28
+TEST_CJALR_OP(x15, x28, x10, 168)
+
+# rs1==x12, 
+# opcode:c.jalr; op1:x12
+TEST_CJALR_OP(x15, x12, x10, 176)
 
 # rs1==x13, 
 # opcode:c.jalr; op1:x13
-TEST_CJALR_OP(x3, x13, x2, 8)
+TEST_CJALR_OP(x15, x13, x10, 184)
+
+# rs1==x7, 
+# opcode:c.jalr; op1:x7
+TEST_CJALR_OP(x15, x7, x10, 192)
+
+# rs1==x6, 
+# opcode:c.jalr; op1:x6
+TEST_CJALR_OP(x15, x6, x10, 200)
+
+# rs1==x15, 
+# opcode:c.jalr; op1:x15
+TEST_CJALR_OP(x3, x15, x10, 208)
+RVTEST_SIGBASE( x2,signature_x2_0)
+
+# rs1==x1, 
+# opcode:c.jalr; op1:x1
+TEST_CJALR_OP(x3, x1, x2, 0)
+
+# rs1==x24, 
+# opcode:c.jalr; op1:x24
+TEST_CJALR_OP(x3, x24, x2, 8)
+
+# rs1==x16, 
+# opcode:c.jalr; op1:x16
+TEST_CJALR_OP(x3, x16, x2, 16)
 
 # rs1==x10, 
-# opcode:c.jalr; op1:x10
-TEST_CJALR_OP(x3, x10, x2, 16)
-
-# 
 # opcode:c.jalr; op1:x10
 TEST_CJALR_OP(x3, x10, x2, 24)
 #endif
@@ -150,7 +146,6 @@ RVTEST_CODE_END
 RVMODEL_HALT
 
 RVTEST_DATA_BEGIN
-.align 4
 .align 4
 rvtest_data:
 .word 0xbabecafe
@@ -164,7 +159,7 @@ signature_x10_0:
 
 
 signature_x10_1:
-    .fill 28*(XLEN/32),4,0xdeadbeef
+    .fill 27*(XLEN/32),4,0xdeadbeef
 
 
 signature_x2_0:

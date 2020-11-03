@@ -1,19 +1,57 @@
 
-## Data Propagation Report
+# Data Propagation Report
+
+STAT1 : Number of unique coverpoint hits that have updated the signature
+
+STAT2 : Number of covepoints hits which are not unique but still update the signature
+
+STAT3 : Number of instructions that contribute to a unique coverpoint but do not update signature
+
+STAT4 : Number of Multiple signature updates for the same coverpoint
+
+STAT5 : Number of times the signature was overwritten
 
 | Param                     | Value    |
 |---------------------------|----------|
 | XLEN                      | 32      |
-| TEST_REGION               | [('0x80000104', '0x80000940')]      |
-| SIG_REGION                | [('0x80002210', '0x80002394')]      |
-| COV_LABELS                | ('misalign-bge', 'misalign-bge')      |
+| TEST_REGION               | [('0x80000104', '0x80000150')]      |
+| SIG_REGION                | [('0x80003204', '0x80003314', '68 words')]      |
+| COV_LABELS                | misalign-bge      |
 | TEST_NAME                 | /scratch/git-repo/incoresemi/riscof/riscof_work/misalign-bge-01.S/misalign-bge-01.S    |
-| Total Unique Coverpoints  | 2      |
+| Total Number of coverpoints| 2     |
 | Total Signature Updates   | 1      |
-| Ops w/o unique coverpoints | 0      |
-| Sig Updates w/o Coverpoints | 0    |
+| Total Coverpoints Covered | 2      |
+| STAT1                     | 1      |
+| STAT2                     | 0      |
+| STAT3                     | 0     |
+| STAT4                     | 0     |
+| STAT5                     | 0     |
 
-## Report Table
+## Details for STAT2:
+
+```
+
+
+```
+
+## Details of STAT3
+
+```
+
+
+```
+
+## Details of STAT4:
+
+```
+
+```
+
+## Details of STAT5:
+
+
+
+## Details of STAT1:
 
 - The first column indicates the signature address and the data at that location in hexadecimal in the following format: 
   ```
@@ -29,7 +67,10 @@
   ```
   [PC of instruction] : mnemonic
   ```
+- The order in the table is based on the order of signatures occuring in the
+  test. These need not necessarily be in increasing or decreasing order of the
+  address in the signature region.
 
-|s.no|        signature         |                        coverpoints                         |                                                code                                                |
-|---:|--------------------------|------------------------------------------------------------|----------------------------------------------------------------------------------------------------|
-|   1|[0x80002210]<br>0x00000001|- opcode : bge<br> -  rs1_val>rs2_val and ea_align == 2<br> |[0x80000920]:bge a0, a1, 6142<br> [0x8000011e]:addi sp, zero, 1<br> [0x80000122]:jal zero, 2070<br> |
+|s.no|        signature         |                        coverpoints                         |                                                             code                                                             |
+|---:|--------------------------|------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------|
+|   1|[0x80003210]<br>0x00000001|- opcode : bge<br> -  rs1_val>rs2_val and ea_align == 2<br> |[0x80000130]:bge a0, a1, 8174<br> [0x8000011e]:addi sp, sp, 1<br> [0x80000122]:jal zero, 38<br> [0x80000148]:sw sp, 0(ra)<br> |

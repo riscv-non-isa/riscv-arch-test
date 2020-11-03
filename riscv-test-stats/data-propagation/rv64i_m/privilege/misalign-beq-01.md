@@ -1,19 +1,57 @@
 
-## Data Propagation Report
+# Data Propagation Report
+
+STAT1 : Number of unique coverpoint hits that have updated the signature
+
+STAT2 : Number of covepoints hits which are not unique but still update the signature
+
+STAT3 : Number of instructions that contribute to a unique coverpoint but do not update signature
+
+STAT4 : Number of Multiple signature updates for the same coverpoint
+
+STAT5 : Number of times the signature was overwritten
 
 | Param                     | Value    |
 |---------------------------|----------|
 | XLEN                      | 64      |
-| TEST_REGION               | [('0x8000039c', '0x800003e0')]      |
-| SIG_REGION                | [('0x80002210', '0x80002518')]      |
-| COV_LABELS                | ('misalign-beq', 'misalign-beq')      |
+| TEST_REGION               | [('0x8000039c', '0x800003f0')]      |
+| SIG_REGION                | [('0x80003204', '0x80003418', '66 dwords')]      |
+| COV_LABELS                | misalign-beq      |
 | TEST_NAME                 | /scratch/git-repo/incoresemi/riscof/riscof_work/misalign-beq-01.S/misalign-beq-01.S    |
-| Total Unique Coverpoints  | 2      |
-| Total Signature Updates   | 2      |
-| Ops w/o unique coverpoints | 0      |
-| Sig Updates w/o Coverpoints | 0    |
+| Total Number of coverpoints| 2     |
+| Total Signature Updates   | 1      |
+| Total Coverpoints Covered | 2      |
+| STAT1                     | 1      |
+| STAT2                     | 0      |
+| STAT3                     | 0     |
+| STAT4                     | 0     |
+| STAT5                     | 0     |
 
-## Report Table
+## Details for STAT2:
+
+```
+
+
+```
+
+## Details of STAT3
+
+```
+
+
+```
+
+## Details of STAT4:
+
+```
+
+```
+
+## Details of STAT5:
+
+
+
+## Details of STAT1:
 
 - The first column indicates the signature address and the data at that location in hexadecimal in the following format: 
   ```
@@ -29,7 +67,10 @@
   ```
   [PC of instruction] : mnemonic
   ```
+- The order in the table is based on the order of signatures occuring in the
+  test. These need not necessarily be in increasing or decreasing order of the
+  address in the signature region.
 
-|s.no|            signature             |                         coverpoints                         |                                             code                                              |
-|---:|----------------------------------|-------------------------------------------------------------|-----------------------------------------------------------------------------------------------|
-|   1|[0x80002210]<br>0x0000000000000003|- opcode : beq<br> -  rs1_val==rs2_val and ea_align == 2<br> |[0x800003c4]:beq a0, a1, 14<br> [0x800003d2]:addi sp, zero, 3<br> [0x800003d6]:jal zero, 6<br> |
+|s.no|            signature             |                         coverpoints                         |                                                             code                                                             |
+|---:|----------------------------------|-------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------|
+|   1|[0x80003210]<br>0x0000000000000001|- opcode : beq<br> -  rs1_val==rs2_val and ea_align == 2<br> |[0x800003cc]:beq a0, a1, 8178<br> [0x800003be]:addi sp, sp, 1<br> [0x800003c2]:jal zero, 34<br> [0x800003e4]:sd sp, 0(ra)<br> |

@@ -18,32 +18,32 @@ RVTEST_CASE(1,"//check ISA:=regex(.*64.*);check ISA:=regex(.*I.*Zicsr.*); check 
 RVTEST_SIGBASE( x1,signature_x1_1)
 
 # ea_align == 1, 
-# opcode:ld op1:x10; dest:x11; immval:-10; align:1
-TEST_LOAD(x1,x2,0,x10,x11,-10,0,ld,1)
+# opcode:ld op1:x10; dest:x11; immval:-4; align:1
+TEST_LOAD(x1,x2,0,x10,x11,-4,0,ld,1)
 
 # ea_align == 2, 
-# opcode:ld op1:x10; dest:x11; immval:-129; align:2
-TEST_LOAD(x1,x2,0,x10,x11,-129,8,ld,2)
+# opcode:ld op1:x10; dest:x11; immval:-2048; align:2
+TEST_LOAD(x1,x2,0,x10,x11,-2048,8,ld,2)
 
 # ea_align == 3, 
-# opcode:ld op1:x10; dest:x11; immval:-7; align:3
-TEST_LOAD(x1,x2,0,x10,x11,-7,16,ld,3)
+# opcode:ld op1:x10; dest:x11; immval:2047; align:3
+TEST_LOAD(x1,x2,0,x10,x11,2047,16,ld,3)
 
 # ea_align == 4, 
 # opcode:ld op1:x10; dest:x11; immval:-3; align:4
 TEST_LOAD(x1,x2,0,x10,x11,-3,24,ld,4)
 
 # ea_align == 5, 
-# opcode:ld op1:x10; dest:x11; immval:-10; align:5
-TEST_LOAD(x1,x2,0,x10,x11,-10,32,ld,5)
+# opcode:ld op1:x10; dest:x11; immval:-3; align:5
+TEST_LOAD(x1,x2,0,x10,x11,-3,32,ld,5)
 
 # ea_align == 6, 
-# opcode:ld op1:x10; dest:x11; immval:1023; align:6
-TEST_LOAD(x1,x2,0,x10,x11,1023,40,ld,6)
+# opcode:ld op1:x10; dest:x11; immval:32; align:6
+TEST_LOAD(x1,x2,0,x10,x11,32,40,ld,6)
 
 # ea_align == 7, 
-# opcode:ld op1:x10; dest:x11; immval:-1366; align:7
-TEST_LOAD(x1,x2,0,x10,x11,-1366,48,ld,7)
+# opcode:ld op1:x10; dest:x11; immval:-9; align:7
+TEST_LOAD(x1,x2,0,x10,x11,-9,48,ld,7)
 #endif
 
 
@@ -51,7 +51,6 @@ RVTEST_CODE_END
 RVMODEL_HALT
 
 RVTEST_DATA_BEGIN
-.align 4
 .align 4
 rvtest_data:
 .word 0xbabecafe

@@ -78,7 +78,6 @@ RVMODEL_HALT
 
 RVTEST_DATA_BEGIN
 .align 4
-.align 4
 rvtest_data:
 .word 0xbabecafe
 RVTEST_DATA_END

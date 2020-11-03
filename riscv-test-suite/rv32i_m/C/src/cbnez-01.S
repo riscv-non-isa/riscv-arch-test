@@ -15,285 +15,277 @@ RVTEST_CASE(0,"//check ISA:=regex(.*32.*);check ISA:=regex(.*I.*C.*);def TEST_CA
 
 RVTEST_SIGBASE( x1,signature_x1_1)
 
-# rs1==x9, rs1_val > 0 and imm_val > 0, rs1_val == 16384
-# opcode: c.bnez; op1:x9; op1val:0x00004000; immval:126
-TEST_CBRANCH_OP(c.bnez, x2, x9, 0x00004000, 126, 3f, x1, 0)
+# rs1==x15, rs1_val > 0 and imm_val > 0, rs1_val == 16
+# opcode: c.bnez; op1:x15; op1val:0x00000010; immval:6
+TEST_CBRANCH_OP(c.bnez, x2, x15, 0x00000010, 6, 3f, x1, 0)
 
-# rs1==x8, rs1_val < 0 and imm_val > 0, 
-# opcode: c.bnez; op1:x8; op1val:0xfffffff9; immval:8
-TEST_CBRANCH_OP(c.bnez, x2, x8, 0xfffffff9, 8, 3f, x1, 4)
+# rs1==x8, rs1_val < 0 and imm_val > 0, rs1_val == -67108865
+# opcode: c.bnez; op1:x8; op1val:0xfbffffff; immval:128
+TEST_CBRANCH_OP(c.bnez, x2, x8, 0xfbffffff, 128, 3f, x1, 4)
 
-# rs1==x10, rs1_val == 0 and imm_val > 0, rs1_val == 0
-# opcode: c.bnez; op1:x10; op1val:0x00000000; immval:170
-TEST_CBRANCH_OP(c.bnez, x2, x10, 0x00000000, 170, 3f, x1, 8)
+# rs1==x11, rs1_val == 0 and imm_val > 0, rs1_val == 0
+# opcode: c.bnez; op1:x11; op1val:0x00000000; immval:128
+TEST_CBRANCH_OP(c.bnez, x2, x11, 0x00000000, 128, 3f, x1, 8)
 
-# rs1==x14, rs1_val > 0 and imm_val < 0, 
-# opcode: c.bnez; op1:x14; op1val:0x00000007; immval:4
-TEST_CBRANCH_OP(c.bnez, x2, x14, 0x00000007, 4, 1b, x1, 12)
+# rs1==x9, rs1_val > 0 and imm_val < 0, rs1_val == 2048
+# opcode: c.bnez; op1:x9; op1val:0x00000800; immval:14
+TEST_CBRANCH_OP(c.bnez, x2, x9, 0x00000800, 14, 1b, x1, 12)
 
-# rs1==x15, rs1_val < 0 and imm_val < 0, rs1_val == -129
-# opcode: c.bnez; op1:x15; op1val:0xffffff7f; immval:18
-TEST_CBRANCH_OP(c.bnez, x2, x15, 0xffffff7f, 18, 1b, x1, 16)
+# rs1==x13, rs1_val < 0 and imm_val < 0, rs1_val == -8388609
+# opcode: c.bnez; op1:x13; op1val:0xff7fffff; immval:12
+TEST_CBRANCH_OP(c.bnez, x2, x13, 0xff7fffff, 12, 1b, x1, 16)
 
-# rs1==x11, rs1_val == 0 and imm_val < 0, 
-# opcode: c.bnez; op1:x11; op1val:0x00000000; immval:16
-TEST_CBRANCH_OP(c.bnez, x2, x11, 0x00000000, 16, 1b, x1, 20)
+# rs1==x14, rs1_val == 0 and imm_val < 0, 
+# opcode: c.bnez; op1:x14; op1val:0x00000000; immval:8
+TEST_CBRANCH_OP(c.bnez, x2, x14, 0x00000000, 8, 1b, x1, 20)
 
 # rs1==x12, rs1_val == (-2**(xlen-1)), rs1_val == -2147483648
-# opcode: c.bnez; op1:x12; op1val:0x80000000; immval:6
-TEST_CBRANCH_OP(c.bnez, x2, x12, 0x80000000, 6, 1b, x1, 24)
+# opcode: c.bnez; op1:x12; op1val:0x80000000; immval:32
+TEST_CBRANCH_OP(c.bnez, x2, x12, 0x80000000, 32, 3f, x1, 24)
 
-# rs1==x13, rs1_val == (2**(xlen-1)-1), rs1_val == 2147483647
-# opcode: c.bnez; op1:x13; op1val:0x7fffffff; immval:8
-TEST_CBRANCH_OP(c.bnez, x2, x13, 0x7fffffff, 8, 1b, x1, 28)
+# rs1==x10, rs1_val == (2**(xlen-1)-1), rs1_val == 2147483647
+# opcode: c.bnez; op1:x10; op1val:0x7fffffff; immval:20
+TEST_CBRANCH_OP(c.bnez, x2, x10, 0x7fffffff, 20, 1b, x1, 28)
 
 # rs1_val == 1, 
-# opcode: c.bnez; op1:x10; op1val:0x00000001; immval:14
-TEST_CBRANCH_OP(c.bnez, x2, x10, 0x00000001, 14, 1b, x1, 32)
+# opcode: c.bnez; op1:x10; op1val:0x00000001; immval:4
+TEST_CBRANCH_OP(c.bnez, x2, x10, 0x00000001, 4, 1b, x1, 32)
 
 # rs1_val == 2, 
-# opcode: c.bnez; op1:x10; op1val:0x00000002; immval:16
-TEST_CBRANCH_OP(c.bnez, x2, x10, 0x00000002, 16, 1b, x1, 36)
+# opcode: c.bnez; op1:x10; op1val:0x00000002; immval:130
+TEST_CBRANCH_OP(c.bnez, x2, x10, 0x00000002, 130, 1b, x1, 36)
 
 # rs1_val == 4, 
-# opcode: c.bnez; op1:x10; op1val:0x00000004; immval:130
-TEST_CBRANCH_OP(c.bnez, x2, x10, 0x00000004, 130, 1b, x1, 40)
+# opcode: c.bnez; op1:x10; op1val:0x00000004; immval:12
+TEST_CBRANCH_OP(c.bnez, x2, x10, 0x00000004, 12, 3f, x1, 40)
 
 # rs1_val == 8, 
-# opcode: c.bnez; op1:x10; op1val:0x00000008; immval:126
-TEST_CBRANCH_OP(c.bnez, x2, x10, 0x00000008, 126, 3f, x1, 44)
-
-# rs1_val == 16, 
-# opcode: c.bnez; op1:x10; op1val:0x00000010; immval:172
-TEST_CBRANCH_OP(c.bnez, x2, x10, 0x00000010, 172, 1b, x1, 48)
+# opcode: c.bnez; op1:x10; op1val:0x00000008; immval:4
+TEST_CBRANCH_OP(c.bnez, x2, x10, 0x00000008, 4, 3f, x1, 44)
 
 # rs1_val == 32, 
-# opcode: c.bnez; op1:x10; op1val:0x00000020; immval:172
-TEST_CBRANCH_OP(c.bnez, x2, x10, 0x00000020, 172, 1b, x1, 52)
+# opcode: c.bnez; op1:x10; op1val:0x00000020; immval:18
+TEST_CBRANCH_OP(c.bnez, x2, x10, 0x00000020, 18, 1b, x1, 48)
 
 # rs1_val == 64, 
-# opcode: c.bnez; op1:x10; op1val:0x00000040; immval:34
-TEST_CBRANCH_OP(c.bnez, x2, x10, 0x00000040, 34, 1b, x1, 56)
+# opcode: c.bnez; op1:x10; op1val:0x00000040; immval:128
+TEST_CBRANCH_OP(c.bnez, x2, x10, 0x00000040, 128, 1b, x1, 52)
 
 # rs1_val == 128, 
-# opcode: c.bnez; op1:x10; op1val:0x00000080; immval:32
-TEST_CBRANCH_OP(c.bnez, x2, x10, 0x00000080, 32, 3f, x1, 60)
+# opcode: c.bnez; op1:x10; op1val:0x00000080; immval:14
+TEST_CBRANCH_OP(c.bnez, x2, x10, 0x00000080, 14, 3f, x1, 56)
 
 # rs1_val == 256, 
-# opcode: c.bnez; op1:x10; op1val:0x00000100; immval:66
-TEST_CBRANCH_OP(c.bnez, x2, x10, 0x00000100, 66, 1b, x1, 64)
+# opcode: c.bnez; op1:x10; op1val:0x00000100; immval:34
+TEST_CBRANCH_OP(c.bnez, x2, x10, 0x00000100, 34, 1b, x1, 60)
 
 # rs1_val == 512, 
-# opcode: c.bnez; op1:x10; op1val:0x00000200; immval:12
-TEST_CBRANCH_OP(c.bnez, x2, x10, 0x00000200, 12, 3f, x1, 68)
+# opcode: c.bnez; op1:x10; op1val:0x00000200; immval:8
+TEST_CBRANCH_OP(c.bnez, x2, x10, 0x00000200, 8, 1b, x1, 64)
 
 # rs1_val == 1024, 
-# opcode: c.bnez; op1:x10; op1val:0x00000400; immval:172
-TEST_CBRANCH_OP(c.bnez, x2, x10, 0x00000400, 172, 1b, x1, 72)
-
-# rs1_val == 2048, 
-# opcode: c.bnez; op1:x10; op1val:0x00000800; immval:16
-TEST_CBRANCH_OP(c.bnez, x2, x10, 0x00000800, 16, 1b, x1, 76)
+# opcode: c.bnez; op1:x10; op1val:0x00000400; immval:8
+TEST_CBRANCH_OP(c.bnez, x2, x10, 0x00000400, 8, 1b, x1, 68)
 
 # rs1_val == 4096, 
-# opcode: c.bnez; op1:x10; op1val:0x00001000; immval:170
-TEST_CBRANCH_OP(c.bnez, x2, x10, 0x00001000, 170, 3f, x1, 80)
+# opcode: c.bnez; op1:x10; op1val:0x00001000; immval:4
+TEST_CBRANCH_OP(c.bnez, x2, x10, 0x00001000, 4, 1b, x1, 72)
 
 # rs1_val == 8192, 
-# opcode: c.bnez; op1:x10; op1val:0x00002000; immval:12
-TEST_CBRANCH_OP(c.bnez, x2, x10, 0x00002000, 12, 3f, x1, 84)
+# opcode: c.bnez; op1:x10; op1val:0x00002000; immval:16
+TEST_CBRANCH_OP(c.bnez, x2, x10, 0x00002000, 16, 3f, x1, 76)
+
+# rs1_val == 16384, 
+# opcode: c.bnez; op1:x10; op1val:0x00004000; immval:8
+TEST_CBRANCH_OP(c.bnez, x2, x10, 0x00004000, 8, 1b, x1, 80)
 
 # rs1_val == 32768, 
-# opcode: c.bnez; op1:x10; op1val:0x00008000; immval:20
-TEST_CBRANCH_OP(c.bnez, x2, x10, 0x00008000, 20, 1b, x1, 88)
+# opcode: c.bnez; op1:x10; op1val:0x00008000; immval:6
+TEST_CBRANCH_OP(c.bnez, x2, x10, 0x00008000, 6, 3f, x1, 84)
 
 # rs1_val == 65536, 
-# opcode: c.bnez; op1:x10; op1val:0x00010000; immval:18
-TEST_CBRANCH_OP(c.bnez, x2, x10, 0x00010000, 18, 3f, x1, 92)
+# opcode: c.bnez; op1:x10; op1val:0x00010000; immval:4
+TEST_CBRANCH_OP(c.bnez, x2, x10, 0x00010000, 4, 1b, x1, 88)
 
 # rs1_val == 131072, 
 # opcode: c.bnez; op1:x10; op1val:0x00020000; immval:6
-TEST_CBRANCH_OP(c.bnez, x2, x10, 0x00020000, 6, 3f, x1, 96)
+TEST_CBRANCH_OP(c.bnez, x2, x10, 0x00020000, 6, 3f, x1, 92)
 
 # rs1_val == 262144, 
-# opcode: c.bnez; op1:x10; op1val:0x00040000; immval:66
-TEST_CBRANCH_OP(c.bnez, x2, x10, 0x00040000, 66, 1b, x1, 100)
+# opcode: c.bnez; op1:x10; op1val:0x00040000; immval:6
+TEST_CBRANCH_OP(c.bnez, x2, x10, 0x00040000, 6, 1b, x1, 96)
 
 # rs1_val == 524288, 
-# opcode: c.bnez; op1:x10; op1val:0x00080000; immval:18
-TEST_CBRANCH_OP(c.bnez, x2, x10, 0x00080000, 18, 1b, x1, 104)
+# opcode: c.bnez; op1:x10; op1val:0x00080000; immval:10
+TEST_CBRANCH_OP(c.bnez, x2, x10, 0x00080000, 10, 1b, x1, 100)
 
 # rs1_val == 1048576, 
-# opcode: c.bnez; op1:x10; op1val:0x00100000; immval:64
-TEST_CBRANCH_OP(c.bnez, x2, x10, 0x00100000, 64, 3f, x1, 108)
+# opcode: c.bnez; op1:x10; op1val:0x00100000; immval:8
+TEST_CBRANCH_OP(c.bnez, x2, x10, 0x00100000, 8, 3f, x1, 104)
 
 # rs1_val == 2097152, 
-# opcode: c.bnez; op1:x10; op1val:0x00200000; immval:6
-TEST_CBRANCH_OP(c.bnez, x2, x10, 0x00200000, 6, 3f, x1, 112)
+# opcode: c.bnez; op1:x10; op1val:0x00200000; immval:16
+TEST_CBRANCH_OP(c.bnez, x2, x10, 0x00200000, 16, 1b, x1, 108)
 
 # rs1_val == 4194304, 
-# opcode: c.bnez; op1:x10; op1val:0x00400000; immval:126
-TEST_CBRANCH_OP(c.bnez, x2, x10, 0x00400000, 126, 3f, x1, 116)
+# opcode: c.bnez; op1:x10; op1val:0x00400000; immval:14
+TEST_CBRANCH_OP(c.bnez, x2, x10, 0x00400000, 14, 1b, x1, 112)
 
 # rs1_val == 8388608, 
-# opcode: c.bnez; op1:x10; op1val:0x00800000; immval:12
-TEST_CBRANCH_OP(c.bnez, x2, x10, 0x00800000, 12, 1b, x1, 120)
+# opcode: c.bnez; op1:x10; op1val:0x00800000; immval:4
+TEST_CBRANCH_OP(c.bnez, x2, x10, 0x00800000, 4, 1b, x1, 116)
 
 # rs1_val == 16777216, 
-# opcode: c.bnez; op1:x10; op1val:0x01000000; immval:16
-TEST_CBRANCH_OP(c.bnez, x2, x10, 0x01000000, 16, 3f, x1, 124)
+# opcode: c.bnez; op1:x10; op1val:0x01000000; immval:34
+TEST_CBRANCH_OP(c.bnez, x2, x10, 0x01000000, 34, 1b, x1, 120)
 
 # rs1_val == 33554432, 
-# opcode: c.bnez; op1:x10; op1val:0x02000000; immval:128
-TEST_CBRANCH_OP(c.bnez, x2, x10, 0x02000000, 128, 3f, x1, 128)
+# opcode: c.bnez; op1:x10; op1val:0x02000000; immval:12
+TEST_CBRANCH_OP(c.bnez, x2, x10, 0x02000000, 12, 1b, x1, 124)
 
 # rs1_val == 67108864, 
 # opcode: c.bnez; op1:x10; op1val:0x04000000; immval:8
-TEST_CBRANCH_OP(c.bnez, x2, x10, 0x04000000, 8, 1b, x1, 132)
+TEST_CBRANCH_OP(c.bnez, x2, x10, 0x04000000, 8, 1b, x1, 128)
 
 # rs1_val == 134217728, 
-# opcode: c.bnez; op1:x10; op1val:0x08000000; immval:10
-TEST_CBRANCH_OP(c.bnez, x2, x10, 0x08000000, 10, 1b, x1, 136)
+# opcode: c.bnez; op1:x10; op1val:0x08000000; immval:170
+TEST_CBRANCH_OP(c.bnez, x2, x10, 0x08000000, 170, 3f, x1, 132)
 
 # rs1_val == 268435456, 
-# opcode: c.bnez; op1:x10; op1val:0x10000000; immval:14
-TEST_CBRANCH_OP(c.bnez, x2, x10, 0x10000000, 14, 1b, x1, 140)
+# opcode: c.bnez; op1:x10; op1val:0x10000000; immval:10
+TEST_CBRANCH_OP(c.bnez, x2, x10, 0x10000000, 10, 3f, x1, 136)
 
 # rs1_val == 536870912, 
-# opcode: c.bnez; op1:x10; op1val:0x20000000; immval:6
-TEST_CBRANCH_OP(c.bnez, x2, x10, 0x20000000, 6, 3f, x1, 144)
+# opcode: c.bnez; op1:x10; op1val:0x20000000; immval:18
+TEST_CBRANCH_OP(c.bnez, x2, x10, 0x20000000, 18, 1b, x1, 140)
 
 # rs1_val == 1073741824, 
-# opcode: c.bnez; op1:x10; op1val:0x40000000; immval:4
-TEST_CBRANCH_OP(c.bnez, x2, x10, 0x40000000, 4, 3f, x1, 148)
-
-# rs1_val == -2, 
-# opcode: c.bnez; op1:x10; op1val:0xfffffffe; immval:14
-TEST_CBRANCH_OP(c.bnez, x2, x10, 0xfffffffe, 14, 1b, x1, 152)
-
-# rs1_val == -8388609, 
-# opcode: c.bnez; op1:x10; op1val:0xff7fffff; immval:4
-TEST_CBRANCH_OP(c.bnez, x2, x10, 0xff7fffff, 4, 3f, x1, 156)
+# opcode: c.bnez; op1:x10; op1val:0x40000000; immval:128
+TEST_CBRANCH_OP(c.bnez, x2, x10, 0x40000000, 128, 1b, x1, 144)
 
 # rs1_val == -16777217, 
-# opcode: c.bnez; op1:x10; op1val:0xfeffffff; immval:16
-TEST_CBRANCH_OP(c.bnez, x2, x10, 0xfeffffff, 16, 3f, x1, 160)
+# opcode: c.bnez; op1:x10; op1val:0xfeffffff; immval:8
+TEST_CBRANCH_OP(c.bnez, x2, x10, 0xfeffffff, 8, 3f, x1, 148)
 
 # rs1_val == -33554433, 
-# opcode: c.bnez; op1:x10; op1val:0xfdffffff; immval:6
-TEST_CBRANCH_OP(c.bnez, x2, x10, 0xfdffffff, 6, 1b, x1, 164)
-
-# rs1_val == -67108865, 
-# opcode: c.bnez; op1:x10; op1val:0xfbffffff; immval:14
-TEST_CBRANCH_OP(c.bnez, x2, x10, 0xfbffffff, 14, 3f, x1, 168)
+# opcode: c.bnez; op1:x10; op1val:0xfdffffff; immval:128
+TEST_CBRANCH_OP(c.bnez, x2, x10, 0xfdffffff, 128, 1b, x1, 152)
 
 # rs1_val == -134217729, 
-# opcode: c.bnez; op1:x10; op1val:0xf7ffffff; immval:8
-TEST_CBRANCH_OP(c.bnez, x2, x10, 0xf7ffffff, 8, 3f, x1, 172)
+# opcode: c.bnez; op1:x10; op1val:0xf7ffffff; immval:170
+TEST_CBRANCH_OP(c.bnez, x2, x10, 0xf7ffffff, 170, 3f, x1, 156)
 
 # rs1_val == -268435457, 
 # opcode: c.bnez; op1:x10; op1val:0xefffffff; immval:34
-TEST_CBRANCH_OP(c.bnez, x2, x10, 0xefffffff, 34, 1b, x1, 176)
+TEST_CBRANCH_OP(c.bnez, x2, x10, 0xefffffff, 34, 1b, x1, 160)
 
 # rs1_val == -536870913, 
-# opcode: c.bnez; op1:x10; op1val:0xdfffffff; immval:6
-TEST_CBRANCH_OP(c.bnez, x2, x10, 0xdfffffff, 6, 1b, x1, 180)
+# opcode: c.bnez; op1:x10; op1val:0xdfffffff; immval:128
+TEST_CBRANCH_OP(c.bnez, x2, x10, 0xdfffffff, 128, 3f, x1, 164)
 
 # rs1_val == -1073741825, 
-# opcode: c.bnez; op1:x10; op1val:0xbfffffff; immval:10
-TEST_CBRANCH_OP(c.bnez, x2, x10, 0xbfffffff, 10, 1b, x1, 184)
+# opcode: c.bnez; op1:x10; op1val:0xbfffffff; immval:128
+TEST_CBRANCH_OP(c.bnez, x2, x10, 0xbfffffff, 128, 1b, x1, 168)
 
 # rs1_val == 1431655765, 
-# opcode: c.bnez; op1:x10; op1val:0x55555555; immval:172
-TEST_CBRANCH_OP(c.bnez, x2, x10, 0x55555555, 172, 1b, x1, 188)
+# opcode: c.bnez; op1:x10; op1val:0x55555555; immval:10
+TEST_CBRANCH_OP(c.bnez, x2, x10, 0x55555555, 10, 3f, x1, 172)
 
 # rs1_val == -1431655766, 
-# opcode: c.bnez; op1:x10; op1val:0xaaaaaaaa; immval:16
-TEST_CBRANCH_OP(c.bnez, x2, x10, 0xaaaaaaaa, 16, 1b, x1, 192)
+# opcode: c.bnez; op1:x10; op1val:0xaaaaaaaa; immval:170
+TEST_CBRANCH_OP(c.bnez, x2, x10, 0xaaaaaaaa, 170, 3f, x1, 176)
+
+# rs1_val == -2, 
+# opcode: c.bnez; op1:x10; op1val:0xfffffffe; immval:12
+TEST_CBRANCH_OP(c.bnez, x2, x10, 0xfffffffe, 12, 3f, x1, 180)
 
 # rs1_val == -3, 
-# opcode: c.bnez; op1:x10; op1val:0xfffffffd; immval:170
-TEST_CBRANCH_OP(c.bnez, x2, x10, 0xfffffffd, 170, 3f, x1, 196)
+# opcode: c.bnez; op1:x10; op1val:0xfffffffd; immval:64
+TEST_CBRANCH_OP(c.bnez, x2, x10, 0xfffffffd, 64, 3f, x1, 184)
 
 # rs1_val == -5, 
-# opcode: c.bnez; op1:x10; op1val:0xfffffffb; immval:6
-TEST_CBRANCH_OP(c.bnez, x2, x10, 0xfffffffb, 6, 1b, x1, 200)
+# opcode: c.bnez; op1:x10; op1val:0xfffffffb; immval:8
+TEST_CBRANCH_OP(c.bnez, x2, x10, 0xfffffffb, 8, 1b, x1, 188)
 
 # rs1_val == -9, 
 # opcode: c.bnez; op1:x10; op1val:0xfffffff7; immval:8
-TEST_CBRANCH_OP(c.bnez, x2, x10, 0xfffffff7, 8, 1b, x1, 204)
+TEST_CBRANCH_OP(c.bnez, x2, x10, 0xfffffff7, 8, 1b, x1, 192)
 
 # rs1_val == -17, 
-# opcode: c.bnez; op1:x10; op1val:0xffffffef; immval:128
-TEST_CBRANCH_OP(c.bnez, x2, x10, 0xffffffef, 128, 3f, x1, 208)
+# opcode: c.bnez; op1:x10; op1val:0xffffffef; immval:18
+TEST_CBRANCH_OP(c.bnez, x2, x10, 0xffffffef, 18, 3f, x1, 196)
 
 # rs1_val == -33, 
-# opcode: c.bnez; op1:x10; op1val:0xffffffdf; immval:4
-TEST_CBRANCH_OP(c.bnez, x2, x10, 0xffffffdf, 4, 1b, x1, 212)
+# opcode: c.bnez; op1:x10; op1val:0xffffffdf; immval:34
+TEST_CBRANCH_OP(c.bnez, x2, x10, 0xffffffdf, 34, 1b, x1, 200)
 
 # rs1_val == -65, 
-# opcode: c.bnez; op1:x10; op1val:0xffffffbf; immval:16
-TEST_CBRANCH_OP(c.bnez, x2, x10, 0xffffffbf, 16, 1b, x1, 216)
+# opcode: c.bnez; op1:x10; op1val:0xffffffbf; immval:6
+TEST_CBRANCH_OP(c.bnez, x2, x10, 0xffffffbf, 6, 1b, x1, 204)
+
+# rs1_val == -129, 
+# opcode: c.bnez; op1:x10; op1val:0xffffff7f; immval:16
+TEST_CBRANCH_OP(c.bnez, x2, x10, 0xffffff7f, 16, 1b, x1, 208)
 
 # rs1_val == -257, 
-# opcode: c.bnez; op1:x10; op1val:0xfffffeff; immval:14
-TEST_CBRANCH_OP(c.bnez, x2, x10, 0xfffffeff, 14, 3f, x1, 220)
+# opcode: c.bnez; op1:x10; op1val:0xfffffeff; immval:4
+TEST_CBRANCH_OP(c.bnez, x2, x10, 0xfffffeff, 4, 3f, x1, 212)
 
 # rs1_val == -513, 
-# opcode: c.bnez; op1:x10; op1val:0xfffffdff; immval:10
-TEST_CBRANCH_OP(c.bnez, x2, x10, 0xfffffdff, 10, 3f, x1, 224)
+# opcode: c.bnez; op1:x10; op1val:0xfffffdff; immval:6
+TEST_CBRANCH_OP(c.bnez, x2, x10, 0xfffffdff, 6, 3f, x1, 216)
 
 # rs1_val == -1025, 
 # opcode: c.bnez; op1:x10; op1val:0xfffffbff; immval:18
-TEST_CBRANCH_OP(c.bnez, x2, x10, 0xfffffbff, 18, 3f, x1, 228)
+TEST_CBRANCH_OP(c.bnez, x2, x10, 0xfffffbff, 18, 1b, x1, 220)
 
 # rs1_val == -2049, 
-# opcode: c.bnez; op1:x10; op1val:0xfffff7ff; immval:4
-TEST_CBRANCH_OP(c.bnez, x2, x10, 0xfffff7ff, 4, 3f, x1, 232)
+# opcode: c.bnez; op1:x10; op1val:0xfffff7ff; immval:14
+TEST_CBRANCH_OP(c.bnez, x2, x10, 0xfffff7ff, 14, 1b, x1, 224)
 
 # rs1_val == -4097, 
-# opcode: c.bnez; op1:x10; op1val:0xffffefff; immval:16
-TEST_CBRANCH_OP(c.bnez, x2, x10, 0xffffefff, 16, 1b, x1, 236)
+# opcode: c.bnez; op1:x10; op1val:0xffffefff; immval:32
+TEST_CBRANCH_OP(c.bnez, x2, x10, 0xffffefff, 32, 3f, x1, 228)
 
 # rs1_val == -8193, 
-# opcode: c.bnez; op1:x10; op1val:0xffffdfff; immval:126
-TEST_CBRANCH_OP(c.bnez, x2, x10, 0xffffdfff, 126, 3f, x1, 240)
+# opcode: c.bnez; op1:x10; op1val:0xffffdfff; immval:64
+TEST_CBRANCH_OP(c.bnez, x2, x10, 0xffffdfff, 64, 3f, x1, 232)
 
 # rs1_val == -16385, 
-# opcode: c.bnez; op1:x10; op1val:0xffffbfff; immval:64
-TEST_CBRANCH_OP(c.bnez, x2, x10, 0xffffbfff, 64, 3f, x1, 244)
+# opcode: c.bnez; op1:x10; op1val:0xffffbfff; immval:10
+TEST_CBRANCH_OP(c.bnez, x2, x10, 0xffffbfff, 10, 1b, x1, 236)
 
 # rs1_val == -32769, 
-# opcode: c.bnez; op1:x10; op1val:0xffff7fff; immval:18
-TEST_CBRANCH_OP(c.bnez, x2, x10, 0xffff7fff, 18, 3f, x1, 248)
+# opcode: c.bnez; op1:x10; op1val:0xffff7fff; immval:66
+TEST_CBRANCH_OP(c.bnez, x2, x10, 0xffff7fff, 66, 1b, x1, 240)
 
 # rs1_val == -65537, 
-# opcode: c.bnez; op1:x10; op1val:0xfffeffff; immval:170
-TEST_CBRANCH_OP(c.bnez, x2, x10, 0xfffeffff, 170, 3f, x1, 252)
+# opcode: c.bnez; op1:x10; op1val:0xfffeffff; immval:4
+TEST_CBRANCH_OP(c.bnez, x2, x10, 0xfffeffff, 4, 1b, x1, 244)
 
 # rs1_val == -131073, 
-# opcode: c.bnez; op1:x10; op1val:0xfffdffff; immval:130
-TEST_CBRANCH_OP(c.bnez, x2, x10, 0xfffdffff, 130, 1b, x1, 256)
+# opcode: c.bnez; op1:x10; op1val:0xfffdffff; immval:170
+TEST_CBRANCH_OP(c.bnez, x2, x10, 0xfffdffff, 170, 3f, x1, 248)
 
 # rs1_val == -262145, 
-# opcode: c.bnez; op1:x10; op1val:0xfffbffff; immval:4
-TEST_CBRANCH_OP(c.bnez, x2, x10, 0xfffbffff, 4, 1b, x1, 260)
+# opcode: c.bnez; op1:x10; op1val:0xfffbffff; immval:170
+TEST_CBRANCH_OP(c.bnez, x2, x10, 0xfffbffff, 170, 3f, x1, 252)
 
 # rs1_val == -524289, 
-# opcode: c.bnez; op1:x10; op1val:0xfff7ffff; immval:34
-TEST_CBRANCH_OP(c.bnez, x2, x10, 0xfff7ffff, 34, 1b, x1, 264)
+# opcode: c.bnez; op1:x10; op1val:0xfff7ffff; immval:6
+TEST_CBRANCH_OP(c.bnez, x2, x10, 0xfff7ffff, 6, 3f, x1, 256)
 
 # rs1_val == -1048577, 
-# opcode: c.bnez; op1:x10; op1val:0xffefffff; immval:16
-TEST_CBRANCH_OP(c.bnez, x2, x10, 0xffefffff, 16, 1b, x1, 268)
+# opcode: c.bnez; op1:x10; op1val:0xffefffff; immval:6
+TEST_CBRANCH_OP(c.bnez, x2, x10, 0xffefffff, 6, 1b, x1, 260)
 
 # rs1_val == -2097153, 
-# opcode: c.bnez; op1:x10; op1val:0xffdfffff; immval:130
-TEST_CBRANCH_OP(c.bnez, x2, x10, 0xffdfffff, 130, 1b, x1, 272)
+# opcode: c.bnez; op1:x10; op1val:0xffdfffff; immval:8
+TEST_CBRANCH_OP(c.bnez, x2, x10, 0xffdfffff, 8, 1b, x1, 264)
 
 # rs1_val == -4194305, 
-# opcode: c.bnez; op1:x10; op1val:0xffbfffff; immval:66
-TEST_CBRANCH_OP(c.bnez, x2, x10, 0xffbfffff, 66, 1b, x1, 276)
+# opcode: c.bnez; op1:x10; op1val:0xffbfffff; immval:12
+TEST_CBRANCH_OP(c.bnez, x2, x10, 0xffbfffff, 12, 1b, x1, 268)
 #endif
 
 
@@ -301,7 +293,6 @@ RVTEST_CODE_END
 RVMODEL_HALT
 
 RVTEST_DATA_BEGIN
-.align 4
 .align 4
 rvtest_data:
 .word 0xbabecafe
@@ -315,7 +306,7 @@ signature_x1_0:
 
 
 signature_x1_1:
-    .fill 70*(XLEN/32),4,0xdeadbeef
+    .fill 68*(XLEN/32),4,0xdeadbeef
 
 #ifdef rvtest_mtrap_routine
 

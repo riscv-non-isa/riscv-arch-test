@@ -18,8 +18,8 @@ RVTEST_CASE(1,"//check ISA:=regex(.*64.*);check ISA:=regex(.*I.*Zicsr.*); check 
 RVTEST_SIGBASE( x1,signature_x1_1)
 
 # ea_align == 1, 
-# opcode: sh; op1:x10; op2:x11; op2val:0xfffffffffffffffe; immval:2047; align:1
-TEST_STORE(x1,x2,0,x10,x11,0xfffffffffffffffe,2047,0,sh,1)
+# opcode: sh; op1:x10; op2:x11; op2val:0xffffffffffffbfff; immval:-3; align:1
+TEST_STORE(x1,x2,0,x10,x11,0xffffffffffffbfff,-3,0,sh,1)
 #endif
 
 
@@ -27,7 +27,6 @@ RVTEST_CODE_END
 RVMODEL_HALT
 
 RVTEST_DATA_BEGIN
-.align 4
 .align 4
 rvtest_data:
 .word 0xbabecafe

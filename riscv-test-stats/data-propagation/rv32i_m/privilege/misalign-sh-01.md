@@ -1,19 +1,89 @@
 
-## Data Propagation Report
+# Data Propagation Report
+
+STAT1 : Number of unique coverpoint hits that have updated the signature
+
+STAT2 : Number of covepoints hits which are not unique but still update the signature
+
+STAT3 : Number of instructions that contribute to a unique coverpoint but do not update signature
+
+STAT4 : Number of Multiple signature updates for the same coverpoint
+
+STAT5 : Number of times the signature was overwritten
 
 | Param                     | Value    |
 |---------------------------|----------|
 | XLEN                      | 32      |
 | TEST_REGION               | [('0x80000104', '0x80000130')]      |
-| SIG_REGION                | [('0x80002210', '0x80002394')]      |
-| COV_LABELS                | ('misalign-sh', 'misalign-sh')      |
+| SIG_REGION                | [('0x80003204', '0x80003314', '68 words')]      |
+| COV_LABELS                | misalign-sh      |
 | TEST_NAME                 | /scratch/git-repo/incoresemi/riscof/riscof_work/misalign-sh-01.S/misalign-sh-01.S    |
-| Total Unique Coverpoints  | 0      |
-| Total Signature Updates   | 0      |
-| Ops w/o unique coverpoints | 0      |
-| Sig Updates w/o Coverpoints | 0    |
+| Total Number of coverpoints| 2     |
+| Total Signature Updates   | 5      |
+| Total Coverpoints Covered | 2      |
+| STAT1                     | 1      |
+| STAT2                     | 0      |
+| STAT3                     | 0     |
+| STAT4                     | 4     |
+| STAT5                     | 0     |
 
-## Report Table
+## Details for STAT2:
+
+```
+
+
+```
+
+## Details of STAT3
+
+```
+
+
+```
+
+## Details of STAT4:
+
+```
+Last Coverpoint : ['opcode : sh', 'ea_align == 1']
+Last Code Sequence : 
+	-[0x80000120]:sh a1, 2047(a0)
+Current Store : [0x80000350] : sw t2, 0(t1) -- Store: [0x80003214]:0x0000008F
+
+
+
+
+Last Coverpoint : ['opcode : sh', 'ea_align == 1']
+Last Code Sequence : 
+	-[0x80000120]:sh a1, 2047(a0)
+Current Store : [0x80000358] : sw t2, 4(t1) -- Store: [0x80003218]:0x00000006
+
+
+
+
+Last Coverpoint : ['opcode : sh', 'ea_align == 1']
+Last Code Sequence : 
+	-[0x80000120]:sh a1, 2047(a0)
+Current Store : [0x80000370] : sw t4, 8(t1) -- Store: [0x8000321c]:0x00000114
+
+
+
+
+Last Coverpoint : ['opcode : sh', 'ea_align == 1']
+Last Code Sequence : 
+	-[0x80000120]:sh a1, 2047(a0)
+Current Store : [0x800003f0] : sw t2, 12(t1) -- Store: [0x80003220]:0x00003205
+
+
+
+
+
+```
+
+## Details of STAT5:
+
+
+
+## Details of STAT1:
 
 - The first column indicates the signature address and the data at that location in hexadecimal in the following format: 
   ```
@@ -29,6 +99,10 @@
   ```
   [PC of instruction] : mnemonic
   ```
+- The order in the table is based on the order of signatures occuring in the
+  test. These need not necessarily be in increasing or decreasing order of the
+  address in the signature region.
 
-|s.no|signature|coverpoints|code|
-|----|---------|-----------|----|
+|s.no|        signature         |             coverpoints              |              code               |
+|---:|--------------------------|--------------------------------------|---------------------------------|
+|   1|[0x80003211]<br>0xFFFEFFFF|- opcode : sh<br> - ea_align == 1<br> |[0x80000120]:sh a1, 2047(a0)<br> |

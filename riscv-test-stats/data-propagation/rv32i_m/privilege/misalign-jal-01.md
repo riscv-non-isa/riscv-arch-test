@@ -1,19 +1,75 @@
 
-## Data Propagation Report
+# Data Propagation Report
+
+STAT1 : Number of unique coverpoint hits that have updated the signature
+
+STAT2 : Number of covepoints hits which are not unique but still update the signature
+
+STAT3 : Number of instructions that contribute to a unique coverpoint but do not update signature
+
+STAT4 : Number of Multiple signature updates for the same coverpoint
+
+STAT5 : Number of times the signature was overwritten
 
 | Param                     | Value    |
 |---------------------------|----------|
 | XLEN                      | 32      |
-| TEST_REGION               | [('0x80000104', '0x80000180')]      |
-| SIG_REGION                | [('0x80002210', '0x80002394')]      |
-| COV_LABELS                | ('misalign-jal', 'misalign-jal')      |
+| TEST_REGION               | [('0x80000104', '0x80000160')]      |
+| SIG_REGION                | [('0x80003204', '0x80003314', '68 words')]      |
+| COV_LABELS                | misalign-jal      |
 | TEST_NAME                 | /scratch/git-repo/incoresemi/riscof/riscof_work/misalign-jal-01.S/misalign-jal-01.S    |
-| Total Unique Coverpoints  | 2      |
+| Total Number of coverpoints| 2     |
 | Total Signature Updates   | 1      |
-| Ops w/o unique coverpoints | 0      |
-| Sig Updates w/o Coverpoints | 0    |
+| Total Coverpoints Covered | 1      |
+| STAT1                     | 0      |
+| STAT2                     | 1      |
+| STAT3                     | 1     |
+| STAT4                     | 0     |
+| STAT5                     | 0     |
 
-## Report Table
+## Details for STAT2:
+
+```
+Op without unique coverpoint updates Signature
+ -- Code Sequence:
+      [0x8000013e]:jal zero, 6
+      [0x80000144]:auipc sp, 0
+      [0x80000148]:addi sp, sp, 4040
+      [0x8000014c]:andi sp, sp, 4092
+      [0x80000150]:sub a0, a0, sp
+      [0x80000154]:sw a0, 0(ra)
+ -- Signature Address: 0x80003210 Data: 0x0000001F
+ -- Redundant Coverpoints hit by the op
+      - opcode : jal
+
+
+
+
+
+
+```
+
+## Details of STAT3
+
+```
+[0x80000124]:jal a0, 22
+[0x8000013a]:xori a0, a0, 3
+
+
+
+```
+
+## Details of STAT4:
+
+```
+
+```
+
+## Details of STAT5:
+
+
+
+## Details of STAT1:
 
 - The first column indicates the signature address and the data at that location in hexadecimal in the following format: 
   ```
@@ -29,7 +85,9 @@
   ```
   [PC of instruction] : mnemonic
   ```
+- The order in the table is based on the order of signatures occuring in the
+  test. These need not necessarily be in increasing or decreasing order of the
+  address in the signature region.
 
-|s.no|        signature         |              coverpoints              |                                                                                                            code                                                                                                            |
-|---:|--------------------------|---------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|   1|[0x80002210]<br>0x00000027|- opcode : jal<br> - ea_align == 2<br> |[0x8000012c]:jal a0, 42<br> [0x80000156]:xori a0, a0, 3<br> [0x8000015a]:jal zero, 6<br> [0x80000160]:auipc sp, 0<br> [0x80000164]:addi sp, sp, 4012<br> [0x80000168]:andi sp, sp, 4092<br> [0x8000016c]:sub a0, a0, sp<br> |
+|s.no|signature|coverpoints|code|
+|----|---------|-----------|----|

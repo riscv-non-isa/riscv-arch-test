@@ -18,16 +18,16 @@ RVTEST_CASE(1,"//check ISA:=regex(.*32.*);check ISA:=regex(.*I.*Zicsr.*); check 
 RVTEST_SIGBASE( x1,signature_x1_1)
 
 # ea_align == 1, 
-# opcode: sw; op1:x10; op2:x11; op2val:0x00000200; immval:5; align:1
-TEST_STORE(x1,x2,0,x10,x11,0x00000200,5,0,sw,1)
+# opcode: sw; op1:x10; op2:x11; op2val:0x00002000; immval:-5; align:1
+TEST_STORE(x1,x2,0,x10,x11,0x00002000,-5,0,sw,1)
 
 # ea_align == 2, 
-# opcode: sw; op1:x10; op2:x11; op2val:0xff7fffff; immval:-3; align:2
-TEST_STORE(x1,x2,0,x10,x11,0xff7fffff,-3,4,sw,2)
+# opcode: sw; op1:x10; op2:x11; op2val:0xfffff7ff; immval:128; align:2
+TEST_STORE(x1,x2,0,x10,x11,0xfffff7ff,128,4,sw,2)
 
 # ea_align == 3, 
-# opcode: sw; op1:x10; op2:x11; op2val:0xff7fffff; immval:5; align:3
-TEST_STORE(x1,x2,0,x10,x11,0xff7fffff,5,8,sw,3)
+# opcode: sw; op1:x10; op2:x11; op2val:0x00000000; immval:2047; align:3
+TEST_STORE(x1,x2,0,x10,x11,0x00000000,2047,8,sw,3)
 #endif
 
 
@@ -35,7 +35,6 @@ RVTEST_CODE_END
 RVMODEL_HALT
 
 RVTEST_DATA_BEGIN
-.align 4
 .align 4
 rvtest_data:
 .word 0xbabecafe

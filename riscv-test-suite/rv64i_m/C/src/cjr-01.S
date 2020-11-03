@@ -13,136 +13,132 @@ RVTEST_CODE_BEGIN
 
 RVTEST_CASE(0,"//check ISA:=regex(.*64.*);check ISA:=regex(.*I.*C.*);def TEST_CASE_1=True;",cjr)
 
-RVTEST_SIGBASE( x19,signature_x19_1)
-
-# rs1==x12, 
-# opcode: c.jr; op1:x12
-TEST_CJR_OP(x9, x12, x19, 0)
-
-# rs1==x3, 
-# opcode: c.jr; op1:x3
-TEST_CJR_OP(x9, x3, x19, 8)
-
-# rs1==x31, 
-# opcode: c.jr; op1:x31
-TEST_CJR_OP(x9, x31, x19, 16)
-
-# rs1==x5, 
-# opcode: c.jr; op1:x5
-TEST_CJR_OP(x9, x5, x19, 24)
-
-# rs1==x6, 
-# opcode: c.jr; op1:x6
-TEST_CJR_OP(x9, x6, x19, 32)
-
-# rs1==x21, 
-# opcode: c.jr; op1:x21
-TEST_CJR_OP(x9, x21, x19, 40)
-
-# rs1==x15, 
-# opcode: c.jr; op1:x15
-TEST_CJR_OP(x9, x15, x19, 48)
-
-# rs1==x27, 
-# opcode: c.jr; op1:x27
-TEST_CJR_OP(x9, x27, x19, 56)
-
-# rs1==x18, 
-# opcode: c.jr; op1:x18
-TEST_CJR_OP(x9, x18, x19, 64)
-
-# rs1==x22, 
-# opcode: c.jr; op1:x22
-TEST_CJR_OP(x9, x22, x19, 72)
-
-# rs1==x2, 
-# opcode: c.jr; op1:x2
-TEST_CJR_OP(x9, x2, x19, 80)
-
-# rs1==x1, 
-# opcode: c.jr; op1:x1
-TEST_CJR_OP(x9, x1, x19, 88)
-
-# rs1==x16, 
-# opcode: c.jr; op1:x16
-TEST_CJR_OP(x9, x16, x19, 96)
-
-# rs1==x26, 
-# opcode: c.jr; op1:x26
-TEST_CJR_OP(x9, x26, x19, 104)
-
-# rs1==x11, 
-# opcode: c.jr; op1:x11
-TEST_CJR_OP(x9, x11, x19, 112)
-
-# rs1==x17, 
-# opcode: c.jr; op1:x17
-TEST_CJR_OP(x9, x17, x19, 120)
-
-# rs1==x7, 
-# opcode: c.jr; op1:x7
-TEST_CJR_OP(x9, x7, x19, 128)
-
-# rs1==x29, 
-# opcode: c.jr; op1:x29
-TEST_CJR_OP(x9, x29, x19, 136)
-
-# rs1==x13, 
-# opcode: c.jr; op1:x13
-TEST_CJR_OP(x9, x13, x19, 144)
-
-# rs1==x24, 
-# opcode: c.jr; op1:x24
-TEST_CJR_OP(x9, x24, x19, 152)
-
-# rs1==x23, 
-# opcode: c.jr; op1:x23
-TEST_CJR_OP(x9, x23, x19, 160)
-
-# rs1==x20, 
-# opcode: c.jr; op1:x20
-TEST_CJR_OP(x9, x20, x19, 168)
-
-# rs1==x8, 
-# opcode: c.jr; op1:x8
-TEST_CJR_OP(x9, x8, x19, 176)
-
-# rs1==x14, 
-# opcode: c.jr; op1:x14
-TEST_CJR_OP(x9, x14, x19, 184)
-
-# rs1==x25, 
-# opcode: c.jr; op1:x25
-TEST_CJR_OP(x9, x25, x19, 192)
-
-# rs1==x4, 
-# opcode: c.jr; op1:x4
-TEST_CJR_OP(x9, x4, x19, 200)
-
-# rs1==x9, 
-# opcode: c.jr; op1:x9
-TEST_CJR_OP(x2, x9, x19, 208)
-RVTEST_SIGBASE( x1,signature_x1_0)
+RVTEST_SIGBASE( x16,signature_x16_1)
 
 # rs1==x28, 
 # opcode: c.jr; op1:x28
-TEST_CJR_OP(x2, x28, x1, 0)
+TEST_CJR_OP(x20, x28, x16, 0)
 
-# rs1==x30, 
-# opcode: c.jr; op1:x30
-TEST_CJR_OP(x2, x30, x1, 8)
+# rs1==x23, 
+# opcode: c.jr; op1:x23
+TEST_CJR_OP(x20, x23, x16, 8)
+
+# rs1==x24, 
+# opcode: c.jr; op1:x24
+TEST_CJR_OP(x20, x24, x16, 16)
+
+# rs1==x8, 
+# opcode: c.jr; op1:x8
+TEST_CJR_OP(x20, x8, x16, 24)
+
+# rs1==x3, 
+# opcode: c.jr; op1:x3
+TEST_CJR_OP(x20, x3, x16, 32)
+
+# rs1==x2, 
+# opcode: c.jr; op1:x2
+TEST_CJR_OP(x20, x2, x16, 40)
+
+# rs1==x31, 
+# opcode: c.jr; op1:x31
+TEST_CJR_OP(x20, x31, x16, 48)
+
+# rs1==x27, 
+# opcode: c.jr; op1:x27
+TEST_CJR_OP(x20, x27, x16, 56)
+
+# rs1==x1, 
+# opcode: c.jr; op1:x1
+TEST_CJR_OP(x20, x1, x16, 64)
+
+# rs1==x5, 
+# opcode: c.jr; op1:x5
+TEST_CJR_OP(x20, x5, x16, 72)
+
+# rs1==x4, 
+# opcode: c.jr; op1:x4
+TEST_CJR_OP(x20, x4, x16, 80)
+
+# rs1==x7, 
+# opcode: c.jr; op1:x7
+TEST_CJR_OP(x20, x7, x16, 88)
+
+# rs1==x25, 
+# opcode: c.jr; op1:x25
+TEST_CJR_OP(x20, x25, x16, 96)
+
+# rs1==x12, 
+# opcode: c.jr; op1:x12
+TEST_CJR_OP(x20, x12, x16, 104)
+
+# rs1==x14, 
+# opcode: c.jr; op1:x14
+TEST_CJR_OP(x20, x14, x16, 112)
+
+# rs1==x6, 
+# opcode: c.jr; op1:x6
+TEST_CJR_OP(x20, x6, x16, 120)
+
+# rs1==x18, 
+# opcode: c.jr; op1:x18
+TEST_CJR_OP(x20, x18, x16, 128)
+
+# rs1==x9, 
+# opcode: c.jr; op1:x9
+TEST_CJR_OP(x20, x9, x16, 136)
+
+# rs1==x11, 
+# opcode: c.jr; op1:x11
+TEST_CJR_OP(x20, x11, x16, 144)
+
+# rs1==x13, 
+# opcode: c.jr; op1:x13
+TEST_CJR_OP(x20, x13, x16, 152)
+
+# rs1==x26, 
+# opcode: c.jr; op1:x26
+TEST_CJR_OP(x20, x26, x16, 160)
+
+# rs1==x17, 
+# opcode: c.jr; op1:x17
+TEST_CJR_OP(x20, x17, x16, 168)
 
 # rs1==x19, 
 # opcode: c.jr; op1:x19
-TEST_CJR_OP(x2, x19, x1, 16)
+TEST_CJR_OP(x20, x19, x16, 176)
+
+# rs1==x15, 
+# opcode: c.jr; op1:x15
+TEST_CJR_OP(x20, x15, x16, 184)
+
+# rs1==x22, 
+# opcode: c.jr; op1:x22
+TEST_CJR_OP(x20, x22, x16, 192)
+
+# rs1==x30, 
+# opcode: c.jr; op1:x30
+TEST_CJR_OP(x20, x30, x16, 200)
+
+# rs1==x29, 
+# opcode: c.jr; op1:x29
+TEST_CJR_OP(x2, x29, x16, 208)
+RVTEST_SIGBASE( x1,signature_x1_0)
+
+# rs1==x20, 
+# opcode: c.jr; op1:x20
+TEST_CJR_OP(x2, x20, x1, 0)
+
+# rs1==x21, 
+# opcode: c.jr; op1:x21
+TEST_CJR_OP(x2, x21, x1, 8)
+
+# rs1==x16, 
+# opcode: c.jr; op1:x16
+TEST_CJR_OP(x2, x16, x1, 16)
 
 # rs1==x10, 
 # opcode: c.jr; op1:x10
 TEST_CJR_OP(x2, x10, x1, 24)
-
-# 
-# opcode: c.jr; op1:x10
-TEST_CJR_OP(x2, x10, x1, 32)
 #endif
 
 
@@ -151,7 +147,6 @@ RVMODEL_HALT
 
 RVTEST_DATA_BEGIN
 .align 4
-.align 4
 rvtest_data:
 .word 0xbabecafe
 RVTEST_DATA_END
@@ -159,16 +154,16 @@ RVTEST_DATA_END
 RVMODEL_DATA_BEGIN
 .align 4
 
-signature_x19_0:
+signature_x16_0:
     .fill 0*(XLEN/32),4,0xdeadbeef
 
 
-signature_x19_1:
+signature_x16_1:
     .fill 27*(XLEN/32),4,0xdeadbeef
 
 
 signature_x1_0:
-    .fill 5*(XLEN/32),4,0xdeadbeef
+    .fill 4*(XLEN/32),4,0xdeadbeef
 
 #ifdef rvtest_mtrap_routine
 
