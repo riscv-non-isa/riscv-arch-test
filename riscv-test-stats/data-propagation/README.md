@@ -1,6 +1,25 @@
-# Data Propagation Reports
+# Data Propagation Reports (DPRs)
 
-This directory contains the data propagation reports for each test available in the suite.
+This directory contains the Data Propagation Reports for each test available in the suite.
+The purpose of the DPR is to ensure that each test is indeed performing as expected. The DPR itself
+is not concerned with the values of the operations (which is the function of the coverage report),
+but is rather concerned with the following:
+
+- does the data of an operation propagate to the signature correctly
+- do signatures entries have a correlation to the coverpoints
+- is the signature overwritten 
+
+To capture this intent each DPR provides the following statistics
+
+- STAT1 : Number of unique coverpoint hits that have updated the signature
+
+- STAT2 : Number of covepoints hits which are not unique but still update the signature
+
+- STAT3 : Number of instructions that contribute to a unique coverpoint but do not update signature
+
+- STAT4 : Number of Multiple signature updates for the same coverpoint
+
+- STAT5 : Number of times the signature was overwritten
 
 ## Directory structure
 The rest of the directory is structured similar to how the riscv-test-suite directory is structured.
