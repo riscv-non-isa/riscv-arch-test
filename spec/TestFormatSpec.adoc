@@ -302,6 +302,8 @@ the test.
       test-target specific data initialization. This macro however, must include labels (if any) to
       indicate the begining of the signature region. One must ensure to not enforce any alignment
       constraints on the signature region to avoid mismatches.
+
+      Note:: The signature region should always begin at a 16-byte boundary
     
   `RVMODEL_DATA_END`::              
     - This macros marks the signature-region. The entire signature reqgion must be included within
@@ -378,6 +380,7 @@ There are the following common rules that shall be applied to each <<The archite
 not `0xdeadbeef`). However, t0 is initialized with `rvtest_code_begin` and t1 is initialized with
 `rvtest_data_begin`.
 . The signature section of every test is pre-loaded with the word `0xdeadbeef`
+. The signature region should always begin at a 16-byte boundary
 . A test shall be divided into logical blocks (<<The test case,_test cases_>>) according to the test goals. Test cases are enclosed in an `#ifdef <__CaseName__>, #endif` pair and begin with the RVTEST_CASE(CaseName,CondStr) macro that specifies the test case name, and a string that defines the conditions under which that <<The test case,_Test case_>> can be selected for assembly and execution. Those conditions will be collected and used to generate the database which in turn is used to select tests for inclusion in the test suite for this target.
 . Tests should use the RVTEST_SIGBASE(BaseReg,Val) macro to define the GPR used as a pointer to the output signature area, and its initial value. It can be used multiple times within a test to reassign the output area or change the base register. This value will be used by the invocations of the RVTEST_SIGUPD macro.
 . Tests should use the RVTEST_SIGUPD(BaseReg, SigReg, ScratchReg, Value) macro to store signature values using (only) the base register defined in the most recently encountered RVTEST_SIGBASE(BaseReg,Val) macro. Repeated uses will automatically have an increasing offset that is managed by the macro. 
