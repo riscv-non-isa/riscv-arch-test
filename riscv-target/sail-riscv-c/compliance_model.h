@@ -23,7 +23,7 @@
 //RV_COMPLIANCE_DATA_BEGIN
 #define RVMODEL_DATA_BEGIN                                              \
   RVMODEL_DATA_SECTION                                                        \
-  .align 4; .global begin_signature; begin_signature:
+  .global begin_signature; begin_signature:
 
 //RV_COMPLIANCE_DATA_END
 #define RVMODEL_DATA_END                                                      \
