@@ -20,5 +20,5 @@ COMPILE_TARGET=\
 		-I$(ROOTDIR)/riscv-test-suite/env/ \
 		-I$(TARGETDIR)/$(RISCV_TARGET)/ \
 		-T$(TARGETDIR)/$(RISCV_TARGET)/link.ld $$(<) \
-		-o $$@; \
+		-o $$@ && \
 	$$(RISCV_OBJDUMP) -D $$@ > $$@.objdump
