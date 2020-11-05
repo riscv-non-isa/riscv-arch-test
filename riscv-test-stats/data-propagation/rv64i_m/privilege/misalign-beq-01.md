@@ -10,7 +10,7 @@
 | Param                     | Value    |
 |---------------------------|----------|
 | XLEN                      | 64      |
-| TEST_REGION               | [('0x8000039c', '0x800003f0')]      |
+| TEST_REGION               | [('0x8000039c', '0x800003e0')]      |
 | SIG_REGION                | [('0x80003204', '0x80003418', '66 dwords')]      |
 | COV_LABELS                | misalign-beq      |
 | TEST_NAME                 | /scratch/git-repo/incoresemi/riscof/riscof_work/misalign-beq-01.S/misalign-beq-01.S    |
@@ -67,6 +67,6 @@
   test. These need not necessarily be in increasing or decreasing order of the
   address in the signature region.
 
-|s.no|            signature             |                         coverpoints                         |                                                             code                                                             |
-|---:|----------------------------------|-------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------|
-|   1|[0x80003210]<br>0x0000000000000001|- opcode : beq<br> -  rs1_val==rs2_val and ea_align == 2<br> |[0x800003cc]:beq a0, a1, 8178<br> [0x800003be]:addi sp, sp, 1<br> [0x800003c2]:jal zero, 34<br> [0x800003e4]:sd sp, 0(ra)<br> |
+|s.no|            signature             |                         coverpoints                         |                                                           code                                                            |
+|---:|----------------------------------|-------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------|
+|   1|[0x80003210]<br>0x0000000000000003|- opcode : beq<br> -  rs1_val==rs2_val and ea_align == 2<br> |[0x800003c0]:beq a0, a1, 18<br> [0x800003d2]:addi sp, sp, 3<br> [0x800003d6]:jal zero, 6<br> [0x800003dc]:sd sp, 0(ra)<br> |

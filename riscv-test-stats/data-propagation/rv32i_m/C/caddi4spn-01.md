@@ -69,14 +69,14 @@
 
 |s.no|        signature         |                        coverpoints                        |                                code                                |
 |---:|--------------------------|-----------------------------------------------------------|--------------------------------------------------------------------|
-|   1|[0x80003210]<br>0x0000000C|- opcode : c.addi4spn<br> - rd : x10<br> - imm_val > 0<br> |[0x80000104]:c.addi4spn a0, 12<br> [0x80000106]:sw a0, 0(ra)<br>    |
-|   2|[0x80003214]<br>0x000003FC|- rd : x13<br> - imm_val == 1020<br>                       |[0x8000010e]:c.addi4spn a3, 1020<br> [0x80000110]:sw a3, 4(ra)<br>  |
-|   3|[0x80003218]<br>0x00000004|- rd : x8<br> - imm_val == 4<br>                           |[0x80000118]:c.addi4spn s0, 4<br> [0x8000011a]:sw fp, 8(ra)<br>     |
-|   4|[0x8000321c]<br>0x00000008|- rd : x9<br> - imm_val == 8<br>                           |[0x80000122]:c.addi4spn s1, 8<br> [0x80000124]:sw s1, 12(ra)<br>    |
-|   5|[0x80003220]<br>0x00000010|- rd : x12<br> - imm_val == 16<br>                         |[0x8000012c]:c.addi4spn a2, 16<br> [0x8000012e]:sw a2, 16(ra)<br>   |
-|   6|[0x80003224]<br>0x00000020|- rd : x11<br> - imm_val == 32<br>                         |[0x80000136]:c.addi4spn a1, 32<br> [0x80000138]:sw a1, 20(ra)<br>   |
-|   7|[0x80003228]<br>0x00000040|- rd : x15<br> - imm_val == 64<br>                         |[0x80000140]:c.addi4spn a5, 64<br> [0x80000142]:sw a5, 24(ra)<br>   |
-|   8|[0x8000322c]<br>0x00000080|- rd : x14<br> - imm_val == 128<br>                        |[0x8000014a]:c.addi4spn a4, 128<br> [0x8000014c]:sw a4, 28(ra)<br>  |
+|   1|[0x80003210]<br>0x00000038|- opcode : c.addi4spn<br> - rd : x13<br> - imm_val > 0<br> |[0x80000104]:c.addi4spn a3, 56<br> [0x80000106]:sw a3, 0(ra)<br>    |
+|   2|[0x80003214]<br>0x000003FC|- rd : x14<br> - imm_val == 1020<br>                       |[0x8000010e]:c.addi4spn a4, 1020<br> [0x80000110]:sw a4, 4(ra)<br>  |
+|   3|[0x80003218]<br>0x00000004|- rd : x15<br> - imm_val == 4<br>                          |[0x80000118]:c.addi4spn a5, 4<br> [0x8000011a]:sw a5, 8(ra)<br>     |
+|   4|[0x8000321c]<br>0x00000008|- rd : x12<br> - imm_val == 8<br>                          |[0x80000122]:c.addi4spn a2, 8<br> [0x80000124]:sw a2, 12(ra)<br>    |
+|   5|[0x80003220]<br>0x00000010|- rd : x8<br> - imm_val == 16<br>                          |[0x8000012c]:c.addi4spn s0, 16<br> [0x8000012e]:sw fp, 16(ra)<br>   |
+|   6|[0x80003224]<br>0x00000020|- rd : x10<br> - imm_val == 32<br>                         |[0x80000136]:c.addi4spn a0, 32<br> [0x80000138]:sw a0, 20(ra)<br>   |
+|   7|[0x80003228]<br>0x00000040|- rd : x11<br> - imm_val == 64<br>                         |[0x80000140]:c.addi4spn a1, 64<br> [0x80000142]:sw a1, 24(ra)<br>   |
+|   8|[0x8000322c]<br>0x00000080|- rd : x9<br> - imm_val == 128<br>                         |[0x8000014a]:c.addi4spn s1, 128<br> [0x8000014c]:sw s1, 28(ra)<br>  |
 |   9|[0x80003230]<br>0x00000100|- imm_val == 256<br>                                       |[0x80000154]:c.addi4spn a0, 256<br> [0x80000156]:sw a0, 32(ra)<br>  |
 |  10|[0x80003234]<br>0x00000200|- imm_val == 512<br>                                       |[0x8000015e]:c.addi4spn a0, 512<br> [0x80000160]:sw a0, 36(ra)<br>  |
 |  11|[0x80003238]<br>0x000003F8|- imm_val == 1016<br>                                      |[0x80000168]:c.addi4spn a0, 1016<br> [0x8000016a]:sw a0, 40(ra)<br> |

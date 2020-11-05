@@ -10,7 +10,7 @@
 | Param                     | Value    |
 |---------------------------|----------|
 | XLEN                      | 64      |
-| TEST_REGION               | [('0x8000039c', '0x80000400')]      |
+| TEST_REGION               | [('0x8000039c', '0x800003f0')]      |
 | SIG_REGION                | [('0x80003204', '0x80003418', '66 dwords')]      |
 | COV_LABELS                | misalign-jal      |
 | TEST_NAME                 | /scratch/git-repo/incoresemi/riscof/riscof_work/misalign-jal-01.S/misalign-jal-01.S    |
@@ -28,13 +28,13 @@
 ```
 Op without unique coverpoint updates Signature
  -- Code Sequence:
-      [0x800003b6]:jal zero, 46
-      [0x800003e4]:auipc sp, 0
-      [0x800003e8]:addi sp, sp, 4032
-      [0x800003ec]:andi sp, sp, 4092
-      [0x800003f0]:sub a0, a0, sp
-      [0x800003f4]:sd a0, 0(ra)
- -- Signature Address: 0x80003210 Data: 0x0000000000000025
+      [0x800003b6]:jal zero, 38
+      [0x800003dc]:auipc sp, 0
+      [0x800003e0]:addi sp, sp, 4040
+      [0x800003e4]:andi sp, sp, 4092
+      [0x800003e8]:sub a0, a0, sp
+      [0x800003ec]:sd a0, 0(ra)
+ -- Signature Address: 0x80003210 Data: 0x000000000000001D
  -- Redundant Coverpoints hit by the op
       - opcode : jal
 
@@ -48,7 +48,7 @@ Op without unique coverpoint updates Signature
 ## Details of STAT3
 
 ```
-[0x800003c4]:jal a0, 2097134
+[0x800003bc]:jal a0, 2097142
 [0x800003b2]:xori a0, a0, 1
 
 

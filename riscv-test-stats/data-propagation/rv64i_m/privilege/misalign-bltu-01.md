@@ -10,7 +10,7 @@
 | Param                     | Value    |
 |---------------------------|----------|
 | XLEN                      | 64      |
-| TEST_REGION               | [('0x8000039c', '0x800003e0')]      |
+| TEST_REGION               | [('0x8000039c', '0x800007d0')]      |
 | SIG_REGION                | [('0x80003204', '0x80003418', '66 dwords')]      |
 | COV_LABELS                | misalign-bltu      |
 | TEST_NAME                 | /scratch/git-repo/incoresemi/riscof/riscof_work/misalign-bltu-01.S/misalign-bltu-01.S    |
@@ -67,6 +67,6 @@
   test. These need not necessarily be in increasing or decreasing order of the
   address in the signature region.
 
-|s.no|            signature             |                         coverpoints                         |                                                             code                                                              |
-|---:|----------------------------------|-------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------|
-|   1|[0x80003210]<br>0x0000000000000001|- opcode : bltu<br> -  rs1_val<rs2_val and ea_align == 2<br> |[0x800003c4]:bltu a0, a1, 8182<br> [0x800003ba]:addi sp, sp, 1<br> [0x800003be]:jal zero, 30<br> [0x800003dc]:sd sp, 0(ra)<br> |
+|s.no|            signature             |                         coverpoints                         |                                                             code                                                             |
+|---:|----------------------------------|-------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------|
+|   1|[0x80003210]<br>0x0000000000000003|- opcode : bltu<br> -  rs1_val<rs2_val and ea_align == 2<br> |[0x800003c0]:bltu a0, a1, 1026<br> [0x800007c2]:addi sp, sp, 3<br> [0x800007c6]:jal zero, 6<br> [0x800007cc]:sd sp, 0(ra)<br> |

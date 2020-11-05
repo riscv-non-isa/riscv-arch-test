@@ -42,7 +42,7 @@
 ```
 Last Coverpoint : ['opcode : lh', 'ea_align == 1']
 Last Code Sequence : 
-	-[0x80000114]:lh a1, 2047(a0)
+	-[0x80000114]:lh a1, 1023(a0)
 Current Store : [0x80000358] : sw t2, 4(t1) -- Store: [0x80003218]:0x00000004
 
 
@@ -50,7 +50,7 @@ Current Store : [0x80000358] : sw t2, 4(t1) -- Store: [0x80003218]:0x00000004
 
 Last Coverpoint : ['opcode : lh', 'ea_align == 1']
 Last Code Sequence : 
-	-[0x80000114]:lh a1, 2047(a0)
+	-[0x80000114]:lh a1, 1023(a0)
 Current Store : [0x80000370] : sw t4, 8(t1) -- Store: [0x8000321c]:0x00000108
 
 
@@ -58,7 +58,7 @@ Current Store : [0x80000370] : sw t4, 8(t1) -- Store: [0x8000321c]:0x00000108
 
 Last Coverpoint : ['opcode : lh', 'ea_align == 1']
 Last Code Sequence : 
-	-[0x80000114]:lh a1, 2047(a0)
+	-[0x80000114]:lh a1, 1023(a0)
 Current Store : [0x800003f0] : sw t2, 12(t1) -- Store: [0x80003220]:0x00003065
 
 
@@ -66,7 +66,7 @@ Current Store : [0x800003f0] : sw t2, 12(t1) -- Store: [0x80003220]:0x00003065
 
 Last Coverpoint : ['opcode : lh', 'ea_align == 1']
 Last Code Sequence : 
-	-[0x80000114]:lh a1, 2047(a0)
+	-[0x80000114]:lh a1, 1023(a0)
 Current Store : [0x80000120] : sw a1, 0(ra) -- Store: [0x80003210]:0xAB7FBB6F
 
 
@@ -101,4 +101,4 @@ Current Store : [0x80000120] : sw a1, 0(ra) -- Store: [0x80003210]:0xAB7FBB6F
 
 |s.no|        signature         |             coverpoints              |              code               |
 |---:|--------------------------|--------------------------------------|---------------------------------|
-|   1|[0x80003214]<br>0x0000008F|- opcode : lh<br> - ea_align == 1<br> |[0x80000114]:lh a1, 2047(a0)<br> |
+|   1|[0x80003214]<br>0x0000008F|- opcode : lh<br> - ea_align == 1<br> |[0x80000114]:lh a1, 1023(a0)<br> |

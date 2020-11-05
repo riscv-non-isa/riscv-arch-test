@@ -3,7 +3,7 @@
 00000000
 ffffffe0
 00000000
-00000000
+0000001f
 00000001
 00000002
 00000004
@@ -11,7 +11,7 @@ ffffffe0
 00000010
 ffffffea
 fffffffe
-fffffffd
+00000000
 fffffffb
 fffffff7
 ffffffef
@@ -33,4 +33,4 @@ ffffffef
 00000000
 00000000
 00000000
-0000001f
+fffffffd
