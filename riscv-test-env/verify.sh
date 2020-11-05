@@ -18,15 +18,15 @@ do
     if [ -f ${ref} ] && [ -f ${sig} ]; then 
         echo -n "Check $(printf %24s ${stub})"
     else
-        echo    "Check $(printf %24s ${stub}) ... IGNORE"
+        echo   -e "Check $(printf %24s ${stub}) \e[33m ... IGNORE \e[39m"
         continue
     fi
     diff --ignore-case --strip-trailing-cr ${ref} ${sig} #&> /dev/null
     if [ $? == 0 ]
     then
-        echo " ... OK"
+        echo -e "\e[32m ... OK \e[39m"
     else
-        echo " ... FAIL"
+        echo -e "\e[31m ... FAIL \e[39m"
         FAIL=$((${FAIL} + 1))
     fi
 done
@@ -39,7 +39,7 @@ do
     ref=${SUITEDIR}/references/${stub}.reference_output
 
     if [ -f $sig ] && [ ! -f ${ref} ]; then
-        echo "Error: sig ${sig} no corresponding ${ref}"
+        echo -e "\e[31m Error: sig ${sig} no corresponding ${ref} \e[39m"
         FAIL=$((${FAIL} + 1))
     fi
 done
@@ -47,13 +47,13 @@ done
 declare -i status=0
 if [ ${FAIL} == 0 ]; then
     echo "--------------------------------"
-    echo -n "OK: ${RUN}/${RUN} "
+    echo -n -e "\e[32m OK: ${RUN}/${RUN}"
     status=0
 else
     echo "--------------------------------"
-    echo -n "FAIL: ${FAIL}/${RUN} "
+    echo -n -e "\e[31m FAIL: ${FAIL}/${RUN} "
     status=1
 fi
-echo "RISCV_TARGET=${RISCV_TARGET} RISCV_DEVICE=${RISCV_DEVICE} XLEN=${XLEN}"
+echo -e "RISCV_TARGET=${RISCV_TARGET} RISCV_DEVICE=${RISCV_DEVICE} XLEN=${XLEN} \e[39m"
 echo
 exit ${status}
