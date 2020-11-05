@@ -1,15 +1,11 @@
 
 # Data Propagation Report
 
-STAT1 : Number of unique coverpoint hits that have updated the signature
-
-STAT2 : Number of covepoints hits which are not unique but still update the signature
-
-STAT3 : Number of instructions that contribute to a unique coverpoint but do not update signature
-
-STAT4 : Number of Multiple signature updates for the same coverpoint
-
-STAT5 : Number of times the signature was overwritten
+- **STAT1** : Number of instructions that hit unique coverpoints and update the signature.
+- **STAT2** : Number of instructions that hit covepoints which are not unique but still update the signature
+- **STAT3** : Number of instructions that hit a unique coverpoint but do not update signature
+- **STAT4** : Number of multiple signature updates for the same coverpoint
+- **STAT5** : Number of times the signature was overwritten
 
 | Param                     | Value    |
 |---------------------------|----------|
@@ -19,8 +15,8 @@ STAT5 : Number of times the signature was overwritten
 | COV_LABELS                | csrli      |
 | TEST_NAME                 | /scratch/git-repo/incoresemi/riscof/riscof_work/csrli-01.S/csrli-01.S    |
 | Total Number of coverpoints| 160     |
+| Total Coverpoints Hit     | 160      |
 | Total Signature Updates   | 132      |
-| Total Coverpoints Covered | 160      |
 | STAT1                     | 132      |
 | STAT2                     | 0      |
 | STAT3                     | 0     |
