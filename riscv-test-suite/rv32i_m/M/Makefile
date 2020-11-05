@@ -45,7 +45,7 @@ $(work_dir_isa)/%.elf: $(src_dir)/%.S
 
 endef
 
-$(eval $(call compile_template,-march=rv32im -mabi=ilp32))
+$(eval $(call compile_template,-march=rv32im -mabi=ilp32 -DXLEN=$(XLEN)))
 
 target_elf = $(foreach e,$(target_tests),$(work_dir_isa)/$(e))
 target_log = $(patsubst %.elf,%.log,$(target_elf))
