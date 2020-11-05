@@ -303,7 +303,7 @@ the test.
       indicate the begining of the signature region. One must ensure to not enforce any alignment
       constraints on the signature region to avoid mismatches.
 
-      Note:: The signature region should always begin at a 16-byte boundary
+      Note:: The signature region should always begin at a XLEN-bit boundary.
     
   `RVMODEL_DATA_END`::              
     - This macros marks the signature-region. The entire signature reqgion must be included within
