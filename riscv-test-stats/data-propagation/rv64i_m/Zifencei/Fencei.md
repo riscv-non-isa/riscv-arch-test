@@ -11,7 +11,7 @@
 |---------------------------|----------|
 | XLEN                      | 64      |
 | TEST_REGION               | [('0x80000390', '0x800003f0')]      |
-| SIG_REGION                | [('0x80003204', '0x80003220', '3 dwords')]      |
+| SIG_REGION                | [('0x80003208', '0x80003220', '3 dwords')]      |
 | COV_LABELS                | fencei      |
 | TEST_NAME                 | /scratch/git-repo/incoresemi/riscof/riscof_work/Fencei.S/Fencei.S    |
 | Total Number of coverpoints| 1     |

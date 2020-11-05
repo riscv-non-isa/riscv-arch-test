@@ -11,7 +11,7 @@
 |---------------------------|----------|
 | XLEN                      | 32      |
 | TEST_REGION               | [('0x800000f8', '0x80000490')]      |
-| SIG_REGION                | [('0x80003204', '0x800032c4', '48 words')]      |
+| SIG_REGION                | [('0x80003204', '0x800032b8', '45 words')]      |
 | COV_LABELS                | auipc      |
 | TEST_NAME                 | /scratch/git-repo/incoresemi/riscof/riscof_work/auipc-01.S/auipc-01.S    |
 | Total Number of coverpoints| 78     |
@@ -28,15 +28,15 @@
 ```
 Op without unique coverpoint updates Signature
  -- Code Sequence:
-      [0x80000480]:auipc a0, 1048571
-      [0x80000484]:sub a0, a0, gp
-      [0x80000488]:sw a0, 60(ra)
- -- Signature Address: 0x800032c0 Data: 0xFFFFB008
+      [0x80000480]:auipc a0, 1048543
+      [0x80000484]:sub a0, a0, sp
+      [0x80000488]:sw a0, 64(ra)
+ -- Signature Address: 0x800032b4 Data: 0xFFFDF008
  -- Redundant Coverpoints hit by the op
       - opcode : auipc
       - rd : x10
       - imm_val > 0
-      - imm_val == 1048571
+      - imm_val == 1048543
 
 
 
@@ -48,146 +48,146 @@ Op without unique coverpoint updates Signature
 ## Details of STAT3
 
 ```
-[0x800000f8]:auipc sp, 3
-[0x800000fc]:addi sp, sp, 280
+[0x800000f8]:auipc s6, 3
+[0x800000fc]:addi s6, s6, 268
 
-[0x80000100]:auipc a3, 0
-[0x80000104]:addi a3, a3, 0
+[0x80000100]:auipc a5, 0
+[0x80000104]:addi a5, a5, 0
 
-[0x80000114]:auipc a3, 0
-[0x80000118]:addi a3, a3, 0
+[0x80000114]:auipc a5, 0
+[0x80000118]:addi a5, a5, 0
 
-[0x80000128]:auipc a3, 0
-[0x8000012c]:addi a3, a3, 0
+[0x80000128]:auipc a5, 0
+[0x8000012c]:addi a5, a5, 0
 
-[0x8000013c]:auipc a3, 0
-[0x80000140]:addi a3, a3, 0
+[0x8000013c]:auipc a5, 0
+[0x80000140]:addi a5, a5, 0
 
-[0x80000150]:auipc a3, 0
-[0x80000154]:addi a3, a3, 0
+[0x80000150]:auipc a5, 0
+[0x80000154]:addi a5, a5, 0
 
-[0x80000164]:auipc a3, 0
-[0x80000168]:addi a3, a3, 0
+[0x80000164]:auipc a5, 0
+[0x80000168]:addi a5, a5, 0
 
-[0x80000178]:auipc a3, 0
-[0x8000017c]:addi a3, a3, 0
+[0x80000178]:auipc a5, 0
+[0x8000017c]:addi a5, a5, 0
 
-[0x8000018c]:auipc a3, 0
-[0x80000190]:addi a3, a3, 0
+[0x8000018c]:auipc a5, 0
+[0x80000190]:addi a5, a5, 0
 
-[0x800001a0]:auipc a3, 0
-[0x800001a4]:addi a3, a3, 0
+[0x800001a0]:auipc a5, 0
+[0x800001a4]:addi a5, a5, 0
 
-[0x800001b4]:auipc a3, 0
-[0x800001b8]:addi a3, a3, 0
+[0x800001b4]:auipc a5, 0
+[0x800001b8]:addi a5, a5, 0
 
-[0x800001c8]:auipc a3, 0
-[0x800001cc]:addi a3, a3, 0
+[0x800001c8]:auipc a5, 0
+[0x800001cc]:addi a5, a5, 0
 
-[0x800001dc]:auipc a3, 0
-[0x800001e0]:addi a3, a3, 0
+[0x800001dc]:auipc a5, 0
+[0x800001e0]:addi a5, a5, 0
 
-[0x800001f0]:auipc a3, 0
-[0x800001f4]:addi a3, a3, 0
+[0x800001f0]:auipc a5, 0
+[0x800001f4]:addi a5, a5, 0
 
-[0x80000204]:auipc a3, 0
-[0x80000208]:addi a3, a3, 0
+[0x80000204]:auipc a5, 0
+[0x80000208]:addi a5, a5, 0
 
-[0x80000218]:auipc a3, 0
-[0x8000021c]:addi a3, a3, 0
+[0x80000218]:auipc a5, 0
+[0x8000021c]:addi a5, a5, 0
 
-[0x8000022c]:auipc a3, 0
-[0x80000230]:addi a3, a3, 0
+[0x8000022c]:auipc a5, 0
+[0x80000230]:addi a5, a5, 0
 
-[0x80000240]:auipc a3, 0
-[0x80000244]:addi a3, a3, 0
+[0x80000240]:auipc a5, 0
+[0x80000244]:addi a5, a5, 0
 
-[0x80000254]:auipc a3, 0
-[0x80000258]:addi a3, a3, 0
+[0x80000254]:auipc a5, 0
+[0x80000258]:addi a5, a5, 0
 
-[0x80000268]:auipc a3, 0
-[0x8000026c]:addi a3, a3, 0
+[0x80000268]:auipc a5, 0
+[0x8000026c]:addi a5, a5, 0
 
-[0x8000027c]:auipc a3, 0
-[0x80000280]:addi a3, a3, 0
+[0x8000027c]:auipc a5, 0
+[0x80000280]:addi a5, a5, 0
 
-[0x80000290]:auipc a3, 0
-[0x80000294]:addi a3, a3, 0
+[0x80000290]:auipc a5, 0
+[0x80000294]:addi a5, a5, 0
 
-[0x800002a4]:auipc a3, 0
-[0x800002a8]:addi a3, a3, 0
+[0x800002a4]:auipc a5, 0
+[0x800002a8]:addi a5, a5, 0
 
-[0x800002b8]:auipc a3, 0
-[0x800002bc]:addi a3, a3, 0
+[0x800002b8]:auipc a5, 0
+[0x800002bc]:addi a5, a5, 0
 
-[0x800002cc]:auipc a3, 0
-[0x800002d0]:addi a3, a3, 0
+[0x800002cc]:auipc a5, 0
+[0x800002d0]:addi a5, a5, 0
 
-[0x800002e0]:auipc a3, 0
-[0x800002e4]:addi a3, a3, 0
+[0x800002e0]:auipc a5, 0
+[0x800002e4]:addi a5, a5, 0
 
-[0x800002f4]:auipc a3, 0
-[0x800002f8]:addi a3, a3, 0
+[0x800002f4]:auipc a5, 0
+[0x800002f8]:addi a5, a5, 0
 
-[0x80000308]:auipc a3, 0
-[0x8000030c]:addi a3, a3, 0
+[0x80000308]:auipc a5, 0
+[0x8000030c]:addi a5, a5, 0
 
-[0x8000031c]:auipc a3, 0
-[0x80000320]:addi a3, a3, 0
+[0x8000031c]:auipc sp, 0
+[0x80000320]:addi sp, sp, 0
 
-[0x80000330]:auipc gp, 0
-[0x80000334]:addi gp, gp, 0
+[0x80000330]:auipc ra, 3
+[0x80000334]:addi ra, ra, 3908
 
-[0x80000344]:auipc ra, 3
-[0x80000348]:addi ra, ra, 3904
+[0x80000338]:auipc sp, 0
+[0x8000033c]:addi sp, sp, 0
 
-[0x8000034c]:auipc gp, 0
-[0x80000350]:addi gp, gp, 0
+[0x8000034c]:auipc sp, 0
+[0x80000350]:addi sp, sp, 0
 
-[0x80000360]:auipc gp, 0
-[0x80000364]:addi gp, gp, 0
+[0x80000360]:auipc sp, 0
+[0x80000364]:addi sp, sp, 0
 
-[0x80000374]:auipc gp, 0
-[0x80000378]:addi gp, gp, 0
+[0x80000374]:auipc sp, 0
+[0x80000378]:addi sp, sp, 0
 
-[0x80000388]:auipc gp, 0
-[0x8000038c]:addi gp, gp, 0
+[0x80000388]:auipc sp, 0
+[0x8000038c]:addi sp, sp, 0
 
-[0x8000039c]:auipc gp, 0
-[0x800003a0]:addi gp, gp, 0
+[0x8000039c]:auipc sp, 0
+[0x800003a0]:addi sp, sp, 0
 
-[0x800003b0]:auipc gp, 0
-[0x800003b4]:addi gp, gp, 0
+[0x800003b0]:auipc sp, 0
+[0x800003b4]:addi sp, sp, 0
 
-[0x800003c4]:auipc gp, 0
-[0x800003c8]:addi gp, gp, 0
+[0x800003c4]:auipc sp, 0
+[0x800003c8]:addi sp, sp, 0
 
-[0x800003d8]:auipc gp, 0
-[0x800003dc]:addi gp, gp, 0
+[0x800003d8]:auipc sp, 0
+[0x800003dc]:addi sp, sp, 0
 
-[0x800003ec]:auipc gp, 0
-[0x800003f0]:addi gp, gp, 0
+[0x800003ec]:auipc sp, 0
+[0x800003f0]:addi sp, sp, 0
 
-[0x80000400]:auipc gp, 0
-[0x80000404]:addi gp, gp, 0
+[0x80000400]:auipc sp, 0
+[0x80000404]:addi sp, sp, 0
 
-[0x80000414]:auipc gp, 0
-[0x80000418]:addi gp, gp, 0
+[0x80000414]:auipc sp, 0
+[0x80000418]:addi sp, sp, 0
 
-[0x80000428]:auipc gp, 0
-[0x8000042c]:addi gp, gp, 0
+[0x80000428]:auipc sp, 0
+[0x8000042c]:addi sp, sp, 0
 
-[0x8000043c]:auipc gp, 0
-[0x80000440]:addi gp, gp, 0
+[0x8000043c]:auipc sp, 0
+[0x80000440]:addi sp, sp, 0
 
-[0x80000450]:auipc gp, 0
-[0x80000454]:addi gp, gp, 0
+[0x80000450]:auipc sp, 0
+[0x80000454]:addi sp, sp, 0
 
-[0x80000464]:auipc gp, 0
-[0x80000468]:addi gp, gp, 0
+[0x80000464]:auipc sp, 0
+[0x80000468]:addi sp, sp, 0
 
-[0x80000478]:auipc gp, 0
-[0x8000047c]:addi gp, gp, 0
+[0x80000478]:auipc sp, 0
+[0x8000047c]:addi sp, sp, 0
 
 
 
@@ -223,49 +223,49 @@ Op without unique coverpoint updates Signature
   test. These need not necessarily be in increasing or decreasing order of the
   address in the signature region.
 
-|s.no|        signature         |                coverpoints                 |                                                   code                                                   |
-|---:|--------------------------|--------------------------------------------|----------------------------------------------------------------------------------------------------------|
-|   1|[0x80003210]<br>0x00000008|- rd : x31<br>                              |[0x80000108]:auipc t6, 0<br> [0x8000010c]:sub t6, t6, a3<br> [0x80000110]:sw t6, 0(sp)<br>                |
-|   2|[0x80003214]<br>0x04000008|- rd : x15<br> - imm_val == 16384<br>       |[0x8000011c]:auipc a5, 16384<br> [0x80000120]:sub a5, a5, a3<br> [0x80000124]:sw a5, 4(sp)<br>            |
-|   3|[0x80003218]<br>0xFFFFF008|- rd : x10<br> - imm_val == ((2**20)-1)<br> |[0x80000130]:auipc a0, 1048575<br> [0x80000134]:sub a0, a0, a3<br> [0x80000138]:sw a0, 8(sp)<br>          |
-|   4|[0x8000321c]<br>0x00001008|- rd : x4<br> - imm_val == 1<br>            |[0x80000144]:auipc tp, 1<br> [0x80000148]:sub tp, tp, a3<br> [0x8000014c]:sw tp, 12(sp)<br>               |
-|   5|[0x80003220]<br>0x00002008|- rd : x14<br> - imm_val == 2<br>           |[0x80000158]:auipc a4, 2<br> [0x8000015c]:sub a4, a4, a3<br> [0x80000160]:sw a4, 16(sp)<br>               |
-|   6|[0x80003224]<br>0x00004008|- rd : x24<br> - imm_val == 4<br>           |[0x8000016c]:auipc s8, 4<br> [0x80000170]:sub s8, s8, a3<br> [0x80000174]:sw s8, 20(sp)<br>               |
-|   7|[0x80003228]<br>0x00008008|- rd : x11<br> - imm_val == 8<br>           |[0x80000180]:auipc a1, 8<br> [0x80000184]:sub a1, a1, a3<br> [0x80000188]:sw a1, 24(sp)<br>               |
-|   8|[0x8000322c]<br>0x00010008|- rd : x21<br> - imm_val == 16<br>          |[0x80000194]:auipc s5, 16<br> [0x80000198]:sub s5, s5, a3<br> [0x8000019c]:sw s5, 28(sp)<br>              |
-|   9|[0x80003230]<br>0x00020008|- rd : x25<br> - imm_val == 32<br>          |[0x800001a8]:auipc s9, 32<br> [0x800001ac]:sub s9, s9, a3<br> [0x800001b0]:sw s9, 32(sp)<br>              |
-|  10|[0x80003234]<br>0x00040008|- rd : x23<br> - imm_val == 64<br>          |[0x800001bc]:auipc s7, 64<br> [0x800001c0]:sub s7, s7, a3<br> [0x800001c4]:sw s7, 36(sp)<br>              |
-|  11|[0x80003238]<br>0x00080008|- rd : x9<br> - imm_val == 128<br>          |[0x800001d0]:auipc s1, 128<br> [0x800001d4]:sub s1, s1, a3<br> [0x800001d8]:sw s1, 40(sp)<br>             |
-|  12|[0x8000323c]<br>0x00100008|- rd : x6<br> - imm_val == 256<br>          |[0x800001e4]:auipc t1, 256<br> [0x800001e8]:sub t1, t1, a3<br> [0x800001ec]:sw t1, 44(sp)<br>             |
-|  13|[0x80003240]<br>0x00200008|- rd : x8<br> - imm_val == 512<br>          |[0x800001f8]:auipc fp, 512<br> [0x800001fc]:sub fp, fp, a3<br> [0x80000200]:sw fp, 48(sp)<br>             |
-|  14|[0x80003244]<br>0x00400008|- rd : x16<br> - imm_val == 1024<br>        |[0x8000020c]:auipc a6, 1024<br> [0x80000210]:sub a6, a6, a3<br> [0x80000214]:sw a6, 52(sp)<br>            |
-|  15|[0x80003248]<br>0x00800008|- rd : x19<br> - imm_val == 2048<br>        |[0x80000220]:auipc s3, 2048<br> [0x80000224]:sub s3, s3, a3<br> [0x80000228]:sw s3, 56(sp)<br>            |
-|  16|[0x8000324c]<br>0x01000008|- rd : x28<br> - imm_val == 4096<br>        |[0x80000234]:auipc t3, 4096<br> [0x80000238]:sub t3, t3, a3<br> [0x8000023c]:sw t3, 60(sp)<br>            |
-|  17|[0x80003250]<br>0x02000008|- rd : x3<br> - imm_val == 8192<br>         |[0x80000248]:auipc gp, 8192<br> [0x8000024c]:sub gp, gp, a3<br> [0x80000250]:sw gp, 64(sp)<br>            |
-|  18|[0x80003254]<br>0x08000008|- rd : x22<br> - imm_val == 32768<br>       |[0x8000025c]:auipc s6, 32768<br> [0x80000260]:sub s6, s6, a3<br> [0x80000264]:sw s6, 68(sp)<br>           |
-|  19|[0x80003258]<br>0x10000008|- rd : x20<br> - imm_val == 65536<br>       |[0x80000270]:auipc s4, 65536<br> [0x80000274]:sub s4, s4, a3<br> [0x80000278]:sw s4, 72(sp)<br>           |
-|  20|[0x8000325c]<br>0x20000008|- rd : x5<br> - imm_val == 131072<br>       |[0x80000284]:auipc t0, 131072<br> [0x80000288]:sub t0, t0, a3<br> [0x8000028c]:sw t0, 76(sp)<br>          |
-|  21|[0x80003260]<br>0x40000008|- rd : x12<br> - imm_val == 262144<br>      |[0x80000298]:auipc a2, 262144<br> [0x8000029c]:sub a2, a2, a3<br> [0x800002a0]:sw a2, 80(sp)<br>          |
-|  22|[0x80003264]<br>0x80000008|- rd : x1<br> - imm_val == 524288<br>       |[0x800002ac]:auipc ra, 524288<br> [0x800002b0]:sub ra, ra, a3<br> [0x800002b4]:sw ra, 84(sp)<br>          |
-|  23|[0x80003268]<br>0xFFFFE008|- rd : x7<br> - imm_val == 1048574<br>      |[0x800002c0]:auipc t2, 1048574<br> [0x800002c4]:sub t2, t2, a3<br> [0x800002c8]:sw t2, 88(sp)<br>         |
-|  24|[0x8000326c]<br>0xFFFFD008|- rd : x18<br> - imm_val == 1048573<br>     |[0x800002d4]:auipc s2, 1048573<br> [0x800002d8]:sub s2, s2, a3<br> [0x800002dc]:sw s2, 92(sp)<br>         |
-|  25|[0x80003270]<br>0x00000000|- rd : x0<br> - imm_val == 1048571<br>      |[0x800002e8]:auipc zero, 1048571<br> [0x800002ec]:sub zero, zero, a3<br> [0x800002f0]:sw zero, 96(sp)<br> |
-|  26|[0x80003274]<br>0xFFFF7008|- rd : x27<br> - imm_val == 1048567<br>     |[0x800002fc]:auipc s11, 1048567<br> [0x80000300]:sub s11, s11, a3<br> [0x80000304]:sw s11, 100(sp)<br>    |
-|  27|[0x80003278]<br>0xFFFEF008|- rd : x30<br> - imm_val == 1048559<br>     |[0x80000310]:auipc t5, 1048559<br> [0x80000314]:sub t5, t5, a3<br> [0x80000318]:sw t5, 104(sp)<br>        |
-|  28|[0x8000327c]<br>0xFFFDF008|- rd : x29<br> - imm_val == 1048543<br>     |[0x80000324]:auipc t4, 1048543<br> [0x80000328]:sub t4, t4, a3<br> [0x8000032c]:sw t4, 108(sp)<br>        |
-|  29|[0x80003280]<br>0xFFFBF008|- rd : x26<br> - imm_val == 1048511<br>     |[0x80000338]:auipc s10, 1048511<br> [0x8000033c]:sub s10, s10, gp<br> [0x80000340]:sw s10, 112(sp)<br>    |
-|  30|[0x80003284]<br>0xFFDFF008|- imm_val == 1048063<br>                    |[0x80000354]:auipc sp, 1048063<br> [0x80000358]:sub sp, sp, gp<br> [0x8000035c]:sw sp, 0(ra)<br>          |
-|  31|[0x80003288]<br>0xFFBFF008|- imm_val == 1047551<br>                    |[0x80000368]:auipc a3, 1047551<br> [0x8000036c]:sub a3, a3, gp<br> [0x80000370]:sw a3, 4(ra)<br>          |
-|  32|[0x8000328c]<br>0xFF7FF008|- rd : x17<br> - imm_val == 1046527<br>     |[0x8000037c]:auipc a7, 1046527<br> [0x80000380]:sub a7, a7, gp<br> [0x80000384]:sw a7, 8(ra)<br>          |
-|  33|[0x80003290]<br>0xFEFFF008|- imm_val == 1044479<br>                    |[0x80000390]:auipc a0, 1044479<br> [0x80000394]:sub a0, a0, gp<br> [0x80000398]:sw a0, 12(ra)<br>         |
-|  34|[0x80003294]<br>0xFDFFF008|- imm_val == 1040383<br>                    |[0x800003a4]:auipc a0, 1040383<br> [0x800003a8]:sub a0, a0, gp<br> [0x800003ac]:sw a0, 16(ra)<br>         |
-|  35|[0x80003298]<br>0xFBFFF008|- imm_val == 1032191<br>                    |[0x800003b8]:auipc a0, 1032191<br> [0x800003bc]:sub a0, a0, gp<br> [0x800003c0]:sw a0, 20(ra)<br>         |
-|  36|[0x8000329c]<br>0xF7FFF008|- imm_val == 1015807<br>                    |[0x800003cc]:auipc a0, 1015807<br> [0x800003d0]:sub a0, a0, gp<br> [0x800003d4]:sw a0, 24(ra)<br>         |
-|  37|[0x800032a0]<br>0xEFFFF008|- imm_val == 983039<br>                     |[0x800003e0]:auipc a0, 983039<br> [0x800003e4]:sub a0, a0, gp<br> [0x800003e8]:sw a0, 28(ra)<br>          |
-|  38|[0x800032a4]<br>0xDFFFF008|- imm_val == 917503<br>                     |[0x800003f4]:auipc a0, 917503<br> [0x800003f8]:sub a0, a0, gp<br> [0x800003fc]:sw a0, 32(ra)<br>          |
-|  39|[0x800032a8]<br>0xBFFFF008|- imm_val == 786431<br>                     |[0x80000408]:auipc a0, 786431<br> [0x8000040c]:sub a0, a0, gp<br> [0x80000410]:sw a0, 36(ra)<br>          |
-|  40|[0x800032ac]<br>0x7FFFF008|- imm_val == 524287<br>                     |[0x8000041c]:auipc a0, 524287<br> [0x80000420]:sub a0, a0, gp<br> [0x80000424]:sw a0, 40(ra)<br>          |
-|  41|[0x800032b0]<br>0x55555008|- imm_val == 349525<br>                     |[0x80000430]:auipc a0, 349525<br> [0x80000434]:sub a0, a0, gp<br> [0x80000438]:sw a0, 44(ra)<br>          |
-|  42|[0x800032b4]<br>0xAAAAA008|- imm_val == 699050<br>                     |[0x80000444]:auipc a0, 699050<br> [0x80000448]:sub a0, a0, gp<br> [0x8000044c]:sw a0, 48(ra)<br>          |
-|  43|[0x800032b8]<br>0xFFF7F008|- imm_val == 1048447<br>                    |[0x80000458]:auipc a0, 1048447<br> [0x8000045c]:sub a0, a0, gp<br> [0x80000460]:sw a0, 52(ra)<br>         |
-|  44|[0x800032bc]<br>0xFFEFF008|- imm_val == 1048319<br>                    |[0x8000046c]:auipc a0, 1048319<br> [0x80000470]:sub a0, a0, gp<br> [0x80000474]:sw a0, 56(ra)<br>         |
+|s.no|        signature         |                coverpoints                |                                                  code                                                   |
+|---:|--------------------------|-------------------------------------------|---------------------------------------------------------------------------------------------------------|
+|   1|[0x80003204]<br>0x00000008|- rd : x26<br>                             |[0x80000108]:auipc s10, 0<br> [0x8000010c]:sub s10, s10, a5<br> [0x80000110]:sw s10, 0(s6)<br>           |
+|   2|[0x80003208]<br>0xFFF7F008|- rd : x5<br> - imm_val == 1048447<br>     |[0x8000011c]:auipc t0, 1048447<br> [0x80000120]:sub t0, t0, a5<br> [0x80000124]:sw t0, 4(s6)<br>         |
+|   3|[0x8000320c]<br>0xFFFFF008|- rd : x1<br> - imm_val == ((2**20)-1)<br> |[0x80000130]:auipc ra, 1048575<br> [0x80000134]:sub ra, ra, a5<br> [0x80000138]:sw ra, 8(s6)<br>         |
+|   4|[0x80003210]<br>0x00001008|- rd : x3<br> - imm_val == 1<br>           |[0x80000144]:auipc gp, 1<br> [0x80000148]:sub gp, gp, a5<br> [0x8000014c]:sw gp, 12(s6)<br>              |
+|   5|[0x80003214]<br>0x00002008|- rd : x7<br> - imm_val == 2<br>           |[0x80000158]:auipc t2, 2<br> [0x8000015c]:sub t2, t2, a5<br> [0x80000160]:sw t2, 16(s6)<br>              |
+|   6|[0x80003218]<br>0x00004008|- rd : x4<br> - imm_val == 4<br>           |[0x8000016c]:auipc tp, 4<br> [0x80000170]:sub tp, tp, a5<br> [0x80000174]:sw tp, 20(s6)<br>              |
+|   7|[0x8000321c]<br>0x00008008|- rd : x10<br> - imm_val == 8<br>          |[0x80000180]:auipc a0, 8<br> [0x80000184]:sub a0, a0, a5<br> [0x80000188]:sw a0, 24(s6)<br>              |
+|   8|[0x80003220]<br>0x00010008|- rd : x30<br> - imm_val == 16<br>         |[0x80000194]:auipc t5, 16<br> [0x80000198]:sub t5, t5, a5<br> [0x8000019c]:sw t5, 28(s6)<br>             |
+|   9|[0x80003224]<br>0x00020008|- rd : x11<br> - imm_val == 32<br>         |[0x800001a8]:auipc a1, 32<br> [0x800001ac]:sub a1, a1, a5<br> [0x800001b0]:sw a1, 32(s6)<br>             |
+|  10|[0x80003228]<br>0x00040008|- rd : x17<br> - imm_val == 64<br>         |[0x800001bc]:auipc a7, 64<br> [0x800001c0]:sub a7, a7, a5<br> [0x800001c4]:sw a7, 36(s6)<br>             |
+|  11|[0x8000322c]<br>0x00080008|- rd : x12<br> - imm_val == 128<br>        |[0x800001d0]:auipc a2, 128<br> [0x800001d4]:sub a2, a2, a5<br> [0x800001d8]:sw a2, 40(s6)<br>            |
+|  12|[0x80003230]<br>0x00100008|- rd : x13<br> - imm_val == 256<br>        |[0x800001e4]:auipc a3, 256<br> [0x800001e8]:sub a3, a3, a5<br> [0x800001ec]:sw a3, 44(s6)<br>            |
+|  13|[0x80003234]<br>0x00200008|- rd : x29<br> - imm_val == 512<br>        |[0x800001f8]:auipc t4, 512<br> [0x800001fc]:sub t4, t4, a5<br> [0x80000200]:sw t4, 48(s6)<br>            |
+|  14|[0x80003238]<br>0x00400008|- rd : x23<br> - imm_val == 1024<br>       |[0x8000020c]:auipc s7, 1024<br> [0x80000210]:sub s7, s7, a5<br> [0x80000214]:sw s7, 52(s6)<br>           |
+|  15|[0x8000323c]<br>0x00800008|- rd : x20<br> - imm_val == 2048<br>       |[0x80000220]:auipc s4, 2048<br> [0x80000224]:sub s4, s4, a5<br> [0x80000228]:sw s4, 56(s6)<br>           |
+|  16|[0x80003240]<br>0x01000008|- rd : x2<br> - imm_val == 4096<br>        |[0x80000234]:auipc sp, 4096<br> [0x80000238]:sub sp, sp, a5<br> [0x8000023c]:sw sp, 60(s6)<br>           |
+|  17|[0x80003244]<br>0x02000008|- rd : x6<br> - imm_val == 8192<br>        |[0x80000248]:auipc t1, 8192<br> [0x8000024c]:sub t1, t1, a5<br> [0x80000250]:sw t1, 64(s6)<br>           |
+|  18|[0x80003248]<br>0x04000008|- rd : x8<br> - imm_val == 16384<br>       |[0x8000025c]:auipc fp, 16384<br> [0x80000260]:sub fp, fp, a5<br> [0x80000264]:sw fp, 68(s6)<br>          |
+|  19|[0x8000324c]<br>0x08000008|- rd : x19<br> - imm_val == 32768<br>      |[0x80000270]:auipc s3, 32768<br> [0x80000274]:sub s3, s3, a5<br> [0x80000278]:sw s3, 72(s6)<br>          |
+|  20|[0x80003250]<br>0x10000008|- rd : x31<br> - imm_val == 65536<br>      |[0x80000284]:auipc t6, 65536<br> [0x80000288]:sub t6, t6, a5<br> [0x8000028c]:sw t6, 76(s6)<br>          |
+|  21|[0x80003254]<br>0x20000008|- rd : x9<br> - imm_val == 131072<br>      |[0x80000298]:auipc s1, 131072<br> [0x8000029c]:sub s1, s1, a5<br> [0x800002a0]:sw s1, 80(s6)<br>         |
+|  22|[0x80003258]<br>0x40000008|- rd : x27<br> - imm_val == 262144<br>     |[0x800002ac]:auipc s11, 262144<br> [0x800002b0]:sub s11, s11, a5<br> [0x800002b4]:sw s11, 84(s6)<br>     |
+|  23|[0x8000325c]<br>0x80000008|- rd : x24<br> - imm_val == 524288<br>     |[0x800002c0]:auipc s8, 524288<br> [0x800002c4]:sub s8, s8, a5<br> [0x800002c8]:sw s8, 88(s6)<br>         |
+|  24|[0x80003260]<br>0xFFFFE008|- rd : x21<br> - imm_val == 1048574<br>    |[0x800002d4]:auipc s5, 1048574<br> [0x800002d8]:sub s5, s5, a5<br> [0x800002dc]:sw s5, 92(s6)<br>        |
+|  25|[0x80003264]<br>0xFFFFD008|- rd : x18<br> - imm_val == 1048573<br>    |[0x800002e8]:auipc s2, 1048573<br> [0x800002ec]:sub s2, s2, a5<br> [0x800002f0]:sw s2, 96(s6)<br>        |
+|  26|[0x80003268]<br>0xFFFFB008|- rd : x16<br> - imm_val == 1048571<br>    |[0x800002fc]:auipc a6, 1048571<br> [0x80000300]:sub a6, a6, a5<br> [0x80000304]:sw a6, 100(s6)<br>       |
+|  27|[0x8000326c]<br>0xFFFF7008|- rd : x14<br> - imm_val == 1048567<br>    |[0x80000310]:auipc a4, 1048567<br> [0x80000314]:sub a4, a4, a5<br> [0x80000318]:sw a4, 104(s6)<br>       |
+|  28|[0x80003270]<br>0xFFFEF008|- imm_val == 1048559<br>                   |[0x80000324]:auipc a5, 1048559<br> [0x80000328]:sub a5, a5, sp<br> [0x8000032c]:sw a5, 108(s6)<br>       |
+|  29|[0x80003274]<br>0x00000000|- rd : x0<br> - imm_val == 1048543<br>     |[0x80000340]:auipc zero, 1048543<br> [0x80000344]:sub zero, zero, sp<br> [0x80000348]:sw zero, 0(ra)<br> |
+|  30|[0x80003278]<br>0xFFDFF008|- rd : x28<br> - imm_val == 1048063<br>    |[0x80000354]:auipc t3, 1048063<br> [0x80000358]:sub t3, t3, sp<br> [0x8000035c]:sw t3, 4(ra)<br>         |
+|  31|[0x8000327c]<br>0xFFBFF008|- imm_val == 1047551<br>                   |[0x80000368]:auipc s6, 1047551<br> [0x8000036c]:sub s6, s6, sp<br> [0x80000370]:sw s6, 8(ra)<br>         |
+|  32|[0x80003280]<br>0xFF7FF008|- rd : x25<br> - imm_val == 1046527<br>    |[0x8000037c]:auipc s9, 1046527<br> [0x80000380]:sub s9, s9, sp<br> [0x80000384]:sw s9, 12(ra)<br>        |
+|  33|[0x80003284]<br>0xFEFFF008|- imm_val == 1044479<br>                   |[0x80000390]:auipc a0, 1044479<br> [0x80000394]:sub a0, a0, sp<br> [0x80000398]:sw a0, 16(ra)<br>        |
+|  34|[0x80003288]<br>0xFDFFF008|- imm_val == 1040383<br>                   |[0x800003a4]:auipc a0, 1040383<br> [0x800003a8]:sub a0, a0, sp<br> [0x800003ac]:sw a0, 20(ra)<br>        |
+|  35|[0x8000328c]<br>0xFBFFF008|- imm_val == 1032191<br>                   |[0x800003b8]:auipc a0, 1032191<br> [0x800003bc]:sub a0, a0, sp<br> [0x800003c0]:sw a0, 24(ra)<br>        |
+|  36|[0x80003290]<br>0xF7FFF008|- imm_val == 1015807<br>                   |[0x800003cc]:auipc a0, 1015807<br> [0x800003d0]:sub a0, a0, sp<br> [0x800003d4]:sw a0, 28(ra)<br>        |
+|  37|[0x80003294]<br>0xEFFFF008|- imm_val == 983039<br>                    |[0x800003e0]:auipc a0, 983039<br> [0x800003e4]:sub a0, a0, sp<br> [0x800003e8]:sw a0, 32(ra)<br>         |
+|  38|[0x80003298]<br>0xDFFFF008|- imm_val == 917503<br>                    |[0x800003f4]:auipc a0, 917503<br> [0x800003f8]:sub a0, a0, sp<br> [0x800003fc]:sw a0, 36(ra)<br>         |
+|  39|[0x8000329c]<br>0xBFFFF008|- imm_val == 786431<br>                    |[0x80000408]:auipc a0, 786431<br> [0x8000040c]:sub a0, a0, sp<br> [0x80000410]:sw a0, 40(ra)<br>         |
+|  40|[0x800032a0]<br>0x7FFFF008|- imm_val == 524287<br>                    |[0x8000041c]:auipc a0, 524287<br> [0x80000420]:sub a0, a0, sp<br> [0x80000424]:sw a0, 44(ra)<br>         |
+|  41|[0x800032a4]<br>0x55555008|- imm_val == 349525<br>                    |[0x80000430]:auipc a0, 349525<br> [0x80000434]:sub a0, a0, sp<br> [0x80000438]:sw a0, 48(ra)<br>         |
+|  42|[0x800032a8]<br>0xAAAAA008|- imm_val == 699050<br>                    |[0x80000444]:auipc a0, 699050<br> [0x80000448]:sub a0, a0, sp<br> [0x8000044c]:sw a0, 52(ra)<br>         |
+|  43|[0x800032ac]<br>0xFFFBF008|- imm_val == 1048511<br>                   |[0x80000458]:auipc a0, 1048511<br> [0x8000045c]:sub a0, a0, sp<br> [0x80000460]:sw a0, 56(ra)<br>        |
+|  44|[0x800032b0]<br>0xFFEFF008|- imm_val == 1048319<br>                   |[0x8000046c]:auipc a0, 1048319<br> [0x80000470]:sub a0, a0, sp<br> [0x80000474]:sw a0, 60(ra)<br>        |

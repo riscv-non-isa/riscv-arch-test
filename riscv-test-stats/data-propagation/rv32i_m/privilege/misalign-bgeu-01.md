@@ -10,8 +10,8 @@
 | Param                     | Value    |
 |---------------------------|----------|
 | XLEN                      | 32      |
-| TEST_REGION               | [('0x80000104', '0x80000540')]      |
-| SIG_REGION                | [('0x80003204', '0x80003314', '68 words')]      |
+| TEST_REGION               | [('0x80000104', '0x80000150')]      |
+| SIG_REGION                | [('0x80003204', '0x80003308', '65 words')]      |
 | COV_LABELS                | misalign-bgeu      |
 | TEST_NAME                 | /scratch/git-repo/incoresemi/riscof/riscof_work/misalign-bgeu-01.S/misalign-bgeu-01.S    |
 | Total Number of coverpoints| 2     |
@@ -67,6 +67,6 @@
   test. These need not necessarily be in increasing or decreasing order of the
   address in the signature region.
 
-|s.no|        signature         |                         coverpoints                         |                                                             code                                                             |
-|---:|--------------------------|-------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------|
-|   1|[0x80003210]<br>0x00000003|- opcode : bgeu<br> -  rs1_val>rs2_val and ea_align == 2<br> |[0x80000128]:bgeu a0, a1, 1026<br> [0x8000052a]:addi sp, sp, 3<br> [0x8000052e]:jal zero, 6<br> [0x80000534]:sw sp, 0(ra)<br> |
+|s.no|        signature         |                         coverpoints                         |                                                             code                                                              |
+|---:|--------------------------|-------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------|
+|   1|[0x80003204]<br>0x00000001|- opcode : bgeu<br> -  rs1_val>rs2_val and ea_align == 2<br> |[0x8000012c]:bgeu a0, a1, 8178<br> [0x8000011e]:addi sp, sp, 1<br> [0x80000122]:jal zero, 34<br> [0x80000144]:sw sp, 0(ra)<br> |

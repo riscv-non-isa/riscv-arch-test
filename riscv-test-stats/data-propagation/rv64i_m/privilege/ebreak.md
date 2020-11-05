@@ -11,7 +11,7 @@
 |---------------------------|----------|
 | XLEN                      | 64      |
 | TEST_REGION               | [('0x8000039c', '0x800003c0')]      |
-| SIG_REGION                | [('0x80003204', '0x80003228', '4 dwords')]      |
+| SIG_REGION                | [('0x80003208', '0x80003228', '4 dwords')]      |
 | COV_LABELS                | ebreak      |
 | TEST_NAME                 | /scratch/git-repo/incoresemi/riscof/riscof_work/ebreak.S/ebreak.S    |
 | Total Number of coverpoints| 1     |

@@ -11,7 +11,7 @@
 |---------------------------|----------|
 | XLEN                      | 32      |
 | TEST_REGION               | [('0x80000104', '0x80000150')]      |
-| SIG_REGION                | [('0x80003204', '0x80003314', '68 words')]      |
+| SIG_REGION                | [('0x80003204', '0x80003308', '65 words')]      |
 | COV_LABELS                | misalign-bne      |
 | TEST_NAME                 | /scratch/git-repo/incoresemi/riscof/riscof_work/misalign-bne-01.S/misalign-bne-01.S    |
 | Total Number of coverpoints| 2     |
@@ -69,4 +69,4 @@
 
 |s.no|        signature         |                         coverpoints                         |                                                           code                                                            |
 |---:|--------------------------|-------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------|
-|   1|[0x80003210]<br>0x00000003|- opcode : bne<br> -  rs1_val!=rs2_val and ea_align == 2<br> |[0x80000128]:bne a0, a1, 14<br> [0x80000136]:addi sp, sp, 3<br> [0x8000013a]:jal zero, 6<br> [0x80000140]:sw sp, 0(ra)<br> |
+|   1|[0x80003204]<br>0x00000003|- opcode : bne<br> -  rs1_val!=rs2_val and ea_align == 2<br> |[0x8000012c]:bne a0, a1, 14<br> [0x8000013a]:addi sp, sp, 3<br> [0x8000013e]:jal zero, 6<br> [0x80000144]:sw sp, 0(ra)<br> |

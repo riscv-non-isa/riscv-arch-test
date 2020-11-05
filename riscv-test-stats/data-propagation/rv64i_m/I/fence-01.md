@@ -11,7 +11,7 @@
 |---------------------------|----------|
 | XLEN                      | 64      |
 | TEST_REGION               | [('0x80000390', '0x800003e0')]      |
-| SIG_REGION                | [('0x80003204', '0x80003218', '2 dwords')]      |
+| SIG_REGION                | [('0x80003208', '0x80003218', '2 dwords')]      |
 | COV_LABELS                | fence      |
 | TEST_NAME                 | /scratch/git-repo/incoresemi/riscof/riscof_work/fence-01.S/fence-01.S    |
 | Total Number of coverpoints| 1     |
