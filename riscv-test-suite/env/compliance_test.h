@@ -545,9 +545,6 @@ rvtest_data_end:
     .endif;\
     .set offset,0;
 
-/* #define RVTEST_SIGUPD(_BR,_R,_OFF)\ */
-/*     SREG _R, _OFF(_BR);\ */
-/*     .set offset,_OFF+REGWIDTH; */
 
 #endif //_COMPLIANCE_TEST_H
 
@@ -725,10 +722,10 @@ RVTEST_SIGUPD(swreg,destreg,offset)
 
 #define TEST_CASE(testreg, destreg, correctval, swreg, offset, code... ) \
     code; \
-    RVTEST_SIGUPD(swreg,destreg,offset) 
-//SREG destreg, offset(swreg); 
+    RVTEST_SIGUPD(swreg,destreg,offset); \
+    RVMODEL_CHECK_TEST(testreg, destreg, correctval); \
+    RVMODEL_IO_ASSERT_GPR_EQ(testreg, destreg, correctval)
 
-//   RVMODEL_IO_ASSERT_GPR_EQ(testreg, destreg, correctval)
 
 
 #define TEST_AUIPC(inst, destreg, correctval, imm, swreg, offset, testreg) \
