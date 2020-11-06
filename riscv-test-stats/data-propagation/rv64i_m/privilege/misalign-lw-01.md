@@ -42,7 +42,7 @@
 ```
 Last Coverpoint : ['opcode : lw', 'ea_align == 1']
 Last Code Sequence : 
-	-[0x800003ac]:lw a1, 5(a0)
+	-[0x800003ac]:lw a1, 4093(a0)
 Current Store : [0x80000698] : sd t2, 8(t1) -- Store: [0x80003228]:0x0000000000000004
 
 
@@ -50,7 +50,7 @@ Current Store : [0x80000698] : sd t2, 8(t1) -- Store: [0x80003228]:0x00000000000
 
 Last Coverpoint : ['opcode : lw', 'ea_align == 1']
 Last Code Sequence : 
-	-[0x800003ac]:lw a1, 5(a0)
+	-[0x800003ac]:lw a1, 4093(a0)
 Current Store : [0x800006b0] : sd t4, 16(t1) -- Store: [0x80003230]:0x00000000000003A0
 
 
@@ -58,7 +58,7 @@ Current Store : [0x800006b0] : sd t4, 16(t1) -- Store: [0x80003230]:0x0000000000
 
 Last Coverpoint : ['opcode : lw', 'ea_align == 1']
 Last Code Sequence : 
-	-[0x800003ac]:lw a1, 5(a0)
+	-[0x800003ac]:lw a1, 4093(a0)
 Current Store : [0x8000073c] : sd t2, 24(t1) -- Store: [0x80003238]:0x0000000000003085
 
 
@@ -66,7 +66,7 @@ Current Store : [0x8000073c] : sd t2, 24(t1) -- Store: [0x80003238]:0x0000000000
 
 Last Coverpoint : ['opcode : lw', 'ea_align == 1']
 Last Code Sequence : 
-	-[0x800003ac]:lw a1, 5(a0)
+	-[0x800003ac]:lw a1, 4093(a0)
 Current Store : [0x800003b8] : sd a1, 0(ra) -- Store: [0x80003208]:0xAB7FBB6FAB7FBB6F
 
 
@@ -74,7 +74,7 @@ Current Store : [0x800003b8] : sd a1, 0(ra) -- Store: [0x80003208]:0xAB7FBB6FAB7
 
 Last Coverpoint : ['ea_align == 2']
 Last Code Sequence : 
-	-[0x800003c4]:lw a1, 3071(a0)
+	-[0x800003c4]:lw a1, 9(a0)
 Current Store : [0x80000698] : sd t2, 8(t1) -- Store: [0x80003248]:0x0000000000000004
 
 
@@ -82,7 +82,7 @@ Current Store : [0x80000698] : sd t2, 8(t1) -- Store: [0x80003248]:0x00000000000
 
 Last Coverpoint : ['ea_align == 2']
 Last Code Sequence : 
-	-[0x800003c4]:lw a1, 3071(a0)
+	-[0x800003c4]:lw a1, 9(a0)
 Current Store : [0x800006b0] : sd t4, 16(t1) -- Store: [0x80003250]:0x00000000000003B8
 
 
@@ -90,7 +90,7 @@ Current Store : [0x800006b0] : sd t4, 16(t1) -- Store: [0x80003250]:0x0000000000
 
 Last Coverpoint : ['ea_align == 2']
 Last Code Sequence : 
-	-[0x800003c4]:lw a1, 3071(a0)
+	-[0x800003c4]:lw a1, 9(a0)
 Current Store : [0x8000073c] : sd t2, 24(t1) -- Store: [0x80003258]:0x0000000000003086
 
 
@@ -98,7 +98,7 @@ Current Store : [0x8000073c] : sd t2, 24(t1) -- Store: [0x80003258]:0x0000000000
 
 Last Coverpoint : ['ea_align == 2']
 Last Code Sequence : 
-	-[0x800003c4]:lw a1, 3071(a0)
+	-[0x800003c4]:lw a1, 9(a0)
 Current Store : [0x800003d0] : sd a1, 8(ra) -- Store: [0x80003210]:0xAB7FBB6FAB7FBB6F
 
 
@@ -106,7 +106,7 @@ Current Store : [0x800003d0] : sd a1, 8(ra) -- Store: [0x80003210]:0xAB7FBB6FAB7
 
 Last Coverpoint : ['ea_align == 3']
 Last Code Sequence : 
-	-[0x800003dc]:lw a1, 3(a0)
+	-[0x800003dc]:lw a1, 4090(a0)
 Current Store : [0x80000698] : sd t2, 8(t1) -- Store: [0x80003268]:0x0000000000000004
 
 
@@ -114,7 +114,7 @@ Current Store : [0x80000698] : sd t2, 8(t1) -- Store: [0x80003268]:0x00000000000
 
 Last Coverpoint : ['ea_align == 3']
 Last Code Sequence : 
-	-[0x800003dc]:lw a1, 3(a0)
+	-[0x800003dc]:lw a1, 4090(a0)
 Current Store : [0x800006b0] : sd t4, 16(t1) -- Store: [0x80003270]:0x00000000000003D0
 
 
@@ -122,7 +122,7 @@ Current Store : [0x800006b0] : sd t4, 16(t1) -- Store: [0x80003270]:0x0000000000
 
 Last Coverpoint : ['ea_align == 3']
 Last Code Sequence : 
-	-[0x800003dc]:lw a1, 3(a0)
+	-[0x800003dc]:lw a1, 4090(a0)
 Current Store : [0x8000073c] : sd t2, 24(t1) -- Store: [0x80003278]:0x0000000000003087
 
 
@@ -130,7 +130,7 @@ Current Store : [0x8000073c] : sd t2, 24(t1) -- Store: [0x80003278]:0x0000000000
 
 Last Coverpoint : ['ea_align == 3']
 Last Code Sequence : 
-	-[0x800003dc]:lw a1, 3(a0)
+	-[0x800003dc]:lw a1, 4090(a0)
 Current Store : [0x800003e8] : sd a1, 16(ra) -- Store: [0x80003218]:0xAB7FBB6FAB7FBB6F
 
 
@@ -165,6 +165,6 @@ Current Store : [0x800003e8] : sd a1, 16(ra) -- Store: [0x80003218]:0xAB7FBB6FAB
 
 |s.no|            signature             |             coverpoints              |              code               |
 |---:|----------------------------------|--------------------------------------|---------------------------------|
-|   1|[0x80003220]<br>0x000000000000010F|- opcode : lw<br> - ea_align == 1<br> |[0x800003ac]:lw a1, 5(a0)<br>    |
-|   2|[0x80003240]<br>0x000000000000010F|- ea_align == 2<br>                   |[0x800003c4]:lw a1, 3071(a0)<br> |
-|   3|[0x80003260]<br>0x000000000000010F|- ea_align == 3<br>                   |[0x800003dc]:lw a1, 3(a0)<br>    |
+|   1|[0x80003220]<br>0x000000000000010F|- opcode : lw<br> - ea_align == 1<br> |[0x800003ac]:lw a1, 4093(a0)<br> |
+|   2|[0x80003240]<br>0x000000000000010F|- ea_align == 2<br>                   |[0x800003c4]:lw a1, 9(a0)<br>    |
+|   3|[0x80003260]<br>0x000000000000010F|- ea_align == 3<br>                   |[0x800003dc]:lw a1, 4090(a0)<br> |

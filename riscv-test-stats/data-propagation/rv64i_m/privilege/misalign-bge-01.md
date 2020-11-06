@@ -10,7 +10,7 @@
 | Param                     | Value    |
 |---------------------------|----------|
 | XLEN                      | 64      |
-| TEST_REGION               | [('0x8000039c', '0x800003e0')]      |
+| TEST_REGION               | [('0x8000039c', '0x800003f0')]      |
 | SIG_REGION                | [('0x80003208', '0x80003410', '65 dwords')]      |
 | COV_LABELS                | misalign-bge      |
 | TEST_NAME                 | /scratch/git-repo/incoresemi/riscof/riscof_work/misalign-bge-01.S/misalign-bge-01.S    |
@@ -67,6 +67,6 @@
   test. These need not necessarily be in increasing or decreasing order of the
   address in the signature region.
 
-|s.no|            signature             |                        coverpoints                         |                                                           code                                                            |
-|---:|----------------------------------|------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------|
-|   1|[0x80003208]<br>0x0000000000000003|- opcode : bge<br> -  rs1_val>rs2_val and ea_align == 2<br> |[0x800003c0]:bge a0, a1, 14<br> [0x800003ce]:addi sp, sp, 3<br> [0x800003d2]:jal zero, 6<br> [0x800003d8]:sd sp, 0(ra)<br> |
+|s.no|            signature             |                        coverpoints                         |                                                             code                                                             |
+|---:|----------------------------------|------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------|
+|   1|[0x80003208]<br>0x0000000000000001|- opcode : bge<br> -  rs1_val>rs2_val and ea_align == 2<br> |[0x800003d4]:bge a0, a1, 8174<br> [0x800003c2]:addi sp, sp, 1<br> [0x800003c6]:jal zero, 38<br> [0x800003ec]:sd sp, 0(ra)<br> |

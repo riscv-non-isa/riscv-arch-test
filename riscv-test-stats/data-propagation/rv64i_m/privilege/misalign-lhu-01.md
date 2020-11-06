@@ -42,7 +42,7 @@
 ```
 Last Coverpoint : ['opcode : lhu', 'ea_align == 1']
 Last Code Sequence : 
-	-[0x800003ac]:lhu a1, 5(a0)
+	-[0x800003ac]:lhu a1, 3583(a0)
 Current Store : [0x80000668] : sd t2, 8(t1) -- Store: [0x80003218]:0x0000000000000004
 
 
@@ -50,7 +50,7 @@ Current Store : [0x80000668] : sd t2, 8(t1) -- Store: [0x80003218]:0x00000000000
 
 Last Coverpoint : ['opcode : lhu', 'ea_align == 1']
 Last Code Sequence : 
-	-[0x800003ac]:lhu a1, 5(a0)
+	-[0x800003ac]:lhu a1, 3583(a0)
 Current Store : [0x80000680] : sd t4, 16(t1) -- Store: [0x80003220]:0x00000000000003A0
 
 
@@ -58,7 +58,7 @@ Current Store : [0x80000680] : sd t4, 16(t1) -- Store: [0x80003220]:0x0000000000
 
 Last Coverpoint : ['opcode : lhu', 'ea_align == 1']
 Last Code Sequence : 
-	-[0x800003ac]:lhu a1, 5(a0)
+	-[0x800003ac]:lhu a1, 3583(a0)
 Current Store : [0x8000070c] : sd t2, 24(t1) -- Store: [0x80003228]:0x0000000000003085
 
 
@@ -66,7 +66,7 @@ Current Store : [0x8000070c] : sd t2, 24(t1) -- Store: [0x80003228]:0x0000000000
 
 Last Coverpoint : ['opcode : lhu', 'ea_align == 1']
 Last Code Sequence : 
-	-[0x800003ac]:lhu a1, 5(a0)
+	-[0x800003ac]:lhu a1, 3583(a0)
 Current Store : [0x800003b8] : sd a1, 0(ra) -- Store: [0x80003208]:0xAB7FBB6FAB7FBB6F
 
 
@@ -99,6 +99,6 @@ Current Store : [0x800003b8] : sd a1, 0(ra) -- Store: [0x80003208]:0xAB7FBB6FAB7
   test. These need not necessarily be in increasing or decreasing order of the
   address in the signature region.
 
-|s.no|            signature             |              coverpoints              |             code              |
-|---:|----------------------------------|---------------------------------------|-------------------------------|
-|   1|[0x80003210]<br>0x000000000000010F|- opcode : lhu<br> - ea_align == 1<br> |[0x800003ac]:lhu a1, 5(a0)<br> |
+|s.no|            signature             |              coverpoints              |               code               |
+|---:|----------------------------------|---------------------------------------|----------------------------------|
+|   1|[0x80003210]<br>0x000000000000010F|- opcode : lhu<br> - ea_align == 1<br> |[0x800003ac]:lhu a1, 3583(a0)<br> |
