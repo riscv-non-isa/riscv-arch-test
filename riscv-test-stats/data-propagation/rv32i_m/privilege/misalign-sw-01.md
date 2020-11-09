@@ -1,26 +1,22 @@
 
 # Data Propagation Report
 
-STAT1 : Number of unique coverpoint hits that have updated the signature
-
-STAT2 : Number of covepoints hits which are not unique but still update the signature
-
-STAT3 : Number of instructions that contribute to a unique coverpoint but do not update signature
-
-STAT4 : Number of Multiple signature updates for the same coverpoint
-
-STAT5 : Number of times the signature was overwritten
+- **STAT1** : Number of instructions that hit unique coverpoints and update the signature.
+- **STAT2** : Number of instructions that hit covepoints which are not unique but still update the signature
+- **STAT3** : Number of instructions that hit a unique coverpoint but do not update signature
+- **STAT4** : Number of multiple signature updates for the same coverpoint
+- **STAT5** : Number of times the signature was overwritten
 
 | Param                     | Value    |
 |---------------------------|----------|
 | XLEN                      | 32      |
 | TEST_REGION               | [('0x80000104', '0x80000170')]      |
-| SIG_REGION                | [('0x80003204', '0x8000331c', '70 words')]      |
+| SIG_REGION                | [('0x80003204', '0x80003310', '67 words')]      |
 | COV_LABELS                | misalign-sw      |
 | TEST_NAME                 | /scratch/git-repo/incoresemi/riscof/riscof_work/misalign-sw-01.S/misalign-sw-01.S    |
 | Total Number of coverpoints| 4     |
+| Total Coverpoints Hit     | 4      |
 | Total Signature Updates   | 15      |
-| Total Coverpoints Covered | 4      |
 | STAT1                     | 3      |
 | STAT2                     | 0      |
 | STAT3                     | 0     |
@@ -46,96 +42,96 @@ STAT5 : Number of times the signature was overwritten
 ```
 Last Coverpoint : ['opcode : sw', 'ea_align == 1']
 Last Code Sequence : 
-	-[0x8000011c]:sw a1, 4091(a0)
-Current Store : [0x80000390] : sw t2, 0(t1) -- Store: [0x8000321c]:0x0000008F
+	-[0x8000011c]:sw a1, 256(a0)
+Current Store : [0x80000390] : sw t2, 0(t1) -- Store: [0x80003210]:0x0000008F
 
 
 
 
 Last Coverpoint : ['opcode : sw', 'ea_align == 1']
 Last Code Sequence : 
-	-[0x8000011c]:sw a1, 4091(a0)
-Current Store : [0x80000398] : sw t2, 4(t1) -- Store: [0x80003220]:0x00000006
+	-[0x8000011c]:sw a1, 256(a0)
+Current Store : [0x80000398] : sw t2, 4(t1) -- Store: [0x80003214]:0x00000006
 
 
 
 
 Last Coverpoint : ['opcode : sw', 'ea_align == 1']
 Last Code Sequence : 
-	-[0x8000011c]:sw a1, 4091(a0)
-Current Store : [0x800003b0] : sw t4, 8(t1) -- Store: [0x80003224]:0x00000110
+	-[0x8000011c]:sw a1, 256(a0)
+Current Store : [0x800003b0] : sw t4, 8(t1) -- Store: [0x80003218]:0x00000110
 
 
 
 
 Last Coverpoint : ['opcode : sw', 'ea_align == 1']
 Last Code Sequence : 
-	-[0x8000011c]:sw a1, 4091(a0)
-Current Store : [0x80000430] : sw t2, 12(t1) -- Store: [0x80003228]:0x00003205
+	-[0x8000011c]:sw a1, 256(a0)
+Current Store : [0x80000430] : sw t2, 12(t1) -- Store: [0x8000321c]:0x000031F9
 
 
 
 
 Last Coverpoint : ['ea_align == 2']
 Last Code Sequence : 
-	-[0x8000013c]:sw a1, 128(a0)
-Current Store : [0x80000390] : sw t2, 0(t1) -- Store: [0x8000322c]:0x0000008F
+	-[0x80000138]:sw a1, 1024(a0)
+Current Store : [0x80000390] : sw t2, 0(t1) -- Store: [0x80003220]:0x0000008F
 
 
 
 
 Last Coverpoint : ['ea_align == 2']
 Last Code Sequence : 
-	-[0x8000013c]:sw a1, 128(a0)
-Current Store : [0x80000398] : sw t2, 4(t1) -- Store: [0x80003230]:0x00000006
+	-[0x80000138]:sw a1, 1024(a0)
+Current Store : [0x80000398] : sw t2, 4(t1) -- Store: [0x80003224]:0x00000006
 
 
 
 
 Last Coverpoint : ['ea_align == 2']
 Last Code Sequence : 
-	-[0x8000013c]:sw a1, 128(a0)
-Current Store : [0x800003b0] : sw t4, 8(t1) -- Store: [0x80003234]:0x00000130
+	-[0x80000138]:sw a1, 1024(a0)
+Current Store : [0x800003b0] : sw t4, 8(t1) -- Store: [0x80003228]:0x0000012C
 
 
 
 
 Last Coverpoint : ['ea_align == 2']
 Last Code Sequence : 
-	-[0x8000013c]:sw a1, 128(a0)
-Current Store : [0x80000430] : sw t2, 12(t1) -- Store: [0x80003238]:0x0000320A
+	-[0x80000138]:sw a1, 1024(a0)
+Current Store : [0x80000430] : sw t2, 12(t1) -- Store: [0x8000322c]:0x000031FE
 
 
 
 
 Last Coverpoint : ['ea_align == 3']
 Last Code Sequence : 
-	-[0x80000158]:sw a1, 2047(a0)
-Current Store : [0x80000390] : sw t2, 0(t1) -- Store: [0x8000323c]:0x0000008F
+	-[0x80000158]:sw a1, 64(a0)
+Current Store : [0x80000390] : sw t2, 0(t1) -- Store: [0x80003230]:0x0000008F
 
 
 
 
 Last Coverpoint : ['ea_align == 3']
 Last Code Sequence : 
-	-[0x80000158]:sw a1, 2047(a0)
-Current Store : [0x80000398] : sw t2, 4(t1) -- Store: [0x80003240]:0x00000006
+	-[0x80000158]:sw a1, 64(a0)
+Current Store : [0x80000398] : sw t2, 4(t1) -- Store: [0x80003234]:0x00000006
 
 
 
 
 Last Coverpoint : ['ea_align == 3']
 Last Code Sequence : 
-	-[0x80000158]:sw a1, 2047(a0)
-Current Store : [0x800003b0] : sw t4, 8(t1) -- Store: [0x80003244]:0x0000014C
+	-[0x80000158]:sw a1, 64(a0)
+Current Store : [0x800003b0] : sw t4, 8(t1) -- Store: [0x80003238]:0x0000014C
 
 
 
 
 Last Coverpoint : ['ea_align == 3']
 Last Code Sequence : 
-	-[0x80000158]:sw a1, 2047(a0)
-Current Store : [0x80000430] : sw t2, 12(t1) -- Store: [0x80003248]:0x0000320F
+	-[0x80000158]:sw a1, 64(a0)
+Current Store : [0x80000430] : sw t2, 12(t1) -- Store: [0x8000323c]:0x00003203
 
 
 
@@ -169,6 +165,6 @@ Current Store : [0x80000430] : sw t2, 12(t1) -- Store: [0x80003248]:0x0000320F
 
 |s.no|        signature         |             coverpoints              |              code               |
 |---:|--------------------------|--------------------------------------|---------------------------------|
-|   1|[0x80003211]<br>0x00002000|- opcode : sw<br> - ea_align == 1<br> |[0x8000011c]:sw a1, 4091(a0)<br> |
-|   2|[0x80003216]<br>0xFFFFF7FF|- ea_align == 2<br>                   |[0x8000013c]:sw a1, 128(a0)<br>  |
-|   3|[0x8000321b]<br>0x00000000|- ea_align == 3<br>                   |[0x80000158]:sw a1, 2047(a0)<br> |
+|   1|[0x80003205]<br>0xFFFFFFF9|- opcode : sw<br> - ea_align == 1<br> |[0x8000011c]:sw a1, 256(a0)<br>  |
+|   2|[0x8000320a]<br>0x80000000|- ea_align == 2<br>                   |[0x80000138]:sw a1, 1024(a0)<br> |
+|   3|[0x8000320f]<br>0xFFFF7FFF|- ea_align == 3<br>                   |[0x80000158]:sw a1, 64(a0)<br>   |

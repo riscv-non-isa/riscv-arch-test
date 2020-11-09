@@ -550,6 +550,11 @@ clean the `workdir` simple run :
 
   make clean
 
+By default the working directory is set to `ROOTDIR/work`. This can be overwritten by assigning a
+new working directory path via the command line. Note, the path must be absolute and not relative :
+
+  make WORK=/home/me/my_path/mywork clean compile simulate
+
 //Once you have ported your target using the steps you can then run the execute the architectural test framework using the following steps:
 //
 //1. go to the root directory of the repository: `cd riscv-compliance`

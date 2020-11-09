@@ -1,3 +1,11 @@
+// -----------
+// Copyright (c) 2020. RISC-V International. All rights reserved.
+// SPDX-License-Identifier: BSD-3-Clause
+// -----------
+//
+// This assembly file tests the ebreak instruction of the RISC-V I extension.
+// 
+
 #include "compliance_model.h"
 #include "compliance_test.h"
 

@@ -231,9 +231,11 @@ The naming convention of a single test:
 Experience has shown that including ISA category in the test name leads to very long test names. Instead, we have introduced the <<Test pool structure,test pool structure>> where the full name is composed of the test path in the <<Test pool structure,test pool structure>> and the simple test name. +
 Since full names can be reconstructed easily it is not necessary to include the path in test names.
 
-=== The test structure of an architectural test
+=== Assembly macros and test labels
 
-All tests shall use a signature approach. Each test shall be written in the same style, with defined mandatory items. There are both pre-defined and model-specific macros which shall be used in every test to guarantee their portability. In addition, there are both pre-defined and model specific macros that are not required, but may be used in tests.
+There are both pre-defined and model-specific macros which shall be used in every test to guarantee 
+their portability. In addition, there are both pre-defined and model specific macros that are not required, 
+but may be used in tests for either convenience or debugging purposes.
 
 ==== *Required, Pre-defined Macros* 
 
@@ -303,7 +305,7 @@ the test.
       indicate the begining of the signature region. One must ensure to not enforce any alignment
       constraints on the signature region to avoid mismatches.
 
-      Note:: The signature region should always begin at a 16-byte boundary
+      Note:: The signature region should always begin at a XLEN-bit boundary.
     
   `RVMODEL_DATA_END`::              
     - This macros marks the signature-region. The entire signature reqgion must be included within
@@ -345,7 +347,8 @@ the test.
       this macro sets the value of mtvec to a region which is readable and writable by the machine
       mode.
     
-  `RVMODEL_IO_INIT`::                    
+////
+`RVMODEL_IO_INIT`::                    
     - initializes IO for debug output
     - this must be invoked if any of the other RV_MODEL_IO_* macros are used
     
@@ -368,18 +371,24 @@ the test.
     - output debug string, using a scratch register +
     - outputs the message String
     - ScrReg is a scratch register used by the output routine; its final value cannot be guaranteed 
+////
 
+=== The test structure of an architectural test
+
+All tests shall use a signature approach. Each test shall be written in the same style, with defined mandatory items. 
 The test structure of an architectural test shall have the following sections in the order as follows:
 
-.  Header + license (including a specification link, a brief test description and RVTEST_ISA macro))
-.  Includes of header files (see Common Header Files section)
-.  Test Virtual Machine (TVM) specification
-.  Test code between “RVTEST_CODE_BEGIN” and “RVTEST_CODE_END”
-.  Input data section, marked with "RVMODEL_DATA_SECTION"
+.  Header + license (including a specification link, a brief test description and RVTEST_ISA macro)).
+.  Includes of header files (see Common Header Files section).
+.  Test Virtual Machine (TVM) specification,
+.  Test code between “RVTEST_CODE_BEGIN” and “RVTEST_CODE_END”.
+.  Input data section, marked with "RVTEST_DATA_BEGIN" and "RVTEST_DATA_END".
 .  Output data section between “RVMODEL_DATA_BEGIN” and “RVMODEL_DATA_END”.
 
 
- Note that there is no a requirement that the code or scratch data sections must be contiguous in memory, or that they be located before or after data or code sections (configured by embedded directives recognized by the linker)
+Note:: Note that there is no requirement that the code or scratch data sections must be contiguous 
+in memory, or that they be located before or after data or code sections 
+(configured by embedded directives recognized by the linker)
 
 ==== Common test format rules
 
@@ -423,15 +432,12 @@ Each test shall include only the following header files:
 
 The inclusion of the _compliance_test.h_ should always occur after the _compliance_model.h_ file.
 
-Adding new header files is forbidden. It may lead to macro redefinition and compilation issues.
-Macros maybe defined and used inside a test, as they will not be defined outside that specific test.
-Assertions will generate code that reports assertion failures (and optionally successes?) only if enabled by the framework.
-In addition, the framework may collect the assertion values and save them as a signature output file if enabled by the framework.
+Important points to be noted regarding header files : 
 
-----
-Note that there are other legacy header files (aw_test_macros.h, riscv_test.h, encoding.h, ..) already included and used in existing tests that. 
-These header files shall not be modified for testing purposes. New tests should must either move them into compliance_test.h or not use them.
-----
+. Adding new header files is forbidden in the test. It may lead to macro redefinition and compilation issues.
+. Macros maybe defined and used inside a test, as they will not be defined and used outside that specific test.
+// . Assertions will generate code that reports assertion failures (and optionally successes?) only if enabled by the framework.
+// . In addition, the framework may collect the assertion values and save them as a signature output file if enabled by the framework.
 
 ==== Framework Requirements
 

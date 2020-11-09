@@ -1,26 +1,22 @@
 
 # Data Propagation Report
 
-STAT1 : Number of unique coverpoint hits that have updated the signature
-
-STAT2 : Number of covepoints hits which are not unique but still update the signature
-
-STAT3 : Number of instructions that contribute to a unique coverpoint but do not update signature
-
-STAT4 : Number of Multiple signature updates for the same coverpoint
-
-STAT5 : Number of times the signature was overwritten
+- **STAT1** : Number of instructions that hit unique coverpoints and update the signature.
+- **STAT2** : Number of instructions that hit covepoints which are not unique but still update the signature
+- **STAT3** : Number of instructions that hit a unique coverpoint but do not update signature
+- **STAT4** : Number of multiple signature updates for the same coverpoint
+- **STAT5** : Number of times the signature was overwritten
 
 | Param                     | Value    |
 |---------------------------|----------|
 | XLEN                      | 64      |
-| TEST_REGION               | [('0x80000390', '0x80100b80')]      |
-| SIG_REGION                | [('0x80103204', '0x80103310', '33 dwords')]      |
+| TEST_REGION               | [('0x80000390', '0x801b35b0')]      |
+| SIG_REGION                | [('0x801b6208', '0x801b6308', '32 dwords')]      |
 | COV_LABELS                | jal      |
 | TEST_NAME                 | /scratch/git-repo/incoresemi/riscof/riscof_work/jal-01.S/jal-01.S    |
 | Total Number of coverpoints| 37     |
+| Total Coverpoints Hit     | 3      |
 | Total Signature Updates   | 32      |
-| Total Coverpoints Covered | 3      |
 | STAT1                     | 1      |
 | STAT2                     | 31      |
 | STAT3                     | 32     |
@@ -32,13 +28,13 @@ STAT5 : Number of times the signature was overwritten
 ```
 Op without unique coverpoint updates Signature
  -- Code Sequence:
-      [0x8000046c]:jal zero, 4
-      [0x80000470]:auipc gp, 0
-      [0x80000474]:addi gp, gp, 3940
-      [0x80000478]:andi gp, gp, 4092
-      [0x8000047c]:sub s8, s8, gp
-      [0x80000480]:sd s8, 8(ra)
- -- Signature Address: 0x80103218 Data: 0x000000000000001B
+      [0x800b2e90]:jal zero, 4
+      [0x800b2e94]:auipc a4, 1048568
+      [0x800b2e98]:addi a4, a4, 4068
+      [0x800b2e9c]:andi a4, a4, 4092
+      [0x800b2ea0]:sub gp, gp, a4
+      [0x800b2ea4]:sd gp, 8(s1)
+ -- Signature Address: 0x801b6210 Data: 0x000000000000001B
  -- Redundant Coverpoints hit by the op
       - opcode : jal
       - rd : x0
@@ -49,13 +45,13 @@ Op without unique coverpoint updates Signature
 
 Op without unique coverpoint updates Signature
  -- Code Sequence:
-      [0x80000494]:jal zero, 524304
-      [0x800804a4]:auipc gp, 1048448
-      [0x800804a8]:addi gp, gp, 4064
-      [0x800804ac]:andi gp, gp, 4092
-      [0x800804b0]:sub sp, sp, gp
-      [0x800804b4]:sd sp, 16(ra)
- -- Signature Address: 0x80103220 Data: 0x0000000000080011
+      [0x800b2eb8]:jal zero, 524304
+      [0x80132ec8]:auipc a4, 1048448
+      [0x80132ecc]:addi a4, a4, 4064
+      [0x80132ed0]:andi a4, a4, 4092
+      [0x80132ed4]:sub s2, s2, a4
+      [0x80132ed8]:sd s2, 16(s1)
+ -- Signature Address: 0x801b6218 Data: 0x0000000000080011
  -- Redundant Coverpoints hit by the op
       - opcode : jal
       - rd : x0
@@ -66,13 +62,13 @@ Op without unique coverpoint updates Signature
 
 Op without unique coverpoint updates Signature
  -- Code Sequence:
-      [0x801004d0]:jal zero, 4
-      [0x801004d4]:auipc gp, 1048448
-      [0x801004d8]:addi gp, gp, 4068
-      [0x801004dc]:andi gp, gp, 4092
-      [0x801004e0]:sub a0, a0, gp
-      [0x801004e4]:sd a0, 24(ra)
- -- Signature Address: 0x80103228 Data: 0x000000000000001B
+      [0x801b2ef4]:jal zero, 4
+      [0x801b2ef8]:auipc a4, 1048448
+      [0x801b2efc]:addi a4, a4, 4068
+      [0x801b2f00]:andi a4, a4, 4092
+      [0x801b2f04]:sub sp, sp, a4
+      [0x801b2f08]:sd sp, 24(s1)
+ -- Signature Address: 0x801b6220 Data: 0x000000000000001B
  -- Redundant Coverpoints hit by the op
       - opcode : jal
       - rd : x0
@@ -83,13 +79,13 @@ Op without unique coverpoint updates Signature
 
 Op without unique coverpoint updates Signature
  -- Code Sequence:
-      [0x8010050c]:jal zero, 4
-      [0x80100510]:auipc gp, 0
-      [0x80100514]:addi gp, gp, 4056
-      [0x80100518]:andi gp, gp, 4092
-      [0x8010051c]:sub a7, a7, gp
-      [0x80100520]:sd a7, 32(ra)
- -- Signature Address: 0x80103230 Data: 0x000000000000001B
+      [0x801b2f30]:jal zero, 4
+      [0x801b2f34]:auipc a4, 0
+      [0x801b2f38]:addi a4, a4, 4056
+      [0x801b2f3c]:andi a4, a4, 4092
+      [0x801b2f40]:sub s4, s4, a4
+      [0x801b2f44]:sd s4, 32(s1)
+ -- Signature Address: 0x801b6228 Data: 0x000000000000001B
  -- Redundant Coverpoints hit by the op
       - opcode : jal
       - rd : x0
@@ -100,13 +96,13 @@ Op without unique coverpoint updates Signature
 
 Op without unique coverpoint updates Signature
  -- Code Sequence:
-      [0x80100548]:jal zero, 4
-      [0x8010054c]:auipc gp, 0
-      [0x80100550]:addi gp, gp, 4056
-      [0x80100554]:andi gp, gp, 4092
-      [0x80100558]:sub s2, s2, gp
-      [0x8010055c]:sd s2, 40(ra)
- -- Signature Address: 0x80103238 Data: 0x000000000000001B
+      [0x801b2f6c]:jal zero, 4
+      [0x801b2f70]:auipc a4, 0
+      [0x801b2f74]:addi a4, a4, 4056
+      [0x801b2f78]:andi a4, a4, 4092
+      [0x801b2f7c]:sub a0, a0, a4
+      [0x801b2f80]:sd a0, 40(s1)
+ -- Signature Address: 0x801b6230 Data: 0x000000000000001B
  -- Redundant Coverpoints hit by the op
       - opcode : jal
       - rd : x0
@@ -117,13 +113,13 @@ Op without unique coverpoint updates Signature
 
 Op without unique coverpoint updates Signature
  -- Code Sequence:
-      [0x80100584]:jal zero, 4
-      [0x80100588]:auipc gp, 0
-      [0x8010058c]:addi gp, gp, 4056
-      [0x80100590]:andi gp, gp, 4092
-      [0x80100594]:sub a1, a1, gp
-      [0x80100598]:sd a1, 48(ra)
- -- Signature Address: 0x80103240 Data: 0x000000000000001B
+      [0x801b2fa8]:jal zero, 4
+      [0x801b2fac]:auipc a4, 0
+      [0x801b2fb0]:addi a4, a4, 4056
+      [0x801b2fb4]:andi a4, a4, 4092
+      [0x801b2fb8]:sub s11, s11, a4
+      [0x801b2fbc]:sd s11, 48(s1)
+ -- Signature Address: 0x801b6238 Data: 0x000000000000001B
  -- Redundant Coverpoints hit by the op
       - opcode : jal
       - rd : x0
@@ -134,13 +130,13 @@ Op without unique coverpoint updates Signature
 
 Op without unique coverpoint updates Signature
  -- Code Sequence:
-      [0x801005c0]:jal zero, 4
-      [0x801005c4]:auipc gp, 0
-      [0x801005c8]:addi gp, gp, 4056
-      [0x801005cc]:andi gp, gp, 4092
-      [0x801005d0]:sub fp, fp, gp
-      [0x801005d4]:sd fp, 56(ra)
- -- Signature Address: 0x80103248 Data: 0x000000000000001B
+      [0x801b2fe4]:jal zero, 4
+      [0x801b2fe8]:auipc a4, 0
+      [0x801b2fec]:addi a4, a4, 4056
+      [0x801b2ff0]:andi a4, a4, 4092
+      [0x801b2ff4]:sub a5, a5, a4
+      [0x801b2ff8]:sd a5, 56(s1)
+ -- Signature Address: 0x801b6240 Data: 0x000000000000001B
  -- Redundant Coverpoints hit by the op
       - opcode : jal
       - rd : x0
@@ -151,13 +147,13 @@ Op without unique coverpoint updates Signature
 
 Op without unique coverpoint updates Signature
  -- Code Sequence:
-      [0x801005fc]:jal zero, 4
-      [0x80100600]:auipc gp, 0
-      [0x80100604]:addi gp, gp, 4056
-      [0x80100608]:andi gp, gp, 4092
-      [0x8010060c]:sub s11, s11, gp
-      [0x80100610]:sd s11, 64(ra)
- -- Signature Address: 0x80103250 Data: 0x000000000000001B
+      [0x801b3020]:jal zero, 4
+      [0x801b3024]:auipc a4, 0
+      [0x801b3028]:addi a4, a4, 4056
+      [0x801b302c]:andi a4, a4, 4092
+      [0x801b3030]:sub s8, s8, a4
+      [0x801b3034]:sd s8, 64(s1)
+ -- Signature Address: 0x801b6248 Data: 0x000000000000001B
  -- Redundant Coverpoints hit by the op
       - opcode : jal
       - rd : x0
@@ -168,13 +164,13 @@ Op without unique coverpoint updates Signature
 
 Op without unique coverpoint updates Signature
  -- Code Sequence:
-      [0x80100638]:jal zero, 4
-      [0x8010063c]:auipc gp, 0
-      [0x80100640]:addi gp, gp, 4056
-      [0x80100644]:andi gp, gp, 4092
-      [0x80100648]:sub a5, a5, gp
-      [0x8010064c]:sd a5, 72(ra)
- -- Signature Address: 0x80103258 Data: 0x000000000000001B
+      [0x801b305c]:jal zero, 4
+      [0x801b3060]:auipc a4, 0
+      [0x801b3064]:addi a4, a4, 4056
+      [0x801b3068]:andi a4, a4, 4092
+      [0x801b306c]:sub a2, a2, a4
+      [0x801b3070]:sd a2, 72(s1)
+ -- Signature Address: 0x801b6250 Data: 0x000000000000001B
  -- Redundant Coverpoints hit by the op
       - opcode : jal
       - rd : x0
@@ -185,13 +181,13 @@ Op without unique coverpoint updates Signature
 
 Op without unique coverpoint updates Signature
  -- Code Sequence:
-      [0x80100674]:jal zero, 4
-      [0x80100678]:auipc gp, 0
-      [0x8010067c]:addi gp, gp, 4056
-      [0x80100680]:andi gp, gp, 4092
-      [0x80100684]:sub s9, s9, gp
-      [0x80100688]:sd s9, 80(ra)
- -- Signature Address: 0x80103260 Data: 0x000000000000001B
+      [0x801b3098]:jal zero, 4
+      [0x801b309c]:auipc a4, 0
+      [0x801b30a0]:addi a4, a4, 4056
+      [0x801b30a4]:andi a4, a4, 4092
+      [0x801b30a8]:sub s7, s7, a4
+      [0x801b30ac]:sd s7, 80(s1)
+ -- Signature Address: 0x801b6258 Data: 0x000000000000001B
  -- Redundant Coverpoints hit by the op
       - opcode : jal
       - rd : x0
@@ -202,13 +198,13 @@ Op without unique coverpoint updates Signature
 
 Op without unique coverpoint updates Signature
  -- Code Sequence:
-      [0x801006b0]:jal zero, 4
-      [0x801006b4]:auipc gp, 0
-      [0x801006b8]:addi gp, gp, 4056
-      [0x801006bc]:andi gp, gp, 4092
-      [0x801006c0]:sub a4, a4, gp
-      [0x801006c4]:sd a4, 88(ra)
- -- Signature Address: 0x80103268 Data: 0x000000000000001B
+      [0x801b30d4]:jal zero, 4
+      [0x801b30d8]:auipc a4, 0
+      [0x801b30dc]:addi a4, a4, 4056
+      [0x801b30e0]:andi a4, a4, 4092
+      [0x801b30e4]:sub a6, a6, a4
+      [0x801b30e8]:sd a6, 88(s1)
+ -- Signature Address: 0x801b6260 Data: 0x000000000000001B
  -- Redundant Coverpoints hit by the op
       - opcode : jal
       - rd : x0
@@ -219,13 +215,13 @@ Op without unique coverpoint updates Signature
 
 Op without unique coverpoint updates Signature
  -- Code Sequence:
-      [0x801006ec]:jal zero, 4
-      [0x801006f0]:auipc gp, 0
-      [0x801006f4]:addi gp, gp, 4056
-      [0x801006f8]:andi gp, gp, 4092
-      [0x801006fc]:sub s3, s3, gp
-      [0x80100700]:sd s3, 96(ra)
- -- Signature Address: 0x80103270 Data: 0x000000000000001B
+      [0x801b3110]:jal zero, 4
+      [0x801b3114]:auipc a4, 0
+      [0x801b3118]:addi a4, a4, 4056
+      [0x801b311c]:andi a4, a4, 4092
+      [0x801b3120]:sub tp, tp, a4
+      [0x801b3124]:sd tp, 96(s1)
+ -- Signature Address: 0x801b6268 Data: 0x000000000000001B
  -- Redundant Coverpoints hit by the op
       - opcode : jal
       - rd : x0
@@ -236,13 +232,13 @@ Op without unique coverpoint updates Signature
 
 Op without unique coverpoint updates Signature
  -- Code Sequence:
-      [0x80100728]:jal zero, 4
-      [0x8010072c]:auipc gp, 0
-      [0x80100730]:addi gp, gp, 4056
-      [0x80100734]:andi gp, gp, 4092
-      [0x80100738]:sub t3, t3, gp
-      [0x8010073c]:sd t3, 104(ra)
- -- Signature Address: 0x80103278 Data: 0x000000000000001B
+      [0x801b314c]:jal zero, 4
+      [0x801b3150]:auipc a4, 0
+      [0x801b3154]:addi a4, a4, 4056
+      [0x801b3158]:andi a4, a4, 4092
+      [0x801b315c]:sub t1, t1, a4
+      [0x801b3160]:sd t1, 104(s1)
+ -- Signature Address: 0x801b6270 Data: 0x000000000000001B
  -- Redundant Coverpoints hit by the op
       - opcode : jal
       - rd : x0
@@ -253,13 +249,13 @@ Op without unique coverpoint updates Signature
 
 Op without unique coverpoint updates Signature
  -- Code Sequence:
-      [0x80100764]:jal zero, 4
-      [0x80100768]:auipc gp, 0
-      [0x8010076c]:addi gp, gp, 4056
-      [0x80100770]:andi gp, gp, 4092
-      [0x80100774]:sub a6, a6, gp
-      [0x80100778]:sd a6, 112(ra)
- -- Signature Address: 0x80103280 Data: 0x000000000000001B
+      [0x801b3188]:jal zero, 4
+      [0x801b318c]:auipc a4, 0
+      [0x801b3190]:addi a4, a4, 4056
+      [0x801b3194]:andi a4, a4, 4092
+      [0x801b3198]:sub t2, t2, a4
+      [0x801b319c]:sd t2, 112(s1)
+ -- Signature Address: 0x801b6278 Data: 0x000000000000001B
  -- Redundant Coverpoints hit by the op
       - opcode : jal
       - rd : x0
@@ -270,13 +266,13 @@ Op without unique coverpoint updates Signature
 
 Op without unique coverpoint updates Signature
  -- Code Sequence:
-      [0x801007a0]:jal zero, 4
-      [0x801007a4]:auipc gp, 0
-      [0x801007a8]:addi gp, gp, 4056
-      [0x801007ac]:andi gp, gp, 4092
-      [0x801007b0]:sub s5, s5, gp
-      [0x801007b4]:sd s5, 120(ra)
- -- Signature Address: 0x80103288 Data: 0x000000000000001B
+      [0x801b31c4]:jal zero, 4
+      [0x801b31c8]:auipc a4, 0
+      [0x801b31cc]:addi a4, a4, 4056
+      [0x801b31d0]:andi a4, a4, 4092
+      [0x801b31d4]:sub s6, s6, a4
+      [0x801b31d8]:sd s6, 120(s1)
+ -- Signature Address: 0x801b6280 Data: 0x000000000000001B
  -- Redundant Coverpoints hit by the op
       - opcode : jal
       - rd : x0
@@ -287,13 +283,13 @@ Op without unique coverpoint updates Signature
 
 Op without unique coverpoint updates Signature
  -- Code Sequence:
-      [0x801007dc]:jal zero, 4
-      [0x801007e0]:auipc gp, 0
-      [0x801007e4]:addi gp, gp, 4056
-      [0x801007e8]:andi gp, gp, 4092
-      [0x801007ec]:sub t6, t6, gp
-      [0x801007f0]:sd t6, 128(ra)
- -- Signature Address: 0x80103290 Data: 0x000000000000001B
+      [0x801b3200]:jal zero, 4
+      [0x801b3204]:auipc a4, 0
+      [0x801b3208]:addi a4, a4, 4056
+      [0x801b320c]:andi a4, a4, 4092
+      [0x801b3210]:sub s5, s5, a4
+      [0x801b3214]:sd s5, 128(s1)
+ -- Signature Address: 0x801b6288 Data: 0x000000000000001B
  -- Redundant Coverpoints hit by the op
       - opcode : jal
       - rd : x0
@@ -304,13 +300,13 @@ Op without unique coverpoint updates Signature
 
 Op without unique coverpoint updates Signature
  -- Code Sequence:
-      [0x80100818]:jal zero, 4
-      [0x8010081c]:auipc gp, 0
-      [0x80100820]:addi gp, gp, 4056
-      [0x80100824]:andi gp, gp, 4092
-      [0x80100828]:sub s10, s10, gp
-      [0x8010082c]:sd s10, 136(ra)
- -- Signature Address: 0x80103298 Data: 0x000000000000001B
+      [0x801b323c]:jal zero, 4
+      [0x801b3240]:auipc a4, 0
+      [0x801b3244]:addi a4, a4, 4056
+      [0x801b3248]:andi a4, a4, 4092
+      [0x801b324c]:sub t3, t3, a4
+      [0x801b3250]:sd t3, 136(s1)
+ -- Signature Address: 0x801b6290 Data: 0x000000000000001B
  -- Redundant Coverpoints hit by the op
       - opcode : jal
       - rd : x0
@@ -321,13 +317,13 @@ Op without unique coverpoint updates Signature
 
 Op without unique coverpoint updates Signature
  -- Code Sequence:
-      [0x80100854]:jal zero, 4
-      [0x80100858]:auipc gp, 0
-      [0x8010085c]:addi gp, gp, 4056
-      [0x80100860]:andi gp, gp, 4092
-      [0x80100864]:sub t0, t0, gp
-      [0x80100868]:sd t0, 144(ra)
- -- Signature Address: 0x801032a0 Data: 0x000000000000001B
+      [0x801b3278]:jal zero, 4
+      [0x801b327c]:auipc a4, 0
+      [0x801b3280]:addi a4, a4, 4056
+      [0x801b3284]:andi a4, a4, 4092
+      [0x801b3288]:sub a7, a7, a4
+      [0x801b328c]:sd a7, 144(s1)
+ -- Signature Address: 0x801b6298 Data: 0x000000000000001B
  -- Redundant Coverpoints hit by the op
       - opcode : jal
       - rd : x0
@@ -338,13 +334,13 @@ Op without unique coverpoint updates Signature
 
 Op without unique coverpoint updates Signature
  -- Code Sequence:
-      [0x80100890]:jal zero, 4
-      [0x80100894]:auipc gp, 0
-      [0x80100898]:addi gp, gp, 4056
-      [0x8010089c]:andi gp, gp, 4092
-      [0x801008a0]:sub s7, s7, gp
-      [0x801008a4]:sd s7, 152(ra)
- -- Signature Address: 0x801032a8 Data: 0x000000000000001B
+      [0x801b32b4]:jal zero, 4
+      [0x801b32b8]:auipc a4, 0
+      [0x801b32bc]:addi a4, a4, 4056
+      [0x801b32c0]:andi a4, a4, 4092
+      [0x801b32c4]:sub t5, t5, a4
+      [0x801b32c8]:sd t5, 152(s1)
+ -- Signature Address: 0x801b62a0 Data: 0x000000000000001B
  -- Redundant Coverpoints hit by the op
       - opcode : jal
       - rd : x0
@@ -355,13 +351,13 @@ Op without unique coverpoint updates Signature
 
 Op without unique coverpoint updates Signature
  -- Code Sequence:
-      [0x801008cc]:jal zero, 4
-      [0x801008d0]:auipc gp, 0
-      [0x801008d4]:addi gp, gp, 4056
-      [0x801008d8]:andi gp, gp, 4092
-      [0x801008dc]:sub t1, t1, gp
-      [0x801008e0]:sd t1, 160(ra)
- -- Signature Address: 0x801032b0 Data: 0x000000000000001B
+      [0x801b32f0]:jal zero, 4
+      [0x801b32f4]:auipc a4, 0
+      [0x801b32f8]:addi a4, a4, 4056
+      [0x801b32fc]:andi a4, a4, 4092
+      [0x801b3300]:sub a3, a3, a4
+      [0x801b3304]:sd a3, 160(s1)
+ -- Signature Address: 0x801b62a8 Data: 0x000000000000001B
  -- Redundant Coverpoints hit by the op
       - opcode : jal
       - rd : x0
@@ -372,13 +368,13 @@ Op without unique coverpoint updates Signature
 
 Op without unique coverpoint updates Signature
  -- Code Sequence:
-      [0x80100908]:jal zero, 4
-      [0x8010090c]:auipc gp, 0
-      [0x80100910]:addi gp, gp, 4056
-      [0x80100914]:andi gp, gp, 4092
-      [0x80100918]:sub zero, zero, gp
-      [0x8010091c]:sd zero, 168(ra)
- -- Signature Address: 0x801032b8 Data: 0x0000000000000000
+      [0x801b332c]:jal zero, 4
+      [0x801b3330]:auipc a4, 0
+      [0x801b3334]:addi a4, a4, 4056
+      [0x801b3338]:andi a4, a4, 4092
+      [0x801b333c]:sub t0, t0, a4
+      [0x801b3340]:sd t0, 168(s1)
+ -- Signature Address: 0x801b62b0 Data: 0x000000000000001B
  -- Redundant Coverpoints hit by the op
       - opcode : jal
       - rd : x0
@@ -389,13 +385,13 @@ Op without unique coverpoint updates Signature
 
 Op without unique coverpoint updates Signature
  -- Code Sequence:
-      [0x80100944]:jal zero, 4
-      [0x80100948]:auipc gp, 0
-      [0x8010094c]:addi gp, gp, 4056
-      [0x80100950]:andi gp, gp, 4092
-      [0x80100954]:sub s1, s1, gp
-      [0x80100958]:sd s1, 176(ra)
- -- Signature Address: 0x801032c0 Data: 0x000000000000001B
+      [0x801b3368]:jal zero, 4
+      [0x801b336c]:auipc a4, 0
+      [0x801b3370]:addi a4, a4, 4056
+      [0x801b3374]:andi a4, a4, 4092
+      [0x801b3378]:sub zero, zero, a4
+      [0x801b337c]:sd zero, 176(s1)
+ -- Signature Address: 0x801b62b8 Data: 0x0000000000000000
  -- Redundant Coverpoints hit by the op
       - opcode : jal
       - rd : x0
@@ -406,13 +402,13 @@ Op without unique coverpoint updates Signature
 
 Op without unique coverpoint updates Signature
  -- Code Sequence:
-      [0x80100980]:jal zero, 4
-      [0x80100984]:auipc gp, 0
-      [0x80100988]:addi gp, gp, 4056
-      [0x8010098c]:andi gp, gp, 4092
-      [0x80100990]:sub a2, a2, gp
-      [0x80100994]:sd a2, 184(ra)
- -- Signature Address: 0x801032c8 Data: 0x000000000000001B
+      [0x801b33a4]:jal zero, 4
+      [0x801b33a8]:auipc a4, 0
+      [0x801b33ac]:addi a4, a4, 4056
+      [0x801b33b0]:andi a4, a4, 4092
+      [0x801b33b4]:sub s9, s9, a4
+      [0x801b33b8]:sd s9, 184(s1)
+ -- Signature Address: 0x801b62c0 Data: 0x000000000000001B
  -- Redundant Coverpoints hit by the op
       - opcode : jal
       - rd : x0
@@ -423,13 +419,13 @@ Op without unique coverpoint updates Signature
 
 Op without unique coverpoint updates Signature
  -- Code Sequence:
-      [0x801009bc]:jal zero, 4
-      [0x801009c0]:auipc gp, 0
-      [0x801009c4]:addi gp, gp, 4056
-      [0x801009c8]:andi gp, gp, 4092
-      [0x801009cc]:sub t5, t5, gp
-      [0x801009d0]:sd t5, 192(ra)
- -- Signature Address: 0x801032d0 Data: 0x000000000000001B
+      [0x801b33e0]:jal zero, 4
+      [0x801b33e4]:auipc a4, 0
+      [0x801b33e8]:addi a4, a4, 4056
+      [0x801b33ec]:andi a4, a4, 4092
+      [0x801b33f0]:sub s3, s3, a4
+      [0x801b33f4]:sd s3, 192(s1)
+ -- Signature Address: 0x801b62c8 Data: 0x000000000000001B
  -- Redundant Coverpoints hit by the op
       - opcode : jal
       - rd : x0
@@ -440,13 +436,13 @@ Op without unique coverpoint updates Signature
 
 Op without unique coverpoint updates Signature
  -- Code Sequence:
-      [0x801009f8]:jal zero, 4
-      [0x801009fc]:auipc gp, 0
-      [0x80100a00]:addi gp, gp, 4056
-      [0x80100a04]:andi gp, gp, 4092
-      [0x80100a08]:sub t2, t2, gp
-      [0x80100a0c]:sd t2, 200(ra)
- -- Signature Address: 0x801032d8 Data: 0x000000000000001B
+      [0x801b341c]:jal zero, 4
+      [0x801b3420]:auipc a4, 0
+      [0x801b3424]:addi a4, a4, 4056
+      [0x801b3428]:andi a4, a4, 4092
+      [0x801b342c]:sub s10, s10, a4
+      [0x801b3430]:sd s10, 200(s1)
+ -- Signature Address: 0x801b62d0 Data: 0x000000000000001B
  -- Redundant Coverpoints hit by the op
       - opcode : jal
       - rd : x0
@@ -457,13 +453,13 @@ Op without unique coverpoint updates Signature
 
 Op without unique coverpoint updates Signature
  -- Code Sequence:
-      [0x80100a34]:jal zero, 4
-      [0x80100a38]:auipc gp, 0
-      [0x80100a3c]:addi gp, gp, 4056
-      [0x80100a40]:andi gp, gp, 4092
-      [0x80100a44]:sub tp, tp, gp
-      [0x80100a48]:sd tp, 208(ra)
- -- Signature Address: 0x801032e0 Data: 0x000000000000001B
+      [0x801b3458]:jal zero, 4
+      [0x801b345c]:auipc a4, 0
+      [0x801b3460]:addi a4, a4, 4056
+      [0x801b3464]:andi a4, a4, 4092
+      [0x801b3468]:sub fp, fp, a4
+      [0x801b346c]:sd fp, 208(s1)
+ -- Signature Address: 0x801b62d8 Data: 0x000000000000001B
  -- Redundant Coverpoints hit by the op
       - opcode : jal
       - rd : x0
@@ -474,13 +470,13 @@ Op without unique coverpoint updates Signature
 
 Op without unique coverpoint updates Signature
  -- Code Sequence:
-      [0x80100a70]:jal zero, 4
-      [0x80100a74]:auipc gp, 0
-      [0x80100a78]:addi gp, gp, 4056
-      [0x80100a7c]:andi gp, gp, 4092
-      [0x80100a80]:sub s4, s4, gp
-      [0x80100a84]:sd s4, 216(ra)
- -- Signature Address: 0x801032e8 Data: 0x000000000000001B
+      [0x801b3494]:jal zero, 4
+      [0x801b3498]:auipc a4, 0
+      [0x801b349c]:addi a4, a4, 4056
+      [0x801b34a0]:andi a4, a4, 4092
+      [0x801b34a4]:sub ra, ra, a4
+      [0x801b34a8]:sd ra, 216(s1)
+ -- Signature Address: 0x801b62e0 Data: 0x000000000000001B
  -- Redundant Coverpoints hit by the op
       - opcode : jal
       - rd : x0
@@ -491,13 +487,13 @@ Op without unique coverpoint updates Signature
 
 Op without unique coverpoint updates Signature
  -- Code Sequence:
-      [0x80100aac]:jal zero, 4
-      [0x80100ab0]:auipc tp, 0
-      [0x80100ab4]:addi tp, tp, 4056
-      [0x80100ab8]:andi tp, tp, 4092
-      [0x80100abc]:sub a3, a3, tp
-      [0x80100ac0]:sd a3, 224(ra)
- -- Signature Address: 0x801032f0 Data: 0x000000000000001B
+      [0x801b34d0]:jal zero, 4
+      [0x801b34d4]:auipc sp, 0
+      [0x801b34d8]:addi sp, sp, 4056
+      [0x801b34dc]:andi sp, sp, 4092
+      [0x801b34e0]:sub a4, a4, sp
+      [0x801b34e4]:sd a4, 224(s1)
+ -- Signature Address: 0x801b62e8 Data: 0x000000000000001B
  -- Redundant Coverpoints hit by the op
       - opcode : jal
       - rd : x0
@@ -508,13 +504,13 @@ Op without unique coverpoint updates Signature
 
 Op without unique coverpoint updates Signature
  -- Code Sequence:
-      [0x80100af0]:jal zero, 4
-      [0x80100af4]:auipc tp, 0
-      [0x80100af8]:addi tp, tp, 4056
-      [0x80100afc]:andi tp, tp, 4092
-      [0x80100b00]:sub t4, t4, tp
-      [0x80100b04]:sd t4, 0(sp)
- -- Signature Address: 0x801032f8 Data: 0x000000000000001B
+      [0x801b3514]:jal zero, 4
+      [0x801b3518]:auipc sp, 0
+      [0x801b351c]:addi sp, sp, 4056
+      [0x801b3520]:andi sp, sp, 4092
+      [0x801b3524]:sub t4, t4, sp
+      [0x801b3528]:sd t4, 0(ra)
+ -- Signature Address: 0x801b62f0 Data: 0x000000000000001B
  -- Redundant Coverpoints hit by the op
       - opcode : jal
       - rd : x0
@@ -525,13 +521,13 @@ Op without unique coverpoint updates Signature
 
 Op without unique coverpoint updates Signature
  -- Code Sequence:
-      [0x80100b2c]:jal zero, 4
-      [0x80100b30]:auipc tp, 0
-      [0x80100b34]:addi tp, tp, 4056
-      [0x80100b38]:andi tp, tp, 4092
-      [0x80100b3c]:sub ra, ra, tp
-      [0x80100b40]:sd ra, 8(sp)
- -- Signature Address: 0x80103300 Data: 0x000000000000001B
+      [0x801b3550]:jal zero, 4
+      [0x801b3554]:auipc sp, 0
+      [0x801b3558]:addi sp, sp, 4056
+      [0x801b355c]:andi sp, sp, 4092
+      [0x801b3560]:sub t6, t6, sp
+      [0x801b3564]:sd t6, 8(ra)
+ -- Signature Address: 0x801b62f8 Data: 0x000000000000001B
  -- Redundant Coverpoints hit by the op
       - opcode : jal
       - rd : x0
@@ -542,13 +538,13 @@ Op without unique coverpoint updates Signature
 
 Op without unique coverpoint updates Signature
  -- Code Sequence:
-      [0x80100b68]:jal zero, 4
-      [0x80100b6c]:auipc tp, 0
-      [0x80100b70]:addi tp, tp, 4056
-      [0x80100b74]:andi tp, tp, 4092
-      [0x80100b78]:sub gp, gp, tp
-      [0x80100b7c]:sd gp, 16(sp)
- -- Signature Address: 0x80103308 Data: 0x000000000000001B
+      [0x801b358c]:jal zero, 4
+      [0x801b3590]:auipc sp, 0
+      [0x801b3594]:addi sp, sp, 4056
+      [0x801b3598]:andi sp, sp, 4092
+      [0x801b359c]:sub s1, s1, sp
+      [0x801b35a0]:sd s1, 16(ra)
+ -- Signature Address: 0x801b6300 Data: 0x000000000000001B
  -- Redundant Coverpoints hit by the op
       - opcode : jal
       - rd : x0
@@ -564,101 +560,101 @@ Op without unique coverpoint updates Signature
 ## Details of STAT3
 
 ```
-[0x800003ac]:jal s6, 2097144
-[0x800003a4]:xori s6, s6, 1
+[0x800aae50]:jal a1, 1398100
+[0x800003a4]:xori a1, a1, 1
 
-[0x800003e8]:jal s8, 128
-[0x80000468]:xori s8, s8, 3
+[0x800aae8c]:jal gp, 32768
+[0x800b2e8c]:xori gp, gp, 3
 
-[0x80080490]:jal sp, 1572864
-[0x80000490]:xori sp, sp, 1
+[0x80132eb4]:jal s2, 1572864
+[0x800b2eb4]:xori s2, s2, 1
 
-[0x800804cc]:jal a0, 524288
-[0x801004cc]:xori a0, a0, 3
+[0x80132ef0]:jal sp, 524288
+[0x801b2ef0]:xori sp, sp, 3
 
-[0x801004fc]:jal a7, 12
-[0x80100508]:xori a7, a7, 3
+[0x801b2f20]:jal s4, 12
+[0x801b2f2c]:xori s4, s4, 3
 
-[0x80100538]:jal s2, 12
-[0x80100544]:xori s2, s2, 3
+[0x801b2f5c]:jal a0, 12
+[0x801b2f68]:xori a0, a0, 3
 
-[0x80100574]:jal a1, 12
-[0x80100580]:xori a1, a1, 3
+[0x801b2f98]:jal s11, 12
+[0x801b2fa4]:xori s11, s11, 3
 
-[0x801005b0]:jal fp, 12
-[0x801005bc]:xori fp, fp, 3
+[0x801b2fd4]:jal a5, 12
+[0x801b2fe0]:xori a5, a5, 3
 
-[0x801005ec]:jal s11, 12
-[0x801005f8]:xori s11, s11, 3
+[0x801b3010]:jal s8, 12
+[0x801b301c]:xori s8, s8, 3
 
-[0x80100628]:jal a5, 12
-[0x80100634]:xori a5, a5, 3
+[0x801b304c]:jal a2, 12
+[0x801b3058]:xori a2, a2, 3
 
-[0x80100664]:jal s9, 12
-[0x80100670]:xori s9, s9, 3
+[0x801b3088]:jal s7, 12
+[0x801b3094]:xori s7, s7, 3
 
-[0x801006a0]:jal a4, 12
-[0x801006ac]:xori a4, a4, 3
+[0x801b30c4]:jal a6, 12
+[0x801b30d0]:xori a6, a6, 3
 
-[0x801006dc]:jal s3, 12
-[0x801006e8]:xori s3, s3, 3
+[0x801b3100]:jal tp, 12
+[0x801b310c]:xori tp, tp, 3
 
-[0x80100718]:jal t3, 12
-[0x80100724]:xori t3, t3, 3
+[0x801b313c]:jal t1, 12
+[0x801b3148]:xori t1, t1, 3
 
-[0x80100754]:jal a6, 12
-[0x80100760]:xori a6, a6, 3
+[0x801b3178]:jal t2, 12
+[0x801b3184]:xori t2, t2, 3
 
-[0x80100790]:jal s5, 12
-[0x8010079c]:xori s5, s5, 3
+[0x801b31b4]:jal s6, 12
+[0x801b31c0]:xori s6, s6, 3
 
-[0x801007cc]:jal t6, 12
-[0x801007d8]:xori t6, t6, 3
+[0x801b31f0]:jal s5, 12
+[0x801b31fc]:xori s5, s5, 3
 
-[0x80100808]:jal s10, 12
-[0x80100814]:xori s10, s10, 3
+[0x801b322c]:jal t3, 12
+[0x801b3238]:xori t3, t3, 3
 
-[0x80100844]:jal t0, 12
-[0x80100850]:xori t0, t0, 3
+[0x801b3268]:jal a7, 12
+[0x801b3274]:xori a7, a7, 3
 
-[0x80100880]:jal s7, 12
-[0x8010088c]:xori s7, s7, 3
+[0x801b32a4]:jal t5, 12
+[0x801b32b0]:xori t5, t5, 3
 
-[0x801008bc]:jal t1, 12
-[0x801008c8]:xori t1, t1, 3
+[0x801b32e0]:jal a3, 12
+[0x801b32ec]:xori a3, a3, 3
 
-[0x801008f8]:jal zero, 12
-[0x80100904]:xori zero, zero, 3
+[0x801b331c]:jal t0, 12
+[0x801b3328]:xori t0, t0, 3
 
-[0x80100934]:jal s1, 12
-[0x80100940]:xori s1, s1, 3
+[0x801b3358]:jal zero, 12
+[0x801b3364]:xori zero, zero, 3
 
-[0x80100970]:jal a2, 12
-[0x8010097c]:xori a2, a2, 3
+[0x801b3394]:jal s9, 12
+[0x801b33a0]:xori s9, s9, 3
 
-[0x801009ac]:jal t5, 12
-[0x801009b8]:xori t5, t5, 3
+[0x801b33d0]:jal s3, 12
+[0x801b33dc]:xori s3, s3, 3
 
-[0x801009e8]:jal t2, 12
-[0x801009f4]:xori t2, t2, 3
+[0x801b340c]:jal s10, 12
+[0x801b3418]:xori s10, s10, 3
 
-[0x80100a24]:jal tp, 12
-[0x80100a30]:xori tp, tp, 3
+[0x801b3448]:jal fp, 12
+[0x801b3454]:xori fp, fp, 3
 
-[0x80100a60]:jal s4, 12
-[0x80100a6c]:xori s4, s4, 3
+[0x801b3484]:jal ra, 12
+[0x801b3490]:xori ra, ra, 3
 
-[0x80100a9c]:jal a3, 12
-[0x80100aa8]:xori a3, a3, 3
+[0x801b34c0]:jal a4, 12
+[0x801b34cc]:xori a4, a4, 3
 
-[0x80100ae0]:jal t4, 12
-[0x80100aec]:xori t4, t4, 3
+[0x801b3504]:jal t4, 12
+[0x801b3510]:xori t4, t4, 3
 
-[0x80100b1c]:jal ra, 12
-[0x80100b28]:xori ra, ra, 3
+[0x801b3540]:jal t6, 12
+[0x801b354c]:xori t6, t6, 3
 
-[0x80100b58]:jal gp, 12
-[0x80100b64]:xori gp, gp, 3
+[0x801b357c]:jal s1, 12
+[0x801b3588]:xori s1, s1, 3
 
 
 
@@ -694,6 +690,6 @@ Op without unique coverpoint updates Signature
   test. These need not necessarily be in increasing or decreasing order of the
   address in the signature region.
 
-|s.no|            signature             |          coverpoints           |                                                                                             code                                                                                              |
-|---:|----------------------------------|--------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|   1|[0x80103210]<br>0x0000000000000019|- rd : x0<br> - imm_val > 0<br> |[0x800003a8]:jal zero, 24<br> [0x800003c0]:auipc gp, 0<br> [0x800003c4]:addi gp, gp, 4056<br> [0x800003c8]:andi gp, gp, 4092<br> [0x800003cc]:sub s6, s6, gp<br> [0x800003d0]:sd s6, 0(ra)<br> |
+|s.no|            signature             |          coverpoints           |                                                                                                  code                                                                                                   |
+|---:|----------------------------------|--------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|   1|[0x801b6208]<br>0x00000000000AAABD|- rd : x0<br> - imm_val > 0<br> |[0x800003a8]:jal zero, 699068<br> [0x800aae64]:auipc a4, 1048405<br> [0x800aae68]:addi a4, a4, 1332<br> [0x800aae6c]:andi a4, a4, 4092<br> [0x800aae70]:sub a1, a1, a4<br> [0x800aae74]:sd a1, 0(s1)<br> |

@@ -1,3 +1,12 @@
+// -----------
+// Copyright (c) 2020. RISC-V International. All rights reserved.
+// SPDX-License-Identifier: BSD-3-Clause
+// -----------
+//
+// This assembly file tests the c.ebreak instruction of the RISC-V C extension.
+// 
+
+
 #define rvtest_mtrap_routine
 
 #include "compliance_model.h"

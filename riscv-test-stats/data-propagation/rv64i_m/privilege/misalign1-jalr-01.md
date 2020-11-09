@@ -1,26 +1,22 @@
 
 # Data Propagation Report
 
-STAT1 : Number of unique coverpoint hits that have updated the signature
-
-STAT2 : Number of covepoints hits which are not unique but still update the signature
-
-STAT3 : Number of instructions that contribute to a unique coverpoint but do not update signature
-
-STAT4 : Number of Multiple signature updates for the same coverpoint
-
-STAT5 : Number of times the signature was overwritten
+- **STAT1** : Number of instructions that hit unique coverpoints and update the signature.
+- **STAT2** : Number of instructions that hit covepoints which are not unique but still update the signature
+- **STAT3** : Number of instructions that hit a unique coverpoint but do not update signature
+- **STAT4** : Number of multiple signature updates for the same coverpoint
+- **STAT5** : Number of times the signature was overwritten
 
 | Param                     | Value    |
 |---------------------------|----------|
 | XLEN                      | 64      |
 | TEST_REGION               | [('0x8000039c', '0x800003f0')]      |
-| SIG_REGION                | [('0x80003204', '0x80003418', '66 dwords')]      |
+| SIG_REGION                | [('0x80003208', '0x80003410', '65 dwords')]      |
 | COV_LABELS                | misalign1-jalr      |
 | TEST_NAME                 | /scratch/git-repo/incoresemi/riscof/riscof_work/misalign1-jalr-01.S/misalign1-jalr-01.S    |
 | Total Number of coverpoints| 2     |
+| Total Coverpoints Hit     | 2      |
 | Total Signature Updates   | 1      |
-| Total Coverpoints Covered | 2      |
 | STAT1                     | 1      |
 | STAT2                     | 0      |
 | STAT3                     | 0     |
@@ -71,6 +67,6 @@ STAT5 : Number of times the signature was overwritten
   test. These need not necessarily be in increasing or decreasing order of the
   address in the signature region.
 
-|s.no|            signature             |              coverpoints               |                                                                                                                              code                                                                                                                              |
-|---:|----------------------------------|----------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|   1|[0x80003210]<br>0x0000000000000017|- opcode : jalr<br> - ea_align == 1<br> |[0x800003b4]:jalr a1, a0, 129<br> [0x800003c8]:xori a1, a1, 3<br> [0x800003cc]:jal zero, 4<br> [0x800003d0]:auipc sp, 0<br> [0x800003d4]:addi sp, sp, 4052<br> [0x800003d8]:andi sp, sp, 4092<br> [0x800003dc]:sub a1, a1, sp<br> [0x800003e0]:sd a1, 0(ra)<br> |
+|s.no|            signature             |              coverpoints               |                                                                                                                              code                                                                                                                               |
+|---:|----------------------------------|----------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|   1|[0x80003208]<br>0x0000000000000017|- opcode : jalr<br> - ea_align == 1<br> |[0x800003b4]:jalr a1, a0, 4088<br> [0x800003c8]:xori a1, a1, 3<br> [0x800003cc]:jal zero, 4<br> [0x800003d0]:auipc sp, 0<br> [0x800003d4]:addi sp, sp, 4052<br> [0x800003d8]:andi sp, sp, 4092<br> [0x800003dc]:sub a1, a1, sp<br> [0x800003e0]:sd a1, 0(ra)<br> |

@@ -1,26 +1,22 @@
 
 # Data Propagation Report
 
-STAT1 : Number of unique coverpoint hits that have updated the signature
-
-STAT2 : Number of covepoints hits which are not unique but still update the signature
-
-STAT3 : Number of instructions that contribute to a unique coverpoint but do not update signature
-
-STAT4 : Number of Multiple signature updates for the same coverpoint
-
-STAT5 : Number of times the signature was overwritten
+- **STAT1** : Number of instructions that hit unique coverpoints and update the signature.
+- **STAT2** : Number of instructions that hit covepoints which are not unique but still update the signature
+- **STAT3** : Number of instructions that hit a unique coverpoint but do not update signature
+- **STAT4** : Number of multiple signature updates for the same coverpoint
+- **STAT5** : Number of times the signature was overwritten
 
 | Param                     | Value    |
 |---------------------------|----------|
 | XLEN                      | 64      |
 | TEST_REGION               | [('0x8000039c', '0x800003c0')]      |
-| SIG_REGION                | [('0x80003204', '0x80003418', '66 dwords')]      |
+| SIG_REGION                | [('0x80003208', '0x80003410', '65 dwords')]      |
 | COV_LABELS                | misalign-lhu      |
 | TEST_NAME                 | /scratch/git-repo/incoresemi/riscof/riscof_work/misalign-lhu-01.S/misalign-lhu-01.S    |
 | Total Number of coverpoints| 2     |
+| Total Coverpoints Hit     | 2      |
 | Total Signature Updates   | 5      |
-| Total Coverpoints Covered | 2      |
 | STAT1                     | 1      |
 | STAT2                     | 0      |
 | STAT3                     | 0     |
@@ -46,32 +42,32 @@ STAT5 : Number of times the signature was overwritten
 ```
 Last Coverpoint : ['opcode : lhu', 'ea_align == 1']
 Last Code Sequence : 
-	-[0x800003ac]:lhu a1, 4086(a0)
-Current Store : [0x80000668] : sd t2, 8(t1) -- Store: [0x80003220]:0x0000000000000004
+	-[0x800003ac]:lhu a1, 3583(a0)
+Current Store : [0x80000668] : sd t2, 8(t1) -- Store: [0x80003218]:0x0000000000000004
 
 
 
 
 Last Coverpoint : ['opcode : lhu', 'ea_align == 1']
 Last Code Sequence : 
-	-[0x800003ac]:lhu a1, 4086(a0)
-Current Store : [0x80000680] : sd t4, 16(t1) -- Store: [0x80003228]:0x00000000000003A0
+	-[0x800003ac]:lhu a1, 3583(a0)
+Current Store : [0x80000680] : sd t4, 16(t1) -- Store: [0x80003220]:0x00000000000003A0
 
 
 
 
 Last Coverpoint : ['opcode : lhu', 'ea_align == 1']
 Last Code Sequence : 
-	-[0x800003ac]:lhu a1, 4086(a0)
-Current Store : [0x8000070c] : sd t2, 24(t1) -- Store: [0x80003230]:0x0000000000003085
+	-[0x800003ac]:lhu a1, 3583(a0)
+Current Store : [0x8000070c] : sd t2, 24(t1) -- Store: [0x80003228]:0x0000000000003085
 
 
 
 
 Last Coverpoint : ['opcode : lhu', 'ea_align == 1']
 Last Code Sequence : 
-	-[0x800003ac]:lhu a1, 4086(a0)
-Current Store : [0x800003b8] : sd a1, 0(ra) -- Store: [0x80003210]:0xAB7FBB6FAB7FBB6F
+	-[0x800003ac]:lhu a1, 3583(a0)
+Current Store : [0x800003b8] : sd a1, 0(ra) -- Store: [0x80003208]:0xAB7FBB6FAB7FBB6F
 
 
 
@@ -105,4 +101,4 @@ Current Store : [0x800003b8] : sd a1, 0(ra) -- Store: [0x80003210]:0xAB7FBB6FAB7
 
 |s.no|            signature             |              coverpoints              |               code               |
 |---:|----------------------------------|---------------------------------------|----------------------------------|
-|   1|[0x80003218]<br>0x000000000000010F|- opcode : lhu<br> - ea_align == 1<br> |[0x800003ac]:lhu a1, 4086(a0)<br> |
+|   1|[0x80003210]<br>0x000000000000010F|- opcode : lhu<br> - ea_align == 1<br> |[0x800003ac]:lhu a1, 3583(a0)<br> |

@@ -7,7 +7,7 @@
 #
 #
 export ROOTDIR    = $(shell pwd)
-export WORK       = $(ROOTDIR)/work
+export WORK      ?= $(ROOTDIR)/work
 
 include Makefile.include
 
@@ -26,6 +26,17 @@ else
     DEFAULT_TARGET=variant
 endif
 export SUITEDIR   = $(ROOTDIR)/riscv-test-suite/rv$(XLEN)i_m/$(RISCV_DEVICE)
+
+$(info )
+$(info ============================ VARIABLE INFO ==================================)
+$(info ROOTDIR: ${ROOTDIR} [origin: $(origin ROOTDIR)])
+$(info WORK: ${WORK} [origin: $(origin WORK)])
+$(info TARGETDIR: ${TARGETDIR} [origin: $(origin TARGETDIR)])
+$(info RISCV_TARGET: ${RISCV_TARGET} [origin: $(origin RISCV_TARGET)])
+$(info XLEN: ${XLEN} [origin: $(origin XLEN)])
+$(info RISCV_DEVICE: ${RISCV_DEVICE} [origin: $(origin RISCV_DEVICE)])
+$(info =============================================================================)
+$(info )
 
 RVTEST_DEFINES = 
 ifeq ($(RISCV_ASSERT),1)
@@ -47,7 +58,7 @@ default: $(DEFAULT_TARGET)
 variant: simulate verify
 
 all_variant:
-	for isa in $(RISCV_ISA_ALL); do \
+	@for isa in $(RISCV_ISA_ALL); do \
 		$(MAKE) $(JOBS) RISCV_TARGET=$(RISCV_TARGET) RISCV_TARGET_FLAGS="$(RISCV_TARGET_FLAGS)" RISCV_DEVICE=$$isa variant; \
 			rc=$$?; \
 			if [ $$rc -ne 0 ]; then \

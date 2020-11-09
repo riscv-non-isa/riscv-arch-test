@@ -1,26 +1,22 @@
 
 # Data Propagation Report
 
-STAT1 : Number of unique coverpoint hits that have updated the signature
-
-STAT2 : Number of covepoints hits which are not unique but still update the signature
-
-STAT3 : Number of instructions that contribute to a unique coverpoint but do not update signature
-
-STAT4 : Number of Multiple signature updates for the same coverpoint
-
-STAT5 : Number of times the signature was overwritten
+- **STAT1** : Number of instructions that hit unique coverpoints and update the signature.
+- **STAT2** : Number of instructions that hit covepoints which are not unique but still update the signature
+- **STAT3** : Number of instructions that hit a unique coverpoint but do not update signature
+- **STAT4** : Number of multiple signature updates for the same coverpoint
+- **STAT5** : Number of times the signature was overwritten
 
 | Param                     | Value    |
 |---------------------------|----------|
 | XLEN                      | 64      |
 | TEST_REGION               | [('0x80000390', '0x800003e0')]      |
-| SIG_REGION                | [('0x80003204', '0x80003218', '2 dwords')]      |
+| SIG_REGION                | [('0x80003208', '0x80003218', '2 dwords')]      |
 | COV_LABELS                | fence      |
 | TEST_NAME                 | /scratch/git-repo/incoresemi/riscof/riscof_work/fence-01.S/fence-01.S    |
 | Total Number of coverpoints| 1     |
+| Total Coverpoints Hit     | 1      |
 | Total Signature Updates   | 2      |
-| Total Coverpoints Covered | 1      |
 | STAT1                     | 1      |
 | STAT2                     | 0      |
 | STAT3                     | 0     |

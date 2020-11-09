@@ -1,6 +1,3 @@
-00000000
-00000000
-00000000
 fffffffe
 ffffffff
 fffffffe
@@ -13,12 +10,12 @@ ffffffbe
 ffffffff
 ffffffbe
 ffffffff
-00000000
-00000000
 ffffffbe
 ffffffff
-ffffffca
+ffffffbe
 ffffffff
+00000000
+00000000
 ffffffca
 ffffffff
 fffffffe
@@ -65,5 +62,5 @@ fffffffe
 ffffffff
 fffffffe
 ffffffff
-ffffffbe
+ffffffca
 ffffffff
