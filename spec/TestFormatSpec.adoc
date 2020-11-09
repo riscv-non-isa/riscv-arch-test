@@ -335,6 +335,10 @@ the test.
 
 ==== *Optional, Model-defined Macros*
 
+  `RVMODEL_TARGET_INIT`::
+    - contains initialization code for the test-target; may include code to copy the data sections
+    from boot device to ram.  Or any other code that needs to be run prior to running the tests. 
+
   `RVMODEL_BOOT`::                       
     - contains boot code for the test-target; may include emulation code or trap stub. If the
       test-target enforces alignment or value restrictions on the mtvec csr, it is required that
@@ -349,6 +353,12 @@ the test.
     - checks IO for debug output
     - <needs description of how this is used > 
     
+  `RVMODEL_CHECK_TEST(ScrReg, Reg, Value)`:: 
+    - Check that GPR should have value +
+    - Outputs a debug message based on Reg!=Value or Reg=Value +
+    - Used to help debug what tests have passed/failed
+    - ScrReg is a scratch register used by the output routine; its final value cannot be guaranteed
+
   `RVMODEL_IO_ASSERT_GPR_EQ(ScrReg, Reg, Value)`:: 
     - debug assertion that GPR should have value +
     - outputs a debug message if Reg!=Value +
