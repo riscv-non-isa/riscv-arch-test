@@ -15,7 +15,7 @@ COMPILE_CMD = $$(RISCV_GCC) $(1) $$(RISCV_GCC_OPTS) \
 							-T$(TARGETDIR)/$(RISCV_TARGET)/link.ld \
 							$$(<) -o $$@ 
 OBJ_CMD = $$(RISCV_OBJDUMP) $$@ -D > $$@.objdump; \
-					$$(RISCV_OBJDUMP) $$@ --source-comment="// " > $$@.debug
+					$$(RISCV_OBJDUMP) $$@ --source > $$@.debug
 
 
 COMPILE_TARGET=\
