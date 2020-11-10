@@ -9,7 +9,7 @@ RISCV_GCC      ?= $(RISCV_PREFIX)gcc
 RISCV_OBJDUMP  ?= $(RISCV_PREFIX)objdump
 RISCV_OBJCOPY  ?= $(RISCV_PREFIX)objcopy
 RISCV_READELF  ?= $(RISCV_PREFIX)readelf
-RISCV_GCC_OPTS ?= -static -mcmodel=medany -fvisibility=hidden -nostdlib -nostartfiles -DXLEN=$(XLEN) $(RVTEST_DEFINES)
+RISCV_GCC_OPTS ?= -static -mcmodel=medany -g -fvisibility=hidden -nostdlib -nostartfiles -DXLEN=$(XLEN) $(RVTEST_DEFINES)
 
 COMPILE_CMD=\
 	$$(RISCV_GCC) $(1) $$(RISCV_GCC_OPTS) \
@@ -20,7 +20,7 @@ COMPILE_CMD=\
 	$$(RISCV_OBJCOPY) -O binary $$@ $$@.bin
 
 OBJ_CMD = $$(RISCV_OBJDUMP) $$@ -D > $$@.objdump; \
-		  $$(RISCV_OBJDUMP) $$@ --source-comment="// " > $$@.debug \
+		  $$(RISCV_OBJDUMP) $$@ --source > $$@.debug \
 		  $$(RISCV_READELF) -a $$@ > $$@.readelf
 
 
