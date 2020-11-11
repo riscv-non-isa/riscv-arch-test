@@ -82,9 +82,12 @@
 .macro RVTEST_CODE_BEGIN
   .align UNROLLSZ
   .section .text.init;
+  .globl rvtest_entry_point
+  rvtest_entry_point:
+  RVMODEL_BOOT
   .option norelax;
-  .globl rvtest_start;                                                  \
-  rvtest_start:
+  .globl rvtest_init;                                                  \
+  rvtest_init:
 #ifdef rvtest_mtrap_routine
   LA(x1, rvtest_trap_prolog );
   jalr ra, x1
