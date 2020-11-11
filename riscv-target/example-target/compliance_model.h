@@ -17,9 +17,6 @@
 #define RVMODEL_HALT                                              \
   self_loop:  j self_loop;
 
-
-#define RVMODEL_BOOT
-
 //RV_COMPLIANCE_DATA_BEGIN
 #define RVMODEL_DATA_BEGIN                                              \
   RVMODEL_DATA_SECTION                                                        \
@@ -33,14 +30,14 @@
 // Add code here to initialize any IO for output support
 #define RVTEST_IO_INIT
 
-//RVTEST_TARGET_INIT
+//RVMODEL_BOOT
 // Any specific target init code should be put here
 
 // For code that has a split rom/ram area
 // Code below will copy from the rom area to ram the 
 // data.strings and .data sections to ram.
 // Use linksplit.ld 
-#define RVTEST_TARGET_INIT \
+#define RVMODEL_BOOT \
 la t0, _data_strings; \
   la t1, _fstext; \
   la t2, _estext; \

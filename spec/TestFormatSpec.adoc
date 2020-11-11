@@ -337,15 +337,12 @@ the test.
 
 ==== *Optional, Model-defined Macros*
 
-  `RVMODEL_TARGET_INIT`::
-    - contains initialization code for the test-target; may include code to copy the data sections
-    from boot device to ram.  Or any other code that needs to be run prior to running the tests. 
-
   `RVMODEL_BOOT`::                       
     - contains boot code for the test-target; may include emulation code or trap stub. If the
       test-target enforces alignment or value restrictions on the mtvec csr, it is required that
       this macro sets the value of mtvec to a region which is readable and writable by the machine
-      mode.
+      mode. May include code to copy the data sections from boot device to ram.  Or any other code 
+      that needs to be run prior to running the tests. 
     
 ////
 `RVMODEL_IO_INIT`::                    
