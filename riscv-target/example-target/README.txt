@@ -46,4 +46,9 @@ la t0, _data_strings; \
 // Use linkmono.ld 
 #define RVTEST_TARGET_INIT \
 
-the file compliacne_model.h will have to be modified to fit our environment.  See comments in the file for more details.
+The file compliance_model.h will have to be modified to fit our environment.  See comments in the file for more details.
+
+Each subdirectory under device (rv32i_m and rv64i_m) have Makefile.include files that are then symlinked
+to the subdir under each of these device directories (I, C, M, privilige, Zifencei).  If you have specific makefile 
+changes for these subtargets then you will need to replace the symliked Makefile.include.
+
