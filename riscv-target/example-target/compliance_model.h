@@ -38,6 +38,7 @@
 // data.strings and .data sections to ram.
 // Use linksplit.ld 
 #define RVMODEL_BOOT \
+.section .text.init; \
 la t0, _data_strings; \
   la t1, _fstext; \
   la t2, _estext; \
@@ -55,14 +56,8 @@ la t0, _data_strings; \
   sw t3, 0(t1); \
   addi t0, t0, 4; \
   addi t1, t1, 4; \
-  bltu t1, t2, 1b;
-
-//RVTEST_TARGET_INIT
-// Any specific target init code should be put here
-// Code for one monolithic ram area
-// Use linkmono.ld 
-#define RVTEST_TARGET_INIT \
-
+  bltu t1, t2, 1b; \
+  RVTEST_IO_INIT
 
 //RVTEST_IO_WRITE_STR
 // _SP = (volatile register)
@@ -75,9 +70,6 @@ la t0, _data_strings; \
     .section .text.init;                                                \
     la a0, 20001b;                                                      \
     jal FN_WriteStr;
-
-//RVTEST_IO_CHECK
-#define RVMODEL_IO_CHECK()
 
 #define RSIZE 4
 // _SP = (volatile register)
@@ -104,13 +96,25 @@ la t0, _data_strings; \
     lw      s0,   (7*RSIZE)(_SP);                                       \
     lw      a0,   (8*RSIZE)(_SP);
 
-//RVMODEL_CHECK_TEST
+//RVMODEL_IO_ASSERT_GPR_EQ
 // _SP = (volatile register)
 // _R = GPR
 // _I = Immediate
 // This code will check a test to see if the results 
 // match the expected value.
-#define RVMODEL_CHECK_TEST(_SP, _R, _I)                                 \
+// It can also be used to tell if a set of tests is still running or has crashed
+#if 0
+// Spinning | =  "I am alive" 
+#define RVMODEL_IO_ASSERT_GPR_EQ(_SP, _R, _I)                                 \
+    LOCAL_IO_PUSH(_SP)                                                  \
+    RVMODEL_IO_WRITE_STR2("|");                                       \
+    RVMODEL_IO_WRITE_STR2("\b=\b");                                       \    
+    LOCAL_IO_POP(_SP)
+
+#else
+
+// Test to see if a specific test has passed or not.  Can assert or not.
+#define RVMODEL_IO_ASSERT_GPR_EQ(_SP, _R, _I)                                 \
     LOCAL_IO_PUSH(_SP)                                                  \
     mv          s0, _R;                                                 \
     li          t5, _I;                                                 \
@@ -130,6 +134,8 @@ la t0, _data_strings; \
 20003:                                                                  \
     RVMODEL_IO_WRITE_STR("\n");                                        \
     LOCAL_IO_POP(_SP)
+    
+#endif
 
 .section .text
 // FN_WriteStr: Add code here to write a string to IO
@@ -139,8 +145,6 @@ FN_WriteStr: \
 FN_WriteNmbr: \
     ret;
 
-//RVTEST_IO_ASSERT_GPR_EQ
-#define RVMODEL_IO_ASSERT_GPR_EQ(_SP, _R, _I)
 //RVTEST_IO_ASSERT_SFPR_EQ
 #define RVMODEL_IO_ASSERT_SFPR_EQ(_F, _R, _I)
 //RVTEST_IO_ASSERT_DFPR_EQ
