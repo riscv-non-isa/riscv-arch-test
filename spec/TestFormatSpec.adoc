@@ -352,17 +352,12 @@ the test.
   `RVMODEL_IO_CHECK`::                   
     - checks IO for debug output
     - <needs description of how this is used > 
-    
-  `RVMODEL_CHECK_TEST(ScrReg, Reg, Value)`:: 
-    - Check that GPR should have value +
-    - Outputs a debug message based on Reg!=Value or Reg=Value +
-    - Used to help debug what tests have passed/failed
-    - ScrReg is a scratch register used by the output routine; its final value cannot be guaranteed
 
   `RVMODEL_IO_ASSERT_GPR_EQ(ScrReg, Reg, Value)`:: 
     - debug assertion that GPR should have value +
     - outputs a debug message if Reg!=Value +
     - ScrReg is a scratch register used by the output routine; its final value cannot be guaranteed
+    - Can be used to help debug what tests have passed/failed
     
   `RVMODEL_IO_WRITE_STR(ScrReg, String)`::
     - output debug string, using a scratch register +

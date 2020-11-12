@@ -723,10 +723,7 @@ RVTEST_SIGUPD(swreg,destreg,offset)
 #define TEST_CASE(testreg, destreg, correctval, swreg, offset, code... ) \
     code; \
     RVTEST_SIGUPD(swreg,destreg,offset); \
-    RVMODEL_CHECK_TEST(testreg, destreg, correctval); \
     RVMODEL_IO_ASSERT_GPR_EQ(testreg, destreg, correctval)
-
-
 
 #define TEST_AUIPC(inst, destreg, correctval, imm, swreg, offset, testreg) \
     TEST_CASE(testreg, destreg, correctval, swreg, offset, \
