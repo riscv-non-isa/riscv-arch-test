@@ -12,6 +12,9 @@
 RVTEST_ISA("RV64I")
 
 # Test code region
+.globl rvtest_entry_point
+rvtest_entry_point:
+RVMODEL_BOOT
 RVTEST_CODE_BEGIN
 RVMODEL_IO_ASSERT_GPR_EQ(x30, x0, 0x00000000)
 RVMODEL_IO_WRITE_STR(x30, "# Test Begin Reserved reg x31\n")

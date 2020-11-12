@@ -19,6 +19,9 @@
 #include "compliance_test.h"
 RVTEST_ISA("RV64IM")
 
+.globl rvtest_entry_point
+rvtest_entry_point:
+RVMODEL_BOOT
 RVTEST_CODE_BEGIN
 
 #ifdef TEST_CASE_1
