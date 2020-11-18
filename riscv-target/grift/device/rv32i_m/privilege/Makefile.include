@@ -5,7 +5,7 @@ ifeq ($(shell command -v $(TARGET_SIM) 2> /dev/null),)
 endif
 
 RUN_TARGET=\
-    $(TARGET_SIM) $(TARGET_FLAGS) --arch=RV32I \
+    $(TARGET_SIM) $(TARGET_FLAGS) --arch=RV32GC \
         --mem-dump-begin=begin_signature --mem-dump-end=end_signature \
 	--halt-pc=grift_stop_addr \
 				$< > $(*).signature.output 2> $@;
