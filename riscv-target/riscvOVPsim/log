@@ -1,0 +1,274 @@
+Imperas riscvOVPsim
+
+
+riscvOVPsim (64-Bit) v20201113.0 Open Virtual Platform simulator from www.IMPERAS.com.
+Copyright (c) 2005-2020 Imperas Software Ltd.  Contains Imperas Proprietary Information.
+Licensed Software, All Rights Reserved.
+Visit www.IMPERAS.com for multicore debug, verification and analysis solutions.
+
+riscvOVPsim started: Wed Nov 18 16:22:14 2020
+
+
+Info (RISCV_ANS1) Attribute 'variant' not specified; defaulting to 'RV32I'
+
+# riscvOVPsim/debugger
+    --override riscvOVPsim/batch=(null) (String) (default=(null)) (default) Execute this list of batch files in the debugger
+    --override riscvOVPsim/consoleport=0 (Uns32) (default=0) (default) Integrated debugger listens for extra MI connections on this port number
+    --override riscvOVPsim/consoleportfile=(null) (String) (default=(null)) (default) Integrated debugger writes the new port number to this file
+    --override riscvOVPsim/debugpseconstructors=F (Boolean) (default=F) (default) Do not run the pse constructors before dropping into the debugger
+    --override riscvOVPsim/debugxchars=80 (Uns32) (default=80) (default) Number of character columns in mpd or GDB console window
+    --override riscvOVPsim/debugychars=40 (Uns32) (default=40) (default) Number of character rows in mpd or GDB console window
+    --override riscvOVPsim/eguicommands=(null) (String) (default=(null)) (default) Pass these commands to the GUI at startup
+    --override riscvOVPsim/eguioptions=(null) (String) (default=(null)) (default) Pass these options onto the command line of GUI when started
+    --override riscvOVPsim/gdbconsole=F (Boolean) (default=F) (default) start a GDB in a console window
+    --override riscvOVPsim/gdbegui=F (Boolean) (default=F) (default) Start GDB Eclipse GUI
+    --override riscvOVPsim/gdbigui=F (Boolean) (default=F) (default) Start GDB Imperas GUI
+    --override riscvOVPsim/idebug=F (Boolean) (default=F) (default) Discontinued integrated debugger. Please use mpdconsole
+    --override riscvOVPsim/interactive=F (Boolean) (default=F) (default) Discontinued integrated debugger. Please use mpdconsole
+    --override riscvOVPsim/mimode=F (Boolean) (default=F) (default) Put the debugger command line interpreter into MI Mode
+    --override riscvOVPsim/mpdconsole=F (Boolean) (default=F) (default) Start the multiprocessor debugger in a console window
+    --override riscvOVPsim/mpdconsolelogfile=(null) (String) (default=(null)) (default) MPD writes its log to this file
+    --override riscvOVPsim/mpdegui=F (Boolean) (default=F) (default) Start the multiprocessor debugger with Eclipse GUI
+    --override riscvOVPsim/mpdfullnames=F (Boolean) (default=F) (default) Do not truncate the processor names in the MPD
+    --override riscvOVPsim/mpdigui=F (Boolean) (default=F) (default) Start the multiprocessor debugger with the Imperas GUI
+    --override riscvOVPsim/remotedebugport=0 (Uns32) (default=0) (default) The simulator will allow a connection to this port by an RSP capable debugger. If the port number is zero, a port will be chosen from the host pool
+    --override riscvOVPsim/rspnowait=F (Boolean) (default=F) (default) Listen for, but do not wait for a debugger connection
+
+# riscvOVPsim/internal
+    --override riscvOVPsim/cgen=F (Boolean) (default=F) (default) For internal use only
+    --override riscvOVPsim/icmmode=F (Boolean) (default=F) (default) For internal use only
+    --override riscvOVPsim/igen=F (Boolean) (default=F) (default) For internal use only
+    --override riscvOVPsim/iss=F (Boolean) (default=F) (default) For internal use only
+    --override riscvOVPsim/memorystats=F (Boolean) (default=F) (default) For internal use
+    --override riscvOVPsim/nooptimize=F (Boolean) (default=F) (default) Turn off JIT code optimization
+    --override riscvOVPsim/readframeinfo=F (Boolean) (default=F) (default) For internal use
+    --override riscvOVPsim/systemc=F (Boolean) (default=F) (default) For internal use
+    --override riscvOVPsim/systemverilog=F (Boolean) (default=F) (default) For internal use
+    --override riscvOVPsim/verbosedictionary=F (Boolean) (default=F) (default) For internal use
+    --override riscvOVPsim/volatilenativememcheck=F (Boolean) (default=F) (default) Check that the JIT cache has not been left invalid when native memory is changed without notification.
+
+# riscvOVPsim/intercept
+    --override riscvOVPsim/enableimperasintercepts=F (Boolean) (default=F) (default) The simulator will intercept calls to Imperas special functions
+
+# riscvOVPsim/visualisation
+    --override riscvOVPsim/httpvis=F (Boolean) (default=F) (default) Enable HTTP visualization
+
+# riscvOVPsim/control
+    --override riscvOVPsim/dictsize=32 (Uns32) (default=32) (default) Override default dictionary size (in MBytes)
+    --override riscvOVPsim/nosimulation=F (Boolean) (default=F) (default) The simulator will exit before simulation begins (use when checking the design).
+    --override riscvOVPsim/stoponcontrolc=T (Boolean) (default=F) (platform) Allow the control-C signal to stop the simulator (note that under Windows the correct behavior of this feature relies on the command shell)
+
+# riscvOVPsim/parallel
+    --override riscvOVPsim/multiprocess=F (Boolean) (default=F) (default) Support multiple processes
+    --override riscvOVPsim/parallel=F (Boolean) (default=F) (default) Enable limited parallel simulation
+    --override riscvOVPsim/parallelmax=F (Boolean) (default=F) (default) Enable unlimited parallel simulation
+    --override riscvOVPsim/parallelopt=0 (Uns32) (default=0) (default) Parallel simulation options
+    --override riscvOVPsim/parallelperipherals=F (Boolean) (default=F) (default) Enable parallel peripheral simulation using any number of concurrent host threads
+    --override riscvOVPsim/parallelthreads=0 (Uns32) (default=0) (default) Set number of parallel threads
+
+# riscvOVPsim/show
+    --override riscvOVPsim/showbuses=F (Boolean) (default=F) (default) Print all bus connections
+    --override riscvOVPsim/showcommands=F (Boolean) (default=F) (default) Print all available model commands in all models in this design
+    --override riscvOVPsim/showdomains=F (Boolean) (default=F) (default) Print a summary of all the memory domains in this design
+    --override riscvOVPsim/showformals=1 (Boolean) (default=F) (override) Show all formal parameters in this design
+    --override riscvOVPsim/showload=F (Boolean) (default=F) (default) Show where each model is loaded from
+    --override riscvOVPsim/showmodelformals=F (Boolean) (default=F) (default) Show model-specific formal parameters in this design
+    --override riscvOVPsim/showsystemformals=F (Boolean) (default=F) (default) Show system formal parameters in this design
+
+# riscvOVPsim/trace
+    --override riscvOVPsim/profile=0 (Int32) (default=0) (default) Enable profiling, showing this number of profile categories
+    --override riscvOVPsim/tracememaddr=0 (Uns64) (default=0) (default) Trace memory starting at this address
+    --override riscvOVPsim/tracememsize=0 (Uns64) (default=0) (default) Trace memory this many bytes
+    --override riscvOVPsim/tracememva=F (Boolean) (default=F) (default) Trace physical addresses (if false) or virtual addresses (if true)
+    --override riscvOVPsim/traceshareddata=F (Boolean) (default=F) (default) Enable tracing of simulator shared data
+
+# riscvOVPsim/log
+    --override riscvOVPsim/bbvfile=(null) (String) (default=(null)) (default) Output basic block vector BBV file for use by tools such as SimPoint
+    --override riscvOVPsim/logfile=(null) (String) (default=(null)) (default) Specify the simulator log file
+    --override riscvOVPsim/logfileflush=F (Boolean) (default=F) (default) Flush the log file after every write (slow on some systems)
+    --override riscvOVPsim/suppressbanner=F (Boolean) (default=F) (default) Suppress printing of the product banner (this feature is restricted to certain products)
+    --override riscvOVPsim/verbose=F (Boolean) (default=F) (default) Enable verbose mode. The simulator will print more information during start up and shutdown
+
+# riscvOVPsim/scheduling
+    --override riscvOVPsim/deferhaltedprocessors=F (Boolean) (default=F) (default) Update halted processors only in a quantum delta cycle (so all non-halted processors execute first)
+    --override riscvOVPsim/finishtime=1.000000e+99 (Double) (default=1.000000e+99) (default) Set the simulation finish time (in seconds)
+    --override riscvOVPsim/legacyscheduling=F (Boolean) (default=F) (default) Use legacy scheduling algorithm (PSE events before processors in each quantum)
+    --override riscvOVPsim/quantum=1.000000e-03 (Double) (default=1.000000e-03) (default) Set the simulator quantum (in seconds)
+    --override riscvOVPsim/quantumdifftime=0.000000e+00 (Double) (default=0.000000e+00) (default) Start of quantum in which to search for non-determinism
+    --override riscvOVPsim/quantumseed=0 (Uns32) (default=0) (default) Specify a seed for random number generation
+    --override riscvOVPsim/quantumtracefile=(null) (String) (default=(null)) (default) Output a VCD (value change dump) file of the quantum trace
+    --override riscvOVPsim/restartyield=F (Boolean) (default=F) (default) Yield to control API when awoken by timer expiry
+    --override riscvOVPsim/timeprecision=0.000000e+00 (Double) (default=0.000000e+00) (default) Set the simulator time precision in seconds
+    --override riscvOVPsim/wallclock=F (Boolean) (default=F) (default) Set the simulator wallclock factor to 1.0
+    --override riscvOVPsim/wallclockfactor=1.000000e+00 (Double) (default=1.000000e+00) (default) Specify set the simulator wallclock factor (a ratio)
+
+# riscvOVPsim/replay
+    --override riscvOVPsim/recorddir=(null) (String) (default=(null)) (default) Models supporting record/replay will write to this directory a replay file derived from the instance name
+    --override riscvOVPsim/replaydir=(null) (String) (default=(null)) (default) Models supporting record/replay will read from this directory a replay file in derived from the instance name
+
+# riscvOVPsim/cpu/debugger
+    --override riscvOVPsim/cpu/debugbasic=F (Boolean) (default=F) (default) Tell the MDP to not use a gdb or debug helper with this processor. This causes the MPD to work with reduced functionality with this processor
+
+# riscvOVPsim/cpu/intercept
+    --override riscvOVPsim/cpu/defaultsemihost=T (Boolean) (default=F) (platform) This processor will load its default semihost library, specified in the processor model.
+    --override riscvOVPsim/cpu/enableSMPTools=F (Boolean) (default=F) (default) Enable VAP tools to do SMP analysis
+    --override riscvOVPsim/cpu/enableimperasintercepts=F (Boolean) (default=F) (default) The simulator will intercept calls to Imperas special functions
+    --override riscvOVPsim/cpu/enabletools=F (Boolean) (default=F) (default) Load VAP tools for this processor
+    --override riscvOVPsim/cpu/exitmode=first (Enumeration) (default=first) (default) Conditions required for a multicore processor to finish simulating: 'first'= when any core exits, 'all'= when all cores have exited
+    --override riscvOVPsim/cpu/simulateexceptions=F (Boolean) (default=F) (default) When the processor encounters an exception, it will execute the exception. If this parameter is not set, the simulator will stop with the appropriate stop reason
+
+# riscvOVPsim/cpu/internal
+    --override riscvOVPsim/cpu/fetchvalidate=F (Boolean) (default=F) (default) For internal use
+    --override riscvOVPsim/cpu/readframeinfo=F (Boolean) (default=F) (default) For internal use
+    --override riscvOVPsim/cpu/systemc=F (Boolean) (default=F) (default) For internal use
+    --override riscvOVPsim/cpu/tracenoannul=F (Boolean) (default=F) (default) For internal use
+
+# riscvOVPsim/cpu/loader
+    --override riscvOVPsim/cpu/elfusevma=F (Boolean) (default=F) (default) When loading an ELF file use VMA rather than LMA
+    --override riscvOVPsim/cpu/loadphysical=F (Boolean) (default=F) (default) Load programs using the physical rather than logical addresses from the program file
+    --override riscvOVPsim/cpu/loadsignextend=F (Boolean) (default=F) (default) When loading programs sign-extend 32 bit addresses from the ELF file to 64 bits
+    --override riscvOVPsim/cpu/setprotection=F (Boolean) (default=F) (default) When loading an ELF file set memory protection according to the program headers
+
+# riscvOVPsim/cpu/platform
+    --override riscvOVPsim/cpu/addrbits=1 (Uns32) (default=1) (default) If the processor is not connected to a bus, connect using this number of address bits
+    --override riscvOVPsim/cpu/cpuid=0 (Uns32) (default=0) (default) Set a unique ID for this CPU. The processor can read this value using impProcessorId() from simulatorIntercepts.h
+    --override riscvOVPsim/cpu/debugflags=0 (Uns32) (default=0) (default) Pass this debug value to the model (The model must be coded to accept it).
+    --override riscvOVPsim/cpu/mips=1.000000e+02 (Double) (default=1.000000e+02) (default) Specify the MIPS rate of this processor (in MHz)
+
+# riscvOVPsim/cpu/gdb
+    --override riscvOVPsim/cpu/alternategdbflags=(null) (String) (default=(null)) (default) Additional command-line flags for the gdb connected to this processor
+    --override riscvOVPsim/cpu/alternategdbpath=(null) (String) (default=(null)) (default) override the default path to the gdb connected to this processor
+    --override riscvOVPsim/cpu/gdbcommandfile=(null) (String) (default=(null)) (default) specify a file to be a read by a gdb connected to this processor
+    --override riscvOVPsim/cpu/gdbinit=(null) (String) (default=(null)) (default) tell gdb to execute this file before the prompt is displayed
+
+# riscvOVPsim/cpu/trace
+    --override riscvOVPsim/cpu/trace=F (Boolean) (default=F) (default) Enable instruction tracing.
+    --override riscvOVPsim/cpu/tracebuffer=F (Boolean) (default=F) (default) Enable 256-entry trace buffer
+    --override riscvOVPsim/cpu/tracechange=F (Boolean) (default=F) (default) Turn on the trace of register changes
+    --override riscvOVPsim/cpu/tracecount=0xffffffffffffffff (Uns64) (default=0xffffffffffffffff) (default) Trace for this many instructions
+    --override riscvOVPsim/cpu/tracehighpc=0xffffffffffffffff (Uns64) (default=0xffffffffffffffff) (default) Trace only instructions with this PC or lower
+    --override riscvOVPsim/cpu/tracelowpc=0 (Uns64) (default=0) (default) Trace only instructions with this PC or higher
+    --override riscvOVPsim/cpu/tracemode=F (Boolean) (default=F) (default) Show the current processor mode when tracing instructions
+    --override riscvOVPsim/cpu/traceregsafter=F (Boolean) (default=F) (default) Print processor register contents after each instruction
+    --override riscvOVPsim/cpu/traceregsbefore=F (Boolean) (default=F) (default) Print processor register contents before each instruction
+    --override riscvOVPsim/cpu/traceshowicount=F (Boolean) (default=F) (default) Include a per-processor instruction count in the trace output
+    --override riscvOVPsim/cpu/tracestart=0 (Uns64) (default=0) (default) Turn tracing on after this many instructions
+
+# riscvOVPsim/cpu/simulate
+    --override riscvOVPsim/cpu/maxinstructions=0xffffffffffffffff (Uns64) (default=0xffffffffffffffff) (default) Limit the maximum number of instructions to be executed before simulation ends
+    --override riscvOVPsim/cpu/startaddress=0 (Uns64) (default=0) (default) Set the PC to start at this specified address instead of using the hardware reset value, or the address found in the loaded program
+
+# riscvOVPsim/cpu/Fundamental
+    --override riscvOVPsim/cpu/add_Extensions= (String) (default=) (default) Add extensions specified by letters to misa.Extensions (for example, specify "VD" to add V and D features)
+    --override riscvOVPsim/cpu/add_Extensions_mask= (String) (default=) (default) Add extensions specified by letters to mask of writable bits in misa.Extensions (for example, specify "VD" to add V and D features)
+    --override riscvOVPsim/cpu/endian=none (Endian) (default=none) (default) Model endian
+    --override riscvOVPsim/cpu/misa_Extensions=0x140100 (Uns32) (default=0x140100) (default) Override default value of misa.Extensions
+    --override riscvOVPsim/cpu/misa_Extensions_mask=0x100 (Uns32) (default=0x100) (default) Override mask of writable bits in misa.Extensions
+    --override riscvOVPsim/cpu/misa_MXL=1 (Uns32) (default=1) (default) Override default value of misa.MXL
+    --override riscvOVPsim/cpu/numHarts=0 (Uns32) (default=0) (default) Specify the number of hart contexts in a multiprocessor
+    --override riscvOVPsim/cpu/priv_version=20190405 (Enumeration) (default=20190405) (default) Specify required Privileged Architecture version
+    --override riscvOVPsim/cpu/user_version=20190305 (Enumeration) (default=20190305) (default) Specify required User Architecture version
+    --override riscvOVPsim/cpu/variant=RV32I (Enumeration) (default=RV32I) (default) Selects variant (either a generic UISA or a specific model)
+
+# riscvOVPsim/cpu/Debug
+    --override riscvOVPsim/cpu/debug_mode=none (Enumeration) (default=none) (default) Specify how Debug mode is implemented
+    --override riscvOVPsim/cpu/debug_version=0.14.0-DRAFT (Enumeration) (default=0.14.0-DRAFT) (default) Specify required Debug Architecture version
+
+# riscvOVPsim/cpu/Simulation_Artifact
+    --override riscvOVPsim/cpu/ASID_cache_size=8 (Uns32) (default=8) (default) Specifies the number of different ASIDs for which TLB entries are cached; a value of 0 implies no limit
+    --override riscvOVPsim/cpu/CSR_remap= (String) (default=) (default) Comma-separated list of CSR number mappings, each of the form <csrName>=<number>
+    --override riscvOVPsim/cpu/enable_CSR_bus=F (Boolean) (default=F) (default) Add artifact CSR bus port, allowing CSR registers to be externally implemented
+    --override riscvOVPsim/cpu/verbose=F (Boolean) (default=F) (default) Specify verbose output messages
+
+# riscvOVPsim/cpu/Memory
+    --override riscvOVPsim/cpu/ASID_bits=9 (Uns32) (default=9) (default) Specify the number of implemented ASID bits
+    --override riscvOVPsim/cpu/PMP_grain=0 (Uns32) (default=0) (default) Specify PMP region granularity, G (0 => 4 bytes, 1 => 8 bytes, etc)
+    --override riscvOVPsim/cpu/PMP_max_page=0 (Uns32) (default=0) (default) Specify the maximum size of PMP region to map if non-zero (may improve performance; constrained to a power of two)
+    --override riscvOVPsim/cpu/PMP_registers=16 (Uns32) (default=16) (default) Specify the number of implemented PMP address registers
+    --override riscvOVPsim/cpu/Sv_modes=3 (Uns32) (default=3) (default) Specify bit mask of implemented Sv modes (e.g. 1<<8 is Sv39)
+    --override riscvOVPsim/cpu/unaligned=F (Boolean) (default=F) (default) Specify whether the processor supports unaligned memory accesses
+    --override riscvOVPsim/cpu/updatePTEA=F (Boolean) (default=F) (default) Specify whether hardware update of PTE A bit is supported
+    --override riscvOVPsim/cpu/updatePTED=F (Boolean) (default=F) (default) Specify whether hardware update of PTE D bit is supported
+
+# riscvOVPsim/cpu/Instruction_CSR_Behavior
+    --override riscvOVPsim/cpu/counteren_mask=0xffffffff (Uns32) (default=0xffffffff) (default) Specify hardware-enforced mask of writable bits in mcounteren/scounteren registers
+    --override riscvOVPsim/cpu/cycle_undefined=F (Boolean) (default=F) (default) Specify that the cycle CSR is undefined (reads to it are emulated by a Machine mode trap)
+    --override riscvOVPsim/cpu/instret_undefined=F (Boolean) (default=F) (default) Specify that the instret CSR is undefined (reads to it are emulated by a Machine mode trap)
+    --override riscvOVPsim/cpu/noinhibit_mask=0 (Uns32) (default=0) (default) Specify hardware-enforced mask of always-zero bits in mcountinhibit register
+    --override riscvOVPsim/cpu/time_undefined=F (Boolean) (default=F) (default) Specify that the time CSR is undefined (reads to it are emulated by a Machine mode trap)
+    --override riscvOVPsim/cpu/wfi_is_nop=F (Boolean) (default=F) (default) Specify whether WFI should be treated as a NOP (if not, halt while waiting for interrupts)
+
+# riscvOVPsim/cpu/Interrupts_Exceptions
+    --override riscvOVPsim/cpu/ecode_mask=0x7fffffff (Uns64) (default=0x7fffffff) (default) Specify hardware-enforced mask of writable bits in xcause.ExceptionCode
+    --override riscvOVPsim/cpu/ecode_nmi=0 (Uns64) (default=0) (default) Specify xcause.ExceptionCode for NMI
+    --override riscvOVPsim/cpu/external_int_id=F (Boolean) (default=F) (default) Whether to add nets allowing External Interrupt ID codes to be forced
+    --override riscvOVPsim/cpu/force_mideleg=0 (Uns64) (default=0) (default) Specify mask of interrupts always delegated to lower-priority execution level from Machine execution level
+    --override riscvOVPsim/cpu/force_sideleg=0 (Uns64) (default=0) (default) Specify mask of interrupts always delegated to User execution level from Supervisor execution level
+    --override riscvOVPsim/cpu/local_int_num=0 (Uns32) (default=0) (default) Specify number of supplemental local interrupts
+    --override riscvOVPsim/cpu/mtvec_is_ro=F (Boolean) (default=F) (default) Specify whether mtvec CSR is read-only
+    --override riscvOVPsim/cpu/nmi_address=0 (Uns64) (default=0) (default) Override NMI vector address
+    --override riscvOVPsim/cpu/no_edeleg=0 (Uns64) (default=0) (default) Specify mask of exceptions that cannot be delegated to lower-priority execution levels
+    --override riscvOVPsim/cpu/no_ideleg=0 (Uns64) (default=0) (default) Specify mask of interrupts that cannot be delegated to lower-priority execution levels
+    --override riscvOVPsim/cpu/reset_address=0 (Uns64) (default=0) (default) Override reset vector address
+    --override riscvOVPsim/cpu/tval_ii_code=T (Boolean) (default=T) (default) Specify whether mtval/stval contain faulting instruction bits on illegal instruction exception
+    --override riscvOVPsim/cpu/tval_zero=F (Boolean) (default=F) (default) Specify whether mtval/stval/utval are hard wired to zero
+    --override riscvOVPsim/cpu/tvec_align=0 (Uns32) (default=0) (default) Specify hardware-enforced alignment of mtvec/stvec/utvec when Vectored interrupt mode enabled
+    --override riscvOVPsim/cpu/unimp_int_mask=0 (Uns64) (default=0) (default) Specify mask of unimplemented interrupts (e.g. 1<<9 indicates Supervisor external interrupt unimplemented)
+    --override riscvOVPsim/cpu/xret_preserves_lr=F (Boolean) (default=F) (default) Whether an xRET instruction preserves the value of LR
+
+# riscvOVPsim/cpu/CSR_Masks
+    --override riscvOVPsim/cpu/mtvec_mask=0 (Uns64) (default=0) (default) Specify hardware-enforced mask of writable bits in mtvec register
+    --override riscvOVPsim/cpu/stvec_mask=0 (Uns64) (default=0) (default) Specify hardware-enforced mask of writable bits in stvec register
+
+# riscvOVPsim/cpu/Trigger
+    --override riscvOVPsim/cpu/amo_trigger=F (Boolean) (default=F) (default) Specify whether AMO load/store operations activate triggers
+    --override riscvOVPsim/cpu/mcontext_bits=6 (Uns32) (default=6) (default) Specify the number of implemented bits in mcontext
+    --override riscvOVPsim/cpu/mcontext_undefined=F (Boolean) (default=F) (default) Specify that the mcontext CSR is undefined
+    --override riscvOVPsim/cpu/mcontrol_maskmax=63 (Uns32) (default=63) (default) Specify mcontrol.maskmax value
+    --override riscvOVPsim/cpu/mscontext_undefined=F (Boolean) (default=F) (default) Specify that the mscontext CSR is undefined (Debug Version 0.14.0 and later)
+    --override riscvOVPsim/cpu/mvalue_bits=6 (Uns32) (default=6) (default) Specify the number of implemented bits in textra.mvalue (if zero, textra.mselect is tied to zero)
+    --override riscvOVPsim/cpu/no_hit=F (Boolean) (default=F) (default) Specify that tdata1.hit is unimplemented
+    --override riscvOVPsim/cpu/no_sselect_2=F (Boolean) (default=F) (default) Specify that textra.sselect=2 is not supported (no trigger match by ASID)
+    --override riscvOVPsim/cpu/scontext_bits=16 (Uns32) (default=16) (default) Specify the number of implemented bits in scontext
+    --override riscvOVPsim/cpu/scontext_undefined=F (Boolean) (default=F) (default) Specify that the scontext CSR is undefined
+    --override riscvOVPsim/cpu/svalue_bits=16 (Uns32) (default=16) (default) Specify the number of implemented bits in textra.svalue (if zero, textra.sselect is tied to zero)
+    --override riscvOVPsim/cpu/tcontrol_undefined=F (Boolean) (default=F) (default) Specify that the tcontrol CSR is undefined
+    --override riscvOVPsim/cpu/tinfo=125 (Uns32) (default=125) (default) Override tinfo register (for all triggers)
+    --override riscvOVPsim/cpu/tinfo_undefined=F (Boolean) (default=F) (default) Specify that the tinfo CSR is undefined
+    --override riscvOVPsim/cpu/trigger_num=4 (Uns32) (default=4) (default) Specify the number of implemented hardware triggers
+
+# riscvOVPsim/cpu/CSR_Defauts
+    --override riscvOVPsim/cpu/marchid=0 (Uns64) (default=0) (default) Override marchid register
+    --override riscvOVPsim/cpu/mhartid=0 (Uns64) (default=0) (default) Override mhartid register (or first mhartid of an incrementing sequence if this is an SMP variant)
+    --override riscvOVPsim/cpu/mimpid=0 (Uns64) (default=0) (default) Override mimpid register
+    --override riscvOVPsim/cpu/mtvec=0 (Uns64) (default=0) (default) Override mtvec register
+    --override riscvOVPsim/cpu/mvendorid=0 (Uns64) (default=0) (default) Override mvendorid register
+
+# riscvOVPsim/cpu/Fast_Interrupt
+    --override riscvOVPsim/cpu/CLICLEVELS=0 (Uns32) (default=0) (default) Specify number of interrupt levels implemented by CLIC, or 0 if CLIC absent
+
+# riscvOVPsim/cpu/pk
+--override riscvOVPsim/cpu/pk/userargv=0x0 (Pointer) (default=0x0) (default) Pointer to argv structure
+--override riscvOVPsim/cpu/pk/userenvp=0x0 (Pointer) (default=0x0) (default) Pointer to envp structure
+--override riscvOVPsim/cpu/pk/reportExitErrors=F (Boolean) (default=F) (default) Report non-zero exit() return codes as simulator errors
+--override riscvOVPsim/cpu/pk/initsp=0 (Uns64) (default=0) (default) Stack Pointer initialization
+--override riscvOVPsim/cpu/pk/strace=F (Boolean) (default=F) (default) trace  proxy system calls (default)
+
+# riscvOVPsim/bus1/bus
+    --override riscvOVPsim/bus1/nooverlapcheck=F (Boolean) (default=F) (default) Suppress checking for devices with overlapping addresses
+
+Info 
+Info ---------------------------------------------------
+Info SIMULATION TIME STATISTICS
+Info   Simulated time        : 0.00 seconds
+Info   User time             : 0.00 seconds
+Info   System time           : 0.00 seconds
+Info   Elapsed time          : 0.00 seconds
+Info ---------------------------------------------------
+
+riscvOVPsim finished: Wed Nov 18 16:22:14 2020
+
+
+riscvOVPsim (64-Bit) v20201113.0 Open Virtual Platform simulator from www.IMPERAS.com.
+Visit www.IMPERAS.com for multicore debug, verification and analysis solutions.
+

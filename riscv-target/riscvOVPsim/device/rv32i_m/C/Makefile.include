@@ -21,19 +21,14 @@ RUN_CMD=\
         --outputfile $(*).${COVERTYPE}.yaml \
         --extensions RVIC,RV32IC \
         --override riscvOVPsim/cpu/sigdump/SignatureFile=$(*).signature.output \
+				--override riscvOVPsim/cpu/sigdump/SignatureGranularity=4 \
         --override riscvOVPsim/cpu/sigdump/ResultReg=3 \
         --override riscvOVPsim/cpu/simulateexceptions=T \
         --override riscvOVPsim/cpu/defaultsemihost=F \
         --logfile $(@) \
         --override riscvOVPsim/cpu/user_version=2.3 \
-        --override riscvOVPsim/cpu/priv_version=1.11 $(REDIR1); \
-            cat $(*).signature.output | \
-            sed 's/.\{8\}/& /g' | \
-            awk '{print $$4 " " $$3 " " $$2 " " $$1}' | \
-            sed 's/ /\n/g' > $(*).temp; \
-            mv $(*).temp $(*).signature.output;
+        --override riscvOVPsim/cpu/priv_version=1.11 $(REDIR1); 
 RUN_TARGET=\
-	echo "$(RUN_CMD)";\
 	$(RUN_CMD)
 
 RISCV_PREFIX   ?= riscv32-unknown-elf-
