@@ -603,11 +603,13 @@ rvtest_data_end:
 5:                                           ;\
     LA(tempreg, 2f                          ) ;\
     jalr x0,0(tempreg)                       ;\
+6:  LA(tempreg, 4f                          ) ;\
+    jalr x0,0(tempreg)                        ;\
 1:  .if adj & 2 == 2                         ;\
     .fill 2,1,0x00                          ;\
     .endif                                    ;\
     xori rd,rd, 0x1                           ;\
-    j 4f                                      ;\
+    beq x0,x0,6b                               ;\
     .if adj & 2 == 2                              ;\
     .fill 2,1,0x00                          ;\
     .endif                                    ;\
@@ -645,7 +647,8 @@ rvtest_data_end:
     .fill 2,1,0x00                          ;\
     .endif                                    ;\
     xori rd,rd, 0x3                           ;\
-    j 4f                                      ;\
+    LA(tempreg, 4f                          ) ;\
+    jalr x0,0(tempreg)                        ;\
     .if adj&2 == 2                              ;\
     .fill 2,1,0x00                     ;\
     .endif                                    ;\
@@ -743,8 +746,8 @@ RVTEST_SIGUPD(swreg,destreg,offset)
 
 #define TEST_AUIPC(inst, destreg, correctval, imm, swreg, offset, testreg) \
     TEST_CASE(testreg, destreg, correctval, swreg, offset, \
+      LA testreg, 1f; \
       1: \
-      LA testreg, 1b; \
       inst destreg, imm; \
       sub destreg, destreg, testreg; \
       )
@@ -839,10 +842,10 @@ RVTEST_SIGUPD(swreg,destreg,offset)
 
 
 #define TEST_CJ_OP(inst, tempreg, imm, label, swreg, offset) \
-    j 2f                                      ;\
-    addi tempreg,x0,0                         ;\
     .option push                              ;\
     .option norvc                             ;\
+    j 2f                                      ;\
+    addi tempreg,x0,0                         ;\
 1:  addi tempreg, tempreg,0x1                 ;\
     j 4f                                      ;\
     .option pop                               ;\
