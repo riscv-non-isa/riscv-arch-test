@@ -13,6 +13,9 @@ available, and avoid using these patches.
 
 == Migration from v0.1 to v0.2
 
+This section will describe the changes required to transition your targets ported on v0.1 to v0.2
+framework. For examples please see: `riscv-target/riscvOVPsim_0p1` and `riscv-target/spike_0p1`.
+
 === Change header filename
 
 In version v0.1 the target specific assembly macros were split across two files: `compliance_test.h`
@@ -74,3 +77,4 @@ constraint has been removed.
 === Changes in device Makefile.include files
 
 No changes required.
+
