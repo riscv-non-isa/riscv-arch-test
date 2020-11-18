@@ -128,7 +128,7 @@
 
 #define INTERRUPT_HANDLER j other_exception /* No interrupts should occur */
 
-#define RVTEST_CODE_BEGIN1                                               \
+#define RVTEST_CODE_BEGIN_OLD                                               \
         .section .text.init;                                            \
         .align  6;                                                      \
         .weak stvec_handler;                                            \
@@ -201,7 +201,7 @@ begin_testcode:
 // End Macro
 //-----------------------------------------------------------------------
 
-#define RVTEST_CODE_END1                                                 \
+#define RVTEST_CODE_END_OLD                                             \
 end_testcode:                                                           \
         ecall;
 
@@ -233,7 +233,7 @@ end_testcode:                                                           \
 
 #define EXTRA_DATA
 
-#define RVTEST_DATA_BEGIN1                                               \
+#define RVTEST_DATA_BEGIN_OLD                                               \
         EXTRA_DATA                                                      \
         .pushsection .tohost,"aw",@progbits;                            \
         .align 8; .global tohost; tohost: .dword 0;                     \
@@ -241,7 +241,7 @@ end_testcode:                                                           \
         .popsection;                                                    \
         .align 4; .global begin_signature; begin_signature:
 
-#define RVTEST_DATA_END1                                                 \
+#define RVTEST_DATA_END_OLD                                                 \
         .global end_signature; end_signature:                 \
         .align 8; .global begin_regstate; begin_regstate:               \
         .word 128;                                                      \

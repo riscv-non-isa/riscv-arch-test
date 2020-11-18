@@ -20,16 +20,16 @@
         RVTEST_RV32M                                                          
 
 #define RV_COMPLIANCE_CODE_BEGIN                                              \
-        RVTEST_CODE_BEGIN1                                                     
+        RVTEST_CODE_BEGIN_OLD                                                     
 
 #define RV_COMPLIANCE_CODE_END                                                \
-        RVTEST_CODE_END1                                                       
+        RVTEST_CODE_END_OLD                                                       
 
 #define RV_COMPLIANCE_DATA_BEGIN                                              \
-        RVTEST_DATA_BEGIN1                                                     
+        RVTEST_DATA_BEGIN_OLD                                                     
 
 #define RV_COMPLIANCE_DATA_END                                                \
-        RVTEST_DATA_END1                                                       
+        RVTEST_DATA_END_OLD                                                       
 
 #endif
 // RISC-V Compliance IO Test Header File

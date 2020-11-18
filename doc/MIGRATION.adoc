@@ -56,7 +56,20 @@ mv rv32Zifencei rv32i_m/Zifencei
 
 === Changes in target macro names.
 
-**TBD**
+Since some of the macros from the old framework have been re-purposed in the new v0.2 framework,
+there will be name conflicts rendering the old ones useless. In order to retain the old macros, they
+have been renamed with a post-fix `_OLD`. The macros that have been renamed are given below:
+
+. `RVTEST_CODE_BEGIN` -->> `RVTEST_CODE_BEGIN_OLD`
+. `RVTEST_CODE_END`   -->> `RVTEST_CODE_END_OLD`
+. `RVTEST_DATA_BEGIN` -->> `RVTEST_DATA_BEGIN_OLD`
+. `RVTEST_DATA_END`   -->> `RVTEST_DATA_END_OLD`
+
+The user is thus required to make the above changes in the new `compliance_model.h` that was created
+as part of this migration.
+
+note:: the RVTEST_DATA_END in v0.1 enforced a 16-byte alignment before the signature end. This
+constraint has been removed.
 
 === Changes in device Makefile.include files
 
