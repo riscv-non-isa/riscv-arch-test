@@ -1,1 +1,0 @@
-../riscv-test-suite/env/compliance_test.h
