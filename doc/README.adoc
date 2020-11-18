@@ -260,7 +260,7 @@ There are then five top level directories.
 
 `riscv-test-env`:: This contains the `verify.sh` script which checks if the signatures generated the riscv-target device match the statically hosted reference signatures at the end of simulation. 
 
-`riscv-test-suite`:: This contains a further `env` subdirectory which contains the `compliance_test.h` and the `encoding.h` file which includes common assembly macros and routines which is used across the tests in the suite. Further directories are present which contain the actual architectural tests. The names and structure of these directories is based on the link:../test-pool structure guideline highlighted above. 
+`riscv-test-suite`:: This contains a further `env` subdirectory which contains the `arch_test.h` and the `encoding.h` file which includes common assembly macros and routines which is used across the tests in the suite. Further directories are present which contain the actual architectural tests. The names and structure of these directories is based on the link:../test-pool structure guideline highlighted above. 
 
 `riscv-ovpsim`:: This contains a copy of the Imperas OVP riscvOVPsim simulator for use in architectural testing. It includes a subdirectory of examples with pre-compiled .elf files and has binaries of the simulator for Linux64 and Windows64. This is referenced by the makefiles for developing and running the architectural test suites. riscvOVPsim can run all the tracing and assertion macros used in the tests.
 
