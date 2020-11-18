@@ -10,37 +10,22 @@
 | Param                     | Value    |
 |---------------------------|----------|
 | XLEN                      | 32      |
-| TEST_REGION               | [('0x80000104', '0x80000160')]      |
-| SIG_REGION                | [('0x80003204', '0x80003308', '65 words')]      |
+| TEST_REGION               | [('0x80000104', '0x80040160')]      |
+| SIG_REGION                | [('0x80042204', '0x80042308', '65 words')]      |
 | COV_LABELS                | misalign-jal      |
 | TEST_NAME                 | /scratch/git-repo/incoresemi/riscof/riscof_work/misalign-jal-01.S/misalign-jal-01.S    |
 | Total Number of coverpoints| 2     |
-| Total Coverpoints Hit     | 1      |
+| Total Coverpoints Hit     | 2      |
 | Total Signature Updates   | 1      |
-| STAT1                     | 0      |
-| STAT2                     | 1      |
-| STAT3                     | 1     |
+| STAT1                     | 1      |
+| STAT2                     | 0      |
+| STAT3                     | 0     |
 | STAT4                     | 0     |
 | STAT5                     | 0     |
 
 ## Details for STAT2:
 
 ```
-Op without unique coverpoint updates Signature
- -- Code Sequence:
-      [0x8000013e]:jal zero, 6
-      [0x80000144]:auipc sp, 0
-      [0x80000148]:addi sp, sp, 4040
-      [0x8000014c]:andi sp, sp, 4092
-      [0x80000150]:sub a0, a0, sp
-      [0x80000154]:sw a0, 0(ra)
- -- Signature Address: 0x80003204 Data: 0x0000001F
- -- Redundant Coverpoints hit by the op
-      - opcode : jal
-
-
-
-
 
 
 ```
@@ -48,9 +33,6 @@ Op without unique coverpoint updates Signature
 ## Details of STAT3
 
 ```
-[0x80000124]:jal a0, 22
-[0x8000013a]:xori a0, a0, 3
-
 
 
 ```
@@ -85,5 +67,6 @@ Op without unique coverpoint updates Signature
   test. These need not necessarily be in increasing or decreasing order of the
   address in the signature region.
 
-|s.no|signature|coverpoints|code|
-|----|---------|-----------|----|
+|s.no|        signature         |              coverpoints              |                                                                                                                                                                 code                                                                                                                                                                  |
+|---:|--------------------------|---------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|   1|[0x80042204]<br>0x0000002B|- opcode : jal<br> - ea_align == 2<br> |[0x80000130]:jal a0, 262154<br> [0x8004013a]:xori a0, a0, 3<br> [0x8004013e]:auipc sp, 0<br> [0x80040142]:addi sp, sp, 14<br> [0x80040146]:jalr zero, sp, 0<br> [0x8004014c]:auipc sp, 1048512<br> [0x80040150]:addi sp, sp, 4032<br> [0x80040154]:andi sp, sp, 4092<br> [0x80040158]:sub a0, a0, sp<br> [0x8004015c]:sw a0, 0(ra)<br> |

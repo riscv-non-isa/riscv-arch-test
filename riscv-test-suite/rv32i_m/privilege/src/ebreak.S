@@ -7,11 +7,12 @@
 // 
 
 #include "compliance_model.h"
-#include "compliance_test.h"
+#include "arch_test.h"
 
 RVTEST_ISA("RV32I")
 
 # Test code region
+.section .text.init
 .globl rvtest_entry_point
 rvtest_entry_point:
 RVMODEL_BOOT
@@ -21,8 +22,6 @@ RVMODEL_IO_WRITE_STR(x30, "# Test Begin Reserved reg x31\n")
 
 #ifdef TEST_CASE_1
     RVTEST_CASE(1,"// check ISA:=regex(.*I.*Zicsr.*); def rvtest_mtrap_routine=True; def TEST_CASE_1=True",ebreak)
-
-    RVMODEL_IO_CHECK()
     # ---------------------------------------------------------------------------------------------
     RVMODEL_IO_WRITE_STR(x30, "# Test part A - test EBREAK\n");
 
@@ -54,8 +53,6 @@ RVTEST_DATA_END
 
 # Output data section.
 RVMODEL_DATA_BEGIN
-  .align 4
-
 test_A_res:
   .fill 2, 4, 0xdeadbeef
 

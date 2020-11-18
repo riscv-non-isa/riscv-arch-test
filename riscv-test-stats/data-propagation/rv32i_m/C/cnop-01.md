@@ -11,7 +11,7 @@
 |---------------------------|----------|
 | XLEN                      | 32      |
 | TEST_REGION               | [('0x800000f8', '0x80000160')]      |
-| SIG_REGION                | [('0x80003204', '0x8000323c', '14 words')]      |
+| SIG_REGION                | [('0x80002204', '0x8000223c', '14 words')]      |
 | COV_LABELS                | cnop      |
 | TEST_NAME                 | /scratch/git-repo/incoresemi/riscof/riscof_work/cnop-01.S/cnop-01.S    |
 | Total Number of coverpoints| 15     |
@@ -69,17 +69,17 @@
 
 |s.no|        signature         |              coverpoints               |                              code                              |
 |---:|--------------------------|----------------------------------------|----------------------------------------------------------------|
-|   1|[0x80003204]<br>0x00000000|- opcode : c.nop<br> - imm_val == 1<br> |[0x80000100]:c.nop.hint.1<br> [0x80000102]:sw zero, 0(ra)<br>   |
-|   2|[0x80003208]<br>0x00000000|- imm_val == 2<br>                      |[0x80000106]:c.nop.hint.2<br> [0x80000108]:sw zero, 4(ra)<br>   |
-|   3|[0x8000320c]<br>0x00000000|- imm_val == 4<br>                      |[0x8000010c]:c.nop.hint.4<br> [0x8000010e]:sw zero, 8(ra)<br>   |
-|   4|[0x80003210]<br>0x00000000|- imm_val == 8<br>                      |[0x80000112]:c.nop.hint.8<br> [0x80000114]:sw zero, 12(ra)<br>  |
-|   5|[0x80003214]<br>0x00000000|- imm_val == 16<br>                     |[0x80000118]:c.nop.hint.16<br> [0x8000011a]:sw zero, 16(ra)<br> |
-|   6|[0x80003218]<br>0x00000000|- imm_val == -32<br>                    |[0x8000011e]:c.nop.hint.32<br> [0x80000120]:sw zero, 20(ra)<br> |
-|   7|[0x8000321c]<br>0x00000000|- imm_val == -2<br>                     |[0x80000124]:c.nop.hint.62<br> [0x80000126]:sw zero, 24(ra)<br> |
-|   8|[0x80003220]<br>0x00000000|- imm_val == -3<br>                     |[0x8000012a]:c.nop.hint.61<br> [0x8000012c]:sw zero, 28(ra)<br> |
-|   9|[0x80003224]<br>0x00000000|- imm_val == -5<br>                     |[0x80000130]:c.nop.hint.59<br> [0x80000132]:sw zero, 32(ra)<br> |
-|  10|[0x80003228]<br>0x00000000|- imm_val == -9<br>                     |[0x80000136]:c.nop.hint.55<br> [0x80000138]:sw zero, 36(ra)<br> |
-|  11|[0x8000322c]<br>0x00000000|- imm_val == -17<br>                    |[0x8000013c]:c.nop.hint.47<br> [0x8000013e]:sw zero, 40(ra)<br> |
-|  12|[0x80003230]<br>0x00000000|- imm_val == 31<br>                     |[0x80000142]:c.nop.hint.31<br> [0x80000144]:sw zero, 44(ra)<br> |
-|  13|[0x80003234]<br>0x00000000|- imm_val == 21<br>                     |[0x80000148]:c.nop.hint.21<br> [0x8000014a]:sw zero, 48(ra)<br> |
-|  14|[0x80003238]<br>0x00000000|- imm_val == -22<br>                    |[0x8000014e]:c.nop.hint.42<br> [0x80000150]:sw zero, 52(ra)<br> |
+|   1|[0x80002204]<br>0x00000000|- opcode : c.nop<br> - imm_val == 1<br> |[0x80000100]:c.nop.hint.1<br> [0x80000102]:sw zero, 0(ra)<br>   |
+|   2|[0x80002208]<br>0x00000000|- imm_val == 2<br>                      |[0x80000106]:c.nop.hint.2<br> [0x80000108]:sw zero, 4(ra)<br>   |
+|   3|[0x8000220c]<br>0x00000000|- imm_val == 4<br>                      |[0x8000010c]:c.nop.hint.4<br> [0x8000010e]:sw zero, 8(ra)<br>   |
+|   4|[0x80002210]<br>0x00000000|- imm_val == 8<br>                      |[0x80000112]:c.nop.hint.8<br> [0x80000114]:sw zero, 12(ra)<br>  |
+|   5|[0x80002214]<br>0x00000000|- imm_val == 16<br>                     |[0x80000118]:c.nop.hint.16<br> [0x8000011a]:sw zero, 16(ra)<br> |
+|   6|[0x80002218]<br>0x00000000|- imm_val == -32<br>                    |[0x8000011e]:c.nop.hint.32<br> [0x80000120]:sw zero, 20(ra)<br> |
+|   7|[0x8000221c]<br>0x00000000|- imm_val == -2<br>                     |[0x80000124]:c.nop.hint.62<br> [0x80000126]:sw zero, 24(ra)<br> |
+|   8|[0x80002220]<br>0x00000000|- imm_val == -3<br>                     |[0x8000012a]:c.nop.hint.61<br> [0x8000012c]:sw zero, 28(ra)<br> |
+|   9|[0x80002224]<br>0x00000000|- imm_val == -5<br>                     |[0x80000130]:c.nop.hint.59<br> [0x80000132]:sw zero, 32(ra)<br> |
+|  10|[0x80002228]<br>0x00000000|- imm_val == -9<br>                     |[0x80000136]:c.nop.hint.55<br> [0x80000138]:sw zero, 36(ra)<br> |
+|  11|[0x8000222c]<br>0x00000000|- imm_val == -17<br>                    |[0x8000013c]:c.nop.hint.47<br> [0x8000013e]:sw zero, 40(ra)<br> |
+|  12|[0x80002230]<br>0x00000000|- imm_val == 31<br>                     |[0x80000142]:c.nop.hint.31<br> [0x80000144]:sw zero, 44(ra)<br> |
+|  13|[0x80002234]<br>0x00000000|- imm_val == 21<br>                     |[0x80000148]:c.nop.hint.21<br> [0x8000014a]:sw zero, 48(ra)<br> |
+|  14|[0x80002238]<br>0x00000000|- imm_val == -22<br>                    |[0x8000014e]:c.nop.hint.42<br> [0x80000150]:sw zero, 52(ra)<br> |

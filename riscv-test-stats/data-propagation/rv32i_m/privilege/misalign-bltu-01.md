@@ -10,8 +10,8 @@
 | Param                     | Value    |
 |---------------------------|----------|
 | XLEN                      | 32      |
-| TEST_REGION               | [('0x80000104', '0x80000940')]      |
-| SIG_REGION                | [('0x80003204', '0x80003308', '65 words')]      |
+| TEST_REGION               | [('0x80000104', '0x80000150')]      |
+| SIG_REGION                | [('0x80002204', '0x80002308', '65 words')]      |
 | COV_LABELS                | misalign-bltu      |
 | TEST_NAME                 | /scratch/git-repo/incoresemi/riscof/riscof_work/misalign-bltu-01.S/misalign-bltu-01.S    |
 | Total Number of coverpoints| 2     |
@@ -67,6 +67,6 @@
   test. These need not necessarily be in increasing or decreasing order of the
   address in the signature region.
 
-|s.no|        signature         |                         coverpoints                         |                                                              code                                                               |
-|---:|--------------------------|-------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------|
-|   1|[0x80003204]<br>0x00000001|- opcode : bltu<br> -  rs1_val<rs2_val and ea_align == 2<br> |[0x80000924]:bltu a0, a1, 6142<br> [0x80000122]:addi sp, sp, 1<br> [0x80000126]:jal zero, 2070<br> [0x8000093c]:sw sp, 0(ra)<br> |
+|s.no|        signature         |                         coverpoints                         |                                                             code                                                              |
+|---:|--------------------------|-------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------|
+|   1|[0x80002204]<br>0x00000001|- opcode : bltu<br> -  rs1_val<rs2_val and ea_align == 2<br> |[0x80000130]:bltu a0, a1, 8178<br> [0x80000122]:addi sp, sp, 1<br> [0x80000126]:jal zero, 34<br> [0x80000148]:sw sp, 0(ra)<br> |

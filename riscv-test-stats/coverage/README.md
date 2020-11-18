@@ -1,7 +1,20 @@
 # Coverage Statistic
 
 The coverpoints used to create tests and capture the quality of the tests is available in the YAML
-file: [coverpoint.yaml](coverpoint.yaml)
+files in this folder:
+
+- [dataset.yaml](dataset.yaml): this file includes all the common datasets that can be used across multiple instructions
+- [rv32ic.yaml      ](rv32ic.yaml): this file includes the coverpoints for 32-bit compressed extension
+- [rv32i_fencei.yaml](rv32i_fencei.yaml): this file includes the coverpoints for the fencei extension
+- [rv32im.yaml      ](rv32im.yaml): this file includes the coverpoints for 32-bit mul-div extension
+- [rv32i_priv.yaml  ](rv32i_priv.yaml): this file includes the coverpoints for 32-bit privilege cases
+- [rv32i.yaml       ](rv32i.yaml): this file includes the coverpoints for 32-bit base extension
+- [rv64ic.yaml      ](rv64ic.yaml): this file includes the coverpoints for 64-bit compressed extension
+- [rv64i_fencei.yaml](rv64i_fencei.yaml): this file includes the coverpoints for the fencei extension
+- [rv64im.yaml      ](rv64im.yaml): this file includes the coverpoints for 64-bit mul-div extension
+- [rv64i_priv.yaml  ](rv64i_priv.yaml): this file includes the coverpoints for 64-bit privilege cases
+- [rv64i.yaml       ](rv64i.yaml): this file includes the coverpoints for 64-bit base extension
+
 
 ## Directory structure
 The rest of the directory is structured similar to how the riscv-test-suite directory is structured.

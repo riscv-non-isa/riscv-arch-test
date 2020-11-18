@@ -11,7 +11,7 @@
 |---------------------------|----------|
 | XLEN                      | 32      |
 | TEST_REGION               | [('0x800000f8', '0x80000120')]      |
-| SIG_REGION                | [('0x80003204', '0x80003214', '4 words')]      |
+| SIG_REGION                | [('0x80002204', '0x80002208', '1 words')]      |
 | COV_LABELS                | fence      |
 | TEST_NAME                 | /scratch/git-repo/incoresemi/riscof/riscof_work/fence-01.S/fence-01.S    |
 | Total Number of coverpoints| 1     |
@@ -69,4 +69,4 @@
 
 |s.no|        signature         |     coverpoints     |                                                                            code                                                                             |
 |---:|--------------------------|---------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|   1|[0x80003210]<br>0xFFFFFFFF|- opcode : fence<br> |[0x80000108]:fence iorw, iorw<br> [0x8000010c]:lw gp, 0(s1)<br> [0x80000110]:auipc s1, 3<br> [0x80000114]:addi s1, s1, 256<br> [0x80000118]:sw gp, 0(s1)<br> |
+|   1|[0x80002204]<br>0xFFFFFFFF|- opcode : fence<br> |[0x80000108]:fence iorw, iorw<br> [0x8000010c]:lw gp, 0(s1)<br> [0x80000110]:auipc s1, 2<br> [0x80000114]:addi s1, s1, 244<br> [0x80000118]:sw gp, 0(s1)<br> |

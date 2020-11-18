@@ -6,13 +6,14 @@
 // This assembly file tests the fence.i instruction of the RISC-V Zifencei extension.
 // 
 
-#include "compliance_test.h"
 #include "compliance_model.h"
+#include "arch_test.h"
 
 # Test Virtual Machine (TVM) used by program.
 RVTEST_ISA("RV32I")
 
 # Test code region
+.section .text.init
 .globl rvtest_entry_point
 rvtest_entry_point:
 RVMODEL_BOOT
@@ -55,7 +56,6 @@ instr_A_dst:
     //
     // Assert
     //
-    RVMODEL_IO_CHECK()
     RVMODEL_IO_ASSERT_GPR_EQ(x17, x2,  0x00000012)
     RVMODEL_IO_ASSERT_GPR_EQ(x17, x3,  0x00000042)
     RVMODEL_IO_ASSERT_GPR_EQ(x17, x15, 0x001101B3)
@@ -88,8 +88,6 @@ RVTEST_DATA_END
 
 # Output data section.
 RVMODEL_DATA_BEGIN
-    .align 4
-
 test_A_res:
     .fill 4, 4, 0xdeadbeef
 

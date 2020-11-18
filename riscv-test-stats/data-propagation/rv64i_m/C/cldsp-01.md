@@ -10,8 +10,8 @@
 | Param                     | Value    |
 |---------------------------|----------|
 | XLEN                      | 64      |
-| TEST_REGION               | [('0x80000390', '0x800005c0')]      |
-| SIG_REGION                | [('0x80003208', '0x80003300', '31 dwords')]      |
+| TEST_REGION               | [('0x80000390', '0x800005d0')]      |
+| SIG_REGION                | [('0x80002208', '0x80002300', '31 dwords')]      |
 | COV_LABELS                | cldsp      |
 | TEST_NAME                 | /scratch/git-repo/incoresemi/riscof/riscof_work/cldsp-01.S/cldsp-01.S    |
 | Total Number of coverpoints| 48     |
@@ -67,36 +67,36 @@
   test. These need not necessarily be in increasing or decreasing order of the
   address in the signature region.
 
-|s.no|            signature             |                      coverpoints                      |                                                     code                                                     |
-|---:|----------------------------------|-------------------------------------------------------|--------------------------------------------------------------------------------------------------------------|
-|   1|[0x80003208]<br>0x00000000BABECAFE|- opcode : c.ldsp<br> - rd : x12<br> - imm_val > 0<br> |[0x800003a0]:c.ldsp a2, 5<br> [0x800003a2]:c.nop<br> [0x800003a4]:c.nop<br> [0x800003a6]:c.sd a5, a2, 0<br>   |
-|   2|[0x80003210]<br>0x00000000BABECAFE|- rd : x30<br> - imm_val == 0<br>                      |[0x800003b0]:c.ldsp t5, 0<br> [0x800003b2]:c.nop<br> [0x800003b4]:c.nop<br> [0x800003b6]:sd t5, 8(a5)<br>     |
-|   3|[0x80003218]<br>0x00000000BABECAFE|- rd : x1<br> - imm_val == 8<br>                       |[0x800003c2]:c.ldsp ra, 1<br> [0x800003c4]:c.nop<br> [0x800003c6]:c.nop<br> [0x800003c8]:sd ra, 16(a5)<br>    |
-|   4|[0x80003220]<br>0x00000000BABECAFE|- rd : x5<br> - imm_val == 16<br>                      |[0x800003d4]:c.ldsp t0, 2<br> [0x800003d6]:c.nop<br> [0x800003d8]:c.nop<br> [0x800003da]:sd t0, 24(a5)<br>    |
-|   5|[0x80003228]<br>0x00000000BABECAFE|- rd : x19<br> - imm_val == 32<br>                     |[0x800003e6]:c.ldsp s3, 4<br> [0x800003e8]:c.nop<br> [0x800003ea]:c.nop<br> [0x800003ec]:sd s3, 32(a5)<br>    |
-|   6|[0x80003230]<br>0x00000000BABECAFE|- rd : x3<br> - imm_val == 64<br>                      |[0x800003f8]:c.ldsp gp, 8<br> [0x800003fa]:c.nop<br> [0x800003fc]:c.nop<br> [0x800003fe]:sd gp, 40(a5)<br>    |
-|   7|[0x80003238]<br>0x00000000BABECAFE|- rd : x25<br> - imm_val == 128<br>                    |[0x8000040a]:c.ldsp s9, 16<br> [0x8000040c]:c.nop<br> [0x8000040e]:c.nop<br> [0x80000410]:sd s9, 48(a5)<br>   |
-|   8|[0x80003240]<br>0x00000000BABECAFE|- rd : x13<br> - imm_val == 256<br>                    |[0x8000041c]:c.ldsp a3, 32<br> [0x8000041e]:c.nop<br> [0x80000420]:c.nop<br> [0x80000422]:c.sd a5, a3, 56<br> |
-|   9|[0x80003248]<br>0x00000000BABECAFE|- rd : x11<br> - imm_val == 496<br>                    |[0x8000042c]:c.ldsp a1, 62<br> [0x8000042e]:c.nop<br> [0x80000430]:c.nop<br> [0x80000432]:c.sd a5, a1, 64<br> |
-|  10|[0x80003250]<br>0x00000000BABECAFE|- rd : x8<br> - imm_val == 488<br>                     |[0x8000043c]:c.ldsp fp, 61<br> [0x8000043e]:c.nop<br> [0x80000440]:c.nop<br> [0x80000442]:c.sd a5, s0, 72<br> |
-|  11|[0x80003258]<br>0x00000000BABECAFE|- rd : x23<br> - imm_val == 472<br>                    |[0x8000044c]:c.ldsp s7, 59<br> [0x8000044e]:c.nop<br> [0x80000450]:c.nop<br> [0x80000452]:sd s7, 80(a5)<br>   |
-|  12|[0x80003260]<br>0x00000000BABECAFE|- rd : x9<br> - imm_val == 440<br>                     |[0x8000045e]:c.ldsp s1, 55<br> [0x80000460]:c.nop<br> [0x80000462]:c.nop<br> [0x80000464]:c.sd a5, s1, 88<br> |
-|  13|[0x80003268]<br>0x00000000BABECAFE|- rd : x7<br> - imm_val == 376<br>                     |[0x8000046e]:c.ldsp t2, 47<br> [0x80000470]:c.nop<br> [0x80000472]:c.nop<br> [0x80000474]:sd t2, 96(a5)<br>   |
-|  14|[0x80003270]<br>0x00000000BABECAFE|- rd : x22<br> - imm_val == 248<br>                    |[0x80000480]:c.ldsp s6, 31<br> [0x80000482]:c.nop<br> [0x80000484]:c.nop<br> [0x80000486]:sd s6, 104(a5)<br>  |
-|  15|[0x80003278]<br>0x00000000BABECAFE|- rd : x6<br> - imm_val == 168<br>                     |[0x80000492]:c.ldsp t1, 21<br> [0x80000494]:c.nop<br> [0x80000496]:c.nop<br> [0x80000498]:sd t1, 112(a5)<br>  |
-|  16|[0x80003280]<br>0x00000000BABECAFE|- rd : x29<br> - imm_val == 336<br>                    |[0x800004a4]:c.ldsp t4, 42<br> [0x800004a6]:c.nop<br> [0x800004a8]:c.nop<br> [0x800004aa]:sd t4, 120(a5)<br>  |
-|  17|[0x80003288]<br>0x00000000BABECAFE|- rd : x26<br>                                         |[0x800004b6]:c.ldsp s10, 0<br> [0x800004b8]:c.nop<br> [0x800004ba]:c.nop<br> [0x800004bc]:sd s10, 128(a5)<br> |
-|  18|[0x80003290]<br>0x00000000BABECAFE|- rd : x18<br>                                         |[0x800004c8]:c.ldsp s2, 0<br> [0x800004ca]:c.nop<br> [0x800004cc]:c.nop<br> [0x800004ce]:sd s2, 136(a5)<br>   |
-|  19|[0x80003298]<br>0x00000000BABECAFE|- rd : x16<br>                                         |[0x800004da]:c.ldsp a6, 0<br> [0x800004dc]:c.nop<br> [0x800004de]:c.nop<br> [0x800004e0]:sd a6, 144(a5)<br>   |
-|  20|[0x800032a0]<br>0x00000000BABECAFE|- rd : x28<br>                                         |[0x800004ec]:c.ldsp t3, 0<br> [0x800004ee]:c.nop<br> [0x800004f0]:c.nop<br> [0x800004f2]:sd t3, 152(a5)<br>   |
-|  21|[0x800032a8]<br>0x00000000BABECAFE|- rd : x2<br>                                          |[0x800004fe]:c.ldsp sp, 0<br> [0x80000500]:c.nop<br> [0x80000502]:c.nop<br> [0x80000504]:sd sp, 160(a5)<br>   |
-|  22|[0x800032b0]<br>0x00000000BABECAFE|- rd : x21<br>                                         |[0x80000510]:c.ldsp s5, 0<br> [0x80000512]:c.nop<br> [0x80000514]:c.nop<br> [0x80000516]:sd s5, 168(a5)<br>   |
-|  23|[0x800032b8]<br>0x00000000BABECAFE|- rd : x4<br>                                          |[0x80000522]:c.ldsp tp, 0<br> [0x80000524]:c.nop<br> [0x80000526]:c.nop<br> [0x80000528]:sd tp, 176(a5)<br>   |
-|  24|[0x800032c0]<br>0x00000000BABECAFE|- rd : x17<br>                                         |[0x80000534]:c.ldsp a7, 0<br> [0x80000536]:c.nop<br> [0x80000538]:c.nop<br> [0x8000053a]:sd a7, 184(a5)<br>   |
-|  25|[0x800032c8]<br>0x00000000BABECAFE|- rd : x10<br>                                         |[0x80000546]:c.ldsp a0, 0<br> [0x80000548]:c.nop<br> [0x8000054a]:c.nop<br> [0x8000054c]:c.sd a5, a0, 192<br> |
-|  26|[0x800032d0]<br>0x00000000BABECAFE|- rd : x14<br>                                         |[0x80000556]:c.ldsp a4, 0<br> [0x80000558]:c.nop<br> [0x8000055a]:c.nop<br> [0x8000055c]:c.sd a5, a4, 200<br> |
-|  27|[0x800032d8]<br>0x00000000BABECAFE|- rd : x24<br>                                         |[0x80000566]:c.ldsp s8, 0<br> [0x80000568]:c.nop<br> [0x8000056a]:c.nop<br> [0x8000056c]:sd s8, 208(a5)<br>   |
-|  28|[0x800032e0]<br>0x00000000BABECAFE|- rd : x27<br>                                         |[0x80000578]:c.ldsp s11, 0<br> [0x8000057a]:c.nop<br> [0x8000057c]:c.nop<br> [0x8000057e]:sd s11, 216(a5)<br> |
-|  29|[0x800032e8]<br>0x00000000BABECAFE|- rd : x15<br>                                         |[0x80000592]:c.ldsp a5, 0<br> [0x80000594]:c.nop<br> [0x80000596]:c.nop<br> [0x80000598]:sd a5, 0(ra)<br>     |
-|  30|[0x800032f0]<br>0x00000000BABECAFE|- rd : x31<br>                                         |[0x800005a4]:c.ldsp t6, 0<br> [0x800005a6]:c.nop<br> [0x800005a8]:c.nop<br> [0x800005aa]:sd t6, 8(ra)<br>     |
-|  31|[0x800032f8]<br>0x00000000BABECAFE|- rd : x20<br>                                         |[0x800005b6]:c.ldsp s4, 0<br> [0x800005b8]:c.nop<br> [0x800005ba]:c.nop<br> [0x800005bc]:sd s4, 16(ra)<br>    |
+|s.no|            signature             |                                coverpoints                                |                                                     code                                                     |
+|---:|----------------------------------|---------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------|
+|   1|[0x80002208]<br>0xBFDDB7D5BFDDB7D5|- opcode : c.ldsp<br> - rd : x4<br> - imm_val > 0<br> - imm_val == 248<br> |[0x800003a0]:c.ldsp tp, 31<br> [0x800003a2]:c.nop<br> [0x800003a4]:c.nop<br> [0x800003a6]:sd tp, 0(gp)<br>    |
+|   2|[0x80002210]<br>0xEADFEEDBEADFEEDB|- rd : x13<br> - imm_val == 0<br>                                          |[0x800003b2]:c.ldsp a3, 0<br> [0x800003b4]:c.nop<br> [0x800003b6]:c.nop<br> [0x800003b8]:sd a3, 8(gp)<br>     |
+|   3|[0x80002218]<br>0x0000000080000390|- rd : x5<br> - imm_val == 8<br>                                           |[0x800003c4]:c.ldsp t0, 1<br> [0x800003c6]:c.nop<br> [0x800003c8]:c.nop<br> [0x800003ca]:sd t0, 16(gp)<br>    |
+|   4|[0x80002220]<br>0x76DF56FF76DF56FF|- rd : x26<br> - imm_val == 16<br>                                         |[0x800003d6]:c.ldsp s10, 2<br> [0x800003d8]:c.nop<br> [0x800003da]:c.nop<br> [0x800003dc]:sd s10, 24(gp)<br>  |
+|   5|[0x80002228]<br>0xADFEEDBEADFEEDBE|- rd : x9<br> - imm_val == 32<br>                                          |[0x800003e8]:c.ldsp s1, 4<br> [0x800003ea]:c.nop<br> [0x800003ec]:c.nop<br> [0x800003ee]:sd s1, 32(gp)<br>    |
+|   6|[0x80002230]<br>0x56FF76DF56FF76DF|- rd : x10<br> - imm_val == 64<br>                                         |[0x800003fa]:c.ldsp a0, 8<br> [0x800003fc]:c.nop<br> [0x800003fe]:c.nop<br> [0x80000400]:sd a0, 40(gp)<br>    |
+|   7|[0x80002238]<br>0xB7D5BFDDB7D5BFDD|- rd : x20<br> - imm_val == 128<br>                                        |[0x8000040c]:c.ldsp s4, 16<br> [0x8000040e]:c.nop<br> [0x80000410]:c.nop<br> [0x80000412]:sd s4, 48(gp)<br>   |
+|   8|[0x80002240]<br>0xEEDBEADFEEDBEADF|- rd : x29<br> - imm_val == 256<br>                                        |[0x8000041e]:c.ldsp t4, 32<br> [0x80000420]:c.nop<br> [0x80000422]:c.nop<br> [0x80000424]:sd t4, 56(gp)<br>   |
+|   9|[0x80002248]<br>0x0000000080002000|- rd : x6<br> - imm_val == 496<br>                                         |[0x80000430]:c.ldsp t1, 62<br> [0x80000432]:c.nop<br> [0x80000434]:c.nop<br> [0x80000436]:sd t1, 64(gp)<br>   |
+|  10|[0x80002250]<br>0xFAB7FBB6FAB7FBB6|- rd : x15<br> - imm_val == 488<br>                                        |[0x80000442]:c.ldsp a5, 61<br> [0x80000444]:c.nop<br> [0x80000446]:c.nop<br> [0x80000448]:sd a5, 72(gp)<br>   |
+|  11|[0x80002258]<br>0xF56FF76DF56FF76D|- rd : x14<br> - imm_val == 472<br>                                        |[0x80000454]:c.ldsp a4, 59<br> [0x80000456]:c.nop<br> [0x80000458]:c.nop<br> [0x8000045a]:sd a4, 80(gp)<br>   |
+|  12|[0x80002260]<br>0x5BFDDB7D5BFDDB7D|- rd : x8<br> - imm_val == 440<br>                                         |[0x80000466]:c.ldsp fp, 55<br> [0x80000468]:c.nop<br> [0x8000046a]:c.nop<br> [0x8000046c]:sd fp, 88(gp)<br>   |
+|  13|[0x80002268]<br>0xB6FAB7FBB6FAB7FB|- rd : x23<br> - imm_val == 376<br>                                        |[0x80000478]:c.ldsp s7, 47<br> [0x8000047a]:c.nop<br> [0x8000047c]:c.nop<br> [0x8000047e]:sd s7, 96(gp)<br>   |
+|  14|[0x80002270]<br>0xB7FBB6FAB7FBB6FA|- rd : x7<br> - imm_val == 168<br>                                         |[0x8000048a]:c.ldsp t2, 21<br> [0x8000048c]:c.nop<br> [0x8000048e]:c.nop<br> [0x80000490]:sd t2, 104(gp)<br>  |
+|  15|[0x80002278]<br>0xDBEADFEEDBEADFEE|- rd : x21<br> - imm_val == 336<br>                                        |[0x8000049c]:c.ldsp s5, 42<br> [0x8000049e]:c.nop<br> [0x800004a0]:c.nop<br> [0x800004a2]:sd s5, 112(gp)<br>  |
+|  16|[0x80002280]<br>0xDF56FF76DF56FF76|- rd : x18<br>                                                             |[0x800004ae]:c.ldsp s2, 0<br> [0x800004b0]:c.nop<br> [0x800004b2]:c.nop<br> [0x800004b4]:sd s2, 120(gp)<br>   |
+|  17|[0x80002288]<br>0x6FAB7FBB6FAB7FBB|- rd : x19<br>                                                             |[0x800004c0]:c.ldsp s3, 0<br> [0x800004c2]:c.nop<br> [0x800004c4]:c.nop<br> [0x800004c6]:sd s3, 128(gp)<br>   |
+|  18|[0x80002290]<br>0xFEEDBEADFEEDBEAD|- rd : x1<br>                                                              |[0x800004d2]:c.ldsp ra, 0<br> [0x800004d4]:c.nop<br> [0x800004d6]:c.nop<br> [0x800004d8]:sd ra, 136(gp)<br>   |
+|  19|[0x80002298]<br>0xAB7FBB6FAB7FBB6F|- rd : x11<br>                                                             |[0x800004e4]:c.ldsp a1, 0<br> [0x800004e6]:c.nop<br> [0x800004e8]:c.nop<br> [0x800004ea]:sd a1, 144(gp)<br>   |
+|  20|[0x800022a0]<br>0x0000000080002000|- rd : x2<br>                                                              |[0x800004f6]:c.ldsp sp, 0<br> [0x800004f8]:c.nop<br> [0x800004fa]:c.nop<br> [0x800004fc]:sd sp, 152(gp)<br>   |
+|  21|[0x800022a8]<br>0xDDB7D5BFDDB7D5BF|- rd : x28<br>                                                             |[0x80000508]:c.ldsp t3, 0<br> [0x8000050a]:c.nop<br> [0x8000050c]:c.nop<br> [0x8000050e]:sd t3, 160(gp)<br>   |
+|  22|[0x800022b0]<br>0xBB6FAB7FBB6FAB7F|- rd : x27<br>                                                             |[0x8000051a]:c.ldsp s11, 0<br> [0x8000051c]:c.nop<br> [0x8000051e]:c.nop<br> [0x80000520]:sd s11, 168(gp)<br> |
+|  23|[0x800022b8]<br>0x7D5BFDDB7D5BFDDB|- rd : x16<br>                                                             |[0x8000052c]:c.ldsp a6, 0<br> [0x8000052e]:c.nop<br> [0x80000530]:c.nop<br> [0x80000532]:sd a6, 176(gp)<br>   |
+|  24|[0x800022c0]<br>0xD5BFDDB7D5BFDDB7|- rd : x12<br>                                                             |[0x8000053e]:c.ldsp a2, 0<br> [0x80000540]:c.nop<br> [0x80000542]:c.nop<br> [0x80000544]:sd a2, 184(gp)<br>   |
+|  25|[0x800022c8]<br>0x6DF56FF76DF56FF7|- rd : x22<br>                                                             |[0x80000550]:c.ldsp s6, 0<br> [0x80000552]:c.nop<br> [0x80000554]:c.nop<br> [0x80000556]:sd s6, 192(gp)<br>   |
+|  26|[0x800022d0]<br>0xDB7D5BFDDB7D5BFD|- rd : x24<br>                                                             |[0x80000562]:c.ldsp s8, 0<br> [0x80000564]:c.nop<br> [0x80000566]:c.nop<br> [0x80000568]:sd s8, 200(gp)<br>   |
+|  27|[0x800022d8]<br>0xEDBEADFEEDBEADFE|- rd : x25<br>                                                             |[0x80000574]:c.ldsp s9, 0<br> [0x80000576]:c.nop<br> [0x80000578]:c.nop<br> [0x8000057a]:sd s9, 208(gp)<br>   |
+|  28|[0x800022e0]<br>0xFBB6FAB7FBB6FAB7|- rd : x31<br>                                                             |[0x80000586]:c.ldsp t6, 0<br> [0x80000588]:c.nop<br> [0x8000058a]:c.nop<br> [0x8000058c]:sd t6, 216(gp)<br>   |
+|  29|[0x800022e8]<br>0xF76DF56FF76DF56F|- rd : x30<br>                                                             |[0x800005a0]:c.ldsp t5, 0<br> [0x800005a2]:c.nop<br> [0x800005a4]:c.nop<br> [0x800005a6]:sd t5, 0(ra)<br>     |
+|  30|[0x800022f0]<br>0xBEADFEEDBEADFEED|- rd : x17<br>                                                             |[0x800005b2]:c.ldsp a7, 0<br> [0x800005b4]:c.nop<br> [0x800005b6]:c.nop<br> [0x800005b8]:sd a7, 8(ra)<br>     |
+|  31|[0x800022f8]<br>0x0000000080002208|- rd : x3<br>                                                              |[0x800005c4]:c.ldsp gp, 0<br> [0x800005c6]:c.nop<br> [0x800005c8]:c.nop<br> [0x800005ca]:sd gp, 16(ra)<br>    |

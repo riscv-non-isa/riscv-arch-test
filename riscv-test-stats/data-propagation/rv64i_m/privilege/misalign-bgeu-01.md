@@ -10,8 +10,8 @@
 | Param                     | Value    |
 |---------------------------|----------|
 | XLEN                      | 64      |
-| TEST_REGION               | [('0x8000039c', '0x800003e0')]      |
-| SIG_REGION                | [('0x80003208', '0x80003410', '65 dwords')]      |
+| TEST_REGION               | [('0x8000039c', '0x800003f0')]      |
+| SIG_REGION                | [('0x80002208', '0x80002410', '65 dwords')]      |
 | COV_LABELS                | misalign-bgeu      |
 | TEST_NAME                 | /scratch/git-repo/incoresemi/riscof/riscof_work/misalign-bgeu-01.S/misalign-bgeu-01.S    |
 | Total Number of coverpoints| 2     |
@@ -67,6 +67,6 @@
   test. These need not necessarily be in increasing or decreasing order of the
   address in the signature region.
 
-|s.no|            signature             |                         coverpoints                         |                                                             code                                                              |
-|---:|----------------------------------|-------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------|
-|   1|[0x80003208]<br>0x0000000000000001|- opcode : bgeu<br> -  rs1_val>rs2_val and ea_align == 2<br> |[0x800003c4]:bgeu a0, a1, 8182<br> [0x800003ba]:addi sp, sp, 1<br> [0x800003be]:jal zero, 30<br> [0x800003dc]:sd sp, 0(ra)<br> |
+|s.no|            signature             |                         coverpoints                         |                                                            code                                                            |
+|---:|----------------------------------|-------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------|
+|   1|[0x80002208]<br>0x0000000000000003|- opcode : bgeu<br> -  rs1_val>rs2_val and ea_align == 2<br> |[0x800003c4]:bgeu a0, a1, 18<br> [0x800003d6]:addi sp, sp, 3<br> [0x800003da]:jal zero, 6<br> [0x800003e0]:sd sp, 0(ra)<br> |

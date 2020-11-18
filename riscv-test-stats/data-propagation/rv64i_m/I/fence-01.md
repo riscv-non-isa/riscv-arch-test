@@ -11,7 +11,7 @@
 |---------------------------|----------|
 | XLEN                      | 64      |
 | TEST_REGION               | [('0x80000390', '0x800003e0')]      |
-| SIG_REGION                | [('0x80003208', '0x80003218', '2 dwords')]      |
+| SIG_REGION                | [('0x80002208', '0x80002210', '1 dwords')]      |
 | COV_LABELS                | fence      |
 | TEST_NAME                 | /scratch/git-repo/incoresemi/riscof/riscof_work/fence-01.S/fence-01.S    |
 | Total Number of coverpoints| 1     |
@@ -45,10 +45,10 @@ Last Code Sequence :
 	-[0x800003bc]:fence iorw, iorw
 	-[0x800003c0]:lw gp, 0(s1)
 	-[0x800003c4]:lw tp, 4(s1)
-	-[0x800003c8]:auipc s1, 3
-	-[0x800003cc]:addi s1, s1, 3656
+	-[0x800003c8]:auipc s1, 2
+	-[0x800003cc]:addi s1, s1, 3648
 	-[0x800003d0]:sw tp, 0(s1)
-Current Store : [0x800003d4] : sw gp, 4(s1) -- Store: [0x80003214]:0xFFFFFFFFFFFFFFFF
+Current Store : [0x800003d4] : sw gp, 4(s1) -- Store: [0x8000220c]:0xFFFFFFFFFFFFFFFF
 
 
 
@@ -82,4 +82,4 @@ Current Store : [0x800003d4] : sw gp, 4(s1) -- Store: [0x80003214]:0xFFFFFFFFFFF
 
 |s.no|            signature             |     coverpoints     |                                                                                            code                                                                                            |
 |---:|----------------------------------|---------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|   1|[0x80003210]<br>0xFFFFFFFFAAAAAAAA|- opcode : fence<br> |[0x800003bc]:fence iorw, iorw<br> [0x800003c0]:lw gp, 0(s1)<br> [0x800003c4]:lw tp, 4(s1)<br> [0x800003c8]:auipc s1, 3<br> [0x800003cc]:addi s1, s1, 3656<br> [0x800003d0]:sw tp, 0(s1)<br> |
+|   1|[0x80002208]<br>0xFFFFFFFFAAAAAAAA|- opcode : fence<br> |[0x800003bc]:fence iorw, iorw<br> [0x800003c0]:lw gp, 0(s1)<br> [0x800003c4]:lw tp, 4(s1)<br> [0x800003c8]:auipc s1, 2<br> [0x800003cc]:addi s1, s1, 3648<br> [0x800003d0]:sw tp, 0(s1)<br> |

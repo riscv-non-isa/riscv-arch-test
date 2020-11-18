@@ -7,9 +7,10 @@
 // 
 
 #include "compliance_model.h"
-#include "compliance_test.h"
+#include "arch_test.h"
 RVTEST_ISA("RV32I")
 
+.section .text.init
 .globl rvtest_entry_point
 rvtest_entry_point:
 RVMODEL_BOOT
@@ -47,8 +48,6 @@ rvtest_data_store:
 RVTEST_DATA_END
 
 RVMODEL_DATA_BEGIN
-.align 4
-
 signature_x9_1:
     .fill 1,4,0xdeadbeef
 

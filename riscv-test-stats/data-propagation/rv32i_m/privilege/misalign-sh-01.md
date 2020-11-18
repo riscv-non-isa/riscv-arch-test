@@ -11,7 +11,7 @@
 |---------------------------|----------|
 | XLEN                      | 32      |
 | TEST_REGION               | [('0x80000104', '0x80000130')]      |
-| SIG_REGION                | [('0x80003204', '0x80003308', '65 words')]      |
+| SIG_REGION                | [('0x80002204', '0x80002308', '65 words')]      |
 | COV_LABELS                | misalign-sh      |
 | TEST_NAME                 | /scratch/git-repo/incoresemi/riscof/riscof_work/misalign-sh-01.S/misalign-sh-01.S    |
 | Total Number of coverpoints| 2     |
@@ -42,32 +42,32 @@
 ```
 Last Coverpoint : ['opcode : sh', 'ea_align == 1']
 Last Code Sequence : 
-	-[0x80000120]:sh a1, 4093(a0)
-Current Store : [0x80000350] : sw t2, 0(t1) -- Store: [0x80003208]:0x0000008F
+	-[0x8000011c]:sh a1, 3072(a0)
+Current Store : [0x80000350] : sw t2, 0(t1) -- Store: [0x80002208]:0x0000008F
 
 
 
 
 Last Coverpoint : ['opcode : sh', 'ea_align == 1']
 Last Code Sequence : 
-	-[0x80000120]:sh a1, 4093(a0)
-Current Store : [0x80000358] : sw t2, 4(t1) -- Store: [0x8000320c]:0x00000006
+	-[0x8000011c]:sh a1, 3072(a0)
+Current Store : [0x80000358] : sw t2, 4(t1) -- Store: [0x8000220c]:0x00000006
 
 
 
 
 Last Coverpoint : ['opcode : sh', 'ea_align == 1']
 Last Code Sequence : 
-	-[0x80000120]:sh a1, 4093(a0)
-Current Store : [0x80000370] : sw t4, 8(t1) -- Store: [0x80003210]:0x00000114
+	-[0x8000011c]:sh a1, 3072(a0)
+Current Store : [0x80000370] : sw t4, 8(t1) -- Store: [0x80002210]:0x00000110
 
 
 
 
 Last Coverpoint : ['opcode : sh', 'ea_align == 1']
 Last Code Sequence : 
-	-[0x80000120]:sh a1, 4093(a0)
-Current Store : [0x800003f0] : sw t2, 12(t1) -- Store: [0x80003214]:0x000031F9
+	-[0x8000011c]:sh a1, 3072(a0)
+Current Store : [0x800003ec] : sw t2, 12(t1) -- Store: [0x80002214]:0x00000000
 
 
 
@@ -101,4 +101,4 @@ Current Store : [0x800003f0] : sw t2, 12(t1) -- Store: [0x80003214]:0x000031F9
 
 |s.no|        signature         |             coverpoints              |              code               |
 |---:|--------------------------|--------------------------------------|---------------------------------|
-|   1|[0x80003205]<br>0xFFFFF7FF|- opcode : sh<br> - ea_align == 1<br> |[0x80000120]:sh a1, 4093(a0)<br> |
+|   1|[0x80002205]<br>0xFFFFFFF6|- opcode : sh<br> - ea_align == 1<br> |[0x8000011c]:sh a1, 3072(a0)<br> |

@@ -89,7 +89,7 @@ misalign-jal:
   opcode:
     coverage: 1/1
     detail:
-      - jal: 2
+      - jal: 1
   val_comb:
     coverage: 1/1
     detail:

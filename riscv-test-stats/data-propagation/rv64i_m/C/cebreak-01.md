@@ -11,7 +11,7 @@
 |---------------------------|----------|
 | XLEN                      | 64      |
 | TEST_REGION               | [('0x8000039c', '0x800003c0')]      |
-| SIG_REGION                | [('0x80003208', '0x80003228', '4 dwords')]      |
+| SIG_REGION                | [('0x80002208', '0x80002220', '3 dwords')]      |
 | COV_LABELS                | cebreak      |
 | TEST_NAME                 | /scratch/git-repo/incoresemi/riscof/riscof_work/cebreak-01.S/cebreak-01.S    |
 | Total Number of coverpoints| 1     |
@@ -43,7 +43,7 @@
 Last Coverpoint : ['opcode : c.ebreak']
 Last Code Sequence : 
 	-[0x800003ac]:c.ebreak
-Current Store : [0x80000668] : sd t2, 8(t1) -- Store: [0x80003220]:0x0000000000000003
+Current Store : [0x80000668] : sd t2, 8(t1) -- Store: [0x80002218]:0x0000000000000003
 
 
 
@@ -51,7 +51,7 @@ Current Store : [0x80000668] : sd t2, 8(t1) -- Store: [0x80003220]:0x00000000000
 Last Coverpoint : ['opcode : c.ebreak']
 Last Code Sequence : 
 	-[0x800003ac]:c.ebreak
-Current Store : [0x80000680] : sd t4, 16(t1) -- Store: [0x80003228]:0x00000000000003A0
+Current Store : [0x80000680] : sd t4, 16(t1) -- Store: [0x80002220]:0x00000000000003A0
 
 
 
@@ -59,7 +59,7 @@ Current Store : [0x80000680] : sd t4, 16(t1) -- Store: [0x80003228]:0x0000000000
 Last Coverpoint : ['opcode : c.ebreak']
 Last Code Sequence : 
 	-[0x800003ac]:c.ebreak
-Current Store : [0x800003b4] : sw zero, 0(ra) -- Store: [0x80003210]:0x0000000000000000
+Current Store : [0x800003b4] : sw zero, 0(ra) -- Store: [0x80002208]:0x0000000000000000
 
 
 
@@ -67,7 +67,7 @@ Current Store : [0x800003b4] : sw zero, 0(ra) -- Store: [0x80003210]:0x000000000
 Last Coverpoint : ['opcode : c.ebreak']
 Last Code Sequence : 
 	-[0x800003ac]:c.ebreak
-Current Store : [0x800003b8] : sw sp, 4(ra) -- Store: [0x80003214]:0x0000000011111111
+Current Store : [0x800003b8] : sw sp, 4(ra) -- Store: [0x8000220c]:0x0000000011111111
 
 
 
@@ -101,4 +101,4 @@ Current Store : [0x800003b8] : sw sp, 4(ra) -- Store: [0x80003214]:0x00000000111
 
 |s.no|            signature             |      coverpoints       |           code           |
 |---:|----------------------------------|------------------------|--------------------------|
-|   1|[0x80003218]<br>0x000000000000010F|- opcode : c.ebreak<br> |[0x800003ac]:c.ebreak<br> |
+|   1|[0x80002210]<br>0x000000000000010F|- opcode : c.ebreak<br> |[0x800003ac]:c.ebreak<br> |

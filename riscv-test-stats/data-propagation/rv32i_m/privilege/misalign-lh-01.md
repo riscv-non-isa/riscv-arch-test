@@ -11,7 +11,7 @@
 |---------------------------|----------|
 | XLEN                      | 32      |
 | TEST_REGION               | [('0x80000104', '0x80000130')]      |
-| SIG_REGION                | [('0x80003204', '0x80003308', '65 words')]      |
+| SIG_REGION                | [('0x80002204', '0x80002308', '65 words')]      |
 | COV_LABELS                | misalign-lh      |
 | TEST_NAME                 | /scratch/git-repo/incoresemi/riscof/riscof_work/misalign-lh-01.S/misalign-lh-01.S    |
 | Total Number of coverpoints| 2     |
@@ -42,32 +42,32 @@
 ```
 Last Coverpoint : ['opcode : lh', 'ea_align == 1']
 Last Code Sequence : 
-	-[0x80000114]:lh a1, 5(a0)
-Current Store : [0x80000358] : sw t2, 4(t1) -- Store: [0x8000320c]:0x00000004
+	-[0x80000114]:lh a1, 3967(a0)
+Current Store : [0x80000358] : sw t2, 4(t1) -- Store: [0x8000220c]:0x00000004
 
 
 
 
 Last Coverpoint : ['opcode : lh', 'ea_align == 1']
 Last Code Sequence : 
-	-[0x80000114]:lh a1, 5(a0)
-Current Store : [0x80000370] : sw t4, 8(t1) -- Store: [0x80003210]:0x00000108
+	-[0x80000114]:lh a1, 3967(a0)
+Current Store : [0x80000370] : sw t4, 8(t1) -- Store: [0x80002210]:0x00000108
 
 
 
 
 Last Coverpoint : ['opcode : lh', 'ea_align == 1']
 Last Code Sequence : 
-	-[0x80000114]:lh a1, 5(a0)
-Current Store : [0x800003f0] : sw t2, 12(t1) -- Store: [0x80003214]:0x00003065
+	-[0x80000114]:lh a1, 3967(a0)
+Current Store : [0x800003ec] : sw t2, 12(t1) -- Store: [0x80002214]:0x00000000
 
 
 
 
 Last Coverpoint : ['opcode : lh', 'ea_align == 1']
 Last Code Sequence : 
-	-[0x80000114]:lh a1, 5(a0)
-Current Store : [0x80000120] : sw a1, 0(ra) -- Store: [0x80003204]:0xAB7FBB6F
+	-[0x80000114]:lh a1, 3967(a0)
+Current Store : [0x80000120] : sw a1, 0(ra) -- Store: [0x80002204]:0xAB7FBB6F
 
 
 
@@ -99,6 +99,6 @@ Current Store : [0x80000120] : sw a1, 0(ra) -- Store: [0x80003204]:0xAB7FBB6F
   test. These need not necessarily be in increasing or decreasing order of the
   address in the signature region.
 
-|s.no|        signature         |             coverpoints              |             code             |
-|---:|--------------------------|--------------------------------------|------------------------------|
-|   1|[0x80003208]<br>0x0000008F|- opcode : lh<br> - ea_align == 1<br> |[0x80000114]:lh a1, 5(a0)<br> |
+|s.no|        signature         |             coverpoints              |              code               |
+|---:|--------------------------|--------------------------------------|---------------------------------|
+|   1|[0x80002208]<br>0x0000008F|- opcode : lh<br> - ea_align == 1<br> |[0x80000114]:lh a1, 3967(a0)<br> |
