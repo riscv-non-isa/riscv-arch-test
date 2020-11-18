@@ -38,11 +38,11 @@ For version v0.2, the `device` directory first needs to have either a `rv32i_m` 
 that the target is a 32-bit machine. The extension directories, as supported by the target, are 
 now to be created in each of these directories using the following mapping scheme:
 
-. device/rv32i          -->> device/rv32i_m/I
-. device/rv32im         -->> device/rv32i_m/M  
-. device/rv32imc        -->> device/rv32i_m/C
-. device/rv32Zicsr      -->> device/rv32i_m/privilege
-. device/rv32Zifencei   -->> device/rv32i_m/Zifencei
+. device/rv32i          -> device/rv32i_m/I
+. device/rv32im         -> device/rv32i_m/M  
+. device/rv32imc        -> device/rv32i_m/C
+. device/rv32Zicsr      -> device/rv32i_m/privilege
+. device/rv32Zifencei   -> device/rv32i_m/Zifencei
 
 The contents of the extension directories need not change, unless there are dependencies on the path
 of the directory itself. The following commands will achieve the above:
@@ -63,10 +63,10 @@ Since some of the macros from the old framework have been re-purposed in the new
 there will be name conflicts rendering the old ones useless. In order to retain the old macros, they
 have been renamed with a post-fix `_OLD`. The macros that have been renamed are given below:
 
-. `RVTEST_CODE_BEGIN` -->> `RVTEST_CODE_BEGIN_OLD`
-. `RVTEST_CODE_END`   -->> `RVTEST_CODE_END_OLD`
-. `RVTEST_DATA_BEGIN` -->> `RVTEST_DATA_BEGIN_OLD`
-. `RVTEST_DATA_END`   -->> `RVTEST_DATA_END_OLD`
+. `RVTEST_CODE_BEGIN` -> `RVTEST_CODE_BEGIN_OLD`
+. `RVTEST_CODE_END`   -> `RVTEST_CODE_END_OLD`
+. `RVTEST_DATA_BEGIN` -> `RVTEST_DATA_BEGIN_OLD`
+. `RVTEST_DATA_END`   -> `RVTEST_DATA_END_OLD`
 
 The user is thus required to make the above changes in the new `compliance_model.h` that was created
 as part of this migration.
