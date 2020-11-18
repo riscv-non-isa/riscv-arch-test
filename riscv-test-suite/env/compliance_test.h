@@ -1,10 +1,7 @@
-#ifndef _COMPLIANCE_TEST_H
-#define _COMPLIANCE_TEST_H
-
 #include "encoding.h"
 // TODO the following should come from the YAML.
 #ifndef NUM_SPECD_INTCAUSES 
-#define NUM_SPECD_INTCAUSES 16
+  #define NUM_SPECD_INTCAUSES 16
 #endif
 //#define RVTEST_FIXED_LEN
 #ifndef UNROLLSZ
@@ -19,6 +16,26 @@
 //-----------------------------------------------------------------------
 // RV Compliance Macros
 //-----------------------------------------------------------------------
+#ifndef RVMODEL_SET_MSW_INT
+  #warning "RVMODEL_SET_MSW_INT is not defined by target. Declaring as empty macro"
+  #define RVMODEL_SET_MSW_INT       
+#endif
+
+#ifndef RVMODEL_CLEAR_MSW_INT     
+  #warning "RVMODEL_CLEAR_MSW_INT is not defined by target. Declaring as empty macro"
+  #define RVMODEL_CLEAR_MSW_INT     
+#endif
+
+#ifndef RVMODEL_CLEAR_MTIMER_INT
+  #warning "RVMODEL_CLEAR_MTIMER_INT is not defined by target. Declaring as empty macro"
+  #define RVMODEL_CLEAR_MTIMER_INT
+#endif
+
+#ifndef RVMODEL_CLEAR_MEXT_INT
+  #warning "RVMODEL_CLEAR_MEXT_INT is not defined by target. Declaring as empty macro"
+  #define RVMODEL_CLEAR_MEXT_INT
+#endif
+
 #ifdef RVTEST_FIXED_LEN
     #define LI(reg, val)\
     .option push;\
@@ -74,11 +91,12 @@
 #endif
 
 #ifndef CODE_REL_TVAL_MSK
-  #define CODE_REL_TVAL_MSK 0xF0D8 << (REGWIDTH*8-16)
+  #define CODE_REL_TVAL_MSK 0xD008 << (REGWIDTH*8-16)
 #endif
 
 
 // ----------------------------------- CODE BEGIN w/ TRAP HANDLER START ------------------------ //
+
 .macro RVTEST_CODE_BEGIN
   .align UNROLLSZ
   .section .text.init;
@@ -299,9 +317,9 @@
   
           LI(t4, CODE_REL_TVAL_MSK)   /* trap#s 12, 3,1,0, -- adjust w/ code_begin */
           sll     t4, t4, t2		          /* put bit# in MSB */
-          bltz    t4, sv_mtval		        /* correct adjustment is data_begin in t3 */
+          bltz    t4, sv_mtval		        /* correct adjustment is code_begin in t3 */
   
-          LA(     t3, rvtest_prolog_done)/* adjustment for data_begin */
+          LA(     t3, rvtest_data_begin)/* adjustment for data_begin */
           LI(t4, DATA_REL_TVAL_MSK)   /* trap#s not 14, 11..8, 2 adjust w/ data_begin */
           sll     t4, t4, t2		          /* put bit# in MSB */
           bltz    t4, sv_mtval		        /* correct adjustment is data_begin in t3 */
@@ -309,8 +327,8 @@
           LI(t3, 0)			/* else zero adjustment amt */
 
   // For Illegal op handling
-          addi    t3, t2, -2            /* check if mcause==2 (illegal op) */
-          bnez    t3, sv_mtval          /* not illegal op, no special treatment */
+          addi    t2, t2, -2            /* check if mcause==2 (illegal op) */
+          bnez    t2, sv_mtval          /* not illegal op, no special treatment */
           csrr    t2, CSR_MTVAL
           bnez    t2, sv_mtval          /* mtval isn’t zero, no special treatment */
   illop:
@@ -323,15 +341,15 @@
           bnez    t4, sv_mtval          /* entire mtval is in tt2, adj amt will be set to zero */
           lhu     t4, 2(t3)           
           sll     t4, t4, 16
-          or      t3, t3, t4            /* get 2nd  hwd, align it & insert it into opcode */
+          or      t3, t2, t4            /* get 2nd  hwd, align it & insert it into opcode */
+          csrw    CSR_MSTATUS, t5           /* restore mstatus */
 
 /*******FIXME: this will not handle 48 or 64b opcodes in an RV64) ********/
 
-          csrw    CSR_MSTATUS, t5           /* restore mstatus */
   sv_mtval:
           csrr   t2, CSR_MTVAL
-          sub     t2, t2, t3		/* perform mtval adjust by either code or data position or zero*/
-          SREG      t2, 3*REGWIDTH(t1)	/* save 4th sig value, (rel mtval) into trap signature area */
+          sub    t2, t2, t3		/* perform mtval adjust by either code or data position or zero*/
+          SREG   t2, 3*REGWIDTH(t1)	/* save 4th sig value, (rel mtval) into trap signature area */
   
   resto_rtn:		/* restore and return */
           addi    t1, t1,4*REGWIDTH		/* adjust trap signature ptr (traps always save 4 words) */
@@ -546,7 +564,6 @@ rvtest_data_end:
     .set offset,0;
 
 
-#endif //_COMPLIANCE_TEST_H
 
 //------------------------------ BORROWED FROM ANDREW's RISC-V TEST MACROS -----------------------//
 #define MASK_XLEN(x) ((x) & ((1 << (__riscv_xlen - 1) << 1) - 1))
@@ -941,3 +958,53 @@ RVTEST_SIGUPD(swreg,destreg,offset)
     sub x1,x1,tempreg                          ;\
     RVTEST_SIGUPD(swreg,x1,offset) 
 //SREG x1, offset(swreg);
+
+
+//--------------------------------- Migration aliases ------------------------------------------
+#ifdef RV_COMPLIANCE_RV32M
+  #warning "RV_COMPLIANCE_RV32M macro will be deprecated."
+  #define RVMODEL_BOOT \
+    RVTEST_IO_INIT; \
+    RV_COMPLIANCE_RV32M ; \
+    RV_COMPLIANCE_CODE_BEGIN
+#endif
+
+#define SWSIG(a, b)
+  
+#ifdef RV_COMPLIANCE_DATA_BEGIN
+  #warning "RV_COMPLIANCE_DATA_BEGIN macro deprecated in v0.2. Please use RVMODEL_DATA_BEGIN instead"
+  #define RVMODEL_DATA_BEGIN \
+    RV_COMPLIANCE_DATA_BEGIN
+#endif
+
+#ifdef RV_COMPLIANCE_DATA_END
+  #warning "RV_COMPLIANCE_DATA_END macro deprecated in v0.2. Please use RVMODEL_DATA_END instead"
+  #define RVMODEL_DATA_END \
+    RV_COMPLIANCE_DATA_END
+#endif
+
+#ifdef RV_COMPLIANCE_HALT
+  #warning "RV_COMPLIANCE_HALT macro deprecated in v0.2. Please use RVMODEL_HALT instead"
+  #define RVMODEL_HALT \
+    RV_COMPLIANCE_HALT
+#endif
+
+#ifdef RVTEST_IO_ASSERT_GPR_EQ
+  #warning "RVTEST_IO_ASSERT_GPR_EQ macro deprecated in v0.2. Please use RVMODEL_IO_ASSERT_GPR_EQ instead"
+  #define RVMODEL_IO_ASSERT_GPR_EQ(_SP, _R, _I) \
+    RVTEST_IO_ASSERT_GPR_EQ(_SP,_R, _I)
+#endif
+
+#ifdef RVTEST_IO_WRITE_STR 
+  #warning "RVTEST_IO_WRITE_STR macro deprecated in v0.2. Please use RVMODEL_IO_WRITE_STR instead"
+  #define RVMODEL_IO_WRITE_STR(_SP, _STR) \
+    RVTEST_IO_WRITE_STR(_SP, _STR)
+#endif
+
+#ifdef RVTEST_IO_INIT
+  #warning "RVTEST_IO_INIT is deprecated in v0.2. Please use RVMODEL_BOOT for initialization"
+#endif
+  
+#ifdef RVTEST_IO_CHECK()
+  #warning "RVTEST_IO_CHECK is deprecated in v0.2.
+#endif
