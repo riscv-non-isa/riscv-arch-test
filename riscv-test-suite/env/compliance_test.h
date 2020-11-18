@@ -83,8 +83,8 @@
   .align UNROLLSZ
   .section .text.init;
   .option norelax;
-  .globl rvtest_start;                                                  \
-  rvtest_start:
+  .globl rvtest_init;                                                  \
+  rvtest_init:
 #ifdef rvtest_mtrap_routine
   LA(x1, rvtest_trap_prolog );
   jalr ra, x1
@@ -545,9 +545,6 @@ rvtest_data_end:
     .endif;\
     .set offset,0;
 
-/* #define RVTEST_SIGUPD(_BR,_R,_OFF)\ */
-/*     SREG _R, _OFF(_BR);\ */
-/*     .set offset,_OFF+REGWIDTH; */
 
 #endif //_COMPLIANCE_TEST_H
 
@@ -725,11 +722,8 @@ RVTEST_SIGUPD(swreg,destreg,offset)
 
 #define TEST_CASE(testreg, destreg, correctval, swreg, offset, code... ) \
     code; \
-    RVTEST_SIGUPD(swreg,destreg,offset) 
-//SREG destreg, offset(swreg); 
-
-//   RVMODEL_IO_ASSERT_GPR_EQ(testreg, destreg, correctval)
-
+    RVTEST_SIGUPD(swreg,destreg,offset); \
+    RVMODEL_IO_ASSERT_GPR_EQ(testreg, destreg, correctval)
 
 #define TEST_AUIPC(inst, destreg, correctval, imm, swreg, offset, testreg) \
     TEST_CASE(testreg, destreg, correctval, swreg, offset, \

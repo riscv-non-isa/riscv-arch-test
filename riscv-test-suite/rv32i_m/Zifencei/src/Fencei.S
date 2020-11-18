@@ -13,12 +13,12 @@
 RVTEST_ISA("RV32I")
 
 # Test code region
+.globl rvtest_entry_point
+rvtest_entry_point:
 RVMODEL_BOOT
 RVTEST_CODE_BEGIN
-
-    RVMODEL_IO_INIT
-    RVMODEL_IO_ASSERT_GPR_EQ(x31, x0, 0x00000000)
-    RVMODEL_IO_WRITE_STR(x31, "# Test Begin\n")
+RVMODEL_IO_ASSERT_GPR_EQ(x31, x0, 0x00000000)
+RVMODEL_IO_WRITE_STR(x31, "# Test Begin\n")
 
 #ifdef TEST_CASE_1
   RVTEST_CASE(1,"// check ISA:=regex(.*32.*); check ISA:=regex(.*I.*); check ISA:=regex(.*Zifencei.*); def TEST_CASE_1=True", fencei)

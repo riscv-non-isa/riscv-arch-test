@@ -10,6 +10,8 @@
 #include "compliance_test.h"
 RVTEST_ISA("RV32I")
 
+.globl rvtest_entry_point
+rvtest_entry_point:
 RVMODEL_BOOT
 RVTEST_CODE_BEGIN
 

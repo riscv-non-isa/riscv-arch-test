@@ -341,7 +341,8 @@ the test.
     - contains boot code for the test-target; may include emulation code or trap stub. If the
       test-target enforces alignment or value restrictions on the mtvec csr, it is required that
       this macro sets the value of mtvec to a region which is readable and writable by the machine
-      mode.
+      mode. May include code to copy the data sections from boot device to ram.  Or any other code 
+      that needs to be run prior to running the tests. 
     
 ////
 `RVMODEL_IO_INIT`::                    
@@ -351,11 +352,12 @@ the test.
   `RVMODEL_IO_CHECK`::                   
     - checks IO for debug output
     - <needs description of how this is used > 
-    
+
   `RVMODEL_IO_ASSERT_GPR_EQ(ScrReg, Reg, Value)`:: 
     - debug assertion that GPR should have value +
     - outputs a debug message if Reg!=Value +
     - ScrReg is a scratch register used by the output routine; its final value cannot be guaranteed
+    - Can be used to help debug what tests have passed/failed
     
   `RVMODEL_IO_WRITE_STR(ScrReg, String)`::
     - output debug string, using a scratch register +

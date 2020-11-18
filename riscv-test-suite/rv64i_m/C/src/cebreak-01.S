@@ -15,12 +15,12 @@
 RVTEST_ISA("RV64IC")
 
 # Test code region
+.globl rvtest_entry_point
+rvtest_entry_point:
 RVMODEL_BOOT
 RVTEST_CODE_BEGIN
-
-    RVMODEL_IO_INIT
-    RVMODEL_IO_ASSERT_GPR_EQ(x30, x0, 0x00000000)
-    RVMODEL_IO_WRITE_STR(x30, "# Test Begin Reserved reg x31\n")
+RVMODEL_IO_ASSERT_GPR_EQ(x30, x0, 0x00000000)
+RVMODEL_IO_WRITE_STR(x30, "# Test Begin Reserved reg x31\n")
 
 #ifdef TEST_CASE_1
     RVTEST_CASE(1,"// check ISA:=regex(.*I.*Zicsr.*.C*); def rvtest_mtrap_routine=True; def TEST_CASE_1=True",cebreak)

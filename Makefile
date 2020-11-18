@@ -19,6 +19,8 @@ space:= $(empty) $(empty)
 RISCV_ISA_ALL = $(shell ls $(TARGETDIR)/$(RISCV_TARGET)/device/rv$(XLEN)i_m)
 RISCV_ISA_OPT = $(subst $(space),$(pipe),$(RISCV_ISA_ALL))
 
+RISCV_ISA_ALL := $(filter-out Makefile.include,$(RISCV_ISA_ALL))
+
 ifeq ($(RISCV_DEVICE),)
     RISCV_DEVICE = I
     DEFAULT_TARGET=all_variant
