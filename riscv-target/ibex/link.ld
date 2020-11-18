@@ -1,0 +1,1 @@
+device/rv32imc/link.ld
