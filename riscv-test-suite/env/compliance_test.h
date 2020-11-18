@@ -100,7 +100,6 @@
 .macro RVTEST_CODE_BEGIN
   .align UNROLLSZ
   .section .text.init;
-  .option norelax;
   .globl rvtest_init;                                                  \
   rvtest_init:
 #ifdef rvtest_mtrap_routine
