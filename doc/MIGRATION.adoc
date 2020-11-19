@@ -69,7 +69,15 @@ have been renamed with a post-fix `_OLD`. The macros that have been renamed are 
 . `RVTEST_DATA_END`   -> `RVTEST_DATA_END_OLD`
 
 The user is thus required to make the above changes in the new `compliance_model.h` that was created
-as part of this migration.
+as part of this migration. The following commands will help achieve the above:
+
+----
+sed -i 's/RVTEST_CODE_BEGIN/RVTEST_CODE_BEGIN_OLD/g' compliance_model.h 
+sed -i 's/RVTEST_CODE_END/RVTEST_CODE_END_OLD/g' compliance_model.h 
+sed -i 's/RVTEST_DATA_BEGIN/RVTEST_DATA_BEGIN_OLD/g' compliance_model.h 
+sed -i 's/RVTEST_DATA_END/RVTEST_DATA_END_OLD/g' compliance_model.h 
+
+----
 
 note:: the RVTEST_DATA_END in v0.1 enforced a 16-byte alignment before the signature end. This
 constraint has been removed.
