@@ -56,6 +56,11 @@ reset_vector:                                                           \
 
 //RV_COMPLIANCE_DATA_BEGIN
 #define RVMODEL_DATA_BEGIN                                              \
+  .align 4; .global begin_signature; begin_signature:
+
+//RV_COMPLIANCE_DATA_END
+#define RVMODEL_DATA_END                                                      \
+  .align 4; .global end_signature; end_signature:  \
   .pushsection .tohost,"aw",@progbits;                            \
   .align 8; .global tohost; tohost: .dword 0;                     \
   .align 8; .global fromhost; fromhost: .dword 0;                 \
@@ -65,11 +70,6 @@ reset_vector:                                                           \
   .align 8; .global end_regstate; end_regstate:                   \
   .word 4;                                                        \
   .align ALIGNMENT;\
-  .global begin_signature; begin_signature:
-
-//RV_COMPLIANCE_DATA_END
-#define RVMODEL_DATA_END                                                      \
-  .global end_signature; end_signature:  
 
 #define RVMODEL_IO_INIT
 #define RVMODEL_IO_ASSERT_SFPR_EQ(_F, _R, _I)

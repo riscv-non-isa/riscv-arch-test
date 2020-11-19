@@ -1,5 +1,5 @@
 OUTPUT_ARCH( "riscv" )
-ENTRY(rvtest_entry_point)
+ENTRY(_start)
 
 SECTIONS
 {

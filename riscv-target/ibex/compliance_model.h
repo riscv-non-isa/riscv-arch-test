@@ -1,21 +1,13 @@
-#ifndef _COMPLIANCE_MODEL_H
-#define _COMPLIANCE_MODEL_H
+// RISC-V Compliance Test Header File
+// Copyright (c) 2017, Codasip Ltd. All Rights Reserved.
+// See LICENSE for license details.
+//
+// Description: Common header file for RV32I tests
 
-#if XLEN == 64
-  #define ALIGNMENT 3
-#else
-  #define ALIGNMENT 2
-#endif
+#ifndef _COMPLIANCE_TEST_H
+#define _COMPLIANCE_TEST_H
 
-#define RVMODEL_DATA_SECTION \
-        .pushsection .tohost,"aw",@progbits;                            \
-        .align 8; .global tohost; tohost: .dword 0;                     \
-        .align 8; .global fromhost; fromhost: .dword 0;                 \
-        .popsection;                                                    \
-        .align 8; .global begin_regstate; begin_regstate:               \
-        .word 128;                                                      \
-        .align 8; .global end_regstate; end_regstate:                   \
-        .word 4;
+#include "riscv_test.h"
 
 //-----------------------------------------------------------------------
 // RV Compliance Macros
@@ -26,7 +18,7 @@
 #define TESTUTIL_ADDR_BEGIN_SIGNATURE (TESTUTIL_BASE + 0x4)
 #define TESTUTIL_ADDR_END_SIGNATURE (TESTUTIL_BASE + 0x8)
 
-#define RVMODEL_HALT                                                    \
+#define RV_COMPLIANCE_HALT                                                    \
         /* tell simulation about location of begin_signature */               \
         la t0, begin_signature;                                               \
         li t1, TESTUTIL_ADDR_BEGIN_SIGNATURE;                                 \
@@ -39,44 +31,57 @@
         li t0, 1;                                                             \
         li t1, TESTUTIL_ADDR_HALT;                                            \
         sw t0, 0(t1);                                                         \
-  addi x1, x1, 4; \
-  li x1, 1;                                                                   \
-  write_tohost:                                                               \
-    sw x1, tohost, t5;                                                        \
-  self_loop:  j self_loop;
+        RVTEST_PASS                                                           \
 
-#define RVMODEL_BOOT
+#define RV_COMPLIANCE_RV32M                                                   \
+        RVTEST_RV32M                                                          \
 
-//RV_COMPLIANCE_DATA_BEGIN
-#define RVMODEL_DATA_BEGIN                                              \
-  RVMODEL_DATA_SECTION                                                        \
-  .align ALIGNMENT;\
-  .global begin_signature; begin_signature:
+#define RV_COMPLIANCE_CODE_BEGIN                                              \
+        RVTEST_CODE_BEGIN_OLD \
 
-//RV_COMPLIANCE_DATA_END
-#define RVMODEL_DATA_END                                                      \
-  .global end_signature; end_signature:  
+#define RV_COMPLIANCE_CODE_END                                                \
+        RVTEST_CODE_END_OLD \
 
-//RVTEST_IO_INIT
-#define RVMODEL_IO_INIT
-//RVTEST_IO_WRITE_STR
-#define RVMODEL_IO_WRITE_STR(_R, _STR)
-//RVTEST_IO_CHECK
-#define RVMODEL_IO_CHECK()
-//RVTEST_IO_ASSERT_GPR_EQ
-#define RVMODEL_IO_ASSERT_GPR_EQ(_S, _R, _I)
-//RVTEST_IO_ASSERT_SFPR_EQ
-#define RVMODEL_IO_ASSERT_SFPR_EQ(_F, _R, _I)
-//RVTEST_IO_ASSERT_DFPR_EQ
-#define RVMODEL_IO_ASSERT_DFPR_EQ(_D, _R, _I)
+#define RV_COMPLIANCE_DATA_BEGIN                                              \
+        RVTEST_DATA_BEGIN_OLD \
 
-#define RVMODEL_SET_MSW_INT
+#define RV_COMPLIANCE_DATA_END                                                \
+        RVTEST_DATA_END_OLD \
 
-#define RVMODEL_CLEAR_MSW_INT
+#endif
+// RISC-V Compliance IO Test Header File
 
-#define RVMODEL_CLEAR_MTIMER_INT
+/*
+ * Copyright (c) 2005-2018 Imperas Software Ltd., www.imperas.com
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied.
+ *
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
 
-#define RVMODEL_CLEAR_MEXT_INT
+#ifndef _COMPLIANCE_IO_H
+#define _COMPLIANCE_IO_H
 
-#endif // _COMPLIANCE_MODEL_H
+//-----------------------------------------------------------------------
+// RV IO Macros (Non functional)
+//-----------------------------------------------------------------------
 
+#define RVTEST_IO_INIT
+#define RVTEST_IO_WRITE_STR(_SP, _STR)
+#define RVTEST_IO_CHECK()
+#define RVTEST_IO_ASSERT_GPR_EQ(_SP, _R, _I)
+#define RVTEST_IO_ASSERT_SFPR_EQ(_F, _R, _I)
+#define RVTEST_IO_ASSERT_DFPR_EQ(_D, _R, _I)
+
+#endif // _COMPLIANCE_IO_H

@@ -28,13 +28,12 @@
 
 //RV_COMPLIANCE_DATA_BEGIN
 #define RVMODEL_DATA_BEGIN                                              \
-  RVMODEL_DATA_SECTION                                                        \
-  .align ALIGNMENT ; \
-  .global begin_signature; begin_signature:
+  .align 4 ; .global begin_signature; begin_signature:
 
 //RV_COMPLIANCE_DATA_END
 #define RVMODEL_DATA_END                                                      \
-  .global end_signature; end_signature:  
+  .align 4; .global end_signature; end_signature:  \
+  RVMODEL_DATA_SECTION                                                        
 
 //RVTEST_IO_INIT
 #define RVMODEL_IO_INIT
