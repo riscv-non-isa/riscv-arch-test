@@ -11,7 +11,7 @@
 |---------------------------|----------|
 | XLEN                      | 32      |
 | TEST_REGION               | [('0x800000f8', '0x80000160')]      |
-| SIG_REGION                | [('0x80002204', '0x80002214', '4 words')]      |
+| SIG_REGION                | [('0x80002010', '0x80002020', '4 words')]      |
 | COV_LABELS                | fencei      |
 | TEST_NAME                 | /scratch/git-repo/incoresemi/riscof/riscof_work/Fencei.S/Fencei.S    |
 | Total Number of coverpoints| 1     |
@@ -45,7 +45,7 @@ Last Code Sequence :
 	-[0x8000012c]:fence.i
 	-[0x80000130]:add gp, sp, ra
 	-[0x80000134]:sw ra, 0(a7)
-Current Store : [0x80000138] : sw sp, 4(a7) -- Store: [0x80002208]:0x00000012
+Current Store : [0x80000138] : sw sp, 4(a7) -- Store: [0x80002014]:0x00000012
 
 
 
@@ -55,7 +55,7 @@ Last Code Sequence :
 	-[0x8000012c]:fence.i
 	-[0x80000130]:add gp, sp, ra
 	-[0x80000134]:sw ra, 0(a7)
-Current Store : [0x8000013c] : sw gp, 8(a7) -- Store: [0x8000220c]:0x00000042
+Current Store : [0x8000013c] : sw gp, 8(a7) -- Store: [0x80002018]:0x00000042
 
 
 
@@ -65,7 +65,7 @@ Last Code Sequence :
 	-[0x8000012c]:fence.i
 	-[0x80000130]:add gp, sp, ra
 	-[0x80000134]:sw ra, 0(a7)
-Current Store : [0x80000140] : sw a5, 12(a7) -- Store: [0x80002210]:0x001101B3
+Current Store : [0x80000140] : sw a5, 12(a7) -- Store: [0x8000201c]:0x001101B3
 
 
 
@@ -99,4 +99,4 @@ Current Store : [0x80000140] : sw a5, 12(a7) -- Store: [0x80002210]:0x001101B3
 
 |s.no|        signature         |      coverpoints      |                                         code                                          |
 |---:|--------------------------|-----------------------|---------------------------------------------------------------------------------------|
-|   1|[0x80002204]<br>0x00000030|- opcode : fence.i<br> |[0x8000012c]:fence.i<br> [0x80000130]:add gp, sp, ra<br> [0x80000134]:sw ra, 0(a7)<br> |
+|   1|[0x80002010]<br>0x00000030|- opcode : fence.i<br> |[0x8000012c]:fence.i<br> [0x80000130]:add gp, sp, ra<br> [0x80000134]:sw ra, 0(a7)<br> |

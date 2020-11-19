@@ -11,7 +11,7 @@
 |---------------------------|----------|
 | XLEN                      | 32      |
 | TEST_REGION               | [('0x80000104', '0x80000130')]      |
-| SIG_REGION                | [('0x80002204', '0x8000221c', '6 words')]      |
+| SIG_REGION                | [('0x80002070', '0x80002090', '8 words')]      |
 | COV_LABELS                | ebreak      |
 | TEST_NAME                 | /scratch/git-repo/incoresemi/riscof/riscof_work/ebreak.S/ebreak.S    |
 | Total Number of coverpoints| 1     |
@@ -43,7 +43,7 @@
 Last Coverpoint : ['opcode : ebreak']
 Last Code Sequence : 
 	-[0x80000114]:ebreak
-Current Store : [0x80000358] : sw t2, 4(t1) -- Store: [0x80002210]:0x00000003
+Current Store : [0x80000358] : sw t2, 4(t1) -- Store: [0x8000207c]:0x00000003
 
 
 
@@ -51,7 +51,7 @@ Current Store : [0x80000358] : sw t2, 4(t1) -- Store: [0x80002210]:0x00000003
 Last Coverpoint : ['opcode : ebreak']
 Last Code Sequence : 
 	-[0x80000114]:ebreak
-Current Store : [0x80000370] : sw t4, 8(t1) -- Store: [0x80002214]:0x00000108
+Current Store : [0x80000370] : sw t4, 8(t1) -- Store: [0x80002080]:0x00000108
 
 
 
@@ -59,7 +59,7 @@ Current Store : [0x80000370] : sw t4, 8(t1) -- Store: [0x80002214]:0x00000108
 Last Coverpoint : ['opcode : ebreak']
 Last Code Sequence : 
 	-[0x80000114]:ebreak
-Current Store : [0x800003ec] : sw t2, 12(t1) -- Store: [0x80002218]:0x00000108
+Current Store : [0x800003ec] : sw t2, 12(t1) -- Store: [0x80002084]:0x00000108
 
 
 
@@ -67,7 +67,7 @@ Current Store : [0x800003ec] : sw t2, 12(t1) -- Store: [0x80002218]:0x00000108
 Last Coverpoint : ['opcode : ebreak']
 Last Code Sequence : 
 	-[0x80000114]:ebreak
-Current Store : [0x80000120] : sw zero, 0(ra) -- Store: [0x80002204]:0x00000000
+Current Store : [0x80000120] : sw zero, 0(ra) -- Store: [0x80002070]:0x00000000
 
 
 
@@ -75,7 +75,7 @@ Current Store : [0x80000120] : sw zero, 0(ra) -- Store: [0x80002204]:0x00000000
 Last Coverpoint : ['opcode : ebreak']
 Last Code Sequence : 
 	-[0x80000114]:ebreak
-Current Store : [0x80000124] : sw sp, 4(ra) -- Store: [0x80002208]:0x11111111
+Current Store : [0x80000124] : sw sp, 4(ra) -- Store: [0x80002074]:0x11111111
 
 
 
@@ -109,4 +109,4 @@ Current Store : [0x80000124] : sw sp, 4(ra) -- Store: [0x80002208]:0x11111111
 
 |s.no|        signature         |     coverpoints      |          code          |
 |---:|--------------------------|----------------------|------------------------|
-|   1|[0x8000220c]<br>0x0000008F|- opcode : ebreak<br> |[0x80000114]:ebreak<br> |
+|   1|[0x80002078]<br>0x0000008F|- opcode : ebreak<br> |[0x80000114]:ebreak<br> |

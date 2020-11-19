@@ -11,7 +11,7 @@
 |---------------------------|----------|
 | XLEN                      | 32      |
 | TEST_REGION               | [('0x80000104', '0x80000950')]      |
-| SIG_REGION                | [('0x80002204', '0x80002308', '65 words')]      |
+| SIG_REGION                | [('0x80002080', '0x80002190', '68 words')]      |
 | COV_LABELS                | misalign-bge      |
 | TEST_NAME                 | /scratch/git-repo/incoresemi/riscof/riscof_work/misalign-bge-01.S/misalign-bge-01.S    |
 | Total Number of coverpoints| 2     |
@@ -69,4 +69,4 @@
 
 |s.no|        signature         |                        coverpoints                         |                                                              code                                                              |
 |---:|--------------------------|------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------|
-|   1|[0x80002204]<br>0x00000001|- opcode : bge<br> -  rs1_val>rs2_val and ea_align == 2<br> |[0x80000928]:bge a0, a1, 6142<br> [0x80000126]:addi sp, sp, 1<br> [0x8000012a]:jal zero, 2070<br> [0x80000940]:sw sp, 0(ra)<br> |
+|   1|[0x80002080]<br>0x00000001|- opcode : bge<br> -  rs1_val>rs2_val and ea_align == 2<br> |[0x80000928]:bge a0, a1, 6142<br> [0x80000126]:addi sp, sp, 1<br> [0x8000012a]:jal zero, 2070<br> [0x80000940]:sw sp, 0(ra)<br> |

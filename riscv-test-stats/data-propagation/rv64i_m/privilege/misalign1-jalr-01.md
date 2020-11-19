@@ -11,7 +11,7 @@
 |---------------------------|----------|
 | XLEN                      | 64      |
 | TEST_REGION               | [('0x8000039c', '0x800003f0')]      |
-| SIG_REGION                | [('0x80002208', '0x80002410', '65 dwords')]      |
+| SIG_REGION                | [('0x800020a0', '0x800022b0', '66 dwords')]      |
 | COV_LABELS                | misalign1-jalr      |
 | TEST_NAME                 | /scratch/git-repo/incoresemi/riscof/riscof_work/misalign1-jalr-01.S/misalign1-jalr-01.S    |
 | Total Number of coverpoints| 2     |
@@ -69,4 +69,4 @@
 
 |s.no|            signature             |              coverpoints               |                                                                                                                             code                                                                                                                              |
 |---:|----------------------------------|----------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|   1|[0x80002208]<br>0x0000000000000017|- opcode : jalr<br> - ea_align == 1<br> |[0x800003b4]:jalr a1, a0, 10<br> [0x800003c8]:xori a1, a1, 3<br> [0x800003cc]:jal zero, 4<br> [0x800003d0]:auipc sp, 0<br> [0x800003d4]:addi sp, sp, 4052<br> [0x800003d8]:andi sp, sp, 4092<br> [0x800003dc]:sub a1, a1, sp<br> [0x800003e0]:sd a1, 0(ra)<br> |
+|   1|[0x800020a0]<br>0x0000000000000017|- opcode : jalr<br> - ea_align == 1<br> |[0x800003b4]:jalr a1, a0, 10<br> [0x800003c8]:xori a1, a1, 3<br> [0x800003cc]:jal zero, 4<br> [0x800003d0]:auipc sp, 0<br> [0x800003d4]:addi sp, sp, 4052<br> [0x800003d8]:andi sp, sp, 4092<br> [0x800003dc]:sub a1, a1, sp<br> [0x800003e0]:sd a1, 0(ra)<br> |

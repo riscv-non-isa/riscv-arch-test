@@ -11,16 +11,16 @@
 |---------------------------|----------|
 | XLEN                      | 64      |
 | TEST_REGION               | [('0x8000039c', '0x800003c0')]      |
-| SIG_REGION                | [('0x80002208', '0x80002220', '3 dwords')]      |
+| SIG_REGION                | [('0x80002090', '0x800020b0', '4 dwords')]      |
 | COV_LABELS                | ebreak      |
 | TEST_NAME                 | /scratch/git-repo/incoresemi/riscof/riscof_work/ebreak.S/ebreak.S    |
 | Total Number of coverpoints| 1     |
 | Total Coverpoints Hit     | 1      |
-| Total Signature Updates   | 5      |
+| Total Signature Updates   | 6      |
 | STAT1                     | 1      |
 | STAT2                     | 0      |
 | STAT3                     | 0     |
-| STAT4                     | 4     |
+| STAT4                     | 5     |
 | STAT5                     | 0     |
 
 ## Details for STAT2:
@@ -43,7 +43,7 @@
 Last Coverpoint : ['opcode : ebreak']
 Last Code Sequence : 
 	-[0x800003ac]:ebreak
-Current Store : [0x80000668] : sd t2, 8(t1) -- Store: [0x80002218]:0x0000000000000003
+Current Store : [0x80000668] : sd t2, 8(t1) -- Store: [0x800020a0]:0x0000000000000003
 
 
 
@@ -51,7 +51,7 @@ Current Store : [0x80000668] : sd t2, 8(t1) -- Store: [0x80002218]:0x00000000000
 Last Coverpoint : ['opcode : ebreak']
 Last Code Sequence : 
 	-[0x800003ac]:ebreak
-Current Store : [0x80000680] : sd t4, 16(t1) -- Store: [0x80002220]:0x00000000000003A0
+Current Store : [0x80000680] : sd t4, 16(t1) -- Store: [0x800020a8]:0x00000000000003A0
 
 
 
@@ -59,7 +59,7 @@ Current Store : [0x80000680] : sd t4, 16(t1) -- Store: [0x80002220]:0x0000000000
 Last Coverpoint : ['opcode : ebreak']
 Last Code Sequence : 
 	-[0x800003ac]:ebreak
-Current Store : [0x800003b8] : sw zero, 0(ra) -- Store: [0x80002208]:0x0000000000000000
+Current Store : [0x80000708] : sd t2, 24(t1) -- Store: [0x800020b0]:0x00000000000003A0
 
 
 
@@ -67,7 +67,15 @@ Current Store : [0x800003b8] : sw zero, 0(ra) -- Store: [0x80002208]:0x000000000
 Last Coverpoint : ['opcode : ebreak']
 Last Code Sequence : 
 	-[0x800003ac]:ebreak
-Current Store : [0x800003bc] : sw sp, 4(ra) -- Store: [0x8000220c]:0x0000000011111111
+Current Store : [0x800003b8] : sw zero, 0(ra) -- Store: [0x80002090]:0x0000000000000000
+
+
+
+
+Last Coverpoint : ['opcode : ebreak']
+Last Code Sequence : 
+	-[0x800003ac]:ebreak
+Current Store : [0x800003bc] : sw sp, 4(ra) -- Store: [0x80002094]:0x0000000011111111
 
 
 
@@ -101,4 +109,4 @@ Current Store : [0x800003bc] : sw sp, 4(ra) -- Store: [0x8000220c]:0x00000000111
 
 |s.no|            signature             |     coverpoints      |          code          |
 |---:|----------------------------------|----------------------|------------------------|
-|   1|[0x80002210]<br>0x000000000000010F|- opcode : ebreak<br> |[0x800003ac]:ebreak<br> |
+|   1|[0x80002098]<br>0x000000000000010F|- opcode : ebreak<br> |[0x800003ac]:ebreak<br> |

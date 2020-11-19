@@ -11,7 +11,7 @@
 |---------------------------|----------|
 | XLEN                      | 32      |
 | TEST_REGION               | [('0x80000104', '0x80000150')]      |
-| SIG_REGION                | [('0x80002204', '0x80002308', '65 words')]      |
+| SIG_REGION                | [('0x80002080', '0x80002190', '68 words')]      |
 | COV_LABELS                | misalign-beq      |
 | TEST_NAME                 | /scratch/git-repo/incoresemi/riscof/riscof_work/misalign-beq-01.S/misalign-beq-01.S    |
 | Total Number of coverpoints| 2     |
@@ -69,4 +69,4 @@
 
 |s.no|        signature         |                         coverpoints                         |                                                           code                                                            |
 |---:|--------------------------|-------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------|
-|   1|[0x80002204]<br>0x00000003|- opcode : beq<br> -  rs1_val==rs2_val and ea_align == 2<br> |[0x80000128]:beq a0, a1, 14<br> [0x80000136]:addi sp, sp, 3<br> [0x8000013a]:jal zero, 6<br> [0x80000140]:sw sp, 0(ra)<br> |
+|   1|[0x80002080]<br>0x00000003|- opcode : beq<br> -  rs1_val==rs2_val and ea_align == 2<br> |[0x80000128]:beq a0, a1, 14<br> [0x80000136]:addi sp, sp, 3<br> [0x8000013a]:jal zero, 6<br> [0x80000140]:sw sp, 0(ra)<br> |

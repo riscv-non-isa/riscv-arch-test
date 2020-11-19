@@ -11,7 +11,7 @@
 |---------------------------|----------|
 | XLEN                      | 32      |
 | TEST_REGION               | [('0x80000104', '0x80000150')]      |
-| SIG_REGION                | [('0x80002204', '0x80002308', '65 words')]      |
+| SIG_REGION                | [('0x80002080', '0x80002190', '68 words')]      |
 | COV_LABELS                | misalign-bltu      |
 | TEST_NAME                 | /scratch/git-repo/incoresemi/riscof/riscof_work/misalign-bltu-01.S/misalign-bltu-01.S    |
 | Total Number of coverpoints| 2     |
@@ -69,4 +69,4 @@
 
 |s.no|        signature         |                         coverpoints                         |                                                             code                                                              |
 |---:|--------------------------|-------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------|
-|   1|[0x80002204]<br>0x00000001|- opcode : bltu<br> -  rs1_val<rs2_val and ea_align == 2<br> |[0x80000130]:bltu a0, a1, 8178<br> [0x80000122]:addi sp, sp, 1<br> [0x80000126]:jal zero, 34<br> [0x80000148]:sw sp, 0(ra)<br> |
+|   1|[0x80002080]<br>0x00000001|- opcode : bltu<br> -  rs1_val<rs2_val and ea_align == 2<br> |[0x80000130]:bltu a0, a1, 8178<br> [0x80000122]:addi sp, sp, 1<br> [0x80000126]:jal zero, 34<br> [0x80000148]:sw sp, 0(ra)<br> |

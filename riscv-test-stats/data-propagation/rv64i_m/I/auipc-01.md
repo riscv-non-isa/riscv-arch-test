@@ -11,7 +11,7 @@
 |---------------------------|----------|
 | XLEN                      | 64      |
 | TEST_REGION               | [('0x80000390', '0x80000890')]      |
-| SIG_REGION                | [('0x80002208', '0x80002400', '63 dwords')]      |
+| SIG_REGION                | [('0x80002010', '0x80002210', '64 dwords')]      |
 | COV_LABELS                | auipc      |
 | TEST_NAME                 | /scratch/git-repo/incoresemi/riscof/riscof_work/auipc-01.S/auipc-01.S    |
 | Total Number of coverpoints| 103     |
@@ -31,7 +31,7 @@ Op without unique coverpoint updates Signature
       [0x80000880]:auipc a0, 349525
       [0x80000884]:sub a0, a0, gp
       [0x80000888]:sd a0, 264(ra)
- -- Signature Address: 0x800023f8 Data: 0x0000000055555000
+ -- Signature Address: 0x80002200 Data: 0x0000000055555000
  -- Redundant Coverpoints hit by the op
       - opcode : auipc
       - rd : x10
@@ -50,7 +50,7 @@ Op without unique coverpoint updates Signature
 
 ```
 [0x80000390]:auipc sp, 2
-[0x80000394]:addi sp, sp, 3704
+[0x80000394]:addi sp, sp, 3200
 
 [0x80000398]:auipc s1, 0
 [0x8000039c]:addi s1, s1, 8
@@ -140,7 +140,7 @@ Op without unique coverpoint updates Signature
 [0x800005cc]:addi gp, gp, 8
 
 [0x800005dc]:auipc ra, 2
-[0x800005e0]:addi ra, ra, 3348
+[0x800005e0]:addi ra, ra, 2844
 
 [0x800005e4]:auipc gp, 0
 [0x800005e8]:addi gp, gp, 8
@@ -280,65 +280,65 @@ Op without unique coverpoint updates Signature
 
 |s.no|            signature             |                         coverpoints                         |                                                  code                                                   |
 |---:|----------------------------------|-------------------------------------------------------------|---------------------------------------------------------------------------------------------------------|
-|   1|[0x80002208]<br>0x0000000000000000|- rd : x29<br>                                               |[0x800003a0]:auipc t4, 0<br> [0x800003a4]:sub t4, t4, s1<br> [0x800003a8]:sd t4, 0(sp)<br>               |
-|   2|[0x80002210]<br>0x0000000002000000|- rd : x6<br> - imm_val == 8192<br>                          |[0x800003b4]:auipc t1, 8192<br> [0x800003b8]:sub t1, t1, s1<br> [0x800003bc]:sd t1, 8(sp)<br>            |
-|   3|[0x80002218]<br>0xFFFFFFFFFFFFF000|- rd : x18<br> - imm_val == ((2**20)-1)<br>                  |[0x800003c8]:auipc s2, 1048575<br> [0x800003cc]:sub s2, s2, s1<br> [0x800003d0]:sd s2, 16(sp)<br>        |
-|   4|[0x80002220]<br>0x0000000000003000|- rd : x4<br> - imm_val==3<br>                               |[0x800003dc]:auipc tp, 3<br> [0x800003e0]:sub tp, tp, s1<br> [0x800003e4]:sd tp, 24(sp)<br>              |
-|   5|[0x80002228]<br>0x0000000000000000|- rd : x0<br> - imm_val==349525<br> - imm_val == 349525<br>  |[0x800003f0]:auipc zero, 349525<br> [0x800003f4]:sub zero, zero, s1<br> [0x800003f8]:sd zero, 32(sp)<br> |
-|   6|[0x80002230]<br>0xFFFFFFFFAAAAA000|- rd : x31<br> - imm_val==699050<br> - imm_val == 699050<br> |[0x80000404]:auipc t6, 699050<br> [0x80000408]:sub t6, t6, s1<br> [0x8000040c]:sd t6, 40(sp)<br>         |
-|   7|[0x80002238]<br>0x0000000000005000|- rd : x15<br> - imm_val==5<br>                              |[0x80000418]:auipc a5, 5<br> [0x8000041c]:sub a5, a5, s1<br> [0x80000420]:sd a5, 48(sp)<br>              |
-|   8|[0x80002240]<br>0x0000000033333000|- rd : x16<br> - imm_val==209715<br>                         |[0x8000042c]:auipc a6, 209715<br> [0x80000430]:sub a6, a6, s1<br> [0x80000434]:sd a6, 56(sp)<br>         |
-|   9|[0x80002248]<br>0x0000000066666000|- rd : x13<br> - imm_val==419430<br>                         |[0x80000440]:auipc a3, 419430<br> [0x80000444]:sub a3, a3, s1<br> [0x80000448]:sd a3, 64(sp)<br>         |
-|  10|[0x80002250]<br>0x00000000002D4000|- rd : x12<br> - imm_val==724<br>                            |[0x80000454]:auipc a2, 724<br> [0x80000458]:sub a2, a2, s1<br> [0x8000045c]:sd a2, 72(sp)<br>            |
-|  11|[0x80002258]<br>0x00000000003FF000|- rd : x1<br> - imm_val==1023<br>                            |[0x80000468]:auipc ra, 1023<br> [0x8000046c]:sub ra, ra, s1<br> [0x80000470]:sd ra, 80(sp)<br>           |
-|  12|[0x80002260]<br>0x0000000000002000|- rd : x7<br>                                                |[0x8000047c]:auipc t2, 2<br> [0x80000480]:sub t2, t2, s1<br> [0x80000484]:sd t2, 88(sp)<br>              |
-|  13|[0x80002268]<br>0x0000000055554000|- rd : x23<br> - imm_val==349524<br>                         |[0x80000490]:auipc s7, 349524<br> [0x80000494]:sub s7, s7, s1<br> [0x80000498]:sd s7, 96(sp)<br>         |
-|  14|[0x80002270]<br>0xFFFFFFFFAAAA9000|- rd : x26<br> - imm_val==699049<br>                         |[0x800004a4]:auipc s10, 699049<br> [0x800004a8]:sub s10, s10, s1<br> [0x800004ac]:sd s10, 104(sp)<br>    |
-|  15|[0x80002278]<br>0x0000000000004000|- rd : x10<br> - imm_val==4<br> - imm_val == 4<br>           |[0x800004b8]:auipc a0, 4<br> [0x800004bc]:sub a0, a0, s1<br> [0x800004c0]:sd a0, 112(sp)<br>             |
-|  16|[0x80002280]<br>0x0000000033332000|- rd : x19<br> - imm_val==209714<br>                         |[0x800004cc]:auipc s3, 209714<br> [0x800004d0]:sub s3, s3, s1<br> [0x800004d4]:sd s3, 120(sp)<br>        |
-|  17|[0x80002288]<br>0x0000000066665000|- rd : x24<br> - imm_val==419429<br>                         |[0x800004e0]:auipc s8, 419429<br> [0x800004e4]:sub s8, s8, s1<br> [0x800004e8]:sd s8, 128(sp)<br>        |
-|  18|[0x80002290]<br>0x00000000002D3000|- rd : x3<br> - imm_val==723<br>                             |[0x800004f4]:auipc gp, 723<br> [0x800004f8]:sub gp, gp, s1<br> [0x800004fc]:sd gp, 136(sp)<br>           |
-|  19|[0x80002298]<br>0x00000000003FE000|- rd : x11<br> - imm_val==1022<br>                           |[0x80000508]:auipc a1, 1022<br> [0x8000050c]:sub a1, a1, s1<br> [0x80000510]:sd a1, 144(sp)<br>          |
-|  20|[0x800022a0]<br>0x0000000055556000|- rd : x5<br> - imm_val==349526<br>                          |[0x8000051c]:auipc t0, 349526<br> [0x80000520]:sub t0, t0, s1<br> [0x80000524]:sd t0, 152(sp)<br>        |
-|  21|[0x800022a8]<br>0xFFFFFFFFAAAAB000|- rd : x27<br> - imm_val==699051<br>                         |[0x80000530]:auipc s11, 699051<br> [0x80000534]:sub s11, s11, s1<br> [0x80000538]:sd s11, 160(sp)<br>    |
-|  22|[0x800022b0]<br>0x0000000000006000|- rd : x30<br> - imm_val==6<br>                              |[0x80000544]:auipc t5, 6<br> [0x80000548]:sub t5, t5, s1<br> [0x8000054c]:sd t5, 168(sp)<br>             |
-|  23|[0x800022b8]<br>0x0000000033334000|- rd : x20<br> - imm_val==209716<br>                         |[0x80000558]:auipc s4, 209716<br> [0x8000055c]:sub s4, s4, s1<br> [0x80000560]:sd s4, 176(sp)<br>        |
-|  24|[0x800022c0]<br>0x0000000066667000|- rd : x21<br> - imm_val==419431<br>                         |[0x8000056c]:auipc s5, 419431<br> [0x80000570]:sub s5, s5, s1<br> [0x80000574]:sd s5, 184(sp)<br>        |
-|  25|[0x800022c8]<br>0x00000000002D5000|- rd : x17<br> - imm_val==725<br>                            |[0x80000580]:auipc a7, 725<br> [0x80000584]:sub a7, a7, s1<br> [0x80000588]:sd a7, 192(sp)<br>           |
-|  26|[0x800022d0]<br>0x0000000000001000|- rd : x14<br> - imm_val==1<br> - imm_val == 1<br>           |[0x80000594]:auipc a4, 1<br> [0x80000598]:sub a4, a4, s1<br> [0x8000059c]:sd a4, 200(sp)<br>             |
-|  27|[0x800022d8]<br>0x0000000000400000|- rd : x8<br> - imm_val==1024<br> - imm_val == 1024<br>      |[0x800005a8]:auipc fp, 1024<br> [0x800005ac]:sub fp, fp, s1<br> [0x800005b0]:sd fp, 208(sp)<br>          |
-|  28|[0x800022e0]<br>0x0000000000008000|- rd : x22<br> - imm_val == 8<br>                            |[0x800005bc]:auipc s6, 8<br> [0x800005c0]:sub s6, s6, s1<br> [0x800005c4]:sd s6, 216(sp)<br>             |
-|  29|[0x800022e8]<br>0x0000000000010000|- rd : x25<br> - imm_val == 16<br>                           |[0x800005d0]:auipc s9, 16<br> [0x800005d4]:sub s9, s9, gp<br> [0x800005d8]:sd s9, 224(sp)<br>            |
-|  30|[0x800022f0]<br>0x0000000000020000|- rd : x28<br> - imm_val == 32<br>                           |[0x800005ec]:auipc t3, 32<br> [0x800005f0]:sub t3, t3, gp<br> [0x800005f4]:sd t3, 0(ra)<br>              |
-|  31|[0x800022f8]<br>0x0000000000040000|- imm_val == 64<br>                                          |[0x80000600]:auipc s1, 64<br> [0x80000604]:sub s1, s1, gp<br> [0x80000608]:sd s1, 8(ra)<br>              |
-|  32|[0x80002300]<br>0xFFFFFFFFEFFFF000|- imm_val == 983039<br>                                      |[0x80000614]:auipc sp, 983039<br> [0x80000618]:sub sp, sp, gp<br> [0x8000061c]:sd sp, 16(ra)<br>         |
-|  33|[0x80002308]<br>0xFFFFFFFFDFFFF000|- imm_val == 917503<br>                                      |[0x80000628]:auipc a0, 917503<br> [0x8000062c]:sub a0, a0, gp<br> [0x80000630]:sd a0, 24(ra)<br>         |
-|  34|[0x80002310]<br>0xFFFFFFFFBFFFF000|- imm_val == 786431<br>                                      |[0x8000063c]:auipc a0, 786431<br> [0x80000640]:sub a0, a0, gp<br> [0x80000644]:sd a0, 32(ra)<br>         |
-|  35|[0x80002318]<br>0x000000007FFFF000|- imm_val == 524287<br>                                      |[0x80000650]:auipc a0, 524287<br> [0x80000654]:sub a0, a0, gp<br> [0x80000658]:sd a0, 40(ra)<br>         |
-|  36|[0x80002320]<br>0x0000000000080000|- imm_val == 128<br>                                         |[0x80000664]:auipc a0, 128<br> [0x80000668]:sub a0, a0, gp<br> [0x8000066c]:sd a0, 48(ra)<br>            |
-|  37|[0x80002328]<br>0x0000000000100000|- imm_val == 256<br>                                         |[0x80000678]:auipc a0, 256<br> [0x8000067c]:sub a0, a0, gp<br> [0x80000680]:sd a0, 56(ra)<br>            |
-|  38|[0x80002330]<br>0x0000000000200000|- imm_val == 512<br>                                         |[0x8000068c]:auipc a0, 512<br> [0x80000690]:sub a0, a0, gp<br> [0x80000694]:sd a0, 64(ra)<br>            |
-|  39|[0x80002338]<br>0x0000000000800000|- imm_val == 2048<br>                                        |[0x800006a0]:auipc a0, 2048<br> [0x800006a4]:sub a0, a0, gp<br> [0x800006a8]:sd a0, 72(ra)<br>           |
-|  40|[0x80002340]<br>0x0000000001000000|- imm_val == 4096<br>                                        |[0x800006b4]:auipc a0, 4096<br> [0x800006b8]:sub a0, a0, gp<br> [0x800006bc]:sd a0, 80(ra)<br>           |
-|  41|[0x80002348]<br>0x0000000004000000|- imm_val == 16384<br>                                       |[0x800006c8]:auipc a0, 16384<br> [0x800006cc]:sub a0, a0, gp<br> [0x800006d0]:sd a0, 88(ra)<br>          |
-|  42|[0x80002350]<br>0x0000000008000000|- imm_val == 32768<br>                                       |[0x800006dc]:auipc a0, 32768<br> [0x800006e0]:sub a0, a0, gp<br> [0x800006e4]:sd a0, 96(ra)<br>          |
-|  43|[0x80002358]<br>0x0000000010000000|- imm_val == 65536<br>                                       |[0x800006f0]:auipc a0, 65536<br> [0x800006f4]:sub a0, a0, gp<br> [0x800006f8]:sd a0, 104(ra)<br>         |
-|  44|[0x80002360]<br>0x0000000020000000|- imm_val == 131072<br>                                      |[0x80000704]:auipc a0, 131072<br> [0x80000708]:sub a0, a0, gp<br> [0x8000070c]:sd a0, 112(ra)<br>        |
-|  45|[0x80002368]<br>0x0000000040000000|- imm_val == 262144<br>                                      |[0x80000718]:auipc a0, 262144<br> [0x8000071c]:sub a0, a0, gp<br> [0x80000720]:sd a0, 120(ra)<br>        |
-|  46|[0x80002370]<br>0xFFFFFFFF80000000|- imm_val == 524288<br>                                      |[0x8000072c]:auipc a0, 524288<br> [0x80000730]:sub a0, a0, gp<br> [0x80000734]:sd a0, 128(ra)<br>        |
-|  47|[0x80002378]<br>0xFFFFFFFFFFFFE000|- imm_val == 1048574<br>                                     |[0x80000740]:auipc a0, 1048574<br> [0x80000744]:sub a0, a0, gp<br> [0x80000748]:sd a0, 136(ra)<br>       |
-|  48|[0x80002380]<br>0xFFFFFFFFFFFFD000|- imm_val == 1048573<br>                                     |[0x80000754]:auipc a0, 1048573<br> [0x80000758]:sub a0, a0, gp<br> [0x8000075c]:sd a0, 144(ra)<br>       |
-|  49|[0x80002388]<br>0xFFFFFFFFFFFFB000|- imm_val == 1048571<br>                                     |[0x80000768]:auipc a0, 1048571<br> [0x8000076c]:sub a0, a0, gp<br> [0x80000770]:sd a0, 152(ra)<br>       |
-|  50|[0x80002390]<br>0xFFFFFFFFFFFF7000|- imm_val == 1048567<br>                                     |[0x8000077c]:auipc a0, 1048567<br> [0x80000780]:sub a0, a0, gp<br> [0x80000784]:sd a0, 160(ra)<br>       |
-|  51|[0x80002398]<br>0xFFFFFFFFFFFEF000|- imm_val == 1048559<br>                                     |[0x80000790]:auipc a0, 1048559<br> [0x80000794]:sub a0, a0, gp<br> [0x80000798]:sd a0, 168(ra)<br>       |
-|  52|[0x800023a0]<br>0xFFFFFFFFFFFDF000|- imm_val == 1048543<br>                                     |[0x800007a4]:auipc a0, 1048543<br> [0x800007a8]:sub a0, a0, gp<br> [0x800007ac]:sd a0, 176(ra)<br>       |
-|  53|[0x800023a8]<br>0xFFFFFFFFFFFBF000|- imm_val == 1048511<br>                                     |[0x800007b8]:auipc a0, 1048511<br> [0x800007bc]:sub a0, a0, gp<br> [0x800007c0]:sd a0, 184(ra)<br>       |
-|  54|[0x800023b0]<br>0xFFFFFFFFFFF7F000|- imm_val == 1048447<br>                                     |[0x800007cc]:auipc a0, 1048447<br> [0x800007d0]:sub a0, a0, gp<br> [0x800007d4]:sd a0, 192(ra)<br>       |
-|  55|[0x800023b8]<br>0xFFFFFFFFFFEFF000|- imm_val == 1048319<br>                                     |[0x800007e0]:auipc a0, 1048319<br> [0x800007e4]:sub a0, a0, gp<br> [0x800007e8]:sd a0, 200(ra)<br>       |
-|  56|[0x800023c0]<br>0xFFFFFFFFFFDFF000|- imm_val == 1048063<br>                                     |[0x800007f4]:auipc a0, 1048063<br> [0x800007f8]:sub a0, a0, gp<br> [0x800007fc]:sd a0, 208(ra)<br>       |
-|  57|[0x800023c8]<br>0xFFFFFFFFFFBFF000|- imm_val == 1047551<br>                                     |[0x80000808]:auipc a0, 1047551<br> [0x8000080c]:sub a0, a0, gp<br> [0x80000810]:sd a0, 216(ra)<br>       |
-|  58|[0x800023d0]<br>0xFFFFFFFFFF7FF000|- imm_val == 1046527<br>                                     |[0x8000081c]:auipc a0, 1046527<br> [0x80000820]:sub a0, a0, gp<br> [0x80000824]:sd a0, 224(ra)<br>       |
-|  59|[0x800023d8]<br>0xFFFFFFFFFEFFF000|- imm_val == 1044479<br>                                     |[0x80000830]:auipc a0, 1044479<br> [0x80000834]:sub a0, a0, gp<br> [0x80000838]:sd a0, 232(ra)<br>       |
-|  60|[0x800023e0]<br>0xFFFFFFFFFDFFF000|- imm_val == 1040383<br>                                     |[0x80000844]:auipc a0, 1040383<br> [0x80000848]:sub a0, a0, gp<br> [0x8000084c]:sd a0, 240(ra)<br>       |
-|  61|[0x800023e8]<br>0xFFFFFFFFFBFFF000|- imm_val == 1032191<br>                                     |[0x80000858]:auipc a0, 1032191<br> [0x8000085c]:sub a0, a0, gp<br> [0x80000860]:sd a0, 248(ra)<br>       |
-|  62|[0x800023f0]<br>0xFFFFFFFFF7FFF000|- imm_val == 1015807<br>                                     |[0x8000086c]:auipc a0, 1015807<br> [0x80000870]:sub a0, a0, gp<br> [0x80000874]:sd a0, 256(ra)<br>       |
+|   1|[0x80002010]<br>0x0000000000000000|- rd : x29<br>                                               |[0x800003a0]:auipc t4, 0<br> [0x800003a4]:sub t4, t4, s1<br> [0x800003a8]:sd t4, 0(sp)<br>               |
+|   2|[0x80002018]<br>0x0000000002000000|- rd : x6<br> - imm_val == 8192<br>                          |[0x800003b4]:auipc t1, 8192<br> [0x800003b8]:sub t1, t1, s1<br> [0x800003bc]:sd t1, 8(sp)<br>            |
+|   3|[0x80002020]<br>0xFFFFFFFFFFFFF000|- rd : x18<br> - imm_val == ((2**20)-1)<br>                  |[0x800003c8]:auipc s2, 1048575<br> [0x800003cc]:sub s2, s2, s1<br> [0x800003d0]:sd s2, 16(sp)<br>        |
+|   4|[0x80002028]<br>0x0000000000003000|- rd : x4<br> - imm_val==3<br>                               |[0x800003dc]:auipc tp, 3<br> [0x800003e0]:sub tp, tp, s1<br> [0x800003e4]:sd tp, 24(sp)<br>              |
+|   5|[0x80002030]<br>0x0000000000000000|- rd : x0<br> - imm_val==349525<br> - imm_val == 349525<br>  |[0x800003f0]:auipc zero, 349525<br> [0x800003f4]:sub zero, zero, s1<br> [0x800003f8]:sd zero, 32(sp)<br> |
+|   6|[0x80002038]<br>0xFFFFFFFFAAAAA000|- rd : x31<br> - imm_val==699050<br> - imm_val == 699050<br> |[0x80000404]:auipc t6, 699050<br> [0x80000408]:sub t6, t6, s1<br> [0x8000040c]:sd t6, 40(sp)<br>         |
+|   7|[0x80002040]<br>0x0000000000005000|- rd : x15<br> - imm_val==5<br>                              |[0x80000418]:auipc a5, 5<br> [0x8000041c]:sub a5, a5, s1<br> [0x80000420]:sd a5, 48(sp)<br>              |
+|   8|[0x80002048]<br>0x0000000033333000|- rd : x16<br> - imm_val==209715<br>                         |[0x8000042c]:auipc a6, 209715<br> [0x80000430]:sub a6, a6, s1<br> [0x80000434]:sd a6, 56(sp)<br>         |
+|   9|[0x80002050]<br>0x0000000066666000|- rd : x13<br> - imm_val==419430<br>                         |[0x80000440]:auipc a3, 419430<br> [0x80000444]:sub a3, a3, s1<br> [0x80000448]:sd a3, 64(sp)<br>         |
+|  10|[0x80002058]<br>0x00000000002D4000|- rd : x12<br> - imm_val==724<br>                            |[0x80000454]:auipc a2, 724<br> [0x80000458]:sub a2, a2, s1<br> [0x8000045c]:sd a2, 72(sp)<br>            |
+|  11|[0x80002060]<br>0x00000000003FF000|- rd : x1<br> - imm_val==1023<br>                            |[0x80000468]:auipc ra, 1023<br> [0x8000046c]:sub ra, ra, s1<br> [0x80000470]:sd ra, 80(sp)<br>           |
+|  12|[0x80002068]<br>0x0000000000002000|- rd : x7<br>                                                |[0x8000047c]:auipc t2, 2<br> [0x80000480]:sub t2, t2, s1<br> [0x80000484]:sd t2, 88(sp)<br>              |
+|  13|[0x80002070]<br>0x0000000055554000|- rd : x23<br> - imm_val==349524<br>                         |[0x80000490]:auipc s7, 349524<br> [0x80000494]:sub s7, s7, s1<br> [0x80000498]:sd s7, 96(sp)<br>         |
+|  14|[0x80002078]<br>0xFFFFFFFFAAAA9000|- rd : x26<br> - imm_val==699049<br>                         |[0x800004a4]:auipc s10, 699049<br> [0x800004a8]:sub s10, s10, s1<br> [0x800004ac]:sd s10, 104(sp)<br>    |
+|  15|[0x80002080]<br>0x0000000000004000|- rd : x10<br> - imm_val==4<br> - imm_val == 4<br>           |[0x800004b8]:auipc a0, 4<br> [0x800004bc]:sub a0, a0, s1<br> [0x800004c0]:sd a0, 112(sp)<br>             |
+|  16|[0x80002088]<br>0x0000000033332000|- rd : x19<br> - imm_val==209714<br>                         |[0x800004cc]:auipc s3, 209714<br> [0x800004d0]:sub s3, s3, s1<br> [0x800004d4]:sd s3, 120(sp)<br>        |
+|  17|[0x80002090]<br>0x0000000066665000|- rd : x24<br> - imm_val==419429<br>                         |[0x800004e0]:auipc s8, 419429<br> [0x800004e4]:sub s8, s8, s1<br> [0x800004e8]:sd s8, 128(sp)<br>        |
+|  18|[0x80002098]<br>0x00000000002D3000|- rd : x3<br> - imm_val==723<br>                             |[0x800004f4]:auipc gp, 723<br> [0x800004f8]:sub gp, gp, s1<br> [0x800004fc]:sd gp, 136(sp)<br>           |
+|  19|[0x800020a0]<br>0x00000000003FE000|- rd : x11<br> - imm_val==1022<br>                           |[0x80000508]:auipc a1, 1022<br> [0x8000050c]:sub a1, a1, s1<br> [0x80000510]:sd a1, 144(sp)<br>          |
+|  20|[0x800020a8]<br>0x0000000055556000|- rd : x5<br> - imm_val==349526<br>                          |[0x8000051c]:auipc t0, 349526<br> [0x80000520]:sub t0, t0, s1<br> [0x80000524]:sd t0, 152(sp)<br>        |
+|  21|[0x800020b0]<br>0xFFFFFFFFAAAAB000|- rd : x27<br> - imm_val==699051<br>                         |[0x80000530]:auipc s11, 699051<br> [0x80000534]:sub s11, s11, s1<br> [0x80000538]:sd s11, 160(sp)<br>    |
+|  22|[0x800020b8]<br>0x0000000000006000|- rd : x30<br> - imm_val==6<br>                              |[0x80000544]:auipc t5, 6<br> [0x80000548]:sub t5, t5, s1<br> [0x8000054c]:sd t5, 168(sp)<br>             |
+|  23|[0x800020c0]<br>0x0000000033334000|- rd : x20<br> - imm_val==209716<br>                         |[0x80000558]:auipc s4, 209716<br> [0x8000055c]:sub s4, s4, s1<br> [0x80000560]:sd s4, 176(sp)<br>        |
+|  24|[0x800020c8]<br>0x0000000066667000|- rd : x21<br> - imm_val==419431<br>                         |[0x8000056c]:auipc s5, 419431<br> [0x80000570]:sub s5, s5, s1<br> [0x80000574]:sd s5, 184(sp)<br>        |
+|  25|[0x800020d0]<br>0x00000000002D5000|- rd : x17<br> - imm_val==725<br>                            |[0x80000580]:auipc a7, 725<br> [0x80000584]:sub a7, a7, s1<br> [0x80000588]:sd a7, 192(sp)<br>           |
+|  26|[0x800020d8]<br>0x0000000000001000|- rd : x14<br> - imm_val==1<br> - imm_val == 1<br>           |[0x80000594]:auipc a4, 1<br> [0x80000598]:sub a4, a4, s1<br> [0x8000059c]:sd a4, 200(sp)<br>             |
+|  27|[0x800020e0]<br>0x0000000000400000|- rd : x8<br> - imm_val==1024<br> - imm_val == 1024<br>      |[0x800005a8]:auipc fp, 1024<br> [0x800005ac]:sub fp, fp, s1<br> [0x800005b0]:sd fp, 208(sp)<br>          |
+|  28|[0x800020e8]<br>0x0000000000008000|- rd : x22<br> - imm_val == 8<br>                            |[0x800005bc]:auipc s6, 8<br> [0x800005c0]:sub s6, s6, s1<br> [0x800005c4]:sd s6, 216(sp)<br>             |
+|  29|[0x800020f0]<br>0x0000000000010000|- rd : x25<br> - imm_val == 16<br>                           |[0x800005d0]:auipc s9, 16<br> [0x800005d4]:sub s9, s9, gp<br> [0x800005d8]:sd s9, 224(sp)<br>            |
+|  30|[0x800020f8]<br>0x0000000000020000|- rd : x28<br> - imm_val == 32<br>                           |[0x800005ec]:auipc t3, 32<br> [0x800005f0]:sub t3, t3, gp<br> [0x800005f4]:sd t3, 0(ra)<br>              |
+|  31|[0x80002100]<br>0x0000000000040000|- imm_val == 64<br>                                          |[0x80000600]:auipc s1, 64<br> [0x80000604]:sub s1, s1, gp<br> [0x80000608]:sd s1, 8(ra)<br>              |
+|  32|[0x80002108]<br>0xFFFFFFFFEFFFF000|- imm_val == 983039<br>                                      |[0x80000614]:auipc sp, 983039<br> [0x80000618]:sub sp, sp, gp<br> [0x8000061c]:sd sp, 16(ra)<br>         |
+|  33|[0x80002110]<br>0xFFFFFFFFDFFFF000|- imm_val == 917503<br>                                      |[0x80000628]:auipc a0, 917503<br> [0x8000062c]:sub a0, a0, gp<br> [0x80000630]:sd a0, 24(ra)<br>         |
+|  34|[0x80002118]<br>0xFFFFFFFFBFFFF000|- imm_val == 786431<br>                                      |[0x8000063c]:auipc a0, 786431<br> [0x80000640]:sub a0, a0, gp<br> [0x80000644]:sd a0, 32(ra)<br>         |
+|  35|[0x80002120]<br>0x000000007FFFF000|- imm_val == 524287<br>                                      |[0x80000650]:auipc a0, 524287<br> [0x80000654]:sub a0, a0, gp<br> [0x80000658]:sd a0, 40(ra)<br>         |
+|  36|[0x80002128]<br>0x0000000000080000|- imm_val == 128<br>                                         |[0x80000664]:auipc a0, 128<br> [0x80000668]:sub a0, a0, gp<br> [0x8000066c]:sd a0, 48(ra)<br>            |
+|  37|[0x80002130]<br>0x0000000000100000|- imm_val == 256<br>                                         |[0x80000678]:auipc a0, 256<br> [0x8000067c]:sub a0, a0, gp<br> [0x80000680]:sd a0, 56(ra)<br>            |
+|  38|[0x80002138]<br>0x0000000000200000|- imm_val == 512<br>                                         |[0x8000068c]:auipc a0, 512<br> [0x80000690]:sub a0, a0, gp<br> [0x80000694]:sd a0, 64(ra)<br>            |
+|  39|[0x80002140]<br>0x0000000000800000|- imm_val == 2048<br>                                        |[0x800006a0]:auipc a0, 2048<br> [0x800006a4]:sub a0, a0, gp<br> [0x800006a8]:sd a0, 72(ra)<br>           |
+|  40|[0x80002148]<br>0x0000000001000000|- imm_val == 4096<br>                                        |[0x800006b4]:auipc a0, 4096<br> [0x800006b8]:sub a0, a0, gp<br> [0x800006bc]:sd a0, 80(ra)<br>           |
+|  41|[0x80002150]<br>0x0000000004000000|- imm_val == 16384<br>                                       |[0x800006c8]:auipc a0, 16384<br> [0x800006cc]:sub a0, a0, gp<br> [0x800006d0]:sd a0, 88(ra)<br>          |
+|  42|[0x80002158]<br>0x0000000008000000|- imm_val == 32768<br>                                       |[0x800006dc]:auipc a0, 32768<br> [0x800006e0]:sub a0, a0, gp<br> [0x800006e4]:sd a0, 96(ra)<br>          |
+|  43|[0x80002160]<br>0x0000000010000000|- imm_val == 65536<br>                                       |[0x800006f0]:auipc a0, 65536<br> [0x800006f4]:sub a0, a0, gp<br> [0x800006f8]:sd a0, 104(ra)<br>         |
+|  44|[0x80002168]<br>0x0000000020000000|- imm_val == 131072<br>                                      |[0x80000704]:auipc a0, 131072<br> [0x80000708]:sub a0, a0, gp<br> [0x8000070c]:sd a0, 112(ra)<br>        |
+|  45|[0x80002170]<br>0x0000000040000000|- imm_val == 262144<br>                                      |[0x80000718]:auipc a0, 262144<br> [0x8000071c]:sub a0, a0, gp<br> [0x80000720]:sd a0, 120(ra)<br>        |
+|  46|[0x80002178]<br>0xFFFFFFFF80000000|- imm_val == 524288<br>                                      |[0x8000072c]:auipc a0, 524288<br> [0x80000730]:sub a0, a0, gp<br> [0x80000734]:sd a0, 128(ra)<br>        |
+|  47|[0x80002180]<br>0xFFFFFFFFFFFFE000|- imm_val == 1048574<br>                                     |[0x80000740]:auipc a0, 1048574<br> [0x80000744]:sub a0, a0, gp<br> [0x80000748]:sd a0, 136(ra)<br>       |
+|  48|[0x80002188]<br>0xFFFFFFFFFFFFD000|- imm_val == 1048573<br>                                     |[0x80000754]:auipc a0, 1048573<br> [0x80000758]:sub a0, a0, gp<br> [0x8000075c]:sd a0, 144(ra)<br>       |
+|  49|[0x80002190]<br>0xFFFFFFFFFFFFB000|- imm_val == 1048571<br>                                     |[0x80000768]:auipc a0, 1048571<br> [0x8000076c]:sub a0, a0, gp<br> [0x80000770]:sd a0, 152(ra)<br>       |
+|  50|[0x80002198]<br>0xFFFFFFFFFFFF7000|- imm_val == 1048567<br>                                     |[0x8000077c]:auipc a0, 1048567<br> [0x80000780]:sub a0, a0, gp<br> [0x80000784]:sd a0, 160(ra)<br>       |
+|  51|[0x800021a0]<br>0xFFFFFFFFFFFEF000|- imm_val == 1048559<br>                                     |[0x80000790]:auipc a0, 1048559<br> [0x80000794]:sub a0, a0, gp<br> [0x80000798]:sd a0, 168(ra)<br>       |
+|  52|[0x800021a8]<br>0xFFFFFFFFFFFDF000|- imm_val == 1048543<br>                                     |[0x800007a4]:auipc a0, 1048543<br> [0x800007a8]:sub a0, a0, gp<br> [0x800007ac]:sd a0, 176(ra)<br>       |
+|  53|[0x800021b0]<br>0xFFFFFFFFFFFBF000|- imm_val == 1048511<br>                                     |[0x800007b8]:auipc a0, 1048511<br> [0x800007bc]:sub a0, a0, gp<br> [0x800007c0]:sd a0, 184(ra)<br>       |
+|  54|[0x800021b8]<br>0xFFFFFFFFFFF7F000|- imm_val == 1048447<br>                                     |[0x800007cc]:auipc a0, 1048447<br> [0x800007d0]:sub a0, a0, gp<br> [0x800007d4]:sd a0, 192(ra)<br>       |
+|  55|[0x800021c0]<br>0xFFFFFFFFFFEFF000|- imm_val == 1048319<br>                                     |[0x800007e0]:auipc a0, 1048319<br> [0x800007e4]:sub a0, a0, gp<br> [0x800007e8]:sd a0, 200(ra)<br>       |
+|  56|[0x800021c8]<br>0xFFFFFFFFFFDFF000|- imm_val == 1048063<br>                                     |[0x800007f4]:auipc a0, 1048063<br> [0x800007f8]:sub a0, a0, gp<br> [0x800007fc]:sd a0, 208(ra)<br>       |
+|  57|[0x800021d0]<br>0xFFFFFFFFFFBFF000|- imm_val == 1047551<br>                                     |[0x80000808]:auipc a0, 1047551<br> [0x8000080c]:sub a0, a0, gp<br> [0x80000810]:sd a0, 216(ra)<br>       |
+|  58|[0x800021d8]<br>0xFFFFFFFFFF7FF000|- imm_val == 1046527<br>                                     |[0x8000081c]:auipc a0, 1046527<br> [0x80000820]:sub a0, a0, gp<br> [0x80000824]:sd a0, 224(ra)<br>       |
+|  59|[0x800021e0]<br>0xFFFFFFFFFEFFF000|- imm_val == 1044479<br>                                     |[0x80000830]:auipc a0, 1044479<br> [0x80000834]:sub a0, a0, gp<br> [0x80000838]:sd a0, 232(ra)<br>       |
+|  60|[0x800021e8]<br>0xFFFFFFFFFDFFF000|- imm_val == 1040383<br>                                     |[0x80000844]:auipc a0, 1040383<br> [0x80000848]:sub a0, a0, gp<br> [0x8000084c]:sd a0, 240(ra)<br>       |
+|  61|[0x800021f0]<br>0xFFFFFFFFFBFFF000|- imm_val == 1032191<br>                                     |[0x80000858]:auipc a0, 1032191<br> [0x8000085c]:sub a0, a0, gp<br> [0x80000860]:sd a0, 248(ra)<br>       |
+|  62|[0x800021f8]<br>0xFFFFFFFFF7FFF000|- imm_val == 1015807<br>                                     |[0x8000086c]:auipc a0, 1015807<br> [0x80000870]:sub a0, a0, gp<br> [0x80000874]:sd a0, 256(ra)<br>       |

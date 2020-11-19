@@ -11,7 +11,7 @@
 |---------------------------|----------|
 | XLEN                      | 64      |
 | TEST_REGION               | [('0x80000390', '0x800003f0')]      |
-| SIG_REGION                | [('0x80002208', '0x80002218', '2 dwords')]      |
+| SIG_REGION                | [('0x80002010', '0x80002020', '2 dwords')]      |
 | COV_LABELS                | fencei      |
 | TEST_NAME                 | /scratch/git-repo/incoresemi/riscof/riscof_work/Fencei.S/Fencei.S    |
 | Total Number of coverpoints| 1     |
@@ -45,7 +45,7 @@ Last Code Sequence :
 	-[0x800003c4]:fence.i
 	-[0x800003c8]:add gp, sp, ra
 	-[0x800003cc]:sw ra, 0(a7)
-Current Store : [0x800003d0] : sw sp, 4(a7) -- Store: [0x8000220c]:0x0000000000000012
+Current Store : [0x800003d0] : sw sp, 4(a7) -- Store: [0x80002014]:0x0000000000000012
 
 
 
@@ -55,7 +55,7 @@ Last Code Sequence :
 	-[0x800003c4]:fence.i
 	-[0x800003c8]:add gp, sp, ra
 	-[0x800003cc]:sw ra, 0(a7)
-Current Store : [0x800003d4] : sw gp, 8(a7) -- Store: [0x80002210]:0x0000000000000042
+Current Store : [0x800003d4] : sw gp, 8(a7) -- Store: [0x80002018]:0x0000000000000042
 
 
 
@@ -65,7 +65,7 @@ Last Code Sequence :
 	-[0x800003c4]:fence.i
 	-[0x800003c8]:add gp, sp, ra
 	-[0x800003cc]:sw ra, 0(a7)
-Current Store : [0x800003d8] : sw a5, 12(a7) -- Store: [0x80002214]:0x00000000001101B3
+Current Store : [0x800003d8] : sw a5, 12(a7) -- Store: [0x8000201c]:0x00000000001101B3
 
 
 
@@ -99,4 +99,4 @@ Current Store : [0x800003d8] : sw a5, 12(a7) -- Store: [0x80002214]:0x0000000000
 
 |s.no|            signature             |      coverpoints      |                                         code                                          |
 |---:|----------------------------------|-----------------------|---------------------------------------------------------------------------------------|
-|   1|[0x80002208]<br>0x0000000000000030|- opcode : fence.i<br> |[0x800003c4]:fence.i<br> [0x800003c8]:add gp, sp, ra<br> [0x800003cc]:sw ra, 0(a7)<br> |
+|   1|[0x80002010]<br>0x0000000000000030|- opcode : fence.i<br> |[0x800003c4]:fence.i<br> [0x800003c8]:add gp, sp, ra<br> [0x800003cc]:sw ra, 0(a7)<br> |

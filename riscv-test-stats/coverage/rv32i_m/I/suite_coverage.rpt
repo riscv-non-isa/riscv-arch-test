@@ -100,13 +100,13 @@ addi:
       - rs1_val != imm_val: 1063
       - rs1_val > 0 and imm_val > 0: 574
       - rs1_val > 0 and imm_val < 0: 84
-      - rs1_val < 0 and imm_val > 0: 84
-      - rs1_val < 0 and imm_val < 0: 146
+      - rs1_val < 0 and imm_val > 0: 82
+      - rs1_val < 0 and imm_val < 0: 148
       - imm_val == 2: 47
       - imm_val == 4: 49
       - imm_val == 8: 2
       - imm_val == 16: 3
-      - imm_val == 32: 5
+      - imm_val == 32: 4
       - imm_val == 64: 2
       - imm_val == 128: 3
       - imm_val == 256: 3
