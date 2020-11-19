@@ -1,35 +1,35 @@
 
 2020-11-24 Neel Gala <neelgala@incoresemi.com>
 	* added MIGRATION.adoc in doc directory to indicate how old framework targets can work with
-		changes made as part of this PR
+	  changes made as part of this PR
 	* updated doc/README.adoc to avoid the word "compliance" and updated the section on porting a new
-		target to the framework.
+	  target to the framework.
 	* Added an example_target directory to host dummy files which can be used as a starting point for
-		porting targets. This was provided by MarcKarasek.
+	  porting targets. This was provided by MarcKarasek.
 	* migrated/ported existing targets (except codasip and sifive-formal) to the new framework
-		changes.
+	  changes.
 	* in riscv-test-env/p/riscv_test.h changed names of RVTEST_[CODE/DATA]_[BEGIN/END] to
-		RVTEST_[CODE/DATA]_[BEGIN/END]_OLD respectively to avoid conflicts with the new framework macros.
+	  RVTEST_[CODE/DATA]_[BEGIN/END]_OLD respectively to avoid conflicts with the new framework macros.
 	* in riscv-test-env/p/riscv_test.h re-strutucture RVTEST_DATA_BEGIN_OLD/END to ensure that all
-		target specific data contents are introduced in RVTEST_DATA_END after the signature.
+	  target specific data contents are introduced in RVTEST_DATA_END after the signature.
 	* added new file riscv-test-suite/env/arch_test.h which contains the macros used by the new set of 
-		tests. A symlink to this in the riscv-test-env directory is also created. The arch_test also 
-		includes aliases for the old macros. 
+	  tests. A symlink to this in the riscv-test-env directory is also created. The arch_test also 
+	  includes aliases for the old macros. 
 	* encoding.h moved to riscv-test-suite/env and a symlink to this file exists in riscv-test-env.
-		This was done to ensure that the arch_test.h and encoding.h are not to be modified by the
-		targets
+	  This was done to ensure that the arch_test.h and encoding.h are not to be modified by the
+	  targets
 	* Added riscv-test-stats which includes coverage and data propagation reports for the tests
-		available in the riscv-test-suite directory.
+	  available in the riscv-test-suite directory.
 	* upadted the directory structure of the riscv-test-suite as per definition found in the
-		TestFormatSpec document.
-	*	added new set of tests in the riscv-test-suite directory for RV32IMC and RV64IMC extensions.
+	  TestFormatSpec document.
+	* added new set of tests in the riscv-test-suite directory for RV32IMC and RV64IMC extensions.
 	* Updated TestFormatSpec to avoid the word compliance and also updated the definitions of macros
-		and signatures
+	  and signatures
 	* created a root-level Makefile.include to decouple the Makefile and target specific settings. 
 	* Added riscv-target and Makefile.include to the .gitignore file to stop tracking target specific
-		changes.
+	  changes.
 	* Added special targets for compile(build), simulate(run) and verify in the Makefiles of each
-		test-suite.
+	  test-suite.
 
 2020-04-24 Allen Baum <allen.baum@esperantotech.com>
 	* fixed the I-SB-01.S and I-SH-01.S tests and associated reference signatures to account
