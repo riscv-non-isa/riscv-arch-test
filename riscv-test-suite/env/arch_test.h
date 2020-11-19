@@ -318,12 +318,17 @@
           sll     t4, t4, t2		          /* put bit# in MSB */
           bltz    t4, sv_mtval		        /* correct adjustment is code_begin in t3 */
   
-//          LA(     t3, mtrap_sigptr)/* adjustment for data_begin */
-          csrr    t3, CSR_MTVAL
-          LI(t4, DATA_REL_TVAL_MSK)   /* trap#s not 14, 11..8, 2 adjust w/ data_begin */
+          LA(     t3, mtrap_sigptr) /* adjustment assuming access is to signature region */
+          LI(t4, DATA_REL_TVAL_MSK)       /* trap#s not 14, 11..8, 2 adjust w/ data_begin */
           sll     t4, t4, t2		          /* put bit# in MSB */
-          bltz    t4, sv_mtval		        /* correct adjustment is data_begin in t3 */
-  
+          bgez    t4, no_adj		          /* correct adjustment is data_begin in t3 */
+  sigbound_chk:
+          csrr t4, CSR_MTVAL                  /* do a bounds check on mtval */
+          bge   t3, t4, sv_mtval          /* if mtval is greater than the rvmodel_data_begin then use that as anchor */
+          LA( t3, rvtest_data_begin)      /* else change anchor to rvtest_data_begin  */
+          blt   t3, t4, sv_mtval          /* before the signature, use data_begin adj */
+          mv t4, t3                       /* use sig relative adjust */
+  no_adj: 
           LI(t3, 0)			/* else zero adjustment amt */
 
   // For Illegal op handling
