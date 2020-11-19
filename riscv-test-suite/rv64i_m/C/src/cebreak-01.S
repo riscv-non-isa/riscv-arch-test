@@ -9,7 +9,7 @@
 
 #define rvtest_mtrap_routine
 
-#include "compliance_model.h"
+#include "model_test.h"
 #include "arch_test.h"
 
 RVTEST_ISA("RV64IC")

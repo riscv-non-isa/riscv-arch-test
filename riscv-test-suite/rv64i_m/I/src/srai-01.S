@@ -15,7 +15,7 @@
 //
 // This assembly file tests the srai instruction of the RISC-V I extension for the srai covergroup.
 // 
-#include "compliance_model.h"
+#include "model_test.h"
 #include "arch_test.h"
 RVTEST_ISA("RV64I")
 

@@ -15,7 +15,7 @@
 //
 // This assembly file tests the sll instruction of the RISC-V i extension for the sll covergroup.
 // 
-#include "compliance_model.h"
+#include "model_test.h"
 #include "arch_test.h"
 RVTEST_ISA("RV64i")
 

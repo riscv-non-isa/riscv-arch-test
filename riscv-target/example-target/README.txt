@@ -10,11 +10,11 @@ a template for linking.
 
 Whichever linker script you choose to use, you will have to modify the example to fit your enviroement address space.
 
-Under /devcie you will find a compliance_model.h file.  This provides the macros and some code that is specific to your
+Under /devcie you will find a model_test.h file.  This provides the macros and some code that is specific to your
 environment.  
 
 For example if you are using the linksplit.ld file for a template for your linker script then in the 
-compliance_model.h file you will have use the code to copy the data sections from the boot device to ram.  
+model_test.h file you will have use the code to copy the data sections from the boot device to ram.  
 
 // For code that has a split rom/ram area
 // Code below will copy from the rom area to ram the 
@@ -46,7 +46,7 @@ la t0, _data_strings; \
 // Use linkmono.ld 
 #define RVTEST_TARGET_INIT \
 
-The file compliance_model.h will have to be modified to fit our environment.  See comments in the file for more details.
+The file model_test.h will have to be modified to fit our environment.  See comments in the file for more details.
 
 Each subdirectory under device (rv32i_m and rv64i_m) have Makefile.include files that are then symlinked
 to the subdir under each of these device directories (I, C, M, privilige, Zifencei).  If you have specific makefile 

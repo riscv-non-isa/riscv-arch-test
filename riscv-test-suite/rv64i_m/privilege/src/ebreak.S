@@ -6,7 +6,7 @@
 // This assembly file tests the ebreak instruction of the RISC-V I extension.
 // 
 
-#include "compliance_model.h"
+#include "model_test.h"
 #include "arch_test.h"
 
 RVTEST_ISA("RV64I")

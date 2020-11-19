@@ -6,7 +6,7 @@
 // This assembly file tests the fence.i instruction of the RISC-V Zifencei extension.
 // 
 
-#include "compliance_model.h"
+#include "model_test.h"
 #include "arch_test.h"
 
 # Test Virtual Machine (TVM) used by program.

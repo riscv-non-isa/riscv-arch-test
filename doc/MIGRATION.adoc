@@ -23,8 +23,8 @@ and `compliance_io.h`. In version v0.2 these macros are to merged into a single 
 `model_test.h`. The following commands can the achieve the above:
 
 ----
-mv compliance_test.h compliance_model.h
-cat compliance_io.h >> compliance_model.h
+mv compliance_test.h model_test.h
+cat compliance_io.h >> model_test.h
 rm compliance_io.h
 ----
 
@@ -68,14 +68,14 @@ have been renamed with a post-fix `_OLD`. The macros that have been renamed are 
 . `RVTEST_DATA_BEGIN` -> `RVTEST_DATA_BEGIN_OLD`
 . `RVTEST_DATA_END`   -> `RVTEST_DATA_END_OLD`
 
-The user is thus required to make the above changes in the new `compliance_model.h` that was created
+The user is thus required to make the above changes in the new `model_test.h` that was created
 as part of this migration. The following commands will help achieve the above:
 
 ----
-sed -i 's/RVTEST_CODE_BEGIN/RVTEST_CODE_BEGIN_OLD/g' compliance_model.h 
-sed -i 's/RVTEST_CODE_END/RVTEST_CODE_END_OLD/g' compliance_model.h 
-sed -i 's/RVTEST_DATA_BEGIN/RVTEST_DATA_BEGIN_OLD/g' compliance_model.h 
-sed -i 's/RVTEST_DATA_END/RVTEST_DATA_END_OLD/g' compliance_model.h 
+sed -i 's/RVTEST_CODE_BEGIN/RVTEST_CODE_BEGIN_OLD/g' model_test.h 
+sed -i 's/RVTEST_CODE_END/RVTEST_CODE_END_OLD/g' model_test.h 
+sed -i 's/RVTEST_DATA_BEGIN/RVTEST_DATA_BEGIN_OLD/g' model_test.h 
+sed -i 's/RVTEST_DATA_END/RVTEST_DATA_END_OLD/g' model_test.h 
 
 ----
 

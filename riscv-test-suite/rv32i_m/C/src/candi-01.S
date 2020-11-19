@@ -15,7 +15,7 @@
 //
 // This assembly file tests the c.andi instruction of the RISC-V C extension for the candi covergroup.
 // 
-#include "compliance_model.h"
+#include "model_test.h"
 #include "arch_test.h"
 RVTEST_ISA("RV32IC")
 

@@ -254,7 +254,7 @@ There are then five top level directories.
 
 `doc`:: All the documentation for the project, written using _AsciiDoc_.
 
-`coverage`:: This directory contains a sub-directory structure similar to the `riscv-test-suite` directory. The coverage reports of each test-suite are available in the corresponding directories. The reports are available in the html and yaml formats. The directory also contains the `coverpoint.yaml` file which indicates all the coverpoints of interest which are covered by all the tests in the `riscv-test-suite` directory.
+`coverage`:: This directory contains a sub-directory structure similar to the `riscv-test-suite` directory. The coverage reports of each test-suite are available in the corresponding directories. The reports are available in the html and yaml formats. The directory also contains multple coverpoint YAMLs which capture all the coverpoints of interest which are covered by all the tests in the `riscv-test-suite` directory.
 
 `riscv-target`:: Contains a further subdirectory for each target, within which are placed the `model_test.h` header for that target and a `device` directory for all the devices of that target. If the `$TARGETDIR` environment variable is set to another directory, the scripts will search this directory for targets instead.
 

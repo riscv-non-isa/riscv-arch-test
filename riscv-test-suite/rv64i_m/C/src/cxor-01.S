@@ -15,7 +15,7 @@
 //
 // This assembly file tests the c.xor instruction of the RISC-V C extension for the cxor covergroup.
 // 
-#include "compliance_model.h"
+#include "model_test.h"
 #include "arch_test.h"
 RVTEST_ISA("RV64IC")
 

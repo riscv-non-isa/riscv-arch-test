@@ -15,7 +15,7 @@
 //
 // This assembly file tests the mulhu instruction of the RISC-V M extension for the mulhu covergroup.
 // 
-#include "compliance_model.h"
+#include "model_test.h"
 #include "arch_test.h"
 RVTEST_ISA("RV32IM")
 

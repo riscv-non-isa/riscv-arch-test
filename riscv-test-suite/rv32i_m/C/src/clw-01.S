@@ -15,7 +15,7 @@
 //
 // This assembly file tests the c.lw instruction of the RISC-V C extension for the clw covergroup.
 // 
-#include "compliance_model.h"
+#include "model_test.h"
 #include "arch_test.h"
 RVTEST_ISA("RV32IC")
 
