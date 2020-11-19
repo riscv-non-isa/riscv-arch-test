@@ -234,15 +234,15 @@ end_testcode:                                                           \
 #define EXTRA_DATA
 
 #define RVTEST_DATA_BEGIN_OLD                                               \
+        .align 4; .global begin_signature; begin_signature:
+
+#define RVTEST_DATA_END_OLD                                                 \
+        .align 4; .global end_signature; end_signature:                 \
         EXTRA_DATA                                                      \
         .pushsection .tohost,"aw",@progbits;                            \
         .align 8; .global tohost; tohost: .dword 0;                     \
         .align 8; .global fromhost; fromhost: .dword 0;                 \
         .popsection;                                                    \
-        .align 4; .global begin_signature; begin_signature:
-
-#define RVTEST_DATA_END_OLD                                                 \
-        .global end_signature; end_signature:                 \
         .align 8; .global begin_regstate; begin_regstate:               \
         .word 128;                                                      \
         .align 8; .global end_regstate; end_regstate:                   \
