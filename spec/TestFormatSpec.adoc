@@ -357,6 +357,26 @@ the test.
     - outputs the message String
     - ScrReg is a scratch register used by the output routine; its final value cannot be guaranteed 
 
+  `RVMODEL_SET_MSW_INT`::
+    - This macro needs to include a routine to set the machine software interrupt.
+    - Currently the test forces an empty macro if a target does not declare this. Future tests may
+      change this.
+  
+  `RVMODEL_CLEAR_MSW_INT`::
+    - This macro needs to include a routine to clear the machine software interrupt.
+    - Currently the test forces an empty macro if a target does not declare this. Future tests may
+      change this.
+  
+  `RVMODEL_CLEAR_MTIMER_INT`::
+    - This macro needs to include a routine to clear the machine timer interrupt.
+    - Currently the test forces an empty macro if a target does not declare this. Future tests may
+      change this.
+
+  `RVMODEL_CLEAR_MEXT_INT`::
+    - This macro needs to include a routine to clear the machine external interrupt.
+    - Currently the test forces an empty macro if a target does not declare this. Future tests may
+      change this.
+
 === Required labels
   
 The test must define a `rvtest_entry_point` label to indicate the location to be used by the linker

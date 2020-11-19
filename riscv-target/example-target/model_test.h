@@ -12,26 +12,24 @@
         .word 4;
 
 
-//RV_COMPLIANCE_HALT
-// Add code here to run after all tests have been run
+//TODO: Add code here to run after all tests have been run
+// The .align 4 ensures that the signature begins at a 16-byte boundary
 #define RVMODEL_HALT                                              \
   self_loop:  j self_loop;
 
-//RV_COMPLIANCE_DATA_BEGIN
+//TODO: declare the start of your signature region here. Nothing else to be used here.
+// The .align 4 ensures that the signature ends at a 16-byte boundary
 #define RVMODEL_DATA_BEGIN                                              \
-  RVMODEL_DATA_SECTION                                                        \
   .align 4; .global begin_signature; begin_signature:
 
-//RV_COMPLIANCE_DATA_END
+//TODO: declare the end of the signature region here. Add other target specific contents here.
 #define RVMODEL_DATA_END                                                      \
-  .global end_signature; end_signature:  
+  .alive 4; .global end_signature; end_signature:                             \
+  RVMODEL_DATA_SECTION                                                        
 
-//RVTEST_IO_INIT
-// Add code here to initialize any IO for output support
-#define RVTEST_IO_INIT
 
 //RVMODEL_BOOT
-// Any specific target init code should be put here
+//TODO:Any specific target init code should be put here or the macro can be left empty
 
 // For code that has a split rom/ram area
 // Code below will copy from the rom area to ram the 
@@ -59,9 +57,8 @@ la t0, _data_strings; \
   bltu t1, t2, 1b; \
   RVTEST_IO_INIT
 
-//RVTEST_IO_WRITE_STR
 // _SP = (volatile register)
-// Macro to output a string to IO
+//TODO: Macro to output a string to IO
 #define LOCAL_IO_WRITE_STR(_STR) RVMODEL_IO_WRITE_STR(x31, _STR)
 #define RVMODEL_IO_WRITE_STR(_SP, _STR)                                 \
     .section .data.string;                                              \
@@ -79,7 +76,7 @@ la t0, _data_strings; \
     sw      t0,   (2*RSIZE)(_SP);                                       \
     sw      t1,   (3*RSIZE)(_SP);                                       \
     sw      t2,   (4*RSIZE)(_SP);                                       \
-    sw      t3,   (5*RSIZE)(_SP);                                       \   
+    sw      t3,   (5*RSIZE)(_SP);                                       \
     sw      t4,   (6*RSIZE)(_SP);                                      \
     sw      s0,   (7*RSIZE)(_SP);                                      \
     sw      a0,   (8*RSIZE)(_SP);
@@ -92,7 +89,7 @@ la t0, _data_strings; \
     lw      t1,   (3*RSIZE)(_SP);                                       \
     lw      t2,   (4*RSIZE)(_SP);                                       \
     lw      t3,   (5*RSIZE)(_SP);                                       \
-    lw      t4,   (6*RSIZE)(_SP);                                       \        
+    lw      t4,   (6*RSIZE)(_SP);                                       \
     lw      s0,   (7*RSIZE)(_SP);                                       \
     lw      a0,   (8*RSIZE)(_SP);
 
@@ -128,7 +125,7 @@ la t0, _data_strings; \
     RVMODEL_IO_WRITE_STR(" ) != ");                                    \
     mv      a0, t5;                                                     \
     jal FN_WriteNmbr;                                                   \
-    j 20003f;                                                           \    
+    j 20003f;                                                           \
 20002:                                                                  \
     RVMODEL_IO_WRITE_STR("Test Passed ");                              \
 20003:                                                                  \
@@ -150,17 +147,16 @@ FN_WriteNmbr: \
 //RVTEST_IO_ASSERT_DFPR_EQ
 #define RVMODEL_IO_ASSERT_DFPR_EQ(_D, _R, _I)
 
-#define RVMODEL_SET_MSW_INT       \
- li t1, 1;                         \
- li t2, 0x2000000;                 \
- sw t1, 0(t2);
+// TODO: specify the routine for setting machine software interrupt
+#define RVMODEL_SET_MSW_INT
 
-#define RVMODEL_CLEAR_MSW_INT     \
- li t2, 0x2000000;                 \
- sw x0, 0(t2);
+// TODO: specify the routine for clearing machine software interrupt
+#define RVMODEL_CLEAR_MSW_INT
 
+// TODO: specify the routine for clearing machine timer interrupt
 #define RVMODEL_CLEAR_MTIMER_INT
 
+// TODO: specify the routine for clearing machine external interrupt
 #define RVMODEL_CLEAR_MEXT_INT
 
 #endif // _COMPLIANCE_MODEL_H
