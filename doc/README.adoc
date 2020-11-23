@@ -1,6 +1,6 @@
-= RISC-V Compliance Tests =
+= RISC-V Architectural Testing Framework =
 RISC-V Foundation Compliance Task Group
-Issue 1.15 Draft
+Issue 1.16 Draft
 :toc:
 :icons: font
 :numbered:
@@ -21,45 +21,66 @@ Document conventions:
 == Introduction
 === About
 
-This document describes the RISC-V Compliance Testing framework which is used to test a RISC-V device's compliance  to the different RISC-V specifications.
+This document describes the RISC-V Architectural Testing framework which is used to test if a RISC-V device's has understood and implemented the specifications correctly
 
-* It explains the required structure of a test, the framework around the tests, the running of individual tests, and the suites of tests.
+* It explains the framework around the tests, the running of individual tests, and the suites of tests.
 
-* It includes, as reference, details of the first suite of tests for the RV32I and their reference signatures.
-
-* It explains how to set up different targets to run the tests.
-
-* It is an expansion of the work carried out by Codasip in the second half of 2017.
+* It explains how to set up targets to run the tests.
 
 This document is made freely available under a <<app_cc_by_4.0>>.
 
-=== Purpose of compliance tests
+=== Intent of the architectural test suite
 
-The goal of compliance tests is to check whether the processor under development meets the open RISC-V standards or not. It is considered as non-functional testing meaning that it doesn’t substitute for design verification. This can be interpreted as testing to check all important aspects of the specification but without focusing on details, for example, on all possible values of instruction operands or all combinations of possible registers.
+The RISC-V Architectural Tests are an evolving set of tests that are created to help ensure that software written for a given RISC-V Profile/Specification will run on all implementations that comply with that profile.
 
-The result that compliance tests provide to the user is an assurance that the specification has been interpreted correctly and the design under test (DUT) can be declared as RISC-V compliant.
+These tests also help ensure that the implementer has both understood and implemented the specification correctly.
+
+The RISC-V Architectural Test suite is a minimal filter. Passing the tests and having the results approved by RISC-V International is a prerequisite to licensing the RISC-V trademarks in connection with the design. Passing the RISC-V Architectural Tests does not mean that the design complies with the RISC-V Architecture. These are only a basic set of tests checking important aspects of the specification without focusing on details.
+
+The RISC-V Architectural Tests are not a substitute for rigorous design verification.
+
+The result that the architecture tests provide to the user is an assurance that the specification has been interpreted correctly and the implementation under test (DUT) can be declared as RISC-V Architecture Test compliant.
 
 === Intended audience
 
-This document is intended for design and verification engineers who wish to develop new compliance tests and also those who wish check if their implementation (simulation models, HDL models, etc.) of a RISC-V processor is compliant to the RISC-V specifications.
+This document is intended for design and verification engineers who wish to check if their RISC-V implementation (simulation models, HDL models, etc.) is compliant to the RISC-V specification. 
 
-=== Future work
+For those who wish to develop new architectural tests and/or to write or adapt their own test framework are suggested to read the link:../spec/TestFormatSpec.adoc[`Test Format Spec`].
 
-This is a work in progress. A number of areas need resolving before the work is complete, and are recorded here so they do not get forgotten.
+//=== Future work
+//
+//This is a work in progress. A number of areas need resolving before the work is complete, and are recorded here so they do not get forgotten.
+//
+//Consider whether `compliance_test.h` is needed It's not clear if this belongs in target directories, or if it is needed at all.
+//
+// Generalize Makefile configuration At present each platform requires editing of the makefile, and many areas are not even fully parameterized.  Again we wish to explore a wider range of platforms before deciding what needs parameterization.  For now `COMPILE_TARGET` allows a choice between GCC and LLVM.  More generally, we know that with tools like _autotools_ and _cmake_ this is a well understood problem to solve.
+//
+//Free up all registers for compliance testing At present some platforms have macros which use some registers in set up and verification, thus excluding them from compliance testing. We believe careful structuring of the macros will mean this problem can be avoided in the future, thus avoiding any registers being excluded from compliance testing.
 
-Consider whether `compliance_test.h` is needed :: It's not clear if this belongs in target directories, or if it is needed at all.
+=== Contribute
 
-Generalize Makefile configuration :: At present each platform requires editing of the makefile, and many areas are not even fully parameterized.  Again we wish to explore a wider range of platforms before deciding what needs parameterization.  For now `COMPILE_TARGET` allows a choice between GCC and LLVM.  More generally, we know that with tools like _autotools_ and _cmake_ this is a well understood problem to solve.
+You are encouraged to contribute to this repository (including changes to this document) by submitting pull requests and by commenting on pull requests submitted by other people as described in the link:../README.md[`README.md`] file in the top level directory.
 
-Free up all registers for compliance testing :: At present some platforms have macros which use some registers in set up and verification, thus excluding them from compliance testing. We believe careful structuring of the macros will mean this problem can be avoided in the future, thus avoiding any registers being excluded from compliance testing.
+While submitting a pull request note that some directories use `ChangeLog` files to track changes in the code and documentation.  Please honor these, keeping them up to date and including the ChangeLog entry in the _git_ commit message.
 
-=== Feedback and how to contribute
-
-Comments on this document should be made through the RISC-V Compliance Task Group mailing list. Proposed changes may be submitted as git pull requests.
-
-You are encouraged to contribute to this repository by submitting pull requests and by commenting on pull requests submitted by other people as described in the link:../README.md[`README.md`] file in the top level directory.
+Make sure to also include a comment with the SPDX license identifier in all source files, for example:
+```
+// SPDX-License-Identifier: BSD-3-Clause
+```
 
 NOTE: Don't forget to add your own name to the list of contributors in the document.
+
+== Licensing
+
+In general:
+
+* code is licensed under the BSD 3-clause license (SPDX license identifier `BSD-3-Clause`);
+* documentation is licensed under the Creative Commons Attribution 4.0 International license (SPDX license identifier `CC-BY-4.0`).
+
+The files link:../COPYING.BSD[`COPYING.BSD`] and link:../COPYING.CC[`COPYING.CC`] in the top level directory contain the complete text of these licenses.
+
+NOTE: The riscv-ovpsim simulator is licensed under an Imperas license. There is no dependency on this and it is included as a convenience to users.
+
 
 ==== AsciiDoc
 
@@ -114,13 +135,20 @@ Any custom words for spell checking should be added to link:./custom.wordlist[`c
 
 This document has been created by the following people (in alphabetical order of surname).
 
-[quote]
-Jeremy Bennett, Mary Bennett, Simon Davidmann, Neel Gala, Radek Hajek, Lee Moore, Milan Nostersky, Marcela Zachariasova.
+* Jeremy Bennett
+* Mary Bennett
+* Simon Davidmann
+* Neel Gala
+* Radek Hajek
+* Lee Moore
+* Milan Nostersky
+* Marcela Zachariasova
 
 === Document history
 [cols="<1,<2,<3,<4",options="header,pagewidth",]
 |================================================================================
 | _Revision_ | _Date_            | _Author_ | _Modification_
+| 1.16 Draft | 23 September 2020 | Neel Gala| Changed Compliance to Architecture/Architectural. Refined the steps to port a new target. Removed simulator and target specific docs. Added vocabulary from the Test Format Specification
 | 1.15 Draft | 14 March 2019     |
 Prashanth Mundkur |
 
@@ -213,434 +241,401 @@ First version of the document.
 
 |================================================================================
 
-== Overall structure
-=== The compliance test
-
-At the heart of the testing infrastructure is the detailed compliance test.  This is the RISC-V assembler code that is executed on the processor and that provides results in a defined memory area (the _signature_).  The test should only use the minimum of instructions and only those absolutely necessary.  It should only use instructions and registers from the ISA instruction set on which it is targeted.
-
-=== The Test Virtual Machine
-
-The test runs in the context of a _Test Virtual Machine_ (TVM) as defined and available at https://github.com/riscv/riscv-tests. There will be a different TVM for each instruction subset and each profile.
-
-=== The target environment
-
-A specific target will need to be chosen and setup to run the Test. This can be an Instruction Set Simulator (ISS), full system simulator (emulator), HDL simulator, FPGA prototype, or a board/chip, etc.  The test runs in the context of a TVM and is set up to run on the specific target.  The _target environment_ controls the loading of the test plus TVM onto the target, configures the device if needed, controls the execution, and then extracts the signature.
-
-=== The processor configuration (device configuration)
-
-The RISC-V specification allows many optional instructions, registers, and other features.  Many targets have a fixed selection of these optional items which cannot be changed. For example, a chip is fixed in the mask.  A simulator on the other hand may implement all known options and will need to be constrained to have only the required options available.  There will need to be processor configuration for those target devices which need to be constrained to only reflect the features of the device being compliance tested. This is essential when writing compliance tests to ensure that only available options are used in the tests.
-
-=== The test signature
-
-The _test signature_ is defined as reference data written into memory during the execution of the test.  It should record values and results of the operation of the Test. It is expected that an implementation, at the end of a test, dumps the signature in to a file such that only 4-bytes are written per line, starting with the most-significant byte on the left.
-
-=== The test reference signature
-
-The _test reference signature_ is the _test signature_ saved from an execution run of the RISC‑V _golden model_.  This is currently from a RISC-V ISS, but the intention is that the RISC-V Formal Model from the RISCV.org Formal Working Group will be used when it is complete, functional, and available. 
-
-=== The test suites
-
-Tests are grouped into different functional test suites targeting the different subsets of the full RISC-V specifications.  There will be ISA and privilege suites.
-
-For information on the status of the different test suites, look here: link:../riscv-test-suite/README.md[../riscv-test-suite/README.md]
-
-
-=== The test framework
-
-This works at several levels.  At the lowest level it runs a test with a TVM on a specific configured target device and compares the test’s output test signature against the test reference signature and reports if there is any difference. A difference indicates that the target has failed that specific compliance test.
-
-The test framework allows different test suites to be run depending on the capabilities of the target
-
-The test framework collates the results of all the Tests that comprise a Test Suite and reports the overall results.
-
-== Developing new tests
-=== Structure
-
-* Clone directory structure of an existing test suite alongside the RV32I tree.
-
-* This must include test and reference signature directories (`src` and `references`).
-
-* Check the target environment setup files.
-
-* Check the processor configuration files.
-
-=== Process
-
-This description assumes the use of a configurable simulator with good trace and debug capabilities.
-
-* Work on one test at a time.
-
-* Ensure that the processor configuration is set appropriately.
-
-* Use the `RVTEST` macros (defined in `compliance_io.h`) to make it easy to see the details of a Test’s execution. There are macros for assertions (`RVTEST_IO_ASSERT_GPR_EQ`) and tracing (`RVTEST_IO_WRITE_STR`) which are empty on targets that can not implement them.
-
-* Assuming you are developing the test on a simulator, use the simulator’s tracing capabilities, especially a register change mode to single step your test examining all changing registers etc. to ensure your test is stimulating what is intending.
-
-* Make sure that the signature you generate at the end of the run shows adequate internal test state such that any checks do report as fails if wrong.
-
-* When you are satisfied that the test does what is intended and that the test signature is correct, copy this into a test reference signature (in the references directory).
-
-For a test suite to be complete it needs to have tests that exercise the full functionality of what it is intended to test. There are tools available to measure instruction and other resource coverage. These should be used to ensure that 100% of the intended instructions have been tested.
-
-== Test framework
-
-For running compliance tests, the Test Virtual Machine (TVM) “p” available at https://github.com/riscv/riscv-tests is utilized.
-
-In addition to using the basic functionality of the TVM, the script for running compliance tests runs the test on the target and then performs comparison of the target’s generated test signature to the manually reviewed test reference signature.
-
-See the chapter below for selecting and setting up the target (simulator, or hardware, etc.).
-
-If using a target that requires the processor to be configured, see the chapter below on processor configuration.
-
-You will also need to have a suitable compiler tool chain (GCC or LLVM) installed in your environment and available on your path.
-
-Tests are run by commands in the top level `Makefile` which has targets for simulate and verify
-
-[source,make]
-----
-RISCV_TARGET ?= riscvOVPsim
-RISCV_DEVICE ?= rv32i
-RISCV_PREFIX ?= riscv64-unknown-elf-
-
-simulate:
-        make RISCV_TARGET=$(RISCV_TARGET) \
-             RISCV_DEVICE=$(RISCV_DEVICE) \
-             RISCV_PREFIX=$(RISCV_PREFIX) \
-             run -C $(SUITEDIR)
-
-verify:
-    riscv-test-env/verify.sh
-----
-
-== Setting the target environment
-
-The target environment needs setting up to allow the compliance tests to be run on the target.  This can be used while developing compliance test suites or it can be used with new targets to see if they correctly execute the compliance test suites and are compliant!
-
-This chapter provides information on the currently available targets and includes a short tutorial on how to add a new target.
-
-== Support for parallel make
-
-In order to speed compilation and execution runs, make can be run in parallel using options to control parallelism.
-
-Two variables are of importance here PARALLEL=<0|1> and JOBS=<-jX --max-load=Y> whereby X and Y are integer values
-
-Additionally the target selected, must be coded in such a way to support parallel execution, unfortunately some targets use common intermediate files, rather than unique files, this makes them unsuitable for parallel execution, these targets will need to be re-coded.
-
-At the moment the riscvOVPsim target will support parallel execution by default, and will select the options -j8 --max-load=4 - these can be overridden either by disable (PARALLEL=0), or redefinition JOBS="-j2 --max-load=2"
-
-=== Imperas riscvOVPsim compliance simulator
-
-For tracing the test the following  macros are defined in `riscv-target/riscvOVPsim/compliance_io.h`:
-
-[source,make]
-----
-RVTEST_IO_INIT
-RVTEST_IO_WRITE_STR(_SP, _STR)
-RVTEST_IO_ASSERT_GPR_EQ(_SP, _R, _I)
-----
-
-An example of a test that uses the tracing macros is `riscv-test-suite/rv32i/ISA/src/I-IO.S`.
-
-To configure the simulator for different target devices there needs to be a Makefile fragment in the `device` directory.
-
-The Makefile fragment for RV32I is in `riscv-target/riscvOVPsim/device/rv32i`
-
-In the top level Makefile there needs to be a selection for the target and device:
-[source,make]
-----
-RISCV_TARGET?=riscvOVPsim
-RISCV_DEVICE?=rv32i
-----
-
-The path to the RUN_TARGET is defined within the riscv-target Makefile.include.
-
-
-=== Codasip ISA simulator
-
-tbd
-
-=== GNU CGEN ISS
-==== Within GDB
-
-tbd
-
-==== Via GDB Remote Serial Protocol
-
-tbd
-
-=== Berkeley Spike ISA simulator
-For spike the file `riscv-target/spike/compliance_io.h` has the trace macros defined as empty.  The Makefile fragment in `riscv-target/spike/device/rv32i` has the spike run command for the RV32I device.
-
-=== Berkeley Rocket Chip emulators
-Additional environment variables:
-
-* `ROCKET_DIR`: Specifies link:https://github.com/freechipsproject/rocket-chip[Rocket Chip] directory. Required.
-* `ROCKET_CONFIG`: Specifies Rocket Chip link:https://github.com/freechipsproject/rocket-chip/blob/master/src/main/scala/system/Configs.scala[configuration]. **Usually** defaults to `DefaultConfig` or `DefaultRV32Config`, unless the aforementioned configurations do not support a test suite's ISA extensions (for example, in the case of `rv32ud`).
-
-Before running the compliance test, make sure that the correct emulator is built, following the link:https://github.com/freechipsproject/rocket-chip#emulator[instructions in the Rocket Chip repository].
-
-**Note**: Rocket Chip's `DefaultRV32Config` is currently failing the following test — link:https://github.com/riscv/riscv-compliance/issues/31[rv32i/I-MISALIGN_JMP-01.S].
-
-=== SiFive RISC-V ISA Formal Specification
-Additional environment variables:
-
-* `FORMALSPEC_DIR`: Specifies link:https://github.com/sifive/RiscvSpecFormal[formal specification] directory. Required.
-
-Build the link:https://github.com/sifive/RiscvSpecFormal[formal model] before running compliance tests. The model currently supports `RV32i` with `a`, `c`, and `f` extensions.
-
-**Note**: Some tests in the `rv32i` suite will fail because privileged CSRs are not yet implemented in the formal specification.
-
-=== GRIFT (Galois RISC-V Formal Tools) Simulator
-
-To run the compliance test suite on the GRIFT simulator, first build/install GRIFT (https://github.com/GaloisInc/grift). The GRIFT simulation tool `grift-sim` needs to be on your PATH.
-
-Then, we can run the compliance suite via:
-
-[source,make]
-----
-make RISCV_TARGET=grift
-----
-
-We have ported the rv32i, rv32im, rv32imc, rv64i, and rv64im tests. You can also run these individually, e.g.:
-
-[source,make]
-----
-make RISCV_TARGET=grift RISCV_ISA=rv64i RISCV_DEVICE=rv64i
-----
-
-=== SiFive Freedom Unleashed 540 board (tbd)
-
-tbd
-
-=== Verilator Verilog RI5CY RTL processor
-==== With GDB Server
-
-tbd
-
-==== With testbench monitor
-
-tbd
-
-=== Adding a new Target
-
-In this section, a short tutorial how to add a user target in the TVM is provided.
-
-If you do not want to use the TVM at all, it is recommended to just take the tests and references and incorporate them into your testing environment.  The only requirement needed in this case is that there must be an option to dump the results from the target in the test environment so as the comparison to test reference signature is possible.
-
-The following steps demonstrate an example in which a target was replaced by Codasip ISA simulator. In a similar way, any RISC-V ISA simulator or any RTL simulation model of the RISC-V processor can be connected.
-
-* Redefine macros in `ISA/src/compliance_test.h` and `binary_coding/src/compliance_test.h`.
-+
-For example, to support Codasip ISA simulator as Target, it was necessary to redefine `RV_COMPLIANCE_HALT macro`, `RV_COMPLIANCE_DATA_BEGIN` macro and `RV_COMPLIANCE_DATA_END` macro in `ISA/compliance_test.h` in the following way:
-+
-[source,c]
-----
-#define RV_COMPLIANCE_HALT
-        add     x31, x0, 1
-        sw      x31, codasip_syscall, t0
-----
-
-* This means that on the address defined by `codasip_syscall`, the 1 value is stored and this is interpreted as `HALT` for the Codasip ISA simulator.
-+
-[source,c]
-----
-#define RV_COMPLIANCE_DATA_BEGIN
-        .align  4;
-        .global codasip_signature_start;
-codasip_signature_start:
-----
-+
-[source,c]
-----
-#define RV_COMPLIANCE_DATA_END
-        .align  4;
-        .global codasip_signature_end;
-codasip_signature_end:
-----
-
-* The Codasip ISA simulator dumps data from the addresses bounded by labels `codasip_signature_start` and `codasip_signature_end` to `stdout`.  The dumped data represent the results of the tests.
-
-* Modify Makefiles in `ISA/Makefile` and `binary_coding/Makefile`.  It is important to change tools that are evaluated and parameters that are passed to the tools.
-+
-For example, to support the Codasip ISA simulator as the device under test
-(DUT), it was necessary to change `RISCV_SIM` from `spike` to
-`codix_berkelium-ia-isimulator –r` and parameters for running the simulator
-from `+signature=$(work_dir)/$<.signature.output` to `–info 5` plus handle
-redirection to a file by `1>$(work_dir)/$<.signature.output`.
-
-== Configuring the target device
-
-This section is for how to specify which optional parts are being used
-
-NOTE: This is primarily for simulators.
-
-In the directory `riscv-target/*/device` there are directories that have Makefile fragments that configure the simulator to simulate only those parts of the RISC-V specification that is required for the specific target device being tested.
-
-For example for the riscvOVPsim to be configured to be a RV32I
-[source,make]
-----
-RUN_TARGET= \
-        riscvOVPsim.exe --variant RV32I --program $(work_dir_isa)/$< \
-            --signaturedump \
-            --override riscvOVPsim/cpu/sigdump/SignatureFile=$(work_dir_isa)/$(*).signature.output \
-            --override riscvOVPsim/cpu/sigdump/ResultReg=3 \
-            --override riscvOVPsim/cpu/simulateexceptions=T \
-            --logfile $(work_dir_isa)/$@
-----
-[appendix]
-== One ISA Test
-
-For a detailed description of one ISA test please have a look at the example: link:../riscv-test-suite/rv32i/src/I-IO.S[`I-IO.S`].
-
-This includes use of all the logging and assertion macros and shows how a test is split into sections.
-
-[appendix]
 == Repository structure
 
-The top level directory contains a `README.md` file giving an overview of the project, top level `Makefile`, `ChangeLog`, the `verify.sh` script and complete license files for the Creative Commons and BSD licenses used by the task group.  There are then four top level directories.
+The top level directory contains :
+
+ - a `README.md` file providing high-level details about the RISC-V Architecture Testing Framework. 
+ - top level `Makefile` for running the tests on a RISC-V implementation.
+ - `ChangeLog` for logging changes with respect to code.
+ -  complete license files for the Creative Commons and BSD licenses used by the task group.  
+
+There are then five top level directories.
 
 `doc`:: All the documentation for the project, written using _AsciiDoc_.
 
-`riscv-target`:: Contains a further subdirectory for each target, within which are placed the `compliance_io.h` header for that target and a `device` directory for all the devices of that target. If the `$TARGETDIR` environment variable is set to another directory, the scripts will search this directory for targets instead.
+`coverage`:: This directory contains a sub-directory structure similar to the `riscv-test-suite` directory. The coverage reports of each test-suite are available in the corresponding directories. The reports are available in the html and yaml formats. The directory also contains multple coverpoint YAMLs which capture all the coverpoints of interest which are covered by all the tests in the `riscv-test-suite` directory.
 
-`riscv-test-env`:: This contains headers common to all environments, and then a directory for each TVM variant, with `link.ld` linker script and `riscv_test.h` header.
+`riscv-target`:: Contains a further subdirectory for each target, within which are placed the `model_test.h` header for that target and a `device` directory for all the devices of that target. If the `$TARGETDIR` environment variable is set to another directory, the scripts will search this directory for targets instead.
 
-`riscv-test-suite`:: This contains a subdirectory for each instruction set or instruction set extension.  Within each subdirectory the source code and reference output for each test are in the `ISA` directory.
+`riscv-test-env`:: This contains the `verify.sh` script which checks if the signatures generated the riscv-target device match the statically hosted reference signatures at the end of simulation. The directory also contains symbolic-links to the `arch_test.h` and `encoding.h` files present in the `riscv-test-suite/env` directory.
 
-`riscv-ovpsim`:: This contains a copy of the Imperas OVP riscvOVPsim simulator for use in compliance testing. It includes a subdirectory of examples with pre-compiled .elf files and has binaries of the simulator for Linux64 and Windows64. This is referenced by the makefiles for developing and running the compliance suites. riscvOVPsim can run all the tracing and assertion macros used in the tests.
+`riscv-test-suite`:: This contains a further `env` subdirectory which contains the `arch_test.h` and the `encoding.h` file which includes common assembly macros and routines which is used across the tests in the suite. Further directories are present which contain the actual architectural tests. The names and structure of these directories is based on the link:../test-pool structure guideline highlighted above. 
 
-[appendix]
-== Creative Commons Attribution 4.0 International License
+`riscv-ovpsim`:: This contains a README pointing to the Imperas OVP riscvOVPsim simulator for use in architectural testing. 
 
-Creative Commons Corporation (“Creative Commons”) is not a law firm and does not provide legal services or legal advice. Distribution of Creative Commons public licenses does not create a lawyer-client or other relationship. Creative Commons makes its licenses and related information available on an “as-is” basis. Creative Commons gives no warranties regarding its licenses, any material licensed under their terms and conditions, or any related information. Creative Commons disclaims all liability for damages resulting from their use to the fullest extent possible.
+== Vocabulary
+=== The architectural test
 
-=== Using Creative Commons Public Licenses
+At the heart of the testing infrastructure is the detailed <<The architectural tests, _architectural test_>> available as `.S` assembly files. The specification and format of the tests is defined in the link:./TestFormatSpec.adoc[`Test Format Specification`].
 
-Creative Commons public licenses provide a standard set of terms and conditions that creators and other rights holders may use to share original works of authorship and other material subject to copyright and certain other rights specified in the public license below. The following considerations are for informational purposes only, are not exhaustive, and do not form part of our licenses.
+=== The architectural test pool
 
-[horizontal]
-*Considerations for licensors*:: Our public licenses are intended for use by those authorized to give the public permission to use material in ways otherwise restricted by copyright and certain other rights. Our licenses are irrevocable. Licensors should read and understand the terms and conditions of the license they choose before applying it. Licensors should also secure all rights necessary before applying our licenses so that the public can reuse the material as expected. Licensors should clearly mark any material not subject to the license. This includes other CC-licensed material, or material used under an exception or limitation to copyright.  https://wiki.creativecommons.org/wiki/Considerations_for_licensors_and_licensees#Considerations_for_licensors[More considerations for licensors].
+The <<The architectural test, _architectural tests_>> are grouped into different functional test suites targeting the different subsets of the RISC-V specification. For more details on the test-pool structure, hierarchy and conventions please refer to the link:./TestFormatSpec.adoc[`Test Format Specification`].
 
-*Considerations for the public*:: By using one of our public licenses, a licensor grants the public permission to use the licensed material under specified terms and conditions. If the licensor's permission is not necessary for any reason–for example, because of any applicable exception or limitation to copyright–then that use is not regulated by the license. Our licenses grant only permissions under copyright and certain other rights that a licensor has authority to grant. Use of the licensed material may still be restricted for other reasons, including because others have copyright or other rights in the material. A licensor may make special requests, such as asking that all changes be marked or described. Although not required by our licenses, you are encouraged to respect those requests where reasonable.  https://wiki.creativecommons.org/Considerations_for_licensors_and_licensees#Considerations_for_licensees[More considerations for the public].
+For information on the currently supported different test suites, look here: link:../riscv-test-suite/README.md[../riscv-test-suite/README.md]
 
-[[app_cc_by_4.0]]
-=== Creative Commons Attribution 4.0 International Public License
+=== The test signature
 
-By exercising the Licensed Rights (defined below), You accept and agree to be bound by the terms and conditions of this Creative Commons Attribution 4.0 International Public License ("Public License"). To the extent this Public License may be interpreted as a contract, You are granted the Licensed Rights in consideration of Your acceptance of these terms and conditions, and the Licensor grants You such rights in consideration of benefits the Licensor receives from making the Licensed Material available under these terms and conditions.
+Each test in the <<The architectural test pool, _architectural test pool_>> generates a <<The test signature, _test signature_>>, which represents the data written into specific memory locations during the execution of the test. The signature typically will record values (or sanitised values) of the operations carried out in the test. More details on the format and nature of the signatures is available in the link:./TestFormatSpec.adoc[`Test Format Specification`]
 
-:numbered!:
-==== Section 1--Definitions.
+=== The reference signature
 
-a. *Adapted Material* means material subject to Copyright and Similar Rights that is derived from or based upon the Licensed Material and in which the Licensed Material is translated, altered, arranged, transformed, or otherwise modified in a manner requiring permission under the Copyright and Similar Rights held by the Licensor. For purposes of this Public License, where the Licensed Material is a musical work, performance, or sound recording, Adapted Material is always produced where the Licensed Material is synched in timed relation with a moving image.
+In order to claim that a device/implementation has passed the RISC-V Architecture Tests, the <<The test signature, _test signatures_>> obtained from the execution of the tests on the implementation need to be compared against a set of _golden_ <<The reference signatures, _reference signature_>>. These reference signatures are currently generated by the link:https://github.com/rems-project/sail-riscv[`RISC-V SAIL`] formal model and statically hosted in the repository for each test.
 
-b. *Adapter's License* means the license You apply to Your Copyright and Similar Rights in Your contributions to Adapted Material in accordance with the terms and conditions of this Public License.
+=== The test target
+The <<The test target,_test target_>> can be either a RISC-V Instruction Set Simulator (ISS), a RISC-V emulator, a RISC-V RTL model running on an HDL simulator, a RISC-V FPGA implementation or a physical chip. Each of the target types offers specific features and represents specific interface challenges. It is a role of the  <<The target shell, _target shell_>> to handle different targets while using the same <<The architectural test pool,_architectural test pool_>> as a test source.
 
-c. *Copyright and Similar Rights* means copyright and/or similar rights closely related to copyright including, without limitation, performance, broadcast, sound recording, and Sui Generis Database Rights, without regard to how the rights are labeled or categorized. For purposes of this Public License, the rights specified in Section 2(b)(1)-(2) are not Copyright and Similar Rights.
+=== The target shell
+The <<The target shell, _target shell_>> is the software and hardware environment around the <<The test target,_test target_>> that enables it to communicate with the framework, including assembling and linking tests, loading tests into memory, executing tests, and extracting the signature. The input to the <<The target shell, _target shell_>> is a .S <<The architectural test,_architectural test_>> file, and the output is a <<The test signature,_test signature_>>.
 
-d. *Effective Technological Measures* means those measures that, in the absence of proper authority, may not be circumvented under laws fulfilling obligations under Article 11 of the WIPO Copyright Treaty adopted on December 20, 1996, and/or similar international agreements.
 
-e. *Exceptions and Limitations* means fair use, fair dealing, and/or any other exception or limitation to Copyright and Similar Rights that applies to Your use of the Licensed Material.
+//=== The Test Virtual Machine
+//
+//The test runs in the context of a _Test Virtual Machine_ (TVM) as defined and available at https://github.com/riscv/riscv-tests. There will be a different TVM for each instruction subset and each profile.
 
-f. *Licensed Material* means the artistic or literary work, database, or other material to which the Licensor applied this Public License.
+//=== The target environment
+//
+//A specific target will need to be chosen and setup to run the Test. This can be an Instruction Set Simulator (ISS), full system simulator (emulator), HDL simulator, FPGA prototype, or a board/chip, etc.  The test runs in the context of a TVM and is set up to run on the specific target.  The _target environment_ controls the loading of the test plus TVM onto the target, configures the device if needed, controls the execution, and then extracts the signature.
 
-g. *Licensed Rights* means the rights granted to You subject to the terms and conditions of this Public License, which are limited to all Copyright and Similar Rights that apply to Your use of the Licensed Material and that the Licensor has authority to license.
+//=== The processor configuration (device configuration)
+//
+//The RISC-V specification allows many optional instructions, registers, and other features.  Many targets have a fixed selection of these optional items which cannot be changed. For example, a chip is fixed in the mask.  A simulator on the other hand may implement all known options and will need to be constrained to have only the required options available.  There will need to be processor configuration for those target devices which need to be constrained to only reflect the features of the device being compliance tested. This is essential when writing compliance tests to ensure that only available options are used in the tests.
 
-h. *Licensor* means the individual(s) or entity(ies) granting rights under this Public License.
+//=== The test signature
+//
+//The _test signature_ is defined as reference data written into memory during the execution of the test.  It should record values and results of the operation of the Test. It is expected that an implementation, at the end of a test, dumps the signature in to a file such that only 4-bytes are written per line, starting with the most-significant byte on the left.
 
-i. *Share* means to provide material to the public by any means or process that requires permission under the Licensed Rights, such as reproduction, public display, public performance, distribution, dissemination, communication, or importation, and to make material available to the public including in ways that members of the public may access the material from a place and at a time individually chosen by them.
+//=== The test framework
+//
+//This works at several levels.  At the lowest level it runs a test with a TVM on a specific configured target device and compares the test’s output test signature against the test reference signature and reports if there is any difference. A difference indicates that the target has failed that specific compliance test.
+//
+//The test framework allows different test suites to be run depending on the capabilities of the target
+//
+//The test framework collates the results of all the Tests that comprise a Test Suite and reports the overall results.
 
-j. *Sui Generis Database Rights* means rights other than copyright resulting from Directive 96/9/EC of the European Parliament and of the Council of 11 March 1996 on the legal protection of databases, as amended and/or succeeded, as well as other essentially equivalent rights anywhere in the world.
+//== Developing new tests
+//=== Structure
+//
+//* Clone directory structure of an existing test suite alongside the RV32I tree.
+//
+//* This must include test and reference signature directories (`src` and `references`).
+//
+//* Check the target environment setup files.
+//
+//* Check the processor configuration files.
+//
+//=== Process
+//
+//This description assumes the use of a configurable simulator with good trace and debug capabilities.
+//
+//* Work on one test at a time.
+//
+//* Ensure that the processor configuration is set appropriately.
+//
+//* Use the `RVTEST` macros (defined in `compliance_io.h`) to make it easy to see the details of a Test’s execution. There are macros for assertions (`RVTEST_IO_ASSERT_GPR_EQ`) and tracing (`RVTEST_IO_WRITE_STR`) which are empty on targets that can not implement them.
+//
+//* Assuming you are developing the test on a simulator, use the simulator’s tracing capabilities, especially a register change mode to single step your test examining all changing registers etc. to ensure your test is stimulating what is intending.
+//
+//* Make sure that the signature you generate at the end of the run shows adequate internal test state such that any checks do report as fails if wrong.
+//
+//* When you are satisfied that the test does what is intended and that the test signature is correct, copy this into a test reference signature (in the references directory).
+//
+//For a test suite to be complete it needs to have tests that exercise the full functionality of what it is intended to test. There are tools available to measure instruction and other resource coverage. These should be used to ensure that 100% of the intended instructions have been tested.
 
-k. *You* means the individual or entity exercising the Licensed Rights under this Public License. Your has a corresponding meaning.
+//== Test framework
+//
+//For running compliance tests, the Test Virtual Machine (TVM) “p” available at https://github.com/riscv/riscv-tests is utilized.
+//
+//In addition to using the basic functionality of the TVM, the script for running compliance tests runs the test on the target and then performs comparison of the target’s generated test signature to the manually reviewed test reference signature.
+//
+//See the chapter below for selecting and setting up the target (simulator, or hardware, etc.).
+//
+//If using a target that requires the processor to be configured, see the chapter below on processor configuration.
+//
+//You will also need to have a suitable compiler tool chain (GCC or LLVM) installed in your environment and available on your path.
+//
+//Tests are run by commands in the top level `Makefile` which has targets for simulate and verify
+//
+//[source,make]
+//----
+//RISCV_TARGET ?= riscvOVPsim
+//RISCV_DEVICE ?= rv32i
+//RISCV_PREFIX ?= riscv64-unknown-elf-
+//
+//simulate:
+//        make RISCV_TARGET=$(RISCV_TARGET) \
+//             RISCV_DEVICE=$(RISCV_DEVICE) \
+//             RISCV_PREFIX=$(RISCV_PREFIX) \
+//             run -C $(SUITEDIR)
+//
+//verify:
+//    riscv-test-env/verify.sh
+//----
 
-==== Section 2 – Scope
+//== Setting the target environment
+//
+//The target environment needs setting up to allow the compliance tests to be run on the target.  This can be used while developing compliance test suites or it can be used with new targets to see if they correctly execute the compliance test suites and are compliant!
+//
+//This chapter provides information on the currently available targets and includes a short tutorial on how to add a new target.
 
-a. *License grant*.
-   1. Subject to the terms and conditions of this Public License, the Licensor hereby grants You a worldwide, royalty-free, non-sublicensable, non-exclusive, irrevocable license to exercise the Licensed Rights in the Licensed Material to:
-      A. reproduce and Share the Licensed Material, in whole or in part; and
-      B. produce, reproduce, and Share Adapted Material.
-   2. _Exceptions and Limitations_. For the avoidance of doubt, where Exceptions and Limitations apply to Your use, this Public License does not apply, and You do not need to comply with its terms and conditions.
-   3. _Term_. The term of this Public License is specified in Section 6(a).
-   4. _Media and formats; technical modifications allowed_. The Licensor authorizes You to exercise the Licensed Rights in all media and formats whether now known or hereafter created, and to make technical modifications necessary to do so. The Licensor waives and/or agrees not to assert any right or authority to forbid You from making technical modifications necessary to exercise the Licensed Rights, including technical modifications necessary to circumvent Effective Technological Measures. For purposes of this Public License, simply making modifications authorized by this Section 2(a)(4) never produces Adapted Material.
-   5. _Downstream recipients_.
-      A. _Offer from the Licensor – Licensed Material_. Every recipient of the Licensed Material automatically receives an offer from the Licensor to exercise the Licensed Rights under the terms and conditions of this Public License.
-      B. _No downstream restrictions_. You may not offer or impose any additional or different terms or conditions on, or apply any Effective Technological Measures to, the Licensed Material if doing so restricts exercise of the Licensed Rights by any recipient of the Licensed Material.
-   6. _No endorsement_. Nothing in this Public License constitutes or may be construed as permission to assert or imply that You are, or that Your use of the Licensed Material is, connected with, or sponsored, endorsed, or granted official status by, the Licensor or others designated to receive attribution as provided in Section 3(a)(1)(A)(i).
+== Porting a new target
 
-b. *Other rights*.
-   1. Moral rights, such as the right of integrity, are not licensed under this Public License, nor are publicity, privacy, and/or other similar personality rights; however, to the extent possible, the Licensor waives and/or agrees not to assert any such rights held by the Licensor to the limited extent necessary to allow You to exercise the Licensed Rights, but not otherwise.
-   2. Patent and trademark rights are not licensed under this Public License.
-   3. To the extent possible, the Licensor waives any right to collect royalties from You for the exercise of the Licensed Rights, whether directly or through a collecting society under any voluntary or waivable statutory or compulsory licensing scheme. In all other cases the Licensor expressly reserves any right to collect such royalties.
 
-==== Section 3 -- License Conditions.
+In this section, a short tutorial on how to add a user target to the RISC-V Architectural Test Framework is provided.
 
-Your exercise of the Licensed Rights is expressly made subject to the
-following conditions.
+The following steps demonstrate an example in which a target was replaced by the RISCV-ISA-SIM 
+(a.k.a Spike). In a similar way, any RISC-V ISA simulator or any RTL simulation model of the 
+RISC-V processor can be ported as a potential target for testing.
+
+=== Setup environment variables
+
+NOTE: `ROOTDIR` will always point to the riscv-compliance repo.
+
+1. Clone the repository: 
+
+  ---
+  git clone https://github.com/riscv/riscv-compliance.git
+  cd riscv-compliance
+
+  ---
+
+2. Open the `Makefile.include` available in the root folder of the repository and edit the following
+variables based on your target:
+   
+ a. `TARGETDIR` : set `TARGETDIR` to point to the directory which contains a sub-folder in the same name
+ as the target. For example, the compliance repo includes the targets: sail-riscv-c and spike
+ under the `riscv-target` folder, in which case we set the `TARGETDIR` to riscv-target as shown
+ below. One can set this completely arbitrary paths as suitable by the user.
  
-a. Attribution.
-   1. If You Share the Licensed Material (including in modified form), You must:
-      A. retain the following if it is supplied by the Licensor with the Licensed Material:
-      	 i) identification of the creator(s) of the Licensed Material and any others designated to receive attribution, in any reasonable manner requested by the Licensor (including by pseudonym if designated);
-	 ii) a copyright notice;
-	 iii) notice that refers to this Public License;
-	 iv) a notice that refers to the disclaimer of warranties;
-	 v) a URI or hyperlink to the Licensed Material to the extent reasonably practicable;
-      B. indicate if You modified the Licensed Material and retain an indication of any previous modifications; and
-      C. indicate the Licensed Material is licensed under this Public License, and include the text of, or the URI or hyperlink to, this Public License.
-   2. You may satisfy the conditions in Section 3(a)(1) in any reasonable manner based on the medium, means, and context in which You Share the Licensed Material. For example, it may be reasonable to satisfy the conditions by providing a URI or hyperlink to a resource that includes the required information.
-   3. If requested by the Licensor, You must remove any of the information required by Section 3(a)(1)(A) to the extent reasonably practicable.
-   4. If You Share Adapted Material You produce, the Adapter's License You apply must not prevent recipients of the Adapted Material from complying with this Public License.
+ 
+   ---
+   export TARGETDIR ?= $(ROOTDIR)/riscv-target
+   
+   ---
 
-==== Section 4 -- Sui Generis Database Rights.
+ b. `XLEN`: set XLEN to max supported XLEN. Allowed values are 32 and 64.
 
-Where the Licensed Rights include Sui Generis Database Rights that apply to Your use of the Licensed Material:
+   ---
+   export XLEN 							?= 64
 
-a. for the avoidance of doubt, Section 2(a)(1) grants You the right to extract, reuse, reproduce, and Share all or a substantial portion of the contents of the database;
+   ---
 
-b. if You include all or a substantial portion of the database contents in a database in which You have Sui Generis Database Rights, then the database in which You have Sui Generis Database Rights (but not its individual contents) is Adapted Material; and
+c. `RISCV_TARGET`: set this variable to the name of the target. A folder of the same name must exist in 
+the `TARGETDIR` directory
 
-c. You must comply with the conditions in Section 3(a) if You Share all or a substantial portion of the contents of the database.
-For the avoidance of doubt, this Section 4 supplements and does not replace Your obligations under this Public License where the Licensed Rights include other Copyright and Similar Rights.
+  ---
+  export RISCV_TARGET       ?= spike
 
-==== Section 5 -- Disclaimer of Warranties and Limitation of Liability.
+  ---
 
-a. *Unless otherwise separately undertaken by the Licensor, to the extent possible, the Licensor offers the Licensed Material as-is and as-available, and makes no representations or warranties of any kind concerning the Licensed Material, whether express, implied, statutory, or other. This includes, without limitation, warranties of title, merchantability, fitness for a particular purpose, non-infringement, absence of latent or other defects, accuracy, or the presence or absence of errors, whether or not known or discoverable. Where disclaimers of warranties are not allowed in full or in part, this disclaimer may not apply to You.*
+d. `RISCV_DEVICE`: set the `RISCV_DEVICE` environment to the extension you want to compile, simulate and verify. Leave
+this blank if you want to iterate through all the supported extensions of the target. Allowed values
+are the individual names of the extensions supported by your target like: I, M, C or Zifencei, etc. Multiple extensions are not be provided.
 
-b. *To the extent possible, in no event will the Licensor be liable to You on any legal theory (including, without limitation, negligence) or otherwise for any direct, special, indirect, incidental, consequential, punitive, exemplary, or other losses, costs, expenses, or damages arising out of this Public License or use of the Licensed Material, even if the Licensor has been advised of the possibility of such losses, costs, expenses, or damages. Where a limitation of liability is not allowed in full or in part, this limitation may not apply to You.*
+  ---
+  export RISCV_DEVICE       ?= 
 
-c. The disclaimer of warranties and limitation of liability provided above shall be interpreted in a manner that, to the extent possible, most closely approximates an absolute disclaimer and waiver of all liability.
+  ---
 
-==== Section 6 -- Term and Termination.
+e. `RISCV_TARGET_FLAGS`: set this to a string which needs to be passed to your target's Makefile.include files
 
-a. This Public License applies for the term of the Copyright and Similar Rights licensed here. However, if You fail to comply with this Public License, then Your rights under this Public License terminate automatically.
+  ---
+  export RISCV_TARGET_FLAGS ?= 
 
-b. Where Your right to use the Licensed Material has terminated under Section 6(a), it reinstates:
-   1. automatically as of the date the violation is cured, provided it is cured within 30 days of Your discovery of the violation; or
-   2. upon express reinstatement by the Licensor.
+  ---
 
-c. For the avoidance of doubt, this Section 6(b) does not affect any right the Licensor may have to seek remedies for Your violations of this Public License.
+f. `RISCV_ASSERT`: set this if you want to enable assertions on the test-suites. **Currently no tests use assertions.**
+  
+  ---
+  export RISCV_ASSERT       ?= 0
 
-d. For the avoidance of doubt, the Licensor may also offer the Licensed Material under separate terms or conditions or stop distributing the Licensed Material at any time; however, doing so will not terminate this Public License.
-Sections 1, 5, 6, 7, and 8 survive termination of this Public License.
+  ---
 
-==== Section 7 -- Other Terms and Conditions.
+g. `JOBS`: set the number of parallel jobs (along with any other arguments) you would like to
+execute. Note that the target needs to  be coded in such a way to support parallel execution. Some
+targets use common intermediate files, rather than unique files, which makes them unsuitable for 
+parallel execution, these targets will need to be re-coded.
+  
+  ---
+  JOBS= -j1
 
-a. The Licensor shall not be bound by any additional or different terms or conditions communicated by You unless expressly agreed.
+  ---
 
-b. Any arrangements, understandings, or agreements regarding the Licensed Material not stated herein are separate from and independent of the terms and conditions of this Public License.
+3. Now inside your `TARGETDIR/RISCV_TARGET` directory you will need to create the following files:
 
-==== Section 8 -- Interpretation.
+a. `model_test.h`: A header file containing the definition of the various target specific
+assembly macros that are required to compile and simulate the tests. The list and definition of the 
+required target specific macros is available in the link:../spec/TestFormatSpec.adoc[Test Format
+Specification]
 
-a. For the avoidance of doubt, this Public License does not, and shall not be interpreted to, reduce, limit, restrict, or impose conditions on any use of the Licensed Material that could lawfully be made without permission under this Public License.
+b. `link.ld`: A linker script to compile the tests for your target.
 
-b. To the extent possible, if any provision of this Public License is deemed unenforceable, it shall be automatically reformed to the minimum extent necessary to make it enforceable. If the provision cannot be reformed, it shall be severed from this Public License without affecting the enforceability of the remaining terms and conditions.
+c. Any other files required by the target (configuration scripts, logs, etc.) can also be placed in
+this directory.
 
-c. No term or condition of this Public License will be waived and no failure to comply consented to unless expressly agreed to by the Licensor.
+4. Inside the `TARGETDIR/RISCV_TARGET` directory create a new folder named: `device`. If your device
+is a 32-bit target then create a directory `device/rv32i_m`. If your device is a 64-bit target then
+create a directory `device/rv64i_m`. If your target is configurable on the `XLEN` parameter then
+both the folders need to be created. 
 
-d. Nothing in this Public License constitutes or may be interpreted as a limitation upon, or waiver of, any privileges and immunities that apply to the Licensor or You, including from the legal processes of any jurisdiction or authority.
+5. Within the `rv32i_m`/`rv64i_m` directories sub-folders in the name of the extensions supported
+by the target need to be created. For eg. A target supporting the ISA RV32IMC_Zifence will have the
+following directory structure:
+   
+   ---
+   - rv32i_m/I
+   - rv32i_m/M
+   - rv32i_m/C
+   - rv32i_m/privilege
+   - rv32i_m/Zifencei
 
-=== Supplementary
+   ---
 
-Creative Commons is not a party to its public licenses. Notwithstanding, Creative Commons may elect to apply one of its public licenses to material it publishes and in those instances will be considered the “Licensor.” The text of the Creative Commons public licenses is dedicated to the public domain under the https://creativecommons.org/publicdomain/zero/1.0/legalcode[CC0 Public Domain Dedication]. Except for the limited purpose of indicating that material is shared under a Creative Commons public license or as otherwise permitted by the Creative Commons policies published at https://creativecommons.org/policies[creativecommons.org/policies], Creative Commons does not authorize the use of the trademark “Creative Commons” or any other trademark or logo of Creative Commons without its prior written consent including, without limitation, in connection with any unauthorized modifications to any of its public licenses or any other arrangements, understandings, or agreements concerning use of licensed material. For the avoidance of doubt, this paragraph does not form part of the public licenses.
+6. Each of the above extension directories will now need to include a file: `Makefile.include` which
+defines the following Makefile variables:
 
-Creative Commons may be contacted at https://creativecommons.org/[creativecommons.org].
+a. `RUN_TARGET`:: This variable needs to include commands and steps to execute an ELF on target device. Note here that this variable should include all the necessary steps and arguments to run that specific test-suite. For example, in case of spike for the `rv32i_m/C` test-suite the corresponding `Makefile.include` has the `--isa=rv32ic` argument as opposed to just `--isa=rv32i` for the base `rv32i_m/I` test-suite. This variable should also include other steps to extract and sanitize the signature file as well for each test. The only argument available to this variable is the compiled `elf` file.
+
+b. `COMPILE_TARGET`:: This variable should include the commands and steps required to compile an assembly test for the target for each extension mentioned above. Note, currently only the GCC compiler is supported. This compiler takes `march` and `mabi` arguments from the corresponding architectural suite framework. `COMPILE_TARGET` will more or less be the same across test-suites. The only argument available to `COMPILE_TARGET` is the assembly file of one architectural test.
+
+The following figure depicts the final directory structure of a target device that should get created at the end of the above steps:
+
+[#img-testStruct]
+.File Structure of the Target directory
+image::./file-struct.jpg[TargetStruct]
+
+
+=== Generating Signature
+
+As previously mentioned the execution of each test on the target must generate a signature file. The name of the signature file should be `<test-file-name.signature_output>`. The signature file should follow the guidelines mentioned in the link:../spec/TestFormatSpec.adoc[`Test Format Specification`].
+
+In case of spike, we have ensured that the signature region is bounded by the labels: `begin_signature` and `end_signature`. This is enforced in the `RVMODEL_DATA_BEGIN` and `RVMODEL_DATA_END` macros defined in the `riscv-target/spike/model_test.h` file. Additionally, if you look closely at the `RUN_TARGET` variable defined in the `Makefile.include` files of the spike target, it includes a few bash commands to sanitize the signature produced from spike. This is done to conform the final signature file to the specification defined in the link:../spec/TestFormatSpec.adoc[`Test Format Specification`].
+
+=== Compile, simulate and verify the tests
+
+Once you have ported your target to the riscv-compliance framework by following the above steps, you
+are now ready to compile, simulate and verify the tests on your target
+
+If you would like to compile, simulate and verify all the extension tests applicable to your target
+simply run `make` from the `ROOTDIR`. 
+
+NOTE: For the above to work the `RISCV_DEVICE` in  `ROOTDIR/Makefile.include` must be left empty. 
+
+If you would like to only compile the tests for a particular extension you can use the following
+command. 
+
+  make RISCV_DEVICE=M compile
+  make RISCV_DEVICE=C compile
+
+The arguments to the `RISCV_DEVICE` variable must be the extensions supported by the target. 
+NOTE: If `RISCV_DEVICE` is not defined/empty it will default to the `I` extension which is necessary
+for all targets.
+
+To simulate the compiled tests on your target:
+
+  make RISCV_DEVICE=M simulate
+  make RISCV_DEVICE=Zifencei simulate
+
+NOTE: If `RISCV_DEVICE` is not defined/empty it will default to the `I` extension which is necessary
+for all targets.
+
+To verify if the generated signatures match the corresponding reference signatures.
+
+  make RISCV_DEVICE=M verify 
+
+NOTE: If `RISCV_DEVICE` is not defined/empty it will default to the `I` extension which is necessary
+for all targets.
+
+All the above steps create and modify files in the `work` directory created in `ROOTDIR` folder. To
+clean the `workdir` simple run :
+
+  make clean
+
+By default the working directory is set to `ROOTDIR/work`. This can be overwritten by assigning a
+new working directory path via the command line. Note, the path must be absolute and not relative :
+
+  make WORK=/home/me/my_path/mywork clean compile simulate
+
+//Once you have ported your target using the steps you can then run the execute the architectural test framework using the following steps:
+//
+//1. go to the root directory of the repository: `cd riscv-compliance`
+//2. in the Makefile available in the root directory perform the following changes:
+//   - change `XLEN` to the default XLEN value of the target/device. Eg. 32 or 64
+//   - change `RISCV_TARGET` to the name of your target. Eg. spike
+//3. save the changes.
+//4. in the terminal, at the root directory, type `make`.
+//
+//Performing the `make` first creates a `work` directory where all the compilation and simulation of the tests on the target will be performed.
+//Based on the `XLEN` value set in the Makfile either the `rv32i_m` test-suite or the `rv64i_m` test-suite is chosen. Further, based on the names of the subdirectories defined in the `device` directory of the target the corresponding tests are enabled and run on the target. Once all the tests from a suite are executed the `riscv-test-env/verify.sh` bash script is run which compares the generated signatures with the corresponding reference signatures and reports an error or an `OK` as the case maybe.
+//
+
+//At the moment the riscvOVPsim target will support parallel execution by default, and will select the options -j8 --max-load=4 - these can be overridden either by disable (PARALLEL=0), or redefinition JOBS="-j2 --max-load=2"
+
+
+
+//* Redefine macros in `ISA/src/compliance_test.h` and `binary_coding/src/compliance_test.h`.
+//+
+//For example, to support Codasip ISA simulator as Target, it was necessary to redefine `RV_COMPLIANCE_HALT macro`, `RV_COMPLIANCE_DATA_BEGIN` macro and `RV_COMPLIANCE_DATA_END` macro in `ISA/compliance_test.h` in the following way:
+//+
+//[source,c]
+//----
+//#define RV_COMPLIANCE_HALT
+//        add     x31, x0, 1
+//        sw      x31, codasip_syscall, t0
+//----
+//
+//* This means that on the address defined by `codasip_syscall`, the 1 value is stored and this is interpreted as `HALT` for the Codasip ISA simulator.
+//+
+//[source,c]
+//----
+//#define RV_COMPLIANCE_DATA_BEGIN
+//        .align  4;
+//        .global codasip_signature_start;
+//codasip_signature_start:
+//----
+//+
+//[source,c]
+//----
+//#define RV_COMPLIANCE_DATA_END
+//        .align  4;
+//        .global codasip_signature_end;
+//codasip_signature_end:
+//----
+
+//* The Codasip ISA simulator dumps data from the addresses bounded by labels `codasip_signature_start` and `codasip_signature_end` to `stdout`.  The dumped data represent the results of the tests.
+//
+//* Modify Makefiles in `ISA/Makefile` and `binary_coding/Makefile`.  It is important to change tools that are evaluated and parameters that are passed to the tools.
+//+
+//For example, to support the Codasip ISA simulator as the device under test
+//(DUT), it was necessary to change `RISCV_SIM` from `spike` to
+//`codix_berkelium-ia-isimulator –r` and parameters for running the simulator
+//from `+signature=$(work_dir)/$<.signature.output` to `–info 5` plus handle
+//redirection to a file by `1>$(work_dir)/$<.signature.output`.
+
+//== Configuring the target device
+//
+//This section is for how to specify which optional parts are being used
+//
+//NOTE: This is primarily for simulators.
+//
+//In the directory `riscv-target/*/device` there are directories that have Makefile fragments that configure the simulator to simulate only those parts of the RISC-V specification that is required for the specific target device being tested.
+//
+//For example for the riscvOVPsim to be configured to be a RV32I
+//[source,make]
+//----
+//RUN_TARGET= \
+//        riscvOVPsim.exe --variant RV32I --program $(work_dir_isa)/$< \
+//            --signaturedump \
+//            --override riscvOVPsim/cpu/sigdump/SignatureFile=$(work_dir_isa)/$(*).signature.output \
+//            --override riscvOVPsim/cpu/sigdump/ResultReg=3 \
+//            --override riscvOVPsim/cpu/simulateexceptions=T \
+//            --logfile $(work_dir_isa)/$@
+//----
+//[appendix]
+//== One ISA Test
+//
+//For a detailed description of one ISA test please have a look at the example: link:../riscv-test-suite/rv32i_m/I/src/add-01.S[`add-01.S`].
+//
+//
+//[appendix]

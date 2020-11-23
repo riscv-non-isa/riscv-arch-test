@@ -7,3 +7,7 @@
 /setup.env
 #ignore Mac file system artifacts
 *.DS_Store
+
+Makefile.include
+
+riscv-target/
