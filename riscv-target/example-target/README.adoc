@@ -16,7 +16,7 @@ Any target that needs to be ported will need to provide the following three item
 For linking you have two options.  
 
 . If your environment is a monolithic runtime (i.e. both code and data reside in the same contiguous memory area) then you will want to use `linkmon.ld` as the template for your linker script.  
-. If your environment has separate code and data sections then you will want to use `linksplit.ld` as a template for your linker script.
+. If your environment has separate code and data sections then you will want to use `linksplit.ld` as a template for your linker script. You can find detailed analysis of this script link:./linker_script.adoc[`Here`]
 
 Whichever linker script you choose to use, you will have to modify the example to fit your enviroement address space.
 
