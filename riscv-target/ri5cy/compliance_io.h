@@ -89,7 +89,7 @@
     jal         FN_WriteA0;						\
 
 #define LOCAL_IO_PUTC(_R)                                               \
-    la          t3, RVTEST_CUSTOM1;					\
+    li          t3, RVTEST_CUSTOM1;					\
     sw          _R, (0)(t3);						\
 
 #define RVTEST_IO_INIT
