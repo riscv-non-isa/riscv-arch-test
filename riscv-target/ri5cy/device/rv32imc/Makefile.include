@@ -8,9 +8,9 @@ TARGET_FLAGS ?= $(RISCV_TARGET_FLAGS)
 
 RUN_TARGET=\
     $(TARGET_SIM) $(TARGET_FLAGS) -c -quiet tb_top_vopt -do 'run -all; exit -f' \
-        +firmware=$(work_dir_isa)/$<.bin \
+        +firmware=$<.bin \
 	+maxcycles=10000 \
-	+signature=$(work_dir_isa)/$(*).signature.output
+	+signature=$(*).signature.output
 
 RISCV_PREFIX   ?= riscv32-unknown-elf-
 RISCV_GCC      ?= $(RISCV_PREFIX)gcc
@@ -21,13 +21,13 @@ RISCV_READELF  ?= $(RISCV_PREFIX)readelf
 RISCV_GCC_OPTS ?= -static -mcmodel=medany -fvisibility=hidden -nostdlib -nostartfiles $(RVTEST_DEFINES)
 
 COMPILE_TARGET=\
-	$$(RISCV_GCC) $(2) $$(RISCV_GCC_OPTS) \
+	$$(RISCV_GCC) $(1) $$(RISCV_GCC_OPTS) \
 		-I$(ROOTDIR)/riscv-test-env/ \
 		-I$(ROOTDIR)/riscv-test-env/p/ \
 		-I$(TARGETDIR)/$(RISCV_TARGET)/ \
-		$(DEFINES) -T$(LDSCRIPT) $$< \
-		-o $(work_dir_isa)/$$@; \
-    $$(RISCV_OBJDUMP) -D $(work_dir_isa)/$$@ > $(work_dir_isa)/$$@.objdump; \
-    $$(RISCV_READELF) -a $(work_dir_isa)/$$@ > $(work_dir_isa)/$$@.readelf; \
-    $$(RISCV_NM) $(work_dir_isa)/$$@ > $(work_dir_isa)/$$@.nm; \
-    $$(RISCV_OBJCOPY) -O verilog $(work_dir_isa)/$$@ $(work_dir_isa)/$$@.bin;
+		$(DEFINES) -T$(LDSCRIPT) $$(<) \
+		-o $$@; \
+    $$(RISCV_OBJDUMP) -D $$@ > $$@.objdump; \
+    $$(RISCV_READELF) -a $$@ > $$@.readelf; \
+    $$(RISCV_NM) $$@ > $$@.nm; \
+    $$(RISCV_OBJCOPY) -O verilog $$@ $$@.bin;
