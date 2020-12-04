@@ -1,4 +1,7 @@
 
+2020-12-03 Deborah Soung <debs@sifive.com>
+    * removing the sifive-formal target, as it is no longer maintained
+
 2020-10-15 Simon Davidmann <simond@imperas.com>
     * riscvOVPsim enhanced and moved to its own respository: github.com/riscv-ovpsim
 
