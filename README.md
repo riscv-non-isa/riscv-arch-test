@@ -34,6 +34,33 @@ when reporting the status of pass/fail on the execution of the architectural sui
    1. The target must have implemented mtvec which is completely writable by the test in machine mode.
    2. The target has initialized mtvec, before entering the test (via RVMODEL_BOOT), to point to a memory location which has both read and write permissions.
 
+## Contribution process
+
+You are encouraged to contribute to this repository by submitting pull requests and by commenting on pull requests submitted by other people.
+
+- Where a pull request is non-controversial one of the repository owners will immediately merge it. The repository uses rebase merges to maintain a linear history.
+
+- Other pull requests will be publicised to the task group for comment and decision at a subsequent meeting of the group. Everyone is encouraged to comment on a pull request. Such pull requests will be merged by when a consensus/decision has been reached by the task group.
+
+## Licensing
+
+In general:
+- code is licensed under the BSD 3-clause license (SPDX license identifier `BSD-3-Clause`); while
+- documentation is licensed under the Creative Commons Attribution 4.0 International license (SPDX license identifier `CC-BY-4.0`).
+
+The files [`COPYING.BSD`](./COPYING.BSD) and [`COPYING.CC`](./COPYING.CC) in the top level directory contain the complete text of these licenses.
+
+## Engineering practice
+
+- Documentation uses the structured text format _AsciiDoc_.  See [`doc/README.adoc`](doc/README.adoc) for more details.
+
+- Some directories use `ChangeLog` files to track changes in the code and documentation.  Please honor these, keeping them up to date and including the ChangeLog entry in the _git_ commit message.
+
+- Please include a comment with the SPDX license identifier in all source files, for example:
+```
+// SPDX-License-Identifier: BSD-3-Clause
+```
+
 ## Quick Links:
 
 - [RISCOF](https://riscof.readthedocs.io/en/latest/): This is the next version of the architectural test framework currently under development
