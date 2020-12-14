@@ -8,7 +8,7 @@ for ref in ${SUITEDIR}/references/*.reference_output;
 do 
     base=$(basename ${ref})
     stub=${base//".reference_output"/}
-    sig=${WORK}/${RISCV_ISA}/${stub}.signature.output
+    sig=${WORK}/rv${XLEN}i_m/${RISCV_DEVICE}/${stub}.signature.output
 
     RUN=$((${RUN} + 1))
     
@@ -18,28 +18,28 @@ do
     if [ -f ${ref} ] && [ -f ${sig} ]; then 
         echo -n "Check $(printf %24s ${stub})"
     else
-        echo    "Check $(printf %24s ${stub}) ... IGNORE"
+        echo   -e "Check $(printf %24s ${stub}) \e[33m ... IGNORE \e[39m"
         continue
     fi
     diff --ignore-case --strip-trailing-cr ${ref} ${sig} #&> /dev/null
     if [ $? == 0 ]
     then
-        echo " ... OK"
+        echo -e "\e[32m ... OK \e[39m"
     else
-        echo " ... FAIL"
+        echo -e "\e[31m ... FAIL \e[39m"
         FAIL=$((${FAIL} + 1))
     fi
 done
 
 # warn on missing reverse reference
-for sig in ${WORK}/${RISCV_ISA}/*.signature.output; 
+for sig in ${WORK}/rv${XLEN}i_m/${RISCV_DEVICE}/*.signature.output; 
 do
     base=$(basename ${sig})
     stub=${base//".signature.output"/}
     ref=${SUITEDIR}/references/${stub}.reference_output
 
     if [ -f $sig ] && [ ! -f ${ref} ]; then
-        echo "Error: sig ${sig} no corresponding ${ref}"
+        echo -e "\e[31m Error: sig ${sig} no corresponding ${ref} \e[39m"
         FAIL=$((${FAIL} + 1))
     fi
 done
@@ -47,13 +47,13 @@ done
 declare -i status=0
 if [ ${FAIL} == 0 ]; then
     echo "--------------------------------"
-    echo -n "OK: ${RUN}/${RUN} "
+    echo -n -e "\e[32m OK: ${RUN}/${RUN}"
     status=0
 else
     echo "--------------------------------"
-    echo -n "FAIL: ${FAIL}/${RUN} "
+    echo -n -e "\e[31m FAIL: ${FAIL}/${RUN} "
     status=1
 fi
-echo "RISCV_TARGET=${RISCV_TARGET} RISCV_DEVICE=${RISCV_DEVICE} RISCV_ISA=${RISCV_ISA}"
+echo -e "RISCV_TARGET=${RISCV_TARGET} RISCV_DEVICE=${RISCV_DEVICE} XLEN=${XLEN} \e[39m"
 echo
 exit ${status}

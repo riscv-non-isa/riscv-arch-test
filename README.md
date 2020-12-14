@@ -6,6 +6,34 @@ This is a repository for the work of the RISC-V Foundation Compliance Task Group
 
 Details of the RISC-V Foundation, the work of its task groups, and how to become a member can be found at [riscv.org](https://riscv.org/).
 
+For more details and documentation on the current testing framework see: [`doc/README.adoc`](doc/README.adoc)
+
+For more details on the test format spec see: ['spec/TestFormatSpec.adoc'](spec/TestFormatSpec.adoc)
+
+## Test Disclaimers
+
+The following are the exhaustive list of disclaimers that can be used as waivers by target owners 
+when reporting the status of pass/fail on the execution of the architectural suite on their respective targets.
+
+1. The references uploaded for the following misaligned load/store tests will match targets which do 
+   not support misaligned load/stores in hardware. Targets with hardware misaligned support for 
+   load/stores will fail these tests.
+
+   1. rv32i_m/privilege/src/misalign-[lb[u],lh[u],lw,sh,sb,sw]-01.S
+   2. rv64i_m/privilege/src/misalign-[lb[u],lh[u],lw[u],ld,sb,sh,sw,sd]-01.S
+
+2. The references uploaded for the following misaligned instruction tests will match targets which 
+   have compressed extension support enabled by default. Targets without the compressed extension 
+   support will fail the following tests:
+   1. rv[32/64]i_m/privilege/src/misalign-b[ge[u],lt[u],eq,ne]-01.S
+   2. rv[32/64]i_m/privilege/src/misalign[1,2]-jalr-01.S
+
+3. The machine mode trap handler used in the privilege tests assumes one of the following conditions. 
+   Targets not satisfying any of the following conditions are bound to fail the entire 
+   rv32i_m/privilege and rv64i_m/privilege tests:
+   1. The target must have implemented mtvec which is completely writable by the test in machine mode.
+   2. The target has initialized mtvec, before entering the test (via RVMODEL_BOOT), to point to a memory location which has both read and write permissions.
+
 ## Contribution process
 
 You are encouraged to contribute to this repository by submitting pull requests and by commenting on pull requests submitted by other people.
@@ -33,89 +61,10 @@ The files [`COPYING.BSD`](./COPYING.BSD) and [`COPYING.CC`](./COPYING.CC) in the
 // SPDX-License-Identifier: BSD-3-Clause
 ```
 
-## Running the compliance tests
+## Quick Links:
 
-The only setup required is to define where the toolchain is found, and where the target / device is found.
+- [RISCOF](https://riscof.readthedocs.io/en/latest/): This is the next version of the architectural test framework currently under development
+- [RISCV-ISAC](https://riscv-isac.readthedocs.io/en/latest/index.html): This is an ISA level coverage extraction tool for RISC-V which used to generate the coverage statistics of the architectural tests.
+- [RISCV-CTG](https://gitlab.com/incoresemi/riscv-compliance/riscv_ctg): This is a RISC-V Architectural Test generator used to generate some of the tests already checked into this repository. Docs to be updated soon !!
+- [Videos](https://youtu.be/VIW1or1Oubo): This Global Forum 2020 video provides an introduction to the above mentioned tools
 
-For the toolchain, the binaries must be in the search path and the compiler prefix is defined on the make line. The default value for this is
-
-    RISCV_PREFIX ?= riscv64-unknown-elf-
-
-The path to the RUN_TARGET is defined within the riscv-target Makefile.include.
-
-To run the rv32i test suite on riscvOVPsim you must first download riscvOVPsim, and install in a directory parallel to riscv-compliance
-Simply clone [github.com/riscv-ovpsim](https://github.com/riscv-ovpsim/imperas-riscv-tests)
-
-Set the environment variable TARGET_SIM to point to the executable <install-dir>/riscv-ovpsim/bin/Linux64/riscvOVPsim.exe
-    
-Now run the command
-
-    export TARGET_SIM=/home/riscv/riscv-ovpsim/bin/Linux64/riscvOVPsim.exe
-    make RISCV_TARGET=riscvOVPsim RISCV_DEVICE=rv32i
-
-### Accessing riscvOVPsim
-
-**riscvOVPsim** was created by Imperas in 2018 to assist in the development of compliance tests and to provide a free, high quality, configurable reference simulator of the RISC-V specifications. 
-
-It was provided in this repository as a convenience. It has now evolved and has been enhanced and moved to its own repository.
-
-There are now two flavors: _riscvOVPsim_ from [github.com/riscv-ovpsim](https://github.com/riscv-ovpsim/imperas-riscv-tests) which is useful for running compliance tests and generating the required signatures, and _riscvOVPsimPlus_ from [ovpworld.org/riscv-ovpsim-plus](https://www.ovpworld.org/riscv-ovpsim-plus) which is used for test development and verification. 
-
-Please contact info@ovpworld.org or info@imperas.com for more information.
-
-For details on riscvOVPsim look here: [github.com/riscv-ovpsim](https://github.com/riscv-ovpsim/imperas-riscv-tests) and here: [riscv-ovpsim/doc/riscvOVPsim_User_Guide.pdf](https://github.com/riscv-ovpsim/imperas-riscv-tests/blob/main/riscv-ovpsim/doc/riscvOVPsim_User_Guide.pdf).
-
-### Running Instruction Functional Coverage with riscvOVPsim
-
-As you develop tests you can measure their coverage with the built-in features of riscvOVPsim. Please see chapter 7 in the [riscv-ovpsim/doc/riscvOVPsim_User_Guide.pdf](https://github.com/riscv-ovpsim/imperas-riscv-tests/blob/main/riscv-ovpsim/doc/riscvOVPsim_User_Guide.pdf) for full details.
-
-To run basic coverage on a suite:
-
-     make clean
-     make RISCV_TARGET=riscvOVPsim RISCV_DEVICE=rv32i RISCV_ISA=rv32i COVERTYPE=basic
-     make RISCV_TARGET=riscvOVPsim RISCV_DEVICE=rv32i RISCV_ISA=rv32i COVERTYPE=basic cover
-
-To run extended coverage on a suite:
-
-     make clean
-     make RISCV_TARGET=riscvOVPsim RISCV_DEVICE=rv32i RISCV_ISA=rv32i COVERTYPE=extended
-     make RISCV_TARGET=riscvOVPsim RISCV_DEVICE=rv32i RISCV_ISA=rv32i COVERTYPE=extended cover
-
-### Using the simulators from the Sail RISC-V formal model
-
-The [Sail RISC-V formal model](https://github.com/rems-project/sail-riscv) generates two
-simulators, in C and OCaml.  They can be used as test targets for this compliance suite.
-
-For this purpose, the Sail model needs to be checked out and built on
-the machine running the compliance suite.  Follow the build
-instructions described the README for building the RV32 and RV64
-models.  Once built, please add `$SAIL_RISCV/c_emulator` and
-`$SAIL_RISCV/ocaml_emulator` to your path, where $SAIL_RISCV is the
-top-level directory containing the model.
-
-To test the compliance of the C simulator for the current RV32 and RV64 tests, use
-
-    make RISCV_TARGET=sail-riscv-c all_variant
-
-while the corresponding command for the OCaml simulator is
-
-    make RISCV_TARGET=sail-riscv-ocaml all_variant
-
-### Using the GRIFT simulator
-
-The [GRIFT](https://github.com/GaloisInc/grift) formal model and simulation tool
-can be used as a test target for this compliance suite.
-
-GRIFT needs to be cloned and built on the machine running the compliance
-suite. Follow the build instructions described in the README for building the
-GRIFT simulator. Once build, add the generated `grift-sim` executable to your
-path.
-
-To test the compliance of the GRIFT simulator for the current RV32 and RV64
-tests, use
-
-    make RISCV_TARGET=grift all_variant
-
-Note that the I-MISALIGN_LDST test fails for GRIFT because GRIFT currently
-supports misaligned loads and stores in hardware, while the test is specifically
-written for systems that trap on misaligned loads and stores.
