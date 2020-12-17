@@ -1,6 +1,8 @@
 #ifndef _COMPLIANCE_MODEL_H
 #define _COMPLIANCE_MODEL_H
 
+#define TESTNUM gp
+
 #if XLEN == 64
   #define ALIGNMENT 3
 #else
@@ -72,8 +74,6 @@ reset_vector:                                                           \
   .align ALIGNMENT;\
 
 #define RVMODEL_IO_INIT
-#define RVMODEL_IO_ASSERT_SFPR_EQ(_F, _R, _I)
-#define RVMODEL_IO_ASSERT_DFPR_EQ(_D, _R, _I)
 
 #define RVMODEL_SET_MSW_INT       
 
@@ -118,8 +118,8 @@ reset_vector:                                                           \
 #ifndef _COMPLIANCE_IO_H
 #define _COMPLIANCE_IO_H
 
-#ifndef  RVTEST_ASSERT
-#  define RVTEST_IO_QUIET
+#ifndef  RVMODEL_ASSERT
+#  define RVMODEL_IO_QUIET
 #endif
 
 //-----------------------------------------------------------------------
@@ -128,9 +128,9 @@ reset_vector:                                                           \
 #define STRINGIFY(x) #x
 #define TOSTRING(x)  STRINGIFY(x)
 
-#define RVTEST_CUSTOM1 0x0005200B
+#define RVMODEL_CUSTOM1 0x0005200B
 
-#ifdef RVTEST_IO_QUIET
+#ifdef RVMODEL_IO_QUIET
 
 #define RVMODEL_IO_INIT
 #define RVMODEL_IO_WRITE_STR(_SP, _STR)
@@ -186,7 +186,7 @@ reset_vector:                                                           \
     jal         FN_WriteA0; \
 
 #define LOCAL_IO_PUTC(_R)                                               \
-    .word RVTEST_CUSTOM1;                                               \
+    .word RVMODEL_CUSTOM1;                                               \
 
 // Assertion violation: file file.c, line 1234: (expr)
 // _SP = (volatile register)
@@ -209,7 +209,7 @@ reset_vector:                                                           \
     LOCAL_IO_WRITE_STR(# _I);                                           \
     LOCAL_IO_WRITE_STR("\n");                                           \
     li TESTNUM, 100;                                                    \
-    RVTEST_FAIL;                                                        \
+    j rvtest_code_end;                                                        \
 20002:                                                                  \
     LOCAL_IO_POP(_SP)
 
@@ -217,7 +217,7 @@ reset_vector:                                                           \
 // _F = FPR
 // _C = GPR
 // _I = Immediate
-#define RVTEST_IO_ASSERT_SFPR_EQ(_F, _C, _I)                            \
+#define RVMODEL_IO_ASSERT_SFPR_EQ(_F, _C, _I)                            \
     fmv.x.s     t0, _F;                                                 \
     beq         _C, t0, 20003f;                                         \
     LOCAL_IO_WRITE_STR("Assertion violation: file ");                   \
@@ -232,13 +232,13 @@ reset_vector:                                                           \
     LOCAL_IO_WRITE_STR(# _I);                                           \
     LOCAL_IO_WRITE_STR("\n");                                           \
     li TESTNUM, 100;                                                    \
-    RVTEST_FAIL;                                                        \
+    j rvtest_code_end;                                                        \
 20003:
 
 // _D = DFPR
 // _R = GPR
 // _I = Immediate
-#define RVTEST_IO_ASSERT_DFPR_EQ(_D, _R, _I)                            \
+#define RVMODEL_IO_ASSERT_DFPR_EQ(_D, _R, _I)                            \
     fmv.x.d     t0, _D;                                                 \
     beq         _R, t0, 20005f;                                         \
     LOCAL_IO_WRITE_STR("Assertion violation: file ");                   \
@@ -253,7 +253,7 @@ reset_vector:                                                           \
     LOCAL_IO_WRITE_STR(# _I);                                           \
     LOCAL_IO_WRITE_STR("\n");                                           \
     li TESTNUM, 100;                                                    \
-    RVTEST_FAIL;                                                        \
+    j rvtest_code_end;                                                        \
 20005:
 
 // _SP = (volatile register)
@@ -336,6 +336,6 @@ FN_WriteA0_common:
         bnez        t1, 10000b
         ret
 
-#endif // RVTEST_IO_QUIET
+#endif // RVMODEL_IO_QUIET
 
 #endif // _COMPLIANCE_IO_H
