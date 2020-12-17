@@ -6,6 +6,8 @@ ffffffff
 7fffffff
 00000001
 00000000
+ffffffff
+ffdfffff
 00000002
 00000000
 00000004
@@ -146,6 +148,8 @@ bfffffff
 55555555
 aaaaaaaa
 aaaaaaaa
+fffffff8
+ffffffff
 fffffffb
 ffffffff
 fffffff7
@@ -249,8 +253,6 @@ fff7ffff
 ffffffff
 ffefffff
 ffffffff
-ffdfffff
-ffffffff
 ffbfffff
 ffffffff
 ff7fffff
@@ -260,5 +262,3 @@ ffffffff
 fdffffff
 ffffffff
 fbffffff
-00000000
-00000000

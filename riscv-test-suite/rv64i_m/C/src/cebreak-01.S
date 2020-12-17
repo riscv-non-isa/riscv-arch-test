@@ -25,8 +25,6 @@ RVTEST_CODE_BEGIN
     RVTEST_CASE(1,"// check ISA:=regex(.*I.*Zicsr.*.C*); def rvtest_mtrap_routine=True; def TEST_CASE_1=True",cebreak)
 
     # ---------------------------------------------------------------------------------------------
-    RVMODEL_IO_WRITE_STR(x30, "# Test part A - test EBREAK\n");
-
     la      x1, test_A_res
     
     li      x2, 0x11111111
@@ -39,7 +37,7 @@ RVTEST_CODE_BEGIN
     sw      x0, 0(x1)
     sw      x2, 4(x1)
     
-    RVMODEL_IO_WRITE_STR(x30, "# Test part A1  - Complete\n");
+    RVMODEL_IO_WRITE_STR(x30, "# Test part A - test EBREAK\n");
 
     RVMODEL_IO_WRITE_STR(x30, "# Test End\n")
 
