@@ -59,7 +59,7 @@ Current Store : [0x80000680] : sd t4, 16(t1) -- Store: [0x800020a8]:0x0000000000
 Last Coverpoint : ['opcode : ecall']
 Last Code Sequence : 
 	-[0x800003ac]:ecall
-Current Store : [0x80000708] : sd t2, 24(t1) -- Store: [0x800020b0]:0x0000000000000000
+Current Store : [0x80000724] : sd t2, 24(t1) -- Store: [0x800020b0]:0x0000000000000000
 
 
 

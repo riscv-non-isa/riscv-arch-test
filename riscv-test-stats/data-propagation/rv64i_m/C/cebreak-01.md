@@ -59,7 +59,7 @@ Current Store : [0x80000680] : sd t4, 16(t1) -- Store: [0x80002088]:0x0000000000
 Last Coverpoint : ['opcode : c.ebreak']
 Last Code Sequence : 
 	-[0x800003ac]:c.ebreak
-Current Store : [0x80000708] : sd t2, 24(t1) -- Store: [0x80002090]:0x00000000000003A0
+Current Store : [0x80000724] : sd t2, 24(t1) -- Store: [0x80002090]:0x00000000000003A0
 
 
 

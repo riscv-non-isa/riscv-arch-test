@@ -6,7 +6,7 @@ ffffffff
 deadbeef
 00000001
 deadbeef
-ffffffff
+00000009
 deadbeef
 00000002
 deadbeef
@@ -136,6 +136,10 @@ fffffffe
 deadbeef
 fffffffd
 deadbeef
+fffffffb
+deadbeef
+fffffff7
+deadbeef
 ffffffff
 deadbeef
 ffffffff
@@ -148,11 +152,7 @@ deadbeef
 deadbeef
 aaaaaaaa
 deadbeef
-00000100
-deadbeef
-fffffffb
-deadbeef
-fffffff7
+00000010
 deadbeef
 ffffffef
 deadbeef
@@ -262,3 +262,7 @@ ffffffff
 deadbeef
 ffffffff
 deadbeef
+ffffffff
+deadbeef
+00000000
+00000000

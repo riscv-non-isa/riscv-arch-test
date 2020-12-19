@@ -1,6 +1,6 @@
 00000000
 00000000
-fffef000
+ffdff000
 ffffffff
 fffff000
 ffffffff
@@ -26,7 +26,7 @@ ffffffff
 00000000
 aaaa9000
 ffffffff
-00004000
+00000000
 00000000
 33332000
 00000000
@@ -36,7 +36,7 @@ ffffffff
 00000000
 003fe000
 00000000
-00000000
+55556000
 00000000
 aaaab000
 ffffffff
@@ -100,6 +100,8 @@ ffffb000
 ffffffff
 ffff7000
 ffffffff
+fffef000
+ffffffff
 fffdf000
 ffffffff
 fffbf000
@@ -107,8 +109,6 @@ ffffffff
 fff7f000
 ffffffff
 ffeff000
-ffffffff
-ffdff000
 ffffffff
 ffbff000
 ffffffff
@@ -122,7 +122,7 @@ fbfff000
 ffffffff
 f7fff000
 ffffffff
-55556000
+00004000
 00000000
 00000000
 00000000

@@ -10,7 +10,7 @@
 | Param                     | Value    |
 |---------------------------|----------|
 | XLEN                      | 32      |
-| TEST_REGION               | [('0x80000104', '0x80000180')]      |
+| TEST_REGION               | [('0x80000104', '0x80000150')]      |
 | SIG_REGION                | [('0x80002080', '0x80002190', '68 words')]      |
 | COV_LABELS                | misalign-bltu      |
 | TEST_NAME                 | /scratch/git-repo/incoresemi/riscof/riscof_work/misalign-bltu-01.S/misalign-bltu-01.S    |
@@ -67,6 +67,6 @@
   test. These need not necessarily be in increasing or decreasing order of the
   address in the signature region.
 
-|s.no|        signature         |                         coverpoints                         |                                                            code                                                            |
-|---:|--------------------------|-------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------|
-|   1|[0x80002080]<br>0x00000003|- opcode : bltu<br> -  rs1_val<rs2_val and ea_align == 2<br> |[0x80000128]:bltu a0, a1, 66<br> [0x8000016a]:addi sp, sp, 3<br> [0x8000016e]:jal zero, 6<br> [0x80000174]:sw sp, 0(ra)<br> |
+|s.no|        signature         |                         coverpoints                         |                                                             code                                                              |
+|---:|--------------------------|-------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------|
+|   1|[0x80002080]<br>0x00000001|- opcode : bltu<br> -  rs1_val<rs2_val and ea_align == 2<br> |[0x8000012c]:bltu a0, a1, 8182<br> [0x80000122]:addi sp, sp, 1<br> [0x80000126]:jal zero, 30<br> [0x80000144]:sw sp, 0(ra)<br> |

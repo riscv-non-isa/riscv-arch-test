@@ -10,7 +10,7 @@
 | Param                     | Value    |
 |---------------------------|----------|
 | XLEN                      | 64      |
-| TEST_REGION               | [('0x8000039c', '0x800003f0')]      |
+| TEST_REGION               | [('0x8000039c', '0x80000420')]      |
 | SIG_REGION                | [('0x800020a0', '0x800022b0', '66 dwords')]      |
 | COV_LABELS                | misalign-bgeu      |
 | TEST_NAME                 | /scratch/git-repo/incoresemi/riscof/riscof_work/misalign-bgeu-01.S/misalign-bgeu-01.S    |
@@ -67,6 +67,6 @@
   test. These need not necessarily be in increasing or decreasing order of the
   address in the signature region.
 
-|s.no|            signature             |                         coverpoints                         |                                                             code                                                              |
-|---:|----------------------------------|-------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------|
-|   1|[0x800020a0]<br>0x0000000000000001|- opcode : bgeu<br> -  rs1_val>rs2_val and ea_align == 2<br> |[0x800003c8]:bgeu a0, a1, 8182<br> [0x800003be]:addi sp, sp, 1<br> [0x800003c2]:jal zero, 30<br> [0x800003e0]:sd sp, 0(ra)<br> |
+|s.no|            signature             |                         coverpoints                         |                                                            code                                                            |
+|---:|----------------------------------|-------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------|
+|   1|[0x800020a0]<br>0x0000000000000003|- opcode : bgeu<br> -  rs1_val>rs2_val and ea_align == 2<br> |[0x800003c8]:bgeu a0, a1, 66<br> [0x8000040a]:addi sp, sp, 3<br> [0x8000040e]:jal zero, 6<br> [0x80000414]:sd sp, 0(ra)<br> |

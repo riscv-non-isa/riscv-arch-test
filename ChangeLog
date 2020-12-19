@@ -1,3 +1,8 @@
+2020-12-17 Neel Gala <neelgala@incoresemi.com>
+  * remove env folder symlinks from all riscv-test-suite src folders 
+	* fixed assertion macros for ovpsim
+	* renamed RVTEST_ASSERT to RVMODEL_ASSERT in the Makefile and ovpsim macros
+	* tests updated with right set of "correctvals"
 
 2020-11-24 Neel Gala <neelgala@incoresemi.com>
 	* added MIGRATION.adoc in doc directory to indicate how old framework targets can work with
