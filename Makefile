@@ -89,8 +89,12 @@ simulate:
 verify:
 	riscv-test-env/verify.sh
 
-cover:
-	riscv-test-env/cover.sh
+postverify:
+ifeq ($(wildcard riscv-target/$(RISCV_TARGET)/postverify.sh),)
+	$(info No post verify script found riscv-target/$(RISCV_TARGET)/postverify.sh)
+else
+	riscv-target/$(RISCV_TARGET)/postverify.sh
+endif
 
 clean:
 	$(MAKE) $(JOBS) \
