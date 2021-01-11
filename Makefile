@@ -86,7 +86,7 @@ simulate:
 		RISCV_DEVICE=$(RISCV_DEVICE) \
 		run -C $(SUITEDIR)
 
-verify:
+verify: simulate
 	riscv-test-env/verify.sh
 
 postverify:
