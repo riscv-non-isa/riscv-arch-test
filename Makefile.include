@@ -14,6 +14,10 @@ export RISCV_DEVICE       ?=
 # set this to a string which needs to be passed to your target Makefile.include files
 export RISCV_TARGET_FLAGS ?= 
 
+# set the RISCV_TEST environment to a single test you want to compile, simulate and/or verify. 
+# Leave this blank if you want to iterate through all the tests for available in the extension.
+export RISCV_TEST  ?= 
+
 # set this if you want to enable assertions on the test-suites. Currently no tests support
 # assertions.
 export RISCV_ASSERT       ?= 0
