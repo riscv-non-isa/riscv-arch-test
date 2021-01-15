@@ -47,7 +47,7 @@ done
 declare -i status=0
 if [ ${FAIL} == 0 ]; then
     echo "--------------------------------"
-    echo -n -e "\e[32m OK: ${RUN}/${RUN}"
+    echo -n -e "\e[32m OK: ${RUN}/${RUN} "
     status=0
 else
     echo "--------------------------------"
