@@ -90,10 +90,10 @@ verify: simulate
 	riscv-test-env/verify.sh
 
 postverify:
-ifeq ($(wildcard riscv-target/$(RISCV_TARGET)/postverify.sh),)
-	$(info No post verify script found riscv-target/$(RISCV_TARGET)/postverify.sh)
+ifeq ($(wildcard $(TARGETDIR)/$(RISCV_TARGET)/postverify.sh),)
+	$(info No post verify script found $(TARGETDIR)/$(RISCV_TARGET)/postverify.sh)
 else
-	riscv-target/$(RISCV_TARGET)/postverify.sh
+	$(TARGETDIR)/$(RISCV_TARGET)/postverify.sh
 endif
 
 clean:
