@@ -1,3 +1,6 @@
+2021-01-16 S Pawan Kumar <spawan1999@gmail.com>
+  	* Fixed NARGS macro defintion to work correctly. 
+
 2021-01-15 Xiretza <xiretza@xiretza.xyz>
 	* style: Add a missing space to the "OK" message in verify.sh
 
