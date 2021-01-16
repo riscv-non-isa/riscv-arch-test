@@ -542,7 +542,7 @@ rvtest_data_end:
 #define _ARG3(_1ST,_2ND, _3RD, ...) _3RD
 #define _ARG2(_1ST,_2ND, ...) _2ND
 #define _ARG1(_1ST,...) _1ST
-#define NARG(...) _ARG5(__VA_ARGS__,3,2,1,0)
+#define NARG(...) _ARG5(__VA_ARGS__,4,3,2,1,0)
 #define RVTEST_SIGUPD(_BR,_R,...)\
   .if NARG(__VA_ARGS__) == 1;\
     SREG _R,_ARG1(__VA_ARGS__,0)(_BR);\
