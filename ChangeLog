@@ -1,3 +1,9 @@
+2021-01-20 Xiretza <xiretza@xiretza.xyz>
+	* Deduplicate makefiles in riscv-test-suite
+	* Makefile: Fix ordering of simulate and verify targets to allow multi-job runs (make -j)
+	* Makefile.include: Document RISCV_TEST
+	* Makefile: use $(TARGETDIR) variable for postverify target instead of hard-coded path
+
 2021-01-16 S Pawan Kumar <spawan1999@gmail.com>
   	* Fixed NARGS macro defintion to work correctly. 
 
