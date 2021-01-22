@@ -1,3 +1,6 @@
+2021-01-22 Tobias Wölfel <tobias.woelfel@mailbox.org>
+	* Add missing base ISA check in riscv-test-suite
+
 2021-01-20 Xiretza <xiretza@xiretza.xyz>
 	* Deduplicate makefiles in riscv-test-suite
 	* Makefile: Fix ordering of simulate and verify targets to allow multi-job runs (make -j)
