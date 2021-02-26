@@ -67,4 +67,6 @@ The files [`COPYING.BSD`](./COPYING.BSD) and [`COPYING.CC`](./COPYING.CC) in the
 - [RISCV-ISAC](https://riscv-isac.readthedocs.io/en/latest/index.html): This is an ISA level coverage extraction tool for RISC-V which used to generate the coverage statistics of the architectural tests.
 - [RISCV-CTG](https://gitlab.com/incoresemi/riscv-compliance/riscv_ctg): This is a RISC-V Architectural Test generator used to generate some of the tests already checked into this repository. Docs to be updated soon !!
 - [Videos](https://youtu.be/VIW1or1Oubo): This Global Forum 2020 video provides an introduction to the above mentioned tools
+- [riscvOVPsim](https://github.com/riscv-ovpsim/imperas-riscv-tests): Imperas freeware RISC-V reference simulator for compliance testing
+- [riscvOVPsimPlus](https://www.ovpworld.org/riscvOVPsimPlus/): Imperas enhanced freeware RISC-V reference simulator for test development and verification
 

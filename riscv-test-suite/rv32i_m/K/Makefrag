@@ -1,0 +1,60 @@
+# RISC-V Compliance Test RV32K Makefrag
+#
+#
+# Copyright (c) 2021 Imperas Software Ltd., www.imperas.com
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#   http:#www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+# either express or implied.
+#
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+#
+
+#
+# Description: Makefrag for RV32K compliance tests
+
+rv32k_sc_tests = \
+	I-AES32DSI-01 \
+	I-AES32DSMI-01 \
+	I-AES32ESI-01 \
+	I-AES32ESMI-01 \
+	I-SHA256SIG0-01 \
+	I-SHA256SIG1-01 \
+	I-SHA256SUM0-01 \
+	I-SHA256SUM1-01 \
+	I-SHA512SIG0H-01 \
+	I-SHA512SIG0L-01 \
+	I-SHA512SIG1H-01 \
+	I-SHA512SIG1L-01 \
+	I-SHA512SUM0R-01 \
+	I-SHA512SUM1R-01 \
+	I-SM3P0-01 \
+	I-SM3P1-01 \
+	I-SM4ED-01 \
+	I-SM4KS-01 \
+	I-ROL-01 \
+	I-ROR-01 \
+	I-RORI-01 \
+	I-GORCI-01 \
+	I-CLMUL-01 \
+	I-CLMULH-01 \
+	I-ANDN-01 \
+	I-ORN-01 \
+	I-XNOR-01 \
+	I-PACK-01 \
+	I-PACKH-01 \
+	I-PACKU-01 \
+
+rv32k_tests = $(addsuffix .elf, $(rv32k_sc_tests))
+
+target_tests += $(rv32k_tests)
+

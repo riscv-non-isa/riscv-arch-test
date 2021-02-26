@@ -1,0 +1,73 @@
+    #
+    # Copyright (c) 2005-2021 Imperas Software Ltd., www.imperas.com
+    #
+    
+
+
+Architectural Test Suite Data for RV32K K Crypto/Scalar:
+    30 test source files
+    13 different instruction categories
+    45 different instructions
+    22,154 total instructions
+
+Instruction category: OPK_Zknd NIST AES Decryption Instructions
+  aes32dsi : 146
+  aes32dsmi : 146
+Instruction category: OPK_Zkne NIST AES Encryption Instructions
+  aes32esmi : 146
+  aes32esi : 146
+Instruction category: OPB_LWNE Logic With Negate
+  orn : 146
+  andn : 146
+  xnor : 146
+Instruction category: OPB_CLML Carry-less Multiply
+  clmul : 146
+  clmulh : 146
+Instruction category: OPK_Zkr Entropy source for seeding random number generators
+Instruction category: OPB_GORC Generalised Or-Combine
+  gorci : 146
+Instruction category: OPB_PACK Packing
+  pack : 146
+  packu : 146
+  packh : 146
+Instruction category: OPK_Zkb Bitmanip Subset included in the scalar cryptography extension, minus those in Zkg
+Instruction category: OPB_ROTS Rotations
+  rol : 146
+  ror : 146
+  rori : 146
+Instruction category: OPK_Zknh NIST SHA2 Hash function instructions
+  sha256sig0 : 146
+  sha256sig1 : 146
+  sha256sum0 : 146
+  sha512sig0h : 146
+  sha512sig0l : 146
+  sha256sum1 : 146
+  sha512sig1h : 146
+  sha512sum0r : 146
+  sha512sig1l : 146
+  sha512sum1r : 146
+Instruction category: OPK_Zksh SM3 Hash function instructions
+  sm3p0 : 146
+  sm3p1 : 146
+Instruction category: OPK_Zkse SM4 Encryption Instructions
+  sm4ed : 146
+  sm4ks : 146
+Instruction category: OPB_XBAR Crossbar Permutation
+
+Other instructions (those not the focus of this suite)
+  jal : 30
+  csrrs : 120
+  bne : 30
+  auipc : 1,080
+  addi : 7,302
+  csrrw : 210
+  csrrwi : 150
+  slli : 30
+  blt : 30
+  beq : 120
+  lui : 4,202
+  mret : 30
+  sw : 4,380
+  fence : 30
+  ecall : 30
+

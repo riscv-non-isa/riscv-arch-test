@@ -117,6 +117,7 @@ help:
 	@echo "     -- build: To compile all the tests within the RISCV_DEVICE suite and generate the elfs. Note this will default to running on the I extension alone if RISCV_DEVICE is empty"
 	@echo "     -- run: To run compiled tests on the target model and generate signatures. Note this will default to running on the I extension alone if RISCV_DEVICE is empty"
 	@echo "     -- verify: To verify if the generated signatures match the corresponding reference signatures. Note this will default to running on the I extension alone if RISCV_DEVICE is empty"
+	@echo "     -- postverify: To run post verification processing for a target, for example with this, riscvOVPsim runs instructional functional coverage on the tests"
 	@echo "     -- clean : removes the working directory from the root folder and also from the respective device folders of the target"
 	@echo "     -- default: build, run, and verify on all devices enabled"
 

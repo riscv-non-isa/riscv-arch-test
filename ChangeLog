@@ -1,3 +1,6 @@
+2021-02-26 Duncan Graham <info@imperas.com>
+	* Added new K Crypto (scalar) (0.7.2) tests from Imperas
+
 2021-01-22 Tobias Wölfel <tobias.woelfel@mailbox.org>
 	* Add missing base ISA check in riscv-test-suite
 
