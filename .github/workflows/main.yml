@@ -47,3 +47,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
         with:
           release_branch: refs/heads/master
+          release_name: ${{ steps.get_version.outputs.version }}
+          tag_name: ${{ steps.get_version.outputs.version }}
+          body: ${{ steps.extract-release-notes.outputs.release_notes }}
+          draft: false
+          prerelease: false
+
