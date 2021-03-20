@@ -292,13 +292,13 @@ RISC-V processor can be ported as a potential target for testing.
 
 === Setup environment variables
 
-NOTE: `ROOTDIR` will always point to the riscv-compliance repo.
+NOTE: `ROOTDIR` will always point to the riscv-arch-test repo.
 
 1. Clone the repository: 
 
   ---
-  git clone https://github.com/riscv/riscv-compliance.git
-  cd riscv-compliance
+  git clone https://github.com/riscv/riscv-arch-test.git
+  cd riscv-arch-test
 
   ---
 
@@ -306,7 +306,7 @@ NOTE: `ROOTDIR` will always point to the riscv-compliance repo.
 variables based on your target:
    
  a. `TARGETDIR` : set `TARGETDIR` to point to the directory which contains a sub-folder in the same name
- as the target. For example, the compliance repo includes the targets: sail-riscv-c and spike
+ as the target. For example, the arch-test repo includes the targets: sail-riscv-c and spike
  under the `riscv-target` folder, in which case we set the `TARGETDIR` to riscv-target as shown
  below. One can set this completely arbitrary paths as suitable by the user.
  
@@ -416,7 +416,7 @@ In case of spike, we have ensured that the signature region is bounded by the la
 
 === Compile, simulate and verify the tests
 
-Once you have ported your target to the riscv-compliance framework by following the above steps, you
+Once you have ported your target to the riscv-arch-test framework by following the above steps, you
 are now ready to compile, simulate and verify the tests on your target
 
 If you would like to compile, simulate and verify all the extension tests applicable to your target
