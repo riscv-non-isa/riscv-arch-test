@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## [2.3.1] - 2021-03-20
+### Changed
+  - Compliance Task Group changed to Architecture Test SIG in all docs and comments
+  - replacing old riscv-compliance link with new riscv-arch-test links
+  - fixed ci for release
+### Removed
+  - spec/TestFormatSpec.pdf is removed since its old. Keeping only adoc file
+  - removing obsolete and commented out portions from doc/README
+
 ## [2.3] - 2021-03-11
 ### Added
 	- updated maintainers list in root-level readme
