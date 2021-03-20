@@ -1,6 +1,6 @@
-# Makefile for RISC-V Compliance Task Group documentation
+# Makefile for RISC-V Architectural Test SIG documentation
 
-# This file is part of the RISC-V Foundation Compliance Task Group compliance
+# This file is part of the RISC-V Foundation Architectural Test SIG
 # tool set and documentation.
 
 # Copyright (C) 2017 CodaSip Limited <www.codasip.com>

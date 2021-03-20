@@ -1,5 +1,5 @@
 = RISC-V Architectural Testing Framework =
-RISC-V Foundation Compliance Task Group
+RISC-V Foundation Architecture Test SIG
 Issue 1.16 Draft
 :toc:
 :icons: font
