@@ -24,9 +24,9 @@ Imperas provide binaries of the GNU toolchains that are used in various Imperas 
 
 The source of the toolchains is other GitHub repositories and we compile them up and make them available as a service to make it easy to just download working versions of the tools to try and make life easier for you.
 
-The toolchains are held in different branches, branch rvk-0.7.0 actally contains the toolchain supporting v0.7.2 Crypto instructions.
+The toolchains are held in different branches, branch rvk-0.9.0-scalar supports v0.9.0 Crypto Scalar instructions.
 
-         $ git clone https://github.com/Imperas/riscv-toolchains -b rvk-0.7.0
+         $ git clone https://github.com/Imperas/riscv-toolchains -b rvk-0.9.0-scalar
          $ export PATH=$PATH:$(pwd)/riscv-toolchains/Linux64/bin
          $ export RISCV_PREFIX=riscv64-unknown-elf-
 
