@@ -25,7 +25,7 @@ endif
 RUN_TARGET=\
     $(TARGET_SIM) $(TARGET_FLAGS) \
         --variant RV64GCK \
-        --override riscvOVPsim/cpu/crypto_version=0.7.2 \
+        --override riscvOVPsim/cpu/crypto_version=0.8.1 \
         \
         --program $(<) \
         --signaturedump --customcontrol \
@@ -47,8 +47,7 @@ RISCV_GCC_OPTS ?= -static -mcmodel=medany -fvisibility=hidden -nostdlib -nostart
 
 COMPILE_TARGET=\
     $$(RISCV_GCC) $(1) $$(RISCV_GCC_OPTS) \
-        -I$(ROOTDIR)/riscv-test-env/ \
-        -I$(ROOTDIR)/riscv-test-env/p/ \
+        -I$(ROOTDIR)/riscv-test-suite/env/ \
         -I$(TARGETDIR)/$(RISCV_TARGET)/ \
         -T$(TARGETDIR)/$(RISCV_TARGET)/link.ld $$(<) \
         -o $$(@); \

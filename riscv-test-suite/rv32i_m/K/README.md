@@ -1,5 +1,5 @@
 # Imperas RISC-V Architecture Tests for RV32K
-K Crypto/Scalar 0.7.2
+K Crypto/Scalar 0.8.1
 
 This directory contains an Imperas test suite.
 The focus of these tests is to check the device under test complies with the RISC-V specifications.

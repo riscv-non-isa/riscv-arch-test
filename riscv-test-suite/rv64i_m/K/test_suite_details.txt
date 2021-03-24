@@ -1,85 +1,103 @@
-    #
-    # Copyright (c) 2005-2021 Imperas Software Ltd., www.imperas.com
-    #
+#
+# Copyright (c) 2021 Imperas Software Ltd., www.imperas.com
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+# either express or implied.
+#
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+#
 
 
 Architectural Test Suite Data for RV64K K Crypto/Scalar:
-    36 test source files
+    51 test source files
     13 different instruction categories
-    58 different instructions
-    57,696 total instructions
+    61 different instructions
+    109,101 total instructions
 
 Instruction category: OPK_Zknd NIST AES Decryption Instructions
-  aes64ds : 274
-  aes64im : 274
-  aes64dsm : 274
+  aes64ds : 530
+  aes64dsm : 530
+  aes64im : 530
 Instruction category: OPK_Zkne NIST AES Encryption Instructions
-  aes64esm : 274
-  aes64ks1i : 274
-  aes64ks2 : 274
-  aes64es : 274
+  aes64es : 530
+  aes64esm : 530
+  aes64ks1i : 530
+  aes64ks2 : 530
 Instruction category: OPB_LWNE Logic With Negate
   andn : 274
-  xnor : 274
   orn : 274
+  xnor : 274
 Instruction category: OPB_CLML Carry-less Multiply
   clmul : 274
   clmulh : 274
 Instruction category: OPK_Zkr Entropy source for seeding random number generators
 Instruction category: OPB_GORC Generalised Or-Combine
-  gorci : 274
 Instruction category: OPB_PACK Packing
   pack : 274
-  packu : 274
   packh : 274
+  packu : 274
   packuw : 274
   packw : 274
 Instruction category: OPK_Zkb Bitmanip Subset included in the scalar cryptography extension, minus those in Zkg
 Instruction category: OPB_ROTS Rotations
-  ror : 274
   rol : 274
-  roriw : 274
-  rolw : 274
+  ror : 274
   rori : 274
+  rolw : 274
+  roriw : 274
   rorw : 274
 Instruction category: OPK_Zknh NIST SHA2 Hash function instructions
   sha256sig0 : 274
-  sha256sum0 : 274
   sha256sig1 : 274
+  sha256sum0 : 274
+  sha256sum1 : 274
   sha512sig0 : 274
   sha512sig1 : 274
-  sha256sum1 : 274
   sha512sum0 : 274
   sha512sum1 : 274
 Instruction category: OPK_Zksh SM3 Hash function instructions
   sm3p0 : 274
   sm3p1 : 274
 Instruction category: OPK_Zkse SM4 Encryption Instructions
-  sm4ks : 274
-  sm4ed : 274
+  sm4ed : 530
+  sm4ks : 530
 Instruction category: OPB_XBAR Crossbar Permutation
+  xperm.n : 274
+  xperm.b : 274
 
 Other instructions (those not the focus of this suite)
-  c-j : 36
-  csrrs : 144
-  c-bnez : 36
-  auipc : 2,196
-  addi : 5,628
-  csrrw : 252
-  csrrwi : 180
-  c-addi : 3,105
-  c-li : 4,134
-  c-slli : 8,319
-  bge : 36
-  beq : 144
-  c-lui : 1,173
-  addiw : 7,158
-  mret : 36
-  lui : 3,381
-  sd : 9,504
-  c-sdsp : 360
-  c-addiw : 1,767
-  slli : 171
-  fence : 36
-  ecall : 36
+  c-j : 51
+  c-lui : 411
+  addiw : 14,591
+  csrrs : 155
+  auipc : 2,925
+  addi : 27,957
+  csrrw : 102
+  mret : 51
+  lui : 9,999
+  slli : 20,989
+  sd : 12,774
+  c-sdsp : 490
+  fence : 49
+  ecall : 49
+  c-li : 491
+  beq : 155
+  c-slli : 3,134
+  c-addiw : 532
+  c-addi : 926
+  grevi : 822
+  shfli : 1
+  bge : 2
+  ori : 2
+  unshfli : 1
 
