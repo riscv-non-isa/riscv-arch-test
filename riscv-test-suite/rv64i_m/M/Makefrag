@@ -1,4 +1,4 @@
-# RISC-V Compliance Test RV64IM Makefrag
+# RISC-V Architecture Test RV64IM Makefrag
 #
 # Copyright (c) 2018, Imperas Software Ltd.
 # Copyright (c) 2020, InCore Semiconductors. Pvt. Ltd.
@@ -26,7 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
-# Description: Makefrag for RV64IM compliance tests
+# Description: Makefrag for RV64IM architectural tests
 
 rv64im_sc_tests = \
   div-01 \

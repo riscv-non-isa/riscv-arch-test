@@ -14,7 +14,7 @@
 #define TEST_CASE_1
 
 //-----------------------------------------------------------------------
-// RV Compliance Macros
+// RV Arch Test Macros
 //-----------------------------------------------------------------------
 #ifndef RVMODEL_SET_MSW_INT
   #warning "RVMODEL_SET_MSW_INT is not defined by target. Declaring as empty macro"

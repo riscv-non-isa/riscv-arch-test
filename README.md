@@ -1,6 +1,8 @@
-# RISC-V Compliance Task Group
+# RISC-V Architecture Test SIG
 
-This is a repository for the work of the RISC-V Foundation Compliance Task Group. The repository owners are:
+
+This is a repository for the work of the RISC-V Foundation Architecture Test SIG. The repository owners are:
+
 - Neel Gala (InCore Semiconductors)
 - Marc Karasek (Inspire Semiconductors)
 

@@ -1,5 +1,5 @@
 = RISC-V Architectural Testing Framework =
-RISC-V Foundation Compliance Task Group
+RISC-V Foundation Architecture Test SIG
 Issue 1.16 Draft
 :toc:
 :icons: font
@@ -47,15 +47,6 @@ This document is intended for design and verification engineers who wish to chec
 
 For those who wish to develop new architectural tests and/or to write or adapt their own test framework are suggested to read the link:../spec/TestFormatSpec.adoc[`Test Format Spec`].
 
-//=== Future work
-//
-//This is a work in progress. A number of areas need resolving before the work is complete, and are recorded here so they do not get forgotten.
-//
-//Consider whether `compliance_test.h` is needed It's not clear if this belongs in target directories, or if it is needed at all.
-//
-// Generalize Makefile configuration At present each platform requires editing of the makefile, and many areas are not even fully parameterized.  Again we wish to explore a wider range of platforms before deciding what needs parameterization.  For now `COMPILE_TARGET` allows a choice between GCC and LLVM.  More generally, we know that with tools like _autotools_ and _cmake_ this is a well understood problem to solve.
-//
-//Free up all registers for compliance testing At present some platforms have macros which use some registers in set up and verification, thus excluding them from compliance testing. We believe careful structuring of the macros will mean this problem can be avoided in the future, thus avoiding any registers being excluded from compliance testing.
 
 === Contribute
 
@@ -290,95 +281,6 @@ The <<The test target,_test target_>> can be either a RISC-V Instruction Set Sim
 The <<The target shell, _target shell_>> is the software and hardware environment around the <<The test target,_test target_>> that enables it to communicate with the framework, including assembling and linking tests, loading tests into memory, executing tests, and extracting the signature. The input to the <<The target shell, _target shell_>> is a .S <<The architectural test,_architectural test_>> file, and the output is a <<The test signature,_test signature_>>.
 
 
-//=== The Test Virtual Machine
-//
-//The test runs in the context of a _Test Virtual Machine_ (TVM) as defined and available at https://github.com/riscv/riscv-tests. There will be a different TVM for each instruction subset and each profile.
-
-//=== The target environment
-//
-//A specific target will need to be chosen and setup to run the Test. This can be an Instruction Set Simulator (ISS), full system simulator (emulator), HDL simulator, FPGA prototype, or a board/chip, etc.  The test runs in the context of a TVM and is set up to run on the specific target.  The _target environment_ controls the loading of the test plus TVM onto the target, configures the device if needed, controls the execution, and then extracts the signature.
-
-//=== The processor configuration (device configuration)
-//
-//The RISC-V specification allows many optional instructions, registers, and other features.  Many targets have a fixed selection of these optional items which cannot be changed. For example, a chip is fixed in the mask.  A simulator on the other hand may implement all known options and will need to be constrained to have only the required options available.  There will need to be processor configuration for those target devices which need to be constrained to only reflect the features of the device being compliance tested. This is essential when writing compliance tests to ensure that only available options are used in the tests.
-
-//=== The test signature
-//
-//The _test signature_ is defined as reference data written into memory during the execution of the test.  It should record values and results of the operation of the Test. It is expected that an implementation, at the end of a test, dumps the signature in to a file such that only 4-bytes are written per line, starting with the most-significant byte on the left.
-
-//=== The test framework
-//
-//This works at several levels.  At the lowest level it runs a test with a TVM on a specific configured target device and compares the test’s output test signature against the test reference signature and reports if there is any difference. A difference indicates that the target has failed that specific compliance test.
-//
-//The test framework allows different test suites to be run depending on the capabilities of the target
-//
-//The test framework collates the results of all the Tests that comprise a Test Suite and reports the overall results.
-
-//== Developing new tests
-//=== Structure
-//
-//* Clone directory structure of an existing test suite alongside the RV32I tree.
-//
-//* This must include test and reference signature directories (`src` and `references`).
-//
-//* Check the target environment setup files.
-//
-//* Check the processor configuration files.
-//
-//=== Process
-//
-//This description assumes the use of a configurable simulator with good trace and debug capabilities.
-//
-//* Work on one test at a time.
-//
-//* Ensure that the processor configuration is set appropriately.
-//
-//* Use the `RVTEST` macros (defined in `compliance_io.h`) to make it easy to see the details of a Test’s execution. There are macros for assertions (`RVTEST_IO_ASSERT_GPR_EQ`) and tracing (`RVTEST_IO_WRITE_STR`) which are empty on targets that can not implement them.
-//
-//* Assuming you are developing the test on a simulator, use the simulator’s tracing capabilities, especially a register change mode to single step your test examining all changing registers etc. to ensure your test is stimulating what is intending.
-//
-//* Make sure that the signature you generate at the end of the run shows adequate internal test state such that any checks do report as fails if wrong.
-//
-//* When you are satisfied that the test does what is intended and that the test signature is correct, copy this into a test reference signature (in the references directory).
-//
-//For a test suite to be complete it needs to have tests that exercise the full functionality of what it is intended to test. There are tools available to measure instruction and other resource coverage. These should be used to ensure that 100% of the intended instructions have been tested.
-
-//== Test framework
-//
-//For running compliance tests, the Test Virtual Machine (TVM) “p” available at https://github.com/riscv/riscv-tests is utilized.
-//
-//In addition to using the basic functionality of the TVM, the script for running compliance tests runs the test on the target and then performs comparison of the target’s generated test signature to the manually reviewed test reference signature.
-//
-//See the chapter below for selecting and setting up the target (simulator, or hardware, etc.).
-//
-//If using a target that requires the processor to be configured, see the chapter below on processor configuration.
-//
-//You will also need to have a suitable compiler tool chain (GCC or LLVM) installed in your environment and available on your path.
-//
-//Tests are run by commands in the top level `Makefile` which has targets for simulate and verify
-//
-//[source,make]
-//----
-//RISCV_TARGET ?= riscvOVPsim
-//RISCV_DEVICE ?= rv32i
-//RISCV_PREFIX ?= riscv64-unknown-elf-
-//
-//simulate:
-//        make RISCV_TARGET=$(RISCV_TARGET) \
-//             RISCV_DEVICE=$(RISCV_DEVICE) \
-//             RISCV_PREFIX=$(RISCV_PREFIX) \
-//             run -C $(SUITEDIR)
-//
-//verify:
-//    riscv-test-env/verify.sh
-//----
-
-//== Setting the target environment
-//
-//The target environment needs setting up to allow the compliance tests to be run on the target.  This can be used while developing compliance test suites or it can be used with new targets to see if they correctly execute the compliance test suites and are compliant!
-//
-//This chapter provides information on the currently available targets and includes a short tutorial on how to add a new target.
-
 == Porting a new target
 
 
@@ -390,13 +292,13 @@ RISC-V processor can be ported as a potential target for testing.
 
 === Setup environment variables
 
-NOTE: `ROOTDIR` will always point to the riscv-compliance repo.
+NOTE: `ROOTDIR` will always point to the riscv-arch-test repo.
 
 1. Clone the repository: 
 
   ---
-  git clone https://github.com/riscv/riscv-compliance.git
-  cd riscv-compliance
+  git clone https://github.com/riscv/riscv-arch-test.git
+  cd riscv-arch-test
 
   ---
 
@@ -404,7 +306,7 @@ NOTE: `ROOTDIR` will always point to the riscv-compliance repo.
 variables based on your target:
    
  a. `TARGETDIR` : set `TARGETDIR` to point to the directory which contains a sub-folder in the same name
- as the target. For example, the compliance repo includes the targets: sail-riscv-c and spike
+ as the target. For example, the arch-test repo includes the targets: sail-riscv-c and spike
  under the `riscv-target` folder, in which case we set the `TARGETDIR` to riscv-target as shown
  below. One can set this completely arbitrary paths as suitable by the user.
  
@@ -514,7 +416,7 @@ In case of spike, we have ensured that the signature region is bounded by the la
 
 === Compile, simulate and verify the tests
 
-Once you have ported your target to the riscv-compliance framework by following the above steps, you
+Once you have ported your target to the riscv-arch-test framework by following the above steps, you
 are now ready to compile, simulate and verify the tests on your target
 
 If you would like to compile, simulate and verify all the extension tests applicable to your target
@@ -556,86 +458,3 @@ By default the working directory is set to `ROOTDIR/work`. This can be overwritt
 new working directory path via the command line. Note, the path must be absolute and not relative :
 
   make WORK=/home/me/my_path/mywork clean compile simulate
-
-//Once you have ported your target using the steps you can then run the execute the architectural test framework using the following steps:
-//
-//1. go to the root directory of the repository: `cd riscv-compliance`
-//2. in the Makefile available in the root directory perform the following changes:
-//   - change `XLEN` to the default XLEN value of the target/device. Eg. 32 or 64
-//   - change `RISCV_TARGET` to the name of your target. Eg. spike
-//3. save the changes.
-//4. in the terminal, at the root directory, type `make`.
-//
-//Performing the `make` first creates a `work` directory where all the compilation and simulation of the tests on the target will be performed.
-//Based on the `XLEN` value set in the Makfile either the `rv32i_m` test-suite or the `rv64i_m` test-suite is chosen. Further, based on the names of the subdirectories defined in the `device` directory of the target the corresponding tests are enabled and run on the target. Once all the tests from a suite are executed the `riscv-test-env/verify.sh` bash script is run which compares the generated signatures with the corresponding reference signatures and reports an error or an `OK` as the case maybe.
-//
-
-//At the moment the riscvOVPsim target will support parallel execution by default, and will select the options -j8 --max-load=4 - these can be overridden either by disable (PARALLEL=0), or redefinition JOBS="-j2 --max-load=2"
-
-
-
-//* Redefine macros in `ISA/src/compliance_test.h` and `binary_coding/src/compliance_test.h`.
-//+
-//For example, to support Codasip ISA simulator as Target, it was necessary to redefine `RV_COMPLIANCE_HALT macro`, `RV_COMPLIANCE_DATA_BEGIN` macro and `RV_COMPLIANCE_DATA_END` macro in `ISA/compliance_test.h` in the following way:
-//+
-//[source,c]
-//----
-//#define RV_COMPLIANCE_HALT
-//        add     x31, x0, 1
-//        sw      x31, codasip_syscall, t0
-//----
-//
-//* This means that on the address defined by `codasip_syscall`, the 1 value is stored and this is interpreted as `HALT` for the Codasip ISA simulator.
-//+
-//[source,c]
-//----
-//#define RV_COMPLIANCE_DATA_BEGIN
-//        .align  4;
-//        .global codasip_signature_start;
-//codasip_signature_start:
-//----
-//+
-//[source,c]
-//----
-//#define RV_COMPLIANCE_DATA_END
-//        .align  4;
-//        .global codasip_signature_end;
-//codasip_signature_end:
-//----
-
-//* The Codasip ISA simulator dumps data from the addresses bounded by labels `codasip_signature_start` and `codasip_signature_end` to `stdout`.  The dumped data represent the results of the tests.
-//
-//* Modify Makefiles in `ISA/Makefile` and `binary_coding/Makefile`.  It is important to change tools that are evaluated and parameters that are passed to the tools.
-//+
-//For example, to support the Codasip ISA simulator as the device under test
-//(DUT), it was necessary to change `RISCV_SIM` from `spike` to
-//`codix_berkelium-ia-isimulator –r` and parameters for running the simulator
-//from `+signature=$(work_dir)/$<.signature.output` to `–info 5` plus handle
-//redirection to a file by `1>$(work_dir)/$<.signature.output`.
-
-//== Configuring the target device
-//
-//This section is for how to specify which optional parts are being used
-//
-//NOTE: This is primarily for simulators.
-//
-//In the directory `riscv-target/*/device` there are directories that have Makefile fragments that configure the simulator to simulate only those parts of the RISC-V specification that is required for the specific target device being tested.
-//
-//For example for the riscvOVPsim to be configured to be a RV32I
-//[source,make]
-//----
-//RUN_TARGET= \
-//        riscvOVPsim.exe --variant RV32I --program $(work_dir_isa)/$< \
-//            --signaturedump \
-//            --override riscvOVPsim/cpu/sigdump/SignatureFile=$(work_dir_isa)/$(*).signature.output \
-//            --override riscvOVPsim/cpu/sigdump/ResultReg=3 \
-//            --override riscvOVPsim/cpu/simulateexceptions=T \
-//            --logfile $(work_dir_isa)/$@
-//----
-//[appendix]
-//== One ISA Test
-//
-//For a detailed description of one ISA test please have a look at the example: link:../riscv-test-suite/rv32i_m/I/src/add-01.S[`add-01.S`].
-//
-//
-//[appendix]
