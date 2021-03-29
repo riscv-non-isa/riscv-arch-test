@@ -66,4 +66,3 @@ fi
 echo -e "RISCV_TARGET=${RISCV_TARGET} RISCV_DEVICE=${RISCV_DEVICE} XLEN=${XLEN} \e[39m"
 echo
 exit ${status}
-
