@@ -60,8 +60,6 @@ rv64k_sc_tests = \
 	REV-B-01 \
 	REV8-01 \
 	REV8-W-01 \
-	ZIP-01 \
-	UNZIP-01 \
 	CLMUL-01 \
 	CLMULH-01 \
 	ANDN-01 \
