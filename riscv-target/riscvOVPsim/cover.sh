@@ -149,3 +149,7 @@ for RISCV_DEV in ${RISCV_DEVICE_ALL}; do
     
 done
 
+echo "------------------"
+echo "# Coverage Summary"
+egrep "Unique instructions|Coverage points hit" ${WORK}/rv${XLEN}i_m/*/${COVERTYPE}.coverage.txt
+
