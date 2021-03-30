@@ -1,0 +1,79 @@
+# RISC-V Compliance Test RV64K Makefrag
+#
+#
+# Copyright (c) 2021 Imperas Software Ltd., www.imperas.com
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+# either express or implied.
+#
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+#
+
+#
+# Description: Makefrag for RV64K compliance tests
+
+rv64k_sc_tests = \
+	AES64DS-01 \
+	AES64DS-02 \
+	AES64DSM-01 \
+	AES64DSM-02 \
+	AES64ES-01 \
+	AES64ES-02 \
+	AES64ESM-01 \
+	AES64ESM-02 \
+	AES64IM-01 \
+	AES64IM-02 \
+	AES64KS1I-01 \
+	AES64KS1I-02 \
+	AES64KS2-01 \
+	AES64KS2-02 \
+	SHA256SIG0-01 \
+	SHA256SIG1-01 \
+	SHA256SUM0-01 \
+	SHA256SUM1-01 \
+	SHA512SIG0-01 \
+	SHA512SIG1-01 \
+	SHA512SUM0-01 \
+	SHA512SUM1-01 \
+	SM3P0-01 \
+	SM3P1-01 \
+	SM4ED-01 \
+	SM4ED-02 \
+	SM4KS-01 \
+	SM4KS-02 \
+	ROL-01 \
+	ROR-01 \
+	RORI-01 \
+	ROLW-01 \
+	RORIW-01 \
+	RORW-01 \
+	REV-B-01 \
+	REV8-01 \
+	REV8-W-01 \
+	CLMUL-01 \
+	CLMULH-01 \
+	ANDN-01 \
+	ORN-01 \
+	XNOR-01 \
+	PACK-01 \
+	PACKH-01 \
+	PACKU-01 \
+	PACKUW-01 \
+	PACKW-01 \
+	XPERM-N-01 \
+	XPERM-B-01 \
+
+rv64k_tests = $(addsuffix .elf, $(rv64k_sc_tests))
+
+target_tests += $(rv64k_tests)
+

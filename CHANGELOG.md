@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [2.4.0] - 2021-03-26
+2021-03-26 Duncan Graham <info@imperas.com>
+	- Added new K Crypto (scalar) (0.8.1) tests from Imperas
+
 ## [2.3.1] - 2021-03-20
 ### Changed
   - Compliance Task Group changed to Architecture Test SIG in all docs and comments

@@ -8,7 +8,14 @@ for ref in ${SUITEDIR}/references/*.reference_output;
 do 
     base=$(basename ${ref})
     stub=${base//".reference_output"/}
+
+    if [ "${stub}" = "*" ]; then
+        echo "No Reference Files ${SUITEDIR}/references/*.reference_output"
+        break
+    fi
+
     sig=${WORK}/rv${XLEN}i_m/${RISCV_DEVICE}/${stub}.signature.output
+    dif=${WORK}/rv${XLEN}i_m/${RISCV_DEVICE}/${stub}.diff
 
     RUN=$((${RUN} + 1))
     
@@ -16,18 +23,19 @@ do
     # Ensure both files exist
     #
     if [ -f ${ref} ] && [ -f ${sig} ]; then 
-        echo -n "Check $(printf %24s ${stub})"
+        echo -n "Check $(printf %-24s ${stub}) "
     else
-        echo   -e "Check $(printf %24s ${stub}) \e[33m ... IGNORE \e[39m"
+        echo -e  "Check $(printf %-24s ${stub}) \e[33m ... IGNORE \e[39m"
         continue
     fi
-    diff --ignore-case --strip-trailing-cr ${ref} ${sig} #&> /dev/null
+    diff --ignore-case --strip-trailing-cr ${ref} ${sig} &> /dev/null
     if [ $? == 0 ]
     then
         echo -e "\e[32m ... OK \e[39m"
     else
         echo -e "\e[31m ... FAIL \e[39m"
         FAIL=$((${FAIL} + 1))
+        sdiff ${ref} ${sig} > ${dif}
     fi
 done
 
@@ -45,7 +53,8 @@ do
 done
 
 declare -i status=0
-if [ ${FAIL} == 0 ]; then
+if [ ${FAIL} == 0 ]
+then
     echo "--------------------------------"
     echo -n -e "\e[32m OK: ${RUN}/${RUN} "
     status=0
