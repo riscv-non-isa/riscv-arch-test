@@ -1,6 +1,6 @@
 = RISC-V Architecture Test Format Specification =
 RISC-V Foundation Architecture Test SIG
-Issue 1.0 Draft
+Issue 1.2.6 Draft
 :toc:
 :icons: font
 :numbered:
