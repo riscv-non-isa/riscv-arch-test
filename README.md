@@ -12,6 +12,8 @@ For more details and documentation on the current testing framework see: [doc/RE
 
 For more details on the test format spec see: [spec/TestFormatSpec.adoc](spec/TestFormatSpec.adoc)
 
+For contributions and reporting issues please refer to [CONTRIBUTION.md](CONTRIBUTION.md)
+
 ## Test Disclaimers
 
 The following are the exhaustive list of disclaimers that can be used as waivers by target owners 
