@@ -7,8 +7,10 @@ export XLEN               ?= 32
 # name of the target. Note a folder of the same name must exist in the TARGETDIR directory
 export RISCV_TARGET       ?= spike
 
-# set the RISCV_DEVICE environment to a single extension you want to compile, simulate and/or verify. 
-# Leave this blank if you want to iterate through all the supported extensions available in the target
+#set the RISCV_DEVICE environment to the extension you want to compile, simulate and verify. Leave
+#this blank if you want to iterate through all the supported extensions of your target. Allowed values
+#are the individual names of the extensions supported by your target like: I, M, C or Zifencei, etc. 
+#Only one extension can be selected at once.
 export RISCV_DEVICE       ?= 
 
 # set RISCV_TEST to the name of a test to run only that single test in the selected device. It is an error

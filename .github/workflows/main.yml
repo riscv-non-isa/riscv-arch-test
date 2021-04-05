@@ -38,6 +38,13 @@ jobs:
         run: |
           git tag ${{ steps.get_version.outputs.version }}
           git push origin ${{ steps.get_version.outputs.version }}
+
+      - name: Build PDF
+        id: build_pdf
+        if: github.ref == 'refs/heads/master'
+        uses: avattathil/asciidoctor-action@master
+        with:
+          program: "asciidoctor-pdf -a allow-uri-read -D . spec/TestFormatSpec.adoc"
       
       - name: Create Release
         id: create_release
@@ -53,3 +60,14 @@ jobs:
           draft: false
           prerelease: false
 
+      - name: Upload Release Asset
+        id: upload-release-asset 
+        if: github.ref == 'refs/heads/master'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} 
+          asset_path: ./TestFormatSpec.pdf
+          asset_name: TestFormatSpec.pdf
+          asset_content_type: application/pdf

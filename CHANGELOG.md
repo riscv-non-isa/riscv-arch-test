@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## [2.4.1] - 2021-04-01
+  - updated issue number in TestFormatSpec to be consistent with doc history
+  - adding a contribution guideline
+  - updated comment on usage of RISCV_DEVICE in Makefile.include
+  - updated licenses that are currently used by tests
+  - renamed K tests to K_unratified
+  - updated ci to build and upload pdf for testformatspec
+
 ## [2.4.0] - 2021-03-26
 2021-03-26 Duncan Graham <info@imperas.com>
 	- Added new K Crypto (scalar) (0.8.1) tests from Imperas
