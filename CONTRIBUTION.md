@@ -1,6 +1,6 @@
 # Contributing to RISC-V Architecture Tests
 
-You inputs are welcome and greatly appreciated! We want to make contributing to this project as easy and transparent as possible, whether it's:
+Your inputs are welcome and greatly appreciated! We want to make contributing to this project as easy and transparent as possible, whether it's:
 
 - Reporting a bug
 - Discussing the current state of the code
@@ -35,7 +35,7 @@ When issuing pull requests, an entry in the CHANGELOG.md is mandatory. The arch-
 the [`Semantic Versioning`](https://semver.org/spec/v2.0.0.html) scheme. Following guidelines must
 be followed while assigning a new version number :
 
-- Patch-updates: all doc updates (like tupos, more clarification,etc) and updates to unratified extensions.
+- Patch-updates: all doc updates (like typos, more clarification,etc) and updates to unratified extensions.
 - Minor-updates: Updates to ratified extensions OR migration of extensions to ratified OR changes in docs regarding policies or spec.
 - Major-updates: Changes to the framework flow (backward compatible or incompatible).
 

@@ -10,7 +10,7 @@ export RISCV_TARGET       ?= spike
 #set the RISCV_DEVICE environment to the extension you want to compile, simulate and verify. Leave
 #this blank if you want to iterate through all the supported extensions of your target. Allowed values
 #are the individual names of the extensions supported by your target like: I, M, C or Zifencei, etc. 
-#Multiple extensions are not be provided.
+#Only one extension can be selected at once.
 export RISCV_DEVICE       ?= 
 
 # set RISCV_TEST to the name of a test to run only that single test in the selected device. It is an error
