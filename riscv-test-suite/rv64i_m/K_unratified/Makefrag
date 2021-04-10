@@ -75,5 +75,5 @@ rv64k_sc_tests = \
 
 rv64k_tests = $(addsuffix .elf, $(rv64k_sc_tests))
 
-target_tests += $(rv64k_tests)
+# target_tests += $(rv64k_tests)
 
