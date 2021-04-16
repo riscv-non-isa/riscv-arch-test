@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## [2.4.2] - 2021-04-16
+  - updated http location where more details about the format of CondStr can be found
+
 ## [2.4.1] - 2021-04-01
   - updated issue number in TestFormatSpec to be consistent with doc history
   - adding a contribution guideline
