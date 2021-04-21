@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## [2.4.2] - 2021-04-20
+  - changed all occurances of SPTBR to the new name SATP
+
 ## [2.4.1] - 2021-04-01
   - updated issue number in TestFormatSpec to be consistent with doc history
   - adding a contribution guideline
