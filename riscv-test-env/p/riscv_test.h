@@ -63,10 +63,10 @@
   .align 2;                                                             \
 1:
 
-#define INIT_SPTBR                                                      \
+#define INIT_SATP                                                      \
   la t0, 1f;                                                            \
   csrw mtvec, t0;                                                       \
-  csrwi sptbr, 0;                                                       \
+  csrwi satp, 0;                                                       \
   .align 2;                                                             \
 1:
 
@@ -108,8 +108,8 @@
 //
 #if defined(PRIV_MISA_S)
 #  if (PRIV_MISA_S==0)
-#    undef  INIT_SPTBR
-#    define INIT_SPTBR
+#    undef  INIT_SATP
+#    define INIT_SATP
 #    undef  INIT_PMP
 #    define INIT_PMP
 #    undef  DELEGATE_NO_TRAPS
@@ -165,7 +165,7 @@ handle_exception:                                                       \
         j write_tohost;                                                 \
 reset_vector:                                                           \
         RISCV_MULTICORE_DISABLE;                                        \
-        INIT_SPTBR;                                                     \
+        INIT_SATP;                                                     \
         INIT_PMP;                                                       \
         DELEGATE_NO_TRAPS;                                              \
         li TESTNUM, 0;                                                  \
