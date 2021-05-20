@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## [2.4.3] - 2021-05-20
+  - added new 64-bit K crypto tests as per the test-plan presented by the scalar crypto task group
+    [here](https://github.com/riscv/riscv-crypto/blob/d89dfee25780f79c162da4eb69cd9076dd701c88/tests/compliance/test-plan-scalar.adoc)
+  - added new 32-bit K crypto tests as per the above mentioned test-plan.
+  - added coverage and data propagation reports for the above tests.
+  - updated README in riscv-test-suite
+  - added missing semi-colon in example target Makefile.include files
+
 ## [2.4.2] - 2021-04-20
   - changed all occurances of SPTBR to the new name SATP
 
