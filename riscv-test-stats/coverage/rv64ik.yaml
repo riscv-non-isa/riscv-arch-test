@@ -851,6 +851,7 @@ xperm.n:
       <<: *rfmt_op_comb
     val_comb:
       abstract_comb:      
+        'uniform_random(20, 100, ["rs1_val","rs2_val"], [64, 64])': 0
         'leading_ones(64, ["rs1_val","rs2_val"], [64,64])': 0
         'trailing_ones(64, ["rs1_val","rs2_val"], [64,64])': 0
         'leading_zeros(64, ["rs1_val","rs2_val"], [64,64])': 0
@@ -874,6 +875,7 @@ xperm.b:
       <<: *rfmt_op_comb
     val_comb:
       abstract_comb:      
+        'uniform_random(20, 100, ["rs1_val","rs2_val"], [64, 64])': 0
         'leading_ones(64, ["rs1_val","rs2_val"], [64,64])': 0
         'trailing_ones(64, ["rs1_val","rs2_val"], [64,64])': 0
         'leading_zeros(64, ["rs1_val","rs2_val"], [64,64])': 0

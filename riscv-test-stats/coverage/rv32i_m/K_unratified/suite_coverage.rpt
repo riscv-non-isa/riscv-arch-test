@@ -9789,25 +9789,25 @@ xperm.b:
   - check ISA:=regex(.*I.*ZKn.*)
   - check ISA:=regex(.*I.*ZKb.*)
   op_comb:
-    rs1 != rs2  and rs1 != rd and rs2 != rd: 265
+    rs1 != rs2  and rs1 != rd and rs2 != rd: 283
     rs1 == rd != rs2: 1
     rs1 == rs2 != rd: 1
     rs1 == rs2 == rd: 1
     rs2 == rd != rs1: 1
     coverage: 5/5
   opcode:
-    xperm.b: 269
+    xperm.b: 287
     coverage: 1/1
   rd:
     x0: 1
     x1: 1
     x10: 1
     x11: 1
-    x12: 238
+    x12: 254
     x13: 1
     x14: 1
     x15: 1
-    x16: 1
+    x16: 2
     x17: 1
     x18: 1
     x19: 1
@@ -9820,7 +9820,7 @@ xperm.b:
     x25: 1
     x26: 1
     x27: 1
-    x28: 1
+    x28: 2
     x29: 1
     x3: 1
     x30: 1
@@ -9835,7 +9835,7 @@ xperm.b:
   rs1:
     x0: 1
     x1: 1
-    x10: 238
+    x10: 254
     x11: 1
     x12: 1
     x13: 1
@@ -9851,14 +9851,14 @@ xperm.b:
     x22: 1
     x23: 1
     x24: 1
-    x25: 1
+    x25: 2
     x26: 1
     x27: 1
     x28: 1
     x29: 1
     x3: 1
     x30: 1
-    x31: 1
+    x31: 2
     x4: 1
     x5: 1
     x6: 1
@@ -9870,11 +9870,11 @@ xperm.b:
     x0: 1
     x1: 1
     x10: 1
-    x11: 238
+    x11: 254
     x12: 1
     x13: 1
     x14: 1
-    x15: 1
+    x15: 2
     x16: 1
     x17: 1
     x18: 1
@@ -9896,19 +9896,39 @@ xperm.b:
     x4: 1
     x5: 1
     x6: 1
-    x7: 1
+    x7: 2
     x8: 1
     x9: 1
     coverage: 32/32
   val_comb:
     'rs1_val == 0xFFFFFFFF and rs2_val == 0x08577EB1 #nosat': 1  # 32 Leading ones for rs1_val. Other operands are random
+    'rs1_val == 0x91766f62 and rs2_val == 0x5570084b #nosat': 1 # Uniform Random 1
+    'rs1_val == 0xc0fe15dd and rs2_val == 0x9f053821 #nosat': 1 # Uniform Random 2
+    'rs1_val == 0xdc80d916 and rs2_val == 0x2a2a146d #nosat': 1 # Uniform Random 3
+    'rs1_val == 0x952acffe and rs2_val == 0x25ae27ee #nosat': 1 # Uniform Random 4
+    'rs1_val == 0x40a5ff52 and rs2_val == 0xb6f9706f #nosat': 1 # Uniform Random 5
+    'rs1_val == 0xe3f4fca3 and rs2_val == 0xa6c9253a #nosat': 1 # Uniform Random 6
+    'rs1_val == 0xc2f1c53e and rs2_val == 0xd05668ae #nosat': 1 # Uniform Random 7
+    'rs1_val == 0x9722c9a6 and rs2_val == 0x7bcad7c4 #nosat': 1 # Uniform Random 8
+    'rs1_val == 0xf7f1305a and rs2_val == 0x9bedfe39 #nosat': 1 # Uniform Random 9
+    'rs1_val == 0xd75739f8 and rs2_val == 0xe6fff3d9 #nosat': 1 # Uniform Random 10
+    'rs1_val == 0x90efb625 and rs2_val == 0x3150e5fa #nosat': 1 # Uniform Random 11
+    'rs1_val == 0x1fc493ca and rs2_val == 0x65408c73 #nosat': 1 # Uniform Random 12
+    'rs1_val == 0x8e2eac2a and rs2_val == 0xd169a3f8 #nosat': 1 # Uniform Random 13
+    'rs1_val == 0x35f9377f and rs2_val == 0xf4c30307 #nosat': 1 # Uniform Random 14
+    'rs1_val == 0x58d548aa and rs2_val == 0xa0569d76 #nosat': 1 # Uniform Random 15
+    'rs1_val == 0x55d98c6e and rs2_val == 0x2daf9ac7 #nosat': 1 # Uniform Random 16
+    'rs1_val == 0x74b8de87 and rs2_val == 0xf273b44c #nosat': 1 # Uniform Random 17
+    'rs1_val == 0xccce240c and rs2_val == 0x886c3a30 #nosat': 1 # Uniform Random 18
+    'rs1_val == 0xb49c83dc and rs2_val == 0xbb61a9cd #nosat': 2 # Uniform Random 19
+    'rs1_val == 0x254a9493 and rs2_val == 0xc5521660 #nosat': 1 # Uniform Random 20
     'rs2_val == 0x00000000 and rs1_val == 0x4FFE831A #nosat': 1 # 32 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0x80000000 and rs1_val == 0xAFC08ACE #nosat': 1 # 31 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0x40000000 and rs1_val == 0xAF6E9055 #nosat': 1 # 30 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0xE0000000 and rs1_val == 0x5B130474 #nosat': 1 # 29 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0x90000000 and rs1_val == 0x3EEA126E #nosat': 1 # 28 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0xB8000000 and rs1_val == 0x9C734D77 #nosat': 1 # 27 Trailing zeros for rs2_val. Other operands are random
-    'rs2_val == 0xB4000000 and rs1_val == 0x5A694BCA #nosat': 2 # 26 Trailing zeros for rs2_val. Other operands are random
+    'rs2_val == 0xB4000000 and rs1_val == 0x5A694BCA #nosat': 1 # 26 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0x3E000000 and rs1_val == 0xED52E4CA #nosat': 1 # 25 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0xFB000000 and rs1_val == 0xB5CB2A93 #nosat': 1 # 24 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0x68800000 and rs1_val == 0x29324E16 #nosat': 1 # 23 Trailing zeros for rs2_val. Other operands are random
@@ -10165,8 +10185,8 @@ xperm.b:
     'rs1_val == 0xFFFFFFFA and rs2_val == 0x854A9657 #nosat': 1 # 29 Leading ones for rs1_val. Other operands are random
     'rs1_val == 0xFFFFFFFD and rs2_val == 0xCF84B683 #nosat': 1 # 30 Leading ones for rs1_val. Other operands are random
     'rs1_val == 0xFFFFFFFE and rs2_val == 0x93FDCAB8 #nosat': 1 # 31 Leading ones for rs1_val. Other operands are random
-    coverage: 264/264
-  total_coverage: 366/366
+    coverage: 284/284
+  total_coverage: 386/386
 xperm.n:
   config:
   - check ISA:=regex(.*I.*K.*)
@@ -10174,21 +10194,21 @@ xperm.n:
   - check ISA:=regex(.*I.*ZKb.*)
   - check ISA:=regex(.*I.*ZKn.*)
   op_comb:
-    rs1 != rs2  and rs1 != rd and rs2 != rd: 265
+    rs1 != rs2  and rs1 != rd and rs2 != rd: 285
     rs1 == rd != rs2: 1
     rs1 == rs2 != rd: 1
     rs1 == rs2 == rd: 1
     rs2 == rd != rs1: 1
     coverage: 5/5
   opcode:
-    xperm.n: 269
+    xperm.n: 289
     coverage: 1/1
   rd:
     x0: 1
     x1: 1
     x10: 1
     x11: 1
-    x12: 238
+    x12: 258
     x13: 1
     x14: 1
     x15: 1
@@ -10220,7 +10240,7 @@ xperm.n:
   rs1:
     x0: 1
     x1: 1
-    x10: 238
+    x10: 258
     x11: 1
     x12: 1
     x13: 1
@@ -10255,7 +10275,7 @@ xperm.n:
     x0: 1
     x1: 1
     x10: 1
-    x11: 238
+    x11: 258
     x12: 1
     x13: 1
     x14: 1
@@ -10287,6 +10307,26 @@ xperm.n:
     coverage: 32/32
   val_comb:
     'rs1_val == 0xFFFFFFFF and rs2_val == 0x08577EB1 #nosat': 1  # 32 Leading ones for rs1_val. Other operands are random
+    'rs1_val == 0x91766f62 and rs2_val == 0x5570084b #nosat': 1 # Uniform Random 1
+    'rs1_val == 0xc0fe15dd and rs2_val == 0x9f053821 #nosat': 1 # Uniform Random 2
+    'rs1_val == 0xdc80d916 and rs2_val == 0x2a2a146d #nosat': 1 # Uniform Random 3
+    'rs1_val == 0x952acffe and rs2_val == 0x25ae27ee #nosat': 1 # Uniform Random 4
+    'rs1_val == 0x40a5ff52 and rs2_val == 0xb6f9706f #nosat': 1 # Uniform Random 5
+    'rs1_val == 0xe3f4fca3 and rs2_val == 0xa6c9253a #nosat': 1 # Uniform Random 6
+    'rs1_val == 0xc2f1c53e and rs2_val == 0xd05668ae #nosat': 1 # Uniform Random 7
+    'rs1_val == 0x9722c9a6 and rs2_val == 0x7bcad7c4 #nosat': 1 # Uniform Random 8
+    'rs1_val == 0xf7f1305a and rs2_val == 0x9bedfe39 #nosat': 1 # Uniform Random 9
+    'rs1_val == 0xd75739f8 and rs2_val == 0xe6fff3d9 #nosat': 1 # Uniform Random 10
+    'rs1_val == 0x90efb625 and rs2_val == 0x3150e5fa #nosat': 1 # Uniform Random 11
+    'rs1_val == 0x1fc493ca and rs2_val == 0x65408c73 #nosat': 1 # Uniform Random 12
+    'rs1_val == 0x8e2eac2a and rs2_val == 0xd169a3f8 #nosat': 1 # Uniform Random 13
+    'rs1_val == 0x35f9377f and rs2_val == 0xf4c30307 #nosat': 1 # Uniform Random 14
+    'rs1_val == 0x58d548aa and rs2_val == 0xa0569d76 #nosat': 1 # Uniform Random 15
+    'rs1_val == 0x55d98c6e and rs2_val == 0x2daf9ac7 #nosat': 2 # Uniform Random 16
+    'rs1_val == 0x74b8de87 and rs2_val == 0xf273b44c #nosat': 1 # Uniform Random 17
+    'rs1_val == 0xccce240c and rs2_val == 0x886c3a30 #nosat': 1 # Uniform Random 18
+    'rs1_val == 0xb49c83dc and rs2_val == 0xbb61a9cd #nosat': 1 # Uniform Random 19
+    'rs1_val == 0x254a9493 and rs2_val == 0xc5521660 #nosat': 1 # Uniform Random 20
     'rs2_val == 0x00000000 and rs1_val == 0x4FFE831A #nosat': 1 # 32 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0x80000000 and rs1_val == 0xAFC08ACE #nosat': 1 # 31 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0x40000000 and rs1_val == 0xAF6E9055 #nosat': 1 # 30 Trailing zeros for rs2_val. Other operands are random
@@ -10299,7 +10339,7 @@ xperm.n:
     'rs2_val == 0x68800000 and rs1_val == 0x29324E16 #nosat': 1 # 23 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0xB7400000 and rs1_val == 0xBC5FB419 #nosat': 1 # 22 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0x5CE00000 and rs1_val == 0x8E92E1B8 #nosat': 1 # 21 Trailing zeros for rs2_val. Other operands are random
-    'rs2_val == 0x49F00000 and rs1_val == 0x96A3B48B #nosat': 2 # 20 Trailing zeros for rs2_val. Other operands are random
+    'rs2_val == 0x49F00000 and rs1_val == 0x96A3B48B #nosat': 1 # 20 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0x53D80000 and rs1_val == 0x0A095049 #nosat': 1 # 19 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0x2EC40000 and rs1_val == 0x6F6E71B7 #nosat': 1 # 18 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0x8E860000 and rs1_val == 0x236CC43D #nosat': 1 # 17 Trailing zeros for rs2_val. Other operands are random
@@ -10550,8 +10590,8 @@ xperm.n:
     'rs1_val == 0xFFFFFFFA and rs2_val == 0x854A9657 #nosat': 1 # 29 Leading ones for rs1_val. Other operands are random
     'rs1_val == 0xFFFFFFFD and rs2_val == 0xCF84B683 #nosat': 1 # 30 Leading ones for rs1_val. Other operands are random
     'rs1_val == 0xFFFFFFFE and rs2_val == 0x93FDCAB8 #nosat': 1 # 31 Leading ones for rs1_val. Other operands are random
-    coverage: 264/264
-  total_coverage: 366/366
+    coverage: 284/284
+  total_coverage: 386/386
 zip:
   config:
   - check ISA:=regex(.*I.*K.*)
