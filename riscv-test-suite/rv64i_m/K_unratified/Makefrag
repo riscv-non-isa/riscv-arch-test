@@ -85,8 +85,10 @@ rv64k_sc_tests = \
   sm3p1-01 \
   sm3p1-rwp1 \
   sm3p1-rwp2 \
-  sm4ed-01 \
-  sm4ks-01 \
+  sm4ed-01.S \
+  sm4ed-rwp1.S \
+  sm4ks-01.S \
+  sm4ks-rwp1.S \
   unzip-01 \
   xnor-01 \
   xperm.b-01 \

@@ -253,7 +253,7 @@ function is_all_rows_hidden(value) {
 
 </script>
     <h1></h1>
-    <p>Report generated on 2021-05-20 13:40 GMT by <a href="https://pypi.python.org/pypi/riscof">riscof</a> v1.19.0</p>
+    <p>Report generated on 2021-05-27 16:26 GMT by <a href="https://pypi.python.org/pypi/riscof">riscof</a> v1.19.0</p>
     <h2>Environment</h2>
     <table id="environment">
       <tr>
@@ -4429,11 +4429,31 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
+          <td class="col-tname">/scratch/git-repo/github/neel/riscv-arch-test/riscv-test-suite/rv64i_m/K_unratified/src/sm4ed-rwp1.S</td>
+          <td class="col-tfprint">10180</td>          
+          <td class="col-tcode">4624</td>          
+          <td class="col-tdata">4</td>          
+          <td class="col-tsign">208</td>          
+          <td class="col-tcov">{'sm4ed'}</td>          
+        </tr></tbody>
+        
+        <tbody class= "  sizes-table-row" >
+        <tr>
           <td class="col-tname">/scratch/git-repo/github/neel/riscv-arch-test/riscv-test-suite/rv64i_m/K_unratified/src/sm4ks-01.S</td>
           <td class="col-tfprint">17212</td>          
           <td class="col-tcode">10640</td>          
           <td class="col-tdata">4</td>          
           <td class="col-tsign">1216</td>          
+          <td class="col-tcov">{'sm4ks'}</td>          
+        </tr></tbody>
+        
+        <tbody class= "  sizes-table-row" >
+        <tr>
+          <td class="col-tname">/scratch/git-repo/github/neel/riscv-arch-test/riscv-test-suite/rv64i_m/K_unratified/src/sm4ks-rwp1.S</td>
+          <td class="col-tfprint">10180</td>          
+          <td class="col-tcode">4624</td>          
+          <td class="col-tdata">4</td>          
+          <td class="col-tsign">208</td>          
           <td class="col-tcov">{'sm4ks'}</td>          
         </tr></tbody>
         
@@ -18799,79 +18819,79 @@ total_coverage: 215/215
    - check ISA:=regex(.*I.*ZKs.*)
    - check ISA:=regex(.*I.*ZKsed.*)
 op_comb:
-     rs1 != rs2: 150
+     rs1 != rs2: 254
      rs1 == rs2: 1
      coverage: 2/2
 opcode:
-     sm4ed: 151
+     sm4ed: 255
      coverage: 1/1
 rs1:
      x0: 1
      x1: 1
-     x10: 120
-     x11: 1
-     x12: 1
-     x13: 1
-     x14: 1
-     x15: 1
-     x16: 1
-     x17: 1
-     x18: 1
-     x19: 1
+     x10: 124
+     x11: 5
+     x12: 5
+     x13: 5
+     x14: 5
+     x15: 5
+     x16: 5
+     x17: 5
+     x18: 5
+     x19: 5
      x2: 1
-     x20: 1
-     x21: 1
-     x22: 1
-     x23: 1
-     x24: 1
-     x25: 1
-     x26: 1
-     x27: 1
-     x28: 1
-     x29: 1
+     x20: 5
+     x21: 5
+     x22: 5
+     x23: 5
+     x24: 5
+     x25: 5
+     x26: 5
+     x27: 5
+     x28: 5
+     x29: 5
      x3: 1
-     x30: 1
+     x30: 5
      x31: 1
      x4: 1
-     x5: 1
-     x6: 1
-     x7: 1
-     x8: 1
-     x9: 1
+     x5: 5
+     x6: 5
+     x7: 5
+     x8: 5
+     x9: 5
      coverage: 32/32
 rs2:
      x0: 1
-     x1: 1
-     x10: 1
-     x11: 120
-     x12: 1
-     x13: 1
-     x14: 1
-     x15: 1
-     x16: 1
-     x17: 1
-     x18: 1
-     x19: 1
-     x2: 1
-     x20: 1
-     x21: 1
-     x22: 1
-     x23: 1
-     x24: 1
-     x25: 1
-     x26: 1
-     x27: 1
-     x28: 1
-     x29: 1
-     x3: 1
+     x1: 2
+     x10: 5
+     x11: 124
+     x12: 5
+     x13: 5
+     x14: 5
+     x15: 5
+     x16: 5
+     x17: 5
+     x18: 5
+     x19: 5
+     x2: 3
+     x20: 5
+     x21: 5
+     x22: 5
+     x23: 5
+     x24: 5
+     x25: 5
+     x26: 5
+     x27: 4
+     x28: 3
+     x29: 2
+     x3: 4
      x30: 1
      x31: 1
-     x4: 1
-     x5: 1
-     x6: 1
-     x7: 1
-     x8: 1
-     x9: 1
+     x4: 5
+     x5: 5
+     x6: 5
+     x7: 5
+     x8: 5
+     x9: 5
      coverage: 32/32
 val_comb:
      'rs1_val == 0x0706050403020100 and rs2_val == 0x0f0e0d0c0b0a0908 and imm_val == 0 #nosat': 1  # Byte Count
@@ -19043,79 +19063,79 @@ total_coverage: 215/215
    - check ISA:=regex(.*I.*ZKs.*)
    - check ISA:=regex(.*I.*ZKsed.*)
 op_comb:
-     rs1 != rs2: 150
+     rs1 != rs2: 254
      rs1 == rs2: 1
      coverage: 2/2
 opcode:
-     sm4ks: 151
+     sm4ks: 255
      coverage: 1/1
 rs1:
      x0: 1
      x1: 1
-     x10: 120
-     x11: 1
-     x12: 1
-     x13: 1
-     x14: 1
-     x15: 1
-     x16: 1
-     x17: 1
-     x18: 1
-     x19: 1
+     x10: 124
+     x11: 5
+     x12: 5
+     x13: 5
+     x14: 5
+     x15: 5
+     x16: 5
+     x17: 5
+     x18: 5
+     x19: 5
      x2: 1
-     x20: 1
-     x21: 1
-     x22: 1
-     x23: 1
-     x24: 1
-     x25: 1
-     x26: 1
-     x27: 1
-     x28: 1
-     x29: 1
+     x20: 5
+     x21: 5
+     x22: 5
+     x23: 5
+     x24: 5
+     x25: 5
+     x26: 5
+     x27: 5
+     x28: 5
+     x29: 5
      x3: 1
-     x30: 1
+     x30: 5
      x31: 1
      x4: 1
-     x5: 1
-     x6: 1
-     x7: 1
-     x8: 1
-     x9: 1
+     x5: 5
+     x6: 5
+     x7: 5
+     x8: 5
+     x9: 5
      coverage: 32/32
 rs2:
      x0: 1
-     x1: 1
-     x10: 1
-     x11: 120
-     x12: 1
-     x13: 1
-     x14: 1
-     x15: 1
-     x16: 1
-     x17: 1
-     x18: 1
-     x19: 1
-     x2: 1
-     x20: 1
-     x21: 1
-     x22: 1
-     x23: 1
-     x24: 1
-     x25: 1
-     x26: 1
-     x27: 1
-     x28: 1
-     x29: 1
-     x3: 1
+     x1: 2
+     x10: 5
+     x11: 124
+     x12: 5
+     x13: 5
+     x14: 5
+     x15: 5
+     x16: 5
+     x17: 5
+     x18: 5
+     x19: 5
+     x2: 3
+     x20: 5
+     x21: 5
+     x22: 5
+     x23: 5
+     x24: 5
+     x25: 5
+     x26: 5
+     x27: 4
+     x28: 3
+     x29: 2
+     x3: 4
      x30: 1
      x31: 1
-     x4: 1
-     x5: 1
-     x6: 1
-     x7: 1
-     x8: 1
-     x9: 1
+     x4: 5
+     x5: 5
+     x6: 5
+     x7: 5
+     x8: 5
+     x9: 5
      coverage: 32/32
 val_comb:
      'rs1_val == 0x0706050403020100 and rs2_val == 0x0f0e0d0c0b0a0908 and imm_val == 0 #nosat': 1  # Byte Count
