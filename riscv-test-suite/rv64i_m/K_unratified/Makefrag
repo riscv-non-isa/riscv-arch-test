@@ -2,6 +2,7 @@
 #
 #
 # Copyright (c) 2021 Imperas Software Ltd., www.imperas.com
+# Copyright (c) 2021 Indian Institute of Technology Madras
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -23,55 +24,76 @@
 # Description: Makefrag for RV64K compliance tests
 
 rv64k_sc_tests = \
-	AES64DS-01 \
-	AES64DS-02 \
-	AES64DSM-01 \
-	AES64DSM-02 \
-	AES64ES-01 \
-	AES64ES-02 \
-	AES64ESM-01 \
-	AES64ESM-02 \
-	AES64IM-01 \
-	AES64IM-02 \
-	AES64KS1I-01 \
-	AES64KS1I-02 \
-	AES64KS2-01 \
-	AES64KS2-02 \
-	SHA256SIG0-01 \
-	SHA256SIG1-01 \
-	SHA256SUM0-01 \
-	SHA256SUM1-01 \
-	SHA512SIG0-01 \
-	SHA512SIG1-01 \
-	SHA512SUM0-01 \
-	SHA512SUM1-01 \
-	SM3P0-01 \
-	SM3P1-01 \
-	SM4ED-01 \
-	SM4ED-02 \
-	SM4KS-01 \
-	SM4KS-02 \
-	ROL-01 \
-	ROR-01 \
-	RORI-01 \
-	ROLW-01 \
-	RORIW-01 \
-	RORW-01 \
-	REV-B-01 \
-	REV8-01 \
-	REV8-W-01 \
-	CLMUL-01 \
-	CLMULH-01 \
-	ANDN-01 \
-	ORN-01 \
-	XNOR-01 \
-	PACK-01 \
-	PACKH-01 \
-	PACKU-01 \
-	PACKUW-01 \
-	PACKW-01 \
-	XPERM-N-01 \
-	XPERM-B-01 \
+  aes64ds-01 \
+  aes64ds-rwp1 \
+  aes64dsm-01 \
+  aes64dsm-rwp1 \
+  aes64es-01 \
+  aes64es-rwp1 \
+  aes64esm-01 \
+  aes64esm-rwp1 \
+  aes64im-01 \
+  aes64im-rwp1 \
+  aes64im-rwp2 \
+  aes64ks1i-01 \
+  aes64ks2-01 \
+  andn-01 \
+  clmul-01 \
+  clmulh-01 \
+  orn-01 \
+  pack-01 \
+  packh-01 \
+  packu-01 \
+  packuw-01 \
+  packw-01 \
+  rev.b-01 \
+  rev8-01 \
+  rev8.w-01 \
+  rol-01 \
+  rolw-01 \
+  ror-01 \
+  rori-01 \
+  roriw-01 \
+  rorw-01 \
+  sha256sig0-01 \
+  sha256sig0-rwp1 \
+  sha256sig0-rwp2 \
+  sha256sig1-01 \
+  sha256sig1-rwp1 \
+  sha256sig1-rwp2 \
+  sha256sum0-01 \
+  sha256sum0-rwp1 \
+  sha256sum0-rwp2 \
+  sha256sum1-01 \
+  sha256sum1-rwp1 \
+  sha256sum1-rwp2 \
+  sha512sig0-01 \
+  sha512sig0-rwp1 \
+  sha512sig0-rwp2 \
+  sha512sig1-01 \
+  sha512sig1-rwp1 \
+  sha512sig1-rwp2 \
+  sha512sum0-01 \
+  sha512sum0-rwp1 \
+  sha512sum0-rwp2 \
+  sha512sum1-01 \
+  sha512sum1-rwp1 \
+  sha512sum1-rwp2 \
+  sm3p0-01 \
+  sm3p0-rwp1 \
+  sm3p0-rwp2 \
+  sm3p1-01 \
+  sm3p1-rwp1 \
+  sm3p1-rwp2 \
+  sm4ed-01.S \
+  sm4ed-rwp1.S \
+  sm4ks-01.S \
+  sm4ks-rwp1.S \
+  unzip-01 \
+  xnor-01 \
+  xperm.b-01 \
+  xperm.n-01 \
+  zip-01 \
 
 rv64k_tests = $(addsuffix .elf, $(rv64k_sc_tests))
 

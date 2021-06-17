@@ -20,7 +20,7 @@ COMPILE_CMD=\
 	$$(RISCV_OBJCOPY) -O binary $$@ $$@.bin
 
 OBJ_CMD = $$(RISCV_OBJDUMP) $$@ -D > $$@.objdump; \
-		  $$(RISCV_OBJDUMP) $$@ --source-comment="// " > $$@.debug \
+		  $$(RISCV_OBJDUMP) $$@ --source-comment="// " > $$@.debug; \
 		  $$(RISCV_READELF) -a $$@ > $$@.readelf
 
 

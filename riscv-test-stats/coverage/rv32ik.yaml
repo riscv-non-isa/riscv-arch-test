@@ -1,0 +1,743 @@
+aes32dsi:
+    config: 
+      - check ISA:=regex(.*RV32.*I.*K.*)
+      - check ISA:=regex(.*RV32.*I.*ZKn.*)
+      - check ISA:=regex(.*RV32.*I.*ZKnd.*)
+    opcode: 
+      aes32dsi: 0
+    rs1: 
+      <<: *all_regs
+    rs2:
+      <<: *all_regs
+    op_comb: 
+      <<: *sfmt_op_comb
+    val_comb:
+      abstract_comb:
+        'byte_count(32,["rs1_val","rs2_val","imm_val"])': 0
+        'uniform_random(20, 100, ["rs1_val","rs2_val","imm_val"], [32, 32, 2])': 0
+
+aes32dsmi:
+    config: 
+      - check ISA:=regex(.*RV32.*I.*K.*)
+      - check ISA:=regex(.*RV32.*I.*ZKn.*)
+      - check ISA:=regex(.*RV32.*I.*ZKnd.*)
+    opcode: 
+      aes32dsmi: 0
+    rs1: 
+      <<: *all_regs
+    rs2:
+      <<: *all_regs
+    op_comb: 
+      <<: *sfmt_op_comb
+    val_comb:
+      abstract_comb:
+        'byte_count(32,["rs1_val","rs2_val","imm_val"])': 0
+        'uniform_random(20, 100, ["rs1_val","rs2_val","imm_val"], [32, 32, 2])': 0
+
+aes32esi:
+    config: 
+      - check ISA:=regex(.*RV32.*I.*K.*)
+      - check ISA:=regex(.*RV32.*I.*ZKn.*)
+      - check ISA:=regex(.*RV32.*I.*ZKne.*)
+    opcode: 
+      aes32esi: 0
+    rs1: 
+      <<: *all_regs
+    rs2:
+      <<: *all_regs
+    op_comb: 
+      <<: *sfmt_op_comb
+    val_comb:
+      abstract_comb:
+        'byte_count(32,["rs1_val","rs2_val","imm_val"])': 0
+        'uniform_random(20, 100, ["rs1_val","rs2_val","imm_val"], [32, 32, 2])': 0
+
+aes32esmi:
+    config: 
+      - check ISA:=regex(.*RV32.*I.*K.*)
+      - check ISA:=regex(.*RV32.*I.*ZKn.*)
+      - check ISA:=regex(.*RV32.*I.*ZKne.*)
+    opcode: 
+      aes32esmi: 0
+    rs1: 
+      <<: *all_regs
+    rs2:
+      <<: *all_regs
+    op_comb: 
+      <<: *sfmt_op_comb
+    val_comb:
+      abstract_comb:
+        'byte_count(32,["rs1_val","rs2_val","imm_val"])': 0
+        'uniform_random(20, 100, ["rs1_val","rs2_val","imm_val"], [32, 32, 2])': 0
+
+sm4ed:
+    config: 
+      - check ISA:=regex(.*I.*K.*)
+      - check ISA:=regex(.*I.*ZKs.*)
+      - check ISA:=regex(.*I.*ZKsed.*)
+    opcode: 
+      sm4ed: 0
+    rs1: 
+      <<: *all_regs
+    rs2:
+      <<: *all_regs
+    op_comb: 
+      <<: *sfmt_op_comb
+    val_comb:
+      abstract_comb:
+        'byte_count(32,["rs1_val","rs2_val","imm_val"])': 0
+        'uniform_random(20, 100, ["rs1_val","rs2_val","imm_val"], [32, 32, 2])': 0
+
+sm4ks:
+    config: 
+      - check ISA:=regex(.*I.*K.*)
+      - check ISA:=regex(.*I.*ZKs.*)
+      - check ISA:=regex(.*I.*ZKsed.*)
+    opcode: 
+      sm4ks: 0
+    rs1: 
+      <<: *all_regs
+    rs2:
+      <<: *all_regs
+    op_comb: 
+      <<: *sfmt_op_comb
+    val_comb:
+      abstract_comb:      
+        'byte_count(32,["rs1_val","rs2_val","imm_val"])': 0
+        'uniform_random(20, 100, ["rs1_val","rs2_val","imm_val"], [32, 32, 2])': 0
+        
+sha256sig0:
+    config: 
+      - check ISA:=regex(.*I.*K.*)
+      - check ISA:=regex(.*I.*ZKn.*)
+      - check ISA:=regex(.*I.*ZKnh.*)
+    opcode: 
+      sha256sig0: 0
+    rs1: 
+      <<: *all_regs
+    rd:
+      <<: *all_regs
+    op_comb: 
+      <<: *ifmt_op_comb
+    val_comb:
+      abstract_comb:      
+        'walking_ones("rs1_val", xlen, False)': 0
+        'walking_zeros("rs1_val", xlen, False)': 0
+        'uniform_random(20, 100, ["rs1_val"], [xlen])': 0
+
+sha256sig1:
+    config: 
+      - check ISA:=regex(.*I.*K.*)
+      - check ISA:=regex(.*I.*ZKn.*)
+      - check ISA:=regex(.*I.*ZKnh.*)
+    opcode: 
+      sha256sig1: 0
+    rs1: 
+      <<: *all_regs
+    rd:
+      <<: *all_regs
+    op_comb: 
+      <<: *ifmt_op_comb
+    val_comb:
+      abstract_comb:      
+        'walking_ones("rs1_val", xlen, False)': 0
+        'walking_zeros("rs1_val", xlen, False)': 0
+        'uniform_random(20, 100, ["rs1_val"], [xlen])': 0
+
+sha256sum0:
+    config: 
+      - check ISA:=regex(.*I.*K.*)
+      - check ISA:=regex(.*I.*ZKn.*)
+      - check ISA:=regex(.*I.*ZKnh.*)
+    opcode: 
+      sha256sum0: 0
+    rs1: 
+      <<: *all_regs
+    rd:
+      <<: *all_regs
+    op_comb: 
+      <<: *ifmt_op_comb
+    val_comb:
+      abstract_comb:      
+        'walking_ones("rs1_val", xlen, False)': 0
+        'walking_zeros("rs1_val", xlen, False)': 0
+        'uniform_random(20, 100, ["rs1_val"], [xlen])': 0
+
+sha256sum1:
+    config: 
+      - check ISA:=regex(.*I.*K.*)
+      - check ISA:=regex(.*I.*ZKn.*)
+      - check ISA:=regex(.*I.*ZKnh.*)
+    opcode: 
+      sha256sum1: 0
+    rs1: 
+      <<: *all_regs
+    rd:
+      <<: *all_regs
+    op_comb: 
+      <<: *ifmt_op_comb
+    val_comb:
+      abstract_comb:      
+        'walking_ones("rs1_val", xlen, False)': 0
+        'walking_zeros("rs1_val", xlen, False)': 0
+        'uniform_random(20, 100, ["rs1_val"], [xlen])': 0
+        
+sm3p0:
+    config: 
+      - check ISA:=regex(.*I.*K.*)
+      - check ISA:=regex(.*I.*ZKn.*)
+      - check ISA:=regex(.*I.*ZKsh.*)
+    opcode: 
+      sm3p0: 0
+    rs1: 
+      <<: *all_regs
+    rd:
+      <<: *all_regs
+    op_comb: 
+      <<: *ifmt_op_comb
+    val_comb:
+      abstract_comb:      
+        'walking_ones("rs1_val", xlen, False)': 0
+        'walking_zeros("rs1_val", xlen, False)': 0
+        'uniform_random(20, 100, ["rs1_val"], [xlen])': 0
+
+sm3p1:
+    config: 
+      - check ISA:=regex(.*I.*K.*)
+      - check ISA:=regex(.*I.*ZKn.*)
+      - check ISA:=regex(.*I.*ZKsh.*)
+    opcode: 
+      sm3p1: 0
+    rs1: 
+      <<: *all_regs
+    rd:
+      <<: *all_regs
+    op_comb: 
+      <<: *ifmt_op_comb
+    val_comb:
+      abstract_comb:      
+        'walking_ones("rs1_val", xlen, False)': 0
+        'walking_zeros("rs1_val", xlen, False)': 0
+        'uniform_random(20, 100, ["rs1_val"], [xlen])': 0
+
+sha512sig0h:
+    config: 
+      - check ISA:=regex(.*RV32.*I.*K.*)
+      - check ISA:=regex(.*RV32.*I.*ZKn.*)
+      - check ISA:=regex(.*RV32.*I.*ZKnh.*)
+    opcode: 
+      sha512sig0h: 0
+    rs1: 
+      <<: *all_regs
+    rs2: 
+      <<: *all_regs
+    rd:
+      <<: *all_regs
+    op_comb: 
+      <<: *rfmt_op_comb
+    val_comb:
+      abstract_comb:      
+        'walking_ones("rs1_val", xlen, False)': 0
+        'walking_ones("rs2_val", xlen, False)': 0
+        'walking_zeros("rs1_val", xlen, False)': 0
+        'walking_zeros("rs2_val", xlen, False)': 0
+        'uniform_random(20, 100, ["rs1_val","rs2_val"], [xlen, xlen])': 0
+        
+sha512sig0l:
+    config: 
+      - check ISA:=regex(.*RV32.*I.*K.*)
+      - check ISA:=regex(.*RV32.*I.*ZKn.*)
+      - check ISA:=regex(.*RV32.*I.*ZKnh.*)
+    opcode: 
+      sha512sig0l: 0
+    rs1: 
+      <<: *all_regs
+    rs2: 
+      <<: *all_regs
+    rd:
+      <<: *all_regs
+    op_comb: 
+      <<: *rfmt_op_comb
+    val_comb:
+      abstract_comb:      
+        'walking_ones("rs1_val", xlen, False)': 0
+        'walking_ones("rs2_val", xlen, False)': 0
+        'walking_zeros("rs1_val", xlen, False)': 0
+        'walking_zeros("rs2_val", xlen, False)': 0
+        'uniform_random(20, 100, ["rs1_val","rs2_val"], [xlen, xlen])': 0
+        
+sha512sig1h:
+    config: 
+      - check ISA:=regex(.*RV32.*I.*K.*)
+      - check ISA:=regex(.*RV32.*I.*ZKn.*)
+      - check ISA:=regex(.*RV32.*I.*ZKnh.*)
+    opcode: 
+      sha512sig1h: 0
+    rs1: 
+      <<: *all_regs
+    rs2: 
+      <<: *all_regs
+    rd:
+      <<: *all_regs
+    op_comb: 
+      <<: *rfmt_op_comb
+    val_comb:
+      abstract_comb:      
+        'walking_ones("rs1_val", xlen, False)': 0
+        'walking_ones("rs2_val", xlen, False)': 0
+        'walking_zeros("rs1_val", xlen, False)': 0
+        'walking_zeros("rs2_val", xlen, False)': 0
+        'uniform_random(20, 100, ["rs1_val","rs2_val"], [xlen, xlen])': 0
+        
+sha512sig1l:
+    config: 
+      - check ISA:=regex(.*RV32.*I.*K.*)
+      - check ISA:=regex(.*RV32.*I.*ZKn.*)
+      - check ISA:=regex(.*RV32.*I.*ZKnh.*)
+    opcode: 
+      sha512sig1l: 0
+    rs1: 
+      <<: *all_regs
+    rs2: 
+      <<: *all_regs
+    rd:
+      <<: *all_regs
+    op_comb: 
+      <<: *rfmt_op_comb
+    val_comb:
+      abstract_comb:      
+        'walking_ones("rs1_val", xlen, False)': 0
+        'walking_ones("rs2_val", xlen, False)': 0
+        'walking_zeros("rs1_val", xlen, False)': 0
+        'walking_zeros("rs2_val", xlen, False)': 0
+        'uniform_random(20, 100, ["rs1_val","rs2_val"], [xlen, xlen])': 0
+
+sha512sum0r:
+    config: 
+      - check ISA:=regex(.*RV32.*I.*K.*)
+      - check ISA:=regex(.*RV32.*I.*ZKn.*)
+      - check ISA:=regex(.*RV32.*I.*ZKnh.*)
+    opcode: 
+      sha512sum0r: 0
+    rs1: 
+      <<: *all_regs
+    rs2: 
+      <<: *all_regs
+    rd:
+      <<: *all_regs
+    op_comb: 
+      <<: *rfmt_op_comb
+    val_comb:
+      abstract_comb:      
+        'walking_ones("rs1_val", xlen, False)': 0
+        'walking_ones("rs2_val", xlen, False)': 0
+        'walking_zeros("rs1_val", xlen, False)': 0
+        'walking_zeros("rs2_val", xlen, False)': 0
+        'uniform_random(20, 100, ["rs1_val","rs2_val"], [xlen, xlen])': 0
+        
+sha512sum1r:
+    config: 
+      - check ISA:=regex(.*RV32.*I.*K.*)
+      - check ISA:=regex(.*RV32.*I.*ZKn.*)
+      - check ISA:=regex(.*RV32.*I.*ZKnh.*)
+    opcode: 
+      sha512sum1r: 0
+    rs1: 
+      <<: *all_regs
+    rs2: 
+      <<: *all_regs
+    rd:
+      <<: *all_regs
+    op_comb: 
+      <<: *rfmt_op_comb
+    val_comb:
+      abstract_comb:      
+        'walking_ones("rs1_val", xlen, False)': 0
+        'walking_ones("rs2_val", xlen, False)': 0
+        'walking_zeros("rs1_val", xlen, False)': 0
+        'walking_zeros("rs2_val", xlen, False)': 0
+        'uniform_random(20, 100, ["rs1_val","rs2_val"], [xlen, xlen])': 0
+
+ror:
+    config: 
+      - check ISA:=regex(.*I.*K.*)
+      - check ISA:=regex(.*I.*ZKs.*)
+      - check ISA:=regex(.*I.*ZKn.*)
+      - check ISA:=regex(.*I.*ZKb.*)
+    opcode: 
+      ror: 0
+    rs1: 
+      <<: *all_regs
+    rs2: 
+      <<: *all_regs
+    rd:
+      <<: *all_regs
+    op_comb: 
+      <<: *rfmt_op_comb
+    val_comb:
+      abstract_comb:      
+        'leading_ones(32, ["rs1_val","rs2_val"],[xlen,xlen])': 0
+        'trailing_ones(32, ["rs1_val","rs2_val"],[xlen,xlen])': 0
+        'leading_zeros(32, ["rs1_val","rs2_val"],[xlen,xlen])': 0
+        'trailing_zeros(32, ["rs1_val","rs2_val"],[xlen,xlen])': 0
+        
+rol:
+    config: 
+      - check ISA:=regex(.*I.*K.*)
+      - check ISA:=regex(.*I.*ZKs.*)
+      - check ISA:=regex(.*I.*ZKn.*)
+      - check ISA:=regex(.*I.*ZKb.*)
+    opcode: 
+      rol: 0
+    rs1: 
+      <<: *all_regs
+    rs2: 
+      <<: *all_regs
+    rd:
+      <<: *all_regs
+    op_comb: 
+      <<: *rfmt_op_comb
+    val_comb:
+      abstract_comb:      
+        'leading_ones(32, ["rs1_val","rs2_val"],[xlen,xlen])': 0
+        'trailing_ones(32, ["rs1_val","rs2_val"],[xlen,xlen])': 0
+        'leading_zeros(32, ["rs1_val","rs2_val"],[xlen,xlen])': 0
+        'trailing_zeros(32, ["rs1_val","rs2_val"],[xlen,xlen])': 0
+        
+rori:
+    config: 
+      - check ISA:=regex(.*I.*K.*)
+      - check ISA:=regex(.*I.*ZKs.*)
+      - check ISA:=regex(.*I.*ZKn.*)
+      - check ISA:=regex(.*I.*ZKb.*)
+    opcode: 
+      rori: 0
+    rs1: 
+      <<: *all_regs
+    rd:
+      <<: *all_regs
+    op_comb: 
+      <<: *ifmt_op_comb
+    val_comb:
+      abstract_comb:      
+        'leading_ones(32, ["rs1_val", "imm_val"], [32,5])': 0
+        'trailing_ones(32, ["rs1_val", "imm_val"], [32,5])': 0
+        'leading_zeros(32, ["rs1_val", "imm_val"], [32,5])': 0
+        'trailing_zeros(32, ["rs1_val", "imm_val"], [32,5])': 0
+        
+rev.b:
+    config: 
+      - check ISA:=regex(.*I.*K.*)
+      - check ISA:=regex(.*I.*ZKs.*)
+      - check ISA:=regex(.*I.*ZKn.*)
+      - check ISA:=regex(.*I.*ZKb.*)
+    opcode: 
+      grevi: 0
+    rs1: 
+      <<: *all_regs
+    rd:
+      <<: *all_regs
+    op_comb: 
+      <<: *ifmt_op_comb
+    val_comb:
+      abstract_comb:      
+        'leading_ones(32, ["rs1_val"],[xlen])': 0
+        'trailing_ones(32, ["rs1_val"],[xlen])': 0
+        'leading_zeros(32, ["rs1_val"],[xlen])': 0
+        'trailing_zeros(32, ["rs1_val"],[xlen])': 0
+        
+rev8:
+    config: 
+      - check ISA:=regex(.*I.*K.*)
+      - check ISA:=regex(.*I.*ZKs.*)
+      - check ISA:=regex(.*I.*ZKn.*)
+      - check ISA:=regex(.*I.*ZKb.*)
+    opcode: 
+      grevi: 0
+    rs1: 
+      <<: *all_regs
+    rd:
+      <<: *all_regs
+    op_comb: 
+      <<: *ifmt_op_comb
+    val_comb:
+      abstract_comb:      
+        'leading_ones(32, ["rs1_val"],[xlen])': 0
+        'trailing_ones(32, ["rs1_val"],[xlen])': 0
+        'leading_zeros(32, ["rs1_val"],[xlen])': 0
+        'trailing_zeros(32, ["rs1_val"],[xlen])': 0
+        
+zip:
+    config: 
+      - check ISA:=regex(.*I.*K.*)
+      - check ISA:=regex(.*I.*ZKs.*)
+      - check ISA:=regex(.*I.*ZKn.*)
+      - check ISA:=regex(.*I.*ZKb.*)
+    opcode: 
+      shfli: 0
+    rs1: 
+      <<: *all_regs
+    rd:
+      <<: *all_regs
+    op_comb: 
+      <<: *ifmt_op_comb
+    val_comb:
+      abstract_comb:      
+        'leading_ones(32, ["rs1_val"],[xlen])': 0
+        'trailing_ones(32, ["rs1_val"],[xlen])': 0
+        'leading_zeros(32, ["rs1_val"],[xlen])': 0
+        'trailing_zeros(32, ["rs1_val"],[xlen])': 0
+
+unzip:
+    config: 
+      - check ISA:=regex(.*I.*K.*)
+      - check ISA:=regex(.*I.*ZKs.*)
+      - check ISA:=regex(.*I.*ZKn.*)
+      - check ISA:=regex(.*I.*ZKb.*)
+    opcode: 
+      unshfli: 0
+    rs1: 
+      <<: *all_regs
+    rd:
+      <<: *all_regs
+    op_comb: 
+      <<: *ifmt_op_comb
+    val_comb:
+      abstract_comb:      
+        'leading_ones(32, ["rs1_val"],[xlen])': 0
+        'trailing_ones(32, ["rs1_val"],[xlen])': 0
+        'leading_zeros(32, ["rs1_val"],[xlen])': 0
+        'trailing_zeros(32, ["rs1_val"],[xlen])': 0
+
+clmul:
+    config: 
+      - check ISA:=regex(.*I.*K.*)
+      - check ISA:=regex(.*I.*ZKs.*)
+      - check ISA:=regex(.*I.*ZKn.*)
+      - check ISA:=regex(.*I.*ZKb.*)
+    opcode: 
+      clmul: 0
+    rs1: 
+      <<: *all_regs
+    rs2: 
+      <<: *all_regs
+    rd:
+      <<: *all_regs
+    op_comb: 
+      <<: *rfmt_op_comb
+    val_comb:
+      abstract_comb:      
+        'leading_ones(32, ["rs1_val","rs2_val"],[xlen,xlen])': 0
+        'trailing_ones(32, ["rs1_val","rs2_val"],[xlen,xlen])': 0
+        'leading_zeros(32, ["rs1_val","rs2_val"],[xlen,xlen])': 0
+        'trailing_zeros(32, ["rs1_val","rs2_val"],[xlen,xlen])': 0
+        
+clmulh:
+    config: 
+      - check ISA:=regex(.*I.*K.*)
+      - check ISA:=regex(.*I.*ZKs.*)
+      - check ISA:=regex(.*I.*ZKn.*)
+      - check ISA:=regex(.*I.*ZKb.*)
+    opcode: 
+      clmulh: 0
+    rs1: 
+      <<: *all_regs
+    rs2: 
+      <<: *all_regs
+    rd:
+      <<: *all_regs
+    op_comb: 
+      <<: *rfmt_op_comb
+    val_comb:
+      abstract_comb:      
+        'leading_ones(32, ["rs1_val","rs2_val"],[xlen,xlen])': 0
+        'trailing_ones(32, ["rs1_val","rs2_val"],[xlen,xlen])': 0
+        'leading_zeros(32, ["rs1_val","rs2_val"],[xlen,xlen])': 0
+        'trailing_zeros(32, ["rs1_val","rs2_val"],[xlen,xlen])': 0
+
+andn:
+    config: 
+      - check ISA:=regex(.*I.*K.*)
+      - check ISA:=regex(.*I.*ZKs.*)
+      - check ISA:=regex(.*I.*ZKn.*)
+      - check ISA:=regex(.*I.*ZKb.*)
+    opcode: 
+      andn: 0
+    rs1: 
+      <<: *all_regs
+    rs2: 
+      <<: *all_regs
+    rd:
+      <<: *all_regs
+    op_comb: 
+      <<: *rfmt_op_comb
+    val_comb:
+      abstract_comb:      
+        'leading_ones(32, ["rs1_val","rs2_val"],[xlen,xlen])': 0
+        'trailing_ones(32, ["rs1_val","rs2_val"],[xlen,xlen])': 0
+        'leading_zeros(32, ["rs1_val","rs2_val"],[xlen,xlen])': 0
+        'trailing_zeros(32, ["rs1_val","rs2_val"],[xlen,xlen])': 0
+
+orn:
+    config: 
+      - check ISA:=regex(.*I.*K.*)
+      - check ISA:=regex(.*I.*ZKs.*)
+      - check ISA:=regex(.*I.*ZKn.*)
+      - check ISA:=regex(.*I.*ZKb.*)
+    opcode: 
+      orn: 0
+    rs1: 
+      <<: *all_regs
+    rs2: 
+      <<: *all_regs
+    rd:
+      <<: *all_regs
+    op_comb: 
+      <<: *rfmt_op_comb
+    val_comb:
+      abstract_comb:      
+        'leading_ones(32, ["rs1_val","rs2_val"],[xlen,xlen])': 0
+        'trailing_ones(32, ["rs1_val","rs2_val"],[xlen,xlen])': 0
+        'leading_zeros(32, ["rs1_val","rs2_val"],[xlen,xlen])': 0
+        'trailing_zeros(32, ["rs1_val","rs2_val"],[xlen,xlen])': 0
+
+xnor:
+    config: 
+      - check ISA:=regex(.*I.*K.*)
+      - check ISA:=regex(.*I.*ZKs.*)
+      - check ISA:=regex(.*I.*ZKn.*)
+      - check ISA:=regex(.*I.*ZKb.*)
+    opcode: 
+      xnor: 0
+    rs1: 
+      <<: *all_regs
+    rs2: 
+      <<: *all_regs
+    rd:
+      <<: *all_regs
+    op_comb: 
+      <<: *rfmt_op_comb
+    val_comb:
+      abstract_comb:      
+        'leading_ones(32, ["rs1_val","rs2_val"],[xlen,xlen])': 0
+        'trailing_ones(32, ["rs1_val","rs2_val"],[xlen,xlen])': 0
+        'leading_zeros(32, ["rs1_val","rs2_val"],[xlen,xlen])': 0
+        'trailing_zeros(32, ["rs1_val","rs2_val"],[xlen,xlen])': 0
+
+pack:
+    config: 
+      - check ISA:=regex(.*I.*K.*)
+      - check ISA:=regex(.*I.*ZKs.*)
+      - check ISA:=regex(.*I.*ZKn.*)
+      - check ISA:=regex(.*I.*ZKb.*)
+    opcode: 
+      pack: 0
+    rs1: 
+      <<: *all_regs
+    rs2: 
+      <<: *all_regs
+    rd:
+      <<: *all_regs
+    op_comb: 
+      <<: *rfmt_op_comb
+    val_comb:
+      abstract_comb:      
+        'leading_ones(32, ["rs1_val","rs2_val"],[xlen,xlen])': 0
+        'trailing_ones(32, ["rs1_val","rs2_val"],[xlen,xlen])': 0
+        'leading_zeros(32, ["rs1_val","rs2_val"],[xlen,xlen])': 0
+        'trailing_zeros(32, ["rs1_val","rs2_val"],[xlen,xlen])': 0
+
+packu:
+    config: 
+      - check ISA:=regex(.*I.*K.*)
+      - check ISA:=regex(.*I.*ZKs.*)
+      - check ISA:=regex(.*I.*ZKn.*)
+      - check ISA:=regex(.*I.*ZKb.*)
+    opcode: 
+      packu: 0
+    rs1: 
+      <<: *all_regs
+    rs2: 
+      <<: *all_regs
+    rd:
+      <<: *all_regs
+    op_comb: 
+      <<: *rfmt_op_comb
+    val_comb:
+      abstract_comb:      
+        'leading_ones(32, ["rs1_val","rs2_val"],[xlen,xlen])': 0
+        'trailing_ones(32, ["rs1_val","rs2_val"],[xlen,xlen])': 0
+        'leading_zeros(32, ["rs1_val","rs2_val"],[xlen,xlen])': 0
+        'trailing_zeros(32, ["rs1_val","rs2_val"],[xlen,xlen])': 0
+        
+packh:
+    config: 
+      - check ISA:=regex(.*I.*K.*)
+      - check ISA:=regex(.*I.*ZKs.*)
+      - check ISA:=regex(.*I.*ZKn.*)
+      - check ISA:=regex(.*I.*ZKb.*)
+    opcode: 
+      packh: 0
+    rs1: 
+      <<: *all_regs
+    rs2: 
+      <<: *all_regs
+    rd:
+      <<: *all_regs
+    op_comb: 
+      <<: *rfmt_op_comb
+    val_comb:
+      abstract_comb:      
+        'leading_ones(32, ["rs1_val","rs2_val"],[xlen,xlen])': 0
+        'trailing_ones(32, ["rs1_val","rs2_val"],[xlen,xlen])': 0
+        'leading_zeros(32, ["rs1_val","rs2_val"],[xlen,xlen])': 0
+        'trailing_zeros(32, ["rs1_val","rs2_val"],[xlen,xlen])': 0
+
+xperm.n:
+    config: 
+      - check ISA:=regex(.*I.*K.*)
+      - check ISA:=regex(.*I.*ZKs.*)
+      - check ISA:=regex(.*I.*ZKb.*)
+      - check ISA:=regex(.*I.*ZKn.*)
+    opcode: 
+      xperm.n: 0
+    rs1: 
+      <<: *all_regs
+    rs2: 
+      <<: *all_regs
+    rd:
+      <<: *all_regs
+    op_comb: 
+      <<: *rfmt_op_comb
+    val_comb:
+      abstract_comb:      
+        'uniform_random(20, 100, ["rs1_val","rs2_val"], [xlen, xlen])': 0
+        'leading_ones(32, ["rs1_val","rs2_val"],[xlen,xlen])': 0
+        'trailing_ones(32, ["rs1_val","rs2_val"],[xlen,xlen])': 0
+        'leading_zeros(32, ["rs1_val","rs2_val"],[xlen,xlen])': 0
+        'trailing_zeros(32, ["rs1_val","rs2_val"],[xlen,xlen])': 0
+        
+xperm.b:
+    config: 
+      - check ISA:=regex(.*I.*K.*)
+      - check ISA:=regex(.*I.*ZKs.*)
+      - check ISA:=regex(.*I.*ZKn.*)
+      - check ISA:=regex(.*I.*ZKb.*)
+    opcode: 
+      xperm.b: 0
+    rs1: 
+      <<: *all_regs
+    rs2: 
+      <<: *all_regs
+    rd:
+      <<: *all_regs
+    op_comb: 
+      <<: *rfmt_op_comb
+    val_comb:
+      abstract_comb:      
+        'uniform_random(20, 100, ["rs1_val","rs2_val"], [xlen, xlen])': 0
+        'leading_ones(32, ["rs1_val","rs2_val"],[xlen,xlen])': 0
+        'trailing_ones(32, ["rs1_val","rs2_val"],[xlen,xlen])': 0
+        'leading_zeros(32, ["rs1_val","rs2_val"],[xlen,xlen])': 0
+        'trailing_zeros(32, ["rs1_val","rs2_val"],[xlen,xlen])': 0
+        
