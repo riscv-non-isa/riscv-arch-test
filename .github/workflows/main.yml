@@ -36,7 +36,7 @@ jobs:
       - name: Tag
         if: github.ref == 'refs/heads/master'
         run: |
-          git tag ${{ steps.get_version.outputs.version }}
+          git tag -a ${{ steps.get_version.outputs.version }}
           git push origin ${{ steps.get_version.outputs.version }}
 
       - name: Build PDF
