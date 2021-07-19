@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## [2.4.4] - 2021-07-19
+  - Annotating tags during releases
+
 ## [2.4.3] - 2021-05-20
   - added new 64-bit K crypto tests as per the test-plan presented by the scalar crypto task group
     [here](https://github.com/riscv/riscv-crypto/blob/d89dfee25780f79c162da4eb69cd9076dd701c88/tests/compliance/test-plan-scalar.adoc)
