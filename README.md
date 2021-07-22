@@ -65,7 +65,7 @@ The files [`COPYING.BSD`](./COPYING.BSD), [`COPYING.APACHE`](./COPYING.APACHE) a
 
 ## Quick Links:
 
-- RISCOF \[[DOCS](https://riscof.readthedocs.io/en/latest/)\] \[[REPO](https://gitlab.com/incoresemi/riscof/)\]: This is the next version of the architectural test framework currently under development
+- RISCOF \[[DOCS](https://riscof.readthedocs.io/en/latest/)\] \[[REPO](https://github.com/riscv/riscof/)\]: This is the next version of the architectural test framework currently under development
 - RISCV-ISAC \[[DOCS](https://riscv-isac.readthedocs.io/en/latest/index.html)\] \[[REPO](https://github.com/riscv/riscv-isac)\] : This is an ISA level coverage extraction tool for RISC-V which used to generate the coverage statistics of the architectural tests.
 - RISCV-CTG: \[[DOCS](https://riscv-ctg.readthedocs.io/en/latest/index.html)\]\[[REPO](https://github.com/riscv/riscv-ctg)\]: This is a RISC-V Architectural Test generator used to generate some of the tests already checked into this repository. Docs to be updated soon !!
 - [Videos](https://youtu.be/VIW1or1Oubo): This Global Forum 2020 video provides an introduction to the above mentioned tools
