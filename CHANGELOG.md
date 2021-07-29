@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## [2.4.4] - 2021-07-29
+  - fix for issue #195
+
 ## [2.4.4] - 2021-07-19
   - Annotating tags during releases
 
