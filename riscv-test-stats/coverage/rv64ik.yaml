@@ -341,11 +341,13 @@ sm4ed:
       <<: *all_regs
     rs2:
       <<: *all_regs
+    rd:
+      <<: *all_regs
     op_comb: 
-      <<: *sfmt_op_comb
+      <<: *rfmt_op_comb
     val_comb:
       abstract_comb:
-        'byte_count(64, ["rs1_val","rs2_val","imm_val"])': 0
+        'byte_count(64, ["rs1_val","rs2_val","imm_val"], "Y")': 0
         'uniform_random(20, 100, ["rs1_val","rs2_val","imm_val"], [64, 64, 2])': 0
 
 sm4ks:
@@ -359,11 +361,13 @@ sm4ks:
       <<: *all_regs
     rs2:
       <<: *all_regs
+    rd:
+      <<: *all_regs
     op_comb: 
-      <<: *sfmt_op_comb
+      <<: *rfmt_op_comb
     val_comb:
       abstract_comb:      
-        'byte_count(64, ["rs1_val","rs2_val","imm_val"])': 0
+        'byte_count(64, ["rs1_val","rs2_val","imm_val"], "Y")': 0
         'uniform_random(20, 100, ["rs1_val","rs2_val","imm_val"], [64, 64, 2])': 0
         
 ror:
@@ -562,47 +566,7 @@ rev8.w:
         'trailing_ones(64, ["rs1_val"], [64])': 0
         'leading_zeros(64, ["rs1_val"], [64])': 0
         'trailing_zeros(64, ["rs1_val"], [64])': 0
-zip:
-    config: 
-      - check ISA:=regex(.*I.*K.*)
-      - check ISA:=regex(.*I.*ZKs.*)
-      - check ISA:=regex(.*I.*ZKn.*)
-      - check ISA:=regex(.*I.*ZKb.*)
-    opcode: 
-      shfli: 0
-    rs1: 
-      <<: *all_regs
-    rd:
-      <<: *all_regs
-    op_comb: 
-      <<: *ifmt_op_comb
-    val_comb:
-      abstract_comb:      
-        'leading_ones(64, ["rs1_val"],[xlen])': 0
-        'trailing_ones(64, ["rs1_val"],[xlen])': 0
-        'leading_zeros(64, ["rs1_val"],[xlen])': 0
-        'trailing_zeros(64, ["rs1_val"],[xlen])': 0
 
-unzip:
-    config: 
-      - check ISA:=regex(.*I.*K.*)
-      - check ISA:=regex(.*I.*ZKs.*)
-      - check ISA:=regex(.*I.*ZKn.*)
-      - check ISA:=regex(.*I.*ZKb.*)
-    opcode: 
-      unshfli: 0
-    rs1: 
-      <<: *all_regs
-    rd:
-      <<: *all_regs
-    op_comb: 
-      <<: *ifmt_op_comb
-    val_comb:
-      abstract_comb:      
-        'leading_ones(64, ["rs1_val"],[xlen])': 0
-        'trailing_ones(64, ["rs1_val"],[xlen])': 0
-        'leading_zeros(64, ["rs1_val"],[xlen])': 0
-        'trailing_zeros(64, ["rs1_val"],[xlen])': 0
 clmul:
     config: 
       - check ISA:=regex(.*I.*K.*)

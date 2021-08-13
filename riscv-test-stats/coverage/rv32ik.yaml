@@ -9,8 +9,10 @@ aes32dsi:
       <<: *all_regs
     rs2:
       <<: *all_regs
+    rd:
+      <<: *all_regs
     op_comb: 
-      <<: *sfmt_op_comb
+      <<: *rfmt_op_comb
     val_comb:
       abstract_comb:
         'byte_count(32,["rs1_val","rs2_val","imm_val"])': 0
@@ -27,8 +29,10 @@ aes32dsmi:
       <<: *all_regs
     rs2:
       <<: *all_regs
+    rd:
+      <<: *all_regs
     op_comb: 
-      <<: *sfmt_op_comb
+      <<: *rfmt_op_comb
     val_comb:
       abstract_comb:
         'byte_count(32,["rs1_val","rs2_val","imm_val"])': 0
@@ -45,8 +49,10 @@ aes32esi:
       <<: *all_regs
     rs2:
       <<: *all_regs
+    rd:
+      <<: *all_regs
     op_comb: 
-      <<: *sfmt_op_comb
+      <<: *rfmt_op_comb
     val_comb:
       abstract_comb:
         'byte_count(32,["rs1_val","rs2_val","imm_val"])': 0
@@ -63,8 +69,10 @@ aes32esmi:
       <<: *all_regs
     rs2:
       <<: *all_regs
+    rd:
+      <<: *all_regs
     op_comb: 
-      <<: *sfmt_op_comb
+      <<: *rfmt_op_comb
     val_comb:
       abstract_comb:
         'byte_count(32,["rs1_val","rs2_val","imm_val"])': 0
@@ -81,8 +89,10 @@ sm4ed:
       <<: *all_regs
     rs2:
       <<: *all_regs
+    rd:
+      <<: *all_regs
     op_comb: 
-      <<: *sfmt_op_comb
+      <<: *rfmt_op_comb
     val_comb:
       abstract_comb:
         'byte_count(32,["rs1_val","rs2_val","imm_val"])': 0
@@ -99,8 +109,10 @@ sm4ks:
       <<: *all_regs
     rs2:
       <<: *all_regs
+    rd:
+      <<: *all_regs
     op_comb: 
-      <<: *sfmt_op_comb
+      <<: *rfmt_op_comb
     val_comb:
       abstract_comb:      
         'byte_count(32,["rs1_val","rs2_val","imm_val"])': 0
