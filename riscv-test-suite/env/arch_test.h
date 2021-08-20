@@ -122,6 +122,7 @@
      LI (x13, (0xEADFEEDBEADFEEDB & MASK));
      LI (x14, (0xF56FF76DF56FF76D & MASK));
      LI (x15, (0xFAB7FBB6FAB7FBB6 & MASK));
+     #ifndef RVTEST_E
      LI (x16, (0x7D5BFDDB7D5BFDDB & MASK));
      LI (x17, (0xBEADFEEDBEADFEED & MASK));
      LI (x18, (0xDF56FF76DF56FF76 & MASK));
@@ -138,6 +139,7 @@
      LI (x29, (0xEEDBEADFEEDBEADF & MASK));
      LI (x30, (0xF76DF56FF76DF56F & MASK));
      LI (x31, (0xFBB6FAB7FBB6FAB7 & MASK));
+     #endif
   .globl rvtest_code_begin
   rvtest_code_begin:
 .endm
