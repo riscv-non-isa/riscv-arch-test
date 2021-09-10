@@ -587,13 +587,13 @@ rvtest_data_end:
 #define RVTEST_SIGUPD_F(_BR,_R,_F,...)\
   .if NARG(__VA_ARGS__) == 1;\
     FSREG _R,_ARG1(__VA_ARGS__,0)(_BR);\
-    SREG _F,_ARG1(__VA_ARGS__,0)+FREGWIDTH(_BR);\
+    SREG _F,_ARG1(__VA_ARGS__,0)+REGWIDTH(_BR);\
     .set offset,_ARG1(__VA_OPT__(__VA_ARGS__,)0)+(REGWIDTH+REGWIDTH);\
   .endif;\
   .if NARG(__VA_ARGS__) == 0;\
     FSREG _R,offset(_BR);\
-    SREG _F,offset+FREGWIDTH(_BR);\
-    .set offset,offset+(FREGWIDTH+REGWIDTH);\
+    SREG _F,offset+REGWIDTH(_BR);\
+    .set offset,offset+(REGWIDTH+REGWIDTH);\
   .endif;
   
 #define RVTEST_SIGUPD_FID(_BR,_R,_F,...)\
