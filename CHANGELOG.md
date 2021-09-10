@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [2.5.0] - 2021-09-10
+  - Added rv32f tests, references, coverage files and data propagation reports
+  - fixed broken links in READMEs across the repo.
+
 ## [2.4.6] - 2021-08-02
   - Added rv32e tests in riscv-test-suite
   
