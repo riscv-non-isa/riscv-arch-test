@@ -588,7 +588,7 @@ rvtest_data_end:
   .if NARG(__VA_ARGS__) == 1;\
     FSREG _R,_ARG1(__VA_ARGS__,0)(_BR);\
     SREG _F,_ARG1(__VA_ARGS__,0)+FREGWIDTH(_BR);\
-    .set offset,_ARG1(__VA_ARGS__,0)+(REGWIDTH+REGWIDTH);\
+    .set offset,_ARG1(__VA_OPT__(__VA_ARGS__,)0)+(REGWIDTH+REGWIDTH);\
   .endif;\
   .if NARG(__VA_ARGS__) == 0;\
     FSREG _R,offset(_BR);\
