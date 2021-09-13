@@ -451,7 +451,7 @@ cswsp:
     opcode: 
       c.swsp: 0
     rs2: 
-      <<: *rv32e_regs_mx0
+      <<: *rv32e_regs_mx2
     val_comb:
         'imm_val > 0': 0
         'imm_val == 0': 0
