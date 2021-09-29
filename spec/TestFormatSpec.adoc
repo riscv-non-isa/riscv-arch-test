@@ -1,6 +1,6 @@
 = RISC-V Architecture Test Format Specification =
 RISC-V Foundation Architecture Test SIG
-Issue 1.2.6 Draft
+Issue 1.2.7 Draft
 :toc:
 :icons: font
 :numbered:
@@ -52,6 +52,10 @@ This document has been created by the following people (in alphabetical order of
 [cols="<1,<2,<3,<4",options="header,pagewidth",]
 |================================================================================
 | _Revision_ | _Date_            | _Author_ | _Modification_
+
+| 1.2.7 Draft | 16 September 2021 | S Pawan Kumar | 
+	* Modified definition of the `RVTEST_ISA` macro.
+	* Added appendix section illustrating the use and effects of the same.
 
 | 1.2.6 Draft | 24 September 2020 | Neel Gala | Replaced Compliance with Architecture/Architectural. Minor beautification in macro definitions.
 
@@ -242,10 +246,13 @@ but may be used in tests for either convenience or debugging purposes.
 These macros are be defined in the file **compilance_test.h** by the author of the test. A
 significant amount of the framework shall depend on the existence of these macros.
 
-  `RVTEST_ISA(isa_str)`::          
+  `RVTEST_ISA(isa_str[,isa_str]*)`::          
   
     - defines the Test Virtual Machine (TVM, the ISA being tested) +
     - empty macro to specify the isa required for compilation of the test. +
+    - Multiple ISAs can be specified to indicate that any one (or combination of them) can be used to compile and run the test.
+    - All strings are compared with the ISA field in the DUT specification(_dut_isa_) and the one which is a proper subset of the _dut_isa_ is 
+      chosen. Incase multiple entries match, they are combined canonically to obtain the ISA applicable.
     - this is mandated to be present at the start of the test.
 
     
@@ -597,3 +604,26 @@ gpr_save:
 RVMODEL_DATA_END
 ----
 
+<<<
+[appendix]
+
+== Example illustrating the use of multiple ISAs for a test
+
+Macro in the Test
+----
+RVTEST_ISA("RV32IK,RV32IB")
+----
+
+Applicable TVM / Compile ISA in different Scenarios
+|===
+|ISA of DUT | Effective ISA
+
+|RV32IMAFDCK
+|RV32IK
+
+|RV32IMAFDCB
+|RV32IB
+
+|RV32IMAFDCBK
+|RV32IBK
+|===
