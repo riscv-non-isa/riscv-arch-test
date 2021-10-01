@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## [2.4.7] - 2021-10-01
+  - Fix for the issue #206
+
 ## [2.4.6] - 2021-08-02
   - Added rv32e tests in riscv-test-suite
   
