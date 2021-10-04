@@ -24,7 +24,7 @@
 
 //TODO: declare the end of the signature region here. Add other target specific contents here.
 #define RVMODEL_DATA_END                                                      \
-  .alive 4; .global end_signature; end_signature:                             \
+  .align 4; .global end_signature; end_signature:                             \
   RVMODEL_DATA_SECTION                                                        
 
 

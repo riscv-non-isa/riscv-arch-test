@@ -31,7 +31,7 @@ RVTEST_CODE_BEGIN
     sw      x0, 0(x1)
     sw      x2, 4(x1)
     
-    RVMODEL_IO_WRITE_STR(x30, "# Test part A - test EBREAK\n");
+    RVMODEL_IO_WRITE_STR(x30, "# Test part A - test ECALL\n");
 
     RVMODEL_IO_WRITE_STR(x30, "# Test End\n")
 

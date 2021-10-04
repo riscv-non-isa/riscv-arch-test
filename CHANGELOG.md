@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## [2.5.0] - 2021-10-17
+  - Added rv32f tests, references, coverage files and data propagation reports
+  - fixed broken links in READMEs across the repo.
+  - corrected string "EBREAK" in io string macro to "ECALL" for ecall.S tests. #207
+  - fixed typo `.alive` --> `.align` in `riscv-target/example_target/model_test.h`.
+
 ## [2.4.7] - 2021-10-01
   - Fix for the issue #206
 
