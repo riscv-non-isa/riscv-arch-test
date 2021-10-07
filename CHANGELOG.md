@@ -1,6 +1,9 @@
 # CHANGELOG
 
-## [2.5.0] - 2021-10-17
+## [2.5.1] - 2021-10-07
+  - added styles files to the F coverage report directories.
+
+## [2.5.0] - 2021-10-01
   - Added rv32f tests, references, coverage files and data propagation reports
   - fixed broken links in READMEs across the repo.
   - corrected string "EBREAK" in io string macro to "ECALL" for ecall.S tests. #207
