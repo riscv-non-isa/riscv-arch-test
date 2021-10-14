@@ -526,7 +526,7 @@ hart0:
                 msb: 33
                 lsb: 32
             sd:
-                implemented: true
+                implemented: false
                 description: Read-only bit that summarizes whether either the FS field
                     or XS field signals the presence of some dirty state.
                 shadow:
@@ -3654,7 +3654,7 @@ hart0:
             accessible: false
         description: The scause register stores the information regarding the trap.
         address: 0x142
-        priv_mode: M
+        priv_mode: S
         reset-val: 0
     stvec:
         rv32:
@@ -3919,11 +3919,11 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/scratch/git-repo/github/neel/riscv-arch-test/riscv-test-suite/rv64i_m/K_unratified/src/aes64ks1i-01.S</td>
-          <td class="col-tfprint">6824</td>          
-          <td class="col-tcode">1008</td>          
+          <td class="col-tname">/scratch/git-repo/github/riscv-arch-test/riscv-test-suite/rv64i_m/K_unratified/src/aes64ks1i-01.S</td>
+          <td class="col-tfprint">9616</td>          
+          <td class="col-tcode">3376</td>          
           <td class="col-tdata">4</td>          
-          <td class="col-tsign">272</td>          
+          <td class="col-tsign">688</td>          
           <td class="col-tcov">{'aes64ks1i'}</td>          
         </tr></tbody>
         
@@ -4419,19 +4419,19 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/scratch/git-repo/github/neel/riscv-arch-test/riscv-test-suite/rv64i_m/K_unratified/src/sm4ed-01.S</td>
-          <td class="col-tfprint">17220</td>          
-          <td class="col-tcode">10640</td>          
+          <td class="col-tname">/scratch/git-repo/github/riscv-arch-test/riscv-test-suite/rv64i_m/K_unratified/src/sm4ed-01.S</td>
+          <td class="col-tfprint">27692</td>          
+          <td class="col-tcode">19904</td>          
           <td class="col-tdata">4</td>          
-          <td class="col-tsign">1216</td>          
+          <td class="col-tsign">2248</td>          
           <td class="col-tcov">{'sm4ed'}</td>          
         </tr></tbody>
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/scratch/git-repo/github/neel/riscv-arch-test/riscv-test-suite/rv64i_m/K_unratified/src/sm4ed-rwp1.S</td>
-          <td class="col-tfprint">10180</td>          
-          <td class="col-tcode">4624</td>          
+          <td class="col-tname">/scratch/git-repo/github/riscv-arch-test/riscv-test-suite/rv64i_m/K_unratified/src/sm4ed-rwp1.S</td>
+          <td class="col-tfprint">9590</td>          
+          <td class="col-tcode">3840</td>          
           <td class="col-tdata">4</td>          
           <td class="col-tsign">208</td>          
           <td class="col-tcov">{'sm4ed'}</td>          
@@ -4439,19 +4439,19 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/scratch/git-repo/github/neel/riscv-arch-test/riscv-test-suite/rv64i_m/K_unratified/src/sm4ks-01.S</td>
-          <td class="col-tfprint">17212</td>          
-          <td class="col-tcode">10640</td>          
+          <td class="col-tname">/scratch/git-repo/github/riscv-arch-test/riscv-test-suite/rv64i_m/K_unratified/src/sm4ks-01.S</td>
+          <td class="col-tfprint">27654</td>          
+          <td class="col-tcode">19858</td>          
           <td class="col-tdata">4</td>          
-          <td class="col-tsign">1216</td>          
+          <td class="col-tsign">2248</td>          
           <td class="col-tcov">{'sm4ks'}</td>          
         </tr></tbody>
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/scratch/git-repo/github/neel/riscv-arch-test/riscv-test-suite/rv64i_m/K_unratified/src/sm4ks-rwp1.S</td>
-          <td class="col-tfprint">10180</td>          
-          <td class="col-tcode">4624</td>          
+          <td class="col-tname">/scratch/git-repo/github/riscv-arch-test/riscv-test-suite/rv64i_m/K_unratified/src/sm4ks-rwp1.S</td>
+          <td class="col-tfprint">9590</td>          
+          <td class="col-tcode">3840</td>          
           <td class="col-tdata">4</td>          
           <td class="col-tsign">208</td>          
           <td class="col-tcov">{'sm4ks'}</td>          
@@ -5508,7 +5508,7 @@ total_coverage: 215/215
         <tbody class= "  results-table-row" >
         <tr>
           <td class="col-name">aes64ks1i</td>
-          <td class="col-result">87/87</td>
+          <td class="col-result">151/151</td>
           <td class="col-percentage">100.00%
             <div class="meter">
               <span style="width: 100.00%"></span>
@@ -5517,107 +5517,171 @@ total_coverage: 215/215
         <tr>
           <td class="extra" colspan="2">
           <div class="log">config:
-   - check ISA:=regex(.*RV64.*I.*K.*)
-   - check ISA:=regex(.*RV64.*I.*ZKn.*)
-   - check ISA:=regex(.*RV64.*I.*ZKne.*)
+  - check ISA:=regex(.*RV64.*I.*K.*)
+  - check ISA:=regex(.*RV64.*I.*ZKn.*)
+  - check ISA:=regex(.*RV64.*I.*ZKne.*)
 op_comb:
-     rs1 != rd: 33
-     rs1 == rd: 1
-     coverage: 2/2
+    rs1 != rd: 85
+    rs1 == rd: 1
+    coverage: 2/2
 opcode:
-     aes64ks1i: 34
-     coverage: 1/1
+    aes64ks1i: 86
+    coverage: 1/1
 rd:
-     x0: 1
-     x1: 1
-     x10: 1
-     x11: 3
-     x12: 1
-     x13: 1
-     x14: 1
-     x15: 1
-     x16: 1
-     x17: 1
-     x18: 1
-     x19: 1
-     x2: 1
-     x20: 1
-     x21: 1
-     x22: 1
-     x23: 1
-     x24: 1
-     x25: 1
-     x26: 1
-     x27: 1
-     x28: 1
-     x29: 1
-     x3: 1
-     x30: 1
-     x31: 1
-     x4: 1
-     x5: 1
-     x6: 1
-     x7: 1
-     x8: 1
-     x9: 1
-     coverage: 32/32
+    x0: 1
+    x1: 1
+    x10: 1
+    x11: 55
+    x12: 1
+    x13: 1
+    x14: 1
+    x15: 1
+    x16: 1
+    x17: 1
+    x18: 1
+    x19: 1
+    x2: 1
+    x20: 1
+    x21: 1
+    x22: 1
+    x23: 1
+    x24: 1
+    x25: 1
+    x26: 1
+    x27: 1
+    x28: 1
+    x29: 1
+    x3: 1
+    x30: 1
+    x31: 1
+    x4: 1
+    x5: 1
+    x6: 1
+    x7: 1
+    x8: 1
+    x9: 1
+    coverage: 32/32
 rs1:
-     x0: 1
-     x1: 1
-     x10: 3
-     x11: 1
-     x12: 1
-     x13: 1
-     x14: 1
-     x15: 1
-     x16: 1
-     x17: 1
-     x18: 1
-     x19: 1
-     x2: 1
-     x20: 1
-     x21: 1
-     x22: 1
-     x23: 1
-     x24: 1
-     x25: 1
-     x26: 1
-     x27: 1
-     x28: 1
-     x29: 1
-     x3: 1
-     x30: 1
-     x31: 1
-     x4: 1
-     x5: 1
-     x6: 1
-     x7: 1
-     x8: 1
-     x9: 1
-     coverage: 32/32
+    x0: 1
+    x1: 1
+    x10: 55
+    x11: 1
+    x12: 1
+    x13: 1
+    x14: 1
+    x15: 1
+    x16: 1
+    x17: 1
+    x18: 1
+    x19: 1
+    x2: 1
+    x20: 1
+    x21: 1
+    x22: 1
+    x23: 1
+    x24: 1
+    x25: 1
+    x26: 1
+    x27: 1
+    x28: 1
+    x29: 1
+    x3: 1
+    x30: 1
+    x31: 1
+    x4: 1
+    x5: 1
+    x6: 1
+    x7: 1
+    x8: 1
+    x9: 1
+    coverage: 32/32
 val_comb:
-     'rs1_val == 0x75a3adb3254a9493 and imm_val == 0x2 #nosat': 1  # Uniform Random 20
-     'rs1_val == 0x71fad878b369e102 and imm_val == 0x0 #nosat': 1 # Uniform Random 1
-     'rs1_val == 0xa4b7f979a8e45869 and imm_val == 0x0 #nosat': 1 # Uniform Random 2
-     'rs1_val == 0x0b3fd605358a9235 and imm_val == 0x1 #nosat': 1 # Uniform Random 3
-     'rs1_val == 0xb0873a0f0334fcca and imm_val == 0x7 #nosat': 1 # Uniform Random 4
-     'rs1_val == 0x5b730cad91766f62 and imm_val == 0x7 #nosat': 1 # Uniform Random 5
-     'rs1_val == 0xb7c1fc5f1efa1095 and imm_val == 0x3 #nosat': 1 # Uniform Random 6
-     'rs1_val == 0x25ae27ee4113ee60 and imm_val == 0x5 #nosat': 1 # Uniform Random 7
-     'rs1_val == 0xe3f4fca319f046a5 and imm_val == 0x6 #nosat': 1 # Uniform Random 8
-     'rs1_val == 0xff9a1b805ced7e2e and imm_val == 0x6 #nosat': 1 # Uniform Random 9
-     'rs1_val == 0x9722c9a6b0942992 and imm_val == 0x5 #nosat': 1 # Uniform Random 10
-     'rs1_val == 0x9bedfe390d6ddd9d and imm_val == 0x4 #nosat': 1 # Uniform Random 11
-     'rs1_val == 0xd75739f82ac177c6 and imm_val == 0x3 #nosat': 1 # Uniform Random 12
-     'rs1_val == 0x90efb625d9fbcdb5 and imm_val == 0x3 #nosat': 1 # Uniform Random 13
-     'rs1_val == 0x60067d39d169a3f8 and imm_val == 0x1 #nosat': 1 # Uniform Random 14
-     'rs1_val == 0xd5b9fe5cf69bdcf3 and imm_val == 0x6 #nosat': 1 # Uniform Random 15
-     'rs1_val == 0x58d548aae4921bf7 and imm_val == 0x6 #nosat': 1 # Uniform Random 16
-     'rs1_val == 0x2daf9ac7f5faf207 and imm_val == 0x3 #nosat': 1 # Uniform Random 17
-     'rs1_val == 0x3acdf61655d98c6e and imm_val == 0x3 #nosat': 2 # Uniform Random 18
-     'rs1_val == 0x436f40f274b8de87 and imm_val == 0x3 #nosat': 1 # Uniform Random 19
-     coverage: 20/20
-total_coverage: 87/87
+    'rs1_val == 0x0706050403020100 and imm_val == 0xA #nosat': 1  # Byte Count
+    'rs1_val == 0x71fad878b369e102 and imm_val == 0x0 #nosat': 1 # Uniform Random 1
+    'rs1_val == 0xa4b7f979a8e45869 and imm_val == 0x0 #nosat': 1 # Uniform Random 2
+    'rs1_val == 0x0b3fd605358a9235 and imm_val == 0x1 #nosat': 1 # Uniform Random 3
+    'rs1_val == 0xb0873a0f0334fcca and imm_val == 0x7 #nosat': 1 # Uniform Random 4
+    'rs1_val == 0x5b730cad91766f62 and imm_val == 0x7 #nosat': 1 # Uniform Random 5
+    'rs1_val == 0xb7c1fc5f1efa1095 and imm_val == 0x3 #nosat': 1 # Uniform Random 6
+    'rs1_val == 0x25ae27ee4113ee60 and imm_val == 0x5 #nosat': 1 # Uniform Random 7
+    'rs1_val == 0xe3f4fca319f046a5 and imm_val == 0x6 #nosat': 1 # Uniform Random 8
+    'rs1_val == 0xff9a1b805ced7e2e and imm_val == 0x6 #nosat': 1 # Uniform Random 9
+    'rs1_val == 0x9722c9a6b0942992 and imm_val == 0x5 #nosat': 1 # Uniform Random 10
+    'rs1_val == 0x9bedfe390d6ddd9d and imm_val == 0x4 #nosat': 1 # Uniform Random 11
+    'rs1_val == 0xd75739f82ac177c6 and imm_val == 0x3 #nosat': 1 # Uniform Random 12
+    'rs1_val == 0x90efb625d9fbcdb5 and imm_val == 0x3 #nosat': 1 # Uniform Random 13
+    'rs1_val == 0x60067d39d169a3f8 and imm_val == 0x1 #nosat': 1 # Uniform Random 14
+    'rs1_val == 0xd5b9fe5cf69bdcf3 and imm_val == 0x6 #nosat': 1 # Uniform Random 15
+    'rs1_val == 0x58d548aae4921bf7 and imm_val == 0x6 #nosat': 1 # Uniform Random 16
+    'rs1_val == 0x2daf9ac7f5faf207 and imm_val == 0x3 #nosat': 1 # Uniform Random 17
+    'rs1_val == 0x3acdf61655d98c6e and imm_val == 0x3 #nosat': 1 # Uniform Random 18
+    'rs1_val == 0x436f40f274b8de87 and imm_val == 0x3 #nosat': 1 # Uniform Random 19
+    'rs1_val == 0x75a3adb3254a9493 and imm_val == 0x2 #nosat': 1 # Uniform Random 20
+    'rs1_val == 0x03020100fffefdfc and imm_val == 0xA #nosat': 1 # Byte Count
+    'rs1_val == 0xfffefdfcfbfaf9f8 and imm_val == 0xA #nosat': 1 # Byte Count
+    'rs1_val == 0xfbfaf9f8f7f6f5f4 and imm_val == 0xA #nosat': 1 # Byte Count
+    'rs1_val == 0xf7f6f5f4f3f2f1f0 and imm_val == 0xA #nosat': 1 # Byte Count
+    'rs1_val == 0xf3f2f1f0efeeedec and imm_val == 0xA #nosat': 1 # Byte Count
+    'rs1_val == 0xefeeedecebeae9e8 and imm_val == 0xA #nosat': 1 # Byte Count
+    'rs1_val == 0xebeae9e8e7e6e5e4 and imm_val == 0xA #nosat': 1 # Byte Count
+    'rs1_val == 0xe7e6e5e4e3e2e1e0 and imm_val == 0xA #nosat': 1 # Byte Count
+    'rs1_val == 0xe3e2e1e0dfdedddc and imm_val == 0xA #nosat': 2 # Byte Count
+    'rs1_val == 0xdfdedddcdbdad9d8 and imm_val == 0xA #nosat': 1 # Byte Count
+    'rs1_val == 0xdbdad9d8d7d6d5d4 and imm_val == 0xA #nosat': 1 # Byte Count
+    'rs1_val == 0xd7d6d5d4d3d2d1d0 and imm_val == 0xA #nosat': 1 # Byte Count
+    'rs1_val == 0xd3d2d1d0cfcecdcc and imm_val == 0xA #nosat': 1 # Byte Count
+    'rs1_val == 0xcfcecdcccbcac9c8 and imm_val == 0xA #nosat': 1 # Byte Count
+    'rs1_val == 0xcbcac9c8c7c6c5c4 and imm_val == 0xA #nosat': 1 # Byte Count
+    'rs1_val == 0xc7c6c5c4c3c2c1c0 and imm_val == 0xA #nosat': 1 # Byte Count
+    'rs1_val == 0xc3c2c1c0bfbebdbc and imm_val == 0xA #nosat': 1 # Byte Count
+    'rs1_val == 0xbfbebdbcbbbab9b8 and imm_val == 0xA #nosat': 1 # Byte Count
+    'rs1_val == 0xbbbab9b8b7b6b5b4 and imm_val == 0xA #nosat': 1 # Byte Count
+    'rs1_val == 0xb7b6b5b4b3b2b1b0 and imm_val == 0xA #nosat': 1 # Byte Count
+    'rs1_val == 0xb3b2b1b0afaeadac and imm_val == 0xA #nosat': 1 # Byte Count
+    'rs1_val == 0xafaeadacabaaa9a8 and imm_val == 0xA #nosat': 1 # Byte Count
+    'rs1_val == 0xabaaa9a8a7a6a5a4 and imm_val == 0xA #nosat': 1 # Byte Count
+    'rs1_val == 0xa7a6a5a4a3a2a1a0 and imm_val == 0xA #nosat': 1 # Byte Count
+    'rs1_val == 0xa3a2a1a09f9e9d9c and imm_val == 0xA #nosat': 1 # Byte Count
+    'rs1_val == 0x9f9e9d9c9b9a9998 and imm_val == 0xA #nosat': 1 # Byte Count
+    'rs1_val == 0x9b9a999897969594 and imm_val == 0xA #nosat': 1 # Byte Count
+    'rs1_val == 0x9796959493929190 and imm_val == 0xA #nosat': 1 # Byte Count
+    'rs1_val == 0x939291908f8e8d8c and imm_val == 0xA #nosat': 1 # Byte Count
+    'rs1_val == 0x8f8e8d8c8b8a8988 and imm_val == 0xA #nosat': 1 # Byte Count
+    'rs1_val == 0x8b8a898887868584 and imm_val == 0xA #nosat': 1 # Byte Count
+    'rs1_val == 0x8786858483828180 and imm_val == 0xA #nosat': 1 # Byte Count
+    'rs1_val == 0x838281807f7e7d7c and imm_val == 0xA #nosat': 1 # Byte Count
+    'rs1_val == 0x7f7e7d7c7b7a7978 and imm_val == 0xA #nosat': 1 # Byte Count
+    'rs1_val == 0x7b7a797877767574 and imm_val == 0xA #nosat': 1 # Byte Count
+    'rs1_val == 0x7776757473727170 and imm_val == 0xA #nosat': 1 # Byte Count
+    'rs1_val == 0x737271706f6e6d6c and imm_val == 0xA #nosat': 1 # Byte Count
+    'rs1_val == 0x6f6e6d6c6b6a6968 and imm_val == 0xA #nosat': 1 # Byte Count
+    'rs1_val == 0x6b6a696867666564 and imm_val == 0xA #nosat': 1 # Byte Count
+    'rs1_val == 0x6766656463626160 and imm_val == 0xA #nosat': 1 # Byte Count
+    'rs1_val == 0x636261605f5e5d5c and imm_val == 0xA #nosat': 1 # Byte Count
+    'rs1_val == 0x5f5e5d5c5b5a5958 and imm_val == 0xA #nosat': 1 # Byte Count
+    'rs1_val == 0x5b5a595857565554 and imm_val == 0xA #nosat': 1 # Byte Count
+    'rs1_val == 0x5756555453525150 and imm_val == 0xA #nosat': 1 # Byte Count
+    'rs1_val == 0x535251504f4e4d4c and imm_val == 0xA #nosat': 1 # Byte Count
+    'rs1_val == 0x4f4e4d4c4b4a4948 and imm_val == 0xA #nosat': 1 # Byte Count
+    'rs1_val == 0x4b4a494847464544 and imm_val == 0xA #nosat': 1 # Byte Count
+    'rs1_val == 0x4746454443424140 and imm_val == 0xA #nosat': 1 # Byte Count
+    'rs1_val == 0x434241403f3e3d3c and imm_val == 0xA #nosat': 1 # Byte Count
+    'rs1_val == 0x3f3e3d3c3b3a3938 and imm_val == 0xA #nosat': 1 # Byte Count
+    'rs1_val == 0x3b3a393837363534 and imm_val == 0xA #nosat': 1 # Byte Count
+    'rs1_val == 0x3736353433323130 and imm_val == 0xA #nosat': 1 # Byte Count
+    'rs1_val == 0x333231302f2e2d2c and imm_val == 0xA #nosat': 1 # Byte Count
+    'rs1_val == 0x2f2e2d2c2b2a2928 and imm_val == 0xA #nosat': 1 # Byte Count
+    'rs1_val == 0x2b2a292827262524 and imm_val == 0xA #nosat': 1 # Byte Count
+    'rs1_val == 0x2726252423222120 and imm_val == 0xA #nosat': 1 # Byte Count
+    'rs1_val == 0x232221201f1e1d1c and imm_val == 0xA #nosat': 1 # Byte Count
+    'rs1_val == 0x1f1e1d1c1b1a1918 and imm_val == 0xA #nosat': 1 # Byte Count
+    'rs1_val == 0x1b1a191817161514 and imm_val == 0xA #nosat': 1 # Byte Count
+    'rs1_val == 0x1716151413121110 and imm_val == 0xA #nosat': 1 # Byte Count
+    'rs1_val == 0x131211100f0e0d0c and imm_val == 0xA #nosat': 1 # Byte Count
+    'rs1_val == 0x0f0e0d0c0b0a0908 and imm_val == 0xA #nosat': 1 # Byte Count
+    'rs1_val == 0x0b0a090807060504 and imm_val == 0xA #nosat': 1 # Byte Count
+    coverage: 84/84
+total_coverage: 151/151
 </br></div></td>
         </tr></tbody>
         
@@ -18806,7 +18870,7 @@ total_coverage: 215/215
         <tbody class= "  results-table-row" >
         <tr>
           <td class="col-name">sm4ed</td>
-          <td class="col-result">215/215</td>
+          <td class="col-result">378/378</td>
           <td class="col-percentage">100.00%
             <div class="meter">
               <span style="width: 100.00%"></span>
@@ -18815,242 +18879,407 @@ total_coverage: 215/215
         <tr>
           <td class="extra" colspan="2">
           <div class="log">config:
-   - check ISA:=regex(.*I.*K.*)
-   - check ISA:=regex(.*I.*ZKs.*)
-   - check ISA:=regex(.*I.*ZKsed.*)
+  - check ISA:=regex(.*I.*K.*)
+  - check ISA:=regex(.*I.*ZKs.*)
+  - check ISA:=regex(.*I.*ZKsed.*)
 op_comb:
-     rs1 != rs2: 254
-     rs1 == rs2: 1
-     coverage: 2/2
+    rs1 != rs2  and rs1 != rd and rs2 != rd: 277
+    rs1 == rd != rs2: 105
+    rs1 == rs2 != rd: 1
+    rs1 == rs2 == rd: 1
+    rs2 == rd != rs1: 1
+    coverage: 5/5
 opcode:
-     sm4ed: 255
-     coverage: 1/1
+    sm4ed: 385
+    coverage: 1/1
+rd:
+    x0: 1
+    x1: 1
+    x10: 5
+    x11: 5
+    x12: 254
+    x13: 5
+    x14: 5
+    x15: 5
+    x16: 5
+    x17: 5
+    x18: 5
+    x19: 5
+    x2: 1
+    x20: 5
+    x21: 5
+    x22: 5
+    x23: 5
+    x24: 5
+    x25: 5
+    x26: 5
+    x27: 5
+    x28: 5
+    x29: 5
+    x3: 1
+    x30: 5
+    x31: 1
+    x4: 1
+    x5: 5
+    x6: 5
+    x7: 5
+    x8: 5
+    x9: 5
+    coverage: 32/32
 rs1:
-     x0: 1
-     x1: 1
-     x10: 124
-     x11: 5
-     x12: 5
-     x13: 5
-     x14: 5
-     x15: 5
-     x16: 5
-     x17: 5
-     x18: 5
-     x19: 5
-     x2: 1
-     x20: 5
-     x21: 5
-     x22: 5
-     x23: 5
-     x24: 5
-     x25: 5
-     x26: 5
-     x27: 5
-     x28: 5
-     x29: 5
-     x3: 1
-     x30: 5
-     x31: 1
-     x4: 1
-     x5: 5
-     x6: 5
-     x7: 5
-     x8: 5
-     x9: 5
-     coverage: 32/32
+    x0: 1
+    x1: 1
+    x10: 254
+    x11: 5
+    x12: 5
+    x13: 5
+    x14: 5
+    x15: 5
+    x16: 5
+    x17: 5
+    x18: 5
+    x19: 5
+    x2: 1
+    x20: 5
+    x21: 5
+    x22: 5
+    x23: 5
+    x24: 5
+    x25: 5
+    x26: 5
+    x27: 5
+    x28: 5
+    x29: 5
+    x3: 1
+    x30: 5
+    x31: 1
+    x4: 1
+    x5: 5
+    x6: 5
+    x7: 5
+    x8: 5
+    x9: 5
+    coverage: 32/32
 rs2:
-     x0: 1
-     x1: 2
-     x10: 5
-     x11: 124
-     x12: 5
-     x13: 5
-     x14: 5
-     x15: 5
-     x16: 5
-     x17: 5
-     x18: 5
-     x19: 5
-     x2: 3
-     x20: 5
-     x21: 5
-     x22: 5
-     x23: 5
-     x24: 5
-     x25: 5
-     x26: 5
-     x27: 4
-     x28: 3
-     x29: 2
-     x3: 4
-     x30: 1
-     x31: 1
-     x4: 5
-     x5: 5
-     x6: 5
-     x7: 5
-     x8: 5
-     x9: 5
-     coverage: 32/32
+    x0: 1
+    x1: 2
+    x10: 5
+    x11: 254
+    x12: 5
+    x13: 5
+    x14: 5
+    x15: 5
+    x16: 5
+    x17: 5
+    x18: 5
+    x19: 5
+    x2: 3
+    x20: 5
+    x21: 5
+    x22: 5
+    x23: 5
+    x24: 5
+    x25: 5
+    x26: 5
+    x27: 4
+    x28: 3
+    x29: 2
+    x3: 4
+    x30: 1
+    x31: 1
+    x4: 5
+    x5: 5
+    x6: 5
+    x7: 5
+    x8: 5
+    x9: 5
+    coverage: 32/32
 val_comb:
-     'rs1_val == 0x0706050403020100 and rs2_val == 0x0f0e0d0c0b0a0908 and imm_val == 0 #nosat': 1  # Byte Count
-     'rs1_val == 0xbc36b151aeb006fc and rs2_val == 0x2cab43d86576923c and imm_val == 0x3 #nosat': 1 # Uniform Random 1
-     'rs1_val == 0x156fe482f9fcd292 and rs2_val == 0x24c6435c8dca0621 and imm_val == 0x0 #nosat': 1 # Uniform Random 2
-     'rs1_val == 0xa757e91e027e5943 and rs2_val == 0xda73ec2605e6750f and imm_val == 0x2 #nosat': 1 # Uniform Random 3
-     'rs1_val == 0xf452cbd863fa921d and rs2_val == 0x4b6587d88ef464d1 and imm_val == 0x3 #nosat': 1 # Uniform Random 4
-     'rs1_val == 0xd40f46a4356c1dcc and rs2_val == 0x30c33d97184e0f23 and imm_val == 0x0 #nosat': 1 # Uniform Random 5
-     'rs1_val == 0x6d23c0488a6019c1 and rs2_val == 0x860bdaad7447a088 and imm_val == 0x2 #nosat': 1 # Uniform Random 6
-     'rs1_val == 0x17168ab3a4351379 and rs2_val == 0xbbb4f560f222070c and imm_val == 0x0 #nosat': 1 # Uniform Random 7
-     'rs1_val == 0x3fb0fe60ef1d54db and rs2_val == 0x09ff42451826a804 and imm_val == 0x1 #nosat': 1 # Uniform Random 8
-     'rs1_val == 0xcc7b22010ca3ef52 and rs2_val == 0xc150f4d3df74d068 and imm_val == 0x1 #nosat': 1 # Uniform Random 9
-     'rs1_val == 0x358a9235987daa20 and rs2_val == 0xb369e10209f393d7 and imm_val == 0x1 #nosat': 1 # Uniform Random 10
-     'rs1_val == 0x91766f62ba2be4d3 and rs2_val == 0x74a813d25570084b and imm_val == 0x0 #nosat': 1 # Uniform Random 11
-     'rs1_val == 0xb7c1fc5f1efa1095 and rs2_val == 0xe2cbb9ab3819fe4d and imm_val == 0x1 #nosat': 1 # Uniform Random 12
-     'rs1_val == 0xa6c9253a4cc6382e and rs2_val == 0x25ae27ee4113ee60 and imm_val == 0x2 #nosat': 1 # Uniform Random 13
-     'rs1_val == 0xf17f6920daaafe5c and rs2_val == 0x7bcad7c4ff9a1b80 and imm_val == 0x0 #nosat': 1 # Uniform Random 14
-     'rs1_val == 0x3150e5fa299c3bcf and rs2_val == 0xe6fff3d9ec1ce9d2 and imm_val == 0x1 #nosat': 1 # Uniform Random 15
-     'rs1_val == 0x1fc493caa371db42 and rs2_val == 0x9a4e9ef10171f4df and imm_val == 0x1 #nosat': 1 # Uniform Random 16
-     'rs1_val == 0xf5faf2073430cb17 and rs2_val == 0x8e2eac2a760b3c5e and imm_val == 0x3 #nosat': 1 # Uniform Random 17
-     'rs1_val == 0xbc991c531484f407 and rs2_val == 0x55d98c6e3459294e and imm_val == 0x2 #nosat': 1 # Uniform Random 18
-     'rs1_val == 0x59885afcbb61a9cd and rs2_val == 0xccce240c81c1e7ff and imm_val == 0x0 #nosat': 1 # Uniform Random 19
-     'rs1_val == 0x75a3adb3254a9493 and rs2_val == 0xc5521660f3a3c571 and imm_val == 0x3 #nosat': 1 # Uniform Random 20
-     'rs1_val == 0xfffefdfcfbfaf9f8 and rs2_val == 0xf7f6f5f4f3f2f1f0 and imm_val == 3 #nosat': 1 # Byte Count
-     'rs1_val == 0xfffefdfcfbfaf9f8 and rs2_val == 0xf7f6f5f4f3f2f1f0 and imm_val == 2 #nosat': 1 # Byte Count
-     'rs1_val == 0xfffefdfcfbfaf9f8 and rs2_val == 0xf7f6f5f4f3f2f1f0 and imm_val == 1 #nosat': 1 # Byte Count
-     'rs1_val == 0xfffefdfcfbfaf9f8 and rs2_val == 0xf7f6f5f4f3f2f1f0 and imm_val == 0 #nosat': 1 # Byte Count
-     'rs1_val == 0xf7f6f5f4f3f2f1f0 and rs2_val == 0xfffefdfcfbfaf9f8 and imm_val == 3 #nosat': 1 # Byte Count
-     'rs1_val == 0xf7f6f5f4f3f2f1f0 and rs2_val == 0xfffefdfcfbfaf9f8 and imm_val == 2 #nosat': 1 # Byte Count
-     'rs1_val == 0xf7f6f5f4f3f2f1f0 and rs2_val == 0xfffefdfcfbfaf9f8 and imm_val == 1 #nosat': 1 # Byte Count
-     'rs1_val == 0xf7f6f5f4f3f2f1f0 and rs2_val == 0xfffefdfcfbfaf9f8 and imm_val == 0 #nosat': 1 # Byte Count
-     'rs1_val == 0xefeeedecebeae9e8 and rs2_val == 0xe7e6e5e4e3e2e1e0 and imm_val == 3 #nosat': 1 # Byte Count
-     'rs1_val == 0xefeeedecebeae9e8 and rs2_val == 0xe7e6e5e4e3e2e1e0 and imm_val == 2 #nosat': 1 # Byte Count
-     'rs1_val == 0xefeeedecebeae9e8 and rs2_val == 0xe7e6e5e4e3e2e1e0 and imm_val == 1 #nosat': 1 # Byte Count
-     'rs1_val == 0xefeeedecebeae9e8 and rs2_val == 0xe7e6e5e4e3e2e1e0 and imm_val == 0 #nosat': 1 # Byte Count
-     'rs1_val == 0xe7e6e5e4e3e2e1e0 and rs2_val == 0xefeeedecebeae9e8 and imm_val == 3 #nosat': 1 # Byte Count
-     'rs1_val == 0xe7e6e5e4e3e2e1e0 and rs2_val == 0xefeeedecebeae9e8 and imm_val == 2 #nosat': 1 # Byte Count
-     'rs1_val == 0xe7e6e5e4e3e2e1e0 and rs2_val == 0xefeeedecebeae9e8 and imm_val == 1 #nosat': 1 # Byte Count
-     'rs1_val == 0xe7e6e5e4e3e2e1e0 and rs2_val == 0xefeeedecebeae9e8 and imm_val == 0 #nosat': 1 # Byte Count
-     'rs1_val == 0xdfdedddcdbdad9d8 and rs2_val == 0xd7d6d5d4d3d2d1d0 and imm_val == 3 #nosat': 1 # Byte Count
-     'rs1_val == 0xdfdedddcdbdad9d8 and rs2_val == 0xd7d6d5d4d3d2d1d0 and imm_val == 2 #nosat': 1 # Byte Count
-     'rs1_val == 0xdfdedddcdbdad9d8 and rs2_val == 0xd7d6d5d4d3d2d1d0 and imm_val == 1 #nosat': 1 # Byte Count
-     'rs1_val == 0xdfdedddcdbdad9d8 and rs2_val == 0xd7d6d5d4d3d2d1d0 and imm_val == 0 #nosat': 1 # Byte Count
-     'rs1_val == 0xd7d6d5d4d3d2d1d0 and rs2_val == 0xdfdedddcdbdad9d8 and imm_val == 3 #nosat': 1 # Byte Count
-     'rs1_val == 0xd7d6d5d4d3d2d1d0 and rs2_val == 0xdfdedddcdbdad9d8 and imm_val == 2 #nosat': 1 # Byte Count
-     'rs1_val == 0xd7d6d5d4d3d2d1d0 and rs2_val == 0xdfdedddcdbdad9d8 and imm_val == 1 #nosat': 1 # Byte Count
-     'rs1_val == 0xd7d6d5d4d3d2d1d0 and rs2_val == 0xdfdedddcdbdad9d8 and imm_val == 0 #nosat': 1 # Byte Count
-     'rs1_val == 0xcfcecdcccbcac9c8 and rs2_val == 0xc7c6c5c4c3c2c1c0 and imm_val == 3 #nosat': 1 # Byte Count
-     'rs1_val == 0xcfcecdcccbcac9c8 and rs2_val == 0xc7c6c5c4c3c2c1c0 and imm_val == 2 #nosat': 1 # Byte Count
-     'rs1_val == 0xcfcecdcccbcac9c8 and rs2_val == 0xc7c6c5c4c3c2c1c0 and imm_val == 1 #nosat': 1 # Byte Count
-     'rs1_val == 0xcfcecdcccbcac9c8 and rs2_val == 0xc7c6c5c4c3c2c1c0 and imm_val == 0 #nosat': 1 # Byte Count
-     'rs1_val == 0xc7c6c5c4c3c2c1c0 and rs2_val == 0xcfcecdcccbcac9c8 and imm_val == 3 #nosat': 1 # Byte Count
-     'rs1_val == 0xc7c6c5c4c3c2c1c0 and rs2_val == 0xcfcecdcccbcac9c8 and imm_val == 2 #nosat': 1 # Byte Count
-     'rs1_val == 0xc7c6c5c4c3c2c1c0 and rs2_val == 0xcfcecdcccbcac9c8 and imm_val == 1 #nosat': 1 # Byte Count
-     'rs1_val == 0xc7c6c5c4c3c2c1c0 and rs2_val == 0xcfcecdcccbcac9c8 and imm_val == 0 #nosat': 1 # Byte Count
-     'rs1_val == 0xbfbebdbcbbbab9b8 and rs2_val == 0xb7b6b5b4b3b2b1b0 and imm_val == 3 #nosat': 1 # Byte Count
-     'rs1_val == 0xbfbebdbcbbbab9b8 and rs2_val == 0xb7b6b5b4b3b2b1b0 and imm_val == 2 #nosat': 1 # Byte Count
-     'rs1_val == 0xbfbebdbcbbbab9b8 and rs2_val == 0xb7b6b5b4b3b2b1b0 and imm_val == 1 #nosat': 1 # Byte Count
-     'rs1_val == 0xbfbebdbcbbbab9b8 and rs2_val == 0xb7b6b5b4b3b2b1b0 and imm_val == 0 #nosat': 1 # Byte Count
-     'rs1_val == 0xb7b6b5b4b3b2b1b0 and rs2_val == 0xbfbebdbcbbbab9b8 and imm_val == 3 #nosat': 1 # Byte Count
-     'rs1_val == 0xb7b6b5b4b3b2b1b0 and rs2_val == 0xbfbebdbcbbbab9b8 and imm_val == 2 #nosat': 1 # Byte Count
-     'rs1_val == 0xb7b6b5b4b3b2b1b0 and rs2_val == 0xbfbebdbcbbbab9b8 and imm_val == 1 #nosat': 1 # Byte Count
-     'rs1_val == 0xb7b6b5b4b3b2b1b0 and rs2_val == 0xbfbebdbcbbbab9b8 and imm_val == 0 #nosat': 1 # Byte Count
-     'rs1_val == 0xafaeadacabaaa9a8 and rs2_val == 0xa7a6a5a4a3a2a1a0 and imm_val == 3 #nosat': 1 # Byte Count
-     'rs1_val == 0xafaeadacabaaa9a8 and rs2_val == 0xa7a6a5a4a3a2a1a0 and imm_val == 2 #nosat': 1 # Byte Count
-     'rs1_val == 0xafaeadacabaaa9a8 and rs2_val == 0xa7a6a5a4a3a2a1a0 and imm_val == 1 #nosat': 1 # Byte Count
-     'rs1_val == 0xafaeadacabaaa9a8 and rs2_val == 0xa7a6a5a4a3a2a1a0 and imm_val == 0 #nosat': 1 # Byte Count
-     'rs1_val == 0xa7a6a5a4a3a2a1a0 and rs2_val == 0xafaeadacabaaa9a8 and imm_val == 3 #nosat': 1 # Byte Count
-     'rs1_val == 0xa7a6a5a4a3a2a1a0 and rs2_val == 0xafaeadacabaaa9a8 and imm_val == 2 #nosat': 1 # Byte Count
-     'rs1_val == 0xa7a6a5a4a3a2a1a0 and rs2_val == 0xafaeadacabaaa9a8 and imm_val == 1 #nosat': 1 # Byte Count
-     'rs1_val == 0xa7a6a5a4a3a2a1a0 and rs2_val == 0xafaeadacabaaa9a8 and imm_val == 0 #nosat': 1 # Byte Count
-     'rs1_val == 0x9f9e9d9c9b9a9998 and rs2_val == 0x9796959493929190 and imm_val == 3 #nosat': 1 # Byte Count
-     'rs1_val == 0x9f9e9d9c9b9a9998 and rs2_val == 0x9796959493929190 and imm_val == 2 #nosat': 1 # Byte Count
-     'rs1_val == 0x9f9e9d9c9b9a9998 and rs2_val == 0x9796959493929190 and imm_val == 1 #nosat': 1 # Byte Count
-     'rs1_val == 0x9f9e9d9c9b9a9998 and rs2_val == 0x9796959493929190 and imm_val == 0 #nosat': 1 # Byte Count
-     'rs1_val == 0x9796959493929190 and rs2_val == 0x9f9e9d9c9b9a9998 and imm_val == 3 #nosat': 1 # Byte Count
-     'rs1_val == 0x9796959493929190 and rs2_val == 0x9f9e9d9c9b9a9998 and imm_val == 2 #nosat': 1 # Byte Count
-     'rs1_val == 0x9796959493929190 and rs2_val == 0x9f9e9d9c9b9a9998 and imm_val == 1 #nosat': 1 # Byte Count
-     'rs1_val == 0x9796959493929190 and rs2_val == 0x9f9e9d9c9b9a9998 and imm_val == 0 #nosat': 1 # Byte Count
-     'rs1_val == 0x8f8e8d8c8b8a8988 and rs2_val == 0x8786858483828180 and imm_val == 3 #nosat': 1 # Byte Count
-     'rs1_val == 0x8f8e8d8c8b8a8988 and rs2_val == 0x8786858483828180 and imm_val == 2 #nosat': 1 # Byte Count
-     'rs1_val == 0x8f8e8d8c8b8a8988 and rs2_val == 0x8786858483828180 and imm_val == 1 #nosat': 1 # Byte Count
-     'rs1_val == 0x8f8e8d8c8b8a8988 and rs2_val == 0x8786858483828180 and imm_val == 0 #nosat': 1 # Byte Count
-     'rs1_val == 0x8786858483828180 and rs2_val == 0x8f8e8d8c8b8a8988 and imm_val == 3 #nosat': 1 # Byte Count
-     'rs1_val == 0x8786858483828180 and rs2_val == 0x8f8e8d8c8b8a8988 and imm_val == 2 #nosat': 1 # Byte Count
-     'rs1_val == 0x8786858483828180 and rs2_val == 0x8f8e8d8c8b8a8988 and imm_val == 1 #nosat': 1 # Byte Count
-     'rs1_val == 0x8786858483828180 and rs2_val == 0x8f8e8d8c8b8a8988 and imm_val == 0 #nosat': 1 # Byte Count
-     'rs1_val == 0x7f7e7d7c7b7a7978 and rs2_val == 0x7776757473727170 and imm_val == 3 #nosat': 1 # Byte Count
-     'rs1_val == 0x7f7e7d7c7b7a7978 and rs2_val == 0x7776757473727170 and imm_val == 2 #nosat': 1 # Byte Count
-     'rs1_val == 0x7f7e7d7c7b7a7978 and rs2_val == 0x7776757473727170 and imm_val == 1 #nosat': 1 # Byte Count
-     'rs1_val == 0x7f7e7d7c7b7a7978 and rs2_val == 0x7776757473727170 and imm_val == 0 #nosat': 1 # Byte Count
-     'rs1_val == 0x7776757473727170 and rs2_val == 0x7f7e7d7c7b7a7978 and imm_val == 3 #nosat': 1 # Byte Count
-     'rs1_val == 0x7776757473727170 and rs2_val == 0x7f7e7d7c7b7a7978 and imm_val == 2 #nosat': 1 # Byte Count
-     'rs1_val == 0x7776757473727170 and rs2_val == 0x7f7e7d7c7b7a7978 and imm_val == 1 #nosat': 1 # Byte Count
-     'rs1_val == 0x7776757473727170 and rs2_val == 0x7f7e7d7c7b7a7978 and imm_val == 0 #nosat': 1 # Byte Count
-     'rs1_val == 0x6f6e6d6c6b6a6968 and rs2_val == 0x6766656463626160 and imm_val == 3 #nosat': 1 # Byte Count
-     'rs1_val == 0x6f6e6d6c6b6a6968 and rs2_val == 0x6766656463626160 and imm_val == 2 #nosat': 1 # Byte Count
-     'rs1_val == 0x6f6e6d6c6b6a6968 and rs2_val == 0x6766656463626160 and imm_val == 1 #nosat': 1 # Byte Count
-     'rs1_val == 0x6f6e6d6c6b6a6968 and rs2_val == 0x6766656463626160 and imm_val == 0 #nosat': 1 # Byte Count
-     'rs1_val == 0x6766656463626160 and rs2_val == 0x6f6e6d6c6b6a6968 and imm_val == 3 #nosat': 1 # Byte Count
-     'rs1_val == 0x6766656463626160 and rs2_val == 0x6f6e6d6c6b6a6968 and imm_val == 2 #nosat': 1 # Byte Count
-     'rs1_val == 0x6766656463626160 and rs2_val == 0x6f6e6d6c6b6a6968 and imm_val == 1 #nosat': 1 # Byte Count
-     'rs1_val == 0x6766656463626160 and rs2_val == 0x6f6e6d6c6b6a6968 and imm_val == 0 #nosat': 1 # Byte Count
-     'rs1_val == 0x5f5e5d5c5b5a5958 and rs2_val == 0x5756555453525150 and imm_val == 3 #nosat': 1 # Byte Count
-     'rs1_val == 0x5f5e5d5c5b5a5958 and rs2_val == 0x5756555453525150 and imm_val == 2 #nosat': 1 # Byte Count
-     'rs1_val == 0x5f5e5d5c5b5a5958 and rs2_val == 0x5756555453525150 and imm_val == 1 #nosat': 1 # Byte Count
-     'rs1_val == 0x5f5e5d5c5b5a5958 and rs2_val == 0x5756555453525150 and imm_val == 0 #nosat': 1 # Byte Count
-     'rs1_val == 0x5756555453525150 and rs2_val == 0x5f5e5d5c5b5a5958 and imm_val == 3 #nosat': 1 # Byte Count
-     'rs1_val == 0x5756555453525150 and rs2_val == 0x5f5e5d5c5b5a5958 and imm_val == 2 #nosat': 1 # Byte Count
-     'rs1_val == 0x5756555453525150 and rs2_val == 0x5f5e5d5c5b5a5958 and imm_val == 1 #nosat': 1 # Byte Count
-     'rs1_val == 0x5756555453525150 and rs2_val == 0x5f5e5d5c5b5a5958 and imm_val == 0 #nosat': 1 # Byte Count
-     'rs1_val == 0x4f4e4d4c4b4a4948 and rs2_val == 0x4746454443424140 and imm_val == 3 #nosat': 1 # Byte Count
-     'rs1_val == 0x4f4e4d4c4b4a4948 and rs2_val == 0x4746454443424140 and imm_val == 2 #nosat': 1 # Byte Count
-     'rs1_val == 0x4f4e4d4c4b4a4948 and rs2_val == 0x4746454443424140 and imm_val == 1 #nosat': 1 # Byte Count
-     'rs1_val == 0x4f4e4d4c4b4a4948 and rs2_val == 0x4746454443424140 and imm_val == 0 #nosat': 1 # Byte Count
-     'rs1_val == 0x4746454443424140 and rs2_val == 0x4f4e4d4c4b4a4948 and imm_val == 3 #nosat': 1 # Byte Count
-     'rs1_val == 0x4746454443424140 and rs2_val == 0x4f4e4d4c4b4a4948 and imm_val == 2 #nosat': 1 # Byte Count
-     'rs1_val == 0x4746454443424140 and rs2_val == 0x4f4e4d4c4b4a4948 and imm_val == 1 #nosat': 1 # Byte Count
-     'rs1_val == 0x4746454443424140 and rs2_val == 0x4f4e4d4c4b4a4948 and imm_val == 0 #nosat': 1 # Byte Count
-     'rs1_val == 0x3f3e3d3c3b3a3938 and rs2_val == 0x3736353433323130 and imm_val == 3 #nosat': 1 # Byte Count
-     'rs1_val == 0x3f3e3d3c3b3a3938 and rs2_val == 0x3736353433323130 and imm_val == 2 #nosat': 1 # Byte Count
-     'rs1_val == 0x3f3e3d3c3b3a3938 and rs2_val == 0x3736353433323130 and imm_val == 1 #nosat': 1 # Byte Count
-     'rs1_val == 0x3f3e3d3c3b3a3938 and rs2_val == 0x3736353433323130 and imm_val == 0 #nosat': 1 # Byte Count
-     'rs1_val == 0x3736353433323130 and rs2_val == 0x3f3e3d3c3b3a3938 and imm_val == 3 #nosat': 1 # Byte Count
-     'rs1_val == 0x3736353433323130 and rs2_val == 0x3f3e3d3c3b3a3938 and imm_val == 2 #nosat': 1 # Byte Count
-     'rs1_val == 0x3736353433323130 and rs2_val == 0x3f3e3d3c3b3a3938 and imm_val == 1 #nosat': 1 # Byte Count
-     'rs1_val == 0x3736353433323130 and rs2_val == 0x3f3e3d3c3b3a3938 and imm_val == 0 #nosat': 1 # Byte Count
-     'rs1_val == 0x2f2e2d2c2b2a2928 and rs2_val == 0x2726252423222120 and imm_val == 3 #nosat': 1 # Byte Count
-     'rs1_val == 0x2f2e2d2c2b2a2928 and rs2_val == 0x2726252423222120 and imm_val == 2 #nosat': 1 # Byte Count
-     'rs1_val == 0x2f2e2d2c2b2a2928 and rs2_val == 0x2726252423222120 and imm_val == 1 #nosat': 1 # Byte Count
-     'rs1_val == 0x2f2e2d2c2b2a2928 and rs2_val == 0x2726252423222120 and imm_val == 0 #nosat': 1 # Byte Count
-     'rs1_val == 0x2726252423222120 and rs2_val == 0x2f2e2d2c2b2a2928 and imm_val == 3 #nosat': 1 # Byte Count
-     'rs1_val == 0x2726252423222120 and rs2_val == 0x2f2e2d2c2b2a2928 and imm_val == 2 #nosat': 1 # Byte Count
-     'rs1_val == 0x2726252423222120 and rs2_val == 0x2f2e2d2c2b2a2928 and imm_val == 1 #nosat': 1 # Byte Count
-     'rs1_val == 0x2726252423222120 and rs2_val == 0x2f2e2d2c2b2a2928 and imm_val == 0 #nosat': 1 # Byte Count
-     'rs1_val == 0x1f1e1d1c1b1a1918 and rs2_val == 0x1716151413121110 and imm_val == 3 #nosat': 1 # Byte Count
-     'rs1_val == 0x1f1e1d1c1b1a1918 and rs2_val == 0x1716151413121110 and imm_val == 2 #nosat': 1 # Byte Count
-     'rs1_val == 0x1f1e1d1c1b1a1918 and rs2_val == 0x1716151413121110 and imm_val == 1 #nosat': 1 # Byte Count
-     'rs1_val == 0x1f1e1d1c1b1a1918 and rs2_val == 0x1716151413121110 and imm_val == 0 #nosat': 1 # Byte Count
-     'rs1_val == 0x1716151413121110 and rs2_val == 0x1f1e1d1c1b1a1918 and imm_val == 3 #nosat': 1 # Byte Count
-     'rs1_val == 0x1716151413121110 and rs2_val == 0x1f1e1d1c1b1a1918 and imm_val == 2 #nosat': 1 # Byte Count
-     'rs1_val == 0x1716151413121110 and rs2_val == 0x1f1e1d1c1b1a1918 and imm_val == 1 #nosat': 1 # Byte Count
-     'rs1_val == 0x1716151413121110 and rs2_val == 0x1f1e1d1c1b1a1918 and imm_val == 0 #nosat': 1 # Byte Count
-     'rs1_val == 0x0f0e0d0c0b0a0908 and rs2_val == 0x0706050403020100 and imm_val == 3 #nosat': 1 # Byte Count
-     'rs1_val == 0x0f0e0d0c0b0a0908 and rs2_val == 0x0706050403020100 and imm_val == 2 #nosat': 1 # Byte Count
-     'rs1_val == 0x0f0e0d0c0b0a0908 and rs2_val == 0x0706050403020100 and imm_val == 1 #nosat': 1 # Byte Count
-     'rs1_val == 0x0f0e0d0c0b0a0908 and rs2_val == 0x0706050403020100 and imm_val == 0 #nosat': 1 # Byte Count
-     'rs1_val == 0x0706050403020100 and rs2_val == 0x0f0e0d0c0b0a0908 and imm_val == 3 #nosat': 1 # Byte Count
-     'rs1_val == 0x0706050403020100 and rs2_val == 0x0f0e0d0c0b0a0908 and imm_val == 2 #nosat': 1 # Byte Count
-     'rs1_val == 0x0706050403020100 and rs2_val == 0x0f0e0d0c0b0a0908 and imm_val == 1 #nosat': 1 # Byte Count
-     coverage: 148/148
-total_coverage: 215/215
+    'rs1_val == 0x0706050403020100 and rs2_val == 0x0b0a090807060504 and imm_val == 0 #nosat': 1  # Byte Count
+    'rs1_val == 0xbc36b151aeb006fc and rs2_val == 0x2cab43d86576923c and imm_val == 0x3 #nosat': 1 # Uniform Random 1
+    'rs1_val == 0x156fe482f9fcd292 and rs2_val == 0x24c6435c8dca0621 and imm_val == 0x0 #nosat': 1 # Uniform Random 2
+    'rs1_val == 0xa757e91e027e5943 and rs2_val == 0xda73ec2605e6750f and imm_val == 0x2 #nosat': 1 # Uniform Random 3
+    'rs1_val == 0xf452cbd863fa921d and rs2_val == 0x4b6587d88ef464d1 and imm_val == 0x3 #nosat': 1 # Uniform Random 4
+    'rs1_val == 0xd40f46a4356c1dcc and rs2_val == 0x30c33d97184e0f23 and imm_val == 0x0 #nosat': 1 # Uniform Random 5
+    'rs1_val == 0x6d23c0488a6019c1 and rs2_val == 0x860bdaad7447a088 and imm_val == 0x2 #nosat': 1 # Uniform Random 6
+    'rs1_val == 0x17168ab3a4351379 and rs2_val == 0xbbb4f560f222070c and imm_val == 0x0 #nosat': 1 # Uniform Random 7
+    'rs1_val == 0x3fb0fe60ef1d54db and rs2_val == 0x09ff42451826a804 and imm_val == 0x1 #nosat': 1 # Uniform Random 8
+    'rs1_val == 0xcc7b22010ca3ef52 and rs2_val == 0xc150f4d3df74d068 and imm_val == 0x1 #nosat': 1 # Uniform Random 9
+    'rs1_val == 0x358a9235987daa20 and rs2_val == 0xb369e10209f393d7 and imm_val == 0x1 #nosat': 1 # Uniform Random 10
+    'rs1_val == 0x91766f62ba2be4d3 and rs2_val == 0x74a813d25570084b and imm_val == 0x0 #nosat': 1 # Uniform Random 11
+    'rs1_val == 0xb7c1fc5f1efa1095 and rs2_val == 0xe2cbb9ab3819fe4d and imm_val == 0x1 #nosat': 1 # Uniform Random 12
+    'rs1_val == 0xa6c9253a4cc6382e and rs2_val == 0x25ae27ee4113ee60 and imm_val == 0x2 #nosat': 1 # Uniform Random 13
+    'rs1_val == 0xf17f6920daaafe5c and rs2_val == 0x7bcad7c4ff9a1b80 and imm_val == 0x0 #nosat': 1 # Uniform Random 14
+    'rs1_val == 0x3150e5fa299c3bcf and rs2_val == 0xe6fff3d9ec1ce9d2 and imm_val == 0x1 #nosat': 2 # Uniform Random 15
+    'rs1_val == 0x1fc493caa371db42 and rs2_val == 0x9a4e9ef10171f4df and imm_val == 0x1 #nosat': 1 # Uniform Random 16
+    'rs1_val == 0xf5faf2073430cb17 and rs2_val == 0x8e2eac2a760b3c5e and imm_val == 0x3 #nosat': 1 # Uniform Random 17
+    'rs1_val == 0xbc991c531484f407 and rs2_val == 0x55d98c6e3459294e and imm_val == 0x2 #nosat': 1 # Uniform Random 18
+    'rs1_val == 0x59885afcbb61a9cd and rs2_val == 0xccce240c81c1e7ff and imm_val == 0x0 #nosat': 1 # Uniform Random 19
+    'rs1_val == 0x75a3adb3254a9493 and rs2_val == 0xc5521660f3a3c571 and imm_val == 0x3 #nosat': 1 # Uniform Random 20
+    'rs1_val == 0x03020100fffefdfc and rs2_val == 0xfffefdfcfbfaf9f8 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x03020100fffefdfc and rs2_val == 0xfffefdfcfbfaf9f8 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x03020100fffefdfc and rs2_val == 0xfffefdfcfbfaf9f8 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x03020100fffefdfc and rs2_val == 0xfffefdfcfbfaf9f8 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0xfffefdfcfbfaf9f8 and rs2_val == 0x03020100fffefdfc and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0xfffefdfcfbfaf9f8 and rs2_val == 0x03020100fffefdfc and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0xfffefdfcfbfaf9f8 and rs2_val == 0x03020100fffefdfc and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0xfffefdfcfbfaf9f8 and rs2_val == 0x03020100fffefdfc and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0xfbfaf9f8f7f6f5f4 and rs2_val == 0xf7f6f5f4f3f2f1f0 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0xfbfaf9f8f7f6f5f4 and rs2_val == 0xf7f6f5f4f3f2f1f0 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0xfbfaf9f8f7f6f5f4 and rs2_val == 0xf7f6f5f4f3f2f1f0 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0xfbfaf9f8f7f6f5f4 and rs2_val == 0xf7f6f5f4f3f2f1f0 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0xf7f6f5f4f3f2f1f0 and rs2_val == 0xfbfaf9f8f7f6f5f4 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0xf7f6f5f4f3f2f1f0 and rs2_val == 0xfbfaf9f8f7f6f5f4 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0xf7f6f5f4f3f2f1f0 and rs2_val == 0xfbfaf9f8f7f6f5f4 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0xf7f6f5f4f3f2f1f0 and rs2_val == 0xfbfaf9f8f7f6f5f4 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0xf3f2f1f0efeeedec and rs2_val == 0xefeeedecebeae9e8 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0xf3f2f1f0efeeedec and rs2_val == 0xefeeedecebeae9e8 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0xf3f2f1f0efeeedec and rs2_val == 0xefeeedecebeae9e8 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0xf3f2f1f0efeeedec and rs2_val == 0xefeeedecebeae9e8 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0xefeeedecebeae9e8 and rs2_val == 0xf3f2f1f0efeeedec and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0xefeeedecebeae9e8 and rs2_val == 0xf3f2f1f0efeeedec and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0xefeeedecebeae9e8 and rs2_val == 0xf3f2f1f0efeeedec and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0xefeeedecebeae9e8 and rs2_val == 0xf3f2f1f0efeeedec and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0xebeae9e8e7e6e5e4 and rs2_val == 0xe7e6e5e4e3e2e1e0 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0xebeae9e8e7e6e5e4 and rs2_val == 0xe7e6e5e4e3e2e1e0 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0xebeae9e8e7e6e5e4 and rs2_val == 0xe7e6e5e4e3e2e1e0 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0xebeae9e8e7e6e5e4 and rs2_val == 0xe7e6e5e4e3e2e1e0 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0xe7e6e5e4e3e2e1e0 and rs2_val == 0xebeae9e8e7e6e5e4 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0xe7e6e5e4e3e2e1e0 and rs2_val == 0xebeae9e8e7e6e5e4 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0xe7e6e5e4e3e2e1e0 and rs2_val == 0xebeae9e8e7e6e5e4 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0xe7e6e5e4e3e2e1e0 and rs2_val == 0xebeae9e8e7e6e5e4 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0xe3e2e1e0dfdedddc and rs2_val == 0xdfdedddcdbdad9d8 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0xe3e2e1e0dfdedddc and rs2_val == 0xdfdedddcdbdad9d8 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0xe3e2e1e0dfdedddc and rs2_val == 0xdfdedddcdbdad9d8 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0xe3e2e1e0dfdedddc and rs2_val == 0xdfdedddcdbdad9d8 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0xdfdedddcdbdad9d8 and rs2_val == 0xe3e2e1e0dfdedddc and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0xdfdedddcdbdad9d8 and rs2_val == 0xe3e2e1e0dfdedddc and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0xdfdedddcdbdad9d8 and rs2_val == 0xe3e2e1e0dfdedddc and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0xdfdedddcdbdad9d8 and rs2_val == 0xe3e2e1e0dfdedddc and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0xdbdad9d8d7d6d5d4 and rs2_val == 0xd7d6d5d4d3d2d1d0 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0xdbdad9d8d7d6d5d4 and rs2_val == 0xd7d6d5d4d3d2d1d0 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0xdbdad9d8d7d6d5d4 and rs2_val == 0xd7d6d5d4d3d2d1d0 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0xdbdad9d8d7d6d5d4 and rs2_val == 0xd7d6d5d4d3d2d1d0 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0xd7d6d5d4d3d2d1d0 and rs2_val == 0xdbdad9d8d7d6d5d4 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0xd7d6d5d4d3d2d1d0 and rs2_val == 0xdbdad9d8d7d6d5d4 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0xd7d6d5d4d3d2d1d0 and rs2_val == 0xdbdad9d8d7d6d5d4 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0xd7d6d5d4d3d2d1d0 and rs2_val == 0xdbdad9d8d7d6d5d4 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0xd3d2d1d0cfcecdcc and rs2_val == 0xcfcecdcccbcac9c8 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0xd3d2d1d0cfcecdcc and rs2_val == 0xcfcecdcccbcac9c8 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0xd3d2d1d0cfcecdcc and rs2_val == 0xcfcecdcccbcac9c8 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0xd3d2d1d0cfcecdcc and rs2_val == 0xcfcecdcccbcac9c8 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0xcfcecdcccbcac9c8 and rs2_val == 0xd3d2d1d0cfcecdcc and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0xcfcecdcccbcac9c8 and rs2_val == 0xd3d2d1d0cfcecdcc and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0xcfcecdcccbcac9c8 and rs2_val == 0xd3d2d1d0cfcecdcc and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0xcfcecdcccbcac9c8 and rs2_val == 0xd3d2d1d0cfcecdcc and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0xcbcac9c8c7c6c5c4 and rs2_val == 0xc7c6c5c4c3c2c1c0 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0xcbcac9c8c7c6c5c4 and rs2_val == 0xc7c6c5c4c3c2c1c0 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0xcbcac9c8c7c6c5c4 and rs2_val == 0xc7c6c5c4c3c2c1c0 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0xcbcac9c8c7c6c5c4 and rs2_val == 0xc7c6c5c4c3c2c1c0 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0xc7c6c5c4c3c2c1c0 and rs2_val == 0xcbcac9c8c7c6c5c4 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0xc7c6c5c4c3c2c1c0 and rs2_val == 0xcbcac9c8c7c6c5c4 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0xc7c6c5c4c3c2c1c0 and rs2_val == 0xcbcac9c8c7c6c5c4 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0xc7c6c5c4c3c2c1c0 and rs2_val == 0xcbcac9c8c7c6c5c4 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0xc3c2c1c0bfbebdbc and rs2_val == 0xbfbebdbcbbbab9b8 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0xc3c2c1c0bfbebdbc and rs2_val == 0xbfbebdbcbbbab9b8 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0xc3c2c1c0bfbebdbc and rs2_val == 0xbfbebdbcbbbab9b8 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0xc3c2c1c0bfbebdbc and rs2_val == 0xbfbebdbcbbbab9b8 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0xbfbebdbcbbbab9b8 and rs2_val == 0xc3c2c1c0bfbebdbc and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0xbfbebdbcbbbab9b8 and rs2_val == 0xc3c2c1c0bfbebdbc and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0xbfbebdbcbbbab9b8 and rs2_val == 0xc3c2c1c0bfbebdbc and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0xbfbebdbcbbbab9b8 and rs2_val == 0xc3c2c1c0bfbebdbc and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0xbbbab9b8b7b6b5b4 and rs2_val == 0xb7b6b5b4b3b2b1b0 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0xbbbab9b8b7b6b5b4 and rs2_val == 0xb7b6b5b4b3b2b1b0 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0xbbbab9b8b7b6b5b4 and rs2_val == 0xb7b6b5b4b3b2b1b0 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0xbbbab9b8b7b6b5b4 and rs2_val == 0xb7b6b5b4b3b2b1b0 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0xb7b6b5b4b3b2b1b0 and rs2_val == 0xbbbab9b8b7b6b5b4 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0xb7b6b5b4b3b2b1b0 and rs2_val == 0xbbbab9b8b7b6b5b4 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0xb7b6b5b4b3b2b1b0 and rs2_val == 0xbbbab9b8b7b6b5b4 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0xb7b6b5b4b3b2b1b0 and rs2_val == 0xbbbab9b8b7b6b5b4 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0xb3b2b1b0afaeadac and rs2_val == 0xafaeadacabaaa9a8 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0xb3b2b1b0afaeadac and rs2_val == 0xafaeadacabaaa9a8 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0xb3b2b1b0afaeadac and rs2_val == 0xafaeadacabaaa9a8 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0xb3b2b1b0afaeadac and rs2_val == 0xafaeadacabaaa9a8 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0xafaeadacabaaa9a8 and rs2_val == 0xb3b2b1b0afaeadac and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0xafaeadacabaaa9a8 and rs2_val == 0xb3b2b1b0afaeadac and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0xafaeadacabaaa9a8 and rs2_val == 0xb3b2b1b0afaeadac and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0xafaeadacabaaa9a8 and rs2_val == 0xb3b2b1b0afaeadac and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0xabaaa9a8a7a6a5a4 and rs2_val == 0xa7a6a5a4a3a2a1a0 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0xabaaa9a8a7a6a5a4 and rs2_val == 0xa7a6a5a4a3a2a1a0 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0xabaaa9a8a7a6a5a4 and rs2_val == 0xa7a6a5a4a3a2a1a0 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0xabaaa9a8a7a6a5a4 and rs2_val == 0xa7a6a5a4a3a2a1a0 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0xa7a6a5a4a3a2a1a0 and rs2_val == 0xabaaa9a8a7a6a5a4 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0xa7a6a5a4a3a2a1a0 and rs2_val == 0xabaaa9a8a7a6a5a4 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0xa7a6a5a4a3a2a1a0 and rs2_val == 0xabaaa9a8a7a6a5a4 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0xa7a6a5a4a3a2a1a0 and rs2_val == 0xabaaa9a8a7a6a5a4 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0xa3a2a1a09f9e9d9c and rs2_val == 0x9f9e9d9c9b9a9998 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0xa3a2a1a09f9e9d9c and rs2_val == 0x9f9e9d9c9b9a9998 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0xa3a2a1a09f9e9d9c and rs2_val == 0x9f9e9d9c9b9a9998 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0xa3a2a1a09f9e9d9c and rs2_val == 0x9f9e9d9c9b9a9998 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x9f9e9d9c9b9a9998 and rs2_val == 0xa3a2a1a09f9e9d9c and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x9f9e9d9c9b9a9998 and rs2_val == 0xa3a2a1a09f9e9d9c and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x9f9e9d9c9b9a9998 and rs2_val == 0xa3a2a1a09f9e9d9c and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x9f9e9d9c9b9a9998 and rs2_val == 0xa3a2a1a09f9e9d9c and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x9b9a999897969594 and rs2_val == 0x9796959493929190 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x9b9a999897969594 and rs2_val == 0x9796959493929190 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x9b9a999897969594 and rs2_val == 0x9796959493929190 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x9b9a999897969594 and rs2_val == 0x9796959493929190 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x9796959493929190 and rs2_val == 0x9b9a999897969594 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x9796959493929190 and rs2_val == 0x9b9a999897969594 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x9796959493929190 and rs2_val == 0x9b9a999897969594 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x9796959493929190 and rs2_val == 0x9b9a999897969594 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x939291908f8e8d8c and rs2_val == 0x8f8e8d8c8b8a8988 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x939291908f8e8d8c and rs2_val == 0x8f8e8d8c8b8a8988 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x939291908f8e8d8c and rs2_val == 0x8f8e8d8c8b8a8988 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x939291908f8e8d8c and rs2_val == 0x8f8e8d8c8b8a8988 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x8f8e8d8c8b8a8988 and rs2_val == 0x939291908f8e8d8c and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x8f8e8d8c8b8a8988 and rs2_val == 0x939291908f8e8d8c and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x8f8e8d8c8b8a8988 and rs2_val == 0x939291908f8e8d8c and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x8f8e8d8c8b8a8988 and rs2_val == 0x939291908f8e8d8c and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x8b8a898887868584 and rs2_val == 0x8786858483828180 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x8b8a898887868584 and rs2_val == 0x8786858483828180 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x8b8a898887868584 and rs2_val == 0x8786858483828180 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x8b8a898887868584 and rs2_val == 0x8786858483828180 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x8786858483828180 and rs2_val == 0x8b8a898887868584 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x8786858483828180 and rs2_val == 0x8b8a898887868584 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x8786858483828180 and rs2_val == 0x8b8a898887868584 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x8786858483828180 and rs2_val == 0x8b8a898887868584 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x838281807f7e7d7c and rs2_val == 0x7f7e7d7c7b7a7978 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x838281807f7e7d7c and rs2_val == 0x7f7e7d7c7b7a7978 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x838281807f7e7d7c and rs2_val == 0x7f7e7d7c7b7a7978 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x838281807f7e7d7c and rs2_val == 0x7f7e7d7c7b7a7978 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x7f7e7d7c7b7a7978 and rs2_val == 0x838281807f7e7d7c and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x7f7e7d7c7b7a7978 and rs2_val == 0x838281807f7e7d7c and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x7f7e7d7c7b7a7978 and rs2_val == 0x838281807f7e7d7c and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x7f7e7d7c7b7a7978 and rs2_val == 0x838281807f7e7d7c and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x7b7a797877767574 and rs2_val == 0x7776757473727170 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x7b7a797877767574 and rs2_val == 0x7776757473727170 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x7b7a797877767574 and rs2_val == 0x7776757473727170 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x7b7a797877767574 and rs2_val == 0x7776757473727170 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x7776757473727170 and rs2_val == 0x7b7a797877767574 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x7776757473727170 and rs2_val == 0x7b7a797877767574 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x7776757473727170 and rs2_val == 0x7b7a797877767574 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x7776757473727170 and rs2_val == 0x7b7a797877767574 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x737271706f6e6d6c and rs2_val == 0x6f6e6d6c6b6a6968 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x737271706f6e6d6c and rs2_val == 0x6f6e6d6c6b6a6968 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x737271706f6e6d6c and rs2_val == 0x6f6e6d6c6b6a6968 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x737271706f6e6d6c and rs2_val == 0x6f6e6d6c6b6a6968 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x6f6e6d6c6b6a6968 and rs2_val == 0x737271706f6e6d6c and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x6f6e6d6c6b6a6968 and rs2_val == 0x737271706f6e6d6c and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x6f6e6d6c6b6a6968 and rs2_val == 0x737271706f6e6d6c and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x6f6e6d6c6b6a6968 and rs2_val == 0x737271706f6e6d6c and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x6b6a696867666564 and rs2_val == 0x6766656463626160 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x6b6a696867666564 and rs2_val == 0x6766656463626160 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x6b6a696867666564 and rs2_val == 0x6766656463626160 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x6b6a696867666564 and rs2_val == 0x6766656463626160 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x6766656463626160 and rs2_val == 0x6b6a696867666564 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x6766656463626160 and rs2_val == 0x6b6a696867666564 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x6766656463626160 and rs2_val == 0x6b6a696867666564 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x6766656463626160 and rs2_val == 0x6b6a696867666564 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x636261605f5e5d5c and rs2_val == 0x5f5e5d5c5b5a5958 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x636261605f5e5d5c and rs2_val == 0x5f5e5d5c5b5a5958 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x636261605f5e5d5c and rs2_val == 0x5f5e5d5c5b5a5958 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x636261605f5e5d5c and rs2_val == 0x5f5e5d5c5b5a5958 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x5f5e5d5c5b5a5958 and rs2_val == 0x636261605f5e5d5c and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x5f5e5d5c5b5a5958 and rs2_val == 0x636261605f5e5d5c and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x5f5e5d5c5b5a5958 and rs2_val == 0x636261605f5e5d5c and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x5f5e5d5c5b5a5958 and rs2_val == 0x636261605f5e5d5c and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x5b5a595857565554 and rs2_val == 0x5756555453525150 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x5b5a595857565554 and rs2_val == 0x5756555453525150 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x5b5a595857565554 and rs2_val == 0x5756555453525150 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x5b5a595857565554 and rs2_val == 0x5756555453525150 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x5756555453525150 and rs2_val == 0x5b5a595857565554 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x5756555453525150 and rs2_val == 0x5b5a595857565554 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x5756555453525150 and rs2_val == 0x5b5a595857565554 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x5756555453525150 and rs2_val == 0x5b5a595857565554 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x535251504f4e4d4c and rs2_val == 0x4f4e4d4c4b4a4948 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x535251504f4e4d4c and rs2_val == 0x4f4e4d4c4b4a4948 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x535251504f4e4d4c and rs2_val == 0x4f4e4d4c4b4a4948 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x535251504f4e4d4c and rs2_val == 0x4f4e4d4c4b4a4948 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x4f4e4d4c4b4a4948 and rs2_val == 0x535251504f4e4d4c and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x4f4e4d4c4b4a4948 and rs2_val == 0x535251504f4e4d4c and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x4f4e4d4c4b4a4948 and rs2_val == 0x535251504f4e4d4c and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x4f4e4d4c4b4a4948 and rs2_val == 0x535251504f4e4d4c and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x4b4a494847464544 and rs2_val == 0x4746454443424140 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x4b4a494847464544 and rs2_val == 0x4746454443424140 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x4b4a494847464544 and rs2_val == 0x4746454443424140 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x4b4a494847464544 and rs2_val == 0x4746454443424140 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x4746454443424140 and rs2_val == 0x4b4a494847464544 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x4746454443424140 and rs2_val == 0x4b4a494847464544 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x4746454443424140 and rs2_val == 0x4b4a494847464544 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x4746454443424140 and rs2_val == 0x4b4a494847464544 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x434241403f3e3d3c and rs2_val == 0x3f3e3d3c3b3a3938 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x434241403f3e3d3c and rs2_val == 0x3f3e3d3c3b3a3938 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x434241403f3e3d3c and rs2_val == 0x3f3e3d3c3b3a3938 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x434241403f3e3d3c and rs2_val == 0x3f3e3d3c3b3a3938 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x3f3e3d3c3b3a3938 and rs2_val == 0x434241403f3e3d3c and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x3f3e3d3c3b3a3938 and rs2_val == 0x434241403f3e3d3c and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x3f3e3d3c3b3a3938 and rs2_val == 0x434241403f3e3d3c and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x3f3e3d3c3b3a3938 and rs2_val == 0x434241403f3e3d3c and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x3b3a393837363534 and rs2_val == 0x3736353433323130 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x3b3a393837363534 and rs2_val == 0x3736353433323130 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x3b3a393837363534 and rs2_val == 0x3736353433323130 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x3b3a393837363534 and rs2_val == 0x3736353433323130 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x3736353433323130 and rs2_val == 0x3b3a393837363534 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x3736353433323130 and rs2_val == 0x3b3a393837363534 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x3736353433323130 and rs2_val == 0x3b3a393837363534 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x3736353433323130 and rs2_val == 0x3b3a393837363534 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x333231302f2e2d2c and rs2_val == 0x2f2e2d2c2b2a2928 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x333231302f2e2d2c and rs2_val == 0x2f2e2d2c2b2a2928 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x333231302f2e2d2c and rs2_val == 0x2f2e2d2c2b2a2928 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x333231302f2e2d2c and rs2_val == 0x2f2e2d2c2b2a2928 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x2f2e2d2c2b2a2928 and rs2_val == 0x333231302f2e2d2c and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x2f2e2d2c2b2a2928 and rs2_val == 0x333231302f2e2d2c and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x2f2e2d2c2b2a2928 and rs2_val == 0x333231302f2e2d2c and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x2f2e2d2c2b2a2928 and rs2_val == 0x333231302f2e2d2c and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x2b2a292827262524 and rs2_val == 0x2726252423222120 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x2b2a292827262524 and rs2_val == 0x2726252423222120 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x2b2a292827262524 and rs2_val == 0x2726252423222120 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x2b2a292827262524 and rs2_val == 0x2726252423222120 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x2726252423222120 and rs2_val == 0x2b2a292827262524 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x2726252423222120 and rs2_val == 0x2b2a292827262524 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x2726252423222120 and rs2_val == 0x2b2a292827262524 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x2726252423222120 and rs2_val == 0x2b2a292827262524 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x232221201f1e1d1c and rs2_val == 0x1f1e1d1c1b1a1918 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x232221201f1e1d1c and rs2_val == 0x1f1e1d1c1b1a1918 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x232221201f1e1d1c and rs2_val == 0x1f1e1d1c1b1a1918 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x232221201f1e1d1c and rs2_val == 0x1f1e1d1c1b1a1918 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x1f1e1d1c1b1a1918 and rs2_val == 0x232221201f1e1d1c and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x1f1e1d1c1b1a1918 and rs2_val == 0x232221201f1e1d1c and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x1f1e1d1c1b1a1918 and rs2_val == 0x232221201f1e1d1c and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x1f1e1d1c1b1a1918 and rs2_val == 0x232221201f1e1d1c and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x1b1a191817161514 and rs2_val == 0x1716151413121110 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x1b1a191817161514 and rs2_val == 0x1716151413121110 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x1b1a191817161514 and rs2_val == 0x1716151413121110 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x1b1a191817161514 and rs2_val == 0x1716151413121110 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x1716151413121110 and rs2_val == 0x1b1a191817161514 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x1716151413121110 and rs2_val == 0x1b1a191817161514 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x1716151413121110 and rs2_val == 0x1b1a191817161514 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x1716151413121110 and rs2_val == 0x1b1a191817161514 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x131211100f0e0d0c and rs2_val == 0x0f0e0d0c0b0a0908 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x131211100f0e0d0c and rs2_val == 0x0f0e0d0c0b0a0908 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x131211100f0e0d0c and rs2_val == 0x0f0e0d0c0b0a0908 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x131211100f0e0d0c and rs2_val == 0x0f0e0d0c0b0a0908 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x0f0e0d0c0b0a0908 and rs2_val == 0x131211100f0e0d0c and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x0f0e0d0c0b0a0908 and rs2_val == 0x131211100f0e0d0c and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x0f0e0d0c0b0a0908 and rs2_val == 0x131211100f0e0d0c and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x0f0e0d0c0b0a0908 and rs2_val == 0x131211100f0e0d0c and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x0b0a090807060504 and rs2_val == 0x0706050403020100 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x0b0a090807060504 and rs2_val == 0x0706050403020100 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x0b0a090807060504 and rs2_val == 0x0706050403020100 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x0b0a090807060504 and rs2_val == 0x0706050403020100 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x0706050403020100 and rs2_val == 0x0b0a090807060504 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x0706050403020100 and rs2_val == 0x0b0a090807060504 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x0706050403020100 and rs2_val == 0x0b0a090807060504 and imm_val == 1 #nosat': 1 # Byte Count
+    coverage: 276/276
+total_coverage: 378/378
 </br></div></td>
         </tr></tbody>
         
         <tbody class= "  results-table-row" >
         <tr>
           <td class="col-name">sm4ks</td>
-          <td class="col-result">215/215</td>
+          <td class="col-result">378/378</td>
           <td class="col-percentage">100.00%
             <div class="meter">
               <span style="width: 100.00%"></span>
@@ -19059,235 +19288,400 @@ total_coverage: 215/215
         <tr>
           <td class="extra" colspan="2">
           <div class="log">config:
-   - check ISA:=regex(.*I.*K.*)
-   - check ISA:=regex(.*I.*ZKs.*)
-   - check ISA:=regex(.*I.*ZKsed.*)
+  - check ISA:=regex(.*I.*K.*)
+  - check ISA:=regex(.*I.*ZKs.*)
+  - check ISA:=regex(.*I.*ZKsed.*)
 op_comb:
-     rs1 != rs2: 254
-     rs1 == rs2: 1
-     coverage: 2/2
+    rs1 != rs2  and rs1 != rd and rs2 != rd: 277
+    rs1 == rd != rs2: 105
+    rs1 == rs2 != rd: 1
+    rs1 == rs2 == rd: 1
+    rs2 == rd != rs1: 1
+    coverage: 5/5
 opcode:
-     sm4ks: 255
-     coverage: 1/1
+    sm4ks: 385
+    coverage: 1/1
+rd:
+    x0: 1
+    x1: 1
+    x10: 5
+    x11: 5
+    x12: 254
+    x13: 5
+    x14: 5
+    x15: 5
+    x16: 5
+    x17: 5
+    x18: 5
+    x19: 5
+    x2: 1
+    x20: 5
+    x21: 5
+    x22: 5
+    x23: 5
+    x24: 5
+    x25: 5
+    x26: 5
+    x27: 5
+    x28: 5
+    x29: 5
+    x3: 1
+    x30: 5
+    x31: 1
+    x4: 1
+    x5: 5
+    x6: 5
+    x7: 5
+    x8: 5
+    x9: 5
+    coverage: 32/32
 rs1:
-     x0: 1
-     x1: 1
-     x10: 124
-     x11: 5
-     x12: 5
-     x13: 5
-     x14: 5
-     x15: 5
-     x16: 5
-     x17: 5
-     x18: 5
-     x19: 5
-     x2: 1
-     x20: 5
-     x21: 5
-     x22: 5
-     x23: 5
-     x24: 5
-     x25: 5
-     x26: 5
-     x27: 5
-     x28: 5
-     x29: 5
-     x3: 1
-     x30: 5
-     x31: 1
-     x4: 1
-     x5: 5
-     x6: 5
-     x7: 5
-     x8: 5
-     x9: 5
-     coverage: 32/32
-rs2:
-     x0: 1
-     x1: 2
-     x10: 5
-     x11: 124
-     x12: 5
-     x13: 5
-     x14: 5
-     x15: 5
-     x16: 5
-     x17: 5
-     x18: 5
-     x19: 5
-     x2: 3
-     x20: 5
-     x21: 5
-     x22: 5
-     x23: 5
-     x24: 5
-     x25: 5
-     x26: 5
-     x27: 4
-     x28: 3
-     x29: 2
-     x3: 4
-     x30: 1
-     x31: 1
-     x4: 5
-     x5: 5
-     x6: 5
-     x7: 5
-     x8: 5
-     x9: 5
-     coverage: 32/32
+    x0: 1
+    x1: 1
+    x10: 254
+    x11: 5
+    x12: 5
+    x13: 5
+    x14: 5
+    x15: 5
+    x16: 5
+    x17: 5
+    x18: 5
+    x19: 5
+    x2: 1
+    x20: 5
+    x21: 5
+    x22: 5
+    x23: 5
+    x24: 5
+    x25: 5
+    x26: 5
+    x27: 5
+    x28: 5
+    x29: 5
+    x3: 1
+    x30: 5
+    x31: 1
+    x4: 1
+    x5: 5
+    x6: 5
+    x7: 5
+    x8: 5
+    x9: 5
+    coverage: 32/32
+  rs2:
+    x0: 1
+    x1: 2
+    x10: 5
+    x11: 254
+    x12: 5
+    x13: 5
+    x14: 5
+    x15: 5
+    x16: 5
+    x17: 5
+    x18: 5
+    x19: 5
+    x2: 3
+    x20: 5
+    x21: 5
+    x22: 5
+    x23: 5
+    x24: 5
+    x25: 5
+    x26: 5
+    x27: 4
+    x28: 3
+    x29: 2
+    x3: 4
+    x30: 1
+    x31: 1
+    x4: 5
+    x5: 5
+    x6: 5
+    x7: 5
+    x8: 5
+    x9: 5
+    coverage: 32/32
 val_comb:
-     'rs1_val == 0x0706050403020100 and rs2_val == 0x0f0e0d0c0b0a0908 and imm_val == 0 #nosat': 1  # Byte Count
-     'rs1_val == 0xbc36b151aeb006fc and rs2_val == 0x2cab43d86576923c and imm_val == 0x3 #nosat': 1 # Uniform Random 1
-     'rs1_val == 0x156fe482f9fcd292 and rs2_val == 0x24c6435c8dca0621 and imm_val == 0x0 #nosat': 1 # Uniform Random 2
-     'rs1_val == 0xa757e91e027e5943 and rs2_val == 0xda73ec2605e6750f and imm_val == 0x2 #nosat': 1 # Uniform Random 3
-     'rs1_val == 0xf452cbd863fa921d and rs2_val == 0x4b6587d88ef464d1 and imm_val == 0x3 #nosat': 1 # Uniform Random 4
-     'rs1_val == 0xd40f46a4356c1dcc and rs2_val == 0x30c33d97184e0f23 and imm_val == 0x0 #nosat': 1 # Uniform Random 5
-     'rs1_val == 0x6d23c0488a6019c1 and rs2_val == 0x860bdaad7447a088 and imm_val == 0x2 #nosat': 1 # Uniform Random 6
-     'rs1_val == 0x17168ab3a4351379 and rs2_val == 0xbbb4f560f222070c and imm_val == 0x0 #nosat': 1 # Uniform Random 7
-     'rs1_val == 0x3fb0fe60ef1d54db and rs2_val == 0x09ff42451826a804 and imm_val == 0x1 #nosat': 1 # Uniform Random 8
-     'rs1_val == 0xcc7b22010ca3ef52 and rs2_val == 0xc150f4d3df74d068 and imm_val == 0x1 #nosat': 1 # Uniform Random 9
-     'rs1_val == 0x358a9235987daa20 and rs2_val == 0xb369e10209f393d7 and imm_val == 0x1 #nosat': 1 # Uniform Random 10
-     'rs1_val == 0x91766f62ba2be4d3 and rs2_val == 0x74a813d25570084b and imm_val == 0x0 #nosat': 1 # Uniform Random 11
-     'rs1_val == 0xb7c1fc5f1efa1095 and rs2_val == 0xe2cbb9ab3819fe4d and imm_val == 0x1 #nosat': 1 # Uniform Random 12
-     'rs1_val == 0xa6c9253a4cc6382e and rs2_val == 0x25ae27ee4113ee60 and imm_val == 0x2 #nosat': 1 # Uniform Random 13
-     'rs1_val == 0xf17f6920daaafe5c and rs2_val == 0x7bcad7c4ff9a1b80 and imm_val == 0x0 #nosat': 1 # Uniform Random 14
-     'rs1_val == 0x3150e5fa299c3bcf and rs2_val == 0xe6fff3d9ec1ce9d2 and imm_val == 0x1 #nosat': 1 # Uniform Random 15
-     'rs1_val == 0x1fc493caa371db42 and rs2_val == 0x9a4e9ef10171f4df and imm_val == 0x1 #nosat': 1 # Uniform Random 16
-     'rs1_val == 0xf5faf2073430cb17 and rs2_val == 0x8e2eac2a760b3c5e and imm_val == 0x3 #nosat': 1 # Uniform Random 17
-     'rs1_val == 0xbc991c531484f407 and rs2_val == 0x55d98c6e3459294e and imm_val == 0x2 #nosat': 1 # Uniform Random 18
-     'rs1_val == 0x59885afcbb61a9cd and rs2_val == 0xccce240c81c1e7ff and imm_val == 0x0 #nosat': 1 # Uniform Random 19
-     'rs1_val == 0x75a3adb3254a9493 and rs2_val == 0xc5521660f3a3c571 and imm_val == 0x3 #nosat': 1 # Uniform Random 20
-     'rs1_val == 0xfffefdfcfbfaf9f8 and rs2_val == 0xf7f6f5f4f3f2f1f0 and imm_val == 3 #nosat': 1 # Byte Count
-     'rs1_val == 0xfffefdfcfbfaf9f8 and rs2_val == 0xf7f6f5f4f3f2f1f0 and imm_val == 2 #nosat': 1 # Byte Count
-     'rs1_val == 0xfffefdfcfbfaf9f8 and rs2_val == 0xf7f6f5f4f3f2f1f0 and imm_val == 1 #nosat': 1 # Byte Count
-     'rs1_val == 0xfffefdfcfbfaf9f8 and rs2_val == 0xf7f6f5f4f3f2f1f0 and imm_val == 0 #nosat': 1 # Byte Count
-     'rs1_val == 0xf7f6f5f4f3f2f1f0 and rs2_val == 0xfffefdfcfbfaf9f8 and imm_val == 3 #nosat': 1 # Byte Count
-     'rs1_val == 0xf7f6f5f4f3f2f1f0 and rs2_val == 0xfffefdfcfbfaf9f8 and imm_val == 2 #nosat': 1 # Byte Count
-     'rs1_val == 0xf7f6f5f4f3f2f1f0 and rs2_val == 0xfffefdfcfbfaf9f8 and imm_val == 1 #nosat': 1 # Byte Count
-     'rs1_val == 0xf7f6f5f4f3f2f1f0 and rs2_val == 0xfffefdfcfbfaf9f8 and imm_val == 0 #nosat': 1 # Byte Count
-     'rs1_val == 0xefeeedecebeae9e8 and rs2_val == 0xe7e6e5e4e3e2e1e0 and imm_val == 3 #nosat': 1 # Byte Count
-     'rs1_val == 0xefeeedecebeae9e8 and rs2_val == 0xe7e6e5e4e3e2e1e0 and imm_val == 2 #nosat': 1 # Byte Count
-     'rs1_val == 0xefeeedecebeae9e8 and rs2_val == 0xe7e6e5e4e3e2e1e0 and imm_val == 1 #nosat': 1 # Byte Count
-     'rs1_val == 0xefeeedecebeae9e8 and rs2_val == 0xe7e6e5e4e3e2e1e0 and imm_val == 0 #nosat': 1 # Byte Count
-     'rs1_val == 0xe7e6e5e4e3e2e1e0 and rs2_val == 0xefeeedecebeae9e8 and imm_val == 3 #nosat': 1 # Byte Count
-     'rs1_val == 0xe7e6e5e4e3e2e1e0 and rs2_val == 0xefeeedecebeae9e8 and imm_val == 2 #nosat': 1 # Byte Count
-     'rs1_val == 0xe7e6e5e4e3e2e1e0 and rs2_val == 0xefeeedecebeae9e8 and imm_val == 1 #nosat': 1 # Byte Count
-     'rs1_val == 0xe7e6e5e4e3e2e1e0 and rs2_val == 0xefeeedecebeae9e8 and imm_val == 0 #nosat': 1 # Byte Count
-     'rs1_val == 0xdfdedddcdbdad9d8 and rs2_val == 0xd7d6d5d4d3d2d1d0 and imm_val == 3 #nosat': 1 # Byte Count
-     'rs1_val == 0xdfdedddcdbdad9d8 and rs2_val == 0xd7d6d5d4d3d2d1d0 and imm_val == 2 #nosat': 1 # Byte Count
-     'rs1_val == 0xdfdedddcdbdad9d8 and rs2_val == 0xd7d6d5d4d3d2d1d0 and imm_val == 1 #nosat': 1 # Byte Count
-     'rs1_val == 0xdfdedddcdbdad9d8 and rs2_val == 0xd7d6d5d4d3d2d1d0 and imm_val == 0 #nosat': 1 # Byte Count
-     'rs1_val == 0xd7d6d5d4d3d2d1d0 and rs2_val == 0xdfdedddcdbdad9d8 and imm_val == 3 #nosat': 1 # Byte Count
-     'rs1_val == 0xd7d6d5d4d3d2d1d0 and rs2_val == 0xdfdedddcdbdad9d8 and imm_val == 2 #nosat': 1 # Byte Count
-     'rs1_val == 0xd7d6d5d4d3d2d1d0 and rs2_val == 0xdfdedddcdbdad9d8 and imm_val == 1 #nosat': 1 # Byte Count
-     'rs1_val == 0xd7d6d5d4d3d2d1d0 and rs2_val == 0xdfdedddcdbdad9d8 and imm_val == 0 #nosat': 1 # Byte Count
-     'rs1_val == 0xcfcecdcccbcac9c8 and rs2_val == 0xc7c6c5c4c3c2c1c0 and imm_val == 3 #nosat': 1 # Byte Count
-     'rs1_val == 0xcfcecdcccbcac9c8 and rs2_val == 0xc7c6c5c4c3c2c1c0 and imm_val == 2 #nosat': 1 # Byte Count
-     'rs1_val == 0xcfcecdcccbcac9c8 and rs2_val == 0xc7c6c5c4c3c2c1c0 and imm_val == 1 #nosat': 1 # Byte Count
-     'rs1_val == 0xcfcecdcccbcac9c8 and rs2_val == 0xc7c6c5c4c3c2c1c0 and imm_val == 0 #nosat': 1 # Byte Count
-     'rs1_val == 0xc7c6c5c4c3c2c1c0 and rs2_val == 0xcfcecdcccbcac9c8 and imm_val == 3 #nosat': 1 # Byte Count
-     'rs1_val == 0xc7c6c5c4c3c2c1c0 and rs2_val == 0xcfcecdcccbcac9c8 and imm_val == 2 #nosat': 1 # Byte Count
-     'rs1_val == 0xc7c6c5c4c3c2c1c0 and rs2_val == 0xcfcecdcccbcac9c8 and imm_val == 1 #nosat': 1 # Byte Count
-     'rs1_val == 0xc7c6c5c4c3c2c1c0 and rs2_val == 0xcfcecdcccbcac9c8 and imm_val == 0 #nosat': 1 # Byte Count
-     'rs1_val == 0xbfbebdbcbbbab9b8 and rs2_val == 0xb7b6b5b4b3b2b1b0 and imm_val == 3 #nosat': 1 # Byte Count
-     'rs1_val == 0xbfbebdbcbbbab9b8 and rs2_val == 0xb7b6b5b4b3b2b1b0 and imm_val == 2 #nosat': 1 # Byte Count
-     'rs1_val == 0xbfbebdbcbbbab9b8 and rs2_val == 0xb7b6b5b4b3b2b1b0 and imm_val == 1 #nosat': 1 # Byte Count
-     'rs1_val == 0xbfbebdbcbbbab9b8 and rs2_val == 0xb7b6b5b4b3b2b1b0 and imm_val == 0 #nosat': 1 # Byte Count
-     'rs1_val == 0xb7b6b5b4b3b2b1b0 and rs2_val == 0xbfbebdbcbbbab9b8 and imm_val == 3 #nosat': 1 # Byte Count
-     'rs1_val == 0xb7b6b5b4b3b2b1b0 and rs2_val == 0xbfbebdbcbbbab9b8 and imm_val == 2 #nosat': 1 # Byte Count
-     'rs1_val == 0xb7b6b5b4b3b2b1b0 and rs2_val == 0xbfbebdbcbbbab9b8 and imm_val == 1 #nosat': 1 # Byte Count
-     'rs1_val == 0xb7b6b5b4b3b2b1b0 and rs2_val == 0xbfbebdbcbbbab9b8 and imm_val == 0 #nosat': 1 # Byte Count
-     'rs1_val == 0xafaeadacabaaa9a8 and rs2_val == 0xa7a6a5a4a3a2a1a0 and imm_val == 3 #nosat': 1 # Byte Count
-     'rs1_val == 0xafaeadacabaaa9a8 and rs2_val == 0xa7a6a5a4a3a2a1a0 and imm_val == 2 #nosat': 1 # Byte Count
-     'rs1_val == 0xafaeadacabaaa9a8 and rs2_val == 0xa7a6a5a4a3a2a1a0 and imm_val == 1 #nosat': 1 # Byte Count
-     'rs1_val == 0xafaeadacabaaa9a8 and rs2_val == 0xa7a6a5a4a3a2a1a0 and imm_val == 0 #nosat': 1 # Byte Count
-     'rs1_val == 0xa7a6a5a4a3a2a1a0 and rs2_val == 0xafaeadacabaaa9a8 and imm_val == 3 #nosat': 1 # Byte Count
-     'rs1_val == 0xa7a6a5a4a3a2a1a0 and rs2_val == 0xafaeadacabaaa9a8 and imm_val == 2 #nosat': 1 # Byte Count
-     'rs1_val == 0xa7a6a5a4a3a2a1a0 and rs2_val == 0xafaeadacabaaa9a8 and imm_val == 1 #nosat': 1 # Byte Count
-     'rs1_val == 0xa7a6a5a4a3a2a1a0 and rs2_val == 0xafaeadacabaaa9a8 and imm_val == 0 #nosat': 1 # Byte Count
-     'rs1_val == 0x9f9e9d9c9b9a9998 and rs2_val == 0x9796959493929190 and imm_val == 3 #nosat': 1 # Byte Count
-     'rs1_val == 0x9f9e9d9c9b9a9998 and rs2_val == 0x9796959493929190 and imm_val == 2 #nosat': 1 # Byte Count
-     'rs1_val == 0x9f9e9d9c9b9a9998 and rs2_val == 0x9796959493929190 and imm_val == 1 #nosat': 1 # Byte Count
-     'rs1_val == 0x9f9e9d9c9b9a9998 and rs2_val == 0x9796959493929190 and imm_val == 0 #nosat': 1 # Byte Count
-     'rs1_val == 0x9796959493929190 and rs2_val == 0x9f9e9d9c9b9a9998 and imm_val == 3 #nosat': 1 # Byte Count
-     'rs1_val == 0x9796959493929190 and rs2_val == 0x9f9e9d9c9b9a9998 and imm_val == 2 #nosat': 1 # Byte Count
-     'rs1_val == 0x9796959493929190 and rs2_val == 0x9f9e9d9c9b9a9998 and imm_val == 1 #nosat': 1 # Byte Count
-     'rs1_val == 0x9796959493929190 and rs2_val == 0x9f9e9d9c9b9a9998 and imm_val == 0 #nosat': 1 # Byte Count
-     'rs1_val == 0x8f8e8d8c8b8a8988 and rs2_val == 0x8786858483828180 and imm_val == 3 #nosat': 1 # Byte Count
-     'rs1_val == 0x8f8e8d8c8b8a8988 and rs2_val == 0x8786858483828180 and imm_val == 2 #nosat': 1 # Byte Count
-     'rs1_val == 0x8f8e8d8c8b8a8988 and rs2_val == 0x8786858483828180 and imm_val == 1 #nosat': 1 # Byte Count
-     'rs1_val == 0x8f8e8d8c8b8a8988 and rs2_val == 0x8786858483828180 and imm_val == 0 #nosat': 1 # Byte Count
-     'rs1_val == 0x8786858483828180 and rs2_val == 0x8f8e8d8c8b8a8988 and imm_val == 3 #nosat': 1 # Byte Count
-     'rs1_val == 0x8786858483828180 and rs2_val == 0x8f8e8d8c8b8a8988 and imm_val == 2 #nosat': 1 # Byte Count
-     'rs1_val == 0x8786858483828180 and rs2_val == 0x8f8e8d8c8b8a8988 and imm_val == 1 #nosat': 1 # Byte Count
-     'rs1_val == 0x8786858483828180 and rs2_val == 0x8f8e8d8c8b8a8988 and imm_val == 0 #nosat': 1 # Byte Count
-     'rs1_val == 0x7f7e7d7c7b7a7978 and rs2_val == 0x7776757473727170 and imm_val == 3 #nosat': 1 # Byte Count
-     'rs1_val == 0x7f7e7d7c7b7a7978 and rs2_val == 0x7776757473727170 and imm_val == 2 #nosat': 1 # Byte Count
-     'rs1_val == 0x7f7e7d7c7b7a7978 and rs2_val == 0x7776757473727170 and imm_val == 1 #nosat': 1 # Byte Count
-     'rs1_val == 0x7f7e7d7c7b7a7978 and rs2_val == 0x7776757473727170 and imm_val == 0 #nosat': 1 # Byte Count
-     'rs1_val == 0x7776757473727170 and rs2_val == 0x7f7e7d7c7b7a7978 and imm_val == 3 #nosat': 1 # Byte Count
-     'rs1_val == 0x7776757473727170 and rs2_val == 0x7f7e7d7c7b7a7978 and imm_val == 2 #nosat': 1 # Byte Count
-     'rs1_val == 0x7776757473727170 and rs2_val == 0x7f7e7d7c7b7a7978 and imm_val == 1 #nosat': 1 # Byte Count
-     'rs1_val == 0x7776757473727170 and rs2_val == 0x7f7e7d7c7b7a7978 and imm_val == 0 #nosat': 1 # Byte Count
-     'rs1_val == 0x6f6e6d6c6b6a6968 and rs2_val == 0x6766656463626160 and imm_val == 3 #nosat': 1 # Byte Count
-     'rs1_val == 0x6f6e6d6c6b6a6968 and rs2_val == 0x6766656463626160 and imm_val == 2 #nosat': 1 # Byte Count
-     'rs1_val == 0x6f6e6d6c6b6a6968 and rs2_val == 0x6766656463626160 and imm_val == 1 #nosat': 1 # Byte Count
-     'rs1_val == 0x6f6e6d6c6b6a6968 and rs2_val == 0x6766656463626160 and imm_val == 0 #nosat': 1 # Byte Count
-     'rs1_val == 0x6766656463626160 and rs2_val == 0x6f6e6d6c6b6a6968 and imm_val == 3 #nosat': 1 # Byte Count
-     'rs1_val == 0x6766656463626160 and rs2_val == 0x6f6e6d6c6b6a6968 and imm_val == 2 #nosat': 1 # Byte Count
-     'rs1_val == 0x6766656463626160 and rs2_val == 0x6f6e6d6c6b6a6968 and imm_val == 1 #nosat': 1 # Byte Count
-     'rs1_val == 0x6766656463626160 and rs2_val == 0x6f6e6d6c6b6a6968 and imm_val == 0 #nosat': 1 # Byte Count
-     'rs1_val == 0x5f5e5d5c5b5a5958 and rs2_val == 0x5756555453525150 and imm_val == 3 #nosat': 1 # Byte Count
-     'rs1_val == 0x5f5e5d5c5b5a5958 and rs2_val == 0x5756555453525150 and imm_val == 2 #nosat': 1 # Byte Count
-     'rs1_val == 0x5f5e5d5c5b5a5958 and rs2_val == 0x5756555453525150 and imm_val == 1 #nosat': 1 # Byte Count
-     'rs1_val == 0x5f5e5d5c5b5a5958 and rs2_val == 0x5756555453525150 and imm_val == 0 #nosat': 1 # Byte Count
-     'rs1_val == 0x5756555453525150 and rs2_val == 0x5f5e5d5c5b5a5958 and imm_val == 3 #nosat': 1 # Byte Count
-     'rs1_val == 0x5756555453525150 and rs2_val == 0x5f5e5d5c5b5a5958 and imm_val == 2 #nosat': 1 # Byte Count
-     'rs1_val == 0x5756555453525150 and rs2_val == 0x5f5e5d5c5b5a5958 and imm_val == 1 #nosat': 1 # Byte Count
-     'rs1_val == 0x5756555453525150 and rs2_val == 0x5f5e5d5c5b5a5958 and imm_val == 0 #nosat': 1 # Byte Count
-     'rs1_val == 0x4f4e4d4c4b4a4948 and rs2_val == 0x4746454443424140 and imm_val == 3 #nosat': 1 # Byte Count
-     'rs1_val == 0x4f4e4d4c4b4a4948 and rs2_val == 0x4746454443424140 and imm_val == 2 #nosat': 1 # Byte Count
-     'rs1_val == 0x4f4e4d4c4b4a4948 and rs2_val == 0x4746454443424140 and imm_val == 1 #nosat': 1 # Byte Count
-     'rs1_val == 0x4f4e4d4c4b4a4948 and rs2_val == 0x4746454443424140 and imm_val == 0 #nosat': 1 # Byte Count
-     'rs1_val == 0x4746454443424140 and rs2_val == 0x4f4e4d4c4b4a4948 and imm_val == 3 #nosat': 1 # Byte Count
-     'rs1_val == 0x4746454443424140 and rs2_val == 0x4f4e4d4c4b4a4948 and imm_val == 2 #nosat': 1 # Byte Count
-     'rs1_val == 0x4746454443424140 and rs2_val == 0x4f4e4d4c4b4a4948 and imm_val == 1 #nosat': 1 # Byte Count
-     'rs1_val == 0x4746454443424140 and rs2_val == 0x4f4e4d4c4b4a4948 and imm_val == 0 #nosat': 1 # Byte Count
-     'rs1_val == 0x3f3e3d3c3b3a3938 and rs2_val == 0x3736353433323130 and imm_val == 3 #nosat': 1 # Byte Count
-     'rs1_val == 0x3f3e3d3c3b3a3938 and rs2_val == 0x3736353433323130 and imm_val == 2 #nosat': 1 # Byte Count
-     'rs1_val == 0x3f3e3d3c3b3a3938 and rs2_val == 0x3736353433323130 and imm_val == 1 #nosat': 1 # Byte Count
-     'rs1_val == 0x3f3e3d3c3b3a3938 and rs2_val == 0x3736353433323130 and imm_val == 0 #nosat': 1 # Byte Count
-     'rs1_val == 0x3736353433323130 and rs2_val == 0x3f3e3d3c3b3a3938 and imm_val == 3 #nosat': 1 # Byte Count
-     'rs1_val == 0x3736353433323130 and rs2_val == 0x3f3e3d3c3b3a3938 and imm_val == 2 #nosat': 1 # Byte Count
-     'rs1_val == 0x3736353433323130 and rs2_val == 0x3f3e3d3c3b3a3938 and imm_val == 1 #nosat': 1 # Byte Count
-     'rs1_val == 0x3736353433323130 and rs2_val == 0x3f3e3d3c3b3a3938 and imm_val == 0 #nosat': 1 # Byte Count
-     'rs1_val == 0x2f2e2d2c2b2a2928 and rs2_val == 0x2726252423222120 and imm_val == 3 #nosat': 1 # Byte Count
-     'rs1_val == 0x2f2e2d2c2b2a2928 and rs2_val == 0x2726252423222120 and imm_val == 2 #nosat': 1 # Byte Count
-     'rs1_val == 0x2f2e2d2c2b2a2928 and rs2_val == 0x2726252423222120 and imm_val == 1 #nosat': 1 # Byte Count
-     'rs1_val == 0x2f2e2d2c2b2a2928 and rs2_val == 0x2726252423222120 and imm_val == 0 #nosat': 1 # Byte Count
-     'rs1_val == 0x2726252423222120 and rs2_val == 0x2f2e2d2c2b2a2928 and imm_val == 3 #nosat': 1 # Byte Count
-     'rs1_val == 0x2726252423222120 and rs2_val == 0x2f2e2d2c2b2a2928 and imm_val == 2 #nosat': 1 # Byte Count
-     'rs1_val == 0x2726252423222120 and rs2_val == 0x2f2e2d2c2b2a2928 and imm_val == 1 #nosat': 1 # Byte Count
-     'rs1_val == 0x2726252423222120 and rs2_val == 0x2f2e2d2c2b2a2928 and imm_val == 0 #nosat': 1 # Byte Count
-     'rs1_val == 0x1f1e1d1c1b1a1918 and rs2_val == 0x1716151413121110 and imm_val == 3 #nosat': 1 # Byte Count
-     'rs1_val == 0x1f1e1d1c1b1a1918 and rs2_val == 0x1716151413121110 and imm_val == 2 #nosat': 1 # Byte Count
-     'rs1_val == 0x1f1e1d1c1b1a1918 and rs2_val == 0x1716151413121110 and imm_val == 1 #nosat': 1 # Byte Count
-     'rs1_val == 0x1f1e1d1c1b1a1918 and rs2_val == 0x1716151413121110 and imm_val == 0 #nosat': 1 # Byte Count
-     'rs1_val == 0x1716151413121110 and rs2_val == 0x1f1e1d1c1b1a1918 and imm_val == 3 #nosat': 1 # Byte Count
-     'rs1_val == 0x1716151413121110 and rs2_val == 0x1f1e1d1c1b1a1918 and imm_val == 2 #nosat': 1 # Byte Count
-     'rs1_val == 0x1716151413121110 and rs2_val == 0x1f1e1d1c1b1a1918 and imm_val == 1 #nosat': 1 # Byte Count
-     'rs1_val == 0x1716151413121110 and rs2_val == 0x1f1e1d1c1b1a1918 and imm_val == 0 #nosat': 1 # Byte Count
-     'rs1_val == 0x0f0e0d0c0b0a0908 and rs2_val == 0x0706050403020100 and imm_val == 3 #nosat': 1 # Byte Count
-     'rs1_val == 0x0f0e0d0c0b0a0908 and rs2_val == 0x0706050403020100 and imm_val == 2 #nosat': 1 # Byte Count
-     'rs1_val == 0x0f0e0d0c0b0a0908 and rs2_val == 0x0706050403020100 and imm_val == 1 #nosat': 1 # Byte Count
-     'rs1_val == 0x0f0e0d0c0b0a0908 and rs2_val == 0x0706050403020100 and imm_val == 0 #nosat': 1 # Byte Count
-     'rs1_val == 0x0706050403020100 and rs2_val == 0x0f0e0d0c0b0a0908 and imm_val == 3 #nosat': 1 # Byte Count
-     'rs1_val == 0x0706050403020100 and rs2_val == 0x0f0e0d0c0b0a0908 and imm_val == 2 #nosat': 1 # Byte Count
-     'rs1_val == 0x0706050403020100 and rs2_val == 0x0f0e0d0c0b0a0908 and imm_val == 1 #nosat': 1 # Byte Count
-     coverage: 148/148
-total_coverage: 215/215
+    'rs1_val == 0x0706050403020100 and rs2_val == 0x0b0a090807060504 and imm_val == 0 #nosat': 1  # Byte Count
+    'rs1_val == 0xbc36b151aeb006fc and rs2_val == 0x2cab43d86576923c and imm_val == 0x3 #nosat': 1 # Uniform Random 1
+    'rs1_val == 0x156fe482f9fcd292 and rs2_val == 0x24c6435c8dca0621 and imm_val == 0x0 #nosat': 1 # Uniform Random 2
+    'rs1_val == 0xa757e91e027e5943 and rs2_val == 0xda73ec2605e6750f and imm_val == 0x2 #nosat': 1 # Uniform Random 3
+    'rs1_val == 0xf452cbd863fa921d and rs2_val == 0x4b6587d88ef464d1 and imm_val == 0x3 #nosat': 1 # Uniform Random 4
+    'rs1_val == 0xd40f46a4356c1dcc and rs2_val == 0x30c33d97184e0f23 and imm_val == 0x0 #nosat': 1 # Uniform Random 5
+    'rs1_val == 0x6d23c0488a6019c1 and rs2_val == 0x860bdaad7447a088 and imm_val == 0x2 #nosat': 1 # Uniform Random 6
+    'rs1_val == 0x17168ab3a4351379 and rs2_val == 0xbbb4f560f222070c and imm_val == 0x0 #nosat': 1 # Uniform Random 7
+    'rs1_val == 0x3fb0fe60ef1d54db and rs2_val == 0x09ff42451826a804 and imm_val == 0x1 #nosat': 1 # Uniform Random 8
+    'rs1_val == 0xcc7b22010ca3ef52 and rs2_val == 0xc150f4d3df74d068 and imm_val == 0x1 #nosat': 1 # Uniform Random 9
+    'rs1_val == 0x358a9235987daa20 and rs2_val == 0xb369e10209f393d7 and imm_val == 0x1 #nosat': 1 # Uniform Random 10
+    'rs1_val == 0x91766f62ba2be4d3 and rs2_val == 0x74a813d25570084b and imm_val == 0x0 #nosat': 1 # Uniform Random 11
+    'rs1_val == 0xb7c1fc5f1efa1095 and rs2_val == 0xe2cbb9ab3819fe4d and imm_val == 0x1 #nosat': 1 # Uniform Random 12
+    'rs1_val == 0xa6c9253a4cc6382e and rs2_val == 0x25ae27ee4113ee60 and imm_val == 0x2 #nosat': 1 # Uniform Random 13
+    'rs1_val == 0xf17f6920daaafe5c and rs2_val == 0x7bcad7c4ff9a1b80 and imm_val == 0x0 #nosat': 1 # Uniform Random 14
+    'rs1_val == 0x3150e5fa299c3bcf and rs2_val == 0xe6fff3d9ec1ce9d2 and imm_val == 0x1 #nosat': 1 # Uniform Random 15
+    'rs1_val == 0x1fc493caa371db42 and rs2_val == 0x9a4e9ef10171f4df and imm_val == 0x1 #nosat': 1 # Uniform Random 16
+    'rs1_val == 0xf5faf2073430cb17 and rs2_val == 0x8e2eac2a760b3c5e and imm_val == 0x3 #nosat': 1 # Uniform Random 17
+    'rs1_val == 0xbc991c531484f407 and rs2_val == 0x55d98c6e3459294e and imm_val == 0x2 #nosat': 1 # Uniform Random 18
+    'rs1_val == 0x59885afcbb61a9cd and rs2_val == 0xccce240c81c1e7ff and imm_val == 0x0 #nosat': 2 # Uniform Random 19
+    'rs1_val == 0x75a3adb3254a9493 and rs2_val == 0xc5521660f3a3c571 and imm_val == 0x3 #nosat': 1 # Uniform Random 20
+    'rs1_val == 0x03020100fffefdfc and rs2_val == 0xfffefdfcfbfaf9f8 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x03020100fffefdfc and rs2_val == 0xfffefdfcfbfaf9f8 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x03020100fffefdfc and rs2_val == 0xfffefdfcfbfaf9f8 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x03020100fffefdfc and rs2_val == 0xfffefdfcfbfaf9f8 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0xfffefdfcfbfaf9f8 and rs2_val == 0x03020100fffefdfc and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0xfffefdfcfbfaf9f8 and rs2_val == 0x03020100fffefdfc and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0xfffefdfcfbfaf9f8 and rs2_val == 0x03020100fffefdfc and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0xfffefdfcfbfaf9f8 and rs2_val == 0x03020100fffefdfc and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0xfbfaf9f8f7f6f5f4 and rs2_val == 0xf7f6f5f4f3f2f1f0 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0xfbfaf9f8f7f6f5f4 and rs2_val == 0xf7f6f5f4f3f2f1f0 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0xfbfaf9f8f7f6f5f4 and rs2_val == 0xf7f6f5f4f3f2f1f0 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0xfbfaf9f8f7f6f5f4 and rs2_val == 0xf7f6f5f4f3f2f1f0 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0xf7f6f5f4f3f2f1f0 and rs2_val == 0xfbfaf9f8f7f6f5f4 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0xf7f6f5f4f3f2f1f0 and rs2_val == 0xfbfaf9f8f7f6f5f4 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0xf7f6f5f4f3f2f1f0 and rs2_val == 0xfbfaf9f8f7f6f5f4 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0xf7f6f5f4f3f2f1f0 and rs2_val == 0xfbfaf9f8f7f6f5f4 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0xf3f2f1f0efeeedec and rs2_val == 0xefeeedecebeae9e8 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0xf3f2f1f0efeeedec and rs2_val == 0xefeeedecebeae9e8 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0xf3f2f1f0efeeedec and rs2_val == 0xefeeedecebeae9e8 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0xf3f2f1f0efeeedec and rs2_val == 0xefeeedecebeae9e8 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0xefeeedecebeae9e8 and rs2_val == 0xf3f2f1f0efeeedec and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0xefeeedecebeae9e8 and rs2_val == 0xf3f2f1f0efeeedec and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0xefeeedecebeae9e8 and rs2_val == 0xf3f2f1f0efeeedec and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0xefeeedecebeae9e8 and rs2_val == 0xf3f2f1f0efeeedec and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0xebeae9e8e7e6e5e4 and rs2_val == 0xe7e6e5e4e3e2e1e0 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0xebeae9e8e7e6e5e4 and rs2_val == 0xe7e6e5e4e3e2e1e0 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0xebeae9e8e7e6e5e4 and rs2_val == 0xe7e6e5e4e3e2e1e0 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0xebeae9e8e7e6e5e4 and rs2_val == 0xe7e6e5e4e3e2e1e0 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0xe7e6e5e4e3e2e1e0 and rs2_val == 0xebeae9e8e7e6e5e4 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0xe7e6e5e4e3e2e1e0 and rs2_val == 0xebeae9e8e7e6e5e4 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0xe7e6e5e4e3e2e1e0 and rs2_val == 0xebeae9e8e7e6e5e4 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0xe7e6e5e4e3e2e1e0 and rs2_val == 0xebeae9e8e7e6e5e4 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0xe3e2e1e0dfdedddc and rs2_val == 0xdfdedddcdbdad9d8 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0xe3e2e1e0dfdedddc and rs2_val == 0xdfdedddcdbdad9d8 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0xe3e2e1e0dfdedddc and rs2_val == 0xdfdedddcdbdad9d8 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0xe3e2e1e0dfdedddc and rs2_val == 0xdfdedddcdbdad9d8 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0xdfdedddcdbdad9d8 and rs2_val == 0xe3e2e1e0dfdedddc and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0xdfdedddcdbdad9d8 and rs2_val == 0xe3e2e1e0dfdedddc and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0xdfdedddcdbdad9d8 and rs2_val == 0xe3e2e1e0dfdedddc and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0xdfdedddcdbdad9d8 and rs2_val == 0xe3e2e1e0dfdedddc and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0xdbdad9d8d7d6d5d4 and rs2_val == 0xd7d6d5d4d3d2d1d0 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0xdbdad9d8d7d6d5d4 and rs2_val == 0xd7d6d5d4d3d2d1d0 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0xdbdad9d8d7d6d5d4 and rs2_val == 0xd7d6d5d4d3d2d1d0 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0xdbdad9d8d7d6d5d4 and rs2_val == 0xd7d6d5d4d3d2d1d0 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0xd7d6d5d4d3d2d1d0 and rs2_val == 0xdbdad9d8d7d6d5d4 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0xd7d6d5d4d3d2d1d0 and rs2_val == 0xdbdad9d8d7d6d5d4 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0xd7d6d5d4d3d2d1d0 and rs2_val == 0xdbdad9d8d7d6d5d4 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0xd7d6d5d4d3d2d1d0 and rs2_val == 0xdbdad9d8d7d6d5d4 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0xd3d2d1d0cfcecdcc and rs2_val == 0xcfcecdcccbcac9c8 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0xd3d2d1d0cfcecdcc and rs2_val == 0xcfcecdcccbcac9c8 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0xd3d2d1d0cfcecdcc and rs2_val == 0xcfcecdcccbcac9c8 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0xd3d2d1d0cfcecdcc and rs2_val == 0xcfcecdcccbcac9c8 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0xcfcecdcccbcac9c8 and rs2_val == 0xd3d2d1d0cfcecdcc and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0xcfcecdcccbcac9c8 and rs2_val == 0xd3d2d1d0cfcecdcc and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0xcfcecdcccbcac9c8 and rs2_val == 0xd3d2d1d0cfcecdcc and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0xcfcecdcccbcac9c8 and rs2_val == 0xd3d2d1d0cfcecdcc and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0xcbcac9c8c7c6c5c4 and rs2_val == 0xc7c6c5c4c3c2c1c0 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0xcbcac9c8c7c6c5c4 and rs2_val == 0xc7c6c5c4c3c2c1c0 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0xcbcac9c8c7c6c5c4 and rs2_val == 0xc7c6c5c4c3c2c1c0 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0xcbcac9c8c7c6c5c4 and rs2_val == 0xc7c6c5c4c3c2c1c0 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0xc7c6c5c4c3c2c1c0 and rs2_val == 0xcbcac9c8c7c6c5c4 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0xc7c6c5c4c3c2c1c0 and rs2_val == 0xcbcac9c8c7c6c5c4 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0xc7c6c5c4c3c2c1c0 and rs2_val == 0xcbcac9c8c7c6c5c4 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0xc7c6c5c4c3c2c1c0 and rs2_val == 0xcbcac9c8c7c6c5c4 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0xc3c2c1c0bfbebdbc and rs2_val == 0xbfbebdbcbbbab9b8 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0xc3c2c1c0bfbebdbc and rs2_val == 0xbfbebdbcbbbab9b8 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0xc3c2c1c0bfbebdbc and rs2_val == 0xbfbebdbcbbbab9b8 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0xc3c2c1c0bfbebdbc and rs2_val == 0xbfbebdbcbbbab9b8 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0xbfbebdbcbbbab9b8 and rs2_val == 0xc3c2c1c0bfbebdbc and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0xbfbebdbcbbbab9b8 and rs2_val == 0xc3c2c1c0bfbebdbc and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0xbfbebdbcbbbab9b8 and rs2_val == 0xc3c2c1c0bfbebdbc and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0xbfbebdbcbbbab9b8 and rs2_val == 0xc3c2c1c0bfbebdbc and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0xbbbab9b8b7b6b5b4 and rs2_val == 0xb7b6b5b4b3b2b1b0 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0xbbbab9b8b7b6b5b4 and rs2_val == 0xb7b6b5b4b3b2b1b0 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0xbbbab9b8b7b6b5b4 and rs2_val == 0xb7b6b5b4b3b2b1b0 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0xbbbab9b8b7b6b5b4 and rs2_val == 0xb7b6b5b4b3b2b1b0 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0xb7b6b5b4b3b2b1b0 and rs2_val == 0xbbbab9b8b7b6b5b4 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0xb7b6b5b4b3b2b1b0 and rs2_val == 0xbbbab9b8b7b6b5b4 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0xb7b6b5b4b3b2b1b0 and rs2_val == 0xbbbab9b8b7b6b5b4 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0xb7b6b5b4b3b2b1b0 and rs2_val == 0xbbbab9b8b7b6b5b4 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0xb3b2b1b0afaeadac and rs2_val == 0xafaeadacabaaa9a8 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0xb3b2b1b0afaeadac and rs2_val == 0xafaeadacabaaa9a8 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0xb3b2b1b0afaeadac and rs2_val == 0xafaeadacabaaa9a8 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0xb3b2b1b0afaeadac and rs2_val == 0xafaeadacabaaa9a8 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0xafaeadacabaaa9a8 and rs2_val == 0xb3b2b1b0afaeadac and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0xafaeadacabaaa9a8 and rs2_val == 0xb3b2b1b0afaeadac and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0xafaeadacabaaa9a8 and rs2_val == 0xb3b2b1b0afaeadac and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0xafaeadacabaaa9a8 and rs2_val == 0xb3b2b1b0afaeadac and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0xabaaa9a8a7a6a5a4 and rs2_val == 0xa7a6a5a4a3a2a1a0 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0xabaaa9a8a7a6a5a4 and rs2_val == 0xa7a6a5a4a3a2a1a0 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0xabaaa9a8a7a6a5a4 and rs2_val == 0xa7a6a5a4a3a2a1a0 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0xabaaa9a8a7a6a5a4 and rs2_val == 0xa7a6a5a4a3a2a1a0 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0xa7a6a5a4a3a2a1a0 and rs2_val == 0xabaaa9a8a7a6a5a4 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0xa7a6a5a4a3a2a1a0 and rs2_val == 0xabaaa9a8a7a6a5a4 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0xa7a6a5a4a3a2a1a0 and rs2_val == 0xabaaa9a8a7a6a5a4 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0xa7a6a5a4a3a2a1a0 and rs2_val == 0xabaaa9a8a7a6a5a4 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0xa3a2a1a09f9e9d9c and rs2_val == 0x9f9e9d9c9b9a9998 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0xa3a2a1a09f9e9d9c and rs2_val == 0x9f9e9d9c9b9a9998 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0xa3a2a1a09f9e9d9c and rs2_val == 0x9f9e9d9c9b9a9998 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0xa3a2a1a09f9e9d9c and rs2_val == 0x9f9e9d9c9b9a9998 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x9f9e9d9c9b9a9998 and rs2_val == 0xa3a2a1a09f9e9d9c and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x9f9e9d9c9b9a9998 and rs2_val == 0xa3a2a1a09f9e9d9c and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x9f9e9d9c9b9a9998 and rs2_val == 0xa3a2a1a09f9e9d9c and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x9f9e9d9c9b9a9998 and rs2_val == 0xa3a2a1a09f9e9d9c and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x9b9a999897969594 and rs2_val == 0x9796959493929190 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x9b9a999897969594 and rs2_val == 0x9796959493929190 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x9b9a999897969594 and rs2_val == 0x9796959493929190 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x9b9a999897969594 and rs2_val == 0x9796959493929190 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x9796959493929190 and rs2_val == 0x9b9a999897969594 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x9796959493929190 and rs2_val == 0x9b9a999897969594 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x9796959493929190 and rs2_val == 0x9b9a999897969594 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x9796959493929190 and rs2_val == 0x9b9a999897969594 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x939291908f8e8d8c and rs2_val == 0x8f8e8d8c8b8a8988 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x939291908f8e8d8c and rs2_val == 0x8f8e8d8c8b8a8988 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x939291908f8e8d8c and rs2_val == 0x8f8e8d8c8b8a8988 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x939291908f8e8d8c and rs2_val == 0x8f8e8d8c8b8a8988 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x8f8e8d8c8b8a8988 and rs2_val == 0x939291908f8e8d8c and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x8f8e8d8c8b8a8988 and rs2_val == 0x939291908f8e8d8c and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x8f8e8d8c8b8a8988 and rs2_val == 0x939291908f8e8d8c and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x8f8e8d8c8b8a8988 and rs2_val == 0x939291908f8e8d8c and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x8b8a898887868584 and rs2_val == 0x8786858483828180 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x8b8a898887868584 and rs2_val == 0x8786858483828180 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x8b8a898887868584 and rs2_val == 0x8786858483828180 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x8b8a898887868584 and rs2_val == 0x8786858483828180 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x8786858483828180 and rs2_val == 0x8b8a898887868584 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x8786858483828180 and rs2_val == 0x8b8a898887868584 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x8786858483828180 and rs2_val == 0x8b8a898887868584 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x8786858483828180 and rs2_val == 0x8b8a898887868584 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x838281807f7e7d7c and rs2_val == 0x7f7e7d7c7b7a7978 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x838281807f7e7d7c and rs2_val == 0x7f7e7d7c7b7a7978 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x838281807f7e7d7c and rs2_val == 0x7f7e7d7c7b7a7978 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x838281807f7e7d7c and rs2_val == 0x7f7e7d7c7b7a7978 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x7f7e7d7c7b7a7978 and rs2_val == 0x838281807f7e7d7c and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x7f7e7d7c7b7a7978 and rs2_val == 0x838281807f7e7d7c and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x7f7e7d7c7b7a7978 and rs2_val == 0x838281807f7e7d7c and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x7f7e7d7c7b7a7978 and rs2_val == 0x838281807f7e7d7c and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x7b7a797877767574 and rs2_val == 0x7776757473727170 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x7b7a797877767574 and rs2_val == 0x7776757473727170 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x7b7a797877767574 and rs2_val == 0x7776757473727170 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x7b7a797877767574 and rs2_val == 0x7776757473727170 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x7776757473727170 and rs2_val == 0x7b7a797877767574 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x7776757473727170 and rs2_val == 0x7b7a797877767574 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x7776757473727170 and rs2_val == 0x7b7a797877767574 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x7776757473727170 and rs2_val == 0x7b7a797877767574 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x737271706f6e6d6c and rs2_val == 0x6f6e6d6c6b6a6968 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x737271706f6e6d6c and rs2_val == 0x6f6e6d6c6b6a6968 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x737271706f6e6d6c and rs2_val == 0x6f6e6d6c6b6a6968 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x737271706f6e6d6c and rs2_val == 0x6f6e6d6c6b6a6968 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x6f6e6d6c6b6a6968 and rs2_val == 0x737271706f6e6d6c and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x6f6e6d6c6b6a6968 and rs2_val == 0x737271706f6e6d6c and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x6f6e6d6c6b6a6968 and rs2_val == 0x737271706f6e6d6c and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x6f6e6d6c6b6a6968 and rs2_val == 0x737271706f6e6d6c and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x6b6a696867666564 and rs2_val == 0x6766656463626160 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x6b6a696867666564 and rs2_val == 0x6766656463626160 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x6b6a696867666564 and rs2_val == 0x6766656463626160 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x6b6a696867666564 and rs2_val == 0x6766656463626160 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x6766656463626160 and rs2_val == 0x6b6a696867666564 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x6766656463626160 and rs2_val == 0x6b6a696867666564 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x6766656463626160 and rs2_val == 0x6b6a696867666564 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x6766656463626160 and rs2_val == 0x6b6a696867666564 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x636261605f5e5d5c and rs2_val == 0x5f5e5d5c5b5a5958 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x636261605f5e5d5c and rs2_val == 0x5f5e5d5c5b5a5958 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x636261605f5e5d5c and rs2_val == 0x5f5e5d5c5b5a5958 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x636261605f5e5d5c and rs2_val == 0x5f5e5d5c5b5a5958 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x5f5e5d5c5b5a5958 and rs2_val == 0x636261605f5e5d5c and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x5f5e5d5c5b5a5958 and rs2_val == 0x636261605f5e5d5c and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x5f5e5d5c5b5a5958 and rs2_val == 0x636261605f5e5d5c and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x5f5e5d5c5b5a5958 and rs2_val == 0x636261605f5e5d5c and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x5b5a595857565554 and rs2_val == 0x5756555453525150 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x5b5a595857565554 and rs2_val == 0x5756555453525150 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x5b5a595857565554 and rs2_val == 0x5756555453525150 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x5b5a595857565554 and rs2_val == 0x5756555453525150 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x5756555453525150 and rs2_val == 0x5b5a595857565554 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x5756555453525150 and rs2_val == 0x5b5a595857565554 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x5756555453525150 and rs2_val == 0x5b5a595857565554 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x5756555453525150 and rs2_val == 0x5b5a595857565554 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x535251504f4e4d4c and rs2_val == 0x4f4e4d4c4b4a4948 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x535251504f4e4d4c and rs2_val == 0x4f4e4d4c4b4a4948 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x535251504f4e4d4c and rs2_val == 0x4f4e4d4c4b4a4948 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x535251504f4e4d4c and rs2_val == 0x4f4e4d4c4b4a4948 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x4f4e4d4c4b4a4948 and rs2_val == 0x535251504f4e4d4c and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x4f4e4d4c4b4a4948 and rs2_val == 0x535251504f4e4d4c and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x4f4e4d4c4b4a4948 and rs2_val == 0x535251504f4e4d4c and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x4f4e4d4c4b4a4948 and rs2_val == 0x535251504f4e4d4c and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x4b4a494847464544 and rs2_val == 0x4746454443424140 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x4b4a494847464544 and rs2_val == 0x4746454443424140 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x4b4a494847464544 and rs2_val == 0x4746454443424140 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x4b4a494847464544 and rs2_val == 0x4746454443424140 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x4746454443424140 and rs2_val == 0x4b4a494847464544 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x4746454443424140 and rs2_val == 0x4b4a494847464544 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x4746454443424140 and rs2_val == 0x4b4a494847464544 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x4746454443424140 and rs2_val == 0x4b4a494847464544 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x434241403f3e3d3c and rs2_val == 0x3f3e3d3c3b3a3938 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x434241403f3e3d3c and rs2_val == 0x3f3e3d3c3b3a3938 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x434241403f3e3d3c and rs2_val == 0x3f3e3d3c3b3a3938 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x434241403f3e3d3c and rs2_val == 0x3f3e3d3c3b3a3938 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x3f3e3d3c3b3a3938 and rs2_val == 0x434241403f3e3d3c and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x3f3e3d3c3b3a3938 and rs2_val == 0x434241403f3e3d3c and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x3f3e3d3c3b3a3938 and rs2_val == 0x434241403f3e3d3c and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x3f3e3d3c3b3a3938 and rs2_val == 0x434241403f3e3d3c and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x3b3a393837363534 and rs2_val == 0x3736353433323130 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x3b3a393837363534 and rs2_val == 0x3736353433323130 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x3b3a393837363534 and rs2_val == 0x3736353433323130 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x3b3a393837363534 and rs2_val == 0x3736353433323130 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x3736353433323130 and rs2_val == 0x3b3a393837363534 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x3736353433323130 and rs2_val == 0x3b3a393837363534 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x3736353433323130 and rs2_val == 0x3b3a393837363534 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x3736353433323130 and rs2_val == 0x3b3a393837363534 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x333231302f2e2d2c and rs2_val == 0x2f2e2d2c2b2a2928 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x333231302f2e2d2c and rs2_val == 0x2f2e2d2c2b2a2928 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x333231302f2e2d2c and rs2_val == 0x2f2e2d2c2b2a2928 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x333231302f2e2d2c and rs2_val == 0x2f2e2d2c2b2a2928 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x2f2e2d2c2b2a2928 and rs2_val == 0x333231302f2e2d2c and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x2f2e2d2c2b2a2928 and rs2_val == 0x333231302f2e2d2c and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x2f2e2d2c2b2a2928 and rs2_val == 0x333231302f2e2d2c and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x2f2e2d2c2b2a2928 and rs2_val == 0x333231302f2e2d2c and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x2b2a292827262524 and rs2_val == 0x2726252423222120 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x2b2a292827262524 and rs2_val == 0x2726252423222120 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x2b2a292827262524 and rs2_val == 0x2726252423222120 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x2b2a292827262524 and rs2_val == 0x2726252423222120 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x2726252423222120 and rs2_val == 0x2b2a292827262524 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x2726252423222120 and rs2_val == 0x2b2a292827262524 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x2726252423222120 and rs2_val == 0x2b2a292827262524 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x2726252423222120 and rs2_val == 0x2b2a292827262524 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x232221201f1e1d1c and rs2_val == 0x1f1e1d1c1b1a1918 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x232221201f1e1d1c and rs2_val == 0x1f1e1d1c1b1a1918 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x232221201f1e1d1c and rs2_val == 0x1f1e1d1c1b1a1918 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x232221201f1e1d1c and rs2_val == 0x1f1e1d1c1b1a1918 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x1f1e1d1c1b1a1918 and rs2_val == 0x232221201f1e1d1c and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x1f1e1d1c1b1a1918 and rs2_val == 0x232221201f1e1d1c and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x1f1e1d1c1b1a1918 and rs2_val == 0x232221201f1e1d1c and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x1f1e1d1c1b1a1918 and rs2_val == 0x232221201f1e1d1c and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x1b1a191817161514 and rs2_val == 0x1716151413121110 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x1b1a191817161514 and rs2_val == 0x1716151413121110 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x1b1a191817161514 and rs2_val == 0x1716151413121110 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x1b1a191817161514 and rs2_val == 0x1716151413121110 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x1716151413121110 and rs2_val == 0x1b1a191817161514 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x1716151413121110 and rs2_val == 0x1b1a191817161514 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x1716151413121110 and rs2_val == 0x1b1a191817161514 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x1716151413121110 and rs2_val == 0x1b1a191817161514 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x131211100f0e0d0c and rs2_val == 0x0f0e0d0c0b0a0908 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x131211100f0e0d0c and rs2_val == 0x0f0e0d0c0b0a0908 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x131211100f0e0d0c and rs2_val == 0x0f0e0d0c0b0a0908 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x131211100f0e0d0c and rs2_val == 0x0f0e0d0c0b0a0908 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x0f0e0d0c0b0a0908 and rs2_val == 0x131211100f0e0d0c and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x0f0e0d0c0b0a0908 and rs2_val == 0x131211100f0e0d0c and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x0f0e0d0c0b0a0908 and rs2_val == 0x131211100f0e0d0c and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x0f0e0d0c0b0a0908 and rs2_val == 0x131211100f0e0d0c and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x0b0a090807060504 and rs2_val == 0x0706050403020100 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x0b0a090807060504 and rs2_val == 0x0706050403020100 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x0b0a090807060504 and rs2_val == 0x0706050403020100 and imm_val == 1 #nosat': 1 # Byte Count
+    'rs1_val == 0x0b0a090807060504 and rs2_val == 0x0706050403020100 and imm_val == 0 #nosat': 1 # Byte Count
+    'rs1_val == 0x0706050403020100 and rs2_val == 0x0b0a090807060504 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0x0706050403020100 and rs2_val == 0x0b0a090807060504 and imm_val == 2 #nosat': 1 # Byte Count
+    'rs1_val == 0x0706050403020100 and rs2_val == 0x0b0a090807060504 and imm_val == 1 #nosat': 1 # Byte Count
+    coverage: 276/276
+total_coverage: 378/378
 </br></div></td>
         </tr></tbody>
         

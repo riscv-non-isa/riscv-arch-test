@@ -1,4 +1,9 @@
 # CHANGELOG
+## [2.5.2] - 2021-10-14
+  - update format for aes32 and sm4 instructions
+  - update reference signature for sha256 and sm3 instructions in rv64i_m/K_unratified
+  - delete zip and unzip tests in rv64i_m/K_unratified
+  - update tests for aes64ks1i, sm4ed and sm4ks to use byte_count with overlap = "Y" to improve the coverage of S-boxes
 
 ## [2.5.1] - 2021-10-07
   - added styles files to the F coverage report directories.
