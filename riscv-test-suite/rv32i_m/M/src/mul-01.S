@@ -17,7 +17,7 @@
 // 
 #include "model_test.h"
 #include "arch_test.h"
-RVTEST_ISA("RV32IM")
+RVTEST_ISA("RV32IM, RV32IZmmul")
 
 .section .text.init
 .globl rvtest_entry_point
