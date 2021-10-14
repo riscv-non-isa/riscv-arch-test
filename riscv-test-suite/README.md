@@ -7,13 +7,13 @@ Directory names postfixed with "\_unratified" indicate that tests for extensions
 been ratified by RVI.
 
 The coverage report (in html format) of the tests available in this suite is generated through
-[RISCOF](https://gitlab.com/incoresemi/riscof) and is available here: [Coverage Report](../coverage/).
+[RISCOF](https://github.com/riscv-software-src/riscof) and is available here: [Coverage Report](../riscv-test-stats/coverage/README.md).
 
 These tests have been generated using the open source Compatibility Test Generator from InCore Semiconductors available 
 at: [CTG](https://github.com/riscv/riscv-ctg).
 
-The reference signatures are generated using [SAIL](https://github.com/rems-project/sail-riscv) or
-[SPIKE](https://github.com/riscv/riscv-isa-sim).
+The reference signatures are generated using [SAIL](https://github.com/riscv/sail-riscv) or
+[SPIKE](https://github.com/riscv-software-src/riscv-isa-sim).
 
 Test directories with the "\_unratified" post-fix indicate test-suites for extensions which have not been
 ratified (but are stable and near ratification)
@@ -25,6 +25,9 @@ Directory structure
 └── rv32i_m                   # top level folder indicate rv32 tests for machine mode
     ├── C                     # include tests and references for "C" extension
     │   └── src               # assembly tests for "C" extension
+    ├── F                     # include tests and references for "rv32F" extension
+    │   ├── references        # static references signatures for "rv32F" extension
+    │   └── src               # assembly tests for "rv32F" extension
     ├── I                     # include tests and references for "I" extension
     │   └── src               # assembly tests for "I" extension
     ├── M                     # include tests and references for "M" extension

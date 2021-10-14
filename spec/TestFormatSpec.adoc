@@ -336,6 +336,13 @@ the test.
     - BaseReg is used if oldBase isn't specified; 0 is used if newOff isn't specified +
     - hidden_offset is re-initialized to 0 afterwards
 
+  `RVTEST_SIGUPD_F(BaseReg, SigReg, FlagReg [, Offset])`:: 
+    - This macro is used for RV32F and RV64D (where XLEN==FLEN).
+    - if Offset is present in the arguments, hidden_offset if set to Offset+(XLEN*2) +
+    - SigReg is stored at hidden_offset[BaseReg]
+    - FlagReg is stored at hidden_offset+XLEN[BaseReg]
+    - hidden_offset is post incremented so repeated uses store signature values sequentially
+    
 ==== *Optional, Model-defined Macros*
 
   `RVMODEL_BOOT`::                       
