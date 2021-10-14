@@ -895,11 +895,11 @@ RVTEST_SIGUPD_F(swreg,destreg,flagreg,offset)
     )
 
 //Tests for a instructions with register-register operand
-#define TEST_RI_OP(inst, destreg, reg2, imm, correctval, val1, val2, swreg, offset, testreg) \
+#define TEST_RI_OP(inst, destreg, reg1, reg2, imm, correctval, val1, val2, swreg, offset, testreg) \
     TEST_CASE(testreg, destreg, correctval, swreg, offset, \
-      LI(destreg, MASK_XLEN(val1)); \
+      LI(reg1, MASK_XLEN(val1)); \
       LI(reg2, MASK_XLEN(val2)); \
-      inst destreg, reg2, imm; \
+      inst destreg, reg1, reg2, imm; \
     )
 
 //Tests for a instructions with register-register operand
