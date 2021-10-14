@@ -29,7 +29,7 @@ RVTEST_CODE_BEGIN
 
 RVTEST_CASE(0,"//check ISA:=regex(.*64.*);check ISA:=regex(.*I.*M.*);def TEST_CASE_1=True;",mulhu)
 
-RVTEST_CASE(1,"//check ISA:=regex(.*64.*);check ISA:=regex(.*I.*Zmmul.*);check ISA:=regex(^[^M]+$);def TEST_CASE_1=True;",mulhu)
+RVTEST_CASE(1,"//check ISA:=regex(.*64.*);check ISA:=regex(.*I.*Zmmul.*);def TEST_CASE_1=True;",mulhu)
 
 RVTEST_SIGBASE( x21,signature_x21_1)
 
