@@ -1,4 +1,8 @@
 # CHANGELOG
+
+## [2.5.3] - 2021-10-15
+  - fix the lower case `i` in the `RVTEST_CASE` macros used in the shift operation tests.
+
 ## [2.5.2] - 2021-10-14
   - update format for aes32 and sm4 instructions
   - update reference signature for sha256 and sm3 instructions in rv64i_m/K_unratified
