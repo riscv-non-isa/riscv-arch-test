@@ -4821,11 +4821,11 @@ cswsp:
   config:
   - check ISA:=regex(.*E.*C.*) ;def RVTEST_E = True
   opcode:
-    c.swsp: 70
+    c.swsp: 71
     coverage: 1/1
   rs2:
     x1: 1
-    x10: 56
+    x10: 58
     x11: 1
     x12: 1
     x13: 1
@@ -4840,12 +4840,12 @@ cswsp:
     x9: 1
     coverage: 14/14
   val_comb:
-    imm_val == 0: 1
+    imm_val == 0: 3
     rs2_val == 2147483647: 1 # Walking Zeros: 0x7fffffff
-    rs2_val == -1073741825: 1 # Walking Zeros: -0x40000001
+    rs2_val == -1073741825: 2 # Walking Zeros: -0x40000001
     rs2_val == -536870913: 1 # Walking Zeros: -0x20000001
     rs2_val == -268435457: 1 # Walking Zeros: -0x10000001
-    rs2_val == -134217729: 1 # Walking Zeros: -0x8000001
+    rs2_val == -134217729: 2 # Walking Zeros: -0x8000001
     rs2_val == -67108865: 1 # Walking Zeros: -0x4000001
     rs2_val == -33554433: 1 # Walking Zeros: -0x2000001
     rs2_val == -16777217: 1 # Walking Zeros: -0x1000001
@@ -4857,7 +4857,7 @@ cswsp:
     rs2_val == -262145: 1 # Walking Zeros: -0x40001
     rs2_val == -131073: 1 # Walking Zeros: -0x20001
     rs2_val == -65537: 1 # Walking Zeros: -0x10001
-    rs2_val == -32769: 2 # Walking Zeros: -0x8001
+    rs2_val == -32769: 1 # Walking Zeros: -0x8001
     rs2_val == -16385: 1 # Walking Zeros: -0x4001
     rs2_val == -8193: 1 # Walking Zeros: -0x2001
     rs2_val == -4097: 1 # Walking Zeros: -0x1001
@@ -4868,17 +4868,17 @@ cswsp:
     rs2_val == -129: 1 # Walking Zeros: -0x81
     rs2_val == -65: 1 # Walking Zeros: -0x41
     rs2_val == -33: 1 # Walking Zeros: -0x21
-    rs2_val == -17: 1 # Walking Zeros: -0x11
+    rs2_val == -17: 2 # Walking Zeros: -0x11
     rs2_val == -9: 1 # Walking Zeros: -0x9
     rs2_val == -5: 1 # Walking Zeros: -0x5
     rs2_val == -3: 1 # Walking Zeros: -0x3
     rs2_val == -2: 1 # Walking Zeros: -0x2
-    imm_val == 124: 3 # Walking Zeros: 0x7c
+    imm_val == 124: 1 # Walking Zeros: 0x7c
     imm_val == 188: 2 # Walking Zeros: 0xbc
     imm_val == 220: 2 # Walking Zeros: 0xdc
-    imm_val == 236: 1 # Walking Zeros: 0xec
-    imm_val == 244: 2 # Walking Zeros: 0xf4
-    imm_val == 248: 4 # Walking Zeros: 0xf8
+    imm_val == 236: 4 # Walking Zeros: 0xec
+    imm_val == 244: 4 # Walking Zeros: 0xf4
+    imm_val == 248: 3 # Walking Zeros: 0xf8
     rs2_val == -2147483648: 1 # Walking Ones: -0x80000000
     rs2_val == 1073741824: 1 # Walking Ones: 0x40000000
     rs2_val == 536870912: 1 # Walking Ones: 0x20000000
@@ -4911,17 +4911,17 @@ cswsp:
     rs2_val == 4: 1 # Walking Ones: 0x4
     rs2_val == 2: 1 # Walking Ones: 0x2
     rs2_val == 1: 1 # Walking Ones: 0x1
-    imm_val == 128: 2 # Walking Ones: 0x80
-    imm_val == 64: 3 # Walking Ones: 0x40
+    imm_val == 128: 3 # Walking Ones: 0x80
+    imm_val == 64: 1 # Walking Ones: 0x40
     imm_val == 32: 3 # Walking Ones: 0x20
     imm_val == 16: 2 # Walking Ones: 0x10
-    imm_val == 8: 2 # Walking Ones: 0x8
+    imm_val == 8: 5 # Walking Ones: 0x8
     imm_val == 4: 3 # Walking Ones: 0x4
     rs2_val == -1431655766: 1 # Alternate: -0x55555556
     rs2_val == 1431655765: 1 # Alternate: 0x55555555
     imm_val == 168: 3 # Alternate: 0xa8
     imm_val == 84: 2  # Alternate: 0x54
-    imm_val > 0: 69
+    imm_val > 0: 68
     rs2_val == (-2**(xlen-1)): 1
     rs2_val == (2**(xlen-1)-1): 1
     rs2_val == 0: 1

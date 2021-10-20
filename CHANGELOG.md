@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## [2.5.4] - 2021-10-20
+  - Second Fix for the issue #206
+
 ## [2.5.3] - 2021-10-15
   - fix the lower case `i` in the `RVTEST_CASE` macros used in the shift operation tests.
 
