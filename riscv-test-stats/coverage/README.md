@@ -41,6 +41,28 @@ HTML preview of the reports can be accessed directly through the following links
 - [rv64i_m/privilege](https://htmlpreview.github.io/?https://github.com/riscv-non-isa/riscv-arch-test/blob/master/riscv-test-stats/coverage/rv64i_m/privilege/coverage.html)
 - [rv64i_m/Zifencei](https://htmlpreview.github.io/?https://github.com/riscv-non-isa/riscv-arch-test/blob/master/riscv-test-stats/coverage/rv64i_m/Zifencei/coverage.html)
 - [rv64i_m/K_unratified](https://htmlpreview.github.io/?https://github.com/riscv-non-isa/riscv-arch-test/blob/master/riscv-test-stats/coverage/rv64i_m/K_unratified/coverage.html)
+- RV64D
+  
+  - [fadd  ](https://htmlpreview.github.io/?https://github.com/riscv-non-isa/riscv-arch-test/blob/master/riscv-test-stats/coverage/rv64i_m/D/rv64d_fadd/coverage.html)
+  - [fclass](https://htmlpreview.github.io/?https://github.com/riscv-non-isa/riscv-arch-test/blob/master/riscv-test-stats/coverage/rv64i_m/D/rv64d_fclass/coverage.html)
+  - [fcvt  ](https://htmlpreview.github.io/?https://github.com/riscv-non-isa/riscv-arch-test/blob/master/riscv-test-stats/coverage/rv64i_m/D/rv64d_fcvt/coverage.html)
+  - [fdiv  ](https://htmlpreview.github.io/?https://github.com/riscv-non-isa/riscv-arch-test/blob/master/riscv-test-stats/coverage/rv64i_m/D/rv64d_fdiv/coverage.html)
+  - [feq   ](https://htmlpreview.github.io/?https://github.com/riscv-non-isa/riscv-arch-test/blob/master/riscv-test-stats/coverage/rv64i_m/D/rv64d_feq/coverage.html)
+  - [fld   ](https://htmlpreview.github.io/?https://github.com/riscv-non-isa/riscv-arch-test/blob/master/riscv-test-stats/coverage/rv64i_m/D/rv64d_fld/coverage.html)
+  - [fle   ](https://htmlpreview.github.io/?https://github.com/riscv-non-isa/riscv-arch-test/blob/master/riscv-test-stats/coverage/rv64i_m/D/rv64d_fle/coverage.html)
+  - [flt   ](https://htmlpreview.github.io/?https://github.com/riscv-non-isa/riscv-arch-test/blob/master/riscv-test-stats/coverage/rv64i_m/D/rv64d_flt/coverage.html)
+  - [fmadd ](https://htmlpreview.github.io/?https://github.com/riscv-non-isa/riscv-arch-test/blob/master/riscv-test-stats/coverage/rv64i_m/D/rv64d_fmadd/coverage.html)
+  - [fmax  ](https://htmlpreview.github.io/?https://github.com/riscv-non-isa/riscv-arch-test/blob/master/riscv-test-stats/coverage/rv64i_m/D/rv64d_fmax/coverage.html)
+  - [fmin  ](https://htmlpreview.github.io/?https://github.com/riscv-non-isa/riscv-arch-test/blob/master/riscv-test-stats/coverage/rv64i_m/D/rv64d_fmin/coverage.html)
+  - [fmsub ](https://htmlpreview.github.io/?https://github.com/riscv-non-isa/riscv-arch-test/blob/master/riscv-test-stats/coverage/rv64i_m/D/rv64d_fmsub/coverage.html)
+  - [fmul  ](https://htmlpreview.github.io/?https://github.com/riscv-non-isa/riscv-arch-test/blob/master/riscv-test-stats/coverage/rv64i_m/D/rv64d_fmul/coverage.html)
+  - [fmv   ](https://htmlpreview.github.io/?https://github.com/riscv-non-isa/riscv-arch-test/blob/master/riscv-test-stats/coverage/rv64i_m/D/rv64d_fmv/coverage.html)
+  - [fnmadd](https://htmlpreview.github.io/?https://github.com/riscv-non-isa/riscv-arch-test/blob/master/riscv-test-stats/coverage/rv64i_m/D/rv64d_fnmadd/coverage.html)
+  - [fnmsub](https://htmlpreview.github.io/?https://github.com/riscv-non-isa/riscv-arch-test/blob/master/riscv-test-stats/coverage/rv64i_m/D/rv64d_fnmsub/coverage.html)
+  - [fsd   ](https://htmlpreview.github.io/?https://github.com/riscv-non-isa/riscv-arch-test/blob/master/riscv-test-stats/coverage/rv64i_m/D/rv64d_fsd/coverage.html)
+  - [fsgn  ](https://htmlpreview.github.io/?https://github.com/riscv-non-isa/riscv-arch-test/blob/master/riscv-test-stats/coverage/rv64i_m/D/rv64d_fsgn/coverage.html)
+  - [fsqrt ](https://htmlpreview.github.io/?https://github.com/riscv-non-isa/riscv-arch-test/blob/master/riscv-test-stats/coverage/rv64i_m/D/rv64d_fsqrt/coverage.html)
+  - [fsub  ](https://htmlpreview.github.io/?https://github.com/riscv-non-isa/riscv-arch-test/blob/master/riscv-test-stats/coverage/rv64i_m/D/rv64d_fsub/coverage.html)
 - RV32F
   
   - [fadd](https://htmlpreview.github.io/?https://github.com/riscv-non-isa/riscv-arch-test/blob/master/riscv-test-stats/coverage/rv32i_m/F/rv32f_fadd/coverage.html)
