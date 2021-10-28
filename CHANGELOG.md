@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## [2.6.0] - 2021-10-21
+  - Added rv64d tests, references, coverage files and data propagation reports
+  - removed unwated re-assignment of macros for RV64F combination in `arch_test.h`
+  - fixed rvtest-case strings for flw and fsw tests in rv32if suite
+
 ## [2.5.4] - 2021-10-20
   - Second Fix for the issue #206
 

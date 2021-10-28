@@ -95,15 +95,6 @@
   #endif
 #endif
 
-#if XLEN==64
-  #if FLEN==32
-    #define SREG sw
-    #define LREG lW
-    #define REGWIDTH 4
-    #define MASK 0xFFFFFFFF
-  #endif
-#endif
-
 #define MMODE_SIG 3
 #define RLENG (REGWIDTH<<3)
 
