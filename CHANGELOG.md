@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## [2.6.1] - 2021-11-25
+  - Fixed RVTEST_FP_ENABLE macro for the issue #223
+
 ## [2.6.0] - 2021-10-21
   - Added rv64d tests, references, coverage files and data propagation reports
   - removed unwated re-assignment of macros for RV64F combination in `arch_test.h`

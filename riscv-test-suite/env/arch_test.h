@@ -546,11 +546,10 @@ rvtest_data_end:
 
 #define RVTEST_CASE(_PNAME,_DSTR,...)                               
 
-#define RVTEST_FP_ENABLE()\
-    LI x2, MSTATUS_FS;\
-    csrrs x3, mstatus,x0;\
-    or x2, x3, x2;\
-    csrrw x0,mstatus,x2;                      
+#define RVTEST_FP_ENABLE()              \
+ li a0, MSTATUS_FS & (MSTATUS_FS >> 1); \
+ csrs mstatus, a0;                      \
+ csrwi fcsr, 0
 
 #define RVTEST_SIGBASE(_R,_TAG) \
   LA(_R,_TAG);\
