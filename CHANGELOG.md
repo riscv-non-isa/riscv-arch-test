@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## [2.7.0] - 2021-12-18
+  - Updated K Crypto (Scalar) instructions for the V.1.0.0 ratified spec.
+  - changed xperm.n -> xperm4 and xperm.b -> xperm8 instructions 
+  - removed unsupported packu
+
 ## [2.6.1] - 2021-11-25
   - Fixed RVTEST_FP_ENABLE macro for the issue #223
 
