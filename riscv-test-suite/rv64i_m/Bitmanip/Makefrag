@@ -1,0 +1,78 @@
+# RISC-V Architecture Test RV64IM Makefrag
+#
+# Copyright (c) 2018, Imperas Software Ltd.
+# Copyright (c) 2020, InCore Semiconductors. Pvt. Ltd.
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#      * Redistributions of source code must retain the above copyright
+#        notice, this list of conditions and the following disclaimer.
+#      * Redistributions in binary form must reproduce the above copyright
+#        notice, this list of conditions and the following disclaimer in the
+#        documentation and/or other materials provided with the distribution.
+#      * Neither the name of the Imperas Software Ltd. nor the
+#        names of its contributors may be used to endorse or promote products
+#        derived from this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
+# IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL Imperas Software Ltd. BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+# THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+# Description: Makefrag for RV64IM architectural tests
+
+rv64im_sc_tests = \
+ add.uw-01 \
+ andn-01 \
+ bclr-01 \
+ bclri-01 \
+ bext-01 \
+ bexti-01 \
+ binv-01 \
+ binvi-01 \
+ bset-01 \
+ bseti-01 \
+ clmul-01 \
+ clmulh-01 \
+ clmulr-01 \
+ clz-01 \
+ clzw-01 \
+ cpop-01 \
+ cpopw-01 \
+ ctz-01 \
+ ctzw-01 \
+ max-01 \
+ maxu-01 \
+ min-01 \
+ minu-01 \
+ orc.b-01 \
+ orn-01 \
+ rev8-01 \
+ rol-01 \
+ rolw-01 \
+ ror-01 \
+ rori-01 \
+ roriw-01 \
+ rorw-01 \
+ sext.b-01 \
+ sext.h-01 \
+ sh1add-01 \
+ sh1add.uw-01 \
+ sh2add-01 \
+ sh2add.uw-01 \
+ sh3add-01 \
+ sh3add.uw-01 \
+ slli.uw-01 \
+ xnor-01 \
+ zext.h-01
+
+rv64im_tests = $(addsuffix .elf, $(rv64im_sc_tests))
+
+target_tests += $(rv64im_tests)

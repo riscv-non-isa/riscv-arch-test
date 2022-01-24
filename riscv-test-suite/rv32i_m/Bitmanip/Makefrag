@@ -1,0 +1,63 @@
+# R \C-V Compliance Test RV32K Makefrag
+#
+#
+# Copyright (c) 2021 Imperas \oftware Ltd., www.imperas.com
+# Copyright (c) 2021 Indian Institute of Technology Madras
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICE \E-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an " \ IS" BASIS,
+# WITHOUT WARRANTI \ OR CONDITIONS OF ANY KIND,
+# either express or implied.
+#
+# \ee the License for the specific language governing permissions and
+# limitations under the License.
+#
+#
+
+#
+# Description: Makefrag for RV32K compliance tests
+
+rv32k_sc_tests = \
+ andn-01 \
+ bclr-01 \
+ bclri-01 \
+ bext-01 \
+ bexti-01 \
+ binv-01 \
+ binvi-01 \
+ bset-01 \
+ bseti-01 \
+ clmul-01 \
+ clmulh-01 \
+ clmulr-01 \
+ clz-01 \
+ cpop-01 \
+ ctz-01 \
+ max-01 \
+ maxu-01 \
+ min-01 \
+ minu-01 \
+ orc.b-01 \
+ orn-01 \
+ rev8-01 \
+ rol-01 \
+ ror-01 \
+ rori-01 \
+ sext.b-01 \
+ sext.h-01 \
+ sh1add-01 \
+ sh2add-01 \
+ sh3add-01 \
+ xnor-01 \
+ zext.h-01 
+
+rv32k_tests = $(addsuffix .elf, $(rv32k_sc_tests))
+
+target_tests += $(rv32k_tests)
+
