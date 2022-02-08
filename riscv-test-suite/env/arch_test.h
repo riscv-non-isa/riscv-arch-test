@@ -344,7 +344,7 @@
           bltz    t4, sv_mtval		        /* correct adjustment is code_begin in t3 */
   
           LA(     t3, mtrap_sigptr) /* adjustment assuming access is to signature region */
-          LI(t4, DATA_REL_TVAL_MSK)       /* trap#s not 14, 11..8, 2 adjust w/ data_begin */
+          LI(t4, DATA_REL_TVAL_MSK)      /* trap#s not 14, 11..8, 2 adjust w/ data_begin */
           sll     t4, t4, t2		          /* put bit# in MSB */
           bgez    t4, no_adj		          /* correct adjustment is data_begin in t3 */
   sigbound_chk:
@@ -555,7 +555,7 @@ rvtest_data_end:
 .endm
 
 
-#define RVTEST_CASE(_PNAME,_DSTR,...)                               
+#define RVTEST_CASE(_PNAME,_DSTR,...)
 
 #define RVTEST_FP_ENABLE()              \
  li a0, MSTATUS_FS & (MSTATUS_FS >> 1); \
@@ -852,7 +852,7 @@ RVTEST_SIGUPD_F(swreg,destreg,flagreg,offset)
       sub destreg, destreg, testreg; \
       )
 
-//Tests for a instructions with register-immediate operand
+//Tests for instructions with register-immediate operand
 #define TEST_IMM_OP( inst, destreg, reg, correctval, val, imm, swreg, offset, testreg) \
     TEST_CASE(testreg, destreg, correctval, swreg, offset, \
       LI(reg, MASK_XLEN(val)); \
@@ -885,7 +885,8 @@ RVTEST_SIGUPD_F(swreg,destreg,flagreg,offset)
       inst destreg, freg; \
       csrrs flagreg, fflags, x0; \
     )
-//Tests for a instructions with register-register operand
+
+//Tests for instructions with register-register-immediate operands
 #define TEST_RRI_OP(inst, destreg, reg1, reg2, imm, correctval, val1, val2, swreg, offset, testreg) \
     TEST_CASE(testreg, destreg, correctval, swreg, offset, \
       LI(reg1, MASK_XLEN(val1)); \
