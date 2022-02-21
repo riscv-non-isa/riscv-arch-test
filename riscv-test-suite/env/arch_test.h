@@ -610,14 +610,14 @@ rvtest_data_end:
 // for updating signatures when 'rd' is a paired register (64-bit) in Zpsfoperand extension in RV32.
 #define RVTEST_SIGUPD_P64(_BR,_R,_R_HI,...)\
   .if NARG(__VA_ARGS__) == 1;\
-    SREG _R,_ARG1(__VA_ARGS__,0)(_BR);\
-    SREG _R_HI,(_ARG1(__VA_ARGS__,0)+4)(_BR);\
-    .set offset,_ARG1(__VA_OPT__(__VA_ARGS__,)0)+REGWIDTH+REGWIDTH;\
+    sw _R,_ARG1(__VA_ARGS__,0)(_BR);\
+    sw _R_HI,(_ARG1(__VA_ARGS__,0)+4)(_BR);\
+    .set offset,_ARG1(__VA_OPT__(__VA_ARGS__,)0)+8;\
   .endif;\
   .if NARG(__VA_ARGS__) == 0;\
-    SREG _R,offset(_BR);\
-    SREG _R_HI,(offset+REGWIDTH)(_BR);\
-  .set offset,offset+REGWIDTH+REGWIDTH;\
+    sw _R,offset(_BR);\
+    sw _R_HI,(offset+4)(_BR);\
+  .set offset,offset+8;\
   .endif;
 
 
@@ -633,18 +633,18 @@ rvtest_data_end:
 // for updating signatures that include flagreg when 'rd' is a paired register (64-bit) in Zpsfoperand extension in RV32.
 #define RVTEST_SIGUPD_PK64(_BR,_R,_R_HI,_F,...)\
   .if NARG(__VA_ARGS__) == 1;\
-    SREG _R,_ARG1(__VA_ARGS__,0)(_BR);\
-    SREG _R_HI,(_ARG1(__VA_ARGS__,0)+4)(_BR);\
+    sw _R,_ARG1(__VA_ARGS__,0)(_BR);\
+    sw _R_HI,(_ARG1(__VA_ARGS__,0)+4)(_BR);\
     RDOV(_F);\
-    SREG _F,(_ARG1(__VA_ARGS__,0)+8)(_BR);\
-    .set offset,_ARG1(__VA_OPT__(__VA_ARGS__,)0)+REGWIDTH+REGWIDTH+REGWIDTH;\
+    sw _F,(_ARG1(__VA_ARGS__,0)+8)(_BR);\
+    .set offset,_ARG1(__VA_OPT__(__VA_ARGS__,)0)+12;\
   .endif;\
   .if NARG(__VA_ARGS__) == 0;\
-    SREG _R,offset(_BR);\
-    SREG _R_HI,(offset+REGWIDTH)(_BR);\
+    sw _R,offset(_BR);\
+    sw _R_HI,(offset+4)(_BR);\
     RDOV(_F);\
-    SREG _F,(offset+REGWIDTH+REGWIDTH)(_BR);\
-  .set offset,offset+REGWIDTH+REGWIDTH+REGWIDTH;\
+    sw _F,(offset+8)(_BR);\
+  .set offset,offset+12;\
   .endif;
 
 #define RVTEST_VALBASEUPD(_BR,...)\
