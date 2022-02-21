@@ -647,6 +647,10 @@ rvtest_data_end:
   .set offset,offset+12;\
   .endif;
 
+// for updating signatures that include flagreg for P-ext saturation instructions (RV32/RV64).
+#define RVTEST_SIGUPD_PK(_BR,_R,_F,OFFSET)\
+  RVTEST_SIGUPD_FID(_BR,_R,_F,OFFSET)
+
 #define RVTEST_VALBASEUPD(_BR,...)\
   .if NARG(__VA_ARGS__) == 0;\
       addi _BR,_BR,2040;\
@@ -991,23 +995,22 @@ RVTEST_SIGUPD_F(swreg,destreg,flagreg,offset)
       inst destreg, reg, SEXT_IMM(imm); \
       rdov flagreg; \
     )
+
 //Tests for instructions with register-register operand and update the saturation flag
 #define TEST_PKRR_OP(inst, destreg, reg1, reg2, correctval, val1, val2, flagreg, swreg, offset, testreg) \
-    TEST_CASE(testreg, destreg, correctval, swreg, offset, \
-      LI(reg1, MASK_XLEN(val1)); \
-      LI(reg2, MASK_XLEN(val2)); \
-      inst destreg, reg1, reg2; \
-      rdov flagreg; \
-    )
+    LI(reg1, MASK_XLEN(val1)); \
+    LI(reg2, MASK_XLEN(val2)); \
+    inst destreg, reg1, reg2; \
+    RVTEST_SIGUPD_PK(swreg, destreg, flagreg, offset); \
+    RVMODEL_IO_ASSERT_GPR_EQ(testreg, destreg, correctval)
 
 //Tests for instructions with a single register operand and update the saturation flag
 #define TEST_PKR_OP( inst, destreg, reg, correctval, val, flagreg, swreg, offset, testreg) \
-    TEST_CASE(testreg, destreg, correctval, swreg, offset, \
+    TEST_CASE_FID(testreg, destreg, correctval, swreg, flagreg, offset, \
       LI(reg, MASK_XLEN(val)); \
       inst destreg, reg; \
       rdov flagreg; \
     )
-
 
 #if __riscv_xlen == 32
 //Tests for a instruction with register pair operands for all its three operands
@@ -1093,6 +1096,7 @@ RVTEST_SIGUPD_F(swreg,destreg,flagreg,offset)
     TEST_P64_NP_OP_32(inst, rd, rs1, rs1_hi, correctval, correctval_hi, rs1_val, rs1_val_hi, imm_val, swreg, offset, testreg)
 
 #else
+
 // When in rv64, there are no instructions with pair operand, so Macro is redefined to normal TEST_RR_OP
 #define TEST_P64_PPP_OP(inst, rd, rd_hi, rs1, rs1_hi, rs2, rs2_hi, correctval, correctval_hi, rs1_val, rs1_val_hi, rs2_val, rs2_val_hi, swreg, offset, testreg) \
     TEST_RR_OP(inst, rd, rs1, rs2, correctval, rs1_val, rs2_val, swreg, offset, testreg)
