@@ -27,11 +27,11 @@
 7fffffff
 7fffffff
 ffff7fff
+ff7fffff
 fffffffe
 00000000
-00000000
 bfffffff
-7fffffff
+00000000
 3fffffff
 5fffffff
 6fffffff
@@ -288,9 +288,5 @@ ffdfffff
 2aaaaaaa
 7fffffff
 7fffffff
-ff7fffff
 f7ffffff
 dfffffff
-00000000
-00000000
-00000000

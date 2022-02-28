@@ -71,8 +71,8 @@ add.uw:
     x28: 1
     x29: 1
     x3: 1
-    x30: 293
-    x31: 1
+    x30: 292
+    x31: 2
     x4: 1
     x5: 1
     x6: 1
@@ -103,9 +103,9 @@ add.uw:
     x26: 1
     x27: 1
     x28: 1
-    x29: 293
+    x29: 291
     x3: 1
-    x30: 1
+    x30: 3
     x31: 1
     x4: 1
     x5: 1
@@ -115,7 +115,7 @@ add.uw:
     x9: 1
     coverage: 32/32
   val_comb:
-    rs1_val == 6148914691236517205: 9  # Alternate: 0x5555555555555555
+    rs1_val != rs2_val and rs1_val > 0 and rs2_val > 0: 297
     rs2_val == 9223372036854775807: 1 # Walking Zeros: 0x7fffffffffffffff
     rs2_val == 13835058055282163711: 1 # Walking Zeros: 0xbfffffffffffffff
     rs2_val == 16140901064495857663: 1 # Walking Zeros: 0xdfffffffffffffff
@@ -145,10 +145,10 @@ add.uw:
     rs2_val == 18446743936270598143: 1 # Walking Zeros: 0xffffffdfffffffff
     rs2_val == 18446744004990074879: 1 # Walking Zeros: 0xffffffefffffffff
     rs2_val == 18446744039349813247: 1 # Walking Zeros: 0xfffffff7ffffffff
-    rs2_val == 18446744056529682431: 2 # Walking Zeros: 0xfffffffbffffffff
+    rs2_val == 18446744056529682431: 1 # Walking Zeros: 0xfffffffbffffffff
     rs2_val == 18446744065119617023: 2 # Walking Zeros: 0xfffffffdffffffff
     rs2_val == 18446744069414584319: 1 # Walking Zeros: 0xfffffffeffffffff
-    rs2_val == 18446744071562067967: 1 # Walking Zeros: 0xffffffff7fffffff
+    rs2_val == 18446744071562067967: 2 # Walking Zeros: 0xffffffff7fffffff
     rs2_val == 18446744072635809791: 1 # Walking Zeros: 0xffffffffbfffffff
     rs2_val == 18446744073172680703: 1 # Walking Zeros: 0xffffffffdfffffff
     rs2_val == 18446744073441116159: 1 # Walking Zeros: 0xffffffffefffffff
@@ -233,7 +233,7 @@ add.uw:
     rs1_val == 18446744073709543423: 1 # Walking Zeros: 0xffffffffffffdfff
     rs1_val == 18446744073709547519: 1 # Walking Zeros: 0xffffffffffffefff
     rs1_val == 18446744073709549567: 1 # Walking Zeros: 0xfffffffffffff7ff
-    rs1_val == 18446744073709550591: 131 # Walking Zeros: 0xfffffffffffffbff
+    rs1_val == 18446744073709550591: 132 # Walking Zeros: 0xfffffffffffffbff
     rs1_val == 18446744073709551103: 1 # Walking Zeros: 0xfffffffffffffdff
     rs1_val == 18446744073709551359: 1 # Walking Zeros: 0xfffffffffffffeff
     rs1_val == 18446744073709551487: 1 # Walking Zeros: 0xffffffffffffff7f
@@ -439,12 +439,19 @@ add.uw:
     rs2_val == 12297829382473034410: 8 # Alternate: 0xaaaaaaaaaaaaaaaa
     rs2_val == 6148914691236517205: 8 # Alternate: 0x5555555555555555
     rs1_val == 12297829382473034410: 8 # Alternate: 0xaaaaaaaaaaaaaaaa
-    coverage: 324/324
-  total_coverage: 426/426
+    rs1_val == 6148914691236517205: 8  # Alternate: 0x5555555555555555
+    rs1_val == (2**(xlen)-1): 8
+    rs1_val == 0: 9
+    rs1_val == rs2_val and rs1_val > 0 and rs2_val > 0: 10
+    rs1_val > 0 and rs2_val > 0: 307
+    rs2_val == (2**(xlen)-1): 8
+    rs2_val == 0: 9
+    coverage: 331/331
+  total_coverage: 433/433
 andn:
   config:
-  - check ISA:=regex(.*RV64.*I.*B.*)
-  - check ISA:=regex(.*RV64.*I.*Zbb.*)
+  - check ISA:=regex(.*I.*B.*)
+  - check ISA:=regex(.*I.*Zbb.*)
   op_comb:
     rs1 != rs2  and rs1 != rd and rs2 != rd: 326
     rs1 == rd != rs2: 1
@@ -514,8 +521,8 @@ andn:
     x28: 1
     x29: 1
     x3: 1
-    x30: 299
-    x31: 1
+    x30: 298
+    x31: 2
     x4: 1
     x5: 1
     x6: 1
@@ -546,9 +553,9 @@ andn:
     x26: 1
     x27: 1
     x28: 1
-    x29: 299
+    x29: 297
     x3: 1
-    x30: 1
+    x30: 3
     x31: 1
     x4: 1
     x5: 1
@@ -588,10 +595,10 @@ andn:
     rs2_val == 18446743936270598143: 1 # Walking Zeros: 0xffffffdfffffffff
     rs2_val == 18446744004990074879: 1 # Walking Zeros: 0xffffffefffffffff
     rs2_val == 18446744039349813247: 1 # Walking Zeros: 0xfffffff7ffffffff
-    rs2_val == 18446744056529682431: 2 # Walking Zeros: 0xfffffffbffffffff
+    rs2_val == 18446744056529682431: 1 # Walking Zeros: 0xfffffffbffffffff
     rs2_val == 18446744065119617023: 2 # Walking Zeros: 0xfffffffdffffffff
     rs2_val == 18446744069414584319: 1 # Walking Zeros: 0xfffffffeffffffff
-    rs2_val == 18446744071562067967: 1 # Walking Zeros: 0xffffffff7fffffff
+    rs2_val == 18446744071562067967: 2 # Walking Zeros: 0xffffffff7fffffff
     rs2_val == 18446744072635809791: 1 # Walking Zeros: 0xffffffffbfffffff
     rs2_val == 18446744073172680703: 1 # Walking Zeros: 0xffffffffdfffffff
     rs2_val == 18446744073441116159: 1 # Walking Zeros: 0xffffffffefffffff
@@ -969,8 +976,8 @@ bclr:
     x28: 1
     x29: 1
     x3: 1
-    x30: 390
-    x31: 1
+    x30: 389
+    x31: 2
     x4: 1
     x5: 1
     x6: 1
@@ -1001,9 +1008,9 @@ bclr:
     x26: 1
     x27: 1
     x28: 1
-    x29: 390
+    x29: 388
     x3: 1
-    x30: 1
+    x30: 3
     x31: 1
     x4: 1
     x5: 1
@@ -1043,10 +1050,10 @@ bclr:
     rs2_val == 18446743936270598143: 1 # Walking Zeros: 0xffffffdfffffffff
     rs2_val == 18446744004990074879: 1 # Walking Zeros: 0xffffffefffffffff
     rs2_val == 18446744039349813247: 1 # Walking Zeros: 0xfffffff7ffffffff
-    rs2_val == 18446744056529682431: 2 # Walking Zeros: 0xfffffffbffffffff
+    rs2_val == 18446744056529682431: 1 # Walking Zeros: 0xfffffffbffffffff
     rs2_val == 18446744065119617023: 2 # Walking Zeros: 0xfffffffdffffffff
     rs2_val == 18446744069414584319: 1 # Walking Zeros: 0xfffffffeffffffff
-    rs2_val == 18446744071562067967: 1 # Walking Zeros: 0xffffffff7fffffff
+    rs2_val == 18446744071562067967: 2 # Walking Zeros: 0xffffffff7fffffff
     rs2_val == 18446744072635809791: 1 # Walking Zeros: 0xffffffffbfffffff
     rs2_val == 18446744073172680703: 1 # Walking Zeros: 0xffffffffdfffffff
     rs2_val == 18446744073441116159: 1 # Walking Zeros: 0xffffffffefffffff
@@ -1742,8 +1749,8 @@ bext:
     x28: 1
     x29: 1
     x3: 1
-    x30: 388
-    x31: 1
+    x30: 387
+    x31: 2
     x4: 1
     x5: 1
     x6: 1
@@ -1774,9 +1781,9 @@ bext:
     x26: 1
     x27: 1
     x28: 1
-    x29: 388
+    x29: 386
     x3: 1
-    x30: 1
+    x30: 3
     x31: 1
     x4: 1
     x5: 1
@@ -1816,10 +1823,10 @@ bext:
     rs2_val == 18446743936270598143: 1 # Walking Zeros: 0xffffffdfffffffff
     rs2_val == 18446744004990074879: 1 # Walking Zeros: 0xffffffefffffffff
     rs2_val == 18446744039349813247: 1 # Walking Zeros: 0xfffffff7ffffffff
-    rs2_val == 18446744056529682431: 2 # Walking Zeros: 0xfffffffbffffffff
+    rs2_val == 18446744056529682431: 1 # Walking Zeros: 0xfffffffbffffffff
     rs2_val == 18446744065119617023: 2 # Walking Zeros: 0xfffffffdffffffff
     rs2_val == 18446744069414584319: 1 # Walking Zeros: 0xfffffffeffffffff
-    rs2_val == 18446744071562067967: 1 # Walking Zeros: 0xffffffff7fffffff
+    rs2_val == 18446744071562067967: 2 # Walking Zeros: 0xffffffff7fffffff
     rs2_val == 18446744072635809791: 1 # Walking Zeros: 0xffffffffbfffffff
     rs2_val == 18446744073172680703: 1 # Walking Zeros: 0xffffffffdfffffff
     rs2_val == 18446744073441116159: 1 # Walking Zeros: 0xffffffffefffffff
@@ -2515,8 +2522,8 @@ binv:
     x28: 1
     x29: 1
     x3: 1
-    x30: 390
-    x31: 1
+    x30: 389
+    x31: 2
     x4: 1
     x5: 1
     x6: 1
@@ -2547,9 +2554,9 @@ binv:
     x26: 1
     x27: 1
     x28: 1
-    x29: 390
+    x29: 388
     x3: 1
-    x30: 1
+    x30: 3
     x31: 1
     x4: 1
     x5: 1
@@ -2589,10 +2596,10 @@ binv:
     rs2_val == 18446743936270598143: 1 # Walking Zeros: 0xffffffdfffffffff
     rs2_val == 18446744004990074879: 1 # Walking Zeros: 0xffffffefffffffff
     rs2_val == 18446744039349813247: 1 # Walking Zeros: 0xfffffff7ffffffff
-    rs2_val == 18446744056529682431: 2 # Walking Zeros: 0xfffffffbffffffff
+    rs2_val == 18446744056529682431: 1 # Walking Zeros: 0xfffffffbffffffff
     rs2_val == 18446744065119617023: 2 # Walking Zeros: 0xfffffffdffffffff
     rs2_val == 18446744069414584319: 1 # Walking Zeros: 0xfffffffeffffffff
-    rs2_val == 18446744071562067967: 1 # Walking Zeros: 0xffffffff7fffffff
+    rs2_val == 18446744071562067967: 2 # Walking Zeros: 0xffffffff7fffffff
     rs2_val == 18446744072635809791: 1 # Walking Zeros: 0xffffffffbfffffff
     rs2_val == 18446744073172680703: 1 # Walking Zeros: 0xffffffffdfffffff
     rs2_val == 18446744073441116159: 1 # Walking Zeros: 0xffffffffefffffff
@@ -3288,8 +3295,8 @@ bset:
     x28: 1
     x29: 1
     x3: 1
-    x30: 388
-    x31: 1
+    x30: 387
+    x31: 2
     x4: 1
     x5: 1
     x6: 1
@@ -3320,9 +3327,9 @@ bset:
     x26: 1
     x27: 1
     x28: 1
-    x29: 388
+    x29: 386
     x3: 1
-    x30: 1
+    x30: 3
     x31: 1
     x4: 1
     x5: 1
@@ -3362,10 +3369,10 @@ bset:
     rs2_val == 18446743936270598143: 1 # Walking Zeros: 0xffffffdfffffffff
     rs2_val == 18446744004990074879: 1 # Walking Zeros: 0xffffffefffffffff
     rs2_val == 18446744039349813247: 1 # Walking Zeros: 0xfffffff7ffffffff
-    rs2_val == 18446744056529682431: 2 # Walking Zeros: 0xfffffffbffffffff
+    rs2_val == 18446744056529682431: 1 # Walking Zeros: 0xfffffffbffffffff
     rs2_val == 18446744065119617023: 2 # Walking Zeros: 0xfffffffdffffffff
     rs2_val == 18446744069414584319: 1 # Walking Zeros: 0xfffffffeffffffff
-    rs2_val == 18446744071562067967: 1 # Walking Zeros: 0xffffffff7fffffff
+    rs2_val == 18446744071562067967: 2 # Walking Zeros: 0xffffffff7fffffff
     rs2_val == 18446744072635809791: 1 # Walking Zeros: 0xffffffffbfffffff
     rs2_val == 18446744073172680703: 1 # Walking Zeros: 0xffffffffdfffffff
     rs2_val == 18446744073441116159: 1 # Walking Zeros: 0xffffffffefffffff
@@ -3990,8 +3997,8 @@ bseti:
   total_coverage: 223/223
 clmul:
   config:
-  - check ISA:=regex(.*RV64.*I.*B.*)
-  - check ISA:=regex(.*RV64.*I.*Zbc.*)
+  - check ISA:=regex(.*I.*B.*)
+  - check ISA:=regex(.*I.*Zbc.*)
   op_comb:
     rs1 != rs2  and rs1 != rd and rs2 != rd: 284
     rs1 == rd != rs2: 1
@@ -4061,8 +4068,8 @@ clmul:
     x28: 1
     x29: 1
     x3: 1
-    x30: 257
-    x31: 1
+    x30: 256
+    x31: 2
     x4: 1
     x5: 1
     x6: 1
@@ -4093,9 +4100,9 @@ clmul:
     x26: 1
     x27: 1
     x28: 1
-    x29: 257
+    x29: 255
     x3: 1
-    x30: 1
+    x30: 3
     x31: 1
     x4: 1
     x5: 1
@@ -4135,10 +4142,10 @@ clmul:
     rs2_val == 18446743936270598143: 1 # Walking Zeros: 0xffffffdfffffffff
     rs2_val == 18446744004990074879: 1 # Walking Zeros: 0xffffffefffffffff
     rs2_val == 18446744039349813247: 1 # Walking Zeros: 0xfffffff7ffffffff
-    rs2_val == 18446744056529682431: 2 # Walking Zeros: 0xfffffffbffffffff
+    rs2_val == 18446744056529682431: 1 # Walking Zeros: 0xfffffffbffffffff
     rs2_val == 18446744065119617023: 2 # Walking Zeros: 0xfffffffdffffffff
     rs2_val == 18446744069414584319: 1 # Walking Zeros: 0xfffffffeffffffff
-    rs2_val == 18446744071562067967: 1 # Walking Zeros: 0xffffffff7fffffff
+    rs2_val == 18446744071562067967: 2 # Walking Zeros: 0xffffffff7fffffff
     rs2_val == 18446744072635809791: 1 # Walking Zeros: 0xffffffffbfffffff
     rs2_val == 18446744073172680703: 1 # Walking Zeros: 0xffffffffdfffffff
     rs2_val == 18446744073441116159: 1 # Walking Zeros: 0xffffffffefffffff
@@ -4395,17 +4402,17 @@ clmul:
   total_coverage: 388/388
 clmulh:
   config:
-  - check ISA:=regex(.*RV64.*I.*B.*)
-  - check ISA:=regex(.*RV64.*I.*Zbc.*)
+  - check ISA:=regex(.*I.*B.*)
+  - check ISA:=regex(.*I.*Zbc.*)
   op_comb:
-    rs1 != rs2  and rs1 != rd and rs2 != rd: 264
+    rs1 != rs2  and rs1 != rd and rs2 != rd: 284
     rs1 == rd != rs2: 1
     rs1 == rs2 != rd: 1
     rs1 == rs2 == rd: 1
     rs2 == rd != rs1: 1
     coverage: 5/5
   opcode:
-    clmulh: 268
+    clmulh: 288
     coverage: 1/1
   rd:
     x0: 1
@@ -4433,7 +4440,7 @@ clmulh:
     x29: 1
     x3: 1
     x30: 1
-    x31: 237
+    x31: 257
     x4: 1
     x5: 1
     x6: 1
@@ -4466,8 +4473,8 @@ clmulh:
     x28: 1
     x29: 1
     x3: 1
-    x30: 237
-    x31: 1
+    x30: 256
+    x31: 2
     x4: 1
     x5: 1
     x6: 1
@@ -4498,9 +4505,9 @@ clmulh:
     x26: 1
     x27: 1
     x28: 1
-    x29: 237
+    x29: 255
     x3: 1
-    x30: 1
+    x30: 3
     x31: 1
     x4: 1
     x5: 1
@@ -4540,10 +4547,10 @@ clmulh:
     rs2_val == 18446743936270598143: 1 # Walking Zeros: 0xffffffdfffffffff
     rs2_val == 18446744004990074879: 1 # Walking Zeros: 0xffffffefffffffff
     rs2_val == 18446744039349813247: 1 # Walking Zeros: 0xfffffff7ffffffff
-    rs2_val == 18446744056529682431: 2 # Walking Zeros: 0xfffffffbffffffff
+    rs2_val == 18446744056529682431: 1 # Walking Zeros: 0xfffffffbffffffff
     rs2_val == 18446744065119617023: 2 # Walking Zeros: 0xfffffffdffffffff
     rs2_val == 18446744069414584319: 1 # Walking Zeros: 0xfffffffeffffffff
-    rs2_val == 18446744071562067967: 1 # Walking Zeros: 0xffffffff7fffffff
+    rs2_val == 18446744071562067967: 2 # Walking Zeros: 0xffffffff7fffffff
     rs2_val == 18446744072635809791: 1 # Walking Zeros: 0xffffffffbfffffff
     rs2_val == 18446744073172680703: 1 # Walking Zeros: 0xffffffffdfffffff
     rs2_val == 18446744073441116159: 1 # Walking Zeros: 0xffffffffefffffff
@@ -4767,6 +4774,26 @@ clmulh:
     rs1_val == 4: 1 # Walking Ones: 0x4
     rs1_val == 2: 1 # Walking Ones: 0x2
     rs1_val == 1: 4 # Walking Ones: 0x1
+    'rs1_val == 0x6af29145404fd8ed and rs2_val == 0x990e75eafff569c2 #nosat': 1 # Uniform Random 1
+    'rs1_val == 0x6d23c0488a6019c1 and rs2_val == 0x860bdaad7447a088 #nosat': 1 # Uniform Random 2
+    'rs1_val == 0x1f7d946f17168ab3 and rs2_val == 0x66eae3d9bbb4f560 #nosat': 1 # Uniform Random 3
+    'rs1_val == 0xef1d54db32b81f27 and rs2_val == 0x1826a804284fe16c #nosat': 1 # Uniform Random 4
+    'rs1_val == 0xb694de26ad9e5431 and rs2_val == 0x293f9f6071fad878 #nosat': 1 # Uniform Random 5
+    'rs1_val == 0x987daa20b858e304 and rs2_val == 0x1aa1beebefb902cb #nosat': 1 # Uniform Random 6
+    'rs1_val == 0x79bb7c341d3110bc and rs2_val == 0x8678f5e3d272e229 #nosat': 1 # Uniform Random 7
+    'rs1_val == 0xe2eaf4a09869be8c and rs2_val == 0x5b730cad91766f62 #nosat': 1 # Uniform Random 8
+    'rs1_val == 0xc0fe15dd0df9564b and rs2_val == 0xb22bbf7eb4c858fb #nosat': 1 # Uniform Random 9
+    'rs1_val == 0x4113ee60952acffe and rs2_val == 0x53a66ed1dc80d916 #nosat': 1 # Uniform Random 10
+    'rs1_val == 0x40a5ff526f38a9c7 and rs2_val == 0xb6f9706fb4f741aa #nosat': 1 # Uniform Random 11
+    'rs1_val == 0x9bedfe390d6ddd9d and rs2_val == 0xd05668ae0fdb82bc #nosat': 1 # Uniform Random 12
+    'rs1_val == 0xd75739f82ac177c6 and rs2_val == 0xaa6bb2bde9ed477d #nosat': 1 # Uniform Random 13
+    'rs1_val == 0x9a4e9ef10171f4df and rs2_val == 0x299c3bcf90efb625 #nosat': 1 # Uniform Random 14
+    'rs1_val == 0xd169a3f8cad5e297 and rs2_val == 0x1fc493caa371db42 #nosat': 1 # Uniform Random 15
+    'rs1_val == 0xd5b9fe5cf69bdcf3 and rs2_val == 0xf4c30307672f666d #nosat': 1 # Uniform Random 16
+    'rs1_val == 0xe4921bf73047c198 and rs2_val == 0xa0569d765ebc64cb #nosat': 1 # Uniform Random 17
+    'rs1_val == 0xfcc1b543c49cd65b and rs2_val == 0x2daf9ac7f5faf207 #nosat': 1 # Uniform Random 18
+    'rs1_val == 0x436f40f274b8de87 and rs2_val == 0x3459294ef273b44c #nosat': 1 # Uniform Random 19
+    'rs1_val == 0x75a3adb3254a9493 and rs2_val == 0xc5521660f3a3c571 #nosat': 1 # Uniform Random 20
     rs2_val == 12297829382473034410: 1 # Alternate: 0xaaaaaaaaaaaaaaaa
     rs2_val == 6148914691236517205: 1 # Alternate: 0x5555555555555555
     rs1_val == 12297829382473034410: 1 # Alternate: 0xaaaaaaaaaaaaaaaa
@@ -4776,21 +4803,21 @@ clmulh:
     rs1_val==1 and rs2_val==0: 1
     rs1_val==1 and rs2_val==0x1000: 1
     rs1_val==1 and rs2_val==1: 1
-    coverage: 266/266
-  total_coverage: 368/368
+    coverage: 286/286
+  total_coverage: 388/388
 clmulr:
   config:
-  - check ISA:=regex(.*RV64.*I.*B.*)
-  - check ISA:=regex(.*RV64.*I.*Zbc.*)
+  - check ISA:=regex(.*I.*B.*)
+  - check ISA:=regex(.*I.*Zbc.*)
   op_comb:
-    rs1 != rs2  and rs1 != rd and rs2 != rd: 264
+    rs1 != rs2  and rs1 != rd and rs2 != rd: 284
     rs1 == rd != rs2: 1
     rs1 == rs2 != rd: 1
     rs1 == rs2 == rd: 1
     rs2 == rd != rs1: 1
     coverage: 5/5
   opcode:
-    clmulr: 268
+    clmulr: 288
     coverage: 1/1
   rd:
     x0: 1
@@ -4818,7 +4845,7 @@ clmulr:
     x29: 1
     x3: 1
     x30: 1
-    x31: 237
+    x31: 257
     x4: 1
     x5: 1
     x6: 1
@@ -4851,8 +4878,8 @@ clmulr:
     x28: 1
     x29: 1
     x3: 1
-    x30: 237
-    x31: 1
+    x30: 256
+    x31: 2
     x4: 1
     x5: 1
     x6: 1
@@ -4883,9 +4910,9 @@ clmulr:
     x26: 1
     x27: 1
     x28: 1
-    x29: 237
+    x29: 255
     x3: 1
-    x30: 1
+    x30: 3
     x31: 1
     x4: 1
     x5: 1
@@ -4925,10 +4952,10 @@ clmulr:
     rs2_val == 18446743936270598143: 1 # Walking Zeros: 0xffffffdfffffffff
     rs2_val == 18446744004990074879: 1 # Walking Zeros: 0xffffffefffffffff
     rs2_val == 18446744039349813247: 1 # Walking Zeros: 0xfffffff7ffffffff
-    rs2_val == 18446744056529682431: 2 # Walking Zeros: 0xfffffffbffffffff
+    rs2_val == 18446744056529682431: 1 # Walking Zeros: 0xfffffffbffffffff
     rs2_val == 18446744065119617023: 2 # Walking Zeros: 0xfffffffdffffffff
     rs2_val == 18446744069414584319: 1 # Walking Zeros: 0xfffffffeffffffff
-    rs2_val == 18446744071562067967: 1 # Walking Zeros: 0xffffffff7fffffff
+    rs2_val == 18446744071562067967: 2 # Walking Zeros: 0xffffffff7fffffff
     rs2_val == 18446744072635809791: 1 # Walking Zeros: 0xffffffffbfffffff
     rs2_val == 18446744073172680703: 1 # Walking Zeros: 0xffffffffdfffffff
     rs2_val == 18446744073441116159: 1 # Walking Zeros: 0xffffffffefffffff
@@ -5152,6 +5179,26 @@ clmulr:
     rs1_val == 4: 1 # Walking Ones: 0x4
     rs1_val == 2: 1 # Walking Ones: 0x2
     rs1_val == 1: 4 # Walking Ones: 0x1
+    'rs1_val == 0x6af29145404fd8ed and rs2_val == 0x990e75eafff569c2 #nosat': 1 # Uniform Random 1
+    'rs1_val == 0x6d23c0488a6019c1 and rs2_val == 0x860bdaad7447a088 #nosat': 1 # Uniform Random 2
+    'rs1_val == 0x1f7d946f17168ab3 and rs2_val == 0x66eae3d9bbb4f560 #nosat': 1 # Uniform Random 3
+    'rs1_val == 0xef1d54db32b81f27 and rs2_val == 0x1826a804284fe16c #nosat': 1 # Uniform Random 4
+    'rs1_val == 0xb694de26ad9e5431 and rs2_val == 0x293f9f6071fad878 #nosat': 1 # Uniform Random 5
+    'rs1_val == 0x987daa20b858e304 and rs2_val == 0x1aa1beebefb902cb #nosat': 1 # Uniform Random 6
+    'rs1_val == 0x79bb7c341d3110bc and rs2_val == 0x8678f5e3d272e229 #nosat': 1 # Uniform Random 7
+    'rs1_val == 0xe2eaf4a09869be8c and rs2_val == 0x5b730cad91766f62 #nosat': 1 # Uniform Random 8
+    'rs1_val == 0xc0fe15dd0df9564b and rs2_val == 0xb22bbf7eb4c858fb #nosat': 1 # Uniform Random 9
+    'rs1_val == 0x4113ee60952acffe and rs2_val == 0x53a66ed1dc80d916 #nosat': 1 # Uniform Random 10
+    'rs1_val == 0x40a5ff526f38a9c7 and rs2_val == 0xb6f9706fb4f741aa #nosat': 1 # Uniform Random 11
+    'rs1_val == 0x9bedfe390d6ddd9d and rs2_val == 0xd05668ae0fdb82bc #nosat': 1 # Uniform Random 12
+    'rs1_val == 0xd75739f82ac177c6 and rs2_val == 0xaa6bb2bde9ed477d #nosat': 1 # Uniform Random 13
+    'rs1_val == 0x9a4e9ef10171f4df and rs2_val == 0x299c3bcf90efb625 #nosat': 1 # Uniform Random 14
+    'rs1_val == 0xd169a3f8cad5e297 and rs2_val == 0x1fc493caa371db42 #nosat': 1 # Uniform Random 15
+    'rs1_val == 0xd5b9fe5cf69bdcf3 and rs2_val == 0xf4c30307672f666d #nosat': 1 # Uniform Random 16
+    'rs1_val == 0xe4921bf73047c198 and rs2_val == 0xa0569d765ebc64cb #nosat': 1 # Uniform Random 17
+    'rs1_val == 0xfcc1b543c49cd65b and rs2_val == 0x2daf9ac7f5faf207 #nosat': 1 # Uniform Random 18
+    'rs1_val == 0x436f40f274b8de87 and rs2_val == 0x3459294ef273b44c #nosat': 1 # Uniform Random 19
+    'rs1_val == 0x75a3adb3254a9493 and rs2_val == 0xc5521660f3a3c571 #nosat': 1 # Uniform Random 20
     rs2_val == 12297829382473034410: 1 # Alternate: 0xaaaaaaaaaaaaaaaa
     rs2_val == 6148914691236517205: 1 # Alternate: 0x5555555555555555
     rs1_val == 12297829382473034410: 1 # Alternate: 0xaaaaaaaaaaaaaaaa
@@ -5161,8 +5208,8 @@ clmulr:
     rs1_val==1 and rs2_val==0: 1
     rs1_val==1 and rs2_val==0x1000: 1
     rs1_val==1 and rs2_val==1: 1
-    coverage: 266/266
-  total_coverage: 368/368
+    coverage: 286/286
+  total_coverage: 388/388
 clz:
   config:
   - check ISA:=regex(.*I.*B.*)
@@ -6941,8 +6988,8 @@ max:
     x28: 1
     x29: 1
     x3: 1
-    x30: 294
-    x31: 1
+    x30: 293
+    x31: 2
     x4: 1
     x5: 1
     x6: 1
@@ -6973,9 +7020,9 @@ max:
     x26: 1
     x27: 1
     x28: 1
-    x29: 294
+    x29: 292
     x3: 1
-    x30: 1
+    x30: 3
     x31: 1
     x4: 1
     x5: 1
@@ -7015,10 +7062,10 @@ max:
     rs2_val == -137438953473: 1 # Walking Zeros: -0x2000000001
     rs2_val == -68719476737: 1 # Walking Zeros: -0x1000000001
     rs2_val == -34359738369: 1 # Walking Zeros: -0x800000001
-    rs2_val == -17179869185: 2 # Walking Zeros: -0x400000001
+    rs2_val == -17179869185: 1 # Walking Zeros: -0x400000001
     rs2_val == -8589934593: 2 # Walking Zeros: -0x200000001
     rs2_val == -4294967297: 1 # Walking Zeros: -0x100000001
-    rs2_val == -2147483649: 1 # Walking Zeros: -0x80000001
+    rs2_val == -2147483649: 2 # Walking Zeros: -0x80000001
     rs2_val == -1073741825: 1 # Walking Zeros: -0x40000001
     rs2_val == -536870913: 1 # Walking Zeros: -0x20000001
     rs2_val == -268435457: 1 # Walking Zeros: -0x10000001
@@ -7396,8 +7443,8 @@ maxu:
     x28: 1
     x29: 1
     x3: 1
-    x30: 294
-    x31: 1
+    x30: 293
+    x31: 2
     x4: 1
     x5: 1
     x6: 1
@@ -7428,9 +7475,9 @@ maxu:
     x26: 1
     x27: 1
     x28: 1
-    x29: 294
+    x29: 292
     x3: 1
-    x30: 1
+    x30: 3
     x31: 1
     x4: 1
     x5: 1
@@ -7470,10 +7517,10 @@ maxu:
     rs2_val == 18446743936270598143: 1 # Walking Zeros: 0xffffffdfffffffff
     rs2_val == 18446744004990074879: 1 # Walking Zeros: 0xffffffefffffffff
     rs2_val == 18446744039349813247: 1 # Walking Zeros: 0xfffffff7ffffffff
-    rs2_val == 18446744056529682431: 2 # Walking Zeros: 0xfffffffbffffffff
+    rs2_val == 18446744056529682431: 1 # Walking Zeros: 0xfffffffbffffffff
     rs2_val == 18446744065119617023: 2 # Walking Zeros: 0xfffffffdffffffff
     rs2_val == 18446744069414584319: 1 # Walking Zeros: 0xfffffffeffffffff
-    rs2_val == 18446744071562067967: 1 # Walking Zeros: 0xffffffff7fffffff
+    rs2_val == 18446744071562067967: 2 # Walking Zeros: 0xffffffff7fffffff
     rs2_val == 18446744072635809791: 1 # Walking Zeros: 0xffffffffbfffffff
     rs2_val == 18446744073172680703: 1 # Walking Zeros: 0xffffffffdfffffff
     rs2_val == 18446744073441116159: 1 # Walking Zeros: 0xffffffffefffffff
@@ -7846,8 +7893,8 @@ min:
     x28: 1
     x29: 1
     x3: 1
-    x30: 294
-    x31: 1
+    x30: 293
+    x31: 2
     x4: 1
     x5: 1
     x6: 1
@@ -7878,9 +7925,9 @@ min:
     x26: 1
     x27: 1
     x28: 1
-    x29: 294
+    x29: 292
     x3: 1
-    x30: 1
+    x30: 3
     x31: 1
     x4: 1
     x5: 1
@@ -7920,10 +7967,10 @@ min:
     rs2_val == -137438953473: 1 # Walking Zeros: -0x2000000001
     rs2_val == -68719476737: 1 # Walking Zeros: -0x1000000001
     rs2_val == -34359738369: 1 # Walking Zeros: -0x800000001
-    rs2_val == -17179869185: 2 # Walking Zeros: -0x400000001
+    rs2_val == -17179869185: 1 # Walking Zeros: -0x400000001
     rs2_val == -8589934593: 2 # Walking Zeros: -0x200000001
     rs2_val == -4294967297: 1 # Walking Zeros: -0x100000001
-    rs2_val == -2147483649: 1 # Walking Zeros: -0x80000001
+    rs2_val == -2147483649: 2 # Walking Zeros: -0x80000001
     rs2_val == -1073741825: 1 # Walking Zeros: -0x40000001
     rs2_val == -536870913: 1 # Walking Zeros: -0x20000001
     rs2_val == -268435457: 1 # Walking Zeros: -0x10000001
@@ -8301,8 +8348,8 @@ minu:
     x28: 1
     x29: 1
     x3: 1
-    x30: 294
-    x31: 1
+    x30: 293
+    x31: 2
     x4: 1
     x5: 1
     x6: 1
@@ -8333,9 +8380,9 @@ minu:
     x26: 1
     x27: 1
     x28: 1
-    x29: 294
+    x29: 292
     x3: 1
-    x30: 1
+    x30: 3
     x31: 1
     x4: 1
     x5: 1
@@ -8375,10 +8422,10 @@ minu:
     rs2_val == 18446743936270598143: 1 # Walking Zeros: 0xffffffdfffffffff
     rs2_val == 18446744004990074879: 1 # Walking Zeros: 0xffffffefffffffff
     rs2_val == 18446744039349813247: 1 # Walking Zeros: 0xfffffff7ffffffff
-    rs2_val == 18446744056529682431: 2 # Walking Zeros: 0xfffffffbffffffff
+    rs2_val == 18446744056529682431: 1 # Walking Zeros: 0xfffffffbffffffff
     rs2_val == 18446744065119617023: 2 # Walking Zeros: 0xfffffffdffffffff
     rs2_val == 18446744069414584319: 1 # Walking Zeros: 0xfffffffeffffffff
-    rs2_val == 18446744071562067967: 1 # Walking Zeros: 0xffffffff7fffffff
+    rs2_val == 18446744071562067967: 2 # Walking Zeros: 0xffffffff7fffffff
     rs2_val == 18446744072635809791: 1 # Walking Zeros: 0xffffffffbfffffff
     rs2_val == 18446744073172680703: 1 # Walking Zeros: 0xffffffffdfffffff
     rs2_val == 18446744073441116159: 1 # Walking Zeros: 0xffffffffefffffff
@@ -8967,8 +9014,8 @@ orn:
     x28: 1
     x29: 1
     x3: 1
-    x30: 314
-    x31: 1
+    x30: 313
+    x31: 2
     x4: 1
     x5: 1
     x6: 1
@@ -8999,9 +9046,9 @@ orn:
     x26: 1
     x27: 1
     x28: 1
-    x29: 314
+    x29: 312
     x3: 1
-    x30: 1
+    x30: 3
     x31: 1
     x4: 1
     x5: 1
@@ -9041,10 +9088,10 @@ orn:
     rs2_val == 18446743936270598143: 1 # Walking Zeros: 0xffffffdfffffffff
     rs2_val == 18446744004990074879: 1 # Walking Zeros: 0xffffffefffffffff
     rs2_val == 18446744039349813247: 1 # Walking Zeros: 0xfffffff7ffffffff
-    rs2_val == 18446744056529682431: 2 # Walking Zeros: 0xfffffffbffffffff
+    rs2_val == 18446744056529682431: 1 # Walking Zeros: 0xfffffffbffffffff
     rs2_val == 18446744065119617023: 2 # Walking Zeros: 0xfffffffdffffffff
     rs2_val == 18446744069414584319: 1 # Walking Zeros: 0xfffffffeffffffff
-    rs2_val == 18446744071562067967: 1 # Walking Zeros: 0xffffffff7fffffff
+    rs2_val == 18446744071562067967: 2 # Walking Zeros: 0xffffffff7fffffff
     rs2_val == 18446744072635809791: 1 # Walking Zeros: 0xffffffffbfffffff
     rs2_val == 18446744073172680703: 1 # Walking Zeros: 0xffffffffdfffffff
     rs2_val == 18446744073441116159: 1 # Walking Zeros: 0xffffffffefffffff
@@ -9661,8 +9708,8 @@ rol:
     x28: 1
     x29: 1
     x3: 1
-    x30: 494
-    x31: 1
+    x30: 493
+    x31: 2
     x4: 1
     x5: 1
     x6: 1
@@ -9693,9 +9740,9 @@ rol:
     x26: 1
     x27: 1
     x28: 1
-    x29: 494
+    x29: 492
     x3: 1
-    x30: 1
+    x30: 3
     x31: 1
     x4: 1
     x5: 1
@@ -9736,9 +9783,9 @@ rol:
     'rs2_val == 0x60C9F22000000000 and rs1_val == 0xCA355A09AB72F99F #nosat': 1 # 37 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0xAF36F11000000000 and rs1_val == 0x22FED7DB4E7B7359 #nosat': 1 # 36 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0x0333990800000000 and rs1_val == 0xB6DE8BCFD96429C9 #nosat': 1 # 35 Trailing zeros for rs2_val. Other operands are random
-    'rs2_val == 0x5C67C8FC00000000 and rs1_val == 0xB9FBD369C8CDF63E #nosat': 2 # 34 Trailing zeros for rs2_val. Other operands are random
+    'rs2_val == 0x5C67C8FC00000000 and rs1_val == 0xB9FBD369C8CDF63E #nosat': 1 # 34 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0xC706E0C200000000 and rs1_val == 0x324C464BC06209FB #nosat': 1 # 33 Trailing zeros for rs2_val. Other operands are random
-    'rs2_val == 0xEFE091E300000000 and rs1_val == 0x70FD0C20644918A7 #nosat': 1 # 32 Trailing zeros for rs2_val. Other operands are random
+    'rs2_val == 0xEFE091E300000000 and rs1_val == 0x70FD0C20644918A7 #nosat': 2 # 32 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0xCB7CDDA380000000 and rs1_val == 0x755CD0BF4F63879F #nosat': 1 # 31 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0x51885E99C0000000 and rs1_val == 0xA31E74CF1F3C1AD7 #nosat': 1 # 30 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0x87503D9D20000000 and rs1_val == 0x300D9B713BB3E347 #nosat': 1 # 29 Trailing zeros for rs2_val. Other operands are random
@@ -10300,8 +10347,8 @@ rolw:
     x28: 1
     x29: 1
     x3: 1
-    x30: 494
-    x31: 1
+    x30: 493
+    x31: 2
     x4: 1
     x5: 1
     x6: 1
@@ -10332,9 +10379,9 @@ rolw:
     x26: 1
     x27: 1
     x28: 1
-    x29: 494
+    x29: 492
     x3: 1
-    x30: 1
+    x30: 3
     x31: 1
     x4: 1
     x5: 1
@@ -10375,9 +10422,9 @@ rolw:
     'rs2_val == 0x60C9F22000000000 and rs1_val == 0xCA355A09AB72F99F #nosat': 1 # 37 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0xAF36F11000000000 and rs1_val == 0x22FED7DB4E7B7359 #nosat': 1 # 36 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0x0333990800000000 and rs1_val == 0xB6DE8BCFD96429C9 #nosat': 1 # 35 Trailing zeros for rs2_val. Other operands are random
-    'rs2_val == 0x5C67C8FC00000000 and rs1_val == 0xB9FBD369C8CDF63E #nosat': 2 # 34 Trailing zeros for rs2_val. Other operands are random
+    'rs2_val == 0x5C67C8FC00000000 and rs1_val == 0xB9FBD369C8CDF63E #nosat': 1 # 34 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0xC706E0C200000000 and rs1_val == 0x324C464BC06209FB #nosat': 1 # 33 Trailing zeros for rs2_val. Other operands are random
-    'rs2_val == 0xEFE091E300000000 and rs1_val == 0x70FD0C20644918A7 #nosat': 1 # 32 Trailing zeros for rs2_val. Other operands are random
+    'rs2_val == 0xEFE091E300000000 and rs1_val == 0x70FD0C20644918A7 #nosat': 2 # 32 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0xCB7CDDA380000000 and rs1_val == 0x755CD0BF4F63879F #nosat': 1 # 31 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0x51885E99C0000000 and rs1_val == 0xA31E74CF1F3C1AD7 #nosat': 1 # 30 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0x87503D9D20000000 and rs1_val == 0x300D9B713BB3E347 #nosat': 1 # 29 Trailing zeros for rs2_val. Other operands are random
@@ -10939,8 +10986,8 @@ ror:
     x28: 1
     x29: 1
     x3: 1
-    x30: 494
-    x31: 1
+    x30: 493
+    x31: 2
     x4: 1
     x5: 1
     x6: 1
@@ -10971,9 +11018,9 @@ ror:
     x26: 1
     x27: 1
     x28: 1
-    x29: 494
+    x29: 492
     x3: 1
-    x30: 1
+    x30: 3
     x31: 1
     x4: 1
     x5: 1
@@ -11014,9 +11061,9 @@ ror:
     'rs2_val == 0x60C9F22000000000 and rs1_val == 0xCA355A09AB72F99F #nosat': 1 # 37 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0xAF36F11000000000 and rs1_val == 0x22FED7DB4E7B7359 #nosat': 1 # 36 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0x0333990800000000 and rs1_val == 0xB6DE8BCFD96429C9 #nosat': 1 # 35 Trailing zeros for rs2_val. Other operands are random
-    'rs2_val == 0x5C67C8FC00000000 and rs1_val == 0xB9FBD369C8CDF63E #nosat': 2 # 34 Trailing zeros for rs2_val. Other operands are random
+    'rs2_val == 0x5C67C8FC00000000 and rs1_val == 0xB9FBD369C8CDF63E #nosat': 1 # 34 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0xC706E0C200000000 and rs1_val == 0x324C464BC06209FB #nosat': 1 # 33 Trailing zeros for rs2_val. Other operands are random
-    'rs2_val == 0xEFE091E300000000 and rs1_val == 0x70FD0C20644918A7 #nosat': 1 # 32 Trailing zeros for rs2_val. Other operands are random
+    'rs2_val == 0xEFE091E300000000 and rs1_val == 0x70FD0C20644918A7 #nosat': 2 # 32 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0xCB7CDDA380000000 and rs1_val == 0x755CD0BF4F63879F #nosat': 1 # 31 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0x51885E99C0000000 and rs1_val == 0xA31E74CF1F3C1AD7 #nosat': 1 # 30 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0x87503D9D20000000 and rs1_val == 0x300D9B713BB3E347 #nosat': 1 # 29 Trailing zeros for rs2_val. Other operands are random
@@ -12054,8 +12101,8 @@ rorw:
     x28: 1
     x29: 1
     x3: 1
-    x30: 494
-    x31: 1
+    x30: 493
+    x31: 2
     x4: 1
     x5: 1
     x6: 1
@@ -12086,9 +12133,9 @@ rorw:
     x26: 1
     x27: 1
     x28: 1
-    x29: 494
+    x29: 492
     x3: 1
-    x30: 1
+    x30: 3
     x31: 1
     x4: 1
     x5: 1
@@ -12129,9 +12176,9 @@ rorw:
     'rs2_val == 0x60C9F22000000000 and rs1_val == 0xCA355A09AB72F99F #nosat': 1 # 37 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0xAF36F11000000000 and rs1_val == 0x22FED7DB4E7B7359 #nosat': 1 # 36 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0x0333990800000000 and rs1_val == 0xB6DE8BCFD96429C9 #nosat': 1 # 35 Trailing zeros for rs2_val. Other operands are random
-    'rs2_val == 0x5C67C8FC00000000 and rs1_val == 0xB9FBD369C8CDF63E #nosat': 2 # 34 Trailing zeros for rs2_val. Other operands are random
+    'rs2_val == 0x5C67C8FC00000000 and rs1_val == 0xB9FBD369C8CDF63E #nosat': 1 # 34 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0xC706E0C200000000 and rs1_val == 0x324C464BC06209FB #nosat': 1 # 33 Trailing zeros for rs2_val. Other operands are random
-    'rs2_val == 0xEFE091E300000000 and rs1_val == 0x70FD0C20644918A7 #nosat': 1 # 32 Trailing zeros for rs2_val. Other operands are random
+    'rs2_val == 0xEFE091E300000000 and rs1_val == 0x70FD0C20644918A7 #nosat': 2 # 32 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0xCB7CDDA380000000 and rs1_val == 0x755CD0BF4F63879F #nosat': 1 # 31 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0x51885E99C0000000 and rs1_val == 0xA31E74CF1F3C1AD7 #nosat': 1 # 30 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0x87503D9D20000000 and rs1_val == 0x300D9B713BB3E347 #nosat': 1 # 29 Trailing zeros for rs2_val. Other operands are random
@@ -13158,8 +13205,8 @@ sh1add:
     x28: 1
     x29: 1
     x3: 1
-    x30: 294
-    x31: 1
+    x30: 293
+    x31: 2
     x4: 1
     x5: 1
     x6: 1
@@ -13190,9 +13237,9 @@ sh1add:
     x26: 1
     x27: 1
     x28: 1
-    x29: 294
+    x29: 292
     x3: 1
-    x30: 1
+    x30: 3
     x31: 1
     x4: 1
     x5: 1
@@ -13232,10 +13279,10 @@ sh1add:
     rs2_val == -137438953473: 1 # Walking Zeros: -0x2000000001
     rs2_val == -68719476737: 1 # Walking Zeros: -0x1000000001
     rs2_val == -34359738369: 1 # Walking Zeros: -0x800000001
-    rs2_val == -17179869185: 2 # Walking Zeros: -0x400000001
+    rs2_val == -17179869185: 1 # Walking Zeros: -0x400000001
     rs2_val == -8589934593: 2 # Walking Zeros: -0x200000001
     rs2_val == -4294967297: 1 # Walking Zeros: -0x100000001
-    rs2_val == -2147483649: 1 # Walking Zeros: -0x80000001
+    rs2_val == -2147483649: 2 # Walking Zeros: -0x80000001
     rs2_val == -1073741825: 1 # Walking Zeros: -0x40000001
     rs2_val == -536870913: 1 # Walking Zeros: -0x20000001
     rs2_val == -268435457: 1 # Walking Zeros: -0x10000001
@@ -13613,8 +13660,8 @@ sh1add.uw:
     x28: 1
     x29: 1
     x3: 1
-    x30: 294
-    x31: 1
+    x30: 293
+    x31: 2
     x4: 1
     x5: 1
     x6: 1
@@ -13645,9 +13692,9 @@ sh1add.uw:
     x26: 1
     x27: 1
     x28: 1
-    x29: 294
+    x29: 292
     x3: 1
-    x30: 1
+    x30: 3
     x31: 1
     x4: 1
     x5: 1
@@ -13687,10 +13734,10 @@ sh1add.uw:
     rs2_val == 18446743936270598143: 1 # Walking Zeros: 0xffffffdfffffffff
     rs2_val == 18446744004990074879: 1 # Walking Zeros: 0xffffffefffffffff
     rs2_val == 18446744039349813247: 1 # Walking Zeros: 0xfffffff7ffffffff
-    rs2_val == 18446744056529682431: 2 # Walking Zeros: 0xfffffffbffffffff
+    rs2_val == 18446744056529682431: 1 # Walking Zeros: 0xfffffffbffffffff
     rs2_val == 18446744065119617023: 2 # Walking Zeros: 0xfffffffdffffffff
     rs2_val == 18446744069414584319: 1 # Walking Zeros: 0xfffffffeffffffff
-    rs2_val == 18446744071562067967: 1 # Walking Zeros: 0xffffffff7fffffff
+    rs2_val == 18446744071562067967: 2 # Walking Zeros: 0xffffffff7fffffff
     rs2_val == 18446744072635809791: 1 # Walking Zeros: 0xffffffffbfffffff
     rs2_val == 18446744073172680703: 1 # Walking Zeros: 0xffffffffdfffffff
     rs2_val == 18446744073441116159: 1 # Walking Zeros: 0xffffffffefffffff
@@ -14063,8 +14110,8 @@ sh2add:
     x28: 1
     x29: 1
     x3: 1
-    x30: 294
-    x31: 1
+    x30: 293
+    x31: 2
     x4: 1
     x5: 1
     x6: 1
@@ -14095,9 +14142,9 @@ sh2add:
     x26: 1
     x27: 1
     x28: 1
-    x29: 294
+    x29: 292
     x3: 1
-    x30: 1
+    x30: 3
     x31: 1
     x4: 1
     x5: 1
@@ -14137,10 +14184,10 @@ sh2add:
     rs2_val == -137438953473: 1 # Walking Zeros: -0x2000000001
     rs2_val == -68719476737: 1 # Walking Zeros: -0x1000000001
     rs2_val == -34359738369: 1 # Walking Zeros: -0x800000001
-    rs2_val == -17179869185: 2 # Walking Zeros: -0x400000001
+    rs2_val == -17179869185: 1 # Walking Zeros: -0x400000001
     rs2_val == -8589934593: 2 # Walking Zeros: -0x200000001
     rs2_val == -4294967297: 1 # Walking Zeros: -0x100000001
-    rs2_val == -2147483649: 1 # Walking Zeros: -0x80000001
+    rs2_val == -2147483649: 2 # Walking Zeros: -0x80000001
     rs2_val == -1073741825: 1 # Walking Zeros: -0x40000001
     rs2_val == -536870913: 1 # Walking Zeros: -0x20000001
     rs2_val == -268435457: 1 # Walking Zeros: -0x10000001
@@ -14518,8 +14565,8 @@ sh2add.uw:
     x28: 1
     x29: 1
     x3: 1
-    x30: 294
-    x31: 1
+    x30: 293
+    x31: 2
     x4: 1
     x5: 1
     x6: 1
@@ -14550,9 +14597,9 @@ sh2add.uw:
     x26: 1
     x27: 1
     x28: 1
-    x29: 294
+    x29: 292
     x3: 1
-    x30: 1
+    x30: 3
     x31: 1
     x4: 1
     x5: 1
@@ -14592,10 +14639,10 @@ sh2add.uw:
     rs2_val == 18446743936270598143: 1 # Walking Zeros: 0xffffffdfffffffff
     rs2_val == 18446744004990074879: 1 # Walking Zeros: 0xffffffefffffffff
     rs2_val == 18446744039349813247: 1 # Walking Zeros: 0xfffffff7ffffffff
-    rs2_val == 18446744056529682431: 2 # Walking Zeros: 0xfffffffbffffffff
+    rs2_val == 18446744056529682431: 1 # Walking Zeros: 0xfffffffbffffffff
     rs2_val == 18446744065119617023: 2 # Walking Zeros: 0xfffffffdffffffff
     rs2_val == 18446744069414584319: 1 # Walking Zeros: 0xfffffffeffffffff
-    rs2_val == 18446744071562067967: 1 # Walking Zeros: 0xffffffff7fffffff
+    rs2_val == 18446744071562067967: 2 # Walking Zeros: 0xffffffff7fffffff
     rs2_val == 18446744072635809791: 1 # Walking Zeros: 0xffffffffbfffffff
     rs2_val == 18446744073172680703: 1 # Walking Zeros: 0xffffffffdfffffff
     rs2_val == 18446744073441116159: 1 # Walking Zeros: 0xffffffffefffffff
@@ -14968,8 +15015,8 @@ sh3add:
     x28: 1
     x29: 1
     x3: 1
-    x30: 294
-    x31: 1
+    x30: 293
+    x31: 2
     x4: 1
     x5: 1
     x6: 1
@@ -15000,9 +15047,9 @@ sh3add:
     x26: 1
     x27: 1
     x28: 1
-    x29: 294
+    x29: 292
     x3: 1
-    x30: 1
+    x30: 3
     x31: 1
     x4: 1
     x5: 1
@@ -15042,10 +15089,10 @@ sh3add:
     rs2_val == -137438953473: 1 # Walking Zeros: -0x2000000001
     rs2_val == -68719476737: 1 # Walking Zeros: -0x1000000001
     rs2_val == -34359738369: 1 # Walking Zeros: -0x800000001
-    rs2_val == -17179869185: 2 # Walking Zeros: -0x400000001
+    rs2_val == -17179869185: 1 # Walking Zeros: -0x400000001
     rs2_val == -8589934593: 2 # Walking Zeros: -0x200000001
     rs2_val == -4294967297: 1 # Walking Zeros: -0x100000001
-    rs2_val == -2147483649: 1 # Walking Zeros: -0x80000001
+    rs2_val == -2147483649: 2 # Walking Zeros: -0x80000001
     rs2_val == -1073741825: 1 # Walking Zeros: -0x40000001
     rs2_val == -536870913: 1 # Walking Zeros: -0x20000001
     rs2_val == -268435457: 1 # Walking Zeros: -0x10000001
@@ -15423,8 +15470,8 @@ sh3add.uw:
     x28: 1
     x29: 1
     x3: 1
-    x30: 294
-    x31: 1
+    x30: 293
+    x31: 2
     x4: 1
     x5: 1
     x6: 1
@@ -15455,9 +15502,9 @@ sh3add.uw:
     x26: 1
     x27: 1
     x28: 1
-    x29: 294
+    x29: 292
     x3: 1
-    x30: 1
+    x30: 3
     x31: 1
     x4: 1
     x5: 1
@@ -15497,10 +15544,10 @@ sh3add.uw:
     rs2_val == 18446743936270598143: 1 # Walking Zeros: 0xffffffdfffffffff
     rs2_val == 18446744004990074879: 1 # Walking Zeros: 0xffffffefffffffff
     rs2_val == 18446744039349813247: 1 # Walking Zeros: 0xfffffff7ffffffff
-    rs2_val == 18446744056529682431: 2 # Walking Zeros: 0xfffffffbffffffff
+    rs2_val == 18446744056529682431: 1 # Walking Zeros: 0xfffffffbffffffff
     rs2_val == 18446744065119617023: 2 # Walking Zeros: 0xfffffffdffffffff
     rs2_val == 18446744069414584319: 1 # Walking Zeros: 0xfffffffeffffffff
-    rs2_val == 18446744071562067967: 1 # Walking Zeros: 0xffffffff7fffffff
+    rs2_val == 18446744071562067967: 2 # Walking Zeros: 0xffffffff7fffffff
     rs2_val == 18446744072635809791: 1 # Walking Zeros: 0xffffffffbfffffff
     rs2_val == 18446744073172680703: 1 # Walking Zeros: 0xffffffffdfffffff
     rs2_val == 18446744073441116159: 1 # Walking Zeros: 0xffffffffefffffff
@@ -16105,8 +16152,8 @@ xnor:
     x28: 1
     x29: 1
     x3: 1
-    x30: 314
-    x31: 1
+    x30: 313
+    x31: 2
     x4: 1
     x5: 1
     x6: 1
@@ -16137,9 +16184,9 @@ xnor:
     x26: 1
     x27: 1
     x28: 1
-    x29: 314
+    x29: 312
     x3: 1
-    x30: 1
+    x30: 3
     x31: 1
     x4: 1
     x5: 1
@@ -16179,10 +16226,10 @@ xnor:
     rs2_val == 18446743936270598143: 1 # Walking Zeros: 0xffffffdfffffffff
     rs2_val == 18446744004990074879: 1 # Walking Zeros: 0xffffffefffffffff
     rs2_val == 18446744039349813247: 1 # Walking Zeros: 0xfffffff7ffffffff
-    rs2_val == 18446744056529682431: 2 # Walking Zeros: 0xfffffffbffffffff
+    rs2_val == 18446744056529682431: 1 # Walking Zeros: 0xfffffffbffffffff
     rs2_val == 18446744065119617023: 2 # Walking Zeros: 0xfffffffdffffffff
     rs2_val == 18446744069414584319: 1 # Walking Zeros: 0xfffffffeffffffff
-    rs2_val == 18446744071562067967: 1 # Walking Zeros: 0xffffffff7fffffff
+    rs2_val == 18446744071562067967: 2 # Walking Zeros: 0xffffffff7fffffff
     rs2_val == 18446744072635809791: 1 # Walking Zeros: 0xffffffffbfffffff
     rs2_val == 18446744073172680703: 1 # Walking Zeros: 0xffffffffdfffffff
     rs2_val == 18446744073441116159: 1 # Walking Zeros: 0xffffffffefffffff

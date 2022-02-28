@@ -77,6 +77,7 @@ xnor:
       abstract_comb:
         'bitmanip_dataset(xlen,signed=False)': 0
         <<: [*rs1val_walking_unsgn, *rs2val_walking_unsgn]
+        'uniform_random(20, 100, ["rs1_val","rs2_val"], [xlen, xlen])': 0
         
 zext.h:
     config: 
@@ -136,6 +137,8 @@ clz:
         <<: [*rs1val_walking_unsgn]
         'leading_zeros("rs1_val", xlen, False)': 0
         'leading_ones("rs1_val", xlen, False)': 0
+        'trailing_zeros("rs1_val", xlen, False)': 0
+        'trailing_ones("rs1_val", xlen, False)': 0
 
 ctz:
     config: 
@@ -312,15 +315,16 @@ rev8:
     op_comb: 
       <<: *ifmt_op_comb
     val_comb:
-      'rs1_val == 16909320': 0
-      'rs1_val == 33818625': 0
-      'rs1_val == 67633410': 0
-      'rs1_val == 134283780': 0
+      'rs1_val == 0x1020408': 0
+      'rs1_val == 0x2040801': 0
+      'rs1_val == 0x4080102': 0
+      'rs1_val == 0x8010204': 0
       abstract_comb:
-        'leading_ones(64, ["rs1_val"], [32])': 0
-        'trailing_ones(64, ["rs1_val"], [32])': 0
-        'leading_zeros(64, ["rs1_val"], [32])': 0
-        'trailing_zeros(64, ["rs1_val"], [32])': 0
+        'leading_ones(32, ["rs1_val"], [32])': 0
+        'trailing_ones(32, ["rs1_val"], [32])': 0
+        'leading_zeros(32, ["rs1_val"], [32])': 0
+        'trailing_zeros(32, ["rs1_val"], [32])': 0
+        'bitmanip_dataset(xlen,["rs1_val"],signed=False)': 0
         
 rol:
     config: 
@@ -338,10 +342,10 @@ rol:
       <<: *rfmt_op_comb
     val_comb:
       abstract_comb:      
-        'leading_ones(64, ["rs1_val","rs2_val"],[xlen,xlen])': 0
-        'trailing_ones(64, ["rs1_val","rs2_val"],[xlen,xlen])': 0
-        'leading_zeros(64, ["rs1_val","rs2_val"],[xlen,xlen])': 0
-        'trailing_zeros(64, ["rs1_val","rs2_val"],[xlen,xlen])': 0
+        'leading_ones(32, ["rs1_val","rs2_val"],[xlen,xlen])': 0
+        'trailing_ones(32, ["rs1_val","rs2_val"],[xlen,xlen])': 0
+        'leading_zeros(32, ["rs1_val","rs2_val"],[xlen,xlen])': 0
+        'trailing_zeros(32, ["rs1_val","rs2_val"],[xlen,xlen])': 0
 
 ror:
     config: 
@@ -499,6 +503,7 @@ clmulr:
       abstract_comb:
         <<: [*rs1val_walking_unsgn,*rs2val_walking_unsgn]
         'uniform_random(20, 100, ["rs1_val","rs2_val"], [xlen, xlen])': 0
+
 bclr:
     config: 
       - check ISA:=regex(.*I.*B.*)
@@ -517,10 +522,12 @@ bclr:
       abstract_comb:
         'xlenlim("rs1_val", xlen)': 0
         'xlenlim("rs2_val", xlen )': 0
-        'leading_ones(64, ["rs1_val", "rs2_val"], [32,5])': 0
-        'trailing_ones(64, ["rs1_val", "rs2_val"], [32,5])': 0
-        'leading_zeros(64, ["rs1_val", "rs2_val"], [32,5])': 0
-        'trailing_zeros(64, ["rs1_val", "rs2_val"], [32,5])': 0
+        'walking_ones("rs1_val", ceil(log(xlen, 2)), False)': 0
+        'walking_ones("rs2_val", ceil(log(xlen, 2)), False)': 0
+        'leading_ones(32, ["rs1_val", "rs2_val"], [32,5])': 0
+        'trailing_ones(32, ["rs1_val", "rs2_val"], [32,5])': 0
+        'leading_zeros(32, ["rs1_val", "rs2_val"], [32,5])': 0
+        'trailing_zeros(32, ["rs1_val", "rs2_val"], [32,5])': 0
         <<: [*rs1val_walking_unsgn,*rs2val_walking_unsgn]
 
         
@@ -539,10 +546,10 @@ bclri:
     val_comb:
       abstract_comb:      
         'xlenlim("rs1_val", xlen)': 0
-        'leading_ones(64, ["rs1_val", "imm_val"], [32,5])': 0
-        'trailing_ones(64, ["rs1_val", "imm_val"], [32,5])': 0
-        'leading_zeros(64, ["rs1_val", "imm_val"], [32,5])': 0
-        'trailing_zeros(64, ["rs1_val", "imm_val"], [32,5])': 0
+        'leading_ones(32, ["rs1_val", "imm_val"], [32,5])': 0
+        'trailing_ones(32, ["rs1_val", "imm_val"], [32,5])': 0
+        'leading_zeros(32, ["rs1_val", "imm_val"], [32,5])': 0
+        'trailing_zeros(32, ["rs1_val", "imm_val"], [32,5])': 0
 
         
 bext:
@@ -565,10 +572,10 @@ bext:
         'xlenlim("rs2_val", xlen )': 0
         'walking_ones("rs1_val", ceil(log(xlen, 2)), False)': 0
         'walking_ones("rs2_val", ceil(log(xlen, 2)), False)': 0
-        'leading_ones(64, ["rs1_val", "rs2_val"], [32,5])': 0
-        'trailing_ones(64, ["rs1_val", "rs2_val"], [32,5])': 0
-        'leading_zeros(64, ["rs1_val", "rs2_val"], [32,5])': 0
-        'trailing_zeros(64, ["rs1_val", "rs2_val"], [32,5])': 0
+        'leading_ones(32, ["rs1_val", "rs2_val"], [32,5])': 0
+        'trailing_ones(32, ["rs1_val", "rs2_val"], [32,5])': 0
+        'leading_zeros(32, ["rs1_val", "rs2_val"], [32,5])': 0
+        'trailing_zeros(32, ["rs1_val", "rs2_val"], [32,5])': 0
         <<: [*rs1val_walking_unsgn,*rs2val_walking_unsgn]
 
         
@@ -587,10 +594,10 @@ bexti:
     val_comb:
       abstract_comb:      
         'xlenlim("rs1_val", xlen)': 0
-        'leading_ones(64, ["rs1_val", "imm_val"], [32,5])': 0
-        'trailing_ones(64, ["rs1_val", "imm_val"], [32,5])': 0
-        'leading_zeros(64, ["rs1_val", "imm_val"], [32,5])': 0
-        'trailing_zeros(64, ["rs1_val", "imm_val"], [32,5])': 0
+        'leading_ones(32, ["rs1_val", "imm_val"], [32,5])': 0
+        'trailing_ones(32, ["rs1_val", "imm_val"], [32,5])': 0
+        'leading_zeros(32, ["rs1_val", "imm_val"], [32,5])': 0
+        'trailing_zeros(32, ["rs1_val", "imm_val"], [32,5])': 0
 
         
 binv:
@@ -613,10 +620,10 @@ binv:
         'xlenlim("rs2_val", xlen )': 0
         'walking_ones("rs1_val", ceil(log(xlen, 2)), False)': 0
         'walking_ones("rs2_val", ceil(log(xlen, 2)), False)': 0
-        'leading_ones(64, ["rs1_val", "rs2_val"], [32,5])': 0
-        'trailing_ones(64, ["rs1_val", "rs2_val"], [32,5])': 0
-        'leading_zeros(64, ["rs1_val", "rs2_val"], [32,5])': 0
-        'trailing_zeros(64, ["rs1_val", "rs2_val"], [32,5])': 0
+        'leading_ones(32, ["rs1_val", "rs2_val"], [32,5])': 0
+        'trailing_ones(32, ["rs1_val", "rs2_val"], [32,5])': 0
+        'leading_zeros(32, ["rs1_val", "rs2_val"], [32,5])': 0
+        'trailing_zeros(32, ["rs1_val", "rs2_val"], [32,5])': 0
         <<: [*rs1val_walking_unsgn,*rs2val_walking_unsgn]
 
         
@@ -635,10 +642,10 @@ binvi:
     val_comb:
       abstract_comb:      
         'xlenlim("rs1_val", xlen)': 0
-        'leading_ones(64, ["rs1_val", "imm_val"], [32,5])': 0
-        'trailing_ones(64, ["rs1_val", "imm_val"], [32,5])': 0
-        'leading_zeros(64, ["rs1_val", "imm_val"], [32,5])': 0
-        'trailing_zeros(64, ["rs1_val", "imm_val"], [32,5])': 0
+        'leading_ones(32, ["rs1_val", "imm_val"], [32,5])': 0
+        'trailing_ones(32, ["rs1_val", "imm_val"], [32,5])': 0
+        'leading_zeros(32, ["rs1_val", "imm_val"], [32,5])': 0
+        'trailing_zeros(32, ["rs1_val", "imm_val"], [32,5])': 0
         
 bset:
     config: 
@@ -660,10 +667,10 @@ bset:
         'xlenlim("rs2_val", xlen )': 0
         'walking_ones("rs1_val", ceil(log(xlen, 2)), False)': 0
         'walking_ones("rs2_val", ceil(log(xlen, 2)), False)': 0
-        'leading_ones(64, ["rs1_val", "rs2_val"], [32,5])': 0
-        'trailing_ones(64, ["rs1_val", "rs2_val"], [32,5])': 0
-        'leading_zeros(64, ["rs1_val", "rs2_val"], [32,5])': 0
-        'trailing_zeros(64, ["rs1_val", "rs2_val"], [32,5])': 0
+        'leading_ones(32, ["rs1_val", "rs2_val"], [32,5])': 0
+        'trailing_ones(32, ["rs1_val", "rs2_val"], [32,5])': 0
+        'leading_zeros(32, ["rs1_val", "rs2_val"], [32,5])': 0
+        'trailing_zeros(32, ["rs1_val", "rs2_val"], [32,5])': 0
         <<: [*rs1val_walking_unsgn,*rs2val_walking_unsgn]
 
         
@@ -682,7 +689,7 @@ bseti:
     val_comb:
       abstract_comb:      
         'xlenlim("rs1_val", xlen)': 0
-        'leading_ones(64, ["rs1_val", "imm_val"], [32,5])': 0
-        'trailing_ones(64, ["rs1_val", "imm_val"], [32,5])': 0
-        'leading_zeros(64, ["rs1_val", "imm_val"], [32,5])': 0
-        'trailing_zeros(64, ["rs1_val", "imm_val"], [32,5])': 0
+        'leading_ones(32, ["rs1_val", "imm_val"], [32,5])': 0
+        'trailing_ones(32, ["rs1_val", "imm_val"], [32,5])': 0
+        'leading_zeros(32, ["rs1_val", "imm_val"], [32,5])': 0
+        'trailing_zeros(32, ["rs1_val", "imm_val"], [32,5])': 0
