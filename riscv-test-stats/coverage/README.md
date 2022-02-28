@@ -16,6 +16,7 @@ files in this folder:
 - [rv32ik.yaml      ](rv64ik.yaml): this file includes the coverpoints for 64-bit K crypto extension
 - [rv64i_priv.yaml  ](rv64i_priv.yaml): this file includes the coverpoints for 64-bit privilege cases
 - [rv64i.yaml       ](rv64i.yaml): this file includes the coverpoints for 64-bit base extension
+- [rv64if_zfh.yaml       ](rv64if_zfh.yaml): this file includes the coverpoints for 64-bit base extension
 
 
 ## Directory structure
@@ -40,6 +41,7 @@ HTML preview of the reports can be accessed directly through the following links
 - [rv64i_m/C](https://htmlpreview.github.io/?https://github.com/riscv-non-isa/riscv-arch-test/blob/master/riscv-test-stats/coverage/rv64i_m/C/coverage.html)
 - [rv64i_m/privilege](https://htmlpreview.github.io/?https://github.com/riscv-non-isa/riscv-arch-test/blob/master/riscv-test-stats/coverage/rv64i_m/privilege/coverage.html)
 - [rv64i_m/Zifencei](https://htmlpreview.github.io/?https://github.com/riscv-non-isa/riscv-arch-test/blob/master/riscv-test-stats/coverage/rv64i_m/Zifencei/coverage.html)
+- [rv64i_m/Zfh](https://htmlpreview.github.io/?https://github.com/riscv-non-isa/riscv-arch-test/blob/master/riscv-test-stats/coverage/rv64i_m/Zfh/coverage.html)
 - [rv64i_m/K_unratified](https://htmlpreview.github.io/?https://github.com/riscv-non-isa/riscv-arch-test/blob/master/riscv-test-stats/coverage/rv64i_m/K_unratified/coverage.html)
 - RV64D
   

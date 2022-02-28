@@ -1,0 +1,478 @@
+
+# For Licence details look at https://gitlab.com/incoresemi/riscv-compliance/riscv_ctg/-/blob/master/LICENSE.incore
+
+fadd_b1:
+    config: 
+      - check ISA:=regex(.*I.*F.*Zfh.*)
+    opcode: 
+      fadd.h: 0
+    rs1: 
+      <<: *all_fregs
+    rs2:
+      <<: *all_fregs
+    rd: 
+      <<: *all_fregs
+    op_comb: 
+      <<: *rfmt_op_comb
+    val_comb:
+      abstract_comb:
+        'ibm_b1(16, "fadd.h", 2)': 0
+        
+fclass_b1:
+    config: 
+      - check ISA:=regex(.*I.*F.*Zfh.*)
+    opcode: 
+      fclass.h: 0
+    rs1: 
+      <<: *all_fregs
+    rd: 
+      <<: *all_regs
+    val_comb:
+      abstract_comb:
+        'ibm_b1(16, "fclass.h", 1)': 0
+
+fcvt.l.h_b1:
+    config: 
+      - check ISA:=regex(.*I.*F.*Zfh.*)
+    opcode: 
+      fcvt.l.h: 0
+    rs1: 
+      <<: *all_fregs
+    rd: 
+      <<: *all_regs
+    val_comb:
+      abstract_comb:
+        'ibm_b1(16, "fcvt.l.h", 1)': 0
+        
+fcvt.lu.h_b1:
+    config: 
+      - check ISA:=regex(.*I.*F.*Zfh.*)
+    opcode: 
+      fcvt.lu.h: 0
+    rs1: 
+      <<: *all_fregs
+    rd: 
+      <<: *all_regs
+    val_comb:
+      abstract_comb:
+        'ibm_b1(16, "fcvt.lu.h", 1)': 0
+  
+fcvt.h.l_b25:
+    config: 
+      - check ISA:=regex(.*I.*F.*Zfh.*)
+    opcode: 
+      fcvt.h.l: 0
+    rs1: 
+      <<: *all_regs
+    rd: 
+      <<: *all_fregs
+    val_comb:
+      abstract_comb:
+        'ibm_b25(16, "fcvt.h.l", 1)': 0
+        
+fcvt.h.lu_b25:
+    config: 
+      - check ISA:=regex(.*I.*F.*Zfh.*)
+    opcode: 
+      fcvt.h.lu: 0
+    rs1: 
+      <<: *all_regs
+    rd: 
+      <<: *all_fregs
+    val_comb:
+      abstract_comb:
+        'ibm_b25(16, "fcvt.h.lu", 1)': 0
+        
+fcvt.h.w_b25:
+    config: 
+      - check ISA:=regex(.*I.*F.*Zfh.*)
+    opcode: 
+      fcvt.h.w: 0
+    rs1: 
+      <<: *all_regs
+    rd: 
+      <<: *all_fregs
+    val_comb:
+      abstract_comb:
+        'ibm_b25(16, "fcvt.h.w", 1)': 0
+        
+fcvt.h.wu_b25:
+    config: 
+      - check ISA:=regex(.*I.*F.*Zfh.*)
+    opcode: 
+      fcvt.h.wu: 0
+    rs1: 
+      <<: *all_regs
+    rd: 
+      <<: *all_fregs
+    val_comb:
+      abstract_comb:
+        'ibm_b25(16, "fcvt.h.wu", 1)': 0
+        
+fcvt.w.h_b1:
+    config: 
+      - check ISA:=regex(.*I.*F.*Zfh.*)
+    opcode: 
+      fcvt.w.h: 0
+    rs1: 
+      <<: *all_fregs
+    rd: 
+      <<: *all_regs
+    val_comb:
+      abstract_comb:
+        'ibm_b1(16, "fcvt.w.h", 1)': 0
+        
+fcvt.wu.h_b1:
+    config: 
+      - check ISA:=regex(.*I.*F.*Zfh.*)
+    opcode: 
+      fcvt.wu.h: 0
+    rs1: 
+      <<: *all_fregs
+    rd: 
+      <<: *all_regs
+    val_comb:
+      abstract_comb:
+        'ibm_b1(16, "fcvt.wu.h", 1)': 0
+        
+fdiv_b1:
+    config: 
+      - check ISA:=regex(.*I.*F.*Zfh.*)
+    opcode: 
+      fdiv.h: 0
+    rs1: 
+      <<: *all_fregs
+    rs2:
+      <<: *all_fregs
+    rd: 
+      <<: *all_fregs
+    op_comb: 
+      <<: *rfmt_op_comb
+    val_comb:
+      abstract_comb:
+        'ibm_b1(16, "fdiv.h", 2)': 0
+        
+feq_b1:
+    config: 
+      - check ISA:=regex(.*I.*F.*Zfh.*)
+    opcode: 
+      feq.h: 0
+    rs1: 
+      <<: *all_fregs
+    rs2:
+      <<: *all_fregs
+    rd: 
+      <<: *all_regs
+    op_comb: 
+      <<: *sfmt_op_comb
+    val_comb:
+      abstract_comb:
+        'ibm_b1(16, "feq.h", 2)': 0
+        
+fle_b1:
+    config: 
+      - check ISA:=regex(.*I.*F.*Zfh.*)
+    opcode: 
+      fle.h: 0
+    rs1: 
+      <<: *all_fregs
+    rs2:
+      <<: *all_fregs
+    rd: 
+      <<: *all_regs
+    op_comb: 
+      <<: *sfmt_op_comb
+    val_comb:
+      abstract_comb:
+        'ibm_b1(16, "fle.h", 2)': 0
+        
+flt_b1:
+    config: 
+      - check ISA:=regex(.*I.*F.*Zfh.*)
+    opcode: 
+      flt.h: 0
+    rs1: 
+      <<: *all_fregs
+    rs2:
+      <<: *all_fregs
+    rd: 
+      <<: *all_regs
+    op_comb: 
+      <<: *sfmt_op_comb
+    val_comb:
+      abstract_comb:
+        'ibm_b1(16, "flt.h", 2)': 0
+        
+flh-align:
+    config: 
+      - check ISA:=regex(.*I.*Zfh.*)
+    opcode: 
+      flh: 0
+    rs1: 
+      <<: *all_regs_mx0
+    rd: 
+      <<: *all_fregs
+    val_comb:
+        'ea_align == 0 and (imm_val % 4) == 0': 0
+        'ea_align == 0 and (imm_val % 4) == 1': 0
+        'ea_align == 0 and (imm_val % 4) == 2': 0
+        'ea_align == 0 and (imm_val % 4) == 3': 0
+        'imm_val > 0': 0
+        'imm_val < 0': 0
+        'imm_val == 0': 0
+
+fmadd_b2:
+    config: 
+      - check ISA:=regex(.*I.*F.*Zfh.*)
+    opcode: 
+      fmadd.h: 0
+    rs1: 
+      <<: *all_fregs
+    rs2:
+      <<: *all_fregs
+    rs3:
+      <<: *all_fregs
+    rd: 
+      <<: *all_fregs
+    op_comb: 
+      <<: *r4fmt_op_comb
+    val_comb:
+      abstract_comb:
+        'ibm_b2(16, "fmadd.h", 3)': 0
+        
+fmax_b1:
+    config: 
+      - check ISA:=regex(.*I.*F.*Zfh.*)
+    opcode: 
+      fmax.h: 0
+    rs1: 
+      <<: *all_fregs
+    rs2:
+      <<: *all_fregs
+    rd: 
+      <<: *all_fregs
+    op_comb: 
+      <<: *rfmt_op_comb
+    val_comb:
+      abstract_comb:
+        'ibm_b1(16, "fmax.h", 2)': 0
+        
+fmin_b1:
+    config: 
+      - check ISA:=regex(.*I.*F.*Zfh.*)
+    opcode: 
+      fmin.h: 0
+    rs1: 
+      <<: *all_fregs
+    rs2:
+      <<: *all_fregs
+    rd: 
+      <<: *all_fregs
+    op_comb: 
+      <<: *rfmt_op_comb
+    val_comb:
+      abstract_comb:
+        'ibm_b1(16, "fmin.h", 2)': 0
+       
+fmsub_b2:
+    config: 
+      - check ISA:=regex(.*I.*F.*Zfh.*)
+    opcode: 
+      fmsub.h: 0
+    rs1: 
+      <<: *all_fregs
+    rs2:
+      <<: *all_fregs
+    rs3:
+      <<: *all_fregs
+    rd: 
+      <<: *all_fregs
+    op_comb: 
+      <<: *r4fmt_op_comb
+    val_comb:
+      abstract_comb:
+        'ibm_b2(16, "fmsub.h", 3)': 0
+      
+fmul_b1:
+    config: 
+      - check ISA:=regex(.*I.*F.*Zfh.*)
+    opcode: 
+      fmul.h: 0
+    rs1: 
+      <<: *all_fregs
+    rs2:
+      <<: *all_fregs
+    rd: 
+      <<: *all_fregs
+    op_comb: 
+      <<: *rfmt_op_comb
+    val_comb:
+      abstract_comb:
+        'ibm_b1(16, "fmul.h", 2)': 0
+         
+fmv.h.x_b25:
+    config: 
+      - check ISA:=regex(.*I.*F.*Zfh.*)
+    opcode: 
+      fmv.h.x: 0
+    rs1: 
+      <<: *all_regs
+    rd: 
+      <<: *all_fregs
+    val_comb:
+      abstract_comb:
+        'ibm_b25(16, "fmv.h.x", 1)': 0
+   
+fmv.x.h_b1:
+    config: 
+      - check ISA:=regex(.*I.*F.*Zfh.*)
+    opcode: 
+      fmv.x.h: 0
+    rs1: 
+      <<: *all_fregs
+    rd: 
+      <<: *all_regs
+    val_comb:
+      abstract_comb:
+        'ibm_b1(16, "fmv.x.h", 1)': 0
+             
+fnmadd_b2:
+    config: 
+      - check ISA:=regex(.*I.*F.*Zfh.*)
+    opcode: 
+      fnmadd.h: 0
+    rs1: 
+      <<: *all_fregs
+    rs2:
+      <<: *all_fregs
+    rs3:
+      <<: *all_fregs
+    rd: 
+      <<: *all_fregs
+    op_comb: 
+      <<: *r4fmt_op_comb
+    val_comb:
+      abstract_comb:
+        'ibm_b2(16, "fnmadd.h", 3)': 0
+    
+fnmsub_b2:
+    config: 
+      - check ISA:=regex(.*I.*F.*Zfh.*)
+    opcode: 
+      fnmsub.h: 0
+    rs1: 
+      <<: *all_fregs
+    rs2:
+      <<: *all_fregs
+    rs3:
+      <<: *all_fregs
+    rd: 
+      <<: *all_fregs
+    op_comb: 
+      <<: *r4fmt_op_comb
+    val_comb:
+      abstract_comb:
+        'ibm_b2(16, "fnmsub.h", 3)': 0
+        
+fsgnj_b1:
+    config: 
+      - check ISA:=regex(.*I.*F.*Zfh.*)
+    opcode: 
+      fsgnj.h: 0
+    rs1: 
+      <<: *all_fregs
+    rs2:
+      <<: *all_fregs
+    rd: 
+      <<: *all_fregs
+    op_comb: 
+      <<: *rfmt_op_comb
+    val_comb:
+      abstract_comb:
+        'ibm_b1(16, "fsgnj.h", 2)': 0
+        
+
+fsgnjn_b1:
+    config: 
+      - check ISA:=regex(.*I.*F.*Zfh.*)
+    opcode: 
+      fsgnjn.h: 0
+    rs1: 
+      <<: *all_fregs
+    rs2:
+      <<: *all_fregs
+    rd: 
+      <<: *all_fregs
+    op_comb: 
+      <<: *rfmt_op_comb
+    val_comb:
+      abstract_comb:
+        'ibm_b1(16, "fsgnjn.h", 2)': 0
+        
+
+fsgnjx_b1:
+    config: 
+      - check ISA:=regex(.*I.*F.*Zfh.*)
+    opcode: 
+      fsgnjx.h: 0
+    rs1: 
+      <<: *all_fregs
+    rs2:
+      <<: *all_fregs
+    rd: 
+      <<: *all_fregs
+    op_comb: 
+      <<: *rfmt_op_comb
+    val_comb:
+      abstract_comb:
+        'ibm_b1(16, "fsgnjx.h", 2)': 0
+        
+fsqrt_b1:
+    config: 
+      - check ISA:=regex(.*I.*F.*Zfh.*)
+    opcode: 
+      fsqrt.h: 0
+    rs1: 
+      <<: *all_fregs
+    rd: 
+      <<: *all_fregs
+    op_comb: 
+      <<: *ifmt_op_comb
+    val_comb:
+      abstract_comb:
+        'ibm_b1(16, "fsqrt.h", 1)': 0
+
+fsub_b1:
+    config: 
+      - check ISA:=regex(.*I.*F.*Zfh.*)
+    opcode: 
+      fsub.h: 0
+    rs1: 
+      <<: *all_fregs
+    rs2:
+      <<: *all_fregs
+    rd: 
+      <<: *all_fregs
+    op_comb: 
+      <<: *rfmt_op_comb
+    val_comb:
+      abstract_comb:
+        'ibm_b1(16, "fsub.h", 2)': 0
+       
+fsh-align:
+    config: 
+      - check ISA:=regex(.*I.*Zfh.*)
+    opcode: 
+      fsh: 0
+    rs1: 
+      <<: *all_regs_mx0
+    rs2: 
+      <<: *all_fregs
+    val_comb:
+        'ea_align == 0 and (imm_val % 4) == 0': 0
+        'ea_align == 0 and (imm_val % 4) == 1': 0
+        'ea_align == 0 and (imm_val % 4) == 2': 0
+        'ea_align == 0 and (imm_val % 4) == 3': 0
+        'imm_val > 0': 0
+        'imm_val < 0': 0
+        'imm_val == 0': 0

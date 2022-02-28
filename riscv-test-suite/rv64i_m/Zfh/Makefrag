@@ -1,0 +1,43 @@
+# RISC-V Architecture Test RV64IZfh Makefrag
+#
+# Copyright (c) 2022. IIT Madras. All rights reserved.
+# SPDX-License-Identifier: BSD-3-Clause
+#
+# Description: Makefrag for RV64I[F]Zfh architectural tests
+
+rv64ifzfh_sc_tests = \
+  fadd_b1 \
+  fclass_b1 \
+  fcvt.h.l_b25 \
+  fcvt.h.lu_b25 \
+  fcvt.h.w_b25 \
+  fcvt.h.wu_b25 \
+  fcvt.l.h_b1 \
+  fcvt.lu.h_b1 \
+  fcvt.w.h_b1 \
+  fcvt.wu.h_b1 \
+  fdiv_b1 \
+  feq_b1 \
+  fle_b1 \
+  flh-align \
+  flt_b1 \
+  fmadd_b2 \
+  fmax_b1 \
+  fmin_b1 \
+  fmsub_b2 \
+  fmul_b1 \
+  fmv.h.x_b25 \
+  fmv.x.h_b1 \
+  fnmadd_b2 \
+  fnmsub_b2 \
+  fsgnj_b1 \
+  fsgnjn_b1 \
+  fsgnjx_b1 \
+  fsh-align \
+  fsqrt_b1 \
+  fsub_b1 \
+
+rv64ifzfh_tests = $(addsuffix .elf, $(rv64ifzfh_sc_tests))
+
+target_tests += $(rv64ifzfh_tests)
+  
