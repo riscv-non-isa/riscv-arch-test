@@ -1,9 +1,14 @@
 # CHANGELOG
 
-## [2.7.0] - 2021-12-18
+## [2.7.0] - 2022-03-01
   - Updated K Crypto (Scalar) instructions for the V.1.0.0 ratified spec.
   - changed xperm.n -> xperm4 and xperm.b -> xperm8 instructions 
   - removed unsupported packu
+
+## [2.6.2] - 2022-02-24
+  - modified verify.sh to ignore comments in reference signature during diff operation [#230]
+  - udpated test-format spec to include the order of lines in the signature file [#214]
+  - RVTEST_E macro to be enabled for all rv32E tests. [#227]
 
 ## [2.6.1] - 2021-11-25
   - Fixed RVTEST_FP_ENABLE macro for the issue #223
