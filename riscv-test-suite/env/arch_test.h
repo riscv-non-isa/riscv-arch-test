@@ -609,17 +609,11 @@ rvtest_data_end:
   
 // for updating signatures when 'rd' is a paired register (64-bit) in Zpsfoperand extension in RV32.
 #define RVTEST_SIGUPD_P64(_BR,_R,_R_HI,...)\
-  .if NARG(__VA_ARGS__) == 1;\
-    sw _R,_ARG1(__VA_ARGS__,0)(_BR);\
-    sw _R_HI,(_ARG1(__VA_ARGS__,0)+4)(_BR);\
-    .set offset,_ARG1(__VA_OPT__(__VA_ARGS__,)0)+8;\
-  .endif;\
-  .if NARG(__VA_ARGS__) == 0;\
-    sw _R,offset(_BR);\
-    sw _R_HI,(offset+4)(_BR);\
-  .set offset,offset+8;\
+  .if NARG(VA_ARGS) == 0;\
+    RVTEST_SIGUPD_FID(_BR,_R,_R_HI);\
+  .else;\
+    RVTEST_SIGUPD_FID(_BR,_R,_R_HI,_ARG1(__VA_OPT__(__VA_ARGS__,0)));\
   .endif;
-
 
 // only reads the vxsat.OV flag when Zicsr extension is present
 #ifdef pext_check_vxsat_ov
