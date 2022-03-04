@@ -573,49 +573,55 @@ rvtest_data_end:
 #define _ARG2(_1ST,_2ND, ...) _2ND
 #define _ARG1(_1ST,...) _1ST
 #define NARG(...) _ARG5(__VA_OPT__(__VA_ARGS__,)4,3,2,1,0)
-#define RVTEST_SIGUPD(_BR,_R,...)\
-  .if NARG(__VA_ARGS__) == 1;\
-    SREG _R,_ARG1(__VA_ARGS__,0)(_BR);\
-    .set offset,_ARG1(__VA_OPT__(__VA_ARGS__,)0)+REGWIDTH;\
-  .endif;\
-  .if NARG(__VA_ARGS__) == 0;\
-    SREG _R,offset(_BR);\
-  .set offset,offset+REGWIDTH;\
-  .endif;
 
-#define RVTEST_SIGUPD_F(_BR,_R,_F,...)\
-  .if NARG(__VA_ARGS__) == 1;\
-    FSREG _R,_ARG1(__VA_ARGS__,0)(_BR);\
-    SREG _F,_ARG1(__VA_ARGS__,0)+REGWIDTH(_BR);\
-    .set offset,_ARG1(__VA_OPT__(__VA_ARGS__,)0)+(REGWIDTH+REGWIDTH);\
-  .endif;\
-  .if NARG(__VA_ARGS__) == 0;\
-    FSREG _R,offset(_BR);\
-    SREG _F,offset+REGWIDTH(_BR);\
-    .set offset,offset+(REGWIDTH+REGWIDTH);\
-  .endif;
+ /* automatically adjust base and offset if offset gets too big */
+ /* RVTEST_SIGUPD(basereg, sigreg)        stores sigreg at offset(basereg) and updates offset by regwidth */
+ /* RVTEST_SIGUPD(basereg, sigreg,newoff) stores sigreg at newoff(basereg) and updates offset to regwidth+newoff */
+#define RVTEST_SIGUPD(_BR,_R,...)		         \
+  .if offset+REGWIDTH>=2048                             ;\
+     addi   _BR, _BR, offset                            ;\
+     .set   offset,   0					;\
+  .endif						;\
+  .if NARG(__VA_ARGS__) == 1                            ;\
+	.set offset,_ARG1(__VA_OPT__(__VA_ARGS__,0))	;\
+  .endif                                                ;\
+   SREG _R,offset(_BR)                                  ;\
+  .set offset,offset+REGWIDTH
+
+#define RVTEST_SIGUPD_F(_BR,_R,_F,...)			 \
+  .if offset+2*REGWIDTH>=2048                           ;\
+     addi   _BR, _BR,offset                             ;\
+     .set   offset, 0					;\
+  .endif						;\
+  .if NARG(__VA_ARGS__) == 1                            ;\
+     .set offset,_ARG1(__VA_OPT__(__VA_ARGS__,0))	;\
+  .endif                                                ;\
+   FSREG _R,offset(_BR)					;\
+   SREG  _F,offset+REGWIDTH(_BR)			;\
+   .set offset,offset+(2*REGWIDTH)
+
   
-#define RVTEST_SIGUPD_FID(_BR,_R,_F,...)\
-  .if NARG(__VA_ARGS__) == 1;\
-    SREG _R,_ARG1(__VA_ARGS__,0)(_BR);\
-    SREG _F,_ARG1(__VA_ARGS__,0)+REGWIDTH(_BR);\
-    .set offset,_ARG1(__VA_ARGS__,0)+(2*REGWIDTH);\
-  .endif;\
-  .if NARG(__VA_ARGS__) == 0;\
-    SREG _R,offset(_BR);\
-    SREG _F,offset+REGWIDTH(_BR);\
-    .set offset,offset+(2*REGWIDTH);\
-  .endif;
+#define RVTEST_SIGUPD_FID(_BR,_R,_F,...)		 \
+  .if offset+2*REGWIDTH>=2048                           ;\
+     addi   _BR, _BR,offset                             ;\
+     .set   offset, 0					;\
+  .endif						;\
+  .if NARG(__VA_ARGS__) == 1                            ;\
+     .set offset,_ARG1(__VA_OPT__(__VA_ARGS__,0))	;\
+  .endif                                                ;\
+    SREG _R,offset(_BR)					;\
+    SREG _F,offset+REGWIDTH(_BR)			;\
+    .set offset,offset+(2*REGWIDTH)
   
 // for updating signatures when 'rd' is a paired register (64-bit) in Zpsfoperand extension in RV32.
-#define RVTEST_SIGUPD_P64(_BR,_R,_R_HI,...)\
-  .if NARG(VA_ARGS) == 0;\
-    RVTEST_SIGUPD_FID(_BR,_R,_R_HI);\
-  .else;\
-    RVTEST_SIGUPD_FID(_BR,_R,_R_HI,_ARG1(__VA_OPT__(__VA_ARGS__,0)));\
-  .endif;
+#define RVTEST_SIGUPD_P64(_BR,_R,_R_HI,...)		 \
+ .if NARG(__VA_ARGS__) == 0				;\
+	RVTEST_SIGUPD_FID(_BR,_R,_R_HI)			;\
+ .else							;\
+	RVTEST_SIGUPD_FID(_BR,_R,_R_HI,_ARG1(__VA_OPT__(__VA_ARGS__,0)));\
+ .endif
 
-// only reads the vxsat.OV flag when Zicsr extension is present
+// for reading vxsat.OV flag in P-ext; and only reads the flag when Zicsr extension is present
 #ifdef pext_check_vxsat_ov
 #define RDOV(_F)\
    rdov _F
@@ -626,20 +632,18 @@ rvtest_data_end:
 
 // for updating signatures that include flagreg when 'rd' is a paired register (64-bit) in Zpsfoperand extension in RV32.
 #define RVTEST_SIGUPD_PK64(_BR,_R,_R_HI,_F,...)\
-  .if NARG(__VA_ARGS__) == 1;\
-    sw _R,_ARG1(__VA_ARGS__,0)(_BR);\
-    sw _R_HI,(_ARG1(__VA_ARGS__,0)+4)(_BR);\
-    RDOV(_F);\
-    sw _F,(_ARG1(__VA_ARGS__,0)+8)(_BR);\
-    .set offset,_ARG1(__VA_OPT__(__VA_ARGS__,)0)+12;\
-  .endif;\
-  .if NARG(__VA_ARGS__) == 0;\
-    sw _R,offset(_BR);\
-    sw _R_HI,(offset+4)(_BR);\
-    RDOV(_F);\
-    sw _F,(offset+8)(_BR);\
-  .set offset,offset+12;\
-  .endif;
+  .if offset+3*REGWIDTH>=2048                           ;\
+     addi   _BR, _BR,offset                             ;\
+     .set   offset, 0					;\
+  .endif						;\
+  .if NARG(__VA_ARGS__) == 1                            ;\
+     .set offset,_ARG1(__VA_OPT__(__VA_ARGS__,0))	;\
+  .endif                                                ;\
+    SREG _R,offset(_BR)					;\
+    SREG _R_HI,offset+REGWIDTH(_BR)			;\
+    RDOV(_F)                                            ;\
+    SREG _F,offset+2*REGWIDTH(_BR)			;\
+    .set offset,offset+(3*REGWIDTH)
 
 // for updating signatures that include flagreg for P-ext saturation instructions (RV32/RV64).
 #define RVTEST_SIGUPD_PK(_BR,_R,_F,OFFSET)\
