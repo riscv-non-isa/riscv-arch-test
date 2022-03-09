@@ -40,7 +40,7 @@ when reporting the status of pass/fail on the execution of the architectural sui
    have compressed extension support enabled by default. Targets without the compressed extension 
    support will fail the following tests:
    1. rv[32/64]i_m/privilege/src/misalign-b[ge[u],lt[u],eq,ne]-01.S
-   2. rv[32/64]i_m/privilege/src/misalign[1,2]-jalr-01.S
+   2. rv[32/64]i_m/privilege/src/misalign2-jalr-01.S
 
 3. The machine mode trap handler used in the privilege tests assumes one of the following conditions. 
    Targets not satisfying any of the following conditions are bound to fail the entire 
