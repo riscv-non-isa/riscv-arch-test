@@ -641,15 +641,6 @@ rvtest_data_end:
 	RVTEST_SIGUPD_FID(_BR,_R,_R_HI,_ARG1(__VA_OPT__(__VA_ARGS__,0)));\
  .endif
 
-// for reading vxsat.OV flag in P-ext; and only reads the flag when Zicsr extension is present
-#ifdef pext_check_vxsat_ov
-#define RDOV(_F)\
-   rdov _F
-#else
-#define RDOV(_F)\
-   nop
-#endif
-
 // for updating signatures that include flagreg when 'rd' is a paired register (64-bit) in Zpsfoperand extension in RV32.
 #define RVTEST_SIGUPD_PK64(_BR,_R,_R_HI,_F,...)\
   .if NARG(__VA_ARGS__) == 1                            ;\
@@ -659,7 +650,7 @@ rvtest_data_end:
     SREG _R,offset(_BR)					;\
   CHK_OFFSET(_BR,REGWIDTH,1);\
     SREG _R_HI,offset+REGWIDTH(_BR)			;\
-    RDOV(_F)                                            ;\
+    rdov _F                                             ;\
   CHK_OFFSET(_BR,REGWIDTH,1);\
     SREG _F,offset+2*REGWIDTH(_BR)			;\
     .set offset,offset+(3*REGWIDTH)
@@ -1018,6 +1009,7 @@ RVTEST_SIGUPD_F(swreg,destreg,flagreg,offset)
     LI(reg1, MASK_XLEN(val1)); \
     LI(reg2, MASK_XLEN(val2)); \
     inst destreg, reg1, reg2; \
+    rdov flagreg; \
     RVTEST_SIGUPD_PK(swreg, destreg, flagreg, offset); \
     RVMODEL_IO_ASSERT_GPR_EQ(testreg, destreg, correctval)
 
