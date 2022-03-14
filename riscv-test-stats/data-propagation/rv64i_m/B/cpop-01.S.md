@@ -13,7 +13,7 @@
 | TEST_REGION               | [('0x80000390', '0x80000bf0')]      |
 | SIG_REGION                | [('0x80002210', '0x80002630', '132 dwords')]      |
 | COV_LABELS                | cpop      |
-| TEST_NAME                 | /home/anku/bmanip/new_trials/trial17/64/riscof_work/cpop-01.S/ref.S    |
+| TEST_NAME                 | /home/anku/bmanip/new_trials/trial22/64/riscof_work/cpop-01.S/ref.S    |
 | Total Number of coverpoints| 202     |
 | Total Coverpoints Hit     | 197      |
 | Total Signature Updates   | 132      |
@@ -84,9 +84,9 @@ Op without unique coverpoint updates Signature
 
 |s.no|            signature             |                                              coverpoints                                               |                              code                              |
 |---:|----------------------------------|--------------------------------------------------------------------------------------------------------|----------------------------------------------------------------|
-|   1|[0x80002210]<br>0x0000000000000020|- opcode : cpop<br> - rs1 : x31<br> - rd : x31<br> - rs1 == rd<br> - rs1_val == 6148914691236517205<br> |[0x800003b8]:cpop t6, t6<br> [0x800003bc]:sd t6, 0(ra)<br>      |
-|   2|[0x80002218]<br>0x000000000000003F|- rs1 : x29<br> - rd : x30<br> - rs1 != rd<br> - rs1_val == 9223372036854775807<br>                     |[0x800003cc]:cpop t5, t4<br> [0x800003d0]:sd t5, 8(ra)<br>      |
-|   3|[0x80002220]<br>0x000000000000003F|- rs1 : x30<br> - rd : x29<br> - rs1_val == 13835058055282163711<br>                                    |[0x800003e0]:cpop t4, t5<br> [0x800003e4]:sd t4, 16(ra)<br>     |
+|   1|[0x80002210]<br>0x0000000000000020|- opcode : cpop<br> - rs1 : x30<br> - rd : x31<br> - rs1 != rd<br> - rs1_val == 6148914691236517205<br> |[0x800003b8]:cpop t6, t5<br> [0x800003bc]:sd t6, 0(ra)<br>      |
+|   2|[0x80002218]<br>0x000000000000003F|- rs1 : x29<br> - rd : x29<br> - rs1 == rd<br> - rs1_val == 9223372036854775807<br>                     |[0x800003cc]:cpop t4, t4<br> [0x800003d0]:sd t4, 8(ra)<br>      |
+|   3|[0x80002220]<br>0x000000000000003F|- rs1 : x31<br> - rd : x30<br> - rs1_val == 13835058055282163711<br>                                    |[0x800003e0]:cpop t5, t6<br> [0x800003e4]:sd t5, 16(ra)<br>     |
 |   4|[0x80002228]<br>0x000000000000003F|- rs1 : x27<br> - rd : x28<br> - rs1_val == 16140901064495857663<br>                                    |[0x800003f4]:cpop t3, s11<br> [0x800003f8]:sd t3, 24(ra)<br>    |
 |   5|[0x80002230]<br>0x000000000000003F|- rs1 : x28<br> - rd : x27<br> - rs1_val == 17293822569102704639<br>                                    |[0x80000408]:cpop s11, t3<br> [0x8000040c]:sd s11, 32(ra)<br>   |
 |   6|[0x80002238]<br>0x000000000000003F|- rs1 : x25<br> - rd : x26<br> - rs1_val == 17870283321406128127<br>                                    |[0x8000041c]:cpop s10, s9<br> [0x80000420]:sd s10, 40(ra)<br>   |

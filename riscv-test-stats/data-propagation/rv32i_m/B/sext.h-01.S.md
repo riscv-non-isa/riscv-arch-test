@@ -13,7 +13,7 @@
 | TEST_REGION               | [('0x800000f8', '0x800005e0')]      |
 | SIG_REGION                | [('0x80002210', '0x80002370', '88 words')]      |
 | COV_LABELS                | sext.h      |
-| TEST_NAME                 | /home/anku/bmanip/new_trials/trial17/32/riscof_work/sext.h-01.S/ref.S    |
+| TEST_NAME                 | /home/anku/bmanip/new_trials/trial22/32/riscof_work/sext.h-01.S/ref.S    |
 | Total Number of coverpoints| 159     |
 | Total Coverpoints Hit     | 154      |
 | Total Signature Updates   | 88      |

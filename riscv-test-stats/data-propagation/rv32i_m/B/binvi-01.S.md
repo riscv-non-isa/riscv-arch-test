@@ -13,7 +13,7 @@
 | TEST_REGION               | [('0x800000f8', '0x80000a30')]      |
 | SIG_REGION                | [('0x80002210', '0x80002490', '160 words')]      |
 | COV_LABELS                | binvi      |
-| TEST_NAME                 | /home/anku/bmanip/new_trials/trial17/32/riscof_work/binvi-01.S/ref.S    |
+| TEST_NAME                 | /home/anku/bmanip/new_trials/trial22/32/riscof_work/binvi-01.S/ref.S    |
 | Total Number of coverpoints| 228     |
 | Total Coverpoints Hit     | 223      |
 | Total Signature Updates   | 158      |

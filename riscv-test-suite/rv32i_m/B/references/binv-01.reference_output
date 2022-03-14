@@ -1,4 +1,4 @@
-d5555555
+55755555
 ffffffff
 ffffffff
 ffffffff
@@ -28,9 +28,9 @@ ffffffff
 7fff7fff
 7f7fffff
 77ffffff
-7ffffffe
-40000000
+20000000
 3fffffff
+bffffffe
 00000000
 6fffffff
 77ffffff
@@ -284,9 +284,9 @@ fffffffb
 7ffffbff
 7fdfffff
 2aaaaaaa
-ffffffff
+d5555555
 ffffffff
 5fffffff
-3fffffff
 5fffffff
+00000000
 00000000

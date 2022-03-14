@@ -1,4 +1,4 @@
-d5555555
+55755555
 ffffffff
 ffffffff
 ffffffff
@@ -28,8 +28,8 @@ ffffffff
 ffffffff
 ffffffff
 ffffffff
+08000000
 ffffffff
-20000000
 ffffffff
 00000000
 bfffffff
@@ -285,7 +285,7 @@ fffffffe
 ffffffff
 ffffffff
 aaaaaaaa
-ffffffff
+d5555555
 ffffffff
 ffffffff
 ffffffff

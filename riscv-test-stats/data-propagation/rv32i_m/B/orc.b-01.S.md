@@ -13,7 +13,7 @@
 | TEST_REGION               | [('0x800000f8', '0x800004e0')]      |
 | SIG_REGION                | [('0x80002210', '0x80002330', '72 words')]      |
 | COV_LABELS                | orc.b      |
-| TEST_NAME                 | /home/anku/bmanip/new_trials/trial17/32/riscof_work/orc.b-01.S/ref.S    |
+| TEST_NAME                 | /home/anku/bmanip/new_trials/trial22/32/riscof_work/orc.b-01.S/ref.S    |
 | Total Number of coverpoints| 142     |
 | Total Coverpoints Hit     | 137      |
 | Total Signature Updates   | 72      |

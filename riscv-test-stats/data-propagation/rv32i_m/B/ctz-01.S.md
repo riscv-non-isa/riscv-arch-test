@@ -13,7 +13,7 @@
 | TEST_REGION               | [('0x800000f8', '0x800004a0')]      |
 | SIG_REGION                | [('0x80002210', '0x80002320', '68 words')]      |
 | COV_LABELS                | ctz      |
-| TEST_NAME                 | /home/anku/bmanip/new_trials/trial17/32/riscof_work/ctz-01.S/ref.S    |
+| TEST_NAME                 | /home/anku/bmanip/new_trials/trial22/32/riscof_work/ctz-01.S/ref.S    |
 | Total Number of coverpoints| 138     |
 | Total Coverpoints Hit     | 133      |
 | Total Signature Updates   | 68      |
