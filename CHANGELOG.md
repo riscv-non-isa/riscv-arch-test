@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## [2.6.3] - 2022-03-04
+  - import and synchronize P-ext changes in arch_test.h from riscv-ctg
+  - automatically adjust base and offset if offset gets too big
+
+## [2.6.2] - 2022-02-24
+  - modified verify.sh to ignore comments in reference signature during diff operation [#230]
+  - udpated test-format spec to include the order of lines in the signature file [#214]
+  - RVTEST_E macro to be enabled for all rv32E tests. [#227]
+
 ## [2.6.1] - 2021-11-25
   - Fixed RVTEST_FP_ENABLE macro for the issue #223
 
