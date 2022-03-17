@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## [2.6.4] - 2022-03-17
+- Fix bug in auto-offset update for SIGUPD macros.
+
 ## [2.6.3] - 2022-03-04
   - import and synchronize P-ext changes in arch_test.h from riscv-ctg
   - automatically adjust base and offset if offset gets too big
