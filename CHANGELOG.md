@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## [2.7.1] - 2022-03-18
+- Fix bug in auto-offset update for SIGUPD macros.
+
 ## [2.7.0] - 2022-03-15
   - Updated K Crypto (Scalar) instructions for the V.1.0.0 ratified spec.
   - changed xperm.n -> xperm4 and xperm.b -> xperm8 instructions 
