@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 #
 # Description: Makefrag for RV32IF architectural tests
-fadd_b10-01.S\
+rv64if_sc_tests=fadd_b10-01.S\
 fadd_b1-01.S\
 fadd_b11-01.S\
 fadd_b12-01.S\
@@ -169,6 +169,6 @@ fsub_b7-01.S\
 fsub_b8-01.S\
 fsw-align-01.S\
 
-rv32if_tests = $(addsuffix .elf, $(rv32if_sc_tests))
+rv64if_tests = $(addsuffix .elf, $(rv64if_sc_tests))
 
-target_tests += $(rv32if_tests)
+target_tests += $(rv64if_tests)
