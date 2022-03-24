@@ -38,7 +38,6 @@ rv32k_sc_tests = \
   orn-01 \
   pack-01 \
   packh-01 \
-  packu-01 \
   rev.b-01 \
   rev8-01 \
   rol-01 \
@@ -86,8 +85,8 @@ rv32k_sc_tests = \
   sm4ks-rwp1 \
   unzip-01 \
   xnor-01 \
-  xperm.b-01 \
-  xperm.n-01 \
+  xperm4-01 \
+  xperm8-01 \
   zip-01 \
 
 rv32k_tests = $(addsuffix .elf, $(rv32k_sc_tests))
