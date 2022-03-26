@@ -558,14 +558,10 @@ rvtest_data_end:
  csrs mstatus, a0;                      \
  csrwi fcsr, 0
 
-#ifdef pext_check_vxsat_ov
 #define RVTEST_VXSAT_ENABLE()\
  li a0, MSTATUS_VS & (MSTATUS_VS >> 1); \
  csrs mstatus, a0;                      \
  clrov
-#else
-#define RVTEST_VXSAT_ENABLE()
-#endif
 
 #define RVTEST_SIGBASE(_R,_TAG) \
   LA(_R,_TAG);\
