@@ -86,12 +86,7 @@
   #define FLREG fld
   #define FSREG fsd
   #define FREGWIDTH 8
-#if XLEN==32
-  #define SIGALIGN 4
-#else
   #define SIGALIGN 8
-#endif
-
 #else 
   #if FLEN==32
     #define FLREG flw
