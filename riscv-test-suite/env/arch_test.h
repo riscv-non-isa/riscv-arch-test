@@ -616,7 +616,8 @@ rvtest_data_end:
      .set offset,_ARG1(__VA_OPT__(__VA_ARGS__,0))	;\
   .endif                                                ;\
   .if (offset & (SIGALIGN-1)) != 0                      ;\
-      .err "Incorrect Offset Alignment for Signature.";\
+      .warning "Incorrect Offset Alignment for Signature.";\
+      .err                                              ;\
   .endif                                                ;\
   CHK_OFFSET(_BR,SIGALIGN,0);\
   FSREG _R,offset(_BR)					;\
@@ -630,7 +631,8 @@ rvtest_data_end:
      .set offset,_ARG1(__VA_OPT__(__VA_ARGS__,0))	;\
   .endif                                                ;\
   .if (offset & (SIGALIGN-1)) != 0                      ;\
-      .err "Incorrect Offset Alignment for Signature.";\
+      .warning "Incorrect Offset Alignment for Signature.";\
+      .err                                              ;\
   .endif                                                ;\
   CHK_OFFSET(_BR,SIGALIGN,0);\
     SREG _R,offset(_BR)					;\
