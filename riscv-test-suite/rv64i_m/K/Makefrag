@@ -43,8 +43,6 @@ rv64k_sc_tests = \
   orn-01 \
   pack-01 \
   packh-01 \
-  packu-01 \
-  packuw-01 \
   packw-01 \
   rev.b-01 \
   rev8-01 \
@@ -90,8 +88,8 @@ rv64k_sc_tests = \
   sm4ks-01 \
   sm4ks-rwp1 \
   xnor-01 \
-  xperm.b-01 \
-  xperm.n-01 \
+  xperm8-01 \
+  xperm4-01 \
 
 rv64k_tests = $(addsuffix .elf, $(rv64k_sc_tests))
 
