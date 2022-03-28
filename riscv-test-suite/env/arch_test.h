@@ -86,12 +86,22 @@
   #define FLREG fld
   #define FSREG fsd
   #define FREGWIDTH 8
+#if XLEN==32
+  #define SIGALIGN 4
+#else
+  #define SIGALIGN 8
+#endif
 
 #else 
   #if FLEN==32
     #define FLREG flw
     #define FSREG fsw
     #define FREGWIDTH 4
+    #if XLEN==64
+        #define SIGALIGN 8
+    #else
+        #define SIGALIGN 4
+    #endif  
   #endif
 #endif
 
@@ -605,23 +615,28 @@ rvtest_data_end:
   .if NARG(__VA_ARGS__) == 1                            ;\
      .set offset,_ARG1(__VA_OPT__(__VA_ARGS__,0))	;\
   .endif                                                ;\
-  CHK_OFFSET(_BR,REGWIDTH,0);\
+  .if (offset & (SIGALIGN-1)) != 0                      ;\
+      .err "Incorrect Offset Alignment for Signature.";\
+  .endif                                                ;\
+  CHK_OFFSET(_BR,SIGALIGN,0);\
   FSREG _R,offset(_BR)					;\
-  CHK_OFFSET(_BR,REGWIDTH,1);\
-   SREG  _F,offset+REGWIDTH(_BR)			;\
-   .set offset,offset+(2*REGWIDTH)
+  CHK_OFFSET(_BR,SIGALIGN,1);\
+   SREG  _F,offset(_BR)			;\
+   .set offset,offset+(SIGALIGN)
 
   
 #define RVTEST_SIGUPD_FID(_BR,_R,_F,...)		 \
   .if NARG(__VA_ARGS__) == 1                            ;\
      .set offset,_ARG1(__VA_OPT__(__VA_ARGS__,0))	;\
   .endif                                                ;\
-  CHK_OFFSET(_BR,REGWIDTH,0);\
-  .endif						;\
+  .if (offset & (SIGALIGN-1)) != 0                      ;\
+      .err "Incorrect Offset Alignment for Signature.";\
+  .endif                                                ;\
+  CHK_OFFSET(_BR,SIGALIGN,0);\
     SREG _R,offset(_BR)					;\
-  CHK_OFFSET(_BR,REGWIDTH,1);\
-    SREG _F,offset+REGWIDTH(_BR)			;\
-    .set offset,offset+(2*REGWIDTH)
+  CHK_OFFSET(_BR,SIGALIGN,1);\
+    SREG _F,offset(_BR)			;\
+    .set offset,offset+(SIGALIGN)
   
 // for updating signatures when 'rd' is a paired register (64-bit) in Zpsfoperand extension in RV32.
 #define RVTEST_SIGUPD_P64(_BR,_R,_R_HI,...)		 \
