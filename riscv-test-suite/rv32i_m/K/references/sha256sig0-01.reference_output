@@ -6,9 +6,9 @@
 1eeffdff
 1f77feff
 1fbbff7f
-00000000
+1fddffbf
 1feeffdf
-00000000
+1ff77fef
 1ffbbff7
 1ffddffb
 1ffeeffd
@@ -29,8 +29,8 @@
 3ffbfffd
 0ffdfffe
 17feffff
-1bff7fff
-1dffbfff
+00000000
+00000000
 11002000
 08801000
 04400800
@@ -82,7 +82,7 @@ e66998b2
 10020001
 08010000
 04008000
-1fddffbf
-1ff77fef
+1bff7fff
+1dffbfff
 00000000
 00000000

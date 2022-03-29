@@ -1,7 +1,7 @@
 ffffffff
 ffffffff
-00000000
-00000000
+61250888
+cadb5bec
 e9173332
 12af8f73
 1e1007e8
@@ -60,10 +60,10 @@ b93df000
 00000008
 00038603
 90000000
-5bf00000
-000006ae
-00000005
-21c11800
+00000000
+00000000
+00000000
+00000000
 0b9be488
 00000000
 0001cb57
@@ -564,8 +564,8 @@ ffffffff
 ffceffff
 ff1fffff
 ffffffff
-ffffffff
-ffffffc9
+deadbeef
+deadbeef
 ffffffcb
 ffffffff
 ffffffff
@@ -574,7 +574,7 @@ fffffff7
 ffffffff
 ffffffff
 7fffffff
-61250888
-cadb5bec
-00000000
-00000000
+5bf00000
+000006ae
+00000005
+21c11800

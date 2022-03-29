@@ -1,0 +1,379 @@
+
+# Data Propagation Report
+
+- **STAT1** : Number of instructions that hit unique coverpoints and update the signature.
+- **STAT2** : Number of instructions that hit covepoints which are not unique but still update the signature
+- **STAT3** : Number of instructions that hit a unique coverpoint but do not update signature
+- **STAT4** : Number of multiple signature updates for the same coverpoint
+- **STAT5** : Number of times the signature was overwritten
+
+| Param                     | Value    |
+|---------------------------|----------|
+| XLEN                      | 64      |
+| TEST_REGION               | [('0x80000390', '0x80002100')]      |
+| SIG_REGION                | [('0x80004210', '0x80004b00', '286 dwords')]      |
+| COV_LABELS                | roriw      |
+| TEST_NAME                 | /home/anku/bcrypto/trial8/64/riscof_work/roriw-01.S/ref.S    |
+| Total Number of coverpoints| 356     |
+| Total Coverpoints Hit     | 350      |
+| Total Signature Updates   | 285      |
+| STAT1                     | 284      |
+| STAT2                     | 1      |
+| STAT3                     | 1     |
+| STAT4                     | 0     |
+| STAT5                     | 0     |
+
+## Details for STAT2:
+
+```
+Op without unique coverpoint updates Signature
+ -- Code Sequence:
+      [0x800020f4]:roriw t6, t5, 18
+      [0x800020f8]:sd t6, 0(t0)
+ -- Signature Address: 0x80004af8 Data: 0x0000000000000000
+ -- Redundant Coverpoints hit by the op
+      - opcode : roriw
+      - rs1 : x30
+      - rd : x31
+      - rs1 != rd
+      - rs1_val == 0xB9BE488000000000 and imm_val == 0x12 #nosat
+
+
+
+
+
+
+```
+
+## Details of STAT3
+
+```
+[0x800020b8]:roriw t6, t5, 0
+[0x800020bc]:addi t0, t0, 2040
+[0x800020c0]:sd t6, 2040(t0)
+[0x800020c4]:auipc t0, 3
+[0x800020c8]:addi t0, t0, 2604
+[0x800020cc]:lui t5, 1047108
+[0x800020d0]:addiw t5, t5, 2083
+[0x800020d4]:slli t5, t5, 40
+
+
+
+```
+
+## Details of STAT4:
+
+```
+
+```
+
+## Details of STAT5:
+
+
+
+## Details of STAT1:
+
+- The first column indicates the signature address and the data at that location in hexadecimal in the following format: 
+  ```
+  [Address]
+  Data
+  ```
+
+- The second column captures all the coverpoints which have been captured by that particular signature location
+
+- The third column captures all the insrtuctions since the time a coverpoint was
+  hit to the point when a store to the signature was performed. Each line has
+  the following format:
+  ```
+  [PC of instruction] : mnemonic
+  ```
+- The order in the table is based on the order of signatures occuring in the
+  test. These need not necessarily be in increasing or decreasing order of the
+  address in the signature region.
+
+|s.no|            signature             |                                                            coverpoints                                                            |                                code                                 |
+|---:|----------------------------------|-----------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------|
+|   1|[0x80004210]<br>0xFFFFFFFFFFFFFFFF|- opcode : roriw<br> - rs1 : x31<br> - rd : x31<br> - rs1 == rd<br> - rs1_val == 0xFFFFFFFFFFFFFFFF and imm_val == 0x1B #nosat<br> |[0x8000039c]:roriw t6, t6, 27<br> [0x800003a0]:sd t6, 0(ra)<br>      |
+|   2|[0x80004218]<br>0x0000000012AF8F73|- rs1 : x29<br> - rd : x30<br> - rs1 != rd<br> - imm_val == 0x00 and rs1_val == 0xE917333212AF8F73 #nosat<br>                      |[0x800003c4]:roriw t5, t4, 0<br> [0x800003c8]:sd t5, 8(ra)<br>       |
+|   3|[0x80004220]<br>0xFFFFFFFFBF6507E8|- rs1 : x30<br> - rd : x29<br> - imm_val == 0x10 and rs1_val == 0xCC381E1007E8BF65 #nosat<br>                                      |[0x800003ec]:roriw t4, t5, 16<br> [0x800003f0]:sd t4, 16(ra)<br>     |
+|   4|[0x80004228]<br>0xFFFFFFFFF4532858|- rs1 : x27<br> - rd : x28<br> - imm_val == 0x18 and rs1_val == 0xFAE216DC58F45328 #nosat<br>                                      |[0x80000414]:roriw t3, s11, 24<br> [0x80000418]:sd t3, 24(ra)<br>    |
+|   5|[0x80004230]<br>0xFFFFFFFF89517C67|- rs1 : x28<br> - rd : x27<br> - imm_val == 0x0C and rs1_val == 0xE6A56AE617C67895 #nosat<br>                                      |[0x8000043c]:roriw s11, t3, 12<br> [0x80000440]:sd s11, 32(ra)<br>   |
+|   6|[0x80004238]<br>0x0000000054124282|- rs1 : x25<br> - rd : x26<br> - imm_val == 0x12 and rs1_val == 0x6AEB7DBD0A095049 #nosat<br>                                      |[0x80000464]:roriw s10, s9, 18<br> [0x80000468]:sd s10, 40(ra)<br>   |
+|   7|[0x80004240]<br>0xFFFFFFFF8BDF718A|- rs1 : x26<br> - rd : x25<br> - imm_val == 0x07 and rs1_val == 0xF644D360EFB8C545 #nosat<br>                                      |[0x8000048c]:roriw s9, s10, 7<br> [0x80000490]:sd s9, 48(ra)<br>     |
+|   8|[0x80004248]<br>0x0000000000000000|- rs1 : x23<br> - rd : x24<br> - rs1_val == 0x0000000000000000 and imm_val == 0x0F #nosat<br>                                      |[0x80000498]:roriw s8, s7, 15<br> [0x8000049c]:sd s8, 56(ra)<br>     |
+|   9|[0x80004250]<br>0x0000000000000000|- rs1 : x24<br> - rd : x23<br> - rs1_val == 0x8000000000000000 and imm_val == 0x11 #nosat<br>                                      |[0x800004a8]:roriw s7, s8, 17<br> [0x800004ac]:sd s7, 64(ra)<br>     |
+|  10|[0x80004258]<br>0x0000000000000000|- rs1 : x21<br> - rd : x22<br> - rs1_val == 0xC000000000000000 and imm_val == 0x08 #nosat<br>                                      |[0x800004b8]:roriw s6, s5, 8<br> [0x800004bc]:sd s6, 72(ra)<br>      |
+|  11|[0x80004260]<br>0x0000000000000000|- rs1 : x22<br> - rd : x21<br> - rs1_val == 0x6000000000000000 and imm_val == 0x00 #nosat<br>                                      |[0x800004c8]:roriw s5, s6, 0<br> [0x800004cc]:sd s5, 80(ra)<br>      |
+|  12|[0x80004268]<br>0x0000000000000000|- rs1 : x19<br> - rd : x20<br> - rs1_val == 0xF000000000000000 and imm_val == 0x10 #nosat<br>                                      |[0x800004d8]:roriw s4, s3, 16<br> [0x800004dc]:sd s4, 88(ra)<br>     |
+|  13|[0x80004270]<br>0x0000000000000000|- rs1 : x20<br> - rd : x19<br> - rs1_val == 0x1800000000000000 and imm_val == 0x0D #nosat<br>                                      |[0x800004e8]:roriw s3, s4, 13<br> [0x800004ec]:sd s3, 96(ra)<br>     |
+|  14|[0x80004278]<br>0x0000000000000000|- rs1 : x17<br> - rd : x18<br> - rs1_val == 0x4400000000000000 and imm_val == 0x1C #nosat<br>                                      |[0x800004f8]:roriw s2, a7, 28<br> [0x800004fc]:sd s2, 104(ra)<br>    |
+|  15|[0x80004280]<br>0x0000000000000000|- rs1 : x18<br> - rd : x17<br> - rs1_val == 0x3E00000000000000 and imm_val == 0x02 #nosat<br>                                      |[0x80000508]:roriw a7, s2, 2<br> [0x8000050c]:sd a7, 112(ra)<br>     |
+|  16|[0x80004288]<br>0x0000000000000000|- rs1 : x15<br> - rd : x16<br> - rs1_val == 0x3500000000000000 and imm_val == 0x0A #nosat<br>                                      |[0x80000518]:roriw a6, a5, 10<br> [0x8000051c]:sd a6, 120(ra)<br>    |
+|  17|[0x80004290]<br>0x0000000000000000|- rs1 : x16<br> - rd : x15<br> - rs1_val == 0x6F80000000000000 and imm_val == 0x1C #nosat<br>                                      |[0x80000528]:roriw a5, a6, 28<br> [0x8000052c]:sd a5, 128(ra)<br>    |
+|  18|[0x80004298]<br>0x0000000000000000|- rs1 : x13<br> - rd : x14<br> - rs1_val == 0x4EC0000000000000 and imm_val == 0x16 #nosat<br>                                      |[0x80000538]:roriw a4, a3, 22<br> [0x8000053c]:sd a4, 136(ra)<br>    |
+|  19|[0x800042a0]<br>0x0000000000000000|- rs1 : x14<br> - rd : x13<br> - rs1_val == 0x1E20000000000000 and imm_val == 0x1E #nosat<br>                                      |[0x80000548]:roriw a3, a4, 30<br> [0x8000054c]:sd a3, 144(ra)<br>    |
+|  20|[0x800042a8]<br>0x0000000000000000|- rs1 : x11<br> - rd : x12<br> - rs1_val == 0x1910000000000000 and imm_val == 0x0E #nosat<br>                                      |[0x80000558]:roriw a2, a1, 14<br> [0x8000055c]:sd a2, 152(ra)<br>    |
+|  21|[0x800042b0]<br>0x0000000000000000|- rs1 : x12<br> - rd : x11<br> - rs1_val == 0x1248000000000000 and imm_val == 0x11 #nosat<br>                                      |[0x80000568]:roriw a1, a2, 17<br> [0x8000056c]:sd a1, 160(ra)<br>    |
+|  22|[0x800042b8]<br>0x0000000000000000|- rs1 : x9<br> - rd : x10<br> - rs1_val == 0xBF84000000000000 and imm_val == 0x14 #nosat<br>                                       |[0x8000057c]:roriw a0, s1, 20<br> [0x80000580]:sd a0, 168(ra)<br>    |
+|  23|[0x800042c0]<br>0x0000000000000000|- rs1 : x10<br> - rd : x9<br> - rs1_val == 0xC116000000000000 and imm_val == 0x09 #nosat<br>                                       |[0x80000590]:roriw s1, a0, 9<br> [0x80000594]:sd s1, 176(ra)<br>     |
+|  24|[0x800042c8]<br>0x0000000000000000|- rs1 : x7<br> - rd : x8<br> - rs1_val == 0xD631000000000000 and imm_val == 0x17 #nosat<br>                                        |[0x800005a4]:roriw fp, t2, 23<br> [0x800005a8]:sd fp, 184(ra)<br>    |
+|  25|[0x800042d0]<br>0x0000000000000000|- rs1 : x8<br> - rd : x7<br> - rs1_val == 0x17B2800000000000 and imm_val == 0x0F #nosat<br>                                        |[0x800005b8]:roriw t2, fp, 15<br> [0x800005bc]:sd t2, 192(ra)<br>    |
+|  26|[0x800042d8]<br>0x0000000000000000|- rs1 : x5<br> - rd : x6<br> - rs1_val == 0x9568400000000000 and imm_val == 0x00 #nosat<br>                                        |[0x800005cc]:roriw t1, t0, 0<br> [0x800005d0]:sd t1, 200(ra)<br>     |
+|  27|[0x800042e0]<br>0x0000000000000000|- rs1 : x6<br> - rd : x5<br> - rs1_val == 0x8B06600000000000 and imm_val == 0x15 #nosat<br>                                        |[0x800005e0]:roriw t0, t1, 21<br> [0x800005e4]:sd t0, 208(ra)<br>    |
+|  28|[0x800042e8]<br>0x0000000000000000|- rs1 : x3<br> - rd : x4<br> - rs1_val == 0xB93DF00000000000 and imm_val == 0x00 #nosat<br>                                        |[0x800005f4]:roriw tp, gp, 0<br> [0x800005f8]:sd tp, 216(ra)<br>     |
+|  29|[0x800042f0]<br>0x0000000000000000|- rs1 : x4<br> - rd : x3<br> - rs1_val == 0x88ADB80000000000 and imm_val == 0x0E #nosat<br>                                        |[0x80000610]:roriw gp, tp, 14<br> [0x80000614]:sd gp, 0(t0)<br>      |
+|  30|[0x800042f8]<br>0x0000000000000000|- rs1 : x1<br> - rd : x2<br> - rs1_val == 0xE180E40000000000 and imm_val == 0x17 #nosat<br>                                        |[0x80000624]:roriw sp, ra, 23<br> [0x80000628]:sd sp, 8(t0)<br>      |
+|  31|[0x80004300]<br>0x0000000000000000|- rs1 : x2<br> - rd : x1<br> - rs1_val == 0xD5CB7E0000000000 and imm_val == 0x0A #nosat<br>                                        |[0x80000638]:roriw ra, sp, 10<br> [0x8000063c]:sd ra, 16(t0)<br>     |
+|  32|[0x80004308]<br>0x0000000000000000|- rs1 : x0<br>                                                                                                                     |[0x80000644]:roriw t6, zero, 30<br> [0x80000648]:sd t6, 24(t0)<br>   |
+|  33|[0x80004310]<br>0x0000000000000000|- rd : x0<br> - rs1_val == 0xB9BE488000000000 and imm_val == 0x12 #nosat<br>                                                       |[0x80000658]:roriw zero, t6, 18<br> [0x8000065c]:sd zero, 32(t0)<br> |
+|  34|[0x80004318]<br>0x0000000000000000|- rs1_val == 0xE5ABA74000000000 and imm_val == 0x17 #nosat<br>                                                                     |[0x8000066c]:roriw t6, t5, 23<br> [0x80000670]:sd t6, 40(t0)<br>     |
+|  35|[0x80004320]<br>0x0000000000000000|- rs1_val == 0xF2124BA000000000 and imm_val == 0x03 #nosat<br>                                                                     |[0x80000680]:roriw t6, t5, 3<br> [0x80000684]:sd t6, 48(t0)<br>      |
+|  36|[0x80004328]<br>0x0000000000000000|- rs1_val == 0x96EBEC5000000000 and imm_val == 0x11 #nosat<br>                                                                     |[0x80000694]:roriw t6, t5, 17<br> [0x80000698]:sd t6, 56(t0)<br>     |
+|  37|[0x80004330]<br>0x0000000000000000|- rs1_val == 0x6CA53BC800000000 and imm_val == 0x11 #nosat<br>                                                                     |[0x800006a8]:roriw t6, t5, 17<br> [0x800006ac]:sd t6, 64(t0)<br>     |
+|  38|[0x80004338]<br>0x0000000000000000|- rs1_val == 0x035FF31C00000000 and imm_val == 0x0E #nosat<br>                                                                     |[0x800006bc]:roriw t6, t5, 14<br> [0x800006c0]:sd t6, 72(t0)<br>     |
+|  39|[0x80004340]<br>0x0000000000000000|- rs1_val == 0x8B38E95A00000000 and imm_val == 0x06 #nosat<br>                                                                     |[0x800006d0]:roriw t6, t5, 6<br> [0x800006d4]:sd t6, 80(t0)<br>      |
+|  40|[0x80004348]<br>0x0000000000000000|- rs1_val == 0x0B21BBBB00000000 and imm_val == 0x0D #nosat<br>                                                                     |[0x800006e4]:roriw t6, t5, 13<br> [0x800006e8]:sd t6, 88(t0)<br>     |
+|  41|[0x80004350]<br>0x0000000000000010|- rs1_val == 0x9C6FFFDC80000000 and imm_val == 0x1B #nosat<br>                                                                     |[0x800006fc]:roriw t6, t5, 27<br> [0x80000700]:sd t6, 96(t0)<br>     |
+|  42|[0x80004358]<br>0x0000000020000000|- rs1_val == 0x8217FFBE40000000 and imm_val == 0x01 #nosat<br>                                                                     |[0x80000718]:roriw t6, t5, 1<br> [0x8000071c]:sd t6, 104(t0)<br>     |
+|  43|[0x80004360]<br>0x0000000000000004|- rs1_val == 0x60E68CB720000000 and imm_val == 0x1B #nosat<br>                                                                     |[0x80000734]:roriw t6, t5, 27<br> [0x80000738]:sd t6, 112(t0)<br>    |
+|  44|[0x80004368]<br>0x0000000000020000|- rs1_val == 0xF5D02B2010000000 and imm_val == 0x0B #nosat<br>                                                                     |[0x80000750]:roriw t6, t5, 11<br> [0x80000754]:sd t6, 120(t0)<br>    |
+|  45|[0x80004370]<br>0x00000000000001C0|- rs1_val == 0x4204DE9838000000 and imm_val == 0x15 #nosat<br>                                                                     |[0x8000076c]:roriw t6, t5, 21<br> [0x80000770]:sd t6, 128(t0)<br>    |
+|  46|[0x80004378]<br>0x0000000001E80000|- rs1_val == 0xF6B1F180F4000000 and imm_val == 0x07 #nosat<br>                                                                     |[0x80000788]:roriw t6, t5, 7<br> [0x8000078c]:sd t6, 136(t0)<br>     |
+|  47|[0x80004380]<br>0x0000000000000066|- rs1_val == 0xF5BB75A166000000 and imm_val == 0x18 #nosat<br>                                                                     |[0x800007a4]:roriw t6, t5, 24<br> [0x800007a8]:sd t6, 144(t0)<br>    |
+|  48|[0x80004388]<br>0x0000000000000072|- rs1_val == 0xAA5B397039000000 and imm_val == 0x17 #nosat<br>                                                                     |[0x800007c0]:roriw t6, t5, 23<br> [0x800007c4]:sd t6, 152(t0)<br>    |
+|  49|[0x80004390]<br>0x0000000000005480|- rs1_val == 0x0E7BD5B154800000 and imm_val == 0x10 #nosat<br>                                                                     |[0x800007dc]:roriw t6, t5, 16<br> [0x800007e0]:sd t6, 160(t0)<br>    |
+|  50|[0x80004398]<br>0x0000000000D20000|- rs1_val == 0xB7A2A2301A400000 and imm_val == 0x05 #nosat<br>                                                                     |[0x800007f8]:roriw t6, t5, 5<br> [0x800007fc]:sd t6, 168(t0)<br>     |
+|  51|[0x800043a0]<br>0x000000006000007B|- rs1_val == 0x29EF41AF7B600000 and imm_val == 0x18 #nosat<br>                                                                     |[0x80000814]:roriw t6, t5, 24<br> [0x80000818]:sd t6, 176(t0)<br>    |
+|  52|[0x800043a8]<br>0xFFFFFFFFBEC00003|- rs1_val == 0xDD8AB0BCEFB00000 and imm_val == 0x1E #nosat<br>                                                                     |[0x80000830]:roriw t6, t5, 30<br> [0x80000834]:sd t6, 184(t0)<br>    |
+|  53|[0x800043b0]<br>0xFFFFFFFF82000009|- rs1_val == 0xFA3B344326080000 and imm_val == 0x1A #nosat<br>                                                                     |[0x8000084c]:roriw t6, t5, 26<br> [0x80000850]:sd t6, 192(t0)<br>    |
+|  54|[0x800043b8]<br>0x0000000002A82000|- rs1_val == 0xBF06387955040000 and imm_val == 0x05 #nosat<br>                                                                     |[0x80000870]:roriw t6, t5, 5<br> [0x80000874]:sd t6, 200(t0)<br>     |
+|  55|[0x800043c0]<br>0x000000000F3F4000|- rs1_val == 0x7D49F3CA79FA0000 and imm_val == 0x03 #nosat<br>                                                                     |[0x80000894]:roriw t6, t5, 3<br> [0x80000898]:sd t6, 208(t0)<br>     |
+|  56|[0x800043c8]<br>0x000000000003C8C0|- rs1_val == 0xAAB48A1C0F230000 and imm_val == 0x0A #nosat<br>                                                                     |[0x800008b8]:roriw t6, t5, 10<br> [0x800008bc]:sd t6, 216(t0)<br>    |
+|  57|[0x800043d0]<br>0x000000000035CB80|- rs1_val == 0xA25E549735CB8000 and imm_val == 0x08 #nosat<br>                                                                     |[0x800008dc]:roriw t6, t5, 8<br> [0x800008e0]:sd t6, 224(t0)<br>     |
+|  58|[0x800043d8]<br>0x0000000001E46880|- rs1_val == 0x49E43C96F2344000 and imm_val == 0x07 #nosat<br>                                                                     |[0x80000900]:roriw t6, t5, 7<br> [0x80000904]:sd t6, 232(t0)<br>     |
+|  59|[0x800043e0]<br>0x0000000055440009|- rs1_val == 0x971662E94AAA2000 and imm_val == 0x1B #nosat<br>                                                                     |[0x80000924]:roriw t6, t5, 27<br> [0x80000928]:sd t6, 240(t0)<br>    |
+|  60|[0x800043e8]<br>0x00000000400134AD|- rs1_val == 0xFA51CD1D4D2B5000 and imm_val == 0x0E #nosat<br>                                                                     |[0x80000948]:roriw t6, t5, 14<br> [0x8000094c]:sd t6, 248(t0)<br>    |
+|  61|[0x800043f0]<br>0x0000000003405D00|- rs1_val == 0xEBC398261A02E800 and imm_val == 0x03 #nosat<br>                                                                     |[0x80000970]:roriw t6, t5, 3<br> [0x80000974]:sd t6, 256(t0)<br>     |
+|  62|[0x800043f8]<br>0x0000000006536020|- rs1_val == 0x5334BAB9CA6C0400 and imm_val == 0x05 #nosat<br>                                                                     |[0x80000998]:roriw t6, t5, 5<br> [0x8000099c]:sd t6, 264(t0)<br>     |
+|  63|[0x80004400]<br>0xFFFFFFFFDE100199|- rs1_val == 0xEC133026333BC200 and imm_val == 0x15 #nosat<br>                                                                     |[0x800009c0]:roriw t6, t5, 21<br> [0x800009c4]:sd t6, 272(t0)<br>    |
+|  64|[0x80004408]<br>0xFFFFFFFFB000F1C6|- rs1_val == 0x82CC710F0F1C6B00 and imm_val == 0x0C #nosat<br>                                                                     |[0x800009e8]:roriw t6, t5, 12<br> [0x800009ec]:sd t6, 280(t0)<br>    |
+|  65|[0x80004410]<br>0xFFFFFFFFE4062967|- rs1_val == 0x7AA3D594C52CFC80 and imm_val == 0x0D #nosat<br>                                                                     |[0x80000a10]:roriw t6, t5, 13<br> [0x80000a14]:sd t6, 288(t0)<br>    |
+|  66|[0x80004418]<br>0x000000006DEB8130|- rs1_val == 0x29DB927E9836F5C0 and imm_val == 0x17 #nosat<br>                                                                     |[0x80000a38]:roriw t6, t5, 23<br> [0x80000a3c]:sd t6, 296(t0)<br>    |
+|  67|[0x80004420]<br>0x00000000706E58B0|- rs1_val == 0x0DA598F1DCB160E0 and imm_val == 0x09 #nosat<br>                                                                     |[0x80000a60]:roriw t6, t5, 9<br> [0x80000a64]:sd t6, 304(t0)<br>     |
+|  68|[0x80004428]<br>0xFFFFFFFF874032AB|- rs1_val == 0xD45AF1CB0CAAE1D0 and imm_val == 0x0E #nosat<br>                                                                     |[0x80000a88]:roriw t6, t5, 14<br> [0x80000a8c]:sd t6, 312(t0)<br>    |
+|  69|[0x80004430]<br>0xFFFFFFFF8A013741|- rs1_val == 0x25B37C62314026E8 and imm_val == 0x1D #nosat<br>                                                                     |[0x80000ab0]:roriw t6, t5, 29<br> [0x80000ab4]:sd t6, 320(t0)<br>    |
+|  70|[0x80004438]<br>0xFFFFFFFFF22A27D3|- rs1_val == 0x7FBFA447FC8A89F4 and imm_val == 0x1E #nosat<br>                                                                     |[0x80000ad8]:roriw t6, t5, 30<br> [0x80000adc]:sd t6, 328(t0)<br>    |
+|  71|[0x80004440]<br>0x000000004902E9CE|- rs1_val == 0xC36673FE4902E9CE and imm_val == 0x00 #nosat<br>                                                                     |[0x80000b00]:roriw t6, t5, 0<br> [0x80000b04]:sd t6, 336(t0)<br>     |
+|  72|[0x80004448]<br>0xFFFFFFFFF5DB7DE5|- rs1_val == 0x44DCDA6A797D76DF and imm_val == 0x16 #nosat<br>                                                                     |[0x80000b28]:roriw t6, t5, 22<br> [0x80000b2c]:sd t6, 344(t0)<br>    |
+|  73|[0x80004450]<br>0xFFFFFFFF963F00D0|- imm_val == 0x02 and rs1_val == 0x20D68CEC58FC0342 #nosat<br>                                                                     |[0x80000b50]:roriw t6, t5, 2<br> [0x80000b54]:sd t6, 352(t0)<br>     |
+|  74|[0x80004458]<br>0xFFFFFFFFD8CD36D2|- imm_val == 0x09 and rs1_val == 0x636A75E39A6DA5B1 #nosat<br>                                                                     |[0x80000b78]:roriw t6, t5, 9<br> [0x80000b7c]:sd t6, 360(t0)<br>     |
+|  75|[0x80004460]<br>0x0000000000111B65|- imm_val == 0x1B and rs1_val == 0x37E0DE00280088DB #nosat<br>                                                                     |[0x80000ba0]:roriw t6, t5, 27<br> [0x80000ba4]:sd t6, 368(t0)<br>    |
+|  76|[0x80004468]<br>0x00000000781AEE1E|- imm_val == 0x07 and rs1_val == 0x1CA7BD1F0D770F3C #nosat<br>                                                                     |[0x80000bc8]:roriw t6, t5, 7<br> [0x80000bcc]:sd t6, 376(t0)<br>     |
+|  77|[0x80004470]<br>0xFFFFFFFFA098C784|- imm_val == 0x0F and rs1_val == 0x5536B8D863C2504C #nosat<br>                                                                     |[0x80000bf0]:roriw t6, t5, 15<br> [0x80000bf4]:sd t6, 384(t0)<br>    |
+|  78|[0x80004478]<br>0xFFFFFFFF8C363F7F|- imm_val == 0x1F and rs1_val == 0x4E6EE408C61B1FBF #nosat<br>                                                                     |[0x80000c18]:roriw t6, t5, 31<br> [0x80000c1c]:sd t6, 392(t0)<br>    |
+|  79|[0x80004480]<br>0xFFFFFFFF846394CC|- rs1_val == 0xC215E193118E5332 and imm_val == 0x02 #nosat<br>                                                                     |[0x80000c40]:roriw t6, t5, 2<br> [0x80000c44]:sd t6, 400(t0)<br>     |
+|  80|[0x80004488]<br>0x000000000B2E5B06|- rs1_val == 0x75EE935F65CB60C1 and imm_val == 0x05 #nosat<br>                                                                     |[0x80000c68]:roriw t6, t5, 5<br> [0x80000c6c]:sd t6, 408(t0)<br>     |
+|  81|[0x80004490]<br>0xFFFFFFFF859BB6CE|- rs1_val == 0x09C161626CE859BB and imm_val == 0x14 #nosat<br>                                                                     |[0x80000c90]:roriw t6, t5, 20<br> [0x80000c94]:sd t6, 416(t0)<br>    |
+|  82|[0x80004498]<br>0xFFFFFFFFBD5F1CD0|- rs1_val == 0xA4053175342F57C7 and imm_val == 0x16 #nosat<br>                                                                     |[0x80000cb8]:roriw t6, t5, 22<br> [0x80000cbc]:sd t6, 424(t0)<br>    |
+|  83|[0x800044a0]<br>0xFFFFFFFFF267CDF2|- rs1_val == 0x499006C897933E6F and imm_val == 0x1B #nosat<br>                                                                     |[0x80000ce0]:roriw t6, t5, 27<br> [0x80000ce4]:sd t6, 432(t0)<br>    |
+|  84|[0x800044a8]<br>0xFFFFFFFF943EB60C|- rs1_val == 0xC5DD85CA5B064A1F and imm_val == 0x0F #nosat<br>                                                                     |[0x80000d08]:roriw t6, t5, 15<br> [0x80000d0c]:sd t6, 440(t0)<br>    |
+|  85|[0x800044b0]<br>0x00000000567E8460|- rs1_val == 0x6CC30F7242302B3F and imm_val == 0x0F #nosat<br>                                                                     |[0x80000d30]:roriw t6, t5, 15<br> [0x80000d34]:sd t6, 448(t0)<br>    |
+|  86|[0x800044b8]<br>0xFFFFFFFFA3FB6723|- rs1_val == 0xAF1DBF276CE4747F and imm_val == 0x0D #nosat<br>                                                                     |[0x80000d58]:roriw t6, t5, 13<br> [0x80000d5c]:sd t6, 456(t0)<br>    |
+|  87|[0x800044c0]<br>0x0000000008FFBD06|- rs1_val == 0x25784F4FBD0608FF and imm_val == 0x10 #nosat<br>                                                                     |[0x80000d80]:roriw t6, t5, 16<br> [0x80000d84]:sd t6, 464(t0)<br>    |
+|  88|[0x800044c8]<br>0x000000007FD81321|- rs1_val == 0x805A391B604C85FF and imm_val == 0x0A #nosat<br>                                                                     |[0x80000da8]:roriw t6, t5, 10<br> [0x80000dac]:sd t6, 472(t0)<br>    |
+|  89|[0x800044d0]<br>0xFFFFFFFFD2FAC6FF|- rs1_val == 0xCC7EB77D4BEB1BFF and imm_val == 0x02 #nosat<br>                                                                     |[0x80000dd0]:roriw t6, t5, 2<br> [0x80000dd4]:sd t6, 480(t0)<br>     |
+|  90|[0x800044d8]<br>0xFFFFFFFFBFF9C8CF|- rs1_val == 0xAB647BCA3919F7FF and imm_val == 0x0D #nosat<br>                                                                     |[0x80000df8]:roriw t6, t5, 13<br> [0x80000dfc]:sd t6, 488(t0)<br>    |
+|  91|[0x800044e0]<br>0xFFFFFFFF9EC8BFFC|- rs1_val == 0x7F1E7F8627B22FFF and imm_val == 0x1E #nosat<br>                                                                     |[0x80000e20]:roriw t6, t5, 30<br> [0x80000e24]:sd t6, 496(t0)<br>    |
+|  92|[0x800044e8]<br>0xFFFFFFFFB4FFF80B|- rs1_val == 0x51D6D6DA01769FFF and imm_val == 0x15 #nosat<br>                                                                     |[0x80000e48]:roriw t6, t5, 21<br> [0x80000e4c]:sd t6, 504(t0)<br>    |
+|  93|[0x800044f0]<br>0xFFFFFFFFF6812FFF|- rs1_val == 0xD5A2038FDA04BFFF and imm_val == 0x02 #nosat<br>                                                                     |[0x80000e70]:roriw t6, t5, 2<br> [0x80000e74]:sd t6, 512(t0)<br>     |
+|  94|[0x800044f8]<br>0x0000000076FFFFE0|- rs1_val == 0x784ABEBBF03B7FFF and imm_val == 0x17 #nosat<br>                                                                     |[0x80000e98]:roriw t6, t5, 23<br> [0x80000e9c]:sd t6, 520(t0)<br>    |
+|  95|[0x80004500]<br>0xFFFFFFFFFE81EFFF|- rs1_val == 0x44D988FBE81EFFFF and imm_val == 0x04 #nosat<br>                                                                     |[0x80000ec0]:roriw t6, t5, 4<br> [0x80000ec4]:sd t6, 528(t0)<br>     |
+|  96|[0x80004508]<br>0x000000003FFFE3E3|- rs1_val == 0x6875944E1F19FFFF and imm_val == 0x13 #nosat<br>                                                                     |[0x80000ee8]:roriw t6, t5, 19<br> [0x80000eec]:sd t6, 536(t0)<br>    |
+|  97|[0x80004510]<br>0x000000007FFFE40C|- rs1_val == 0xFF7746E52063FFFF and imm_val == 0x13 #nosat<br>                                                                     |[0x80000f08]:roriw t6, t5, 19<br> [0x80000f0c]:sd t6, 544(t0)<br>    |
+|  98|[0x80004518]<br>0xFFFFFFFFA527FFFF|- rs1_val == 0x17B8B123A527FFFF and imm_val == 0x00 #nosat<br>                                                                     |[0x80000f28]:roriw t6, t5, 0<br> [0x80000f2c]:sd t6, 552(t0)<br>     |
+|  99|[0x80004520]<br>0x000000007FFFFFC4|- rs1_val == 0x70890268F88FFFFF and imm_val == 0x15 #nosat<br>                                                                     |[0x80000f48]:roriw t6, t5, 21<br> [0x80000f4c]:sd t6, 560(t0)<br>    |
+| 100|[0x80004528]<br>0xFFFFFFFFC467FFFF|- rs1_val == 0x6DDC74E6119FFFFF and imm_val == 0x02 #nosat<br>                                                                     |[0x80000f68]:roriw t6, t5, 2<br> [0x80000f6c]:sd t6, 568(t0)<br>     |
+| 101|[0x80004530]<br>0xFFFFFFFFFFF9AFFF|- rs1_val == 0x39BE2172E6BFFFFF and imm_val == 0x0A #nosat<br>                                                                     |[0x80000f88]:roriw t6, t5, 10<br> [0x80000f8c]:sd t6, 576(t0)<br>    |
+| 102|[0x80004538]<br>0xFFFFFFFFFE54FFFF|- rs1_val == 0xC99324582A7FFFFF and imm_val == 0x07 #nosat<br>                                                                     |[0x80000fa8]:roriw t6, t5, 7<br> [0x80000fac]:sd t6, 584(t0)<br>     |
+| 103|[0x80004540]<br>0xFFFFFFFFFFF2EFFF|- rs1_val == 0x4B9A6C802EFFFFFF and imm_val == 0x0C #nosat<br>                                                                     |[0x80000fc8]:roriw t6, t5, 12<br> [0x80000fcc]:sd t6, 592(t0)<br>    |
+| 104|[0x80004548]<br>0xFFFFFFFFFFFFFACF|- rs1_val == 0x9541240E59FFFFFF and imm_val == 0x15 #nosat<br>                                                                     |[0x80000fe8]:roriw t6, t5, 21<br> [0x80000fec]:sd t6, 600(t0)<br>    |
+| 105|[0x80004550]<br>0xFFFFFFFFE4FFFFFF|- rs1_val == 0xB3A8D61293FFFFFF and imm_val == 0x02 #nosat<br>                                                                     |[0x80001008]:roriw t6, t5, 2<br> [0x8000100c]:sd t6, 608(t0)<br>     |
+| 106|[0x80004558]<br>0xFFFFFFFFF5FFFFFF|- rs1_val == 0x9E03793FD7FFFFFF and imm_val == 0x02 #nosat<br>                                                                     |[0x80001028]:roriw t6, t5, 2<br> [0x8000102c]:sd t6, 616(t0)<br>     |
+| 107|[0x80004560]<br>0xFFFFFFFFFFFD7FFF|- rs1_val == 0x7F1071ECAFFFFFFF and imm_val == 0x0D #nosat<br>                                                                     |[0x80001048]:roriw t6, t5, 13<br> [0x8000104c]:sd t6, 624(t0)<br>    |
+| 108|[0x80004568]<br>0xFFFFFFFFFFFFBFFF|- rs1_val == 0xF8A75516DFFFFFFF and imm_val == 0x0F #nosat<br>                                                                     |[0x80001060]:roriw t6, t5, 15<br> [0x80001064]:sd t6, 632(t0)<br>    |
+| 109|[0x80004570]<br>0xFFFFFFFFFFBFFFFF|- rs1_val == 0xB76D454DBFFFFFFF and imm_val == 0x08 #nosat<br>                                                                     |[0x80001080]:roriw t6, t5, 8<br> [0x80001084]:sd t6, 640(t0)<br>     |
+| 110|[0x80004578]<br>0xFFFFFFFFFFFFFEFF|- rs1_val == 0xB494A73D7FFFFFFF and imm_val == 0x17 #nosat<br>                                                                     |[0x800010a0]:roriw t6, t5, 23<br> [0x800010a4]:sd t6, 648(t0)<br>    |
+| 111|[0x80004580]<br>0xFFFFFFFFFFFFFFFF|- rs1_val == 0xC28CB594FFFFFFFF and imm_val == 0x16 #nosat<br>                                                                     |[0x800010b8]:roriw t6, t5, 22<br> [0x800010bc]:sd t6, 656(t0)<br>    |
+| 112|[0x80004588]<br>0xFFFFFFFFFFFFFFFF|- rs1_val == 0x69DA8A2DFFFFFFFF and imm_val == 0x10 #nosat<br>                                                                     |[0x800010d0]:roriw t6, t5, 16<br> [0x800010d4]:sd t6, 664(t0)<br>    |
+| 113|[0x80004590]<br>0xFFFFFFFFFFFFFFFF|- rs1_val == 0x40F27003FFFFFFFF and imm_val == 0x0A #nosat<br>                                                                     |[0x800010e8]:roriw t6, t5, 10<br> [0x800010ec]:sd t6, 672(t0)<br>    |
+| 114|[0x80004598]<br>0xFFFFFFFFFFFFFFFF|- rs1_val == 0xB2B8AF97FFFFFFFF and imm_val == 0x1C #nosat<br>                                                                     |[0x80001100]:roriw t6, t5, 28<br> [0x80001104]:sd t6, 680(t0)<br>    |
+| 115|[0x800045a0]<br>0xFFFFFFFFFFFFFFFF|- rs1_val == 0x24496FEFFFFFFFFF and imm_val == 0x1F #nosat<br>                                                                     |[0x80001118]:roriw t6, t5, 31<br> [0x8000111c]:sd t6, 688(t0)<br>    |
+| 116|[0x800045a8]<br>0xFFFFFFFFFFFFFFFF|- rs1_val == 0xDE14BFDFFFFFFFFF and imm_val == 0x02 #nosat<br>                                                                     |[0x80001130]:roriw t6, t5, 2<br> [0x80001134]:sd t6, 696(t0)<br>     |
+| 117|[0x800045b0]<br>0xFFFFFFFFFFFFFFFF|- rs1_val == 0x008EEF3FFFFFFFFF and imm_val == 0x1B #nosat<br>                                                                     |[0x80001148]:roriw t6, t5, 27<br> [0x8000114c]:sd t6, 704(t0)<br>    |
+| 118|[0x800045b8]<br>0xFFFFFFFFFFFFFFFF|- rs1_val == 0x6E2D707FFFFFFFFF and imm_val == 0x1D #nosat<br>                                                                     |[0x80001160]:roriw t6, t5, 29<br> [0x80001164]:sd t6, 712(t0)<br>    |
+| 119|[0x800045c0]<br>0xFFFFFFFFFFFFFFFF|- rs1_val == 0x5DCF00FFFFFFFFFF and imm_val == 0x08 #nosat<br>                                                                     |[0x80001178]:roriw t6, t5, 8<br> [0x8000117c]:sd t6, 720(t0)<br>     |
+| 120|[0x800045c8]<br>0xFFFFFFFFFFFFFFFF|- rs1_val == 0x3C5569FFFFFFFFFF and imm_val == 0x0C #nosat<br>                                                                     |[0x80001190]:roriw t6, t5, 12<br> [0x80001194]:sd t6, 728(t0)<br>    |
+| 121|[0x800045d0]<br>0xFFFFFFFFFFFFFFFF|- rs1_val == 0x7DA8D3FFFFFFFFFF and imm_val == 0x0F #nosat<br>                                                                     |[0x800011a8]:roriw t6, t5, 15<br> [0x800011ac]:sd t6, 736(t0)<br>    |
+| 122|[0x800045d8]<br>0xFFFFFFFFFFFFFFFF|- rs1_val == 0xE3A707FFFFFFFFFF and imm_val == 0x08 #nosat<br>                                                                     |[0x800011c0]:roriw t6, t5, 8<br> [0x800011c4]:sd t6, 744(t0)<br>     |
+| 123|[0x800045e0]<br>0xFFFFFFFFFFFFFFFF|- rs1_val == 0x9B01EFFFFFFFFFFF and imm_val == 0x11 #nosat<br>                                                                     |[0x800011d8]:roriw t6, t5, 17<br> [0x800011dc]:sd t6, 752(t0)<br>    |
+| 124|[0x800045e8]<br>0xFFFFFFFFFFFFFFFF|- rs1_val == 0x5F011FFFFFFFFFFF and imm_val == 0x1D #nosat<br>                                                                     |[0x800011f0]:roriw t6, t5, 29<br> [0x800011f4]:sd t6, 760(t0)<br>    |
+| 125|[0x800045f0]<br>0xFFFFFFFFFFFFFFFF|- rs1_val == 0x2DEDBFFFFFFFFFFF and imm_val == 0x16 #nosat<br>                                                                     |[0x80001208]:roriw t6, t5, 22<br> [0x8000120c]:sd t6, 768(t0)<br>    |
+| 126|[0x800045f8]<br>0xFFFFFFFFFFFFFFFF|- rs1_val == 0x2D377FFFFFFFFFFF and imm_val == 0x12 #nosat<br>                                                                     |[0x80001220]:roriw t6, t5, 18<br> [0x80001224]:sd t6, 776(t0)<br>    |
+| 127|[0x80004600]<br>0xFFFFFFFFFFFFFFFF|- rs1_val == 0xAD44FFFFFFFFFFFF and imm_val == 0x1C #nosat<br>                                                                     |[0x80001238]:roriw t6, t5, 28<br> [0x8000123c]:sd t6, 784(t0)<br>    |
+| 128|[0x80004608]<br>0xFFFFFFFFFFFFFFFF|- rs1_val == 0x72C9FFFFFFFFFFFF and imm_val == 0x08 #nosat<br>                                                                     |[0x80001250]:roriw t6, t5, 8<br> [0x80001254]:sd t6, 792(t0)<br>     |
+| 129|[0x80004610]<br>0xFFFFFFFFFFFFFFFF|- rs1_val == 0xD1D3FFFFFFFFFFFF and imm_val == 0x10 #nosat<br>                                                                     |[0x80001268]:roriw t6, t5, 16<br> [0x8000126c]:sd t6, 800(t0)<br>    |
+| 130|[0x80004618]<br>0xFFFFFFFFFFFFFFFF|- rs1_val == 0x5057FFFFFFFFFFFF and imm_val == 0x07 #nosat<br>                                                                     |[0x80001280]:roriw t6, t5, 7<br> [0x80001284]:sd t6, 808(t0)<br>     |
+| 131|[0x80004620]<br>0xFFFFFFFFFFFFFFFF|- rs1_val == 0x5D2FFFFFFFFFFFFF and imm_val == 0x1B #nosat<br>                                                                     |[0x80001294]:roriw t6, t5, 27<br> [0x80001298]:sd t6, 816(t0)<br>    |
+| 132|[0x80004628]<br>0xFFFFFFFFFFFFFFFF|- rs1_val == 0xE5DFFFFFFFFFFFFF and imm_val == 0x1B #nosat<br>                                                                     |[0x800012a8]:roriw t6, t5, 27<br> [0x800012ac]:sd t6, 824(t0)<br>    |
+| 133|[0x80004630]<br>0xFFFFFFFFFFFFFFFF|- rs1_val == 0xD9BFFFFFFFFFFFFF and imm_val == 0x0E #nosat<br>                                                                     |[0x800012bc]:roriw t6, t5, 14<br> [0x800012c0]:sd t6, 832(t0)<br>    |
+| 134|[0x80004638]<br>0xFFFFFFFFFFFFFFFF|- rs1_val == 0x237FFFFFFFFFFFFF and imm_val == 0x10 #nosat<br>                                                                     |[0x800012d0]:roriw t6, t5, 16<br> [0x800012d4]:sd t6, 840(t0)<br>    |
+| 135|[0x80004640]<br>0xFFFFFFFFFFFFFFFF|- rs1_val == 0x72FFFFFFFFFFFFFF and imm_val == 0x1B #nosat<br>                                                                     |[0x800012e4]:roriw t6, t5, 27<br> [0x800012e8]:sd t6, 848(t0)<br>    |
+| 136|[0x80004648]<br>0xFFFFFFFFFFFFFFFF|- rs1_val == 0xDDFFFFFFFFFFFFFF and imm_val == 0x10 #nosat<br>                                                                     |[0x800012f8]:roriw t6, t5, 16<br> [0x800012fc]:sd t6, 856(t0)<br>    |
+| 137|[0x80004650]<br>0xFFFFFFFFFFFFFFFF|- rs1_val == 0x43FFFFFFFFFFFFFF and imm_val == 0x09 #nosat<br>                                                                     |[0x8000130c]:roriw t6, t5, 9<br> [0x80001310]:sd t6, 864(t0)<br>     |
+| 138|[0x80004658]<br>0xFFFFFFFFFFFFFFFF|- rs1_val == 0x27FFFFFFFFFFFFFF and imm_val == 0x00 #nosat<br>                                                                     |[0x80001320]:roriw t6, t5, 0<br> [0x80001324]:sd t6, 872(t0)<br>     |
+| 139|[0x80004660]<br>0xFFFFFFFFFFFFFFFF|- rs1_val == 0x4FFFFFFFFFFFFFFF and imm_val == 0x01 #nosat<br>                                                                     |[0x80001334]:roriw t6, t5, 1<br> [0x80001338]:sd t6, 880(t0)<br>     |
+| 140|[0x80004668]<br>0xFFFFFFFFFFFFFFFF|- rs1_val == 0x1FFFFFFFFFFFFFFF and imm_val == 0x0D #nosat<br>                                                                     |[0x80001348]:roriw t6, t5, 13<br> [0x8000134c]:sd t6, 888(t0)<br>    |
+| 141|[0x80004670]<br>0xFFFFFFFFFFFFFFFF|- rs1_val == 0x3FFFFFFFFFFFFFFF and imm_val == 0x0B #nosat<br>                                                                     |[0x8000135c]:roriw t6, t5, 11<br> [0x80001360]:sd t6, 896(t0)<br>    |
+| 142|[0x80004678]<br>0xFFFFFFFFFFFFFFFF|- rs1_val == 0x7FFFFFFFFFFFFFFF and imm_val == 0x09 #nosat<br>                                                                     |[0x80001370]:roriw t6, t5, 9<br> [0x80001374]:sd t6, 904(t0)<br>     |
+| 143|[0x80004680]<br>0xFFFFFFFFFFFFFFFF|- rs1_val == 0xFFFFFFFFFFFFFFFF and imm_val == 0x0B #nosat<br>                                                                     |[0x8000137c]:roriw t6, t5, 11<br> [0x80001380]:sd t6, 912(t0)<br>    |
+| 144|[0x80004688]<br>0xFFFFFFFFBDEFCB47|- imm_val == 0x12 and rs1_val == 0x482EA7602D1EF7BF #nosat<br>                                                                     |[0x800013a4]:roriw t6, t5, 18<br> [0x800013a8]:sd t6, 920(t0)<br>    |
+| 145|[0x80004690]<br>0x000000000769C867|- imm_val == 0x0E and rs1_val == 0x3FC2A9087219C1DA #nosat<br>                                                                     |[0x800013cc]:roriw t6, t5, 14<br> [0x800013d0]:sd t6, 928(t0)<br>    |
+| 146|[0x80004698]<br>0x000000005043E3EF|- imm_val == 0x04 and rs1_val == 0x11B41900043E3EF5 #nosat<br>                                                                     |[0x800013f4]:roriw t6, t5, 4<br> [0x800013f8]:sd t6, 936(t0)<br>     |
+| 147|[0x800046a0]<br>0xFFFFFFFFBD5B03B9|- imm_val == 0x03 and rs1_val == 0xEA3A0683EAD81DCD #nosat<br>                                                                     |[0x8000141c]:roriw t6, t5, 3<br> [0x80001420]:sd t6, 944(t0)<br>     |
+| 148|[0x800046a8]<br>0x000000004EA17B38|- imm_val == 0x01 and rs1_val == 0x12FAD8029D42F670 #nosat<br>                                                                     |[0x80001444]:roriw t6, t5, 1<br> [0x80001448]:sd t6, 952(t0)<br>     |
+| 149|[0x800046b0]<br>0xFFFFFFFFB869135C|- imm_val == 0x00 and rs1_val == 0xFA285A0DB869135C #nosat<br>                                                                     |[0x8000146c]:roriw t6, t5, 0<br> [0x80001470]:sd t6, 960(t0)<br>     |
+| 150|[0x800046b8]<br>0xFFFFFFFF87E963D2|- rs1_val == 0x852395744B1E943F and imm_val == 0x0B #nosat<br>                                                                     |[0x80001494]:roriw t6, t5, 11<br> [0x80001498]:sd t6, 968(t0)<br>    |
+| 151|[0x800046c0]<br>0xFFFFFFFF839310DE|- rs1_val == 0x6BBA8D2141C9886F and imm_val == 0x1F #nosat<br>                                                                     |[0x800014bc]:roriw t6, t5, 31<br> [0x800014c0]:sd t6, 976(t0)<br>    |
+| 152|[0x800046c8]<br>0xFFFFFFFF84207E1E|- rs1_val == 0x3D65693B3D0840FC and imm_val == 0x19 #nosat<br>                                                                     |[0x800014e4]:roriw t6, t5, 25<br> [0x800014e8]:sd t6, 984(t0)<br>    |
+| 153|[0x800046d0]<br>0xFFFFFFFF85941BEA|- rs1_val == 0x19E803191BEA8594 and imm_val == 0x10 #nosat<br>                                                                     |[0x8000150c]:roriw t6, t5, 16<br> [0x80001510]:sd t6, 992(t0)<br>    |
+| 154|[0x800046d8]<br>0xFFFFFFFFA1AF927B|- rs1_val == 0x0C2282666BE49EE8 and imm_val == 0x06 #nosat<br>                                                                     |[0x80001534]:roriw t6, t5, 6<br> [0x80001538]:sd t6, 1000(t0)<br>    |
+| 155|[0x800046e0]<br>0xFFFFFFFF870EB980|- rs1_val == 0x07862EACE1D73010 and imm_val == 0x05 #nosat<br>                                                                     |[0x8000155c]:roriw t6, t5, 5<br> [0x80001560]:sd t6, 1008(t0)<br>    |
+| 156|[0x800046e8]<br>0xFFFFFFFFDD8734AF|- rs1_val == 0x033C1A7FAFDD8734 and imm_val == 0x18 #nosat<br>                                                                     |[0x8000157c]:roriw t6, t5, 24<br> [0x80001580]:sd t6, 1016(t0)<br>   |
+| 157|[0x800046f0]<br>0xFFFFFFFFAB1BD4AE|- rs1_val == 0x0104A795BD4AEAB1 and imm_val == 0x0C #nosat<br>                                                                     |[0x800015a4]:roriw t6, t5, 12<br> [0x800015a8]:sd t6, 1024(t0)<br>   |
+| 158|[0x800046f8]<br>0x000000003B2E6CCE|- rs1_val == 0x0096C6C8B9B338EC and imm_val == 0x0A #nosat<br>                                                                     |[0x800015c4]:roriw t6, t5, 10<br> [0x800015c8]:sd t6, 1032(t0)<br>   |
+| 159|[0x80004700]<br>0xFFFFFFFFEA61D11C|- rs1_val == 0x00775505E88E7530 and imm_val == 0x0F #nosat<br>                                                                     |[0x800015e4]:roriw t6, t5, 15<br> [0x800015e8]:sd t6, 1040(t0)<br>   |
+| 160|[0x80004708]<br>0x0000000063DAB412|- rs1_val == 0x00356991A0931ED5 and imm_val == 0x13 #nosat<br>                                                                     |[0x80001604]:roriw t6, t5, 19<br> [0x80001608]:sd t6, 1048(t0)<br>   |
+| 161|[0x80004710]<br>0x000000000ABBBA94|- rs1_val == 0x00174145DDD4A055 and imm_val == 0x0B #nosat<br>                                                                     |[0x80001624]:roriw t6, t5, 11<br> [0x80001628]:sd t6, 1056(t0)<br>   |
+| 162|[0x80004718]<br>0xFFFFFFFF9ED5157E|- rs1_val == 0x000F19FDD5157E9E and imm_val == 0x08 #nosat<br>                                                                     |[0x80001644]:roriw t6, t5, 8<br> [0x80001648]:sd t6, 1064(t0)<br>    |
+| 163|[0x80004720]<br>0xFFFFFFFF82463EA0|- rs1_val == 0x0005D99A20918FA8 and imm_val == 0x1E #nosat<br>                                                                     |[0x80001664]:roriw t6, t5, 30<br> [0x80001668]:sd t6, 1072(t0)<br>   |
+| 164|[0x80004728]<br>0xFFFFFFFFF93FF84A|- rs1_val == 0x00032C075F27FF09 and imm_val == 0x1D #nosat<br>                                                                     |[0x8000167c]:roriw t6, t5, 29<br> [0x80001680]:sd t6, 1080(t0)<br>   |
+| 165|[0x80004730]<br>0xFFFFFFFFF0CE1C07|- rs1_val == 0x0001BCE703F8670E and imm_val == 0x17 #nosat<br>                                                                     |[0x8000169c]:roriw t6, t5, 23<br> [0x800016a0]:sd t6, 1088(t0)<br>   |
+| 166|[0x80004738]<br>0x0000000017A46ADF|- rs1_val == 0x00009B8B356F8BD2 and imm_val == 0x0F #nosat<br>                                                                     |[0x800016bc]:roriw t6, t5, 15<br> [0x800016c0]:sd t6, 1096(t0)<br>   |
+| 167|[0x80004740]<br>0xFFFFFFFF889651FB|- rs1_val == 0x0000545212CA3F71 and imm_val == 0x05 #nosat<br>                                                                     |[0x800016dc]:roriw t6, t5, 5<br> [0x800016e0]:sd t6, 1104(t0)<br>    |
+| 168|[0x80004748]<br>0xFFFFFFFF8DD9F4D4|- rs1_val == 0x00003090D48DD9F4 and imm_val == 0x18 #nosat<br>                                                                     |[0x800016fc]:roriw t6, t5, 24<br> [0x80001700]:sd t6, 1112(t0)<br>   |
+| 169|[0x80004750]<br>0xFFFFFFFF9C2E5013|- rs1_val == 0x00001DD8027385CA and imm_val == 0x15 #nosat<br>                                                                     |[0x80001714]:roriw t6, t5, 21<br> [0x80001718]:sd t6, 1120(t0)<br>   |
+| 170|[0x80004758]<br>0x000000001E1C3697|- rs1_val == 0x0000082236971E1C and imm_val == 0x10 #nosat<br>                                                                     |[0x8000172c]:roriw t6, t5, 16<br> [0x80001730]:sd t6, 1128(t0)<br>   |
+| 171|[0x80004760]<br>0xFFFFFFFFFB0563C9|- rs1_val == 0x000004440AC793F6 and imm_val == 0x09 #nosat<br>                                                                     |[0x80001744]:roriw t6, t5, 9<br> [0x80001748]:sd t6, 1136(t0)<br>    |
+| 172|[0x80004768]<br>0xFFFFFFFFABFBBC5B|- rs1_val == 0x000003D5FEEF16EA and imm_val == 0x06 #nosat<br>                                                                     |[0x8000175c]:roriw t6, t5, 6<br> [0x80001760]:sd t6, 1144(t0)<br>    |
+| 173|[0x80004770]<br>0xFFFFFFFFF88D799A|- rs1_val == 0x0000010735F11AF3 and imm_val == 0x19 #nosat<br>                                                                     |[0x80001774]:roriw t6, t5, 25<br> [0x80001778]:sd t6, 1152(t0)<br>   |
+| 174|[0x80004778]<br>0x000000007FBB4F1C|- rs1_val == 0x000000ACFF769E38 and imm_val == 0x01 #nosat<br>                                                                     |[0x8000178c]:roriw t6, t5, 1<br> [0x80001790]:sd t6, 1160(t0)<br>    |
+| 175|[0x80004780]<br>0x00000000291148A2|- rs1_val == 0x000000764511488A and imm_val == 0x13 #nosat<br>                                                                     |[0x800017a4]:roriw t6, t5, 19<br> [0x800017a8]:sd t6, 1168(t0)<br>   |
+| 176|[0x80004788]<br>0xFFFFFFFFFD74106A|- rs1_val == 0x0000002DFD74106A and imm_val == 0x00 #nosat<br>                                                                     |[0x800017bc]:roriw t6, t5, 0<br> [0x800017c0]:sd t6, 1176(t0)<br>    |
+| 177|[0x80004790]<br>0x0000000074DDF007|- rs1_val == 0x000000101DD377C0 and imm_val == 0x1A #nosat<br>                                                                     |[0x800017d4]:roriw t6, t5, 26<br> [0x800017d8]:sd t6, 1184(t0)<br>   |
+| 178|[0x80004798]<br>0x0000000052B08E6B|- rs1_val == 0x0000000A6B52B08E and imm_val == 0x18 #nosat<br>                                                                     |[0x800017ec]:roriw t6, t5, 24<br> [0x800017f0]:sd t6, 1192(t0)<br>   |
+| 179|[0x800047a0]<br>0xFFFFFFFFFBFC3B66|- rs1_val == 0x00000004FC3B66FB and imm_val == 0x08 #nosat<br>                                                                     |[0x80001804]:roriw t6, t5, 8<br> [0x80001808]:sd t6, 1200(t0)<br>    |
+| 180|[0x800047a8]<br>0xFFFFFFFFFD0728A6|- rs1_val == 0x00000002728A6FD0 and imm_val == 0x0C #nosat<br>                                                                     |[0x8000181c]:roriw t6, t5, 12<br> [0x80001820]:sd t6, 1208(t0)<br>   |
+| 181|[0x800047b0]<br>0x0000000008CAE9CA|- rs1_val == 0x00000001AE9CA08C and imm_val == 0x0C #nosat<br>                                                                     |[0x80001834]:roriw t6, t5, 12<br> [0x80001838]:sd t6, 1216(t0)<br>   |
+| 182|[0x800047b8]<br>0x0000000043F98133|- rs1_val == 0x00000000CC099A1F and imm_val == 0x0B #nosat<br>                                                                     |[0x8000184c]:roriw t6, t5, 11<br> [0x80001850]:sd t6, 1224(t0)<br>   |
+| 183|[0x800047c0]<br>0x00000000166F9582|- rs1_val == 0x0000000042CDF2B0 and imm_val == 0x1D #nosat<br>                                                                     |[0x8000185c]:roriw t6, t5, 29<br> [0x80001860]:sd t6, 1232(t0)<br>   |
+| 184|[0x800047c8]<br>0x000000006489D3A8|- rs1_val == 0x000000002274EA19 and imm_val == 0x06 #nosat<br>                                                                     |[0x8000186c]:roriw t6, t5, 6<br> [0x80001870]:sd t6, 1240(t0)<br>    |
+| 185|[0x800047d0]<br>0xFFFFFFFFCA241DE2|- rs1_val == 0x00000000120EF165 and imm_val == 0x07 #nosat<br>                                                                     |[0x8000187c]:roriw t6, t5, 7<br> [0x80001880]:sd t6, 1248(t0)<br>    |
+| 186|[0x800047d8]<br>0x0000000049153C83|- rs1_val == 0x000000000D2454F2 and imm_val == 0x1A #nosat<br>                                                                     |[0x8000188c]:roriw t6, t5, 26<br> [0x80001890]:sd t6, 1256(t0)<br>   |
+| 187|[0x800047e0]<br>0xFFFFFFFFD37DC0C7|- rs1_val == 0x00000000063E9BEE and imm_val == 0x13 #nosat<br>                                                                     |[0x8000189c]:roriw t6, t5, 19<br> [0x800018a0]:sd t6, 1264(t0)<br>   |
+| 188|[0x800047e8]<br>0x000000003E6801A6|- rs1_val == 0x00000000034C7CD0 and imm_val == 0x11 #nosat<br>                                                                     |[0x800018ac]:roriw t6, t5, 17<br> [0x800018b0]:sd t6, 1272(t0)<br>   |
+| 189|[0x800047f0]<br>0x0000000031001777|- rs1_val == 0x0000000001777310 and imm_val == 0x0C #nosat<br>                                                                     |[0x800018bc]:roriw t6, t5, 12<br> [0x800018c0]:sd t6, 1280(t0)<br>   |
+| 190|[0x800047f8]<br>0x00000000688B0480|- rs1_val == 0x0000000000D11609 and imm_val == 0x19 #nosat<br>                                                                     |[0x800018cc]:roriw t6, t5, 25<br> [0x800018d0]:sd t6, 1288(t0)<br>   |
+| 191|[0x80004800]<br>0x00000000000D017C|- rs1_val == 0x0000000000680BE0 and imm_val == 0x03 #nosat<br>                                                                     |[0x800018dc]:roriw t6, t5, 3<br> [0x800018e0]:sd t6, 1296(t0)<br>    |
+| 192|[0x80004808]<br>0x0000000000294B16|- rs1_val == 0x0000000000294B16 and imm_val == 0x00 #nosat<br>                                                                     |[0x800018ec]:roriw t6, t5, 0<br> [0x800018f0]:sd t6, 1304(t0)<br>    |
+| 193|[0x80004810]<br>0xFFFFFFFF8009468D|- rs1_val == 0x0000000000128D1B and imm_val == 0x01 #nosat<br>                                                                     |[0x800018fc]:roriw t6, t5, 1<br> [0x80001900]:sd t6, 1312(t0)<br>    |
+| 194|[0x80004818]<br>0x0000000026848002|- rs1_val == 0x0000000000089A12 and imm_val == 0x12 #nosat<br>                                                                     |[0x8000190c]:roriw t6, t5, 18<br> [0x80001910]:sd t6, 1320(t0)<br>   |
+| 195|[0x80004820]<br>0x000000006C001749|- rs1_val == 0x000000000005D25B and imm_val == 0x06 #nosat<br>                                                                     |[0x8000191c]:roriw t6, t5, 6<br> [0x80001920]:sd t6, 1328(t0)<br>    |
+| 196|[0x80004828]<br>0xFFFFFFFFE8B0C000|- rs1_val == 0x000000000003A2C3 and imm_val == 0x12 #nosat<br>                                                                     |[0x8000192c]:roriw t6, t5, 18<br> [0x80001930]:sd t6, 1336(t0)<br>   |
+| 197|[0x80004830]<br>0x00000000102FD000|- rs1_val == 0x00000000000102FD and imm_val == 0x14 #nosat<br>                                                                     |[0x8000193c]:roriw t6, t5, 20<br> [0x80001940]:sd t6, 1344(t0)<br>   |
+| 198|[0x80004838]<br>0xFFFFFFFF98000535|- rs1_val == 0x000000000000A6B3 and imm_val == 0x05 #nosat<br>                                                                     |[0x8000194c]:roriw t6, t5, 5<br> [0x80001950]:sd t6, 1352(t0)<br>    |
+| 199|[0x80004840]<br>0x00000000291C0000|- rs1_val == 0x0000000000005238 and imm_val == 0x11 #nosat<br>                                                                     |[0x8000195c]:roriw t6, t5, 17<br> [0x80001960]:sd t6, 1360(t0)<br>   |
+| 200|[0x80004848]<br>0x0000000050000111|- rs1_val == 0x000000000000222A and imm_val == 0x05 #nosat<br>                                                                     |[0x8000196c]:roriw t6, t5, 5<br> [0x80001970]:sd t6, 1368(t0)<br>    |
+| 201|[0x80004850]<br>0x0000000004584000|- rs1_val == 0x0000000000001161 and imm_val == 0x12 #nosat<br>                                                                     |[0x8000197c]:roriw t6, t5, 18<br> [0x80001980]:sd t6, 1376(t0)<br>   |
+| 202|[0x80004858]<br>0xFFFFFFFFDB900000|- rs1_val == 0x0000000000000DB9 and imm_val == 0x0C #nosat<br>                                                                     |[0x8000198c]:roriw t6, t5, 12<br> [0x80001990]:sd t6, 1384(t0)<br>   |
+| 203|[0x80004860]<br>0x00000000004C1000|- rs1_val == 0x00000000000004C1 and imm_val == 0x14 #nosat<br>                                                                     |[0x80001998]:roriw t6, t5, 20<br> [0x8000199c]:sd t6, 1392(t0)<br>   |
+| 204|[0x80004868]<br>0x00000000000001C8|- rs1_val == 0x0000000000000390 and imm_val == 0x01 #nosat<br>                                                                     |[0x800019a4]:roriw t6, t5, 1<br> [0x800019a8]:sd t6, 1400(t0)<br>    |
+| 205|[0x80004870]<br>0x000000001D400000|- rs1_val == 0x00000000000001D4 and imm_val == 0x0C #nosat<br>                                                                     |[0x800019b0]:roriw t6, t5, 12<br> [0x800019b4]:sd t6, 1408(t0)<br>   |
+| 206|[0x80004878]<br>0x000000007000000A|- rs1_val == 0x00000000000000A7 and imm_val == 0x04 #nosat<br>                                                                     |[0x800019bc]:roriw t6, t5, 4<br> [0x800019c0]:sd t6, 1416(t0)<br>    |
+| 207|[0x80004880]<br>0x000000001E400000|- rs1_val == 0x0000000000000079 and imm_val == 0x0A #nosat<br>                                                                     |[0x800019c8]:roriw t6, t5, 10<br> [0x800019cc]:sd t6, 1424(t0)<br>   |
+| 208|[0x80004888]<br>0x0000000000001600|- rs1_val == 0x000000000000002C and imm_val == 0x19 #nosat<br>                                                                     |[0x800019d4]:roriw t6, t5, 25<br> [0x800019d8]:sd t6, 1432(t0)<br>   |
+| 209|[0x80004890]<br>0x0000000040000007|- rs1_val == 0x000000000000001D and imm_val == 0x02 #nosat<br>                                                                     |[0x800019e0]:roriw t6, t5, 2<br> [0x800019e4]:sd t6, 1440(t0)<br>    |
+| 210|[0x80004898]<br>0x0000000000018000|- rs1_val == 0x000000000000000C and imm_val == 0x13 #nosat<br>                                                                     |[0x800019ec]:roriw t6, t5, 19<br> [0x800019f0]:sd t6, 1448(t0)<br>   |
+| 211|[0x800048a0]<br>0x0000000000C00000|- rs1_val == 0x0000000000000006 and imm_val == 0x0B #nosat<br>                                                                     |[0x800019f8]:roriw t6, t5, 11<br> [0x800019fc]:sd t6, 1456(t0)<br>   |
+| 212|[0x800048a8]<br>0x000000000000000C|- rs1_val == 0x0000000000000003 and imm_val == 0x1E #nosat<br>                                                                     |[0x80001a04]:roriw t6, t5, 30<br> [0x80001a08]:sd t6, 1464(t0)<br>   |
+| 213|[0x800048b0]<br>0x0000000000100000|- rs1_val == 0x0000000000000001 and imm_val == 0x0C #nosat<br>                                                                     |[0x80001a10]:roriw t6, t5, 12<br> [0x80001a14]:sd t6, 1472(t0)<br>   |
+| 214|[0x800048b8]<br>0x0000000000000000|- rs1_val == 0x0000000000000000 and imm_val == 0x1D #nosat<br>                                                                     |[0x80001a1c]:roriw t6, t5, 29<br> [0x80001a20]:sd t6, 1480(t0)<br>   |
+| 215|[0x800048c0]<br>0xFFFFFFFFCC51A8D9|- imm_val == 0x06 and rs1_val == 0x976AD220146A3673 #nosat<br>                                                                     |[0x80001a44]:roriw t6, t5, 6<br> [0x80001a48]:sd t6, 1488(t0)<br>    |
+| 216|[0x800048c8]<br>0x00000000529DC312|- imm_val == 0x14 and rs1_val == 0xFC6113A3312529DC #nosat<br>                                                                     |[0x80001a6c]:roriw t6, t5, 20<br> [0x80001a70]:sd t6, 1496(t0)<br>   |
+| 217|[0x800048d0]<br>0xFFFFFFFF8C827F9E|- imm_val == 0x1A and rs1_val == 0x242A809B7A3209FE #nosat<br>                                                                     |[0x80001a94]:roriw t6, t5, 26<br> [0x80001a98]:sd t6, 1504(t0)<br>   |
+| 218|[0x800048d8]<br>0x0000000050827332|- imm_val == 0x1D and rs1_val == 0xE380A1764A104E66 #nosat<br>                                                                     |[0x80001abc]:roriw t6, t5, 29<br> [0x80001ac0]:sd t6, 1512(t0)<br>   |
+| 219|[0x800048e0]<br>0x0000000051545023|- imm_val == 0x1E and rs1_val == 0xA0E0BD86D4551408 #nosat<br>                                                                     |[0x80001ae4]:roriw t6, t5, 30<br> [0x80001ae8]:sd t6, 1520(t0)<br>   |
+| 220|[0x800048e8]<br>0x0000000010D836F0|- imm_val == 0x1F and rs1_val == 0xAFE08A13086C1B78 #nosat<br>                                                                     |[0x80001b0c]:roriw t6, t5, 31<br> [0x80001b10]:sd t6, 1528(t0)<br>   |
+| 221|[0x800048f0]<br>0xFFFFFFFF9213FBD5|- rs1_val == 0x3CC279B3BD59213F and imm_val == 0x14 #nosat<br>                                                                     |[0x80001b34]:roriw t6, t5, 20<br> [0x80001b38]:sd t6, 1536(t0)<br>   |
+| 222|[0x800048f8]<br>0xFFFFFFFFBCB62F0A|- rs1_val == 0x941060376C5E1579 and imm_val == 0x09 #nosat<br>                                                                     |[0x80001b5c]:roriw t6, t5, 9<br> [0x80001b60]:sd t6, 1544(t0)<br>    |
+| 223|[0x80004900]<br>0x000000002EFBF85F|- rs1_val == 0xC9EA3210E5DF7F0B and imm_val == 0x1D #nosat<br>                                                                     |[0x80001b84]:roriw t6, t5, 29<br> [0x80001b88]:sd t6, 1552(t0)<br>   |
+| 224|[0x80004908]<br>0xFFFFFFFFE0F057DD|- rs1_val == 0xE9E93D5257DDE0F0 and imm_val == 0x10 #nosat<br>                                                                     |[0x80001bac]:roriw t6, t5, 16<br> [0x80001bb0]:sd t6, 1560(t0)<br>   |
+| 225|[0x80004910]<br>0x0000000064C47E8C|- rs1_val == 0xF048E341C64C47E8 and imm_val == 0x1C #nosat<br>                                                                     |[0x80001bd4]:roriw t6, t5, 28<br> [0x80001bd8]:sd t6, 1568(t0)<br>   |
+| 226|[0x80004918]<br>0x0000000075249004|- rs1_val == 0xF969730123A92480 and imm_val == 0x1B #nosat<br>                                                                     |[0x80001bfc]:roriw t6, t5, 27<br> [0x80001c00]:sd t6, 1576(t0)<br>   |
+| 227|[0x80004920]<br>0xFFFFFFFFAABA39D1|- rs1_val == 0xFC20CE1CD55D1CE8 and imm_val == 0x1F #nosat<br>                                                                     |[0x80001c24]:roriw t6, t5, 31<br> [0x80001c28]:sd t6, 1584(t0)<br>   |
+| 228|[0x80004928]<br>0x0000000037521769|- rs1_val == 0xFED775C526EA42ED and imm_val == 0x1D #nosat<br>                                                                     |[0x80001c44]:roriw t6, t5, 29<br> [0x80001c48]:sd t6, 1592(t0)<br>   |
+| 229|[0x80004930]<br>0x00000000206792C9|- rs1_val == 0xFF01DFA30CF25924 and imm_val == 0x05 #nosat<br>                                                                     |[0x80001c64]:roriw t6, t5, 5<br> [0x80001c68]:sd t6, 1600(t0)<br>    |
+| 230|[0x80004938]<br>0x0000000017046AB6|- rs1_val == 0xFF912F0A7046AB61 and imm_val == 0x04 #nosat<br>                                                                     |[0x80001c84]:roriw t6, t5, 4<br> [0x80001c88]:sd t6, 1608(t0)<br>    |
+| 231|[0x80004940]<br>0xFFFFFFFFD43DB43F|- rs1_val == 0xFFCA96C9D43DB43F and imm_val == 0x00 #nosat<br>                                                                     |[0x80001ca4]:roriw t6, t5, 0<br> [0x80001ca8]:sd t6, 1616(t0)<br>    |
+| 232|[0x80004948]<br>0x00000000504D6946|- rs1_val == 0xFFEB4B49194135A5 and imm_val == 0x1A #nosat<br>                                                                     |[0x80001cc4]:roriw t6, t5, 26<br> [0x80001cc8]:sd t6, 1624(t0)<br>   |
+| 233|[0x80004950]<br>0x000000003A63FA4B|- rs1_val == 0xFFF1A2ADB3A63FA4 and imm_val == 0x1C #nosat<br>                                                                     |[0x80001ce4]:roriw t6, t5, 28<br> [0x80001ce8]:sd t6, 1632(t0)<br>   |
+| 234|[0x80004958]<br>0x0000000013CC2AD9|- rs1_val == 0xFFF8306E89E6156C and imm_val == 0x1F #nosat<br>                                                                     |[0x80001d04]:roriw t6, t5, 31<br> [0x80001d08]:sd t6, 1640(t0)<br>   |
+| 235|[0x80004960]<br>0x0000000004D1D88B|- rs1_val == 0xFFFDA6CA22C13476 and imm_val == 0x16 #nosat<br>                                                                     |[0x80001d24]:roriw t6, t5, 22<br> [0x80001d28]:sd t6, 1648(t0)<br>   |
+| 236|[0x80004968]<br>0x000000004F4819D6|- rs1_val == 0xFFFE03B4AC9E9033 and imm_val == 0x19 #nosat<br>                                                                     |[0x80001d44]:roriw t6, t5, 25<br> [0x80001d48]:sd t6, 1656(t0)<br>   |
+| 237|[0x80004970]<br>0x000000002023DD6A|- rs1_val == 0xFFFF3AD31011EEB5 and imm_val == 0x1F #nosat<br>                                                                     |[0x80001d64]:roriw t6, t5, 31<br> [0x80001d68]:sd t6, 1664(t0)<br>   |
+| 238|[0x80004978]<br>0x000000000A4BD153|- rs1_val == 0xFFFF90F48525E8A9 and imm_val == 0x1F #nosat<br>                                                                     |[0x80001d84]:roriw t6, t5, 31<br> [0x80001d88]:sd t6, 1672(t0)<br>   |
+| 239|[0x80004980]<br>0xFFFFFFFFC2F1DE3F|- rs1_val == 0xFFFFD6E6BC7F85E3 and imm_val == 0x11 #nosat<br>                                                                     |[0x80001d9c]:roriw t6, t5, 17<br> [0x80001da0]:sd t6, 1680(t0)<br>   |
+| 240|[0x80004988]<br>0xFFFFFFFFC0AF58C1|- rs1_val == 0xFFFFE7F6AC60E057 and imm_val == 0x0F #nosat<br>                                                                     |[0x80001dbc]:roriw t6, t5, 15<br> [0x80001dc0]:sd t6, 1688(t0)<br>   |
+| 241|[0x80004990]<br>0xFFFFFFFFC7FB0300|- rs1_val == 0xFFFFF12863FD8180 and imm_val == 0x1F #nosat<br>                                                                     |[0x80001dd4]:roriw t6, t5, 31<br> [0x80001dd8]:sd t6, 1696(t0)<br>   |
+| 242|[0x80004998]<br>0xFFFFFFFFC31CACF2|- rs1_val == 0xFFFFFB5472B3CB0C and imm_val == 0x0A #nosat<br>                                                                     |[0x80001dec]:roriw t6, t5, 10<br> [0x80001df0]:sd t6, 1704(t0)<br>   |
+| 243|[0x800049a0]<br>0xFFFFFFFF85223E1C|- rs1_val == 0xFFFFFD8D3E1C8522 and imm_val == 0x10 #nosat<br>                                                                     |[0x80001e04]:roriw t6, t5, 16<br> [0x80001e08]:sd t6, 1712(t0)<br>   |
+| 244|[0x800049a8]<br>0x0000000077CDC54E|- rs1_val == 0xFFFFFE8F54E77CDC and imm_val == 0x14 #nosat<br>                                                                     |[0x80001e1c]:roriw t6, t5, 20<br> [0x80001e20]:sd t6, 1720(t0)<br>   |
+| 245|[0x800049b0]<br>0x0000000062DED4DE|- rs1_val == 0xFFFFFF048B7B5379 and imm_val == 0x02 #nosat<br>                                                                     |[0x80001e34]:roriw t6, t5, 2<br> [0x80001e38]:sd t6, 1728(t0)<br>    |
+| 246|[0x800049b8]<br>0x000000006F4930C9|- rs1_val == 0xFFFFFF856F4930C9 and imm_val == 0x00 #nosat<br>                                                                     |[0x80001e4c]:roriw t6, t5, 0<br> [0x80001e50]:sd t6, 1736(t0)<br>    |
+| 247|[0x800049c0]<br>0xFFFFFFFF97467C5D|- rs1_val == 0xFFFFFFDCC5D97467 and imm_val == 0x14 #nosat<br>                                                                     |[0x80001e64]:roriw t6, t5, 20<br> [0x80001e68]:sd t6, 1744(t0)<br>   |
+| 248|[0x800049c8]<br>0x000000001C2BF24F|- rs1_val == 0xFFFFFFE5C70AFC93 and imm_val == 0x1E #nosat<br>                                                                     |[0x80001e7c]:roriw t6, t5, 30<br> [0x80001e80]:sd t6, 1752(t0)<br>   |
+| 249|[0x800049d0]<br>0xFFFFFFFFABF5222C|- rs1_val == 0xFFFFFFF6A911655F and imm_val == 0x0B #nosat<br>                                                                     |[0x80001e94]:roriw t6, t5, 11<br> [0x80001e98]:sd t6, 1760(t0)<br>   |
+| 250|[0x800049d8]<br>0xFFFFFFFF8E5D2AC2|- rs1_val == 0xFFFFFFF974AB0A39 and imm_val == 0x0A #nosat<br>                                                                     |[0x80001eac]:roriw t6, t5, 10<br> [0x80001eb0]:sd t6, 1768(t0)<br>   |
+| 251|[0x800049e0]<br>0x0000000079016EB4|- rs1_val == 0xFFFFFFFCDD68F202 and imm_val == 0x11 #nosat<br>                                                                     |[0x80001ec4]:roriw t6, t5, 17<br> [0x80001ec8]:sd t6, 1776(t0)<br>   |
+| 252|[0x800049e8]<br>0x00000000042497A9|- rs1_val == 0xFFFFFFFE24BD4821 and imm_val == 0x0B #nosat<br>                                                                     |[0x80001edc]:roriw t6, t5, 11<br> [0x80001ee0]:sd t6, 1784(t0)<br>   |
+| 253|[0x800049f0]<br>0xFFFFFFFFF3339F6B|- rs1_val == 0xFFFFFFFF3ED7E667 and imm_val == 0x11 #nosat<br>                                                                     |[0x80001ef4]:roriw t6, t5, 17<br> [0x80001ef8]:sd t6, 1792(t0)<br>   |
+| 254|[0x800049f8]<br>0xFFFFFFFF871CFDFB|- rs1_val == 0xFFFFFFFFB871CFDF and imm_val == 0x1C #nosat<br>                                                                     |[0x80001f04]:roriw t6, t5, 28<br> [0x80001f08]:sd t6, 1800(t0)<br>   |
+| 255|[0x80004a00]<br>0x00000000538235DA|- rs1_val == 0xFFFFFFFFD29C11AE and imm_val == 0x1B #nosat<br>                                                                     |[0x80001f14]:roriw t6, t5, 27<br> [0x80001f18]:sd t6, 1808(t0)<br>   |
+| 256|[0x80004a08]<br>0xFFFFFFFF99AE1097|- rs1_val == 0xFFFFFFFFE109799A and imm_val == 0x0C #nosat<br>                                                                     |[0x80001f24]:roriw t6, t5, 12<br> [0x80001f28]:sd t6, 1816(t0)<br>   |
+| 257|[0x80004a10]<br>0x000000004FD3A02C|- rs1_val == 0xFFFFFFFFF4E80B13 and imm_val == 0x06 #nosat<br>                                                                     |[0x80001f34]:roriw t6, t5, 6<br> [0x80001f38]:sd t6, 1824(t0)<br>    |
+| 258|[0x80004a18]<br>0x00000000317CDBF5|- rs1_val == 0xFFFFFFFFF9B7EA62 and imm_val == 0x09 #nosat<br>                                                                     |[0x80001f44]:roriw t6, t5, 9<br> [0x80001f48]:sd t6, 1832(t0)<br>    |
+| 259|[0x80004a20]<br>0xFFFFFFFFA3EC71F8|- rs1_val == 0xFFFFFFFFFC51F638 and imm_val == 0x17 #nosat<br>                                                                     |[0x80001f54]:roriw t6, t5, 23<br> [0x80001f58]:sd t6, 1840(t0)<br>   |
+| 260|[0x80004a28]<br>0x000000007FF4931E|- rs1_val == 0xFFFFFFFFFE9263CF and imm_val == 0x05 #nosat<br>                                                                     |[0x80001f64]:roriw t6, t5, 5<br> [0x80001f68]:sd t6, 1848(t0)<br>    |
+| 261|[0x80004a30]<br>0x000000003FF21682|- rs1_val == 0xFFFFFFFFFF216823 and imm_val == 0x04 #nosat<br>                                                                     |[0x80001f74]:roriw t6, t5, 4<br> [0x80001f78]:sd t6, 1856(t0)<br>    |
+| 262|[0x80004a38]<br>0x000000003FE1850E|- rs1_val == 0xFFFFFFFFFF861438 and imm_val == 0x02 #nosat<br>                                                                     |[0x80001f84]:roriw t6, t5, 2<br> [0x80001f88]:sd t6, 1864(t0)<br>    |
+| 263|[0x80004a40]<br>0xFFFFFFFFF632743F|- rs1_val == 0xFFFFFFFFFFD8C9D0 and imm_val == 0x1A #nosat<br>                                                                     |[0x80001f94]:roriw t6, t5, 26<br> [0x80001f98]:sd t6, 1872(t0)<br>   |
+| 264|[0x80004a48]<br>0x000000005DBFF935|- rs1_val == 0xFFFFFFFFFFE4D576 and imm_val == 0x0A #nosat<br>                                                                     |[0x80001fa4]:roriw t6, t5, 10<br> [0x80001fa8]:sd t6, 1880(t0)<br>   |
+| 265|[0x80004a50]<br>0x0000000018C67FFF|- rs1_val == 0xFFFFFFFFFFF18C67 and imm_val == 0x14 #nosat<br>                                                                     |[0x80001fb4]:roriw t6, t5, 20<br> [0x80001fb8]:sd t6, 1888(t0)<br>   |
+| 266|[0x80004a58]<br>0xFFFFFFFF8FFFBB99|- rs1_val == 0xFFFFFFFFFFFBB998 and imm_val == 0x04 #nosat<br>                                                                     |[0x80001fc4]:roriw t6, t5, 4<br> [0x80001fc8]:sd t6, 1896(t0)<br>    |
+| 267|[0x80004a60]<br>0xFFFFFFFFFFC2561F|- rs1_val == 0xFFFFFFFFFFFC2561 and imm_val == 0x1C #nosat<br>                                                                     |[0x80001fd4]:roriw t6, t5, 28<br> [0x80001fd8]:sd t6, 1904(t0)<br>   |
+| 268|[0x80004a68]<br>0xFFFFFFFFD56BFFFD|- rs1_val == 0xFFFFFFFFFFFEEAB5 and imm_val == 0x0F #nosat<br>                                                                     |[0x80001fe4]:roriw t6, t5, 15<br> [0x80001fe8]:sd t6, 1912(t0)<br>   |
+| 269|[0x80004a70]<br>0xFFFFFFFFE0CA3FFF|- rs1_val == 0xFFFFFFFFFFFF0651 and imm_val == 0x13 #nosat<br>                                                                     |[0x80001ff4]:roriw t6, t5, 19<br> [0x80001ff8]:sd t6, 1920(t0)<br>   |
+| 270|[0x80004a78]<br>0x000000000E4FFFF9|- rs1_val == 0xFFFFFFFFFFFF90E4 and imm_val == 0x0C #nosat<br>                                                                     |[0x80002004]:roriw t6, t5, 12<br> [0x80002008]:sd t6, 1928(t0)<br>   |
+| 271|[0x80004a80]<br>0xFFFFFFFFFFFFCA23|- rs1_val == 0xFFFFFFFFFFFFCA23 and imm_val == 0x00 #nosat<br>                                                                     |[0x80002014]:roriw t6, t5, 0<br> [0x80002018]:sd t6, 1936(t0)<br>    |
+| 272|[0x80004a88]<br>0xFFFFFFFFFFE2A0FF|- rs1_val == 0xFFFFFFFFFFFFE2A0 and imm_val == 0x18 #nosat<br>                                                                     |[0x80002024]:roriw t6, t5, 24<br> [0x80002028]:sd t6, 1944(t0)<br>   |
+| 273|[0x80004a90]<br>0xFFFFFFFFE599FFFF|- rs1_val == 0xFFFFFFFFFFFFF2CC and imm_val == 0x0F #nosat<br>                                                                     |[0x80002034]:roriw t6, t5, 15<br> [0x80002038]:sd t6, 1952(t0)<br>   |
+| 274|[0x80004a98]<br>0xFFFFFFFFB4FFFFFA|- rs1_val == 0xFFFFFFFFFFFFFAB4 and imm_val == 0x08 #nosat<br>                                                                     |[0x80002040]:roriw t6, t5, 8<br> [0x80002044]:sd t6, 1960(t0)<br>    |
+| 275|[0x80004aa0]<br>0xFFFFFFFFFF9DDFFF|- rs1_val == 0xFFFFFFFFFFFFFCEE and imm_val == 0x13 #nosat<br>                                                                     |[0x8000204c]:roriw t6, t5, 19<br> [0x80002050]:sd t6, 1968(t0)<br>   |
+| 276|[0x80004aa8]<br>0xFFFFFFFFFE04FFFF|- rs1_val == 0xFFFFFFFFFFFFFE04 and imm_val == 0x10 #nosat<br>                                                                     |[0x80002058]:roriw t6, t5, 16<br> [0x8000205c]:sd t6, 1976(t0)<br>   |
+| 277|[0x80004ab0]<br>0xFFFFFFFFFFFF2AFF|- rs1_val == 0xFFFFFFFFFFFFFF2A and imm_val == 0x18 #nosat<br>                                                                     |[0x80002064]:roriw t6, t5, 24<br> [0x80002068]:sd t6, 1984(t0)<br>   |
+| 278|[0x80004ab8]<br>0xFFFFFFFF9DFFFFFF|- rs1_val == 0xFFFFFFFFFFFFFF9D and imm_val == 0x08 #nosat<br>                                                                     |[0x80002070]:roriw t6, t5, 8<br> [0x80002074]:sd t6, 1992(t0)<br>    |
+| 279|[0x80004ac0]<br>0xFFFFFFFFFFFF8FFF|- rs1_val == 0xFFFFFFFFFFFFFFC7 and imm_val == 0x17 #nosat<br>                                                                     |[0x8000207c]:roriw t6, t5, 23<br> [0x80002080]:sd t6, 2000(t0)<br>   |
+| 280|[0x80004ac8]<br>0xFFFFFFFFFFC9FFFF|- rs1_val == 0xFFFFFFFFFFFFFFE4 and imm_val == 0x0F #nosat<br>                                                                     |[0x80002088]:roriw t6, t5, 15<br> [0x8000208c]:sd t6, 2008(t0)<br>   |
+| 281|[0x80004ad0]<br>0xFFFFFFFFFFFFFFE5|- rs1_val == 0xFFFFFFFFFFFFFFF2 and imm_val == 0x1F #nosat<br>                                                                     |[0x80002094]:roriw t6, t5, 31<br> [0x80002098]:sd t6, 2016(t0)<br>   |
+| 282|[0x80004ad8]<br>0xFFFFFFFFFE3FFFFF|- rs1_val == 0xFFFFFFFFFFFFFFF8 and imm_val == 0x0A #nosat<br>                                                                     |[0x800020a0]:roriw t6, t5, 10<br> [0x800020a4]:sd t6, 2024(t0)<br>   |
+| 283|[0x80004ae0]<br>0xFFFFFFFFFFFFFFFB|- rs1_val == 0xFFFFFFFFFFFFFFFD and imm_val == 0x1F #nosat<br>                                                                     |[0x800020ac]:roriw t6, t5, 31<br> [0x800020b0]:sd t6, 2032(t0)<br>   |
+| 284|[0x80004af0]<br>0x0000000000000000|- rs1_val == 0xA438230000000000 and imm_val == 0x1E #nosat<br>                                                                     |[0x800020d8]:roriw t6, t5, 30<br> [0x800020dc]:sd t6, 0(t0)<br>      |

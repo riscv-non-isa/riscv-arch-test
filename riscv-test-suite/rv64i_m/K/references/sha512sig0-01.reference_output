@@ -12,8 +12,6 @@ ffffffff
 deadbeef
 ffffffff
 deadbeef
-00000000
-deadbeef
 ffffffff
 deadbeef
 ffffffff
@@ -40,7 +38,9 @@ ffffffff
 deadbeef
 ffffffff
 deadbeef
-00000000
+ffffffff
+deadbeef
+ffffffff
 deadbeef
 ffffffff
 deadbeef
@@ -60,9 +60,9 @@ e7ffffff
 deadbeef
 f3ffffff
 deadbeef
-f9ffffff
+00000000
 deadbeef
-7cffffff
+00000000
 deadbeef
 be7fffff
 deadbeef
@@ -294,7 +294,7 @@ deadbeef
 deadbeef
 00000001
 deadbeef
-ffffffff
+f9ffffff
 deadbeef
-ffffffff
+7cffffff
 deadbeef
