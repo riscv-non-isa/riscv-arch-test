@@ -8,4 +8,4 @@
 #ignore Mac file system artifacts
 *.DS_Store
 
-riscv-target/
+#riscv-target/
