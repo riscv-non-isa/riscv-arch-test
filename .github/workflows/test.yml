@@ -22,7 +22,7 @@ jobs:
         run: |
           export CHNGVER=$(grep -P -o '(?<=## \[).*(?=\])' -m1 CHANGELOG.md); 
           echo "CHANGELOG VERSION: $CHNGVER"
-          export TAGVER=$(git describe); 
+          export TAGVER=$(git describe --tags --abbrev=0); 
           echo "TAG VERSION: $TAGVER"
           if [ "$CHNGVER" = "$TAGVER" ]; then
               echo "No changelog update."
