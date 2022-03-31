@@ -253,10 +253,10 @@
   /**** to a return for anything above that (which causes a mismatch)****/
   /**********************************************************************/
   mtrampoline:		// 64 or 32 entry table
-  value = 0
+  .set value, 0
   .rept NUM_SPECD_INTCAUSES     	  // located at each possible int vectors
      j	mtrap_handler + 12*(value)  //offset < +/- 1MB
-     value = value + 1
+     .set value, value + 1
   .endr
   .rept RLENG-NUM_SPECD_INTCAUSES   // fill at each impossible entry
   	mret
@@ -730,7 +730,7 @@ rvtest_data_end:
     .else                                     ;\
         .set num,0                            ;\
     .endif                                    ;\
-     .if label == 3f                          ;\
+     .ifc label, 3f                          ;\
         .set num,0                            ;\
     .endif                                    ;\
     .rept num                                 ;\
@@ -749,7 +749,7 @@ rvtest_data_end:
     .else                                     ;\
         .set num,0                            ;\
     .endif                                    ;\
-    .if label == 1b                          ;\
+    .ifc label, 1b                          ;\
         .set num,0                            ;\
     .endif                                    ;\
     .rept num                                 ;\
@@ -789,7 +789,7 @@ rvtest_data_end:
     .else                                     ;\
         .set num,0                            ;\
     .endif                                    ;\
-     .if label == 3f                          ;\
+     .ifc label, 3f                          ;\
         .set num,0                            ;\
     .endif                                    ;\
     .rept num                                 ;\
@@ -804,7 +804,7 @@ rvtest_data_end:
     .else                                     ;\
         .set num,0                            ;\
     .endif                                    ;\
-     .if label == 1b                          ;\
+     .ifc label, 1b                          ;\
         .set num,0                            ;\
     .endif                                    ;\
     .rept num                                 ;\
@@ -1159,7 +1159,7 @@ RVTEST_SIGUPD_F(swreg,destreg,flagreg,offset)
     .else                                     ;\
         .set num,0                            ;\
     .endif                                    ;\
-    .if label == 3f                           ;\
+    .ifc label, 3f                           ;\
         .set num,0                            ;\
     .endif                                    ;\
     .rept num                                 ;\
@@ -1176,7 +1176,7 @@ RVTEST_SIGUPD_F(swreg,destreg,flagreg,offset)
     .else                                     ;\
         .set num,0                            ;\
     .endif                                    ;\
-     .if label == 1b                          ;\
+     .ifc label, 1b                          ;\
         .set num,0                            ;\
     .endif                                    ;\
     .rept num                                 ;\
@@ -1202,7 +1202,7 @@ RVTEST_SIGUPD_F(swreg,destreg,flagreg,offset)
     .else                                     ;\
         .set num,0                            ;\
     .endif                                    ;\
-    .if label == 3f                           ;\
+    .ifc label, 3f                           ;\
         .set num,0                            ;\
     .endif                                    ;\
     .rept num                                 ;\
@@ -1219,7 +1219,7 @@ RVTEST_SIGUPD_F(swreg,destreg,flagreg,offset)
     .else                                     ;\
         .set num,0                            ;\
     .endif                                    ;\
-     .if label == 1b                          ;\
+     .ifc label, 1b                          ;\
         .set num,0                            ;\
     .endif                                    ;\
     .rept num                                 ;\
@@ -1245,7 +1245,7 @@ RVTEST_SIGUPD_F(swreg,destreg,flagreg,offset)
     .else                                     ;\
         .set num,0                            ;\
     .endif                                    ;\
-    .if label == 3f                           ;\
+    .ifc label, 3f                           ;\
         .set num,0                            ;\
     .endif                                    ;\
     .rept num                                 ;\
@@ -1262,7 +1262,7 @@ RVTEST_SIGUPD_F(swreg,destreg,flagreg,offset)
     .else                                     ;\
         .set num,0                            ;\
     .endif                                    ;\
-     .if label == 1b                          ;\
+     .ifc label, 1b                          ;\
         .set num,0                            ;\
     .endif                                    ;\
     .rept num                                 ;\
