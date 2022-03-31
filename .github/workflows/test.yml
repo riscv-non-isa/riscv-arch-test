@@ -17,16 +17,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-
+      
+      - uses: actions-ecosystem/action-get-latest-tag@v1
+        id: get-latest-tag
+      
       - name: version check
         run: |
           export CHNGVER=$(grep -P -o '(?<=## \[).*(?=\])' -m1 CHANGELOG.md); 
           echo "CHANGELOG VERSION: $CHNGVER"
-          export TAGVER=$(git describe --tags --abbrev=0); 
+          export TAGVER=${{ steps.get-latest-tag.outputs.tag }}; 
           echo "TAG VERSION: $TAGVER"
           if [ "$CHNGVER" = "$TAGVER" ]; then
               echo "No changelog update."
+              exit 1
           else
               echo "Changelog updated."
-              exit 1
           fi
