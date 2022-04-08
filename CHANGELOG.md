@@ -1,7 +1,13 @@
 # CHANGELOG
 
-## [2.7.2] - 2022-03-31
+
+## [2.7.3] - 2022-03-31
   - Update framework to support test suite compilation with LLVM.
+
+## [2.7.2] - 2022-03-18
+- Add sigalign based changes to F&D sigupd macros.
+- Add helper macro to check offset legality.
+
 
 ## [2.7.1] - 2022-03-18
 - Fix bug in auto-offset update for SIGUPD macros.

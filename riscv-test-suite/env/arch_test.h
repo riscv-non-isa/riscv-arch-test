@@ -86,12 +86,17 @@
   #define FLREG fld
   #define FSREG fsd
   #define FREGWIDTH 8
-
+  #define SIGALIGN 8
 #else 
   #if FLEN==32
     #define FLREG flw
     #define FSREG fsw
     #define FREGWIDTH 4
+    #if XLEN==64
+        #define SIGALIGN 8
+    #else
+        #define SIGALIGN 4
+    #endif  
   #endif
 #endif
 
@@ -107,6 +112,8 @@
 #ifndef CODE_REL_TVAL_MSK
   #define CODE_REL_TVAL_MSK 0xD008 << (REGWIDTH*8-16)
 #endif
+
+
 
 
 // ----------------------------------- CODE BEGIN w/ TRAP HANDLER START ------------------------ //
@@ -574,6 +581,20 @@ rvtest_data_end:
 #define _ARG1(_1ST,...) _1ST
 #define NARG(...) _ARG5(__VA_OPT__(__VA_ARGS__,)4,3,2,1,0)
 
+ /* use this function to ensure individual signature stores don't exceed offset limits */
+  /* if they would, then update the base by offset & reduce offset by -2048             */
+  /* there is an option to pre-increment offset if there was a previous signture store  */
+
+#define CHK_OFFSET(_BREG, _SZ, _PRE_INC) \
+  .if (_PRE_INC!=0)                      ;\
+    .set offset, offset+_SZ             ;\
+  .endif                                ;\
+  .if offset>=2048                      ;\
+     addi  _BREG, _BREG, (2048 - _SZ)   ;\
+     .set  offset, offset -(2048 - _SZ)  ;\
+  .endif
+
+
  /* automatically adjust base and offset if offset gets too big */
  /* RVTEST_SIGUPD(basereg, sigreg)        stores sigreg at offset(basereg) and updates offset by regwidth */
  /* RVTEST_SIGUPD(basereg, sigreg,newoff) stores sigreg at newoff(basereg) and updates offset to regwidth+newoff */
@@ -581,10 +602,7 @@ rvtest_data_end:
   .if NARG(__VA_ARGS__) == 1                            ;\
 	.set offset,_ARG1(__VA_OPT__(__VA_ARGS__,0))	;\
   .endif                                                ;\
-  .if offset+REGWIDTH>=2048                             ;\
-     addi   _BR, _BR, offset                            ;\
-     .set   offset,   0					;\
-  .endif						;\
+  CHK_OFFSET(_BR,REGWIDTH,0);\
    SREG _R,offset(_BR)                                  ;\
   .set offset,offset+REGWIDTH
 
@@ -592,26 +610,30 @@ rvtest_data_end:
   .if NARG(__VA_ARGS__) == 1                            ;\
      .set offset,_ARG1(__VA_OPT__(__VA_ARGS__,0))	;\
   .endif                                                ;\
-  .if offset+2*REGWIDTH>=2048                           ;\
-     addi   _BR, _BR,offset                             ;\
-     .set   offset, 0					;\
-  .endif						;\
-   FSREG _R,offset(_BR)					;\
-   SREG  _F,offset+REGWIDTH(_BR)			;\
-   .set offset,offset+(2*REGWIDTH)
+  .if (offset & (SIGALIGN-1)) != 0                      ;\
+      .warning "Incorrect Offset Alignment for Signature.";\
+      .err                                              ;\
+  .endif                                                ;\
+  CHK_OFFSET(_BR,SIGALIGN,0);\
+  FSREG _R,offset(_BR)					;\
+  CHK_OFFSET(_BR,SIGALIGN,1);\
+   SREG  _F,offset(_BR)			;\
+   .set offset,offset+(SIGALIGN)
 
   
 #define RVTEST_SIGUPD_FID(_BR,_R,_F,...)		 \
   .if NARG(__VA_ARGS__) == 1                            ;\
      .set offset,_ARG1(__VA_OPT__(__VA_ARGS__,0))	;\
   .endif                                                ;\
-  .if offset+2*REGWIDTH>=2048                           ;\
-     addi   _BR, _BR,offset                             ;\
-     .set   offset, 0					;\
-  .endif						;\
+  .if (offset & (SIGALIGN-1)) != 0                      ;\
+      .warning "Incorrect Offset Alignment for Signature.";\
+      .err                                              ;\
+  .endif                                                ;\
+  CHK_OFFSET(_BR,SIGALIGN,0);\
     SREG _R,offset(_BR)					;\
-    SREG _F,offset+REGWIDTH(_BR)			;\
-    .set offset,offset+(2*REGWIDTH)
+  CHK_OFFSET(_BR,SIGALIGN,1);\
+    SREG _F,offset(_BR)			;\
+    .set offset,offset+(SIGALIGN)
   
 // for updating signatures when 'rd' is a paired register (64-bit) in Zpsfoperand extension in RV32.
 #define RVTEST_SIGUPD_P64(_BR,_R,_R_HI,...)		 \
@@ -635,13 +657,12 @@ rvtest_data_end:
   .if NARG(__VA_ARGS__) == 1                            ;\
      .set offset,_ARG1(__VA_OPT__(__VA_ARGS__,0))	;\
   .endif                                                ;\
-  .if offset+3*REGWIDTH>=2048                           ;\
-     addi   _BR, _BR,offset                             ;\
-     .set   offset, 0					;\
-  .endif						;\
+  CHK_OFFSET(_BR,REGWIDTH,0);\
     SREG _R,offset(_BR)					;\
+  CHK_OFFSET(_BR,REGWIDTH,1);\
     SREG _R_HI,offset+REGWIDTH(_BR)			;\
     RDOV(_F)                                            ;\
+  CHK_OFFSET(_BR,REGWIDTH,1);\
     SREG _F,offset+2*REGWIDTH(_BR)			;\
     .set offset,offset+(3*REGWIDTH)
 
