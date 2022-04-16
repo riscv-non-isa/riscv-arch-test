@@ -847,7 +847,7 @@ sub rs1,rs1,testreg                                                          ;\
 inst rs2, imm_val(rs1)                                                      ;\
 nop                                                                         ;\
 nop                                                                         ;\
-csrrs flagreg, fflags, x0                                                   ;\
+csrrw flagreg, fflags, x0                                                   ;\
 RVTEST_SIGUPD(swreg,flagreg,offset)
 
 #define TEST_LOAD_F(swreg,testreg,index,rs1,destreg,imm_val,offset,inst,adj,flagreg)   ;\
@@ -855,7 +855,7 @@ LA(rs1,rvtest_data+(index*4)+adj-imm_val)                                      ;
 inst destreg, imm_val(rs1)                                                   ;\
 nop                                                                         ;\
 nop                                                                         ;\
-csrrs flagreg, fflags, x0                                                   ;\
+csrrw flagreg, fflags, x0                                                   ;\
 RVTEST_SIGUPD_F(swreg,destreg,flagreg,offset) 
 
 #define TEST_CSR_FIELD(ADDRESS,TEMP_REG,MASK_REG,NEG_MASK_REG,VAL,DEST_REG,OFFSET,BASE_REG) \
@@ -905,7 +905,7 @@ RVTEST_SIGUPD_F(swreg,destreg,flagreg,offset)
       FLREG freg, val_offset(valaddr_reg); \
       csrrwi x0, frm, rm; \
       inst destreg, freg; \
-      csrrs flagreg, fflags, x0; \
+      csrrw flagreg, fflags, x0; \
     )
     
 //Tests for floating-point instructions with a single register operand and integer destination register
@@ -914,7 +914,7 @@ RVTEST_SIGUPD_F(swreg,destreg,flagreg,offset)
       FLREG freg, val_offset(valaddr_reg); \
       csrrwi x0, frm, rm; \
       inst destreg, freg; \
-      csrrs flagreg, fflags, x0; \
+      csrrw flagreg, fflags, x0; \
     )
     
 //Tests for floating-point instructions with a single register operand and integer operand register
@@ -923,7 +923,7 @@ RVTEST_SIGUPD_F(swreg,destreg,flagreg,offset)
       LREG freg, val_offset(valaddr_reg); \
       csrrwi x0, frm, rm; \
       inst destreg, freg; \
-      csrrs flagreg, fflags, x0; \
+      csrrw flagreg, fflags, x0; \
     )
 
 //Tests for instructions with register-register-immediate operands
@@ -956,7 +956,7 @@ RVTEST_SIGUPD_F(swreg,destreg,flagreg,offset)
       FLREG freg2, val_offset+FREGWIDTH(valaddr_reg); \
       csrrwi x0, frm, rm; \
       inst destreg, freg1, freg2; \
-      csrrs flagreg, fflags, x0; \
+      csrrw flagreg, fflags, x0; \
     )
     
 //Tests for floating-point CMP instructions with register-register operand
@@ -965,7 +965,7 @@ RVTEST_SIGUPD_F(swreg,destreg,flagreg,offset)
       FLREG freg1, val_offset(valaddr_reg); \
       FLREG freg2, val_offset+FREGWIDTH(valaddr_reg); \
       inst destreg, freg1, freg2; \
-      csrrs flagreg, fflags, x0; \
+      csrrw flagreg, fflags, x0; \
     )
 
 //Tests for floating-point R4 type instructions
@@ -976,7 +976,7 @@ RVTEST_SIGUPD_F(swreg,destreg,flagreg,offset)
       FLREG freg3, val_offset+2*FREGWIDTH(valaddr_reg); \
       csrrwi x0, frm, rm; \
       inst destreg, freg1, freg2, freg3; \
-      csrrs flagreg, fflags, x0; \
+      csrrw flagreg, fflags, x0; \
     )
 
 #define TEST_CNOP_OP( inst, testreg, imm_val, swreg, offset) \
