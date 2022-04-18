@@ -1,6 +1,10 @@
 # CHANGELOG
 
 
+## [2.7.4] - 2022-04-18
+  - Clean fflags in F* macros
+  - Update rv32i_m/F and rv64i_m/D signatures
+
 ## [2.7.3] - 2022-03-31
   - Update framework to support test suite compilation with LLVM.
 
