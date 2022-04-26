@@ -1,7 +1,18 @@
 # CHANGELOG
 
-## [2.7.2] - 2022-03-28
+## [2.7.5] - 2022-04-26
   - Updates for Bitmanip instructions.
+
+## [2.7.4] - 2022-04-18
+  - Clean fflags in F* macros
+  - Update rv32i_m/F and rv64i_m/D signatures
+
+## [2.7.3] - 2022-03-31
+  - Update framework to support test suite compilation with LLVM.
+
+## [2.7.2] - 2022-03-18
+- Add sigalign based changes to F&D sigupd macros.
+- Add helper macro to check offset legality.
 
 ## [2.7.1] - 2022-03-18
 - Fix bug in auto-offset update for SIGUPD macros.
