@@ -1,5 +1,14 @@
-# RISC-V Architecture Test SIG
 
+# :red_circle: IMPORTANT DISCLAIMER :red_circle:
+
+The current default branch [master] will be  completely replaced with branch [riscof-dev](https://github.com/riscv-non-isa/riscv-arch-test/tree/riscof-dev) on  **1st MAY 2022**.
+This transition essentially migrates the current framework to the RISCOF framework.
+This provides a much richer and configurable environment for targets to test their compatibility.
+The current framework will be archived and **NO LONGER SUPPORTED AFTER 1st MAY 2022.**
+It is therefore recommended that ALL model/target owners  migrate their targets to the riscof environment ASAP.
+More information on porting your target to RISCOF is available here: https://riscof.readthedocs.io/en/stable/
+
+# RISC-V Architecture Test SIG
 
 This is a repository for the work of the RISC-V Foundation Architecture Test SIG. The repository owners are:
 
@@ -13,6 +22,7 @@ For more details and documentation on the current testing framework see: [doc/RE
 For more details on the test format spec see: [spec/TestFormatSpec.adoc](spec/TestFormatSpec.adoc)
 
 For contributions and reporting issues please refer to [CONTRIBUTION.md](CONTRIBUTION.md)
+
 
 ## Test Disclaimers
 
