@@ -1,8 +1,14 @@
 # CHANGELOG
 
+## [2.7.0] - 2022-03-15
+  - Updated K Crypto (Scalar) instructions for the V.1.0.0 ratified spec.
+  - changed xperm.n -> xperm4 and xperm.b -> xperm8 instructions 
+  - removed unsupported packu
+
 ## [2.6.3] - 2022-03-04
   - import and synchronize P-ext changes in arch_test.h from riscv-ctg
   - automatically adjust base and offset if offset gets too big
+
 
 ## [2.6.2] - 2022-02-24
   - modified verify.sh to ignore comments in reference signature during diff operation [#230]
