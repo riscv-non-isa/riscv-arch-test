@@ -17,7 +17,7 @@ For contributions and reporting issues please refer to [CONTRIBUTION.md](CONTRIB
 For more details on the usage of the current framework see : [RISCOF](https://riscof.readthedocs.io/)
 
 **Note : The RISCOF framework requires a
-[riscv-config](https://github.com/riscv-software-src/riscv-config) YAML for describe the
+[riscv-config](https://github.com/riscv-software-src/riscv-config) YAML to describe the
 configurations implemented by the DUT**
 
 ## Old Framework
