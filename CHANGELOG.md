@@ -1,5 +1,7 @@
 # CHANGELOG
 
+## [3.0.0] - 2022-05-07
+  - Migration of test-suite to new RISCOF framework.
 
 ## [2.7.4] - 2022-04-18
   - Clean fflags in F* macros

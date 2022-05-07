@@ -237,23 +237,17 @@ First version of the document.
 The top level directory contains :
 
  - a `README.md` file providing high-level details about the RISC-V Architecture Testing Framework. 
- - top level `Makefile` for running the tests on a RISC-V implementation.
- - `ChangeLog` for logging changes with respect to code.
+ - `CHANGELOG.md` for logging changes with respect to code.
  -  complete license files for the Creative Commons and BSD licenses used by the task group.  
 
 There are then five top level directories.
 
 `doc`:: All the documentation for the project, written using _AsciiDoc_.
 
-`coverage`:: This directory contains a sub-directory structure similar to the `riscv-test-suite` directory. The coverage reports of each test-suite are available in the corresponding directories. The reports are available in the html and yaml formats. The directory also contains multiple coverpoint YAMLs which capture all the coverpoints of interest which are covered by all the tests in the `riscv-test-suite` directory.
-
-`riscv-target`:: Contains a further subdirectory for each target, within which are placed the `model_test.h` header for that target and a `device` directory for all the devices of that target. If the `$TARGETDIR` environment variable is set to another directory, the scripts will search this directory for targets instead.
-
-`riscv-test-env`:: This contains the `verify.sh` script which checks if the signatures generated the riscv-target device match the statically hosted reference signatures at the end of simulation. The directory also contains symbolic-links to the `arch_test.h` and `encoding.h` files present in the `riscv-test-suite/env` directory.
+`coverage`:: This directory contains multiple coverpoint YAMLs which capture all the coverpoints of 
+interest which are covered by all the tests in the `riscv-test-suite` directory.
 
 `riscv-test-suite`:: This contains a further `env` subdirectory which contains the `arch_test.h` and the `encoding.h` file which includes common assembly macros and routines which is used across the tests in the suite. Further directories are present which contain the actual architectural tests. The names and structure of these directories is based on the link:../test-pool structure guideline highlighted above. 
-
-`riscv-ovpsim`:: This contains a README pointing to the Imperas OVP riscvOVPsim simulator for use in architectural testing. 
 
 == Vocabulary
 === The architectural test
@@ -283,178 +277,6 @@ The <<The target shell, _target shell_>> is the software and hardware environmen
 
 == Porting a new target
 
-
-In this section, a short tutorial on how to add a user target to the RISC-V Architectural Test Framework is provided.
-
-The following steps demonstrate an example in which a target was replaced by the RISCV-ISA-SIM 
-(a.k.a Spike). In a similar way, any RISC-V ISA simulator or any RTL simulation model of the 
-RISC-V processor can be ported as a potential target for testing.
-
-=== Setup environment variables
-
-NOTE: `ROOTDIR` will always point to the riscv-arch-test repo.
-
-1. Clone the repository: 
-
-  ---
-  git clone https://github.com/riscv/riscv-arch-test.git
-  cd riscv-arch-test
-
-  ---
-
-2. Open the `Makefile.include` available in the root folder of the repository and edit the following
-variables based on your target:
-   
- a. `TARGETDIR` : set `TARGETDIR` to point to the directory which contains a sub-folder in the same name
- as the target. For example, the arch-test repo includes the targets: sail-riscv-c and spike
- under the `riscv-target` folder, in which case we set the `TARGETDIR` to riscv-target as shown
- below. One can set this completely arbitrary paths as suitable by the user.
- 
- 
-   ---
-   export TARGETDIR ?= $(ROOTDIR)/riscv-target
-   
-   ---
-
- b. `XLEN`: set XLEN to max supported XLEN. Allowed values are 32 and 64.
-
-   ---
-   export XLEN 							?= 64
-
-   ---
-
-c. `RISCV_TARGET`: set this variable to the name of the target. A folder of the same name must exist in 
-the `TARGETDIR` directory
-
-  ---
-  export RISCV_TARGET       ?= spike
-
-  ---
-
-d. `RISCV_DEVICE`: set the `RISCV_DEVICE` environment to the extension you want to compile, simulate and verify. Leave
-this blank if you want to iterate through all the supported extensions of the target. Allowed values
-are the individual names of the extensions supported by your target like: I, M, C or Zifencei, etc. Multiple extensions are not be provided.
-
-  ---
-  export RISCV_DEVICE       ?= 
-
-  ---
-
-e. `RISCV_TARGET_FLAGS`: set this to a string which needs to be passed to your target's Makefile.include files
-
-  ---
-  export RISCV_TARGET_FLAGS ?= 
-
-  ---
-
-f. `RISCV_ASSERT`: set this if you want to enable assertions on the test-suites. **Currently no tests use assertions.**
-  
-  ---
-  export RISCV_ASSERT       ?= 0
-
-  ---
-
-g. `JOBS`: set the number of parallel jobs (along with any other arguments) you would like to
-execute. Note that the target needs to  be coded in such a way to support parallel execution. Some
-targets use common intermediate files, rather than unique files, which makes them unsuitable for 
-parallel execution, these targets will need to be re-coded.
-  
-  ---
-  JOBS= -j1
-
-  ---
-
-3. Now inside your `TARGETDIR/RISCV_TARGET` directory you will need to create the following files:
-
-a. `model_test.h`: A header file containing the definition of the various target specific
-assembly macros that are required to compile and simulate the tests. The list and definition of the 
-required target specific macros is available in the link:../spec/TestFormatSpec.adoc[Test Format
-Specification]
-
-b. `link.ld`: A linker script to compile the tests for your target.
-
-c. Any other files required by the target (configuration scripts, logs, etc.) can also be placed in
-this directory.
-
-4. Inside the `TARGETDIR/RISCV_TARGET` directory create a new folder named: `device`. If your device
-is a 32-bit target then create a directory `device/rv32i_m`. If your device is a 64-bit target then
-create a directory `device/rv64i_m`. If your target is configurable on the `XLEN` parameter then
-both the folders need to be created. 
-
-5. Within the `rv32i_m`/`rv64i_m` directories sub-folders in the name of the extensions supported
-by the target need to be created. For eg. A target supporting the ISA RV32IMC_Zifence will have the
-following directory structure:
-   
-   ---
-   - rv32i_m/I
-   - rv32i_m/M
-   - rv32i_m/C
-   - rv32i_m/privilege
-   - rv32i_m/Zifencei
-
-   ---
-
-6. Each of the above extension directories will now need to include a file: `Makefile.include` which
-defines the following Makefile variables:
-
-a. `RUN_TARGET`:: This variable needs to include commands and steps to execute an ELF on target device. Note here that this variable should include all the necessary steps and arguments to run that specific test-suite. For example, in case of spike for the `rv32i_m/C` test-suite the corresponding `Makefile.include` has the `--isa=rv32ic` argument as opposed to just `--isa=rv32i` for the base `rv32i_m/I` test-suite. This variable should also include other steps to extract and sanitize the signature file as well for each test. The only argument available to this variable is the compiled `elf` file.
-
-b. `COMPILE_TARGET`:: This variable should include the commands and steps required to compile an assembly test for the target for each extension mentioned above. Note, currently only the GCC compiler is supported. This compiler takes `march` and `mabi` arguments from the corresponding architectural suite framework. `COMPILE_TARGET` will more or less be the same across test-suites. The only argument available to `COMPILE_TARGET` is the assembly file of one architectural test.
-
-The following figure depicts the final directory structure of a target device that should get created at the end of the above steps:
-
-[#img-testStruct]
-.File Structure of the Target directory
-image::./file-struct.jpg[TargetStruct]
-
-
-=== Generating Signature
-
-As previously mentioned the execution of each test on the target must generate a signature file. The name of the signature file should be `<test-file-name.signature_output>`. The signature file should follow the guidelines mentioned in the link:../spec/TestFormatSpec.adoc[`Test Format Specification`].
-
-In case of spike, we have ensured that the signature region is bounded by the labels: `begin_signature` and `end_signature`. This is enforced in the `RVMODEL_DATA_BEGIN` and `RVMODEL_DATA_END` macros defined in the `riscv-target/spike/model_test.h` file. Additionally, if you look closely at the `RUN_TARGET` variable defined in the `Makefile.include` files of the spike target, it includes a few bash commands to sanitize the signature produced from spike. This is done to conform the final signature file to the specification defined in the link:../spec/TestFormatSpec.adoc[`Test Format Specification`].
-
-=== Compile, simulate and verify the tests
-
-Once you have ported your target to the riscv-arch-test framework by following the above steps, you
-are now ready to compile, simulate and verify the tests on your target
-
-If you would like to compile, simulate and verify all the extension tests applicable to your target
-simply run `make` from the `ROOTDIR`. 
-
-NOTE: For the above to work the `RISCV_DEVICE` in  `ROOTDIR/Makefile.include` must be left empty. 
-
-If you would like to only compile the tests for a particular extension you can use the following
-command. 
-
-  make RISCV_DEVICE=M compile
-  make RISCV_DEVICE=C compile
-
-The arguments to the `RISCV_DEVICE` variable must be the extensions supported by the target. 
-NOTE: If `RISCV_DEVICE` is not defined/empty it will default to the `I` extension which is necessary
-for all targets.
-
-To simulate the compiled tests on your target:
-
-  make RISCV_DEVICE=M simulate
-  make RISCV_DEVICE=Zifencei simulate
-
-NOTE: If `RISCV_DEVICE` is not defined/empty it will default to the `I` extension which is necessary
-for all targets.
-
-To verify if the generated signatures match the corresponding reference signatures.
-
-  make RISCV_DEVICE=M verify 
-
-NOTE: If `RISCV_DEVICE` is not defined/empty it will default to the `I` extension which is necessary
-for all targets.
-
-All the above steps create and modify files in the `work` directory created in `ROOTDIR` folder. To
-clean the `workdir` simple run :
-
-  make clean
-
-By default the working directory is set to `ROOTDIR/work`. This can be overwritten by assigning a
-new working directory path via the command line. Note, the path must be absolute and not relative :
-
-  make WORK=/home/me/my_path/mywork clean compile simulate
+Please refer to the RISCOF's guide on [Running
+RISCV-ARCH-TESTS](https://riscof.readthedocs.io/en/stable/arch-tests.html) to run the architectural
+test-suite on your DUT.
