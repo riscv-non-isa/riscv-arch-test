@@ -639,17 +639,12 @@ rvtest_data_end:
 
 // for updating signatures that include flagreg when 'rd' is a paired register (64-bit) in Zpsfoperand extension in RV32.
 #define RVTEST_SIGUPD_PK64(_BR,_R,_R_HI,_F,...)\
-  .if NARG(__VA_ARGS__) == 1                            ;\
-     .set offset,_ARG1(__VA_OPT__(__VA_ARGS__,0))	;\
-  .endif                                                ;\
-  CHK_OFFSET(_BR,REGWIDTH,0);\
-    SREG _R,offset(_BR)					;\
-  CHK_OFFSET(_BR,REGWIDTH,1);\
-    SREG _R_HI,offset+REGWIDTH(_BR)			;\
-    rdov _F                                             ;\
-  CHK_OFFSET(_BR,REGWIDTH,1);\
-    SREG _F,offset+2*REGWIDTH(_BR)			;\
-    .set offset,offset+(3*REGWIDTH)
+	rdov _F                                         ;\
+ .if NARG(__VA_ARGS__) == 0				;\
+	RVTEST_SIGUPD_FID(_BR,_R,_R_HI)			;\
+ .else							;\
+	RVTEST_SIGUPD_FID(_BR,_R,_R_HI,_ARG1(__VA_OPT__(__VA_ARGS__,0)));\
+ .endif
 
 // for updating signatures that include flagreg for P-ext saturation instructions (RV32/RV64).
 #define RVTEST_SIGUPD_PK(_BR,_R,_F,OFFSET)\
