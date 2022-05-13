@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## [3.0.1] - 2022-05-13
+  - Rename "master" to "main" in github-action yamls
+
 ## [3.0.0] - 2022-05-07
   - Migration of test-suite to new RISCOF framework.
 
