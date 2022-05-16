@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## [3.0.2] - 2022-05-16
+  - Add test cases for P-ext
+  - Correct TEST_PKRR_OP() macro in arch_test.h 
+  - Avoid reusing RVTEST_SIGUPD_FID() for P-ext macros: SIGALIGN may not be defined when FLEN==0
+
 ## [3.0.1] - 2022-05-13
   - Rename "master" to "main" in github-action yamls
 
@@ -17,9 +22,8 @@
 - Add sigalign based changes to F&D sigupd macros.
 - Add helper macro to check offset legality.
 
-
 ## [2.7.1] - 2022-03-18
-- Fix bug in auto-offset update for SIGUPD macros.
+  - Fix bug in auto-offset update for SIGUPD macros.
 
 ## [2.7.0] - 2022-03-15
   - Updated K Crypto (Scalar) instructions for the V.1.0.0 ratified spec.
@@ -29,7 +33,6 @@
 ## [2.6.3] - 2022-03-04
   - import and synchronize P-ext changes in arch_test.h from riscv-ctg
   - automatically adjust base and offset if offset gets too big
-
 
 ## [2.6.2] - 2022-02-24
   - modified verify.sh to ignore comments in reference signature during diff operation [#230]
