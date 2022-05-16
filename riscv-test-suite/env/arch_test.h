@@ -629,29 +629,46 @@ rvtest_data_end:
     SREG _F,offset(_BR)			;\
     .set offset,offset+(SIGALIGN)
   
-// for updating signatures when 'rd' is a paired register (64-bit) in Zpsfoperand extension in RV32.
+// for updating signatures that include flagreg for P-ext saturation instructions (RV32/RV64).
+#define RVTEST_SIGUPD_PK(_BR,_R,_F,...)			 \
+  .if NARG(__VA_ARGS__) == 1                            ;\
+      .set offset,_ARG1(__VA_OPT__(__VA_ARGS__,0))	;\
+  .endif                                                ;\
+  .if (offset & (REGWIDTH-1)) != 0                      ;\
+      .warning "Incorrect Offset Alignment for Signature.";\
+      .err                                              ;\
+  .endif                                                ;\
+      CHK_OFFSET(_BR,REGWIDTH,0)			;\
+      SREG _R,offset(_BR)				;\
+      CHK_OFFSET(_BR,REGWIDTH,1)			;\
+      SREG _F,offset(_BR)				;\
+      .set offset,offset+(REGWIDTH)
+
+// for updating signatures when 'rd' is a paired register (64-bit) in Zpsfoperand extension in RV32; reuses RVTEST_SIGUPD_PK()
 #define RVTEST_SIGUPD_P64(_BR,_R,_R_HI,...)		 \
- .if NARG(__VA_ARGS__) == 0				;\
-	RVTEST_SIGUPD_FID(_BR,_R,_R_HI)			;\
- .else							;\
-	RVTEST_SIGUPD_FID(_BR,_R,_R_HI,_ARG1(__VA_OPT__(__VA_ARGS__,0)));\
- .endif
+  .if NARG(__VA_ARGS__) == 0				;\
+      RVTEST_SIGUPD_PK(_BR,_R,_R_HI)			;\
+  .else							;\
+      RVTEST_SIGUPD_PK(_BR,_R,_R_HI,_ARG1(__VA_OPT__(__VA_ARGS__,0)));\
+  .endif
 
 // for updating signatures that include flagreg when 'rd' is a paired register (64-bit) in Zpsfoperand extension in RV32.
-#define RVTEST_SIGUPD_PK64(_BR,_R,_R_HI,_F,...)\
- .if NARG(__VA_ARGS__) == 0				;\
-	RVTEST_SIGUPD_FID(_BR,_R,_R_HI)			;\
- .else							;\
-	RVTEST_SIGUPD_FID(_BR,_R,_R_HI,_ARG1(__VA_OPT__(__VA_ARGS__,0)));\
- .endif							;\
-	CHK_OFFSET(_BR,SIGALIGN,0);			;\
-	rdov _F						;\
-	SREG _F,offset(_BR)				;\
-	.set offset,offset+(SIGALIGN)
-
-// for updating signatures that include flagreg for P-ext saturation instructions (RV32/RV64).
-#define RVTEST_SIGUPD_PK(_BR,_R,_F,OFFSET)\
-  RVTEST_SIGUPD_FID(_BR,_R,_F,OFFSET)
+#define RVTEST_SIGUPD_PK64(_BR,_R,_R_HI,_F,...)		 \
+      rdov _F						;\
+  .if NARG(__VA_ARGS__) == 1				;\
+      .set offset,_ARG1(__VA_OPT__(__VA_ARGS__,0))	;\
+  .endif						;\
+  .if (offset & (REGWIDTH-1)) != 0			;\
+      .warning "Incorrect Offset Alignment for Signature.";\
+      .err						;\
+  .endif						;\
+      CHK_OFFSET(_BR,REGWIDTH,0)			;\
+      SREG _F,offset(_BR)				;\
+      CHK_OFFSET(_BR,REGWIDTH,1)			;\
+      SREG _R,offset(_BR)				;\
+      CHK_OFFSET(_BR,REGWIDTH,1)			;\
+      SREG _R_HI,offset(_BR)				;\
+      .set offset,offset+(REGWIDTH)
 
 #define RVTEST_VALBASEUPD(_BR,...)\
   .if NARG(__VA_ARGS__) == 0;\
@@ -1009,11 +1026,11 @@ RVTEST_SIGUPD_F(swreg,destreg,flagreg,offset)
 
 //Tests for instructions with a single register operand and update the saturation flag
 #define TEST_PKR_OP( inst, destreg, reg, correctval, val, flagreg, swreg, offset, testreg) \
-    TEST_CASE_FID(testreg, destreg, correctval, swreg, flagreg, offset, \
-      LI(reg, MASK_XLEN(val)); \
-      inst destreg, reg; \
-      rdov flagreg; \
-    )
+    LI(reg, MASK_XLEN(val)); \
+    inst destreg, reg; \
+    rdov flagreg; \
+    RVTEST_SIGUPD_PK(swreg,destreg,flagreg,offset); \
+    RVMODEL_IO_ASSERT_GPR_EQ(testreg, destreg, correctval)
 
 #if __riscv_xlen == 32
 //Tests for a instruction with register pair operands for all its three operands
