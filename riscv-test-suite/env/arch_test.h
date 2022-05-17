@@ -663,11 +663,11 @@ rvtest_data_end:
       .err						;\
   .endif						;\
       CHK_OFFSET(_BR,REGWIDTH,0)			;\
-      SREG _F,offset(_BR)				;\
-      CHK_OFFSET(_BR,REGWIDTH,1)			;\
       SREG _R,offset(_BR)				;\
       CHK_OFFSET(_BR,REGWIDTH,1)			;\
       SREG _R_HI,offset(_BR)				;\
+      CHK_OFFSET(_BR,REGWIDTH,1)			;\
+      SREG _F,offset(_BR)				;\
       .set offset,offset+(REGWIDTH)
 
 #define RVTEST_VALBASEUPD(_BR,...)\
