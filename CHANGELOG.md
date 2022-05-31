@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## [3.6.9] - 2023-06-25
+- Add support for Zicboz extension
+
 ## [3.6.8] - 2023-06-22
 - Fix broken hyperlink in README
 
