@@ -165,7 +165,7 @@ calculations:
 
 
 
-//////////////////// Locked bit TEST 1 /////////////////////////////////////////////
+	//////////////////// Locked bit TEST 1 /////////////////////////////////////////////
 	
 	csrw pmpcfg0, a5		// WRITE pmpcfg0 with ALL 1s, Locked the lock-bit [7,15,23,31]
 	nop
@@ -267,28 +267,6 @@ calculations:
 	RVTEST_SIGUPD(x3,a5,0)
     	RVMODEL_IO_ASSERT_GPR_EQ(x18, a5, 0x9F9F9F9F)
 	addi 	x3, x3, 4
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
