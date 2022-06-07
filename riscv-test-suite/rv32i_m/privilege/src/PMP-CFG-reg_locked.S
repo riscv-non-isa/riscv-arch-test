@@ -37,8 +37,26 @@ main:
 
     	li	a5,-1
 	li 	x4, 0x1F1F1F
-
-
+	csrw pmpcfg0, x0
+	csrw pmpcfg1, x0
+	csrw pmpcfg2, x0
+	csrw pmpcfg3, x0
+	csrw pmpaddr0, x0
+	csrw pmpaddr1, x0
+	csrw pmpaddr2, x0
+	csrw pmpaddr3, x0
+	csrw pmpaddr4, x0
+	csrw pmpaddr5, x0
+	csrw pmpaddr6, x0
+	csrw pmpaddr7, x0
+	csrw pmpaddr8, x0
+	csrw pmpaddr9, x0
+	csrw pmpaddr10, x0
+	csrw pmpaddr11, x0
+	csrw pmpaddr12, x0
+	csrw pmpaddr13, x0
+	csrw pmpaddr14, x0
+	csrw pmpaddr15, x0
 
 //////////////////// Locked bit TEST 1 /////////////////////////////////////////////
 	

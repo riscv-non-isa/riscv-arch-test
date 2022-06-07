@@ -25,6 +25,7 @@ RVTEST_CODE_BEGIN
 #ifdef TEST_CASE_1
     RVTEST_CASE(1,"//check ISA:=regex(.*32.*); check ISA:=regex(.*I.*Zicsr.*); def rvtest_mtrap_routine=True; def TEST_CASE_1=True",PMP-CFG-reg)
 RVTEST_SIGBASE( x3,signature_x3_1)
+#define OFFSET	4
 
 	.attribute unaligned_access, 0
 	.attribute stack_align, 16
@@ -34,63 +35,58 @@ RVTEST_SIGBASE( x3,signature_x3_1)
 main: 
 
 
+//////////////////// TEST START HERE  /////////////////////////////////////////////
 
-    	li	a5,-1
-	li 	x4, 0x1F1F1F
+     	li	a5,-1                   # PUT 0xFFFFFFFF
+		csrw pmpcfg0, x0
+	csrw pmpcfg1, x0
+	csrw pmpcfg2, x0
+	csrw pmpcfg3, x0
+	csrw pmpaddr0, x0
+	csrw pmpaddr1, x0
+	csrw pmpaddr2, x0
+	csrw pmpaddr3, x0
+	csrw pmpaddr4, x0
+	csrw pmpaddr5, x0
+	csrw pmpaddr6, x0
+	csrw pmpaddr7, x0
+	csrw pmpaddr8, x0
+	csrw pmpaddr9, x0
+	csrw pmpaddr10, x0
+	csrw pmpaddr11, x0
+	csrw pmpaddr12, x0
+	csrw pmpaddr13, x0
+	csrw pmpaddr14, x0
+	csrw pmpaddr15, x0
 
 
 
 
-///////////////////// Zero Bits TEST 01 ///////////////////////////////////////////
-    	
-	csrw pmpcfg0, a5		// WRITE pmpcfg0 with ALL 1s
+	csrr 	a2, pmpcfg0		# READ pmpcfg0		
+	RVTEST_SIGUPD(x3,a2,0)
+	addi 	x3, x3, OFFSET
+	
+	
+	csrw pmpcfg0, a5		# WRITE pmpcfg0 with ALL 1s, Locked the lock-bit [7,15,23,31]
 	nop
 	
-	csrr a5, pmpcfg0		// READ pmpcfg0		
+	csrr a4, pmpcfg0		# READ pmpcfg0		
+	RVTEST_SIGUPD(x3,a4,0)
+	addi 	x3, x3, OFFSET
 
-	// BIT 5-6, BIT 13-14, BIT 21-22, BIT 29-30 must be hardwired to zero
+#	// Verify that LOCKED bits are HIGH by displaying it in debugger
+		
 	
-	RVTEST_SIGUPD(x3,a5,0)
-    	RVMODEL_IO_ASSERT_GPR_EQ(x18, a5, 0x9F9F9F9F)
-	addi 	x3, x3, 4
 	
 
-//////////////////// Zero Bits TEST 02 /////////////////////////////////////////////
-	csrw pmpcfg1, a5		// WRITE pmpcfg1 with ALL 1s
+#	// TRY TO WRITE ADDRESS REGISTER. THIS WRITE SHOULD HAVE BEEN IGNORED 
+	csrw pmpaddr0, a5		# WRITE pmpaddr0 with some other values
 	nop
 	
-	csrr a5, pmpcfg1		// READ pmpcfg1		
-
-	// BIT 5-6, BIT 13-14, BIT 21-22, BIT 29-30 must be hardwired to zero
+	csrr a3, pmpaddr0		# READ pmpaddr0		
 	
-	RVTEST_SIGUPD(x3,a5,0)
-    	RVMODEL_IO_ASSERT_GPR_EQ(x18, a5, 0x9F9F9F9F)
-	addi 	x3, x3, 4
-	
-//////////////////// Zero Bits TEST 03 /////////////////////////////////////////////
-	csrw pmpcfg2, a5		// WRITE pmpcfg2 with ALL 1s
-	nop
-	
-	csrr a5, pmpcfg2		// READ pmpcfg2		
-
-	// BIT 5-6, BIT 13-14, BIT 21-22, BIT 29-30 must be hardwired to zero
-	
-	RVTEST_SIGUPD(x3,a5,0)
-    	RVMODEL_IO_ASSERT_GPR_EQ(x18, a5, 0x9F9F9F9F)
-	addi 	x3, x3, 4
-
-
-//////////////////// Zero Bits TEST 04 /////////////////////////////////////////////
-	csrw pmpcfg3, a5		// WRITE pmpcfg3 with ALL 1s
-	nop
-	
-	csrr a5, pmpcfg3		// READ pmpcfg3		
-
-	// BIT 5-6, BIT 13-14, BIT 21-22, BIT 29-30 must be hardwired to zero
-	
-	RVTEST_SIGUPD(x3,a5,0)
-    	RVMODEL_IO_ASSERT_GPR_EQ(x18, a5, 0x9F9F9F9F)
-	addi 	x3, x3, 4
+	RVTEST_SIGUPD(x3,a3,0)
+	addi 	x3, x3, OFFSET
 
 
 
@@ -100,22 +96,7 @@ main:
 	j exit
 
 
-	
 
-
-
-
-
-
-
-
-
-
-
-
-	
-
-	
  	.align 8
   	.global mtvec_handler
 mtvec_handler:
