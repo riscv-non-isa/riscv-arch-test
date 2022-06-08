@@ -38,7 +38,7 @@ main:
 //////////////////// TEST START HERE  /////////////////////////////////////////////
 
      	li	a5,-1                   # PUT 0xFFFFFFFF
-		csrw pmpcfg0, x0
+	csrw pmpcfg0, x0
 	csrw pmpcfg1, x0
 	csrw pmpcfg2, x0
 	csrw pmpcfg3, x0

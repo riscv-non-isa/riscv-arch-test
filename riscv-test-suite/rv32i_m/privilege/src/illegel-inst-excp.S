@@ -41,36 +41,38 @@ RVTEST_SIGBASE( x11,test_A_res)
 
   # Test vectored interrupts if they are supported.
 test_vectored_interrupts:
-  csrwi mip, MIP_SSIP
-  csrwi mie, MIP_SSIP
-  la t0, mtvec_handler + 1
-  csrrw s0, mtvec, t0
-  csrr t0, mtvec
-  andi t0, t0, 1
-  beqz t0, msip
-  csrsi mstatus, MSTATUS_MIE
+ 	 csrwi mip, MIP_SSIP
+  	csrwi mie, MIP_SSIP
+  	la t0, mtvec_handler + 1
+  	csrrw s0, mtvec, t0
+  	csrr t0, mtvec
+  	andi t0, t0, 1
+  	beqz t0, msip
+  	csrsi mstatus, MSTATUS_MIE
 1:
-  j 1b
+  	j 1b
+
 msip:
-  csrw mtvec, s0
+  	csrw mtvec, s0
 
   # Delegate supervisor software interrupts so WFI won't stall.
-  csrwi mideleg, MIP_SSIP
+  	csrwi mideleg, MIP_SSIP
   # Enter supervisor mode.
-  la t0, 1f
-  csrw mepc, t0
-  li t0, MSTATUS_MPP
-  csrc mstatus, t0
-  li t1, (MSTATUS_MPP & -MSTATUS_MPP) * PRV_S
-  csrs mstatus, t1
-  mret
+  	la t0, 1f
+  	csrw mepc, t0
+  	li t0, MSTATUS_MPP
+  	csrw mstatus, t0
+  	li t1, (MSTATUS_MPP & -MSTATUS_MPP) * PRV_S
+  	csrs mstatus, t1
+  	mret
 
 1:
   # Make sure WFI doesn't trap when TW=0.
-  wfi
+
+ 	 wfi
 bad3:
-  .word 0
-  j fail
+  	.word 0
+  	j fail
 
 bad4:
   # Make sure WFI does trap when TW=1.
