@@ -3,7 +3,7 @@ aes32dsi:
       - check ISA:=regex(.*RV32.*I.*K.*)
       - check ISA:=regex(.*RV32.*I.*Zkn.*)
       - check ISA:=regex(.*RV32.*I.*Zknd.*)
-    opcode: 
+    mnemonics: 
       aes32dsi: 0
     rs1: 
       <<: *all_regs
@@ -23,7 +23,7 @@ aes32dsmi:
       - check ISA:=regex(.*RV32.*I.*K.*)
       - check ISA:=regex(.*RV32.*I.*Zkn.*)
       - check ISA:=regex(.*RV32.*I.*Zknd.*)
-    opcode: 
+    mnemonics: 
       aes32dsmi: 0
     rs1: 
       <<: *all_regs
@@ -43,7 +43,7 @@ aes32esi:
       - check ISA:=regex(.*RV32.*I.*K.*)
       - check ISA:=regex(.*RV32.*I.*Zkn.*)
       - check ISA:=regex(.*RV32.*I.*Zkne.*)
-    opcode: 
+    mnemonics: 
       aes32esi: 0
     rs1: 
       <<: *all_regs
@@ -63,7 +63,7 @@ aes32esmi:
       - check ISA:=regex(.*RV32.*I.*K.*)
       - check ISA:=regex(.*RV32.*I.*Zkn.*)
       - check ISA:=regex(.*RV32.*I.*Zkne.*)
-    opcode: 
+    mnemonics: 
       aes32esmi: 0
     rs1: 
       <<: *all_regs
@@ -84,7 +84,7 @@ sm4ed:
       - check ISA:=regex(.*I.*Zk.*)
       - check ISA:=regex(.*I.*Zks.*)
       - check ISA:=regex(.*I.*Zksed.*)
-    opcode: 
+    mnemonics: 
       sm4ed: 0
     rs1: 
       <<: *all_regs
@@ -105,7 +105,7 @@ sm4ks:
       - check ISA:=regex(.*I.*Zk.*)
       - check ISA:=regex(.*I.*Zks.*)
       - check ISA:=regex(.*I.*Zksed.*)
-    opcode: 
+    mnemonics: 
       sm4ks: 0
     rs1: 
       <<: *all_regs
@@ -125,7 +125,7 @@ sha256sig0:
       - check ISA:=regex(.*I.*K.*)
       - check ISA:=regex(.*I.*Zkn.*)
       - check ISA:=regex(.*I.*Zknh.*)
-    opcode: 
+    mnemonics: 
       sha256sig0: 0
     rs1: 
       <<: *all_regs
@@ -144,7 +144,7 @@ sha256sig1:
       - check ISA:=regex(.*I.*K.*)
       - check ISA:=regex(.*I.*Zkn.*)
       - check ISA:=regex(.*I.*Zknh.*)
-    opcode: 
+    mnemonics: 
       sha256sig1: 0
     rs1: 
       <<: *all_regs
@@ -163,7 +163,7 @@ sha256sum0:
       - check ISA:=regex(.*I.*K.*)
       - check ISA:=regex(.*I.*Zkn.*)
       - check ISA:=regex(.*I.*Zknh.*)
-    opcode: 
+    mnemonics: 
       sha256sum0: 0
     rs1: 
       <<: *all_regs
@@ -182,7 +182,7 @@ sha256sum1:
       - check ISA:=regex(.*I.*K.*)
       - check ISA:=regex(.*I.*Zkn.*)
       - check ISA:=regex(.*I.*Zknh.*)
-    opcode: 
+    mnemonics: 
       sha256sum1: 0
     rs1: 
       <<: *all_regs
@@ -201,7 +201,7 @@ sm3p0:
       - check ISA:=regex(.*I.*K.*)
       - check ISA:=regex(.*I.*Zks.*)
       - check ISA:=regex(.*I.*Zksh.*)
-    opcode: 
+    mnemonics: 
       sm3p0: 0
     rs1: 
       <<: *all_regs
@@ -220,7 +220,7 @@ sm3p1:
       - check ISA:=regex(.*I.*K.*)
       - check ISA:=regex(.*I.*Zks.*)
       - check ISA:=regex(.*I.*Zksh.*)
-    opcode: 
+    mnemonics: 
       sm3p1: 0
     rs1: 
       <<: *all_regs
@@ -239,7 +239,7 @@ sha512sig0h:
       - check ISA:=regex(.*RV32.*I.*K.*)
       - check ISA:=regex(.*RV32.*I.*Zkn.*)
       - check ISA:=regex(.*RV32.*I.*Zknh.*)
-    opcode: 
+    mnemonics: 
       sha512sig0h: 0
     rs1: 
       <<: *all_regs
@@ -262,7 +262,7 @@ sha512sig0l:
       - check ISA:=regex(.*RV32.*I.*K.*)
       - check ISA:=regex(.*RV32.*I.*Zkn.*)
       - check ISA:=regex(.*RV32.*I.*Zknh.*)
-    opcode: 
+    mnemonics: 
       sha512sig0l: 0
     rs1: 
       <<: *all_regs
@@ -285,7 +285,7 @@ sha512sig1h:
       - check ISA:=regex(.*RV32.*I.*K.*)
       - check ISA:=regex(.*RV32.*I.*Zkn.*)
       - check ISA:=regex(.*RV32.*I.*Zknh.*)
-    opcode: 
+    mnemonics: 
       sha512sig1h: 0
     rs1: 
       <<: *all_regs
@@ -308,7 +308,7 @@ sha512sig1l:
       - check ISA:=regex(.*RV32.*I.*K.*)
       - check ISA:=regex(.*RV32.*I.*Zkn.*)
       - check ISA:=regex(.*RV32.*I.*Zknh.*)
-    opcode: 
+    mnemonics: 
       sha512sig1l: 0
     rs1: 
       <<: *all_regs
@@ -331,7 +331,7 @@ sha512sum0r:
       - check ISA:=regex(.*RV32.*I.*K.*)
       - check ISA:=regex(.*RV32.*I.*Zkn.*)
       - check ISA:=regex(.*RV32.*I.*Zknh.*)
-    opcode: 
+    mnemonics: 
       sha512sum0r: 0
     rs1: 
       <<: *all_regs
@@ -354,7 +354,7 @@ sha512sum1r:
       - check ISA:=regex(.*RV32.*I.*K.*)
       - check ISA:=regex(.*RV32.*I.*Zkn.*)
       - check ISA:=regex(.*RV32.*I.*Zknh.*)
-    opcode: 
+    mnemonics: 
       sha512sum1r: 0
     rs1: 
       <<: *all_regs
@@ -378,7 +378,7 @@ ror:
       - check ISA:=regex(.*I.*Zkn.*)
       - check ISA:=regex(.*I.*Zks.*)
       - check ISA:=regex(.*I.*Zbkb.*)
-    opcode: 
+    mnemonics: 
       ror: 0
     rs1: 
       <<: *all_regs
@@ -401,7 +401,7 @@ rol:
       - check ISA:=regex(.*I.*Zkn.*)
       - check ISA:=regex(.*I.*Zks.*)
       - check ISA:=regex(.*I.*Zbkb.*)
-    opcode: 
+    mnemonics: 
       rol: 0
     rs1: 
       <<: *all_regs
@@ -424,7 +424,7 @@ rori:
       - check ISA:=regex(.*I.*Zkn.*)
       - check ISA:=regex(.*I.*Zks.*)
       - check ISA:=regex(.*I.*Zbkb.*)
-    opcode: 
+    mnemonics: 
       rori: 0
     rs1: 
       <<: *all_regs
@@ -439,14 +439,16 @@ rori:
         'leading_zeros(32, ["rs1_val", "imm_val"], [32,5])': 0
         'trailing_zeros(32, ["rs1_val", "imm_val"], [32,5])': 0
         
-rev8:
+rev8_32:
     config: 
       - check ISA:=regex(.*I.*K.*)
       - check ISA:=regex(.*I.*Zks.*)
       - check ISA:=regex(.*I.*Zkn.*)
       - check ISA:=regex(.*I.*Zbkb.*)
-    opcode: 
+    mnemonics: 
       rev8: 0
+    base_op: grevi
+    p_op_cond: imm_val == 24
     rs1: 
       <<: *all_regs
     rd:
@@ -465,14 +467,44 @@ rev8:
         'trailing_zeros(64, ["rs1_val"], [32])': 0
         'bitmanip_dataset(xlen,["rs1_val"],signed=False)': 0
  
+brev8_32:
+    config:
+      - check ISA:=regex(.*I.*K.*)
+      - check ISA:=regex(.*I.*Zks.*)
+      - check ISA:=regex(.*I.*Zkn.*)
+      - check ISA:=regex(.*I.*Zbkb.*)
+    mnemonics:
+      brev8: 0
+    base_op: grevi
+    p_op_cond: imm_val == 7
+    rs1:
+      <<: *all_regs
+    rd:
+      <<: *all_regs
+    op_comb:
+      <<: *ifmt_op_comb
+    val_comb:
+      'rs1_val == 0x1020408': 0
+      'rs1_val == 0x2040801': 0
+      'rs1_val == 0x4080102': 0
+      'rs1_val == 0x8010204': 0
+      abstract_comb:
+        'leading_ones(64, ["rs1_val"], [32])': 0
+        'trailing_ones(64, ["rs1_val"], [32])': 0
+        'leading_zeros(64, ["rs1_val"], [32])': 0
+        'trailing_zeros(64, ["rs1_val"], [32])': 0
+        'bitmanip_dataset(xlen,["rs1_val"],signed=False)': 0
+
 zip:
     config: 
       - check ISA:=regex(.*I.*K.*)
       - check ISA:=regex(.*I.*Zkn.*)
       - check ISA:=regex(.*I.*Zks.*)
       - check ISA:=regex(.*I.*Zbkb.*)
-    opcode: 
+    mnemonics: 
       zip: 0
+    base_op: shfli
+    p_op_cond: imm_val == 15
     rs1: 
       <<: *all_regs
     rd:
@@ -492,8 +524,10 @@ unzip:
       - check ISA:=regex(.*I.*Zkn.*)
       - check ISA:=regex(.*I.*Zks.*)
       - check ISA:=regex(.*I.*Zbkb.*)
-    opcode: 
+    mnemonics: 
       unzip: 0
+    base_op: unshfli
+    p_op_cond: imm_val == 15
     rs1: 
       <<: *all_regs
     rd:
@@ -513,7 +547,7 @@ clmul:
       - check ISA:=regex(.*I.*Zks.*)
       - check ISA:=regex(.*I.*Zkn.*)
       - check ISA:=regex(.*I.*Zbkb.*)
-    opcode: 
+    mnemonics: 
       clmul: 0
     rs1: 
       <<: *all_regs
@@ -540,7 +574,7 @@ clmulh:
       - check ISA:=regex(.*I.*Zks.*)
       - check ISA:=regex(.*I.*Zkn.*)
       - check ISA:=regex(.*I.*Zbkb.*)
-    opcode: 
+    mnemonics: 
       clmulh: 0
     rs1: 
       <<: *all_regs
@@ -567,7 +601,7 @@ andn:
       - check ISA:=regex(.*I.*Zks.*)
       - check ISA:=regex(.*I.*Zkn.*)
       - check ISA:=regex(.*I.*Zbkb.*)
-    opcode: 
+    mnemonics: 
       andn: 0
     rs1: 
       <<: *all_regs
@@ -590,7 +624,7 @@ orn:
       - check ISA:=regex(.*I.*Zks.*)
       - check ISA:=regex(.*I.*Zkn.*)
       - check ISA:=regex(.*I.*Zbkb.*)
-    opcode: 
+    mnemonics: 
       orn: 0
     rs1: 
       <<: *all_regs
@@ -614,7 +648,7 @@ xnor:
       - check ISA:=regex(.*I.*Zks.*)
       - check ISA:=regex(.*I.*Zkn.*)
       - check ISA:=regex(.*I.*Zbkb.*)
-    opcode: 
+    mnemonics: 
       xnor: 0
     rs1: 
       <<: *all_regs
@@ -637,7 +671,7 @@ pack:
       - check ISA:=regex(.*I.*Zks.*)
       - check ISA:=regex(.*I.*Zkn.*)
       - check ISA:=regex(.*I.*Zbkb.*)
-    opcode: 
+    mnemonics: 
       pack: 0
     rs1: 
       <<: *all_regs
@@ -660,7 +694,7 @@ packh:
       - check ISA:=regex(.*I.*Zks.*)
       - check ISA:=regex(.*I.*Zkn.*)
       - check ISA:=regex(.*I.*Zbkb.*)
-    opcode: 
+    mnemonics: 
       packh: 0
     rs1: 
       <<: *all_regs
@@ -683,7 +717,7 @@ xperm8:
       - check ISA:=regex(.*I.*Zks.*)
       - check ISA:=regex(.*I.*Zkn.*)
       - check ISA:=regex(.*I.*Zbkx.*)
-    opcode: 
+    mnemonics: 
       xperm8: 0
     rs1: 
       <<: *all_regs
@@ -707,7 +741,7 @@ xperm4:
       - check ISA:=regex(.*I.*Zkn.*)
       - check ISA:=regex(.*I.*Zks.*)
       - check ISA:=regex(.*I.*Zbkx.*)
-    opcode: 
+    mnemonics: 
       xperm4: 0
     rs1: 
       <<: *all_regs
