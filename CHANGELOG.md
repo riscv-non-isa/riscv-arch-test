@@ -1,5 +1,6 @@
 # CHANGELOG
 
+
 ## [3.0.2] - 2022-06-09
   - Updates for crypto scalar instructions
 

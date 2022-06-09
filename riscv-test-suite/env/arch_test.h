@@ -11,8 +11,6 @@
 //   #define rvtest_gpr_save
 // #endif
 
-#define TEST_CASE_1
-
 //-----------------------------------------------------------------------
 // RV Arch Test Macros
 //-----------------------------------------------------------------------
@@ -738,12 +736,12 @@ rvtest_data_end:
     jalr x0,0(tempreg)                       ;\
 6:  LA(tempreg, 4f                          ) ;\
     jalr x0,0(tempreg)                        ;\
-1:  .if adj & 2 == 2                         ;\
+1:  .if (adj & 2 == 2) && (label == 1b)      ;\
     .fill 2,1,0x00                          ;\
     .endif                                    ;\
     xori rd,rd, 0x1                           ;\
     beq x0,x0,6b                               ;\
-    .if adj & 2 == 2                              ;\
+    .if (adj & 2 == 2) && (label == 1b)     ;\
     .fill 2,1,0x00                          ;\
     .endif                                    ;\
     .if (imm/2) - 2 >= 0                      ;\
@@ -776,13 +774,13 @@ rvtest_data_end:
     .rept num                                 ;\
     nop                                       ;\
     .endr                                     ;\
-3:  .if adj & 2 == 2                              ;\
+3:  .if (adj & 2 == 2) && (label == 3f)      ;\
     .fill 2,1,0x00                          ;\
     .endif                                    ;\
     xori rd,rd, 0x3                           ;\
     LA(tempreg, 4f                          ) ;\
     jalr x0,0(tempreg)                        ;\
-    .if adj&2 == 2                              ;\
+    .if (adj&2 == 2) && (label == 3f)       ;\
     .fill 2,1,0x00                     ;\
     .endif                                    ;\
 4: LA(tempreg, 5b                            ) ;\
