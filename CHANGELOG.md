@@ -1,7 +1,13 @@
 # CHANGELOG
 
-## [2.7.5] - 2022-04-26
-  - Updates for Bitmanip instructions.
+## [3.0.2] - 2022-06-09
+  - Updates for crypto scalar instructions
+
+## [3.0.1] - 2022-05-13
+  - Rename "master" to "main" in github-action yamls
+
+## [3.0.0] - 2022-05-07
+  - Migration of test-suite to new RISCOF framework.
 
 ## [2.7.4] - 2022-04-18
   - Clean fflags in F* macros
@@ -13,6 +19,7 @@
 ## [2.7.2] - 2022-03-18
 - Add sigalign based changes to F&D sigupd macros.
 - Add helper macro to check offset legality.
+
 
 ## [2.7.1] - 2022-03-18
 - Fix bug in auto-offset update for SIGUPD macros.
