@@ -1,13 +1,4 @@
 
-# :red_circle: IMPORTANT DISCLAIMER :red_circle:
-
-The current default branch [master] will be  completely replaced with branch [riscof-dev](https://github.com/riscv-non-isa/riscv-arch-test/tree/riscof-dev) on  **1st MAY 2022**.
-This transition essentially migrates the current framework to the RISCOF framework.
-This provides a much richer and configurable environment for targets to test their compatibility.
-The current framework will be archived and **NO LONGER SUPPORTED AFTER 1st MAY 2022.**
-It is therefore recommended that ALL model/target owners  migrate their targets to the riscof environment ASAP.
-More information on porting your target to RISCOF is available here: https://riscof.readthedocs.io/en/stable/
-
 # RISC-V Architecture Test SIG
 
 This is a repository for the work of the RISC-V Foundation Architecture Test SIG. The repository owners are:
@@ -17,30 +8,33 @@ This is a repository for the work of the RISC-V Foundation Architecture Test SIG
 
 Details of the RISC-V Foundation, the work of its task groups, and how to become a member can be found at [riscv.org](https://riscv.org/).
 
-For more details and documentation on the current testing framework see: [doc/README.adoc](doc/README.adoc)
+For more details and documentation on the current test environment see: [doc/README.adoc](doc/README.adoc)
 
 For more details on the test format spec see: [spec/TestFormatSpec.adoc](spec/TestFormatSpec.adoc)
 
 For contributions and reporting issues please refer to [CONTRIBUTION.md](CONTRIBUTION.md)
 
+For more details on the usage of the current framework see : [RISCOF](https://riscof.readthedocs.io/)
+
+**Note : The RISCOF framework requires a
+[riscv-config](https://github.com/riscv-software-src/riscv-config) YAML to describe the
+configurations implemented by the DUT**
+
+## Old Framework
+
+The older 2.x version of the framework (based on Makefiles) can be found in a separate branch :
+[old-framework-2.x](https://github.com/riscv-non-isa/riscv-arch-test/tree/old-framework-2.x). This
+branch is officiall no longer supported and all changes must occur on the main branch.
 
 ## Test Disclaimers
 
 The following are the exhaustive list of disclaimers that can be used as waivers by target owners 
 when reporting the status of pass/fail on the execution of the architectural suite on their respective targets.
 
-1. The references uploaded for the following misaligned load/store tests will match targets which do 
-   not support misaligned load/stores in hardware. Targets with hardware misaligned support for 
-   load/stores will fail these tests.
+1. For the following set of misaligned-tests, signature mismatches will occur if misaligned accesses can sometimes succeed (without an exception) and sometimes fail on the DUT.
 
    1. rv32i_m/privilege/src/misalign-[lb[u],lh[u],lw,sh,sb,sw]-01.S
    2. rv64i_m/privilege/src/misalign-[lb[u],lh[u],lw[u],ld,sb,sh,sw,sd]-01.S
-
-2. The references uploaded for the following misaligned instruction tests will match targets which 
-   have compressed extension support enabled by default. Targets without the compressed extension 
-   support will fail the following tests:
-   1. rv[32/64]i_m/privilege/src/misalign-b[ge[u],lt[u],eq,ne]-01.S
-   2. rv[32/64]i_m/privilege/src/misalign2-jalr-01.S
 
 3. The machine mode trap handler used in the privilege tests assumes one of the following conditions. 
    Targets not satisfying any of the following conditions are bound to fail the entire 

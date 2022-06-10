@@ -11,8 +11,6 @@
 //   #define rvtest_gpr_save
 // #endif
 
-#define TEST_CASE_1
-
 //-----------------------------------------------------------------------
 // RV Arch Test Macros
 //-----------------------------------------------------------------------
@@ -86,12 +84,17 @@
   #define FLREG fld
   #define FSREG fsd
   #define FREGWIDTH 8
-
+  #define SIGALIGN 8
 #else 
   #if FLEN==32
     #define FLREG flw
     #define FSREG fsw
     #define FREGWIDTH 4
+    #if XLEN==64
+        #define SIGALIGN 8
+    #else
+        #define SIGALIGN 4
+    #endif  
   #endif
 #endif
 
@@ -107,6 +110,8 @@
 #ifndef CODE_REL_TVAL_MSK
   #define CODE_REL_TVAL_MSK 0xD008 << (REGWIDTH*8-16)
 #endif
+
+
 
 
 // ----------------------------------- CODE BEGIN w/ TRAP HANDLER START ------------------------ //
@@ -253,10 +258,10 @@
   /**** to a return for anything above that (which causes a mismatch)****/
   /**********************************************************************/
   mtrampoline:		// 64 or 32 entry table
-  value = 0
+  .set value, 0
   .rept NUM_SPECD_INTCAUSES     	  // located at each possible int vectors
      j	mtrap_handler + 12*(value)  //offset < +/- 1MB
-     value = value + 1
+     .set value, value + 1
   .endr
   .rept RLENG-NUM_SPECD_INTCAUSES   // fill at each impossible entry
   	mret
@@ -574,6 +579,20 @@ rvtest_data_end:
 #define _ARG1(_1ST,...) _1ST
 #define NARG(...) _ARG5(__VA_OPT__(__VA_ARGS__,)4,3,2,1,0)
 
+ /* use this function to ensure individual signature stores don't exceed offset limits */
+  /* if they would, then update the base by offset & reduce offset by -2048             */
+  /* there is an option to pre-increment offset if there was a previous signture store  */
+
+#define CHK_OFFSET(_BREG, _SZ, _PRE_INC) \
+  .if (_PRE_INC!=0)                      ;\
+    .set offset, offset+_SZ             ;\
+  .endif                                ;\
+  .if offset>=2048                      ;\
+     addi  _BREG, _BREG, (2048 - _SZ)   ;\
+     .set  offset, offset -(2048 - _SZ)  ;\
+  .endif
+
+
  /* automatically adjust base and offset if offset gets too big */
  /* RVTEST_SIGUPD(basereg, sigreg)        stores sigreg at offset(basereg) and updates offset by regwidth */
  /* RVTEST_SIGUPD(basereg, sigreg,newoff) stores sigreg at newoff(basereg) and updates offset to regwidth+newoff */
@@ -581,10 +600,7 @@ rvtest_data_end:
   .if NARG(__VA_ARGS__) == 1                            ;\
 	.set offset,_ARG1(__VA_OPT__(__VA_ARGS__,0))	;\
   .endif                                                ;\
-  .if offset+REGWIDTH>=2048                             ;\
-     addi   _BR, _BR, offset                            ;\
-     .set   offset,   0					;\
-  .endif						;\
+  CHK_OFFSET(_BR,REGWIDTH,0);\
    SREG _R,offset(_BR)                                  ;\
   .set offset,offset+REGWIDTH
 
@@ -592,26 +608,30 @@ rvtest_data_end:
   .if NARG(__VA_ARGS__) == 1                            ;\
      .set offset,_ARG1(__VA_OPT__(__VA_ARGS__,0))	;\
   .endif                                                ;\
-  .if offset+2*REGWIDTH>=2048                           ;\
-     addi   _BR, _BR,offset                             ;\
-     .set   offset, 0					;\
-  .endif						;\
-   FSREG _R,offset(_BR)					;\
-   SREG  _F,offset+REGWIDTH(_BR)			;\
-   .set offset,offset+(2*REGWIDTH)
+  .if (offset & (SIGALIGN-1)) != 0                      ;\
+      .warning "Incorrect Offset Alignment for Signature.";\
+      .err                                              ;\
+  .endif                                                ;\
+  CHK_OFFSET(_BR,SIGALIGN,0);\
+  FSREG _R,offset(_BR)					;\
+  CHK_OFFSET(_BR,SIGALIGN,1);\
+   SREG  _F,offset(_BR)			;\
+   .set offset,offset+(SIGALIGN)
 
   
 #define RVTEST_SIGUPD_FID(_BR,_R,_F,...)		 \
   .if NARG(__VA_ARGS__) == 1                            ;\
      .set offset,_ARG1(__VA_OPT__(__VA_ARGS__,0))	;\
   .endif                                                ;\
-  .if offset+2*REGWIDTH>=2048                           ;\
-     addi   _BR, _BR,offset                             ;\
-     .set   offset, 0					;\
-  .endif						;\
+  .if (offset & (SIGALIGN-1)) != 0                      ;\
+      .warning "Incorrect Offset Alignment for Signature.";\
+      .err                                              ;\
+  .endif                                                ;\
+  CHK_OFFSET(_BR,SIGALIGN,0);\
     SREG _R,offset(_BR)					;\
-    SREG _F,offset+REGWIDTH(_BR)			;\
-    .set offset,offset+(2*REGWIDTH)
+  CHK_OFFSET(_BR,SIGALIGN,1);\
+    SREG _F,offset(_BR)			;\
+    .set offset,offset+(SIGALIGN)
   
 // for updating signatures when 'rd' is a paired register (64-bit) in Zpsfoperand extension in RV32.
 #define RVTEST_SIGUPD_P64(_BR,_R,_R_HI,...)		 \
@@ -635,13 +655,12 @@ rvtest_data_end:
   .if NARG(__VA_ARGS__) == 1                            ;\
      .set offset,_ARG1(__VA_OPT__(__VA_ARGS__,0))	;\
   .endif                                                ;\
-  .if offset+3*REGWIDTH>=2048                           ;\
-     addi   _BR, _BR,offset                             ;\
-     .set   offset, 0					;\
-  .endif						;\
+  CHK_OFFSET(_BR,REGWIDTH,0);\
     SREG _R,offset(_BR)					;\
+  CHK_OFFSET(_BR,REGWIDTH,1);\
     SREG _R_HI,offset+REGWIDTH(_BR)			;\
     RDOV(_F)                                            ;\
+  CHK_OFFSET(_BR,REGWIDTH,1);\
     SREG _F,offset+2*REGWIDTH(_BR)			;\
     .set offset,offset+(3*REGWIDTH)
 
@@ -717,12 +736,12 @@ rvtest_data_end:
     jalr x0,0(tempreg)                       ;\
 6:  LA(tempreg, 4f                          ) ;\
     jalr x0,0(tempreg)                        ;\
-1:  .if adj & 2 == 2                         ;\
+1:  .if (adj & 2 == 2) && (label == 1b)      ;\
     .fill 2,1,0x00                          ;\
     .endif                                    ;\
     xori rd,rd, 0x1                           ;\
     beq x0,x0,6b                               ;\
-    .if adj & 2 == 2                              ;\
+    .if (adj & 2 == 2) && (label == 1b)     ;\
     .fill 2,1,0x00                          ;\
     .endif                                    ;\
     .if (imm/2) - 2 >= 0                      ;\
@@ -730,7 +749,7 @@ rvtest_data_end:
     .else                                     ;\
         .set num,0                            ;\
     .endif                                    ;\
-     .if label == 3f                          ;\
+     .ifc label, 3f                          ;\
         .set num,0                            ;\
     .endif                                    ;\
     .rept num                                 ;\
@@ -749,19 +768,19 @@ rvtest_data_end:
     .else                                     ;\
         .set num,0                            ;\
     .endif                                    ;\
-    .if label == 1b                          ;\
+    .ifc label, 1b                          ;\
         .set num,0                            ;\
     .endif                                    ;\
     .rept num                                 ;\
     nop                                       ;\
     .endr                                     ;\
-3:  .if adj & 2 == 2                              ;\
+3:  .if (adj & 2 == 2) && (label == 3f)      ;\
     .fill 2,1,0x00                          ;\
     .endif                                    ;\
     xori rd,rd, 0x3                           ;\
     LA(tempreg, 4f                          ) ;\
     jalr x0,0(tempreg)                        ;\
-    .if adj&2 == 2                              ;\
+    .if (adj&2 == 2) && (label == 3f)       ;\
     .fill 2,1,0x00                     ;\
     .endif                                    ;\
 4: LA(tempreg, 5b                            ) ;\
@@ -789,7 +808,7 @@ rvtest_data_end:
     .else                                     ;\
         .set num,0                            ;\
     .endif                                    ;\
-     .if label == 3f                          ;\
+     .ifc label, 3f                          ;\
         .set num,0                            ;\
     .endif                                    ;\
     .rept num                                 ;\
@@ -804,7 +823,7 @@ rvtest_data_end:
     .else                                     ;\
         .set num,0                            ;\
     .endif                                    ;\
-     .if label == 1b                          ;\
+     .ifc label, 1b                          ;\
         .set num,0                            ;\
     .endif                                    ;\
     .rept num                                 ;\
@@ -849,7 +868,7 @@ sub rs1,rs1,testreg                                                          ;\
 inst rs2, imm_val(rs1)                                                      ;\
 nop                                                                         ;\
 nop                                                                         ;\
-csrrs flagreg, fflags, x0                                                   ;\
+csrrw flagreg, fflags, x0                                                   ;\
 RVTEST_SIGUPD(swreg,flagreg,offset)
 
 #define TEST_LOAD_F(swreg,testreg,index,rs1,destreg,imm_val,offset,inst,adj,flagreg)   ;\
@@ -857,7 +876,7 @@ LA(rs1,rvtest_data+(index*4)+adj-imm_val)                                      ;
 inst destreg, imm_val(rs1)                                                   ;\
 nop                                                                         ;\
 nop                                                                         ;\
-csrrs flagreg, fflags, x0                                                   ;\
+csrrw flagreg, fflags, x0                                                   ;\
 RVTEST_SIGUPD_F(swreg,destreg,flagreg,offset) 
 
 #define TEST_CSR_FIELD(ADDRESS,TEMP_REG,MASK_REG,NEG_MASK_REG,VAL,DEST_REG,OFFSET,BASE_REG) \
@@ -907,7 +926,7 @@ RVTEST_SIGUPD_F(swreg,destreg,flagreg,offset)
       FLREG freg, val_offset(valaddr_reg); \
       csrrwi x0, frm, rm; \
       inst destreg, freg; \
-      csrrs flagreg, fflags, x0; \
+      csrrw flagreg, fflags, x0; \
     )
     
 //Tests for floating-point instructions with a single register operand and integer destination register
@@ -916,7 +935,7 @@ RVTEST_SIGUPD_F(swreg,destreg,flagreg,offset)
       FLREG freg, val_offset(valaddr_reg); \
       csrrwi x0, frm, rm; \
       inst destreg, freg; \
-      csrrs flagreg, fflags, x0; \
+      csrrw flagreg, fflags, x0; \
     )
     
 //Tests for floating-point instructions with a single register operand and integer operand register
@@ -925,7 +944,7 @@ RVTEST_SIGUPD_F(swreg,destreg,flagreg,offset)
       LREG freg, val_offset(valaddr_reg); \
       csrrwi x0, frm, rm; \
       inst destreg, freg; \
-      csrrs flagreg, fflags, x0; \
+      csrrw flagreg, fflags, x0; \
     )
 
 //Tests for instructions with register-register-immediate operands
@@ -958,7 +977,7 @@ RVTEST_SIGUPD_F(swreg,destreg,flagreg,offset)
       FLREG freg2, val_offset+FREGWIDTH(valaddr_reg); \
       csrrwi x0, frm, rm; \
       inst destreg, freg1, freg2; \
-      csrrs flagreg, fflags, x0; \
+      csrrw flagreg, fflags, x0; \
     )
     
 //Tests for floating-point CMP instructions with register-register operand
@@ -967,7 +986,7 @@ RVTEST_SIGUPD_F(swreg,destreg,flagreg,offset)
       FLREG freg1, val_offset(valaddr_reg); \
       FLREG freg2, val_offset+FREGWIDTH(valaddr_reg); \
       inst destreg, freg1, freg2; \
-      csrrs flagreg, fflags, x0; \
+      csrrw flagreg, fflags, x0; \
     )
 
 //Tests for floating-point R4 type instructions
@@ -978,7 +997,7 @@ RVTEST_SIGUPD_F(swreg,destreg,flagreg,offset)
       FLREG freg3, val_offset+2*FREGWIDTH(valaddr_reg); \
       csrrwi x0, frm, rm; \
       inst destreg, freg1, freg2, freg3; \
-      csrrs flagreg, fflags, x0; \
+      csrrw flagreg, fflags, x0; \
     )
 
 #define TEST_CNOP_OP( inst, testreg, imm_val, swreg, offset) \
@@ -1159,7 +1178,7 @@ RVTEST_SIGUPD_F(swreg,destreg,flagreg,offset)
     .else                                     ;\
         .set num,0                            ;\
     .endif                                    ;\
-    .if label == 3f                           ;\
+    .ifc label, 3f                           ;\
         .set num,0                            ;\
     .endif                                    ;\
     .rept num                                 ;\
@@ -1176,7 +1195,7 @@ RVTEST_SIGUPD_F(swreg,destreg,flagreg,offset)
     .else                                     ;\
         .set num,0                            ;\
     .endif                                    ;\
-     .if label == 1b                          ;\
+     .ifc label, 1b                          ;\
         .set num,0                            ;\
     .endif                                    ;\
     .rept num                                 ;\
@@ -1202,7 +1221,7 @@ RVTEST_SIGUPD_F(swreg,destreg,flagreg,offset)
     .else                                     ;\
         .set num,0                            ;\
     .endif                                    ;\
-    .if label == 3f                           ;\
+    .ifc label, 3f                           ;\
         .set num,0                            ;\
     .endif                                    ;\
     .rept num                                 ;\
@@ -1219,7 +1238,7 @@ RVTEST_SIGUPD_F(swreg,destreg,flagreg,offset)
     .else                                     ;\
         .set num,0                            ;\
     .endif                                    ;\
-     .if label == 1b                          ;\
+     .ifc label, 1b                          ;\
         .set num,0                            ;\
     .endif                                    ;\
     .rept num                                 ;\
@@ -1245,7 +1264,7 @@ RVTEST_SIGUPD_F(swreg,destreg,flagreg,offset)
     .else                                     ;\
         .set num,0                            ;\
     .endif                                    ;\
-    .if label == 3f                           ;\
+    .ifc label, 3f                           ;\
         .set num,0                            ;\
     .endif                                    ;\
     .rept num                                 ;\
@@ -1262,7 +1281,7 @@ RVTEST_SIGUPD_F(swreg,destreg,flagreg,offset)
     .else                                     ;\
         .set num,0                            ;\
     .endif                                    ;\
-     .if label == 1b                          ;\
+     .ifc label, 1b                          ;\
         .set num,0                            ;\
     .endif                                    ;\
     .rept num                                 ;\
