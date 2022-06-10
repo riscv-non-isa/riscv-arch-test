@@ -1,8 +1,5 @@
 # CHANGELOG
 
-## [2.7.2] - 2022-03-28
-  - Updates for Bitmanip instructions.
-
 ## [2.7.1] - 2022-03-18
 - Fix bug in auto-offset update for SIGUPD macros.
 
