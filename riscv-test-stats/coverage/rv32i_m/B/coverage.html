@@ -253,18 +253,18 @@ function is_all_rows_hidden(value) {
 
 </script>
     <h1></h1>
-    <p>Report generated on 2022-03-10 13:04 GMT by <a href="https://pypi.python.org/pypi/riscof">riscof</a> v</p>
+    <p>Report generated on 2022-05-29 19:32 GMT by <a href="https://pypi.python.org/pypi/riscof">riscof</a> v</p>
     <h2>Environment</h2>
     <table id="environment">
       <tr>
         <td>Riscof Version</td>
-        <td>1.23.2</td></tr>
+        <td>1.24.0</td></tr>
       <tr>
         <td>Riscv-arch-test Version/Commit Id</td>
         <td>-</td></tr>
       <tr>
         <td>ISA</td>
-        <td>RV32IMFC_Zicsr_Zifencei_Zba_Zbb_Zbc_Zbs</td></tr>
+        <td>RV32IMCZicsr_Zifencei_Zba_Zbb_Zbc_Zbs</td></tr>
       <tr>
         <td>User Spec Version</td>
         <td>2.3</td></tr>
@@ -281,50 +281,24 @@ function is_all_rows_hidden(value) {
       </thead>
       <tbody>
           <tr>
-            <td class="col-yname">/home/anku/bmanip/new_trials/trial22/32/riscof_work/spike_parallel_isa_checked.yaml</td></tr>
+            <td class="col-yname">/home/anku/trials/bmanip/32/riscof_work-v2/spike_parallel_isa_checked.yaml</td></tr>
           <tr>
             <td class="extra" colspan="1">
               <div class="log">hart_ids: [0]
 hart0:
-    ISA: RV32IMFC_Zicsr_Zifencei_Zba_Zbb_Zbc_Zbs
+    ISA: RV32IMCZicsr_Zifencei_Zba_Zbb_Zbc_Zbs
     physical_addr_sz: 32
     User_Spec_Version: '2.3'
     supported_xlen:
       - 32
+    Privilege_Spec_Version: '1.10'
+    hw_data_misaligned_support: false
+    pmp_granularity: 0
+    custom_exceptions:
+    custom_interrupts:
     misa:
-        reset-val: 0x40001124
         rv32:
             accessible: true
-            mxl:
-                implemented: true
-                type:
-                    warl:
-                        dependency_fields: []
-                        legal:
-                          - mxl[1:0] in [0x1]
-                        wr_illegal:
-                          - Unchanged
-                description: Encodes the native base integer ISA width.
-                shadow:
-                shadow_type: rw
-                msb: 31
-                lsb: 30
-            extensions:
-                implemented: true
-                type:
-                    warl:
-                        dependency_fields: []
-                        legal:
-                          - extensions[25:0] bitmask [0x0001504, 0x0000000]
-                        wr_illegal:
-                          - Unchanged
-
-                description: Encodes the presence of the standard extensions, with
-                    a single bit per letter of the alphabet.
-                shadow:
-                shadow_type: rw
-                msb: 25
-                lsb: 0
             fields:
               - extensions
               - mxl
@@ -332,17 +306,43 @@ hart0:
                   -
                       - 26
                       - 29
+            mxl:
+                implemented: true
+                description: Encodes the native base integer ISA width.
+                shadow:
+                shadow_type: rw
+                msb: 31
+                lsb: 30
+                type:
+                    warl:
+                        dependency_fields: []
+                        legal:
+                          - mxl[1:0] in [0x1]
+                        wr_illegal:
+                          - unchanged
+            extensions:
+                implemented: true
+                description: Encodes the presence of the standard extensions, with
+                    a single bit per letter of the alphabet.
+                shadow:
+                shadow_type: rw
+                msb: 25
+                lsb: 0
+                type:
+                    warl:
+                        dependency_fields: []
+                        legal:
+                          - extensions[25:0] bitmask [0x1104, 0x00000000]
+                        wr_illegal:
+                          - unchanged
+
+        rv64:
+            accessible: false
         description: misa is a read-write register reporting the ISA supported by
             the hart.
         address: 769
         priv_mode: M
-        rv64:
-            accessible: false
-    Privilege_Spec_Version: '1.10'
-    hw_data_misaligned_support: false
-    pmp_granularity: 0
-    custom_exceptions:
-    custom_interrupts:
+        reset-val: 1073746180
     mstatus:
         rv32:
             accessible: true
@@ -442,20 +442,13 @@ hart0:
                 lsb: 11
                 type: {ro_constant: 0}
             fs:
-                implemented: true
+                implemented: false
                 description: Encodes the status of the floating-point unit, including
                     the CSR fcsr and floating-point data registers.
                 shadow:
                 shadow_type: rw
                 msb: 14
                 lsb: 13
-                type:
-                    warl:
-                        dependency_fields: []
-                        legal:
-                          - fs[1:0] in [0x0:0x3]
-                        wr_illegal:
-                          - unchanged
             xs:
                 implemented: false
                 description: Encodes the status of additional user-mode extensions
@@ -512,16 +505,13 @@ hart0:
                 msb: 22
                 lsb: 22
             sd:
-                implemented: true
+                implemented: false
                 description: Read-only bit that summarizes whether either the FS field
                     or XS field signals the presence of some dirty state.
                 shadow:
                 shadow_type: rw
                 msb: 31
                 lsb: 31
-                type:
-                    wlrl:
-                      - 0:1
         rv64:
             accessible: false
         description: The mstatus register keeps track of and controls the hart’s current
@@ -533,12 +523,14 @@ hart0:
         rv32:
             accessible: true
             fields:
+              - sbe
+              - mbe
               - gva
               - mpv
               -
                   -
                       - 0
-                      - 5
+                      - 3
                   -
                       - 8
                       - 31
@@ -556,6 +548,22 @@ hart0:
                 shadow_type: rw
                 msb: 6
                 lsb: 6
+            mbe:
+                implemented: false
+                description: control the endianness of memory accesses other than
+                    instruction fetches for machine mode
+                shadow:
+                shadow_type: rw
+                msb: 5
+                lsb: 5
+            sbe:
+                implemented: false
+                description: control the endianness of memory accesses other than
+                    instruction fetches for supervisor mode
+                shadow:
+                shadow_type: rw
+                msb: 4
+                lsb: 4
         rv64:
             accessible: false
         description: The mstatush register keeps track of and controls the hart’s
@@ -4314,7 +4322,7 @@ hart0:
           </tbody>
           <tbody>
           <tr>
-            <td class="col-yname">/home/anku/bmanip/new_trials/trial22/32/riscof_work/spike_parallel_platform_checked.yaml</td></tr>
+            <td class="col-yname">/home/anku/trials/bmanip/32/riscof_work-v2/spike_parallel_platform_checked.yaml</td></tr>
           <tr>
             <td class="extra" colspan="1">
               <div class="log">mtime:
@@ -4354,9 +4362,9 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/32/suite/andn-01.S</td>
-          <td class="col-tfprint">20140</td>          
-          <td class="col-tcode">12872</td>          
+          <td class="col-tname">/home/anku/trials/bmanip/32/suite/andn-01.S</td>
+          <td class="col-tfprint">20148</td>          
+          <td class="col-tcode">12888</td>          
           <td class="col-tdata">16</td>          
           <td class="col-tsign">2368</td>          
           <td class="col-tcov">{'andn'}</td>          
@@ -4364,8 +4372,8 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/32/suite/bclr-01.S</td>
-          <td class="col-tfprint">11392</td>          
+          <td class="col-tname">/home/anku/trials/bmanip/32/suite/bclr-01.S</td>
+          <td class="col-tfprint">11396</td>          
           <td class="col-tcode">5336</td>          
           <td class="col-tdata">16</td>          
           <td class="col-tsign">1168</td>          
@@ -4374,7 +4382,7 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/32/suite/bclri-01.S</td>
+          <td class="col-tname">/home/anku/trials/bmanip/32/suite/bclri-01.S</td>
           <td class="col-tfprint">7916</td>          
           <td class="col-tcode">2360</td>          
           <td class="col-tdata">16</td>          
@@ -4384,8 +4392,8 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/32/suite/bext-01.S</td>
-          <td class="col-tfprint">11392</td>          
+          <td class="col-tname">/home/anku/trials/bmanip/32/suite/bext-01.S</td>
+          <td class="col-tfprint">11396</td>          
           <td class="col-tcode">5320</td>          
           <td class="col-tdata">16</td>          
           <td class="col-tsign">1168</td>          
@@ -4394,7 +4402,7 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/32/suite/bexti-01.S</td>
+          <td class="col-tname">/home/anku/trials/bmanip/32/suite/bexti-01.S</td>
           <td class="col-tfprint">7916</td>          
           <td class="col-tcode">2360</td>          
           <td class="col-tdata">16</td>          
@@ -4404,9 +4412,9 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/32/suite/binv-01.S</td>
-          <td class="col-tfprint">11908</td>          
-          <td class="col-tcode">5832</td>          
+          <td class="col-tname">/home/anku/trials/bmanip/32/suite/binv-01.S</td>
+          <td class="col-tfprint">11932</td>          
+          <td class="col-tcode">5848</td>          
           <td class="col-tdata">16</td>          
           <td class="col-tsign">1168</td>          
           <td class="col-tcov">{'binv'}</td>          
@@ -4414,7 +4422,7 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/32/suite/binvi-01.S</td>
+          <td class="col-tname">/home/anku/trials/bmanip/32/suite/binvi-01.S</td>
           <td class="col-tfprint">7916</td>          
           <td class="col-tcode">2360</td>          
           <td class="col-tdata">16</td>          
@@ -4424,8 +4432,8 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/32/suite/bset-01.S</td>
-          <td class="col-tfprint">11392</td>          
+          <td class="col-tname">/home/anku/trials/bmanip/32/suite/bset-01.S</td>
+          <td class="col-tfprint">11396</td>          
           <td class="col-tcode">5320</td>          
           <td class="col-tdata">16</td>          
           <td class="col-tsign">1168</td>          
@@ -4434,7 +4442,7 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/32/suite/bseti-01.S</td>
+          <td class="col-tname">/home/anku/trials/bmanip/32/suite/bseti-01.S</td>
           <td class="col-tfprint">7916</td>          
           <td class="col-tcode">2360</td>          
           <td class="col-tdata">16</td>          
@@ -4444,8 +4452,8 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/32/suite/clmul-01.S</td>
-          <td class="col-tfprint">8540</td>          
+          <td class="col-tname">/home/anku/trials/bmanip/32/suite/clmul-01.S</td>
+          <td class="col-tfprint">8536</td>          
           <td class="col-tcode">2968</td>          
           <td class="col-tdata">16</td>          
           <td class="col-tsign">656</td>          
@@ -4454,8 +4462,8 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/32/suite/clmulh-01.S</td>
-          <td class="col-tfprint">8540</td>          
+          <td class="col-tname">/home/anku/trials/bmanip/32/suite/clmulh-01.S</td>
+          <td class="col-tfprint">8536</td>          
           <td class="col-tcode">2968</td>          
           <td class="col-tdata">16</td>          
           <td class="col-tsign">656</td>          
@@ -4464,8 +4472,8 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/32/suite/clmulr-01.S</td>
-          <td class="col-tfprint">8540</td>          
+          <td class="col-tname">/home/anku/trials/bmanip/32/suite/clmulr-01.S</td>
+          <td class="col-tfprint">8536</td>          
           <td class="col-tcode">2968</td>          
           <td class="col-tdata">16</td>          
           <td class="col-tsign">656</td>          
@@ -4474,7 +4482,7 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/32/suite/clz-01.S</td>
+          <td class="col-tname">/home/anku/trials/bmanip/32/suite/clz-01.S</td>
           <td class="col-tfprint">6112</td>          
           <td class="col-tcode">936</td>          
           <td class="col-tdata">16</td>          
@@ -4484,7 +4492,7 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/32/suite/cpop-01.S</td>
+          <td class="col-tname">/home/anku/trials/bmanip/32/suite/cpop-01.S</td>
           <td class="col-tfprint">6112</td>          
           <td class="col-tcode">936</td>          
           <td class="col-tdata">16</td>          
@@ -4494,7 +4502,7 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/32/suite/ctz-01.S</td>
+          <td class="col-tname">/home/anku/trials/bmanip/32/suite/ctz-01.S</td>
           <td class="col-tfprint">6112</td>          
           <td class="col-tcode">936</td>          
           <td class="col-tdata">16</td>          
@@ -4504,9 +4512,9 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/32/suite/max-01.S</td>
-          <td class="col-tfprint">19580</td>          
-          <td class="col-tcode">12392</td>          
+          <td class="col-tname">/home/anku/trials/bmanip/32/suite/max-01.S</td>
+          <td class="col-tfprint">19588</td>          
+          <td class="col-tcode">12408</td>          
           <td class="col-tdata">16</td>          
           <td class="col-tsign">2288</td>          
           <td class="col-tcov">{'max'}</td>          
@@ -4514,9 +4522,9 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/32/suite/maxu-01.S</td>
-          <td class="col-tfprint">19580</td>          
-          <td class="col-tcode">12392</td>          
+          <td class="col-tname">/home/anku/trials/bmanip/32/suite/maxu-01.S</td>
+          <td class="col-tfprint">19588</td>          
+          <td class="col-tcode">12408</td>          
           <td class="col-tdata">16</td>          
           <td class="col-tsign">2288</td>          
           <td class="col-tcov">{'maxu'}</td>          
@@ -4524,9 +4532,9 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/32/suite/min-01.S</td>
-          <td class="col-tfprint">19580</td>          
-          <td class="col-tcode">12392</td>          
+          <td class="col-tname">/home/anku/trials/bmanip/32/suite/min-01.S</td>
+          <td class="col-tfprint">19588</td>          
+          <td class="col-tcode">12408</td>          
           <td class="col-tdata">16</td>          
           <td class="col-tsign">2288</td>          
           <td class="col-tcov">{'min'}</td>          
@@ -4534,9 +4542,9 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/32/suite/minu-01.S</td>
-          <td class="col-tfprint">19580</td>          
-          <td class="col-tcode">12392</td>          
+          <td class="col-tname">/home/anku/trials/bmanip/32/suite/minu-01.S</td>
+          <td class="col-tfprint">19588</td>          
+          <td class="col-tcode">12408</td>          
           <td class="col-tdata">16</td>          
           <td class="col-tsign">2288</td>          
           <td class="col-tcov">{'minu'}</td>          
@@ -4544,19 +4552,19 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/32/suite/orc.b-01.S</td>
+          <td class="col-tname">/home/anku/trials/bmanip/32/suite/orcb_32-01.S</td>
           <td class="col-tfprint">6192</td>          
           <td class="col-tcode">1000</td>          
           <td class="col-tdata">16</td>          
           <td class="col-tsign">288</td>          
-          <td class="col-tcov">{'orc.b'}</td>          
+          <td class="col-tcov">{'orcb_32'}</td>          
         </tr></tbody>
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/32/suite/orn-01.S</td>
-          <td class="col-tfprint">20140</td>          
-          <td class="col-tcode">12872</td>          
+          <td class="col-tname">/home/anku/trials/bmanip/32/suite/orn-01.S</td>
+          <td class="col-tfprint">20148</td>          
+          <td class="col-tcode">12888</td>          
           <td class="col-tdata">16</td>          
           <td class="col-tsign">2368</td>          
           <td class="col-tcov">{'orn'}</td>          
@@ -4564,19 +4572,19 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/32/suite/rev8-01.S</td>
+          <td class="col-tname">/home/anku/trials/bmanip/32/suite/rev8_32-01.S</td>
           <td class="col-tfprint">7844</td>          
           <td class="col-tcode">2312</td>          
           <td class="col-tdata">16</td>          
           <td class="col-tsign">624</td>          
-          <td class="col-tcov">{'rev8'}</td>          
+          <td class="col-tcov">{'rev8_32'}</td>          
         </tr></tbody>
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/32/suite/rol-01.S</td>
-          <td class="col-tfprint">12072</td>          
-          <td class="col-tcode">6088</td>          
+          <td class="col-tname">/home/anku/trials/bmanip/32/suite/rol-01.S</td>
+          <td class="col-tfprint">12084</td>          
+          <td class="col-tcode">6104</td>          
           <td class="col-tdata">16</td>          
           <td class="col-tsign">1088</td>          
           <td class="col-tcov">{'rol'}</td>          
@@ -4584,9 +4592,9 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/32/suite/ror-01.S</td>
-          <td class="col-tfprint">12072</td>          
-          <td class="col-tcode">6088</td>          
+          <td class="col-tname">/home/anku/trials/bmanip/32/suite/ror-01.S</td>
+          <td class="col-tfprint">12084</td>          
+          <td class="col-tcode">6104</td>          
           <td class="col-tdata">16</td>          
           <td class="col-tsign">1088</td>          
           <td class="col-tcov">{'ror'}</td>          
@@ -4594,7 +4602,7 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/32/suite/rori-01.S</td>
+          <td class="col-tname">/home/anku/trials/bmanip/32/suite/rori-01.S</td>
           <td class="col-tfprint">7916</td>          
           <td class="col-tcode">2360</td>          
           <td class="col-tdata">16</td>          
@@ -4604,7 +4612,7 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/32/suite/sext.b-01.S</td>
+          <td class="col-tname">/home/anku/trials/bmanip/32/suite/sext.b-01.S</td>
           <td class="col-tfprint">6484</td>          
           <td class="col-tcode">1240</td>          
           <td class="col-tdata">16</td>          
@@ -4614,7 +4622,7 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/32/suite/sext.h-01.S</td>
+          <td class="col-tname">/home/anku/trials/bmanip/32/suite/sext.h-01.S</td>
           <td class="col-tfprint">6516</td>          
           <td class="col-tcode">1256</td>          
           <td class="col-tdata">16</td>          
@@ -4624,9 +4632,9 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/32/suite/sh1add-01.S</td>
-          <td class="col-tfprint">19580</td>          
-          <td class="col-tcode">12392</td>          
+          <td class="col-tname">/home/anku/trials/bmanip/32/suite/sh1add-01.S</td>
+          <td class="col-tfprint">19588</td>          
+          <td class="col-tcode">12408</td>          
           <td class="col-tdata">16</td>          
           <td class="col-tsign">2288</td>          
           <td class="col-tcov">{'sh1add'}</td>          
@@ -4634,9 +4642,9 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/32/suite/sh2add-01.S</td>
-          <td class="col-tfprint">19580</td>          
-          <td class="col-tcode">12392</td>          
+          <td class="col-tname">/home/anku/trials/bmanip/32/suite/sh2add-01.S</td>
+          <td class="col-tfprint">19588</td>          
+          <td class="col-tcode">12408</td>          
           <td class="col-tdata">16</td>          
           <td class="col-tsign">2288</td>          
           <td class="col-tcov">{'sh2add'}</td>          
@@ -4644,9 +4652,9 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/32/suite/sh3add-01.S</td>
-          <td class="col-tfprint">19580</td>          
-          <td class="col-tcode">12392</td>          
+          <td class="col-tname">/home/anku/trials/bmanip/32/suite/sh3add-01.S</td>
+          <td class="col-tfprint">19588</td>          
+          <td class="col-tcode">12408</td>          
           <td class="col-tdata">16</td>          
           <td class="col-tsign">2288</td>          
           <td class="col-tcov">{'sh3add'}</td>          
@@ -4654,9 +4662,9 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/32/suite/xnor-01.S</td>
-          <td class="col-tfprint">20140</td>          
-          <td class="col-tcode">12872</td>          
+          <td class="col-tname">/home/anku/trials/bmanip/32/suite/xnor-01.S</td>
+          <td class="col-tfprint">20148</td>          
+          <td class="col-tcode">12888</td>          
           <td class="col-tdata">16</td>          
           <td class="col-tsign">2368</td>          
           <td class="col-tcov">{'xnor'}</td>          
@@ -4664,12 +4672,12 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/32/suite/zext.h-01.S</td>
+          <td class="col-tname">/home/anku/trials/bmanip/32/suite/zext.h_32-01.S</td>
           <td class="col-tfprint">6516</td>          
           <td class="col-tcode">1256</td>          
           <td class="col-tdata">16</td>          
           <td class="col-tsign">352</td>          
-          <td class="col-tcov">{'zext.h'}</td>          
+          <td class="col-tcov">{'zext.h_32'}</td>          
         </tr></tbody>
         
       </table>
@@ -4700,6 +4708,9 @@ stval_condition_writes:
           <div class="log">config:
    - check ISA:=regex(.*I.*B.*)
    - check ISA:=regex(.*I.*Zbb.*)
+mnemonics:
+     andn: 592
+     coverage: 1/1
 op_comb:
      rs1 != rs2  and rs1 != rd and rs2 != rd: 588
      rs1 == rd != rs2: 1
@@ -4707,9 +4718,6 @@ op_comb:
      rs1 == rs2 == rd: 1
      rs2 == rd != rs1: 1
      coverage: 5/5
-opcode:
-     andn: 592
-     coverage: 1/1
 rd:
      x0: 1
      x1: 1
@@ -4769,8 +4777,8 @@ rs1:
      x28: 1
      x29: 1
      x3: 1
-     x30: 560
-     x31: 2
+     x30: 559
+     x31: 3
      x4: 1
      x5: 1
      x6: 1
@@ -4801,9 +4809,9 @@ rs2:
      x26: 1
      x27: 1
      x28: 1
-     x29: 559
+     x29: 557
      x3: 1
-     x30: 3
+     x30: 5
      x31: 1
      x4: 1
      x5: 1
@@ -4843,12 +4851,12 @@ val_comb:
      rs2_val == 4294967263: 1
      rs2_val == 4294967279: 1
      rs2_val == 4294967287: 1
-     rs2_val == 4294967291: 2
-     rs2_val == 4294967293: 1
+     rs2_val == 4294967291: 1
+     rs2_val == 4294967293: 2
      rs2_val == 4294967294: 1
      rs1_val == 2147483647: 2
      rs1_val == 3221225471: 1
-     rs1_val == 3758096383: 1
+     rs1_val == 3758096383: 2
      rs1_val == 4026531839: 1
      rs1_val == 4160749567: 1
      rs1_val == 4227858431: 1
@@ -4964,7 +4972,7 @@ val_comb:
      'rs1_val == 0x254a9493 and rs2_val == 0xc5521660 #nosat': 1
      rs1_val==4294967295 and rs2_val==4294967295: 3
      rs1_val==4294967295 and rs2_val==1: 1
-     rs1_val==4294967295 and rs2_val==0: 2
+     rs1_val==4294967295 and rs2_val==0: 1
      rs1_val==4294967295 and rs2_val==2576980378: 1
      rs1_val==4294967295 and rs2_val==1717986919: 1
      rs1_val==4294967295 and rs2_val==3435973837: 1
@@ -5407,7 +5415,7 @@ val_comb:
      rs2_val == 1431655765: 21
      rs1_val == 2863311530: 21
      rs1_val == 1431655765: 21
-     rs1_val == (2**(xlen)-1): 87
+     rs1_val == (2**(xlen)-1): 86
      rs1_val == 0: 22
      rs1_val == rs2_val and rs1_val > 0 and rs2_val > 0: 22
      rs1_val > 0 and rs2_val > 0: 549
@@ -5432,6 +5440,9 @@ total_coverage: 702/702
           <div class="log">config:
    - check ISA:=regex(.*I.*B.*)
    - check ISA:=regex(.*I.*Zbs.*)
+mnemonics:
+     bclr: 292
+     coverage: 1/1
 op_comb:
      rs1 != rs2  and rs1 != rd and rs2 != rd: 288
      rs1 == rd != rs2: 1
@@ -5439,9 +5450,6 @@ op_comb:
      rs1 == rs2 == rd: 1
      rs2 == rd != rs1: 1
      coverage: 5/5
-opcode:
-     bclr: 292
-     coverage: 1/1
 rd:
      x0: 1
      x1: 1
@@ -5501,1350 +5509,8 @@ rs1:
      x28: 1
      x29: 1
      x3: 1
-     x30: 260
-     x31: 2
-     x4: 1
-     x5: 1
-     x6: 1
-     x7: 1
-     x8: 1
-     x9: 1
-     coverage: 32/32
-rs2:
-     x0: 1
-     x1: 1
-     x10: 1
-     x11: 1
-     x12: 1
-     x13: 1
-     x14: 1
-     x15: 1
-     x16: 1
-     x17: 1
-     x18: 1
-     x19: 1
-     x2: 1
-     x20: 1
-     x21: 1
-     x22: 1
-     x23: 1
-     x24: 1
-     x25: 1
-     x26: 1
-     x27: 1
-     x28: 1
-     x29: 259
-     x3: 1
-     x30: 3
-     x31: 1
-     x4: 1
-     x5: 1
-     x6: 1
-     x7: 1
-     x8: 1
-     x9: 1
-     coverage: 32/32
-val_comb:
-     rs1_val == 1431655765: 2
-     rs2_val == 2147483647: 1
-     rs2_val == 3221225471: 1
-     rs2_val == 3758096383: 1
-     rs2_val == 4026531839: 1
-     rs2_val == 4160749567: 1
-     rs2_val == 4227858431: 1
-     rs2_val == 4261412863: 1
-     rs2_val == 4278190079: 1
-     rs2_val == 4286578687: 1
-     rs2_val == 4290772991: 1
-     rs2_val == 4292870143: 1
-     rs2_val == 4293918719: 1
-     rs2_val == 4294443007: 1
-     rs2_val == 4294705151: 1
-     rs2_val == 4294836223: 1
-     rs2_val == 4294901759: 1
-     rs2_val == 4294934527: 1
-     rs2_val == 4294950911: 1
-     rs2_val == 4294959103: 1
-     rs2_val == 4294963199: 1
-     rs2_val == 4294965247: 1
-     rs2_val == 4294966271: 1
-     rs2_val == 4294966783: 1
-     rs2_val == 4294967039: 1
-     rs2_val == 4294967167: 1
-     rs2_val == 4294967231: 1
-     rs2_val == 4294967263: 1
-     rs2_val == 4294967279: 1
-     rs2_val == 4294967287: 1
-     rs2_val == 4294967291: 2
-     rs2_val == 4294967293: 1
-     rs2_val == 4294967294: 1
-     rs1_val == 2147483647: 2
-     rs1_val == 3221225471: 2
-     rs1_val == 3758096383: 1
-     rs1_val == 4026531839: 1
-     rs1_val == 4160749567: 1
-     rs1_val == 4227858431: 1
-     rs1_val == 4261412863: 1
-     rs1_val == 4278190079: 1
-     rs1_val == 4286578687: 1
-     rs1_val == 4290772991: 1
-     rs1_val == 4292870143: 1
-     rs1_val == 4293918719: 1
-     rs1_val == 4294443007: 1
-     rs1_val == 4294705151: 1
-     rs1_val == 4294836223: 1
-     rs1_val == 4294901759: 1
-     rs1_val == 4294934527: 1
-     rs1_val == 4294950911: 1
-     rs1_val == 4294959103: 1
-     rs1_val == 4294963199: 1
-     rs1_val == 4294965247: 1
-     rs1_val == 4294966271: 1
-     rs1_val == 4294966783: 1
-     rs1_val == 4294967039: 1
-     rs1_val == 4294967167: 1
-     rs1_val == 4294967231: 1
-     rs1_val == 4294967263: 1
-     rs1_val == 4294967279: 1
-     rs1_val == 4294967287: 1
-     rs1_val == 4294967291: 1
-     rs1_val == 4294967293: 2
-     rs1_val == 4294967294: 2
-     rs2_val == 2147483648: 1
-     rs2_val == 1073741824: 1
-     rs2_val == 536870912: 1
-     rs2_val == 268435456: 1
-     rs2_val == 134217728: 1
-     rs2_val == 67108864: 1
-     rs2_val == 33554432: 1
-     rs2_val == 16777216: 1
-     rs2_val == 8388608: 1
-     rs2_val == 4194304: 1
-     rs2_val == 2097152: 1
-     rs2_val == 1048576: 1
-     rs2_val == 524288: 1
-     rs2_val == 262144: 1
-     rs2_val == 131072: 1
-     rs2_val == 65536: 1
-     rs2_val == 32768: 1
-     rs2_val == 16384: 1
-     rs2_val == 8192: 1
-     rs2_val == 4096: 1
-     rs2_val == 2048: 1
-     rs2_val == 1024: 1
-     rs2_val == 512: 1
-     rs2_val == 256: 1
-     rs2_val == 128: 1
-     rs2_val == 64: 1
-     rs2_val == 32: 1
-     rs2_val == 16: 8
-     rs2_val == 8: 7
-     rs2_val == 4: 6
-     rs2_val == 2: 5
-     rs2_val == 1: 5
-     rs1_val == 2147483648: 2
-     rs1_val == 1073741824: 2
-     rs1_val == 536870912: 1
-     rs1_val == 268435456: 1
-     rs1_val == 134217728: 2
-     rs1_val == 67108864: 1
-     rs1_val == 33554432: 1
-     rs1_val == 16777216: 1
-     rs1_val == 8388608: 1
-     rs1_val == 4194304: 1
-     rs1_val == 2097152: 1
-     rs1_val == 1048576: 1
-     rs1_val == 524288: 1
-     rs1_val == 262144: 1
-     rs1_val == 131072: 1
-     rs1_val == 65536: 1
-     rs1_val == 32768: 1
-     rs1_val == 16384: 1
-     rs1_val == 8192: 1
-     rs1_val == 4096: 1
-     rs1_val == 2048: 1
-     rs1_val == 1024: 1
-     rs1_val == 512: 1
-     rs1_val == 256: 1
-     rs1_val == 128: 1
-     rs1_val == 64: 1
-     rs1_val == 32: 1
-     rs1_val == 16: 1
-     rs1_val == 8: 1
-     rs1_val == 4: 1
-     rs1_val == 2: 1
-     rs1_val == 1: 2
-     'rs2_val == 0x00 and rs1_val == 0x2DEDB6A7 #nosat': 1
-     'rs2_val == 0x10 and rs1_val == 0x3C272728 #nosat': 1
-     'rs2_val == 0x18 and rs1_val == 0x4F55C73D #nosat': 1
-     'rs2_val == 0x14 and rs1_val == 0xB0AB577A #nosat': 1
-     'rs2_val == 0x1A and rs1_val == 0xF0EB21AA #nosat': 1
-     'rs2_val == 0x1B and rs1_val == 0xA9E16E27 #nosat': 1
-     'rs1_val == 0x00000000 and rs2_val == 0x0C #nosat': 1
-     'rs1_val == 0x80000000 and rs2_val == 0x05 #nosat': 1
-     'rs1_val == 0x40000000 and rs2_val == 0x01 #nosat': 1
-     'rs1_val == 0x60000000 and rs2_val == 0x18 #nosat': 1
-     'rs1_val == 0xB0000000 and rs2_val == 0x1E #nosat': 1
-     'rs1_val == 0x08000000 and rs2_val == 0x1A #nosat': 1
-     'rs1_val == 0xF4000000 and rs2_val == 0x05 #nosat': 1
-     'rs1_val == 0x82000000 and rs2_val == 0x0A #nosat': 1
-     'rs1_val == 0xFD000000 and rs2_val == 0x03 #nosat': 1
-     'rs1_val == 0xD8800000 and rs2_val == 0x0A #nosat': 1
-     'rs1_val == 0xC8C00000 and rs2_val == 0x14 #nosat': 1
-     'rs1_val == 0xA3200000 and rs2_val == 0x08 #nosat': 1
-     'rs1_val == 0xC7900000 and rs2_val == 0x1B #nosat': 1
-     'rs1_val == 0x46880000 and rs2_val == 0x1C #nosat': 1
-     'rs1_val == 0x55440000 and rs2_val == 0x1B #nosat': 1
-     'rs1_val == 0xA56A0000 and rs2_val == 0x0E #nosat': 1
-     'rs1_val == 0x405D0000 and rs2_val == 0x03 #nosat': 1
-     'rs1_val == 0xCD2F8000 and rs2_val == 0x05 #nosat': 1
-     'rs1_val == 0xA6C04000 and rs2_val == 0x19 #nosat': 1
-     'rs1_val == 0x33BC2000 and rs2_val == 0x15 #nosat': 1
-     'rs1_val == 0xF1C6B000 and rs2_val == 0x0C #nosat': 1
-     'rs1_val == 0xAA3D6800 and rs2_val == 0x0D #nosat': 1
-     'rs1_val == 0x7AA5E400 and rs2_val == 0x0A #nosat': 1
-     'rs1_val == 0xC1B7AE00 and rs2_val == 0x1C #nosat': 1
-     'rs1_val == 0x4C56BB00 and rs2_val == 0x09 #nosat': 1
-     'rs1_val == 0x72C58380 and rs2_val == 0x00 #nosat': 1
-     'rs1_val == 0x32AB8740 and rs2_val == 0x0E #nosat': 1
-     'rs1_val == 0x96CDF1A0 and rs2_val == 0x1D #nosat': 1
-     'rs1_val == 0xB87A9E30 and rs2_val == 0x11 #nosat': 1
-     'rs1_val == 0x163DFF98 and rs2_val == 0x17 #nosat': 1
-     'rs1_val == 0x9205D39C and rs2_val == 0x18 #nosat': 1
-     'rs1_val == 0x50A03C5A and rs2_val == 0x16 #nosat': 1
-     'rs1_val == 0x797D76DF and rs2_val == 0x11 #nosat': 1
-     'rs2_val == 0x08 and rs1_val == 0x24496FE3 #nosat': 1
-     'rs2_val == 0x1D and rs1_val == 0xDE14BFF2 #nosat': 1
-     'rs2_val == 0x03 and rs1_val == 0xB808A677 #nosat': 1
-     'rs2_val == 0x07 and rs1_val == 0x76B1FD3D #nosat': 1
-     'rs2_val == 0x0F and rs1_val == 0x5DCF019D #nosat': 1
-     'rs2_val == 0x1F and rs1_val == 0x47B7097B #nosat': 1
-     'rs1_val == 0x759F1B44 and rs2_val == 0x10 #nosat': 1
-     'rs1_val == 0x40D90A1D and rs2_val == 0x17 #nosat': 1
-     'rs1_val == 0x2DEDF123 and rs2_val == 0x16 #nosat': 1
-     'rs1_val == 0x4B1634E7 and rs2_val == 0x0C #nosat': 1
-     'rs1_val == 0x8935B82F and rs2_val == 0x0B #nosat': 1
-     'rs1_val == 0x70BCB8DF and rs2_val == 0x1C #nosat': 1
-     'rs1_val == 0x8DE1C73F and rs2_val == 0x08 #nosat': 1
-     'rs1_val == 0xB0E04E7F and rs2_val == 0x1C #nosat': 1
-     'rs1_val == 0x589218FF and rs2_val == 0x10 #nosat': 1
-     'rs1_val == 0xA7BE99FF and rs2_val == 0x07 #nosat': 1
-     'rs1_val == 0xA37E33FF and rs2_val == 0x14 #nosat': 1
-     'rs1_val == 0xE37D37FF and rs2_val == 0x1B #nosat': 1
-     'rs1_val == 0xABB4CFFF and rs2_val == 0x17 #nosat': 1
-     'rs1_val == 0x7C9DDFFF and rs2_val == 0x1B #nosat': 1
-     'rs1_val == 0x5B11BFFF and rs2_val == 0x0E #nosat': 1
-     'rs1_val == 0xCB347FFF and rs2_val == 0x10 #nosat': 1
-     'rs1_val == 0xF306FFFF and rs2_val == 0x08 #nosat': 1
-     'rs1_val == 0xBEA5FFFF and rs2_val == 0x1B #nosat': 1
-     'rs1_val == 0xD38BFFFF and rs2_val == 0x1C #nosat': 1
-     'rs1_val == 0x15B7FFFF and rs2_val == 0x10 #nosat': 1
-     'rs1_val == 0xD58FFFFF and rs2_val == 0x09 #nosat': 1
-     'rs1_val == 0xFE1FFFFF and rs2_val == 0x11 #nosat': 1
-     'rs1_val == 0x203FFFFF and rs2_val == 0x00 #nosat': 1
-     'rs1_val == 0x077FFFFF and rs2_val == 0x1B #nosat': 1
-     'rs1_val == 0xBEFFFFFF and rs2_val == 0x12 #nosat': 1
-     'rs1_val == 0x89FFFFFF and rs2_val == 0x0D #nosat': 1
-     'rs1_val == 0x23FFFFFF and rs2_val == 0x04 #nosat': 1
-     'rs1_val == 0xA7FFFFFF and rs2_val == 0x0B #nosat': 1
-     'rs1_val == 0xCFFFFFFF and rs2_val == 0x0E #nosat': 1
-     'rs1_val == 0x9FFFFFFF and rs2_val == 0x09 #nosat': 1
-     'rs1_val == 0xBFFFFFFF and rs2_val == 0x0E #nosat': 1
-     'rs1_val == 0x7FFFFFFF and rs2_val == 0x0B #nosat': 1
-     'rs1_val == 0xFFFFFFFF and rs2_val == 0x12 #nosat': 1
-     'rs2_val == 0x1B and rs1_val == 0x164F1513 #nosat': 1
-     'rs2_val == 0x09 and rs1_val == 0xACC6D8F2 #nosat': 1
-     'rs2_val == 0x06 and rs1_val == 0xA123F501 #nosat': 1
-     'rs2_val == 0x02 and rs1_val == 0xB57A6A1D #nosat': 1
-     'rs2_val == 0x01 and rs1_val == 0xE90794DF #nosat': 1
-     'rs2_val == 0x00 and rs1_val == 0xAF5570EE #nosat': 1
-     'rs1_val == 0xF542441E and rs2_val == 0x01 #nosat': 1
-     'rs1_val == 0x62F28D1B and rs2_val == 0x04 #nosat': 1
-     'rs1_val == 0x38B9B45D and rs2_val == 0x12 #nosat': 1
-     'rs1_val == 0x16809A12 and rs2_val == 0x06 #nosat': 1
-     'rs1_val == 0x082A1750 and rs2_val == 0x06 #nosat': 1
-     'rs1_val == 0x079DD25B and rs2_val == 0x04 #nosat': 1
-     'rs1_val == 0x034C687B and rs2_val == 0x12 #nosat': 1
-     'rs1_val == 0x01B601FD and rs2_val == 0x0E #nosat': 1
-     'rs1_val == 0x00B302FD and rs2_val == 0x10 #nosat': 1
-     'rs1_val == 0x0062A6B3 and rs2_val == 0x05 #nosat': 1
-     'rs1_val == 0x00339238 and rs2_val == 0x11 #nosat': 1
-     'rs1_val == 0x00164AF0 and rs2_val == 0x05 #nosat': 1
-     'rs1_val == 0x0009222A and rs2_val == 0x00 #nosat': 1
-     'rs1_val == 0x0006284E and rs2_val == 0x12 #nosat': 1
-     'rs1_val == 0x00035161 and rs2_val == 0x0E #nosat': 1
-     'rs1_val == 0x00011E24 and rs2_val == 0x0C #nosat': 1
-     'rs1_val == 0x0000F614 and rs2_val == 0x1C #nosat': 1
-     'rs1_val == 0x00005CC1 and rs2_val == 0x1D #nosat': 1
-     'rs1_val == 0x00003226 and rs2_val == 0x01 #nosat': 1
-     'rs1_val == 0x00001D0C and rs2_val == 0x0F #nosat': 1
-     'rs1_val == 0x00000DD4 and rs2_val == 0x02 #nosat': 1
-     'rs1_val == 0x000005D1 and rs2_val == 0x04 #nosat': 1
-     'rs1_val == 0x000002A7 and rs2_val == 0x00 #nosat': 1
-     'rs1_val == 0x00000197 and rs2_val == 0x0A #nosat': 1
-     'rs1_val == 0x000000B9 and rs2_val == 0x1C #nosat': 1
-     'rs1_val == 0x0000004C and rs2_val == 0x19 #nosat': 1
-     'rs1_val == 0x00000026 and rs2_val == 0x02 #nosat': 1
-     'rs1_val == 0x00000012 and rs2_val == 0x09 #nosat': 1
-     'rs1_val == 0x0000000C and rs2_val == 0x1C #nosat': 1
-     'rs1_val == 0x00000006 and rs2_val == 0x0B #nosat': 1
-     'rs1_val == 0x00000003 and rs2_val == 0x1E #nosat': 1
-     'rs1_val == 0x00000001 and rs2_val == 0x0C #nosat': 1
-     'rs1_val == 0x00000000 and rs2_val == 0x1D #nosat': 1
-     'rs2_val == 0x0F and rs1_val == 0x59432A19 #nosat': 1
-     'rs2_val == 0x17 and rs1_val == 0xCEB506F6 #nosat': 1
-     'rs2_val == 0x18 and rs1_val == 0xC5EC6148 #nosat': 1
-     'rs2_val == 0x1D and rs1_val == 0x99EF1857 #nosat': 1
-     'rs2_val == 0x1E and rs1_val == 0x14B91C79 #nosat': 1
-     'rs2_val == 0x1F and rs1_val == 0x0973E89C #nosat': 1
-     'rs1_val == 0x7843BDB9 and rs2_val == 0x1A #nosat': 1
-     'rs1_val == 0x9798C9D0 and rs2_val == 0x0E #nosat': 1
-     'rs1_val == 0xD814D576 and rs2_val == 0x0A #nosat': 1
-     'rs1_val == 0xE0A37559 and rs2_val == 0x14 #nosat': 1
-     'rs1_val == 0xF79FB998 and rs2_val == 0x1E #nosat': 1
-     'rs1_val == 0xF87A2561 and rs2_val == 0x1C #nosat': 1
-     'rs1_val == 0xFDA56D7F and rs2_val == 0x0F #nosat': 1
-     'rs1_val == 0xFE4DEAB5 and rs2_val == 0x17 #nosat': 1
-     'rs1_val == 0xFF6875BB and rs2_val == 0x13 #nosat': 1
-     'rs1_val == 0xFF93D0E4 and rs2_val == 0x08 #nosat': 1
-     'rs1_val == 0xFFD4AA23 and rs2_val == 0x00 #nosat': 1
-     'rs1_val == 0xFFE2FC91 and rs2_val == 0x18 #nosat': 1
-     'rs1_val == 0xFFF1D2A0 and rs2_val == 0x1C #nosat': 1
-     'rs1_val == 0xFFF904D1 and rs2_val == 0x0F #nosat': 1
-     'rs1_val == 0xFFFCDB0B and rs2_val == 0x1D #nosat': 1
-     'rs1_val == 0xFFFEC2B4 and rs2_val == 0x17 #nosat': 1
-     'rs1_val == 0xFFFF1E5F and rs2_val == 0x13 #nosat': 1
-     'rs1_val == 0xFFFFA2EE and rs2_val == 0x0B #nosat': 1
-     'rs1_val == 0xFFFFD410 and rs2_val == 0x10 #nosat': 1
-     'rs1_val == 0xFFFFEE0A and rs2_val == 0x1A #nosat': 1
-     'rs1_val == 0xFFFFF32A and rs2_val == 0x16 #nosat': 1
-     'rs1_val == 0xFFFFFB84 and rs2_val == 0x08 #nosat': 1
-     'rs1_val == 0xFFFFFC1D and rs2_val == 0x1A #nosat': 1
-     'rs1_val == 0xFFFFFE31 and rs2_val == 0x17 #nosat': 1
-     'rs1_val == 0xFFFFFF44 and rs2_val == 0x04 #nosat': 1
-     'rs1_val == 0xFFFFFFBA and rs2_val == 0x1F #nosat': 1
-     'rs1_val == 0xFFFFFFC6 and rs2_val == 0x0A #nosat': 1
-     'rs1_val == 0xFFFFFFE8 and rs2_val == 0x11 #nosat': 1
-     'rs1_val == 0xFFFFFFF2 and rs2_val == 0x1F #nosat': 1
-     'rs1_val == 0xFFFFFFF9 and rs2_val == 0x1D #nosat': 1
-     'rs1_val == 0xFFFFFFFD and rs2_val == 0x00 #nosat': 1
-     'rs1_val == 0xFFFFFFFE and rs2_val == 0x1E #nosat': 1
-     'rs1_val == 0xFFFFFFFF and rs2_val == 0x02 #nosat': 2
-     rs2_val == 2863311530: 1
-     rs2_val == 1431655765: 2
-     rs1_val == 2863311530: 1
-     coverage: 288/288
-total_coverage: 390/390
-</br></div></td>
-        </tr></tbody>
-        
-        <tbody class= "  results-table-row" >
-        <tr>
-          <td class="col-name">bclri</td>
-          <td class="col-result">223/223</td>
-          <td class="col-percentage">100.00%
-            <div class="meter">
-              <span style="width: 100.00%"></span>
-            </div>
-          </td>          
-        <tr>
-          <td class="extra" colspan="2">
-          <div class="log">config:
-   - check ISA:=regex(.*I.*B.*)
-   - check ISA:=regex(.*I.*Zbs.*)
-op_comb:
-     rs1 != rd: 157
-     rs1 == rd: 1
-     coverage: 2/2
-opcode:
-     bclri: 158
-     coverage: 1/1
-rd:
-     x0: 1
-     x1: 1
-     x10: 1
-     x11: 1
-     x12: 1
-     x13: 1
-     x14: 1
-     x15: 1
-     x16: 1
-     x17: 1
-     x18: 1
-     x19: 1
-     x2: 1
-     x20: 1
-     x21: 1
-     x22: 1
-     x23: 1
-     x24: 1
-     x25: 1
-     x26: 1
-     x27: 1
-     x28: 1
-     x29: 1
-     x3: 1
-     x30: 1
-     x31: 127
-     x4: 1
-     x5: 1
-     x6: 1
-     x7: 1
-     x8: 1
-     x9: 1
-     coverage: 32/32
-rs1:
-     x0: 1
-     x1: 1
-     x10: 1
-     x11: 1
-     x12: 1
-     x13: 1
-     x14: 1
-     x15: 1
-     x16: 1
-     x17: 1
-     x18: 1
-     x19: 1
-     x2: 1
-     x20: 1
-     x21: 1
-     x22: 1
-     x23: 1
-     x24: 1
-     x25: 1
-     x26: 1
-     x27: 1
-     x28: 1
-     x29: 1
-     x3: 1
-     x30: 126
-     x31: 2
-     x4: 1
-     x5: 1
-     x6: 1
-     x7: 1
-     x8: 1
-     x9: 1
-     coverage: 32/32
-val_comb:
-     'rs1_val == 0xFFFFFFFF and imm_val == 0x02 #nosat': 1
-     'imm_val == 0x00 and rs1_val == 0x2DEDB6A7 #nosat': 1
-     'imm_val == 0x10 and rs1_val == 0x3C272728 #nosat': 1
-     'imm_val == 0x18 and rs1_val == 0x4F55C73D #nosat': 1
-     'imm_val == 0x14 and rs1_val == 0xB0AB577A #nosat': 1
-     'imm_val == 0x1A and rs1_val == 0xF0EB21AA #nosat': 1
-     'imm_val == 0x1B and rs1_val == 0xA9E16E27 #nosat': 1
-     'rs1_val == 0x00000000 and imm_val == 0x0C #nosat': 1
-     'rs1_val == 0x80000000 and imm_val == 0x05 #nosat': 1
-     'rs1_val == 0x40000000 and imm_val == 0x01 #nosat': 1
-     'rs1_val == 0x60000000 and imm_val == 0x18 #nosat': 1
-     'rs1_val == 0xB0000000 and imm_val == 0x1E #nosat': 1
-     'rs1_val == 0x08000000 and imm_val == 0x1A #nosat': 1
-     'rs1_val == 0xF4000000 and imm_val == 0x05 #nosat': 1
-     'rs1_val == 0x82000000 and imm_val == 0x0A #nosat': 1
-     'rs1_val == 0xFD000000 and imm_val == 0x03 #nosat': 1
-     'rs1_val == 0xD8800000 and imm_val == 0x0A #nosat': 1
-     'rs1_val == 0xC8C00000 and imm_val == 0x14 #nosat': 1
-     'rs1_val == 0xA3200000 and imm_val == 0x08 #nosat': 1
-     'rs1_val == 0xC7900000 and imm_val == 0x1B #nosat': 1
-     'rs1_val == 0x46880000 and imm_val == 0x1C #nosat': 1
-     'rs1_val == 0x55440000 and imm_val == 0x1B #nosat': 1
-     'rs1_val == 0xA56A0000 and imm_val == 0x0E #nosat': 1
-     'rs1_val == 0x405D0000 and imm_val == 0x03 #nosat': 1
-     'rs1_val == 0xCD2F8000 and imm_val == 0x05 #nosat': 1
-     'rs1_val == 0xA6C04000 and imm_val == 0x19 #nosat': 1
-     'rs1_val == 0x33BC2000 and imm_val == 0x15 #nosat': 1
-     'rs1_val == 0xF1C6B000 and imm_val == 0x0C #nosat': 1
-     'rs1_val == 0xAA3D6800 and imm_val == 0x0D #nosat': 1
-     'rs1_val == 0x7AA5E400 and imm_val == 0x0A #nosat': 1
-     'rs1_val == 0xC1B7AE00 and imm_val == 0x1C #nosat': 1
-     'rs1_val == 0x4C56BB00 and imm_val == 0x09 #nosat': 1
-     'rs1_val == 0x72C58380 and imm_val == 0x00 #nosat': 2
-     'rs1_val == 0x32AB8740 and imm_val == 0x0E #nosat': 1
-     'rs1_val == 0x96CDF1A0 and imm_val == 0x1D #nosat': 1
-     'rs1_val == 0xB87A9E30 and imm_val == 0x11 #nosat': 1
-     'rs1_val == 0x163DFF98 and imm_val == 0x17 #nosat': 1
-     'rs1_val == 0x9205D39C and imm_val == 0x18 #nosat': 1
-     'rs1_val == 0x50A03C5A and imm_val == 0x16 #nosat': 1
-     'rs1_val == 0x797D76DF and imm_val == 0x11 #nosat': 1
-     'imm_val == 0x08 and rs1_val == 0x24496FE3 #nosat': 1
-     'imm_val == 0x1D and rs1_val == 0xDE14BFF2 #nosat': 1
-     'imm_val == 0x03 and rs1_val == 0xB808A677 #nosat': 1
-     'imm_val == 0x07 and rs1_val == 0x76B1FD3D #nosat': 1
-     'imm_val == 0x0F and rs1_val == 0x5DCF019D #nosat': 1
-     'imm_val == 0x1F and rs1_val == 0x47B7097B #nosat': 1
-     'rs1_val == 0x759F1B44 and imm_val == 0x10 #nosat': 1
-     'rs1_val == 0x40D90A1D and imm_val == 0x17 #nosat': 1
-     'rs1_val == 0x2DEDF123 and imm_val == 0x16 #nosat': 1
-     'rs1_val == 0x4B1634E7 and imm_val == 0x0C #nosat': 1
-     'rs1_val == 0x8935B82F and imm_val == 0x0B #nosat': 1
-     'rs1_val == 0x70BCB8DF and imm_val == 0x1C #nosat': 1
-     'rs1_val == 0x8DE1C73F and imm_val == 0x08 #nosat': 1
-     'rs1_val == 0xB0E04E7F and imm_val == 0x1C #nosat': 1
-     'rs1_val == 0x589218FF and imm_val == 0x10 #nosat': 1
-     'rs1_val == 0xA7BE99FF and imm_val == 0x07 #nosat': 1
-     'rs1_val == 0xA37E33FF and imm_val == 0x14 #nosat': 1
-     'rs1_val == 0xE37D37FF and imm_val == 0x1B #nosat': 1
-     'rs1_val == 0xABB4CFFF and imm_val == 0x17 #nosat': 1
-     'rs1_val == 0x7C9DDFFF and imm_val == 0x1B #nosat': 1
-     'rs1_val == 0x5B11BFFF and imm_val == 0x0E #nosat': 1
-     'rs1_val == 0xCB347FFF and imm_val == 0x10 #nosat': 1
-     'rs1_val == 0xF306FFFF and imm_val == 0x08 #nosat': 1
-     'rs1_val == 0xBEA5FFFF and imm_val == 0x1B #nosat': 1
-     'rs1_val == 0xD38BFFFF and imm_val == 0x1C #nosat': 1
-     'rs1_val == 0x15B7FFFF and imm_val == 0x10 #nosat': 1
-     'rs1_val == 0xD58FFFFF and imm_val == 0x09 #nosat': 1
-     'rs1_val == 0xFE1FFFFF and imm_val == 0x11 #nosat': 1
-     'rs1_val == 0x203FFFFF and imm_val == 0x00 #nosat': 1
-     'rs1_val == 0x077FFFFF and imm_val == 0x1B #nosat': 1
-     'rs1_val == 0xBEFFFFFF and imm_val == 0x12 #nosat': 1
-     'rs1_val == 0x89FFFFFF and imm_val == 0x0D #nosat': 1
-     'rs1_val == 0x23FFFFFF and imm_val == 0x04 #nosat': 1
-     'rs1_val == 0xA7FFFFFF and imm_val == 0x0B #nosat': 1
-     'rs1_val == 0xCFFFFFFF and imm_val == 0x0E #nosat': 1
-     'rs1_val == 0x9FFFFFFF and imm_val == 0x09 #nosat': 1
-     'rs1_val == 0xBFFFFFFF and imm_val == 0x0E #nosat': 1
-     'rs1_val == 0x7FFFFFFF and imm_val == 0x0B #nosat': 1
-     'rs1_val == 0xFFFFFFFF and imm_val == 0x12 #nosat': 1
-     'imm_val == 0x1B and rs1_val == 0x164F1513 #nosat': 1
-     'imm_val == 0x09 and rs1_val == 0xACC6D8F2 #nosat': 1
-     'imm_val == 0x06 and rs1_val == 0xA123F501 #nosat': 1
-     'imm_val == 0x02 and rs1_val == 0xB57A6A1D #nosat': 1
-     'imm_val == 0x01 and rs1_val == 0xE90794DF #nosat': 1
-     'imm_val == 0x00 and rs1_val == 0xAF5570EE #nosat': 1
-     'rs1_val == 0xF542441E and imm_val == 0x01 #nosat': 1
-     'rs1_val == 0x62F28D1B and imm_val == 0x04 #nosat': 1
-     'rs1_val == 0x38B9B45D and imm_val == 0x12 #nosat': 1
-     'rs1_val == 0x16809A12 and imm_val == 0x06 #nosat': 1
-     'rs1_val == 0x082A1750 and imm_val == 0x06 #nosat': 1
-     'rs1_val == 0x079DD25B and imm_val == 0x04 #nosat': 1
-     'rs1_val == 0x034C687B and imm_val == 0x12 #nosat': 1
-     'rs1_val == 0x01B601FD and imm_val == 0x0E #nosat': 1
-     'rs1_val == 0x00B302FD and imm_val == 0x10 #nosat': 1
-     'rs1_val == 0x0062A6B3 and imm_val == 0x05 #nosat': 1
-     'rs1_val == 0x00339238 and imm_val == 0x11 #nosat': 1
-     'rs1_val == 0x00164AF0 and imm_val == 0x05 #nosat': 1
-     'rs1_val == 0x0009222A and imm_val == 0x00 #nosat': 1
-     'rs1_val == 0x0006284E and imm_val == 0x12 #nosat': 1
-     'rs1_val == 0x00035161 and imm_val == 0x0E #nosat': 1
-     'rs1_val == 0x00011E24 and imm_val == 0x0C #nosat': 1
-     'rs1_val == 0x0000F614 and imm_val == 0x1C #nosat': 1
-     'rs1_val == 0x00005CC1 and imm_val == 0x1D #nosat': 1
-     'rs1_val == 0x00003226 and imm_val == 0x01 #nosat': 1
-     'rs1_val == 0x00001D0C and imm_val == 0x0F #nosat': 1
-     'rs1_val == 0x00000DD4 and imm_val == 0x02 #nosat': 1
-     'rs1_val == 0x000005D1 and imm_val == 0x04 #nosat': 1
-     'rs1_val == 0x000002A7 and imm_val == 0x00 #nosat': 1
-     'rs1_val == 0x00000197 and imm_val == 0x0A #nosat': 1
-     'rs1_val == 0x000000B9 and imm_val == 0x1C #nosat': 1
-     'rs1_val == 0x0000004C and imm_val == 0x19 #nosat': 1
-     'rs1_val == 0x00000026 and imm_val == 0x02 #nosat': 1
-     'rs1_val == 0x00000012 and imm_val == 0x09 #nosat': 1
-     'rs1_val == 0x0000000C and imm_val == 0x1C #nosat': 1
-     'rs1_val == 0x00000006 and imm_val == 0x0B #nosat': 1
-     'rs1_val == 0x00000003 and imm_val == 0x1E #nosat': 1
-     'rs1_val == 0x00000001 and imm_val == 0x0C #nosat': 1
-     'rs1_val == 0x00000000 and imm_val == 0x1D #nosat': 1
-     'imm_val == 0x0F and rs1_val == 0x59432A19 #nosat': 1
-     'imm_val == 0x17 and rs1_val == 0xCEB506F6 #nosat': 1
-     'imm_val == 0x18 and rs1_val == 0xC5EC6148 #nosat': 1
-     'imm_val == 0x1D and rs1_val == 0x99EF1857 #nosat': 1
-     'imm_val == 0x1E and rs1_val == 0x14B91C79 #nosat': 1
-     'imm_val == 0x1F and rs1_val == 0x0973E89C #nosat': 1
-     'rs1_val == 0x7843BDB9 and imm_val == 0x1A #nosat': 1
-     'rs1_val == 0x9798C9D0 and imm_val == 0x0E #nosat': 1
-     'rs1_val == 0xD814D576 and imm_val == 0x0A #nosat': 1
-     'rs1_val == 0xE0A37559 and imm_val == 0x14 #nosat': 1
-     'rs1_val == 0xF79FB998 and imm_val == 0x1E #nosat': 1
-     'rs1_val == 0xF87A2561 and imm_val == 0x1C #nosat': 1
-     'rs1_val == 0xFDA56D7F and imm_val == 0x0F #nosat': 1
-     'rs1_val == 0xFE4DEAB5 and imm_val == 0x17 #nosat': 1
-     'rs1_val == 0xFF6875BB and imm_val == 0x13 #nosat': 1
-     'rs1_val == 0xFF93D0E4 and imm_val == 0x08 #nosat': 1
-     'rs1_val == 0xFFD4AA23 and imm_val == 0x00 #nosat': 1
-     'rs1_val == 0xFFE2FC91 and imm_val == 0x18 #nosat': 1
-     'rs1_val == 0xFFF1D2A0 and imm_val == 0x1C #nosat': 1
-     'rs1_val == 0xFFF904D1 and imm_val == 0x0F #nosat': 1
-     'rs1_val == 0xFFFCDB0B and imm_val == 0x1D #nosat': 1
-     'rs1_val == 0xFFFEC2B4 and imm_val == 0x17 #nosat': 1
-     'rs1_val == 0xFFFF1E5F and imm_val == 0x13 #nosat': 1
-     'rs1_val == 0xFFFFA2EE and imm_val == 0x0B #nosat': 1
-     'rs1_val == 0xFFFFD410 and imm_val == 0x10 #nosat': 1
-     'rs1_val == 0xFFFFEE0A and imm_val == 0x1A #nosat': 1
-     'rs1_val == 0xFFFFF32A and imm_val == 0x16 #nosat': 1
-     'rs1_val == 0xFFFFFB84 and imm_val == 0x08 #nosat': 1
-     'rs1_val == 0xFFFFFC1D and imm_val == 0x1A #nosat': 1
-     'rs1_val == 0xFFFFFE31 and imm_val == 0x17 #nosat': 1
-     'rs1_val == 0xFFFFFF44 and imm_val == 0x04 #nosat': 1
-     'rs1_val == 0xFFFFFFBA and imm_val == 0x1F #nosat': 1
-     'rs1_val == 0xFFFFFFC6 and imm_val == 0x0A #nosat': 1
-     'rs1_val == 0xFFFFFFE8 and imm_val == 0x11 #nosat': 1
-     'rs1_val == 0xFFFFFFF2 and imm_val == 0x1F #nosat': 1
-     'rs1_val == 0xFFFFFFF9 and imm_val == 0x1D #nosat': 1
-     'rs1_val == 0xFFFFFFFD and imm_val == 0x00 #nosat': 1
-     'rs1_val == 0xFFFFFFFE and imm_val == 0x1E #nosat': 1
-     coverage: 156/156
-total_coverage: 223/223
-</br></div></td>
-        </tr></tbody>
-        
-        <tbody class= "  results-table-row" >
-        <tr>
-          <td class="col-name">bext</td>
-          <td class="col-result">390/390</td>
-          <td class="col-percentage">100.00%
-            <div class="meter">
-              <span style="width: 100.00%"></span>
-            </div>
-          </td>          
-        <tr>
-          <td class="extra" colspan="2">
-          <div class="log">config:
-   - check ISA:=regex(.*I.*B.*)
-   - check ISA:=regex(.*I.*Zbs.*)
-op_comb:
-     rs1 != rs2  and rs1 != rd and rs2 != rd: 287
-     rs1 == rd != rs2: 1
-     rs1 == rs2 != rd: 1
-     rs1 == rs2 == rd: 1
-     rs2 == rd != rs1: 1
-     coverage: 5/5
-opcode:
-     bext: 291
-     coverage: 1/1
-rd:
-     x0: 1
-     x1: 1
-     x10: 1
-     x11: 1
-     x12: 1
-     x13: 1
-     x14: 1
-     x15: 1
-     x16: 1
-     x17: 1
-     x18: 1
-     x19: 1
-     x2: 1
-     x20: 1
-     x21: 1
-     x22: 1
-     x23: 1
-     x24: 1
-     x25: 1
-     x26: 1
-     x27: 1
-     x28: 1
-     x29: 1
-     x3: 1
-     x30: 1
-     x31: 260
-     x4: 1
-     x5: 1
-     x6: 1
-     x7: 1
-     x8: 1
-     x9: 1
-     coverage: 32/32
-rs1:
-     x0: 1
-     x1: 1
-     x10: 1
-     x11: 1
-     x12: 1
-     x13: 1
-     x14: 1
-     x15: 1
-     x16: 1
-     x17: 1
-     x18: 1
-     x19: 1
-     x2: 1
-     x20: 1
-     x21: 1
-     x22: 1
-     x23: 1
-     x24: 1
-     x25: 1
-     x26: 1
-     x27: 1
-     x28: 1
-     x29: 1
-     x3: 1
      x30: 259
-     x31: 2
-     x4: 1
-     x5: 1
-     x6: 1
-     x7: 1
-     x8: 1
-     x9: 1
-     coverage: 32/32
-rs2:
-     x0: 1
-     x1: 1
-     x10: 1
-     x11: 1
-     x12: 1
-     x13: 1
-     x14: 1
-     x15: 1
-     x16: 1
-     x17: 1
-     x18: 1
-     x19: 1
-     x2: 1
-     x20: 1
-     x21: 1
-     x22: 1
-     x23: 1
-     x24: 1
-     x25: 1
-     x26: 1
-     x27: 1
-     x28: 1
-     x29: 258
-     x3: 1
-     x30: 3
-     x31: 1
-     x4: 1
-     x5: 1
-     x6: 1
-     x7: 1
-     x8: 1
-     x9: 1
-     coverage: 32/32
-val_comb:
-     rs1_val == 1431655765: 2
-     rs2_val == 2147483647: 1
-     rs2_val == 3221225471: 1
-     rs2_val == 3758096383: 1
-     rs2_val == 4026531839: 1
-     rs2_val == 4160749567: 1
-     rs2_val == 4227858431: 1
-     rs2_val == 4261412863: 1
-     rs2_val == 4278190079: 1
-     rs2_val == 4286578687: 1
-     rs2_val == 4290772991: 1
-     rs2_val == 4292870143: 1
-     rs2_val == 4293918719: 1
-     rs2_val == 4294443007: 1
-     rs2_val == 4294705151: 1
-     rs2_val == 4294836223: 1
-     rs2_val == 4294901759: 1
-     rs2_val == 4294934527: 1
-     rs2_val == 4294950911: 1
-     rs2_val == 4294959103: 1
-     rs2_val == 4294963199: 1
-     rs2_val == 4294965247: 1
-     rs2_val == 4294966271: 1
-     rs2_val == 4294966783: 1
-     rs2_val == 4294967039: 1
-     rs2_val == 4294967167: 1
-     rs2_val == 4294967231: 1
-     rs2_val == 4294967263: 1
-     rs2_val == 4294967279: 1
-     rs2_val == 4294967287: 1
-     rs2_val == 4294967291: 2
-     rs2_val == 4294967293: 1
-     rs2_val == 4294967294: 1
-     rs1_val == 2147483647: 2
-     rs1_val == 3221225471: 2
-     rs1_val == 3758096383: 1
-     rs1_val == 4026531839: 1
-     rs1_val == 4160749567: 1
-     rs1_val == 4227858431: 1
-     rs1_val == 4261412863: 1
-     rs1_val == 4278190079: 1
-     rs1_val == 4286578687: 1
-     rs1_val == 4290772991: 1
-     rs1_val == 4292870143: 1
-     rs1_val == 4293918719: 1
-     rs1_val == 4294443007: 1
-     rs1_val == 4294705151: 1
-     rs1_val == 4294836223: 1
-     rs1_val == 4294901759: 1
-     rs1_val == 4294934527: 1
-     rs1_val == 4294950911: 1
-     rs1_val == 4294959103: 1
-     rs1_val == 4294963199: 1
-     rs1_val == 4294965247: 1
-     rs1_val == 4294966271: 1
-     rs1_val == 4294966783: 1
-     rs1_val == 4294967039: 1
-     rs1_val == 4294967167: 1
-     rs1_val == 4294967231: 1
-     rs1_val == 4294967263: 1
-     rs1_val == 4294967279: 1
-     rs1_val == 4294967287: 1
-     rs1_val == 4294967291: 1
-     rs1_val == 4294967293: 2
-     rs1_val == 4294967294: 2
-     rs2_val == 2147483648: 1
-     rs2_val == 1073741824: 1
-     rs2_val == 536870912: 1
-     rs2_val == 268435456: 1
-     rs2_val == 134217728: 1
-     rs2_val == 67108864: 1
-     rs2_val == 33554432: 1
-     rs2_val == 16777216: 1
-     rs2_val == 8388608: 1
-     rs2_val == 4194304: 1
-     rs2_val == 2097152: 1
-     rs2_val == 1048576: 1
-     rs2_val == 524288: 1
-     rs2_val == 262144: 1
-     rs2_val == 131072: 1
-     rs2_val == 65536: 1
-     rs2_val == 32768: 1
-     rs2_val == 16384: 1
-     rs2_val == 8192: 1
-     rs2_val == 4096: 1
-     rs2_val == 2048: 1
-     rs2_val == 1024: 1
-     rs2_val == 512: 1
-     rs2_val == 256: 1
-     rs2_val == 128: 1
-     rs2_val == 64: 1
-     rs2_val == 32: 1
-     rs2_val == 16: 8
-     rs2_val == 8: 7
-     rs2_val == 4: 6
-     rs2_val == 2: 4
-     rs2_val == 1: 5
-     rs1_val == 2147483648: 2
-     rs1_val == 1073741824: 2
-     rs1_val == 536870912: 1
-     rs1_val == 268435456: 1
-     rs1_val == 134217728: 2
-     rs1_val == 67108864: 1
-     rs1_val == 33554432: 1
-     rs1_val == 16777216: 1
-     rs1_val == 8388608: 1
-     rs1_val == 4194304: 1
-     rs1_val == 2097152: 1
-     rs1_val == 1048576: 1
-     rs1_val == 524288: 1
-     rs1_val == 262144: 1
-     rs1_val == 131072: 1
-     rs1_val == 65536: 1
-     rs1_val == 32768: 1
-     rs1_val == 16384: 1
-     rs1_val == 8192: 1
-     rs1_val == 4096: 1
-     rs1_val == 2048: 1
-     rs1_val == 1024: 1
-     rs1_val == 512: 1
-     rs1_val == 256: 1
-     rs1_val == 128: 1
-     rs1_val == 64: 1
-     rs1_val == 32: 1
-     rs1_val == 16: 1
-     rs1_val == 8: 1
-     rs1_val == 4: 1
-     rs1_val == 2: 1
-     rs1_val == 1: 2
-     'rs2_val == 0x00 and rs1_val == 0x2DEDB6A7 #nosat': 1
-     'rs2_val == 0x10 and rs1_val == 0x3C272728 #nosat': 1
-     'rs2_val == 0x18 and rs1_val == 0x4F55C73D #nosat': 1
-     'rs2_val == 0x14 and rs1_val == 0xB0AB577A #nosat': 1
-     'rs2_val == 0x1A and rs1_val == 0xF0EB21AA #nosat': 1
-     'rs2_val == 0x1B and rs1_val == 0xA9E16E27 #nosat': 1
-     'rs1_val == 0x00000000 and rs2_val == 0x0C #nosat': 1
-     'rs1_val == 0x80000000 and rs2_val == 0x05 #nosat': 1
-     'rs1_val == 0x40000000 and rs2_val == 0x01 #nosat': 1
-     'rs1_val == 0x60000000 and rs2_val == 0x18 #nosat': 1
-     'rs1_val == 0xB0000000 and rs2_val == 0x1E #nosat': 1
-     'rs1_val == 0x08000000 and rs2_val == 0x1A #nosat': 1
-     'rs1_val == 0xF4000000 and rs2_val == 0x05 #nosat': 1
-     'rs1_val == 0x82000000 and rs2_val == 0x0A #nosat': 1
-     'rs1_val == 0xFD000000 and rs2_val == 0x03 #nosat': 1
-     'rs1_val == 0xD8800000 and rs2_val == 0x0A #nosat': 1
-     'rs1_val == 0xC8C00000 and rs2_val == 0x14 #nosat': 1
-     'rs1_val == 0xA3200000 and rs2_val == 0x08 #nosat': 1
-     'rs1_val == 0xC7900000 and rs2_val == 0x1B #nosat': 1
-     'rs1_val == 0x46880000 and rs2_val == 0x1C #nosat': 1
-     'rs1_val == 0x55440000 and rs2_val == 0x1B #nosat': 1
-     'rs1_val == 0xA56A0000 and rs2_val == 0x0E #nosat': 1
-     'rs1_val == 0x405D0000 and rs2_val == 0x03 #nosat': 1
-     'rs1_val == 0xCD2F8000 and rs2_val == 0x05 #nosat': 1
-     'rs1_val == 0xA6C04000 and rs2_val == 0x19 #nosat': 1
-     'rs1_val == 0x33BC2000 and rs2_val == 0x15 #nosat': 1
-     'rs1_val == 0xF1C6B000 and rs2_val == 0x0C #nosat': 1
-     'rs1_val == 0xAA3D6800 and rs2_val == 0x0D #nosat': 1
-     'rs1_val == 0x7AA5E400 and rs2_val == 0x0A #nosat': 1
-     'rs1_val == 0xC1B7AE00 and rs2_val == 0x1C #nosat': 1
-     'rs1_val == 0x4C56BB00 and rs2_val == 0x09 #nosat': 1
-     'rs1_val == 0x72C58380 and rs2_val == 0x00 #nosat': 1
-     'rs1_val == 0x32AB8740 and rs2_val == 0x0E #nosat': 1
-     'rs1_val == 0x96CDF1A0 and rs2_val == 0x1D #nosat': 1
-     'rs1_val == 0xB87A9E30 and rs2_val == 0x11 #nosat': 1
-     'rs1_val == 0x163DFF98 and rs2_val == 0x17 #nosat': 1
-     'rs1_val == 0x9205D39C and rs2_val == 0x18 #nosat': 1
-     'rs1_val == 0x50A03C5A and rs2_val == 0x16 #nosat': 1
-     'rs1_val == 0x797D76DF and rs2_val == 0x11 #nosat': 1
-     'rs2_val == 0x08 and rs1_val == 0x24496FE3 #nosat': 1
-     'rs2_val == 0x1D and rs1_val == 0xDE14BFF2 #nosat': 1
-     'rs2_val == 0x03 and rs1_val == 0xB808A677 #nosat': 1
-     'rs2_val == 0x07 and rs1_val == 0x76B1FD3D #nosat': 1
-     'rs2_val == 0x0F and rs1_val == 0x5DCF019D #nosat': 1
-     'rs2_val == 0x1F and rs1_val == 0x47B7097B #nosat': 1
-     'rs1_val == 0x759F1B44 and rs2_val == 0x10 #nosat': 1
-     'rs1_val == 0x40D90A1D and rs2_val == 0x17 #nosat': 1
-     'rs1_val == 0x2DEDF123 and rs2_val == 0x16 #nosat': 1
-     'rs1_val == 0x4B1634E7 and rs2_val == 0x0C #nosat': 1
-     'rs1_val == 0x8935B82F and rs2_val == 0x0B #nosat': 1
-     'rs1_val == 0x70BCB8DF and rs2_val == 0x1C #nosat': 1
-     'rs1_val == 0x8DE1C73F and rs2_val == 0x08 #nosat': 1
-     'rs1_val == 0xB0E04E7F and rs2_val == 0x1C #nosat': 1
-     'rs1_val == 0x589218FF and rs2_val == 0x10 #nosat': 1
-     'rs1_val == 0xA7BE99FF and rs2_val == 0x07 #nosat': 1
-     'rs1_val == 0xA37E33FF and rs2_val == 0x14 #nosat': 1
-     'rs1_val == 0xE37D37FF and rs2_val == 0x1B #nosat': 1
-     'rs1_val == 0xABB4CFFF and rs2_val == 0x17 #nosat': 1
-     'rs1_val == 0x7C9DDFFF and rs2_val == 0x1B #nosat': 1
-     'rs1_val == 0x5B11BFFF and rs2_val == 0x0E #nosat': 1
-     'rs1_val == 0xCB347FFF and rs2_val == 0x10 #nosat': 1
-     'rs1_val == 0xF306FFFF and rs2_val == 0x08 #nosat': 1
-     'rs1_val == 0xBEA5FFFF and rs2_val == 0x1B #nosat': 1
-     'rs1_val == 0xD38BFFFF and rs2_val == 0x1C #nosat': 1
-     'rs1_val == 0x15B7FFFF and rs2_val == 0x10 #nosat': 1
-     'rs1_val == 0xD58FFFFF and rs2_val == 0x09 #nosat': 1
-     'rs1_val == 0xFE1FFFFF and rs2_val == 0x11 #nosat': 1
-     'rs1_val == 0x203FFFFF and rs2_val == 0x00 #nosat': 1
-     'rs1_val == 0x077FFFFF and rs2_val == 0x1B #nosat': 1
-     'rs1_val == 0xBEFFFFFF and rs2_val == 0x12 #nosat': 1
-     'rs1_val == 0x89FFFFFF and rs2_val == 0x0D #nosat': 1
-     'rs1_val == 0x23FFFFFF and rs2_val == 0x04 #nosat': 1
-     'rs1_val == 0xA7FFFFFF and rs2_val == 0x0B #nosat': 1
-     'rs1_val == 0xCFFFFFFF and rs2_val == 0x0E #nosat': 1
-     'rs1_val == 0x9FFFFFFF and rs2_val == 0x09 #nosat': 1
-     'rs1_val == 0xBFFFFFFF and rs2_val == 0x0E #nosat': 1
-     'rs1_val == 0x7FFFFFFF and rs2_val == 0x0B #nosat': 1
-     'rs1_val == 0xFFFFFFFF and rs2_val == 0x12 #nosat': 1
-     'rs2_val == 0x1B and rs1_val == 0x164F1513 #nosat': 1
-     'rs2_val == 0x09 and rs1_val == 0xACC6D8F2 #nosat': 1
-     'rs2_val == 0x06 and rs1_val == 0xA123F501 #nosat': 1
-     'rs2_val == 0x02 and rs1_val == 0xB57A6A1D #nosat': 1
-     'rs2_val == 0x01 and rs1_val == 0xE90794DF #nosat': 1
-     'rs2_val == 0x00 and rs1_val == 0xAF5570EE #nosat': 1
-     'rs1_val == 0xF542441E and rs2_val == 0x01 #nosat': 1
-     'rs1_val == 0x62F28D1B and rs2_val == 0x04 #nosat': 1
-     'rs1_val == 0x38B9B45D and rs2_val == 0x12 #nosat': 1
-     'rs1_val == 0x16809A12 and rs2_val == 0x06 #nosat': 1
-     'rs1_val == 0x082A1750 and rs2_val == 0x06 #nosat': 1
-     'rs1_val == 0x079DD25B and rs2_val == 0x04 #nosat': 1
-     'rs1_val == 0x034C687B and rs2_val == 0x12 #nosat': 1
-     'rs1_val == 0x01B601FD and rs2_val == 0x0E #nosat': 1
-     'rs1_val == 0x00B302FD and rs2_val == 0x10 #nosat': 1
-     'rs1_val == 0x0062A6B3 and rs2_val == 0x05 #nosat': 1
-     'rs1_val == 0x00339238 and rs2_val == 0x11 #nosat': 1
-     'rs1_val == 0x00164AF0 and rs2_val == 0x05 #nosat': 1
-     'rs1_val == 0x0009222A and rs2_val == 0x00 #nosat': 1
-     'rs1_val == 0x0006284E and rs2_val == 0x12 #nosat': 1
-     'rs1_val == 0x00035161 and rs2_val == 0x0E #nosat': 1
-     'rs1_val == 0x00011E24 and rs2_val == 0x0C #nosat': 1
-     'rs1_val == 0x0000F614 and rs2_val == 0x1C #nosat': 1
-     'rs1_val == 0x00005CC1 and rs2_val == 0x1D #nosat': 1
-     'rs1_val == 0x00003226 and rs2_val == 0x01 #nosat': 1
-     'rs1_val == 0x00001D0C and rs2_val == 0x0F #nosat': 1
-     'rs1_val == 0x00000DD4 and rs2_val == 0x02 #nosat': 1
-     'rs1_val == 0x000005D1 and rs2_val == 0x04 #nosat': 1
-     'rs1_val == 0x000002A7 and rs2_val == 0x00 #nosat': 1
-     'rs1_val == 0x00000197 and rs2_val == 0x0A #nosat': 1
-     'rs1_val == 0x000000B9 and rs2_val == 0x1C #nosat': 1
-     'rs1_val == 0x0000004C and rs2_val == 0x19 #nosat': 1
-     'rs1_val == 0x00000026 and rs2_val == 0x02 #nosat': 1
-     'rs1_val == 0x00000012 and rs2_val == 0x09 #nosat': 1
-     'rs1_val == 0x0000000C and rs2_val == 0x1C #nosat': 1
-     'rs1_val == 0x00000006 and rs2_val == 0x0B #nosat': 1
-     'rs1_val == 0x00000003 and rs2_val == 0x1E #nosat': 1
-     'rs1_val == 0x00000001 and rs2_val == 0x0C #nosat': 1
-     'rs1_val == 0x00000000 and rs2_val == 0x1D #nosat': 1
-     'rs2_val == 0x0F and rs1_val == 0x59432A19 #nosat': 1
-     'rs2_val == 0x17 and rs1_val == 0xCEB506F6 #nosat': 1
-     'rs2_val == 0x18 and rs1_val == 0xC5EC6148 #nosat': 1
-     'rs2_val == 0x1D and rs1_val == 0x99EF1857 #nosat': 1
-     'rs2_val == 0x1E and rs1_val == 0x14B91C79 #nosat': 1
-     'rs2_val == 0x1F and rs1_val == 0x0973E89C #nosat': 1
-     'rs1_val == 0x7843BDB9 and rs2_val == 0x1A #nosat': 1
-     'rs1_val == 0x9798C9D0 and rs2_val == 0x0E #nosat': 1
-     'rs1_val == 0xD814D576 and rs2_val == 0x0A #nosat': 1
-     'rs1_val == 0xE0A37559 and rs2_val == 0x14 #nosat': 1
-     'rs1_val == 0xF79FB998 and rs2_val == 0x1E #nosat': 1
-     'rs1_val == 0xF87A2561 and rs2_val == 0x1C #nosat': 1
-     'rs1_val == 0xFDA56D7F and rs2_val == 0x0F #nosat': 1
-     'rs1_val == 0xFE4DEAB5 and rs2_val == 0x17 #nosat': 1
-     'rs1_val == 0xFF6875BB and rs2_val == 0x13 #nosat': 1
-     'rs1_val == 0xFF93D0E4 and rs2_val == 0x08 #nosat': 1
-     'rs1_val == 0xFFD4AA23 and rs2_val == 0x00 #nosat': 1
-     'rs1_val == 0xFFE2FC91 and rs2_val == 0x18 #nosat': 1
-     'rs1_val == 0xFFF1D2A0 and rs2_val == 0x1C #nosat': 1
-     'rs1_val == 0xFFF904D1 and rs2_val == 0x0F #nosat': 1
-     'rs1_val == 0xFFFCDB0B and rs2_val == 0x1D #nosat': 1
-     'rs1_val == 0xFFFEC2B4 and rs2_val == 0x17 #nosat': 1
-     'rs1_val == 0xFFFF1E5F and rs2_val == 0x13 #nosat': 1
-     'rs1_val == 0xFFFFA2EE and rs2_val == 0x0B #nosat': 1
-     'rs1_val == 0xFFFFD410 and rs2_val == 0x10 #nosat': 1
-     'rs1_val == 0xFFFFEE0A and rs2_val == 0x1A #nosat': 1
-     'rs1_val == 0xFFFFF32A and rs2_val == 0x16 #nosat': 1
-     'rs1_val == 0xFFFFFB84 and rs2_val == 0x08 #nosat': 1
-     'rs1_val == 0xFFFFFC1D and rs2_val == 0x1A #nosat': 1
-     'rs1_val == 0xFFFFFE31 and rs2_val == 0x17 #nosat': 1
-     'rs1_val == 0xFFFFFF44 and rs2_val == 0x04 #nosat': 1
-     'rs1_val == 0xFFFFFFBA and rs2_val == 0x1F #nosat': 1
-     'rs1_val == 0xFFFFFFC6 and rs2_val == 0x0A #nosat': 1
-     'rs1_val == 0xFFFFFFE8 and rs2_val == 0x11 #nosat': 1
-     'rs1_val == 0xFFFFFFF2 and rs2_val == 0x1F #nosat': 1
-     'rs1_val == 0xFFFFFFF9 and rs2_val == 0x1D #nosat': 1
-     'rs1_val == 0xFFFFFFFD and rs2_val == 0x00 #nosat': 1
-     'rs1_val == 0xFFFFFFFE and rs2_val == 0x1E #nosat': 1
-     'rs1_val == 0xFFFFFFFF and rs2_val == 0x02 #nosat': 1
-     rs2_val == 2863311530: 1
-     rs2_val == 1431655765: 2
-     rs1_val == 2863311530: 1
-     coverage: 288/288
-total_coverage: 390/390
-</br></div></td>
-        </tr></tbody>
-        
-        <tbody class= "  results-table-row" >
-        <tr>
-          <td class="col-name">bexti</td>
-          <td class="col-result">223/223</td>
-          <td class="col-percentage">100.00%
-            <div class="meter">
-              <span style="width: 100.00%"></span>
-            </div>
-          </td>          
-        <tr>
-          <td class="extra" colspan="2">
-          <div class="log">config:
-   - check ISA:=regex(.*I.*B.*)
-   - check ISA:=regex(.*I.*Zbs.*)
-op_comb:
-     rs1 != rd: 157
-     rs1 == rd: 1
-     coverage: 2/2
-opcode:
-     bexti: 158
-     coverage: 1/1
-rd:
-     x0: 1
-     x1: 1
-     x10: 1
-     x11: 1
-     x12: 1
-     x13: 1
-     x14: 1
-     x15: 1
-     x16: 1
-     x17: 1
-     x18: 1
-     x19: 1
-     x2: 1
-     x20: 1
-     x21: 1
-     x22: 1
-     x23: 1
-     x24: 1
-     x25: 1
-     x26: 1
-     x27: 1
-     x28: 1
-     x29: 1
-     x3: 1
-     x30: 1
-     x31: 127
-     x4: 1
-     x5: 1
-     x6: 1
-     x7: 1
-     x8: 1
-     x9: 1
-     coverage: 32/32
-rs1:
-     x0: 1
-     x1: 1
-     x10: 1
-     x11: 1
-     x12: 1
-     x13: 1
-     x14: 1
-     x15: 1
-     x16: 1
-     x17: 1
-     x18: 1
-     x19: 1
-     x2: 1
-     x20: 1
-     x21: 1
-     x22: 1
-     x23: 1
-     x24: 1
-     x25: 1
-     x26: 1
-     x27: 1
-     x28: 1
-     x29: 1
-     x3: 1
-     x30: 126
-     x31: 2
-     x4: 1
-     x5: 1
-     x6: 1
-     x7: 1
-     x8: 1
-     x9: 1
-     coverage: 32/32
-val_comb:
-     'rs1_val == 0xFFFFFFFF and imm_val == 0x02 #nosat': 1
-     'imm_val == 0x00 and rs1_val == 0x2DEDB6A7 #nosat': 1
-     'imm_val == 0x10 and rs1_val == 0x3C272728 #nosat': 1
-     'imm_val == 0x18 and rs1_val == 0x4F55C73D #nosat': 1
-     'imm_val == 0x14 and rs1_val == 0xB0AB577A #nosat': 1
-     'imm_val == 0x1A and rs1_val == 0xF0EB21AA #nosat': 1
-     'imm_val == 0x1B and rs1_val == 0xA9E16E27 #nosat': 1
-     'rs1_val == 0x00000000 and imm_val == 0x0C #nosat': 1
-     'rs1_val == 0x80000000 and imm_val == 0x05 #nosat': 1
-     'rs1_val == 0x40000000 and imm_val == 0x01 #nosat': 1
-     'rs1_val == 0x60000000 and imm_val == 0x18 #nosat': 1
-     'rs1_val == 0xB0000000 and imm_val == 0x1E #nosat': 1
-     'rs1_val == 0x08000000 and imm_val == 0x1A #nosat': 1
-     'rs1_val == 0xF4000000 and imm_val == 0x05 #nosat': 1
-     'rs1_val == 0x82000000 and imm_val == 0x0A #nosat': 1
-     'rs1_val == 0xFD000000 and imm_val == 0x03 #nosat': 1
-     'rs1_val == 0xD8800000 and imm_val == 0x0A #nosat': 1
-     'rs1_val == 0xC8C00000 and imm_val == 0x14 #nosat': 1
-     'rs1_val == 0xA3200000 and imm_val == 0x08 #nosat': 1
-     'rs1_val == 0xC7900000 and imm_val == 0x1B #nosat': 1
-     'rs1_val == 0x46880000 and imm_val == 0x1C #nosat': 1
-     'rs1_val == 0x55440000 and imm_val == 0x1B #nosat': 1
-     'rs1_val == 0xA56A0000 and imm_val == 0x0E #nosat': 1
-     'rs1_val == 0x405D0000 and imm_val == 0x03 #nosat': 1
-     'rs1_val == 0xCD2F8000 and imm_val == 0x05 #nosat': 1
-     'rs1_val == 0xA6C04000 and imm_val == 0x19 #nosat': 1
-     'rs1_val == 0x33BC2000 and imm_val == 0x15 #nosat': 1
-     'rs1_val == 0xF1C6B000 and imm_val == 0x0C #nosat': 1
-     'rs1_val == 0xAA3D6800 and imm_val == 0x0D #nosat': 1
-     'rs1_val == 0x7AA5E400 and imm_val == 0x0A #nosat': 1
-     'rs1_val == 0xC1B7AE00 and imm_val == 0x1C #nosat': 1
-     'rs1_val == 0x4C56BB00 and imm_val == 0x09 #nosat': 1
-     'rs1_val == 0x72C58380 and imm_val == 0x00 #nosat': 2
-     'rs1_val == 0x32AB8740 and imm_val == 0x0E #nosat': 1
-     'rs1_val == 0x96CDF1A0 and imm_val == 0x1D #nosat': 1
-     'rs1_val == 0xB87A9E30 and imm_val == 0x11 #nosat': 1
-     'rs1_val == 0x163DFF98 and imm_val == 0x17 #nosat': 1
-     'rs1_val == 0x9205D39C and imm_val == 0x18 #nosat': 1
-     'rs1_val == 0x50A03C5A and imm_val == 0x16 #nosat': 1
-     'rs1_val == 0x797D76DF and imm_val == 0x11 #nosat': 1
-     'imm_val == 0x08 and rs1_val == 0x24496FE3 #nosat': 1
-     'imm_val == 0x1D and rs1_val == 0xDE14BFF2 #nosat': 1
-     'imm_val == 0x03 and rs1_val == 0xB808A677 #nosat': 1
-     'imm_val == 0x07 and rs1_val == 0x76B1FD3D #nosat': 1
-     'imm_val == 0x0F and rs1_val == 0x5DCF019D #nosat': 1
-     'imm_val == 0x1F and rs1_val == 0x47B7097B #nosat': 1
-     'rs1_val == 0x759F1B44 and imm_val == 0x10 #nosat': 1
-     'rs1_val == 0x40D90A1D and imm_val == 0x17 #nosat': 1
-     'rs1_val == 0x2DEDF123 and imm_val == 0x16 #nosat': 1
-     'rs1_val == 0x4B1634E7 and imm_val == 0x0C #nosat': 1
-     'rs1_val == 0x8935B82F and imm_val == 0x0B #nosat': 1
-     'rs1_val == 0x70BCB8DF and imm_val == 0x1C #nosat': 1
-     'rs1_val == 0x8DE1C73F and imm_val == 0x08 #nosat': 1
-     'rs1_val == 0xB0E04E7F and imm_val == 0x1C #nosat': 1
-     'rs1_val == 0x589218FF and imm_val == 0x10 #nosat': 1
-     'rs1_val == 0xA7BE99FF and imm_val == 0x07 #nosat': 1
-     'rs1_val == 0xA37E33FF and imm_val == 0x14 #nosat': 1
-     'rs1_val == 0xE37D37FF and imm_val == 0x1B #nosat': 1
-     'rs1_val == 0xABB4CFFF and imm_val == 0x17 #nosat': 1
-     'rs1_val == 0x7C9DDFFF and imm_val == 0x1B #nosat': 1
-     'rs1_val == 0x5B11BFFF and imm_val == 0x0E #nosat': 1
-     'rs1_val == 0xCB347FFF and imm_val == 0x10 #nosat': 1
-     'rs1_val == 0xF306FFFF and imm_val == 0x08 #nosat': 1
-     'rs1_val == 0xBEA5FFFF and imm_val == 0x1B #nosat': 1
-     'rs1_val == 0xD38BFFFF and imm_val == 0x1C #nosat': 1
-     'rs1_val == 0x15B7FFFF and imm_val == 0x10 #nosat': 1
-     'rs1_val == 0xD58FFFFF and imm_val == 0x09 #nosat': 1
-     'rs1_val == 0xFE1FFFFF and imm_val == 0x11 #nosat': 1
-     'rs1_val == 0x203FFFFF and imm_val == 0x00 #nosat': 1
-     'rs1_val == 0x077FFFFF and imm_val == 0x1B #nosat': 1
-     'rs1_val == 0xBEFFFFFF and imm_val == 0x12 #nosat': 1
-     'rs1_val == 0x89FFFFFF and imm_val == 0x0D #nosat': 1
-     'rs1_val == 0x23FFFFFF and imm_val == 0x04 #nosat': 1
-     'rs1_val == 0xA7FFFFFF and imm_val == 0x0B #nosat': 1
-     'rs1_val == 0xCFFFFFFF and imm_val == 0x0E #nosat': 1
-     'rs1_val == 0x9FFFFFFF and imm_val == 0x09 #nosat': 1
-     'rs1_val == 0xBFFFFFFF and imm_val == 0x0E #nosat': 1
-     'rs1_val == 0x7FFFFFFF and imm_val == 0x0B #nosat': 1
-     'rs1_val == 0xFFFFFFFF and imm_val == 0x12 #nosat': 1
-     'imm_val == 0x1B and rs1_val == 0x164F1513 #nosat': 1
-     'imm_val == 0x09 and rs1_val == 0xACC6D8F2 #nosat': 1
-     'imm_val == 0x06 and rs1_val == 0xA123F501 #nosat': 1
-     'imm_val == 0x02 and rs1_val == 0xB57A6A1D #nosat': 1
-     'imm_val == 0x01 and rs1_val == 0xE90794DF #nosat': 1
-     'imm_val == 0x00 and rs1_val == 0xAF5570EE #nosat': 1
-     'rs1_val == 0xF542441E and imm_val == 0x01 #nosat': 1
-     'rs1_val == 0x62F28D1B and imm_val == 0x04 #nosat': 1
-     'rs1_val == 0x38B9B45D and imm_val == 0x12 #nosat': 1
-     'rs1_val == 0x16809A12 and imm_val == 0x06 #nosat': 1
-     'rs1_val == 0x082A1750 and imm_val == 0x06 #nosat': 1
-     'rs1_val == 0x079DD25B and imm_val == 0x04 #nosat': 1
-     'rs1_val == 0x034C687B and imm_val == 0x12 #nosat': 1
-     'rs1_val == 0x01B601FD and imm_val == 0x0E #nosat': 1
-     'rs1_val == 0x00B302FD and imm_val == 0x10 #nosat': 1
-     'rs1_val == 0x0062A6B3 and imm_val == 0x05 #nosat': 1
-     'rs1_val == 0x00339238 and imm_val == 0x11 #nosat': 1
-     'rs1_val == 0x00164AF0 and imm_val == 0x05 #nosat': 1
-     'rs1_val == 0x0009222A and imm_val == 0x00 #nosat': 1
-     'rs1_val == 0x0006284E and imm_val == 0x12 #nosat': 1
-     'rs1_val == 0x00035161 and imm_val == 0x0E #nosat': 1
-     'rs1_val == 0x00011E24 and imm_val == 0x0C #nosat': 1
-     'rs1_val == 0x0000F614 and imm_val == 0x1C #nosat': 1
-     'rs1_val == 0x00005CC1 and imm_val == 0x1D #nosat': 1
-     'rs1_val == 0x00003226 and imm_val == 0x01 #nosat': 1
-     'rs1_val == 0x00001D0C and imm_val == 0x0F #nosat': 1
-     'rs1_val == 0x00000DD4 and imm_val == 0x02 #nosat': 1
-     'rs1_val == 0x000005D1 and imm_val == 0x04 #nosat': 1
-     'rs1_val == 0x000002A7 and imm_val == 0x00 #nosat': 1
-     'rs1_val == 0x00000197 and imm_val == 0x0A #nosat': 1
-     'rs1_val == 0x000000B9 and imm_val == 0x1C #nosat': 1
-     'rs1_val == 0x0000004C and imm_val == 0x19 #nosat': 1
-     'rs1_val == 0x00000026 and imm_val == 0x02 #nosat': 1
-     'rs1_val == 0x00000012 and imm_val == 0x09 #nosat': 1
-     'rs1_val == 0x0000000C and imm_val == 0x1C #nosat': 1
-     'rs1_val == 0x00000006 and imm_val == 0x0B #nosat': 1
-     'rs1_val == 0x00000003 and imm_val == 0x1E #nosat': 1
-     'rs1_val == 0x00000001 and imm_val == 0x0C #nosat': 1
-     'rs1_val == 0x00000000 and imm_val == 0x1D #nosat': 1
-     'imm_val == 0x0F and rs1_val == 0x59432A19 #nosat': 1
-     'imm_val == 0x17 and rs1_val == 0xCEB506F6 #nosat': 1
-     'imm_val == 0x18 and rs1_val == 0xC5EC6148 #nosat': 1
-     'imm_val == 0x1D and rs1_val == 0x99EF1857 #nosat': 1
-     'imm_val == 0x1E and rs1_val == 0x14B91C79 #nosat': 1
-     'imm_val == 0x1F and rs1_val == 0x0973E89C #nosat': 1
-     'rs1_val == 0x7843BDB9 and imm_val == 0x1A #nosat': 1
-     'rs1_val == 0x9798C9D0 and imm_val == 0x0E #nosat': 1
-     'rs1_val == 0xD814D576 and imm_val == 0x0A #nosat': 1
-     'rs1_val == 0xE0A37559 and imm_val == 0x14 #nosat': 1
-     'rs1_val == 0xF79FB998 and imm_val == 0x1E #nosat': 1
-     'rs1_val == 0xF87A2561 and imm_val == 0x1C #nosat': 1
-     'rs1_val == 0xFDA56D7F and imm_val == 0x0F #nosat': 1
-     'rs1_val == 0xFE4DEAB5 and imm_val == 0x17 #nosat': 1
-     'rs1_val == 0xFF6875BB and imm_val == 0x13 #nosat': 1
-     'rs1_val == 0xFF93D0E4 and imm_val == 0x08 #nosat': 1
-     'rs1_val == 0xFFD4AA23 and imm_val == 0x00 #nosat': 1
-     'rs1_val == 0xFFE2FC91 and imm_val == 0x18 #nosat': 1
-     'rs1_val == 0xFFF1D2A0 and imm_val == 0x1C #nosat': 1
-     'rs1_val == 0xFFF904D1 and imm_val == 0x0F #nosat': 1
-     'rs1_val == 0xFFFCDB0B and imm_val == 0x1D #nosat': 1
-     'rs1_val == 0xFFFEC2B4 and imm_val == 0x17 #nosat': 1
-     'rs1_val == 0xFFFF1E5F and imm_val == 0x13 #nosat': 1
-     'rs1_val == 0xFFFFA2EE and imm_val == 0x0B #nosat': 1
-     'rs1_val == 0xFFFFD410 and imm_val == 0x10 #nosat': 1
-     'rs1_val == 0xFFFFEE0A and imm_val == 0x1A #nosat': 1
-     'rs1_val == 0xFFFFF32A and imm_val == 0x16 #nosat': 1
-     'rs1_val == 0xFFFFFB84 and imm_val == 0x08 #nosat': 1
-     'rs1_val == 0xFFFFFC1D and imm_val == 0x1A #nosat': 1
-     'rs1_val == 0xFFFFFE31 and imm_val == 0x17 #nosat': 1
-     'rs1_val == 0xFFFFFF44 and imm_val == 0x04 #nosat': 1
-     'rs1_val == 0xFFFFFFBA and imm_val == 0x1F #nosat': 1
-     'rs1_val == 0xFFFFFFC6 and imm_val == 0x0A #nosat': 1
-     'rs1_val == 0xFFFFFFE8 and imm_val == 0x11 #nosat': 1
-     'rs1_val == 0xFFFFFFF2 and imm_val == 0x1F #nosat': 1
-     'rs1_val == 0xFFFFFFF9 and imm_val == 0x1D #nosat': 1
-     'rs1_val == 0xFFFFFFFD and imm_val == 0x00 #nosat': 1
-     'rs1_val == 0xFFFFFFFE and imm_val == 0x1E #nosat': 1
-     coverage: 156/156
-total_coverage: 223/223
-</br></div></td>
-        </tr></tbody>
-        
-        <tbody class= "  results-table-row" >
-        <tr>
-          <td class="col-name">binv</td>
-          <td class="col-result">390/390</td>
-          <td class="col-percentage">100.00%
-            <div class="meter">
-              <span style="width: 100.00%"></span>
-            </div>
-          </td>          
-        <tr>
-          <td class="extra" colspan="2">
-          <div class="log">config:
-   - check ISA:=regex(.*I.*B.*)
-   - check ISA:=regex(.*I.*Zbs.*)
-op_comb:
-     rs1 != rs2  and rs1 != rd and rs2 != rd: 286
-     rs1 == rd != rs2: 1
-     rs1 == rs2 != rd: 1
-     rs1 == rs2 == rd: 1
-     rs2 == rd != rs1: 1
-     coverage: 5/5
-opcode:
-     binv: 290
-     coverage: 1/1
-rd:
-     x0: 1
-     x1: 1
-     x10: 1
-     x11: 1
-     x12: 1
-     x13: 1
-     x14: 1
-     x15: 1
-     x16: 1
-     x17: 1
-     x18: 1
-     x19: 1
-     x2: 1
-     x20: 1
-     x21: 1
-     x22: 1
-     x23: 1
-     x24: 1
-     x25: 1
-     x26: 1
-     x27: 1
-     x28: 1
-     x29: 1
-     x3: 1
-     x30: 1
-     x31: 259
-     x4: 1
-     x5: 1
-     x6: 1
-     x7: 1
-     x8: 1
-     x9: 1
-     coverage: 32/32
-rs1:
-     x0: 1
-     x1: 1
-     x10: 1
-     x11: 1
-     x12: 1
-     x13: 1
-     x14: 1
-     x15: 1
-     x16: 1
-     x17: 1
-     x18: 1
-     x19: 1
-     x2: 1
-     x20: 1
-     x21: 1
-     x22: 1
-     x23: 1
-     x24: 1
-     x25: 1
-     x26: 1
-     x27: 1
-     x28: 1
-     x29: 1
-     x3: 1
-     x30: 258
-     x31: 2
+     x31: 3
      x4: 1
      x5: 1
      x6: 1
@@ -6877,7 +5543,7 @@ rs2:
      x28: 1
      x29: 257
      x3: 1
-     x30: 3
+     x30: 5
      x31: 1
      x4: 1
      x5: 1
@@ -6887,8 +5553,8 @@ rs2:
      x9: 1
      coverage: 32/32
 val_comb:
-     rs1_val == 1431655765: 2
-     rs2_val == 2147483647: 66
+     rs1_val == 1431655765: 1
+     rs2_val == 2147483647: 1
      rs2_val == 3221225471: 1
      rs2_val == 3758096383: 1
      rs2_val == 4026531839: 1
@@ -6920,7 +5586,7 @@ val_comb:
      rs2_val == 4294967291: 1
      rs2_val == 4294967293: 2
      rs2_val == 4294967294: 1
-     rs1_val == 2147483647: 67
+     rs1_val == 2147483647: 2
      rs1_val == 3221225471: 2
      rs1_val == 3758096383: 2
      rs1_val == 4026531839: 1
@@ -7171,9 +5837,9 @@ val_comb:
      'rs1_val == 0xFFFFFFF9 and rs2_val == 0x1D #nosat': 1
      'rs1_val == 0xFFFFFFFD and rs2_val == 0x00 #nosat': 1
      'rs1_val == 0xFFFFFFFE and rs2_val == 0x1E #nosat': 1
-     'rs1_val == 0xFFFFFFFF and rs2_val == 0x02 #nosat': 1
+     'rs1_val == 0xFFFFFFFF and rs2_val == 0x02 #nosat': 2
      rs2_val == 2863311530: 1
-     rs2_val == 1431655765: 2
+     rs2_val == 1431655765: 1
      rs1_val == 2863311530: 1
      coverage: 288/288
 total_coverage: 390/390
@@ -7182,7 +5848,7 @@ total_coverage: 390/390
         
         <tbody class= "  results-table-row" >
         <tr>
-          <td class="col-name">binvi</td>
+          <td class="col-name">bclri</td>
           <td class="col-result">223/223</td>
           <td class="col-percentage">100.00%
             <div class="meter">
@@ -7194,13 +5860,13 @@ total_coverage: 390/390
           <div class="log">config:
    - check ISA:=regex(.*I.*B.*)
    - check ISA:=regex(.*I.*Zbs.*)
+mnemonics:
+     bclri: 158
+     coverage: 1/1
 op_comb:
      rs1 != rd: 157
      rs1 == rd: 1
      coverage: 2/2
-opcode:
-     binvi: 158
-     coverage: 1/1
 rd:
      x0: 1
      x1: 1
@@ -7433,7 +6099,7 @@ total_coverage: 223/223
         
         <tbody class= "  results-table-row" >
         <tr>
-          <td class="col-name">bset</td>
+          <td class="col-name">bext</td>
           <td class="col-result">390/390</td>
           <td class="col-percentage">100.00%
             <div class="meter">
@@ -7445,6 +6111,9 @@ total_coverage: 223/223
           <div class="log">config:
    - check ISA:=regex(.*I.*B.*)
    - check ISA:=regex(.*I.*Zbs.*)
+mnemonics:
+     bext: 291
+     coverage: 1/1
 op_comb:
      rs1 != rs2  and rs1 != rd and rs2 != rd: 287
      rs1 == rd != rs2: 1
@@ -7452,9 +6121,6 @@ op_comb:
      rs1 == rs2 == rd: 1
      rs2 == rd != rs1: 1
      coverage: 5/5
-opcode:
-     bset: 291
-     coverage: 1/1
 rd:
      x0: 1
      x1: 1
@@ -7514,8 +6180,8 @@ rs1:
      x28: 1
      x29: 1
      x3: 1
-     x30: 259
-     x31: 2
+     x30: 258
+     x31: 3
      x4: 1
      x5: 1
      x6: 1
@@ -7546,9 +6212,9 @@ rs2:
      x26: 1
      x27: 1
      x28: 1
-     x29: 258
+     x29: 256
      x3: 1
-     x30: 3
+     x30: 5
      x31: 1
      x4: 1
      x5: 1
@@ -7558,7 +6224,7 @@ rs2:
      x9: 1
      coverage: 32/32
 val_comb:
-     rs1_val == 1431655765: 2
+     rs1_val == 1431655765: 1
      rs2_val == 2147483647: 1
      rs2_val == 3221225471: 1
      rs2_val == 3758096383: 1
@@ -7588,12 +6254,12 @@ val_comb:
      rs2_val == 4294967263: 1
      rs2_val == 4294967279: 1
      rs2_val == 4294967287: 1
-     rs2_val == 4294967291: 2
-     rs2_val == 4294967293: 1
+     rs2_val == 4294967291: 1
+     rs2_val == 4294967293: 2
      rs2_val == 4294967294: 1
      rs1_val == 2147483647: 2
      rs1_val == 3221225471: 2
-     rs1_val == 3758096383: 1
+     rs1_val == 3758096383: 2
      rs1_val == 4026531839: 1
      rs1_val == 4160749567: 1
      rs1_val == 4227858431: 1
@@ -7844,7 +6510,1349 @@ val_comb:
      'rs1_val == 0xFFFFFFFE and rs2_val == 0x1E #nosat': 1
      'rs1_val == 0xFFFFFFFF and rs2_val == 0x02 #nosat': 1
      rs2_val == 2863311530: 1
-     rs2_val == 1431655765: 2
+     rs2_val == 1431655765: 1
+     rs1_val == 2863311530: 1
+     coverage: 288/288
+total_coverage: 390/390
+</br></div></td>
+        </tr></tbody>
+        
+        <tbody class= "  results-table-row" >
+        <tr>
+          <td class="col-name">bexti</td>
+          <td class="col-result">223/223</td>
+          <td class="col-percentage">100.00%
+            <div class="meter">
+              <span style="width: 100.00%"></span>
+            </div>
+          </td>          
+        <tr>
+          <td class="extra" colspan="2">
+          <div class="log">config:
+   - check ISA:=regex(.*I.*B.*)
+   - check ISA:=regex(.*I.*Zbs.*)
+mnemonics:
+     bexti: 158
+     coverage: 1/1
+op_comb:
+     rs1 != rd: 157
+     rs1 == rd: 1
+     coverage: 2/2
+rd:
+     x0: 1
+     x1: 1
+     x10: 1
+     x11: 1
+     x12: 1
+     x13: 1
+     x14: 1
+     x15: 1
+     x16: 1
+     x17: 1
+     x18: 1
+     x19: 1
+     x2: 1
+     x20: 1
+     x21: 1
+     x22: 1
+     x23: 1
+     x24: 1
+     x25: 1
+     x26: 1
+     x27: 1
+     x28: 1
+     x29: 1
+     x3: 1
+     x30: 1
+     x31: 127
+     x4: 1
+     x5: 1
+     x6: 1
+     x7: 1
+     x8: 1
+     x9: 1
+     coverage: 32/32
+rs1:
+     x0: 1
+     x1: 1
+     x10: 1
+     x11: 1
+     x12: 1
+     x13: 1
+     x14: 1
+     x15: 1
+     x16: 1
+     x17: 1
+     x18: 1
+     x19: 1
+     x2: 1
+     x20: 1
+     x21: 1
+     x22: 1
+     x23: 1
+     x24: 1
+     x25: 1
+     x26: 1
+     x27: 1
+     x28: 1
+     x29: 1
+     x3: 1
+     x30: 126
+     x31: 2
+     x4: 1
+     x5: 1
+     x6: 1
+     x7: 1
+     x8: 1
+     x9: 1
+     coverage: 32/32
+val_comb:
+     'rs1_val == 0xFFFFFFFF and imm_val == 0x02 #nosat': 1
+     'imm_val == 0x00 and rs1_val == 0x2DEDB6A7 #nosat': 1
+     'imm_val == 0x10 and rs1_val == 0x3C272728 #nosat': 1
+     'imm_val == 0x18 and rs1_val == 0x4F55C73D #nosat': 1
+     'imm_val == 0x14 and rs1_val == 0xB0AB577A #nosat': 1
+     'imm_val == 0x1A and rs1_val == 0xF0EB21AA #nosat': 1
+     'imm_val == 0x1B and rs1_val == 0xA9E16E27 #nosat': 1
+     'rs1_val == 0x00000000 and imm_val == 0x0C #nosat': 1
+     'rs1_val == 0x80000000 and imm_val == 0x05 #nosat': 1
+     'rs1_val == 0x40000000 and imm_val == 0x01 #nosat': 1
+     'rs1_val == 0x60000000 and imm_val == 0x18 #nosat': 1
+     'rs1_val == 0xB0000000 and imm_val == 0x1E #nosat': 1
+     'rs1_val == 0x08000000 and imm_val == 0x1A #nosat': 1
+     'rs1_val == 0xF4000000 and imm_val == 0x05 #nosat': 1
+     'rs1_val == 0x82000000 and imm_val == 0x0A #nosat': 1
+     'rs1_val == 0xFD000000 and imm_val == 0x03 #nosat': 1
+     'rs1_val == 0xD8800000 and imm_val == 0x0A #nosat': 1
+     'rs1_val == 0xC8C00000 and imm_val == 0x14 #nosat': 1
+     'rs1_val == 0xA3200000 and imm_val == 0x08 #nosat': 1
+     'rs1_val == 0xC7900000 and imm_val == 0x1B #nosat': 1
+     'rs1_val == 0x46880000 and imm_val == 0x1C #nosat': 1
+     'rs1_val == 0x55440000 and imm_val == 0x1B #nosat': 1
+     'rs1_val == 0xA56A0000 and imm_val == 0x0E #nosat': 1
+     'rs1_val == 0x405D0000 and imm_val == 0x03 #nosat': 1
+     'rs1_val == 0xCD2F8000 and imm_val == 0x05 #nosat': 1
+     'rs1_val == 0xA6C04000 and imm_val == 0x19 #nosat': 1
+     'rs1_val == 0x33BC2000 and imm_val == 0x15 #nosat': 1
+     'rs1_val == 0xF1C6B000 and imm_val == 0x0C #nosat': 1
+     'rs1_val == 0xAA3D6800 and imm_val == 0x0D #nosat': 1
+     'rs1_val == 0x7AA5E400 and imm_val == 0x0A #nosat': 1
+     'rs1_val == 0xC1B7AE00 and imm_val == 0x1C #nosat': 1
+     'rs1_val == 0x4C56BB00 and imm_val == 0x09 #nosat': 1
+     'rs1_val == 0x72C58380 and imm_val == 0x00 #nosat': 2
+     'rs1_val == 0x32AB8740 and imm_val == 0x0E #nosat': 1
+     'rs1_val == 0x96CDF1A0 and imm_val == 0x1D #nosat': 1
+     'rs1_val == 0xB87A9E30 and imm_val == 0x11 #nosat': 1
+     'rs1_val == 0x163DFF98 and imm_val == 0x17 #nosat': 1
+     'rs1_val == 0x9205D39C and imm_val == 0x18 #nosat': 1
+     'rs1_val == 0x50A03C5A and imm_val == 0x16 #nosat': 1
+     'rs1_val == 0x797D76DF and imm_val == 0x11 #nosat': 1
+     'imm_val == 0x08 and rs1_val == 0x24496FE3 #nosat': 1
+     'imm_val == 0x1D and rs1_val == 0xDE14BFF2 #nosat': 1
+     'imm_val == 0x03 and rs1_val == 0xB808A677 #nosat': 1
+     'imm_val == 0x07 and rs1_val == 0x76B1FD3D #nosat': 1
+     'imm_val == 0x0F and rs1_val == 0x5DCF019D #nosat': 1
+     'imm_val == 0x1F and rs1_val == 0x47B7097B #nosat': 1
+     'rs1_val == 0x759F1B44 and imm_val == 0x10 #nosat': 1
+     'rs1_val == 0x40D90A1D and imm_val == 0x17 #nosat': 1
+     'rs1_val == 0x2DEDF123 and imm_val == 0x16 #nosat': 1
+     'rs1_val == 0x4B1634E7 and imm_val == 0x0C #nosat': 1
+     'rs1_val == 0x8935B82F and imm_val == 0x0B #nosat': 1
+     'rs1_val == 0x70BCB8DF and imm_val == 0x1C #nosat': 1
+     'rs1_val == 0x8DE1C73F and imm_val == 0x08 #nosat': 1
+     'rs1_val == 0xB0E04E7F and imm_val == 0x1C #nosat': 1
+     'rs1_val == 0x589218FF and imm_val == 0x10 #nosat': 1
+     'rs1_val == 0xA7BE99FF and imm_val == 0x07 #nosat': 1
+     'rs1_val == 0xA37E33FF and imm_val == 0x14 #nosat': 1
+     'rs1_val == 0xE37D37FF and imm_val == 0x1B #nosat': 1
+     'rs1_val == 0xABB4CFFF and imm_val == 0x17 #nosat': 1
+     'rs1_val == 0x7C9DDFFF and imm_val == 0x1B #nosat': 1
+     'rs1_val == 0x5B11BFFF and imm_val == 0x0E #nosat': 1
+     'rs1_val == 0xCB347FFF and imm_val == 0x10 #nosat': 1
+     'rs1_val == 0xF306FFFF and imm_val == 0x08 #nosat': 1
+     'rs1_val == 0xBEA5FFFF and imm_val == 0x1B #nosat': 1
+     'rs1_val == 0xD38BFFFF and imm_val == 0x1C #nosat': 1
+     'rs1_val == 0x15B7FFFF and imm_val == 0x10 #nosat': 1
+     'rs1_val == 0xD58FFFFF and imm_val == 0x09 #nosat': 1
+     'rs1_val == 0xFE1FFFFF and imm_val == 0x11 #nosat': 1
+     'rs1_val == 0x203FFFFF and imm_val == 0x00 #nosat': 1
+     'rs1_val == 0x077FFFFF and imm_val == 0x1B #nosat': 1
+     'rs1_val == 0xBEFFFFFF and imm_val == 0x12 #nosat': 1
+     'rs1_val == 0x89FFFFFF and imm_val == 0x0D #nosat': 1
+     'rs1_val == 0x23FFFFFF and imm_val == 0x04 #nosat': 1
+     'rs1_val == 0xA7FFFFFF and imm_val == 0x0B #nosat': 1
+     'rs1_val == 0xCFFFFFFF and imm_val == 0x0E #nosat': 1
+     'rs1_val == 0x9FFFFFFF and imm_val == 0x09 #nosat': 1
+     'rs1_val == 0xBFFFFFFF and imm_val == 0x0E #nosat': 1
+     'rs1_val == 0x7FFFFFFF and imm_val == 0x0B #nosat': 1
+     'rs1_val == 0xFFFFFFFF and imm_val == 0x12 #nosat': 1
+     'imm_val == 0x1B and rs1_val == 0x164F1513 #nosat': 1
+     'imm_val == 0x09 and rs1_val == 0xACC6D8F2 #nosat': 1
+     'imm_val == 0x06 and rs1_val == 0xA123F501 #nosat': 1
+     'imm_val == 0x02 and rs1_val == 0xB57A6A1D #nosat': 1
+     'imm_val == 0x01 and rs1_val == 0xE90794DF #nosat': 1
+     'imm_val == 0x00 and rs1_val == 0xAF5570EE #nosat': 1
+     'rs1_val == 0xF542441E and imm_val == 0x01 #nosat': 1
+     'rs1_val == 0x62F28D1B and imm_val == 0x04 #nosat': 1
+     'rs1_val == 0x38B9B45D and imm_val == 0x12 #nosat': 1
+     'rs1_val == 0x16809A12 and imm_val == 0x06 #nosat': 1
+     'rs1_val == 0x082A1750 and imm_val == 0x06 #nosat': 1
+     'rs1_val == 0x079DD25B and imm_val == 0x04 #nosat': 1
+     'rs1_val == 0x034C687B and imm_val == 0x12 #nosat': 1
+     'rs1_val == 0x01B601FD and imm_val == 0x0E #nosat': 1
+     'rs1_val == 0x00B302FD and imm_val == 0x10 #nosat': 1
+     'rs1_val == 0x0062A6B3 and imm_val == 0x05 #nosat': 1
+     'rs1_val == 0x00339238 and imm_val == 0x11 #nosat': 1
+     'rs1_val == 0x00164AF0 and imm_val == 0x05 #nosat': 1
+     'rs1_val == 0x0009222A and imm_val == 0x00 #nosat': 1
+     'rs1_val == 0x0006284E and imm_val == 0x12 #nosat': 1
+     'rs1_val == 0x00035161 and imm_val == 0x0E #nosat': 1
+     'rs1_val == 0x00011E24 and imm_val == 0x0C #nosat': 1
+     'rs1_val == 0x0000F614 and imm_val == 0x1C #nosat': 1
+     'rs1_val == 0x00005CC1 and imm_val == 0x1D #nosat': 1
+     'rs1_val == 0x00003226 and imm_val == 0x01 #nosat': 1
+     'rs1_val == 0x00001D0C and imm_val == 0x0F #nosat': 1
+     'rs1_val == 0x00000DD4 and imm_val == 0x02 #nosat': 1
+     'rs1_val == 0x000005D1 and imm_val == 0x04 #nosat': 1
+     'rs1_val == 0x000002A7 and imm_val == 0x00 #nosat': 1
+     'rs1_val == 0x00000197 and imm_val == 0x0A #nosat': 1
+     'rs1_val == 0x000000B9 and imm_val == 0x1C #nosat': 1
+     'rs1_val == 0x0000004C and imm_val == 0x19 #nosat': 1
+     'rs1_val == 0x00000026 and imm_val == 0x02 #nosat': 1
+     'rs1_val == 0x00000012 and imm_val == 0x09 #nosat': 1
+     'rs1_val == 0x0000000C and imm_val == 0x1C #nosat': 1
+     'rs1_val == 0x00000006 and imm_val == 0x0B #nosat': 1
+     'rs1_val == 0x00000003 and imm_val == 0x1E #nosat': 1
+     'rs1_val == 0x00000001 and imm_val == 0x0C #nosat': 1
+     'rs1_val == 0x00000000 and imm_val == 0x1D #nosat': 1
+     'imm_val == 0x0F and rs1_val == 0x59432A19 #nosat': 1
+     'imm_val == 0x17 and rs1_val == 0xCEB506F6 #nosat': 1
+     'imm_val == 0x18 and rs1_val == 0xC5EC6148 #nosat': 1
+     'imm_val == 0x1D and rs1_val == 0x99EF1857 #nosat': 1
+     'imm_val == 0x1E and rs1_val == 0x14B91C79 #nosat': 1
+     'imm_val == 0x1F and rs1_val == 0x0973E89C #nosat': 1
+     'rs1_val == 0x7843BDB9 and imm_val == 0x1A #nosat': 1
+     'rs1_val == 0x9798C9D0 and imm_val == 0x0E #nosat': 1
+     'rs1_val == 0xD814D576 and imm_val == 0x0A #nosat': 1
+     'rs1_val == 0xE0A37559 and imm_val == 0x14 #nosat': 1
+     'rs1_val == 0xF79FB998 and imm_val == 0x1E #nosat': 1
+     'rs1_val == 0xF87A2561 and imm_val == 0x1C #nosat': 1
+     'rs1_val == 0xFDA56D7F and imm_val == 0x0F #nosat': 1
+     'rs1_val == 0xFE4DEAB5 and imm_val == 0x17 #nosat': 1
+     'rs1_val == 0xFF6875BB and imm_val == 0x13 #nosat': 1
+     'rs1_val == 0xFF93D0E4 and imm_val == 0x08 #nosat': 1
+     'rs1_val == 0xFFD4AA23 and imm_val == 0x00 #nosat': 1
+     'rs1_val == 0xFFE2FC91 and imm_val == 0x18 #nosat': 1
+     'rs1_val == 0xFFF1D2A0 and imm_val == 0x1C #nosat': 1
+     'rs1_val == 0xFFF904D1 and imm_val == 0x0F #nosat': 1
+     'rs1_val == 0xFFFCDB0B and imm_val == 0x1D #nosat': 1
+     'rs1_val == 0xFFFEC2B4 and imm_val == 0x17 #nosat': 1
+     'rs1_val == 0xFFFF1E5F and imm_val == 0x13 #nosat': 1
+     'rs1_val == 0xFFFFA2EE and imm_val == 0x0B #nosat': 1
+     'rs1_val == 0xFFFFD410 and imm_val == 0x10 #nosat': 1
+     'rs1_val == 0xFFFFEE0A and imm_val == 0x1A #nosat': 1
+     'rs1_val == 0xFFFFF32A and imm_val == 0x16 #nosat': 1
+     'rs1_val == 0xFFFFFB84 and imm_val == 0x08 #nosat': 1
+     'rs1_val == 0xFFFFFC1D and imm_val == 0x1A #nosat': 1
+     'rs1_val == 0xFFFFFE31 and imm_val == 0x17 #nosat': 1
+     'rs1_val == 0xFFFFFF44 and imm_val == 0x04 #nosat': 1
+     'rs1_val == 0xFFFFFFBA and imm_val == 0x1F #nosat': 1
+     'rs1_val == 0xFFFFFFC6 and imm_val == 0x0A #nosat': 1
+     'rs1_val == 0xFFFFFFE8 and imm_val == 0x11 #nosat': 1
+     'rs1_val == 0xFFFFFFF2 and imm_val == 0x1F #nosat': 1
+     'rs1_val == 0xFFFFFFF9 and imm_val == 0x1D #nosat': 1
+     'rs1_val == 0xFFFFFFFD and imm_val == 0x00 #nosat': 1
+     'rs1_val == 0xFFFFFFFE and imm_val == 0x1E #nosat': 1
+     coverage: 156/156
+total_coverage: 223/223
+</br></div></td>
+        </tr></tbody>
+        
+        <tbody class= "  results-table-row" >
+        <tr>
+          <td class="col-name">binv</td>
+          <td class="col-result">390/390</td>
+          <td class="col-percentage">100.00%
+            <div class="meter">
+              <span style="width: 100.00%"></span>
+            </div>
+          </td>          
+        <tr>
+          <td class="extra" colspan="2">
+          <div class="log">config:
+   - check ISA:=regex(.*I.*B.*)
+   - check ISA:=regex(.*I.*Zbs.*)
+mnemonics:
+     binv: 291
+     coverage: 1/1
+op_comb:
+     rs1 != rs2  and rs1 != rd and rs2 != rd: 287
+     rs1 == rd != rs2: 1
+     rs1 == rs2 != rd: 1
+     rs1 == rs2 == rd: 1
+     rs2 == rd != rs1: 1
+     coverage: 5/5
+rd:
+     x0: 1
+     x1: 1
+     x10: 1
+     x11: 1
+     x12: 1
+     x13: 1
+     x14: 1
+     x15: 1
+     x16: 1
+     x17: 1
+     x18: 1
+     x19: 1
+     x2: 1
+     x20: 1
+     x21: 1
+     x22: 1
+     x23: 1
+     x24: 1
+     x25: 1
+     x26: 1
+     x27: 1
+     x28: 1
+     x29: 1
+     x3: 1
+     x30: 1
+     x31: 260
+     x4: 1
+     x5: 1
+     x6: 1
+     x7: 1
+     x8: 1
+     x9: 1
+     coverage: 32/32
+rs1:
+     x0: 1
+     x1: 1
+     x10: 1
+     x11: 1
+     x12: 1
+     x13: 1
+     x14: 1
+     x15: 1
+     x16: 1
+     x17: 1
+     x18: 1
+     x19: 1
+     x2: 1
+     x20: 1
+     x21: 1
+     x22: 1
+     x23: 1
+     x24: 1
+     x25: 1
+     x26: 1
+     x27: 1
+     x28: 1
+     x29: 1
+     x3: 1
+     x30: 258
+     x31: 3
+     x4: 1
+     x5: 1
+     x6: 1
+     x7: 1
+     x8: 1
+     x9: 1
+     coverage: 32/32
+rs2:
+     x0: 1
+     x1: 1
+     x10: 1
+     x11: 1
+     x12: 1
+     x13: 1
+     x14: 1
+     x15: 1
+     x16: 1
+     x17: 1
+     x18: 1
+     x19: 1
+     x2: 1
+     x20: 1
+     x21: 1
+     x22: 1
+     x23: 1
+     x24: 1
+     x25: 1
+     x26: 1
+     x27: 1
+     x28: 1
+     x29: 256
+     x3: 1
+     x30: 5
+     x31: 1
+     x4: 1
+     x5: 1
+     x6: 1
+     x7: 1
+     x8: 1
+     x9: 1
+     coverage: 32/32
+val_comb:
+     rs1_val == 1431655765: 1
+     rs2_val == 2147483647: 68
+     rs2_val == 3221225471: 1
+     rs2_val == 3758096383: 1
+     rs2_val == 4026531839: 1
+     rs2_val == 4160749567: 1
+     rs2_val == 4227858431: 1
+     rs2_val == 4261412863: 1
+     rs2_val == 4278190079: 1
+     rs2_val == 4286578687: 1
+     rs2_val == 4290772991: 1
+     rs2_val == 4292870143: 1
+     rs2_val == 4293918719: 1
+     rs2_val == 4294443007: 1
+     rs2_val == 4294705151: 1
+     rs2_val == 4294836223: 1
+     rs2_val == 4294901759: 1
+     rs2_val == 4294934527: 1
+     rs2_val == 4294950911: 1
+     rs2_val == 4294959103: 1
+     rs2_val == 4294963199: 1
+     rs2_val == 4294965247: 1
+     rs2_val == 4294966271: 1
+     rs2_val == 4294966783: 1
+     rs2_val == 4294967039: 1
+     rs2_val == 4294967167: 1
+     rs2_val == 4294967231: 1
+     rs2_val == 4294967263: 1
+     rs2_val == 4294967279: 1
+     rs2_val == 4294967287: 1
+     rs2_val == 4294967291: 1
+     rs2_val == 4294967293: 1
+     rs2_val == 4294967294: 2
+     rs1_val == 2147483647: 68
+     rs1_val == 3221225471: 2
+     rs1_val == 3758096383: 2
+     rs1_val == 4026531839: 1
+     rs1_val == 4160749567: 2
+     rs1_val == 4227858431: 1
+     rs1_val == 4261412863: 1
+     rs1_val == 4278190079: 1
+     rs1_val == 4286578687: 1
+     rs1_val == 4290772991: 1
+     rs1_val == 4292870143: 1
+     rs1_val == 4293918719: 1
+     rs1_val == 4294443007: 1
+     rs1_val == 4294705151: 1
+     rs1_val == 4294836223: 1
+     rs1_val == 4294901759: 1
+     rs1_val == 4294934527: 1
+     rs1_val == 4294950911: 1
+     rs1_val == 4294959103: 1
+     rs1_val == 4294963199: 1
+     rs1_val == 4294965247: 1
+     rs1_val == 4294966271: 1
+     rs1_val == 4294966783: 1
+     rs1_val == 4294967039: 1
+     rs1_val == 4294967167: 1
+     rs1_val == 4294967231: 1
+     rs1_val == 4294967263: 1
+     rs1_val == 4294967279: 1
+     rs1_val == 4294967287: 1
+     rs1_val == 4294967291: 1
+     rs1_val == 4294967293: 2
+     rs1_val == 4294967294: 2
+     rs2_val == 2147483648: 1
+     rs2_val == 1073741824: 1
+     rs2_val == 536870912: 1
+     rs2_val == 268435456: 1
+     rs2_val == 134217728: 1
+     rs2_val == 67108864: 1
+     rs2_val == 33554432: 1
+     rs2_val == 16777216: 1
+     rs2_val == 8388608: 1
+     rs2_val == 4194304: 1
+     rs2_val == 2097152: 1
+     rs2_val == 1048576: 1
+     rs2_val == 524288: 1
+     rs2_val == 262144: 1
+     rs2_val == 131072: 1
+     rs2_val == 65536: 1
+     rs2_val == 32768: 1
+     rs2_val == 16384: 1
+     rs2_val == 8192: 1
+     rs2_val == 4096: 1
+     rs2_val == 2048: 1
+     rs2_val == 1024: 1
+     rs2_val == 512: 1
+     rs2_val == 256: 1
+     rs2_val == 128: 1
+     rs2_val == 64: 1
+     rs2_val == 32: 1
+     rs2_val == 16: 8
+     rs2_val == 8: 7
+     rs2_val == 4: 6
+     rs2_val == 2: 5
+     rs2_val == 1: 5
+     rs1_val == 2147483648: 2
+     rs1_val == 1073741824: 2
+     rs1_val == 536870912: 1
+     rs1_val == 268435456: 1
+     rs1_val == 134217728: 2
+     rs1_val == 67108864: 1
+     rs1_val == 33554432: 1
+     rs1_val == 16777216: 1
+     rs1_val == 8388608: 1
+     rs1_val == 4194304: 1
+     rs1_val == 2097152: 1
+     rs1_val == 1048576: 1
+     rs1_val == 524288: 1
+     rs1_val == 262144: 1
+     rs1_val == 131072: 1
+     rs1_val == 65536: 1
+     rs1_val == 32768: 1
+     rs1_val == 16384: 1
+     rs1_val == 8192: 1
+     rs1_val == 4096: 1
+     rs1_val == 2048: 1
+     rs1_val == 1024: 1
+     rs1_val == 512: 1
+     rs1_val == 256: 1
+     rs1_val == 128: 1
+     rs1_val == 64: 1
+     rs1_val == 32: 1
+     rs1_val == 16: 1
+     rs1_val == 8: 1
+     rs1_val == 4: 1
+     rs1_val == 2: 1
+     rs1_val == 1: 2
+     'rs2_val == 0x00 and rs1_val == 0x2DEDB6A7 #nosat': 1
+     'rs2_val == 0x10 and rs1_val == 0x3C272728 #nosat': 1
+     'rs2_val == 0x18 and rs1_val == 0x4F55C73D #nosat': 1
+     'rs2_val == 0x14 and rs1_val == 0xB0AB577A #nosat': 1
+     'rs2_val == 0x1A and rs1_val == 0xF0EB21AA #nosat': 1
+     'rs2_val == 0x1B and rs1_val == 0xA9E16E27 #nosat': 1
+     'rs1_val == 0x00000000 and rs2_val == 0x0C #nosat': 1
+     'rs1_val == 0x80000000 and rs2_val == 0x05 #nosat': 1
+     'rs1_val == 0x40000000 and rs2_val == 0x01 #nosat': 1
+     'rs1_val == 0x60000000 and rs2_val == 0x18 #nosat': 1
+     'rs1_val == 0xB0000000 and rs2_val == 0x1E #nosat': 1
+     'rs1_val == 0x08000000 and rs2_val == 0x1A #nosat': 1
+     'rs1_val == 0xF4000000 and rs2_val == 0x05 #nosat': 1
+     'rs1_val == 0x82000000 and rs2_val == 0x0A #nosat': 1
+     'rs1_val == 0xFD000000 and rs2_val == 0x03 #nosat': 1
+     'rs1_val == 0xD8800000 and rs2_val == 0x0A #nosat': 1
+     'rs1_val == 0xC8C00000 and rs2_val == 0x14 #nosat': 1
+     'rs1_val == 0xA3200000 and rs2_val == 0x08 #nosat': 1
+     'rs1_val == 0xC7900000 and rs2_val == 0x1B #nosat': 1
+     'rs1_val == 0x46880000 and rs2_val == 0x1C #nosat': 1
+     'rs1_val == 0x55440000 and rs2_val == 0x1B #nosat': 1
+     'rs1_val == 0xA56A0000 and rs2_val == 0x0E #nosat': 1
+     'rs1_val == 0x405D0000 and rs2_val == 0x03 #nosat': 1
+     'rs1_val == 0xCD2F8000 and rs2_val == 0x05 #nosat': 1
+     'rs1_val == 0xA6C04000 and rs2_val == 0x19 #nosat': 1
+     'rs1_val == 0x33BC2000 and rs2_val == 0x15 #nosat': 1
+     'rs1_val == 0xF1C6B000 and rs2_val == 0x0C #nosat': 1
+     'rs1_val == 0xAA3D6800 and rs2_val == 0x0D #nosat': 1
+     'rs1_val == 0x7AA5E400 and rs2_val == 0x0A #nosat': 1
+     'rs1_val == 0xC1B7AE00 and rs2_val == 0x1C #nosat': 1
+     'rs1_val == 0x4C56BB00 and rs2_val == 0x09 #nosat': 1
+     'rs1_val == 0x72C58380 and rs2_val == 0x00 #nosat': 1
+     'rs1_val == 0x32AB8740 and rs2_val == 0x0E #nosat': 1
+     'rs1_val == 0x96CDF1A0 and rs2_val == 0x1D #nosat': 1
+     'rs1_val == 0xB87A9E30 and rs2_val == 0x11 #nosat': 1
+     'rs1_val == 0x163DFF98 and rs2_val == 0x17 #nosat': 1
+     'rs1_val == 0x9205D39C and rs2_val == 0x18 #nosat': 1
+     'rs1_val == 0x50A03C5A and rs2_val == 0x16 #nosat': 1
+     'rs1_val == 0x797D76DF and rs2_val == 0x11 #nosat': 1
+     'rs2_val == 0x08 and rs1_val == 0x24496FE3 #nosat': 1
+     'rs2_val == 0x1D and rs1_val == 0xDE14BFF2 #nosat': 1
+     'rs2_val == 0x03 and rs1_val == 0xB808A677 #nosat': 1
+     'rs2_val == 0x07 and rs1_val == 0x76B1FD3D #nosat': 1
+     'rs2_val == 0x0F and rs1_val == 0x5DCF019D #nosat': 1
+     'rs2_val == 0x1F and rs1_val == 0x47B7097B #nosat': 1
+     'rs1_val == 0x759F1B44 and rs2_val == 0x10 #nosat': 1
+     'rs1_val == 0x40D90A1D and rs2_val == 0x17 #nosat': 1
+     'rs1_val == 0x2DEDF123 and rs2_val == 0x16 #nosat': 1
+     'rs1_val == 0x4B1634E7 and rs2_val == 0x0C #nosat': 1
+     'rs1_val == 0x8935B82F and rs2_val == 0x0B #nosat': 1
+     'rs1_val == 0x70BCB8DF and rs2_val == 0x1C #nosat': 1
+     'rs1_val == 0x8DE1C73F and rs2_val == 0x08 #nosat': 1
+     'rs1_val == 0xB0E04E7F and rs2_val == 0x1C #nosat': 1
+     'rs1_val == 0x589218FF and rs2_val == 0x10 #nosat': 1
+     'rs1_val == 0xA7BE99FF and rs2_val == 0x07 #nosat': 1
+     'rs1_val == 0xA37E33FF and rs2_val == 0x14 #nosat': 1
+     'rs1_val == 0xE37D37FF and rs2_val == 0x1B #nosat': 1
+     'rs1_val == 0xABB4CFFF and rs2_val == 0x17 #nosat': 1
+     'rs1_val == 0x7C9DDFFF and rs2_val == 0x1B #nosat': 1
+     'rs1_val == 0x5B11BFFF and rs2_val == 0x0E #nosat': 1
+     'rs1_val == 0xCB347FFF and rs2_val == 0x10 #nosat': 1
+     'rs1_val == 0xF306FFFF and rs2_val == 0x08 #nosat': 1
+     'rs1_val == 0xBEA5FFFF and rs2_val == 0x1B #nosat': 1
+     'rs1_val == 0xD38BFFFF and rs2_val == 0x1C #nosat': 1
+     'rs1_val == 0x15B7FFFF and rs2_val == 0x10 #nosat': 1
+     'rs1_val == 0xD58FFFFF and rs2_val == 0x09 #nosat': 1
+     'rs1_val == 0xFE1FFFFF and rs2_val == 0x11 #nosat': 1
+     'rs1_val == 0x203FFFFF and rs2_val == 0x00 #nosat': 1
+     'rs1_val == 0x077FFFFF and rs2_val == 0x1B #nosat': 1
+     'rs1_val == 0xBEFFFFFF and rs2_val == 0x12 #nosat': 1
+     'rs1_val == 0x89FFFFFF and rs2_val == 0x0D #nosat': 1
+     'rs1_val == 0x23FFFFFF and rs2_val == 0x04 #nosat': 1
+     'rs1_val == 0xA7FFFFFF and rs2_val == 0x0B #nosat': 1
+     'rs1_val == 0xCFFFFFFF and rs2_val == 0x0E #nosat': 1
+     'rs1_val == 0x9FFFFFFF and rs2_val == 0x09 #nosat': 1
+     'rs1_val == 0xBFFFFFFF and rs2_val == 0x0E #nosat': 1
+     'rs1_val == 0x7FFFFFFF and rs2_val == 0x0B #nosat': 1
+     'rs1_val == 0xFFFFFFFF and rs2_val == 0x12 #nosat': 1
+     'rs2_val == 0x1B and rs1_val == 0x164F1513 #nosat': 1
+     'rs2_val == 0x09 and rs1_val == 0xACC6D8F2 #nosat': 1
+     'rs2_val == 0x06 and rs1_val == 0xA123F501 #nosat': 1
+     'rs2_val == 0x02 and rs1_val == 0xB57A6A1D #nosat': 1
+     'rs2_val == 0x01 and rs1_val == 0xE90794DF #nosat': 1
+     'rs2_val == 0x00 and rs1_val == 0xAF5570EE #nosat': 1
+     'rs1_val == 0xF542441E and rs2_val == 0x01 #nosat': 1
+     'rs1_val == 0x62F28D1B and rs2_val == 0x04 #nosat': 1
+     'rs1_val == 0x38B9B45D and rs2_val == 0x12 #nosat': 1
+     'rs1_val == 0x16809A12 and rs2_val == 0x06 #nosat': 1
+     'rs1_val == 0x082A1750 and rs2_val == 0x06 #nosat': 1
+     'rs1_val == 0x079DD25B and rs2_val == 0x04 #nosat': 1
+     'rs1_val == 0x034C687B and rs2_val == 0x12 #nosat': 1
+     'rs1_val == 0x01B601FD and rs2_val == 0x0E #nosat': 1
+     'rs1_val == 0x00B302FD and rs2_val == 0x10 #nosat': 1
+     'rs1_val == 0x0062A6B3 and rs2_val == 0x05 #nosat': 1
+     'rs1_val == 0x00339238 and rs2_val == 0x11 #nosat': 1
+     'rs1_val == 0x00164AF0 and rs2_val == 0x05 #nosat': 1
+     'rs1_val == 0x0009222A and rs2_val == 0x00 #nosat': 1
+     'rs1_val == 0x0006284E and rs2_val == 0x12 #nosat': 1
+     'rs1_val == 0x00035161 and rs2_val == 0x0E #nosat': 1
+     'rs1_val == 0x00011E24 and rs2_val == 0x0C #nosat': 1
+     'rs1_val == 0x0000F614 and rs2_val == 0x1C #nosat': 1
+     'rs1_val == 0x00005CC1 and rs2_val == 0x1D #nosat': 1
+     'rs1_val == 0x00003226 and rs2_val == 0x01 #nosat': 1
+     'rs1_val == 0x00001D0C and rs2_val == 0x0F #nosat': 1
+     'rs1_val == 0x00000DD4 and rs2_val == 0x02 #nosat': 1
+     'rs1_val == 0x000005D1 and rs2_val == 0x04 #nosat': 1
+     'rs1_val == 0x000002A7 and rs2_val == 0x00 #nosat': 1
+     'rs1_val == 0x00000197 and rs2_val == 0x0A #nosat': 1
+     'rs1_val == 0x000000B9 and rs2_val == 0x1C #nosat': 1
+     'rs1_val == 0x0000004C and rs2_val == 0x19 #nosat': 1
+     'rs1_val == 0x00000026 and rs2_val == 0x02 #nosat': 1
+     'rs1_val == 0x00000012 and rs2_val == 0x09 #nosat': 1
+     'rs1_val == 0x0000000C and rs2_val == 0x1C #nosat': 1
+     'rs1_val == 0x00000006 and rs2_val == 0x0B #nosat': 1
+     'rs1_val == 0x00000003 and rs2_val == 0x1E #nosat': 1
+     'rs1_val == 0x00000001 and rs2_val == 0x0C #nosat': 1
+     'rs1_val == 0x00000000 and rs2_val == 0x1D #nosat': 1
+     'rs2_val == 0x0F and rs1_val == 0x59432A19 #nosat': 1
+     'rs2_val == 0x17 and rs1_val == 0xCEB506F6 #nosat': 1
+     'rs2_val == 0x18 and rs1_val == 0xC5EC6148 #nosat': 1
+     'rs2_val == 0x1D and rs1_val == 0x99EF1857 #nosat': 1
+     'rs2_val == 0x1E and rs1_val == 0x14B91C79 #nosat': 1
+     'rs2_val == 0x1F and rs1_val == 0x0973E89C #nosat': 1
+     'rs1_val == 0x7843BDB9 and rs2_val == 0x1A #nosat': 1
+     'rs1_val == 0x9798C9D0 and rs2_val == 0x0E #nosat': 1
+     'rs1_val == 0xD814D576 and rs2_val == 0x0A #nosat': 1
+     'rs1_val == 0xE0A37559 and rs2_val == 0x14 #nosat': 1
+     'rs1_val == 0xF79FB998 and rs2_val == 0x1E #nosat': 1
+     'rs1_val == 0xF87A2561 and rs2_val == 0x1C #nosat': 1
+     'rs1_val == 0xFDA56D7F and rs2_val == 0x0F #nosat': 1
+     'rs1_val == 0xFE4DEAB5 and rs2_val == 0x17 #nosat': 1
+     'rs1_val == 0xFF6875BB and rs2_val == 0x13 #nosat': 1
+     'rs1_val == 0xFF93D0E4 and rs2_val == 0x08 #nosat': 1
+     'rs1_val == 0xFFD4AA23 and rs2_val == 0x00 #nosat': 1
+     'rs1_val == 0xFFE2FC91 and rs2_val == 0x18 #nosat': 1
+     'rs1_val == 0xFFF1D2A0 and rs2_val == 0x1C #nosat': 1
+     'rs1_val == 0xFFF904D1 and rs2_val == 0x0F #nosat': 1
+     'rs1_val == 0xFFFCDB0B and rs2_val == 0x1D #nosat': 1
+     'rs1_val == 0xFFFEC2B4 and rs2_val == 0x17 #nosat': 1
+     'rs1_val == 0xFFFF1E5F and rs2_val == 0x13 #nosat': 1
+     'rs1_val == 0xFFFFA2EE and rs2_val == 0x0B #nosat': 1
+     'rs1_val == 0xFFFFD410 and rs2_val == 0x10 #nosat': 1
+     'rs1_val == 0xFFFFEE0A and rs2_val == 0x1A #nosat': 1
+     'rs1_val == 0xFFFFF32A and rs2_val == 0x16 #nosat': 1
+     'rs1_val == 0xFFFFFB84 and rs2_val == 0x08 #nosat': 1
+     'rs1_val == 0xFFFFFC1D and rs2_val == 0x1A #nosat': 1
+     'rs1_val == 0xFFFFFE31 and rs2_val == 0x17 #nosat': 1
+     'rs1_val == 0xFFFFFF44 and rs2_val == 0x04 #nosat': 1
+     'rs1_val == 0xFFFFFFBA and rs2_val == 0x1F #nosat': 1
+     'rs1_val == 0xFFFFFFC6 and rs2_val == 0x0A #nosat': 1
+     'rs1_val == 0xFFFFFFE8 and rs2_val == 0x11 #nosat': 1
+     'rs1_val == 0xFFFFFFF2 and rs2_val == 0x1F #nosat': 1
+     'rs1_val == 0xFFFFFFF9 and rs2_val == 0x1D #nosat': 1
+     'rs1_val == 0xFFFFFFFD and rs2_val == 0x00 #nosat': 1
+     'rs1_val == 0xFFFFFFFE and rs2_val == 0x1E #nosat': 1
+     'rs1_val == 0xFFFFFFFF and rs2_val == 0x02 #nosat': 1
+     rs2_val == 2863311530: 1
+     rs2_val == 1431655765: 1
+     rs1_val == 2863311530: 1
+     coverage: 288/288
+total_coverage: 390/390
+</br></div></td>
+        </tr></tbody>
+        
+        <tbody class= "  results-table-row" >
+        <tr>
+          <td class="col-name">binvi</td>
+          <td class="col-result">223/223</td>
+          <td class="col-percentage">100.00%
+            <div class="meter">
+              <span style="width: 100.00%"></span>
+            </div>
+          </td>          
+        <tr>
+          <td class="extra" colspan="2">
+          <div class="log">config:
+   - check ISA:=regex(.*I.*B.*)
+   - check ISA:=regex(.*I.*Zbs.*)
+mnemonics:
+     binvi: 158
+     coverage: 1/1
+op_comb:
+     rs1 != rd: 157
+     rs1 == rd: 1
+     coverage: 2/2
+rd:
+     x0: 1
+     x1: 1
+     x10: 1
+     x11: 1
+     x12: 1
+     x13: 1
+     x14: 1
+     x15: 1
+     x16: 1
+     x17: 1
+     x18: 1
+     x19: 1
+     x2: 1
+     x20: 1
+     x21: 1
+     x22: 1
+     x23: 1
+     x24: 1
+     x25: 1
+     x26: 1
+     x27: 1
+     x28: 1
+     x29: 1
+     x3: 1
+     x30: 1
+     x31: 127
+     x4: 1
+     x5: 1
+     x6: 1
+     x7: 1
+     x8: 1
+     x9: 1
+     coverage: 32/32
+rs1:
+     x0: 1
+     x1: 1
+     x10: 1
+     x11: 1
+     x12: 1
+     x13: 1
+     x14: 1
+     x15: 1
+     x16: 1
+     x17: 1
+     x18: 1
+     x19: 1
+     x2: 1
+     x20: 1
+     x21: 1
+     x22: 1
+     x23: 1
+     x24: 1
+     x25: 1
+     x26: 1
+     x27: 1
+     x28: 1
+     x29: 1
+     x3: 1
+     x30: 126
+     x31: 2
+     x4: 1
+     x5: 1
+     x6: 1
+     x7: 1
+     x8: 1
+     x9: 1
+     coverage: 32/32
+val_comb:
+     'rs1_val == 0xFFFFFFFF and imm_val == 0x02 #nosat': 1
+     'imm_val == 0x00 and rs1_val == 0x2DEDB6A7 #nosat': 1
+     'imm_val == 0x10 and rs1_val == 0x3C272728 #nosat': 1
+     'imm_val == 0x18 and rs1_val == 0x4F55C73D #nosat': 1
+     'imm_val == 0x14 and rs1_val == 0xB0AB577A #nosat': 1
+     'imm_val == 0x1A and rs1_val == 0xF0EB21AA #nosat': 1
+     'imm_val == 0x1B and rs1_val == 0xA9E16E27 #nosat': 1
+     'rs1_val == 0x00000000 and imm_val == 0x0C #nosat': 1
+     'rs1_val == 0x80000000 and imm_val == 0x05 #nosat': 1
+     'rs1_val == 0x40000000 and imm_val == 0x01 #nosat': 1
+     'rs1_val == 0x60000000 and imm_val == 0x18 #nosat': 1
+     'rs1_val == 0xB0000000 and imm_val == 0x1E #nosat': 1
+     'rs1_val == 0x08000000 and imm_val == 0x1A #nosat': 1
+     'rs1_val == 0xF4000000 and imm_val == 0x05 #nosat': 1
+     'rs1_val == 0x82000000 and imm_val == 0x0A #nosat': 1
+     'rs1_val == 0xFD000000 and imm_val == 0x03 #nosat': 1
+     'rs1_val == 0xD8800000 and imm_val == 0x0A #nosat': 1
+     'rs1_val == 0xC8C00000 and imm_val == 0x14 #nosat': 1
+     'rs1_val == 0xA3200000 and imm_val == 0x08 #nosat': 1
+     'rs1_val == 0xC7900000 and imm_val == 0x1B #nosat': 1
+     'rs1_val == 0x46880000 and imm_val == 0x1C #nosat': 1
+     'rs1_val == 0x55440000 and imm_val == 0x1B #nosat': 1
+     'rs1_val == 0xA56A0000 and imm_val == 0x0E #nosat': 1
+     'rs1_val == 0x405D0000 and imm_val == 0x03 #nosat': 1
+     'rs1_val == 0xCD2F8000 and imm_val == 0x05 #nosat': 1
+     'rs1_val == 0xA6C04000 and imm_val == 0x19 #nosat': 1
+     'rs1_val == 0x33BC2000 and imm_val == 0x15 #nosat': 1
+     'rs1_val == 0xF1C6B000 and imm_val == 0x0C #nosat': 1
+     'rs1_val == 0xAA3D6800 and imm_val == 0x0D #nosat': 1
+     'rs1_val == 0x7AA5E400 and imm_val == 0x0A #nosat': 1
+     'rs1_val == 0xC1B7AE00 and imm_val == 0x1C #nosat': 1
+     'rs1_val == 0x4C56BB00 and imm_val == 0x09 #nosat': 1
+     'rs1_val == 0x72C58380 and imm_val == 0x00 #nosat': 2
+     'rs1_val == 0x32AB8740 and imm_val == 0x0E #nosat': 1
+     'rs1_val == 0x96CDF1A0 and imm_val == 0x1D #nosat': 1
+     'rs1_val == 0xB87A9E30 and imm_val == 0x11 #nosat': 1
+     'rs1_val == 0x163DFF98 and imm_val == 0x17 #nosat': 1
+     'rs1_val == 0x9205D39C and imm_val == 0x18 #nosat': 1
+     'rs1_val == 0x50A03C5A and imm_val == 0x16 #nosat': 1
+     'rs1_val == 0x797D76DF and imm_val == 0x11 #nosat': 1
+     'imm_val == 0x08 and rs1_val == 0x24496FE3 #nosat': 1
+     'imm_val == 0x1D and rs1_val == 0xDE14BFF2 #nosat': 1
+     'imm_val == 0x03 and rs1_val == 0xB808A677 #nosat': 1
+     'imm_val == 0x07 and rs1_val == 0x76B1FD3D #nosat': 1
+     'imm_val == 0x0F and rs1_val == 0x5DCF019D #nosat': 1
+     'imm_val == 0x1F and rs1_val == 0x47B7097B #nosat': 1
+     'rs1_val == 0x759F1B44 and imm_val == 0x10 #nosat': 1
+     'rs1_val == 0x40D90A1D and imm_val == 0x17 #nosat': 1
+     'rs1_val == 0x2DEDF123 and imm_val == 0x16 #nosat': 1
+     'rs1_val == 0x4B1634E7 and imm_val == 0x0C #nosat': 1
+     'rs1_val == 0x8935B82F and imm_val == 0x0B #nosat': 1
+     'rs1_val == 0x70BCB8DF and imm_val == 0x1C #nosat': 1
+     'rs1_val == 0x8DE1C73F and imm_val == 0x08 #nosat': 1
+     'rs1_val == 0xB0E04E7F and imm_val == 0x1C #nosat': 1
+     'rs1_val == 0x589218FF and imm_val == 0x10 #nosat': 1
+     'rs1_val == 0xA7BE99FF and imm_val == 0x07 #nosat': 1
+     'rs1_val == 0xA37E33FF and imm_val == 0x14 #nosat': 1
+     'rs1_val == 0xE37D37FF and imm_val == 0x1B #nosat': 1
+     'rs1_val == 0xABB4CFFF and imm_val == 0x17 #nosat': 1
+     'rs1_val == 0x7C9DDFFF and imm_val == 0x1B #nosat': 1
+     'rs1_val == 0x5B11BFFF and imm_val == 0x0E #nosat': 1
+     'rs1_val == 0xCB347FFF and imm_val == 0x10 #nosat': 1
+     'rs1_val == 0xF306FFFF and imm_val == 0x08 #nosat': 1
+     'rs1_val == 0xBEA5FFFF and imm_val == 0x1B #nosat': 1
+     'rs1_val == 0xD38BFFFF and imm_val == 0x1C #nosat': 1
+     'rs1_val == 0x15B7FFFF and imm_val == 0x10 #nosat': 1
+     'rs1_val == 0xD58FFFFF and imm_val == 0x09 #nosat': 1
+     'rs1_val == 0xFE1FFFFF and imm_val == 0x11 #nosat': 1
+     'rs1_val == 0x203FFFFF and imm_val == 0x00 #nosat': 1
+     'rs1_val == 0x077FFFFF and imm_val == 0x1B #nosat': 1
+     'rs1_val == 0xBEFFFFFF and imm_val == 0x12 #nosat': 1
+     'rs1_val == 0x89FFFFFF and imm_val == 0x0D #nosat': 1
+     'rs1_val == 0x23FFFFFF and imm_val == 0x04 #nosat': 1
+     'rs1_val == 0xA7FFFFFF and imm_val == 0x0B #nosat': 1
+     'rs1_val == 0xCFFFFFFF and imm_val == 0x0E #nosat': 1
+     'rs1_val == 0x9FFFFFFF and imm_val == 0x09 #nosat': 1
+     'rs1_val == 0xBFFFFFFF and imm_val == 0x0E #nosat': 1
+     'rs1_val == 0x7FFFFFFF and imm_val == 0x0B #nosat': 1
+     'rs1_val == 0xFFFFFFFF and imm_val == 0x12 #nosat': 1
+     'imm_val == 0x1B and rs1_val == 0x164F1513 #nosat': 1
+     'imm_val == 0x09 and rs1_val == 0xACC6D8F2 #nosat': 1
+     'imm_val == 0x06 and rs1_val == 0xA123F501 #nosat': 1
+     'imm_val == 0x02 and rs1_val == 0xB57A6A1D #nosat': 1
+     'imm_val == 0x01 and rs1_val == 0xE90794DF #nosat': 1
+     'imm_val == 0x00 and rs1_val == 0xAF5570EE #nosat': 1
+     'rs1_val == 0xF542441E and imm_val == 0x01 #nosat': 1
+     'rs1_val == 0x62F28D1B and imm_val == 0x04 #nosat': 1
+     'rs1_val == 0x38B9B45D and imm_val == 0x12 #nosat': 1
+     'rs1_val == 0x16809A12 and imm_val == 0x06 #nosat': 1
+     'rs1_val == 0x082A1750 and imm_val == 0x06 #nosat': 1
+     'rs1_val == 0x079DD25B and imm_val == 0x04 #nosat': 1
+     'rs1_val == 0x034C687B and imm_val == 0x12 #nosat': 1
+     'rs1_val == 0x01B601FD and imm_val == 0x0E #nosat': 1
+     'rs1_val == 0x00B302FD and imm_val == 0x10 #nosat': 1
+     'rs1_val == 0x0062A6B3 and imm_val == 0x05 #nosat': 1
+     'rs1_val == 0x00339238 and imm_val == 0x11 #nosat': 1
+     'rs1_val == 0x00164AF0 and imm_val == 0x05 #nosat': 1
+     'rs1_val == 0x0009222A and imm_val == 0x00 #nosat': 1
+     'rs1_val == 0x0006284E and imm_val == 0x12 #nosat': 1
+     'rs1_val == 0x00035161 and imm_val == 0x0E #nosat': 1
+     'rs1_val == 0x00011E24 and imm_val == 0x0C #nosat': 1
+     'rs1_val == 0x0000F614 and imm_val == 0x1C #nosat': 1
+     'rs1_val == 0x00005CC1 and imm_val == 0x1D #nosat': 1
+     'rs1_val == 0x00003226 and imm_val == 0x01 #nosat': 1
+     'rs1_val == 0x00001D0C and imm_val == 0x0F #nosat': 1
+     'rs1_val == 0x00000DD4 and imm_val == 0x02 #nosat': 1
+     'rs1_val == 0x000005D1 and imm_val == 0x04 #nosat': 1
+     'rs1_val == 0x000002A7 and imm_val == 0x00 #nosat': 1
+     'rs1_val == 0x00000197 and imm_val == 0x0A #nosat': 1
+     'rs1_val == 0x000000B9 and imm_val == 0x1C #nosat': 1
+     'rs1_val == 0x0000004C and imm_val == 0x19 #nosat': 1
+     'rs1_val == 0x00000026 and imm_val == 0x02 #nosat': 1
+     'rs1_val == 0x00000012 and imm_val == 0x09 #nosat': 1
+     'rs1_val == 0x0000000C and imm_val == 0x1C #nosat': 1
+     'rs1_val == 0x00000006 and imm_val == 0x0B #nosat': 1
+     'rs1_val == 0x00000003 and imm_val == 0x1E #nosat': 1
+     'rs1_val == 0x00000001 and imm_val == 0x0C #nosat': 1
+     'rs1_val == 0x00000000 and imm_val == 0x1D #nosat': 1
+     'imm_val == 0x0F and rs1_val == 0x59432A19 #nosat': 1
+     'imm_val == 0x17 and rs1_val == 0xCEB506F6 #nosat': 1
+     'imm_val == 0x18 and rs1_val == 0xC5EC6148 #nosat': 1
+     'imm_val == 0x1D and rs1_val == 0x99EF1857 #nosat': 1
+     'imm_val == 0x1E and rs1_val == 0x14B91C79 #nosat': 1
+     'imm_val == 0x1F and rs1_val == 0x0973E89C #nosat': 1
+     'rs1_val == 0x7843BDB9 and imm_val == 0x1A #nosat': 1
+     'rs1_val == 0x9798C9D0 and imm_val == 0x0E #nosat': 1
+     'rs1_val == 0xD814D576 and imm_val == 0x0A #nosat': 1
+     'rs1_val == 0xE0A37559 and imm_val == 0x14 #nosat': 1
+     'rs1_val == 0xF79FB998 and imm_val == 0x1E #nosat': 1
+     'rs1_val == 0xF87A2561 and imm_val == 0x1C #nosat': 1
+     'rs1_val == 0xFDA56D7F and imm_val == 0x0F #nosat': 1
+     'rs1_val == 0xFE4DEAB5 and imm_val == 0x17 #nosat': 1
+     'rs1_val == 0xFF6875BB and imm_val == 0x13 #nosat': 1
+     'rs1_val == 0xFF93D0E4 and imm_val == 0x08 #nosat': 1
+     'rs1_val == 0xFFD4AA23 and imm_val == 0x00 #nosat': 1
+     'rs1_val == 0xFFE2FC91 and imm_val == 0x18 #nosat': 1
+     'rs1_val == 0xFFF1D2A0 and imm_val == 0x1C #nosat': 1
+     'rs1_val == 0xFFF904D1 and imm_val == 0x0F #nosat': 1
+     'rs1_val == 0xFFFCDB0B and imm_val == 0x1D #nosat': 1
+     'rs1_val == 0xFFFEC2B4 and imm_val == 0x17 #nosat': 1
+     'rs1_val == 0xFFFF1E5F and imm_val == 0x13 #nosat': 1
+     'rs1_val == 0xFFFFA2EE and imm_val == 0x0B #nosat': 1
+     'rs1_val == 0xFFFFD410 and imm_val == 0x10 #nosat': 1
+     'rs1_val == 0xFFFFEE0A and imm_val == 0x1A #nosat': 1
+     'rs1_val == 0xFFFFF32A and imm_val == 0x16 #nosat': 1
+     'rs1_val == 0xFFFFFB84 and imm_val == 0x08 #nosat': 1
+     'rs1_val == 0xFFFFFC1D and imm_val == 0x1A #nosat': 1
+     'rs1_val == 0xFFFFFE31 and imm_val == 0x17 #nosat': 1
+     'rs1_val == 0xFFFFFF44 and imm_val == 0x04 #nosat': 1
+     'rs1_val == 0xFFFFFFBA and imm_val == 0x1F #nosat': 1
+     'rs1_val == 0xFFFFFFC6 and imm_val == 0x0A #nosat': 1
+     'rs1_val == 0xFFFFFFE8 and imm_val == 0x11 #nosat': 1
+     'rs1_val == 0xFFFFFFF2 and imm_val == 0x1F #nosat': 1
+     'rs1_val == 0xFFFFFFF9 and imm_val == 0x1D #nosat': 1
+     'rs1_val == 0xFFFFFFFD and imm_val == 0x00 #nosat': 1
+     'rs1_val == 0xFFFFFFFE and imm_val == 0x1E #nosat': 1
+     coverage: 156/156
+total_coverage: 223/223
+</br></div></td>
+        </tr></tbody>
+        
+        <tbody class= "  results-table-row" >
+        <tr>
+          <td class="col-name">bset</td>
+          <td class="col-result">390/390</td>
+          <td class="col-percentage">100.00%
+            <div class="meter">
+              <span style="width: 100.00%"></span>
+            </div>
+          </td>          
+        <tr>
+          <td class="extra" colspan="2">
+          <div class="log">config:
+   - check ISA:=regex(.*I.*B.*)
+   - check ISA:=regex(.*I.*Zbs.*)
+mnemonics:
+     bset: 291
+     coverage: 1/1
+op_comb:
+     rs1 != rs2  and rs1 != rd and rs2 != rd: 287
+     rs1 == rd != rs2: 1
+     rs1 == rs2 != rd: 1
+     rs1 == rs2 == rd: 1
+     rs2 == rd != rs1: 1
+     coverage: 5/5
+rd:
+     x0: 1
+     x1: 1
+     x10: 1
+     x11: 1
+     x12: 1
+     x13: 1
+     x14: 1
+     x15: 1
+     x16: 1
+     x17: 1
+     x18: 1
+     x19: 1
+     x2: 1
+     x20: 1
+     x21: 1
+     x22: 1
+     x23: 1
+     x24: 1
+     x25: 1
+     x26: 1
+     x27: 1
+     x28: 1
+     x29: 1
+     x3: 1
+     x30: 1
+     x31: 260
+     x4: 1
+     x5: 1
+     x6: 1
+     x7: 1
+     x8: 1
+     x9: 1
+     coverage: 32/32
+rs1:
+     x0: 1
+     x1: 1
+     x10: 1
+     x11: 1
+     x12: 1
+     x13: 1
+     x14: 1
+     x15: 1
+     x16: 1
+     x17: 1
+     x18: 1
+     x19: 1
+     x2: 1
+     x20: 1
+     x21: 1
+     x22: 1
+     x23: 1
+     x24: 1
+     x25: 1
+     x26: 1
+     x27: 1
+     x28: 1
+     x29: 1
+     x3: 1
+     x30: 258
+     x31: 3
+     x4: 1
+     x5: 1
+     x6: 1
+     x7: 1
+     x8: 1
+     x9: 1
+     coverage: 32/32
+rs2:
+     x0: 1
+     x1: 1
+     x10: 1
+     x11: 1
+     x12: 1
+     x13: 1
+     x14: 1
+     x15: 1
+     x16: 1
+     x17: 1
+     x18: 1
+     x19: 1
+     x2: 1
+     x20: 1
+     x21: 1
+     x22: 1
+     x23: 1
+     x24: 1
+     x25: 1
+     x26: 1
+     x27: 1
+     x28: 1
+     x29: 256
+     x3: 1
+     x30: 5
+     x31: 1
+     x4: 1
+     x5: 1
+     x6: 1
+     x7: 1
+     x8: 1
+     x9: 1
+     coverage: 32/32
+val_comb:
+     rs1_val == 1431655765: 1
+     rs2_val == 2147483647: 1
+     rs2_val == 3221225471: 1
+     rs2_val == 3758096383: 1
+     rs2_val == 4026531839: 1
+     rs2_val == 4160749567: 1
+     rs2_val == 4227858431: 1
+     rs2_val == 4261412863: 1
+     rs2_val == 4278190079: 1
+     rs2_val == 4286578687: 1
+     rs2_val == 4290772991: 1
+     rs2_val == 4292870143: 1
+     rs2_val == 4293918719: 1
+     rs2_val == 4294443007: 1
+     rs2_val == 4294705151: 1
+     rs2_val == 4294836223: 1
+     rs2_val == 4294901759: 1
+     rs2_val == 4294934527: 1
+     rs2_val == 4294950911: 1
+     rs2_val == 4294959103: 1
+     rs2_val == 4294963199: 1
+     rs2_val == 4294965247: 1
+     rs2_val == 4294966271: 1
+     rs2_val == 4294966783: 1
+     rs2_val == 4294967039: 1
+     rs2_val == 4294967167: 1
+     rs2_val == 4294967231: 1
+     rs2_val == 4294967263: 1
+     rs2_val == 4294967279: 1
+     rs2_val == 4294967287: 1
+     rs2_val == 4294967291: 1
+     rs2_val == 4294967293: 2
+     rs2_val == 4294967294: 1
+     rs1_val == 2147483647: 2
+     rs1_val == 3221225471: 2
+     rs1_val == 3758096383: 2
+     rs1_val == 4026531839: 1
+     rs1_val == 4160749567: 1
+     rs1_val == 4227858431: 1
+     rs1_val == 4261412863: 1
+     rs1_val == 4278190079: 1
+     rs1_val == 4286578687: 1
+     rs1_val == 4290772991: 1
+     rs1_val == 4292870143: 1
+     rs1_val == 4293918719: 1
+     rs1_val == 4294443007: 1
+     rs1_val == 4294705151: 1
+     rs1_val == 4294836223: 1
+     rs1_val == 4294901759: 1
+     rs1_val == 4294934527: 1
+     rs1_val == 4294950911: 1
+     rs1_val == 4294959103: 1
+     rs1_val == 4294963199: 1
+     rs1_val == 4294965247: 1
+     rs1_val == 4294966271: 1
+     rs1_val == 4294966783: 1
+     rs1_val == 4294967039: 1
+     rs1_val == 4294967167: 1
+     rs1_val == 4294967231: 1
+     rs1_val == 4294967263: 1
+     rs1_val == 4294967279: 1
+     rs1_val == 4294967287: 1
+     rs1_val == 4294967291: 1
+     rs1_val == 4294967293: 2
+     rs1_val == 4294967294: 2
+     rs2_val == 2147483648: 1
+     rs2_val == 1073741824: 1
+     rs2_val == 536870912: 1
+     rs2_val == 268435456: 1
+     rs2_val == 134217728: 1
+     rs2_val == 67108864: 1
+     rs2_val == 33554432: 1
+     rs2_val == 16777216: 1
+     rs2_val == 8388608: 1
+     rs2_val == 4194304: 1
+     rs2_val == 2097152: 1
+     rs2_val == 1048576: 1
+     rs2_val == 524288: 1
+     rs2_val == 262144: 1
+     rs2_val == 131072: 1
+     rs2_val == 65536: 1
+     rs2_val == 32768: 1
+     rs2_val == 16384: 1
+     rs2_val == 8192: 1
+     rs2_val == 4096: 1
+     rs2_val == 2048: 1
+     rs2_val == 1024: 1
+     rs2_val == 512: 1
+     rs2_val == 256: 1
+     rs2_val == 128: 1
+     rs2_val == 64: 1
+     rs2_val == 32: 1
+     rs2_val == 16: 8
+     rs2_val == 8: 7
+     rs2_val == 4: 6
+     rs2_val == 2: 4
+     rs2_val == 1: 5
+     rs1_val == 2147483648: 2
+     rs1_val == 1073741824: 2
+     rs1_val == 536870912: 1
+     rs1_val == 268435456: 1
+     rs1_val == 134217728: 2
+     rs1_val == 67108864: 1
+     rs1_val == 33554432: 1
+     rs1_val == 16777216: 1
+     rs1_val == 8388608: 1
+     rs1_val == 4194304: 1
+     rs1_val == 2097152: 1
+     rs1_val == 1048576: 1
+     rs1_val == 524288: 1
+     rs1_val == 262144: 1
+     rs1_val == 131072: 1
+     rs1_val == 65536: 1
+     rs1_val == 32768: 1
+     rs1_val == 16384: 1
+     rs1_val == 8192: 1
+     rs1_val == 4096: 1
+     rs1_val == 2048: 1
+     rs1_val == 1024: 1
+     rs1_val == 512: 1
+     rs1_val == 256: 1
+     rs1_val == 128: 1
+     rs1_val == 64: 1
+     rs1_val == 32: 1
+     rs1_val == 16: 1
+     rs1_val == 8: 1
+     rs1_val == 4: 1
+     rs1_val == 2: 1
+     rs1_val == 1: 2
+     'rs2_val == 0x00 and rs1_val == 0x2DEDB6A7 #nosat': 1
+     'rs2_val == 0x10 and rs1_val == 0x3C272728 #nosat': 1
+     'rs2_val == 0x18 and rs1_val == 0x4F55C73D #nosat': 1
+     'rs2_val == 0x14 and rs1_val == 0xB0AB577A #nosat': 1
+     'rs2_val == 0x1A and rs1_val == 0xF0EB21AA #nosat': 1
+     'rs2_val == 0x1B and rs1_val == 0xA9E16E27 #nosat': 1
+     'rs1_val == 0x00000000 and rs2_val == 0x0C #nosat': 1
+     'rs1_val == 0x80000000 and rs2_val == 0x05 #nosat': 1
+     'rs1_val == 0x40000000 and rs2_val == 0x01 #nosat': 1
+     'rs1_val == 0x60000000 and rs2_val == 0x18 #nosat': 1
+     'rs1_val == 0xB0000000 and rs2_val == 0x1E #nosat': 1
+     'rs1_val == 0x08000000 and rs2_val == 0x1A #nosat': 1
+     'rs1_val == 0xF4000000 and rs2_val == 0x05 #nosat': 1
+     'rs1_val == 0x82000000 and rs2_val == 0x0A #nosat': 1
+     'rs1_val == 0xFD000000 and rs2_val == 0x03 #nosat': 1
+     'rs1_val == 0xD8800000 and rs2_val == 0x0A #nosat': 1
+     'rs1_val == 0xC8C00000 and rs2_val == 0x14 #nosat': 1
+     'rs1_val == 0xA3200000 and rs2_val == 0x08 #nosat': 1
+     'rs1_val == 0xC7900000 and rs2_val == 0x1B #nosat': 1
+     'rs1_val == 0x46880000 and rs2_val == 0x1C #nosat': 1
+     'rs1_val == 0x55440000 and rs2_val == 0x1B #nosat': 1
+     'rs1_val == 0xA56A0000 and rs2_val == 0x0E #nosat': 1
+     'rs1_val == 0x405D0000 and rs2_val == 0x03 #nosat': 1
+     'rs1_val == 0xCD2F8000 and rs2_val == 0x05 #nosat': 1
+     'rs1_val == 0xA6C04000 and rs2_val == 0x19 #nosat': 1
+     'rs1_val == 0x33BC2000 and rs2_val == 0x15 #nosat': 1
+     'rs1_val == 0xF1C6B000 and rs2_val == 0x0C #nosat': 1
+     'rs1_val == 0xAA3D6800 and rs2_val == 0x0D #nosat': 1
+     'rs1_val == 0x7AA5E400 and rs2_val == 0x0A #nosat': 1
+     'rs1_val == 0xC1B7AE00 and rs2_val == 0x1C #nosat': 1
+     'rs1_val == 0x4C56BB00 and rs2_val == 0x09 #nosat': 1
+     'rs1_val == 0x72C58380 and rs2_val == 0x00 #nosat': 1
+     'rs1_val == 0x32AB8740 and rs2_val == 0x0E #nosat': 1
+     'rs1_val == 0x96CDF1A0 and rs2_val == 0x1D #nosat': 1
+     'rs1_val == 0xB87A9E30 and rs2_val == 0x11 #nosat': 1
+     'rs1_val == 0x163DFF98 and rs2_val == 0x17 #nosat': 1
+     'rs1_val == 0x9205D39C and rs2_val == 0x18 #nosat': 1
+     'rs1_val == 0x50A03C5A and rs2_val == 0x16 #nosat': 1
+     'rs1_val == 0x797D76DF and rs2_val == 0x11 #nosat': 1
+     'rs2_val == 0x08 and rs1_val == 0x24496FE3 #nosat': 1
+     'rs2_val == 0x1D and rs1_val == 0xDE14BFF2 #nosat': 1
+     'rs2_val == 0x03 and rs1_val == 0xB808A677 #nosat': 1
+     'rs2_val == 0x07 and rs1_val == 0x76B1FD3D #nosat': 1
+     'rs2_val == 0x0F and rs1_val == 0x5DCF019D #nosat': 1
+     'rs2_val == 0x1F and rs1_val == 0x47B7097B #nosat': 1
+     'rs1_val == 0x759F1B44 and rs2_val == 0x10 #nosat': 1
+     'rs1_val == 0x40D90A1D and rs2_val == 0x17 #nosat': 1
+     'rs1_val == 0x2DEDF123 and rs2_val == 0x16 #nosat': 1
+     'rs1_val == 0x4B1634E7 and rs2_val == 0x0C #nosat': 1
+     'rs1_val == 0x8935B82F and rs2_val == 0x0B #nosat': 1
+     'rs1_val == 0x70BCB8DF and rs2_val == 0x1C #nosat': 1
+     'rs1_val == 0x8DE1C73F and rs2_val == 0x08 #nosat': 1
+     'rs1_val == 0xB0E04E7F and rs2_val == 0x1C #nosat': 1
+     'rs1_val == 0x589218FF and rs2_val == 0x10 #nosat': 1
+     'rs1_val == 0xA7BE99FF and rs2_val == 0x07 #nosat': 1
+     'rs1_val == 0xA37E33FF and rs2_val == 0x14 #nosat': 1
+     'rs1_val == 0xE37D37FF and rs2_val == 0x1B #nosat': 1
+     'rs1_val == 0xABB4CFFF and rs2_val == 0x17 #nosat': 1
+     'rs1_val == 0x7C9DDFFF and rs2_val == 0x1B #nosat': 1
+     'rs1_val == 0x5B11BFFF and rs2_val == 0x0E #nosat': 1
+     'rs1_val == 0xCB347FFF and rs2_val == 0x10 #nosat': 1
+     'rs1_val == 0xF306FFFF and rs2_val == 0x08 #nosat': 1
+     'rs1_val == 0xBEA5FFFF and rs2_val == 0x1B #nosat': 1
+     'rs1_val == 0xD38BFFFF and rs2_val == 0x1C #nosat': 1
+     'rs1_val == 0x15B7FFFF and rs2_val == 0x10 #nosat': 1
+     'rs1_val == 0xD58FFFFF and rs2_val == 0x09 #nosat': 1
+     'rs1_val == 0xFE1FFFFF and rs2_val == 0x11 #nosat': 1
+     'rs1_val == 0x203FFFFF and rs2_val == 0x00 #nosat': 1
+     'rs1_val == 0x077FFFFF and rs2_val == 0x1B #nosat': 1
+     'rs1_val == 0xBEFFFFFF and rs2_val == 0x12 #nosat': 1
+     'rs1_val == 0x89FFFFFF and rs2_val == 0x0D #nosat': 1
+     'rs1_val == 0x23FFFFFF and rs2_val == 0x04 #nosat': 1
+     'rs1_val == 0xA7FFFFFF and rs2_val == 0x0B #nosat': 1
+     'rs1_val == 0xCFFFFFFF and rs2_val == 0x0E #nosat': 1
+     'rs1_val == 0x9FFFFFFF and rs2_val == 0x09 #nosat': 1
+     'rs1_val == 0xBFFFFFFF and rs2_val == 0x0E #nosat': 1
+     'rs1_val == 0x7FFFFFFF and rs2_val == 0x0B #nosat': 1
+     'rs1_val == 0xFFFFFFFF and rs2_val == 0x12 #nosat': 1
+     'rs2_val == 0x1B and rs1_val == 0x164F1513 #nosat': 1
+     'rs2_val == 0x09 and rs1_val == 0xACC6D8F2 #nosat': 1
+     'rs2_val == 0x06 and rs1_val == 0xA123F501 #nosat': 1
+     'rs2_val == 0x02 and rs1_val == 0xB57A6A1D #nosat': 1
+     'rs2_val == 0x01 and rs1_val == 0xE90794DF #nosat': 1
+     'rs2_val == 0x00 and rs1_val == 0xAF5570EE #nosat': 1
+     'rs1_val == 0xF542441E and rs2_val == 0x01 #nosat': 1
+     'rs1_val == 0x62F28D1B and rs2_val == 0x04 #nosat': 1
+     'rs1_val == 0x38B9B45D and rs2_val == 0x12 #nosat': 1
+     'rs1_val == 0x16809A12 and rs2_val == 0x06 #nosat': 1
+     'rs1_val == 0x082A1750 and rs2_val == 0x06 #nosat': 1
+     'rs1_val == 0x079DD25B and rs2_val == 0x04 #nosat': 1
+     'rs1_val == 0x034C687B and rs2_val == 0x12 #nosat': 1
+     'rs1_val == 0x01B601FD and rs2_val == 0x0E #nosat': 1
+     'rs1_val == 0x00B302FD and rs2_val == 0x10 #nosat': 1
+     'rs1_val == 0x0062A6B3 and rs2_val == 0x05 #nosat': 1
+     'rs1_val == 0x00339238 and rs2_val == 0x11 #nosat': 1
+     'rs1_val == 0x00164AF0 and rs2_val == 0x05 #nosat': 1
+     'rs1_val == 0x0009222A and rs2_val == 0x00 #nosat': 1
+     'rs1_val == 0x0006284E and rs2_val == 0x12 #nosat': 1
+     'rs1_val == 0x00035161 and rs2_val == 0x0E #nosat': 1
+     'rs1_val == 0x00011E24 and rs2_val == 0x0C #nosat': 1
+     'rs1_val == 0x0000F614 and rs2_val == 0x1C #nosat': 1
+     'rs1_val == 0x00005CC1 and rs2_val == 0x1D #nosat': 1
+     'rs1_val == 0x00003226 and rs2_val == 0x01 #nosat': 1
+     'rs1_val == 0x00001D0C and rs2_val == 0x0F #nosat': 1
+     'rs1_val == 0x00000DD4 and rs2_val == 0x02 #nosat': 1
+     'rs1_val == 0x000005D1 and rs2_val == 0x04 #nosat': 1
+     'rs1_val == 0x000002A7 and rs2_val == 0x00 #nosat': 1
+     'rs1_val == 0x00000197 and rs2_val == 0x0A #nosat': 1
+     'rs1_val == 0x000000B9 and rs2_val == 0x1C #nosat': 1
+     'rs1_val == 0x0000004C and rs2_val == 0x19 #nosat': 1
+     'rs1_val == 0x00000026 and rs2_val == 0x02 #nosat': 1
+     'rs1_val == 0x00000012 and rs2_val == 0x09 #nosat': 1
+     'rs1_val == 0x0000000C and rs2_val == 0x1C #nosat': 1
+     'rs1_val == 0x00000006 and rs2_val == 0x0B #nosat': 1
+     'rs1_val == 0x00000003 and rs2_val == 0x1E #nosat': 1
+     'rs1_val == 0x00000001 and rs2_val == 0x0C #nosat': 1
+     'rs1_val == 0x00000000 and rs2_val == 0x1D #nosat': 1
+     'rs2_val == 0x0F and rs1_val == 0x59432A19 #nosat': 1
+     'rs2_val == 0x17 and rs1_val == 0xCEB506F6 #nosat': 1
+     'rs2_val == 0x18 and rs1_val == 0xC5EC6148 #nosat': 1
+     'rs2_val == 0x1D and rs1_val == 0x99EF1857 #nosat': 1
+     'rs2_val == 0x1E and rs1_val == 0x14B91C79 #nosat': 1
+     'rs2_val == 0x1F and rs1_val == 0x0973E89C #nosat': 1
+     'rs1_val == 0x7843BDB9 and rs2_val == 0x1A #nosat': 1
+     'rs1_val == 0x9798C9D0 and rs2_val == 0x0E #nosat': 1
+     'rs1_val == 0xD814D576 and rs2_val == 0x0A #nosat': 1
+     'rs1_val == 0xE0A37559 and rs2_val == 0x14 #nosat': 1
+     'rs1_val == 0xF79FB998 and rs2_val == 0x1E #nosat': 1
+     'rs1_val == 0xF87A2561 and rs2_val == 0x1C #nosat': 1
+     'rs1_val == 0xFDA56D7F and rs2_val == 0x0F #nosat': 1
+     'rs1_val == 0xFE4DEAB5 and rs2_val == 0x17 #nosat': 1
+     'rs1_val == 0xFF6875BB and rs2_val == 0x13 #nosat': 1
+     'rs1_val == 0xFF93D0E4 and rs2_val == 0x08 #nosat': 1
+     'rs1_val == 0xFFD4AA23 and rs2_val == 0x00 #nosat': 1
+     'rs1_val == 0xFFE2FC91 and rs2_val == 0x18 #nosat': 1
+     'rs1_val == 0xFFF1D2A0 and rs2_val == 0x1C #nosat': 1
+     'rs1_val == 0xFFF904D1 and rs2_val == 0x0F #nosat': 1
+     'rs1_val == 0xFFFCDB0B and rs2_val == 0x1D #nosat': 1
+     'rs1_val == 0xFFFEC2B4 and rs2_val == 0x17 #nosat': 1
+     'rs1_val == 0xFFFF1E5F and rs2_val == 0x13 #nosat': 1
+     'rs1_val == 0xFFFFA2EE and rs2_val == 0x0B #nosat': 1
+     'rs1_val == 0xFFFFD410 and rs2_val == 0x10 #nosat': 1
+     'rs1_val == 0xFFFFEE0A and rs2_val == 0x1A #nosat': 1
+     'rs1_val == 0xFFFFF32A and rs2_val == 0x16 #nosat': 1
+     'rs1_val == 0xFFFFFB84 and rs2_val == 0x08 #nosat': 1
+     'rs1_val == 0xFFFFFC1D and rs2_val == 0x1A #nosat': 1
+     'rs1_val == 0xFFFFFE31 and rs2_val == 0x17 #nosat': 1
+     'rs1_val == 0xFFFFFF44 and rs2_val == 0x04 #nosat': 1
+     'rs1_val == 0xFFFFFFBA and rs2_val == 0x1F #nosat': 1
+     'rs1_val == 0xFFFFFFC6 and rs2_val == 0x0A #nosat': 1
+     'rs1_val == 0xFFFFFFE8 and rs2_val == 0x11 #nosat': 1
+     'rs1_val == 0xFFFFFFF2 and rs2_val == 0x1F #nosat': 1
+     'rs1_val == 0xFFFFFFF9 and rs2_val == 0x1D #nosat': 1
+     'rs1_val == 0xFFFFFFFD and rs2_val == 0x00 #nosat': 1
+     'rs1_val == 0xFFFFFFFE and rs2_val == 0x1E #nosat': 1
+     'rs1_val == 0xFFFFFFFF and rs2_val == 0x02 #nosat': 1
+     rs2_val == 2863311530: 1
+     rs2_val == 1431655765: 1
      rs1_val == 2863311530: 1
      coverage: 288/288
 total_coverage: 390/390
@@ -7865,13 +7873,13 @@ total_coverage: 390/390
           <div class="log">config:
    - check ISA:=regex(.*I.*B.*)
    - check ISA:=regex(.*I.*Zbs.*)
+mnemonics:
+     bseti: 158
+     coverage: 1/1
 op_comb:
      rs1 != rd: 157
      rs1 == rd: 1
      coverage: 2/2
-opcode:
-     bseti: 158
-     coverage: 1/1
 rd:
      x0: 1
      x1: 1
@@ -8116,6 +8124,9 @@ total_coverage: 223/223
           <div class="log">config:
    - check ISA:=regex(.*I.*B.*)
    - check ISA:=regex(.*I.*Zbc.*)
+mnemonics:
+     clmul: 162
+     coverage: 1/1
 op_comb:
      rs1 != rs2  and rs1 != rd and rs2 != rd: 158
      rs1 == rd != rs2: 1
@@ -8123,9 +8134,6 @@ op_comb:
      rs1 == rs2 == rd: 1
      rs2 == rd != rs1: 1
      coverage: 5/5
-opcode:
-     clmul: 162
-     coverage: 1/1
 rd:
      x0: 1
      x1: 1
@@ -8185,8 +8193,8 @@ rs1:
      x28: 1
      x29: 1
      x3: 1
-     x30: 130
-     x31: 2
+     x30: 129
+     x31: 3
      x4: 1
      x5: 1
      x6: 1
@@ -8217,9 +8225,9 @@ rs2:
      x26: 1
      x27: 1
      x28: 1
-     x29: 129
+     x29: 127
      x3: 1
-     x30: 3
+     x30: 5
      x31: 1
      x4: 1
      x5: 1
@@ -8229,7 +8237,7 @@ rs2:
      x9: 1
      coverage: 32/32
 val_comb:
-     rs1_val==0 and rs2_val==0: 2
+     rs1_val==0 and rs2_val==0: 1
      rs2_val == 2147483647: 1
      rs2_val == 3221225471: 1
      rs2_val == 3758096383: 1
@@ -8259,12 +8267,12 @@ val_comb:
      rs2_val == 4294967263: 1
      rs2_val == 4294967279: 1
      rs2_val == 4294967287: 1
-     rs2_val == 4294967291: 2
-     rs2_val == 4294967293: 1
+     rs2_val == 4294967291: 1
+     rs2_val == 4294967293: 2
      rs2_val == 4294967294: 1
      rs1_val == 2147483647: 2
      rs1_val == 3221225471: 1
-     rs1_val == 3758096383: 1
+     rs1_val == 3758096383: 2
      rs1_val == 4026531839: 1
      rs1_val == 4160749567: 1
      rs1_val == 4227858431: 1
@@ -8406,6 +8414,9 @@ total_coverage: 260/260
           <div class="log">config:
    - check ISA:=regex(.*I.*B.*)
    - check ISA:=regex(.*I.*Zbc.*)
+mnemonics:
+     clmulh: 162
+     coverage: 1/1
 op_comb:
      rs1 != rs2  and rs1 != rd and rs2 != rd: 158
      rs1 == rd != rs2: 1
@@ -8413,9 +8424,6 @@ op_comb:
      rs1 == rs2 == rd: 1
      rs2 == rd != rs1: 1
      coverage: 5/5
-opcode:
-     clmulh: 162
-     coverage: 1/1
 rd:
      x0: 1
      x1: 1
@@ -8475,8 +8483,8 @@ rs1:
      x28: 1
      x29: 1
      x3: 1
-     x30: 130
-     x31: 2
+     x30: 129
+     x31: 3
      x4: 1
      x5: 1
      x6: 1
@@ -8507,9 +8515,9 @@ rs2:
      x26: 1
      x27: 1
      x28: 1
-     x29: 129
+     x29: 127
      x3: 1
-     x30: 3
+     x30: 5
      x31: 1
      x4: 1
      x5: 1
@@ -8519,7 +8527,7 @@ rs2:
      x9: 1
      coverage: 32/32
 val_comb:
-     rs1_val==0 and rs2_val==0: 2
+     rs1_val==0 and rs2_val==0: 1
      rs2_val == 2147483647: 1
      rs2_val == 3221225471: 1
      rs2_val == 3758096383: 1
@@ -8549,12 +8557,12 @@ val_comb:
      rs2_val == 4294967263: 1
      rs2_val == 4294967279: 1
      rs2_val == 4294967287: 1
-     rs2_val == 4294967291: 2
-     rs2_val == 4294967293: 1
+     rs2_val == 4294967291: 1
+     rs2_val == 4294967293: 2
      rs2_val == 4294967294: 1
      rs1_val == 2147483647: 2
      rs1_val == 3221225471: 1
-     rs1_val == 3758096383: 1
+     rs1_val == 3758096383: 2
      rs1_val == 4026531839: 1
      rs1_val == 4160749567: 1
      rs1_val == 4227858431: 1
@@ -8696,6 +8704,9 @@ total_coverage: 260/260
           <div class="log">config:
    - check ISA:=regex(.*I.*B.*)
    - check ISA:=regex(.*I.*Zbc.*)
+mnemonics:
+     clmulr: 162
+     coverage: 1/1
 op_comb:
      rs1 != rs2  and rs1 != rd and rs2 != rd: 158
      rs1 == rd != rs2: 1
@@ -8703,9 +8714,6 @@ op_comb:
      rs1 == rs2 == rd: 1
      rs2 == rd != rs1: 1
      coverage: 5/5
-opcode:
-     clmulr: 162
-     coverage: 1/1
 rd:
      x0: 1
      x1: 1
@@ -8765,8 +8773,8 @@ rs1:
      x28: 1
      x29: 1
      x3: 1
-     x30: 130
-     x31: 2
+     x30: 129
+     x31: 3
      x4: 1
      x5: 1
      x6: 1
@@ -8797,9 +8805,9 @@ rs2:
      x26: 1
      x27: 1
      x28: 1
-     x29: 129
+     x29: 127
      x3: 1
-     x30: 3
+     x30: 5
      x31: 1
      x4: 1
      x5: 1
@@ -8809,7 +8817,7 @@ rs2:
      x9: 1
      coverage: 32/32
 val_comb:
-     rs1_val==0 and rs2_val==0: 2
+     rs1_val==0 and rs2_val==0: 1
      rs2_val == 2147483647: 1
      rs2_val == 3221225471: 1
      rs2_val == 3758096383: 1
@@ -8839,12 +8847,12 @@ val_comb:
      rs2_val == 4294967263: 1
      rs2_val == 4294967279: 1
      rs2_val == 4294967287: 1
-     rs2_val == 4294967291: 2
-     rs2_val == 4294967293: 1
+     rs2_val == 4294967291: 1
+     rs2_val == 4294967293: 2
      rs2_val == 4294967294: 1
      rs1_val == 2147483647: 2
      rs1_val == 3221225471: 1
-     rs1_val == 3758096383: 1
+     rs1_val == 3758096383: 2
      rs1_val == 4026531839: 1
      rs1_val == 4160749567: 1
      rs1_val == 4227858431: 1
@@ -8986,13 +8994,13 @@ total_coverage: 260/260
           <div class="log">config:
    - check ISA:=regex(.*I.*B.*)
    - check ISA:=regex(.*I.*Zbb.*)
+mnemonics:
+     clz: 68
+     coverage: 1/1
 op_comb:
      rs1 != rd: 67
      rs1 == rd: 1
      coverage: 2/2
-opcode:
-     clz: 68
-     coverage: 1/1
 rd:
      x0: 1
      x1: 1
@@ -9147,13 +9155,13 @@ total_coverage: 133/133
           <div class="log">config:
    - check ISA:=regex(.*I.*B.*)
    - check ISA:=regex(.*I.*Zbb.*)
+mnemonics:
+     cpop: 68
+     coverage: 1/1
 op_comb:
      rs1 != rd: 67
      rs1 == rd: 1
      coverage: 2/2
-opcode:
-     cpop: 68
-     coverage: 1/1
 rd:
      x0: 1
      x1: 1
@@ -9308,13 +9316,13 @@ total_coverage: 133/133
           <div class="log">config:
    - check ISA:=regex(.*I.*B.*)
    - check ISA:=regex(.*I.*Zbb.*)
+mnemonics:
+     ctz: 68
+     coverage: 1/1
 op_comb:
      rs1 != rd: 67
      rs1 == rd: 1
      coverage: 2/2
-opcode:
-     ctz: 68
-     coverage: 1/1
 rd:
      x0: 1
      x1: 1
@@ -9469,6 +9477,9 @@ total_coverage: 133/133
           <div class="log">config:
    - check ISA:=regex(.*I.*B.*)
    - check ISA:=regex(.*I.*Zbb.*)
+mnemonics:
+     max: 572
+     coverage: 1/1
 op_comb:
      rs1 != rs2  and rs1 != rd and rs2 != rd: 568
      rs1 == rd != rs2: 1
@@ -9476,9 +9487,6 @@ op_comb:
      rs1 == rs2 == rd: 1
      rs2 == rd != rs1: 1
      coverage: 5/5
-opcode:
-     max: 572
-     coverage: 1/1
 rd:
      x0: 1
      x1: 1
@@ -9538,8 +9546,8 @@ rs1:
      x28: 1
      x29: 1
      x3: 1
-     x30: 540
-     x31: 2
+     x30: 539
+     x31: 3
      x4: 1
      x5: 1
      x6: 1
@@ -9570,9 +9578,9 @@ rs2:
      x26: 1
      x27: 1
      x28: 1
-     x29: 539
+     x29: 537
      x3: 1
-     x30: 3
+     x30: 5
      x31: 1
      x4: 1
      x5: 1
@@ -9612,12 +9620,12 @@ val_comb:
      rs2_val == -33: 1
      rs2_val == -17: 1
      rs2_val == -9: 1
-     rs2_val == -5: 2
-     rs2_val == -3: 1
+     rs2_val == -5: 1
+     rs2_val == -3: 2
      rs2_val == -2: 1
      rs1_val == 2147483647: 2
      rs1_val == -1073741825: 1
-     rs1_val == -536870913: 1
+     rs1_val == -536870913: 2
      rs1_val == -268435457: 1
      rs1_val == -134217729: 1
      rs1_val == -67108865: 1
@@ -9713,7 +9721,7 @@ val_comb:
      rs1_val == 1: 21
      rs1_val==-1 and rs2_val==-1: 3
      rs1_val==-1 and rs2_val==1: 1
-     rs1_val==-1 and rs2_val==0: 2
+     rs1_val==-1 and rs2_val==0: 1
      rs1_val==-1 and rs2_val==-1717986918: 1
      rs1_val==-1 and rs2_val==1717986919: 1
      rs1_val==-1 and rs2_val==-858993459: 1
@@ -10156,13 +10164,13 @@ val_comb:
      rs2_val == 1431655765: 21
      rs1_val == -1431655766: 21
      rs1_val == 1431655765: 21
-     rs1_val < 0 and rs2_val < 0: 166
+     rs1_val < 0 and rs2_val < 0: 167
      rs1_val < 0 and rs2_val > 0: 131
      rs1_val == (-2**(xlen-1)): 1
      rs1_val == (2**(xlen-1)-1): 2
      rs1_val == 0: 22
      rs1_val == rs2_val: 23
-     rs1_val > 0 and rs2_val < 0: 132
+     rs1_val > 0 and rs2_val < 0: 131
      rs1_val > 0 and rs2_val > 0: 100
      rs2_val == (-2**(xlen-1)): 1
      rs2_val == (2**(xlen-1)-1): 1
@@ -10186,6 +10194,9 @@ total_coverage: 687/687
           <div class="log">config:
    - check ISA:=regex(.*I.*B.*)
    - check ISA:=regex(.*I.*Zbb.*)
+mnemonics:
+     maxu: 572
+     coverage: 1/1
 op_comb:
      rs1 != rs2  and rs1 != rd and rs2 != rd: 568
      rs1 == rd != rs2: 1
@@ -10193,9 +10204,6 @@ op_comb:
      rs1 == rs2 == rd: 1
      rs2 == rd != rs1: 1
      coverage: 5/5
-opcode:
-     maxu: 572
-     coverage: 1/1
 rd:
      x0: 1
      x1: 1
@@ -10255,8 +10263,8 @@ rs1:
      x28: 1
      x29: 1
      x3: 1
-     x30: 540
-     x31: 2
+     x30: 539
+     x31: 3
      x4: 1
      x5: 1
      x6: 1
@@ -10287,9 +10295,9 @@ rs2:
      x26: 1
      x27: 1
      x28: 1
-     x29: 539
+     x29: 537
      x3: 1
-     x30: 3
+     x30: 5
      x31: 1
      x4: 1
      x5: 1
@@ -10329,12 +10337,12 @@ val_comb:
      rs2_val == 4294967263: 1
      rs2_val == 4294967279: 1
      rs2_val == 4294967287: 1
-     rs2_val == 4294967291: 2
-     rs2_val == 4294967293: 1
+     rs2_val == 4294967291: 1
+     rs2_val == 4294967293: 2
      rs2_val == 4294967294: 1
      rs1_val == 2147483647: 2
      rs1_val == 3221225471: 1
-     rs1_val == 3758096383: 1
+     rs1_val == 3758096383: 2
      rs1_val == 4026531839: 1
      rs1_val == 4160749567: 1
      rs1_val == 4227858431: 1
@@ -10430,7 +10438,7 @@ val_comb:
      rs1_val == 1: 21
      rs1_val==4294967295 and rs2_val==4294967295: 3
      rs1_val==4294967295 and rs2_val==1: 1
-     rs1_val==4294967295 and rs2_val==0: 2
+     rs1_val==4294967295 and rs2_val==0: 1
      rs1_val==4294967295 and rs2_val==2576980378: 1
      rs1_val==4294967295 and rs2_val==1717986919: 1
      rs1_val==4294967295 and rs2_val==3435973837: 1
@@ -10873,7 +10881,7 @@ val_comb:
      rs2_val == 1431655765: 21
      rs1_val == 2863311530: 21
      rs1_val == 1431655765: 21
-     rs1_val == (2**(xlen)-1): 87
+     rs1_val == (2**(xlen)-1): 86
      rs1_val == 0: 22
      rs1_val == rs2_val and rs1_val > 0 and rs2_val > 0: 22
      rs1_val > 0 and rs2_val > 0: 529
@@ -10898,6 +10906,9 @@ total_coverage: 682/682
           <div class="log">config:
    - check ISA:=regex(.*I.*B.*)
    - check ISA:=regex(.*I.*Zbb.*)
+mnemonics:
+     min: 572
+     coverage: 1/1
 op_comb:
      rs1 != rs2  and rs1 != rd and rs2 != rd: 568
      rs1 == rd != rs2: 1
@@ -10905,9 +10916,6 @@ op_comb:
      rs1 == rs2 == rd: 1
      rs2 == rd != rs1: 1
      coverage: 5/5
-opcode:
-     min: 572
-     coverage: 1/1
 rd:
      x0: 1
      x1: 1
@@ -10967,8 +10975,8 @@ rs1:
      x28: 1
      x29: 1
      x3: 1
-     x30: 540
-     x31: 2
+     x30: 539
+     x31: 3
      x4: 1
      x5: 1
      x6: 1
@@ -10999,9 +11007,9 @@ rs2:
      x26: 1
      x27: 1
      x28: 1
-     x29: 539
+     x29: 537
      x3: 1
-     x30: 3
+     x30: 5
      x31: 1
      x4: 1
      x5: 1
@@ -11041,12 +11049,12 @@ val_comb:
      rs2_val == -33: 1
      rs2_val == -17: 1
      rs2_val == -9: 1
-     rs2_val == -5: 2
-     rs2_val == -3: 1
+     rs2_val == -5: 1
+     rs2_val == -3: 2
      rs2_val == -2: 1
      rs1_val == 2147483647: 2
      rs1_val == -1073741825: 1
-     rs1_val == -536870913: 1
+     rs1_val == -536870913: 2
      rs1_val == -268435457: 1
      rs1_val == -134217729: 1
      rs1_val == -67108865: 1
@@ -11142,7 +11150,7 @@ val_comb:
      rs1_val == 1: 21
      rs1_val==-1 and rs2_val==-1: 3
      rs1_val==-1 and rs2_val==1: 1
-     rs1_val==-1 and rs2_val==0: 2
+     rs1_val==-1 and rs2_val==0: 1
      rs1_val==-1 and rs2_val==-1717986918: 1
      rs1_val==-1 and rs2_val==1717986919: 1
      rs1_val==-1 and rs2_val==-858993459: 1
@@ -11585,13 +11593,13 @@ val_comb:
      rs2_val == 1431655765: 21
      rs1_val == -1431655766: 21
      rs1_val == 1431655765: 21
-     rs1_val < 0 and rs2_val < 0: 166
+     rs1_val < 0 and rs2_val < 0: 167
      rs1_val < 0 and rs2_val > 0: 131
      rs1_val == (-2**(xlen-1)): 1
      rs1_val == (2**(xlen-1)-1): 2
      rs1_val == 0: 22
      rs1_val == rs2_val: 23
-     rs1_val > 0 and rs2_val < 0: 132
+     rs1_val > 0 and rs2_val < 0: 131
      rs1_val > 0 and rs2_val > 0: 100
      rs2_val == (-2**(xlen-1)): 1
      rs2_val == (2**(xlen-1)-1): 1
@@ -11615,6 +11623,9 @@ total_coverage: 687/687
           <div class="log">config:
    - check ISA:=regex(.*I.*B.*)
    - check ISA:=regex(.*I.*Zbb.*)
+mnemonics:
+     minu: 572
+     coverage: 1/1
 op_comb:
      rs1 != rs2  and rs1 != rd and rs2 != rd: 568
      rs1 == rd != rs2: 1
@@ -11622,9 +11633,6 @@ op_comb:
      rs1 == rs2 == rd: 1
      rs2 == rd != rs1: 1
      coverage: 5/5
-opcode:
-     minu: 572
-     coverage: 1/1
 rd:
      x0: 1
      x1: 1
@@ -11684,8 +11692,8 @@ rs1:
      x28: 1
      x29: 1
      x3: 1
-     x30: 540
-     x31: 2
+     x30: 539
+     x31: 3
      x4: 1
      x5: 1
      x6: 1
@@ -11716,9 +11724,9 @@ rs2:
      x26: 1
      x27: 1
      x28: 1
-     x29: 539
+     x29: 537
      x3: 1
-     x30: 3
+     x30: 5
      x31: 1
      x4: 1
      x5: 1
@@ -11758,12 +11766,12 @@ val_comb:
      rs2_val == 4294967263: 1
      rs2_val == 4294967279: 1
      rs2_val == 4294967287: 1
-     rs2_val == 4294967291: 2
-     rs2_val == 4294967293: 1
+     rs2_val == 4294967291: 1
+     rs2_val == 4294967293: 2
      rs2_val == 4294967294: 1
      rs1_val == 2147483647: 2
      rs1_val == 3221225471: 1
-     rs1_val == 3758096383: 1
+     rs1_val == 3758096383: 2
      rs1_val == 4026531839: 1
      rs1_val == 4160749567: 1
      rs1_val == 4227858431: 1
@@ -11859,7 +11867,7 @@ val_comb:
      rs1_val == 1: 21
      rs1_val==4294967295 and rs2_val==4294967295: 3
      rs1_val==4294967295 and rs2_val==1: 1
-     rs1_val==4294967295 and rs2_val==0: 2
+     rs1_val==4294967295 and rs2_val==0: 1
      rs1_val==4294967295 and rs2_val==2576980378: 1
      rs1_val==4294967295 and rs2_val==1717986919: 1
      rs1_val==4294967295 and rs2_val==3435973837: 1
@@ -12302,7 +12310,7 @@ val_comb:
      rs2_val == 1431655765: 21
      rs1_val == 2863311530: 21
      rs1_val == 1431655765: 21
-     rs1_val == (2**(xlen)-1): 87
+     rs1_val == (2**(xlen)-1): 86
      rs1_val == 0: 22
      rs1_val == rs2_val and rs1_val > 0 and rs2_val > 0: 22
      rs1_val > 0 and rs2_val > 0: 529
@@ -12315,7 +12323,7 @@ total_coverage: 682/682
         
         <tbody class= "  results-table-row" >
         <tr>
-          <td class="col-name">orc.b</td>
+          <td class="col-name">orcb_32</td>
           <td class="col-result">137/137</td>
           <td class="col-percentage">100.00%
             <div class="meter">
@@ -12324,16 +12332,18 @@ total_coverage: 682/682
           </td>          
         <tr>
           <td class="extra" colspan="2">
-          <div class="log">config:
+          <div class="log">base_op: gorci
+config:
    - check ISA:=regex(.*I.*B.*)
    - check ISA:=regex(.*I.*Zbb.*)
+mnemonics:
+     orc.b: 72
+     coverage: 1/1
 op_comb:
      rs1 != rd: 71
      rs1 == rd: 1
      coverage: 2/2
-opcode:
-     orc.b: 72
-     coverage: 1/1
+p_op_cond: imm_val == 7
 rd:
      x0: 1
      x1: 1
@@ -12492,6 +12502,9 @@ total_coverage: 137/137
           <div class="log">config:
    - check ISA:=regex(.*I.*B.*)
    - check ISA:=regex(.*I.*Zbb.*)
+mnemonics:
+     orn: 592
+     coverage: 1/1
 op_comb:
      rs1 != rs2  and rs1 != rd and rs2 != rd: 588
      rs1 == rd != rs2: 1
@@ -12499,9 +12512,6 @@ op_comb:
      rs1 == rs2 == rd: 1
      rs2 == rd != rs1: 1
      coverage: 5/5
-opcode:
-     orn: 592
-     coverage: 1/1
 rd:
      x0: 1
      x1: 1
@@ -12561,8 +12571,8 @@ rs1:
      x28: 1
      x29: 1
      x3: 1
-     x30: 560
-     x31: 2
+     x30: 559
+     x31: 3
      x4: 1
      x5: 1
      x6: 1
@@ -12593,9 +12603,9 @@ rs2:
      x26: 1
      x27: 1
      x28: 1
-     x29: 559
+     x29: 557
      x3: 1
-     x30: 3
+     x30: 5
      x31: 1
      x4: 1
      x5: 1
@@ -12635,12 +12645,12 @@ val_comb:
      rs2_val == 4294967263: 1
      rs2_val == 4294967279: 1
      rs2_val == 4294967287: 1
-     rs2_val == 4294967291: 2
-     rs2_val == 4294967293: 1
+     rs2_val == 4294967291: 1
+     rs2_val == 4294967293: 2
      rs2_val == 4294967294: 1
      rs1_val == 2147483647: 2
      rs1_val == 3221225471: 1
-     rs1_val == 3758096383: 1
+     rs1_val == 3758096383: 2
      rs1_val == 4026531839: 1
      rs1_val == 4160749567: 1
      rs1_val == 4227858431: 1
@@ -12756,7 +12766,7 @@ val_comb:
      'rs1_val == 0x254a9493 and rs2_val == 0xc5521660 #nosat': 1
      rs1_val==4294967295 and rs2_val==4294967295: 3
      rs1_val==4294967295 and rs2_val==1: 1
-     rs1_val==4294967295 and rs2_val==0: 2
+     rs1_val==4294967295 and rs2_val==0: 1
      rs1_val==4294967295 and rs2_val==2576980378: 1
      rs1_val==4294967295 and rs2_val==1717986919: 1
      rs1_val==4294967295 and rs2_val==3435973837: 1
@@ -13199,7 +13209,7 @@ val_comb:
      rs2_val == 1431655765: 21
      rs1_val == 2863311530: 21
      rs1_val == 1431655765: 21
-     rs1_val == (2**(xlen)-1): 87
+     rs1_val == (2**(xlen)-1): 86
      rs1_val == 0: 22
      rs1_val == rs2_val and rs1_val > 0 and rs2_val > 0: 22
      rs1_val > 0 and rs2_val > 0: 549
@@ -13212,7 +13222,7 @@ total_coverage: 702/702
         
         <tbody class= "  results-table-row" >
         <tr>
-          <td class="col-name">rev8</td>
+          <td class="col-name">rev8_32</td>
           <td class="col-result">222/222</td>
           <td class="col-percentage">100.00%
             <div class="meter">
@@ -13221,16 +13231,18 @@ total_coverage: 702/702
           </td>          
         <tr>
           <td class="extra" colspan="2">
-          <div class="log">config:
+          <div class="log">base_op: grevi
+config:
    - check ISA:=regex(.*I.*B.*)
    - check ISA:=regex(.*I.*Zbb.*)
+mnemonics:
+     rev8: 154
+     coverage: 1/1
 op_comb:
      rs1 != rd: 153
      rs1 == rd: 1
      coverage: 2/2
-opcode:
-     rev8: 154
-     coverage: 1/1
+p_op_cond: imm_val == 24
 rd:
      x0: 1
      x1: 1
@@ -13474,6 +13486,9 @@ total_coverage: 222/222
           <div class="log">config:
    - check ISA:=regex(.*I.*B.*)
    - check ISA:=regex(.*I.*Zbb.*)
+mnemonics:
+     rol: 269
+     coverage: 1/1
 op_comb:
      rs1 != rs2  and rs1 != rd and rs2 != rd: 265
      rs1 == rd != rs2: 1
@@ -13481,9 +13496,6 @@ op_comb:
      rs1 == rs2 == rd: 1
      rs2 == rd != rs1: 1
      coverage: 5/5
-opcode:
-     rol: 269
-     coverage: 1/1
 rd:
      x0: 1
      x1: 1
@@ -13543,8 +13555,8 @@ rs1:
      x28: 1
      x29: 1
      x3: 1
-     x30: 237
-     x31: 2
+     x30: 236
+     x31: 3
      x4: 1
      x5: 1
      x6: 1
@@ -13575,9 +13587,9 @@ rs2:
      x26: 1
      x27: 1
      x28: 1
-     x29: 236
+     x29: 234
      x3: 1
-     x30: 3
+     x30: 5
      x31: 1
      x4: 1
      x5: 1
@@ -13620,9 +13632,9 @@ val_comb:
      'rs2_val == 0xEEC50588 and rs1_val == 0xCB8193EF #nosat': 1
      'rs2_val == 0xCA7160CC and rs1_val == 0x577F8847 #nosat': 1
      'rs2_val == 0x60E30DA2 and rs1_val == 0x9B5EAF0A #nosat': 1
-     'rs2_val == 0x76F86039 and rs1_val == 0x5D3BBCE0 #nosat': 2
+     'rs2_val == 0x76F86039 and rs1_val == 0x5D3BBCE0 #nosat': 1
      'rs1_val == 0x00000000 and rs2_val == 0xFD1032E8 #nosat': 1
-     'rs1_val == 0x80000000 and rs2_val == 0x7B246C17 #nosat': 1
+     'rs1_val == 0x80000000 and rs2_val == 0x7B246C17 #nosat': 2
      'rs1_val == 0x40000000 and rs2_val == 0x56F3EEF1 #nosat': 1
      'rs1_val == 0xA0000000 and rs2_val == 0x75923260 #nosat': 1
      'rs1_val == 0x10000000 and rs2_val == 0xB9D3087C #nosat': 1
@@ -13870,6 +13882,9 @@ total_coverage: 366/366
           <div class="log">config:
    - check ISA:=regex(.*I.*B.*)
    - check ISA:=regex(.*I.*Zbb.*)
+mnemonics:
+     ror: 269
+     coverage: 1/1
 op_comb:
      rs1 != rs2  and rs1 != rd and rs2 != rd: 265
      rs1 == rd != rs2: 1
@@ -13877,9 +13892,6 @@ op_comb:
      rs1 == rs2 == rd: 1
      rs2 == rd != rs1: 1
      coverage: 5/5
-opcode:
-     ror: 269
-     coverage: 1/1
 rd:
      x0: 1
      x1: 1
@@ -13939,8 +13951,8 @@ rs1:
      x28: 1
      x29: 1
      x3: 1
-     x30: 237
-     x31: 2
+     x30: 236
+     x31: 3
      x4: 1
      x5: 1
      x6: 1
@@ -13971,9 +13983,9 @@ rs2:
      x26: 1
      x27: 1
      x28: 1
-     x29: 236
+     x29: 234
      x3: 1
-     x30: 3
+     x30: 5
      x31: 1
      x4: 1
      x5: 1
@@ -14016,9 +14028,9 @@ val_comb:
      'rs2_val == 0xEEC50588 and rs1_val == 0xCB8193EF #nosat': 1
      'rs2_val == 0xCA7160CC and rs1_val == 0x577F8847 #nosat': 1
      'rs2_val == 0x60E30DA2 and rs1_val == 0x9B5EAF0A #nosat': 1
-     'rs2_val == 0x76F86039 and rs1_val == 0x5D3BBCE0 #nosat': 2
+     'rs2_val == 0x76F86039 and rs1_val == 0x5D3BBCE0 #nosat': 1
      'rs1_val == 0x00000000 and rs2_val == 0xFD1032E8 #nosat': 1
-     'rs1_val == 0x80000000 and rs2_val == 0x7B246C17 #nosat': 1
+     'rs1_val == 0x80000000 and rs2_val == 0x7B246C17 #nosat': 2
      'rs1_val == 0x40000000 and rs2_val == 0x56F3EEF1 #nosat': 1
      'rs1_val == 0xA0000000 and rs2_val == 0x75923260 #nosat': 1
      'rs1_val == 0x10000000 and rs2_val == 0xB9D3087C #nosat': 1
@@ -14266,13 +14278,13 @@ total_coverage: 366/366
           <div class="log">config:
    - check ISA:=regex(.*I.*B.*)
    - check ISA:=regex(.*I.*Zbb.*)
+mnemonics:
+     rori: 158
+     coverage: 1/1
 op_comb:
      rs1 != rd: 157
      rs1 == rd: 1
      coverage: 2/2
-opcode:
-     rori: 158
-     coverage: 1/1
 rd:
      x0: 1
      x1: 1
@@ -14517,13 +14529,13 @@ total_coverage: 223/223
           <div class="log">config:
    - check ISA:=regex(.*I.*B.*)
    - check ISA:=regex(.*I.*Zbb.*)
+mnemonics:
+     sext.b: 87
+     coverage: 1/1
 op_comb:
      rs1 != rd: 86
      rs1 == rd: 1
      coverage: 2/2
-opcode:
-     sext.b: 87
-     coverage: 1/1
 rd:
      x0: 1
      x1: 1
@@ -14698,13 +14710,13 @@ total_coverage: 153/153
           <div class="log">config:
    - check ISA:=regex(.*I.*B.*)
    - check ISA:=regex(.*I.*Zbb.*)
+mnemonics:
+     sext.h: 88
+     coverage: 1/1
 op_comb:
      rs1 != rd: 87
      rs1 == rd: 1
      coverage: 2/2
-opcode:
-     sext.h: 88
-     coverage: 1/1
 rd:
      x0: 1
      x1: 1
@@ -14880,6 +14892,9 @@ total_coverage: 154/154
           <div class="log">config:
    - check ISA:=regex(.*I.*B.*)
    - check ISA:=regex(.*I.*Zba.*)
+mnemonics:
+     sh1add: 572
+     coverage: 1/1
 op_comb:
      rs1 != rs2  and rs1 != rd and rs2 != rd: 568
      rs1 == rd != rs2: 1
@@ -14887,9 +14902,6 @@ op_comb:
      rs1 == rs2 == rd: 1
      rs2 == rd != rs1: 1
      coverage: 5/5
-opcode:
-     sh1add: 572
-     coverage: 1/1
 rd:
      x0: 1
      x1: 1
@@ -14949,8 +14961,8 @@ rs1:
      x28: 1
      x29: 1
      x3: 1
-     x30: 540
-     x31: 2
+     x30: 539
+     x31: 3
      x4: 1
      x5: 1
      x6: 1
@@ -14981,9 +14993,9 @@ rs2:
      x26: 1
      x27: 1
      x28: 1
-     x29: 539
+     x29: 537
      x3: 1
-     x30: 3
+     x30: 5
      x31: 1
      x4: 1
      x5: 1
@@ -15023,12 +15035,12 @@ val_comb:
      rs2_val == -33: 1
      rs2_val == -17: 1
      rs2_val == -9: 1
-     rs2_val == -5: 2
-     rs2_val == -3: 1
+     rs2_val == -5: 1
+     rs2_val == -3: 2
      rs2_val == -2: 1
      rs1_val == 2147483647: 2
      rs1_val == -1073741825: 1
-     rs1_val == -536870913: 1
+     rs1_val == -536870913: 2
      rs1_val == -268435457: 1
      rs1_val == -134217729: 1
      rs1_val == -67108865: 1
@@ -15124,7 +15136,7 @@ val_comb:
      rs1_val == 1: 21
      rs1_val==-1 and rs2_val==-1: 3
      rs1_val==-1 and rs2_val==1: 1
-     rs1_val==-1 and rs2_val==0: 2
+     rs1_val==-1 and rs2_val==0: 1
      rs1_val==-1 and rs2_val==-1717986918: 1
      rs1_val==-1 and rs2_val==1717986919: 1
      rs1_val==-1 and rs2_val==-858993459: 1
@@ -15567,13 +15579,13 @@ val_comb:
      rs2_val == 1431655765: 21
      rs1_val == -1431655766: 21
      rs1_val == 1431655765: 21
-     rs1_val < 0 and rs2_val < 0: 166
+     rs1_val < 0 and rs2_val < 0: 167
      rs1_val < 0 and rs2_val > 0: 131
      rs1_val == (-2**(xlen-1)): 1
      rs1_val == (2**(xlen-1)-1): 2
      rs1_val == 0: 22
      rs1_val == rs2_val: 23
-     rs1_val > 0 and rs2_val < 0: 132
+     rs1_val > 0 and rs2_val < 0: 131
      rs1_val > 0 and rs2_val > 0: 100
      rs2_val == (-2**(xlen-1)): 1
      rs2_val == (2**(xlen-1)-1): 1
@@ -15597,6 +15609,9 @@ total_coverage: 687/687
           <div class="log">config:
    - check ISA:=regex(.*I.*B.*)
    - check ISA:=regex(.*I.*Zba.*)
+mnemonics:
+     sh2add: 572
+     coverage: 1/1
 op_comb:
      rs1 != rs2  and rs1 != rd and rs2 != rd: 568
      rs1 == rd != rs2: 1
@@ -15604,9 +15619,6 @@ op_comb:
      rs1 == rs2 == rd: 1
      rs2 == rd != rs1: 1
      coverage: 5/5
-opcode:
-     sh2add: 572
-     coverage: 1/1
 rd:
      x0: 1
      x1: 1
@@ -15666,8 +15678,8 @@ rs1:
      x28: 1
      x29: 1
      x3: 1
-     x30: 540
-     x31: 2
+     x30: 539
+     x31: 3
      x4: 1
      x5: 1
      x6: 1
@@ -15698,9 +15710,9 @@ rs2:
      x26: 1
      x27: 1
      x28: 1
-     x29: 539
+     x29: 537
      x3: 1
-     x30: 3
+     x30: 5
      x31: 1
      x4: 1
      x5: 1
@@ -15740,12 +15752,12 @@ val_comb:
      rs2_val == -33: 1
      rs2_val == -17: 1
      rs2_val == -9: 1
-     rs2_val == -5: 2
-     rs2_val == -3: 1
+     rs2_val == -5: 1
+     rs2_val == -3: 2
      rs2_val == -2: 1
      rs1_val == 2147483647: 2
      rs1_val == -1073741825: 1
-     rs1_val == -536870913: 1
+     rs1_val == -536870913: 2
      rs1_val == -268435457: 1
      rs1_val == -134217729: 1
      rs1_val == -67108865: 1
@@ -15841,7 +15853,7 @@ val_comb:
      rs1_val == 1: 21
      rs1_val==-1 and rs2_val==-1: 3
      rs1_val==-1 and rs2_val==1: 1
-     rs1_val==-1 and rs2_val==0: 2
+     rs1_val==-1 and rs2_val==0: 1
      rs1_val==-1 and rs2_val==-1717986918: 1
      rs1_val==-1 and rs2_val==1717986919: 1
      rs1_val==-1 and rs2_val==-858993459: 1
@@ -16284,13 +16296,13 @@ val_comb:
      rs2_val == 1431655765: 21
      rs1_val == -1431655766: 21
      rs1_val == 1431655765: 21
-     rs1_val < 0 and rs2_val < 0: 166
+     rs1_val < 0 and rs2_val < 0: 167
      rs1_val < 0 and rs2_val > 0: 131
      rs1_val == (-2**(xlen-1)): 1
      rs1_val == (2**(xlen-1)-1): 2
      rs1_val == 0: 22
      rs1_val == rs2_val: 23
-     rs1_val > 0 and rs2_val < 0: 132
+     rs1_val > 0 and rs2_val < 0: 131
      rs1_val > 0 and rs2_val > 0: 100
      rs2_val == (-2**(xlen-1)): 1
      rs2_val == (2**(xlen-1)-1): 1
@@ -16314,6 +16326,9 @@ total_coverage: 687/687
           <div class="log">config:
    - check ISA:=regex(.*I.*B.*)
    - check ISA:=regex(.*I.*Zba.*)
+mnemonics:
+     sh3add: 572
+     coverage: 1/1
 op_comb:
      rs1 != rs2  and rs1 != rd and rs2 != rd: 568
      rs1 == rd != rs2: 1
@@ -16321,9 +16336,6 @@ op_comb:
      rs1 == rs2 == rd: 1
      rs2 == rd != rs1: 1
      coverage: 5/5
-opcode:
-     sh3add: 572
-     coverage: 1/1
 rd:
      x0: 1
      x1: 1
@@ -16383,8 +16395,8 @@ rs1:
      x28: 1
      x29: 1
      x3: 1
-     x30: 540
-     x31: 2
+     x30: 539
+     x31: 3
      x4: 1
      x5: 1
      x6: 1
@@ -16415,9 +16427,9 @@ rs2:
      x26: 1
      x27: 1
      x28: 1
-     x29: 539
+     x29: 537
      x3: 1
-     x30: 3
+     x30: 5
      x31: 1
      x4: 1
      x5: 1
@@ -16457,12 +16469,12 @@ val_comb:
      rs2_val == -33: 1
      rs2_val == -17: 1
      rs2_val == -9: 1
-     rs2_val == -5: 2
-     rs2_val == -3: 1
+     rs2_val == -5: 1
+     rs2_val == -3: 2
      rs2_val == -2: 1
      rs1_val == 2147483647: 2
      rs1_val == -1073741825: 1
-     rs1_val == -536870913: 1
+     rs1_val == -536870913: 2
      rs1_val == -268435457: 1
      rs1_val == -134217729: 1
      rs1_val == -67108865: 1
@@ -16558,7 +16570,7 @@ val_comb:
      rs1_val == 1: 21
      rs1_val==-1 and rs2_val==-1: 3
      rs1_val==-1 and rs2_val==1: 1
-     rs1_val==-1 and rs2_val==0: 2
+     rs1_val==-1 and rs2_val==0: 1
      rs1_val==-1 and rs2_val==-1717986918: 1
      rs1_val==-1 and rs2_val==1717986919: 1
      rs1_val==-1 and rs2_val==-858993459: 1
@@ -17001,13 +17013,13 @@ val_comb:
      rs2_val == 1431655765: 21
      rs1_val == -1431655766: 21
      rs1_val == 1431655765: 21
-     rs1_val < 0 and rs2_val < 0: 166
+     rs1_val < 0 and rs2_val < 0: 167
      rs1_val < 0 and rs2_val > 0: 131
      rs1_val == (-2**(xlen-1)): 1
      rs1_val == (2**(xlen-1)-1): 2
      rs1_val == 0: 22
      rs1_val == rs2_val: 23
-     rs1_val > 0 and rs2_val < 0: 132
+     rs1_val > 0 and rs2_val < 0: 131
      rs1_val > 0 and rs2_val > 0: 100
      rs2_val == (-2**(xlen-1)): 1
      rs2_val == (2**(xlen-1)-1): 1
@@ -17031,6 +17043,9 @@ total_coverage: 687/687
           <div class="log">config:
    - check ISA:=regex(.*I.*B.*)
    - check ISA:=regex(.*I.*Zbb.*)
+mnemonics:
+     xnor: 592
+     coverage: 1/1
 op_comb:
      rs1 != rs2  and rs1 != rd and rs2 != rd: 588
      rs1 == rd != rs2: 1
@@ -17038,9 +17053,6 @@ op_comb:
      rs1 == rs2 == rd: 1
      rs2 == rd != rs1: 1
      coverage: 5/5
-opcode:
-     xnor: 592
-     coverage: 1/1
 rd:
      x0: 1
      x1: 1
@@ -17100,8 +17112,8 @@ rs1:
      x28: 1
      x29: 1
      x3: 1
-     x30: 560
-     x31: 2
+     x30: 559
+     x31: 3
      x4: 1
      x5: 1
      x6: 1
@@ -17132,9 +17144,9 @@ rs2:
      x26: 1
      x27: 1
      x28: 1
-     x29: 559
+     x29: 557
      x3: 1
-     x30: 3
+     x30: 5
      x31: 1
      x4: 1
      x5: 1
@@ -17174,12 +17186,12 @@ val_comb:
      rs2_val == 4294967263: 1
      rs2_val == 4294967279: 1
      rs2_val == 4294967287: 1
-     rs2_val == 4294967291: 2
-     rs2_val == 4294967293: 1
+     rs2_val == 4294967291: 1
+     rs2_val == 4294967293: 2
      rs2_val == 4294967294: 1
      rs1_val == 2147483647: 2
      rs1_val == 3221225471: 1
-     rs1_val == 3758096383: 1
+     rs1_val == 3758096383: 2
      rs1_val == 4026531839: 1
      rs1_val == 4160749567: 1
      rs1_val == 4227858431: 1
@@ -17295,7 +17307,7 @@ val_comb:
      'rs1_val == 0x254a9493 and rs2_val == 0xc5521660 #nosat': 1
      rs1_val==4294967295 and rs2_val==4294967295: 3
      rs1_val==4294967295 and rs2_val==1: 1
-     rs1_val==4294967295 and rs2_val==0: 2
+     rs1_val==4294967295 and rs2_val==0: 1
      rs1_val==4294967295 and rs2_val==2576980378: 1
      rs1_val==4294967295 and rs2_val==1717986919: 1
      rs1_val==4294967295 and rs2_val==3435973837: 1
@@ -17738,7 +17750,7 @@ val_comb:
      rs2_val == 1431655765: 21
      rs1_val == 2863311530: 21
      rs1_val == 1431655765: 21
-     rs1_val == (2**(xlen)-1): 87
+     rs1_val == (2**(xlen)-1): 86
      rs1_val == 0: 22
      rs1_val == rs2_val and rs1_val > 0 and rs2_val > 0: 22
      rs1_val > 0 and rs2_val > 0: 549
@@ -17751,7 +17763,7 @@ total_coverage: 702/702
         
         <tbody class= "  results-table-row" >
         <tr>
-          <td class="col-name">zext.h</td>
+          <td class="col-name">zext.h_32</td>
           <td class="col-result">154/154</td>
           <td class="col-percentage">100.00%
             <div class="meter">
@@ -17760,16 +17772,18 @@ total_coverage: 702/702
           </td>          
         <tr>
           <td class="extra" colspan="2">
-          <div class="log">config:
+          <div class="log">base_op: pack
+config:
    - check ISA:=regex(.*I.*B.*)
    - check ISA:=regex(.*I.*Zbb.*)
+mnemonics:
+     zext.h: 88
+     coverage: 1/1
 op_comb:
      rs1 != rd: 87
      rs1 == rd: 1
      coverage: 2/2
-opcode:
-     zext.h: 88
-     coverage: 1/1
+p_op_cond: rs2 == x0
 rd:
      x0: 1
      x1: 1

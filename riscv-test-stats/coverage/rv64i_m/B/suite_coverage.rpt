@@ -2,6 +2,9 @@ add.uw:
   config:
   - check ISA:=regex(.*RV64.*I.*B.*)
   - check ISA:=regex(.*RV64.*I.*Zba.*)
+  mnemonics:
+    add.uw: 701
+    coverage: 1/1
   op_comb:
     rs1 != rs2  and rs1 != rd and rs2 != rd: 697
     rs1 == rd != rs2: 1
@@ -9,9 +12,6 @@ add.uw:
     rs1 == rs2 == rd: 1
     rs2 == rd != rs1: 1
     coverage: 5/5
-  opcode:
-    add.uw: 701
-    coverage: 1/1
   rd:
     x0: 1
     x1: 1
@@ -71,8 +71,8 @@ add.uw:
     x28: 1
     x29: 1
     x3: 1
-    x30: 668
-    x31: 3
+    x30: 670
+    x31: 1
     x4: 1
     x5: 1
     x6: 1
@@ -103,9 +103,9 @@ add.uw:
     x26: 1
     x27: 1
     x28: 1
-    x29: 666
+    x29: 670
     x3: 1
-    x30: 5
+    x30: 1
     x31: 1
     x4: 1
     x5: 1
@@ -145,12 +145,12 @@ add.uw:
     rs2_val == 18446743936270598143: 1 # Walking Zeros: 0xffffffdfffffffff
     rs2_val == 18446744004990074879: 1 # Walking Zeros: 0xffffffefffffffff
     rs2_val == 18446744039349813247: 1 # Walking Zeros: 0xfffffff7ffffffff
-    rs2_val == 18446744056529682431: 1 # Walking Zeros: 0xfffffffbffffffff
+    rs2_val == 18446744056529682431: 2 # Walking Zeros: 0xfffffffbffffffff
     rs2_val == 18446744065119617023: 2 # Walking Zeros: 0xfffffffdffffffff
     rs2_val == 18446744069414584319: 1 # Walking Zeros: 0xfffffffeffffffff
     rs2_val == 18446744071562067967: 1 # Walking Zeros: 0xffffffff7fffffff
     rs2_val == 18446744072635809791: 1 # Walking Zeros: 0xffffffffbfffffff
-    rs2_val == 18446744073172680703: 2 # Walking Zeros: 0xffffffffdfffffff
+    rs2_val == 18446744073172680703: 1 # Walking Zeros: 0xffffffffdfffffff
     rs2_val == 18446744073441116159: 1 # Walking Zeros: 0xffffffffefffffff
     rs2_val == 18446744073575333887: 1 # Walking Zeros: 0xfffffffff7ffffff
     rs2_val == 18446744073642442751: 1 # Walking Zeros: 0xfffffffffbffffff
@@ -829,6 +829,9 @@ andn:
   config:
   - check ISA:=regex(.*I.*B.*)
   - check ISA:=regex(.*I.*Zbb.*)
+  mnemonics:
+    andn: 705
+    coverage: 1/1
   op_comb:
     rs1 != rs2  and rs1 != rd and rs2 != rd: 701
     rs1 == rd != rs2: 1
@@ -836,9 +839,6 @@ andn:
     rs1 == rs2 == rd: 1
     rs2 == rd != rs1: 1
     coverage: 5/5
-  opcode:
-    andn: 705
-    coverage: 1/1
   rd:
     x0: 1
     x1: 1
@@ -898,8 +898,8 @@ andn:
     x28: 1
     x29: 1
     x3: 1
-    x30: 672
-    x31: 3
+    x30: 674
+    x31: 1
     x4: 1
     x5: 1
     x6: 1
@@ -930,9 +930,9 @@ andn:
     x26: 1
     x27: 1
     x28: 1
-    x29: 670
+    x29: 674
     x3: 1
-    x30: 5
+    x30: 1
     x31: 1
     x4: 1
     x5: 1
@@ -972,12 +972,12 @@ andn:
     rs2_val == 18446743936270598143: 1 # Walking Zeros: 0xffffffdfffffffff
     rs2_val == 18446744004990074879: 1 # Walking Zeros: 0xffffffefffffffff
     rs2_val == 18446744039349813247: 1 # Walking Zeros: 0xfffffff7ffffffff
-    rs2_val == 18446744056529682431: 1 # Walking Zeros: 0xfffffffbffffffff
+    rs2_val == 18446744056529682431: 2 # Walking Zeros: 0xfffffffbffffffff
     rs2_val == 18446744065119617023: 2 # Walking Zeros: 0xfffffffdffffffff
     rs2_val == 18446744069414584319: 1 # Walking Zeros: 0xfffffffeffffffff
     rs2_val == 18446744071562067967: 1 # Walking Zeros: 0xffffffff7fffffff
     rs2_val == 18446744072635809791: 1 # Walking Zeros: 0xffffffffbfffffff
-    rs2_val == 18446744073172680703: 2 # Walking Zeros: 0xffffffffdfffffff
+    rs2_val == 18446744073172680703: 1 # Walking Zeros: 0xffffffffdfffffff
     rs2_val == 18446744073441116159: 1 # Walking Zeros: 0xffffffffefffffff
     rs2_val == 18446744073575333887: 1 # Walking Zeros: 0xfffffffff7ffffff
     rs2_val == 18446744073642442751: 1 # Walking Zeros: 0xfffffffffbffffff
@@ -1661,6 +1661,9 @@ bclr:
   config:
   - check ISA:=regex(.*I.*B.*)
   - check ISA:=regex(.*I.*Zbs.*)
+  mnemonics:
+    bclr: 421
+    coverage: 1/1
   op_comb:
     rs1 != rs2  and rs1 != rd and rs2 != rd: 417
     rs1 == rd != rs2: 1
@@ -1668,9 +1671,6 @@ bclr:
     rs1 == rs2 == rd: 1
     rs2 == rd != rs1: 1
     coverage: 5/5
-  opcode:
-    bclr: 421
-    coverage: 1/1
   rd:
     x0: 1
     x1: 1
@@ -1730,8 +1730,8 @@ bclr:
     x28: 1
     x29: 1
     x3: 1
-    x30: 388
-    x31: 3
+    x30: 390
+    x31: 1
     x4: 1
     x5: 1
     x6: 1
@@ -1762,9 +1762,9 @@ bclr:
     x26: 1
     x27: 1
     x28: 1
-    x29: 386
+    x29: 390
     x3: 1
-    x30: 5
+    x30: 1
     x31: 1
     x4: 1
     x5: 1
@@ -1804,12 +1804,12 @@ bclr:
     rs2_val == 18446743936270598143: 1 # Walking Zeros: 0xffffffdfffffffff
     rs2_val == 18446744004990074879: 1 # Walking Zeros: 0xffffffefffffffff
     rs2_val == 18446744039349813247: 1 # Walking Zeros: 0xfffffff7ffffffff
-    rs2_val == 18446744056529682431: 1 # Walking Zeros: 0xfffffffbffffffff
+    rs2_val == 18446744056529682431: 2 # Walking Zeros: 0xfffffffbffffffff
     rs2_val == 18446744065119617023: 2 # Walking Zeros: 0xfffffffdffffffff
     rs2_val == 18446744069414584319: 1 # Walking Zeros: 0xfffffffeffffffff
     rs2_val == 18446744071562067967: 1 # Walking Zeros: 0xffffffff7fffffff
     rs2_val == 18446744072635809791: 1 # Walking Zeros: 0xffffffffbfffffff
-    rs2_val == 18446744073172680703: 2 # Walking Zeros: 0xffffffffdfffffff
+    rs2_val == 18446744073172680703: 1 # Walking Zeros: 0xffffffffdfffffff
     rs2_val == 18446744073441116159: 1 # Walking Zeros: 0xffffffffefffffff
     rs2_val == 18446744073575333887: 1 # Walking Zeros: 0xfffffffff7ffffff
     rs2_val == 18446744073642442751: 1 # Walking Zeros: 0xfffffffffbffffff
@@ -2196,13 +2196,13 @@ bclri:
   config:
   - check ISA:=regex(.*I.*B.*)
   - check ISA:=regex(.*I.*Zbs.*)
+  mnemonics:
+    bclri: 158
+    coverage: 1/1
   op_comb:
     rs1 != rd: 157
     rs1 == rd: 1
     coverage: 2/2
-  opcode:
-    bclri: 158
-    coverage: 1/1
   rd:
     x0: 1
     x1: 1
@@ -2434,6 +2434,9 @@ bext:
   config:
   - check ISA:=regex(.*I.*B.*)
   - check ISA:=regex(.*I.*Zbs.*)
+  mnemonics:
+    bext: 419
+    coverage: 1/1
   op_comb:
     rs1 != rs2  and rs1 != rd and rs2 != rd: 415
     rs1 == rd != rs2: 1
@@ -2441,9 +2444,6 @@ bext:
     rs1 == rs2 == rd: 1
     rs2 == rd != rs1: 1
     coverage: 5/5
-  opcode:
-    bext: 419
-    coverage: 1/1
   rd:
     x0: 1
     x1: 1
@@ -2503,8 +2503,8 @@ bext:
     x28: 1
     x29: 1
     x3: 1
-    x30: 386
-    x31: 3
+    x30: 388
+    x31: 1
     x4: 1
     x5: 1
     x6: 1
@@ -2535,9 +2535,9 @@ bext:
     x26: 1
     x27: 1
     x28: 1
-    x29: 384
+    x29: 388
     x3: 1
-    x30: 5
+    x30: 1
     x31: 1
     x4: 1
     x5: 1
@@ -2577,12 +2577,12 @@ bext:
     rs2_val == 18446743936270598143: 1 # Walking Zeros: 0xffffffdfffffffff
     rs2_val == 18446744004990074879: 1 # Walking Zeros: 0xffffffefffffffff
     rs2_val == 18446744039349813247: 1 # Walking Zeros: 0xfffffff7ffffffff
-    rs2_val == 18446744056529682431: 1 # Walking Zeros: 0xfffffffbffffffff
+    rs2_val == 18446744056529682431: 2 # Walking Zeros: 0xfffffffbffffffff
     rs2_val == 18446744065119617023: 2 # Walking Zeros: 0xfffffffdffffffff
     rs2_val == 18446744069414584319: 1 # Walking Zeros: 0xfffffffeffffffff
     rs2_val == 18446744071562067967: 1 # Walking Zeros: 0xffffffff7fffffff
     rs2_val == 18446744072635809791: 1 # Walking Zeros: 0xffffffffbfffffff
-    rs2_val == 18446744073172680703: 2 # Walking Zeros: 0xffffffffdfffffff
+    rs2_val == 18446744073172680703: 1 # Walking Zeros: 0xffffffffdfffffff
     rs2_val == 18446744073441116159: 1 # Walking Zeros: 0xffffffffefffffff
     rs2_val == 18446744073575333887: 1 # Walking Zeros: 0xfffffffff7ffffff
     rs2_val == 18446744073642442751: 1 # Walking Zeros: 0xfffffffffbffffff
@@ -2969,13 +2969,13 @@ bexti:
   config:
   - check ISA:=regex(.*I.*B.*)
   - check ISA:=regex(.*I.*Zbs.*)
+  mnemonics:
+    bexti: 158
+    coverage: 1/1
   op_comb:
     rs1 != rd: 157
     rs1 == rd: 1
     coverage: 2/2
-  opcode:
-    bexti: 158
-    coverage: 1/1
   rd:
     x0: 1
     x1: 1
@@ -3207,6 +3207,9 @@ binv:
   config:
   - check ISA:=regex(.*I.*B.*)
   - check ISA:=regex(.*I.*Zbs.*)
+  mnemonics:
+    binv: 421
+    coverage: 1/1
   op_comb:
     rs1 != rs2  and rs1 != rd and rs2 != rd: 417
     rs1 == rd != rs2: 1
@@ -3214,9 +3217,6 @@ binv:
     rs1 == rs2 == rd: 1
     rs2 == rd != rs1: 1
     coverage: 5/5
-  opcode:
-    binv: 421
-    coverage: 1/1
   rd:
     x0: 1
     x1: 1
@@ -3276,8 +3276,8 @@ binv:
     x28: 1
     x29: 1
     x3: 1
-    x30: 388
-    x31: 3
+    x30: 390
+    x31: 1
     x4: 1
     x5: 1
     x6: 1
@@ -3308,9 +3308,9 @@ binv:
     x26: 1
     x27: 1
     x28: 1
-    x29: 386
+    x29: 390
     x3: 1
-    x30: 5
+    x30: 1
     x31: 1
     x4: 1
     x5: 1
@@ -3350,12 +3350,12 @@ binv:
     rs2_val == 18446743936270598143: 1 # Walking Zeros: 0xffffffdfffffffff
     rs2_val == 18446744004990074879: 1 # Walking Zeros: 0xffffffefffffffff
     rs2_val == 18446744039349813247: 1 # Walking Zeros: 0xfffffff7ffffffff
-    rs2_val == 18446744056529682431: 1 # Walking Zeros: 0xfffffffbffffffff
+    rs2_val == 18446744056529682431: 2 # Walking Zeros: 0xfffffffbffffffff
     rs2_val == 18446744065119617023: 2 # Walking Zeros: 0xfffffffdffffffff
     rs2_val == 18446744069414584319: 1 # Walking Zeros: 0xfffffffeffffffff
     rs2_val == 18446744071562067967: 1 # Walking Zeros: 0xffffffff7fffffff
     rs2_val == 18446744072635809791: 1 # Walking Zeros: 0xffffffffbfffffff
-    rs2_val == 18446744073172680703: 2 # Walking Zeros: 0xffffffffdfffffff
+    rs2_val == 18446744073172680703: 1 # Walking Zeros: 0xffffffffdfffffff
     rs2_val == 18446744073441116159: 1 # Walking Zeros: 0xffffffffefffffff
     rs2_val == 18446744073575333887: 1 # Walking Zeros: 0xfffffffff7ffffff
     rs2_val == 18446744073642442751: 1 # Walking Zeros: 0xfffffffffbffffff
@@ -3742,13 +3742,13 @@ binvi:
   config:
   - check ISA:=regex(.*I.*B.*)
   - check ISA:=regex(.*I.*Zbs.*)
+  mnemonics:
+    binvi: 158
+    coverage: 1/1
   op_comb:
     rs1 != rd: 157
     rs1 == rd: 1
     coverage: 2/2
-  opcode:
-    binvi: 158
-    coverage: 1/1
   rd:
     x0: 1
     x1: 1
@@ -3980,6 +3980,9 @@ bset:
   config:
   - check ISA:=regex(.*I.*B.*)
   - check ISA:=regex(.*I.*Zbs.*)
+  mnemonics:
+    bset: 419
+    coverage: 1/1
   op_comb:
     rs1 != rs2  and rs1 != rd and rs2 != rd: 415
     rs1 == rd != rs2: 1
@@ -3987,9 +3990,6 @@ bset:
     rs1 == rs2 == rd: 1
     rs2 == rd != rs1: 1
     coverage: 5/5
-  opcode:
-    bset: 419
-    coverage: 1/1
   rd:
     x0: 1
     x1: 1
@@ -4049,8 +4049,8 @@ bset:
     x28: 1
     x29: 1
     x3: 1
-    x30: 386
-    x31: 3
+    x30: 388
+    x31: 1
     x4: 1
     x5: 1
     x6: 1
@@ -4081,9 +4081,9 @@ bset:
     x26: 1
     x27: 1
     x28: 1
-    x29: 384
+    x29: 388
     x3: 1
-    x30: 5
+    x30: 1
     x31: 1
     x4: 1
     x5: 1
@@ -4123,12 +4123,12 @@ bset:
     rs2_val == 18446743936270598143: 1 # Walking Zeros: 0xffffffdfffffffff
     rs2_val == 18446744004990074879: 1 # Walking Zeros: 0xffffffefffffffff
     rs2_val == 18446744039349813247: 1 # Walking Zeros: 0xfffffff7ffffffff
-    rs2_val == 18446744056529682431: 1 # Walking Zeros: 0xfffffffbffffffff
+    rs2_val == 18446744056529682431: 2 # Walking Zeros: 0xfffffffbffffffff
     rs2_val == 18446744065119617023: 2 # Walking Zeros: 0xfffffffdffffffff
     rs2_val == 18446744069414584319: 1 # Walking Zeros: 0xfffffffeffffffff
     rs2_val == 18446744071562067967: 1 # Walking Zeros: 0xffffffff7fffffff
     rs2_val == 18446744072635809791: 1 # Walking Zeros: 0xffffffffbfffffff
-    rs2_val == 18446744073172680703: 2 # Walking Zeros: 0xffffffffdfffffff
+    rs2_val == 18446744073172680703: 1 # Walking Zeros: 0xffffffffdfffffff
     rs2_val == 18446744073441116159: 1 # Walking Zeros: 0xffffffffefffffff
     rs2_val == 18446744073575333887: 1 # Walking Zeros: 0xfffffffff7ffffff
     rs2_val == 18446744073642442751: 1 # Walking Zeros: 0xfffffffffbffffff
@@ -4515,13 +4515,13 @@ bseti:
   config:
   - check ISA:=regex(.*I.*B.*)
   - check ISA:=regex(.*I.*Zbs.*)
+  mnemonics:
+    bseti: 158
+    coverage: 1/1
   op_comb:
     rs1 != rd: 157
     rs1 == rd: 1
     coverage: 2/2
-  opcode:
-    bseti: 158
-    coverage: 1/1
   rd:
     x0: 1
     x1: 1
@@ -4753,6 +4753,9 @@ clmul:
   config:
   - check ISA:=regex(.*I.*B.*)
   - check ISA:=regex(.*I.*Zbc.*)
+  mnemonics:
+    clmul: 288
+    coverage: 1/1
   op_comb:
     rs1 != rs2  and rs1 != rd and rs2 != rd: 284
     rs1 == rd != rs2: 1
@@ -4760,9 +4763,6 @@ clmul:
     rs1 == rs2 == rd: 1
     rs2 == rd != rs1: 1
     coverage: 5/5
-  opcode:
-    clmul: 288
-    coverage: 1/1
   rd:
     x0: 1
     x1: 1
@@ -4822,8 +4822,8 @@ clmul:
     x28: 1
     x29: 1
     x3: 1
-    x30: 255
-    x31: 3
+    x30: 257
+    x31: 1
     x4: 1
     x5: 1
     x6: 1
@@ -4854,9 +4854,9 @@ clmul:
     x26: 1
     x27: 1
     x28: 1
-    x29: 253
+    x29: 257
     x3: 1
-    x30: 5
+    x30: 1
     x31: 1
     x4: 1
     x5: 1
@@ -4896,12 +4896,12 @@ clmul:
     rs2_val == 18446743936270598143: 1 # Walking Zeros: 0xffffffdfffffffff
     rs2_val == 18446744004990074879: 1 # Walking Zeros: 0xffffffefffffffff
     rs2_val == 18446744039349813247: 1 # Walking Zeros: 0xfffffff7ffffffff
-    rs2_val == 18446744056529682431: 1 # Walking Zeros: 0xfffffffbffffffff
+    rs2_val == 18446744056529682431: 2 # Walking Zeros: 0xfffffffbffffffff
     rs2_val == 18446744065119617023: 2 # Walking Zeros: 0xfffffffdffffffff
     rs2_val == 18446744069414584319: 1 # Walking Zeros: 0xfffffffeffffffff
     rs2_val == 18446744071562067967: 1 # Walking Zeros: 0xffffffff7fffffff
     rs2_val == 18446744072635809791: 1 # Walking Zeros: 0xffffffffbfffffff
-    rs2_val == 18446744073172680703: 2 # Walking Zeros: 0xffffffffdfffffff
+    rs2_val == 18446744073172680703: 1 # Walking Zeros: 0xffffffffdfffffff
     rs2_val == 18446744073441116159: 1 # Walking Zeros: 0xffffffffefffffff
     rs2_val == 18446744073575333887: 1 # Walking Zeros: 0xfffffffff7ffffff
     rs2_val == 18446744073642442751: 1 # Walking Zeros: 0xfffffffffbffffff
@@ -5158,6 +5158,9 @@ clmulh:
   config:
   - check ISA:=regex(.*I.*B.*)
   - check ISA:=regex(.*I.*Zbc.*)
+  mnemonics:
+    clmulh: 288
+    coverage: 1/1
   op_comb:
     rs1 != rs2  and rs1 != rd and rs2 != rd: 284
     rs1 == rd != rs2: 1
@@ -5165,9 +5168,6 @@ clmulh:
     rs1 == rs2 == rd: 1
     rs2 == rd != rs1: 1
     coverage: 5/5
-  opcode:
-    clmulh: 288
-    coverage: 1/1
   rd:
     x0: 1
     x1: 1
@@ -5227,8 +5227,8 @@ clmulh:
     x28: 1
     x29: 1
     x3: 1
-    x30: 255
-    x31: 3
+    x30: 257
+    x31: 1
     x4: 1
     x5: 1
     x6: 1
@@ -5259,9 +5259,9 @@ clmulh:
     x26: 1
     x27: 1
     x28: 1
-    x29: 253
+    x29: 257
     x3: 1
-    x30: 5
+    x30: 1
     x31: 1
     x4: 1
     x5: 1
@@ -5301,12 +5301,12 @@ clmulh:
     rs2_val == 18446743936270598143: 1 # Walking Zeros: 0xffffffdfffffffff
     rs2_val == 18446744004990074879: 1 # Walking Zeros: 0xffffffefffffffff
     rs2_val == 18446744039349813247: 1 # Walking Zeros: 0xfffffff7ffffffff
-    rs2_val == 18446744056529682431: 1 # Walking Zeros: 0xfffffffbffffffff
+    rs2_val == 18446744056529682431: 2 # Walking Zeros: 0xfffffffbffffffff
     rs2_val == 18446744065119617023: 2 # Walking Zeros: 0xfffffffdffffffff
     rs2_val == 18446744069414584319: 1 # Walking Zeros: 0xfffffffeffffffff
     rs2_val == 18446744071562067967: 1 # Walking Zeros: 0xffffffff7fffffff
     rs2_val == 18446744072635809791: 1 # Walking Zeros: 0xffffffffbfffffff
-    rs2_val == 18446744073172680703: 2 # Walking Zeros: 0xffffffffdfffffff
+    rs2_val == 18446744073172680703: 1 # Walking Zeros: 0xffffffffdfffffff
     rs2_val == 18446744073441116159: 1 # Walking Zeros: 0xffffffffefffffff
     rs2_val == 18446744073575333887: 1 # Walking Zeros: 0xfffffffff7ffffff
     rs2_val == 18446744073642442751: 1 # Walking Zeros: 0xfffffffffbffffff
@@ -5563,6 +5563,9 @@ clmulr:
   config:
   - check ISA:=regex(.*I.*B.*)
   - check ISA:=regex(.*I.*Zbc.*)
+  mnemonics:
+    clmulr: 288
+    coverage: 1/1
   op_comb:
     rs1 != rs2  and rs1 != rd and rs2 != rd: 284
     rs1 == rd != rs2: 1
@@ -5570,9 +5573,6 @@ clmulr:
     rs1 == rs2 == rd: 1
     rs2 == rd != rs1: 1
     coverage: 5/5
-  opcode:
-    clmulr: 288
-    coverage: 1/1
   rd:
     x0: 1
     x1: 1
@@ -5632,8 +5632,8 @@ clmulr:
     x28: 1
     x29: 1
     x3: 1
-    x30: 255
-    x31: 3
+    x30: 257
+    x31: 1
     x4: 1
     x5: 1
     x6: 1
@@ -5664,9 +5664,9 @@ clmulr:
     x26: 1
     x27: 1
     x28: 1
-    x29: 253
+    x29: 257
     x3: 1
-    x30: 5
+    x30: 1
     x31: 1
     x4: 1
     x5: 1
@@ -5706,12 +5706,12 @@ clmulr:
     rs2_val == 18446743936270598143: 1 # Walking Zeros: 0xffffffdfffffffff
     rs2_val == 18446744004990074879: 1 # Walking Zeros: 0xffffffefffffffff
     rs2_val == 18446744039349813247: 1 # Walking Zeros: 0xfffffff7ffffffff
-    rs2_val == 18446744056529682431: 1 # Walking Zeros: 0xfffffffbffffffff
+    rs2_val == 18446744056529682431: 2 # Walking Zeros: 0xfffffffbffffffff
     rs2_val == 18446744065119617023: 2 # Walking Zeros: 0xfffffffdffffffff
     rs2_val == 18446744069414584319: 1 # Walking Zeros: 0xfffffffeffffffff
     rs2_val == 18446744071562067967: 1 # Walking Zeros: 0xffffffff7fffffff
     rs2_val == 18446744072635809791: 1 # Walking Zeros: 0xffffffffbfffffff
-    rs2_val == 18446744073172680703: 2 # Walking Zeros: 0xffffffffdfffffff
+    rs2_val == 18446744073172680703: 1 # Walking Zeros: 0xffffffffdfffffff
     rs2_val == 18446744073441116159: 1 # Walking Zeros: 0xffffffffefffffff
     rs2_val == 18446744073575333887: 1 # Walking Zeros: 0xfffffffff7ffffff
     rs2_val == 18446744073642442751: 1 # Walking Zeros: 0xfffffffffbffffff
@@ -5968,13 +5968,13 @@ clz:
   config:
   - check ISA:=regex(.*I.*B.*)
   - check ISA:=regex(.*I.*Zbb.*)
+  mnemonics:
+    clz: 132
+    coverage: 1/1
   op_comb:
     rs1 != rd: 131
     rs1 == rd: 1
     coverage: 2/2
-  opcode:
-    clz: 132
-    coverage: 1/1
   rd:
     x0: 1
     x1: 1
@@ -6180,13 +6180,13 @@ clzw:
   config:
   - check ISA:=regex(.*RV64.*I.*B.*)
   - check ISA:=regex(.*RV64.*I.*Zbb.*)
+  mnemonics:
+    clzw: 132
+    coverage: 1/1
   op_comb:
     rs1 != rd: 131
     rs1 == rd: 1
     coverage: 2/2
-  opcode:
-    clzw: 132
-    coverage: 1/1
   rd:
     x0: 1
     x1: 1
@@ -6392,13 +6392,13 @@ cpop:
   config:
   - check ISA:=regex(.*I.*B.*)
   - check ISA:=regex(.*I.*Zbb.*)
+  mnemonics:
+    cpop: 132
+    coverage: 1/1
   op_comb:
     rs1 != rd: 131
     rs1 == rd: 1
     coverage: 2/2
-  opcode:
-    cpop: 132
-    coverage: 1/1
   rd:
     x0: 1
     x1: 1
@@ -6604,13 +6604,13 @@ cpopw:
   config:
   - check ISA:=regex(.*RV64.*I.*B.*)
   - check ISA:=regex(.*RV64.*I.*Zbb.*)
+  mnemonics:
+    cpopw: 132
+    coverage: 1/1
   op_comb:
     rs1 != rd: 131
     rs1 == rd: 1
     coverage: 2/2
-  opcode:
-    cpopw: 132
-    coverage: 1/1
   rd:
     x0: 1
     x1: 1
@@ -6816,13 +6816,13 @@ ctz:
   config:
   - check ISA:=regex(.*I.*B.*)
   - check ISA:=regex(.*I.*Zbb.*)
+  mnemonics:
+    ctz: 132
+    coverage: 1/1
   op_comb:
     rs1 != rd: 131
     rs1 == rd: 1
     coverage: 2/2
-  opcode:
-    ctz: 132
-    coverage: 1/1
   rd:
     x0: 1
     x1: 1
@@ -7028,13 +7028,13 @@ ctzw:
   config:
   - check ISA:=regex(.*RV64.*I.*B.*)
   - check ISA:=regex(.*RV64.*I.*Zbb.*)
+  mnemonics:
+    ctzw: 132
+    coverage: 1/1
   op_comb:
     rs1 != rd: 131
     rs1 == rd: 1
     coverage: 2/2
-  opcode:
-    ctzw: 132
-    coverage: 1/1
   rd:
     x0: 1
     x1: 1
@@ -7673,6 +7673,9 @@ max:
   config:
   - check ISA:=regex(.*I.*B.*)
   - check ISA:=regex(.*I.*Zbb.*)
+  mnemonics:
+    max: 700
+    coverage: 1/1
   op_comb:
     rs1 != rs2  and rs1 != rd and rs2 != rd: 696
     rs1 == rd != rs2: 1
@@ -7680,9 +7683,6 @@ max:
     rs1 == rs2 == rd: 1
     rs2 == rd != rs1: 1
     coverage: 5/5
-  opcode:
-    max: 700
-    coverage: 1/1
   rd:
     x0: 1
     x1: 1
@@ -7742,8 +7742,8 @@ max:
     x28: 1
     x29: 1
     x3: 1
-    x30: 667
-    x31: 3
+    x30: 669
+    x31: 1
     x4: 1
     x5: 1
     x6: 1
@@ -7774,9 +7774,9 @@ max:
     x26: 1
     x27: 1
     x28: 1
-    x29: 665
+    x29: 669
     x3: 1
-    x30: 5
+    x30: 1
     x31: 1
     x4: 1
     x5: 1
@@ -7816,12 +7816,12 @@ max:
     rs2_val == -137438953473: 1 # Walking Zeros: -0x2000000001
     rs2_val == -68719476737: 1 # Walking Zeros: -0x1000000001
     rs2_val == -34359738369: 1 # Walking Zeros: -0x800000001
-    rs2_val == -17179869185: 1 # Walking Zeros: -0x400000001
+    rs2_val == -17179869185: 2 # Walking Zeros: -0x400000001
     rs2_val == -8589934593: 2 # Walking Zeros: -0x200000001
     rs2_val == -4294967297: 1 # Walking Zeros: -0x100000001
     rs2_val == -2147483649: 1 # Walking Zeros: -0x80000001
     rs2_val == -1073741825: 1 # Walking Zeros: -0x40000001
-    rs2_val == -536870913: 2 # Walking Zeros: -0x20000001
+    rs2_val == -536870913: 1 # Walking Zeros: -0x20000001
     rs2_val == -268435457: 1 # Walking Zeros: -0x10000001
     rs2_val == -134217729: 1 # Walking Zeros: -0x8000001
     rs2_val == -67108865: 1 # Walking Zeros: -0x4000001
@@ -8505,6 +8505,9 @@ maxu:
   config:
   - check ISA:=regex(.*I.*B.*)
   - check ISA:=regex(.*I.*Zbb.*)
+  mnemonics:
+    maxu: 700
+    coverage: 1/1
   op_comb:
     rs1 != rs2  and rs1 != rd and rs2 != rd: 696
     rs1 == rd != rs2: 1
@@ -8512,9 +8515,6 @@ maxu:
     rs1 == rs2 == rd: 1
     rs2 == rd != rs1: 1
     coverage: 5/5
-  opcode:
-    maxu: 700
-    coverage: 1/1
   rd:
     x0: 1
     x1: 1
@@ -8574,8 +8574,8 @@ maxu:
     x28: 1
     x29: 1
     x3: 1
-    x30: 667
-    x31: 3
+    x30: 669
+    x31: 1
     x4: 1
     x5: 1
     x6: 1
@@ -8606,9 +8606,9 @@ maxu:
     x26: 1
     x27: 1
     x28: 1
-    x29: 665
+    x29: 669
     x3: 1
-    x30: 5
+    x30: 1
     x31: 1
     x4: 1
     x5: 1
@@ -8648,12 +8648,12 @@ maxu:
     rs2_val == 18446743936270598143: 1 # Walking Zeros: 0xffffffdfffffffff
     rs2_val == 18446744004990074879: 1 # Walking Zeros: 0xffffffefffffffff
     rs2_val == 18446744039349813247: 1 # Walking Zeros: 0xfffffff7ffffffff
-    rs2_val == 18446744056529682431: 1 # Walking Zeros: 0xfffffffbffffffff
+    rs2_val == 18446744056529682431: 2 # Walking Zeros: 0xfffffffbffffffff
     rs2_val == 18446744065119617023: 2 # Walking Zeros: 0xfffffffdffffffff
     rs2_val == 18446744069414584319: 1 # Walking Zeros: 0xfffffffeffffffff
     rs2_val == 18446744071562067967: 1 # Walking Zeros: 0xffffffff7fffffff
     rs2_val == 18446744072635809791: 1 # Walking Zeros: 0xffffffffbfffffff
-    rs2_val == 18446744073172680703: 2 # Walking Zeros: 0xffffffffdfffffff
+    rs2_val == 18446744073172680703: 1 # Walking Zeros: 0xffffffffdfffffff
     rs2_val == 18446744073441116159: 1 # Walking Zeros: 0xffffffffefffffff
     rs2_val == 18446744073575333887: 1 # Walking Zeros: 0xfffffffff7ffffff
     rs2_val == 18446744073642442751: 1 # Walking Zeros: 0xfffffffffbffffff
@@ -9332,6 +9332,9 @@ min:
   config:
   - check ISA:=regex(.*I.*B.*)
   - check ISA:=regex(.*I.*Zbb.*)
+  mnemonics:
+    min: 700
+    coverage: 1/1
   op_comb:
     rs1 != rs2  and rs1 != rd and rs2 != rd: 696
     rs1 == rd != rs2: 1
@@ -9339,9 +9342,6 @@ min:
     rs1 == rs2 == rd: 1
     rs2 == rd != rs1: 1
     coverage: 5/5
-  opcode:
-    min: 700
-    coverage: 1/1
   rd:
     x0: 1
     x1: 1
@@ -9401,8 +9401,8 @@ min:
     x28: 1
     x29: 1
     x3: 1
-    x30: 667
-    x31: 3
+    x30: 669
+    x31: 1
     x4: 1
     x5: 1
     x6: 1
@@ -9433,9 +9433,9 @@ min:
     x26: 1
     x27: 1
     x28: 1
-    x29: 665
+    x29: 669
     x3: 1
-    x30: 5
+    x30: 1
     x31: 1
     x4: 1
     x5: 1
@@ -9475,12 +9475,12 @@ min:
     rs2_val == -137438953473: 1 # Walking Zeros: -0x2000000001
     rs2_val == -68719476737: 1 # Walking Zeros: -0x1000000001
     rs2_val == -34359738369: 1 # Walking Zeros: -0x800000001
-    rs2_val == -17179869185: 1 # Walking Zeros: -0x400000001
+    rs2_val == -17179869185: 2 # Walking Zeros: -0x400000001
     rs2_val == -8589934593: 2 # Walking Zeros: -0x200000001
     rs2_val == -4294967297: 1 # Walking Zeros: -0x100000001
     rs2_val == -2147483649: 1 # Walking Zeros: -0x80000001
     rs2_val == -1073741825: 1 # Walking Zeros: -0x40000001
-    rs2_val == -536870913: 2 # Walking Zeros: -0x20000001
+    rs2_val == -536870913: 1 # Walking Zeros: -0x20000001
     rs2_val == -268435457: 1 # Walking Zeros: -0x10000001
     rs2_val == -134217729: 1 # Walking Zeros: -0x8000001
     rs2_val == -67108865: 1 # Walking Zeros: -0x4000001
@@ -10164,6 +10164,9 @@ minu:
   config:
   - check ISA:=regex(.*I.*B.*)
   - check ISA:=regex(.*I.*Zbb.*)
+  mnemonics:
+    minu: 700
+    coverage: 1/1
   op_comb:
     rs1 != rs2  and rs1 != rd and rs2 != rd: 696
     rs1 == rd != rs2: 1
@@ -10171,9 +10174,6 @@ minu:
     rs1 == rs2 == rd: 1
     rs2 == rd != rs1: 1
     coverage: 5/5
-  opcode:
-    minu: 700
-    coverage: 1/1
   rd:
     x0: 1
     x1: 1
@@ -10233,8 +10233,8 @@ minu:
     x28: 1
     x29: 1
     x3: 1
-    x30: 667
-    x31: 3
+    x30: 669
+    x31: 1
     x4: 1
     x5: 1
     x6: 1
@@ -10265,9 +10265,9 @@ minu:
     x26: 1
     x27: 1
     x28: 1
-    x29: 665
+    x29: 669
     x3: 1
-    x30: 5
+    x30: 1
     x31: 1
     x4: 1
     x5: 1
@@ -10307,12 +10307,12 @@ minu:
     rs2_val == 18446743936270598143: 1 # Walking Zeros: 0xffffffdfffffffff
     rs2_val == 18446744004990074879: 1 # Walking Zeros: 0xffffffefffffffff
     rs2_val == 18446744039349813247: 1 # Walking Zeros: 0xfffffff7ffffffff
-    rs2_val == 18446744056529682431: 1 # Walking Zeros: 0xfffffffbffffffff
+    rs2_val == 18446744056529682431: 2 # Walking Zeros: 0xfffffffbffffffff
     rs2_val == 18446744065119617023: 2 # Walking Zeros: 0xfffffffdffffffff
     rs2_val == 18446744069414584319: 1 # Walking Zeros: 0xfffffffeffffffff
     rs2_val == 18446744071562067967: 1 # Walking Zeros: 0xffffffff7fffffff
     rs2_val == 18446744072635809791: 1 # Walking Zeros: 0xffffffffbfffffff
-    rs2_val == 18446744073172680703: 2 # Walking Zeros: 0xffffffffdfffffff
+    rs2_val == 18446744073172680703: 1 # Walking Zeros: 0xffffffffdfffffff
     rs2_val == 18446744073441116159: 1 # Walking Zeros: 0xffffffffefffffff
     rs2_val == 18446744073575333887: 1 # Walking Zeros: 0xfffffffff7ffffff
     rs2_val == 18446744073642442751: 1 # Walking Zeros: 0xfffffffffbffffff
@@ -10987,17 +10987,19 @@ minu:
     rs2_val == 0: 22
     coverage: 708/708
   total_coverage: 810/810
-orc.b:
+orcb_64:
+  base_op: gorci
   config:
   - check ISA:=regex(.*I.*B.*)
   - check ISA:=regex(.*I.*Zbb.*)
+  mnemonics:
+    orc.b: 136
+    coverage: 1/1
   op_comb:
     rs1 != rd: 135
     rs1 == rd: 1
     coverage: 2/2
-  opcode:
-    orc.b: 136
-    coverage: 1/1
+  p_op_cond: imm_val == 7
   rd:
     x0: 1
     x1: 1
@@ -11207,6 +11209,9 @@ orn:
   config:
   - check ISA:=regex(.*I.*B.*)
   - check ISA:=regex(.*I.*Zbb.*)
+  mnemonics:
+    orn: 720
+    coverage: 1/1
   op_comb:
     rs1 != rs2  and rs1 != rd and rs2 != rd: 716
     rs1 == rd != rs2: 1
@@ -11214,9 +11219,6 @@ orn:
     rs1 == rs2 == rd: 1
     rs2 == rd != rs1: 1
     coverage: 5/5
-  opcode:
-    orn: 720
-    coverage: 1/1
   rd:
     x0: 1
     x1: 1
@@ -11276,8 +11278,8 @@ orn:
     x28: 1
     x29: 1
     x3: 1
-    x30: 687
-    x31: 3
+    x30: 689
+    x31: 1
     x4: 1
     x5: 1
     x6: 1
@@ -11308,9 +11310,9 @@ orn:
     x26: 1
     x27: 1
     x28: 1
-    x29: 685
+    x29: 689
     x3: 1
-    x30: 5
+    x30: 1
     x31: 1
     x4: 1
     x5: 1
@@ -11350,12 +11352,12 @@ orn:
     rs2_val == 18446743936270598143: 1 # Walking Zeros: 0xffffffdfffffffff
     rs2_val == 18446744004990074879: 1 # Walking Zeros: 0xffffffefffffffff
     rs2_val == 18446744039349813247: 1 # Walking Zeros: 0xfffffff7ffffffff
-    rs2_val == 18446744056529682431: 1 # Walking Zeros: 0xfffffffbffffffff
+    rs2_val == 18446744056529682431: 2 # Walking Zeros: 0xfffffffbffffffff
     rs2_val == 18446744065119617023: 2 # Walking Zeros: 0xfffffffdffffffff
     rs2_val == 18446744069414584319: 1 # Walking Zeros: 0xfffffffeffffffff
     rs2_val == 18446744071562067967: 1 # Walking Zeros: 0xffffffff7fffffff
     rs2_val == 18446744072635809791: 1 # Walking Zeros: 0xffffffffbfffffff
-    rs2_val == 18446744073172680703: 2 # Walking Zeros: 0xffffffffdfffffff
+    rs2_val == 18446744073172680703: 1 # Walking Zeros: 0xffffffffdfffffff
     rs2_val == 18446744073441116159: 1 # Walking Zeros: 0xffffffffefffffff
     rs2_val == 18446744073575333887: 1 # Walking Zeros: 0xfffffffff7ffffff
     rs2_val == 18446744073642442751: 1 # Walking Zeros: 0xfffffffffbffffff
@@ -12050,17 +12052,19 @@ orn:
     rs2_val == 0: 22
     coverage: 728/728
   total_coverage: 830/830
-rev8:
+rev8_64:
+  base_op: grevi
   config:
   - check ISA:=regex(.*I.*B.*)
   - check ISA:=regex(.*I.*Zbb.*)
+  mnemonics:
+    rev8: 155
+    coverage: 1/1
   op_comb:
     rs1 != rd: 154
     rs1 == rd: 1
     coverage: 2/2
-  opcode:
-    rev8: 155
-    coverage: 1/1
+  p_op_cond: imm_val == 56
   rd:
     x0: 1
     x1: 1
@@ -12291,6 +12295,9 @@ rol:
   config:
   - check ISA:=regex(.*I.*B.*)
   - check ISA:=regex(.*I.*Zbb.*)
+  mnemonics:
+    rol: 525
+    coverage: 1/1
   op_comb:
     rs1 != rs2  and rs1 != rd and rs2 != rd: 521
     rs1 == rd != rs2: 1
@@ -12298,9 +12305,6 @@ rol:
     rs1 == rs2 == rd: 1
     rs2 == rd != rs1: 1
     coverage: 5/5
-  opcode:
-    rol: 525
-    coverage: 1/1
   rd:
     x0: 1
     x1: 1
@@ -12360,8 +12364,8 @@ rol:
     x28: 1
     x29: 1
     x3: 1
-    x30: 492
-    x31: 3
+    x30: 494
+    x31: 1
     x4: 1
     x5: 1
     x6: 1
@@ -12392,9 +12396,9 @@ rol:
     x26: 1
     x27: 1
     x28: 1
-    x29: 490
+    x29: 494
     x3: 1
-    x30: 5
+    x30: 1
     x31: 1
     x4: 1
     x5: 1
@@ -12435,11 +12439,11 @@ rol:
     'rs2_val == 0x60C9F22000000000 and rs1_val == 0xCA355A09AB72F99F #nosat': 1 # 37 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0xAF36F11000000000 and rs1_val == 0x22FED7DB4E7B7359 #nosat': 1 # 36 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0x0333990800000000 and rs1_val == 0xB6DE8BCFD96429C9 #nosat': 1 # 35 Trailing zeros for rs2_val. Other operands are random
-    'rs2_val == 0x5C67C8FC00000000 and rs1_val == 0xB9FBD369C8CDF63E #nosat': 1 # 34 Trailing zeros for rs2_val. Other operands are random
+    'rs2_val == 0x5C67C8FC00000000 and rs1_val == 0xB9FBD369C8CDF63E #nosat': 2 # 34 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0xC706E0C200000000 and rs1_val == 0x324C464BC06209FB #nosat': 1 # 33 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0xEFE091E300000000 and rs1_val == 0x70FD0C20644918A7 #nosat': 1 # 32 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0xCB7CDDA380000000 and rs1_val == 0x755CD0BF4F63879F #nosat': 1 # 31 Trailing zeros for rs2_val. Other operands are random
-    'rs2_val == 0x51885E99C0000000 and rs1_val == 0xA31E74CF1F3C1AD7 #nosat': 2 # 30 Trailing zeros for rs2_val. Other operands are random
+    'rs2_val == 0x51885E99C0000000 and rs1_val == 0xA31E74CF1F3C1AD7 #nosat': 1 # 30 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0x87503D9D20000000 and rs1_val == 0x300D9B713BB3E347 #nosat': 1 # 29 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0x1AC7983C70000000 and rs1_val == 0xCB0ACB582BEDCFC5 #nosat': 1 # 28 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0x1857BC0AE8000000 and rs1_val == 0xFD5324A47C496066 #nosat': 1 # 27 Trailing zeros for rs2_val. Other operands are random
@@ -12930,6 +12934,9 @@ rolw:
   config:
   - check ISA:=regex(.*RV64.*I.*B.*)
   - check ISA:=regex(.*RV64.*I.*Zbb.*)
+  mnemonics:
+    rolw: 525
+    coverage: 1/1
   op_comb:
     rs1 != rs2  and rs1 != rd and rs2 != rd: 521
     rs1 == rd != rs2: 1
@@ -12937,9 +12944,6 @@ rolw:
     rs1 == rs2 == rd: 1
     rs2 == rd != rs1: 1
     coverage: 5/5
-  opcode:
-    rolw: 525
-    coverage: 1/1
   rd:
     x0: 1
     x1: 1
@@ -12999,8 +13003,8 @@ rolw:
     x28: 1
     x29: 1
     x3: 1
-    x30: 492
-    x31: 3
+    x30: 494
+    x31: 1
     x4: 1
     x5: 1
     x6: 1
@@ -13031,9 +13035,9 @@ rolw:
     x26: 1
     x27: 1
     x28: 1
-    x29: 490
+    x29: 494
     x3: 1
-    x30: 5
+    x30: 1
     x31: 1
     x4: 1
     x5: 1
@@ -13074,11 +13078,11 @@ rolw:
     'rs2_val == 0x60C9F22000000000 and rs1_val == 0xCA355A09AB72F99F #nosat': 1 # 37 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0xAF36F11000000000 and rs1_val == 0x22FED7DB4E7B7359 #nosat': 1 # 36 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0x0333990800000000 and rs1_val == 0xB6DE8BCFD96429C9 #nosat': 1 # 35 Trailing zeros for rs2_val. Other operands are random
-    'rs2_val == 0x5C67C8FC00000000 and rs1_val == 0xB9FBD369C8CDF63E #nosat': 1 # 34 Trailing zeros for rs2_val. Other operands are random
+    'rs2_val == 0x5C67C8FC00000000 and rs1_val == 0xB9FBD369C8CDF63E #nosat': 2 # 34 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0xC706E0C200000000 and rs1_val == 0x324C464BC06209FB #nosat': 1 # 33 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0xEFE091E300000000 and rs1_val == 0x70FD0C20644918A7 #nosat': 1 # 32 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0xCB7CDDA380000000 and rs1_val == 0x755CD0BF4F63879F #nosat': 1 # 31 Trailing zeros for rs2_val. Other operands are random
-    'rs2_val == 0x51885E99C0000000 and rs1_val == 0xA31E74CF1F3C1AD7 #nosat': 2 # 30 Trailing zeros for rs2_val. Other operands are random
+    'rs2_val == 0x51885E99C0000000 and rs1_val == 0xA31E74CF1F3C1AD7 #nosat': 1 # 30 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0x87503D9D20000000 and rs1_val == 0x300D9B713BB3E347 #nosat': 1 # 29 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0x1AC7983C70000000 and rs1_val == 0xCB0ACB582BEDCFC5 #nosat': 1 # 28 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0x1857BC0AE8000000 and rs1_val == 0xFD5324A47C496066 #nosat': 1 # 27 Trailing zeros for rs2_val. Other operands are random
@@ -13569,6 +13573,9 @@ ror:
   config:
   - check ISA:=regex(.*I.*B.*)
   - check ISA:=regex(.*I.*Zbb.*)
+  mnemonics:
+    ror: 525
+    coverage: 1/1
   op_comb:
     rs1 != rs2  and rs1 != rd and rs2 != rd: 521
     rs1 == rd != rs2: 1
@@ -13576,9 +13583,6 @@ ror:
     rs1 == rs2 == rd: 1
     rs2 == rd != rs1: 1
     coverage: 5/5
-  opcode:
-    ror: 525
-    coverage: 1/1
   rd:
     x0: 1
     x1: 1
@@ -13638,8 +13642,8 @@ ror:
     x28: 1
     x29: 1
     x3: 1
-    x30: 492
-    x31: 3
+    x30: 494
+    x31: 1
     x4: 1
     x5: 1
     x6: 1
@@ -13670,9 +13674,9 @@ ror:
     x26: 1
     x27: 1
     x28: 1
-    x29: 490
+    x29: 494
     x3: 1
-    x30: 5
+    x30: 1
     x31: 1
     x4: 1
     x5: 1
@@ -13713,11 +13717,11 @@ ror:
     'rs2_val == 0x60C9F22000000000 and rs1_val == 0xCA355A09AB72F99F #nosat': 1 # 37 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0xAF36F11000000000 and rs1_val == 0x22FED7DB4E7B7359 #nosat': 1 # 36 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0x0333990800000000 and rs1_val == 0xB6DE8BCFD96429C9 #nosat': 1 # 35 Trailing zeros for rs2_val. Other operands are random
-    'rs2_val == 0x5C67C8FC00000000 and rs1_val == 0xB9FBD369C8CDF63E #nosat': 1 # 34 Trailing zeros for rs2_val. Other operands are random
+    'rs2_val == 0x5C67C8FC00000000 and rs1_val == 0xB9FBD369C8CDF63E #nosat': 2 # 34 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0xC706E0C200000000 and rs1_val == 0x324C464BC06209FB #nosat': 1 # 33 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0xEFE091E300000000 and rs1_val == 0x70FD0C20644918A7 #nosat': 1 # 32 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0xCB7CDDA380000000 and rs1_val == 0x755CD0BF4F63879F #nosat': 1 # 31 Trailing zeros for rs2_val. Other operands are random
-    'rs2_val == 0x51885E99C0000000 and rs1_val == 0xA31E74CF1F3C1AD7 #nosat': 2 # 30 Trailing zeros for rs2_val. Other operands are random
+    'rs2_val == 0x51885E99C0000000 and rs1_val == 0xA31E74CF1F3C1AD7 #nosat': 1 # 30 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0x87503D9D20000000 and rs1_val == 0x300D9B713BB3E347 #nosat': 1 # 29 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0x1AC7983C70000000 and rs1_val == 0xCB0ACB582BEDCFC5 #nosat': 1 # 28 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0x1857BC0AE8000000 and rs1_val == 0xFD5324A47C496066 #nosat': 1 # 27 Trailing zeros for rs2_val. Other operands are random
@@ -14208,13 +14212,13 @@ rori:
   config:
   - check ISA:=regex(.*I.*B.*)
   - check ISA:=regex(.*I.*Zbb.*)
+  mnemonics:
+    rori: 158
+    coverage: 1/1
   op_comb:
     rs1 != rd: 157
     rs1 == rd: 1
     coverage: 2/2
-  opcode:
-    rori: 158
-    coverage: 1/1
   rd:
     x0: 1
     x1: 1
@@ -14446,13 +14450,13 @@ roriw:
   config:
   - check ISA:=regex(.*RV64.*I.*B.*)
   - check ISA:=regex(.*RV64.*I.*Zbb.*)
+  mnemonics:
+    roriw: 158
+    coverage: 1/1
   op_comb:
     rs1 != rd: 157
     rs1 == rd: 1
     coverage: 2/2
-  opcode:
-    roriw: 158
-    coverage: 1/1
   rd:
     x0: 1
     x1: 1
@@ -14684,6 +14688,9 @@ rorw:
   config:
   - check ISA:=regex(.*RV64.*I.*B.*)
   - check ISA:=regex(.*RV64.*I.*Zbb.*)
+  mnemonics:
+    rorw: 525
+    coverage: 1/1
   op_comb:
     rs1 != rs2  and rs1 != rd and rs2 != rd: 521
     rs1 == rd != rs2: 1
@@ -14691,9 +14698,6 @@ rorw:
     rs1 == rs2 == rd: 1
     rs2 == rd != rs1: 1
     coverage: 5/5
-  opcode:
-    rorw: 525
-    coverage: 1/1
   rd:
     x0: 1
     x1: 1
@@ -14753,8 +14757,8 @@ rorw:
     x28: 1
     x29: 1
     x3: 1
-    x30: 492
-    x31: 3
+    x30: 494
+    x31: 1
     x4: 1
     x5: 1
     x6: 1
@@ -14785,9 +14789,9 @@ rorw:
     x26: 1
     x27: 1
     x28: 1
-    x29: 490
+    x29: 494
     x3: 1
-    x30: 5
+    x30: 1
     x31: 1
     x4: 1
     x5: 1
@@ -14828,11 +14832,11 @@ rorw:
     'rs2_val == 0x60C9F22000000000 and rs1_val == 0xCA355A09AB72F99F #nosat': 1 # 37 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0xAF36F11000000000 and rs1_val == 0x22FED7DB4E7B7359 #nosat': 1 # 36 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0x0333990800000000 and rs1_val == 0xB6DE8BCFD96429C9 #nosat': 1 # 35 Trailing zeros for rs2_val. Other operands are random
-    'rs2_val == 0x5C67C8FC00000000 and rs1_val == 0xB9FBD369C8CDF63E #nosat': 1 # 34 Trailing zeros for rs2_val. Other operands are random
+    'rs2_val == 0x5C67C8FC00000000 and rs1_val == 0xB9FBD369C8CDF63E #nosat': 2 # 34 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0xC706E0C200000000 and rs1_val == 0x324C464BC06209FB #nosat': 1 # 33 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0xEFE091E300000000 and rs1_val == 0x70FD0C20644918A7 #nosat': 1 # 32 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0xCB7CDDA380000000 and rs1_val == 0x755CD0BF4F63879F #nosat': 1 # 31 Trailing zeros for rs2_val. Other operands are random
-    'rs2_val == 0x51885E99C0000000 and rs1_val == 0xA31E74CF1F3C1AD7 #nosat': 2 # 30 Trailing zeros for rs2_val. Other operands are random
+    'rs2_val == 0x51885E99C0000000 and rs1_val == 0xA31E74CF1F3C1AD7 #nosat': 1 # 30 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0x87503D9D20000000 and rs1_val == 0x300D9B713BB3E347 #nosat': 1 # 29 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0x1AC7983C70000000 and rs1_val == 0xCB0ACB582BEDCFC5 #nosat': 1 # 28 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0x1857BC0AE8000000 and rs1_val == 0xFD5324A47C496066 #nosat': 1 # 27 Trailing zeros for rs2_val. Other operands are random
@@ -15323,13 +15327,13 @@ sext.b:
   config:
   - check ISA:=regex(.*I.*B.*)
   - check ISA:=regex(.*I.*Zbb.*)
+  mnemonics:
+    sext.b: 151
+    coverage: 1/1
   op_comb:
     rs1 != rd: 150
     rs1 == rd: 1
     coverage: 2/2
-  opcode:
-    sext.b: 151
-    coverage: 1/1
   rd:
     x0: 1
     x1: 1
@@ -15555,13 +15559,13 @@ sext.h:
   config:
   - check ISA:=regex(.*I.*B.*)
   - check ISA:=regex(.*I.*Zbb.*)
+  mnemonics:
+    sext.h: 152
+    coverage: 1/1
   op_comb:
     rs1 != rd: 151
     rs1 == rd: 1
     coverage: 2/2
-  opcode:
-    sext.h: 152
-    coverage: 1/1
   rd:
     x0: 1
     x1: 1
@@ -15788,6 +15792,9 @@ sh1add:
   config:
   - check ISA:=regex(.*I.*B.*)
   - check ISA:=regex(.*I.*Zba.*)
+  mnemonics:
+    sh1add: 700
+    coverage: 1/1
   op_comb:
     rs1 != rs2  and rs1 != rd and rs2 != rd: 696
     rs1 == rd != rs2: 1
@@ -15795,9 +15802,6 @@ sh1add:
     rs1 == rs2 == rd: 1
     rs2 == rd != rs1: 1
     coverage: 5/5
-  opcode:
-    sh1add: 700
-    coverage: 1/1
   rd:
     x0: 1
     x1: 1
@@ -15857,8 +15861,8 @@ sh1add:
     x28: 1
     x29: 1
     x3: 1
-    x30: 667
-    x31: 3
+    x30: 669
+    x31: 1
     x4: 1
     x5: 1
     x6: 1
@@ -15889,9 +15893,9 @@ sh1add:
     x26: 1
     x27: 1
     x28: 1
-    x29: 665
+    x29: 669
     x3: 1
-    x30: 5
+    x30: 1
     x31: 1
     x4: 1
     x5: 1
@@ -15931,12 +15935,12 @@ sh1add:
     rs2_val == -137438953473: 1 # Walking Zeros: -0x2000000001
     rs2_val == -68719476737: 1 # Walking Zeros: -0x1000000001
     rs2_val == -34359738369: 1 # Walking Zeros: -0x800000001
-    rs2_val == -17179869185: 1 # Walking Zeros: -0x400000001
+    rs2_val == -17179869185: 2 # Walking Zeros: -0x400000001
     rs2_val == -8589934593: 2 # Walking Zeros: -0x200000001
     rs2_val == -4294967297: 1 # Walking Zeros: -0x100000001
     rs2_val == -2147483649: 1 # Walking Zeros: -0x80000001
     rs2_val == -1073741825: 1 # Walking Zeros: -0x40000001
-    rs2_val == -536870913: 2 # Walking Zeros: -0x20000001
+    rs2_val == -536870913: 1 # Walking Zeros: -0x20000001
     rs2_val == -268435457: 1 # Walking Zeros: -0x10000001
     rs2_val == -134217729: 1 # Walking Zeros: -0x8000001
     rs2_val == -67108865: 1 # Walking Zeros: -0x4000001
@@ -16620,6 +16624,9 @@ sh1add.uw:
   config:
   - check ISA:=regex(.*RV64.*I.*B.*)
   - check ISA:=regex(.*RV64.*I.*Zba.*)
+  mnemonics:
+    sh1add.uw: 700
+    coverage: 1/1
   op_comb:
     rs1 != rs2  and rs1 != rd and rs2 != rd: 696
     rs1 == rd != rs2: 1
@@ -16627,9 +16634,6 @@ sh1add.uw:
     rs1 == rs2 == rd: 1
     rs2 == rd != rs1: 1
     coverage: 5/5
-  opcode:
-    sh1add.uw: 700
-    coverage: 1/1
   rd:
     x0: 1
     x1: 1
@@ -16689,8 +16693,8 @@ sh1add.uw:
     x28: 1
     x29: 1
     x3: 1
-    x30: 667
-    x31: 3
+    x30: 669
+    x31: 1
     x4: 1
     x5: 1
     x6: 1
@@ -16721,9 +16725,9 @@ sh1add.uw:
     x26: 1
     x27: 1
     x28: 1
-    x29: 665
+    x29: 669
     x3: 1
-    x30: 5
+    x30: 1
     x31: 1
     x4: 1
     x5: 1
@@ -16763,12 +16767,12 @@ sh1add.uw:
     rs2_val == 18446743936270598143: 1 # Walking Zeros: 0xffffffdfffffffff
     rs2_val == 18446744004990074879: 1 # Walking Zeros: 0xffffffefffffffff
     rs2_val == 18446744039349813247: 1 # Walking Zeros: 0xfffffff7ffffffff
-    rs2_val == 18446744056529682431: 1 # Walking Zeros: 0xfffffffbffffffff
+    rs2_val == 18446744056529682431: 2 # Walking Zeros: 0xfffffffbffffffff
     rs2_val == 18446744065119617023: 2 # Walking Zeros: 0xfffffffdffffffff
     rs2_val == 18446744069414584319: 1 # Walking Zeros: 0xfffffffeffffffff
     rs2_val == 18446744071562067967: 1 # Walking Zeros: 0xffffffff7fffffff
     rs2_val == 18446744072635809791: 1 # Walking Zeros: 0xffffffffbfffffff
-    rs2_val == 18446744073172680703: 2 # Walking Zeros: 0xffffffffdfffffff
+    rs2_val == 18446744073172680703: 1 # Walking Zeros: 0xffffffffdfffffff
     rs2_val == 18446744073441116159: 1 # Walking Zeros: 0xffffffffefffffff
     rs2_val == 18446744073575333887: 1 # Walking Zeros: 0xfffffffff7ffffff
     rs2_val == 18446744073642442751: 1 # Walking Zeros: 0xfffffffffbffffff
@@ -17447,6 +17451,9 @@ sh2add:
   config:
   - check ISA:=regex(.*I.*B.*)
   - check ISA:=regex(.*I.*Zba.*)
+  mnemonics:
+    sh2add: 700
+    coverage: 1/1
   op_comb:
     rs1 != rs2  and rs1 != rd and rs2 != rd: 696
     rs1 == rd != rs2: 1
@@ -17454,9 +17461,6 @@ sh2add:
     rs1 == rs2 == rd: 1
     rs2 == rd != rs1: 1
     coverage: 5/5
-  opcode:
-    sh2add: 700
-    coverage: 1/1
   rd:
     x0: 1
     x1: 1
@@ -17516,8 +17520,8 @@ sh2add:
     x28: 1
     x29: 1
     x3: 1
-    x30: 667
-    x31: 3
+    x30: 669
+    x31: 1
     x4: 1
     x5: 1
     x6: 1
@@ -17548,9 +17552,9 @@ sh2add:
     x26: 1
     x27: 1
     x28: 1
-    x29: 665
+    x29: 669
     x3: 1
-    x30: 5
+    x30: 1
     x31: 1
     x4: 1
     x5: 1
@@ -17590,12 +17594,12 @@ sh2add:
     rs2_val == -137438953473: 1 # Walking Zeros: -0x2000000001
     rs2_val == -68719476737: 1 # Walking Zeros: -0x1000000001
     rs2_val == -34359738369: 1 # Walking Zeros: -0x800000001
-    rs2_val == -17179869185: 1 # Walking Zeros: -0x400000001
+    rs2_val == -17179869185: 2 # Walking Zeros: -0x400000001
     rs2_val == -8589934593: 2 # Walking Zeros: -0x200000001
     rs2_val == -4294967297: 1 # Walking Zeros: -0x100000001
     rs2_val == -2147483649: 1 # Walking Zeros: -0x80000001
     rs2_val == -1073741825: 1 # Walking Zeros: -0x40000001
-    rs2_val == -536870913: 2 # Walking Zeros: -0x20000001
+    rs2_val == -536870913: 1 # Walking Zeros: -0x20000001
     rs2_val == -268435457: 1 # Walking Zeros: -0x10000001
     rs2_val == -134217729: 1 # Walking Zeros: -0x8000001
     rs2_val == -67108865: 1 # Walking Zeros: -0x4000001
@@ -18279,6 +18283,9 @@ sh2add.uw:
   config:
   - check ISA:=regex(.*RV64.*I.*B.*)
   - check ISA:=regex(.*RV64.*I.*Zba.*)
+  mnemonics:
+    sh2add.uw: 700
+    coverage: 1/1
   op_comb:
     rs1 != rs2  and rs1 != rd and rs2 != rd: 696
     rs1 == rd != rs2: 1
@@ -18286,9 +18293,6 @@ sh2add.uw:
     rs1 == rs2 == rd: 1
     rs2 == rd != rs1: 1
     coverage: 5/5
-  opcode:
-    sh2add.uw: 700
-    coverage: 1/1
   rd:
     x0: 1
     x1: 1
@@ -18348,8 +18352,8 @@ sh2add.uw:
     x28: 1
     x29: 1
     x3: 1
-    x30: 667
-    x31: 3
+    x30: 669
+    x31: 1
     x4: 1
     x5: 1
     x6: 1
@@ -18380,9 +18384,9 @@ sh2add.uw:
     x26: 1
     x27: 1
     x28: 1
-    x29: 665
+    x29: 669
     x3: 1
-    x30: 5
+    x30: 1
     x31: 1
     x4: 1
     x5: 1
@@ -18422,12 +18426,12 @@ sh2add.uw:
     rs2_val == 18446743936270598143: 1 # Walking Zeros: 0xffffffdfffffffff
     rs2_val == 18446744004990074879: 1 # Walking Zeros: 0xffffffefffffffff
     rs2_val == 18446744039349813247: 1 # Walking Zeros: 0xfffffff7ffffffff
-    rs2_val == 18446744056529682431: 1 # Walking Zeros: 0xfffffffbffffffff
+    rs2_val == 18446744056529682431: 2 # Walking Zeros: 0xfffffffbffffffff
     rs2_val == 18446744065119617023: 2 # Walking Zeros: 0xfffffffdffffffff
     rs2_val == 18446744069414584319: 1 # Walking Zeros: 0xfffffffeffffffff
     rs2_val == 18446744071562067967: 1 # Walking Zeros: 0xffffffff7fffffff
     rs2_val == 18446744072635809791: 1 # Walking Zeros: 0xffffffffbfffffff
-    rs2_val == 18446744073172680703: 2 # Walking Zeros: 0xffffffffdfffffff
+    rs2_val == 18446744073172680703: 1 # Walking Zeros: 0xffffffffdfffffff
     rs2_val == 18446744073441116159: 1 # Walking Zeros: 0xffffffffefffffff
     rs2_val == 18446744073575333887: 1 # Walking Zeros: 0xfffffffff7ffffff
     rs2_val == 18446744073642442751: 1 # Walking Zeros: 0xfffffffffbffffff
@@ -19106,6 +19110,9 @@ sh3add:
   config:
   - check ISA:=regex(.*I.*B.*)
   - check ISA:=regex(.*I.*Zba.*)
+  mnemonics:
+    sh3add: 700
+    coverage: 1/1
   op_comb:
     rs1 != rs2  and rs1 != rd and rs2 != rd: 696
     rs1 == rd != rs2: 1
@@ -19113,9 +19120,6 @@ sh3add:
     rs1 == rs2 == rd: 1
     rs2 == rd != rs1: 1
     coverage: 5/5
-  opcode:
-    sh3add: 700
-    coverage: 1/1
   rd:
     x0: 1
     x1: 1
@@ -19175,8 +19179,8 @@ sh3add:
     x28: 1
     x29: 1
     x3: 1
-    x30: 667
-    x31: 3
+    x30: 669
+    x31: 1
     x4: 1
     x5: 1
     x6: 1
@@ -19207,9 +19211,9 @@ sh3add:
     x26: 1
     x27: 1
     x28: 1
-    x29: 665
+    x29: 669
     x3: 1
-    x30: 5
+    x30: 1
     x31: 1
     x4: 1
     x5: 1
@@ -19249,12 +19253,12 @@ sh3add:
     rs2_val == -137438953473: 1 # Walking Zeros: -0x2000000001
     rs2_val == -68719476737: 1 # Walking Zeros: -0x1000000001
     rs2_val == -34359738369: 1 # Walking Zeros: -0x800000001
-    rs2_val == -17179869185: 1 # Walking Zeros: -0x400000001
+    rs2_val == -17179869185: 2 # Walking Zeros: -0x400000001
     rs2_val == -8589934593: 2 # Walking Zeros: -0x200000001
     rs2_val == -4294967297: 1 # Walking Zeros: -0x100000001
     rs2_val == -2147483649: 1 # Walking Zeros: -0x80000001
     rs2_val == -1073741825: 1 # Walking Zeros: -0x40000001
-    rs2_val == -536870913: 2 # Walking Zeros: -0x20000001
+    rs2_val == -536870913: 1 # Walking Zeros: -0x20000001
     rs2_val == -268435457: 1 # Walking Zeros: -0x10000001
     rs2_val == -134217729: 1 # Walking Zeros: -0x8000001
     rs2_val == -67108865: 1 # Walking Zeros: -0x4000001
@@ -19938,6 +19942,9 @@ sh3add.uw:
   config:
   - check ISA:=regex(.*RV64.*I.*B.*)
   - check ISA:=regex(.*RV64.*I.*Zba.*)
+  mnemonics:
+    sh3add.uw: 700
+    coverage: 1/1
   op_comb:
     rs1 != rs2  and rs1 != rd and rs2 != rd: 696
     rs1 == rd != rs2: 1
@@ -19945,9 +19952,6 @@ sh3add.uw:
     rs1 == rs2 == rd: 1
     rs2 == rd != rs1: 1
     coverage: 5/5
-  opcode:
-    sh3add.uw: 700
-    coverage: 1/1
   rd:
     x0: 1
     x1: 1
@@ -20007,8 +20011,8 @@ sh3add.uw:
     x28: 1
     x29: 1
     x3: 1
-    x30: 667
-    x31: 3
+    x30: 669
+    x31: 1
     x4: 1
     x5: 1
     x6: 1
@@ -20039,9 +20043,9 @@ sh3add.uw:
     x26: 1
     x27: 1
     x28: 1
-    x29: 665
+    x29: 669
     x3: 1
-    x30: 5
+    x30: 1
     x31: 1
     x4: 1
     x5: 1
@@ -20081,12 +20085,12 @@ sh3add.uw:
     rs2_val == 18446743936270598143: 1 # Walking Zeros: 0xffffffdfffffffff
     rs2_val == 18446744004990074879: 1 # Walking Zeros: 0xffffffefffffffff
     rs2_val == 18446744039349813247: 1 # Walking Zeros: 0xfffffff7ffffffff
-    rs2_val == 18446744056529682431: 1 # Walking Zeros: 0xfffffffbffffffff
+    rs2_val == 18446744056529682431: 2 # Walking Zeros: 0xfffffffbffffffff
     rs2_val == 18446744065119617023: 2 # Walking Zeros: 0xfffffffdffffffff
     rs2_val == 18446744069414584319: 1 # Walking Zeros: 0xfffffffeffffffff
     rs2_val == 18446744071562067967: 1 # Walking Zeros: 0xffffffff7fffffff
     rs2_val == 18446744072635809791: 1 # Walking Zeros: 0xffffffffbfffffff
-    rs2_val == 18446744073172680703: 2 # Walking Zeros: 0xffffffffdfffffff
+    rs2_val == 18446744073172680703: 1 # Walking Zeros: 0xffffffffdfffffff
     rs2_val == 18446744073441116159: 1 # Walking Zeros: 0xffffffffefffffff
     rs2_val == 18446744073575333887: 1 # Walking Zeros: 0xfffffffff7ffffff
     rs2_val == 18446744073642442751: 1 # Walking Zeros: 0xfffffffffbffffff
@@ -20765,13 +20769,13 @@ slli.uw:
   config:
   - check ISA:=regex(.*RV64.*I.*B.*)
   - check ISA:=regex(.*RV64.*I.*Zba.*)
+  mnemonics:
+    slli.uw: 161
+    coverage: 1/1
   op_comb:
     rs1 != rd: 160
     rs1 == rd: 1
     coverage: 2/2
-  opcode:
-    slli.uw: 161
-    coverage: 1/1
   rd:
     x0: 1
     x1: 1
@@ -21010,6 +21014,9 @@ xnor:
   config:
   - check ISA:=regex(.*I.*B.*)
   - check ISA:=regex(.*I.*Zbb.*)
+  mnemonics:
+    xnor: 720
+    coverage: 1/1
   op_comb:
     rs1 != rs2  and rs1 != rd and rs2 != rd: 716
     rs1 == rd != rs2: 1
@@ -21017,9 +21024,6 @@ xnor:
     rs1 == rs2 == rd: 1
     rs2 == rd != rs1: 1
     coverage: 5/5
-  opcode:
-    xnor: 720
-    coverage: 1/1
   rd:
     x0: 1
     x1: 1
@@ -21079,8 +21083,8 @@ xnor:
     x28: 1
     x29: 1
     x3: 1
-    x30: 687
-    x31: 3
+    x30: 689
+    x31: 1
     x4: 1
     x5: 1
     x6: 1
@@ -21111,9 +21115,9 @@ xnor:
     x26: 1
     x27: 1
     x28: 1
-    x29: 685
+    x29: 689
     x3: 1
-    x30: 5
+    x30: 1
     x31: 1
     x4: 1
     x5: 1
@@ -21153,12 +21157,12 @@ xnor:
     rs2_val == 18446743936270598143: 1 # Walking Zeros: 0xffffffdfffffffff
     rs2_val == 18446744004990074879: 1 # Walking Zeros: 0xffffffefffffffff
     rs2_val == 18446744039349813247: 1 # Walking Zeros: 0xfffffff7ffffffff
-    rs2_val == 18446744056529682431: 1 # Walking Zeros: 0xfffffffbffffffff
+    rs2_val == 18446744056529682431: 2 # Walking Zeros: 0xfffffffbffffffff
     rs2_val == 18446744065119617023: 2 # Walking Zeros: 0xfffffffdffffffff
     rs2_val == 18446744069414584319: 1 # Walking Zeros: 0xfffffffeffffffff
     rs2_val == 18446744071562067967: 1 # Walking Zeros: 0xffffffff7fffffff
     rs2_val == 18446744072635809791: 1 # Walking Zeros: 0xffffffffbfffffff
-    rs2_val == 18446744073172680703: 2 # Walking Zeros: 0xffffffffdfffffff
+    rs2_val == 18446744073172680703: 1 # Walking Zeros: 0xffffffffdfffffff
     rs2_val == 18446744073441116159: 1 # Walking Zeros: 0xffffffffefffffff
     rs2_val == 18446744073575333887: 1 # Walking Zeros: 0xfffffffff7ffffff
     rs2_val == 18446744073642442751: 1 # Walking Zeros: 0xfffffffffbffffff
@@ -21853,17 +21857,19 @@ xnor:
     rs2_val == 0: 22
     coverage: 728/728
   total_coverage: 830/830
-zext.h:
+zext.h_64:
+  base_op: packw
   config:
   - check ISA:=regex(.*I.*B.*)
   - check ISA:=regex(.*I.*Zbb.*)
+  mnemonics:
+    zext.h: 152
+    coverage: 1/1
   op_comb:
     rs1 != rd: 151
     rs1 == rd: 1
     coverage: 2/2
-  opcode:
-    zext.h: 152
-    coverage: 1/1
+  p_op_cond: rs2 == x0
   rd:
     x0: 1
     x1: 1

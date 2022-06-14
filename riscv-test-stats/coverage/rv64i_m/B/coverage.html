@@ -253,18 +253,18 @@ function is_all_rows_hidden(value) {
 
 </script>
     <h1></h1>
-    <p>Report generated on 2022-03-10 13:43 GMT by <a href="https://pypi.python.org/pypi/riscof">riscof</a> v</p>
+    <p>Report generated on 2022-05-29 19:24 GMT by <a href="https://pypi.python.org/pypi/riscof">riscof</a> v</p>
     <h2>Environment</h2>
     <table id="environment">
       <tr>
         <td>Riscof Version</td>
-        <td>1.23.2</td></tr>
+        <td>1.24.0</td></tr>
       <tr>
         <td>Riscv-arch-test Version/Commit Id</td>
         <td>-</td></tr>
       <tr>
         <td>ISA</td>
-        <td>RV64IMC_Zicsr_Zifencei_Zba_Zbb_Zbc_Zbs</td></tr>
+        <td>RV64IMCZicsr_Zifencei_Zba_Zbb_Zbc_Zbs</td></tr>
       <tr>
         <td>User Spec Version</td>
         <td>2.3</td></tr>
@@ -281,50 +281,26 @@ function is_all_rows_hidden(value) {
       </thead>
       <tbody>
           <tr>
-            <td class="col-yname">/home/anku/bmanip/new_trials/trial22/64/riscof_work/spike_parallel_isa_checked.yaml</td></tr>
+            <td class="col-yname">/home/anku/trials/bmanip/64/riscof_work-v2/spike_parallel_isa_checked.yaml</td></tr>
           <tr>
             <td class="extra" colspan="1">
               <div class="log">hart_ids: [0]
 hart0:
-    ISA: RV64IMC_Zicsr_Zifencei_Zba_Zbb_Zbc_Zbs
+    ISA: RV64IMCZicsr_Zifencei_Zba_Zbb_Zbc_Zbs
     physical_addr_sz: 32
     User_Spec_Version: '2.3'
     supported_xlen:
       - 64
+    Privilege_Spec_Version: '1.10'
+    hw_data_misaligned_support: false
+    pmp_granularity: 0
+    custom_exceptions:
+    custom_interrupts:
     misa:
-        reset-val: 0x8000000000001104
+        rv32:
+            accessible: false
         rv64:
             accessible: true
-            mxl:
-                implemented: true
-                type:
-                    warl:
-                        dependency_fields: []
-                        legal:
-                          - mxl[1:0] in [0x2]
-                        wr_illegal:
-                          - Unchanged
-                description: Encodes the native base integer ISA width.
-                shadow:
-                shadow_type: rw
-                msb: 63
-                lsb: 62
-            extensions:
-                implemented: true
-                type:
-                    warl:
-                        dependency_fields: []
-                        legal:
-                          - extensions[25:0] bitmask [0x0001504, 0x0000000]
-                        wr_illegal:
-                          - Unchanged
-
-                description: Encodes the presence of the standard extensions, with
-                    a single bit per letter of the alphabet.
-                shadow:
-                shadow_type: rw
-                msb: 25
-                lsb: 0
             fields:
               - extensions
               - mxl
@@ -332,17 +308,40 @@ hart0:
                   -
                       - 26
                       - 61
+            mxl:
+                implemented: true
+                description: Encodes the native base integer ISA width.
+                shadow:
+                shadow_type: rw
+                msb: 63
+                lsb: 62
+                type:
+                    warl:
+                        dependency_fields: []
+                        legal:
+                          - mxl[1:0] in [0x2]
+                        wr_illegal:
+                          - unchanged
+            extensions:
+                implemented: true
+                description: Encodes the presence of the standard extensions, with
+                    a single bit per letter of the alphabet.
+                shadow:
+                shadow_type: rw
+                msb: 25
+                lsb: 0
+                type:
+                    warl:
+                        dependency_fields: []
+                        legal:
+                          - extensions[25:0] bitmask [0x1104, 0x00000000]
+                        wr_illegal:
+                          - unchanged
         description: misa is a read-write register reporting the ISA supported by
             the hart.
         address: 769
         priv_mode: M
-        rv32:
-            accessible: false
-    Privilege_Spec_Version: '1.10'
-    hw_data_misaligned_support: false
-    pmp_granularity: 0
-    custom_exceptions:
-    custom_interrupts:
+        reset-val: 9223372036854780164
     mstatus:
         rv32:
             accessible: false
@@ -4124,7 +4123,7 @@ hart0:
           </tbody>
           <tbody>
           <tr>
-            <td class="col-yname">/home/anku/bmanip/new_trials/trial22/64/riscof_work/spike_parallel_platform_checked.yaml</td></tr>
+            <td class="col-yname">/home/anku/trials/bmanip/64/riscof_work-v2/spike_parallel_platform_checked.yaml</td></tr>
           <tr>
             <td class="extra" colspan="1">
               <div class="log">mtime:
@@ -4164,9 +4163,9 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/64/suite/add.uw-01.S</td>
-          <td class="col-tfprint">44604</td>          
-          <td class="col-tcode">33408</td>          
+          <td class="col-tname">/home/anku/trials/bmanip/64/suite/add.uw-01.S</td>
+          <td class="col-tfprint">44608</td>          
+          <td class="col-tcode">33424</td>          
           <td class="col-tdata">16</td>          
           <td class="col-tsign">5616</td>          
           <td class="col-tcov">{'add.uw'}</td>          
@@ -4174,8 +4173,8 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/64/suite/andn-01.S</td>
-          <td class="col-tfprint">44964</td>          
+          <td class="col-tname">/home/anku/trials/bmanip/64/suite/andn-01.S</td>
+          <td class="col-tfprint">44984</td>          
           <td class="col-tcode">33760</td>          
           <td class="col-tdata">16</td>          
           <td class="col-tsign">5648</td>          
@@ -4184,8 +4183,8 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/64/suite/bclr-01.S</td>
-          <td class="col-tfprint">17856</td>          
+          <td class="col-tname">/home/anku/trials/bmanip/64/suite/bclr-01.S</td>
+          <td class="col-tfprint">17848</td>          
           <td class="col-tcode">8912</td>          
           <td class="col-tdata">16</td>          
           <td class="col-tsign">3376</td>          
@@ -4194,7 +4193,7 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/64/suite/bclri-01.S</td>
+          <td class="col-tname">/home/anku/trials/bmanip/64/suite/bclri-01.S</td>
           <td class="col-tfprint">9792</td>          
           <td class="col-tcode">2976</td>          
           <td class="col-tdata">16</td>          
@@ -4204,8 +4203,8 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/64/suite/bext-01.S</td>
-          <td class="col-tfprint">17808</td>          
+          <td class="col-tname">/home/anku/trials/bmanip/64/suite/bext-01.S</td>
+          <td class="col-tfprint">17800</td>          
           <td class="col-tcode">8880</td>          
           <td class="col-tdata">16</td>          
           <td class="col-tsign">3360</td>          
@@ -4214,7 +4213,7 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/64/suite/bexti-01.S</td>
+          <td class="col-tname">/home/anku/trials/bmanip/64/suite/bexti-01.S</td>
           <td class="col-tfprint">9792</td>          
           <td class="col-tcode">2976</td>          
           <td class="col-tdata">16</td>          
@@ -4224,8 +4223,8 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/64/suite/binv-01.S</td>
-          <td class="col-tfprint">17856</td>          
+          <td class="col-tname">/home/anku/trials/bmanip/64/suite/binv-01.S</td>
+          <td class="col-tfprint">17848</td>          
           <td class="col-tcode">8912</td>          
           <td class="col-tdata">16</td>          
           <td class="col-tsign">3376</td>          
@@ -4234,7 +4233,7 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/64/suite/binvi-01.S</td>
+          <td class="col-tname">/home/anku/trials/bmanip/64/suite/binvi-01.S</td>
           <td class="col-tfprint">9792</td>          
           <td class="col-tcode">2976</td>          
           <td class="col-tdata">16</td>          
@@ -4244,8 +4243,8 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/64/suite/bset-01.S</td>
-          <td class="col-tfprint">17808</td>          
+          <td class="col-tname">/home/anku/trials/bmanip/64/suite/bset-01.S</td>
+          <td class="col-tfprint">17800</td>          
           <td class="col-tcode">8880</td>          
           <td class="col-tdata">16</td>          
           <td class="col-tsign">3360</td>          
@@ -4254,7 +4253,7 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/64/suite/bseti-01.S</td>
+          <td class="col-tname">/home/anku/trials/bmanip/64/suite/bseti-01.S</td>
           <td class="col-tfprint">9792</td>          
           <td class="col-tcode">2976</td>          
           <td class="col-tdata">16</td>          
@@ -4264,8 +4263,8 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/64/suite/clmul-01.S</td>
-          <td class="col-tfprint">14708</td>          
+          <td class="col-tname">/home/anku/trials/bmanip/64/suite/clmul-01.S</td>
+          <td class="col-tfprint">14732</td>          
           <td class="col-tcode">6848</td>          
           <td class="col-tdata">16</td>          
           <td class="col-tsign">2304</td>          
@@ -4274,8 +4273,8 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/64/suite/clmulh-01.S</td>
-          <td class="col-tfprint">14708</td>          
+          <td class="col-tname">/home/anku/trials/bmanip/64/suite/clmulh-01.S</td>
+          <td class="col-tfprint">14732</td>          
           <td class="col-tcode">6848</td>          
           <td class="col-tdata">16</td>          
           <td class="col-tsign">2304</td>          
@@ -4284,8 +4283,8 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/64/suite/clmulr-01.S</td>
-          <td class="col-tfprint">14708</td>          
+          <td class="col-tname">/home/anku/trials/bmanip/64/suite/clmulr-01.S</td>
+          <td class="col-tfprint">14732</td>          
           <td class="col-tcode">6848</td>          
           <td class="col-tdata">16</td>          
           <td class="col-tsign">2304</td>          
@@ -4294,7 +4293,7 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/64/suite/clz-01.S</td>
+          <td class="col-tname">/home/anku/trials/bmanip/64/suite/clz-01.S</td>
           <td class="col-tfprint">8776</td>          
           <td class="col-tcode">2144</td>          
           <td class="col-tdata">16</td>          
@@ -4304,7 +4303,7 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/64/suite/clzw-01.S</td>
+          <td class="col-tname">/home/anku/trials/bmanip/64/suite/clzw-01.S</td>
           <td class="col-tfprint">8776</td>          
           <td class="col-tcode">2144</td>          
           <td class="col-tdata">16</td>          
@@ -4314,7 +4313,7 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/64/suite/cpop-01.S</td>
+          <td class="col-tname">/home/anku/trials/bmanip/64/suite/cpop-01.S</td>
           <td class="col-tfprint">8776</td>          
           <td class="col-tcode">2144</td>          
           <td class="col-tdata">16</td>          
@@ -4324,7 +4323,7 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/64/suite/cpopw-01.S</td>
+          <td class="col-tname">/home/anku/trials/bmanip/64/suite/cpopw-01.S</td>
           <td class="col-tfprint">8776</td>          
           <td class="col-tcode">2144</td>          
           <td class="col-tdata">16</td>          
@@ -4334,7 +4333,7 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/64/suite/ctz-01.S</td>
+          <td class="col-tname">/home/anku/trials/bmanip/64/suite/ctz-01.S</td>
           <td class="col-tfprint">8776</td>          
           <td class="col-tcode">2144</td>          
           <td class="col-tdata">16</td>          
@@ -4344,7 +4343,7 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/64/suite/ctzw-01.S</td>
+          <td class="col-tname">/home/anku/trials/bmanip/64/suite/ctzw-01.S</td>
           <td class="col-tfprint">8776</td>          
           <td class="col-tcode">2144</td>          
           <td class="col-tdata">16</td>          
@@ -4354,9 +4353,9 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/64/suite/max-01.S</td>
-          <td class="col-tfprint">44556</td>          
-          <td class="col-tcode">33392</td>          
+          <td class="col-tname">/home/anku/trials/bmanip/64/suite/max-01.S</td>
+          <td class="col-tfprint">44560</td>          
+          <td class="col-tcode">33408</td>          
           <td class="col-tdata">16</td>          
           <td class="col-tsign">5600</td>          
           <td class="col-tcov">{'max'}</td>          
@@ -4364,9 +4363,9 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/64/suite/maxu-01.S</td>
-          <td class="col-tfprint">44556</td>          
-          <td class="col-tcode">33392</td>          
+          <td class="col-tname">/home/anku/trials/bmanip/64/suite/maxu-01.S</td>
+          <td class="col-tfprint">44560</td>          
+          <td class="col-tcode">33408</td>          
           <td class="col-tdata">16</td>          
           <td class="col-tsign">5600</td>          
           <td class="col-tcov">{'maxu'}</td>          
@@ -4374,9 +4373,9 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/64/suite/min-01.S</td>
-          <td class="col-tfprint">44556</td>          
-          <td class="col-tcode">33392</td>          
+          <td class="col-tname">/home/anku/trials/bmanip/64/suite/min-01.S</td>
+          <td class="col-tfprint">44560</td>          
+          <td class="col-tcode">33408</td>          
           <td class="col-tdata">16</td>          
           <td class="col-tsign">5600</td>          
           <td class="col-tcov">{'min'}</td>          
@@ -4384,9 +4383,9 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/64/suite/minu-01.S</td>
-          <td class="col-tfprint">44556</td>          
-          <td class="col-tcode">33392</td>          
+          <td class="col-tname">/home/anku/trials/bmanip/64/suite/minu-01.S</td>
+          <td class="col-tfprint">44560</td>          
+          <td class="col-tcode">33408</td>          
           <td class="col-tdata">16</td>          
           <td class="col-tsign">5600</td>          
           <td class="col-tcov">{'minu'}</td>          
@@ -4394,18 +4393,18 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/64/suite/orc.b-01.S</td>
+          <td class="col-tname">/home/anku/trials/bmanip/64/suite/orcb_64-01.S</td>
           <td class="col-tfprint">8936</td>          
           <td class="col-tcode">2288</td>          
           <td class="col-tdata">16</td>          
           <td class="col-tsign">1088</td>          
-          <td class="col-tcov">{'orc.b'}</td>          
+          <td class="col-tcov">{'orcb_64'}</td>          
         </tr></tbody>
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/64/suite/orn-01.S</td>
-          <td class="col-tfprint">46164</td>          
+          <td class="col-tname">/home/anku/trials/bmanip/64/suite/orn-01.S</td>
+          <td class="col-tfprint">46152</td>          
           <td class="col-tcode">34832</td>          
           <td class="col-tdata">16</td>          
           <td class="col-tsign">5760</td>          
@@ -4414,19 +4413,19 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/64/suite/rev8-01.S</td>
+          <td class="col-tname">/home/anku/trials/bmanip/64/suite/rev8_64-01.S</td>
           <td class="col-tfprint">10152</td>          
           <td class="col-tcode">3328</td>          
           <td class="col-tdata">16</td>          
           <td class="col-tsign">1248</td>          
-          <td class="col-tcov">{'rev8'}</td>          
+          <td class="col-tcov">{'rev8_64'}</td>          
         </tr></tbody>
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/64/suite/rol-01.S</td>
-          <td class="col-tfprint">39460</td>          
-          <td class="col-tcode">29696</td>          
+          <td class="col-tname">/home/anku/trials/bmanip/64/suite/rol-01.S</td>
+          <td class="col-tfprint">39448</td>          
+          <td class="col-tcode">29680</td>          
           <td class="col-tdata">16</td>          
           <td class="col-tsign">4208</td>          
           <td class="col-tcov">{'rol'}</td>          
@@ -4434,9 +4433,9 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/64/suite/rolw-01.S</td>
-          <td class="col-tfprint">39460</td>          
-          <td class="col-tcode">29696</td>          
+          <td class="col-tname">/home/anku/trials/bmanip/64/suite/rolw-01.S</td>
+          <td class="col-tfprint">39448</td>          
+          <td class="col-tcode">29680</td>          
           <td class="col-tdata">16</td>          
           <td class="col-tsign">4208</td>          
           <td class="col-tcov">{'rolw'}</td>          
@@ -4444,9 +4443,9 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/64/suite/ror-01.S</td>
-          <td class="col-tfprint">39460</td>          
-          <td class="col-tcode">29696</td>          
+          <td class="col-tname">/home/anku/trials/bmanip/64/suite/ror-01.S</td>
+          <td class="col-tfprint">39448</td>          
+          <td class="col-tcode">29680</td>          
           <td class="col-tdata">16</td>          
           <td class="col-tsign">4208</td>          
           <td class="col-tcov">{'ror'}</td>          
@@ -4454,7 +4453,7 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/64/suite/rori-01.S</td>
+          <td class="col-tname">/home/anku/trials/bmanip/64/suite/rori-01.S</td>
           <td class="col-tfprint">9792</td>          
           <td class="col-tcode">2976</td>          
           <td class="col-tdata">16</td>          
@@ -4464,7 +4463,7 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/64/suite/roriw-01.S</td>
+          <td class="col-tname">/home/anku/trials/bmanip/64/suite/roriw-01.S</td>
           <td class="col-tfprint">9792</td>          
           <td class="col-tcode">2976</td>          
           <td class="col-tdata">16</td>          
@@ -4474,9 +4473,9 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/64/suite/rorw-01.S</td>
-          <td class="col-tfprint">39460</td>          
-          <td class="col-tcode">29696</td>          
+          <td class="col-tname">/home/anku/trials/bmanip/64/suite/rorw-01.S</td>
+          <td class="col-tfprint">39448</td>          
+          <td class="col-tcode">29680</td>          
           <td class="col-tdata">16</td>          
           <td class="col-tsign">4208</td>          
           <td class="col-tcov">{'rorw'}</td>          
@@ -4484,7 +4483,7 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/64/suite/sext.b-01.S</td>
+          <td class="col-tname">/home/anku/trials/bmanip/64/suite/sext.b-01.S</td>
           <td class="col-tfprint">9676</td>          
           <td class="col-tcode">2880</td>          
           <td class="col-tdata">16</td>          
@@ -4494,7 +4493,7 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/64/suite/sext.h-01.S</td>
+          <td class="col-tname">/home/anku/trials/bmanip/64/suite/sext.h-01.S</td>
           <td class="col-tfprint">9676</td>          
           <td class="col-tcode">2896</td>          
           <td class="col-tdata">16</td>          
@@ -4504,9 +4503,9 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/64/suite/sh1add-01.S</td>
-          <td class="col-tfprint">44556</td>          
-          <td class="col-tcode">33392</td>          
+          <td class="col-tname">/home/anku/trials/bmanip/64/suite/sh1add-01.S</td>
+          <td class="col-tfprint">44560</td>          
+          <td class="col-tcode">33408</td>          
           <td class="col-tdata">16</td>          
           <td class="col-tsign">5600</td>          
           <td class="col-tcov">{'sh1add'}</td>          
@@ -4514,9 +4513,9 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/64/suite/sh1add.uw-01.S</td>
-          <td class="col-tfprint">44556</td>          
-          <td class="col-tcode">33392</td>          
+          <td class="col-tname">/home/anku/trials/bmanip/64/suite/sh1add.uw-01.S</td>
+          <td class="col-tfprint">44560</td>          
+          <td class="col-tcode">33408</td>          
           <td class="col-tdata">16</td>          
           <td class="col-tsign">5600</td>          
           <td class="col-tcov">{'sh1add.uw'}</td>          
@@ -4524,9 +4523,9 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/64/suite/sh2add-01.S</td>
-          <td class="col-tfprint">44556</td>          
-          <td class="col-tcode">33392</td>          
+          <td class="col-tname">/home/anku/trials/bmanip/64/suite/sh2add-01.S</td>
+          <td class="col-tfprint">44560</td>          
+          <td class="col-tcode">33408</td>          
           <td class="col-tdata">16</td>          
           <td class="col-tsign">5600</td>          
           <td class="col-tcov">{'sh2add'}</td>          
@@ -4534,9 +4533,9 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/64/suite/sh2add.uw-01.S</td>
-          <td class="col-tfprint">44556</td>          
-          <td class="col-tcode">33392</td>          
+          <td class="col-tname">/home/anku/trials/bmanip/64/suite/sh2add.uw-01.S</td>
+          <td class="col-tfprint">44560</td>          
+          <td class="col-tcode">33408</td>          
           <td class="col-tdata">16</td>          
           <td class="col-tsign">5600</td>          
           <td class="col-tcov">{'sh2add.uw'}</td>          
@@ -4544,9 +4543,9 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/64/suite/sh3add-01.S</td>
-          <td class="col-tfprint">44556</td>          
-          <td class="col-tcode">33392</td>          
+          <td class="col-tname">/home/anku/trials/bmanip/64/suite/sh3add-01.S</td>
+          <td class="col-tfprint">44560</td>          
+          <td class="col-tcode">33408</td>          
           <td class="col-tdata">16</td>          
           <td class="col-tsign">5600</td>          
           <td class="col-tcov">{'sh3add'}</td>          
@@ -4554,9 +4553,9 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/64/suite/sh3add.uw-01.S</td>
-          <td class="col-tfprint">44556</td>          
-          <td class="col-tcode">33392</td>          
+          <td class="col-tname">/home/anku/trials/bmanip/64/suite/sh3add.uw-01.S</td>
+          <td class="col-tfprint">44560</td>          
+          <td class="col-tcode">33408</td>          
           <td class="col-tdata">16</td>          
           <td class="col-tsign">5600</td>          
           <td class="col-tcov">{'sh3add.uw'}</td>          
@@ -4564,7 +4563,7 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/64/suite/slli.uw-01.S</td>
+          <td class="col-tname">/home/anku/trials/bmanip/64/suite/slli.uw-01.S</td>
           <td class="col-tfprint">9820</td>          
           <td class="col-tcode">2944</td>          
           <td class="col-tdata">16</td>          
@@ -4574,8 +4573,8 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/64/suite/xnor-01.S</td>
-          <td class="col-tfprint">46164</td>          
+          <td class="col-tname">/home/anku/trials/bmanip/64/suite/xnor-01.S</td>
+          <td class="col-tfprint">46152</td>          
           <td class="col-tcode">34832</td>          
           <td class="col-tdata">16</td>          
           <td class="col-tsign">5760</td>          
@@ -4584,12 +4583,12 @@ stval_condition_writes:
         
         <tbody class= "  sizes-table-row" >
         <tr>
-          <td class="col-tname">/home/anku/bmanip/new_trials/trial22/64/suite/zext.h-01.S</td>
+          <td class="col-tname">/home/anku/trials/bmanip/64/suite/zext.h_64-01.S</td>
           <td class="col-tfprint">9676</td>          
           <td class="col-tcode">2896</td>          
           <td class="col-tdata">16</td>          
           <td class="col-tsign">1216</td>          
-          <td class="col-tcov">{'zext.h'}</td>          
+          <td class="col-tcov">{'zext.h_64'}</td>          
         </tr></tbody>
         
       </table>
@@ -4620,6 +4619,9 @@ stval_condition_writes:
           <div class="log">config:
    - check ISA:=regex(.*RV64.*I.*B.*)
    - check ISA:=regex(.*RV64.*I.*Zba.*)
+mnemonics:
+     add.uw: 701
+     coverage: 1/1
 op_comb:
      rs1 != rs2  and rs1 != rd and rs2 != rd: 697
      rs1 == rd != rs2: 1
@@ -4627,9 +4629,6 @@ op_comb:
      rs1 == rs2 == rd: 1
      rs2 == rd != rs1: 1
      coverage: 5/5
-opcode:
-     add.uw: 701
-     coverage: 1/1
 rd:
      x0: 1
      x1: 1
@@ -4689,8 +4688,8 @@ rs1:
      x28: 1
      x29: 1
      x3: 1
-     x30: 668
-     x31: 3
+     x30: 670
+     x31: 1
      x4: 1
      x5: 1
      x6: 1
@@ -4721,9 +4720,9 @@ rs2:
      x26: 1
      x27: 1
      x28: 1
-     x29: 666
+     x29: 670
      x3: 1
-     x30: 5
+     x30: 1
      x31: 1
      x4: 1
      x5: 1
@@ -4763,12 +4762,12 @@ val_comb:
      rs2_val == 18446743936270598143: 1
      rs2_val == 18446744004990074879: 1
      rs2_val == 18446744039349813247: 1
-     rs2_val == 18446744056529682431: 1
+     rs2_val == 18446744056529682431: 2
      rs2_val == 18446744065119617023: 2
      rs2_val == 18446744069414584319: 1
      rs2_val == 18446744071562067967: 1
      rs2_val == 18446744072635809791: 1
-     rs2_val == 18446744073172680703: 2
+     rs2_val == 18446744073172680703: 1
      rs2_val == 18446744073441116159: 1
      rs2_val == 18446744073575333887: 1
      rs2_val == 18446744073642442751: 1
@@ -5460,6 +5459,9 @@ total_coverage: 810/810
           <div class="log">config:
    - check ISA:=regex(.*I.*B.*)
    - check ISA:=regex(.*I.*Zbb.*)
+mnemonics:
+     andn: 705
+     coverage: 1/1
 op_comb:
      rs1 != rs2  and rs1 != rd and rs2 != rd: 701
      rs1 == rd != rs2: 1
@@ -5467,9 +5469,6 @@ op_comb:
      rs1 == rs2 == rd: 1
      rs2 == rd != rs1: 1
      coverage: 5/5
-opcode:
-     andn: 705
-     coverage: 1/1
 rd:
      x0: 1
      x1: 1
@@ -5529,8 +5528,8 @@ rs1:
      x28: 1
      x29: 1
      x3: 1
-     x30: 672
-     x31: 3
+     x30: 674
+     x31: 1
      x4: 1
      x5: 1
      x6: 1
@@ -5561,9 +5560,9 @@ rs2:
      x26: 1
      x27: 1
      x28: 1
-     x29: 670
+     x29: 674
      x3: 1
-     x30: 5
+     x30: 1
      x31: 1
      x4: 1
      x5: 1
@@ -5603,12 +5602,12 @@ val_comb:
      rs2_val == 18446743936270598143: 1
      rs2_val == 18446744004990074879: 1
      rs2_val == 18446744039349813247: 1
-     rs2_val == 18446744056529682431: 1
+     rs2_val == 18446744056529682431: 2
      rs2_val == 18446744065119617023: 2
      rs2_val == 18446744069414584319: 1
      rs2_val == 18446744071562067967: 1
      rs2_val == 18446744072635809791: 1
-     rs2_val == 18446744073172680703: 2
+     rs2_val == 18446744073172680703: 1
      rs2_val == 18446744073441116159: 1
      rs2_val == 18446744073575333887: 1
      rs2_val == 18446744073642442751: 1
@@ -6305,6 +6304,9 @@ total_coverage: 815/815
           <div class="log">config:
    - check ISA:=regex(.*I.*B.*)
    - check ISA:=regex(.*I.*Zbs.*)
+mnemonics:
+     bclr: 421
+     coverage: 1/1
 op_comb:
      rs1 != rs2  and rs1 != rd and rs2 != rd: 417
      rs1 == rd != rs2: 1
@@ -6312,9 +6314,6 @@ op_comb:
      rs1 == rs2 == rd: 1
      rs2 == rd != rs1: 1
      coverage: 5/5
-opcode:
-     bclr: 421
-     coverage: 1/1
 rd:
      x0: 1
      x1: 1
@@ -6374,8 +6373,8 @@ rs1:
      x28: 1
      x29: 1
      x3: 1
-     x30: 388
-     x31: 3
+     x30: 390
+     x31: 1
      x4: 1
      x5: 1
      x6: 1
@@ -6406,9 +6405,9 @@ rs2:
      x26: 1
      x27: 1
      x28: 1
-     x29: 386
+     x29: 390
      x3: 1
-     x30: 5
+     x30: 1
      x31: 1
      x4: 1
      x5: 1
@@ -6448,12 +6447,12 @@ val_comb:
      rs2_val == 18446743936270598143: 1
      rs2_val == 18446744004990074879: 1
      rs2_val == 18446744039349813247: 1
-     rs2_val == 18446744056529682431: 1
+     rs2_val == 18446744056529682431: 2
      rs2_val == 18446744065119617023: 2
      rs2_val == 18446744069414584319: 1
      rs2_val == 18446744071562067967: 1
      rs2_val == 18446744072635809791: 1
-     rs2_val == 18446744073172680703: 2
+     rs2_val == 18446744073172680703: 1
      rs2_val == 18446744073441116159: 1
      rs2_val == 18446744073575333887: 1
      rs2_val == 18446744073642442751: 1
@@ -6853,13 +6852,13 @@ total_coverage: 518/518
           <div class="log">config:
    - check ISA:=regex(.*I.*B.*)
    - check ISA:=regex(.*I.*Zbs.*)
+mnemonics:
+     bclri: 158
+     coverage: 1/1
 op_comb:
      rs1 != rd: 157
      rs1 == rd: 1
      coverage: 2/2
-opcode:
-     bclri: 158
-     coverage: 1/1
 rd:
      x0: 1
      x1: 1
@@ -7104,6 +7103,9 @@ total_coverage: 223/223
           <div class="log">config:
    - check ISA:=regex(.*I.*B.*)
    - check ISA:=regex(.*I.*Zbs.*)
+mnemonics:
+     bext: 419
+     coverage: 1/1
 op_comb:
      rs1 != rs2  and rs1 != rd and rs2 != rd: 415
      rs1 == rd != rs2: 1
@@ -7111,9 +7113,6 @@ op_comb:
      rs1 == rs2 == rd: 1
      rs2 == rd != rs1: 1
      coverage: 5/5
-opcode:
-     bext: 419
-     coverage: 1/1
 rd:
      x0: 1
      x1: 1
@@ -7173,8 +7172,8 @@ rs1:
      x28: 1
      x29: 1
      x3: 1
-     x30: 386
-     x31: 3
+     x30: 388
+     x31: 1
      x4: 1
      x5: 1
      x6: 1
@@ -7205,9 +7204,9 @@ rs2:
      x26: 1
      x27: 1
      x28: 1
-     x29: 384
+     x29: 388
      x3: 1
-     x30: 5
+     x30: 1
      x31: 1
      x4: 1
      x5: 1
@@ -7247,12 +7246,12 @@ val_comb:
      rs2_val == 18446743936270598143: 1
      rs2_val == 18446744004990074879: 1
      rs2_val == 18446744039349813247: 1
-     rs2_val == 18446744056529682431: 1
+     rs2_val == 18446744056529682431: 2
      rs2_val == 18446744065119617023: 2
      rs2_val == 18446744069414584319: 1
      rs2_val == 18446744071562067967: 1
      rs2_val == 18446744072635809791: 1
-     rs2_val == 18446744073172680703: 2
+     rs2_val == 18446744073172680703: 1
      rs2_val == 18446744073441116159: 1
      rs2_val == 18446744073575333887: 1
      rs2_val == 18446744073642442751: 1
@@ -7652,13 +7651,13 @@ total_coverage: 518/518
           <div class="log">config:
    - check ISA:=regex(.*I.*B.*)
    - check ISA:=regex(.*I.*Zbs.*)
+mnemonics:
+     bexti: 158
+     coverage: 1/1
 op_comb:
      rs1 != rd: 157
      rs1 == rd: 1
      coverage: 2/2
-opcode:
-     bexti: 158
-     coverage: 1/1
 rd:
      x0: 1
      x1: 1
@@ -7903,6 +7902,9 @@ total_coverage: 223/223
           <div class="log">config:
    - check ISA:=regex(.*I.*B.*)
    - check ISA:=regex(.*I.*Zbs.*)
+mnemonics:
+     binv: 421
+     coverage: 1/1
 op_comb:
      rs1 != rs2  and rs1 != rd and rs2 != rd: 417
      rs1 == rd != rs2: 1
@@ -7910,9 +7912,6 @@ op_comb:
      rs1 == rs2 == rd: 1
      rs2 == rd != rs1: 1
      coverage: 5/5
-opcode:
-     binv: 421
-     coverage: 1/1
 rd:
      x0: 1
      x1: 1
@@ -7972,8 +7971,8 @@ rs1:
      x28: 1
      x29: 1
      x3: 1
-     x30: 388
-     x31: 3
+     x30: 390
+     x31: 1
      x4: 1
      x5: 1
      x6: 1
@@ -8004,9 +8003,9 @@ rs2:
      x26: 1
      x27: 1
      x28: 1
-     x29: 386
+     x29: 390
      x3: 1
-     x30: 5
+     x30: 1
      x31: 1
      x4: 1
      x5: 1
@@ -8046,12 +8045,12 @@ val_comb:
      rs2_val == 18446743936270598143: 1
      rs2_val == 18446744004990074879: 1
      rs2_val == 18446744039349813247: 1
-     rs2_val == 18446744056529682431: 1
+     rs2_val == 18446744056529682431: 2
      rs2_val == 18446744065119617023: 2
      rs2_val == 18446744069414584319: 1
      rs2_val == 18446744071562067967: 1
      rs2_val == 18446744072635809791: 1
-     rs2_val == 18446744073172680703: 2
+     rs2_val == 18446744073172680703: 1
      rs2_val == 18446744073441116159: 1
      rs2_val == 18446744073575333887: 1
      rs2_val == 18446744073642442751: 1
@@ -8451,13 +8450,13 @@ total_coverage: 518/518
           <div class="log">config:
    - check ISA:=regex(.*I.*B.*)
    - check ISA:=regex(.*I.*Zbs.*)
+mnemonics:
+     binvi: 158
+     coverage: 1/1
 op_comb:
      rs1 != rd: 157
      rs1 == rd: 1
      coverage: 2/2
-opcode:
-     binvi: 158
-     coverage: 1/1
 rd:
      x0: 1
      x1: 1
@@ -8702,6 +8701,9 @@ total_coverage: 223/223
           <div class="log">config:
    - check ISA:=regex(.*I.*B.*)
    - check ISA:=regex(.*I.*Zbs.*)
+mnemonics:
+     bset: 419
+     coverage: 1/1
 op_comb:
      rs1 != rs2  and rs1 != rd and rs2 != rd: 415
      rs1 == rd != rs2: 1
@@ -8709,9 +8711,6 @@ op_comb:
      rs1 == rs2 == rd: 1
      rs2 == rd != rs1: 1
      coverage: 5/5
-opcode:
-     bset: 419
-     coverage: 1/1
 rd:
      x0: 1
      x1: 1
@@ -8771,8 +8770,8 @@ rs1:
      x28: 1
      x29: 1
      x3: 1
-     x30: 386
-     x31: 3
+     x30: 388
+     x31: 1
      x4: 1
      x5: 1
      x6: 1
@@ -8803,9 +8802,9 @@ rs2:
      x26: 1
      x27: 1
      x28: 1
-     x29: 384
+     x29: 388
      x3: 1
-     x30: 5
+     x30: 1
      x31: 1
      x4: 1
      x5: 1
@@ -8845,12 +8844,12 @@ val_comb:
      rs2_val == 18446743936270598143: 1
      rs2_val == 18446744004990074879: 1
      rs2_val == 18446744039349813247: 1
-     rs2_val == 18446744056529682431: 1
+     rs2_val == 18446744056529682431: 2
      rs2_val == 18446744065119617023: 2
      rs2_val == 18446744069414584319: 1
      rs2_val == 18446744071562067967: 1
      rs2_val == 18446744072635809791: 1
-     rs2_val == 18446744073172680703: 2
+     rs2_val == 18446744073172680703: 1
      rs2_val == 18446744073441116159: 1
      rs2_val == 18446744073575333887: 1
      rs2_val == 18446744073642442751: 1
@@ -9250,13 +9249,13 @@ total_coverage: 518/518
           <div class="log">config:
    - check ISA:=regex(.*I.*B.*)
    - check ISA:=regex(.*I.*Zbs.*)
+mnemonics:
+     bseti: 158
+     coverage: 1/1
 op_comb:
      rs1 != rd: 157
      rs1 == rd: 1
      coverage: 2/2
-opcode:
-     bseti: 158
-     coverage: 1/1
 rd:
      x0: 1
      x1: 1
@@ -9501,6 +9500,9 @@ total_coverage: 223/223
           <div class="log">config:
    - check ISA:=regex(.*I.*B.*)
    - check ISA:=regex(.*I.*Zbc.*)
+mnemonics:
+     clmul: 288
+     coverage: 1/1
 op_comb:
      rs1 != rs2  and rs1 != rd and rs2 != rd: 284
      rs1 == rd != rs2: 1
@@ -9508,9 +9510,6 @@ op_comb:
      rs1 == rs2 == rd: 1
      rs2 == rd != rs1: 1
      coverage: 5/5
-opcode:
-     clmul: 288
-     coverage: 1/1
 rd:
      x0: 1
      x1: 1
@@ -9570,8 +9569,8 @@ rs1:
      x28: 1
      x29: 1
      x3: 1
-     x30: 255
-     x31: 3
+     x30: 257
+     x31: 1
      x4: 1
      x5: 1
      x6: 1
@@ -9602,9 +9601,9 @@ rs2:
      x26: 1
      x27: 1
      x28: 1
-     x29: 253
+     x29: 257
      x3: 1
-     x30: 5
+     x30: 1
      x31: 1
      x4: 1
      x5: 1
@@ -9644,12 +9643,12 @@ val_comb:
      rs2_val == 18446743936270598143: 1
      rs2_val == 18446744004990074879: 1
      rs2_val == 18446744039349813247: 1
-     rs2_val == 18446744056529682431: 1
+     rs2_val == 18446744056529682431: 2
      rs2_val == 18446744065119617023: 2
      rs2_val == 18446744069414584319: 1
      rs2_val == 18446744071562067967: 1
      rs2_val == 18446744072635809791: 1
-     rs2_val == 18446744073172680703: 2
+     rs2_val == 18446744073172680703: 1
      rs2_val == 18446744073441116159: 1
      rs2_val == 18446744073575333887: 1
      rs2_val == 18446744073642442751: 1
@@ -9919,6 +9918,9 @@ total_coverage: 388/388
           <div class="log">config:
    - check ISA:=regex(.*I.*B.*)
    - check ISA:=regex(.*I.*Zbc.*)
+mnemonics:
+     clmulh: 288
+     coverage: 1/1
 op_comb:
      rs1 != rs2  and rs1 != rd and rs2 != rd: 284
      rs1 == rd != rs2: 1
@@ -9926,9 +9928,6 @@ op_comb:
      rs1 == rs2 == rd: 1
      rs2 == rd != rs1: 1
      coverage: 5/5
-opcode:
-     clmulh: 288
-     coverage: 1/1
 rd:
      x0: 1
      x1: 1
@@ -9988,8 +9987,8 @@ rs1:
      x28: 1
      x29: 1
      x3: 1
-     x30: 255
-     x31: 3
+     x30: 257
+     x31: 1
      x4: 1
      x5: 1
      x6: 1
@@ -10020,9 +10019,9 @@ rs2:
      x26: 1
      x27: 1
      x28: 1
-     x29: 253
+     x29: 257
      x3: 1
-     x30: 5
+     x30: 1
      x31: 1
      x4: 1
      x5: 1
@@ -10062,12 +10061,12 @@ val_comb:
      rs2_val == 18446743936270598143: 1
      rs2_val == 18446744004990074879: 1
      rs2_val == 18446744039349813247: 1
-     rs2_val == 18446744056529682431: 1
+     rs2_val == 18446744056529682431: 2
      rs2_val == 18446744065119617023: 2
      rs2_val == 18446744069414584319: 1
      rs2_val == 18446744071562067967: 1
      rs2_val == 18446744072635809791: 1
-     rs2_val == 18446744073172680703: 2
+     rs2_val == 18446744073172680703: 1
      rs2_val == 18446744073441116159: 1
      rs2_val == 18446744073575333887: 1
      rs2_val == 18446744073642442751: 1
@@ -10337,6 +10336,9 @@ total_coverage: 388/388
           <div class="log">config:
    - check ISA:=regex(.*I.*B.*)
    - check ISA:=regex(.*I.*Zbc.*)
+mnemonics:
+     clmulr: 288
+     coverage: 1/1
 op_comb:
      rs1 != rs2  and rs1 != rd and rs2 != rd: 284
      rs1 == rd != rs2: 1
@@ -10344,9 +10346,6 @@ op_comb:
      rs1 == rs2 == rd: 1
      rs2 == rd != rs1: 1
      coverage: 5/5
-opcode:
-     clmulr: 288
-     coverage: 1/1
 rd:
      x0: 1
      x1: 1
@@ -10406,8 +10405,8 @@ rs1:
      x28: 1
      x29: 1
      x3: 1
-     x30: 255
-     x31: 3
+     x30: 257
+     x31: 1
      x4: 1
      x5: 1
      x6: 1
@@ -10438,9 +10437,9 @@ rs2:
      x26: 1
      x27: 1
      x28: 1
-     x29: 253
+     x29: 257
      x3: 1
-     x30: 5
+     x30: 1
      x31: 1
      x4: 1
      x5: 1
@@ -10480,12 +10479,12 @@ val_comb:
      rs2_val == 18446743936270598143: 1
      rs2_val == 18446744004990074879: 1
      rs2_val == 18446744039349813247: 1
-     rs2_val == 18446744056529682431: 1
+     rs2_val == 18446744056529682431: 2
      rs2_val == 18446744065119617023: 2
      rs2_val == 18446744069414584319: 1
      rs2_val == 18446744071562067967: 1
      rs2_val == 18446744072635809791: 1
-     rs2_val == 18446744073172680703: 2
+     rs2_val == 18446744073172680703: 1
      rs2_val == 18446744073441116159: 1
      rs2_val == 18446744073575333887: 1
      rs2_val == 18446744073642442751: 1
@@ -10755,13 +10754,13 @@ total_coverage: 388/388
           <div class="log">config:
    - check ISA:=regex(.*I.*B.*)
    - check ISA:=regex(.*I.*Zbb.*)
+mnemonics:
+     clz: 132
+     coverage: 1/1
 op_comb:
      rs1 != rd: 131
      rs1 == rd: 1
      coverage: 2/2
-opcode:
-     clz: 132
-     coverage: 1/1
 rd:
      x0: 1
      x1: 1
@@ -10980,13 +10979,13 @@ total_coverage: 197/197
           <div class="log">config:
    - check ISA:=regex(.*RV64.*I.*B.*)
    - check ISA:=regex(.*RV64.*I.*Zbb.*)
+mnemonics:
+     clzw: 132
+     coverage: 1/1
 op_comb:
      rs1 != rd: 131
      rs1 == rd: 1
      coverage: 2/2
-opcode:
-     clzw: 132
-     coverage: 1/1
 rd:
      x0: 1
      x1: 1
@@ -11205,13 +11204,13 @@ total_coverage: 197/197
           <div class="log">config:
    - check ISA:=regex(.*I.*B.*)
    - check ISA:=regex(.*I.*Zbb.*)
+mnemonics:
+     cpop: 132
+     coverage: 1/1
 op_comb:
      rs1 != rd: 131
      rs1 == rd: 1
      coverage: 2/2
-opcode:
-     cpop: 132
-     coverage: 1/1
 rd:
      x0: 1
      x1: 1
@@ -11430,13 +11429,13 @@ total_coverage: 197/197
           <div class="log">config:
    - check ISA:=regex(.*RV64.*I.*B.*)
    - check ISA:=regex(.*RV64.*I.*Zbb.*)
+mnemonics:
+     cpopw: 132
+     coverage: 1/1
 op_comb:
      rs1 != rd: 131
      rs1 == rd: 1
      coverage: 2/2
-opcode:
-     cpopw: 132
-     coverage: 1/1
 rd:
      x0: 1
      x1: 1
@@ -11655,13 +11654,13 @@ total_coverage: 197/197
           <div class="log">config:
    - check ISA:=regex(.*I.*B.*)
    - check ISA:=regex(.*I.*Zbb.*)
+mnemonics:
+     ctz: 132
+     coverage: 1/1
 op_comb:
      rs1 != rd: 131
      rs1 == rd: 1
      coverage: 2/2
-opcode:
-     ctz: 132
-     coverage: 1/1
 rd:
      x0: 1
      x1: 1
@@ -11880,13 +11879,13 @@ total_coverage: 197/197
           <div class="log">config:
    - check ISA:=regex(.*RV64.*I.*B.*)
    - check ISA:=regex(.*RV64.*I.*Zbb.*)
+mnemonics:
+     ctzw: 132
+     coverage: 1/1
 op_comb:
      rs1 != rd: 131
      rs1 == rd: 1
      coverage: 2/2
-opcode:
-     ctzw: 132
-     coverage: 1/1
 rd:
      x0: 1
      x1: 1
@@ -12105,6 +12104,9 @@ total_coverage: 197/197
           <div class="log">config:
    - check ISA:=regex(.*I.*B.*)
    - check ISA:=regex(.*I.*Zbb.*)
+mnemonics:
+     max: 700
+     coverage: 1/1
 op_comb:
      rs1 != rs2  and rs1 != rd and rs2 != rd: 696
      rs1 == rd != rs2: 1
@@ -12112,9 +12114,6 @@ op_comb:
      rs1 == rs2 == rd: 1
      rs2 == rd != rs1: 1
      coverage: 5/5
-opcode:
-     max: 700
-     coverage: 1/1
 rd:
      x0: 1
      x1: 1
@@ -12174,8 +12173,8 @@ rs1:
      x28: 1
      x29: 1
      x3: 1
-     x30: 667
-     x31: 3
+     x30: 669
+     x31: 1
      x4: 1
      x5: 1
      x6: 1
@@ -12206,9 +12205,9 @@ rs2:
      x26: 1
      x27: 1
      x28: 1
-     x29: 665
+     x29: 669
      x3: 1
-     x30: 5
+     x30: 1
      x31: 1
      x4: 1
      x5: 1
@@ -12248,12 +12247,12 @@ val_comb:
      rs2_val == -137438953473: 1
      rs2_val == -68719476737: 1
      rs2_val == -34359738369: 1
-     rs2_val == -17179869185: 1
+     rs2_val == -17179869185: 2
      rs2_val == -8589934593: 2
      rs2_val == -4294967297: 1
      rs2_val == -2147483649: 1
      rs2_val == -1073741825: 1
-     rs2_val == -536870913: 2
+     rs2_val == -536870913: 1
      rs2_val == -268435457: 1
      rs2_val == -134217729: 1
      rs2_val == -67108865: 1
@@ -12950,6 +12949,9 @@ total_coverage: 815/815
           <div class="log">config:
    - check ISA:=regex(.*I.*B.*)
    - check ISA:=regex(.*I.*Zbb.*)
+mnemonics:
+     maxu: 700
+     coverage: 1/1
 op_comb:
      rs1 != rs2  and rs1 != rd and rs2 != rd: 696
      rs1 == rd != rs2: 1
@@ -12957,9 +12959,6 @@ op_comb:
      rs1 == rs2 == rd: 1
      rs2 == rd != rs1: 1
      coverage: 5/5
-opcode:
-     maxu: 700
-     coverage: 1/1
 rd:
      x0: 1
      x1: 1
@@ -13019,8 +13018,8 @@ rs1:
      x28: 1
      x29: 1
      x3: 1
-     x30: 667
-     x31: 3
+     x30: 669
+     x31: 1
      x4: 1
      x5: 1
      x6: 1
@@ -13051,9 +13050,9 @@ rs2:
      x26: 1
      x27: 1
      x28: 1
-     x29: 665
+     x29: 669
      x3: 1
-     x30: 5
+     x30: 1
      x31: 1
      x4: 1
      x5: 1
@@ -13093,12 +13092,12 @@ val_comb:
      rs2_val == 18446743936270598143: 1
      rs2_val == 18446744004990074879: 1
      rs2_val == 18446744039349813247: 1
-     rs2_val == 18446744056529682431: 1
+     rs2_val == 18446744056529682431: 2
      rs2_val == 18446744065119617023: 2
      rs2_val == 18446744069414584319: 1
      rs2_val == 18446744071562067967: 1
      rs2_val == 18446744072635809791: 1
-     rs2_val == 18446744073172680703: 2
+     rs2_val == 18446744073172680703: 1
      rs2_val == 18446744073441116159: 1
      rs2_val == 18446744073575333887: 1
      rs2_val == 18446744073642442751: 1
@@ -13790,6 +13789,9 @@ total_coverage: 810/810
           <div class="log">config:
    - check ISA:=regex(.*I.*B.*)
    - check ISA:=regex(.*I.*Zbb.*)
+mnemonics:
+     min: 700
+     coverage: 1/1
 op_comb:
      rs1 != rs2  and rs1 != rd and rs2 != rd: 696
      rs1 == rd != rs2: 1
@@ -13797,9 +13799,6 @@ op_comb:
      rs1 == rs2 == rd: 1
      rs2 == rd != rs1: 1
      coverage: 5/5
-opcode:
-     min: 700
-     coverage: 1/1
 rd:
      x0: 1
      x1: 1
@@ -13859,8 +13858,8 @@ rs1:
      x28: 1
      x29: 1
      x3: 1
-     x30: 667
-     x31: 3
+     x30: 669
+     x31: 1
      x4: 1
      x5: 1
      x6: 1
@@ -13891,9 +13890,9 @@ rs2:
      x26: 1
      x27: 1
      x28: 1
-     x29: 665
+     x29: 669
      x3: 1
-     x30: 5
+     x30: 1
      x31: 1
      x4: 1
      x5: 1
@@ -13933,12 +13932,12 @@ val_comb:
      rs2_val == -137438953473: 1
      rs2_val == -68719476737: 1
      rs2_val == -34359738369: 1
-     rs2_val == -17179869185: 1
+     rs2_val == -17179869185: 2
      rs2_val == -8589934593: 2
      rs2_val == -4294967297: 1
      rs2_val == -2147483649: 1
      rs2_val == -1073741825: 1
-     rs2_val == -536870913: 2
+     rs2_val == -536870913: 1
      rs2_val == -268435457: 1
      rs2_val == -134217729: 1
      rs2_val == -67108865: 1
@@ -14635,6 +14634,9 @@ total_coverage: 815/815
           <div class="log">config:
    - check ISA:=regex(.*I.*B.*)
    - check ISA:=regex(.*I.*Zbb.*)
+mnemonics:
+     minu: 700
+     coverage: 1/1
 op_comb:
      rs1 != rs2  and rs1 != rd and rs2 != rd: 696
      rs1 == rd != rs2: 1
@@ -14642,9 +14644,6 @@ op_comb:
      rs1 == rs2 == rd: 1
      rs2 == rd != rs1: 1
      coverage: 5/5
-opcode:
-     minu: 700
-     coverage: 1/1
 rd:
      x0: 1
      x1: 1
@@ -14704,8 +14703,8 @@ rs1:
      x28: 1
      x29: 1
      x3: 1
-     x30: 667
-     x31: 3
+     x30: 669
+     x31: 1
      x4: 1
      x5: 1
      x6: 1
@@ -14736,9 +14735,9 @@ rs2:
      x26: 1
      x27: 1
      x28: 1
-     x29: 665
+     x29: 669
      x3: 1
-     x30: 5
+     x30: 1
      x31: 1
      x4: 1
      x5: 1
@@ -14778,12 +14777,12 @@ val_comb:
      rs2_val == 18446743936270598143: 1
      rs2_val == 18446744004990074879: 1
      rs2_val == 18446744039349813247: 1
-     rs2_val == 18446744056529682431: 1
+     rs2_val == 18446744056529682431: 2
      rs2_val == 18446744065119617023: 2
      rs2_val == 18446744069414584319: 1
      rs2_val == 18446744071562067967: 1
      rs2_val == 18446744072635809791: 1
-     rs2_val == 18446744073172680703: 2
+     rs2_val == 18446744073172680703: 1
      rs2_val == 18446744073441116159: 1
      rs2_val == 18446744073575333887: 1
      rs2_val == 18446744073642442751: 1
@@ -15463,7 +15462,7 @@ total_coverage: 810/810
         
         <tbody class= "  results-table-row" >
         <tr>
-          <td class="col-name">orc.b</td>
+          <td class="col-name">orcb_64</td>
           <td class="col-result">201/201</td>
           <td class="col-percentage">100.00%
             <div class="meter">
@@ -15472,16 +15471,18 @@ total_coverage: 810/810
           </td>          
         <tr>
           <td class="extra" colspan="2">
-          <div class="log">config:
+          <div class="log">base_op: gorci
+config:
    - check ISA:=regex(.*I.*B.*)
    - check ISA:=regex(.*I.*Zbb.*)
+mnemonics:
+     orc.b: 136
+     coverage: 1/1
 op_comb:
      rs1 != rd: 135
      rs1 == rd: 1
      coverage: 2/2
-opcode:
-     orc.b: 136
-     coverage: 1/1
+p_op_cond: imm_val == 7
 rd:
      x0: 1
      x1: 1
@@ -15704,6 +15705,9 @@ total_coverage: 201/201
           <div class="log">config:
    - check ISA:=regex(.*I.*B.*)
    - check ISA:=regex(.*I.*Zbb.*)
+mnemonics:
+     orn: 720
+     coverage: 1/1
 op_comb:
      rs1 != rs2  and rs1 != rd and rs2 != rd: 716
      rs1 == rd != rs2: 1
@@ -15711,9 +15715,6 @@ op_comb:
      rs1 == rs2 == rd: 1
      rs2 == rd != rs1: 1
      coverage: 5/5
-opcode:
-     orn: 720
-     coverage: 1/1
 rd:
      x0: 1
      x1: 1
@@ -15773,8 +15774,8 @@ rs1:
      x28: 1
      x29: 1
      x3: 1
-     x30: 687
-     x31: 3
+     x30: 689
+     x31: 1
      x4: 1
      x5: 1
      x6: 1
@@ -15805,9 +15806,9 @@ rs2:
      x26: 1
      x27: 1
      x28: 1
-     x29: 685
+     x29: 689
      x3: 1
-     x30: 5
+     x30: 1
      x31: 1
      x4: 1
      x5: 1
@@ -15847,12 +15848,12 @@ val_comb:
      rs2_val == 18446743936270598143: 1
      rs2_val == 18446744004990074879: 1
      rs2_val == 18446744039349813247: 1
-     rs2_val == 18446744056529682431: 1
+     rs2_val == 18446744056529682431: 2
      rs2_val == 18446744065119617023: 2
      rs2_val == 18446744069414584319: 1
      rs2_val == 18446744071562067967: 1
      rs2_val == 18446744072635809791: 1
-     rs2_val == 18446744073172680703: 2
+     rs2_val == 18446744073172680703: 1
      rs2_val == 18446744073441116159: 1
      rs2_val == 18446744073575333887: 1
      rs2_val == 18446744073642442751: 1
@@ -16552,7 +16553,7 @@ total_coverage: 830/830
         
         <tbody class= "  results-table-row" >
         <tr>
-          <td class="col-name">rev8</td>
+          <td class="col-name">rev8_64</td>
           <td class="col-result">222/222</td>
           <td class="col-percentage">100.00%
             <div class="meter">
@@ -16561,16 +16562,18 @@ total_coverage: 830/830
           </td>          
         <tr>
           <td class="extra" colspan="2">
-          <div class="log">config:
+          <div class="log">base_op: grevi
+config:
    - check ISA:=regex(.*I.*B.*)
    - check ISA:=regex(.*I.*Zbb.*)
+mnemonics:
+     rev8: 155
+     coverage: 1/1
 op_comb:
      rs1 != rd: 154
      rs1 == rd: 1
      coverage: 2/2
-opcode:
-     rev8: 155
-     coverage: 1/1
+p_op_cond: imm_val == 56
 rd:
      x0: 1
      x1: 1
@@ -16814,6 +16817,9 @@ total_coverage: 222/222
           <div class="log">config:
    - check ISA:=regex(.*I.*B.*)
    - check ISA:=regex(.*I.*Zbb.*)
+mnemonics:
+     rol: 525
+     coverage: 1/1
 op_comb:
      rs1 != rs2  and rs1 != rd and rs2 != rd: 521
      rs1 == rd != rs2: 1
@@ -16821,9 +16827,6 @@ op_comb:
      rs1 == rs2 == rd: 1
      rs2 == rd != rs1: 1
      coverage: 5/5
-opcode:
-     rol: 525
-     coverage: 1/1
 rd:
      x0: 1
      x1: 1
@@ -16883,8 +16886,8 @@ rs1:
      x28: 1
      x29: 1
      x3: 1
-     x30: 492
-     x31: 3
+     x30: 494
+     x31: 1
      x4: 1
      x5: 1
      x6: 1
@@ -16915,9 +16918,9 @@ rs2:
      x26: 1
      x27: 1
      x28: 1
-     x29: 490
+     x29: 494
      x3: 1
-     x30: 5
+     x30: 1
      x31: 1
      x4: 1
      x5: 1
@@ -16958,11 +16961,11 @@ val_comb:
      'rs2_val == 0x60C9F22000000000 and rs1_val == 0xCA355A09AB72F99F #nosat': 1
      'rs2_val == 0xAF36F11000000000 and rs1_val == 0x22FED7DB4E7B7359 #nosat': 1
      'rs2_val == 0x0333990800000000 and rs1_val == 0xB6DE8BCFD96429C9 #nosat': 1
-     'rs2_val == 0x5C67C8FC00000000 and rs1_val == 0xB9FBD369C8CDF63E #nosat': 1
+     'rs2_val == 0x5C67C8FC00000000 and rs1_val == 0xB9FBD369C8CDF63E #nosat': 2
      'rs2_val == 0xC706E0C200000000 and rs1_val == 0x324C464BC06209FB #nosat': 1
      'rs2_val == 0xEFE091E300000000 and rs1_val == 0x70FD0C20644918A7 #nosat': 1
      'rs2_val == 0xCB7CDDA380000000 and rs1_val == 0x755CD0BF4F63879F #nosat': 1
-     'rs2_val == 0x51885E99C0000000 and rs1_val == 0xA31E74CF1F3C1AD7 #nosat': 2
+     'rs2_val == 0x51885E99C0000000 and rs1_val == 0xA31E74CF1F3C1AD7 #nosat': 1
      'rs2_val == 0x87503D9D20000000 and rs1_val == 0x300D9B713BB3E347 #nosat': 1
      'rs2_val == 0x1AC7983C70000000 and rs1_val == 0xCB0ACB582BEDCFC5 #nosat': 1
      'rs2_val == 0x1857BC0AE8000000 and rs1_val == 0xFD5324A47C496066 #nosat': 1
@@ -17466,6 +17469,9 @@ total_coverage: 622/622
           <div class="log">config:
    - check ISA:=regex(.*RV64.*I.*B.*)
    - check ISA:=regex(.*RV64.*I.*Zbb.*)
+mnemonics:
+     rolw: 525
+     coverage: 1/1
 op_comb:
      rs1 != rs2  and rs1 != rd and rs2 != rd: 521
      rs1 == rd != rs2: 1
@@ -17473,9 +17479,6 @@ op_comb:
      rs1 == rs2 == rd: 1
      rs2 == rd != rs1: 1
      coverage: 5/5
-opcode:
-     rolw: 525
-     coverage: 1/1
 rd:
      x0: 1
      x1: 1
@@ -17535,8 +17538,8 @@ rs1:
      x28: 1
      x29: 1
      x3: 1
-     x30: 492
-     x31: 3
+     x30: 494
+     x31: 1
      x4: 1
      x5: 1
      x6: 1
@@ -17567,9 +17570,9 @@ rs2:
      x26: 1
      x27: 1
      x28: 1
-     x29: 490
+     x29: 494
      x3: 1
-     x30: 5
+     x30: 1
      x31: 1
      x4: 1
      x5: 1
@@ -17610,11 +17613,11 @@ val_comb:
      'rs2_val == 0x60C9F22000000000 and rs1_val == 0xCA355A09AB72F99F #nosat': 1
      'rs2_val == 0xAF36F11000000000 and rs1_val == 0x22FED7DB4E7B7359 #nosat': 1
      'rs2_val == 0x0333990800000000 and rs1_val == 0xB6DE8BCFD96429C9 #nosat': 1
-     'rs2_val == 0x5C67C8FC00000000 and rs1_val == 0xB9FBD369C8CDF63E #nosat': 1
+     'rs2_val == 0x5C67C8FC00000000 and rs1_val == 0xB9FBD369C8CDF63E #nosat': 2
      'rs2_val == 0xC706E0C200000000 and rs1_val == 0x324C464BC06209FB #nosat': 1
      'rs2_val == 0xEFE091E300000000 and rs1_val == 0x70FD0C20644918A7 #nosat': 1
      'rs2_val == 0xCB7CDDA380000000 and rs1_val == 0x755CD0BF4F63879F #nosat': 1
-     'rs2_val == 0x51885E99C0000000 and rs1_val == 0xA31E74CF1F3C1AD7 #nosat': 2
+     'rs2_val == 0x51885E99C0000000 and rs1_val == 0xA31E74CF1F3C1AD7 #nosat': 1
      'rs2_val == 0x87503D9D20000000 and rs1_val == 0x300D9B713BB3E347 #nosat': 1
      'rs2_val == 0x1AC7983C70000000 and rs1_val == 0xCB0ACB582BEDCFC5 #nosat': 1
      'rs2_val == 0x1857BC0AE8000000 and rs1_val == 0xFD5324A47C496066 #nosat': 1
@@ -18118,6 +18121,9 @@ total_coverage: 622/622
           <div class="log">config:
    - check ISA:=regex(.*I.*B.*)
    - check ISA:=regex(.*I.*Zbb.*)
+mnemonics:
+     ror: 525
+     coverage: 1/1
 op_comb:
      rs1 != rs2  and rs1 != rd and rs2 != rd: 521
      rs1 == rd != rs2: 1
@@ -18125,9 +18131,6 @@ op_comb:
      rs1 == rs2 == rd: 1
      rs2 == rd != rs1: 1
      coverage: 5/5
-opcode:
-     ror: 525
-     coverage: 1/1
 rd:
      x0: 1
      x1: 1
@@ -18187,8 +18190,8 @@ rs1:
      x28: 1
      x29: 1
      x3: 1
-     x30: 492
-     x31: 3
+     x30: 494
+     x31: 1
      x4: 1
      x5: 1
      x6: 1
@@ -18219,9 +18222,9 @@ rs2:
      x26: 1
      x27: 1
      x28: 1
-     x29: 490
+     x29: 494
      x3: 1
-     x30: 5
+     x30: 1
      x31: 1
      x4: 1
      x5: 1
@@ -18262,11 +18265,11 @@ val_comb:
      'rs2_val == 0x60C9F22000000000 and rs1_val == 0xCA355A09AB72F99F #nosat': 1
      'rs2_val == 0xAF36F11000000000 and rs1_val == 0x22FED7DB4E7B7359 #nosat': 1
      'rs2_val == 0x0333990800000000 and rs1_val == 0xB6DE8BCFD96429C9 #nosat': 1
-     'rs2_val == 0x5C67C8FC00000000 and rs1_val == 0xB9FBD369C8CDF63E #nosat': 1
+     'rs2_val == 0x5C67C8FC00000000 and rs1_val == 0xB9FBD369C8CDF63E #nosat': 2
      'rs2_val == 0xC706E0C200000000 and rs1_val == 0x324C464BC06209FB #nosat': 1
      'rs2_val == 0xEFE091E300000000 and rs1_val == 0x70FD0C20644918A7 #nosat': 1
      'rs2_val == 0xCB7CDDA380000000 and rs1_val == 0x755CD0BF4F63879F #nosat': 1
-     'rs2_val == 0x51885E99C0000000 and rs1_val == 0xA31E74CF1F3C1AD7 #nosat': 2
+     'rs2_val == 0x51885E99C0000000 and rs1_val == 0xA31E74CF1F3C1AD7 #nosat': 1
      'rs2_val == 0x87503D9D20000000 and rs1_val == 0x300D9B713BB3E347 #nosat': 1
      'rs2_val == 0x1AC7983C70000000 and rs1_val == 0xCB0ACB582BEDCFC5 #nosat': 1
      'rs2_val == 0x1857BC0AE8000000 and rs1_val == 0xFD5324A47C496066 #nosat': 1
@@ -18770,13 +18773,13 @@ total_coverage: 622/622
           <div class="log">config:
    - check ISA:=regex(.*I.*B.*)
    - check ISA:=regex(.*I.*Zbb.*)
+mnemonics:
+     rori: 158
+     coverage: 1/1
 op_comb:
      rs1 != rd: 157
      rs1 == rd: 1
      coverage: 2/2
-opcode:
-     rori: 158
-     coverage: 1/1
 rd:
      x0: 1
      x1: 1
@@ -19021,13 +19024,13 @@ total_coverage: 223/223
           <div class="log">config:
    - check ISA:=regex(.*RV64.*I.*B.*)
    - check ISA:=regex(.*RV64.*I.*Zbb.*)
+mnemonics:
+     roriw: 158
+     coverage: 1/1
 op_comb:
      rs1 != rd: 157
      rs1 == rd: 1
      coverage: 2/2
-opcode:
-     roriw: 158
-     coverage: 1/1
 rd:
      x0: 1
      x1: 1
@@ -19272,6 +19275,9 @@ total_coverage: 223/223
           <div class="log">config:
    - check ISA:=regex(.*RV64.*I.*B.*)
    - check ISA:=regex(.*RV64.*I.*Zbb.*)
+mnemonics:
+     rorw: 525
+     coverage: 1/1
 op_comb:
      rs1 != rs2  and rs1 != rd and rs2 != rd: 521
      rs1 == rd != rs2: 1
@@ -19279,9 +19285,6 @@ op_comb:
      rs1 == rs2 == rd: 1
      rs2 == rd != rs1: 1
      coverage: 5/5
-opcode:
-     rorw: 525
-     coverage: 1/1
 rd:
      x0: 1
      x1: 1
@@ -19341,8 +19344,8 @@ rs1:
      x28: 1
      x29: 1
      x3: 1
-     x30: 492
-     x31: 3
+     x30: 494
+     x31: 1
      x4: 1
      x5: 1
      x6: 1
@@ -19373,9 +19376,9 @@ rs2:
      x26: 1
      x27: 1
      x28: 1
-     x29: 490
+     x29: 494
      x3: 1
-     x30: 5
+     x30: 1
      x31: 1
      x4: 1
      x5: 1
@@ -19416,11 +19419,11 @@ val_comb:
      'rs2_val == 0x60C9F22000000000 and rs1_val == 0xCA355A09AB72F99F #nosat': 1
      'rs2_val == 0xAF36F11000000000 and rs1_val == 0x22FED7DB4E7B7359 #nosat': 1
      'rs2_val == 0x0333990800000000 and rs1_val == 0xB6DE8BCFD96429C9 #nosat': 1
-     'rs2_val == 0x5C67C8FC00000000 and rs1_val == 0xB9FBD369C8CDF63E #nosat': 1
+     'rs2_val == 0x5C67C8FC00000000 and rs1_val == 0xB9FBD369C8CDF63E #nosat': 2
      'rs2_val == 0xC706E0C200000000 and rs1_val == 0x324C464BC06209FB #nosat': 1
      'rs2_val == 0xEFE091E300000000 and rs1_val == 0x70FD0C20644918A7 #nosat': 1
      'rs2_val == 0xCB7CDDA380000000 and rs1_val == 0x755CD0BF4F63879F #nosat': 1
-     'rs2_val == 0x51885E99C0000000 and rs1_val == 0xA31E74CF1F3C1AD7 #nosat': 2
+     'rs2_val == 0x51885E99C0000000 and rs1_val == 0xA31E74CF1F3C1AD7 #nosat': 1
      'rs2_val == 0x87503D9D20000000 and rs1_val == 0x300D9B713BB3E347 #nosat': 1
      'rs2_val == 0x1AC7983C70000000 and rs1_val == 0xCB0ACB582BEDCFC5 #nosat': 1
      'rs2_val == 0x1857BC0AE8000000 and rs1_val == 0xFD5324A47C496066 #nosat': 1
@@ -19924,13 +19927,13 @@ total_coverage: 622/622
           <div class="log">config:
    - check ISA:=regex(.*I.*B.*)
    - check ISA:=regex(.*I.*Zbb.*)
+mnemonics:
+     sext.b: 151
+     coverage: 1/1
 op_comb:
      rs1 != rd: 150
      rs1 == rd: 1
      coverage: 2/2
-opcode:
-     sext.b: 151
-     coverage: 1/1
 rd:
      x0: 1
      x1: 1
@@ -20169,13 +20172,13 @@ total_coverage: 217/217
           <div class="log">config:
    - check ISA:=regex(.*I.*B.*)
    - check ISA:=regex(.*I.*Zbb.*)
+mnemonics:
+     sext.h: 152
+     coverage: 1/1
 op_comb:
      rs1 != rd: 151
      rs1 == rd: 1
      coverage: 2/2
-opcode:
-     sext.h: 152
-     coverage: 1/1
 rd:
      x0: 1
      x1: 1
@@ -20415,6 +20418,9 @@ total_coverage: 218/218
           <div class="log">config:
    - check ISA:=regex(.*I.*B.*)
    - check ISA:=regex(.*I.*Zba.*)
+mnemonics:
+     sh1add: 700
+     coverage: 1/1
 op_comb:
      rs1 != rs2  and rs1 != rd and rs2 != rd: 696
      rs1 == rd != rs2: 1
@@ -20422,9 +20428,6 @@ op_comb:
      rs1 == rs2 == rd: 1
      rs2 == rd != rs1: 1
      coverage: 5/5
-opcode:
-     sh1add: 700
-     coverage: 1/1
 rd:
      x0: 1
      x1: 1
@@ -20484,8 +20487,8 @@ rs1:
      x28: 1
      x29: 1
      x3: 1
-     x30: 667
-     x31: 3
+     x30: 669
+     x31: 1
      x4: 1
      x5: 1
      x6: 1
@@ -20516,9 +20519,9 @@ rs2:
      x26: 1
      x27: 1
      x28: 1
-     x29: 665
+     x29: 669
      x3: 1
-     x30: 5
+     x30: 1
      x31: 1
      x4: 1
      x5: 1
@@ -20558,12 +20561,12 @@ val_comb:
      rs2_val == -137438953473: 1
      rs2_val == -68719476737: 1
      rs2_val == -34359738369: 1
-     rs2_val == -17179869185: 1
+     rs2_val == -17179869185: 2
      rs2_val == -8589934593: 2
      rs2_val == -4294967297: 1
      rs2_val == -2147483649: 1
      rs2_val == -1073741825: 1
-     rs2_val == -536870913: 2
+     rs2_val == -536870913: 1
      rs2_val == -268435457: 1
      rs2_val == -134217729: 1
      rs2_val == -67108865: 1
@@ -21260,6 +21263,9 @@ total_coverage: 815/815
           <div class="log">config:
    - check ISA:=regex(.*RV64.*I.*B.*)
    - check ISA:=regex(.*RV64.*I.*Zba.*)
+mnemonics:
+     sh1add.uw: 700
+     coverage: 1/1
 op_comb:
      rs1 != rs2  and rs1 != rd and rs2 != rd: 696
      rs1 == rd != rs2: 1
@@ -21267,9 +21273,6 @@ op_comb:
      rs1 == rs2 == rd: 1
      rs2 == rd != rs1: 1
      coverage: 5/5
-opcode:
-     sh1add.uw: 700
-     coverage: 1/1
 rd:
      x0: 1
      x1: 1
@@ -21329,8 +21332,8 @@ rs1:
      x28: 1
      x29: 1
      x3: 1
-     x30: 667
-     x31: 3
+     x30: 669
+     x31: 1
      x4: 1
      x5: 1
      x6: 1
@@ -21361,9 +21364,9 @@ rs2:
      x26: 1
      x27: 1
      x28: 1
-     x29: 665
+     x29: 669
      x3: 1
-     x30: 5
+     x30: 1
      x31: 1
      x4: 1
      x5: 1
@@ -21403,12 +21406,12 @@ val_comb:
      rs2_val == 18446743936270598143: 1
      rs2_val == 18446744004990074879: 1
      rs2_val == 18446744039349813247: 1
-     rs2_val == 18446744056529682431: 1
+     rs2_val == 18446744056529682431: 2
      rs2_val == 18446744065119617023: 2
      rs2_val == 18446744069414584319: 1
      rs2_val == 18446744071562067967: 1
      rs2_val == 18446744072635809791: 1
-     rs2_val == 18446744073172680703: 2
+     rs2_val == 18446744073172680703: 1
      rs2_val == 18446744073441116159: 1
      rs2_val == 18446744073575333887: 1
      rs2_val == 18446744073642442751: 1
@@ -22100,6 +22103,9 @@ total_coverage: 810/810
           <div class="log">config:
    - check ISA:=regex(.*I.*B.*)
    - check ISA:=regex(.*I.*Zba.*)
+mnemonics:
+     sh2add: 700
+     coverage: 1/1
 op_comb:
      rs1 != rs2  and rs1 != rd and rs2 != rd: 696
      rs1 == rd != rs2: 1
@@ -22107,9 +22113,6 @@ op_comb:
      rs1 == rs2 == rd: 1
      rs2 == rd != rs1: 1
      coverage: 5/5
-opcode:
-     sh2add: 700
-     coverage: 1/1
 rd:
      x0: 1
      x1: 1
@@ -22169,8 +22172,8 @@ rs1:
      x28: 1
      x29: 1
      x3: 1
-     x30: 667
-     x31: 3
+     x30: 669
+     x31: 1
      x4: 1
      x5: 1
      x6: 1
@@ -22201,9 +22204,9 @@ rs2:
      x26: 1
      x27: 1
      x28: 1
-     x29: 665
+     x29: 669
      x3: 1
-     x30: 5
+     x30: 1
      x31: 1
      x4: 1
      x5: 1
@@ -22243,12 +22246,12 @@ val_comb:
      rs2_val == -137438953473: 1
      rs2_val == -68719476737: 1
      rs2_val == -34359738369: 1
-     rs2_val == -17179869185: 1
+     rs2_val == -17179869185: 2
      rs2_val == -8589934593: 2
      rs2_val == -4294967297: 1
      rs2_val == -2147483649: 1
      rs2_val == -1073741825: 1
-     rs2_val == -536870913: 2
+     rs2_val == -536870913: 1
      rs2_val == -268435457: 1
      rs2_val == -134217729: 1
      rs2_val == -67108865: 1
@@ -22945,6 +22948,9 @@ total_coverage: 815/815
           <div class="log">config:
    - check ISA:=regex(.*RV64.*I.*B.*)
    - check ISA:=regex(.*RV64.*I.*Zba.*)
+mnemonics:
+     sh2add.uw: 700
+     coverage: 1/1
 op_comb:
      rs1 != rs2  and rs1 != rd and rs2 != rd: 696
      rs1 == rd != rs2: 1
@@ -22952,9 +22958,6 @@ op_comb:
      rs1 == rs2 == rd: 1
      rs2 == rd != rs1: 1
      coverage: 5/5
-opcode:
-     sh2add.uw: 700
-     coverage: 1/1
 rd:
      x0: 1
      x1: 1
@@ -23014,8 +23017,8 @@ rs1:
      x28: 1
      x29: 1
      x3: 1
-     x30: 667
-     x31: 3
+     x30: 669
+     x31: 1
      x4: 1
      x5: 1
      x6: 1
@@ -23046,9 +23049,9 @@ rs2:
      x26: 1
      x27: 1
      x28: 1
-     x29: 665
+     x29: 669
      x3: 1
-     x30: 5
+     x30: 1
      x31: 1
      x4: 1
      x5: 1
@@ -23088,12 +23091,12 @@ val_comb:
      rs2_val == 18446743936270598143: 1
      rs2_val == 18446744004990074879: 1
      rs2_val == 18446744039349813247: 1
-     rs2_val == 18446744056529682431: 1
+     rs2_val == 18446744056529682431: 2
      rs2_val == 18446744065119617023: 2
      rs2_val == 18446744069414584319: 1
      rs2_val == 18446744071562067967: 1
      rs2_val == 18446744072635809791: 1
-     rs2_val == 18446744073172680703: 2
+     rs2_val == 18446744073172680703: 1
      rs2_val == 18446744073441116159: 1
      rs2_val == 18446744073575333887: 1
      rs2_val == 18446744073642442751: 1
@@ -23785,6 +23788,9 @@ total_coverage: 810/810
           <div class="log">config:
    - check ISA:=regex(.*I.*B.*)
    - check ISA:=regex(.*I.*Zba.*)
+mnemonics:
+     sh3add: 700
+     coverage: 1/1
 op_comb:
      rs1 != rs2  and rs1 != rd and rs2 != rd: 696
      rs1 == rd != rs2: 1
@@ -23792,9 +23798,6 @@ op_comb:
      rs1 == rs2 == rd: 1
      rs2 == rd != rs1: 1
      coverage: 5/5
-opcode:
-     sh3add: 700
-     coverage: 1/1
 rd:
      x0: 1
      x1: 1
@@ -23854,8 +23857,8 @@ rs1:
      x28: 1
      x29: 1
      x3: 1
-     x30: 667
-     x31: 3
+     x30: 669
+     x31: 1
      x4: 1
      x5: 1
      x6: 1
@@ -23886,9 +23889,9 @@ rs2:
      x26: 1
      x27: 1
      x28: 1
-     x29: 665
+     x29: 669
      x3: 1
-     x30: 5
+     x30: 1
      x31: 1
      x4: 1
      x5: 1
@@ -23928,12 +23931,12 @@ val_comb:
      rs2_val == -137438953473: 1
      rs2_val == -68719476737: 1
      rs2_val == -34359738369: 1
-     rs2_val == -17179869185: 1
+     rs2_val == -17179869185: 2
      rs2_val == -8589934593: 2
      rs2_val == -4294967297: 1
      rs2_val == -2147483649: 1
      rs2_val == -1073741825: 1
-     rs2_val == -536870913: 2
+     rs2_val == -536870913: 1
      rs2_val == -268435457: 1
      rs2_val == -134217729: 1
      rs2_val == -67108865: 1
@@ -24630,6 +24633,9 @@ total_coverage: 815/815
           <div class="log">config:
    - check ISA:=regex(.*RV64.*I.*B.*)
    - check ISA:=regex(.*RV64.*I.*Zba.*)
+mnemonics:
+     sh3add.uw: 700
+     coverage: 1/1
 op_comb:
      rs1 != rs2  and rs1 != rd and rs2 != rd: 696
      rs1 == rd != rs2: 1
@@ -24637,9 +24643,6 @@ op_comb:
      rs1 == rs2 == rd: 1
      rs2 == rd != rs1: 1
      coverage: 5/5
-opcode:
-     sh3add.uw: 700
-     coverage: 1/1
 rd:
      x0: 1
      x1: 1
@@ -24699,8 +24702,8 @@ rs1:
      x28: 1
      x29: 1
      x3: 1
-     x30: 667
-     x31: 3
+     x30: 669
+     x31: 1
      x4: 1
      x5: 1
      x6: 1
@@ -24731,9 +24734,9 @@ rs2:
      x26: 1
      x27: 1
      x28: 1
-     x29: 665
+     x29: 669
      x3: 1
-     x30: 5
+     x30: 1
      x31: 1
      x4: 1
      x5: 1
@@ -24773,12 +24776,12 @@ val_comb:
      rs2_val == 18446743936270598143: 1
      rs2_val == 18446744004990074879: 1
      rs2_val == 18446744039349813247: 1
-     rs2_val == 18446744056529682431: 1
+     rs2_val == 18446744056529682431: 2
      rs2_val == 18446744065119617023: 2
      rs2_val == 18446744069414584319: 1
      rs2_val == 18446744071562067967: 1
      rs2_val == 18446744072635809791: 1
-     rs2_val == 18446744073172680703: 2
+     rs2_val == 18446744073172680703: 1
      rs2_val == 18446744073441116159: 1
      rs2_val == 18446744073575333887: 1
      rs2_val == 18446744073642442751: 1
@@ -25470,13 +25473,13 @@ total_coverage: 810/810
           <div class="log">config:
    - check ISA:=regex(.*RV64.*I.*B.*)
    - check ISA:=regex(.*RV64.*I.*Zba.*)
+mnemonics:
+     slli.uw: 161
+     coverage: 1/1
 op_comb:
      rs1 != rd: 160
      rs1 == rd: 1
      coverage: 2/2
-opcode:
-     slli.uw: 161
-     coverage: 1/1
 rd:
      x0: 1
      x1: 1
@@ -25728,6 +25731,9 @@ total_coverage: 230/230
           <div class="log">config:
    - check ISA:=regex(.*I.*B.*)
    - check ISA:=regex(.*I.*Zbb.*)
+mnemonics:
+     xnor: 720
+     coverage: 1/1
 op_comb:
      rs1 != rs2  and rs1 != rd and rs2 != rd: 716
      rs1 == rd != rs2: 1
@@ -25735,9 +25741,6 @@ op_comb:
      rs1 == rs2 == rd: 1
      rs2 == rd != rs1: 1
      coverage: 5/5
-opcode:
-     xnor: 720
-     coverage: 1/1
 rd:
      x0: 1
      x1: 1
@@ -25797,8 +25800,8 @@ rs1:
      x28: 1
      x29: 1
      x3: 1
-     x30: 687
-     x31: 3
+     x30: 689
+     x31: 1
      x4: 1
      x5: 1
      x6: 1
@@ -25829,9 +25832,9 @@ rs2:
      x26: 1
      x27: 1
      x28: 1
-     x29: 685
+     x29: 689
      x3: 1
-     x30: 5
+     x30: 1
      x31: 1
      x4: 1
      x5: 1
@@ -25871,12 +25874,12 @@ val_comb:
      rs2_val == 18446743936270598143: 1
      rs2_val == 18446744004990074879: 1
      rs2_val == 18446744039349813247: 1
-     rs2_val == 18446744056529682431: 1
+     rs2_val == 18446744056529682431: 2
      rs2_val == 18446744065119617023: 2
      rs2_val == 18446744069414584319: 1
      rs2_val == 18446744071562067967: 1
      rs2_val == 18446744072635809791: 1
-     rs2_val == 18446744073172680703: 2
+     rs2_val == 18446744073172680703: 1
      rs2_val == 18446744073441116159: 1
      rs2_val == 18446744073575333887: 1
      rs2_val == 18446744073642442751: 1
@@ -26576,7 +26579,7 @@ total_coverage: 830/830
         
         <tbody class= "  results-table-row" >
         <tr>
-          <td class="col-name">zext.h</td>
+          <td class="col-name">zext.h_64</td>
           <td class="col-result">218/218</td>
           <td class="col-percentage">100.00%
             <div class="meter">
@@ -26585,16 +26588,18 @@ total_coverage: 830/830
           </td>          
         <tr>
           <td class="extra" colspan="2">
-          <div class="log">config:
+          <div class="log">base_op: packw
+config:
    - check ISA:=regex(.*I.*B.*)
    - check ISA:=regex(.*I.*Zbb.*)
+mnemonics:
+     zext.h: 152
+     coverage: 1/1
 op_comb:
      rs1 != rd: 151
      rs1 == rd: 1
      coverage: 2/2
-opcode:
-     zext.h: 152
-     coverage: 1/1
+p_op_cond: rs2 == x0
 rd:
      x0: 1
      x1: 1
