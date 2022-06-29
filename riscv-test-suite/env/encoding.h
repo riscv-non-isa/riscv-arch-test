@@ -831,6 +831,7 @@
 #define CSR_PMPCFG0 0x3a0
 #define CSR_PMPCFG1 0x3a1
 #define CSR_PMPCFG2 0x3a2
+#define CSR_PMPCFG3 0x3a3
 #define CSR_PMPCFG4 0x3a4
 #define CSR_PMPCFG5 0x3a5
 #define CSR_PMPCFG6 0x3a6
