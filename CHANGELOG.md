@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## [3.1.0] - 2022-07-01
+  - Added (and fixed) macros that instantiate per-mode copies of the handler, including CSR renaming macro
+  - Fixed multiple bugs in trampoline register assignments, trampoline copy and restore when xTVEC diversion fails
+  - Added GOTO_MMODE macro to enable future tests at lower modes to execute properly
+  - Fixed bugs in code that maintained separate trap signatures
+  - Added identity map page table to allow future tests to transition between and handle traps in different modes safely
+  - Fixed which CSRs get stored in signature depending on type and cause of trap
+  - Fixed relocation of signature CSRs depending on type and cause of trap
+
 ## [3.0.1] - 2022-05-13
   - Rename "master" to "main" in github-action yamls
 
