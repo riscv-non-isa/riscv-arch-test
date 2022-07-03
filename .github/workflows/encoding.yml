@@ -1,0 +1,50 @@
+name: test
+
+on: [push, pull_request]
+
+jobs:
+  build:
+
+    name: Update encoding.h
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Remove old encoding.h
+      run: |
+        git rm riscv-test-suite/env/encoding.h
+    
+    - name: commit deleted file
+      run: |
+        git config --local user.email "github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "github-actions[bot]"
+        git commit -m "remove old encoding.h"
+    
+    - name: download riscv opcodes
+      run: git clone https://github.com/riscv/riscv-opcodes
+      
+    - name: running make
+      run: |
+        cd $GITHUB_WORKSPACE/riscv-opcodes
+        make
+    
+    - name: Add new encoding.h
+      run: |
+        cp "$GITHUB_WORKSPACE/riscv-opcodes/encoding.out.h" "./riscv-test-suite/env"
+        cd riscv-test-suite/env
+        mv encoding.out.h encoding.h
+    
+    - name: commit updated file
+      run: |
+        git config --local user.email "github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "github-actions[bot]"
+        git add riscv-test-suite/env/encoding.h
+        git commit -m "update encoding.h"
+        git status
+      
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        force_with_lease: true
+
