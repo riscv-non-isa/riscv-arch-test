@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## [3.1.0] - 2022-07-05
+  - Update floating point tests and macros to ensure flags are cleared & correct rounding modes are used.
+
 ## [3.0.1] - 2022-05-13
   - Rename "master" to "main" in github-action yamls
 
@@ -14,12 +17,12 @@
   - Update framework to support test suite compilation with LLVM.
 
 ## [2.7.2] - 2022-03-18
-- Add sigalign based changes to F&D sigupd macros.
-- Add helper macro to check offset legality.
+  - Add sigalign based changes to F&D sigupd macros.
+  - Add helper macro to check offset legality.
 
 
 ## [2.7.1] - 2022-03-18
-- Fix bug in auto-offset update for SIGUPD macros.
+  - Fix bug in auto-offset update for SIGUPD macros.
 
 ## [2.7.0] - 2022-03-15
   - Updated K Crypto (Scalar) instructions for the V.1.0.0 ratified spec.
