@@ -7,7 +7,7 @@
 // 
 
 /* 
-	PMP Test for RW of memory region in TOR mode
+	PMP Test for RW of memory region in TOR address matching mode
 	PMP memory region is defined b/w pmpaddr0 and base address
     pmpcfg0 is used with the corresponding address registers 
 */
@@ -88,8 +88,8 @@ main:
 
 #define PMPCONFIG0      ((((RW|PMP_L|PMP_TOR)&0xFF) << PMP0_CFG_SHIFT)   | \
                         (((RW|PMP_L|PMP_TOR)&0xFF) << PMP1_CFG_SHIFT)    | \
-                        (((RW|PMP_L|OFF)&0xFF) << PMP2_CFG_SHIFT)    | \
-                        (((RW|PMP_L|OFF)&0xFF) << PMP3_CFG_SHIFT))
+                        (((RWX|PMP_L|OFF)&0xFF) << PMP2_CFG_SHIFT)       | \
+                        (((RWX|PMP_L|OFF)&0xFF) << PMP3_CFG_SHIFT))
                         
 /* Setup some data for testing */
 

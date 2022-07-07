@@ -7,7 +7,7 @@
 // 
 
 /* 
-	PMP Test in TOR mode where memory region is not defined (special case)
+	PMP Test in TOR address matching mode where memory region is not defined (special case)
 	i.e. pmpaddr[i] < pmpaddr[i-1]
     pmpcfg0 is used with the corresponding address registers 
  */
@@ -85,9 +85,9 @@ main:
 #define PMP2_CFG_SHIFT  16
 #define PMP3_CFG_SHIFT  24
 
-#define PMPCONFIG0      ((((RX|PMP_L|OFF)&0xFF) << PMP0_CFG_SHIFT)   | \
+#define PMPCONFIG0      ((((RX|PMP_L|OFF)&0xFF) << PMP0_CFG_SHIFT)       | \
                         (((RX|PMP_L|PMP_TOR)&0xFF) << PMP1_CFG_SHIFT)    | \
-                        (((RX|PMP_L|OFF)&0xFF) << PMP2_CFG_SHIFT)    | \
+                        (((RX|PMP_L|OFF)&0xFF) << PMP2_CFG_SHIFT)        | \
                         (((RX|PMP_L|OFF)&0xFF) << PMP3_CFG_SHIFT))
                          
 /* Setup some data for testing */
