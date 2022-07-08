@@ -94,7 +94,7 @@
         #define SIGALIGN 8
     #else
         #define SIGALIGN 4
-    #endif  
+    #endif
   #endif
 #endif
 
@@ -111,8 +111,36 @@
   #define CODE_REL_TVAL_MSK 0xD008 << (REGWIDTH*8-16)
 #endif
 
+#define NAN_BOXED(__val__,__width__,__max__)    \
+    .if __width__ == 32                        ;\
+        .word __val__                          ;\
+    .else                                      ;\
+        .dword __val__                         ;\
+    .endif                                     ;\
+    .if __max__ > __width__                    ;\
+        .set pref_bytes,(__max__-__width__)/32 ;\
+    .else                                      ;\
+        .set pref_bytes, 0                     ;\
+    .endif                                     ;\
+    .rept pref_bytes                           ;\
+        .word 0xffffffff                       ;\
+    .endr                                      ;
 
 
+#define ZERO_EXTEND(__val__,__width__,__max__)  \
+    .if __max__ > __width__                    ;\
+        .set pref_bytes,(__max__-__width__)/32 ;\
+    .else                                      ;\
+        .set pref_bytes, 0                     ;\
+    .endif                                     ;\
+    .rept pref_bytes                           ;\
+        .word 0                                ;\
+    .endr                                      ;\
+    .if __width__ == 32                        ;\
+        .word __val__                          ;\
+    .else                                      ;\
+        .dword __val__                         ;\
+    .endif;
 
 // ----------------------------------- CODE BEGIN w/ TRAP HANDLER START ------------------------ //
 
@@ -579,6 +607,19 @@ rvtest_data_end:
 #define _ARG1(_1ST,...) _1ST
 #define NARG(...) _ARG5(__VA_OPT__(__VA_ARGS__,)4,3,2,1,0)
 
+#define LOAD_MEM_VAL(_LINST, _AREG, _RD, _OFF, _TREG)  \
+    .if _OFF >= 2048                                  ;\
+        .set _off, _OFF%2048                          ;\
+        LI(_TREG, _OFF-_off)                          ;\
+        add _AREG,_AREG,_TREG                         ;\
+    .else                                             ;\
+        .set _off, _OFF                               ;\
+    .endif                                            ;\
+    _LINST _RD, _off(_AREG)                           ;\
+    .if _OFF >= 2048                                  ;\
+        sub _AREG,_AREG,_TREG                         ;\
+    .endif
+
  /* use this function to ensure individual signature stores don't exceed offset limits */
   /* if they would, then update the base by offset & reduce offset by -2048             */
   /* there is an option to pre-increment offset if there was a previous signture store  */
@@ -868,7 +909,7 @@ sub rs1,rs1,testreg                                                          ;\
 inst rs2, imm_val(rs1)                                                      ;\
 nop                                                                         ;\
 nop                                                                         ;\
-csrrw flagreg, fflags, x0                                                   ;\
+csrr flagreg, fcsr                                                         ;\
 RVTEST_SIGUPD(swreg,flagreg,offset)
 
 #define TEST_LOAD_F(swreg,testreg,index,rs1,destreg,imm_val,offset,inst,adj,flagreg)   ;\
@@ -876,7 +917,7 @@ LA(rs1,rvtest_data+(index*4)+adj-imm_val)                                      ;
 inst destreg, imm_val(rs1)                                                   ;\
 nop                                                                         ;\
 nop                                                                         ;\
-csrrw flagreg, fflags, x0                                                   ;\
+csrr flagreg, fcsr                                                         ;\
 RVTEST_SIGUPD_F(swreg,destreg,flagreg,offset) 
 
 #define TEST_CSR_FIELD(ADDRESS,TEMP_REG,MASK_REG,NEG_MASK_REG,VAL,DEST_REG,OFFSET,BASE_REG) \
@@ -895,14 +936,14 @@ RVTEST_SIGUPD_F(swreg,destreg,flagreg,offset)
     RVTEST_SIGUPD(swreg,destreg,offset); \
     RVMODEL_IO_ASSERT_GPR_EQ(testreg, destreg, correctval)
 
-#define TEST_CASE_F(testreg, destreg, correctval, swreg, flagreg, offset, code... ) \
+#define TEST_CASE_F(testreg, destreg, correctval, swreg, flagreg, code... ) \
     code; \
-    RVTEST_SIGUPD_F(swreg,destreg,flagreg,offset); \
+    RVTEST_SIGUPD_F(swreg,destreg,flagreg); \
     RVMODEL_IO_ASSERT_GPR_EQ(testreg, destreg, correctval)
     
-#define TEST_CASE_FID(testreg, destreg, correctval, swreg, flagreg, offset, code... ) \
+#define TEST_CASE_FID(testreg, destreg, correctval, swreg, flagreg, code... ) \
     code; \
-    RVTEST_SIGUPD_FID(swreg,destreg,flagreg,offset); \
+    RVTEST_SIGUPD_FID(swreg,destreg,flagreg); \
     RVMODEL_IO_ASSERT_GPR_EQ(testreg, destreg, correctval)
 
 #define TEST_AUIPC(inst, destreg, correctval, imm, swreg, offset, testreg) \
@@ -921,30 +962,60 @@ RVTEST_SIGUPD_F(swreg,destreg,flagreg,offset)
     )
 
 //Tests for floating-point instructions with a single register operand
-#define TEST_FPSR_OP( inst, destreg, freg, rm, correctval, valaddr_reg, val_offset, flagreg, swreg, offset, testreg) \
-    TEST_CASE_F(testreg, destreg, correctval, swreg, flagreg, offset, \
-      FLREG freg, val_offset(valaddr_reg); \
-      csrrwi x0, frm, rm; \
+#define TEST_FPSR_OP( inst, destreg, freg, rm, fcsr_val, correctval, valaddr_reg, val_offset, flagreg, swreg, testreg) \
+    TEST_CASE_F(testreg, destreg, correctval, swreg, flagreg, \
+      LOAD_MEM_VAL(FLREG, valaddr_reg, freg, val_offset, testreg); \
+      li testreg, fcsr_val; csrw fcsr, testreg; \
+      inst destreg, freg, rm; \
+      csrr flagreg, fcsr      ; \
+    )
+
+//Tests for floating-point instructions with a single register operand
+//This variant does not take the rm field and set it while writing the instruction
+#define TEST_FPSR_OP_NRM( inst, destreg, freg, fcsr_val, correctval, valaddr_reg, val_offset, flagreg, swreg, testreg) \
+    TEST_CASE_F(testreg, destreg, correctval, swreg, flagreg, \
+      LOAD_MEM_VAL(FLREG, valaddr_reg, freg, val_offset, testreg); \
+      li testreg, fcsr_val; csrw fcsr, testreg; \
       inst destreg, freg; \
-      csrrw flagreg, fflags, x0; \
+      csrr flagreg, fcsr      ; \
     )
     
 //Tests for floating-point instructions with a single register operand and integer destination register
-#define TEST_FPID_OP( inst, destreg, freg, rm, correctval, valaddr_reg, val_offset, flagreg, swreg, offset, testreg) \
-    TEST_CASE_FID(testreg, destreg, correctval, swreg, flagreg, offset, \
-      FLREG freg, val_offset(valaddr_reg); \
-      csrrwi x0, frm, rm; \
-      inst destreg, freg; \
-      csrrw flagreg, fflags, x0; \
-    )
+#define TEST_FPID_OP( inst, destreg, freg, rm, fcsr_val, correctval, valaddr_reg, val_offset, flagreg, swreg, testreg,load_instr) \
+    TEST_CASE_FID(testreg, destreg, correctval, swreg, flagreg, \
+      LOAD_MEM_VAL(load_instr, valaddr_reg, freg, val_offset, testreg); \
+      li testreg, fcsr_val; csrw fcsr, testreg; \
+      inst destreg, freg, rm; \
+      csrr flagreg, fcsr      ; \
+      )
     
 //Tests for floating-point instructions with a single register operand and integer operand register
-#define TEST_FPIO_OP( inst, destreg, freg, rm, correctval, valaddr_reg, val_offset, flagreg, swreg, offset, testreg) \
-    TEST_CASE_F(testreg, destreg, correctval, swreg, flagreg, offset, \
-      LREG freg, val_offset(valaddr_reg); \
-      csrrwi x0, frm, rm; \
+#define TEST_FPIO_OP( inst, destreg, freg, rm, fcsr_val, correctval, valaddr_reg, val_offset, flagreg, swreg, testreg, load_instr) \
+    TEST_CASE_F(testreg, destreg, correctval, swreg, flagreg, \
+      LOAD_MEM_VAL(load_instr, valaddr_reg, freg, val_offset, testreg); \
+      li testreg, fcsr_val; csrw fcsr, testreg; \
+      inst destreg, freg, rm; \
+      csrr flagreg, fcsr; \
+    )
+
+//Tests for floating-point instructions with a single register operand and integer destination register
+//This variant does not take the rm field and set it while writing the instruction
+#define TEST_FPID_OP_NRM( inst, destreg, freg, fcsr_val, correctval, valaddr_reg, val_offset, flagreg, swreg, testreg) \
+    TEST_CASE_FID(testreg, destreg, correctval, swreg, flagreg, \
+      LOAD_MEM_VAL(FLREG, valaddr_reg, freg, val_offset, testreg); \
+      li testreg, fcsr_val; csrw fcsr, testreg; \
       inst destreg, freg; \
-      csrrw flagreg, fflags, x0; \
+      csrr flagreg, fcsr      ; \
+      )
+    
+//Tests for floating-point instructions with a single register operand and integer operand register
+//This variant does not take the rm field and set it while writing the instruction
+#define TEST_FPIO_OP_NRM( inst, destreg, freg, fcsr_val, correctval, valaddr_reg, val_offset, flagreg, swreg, testreg, load_instr) \
+    TEST_CASE_F(testreg, destreg, correctval, swreg, flagreg, \
+      LOAD_MEM_VAL(load_instr, valaddr_reg, freg, val_offset, testreg); \
+      li testreg, fcsr_val; csrw fcsr, testreg; \
+      inst destreg, freg; \
+      csrr flagreg, fcsr; \
     )
 
 //Tests for instructions with register-register-immediate operands
@@ -971,33 +1042,45 @@ RVTEST_SIGUPD_F(swreg,destreg,flagreg,offset)
       inst destreg, reg1, reg2; \
     )
 //Tests for floating-point instructions with register-register operand
-#define TEST_FPRR_OP(inst, destreg, freg1, freg2, rm, correctval, valaddr_reg, val_offset, flagreg, swreg, offset, testreg) \
-    TEST_CASE_F(testreg, destreg, correctval, swreg, flagreg, offset, \
-      FLREG freg1, val_offset(valaddr_reg); \
-      FLREG freg2, val_offset+FREGWIDTH(valaddr_reg); \
-      csrrwi x0, frm, rm; \
+//This variant does not take the rm field and set it while writing the instruction
+#define TEST_FPRR_OP_NRM(inst, destreg, freg1, freg2, fcsr_val, correctval, valaddr_reg, val_offset, flagreg, swreg, testreg) \
+    TEST_CASE_F(testreg, destreg, correctval, swreg, flagreg, \
+      LOAD_MEM_VAL(FLREG, valaddr_reg, freg1, val_offset, testreg); \
+      LOAD_MEM_VAL(FLREG, valaddr_reg, freg2, (val_offset+FREGWIDTH), testreg); \
+      li testreg, fcsr_val; csrw fcsr, testreg; \
       inst destreg, freg1, freg2; \
-      csrrw flagreg, fflags, x0; \
+      csrr flagreg, fcsr; \
+    )
+
+//Tests for floating-point instructions with register-register operand
+#define TEST_FPRR_OP(inst, destreg, freg1, freg2, rm, fcsr_val, correctval, valaddr_reg, val_offset, flagreg, swreg, testreg) \
+    TEST_CASE_F(testreg, destreg, correctval, swreg, flagreg, \
+      LOAD_MEM_VAL(FLREG, valaddr_reg, freg1, val_offset, testreg); \
+      LOAD_MEM_VAL(FLREG, valaddr_reg, freg2, (val_offset+FREGWIDTH), testreg); \
+      li testreg, fcsr_val; csrw fcsr, testreg; \
+      inst destreg, freg1, freg2, rm; \
+      csrr flagreg, fcsr; \
     )
     
 //Tests for floating-point CMP instructions with register-register operand
-#define TEST_FCMP_OP(inst, destreg, freg1, freg2, correctval, valaddr_reg, val_offset, flagreg, swreg, offset, testreg) \
-    TEST_CASE_FID(testreg, destreg, correctval, swreg, flagreg, offset, \
-      FLREG freg1, val_offset(valaddr_reg); \
-      FLREG freg2, val_offset+FREGWIDTH(valaddr_reg); \
+#define TEST_FCMP_OP(inst, destreg, freg1, freg2, fcsr_val, correctval, valaddr_reg, val_offset, flagreg, swreg, testreg) \
+    TEST_CASE_FID(testreg, destreg, correctval, swreg, flagreg, \
+      LOAD_MEM_VAL(FLREG, valaddr_reg, freg1, val_offset, testreg); \
+      LOAD_MEM_VAL(FLREG, valaddr_reg, freg2, (val_offset+FREGWIDTH), testreg); \
+      li testreg, fcsr_val; csrw fcsr, testreg; \
       inst destreg, freg1, freg2; \
-      csrrw flagreg, fflags, x0; \
+      csrr flagreg, fcsr      ; \
     )
 
 //Tests for floating-point R4 type instructions
-#define TEST_FPR4_OP(inst, destreg, freg1, freg2, freg3, rm, correctval, valaddr_reg, val_offset, flagreg, swreg, offset, testreg) \
-    TEST_CASE_F(testreg, destreg, correctval, swreg, flagreg, offset, \
-      FLREG freg1, val_offset(valaddr_reg); \
-      FLREG freg2, val_offset+FREGWIDTH(valaddr_reg); \
-      FLREG freg3, val_offset+2*FREGWIDTH(valaddr_reg); \
-      csrrwi x0, frm, rm; \
-      inst destreg, freg1, freg2, freg3; \
-      csrrw flagreg, fflags, x0; \
+#define TEST_FPR4_OP(inst, destreg, freg1, freg2, freg3, rm , fcsr_val, correctval, valaddr_reg, val_offset, flagreg, swreg, testreg) \
+    TEST_CASE_F(testreg, destreg, correctval, swreg, flagreg, \
+      LOAD_MEM_VAL(FLREG, valaddr_reg, freg1, val_offset, testreg); \
+      LOAD_MEM_VAL(FLREG, valaddr_reg, freg2, (val_offset+FREGWIDTH), testreg); \
+      LOAD_MEM_VAL(FLREG, valaddr_reg, freg3, (val_offset+2*FREGWIDTH), testreg); \
+      li testreg, fcsr_val; csrw fcsr, testreg; \
+      inst destreg, freg1, freg2, freg3, rm; \
+      csrr flagreg, fcsr      ; \
     )
 
 #define TEST_CNOP_OP( inst, testreg, imm_val, swreg, offset) \
@@ -1018,6 +1101,7 @@ RVTEST_SIGUPD_F(swreg,destreg,flagreg,offset)
     LI(reg1, MASK_XLEN(val1)); \
     LI(reg2, MASK_XLEN(val2)); \
     inst destreg, reg1, reg2; \
+    rdov flagreg; \
     RVTEST_SIGUPD_PK(swreg, destreg, flagreg, offset); \
     RVMODEL_IO_ASSERT_GPR_EQ(testreg, destreg, correctval)
 
