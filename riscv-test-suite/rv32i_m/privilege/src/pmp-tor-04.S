@@ -30,7 +30,7 @@ RVTEST_CODE_BEGIN
 
 
 #ifdef TEST_CASE_1
-    RVTEST_CASE(1,"//check ISA:=regex(.*32.*); check ISA:=regex(.*I.*Zicsr.*); def rvtest_mtrap_routine=True; def TEST_CASE_1=True",PMP-protection)
+    RVTEST_CASE(1,"//check ISA:=regex(.*32.*); check ISA:=regex(.*I.*Zicsr.*); def rvtest_mtrap_routine=True; def TEST_CASE_1=True",pmp-tor)
 RVTEST_SIGBASE( x3,signature_x3_1)
 
 	.attribute unaligned_access, 0

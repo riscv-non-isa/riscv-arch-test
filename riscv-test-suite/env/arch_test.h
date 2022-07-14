@@ -94,7 +94,7 @@
         #define SIGALIGN 8
     #else
         #define SIGALIGN 4
-    #endif  
+    #endif
   #endif
 #endif
 
@@ -112,6 +112,11 @@
 #endif
 
 #define NAN_BOXED(__val__,__width__,__max__)    \
+    .if __width__ == 32                        ;\
+        .word __val__                          ;\
+    .else                                      ;\
+        .dword __val__                         ;\
+    .endif                                     ;\
     .if __max__ > __width__                    ;\
         .set pref_bytes,(__max__-__width__)/32 ;\
     .else                                      ;\
@@ -119,12 +124,8 @@
     .endif                                     ;\
     .rept pref_bytes                           ;\
         .word 0xffffffff                       ;\
-    .endr                                      ;\
-    .if __width__ == 32                        ;\
-        .word __val__                          ;\
-    .else                                      ;\
-        .dword __val__                         ;\
-    .endif;
+    .endr                                      ;
+
 
 #define ZERO_EXTEND(__val__,__width__,__max__)  \
     .if __max__ > __width__                    ;\
@@ -980,9 +981,9 @@ RVTEST_SIGUPD_F(swreg,destreg,flagreg,offset)
     )
     
 //Tests for floating-point instructions with a single register operand and integer destination register
-#define TEST_FPID_OP( inst, destreg, freg, rm, fcsr_val, correctval, valaddr_reg, val_offset, flagreg, swreg, testreg) \
+#define TEST_FPID_OP( inst, destreg, freg, rm, fcsr_val, correctval, valaddr_reg, val_offset, flagreg, swreg, testreg,load_instr) \
     TEST_CASE_FID(testreg, destreg, correctval, swreg, flagreg, \
-      LOAD_MEM_VAL(FLREG, valaddr_reg, freg, val_offset, testreg); \
+      LOAD_MEM_VAL(load_instr, valaddr_reg, freg, val_offset, testreg); \
       li testreg, fcsr_val; csrw fcsr, testreg; \
       inst destreg, freg, rm; \
       csrr flagreg, fcsr      ; \

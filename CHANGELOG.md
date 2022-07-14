@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [3.1.1] - 2022-07-07
+  - Fix definition of FPID macro to add load instruction.
+  - Fix nan boxing macro to use correct endianness.
+
 ## [3.1.0] - 2022-07-05
   - Update floating point tests and macros to ensure flags are cleared & correct rounding modes are used.
 
