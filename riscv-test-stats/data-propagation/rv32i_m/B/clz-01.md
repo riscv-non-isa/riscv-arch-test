@@ -13,7 +13,7 @@
 | TEST_REGION               | [('0x800000f8', '0x800004a0')]      |
 | SIG_REGION                | [('0x80002210', '0x80002320', '68 words')]      |
 | COV_LABELS                | clz      |
-| TEST_NAME                 | /home/anku/trials/bmanip/32/riscof_work-v2/clz-01.S/ref.S    |
+| TEST_NAME                 | /home/anku/trials/bmanip/32/work_v2/clz-01.S/ref.S    |
 | Total Number of coverpoints| 133     |
 | Total Coverpoints Hit     | 133      |
 | Total Signature Updates   | 68      |
@@ -84,9 +84,9 @@ Op without unique coverpoint updates Signature
 
 |s.no|        signature         |                                          coverpoints                                           |                             code                              |
 |---:|--------------------------|------------------------------------------------------------------------------------------------|---------------------------------------------------------------|
-|   1|[0x80002210]<br>0x00000001|- mnemonic : clz<br> - rs1 : x31<br> - rd : x31<br> - rs1 == rd<br> - rs1_val == 1431655765<br> |[0x80000108]:clz t6, t6<br> [0x8000010c]:sw t6, 0(ra)<br>      |
-|   2|[0x80002214]<br>0x00000001|- rs1 : x29<br> - rd : x30<br> - rs1 != rd<br> - rs1_val == 2147483647<br>                      |[0x80000118]:clz t5, t4<br> [0x8000011c]:sw t5, 4(ra)<br>      |
-|   3|[0x80002218]<br>0x00000000|- rs1 : x30<br> - rd : x29<br> - rs1_val == 3221225471<br>                                      |[0x80000128]:clz t4, t5<br> [0x8000012c]:sw t4, 8(ra)<br>      |
+|   1|[0x80002210]<br>0x00000001|- mnemonic : clz<br> - rs1 : x30<br> - rd : x31<br> - rs1 != rd<br> - rs1_val == 1431655765<br> |[0x80000108]:clz t6, t5<br> [0x8000010c]:sw t6, 0(ra)<br>      |
+|   2|[0x80002214]<br>0x00000001|- rs1 : x29<br> - rd : x29<br> - rs1 == rd<br> - rs1_val == 2147483647<br>                      |[0x80000118]:clz t4, t4<br> [0x8000011c]:sw t4, 4(ra)<br>      |
+|   3|[0x80002218]<br>0x00000000|- rs1 : x31<br> - rd : x30<br> - rs1_val == 3221225471<br>                                      |[0x80000128]:clz t5, t6<br> [0x8000012c]:sw t5, 8(ra)<br>      |
 |   4|[0x8000221c]<br>0x00000000|- rs1 : x27<br> - rd : x28<br> - rs1_val == 3758096383<br>                                      |[0x80000138]:clz t3, s11<br> [0x8000013c]:sw t3, 12(ra)<br>    |
 |   5|[0x80002220]<br>0x00000000|- rs1 : x28<br> - rd : x27<br> - rs1_val == 4026531839<br>                                      |[0x80000148]:clz s11, t3<br> [0x8000014c]:sw s11, 16(ra)<br>   |
 |   6|[0x80002224]<br>0x00000000|- rs1 : x25<br> - rd : x26<br> - rs1_val == 4160749567<br>                                      |[0x80000158]:clz s10, s9<br> [0x8000015c]:sw s10, 20(ra)<br>   |

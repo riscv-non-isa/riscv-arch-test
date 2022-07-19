@@ -13,7 +13,7 @@
 | TEST_REGION               | [('0x800000f8', '0x800005e0')]      |
 | SIG_REGION                | [('0x80002210', '0x80002370', '88 words')]      |
 | COV_LABELS                | zext.h_32      |
-| TEST_NAME                 | /home/anku/trials/bmanip/32/riscof_work-v2/zext.h_32-01.S/ref.S    |
+| TEST_NAME                 | /home/anku/trials/bmanip/32/work_v2/zext.h_32-01.S/ref.S    |
 | Total Number of coverpoints| 154     |
 | Total Coverpoints Hit     | 154      |
 | Total Signature Updates   | 88      |
@@ -84,9 +84,9 @@ Op without unique coverpoint updates Signature
 
 |s.no|        signature         |                                       coverpoints                                        |                          code                           |
 |---:|--------------------------|------------------------------------------------------------------------------------------|---------------------------------------------------------|
-|   1|[0x80002210]<br>0x00000000|- mnemonic : zext.h<br> - rs1 : x31<br> - rd : x31<br> - rs1 == rd<br> - rs1_val == 0<br> |[0x80000104]:zext.h<br> [0x80000108]:sw t6, 0(ra)<br>    |
-|   2|[0x80002214]<br>0x0000FFFF|- rs1 : x29<br> - rd : x30<br> - rs1 != rd<br> - rs1_val == 2147483647<br>                |[0x80000114]:zext.h<br> [0x80000118]:sw t5, 4(ra)<br>    |
-|   3|[0x80002218]<br>0x0000FFFF|- rs1 : x30<br> - rd : x29<br> - rs1_val == 3221225471<br>                                |[0x80000124]:zext.h<br> [0x80000128]:sw t4, 8(ra)<br>    |
+|   1|[0x80002210]<br>0x00000000|- mnemonic : zext.h<br> - rs1 : x30<br> - rd : x31<br> - rs1 != rd<br> - rs1_val == 0<br> |[0x80000104]:zext.h<br> [0x80000108]:sw t6, 0(ra)<br>    |
+|   2|[0x80002214]<br>0x0000FFFF|- rs1 : x29<br> - rd : x29<br> - rs1 == rd<br> - rs1_val == 2147483647<br>                |[0x80000114]:zext.h<br> [0x80000118]:sw t4, 4(ra)<br>    |
+|   3|[0x80002218]<br>0x0000FFFF|- rs1 : x31<br> - rd : x30<br> - rs1_val == 3221225471<br>                                |[0x80000124]:zext.h<br> [0x80000128]:sw t5, 8(ra)<br>    |
 |   4|[0x8000221c]<br>0x0000FFFF|- rs1 : x27<br> - rd : x28<br> - rs1_val == 3758096383<br>                                |[0x80000134]:zext.h<br> [0x80000138]:sw t3, 12(ra)<br>   |
 |   5|[0x80002220]<br>0x0000FFFF|- rs1 : x28<br> - rd : x27<br> - rs1_val == 4026531839<br>                                |[0x80000144]:zext.h<br> [0x80000148]:sw s11, 16(ra)<br>  |
 |   6|[0x80002224]<br>0x0000FFFF|- rs1 : x25<br> - rd : x26<br> - rs1_val == 4160749567<br>                                |[0x80000154]:zext.h<br> [0x80000158]:sw s10, 20(ra)<br>  |

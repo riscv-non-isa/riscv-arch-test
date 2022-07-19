@@ -13,7 +13,7 @@
 | TEST_REGION               | [('0x800000f8', '0x80000a30')]      |
 | SIG_REGION                | [('0x80002210', '0x80002490', '160 words')]      |
 | COV_LABELS                | bclri      |
-| TEST_NAME                 | /home/anku/trials/bmanip/32/riscof_work-v2/bclri-01.S/ref.S    |
+| TEST_NAME                 | /home/anku/trials/bmanip/32/work_v2/bclri-01.S/ref.S    |
 | Total Number of coverpoints| 223     |
 | Total Coverpoints Hit     | 223      |
 | Total Signature Updates   | 158      |
@@ -84,9 +84,9 @@ Op without unique coverpoint updates Signature
 
 |s.no|        signature         |                                                         coverpoints                                                         |                                code                                |
 |---:|--------------------------|-----------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------|
-|   1|[0x80002210]<br>0xFFFFFFFB|- mnemonic : bclri<br> - rs1 : x31<br> - rd : x31<br> - rs1 == rd<br> - rs1_val == 0xFFFFFFFF and imm_val == 0x02 #nosat<br> |[0x80000104]:bclri t6, t6, 2<br> [0x80000108]:sw t6, 0(ra)<br>      |
-|   2|[0x80002214]<br>0x2DEDB6A6|- rs1 : x29<br> - rd : x30<br> - rs1 != rd<br> - imm_val == 0x00 and rs1_val == 0x2DEDB6A7 #nosat<br>                        |[0x80000114]:bclri t5, t4, 0<br> [0x80000118]:sw t5, 4(ra)<br>      |
-|   3|[0x80002218]<br>0x3C262728|- rs1 : x30<br> - rd : x29<br> - imm_val == 0x10 and rs1_val == 0x3C272728 #nosat<br>                                        |[0x80000124]:bclri t4, t5, 16<br> [0x80000128]:sw t4, 8(ra)<br>     |
+|   1|[0x80002210]<br>0xFFFFFFFB|- mnemonic : bclri<br> - rs1 : x30<br> - rd : x31<br> - rs1 != rd<br> - rs1_val == 0xFFFFFFFF and imm_val == 0x02 #nosat<br> |[0x80000104]:bclri t6, t5, 2<br> [0x80000108]:sw t6, 0(ra)<br>      |
+|   2|[0x80002214]<br>0x2DEDB6A6|- rs1 : x29<br> - rd : x29<br> - rs1 == rd<br> - imm_val == 0x00 and rs1_val == 0x2DEDB6A7 #nosat<br>                        |[0x80000114]:bclri t4, t4, 0<br> [0x80000118]:sw t4, 4(ra)<br>      |
+|   3|[0x80002218]<br>0x3C262728|- rs1 : x31<br> - rd : x30<br> - imm_val == 0x10 and rs1_val == 0x3C272728 #nosat<br>                                        |[0x80000124]:bclri t5, t6, 16<br> [0x80000128]:sw t5, 8(ra)<br>     |
 |   4|[0x8000221c]<br>0x4E55C73D|- rs1 : x27<br> - rd : x28<br> - imm_val == 0x18 and rs1_val == 0x4F55C73D #nosat<br>                                        |[0x80000134]:bclri t3, s11, 24<br> [0x80000138]:sw t3, 12(ra)<br>   |
 |   5|[0x80002220]<br>0xB0AB577A|- rs1 : x28<br> - rd : x27<br> - imm_val == 0x14 and rs1_val == 0xB0AB577A #nosat<br>                                        |[0x80000144]:bclri s11, t3, 20<br> [0x80000148]:sw s11, 16(ra)<br>  |
 |   6|[0x80002224]<br>0xF0EB21AA|- rs1 : x25<br> - rd : x26<br> - imm_val == 0x1A and rs1_val == 0xF0EB21AA #nosat<br>                                        |[0x80000154]:bclri s10, s9, 26<br> [0x80000158]:sw s10, 20(ra)<br>  |

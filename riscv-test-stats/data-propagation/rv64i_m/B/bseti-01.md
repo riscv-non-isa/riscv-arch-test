@@ -13,7 +13,7 @@
 | TEST_REGION               | [('0x80000390', '0x80000f30')]      |
 | SIG_REGION                | [('0x80002210', '0x80002700', '158 dwords')]      |
 | COV_LABELS                | bseti      |
-| TEST_NAME                 | /home/anku/trials/bmanip/64/riscof_work-v2/bseti-01.S/ref.S    |
+| TEST_NAME                 | /home/anku/trials/bmanip/64/b_work/bseti-01.S/ref.S    |
 | Total Number of coverpoints| 223     |
 | Total Coverpoints Hit     | 223      |
 | Total Signature Updates   | 158      |
@@ -84,9 +84,9 @@ Op without unique coverpoint updates Signature
 
 |s.no|            signature             |                                                         coverpoints                                                         |                                code                                |
 |---:|----------------------------------|-----------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------|
-|   1|[0x80002210]<br>0x00000000FFFFFFFF|- mnemonic : bseti<br> - rs1 : x31<br> - rd : x31<br> - rs1 == rd<br> - rs1_val == 0xFFFFFFFF and imm_val == 0x02 #nosat<br> |[0x800003a4]:bseti t6, t6, 2<br> [0x800003a8]:sd t6, 0(ra)<br>      |
-|   2|[0x80002218]<br>0x000000002DEDB6A7|- rs1 : x29<br> - rd : x30<br> - rs1 != rd<br> - imm_val == 0x00 and rs1_val == 0x2DEDB6A7 #nosat<br>                        |[0x800003b4]:bseti t5, t4, 0<br> [0x800003b8]:sd t5, 8(ra)<br>      |
-|   3|[0x80002220]<br>0x000000003C272728|- rs1 : x30<br> - rd : x29<br> - imm_val == 0x10 and rs1_val == 0x3C272728 #nosat<br>                                        |[0x800003c4]:bseti t4, t5, 16<br> [0x800003c8]:sd t4, 16(ra)<br>    |
+|   1|[0x80002210]<br>0x00000000FFFFFFFF|- mnemonic : bseti<br> - rs1 : x30<br> - rd : x31<br> - rs1 != rd<br> - rs1_val == 0xFFFFFFFF and imm_val == 0x02 #nosat<br> |[0x800003a4]:bseti t6, t5, 2<br> [0x800003a8]:sd t6, 0(ra)<br>      |
+|   2|[0x80002218]<br>0x000000002DEDB6A7|- rs1 : x29<br> - rd : x29<br> - rs1 == rd<br> - imm_val == 0x00 and rs1_val == 0x2DEDB6A7 #nosat<br>                        |[0x800003b4]:bseti t4, t4, 0<br> [0x800003b8]:sd t4, 8(ra)<br>      |
+|   3|[0x80002220]<br>0x000000003C272728|- rs1 : x31<br> - rd : x30<br> - imm_val == 0x10 and rs1_val == 0x3C272728 #nosat<br>                                        |[0x800003c4]:bseti t5, t6, 16<br> [0x800003c8]:sd t5, 16(ra)<br>    |
 |   4|[0x80002228]<br>0x000000004F55C73D|- rs1 : x27<br> - rd : x28<br> - imm_val == 0x18 and rs1_val == 0x4F55C73D #nosat<br>                                        |[0x800003d4]:bseti t3, s11, 24<br> [0x800003d8]:sd t3, 24(ra)<br>   |
 |   5|[0x80002230]<br>0x00000000B0BB577A|- rs1 : x28<br> - rd : x27<br> - imm_val == 0x14 and rs1_val == 0xB0AB577A #nosat<br>                                        |[0x800003ec]:bseti s11, t3, 20<br> [0x800003f0]:sd s11, 32(ra)<br>  |
 |   6|[0x80002238]<br>0x00000000F4EB21AA|- rs1 : x25<br> - rd : x26<br> - imm_val == 0x1A and rs1_val == 0xF0EB21AA #nosat<br>                                        |[0x80000404]:bseti s10, s9, 26<br> [0x80000408]:sd s10, 40(ra)<br>  |
