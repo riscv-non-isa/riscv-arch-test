@@ -85,6 +85,18 @@ span.failed, .failed .col-result {
 	font-weight: bold
 }
 
+table.diff {font-family:Courier; border:medium;overflow-y:auto;height:150px;}
+        .diff_header {background-color:#e0e0e0}
+        .diff thead th {
+        position: sticky;
+        top: 0;
+        }
+        td.diff_header {text-align:right}
+        .diff_next {background-color:#c0c0c}
+        .diff_add {background-color:#aaffaa}
+        .diff_chg {background-color:#ffff77}
+        .diff_sub {background-color:#ffaaaa}
+
 #sizes-table {
 	border: 1px solid #cccccc;
 	color: #313131;
@@ -121,9 +133,6 @@ span.failed, .failed .col-result {
  * 2. Extra
  *------------------*/
 
-.log:only-child {
-	height: inherit
-}
 .log {
 	background-color: #e6e6e6;
 	border: 1px solid #e6e6e6;

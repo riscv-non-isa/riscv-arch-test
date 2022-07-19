@@ -1,7 +1,11 @@
 andn:
   config:
   - check ISA:=regex(.*I.*B.*)
+  - check ISA:=regex(.*I.*K.*)
   - check ISA:=regex(.*I.*Zbb.*)
+  - check ISA:=regex(.*I.*Zks.*)
+  - check ISA:=regex(.*I.*Zkn.*)
+  - check ISA:=regex(.*I.*Zbkb.*)
   mnemonics:
     andn: 592
     coverage: 1/1
@@ -71,8 +75,8 @@ andn:
     x28: 1
     x29: 1
     x3: 1
-    x30: 559
-    x31: 3
+    x30: 560
+    x31: 2
     x4: 1
     x5: 1
     x6: 1
@@ -103,9 +107,9 @@ andn:
     x26: 1
     x27: 1
     x28: 1
-    x29: 557
+    x29: 559
     x3: 1
-    x30: 5
+    x30: 3
     x31: 1
     x4: 1
     x5: 1
@@ -145,12 +149,12 @@ andn:
     rs2_val == 4294967263: 1 # Walking Zeros: 0xffffffdf
     rs2_val == 4294967279: 1 # Walking Zeros: 0xffffffef
     rs2_val == 4294967287: 1 # Walking Zeros: 0xfffffff7
-    rs2_val == 4294967291: 1 # Walking Zeros: 0xfffffffb
-    rs2_val == 4294967293: 2 # Walking Zeros: 0xfffffffd
+    rs2_val == 4294967291: 2 # Walking Zeros: 0xfffffffb
+    rs2_val == 4294967293: 1 # Walking Zeros: 0xfffffffd
     rs2_val == 4294967294: 1 # Walking Zeros: 0xfffffffe
     rs1_val == 2147483647: 2 # Walking Zeros: 0x7fffffff
     rs1_val == 3221225471: 1 # Walking Zeros: 0xbfffffff
-    rs1_val == 3758096383: 2 # Walking Zeros: 0xdfffffff
+    rs1_val == 3758096383: 1 # Walking Zeros: 0xdfffffff
     rs1_val == 4026531839: 1 # Walking Zeros: 0xefffffff
     rs1_val == 4160749567: 1 # Walking Zeros: 0xf7ffffff
     rs1_val == 4227858431: 1 # Walking Zeros: 0xfbffffff
@@ -266,7 +270,7 @@ andn:
     'rs1_val == 0x254a9493 and rs2_val == 0xc5521660 #nosat': 1 # Uniform Random 20
     rs1_val==4294967295 and rs2_val==4294967295: 3 # Bitmanip Dataset
     rs1_val==4294967295 and rs2_val==1: 1 # Bitmanip Dataset
-    rs1_val==4294967295 and rs2_val==0: 1 # Bitmanip Dataset
+    rs1_val==4294967295 and rs2_val==0: 2 # Bitmanip Dataset
     rs1_val==4294967295 and rs2_val==2576980378: 1 # Bitmanip Dataset
     rs1_val==4294967295 and rs2_val==1717986919: 1 # Bitmanip Dataset
     rs1_val==4294967295 and rs2_val==3435973837: 1 # Bitmanip Dataset
@@ -709,7 +713,7 @@ andn:
     rs2_val == 1431655765: 21 # Alternate: 0x55555555
     rs1_val == 2863311530: 21 # Alternate: 0xaaaaaaaa
     rs1_val == 1431655765: 21  # Alternate: 0x55555555
-    rs1_val == (2**(xlen)-1): 86
+    rs1_val == (2**(xlen)-1): 87
     rs1_val == 0: 22
     rs1_val == rs2_val and rs1_val > 0 and rs2_val > 0: 22
     rs1_val > 0 and rs2_val > 0: 549
@@ -790,8 +794,8 @@ bclr:
     x28: 1
     x29: 1
     x3: 1
-    x30: 259
-    x31: 3
+    x30: 260
+    x31: 2
     x4: 1
     x5: 1
     x6: 1
@@ -822,9 +826,9 @@ bclr:
     x26: 1
     x27: 1
     x28: 1
-    x29: 257
+    x29: 259
     x3: 1
-    x30: 5
+    x30: 3
     x31: 1
     x4: 1
     x5: 1
@@ -864,12 +868,12 @@ bclr:
     rs2_val == 4294967263: 1 # Walking Zeros: 0xffffffdf
     rs2_val == 4294967279: 1 # Walking Zeros: 0xffffffef
     rs2_val == 4294967287: 1 # Walking Zeros: 0xfffffff7
-    rs2_val == 4294967291: 1 # Walking Zeros: 0xfffffffb
-    rs2_val == 4294967293: 2 # Walking Zeros: 0xfffffffd
+    rs2_val == 4294967291: 2 # Walking Zeros: 0xfffffffb
+    rs2_val == 4294967293: 1 # Walking Zeros: 0xfffffffd
     rs2_val == 4294967294: 1 # Walking Zeros: 0xfffffffe
     rs1_val == 2147483647: 2 # Walking Zeros: 0x7fffffff
     rs1_val == 3221225471: 2 # Walking Zeros: 0xbfffffff
-    rs1_val == 3758096383: 2 # Walking Zeros: 0xdfffffff
+    rs1_val == 3758096383: 1 # Walking Zeros: 0xdfffffff
     rs1_val == 4026531839: 1 # Walking Zeros: 0xefffffff
     rs1_val == 4160749567: 1 # Walking Zeros: 0xf7ffffff
     rs1_val == 4227858431: 1 # Walking Zeros: 0xfbffffff
@@ -1435,8 +1439,8 @@ bext:
     x28: 1
     x29: 1
     x3: 1
-    x30: 258
-    x31: 3
+    x30: 259
+    x31: 2
     x4: 1
     x5: 1
     x6: 1
@@ -1467,9 +1471,9 @@ bext:
     x26: 1
     x27: 1
     x28: 1
-    x29: 256
+    x29: 258
     x3: 1
-    x30: 5
+    x30: 3
     x31: 1
     x4: 1
     x5: 1
@@ -1509,12 +1513,12 @@ bext:
     rs2_val == 4294967263: 1 # Walking Zeros: 0xffffffdf
     rs2_val == 4294967279: 1 # Walking Zeros: 0xffffffef
     rs2_val == 4294967287: 1 # Walking Zeros: 0xfffffff7
-    rs2_val == 4294967291: 1 # Walking Zeros: 0xfffffffb
-    rs2_val == 4294967293: 2 # Walking Zeros: 0xfffffffd
+    rs2_val == 4294967291: 2 # Walking Zeros: 0xfffffffb
+    rs2_val == 4294967293: 1 # Walking Zeros: 0xfffffffd
     rs2_val == 4294967294: 1 # Walking Zeros: 0xfffffffe
     rs1_val == 2147483647: 2 # Walking Zeros: 0x7fffffff
     rs1_val == 3221225471: 2 # Walking Zeros: 0xbfffffff
-    rs1_val == 3758096383: 2 # Walking Zeros: 0xdfffffff
+    rs1_val == 3758096383: 1 # Walking Zeros: 0xdfffffff
     rs1_val == 4026531839: 1 # Walking Zeros: 0xefffffff
     rs1_val == 4160749567: 1 # Walking Zeros: 0xf7ffffff
     rs1_val == 4227858431: 1 # Walking Zeros: 0xfbffffff
@@ -2012,10 +2016,10 @@ binv:
   - check ISA:=regex(.*I.*B.*)
   - check ISA:=regex(.*I.*Zbs.*)
   mnemonics:
-    binv: 291
+    binv: 290
     coverage: 1/1
   op_comb:
-    rs1 != rs2  and rs1 != rd and rs2 != rd: 287
+    rs1 != rs2  and rs1 != rd and rs2 != rd: 286
     rs1 == rd != rs2: 1
     rs1 == rs2 != rd: 1
     rs1 == rs2 == rd: 1
@@ -2047,7 +2051,7 @@ binv:
     x29: 1
     x3: 1
     x30: 1
-    x31: 260
+    x31: 259
     x4: 1
     x5: 1
     x6: 1
@@ -2081,7 +2085,7 @@ binv:
     x29: 1
     x3: 1
     x30: 258
-    x31: 3
+    x31: 2
     x4: 1
     x5: 1
     x6: 1
@@ -2112,9 +2116,9 @@ binv:
     x26: 1
     x27: 1
     x28: 1
-    x29: 256
+    x29: 257
     x3: 1
-    x30: 5
+    x30: 3
     x31: 1
     x4: 1
     x5: 1
@@ -2125,7 +2129,7 @@ binv:
     coverage: 32/32
   val_comb:
     rs1_val == 1431655765: 1  # Alternate: 0x55555555
-    rs2_val == 2147483647: 68 # Walking Zeros: 0x7fffffff
+    rs2_val == 2147483647: 67 # Walking Zeros: 0x7fffffff
     rs2_val == 3221225471: 1 # Walking Zeros: 0xbfffffff
     rs2_val == 3758096383: 1 # Walking Zeros: 0xdfffffff
     rs2_val == 4026531839: 1 # Walking Zeros: 0xefffffff
@@ -2155,13 +2159,13 @@ binv:
     rs2_val == 4294967279: 1 # Walking Zeros: 0xffffffef
     rs2_val == 4294967287: 1 # Walking Zeros: 0xfffffff7
     rs2_val == 4294967291: 1 # Walking Zeros: 0xfffffffb
-    rs2_val == 4294967293: 1 # Walking Zeros: 0xfffffffd
-    rs2_val == 4294967294: 2 # Walking Zeros: 0xfffffffe
+    rs2_val == 4294967293: 2 # Walking Zeros: 0xfffffffd
+    rs2_val == 4294967294: 1 # Walking Zeros: 0xfffffffe
     rs1_val == 2147483647: 68 # Walking Zeros: 0x7fffffff
     rs1_val == 3221225471: 2 # Walking Zeros: 0xbfffffff
     rs1_val == 3758096383: 2 # Walking Zeros: 0xdfffffff
     rs1_val == 4026531839: 1 # Walking Zeros: 0xefffffff
-    rs1_val == 4160749567: 2 # Walking Zeros: 0xf7ffffff
+    rs1_val == 4160749567: 1 # Walking Zeros: 0xf7ffffff
     rs1_val == 4227858431: 1 # Walking Zeros: 0xfbffffff
     rs1_val == 4261412863: 1 # Walking Zeros: 0xfdffffff
     rs1_val == 4278190079: 1 # Walking Zeros: 0xfeffffff
@@ -2725,8 +2729,8 @@ bset:
     x28: 1
     x29: 1
     x3: 1
-    x30: 258
-    x31: 3
+    x30: 259
+    x31: 2
     x4: 1
     x5: 1
     x6: 1
@@ -2757,9 +2761,9 @@ bset:
     x26: 1
     x27: 1
     x28: 1
-    x29: 256
+    x29: 258
     x3: 1
-    x30: 5
+    x30: 3
     x31: 1
     x4: 1
     x5: 1
@@ -2799,12 +2803,12 @@ bset:
     rs2_val == 4294967263: 1 # Walking Zeros: 0xffffffdf
     rs2_val == 4294967279: 1 # Walking Zeros: 0xffffffef
     rs2_val == 4294967287: 1 # Walking Zeros: 0xfffffff7
-    rs2_val == 4294967291: 1 # Walking Zeros: 0xfffffffb
-    rs2_val == 4294967293: 2 # Walking Zeros: 0xfffffffd
+    rs2_val == 4294967291: 2 # Walking Zeros: 0xfffffffb
+    rs2_val == 4294967293: 1 # Walking Zeros: 0xfffffffd
     rs2_val == 4294967294: 1 # Walking Zeros: 0xfffffffe
     rs1_val == 2147483647: 2 # Walking Zeros: 0x7fffffff
     rs1_val == 3221225471: 2 # Walking Zeros: 0xbfffffff
-    rs1_val == 3758096383: 2 # Walking Zeros: 0xdfffffff
+    rs1_val == 3758096383: 1 # Walking Zeros: 0xdfffffff
     rs1_val == 4026531839: 1 # Walking Zeros: 0xefffffff
     rs1_val == 4160749567: 1 # Walking Zeros: 0xf7ffffff
     rs1_val == 4227858431: 1 # Walking Zeros: 0xfbffffff
@@ -3300,7 +3304,11 @@ bseti:
 clmul:
   config:
   - check ISA:=regex(.*I.*B.*)
+  - check ISA:=regex(.*I.*K.*)
   - check ISA:=regex(.*I.*Zbc.*)
+  - check ISA:=regex(.*I.*Zks.*)
+  - check ISA:=regex(.*I.*Zkn.*)
+  - check ISA:=regex(.*I.*Zbkb.*)
   mnemonics:
     clmul: 162
     coverage: 1/1
@@ -3370,8 +3378,8 @@ clmul:
     x28: 1
     x29: 1
     x3: 1
-    x30: 129
-    x31: 3
+    x30: 130
+    x31: 2
     x4: 1
     x5: 1
     x6: 1
@@ -3402,9 +3410,9 @@ clmul:
     x26: 1
     x27: 1
     x28: 1
-    x29: 127
+    x29: 129
     x3: 1
-    x30: 5
+    x30: 3
     x31: 1
     x4: 1
     x5: 1
@@ -3444,12 +3452,12 @@ clmul:
     rs2_val == 4294967263: 1 # Walking Zeros: 0xffffffdf
     rs2_val == 4294967279: 1 # Walking Zeros: 0xffffffef
     rs2_val == 4294967287: 1 # Walking Zeros: 0xfffffff7
-    rs2_val == 4294967291: 1 # Walking Zeros: 0xfffffffb
-    rs2_val == 4294967293: 2 # Walking Zeros: 0xfffffffd
+    rs2_val == 4294967291: 2 # Walking Zeros: 0xfffffffb
+    rs2_val == 4294967293: 1 # Walking Zeros: 0xfffffffd
     rs2_val == 4294967294: 1 # Walking Zeros: 0xfffffffe
     rs1_val == 2147483647: 2 # Walking Zeros: 0x7fffffff
     rs1_val == 3221225471: 1 # Walking Zeros: 0xbfffffff
-    rs1_val == 3758096383: 2 # Walking Zeros: 0xdfffffff
+    rs1_val == 3758096383: 1 # Walking Zeros: 0xdfffffff
     rs1_val == 4026531839: 1 # Walking Zeros: 0xefffffff
     rs1_val == 4160749567: 1 # Walking Zeros: 0xf7ffffff
     rs1_val == 4227858431: 1 # Walking Zeros: 0xfbffffff
@@ -3577,7 +3585,11 @@ clmul:
 clmulh:
   config:
   - check ISA:=regex(.*I.*B.*)
+  - check ISA:=regex(.*I.*K.*)
   - check ISA:=regex(.*I.*Zbc.*)
+  - check ISA:=regex(.*I.*Zks.*)
+  - check ISA:=regex(.*I.*Zkn.*)
+  - check ISA:=regex(.*I.*Zbkb.*)
   mnemonics:
     clmulh: 162
     coverage: 1/1
@@ -3647,8 +3659,8 @@ clmulh:
     x28: 1
     x29: 1
     x3: 1
-    x30: 129
-    x31: 3
+    x30: 130
+    x31: 2
     x4: 1
     x5: 1
     x6: 1
@@ -3679,9 +3691,9 @@ clmulh:
     x26: 1
     x27: 1
     x28: 1
-    x29: 127
+    x29: 129
     x3: 1
-    x30: 5
+    x30: 3
     x31: 1
     x4: 1
     x5: 1
@@ -3721,12 +3733,12 @@ clmulh:
     rs2_val == 4294967263: 1 # Walking Zeros: 0xffffffdf
     rs2_val == 4294967279: 1 # Walking Zeros: 0xffffffef
     rs2_val == 4294967287: 1 # Walking Zeros: 0xfffffff7
-    rs2_val == 4294967291: 1 # Walking Zeros: 0xfffffffb
-    rs2_val == 4294967293: 2 # Walking Zeros: 0xfffffffd
+    rs2_val == 4294967291: 2 # Walking Zeros: 0xfffffffb
+    rs2_val == 4294967293: 1 # Walking Zeros: 0xfffffffd
     rs2_val == 4294967294: 1 # Walking Zeros: 0xfffffffe
     rs1_val == 2147483647: 2 # Walking Zeros: 0x7fffffff
     rs1_val == 3221225471: 1 # Walking Zeros: 0xbfffffff
-    rs1_val == 3758096383: 2 # Walking Zeros: 0xdfffffff
+    rs1_val == 3758096383: 1 # Walking Zeros: 0xdfffffff
     rs1_val == 4026531839: 1 # Walking Zeros: 0xefffffff
     rs1_val == 4160749567: 1 # Walking Zeros: 0xf7ffffff
     rs1_val == 4227858431: 1 # Walking Zeros: 0xfbffffff
@@ -3924,8 +3936,8 @@ clmulr:
     x28: 1
     x29: 1
     x3: 1
-    x30: 129
-    x31: 3
+    x30: 130
+    x31: 2
     x4: 1
     x5: 1
     x6: 1
@@ -3956,9 +3968,9 @@ clmulr:
     x26: 1
     x27: 1
     x28: 1
-    x29: 127
+    x29: 129
     x3: 1
-    x30: 5
+    x30: 3
     x31: 1
     x4: 1
     x5: 1
@@ -3998,12 +4010,12 @@ clmulr:
     rs2_val == 4294967263: 1 # Walking Zeros: 0xffffffdf
     rs2_val == 4294967279: 1 # Walking Zeros: 0xffffffef
     rs2_val == 4294967287: 1 # Walking Zeros: 0xfffffff7
-    rs2_val == 4294967291: 1 # Walking Zeros: 0xfffffffb
-    rs2_val == 4294967293: 2 # Walking Zeros: 0xfffffffd
+    rs2_val == 4294967291: 2 # Walking Zeros: 0xfffffffb
+    rs2_val == 4294967293: 1 # Walking Zeros: 0xfffffffd
     rs2_val == 4294967294: 1 # Walking Zeros: 0xfffffffe
     rs1_val == 2147483647: 2 # Walking Zeros: 0x7fffffff
     rs1_val == 3221225471: 1 # Walking Zeros: 0xbfffffff
-    rs1_val == 3758096383: 2 # Walking Zeros: 0xdfffffff
+    rs1_val == 3758096383: 1 # Walking Zeros: 0xdfffffff
     rs1_val == 4026531839: 1 # Walking Zeros: 0xefffffff
     rs1_val == 4160749567: 1 # Walking Zeros: 0xf7ffffff
     rs1_val == 4227858431: 1 # Walking Zeros: 0xfbffffff
@@ -5078,8 +5090,8 @@ max:
     x28: 1
     x29: 1
     x3: 1
-    x30: 539
-    x31: 3
+    x30: 540
+    x31: 2
     x4: 1
     x5: 1
     x6: 1
@@ -5110,9 +5122,9 @@ max:
     x26: 1
     x27: 1
     x28: 1
-    x29: 537
+    x29: 539
     x3: 1
-    x30: 5
+    x30: 3
     x31: 1
     x4: 1
     x5: 1
@@ -5152,12 +5164,12 @@ max:
     rs2_val == -33: 1 # Walking Zeros: -0x21
     rs2_val == -17: 1 # Walking Zeros: -0x11
     rs2_val == -9: 1 # Walking Zeros: -0x9
-    rs2_val == -5: 1 # Walking Zeros: -0x5
-    rs2_val == -3: 2 # Walking Zeros: -0x3
+    rs2_val == -5: 2 # Walking Zeros: -0x5
+    rs2_val == -3: 1 # Walking Zeros: -0x3
     rs2_val == -2: 1 # Walking Zeros: -0x2
     rs1_val == 2147483647: 2 # Walking Zeros: 0x7fffffff
     rs1_val == -1073741825: 1 # Walking Zeros: -0x40000001
-    rs1_val == -536870913: 2 # Walking Zeros: -0x20000001
+    rs1_val == -536870913: 1 # Walking Zeros: -0x20000001
     rs1_val == -268435457: 1 # Walking Zeros: -0x10000001
     rs1_val == -134217729: 1 # Walking Zeros: -0x8000001
     rs1_val == -67108865: 1 # Walking Zeros: -0x4000001
@@ -5253,7 +5265,7 @@ max:
     rs1_val == 1: 21 # Walking Ones: 0x1
     rs1_val==-1 and rs2_val==-1: 3 # Bitmanip Dataset
     rs1_val==-1 and rs2_val==1: 1 # Bitmanip Dataset
-    rs1_val==-1 and rs2_val==0: 1 # Bitmanip Dataset
+    rs1_val==-1 and rs2_val==0: 2 # Bitmanip Dataset
     rs1_val==-1 and rs2_val==-1717986918: 1 # Bitmanip Dataset
     rs1_val==-1 and rs2_val==1717986919: 1 # Bitmanip Dataset
     rs1_val==-1 and rs2_val==-858993459: 1 # Bitmanip Dataset
@@ -5696,13 +5708,13 @@ max:
     rs2_val == 1431655765: 21 # Alternate: 0x55555555
     rs1_val == -1431655766: 21 # Alternate: -0x55555556
     rs1_val == 1431655765: 21  # Alternate: 0x55555555
-    rs1_val < 0 and rs2_val < 0: 167
+    rs1_val < 0 and rs2_val < 0: 166
     rs1_val < 0 and rs2_val > 0: 131
     rs1_val == (-2**(xlen-1)): 1
     rs1_val == (2**(xlen-1)-1): 2
     rs1_val == 0: 22
     rs1_val == rs2_val: 23
-    rs1_val > 0 and rs2_val < 0: 131
+    rs1_val > 0 and rs2_val < 0: 132
     rs1_val > 0 and rs2_val > 0: 100
     rs2_val == (-2**(xlen-1)): 1
     rs2_val == (2**(xlen-1)-1): 1
@@ -5782,8 +5794,8 @@ maxu:
     x28: 1
     x29: 1
     x3: 1
-    x30: 539
-    x31: 3
+    x30: 540
+    x31: 2
     x4: 1
     x5: 1
     x6: 1
@@ -5814,9 +5826,9 @@ maxu:
     x26: 1
     x27: 1
     x28: 1
-    x29: 537
+    x29: 539
     x3: 1
-    x30: 5
+    x30: 3
     x31: 1
     x4: 1
     x5: 1
@@ -5856,12 +5868,12 @@ maxu:
     rs2_val == 4294967263: 1 # Walking Zeros: 0xffffffdf
     rs2_val == 4294967279: 1 # Walking Zeros: 0xffffffef
     rs2_val == 4294967287: 1 # Walking Zeros: 0xfffffff7
-    rs2_val == 4294967291: 1 # Walking Zeros: 0xfffffffb
-    rs2_val == 4294967293: 2 # Walking Zeros: 0xfffffffd
+    rs2_val == 4294967291: 2 # Walking Zeros: 0xfffffffb
+    rs2_val == 4294967293: 1 # Walking Zeros: 0xfffffffd
     rs2_val == 4294967294: 1 # Walking Zeros: 0xfffffffe
     rs1_val == 2147483647: 2 # Walking Zeros: 0x7fffffff
     rs1_val == 3221225471: 1 # Walking Zeros: 0xbfffffff
-    rs1_val == 3758096383: 2 # Walking Zeros: 0xdfffffff
+    rs1_val == 3758096383: 1 # Walking Zeros: 0xdfffffff
     rs1_val == 4026531839: 1 # Walking Zeros: 0xefffffff
     rs1_val == 4160749567: 1 # Walking Zeros: 0xf7ffffff
     rs1_val == 4227858431: 1 # Walking Zeros: 0xfbffffff
@@ -5957,7 +5969,7 @@ maxu:
     rs1_val == 1: 21 # Walking Ones: 0x1
     rs1_val==4294967295 and rs2_val==4294967295: 3 # Bitmanip Dataset
     rs1_val==4294967295 and rs2_val==1: 1 # Bitmanip Dataset
-    rs1_val==4294967295 and rs2_val==0: 1 # Bitmanip Dataset
+    rs1_val==4294967295 and rs2_val==0: 2 # Bitmanip Dataset
     rs1_val==4294967295 and rs2_val==2576980378: 1 # Bitmanip Dataset
     rs1_val==4294967295 and rs2_val==1717986919: 1 # Bitmanip Dataset
     rs1_val==4294967295 and rs2_val==3435973837: 1 # Bitmanip Dataset
@@ -6400,7 +6412,7 @@ maxu:
     rs2_val == 1431655765: 21 # Alternate: 0x55555555
     rs1_val == 2863311530: 21 # Alternate: 0xaaaaaaaa
     rs1_val == 1431655765: 21  # Alternate: 0x55555555
-    rs1_val == (2**(xlen)-1): 86
+    rs1_val == (2**(xlen)-1): 87
     rs1_val == 0: 22
     rs1_val == rs2_val and rs1_val > 0 and rs2_val > 0: 22
     rs1_val > 0 and rs2_val > 0: 529
@@ -6481,8 +6493,8 @@ min:
     x28: 1
     x29: 1
     x3: 1
-    x30: 539
-    x31: 3
+    x30: 540
+    x31: 2
     x4: 1
     x5: 1
     x6: 1
@@ -6513,9 +6525,9 @@ min:
     x26: 1
     x27: 1
     x28: 1
-    x29: 537
+    x29: 539
     x3: 1
-    x30: 5
+    x30: 3
     x31: 1
     x4: 1
     x5: 1
@@ -6555,12 +6567,12 @@ min:
     rs2_val == -33: 1 # Walking Zeros: -0x21
     rs2_val == -17: 1 # Walking Zeros: -0x11
     rs2_val == -9: 1 # Walking Zeros: -0x9
-    rs2_val == -5: 1 # Walking Zeros: -0x5
-    rs2_val == -3: 2 # Walking Zeros: -0x3
+    rs2_val == -5: 2 # Walking Zeros: -0x5
+    rs2_val == -3: 1 # Walking Zeros: -0x3
     rs2_val == -2: 1 # Walking Zeros: -0x2
     rs1_val == 2147483647: 2 # Walking Zeros: 0x7fffffff
     rs1_val == -1073741825: 1 # Walking Zeros: -0x40000001
-    rs1_val == -536870913: 2 # Walking Zeros: -0x20000001
+    rs1_val == -536870913: 1 # Walking Zeros: -0x20000001
     rs1_val == -268435457: 1 # Walking Zeros: -0x10000001
     rs1_val == -134217729: 1 # Walking Zeros: -0x8000001
     rs1_val == -67108865: 1 # Walking Zeros: -0x4000001
@@ -6656,7 +6668,7 @@ min:
     rs1_val == 1: 21 # Walking Ones: 0x1
     rs1_val==-1 and rs2_val==-1: 3 # Bitmanip Dataset
     rs1_val==-1 and rs2_val==1: 1 # Bitmanip Dataset
-    rs1_val==-1 and rs2_val==0: 1 # Bitmanip Dataset
+    rs1_val==-1 and rs2_val==0: 2 # Bitmanip Dataset
     rs1_val==-1 and rs2_val==-1717986918: 1 # Bitmanip Dataset
     rs1_val==-1 and rs2_val==1717986919: 1 # Bitmanip Dataset
     rs1_val==-1 and rs2_val==-858993459: 1 # Bitmanip Dataset
@@ -7099,13 +7111,13 @@ min:
     rs2_val == 1431655765: 21 # Alternate: 0x55555555
     rs1_val == -1431655766: 21 # Alternate: -0x55555556
     rs1_val == 1431655765: 21  # Alternate: 0x55555555
-    rs1_val < 0 and rs2_val < 0: 167
+    rs1_val < 0 and rs2_val < 0: 166
     rs1_val < 0 and rs2_val > 0: 131
     rs1_val == (-2**(xlen-1)): 1
     rs1_val == (2**(xlen-1)-1): 2
     rs1_val == 0: 22
     rs1_val == rs2_val: 23
-    rs1_val > 0 and rs2_val < 0: 131
+    rs1_val > 0 and rs2_val < 0: 132
     rs1_val > 0 and rs2_val > 0: 100
     rs2_val == (-2**(xlen-1)): 1
     rs2_val == (2**(xlen-1)-1): 1
@@ -7185,8 +7197,8 @@ minu:
     x28: 1
     x29: 1
     x3: 1
-    x30: 539
-    x31: 3
+    x30: 540
+    x31: 2
     x4: 1
     x5: 1
     x6: 1
@@ -7217,9 +7229,9 @@ minu:
     x26: 1
     x27: 1
     x28: 1
-    x29: 537
+    x29: 539
     x3: 1
-    x30: 5
+    x30: 3
     x31: 1
     x4: 1
     x5: 1
@@ -7259,12 +7271,12 @@ minu:
     rs2_val == 4294967263: 1 # Walking Zeros: 0xffffffdf
     rs2_val == 4294967279: 1 # Walking Zeros: 0xffffffef
     rs2_val == 4294967287: 1 # Walking Zeros: 0xfffffff7
-    rs2_val == 4294967291: 1 # Walking Zeros: 0xfffffffb
-    rs2_val == 4294967293: 2 # Walking Zeros: 0xfffffffd
+    rs2_val == 4294967291: 2 # Walking Zeros: 0xfffffffb
+    rs2_val == 4294967293: 1 # Walking Zeros: 0xfffffffd
     rs2_val == 4294967294: 1 # Walking Zeros: 0xfffffffe
     rs1_val == 2147483647: 2 # Walking Zeros: 0x7fffffff
     rs1_val == 3221225471: 1 # Walking Zeros: 0xbfffffff
-    rs1_val == 3758096383: 2 # Walking Zeros: 0xdfffffff
+    rs1_val == 3758096383: 1 # Walking Zeros: 0xdfffffff
     rs1_val == 4026531839: 1 # Walking Zeros: 0xefffffff
     rs1_val == 4160749567: 1 # Walking Zeros: 0xf7ffffff
     rs1_val == 4227858431: 1 # Walking Zeros: 0xfbffffff
@@ -7360,7 +7372,7 @@ minu:
     rs1_val == 1: 21 # Walking Ones: 0x1
     rs1_val==4294967295 and rs2_val==4294967295: 3 # Bitmanip Dataset
     rs1_val==4294967295 and rs2_val==1: 1 # Bitmanip Dataset
-    rs1_val==4294967295 and rs2_val==0: 1 # Bitmanip Dataset
+    rs1_val==4294967295 and rs2_val==0: 2 # Bitmanip Dataset
     rs1_val==4294967295 and rs2_val==2576980378: 1 # Bitmanip Dataset
     rs1_val==4294967295 and rs2_val==1717986919: 1 # Bitmanip Dataset
     rs1_val==4294967295 and rs2_val==3435973837: 1 # Bitmanip Dataset
@@ -7803,7 +7815,7 @@ minu:
     rs2_val == 1431655765: 21 # Alternate: 0x55555555
     rs1_val == 2863311530: 21 # Alternate: 0xaaaaaaaa
     rs1_val == 1431655765: 21  # Alternate: 0x55555555
-    rs1_val == (2**(xlen)-1): 86
+    rs1_val == (2**(xlen)-1): 87
     rs1_val == 0: 22
     rs1_val == rs2_val and rs1_val > 0 and rs2_val > 0: 22
     rs1_val > 0 and rs2_val > 0: 529
@@ -7968,7 +7980,11 @@ orcb_32:
 orn:
   config:
   - check ISA:=regex(.*I.*B.*)
+  - check ISA:=regex(.*I.*K.*)
   - check ISA:=regex(.*I.*Zbb.*)
+  - check ISA:=regex(.*I.*Zks.*)
+  - check ISA:=regex(.*I.*Zkn.*)
+  - check ISA:=regex(.*I.*Zbkb.*)
   mnemonics:
     orn: 592
     coverage: 1/1
@@ -8038,8 +8054,8 @@ orn:
     x28: 1
     x29: 1
     x3: 1
-    x30: 559
-    x31: 3
+    x30: 560
+    x31: 2
     x4: 1
     x5: 1
     x6: 1
@@ -8070,9 +8086,9 @@ orn:
     x26: 1
     x27: 1
     x28: 1
-    x29: 557
+    x29: 559
     x3: 1
-    x30: 5
+    x30: 3
     x31: 1
     x4: 1
     x5: 1
@@ -8112,12 +8128,12 @@ orn:
     rs2_val == 4294967263: 1 # Walking Zeros: 0xffffffdf
     rs2_val == 4294967279: 1 # Walking Zeros: 0xffffffef
     rs2_val == 4294967287: 1 # Walking Zeros: 0xfffffff7
-    rs2_val == 4294967291: 1 # Walking Zeros: 0xfffffffb
-    rs2_val == 4294967293: 2 # Walking Zeros: 0xfffffffd
+    rs2_val == 4294967291: 2 # Walking Zeros: 0xfffffffb
+    rs2_val == 4294967293: 1 # Walking Zeros: 0xfffffffd
     rs2_val == 4294967294: 1 # Walking Zeros: 0xfffffffe
     rs1_val == 2147483647: 2 # Walking Zeros: 0x7fffffff
     rs1_val == 3221225471: 1 # Walking Zeros: 0xbfffffff
-    rs1_val == 3758096383: 2 # Walking Zeros: 0xdfffffff
+    rs1_val == 3758096383: 1 # Walking Zeros: 0xdfffffff
     rs1_val == 4026531839: 1 # Walking Zeros: 0xefffffff
     rs1_val == 4160749567: 1 # Walking Zeros: 0xf7ffffff
     rs1_val == 4227858431: 1 # Walking Zeros: 0xfbffffff
@@ -8233,7 +8249,7 @@ orn:
     'rs1_val == 0x254a9493 and rs2_val == 0xc5521660 #nosat': 1 # Uniform Random 20
     rs1_val==4294967295 and rs2_val==4294967295: 3 # Bitmanip Dataset
     rs1_val==4294967295 and rs2_val==1: 1 # Bitmanip Dataset
-    rs1_val==4294967295 and rs2_val==0: 1 # Bitmanip Dataset
+    rs1_val==4294967295 and rs2_val==0: 2 # Bitmanip Dataset
     rs1_val==4294967295 and rs2_val==2576980378: 1 # Bitmanip Dataset
     rs1_val==4294967295 and rs2_val==1717986919: 1 # Bitmanip Dataset
     rs1_val==4294967295 and rs2_val==3435973837: 1 # Bitmanip Dataset
@@ -8676,7 +8692,7 @@ orn:
     rs2_val == 1431655765: 21 # Alternate: 0x55555555
     rs1_val == 2863311530: 21 # Alternate: 0xaaaaaaaa
     rs1_val == 1431655765: 21  # Alternate: 0x55555555
-    rs1_val == (2**(xlen)-1): 86
+    rs1_val == (2**(xlen)-1): 87
     rs1_val == 0: 22
     rs1_val == rs2_val and rs1_val > 0 and rs2_val > 0: 22
     rs1_val > 0 and rs2_val > 0: 549
@@ -8688,7 +8704,11 @@ rev8_32:
   base_op: grevi
   config:
   - check ISA:=regex(.*I.*B.*)
+  - check ISA:=regex(.*I.*K.*)
   - check ISA:=regex(.*I.*Zbb.*)
+  - check ISA:=regex(.*I.*Zks.*)
+  - check ISA:=regex(.*I.*Zkn.*)
+  - check ISA:=regex(.*I.*Zbkb.*)
   mnemonics:
     rev8: 154
     coverage: 1/1
@@ -8926,7 +8946,11 @@ rev8_32:
 rol:
   config:
   - check ISA:=regex(.*I.*B.*)
+  - check ISA:=regex(.*I.*K.*)
   - check ISA:=regex(.*I.*Zbb.*)
+  - check ISA:=regex(.*I.*Zkn.*)
+  - check ISA:=regex(.*I.*Zks.*)
+  - check ISA:=regex(.*I.*Zbkb.*)
   mnemonics:
     rol: 269
     coverage: 1/1
@@ -8996,8 +9020,8 @@ rol:
     x28: 1
     x29: 1
     x3: 1
-    x30: 236
-    x31: 3
+    x30: 237
+    x31: 2
     x4: 1
     x5: 1
     x6: 1
@@ -9028,9 +9052,9 @@ rol:
     x26: 1
     x27: 1
     x28: 1
-    x29: 234
+    x29: 236
     x3: 1
-    x30: 5
+    x30: 3
     x31: 1
     x4: 1
     x5: 1
@@ -9073,9 +9097,9 @@ rol:
     'rs2_val == 0xEEC50588 and rs1_val == 0xCB8193EF #nosat': 1 # 3 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0xCA7160CC and rs1_val == 0x577F8847 #nosat': 1 # 2 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0x60E30DA2 and rs1_val == 0x9B5EAF0A #nosat': 1 # 1 Trailing zeros for rs2_val. Other operands are random
-    'rs2_val == 0x76F86039 and rs1_val == 0x5D3BBCE0 #nosat': 1 # 0 Trailing zeros for rs2_val. Other operands are random
+    'rs2_val == 0x76F86039 and rs1_val == 0x5D3BBCE0 #nosat': 2 # 0 Trailing zeros for rs2_val. Other operands are random
     'rs1_val == 0x00000000 and rs2_val == 0xFD1032E8 #nosat': 1 # 32 Trailing zeros for rs1_val. Other operands are random
-    'rs1_val == 0x80000000 and rs2_val == 0x7B246C17 #nosat': 2 # 31 Trailing zeros for rs1_val. Other operands are random
+    'rs1_val == 0x80000000 and rs2_val == 0x7B246C17 #nosat': 1 # 31 Trailing zeros for rs1_val. Other operands are random
     'rs1_val == 0x40000000 and rs2_val == 0x56F3EEF1 #nosat': 1 # 30 Trailing zeros for rs1_val. Other operands are random
     'rs1_val == 0xA0000000 and rs2_val == 0x75923260 #nosat': 1 # 29 Trailing zeros for rs1_val. Other operands are random
     'rs1_val == 0x10000000 and rs2_val == 0xB9D3087C #nosat': 1 # 28 Trailing zeros for rs1_val. Other operands are random
@@ -9309,7 +9333,11 @@ rol:
 ror:
   config:
   - check ISA:=regex(.*I.*B.*)
+  - check ISA:=regex(.*I.*K.*)
   - check ISA:=regex(.*I.*Zbb.*)
+  - check ISA:=regex(.*I.*Zkn.*)
+  - check ISA:=regex(.*I.*Zks.*)
+  - check ISA:=regex(.*I.*Zbkb.*)
   mnemonics:
     ror: 269
     coverage: 1/1
@@ -9379,8 +9407,8 @@ ror:
     x28: 1
     x29: 1
     x3: 1
-    x30: 236
-    x31: 3
+    x30: 237
+    x31: 2
     x4: 1
     x5: 1
     x6: 1
@@ -9411,9 +9439,9 @@ ror:
     x26: 1
     x27: 1
     x28: 1
-    x29: 234
+    x29: 236
     x3: 1
-    x30: 5
+    x30: 3
     x31: 1
     x4: 1
     x5: 1
@@ -9456,9 +9484,9 @@ ror:
     'rs2_val == 0xEEC50588 and rs1_val == 0xCB8193EF #nosat': 1 # 3 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0xCA7160CC and rs1_val == 0x577F8847 #nosat': 1 # 2 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0x60E30DA2 and rs1_val == 0x9B5EAF0A #nosat': 1 # 1 Trailing zeros for rs2_val. Other operands are random
-    'rs2_val == 0x76F86039 and rs1_val == 0x5D3BBCE0 #nosat': 1 # 0 Trailing zeros for rs2_val. Other operands are random
+    'rs2_val == 0x76F86039 and rs1_val == 0x5D3BBCE0 #nosat': 2 # 0 Trailing zeros for rs2_val. Other operands are random
     'rs1_val == 0x00000000 and rs2_val == 0xFD1032E8 #nosat': 1 # 32 Trailing zeros for rs1_val. Other operands are random
-    'rs1_val == 0x80000000 and rs2_val == 0x7B246C17 #nosat': 2 # 31 Trailing zeros for rs1_val. Other operands are random
+    'rs1_val == 0x80000000 and rs2_val == 0x7B246C17 #nosat': 1 # 31 Trailing zeros for rs1_val. Other operands are random
     'rs1_val == 0x40000000 and rs2_val == 0x56F3EEF1 #nosat': 1 # 30 Trailing zeros for rs1_val. Other operands are random
     'rs1_val == 0xA0000000 and rs2_val == 0x75923260 #nosat': 1 # 29 Trailing zeros for rs1_val. Other operands are random
     'rs1_val == 0x10000000 and rs2_val == 0xB9D3087C #nosat': 1 # 28 Trailing zeros for rs1_val. Other operands are random
@@ -9692,7 +9720,11 @@ ror:
 rori:
   config:
   - check ISA:=regex(.*I.*B.*)
+  - check ISA:=regex(.*I.*K.*)
   - check ISA:=regex(.*I.*Zbb.*)
+  - check ISA:=regex(.*I.*Zkn.*)
+  - check ISA:=regex(.*I.*Zks.*)
+  - check ISA:=regex(.*I.*Zbkb.*)
   mnemonics:
     rori: 158
     coverage: 1/1
@@ -10337,8 +10369,8 @@ sh1add:
     x28: 1
     x29: 1
     x3: 1
-    x30: 539
-    x31: 3
+    x30: 540
+    x31: 2
     x4: 1
     x5: 1
     x6: 1
@@ -10369,9 +10401,9 @@ sh1add:
     x26: 1
     x27: 1
     x28: 1
-    x29: 537
+    x29: 539
     x3: 1
-    x30: 5
+    x30: 3
     x31: 1
     x4: 1
     x5: 1
@@ -10411,12 +10443,12 @@ sh1add:
     rs2_val == -33: 1 # Walking Zeros: -0x21
     rs2_val == -17: 1 # Walking Zeros: -0x11
     rs2_val == -9: 1 # Walking Zeros: -0x9
-    rs2_val == -5: 1 # Walking Zeros: -0x5
-    rs2_val == -3: 2 # Walking Zeros: -0x3
+    rs2_val == -5: 2 # Walking Zeros: -0x5
+    rs2_val == -3: 1 # Walking Zeros: -0x3
     rs2_val == -2: 1 # Walking Zeros: -0x2
     rs1_val == 2147483647: 2 # Walking Zeros: 0x7fffffff
     rs1_val == -1073741825: 1 # Walking Zeros: -0x40000001
-    rs1_val == -536870913: 2 # Walking Zeros: -0x20000001
+    rs1_val == -536870913: 1 # Walking Zeros: -0x20000001
     rs1_val == -268435457: 1 # Walking Zeros: -0x10000001
     rs1_val == -134217729: 1 # Walking Zeros: -0x8000001
     rs1_val == -67108865: 1 # Walking Zeros: -0x4000001
@@ -10512,7 +10544,7 @@ sh1add:
     rs1_val == 1: 21 # Walking Ones: 0x1
     rs1_val==-1 and rs2_val==-1: 3 # Bitmanip Dataset
     rs1_val==-1 and rs2_val==1: 1 # Bitmanip Dataset
-    rs1_val==-1 and rs2_val==0: 1 # Bitmanip Dataset
+    rs1_val==-1 and rs2_val==0: 2 # Bitmanip Dataset
     rs1_val==-1 and rs2_val==-1717986918: 1 # Bitmanip Dataset
     rs1_val==-1 and rs2_val==1717986919: 1 # Bitmanip Dataset
     rs1_val==-1 and rs2_val==-858993459: 1 # Bitmanip Dataset
@@ -10955,13 +10987,13 @@ sh1add:
     rs2_val == 1431655765: 21 # Alternate: 0x55555555
     rs1_val == -1431655766: 21 # Alternate: -0x55555556
     rs1_val == 1431655765: 21  # Alternate: 0x55555555
-    rs1_val < 0 and rs2_val < 0: 167
+    rs1_val < 0 and rs2_val < 0: 166
     rs1_val < 0 and rs2_val > 0: 131
     rs1_val == (-2**(xlen-1)): 1
     rs1_val == (2**(xlen-1)-1): 2
     rs1_val == 0: 22
     rs1_val == rs2_val: 23
-    rs1_val > 0 and rs2_val < 0: 131
+    rs1_val > 0 and rs2_val < 0: 132
     rs1_val > 0 and rs2_val > 0: 100
     rs2_val == (-2**(xlen-1)): 1
     rs2_val == (2**(xlen-1)-1): 1
@@ -11041,8 +11073,8 @@ sh2add:
     x28: 1
     x29: 1
     x3: 1
-    x30: 539
-    x31: 3
+    x30: 540
+    x31: 2
     x4: 1
     x5: 1
     x6: 1
@@ -11073,9 +11105,9 @@ sh2add:
     x26: 1
     x27: 1
     x28: 1
-    x29: 537
+    x29: 539
     x3: 1
-    x30: 5
+    x30: 3
     x31: 1
     x4: 1
     x5: 1
@@ -11115,12 +11147,12 @@ sh2add:
     rs2_val == -33: 1 # Walking Zeros: -0x21
     rs2_val == -17: 1 # Walking Zeros: -0x11
     rs2_val == -9: 1 # Walking Zeros: -0x9
-    rs2_val == -5: 1 # Walking Zeros: -0x5
-    rs2_val == -3: 2 # Walking Zeros: -0x3
+    rs2_val == -5: 2 # Walking Zeros: -0x5
+    rs2_val == -3: 1 # Walking Zeros: -0x3
     rs2_val == -2: 1 # Walking Zeros: -0x2
     rs1_val == 2147483647: 2 # Walking Zeros: 0x7fffffff
     rs1_val == -1073741825: 1 # Walking Zeros: -0x40000001
-    rs1_val == -536870913: 2 # Walking Zeros: -0x20000001
+    rs1_val == -536870913: 1 # Walking Zeros: -0x20000001
     rs1_val == -268435457: 1 # Walking Zeros: -0x10000001
     rs1_val == -134217729: 1 # Walking Zeros: -0x8000001
     rs1_val == -67108865: 1 # Walking Zeros: -0x4000001
@@ -11216,7 +11248,7 @@ sh2add:
     rs1_val == 1: 21 # Walking Ones: 0x1
     rs1_val==-1 and rs2_val==-1: 3 # Bitmanip Dataset
     rs1_val==-1 and rs2_val==1: 1 # Bitmanip Dataset
-    rs1_val==-1 and rs2_val==0: 1 # Bitmanip Dataset
+    rs1_val==-1 and rs2_val==0: 2 # Bitmanip Dataset
     rs1_val==-1 and rs2_val==-1717986918: 1 # Bitmanip Dataset
     rs1_val==-1 and rs2_val==1717986919: 1 # Bitmanip Dataset
     rs1_val==-1 and rs2_val==-858993459: 1 # Bitmanip Dataset
@@ -11659,13 +11691,13 @@ sh2add:
     rs2_val == 1431655765: 21 # Alternate: 0x55555555
     rs1_val == -1431655766: 21 # Alternate: -0x55555556
     rs1_val == 1431655765: 21  # Alternate: 0x55555555
-    rs1_val < 0 and rs2_val < 0: 167
+    rs1_val < 0 and rs2_val < 0: 166
     rs1_val < 0 and rs2_val > 0: 131
     rs1_val == (-2**(xlen-1)): 1
     rs1_val == (2**(xlen-1)-1): 2
     rs1_val == 0: 22
     rs1_val == rs2_val: 23
-    rs1_val > 0 and rs2_val < 0: 131
+    rs1_val > 0 and rs2_val < 0: 132
     rs1_val > 0 and rs2_val > 0: 100
     rs2_val == (-2**(xlen-1)): 1
     rs2_val == (2**(xlen-1)-1): 1
@@ -11745,8 +11777,8 @@ sh3add:
     x28: 1
     x29: 1
     x3: 1
-    x30: 539
-    x31: 3
+    x30: 540
+    x31: 2
     x4: 1
     x5: 1
     x6: 1
@@ -11777,9 +11809,9 @@ sh3add:
     x26: 1
     x27: 1
     x28: 1
-    x29: 537
+    x29: 539
     x3: 1
-    x30: 5
+    x30: 3
     x31: 1
     x4: 1
     x5: 1
@@ -11819,12 +11851,12 @@ sh3add:
     rs2_val == -33: 1 # Walking Zeros: -0x21
     rs2_val == -17: 1 # Walking Zeros: -0x11
     rs2_val == -9: 1 # Walking Zeros: -0x9
-    rs2_val == -5: 1 # Walking Zeros: -0x5
-    rs2_val == -3: 2 # Walking Zeros: -0x3
+    rs2_val == -5: 2 # Walking Zeros: -0x5
+    rs2_val == -3: 1 # Walking Zeros: -0x3
     rs2_val == -2: 1 # Walking Zeros: -0x2
     rs1_val == 2147483647: 2 # Walking Zeros: 0x7fffffff
     rs1_val == -1073741825: 1 # Walking Zeros: -0x40000001
-    rs1_val == -536870913: 2 # Walking Zeros: -0x20000001
+    rs1_val == -536870913: 1 # Walking Zeros: -0x20000001
     rs1_val == -268435457: 1 # Walking Zeros: -0x10000001
     rs1_val == -134217729: 1 # Walking Zeros: -0x8000001
     rs1_val == -67108865: 1 # Walking Zeros: -0x4000001
@@ -11920,7 +11952,7 @@ sh3add:
     rs1_val == 1: 21 # Walking Ones: 0x1
     rs1_val==-1 and rs2_val==-1: 3 # Bitmanip Dataset
     rs1_val==-1 and rs2_val==1: 1 # Bitmanip Dataset
-    rs1_val==-1 and rs2_val==0: 1 # Bitmanip Dataset
+    rs1_val==-1 and rs2_val==0: 2 # Bitmanip Dataset
     rs1_val==-1 and rs2_val==-1717986918: 1 # Bitmanip Dataset
     rs1_val==-1 and rs2_val==1717986919: 1 # Bitmanip Dataset
     rs1_val==-1 and rs2_val==-858993459: 1 # Bitmanip Dataset
@@ -12363,13 +12395,13 @@ sh3add:
     rs2_val == 1431655765: 21 # Alternate: 0x55555555
     rs1_val == -1431655766: 21 # Alternate: -0x55555556
     rs1_val == 1431655765: 21  # Alternate: 0x55555555
-    rs1_val < 0 and rs2_val < 0: 167
+    rs1_val < 0 and rs2_val < 0: 166
     rs1_val < 0 and rs2_val > 0: 131
     rs1_val == (-2**(xlen-1)): 1
     rs1_val == (2**(xlen-1)-1): 2
     rs1_val == 0: 22
     rs1_val == rs2_val: 23
-    rs1_val > 0 and rs2_val < 0: 131
+    rs1_val > 0 and rs2_val < 0: 132
     rs1_val > 0 and rs2_val > 0: 100
     rs2_val == (-2**(xlen-1)): 1
     rs2_val == (2**(xlen-1)-1): 1
@@ -12379,7 +12411,12 @@ sh3add:
 xnor:
   config:
   - check ISA:=regex(.*I.*B.*)
+  - check ISA:=regex(.*I.*K.*)
   - check ISA:=regex(.*I.*Zbb.*)
+  - check ISA:=regex(.*I.*Zk.*)
+  - check ISA:=regex(.*I.*Zks.*)
+  - check ISA:=regex(.*I.*Zkn.*)
+  - check ISA:=regex(.*I.*Zbkb.*)
   mnemonics:
     xnor: 592
     coverage: 1/1
@@ -12449,8 +12486,8 @@ xnor:
     x28: 1
     x29: 1
     x3: 1
-    x30: 559
-    x31: 3
+    x30: 560
+    x31: 2
     x4: 1
     x5: 1
     x6: 1
@@ -12481,9 +12518,9 @@ xnor:
     x26: 1
     x27: 1
     x28: 1
-    x29: 557
+    x29: 559
     x3: 1
-    x30: 5
+    x30: 3
     x31: 1
     x4: 1
     x5: 1
@@ -12523,12 +12560,12 @@ xnor:
     rs2_val == 4294967263: 1 # Walking Zeros: 0xffffffdf
     rs2_val == 4294967279: 1 # Walking Zeros: 0xffffffef
     rs2_val == 4294967287: 1 # Walking Zeros: 0xfffffff7
-    rs2_val == 4294967291: 1 # Walking Zeros: 0xfffffffb
-    rs2_val == 4294967293: 2 # Walking Zeros: 0xfffffffd
+    rs2_val == 4294967291: 2 # Walking Zeros: 0xfffffffb
+    rs2_val == 4294967293: 1 # Walking Zeros: 0xfffffffd
     rs2_val == 4294967294: 1 # Walking Zeros: 0xfffffffe
     rs1_val == 2147483647: 2 # Walking Zeros: 0x7fffffff
     rs1_val == 3221225471: 1 # Walking Zeros: 0xbfffffff
-    rs1_val == 3758096383: 2 # Walking Zeros: 0xdfffffff
+    rs1_val == 3758096383: 1 # Walking Zeros: 0xdfffffff
     rs1_val == 4026531839: 1 # Walking Zeros: 0xefffffff
     rs1_val == 4160749567: 1 # Walking Zeros: 0xf7ffffff
     rs1_val == 4227858431: 1 # Walking Zeros: 0xfbffffff
@@ -12644,7 +12681,7 @@ xnor:
     'rs1_val == 0x254a9493 and rs2_val == 0xc5521660 #nosat': 1 # Uniform Random 20
     rs1_val==4294967295 and rs2_val==4294967295: 3 # Bitmanip Dataset
     rs1_val==4294967295 and rs2_val==1: 1 # Bitmanip Dataset
-    rs1_val==4294967295 and rs2_val==0: 1 # Bitmanip Dataset
+    rs1_val==4294967295 and rs2_val==0: 2 # Bitmanip Dataset
     rs1_val==4294967295 and rs2_val==2576980378: 1 # Bitmanip Dataset
     rs1_val==4294967295 and rs2_val==1717986919: 1 # Bitmanip Dataset
     rs1_val==4294967295 and rs2_val==3435973837: 1 # Bitmanip Dataset
@@ -13087,7 +13124,7 @@ xnor:
     rs2_val == 1431655765: 21 # Alternate: 0x55555555
     rs1_val == 2863311530: 21 # Alternate: 0xaaaaaaaa
     rs1_val == 1431655765: 21  # Alternate: 0x55555555
-    rs1_val == (2**(xlen)-1): 86
+    rs1_val == (2**(xlen)-1): 87
     rs1_val == 0: 22
     rs1_val == rs2_val and rs1_val > 0 and rs2_val > 0: 22
     rs1_val > 0 and rs2_val > 0: 549
