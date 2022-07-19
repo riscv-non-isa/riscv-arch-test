@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## [3.1.2] - 2022-07-19
+## [3.2.0] - 2022-07-19
   - Add definition of LREGWU according to XLEN.
   - Fix corresponding fcvt.\*.wu tests.
 
