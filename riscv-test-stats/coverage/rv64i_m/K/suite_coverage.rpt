@@ -1,6 +1,5 @@
 aes64ds:
   config:
-  - check ISA:=regex(.*RV64.*I.*K.*)
   - check ISA:=regex(.*RV64.*I.*Zk.*)
   - check ISA:=regex(.*RV64.*I.*Zkn.*)
   - check ISA:=regex(.*RV64.*I.*Zknd.*)
@@ -173,7 +172,6 @@ aes64ds:
   total_coverage: 154/154
 aes64dsm:
   config:
-  - check ISA:=regex(.*RV64.*I.*K.*)
   - check ISA:=regex(.*RV64.*I.*Zk.*)
   - check ISA:=regex(.*RV64.*I.*Zkn.*)
   - check ISA:=regex(.*RV64.*I.*Zknd.*)
@@ -346,7 +344,6 @@ aes64dsm:
   total_coverage: 154/154
 aes64es:
   config:
-  - check ISA:=regex(.*RV64.*I.*K.*)
   - check ISA:=regex(.*RV64.*I.*Zk.*)
   - check ISA:=regex(.*RV64.*I.*Zkn.*)
   - check ISA:=regex(.*RV64.*I.*Zkne.*)
@@ -519,7 +516,6 @@ aes64es:
   total_coverage: 154/154
 aes64esm:
   config:
-  - check ISA:=regex(.*RV64.*I.*K.*)
   - check ISA:=regex(.*RV64.*I.*Zk.*)
   - check ISA:=regex(.*RV64.*I.*Zkn.*)
   - check ISA:=regex(.*RV64.*I.*Zkne.*)
@@ -692,7 +688,6 @@ aes64esm:
   total_coverage: 154/154
 aes64im:
   config:
-  - check ISA:=regex(.*RV64.*I.*K.*)
   - check ISA:=regex(.*RV64.*I.*Zk.*)
   - check ISA:=regex(.*RV64.*I.*Zkn.*)
   - check ISA:=regex(.*RV64.*I.*Zknd.*)
@@ -924,9 +919,9 @@ aes64im:
   total_coverage: 215/215
 aes64ks1i:
   config:
-  - check ISA:=regex(.*RV64.*I.*K.*)
   - check ISA:=regex(.*RV64.*I.*Zk.*)
   - check ISA:=regex(.*RV64.*I.*Zkn.*)
+  - check ISA:=regex(.*RV64.*I.*Zknd.*)
   - check ISA:=regex(.*RV64.*I.*Zkne.*)
   mnemonics:
     aes64ks1i: 86
@@ -1092,9 +1087,9 @@ aes64ks1i:
   total_coverage: 151/151
 aes64ks2:
   config:
-  - check ISA:=regex(.*RV64.*I.*K.*)
   - check ISA:=regex(.*RV64.*I.*Zk.*)
   - check ISA:=regex(.*RV64.*I.*Zkn.*)
+  - check ISA:=regex(.*RV64.*I.*Zknd.*)
   - check ISA:=regex(.*RV64.*I.*Zkne.*)
   mnemonics:
     aes64ks2: 280
@@ -1490,7 +1485,6 @@ aes64ks2:
 brev8:
   base_op: grevi
   config:
-  - check ISA:=regex(.*I.*K.*)
   - check ISA:=regex(.*I.*Zk.*)
   - check ISA:=regex(.*I.*Zks.*)
   - check ISA:=regex(.*I.*Zkn.*)
@@ -1709,39 +1703,6 @@ brev8:
     coverage: 134/134
   total_coverage: 201/201
 datasets:
-  all_fregs:
-    f0: 0
-    f1: 0
-    f10: 0
-    f11: 0
-    f12: 0
-    f13: 0
-    f14: 0
-    f15: 0
-    f16: 0
-    f17: 0
-    f18: 0
-    f19: 0
-    f2: 0
-    f20: 0
-    f21: 0
-    f22: 0
-    f23: 0
-    f24: 0
-    f25: 0
-    f26: 0
-    f27: 0
-    f28: 0
-    f29: 0
-    f3: 0
-    f30: 0
-    f31: 0
-    f4: 0
-    f5: 0
-    f6: 0
-    f7: 0
-    f8: 0
-    f9: 0
   all_regs:
     x0: 0
     x1: 0
@@ -1856,15 +1817,6 @@ datasets:
     rs2_val == (2**(xlen)-1): 0
     rs2_val == 0: 0
     rs2_val == 1: 0
-  base_rs3val_sgn:
-    rs3_val == (-2**(xlen-1)): 0
-    rs3_val == (2**(xlen-1)-1): 0
-    rs3_val == 0: 0
-    rs3_val == 1: 0
-  base_rs3val_unsgn:
-    rs3_val == (2**(xlen)-1): 0
-    rs3_val == 0: 0
-    rs3_val == 1: 0
   bfmt_base_branch_val_align_sgn:
     rs1_val < 0 and rs2_val < 0 and imm_val & 0x03 == 0: 0
     rs1_val < 0 and rs2_val > 0 and imm_val & 0x03 == 0: 0
@@ -1910,17 +1862,8 @@ datasets:
     imm_val == (2**(12-1)-1): 0
     imm_val == 0: 0
     imm_val == 1: 0
-  ifmt_base_immval_sgn_len:
-    imm_val == (-2**(ceil(log(xlen,2))-1)): 0
-    imm_val == (2**(ceil(log(xlen,2))-1)-1): 0
-    imm_val == 0: 0
-    imm_val == 1: 0
   ifmt_base_immval_unsgn:
     imm_val == (2**(12)-1): 0
-    imm_val == 0: 0
-    imm_val == 1: 0
-  ifmt_base_immval_unsgn_len_sub_3:
-    imm_val == (2**(ceil(log(xlen,2))-3)-1): 0
     imm_val == 0: 0
     imm_val == 1: 0
   ifmt_base_shift:
@@ -1951,18 +1894,6 @@ datasets:
     alternate("imm_val",12): 0
     walking_ones("imm_val", 12): 0
     walking_zeros("imm_val", 12): 0
-  ifmt_immval_walking_5u:
-    alternate("imm_val", 5, False): 0
-    walking_ones("imm_val", 5, False): 0
-    walking_zeros("imm_val", 5, False): 0
-  ifmt_immval_walking_len:
-    alternate("imm_val",ceil(log(xlen,2)), False): 0
-    walking_ones("imm_val", ceil(log(xlen,2)), False): 0
-    walking_zeros("imm_val", ceil(log(xlen,2)), False): 0
-  ifmt_immval_walking_len_sub_3:
-    alternate("imm_val", ceil(log(xlen,2))-3, False): 0
-    walking_ones("imm_val", ceil(log(xlen,2))-3, False): 0
-    walking_zeros("imm_val", ceil(log(xlen,2))-3, False): 0
   ifmt_immval_walking_unsgn:
     alternate("imm_val",12,False): 0
     walking_ones("imm_val", 12,False): 0
@@ -1980,35 +1911,6 @@ datasets:
   ifmt_val_comb_unsgn:
     rs1_val != imm_val and rs1_val > 0 and imm_val > 0: 0
     rs1_val == imm_val and rs1_val > 0 and imm_val > 0: 0
-  pair_regs:
-    x10: 0
-    x12: 0
-    x14: 0
-    x16: 0
-    x18: 0
-    x2: 0
-    x20: 0
-    x22: 0
-    x24: 0
-    x26: 0
-    x28: 0
-    x30: 0
-    x4: 0
-    x6: 0
-    x8: 0
-  r4fmt_op_comb:
-    rd == rs2 == rs3 != rs1: 0
-    rs1 != rs2 and rs1 != rd and rs1 != rs3 and rs2 != rs3 and rs2 != rd and rs3 != rd: 0
-    rs1 == rd != rs2 and rs1 == rd != rs3 and rs3 != rs2: 0
-    rs1 == rd == rs3 != rs2: 0
-    rs1 == rs2 != rs3 and rs1 == rs2 != rd and rd != rs3: 0
-    rs1 == rs2 == rd != rs3: 0
-    rs1 == rs2 == rs3 != rd: 0
-    rs1 == rs2 == rs3 == rd: 0
-    rs1 == rs3 != rs2 and rs1 == rs3 != rd and rd != rs2: 0
-    rs2 == rd != rs1 and rs2 == rd != rs3 and rs3 != rs1: 0
-    rs2 == rs3 != rs1 and rs2 == rs3 != rd and rd != rs1: 0
-    rs3 == rd != rs1 and rs3 == rd != rs2 and rs2 != rs1: 0
   rfmt_base_shift:
     rs1_val < 0 and rs2_val == 0: 0
     rs1_val < 0 and rs2_val > 0 and rs2_val < xlen: 0
@@ -2052,98 +1954,11 @@ datasets:
     alternate("rs2_val",xlen,False): 0
     walking_ones("rs2_val", xlen,False): 0
     walking_zeros("rs2_val", xlen,False): 0
-  rs3val_walking:
-    alternate("rs3_val",xlen): 0
-    walking_ones("rs3_val", xlen): 0
-    walking_zeros("rs3_val", xlen): 0
-  rv32e_regs:
-    x0: 0
-    x1: 0
-    x10: 0
-    x11: 0
-    x12: 0
-    x13: 0
-    x14: 0
-    x15: 0
-    x2: 0
-    x3: 0
-    x4: 0
-    x5: 0
-    x6: 0
-    x7: 0
-    x8: 0
-    x9: 0
-  rv32e_regs_mx0:
-    x1: 0
-    x10: 0
-    x11: 0
-    x12: 0
-    x13: 0
-    x14: 0
-    x15: 0
-    x2: 0
-    x3: 0
-    x4: 0
-    x5: 0
-    x6: 0
-    x7: 0
-    x8: 0
-    x9: 0
-  rv32e_regs_mx2:
-    x1: 0
-    x10: 0
-    x11: 0
-    x12: 0
-    x13: 0
-    x14: 0
-    x15: 0
-    x3: 0
-    x4: 0
-    x5: 0
-    x6: 0
-    x7: 0
-    x8: 0
-    x9: 0
-  rvp64_rs1val_sgn:
-    rs1_val == (-2**63): 0
-    rs1_val == (2**63-1): 0
-    rs1_val == 0: 0
-    rs1_val == 1: 0
-  rvp64_rs1val_unsgn:
-    rs1_val == (2**64-1): 0
-    rs1_val == 0: 0
-    rs1_val == 1: 0
-  rvp64_rs1val_walking_sgn:
-    alternate("rs1_val",64): 0
-    walking_ones("rs1_val", 64): 0
-    walking_zeros("rs1_val", 64): 0
-  rvp64_rs1val_walking_unsgn:
-    alternate("rs1_val",64, signed=False): 0
-    walking_ones("rs1_val", 64, signed=False): 0
-    walking_zeros("rs1_val", 64, signed=False): 0
-  rvp64_rs2val_sgn:
-    rs2_val == (-2**63): 0
-    rs2_val == (2**63-1): 0
-    rs2_val == 0: 0
-    rs2_val == 1: 0
-  rvp64_rs2val_unsgn:
-    rs2_val == (2**64-1): 0
-    rs2_val == 0: 0
-    rs2_val == 1: 0
-  rvp64_rs2val_walking_sgn:
-    alternate("rs2_val",64): 0
-    walking_ones("rs2_val", 64): 0
-    walking_zeros("rs2_val", 64): 0
-  rvp64_rs2val_walking_unsgn:
-    alternate("rs2_val",64, signed=False): 0
-    walking_ones("rs2_val", 64, signed=False): 0
-    walking_zeros("rs2_val", 64, signed=False): 0
   sfmt_op_comb:
     rs1 != rs2: 0
     rs1 == rs2: 0
 pack:
   config:
-  - check ISA:=regex(.*I.*K.*)
   - check ISA:=regex(.*I.*Zk.*)
   - check ISA:=regex(.*I.*Zks.*)
   - check ISA:=regex(.*I.*Zkn.*)
@@ -2785,7 +2600,6 @@ pack:
   total_coverage: 622/622
 packh:
   config:
-  - check ISA:=regex(.*I.*K.*)
   - check ISA:=regex(.*I.*Zk.*)
   - check ISA:=regex(.*I.*Zks.*)
   - check ISA:=regex(.*I.*Zkn.*)
@@ -3427,7 +3241,6 @@ packh:
   total_coverage: 622/622
 packw:
   config:
-  - check ISA:=regex(.*RV64.*I.*K.*)
   - check ISA:=regex(.*RV64.*I.*Zk.*)
   - check ISA:=regex(.*RV64.*I.*Zks.*)
   - check ISA:=regex(.*RV64.*I.*Zkn.*)
@@ -4069,7 +3882,6 @@ packw:
   total_coverage: 622/622
 sha256sig0:
   config:
-  - check ISA:=regex(.*I.*K.*)
   - check ISA:=regex(.*I.*Zk.*)
   - check ISA:=regex(.*I.*Zkn.*)
   - check ISA:=regex(.*I.*Zknh.*)
@@ -4301,7 +4113,6 @@ sha256sig0:
   total_coverage: 215/215
 sha256sig1:
   config:
-  - check ISA:=regex(.*I.*K.*)
   - check ISA:=regex(.*I.*Zk.*)
   - check ISA:=regex(.*I.*Zkn.*)
   - check ISA:=regex(.*I.*Zknh.*)
@@ -4533,7 +4344,6 @@ sha256sig1:
   total_coverage: 215/215
 sha256sum0:
   config:
-  - check ISA:=regex(.*I.*K.*)
   - check ISA:=regex(.*I.*Zk.*)
   - check ISA:=regex(.*I.*Zkn.*)
   - check ISA:=regex(.*I.*Zknh.*)
@@ -4765,7 +4575,6 @@ sha256sum0:
   total_coverage: 215/215
 sha256sum1:
   config:
-  - check ISA:=regex(.*I.*K.*)
   - check ISA:=regex(.*I.*Zk.*)
   - check ISA:=regex(.*I.*Zkn.*)
   - check ISA:=regex(.*I.*Zknh.*)
@@ -4997,7 +4806,6 @@ sha256sum1:
   total_coverage: 215/215
 sha512sig0:
   config:
-  - check ISA:=regex(.*RV64.*I.*K.*)
   - check ISA:=regex(.*RV64.*I.*Zk.*)
   - check ISA:=regex(.*RV64.*I.*Zkn.*)
   - check ISA:=regex(.*RV64.*I.*Zknh.*)
@@ -5229,7 +5037,6 @@ sha512sig0:
   total_coverage: 215/215
 sha512sig1:
   config:
-  - check ISA:=regex(.*RV64.*I.*K.*)
   - check ISA:=regex(.*RV64.*I.*Zk.*)
   - check ISA:=regex(.*RV64.*I.*Zkn.*)
   - check ISA:=regex(.*RV64.*I.*Zknh.*)
@@ -5461,7 +5268,6 @@ sha512sig1:
   total_coverage: 215/215
 sha512sum0:
   config:
-  - check ISA:=regex(.*RV64.*I.*K.*)
   - check ISA:=regex(.*RV64.*I.*Zk.*)
   - check ISA:=regex(.*RV64.*I.*Zkn.*)
   - check ISA:=regex(.*RV64.*I.*Zknh.*)
@@ -5693,7 +5499,6 @@ sha512sum0:
   total_coverage: 215/215
 sha512sum1:
   config:
-  - check ISA:=regex(.*RV64.*I.*K.*)
   - check ISA:=regex(.*RV64.*I.*Zk.*)
   - check ISA:=regex(.*RV64.*I.*Zkn.*)
   - check ISA:=regex(.*RV64.*I.*Zknh.*)
@@ -5925,8 +5730,6 @@ sha512sum1:
   total_coverage: 215/215
 sm3p0:
   config:
-  - check ISA:=regex(.*I.*K.*)
-  - check ISA:=regex(.*I.*Zk.*)
   - check ISA:=regex(.*I.*Zks.*)
   - check ISA:=regex(.*I.*Zksh.*)
   mnemonics:
@@ -6157,8 +5960,6 @@ sm3p0:
   total_coverage: 215/215
 sm3p1:
   config:
-  - check ISA:=regex(.*I.*K.*)
-  - check ISA:=regex(.*I.*Zk.*)
   - check ISA:=regex(.*I.*Zks.*)
   - check ISA:=regex(.*I.*Zksh.*)
   mnemonics:
@@ -6389,8 +6190,6 @@ sm3p1:
   total_coverage: 215/215
 sm4ed:
   config:
-  - check ISA:=regex(.*I.*K.*)
-  - check ISA:=regex(.*I.*Zk.*)
   - check ISA:=regex(.*I.*Zks.*)
   - check ISA:=regex(.*I.*Zksed.*)
   mnemonics:
@@ -6786,8 +6585,6 @@ sm4ed:
   total_coverage: 378/378
 sm4ks:
   config:
-  - check ISA:=regex(.*I.*K.*)
-  - check ISA:=regex(.*I.*Zk.*)
   - check ISA:=regex(.*I.*Zks.*)
   - check ISA:=regex(.*I.*Zksed.*)
   mnemonics:
@@ -7183,7 +6980,6 @@ sm4ks:
   total_coverage: 378/378
 xperm4:
   config:
-  - check ISA:=regex(.*I.*K.*)
   - check ISA:=regex(.*I.*Zk.*)
   - check ISA:=regex(.*I.*Zks.*)
   - check ISA:=regex(.*I.*Zkn.*)
@@ -7845,7 +7641,6 @@ xperm4:
   total_coverage: 642/642
 xperm8:
   config:
-  - check ISA:=regex(.*I.*K.*)
   - check ISA:=regex(.*I.*Zk.*)
   - check ISA:=regex(.*I.*Zks.*)
   - check ISA:=regex(.*I.*Zkn.*)

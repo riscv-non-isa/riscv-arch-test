@@ -1,6 +1,5 @@
 sh1add:
     config: 
-      - check ISA:=regex(.*I.*B.*)
       - check ISA:=regex(.*I.*Zba.*)
     mnemonics: 
       sh1add: 0
@@ -20,7 +19,6 @@ sh1add:
         
 sh2add:
     config: 
-      - check ISA:=regex(.*I.*B.*)
       - check ISA:=regex(.*I.*Zba.*)
     mnemonics: 
       sh2add: 0
@@ -40,7 +38,6 @@ sh2add:
         
 sh3add:
     config: 
-      - check ISA:=regex(.*I.*B.*)
       - check ISA:=regex(.*I.*Zba.*)
     mnemonics: 
       sh3add: 0
@@ -60,13 +57,11 @@ sh3add:
         
 xnor:
     config: 
-      - check ISA:=regex(.*I.*B.*)
-      - check ISA:=regex(.*I.*K.*)
       - check ISA:=regex(.*I.*Zbb.*)
-      - check ISA:=regex(.*I.*Zk.*)
-      - check ISA:=regex(.*I.*Zks.*)
-      - check ISA:=regex(.*I.*Zkn.*)
       - check ISA:=regex(.*I.*Zbkb.*)
+      - check ISA:=regex(.*I.*Zk.*)
+      - check ISA:=regex(.*I.*Zkn.*)
+      - check ISA:=regex(.*I.*Zks.*)
     mnemonics: 
       xnor: 0
     rs1: 
@@ -86,7 +81,6 @@ xnor:
         
 zext.h_32:
     config: 
-      - check ISA:=regex(.*I.*B.*)
       - check ISA:=regex(.*I.*Zbb.*)
     mnemonics: 
       zext.h: 0
@@ -108,12 +102,11 @@ zext.h_32:
         'uniform_random(20, 100, ["rs1_val"], [xlen])': 0
 andn:
     config: 
-      - check ISA:=regex(.*I.*B.*)
-      - check ISA:=regex(.*I.*K.*)
       - check ISA:=regex(.*I.*Zbb.*)
-      - check ISA:=regex(.*I.*Zks.*)
-      - check ISA:=regex(.*I.*Zkn.*)
       - check ISA:=regex(.*I.*Zbkb.*)
+      - check ISA:=regex(.*I.*Zk.*)
+      - check ISA:=regex(.*I.*Zkn.*)
+      - check ISA:=regex(.*I.*Zks.*)
     mnemonics: 
       andn: 0
     rs1: 
@@ -133,7 +126,6 @@ andn:
 
 clz:
     config: 
-      - check ISA:=regex(.*I.*B.*)
       - check ISA:=regex(.*I.*Zbb.*)
     mnemonics: 
       clz: 0
@@ -153,7 +145,6 @@ clz:
 
 ctz:
     config: 
-      - check ISA:=regex(.*I.*B.*)
       - check ISA:=regex(.*I.*Zbb.*)
     mnemonics: 
       ctz: 0
@@ -173,7 +164,6 @@ ctz:
         
 cpop:
     config: 
-      - check ISA:=regex(.*I.*B.*)
       - check ISA:=regex(.*I.*Zbb.*)
     mnemonics: 
       cpop: 0
@@ -193,7 +183,6 @@ cpop:
         
 max:
     config: 
-      - check ISA:=regex(.*I.*B.*)
       - check ISA:=regex(.*I.*Zbb.*)
     mnemonics: 
       max: 0
@@ -213,7 +202,6 @@ max:
 
 maxu:
     config: 
-      - check ISA:=regex(.*I.*B.*)
       - check ISA:=regex(.*I.*Zbb.*)
     mnemonics: 
       maxu: 0
@@ -233,7 +221,6 @@ maxu:
         
 min:
     config: 
-      - check ISA:=regex(.*I.*B.*)
       - check ISA:=regex(.*I.*Zbb.*)
     mnemonics: 
       min: 0
@@ -253,7 +240,6 @@ min:
         
 minu:
     config: 
-      - check ISA:=regex(.*I.*B.*)
       - check ISA:=regex(.*I.*Zbb.*)
     mnemonics: 
       minu: 0
@@ -273,7 +259,6 @@ minu:
         
 orcb_32:
     config: 
-      - check ISA:=regex(.*I.*B.*)
       - check ISA:=regex(.*I.*Zbb.*)
     mnemonics: 
       orc.b: 0
@@ -296,12 +281,11 @@ orcb_32:
         
 orn:
     config: 
-      - check ISA:=regex(.*I.*B.*)
-      - check ISA:=regex(.*I.*K.*)
       - check ISA:=regex(.*I.*Zbb.*)
-      - check ISA:=regex(.*I.*Zks.*)
-      - check ISA:=regex(.*I.*Zkn.*)
       - check ISA:=regex(.*I.*Zbkb.*)
+      - check ISA:=regex(.*I.*Zk.*)
+      - check ISA:=regex(.*I.*Zkn.*)
+      - check ISA:=regex(.*I.*Zks.*)
     mnemonics: 
       orn: 0
     rs1: 
@@ -321,12 +305,11 @@ orn:
 
 rev8_32:
     config: 
-      - check ISA:=regex(.*I.*B.*)
-      - check ISA:=regex(.*I.*K.*)
       - check ISA:=regex(.*I.*Zbb.*)
-      - check ISA:=regex(.*I.*Zks.*)
-      - check ISA:=regex(.*I.*Zkn.*)
       - check ISA:=regex(.*I.*Zbkb.*)
+      - check ISA:=regex(.*I.*Zk.*)
+      - check ISA:=regex(.*I.*Zkn.*)
+      - check ISA:=regex(.*I.*Zks.*)
     mnemonics: 
       rev8: 0
     base_op: grevi
@@ -351,12 +334,11 @@ rev8_32:
         
 rol:
     config: 
-      - check ISA:=regex(.*I.*B.*)
-      - check ISA:=regex(.*I.*K.*)
       - check ISA:=regex(.*I.*Zbb.*)
+      - check ISA:=regex(.*I.*Zbkb.*)
+      - check ISA:=regex(.*I.*Zk.*)
       - check ISA:=regex(.*I.*Zkn.*)
       - check ISA:=regex(.*I.*Zks.*)
-      - check ISA:=regex(.*I.*Zbkb.*)
     mnemonics: 
       rol: 0
     rs1: 
@@ -376,12 +358,11 @@ rol:
 
 ror:
     config: 
-      - check ISA:=regex(.*I.*B.*)
-      - check ISA:=regex(.*I.*K.*)
       - check ISA:=regex(.*I.*Zbb.*)
+      - check ISA:=regex(.*I.*Zbkb.*)
+      - check ISA:=regex(.*I.*Zk.*)
       - check ISA:=regex(.*I.*Zkn.*)
       - check ISA:=regex(.*I.*Zks.*)
-      - check ISA:=regex(.*I.*Zbkb.*)
     mnemonics: 
       ror: 0
     rs1: 
@@ -401,12 +382,11 @@ ror:
         
 rori:
     config: 
-      - check ISA:=regex(.*I.*B.*)
-      - check ISA:=regex(.*I.*K.*)
       - check ISA:=regex(.*I.*Zbb.*)
+      - check ISA:=regex(.*I.*Zbkb.*)
+      - check ISA:=regex(.*I.*Zk.*)
       - check ISA:=regex(.*I.*Zkn.*)
       - check ISA:=regex(.*I.*Zks.*)
-      - check ISA:=regex(.*I.*Zbkb.*)
     mnemonics: 
       rori: 0
     rs1: 
@@ -424,7 +404,6 @@ rori:
 
 sext.b:
     config: 
-      - check ISA:=regex(.*I.*B.*)
       - check ISA:=regex(.*I.*Zbb.*)
     mnemonics: 
       sext.b: 0
@@ -444,7 +423,6 @@ sext.b:
 
 sext.h:
     config: 
-      - check ISA:=regex(.*I.*B.*)
       - check ISA:=regex(.*I.*Zbb.*)
     mnemonics: 
       sext.h: 0
@@ -465,12 +443,11 @@ sext.h:
 
 clmul:
     config: 
-      - check ISA:=regex(.*I.*B.*)
-      - check ISA:=regex(.*I.*K.*)
       - check ISA:=regex(.*I.*Zbc.*)
+      - check ISA:=regex(.*I.*Zbkc.*)
+      - check ISA:=regex(.*I.*Zk.*)
       - check ISA:=regex(.*I.*Zks.*)
       - check ISA:=regex(.*I.*Zkn.*)
-      - check ISA:=regex(.*I.*Zbkb.*)
     mnemonics: 
       clmul: 0
     rs1: 
@@ -494,12 +471,11 @@ clmul:
         
 clmulh:
     config: 
-      - check ISA:=regex(.*I.*B.*)
-      - check ISA:=regex(.*I.*K.*)
       - check ISA:=regex(.*I.*Zbc.*)
-      - check ISA:=regex(.*I.*Zks.*)
+      - check ISA:=regex(.*I.*Zbkc.*)
+      - check ISA:=regex(.*I.*Zk.*)
       - check ISA:=regex(.*I.*Zkn.*)
-      - check ISA:=regex(.*I.*Zbkb.*)
+      - check ISA:=regex(.*I.*Zks.*)
     mnemonics: 
       clmulh: 0
     rs1: 
@@ -524,7 +500,6 @@ clmulh:
         
 clmulr:
     config: 
-      - check ISA:=regex(.*I.*B.*)
       - check ISA:=regex(.*I.*Zbc.*)
     mnemonics: 
       clmulr: 0
@@ -549,7 +524,6 @@ clmulr:
 
 bclr:
     config: 
-      - check ISA:=regex(.*I.*B.*)
       - check ISA:=regex(.*I.*Zbs.*)
     mnemonics: 
       bclr: 0
@@ -576,7 +550,6 @@ bclr:
         
 bclri:
     config: 
-      - check ISA:=regex(.*I.*B.*)
       - check ISA:=regex(.*I.*Zbs.*)
     mnemonics: 
       bclri: 0
@@ -597,7 +570,6 @@ bclri:
         
 bext:
     config: 
-      - check ISA:=regex(.*I.*B.*)
       - check ISA:=regex(.*I.*Zbs.*)
     mnemonics: 
       bext: 0
@@ -624,7 +596,6 @@ bext:
         
 bexti:
     config: 
-      - check ISA:=regex(.*I.*B.*)
       - check ISA:=regex(.*I.*Zbs.*)
     mnemonics: 
       bexti: 0
@@ -645,7 +616,6 @@ bexti:
         
 binv:
     config: 
-      - check ISA:=regex(.*I.*B.*)
       - check ISA:=regex(.*I.*Zbs.*)
     mnemonics: 
       binv: 0
@@ -672,7 +642,6 @@ binv:
         
 binvi:
     config: 
-      - check ISA:=regex(.*I.*B.*)
       - check ISA:=regex(.*I.*Zbs.*)
     mnemonics: 
       binvi: 0
@@ -692,7 +661,6 @@ binvi:
         
 bset:
     config: 
-      - check ISA:=regex(.*I.*B.*)
       - check ISA:=regex(.*I.*Zbs.*)
     mnemonics: 
       bset: 0
@@ -719,7 +687,6 @@ bset:
         
 bseti:
     config: 
-      - check ISA:=regex(.*I.*B.*)
       - check ISA:=regex(.*I.*Zbs.*)
     mnemonics: 
       bseti: 0

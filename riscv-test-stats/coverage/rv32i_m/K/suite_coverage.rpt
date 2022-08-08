@@ -1,6 +1,6 @@
 aes32dsi:
   config:
-  - check ISA:=regex(.*RV32.*I.*K.*)
+  - check ISA:=regex(.*RV32.*I.*Zk.*)
   - check ISA:=regex(.*RV32.*I.*Zkn.*)
   - check ISA:=regex(.*RV32.*I.*Zknd.*)
   mnemonics:
@@ -72,8 +72,8 @@ aes32dsi:
     x28: 1
     x29: 1
     x3: 1
-    x30: 250
-    x31: 1
+    x30: 249
+    x31: 2
     x4: 1
     x5: 1
     x6: 1
@@ -104,9 +104,9 @@ aes32dsi:
     x26: 1
     x27: 1
     x28: 1
-    x29: 250
+    x29: 248
     x3: 1
-    x30: 1
+    x30: 3
     x31: 1
     x4: 1
     x5: 1
@@ -147,9 +147,9 @@ aes32dsi:
     'rs1_val == 0 and rs2_val == 0xfbfaf9f8 and imm_val == 0 #nosat': 1 # Byte Count
     'rs1_val == 0 and rs2_val == 0xf7f6f5f4 and imm_val == 3 #nosat': 1 # Byte Count
     'rs1_val == 0 and rs2_val == 0xf7f6f5f4 and imm_val == 2 #nosat': 2 # Byte Count
-    'rs1_val == 0 and rs2_val == 0xf7f6f5f4 and imm_val == 1 #nosat': 2 # Byte Count
+    'rs1_val == 0 and rs2_val == 0xf7f6f5f4 and imm_val == 1 #nosat': 1 # Byte Count
     'rs1_val == 0 and rs2_val == 0xf7f6f5f4 and imm_val == 0 #nosat': 1 # Byte Count
-    'rs1_val == 0 and rs2_val == 0xf3f2f1f0 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0 and rs2_val == 0xf3f2f1f0 and imm_val == 3 #nosat': 2 # Byte Count
     'rs1_val == 0 and rs2_val == 0xf3f2f1f0 and imm_val == 2 #nosat': 1 # Byte Count
     'rs1_val == 0 and rs2_val == 0xf3f2f1f0 and imm_val == 1 #nosat': 1 # Byte Count
     'rs1_val == 0 and rs2_val == 0xf3f2f1f0 and imm_val == 0 #nosat': 1 # Byte Count
@@ -396,7 +396,7 @@ aes32dsi:
   total_coverage: 378/378
 aes32dsmi:
   config:
-  - check ISA:=regex(.*RV32.*I.*K.*)
+  - check ISA:=regex(.*RV32.*I.*Zk.*)
   - check ISA:=regex(.*RV32.*I.*Zkn.*)
   - check ISA:=regex(.*RV32.*I.*Zknd.*)
   mnemonics:
@@ -468,8 +468,8 @@ aes32dsmi:
     x28: 1
     x29: 1
     x3: 1
-    x30: 250
-    x31: 1
+    x30: 249
+    x31: 2
     x4: 1
     x5: 1
     x6: 1
@@ -500,9 +500,9 @@ aes32dsmi:
     x26: 1
     x27: 1
     x28: 1
-    x29: 250
+    x29: 248
     x3: 1
-    x30: 1
+    x30: 3
     x31: 1
     x4: 1
     x5: 1
@@ -543,9 +543,9 @@ aes32dsmi:
     'rs1_val == 0 and rs2_val == 0xfbfaf9f8 and imm_val == 0 #nosat': 1 # Byte Count
     'rs1_val == 0 and rs2_val == 0xf7f6f5f4 and imm_val == 3 #nosat': 1 # Byte Count
     'rs1_val == 0 and rs2_val == 0xf7f6f5f4 and imm_val == 2 #nosat': 2 # Byte Count
-    'rs1_val == 0 and rs2_val == 0xf7f6f5f4 and imm_val == 1 #nosat': 2 # Byte Count
+    'rs1_val == 0 and rs2_val == 0xf7f6f5f4 and imm_val == 1 #nosat': 1 # Byte Count
     'rs1_val == 0 and rs2_val == 0xf7f6f5f4 and imm_val == 0 #nosat': 1 # Byte Count
-    'rs1_val == 0 and rs2_val == 0xf3f2f1f0 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0 and rs2_val == 0xf3f2f1f0 and imm_val == 3 #nosat': 2 # Byte Count
     'rs1_val == 0 and rs2_val == 0xf3f2f1f0 and imm_val == 2 #nosat': 1 # Byte Count
     'rs1_val == 0 and rs2_val == 0xf3f2f1f0 and imm_val == 1 #nosat': 1 # Byte Count
     'rs1_val == 0 and rs2_val == 0xf3f2f1f0 and imm_val == 0 #nosat': 1 # Byte Count
@@ -792,7 +792,7 @@ aes32dsmi:
   total_coverage: 378/378
 aes32esi:
   config:
-  - check ISA:=regex(.*RV32.*I.*K.*)
+  - check ISA:=regex(.*RV32.*I.*Zk.*)
   - check ISA:=regex(.*RV32.*I.*Zkn.*)
   - check ISA:=regex(.*RV32.*I.*Zkne.*)
   mnemonics:
@@ -864,8 +864,8 @@ aes32esi:
     x28: 1
     x29: 1
     x3: 1
-    x30: 250
-    x31: 1
+    x30: 249
+    x31: 2
     x4: 1
     x5: 1
     x6: 1
@@ -896,9 +896,9 @@ aes32esi:
     x26: 1
     x27: 1
     x28: 1
-    x29: 250
+    x29: 248
     x3: 1
-    x30: 1
+    x30: 3
     x31: 1
     x4: 1
     x5: 1
@@ -939,9 +939,9 @@ aes32esi:
     'rs1_val == 0 and rs2_val == 0xfbfaf9f8 and imm_val == 0 #nosat': 1 # Byte Count
     'rs1_val == 0 and rs2_val == 0xf7f6f5f4 and imm_val == 3 #nosat': 1 # Byte Count
     'rs1_val == 0 and rs2_val == 0xf7f6f5f4 and imm_val == 2 #nosat': 2 # Byte Count
-    'rs1_val == 0 and rs2_val == 0xf7f6f5f4 and imm_val == 1 #nosat': 2 # Byte Count
+    'rs1_val == 0 and rs2_val == 0xf7f6f5f4 and imm_val == 1 #nosat': 1 # Byte Count
     'rs1_val == 0 and rs2_val == 0xf7f6f5f4 and imm_val == 0 #nosat': 1 # Byte Count
-    'rs1_val == 0 and rs2_val == 0xf3f2f1f0 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0 and rs2_val == 0xf3f2f1f0 and imm_val == 3 #nosat': 2 # Byte Count
     'rs1_val == 0 and rs2_val == 0xf3f2f1f0 and imm_val == 2 #nosat': 1 # Byte Count
     'rs1_val == 0 and rs2_val == 0xf3f2f1f0 and imm_val == 1 #nosat': 1 # Byte Count
     'rs1_val == 0 and rs2_val == 0xf3f2f1f0 and imm_val == 0 #nosat': 1 # Byte Count
@@ -1188,7 +1188,7 @@ aes32esi:
   total_coverage: 378/378
 aes32esmi:
   config:
-  - check ISA:=regex(.*RV32.*I.*K.*)
+  - check ISA:=regex(.*RV32.*I.*Zk.*)
   - check ISA:=regex(.*RV32.*I.*Zkn.*)
   - check ISA:=regex(.*RV32.*I.*Zkne.*)
   mnemonics:
@@ -1260,8 +1260,8 @@ aes32esmi:
     x28: 1
     x29: 1
     x3: 1
-    x30: 250
-    x31: 1
+    x30: 249
+    x31: 2
     x4: 1
     x5: 1
     x6: 1
@@ -1292,9 +1292,9 @@ aes32esmi:
     x26: 1
     x27: 1
     x28: 1
-    x29: 250
+    x29: 248
     x3: 1
-    x30: 1
+    x30: 3
     x31: 1
     x4: 1
     x5: 1
@@ -1335,9 +1335,9 @@ aes32esmi:
     'rs1_val == 0 and rs2_val == 0xfbfaf9f8 and imm_val == 0 #nosat': 1 # Byte Count
     'rs1_val == 0 and rs2_val == 0xf7f6f5f4 and imm_val == 3 #nosat': 1 # Byte Count
     'rs1_val == 0 and rs2_val == 0xf7f6f5f4 and imm_val == 2 #nosat': 2 # Byte Count
-    'rs1_val == 0 and rs2_val == 0xf7f6f5f4 and imm_val == 1 #nosat': 2 # Byte Count
+    'rs1_val == 0 and rs2_val == 0xf7f6f5f4 and imm_val == 1 #nosat': 1 # Byte Count
     'rs1_val == 0 and rs2_val == 0xf7f6f5f4 and imm_val == 0 #nosat': 1 # Byte Count
-    'rs1_val == 0 and rs2_val == 0xf3f2f1f0 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0 and rs2_val == 0xf3f2f1f0 and imm_val == 3 #nosat': 2 # Byte Count
     'rs1_val == 0 and rs2_val == 0xf3f2f1f0 and imm_val == 2 #nosat': 1 # Byte Count
     'rs1_val == 0 and rs2_val == 0xf3f2f1f0 and imm_val == 1 #nosat': 1 # Byte Count
     'rs1_val == 0 and rs2_val == 0xf3f2f1f0 and imm_val == 0 #nosat': 1 # Byte Count
@@ -1585,7 +1585,7 @@ aes32esmi:
 brev8_32:
   base_op: grevi
   config:
-  - check ISA:=regex(.*I.*K.*)
+  - check ISA:=regex(.*I.*Zk.*)
   - check ISA:=regex(.*I.*Zks.*)
   - check ISA:=regex(.*I.*Zkn.*)
   - check ISA:=regex(.*I.*Zbkb.*)
@@ -1824,39 +1824,6 @@ brev8_32:
     coverage: 155/155
   total_coverage: 222/222
 datasets:
-  all_fregs:
-    f0: 0
-    f1: 0
-    f10: 0
-    f11: 0
-    f12: 0
-    f13: 0
-    f14: 0
-    f15: 0
-    f16: 0
-    f17: 0
-    f18: 0
-    f19: 0
-    f2: 0
-    f20: 0
-    f21: 0
-    f22: 0
-    f23: 0
-    f24: 0
-    f25: 0
-    f26: 0
-    f27: 0
-    f28: 0
-    f29: 0
-    f3: 0
-    f30: 0
-    f31: 0
-    f4: 0
-    f5: 0
-    f6: 0
-    f7: 0
-    f8: 0
-    f9: 0
   all_regs:
     x0: 0
     x1: 0
@@ -1971,15 +1938,6 @@ datasets:
     rs2_val == (2**(xlen)-1): 0
     rs2_val == 0: 0
     rs2_val == 1: 0
-  base_rs3val_sgn:
-    rs3_val == (-2**(xlen-1)): 0
-    rs3_val == (2**(xlen-1)-1): 0
-    rs3_val == 0: 0
-    rs3_val == 1: 0
-  base_rs3val_unsgn:
-    rs3_val == (2**(xlen)-1): 0
-    rs3_val == 0: 0
-    rs3_val == 1: 0
   bfmt_base_branch_val_align_sgn:
     rs1_val < 0 and rs2_val < 0 and imm_val & 0x03 == 0: 0
     rs1_val < 0 and rs2_val > 0 and imm_val & 0x03 == 0: 0
@@ -2025,17 +1983,8 @@ datasets:
     imm_val == (2**(12-1)-1): 0
     imm_val == 0: 0
     imm_val == 1: 0
-  ifmt_base_immval_sgn_len:
-    imm_val == (-2**(ceil(log(xlen,2))-1)): 0
-    imm_val == (2**(ceil(log(xlen,2))-1)-1): 0
-    imm_val == 0: 0
-    imm_val == 1: 0
   ifmt_base_immval_unsgn:
     imm_val == (2**(12)-1): 0
-    imm_val == 0: 0
-    imm_val == 1: 0
-  ifmt_base_immval_unsgn_len_sub_3:
-    imm_val == (2**(ceil(log(xlen,2))-3)-1): 0
     imm_val == 0: 0
     imm_val == 1: 0
   ifmt_base_shift:
@@ -2066,18 +2015,6 @@ datasets:
     alternate("imm_val",12): 0
     walking_ones("imm_val", 12): 0
     walking_zeros("imm_val", 12): 0
-  ifmt_immval_walking_5u:
-    alternate("imm_val", 5, False): 0
-    walking_ones("imm_val", 5, False): 0
-    walking_zeros("imm_val", 5, False): 0
-  ifmt_immval_walking_len:
-    alternate("imm_val",ceil(log(xlen,2)), False): 0
-    walking_ones("imm_val", ceil(log(xlen,2)), False): 0
-    walking_zeros("imm_val", ceil(log(xlen,2)), False): 0
-  ifmt_immval_walking_len_sub_3:
-    alternate("imm_val", ceil(log(xlen,2))-3, False): 0
-    walking_ones("imm_val", ceil(log(xlen,2))-3, False): 0
-    walking_zeros("imm_val", ceil(log(xlen,2))-3, False): 0
   ifmt_immval_walking_unsgn:
     alternate("imm_val",12,False): 0
     walking_ones("imm_val", 12,False): 0
@@ -2095,35 +2032,6 @@ datasets:
   ifmt_val_comb_unsgn:
     rs1_val != imm_val and rs1_val > 0 and imm_val > 0: 0
     rs1_val == imm_val and rs1_val > 0 and imm_val > 0: 0
-  pair_regs:
-    x10: 0
-    x12: 0
-    x14: 0
-    x16: 0
-    x18: 0
-    x2: 0
-    x20: 0
-    x22: 0
-    x24: 0
-    x26: 0
-    x28: 0
-    x30: 0
-    x4: 0
-    x6: 0
-    x8: 0
-  r4fmt_op_comb:
-    rd == rs2 == rs3 != rs1: 0
-    rs1 != rs2 and rs1 != rd and rs1 != rs3 and rs2 != rs3 and rs2 != rd and rs3 != rd: 0
-    rs1 == rd != rs2 and rs1 == rd != rs3 and rs3 != rs2: 0
-    rs1 == rd == rs3 != rs2: 0
-    rs1 == rs2 != rs3 and rs1 == rs2 != rd and rd != rs3: 0
-    rs1 == rs2 == rd != rs3: 0
-    rs1 == rs2 == rs3 != rd: 0
-    rs1 == rs2 == rs3 == rd: 0
-    rs1 == rs3 != rs2 and rs1 == rs3 != rd and rd != rs2: 0
-    rs2 == rd != rs1 and rs2 == rd != rs3 and rs3 != rs1: 0
-    rs2 == rs3 != rs1 and rs2 == rs3 != rd and rd != rs1: 0
-    rs3 == rd != rs1 and rs3 == rd != rs2 and rs2 != rs1: 0
   rfmt_base_shift:
     rs1_val < 0 and rs2_val == 0: 0
     rs1_val < 0 and rs2_val > 0 and rs2_val < xlen: 0
@@ -2167,100 +2075,14 @@ datasets:
     alternate("rs2_val",xlen,False): 0
     walking_ones("rs2_val", xlen,False): 0
     walking_zeros("rs2_val", xlen,False): 0
-  rs3val_walking:
-    alternate("rs3_val",xlen): 0
-    walking_ones("rs3_val", xlen): 0
-    walking_zeros("rs3_val", xlen): 0
-  rv32e_regs:
-    x0: 0
-    x1: 0
-    x10: 0
-    x11: 0
-    x12: 0
-    x13: 0
-    x14: 0
-    x15: 0
-    x2: 0
-    x3: 0
-    x4: 0
-    x5: 0
-    x6: 0
-    x7: 0
-    x8: 0
-    x9: 0
-  rv32e_regs_mx0:
-    x1: 0
-    x10: 0
-    x11: 0
-    x12: 0
-    x13: 0
-    x14: 0
-    x15: 0
-    x2: 0
-    x3: 0
-    x4: 0
-    x5: 0
-    x6: 0
-    x7: 0
-    x8: 0
-    x9: 0
-  rv32e_regs_mx2:
-    x1: 0
-    x10: 0
-    x11: 0
-    x12: 0
-    x13: 0
-    x14: 0
-    x15: 0
-    x3: 0
-    x4: 0
-    x5: 0
-    x6: 0
-    x7: 0
-    x8: 0
-    x9: 0
-  rvp64_rs1val_sgn:
-    rs1_val == (-2**63): 0
-    rs1_val == (2**63-1): 0
-    rs1_val == 0: 0
-    rs1_val == 1: 0
-  rvp64_rs1val_unsgn:
-    rs1_val == (2**64-1): 0
-    rs1_val == 0: 0
-    rs1_val == 1: 0
-  rvp64_rs1val_walking_sgn:
-    alternate("rs1_val",64): 0
-    walking_ones("rs1_val", 64): 0
-    walking_zeros("rs1_val", 64): 0
-  rvp64_rs1val_walking_unsgn:
-    alternate("rs1_val",64, signed=False): 0
-    walking_ones("rs1_val", 64, signed=False): 0
-    walking_zeros("rs1_val", 64, signed=False): 0
-  rvp64_rs2val_sgn:
-    rs2_val == (-2**63): 0
-    rs2_val == (2**63-1): 0
-    rs2_val == 0: 0
-    rs2_val == 1: 0
-  rvp64_rs2val_unsgn:
-    rs2_val == (2**64-1): 0
-    rs2_val == 0: 0
-    rs2_val == 1: 0
-  rvp64_rs2val_walking_sgn:
-    alternate("rs2_val",64): 0
-    walking_ones("rs2_val", 64): 0
-    walking_zeros("rs2_val", 64): 0
-  rvp64_rs2val_walking_unsgn:
-    alternate("rs2_val",64, signed=False): 0
-    walking_ones("rs2_val", 64, signed=False): 0
-    walking_zeros("rs2_val", 64, signed=False): 0
   sfmt_op_comb:
     rs1 != rs2: 0
     rs1 == rs2: 0
 pack:
   config:
-  - check ISA:=regex(.*I.*K.*)
-  - check ISA:=regex(.*I.*Zks.*)
+  - check ISA:=regex(.*I.*Zk.*)
   - check ISA:=regex(.*I.*Zkn.*)
+  - check ISA:=regex(.*I.*Zks.*)
   - check ISA:=regex(.*I.*Zbkb.*)
   mnemonics:
     pack: 269
@@ -2331,8 +2153,8 @@ pack:
     x28: 1
     x29: 1
     x3: 1
-    x30: 238
-    x31: 1
+    x30: 237
+    x31: 2
     x4: 1
     x5: 1
     x6: 1
@@ -2363,9 +2185,9 @@ pack:
     x26: 1
     x27: 1
     x28: 1
-    x29: 238
+    x29: 236
     x3: 1
-    x30: 1
+    x30: 3
     x31: 1
     x4: 1
     x5: 1
@@ -2406,9 +2228,9 @@ pack:
     'rs2_val == 0xCF7AC620 and rs1_val == 0x27A16894 #nosat': 1 # 5 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0x05C2F650 and rs1_val == 0x0A3EF19E #nosat': 1 # 4 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0xEEC50588 and rs1_val == 0xCB8193EF #nosat': 1 # 3 Trailing zeros for rs2_val. Other operands are random
-    'rs2_val == 0xCA7160CC and rs1_val == 0x577F8847 #nosat': 2 # 2 Trailing zeros for rs2_val. Other operands are random
+    'rs2_val == 0xCA7160CC and rs1_val == 0x577F8847 #nosat': 1 # 2 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0x60E30DA2 and rs1_val == 0x9B5EAF0A #nosat': 1 # 1 Trailing zeros for rs2_val. Other operands are random
-    'rs2_val == 0x76F86039 and rs1_val == 0x5D3BBCE0 #nosat': 1 # 0 Trailing zeros for rs2_val. Other operands are random
+    'rs2_val == 0x76F86039 and rs1_val == 0x5D3BBCE0 #nosat': 2 # 0 Trailing zeros for rs2_val. Other operands are random
     'rs1_val == 0x00000000 and rs2_val == 0xFD1032E8 #nosat': 1 # 32 Trailing zeros for rs1_val. Other operands are random
     'rs1_val == 0x80000000 and rs2_val == 0x7B246C17 #nosat': 1 # 31 Trailing zeros for rs1_val. Other operands are random
     'rs1_val == 0x40000000 and rs2_val == 0x56F3EEF1 #nosat': 1 # 30 Trailing zeros for rs1_val. Other operands are random
@@ -2643,7 +2465,7 @@ pack:
   total_coverage: 366/366
 packh:
   config:
-  - check ISA:=regex(.*I.*K.*)
+  - check ISA:=regex(.*I.*Zk.*)
   - check ISA:=regex(.*I.*Zks.*)
   - check ISA:=regex(.*I.*Zkn.*)
   - check ISA:=regex(.*I.*Zbkb.*)
@@ -2716,8 +2538,8 @@ packh:
     x28: 1
     x29: 1
     x3: 1
-    x30: 238
-    x31: 1
+    x30: 237
+    x31: 2
     x4: 1
     x5: 1
     x6: 1
@@ -2748,9 +2570,9 @@ packh:
     x26: 1
     x27: 1
     x28: 1
-    x29: 238
+    x29: 236
     x3: 1
-    x30: 1
+    x30: 3
     x31: 1
     x4: 1
     x5: 1
@@ -2791,9 +2613,9 @@ packh:
     'rs2_val == 0xCF7AC620 and rs1_val == 0x27A16894 #nosat': 1 # 5 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0x05C2F650 and rs1_val == 0x0A3EF19E #nosat': 1 # 4 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0xEEC50588 and rs1_val == 0xCB8193EF #nosat': 1 # 3 Trailing zeros for rs2_val. Other operands are random
-    'rs2_val == 0xCA7160CC and rs1_val == 0x577F8847 #nosat': 2 # 2 Trailing zeros for rs2_val. Other operands are random
+    'rs2_val == 0xCA7160CC and rs1_val == 0x577F8847 #nosat': 1 # 2 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0x60E30DA2 and rs1_val == 0x9B5EAF0A #nosat': 1 # 1 Trailing zeros for rs2_val. Other operands are random
-    'rs2_val == 0x76F86039 and rs1_val == 0x5D3BBCE0 #nosat': 1 # 0 Trailing zeros for rs2_val. Other operands are random
+    'rs2_val == 0x76F86039 and rs1_val == 0x5D3BBCE0 #nosat': 2 # 0 Trailing zeros for rs2_val. Other operands are random
     'rs1_val == 0x00000000 and rs2_val == 0xFD1032E8 #nosat': 1 # 32 Trailing zeros for rs1_val. Other operands are random
     'rs1_val == 0x80000000 and rs2_val == 0x7B246C17 #nosat': 1 # 31 Trailing zeros for rs1_val. Other operands are random
     'rs1_val == 0x40000000 and rs2_val == 0x56F3EEF1 #nosat': 1 # 30 Trailing zeros for rs1_val. Other operands are random
@@ -3028,7 +2850,7 @@ packh:
   total_coverage: 366/366
 sha256sig0:
   config:
-  - check ISA:=regex(.*I.*K.*)
+  - check ISA:=regex(.*I.*Zk.*)
   - check ISA:=regex(.*I.*Zkn.*)
   - check ISA:=regex(.*I.*Zknh.*)
   mnemonics:
@@ -3195,7 +3017,7 @@ sha256sig0:
   total_coverage: 151/151
 sha256sig1:
   config:
-  - check ISA:=regex(.*I.*K.*)
+  - check ISA:=regex(.*I.*Zk.*)
   - check ISA:=regex(.*I.*Zkn.*)
   - check ISA:=regex(.*I.*Zknh.*)
   mnemonics:
@@ -3362,7 +3184,7 @@ sha256sig1:
   total_coverage: 151/151
 sha256sum0:
   config:
-  - check ISA:=regex(.*I.*K.*)
+  - check ISA:=regex(.*I.*Zk.*)
   - check ISA:=regex(.*I.*Zkn.*)
   - check ISA:=regex(.*I.*Zknh.*)
   mnemonics:
@@ -3529,7 +3351,7 @@ sha256sum0:
   total_coverage: 151/151
 sha256sum1:
   config:
-  - check ISA:=regex(.*I.*K.*)
+  - check ISA:=regex(.*I.*Zk.*)
   - check ISA:=regex(.*I.*Zkn.*)
   - check ISA:=regex(.*I.*Zknh.*)
   mnemonics:
@@ -3696,7 +3518,7 @@ sha256sum1:
   total_coverage: 151/151
 sha512sig0h:
   config:
-  - check ISA:=regex(.*RV32.*I.*K.*)
+  - check ISA:=regex(.*I.*Zk.*)
   - check ISA:=regex(.*RV32.*I.*Zkn.*)
   - check ISA:=regex(.*RV32.*I.*Zknh.*)
   mnemonics:
@@ -3768,8 +3590,8 @@ sha512sig0h:
     x28: 1
     x29: 1
     x3: 1
-    x30: 122
-    x31: 1
+    x30: 121
+    x31: 2
     x4: 1
     x5: 1
     x6: 1
@@ -3800,9 +3622,9 @@ sha512sig0h:
     x26: 1
     x27: 1
     x28: 1
-    x29: 122
+    x29: 120
     x3: 1
-    x30: 1
+    x30: 3
     x31: 1
     x4: 1
     x5: 1
@@ -3843,9 +3665,9 @@ sha512sig0h:
     rs2_val == 4294967279: 1 # Walking Zeros: 0xffffffef
     rs2_val == 4294967287: 1 # Walking Zeros: 0xfffffff7
     rs2_val == 4294967291: 2 # Walking Zeros: 0xfffffffb
-    rs2_val == 4294967293: 2 # Walking Zeros: 0xfffffffd
+    rs2_val == 4294967293: 1 # Walking Zeros: 0xfffffffd
     rs2_val == 4294967294: 1 # Walking Zeros: 0xfffffffe
-    rs1_val == 2147483647: 1 # Walking Zeros: 0x7fffffff
+    rs1_val == 2147483647: 2 # Walking Zeros: 0x7fffffff
     rs1_val == 3221225471: 1 # Walking Zeros: 0xbfffffff
     rs1_val == 3758096383: 1 # Walking Zeros: 0xdfffffff
     rs1_val == 4026531839: 1 # Walking Zeros: 0xefffffff
@@ -3964,7 +3786,7 @@ sha512sig0h:
   total_coverage: 250/250
 sha512sig0l:
   config:
-  - check ISA:=regex(.*RV32.*I.*K.*)
+  - check ISA:=regex(.*I.*Zk.*)
   - check ISA:=regex(.*RV32.*I.*Zkn.*)
   - check ISA:=regex(.*RV32.*I.*Zknh.*)
   mnemonics:
@@ -4036,8 +3858,8 @@ sha512sig0l:
     x28: 1
     x29: 1
     x3: 1
-    x30: 122
-    x31: 1
+    x30: 121
+    x31: 2
     x4: 1
     x5: 1
     x6: 1
@@ -4068,9 +3890,9 @@ sha512sig0l:
     x26: 1
     x27: 1
     x28: 1
-    x29: 122
+    x29: 120
     x3: 1
-    x30: 1
+    x30: 3
     x31: 1
     x4: 1
     x5: 1
@@ -4111,9 +3933,9 @@ sha512sig0l:
     rs2_val == 4294967279: 1 # Walking Zeros: 0xffffffef
     rs2_val == 4294967287: 1 # Walking Zeros: 0xfffffff7
     rs2_val == 4294967291: 2 # Walking Zeros: 0xfffffffb
-    rs2_val == 4294967293: 2 # Walking Zeros: 0xfffffffd
+    rs2_val == 4294967293: 1 # Walking Zeros: 0xfffffffd
     rs2_val == 4294967294: 1 # Walking Zeros: 0xfffffffe
-    rs1_val == 2147483647: 1 # Walking Zeros: 0x7fffffff
+    rs1_val == 2147483647: 2 # Walking Zeros: 0x7fffffff
     rs1_val == 3221225471: 1 # Walking Zeros: 0xbfffffff
     rs1_val == 3758096383: 1 # Walking Zeros: 0xdfffffff
     rs1_val == 4026531839: 1 # Walking Zeros: 0xefffffff
@@ -4232,7 +4054,7 @@ sha512sig0l:
   total_coverage: 250/250
 sha512sig1h:
   config:
-  - check ISA:=regex(.*RV32.*I.*K.*)
+  - check ISA:=regex(.*I.*Zk.*)
   - check ISA:=regex(.*RV32.*I.*Zkn.*)
   - check ISA:=regex(.*RV32.*I.*Zknh.*)
   mnemonics:
@@ -4304,8 +4126,8 @@ sha512sig1h:
     x28: 1
     x29: 1
     x3: 1
-    x30: 122
-    x31: 1
+    x30: 121
+    x31: 2
     x4: 1
     x5: 1
     x6: 1
@@ -4336,9 +4158,9 @@ sha512sig1h:
     x26: 1
     x27: 1
     x28: 1
-    x29: 122
+    x29: 120
     x3: 1
-    x30: 1
+    x30: 3
     x31: 1
     x4: 1
     x5: 1
@@ -4379,9 +4201,9 @@ sha512sig1h:
     rs2_val == 4294967279: 1 # Walking Zeros: 0xffffffef
     rs2_val == 4294967287: 1 # Walking Zeros: 0xfffffff7
     rs2_val == 4294967291: 2 # Walking Zeros: 0xfffffffb
-    rs2_val == 4294967293: 2 # Walking Zeros: 0xfffffffd
+    rs2_val == 4294967293: 1 # Walking Zeros: 0xfffffffd
     rs2_val == 4294967294: 1 # Walking Zeros: 0xfffffffe
-    rs1_val == 2147483647: 1 # Walking Zeros: 0x7fffffff
+    rs1_val == 2147483647: 2 # Walking Zeros: 0x7fffffff
     rs1_val == 3221225471: 1 # Walking Zeros: 0xbfffffff
     rs1_val == 3758096383: 1 # Walking Zeros: 0xdfffffff
     rs1_val == 4026531839: 1 # Walking Zeros: 0xefffffff
@@ -4500,7 +4322,7 @@ sha512sig1h:
   total_coverage: 250/250
 sha512sig1l:
   config:
-  - check ISA:=regex(.*RV32.*I.*K.*)
+  - check ISA:=regex(.*I.*Zk.*)
   - check ISA:=regex(.*RV32.*I.*Zkn.*)
   - check ISA:=regex(.*RV32.*I.*Zknh.*)
   mnemonics:
@@ -4572,8 +4394,8 @@ sha512sig1l:
     x28: 1
     x29: 1
     x3: 1
-    x30: 122
-    x31: 1
+    x30: 121
+    x31: 2
     x4: 1
     x5: 1
     x6: 1
@@ -4604,9 +4426,9 @@ sha512sig1l:
     x26: 1
     x27: 1
     x28: 1
-    x29: 122
+    x29: 120
     x3: 1
-    x30: 1
+    x30: 3
     x31: 1
     x4: 1
     x5: 1
@@ -4647,9 +4469,9 @@ sha512sig1l:
     rs2_val == 4294967279: 1 # Walking Zeros: 0xffffffef
     rs2_val == 4294967287: 1 # Walking Zeros: 0xfffffff7
     rs2_val == 4294967291: 2 # Walking Zeros: 0xfffffffb
-    rs2_val == 4294967293: 2 # Walking Zeros: 0xfffffffd
+    rs2_val == 4294967293: 1 # Walking Zeros: 0xfffffffd
     rs2_val == 4294967294: 1 # Walking Zeros: 0xfffffffe
-    rs1_val == 2147483647: 1 # Walking Zeros: 0x7fffffff
+    rs1_val == 2147483647: 2 # Walking Zeros: 0x7fffffff
     rs1_val == 3221225471: 1 # Walking Zeros: 0xbfffffff
     rs1_val == 3758096383: 1 # Walking Zeros: 0xdfffffff
     rs1_val == 4026531839: 1 # Walking Zeros: 0xefffffff
@@ -4768,7 +4590,7 @@ sha512sig1l:
   total_coverage: 250/250
 sha512sum0r:
   config:
-  - check ISA:=regex(.*RV32.*I.*K.*)
+  - check ISA:=regex(.*I.*Zk.*)
   - check ISA:=regex(.*RV32.*I.*Zkn.*)
   - check ISA:=regex(.*RV32.*I.*Zknh.*)
   mnemonics:
@@ -4840,8 +4662,8 @@ sha512sum0r:
     x28: 1
     x29: 1
     x3: 1
-    x30: 122
-    x31: 1
+    x30: 121
+    x31: 2
     x4: 1
     x5: 1
     x6: 1
@@ -4872,9 +4694,9 @@ sha512sum0r:
     x26: 1
     x27: 1
     x28: 1
-    x29: 122
+    x29: 120
     x3: 1
-    x30: 1
+    x30: 3
     x31: 1
     x4: 1
     x5: 1
@@ -4915,9 +4737,9 @@ sha512sum0r:
     rs2_val == 4294967279: 1 # Walking Zeros: 0xffffffef
     rs2_val == 4294967287: 1 # Walking Zeros: 0xfffffff7
     rs2_val == 4294967291: 2 # Walking Zeros: 0xfffffffb
-    rs2_val == 4294967293: 2 # Walking Zeros: 0xfffffffd
+    rs2_val == 4294967293: 1 # Walking Zeros: 0xfffffffd
     rs2_val == 4294967294: 1 # Walking Zeros: 0xfffffffe
-    rs1_val == 2147483647: 1 # Walking Zeros: 0x7fffffff
+    rs1_val == 2147483647: 2 # Walking Zeros: 0x7fffffff
     rs1_val == 3221225471: 1 # Walking Zeros: 0xbfffffff
     rs1_val == 3758096383: 1 # Walking Zeros: 0xdfffffff
     rs1_val == 4026531839: 1 # Walking Zeros: 0xefffffff
@@ -5036,7 +4858,7 @@ sha512sum0r:
   total_coverage: 250/250
 sha512sum1r:
   config:
-  - check ISA:=regex(.*RV32.*I.*K.*)
+  - check ISA:=regex(.*I.*Zk.*)
   - check ISA:=regex(.*RV32.*I.*Zkn.*)
   - check ISA:=regex(.*RV32.*I.*Zknh.*)
   mnemonics:
@@ -5108,8 +4930,8 @@ sha512sum1r:
     x28: 1
     x29: 1
     x3: 1
-    x30: 122
-    x31: 1
+    x30: 121
+    x31: 2
     x4: 1
     x5: 1
     x6: 1
@@ -5140,9 +4962,9 @@ sha512sum1r:
     x26: 1
     x27: 1
     x28: 1
-    x29: 122
+    x29: 120
     x3: 1
-    x30: 1
+    x30: 3
     x31: 1
     x4: 1
     x5: 1
@@ -5183,9 +5005,9 @@ sha512sum1r:
     rs2_val == 4294967279: 1 # Walking Zeros: 0xffffffef
     rs2_val == 4294967287: 1 # Walking Zeros: 0xfffffff7
     rs2_val == 4294967291: 2 # Walking Zeros: 0xfffffffb
-    rs2_val == 4294967293: 2 # Walking Zeros: 0xfffffffd
+    rs2_val == 4294967293: 1 # Walking Zeros: 0xfffffffd
     rs2_val == 4294967294: 1 # Walking Zeros: 0xfffffffe
-    rs1_val == 2147483647: 1 # Walking Zeros: 0x7fffffff
+    rs1_val == 2147483647: 2 # Walking Zeros: 0x7fffffff
     rs1_val == 3221225471: 1 # Walking Zeros: 0xbfffffff
     rs1_val == 3758096383: 1 # Walking Zeros: 0xdfffffff
     rs1_val == 4026531839: 1 # Walking Zeros: 0xefffffff
@@ -5304,7 +5126,6 @@ sha512sum1r:
   total_coverage: 250/250
 sm3p0:
   config:
-  - check ISA:=regex(.*I.*K.*)
   - check ISA:=regex(.*I.*Zks.*)
   - check ISA:=regex(.*I.*Zksh.*)
   mnemonics:
@@ -5471,7 +5292,6 @@ sm3p0:
   total_coverage: 151/151
 sm3p1:
   config:
-  - check ISA:=regex(.*I.*K.*)
   - check ISA:=regex(.*I.*Zks.*)
   - check ISA:=regex(.*I.*Zksh.*)
   mnemonics:
@@ -5638,8 +5458,6 @@ sm3p1:
   total_coverage: 151/151
 sm4ed:
   config:
-  - check ISA:=regex(.*I.*K.*)
-  - check ISA:=regex(.*I.*Zk.*)
   - check ISA:=regex(.*I.*Zks.*)
   - check ISA:=regex(.*I.*Zksed.*)
   mnemonics:
@@ -5711,8 +5529,8 @@ sm4ed:
     x28: 1
     x29: 1
     x3: 1
-    x30: 250
-    x31: 1
+    x30: 249
+    x31: 2
     x4: 1
     x5: 1
     x6: 1
@@ -5743,9 +5561,9 @@ sm4ed:
     x26: 1
     x27: 1
     x28: 1
-    x29: 250
+    x29: 248
     x3: 1
-    x30: 1
+    x30: 3
     x31: 1
     x4: 1
     x5: 1
@@ -5786,9 +5604,9 @@ sm4ed:
     'rs1_val == 0 and rs2_val == 0xfbfaf9f8 and imm_val == 0 #nosat': 1 # Byte Count
     'rs1_val == 0 and rs2_val == 0xf7f6f5f4 and imm_val == 3 #nosat': 1 # Byte Count
     'rs1_val == 0 and rs2_val == 0xf7f6f5f4 and imm_val == 2 #nosat': 2 # Byte Count
-    'rs1_val == 0 and rs2_val == 0xf7f6f5f4 and imm_val == 1 #nosat': 2 # Byte Count
+    'rs1_val == 0 and rs2_val == 0xf7f6f5f4 and imm_val == 1 #nosat': 1 # Byte Count
     'rs1_val == 0 and rs2_val == 0xf7f6f5f4 and imm_val == 0 #nosat': 1 # Byte Count
-    'rs1_val == 0 and rs2_val == 0xf3f2f1f0 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0 and rs2_val == 0xf3f2f1f0 and imm_val == 3 #nosat': 2 # Byte Count
     'rs1_val == 0 and rs2_val == 0xf3f2f1f0 and imm_val == 2 #nosat': 1 # Byte Count
     'rs1_val == 0 and rs2_val == 0xf3f2f1f0 and imm_val == 1 #nosat': 1 # Byte Count
     'rs1_val == 0 and rs2_val == 0xf3f2f1f0 and imm_val == 0 #nosat': 1 # Byte Count
@@ -6035,8 +5853,6 @@ sm4ed:
   total_coverage: 378/378
 sm4ks:
   config:
-  - check ISA:=regex(.*I.*K.*)
-  - check ISA:=regex(.*I.*Zk.*)
   - check ISA:=regex(.*I.*Zks.*)
   - check ISA:=regex(.*I.*Zksed.*)
   mnemonics:
@@ -6108,8 +5924,8 @@ sm4ks:
     x28: 1
     x29: 1
     x3: 1
-    x30: 250
-    x31: 1
+    x30: 249
+    x31: 2
     x4: 1
     x5: 1
     x6: 1
@@ -6140,9 +5956,9 @@ sm4ks:
     x26: 1
     x27: 1
     x28: 1
-    x29: 250
+    x29: 248
     x3: 1
-    x30: 1
+    x30: 3
     x31: 1
     x4: 1
     x5: 1
@@ -6183,9 +5999,9 @@ sm4ks:
     'rs1_val == 0 and rs2_val == 0xfbfaf9f8 and imm_val == 0 #nosat': 1 # Byte Count
     'rs1_val == 0 and rs2_val == 0xf7f6f5f4 and imm_val == 3 #nosat': 1 # Byte Count
     'rs1_val == 0 and rs2_val == 0xf7f6f5f4 and imm_val == 2 #nosat': 2 # Byte Count
-    'rs1_val == 0 and rs2_val == 0xf7f6f5f4 and imm_val == 1 #nosat': 2 # Byte Count
+    'rs1_val == 0 and rs2_val == 0xf7f6f5f4 and imm_val == 1 #nosat': 1 # Byte Count
     'rs1_val == 0 and rs2_val == 0xf7f6f5f4 and imm_val == 0 #nosat': 1 # Byte Count
-    'rs1_val == 0 and rs2_val == 0xf3f2f1f0 and imm_val == 3 #nosat': 1 # Byte Count
+    'rs1_val == 0 and rs2_val == 0xf3f2f1f0 and imm_val == 3 #nosat': 2 # Byte Count
     'rs1_val == 0 and rs2_val == 0xf3f2f1f0 and imm_val == 2 #nosat': 1 # Byte Count
     'rs1_val == 0 and rs2_val == 0xf3f2f1f0 and imm_val == 1 #nosat': 1 # Byte Count
     'rs1_val == 0 and rs2_val == 0xf3f2f1f0 and imm_val == 0 #nosat': 1 # Byte Count
@@ -6433,7 +6249,7 @@ sm4ks:
 unzip:
   base_op: unshfli
   config:
-  - check ISA:=regex(.*I.*K.*)
+  - check ISA:=regex(.*I.*Zk.*)
   - check ISA:=regex(.*I.*Zkn.*)
   - check ISA:=regex(.*I.*Zks.*)
   - check ISA:=regex(.*I.*Zbkb.*)
@@ -6648,7 +6464,7 @@ unzip:
   total_coverage: 197/197
 xperm4:
   config:
-  - check ISA:=regex(.*I.*K.*)
+  - check ISA:=regex(.*I.*Zk.*)
   - check ISA:=regex(.*I.*Zkn.*)
   - check ISA:=regex(.*I.*Zks.*)
   - check ISA:=regex(.*I.*Zbkx.*)
@@ -6721,8 +6537,8 @@ xperm4:
     x28: 1
     x29: 1
     x3: 1
-    x30: 258
-    x31: 1
+    x30: 257
+    x31: 2
     x4: 1
     x5: 1
     x6: 1
@@ -6753,9 +6569,9 @@ xperm4:
     x26: 1
     x27: 1
     x28: 1
-    x29: 258
+    x29: 256
     x3: 1
-    x30: 1
+    x30: 3
     x31: 1
     x4: 1
     x5: 1
@@ -6796,9 +6612,9 @@ xperm4:
     'rs2_val == 0x3E000000 and rs1_val == 0xED52E4CA #nosat': 1 # 25 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0xFB000000 and rs1_val == 0xB5CB2A93 #nosat': 1 # 24 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0x68800000 and rs1_val == 0x29324E16 #nosat': 1 # 23 Trailing zeros for rs2_val. Other operands are random
-    'rs2_val == 0xB7400000 and rs1_val == 0xBC5FB419 #nosat': 2 # 22 Trailing zeros for rs2_val. Other operands are random
+    'rs2_val == 0xB7400000 and rs1_val == 0xBC5FB419 #nosat': 1 # 22 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0x5CE00000 and rs1_val == 0x8E92E1B8 #nosat': 1 # 21 Trailing zeros for rs2_val. Other operands are random
-    'rs2_val == 0x49F00000 and rs1_val == 0x96A3B48B #nosat': 1 # 20 Trailing zeros for rs2_val. Other operands are random
+    'rs2_val == 0x49F00000 and rs1_val == 0x96A3B48B #nosat': 2 # 20 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0x53D80000 and rs1_val == 0x0A095049 #nosat': 1 # 19 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0x2EC40000 and rs1_val == 0x6F6E71B7 #nosat': 1 # 18 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0x8E860000 and rs1_val == 0x236CC43D #nosat': 1 # 17 Trailing zeros for rs2_val. Other operands are random
@@ -7053,7 +6869,7 @@ xperm4:
   total_coverage: 386/386
 xperm8:
   config:
-  - check ISA:=regex(.*I.*K.*)
+  - check ISA:=regex(.*I.*Zk.*)
   - check ISA:=regex(.*I.*Zks.*)
   - check ISA:=regex(.*I.*Zkn.*)
   - check ISA:=regex(.*I.*Zbkx.*)
@@ -7126,8 +6942,8 @@ xperm8:
     x28: 1
     x29: 1
     x3: 1
-    x30: 258
-    x31: 1
+    x30: 257
+    x31: 2
     x4: 1
     x5: 1
     x6: 1
@@ -7158,9 +6974,9 @@ xperm8:
     x26: 1
     x27: 1
     x28: 1
-    x29: 258
+    x29: 256
     x3: 1
-    x30: 1
+    x30: 3
     x31: 1
     x4: 1
     x5: 1
@@ -7201,9 +7017,9 @@ xperm8:
     'rs2_val == 0x3E000000 and rs1_val == 0xED52E4CA #nosat': 1 # 25 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0xFB000000 and rs1_val == 0xB5CB2A93 #nosat': 1 # 24 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0x68800000 and rs1_val == 0x29324E16 #nosat': 1 # 23 Trailing zeros for rs2_val. Other operands are random
-    'rs2_val == 0xB7400000 and rs1_val == 0xBC5FB419 #nosat': 2 # 22 Trailing zeros for rs2_val. Other operands are random
+    'rs2_val == 0xB7400000 and rs1_val == 0xBC5FB419 #nosat': 1 # 22 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0x5CE00000 and rs1_val == 0x8E92E1B8 #nosat': 1 # 21 Trailing zeros for rs2_val. Other operands are random
-    'rs2_val == 0x49F00000 and rs1_val == 0x96A3B48B #nosat': 1 # 20 Trailing zeros for rs2_val. Other operands are random
+    'rs2_val == 0x49F00000 and rs1_val == 0x96A3B48B #nosat': 2 # 20 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0x53D80000 and rs1_val == 0x0A095049 #nosat': 1 # 19 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0x2EC40000 and rs1_val == 0x6F6E71B7 #nosat': 1 # 18 Trailing zeros for rs2_val. Other operands are random
     'rs2_val == 0x8E860000 and rs1_val == 0x236CC43D #nosat': 1 # 17 Trailing zeros for rs2_val. Other operands are random
@@ -7459,7 +7275,7 @@ xperm8:
 zip:
   base_op: shfli
   config:
-  - check ISA:=regex(.*I.*K.*)
+  - check ISA:=regex(.*I.*Zk.*)
   - check ISA:=regex(.*I.*Zkn.*)
   - check ISA:=regex(.*I.*Zks.*)
   - check ISA:=regex(.*I.*Zbkb.*)

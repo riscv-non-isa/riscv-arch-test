@@ -3,7 +3,6 @@
         
 brev8:
     config: 
-      - check ISA:=regex(.*I.*K.*)
       - check ISA:=regex(.*I.*Zk.*)
       - check ISA:=regex(.*I.*Zks.*)
       - check ISA:=regex(.*I.*Zkn.*)
@@ -32,7 +31,6 @@ brev8:
         
 pack:
     config: 
-      - check ISA:=regex(.*I.*K.*)
       - check ISA:=regex(.*I.*Zk.*)
       - check ISA:=regex(.*I.*Zks.*)
       - check ISA:=regex(.*I.*Zkn.*)
@@ -56,7 +54,6 @@ pack:
 
 packh:
     config: 
-      - check ISA:=regex(.*I.*K.*)
       - check ISA:=regex(.*I.*Zk.*)
       - check ISA:=regex(.*I.*Zks.*)
       - check ISA:=regex(.*I.*Zkn.*)
@@ -80,7 +77,6 @@ packh:
         
 packw:
     config: 
-      - check ISA:=regex(.*RV64.*I.*K.*)
       - check ISA:=regex(.*RV64.*I.*Zk.*)
       - check ISA:=regex(.*RV64.*I.*Zks.*)
       - check ISA:=regex(.*RV64.*I.*Zkn.*)
@@ -104,7 +100,6 @@ packw:
 
 xperm4:
     config: 
-      - check ISA:=regex(.*I.*K.*)
       - check ISA:=regex(.*I.*Zk.*)
       - check ISA:=regex(.*I.*Zks.*)
       - check ISA:=regex(.*I.*Zkn.*)
@@ -129,7 +124,6 @@ xperm4:
 
 xperm8:
     config: 
-      - check ISA:=regex(.*I.*K.*)
       - check ISA:=regex(.*I.*Zk.*)
       - check ISA:=regex(.*I.*Zks.*)
       - check ISA:=regex(.*I.*Zkn.*)
@@ -155,7 +149,6 @@ xperm8:
 
 aes64ds:
     config: 
-      - check ISA:=regex(.*RV64.*I.*K.*)
       - check ISA:=regex(.*RV64.*I.*Zk.*)
       - check ISA:=regex(.*RV64.*I.*Zkn.*)
       - check ISA:=regex(.*RV64.*I.*Zknd.*)
@@ -176,7 +169,6 @@ aes64ds:
 
 aes64dsm:
     config: 
-      - check ISA:=regex(.*RV64.*I.*K.*)
       - check ISA:=regex(.*RV64.*I.*Zk.*)
       - check ISA:=regex(.*RV64.*I.*Zkn.*)
       - check ISA:=regex(.*RV64.*I.*Zknd.*)
@@ -197,7 +189,6 @@ aes64dsm:
 
 aes64es:
     config: 
-      - check ISA:=regex(.*RV64.*I.*K.*)
       - check ISA:=regex(.*RV64.*I.*Zk.*)
       - check ISA:=regex(.*RV64.*I.*Zkn.*)
       - check ISA:=regex(.*RV64.*I.*Zkne.*)
@@ -218,7 +209,6 @@ aes64es:
 
 aes64esm:
     config: 
-      - check ISA:=regex(.*RV64.*I.*K.*)
       - check ISA:=regex(.*RV64.*I.*Zk.*)
       - check ISA:=regex(.*RV64.*I.*Zkn.*)
       - check ISA:=regex(.*RV64.*I.*Zkne.*)
@@ -239,7 +229,6 @@ aes64esm:
 
 aes64im:
     config: 
-      - check ISA:=regex(.*RV64.*I.*K.*)
       - check ISA:=regex(.*RV64.*I.*Zk.*)
       - check ISA:=regex(.*RV64.*I.*Zkn.*)
       - check ISA:=regex(.*RV64.*I.*Zknd.*)
@@ -259,9 +248,9 @@ aes64im:
         
 aes64ks1i:
     config: 
-      - check ISA:=regex(.*RV64.*I.*K.*)
       - check ISA:=regex(.*RV64.*I.*Zk.*)
       - check ISA:=regex(.*RV64.*I.*Zkn.*)
+      - check ISA:=regex(.*RV64.*I.*Zknd.*)
       - check ISA:=regex(.*RV64.*I.*Zkne.*)
     mnemonics: 
       aes64ks1i: 0
@@ -278,9 +267,9 @@ aes64ks1i:
 
 aes64ks2:
     config: 
-      - check ISA:=regex(.*RV64.*I.*K.*)
       - check ISA:=regex(.*RV64.*I.*Zk.*)
       - check ISA:=regex(.*RV64.*I.*Zkn.*)
+      - check ISA:=regex(.*RV64.*I.*Zknd.*)
       - check ISA:=regex(.*RV64.*I.*Zkne.*)
     mnemonics: 
       aes64ks2: 0
@@ -302,7 +291,6 @@ aes64ks2:
         
 sha256sig0:
     config: 
-      - check ISA:=regex(.*I.*K.*)
       - check ISA:=regex(.*I.*Zk.*)
       - check ISA:=regex(.*I.*Zkn.*)
       - check ISA:=regex(.*I.*Zknh.*)
@@ -322,7 +310,6 @@ sha256sig0:
 
 sha256sig1:
     config: 
-      - check ISA:=regex(.*I.*K.*)
       - check ISA:=regex(.*I.*Zk.*)
       - check ISA:=regex(.*I.*Zkn.*)
       - check ISA:=regex(.*I.*Zknh.*)
@@ -342,7 +329,6 @@ sha256sig1:
         
 sha256sum0:
     config: 
-      - check ISA:=regex(.*I.*K.*)
       - check ISA:=regex(.*I.*Zk.*)
       - check ISA:=regex(.*I.*Zkn.*)
       - check ISA:=regex(.*I.*Zknh.*)
@@ -362,7 +348,6 @@ sha256sum0:
         
 sha256sum1:
     config: 
-      - check ISA:=regex(.*I.*K.*)
       - check ISA:=regex(.*I.*Zk.*)
       - check ISA:=regex(.*I.*Zkn.*)
       - check ISA:=regex(.*I.*Zknh.*)
@@ -382,7 +367,6 @@ sha256sum1:
 
 sha512sig0:
     config: 
-      - check ISA:=regex(.*RV64.*I.*K.*)
       - check ISA:=regex(.*RV64.*I.*Zk.*)
       - check ISA:=regex(.*RV64.*I.*Zkn.*)
       - check ISA:=regex(.*RV64.*I.*Zknh.*)
@@ -402,7 +386,6 @@ sha512sig0:
 
 sha512sig1:
     config: 
-      - check ISA:=regex(.*RV64.*I.*K.*)
       - check ISA:=regex(.*RV64.*I.*Zk.*)
       - check ISA:=regex(.*RV64.*I.*Zkn.*)
       - check ISA:=regex(.*RV64.*I.*Zknh.*)
@@ -422,7 +405,6 @@ sha512sig1:
         
 sha512sum0:
     config: 
-      - check ISA:=regex(.*RV64.*I.*K.*)
       - check ISA:=regex(.*RV64.*I.*Zk.*)
       - check ISA:=regex(.*RV64.*I.*Zkn.*)
       - check ISA:=regex(.*RV64.*I.*Zknh.*)
@@ -442,7 +424,6 @@ sha512sum0:
         
 sha512sum1:
     config: 
-      - check ISA:=regex(.*RV64.*I.*K.*)
       - check ISA:=regex(.*RV64.*I.*Zk.*)
       - check ISA:=regex(.*RV64.*I.*Zkn.*)
       - check ISA:=regex(.*RV64.*I.*Zknh.*)
@@ -462,8 +443,6 @@ sha512sum1:
         
 sm3p0:
     config: 
-      - check ISA:=regex(.*I.*K.*)
-      - check ISA:=regex(.*I.*Zk.*)
       - check ISA:=regex(.*I.*Zks.*)
       - check ISA:=regex(.*I.*Zksh.*)
     mnemonics: 
@@ -482,8 +461,6 @@ sm3p0:
         
 sm3p1:
     config: 
-      - check ISA:=regex(.*I.*K.*)
-      - check ISA:=regex(.*I.*Zk.*)
       - check ISA:=regex(.*I.*Zks.*)
       - check ISA:=regex(.*I.*Zksh.*)
     mnemonics: 
@@ -502,8 +479,6 @@ sm3p1:
         
 sm4ed:
     config: 
-      - check ISA:=regex(.*I.*K.*)
-      - check ISA:=regex(.*I.*Zk.*)
       - check ISA:=regex(.*I.*Zks.*)
       - check ISA:=regex(.*I.*Zksed.*)
     mnemonics: 
@@ -523,8 +498,6 @@ sm4ed:
 
 sm4ks:
     config: 
-      - check ISA:=regex(.*I.*K.*)
-      - check ISA:=regex(.*I.*Zk.*)
       - check ISA:=regex(.*I.*Zks.*)
       - check ISA:=regex(.*I.*Zksed.*)
     mnemonics: 
