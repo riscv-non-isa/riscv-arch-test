@@ -61,8 +61,7 @@
 	.set offset,_ARG1(__VA_ARGS__,0)		;\
   .endif						;\
   CHK_OFFSET(_BR, REGWIDTH, 0)				;\
-  SREG _R,offset(_BR)					;\
-  .set offset,offset+REGWIDTH
+  SREG _R,offset(_BR)					
 
 /* RVTEST_SIGUPD_F(basereg, sigreg,flagreg,newoff)			 */
 /* This macro is used to store the signature values of (32 & 64) F and D */
