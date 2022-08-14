@@ -194,9 +194,6 @@
   //#define SMODE_SIG 1
 	/* these macros need to be defined because mode is uppercase in mode specific macros */
 	/* note that vs mode uses smode return */
-#define MRET	mret
-#define VRET	sret
-#define SRET	sret
 
 #define MPP_LSB	  11	//bit pos of LSB of the mstatus.MPP field
 #define MPP_SMODE  (1<<MPP_LSB)
@@ -433,7 +430,7 @@
 /******************************************************************************/
 
  .macro	XCSR_RENAME __MODE__		// enable CSR names to be parameterized.
-    .if ((__MODE__ == S) | (__MODE__ == V))
+    .if ((\__MODE__ == S) | (\__MODE__ == V))
       .set CSR_XSTATUS,	CSR_SSTATUS
       .set CSR_XEDELEG,	CSR_SEDELEG
       .set CSR_XIE,	CSR_SIE
@@ -463,7 +460,7 @@
 /**** accesses CSRs when V=1in different modes can share the code          ****/
 /******************************************************************************/
  .macro	XCSR_VRENAME __MODE__		// enable CSR names to be parameterized, with H/V,S aliasing
-  .if (__MODE__ == S)
+  .if (\__MODE__ == S)
       .set CSR_XSTATUS, CSR_SSTATUS
       .set CSR_XEDELEG, CSR_SEDELEG
       .set CSR_XIE,	CSR_SIE
@@ -474,7 +471,7 @@
       .set CSR_XSCRATCH,CSR_SSCRATCH
       .set CSR_XTVAL,	CSR_STVAL
       .set CSR_XTVEC,	CSR_STVEC
-  .elseif (__MODE__ == V)
+  .elseif (\__MODE__ == V)
       .set CSR_XSTATUS, CSR_HSTATUS
       .set CSR_XEDELEG, CSR_HEDELEG
       .set CSR_XIE,	CSR_HIE
@@ -1069,7 +1066,7 @@ sv_\__MODE__\()tval:			// adjustment amt is in t3, tval or opcode in t2
 	sub	t6, t6, t3		// perform mtval adjust by either code or data position or zero in t3
 no_\__MODE__\()adj:			// For Illegal op handling or tval not loaded - opcode not address
 // Commenting the next line to stop printing 4th sig value (int ID)
-//	SREG	t6, 3*REGWIDTH(t1)	// save 4th sig value, (rel mtval) into trap signature area
+	SREG	t6, 3*REGWIDTH(t1)	// save 4th sig value, (rel mtval) into trap signature area
   .if (\__MODE__\() == M)
     .ifdef  __H_EXT__
 	csrr	t2, CSR_MTVAL2
@@ -1143,7 +1140,7 @@ spcl_\__MODE__\()handler:		// case table branch to special handler code, dependi
 \__MODE__\()clr_Mext_int:				 // default to just return
 	RVMODEL_CLEAR_MEXT_INT
 // Commenting the next line to stop printing 4th sig value (int ID)
-//	SREG	t3, 3*REGWIDTH(t1)	  // save 4rd sig value, (intID)
+	SREG	t3, 3*REGWIDTH(t1)	  // save 4rd sig value, (intID)
 	j	resto_\__MODE__\()rtn
 
 
@@ -1158,7 +1155,7 @@ spcl_\__MODE__\()handler:		// case table branch to special handler code, dependi
 \__MODE__\()clr_Sext_int:				 // default to just return
 	RVMODEL_CLEAR_SEXT_INT
 // Commenting the next line to stop printing 4th sig value (int ID)
-//	SREG	t3, 3*REGWIDTH(t1)	 // save 4rd sig value, (intID)
+	SREG	t3, 3*REGWIDTH(t1)	 // save 4rd sig value, (intID)
 	j	resto_\__MODE__\()rtn
 
 
@@ -1173,7 +1170,7 @@ spcl_\__MODE__\()handler:		// case table branch to special handler code, dependi
 \__MODE__\()clr_Vext_int:			       // default to just return
 	RVMODEL_CLEAR_VEXT_INT
 // Commenting the next line to stop printing 4th sig value (int ID)
-//	SREG	t3, 3*REGWIDTH(t1)	// save 4rd sig value, (intID)
+	SREG	t3, 3*REGWIDTH(t1)	// save 4rd sig value, (intID)
 	j	resto_\__MODE__\()rtn
 
 
