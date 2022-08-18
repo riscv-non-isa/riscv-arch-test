@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [3.2.1] - 2022-08-01
+  - Fix invalid link in README.adoc
+
+## [3.2.0] - 2022-07-19
+  - Add definition of LREGWU according to XLEN.
+  - Fix corresponding fcvt.\*.wu tests.
+
 ## [3.1.1] - 2022-07-07
   - Fix definition of FPID macro to add load instruction.
   - Fix nan boxing macro to use correct endianness.

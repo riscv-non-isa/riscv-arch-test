@@ -252,17 +252,17 @@ interest which are covered by all the tests in the `riscv-test-suite` directory.
 == Vocabulary
 === The architectural test
 
-At the heart of the testing infrastructure is the detailed <<The architectural tests, _architectural test_>> available as `.S` assembly files. The specification and format of the tests is defined in the link:./TestFormatSpec.adoc[`Test Format Specification`].
+At the heart of the testing infrastructure is the detailed <<The architectural tests, _architectural test_>> available as `.S` assembly files. The specification and format of the tests is defined in the link:../spec/TestFormatSpec.adoc[`Test Format Spec`].
 
 === The architectural test pool
 
-The <<The architectural test, _architectural tests_>> are grouped into different functional test suites targeting the different subsets of the RISC-V specification. For more details on the test-pool structure, hierarchy and conventions please refer to the link:./TestFormatSpec.adoc[`Test Format Specification`].
+The <<The architectural test, _architectural tests_>> are grouped into different functional test suites targeting the different subsets of the RISC-V specification. For more details on the test-pool structure, hierarchy and conventions please refer to the link:../spec/TestFormatSpec.adoc[`Test Format Spec`].
 
 For information on the currently supported different test suites, look here: link:../riscv-test-suite/README.md[../riscv-test-suite/README.md]
 
 === The test signature
 
-Each test in the <<The architectural test pool, _architectural test pool_>> generates a <<The test signature, _test signature_>>, which represents the data written into specific memory locations during the execution of the test. The signature typically will record values (or sanitised values) of the operations carried out in the test. More details on the format and nature of the signatures is available in the link:./TestFormatSpec.adoc[`Test Format Specification`]
+Each test in the <<The architectural test pool, _architectural test pool_>> generates a <<The test signature, _test signature_>>, which represents the data written into specific memory locations during the execution of the test. The signature typically will record values (or sanitised values) of the operations carried out in the test. More details on the format and nature of the signatures is available in the link:../spec/TestFormatSpec.adoc[`Test Format Spec`]
 
 === The reference signature
 

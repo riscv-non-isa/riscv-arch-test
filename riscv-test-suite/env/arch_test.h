@@ -67,6 +67,7 @@
 #if XLEN==64
   #define SREG sd
   #define LREG ld
+  #define LREGWU lwu
   #define REGWIDTH 8
   #define MASK 0xFFFFFFFFFFFFFFFF
 
@@ -74,6 +75,7 @@
   #if XLEN==32
     #define SREG sw
     #define LREG lw
+    #define LREGWU lw
     #define REGWIDTH 4
   #define MASK 0xFFFFFFFF
 
