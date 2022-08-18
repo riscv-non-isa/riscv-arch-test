@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## [3.3.0] - 2022-08-18
+  - Added tests for Bitmanip and Crypto scalar extensions
+
 ## [3.2.1] - 2022-08-01
   - Fix invalid link in README.adoc
 
