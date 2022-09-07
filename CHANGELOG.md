@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## [3.3.1] - 2022-08-18
+## [3.4.0] - 2022-08-18
   - Added tests for Bitmanip and Crypto scalar extensions
   
 ## [3.3.0] - 2022-08-08
