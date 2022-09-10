@@ -915,7 +915,7 @@ RVTEST_SIGUPD(swreg,flagreg,offset+SIGALIGN)
 
 #define TEST_LOAD_F(swreg,testreg,fcsr_val,rs1,destreg,imm_val,inst,adj,flagreg)        ;\
 LA(rs1,rvtest_data+adj-imm_val)                                                         ;\
-LI(testreg, fcsr_val)                                                                   ;\ 
+LI(testreg, fcsr_val)                                                                   ;\
 csrw fcsr, testreg                                                                      ;\
 inst destreg, imm_val(rs1)                                                              ;\
 nop                                                                                     ;\
