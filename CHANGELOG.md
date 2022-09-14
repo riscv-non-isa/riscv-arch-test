@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## [3.4.1] - 2022-09-11
+  - Fix trailing space in arch_test.h
+
 ## [3.4.0] - 2022-08-18
   - Added tests for Bitmanip and Crypto scalar extensions
   
