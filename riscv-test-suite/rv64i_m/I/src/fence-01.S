@@ -21,8 +21,8 @@ RVTEST_CODE_BEGIN
 RVTEST_CASE(0,"//check ISA:=regex(.*64.*);check ISA:=regex(.*I.*);def TEST_CASE_1=True;",fence)
 
 LA(x9,rvtest_data_store)
-li x8, 0xffffffff
-li x7, 0xaaaaaaaa
+LI(x8,0xffffffff)
+LI(x7,0xaaaaaaaa)
 
 sw x8, 0(x9)
 sw x7, 4(x9)

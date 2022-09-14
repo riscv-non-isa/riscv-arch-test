@@ -32,7 +32,7 @@ RVMODEL_IO_WRITE_STR(x31, "# Test Begin\n")
     LA(     x17,test_A_res)
 
     # Register initialization
-    li      x3, 0
+    LI(     x3,0)
 
     # Load testdata
     lw      x1, 0(x16)

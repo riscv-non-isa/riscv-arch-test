@@ -25,7 +25,7 @@ RVTEST_CODE_BEGIN
 
     LA(     x1,test_A_res)
     
-    li      x2, 0x11111111
+    LI(     x2,0x11111111)
     ebreak
     nop
     nop
