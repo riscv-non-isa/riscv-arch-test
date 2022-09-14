@@ -39,7 +39,7 @@ inst_0:
 // rs1 != rs2  and rs1 != rd and rs2 != rd, rs1==f26, rs2==f13, rd==f12,fs1 == 0 and fe1 == 0x00 and fm1 == 0x000000 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f26; op2:f13; dest:f12; op1val:0x0; op2val:0x0;
    valaddr_reg:x3; val_offset:0*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f12, f26, f13, 0, 0, x3, 0*FLEN/8, x4, x1, x2)
 
@@ -47,7 +47,7 @@ inst_1:
 // rs2 == rd != rs1, rs1==f8, rs2==f17, rd==f17,fs1 == 0 and fe1 == 0x00 and fm1 == 0x000000 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f8; op2:f17; dest:f17; op1val:0x0; op2val:0x1;
    valaddr_reg:x3; val_offset:2*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f17, f8, f17, 0, 0, x3, 2*FLEN/8, x4, x1, x2)
 
@@ -55,7 +55,7 @@ inst_2:
 // rs1 == rs2 != rd, rs1==f6, rs2==f6, rd==f21,fs1 == 0 and fe1 == 0x00 and fm1 == 0x000000 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x000002 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f6; op2:f6; dest:f21; op1val:0x0; op2val:0x0;
    valaddr_reg:x3; val_offset:4*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f21, f6, f6, 0, 0, x3, 4*FLEN/8, x4, x1, x2)
 
@@ -63,7 +63,7 @@ inst_3:
 // rs1 == rs2 == rd, rs1==f30, rs2==f30, rd==f30,fs1 == 0 and fe1 == 0x00 and fm1 == 0x000000 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f30; dest:f30; op1val:0x0; op2val:0x0;
    valaddr_reg:x3; val_offset:6*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f30, f30, f30, 0, 0, x3, 6*FLEN/8, x4, x1, x2)
 
@@ -71,7 +71,7 @@ inst_4:
 // rs1 == rd != rs2, rs1==f19, rs2==f9, rd==f19,fs1 == 0 and fe1 == 0x00 and fm1 == 0x000000 and fs2 == 0 and fe2 == 0x01 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f19; op2:f9; dest:f19; op1val:0x0; op2val:0x800000;
    valaddr_reg:x3; val_offset:8*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f19, f19, f9, 0, 0, x3, 8*FLEN/8, x4, x1, x2)
 
@@ -79,7 +79,7 @@ inst_5:
 // rs1==f15, rs2==f0, rd==f18,fs1 == 0 and fe1 == 0x00 and fm1 == 0x000000 and fs2 == 0 and fe2 == 0x01 and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f15; op2:f0; dest:f18; op1val:0x0; op2val:0x800001;
    valaddr_reg:x3; val_offset:10*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f18, f15, f0, 0, 0, x3, 10*FLEN/8, x4, x1, x2)
 
@@ -87,7 +87,7 @@ inst_6:
 // rs1==f29, rs2==f10, rd==f25,fs1 == 0 and fe1 == 0x00 and fm1 == 0x000000 and fs2 == 0 and fe2 == 0x7f and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f29; op2:f10; dest:f25; op1val:0x0; op2val:0x3f800000;
    valaddr_reg:x3; val_offset:12*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f25, f29, f10, 0, 0, x3, 12*FLEN/8, x4, x1, x2)
 
@@ -95,7 +95,7 @@ inst_7:
 // rs1==f2, rs2==f12, rd==f24,fs1 == 0 and fe1 == 0x00 and fm1 == 0x000000 and fs2 == 0 and fe2 == 0xfe and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f2; op2:f12; dest:f24; op1val:0x0; op2val:0x7f7fffff;
    valaddr_reg:x3; val_offset:14*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f24, f2, f12, 0, 0, x3, 14*FLEN/8, x4, x1, x2)
 
@@ -103,7 +103,7 @@ inst_8:
 // rs1==f17, rs2==f28, rd==f26,fs1 == 0 and fe1 == 0x00 and fm1 == 0x000000 and fs2 == 0 and fe2 == 0xff and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f17; op2:f28; dest:f26; op1val:0x0; op2val:0x7f800000;
    valaddr_reg:x3; val_offset:16*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f26, f17, f28, 0, 0, x3, 16*FLEN/8, x4, x1, x2)
 
@@ -111,7 +111,7 @@ inst_9:
 // rs1==f24, rs2==f15, rd==f13,fs1 == 0 and fe1 == 0x00 and fm1 == 0x000000 and fs2 == 0 and fe2 == 0xff and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f24; op2:f15; dest:f13; op1val:0x0; op2val:0x7f800001;
    valaddr_reg:x3; val_offset:18*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f13, f24, f15, 0, 0, x3, 18*FLEN/8, x4, x1, x2)
 
@@ -119,7 +119,7 @@ inst_10:
 // rs1==f27, rs2==f31, rd==f8,fs1 == 0 and fe1 == 0x00 and fm1 == 0x000000 and fs2 == 0 and fe2 == 0xff and fm2 == 0x400000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f27; op2:f31; dest:f8; op1val:0x0; op2val:0x7fc00000;
    valaddr_reg:x3; val_offset:20*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f8, f27, f31, 0, 0, x3, 20*FLEN/8, x4, x1, x2)
 
@@ -127,7 +127,7 @@ inst_11:
 // rs1==f7, rs2==f18, rd==f31,fs1 == 0 and fe1 == 0x00 and fm1 == 0x000000 and fs2 == 0 and fe2 == 0xff and fm2 == 0x400001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f7; op2:f18; dest:f31; op1val:0x0; op2val:0x7fc00001;
    valaddr_reg:x3; val_offset:22*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f7, f18, 0, 0, x3, 22*FLEN/8, x4, x1, x2)
 
@@ -135,7 +135,7 @@ inst_12:
 // rs1==f1, rs2==f7, rd==f11,fs1 == 0 and fe1 == 0x00 and fm1 == 0x000000 and fs2 == 1 and fe2 == 0x00 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f1; op2:f7; dest:f11; op1val:0x0; op2val:0x80000000;
    valaddr_reg:x3; val_offset:24*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f11, f1, f7, 0, 0, x3, 24*FLEN/8, x4, x1, x2)
 
@@ -143,7 +143,7 @@ inst_13:
 // rs1==f25, rs2==f29, rd==f9,fs1 == 0 and fe1 == 0x00 and fm1 == 0x000000 and fs2 == 1 and fe2 == 0x00 and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f25; op2:f29; dest:f9; op1val:0x0; op2val:0x80000001;
    valaddr_reg:x3; val_offset:26*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f9, f25, f29, 0, 0, x3, 26*FLEN/8, x4, x1, x2)
 
@@ -151,7 +151,7 @@ inst_14:
 // rs1==f3, rs2==f8, rd==f7,fs1 == 0 and fe1 == 0x00 and fm1 == 0x000000 and fs2 == 1 and fe2 == 0x00 and fm2 == 0x7ffffe and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f3; op2:f8; dest:f7; op1val:0x0; op2val:0x807ffffe;
    valaddr_reg:x3; val_offset:28*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f7, f3, f8, 0, 0, x3, 28*FLEN/8, x4, x1, x2)
 
@@ -159,7 +159,7 @@ inst_15:
 // rs1==f21, rs2==f5, rd==f22,fs1 == 0 and fe1 == 0x00 and fm1 == 0x000000 and fs2 == 1 and fe2 == 0x00 and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f21; op2:f5; dest:f22; op1val:0x0; op2val:0x807fffff;
    valaddr_reg:x3; val_offset:30*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f22, f21, f5, 0, 0, x3, 30*FLEN/8, x4, x1, x2)
 
@@ -167,7 +167,7 @@ inst_16:
 // rs1==f28, rs2==f1, rd==f5,fs1 == 0 and fe1 == 0x00 and fm1 == 0x000000 and fs2 == 1 and fe2 == 0x01 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f28; op2:f1; dest:f5; op1val:0x0; op2val:0x80800000;
    valaddr_reg:x3; val_offset:32*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f5, f28, f1, 0, 0, x3, 32*FLEN/8, x4, x1, x2)
 
@@ -175,7 +175,7 @@ inst_17:
 // rs1==f12, rs2==f23, rd==f16,fs1 == 0 and fe1 == 0x00 and fm1 == 0x000000 and fs2 == 1 and fe2 == 0x01 and fm2 == 0x055555 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f12; op2:f23; dest:f16; op1val:0x0; op2val:0x80855555;
    valaddr_reg:x3; val_offset:34*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f16, f12, f23, 0, 0, x3, 34*FLEN/8, x4, x1, x2)
 
@@ -183,7 +183,7 @@ inst_18:
 // rs1==f5, rs2==f21, rd==f2,fs1 == 0 and fe1 == 0x00 and fm1 == 0x000000 and fs2 == 1 and fe2 == 0x7f and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f5; op2:f21; dest:f2; op1val:0x0; op2val:0xbf800000;
    valaddr_reg:x3; val_offset:36*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f2, f5, f21, 0, 0, x3, 36*FLEN/8, x4, x1, x2)
 
@@ -191,7 +191,7 @@ inst_19:
 // rs1==f20, rs2==f2, rd==f4,fs1 == 0 and fe1 == 0x00 and fm1 == 0x000000 and fs2 == 1 and fe2 == 0xfe and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f20; op2:f2; dest:f4; op1val:0x0; op2val:0xff7fffff;
    valaddr_reg:x3; val_offset:38*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f4, f20, f2, 0, 0, x3, 38*FLEN/8, x4, x1, x2)
 
@@ -199,7 +199,7 @@ inst_20:
 // rs1==f10, rs2==f26, rd==f6,fs1 == 0 and fe1 == 0x00 and fm1 == 0x000000 and fs2 == 1 and fe2 == 0xff and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f10; op2:f26; dest:f6; op1val:0x0; op2val:0xff800000;
    valaddr_reg:x3; val_offset:40*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f6, f10, f26, 0, 0, x3, 40*FLEN/8, x4, x1, x2)
 
@@ -207,7 +207,7 @@ inst_21:
 // rs1==f31, rs2==f27, rd==f29,fs1 == 0 and fe1 == 0x00 and fm1 == 0x000000 and fs2 == 1 and fe2 == 0xff and fm2 == 0x2aaaaa and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f31; op2:f27; dest:f29; op1val:0x0; op2val:0xffaaaaaa;
    valaddr_reg:x3; val_offset:42*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f29, f31, f27, 0, 0, x3, 42*FLEN/8, x4, x1, x2)
 
@@ -215,7 +215,7 @@ inst_22:
 // rs1==f4, rs2==f11, rd==f28,fs1 == 0 and fe1 == 0x00 and fm1 == 0x000000 and fs2 == 1 and fe2 == 0xff and fm2 == 0x400000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f4; op2:f11; dest:f28; op1val:0x0; op2val:0xffc00000;
    valaddr_reg:x3; val_offset:44*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f28, f4, f11, 0, 0, x3, 44*FLEN/8, x4, x1, x2)
 
@@ -223,7 +223,7 @@ inst_23:
 // rs1==f13, rs2==f3, rd==f14,fs1 == 0 and fe1 == 0x00 and fm1 == 0x000000 and fs2 == 1 and fe2 == 0xff and fm2 == 0x455555 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f13; op2:f3; dest:f14; op1val:0x0; op2val:0xffc55555;
    valaddr_reg:x3; val_offset:46*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f14, f13, f3, 0, 0, x3, 46*FLEN/8, x4, x1, x2)
 
@@ -231,7 +231,7 @@ inst_24:
 // rs1==f18, rs2==f16, rd==f1,fs1 == 0 and fe1 == 0x00 and fm1 == 0x000001 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f18; op2:f16; dest:f1; op1val:0x1; op2val:0x0;
    valaddr_reg:x3; val_offset:48*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f1, f18, f16, 0, 0, x3, 48*FLEN/8, x4, x1, x2)
 
@@ -239,7 +239,7 @@ inst_25:
 // rs1==f16, rs2==f19, rd==f20,fs1 == 0 and fe1 == 0x00 and fm1 == 0x000001 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f16; op2:f19; dest:f20; op1val:0x1; op2val:0x1;
    valaddr_reg:x3; val_offset:50*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f20, f16, f19, 0, 0, x3, 50*FLEN/8, x4, x1, x2)
 
@@ -247,7 +247,7 @@ inst_26:
 // rs1==f0, rs2==f22, rd==f10,fs1 == 0 and fe1 == 0x00 and fm1 == 0x000001 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x000002 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f0; op2:f22; dest:f10; op1val:0x1; op2val:0x2;
    valaddr_reg:x3; val_offset:52*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f10, f0, f22, 0, 0, x3, 52*FLEN/8, x4, x1, x2)
 
@@ -255,7 +255,7 @@ inst_27:
 // rs1==f14, rs2==f20, rd==f0,fs1 == 0 and fe1 == 0x00 and fm1 == 0x000001 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f14; op2:f20; dest:f0; op1val:0x1; op2val:0x7fffff;
    valaddr_reg:x3; val_offset:54*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f0, f14, f20, 0, 0, x3, 54*FLEN/8, x4, x1, x2)
 
@@ -263,7 +263,7 @@ inst_28:
 // rs1==f9, rs2==f24, rd==f27,fs1 == 0 and fe1 == 0x00 and fm1 == 0x000001 and fs2 == 0 and fe2 == 0x01 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f9; op2:f24; dest:f27; op1val:0x1; op2val:0x800000;
    valaddr_reg:x3; val_offset:56*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f27, f9, f24, 0, 0, x3, 56*FLEN/8, x4, x1, x2)
 
@@ -271,7 +271,7 @@ inst_29:
 // rs1==f23, rs2==f14, rd==f3,fs1 == 0 and fe1 == 0x00 and fm1 == 0x000001 and fs2 == 0 and fe2 == 0x01 and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f23; op2:f14; dest:f3; op1val:0x1; op2val:0x800001;
    valaddr_reg:x3; val_offset:58*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f3, f23, f14, 0, 0, x3, 58*FLEN/8, x4, x1, x2)
 
@@ -279,7 +279,7 @@ inst_30:
 // rs1==f22, rs2==f4, rd==f15,fs1 == 0 and fe1 == 0x00 and fm1 == 0x000001 and fs2 == 0 and fe2 == 0x7f and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f22; op2:f4; dest:f15; op1val:0x1; op2val:0x3f800000;
    valaddr_reg:x3; val_offset:60*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f15, f22, f4, 0, 0, x3, 60*FLEN/8, x4, x1, x2)
 
@@ -287,7 +287,7 @@ inst_31:
 // rs1==f11, rs2==f25, rd==f23,fs1 == 0 and fe1 == 0x00 and fm1 == 0x000001 and fs2 == 0 and fe2 == 0xfe and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f11; op2:f25; dest:f23; op1val:0x1; op2val:0x7f7fffff;
    valaddr_reg:x3; val_offset:62*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f23, f11, f25, 0, 0, x3, 62*FLEN/8, x4, x1, x2)
 
@@ -295,7 +295,7 @@ inst_32:
 // fs1 == 0 and fe1 == 0x00 and fm1 == 0x000001 and fs2 == 0 and fe2 == 0xff and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x1; op2val:0x7f800000;
    valaddr_reg:x3; val_offset:64*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 64*FLEN/8, x4, x1, x2)
 
@@ -303,7 +303,7 @@ inst_33:
 // fs1 == 0 and fe1 == 0x00 and fm1 == 0x000001 and fs2 == 0 and fe2 == 0xff and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x1; op2val:0x7f800001;
    valaddr_reg:x3; val_offset:66*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 66*FLEN/8, x4, x1, x2)
 
@@ -311,7 +311,7 @@ inst_34:
 // fs1 == 0 and fe1 == 0x00 and fm1 == 0x000001 and fs2 == 0 and fe2 == 0xff and fm2 == 0x400000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x1; op2val:0x7fc00000;
    valaddr_reg:x3; val_offset:68*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 68*FLEN/8, x4, x1, x2)
 
@@ -319,7 +319,7 @@ inst_35:
 // fs1 == 0 and fe1 == 0x00 and fm1 == 0x000001 and fs2 == 0 and fe2 == 0xff and fm2 == 0x400001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x1; op2val:0x7fc00001;
    valaddr_reg:x3; val_offset:70*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 70*FLEN/8, x4, x1, x2)
 
@@ -327,7 +327,7 @@ inst_36:
 // fs1 == 0 and fe1 == 0x00 and fm1 == 0x000001 and fs2 == 1 and fe2 == 0x00 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x1; op2val:0x80000000;
    valaddr_reg:x3; val_offset:72*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 72*FLEN/8, x4, x1, x2)
 
@@ -335,7 +335,7 @@ inst_37:
 // fs1 == 0 and fe1 == 0x00 and fm1 == 0x000001 and fs2 == 1 and fe2 == 0x00 and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x1; op2val:0x80000001;
    valaddr_reg:x3; val_offset:74*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 74*FLEN/8, x4, x1, x2)
 
@@ -343,7 +343,7 @@ inst_38:
 // fs1 == 0 and fe1 == 0x00 and fm1 == 0x000001 and fs2 == 1 and fe2 == 0x00 and fm2 == 0x7ffffe and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x1; op2val:0x807ffffe;
    valaddr_reg:x3; val_offset:76*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 76*FLEN/8, x4, x1, x2)
 
@@ -351,7 +351,7 @@ inst_39:
 // fs1 == 0 and fe1 == 0x00 and fm1 == 0x000001 and fs2 == 1 and fe2 == 0x00 and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x1; op2val:0x807fffff;
    valaddr_reg:x3; val_offset:78*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 78*FLEN/8, x4, x1, x2)
 
@@ -359,7 +359,7 @@ inst_40:
 // fs1 == 0 and fe1 == 0x00 and fm1 == 0x000001 and fs2 == 1 and fe2 == 0x01 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x1; op2val:0x80800000;
    valaddr_reg:x3; val_offset:80*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 80*FLEN/8, x4, x1, x2)
 
@@ -367,7 +367,7 @@ inst_41:
 // fs1 == 0 and fe1 == 0x00 and fm1 == 0x000001 and fs2 == 1 and fe2 == 0x01 and fm2 == 0x055555 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x1; op2val:0x80855555;
    valaddr_reg:x3; val_offset:82*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 82*FLEN/8, x4, x1, x2)
 
@@ -375,7 +375,7 @@ inst_42:
 // fs1 == 0 and fe1 == 0x00 and fm1 == 0x000001 and fs2 == 1 and fe2 == 0x7f and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x1; op2val:0xbf800000;
    valaddr_reg:x3; val_offset:84*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 84*FLEN/8, x4, x1, x2)
 
@@ -383,7 +383,7 @@ inst_43:
 // fs1 == 0 and fe1 == 0x00 and fm1 == 0x000001 and fs2 == 1 and fe2 == 0xfe and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x1; op2val:0xff7fffff;
    valaddr_reg:x3; val_offset:86*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 86*FLEN/8, x4, x1, x2)
 
@@ -391,7 +391,7 @@ inst_44:
 // fs1 == 0 and fe1 == 0x00 and fm1 == 0x000001 and fs2 == 1 and fe2 == 0xff and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x1; op2val:0xff800000;
    valaddr_reg:x3; val_offset:88*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 88*FLEN/8, x4, x1, x2)
 
@@ -399,7 +399,7 @@ inst_45:
 // fs1 == 0 and fe1 == 0x00 and fm1 == 0x000001 and fs2 == 1 and fe2 == 0xff and fm2 == 0x2aaaaa and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x1; op2val:0xffaaaaaa;
    valaddr_reg:x3; val_offset:90*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 90*FLEN/8, x4, x1, x2)
 
@@ -407,7 +407,7 @@ inst_46:
 // fs1 == 0 and fe1 == 0x00 and fm1 == 0x000001 and fs2 == 1 and fe2 == 0xff and fm2 == 0x400000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x1; op2val:0xffc00000;
    valaddr_reg:x3; val_offset:92*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 92*FLEN/8, x4, x1, x2)
 
@@ -415,7 +415,7 @@ inst_47:
 // fs1 == 0 and fe1 == 0x00 and fm1 == 0x000001 and fs2 == 1 and fe2 == 0xff and fm2 == 0x455555 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x1; op2val:0xffc55555;
    valaddr_reg:x3; val_offset:94*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 94*FLEN/8, x4, x1, x2)
 
@@ -423,7 +423,7 @@ inst_48:
 // fs1 == 0 and fe1 == 0x00 and fm1 == 0x000002 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x2; op2val:0x0;
    valaddr_reg:x3; val_offset:96*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 96*FLEN/8, x4, x1, x2)
 
@@ -431,7 +431,7 @@ inst_49:
 // fs1 == 0 and fe1 == 0x00 and fm1 == 0x000002 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x2; op2val:0x1;
    valaddr_reg:x3; val_offset:98*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 98*FLEN/8, x4, x1, x2)
 
@@ -439,7 +439,7 @@ inst_50:
 // fs1 == 0 and fe1 == 0x00 and fm1 == 0x000002 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x000002 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x2; op2val:0x2;
    valaddr_reg:x3; val_offset:100*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 100*FLEN/8, x4, x1, x2)
 
@@ -447,7 +447,7 @@ inst_51:
 // fs1 == 0 and fe1 == 0x00 and fm1 == 0x000002 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x2; op2val:0x7fffff;
    valaddr_reg:x3; val_offset:102*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 102*FLEN/8, x4, x1, x2)
 
@@ -455,7 +455,7 @@ inst_52:
 // fs1 == 0 and fe1 == 0x00 and fm1 == 0x000002 and fs2 == 0 and fe2 == 0x01 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x2; op2val:0x800000;
    valaddr_reg:x3; val_offset:104*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 104*FLEN/8, x4, x1, x2)
 
@@ -463,7 +463,7 @@ inst_53:
 // fs1 == 0 and fe1 == 0x00 and fm1 == 0x000002 and fs2 == 0 and fe2 == 0x01 and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x2; op2val:0x800001;
    valaddr_reg:x3; val_offset:106*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 106*FLEN/8, x4, x1, x2)
 
@@ -471,7 +471,7 @@ inst_54:
 // fs1 == 0 and fe1 == 0x00 and fm1 == 0x000002 and fs2 == 0 and fe2 == 0x7f and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x2; op2val:0x3f800000;
    valaddr_reg:x3; val_offset:108*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 108*FLEN/8, x4, x1, x2)
 
@@ -479,7 +479,7 @@ inst_55:
 // fs1 == 0 and fe1 == 0x00 and fm1 == 0x000002 and fs2 == 0 and fe2 == 0xfe and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x2; op2val:0x7f7fffff;
    valaddr_reg:x3; val_offset:110*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 110*FLEN/8, x4, x1, x2)
 
@@ -487,7 +487,7 @@ inst_56:
 // fs1 == 0 and fe1 == 0x00 and fm1 == 0x000002 and fs2 == 0 and fe2 == 0xff and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x2; op2val:0x7f800000;
    valaddr_reg:x3; val_offset:112*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 112*FLEN/8, x4, x1, x2)
 
@@ -495,7 +495,7 @@ inst_57:
 // fs1 == 0 and fe1 == 0x00 and fm1 == 0x000002 and fs2 == 0 and fe2 == 0xff and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x2; op2val:0x7f800001;
    valaddr_reg:x3; val_offset:114*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 114*FLEN/8, x4, x1, x2)
 
@@ -503,7 +503,7 @@ inst_58:
 // fs1 == 0 and fe1 == 0x00 and fm1 == 0x000002 and fs2 == 0 and fe2 == 0xff and fm2 == 0x400000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x2; op2val:0x7fc00000;
    valaddr_reg:x3; val_offset:116*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 116*FLEN/8, x4, x1, x2)
 
@@ -511,7 +511,7 @@ inst_59:
 // fs1 == 0 and fe1 == 0x00 and fm1 == 0x000002 and fs2 == 0 and fe2 == 0xff and fm2 == 0x400001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x2; op2val:0x7fc00001;
    valaddr_reg:x3; val_offset:118*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 118*FLEN/8, x4, x1, x2)
 
@@ -519,7 +519,7 @@ inst_60:
 // fs1 == 0 and fe1 == 0x00 and fm1 == 0x000002 and fs2 == 1 and fe2 == 0x00 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x2; op2val:0x80000000;
    valaddr_reg:x3; val_offset:120*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 120*FLEN/8, x4, x1, x2)
 
@@ -527,7 +527,7 @@ inst_61:
 // fs1 == 0 and fe1 == 0x00 and fm1 == 0x000002 and fs2 == 1 and fe2 == 0x00 and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x2; op2val:0x80000001;
    valaddr_reg:x3; val_offset:122*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 122*FLEN/8, x4, x1, x2)
 
@@ -535,7 +535,7 @@ inst_62:
 // fs1 == 0 and fe1 == 0x00 and fm1 == 0x000002 and fs2 == 1 and fe2 == 0x00 and fm2 == 0x7ffffe and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x2; op2val:0x807ffffe;
    valaddr_reg:x3; val_offset:124*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 124*FLEN/8, x4, x1, x2)
 
@@ -543,7 +543,7 @@ inst_63:
 // fs1 == 0 and fe1 == 0x00 and fm1 == 0x000002 and fs2 == 1 and fe2 == 0x00 and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x2; op2val:0x807fffff;
    valaddr_reg:x3; val_offset:126*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 126*FLEN/8, x4, x1, x2)
 
@@ -551,7 +551,7 @@ inst_64:
 // fs1 == 0 and fe1 == 0x00 and fm1 == 0x000002 and fs2 == 1 and fe2 == 0x01 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x2; op2val:0x80800000;
    valaddr_reg:x3; val_offset:128*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 128*FLEN/8, x4, x1, x2)
 
@@ -559,7 +559,7 @@ inst_65:
 // fs1 == 0 and fe1 == 0x00 and fm1 == 0x000002 and fs2 == 1 and fe2 == 0x01 and fm2 == 0x055555 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x2; op2val:0x80855555;
    valaddr_reg:x3; val_offset:130*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 130*FLEN/8, x4, x1, x2)
 
@@ -567,7 +567,7 @@ inst_66:
 // fs1 == 0 and fe1 == 0x00 and fm1 == 0x000002 and fs2 == 1 and fe2 == 0x7f and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x2; op2val:0xbf800000;
    valaddr_reg:x3; val_offset:132*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 132*FLEN/8, x4, x1, x2)
 
@@ -575,7 +575,7 @@ inst_67:
 // fs1 == 0 and fe1 == 0x00 and fm1 == 0x000002 and fs2 == 1 and fe2 == 0xfe and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x2; op2val:0xff7fffff;
    valaddr_reg:x3; val_offset:134*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 134*FLEN/8, x4, x1, x2)
 
@@ -583,7 +583,7 @@ inst_68:
 // fs1 == 0 and fe1 == 0x00 and fm1 == 0x000002 and fs2 == 1 and fe2 == 0xff and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x2; op2val:0xff800000;
    valaddr_reg:x3; val_offset:136*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 136*FLEN/8, x4, x1, x2)
 
@@ -591,7 +591,7 @@ inst_69:
 // fs1 == 0 and fe1 == 0x00 and fm1 == 0x000002 and fs2 == 1 and fe2 == 0xff and fm2 == 0x2aaaaa and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x2; op2val:0xffaaaaaa;
    valaddr_reg:x3; val_offset:138*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 138*FLEN/8, x4, x1, x2)
 
@@ -599,7 +599,7 @@ inst_70:
 // fs1 == 0 and fe1 == 0x00 and fm1 == 0x000002 and fs2 == 1 and fe2 == 0xff and fm2 == 0x400000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x2; op2val:0xffc00000;
    valaddr_reg:x3; val_offset:140*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 140*FLEN/8, x4, x1, x2)
 
@@ -607,7 +607,7 @@ inst_71:
 // fs1 == 0 and fe1 == 0x00 and fm1 == 0x000002 and fs2 == 1 and fe2 == 0xff and fm2 == 0x455555 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x2; op2val:0xffc55555;
    valaddr_reg:x3; val_offset:142*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 142*FLEN/8, x4, x1, x2)
 
@@ -615,7 +615,7 @@ inst_72:
 // fs1 == 0 and fe1 == 0x00 and fm1 == 0x7fffff and fs2 == 0 and fe2 == 0x00 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7fffff; op2val:0x0;
    valaddr_reg:x3; val_offset:144*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 144*FLEN/8, x4, x1, x2)
 
@@ -623,7 +623,7 @@ inst_73:
 // fs1 == 0 and fe1 == 0x00 and fm1 == 0x7fffff and fs2 == 0 and fe2 == 0x00 and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7fffff; op2val:0x1;
    valaddr_reg:x3; val_offset:146*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 146*FLEN/8, x4, x1, x2)
 
@@ -631,7 +631,7 @@ inst_74:
 // fs1 == 0 and fe1 == 0x00 and fm1 == 0x7fffff and fs2 == 0 and fe2 == 0x00 and fm2 == 0x000002 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7fffff; op2val:0x2;
    valaddr_reg:x3; val_offset:148*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 148*FLEN/8, x4, x1, x2)
 
@@ -639,7 +639,7 @@ inst_75:
 // fs1 == 0 and fe1 == 0x00 and fm1 == 0x7fffff and fs2 == 0 and fe2 == 0x00 and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7fffff; op2val:0x7fffff;
    valaddr_reg:x3; val_offset:150*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 150*FLEN/8, x4, x1, x2)
 
@@ -647,7 +647,7 @@ inst_76:
 // fs1 == 0 and fe1 == 0x00 and fm1 == 0x7fffff and fs2 == 0 and fe2 == 0x01 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7fffff; op2val:0x800000;
    valaddr_reg:x3; val_offset:152*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 152*FLEN/8, x4, x1, x2)
 
@@ -655,7 +655,7 @@ inst_77:
 // fs1 == 0 and fe1 == 0x00 and fm1 == 0x7fffff and fs2 == 0 and fe2 == 0x01 and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7fffff; op2val:0x800001;
    valaddr_reg:x3; val_offset:154*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 154*FLEN/8, x4, x1, x2)
 
@@ -663,7 +663,7 @@ inst_78:
 // fs1 == 0 and fe1 == 0x00 and fm1 == 0x7fffff and fs2 == 0 and fe2 == 0x7f and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7fffff; op2val:0x3f800000;
    valaddr_reg:x3; val_offset:156*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 156*FLEN/8, x4, x1, x2)
 
@@ -671,7 +671,7 @@ inst_79:
 // fs1 == 0 and fe1 == 0x00 and fm1 == 0x7fffff and fs2 == 0 and fe2 == 0xfe and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7fffff; op2val:0x7f7fffff;
    valaddr_reg:x3; val_offset:158*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 158*FLEN/8, x4, x1, x2)
 
@@ -679,7 +679,7 @@ inst_80:
 // fs1 == 0 and fe1 == 0x00 and fm1 == 0x7fffff and fs2 == 0 and fe2 == 0xff and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7fffff; op2val:0x7f800000;
    valaddr_reg:x3; val_offset:160*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 160*FLEN/8, x4, x1, x2)
 
@@ -687,7 +687,7 @@ inst_81:
 // fs1 == 0 and fe1 == 0x00 and fm1 == 0x7fffff and fs2 == 0 and fe2 == 0xff and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7fffff; op2val:0x7f800001;
    valaddr_reg:x3; val_offset:162*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 162*FLEN/8, x4, x1, x2)
 
@@ -695,7 +695,7 @@ inst_82:
 // fs1 == 0 and fe1 == 0x00 and fm1 == 0x7fffff and fs2 == 0 and fe2 == 0xff and fm2 == 0x400000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7fffff; op2val:0x7fc00000;
    valaddr_reg:x3; val_offset:164*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 164*FLEN/8, x4, x1, x2)
 
@@ -703,7 +703,7 @@ inst_83:
 // fs1 == 0 and fe1 == 0x00 and fm1 == 0x7fffff and fs2 == 0 and fe2 == 0xff and fm2 == 0x400001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7fffff; op2val:0x7fc00001;
    valaddr_reg:x3; val_offset:166*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 166*FLEN/8, x4, x1, x2)
 
@@ -711,7 +711,7 @@ inst_84:
 // fs1 == 0 and fe1 == 0x00 and fm1 == 0x7fffff and fs2 == 1 and fe2 == 0x00 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7fffff; op2val:0x80000000;
    valaddr_reg:x3; val_offset:168*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 168*FLEN/8, x4, x1, x2)
 
@@ -719,7 +719,7 @@ inst_85:
 // fs1 == 0 and fe1 == 0x00 and fm1 == 0x7fffff and fs2 == 1 and fe2 == 0x00 and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7fffff; op2val:0x80000001;
    valaddr_reg:x3; val_offset:170*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 170*FLEN/8, x4, x1, x2)
 
@@ -727,7 +727,7 @@ inst_86:
 // fs1 == 0 and fe1 == 0x00 and fm1 == 0x7fffff and fs2 == 1 and fe2 == 0x00 and fm2 == 0x7ffffe and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7fffff; op2val:0x807ffffe;
    valaddr_reg:x3; val_offset:172*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 172*FLEN/8, x4, x1, x2)
 
@@ -735,7 +735,7 @@ inst_87:
 // fs1 == 0 and fe1 == 0x00 and fm1 == 0x7fffff and fs2 == 1 and fe2 == 0x00 and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7fffff; op2val:0x807fffff;
    valaddr_reg:x3; val_offset:174*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 174*FLEN/8, x4, x1, x2)
 
@@ -743,7 +743,7 @@ inst_88:
 // fs1 == 0 and fe1 == 0x00 and fm1 == 0x7fffff and fs2 == 1 and fe2 == 0x01 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7fffff; op2val:0x80800000;
    valaddr_reg:x3; val_offset:176*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 176*FLEN/8, x4, x1, x2)
 
@@ -751,7 +751,7 @@ inst_89:
 // fs1 == 0 and fe1 == 0x00 and fm1 == 0x7fffff and fs2 == 1 and fe2 == 0x01 and fm2 == 0x055555 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7fffff; op2val:0x80855555;
    valaddr_reg:x3; val_offset:178*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 178*FLEN/8, x4, x1, x2)
 
@@ -759,7 +759,7 @@ inst_90:
 // fs1 == 0 and fe1 == 0x00 and fm1 == 0x7fffff and fs2 == 1 and fe2 == 0x7f and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7fffff; op2val:0xbf800000;
    valaddr_reg:x3; val_offset:180*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 180*FLEN/8, x4, x1, x2)
 
@@ -767,7 +767,7 @@ inst_91:
 // fs1 == 0 and fe1 == 0x00 and fm1 == 0x7fffff and fs2 == 1 and fe2 == 0xfe and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7fffff; op2val:0xff7fffff;
    valaddr_reg:x3; val_offset:182*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 182*FLEN/8, x4, x1, x2)
 
@@ -775,7 +775,7 @@ inst_92:
 // fs1 == 0 and fe1 == 0x00 and fm1 == 0x7fffff and fs2 == 1 and fe2 == 0xff and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7fffff; op2val:0xff800000;
    valaddr_reg:x3; val_offset:184*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 184*FLEN/8, x4, x1, x2)
 
@@ -783,7 +783,7 @@ inst_93:
 // fs1 == 0 and fe1 == 0x00 and fm1 == 0x7fffff and fs2 == 1 and fe2 == 0xff and fm2 == 0x2aaaaa and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7fffff; op2val:0xffaaaaaa;
    valaddr_reg:x3; val_offset:186*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 186*FLEN/8, x4, x1, x2)
 
@@ -791,7 +791,7 @@ inst_94:
 // fs1 == 0 and fe1 == 0x00 and fm1 == 0x7fffff and fs2 == 1 and fe2 == 0xff and fm2 == 0x400000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7fffff; op2val:0xffc00000;
    valaddr_reg:x3; val_offset:188*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 188*FLEN/8, x4, x1, x2)
 
@@ -799,7 +799,7 @@ inst_95:
 // fs1 == 0 and fe1 == 0x00 and fm1 == 0x7fffff and fs2 == 1 and fe2 == 0xff and fm2 == 0x455555 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7fffff; op2val:0xffc55555;
    valaddr_reg:x3; val_offset:190*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 190*FLEN/8, x4, x1, x2)
 
@@ -807,7 +807,7 @@ inst_96:
 // fs1 == 0 and fe1 == 0x01 and fm1 == 0x000000 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x800000; op2val:0x0;
    valaddr_reg:x3; val_offset:192*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 192*FLEN/8, x4, x1, x2)
 
@@ -815,7 +815,7 @@ inst_97:
 // fs1 == 0 and fe1 == 0x01 and fm1 == 0x000000 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x800000; op2val:0x1;
    valaddr_reg:x3; val_offset:194*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 194*FLEN/8, x4, x1, x2)
 
@@ -823,7 +823,7 @@ inst_98:
 // fs1 == 0 and fe1 == 0x01 and fm1 == 0x000000 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x000002 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x800000; op2val:0x2;
    valaddr_reg:x3; val_offset:196*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 196*FLEN/8, x4, x1, x2)
 
@@ -831,7 +831,7 @@ inst_99:
 // fs1 == 0 and fe1 == 0x01 and fm1 == 0x000000 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x800000; op2val:0x7fffff;
    valaddr_reg:x3; val_offset:198*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 198*FLEN/8, x4, x1, x2)
 
@@ -839,7 +839,7 @@ inst_100:
 // fs1 == 0 and fe1 == 0x01 and fm1 == 0x000000 and fs2 == 0 and fe2 == 0x01 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x800000; op2val:0x800000;
    valaddr_reg:x3; val_offset:200*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 200*FLEN/8, x4, x1, x2)
 
@@ -847,7 +847,7 @@ inst_101:
 // fs1 == 0 and fe1 == 0x01 and fm1 == 0x000000 and fs2 == 0 and fe2 == 0x01 and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x800000; op2val:0x800001;
    valaddr_reg:x3; val_offset:202*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 202*FLEN/8, x4, x1, x2)
 
@@ -855,7 +855,7 @@ inst_102:
 // fs1 == 0 and fe1 == 0x01 and fm1 == 0x000000 and fs2 == 0 and fe2 == 0x7f and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x800000; op2val:0x3f800000;
    valaddr_reg:x3; val_offset:204*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 204*FLEN/8, x4, x1, x2)
 
@@ -863,7 +863,7 @@ inst_103:
 // fs1 == 0 and fe1 == 0x01 and fm1 == 0x000000 and fs2 == 0 and fe2 == 0xfe and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x800000; op2val:0x7f7fffff;
    valaddr_reg:x3; val_offset:206*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 206*FLEN/8, x4, x1, x2)
 
@@ -871,7 +871,7 @@ inst_104:
 // fs1 == 0 and fe1 == 0x01 and fm1 == 0x000000 and fs2 == 0 and fe2 == 0xff and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x800000; op2val:0x7f800000;
    valaddr_reg:x3; val_offset:208*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 208*FLEN/8, x4, x1, x2)
 
@@ -879,7 +879,7 @@ inst_105:
 // fs1 == 0 and fe1 == 0x01 and fm1 == 0x000000 and fs2 == 0 and fe2 == 0xff and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x800000; op2val:0x7f800001;
    valaddr_reg:x3; val_offset:210*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 210*FLEN/8, x4, x1, x2)
 
@@ -887,7 +887,7 @@ inst_106:
 // fs1 == 0 and fe1 == 0x01 and fm1 == 0x000000 and fs2 == 0 and fe2 == 0xff and fm2 == 0x400000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x800000; op2val:0x7fc00000;
    valaddr_reg:x3; val_offset:212*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 212*FLEN/8, x4, x1, x2)
 
@@ -895,7 +895,7 @@ inst_107:
 // fs1 == 0 and fe1 == 0x01 and fm1 == 0x000000 and fs2 == 0 and fe2 == 0xff and fm2 == 0x400001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x800000; op2val:0x7fc00001;
    valaddr_reg:x3; val_offset:214*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 214*FLEN/8, x4, x1, x2)
 
@@ -903,7 +903,7 @@ inst_108:
 // fs1 == 0 and fe1 == 0x01 and fm1 == 0x000000 and fs2 == 1 and fe2 == 0x00 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x800000; op2val:0x80000000;
    valaddr_reg:x3; val_offset:216*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 216*FLEN/8, x4, x1, x2)
 
@@ -911,7 +911,7 @@ inst_109:
 // fs1 == 0 and fe1 == 0x01 and fm1 == 0x000000 and fs2 == 1 and fe2 == 0x00 and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x800000; op2val:0x80000001;
    valaddr_reg:x3; val_offset:218*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 218*FLEN/8, x4, x1, x2)
 
@@ -919,7 +919,7 @@ inst_110:
 // fs1 == 0 and fe1 == 0x01 and fm1 == 0x000000 and fs2 == 1 and fe2 == 0x00 and fm2 == 0x7ffffe and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x800000; op2val:0x807ffffe;
    valaddr_reg:x3; val_offset:220*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 220*FLEN/8, x4, x1, x2)
 
@@ -927,7 +927,7 @@ inst_111:
 // fs1 == 0 and fe1 == 0x01 and fm1 == 0x000000 and fs2 == 1 and fe2 == 0x00 and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x800000; op2val:0x807fffff;
    valaddr_reg:x3; val_offset:222*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 222*FLEN/8, x4, x1, x2)
 
@@ -935,7 +935,7 @@ inst_112:
 // fs1 == 0 and fe1 == 0x01 and fm1 == 0x000000 and fs2 == 1 and fe2 == 0x01 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x800000; op2val:0x80800000;
    valaddr_reg:x3; val_offset:224*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 224*FLEN/8, x4, x1, x2)
 
@@ -943,7 +943,7 @@ inst_113:
 // fs1 == 0 and fe1 == 0x01 and fm1 == 0x000000 and fs2 == 1 and fe2 == 0x01 and fm2 == 0x055555 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x800000; op2val:0x80855555;
    valaddr_reg:x3; val_offset:226*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 226*FLEN/8, x4, x1, x2)
 
@@ -951,7 +951,7 @@ inst_114:
 // fs1 == 0 and fe1 == 0x01 and fm1 == 0x000000 and fs2 == 1 and fe2 == 0x7f and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x800000; op2val:0xbf800000;
    valaddr_reg:x3; val_offset:228*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 228*FLEN/8, x4, x1, x2)
 
@@ -959,7 +959,7 @@ inst_115:
 // fs1 == 0 and fe1 == 0x01 and fm1 == 0x000000 and fs2 == 1 and fe2 == 0xfe and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x800000; op2val:0xff7fffff;
    valaddr_reg:x3; val_offset:230*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 230*FLEN/8, x4, x1, x2)
 
@@ -967,7 +967,7 @@ inst_116:
 // fs1 == 0 and fe1 == 0x01 and fm1 == 0x000000 and fs2 == 1 and fe2 == 0xff and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x800000; op2val:0xff800000;
    valaddr_reg:x3; val_offset:232*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 232*FLEN/8, x4, x1, x2)
 
@@ -975,7 +975,7 @@ inst_117:
 // fs1 == 0 and fe1 == 0x01 and fm1 == 0x000000 and fs2 == 1 and fe2 == 0xff and fm2 == 0x2aaaaa and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x800000; op2val:0xffaaaaaa;
    valaddr_reg:x3; val_offset:234*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 234*FLEN/8, x4, x1, x2)
 
@@ -983,7 +983,7 @@ inst_118:
 // fs1 == 0 and fe1 == 0x01 and fm1 == 0x000000 and fs2 == 1 and fe2 == 0xff and fm2 == 0x400000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x800000; op2val:0xffc00000;
    valaddr_reg:x3; val_offset:236*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 236*FLEN/8, x4, x1, x2)
 
@@ -991,7 +991,7 @@ inst_119:
 // fs1 == 0 and fe1 == 0x01 and fm1 == 0x000000 and fs2 == 1 and fe2 == 0xff and fm2 == 0x455555 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x800000; op2val:0xffc55555;
    valaddr_reg:x3; val_offset:238*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 238*FLEN/8, x4, x1, x2)
 
@@ -999,7 +999,7 @@ inst_120:
 // fs1 == 0 and fe1 == 0x01 and fm1 == 0x000001 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x800001; op2val:0x0;
    valaddr_reg:x3; val_offset:240*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 240*FLEN/8, x4, x1, x2)
 
@@ -1007,7 +1007,7 @@ inst_121:
 // fs1 == 0 and fe1 == 0x01 and fm1 == 0x000001 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x800001; op2val:0x1;
    valaddr_reg:x3; val_offset:242*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 242*FLEN/8, x4, x1, x2)
 
@@ -1015,7 +1015,7 @@ inst_122:
 // fs1 == 0 and fe1 == 0x01 and fm1 == 0x000001 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x000002 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x800001; op2val:0x2;
    valaddr_reg:x3; val_offset:244*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 244*FLEN/8, x4, x1, x2)
 
@@ -1023,7 +1023,7 @@ inst_123:
 // fs1 == 0 and fe1 == 0x01 and fm1 == 0x000001 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x800001; op2val:0x7fffff;
    valaddr_reg:x3; val_offset:246*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 246*FLEN/8, x4, x1, x2)
 
@@ -1031,7 +1031,7 @@ inst_124:
 // fs1 == 0 and fe1 == 0x01 and fm1 == 0x000001 and fs2 == 0 and fe2 == 0x01 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x800001; op2val:0x800000;
    valaddr_reg:x3; val_offset:248*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 248*FLEN/8, x4, x1, x2)
 
@@ -1039,7 +1039,7 @@ inst_125:
 // fs1 == 0 and fe1 == 0x01 and fm1 == 0x000001 and fs2 == 0 and fe2 == 0x01 and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x800001; op2val:0x800001;
    valaddr_reg:x3; val_offset:250*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 250*FLEN/8, x4, x1, x2)
 
@@ -1047,7 +1047,7 @@ inst_126:
 // fs1 == 0 and fe1 == 0x01 and fm1 == 0x000001 and fs2 == 0 and fe2 == 0x7f and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x800001; op2val:0x3f800000;
    valaddr_reg:x3; val_offset:252*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 252*FLEN/8, x4, x1, x2)
 
@@ -1055,7 +1055,7 @@ inst_127:
 // fs1 == 0 and fe1 == 0x01 and fm1 == 0x000001 and fs2 == 0 and fe2 == 0xfe and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x800001; op2val:0x7f7fffff;
    valaddr_reg:x3; val_offset:254*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 254*FLEN/8, x4, x1, x2)
 RVTEST_SIGBASE(x1,signature_x1_2)
@@ -1064,7 +1064,7 @@ inst_128:
 // fs1 == 0 and fe1 == 0x01 and fm1 == 0x000001 and fs2 == 0 and fe2 == 0xff and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x800001; op2val:0x7f800000;
    valaddr_reg:x3; val_offset:256*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 256*FLEN/8, x4, x1, x2)
 
@@ -1072,7 +1072,7 @@ inst_129:
 // fs1 == 0 and fe1 == 0x01 and fm1 == 0x000001 and fs2 == 0 and fe2 == 0xff and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x800001; op2val:0x7f800001;
    valaddr_reg:x3; val_offset:258*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 258*FLEN/8, x4, x1, x2)
 
@@ -1080,7 +1080,7 @@ inst_130:
 // fs1 == 0 and fe1 == 0x01 and fm1 == 0x000001 and fs2 == 0 and fe2 == 0xff and fm2 == 0x400000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x800001; op2val:0x7fc00000;
    valaddr_reg:x3; val_offset:260*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 260*FLEN/8, x4, x1, x2)
 
@@ -1088,7 +1088,7 @@ inst_131:
 // fs1 == 0 and fe1 == 0x01 and fm1 == 0x000001 and fs2 == 0 and fe2 == 0xff and fm2 == 0x400001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x800001; op2val:0x7fc00001;
    valaddr_reg:x3; val_offset:262*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 262*FLEN/8, x4, x1, x2)
 
@@ -1096,7 +1096,7 @@ inst_132:
 // fs1 == 0 and fe1 == 0x01 and fm1 == 0x000001 and fs2 == 1 and fe2 == 0x00 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x800001; op2val:0x80000000;
    valaddr_reg:x3; val_offset:264*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 264*FLEN/8, x4, x1, x2)
 
@@ -1104,7 +1104,7 @@ inst_133:
 // fs1 == 0 and fe1 == 0x01 and fm1 == 0x000001 and fs2 == 1 and fe2 == 0x00 and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x800001; op2val:0x80000001;
    valaddr_reg:x3; val_offset:266*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 266*FLEN/8, x4, x1, x2)
 
@@ -1112,7 +1112,7 @@ inst_134:
 // fs1 == 0 and fe1 == 0x01 and fm1 == 0x000001 and fs2 == 1 and fe2 == 0x00 and fm2 == 0x7ffffe and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x800001; op2val:0x807ffffe;
    valaddr_reg:x3; val_offset:268*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 268*FLEN/8, x4, x1, x2)
 
@@ -1120,7 +1120,7 @@ inst_135:
 // fs1 == 0 and fe1 == 0x01 and fm1 == 0x000001 and fs2 == 1 and fe2 == 0x00 and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x800001; op2val:0x807fffff;
    valaddr_reg:x3; val_offset:270*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 270*FLEN/8, x4, x1, x2)
 
@@ -1128,7 +1128,7 @@ inst_136:
 // fs1 == 0 and fe1 == 0x01 and fm1 == 0x000001 and fs2 == 1 and fe2 == 0x01 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x800001; op2val:0x80800000;
    valaddr_reg:x3; val_offset:272*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 272*FLEN/8, x4, x1, x2)
 
@@ -1136,7 +1136,7 @@ inst_137:
 // fs1 == 0 and fe1 == 0x01 and fm1 == 0x000001 and fs2 == 1 and fe2 == 0x01 and fm2 == 0x055555 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x800001; op2val:0x80855555;
    valaddr_reg:x3; val_offset:274*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 274*FLEN/8, x4, x1, x2)
 
@@ -1144,7 +1144,7 @@ inst_138:
 // fs1 == 0 and fe1 == 0x01 and fm1 == 0x000001 and fs2 == 1 and fe2 == 0x7f and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x800001; op2val:0xbf800000;
    valaddr_reg:x3; val_offset:276*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 276*FLEN/8, x4, x1, x2)
 
@@ -1152,7 +1152,7 @@ inst_139:
 // fs1 == 0 and fe1 == 0x01 and fm1 == 0x000001 and fs2 == 1 and fe2 == 0xfe and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x800001; op2val:0xff7fffff;
    valaddr_reg:x3; val_offset:278*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 278*FLEN/8, x4, x1, x2)
 
@@ -1160,7 +1160,7 @@ inst_140:
 // fs1 == 0 and fe1 == 0x01 and fm1 == 0x000001 and fs2 == 1 and fe2 == 0xff and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x800001; op2val:0xff800000;
    valaddr_reg:x3; val_offset:280*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 280*FLEN/8, x4, x1, x2)
 
@@ -1168,7 +1168,7 @@ inst_141:
 // fs1 == 0 and fe1 == 0x01 and fm1 == 0x000001 and fs2 == 1 and fe2 == 0xff and fm2 == 0x2aaaaa and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x800001; op2val:0xffaaaaaa;
    valaddr_reg:x3; val_offset:282*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 282*FLEN/8, x4, x1, x2)
 
@@ -1176,7 +1176,7 @@ inst_142:
 // fs1 == 0 and fe1 == 0x01 and fm1 == 0x000001 and fs2 == 1 and fe2 == 0xff and fm2 == 0x400000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x800001; op2val:0xffc00000;
    valaddr_reg:x3; val_offset:284*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 284*FLEN/8, x4, x1, x2)
 
@@ -1184,7 +1184,7 @@ inst_143:
 // fs1 == 0 and fe1 == 0x01 and fm1 == 0x000001 and fs2 == 1 and fe2 == 0xff and fm2 == 0x455555 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x800001; op2val:0xffc55555;
    valaddr_reg:x3; val_offset:286*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 286*FLEN/8, x4, x1, x2)
 
@@ -1192,7 +1192,7 @@ inst_144:
 // fs1 == 0 and fe1 == 0x7f and fm1 == 0x000000 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x3f800000; op2val:0x0;
    valaddr_reg:x3; val_offset:288*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 288*FLEN/8, x4, x1, x2)
 
@@ -1200,7 +1200,7 @@ inst_145:
 // fs1 == 0 and fe1 == 0x7f and fm1 == 0x000000 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x3f800000; op2val:0x1;
    valaddr_reg:x3; val_offset:290*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 290*FLEN/8, x4, x1, x2)
 
@@ -1208,7 +1208,7 @@ inst_146:
 // fs1 == 0 and fe1 == 0x7f and fm1 == 0x000000 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x000002 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x3f800000; op2val:0x2;
    valaddr_reg:x3; val_offset:292*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 292*FLEN/8, x4, x1, x2)
 
@@ -1216,7 +1216,7 @@ inst_147:
 // fs1 == 0 and fe1 == 0x7f and fm1 == 0x000000 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x3f800000; op2val:0x7fffff;
    valaddr_reg:x3; val_offset:294*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 294*FLEN/8, x4, x1, x2)
 
@@ -1224,7 +1224,7 @@ inst_148:
 // fs1 == 0 and fe1 == 0x7f and fm1 == 0x000000 and fs2 == 0 and fe2 == 0x01 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x3f800000; op2val:0x800000;
    valaddr_reg:x3; val_offset:296*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 296*FLEN/8, x4, x1, x2)
 
@@ -1232,7 +1232,7 @@ inst_149:
 // fs1 == 0 and fe1 == 0x7f and fm1 == 0x000000 and fs2 == 0 and fe2 == 0x01 and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x3f800000; op2val:0x800001;
    valaddr_reg:x3; val_offset:298*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 298*FLEN/8, x4, x1, x2)
 
@@ -1240,7 +1240,7 @@ inst_150:
 // fs1 == 0 and fe1 == 0x7f and fm1 == 0x000000 and fs2 == 0 and fe2 == 0x7f and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x3f800000; op2val:0x3f800000;
    valaddr_reg:x3; val_offset:300*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 300*FLEN/8, x4, x1, x2)
 
@@ -1248,7 +1248,7 @@ inst_151:
 // fs1 == 0 and fe1 == 0x7f and fm1 == 0x000000 and fs2 == 0 and fe2 == 0xfe and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x3f800000; op2val:0x7f7fffff;
    valaddr_reg:x3; val_offset:302*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 302*FLEN/8, x4, x1, x2)
 
@@ -1256,7 +1256,7 @@ inst_152:
 // fs1 == 0 and fe1 == 0x7f and fm1 == 0x000000 and fs2 == 0 and fe2 == 0xff and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x3f800000; op2val:0x7f800000;
    valaddr_reg:x3; val_offset:304*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 304*FLEN/8, x4, x1, x2)
 
@@ -1264,7 +1264,7 @@ inst_153:
 // fs1 == 0 and fe1 == 0x7f and fm1 == 0x000000 and fs2 == 0 and fe2 == 0xff and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x3f800000; op2val:0x7f800001;
    valaddr_reg:x3; val_offset:306*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 306*FLEN/8, x4, x1, x2)
 
@@ -1272,7 +1272,7 @@ inst_154:
 // fs1 == 0 and fe1 == 0x7f and fm1 == 0x000000 and fs2 == 0 and fe2 == 0xff and fm2 == 0x400000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x3f800000; op2val:0x7fc00000;
    valaddr_reg:x3; val_offset:308*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 308*FLEN/8, x4, x1, x2)
 
@@ -1280,7 +1280,7 @@ inst_155:
 // fs1 == 0 and fe1 == 0x7f and fm1 == 0x000000 and fs2 == 0 and fe2 == 0xff and fm2 == 0x400001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x3f800000; op2val:0x7fc00001;
    valaddr_reg:x3; val_offset:310*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 310*FLEN/8, x4, x1, x2)
 
@@ -1288,7 +1288,7 @@ inst_156:
 // fs1 == 0 and fe1 == 0x7f and fm1 == 0x000000 and fs2 == 1 and fe2 == 0x00 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x3f800000; op2val:0x80000000;
    valaddr_reg:x3; val_offset:312*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 312*FLEN/8, x4, x1, x2)
 
@@ -1296,7 +1296,7 @@ inst_157:
 // fs1 == 0 and fe1 == 0x7f and fm1 == 0x000000 and fs2 == 1 and fe2 == 0x00 and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x3f800000; op2val:0x80000001;
    valaddr_reg:x3; val_offset:314*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 314*FLEN/8, x4, x1, x2)
 
@@ -1304,7 +1304,7 @@ inst_158:
 // fs1 == 0 and fe1 == 0x7f and fm1 == 0x000000 and fs2 == 1 and fe2 == 0x00 and fm2 == 0x7ffffe and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x3f800000; op2val:0x807ffffe;
    valaddr_reg:x3; val_offset:316*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 316*FLEN/8, x4, x1, x2)
 
@@ -1312,7 +1312,7 @@ inst_159:
 // fs1 == 0 and fe1 == 0x7f and fm1 == 0x000000 and fs2 == 1 and fe2 == 0x00 and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x3f800000; op2val:0x807fffff;
    valaddr_reg:x3; val_offset:318*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 318*FLEN/8, x4, x1, x2)
 
@@ -1320,7 +1320,7 @@ inst_160:
 // fs1 == 0 and fe1 == 0x7f and fm1 == 0x000000 and fs2 == 1 and fe2 == 0x01 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x3f800000; op2val:0x80800000;
    valaddr_reg:x3; val_offset:320*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 320*FLEN/8, x4, x1, x2)
 
@@ -1328,7 +1328,7 @@ inst_161:
 // fs1 == 0 and fe1 == 0x7f and fm1 == 0x000000 and fs2 == 1 and fe2 == 0x01 and fm2 == 0x055555 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x3f800000; op2val:0x80855555;
    valaddr_reg:x3; val_offset:322*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 322*FLEN/8, x4, x1, x2)
 
@@ -1336,7 +1336,7 @@ inst_162:
 // fs1 == 0 and fe1 == 0x7f and fm1 == 0x000000 and fs2 == 1 and fe2 == 0x7f and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x3f800000; op2val:0xbf800000;
    valaddr_reg:x3; val_offset:324*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 324*FLEN/8, x4, x1, x2)
 
@@ -1344,7 +1344,7 @@ inst_163:
 // fs1 == 0 and fe1 == 0x7f and fm1 == 0x000000 and fs2 == 1 and fe2 == 0xfe and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x3f800000; op2val:0xff7fffff;
    valaddr_reg:x3; val_offset:326*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 326*FLEN/8, x4, x1, x2)
 
@@ -1352,7 +1352,7 @@ inst_164:
 // fs1 == 0 and fe1 == 0x7f and fm1 == 0x000000 and fs2 == 1 and fe2 == 0xff and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x3f800000; op2val:0xff800000;
    valaddr_reg:x3; val_offset:328*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 328*FLEN/8, x4, x1, x2)
 
@@ -1360,7 +1360,7 @@ inst_165:
 // fs1 == 0 and fe1 == 0x7f and fm1 == 0x000000 and fs2 == 1 and fe2 == 0xff and fm2 == 0x2aaaaa and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x3f800000; op2val:0xffaaaaaa;
    valaddr_reg:x3; val_offset:330*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 330*FLEN/8, x4, x1, x2)
 
@@ -1368,7 +1368,7 @@ inst_166:
 // fs1 == 0 and fe1 == 0x7f and fm1 == 0x000000 and fs2 == 1 and fe2 == 0xff and fm2 == 0x400000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x3f800000; op2val:0xffc00000;
    valaddr_reg:x3; val_offset:332*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 332*FLEN/8, x4, x1, x2)
 
@@ -1376,7 +1376,7 @@ inst_167:
 // fs1 == 0 and fe1 == 0x7f and fm1 == 0x000000 and fs2 == 1 and fe2 == 0xff and fm2 == 0x455555 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x3f800000; op2val:0xffc55555;
    valaddr_reg:x3; val_offset:334*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 334*FLEN/8, x4, x1, x2)
 
@@ -1384,7 +1384,7 @@ inst_168:
 // fs1 == 0 and fe1 == 0xfe and fm1 == 0x7fffff and fs2 == 0 and fe2 == 0x00 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7f7fffff; op2val:0x0;
    valaddr_reg:x3; val_offset:336*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 336*FLEN/8, x4, x1, x2)
 
@@ -1392,7 +1392,7 @@ inst_169:
 // fs1 == 0 and fe1 == 0xfe and fm1 == 0x7fffff and fs2 == 0 and fe2 == 0x00 and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7f7fffff; op2val:0x1;
    valaddr_reg:x3; val_offset:338*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 338*FLEN/8, x4, x1, x2)
 
@@ -1400,7 +1400,7 @@ inst_170:
 // fs1 == 0 and fe1 == 0xfe and fm1 == 0x7fffff and fs2 == 0 and fe2 == 0x00 and fm2 == 0x000002 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7f7fffff; op2val:0x2;
    valaddr_reg:x3; val_offset:340*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 340*FLEN/8, x4, x1, x2)
 
@@ -1408,7 +1408,7 @@ inst_171:
 // fs1 == 0 and fe1 == 0xfe and fm1 == 0x7fffff and fs2 == 0 and fe2 == 0x00 and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7f7fffff; op2val:0x7fffff;
    valaddr_reg:x3; val_offset:342*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 342*FLEN/8, x4, x1, x2)
 
@@ -1416,7 +1416,7 @@ inst_172:
 // fs1 == 0 and fe1 == 0xfe and fm1 == 0x7fffff and fs2 == 0 and fe2 == 0x01 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7f7fffff; op2val:0x800000;
    valaddr_reg:x3; val_offset:344*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 344*FLEN/8, x4, x1, x2)
 
@@ -1424,7 +1424,7 @@ inst_173:
 // fs1 == 0 and fe1 == 0xfe and fm1 == 0x7fffff and fs2 == 0 and fe2 == 0x01 and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7f7fffff; op2val:0x800001;
    valaddr_reg:x3; val_offset:346*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 346*FLEN/8, x4, x1, x2)
 
@@ -1432,7 +1432,7 @@ inst_174:
 // fs1 == 0 and fe1 == 0xfe and fm1 == 0x7fffff and fs2 == 0 and fe2 == 0x7f and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7f7fffff; op2val:0x3f800000;
    valaddr_reg:x3; val_offset:348*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 348*FLEN/8, x4, x1, x2)
 
@@ -1440,7 +1440,7 @@ inst_175:
 // fs1 == 0 and fe1 == 0xfe and fm1 == 0x7fffff and fs2 == 0 and fe2 == 0xfe and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7f7fffff; op2val:0x7f7fffff;
    valaddr_reg:x3; val_offset:350*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 350*FLEN/8, x4, x1, x2)
 
@@ -1448,7 +1448,7 @@ inst_176:
 // fs1 == 0 and fe1 == 0xfe and fm1 == 0x7fffff and fs2 == 0 and fe2 == 0xff and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7f7fffff; op2val:0x7f800000;
    valaddr_reg:x3; val_offset:352*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 352*FLEN/8, x4, x1, x2)
 
@@ -1456,7 +1456,7 @@ inst_177:
 // fs1 == 0 and fe1 == 0xfe and fm1 == 0x7fffff and fs2 == 0 and fe2 == 0xff and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7f7fffff; op2val:0x7f800001;
    valaddr_reg:x3; val_offset:354*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 354*FLEN/8, x4, x1, x2)
 
@@ -1464,7 +1464,7 @@ inst_178:
 // fs1 == 0 and fe1 == 0xfe and fm1 == 0x7fffff and fs2 == 0 and fe2 == 0xff and fm2 == 0x400000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7f7fffff; op2val:0x7fc00000;
    valaddr_reg:x3; val_offset:356*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 356*FLEN/8, x4, x1, x2)
 
@@ -1472,7 +1472,7 @@ inst_179:
 // fs1 == 0 and fe1 == 0xfe and fm1 == 0x7fffff and fs2 == 0 and fe2 == 0xff and fm2 == 0x400001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7f7fffff; op2val:0x7fc00001;
    valaddr_reg:x3; val_offset:358*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 358*FLEN/8, x4, x1, x2)
 
@@ -1480,7 +1480,7 @@ inst_180:
 // fs1 == 0 and fe1 == 0xfe and fm1 == 0x7fffff and fs2 == 1 and fe2 == 0x00 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7f7fffff; op2val:0x80000000;
    valaddr_reg:x3; val_offset:360*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 360*FLEN/8, x4, x1, x2)
 
@@ -1488,7 +1488,7 @@ inst_181:
 // fs1 == 0 and fe1 == 0xfe and fm1 == 0x7fffff and fs2 == 1 and fe2 == 0x00 and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7f7fffff; op2val:0x80000001;
    valaddr_reg:x3; val_offset:362*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 362*FLEN/8, x4, x1, x2)
 
@@ -1496,7 +1496,7 @@ inst_182:
 // fs1 == 0 and fe1 == 0xfe and fm1 == 0x7fffff and fs2 == 1 and fe2 == 0x00 and fm2 == 0x7ffffe and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7f7fffff; op2val:0x807ffffe;
    valaddr_reg:x3; val_offset:364*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 364*FLEN/8, x4, x1, x2)
 
@@ -1504,7 +1504,7 @@ inst_183:
 // fs1 == 0 and fe1 == 0xfe and fm1 == 0x7fffff and fs2 == 1 and fe2 == 0x00 and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7f7fffff; op2val:0x807fffff;
    valaddr_reg:x3; val_offset:366*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 366*FLEN/8, x4, x1, x2)
 
@@ -1512,7 +1512,7 @@ inst_184:
 // fs1 == 0 and fe1 == 0xfe and fm1 == 0x7fffff and fs2 == 1 and fe2 == 0x01 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7f7fffff; op2val:0x80800000;
    valaddr_reg:x3; val_offset:368*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 368*FLEN/8, x4, x1, x2)
 
@@ -1520,7 +1520,7 @@ inst_185:
 // fs1 == 0 and fe1 == 0xfe and fm1 == 0x7fffff and fs2 == 1 and fe2 == 0x01 and fm2 == 0x055555 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7f7fffff; op2val:0x80855555;
    valaddr_reg:x3; val_offset:370*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 370*FLEN/8, x4, x1, x2)
 
@@ -1528,7 +1528,7 @@ inst_186:
 // fs1 == 0 and fe1 == 0xfe and fm1 == 0x7fffff and fs2 == 1 and fe2 == 0x7f and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7f7fffff; op2val:0xbf800000;
    valaddr_reg:x3; val_offset:372*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 372*FLEN/8, x4, x1, x2)
 
@@ -1536,7 +1536,7 @@ inst_187:
 // fs1 == 0 and fe1 == 0xfe and fm1 == 0x7fffff and fs2 == 1 and fe2 == 0xfe and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7f7fffff; op2val:0xff7fffff;
    valaddr_reg:x3; val_offset:374*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 374*FLEN/8, x4, x1, x2)
 
@@ -1544,7 +1544,7 @@ inst_188:
 // fs1 == 0 and fe1 == 0xfe and fm1 == 0x7fffff and fs2 == 1 and fe2 == 0xff and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7f7fffff; op2val:0xff800000;
    valaddr_reg:x3; val_offset:376*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 376*FLEN/8, x4, x1, x2)
 
@@ -1552,7 +1552,7 @@ inst_189:
 // fs1 == 0 and fe1 == 0xfe and fm1 == 0x7fffff and fs2 == 1 and fe2 == 0xff and fm2 == 0x2aaaaa and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7f7fffff; op2val:0xffaaaaaa;
    valaddr_reg:x3; val_offset:378*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 378*FLEN/8, x4, x1, x2)
 
@@ -1560,7 +1560,7 @@ inst_190:
 // fs1 == 0 and fe1 == 0xfe and fm1 == 0x7fffff and fs2 == 1 and fe2 == 0xff and fm2 == 0x400000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7f7fffff; op2val:0xffc00000;
    valaddr_reg:x3; val_offset:380*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 380*FLEN/8, x4, x1, x2)
 
@@ -1568,7 +1568,7 @@ inst_191:
 // fs1 == 0 and fe1 == 0xfe and fm1 == 0x7fffff and fs2 == 1 and fe2 == 0xff and fm2 == 0x455555 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7f7fffff; op2val:0xffc55555;
    valaddr_reg:x3; val_offset:382*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 382*FLEN/8, x4, x1, x2)
 
@@ -1576,7 +1576,7 @@ inst_192:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x000000 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7f800000; op2val:0x0;
    valaddr_reg:x3; val_offset:384*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 384*FLEN/8, x4, x1, x2)
 
@@ -1584,7 +1584,7 @@ inst_193:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x000000 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7f800000; op2val:0x1;
    valaddr_reg:x3; val_offset:386*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 386*FLEN/8, x4, x1, x2)
 
@@ -1592,7 +1592,7 @@ inst_194:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x000000 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x000002 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7f800000; op2val:0x2;
    valaddr_reg:x3; val_offset:388*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 388*FLEN/8, x4, x1, x2)
 
@@ -1600,7 +1600,7 @@ inst_195:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x000000 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7f800000; op2val:0x7fffff;
    valaddr_reg:x3; val_offset:390*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 390*FLEN/8, x4, x1, x2)
 
@@ -1608,7 +1608,7 @@ inst_196:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x000000 and fs2 == 0 and fe2 == 0x01 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7f800000; op2val:0x800000;
    valaddr_reg:x3; val_offset:392*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 392*FLEN/8, x4, x1, x2)
 
@@ -1616,7 +1616,7 @@ inst_197:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x000000 and fs2 == 0 and fe2 == 0x01 and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7f800000; op2val:0x800001;
    valaddr_reg:x3; val_offset:394*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 394*FLEN/8, x4, x1, x2)
 
@@ -1624,7 +1624,7 @@ inst_198:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x000000 and fs2 == 0 and fe2 == 0x7f and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7f800000; op2val:0x3f800000;
    valaddr_reg:x3; val_offset:396*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 396*FLEN/8, x4, x1, x2)
 
@@ -1632,7 +1632,7 @@ inst_199:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x000000 and fs2 == 0 and fe2 == 0xfe and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7f800000; op2val:0x7f7fffff;
    valaddr_reg:x3; val_offset:398*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 398*FLEN/8, x4, x1, x2)
 
@@ -1640,7 +1640,7 @@ inst_200:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x000000 and fs2 == 0 and fe2 == 0xff and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7f800000; op2val:0x7f800000;
    valaddr_reg:x3; val_offset:400*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 400*FLEN/8, x4, x1, x2)
 
@@ -1648,7 +1648,7 @@ inst_201:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x000000 and fs2 == 0 and fe2 == 0xff and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7f800000; op2val:0x7f800001;
    valaddr_reg:x3; val_offset:402*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 402*FLEN/8, x4, x1, x2)
 
@@ -1656,7 +1656,7 @@ inst_202:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x000000 and fs2 == 0 and fe2 == 0xff and fm2 == 0x400000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7f800000; op2val:0x7fc00000;
    valaddr_reg:x3; val_offset:404*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 404*FLEN/8, x4, x1, x2)
 
@@ -1664,7 +1664,7 @@ inst_203:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x000000 and fs2 == 0 and fe2 == 0xff and fm2 == 0x400001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7f800000; op2val:0x7fc00001;
    valaddr_reg:x3; val_offset:406*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 406*FLEN/8, x4, x1, x2)
 
@@ -1672,7 +1672,7 @@ inst_204:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x000000 and fs2 == 1 and fe2 == 0x00 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7f800000; op2val:0x80000000;
    valaddr_reg:x3; val_offset:408*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 408*FLEN/8, x4, x1, x2)
 
@@ -1680,7 +1680,7 @@ inst_205:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x000000 and fs2 == 1 and fe2 == 0x00 and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7f800000; op2val:0x80000001;
    valaddr_reg:x3; val_offset:410*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 410*FLEN/8, x4, x1, x2)
 
@@ -1688,7 +1688,7 @@ inst_206:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x000000 and fs2 == 1 and fe2 == 0x00 and fm2 == 0x7ffffe and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7f800000; op2val:0x807ffffe;
    valaddr_reg:x3; val_offset:412*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 412*FLEN/8, x4, x1, x2)
 
@@ -1696,7 +1696,7 @@ inst_207:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x000000 and fs2 == 1 and fe2 == 0x00 and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7f800000; op2val:0x807fffff;
    valaddr_reg:x3; val_offset:414*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 414*FLEN/8, x4, x1, x2)
 
@@ -1704,7 +1704,7 @@ inst_208:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x000000 and fs2 == 1 and fe2 == 0x01 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7f800000; op2val:0x80800000;
    valaddr_reg:x3; val_offset:416*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 416*FLEN/8, x4, x1, x2)
 
@@ -1712,7 +1712,7 @@ inst_209:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x000000 and fs2 == 1 and fe2 == 0x01 and fm2 == 0x055555 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7f800000; op2val:0x80855555;
    valaddr_reg:x3; val_offset:418*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 418*FLEN/8, x4, x1, x2)
 
@@ -1720,7 +1720,7 @@ inst_210:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x000000 and fs2 == 1 and fe2 == 0x7f and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7f800000; op2val:0xbf800000;
    valaddr_reg:x3; val_offset:420*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 420*FLEN/8, x4, x1, x2)
 
@@ -1728,7 +1728,7 @@ inst_211:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x000000 and fs2 == 1 and fe2 == 0xfe and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7f800000; op2val:0xff7fffff;
    valaddr_reg:x3; val_offset:422*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 422*FLEN/8, x4, x1, x2)
 
@@ -1736,7 +1736,7 @@ inst_212:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x000000 and fs2 == 1 and fe2 == 0xff and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7f800000; op2val:0xff800000;
    valaddr_reg:x3; val_offset:424*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 424*FLEN/8, x4, x1, x2)
 
@@ -1744,7 +1744,7 @@ inst_213:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x000000 and fs2 == 1 and fe2 == 0xff and fm2 == 0x2aaaaa and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7f800000; op2val:0xffaaaaaa;
    valaddr_reg:x3; val_offset:426*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 426*FLEN/8, x4, x1, x2)
 
@@ -1752,7 +1752,7 @@ inst_214:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x000000 and fs2 == 1 and fe2 == 0xff and fm2 == 0x400000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7f800000; op2val:0xffc00000;
    valaddr_reg:x3; val_offset:428*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 428*FLEN/8, x4, x1, x2)
 
@@ -1760,7 +1760,7 @@ inst_215:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x000000 and fs2 == 1 and fe2 == 0xff and fm2 == 0x455555 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7f800000; op2val:0xffc55555;
    valaddr_reg:x3; val_offset:430*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 430*FLEN/8, x4, x1, x2)
 
@@ -1768,7 +1768,7 @@ inst_216:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x000001 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7f800001; op2val:0x0;
    valaddr_reg:x3; val_offset:432*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 432*FLEN/8, x4, x1, x2)
 
@@ -1776,7 +1776,7 @@ inst_217:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x000001 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7f800001; op2val:0x1;
    valaddr_reg:x3; val_offset:434*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 434*FLEN/8, x4, x1, x2)
 
@@ -1784,7 +1784,7 @@ inst_218:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x000001 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x000002 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7f800001; op2val:0x2;
    valaddr_reg:x3; val_offset:436*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 436*FLEN/8, x4, x1, x2)
 
@@ -1792,7 +1792,7 @@ inst_219:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x000001 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7f800001; op2val:0x7fffff;
    valaddr_reg:x3; val_offset:438*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 438*FLEN/8, x4, x1, x2)
 
@@ -1800,7 +1800,7 @@ inst_220:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x000001 and fs2 == 0 and fe2 == 0x01 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7f800001; op2val:0x800000;
    valaddr_reg:x3; val_offset:440*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 440*FLEN/8, x4, x1, x2)
 
@@ -1808,7 +1808,7 @@ inst_221:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x000001 and fs2 == 0 and fe2 == 0x01 and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7f800001; op2val:0x800001;
    valaddr_reg:x3; val_offset:442*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 442*FLEN/8, x4, x1, x2)
 
@@ -1816,7 +1816,7 @@ inst_222:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x000001 and fs2 == 0 and fe2 == 0x7f and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7f800001; op2val:0x3f800000;
    valaddr_reg:x3; val_offset:444*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 444*FLEN/8, x4, x1, x2)
 
@@ -1824,7 +1824,7 @@ inst_223:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x000001 and fs2 == 0 and fe2 == 0xfe and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7f800001; op2val:0x7f7fffff;
    valaddr_reg:x3; val_offset:446*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 446*FLEN/8, x4, x1, x2)
 
@@ -1832,7 +1832,7 @@ inst_224:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x000001 and fs2 == 0 and fe2 == 0xff and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7f800001; op2val:0x7f800000;
    valaddr_reg:x3; val_offset:448*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 448*FLEN/8, x4, x1, x2)
 
@@ -1840,7 +1840,7 @@ inst_225:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x000001 and fs2 == 0 and fe2 == 0xff and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7f800001; op2val:0x7f800001;
    valaddr_reg:x3; val_offset:450*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 450*FLEN/8, x4, x1, x2)
 
@@ -1848,7 +1848,7 @@ inst_226:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x000001 and fs2 == 0 and fe2 == 0xff and fm2 == 0x400000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7f800001; op2val:0x7fc00000;
    valaddr_reg:x3; val_offset:452*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 452*FLEN/8, x4, x1, x2)
 
@@ -1856,7 +1856,7 @@ inst_227:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x000001 and fs2 == 0 and fe2 == 0xff and fm2 == 0x400001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7f800001; op2val:0x7fc00001;
    valaddr_reg:x3; val_offset:454*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 454*FLEN/8, x4, x1, x2)
 
@@ -1864,7 +1864,7 @@ inst_228:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x000001 and fs2 == 1 and fe2 == 0x00 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7f800001; op2val:0x80000000;
    valaddr_reg:x3; val_offset:456*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 456*FLEN/8, x4, x1, x2)
 
@@ -1872,7 +1872,7 @@ inst_229:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x000001 and fs2 == 1 and fe2 == 0x00 and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7f800001; op2val:0x80000001;
    valaddr_reg:x3; val_offset:458*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 458*FLEN/8, x4, x1, x2)
 
@@ -1880,7 +1880,7 @@ inst_230:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x000001 and fs2 == 1 and fe2 == 0x00 and fm2 == 0x7ffffe and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7f800001; op2val:0x807ffffe;
    valaddr_reg:x3; val_offset:460*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 460*FLEN/8, x4, x1, x2)
 
@@ -1888,7 +1888,7 @@ inst_231:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x000001 and fs2 == 1 and fe2 == 0x00 and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7f800001; op2val:0x807fffff;
    valaddr_reg:x3; val_offset:462*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 462*FLEN/8, x4, x1, x2)
 
@@ -1896,7 +1896,7 @@ inst_232:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x000001 and fs2 == 1 and fe2 == 0x01 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7f800001; op2val:0x80800000;
    valaddr_reg:x3; val_offset:464*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 464*FLEN/8, x4, x1, x2)
 
@@ -1904,7 +1904,7 @@ inst_233:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x000001 and fs2 == 1 and fe2 == 0x01 and fm2 == 0x055555 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7f800001; op2val:0x80855555;
    valaddr_reg:x3; val_offset:466*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 466*FLEN/8, x4, x1, x2)
 
@@ -1912,7 +1912,7 @@ inst_234:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x000001 and fs2 == 1 and fe2 == 0x7f and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7f800001; op2val:0xbf800000;
    valaddr_reg:x3; val_offset:468*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 468*FLEN/8, x4, x1, x2)
 
@@ -1920,7 +1920,7 @@ inst_235:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x000001 and fs2 == 1 and fe2 == 0xfe and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7f800001; op2val:0xff7fffff;
    valaddr_reg:x3; val_offset:470*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 470*FLEN/8, x4, x1, x2)
 
@@ -1928,7 +1928,7 @@ inst_236:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x000001 and fs2 == 1 and fe2 == 0xff and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7f800001; op2val:0xff800000;
    valaddr_reg:x3; val_offset:472*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 472*FLEN/8, x4, x1, x2)
 
@@ -1936,7 +1936,7 @@ inst_237:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x000001 and fs2 == 1 and fe2 == 0xff and fm2 == 0x2aaaaa and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7f800001; op2val:0xffaaaaaa;
    valaddr_reg:x3; val_offset:474*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 474*FLEN/8, x4, x1, x2)
 
@@ -1944,7 +1944,7 @@ inst_238:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x000001 and fs2 == 1 and fe2 == 0xff and fm2 == 0x400000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7f800001; op2val:0xffc00000;
    valaddr_reg:x3; val_offset:476*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 476*FLEN/8, x4, x1, x2)
 
@@ -1952,7 +1952,7 @@ inst_239:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x000001 and fs2 == 1 and fe2 == 0xff and fm2 == 0x455555 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7f800001; op2val:0xffc55555;
    valaddr_reg:x3; val_offset:478*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 478*FLEN/8, x4, x1, x2)
 
@@ -1960,7 +1960,7 @@ inst_240:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x400000 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7fc00000; op2val:0x0;
    valaddr_reg:x3; val_offset:480*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 480*FLEN/8, x4, x1, x2)
 
@@ -1968,7 +1968,7 @@ inst_241:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x400000 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7fc00000; op2val:0x1;
    valaddr_reg:x3; val_offset:482*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 482*FLEN/8, x4, x1, x2)
 
@@ -1976,7 +1976,7 @@ inst_242:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x400000 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x000002 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7fc00000; op2val:0x2;
    valaddr_reg:x3; val_offset:484*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 484*FLEN/8, x4, x1, x2)
 
@@ -1984,7 +1984,7 @@ inst_243:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x400000 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7fc00000; op2val:0x7fffff;
    valaddr_reg:x3; val_offset:486*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 486*FLEN/8, x4, x1, x2)
 
@@ -1992,7 +1992,7 @@ inst_244:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x400000 and fs2 == 0 and fe2 == 0x01 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7fc00000; op2val:0x800000;
    valaddr_reg:x3; val_offset:488*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 488*FLEN/8, x4, x1, x2)
 
@@ -2000,7 +2000,7 @@ inst_245:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x400000 and fs2 == 0 and fe2 == 0x01 and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7fc00000; op2val:0x800001;
    valaddr_reg:x3; val_offset:490*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 490*FLEN/8, x4, x1, x2)
 
@@ -2008,7 +2008,7 @@ inst_246:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x400000 and fs2 == 0 and fe2 == 0x7f and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7fc00000; op2val:0x3f800000;
    valaddr_reg:x3; val_offset:492*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 492*FLEN/8, x4, x1, x2)
 
@@ -2016,7 +2016,7 @@ inst_247:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x400000 and fs2 == 0 and fe2 == 0xfe and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7fc00000; op2val:0x7f7fffff;
    valaddr_reg:x3; val_offset:494*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 494*FLEN/8, x4, x1, x2)
 
@@ -2024,7 +2024,7 @@ inst_248:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x400000 and fs2 == 0 and fe2 == 0xff and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7fc00000; op2val:0x7f800000;
    valaddr_reg:x3; val_offset:496*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 496*FLEN/8, x4, x1, x2)
 
@@ -2032,7 +2032,7 @@ inst_249:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x400000 and fs2 == 0 and fe2 == 0xff and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7fc00000; op2val:0x7f800001;
    valaddr_reg:x3; val_offset:498*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 498*FLEN/8, x4, x1, x2)
 
@@ -2040,7 +2040,7 @@ inst_250:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x400000 and fs2 == 0 and fe2 == 0xff and fm2 == 0x400000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7fc00000; op2val:0x7fc00000;
    valaddr_reg:x3; val_offset:500*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 500*FLEN/8, x4, x1, x2)
 
@@ -2048,7 +2048,7 @@ inst_251:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x400000 and fs2 == 0 and fe2 == 0xff and fm2 == 0x400001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7fc00000; op2val:0x7fc00001;
    valaddr_reg:x3; val_offset:502*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 502*FLEN/8, x4, x1, x2)
 
@@ -2056,7 +2056,7 @@ inst_252:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x400000 and fs2 == 1 and fe2 == 0x00 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7fc00000; op2val:0x80000000;
    valaddr_reg:x3; val_offset:504*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 504*FLEN/8, x4, x1, x2)
 
@@ -2064,7 +2064,7 @@ inst_253:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x400000 and fs2 == 1 and fe2 == 0x00 and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7fc00000; op2val:0x80000001;
    valaddr_reg:x3; val_offset:506*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 506*FLEN/8, x4, x1, x2)
 
@@ -2072,7 +2072,7 @@ inst_254:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x400000 and fs2 == 1 and fe2 == 0x00 and fm2 == 0x7ffffe and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7fc00000; op2val:0x807ffffe;
    valaddr_reg:x3; val_offset:508*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 508*FLEN/8, x4, x1, x2)
 
@@ -2080,7 +2080,7 @@ inst_255:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x400000 and fs2 == 1 and fe2 == 0x00 and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7fc00000; op2val:0x807fffff;
    valaddr_reg:x3; val_offset:510*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 510*FLEN/8, x4, x1, x2)
 RVTEST_SIGBASE(x1,signature_x1_3)
@@ -2089,7 +2089,7 @@ inst_256:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x400000 and fs2 == 1 and fe2 == 0x01 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7fc00000; op2val:0x80800000;
    valaddr_reg:x3; val_offset:512*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 512*FLEN/8, x4, x1, x2)
 
@@ -2097,7 +2097,7 @@ inst_257:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x400000 and fs2 == 1 and fe2 == 0x01 and fm2 == 0x055555 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7fc00000; op2val:0x80855555;
    valaddr_reg:x3; val_offset:514*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 514*FLEN/8, x4, x1, x2)
 
@@ -2105,7 +2105,7 @@ inst_258:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x400000 and fs2 == 1 and fe2 == 0x7f and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7fc00000; op2val:0xbf800000;
    valaddr_reg:x3; val_offset:516*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 516*FLEN/8, x4, x1, x2)
 
@@ -2113,7 +2113,7 @@ inst_259:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x400000 and fs2 == 1 and fe2 == 0xfe and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7fc00000; op2val:0xff7fffff;
    valaddr_reg:x3; val_offset:518*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 518*FLEN/8, x4, x1, x2)
 
@@ -2121,7 +2121,7 @@ inst_260:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x400000 and fs2 == 1 and fe2 == 0xff and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7fc00000; op2val:0xff800000;
    valaddr_reg:x3; val_offset:520*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 520*FLEN/8, x4, x1, x2)
 
@@ -2129,7 +2129,7 @@ inst_261:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x400000 and fs2 == 1 and fe2 == 0xff and fm2 == 0x2aaaaa and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7fc00000; op2val:0xffaaaaaa;
    valaddr_reg:x3; val_offset:522*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 522*FLEN/8, x4, x1, x2)
 
@@ -2137,7 +2137,7 @@ inst_262:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x400000 and fs2 == 1 and fe2 == 0xff and fm2 == 0x400000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7fc00000; op2val:0xffc00000;
    valaddr_reg:x3; val_offset:524*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 524*FLEN/8, x4, x1, x2)
 
@@ -2145,7 +2145,7 @@ inst_263:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x400000 and fs2 == 1 and fe2 == 0xff and fm2 == 0x455555 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7fc00000; op2val:0xffc55555;
    valaddr_reg:x3; val_offset:526*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 526*FLEN/8, x4, x1, x2)
 
@@ -2153,7 +2153,7 @@ inst_264:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x400001 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7fc00001; op2val:0x0;
    valaddr_reg:x3; val_offset:528*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 528*FLEN/8, x4, x1, x2)
 
@@ -2161,7 +2161,7 @@ inst_265:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x400001 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7fc00001; op2val:0x1;
    valaddr_reg:x3; val_offset:530*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 530*FLEN/8, x4, x1, x2)
 
@@ -2169,7 +2169,7 @@ inst_266:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x400001 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x000002 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7fc00001; op2val:0x2;
    valaddr_reg:x3; val_offset:532*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 532*FLEN/8, x4, x1, x2)
 
@@ -2177,7 +2177,7 @@ inst_267:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x400001 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7fc00001; op2val:0x7fffff;
    valaddr_reg:x3; val_offset:534*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 534*FLEN/8, x4, x1, x2)
 
@@ -2185,7 +2185,7 @@ inst_268:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x400001 and fs2 == 0 and fe2 == 0x01 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7fc00001; op2val:0x800000;
    valaddr_reg:x3; val_offset:536*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 536*FLEN/8, x4, x1, x2)
 
@@ -2193,7 +2193,7 @@ inst_269:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x400001 and fs2 == 0 and fe2 == 0x01 and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7fc00001; op2val:0x800001;
    valaddr_reg:x3; val_offset:538*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 538*FLEN/8, x4, x1, x2)
 
@@ -2201,7 +2201,7 @@ inst_270:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x400001 and fs2 == 0 and fe2 == 0x7f and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7fc00001; op2val:0x3f800000;
    valaddr_reg:x3; val_offset:540*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 540*FLEN/8, x4, x1, x2)
 
@@ -2209,7 +2209,7 @@ inst_271:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x400001 and fs2 == 0 and fe2 == 0xfe and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7fc00001; op2val:0x7f7fffff;
    valaddr_reg:x3; val_offset:542*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 542*FLEN/8, x4, x1, x2)
 
@@ -2217,7 +2217,7 @@ inst_272:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x400001 and fs2 == 0 and fe2 == 0xff and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7fc00001; op2val:0x7f800000;
    valaddr_reg:x3; val_offset:544*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 544*FLEN/8, x4, x1, x2)
 
@@ -2225,7 +2225,7 @@ inst_273:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x400001 and fs2 == 0 and fe2 == 0xff and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7fc00001; op2val:0x7f800001;
    valaddr_reg:x3; val_offset:546*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 546*FLEN/8, x4, x1, x2)
 
@@ -2233,7 +2233,7 @@ inst_274:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x400001 and fs2 == 0 and fe2 == 0xff and fm2 == 0x400000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7fc00001; op2val:0x7fc00000;
    valaddr_reg:x3; val_offset:548*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 548*FLEN/8, x4, x1, x2)
 
@@ -2241,7 +2241,7 @@ inst_275:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x400001 and fs2 == 0 and fe2 == 0xff and fm2 == 0x400001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7fc00001; op2val:0x7fc00001;
    valaddr_reg:x3; val_offset:550*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 550*FLEN/8, x4, x1, x2)
 
@@ -2249,7 +2249,7 @@ inst_276:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x400001 and fs2 == 1 and fe2 == 0x00 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7fc00001; op2val:0x80000000;
    valaddr_reg:x3; val_offset:552*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 552*FLEN/8, x4, x1, x2)
 
@@ -2257,7 +2257,7 @@ inst_277:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x400001 and fs2 == 1 and fe2 == 0x00 and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7fc00001; op2val:0x80000001;
    valaddr_reg:x3; val_offset:554*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 554*FLEN/8, x4, x1, x2)
 
@@ -2265,7 +2265,7 @@ inst_278:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x400001 and fs2 == 1 and fe2 == 0x00 and fm2 == 0x7ffffe and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7fc00001; op2val:0x807ffffe;
    valaddr_reg:x3; val_offset:556*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 556*FLEN/8, x4, x1, x2)
 
@@ -2273,7 +2273,7 @@ inst_279:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x400001 and fs2 == 1 and fe2 == 0x00 and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7fc00001; op2val:0x807fffff;
    valaddr_reg:x3; val_offset:558*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 558*FLEN/8, x4, x1, x2)
 
@@ -2281,7 +2281,7 @@ inst_280:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x400001 and fs2 == 1 and fe2 == 0x01 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7fc00001; op2val:0x80800000;
    valaddr_reg:x3; val_offset:560*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 560*FLEN/8, x4, x1, x2)
 
@@ -2289,7 +2289,7 @@ inst_281:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x400001 and fs2 == 1 and fe2 == 0x01 and fm2 == 0x055555 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7fc00001; op2val:0x80855555;
    valaddr_reg:x3; val_offset:562*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 562*FLEN/8, x4, x1, x2)
 
@@ -2297,7 +2297,7 @@ inst_282:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x400001 and fs2 == 1 and fe2 == 0x7f and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7fc00001; op2val:0xbf800000;
    valaddr_reg:x3; val_offset:564*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 564*FLEN/8, x4, x1, x2)
 
@@ -2305,7 +2305,7 @@ inst_283:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x400001 and fs2 == 1 and fe2 == 0xfe and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7fc00001; op2val:0xff7fffff;
    valaddr_reg:x3; val_offset:566*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 566*FLEN/8, x4, x1, x2)
 
@@ -2313,7 +2313,7 @@ inst_284:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x400001 and fs2 == 1 and fe2 == 0xff and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7fc00001; op2val:0xff800000;
    valaddr_reg:x3; val_offset:568*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 568*FLEN/8, x4, x1, x2)
 
@@ -2321,7 +2321,7 @@ inst_285:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x400001 and fs2 == 1 and fe2 == 0xff and fm2 == 0x2aaaaa and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7fc00001; op2val:0xffaaaaaa;
    valaddr_reg:x3; val_offset:570*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 570*FLEN/8, x4, x1, x2)
 
@@ -2329,7 +2329,7 @@ inst_286:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x400001 and fs2 == 1 and fe2 == 0xff and fm2 == 0x400000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7fc00001; op2val:0xffc00000;
    valaddr_reg:x3; val_offset:572*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 572*FLEN/8, x4, x1, x2)
 
@@ -2337,7 +2337,7 @@ inst_287:
 // fs1 == 0 and fe1 == 0xff and fm1 == 0x400001 and fs2 == 1 and fe2 == 0xff and fm2 == 0x455555 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x7fc00001; op2val:0xffc55555;
    valaddr_reg:x3; val_offset:574*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 574*FLEN/8, x4, x1, x2)
 
@@ -2345,7 +2345,7 @@ inst_288:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x000000 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80000000; op2val:0x0;
    valaddr_reg:x3; val_offset:576*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 576*FLEN/8, x4, x1, x2)
 
@@ -2353,7 +2353,7 @@ inst_289:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x000000 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80000000; op2val:0x1;
    valaddr_reg:x3; val_offset:578*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 578*FLEN/8, x4, x1, x2)
 
@@ -2361,7 +2361,7 @@ inst_290:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x000000 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x000002 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80000000; op2val:0x2;
    valaddr_reg:x3; val_offset:580*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 580*FLEN/8, x4, x1, x2)
 
@@ -2369,7 +2369,7 @@ inst_291:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x000000 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80000000; op2val:0x7fffff;
    valaddr_reg:x3; val_offset:582*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 582*FLEN/8, x4, x1, x2)
 
@@ -2377,7 +2377,7 @@ inst_292:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x000000 and fs2 == 0 and fe2 == 0x01 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80000000; op2val:0x800000;
    valaddr_reg:x3; val_offset:584*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 584*FLEN/8, x4, x1, x2)
 
@@ -2385,7 +2385,7 @@ inst_293:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x000000 and fs2 == 0 and fe2 == 0x01 and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80000000; op2val:0x800001;
    valaddr_reg:x3; val_offset:586*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 586*FLEN/8, x4, x1, x2)
 
@@ -2393,7 +2393,7 @@ inst_294:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x000000 and fs2 == 0 and fe2 == 0x7f and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80000000; op2val:0x3f800000;
    valaddr_reg:x3; val_offset:588*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 588*FLEN/8, x4, x1, x2)
 
@@ -2401,7 +2401,7 @@ inst_295:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x000000 and fs2 == 0 and fe2 == 0xfe and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80000000; op2val:0x7f7fffff;
    valaddr_reg:x3; val_offset:590*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 590*FLEN/8, x4, x1, x2)
 
@@ -2409,7 +2409,7 @@ inst_296:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x000000 and fs2 == 0 and fe2 == 0xff and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80000000; op2val:0x7f800000;
    valaddr_reg:x3; val_offset:592*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 592*FLEN/8, x4, x1, x2)
 
@@ -2417,7 +2417,7 @@ inst_297:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x000000 and fs2 == 0 and fe2 == 0xff and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80000000; op2val:0x7f800001;
    valaddr_reg:x3; val_offset:594*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 594*FLEN/8, x4, x1, x2)
 
@@ -2425,7 +2425,7 @@ inst_298:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x000000 and fs2 == 0 and fe2 == 0xff and fm2 == 0x400000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80000000; op2val:0x7fc00000;
    valaddr_reg:x3; val_offset:596*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 596*FLEN/8, x4, x1, x2)
 
@@ -2433,7 +2433,7 @@ inst_299:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x000000 and fs2 == 0 and fe2 == 0xff and fm2 == 0x400001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80000000; op2val:0x7fc00001;
    valaddr_reg:x3; val_offset:598*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 598*FLEN/8, x4, x1, x2)
 
@@ -2441,7 +2441,7 @@ inst_300:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x000000 and fs2 == 1 and fe2 == 0x00 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80000000; op2val:0x80000000;
    valaddr_reg:x3; val_offset:600*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 600*FLEN/8, x4, x1, x2)
 
@@ -2449,7 +2449,7 @@ inst_301:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x000000 and fs2 == 1 and fe2 == 0x00 and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80000000; op2val:0x80000001;
    valaddr_reg:x3; val_offset:602*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 602*FLEN/8, x4, x1, x2)
 
@@ -2457,7 +2457,7 @@ inst_302:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x000000 and fs2 == 1 and fe2 == 0x00 and fm2 == 0x7ffffe and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80000000; op2val:0x807ffffe;
    valaddr_reg:x3; val_offset:604*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 604*FLEN/8, x4, x1, x2)
 
@@ -2465,7 +2465,7 @@ inst_303:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x000000 and fs2 == 1 and fe2 == 0x00 and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80000000; op2val:0x807fffff;
    valaddr_reg:x3; val_offset:606*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 606*FLEN/8, x4, x1, x2)
 
@@ -2473,7 +2473,7 @@ inst_304:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x000000 and fs2 == 1 and fe2 == 0x01 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80000000; op2val:0x80800000;
    valaddr_reg:x3; val_offset:608*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 608*FLEN/8, x4, x1, x2)
 
@@ -2481,7 +2481,7 @@ inst_305:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x000000 and fs2 == 1 and fe2 == 0x01 and fm2 == 0x055555 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80000000; op2val:0x80855555;
    valaddr_reg:x3; val_offset:610*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 610*FLEN/8, x4, x1, x2)
 
@@ -2489,7 +2489,7 @@ inst_306:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x000000 and fs2 == 1 and fe2 == 0x7f and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80000000; op2val:0xbf800000;
    valaddr_reg:x3; val_offset:612*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 612*FLEN/8, x4, x1, x2)
 
@@ -2497,7 +2497,7 @@ inst_307:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x000000 and fs2 == 1 and fe2 == 0xfe and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80000000; op2val:0xff7fffff;
    valaddr_reg:x3; val_offset:614*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 614*FLEN/8, x4, x1, x2)
 
@@ -2505,7 +2505,7 @@ inst_308:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x000000 and fs2 == 1 and fe2 == 0xff and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80000000; op2val:0xff800000;
    valaddr_reg:x3; val_offset:616*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 616*FLEN/8, x4, x1, x2)
 
@@ -2513,7 +2513,7 @@ inst_309:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x000000 and fs2 == 1 and fe2 == 0xff and fm2 == 0x2aaaaa and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80000000; op2val:0xffaaaaaa;
    valaddr_reg:x3; val_offset:618*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 618*FLEN/8, x4, x1, x2)
 
@@ -2521,7 +2521,7 @@ inst_310:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x000000 and fs2 == 1 and fe2 == 0xff and fm2 == 0x400000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80000000; op2val:0xffc00000;
    valaddr_reg:x3; val_offset:620*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 620*FLEN/8, x4, x1, x2)
 
@@ -2529,7 +2529,7 @@ inst_311:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x000000 and fs2 == 1 and fe2 == 0xff and fm2 == 0x455555 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80000000; op2val:0xffc55555;
    valaddr_reg:x3; val_offset:622*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 622*FLEN/8, x4, x1, x2)
 
@@ -2537,7 +2537,7 @@ inst_312:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x000001 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80000001; op2val:0x0;
    valaddr_reg:x3; val_offset:624*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 624*FLEN/8, x4, x1, x2)
 
@@ -2545,7 +2545,7 @@ inst_313:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x000001 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80000001; op2val:0x1;
    valaddr_reg:x3; val_offset:626*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 626*FLEN/8, x4, x1, x2)
 
@@ -2553,7 +2553,7 @@ inst_314:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x000001 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x000002 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80000001; op2val:0x2;
    valaddr_reg:x3; val_offset:628*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 628*FLEN/8, x4, x1, x2)
 
@@ -2561,7 +2561,7 @@ inst_315:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x000001 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80000001; op2val:0x7fffff;
    valaddr_reg:x3; val_offset:630*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 630*FLEN/8, x4, x1, x2)
 
@@ -2569,7 +2569,7 @@ inst_316:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x000001 and fs2 == 0 and fe2 == 0x01 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80000001; op2val:0x800000;
    valaddr_reg:x3; val_offset:632*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 632*FLEN/8, x4, x1, x2)
 
@@ -2577,7 +2577,7 @@ inst_317:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x000001 and fs2 == 0 and fe2 == 0x01 and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80000001; op2val:0x800001;
    valaddr_reg:x3; val_offset:634*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 634*FLEN/8, x4, x1, x2)
 
@@ -2585,7 +2585,7 @@ inst_318:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x000001 and fs2 == 0 and fe2 == 0x7f and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80000001; op2val:0x3f800000;
    valaddr_reg:x3; val_offset:636*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 636*FLEN/8, x4, x1, x2)
 
@@ -2593,7 +2593,7 @@ inst_319:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x000001 and fs2 == 0 and fe2 == 0xfe and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80000001; op2val:0x7f7fffff;
    valaddr_reg:x3; val_offset:638*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 638*FLEN/8, x4, x1, x2)
 
@@ -2601,7 +2601,7 @@ inst_320:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x000001 and fs2 == 0 and fe2 == 0xff and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80000001; op2val:0x7f800000;
    valaddr_reg:x3; val_offset:640*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 640*FLEN/8, x4, x1, x2)
 
@@ -2609,7 +2609,7 @@ inst_321:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x000001 and fs2 == 0 and fe2 == 0xff and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80000001; op2val:0x7f800001;
    valaddr_reg:x3; val_offset:642*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 642*FLEN/8, x4, x1, x2)
 
@@ -2617,7 +2617,7 @@ inst_322:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x000001 and fs2 == 0 and fe2 == 0xff and fm2 == 0x400000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80000001; op2val:0x7fc00000;
    valaddr_reg:x3; val_offset:644*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 644*FLEN/8, x4, x1, x2)
 
@@ -2625,7 +2625,7 @@ inst_323:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x000001 and fs2 == 0 and fe2 == 0xff and fm2 == 0x400001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80000001; op2val:0x7fc00001;
    valaddr_reg:x3; val_offset:646*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 646*FLEN/8, x4, x1, x2)
 
@@ -2633,7 +2633,7 @@ inst_324:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x000001 and fs2 == 1 and fe2 == 0x00 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80000001; op2val:0x80000000;
    valaddr_reg:x3; val_offset:648*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 648*FLEN/8, x4, x1, x2)
 
@@ -2641,7 +2641,7 @@ inst_325:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x000001 and fs2 == 1 and fe2 == 0x00 and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80000001; op2val:0x80000001;
    valaddr_reg:x3; val_offset:650*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 650*FLEN/8, x4, x1, x2)
 
@@ -2649,7 +2649,7 @@ inst_326:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x000001 and fs2 == 1 and fe2 == 0x00 and fm2 == 0x7ffffe and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80000001; op2val:0x807ffffe;
    valaddr_reg:x3; val_offset:652*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 652*FLEN/8, x4, x1, x2)
 
@@ -2657,7 +2657,7 @@ inst_327:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x000001 and fs2 == 1 and fe2 == 0x00 and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80000001; op2val:0x807fffff;
    valaddr_reg:x3; val_offset:654*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 654*FLEN/8, x4, x1, x2)
 
@@ -2665,7 +2665,7 @@ inst_328:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x000001 and fs2 == 1 and fe2 == 0x01 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80000001; op2val:0x80800000;
    valaddr_reg:x3; val_offset:656*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 656*FLEN/8, x4, x1, x2)
 
@@ -2673,7 +2673,7 @@ inst_329:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x000001 and fs2 == 1 and fe2 == 0x01 and fm2 == 0x055555 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80000001; op2val:0x80855555;
    valaddr_reg:x3; val_offset:658*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 658*FLEN/8, x4, x1, x2)
 
@@ -2681,7 +2681,7 @@ inst_330:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x000001 and fs2 == 1 and fe2 == 0x7f and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80000001; op2val:0xbf800000;
    valaddr_reg:x3; val_offset:660*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 660*FLEN/8, x4, x1, x2)
 
@@ -2689,7 +2689,7 @@ inst_331:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x000001 and fs2 == 1 and fe2 == 0xfe and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80000001; op2val:0xff7fffff;
    valaddr_reg:x3; val_offset:662*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 662*FLEN/8, x4, x1, x2)
 
@@ -2697,7 +2697,7 @@ inst_332:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x000001 and fs2 == 1 and fe2 == 0xff and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80000001; op2val:0xff800000;
    valaddr_reg:x3; val_offset:664*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 664*FLEN/8, x4, x1, x2)
 
@@ -2705,7 +2705,7 @@ inst_333:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x000001 and fs2 == 1 and fe2 == 0xff and fm2 == 0x2aaaaa and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80000001; op2val:0xffaaaaaa;
    valaddr_reg:x3; val_offset:666*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 666*FLEN/8, x4, x1, x2)
 
@@ -2713,7 +2713,7 @@ inst_334:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x000001 and fs2 == 1 and fe2 == 0xff and fm2 == 0x400000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80000001; op2val:0xffc00000;
    valaddr_reg:x3; val_offset:668*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 668*FLEN/8, x4, x1, x2)
 
@@ -2721,7 +2721,7 @@ inst_335:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x000001 and fs2 == 1 and fe2 == 0xff and fm2 == 0x455555 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80000001; op2val:0xffc55555;
    valaddr_reg:x3; val_offset:670*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 670*FLEN/8, x4, x1, x2)
 
@@ -2729,7 +2729,7 @@ inst_336:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x7ffffe and fs2 == 0 and fe2 == 0x00 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x807ffffe; op2val:0x0;
    valaddr_reg:x3; val_offset:672*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 672*FLEN/8, x4, x1, x2)
 
@@ -2737,7 +2737,7 @@ inst_337:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x7ffffe and fs2 == 0 and fe2 == 0x00 and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x807ffffe; op2val:0x1;
    valaddr_reg:x3; val_offset:674*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 674*FLEN/8, x4, x1, x2)
 
@@ -2745,7 +2745,7 @@ inst_338:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x7ffffe and fs2 == 0 and fe2 == 0x00 and fm2 == 0x000002 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x807ffffe; op2val:0x2;
    valaddr_reg:x3; val_offset:676*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 676*FLEN/8, x4, x1, x2)
 
@@ -2753,7 +2753,7 @@ inst_339:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x7ffffe and fs2 == 0 and fe2 == 0x00 and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x807ffffe; op2val:0x7fffff;
    valaddr_reg:x3; val_offset:678*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 678*FLEN/8, x4, x1, x2)
 
@@ -2761,7 +2761,7 @@ inst_340:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x7ffffe and fs2 == 0 and fe2 == 0x01 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x807ffffe; op2val:0x800000;
    valaddr_reg:x3; val_offset:680*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 680*FLEN/8, x4, x1, x2)
 
@@ -2769,7 +2769,7 @@ inst_341:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x7ffffe and fs2 == 0 and fe2 == 0x01 and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x807ffffe; op2val:0x800001;
    valaddr_reg:x3; val_offset:682*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 682*FLEN/8, x4, x1, x2)
 
@@ -2777,7 +2777,7 @@ inst_342:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x7ffffe and fs2 == 0 and fe2 == 0x7f and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x807ffffe; op2val:0x3f800000;
    valaddr_reg:x3; val_offset:684*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 684*FLEN/8, x4, x1, x2)
 
@@ -2785,7 +2785,7 @@ inst_343:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x7ffffe and fs2 == 0 and fe2 == 0xfe and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x807ffffe; op2val:0x7f7fffff;
    valaddr_reg:x3; val_offset:686*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 686*FLEN/8, x4, x1, x2)
 
@@ -2793,7 +2793,7 @@ inst_344:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x7ffffe and fs2 == 0 and fe2 == 0xff and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x807ffffe; op2val:0x7f800000;
    valaddr_reg:x3; val_offset:688*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 688*FLEN/8, x4, x1, x2)
 
@@ -2801,7 +2801,7 @@ inst_345:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x7ffffe and fs2 == 0 and fe2 == 0xff and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x807ffffe; op2val:0x7f800001;
    valaddr_reg:x3; val_offset:690*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 690*FLEN/8, x4, x1, x2)
 
@@ -2809,7 +2809,7 @@ inst_346:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x7ffffe and fs2 == 0 and fe2 == 0xff and fm2 == 0x400000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x807ffffe; op2val:0x7fc00000;
    valaddr_reg:x3; val_offset:692*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 692*FLEN/8, x4, x1, x2)
 
@@ -2817,7 +2817,7 @@ inst_347:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x7ffffe and fs2 == 0 and fe2 == 0xff and fm2 == 0x400001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x807ffffe; op2val:0x7fc00001;
    valaddr_reg:x3; val_offset:694*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 694*FLEN/8, x4, x1, x2)
 
@@ -2825,7 +2825,7 @@ inst_348:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x7ffffe and fs2 == 1 and fe2 == 0x00 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x807ffffe; op2val:0x80000000;
    valaddr_reg:x3; val_offset:696*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 696*FLEN/8, x4, x1, x2)
 
@@ -2833,7 +2833,7 @@ inst_349:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x7ffffe and fs2 == 1 and fe2 == 0x00 and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x807ffffe; op2val:0x80000001;
    valaddr_reg:x3; val_offset:698*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 698*FLEN/8, x4, x1, x2)
 
@@ -2841,7 +2841,7 @@ inst_350:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x7ffffe and fs2 == 1 and fe2 == 0x00 and fm2 == 0x7ffffe and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x807ffffe; op2val:0x807ffffe;
    valaddr_reg:x3; val_offset:700*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 700*FLEN/8, x4, x1, x2)
 
@@ -2849,7 +2849,7 @@ inst_351:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x7ffffe and fs2 == 1 and fe2 == 0x00 and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x807ffffe; op2val:0x807fffff;
    valaddr_reg:x3; val_offset:702*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 702*FLEN/8, x4, x1, x2)
 
@@ -2857,7 +2857,7 @@ inst_352:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x7ffffe and fs2 == 1 and fe2 == 0x01 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x807ffffe; op2val:0x80800000;
    valaddr_reg:x3; val_offset:704*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 704*FLEN/8, x4, x1, x2)
 
@@ -2865,7 +2865,7 @@ inst_353:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x7ffffe and fs2 == 1 and fe2 == 0x01 and fm2 == 0x055555 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x807ffffe; op2val:0x80855555;
    valaddr_reg:x3; val_offset:706*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 706*FLEN/8, x4, x1, x2)
 
@@ -2873,7 +2873,7 @@ inst_354:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x7ffffe and fs2 == 1 and fe2 == 0x7f and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x807ffffe; op2val:0xbf800000;
    valaddr_reg:x3; val_offset:708*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 708*FLEN/8, x4, x1, x2)
 
@@ -2881,7 +2881,7 @@ inst_355:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x7ffffe and fs2 == 1 and fe2 == 0xfe and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x807ffffe; op2val:0xff7fffff;
    valaddr_reg:x3; val_offset:710*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 710*FLEN/8, x4, x1, x2)
 
@@ -2889,7 +2889,7 @@ inst_356:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x7ffffe and fs2 == 1 and fe2 == 0xff and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x807ffffe; op2val:0xff800000;
    valaddr_reg:x3; val_offset:712*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 712*FLEN/8, x4, x1, x2)
 
@@ -2897,7 +2897,7 @@ inst_357:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x7ffffe and fs2 == 1 and fe2 == 0xff and fm2 == 0x2aaaaa and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x807ffffe; op2val:0xffaaaaaa;
    valaddr_reg:x3; val_offset:714*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 714*FLEN/8, x4, x1, x2)
 
@@ -2905,7 +2905,7 @@ inst_358:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x7ffffe and fs2 == 1 and fe2 == 0xff and fm2 == 0x400000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x807ffffe; op2val:0xffc00000;
    valaddr_reg:x3; val_offset:716*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 716*FLEN/8, x4, x1, x2)
 
@@ -2913,7 +2913,7 @@ inst_359:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x7ffffe and fs2 == 1 and fe2 == 0xff and fm2 == 0x455555 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x807ffffe; op2val:0xffc55555;
    valaddr_reg:x3; val_offset:718*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 718*FLEN/8, x4, x1, x2)
 
@@ -2921,7 +2921,7 @@ inst_360:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x7fffff and fs2 == 0 and fe2 == 0x00 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x807fffff; op2val:0x0;
    valaddr_reg:x3; val_offset:720*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 720*FLEN/8, x4, x1, x2)
 
@@ -2929,7 +2929,7 @@ inst_361:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x7fffff and fs2 == 0 and fe2 == 0x00 and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x807fffff; op2val:0x1;
    valaddr_reg:x3; val_offset:722*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 722*FLEN/8, x4, x1, x2)
 
@@ -2937,7 +2937,7 @@ inst_362:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x7fffff and fs2 == 0 and fe2 == 0x00 and fm2 == 0x000002 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x807fffff; op2val:0x2;
    valaddr_reg:x3; val_offset:724*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 724*FLEN/8, x4, x1, x2)
 
@@ -2945,7 +2945,7 @@ inst_363:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x7fffff and fs2 == 0 and fe2 == 0x00 and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x807fffff; op2val:0x7fffff;
    valaddr_reg:x3; val_offset:726*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 726*FLEN/8, x4, x1, x2)
 
@@ -2953,7 +2953,7 @@ inst_364:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x7fffff and fs2 == 0 and fe2 == 0x01 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x807fffff; op2val:0x800000;
    valaddr_reg:x3; val_offset:728*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 728*FLEN/8, x4, x1, x2)
 
@@ -2961,7 +2961,7 @@ inst_365:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x7fffff and fs2 == 0 and fe2 == 0x01 and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x807fffff; op2val:0x800001;
    valaddr_reg:x3; val_offset:730*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 730*FLEN/8, x4, x1, x2)
 
@@ -2969,7 +2969,7 @@ inst_366:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x7fffff and fs2 == 0 and fe2 == 0x7f and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x807fffff; op2val:0x3f800000;
    valaddr_reg:x3; val_offset:732*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 732*FLEN/8, x4, x1, x2)
 
@@ -2977,7 +2977,7 @@ inst_367:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x7fffff and fs2 == 0 and fe2 == 0xfe and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x807fffff; op2val:0x7f7fffff;
    valaddr_reg:x3; val_offset:734*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 734*FLEN/8, x4, x1, x2)
 
@@ -2985,7 +2985,7 @@ inst_368:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x7fffff and fs2 == 0 and fe2 == 0xff and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x807fffff; op2val:0x7f800000;
    valaddr_reg:x3; val_offset:736*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 736*FLEN/8, x4, x1, x2)
 
@@ -2993,7 +2993,7 @@ inst_369:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x7fffff and fs2 == 0 and fe2 == 0xff and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x807fffff; op2val:0x7f800001;
    valaddr_reg:x3; val_offset:738*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 738*FLEN/8, x4, x1, x2)
 
@@ -3001,7 +3001,7 @@ inst_370:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x7fffff and fs2 == 0 and fe2 == 0xff and fm2 == 0x400000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x807fffff; op2val:0x7fc00000;
    valaddr_reg:x3; val_offset:740*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 740*FLEN/8, x4, x1, x2)
 
@@ -3009,7 +3009,7 @@ inst_371:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x7fffff and fs2 == 0 and fe2 == 0xff and fm2 == 0x400001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x807fffff; op2val:0x7fc00001;
    valaddr_reg:x3; val_offset:742*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 742*FLEN/8, x4, x1, x2)
 
@@ -3017,7 +3017,7 @@ inst_372:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x7fffff and fs2 == 1 and fe2 == 0x00 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x807fffff; op2val:0x80000000;
    valaddr_reg:x3; val_offset:744*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 744*FLEN/8, x4, x1, x2)
 
@@ -3025,7 +3025,7 @@ inst_373:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x7fffff and fs2 == 1 and fe2 == 0x00 and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x807fffff; op2val:0x80000001;
    valaddr_reg:x3; val_offset:746*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 746*FLEN/8, x4, x1, x2)
 
@@ -3033,7 +3033,7 @@ inst_374:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x7fffff and fs2 == 1 and fe2 == 0x00 and fm2 == 0x7ffffe and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x807fffff; op2val:0x807ffffe;
    valaddr_reg:x3; val_offset:748*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 748*FLEN/8, x4, x1, x2)
 
@@ -3041,7 +3041,7 @@ inst_375:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x7fffff and fs2 == 1 and fe2 == 0x00 and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x807fffff; op2val:0x807fffff;
    valaddr_reg:x3; val_offset:750*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 750*FLEN/8, x4, x1, x2)
 
@@ -3049,7 +3049,7 @@ inst_376:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x7fffff and fs2 == 1 and fe2 == 0x01 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x807fffff; op2val:0x80800000;
    valaddr_reg:x3; val_offset:752*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 752*FLEN/8, x4, x1, x2)
 
@@ -3057,7 +3057,7 @@ inst_377:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x7fffff and fs2 == 1 and fe2 == 0x01 and fm2 == 0x055555 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x807fffff; op2val:0x80855555;
    valaddr_reg:x3; val_offset:754*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 754*FLEN/8, x4, x1, x2)
 
@@ -3065,7 +3065,7 @@ inst_378:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x7fffff and fs2 == 1 and fe2 == 0x7f and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x807fffff; op2val:0xbf800000;
    valaddr_reg:x3; val_offset:756*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 756*FLEN/8, x4, x1, x2)
 
@@ -3073,7 +3073,7 @@ inst_379:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x7fffff and fs2 == 1 and fe2 == 0xfe and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x807fffff; op2val:0xff7fffff;
    valaddr_reg:x3; val_offset:758*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 758*FLEN/8, x4, x1, x2)
 
@@ -3081,7 +3081,7 @@ inst_380:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x7fffff and fs2 == 1 and fe2 == 0xff and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x807fffff; op2val:0xff800000;
    valaddr_reg:x3; val_offset:760*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 760*FLEN/8, x4, x1, x2)
 
@@ -3089,7 +3089,7 @@ inst_381:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x7fffff and fs2 == 1 and fe2 == 0xff and fm2 == 0x2aaaaa and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x807fffff; op2val:0xffaaaaaa;
    valaddr_reg:x3; val_offset:762*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 762*FLEN/8, x4, x1, x2)
 
@@ -3097,7 +3097,7 @@ inst_382:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x7fffff and fs2 == 1 and fe2 == 0xff and fm2 == 0x400000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x807fffff; op2val:0xffc00000;
    valaddr_reg:x3; val_offset:764*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 764*FLEN/8, x4, x1, x2)
 
@@ -3105,7 +3105,7 @@ inst_383:
 // fs1 == 1 and fe1 == 0x00 and fm1 == 0x7fffff and fs2 == 1 and fe2 == 0xff and fm2 == 0x455555 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x807fffff; op2val:0xffc55555;
    valaddr_reg:x3; val_offset:766*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 766*FLEN/8, x4, x1, x2)
 RVTEST_SIGBASE(x1,signature_x1_4)
@@ -3114,7 +3114,7 @@ inst_384:
 // fs1 == 1 and fe1 == 0x01 and fm1 == 0x000000 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80800000; op2val:0x0;
    valaddr_reg:x3; val_offset:768*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 768*FLEN/8, x4, x1, x2)
 
@@ -3122,7 +3122,7 @@ inst_385:
 // fs1 == 1 and fe1 == 0x01 and fm1 == 0x000000 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80800000; op2val:0x1;
    valaddr_reg:x3; val_offset:770*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 770*FLEN/8, x4, x1, x2)
 
@@ -3130,7 +3130,7 @@ inst_386:
 // fs1 == 1 and fe1 == 0x01 and fm1 == 0x000000 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x000002 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80800000; op2val:0x2;
    valaddr_reg:x3; val_offset:772*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 772*FLEN/8, x4, x1, x2)
 
@@ -3138,7 +3138,7 @@ inst_387:
 // fs1 == 1 and fe1 == 0x01 and fm1 == 0x000000 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80800000; op2val:0x7fffff;
    valaddr_reg:x3; val_offset:774*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 774*FLEN/8, x4, x1, x2)
 
@@ -3146,7 +3146,7 @@ inst_388:
 // fs1 == 1 and fe1 == 0x01 and fm1 == 0x000000 and fs2 == 0 and fe2 == 0x01 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80800000; op2val:0x800000;
    valaddr_reg:x3; val_offset:776*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 776*FLEN/8, x4, x1, x2)
 
@@ -3154,7 +3154,7 @@ inst_389:
 // fs1 == 1 and fe1 == 0x01 and fm1 == 0x000000 and fs2 == 0 and fe2 == 0x01 and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80800000; op2val:0x800001;
    valaddr_reg:x3; val_offset:778*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 778*FLEN/8, x4, x1, x2)
 
@@ -3162,7 +3162,7 @@ inst_390:
 // fs1 == 1 and fe1 == 0x01 and fm1 == 0x000000 and fs2 == 0 and fe2 == 0x7f and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80800000; op2val:0x3f800000;
    valaddr_reg:x3; val_offset:780*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 780*FLEN/8, x4, x1, x2)
 
@@ -3170,7 +3170,7 @@ inst_391:
 // fs1 == 1 and fe1 == 0x01 and fm1 == 0x000000 and fs2 == 0 and fe2 == 0xfe and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80800000; op2val:0x7f7fffff;
    valaddr_reg:x3; val_offset:782*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 782*FLEN/8, x4, x1, x2)
 
@@ -3178,7 +3178,7 @@ inst_392:
 // fs1 == 1 and fe1 == 0x01 and fm1 == 0x000000 and fs2 == 0 and fe2 == 0xff and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80800000; op2val:0x7f800000;
    valaddr_reg:x3; val_offset:784*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 784*FLEN/8, x4, x1, x2)
 
@@ -3186,7 +3186,7 @@ inst_393:
 // fs1 == 1 and fe1 == 0x01 and fm1 == 0x000000 and fs2 == 0 and fe2 == 0xff and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80800000; op2val:0x7f800001;
    valaddr_reg:x3; val_offset:786*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 786*FLEN/8, x4, x1, x2)
 
@@ -3194,7 +3194,7 @@ inst_394:
 // fs1 == 1 and fe1 == 0x01 and fm1 == 0x000000 and fs2 == 0 and fe2 == 0xff and fm2 == 0x400000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80800000; op2val:0x7fc00000;
    valaddr_reg:x3; val_offset:788*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 788*FLEN/8, x4, x1, x2)
 
@@ -3202,7 +3202,7 @@ inst_395:
 // fs1 == 1 and fe1 == 0x01 and fm1 == 0x000000 and fs2 == 0 and fe2 == 0xff and fm2 == 0x400001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80800000; op2val:0x7fc00001;
    valaddr_reg:x3; val_offset:790*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 790*FLEN/8, x4, x1, x2)
 
@@ -3210,7 +3210,7 @@ inst_396:
 // fs1 == 1 and fe1 == 0x01 and fm1 == 0x000000 and fs2 == 1 and fe2 == 0x00 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80800000; op2val:0x80000000;
    valaddr_reg:x3; val_offset:792*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 792*FLEN/8, x4, x1, x2)
 
@@ -3218,7 +3218,7 @@ inst_397:
 // fs1 == 1 and fe1 == 0x01 and fm1 == 0x000000 and fs2 == 1 and fe2 == 0x00 and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80800000; op2val:0x80000001;
    valaddr_reg:x3; val_offset:794*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 794*FLEN/8, x4, x1, x2)
 
@@ -3226,7 +3226,7 @@ inst_398:
 // fs1 == 1 and fe1 == 0x01 and fm1 == 0x000000 and fs2 == 1 and fe2 == 0x00 and fm2 == 0x7ffffe and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80800000; op2val:0x807ffffe;
    valaddr_reg:x3; val_offset:796*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 796*FLEN/8, x4, x1, x2)
 
@@ -3234,7 +3234,7 @@ inst_399:
 // fs1 == 1 and fe1 == 0x01 and fm1 == 0x000000 and fs2 == 1 and fe2 == 0x00 and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80800000; op2val:0x807fffff;
    valaddr_reg:x3; val_offset:798*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 798*FLEN/8, x4, x1, x2)
 
@@ -3242,7 +3242,7 @@ inst_400:
 // fs1 == 1 and fe1 == 0x01 and fm1 == 0x000000 and fs2 == 1 and fe2 == 0x01 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80800000; op2val:0x80800000;
    valaddr_reg:x3; val_offset:800*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 800*FLEN/8, x4, x1, x2)
 
@@ -3250,7 +3250,7 @@ inst_401:
 // fs1 == 1 and fe1 == 0x01 and fm1 == 0x000000 and fs2 == 1 and fe2 == 0x01 and fm2 == 0x055555 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80800000; op2val:0x80855555;
    valaddr_reg:x3; val_offset:802*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 802*FLEN/8, x4, x1, x2)
 
@@ -3258,7 +3258,7 @@ inst_402:
 // fs1 == 1 and fe1 == 0x01 and fm1 == 0x000000 and fs2 == 1 and fe2 == 0x7f and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80800000; op2val:0xbf800000;
    valaddr_reg:x3; val_offset:804*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 804*FLEN/8, x4, x1, x2)
 
@@ -3266,7 +3266,7 @@ inst_403:
 // fs1 == 1 and fe1 == 0x01 and fm1 == 0x000000 and fs2 == 1 and fe2 == 0xfe and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80800000; op2val:0xff7fffff;
    valaddr_reg:x3; val_offset:806*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 806*FLEN/8, x4, x1, x2)
 
@@ -3274,7 +3274,7 @@ inst_404:
 // fs1 == 1 and fe1 == 0x01 and fm1 == 0x000000 and fs2 == 1 and fe2 == 0xff and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80800000; op2val:0xff800000;
    valaddr_reg:x3; val_offset:808*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 808*FLEN/8, x4, x1, x2)
 
@@ -3282,7 +3282,7 @@ inst_405:
 // fs1 == 1 and fe1 == 0x01 and fm1 == 0x000000 and fs2 == 1 and fe2 == 0xff and fm2 == 0x2aaaaa and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80800000; op2val:0xffaaaaaa;
    valaddr_reg:x3; val_offset:810*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 810*FLEN/8, x4, x1, x2)
 
@@ -3290,7 +3290,7 @@ inst_406:
 // fs1 == 1 and fe1 == 0x01 and fm1 == 0x000000 and fs2 == 1 and fe2 == 0xff and fm2 == 0x400000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80800000; op2val:0xffc00000;
    valaddr_reg:x3; val_offset:812*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 812*FLEN/8, x4, x1, x2)
 
@@ -3298,7 +3298,7 @@ inst_407:
 // fs1 == 1 and fe1 == 0x01 and fm1 == 0x000000 and fs2 == 1 and fe2 == 0xff and fm2 == 0x455555 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80800000; op2val:0xffc55555;
    valaddr_reg:x3; val_offset:814*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 814*FLEN/8, x4, x1, x2)
 
@@ -3306,7 +3306,7 @@ inst_408:
 // fs1 == 1 and fe1 == 0x01 and fm1 == 0x055555 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80855555; op2val:0x0;
    valaddr_reg:x3; val_offset:816*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 816*FLEN/8, x4, x1, x2)
 
@@ -3314,7 +3314,7 @@ inst_409:
 // fs1 == 1 and fe1 == 0x01 and fm1 == 0x055555 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80855555; op2val:0x1;
    valaddr_reg:x3; val_offset:818*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 818*FLEN/8, x4, x1, x2)
 
@@ -3322,7 +3322,7 @@ inst_410:
 // fs1 == 1 and fe1 == 0x01 and fm1 == 0x055555 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x000002 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80855555; op2val:0x2;
    valaddr_reg:x3; val_offset:820*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 820*FLEN/8, x4, x1, x2)
 
@@ -3330,7 +3330,7 @@ inst_411:
 // fs1 == 1 and fe1 == 0x01 and fm1 == 0x055555 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80855555; op2val:0x7fffff;
    valaddr_reg:x3; val_offset:822*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 822*FLEN/8, x4, x1, x2)
 
@@ -3338,7 +3338,7 @@ inst_412:
 // fs1 == 1 and fe1 == 0x01 and fm1 == 0x055555 and fs2 == 0 and fe2 == 0x01 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80855555; op2val:0x800000;
    valaddr_reg:x3; val_offset:824*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 824*FLEN/8, x4, x1, x2)
 
@@ -3346,7 +3346,7 @@ inst_413:
 // fs1 == 1 and fe1 == 0x01 and fm1 == 0x055555 and fs2 == 0 and fe2 == 0x01 and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80855555; op2val:0x800001;
    valaddr_reg:x3; val_offset:826*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 826*FLEN/8, x4, x1, x2)
 
@@ -3354,7 +3354,7 @@ inst_414:
 // fs1 == 1 and fe1 == 0x01 and fm1 == 0x055555 and fs2 == 0 and fe2 == 0x7f and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80855555; op2val:0x3f800000;
    valaddr_reg:x3; val_offset:828*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 828*FLEN/8, x4, x1, x2)
 
@@ -3362,7 +3362,7 @@ inst_415:
 // fs1 == 1 and fe1 == 0x01 and fm1 == 0x055555 and fs2 == 0 and fe2 == 0xfe and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80855555; op2val:0x7f7fffff;
    valaddr_reg:x3; val_offset:830*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 830*FLEN/8, x4, x1, x2)
 
@@ -3370,7 +3370,7 @@ inst_416:
 // fs1 == 1 and fe1 == 0x01 and fm1 == 0x055555 and fs2 == 0 and fe2 == 0xff and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80855555; op2val:0x7f800000;
    valaddr_reg:x3; val_offset:832*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 832*FLEN/8, x4, x1, x2)
 
@@ -3378,7 +3378,7 @@ inst_417:
 // fs1 == 1 and fe1 == 0x01 and fm1 == 0x055555 and fs2 == 0 and fe2 == 0xff and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80855555; op2val:0x7f800001;
    valaddr_reg:x3; val_offset:834*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 834*FLEN/8, x4, x1, x2)
 
@@ -3386,7 +3386,7 @@ inst_418:
 // fs1 == 1 and fe1 == 0x01 and fm1 == 0x055555 and fs2 == 0 and fe2 == 0xff and fm2 == 0x400000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80855555; op2val:0x7fc00000;
    valaddr_reg:x3; val_offset:836*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 836*FLEN/8, x4, x1, x2)
 
@@ -3394,7 +3394,7 @@ inst_419:
 // fs1 == 1 and fe1 == 0x01 and fm1 == 0x055555 and fs2 == 0 and fe2 == 0xff and fm2 == 0x400001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80855555; op2val:0x7fc00001;
    valaddr_reg:x3; val_offset:838*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 838*FLEN/8, x4, x1, x2)
 
@@ -3402,7 +3402,7 @@ inst_420:
 // fs1 == 1 and fe1 == 0x01 and fm1 == 0x055555 and fs2 == 1 and fe2 == 0x00 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80855555; op2val:0x80000000;
    valaddr_reg:x3; val_offset:840*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 840*FLEN/8, x4, x1, x2)
 
@@ -3410,7 +3410,7 @@ inst_421:
 // fs1 == 1 and fe1 == 0x01 and fm1 == 0x055555 and fs2 == 1 and fe2 == 0x00 and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80855555; op2val:0x80000001;
    valaddr_reg:x3; val_offset:842*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 842*FLEN/8, x4, x1, x2)
 
@@ -3418,7 +3418,7 @@ inst_422:
 // fs1 == 1 and fe1 == 0x01 and fm1 == 0x055555 and fs2 == 1 and fe2 == 0x00 and fm2 == 0x7ffffe and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80855555; op2val:0x807ffffe;
    valaddr_reg:x3; val_offset:844*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 844*FLEN/8, x4, x1, x2)
 
@@ -3426,7 +3426,7 @@ inst_423:
 // fs1 == 1 and fe1 == 0x01 and fm1 == 0x055555 and fs2 == 1 and fe2 == 0x00 and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80855555; op2val:0x807fffff;
    valaddr_reg:x3; val_offset:846*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 846*FLEN/8, x4, x1, x2)
 
@@ -3434,7 +3434,7 @@ inst_424:
 // fs1 == 1 and fe1 == 0x01 and fm1 == 0x055555 and fs2 == 1 and fe2 == 0x01 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80855555; op2val:0x80800000;
    valaddr_reg:x3; val_offset:848*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 848*FLEN/8, x4, x1, x2)
 
@@ -3442,7 +3442,7 @@ inst_425:
 // fs1 == 1 and fe1 == 0x01 and fm1 == 0x055555 and fs2 == 1 and fe2 == 0x01 and fm2 == 0x055555 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80855555; op2val:0x80855555;
    valaddr_reg:x3; val_offset:850*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 850*FLEN/8, x4, x1, x2)
 
@@ -3450,7 +3450,7 @@ inst_426:
 // fs1 == 1 and fe1 == 0x01 and fm1 == 0x055555 and fs2 == 1 and fe2 == 0x7f and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80855555; op2val:0xbf800000;
    valaddr_reg:x3; val_offset:852*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 852*FLEN/8, x4, x1, x2)
 
@@ -3458,7 +3458,7 @@ inst_427:
 // fs1 == 1 and fe1 == 0x01 and fm1 == 0x055555 and fs2 == 1 and fe2 == 0xfe and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80855555; op2val:0xff7fffff;
    valaddr_reg:x3; val_offset:854*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 854*FLEN/8, x4, x1, x2)
 
@@ -3466,7 +3466,7 @@ inst_428:
 // fs1 == 1 and fe1 == 0x01 and fm1 == 0x055555 and fs2 == 1 and fe2 == 0xff and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80855555; op2val:0xff800000;
    valaddr_reg:x3; val_offset:856*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 856*FLEN/8, x4, x1, x2)
 
@@ -3474,7 +3474,7 @@ inst_429:
 // fs1 == 1 and fe1 == 0x01 and fm1 == 0x055555 and fs2 == 1 and fe2 == 0xff and fm2 == 0x2aaaaa and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80855555; op2val:0xffaaaaaa;
    valaddr_reg:x3; val_offset:858*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 858*FLEN/8, x4, x1, x2)
 
@@ -3482,7 +3482,7 @@ inst_430:
 // fs1 == 1 and fe1 == 0x01 and fm1 == 0x055555 and fs2 == 1 and fe2 == 0xff and fm2 == 0x400000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80855555; op2val:0xffc00000;
    valaddr_reg:x3; val_offset:860*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 860*FLEN/8, x4, x1, x2)
 
@@ -3490,7 +3490,7 @@ inst_431:
 // fs1 == 1 and fe1 == 0x01 and fm1 == 0x055555 and fs2 == 1 and fe2 == 0xff and fm2 == 0x455555 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x80855555; op2val:0xffc55555;
    valaddr_reg:x3; val_offset:862*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 862*FLEN/8, x4, x1, x2)
 
@@ -3498,7 +3498,7 @@ inst_432:
 // fs1 == 1 and fe1 == 0x7f and fm1 == 0x000000 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xbf800000; op2val:0x0;
    valaddr_reg:x3; val_offset:864*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 864*FLEN/8, x4, x1, x2)
 
@@ -3506,7 +3506,7 @@ inst_433:
 // fs1 == 1 and fe1 == 0x7f and fm1 == 0x000000 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xbf800000; op2val:0x1;
    valaddr_reg:x3; val_offset:866*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 866*FLEN/8, x4, x1, x2)
 
@@ -3514,7 +3514,7 @@ inst_434:
 // fs1 == 1 and fe1 == 0x7f and fm1 == 0x000000 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x000002 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xbf800000; op2val:0x2;
    valaddr_reg:x3; val_offset:868*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 868*FLEN/8, x4, x1, x2)
 
@@ -3522,7 +3522,7 @@ inst_435:
 // fs1 == 1 and fe1 == 0x7f and fm1 == 0x000000 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xbf800000; op2val:0x7fffff;
    valaddr_reg:x3; val_offset:870*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 870*FLEN/8, x4, x1, x2)
 
@@ -3530,7 +3530,7 @@ inst_436:
 // fs1 == 1 and fe1 == 0x7f and fm1 == 0x000000 and fs2 == 0 and fe2 == 0x01 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xbf800000; op2val:0x800000;
    valaddr_reg:x3; val_offset:872*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 872*FLEN/8, x4, x1, x2)
 
@@ -3538,7 +3538,7 @@ inst_437:
 // fs1 == 1 and fe1 == 0x7f and fm1 == 0x000000 and fs2 == 0 and fe2 == 0x01 and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xbf800000; op2val:0x800001;
    valaddr_reg:x3; val_offset:874*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 874*FLEN/8, x4, x1, x2)
 
@@ -3546,7 +3546,7 @@ inst_438:
 // fs1 == 1 and fe1 == 0x7f and fm1 == 0x000000 and fs2 == 0 and fe2 == 0x7f and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xbf800000; op2val:0x3f800000;
    valaddr_reg:x3; val_offset:876*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 876*FLEN/8, x4, x1, x2)
 
@@ -3554,7 +3554,7 @@ inst_439:
 // fs1 == 1 and fe1 == 0x7f and fm1 == 0x000000 and fs2 == 0 and fe2 == 0xfe and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xbf800000; op2val:0x7f7fffff;
    valaddr_reg:x3; val_offset:878*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 878*FLEN/8, x4, x1, x2)
 
@@ -3562,7 +3562,7 @@ inst_440:
 // fs1 == 1 and fe1 == 0x7f and fm1 == 0x000000 and fs2 == 0 and fe2 == 0xff and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xbf800000; op2val:0x7f800000;
    valaddr_reg:x3; val_offset:880*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 880*FLEN/8, x4, x1, x2)
 
@@ -3570,7 +3570,7 @@ inst_441:
 // fs1 == 1 and fe1 == 0x7f and fm1 == 0x000000 and fs2 == 0 and fe2 == 0xff and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xbf800000; op2val:0x7f800001;
    valaddr_reg:x3; val_offset:882*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 882*FLEN/8, x4, x1, x2)
 
@@ -3578,7 +3578,7 @@ inst_442:
 // fs1 == 1 and fe1 == 0x7f and fm1 == 0x000000 and fs2 == 0 and fe2 == 0xff and fm2 == 0x400000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xbf800000; op2val:0x7fc00000;
    valaddr_reg:x3; val_offset:884*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 884*FLEN/8, x4, x1, x2)
 
@@ -3586,7 +3586,7 @@ inst_443:
 // fs1 == 1 and fe1 == 0x7f and fm1 == 0x000000 and fs2 == 0 and fe2 == 0xff and fm2 == 0x400001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xbf800000; op2val:0x7fc00001;
    valaddr_reg:x3; val_offset:886*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 886*FLEN/8, x4, x1, x2)
 
@@ -3594,7 +3594,7 @@ inst_444:
 // fs1 == 1 and fe1 == 0x7f and fm1 == 0x000000 and fs2 == 1 and fe2 == 0x00 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xbf800000; op2val:0x80000000;
    valaddr_reg:x3; val_offset:888*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 888*FLEN/8, x4, x1, x2)
 
@@ -3602,7 +3602,7 @@ inst_445:
 // fs1 == 1 and fe1 == 0x7f and fm1 == 0x000000 and fs2 == 1 and fe2 == 0x00 and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xbf800000; op2val:0x80000001;
    valaddr_reg:x3; val_offset:890*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 890*FLEN/8, x4, x1, x2)
 
@@ -3610,7 +3610,7 @@ inst_446:
 // fs1 == 1 and fe1 == 0x7f and fm1 == 0x000000 and fs2 == 1 and fe2 == 0x00 and fm2 == 0x7ffffe and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xbf800000; op2val:0x807ffffe;
    valaddr_reg:x3; val_offset:892*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 892*FLEN/8, x4, x1, x2)
 
@@ -3618,7 +3618,7 @@ inst_447:
 // fs1 == 1 and fe1 == 0x7f and fm1 == 0x000000 and fs2 == 1 and fe2 == 0x00 and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xbf800000; op2val:0x807fffff;
    valaddr_reg:x3; val_offset:894*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 894*FLEN/8, x4, x1, x2)
 
@@ -3626,7 +3626,7 @@ inst_448:
 // fs1 == 1 and fe1 == 0x7f and fm1 == 0x000000 and fs2 == 1 and fe2 == 0x01 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xbf800000; op2val:0x80800000;
    valaddr_reg:x3; val_offset:896*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 896*FLEN/8, x4, x1, x2)
 
@@ -3634,7 +3634,7 @@ inst_449:
 // fs1 == 1 and fe1 == 0x7f and fm1 == 0x000000 and fs2 == 1 and fe2 == 0x01 and fm2 == 0x055555 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xbf800000; op2val:0x80855555;
    valaddr_reg:x3; val_offset:898*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 898*FLEN/8, x4, x1, x2)
 
@@ -3642,7 +3642,7 @@ inst_450:
 // fs1 == 1 and fe1 == 0x7f and fm1 == 0x000000 and fs2 == 1 and fe2 == 0x7f and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xbf800000; op2val:0xbf800000;
    valaddr_reg:x3; val_offset:900*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 900*FLEN/8, x4, x1, x2)
 
@@ -3650,7 +3650,7 @@ inst_451:
 // fs1 == 1 and fe1 == 0x7f and fm1 == 0x000000 and fs2 == 1 and fe2 == 0xfe and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xbf800000; op2val:0xff7fffff;
    valaddr_reg:x3; val_offset:902*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 902*FLEN/8, x4, x1, x2)
 
@@ -3658,7 +3658,7 @@ inst_452:
 // fs1 == 1 and fe1 == 0x7f and fm1 == 0x000000 and fs2 == 1 and fe2 == 0xff and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xbf800000; op2val:0xff800000;
    valaddr_reg:x3; val_offset:904*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 904*FLEN/8, x4, x1, x2)
 
@@ -3666,7 +3666,7 @@ inst_453:
 // fs1 == 1 and fe1 == 0x7f and fm1 == 0x000000 and fs2 == 1 and fe2 == 0xff and fm2 == 0x2aaaaa and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xbf800000; op2val:0xffaaaaaa;
    valaddr_reg:x3; val_offset:906*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 906*FLEN/8, x4, x1, x2)
 
@@ -3674,7 +3674,7 @@ inst_454:
 // fs1 == 1 and fe1 == 0x7f and fm1 == 0x000000 and fs2 == 1 and fe2 == 0xff and fm2 == 0x400000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xbf800000; op2val:0xffc00000;
    valaddr_reg:x3; val_offset:908*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 908*FLEN/8, x4, x1, x2)
 
@@ -3682,7 +3682,7 @@ inst_455:
 // fs1 == 1 and fe1 == 0x7f and fm1 == 0x000000 and fs2 == 1 and fe2 == 0xff and fm2 == 0x455555 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xbf800000; op2val:0xffc55555;
    valaddr_reg:x3; val_offset:910*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 910*FLEN/8, x4, x1, x2)
 
@@ -3690,7 +3690,7 @@ inst_456:
 // fs1 == 1 and fe1 == 0xfe and fm1 == 0x7fffff and fs2 == 0 and fe2 == 0x00 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xff7fffff; op2val:0x0;
    valaddr_reg:x3; val_offset:912*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 912*FLEN/8, x4, x1, x2)
 
@@ -3698,7 +3698,7 @@ inst_457:
 // fs1 == 1 and fe1 == 0xfe and fm1 == 0x7fffff and fs2 == 0 and fe2 == 0x00 and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xff7fffff; op2val:0x1;
    valaddr_reg:x3; val_offset:914*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 914*FLEN/8, x4, x1, x2)
 
@@ -3706,7 +3706,7 @@ inst_458:
 // fs1 == 1 and fe1 == 0xfe and fm1 == 0x7fffff and fs2 == 0 and fe2 == 0x00 and fm2 == 0x000002 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xff7fffff; op2val:0x2;
    valaddr_reg:x3; val_offset:916*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 916*FLEN/8, x4, x1, x2)
 
@@ -3714,7 +3714,7 @@ inst_459:
 // fs1 == 1 and fe1 == 0xfe and fm1 == 0x7fffff and fs2 == 0 and fe2 == 0x00 and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xff7fffff; op2val:0x7fffff;
    valaddr_reg:x3; val_offset:918*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 918*FLEN/8, x4, x1, x2)
 
@@ -3722,7 +3722,7 @@ inst_460:
 // fs1 == 1 and fe1 == 0xfe and fm1 == 0x7fffff and fs2 == 0 and fe2 == 0x01 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xff7fffff; op2val:0x800000;
    valaddr_reg:x3; val_offset:920*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 920*FLEN/8, x4, x1, x2)
 
@@ -3730,7 +3730,7 @@ inst_461:
 // fs1 == 1 and fe1 == 0xfe and fm1 == 0x7fffff and fs2 == 0 and fe2 == 0x01 and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xff7fffff; op2val:0x800001;
    valaddr_reg:x3; val_offset:922*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 922*FLEN/8, x4, x1, x2)
 
@@ -3738,7 +3738,7 @@ inst_462:
 // fs1 == 1 and fe1 == 0xfe and fm1 == 0x7fffff and fs2 == 0 and fe2 == 0x7f and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xff7fffff; op2val:0x3f800000;
    valaddr_reg:x3; val_offset:924*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 924*FLEN/8, x4, x1, x2)
 
@@ -3746,7 +3746,7 @@ inst_463:
 // fs1 == 1 and fe1 == 0xfe and fm1 == 0x7fffff and fs2 == 0 and fe2 == 0xfe and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xff7fffff; op2val:0x7f7fffff;
    valaddr_reg:x3; val_offset:926*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 926*FLEN/8, x4, x1, x2)
 
@@ -3754,7 +3754,7 @@ inst_464:
 // fs1 == 1 and fe1 == 0xfe and fm1 == 0x7fffff and fs2 == 0 and fe2 == 0xff and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xff7fffff; op2val:0x7f800000;
    valaddr_reg:x3; val_offset:928*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 928*FLEN/8, x4, x1, x2)
 
@@ -3762,7 +3762,7 @@ inst_465:
 // fs1 == 1 and fe1 == 0xfe and fm1 == 0x7fffff and fs2 == 0 and fe2 == 0xff and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xff7fffff; op2val:0x7f800001;
    valaddr_reg:x3; val_offset:930*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 930*FLEN/8, x4, x1, x2)
 
@@ -3770,7 +3770,7 @@ inst_466:
 // fs1 == 1 and fe1 == 0xfe and fm1 == 0x7fffff and fs2 == 0 and fe2 == 0xff and fm2 == 0x400000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xff7fffff; op2val:0x7fc00000;
    valaddr_reg:x3; val_offset:932*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 932*FLEN/8, x4, x1, x2)
 
@@ -3778,7 +3778,7 @@ inst_467:
 // fs1 == 1 and fe1 == 0xfe and fm1 == 0x7fffff and fs2 == 0 and fe2 == 0xff and fm2 == 0x400001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xff7fffff; op2val:0x7fc00001;
    valaddr_reg:x3; val_offset:934*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 934*FLEN/8, x4, x1, x2)
 
@@ -3786,7 +3786,7 @@ inst_468:
 // fs1 == 1 and fe1 == 0xfe and fm1 == 0x7fffff and fs2 == 1 and fe2 == 0x00 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xff7fffff; op2val:0x80000000;
    valaddr_reg:x3; val_offset:936*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 936*FLEN/8, x4, x1, x2)
 
@@ -3794,7 +3794,7 @@ inst_469:
 // fs1 == 1 and fe1 == 0xfe and fm1 == 0x7fffff and fs2 == 1 and fe2 == 0x00 and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xff7fffff; op2val:0x80000001;
    valaddr_reg:x3; val_offset:938*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 938*FLEN/8, x4, x1, x2)
 
@@ -3802,7 +3802,7 @@ inst_470:
 // fs1 == 1 and fe1 == 0xfe and fm1 == 0x7fffff and fs2 == 1 and fe2 == 0x00 and fm2 == 0x7ffffe and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xff7fffff; op2val:0x807ffffe;
    valaddr_reg:x3; val_offset:940*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 940*FLEN/8, x4, x1, x2)
 
@@ -3810,7 +3810,7 @@ inst_471:
 // fs1 == 1 and fe1 == 0xfe and fm1 == 0x7fffff and fs2 == 1 and fe2 == 0x00 and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xff7fffff; op2val:0x807fffff;
    valaddr_reg:x3; val_offset:942*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 942*FLEN/8, x4, x1, x2)
 
@@ -3818,7 +3818,7 @@ inst_472:
 // fs1 == 1 and fe1 == 0xfe and fm1 == 0x7fffff and fs2 == 1 and fe2 == 0x01 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xff7fffff; op2val:0x80800000;
    valaddr_reg:x3; val_offset:944*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 944*FLEN/8, x4, x1, x2)
 
@@ -3826,7 +3826,7 @@ inst_473:
 // fs1 == 1 and fe1 == 0xfe and fm1 == 0x7fffff and fs2 == 1 and fe2 == 0x01 and fm2 == 0x055555 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xff7fffff; op2val:0x80855555;
    valaddr_reg:x3; val_offset:946*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 946*FLEN/8, x4, x1, x2)
 
@@ -3834,7 +3834,7 @@ inst_474:
 // fs1 == 1 and fe1 == 0xfe and fm1 == 0x7fffff and fs2 == 1 and fe2 == 0x7f and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xff7fffff; op2val:0xbf800000;
    valaddr_reg:x3; val_offset:948*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 948*FLEN/8, x4, x1, x2)
 
@@ -3842,7 +3842,7 @@ inst_475:
 // fs1 == 1 and fe1 == 0xfe and fm1 == 0x7fffff and fs2 == 1 and fe2 == 0xfe and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xff7fffff; op2val:0xff7fffff;
    valaddr_reg:x3; val_offset:950*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 950*FLEN/8, x4, x1, x2)
 
@@ -3850,7 +3850,7 @@ inst_476:
 // fs1 == 1 and fe1 == 0xfe and fm1 == 0x7fffff and fs2 == 1 and fe2 == 0xff and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xff7fffff; op2val:0xff800000;
    valaddr_reg:x3; val_offset:952*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 952*FLEN/8, x4, x1, x2)
 
@@ -3858,7 +3858,7 @@ inst_477:
 // fs1 == 1 and fe1 == 0xfe and fm1 == 0x7fffff and fs2 == 1 and fe2 == 0xff and fm2 == 0x2aaaaa and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xff7fffff; op2val:0xffaaaaaa;
    valaddr_reg:x3; val_offset:954*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 954*FLEN/8, x4, x1, x2)
 
@@ -3866,7 +3866,7 @@ inst_478:
 // fs1 == 1 and fe1 == 0xfe and fm1 == 0x7fffff and fs2 == 1 and fe2 == 0xff and fm2 == 0x400000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xff7fffff; op2val:0xffc00000;
    valaddr_reg:x3; val_offset:956*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 956*FLEN/8, x4, x1, x2)
 
@@ -3874,7 +3874,7 @@ inst_479:
 // fs1 == 1 and fe1 == 0xfe and fm1 == 0x7fffff and fs2 == 1 and fe2 == 0xff and fm2 == 0x455555 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xff7fffff; op2val:0xffc55555;
    valaddr_reg:x3; val_offset:958*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 958*FLEN/8, x4, x1, x2)
 
@@ -3882,7 +3882,7 @@ inst_480:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x000000 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xff800000; op2val:0x0;
    valaddr_reg:x3; val_offset:960*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 960*FLEN/8, x4, x1, x2)
 
@@ -3890,7 +3890,7 @@ inst_481:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x000000 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xff800000; op2val:0x1;
    valaddr_reg:x3; val_offset:962*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 962*FLEN/8, x4, x1, x2)
 
@@ -3898,7 +3898,7 @@ inst_482:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x000000 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x000002 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xff800000; op2val:0x2;
    valaddr_reg:x3; val_offset:964*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 964*FLEN/8, x4, x1, x2)
 
@@ -3906,7 +3906,7 @@ inst_483:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x000000 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xff800000; op2val:0x7fffff;
    valaddr_reg:x3; val_offset:966*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 966*FLEN/8, x4, x1, x2)
 
@@ -3914,7 +3914,7 @@ inst_484:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x000000 and fs2 == 0 and fe2 == 0x01 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xff800000; op2val:0x800000;
    valaddr_reg:x3; val_offset:968*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 968*FLEN/8, x4, x1, x2)
 
@@ -3922,7 +3922,7 @@ inst_485:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x000000 and fs2 == 0 and fe2 == 0x01 and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xff800000; op2val:0x800001;
    valaddr_reg:x3; val_offset:970*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 970*FLEN/8, x4, x1, x2)
 
@@ -3930,7 +3930,7 @@ inst_486:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x000000 and fs2 == 0 and fe2 == 0x7f and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xff800000; op2val:0x3f800000;
    valaddr_reg:x3; val_offset:972*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 972*FLEN/8, x4, x1, x2)
 
@@ -3938,7 +3938,7 @@ inst_487:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x000000 and fs2 == 0 and fe2 == 0xfe and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xff800000; op2val:0x7f7fffff;
    valaddr_reg:x3; val_offset:974*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 974*FLEN/8, x4, x1, x2)
 
@@ -3946,7 +3946,7 @@ inst_488:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x000000 and fs2 == 0 and fe2 == 0xff and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xff800000; op2val:0x7f800000;
    valaddr_reg:x3; val_offset:976*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 976*FLEN/8, x4, x1, x2)
 
@@ -3954,7 +3954,7 @@ inst_489:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x000000 and fs2 == 0 and fe2 == 0xff and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xff800000; op2val:0x7f800001;
    valaddr_reg:x3; val_offset:978*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 978*FLEN/8, x4, x1, x2)
 
@@ -3962,7 +3962,7 @@ inst_490:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x000000 and fs2 == 0 and fe2 == 0xff and fm2 == 0x400000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xff800000; op2val:0x7fc00000;
    valaddr_reg:x3; val_offset:980*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 980*FLEN/8, x4, x1, x2)
 
@@ -3970,7 +3970,7 @@ inst_491:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x000000 and fs2 == 0 and fe2 == 0xff and fm2 == 0x400001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xff800000; op2val:0x7fc00001;
    valaddr_reg:x3; val_offset:982*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 982*FLEN/8, x4, x1, x2)
 
@@ -3978,7 +3978,7 @@ inst_492:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x000000 and fs2 == 1 and fe2 == 0x00 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xff800000; op2val:0x80000000;
    valaddr_reg:x3; val_offset:984*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 984*FLEN/8, x4, x1, x2)
 
@@ -3986,7 +3986,7 @@ inst_493:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x000000 and fs2 == 1 and fe2 == 0x00 and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xff800000; op2val:0x80000001;
    valaddr_reg:x3; val_offset:986*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 986*FLEN/8, x4, x1, x2)
 
@@ -3994,7 +3994,7 @@ inst_494:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x000000 and fs2 == 1 and fe2 == 0x00 and fm2 == 0x7ffffe and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xff800000; op2val:0x807ffffe;
    valaddr_reg:x3; val_offset:988*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 988*FLEN/8, x4, x1, x2)
 
@@ -4002,7 +4002,7 @@ inst_495:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x000000 and fs2 == 1 and fe2 == 0x00 and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xff800000; op2val:0x807fffff;
    valaddr_reg:x3; val_offset:990*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 990*FLEN/8, x4, x1, x2)
 
@@ -4010,7 +4010,7 @@ inst_496:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x000000 and fs2 == 1 and fe2 == 0x01 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xff800000; op2val:0x80800000;
    valaddr_reg:x3; val_offset:992*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 992*FLEN/8, x4, x1, x2)
 
@@ -4018,7 +4018,7 @@ inst_497:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x000000 and fs2 == 1 and fe2 == 0x01 and fm2 == 0x055555 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xff800000; op2val:0x80855555;
    valaddr_reg:x3; val_offset:994*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 994*FLEN/8, x4, x1, x2)
 
@@ -4026,7 +4026,7 @@ inst_498:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x000000 and fs2 == 1 and fe2 == 0x7f and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xff800000; op2val:0xbf800000;
    valaddr_reg:x3; val_offset:996*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 996*FLEN/8, x4, x1, x2)
 
@@ -4034,7 +4034,7 @@ inst_499:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x000000 and fs2 == 1 and fe2 == 0xfe and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xff800000; op2val:0xff7fffff;
    valaddr_reg:x3; val_offset:998*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 998*FLEN/8, x4, x1, x2)
 
@@ -4042,7 +4042,7 @@ inst_500:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x000000 and fs2 == 1 and fe2 == 0xff and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xff800000; op2val:0xff800000;
    valaddr_reg:x3; val_offset:1000*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1000*FLEN/8, x4, x1, x2)
 
@@ -4050,7 +4050,7 @@ inst_501:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x000000 and fs2 == 1 and fe2 == 0xff and fm2 == 0x2aaaaa and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xff800000; op2val:0xffaaaaaa;
    valaddr_reg:x3; val_offset:1002*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1002*FLEN/8, x4, x1, x2)
 
@@ -4058,7 +4058,7 @@ inst_502:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x000000 and fs2 == 1 and fe2 == 0xff and fm2 == 0x400000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xff800000; op2val:0xffc00000;
    valaddr_reg:x3; val_offset:1004*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1004*FLEN/8, x4, x1, x2)
 
@@ -4066,7 +4066,7 @@ inst_503:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x000000 and fs2 == 1 and fe2 == 0xff and fm2 == 0x455555 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xff800000; op2val:0xffc55555;
    valaddr_reg:x3; val_offset:1006*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1006*FLEN/8, x4, x1, x2)
 
@@ -4074,7 +4074,7 @@ inst_504:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x2aaaaa and fs2 == 0 and fe2 == 0x00 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xffaaaaaa; op2val:0x0;
    valaddr_reg:x3; val_offset:1008*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1008*FLEN/8, x4, x1, x2)
 
@@ -4082,7 +4082,7 @@ inst_505:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x2aaaaa and fs2 == 0 and fe2 == 0x00 and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xffaaaaaa; op2val:0x1;
    valaddr_reg:x3; val_offset:1010*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1010*FLEN/8, x4, x1, x2)
 
@@ -4090,7 +4090,7 @@ inst_506:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x2aaaaa and fs2 == 0 and fe2 == 0x00 and fm2 == 0x000002 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xffaaaaaa; op2val:0x2;
    valaddr_reg:x3; val_offset:1012*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1012*FLEN/8, x4, x1, x2)
 
@@ -4098,7 +4098,7 @@ inst_507:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x2aaaaa and fs2 == 0 and fe2 == 0x00 and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xffaaaaaa; op2val:0x7fffff;
    valaddr_reg:x3; val_offset:1014*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1014*FLEN/8, x4, x1, x2)
 
@@ -4106,7 +4106,7 @@ inst_508:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x2aaaaa and fs2 == 0 and fe2 == 0x01 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xffaaaaaa; op2val:0x800000;
    valaddr_reg:x3; val_offset:1016*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1016*FLEN/8, x4, x1, x2)
 
@@ -4114,7 +4114,7 @@ inst_509:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x2aaaaa and fs2 == 0 and fe2 == 0x01 and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xffaaaaaa; op2val:0x800001;
    valaddr_reg:x3; val_offset:1018*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1018*FLEN/8, x4, x1, x2)
 
@@ -4122,7 +4122,7 @@ inst_510:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x2aaaaa and fs2 == 0 and fe2 == 0x7f and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xffaaaaaa; op2val:0x3f800000;
    valaddr_reg:x3; val_offset:1020*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1020*FLEN/8, x4, x1, x2)
 
@@ -4130,7 +4130,7 @@ inst_511:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x2aaaaa and fs2 == 0 and fe2 == 0xfe and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xffaaaaaa; op2val:0x7f7fffff;
    valaddr_reg:x3; val_offset:1022*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1022*FLEN/8, x4, x1, x2)
 RVTEST_SIGBASE(x1,signature_x1_5)
@@ -4139,7 +4139,7 @@ inst_512:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x2aaaaa and fs2 == 0 and fe2 == 0xff and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xffaaaaaa; op2val:0x7f800000;
    valaddr_reg:x3; val_offset:1024*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1024*FLEN/8, x4, x1, x2)
 
@@ -4147,7 +4147,7 @@ inst_513:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x2aaaaa and fs2 == 0 and fe2 == 0xff and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xffaaaaaa; op2val:0x7f800001;
    valaddr_reg:x3; val_offset:1026*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1026*FLEN/8, x4, x1, x2)
 
@@ -4155,7 +4155,7 @@ inst_514:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x2aaaaa and fs2 == 0 and fe2 == 0xff and fm2 == 0x400000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xffaaaaaa; op2val:0x7fc00000;
    valaddr_reg:x3; val_offset:1028*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1028*FLEN/8, x4, x1, x2)
 
@@ -4163,7 +4163,7 @@ inst_515:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x2aaaaa and fs2 == 0 and fe2 == 0xff and fm2 == 0x400001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xffaaaaaa; op2val:0x7fc00001;
    valaddr_reg:x3; val_offset:1030*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1030*FLEN/8, x4, x1, x2)
 
@@ -4171,7 +4171,7 @@ inst_516:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x2aaaaa and fs2 == 1 and fe2 == 0x00 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xffaaaaaa; op2val:0x80000000;
    valaddr_reg:x3; val_offset:1032*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1032*FLEN/8, x4, x1, x2)
 
@@ -4179,7 +4179,7 @@ inst_517:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x2aaaaa and fs2 == 1 and fe2 == 0x00 and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xffaaaaaa; op2val:0x80000001;
    valaddr_reg:x3; val_offset:1034*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1034*FLEN/8, x4, x1, x2)
 
@@ -4187,7 +4187,7 @@ inst_518:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x2aaaaa and fs2 == 1 and fe2 == 0x00 and fm2 == 0x7ffffe and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xffaaaaaa; op2val:0x807ffffe;
    valaddr_reg:x3; val_offset:1036*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1036*FLEN/8, x4, x1, x2)
 
@@ -4195,7 +4195,7 @@ inst_519:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x2aaaaa and fs2 == 1 and fe2 == 0x00 and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xffaaaaaa; op2val:0x807fffff;
    valaddr_reg:x3; val_offset:1038*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1038*FLEN/8, x4, x1, x2)
 
@@ -4203,7 +4203,7 @@ inst_520:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x2aaaaa and fs2 == 1 and fe2 == 0x01 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xffaaaaaa; op2val:0x80800000;
    valaddr_reg:x3; val_offset:1040*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1040*FLEN/8, x4, x1, x2)
 
@@ -4211,7 +4211,7 @@ inst_521:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x2aaaaa and fs2 == 1 and fe2 == 0x01 and fm2 == 0x055555 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xffaaaaaa; op2val:0x80855555;
    valaddr_reg:x3; val_offset:1042*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1042*FLEN/8, x4, x1, x2)
 
@@ -4219,7 +4219,7 @@ inst_522:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x2aaaaa and fs2 == 1 and fe2 == 0x7f and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xffaaaaaa; op2val:0xbf800000;
    valaddr_reg:x3; val_offset:1044*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1044*FLEN/8, x4, x1, x2)
 
@@ -4227,7 +4227,7 @@ inst_523:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x2aaaaa and fs2 == 1 and fe2 == 0xfe and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xffaaaaaa; op2val:0xff7fffff;
    valaddr_reg:x3; val_offset:1046*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1046*FLEN/8, x4, x1, x2)
 
@@ -4235,7 +4235,7 @@ inst_524:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x2aaaaa and fs2 == 1 and fe2 == 0xff and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xffaaaaaa; op2val:0xff800000;
    valaddr_reg:x3; val_offset:1048*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1048*FLEN/8, x4, x1, x2)
 
@@ -4243,7 +4243,7 @@ inst_525:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x2aaaaa and fs2 == 1 and fe2 == 0xff and fm2 == 0x2aaaaa and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xffaaaaaa; op2val:0xffaaaaaa;
    valaddr_reg:x3; val_offset:1050*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1050*FLEN/8, x4, x1, x2)
 
@@ -4251,7 +4251,7 @@ inst_526:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x2aaaaa and fs2 == 1 and fe2 == 0xff and fm2 == 0x400000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xffaaaaaa; op2val:0xffc00000;
    valaddr_reg:x3; val_offset:1052*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1052*FLEN/8, x4, x1, x2)
 
@@ -4259,7 +4259,7 @@ inst_527:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x2aaaaa and fs2 == 1 and fe2 == 0xff and fm2 == 0x455555 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xffaaaaaa; op2val:0xffc55555;
    valaddr_reg:x3; val_offset:1054*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1054*FLEN/8, x4, x1, x2)
 
@@ -4267,7 +4267,7 @@ inst_528:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x400000 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xffc00000; op2val:0x0;
    valaddr_reg:x3; val_offset:1056*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1056*FLEN/8, x4, x1, x2)
 
@@ -4275,7 +4275,7 @@ inst_529:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x400000 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xffc00000; op2val:0x1;
    valaddr_reg:x3; val_offset:1058*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1058*FLEN/8, x4, x1, x2)
 
@@ -4283,7 +4283,7 @@ inst_530:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x400000 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x000002 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xffc00000; op2val:0x2;
    valaddr_reg:x3; val_offset:1060*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1060*FLEN/8, x4, x1, x2)
 
@@ -4291,7 +4291,7 @@ inst_531:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x400000 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xffc00000; op2val:0x7fffff;
    valaddr_reg:x3; val_offset:1062*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1062*FLEN/8, x4, x1, x2)
 
@@ -4299,7 +4299,7 @@ inst_532:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x400000 and fs2 == 0 and fe2 == 0x01 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xffc00000; op2val:0x800000;
    valaddr_reg:x3; val_offset:1064*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1064*FLEN/8, x4, x1, x2)
 
@@ -4307,7 +4307,7 @@ inst_533:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x400000 and fs2 == 0 and fe2 == 0x01 and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xffc00000; op2val:0x800001;
    valaddr_reg:x3; val_offset:1066*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1066*FLEN/8, x4, x1, x2)
 
@@ -4315,7 +4315,7 @@ inst_534:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x400000 and fs2 == 0 and fe2 == 0x7f and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xffc00000; op2val:0x3f800000;
    valaddr_reg:x3; val_offset:1068*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1068*FLEN/8, x4, x1, x2)
 
@@ -4323,7 +4323,7 @@ inst_535:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x400000 and fs2 == 0 and fe2 == 0xfe and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xffc00000; op2val:0x7f7fffff;
    valaddr_reg:x3; val_offset:1070*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1070*FLEN/8, x4, x1, x2)
 
@@ -4331,7 +4331,7 @@ inst_536:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x400000 and fs2 == 0 and fe2 == 0xff and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xffc00000; op2val:0x7f800000;
    valaddr_reg:x3; val_offset:1072*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1072*FLEN/8, x4, x1, x2)
 
@@ -4339,7 +4339,7 @@ inst_537:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x400000 and fs2 == 0 and fe2 == 0xff and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xffc00000; op2val:0x7f800001;
    valaddr_reg:x3; val_offset:1074*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1074*FLEN/8, x4, x1, x2)
 
@@ -4347,7 +4347,7 @@ inst_538:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x400000 and fs2 == 0 and fe2 == 0xff and fm2 == 0x400000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xffc00000; op2val:0x7fc00000;
    valaddr_reg:x3; val_offset:1076*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1076*FLEN/8, x4, x1, x2)
 
@@ -4355,7 +4355,7 @@ inst_539:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x400000 and fs2 == 0 and fe2 == 0xff and fm2 == 0x400001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xffc00000; op2val:0x7fc00001;
    valaddr_reg:x3; val_offset:1078*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1078*FLEN/8, x4, x1, x2)
 
@@ -4363,7 +4363,7 @@ inst_540:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x400000 and fs2 == 1 and fe2 == 0x00 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xffc00000; op2val:0x80000000;
    valaddr_reg:x3; val_offset:1080*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1080*FLEN/8, x4, x1, x2)
 
@@ -4371,7 +4371,7 @@ inst_541:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x400000 and fs2 == 1 and fe2 == 0x00 and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xffc00000; op2val:0x80000001;
    valaddr_reg:x3; val_offset:1082*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1082*FLEN/8, x4, x1, x2)
 
@@ -4379,7 +4379,7 @@ inst_542:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x400000 and fs2 == 1 and fe2 == 0x00 and fm2 == 0x7ffffe and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xffc00000; op2val:0x807ffffe;
    valaddr_reg:x3; val_offset:1084*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1084*FLEN/8, x4, x1, x2)
 
@@ -4387,7 +4387,7 @@ inst_543:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x400000 and fs2 == 1 and fe2 == 0x00 and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xffc00000; op2val:0x807fffff;
    valaddr_reg:x3; val_offset:1086*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1086*FLEN/8, x4, x1, x2)
 
@@ -4395,7 +4395,7 @@ inst_544:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x400000 and fs2 == 1 and fe2 == 0x01 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xffc00000; op2val:0x80800000;
    valaddr_reg:x3; val_offset:1088*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1088*FLEN/8, x4, x1, x2)
 
@@ -4403,7 +4403,7 @@ inst_545:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x400000 and fs2 == 1 and fe2 == 0x01 and fm2 == 0x055555 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xffc00000; op2val:0x80855555;
    valaddr_reg:x3; val_offset:1090*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1090*FLEN/8, x4, x1, x2)
 
@@ -4411,7 +4411,7 @@ inst_546:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x400000 and fs2 == 1 and fe2 == 0x7f and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xffc00000; op2val:0xbf800000;
    valaddr_reg:x3; val_offset:1092*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1092*FLEN/8, x4, x1, x2)
 
@@ -4419,7 +4419,7 @@ inst_547:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x400000 and fs2 == 1 and fe2 == 0xfe and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xffc00000; op2val:0xff7fffff;
    valaddr_reg:x3; val_offset:1094*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1094*FLEN/8, x4, x1, x2)
 
@@ -4427,7 +4427,7 @@ inst_548:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x400000 and fs2 == 1 and fe2 == 0xff and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xffc00000; op2val:0xff800000;
    valaddr_reg:x3; val_offset:1096*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1096*FLEN/8, x4, x1, x2)
 
@@ -4435,7 +4435,7 @@ inst_549:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x400000 and fs2 == 1 and fe2 == 0xff and fm2 == 0x2aaaaa and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xffc00000; op2val:0xffaaaaaa;
    valaddr_reg:x3; val_offset:1098*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1098*FLEN/8, x4, x1, x2)
 
@@ -4443,7 +4443,7 @@ inst_550:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x400000 and fs2 == 1 and fe2 == 0xff and fm2 == 0x400000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xffc00000; op2val:0xffc00000;
    valaddr_reg:x3; val_offset:1100*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1100*FLEN/8, x4, x1, x2)
 
@@ -4451,7 +4451,7 @@ inst_551:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x400000 and fs2 == 1 and fe2 == 0xff and fm2 == 0x455555 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xffc00000; op2val:0xffc55555;
    valaddr_reg:x3; val_offset:1102*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1102*FLEN/8, x4, x1, x2)
 
@@ -4459,7 +4459,7 @@ inst_552:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x455555 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xffc55555; op2val:0x0;
    valaddr_reg:x3; val_offset:1104*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1104*FLEN/8, x4, x1, x2)
 
@@ -4467,7 +4467,7 @@ inst_553:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x455555 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xffc55555; op2val:0x1;
    valaddr_reg:x3; val_offset:1106*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1106*FLEN/8, x4, x1, x2)
 
@@ -4475,7 +4475,7 @@ inst_554:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x455555 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x000002 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xffc55555; op2val:0x2;
    valaddr_reg:x3; val_offset:1108*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1108*FLEN/8, x4, x1, x2)
 
@@ -4483,7 +4483,7 @@ inst_555:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x455555 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xffc55555; op2val:0x7fffff;
    valaddr_reg:x3; val_offset:1110*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1110*FLEN/8, x4, x1, x2)
 
@@ -4491,7 +4491,7 @@ inst_556:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x455555 and fs2 == 0 and fe2 == 0x01 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xffc55555; op2val:0x800000;
    valaddr_reg:x3; val_offset:1112*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1112*FLEN/8, x4, x1, x2)
 
@@ -4499,7 +4499,7 @@ inst_557:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x455555 and fs2 == 0 and fe2 == 0x01 and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xffc55555; op2val:0x800001;
    valaddr_reg:x3; val_offset:1114*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1114*FLEN/8, x4, x1, x2)
 
@@ -4507,7 +4507,7 @@ inst_558:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x455555 and fs2 == 0 and fe2 == 0x7f and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xffc55555; op2val:0x3f800000;
    valaddr_reg:x3; val_offset:1116*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1116*FLEN/8, x4, x1, x2)
 
@@ -4515,7 +4515,7 @@ inst_559:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x455555 and fs2 == 0 and fe2 == 0xfe and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xffc55555; op2val:0x7f7fffff;
    valaddr_reg:x3; val_offset:1118*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1118*FLEN/8, x4, x1, x2)
 
@@ -4523,7 +4523,7 @@ inst_560:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x455555 and fs2 == 0 and fe2 == 0xff and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xffc55555; op2val:0x7f800000;
    valaddr_reg:x3; val_offset:1120*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1120*FLEN/8, x4, x1, x2)
 
@@ -4531,7 +4531,7 @@ inst_561:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x455555 and fs2 == 0 and fe2 == 0xff and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xffc55555; op2val:0x7f800001;
    valaddr_reg:x3; val_offset:1122*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1122*FLEN/8, x4, x1, x2)
 
@@ -4539,7 +4539,7 @@ inst_562:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x455555 and fs2 == 0 and fe2 == 0xff and fm2 == 0x400000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xffc55555; op2val:0x7fc00000;
    valaddr_reg:x3; val_offset:1124*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1124*FLEN/8, x4, x1, x2)
 
@@ -4547,7 +4547,7 @@ inst_563:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x455555 and fs2 == 0 and fe2 == 0xff and fm2 == 0x400001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xffc55555; op2val:0x7fc00001;
    valaddr_reg:x3; val_offset:1126*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1126*FLEN/8, x4, x1, x2)
 
@@ -4555,7 +4555,7 @@ inst_564:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x455555 and fs2 == 1 and fe2 == 0x00 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xffc55555; op2val:0x80000000;
    valaddr_reg:x3; val_offset:1128*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1128*FLEN/8, x4, x1, x2)
 
@@ -4563,7 +4563,7 @@ inst_565:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x455555 and fs2 == 1 and fe2 == 0x00 and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xffc55555; op2val:0x80000001;
    valaddr_reg:x3; val_offset:1130*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1130*FLEN/8, x4, x1, x2)
 
@@ -4571,7 +4571,7 @@ inst_566:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x455555 and fs2 == 1 and fe2 == 0x00 and fm2 == 0x7ffffe and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xffc55555; op2val:0x807ffffe;
    valaddr_reg:x3; val_offset:1132*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1132*FLEN/8, x4, x1, x2)
 
@@ -4579,7 +4579,7 @@ inst_567:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x455555 and fs2 == 1 and fe2 == 0x00 and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xffc55555; op2val:0x807fffff;
    valaddr_reg:x3; val_offset:1134*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1134*FLEN/8, x4, x1, x2)
 
@@ -4587,7 +4587,7 @@ inst_568:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x455555 and fs2 == 1 and fe2 == 0x01 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xffc55555; op2val:0x80800000;
    valaddr_reg:x3; val_offset:1136*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1136*FLEN/8, x4, x1, x2)
 
@@ -4595,7 +4595,7 @@ inst_569:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x455555 and fs2 == 1 and fe2 == 0x01 and fm2 == 0x055555 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xffc55555; op2val:0x80855555;
    valaddr_reg:x3; val_offset:1138*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1138*FLEN/8, x4, x1, x2)
 
@@ -4603,7 +4603,7 @@ inst_570:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x455555 and fs2 == 1 and fe2 == 0x7f and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xffc55555; op2val:0xbf800000;
    valaddr_reg:x3; val_offset:1140*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1140*FLEN/8, x4, x1, x2)
 
@@ -4611,7 +4611,7 @@ inst_571:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x455555 and fs2 == 1 and fe2 == 0xfe and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xffc55555; op2val:0xff7fffff;
    valaddr_reg:x3; val_offset:1142*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1142*FLEN/8, x4, x1, x2)
 
@@ -4619,7 +4619,7 @@ inst_572:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x455555 and fs2 == 1 and fe2 == 0xff and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xffc55555; op2val:0xff800000;
    valaddr_reg:x3; val_offset:1144*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1144*FLEN/8, x4, x1, x2)
 
@@ -4627,7 +4627,7 @@ inst_573:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x455555 and fs2 == 1 and fe2 == 0xff and fm2 == 0x2aaaaa and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xffc55555; op2val:0xffaaaaaa;
    valaddr_reg:x3; val_offset:1146*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1146*FLEN/8, x4, x1, x2)
 
@@ -4635,7 +4635,7 @@ inst_574:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x455555 and fs2 == 1 and fe2 == 0xff and fm2 == 0x400000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xffc55555; op2val:0xffc00000;
    valaddr_reg:x3; val_offset:1148*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1148*FLEN/8, x4, x1, x2)
 
@@ -4643,7 +4643,7 @@ inst_575:
 // fs1 == 1 and fe1 == 0xff and fm1 == 0x455555 and fs2 == 1 and fe2 == 0xff and fm2 == 0x455555 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0xffc55555; op2val:0xffc55555;
    valaddr_reg:x3; val_offset:1150*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1150*FLEN/8, x4, x1, x2)
 
@@ -4651,7 +4651,7 @@ inst_576:
 // fs1 == 0 and fe1 == 0x00 and fm1 == 0x000000 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x000001 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x0; op2val:0x1;
    valaddr_reg:x3; val_offset:1152*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1152*FLEN/8, x4, x1, x2)
 
@@ -4659,7 +4659,7 @@ inst_577:
 // fs1 == 0 and fe1 == 0x00 and fm1 == 0x000000 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x000002 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x0; op2val:0x2;
    valaddr_reg:x3; val_offset:1154*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1154*FLEN/8, x4, x1, x2)
 
@@ -4667,7 +4667,7 @@ inst_578:
 // fs1 == 0 and fe1 == 0x00 and fm1 == 0x000000 and fs2 == 0 and fe2 == 0x00 and fm2 == 0x7fffff and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x0; op2val:0x7fffff;
    valaddr_reg:x3; val_offset:1156*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1156*FLEN/8, x4, x1, x2)
 
@@ -4675,7 +4675,7 @@ inst_579:
 // fs1 == 0 and fe1 == 0x00 and fm1 == 0x000000 and fs2 == 0 and fe2 == 0x01 and fm2 == 0x000000 and  fcsr == 0  
 /* opcode: fsgnjx.s ; op1:f30; op2:f29; dest:f31; op1val:0x0; op2val:0x800000;
    valaddr_reg:x3; val_offset:1158*FLEN/8; fcsr: 0;
-   correctval:0; testreg:x2
+   correctval:??; testreg:x2
 */
 TEST_FPRR_OP_NRM(fsgnjx.s, f31, f30, f29, 0, 0, x3, 1158*FLEN/8, x4, x1, x2)
 #endif
@@ -5855,6 +5855,9 @@ NAN_BOXED(8388608,32,FLEN)
 RVTEST_DATA_END
 
 RVMODEL_DATA_BEGIN
+rvtest_sig_begin:
+sig_begin_canary:
+CANARY;
 
 
 signature_x1_0:
@@ -5882,8 +5885,16 @@ signature_x1_5:
 
 #ifdef rvtest_mtrap_routine
 
+tsig_begin_canary:
+CANARY;
+tsig_begin_canary:
+CANARY;
 mtrap_sigptr:
-    .fill 64*XLEN/32,4,0xdeadbeef
+    .fill 64*(XLEN/32),4,0xdeadbeef
+tsig_end_canary:
+CANARY;
+tsig_end_canary:
+CANARY;
 
 #endif
 
@@ -5894,4 +5905,7 @@ gpr_save:
 
 #endif
 
+sig_end_canary:
+CANARY;
+rvtest_sig_end:
 RVMODEL_DATA_END

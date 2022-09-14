@@ -51,6 +51,9 @@ RVTEST_DATA_END
 
 # Output data section.
 RVMODEL_DATA_BEGIN
+rvtest_sig_begin:
+sig_begin_canary:
+CANARY;
 
 test_A_res:
     .fill 2, 4, 0xdeadbeef
@@ -63,4 +66,7 @@ gpr_save:
   .fill 32*(XLEN/32), 4, 0xdeadbeef
 #endif
 
+sig_end_canary:
+CANARY;
+rvtest_sig_end:
 RVMODEL_DATA_END

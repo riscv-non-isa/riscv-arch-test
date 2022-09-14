@@ -70,6 +70,8 @@
   #define LREGWU lwu
   #define REGWIDTH 8
   #define MASK 0xFFFFFFFFFFFFFFFF
+  #define CANARY \
+      .dword 0xCCCCCCCCCCCCCCCC
 
 #else 
   #if XLEN==32
@@ -78,6 +80,8 @@
     #define LREGWU lw
     #define REGWIDTH 4
   #define MASK 0xFFFFFFFF
+  #define CANARY \
+      .word 0xCCCCCCCC
 
   #endif
 #endif
