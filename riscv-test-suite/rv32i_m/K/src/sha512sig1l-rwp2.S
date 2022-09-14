@@ -17,7 +17,7 @@ RVTEST_CASE(1,"//check ISA:=regex(.*32.*);check ISA:=regex(.*RV32.*I.*ZKn.*);def
 
 RVTEST_SIGBASE( x31,signature_x31_1)
 
-la x1, rvtest_data
+LA(x1,rvtest_data)
 
 inst_0:
 // Checking load-to-use hazard!
