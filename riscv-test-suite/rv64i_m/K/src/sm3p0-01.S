@@ -40,7 +40,7 @@ inst_0:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0x75a3adb3254a9493;
 LI(x30,0x75a3adb3254a9493)
 sm3p0 x31, x30
-sw x31, 0(x1)
+SREG x31, 0(x1)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x31, 0x0000000000000000)
 
 inst_1:
@@ -48,7 +48,7 @@ inst_1:
 // opcode: sm3p0 ; op1:x29; dest:x29; op1val:0x7fffffffffffffff;
 LI(x29,0x7fffffffffffffff)
 sm3p0 x29, x29
-sw x29, 8(x1)
+SREG x29, 8(x1)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x29, 0x0000000000000000)
 
 inst_2:
@@ -56,7 +56,7 @@ inst_2:
 // opcode: sm3p0 ; op1:x31; dest:x30; op1val:0xbfffffffffffffff;
 LI(x31,0xbfffffffffffffff)
 sm3p0 x30, x31
-sw x30, 16(x1)
+SREG x30, 16(x1)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x30, 0x0000000000000000)
 
 inst_3:
@@ -64,7 +64,7 @@ inst_3:
 // opcode: sm3p0 ; op1:x27; dest:x28; op1val:0xdfffffffffffffff;
 LI(x27,0xdfffffffffffffff)
 sm3p0 x28, x27
-sw x28, 24(x1)
+SREG x28, 24(x1)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x28, 0x0000000000000000)
 
 inst_4:
@@ -72,7 +72,7 @@ inst_4:
 // opcode: sm3p0 ; op1:x28; dest:x27; op1val:0xefffffffffffffff;
 LI(x28,0xefffffffffffffff)
 sm3p0 x27, x28
-sw x27, 32(x1)
+SREG x27, 32(x1)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x27, 0x0000000000000000)
 
 inst_5:
@@ -80,7 +80,7 @@ inst_5:
 // opcode: sm3p0 ; op1:x25; dest:x26; op1val:0xf7ffffffffffffff;
 LI(x25,0xf7ffffffffffffff)
 sm3p0 x26, x25
-sw x26, 40(x1)
+SREG x26, 40(x1)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x26, 0x0000000000000000)
 
 inst_6:
@@ -88,7 +88,7 @@ inst_6:
 // opcode: sm3p0 ; op1:x26; dest:x25; op1val:0xfbffffffffffffff;
 LI(x26,0xfbffffffffffffff)
 sm3p0 x25, x26
-sw x25, 48(x1)
+SREG x25, 48(x1)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x25, 0x0000000000000000)
 
 inst_7:
@@ -96,7 +96,7 @@ inst_7:
 // opcode: sm3p0 ; op1:x23; dest:x24; op1val:0xfdffffffffffffff;
 LI(x23,0xfdffffffffffffff)
 sm3p0 x24, x23
-sw x24, 56(x1)
+SREG x24, 56(x1)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x24, 0x0000000000000000)
 
 inst_8:
@@ -104,7 +104,7 @@ inst_8:
 // opcode: sm3p0 ; op1:x24; dest:x23; op1val:0xfeffffffffffffff;
 LI(x24,0xfeffffffffffffff)
 sm3p0 x23, x24
-sw x23, 64(x1)
+SREG x23, 64(x1)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x23, 0x0000000000000000)
 
 inst_9:
@@ -112,7 +112,7 @@ inst_9:
 // opcode: sm3p0 ; op1:x21; dest:x22; op1val:0xff7fffffffffffff;
 LI(x21,0xff7fffffffffffff)
 sm3p0 x22, x21
-sw x22, 72(x1)
+SREG x22, 72(x1)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x22, 0x0000000000000000)
 
 inst_10:
@@ -120,7 +120,7 @@ inst_10:
 // opcode: sm3p0 ; op1:x22; dest:x21; op1val:0xffbfffffffffffff;
 LI(x22,0xffbfffffffffffff)
 sm3p0 x21, x22
-sw x21, 80(x1)
+SREG x21, 80(x1)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x21, 0x0000000000000000)
 
 inst_11:
@@ -128,7 +128,7 @@ inst_11:
 // opcode: sm3p0 ; op1:x19; dest:x20; op1val:0xffdfffffffffffff;
 LI(x19,0xffdfffffffffffff)
 sm3p0 x20, x19
-sw x20, 88(x1)
+SREG x20, 88(x1)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x20, 0x0000000000000000)
 
 inst_12:
@@ -136,7 +136,7 @@ inst_12:
 // opcode: sm3p0 ; op1:x20; dest:x19; op1val:0xffefffffffffffff;
 LI(x20,0xffefffffffffffff)
 sm3p0 x19, x20
-sw x19, 96(x1)
+SREG x19, 96(x1)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x19, 0x0000000000000000)
 
 inst_13:
@@ -144,7 +144,7 @@ inst_13:
 // opcode: sm3p0 ; op1:x17; dest:x18; op1val:0xfff7ffffffffffff;
 LI(x17,0xfff7ffffffffffff)
 sm3p0 x18, x17
-sw x18, 104(x1)
+SREG x18, 104(x1)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x18, 0x0000000000000000)
 
 inst_14:
@@ -152,7 +152,7 @@ inst_14:
 // opcode: sm3p0 ; op1:x18; dest:x17; op1val:0xfffbffffffffffff;
 LI(x18,0xfffbffffffffffff)
 sm3p0 x17, x18
-sw x17, 112(x1)
+SREG x17, 112(x1)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x17, 0x0000000000000000)
 
 inst_15:
@@ -160,7 +160,7 @@ inst_15:
 // opcode: sm3p0 ; op1:x15; dest:x16; op1val:0xfffdffffffffffff;
 LI(x15,0xfffdffffffffffff)
 sm3p0 x16, x15
-sw x16, 120(x1)
+SREG x16, 120(x1)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x16, 0x0000000000000000)
 
 inst_16:
@@ -168,7 +168,7 @@ inst_16:
 // opcode: sm3p0 ; op1:x16; dest:x15; op1val:0xfffeffffffffffff;
 LI(x16,0xfffeffffffffffff)
 sm3p0 x15, x16
-sw x15, 128(x1)
+SREG x15, 128(x1)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x15, 0x0000000000000000)
 
 inst_17:
@@ -176,7 +176,7 @@ inst_17:
 // opcode: sm3p0 ; op1:x13; dest:x14; op1val:0xffff7fffffffffff;
 LI(x13,0xffff7fffffffffff)
 sm3p0 x14, x13
-sw x14, 136(x1)
+SREG x14, 136(x1)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x14, 0x0000000000000000)
 
 inst_18:
@@ -184,7 +184,7 @@ inst_18:
 // opcode: sm3p0 ; op1:x14; dest:x13; op1val:0xffffbfffffffffff;
 LI(x14,0xffffbfffffffffff)
 sm3p0 x13, x14
-sw x13, 144(x1)
+SREG x13, 144(x1)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x13, 0x0000000000000000)
 
 inst_19:
@@ -192,7 +192,7 @@ inst_19:
 // opcode: sm3p0 ; op1:x11; dest:x12; op1val:0xffffdfffffffffff;
 LI(x11,0xffffdfffffffffff)
 sm3p0 x12, x11
-sw x12, 152(x1)
+SREG x12, 152(x1)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x12, 0x0000000000000000)
 
 inst_20:
@@ -200,7 +200,7 @@ inst_20:
 // opcode: sm3p0 ; op1:x12; dest:x11; op1val:0xffffefffffffffff;
 LI(x12,0xffffefffffffffff)
 sm3p0 x11, x12
-sw x11, 160(x1)
+SREG x11, 160(x1)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x11, 0x0000000000000000)
 
 inst_21:
@@ -208,7 +208,7 @@ inst_21:
 // opcode: sm3p0 ; op1:x9; dest:x10; op1val:0xfffff7ffffffffff;
 LI(x9,0xfffff7ffffffffff)
 sm3p0 x10, x9
-sw x10, 168(x1)
+SREG x10, 168(x1)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x10, 0x0000000000000000)
 
 inst_22:
@@ -216,7 +216,7 @@ inst_22:
 // opcode: sm3p0 ; op1:x10; dest:x9; op1val:0xfffffbffffffffff;
 LI(x10,0xfffffbffffffffff)
 sm3p0 x9, x10
-sw x9, 176(x1)
+SREG x9, 176(x1)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x9, 0x0000000000000000)
 
 inst_23:
@@ -224,7 +224,7 @@ inst_23:
 // opcode: sm3p0 ; op1:x7; dest:x8; op1val:0xfffffdffffffffff;
 LI(x7,0xfffffdffffffffff)
 sm3p0 x8, x7
-sw x8, 184(x1)
+SREG x8, 184(x1)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x8, 0x0000000000000000)
 
 inst_24:
@@ -232,7 +232,7 @@ inst_24:
 // opcode: sm3p0 ; op1:x8; dest:x7; op1val:0xfffffeffffffffff;
 LI(x8,0xfffffeffffffffff)
 sm3p0 x7, x8
-sw x7, 192(x1)
+SREG x7, 192(x1)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x7, 0x0000000000000000)
 
 inst_25:
@@ -240,7 +240,7 @@ inst_25:
 // opcode: sm3p0 ; op1:x5; dest:x6; op1val:0xffffff7fffffffff;
 LI(x5,0xffffff7fffffffff)
 sm3p0 x6, x5
-sw x6, 200(x1)
+SREG x6, 200(x1)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x6, 0x0000000000000000)
 
 inst_26:
@@ -248,7 +248,7 @@ inst_26:
 // opcode: sm3p0 ; op1:x6; dest:x5; op1val:0xffffffbfffffffff;
 LI(x6,0xffffffbfffffffff)
 sm3p0 x5, x6
-sw x5, 208(x1)
+SREG x5, 208(x1)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x5, 0x0000000000000000)
 
 inst_27:
@@ -256,7 +256,7 @@ inst_27:
 // opcode: sm3p0 ; op1:x3; dest:x4; op1val:0xffffffdfffffffff;
 LI(x3,0xffffffdfffffffff)
 sm3p0 x4, x3
-sw x4, 216(x1)
+SREG x4, 216(x1)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x4, 0x0000000000000000)
 RVTEST_SIGBASE(x5,signature_x5_0)
 
@@ -265,7 +265,7 @@ inst_28:
 // opcode: sm3p0 ; op1:x4; dest:x3; op1val:0xffffffefffffffff;
 LI(x4,0xffffffefffffffff)
 sm3p0 x3, x4
-sw x3, 0(x5)
+SREG x3, 0(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x3, 0x0000000000000000)
 
 inst_29:
@@ -273,7 +273,7 @@ inst_29:
 // opcode: sm3p0 ; op1:x1; dest:x2; op1val:0xfffffff7ffffffff;
 LI(x1,0xfffffff7ffffffff)
 sm3p0 x2, x1
-sw x2, 8(x5)
+SREG x2, 8(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x2, 0x0000000000000000)
 
 inst_30:
@@ -281,7 +281,7 @@ inst_30:
 // opcode: sm3p0 ; op1:x2; dest:x1; op1val:0xfffffffbffffffff;
 LI(x2,0xfffffffbffffffff)
 sm3p0 x1, x2
-sw x1, 16(x5)
+SREG x1, 16(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x1, 0x0000000000000000)
 
 inst_31:
@@ -289,7 +289,7 @@ inst_31:
 // opcode: sm3p0 ; op1:x0; dest:x31; op1val:0x0;
 LI(x0,0x0)
 sm3p0 x31, x0
-sw x31, 24(x5)
+SREG x31, 24(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_32:
@@ -297,7 +297,7 @@ inst_32:
 // opcode: sm3p0 ; op1:x31; dest:x0; op1val:0xfffffffeffffffff;
 LI(x31,0xfffffffeffffffff)
 sm3p0 x0, x31
-sw x0, 32(x5)
+SREG x0, 32(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x0, 0x0000000000000000)
 
 inst_33:
@@ -305,7 +305,7 @@ inst_33:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0xffffffff7fffffff;
 LI(x30,0xffffffff7fffffff)
 sm3p0 x31, x30
-sw x31, 40(x5)
+SREG x31, 40(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_34:
@@ -313,7 +313,7 @@ inst_34:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0xffffffffbfffffff;
 LI(x30,0xffffffffbfffffff)
 sm3p0 x31, x30
-sw x31, 48(x5)
+SREG x31, 48(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_35:
@@ -321,7 +321,7 @@ inst_35:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0xffffffffdfffffff;
 LI(x30,0xffffffffdfffffff)
 sm3p0 x31, x30
-sw x31, 56(x5)
+SREG x31, 56(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_36:
@@ -329,7 +329,7 @@ inst_36:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0xffffffffefffffff;
 LI(x30,0xffffffffefffffff)
 sm3p0 x31, x30
-sw x31, 64(x5)
+SREG x31, 64(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_37:
@@ -337,7 +337,7 @@ inst_37:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0xfffffffff7ffffff;
 LI(x30,0xfffffffff7ffffff)
 sm3p0 x31, x30
-sw x31, 72(x5)
+SREG x31, 72(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_38:
@@ -345,7 +345,7 @@ inst_38:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0xfffffffffbffffff;
 LI(x30,0xfffffffffbffffff)
 sm3p0 x31, x30
-sw x31, 80(x5)
+SREG x31, 80(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_39:
@@ -353,7 +353,7 @@ inst_39:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0xfffffffffdffffff;
 LI(x30,0xfffffffffdffffff)
 sm3p0 x31, x30
-sw x31, 88(x5)
+SREG x31, 88(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_40:
@@ -361,7 +361,7 @@ inst_40:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0xfffffffffeffffff;
 LI(x30,0xfffffffffeffffff)
 sm3p0 x31, x30
-sw x31, 96(x5)
+SREG x31, 96(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_41:
@@ -369,7 +369,7 @@ inst_41:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0xffffffffff7fffff;
 LI(x30,0xffffffffff7fffff)
 sm3p0 x31, x30
-sw x31, 104(x5)
+SREG x31, 104(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_42:
@@ -377,7 +377,7 @@ inst_42:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0xffffffffffbfffff;
 LI(x30,0xffffffffffbfffff)
 sm3p0 x31, x30
-sw x31, 112(x5)
+SREG x31, 112(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_43:
@@ -385,7 +385,7 @@ inst_43:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0xffffffffffdfffff;
 LI(x30,0xffffffffffdfffff)
 sm3p0 x31, x30
-sw x31, 120(x5)
+SREG x31, 120(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_44:
@@ -393,7 +393,7 @@ inst_44:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0xffffffffffefffff;
 LI(x30,0xffffffffffefffff)
 sm3p0 x31, x30
-sw x31, 128(x5)
+SREG x31, 128(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_45:
@@ -401,7 +401,7 @@ inst_45:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0xfffffffffff7ffff;
 LI(x30,0xfffffffffff7ffff)
 sm3p0 x31, x30
-sw x31, 136(x5)
+SREG x31, 136(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_46:
@@ -409,7 +409,7 @@ inst_46:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0xfffffffffffbffff;
 LI(x30,0xfffffffffffbffff)
 sm3p0 x31, x30
-sw x31, 144(x5)
+SREG x31, 144(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_47:
@@ -417,7 +417,7 @@ inst_47:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0xfffffffffffdffff;
 LI(x30,0xfffffffffffdffff)
 sm3p0 x31, x30
-sw x31, 152(x5)
+SREG x31, 152(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_48:
@@ -425,7 +425,7 @@ inst_48:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0xfffffffffffeffff;
 LI(x30,0xfffffffffffeffff)
 sm3p0 x31, x30
-sw x31, 160(x5)
+SREG x31, 160(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_49:
@@ -433,7 +433,7 @@ inst_49:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0xffffffffffff7fff;
 LI(x30,0xffffffffffff7fff)
 sm3p0 x31, x30
-sw x31, 168(x5)
+SREG x31, 168(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_50:
@@ -441,7 +441,7 @@ inst_50:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0xffffffffffffbfff;
 LI(x30,0xffffffffffffbfff)
 sm3p0 x31, x30
-sw x31, 176(x5)
+SREG x31, 176(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_51:
@@ -449,7 +449,7 @@ inst_51:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0xffffffffffffdfff;
 LI(x30,0xffffffffffffdfff)
 sm3p0 x31, x30
-sw x31, 184(x5)
+SREG x31, 184(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_52:
@@ -457,7 +457,7 @@ inst_52:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0xffffffffffffefff;
 LI(x30,0xffffffffffffefff)
 sm3p0 x31, x30
-sw x31, 192(x5)
+SREG x31, 192(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_53:
@@ -465,7 +465,7 @@ inst_53:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0xfffffffffffff7ff;
 LI(x30,0xfffffffffffff7ff)
 sm3p0 x31, x30
-sw x31, 200(x5)
+SREG x31, 200(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_54:
@@ -473,7 +473,7 @@ inst_54:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0xfffffffffffffbff;
 LI(x30,0xfffffffffffffbff)
 sm3p0 x31, x30
-sw x31, 208(x5)
+SREG x31, 208(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_55:
@@ -481,7 +481,7 @@ inst_55:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0xfffffffffffffdff;
 LI(x30,0xfffffffffffffdff)
 sm3p0 x31, x30
-sw x31, 216(x5)
+SREG x31, 216(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_56:
@@ -489,7 +489,7 @@ inst_56:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0xfffffffffffffeff;
 LI(x30,0xfffffffffffffeff)
 sm3p0 x31, x30
-sw x31, 224(x5)
+SREG x31, 224(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_57:
@@ -497,7 +497,7 @@ inst_57:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0xffffffffffffff7f;
 LI(x30,0xffffffffffffff7f)
 sm3p0 x31, x30
-sw x31, 232(x5)
+SREG x31, 232(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_58:
@@ -505,7 +505,7 @@ inst_58:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0xffffffffffffffbf;
 LI(x30,0xffffffffffffffbf)
 sm3p0 x31, x30
-sw x31, 240(x5)
+SREG x31, 240(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_59:
@@ -513,7 +513,7 @@ inst_59:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0xffffffffffffffdf;
 LI(x30,0xffffffffffffffdf)
 sm3p0 x31, x30
-sw x31, 248(x5)
+SREG x31, 248(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_60:
@@ -521,7 +521,7 @@ inst_60:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0xffffffffffffffef;
 LI(x30,0xffffffffffffffef)
 sm3p0 x31, x30
-sw x31, 256(x5)
+SREG x31, 256(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_61:
@@ -529,7 +529,7 @@ inst_61:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0xfffffffffffffff7;
 LI(x30,0xfffffffffffffff7)
 sm3p0 x31, x30
-sw x31, 264(x5)
+SREG x31, 264(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_62:
@@ -537,7 +537,7 @@ inst_62:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0xfffffffffffffffb;
 LI(x30,0xfffffffffffffffb)
 sm3p0 x31, x30
-sw x31, 272(x5)
+SREG x31, 272(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_63:
@@ -545,7 +545,7 @@ inst_63:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0xfffffffffffffffd;
 LI(x30,0xfffffffffffffffd)
 sm3p0 x31, x30
-sw x31, 280(x5)
+SREG x31, 280(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_64:
@@ -553,7 +553,7 @@ inst_64:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0xfffffffffffffffe;
 LI(x30,0xfffffffffffffffe)
 sm3p0 x31, x30
-sw x31, 288(x5)
+SREG x31, 288(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_65:
@@ -561,7 +561,7 @@ inst_65:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0x8000000000000000;
 LI(x30,0x8000000000000000)
 sm3p0 x31, x30
-sw x31, 296(x5)
+SREG x31, 296(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_66:
@@ -569,7 +569,7 @@ inst_66:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0x4000000000000000;
 LI(x30,0x4000000000000000)
 sm3p0 x31, x30
-sw x31, 304(x5)
+SREG x31, 304(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_67:
@@ -577,7 +577,7 @@ inst_67:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0x2000000000000000;
 LI(x30,0x2000000000000000)
 sm3p0 x31, x30
-sw x31, 312(x5)
+SREG x31, 312(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_68:
@@ -585,7 +585,7 @@ inst_68:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0x1000000000000000;
 LI(x30,0x1000000000000000)
 sm3p0 x31, x30
-sw x31, 320(x5)
+SREG x31, 320(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_69:
@@ -593,7 +593,7 @@ inst_69:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0x800000000000000;
 LI(x30,0x800000000000000)
 sm3p0 x31, x30
-sw x31, 328(x5)
+SREG x31, 328(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_70:
@@ -601,7 +601,7 @@ inst_70:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0x400000000000000;
 LI(x30,0x400000000000000)
 sm3p0 x31, x30
-sw x31, 336(x5)
+SREG x31, 336(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_71:
@@ -609,7 +609,7 @@ inst_71:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0x200000000000000;
 LI(x30,0x200000000000000)
 sm3p0 x31, x30
-sw x31, 344(x5)
+SREG x31, 344(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_72:
@@ -617,7 +617,7 @@ inst_72:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0x100000000000000;
 LI(x30,0x100000000000000)
 sm3p0 x31, x30
-sw x31, 352(x5)
+SREG x31, 352(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_73:
@@ -625,7 +625,7 @@ inst_73:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0x80000000000000;
 LI(x30,0x80000000000000)
 sm3p0 x31, x30
-sw x31, 360(x5)
+SREG x31, 360(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_74:
@@ -633,7 +633,7 @@ inst_74:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0x40000000000000;
 LI(x30,0x40000000000000)
 sm3p0 x31, x30
-sw x31, 368(x5)
+SREG x31, 368(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_75:
@@ -641,7 +641,7 @@ inst_75:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0x20000000000000;
 LI(x30,0x20000000000000)
 sm3p0 x31, x30
-sw x31, 376(x5)
+SREG x31, 376(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_76:
@@ -649,7 +649,7 @@ inst_76:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0x10000000000000;
 LI(x30,0x10000000000000)
 sm3p0 x31, x30
-sw x31, 384(x5)
+SREG x31, 384(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_77:
@@ -657,7 +657,7 @@ inst_77:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0x8000000000000;
 LI(x30,0x8000000000000)
 sm3p0 x31, x30
-sw x31, 392(x5)
+SREG x31, 392(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_78:
@@ -665,7 +665,7 @@ inst_78:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0x4000000000000;
 LI(x30,0x4000000000000)
 sm3p0 x31, x30
-sw x31, 400(x5)
+SREG x31, 400(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_79:
@@ -673,7 +673,7 @@ inst_79:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0x2000000000000;
 LI(x30,0x2000000000000)
 sm3p0 x31, x30
-sw x31, 408(x5)
+SREG x31, 408(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_80:
@@ -681,7 +681,7 @@ inst_80:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0x1000000000000;
 LI(x30,0x1000000000000)
 sm3p0 x31, x30
-sw x31, 416(x5)
+SREG x31, 416(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_81:
@@ -689,7 +689,7 @@ inst_81:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0x800000000000;
 LI(x30,0x800000000000)
 sm3p0 x31, x30
-sw x31, 424(x5)
+SREG x31, 424(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_82:
@@ -697,7 +697,7 @@ inst_82:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0x400000000000;
 LI(x30,0x400000000000)
 sm3p0 x31, x30
-sw x31, 432(x5)
+SREG x31, 432(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_83:
@@ -705,7 +705,7 @@ inst_83:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0x200000000000;
 LI(x30,0x200000000000)
 sm3p0 x31, x30
-sw x31, 440(x5)
+SREG x31, 440(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_84:
@@ -713,7 +713,7 @@ inst_84:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0x100000000000;
 LI(x30,0x100000000000)
 sm3p0 x31, x30
-sw x31, 448(x5)
+SREG x31, 448(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_85:
@@ -721,7 +721,7 @@ inst_85:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0x1;
 LI(x30,0x1)
 sm3p0 x31, x30
-sw x31, 456(x5)
+SREG x31, 456(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_86:
@@ -729,7 +729,7 @@ inst_86:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0xb6f9706fb4f741aa;
 LI(x30,0xb6f9706fb4f741aa)
 sm3p0 x31, x30
-sw x31, 464(x5)
+SREG x31, 464(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_87:
@@ -737,7 +737,7 @@ inst_87:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0x40a5ff526f38a9c7;
 LI(x30,0x40a5ff526f38a9c7)
 sm3p0 x31, x30
-sw x31, 472(x5)
+SREG x31, 472(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_88:
@@ -745,7 +745,7 @@ inst_88:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0xd05668ae0fdb82bc;
 LI(x30,0xd05668ae0fdb82bc)
 sm3p0 x31, x30
-sw x31, 480(x5)
+SREG x31, 480(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_89:
@@ -753,7 +753,7 @@ inst_89:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0x9bedfe390d6ddd9d;
 LI(x30,0x9bedfe390d6ddd9d)
 sm3p0 x31, x30
-sw x31, 488(x5)
+SREG x31, 488(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_90:
@@ -761,7 +761,7 @@ inst_90:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0xaa6bb2bde9ed477d;
 LI(x30,0xaa6bb2bde9ed477d)
 sm3p0 x31, x30
-sw x31, 496(x5)
+SREG x31, 496(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_91:
@@ -769,7 +769,7 @@ inst_91:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0xd75739f82ac177c6;
 LI(x30,0xd75739f82ac177c6)
 sm3p0 x31, x30
-sw x31, 504(x5)
+SREG x31, 504(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_92:
@@ -777,7 +777,7 @@ inst_92:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0x299c3bcf90efb625;
 LI(x30,0x299c3bcf90efb625)
 sm3p0 x31, x30
-sw x31, 512(x5)
+SREG x31, 512(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_93:
@@ -785,7 +785,7 @@ inst_93:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0x9a4e9ef10171f4df;
 LI(x30,0x9a4e9ef10171f4df)
 sm3p0 x31, x30
-sw x31, 520(x5)
+SREG x31, 520(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_94:
@@ -793,7 +793,7 @@ inst_94:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0x1fc493caa371db42;
 LI(x30,0x1fc493caa371db42)
 sm3p0 x31, x30
-sw x31, 528(x5)
+SREG x31, 528(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_95:
@@ -801,7 +801,7 @@ inst_95:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0xd169a3f8cad5e297;
 LI(x30,0xd169a3f8cad5e297)
 sm3p0 x31, x30
-sw x31, 536(x5)
+SREG x31, 536(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_96:
@@ -809,7 +809,7 @@ inst_96:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0xf4c30307672f666d;
 LI(x30,0xf4c30307672f666d)
 sm3p0 x31, x30
-sw x31, 544(x5)
+SREG x31, 544(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_97:
@@ -817,7 +817,7 @@ inst_97:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0xd5b9fe5cf69bdcf3;
 LI(x30,0xd5b9fe5cf69bdcf3)
 sm3p0 x31, x30
-sw x31, 552(x5)
+SREG x31, 552(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_98:
@@ -825,7 +825,7 @@ inst_98:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0xa0569d765ebc64cb;
 LI(x30,0xa0569d765ebc64cb)
 sm3p0 x31, x30
-sw x31, 560(x5)
+SREG x31, 560(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_99:
@@ -833,7 +833,7 @@ inst_99:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0xe4921bf73047c198;
 LI(x30,0xe4921bf73047c198)
 sm3p0 x31, x30
-sw x31, 568(x5)
+SREG x31, 568(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_100:
@@ -841,7 +841,7 @@ inst_100:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0x2daf9ac7f5faf207;
 LI(x30,0x2daf9ac7f5faf207)
 sm3p0 x31, x30
-sw x31, 576(x5)
+SREG x31, 576(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_101:
@@ -849,7 +849,7 @@ inst_101:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0xfcc1b543c49cd65b;
 LI(x30,0xfcc1b543c49cd65b)
 sm3p0 x31, x30
-sw x31, 584(x5)
+SREG x31, 584(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_102:
@@ -857,7 +857,7 @@ inst_102:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0x3459294ef273b44c;
 LI(x30,0x3459294ef273b44c)
 sm3p0 x31, x30
-sw x31, 592(x5)
+SREG x31, 592(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_103:
@@ -865,7 +865,7 @@ inst_103:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0x436f40f274b8de87;
 LI(x30,0x436f40f274b8de87)
 sm3p0 x31, x30
-sw x31, 600(x5)
+SREG x31, 600(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_104:
@@ -873,7 +873,7 @@ inst_104:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0xc5521660f3a3c571;
 LI(x30,0xc5521660f3a3c571)
 sm3p0 x31, x30
-sw x31, 608(x5)
+SREG x31, 608(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_105:
@@ -881,7 +881,7 @@ inst_105:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0x80000000000;
 LI(x30,0x80000000000)
 sm3p0 x31, x30
-sw x31, 616(x5)
+SREG x31, 616(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_106:
@@ -889,7 +889,7 @@ inst_106:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0x40000000000;
 LI(x30,0x40000000000)
 sm3p0 x31, x30
-sw x31, 624(x5)
+SREG x31, 624(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_107:
@@ -897,7 +897,7 @@ inst_107:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0x20000000000;
 LI(x30,0x20000000000)
 sm3p0 x31, x30
-sw x31, 632(x5)
+SREG x31, 632(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_108:
@@ -905,7 +905,7 @@ inst_108:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0x10000000000;
 LI(x30,0x10000000000)
 sm3p0 x31, x30
-sw x31, 640(x5)
+SREG x31, 640(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_109:
@@ -913,7 +913,7 @@ inst_109:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0x8000000000;
 LI(x30,0x8000000000)
 sm3p0 x31, x30
-sw x31, 648(x5)
+SREG x31, 648(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_110:
@@ -921,7 +921,7 @@ inst_110:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0x4000000000;
 LI(x30,0x4000000000)
 sm3p0 x31, x30
-sw x31, 656(x5)
+SREG x31, 656(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_111:
@@ -929,7 +929,7 @@ inst_111:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0x2000000000;
 LI(x30,0x2000000000)
 sm3p0 x31, x30
-sw x31, 664(x5)
+SREG x31, 664(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_112:
@@ -937,7 +937,7 @@ inst_112:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0x1000000000;
 LI(x30,0x1000000000)
 sm3p0 x31, x30
-sw x31, 672(x5)
+SREG x31, 672(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_113:
@@ -945,7 +945,7 @@ inst_113:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0x800000000;
 LI(x30,0x800000000)
 sm3p0 x31, x30
-sw x31, 680(x5)
+SREG x31, 680(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_114:
@@ -953,7 +953,7 @@ inst_114:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0x400000000;
 LI(x30,0x400000000)
 sm3p0 x31, x30
-sw x31, 688(x5)
+SREG x31, 688(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_115:
@@ -961,7 +961,7 @@ inst_115:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0x200000000;
 LI(x30,0x200000000)
 sm3p0 x31, x30
-sw x31, 696(x5)
+SREG x31, 696(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_116:
@@ -969,7 +969,7 @@ inst_116:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0x100000000;
 LI(x30,0x100000000)
 sm3p0 x31, x30
-sw x31, 704(x5)
+SREG x31, 704(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_117:
@@ -977,7 +977,7 @@ inst_117:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0x80000000;
 LI(x30,0x80000000)
 sm3p0 x31, x30
-sw x31, 712(x5)
+SREG x31, 712(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_118:
@@ -985,7 +985,7 @@ inst_118:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0x40000000;
 LI(x30,0x40000000)
 sm3p0 x31, x30
-sw x31, 720(x5)
+SREG x31, 720(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_119:
@@ -993,7 +993,7 @@ inst_119:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0x20000000;
 LI(x30,0x20000000)
 sm3p0 x31, x30
-sw x31, 728(x5)
+SREG x31, 728(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_120:
@@ -1001,7 +1001,7 @@ inst_120:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0x10000000;
 LI(x30,0x10000000)
 sm3p0 x31, x30
-sw x31, 736(x5)
+SREG x31, 736(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_121:
@@ -1009,7 +1009,7 @@ inst_121:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0x8000000;
 LI(x30,0x8000000)
 sm3p0 x31, x30
-sw x31, 744(x5)
+SREG x31, 744(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_122:
@@ -1017,7 +1017,7 @@ inst_122:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0x4000000;
 LI(x30,0x4000000)
 sm3p0 x31, x30
-sw x31, 752(x5)
+SREG x31, 752(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_123:
@@ -1025,7 +1025,7 @@ inst_123:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0x2000000;
 LI(x30,0x2000000)
 sm3p0 x31, x30
-sw x31, 760(x5)
+SREG x31, 760(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_124:
@@ -1033,7 +1033,7 @@ inst_124:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0x1000000;
 LI(x30,0x1000000)
 sm3p0 x31, x30
-sw x31, 768(x5)
+SREG x31, 768(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_125:
@@ -1041,7 +1041,7 @@ inst_125:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0x800000;
 LI(x30,0x800000)
 sm3p0 x31, x30
-sw x31, 776(x5)
+SREG x31, 776(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_126:
@@ -1049,7 +1049,7 @@ inst_126:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0x400000;
 LI(x30,0x400000)
 sm3p0 x31, x30
-sw x31, 784(x5)
+SREG x31, 784(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_127:
@@ -1057,7 +1057,7 @@ inst_127:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0x200000;
 LI(x30,0x200000)
 sm3p0 x31, x30
-sw x31, 792(x5)
+SREG x31, 792(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_128:
@@ -1065,7 +1065,7 @@ inst_128:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0x100000;
 LI(x30,0x100000)
 sm3p0 x31, x30
-sw x31, 800(x5)
+SREG x31, 800(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_129:
@@ -1073,7 +1073,7 @@ inst_129:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0x80000;
 LI(x30,0x80000)
 sm3p0 x31, x30
-sw x31, 808(x5)
+SREG x31, 808(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_130:
@@ -1081,7 +1081,7 @@ inst_130:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0x40000;
 LI(x30,0x40000)
 sm3p0 x31, x30
-sw x31, 816(x5)
+SREG x31, 816(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_131:
@@ -1089,7 +1089,7 @@ inst_131:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0x20000;
 LI(x30,0x20000)
 sm3p0 x31, x30
-sw x31, 824(x5)
+SREG x31, 824(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_132:
@@ -1097,7 +1097,7 @@ inst_132:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0x10000;
 LI(x30,0x10000)
 sm3p0 x31, x30
-sw x31, 832(x5)
+SREG x31, 832(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_133:
@@ -1105,7 +1105,7 @@ inst_133:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0x8000;
 LI(x30,0x8000)
 sm3p0 x31, x30
-sw x31, 840(x5)
+SREG x31, 840(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_134:
@@ -1113,7 +1113,7 @@ inst_134:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0x4000;
 LI(x30,0x4000)
 sm3p0 x31, x30
-sw x31, 848(x5)
+SREG x31, 848(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_135:
@@ -1121,7 +1121,7 @@ inst_135:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0x2000;
 LI(x30,0x2000)
 sm3p0 x31, x30
-sw x31, 856(x5)
+SREG x31, 856(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_136:
@@ -1129,7 +1129,7 @@ inst_136:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0x1000;
 LI(x30,0x1000)
 sm3p0 x31, x30
-sw x31, 864(x5)
+SREG x31, 864(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_137:
@@ -1137,7 +1137,7 @@ inst_137:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0x800;
 LI(x30,0x800)
 sm3p0 x31, x30
-sw x31, 872(x5)
+SREG x31, 872(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_138:
@@ -1145,7 +1145,7 @@ inst_138:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0x400;
 LI(x30,0x400)
 sm3p0 x31, x30
-sw x31, 880(x5)
+SREG x31, 880(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_139:
@@ -1153,7 +1153,7 @@ inst_139:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0x200;
 LI(x30,0x200)
 sm3p0 x31, x30
-sw x31, 888(x5)
+SREG x31, 888(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_140:
@@ -1161,7 +1161,7 @@ inst_140:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0x100;
 LI(x30,0x100)
 sm3p0 x31, x30
-sw x31, 896(x5)
+SREG x31, 896(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_141:
@@ -1169,7 +1169,7 @@ inst_141:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0x80;
 LI(x30,0x80)
 sm3p0 x31, x30
-sw x31, 904(x5)
+SREG x31, 904(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_142:
@@ -1177,7 +1177,7 @@ inst_142:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0x40;
 LI(x30,0x40)
 sm3p0 x31, x30
-sw x31, 912(x5)
+SREG x31, 912(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_143:
@@ -1185,7 +1185,7 @@ inst_143:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0x20;
 LI(x30,0x20)
 sm3p0 x31, x30
-sw x31, 920(x5)
+SREG x31, 920(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_144:
@@ -1193,7 +1193,7 @@ inst_144:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0x10;
 LI(x30,0x10)
 sm3p0 x31, x30
-sw x31, 928(x5)
+SREG x31, 928(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_145:
@@ -1201,7 +1201,7 @@ inst_145:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0x8;
 LI(x30,0x8)
 sm3p0 x31, x30
-sw x31, 936(x5)
+SREG x31, 936(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_146:
@@ -1209,7 +1209,7 @@ inst_146:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0x4;
 LI(x30,0x4)
 sm3p0 x31, x30
-sw x31, 944(x5)
+SREG x31, 944(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_147:
@@ -1217,7 +1217,7 @@ inst_147:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0x2;
 LI(x30,0x2)
 sm3p0 x31, x30
-sw x31, 952(x5)
+SREG x31, 952(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_148:
@@ -1225,7 +1225,7 @@ inst_148:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0xfffffffdffffffff;
 LI(x30,0xfffffffdffffffff)
 sm3p0 x31, x30
-sw x31, 960(x5)
+SREG x31, 960(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 
 inst_149:
@@ -1233,7 +1233,7 @@ inst_149:
 // opcode: sm3p0 ; op1:x30; dest:x31; op1val:0xfffffffeffffffff;
 LI(x30,0xfffffffeffffffff)
 sm3p0 x31, x30
-sw x31, 968(x5)
+SREG x31, 968(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x0000000000000000)
 #endif
 
