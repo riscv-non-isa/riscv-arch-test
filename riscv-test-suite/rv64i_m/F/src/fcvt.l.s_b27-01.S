@@ -37,201 +37,201 @@ RVTEST_SIGBASE(x5,signature_x5_1)
 
 inst_0:// rs1==f23, rd==x3,fs1 == 0 and fe1 == 0xff and fm1 == 0x000001 and  fcsr == 0x0 and rm_val == 7   
 /* opcode: fcvt.l.s ; op1:f23; dest:x3; op1val:0x7f800001; valaddr_reg:x10;
-val_offset:0*FLEN/8; rmval:dyn; correctval:0; testreg:x11;
+val_offset:0*FLEN/8; rmval:dyn; correctval:??; testreg:x11;
 fcsr_val:0*/
 TEST_FPID_OP(fcvt.l.s, x3, f23, dyn, 0, 0, x10, 0*FLEN/8, x12, x5, x11,FLREG)
 
 inst_1:// rs1==f17, rd==x27,fs1 == 0 and fe1 == 0xff and fm1 == 0x2aaaaa and  fcsr == 0x0 and rm_val == 7   
 /* opcode: fcvt.l.s ; op1:f17; dest:x27; op1val:0x7faaaaaa; valaddr_reg:x10;
-val_offset:1*FLEN/8; rmval:dyn; correctval:0; testreg:x11;
+val_offset:1*FLEN/8; rmval:dyn; correctval:??; testreg:x11;
 fcsr_val:0*/
 TEST_FPID_OP(fcvt.l.s, x27, f17, dyn, 0, 0, x10, 1*FLEN/8, x12, x5, x11,FLREG)
 
 inst_2:// rs1==f2, rd==x15,fs1 == 0 and fe1 == 0xff and fm1 == 0x400001 and  fcsr == 0x0 and rm_val == 7   
 /* opcode: fcvt.l.s ; op1:f2; dest:x15; op1val:0x7fc00001; valaddr_reg:x10;
-val_offset:2*FLEN/8; rmval:dyn; correctval:0; testreg:x11;
+val_offset:2*FLEN/8; rmval:dyn; correctval:??; testreg:x11;
 fcsr_val:0*/
 TEST_FPID_OP(fcvt.l.s, x15, f2, dyn, 0, 0, x10, 2*FLEN/8, x12, x5, x11,FLREG)
 
 inst_3:// rs1==f0, rd==x24,fs1 == 0 and fe1 == 0xff and fm1 == 0x455555 and  fcsr == 0x0 and rm_val == 7   
 /* opcode: fcvt.l.s ; op1:f0; dest:x24; op1val:0x7fc55555; valaddr_reg:x10;
-val_offset:3*FLEN/8; rmval:dyn; correctval:0; testreg:x11;
+val_offset:3*FLEN/8; rmval:dyn; correctval:??; testreg:x11;
 fcsr_val:0*/
 TEST_FPID_OP(fcvt.l.s, x24, f0, dyn, 0, 0, x10, 3*FLEN/8, x12, x5, x11,FLREG)
 
 inst_4:// rs1==f14, rd==x17,fs1 == 1 and fe1 == 0xff and fm1 == 0x000001 and  fcsr == 0x0 and rm_val == 7   
 /* opcode: fcvt.l.s ; op1:f14; dest:x17; op1val:0xff800001; valaddr_reg:x10;
-val_offset:4*FLEN/8; rmval:dyn; correctval:0; testreg:x11;
+val_offset:4*FLEN/8; rmval:dyn; correctval:??; testreg:x11;
 fcsr_val:0*/
 TEST_FPID_OP(fcvt.l.s, x17, f14, dyn, 0, 0, x10, 4*FLEN/8, x12, x5, x11,FLREG)
 
 inst_5:// rs1==f7, rd==x0,fs1 == 1 and fe1 == 0xff and fm1 == 0x2aaaaa and  fcsr == 0x0 and rm_val == 7   
 /* opcode: fcvt.l.s ; op1:f7; dest:x0; op1val:0xffaaaaaa; valaddr_reg:x10;
-val_offset:5*FLEN/8; rmval:dyn; correctval:0; testreg:x11;
+val_offset:5*FLEN/8; rmval:dyn; correctval:??; testreg:x11;
 fcsr_val:0*/
 TEST_FPID_OP(fcvt.l.s, x0, f7, dyn, 0, 0, x10, 5*FLEN/8, x12, x5, x11,FLREG)
 
 inst_6:// rs1==f24, rd==x4,fs1 == 1 and fe1 == 0xff and fm1 == 0x400001 and  fcsr == 0x0 and rm_val == 7   
 /* opcode: fcvt.l.s ; op1:f24; dest:x4; op1val:0xffc00001; valaddr_reg:x10;
-val_offset:6*FLEN/8; rmval:dyn; correctval:0; testreg:x11;
+val_offset:6*FLEN/8; rmval:dyn; correctval:??; testreg:x11;
 fcsr_val:0*/
 TEST_FPID_OP(fcvt.l.s, x4, f24, dyn, 0, 0, x10, 6*FLEN/8, x12, x5, x11,FLREG)
 
 inst_7:// rs1==f16, rd==x25,fs1 == 1 and fe1 == 0xff and fm1 == 0x455555 and  fcsr == 0x0 and rm_val == 7   
 /* opcode: fcvt.l.s ; op1:f16; dest:x25; op1val:0xffc55555; valaddr_reg:x10;
-val_offset:7*FLEN/8; rmval:dyn; correctval:0; testreg:x11;
+val_offset:7*FLEN/8; rmval:dyn; correctval:??; testreg:x11;
 fcsr_val:0*/
 TEST_FPID_OP(fcvt.l.s, x25, f16, dyn, 0, 0, x10, 7*FLEN/8, x12, x5, x11,FLREG)
 
 inst_8:// rs1==f5, rd==x22,
 /* opcode: fcvt.l.s ; op1:f5; dest:x22; op1val:0x0; valaddr_reg:x10;
-val_offset:8*FLEN/8; rmval:rne; correctval:0; testreg:x11;
+val_offset:8*FLEN/8; rmval:rne; correctval:??; testreg:x11;
 fcsr_val:0*/
 TEST_FPID_OP(fcvt.l.s, x22, f5, rne, 0, 0, x10, 8*FLEN/8, x12, x5, x11,FLREG)
 
 inst_9:// rs1==f31, rd==x21,
 /* opcode: fcvt.l.s ; op1:f31; dest:x21; op1val:0x0; valaddr_reg:x10;
-val_offset:9*FLEN/8; rmval:rne; correctval:0; testreg:x11;
+val_offset:9*FLEN/8; rmval:rne; correctval:??; testreg:x11;
 fcsr_val:0*/
 TEST_FPID_OP(fcvt.l.s, x21, f31, rne, 0, 0, x10, 9*FLEN/8, x12, x5, x11,FLREG)
 
 inst_10:// rs1==f25, rd==x13,
 /* opcode: fcvt.l.s ; op1:f25; dest:x13; op1val:0x0; valaddr_reg:x10;
-val_offset:10*FLEN/8; rmval:rne; correctval:0; testreg:x11;
+val_offset:10*FLEN/8; rmval:rne; correctval:??; testreg:x11;
 fcsr_val:0*/
 TEST_FPID_OP(fcvt.l.s, x13, f25, rne, 0, 0, x10, 10*FLEN/8, x12, x5, x11,FLREG)
 
 inst_11:// rs1==f4, rd==x2,
 /* opcode: fcvt.l.s ; op1:f4; dest:x2; op1val:0x0; valaddr_reg:x10;
-val_offset:11*FLEN/8; rmval:rne; correctval:0; testreg:x11;
+val_offset:11*FLEN/8; rmval:rne; correctval:??; testreg:x11;
 fcsr_val:0*/
 TEST_FPID_OP(fcvt.l.s, x2, f4, rne, 0, 0, x10, 11*FLEN/8, x12, x5, x11,FLREG)
 
 inst_12:// rs1==f6, rd==x14,
 /* opcode: fcvt.l.s ; op1:f6; dest:x14; op1val:0x0; valaddr_reg:x10;
-val_offset:12*FLEN/8; rmval:rne; correctval:0; testreg:x11;
+val_offset:12*FLEN/8; rmval:rne; correctval:??; testreg:x11;
 fcsr_val:0*/
 TEST_FPID_OP(fcvt.l.s, x14, f6, rne, 0, 0, x10, 12*FLEN/8, x12, x5, x11,FLREG)
 
 inst_13:// rs1==f20, rd==x6,
 /* opcode: fcvt.l.s ; op1:f20; dest:x6; op1val:0x0; valaddr_reg:x10;
-val_offset:13*FLEN/8; rmval:rne; correctval:0; testreg:x11;
+val_offset:13*FLEN/8; rmval:rne; correctval:??; testreg:x11;
 fcsr_val:0*/
 TEST_FPID_OP(fcvt.l.s, x6, f20, rne, 0, 0, x10, 13*FLEN/8, x12, x5, x11,FLREG)
 
 inst_14:// rs1==f12, rd==x29,
 /* opcode: fcvt.l.s ; op1:f12; dest:x29; op1val:0x0; valaddr_reg:x10;
-val_offset:14*FLEN/8; rmval:rne; correctval:0; testreg:x11;
+val_offset:14*FLEN/8; rmval:rne; correctval:??; testreg:x11;
 fcsr_val:0*/
 TEST_FPID_OP(fcvt.l.s, x29, f12, rne, 0, 0, x10, 14*FLEN/8, x12, x5, x11,FLREG)
 
 inst_15:// rs1==f13, rd==x18,
 /* opcode: fcvt.l.s ; op1:f13; dest:x18; op1val:0x0; valaddr_reg:x10;
-val_offset:15*FLEN/8; rmval:rne; correctval:0; testreg:x11;
+val_offset:15*FLEN/8; rmval:rne; correctval:??; testreg:x11;
 fcsr_val:0*/
 TEST_FPID_OP(fcvt.l.s, x18, f13, rne, 0, 0, x10, 15*FLEN/8, x12, x5, x11,FLREG)
 
 inst_16:// rs1==f26, rd==x19,
 /* opcode: fcvt.l.s ; op1:f26; dest:x19; op1val:0x0; valaddr_reg:x10;
-val_offset:16*FLEN/8; rmval:rne; correctval:0; testreg:x11;
+val_offset:16*FLEN/8; rmval:rne; correctval:??; testreg:x11;
 fcsr_val:0*/
 TEST_FPID_OP(fcvt.l.s, x19, f26, rne, 0, 0, x10, 16*FLEN/8, x12, x5, x11,FLREG)
 
 inst_17:// rs1==f30, rd==x7,
 /* opcode: fcvt.l.s ; op1:f30; dest:x7; op1val:0x0; valaddr_reg:x10;
-val_offset:17*FLEN/8; rmval:rne; correctval:0; testreg:x11;
+val_offset:17*FLEN/8; rmval:rne; correctval:??; testreg:x11;
 fcsr_val:0*/
 TEST_FPID_OP(fcvt.l.s, x7, f30, rne, 0, 0, x10, 17*FLEN/8, x12, x5, x11,FLREG)
 
 inst_18:// rs1==f27, rd==x28,
 /* opcode: fcvt.l.s ; op1:f27; dest:x28; op1val:0x0; valaddr_reg:x10;
-val_offset:18*FLEN/8; rmval:rne; correctval:0; testreg:x11;
+val_offset:18*FLEN/8; rmval:rne; correctval:??; testreg:x11;
 fcsr_val:0*/
 TEST_FPID_OP(fcvt.l.s, x28, f27, rne, 0, 0, x10, 18*FLEN/8, x12, x5, x11,FLREG)
 
 inst_19:// rs1==f15, rd==x26,
 /* opcode: fcvt.l.s ; op1:f15; dest:x26; op1val:0x0; valaddr_reg:x10;
-val_offset:19*FLEN/8; rmval:rne; correctval:0; testreg:x11;
+val_offset:19*FLEN/8; rmval:rne; correctval:??; testreg:x11;
 fcsr_val:0*/
 TEST_FPID_OP(fcvt.l.s, x26, f15, rne, 0, 0, x10, 19*FLEN/8, x12, x5, x11,FLREG)
 
 inst_20:// rs1==f3, rd==x30,
 /* opcode: fcvt.l.s ; op1:f3; dest:x30; op1val:0x0; valaddr_reg:x10;
-val_offset:20*FLEN/8; rmval:rne; correctval:0; testreg:x11;
+val_offset:20*FLEN/8; rmval:rne; correctval:??; testreg:x11;
 fcsr_val:0*/
 TEST_FPID_OP(fcvt.l.s, x30, f3, rne, 0, 0, x10, 20*FLEN/8, x12, x5, x11,FLREG)
 
 inst_21:// rs1==f10, rd==x9,
 /* opcode: fcvt.l.s ; op1:f10; dest:x9; op1val:0x0; valaddr_reg:x10;
-val_offset:21*FLEN/8; rmval:rne; correctval:0; testreg:x11;
+val_offset:21*FLEN/8; rmval:rne; correctval:??; testreg:x11;
 fcsr_val:0*/
 TEST_FPID_OP(fcvt.l.s, x9, f10, rne, 0, 0, x10, 21*FLEN/8, x12, x5, x11,FLREG)
 
 inst_22:// rs1==f9, rd==x8,
 /* opcode: fcvt.l.s ; op1:f9; dest:x8; op1val:0x0; valaddr_reg:x10;
-val_offset:22*FLEN/8; rmval:rne; correctval:0; testreg:x11;
+val_offset:22*FLEN/8; rmval:rne; correctval:??; testreg:x11;
 fcsr_val:0*/
 TEST_FPID_OP(fcvt.l.s, x8, f9, rne, 0, 0, x10, 22*FLEN/8, x12, x5, x11,FLREG)
 
 inst_23:// rs1==f29, rd==x23,
 /* opcode: fcvt.l.s ; op1:f29; dest:x23; op1val:0x0; valaddr_reg:x10;
-val_offset:23*FLEN/8; rmval:rne; correctval:0; testreg:x11;
+val_offset:23*FLEN/8; rmval:rne; correctval:??; testreg:x11;
 fcsr_val:0*/
 TEST_FPID_OP(fcvt.l.s, x23, f29, rne, 0, 0, x10, 23*FLEN/8, x12, x5, x11,FLREG)
 
 inst_24:// rs1==f11, rd==x1,
 /* opcode: fcvt.l.s ; op1:f11; dest:x1; op1val:0x0; valaddr_reg:x10;
-val_offset:24*FLEN/8; rmval:rne; correctval:0; testreg:x11;
+val_offset:24*FLEN/8; rmval:rne; correctval:??; testreg:x11;
 fcsr_val:0*/
 TEST_FPID_OP(fcvt.l.s, x1, f11, rne, 0, 0, x10, 24*FLEN/8, x12, x5, x11,FLREG)
 RVTEST_VALBASEUPD(x3,test_dataset_1)
 
 inst_25:// rs1==f22, rd==x16,
 /* opcode: fcvt.l.s ; op1:f22; dest:x16; op1val:0x0; valaddr_reg:x3;
-val_offset:0*FLEN/8; rmval:rne; correctval:0; testreg:x11;
+val_offset:0*FLEN/8; rmval:rne; correctval:??; testreg:x11;
 fcsr_val:0*/
 TEST_FPID_OP(fcvt.l.s, x16, f22, rne, 0, 0, x3, 0*FLEN/8, x4, x5, x11,FLREG)
 
 inst_26:// rs1==f1, rd==x10,
 /* opcode: fcvt.l.s ; op1:f1; dest:x10; op1val:0x0; valaddr_reg:x3;
-val_offset:1*FLEN/8; rmval:rne; correctval:0; testreg:x11;
+val_offset:1*FLEN/8; rmval:rne; correctval:??; testreg:x11;
 fcsr_val:0*/
 TEST_FPID_OP(fcvt.l.s, x10, f1, rne, 0, 0, x3, 1*FLEN/8, x4, x5, x11,FLREG)
 
 inst_27:// rs1==f21, rd==x11,
 /* opcode: fcvt.l.s ; op1:f21; dest:x11; op1val:0x0; valaddr_reg:x3;
-val_offset:2*FLEN/8; rmval:rne; correctval:0; testreg:x2;
+val_offset:2*FLEN/8; rmval:rne; correctval:??; testreg:x2;
 fcsr_val:0*/
 TEST_FPID_OP(fcvt.l.s, x11, f21, rne, 0, 0, x3, 2*FLEN/8, x4, x5, x2,FLREG)
 RVTEST_SIGBASE(x1,signature_x1_0)
 
 inst_28:// rs1==f18, rd==x31,
 /* opcode: fcvt.l.s ; op1:f18; dest:x31; op1val:0x0; valaddr_reg:x3;
-val_offset:3*FLEN/8; rmval:rne; correctval:0; testreg:x2;
+val_offset:3*FLEN/8; rmval:rne; correctval:??; testreg:x2;
 fcsr_val:0*/
 TEST_FPID_OP(fcvt.l.s, x31, f18, rne, 0, 0, x3, 3*FLEN/8, x4, x1, x2,FLREG)
 
 inst_29:// rs1==f19, rd==x20,
 /* opcode: fcvt.l.s ; op1:f19; dest:x20; op1val:0x0; valaddr_reg:x3;
-val_offset:4*FLEN/8; rmval:rne; correctval:0; testreg:x2;
+val_offset:4*FLEN/8; rmval:rne; correctval:??; testreg:x2;
 fcsr_val:0*/
 TEST_FPID_OP(fcvt.l.s, x20, f19, rne, 0, 0, x3, 4*FLEN/8, x4, x1, x2,FLREG)
 
 inst_30:// rs1==f8, rd==x5,
 /* opcode: fcvt.l.s ; op1:f8; dest:x5; op1val:0x0; valaddr_reg:x3;
-val_offset:5*FLEN/8; rmval:rne; correctval:0; testreg:x2;
+val_offset:5*FLEN/8; rmval:rne; correctval:??; testreg:x2;
 fcsr_val:0*/
 TEST_FPID_OP(fcvt.l.s, x5, f8, rne, 0, 0, x3, 5*FLEN/8, x4, x1, x2,FLREG)
 
 inst_31:// rs1==f28, rd==x12,
 /* opcode: fcvt.l.s ; op1:f28; dest:x12; op1val:0x0; valaddr_reg:x3;
-val_offset:6*FLEN/8; rmval:rne; correctval:0; testreg:x2;
+val_offset:6*FLEN/8; rmval:rne; correctval:??; testreg:x2;
 fcsr_val:0*/
 TEST_FPID_OP(fcvt.l.s, x12, f28, rne, 0, 0, x3, 6*FLEN/8, x4, x1, x2,FLREG)
 
 inst_32:// fs1 == 1 and fe1 == 0xff and fm1 == 0x2aaaaa and  fcsr == 0x0 and rm_val == 7   
 /* opcode: fcvt.l.s ; op1:f31; dest:x31; op1val:0xffaaaaaa; valaddr_reg:x3;
-val_offset:7*FLEN/8; rmval:dyn; correctval:0; testreg:x2;
+val_offset:7*FLEN/8; rmval:dyn; correctval:??; testreg:x2;
 fcsr_val:0*/
 TEST_FPID_OP(fcvt.l.s, x31, f31, dyn, 0, 0, x3, 7*FLEN/8, x4, x1, x2,FLREG)
 #endif
@@ -285,6 +285,9 @@ NAN_BOXED(4289374890,32,FLEN)
 RVTEST_DATA_END
 
 RVMODEL_DATA_BEGIN
+rvtest_sig_begin:
+sig_begin_canary:
+CANARY;
 
 
 signature_x5_0:
@@ -300,8 +303,16 @@ signature_x1_0:
 
 #ifdef rvtest_mtrap_routine
 
+tsig_begin_canary:
+CANARY;
+tsig_begin_canary:
+CANARY;
 mtrap_sigptr:
-    .fill 64*XLEN/32,4,0xdeadbeef
+    .fill 64*(XLEN/32),4,0xdeadbeef
+tsig_end_canary:
+CANARY;
+tsig_end_canary:
+CANARY;
 
 #endif
 
@@ -312,4 +323,7 @@ gpr_save:
 
 #endif
 
+sig_end_canary:
+CANARY;
+rvtest_sig_end:
 RVMODEL_DATA_END

@@ -42,7 +42,7 @@ RVTEST_SIGBASE(x1,signature_x1_1)
 inst_0:
 // rs1 != rd, rs1==x30, rd==x31, 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0x1020408;
-li x30, 0x1020408
+LI(x30,0x1020408)
 brev8 x31, x30
 RVTEST_SIGUPD(x1,x31,0)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x31, 0x00000000)
@@ -50,7 +50,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x2, x31, 0x00000000)
 inst_1:
 // rs1 == rd, rs1==x29, rd==x29, 
 // opcode: brev8 ; op1:x29; dest:x29; op1val:0x0;
-li x29, 0x0
+LI(x29,0x0)
 brev8 x29, x29
 RVTEST_SIGUPD(x1,x29,4)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x29, 0x00000000)
@@ -58,7 +58,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x2, x29, 0x00000000)
 inst_2:
 // rs1==x31, rd==x30, 
 // opcode: brev8 ; op1:x31; dest:x30; op1val:0x80000000;
-li x31, 0x80000000
+LI(x31,0x80000000)
 brev8 x30, x31
 RVTEST_SIGUPD(x1,x30,8)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x30, 0x00000000)
@@ -66,7 +66,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x2, x30, 0x00000000)
 inst_3:
 // rs1==x27, rd==x28, 
 // opcode: brev8 ; op1:x27; dest:x28; op1val:0x40000000;
-li x27, 0x40000000
+LI(x27,0x40000000)
 brev8 x28, x27
 RVTEST_SIGUPD(x1,x28,12)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x28, 0x00000000)
@@ -74,7 +74,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x2, x28, 0x00000000)
 inst_4:
 // rs1==x28, rd==x27, 
 // opcode: brev8 ; op1:x28; dest:x27; op1val:0xa0000000;
-li x28, 0xa0000000
+LI(x28,0xa0000000)
 brev8 x27, x28
 RVTEST_SIGUPD(x1,x27,16)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x27, 0x00000000)
@@ -82,7 +82,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x2, x27, 0x00000000)
 inst_5:
 // rs1==x25, rd==x26, 
 // opcode: brev8 ; op1:x25; dest:x26; op1val:0x90000000;
-li x25, 0x90000000
+LI(x25,0x90000000)
 brev8 x26, x25
 RVTEST_SIGUPD(x1,x26,20)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x26, 0x00000000)
@@ -90,7 +90,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x2, x26, 0x00000000)
 inst_6:
 // rs1==x26, rd==x25, 
 // opcode: brev8 ; op1:x26; dest:x25; op1val:0xc8000000;
-li x26, 0xc8000000
+LI(x26,0xc8000000)
 brev8 x25, x26
 RVTEST_SIGUPD(x1,x25,24)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x25, 0x00000000)
@@ -98,7 +98,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x2, x25, 0x00000000)
 inst_7:
 // rs1==x23, rd==x24, 
 // opcode: brev8 ; op1:x23; dest:x24; op1val:0x2c000000;
-li x23, 0x2c000000
+LI(x23,0x2c000000)
 brev8 x24, x23
 RVTEST_SIGUPD(x1,x24,28)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x24, 0x00000000)
@@ -106,7 +106,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x2, x24, 0x00000000)
 inst_8:
 // rs1==x24, rd==x23, 
 // opcode: brev8 ; op1:x24; dest:x23; op1val:0xae000000;
-li x24, 0xae000000
+LI(x24,0xae000000)
 brev8 x23, x24
 RVTEST_SIGUPD(x1,x23,32)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x23, 0x00000000)
@@ -114,7 +114,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x2, x23, 0x00000000)
 inst_9:
 // rs1==x21, rd==x22, 
 // opcode: brev8 ; op1:x21; dest:x22; op1val:0x43000000;
-li x21, 0x43000000
+LI(x21,0x43000000)
 brev8 x22, x21
 RVTEST_SIGUPD(x1,x22,36)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x22, 0x00000000)
@@ -122,7 +122,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x2, x22, 0x00000000)
 inst_10:
 // rs1==x22, rd==x21, 
 // opcode: brev8 ; op1:x22; dest:x21; op1val:0xf1800000;
-li x22, 0xf1800000
+LI(x22,0xf1800000)
 brev8 x21, x22
 RVTEST_SIGUPD(x1,x21,40)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x21, 0x00000000)
@@ -130,7 +130,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x2, x21, 0x00000000)
 inst_11:
 // rs1==x19, rd==x20, 
 // opcode: brev8 ; op1:x19; dest:x20; op1val:0xaec00000;
-li x19, 0xaec00000
+LI(x19,0xaec00000)
 brev8 x20, x19
 RVTEST_SIGUPD(x1,x20,44)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x20, 0x00000000)
@@ -138,7 +138,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x2, x20, 0x00000000)
 inst_12:
 // rs1==x20, rd==x19, 
 // opcode: brev8 ; op1:x20; dest:x19; op1val:0x99200000;
-li x20, 0x99200000
+LI(x20,0x99200000)
 brev8 x19, x20
 RVTEST_SIGUPD(x1,x19,48)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x19, 0x00000000)
@@ -146,7 +146,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x2, x19, 0x00000000)
 inst_13:
 // rs1==x17, rd==x18, 
 // opcode: brev8 ; op1:x17; dest:x18; op1val:0xb0700000;
-li x17, 0xb0700000
+LI(x17,0xb0700000)
 brev8 x18, x17
 RVTEST_SIGUPD(x1,x18,52)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x18, 0x00000000)
@@ -154,7 +154,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x2, x18, 0x00000000)
 inst_14:
 // rs1==x18, rd==x17, 
 // opcode: brev8 ; op1:x18; dest:x17; op1val:0x35880000;
-li x18, 0x35880000
+LI(x18,0x35880000)
 brev8 x17, x18
 RVTEST_SIGUPD(x1,x17,56)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x17, 0x00000000)
@@ -162,7 +162,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x2, x17, 0x00000000)
 inst_15:
 // rs1==x15, rd==x16, 
 // opcode: brev8 ; op1:x15; dest:x16; op1val:0x5acc0000;
-li x15, 0x5acc0000
+LI(x15,0x5acc0000)
 brev8 x16, x15
 RVTEST_SIGUPD(x1,x16,60)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x16, 0x00000000)
@@ -170,7 +170,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x2, x16, 0x00000000)
 inst_16:
 // rs1==x16, rd==x15, 
 // opcode: brev8 ; op1:x16; dest:x15; op1val:0x5e3a0000;
-li x16, 0x5e3a0000
+LI(x16,0x5e3a0000)
 brev8 x15, x16
 RVTEST_SIGUPD(x1,x15,64)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x15, 0x00000000)
@@ -178,7 +178,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x2, x15, 0x00000000)
 inst_17:
 // rs1==x13, rd==x14, 
 // opcode: brev8 ; op1:x13; dest:x14; op1val:0xae1d0000;
-li x13, 0xae1d0000
+LI(x13,0xae1d0000)
 brev8 x14, x13
 RVTEST_SIGUPD(x1,x14,68)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x14, 0x00000000)
@@ -186,7 +186,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x2, x14, 0x00000000)
 inst_18:
 // rs1==x14, rd==x13, 
 // opcode: brev8 ; op1:x14; dest:x13; op1val:0x6eb38000;
-li x14, 0x6eb38000
+LI(x14,0x6eb38000)
 brev8 x13, x14
 RVTEST_SIGUPD(x1,x13,72)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x13, 0x00000000)
@@ -194,7 +194,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x2, x13, 0x00000000)
 inst_19:
 // rs1==x11, rd==x12, 
 // opcode: brev8 ; op1:x11; dest:x12; op1val:0xbe164000;
-li x11, 0xbe164000
+LI(x11,0xbe164000)
 brev8 x12, x11
 RVTEST_SIGUPD(x1,x12,76)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x12, 0x00000000)
@@ -202,7 +202,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x2, x12, 0x00000000)
 inst_20:
 // rs1==x12, rd==x11, 
 // opcode: brev8 ; op1:x12; dest:x11; op1val:0xcdf1a000;
-li x12, 0xcdf1a000
+LI(x12,0xcdf1a000)
 brev8 x11, x12
 RVTEST_SIGUPD(x1,x11,80)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x11, 0x00000000)
@@ -210,7 +210,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x2, x11, 0x00000000)
 inst_21:
 // rs1==x9, rd==x10, 
 // opcode: brev8 ; op1:x9; dest:x10; op1val:0x804dd000;
-li x9, 0x804dd000
+LI(x9,0x804dd000)
 brev8 x10, x9
 RVTEST_SIGUPD(x1,x10,84)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x10, 0x00000000)
@@ -218,7 +218,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x2, x10, 0x00000000)
 inst_22:
 // rs1==x10, rd==x9, 
 // opcode: brev8 ; op1:x10; dest:x9; op1val:0x3d4f1800;
-li x10, 0x3d4f1800
+LI(x10,0x3d4f1800)
 brev8 x9, x10
 RVTEST_SIGUPD(x1,x9,88)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x9, 0x00000000)
@@ -226,7 +226,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x2, x9, 0x00000000)
 inst_23:
 // rs1==x7, rd==x8, 
 // opcode: brev8 ; op1:x7; dest:x8; op1val:0xbfa44c00;
-li x7, 0xbfa44c00
+LI(x7,0xbfa44c00)
 brev8 x8, x7
 RVTEST_SIGUPD(x1,x8,92)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x8, 0x00000000)
@@ -234,7 +234,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x2, x8, 0x00000000)
 inst_24:
 // rs1==x8, rd==x7, 
 // opcode: brev8 ; op1:x8; dest:x7; op1val:0x4544fa00;
-li x8, 0x4544fa00
+LI(x8,0x4544fa00)
 brev8 x7, x8
 RVTEST_SIGUPD(x1,x7,96)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x7, 0x00000000)
@@ -242,7 +242,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x2, x7, 0x00000000)
 inst_25:
 // rs1==x5, rd==x6, 
 // opcode: brev8 ; op1:x5; dest:x6; op1val:0xc7bff300;
-li x5, 0xc7bff300
+LI(x5,0xc7bff300)
 brev8 x6, x5
 RVTEST_SIGUPD(x1,x6,100)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x6, 0x00000000)
@@ -250,7 +250,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x2, x6, 0x00000000)
 inst_26:
 // rs1==x6, rd==x5, 
 // opcode: brev8 ; op1:x6; dest:x5; op1val:0xd99d0080;
-li x6, 0xd99d0080
+LI(x6,0xd99d0080)
 brev8 x5, x6
 RVTEST_SIGUPD(x1,x5,104)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x5, 0x00000000)
@@ -258,7 +258,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x5, 0x00000000)
 inst_27:
 // rs1==x3, rd==x4, 
 // opcode: brev8 ; op1:x3; dest:x4; op1val:0x205d39c0;
-li x3, 0x205d39c0
+LI(x3,0x205d39c0)
 brev8 x4, x3
 RVTEST_SIGUPD(x1,x4,108)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x4, 0x00000000)
@@ -267,7 +267,7 @@ RVTEST_SIGBASE(x5,signature_x5_0)
 inst_28:
 // rs1==x4, rd==x3, 
 // opcode: brev8 ; op1:x4; dest:x3; op1val:0x31711ba0;
-li x4, 0x31711ba0
+LI(x4,0x31711ba0)
 brev8 x3, x4
 RVTEST_SIGUPD(x5,x3,0)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x3, 0x00000000)
@@ -275,7 +275,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x3, 0x00000000)
 inst_29:
 // rs1==x1, rd==x2, 
 // opcode: brev8 ; op1:x1; dest:x2; op1val:0xa99e07b0;
-li x1, 0xa99e07b0
+LI(x1,0xa99e07b0)
 brev8 x2, x1
 RVTEST_SIGUPD(x5,x2,4)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x2, 0x00000000)
@@ -283,7 +283,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x2, 0x00000000)
 inst_30:
 // rs1==x2, rd==x1, 
 // opcode: brev8 ; op1:x2; dest:x1; op1val:0x3ba8ea68;
-li x2, 0x3ba8ea68
+LI(x2,0x3ba8ea68)
 brev8 x1, x2
 RVTEST_SIGUPD(x5,x1,8)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x1, 0x00000000)
@@ -291,7 +291,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x1, 0x00000000)
 inst_31:
 // rs1==x0, 
 // opcode: brev8 ; op1:x0; dest:x31; op1val:0x0;
-li x0, 0x0
+LI(x0,0x0)
 brev8 x31, x0
 RVTEST_SIGUPD(x5,x31,12)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -299,7 +299,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_32:
 // rd==x0, 
 // opcode: brev8 ; op1:x31; dest:x0; op1val:0x89b9b4d6;
-li x31, 0x89b9b4d6
+LI(x31,0x89b9b4d6)
 brev8 x0, x31
 RVTEST_SIGUPD(x5,x0,16)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x0, 0x00000000)
@@ -307,7 +307,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x0, 0x00000000)
 inst_33:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0x797d76df;
-li x30, 0x797d76df
+LI(x30,0x797d76df)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,20)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -315,7 +315,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_34:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0x3b1d74c;
-li x30, 0x3b1d74c
+LI(x30,0x3b1d74c)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,24)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -323,7 +323,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_35:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0xff7d5ec1;
-li x30, 0xff7d5ec1
+LI(x30,0xff7d5ec1)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,28)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -331,7 +331,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_36:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0x9bc03e23;
-li x30, 0x9bc03e23
+LI(x30,0x9bc03e23)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,32)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -339,7 +339,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_37:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0xaf2529c7;
-li x30, 0xaf2529c7
+LI(x30,0xaf2529c7)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,36)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -347,7 +347,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_38:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0xd670a82f;
-li x30, 0xd670a82f
+LI(x30,0xd670a82f)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,40)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -355,7 +355,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_39:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0x2054fa9f;
-li x30, 0x2054fa9f
+LI(x30,0x2054fa9f)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,44)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -363,7 +363,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_40:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0x6e7c0c3f;
-li x30, 0x6e7c0c3f
+LI(x30,0x6e7c0c3f)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,48)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -371,7 +371,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_41:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0x7ac5f7f;
-li x30, 0x7ac5f7f
+LI(x30,0x7ac5f7f)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,52)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -379,7 +379,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_42:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0x4b6ea0ff;
-li x30, 0x4b6ea0ff
+LI(x30,0x4b6ea0ff)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,56)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -387,7 +387,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_43:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0xbea425ff;
-li x30, 0xbea425ff
+LI(x30,0xbea425ff)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,60)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -395,7 +395,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_44:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0x36c2a3ff;
-li x30, 0x36c2a3ff
+LI(x30,0x36c2a3ff)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,64)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -403,7 +403,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_45:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0xd885b7ff;
-li x30, 0xd885b7ff
+LI(x30,0xd885b7ff)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,68)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -411,7 +411,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_46:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0x88042fff;
-li x30, 0x88042fff
+LI(x30,0x88042fff)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,72)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -419,7 +419,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_47:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0x12219fff;
-li x30, 0x12219fff
+LI(x30,0x12219fff)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,76)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -427,7 +427,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_48:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0x2155bfff;
-li x30, 0x2155bfff
+LI(x30,0x2155bfff)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,80)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -435,7 +435,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_49:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0x2ff77fff;
-li x30, 0x2ff77fff
+LI(x30,0x2ff77fff)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,84)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -443,7 +443,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_50:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0xbbe8ffff;
-li x30, 0xbbe8ffff
+LI(x30,0xbbe8ffff)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,88)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -451,7 +451,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_51:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0xa415ffff;
-li x30, 0xa415ffff
+LI(x30,0xa415ffff)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,92)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -459,7 +459,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_52:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0x39a3ffff;
-li x30, 0x39a3ffff
+LI(x30,0x39a3ffff)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,96)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -467,7 +467,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_53:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0xde87ffff;
-li x30, 0xde87ffff
+LI(x30,0xde87ffff)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,100)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -475,7 +475,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_54:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0x25afffff;
-li x30, 0x25afffff
+LI(x30,0x25afffff)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,104)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -483,7 +483,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_55:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0xaa9fffff;
-li x30, 0xaa9fffff
+LI(x30,0xaa9fffff)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,108)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -491,7 +491,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_56:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0x3b3fffff;
-li x30, 0x3b3fffff
+LI(x30,0x3b3fffff)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,112)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -499,7 +499,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_57:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0xa67fffff;
-li x30, 0xa67fffff
+LI(x30,0xa67fffff)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,116)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -507,7 +507,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_58:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0x2effffff;
-li x30, 0x2effffff
+LI(x30,0x2effffff)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,120)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -515,7 +515,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_59:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0xe1ffffff;
-li x30, 0xe1ffffff
+LI(x30,0xe1ffffff)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,124)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -523,7 +523,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_60:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0xdbffffff;
-li x30, 0xdbffffff
+LI(x30,0xdbffffff)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,128)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -531,7 +531,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_61:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0xc7ffffff;
-li x30, 0xc7ffffff
+LI(x30,0xc7ffffff)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,132)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -539,7 +539,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_62:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0xafffffff;
-li x30, 0xafffffff
+LI(x30,0xafffffff)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,136)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -547,7 +547,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_63:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0xdfffffff;
-li x30, 0xdfffffff
+LI(x30,0xdfffffff)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,140)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -555,7 +555,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_64:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0xbfffffff;
-li x30, 0xbfffffff
+LI(x30,0xbfffffff)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,144)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -563,7 +563,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_65:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0x7fffffff;
-li x30, 0x7fffffff
+LI(x30,0x7fffffff)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,148)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -571,7 +571,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_66:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0xffffffff;
-li x30, 0xffffffff
+LI(x30,0xffffffff)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,152)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -579,7 +579,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_67:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0xfb710735;
-li x30, 0xfb710735
+LI(x30,0xfb710735)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,156)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -587,7 +587,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_68:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0x586e86cc;
-li x30, 0x586e86cc
+LI(x30,0x586e86cc)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,160)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -595,7 +595,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_69:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0x2ab8ab68;
-li x30, 0x2ab8ab68
+LI(x30,0x2ab8ab68)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,164)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -603,7 +603,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_70:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0x126b7f63;
-li x30, 0x126b7f63
+LI(x30,0x126b7f63)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,168)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -611,7 +611,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_71:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0x9852f28;
-li x30, 0x9852f28
+LI(x30,0x9852f28)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,172)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -619,7 +619,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_72:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0x7eff9c1;
-li x30, 0x7eff9c1
+LI(x30,0x7eff9c1)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,176)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -627,7 +627,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_73:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0x344dd40;
-li x30, 0x344dd40
+LI(x30,0x344dd40)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,180)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -635,7 +635,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_74:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0x1e7d160;
-li x30, 0x1e7d160
+LI(x30,0x1e7d160)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,184)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -643,7 +643,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_75:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0xb62f26;
-li x30, 0xb62f26
+LI(x30,0xb62f26)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,188)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -651,7 +651,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_76:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0x4caf9d;
-li x30, 0x4caf9d
+LI(x30,0x4caf9d)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,192)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -659,7 +659,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_77:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0x2bb482;
-li x30, 0x2bb482
+LI(x30,0x2bb482)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,196)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -667,7 +667,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_78:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0x13edc7;
-li x30, 0x13edc7
+LI(x30,0x13edc7)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,200)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -675,7 +675,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_79:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0x87994;
-li x30, 0x87994
+LI(x30,0x87994)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,204)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -683,7 +683,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_80:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0x51426;
-li x30, 0x51426
+LI(x30,0x51426)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,208)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -691,7 +691,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_81:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0x28854;
-li x30, 0x28854
+LI(x30,0x28854)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,212)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -699,7 +699,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_82:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0x167ee;
-li x30, 0x167ee
+LI(x30,0x167ee)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,216)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -707,7 +707,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_83:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0xfe7a;
-li x30, 0xfe7a
+LI(x30,0xfe7a)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,220)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -715,7 +715,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_84:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0x5e87;
-li x30, 0x5e87
+LI(x30,0x5e87)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,224)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -723,7 +723,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_85:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0x31c3;
-li x30, 0x31c3
+LI(x30,0x31c3)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,228)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -731,7 +731,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_86:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0x192a;
-li x30, 0x192a
+LI(x30,0x192a)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,232)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -739,7 +739,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_87:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0xe79;
-li x30, 0xe79
+LI(x30,0xe79)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,236)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -747,7 +747,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_88:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0x77a;
-li x30, 0x77a
+LI(x30,0x77a)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,240)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -755,7 +755,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_89:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0x233;
-li x30, 0x233
+LI(x30,0x233)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,244)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -763,7 +763,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_90:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0x151;
-li x30, 0x151
+LI(x30,0x151)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,248)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -771,7 +771,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_91:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0xbe;
-li x30, 0xbe
+LI(x30,0xbe)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,252)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -779,7 +779,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_92:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0x77;
-li x30, 0x77
+LI(x30,0x77)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,256)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -787,7 +787,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_93:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0x22;
-li x30, 0x22
+LI(x30,0x22)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,260)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -795,7 +795,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_94:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0x16;
-li x30, 0x16
+LI(x30,0x16)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,264)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -803,7 +803,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_95:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0xe;
-li x30, 0xe
+LI(x30,0xe)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,268)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -811,7 +811,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_96:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0x4;
-li x30, 0x4
+LI(x30,0x4)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,272)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -819,7 +819,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_97:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0x2;
-li x30, 0x2
+LI(x30,0x2)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,276)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -827,7 +827,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_98:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0x1;
-li x30, 0x1
+LI(x30,0x1)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,280)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -835,7 +835,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_99:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0x61b0ee0a;
-li x30, 0x61b0ee0a
+LI(x30,0x61b0ee0a)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,284)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -843,7 +843,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_100:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0x9ae6a229;
-li x30, 0x9ae6a229
+LI(x30,0x9ae6a229)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,288)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -851,7 +851,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_101:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0xda6ab32a;
-li x30, 0xda6ab32a
+LI(x30,0xda6ab32a)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,292)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -859,7 +859,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_102:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0xe38123e6;
-li x30, 0xe38123e6
+LI(x30,0xe38123e6)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,296)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -867,7 +867,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_103:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0xf4338384;
-li x30, 0xf4338384
+LI(x30,0xf4338384)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,300)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -875,7 +875,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_104:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0xfb9f15c5;
-li x30, 0xfb9f15c5
+LI(x30,0xfb9f15c5)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,304)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -883,7 +883,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_105:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0xfd680c1d;
-li x30, 0xfd680c1d
+LI(x30,0xfd680c1d)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,308)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -891,7 +891,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_106:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0xfe74e45f;
-li x30, 0xfe74e45f
+LI(x30,0xfe74e45f)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,312)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -899,7 +899,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_107:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0xff1e5bf0;
-li x30, 0xff1e5bf0
+LI(x30,0xff1e5bf0)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,316)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -907,7 +907,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_108:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0xff9c25e7;
-li x30, 0xff9c25e7
+LI(x30,0xff9c25e7)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,320)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -915,7 +915,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_109:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0xffcbcf13;
-li x30, 0xffcbcf13
+LI(x30,0xffcbcf13)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,324)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -923,7 +923,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_110:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0xffe06f87;
-li x30, 0xffe06f87
+LI(x30,0xffe06f87)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,328)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -931,7 +931,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_111:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0xfff7c831;
-li x30, 0xfff7c831
+LI(x30,0xfff7c831)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,332)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -939,7 +939,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_112:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0xfffa9778;
-li x30, 0xfffa9778
+LI(x30,0xfffa9778)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,336)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -947,7 +947,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_113:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0xfffceb44;
-li x30, 0xfffceb44
+LI(x30,0xfffceb44)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,340)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -955,7 +955,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_114:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0xfffe3fba;
-li x30, 0xfffe3fba
+LI(x30,0xfffe3fba)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,344)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -963,7 +963,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_115:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0xffff1658;
-li x30, 0xffff1658
+LI(x30,0xffff1658)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,348)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -971,7 +971,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_116:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0xffffac3a;
-li x30, 0xffffac3a
+LI(x30,0xffffac3a)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,352)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -979,7 +979,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_117:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0xffffcdf0;
-li x30, 0xffffcdf0
+LI(x30,0xffffcdf0)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,356)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -987,7 +987,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_118:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0xffffe684;
-li x30, 0xffffe684
+LI(x30,0xffffe684)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,360)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -995,7 +995,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_119:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0xfffff1c6;
-li x30, 0xfffff1c6
+LI(x30,0xfffff1c6)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,364)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -1003,7 +1003,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_120:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0xfffff806;
-li x30, 0xfffff806
+LI(x30,0xfffff806)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,368)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -1011,7 +1011,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_121:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0xfffffc78;
-li x30, 0xfffffc78
+LI(x30,0xfffffc78)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,372)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -1019,7 +1019,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_122:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0xfffffe3b;
-li x30, 0xfffffe3b
+LI(x30,0xfffffe3b)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,376)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -1027,7 +1027,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_123:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0xffffff5a;
-li x30, 0xffffff5a
+LI(x30,0xffffff5a)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,380)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -1035,7 +1035,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_124:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0xffffff88;
-li x30, 0xffffff88
+LI(x30,0xffffff88)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,384)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -1043,7 +1043,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_125:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0xffffffc1;
-li x30, 0xffffffc1
+LI(x30,0xffffffc1)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,388)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -1051,7 +1051,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_126:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0xffffffe8;
-li x30, 0xffffffe8
+LI(x30,0xffffffe8)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,392)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -1059,7 +1059,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_127:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0xfffffff1;
-li x30, 0xfffffff1
+LI(x30,0xfffffff1)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,396)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -1067,7 +1067,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_128:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0xfffffff9;
-li x30, 0xfffffff9
+LI(x30,0xfffffff9)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,400)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -1075,7 +1075,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_129:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0xfffffffd;
-li x30, 0xfffffffd
+LI(x30,0xfffffffd)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,404)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -1083,7 +1083,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_130:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0xfffffffe;
-li x30, 0xfffffffe
+LI(x30,0xfffffffe)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,408)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -1091,7 +1091,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_131:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0x9999999a;
-li x30, 0x9999999a
+LI(x30,0x9999999a)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,412)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -1099,7 +1099,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_132:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0x66666667;
-li x30, 0x66666667
+LI(x30,0x66666667)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,416)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -1107,7 +1107,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_133:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0xcccccccd;
-li x30, 0xcccccccd
+LI(x30,0xcccccccd)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,420)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -1115,7 +1115,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_134:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0x33333334;
-li x30, 0x33333334
+LI(x30,0x33333334)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,424)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -1123,7 +1123,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_135:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0xaaaaaaab;
-li x30, 0xaaaaaaab
+LI(x30,0xaaaaaaab)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,428)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -1131,7 +1131,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_136:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0x55555556;
-li x30, 0x55555556
+LI(x30,0x55555556)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,432)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -1139,7 +1139,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_137:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0x99999998;
-li x30, 0x99999998
+LI(x30,0x99999998)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,436)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -1147,7 +1147,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_138:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0x66666665;
-li x30, 0x66666665
+LI(x30,0x66666665)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,440)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -1155,7 +1155,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_139:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0xcccccccb;
-li x30, 0xcccccccb
+LI(x30,0xcccccccb)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,444)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -1163,7 +1163,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_140:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0x33333332;
-li x30, 0x33333332
+LI(x30,0x33333332)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,448)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -1171,7 +1171,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_141:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0xaaaaaaa9;
-li x30, 0xaaaaaaa9
+LI(x30,0xaaaaaaa9)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,452)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -1179,7 +1179,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_142:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0x55555554;
-li x30, 0x55555554
+LI(x30,0x55555554)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,456)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -1187,7 +1187,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_143:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0x99999999;
-li x30, 0x99999999
+LI(x30,0x99999999)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,460)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -1195,7 +1195,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_144:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0x66666666;
-li x30, 0x66666666
+LI(x30,0x66666666)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,464)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -1203,7 +1203,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_145:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0xcccccccc;
-li x30, 0xcccccccc
+LI(x30,0xcccccccc)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,468)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -1211,7 +1211,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_146:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0x33333333;
-li x30, 0x33333333
+LI(x30,0x33333333)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,472)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -1219,7 +1219,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_147:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0xaaaaaaaa;
-li x30, 0xaaaaaaaa
+LI(x30,0xaaaaaaaa)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,476)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -1227,7 +1227,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_148:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0x2040801;
-li x30, 0x2040801
+LI(x30,0x2040801)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,480)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -1235,7 +1235,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_149:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0x4080102;
-li x30, 0x4080102
+LI(x30,0x4080102)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,484)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -1243,7 +1243,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_150:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0x8010204;
-li x30, 0x8010204
+LI(x30,0x8010204)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,488)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -1251,7 +1251,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_151:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0x55555555;
-li x30, 0x55555555
+LI(x30,0x55555555)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,492)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -1259,7 +1259,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_152:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0xa14078b4;
-li x30, 0xa14078b4
+LI(x30,0xa14078b4)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,496)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -1267,7 +1267,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_153:
 // 
 // opcode: brev8 ; op1:x30; dest:x31; op1val:0x89b9b4d6;
-li x30, 0x89b9b4d6
+LI(x30,0x89b9b4d6)
 brev8 x31, x30
 RVTEST_SIGUPD(x5,x31,500)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -1287,6 +1287,9 @@ rvtest_data:
 RVTEST_DATA_END
 
 RVMODEL_DATA_BEGIN
+rvtest_sig_begin:
+sig_begin_canary:
+CANARY;
 
 
 signature_x1_0:
@@ -1302,8 +1305,12 @@ signature_x5_0:
 
 #ifdef rvtest_mtrap_routine
 
+tsig_begin_canary:
+CANARY;
 mtrap_sigptr:
     .fill 64*(XLEN/32),4,0xdeadbeef
+tsig_end_canary:
+CANARY;
 
 #endif
 
@@ -1314,4 +1321,7 @@ gpr_save:
 
 #endif
 
+sig_end_canary:
+CANARY;
+rvtest_sig_end:
 RVMODEL_DATA_END

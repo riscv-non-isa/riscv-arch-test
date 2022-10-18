@@ -3417,11 +3417,19 @@ RVMODEL_HALT
 
 RVTEST_DATA_BEGIN
 .align 4
+
 rvtest_data:
+.word 0xbabecafe
+.word 0xbabecafe
+.word 0xbabecafe
 .word 0xbabecafe
 RVTEST_DATA_END
 
+
 RVMODEL_DATA_BEGIN
+rvtest_sig_begin:
+sig_begin_canary:
+CANARY;
 
 
 signature_x9_0:
@@ -3449,8 +3457,12 @@ signature_x1_2:
 
 #ifdef rvtest_mtrap_routine
 
+tsig_begin_canary:
+CANARY;
 mtrap_sigptr:
     .fill 64*(XLEN/32),4,0xdeadbeef
+tsig_end_canary:
+CANARY;
 
 #endif
 
@@ -3461,4 +3473,7 @@ gpr_save:
 
 #endif
 
+sig_end_canary:
+CANARY;
+rvtest_sig_end:
 RVMODEL_DATA_END

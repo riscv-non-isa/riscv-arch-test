@@ -20,8 +20,8 @@ RVTEST_SIGBASE( x31,signature_x31_1)
 inst_0:
 // Forwarded xor into sha256sum0 & the result back into xor
 // opcode: sha256sum0; op1:x3; dest1:x1; op1val:0x924770d3; op2val:0x6dcbac50
-li x1, 0x924770d3;
-li x2, 0x6dcbac50;
+LI(x1,0x924770d3);
+LI(x2,0x6dcbac50);
 xor x3, x1, x2;
 sha256sum0 x1, x3;
 xor x4, x1, x2;
@@ -31,8 +31,8 @@ RVTEST_SIGUPD(x31,x4,8);
 
 // Forwarded not into sha256sum0 & the result back into not
 // opcode: sha256sum0; op1:x3; dest1:x1; op1val:0x924770d3; op2val:0x6dcbac50
-li x1, 0x924770d3;
-li x2, 0x6dcbac50;
+LI(x1,0x924770d3);
+LI(x2,0x6dcbac50);
 not x3, x2;
 sha256sum0 x1, x3;
 not x4, x1;
@@ -42,8 +42,8 @@ RVTEST_SIGUPD(x31,x4,20);
 
 // Forwarded add into sha256sum0 & the result back into add
 // opcode: sha256sum0; op1:x3; dest1:x1; op1val:0x924770d3; op2val:0x6dcbac50
-li x1, 0x924770d3;
-li x2, 0x6dcbac50;
+LI(x1,0x924770d3);
+LI(x2,0x6dcbac50);
 add x3, x1, x2;
 sha256sum0 x1, x3;
 add x4, x1, x2;
@@ -54,8 +54,8 @@ RVTEST_SIGUPD(x31,x4,32);
 inst_1:
 // Forwarded xor into sha256sum0 & the result back into xor
 // opcode: sha256sum0; op1:x4; dest1:x2; op1val:0xd2d6b877; op2val:0x2904cdef
-li x2, 0xd2d6b877;
-li x3, 0x2904cdef;
+LI(x2,0xd2d6b877);
+LI(x3,0x2904cdef);
 xor x4, x2, x3;
 sha256sum0 x2, x4;
 xor x5, x2, x3;
@@ -65,8 +65,8 @@ RVTEST_SIGUPD(x31,x5,44);
 
 // Forwarded not into sha256sum0 & the result back into not
 // opcode: sha256sum0; op1:x4; dest1:x2; op1val:0xd2d6b877; op2val:0x2904cdef
-li x2, 0xd2d6b877;
-li x3, 0x2904cdef;
+LI(x2,0xd2d6b877);
+LI(x3,0x2904cdef);
 not x4, x3;
 sha256sum0 x2, x4;
 not x5, x2;
@@ -76,8 +76,8 @@ RVTEST_SIGUPD(x31,x5,56);
 
 // Forwarded add into sha256sum0 & the result back into add
 // opcode: sha256sum0; op1:x4; dest1:x2; op1val:0xd2d6b877; op2val:0x2904cdef
-li x2, 0xd2d6b877;
-li x3, 0x2904cdef;
+LI(x2,0xd2d6b877);
+LI(x3,0x2904cdef);
 add x4, x2, x3;
 sha256sum0 x2, x4;
 add x5, x2, x3;
@@ -88,8 +88,8 @@ RVTEST_SIGUPD(x31,x5,68);
 inst_2:
 // Forwarded xor into sha256sum0 & the result back into xor
 // opcode: sha256sum0; op1:x5; dest1:x3; op1val:0x0b680c1c; op2val:0xdc338383
-li x3, 0x0b680c1c;
-li x4, 0xdc338383;
+LI(x3,0x0b680c1c);
+LI(x4,0xdc338383);
 xor x5, x3, x4;
 sha256sum0 x3, x5;
 xor x6, x3, x4;
@@ -99,8 +99,8 @@ RVTEST_SIGUPD(x31,x6,80);
 
 // Forwarded not into sha256sum0 & the result back into not
 // opcode: sha256sum0; op1:x5; dest1:x3; op1val:0x0b680c1c; op2val:0xdc338383
-li x3, 0x0b680c1c;
-li x4, 0xdc338383;
+LI(x3,0x0b680c1c);
+LI(x4,0xdc338383);
 not x5, x4;
 sha256sum0 x3, x5;
 not x6, x3;
@@ -110,8 +110,8 @@ RVTEST_SIGUPD(x31,x6,92);
 
 // Forwarded add into sha256sum0 & the result back into add
 // opcode: sha256sum0; op1:x5; dest1:x3; op1val:0x0b680c1c; op2val:0xdc338383
-li x3, 0x0b680c1c;
-li x4, 0xdc338383;
+LI(x3,0x0b680c1c);
+LI(x4,0xdc338383);
 add x5, x3, x4;
 sha256sum0 x3, x5;
 add x6, x3, x4;
@@ -122,8 +122,8 @@ RVTEST_SIGUPD(x31,x6,104);
 inst_3:
 // Forwarded xor into sha256sum0 & the result back into xor
 // opcode: sha256sum0; op1:x6; dest1:x4; op1val:0x74f2e2ed; op2val:0xaf949e5e
-li x4, 0x74f2e2ed;
-li x5, 0xaf949e5e;
+LI(x4,0x74f2e2ed);
+LI(x5,0xaf949e5e);
 xor x6, x4, x5;
 sha256sum0 x4, x6;
 xor x7, x4, x5;
@@ -133,8 +133,8 @@ RVTEST_SIGUPD(x31,x7,116);
 
 // Forwarded not into sha256sum0 & the result back into not
 // opcode: sha256sum0; op1:x6; dest1:x4; op1val:0x74f2e2ed; op2val:0xaf949e5e
-li x4, 0x74f2e2ed;
-li x5, 0xaf949e5e;
+LI(x4,0x74f2e2ed);
+LI(x5,0xaf949e5e);
 not x6, x5;
 sha256sum0 x4, x6;
 not x7, x4;
@@ -144,8 +144,8 @@ RVTEST_SIGUPD(x31,x7,128);
 
 // Forwarded add into sha256sum0 & the result back into add
 // opcode: sha256sum0; op1:x6; dest1:x4; op1val:0x74f2e2ed; op2val:0xaf949e5e
-li x4, 0x74f2e2ed;
-li x5, 0xaf949e5e;
+LI(x4,0x74f2e2ed);
+LI(x5,0xaf949e5e);
 add x6, x4, x5;
 sha256sum0 x4, x6;
 add x7, x4, x5;
@@ -156,8 +156,8 @@ RVTEST_SIGUPD(x31,x7,140);
 inst_4:
 // Forwarded xor into sha256sum0 & the result back into xor
 // opcode: sha256sum0; op1:x7; dest1:x5; op1val:0xf829d29f; op2val:0x9d02fc90
-li x5, 0xf829d29f;
-li x6, 0x9d02fc90;
+LI(x5,0xf829d29f);
+LI(x6,0x9d02fc90);
 xor x7, x5, x6;
 sha256sum0 x5, x7;
 xor x8, x5, x6;
@@ -167,8 +167,8 @@ RVTEST_SIGUPD(x31,x8,152);
 
 // Forwarded not into sha256sum0 & the result back into not
 // opcode: sha256sum0; op1:x7; dest1:x5; op1val:0xf829d29f; op2val:0x9d02fc90
-li x5, 0xf829d29f;
-li x6, 0x9d02fc90;
+LI(x5,0xf829d29f);
+LI(x6,0x9d02fc90);
 not x7, x6;
 sha256sum0 x5, x7;
 not x8, x5;
@@ -178,8 +178,8 @@ RVTEST_SIGUPD(x31,x8,164);
 
 // Forwarded add into sha256sum0 & the result back into add
 // opcode: sha256sum0; op1:x7; dest1:x5; op1val:0xf829d29f; op2val:0x9d02fc90
-li x5, 0xf829d29f;
-li x6, 0x9d02fc90;
+LI(x5,0xf829d29f);
+LI(x6,0x9d02fc90);
 add x7, x5, x6;
 sha256sum0 x5, x7;
 add x8, x5, x6;
@@ -190,8 +190,8 @@ RVTEST_SIGUPD(x31,x8,176);
 inst_5:
 // Forwarded xor into sha256sum0 & the result back into xor
 // opcode: sha256sum0; op1:x8; dest1:x6; op1val:0x8c8a18b2; op2val:0x6f9fb997
-li x6, 0x8c8a18b2;
-li x7, 0x6f9fb997;
+LI(x6,0x8c8a18b2);
+LI(x7,0x6f9fb997);
 xor x8, x6, x7;
 sha256sum0 x6, x8;
 xor x9, x6, x7;
@@ -201,8 +201,8 @@ RVTEST_SIGUPD(x31,x9,188);
 
 // Forwarded not into sha256sum0 & the result back into not
 // opcode: sha256sum0; op1:x8; dest1:x6; op1val:0x8c8a18b2; op2val:0x6f9fb997
-li x6, 0x8c8a18b2;
-li x7, 0x6f9fb997;
+LI(x6,0x8c8a18b2);
+LI(x7,0x6f9fb997);
 not x8, x7;
 sha256sum0 x6, x8;
 not x9, x6;
@@ -212,8 +212,8 @@ RVTEST_SIGUPD(x31,x9,200);
 
 // Forwarded add into sha256sum0 & the result back into add
 // opcode: sha256sum0; op1:x8; dest1:x6; op1val:0x8c8a18b2; op2val:0x6f9fb997
-li x6, 0x8c8a18b2;
-li x7, 0x6f9fb997;
+LI(x6,0x8c8a18b2);
+LI(x7,0x6f9fb997);
 add x8, x6, x7;
 sha256sum0 x6, x8;
 add x9, x6, x7;
@@ -224,8 +224,8 @@ RVTEST_SIGUPD(x31,x9,212);
 inst_6:
 // Forwarded xor into sha256sum0 & the result back into xor
 // opcode: sha256sum0; op1:x9; dest1:x7; op1val:0x7f216822; op2val:0xa86b8a6e
-li x7, 0x7f216822;
-li x8, 0xa86b8a6e;
+LI(x7,0x7f216822);
+LI(x8,0xa86b8a6e);
 xor x9, x7, x8;
 sha256sum0 x7, x9;
 xor x10, x7, x8;
@@ -235,8 +235,8 @@ RVTEST_SIGUPD(x31,x10,224);
 
 // Forwarded not into sha256sum0 & the result back into not
 // opcode: sha256sum0; op1:x9; dest1:x7; op1val:0x7f216822; op2val:0xa86b8a6e
-li x7, 0x7f216822;
-li x8, 0xa86b8a6e;
+LI(x7,0x7f216822);
+LI(x8,0xa86b8a6e);
 not x9, x8;
 sha256sum0 x7, x9;
 not x10, x7;
@@ -246,8 +246,8 @@ RVTEST_SIGUPD(x31,x10,236);
 
 // Forwarded add into sha256sum0 & the result back into add
 // opcode: sha256sum0; op1:x9; dest1:x7; op1val:0x7f216822; op2val:0xa86b8a6e
-li x7, 0x7f216822;
-li x8, 0xa86b8a6e;
+LI(x7,0x7f216822);
+LI(x8,0xa86b8a6e);
 add x9, x7, x8;
 sha256sum0 x7, x9;
 add x10, x7, x8;
@@ -258,8 +258,8 @@ RVTEST_SIGUPD(x31,x10,248);
 inst_7:
 // Forwarded xor into sha256sum0 & the result back into xor
 // opcode: sha256sum0; op1:x10; dest1:x8; op1val:0x18bb28e9; op2val:0xceb506f6
-li x8, 0x18bb28e9;
-li x9, 0xceb506f6;
+LI(x8,0x18bb28e9);
+LI(x9,0xceb506f6);
 xor x10, x8, x9;
 sha256sum0 x8, x10;
 xor x11, x8, x9;
@@ -269,8 +269,8 @@ RVTEST_SIGUPD(x31,x11,260);
 
 // Forwarded not into sha256sum0 & the result back into not
 // opcode: sha256sum0; op1:x10; dest1:x8; op1val:0x18bb28e9; op2val:0xceb506f6
-li x8, 0x18bb28e9;
-li x9, 0xceb506f6;
+LI(x8,0x18bb28e9);
+LI(x9,0xceb506f6);
 not x10, x9;
 sha256sum0 x8, x10;
 not x11, x8;
@@ -280,8 +280,8 @@ RVTEST_SIGUPD(x31,x11,272);
 
 // Forwarded add into sha256sum0 & the result back into add
 // opcode: sha256sum0; op1:x10; dest1:x8; op1val:0x18bb28e9; op2val:0xceb506f6
-li x8, 0x18bb28e9;
-li x9, 0xceb506f6;
+LI(x8,0x18bb28e9);
+LI(x9,0xceb506f6);
 add x10, x8, x9;
 sha256sum0 x8, x10;
 add x11, x8, x9;
@@ -292,8 +292,8 @@ RVTEST_SIGUPD(x31,x11,284);
 inst_8:
 // Forwarded xor into sha256sum0 & the result back into xor
 // opcode: sha256sum0; op1:x11; dest1:x9; op1val:0x1e9667c2; op2val:0x74ab0a38
-li x9, 0x1e9667c2;
-li x10, 0x74ab0a38;
+LI(x9,0x1e9667c2);
+LI(x10,0x74ab0a38);
 xor x11, x9, x10;
 sha256sum0 x9, x11;
 xor x12, x9, x10;
@@ -303,8 +303,8 @@ RVTEST_SIGUPD(x31,x12,296);
 
 // Forwarded not into sha256sum0 & the result back into not
 // opcode: sha256sum0; op1:x11; dest1:x9; op1val:0x1e9667c2; op2val:0x74ab0a38
-li x9, 0x1e9667c2;
-li x10, 0x74ab0a38;
+LI(x9,0x1e9667c2);
+LI(x10,0x74ab0a38);
 not x11, x10;
 sha256sum0 x9, x11;
 not x12, x9;
@@ -314,8 +314,8 @@ RVTEST_SIGUPD(x31,x12,308);
 
 // Forwarded add into sha256sum0 & the result back into add
 // opcode: sha256sum0; op1:x11; dest1:x9; op1val:0x1e9667c2; op2val:0x74ab0a38
-li x9, 0x1e9667c2;
-li x10, 0x74ab0a38;
+LI(x9,0x1e9667c2);
+LI(x10,0x74ab0a38);
 add x11, x9, x10;
 sha256sum0 x9, x11;
 add x12, x9, x10;
@@ -326,8 +326,8 @@ RVTEST_SIGUPD(x31,x12,320);
 inst_9:
 // Forwarded xor into sha256sum0 & the result back into xor
 // opcode: sha256sum0; op1:x12; dest1:x10; op1val:0x6f4930c8; op2val:0xb66b3284
-li x10, 0x6f4930c8;
-li x11, 0xb66b3284;
+LI(x10,0x6f4930c8);
+LI(x11,0xb66b3284);
 xor x12, x10, x11;
 sha256sum0 x10, x12;
 xor x13, x10, x11;
@@ -337,8 +337,8 @@ RVTEST_SIGUPD(x31,x13,332);
 
 // Forwarded not into sha256sum0 & the result back into not
 // opcode: sha256sum0; op1:x12; dest1:x10; op1val:0x6f4930c8; op2val:0xb66b3284
-li x10, 0x6f4930c8;
-li x11, 0xb66b3284;
+LI(x10,0x6f4930c8);
+LI(x11,0xb66b3284);
 not x12, x11;
 sha256sum0 x10, x12;
 not x13, x10;
@@ -348,8 +348,8 @@ RVTEST_SIGUPD(x31,x13,344);
 
 // Forwarded add into sha256sum0 & the result back into add
 // opcode: sha256sum0; op1:x12; dest1:x10; op1val:0x6f4930c8; op2val:0xb66b3284
-li x10, 0x6f4930c8;
-li x11, 0xb66b3284;
+LI(x10,0x6f4930c8);
+LI(x11,0xb66b3284);
 add x12, x10, x11;
 sha256sum0 x10, x12;
 add x13, x10, x11;
@@ -360,8 +360,8 @@ RVTEST_SIGUPD(x31,x13,356);
 inst_10:
 // Forwarded xor into sha256sum0 & the result back into xor
 // opcode: sha256sum0; op1:x13; dest1:x11; op1val:0x9535971c; op2val:0xde9a896f
-li x11, 0x9535971c;
-li x12, 0xde9a896f;
+LI(x11,0x9535971c);
+LI(x12,0xde9a896f);
 xor x13, x11, x12;
 sha256sum0 x11, x13;
 xor x14, x11, x12;
@@ -371,8 +371,8 @@ RVTEST_SIGUPD(x31,x14,368);
 
 // Forwarded not into sha256sum0 & the result back into not
 // opcode: sha256sum0; op1:x13; dest1:x11; op1val:0x9535971c; op2val:0xde9a896f
-li x11, 0x9535971c;
-li x12, 0xde9a896f;
+LI(x11,0x9535971c);
+LI(x12,0xde9a896f);
 not x13, x12;
 sha256sum0 x11, x13;
 not x14, x11;
@@ -382,8 +382,8 @@ RVTEST_SIGUPD(x31,x14,380);
 
 // Forwarded add into sha256sum0 & the result back into add
 // opcode: sha256sum0; op1:x13; dest1:x11; op1val:0x9535971c; op2val:0xde9a896f
-li x11, 0x9535971c;
-li x12, 0xde9a896f;
+LI(x11,0x9535971c);
+LI(x12,0xde9a896f);
 add x13, x11, x12;
 sha256sum0 x11, x13;
 add x14, x11, x12;
@@ -394,8 +394,8 @@ RVTEST_SIGUPD(x31,x14,392);
 inst_11:
 // Forwarded xor into sha256sum0 & the result back into xor
 // opcode: sha256sum0; op1:x14; dest1:x12; op1val:0x1011eeb4; op2val:0x66b072b9
-li x12, 0x1011eeb4;
-li x13, 0x66b072b9;
+LI(x12,0x1011eeb4);
+LI(x13,0x66b072b9);
 xor x14, x12, x13;
 sha256sum0 x12, x14;
 xor x15, x12, x13;
@@ -405,8 +405,8 @@ RVTEST_SIGUPD(x31,x15,404);
 
 // Forwarded not into sha256sum0 & the result back into not
 // opcode: sha256sum0; op1:x14; dest1:x12; op1val:0x1011eeb4; op2val:0x66b072b9
-li x12, 0x1011eeb4;
-li x13, 0x66b072b9;
+LI(x12,0x1011eeb4);
+LI(x13,0x66b072b9);
 not x14, x13;
 sha256sum0 x12, x14;
 not x15, x12;
@@ -416,8 +416,8 @@ RVTEST_SIGUPD(x31,x15,416);
 
 // Forwarded add into sha256sum0 & the result back into add
 // opcode: sha256sum0; op1:x14; dest1:x12; op1val:0x1011eeb4; op2val:0x66b072b9
-li x12, 0x1011eeb4;
-li x13, 0x66b072b9;
+LI(x12,0x1011eeb4);
+LI(x13,0x66b072b9);
 add x14, x12, x13;
 sha256sum0 x12, x14;
 add x15, x12, x13;
@@ -428,8 +428,8 @@ RVTEST_SIGUPD(x31,x15,428);
 inst_12:
 // Forwarded xor into sha256sum0 & the result back into xor
 // opcode: sha256sum0; op1:x15; dest1:x13; op1val:0x00b97ea6; op2val:0x89112f0a
-li x13, 0x00b97ea6;
-li x14, 0x89112f0a;
+LI(x13,0x00b97ea6);
+LI(x14,0x89112f0a);
 xor x15, x13, x14;
 sha256sum0 x13, x15;
 xor x16, x13, x14;
@@ -439,8 +439,8 @@ RVTEST_SIGUPD(x31,x16,440);
 
 // Forwarded not into sha256sum0 & the result back into not
 // opcode: sha256sum0; op1:x15; dest1:x13; op1val:0x00b97ea6; op2val:0x89112f0a
-li x13, 0x00b97ea6;
-li x14, 0x89112f0a;
+LI(x13,0x00b97ea6);
+LI(x14,0x89112f0a);
 not x15, x14;
 sha256sum0 x13, x15;
 not x16, x13;
@@ -450,8 +450,8 @@ RVTEST_SIGUPD(x31,x16,452);
 
 // Forwarded add into sha256sum0 & the result back into add
 // opcode: sha256sum0; op1:x15; dest1:x13; op1val:0x00b97ea6; op2val:0x89112f0a
-li x13, 0x00b97ea6;
-li x14, 0x89112f0a;
+LI(x13,0x00b97ea6);
+LI(x14,0x89112f0a);
 add x15, x13, x14;
 sha256sum0 x13, x15;
 add x16, x13, x14;
@@ -462,8 +462,8 @@ RVTEST_SIGUPD(x31,x16,464);
 inst_13:
 // Forwarded xor into sha256sum0 & the result back into xor
 // opcode: sha256sum0; op1:x16; dest1:x14; op1val:0x72745307; op2val:0xb9e93d52
-li x14, 0x72745307;
-li x15, 0xb9e93d52;
+LI(x14,0x72745307);
+LI(x15,0xb9e93d52);
 xor x16, x14, x15;
 sha256sum0 x14, x16;
 xor x17, x14, x15;
@@ -473,8 +473,8 @@ RVTEST_SIGUPD(x31,x17,476);
 
 // Forwarded not into sha256sum0 & the result back into not
 // opcode: sha256sum0; op1:x16; dest1:x14; op1val:0x72745307; op2val:0xb9e93d52
-li x14, 0x72745307;
-li x15, 0xb9e93d52;
+LI(x14,0x72745307);
+LI(x15,0xb9e93d52);
 not x16, x15;
 sha256sum0 x14, x16;
 not x17, x14;
@@ -484,8 +484,8 @@ RVTEST_SIGUPD(x31,x17,488);
 
 // Forwarded add into sha256sum0 & the result back into add
 // opcode: sha256sum0; op1:x16; dest1:x14; op1val:0x72745307; op2val:0xb9e93d52
-li x14, 0x72745307;
-li x15, 0xb9e93d52;
+LI(x14,0x72745307);
+LI(x15,0xb9e93d52);
 add x16, x14, x15;
 sha256sum0 x14, x16;
 add x17, x14, x15;
@@ -496,8 +496,8 @@ RVTEST_SIGUPD(x31,x17,500);
 inst_14:
 // Forwarded xor into sha256sum0 & the result back into xor
 // opcode: sha256sum0; op1:x17; dest1:x15; op1val:0x9e7e1fc3; op2val:0xafe08a13
-li x15, 0x9e7e1fc3;
-li x16, 0xafe08a13;
+LI(x15,0x9e7e1fc3);
+LI(x16,0xafe08a13);
 xor x17, x15, x16;
 sha256sum0 x15, x17;
 xor x18, x15, x16;
@@ -507,8 +507,8 @@ RVTEST_SIGUPD(x31,x18,512);
 
 // Forwarded not into sha256sum0 & the result back into not
 // opcode: sha256sum0; op1:x17; dest1:x15; op1val:0x9e7e1fc3; op2val:0xafe08a13
-li x15, 0x9e7e1fc3;
-li x16, 0xafe08a13;
+LI(x15,0x9e7e1fc3);
+LI(x16,0xafe08a13);
 not x17, x16;
 sha256sum0 x15, x17;
 not x18, x15;
@@ -518,8 +518,8 @@ RVTEST_SIGUPD(x31,x18,524);
 
 // Forwarded add into sha256sum0 & the result back into add
 // opcode: sha256sum0; op1:x17; dest1:x15; op1val:0x9e7e1fc3; op2val:0xafe08a13
-li x15, 0x9e7e1fc3;
-li x16, 0xafe08a13;
+LI(x15,0x9e7e1fc3);
+LI(x16,0xafe08a13);
 add x17, x15, x16;
 sha256sum0 x15, x17;
 add x18, x15, x16;
@@ -530,8 +530,8 @@ RVTEST_SIGUPD(x31,x18,536);
 inst_15:
 // Forwarded xor into sha256sum0 & the result back into xor
 // opcode: sha256sum0; op1:x18; dest1:x16; op1val:0xdbdd4dd9; op2val:0xb7debb9b
-li x16, 0xdbdd4dd9;
-li x17, 0xb7debb9b;
+LI(x16,0xdbdd4dd9);
+LI(x17,0xb7debb9b);
 xor x18, x16, x17;
 sha256sum0 x16, x18;
 xor x19, x16, x17;
@@ -541,8 +541,8 @@ RVTEST_SIGUPD(x31,x19,548);
 
 // Forwarded not into sha256sum0 & the result back into not
 // opcode: sha256sum0; op1:x18; dest1:x16; op1val:0xdbdd4dd9; op2val:0xb7debb9b
-li x16, 0xdbdd4dd9;
-li x17, 0xb7debb9b;
+LI(x16,0xdbdd4dd9);
+LI(x17,0xb7debb9b);
 not x18, x17;
 sha256sum0 x16, x18;
 not x19, x16;
@@ -552,8 +552,8 @@ RVTEST_SIGUPD(x31,x19,560);
 
 // Forwarded add into sha256sum0 & the result back into add
 // opcode: sha256sum0; op1:x18; dest1:x16; op1val:0xdbdd4dd9; op2val:0xb7debb9b
-li x16, 0xdbdd4dd9;
-li x17, 0xb7debb9b;
+LI(x16,0xdbdd4dd9);
+LI(x17,0xb7debb9b);
 add x18, x16, x17;
 sha256sum0 x16, x18;
 add x19, x16, x17;
@@ -564,8 +564,8 @@ RVTEST_SIGUPD(x31,x19,572);
 inst_16:
 // Forwarded xor into sha256sum0 & the result back into xor
 // opcode: sha256sum0; op1:x19; dest1:x17; op1val:0xab8534c1; op2val:0x242a809b
-li x17, 0xab8534c1;
-li x18, 0x242a809b;
+LI(x17,0xab8534c1);
+LI(x18,0x242a809b);
 xor x19, x17, x18;
 sha256sum0 x17, x19;
 xor x20, x17, x18;
@@ -575,8 +575,8 @@ RVTEST_SIGUPD(x31,x20,584);
 
 // Forwarded not into sha256sum0 & the result back into not
 // opcode: sha256sum0; op1:x19; dest1:x17; op1val:0xab8534c1; op2val:0x242a809b
-li x17, 0xab8534c1;
-li x18, 0x242a809b;
+LI(x17,0xab8534c1);
+LI(x18,0x242a809b);
 not x19, x18;
 sha256sum0 x17, x19;
 not x20, x17;
@@ -586,8 +586,8 @@ RVTEST_SIGUPD(x31,x20,596);
 
 // Forwarded add into sha256sum0 & the result back into add
 // opcode: sha256sum0; op1:x19; dest1:x17; op1val:0xab8534c1; op2val:0x242a809b
-li x17, 0xab8534c1;
-li x18, 0x242a809b;
+LI(x17,0xab8534c1);
+LI(x18,0x242a809b);
 add x19, x17, x18;
 sha256sum0 x17, x19;
 add x20, x17, x18;
@@ -598,8 +598,8 @@ RVTEST_SIGUPD(x31,x20,608);
 inst_17:
 // Forwarded xor into sha256sum0 & the result back into xor
 // opcode: sha256sum0; op1:x20; dest1:x18; op1val:0xffec35fe; op2val:0x6c69a172
-li x18, 0xffec35fe;
-li x19, 0x6c69a172;
+LI(x18,0xffec35fe);
+LI(x19,0x6c69a172);
 xor x20, x18, x19;
 sha256sum0 x18, x20;
 xor x21, x18, x19;
@@ -609,8 +609,8 @@ RVTEST_SIGUPD(x31,x21,620);
 
 // Forwarded not into sha256sum0 & the result back into not
 // opcode: sha256sum0; op1:x20; dest1:x18; op1val:0xffec35fe; op2val:0x6c69a172
-li x18, 0xffec35fe;
-li x19, 0x6c69a172;
+LI(x18,0xffec35fe);
+LI(x19,0x6c69a172);
 not x20, x19;
 sha256sum0 x18, x20;
 not x21, x18;
@@ -620,8 +620,8 @@ RVTEST_SIGUPD(x31,x21,632);
 
 // Forwarded add into sha256sum0 & the result back into add
 // opcode: sha256sum0; op1:x20; dest1:x18; op1val:0xffec35fe; op2val:0x6c69a172
-li x18, 0xffec35fe;
-li x19, 0x6c69a172;
+LI(x18,0xffec35fe);
+LI(x19,0x6c69a172);
 add x20, x18, x19;
 sha256sum0 x18, x20;
 add x21, x18, x19;
@@ -632,8 +632,8 @@ RVTEST_SIGUPD(x31,x21,644);
 inst_18:
 // Forwarded xor into sha256sum0 & the result back into xor
 // opcode: sha256sum0; op1:x21; dest1:x19; op1val:0x35a7efc0; op2val:0x9c1a1528
-li x19, 0x35a7efc0;
-li x20, 0x9c1a1528;
+LI(x19,0x35a7efc0);
+LI(x20,0x9c1a1528);
 xor x21, x19, x20;
 sha256sum0 x19, x21;
 xor x22, x19, x20;
@@ -643,8 +643,8 @@ RVTEST_SIGUPD(x31,x22,656);
 
 // Forwarded not into sha256sum0 & the result back into not
 // opcode: sha256sum0; op1:x21; dest1:x19; op1val:0x35a7efc0; op2val:0x9c1a1528
-li x19, 0x35a7efc0;
-li x20, 0x9c1a1528;
+LI(x19,0x35a7efc0);
+LI(x20,0x9c1a1528);
 not x21, x20;
 sha256sum0 x19, x21;
 not x22, x19;
@@ -654,8 +654,8 @@ RVTEST_SIGUPD(x31,x22,668);
 
 // Forwarded add into sha256sum0 & the result back into add
 // opcode: sha256sum0; op1:x21; dest1:x19; op1val:0x35a7efc0; op2val:0x9c1a1528
-li x19, 0x35a7efc0;
-li x20, 0x9c1a1528;
+LI(x19,0x35a7efc0);
+LI(x20,0x9c1a1528);
 add x21, x19, x20;
 sha256sum0 x19, x21;
 add x22, x19, x20;
@@ -666,8 +666,8 @@ RVTEST_SIGUPD(x31,x22,680);
 inst_19:
 // Forwarded xor into sha256sum0 & the result back into xor
 // opcode: sha256sum0; op1:x22; dest1:x20; op1val:0x4133e4d7; op2val:0x74f5add5
-li x20, 0x4133e4d7;
-li x21, 0x74f5add5;
+LI(x20,0x4133e4d7);
+LI(x21,0x74f5add5);
 xor x22, x20, x21;
 sha256sum0 x20, x22;
 xor x23, x20, x21;
@@ -677,8 +677,8 @@ RVTEST_SIGUPD(x31,x23,692);
 
 // Forwarded not into sha256sum0 & the result back into not
 // opcode: sha256sum0; op1:x22; dest1:x20; op1val:0x4133e4d7; op2val:0x74f5add5
-li x20, 0x4133e4d7;
-li x21, 0x74f5add5;
+LI(x20,0x4133e4d7);
+LI(x21,0x74f5add5);
 not x22, x21;
 sha256sum0 x20, x22;
 not x23, x20;
@@ -688,8 +688,8 @@ RVTEST_SIGUPD(x31,x23,704);
 
 // Forwarded add into sha256sum0 & the result back into add
 // opcode: sha256sum0; op1:x22; dest1:x20; op1val:0x4133e4d7; op2val:0x74f5add5
-li x20, 0x4133e4d7;
-li x21, 0x74f5add5;
+LI(x20,0x4133e4d7);
+LI(x21,0x74f5add5);
 add x22, x20, x21;
 sha256sum0 x20, x22;
 add x23, x20, x21;
@@ -700,8 +700,8 @@ RVTEST_SIGUPD(x31,x23,716);
 inst_20:
 // Forwarded xor into sha256sum0 & the result back into xor
 // opcode: sha256sum0; op1:x23; dest1:x21; op1val:0x81aa70ac; op2val:0x437cbc41
-li x21, 0x81aa70ac;
-li x22, 0x437cbc41;
+LI(x21,0x81aa70ac);
+LI(x22,0x437cbc41);
 xor x23, x21, x22;
 sha256sum0 x21, x23;
 xor x24, x21, x22;
@@ -711,8 +711,8 @@ RVTEST_SIGUPD(x31,x24,728);
 
 // Forwarded not into sha256sum0 & the result back into not
 // opcode: sha256sum0; op1:x23; dest1:x21; op1val:0x81aa70ac; op2val:0x437cbc41
-li x21, 0x81aa70ac;
-li x22, 0x437cbc41;
+LI(x21,0x81aa70ac);
+LI(x22,0x437cbc41);
 not x23, x22;
 sha256sum0 x21, x23;
 not x24, x21;
@@ -722,8 +722,8 @@ RVTEST_SIGUPD(x31,x24,740);
 
 // Forwarded add into sha256sum0 & the result back into add
 // opcode: sha256sum0; op1:x23; dest1:x21; op1val:0x81aa70ac; op2val:0x437cbc41
-li x21, 0x81aa70ac;
-li x22, 0x437cbc41;
+LI(x21,0x81aa70ac);
+LI(x22,0x437cbc41);
 add x23, x21, x22;
 sha256sum0 x21, x23;
 add x24, x21, x22;
@@ -734,8 +734,8 @@ RVTEST_SIGUPD(x31,x24,752);
 inst_21:
 // Forwarded xor into sha256sum0 & the result back into xor
 // opcode: sha256sum0; op1:x24; dest1:x22; op1val:0xb847f03e; op2val:0xcb256db7
-li x22, 0xb847f03e;
-li x23, 0xcb256db7;
+LI(x22,0xb847f03e);
+LI(x23,0xcb256db7);
 xor x24, x22, x23;
 sha256sum0 x22, x24;
 xor x25, x22, x23;
@@ -745,8 +745,8 @@ RVTEST_SIGUPD(x31,x25,764);
 
 // Forwarded not into sha256sum0 & the result back into not
 // opcode: sha256sum0; op1:x24; dest1:x22; op1val:0xb847f03e; op2val:0xcb256db7
-li x22, 0xb847f03e;
-li x23, 0xcb256db7;
+LI(x22,0xb847f03e);
+LI(x23,0xcb256db7);
 not x24, x23;
 sha256sum0 x22, x24;
 not x25, x22;
@@ -756,8 +756,8 @@ RVTEST_SIGUPD(x31,x25,776);
 
 // Forwarded add into sha256sum0 & the result back into add
 // opcode: sha256sum0; op1:x24; dest1:x22; op1val:0xb847f03e; op2val:0xcb256db7
-li x22, 0xb847f03e;
-li x23, 0xcb256db7;
+LI(x22,0xb847f03e);
+LI(x23,0xcb256db7);
 add x24, x22, x23;
 sha256sum0 x22, x24;
 add x25, x22, x23;
@@ -768,8 +768,8 @@ RVTEST_SIGUPD(x31,x25,788);
 inst_22:
 // Forwarded xor into sha256sum0 & the result back into xor
 // opcode: sha256sum0; op1:x25; dest1:x23; op1val:0xbd8d9d60; op2val:0x9c3d087c
-li x23, 0xbd8d9d60;
-li x24, 0x9c3d087c;
+LI(x23,0xbd8d9d60);
+LI(x24,0x9c3d087c);
 xor x25, x23, x24;
 sha256sum0 x23, x25;
 xor x26, x23, x24;
@@ -779,8 +779,8 @@ RVTEST_SIGUPD(x31,x26,800);
 
 // Forwarded not into sha256sum0 & the result back into not
 // opcode: sha256sum0; op1:x25; dest1:x23; op1val:0xbd8d9d60; op2val:0x9c3d087c
-li x23, 0xbd8d9d60;
-li x24, 0x9c3d087c;
+LI(x23,0xbd8d9d60);
+LI(x24,0x9c3d087c);
 not x25, x24;
 sha256sum0 x23, x25;
 not x26, x23;
@@ -790,8 +790,8 @@ RVTEST_SIGUPD(x31,x26,812);
 
 // Forwarded add into sha256sum0 & the result back into add
 // opcode: sha256sum0; op1:x25; dest1:x23; op1val:0xbd8d9d60; op2val:0x9c3d087c
-li x23, 0xbd8d9d60;
-li x24, 0x9c3d087c;
+LI(x23,0xbd8d9d60);
+LI(x24,0x9c3d087c);
 add x25, x23, x24;
 sha256sum0 x23, x25;
 add x26, x23, x24;
@@ -802,8 +802,8 @@ RVTEST_SIGUPD(x31,x26,824);
 inst_23:
 // Forwarded xor into sha256sum0 & the result back into xor
 // opcode: sha256sum0; op1:x26; dest1:x24; op1val:0xbeb2993a; op2val:0xf37e27a3
-li x24, 0xbeb2993a;
-li x25, 0xf37e27a3;
+LI(x24,0xbeb2993a);
+LI(x25,0xf37e27a3);
 xor x26, x24, x25;
 sha256sum0 x24, x26;
 xor x27, x24, x25;
@@ -813,8 +813,8 @@ RVTEST_SIGUPD(x31,x27,836);
 
 // Forwarded not into sha256sum0 & the result back into not
 // opcode: sha256sum0; op1:x26; dest1:x24; op1val:0xbeb2993a; op2val:0xf37e27a3
-li x24, 0xbeb2993a;
-li x25, 0xf37e27a3;
+LI(x24,0xbeb2993a);
+LI(x25,0xf37e27a3);
 not x26, x25;
 sha256sum0 x24, x26;
 not x27, x24;
@@ -824,8 +824,8 @@ RVTEST_SIGUPD(x31,x27,848);
 
 // Forwarded add into sha256sum0 & the result back into add
 // opcode: sha256sum0; op1:x26; dest1:x24; op1val:0xbeb2993a; op2val:0xf37e27a3
-li x24, 0xbeb2993a;
-li x25, 0xf37e27a3;
+LI(x24,0xbeb2993a);
+LI(x25,0xf37e27a3);
 add x26, x24, x25;
 sha256sum0 x24, x26;
 add x27, x24, x25;
@@ -836,8 +836,8 @@ RVTEST_SIGUPD(x31,x27,860);
 inst_24:
 // Forwarded xor into sha256sum0 & the result back into xor
 // opcode: sha256sum0; op1:x27; dest1:x25; op1val:0x0cd5d8e2; op2val:0x90af95fe
-li x25, 0x0cd5d8e2;
-li x26, 0x90af95fe;
+LI(x25,0x0cd5d8e2);
+LI(x26,0x90af95fe);
 xor x27, x25, x26;
 sha256sum0 x25, x27;
 xor x28, x25, x26;
@@ -847,8 +847,8 @@ RVTEST_SIGUPD(x31,x28,872);
 
 // Forwarded not into sha256sum0 & the result back into not
 // opcode: sha256sum0; op1:x27; dest1:x25; op1val:0x0cd5d8e2; op2val:0x90af95fe
-li x25, 0x0cd5d8e2;
-li x26, 0x90af95fe;
+LI(x25,0x0cd5d8e2);
+LI(x26,0x90af95fe);
 not x27, x26;
 sha256sum0 x25, x27;
 not x28, x25;
@@ -858,8 +858,8 @@ RVTEST_SIGUPD(x31,x28,884);
 
 // Forwarded add into sha256sum0 & the result back into add
 // opcode: sha256sum0; op1:x27; dest1:x25; op1val:0x0cd5d8e2; op2val:0x90af95fe
-li x25, 0x0cd5d8e2;
-li x26, 0x90af95fe;
+LI(x25,0x0cd5d8e2);
+LI(x26,0x90af95fe);
 add x27, x25, x26;
 sha256sum0 x25, x27;
 add x28, x25, x26;
@@ -870,8 +870,8 @@ RVTEST_SIGUPD(x31,x28,896);
 inst_25:
 // Forwarded xor into sha256sum0 & the result back into xor
 // opcode: sha256sum0; op1:x28; dest1:x26; op1val:0xfff5618b; op2val:0x596f5f89
-li x26, 0xfff5618b;
-li x27, 0x596f5f89;
+LI(x26,0xfff5618b);
+LI(x27,0x596f5f89);
 xor x28, x26, x27;
 sha256sum0 x26, x28;
 xor x29, x26, x27;
@@ -881,8 +881,8 @@ RVTEST_SIGUPD(x31,x29,908);
 
 // Forwarded not into sha256sum0 & the result back into not
 // opcode: sha256sum0; op1:x28; dest1:x26; op1val:0xfff5618b; op2val:0x596f5f89
-li x26, 0xfff5618b;
-li x27, 0x596f5f89;
+LI(x26,0xfff5618b);
+LI(x27,0x596f5f89);
 not x28, x27;
 sha256sum0 x26, x28;
 not x29, x26;
@@ -892,8 +892,8 @@ RVTEST_SIGUPD(x31,x29,920);
 
 // Forwarded add into sha256sum0 & the result back into add
 // opcode: sha256sum0; op1:x28; dest1:x26; op1val:0xfff5618b; op2val:0x596f5f89
-li x26, 0xfff5618b;
-li x27, 0x596f5f89;
+LI(x26,0xfff5618b);
+LI(x27,0x596f5f89);
 add x28, x26, x27;
 sha256sum0 x26, x28;
 add x29, x26, x27;
@@ -904,8 +904,8 @@ RVTEST_SIGUPD(x31,x29,932);
 inst_26:
 // Forwarded xor into sha256sum0 & the result back into xor
 // opcode: sha256sum0; op1:x29; dest1:x27; op1val:0xb4dc7dee; op2val:0x9c1f741f
-li x27, 0xb4dc7dee;
-li x28, 0x9c1f741f;
+LI(x27,0xb4dc7dee);
+LI(x28,0x9c1f741f);
 xor x29, x27, x28;
 sha256sum0 x27, x29;
 xor x30, x27, x28;
@@ -915,8 +915,8 @@ RVTEST_SIGUPD(x31,x30,944);
 
 // Forwarded not into sha256sum0 & the result back into not
 // opcode: sha256sum0; op1:x29; dest1:x27; op1val:0xb4dc7dee; op2val:0x9c1f741f
-li x27, 0xb4dc7dee;
-li x28, 0x9c1f741f;
+LI(x27,0xb4dc7dee);
+LI(x28,0x9c1f741f);
 not x29, x28;
 sha256sum0 x27, x29;
 not x30, x27;
@@ -926,8 +926,8 @@ RVTEST_SIGUPD(x31,x30,956);
 
 // Forwarded add into sha256sum0 & the result back into add
 // opcode: sha256sum0; op1:x29; dest1:x27; op1val:0xb4dc7dee; op2val:0x9c1f741f
-li x27, 0xb4dc7dee;
-li x28, 0x9c1f741f;
+LI(x27,0xb4dc7dee);
+LI(x28,0x9c1f741f);
 add x29, x27, x28;
 sha256sum0 x27, x29;
 add x30, x27, x28;
@@ -942,11 +942,19 @@ RVMODEL_HALT
 
 RVTEST_DATA_BEGIN
 .align 4
+
 rvtest_data:
+.word 0xbabecafe
+.word 0xbabecafe
+.word 0xbabecafe
 .word 0xbabecafe
 RVTEST_DATA_END
 
+
 RVMODEL_DATA_BEGIN
+rvtest_sig_begin:
+sig_begin_canary:
+CANARY;
 
 
 signature_x31_1:
@@ -954,8 +962,12 @@ signature_x31_1:
     
 #ifdef rvtest_mtrap_routine
 
+tsig_begin_canary:
+CANARY;
 mtrap_sigptr:
     .fill 64*(XLEN/32),4,0xdeadbeef
+tsig_end_canary:
+CANARY;
 
 #endif
 
@@ -966,4 +978,7 @@ gpr_save:
 
 #endif
 
+sig_end_canary:
+CANARY;
+rvtest_sig_end:
 RVMODEL_DATA_END

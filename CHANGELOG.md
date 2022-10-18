@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## [3.5.0] - 2022-10-17
+- Add Canaries (labels - sig_begin_canary. tsig_begin_canary, tsig_end_canary, sig_end_canary)
+- Signature boundary labels (rvtest_sig_begin and rvtest_sig_end) (enables the new trap handler to fix #262)
+- Zicsr ISA update for priv tests (#233)
+- Default data section should be 16 bytes. This expands default rvtest_data region to be at least 16 bytes (#211)
+- Replace la/li ops with LA/LI macros in tests (#275)
+- Remove trap handler enable macro from misalign1-jalr tests (#281)
+- Move misalign1-jalr test into I directory. (#281)
+- Move fmem tests into the [F|D]/src directory
+- Fix correctval in tests to ?? instead of 0. (#256)
+- Remove the riscv-target directory (#259)
+- Fix the store instruction used in 64bit K tests from `sw` to `SREG` (#282)
+
 ## [3.4.1] - 2022-09-11
   - Fix trailing space in arch_test.h
 

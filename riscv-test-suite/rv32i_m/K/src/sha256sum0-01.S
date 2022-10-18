@@ -40,7 +40,7 @@ RVTEST_SIGBASE(x1,signature_x1_1)
 inst_0:
 // rs1 != rd, rs1==x30, rd==x31, 
 // opcode: sha256sum0 ; op1:x30; dest:x31; op1val:0x254a9493;
-li x30, 0x254a9493
+LI(x30,0x254a9493)
 sha256sum0 x31, x30
 sw x31, 0(x1)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x31, 0x00000000)
@@ -48,7 +48,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x2, x31, 0x00000000)
 inst_1:
 // rs1 == rd, rs1==x29, rd==x29, 
 // opcode: sha256sum0 ; op1:x29; dest:x29; op1val:0x7fffffff;
-li x29, 0x7fffffff
+LI(x29,0x7fffffff)
 sha256sum0 x29, x29
 sw x29, 4(x1)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x29, 0x00000000)
@@ -56,7 +56,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x2, x29, 0x00000000)
 inst_2:
 // rs1==x31, rd==x30, 
 // opcode: sha256sum0 ; op1:x31; dest:x30; op1val:0xbfffffff;
-li x31, 0xbfffffff
+LI(x31,0xbfffffff)
 sha256sum0 x30, x31
 sw x30, 8(x1)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x30, 0x00000000)
@@ -64,7 +64,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x2, x30, 0x00000000)
 inst_3:
 // rs1==x27, rd==x28, 
 // opcode: sha256sum0 ; op1:x27; dest:x28; op1val:0xdfffffff;
-li x27, 0xdfffffff
+LI(x27,0xdfffffff)
 sha256sum0 x28, x27
 sw x28, 12(x1)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x28, 0x00000000)
@@ -72,7 +72,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x2, x28, 0x00000000)
 inst_4:
 // rs1==x28, rd==x27, 
 // opcode: sha256sum0 ; op1:x28; dest:x27; op1val:0xefffffff;
-li x28, 0xefffffff
+LI(x28,0xefffffff)
 sha256sum0 x27, x28
 sw x27, 16(x1)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x27, 0x00000000)
@@ -80,7 +80,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x2, x27, 0x00000000)
 inst_5:
 // rs1==x25, rd==x26, 
 // opcode: sha256sum0 ; op1:x25; dest:x26; op1val:0xf7ffffff;
-li x25, 0xf7ffffff
+LI(x25,0xf7ffffff)
 sha256sum0 x26, x25
 sw x26, 20(x1)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x26, 0x00000000)
@@ -88,7 +88,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x2, x26, 0x00000000)
 inst_6:
 // rs1==x26, rd==x25, 
 // opcode: sha256sum0 ; op1:x26; dest:x25; op1val:0xfbffffff;
-li x26, 0xfbffffff
+LI(x26,0xfbffffff)
 sha256sum0 x25, x26
 sw x25, 24(x1)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x25, 0x00000000)
@@ -96,7 +96,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x2, x25, 0x00000000)
 inst_7:
 // rs1==x23, rd==x24, 
 // opcode: sha256sum0 ; op1:x23; dest:x24; op1val:0xfdffffff;
-li x23, 0xfdffffff
+LI(x23,0xfdffffff)
 sha256sum0 x24, x23
 sw x24, 28(x1)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x24, 0x00000000)
@@ -104,7 +104,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x2, x24, 0x00000000)
 inst_8:
 // rs1==x24, rd==x23, 
 // opcode: sha256sum0 ; op1:x24; dest:x23; op1val:0xfeffffff;
-li x24, 0xfeffffff
+LI(x24,0xfeffffff)
 sha256sum0 x23, x24
 sw x23, 32(x1)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x23, 0x00000000)
@@ -112,7 +112,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x2, x23, 0x00000000)
 inst_9:
 // rs1==x21, rd==x22, 
 // opcode: sha256sum0 ; op1:x21; dest:x22; op1val:0xff7fffff;
-li x21, 0xff7fffff
+LI(x21,0xff7fffff)
 sha256sum0 x22, x21
 sw x22, 36(x1)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x22, 0x00000000)
@@ -120,7 +120,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x2, x22, 0x00000000)
 inst_10:
 // rs1==x22, rd==x21, 
 // opcode: sha256sum0 ; op1:x22; dest:x21; op1val:0xffbfffff;
-li x22, 0xffbfffff
+LI(x22,0xffbfffff)
 sha256sum0 x21, x22
 sw x21, 40(x1)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x21, 0x00000000)
@@ -128,7 +128,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x2, x21, 0x00000000)
 inst_11:
 // rs1==x19, rd==x20, 
 // opcode: sha256sum0 ; op1:x19; dest:x20; op1val:0xffdfffff;
-li x19, 0xffdfffff
+LI(x19,0xffdfffff)
 sha256sum0 x20, x19
 sw x20, 44(x1)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x20, 0x00000000)
@@ -136,7 +136,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x2, x20, 0x00000000)
 inst_12:
 // rs1==x20, rd==x19, 
 // opcode: sha256sum0 ; op1:x20; dest:x19; op1val:0xffefffff;
-li x20, 0xffefffff
+LI(x20,0xffefffff)
 sha256sum0 x19, x20
 sw x19, 48(x1)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x19, 0x00000000)
@@ -144,7 +144,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x2, x19, 0x00000000)
 inst_13:
 // rs1==x17, rd==x18, 
 // opcode: sha256sum0 ; op1:x17; dest:x18; op1val:0xfff7ffff;
-li x17, 0xfff7ffff
+LI(x17,0xfff7ffff)
 sha256sum0 x18, x17
 sw x18, 52(x1)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x18, 0x00000000)
@@ -152,7 +152,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x2, x18, 0x00000000)
 inst_14:
 // rs1==x18, rd==x17, 
 // opcode: sha256sum0 ; op1:x18; dest:x17; op1val:0xfffbffff;
-li x18, 0xfffbffff
+LI(x18,0xfffbffff)
 sha256sum0 x17, x18
 sw x17, 56(x1)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x17, 0x00000000)
@@ -160,7 +160,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x2, x17, 0x00000000)
 inst_15:
 // rs1==x15, rd==x16, 
 // opcode: sha256sum0 ; op1:x15; dest:x16; op1val:0xfffdffff;
-li x15, 0xfffdffff
+LI(x15,0xfffdffff)
 sha256sum0 x16, x15
 sw x16, 60(x1)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x16, 0x00000000)
@@ -168,7 +168,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x2, x16, 0x00000000)
 inst_16:
 // rs1==x16, rd==x15, 
 // opcode: sha256sum0 ; op1:x16; dest:x15; op1val:0xfffeffff;
-li x16, 0xfffeffff
+LI(x16,0xfffeffff)
 sha256sum0 x15, x16
 sw x15, 64(x1)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x15, 0x00000000)
@@ -176,7 +176,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x2, x15, 0x00000000)
 inst_17:
 // rs1==x13, rd==x14, 
 // opcode: sha256sum0 ; op1:x13; dest:x14; op1val:0xffff7fff;
-li x13, 0xffff7fff
+LI(x13,0xffff7fff)
 sha256sum0 x14, x13
 sw x14, 68(x1)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x14, 0x00000000)
@@ -184,7 +184,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x2, x14, 0x00000000)
 inst_18:
 // rs1==x14, rd==x13, 
 // opcode: sha256sum0 ; op1:x14; dest:x13; op1val:0xffffbfff;
-li x14, 0xffffbfff
+LI(x14,0xffffbfff)
 sha256sum0 x13, x14
 sw x13, 72(x1)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x13, 0x00000000)
@@ -192,7 +192,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x2, x13, 0x00000000)
 inst_19:
 // rs1==x11, rd==x12, 
 // opcode: sha256sum0 ; op1:x11; dest:x12; op1val:0xffffdfff;
-li x11, 0xffffdfff
+LI(x11,0xffffdfff)
 sha256sum0 x12, x11
 sw x12, 76(x1)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x12, 0x00000000)
@@ -200,7 +200,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x2, x12, 0x00000000)
 inst_20:
 // rs1==x12, rd==x11, 
 // opcode: sha256sum0 ; op1:x12; dest:x11; op1val:0xffffefff;
-li x12, 0xffffefff
+LI(x12,0xffffefff)
 sha256sum0 x11, x12
 sw x11, 80(x1)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x11, 0x00000000)
@@ -208,7 +208,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x2, x11, 0x00000000)
 inst_21:
 // rs1==x9, rd==x10, 
 // opcode: sha256sum0 ; op1:x9; dest:x10; op1val:0xfffff7ff;
-li x9, 0xfffff7ff
+LI(x9,0xfffff7ff)
 sha256sum0 x10, x9
 sw x10, 84(x1)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x10, 0x00000000)
@@ -216,7 +216,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x2, x10, 0x00000000)
 inst_22:
 // rs1==x10, rd==x9, 
 // opcode: sha256sum0 ; op1:x10; dest:x9; op1val:0xfffffbff;
-li x10, 0xfffffbff
+LI(x10,0xfffffbff)
 sha256sum0 x9, x10
 sw x9, 88(x1)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x9, 0x00000000)
@@ -224,7 +224,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x2, x9, 0x00000000)
 inst_23:
 // rs1==x7, rd==x8, 
 // opcode: sha256sum0 ; op1:x7; dest:x8; op1val:0xfffffdff;
-li x7, 0xfffffdff
+LI(x7,0xfffffdff)
 sha256sum0 x8, x7
 sw x8, 92(x1)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x8, 0x00000000)
@@ -232,7 +232,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x2, x8, 0x00000000)
 inst_24:
 // rs1==x8, rd==x7, 
 // opcode: sha256sum0 ; op1:x8; dest:x7; op1val:0xfffffeff;
-li x8, 0xfffffeff
+LI(x8,0xfffffeff)
 sha256sum0 x7, x8
 sw x7, 96(x1)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x7, 0x00000000)
@@ -240,7 +240,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x2, x7, 0x00000000)
 inst_25:
 // rs1==x5, rd==x6, 
 // opcode: sha256sum0 ; op1:x5; dest:x6; op1val:0xffffff7f;
-li x5, 0xffffff7f
+LI(x5,0xffffff7f)
 sha256sum0 x6, x5
 sw x6, 100(x1)
 RVMODEL_IO_ASSERT_GPR_EQ(x2, x6, 0x00000000)
@@ -248,7 +248,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x2, x6, 0x00000000)
 inst_26:
 // rs1==x6, rd==x5, 
 // opcode: sha256sum0 ; op1:x6; dest:x5; op1val:0xffffffbf;
-li x6, 0xffffffbf
+LI(x6,0xffffffbf)
 sha256sum0 x5, x6
 sw x5, 104(x1)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x5, 0x00000000)
@@ -256,7 +256,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x5, 0x00000000)
 inst_27:
 // rs1==x3, rd==x4, 
 // opcode: sha256sum0 ; op1:x3; dest:x4; op1val:0xffffffdf;
-li x3, 0xffffffdf
+LI(x3,0xffffffdf)
 sha256sum0 x4, x3
 sw x4, 108(x1)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x4, 0x00000000)
@@ -265,7 +265,7 @@ RVTEST_SIGBASE(x5,signature_x5_0)
 inst_28:
 // rs1==x4, rd==x3, 
 // opcode: sha256sum0 ; op1:x4; dest:x3; op1val:0xffffffef;
-li x4, 0xffffffef
+LI(x4,0xffffffef)
 sha256sum0 x3, x4
 sw x3, 0(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x3, 0x00000000)
@@ -273,7 +273,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x3, 0x00000000)
 inst_29:
 // rs1==x1, rd==x2, 
 // opcode: sha256sum0 ; op1:x1; dest:x2; op1val:0xfffffff7;
-li x1, 0xfffffff7
+LI(x1,0xfffffff7)
 sha256sum0 x2, x1
 sw x2, 4(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x2, 0x00000000)
@@ -281,7 +281,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x2, 0x00000000)
 inst_30:
 // rs1==x2, rd==x1, 
 // opcode: sha256sum0 ; op1:x2; dest:x1; op1val:0xfffffffb;
-li x2, 0xfffffffb
+LI(x2,0xfffffffb)
 sha256sum0 x1, x2
 sw x1, 8(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x1, 0x00000000)
@@ -289,7 +289,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x1, 0x00000000)
 inst_31:
 // rs1==x0, 
 // opcode: sha256sum0 ; op1:x0; dest:x31; op1val:0x0;
-li x0, 0x0
+LI(x0,0x0)
 sha256sum0 x31, x0
 sw x31, 12(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -297,7 +297,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_32:
 // rd==x0, 
 // opcode: sha256sum0 ; op1:x31; dest:x0; op1val:0xfffffffe;
-li x31, 0xfffffffe
+LI(x31,0xfffffffe)
 sha256sum0 x0, x31
 sw x0, 16(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x0, 0x00000000)
@@ -305,7 +305,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x0, 0x00000000)
 inst_33:
 // 
 // opcode: sha256sum0 ; op1:x30; dest:x31; op1val:0x80000000;
-li x30, 0x80000000
+LI(x30,0x80000000)
 sha256sum0 x31, x30
 sw x31, 20(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -313,7 +313,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_34:
 // 
 // opcode: sha256sum0 ; op1:x30; dest:x31; op1val:0x40000000;
-li x30, 0x40000000
+LI(x30,0x40000000)
 sha256sum0 x31, x30
 sw x31, 24(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -321,7 +321,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_35:
 // 
 // opcode: sha256sum0 ; op1:x30; dest:x31; op1val:0x20000000;
-li x30, 0x20000000
+LI(x30,0x20000000)
 sha256sum0 x31, x30
 sw x31, 28(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -329,7 +329,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_36:
 // 
 // opcode: sha256sum0 ; op1:x30; dest:x31; op1val:0x10000000;
-li x30, 0x10000000
+LI(x30,0x10000000)
 sha256sum0 x31, x30
 sw x31, 32(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -337,7 +337,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_37:
 // 
 // opcode: sha256sum0 ; op1:x30; dest:x31; op1val:0x8000000;
-li x30, 0x8000000
+LI(x30,0x8000000)
 sha256sum0 x31, x30
 sw x31, 36(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -345,7 +345,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_38:
 // 
 // opcode: sha256sum0 ; op1:x30; dest:x31; op1val:0x4000000;
-li x30, 0x4000000
+LI(x30,0x4000000)
 sha256sum0 x31, x30
 sw x31, 40(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -353,7 +353,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_39:
 // 
 // opcode: sha256sum0 ; op1:x30; dest:x31; op1val:0x2000000;
-li x30, 0x2000000
+LI(x30,0x2000000)
 sha256sum0 x31, x30
 sw x31, 44(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -361,7 +361,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_40:
 // 
 // opcode: sha256sum0 ; op1:x30; dest:x31; op1val:0x1000000;
-li x30, 0x1000000
+LI(x30,0x1000000)
 sha256sum0 x31, x30
 sw x31, 48(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -369,7 +369,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_41:
 // 
 // opcode: sha256sum0 ; op1:x30; dest:x31; op1val:0x800000;
-li x30, 0x800000
+LI(x30,0x800000)
 sha256sum0 x31, x30
 sw x31, 52(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -377,7 +377,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_42:
 // 
 // opcode: sha256sum0 ; op1:x30; dest:x31; op1val:0x400000;
-li x30, 0x400000
+LI(x30,0x400000)
 sha256sum0 x31, x30
 sw x31, 56(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -385,7 +385,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_43:
 // 
 // opcode: sha256sum0 ; op1:x30; dest:x31; op1val:0x200000;
-li x30, 0x200000
+LI(x30,0x200000)
 sha256sum0 x31, x30
 sw x31, 60(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -393,7 +393,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_44:
 // 
 // opcode: sha256sum0 ; op1:x30; dest:x31; op1val:0x100000;
-li x30, 0x100000
+LI(x30,0x100000)
 sha256sum0 x31, x30
 sw x31, 64(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -401,7 +401,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_45:
 // 
 // opcode: sha256sum0 ; op1:x30; dest:x31; op1val:0x80000;
-li x30, 0x80000
+LI(x30,0x80000)
 sha256sum0 x31, x30
 sw x31, 68(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -409,7 +409,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_46:
 // 
 // opcode: sha256sum0 ; op1:x30; dest:x31; op1val:0x40000;
-li x30, 0x40000
+LI(x30,0x40000)
 sha256sum0 x31, x30
 sw x31, 72(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -417,7 +417,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_47:
 // 
 // opcode: sha256sum0 ; op1:x30; dest:x31; op1val:0x20000;
-li x30, 0x20000
+LI(x30,0x20000)
 sha256sum0 x31, x30
 sw x31, 76(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -425,7 +425,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_48:
 // 
 // opcode: sha256sum0 ; op1:x30; dest:x31; op1val:0x10000;
-li x30, 0x10000
+LI(x30,0x10000)
 sha256sum0 x31, x30
 sw x31, 80(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -433,7 +433,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_49:
 // 
 // opcode: sha256sum0 ; op1:x30; dest:x31; op1val:0x8000;
-li x30, 0x8000
+LI(x30,0x8000)
 sha256sum0 x31, x30
 sw x31, 84(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -441,7 +441,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_50:
 // 
 // opcode: sha256sum0 ; op1:x30; dest:x31; op1val:0x4000;
-li x30, 0x4000
+LI(x30,0x4000)
 sha256sum0 x31, x30
 sw x31, 88(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -449,7 +449,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_51:
 // 
 // opcode: sha256sum0 ; op1:x30; dest:x31; op1val:0x2000;
-li x30, 0x2000
+LI(x30,0x2000)
 sha256sum0 x31, x30
 sw x31, 92(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -457,7 +457,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_52:
 // 
 // opcode: sha256sum0 ; op1:x30; dest:x31; op1val:0x1000;
-li x30, 0x1000
+LI(x30,0x1000)
 sha256sum0 x31, x30
 sw x31, 96(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -465,7 +465,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_53:
 // 
 // opcode: sha256sum0 ; op1:x30; dest:x31; op1val:0x1;
-li x30, 0x1
+LI(x30,0x1)
 sha256sum0 x31, x30
 sw x31, 100(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -473,7 +473,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_54:
 // 
 // opcode: sha256sum0 ; op1:x30; dest:x31; op1val:0x3150e5fa;
-li x30, 0x3150e5fa
+LI(x30,0x3150e5fa)
 sha256sum0 x31, x30
 sw x31, 104(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -481,7 +481,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_55:
 // 
 // opcode: sha256sum0 ; op1:x30; dest:x31; op1val:0x90efb625;
-li x30, 0x90efb625
+LI(x30,0x90efb625)
 sha256sum0 x31, x30
 sw x31, 108(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -489,7 +489,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_56:
 // 
 // opcode: sha256sum0 ; op1:x30; dest:x31; op1val:0x65408c73;
-li x30, 0x65408c73
+LI(x30,0x65408c73)
 sha256sum0 x31, x30
 sw x31, 112(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -497,7 +497,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_57:
 // 
 // opcode: sha256sum0 ; op1:x30; dest:x31; op1val:0x1fc493ca;
-li x30, 0x1fc493ca
+LI(x30,0x1fc493ca)
 sha256sum0 x31, x30
 sw x31, 116(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -505,7 +505,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_58:
 // 
 // opcode: sha256sum0 ; op1:x30; dest:x31; op1val:0xd169a3f8;
-li x30, 0xd169a3f8
+LI(x30,0xd169a3f8)
 sha256sum0 x31, x30
 sw x31, 120(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -513,7 +513,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_59:
 // 
 // opcode: sha256sum0 ; op1:x30; dest:x31; op1val:0x8e2eac2a;
-li x30, 0x8e2eac2a
+LI(x30,0x8e2eac2a)
 sha256sum0 x31, x30
 sw x31, 124(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -521,7 +521,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_60:
 // 
 // opcode: sha256sum0 ; op1:x30; dest:x31; op1val:0xf4c30307;
-li x30, 0xf4c30307
+LI(x30,0xf4c30307)
 sha256sum0 x31, x30
 sw x31, 128(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -529,7 +529,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_61:
 // 
 // opcode: sha256sum0 ; op1:x30; dest:x31; op1val:0x35f9377f;
-li x30, 0x35f9377f
+LI(x30,0x35f9377f)
 sha256sum0 x31, x30
 sw x31, 132(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -537,7 +537,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_62:
 // 
 // opcode: sha256sum0 ; op1:x30; dest:x31; op1val:0xa0569d76;
-li x30, 0xa0569d76
+LI(x30,0xa0569d76)
 sha256sum0 x31, x30
 sw x31, 136(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -545,7 +545,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_63:
 // 
 // opcode: sha256sum0 ; op1:x30; dest:x31; op1val:0x58d548aa;
-li x30, 0x58d548aa
+LI(x30,0x58d548aa)
 sha256sum0 x31, x30
 sw x31, 140(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -553,7 +553,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_64:
 // 
 // opcode: sha256sum0 ; op1:x30; dest:x31; op1val:0x2daf9ac7;
-li x30, 0x2daf9ac7
+LI(x30,0x2daf9ac7)
 sha256sum0 x31, x30
 sw x31, 144(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -561,7 +561,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_65:
 // 
 // opcode: sha256sum0 ; op1:x30; dest:x31; op1val:0x55d98c6e;
-li x30, 0x55d98c6e
+LI(x30,0x55d98c6e)
 sha256sum0 x31, x30
 sw x31, 148(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -569,7 +569,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_66:
 // 
 // opcode: sha256sum0 ; op1:x30; dest:x31; op1val:0xf273b44c;
-li x30, 0xf273b44c
+LI(x30,0xf273b44c)
 sha256sum0 x31, x30
 sw x31, 152(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -577,7 +577,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_67:
 // 
 // opcode: sha256sum0 ; op1:x30; dest:x31; op1val:0x74b8de87;
-li x30, 0x74b8de87
+LI(x30,0x74b8de87)
 sha256sum0 x31, x30
 sw x31, 156(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -585,7 +585,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_68:
 // 
 // opcode: sha256sum0 ; op1:x30; dest:x31; op1val:0x886c3a30;
-li x30, 0x886c3a30
+LI(x30,0x886c3a30)
 sha256sum0 x31, x30
 sw x31, 160(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -593,7 +593,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_69:
 // 
 // opcode: sha256sum0 ; op1:x30; dest:x31; op1val:0xccce240c;
-li x30, 0xccce240c
+LI(x30,0xccce240c)
 sha256sum0 x31, x30
 sw x31, 164(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -601,7 +601,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_70:
 // 
 // opcode: sha256sum0 ; op1:x30; dest:x31; op1val:0xbb61a9cd;
-li x30, 0xbb61a9cd
+LI(x30,0xbb61a9cd)
 sha256sum0 x31, x30
 sw x31, 168(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -609,7 +609,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_71:
 // 
 // opcode: sha256sum0 ; op1:x30; dest:x31; op1val:0xb49c83dc;
-li x30, 0xb49c83dc
+LI(x30,0xb49c83dc)
 sha256sum0 x31, x30
 sw x31, 172(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -617,7 +617,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_72:
 // 
 // opcode: sha256sum0 ; op1:x30; dest:x31; op1val:0xc5521660;
-li x30, 0xc5521660
+LI(x30,0xc5521660)
 sha256sum0 x31, x30
 sw x31, 176(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -625,7 +625,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_73:
 // 
 // opcode: sha256sum0 ; op1:x30; dest:x31; op1val:0x800;
-li x30, 0x800
+LI(x30,0x800)
 sha256sum0 x31, x30
 sw x31, 180(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -633,7 +633,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_74:
 // 
 // opcode: sha256sum0 ; op1:x30; dest:x31; op1val:0x400;
-li x30, 0x400
+LI(x30,0x400)
 sha256sum0 x31, x30
 sw x31, 184(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -641,7 +641,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_75:
 // 
 // opcode: sha256sum0 ; op1:x30; dest:x31; op1val:0x200;
-li x30, 0x200
+LI(x30,0x200)
 sha256sum0 x31, x30
 sw x31, 188(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -649,7 +649,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_76:
 // 
 // opcode: sha256sum0 ; op1:x30; dest:x31; op1val:0x100;
-li x30, 0x100
+LI(x30,0x100)
 sha256sum0 x31, x30
 sw x31, 192(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -657,7 +657,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_77:
 // 
 // opcode: sha256sum0 ; op1:x30; dest:x31; op1val:0x80;
-li x30, 0x80
+LI(x30,0x80)
 sha256sum0 x31, x30
 sw x31, 196(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -665,7 +665,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_78:
 // 
 // opcode: sha256sum0 ; op1:x30; dest:x31; op1val:0x40;
-li x30, 0x40
+LI(x30,0x40)
 sha256sum0 x31, x30
 sw x31, 200(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -673,7 +673,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_79:
 // 
 // opcode: sha256sum0 ; op1:x30; dest:x31; op1val:0x20;
-li x30, 0x20
+LI(x30,0x20)
 sha256sum0 x31, x30
 sw x31, 204(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -681,7 +681,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_80:
 // 
 // opcode: sha256sum0 ; op1:x30; dest:x31; op1val:0x10;
-li x30, 0x10
+LI(x30,0x10)
 sha256sum0 x31, x30
 sw x31, 208(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -689,7 +689,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_81:
 // 
 // opcode: sha256sum0 ; op1:x30; dest:x31; op1val:0x8;
-li x30, 0x8
+LI(x30,0x8)
 sha256sum0 x31, x30
 sw x31, 212(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -697,7 +697,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_82:
 // 
 // opcode: sha256sum0 ; op1:x30; dest:x31; op1val:0x4;
-li x30, 0x4
+LI(x30,0x4)
 sha256sum0 x31, x30
 sw x31, 216(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -705,7 +705,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_83:
 // 
 // opcode: sha256sum0 ; op1:x30; dest:x31; op1val:0x2;
-li x30, 0x2
+LI(x30,0x2)
 sha256sum0 x31, x30
 sw x31, 220(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -713,7 +713,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_84:
 // 
 // opcode: sha256sum0 ; op1:x30; dest:x31; op1val:0xfffffffd;
-li x30, 0xfffffffd
+LI(x30,0xfffffffd)
 sha256sum0 x31, x30
 sw x31, 224(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -721,7 +721,7 @@ RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
 inst_85:
 // 
 // opcode: sha256sum0 ; op1:x30; dest:x31; op1val:0xfffffffe;
-li x30, 0xfffffffe
+LI(x30,0xfffffffe)
 sha256sum0 x31, x30
 sw x31, 228(x5)
 RVMODEL_IO_ASSERT_GPR_EQ(x7, x31, 0x00000000)
@@ -741,6 +741,9 @@ rvtest_data:
 RVTEST_DATA_END
 
 RVMODEL_DATA_BEGIN
+rvtest_sig_begin:
+sig_begin_canary:
+CANARY;
 
 
 signature_x1_0:
@@ -756,8 +759,12 @@ signature_x5_0:
 
 #ifdef rvtest_mtrap_routine
 
+tsig_begin_canary:
+CANARY;
 mtrap_sigptr:
     .fill 64*(XLEN/32),4,0xdeadbeef
+tsig_end_canary:
+CANARY;
 
 #endif
 
@@ -768,4 +775,7 @@ gpr_save:
 
 #endif
 
+sig_end_canary:
+CANARY;
+rvtest_sig_end:
 RVMODEL_DATA_END
