@@ -34,6 +34,9 @@ Directory structure
     │   └── src               # assembly tests for "M" extension
     ├── K_unratified          # include tests and references for "K" extension
     │   └── src               # assembly tests for "K" extension
+    ├── P_unratified          # include tests and references for "P" extension
+    │   ├── references        # static references signatures for "P" extension
+    │   └── src               # assembly tests for "P" extension
     ├── privilege             # include tests and references for tests which require Privilege Spec 
     │   └── src               # assembly tests for tests which require Privilege Spec
     └── Zifencei              # include tests and references for "Zifencei" extension
@@ -47,6 +50,9 @@ Directory structure
     │   └── src               # assembly tests for "M" extension
     ├── K_unratified          # include tests and references for "K" extension
     │   └── src               # assembly tests for "K" extension
+    ├── P_unratified          # include tests and references for "P" extension
+    │   ├── references        # static references signatures for "P" extension
+    │   └── src               # assembly tests for "P" extension
     ├── privilege             # include tests and references for tests which require Privilege Spec 
     │   └── src               # assembly tests for tests which require Privilege Spec
     └── Zifencei              # include tests and references for "Zifencei" extension

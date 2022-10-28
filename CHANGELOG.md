@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## [3.5.1] - 2022-10-28
+  - Add test cases for P-ext
+  - Correct TEST_PKRR_OP() macro in arch_test.h 
+  - Avoid reusing RVTEST_SIGUPD_FID() for P-ext macros: SIGALIGN may not be defined when FLEN==0
+
 ## [3.5.0] - 2022-10-17
 - Add Canaries (labels - sig_begin_canary. tsig_begin_canary, tsig_end_canary, sig_end_canary)
 - Signature boundary labels (rvtest_sig_begin and rvtest_sig_end) (enables the new trap handler to fix #262)
@@ -54,7 +59,6 @@
   - Add sigalign based changes to F&D sigupd macros.
   - Add helper macro to check offset legality.
 
-
 ## [2.7.1] - 2022-03-18
   - Fix bug in auto-offset update for SIGUPD macros.
 
@@ -66,7 +70,6 @@
 ## [2.6.3] - 2022-03-04
   - import and synchronize P-ext changes in arch_test.h from riscv-ctg
   - automatically adjust base and offset if offset gets too big
-
 
 ## [2.6.2] - 2022-02-24
   - modified verify.sh to ignore comments in reference signature during diff operation [#230]

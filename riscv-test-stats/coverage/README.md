@@ -8,13 +8,15 @@ files in this folder:
 - [rv32i_fencei.yaml](rv32i_fencei.yaml): this file includes the coverpoints for the fencei extension
 - [rv32im.yaml      ](rv32im.yaml): this file includes the coverpoints for 32-bit mul-div extension
 - [rv32ik.yaml      ](rv32ik.yaml): this file includes the coverpoints for 32-bit K crypto extension
+- [rv32ip.yaml      ](rv32ip.yaml): this file includes the coverpoints for 32-bit packed-SIMD extension
 - [rv32i_priv.yaml  ](rv32i_priv.yaml): this file includes the coverpoints for 32-bit privilege cases
 - [rv32i.yaml       ](rv32i.yaml): this file includes the coverpoints for 32-bit base extension
 - [rv32ib.yaml       ](rv64i.yaml): this file includes the coverpoints for 32-bit bitmanip extension
 - [rv64ic.yaml      ](rv64ic.yaml): this file includes the coverpoints for 64-bit compressed extension
 - [rv64i_fencei.yaml](rv64i_fencei.yaml): this file includes the coverpoints for the fencei extension
 - [rv64im.yaml      ](rv64im.yaml): this file includes the coverpoints for 64-bit mul-div extension
-- [rv32ik.yaml      ](rv64ik.yaml): this file includes the coverpoints for 64-bit K crypto extension
+- [rv64ik.yaml      ](rv64ik.yaml): this file includes the coverpoints for 64-bit K crypto extension
+- [rv64ip.yaml      ](rv64ip.yaml): this file includes the coverpoints for 64-bit packed-SIMD extension
 - [rv64i_priv.yaml  ](rv64i_priv.yaml): this file includes the coverpoints for 64-bit privilege cases
 - [rv64i.yaml       ](rv64i.yaml): this file includes the coverpoints for 64-bit base extension
 - [rv64ib.yaml       ](rv64i.yaml): this file includes the coverpoints for 64-bit bitmanip extension
@@ -38,12 +40,14 @@ HTML preview of the reports can be accessed directly through the following links
 - [rv32i_m/privilege](https://htmlpreview.github.io/?https://github.com/riscv-non-isa/riscv-arch-test/blob/master/riscv-test-stats/coverage/rv32i_m/privilege/coverage.html)
 - [rv32i_m/Zifencei](https://htmlpreview.github.io/?https://github.com/riscv-non-isa/riscv-arch-test/blob/master/riscv-test-stats/coverage/rv32i_m/Zifencei/coverage.html)
 - [rv32i_m/K_unratified](https://htmlpreview.github.io/?https://github.com/riscv-non-isa/riscv-arch-test/blob/master/riscv-test-stats/coverage/rv32i_m/K_unratified/coverage.html)
+- [rv32i_m/P_unratified](https://htmlpreview.github.io/?https://github.com/riscv-non-isa/riscv-arch-test/blob/master/riscv-test-stats/coverage/rv32i_m/P_unratified/coverage.html)
 - [rv64i_m/I](https://htmlpreview.github.io/?https://github.com/riscv-non-isa/riscv-arch-test/blob/master/riscv-test-stats/coverage/rv64i_m/I/coverage.html)
 - [rv64i_m/M](https://htmlpreview.github.io/?https://github.com/riscv-non-isa/riscv-arch-test/blob/master/riscv-test-stats/coverage/rv64i_m/M/coverage.html)
 - [rv64i_m/C](https://htmlpreview.github.io/?https://github.com/riscv-non-isa/riscv-arch-test/blob/master/riscv-test-stats/coverage/rv64i_m/C/coverage.html)
 - [rv64i_m/privilege](https://htmlpreview.github.io/?https://github.com/riscv-non-isa/riscv-arch-test/blob/master/riscv-test-stats/coverage/rv64i_m/privilege/coverage.html)
 - [rv64i_m/Zifencei](https://htmlpreview.github.io/?https://github.com/riscv-non-isa/riscv-arch-test/blob/master/riscv-test-stats/coverage/rv64i_m/Zifencei/coverage.html)
 - [rv64i_m/K_unratified](https://htmlpreview.github.io/?https://github.com/riscv-non-isa/riscv-arch-test/blob/master/riscv-test-stats/coverage/rv64i_m/K_unratified/coverage.html)
+- [rv64i_m/P_unratified](https://htmlpreview.github.io/?https://github.com/riscv-non-isa/riscv-arch-test/blob/master/riscv-test-stats/coverage/rv64i_m/P_unratified/coverage.html)
 - RV64D
   
   - [fadd  ](https://htmlpreview.github.io/?https://github.com/riscv-non-isa/riscv-arch-test/blob/master/riscv-test-stats/coverage/rv64i_m/D/rv64d_fadd/coverage.html)
