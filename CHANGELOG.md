@@ -1,9 +1,46 @@
 # CHANGELOG
 
-## [3.0.2] - 2022-05-16
+## [3.5.1] - 2022-10-28
   - Add test cases for P-ext
   - Correct TEST_PKRR_OP() macro in arch_test.h 
   - Avoid reusing RVTEST_SIGUPD_FID() for P-ext macros: SIGALIGN may not be defined when FLEN==0
+
+## [3.5.0] - 2022-10-17
+- Add Canaries (labels - sig_begin_canary. tsig_begin_canary, tsig_end_canary, sig_end_canary)
+- Signature boundary labels (rvtest_sig_begin and rvtest_sig_end) (enables the new trap handler to fix #262)
+- Zicsr ISA update for priv tests (#233)
+- Default data section should be 16 bytes. This expands default rvtest_data region to be at least 16 bytes (#211)
+- Replace la/li ops with LA/LI macros in tests (#275)
+- Remove trap handler enable macro from misalign1-jalr tests (#281)
+- Move misalign1-jalr test into I directory. (#281)
+- Move fmem tests into the [F|D]/src directory
+- Fix correctval in tests to ?? instead of 0. (#256)
+- Remove the riscv-target directory (#259)
+- Fix the store instruction used in 64bit K tests from `sw` to `SREG` (#282)
+
+## [3.4.1] - 2022-09-11
+  - Fix trailing space in arch_test.h
+
+## [3.4.0] - 2022-08-18
+  - Added tests for Bitmanip and Crypto scalar extensions
+  
+## [3.3.0] - 2022-08-08
+  - Added floating point aligned memory operations tests.
+
+
+## [3.2.1] - 2022-08-01
+  - Fix invalid link in README.adoc
+
+## [3.2.0] - 2022-07-19
+  - Add definition of LREGWU according to XLEN.
+  - Fix corresponding fcvt.\*.wu tests.
+
+## [3.1.1] - 2022-07-07
+  - Fix definition of FPID macro to add load instruction.
+  - Fix nan boxing macro to use correct endianness.
+
+## [3.1.0] - 2022-07-05
+  - Update floating point tests and macros to ensure flags are cleared & correct rounding modes are used.
 
 ## [3.0.1] - 2022-05-13
   - Rename "master" to "main" in github-action yamls
@@ -19,8 +56,8 @@
   - Update framework to support test suite compilation with LLVM.
 
 ## [2.7.2] - 2022-03-18
-- Add sigalign based changes to F&D sigupd macros.
-- Add helper macro to check offset legality.
+  - Add sigalign based changes to F&D sigupd macros.
+  - Add helper macro to check offset legality.
 
 ## [2.7.1] - 2022-03-18
   - Fix bug in auto-offset update for SIGUPD macros.

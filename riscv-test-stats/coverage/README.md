@@ -11,6 +11,7 @@ files in this folder:
 - [rv32ip.yaml      ](rv32ip.yaml): this file includes the coverpoints for 32-bit packed-SIMD extension
 - [rv32i_priv.yaml  ](rv32i_priv.yaml): this file includes the coverpoints for 32-bit privilege cases
 - [rv32i.yaml       ](rv32i.yaml): this file includes the coverpoints for 32-bit base extension
+- [rv32ib.yaml       ](rv64i.yaml): this file includes the coverpoints for 32-bit bitmanip extension
 - [rv64ic.yaml      ](rv64ic.yaml): this file includes the coverpoints for 64-bit compressed extension
 - [rv64i_fencei.yaml](rv64i_fencei.yaml): this file includes the coverpoints for the fencei extension
 - [rv64im.yaml      ](rv64im.yaml): this file includes the coverpoints for 64-bit mul-div extension
@@ -18,6 +19,8 @@ files in this folder:
 - [rv64ip.yaml      ](rv64ip.yaml): this file includes the coverpoints for 64-bit packed-SIMD extension
 - [rv64i_priv.yaml  ](rv64i_priv.yaml): this file includes the coverpoints for 64-bit privilege cases
 - [rv64i.yaml       ](rv64i.yaml): this file includes the coverpoints for 64-bit base extension
+- [rv64ib.yaml       ](rv64i.yaml): this file includes the coverpoints for 64-bit bitmanip extension
+
 
 
 ## Directory structure

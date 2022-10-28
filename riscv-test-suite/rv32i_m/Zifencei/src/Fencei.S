@@ -28,19 +28,19 @@ RVMODEL_IO_WRITE_STR(x31, "# Test Begin\n")
     RVMODEL_IO_WRITE_STR(x31, "# Test part A - test fence\n");
 
     # Addresses for test data and results
-    la      x16, test_A_data
-    la      x17, test_A_res
+    LA(     x16,test_A_data)
+    LA(     x17,test_A_res)
 
     # Register initialization
-    li      x3, 0
+    LI(     x3,0)
 
     # Load testdata
     lw      x1, 0(x16)
     lw      x2, 4(x16)
 
     # Test
-    la      x20, instr_A_src
-    la      x21, instr_A_dst
+    LA(     x20,instr_A_src)
+    LA(     x21,instr_A_dst)
     lw      x15, 0(x20)
     sw      x15, 0(x21)
     fence.i
@@ -88,6 +88,9 @@ RVTEST_DATA_END
 
 # Output data section.
 RVMODEL_DATA_BEGIN
+rvtest_sig_begin:
+sig_begin_canary:
+CANARY;
 test_A_res:
     .fill 4, 4, 0xdeadbeef
 
@@ -96,4 +99,7 @@ gpr_save:
     .fill 32*(XLEN/32), 4, 0xdeadbeef
 #endif
 
+sig_end_canary:
+CANARY;
+rvtest_sig_end:
 RVMODEL_DATA_END
