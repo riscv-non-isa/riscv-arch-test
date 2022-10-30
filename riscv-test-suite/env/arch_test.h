@@ -233,9 +233,11 @@
   	la	t1, mtrampoline    
   	la	t4, mtvec_save
   	csrrw	t2, CSR_MTVEC, t1		          // swap mtvec and trap_trampoline
+	andi    t2, t2, -64
   	SREG	t2, 0(t4)		              // save orig mtvec
   	csrr	t3, CSR_MTVEC		              // now read new_mtval back
-  	beq	t3, t1, rvtest_prolog_done // if mtvec==trap_trampoline, mtvec is writable, continue
+	andi    t3, t3, -64
+	beq	t3, t1, rvtest_prolog_done // if mtvec==trap_trampoline, mtvec is writable, continue
   	
   /****************************************************************/
   /**** fixed mtvec, can't move it so move trampoline instead  ****/
@@ -291,6 +293,7 @@
   /**** to an array of 32B mhandler macros for specd int causes, and ****/
   /**** to a return for anything above that (which causes a mismatch)****/
   /**********************************************************************/
+  .align 6
   mtrampoline:		// 64 or 32 entry table
   .set value, 0
   .rept NUM_SPECD_INTCAUSES     	  // located at each possible int vectors
@@ -337,6 +340,8 @@
           SREG      t2, 0*REGWIDTH(t1)        /* save 1st sig value, (vect, trapmode) */
   sv_mcause:	
           csrr   t2, CSR_MCAUSE
+          sll t2, t2, __riscv_xlen - 12
+          srl t2, t2, __riscv_xlen - 12
           SREG      t2, 1*REGWIDTH(t1) /* save 2nd sig value, (mcause)  */
   
           bltz    t2, common_mint_handler /* this is a interrupt, not a trap */
@@ -368,6 +373,8 @@
   
   adj_mtval:
         	csrr   t2, CSR_MCAUSE  /* code begin adjustment amount already in t3 */
+		sll t2, t2, __riscv_xlen - 12
+		srl t2, t2, __riscv_xlen - 12
   
           LI(t4, CODE_REL_TVAL_MSK)   /* trap#s 12, 3,1,0, -- adjust w/ code_begin */
           sll     t4, t4, t2		          /* put bit# in MSB */
@@ -504,6 +511,7 @@
   	csrw	 CSR_MSCRATCH, t1		        // restore mscratch
   	LREG	t4, 0(t5)		              // load orig mtvec
   	csrrw	t2, CSR_MTVEC, t4		        // restore mtvec (not redundant)
+	andi    t2, t2, -64
   	bne	t4, t2, 1f// if saved!=mtvec, done, else need to restore
   	
   	addi	t2, t4, NUM_SPECD_INTCAUSES*4  // start pt is end of vect area
