@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [3.5.2] - 2022-11-04
+  - Fix inconsistencies in tests.
+  - Add Zicsr to ISA in RV32 privilege tests
+
 ## [3.5.1] - 2022-10-28
   - Add test cases for P-ext
   - Correct TEST_PKRR_OP() macro in arch_test.h 
