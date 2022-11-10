@@ -132,10 +132,6 @@
     #define GOTO_M_OP	csrr	t4, CSR_MSTATUS
 #endif
 
-#ifndef CANARY	//just in case 0xdeadbeef is legal, this allows a test to change it
-    #define CANARY	0xdeadbeef
-#endif
-//this is a valid global pte entry with all permissions. IF at the root entry, it forms an identity map.
 #define RVTEST_PTE_IDENT_MAP  .fill   4096/REGWIDTH, REGWIDTH, (PTE_G | PTE_U | PTE_X | PTE_W | PTE_R | PTE_V)
 
 //_ADDR_SZ_ is a global variable extracted from YAML; set a default if it isn't defined
@@ -152,10 +148,15 @@
     #define SREG sw
     #define LREG lw
     #define XLEN_WIDTH 5
+    #define CANARY \
+      .word 0x6F5CA309
+    
 #elif XLEN==64
     #define SREG sd
     #define LREG ld
     #define XLEN_WIDTH 6
+    #define CANARY \
+      .dword 0x6F5CA309E7D4B281
 #else
     #define SREG sq
     #define LREG lq
@@ -485,7 +486,7 @@
 #define	RVTEST_SIG_END							  ;\
 									  ;\
 .global rvtest_sig_end		/* defines end of signature area       */ ;\
-.word CANARY			/* add one extra word of guardband     */ ;\
+CANARY				/* add one extra word of guardband     */ ;\
   #ifndef rvtest_sig_end						  ;\
 	  rvtest_sig_end:	/* end of sig region		       */ ;\
   #endif								  ;\
@@ -1409,7 +1410,7 @@ rvtest_data_begin:
 #ifndef rvtest_mtrap_routine
  #ifndef mtrap_sigptr
   mtrap_sigptr:
-    .fill 2,4,CANARY
+    .fill 2,4,0xdeadbeef
  #endif
 #endif
 rvtest_data_end:
