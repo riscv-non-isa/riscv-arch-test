@@ -777,6 +777,7 @@
 #define CSR_CYCLE 0xc00
 #define CSR_TIME 0xc01
 #define CSR_INSTRET 0xc02
+#define CSR_HEDELEG 0x602
 #define CSR_HPMCOUNTER3 0xc03
 #define CSR_HPMCOUNTER4 0xc04
 #define CSR_HPMCOUNTER5 0xc05
@@ -806,6 +807,7 @@
 #define CSR_HPMCOUNTER29 0xc1d
 #define CSR_HPMCOUNTER30 0xc1e
 #define CSR_HPMCOUNTER31 0xc1f
+#define CSR_VSATP 0x280
 #define CSR_SSTATUS 0x100
 #define CSR_SIE 0x104
 #define CSR_STVEC 0x105
@@ -816,6 +818,7 @@
 #define CSR_STVAL 0x143
 #define CSR_SIP 0x144
 #define CSR_SATP 0x180
+#define CSR_SEDELEG 0x102
 #define CSR_MSTATUS 0x300
 #define CSR_MISA 0x301
 #define CSR_MEDELEG 0x302
