@@ -21,83 +21,184 @@ rvtest_entry_point:
 RVMODEL_BOOT
 RVTEST_CODE_BEGIN
 #ifdef TEST_CASE_1
-    RVTEST_CASE(1,"//check ISA:=regex(.*32.*); check ISA:=regex(.*I.*Zicsr.*); def rvtest_mtrap_routine=True; def TEST_CASE_1=True",ePMP_test_08)
+    RVTEST_CASE(1,"//check ISA:=regex(.*32.*); check ISA:=regex(.*I.*Zicsr.*); def rvtest_mtrap_routine=True; def TEST_CASE_1=True",ePMP_test_07)
 RVTEST_SIGBASE( x13,signature_x13_1)
     .option nopic
     .attribute unaligned_access, 0
     .attribute stack_align, 16
     .align  2    
+
+#define test_value 0x44444444
+
+#define setRLB  4
+#define setMMWP 2
+#define setMML  1
+
+#define PMPCFG0		0x3A0		// Address of pmpcfg0 	(HAS BEEN USED WHILE ITERATING THE LOOP)
+#define PMPADDR0	0x3B0		// Address of pmpaddr0 	(HAS BEEN USED WHILE ITERATING THE LOOP)
+
+#define PMP0_CFG_SHIFT  0
+#define PMP1_CFG_SHIFT  8
+#define PMP2_CFG_SHIFT  16
+#define PMP3_CFG_SHIFT  24
+
+#define clear_cf_of_Region3 0xFFFFFF00
+
+
 main: 
 
-    LI(x1,0x44444444)                   //Load a value in a register which signifies we are in main
+    LI(x1,test_value)                   //Load a value in a register which signifies we are in main
     RVTEST_SIGUPD(x13,x1)               //Update the signature 
+ 
+//------------------------------Loop to initialize all pmpaddr and pmpcfg CSR(s) to zero--------------------------------     
 
-    LI(x2,4)                            //Load a value 4 in x2 to set mseccfg.RLB
-    RVTEST_SIGUPD(x13,x2)               //Update the signature
-    csrw mseccfg, x2                    //Writing 4 to mseccfg and in specific mseccfg.RLB is set
-    csrr x3,mseccfg                     //Verify its value by reading back
-    RVTEST_SIGUPD(x13,x3)               //Update the signature with the csr value
-   
-    //------------------ Configuring a pmp region 0-------------------------------------   
-    
+    .set pmpcfgi, PMPCFG0	            // Initialize an iterating variable with the address of pmpcfg0
+	.rept 4			                    // START OF LOOP(Repeat 4 times)
+	csrw pmpcfgi , x0	                // Set all pmpcfg regs to zero (initial value)
+	.set pmpcfgi, pmpcfgi+1		        // increment variable to next pmpcfg reg
+	.endr			                    // END OF LOOP BODY
+	// Loop to SET ALL pmpaddr REGs to zero
+	.set pmpaddri, PMPADDR0	            // Initialize an iterating variable with the address of pmpaddr0
+	.rept 16		                    // START OF LOOP(Repeat 16 times)
+	csrw pmpaddri, x0	                // Set all pmpaddr regs to zero (initial value)
+	.set pmpaddri, pmpaddri+1		    // increment variable pmpaddri to the next pmpaddr reg
+	.endr			                    // END OF LOOP BODY
+
+//-----------------------------------------------------------------------------------------------------------------------
+
+    LI(x2,setRLB)
+    csrw mseccfg, x2                   //Setting mseccfg.RLB 
+    csrr x2,mseccfg                     //Verify its value by reading back
+    RVTEST_SIGUPD(x13,x2)               //Update the signature with the csr value
+
+/*-----------------------------------------------------------------------------------------Descritption of all regions used---------------------------------------------------------------------------  
+                                      Region0                                                                                             Region1                                                      
+           0             |````````````````````````````````````````````````````````````|  rvtest_code_end         |````````````````````````````````````````````````````````````````````````````` |             
+                         | [Region0] from 0 till RAM_LOCATION_FOR_TEST                |                          | [Region1] from rvtest_code_end till PMP_region_High                          |      
+                         |  with RWX enabled with lock is clear,PMP TOR is configured |                          |  with RWX enabled and with lock clear PMP TOR type is configured             |      
+         till            |because this is the part of code memory containing our code |    till                  |because this is the part of of our signatures and other stuff                 |      
+                         |for this purpose we have loaded RAM_LOCATION_FOR_TEST addres|                          |for this purpose we have loaded rvtest_code_end addres into                   |      
+   RAM_LOCATION_FOR_TEST |into pmpaddr0 and its corresponding cfg is pmpcfg0 csr      |   PMP_region_High        | pmpaddr1 and PMP_region_High into pmpaddr2, pmpcfg0 [24:16] are used for cfg |      
+                         ``````````````````````````````````````````````````````````````                          ```````````````````````````````````````````````````````````````````````````````       
+              
+          
+           .                                               Region2                                                                                                                     Region3
+TEST_FOR_EXECUTION  |````````````````````````````````````````````````````````````````````````````` |  RAM_LOCATION_FOR_TEST  |````````````````````````````````````````````````````````````````````````````` |
+                    | [Region2] from TEST_FOR_EXECUTION till exit                                  |                         | [Region3] from RAM_LOCATION_FOR_TEST till TEST_FOR_EXECUTION                 |
+                    |  with   X enabled and lock is clear and PMP TOR type is configured           |                         |  with   X enabled and lock is set   and PMP TOR type is configured           |
+    till            | this is the region contains our testing code for checkings RWX on region 3   |       till              | this is the region from where we will perform RWX to check our cfg and tests |
+                    |for this purpose we have loaded TEST_FOR_EXECUTION addres into                |                         |for this purpose we have loaded RAM_LOCATION_FOR_TEST addres into             |
+    exit            | pmpaddr3 and exit into pmpaddr4, pmpcfg1 [7:0] are used for cfg              |  TEST_FOR_EXECUTION     | pmpaddr5 and TEST_FOR_EXECUTION into pmpaddr6, pmpcfg1 [24:16] are used for cfg
+                    ```````````````````````````````````````````````````````````````````````````````                          ```````````````````````````````````````````````````````````````````````````````                     
+          
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+#define PMPADDRESS0	RAM_LOCATION_FOR_TEST                                                         // value to be loaded pmpaddr0 to declare region0
+#define PMPREGION0 (((PMP_R | PMP_W | PMP_X | PMP_TOR)&0xFF)<< PMP0_CFG_SHIFT)                    // Configuration for region 0
+
+#define PMPADDRESS1	rvtest_code_end                                                               // value to be loaded pmpaddr1 to declare region1 start
+#define PMPADDRESS2	PMP_region_High                                                               // value to be loaded pmpaddr2 to declare region1 end
+#define PMPREGION1 (((PMP_R | PMP_W | PMP_X | PMP_TOR)&0xFF)<< PMP2_CFG_SHIFT)                    // Configuration for region 1
+
+# define PMPADDRESS3	TEST_FOR_EXECUTION                                                        // value to be loaded pmpaddr3 to declare region2 start
+# define PMPADDRESS4	exit                                                                      // value to be loaded pmpaddr4 to declare region2 end
+# define PMPREGION2 ((( PMP_X | PMP_TOR)&0xFF)<< PMP0_CFG_SHIFT)                                  // Configuration for region 2
+
+#define PMPADDRESS5	RAM_LOCATION_FOR_TEST                                                         // value to be loaded pmpaddr5 to declare region3 start
+#define PMPADDRESS6	TEST_FOR_EXECUTION                                                            // value to be loaded pmpaddr6 to declare region3 end
+#define PMPREGION3 (((PMP_L | PMP_X |PMP_TOR)&0xFF)<< PMP2_CFG_SHIFT)                             // Configuration for region 3
+#define NEW_PMPREGION3 (((PMP_L | PMP_R | PMP_W |PMP_X |PMP_TOR)&0xFF)<< PMP2_CFG_SHIFT)          //New Configuration for region 3 which will be used later to check our test
+
+//------------------ Configuring 3 regions as mentioned  above--------------------------------------------------     
     csrw satp, zero                     //Disable address translation.
-    LI(x4, 0x20004000)                  //Starting address 0 upto 0x80010000 is configured  
-    csrw pmpaddr0, x4                   //write pmpaddr0 to define PMP region from 0 upto 0x80010000
+    LA(x4, PMPADDRESS0)                  //Starting address 0 upto RAM_LOCATION_FOR_TEST is configured  
+	srl x4, x4, PMP_SHIFT		        // Shift right by 2 times    
+    csrw pmpaddr0, x4                   //Updated pmpaddr0 to define PMP region consisting
     csrr x5, pmpaddr0                   //Verify its value by reading back
-    nop                                 //Added nop in case of trap 
-    LI(x6, PMP_L | PMP_R | PMP_W | PMP_X | PMP_TOR)        //LOCKED BIT IS set and permission is read,write and execute
-    csrw pmpcfg0, x6
-    csrr x7,pmpcfg0                     //Read to confirm configuration is set properly
-    RVTEST_SIGUPD(x13,x7)               //Update the signature 
+    nop                                 //Added nop in case of trap
+    RVTEST_SIGUPD(x13,x5)               //Update the signature 
+    nop                                 //Added nop in case of trap
 
-    //--------------------- Region configured ----------------------------------------    
-
-    //------------------ Configuring a pmp region 1-------------------------------------   
-    
-    LI(x4, 0x20004005)                  //Starting address 80010010 upto 80010020 is configured  
-    csrw pmpaddr1, x4                   //write pmpaddr1 to define PMP region consisting of 16 bytes from 80010010 upto 80010020
+    LA(x4, PMPADDRESS1)                  //Starting address rvtest_code_end is loaded for reigion 1  
+	srl x4, x4, PMP_SHIFT		        // Shift right by 2 times    
+    csrw pmpaddr1, x4                   //Updated pmpaddr1 to define PMP region consisting
     csrr x5, pmpaddr1                   //Verify its value by reading back
     nop                                 //Added nop in case of trap
     RVTEST_SIGUPD(x13,x5)               //Update the signature 
     nop                                 //Added nop in case of trap
-    LI(x6, PMP_L | PMP_X  | PMP_NAPOT)        //LOCKED BIT IS SET and permission is execute
-    slli x6,x6,8                        //shifting left 8 bits to set configuration for pmpaddr1
-    csrs pmpcfg0, x6                     
+
+    LA(x4, PMPADDRESS2)                  //Ending address PMP_region_High is loaded for region 1 
+	srl x4, x4, PMP_SHIFT		        // Shift right by 2 times    
+    csrw pmpaddr2, x4                   //Updated pmpaddr2 to define PMP region consisting
+    csrr x5, pmpaddr2                   //Verify its value by reading back
+    nop                                 //Added nop in case of trap
+    RVTEST_SIGUPD(x13,x5)               //Update the signature 
+    nop                                 //Added nop in case of trap
+
+    LA(x4, PMPADDRESS3)                  //Ending address PMP_region_High is loaded for region 1 
+	srl x4, x4, PMP_SHIFT		        // Shift right by 2 times    
+    csrw pmpaddr3, x4                   //Updated pmpaddr2 to define PMP region consisting
+    csrr x5, pmpaddr3                   //Verify its value by reading back
+    nop                                 //Added nop in case of trap
+    RVTEST_SIGUPD(x13,x5)               //Update the signature 
+    nop                                 //Added nop in case of trap
+            
+    LA(x4, PMPADDRESS4)                  //Ending address PMP_region_High is loaded for region 1 
+	srl x4, x4, PMP_SHIFT		        // Shift right by 2 times    
+    csrw pmpaddr4, x4                   //Updated pmpaddr2 to define PMP region consisting
+    csrr x5, pmpaddr4                   //Verify its value by reading back
+    nop                                 //Added nop in case of trap
+    RVTEST_SIGUPD(x13,x5)               //Update the signature 
+    nop                                 //Added nop in case of trap
+
+    LA(x4, PMPADDRESS5)                  //Ending address PMP_region_High is loaded for region 1 
+	srl x4, x4, PMP_SHIFT		        // Shift right by 2 times    
+    csrw pmpaddr5, x4                   //Updated pmpaddr2 to define PMP region consisting
+    csrr x5, pmpaddr5                   //Verify its value by reading back
+    nop                                 //Added nop in case of trap
+    RVTEST_SIGUPD(x13,x5)               //Update the signature 
+    nop  
+
+    LA(x4, PMPADDRESS6)                  //Ending address PMP_region_High is loaded for region 1 
+	srl x4, x4, PMP_SHIFT		        // Shift right by 2 times    
+    csrw pmpaddr6, x4                   //Updated pmpaddr2 to define PMP region consisting
+    csrr x5, pmpaddr6                   //Verify its value by reading back
+    nop                                 //Added nop in case of trap
+    RVTEST_SIGUPD(x13,x5)               //Update the signature 
+    nop 
+
+    LI(x6, PMPREGION0 | PMPREGION1)     //Permission for Region 0 is RWX with L clear and same for region 1
+    csrw pmpcfg0, x6
     csrr x7,pmpcfg0                     //Read to confirm configuration is set properly
     RVTEST_SIGUPD(x13,x7)               //Update the signature 
 
-    //--------------------- Region configured ----------------------------------------
+    LI(x6,  PMPREGION2 | PMPREGION3)      //Permission for Region 2 is X with L is clear and for Region 3 is X with lock set
+    csrw pmpcfg1, x6
+    csrr x7,pmpcfg1                     //Read to confirm configuration is set properly
+    RVTEST_SIGUPD(x13,x7)               //Update the signature 
 
-    LI(x7,0x80010010)                   //Load the address of pmp region 1
-    sw x1,0(x7)                         //Perform writes in first 4 bytes. It should trap because no writes permission
-    sw x1,4(x7)                         //Perform writes in next 4 bytes. It should trap because no writes permission
-    sw x1,8(x7)                         //Perform writes in next 4 bytes. It should trap because no writes permission
-    sw x1,12(x7)                        //Perform writes in next 4 bytes. It should trap because no writes permission
-    nop                                  
-    lw x1,0(x7)                         //Perform read in first 4 bytes. It should trap because no reads permission
-    lw x1,4(x7)                         //Perform read in next 4 bytes. It should trap because no read permission
-    lw x1,8(x7)                         //Perform read in next 4 bytes. It should trap because no read permission
-    lw x1,12(x7)                        //Perform read in next 4 bytes. It should trap because no read permission
-
-    LI(x8,0xFFFFFF00)
-    csrc pmpcfg0,x8                     //clears the configuration of pmpaddr1(region1)
-    LI(x10, PMP_L | PMP_W | PMP_R | PMP_X | PMP_NAPOT)        //Updated configuration LOCKED BIT IS SET and permission is read, write and execute
-    slli x10,x10,8                        //shifting left 8 bits to set configuration for pmpaddr1
-    csrs pmpcfg0, x10                     
-    csrr x11,pmpcfg0                     //Read to confirm configuration is set properly
-    RVTEST_SIGUPD(x13,x11)               //Update the signature     
+    //---------------------------------------------------------------------------------------------------------
+    
+    LI(x2,test_value)
     nop
+    jal TEST_FOR_EXECUTION             //Jump from here to our testing code will generate load and store access fault bcz we do not have a RW permission for region3
+    LI(x8,clear_cf_of_Region3)
+    csrc pmpcfg1, x8                   //Clear the configuration of region3
+    LI(x9,NEW_PMPREGION3)
+    csrs pmpcfg1, x9                   //Update the configuration to give RW permission (If it is done then our test is passing as we are able to change the configuration of region3 despite being locked using RLB set)
+    jal TEST_FOR_EXECUTION             //Jump from here to our testing code will now not generate load and store access fault bcz we have updated the permission for region3        
 
-    sw x1,0(x7)                         //Perform writes in first 4 bytes. It should not trap now
-    sw x1,4(x7)                         //Perform writes in next 4 bytes. It should not trap now
-    sw x1,8(x7)                         //Perform writes in next 4 bytes. It should not trap now
-    sw x1,12(x7)                        //Perform writes in next 4 bytes. It should not trap now
-    nop                                  
-    lw x1,0(x7)                         //Perform read in first 4 bytes. It should not trap now
-    lw x1,4(x7)                         //Perform read in next 4 bytes. It should not trap now
-    lw x1,8(x7)                         //Perform read in next 4 bytes. It should not trap now
-    lw x1,12(x7)                        //Perform read in next 4 bytes. It should not trap now
-    nop    
+    j exit
+
+RAM_LOCATION_FOR_TEST:                //This is the region which will be used to test RWX permissions
+	.fill 4*(XLEN/32),4,0x12345678
+TEST_FOR_EXECUTION:                   //This is the region which contains code for testing our RAM_LOCATION_FOR_TEST region
+    LA(x11,RAM_LOCATION_FOR_TEST)
+    sw x2,0(x11)
+    nop
+    lw x12,0(x11)
+    nop
+    ret
+exit: 
     
 #endif
  # ---------------------------------------------------------------------------------------------
@@ -122,4 +223,5 @@ mtrap_sigptr:
 gpr_save:
     .fill 24*(XLEN/32),4,0xc9a8b7f1
 #endif
+PMP_region_High:
 RVMODEL_DATA_END

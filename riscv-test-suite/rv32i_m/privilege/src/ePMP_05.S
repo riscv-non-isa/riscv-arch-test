@@ -25,15 +25,22 @@ RVTEST_SIGBASE( x13,signature_x13_1)
     .attribute unaligned_access, 0
     .attribute stack_align, 16
     .align  2    
+
+#define test_value 0x44444444
+
+#define setRLB  4
+#define setMMWP 2
+#define setMML  1
+
 main: 
  
-    LI(x1,0x44444444)                   //Load a value in a register which signifies we are in main
+    LI(x1,test_value)                   //Load a value in a register which signifies we are in main
     RVTEST_SIGUPD(x13,x1)               //Update the signature 
 
-    LI(x2,7)                            //Load a value 7 in x2 which signifies first 3 valid bits of mseccfg
-    not x2,x2                           //set 1's to all other fields except first 3 fields
+    LI(x2,setRLB | setMMWP | setMML)    //Set immidiate as all legal values of mseccfg
+    not x2,x2                           //set 1's to all other fields except first 3 valid fields of mseccfg
     csrw mseccfg,x2                     //write mseccfg to know whether fields are written
-    csrr x3,mseccfg                     //Read the value of mseccfg to verify whether fields are written
+    csrr x3,mseccfg                     //Read the value of mseccfg to verify whether fields are written(It should remain zero bcz we have written to reserve fields)
     RVTEST_SIGUPD(x13,x3)               //Update the signature with the csr value
 
        

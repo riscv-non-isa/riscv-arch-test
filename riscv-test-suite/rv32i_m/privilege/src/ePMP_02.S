@@ -24,24 +24,26 @@ RVTEST_SIGBASE( x13,signature_x13_1)
     .option nopic
     .attribute unaligned_access, 0
     .attribute stack_align, 16
-    .align  2    
+    .align  2   
+
+#define test_value 0x44444444
+
 main: 
 
-    LI(x1,0x44444444)                   //Load a value in a register which signifies we are in main
-    RVTEST_SIGUPD(x13,x1)               //Update the signature 
+    LI(x1,test_value)                    //Load a value in a register which signifies we are in main
+    RVTEST_SIGUPD(x13,x1)                //Update the signature 
 
-    LI(x2,0)                            //Load a value 0 in x2 which is used later on
-    csrw mseccfg,x2                     //write mseccfg to know whether csrw is permitted
-    csrr x3,mseccfg                     //Read the value of mseccfg
-    RVTEST_SIGUPD(x13,x3)               //Update the signature with the csr value
+    csrw mseccfg,zero                    //write mseccfg to know whether csrw is permitted
+    csrr x2,mseccfg                      //Read the value of mseccfg
+    RVTEST_SIGUPD(x13,x2)                //Update the signature with the csr value
 
-    csrs mseccfg,x2                     //set mseccfg to know whether csrs is permitted
-    csrr x3,mseccfg                     //Read the value of mseccfg
-    RVTEST_SIGUPD(x13,x3)               //Update the signature with the csr value
+    csrs mseccfg,zero                    //set mseccfg to know whether csrs is permitted
+    csrr x2,mseccfg                      //Read the value of mseccfg
+    RVTEST_SIGUPD(x13,x2)                //Update the signature with the csr value
 
-    csrc mseccfg,x2                      //clear mseccfg to know whether csrc is permitted
-    csrr x3,mseccfg                     //Read the value of mseccfg
-    RVTEST_SIGUPD(x13,x3)               //Update the signature with the csr value
+    csrc mseccfg,zero                    //clear mseccfg to know whether csrc is permitted
+    csrr x2,mseccfg                      //Read the value of mseccfg
+    RVTEST_SIGUPD(x13,x2)                //Update the signature with the csr value
 
        
 #endif
