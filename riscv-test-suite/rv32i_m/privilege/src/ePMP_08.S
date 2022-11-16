@@ -44,6 +44,23 @@ RVTEST_SIGBASE( x13,signature_x13_1)
 
 #define clear_cf_of_Region3 0xFFFFFF00
 
+//------------------------------This macro is used for testing the RWX for region 3(region under test)------------------     
+
+#define NOP 	0x13
+.macro VERIFICATION_RWX		ADDRESS 	 
+   	LA(a5, \ADDRESS)	   //Fetch the address to be checked
+    lw	a4,0(a5)	       // Load data from it (CHECK FOR READ) ; (NOT TRAP => R enabled)
+	nop			           // Added nop in case of trap
+    // WRITING new value to memory region TRAP if the WRITability is blocked
+	LI(a4, 	NOP)		   // Load the new value (NOP Instruction ID) 
+	sw	a4,0(a5)	       // Store the new value (NOT TRAP => W enabled)
+	nop			           // Added nop in case of trap
+	lw	a4,0(a5)	       // Reload for verification (CHECK IF DATA HAS BEEN UPDATED SUCCESSFULLY)
+	nop			           // Added nop in case of trap
+	jal	\ADDRESS	// Test for execution, an instruction is placed at this address 
+.endm
+//-----------------------------------------------------------------------------------------------------------------------     
+
 
 main: 
 
@@ -71,7 +88,7 @@ main:
     csrr x2,mseccfg                     //Verify its value by reading back
     RVTEST_SIGUPD(x13,x2)               //Update the signature with the csr value
 
-/*-----------------------------------------------------------------------------------------Descritption of all regions used---------------------------------------------------------------------------  
+/*------------------------------------------------------------------------------------------Descritption of all regions used---------------------------------------------------------------------------  
                                       Region0                                                                                             Region1                                                      
            0             |````````````````````````````````````````````````````````````|  rvtest_code_end         |````````````````````````````````````````````````````````````````````````````` |             
                          | [Region0] from 0 till RAM_LOCATION_FOR_TEST                |                          | [Region1] from rvtest_code_end till PMP_region_High                          |      
@@ -83,12 +100,12 @@ main:
               
           
            .                                               Region2                                                                                                                     Region3
-TEST_FOR_EXECUTION  |````````````````````````````````````````````````````````````````````````````` |  RAM_LOCATION_FOR_TEST  |````````````````````````````````````````````````````````````````````````````` |
-                    | [Region2] from TEST_FOR_EXECUTION till exit                                  |                         | [Region3] from RAM_LOCATION_FOR_TEST till TEST_FOR_EXECUTION                 |
-                    |  with   X enabled and lock is clear and PMP TOR type is configured           |                         |  with   X enabled and lock is set   and PMP TOR type is configured           |
-    till            | this is the region contains our testing code for checkings RWX on region 3   |       till              | this is the region from where we will perform RWX to check our cfg and tests |
-                    |for this purpose we have loaded TEST_FOR_EXECUTION addres into                |                         |for this purpose we have loaded RAM_LOCATION_FOR_TEST addres into             |
-    exit            | pmpaddr3 and exit into pmpaddr4, pmpcfg1 [7:0] are used for cfg              |  TEST_FOR_EXECUTION     | pmpaddr5 and TEST_FOR_EXECUTION into pmpaddr6, pmpcfg1 [24:16] are used for cfg
+RETURN_INSTRUCTION  |````````````````````````````````````````````````````````````````````````````` |  RAM_LOCATION_FOR_TEST  |````````````````````````````````````````````````````````````````````````````` |
+                    | [Region2] from RETURN_INSTRUCTION till exit                                  |                         | [Region3] from RAM_LOCATION_FOR_TEST till RETURN_INSTRUCTION                 |
+                    |  with   X enabled and lock is clear and PMP TOR type is configured           |                         |  with   nothing enabled and lock is set   and PMP TOR type is configured     |
+    till            | this is the region contains return instruction, for this we used  region 3   |       till              | this is the region from where we will perform RWX to check our cfg and tests |
+                    |for this purpose we have loaded RETURN_INSTRUCTION addres into                |                         |for this purpose we have loaded RAM_LOCATION_FOR_TEST addres into             |
+    exit            | pmpaddr3 and exit into pmpaddr4, pmpcfg1 [7:0] are used for cfg              |  RETURN_INSTRUCTION     | pmpaddr5 and RETURN_INSTRUCTION into pmpaddr6, pmpcfg1 [24:16] are used for cfg
                     ```````````````````````````````````````````````````````````````````````````````                          ```````````````````````````````````````````````````````````````````````````````                     
           
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
@@ -99,13 +116,13 @@ TEST_FOR_EXECUTION  |```````````````````````````````````````````````````````````
 #define PMPADDRESS2	PMP_region_High                                                               // value to be loaded pmpaddr2 to declare region1 end
 #define PMPREGION1 (((PMP_R | PMP_W | PMP_X | PMP_TOR)&0xFF)<< PMP2_CFG_SHIFT)                    // Configuration for region 1
 
-# define PMPADDRESS3	TEST_FOR_EXECUTION                                                        // value to be loaded pmpaddr3 to declare region2 start
+# define PMPADDRESS3	RETURN_INSTRUCTION                                                        // value to be loaded pmpaddr3 to declare region2 start
 # define PMPADDRESS4	exit                                                                      // value to be loaded pmpaddr4 to declare region2 end
 # define PMPREGION2 ((( PMP_X | PMP_TOR)&0xFF)<< PMP0_CFG_SHIFT)                                  // Configuration for region 2
 
 #define PMPADDRESS5	RAM_LOCATION_FOR_TEST                                                         // value to be loaded pmpaddr5 to declare region3 start
-#define PMPADDRESS6	TEST_FOR_EXECUTION                                                            // value to be loaded pmpaddr6 to declare region3 end
-#define PMPREGION3 (((PMP_L | PMP_X |PMP_TOR)&0xFF)<< PMP2_CFG_SHIFT)                             // Configuration for region 3
+#define PMPADDRESS6	RETURN_INSTRUCTION                                                            // value to be loaded pmpaddr6 to declare region3 end
+#define PMPREGION3 (((PMP_L |PMP_TOR)&0xFF)<< PMP2_CFG_SHIFT)                             // Configuration for region 3
 #define NEW_PMPREGION3 (((PMP_L | PMP_R | PMP_W |PMP_X |PMP_TOR)&0xFF)<< PMP2_CFG_SHIFT)          //New Configuration for region 3 which will be used later to check our test
 
 //------------------ Configuring 3 regions as mentioned  above--------------------------------------------------     
@@ -180,24 +197,22 @@ TEST_FOR_EXECUTION  |```````````````````````````````````````````````````````````
     
     LI(x2,test_value)
     nop
-    jal TEST_FOR_EXECUTION             //Jump from here to our testing code will generate load and store access fault bcz we do not have a RW permission for region3
+   	VERIFICATION_RWX	RAM_LOCATION_FOR_TEST    //macro is called with address as RAM_LOCATION_FOR_TEST(CALLING from here will give RWX trap bcz permission is not to do RWX)
     LI(x8,clear_cf_of_Region3)
-    csrc pmpcfg1, x8                   //Clear the configuration of region3
+    csrc pmpcfg1, x8                             //Clear the configuration of region3
     LI(x9,NEW_PMPREGION3)
-    csrs pmpcfg1, x9                   //Update the configuration to give RW permission (If it is done then our test is passing as we are able to change the configuration of region3 despite being locked using RLB set)
-    jal TEST_FOR_EXECUTION             //Jump from here to our testing code will now not generate load and store access fault bcz we have updated the permission for region3        
+    csrs pmpcfg1, x9                            //Update the configuration to give RWX permission (If it is done then our test is passing as we are able to change the configuration of region3 despite being locked using RLB set)
+   	VERIFICATION_RWX	RAM_LOCATION_FOR_TEST    //macro is called with address as RAM_LOCATION_FOR_TEST
 
     j exit
 
 RAM_LOCATION_FOR_TEST:                //This is the region which will be used to test RWX permissions
-	.fill 4*(XLEN/32),4,0x12345678
-TEST_FOR_EXECUTION:                   //This is the region which contains code for testing our RAM_LOCATION_FOR_TEST region
-    LA(x11,RAM_LOCATION_FOR_TEST)
-    sw x2,0(x11)
-    nop
-    lw x12,0(x11)
-    nop
+	.fill 1*(XLEN/32),4,0x13
+    addi x9,x9,0x01		               // A TEST INSTRUCTION TO TEST THE EXECUTION CHECK ON PMP REGION
+
+RETURN_INSTRUCTION:    
     ret
+
 exit: 
     
 #endif
