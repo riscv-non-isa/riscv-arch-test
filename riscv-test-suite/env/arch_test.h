@@ -151,14 +151,10 @@
     #define SREG sw
     #define LREG lw
     #define XLEN_WIDTH 5
-    #define CANARY \
-      .word 0x6F5CA309
 #elif XLEN==64
     #define SREG sd
     #define LREG ld
     #define XLEN_WIDTH 6
-    #define CANARY \
-      .dword 0x6F5CA309E7D4B281
 #else
     #define SREG sq
     #define LREG lq
@@ -173,6 +169,14 @@
     #define FLREG fld
     #define FSREG fsd
     #define FREGWIDTH 8
+#endif
+
+#if SIGALIGN==8
+  #define CANARY \
+      .dword 0x6F5CA309E7D4B281
+#else
+  #define CANARY \
+      .word 0x6F5CA309 
 #endif
 
 #define ALIGNSZ ((XLEN>>5)+2)	// log2(XLEN): 2,3,4 for XLEN 32,64,128
