@@ -132,6 +132,7 @@
     #define GOTO_M_OP	csrr	t4, CSR_MSTATUS
 #endif
 
+//this is a valid global pte entry with all permissions. IF at the root entry, it forms an identity map.
 #define RVTEST_PTE_IDENT_MAP  .fill   4096/REGWIDTH, REGWIDTH, (PTE_G | PTE_U | PTE_X | PTE_W | PTE_R | PTE_V)
 
 //_ADDR_SZ_ is a global variable extracted from YAML; set a default if it isn't defined
@@ -143,6 +144,8 @@
     #define _ADDR_SZ_ 32
   #endif
 #endif
+
+#define LREGWU lwu
 // define a bunch of XLEN dependent constants
 #if   XLEN==32
     #define SREG sw
@@ -150,7 +153,6 @@
     #define XLEN_WIDTH 5
     #define CANARY \
       .word 0x6F5CA309
-    
 #elif XLEN==64
     #define SREG sd
     #define LREG ld
@@ -175,7 +177,7 @@
 
 #define ALIGNSZ ((XLEN>>5)+2)	// log2(XLEN): 2,3,4 for XLEN 32,64,128
 #if XLEN>FLEN
-  #define SIGALIGN XLEN_WIDTH
+  #define SIGALIGN REGWIDTH
 #else
   #define SIGALIGN FREGWIDTH
 #endif
@@ -249,9 +251,9 @@
     .elseif ((((val>>31)+1)>>1)==0)				;\
 	li   reg, val	/* <=32bit, will be auipc/addi pair */	;\
     .elseif (((val-1)&val) ==0) /* single bit optimization */	;\
-	.set shamt, XLEN-12	;\
-	.rept XLEN-12		;\
-	  .if (val>>shamt)==1	;\
+	.set shamt, 32	;\
+	.rept 32		;\
+	  .if ((val>>shamt)&1)==1	;\
 	    addi reg, x0, 1	;\
 	    slli reg, reg, shamt;\
 	  .endif		;\
@@ -436,28 +438,52 @@
     .endif
 .endm
 
-////////////////////////////////////////////////////////////////////////////////////////
-//**** This is a helper macro that saves GPRs. Normally used only inside CODE_END ****//
-//**** Note: this needs a temp scratch register, & there isn't anything that will ****//
-//**** will work, so we always trash some register, determined by macro param	  ****//
-//**** NOTE: Only be use for debug! Xregs containing addresses won't be relocated ****//
-////////////////////////////////////////////////////////////////////////////////////////
-.macro RVTEST_SAVE_GPRS	TMPREG REG_SV_ADDR	// optionally save GPRs
-.option push
-.option norvc
-  .set __TMP__, \TMPREG
-  __RNUM__ = 1
-  LA(  x\__TMP__,  \REG_SV_ADDR)		//this destroys TMPREG, but saves rest
-
-  .rept 31
-    #if (__RV32E__ && __RNUM<16) & ( __RNUM__ != __TMP__)
-	SREG x\()__RNUM__,   \__RNUM__*REGWIDTH(x\()__TMP__)
-     __RNUM__ = __RNUM__+1
-    #endif
-  .endr
+//////////////////////////////////////////////////////////////////////////////////////// 
+//**** This is a helper macro that saves GPRs. Normally used only inside CODE_END ****// 
+//**** Note: this needs a temp scratch register, & there isn't anything that will ****// 
+//**** will work, so we always trash some register, determined by macro param ****// 
+//**** NOTE: Only be use for debug! Xregs containing addresses won't be relocated ****// 
+//////////////////////////////////////////////////////////////////////////////////////// 
+.macro RVTEST_SAVE_GPRS BASEREG REG_SV_ADDR // optionally save GPRs 
+.option push 
+.option norvc 
+.set offset,0 
+LA( \BASEREG, \REG_SV_ADDR) //this destroys basereg, but saves rest 
+SIGUPD( \BASEREG, x1) 
+SIGUPD( \BASEREG, x2) 
+SIGUPD( \BASEREG, x3) 
+SIGUPD( \BASEREG, x4) 
+SIGUPD( \BASEREG, x5) 
+SIGUPD( \BASEREG, x6) 
+SIGUPD( \BASEREG, x7) 
+SIGUPD( \BASEREG, x8) 
+SIGUPD( \BASEREG, x9) 
+SIGUPD( \BASEREG, x10) 
+SIGUPD( \BASEREG, x11) 
+SIGUPD( \BASEREG, x12) 
+SIGUPD( \BASEREG, x13) 
+SIGUPD( \BASEREG, x14) 
+SIGUPD( \BASEREG, x15) 
+#if (! __RV32E__) 
+SIGUPD( \BASEREG, x16) 
+SIGUPD( \BASEREG, x17) 
+SIGUPD( \BASEREG, x18) 
+SIGUPD( \BASEREG, x19) 
+SIGUPD( \BASEREG, x20) 
+SIGUPD( \BASEREG, x21) 
+SIGUPD( \BASEREG, x22) 
+SIGUPD( \BASEREG, x23) 
+SIGUPD( \BASEREG, x24) 
+SIGUPD( \BASEREG, x25) 
+SIGUPD( \BASEREG, x26) 
+SIGUPD( \BASEREG, x27) 
+SIGUPD( \BASEREG, x28) 
+SIGUPD( \BASEREG, x29) 
+SIGUPD( \BASEREG, x30) 
+SIGUPD( \BASEREG, x31) 
+#endif
 .option pop
-.endm
-
+.endm 
 /********************* REQUIRED FOR NEW TESTS *************************/
 /**** new macro encapsulating RVMODEL_DATA_BEGIN (signature area)  ****/
 /**** defining rvtest_sig_begin: label to enabling direct stores   ****/
@@ -467,12 +493,6 @@
 .global rvtest_sig_begin	/* defines beginning of signature area */ ;\
 									  ;\
     RVMODEL_DATA_BEGIN		/* model specific stuff		       */ ;\
-  #ifndef rvtest_sig_begin						  ;\
-	  rvtest_sig_begin:	/* start of sig region		       */ ;\
-  #endif								  ;\
-  #ifndef signature_begin						  ;\
-	  signature_begin:	/* redundant for bkwards compatibility */ ;\
-  #endif
 
 // tests allocate normal signature space here, then define
 // the mtrap_sigptr: label to separate normal and trap
@@ -486,13 +506,7 @@
 #define	RVTEST_SIG_END							  ;\
 									  ;\
 .global rvtest_sig_end		/* defines end of signature area       */ ;\
-CANARY				/* add one extra word of guardband     */ ;\
-  #ifndef rvtest_sig_end						  ;\
-	  rvtest_sig_end:	/* end of sig region		       */ ;\
-  #endif								  ;\
-  #ifndef signature_end							  ;\
-	  signature_end:	/* redundant for bkwards compatibility */ ;\
-  #endif								  ;\
+CANARY			/* add one extra word of guardband     */ ;\
     RVMODEL_DATA_END		/* model specific stuff */
 
  //#define rvtest_sig_sz (rvtest_sig_end - rvtest_sig_begin) not currently used
@@ -923,10 +937,8 @@ common_\__MODE__\()entry:
 	add	t4, t1, t2			// pre-inc pointer so nested traps don't corrupt signature queue
 	SREG	t4, 0(t3)			// and save new value (old value is still in t1)
 //------end atomic------------------------------------------------
-#ifdef rvtest_sig_end				// if not defined, we can't test for overrun
 	LA(	t3, rvtest_sig_end)		// exceeding this is an overrun, test error
 	bgtu	t4, t3, cleanup_epilogs		// abort test if pre-incremented value overruns
-#endif
 	csrr	sp, CSR_XSCRATCH		// load trapreg_sv from scratch
 	LREG	t3, xtvec_new_addr(sp)		// get pointer to actual tramp table at offset -24
 //----------------------------------------------------------------
@@ -1343,7 +1355,7 @@ rvtest_code_begin:
   .global cleanup_epilogs
 
 rvtest_code_end:		// COMPLIANCE_HALT should get here
-  #ifdef rvtest_gpr_save	// gpr_save area is instantiated at end of signature
+  #ifdef RVTEST_GPR_SAVE	// gpr_save area is instantiated at end of signature
     RVTEST_SAVE_GPRS  1	gpr_save
   #endif
     RVTEST_GOTO_MMODE		// if only Mmode used by tests, this has no effect
@@ -1406,14 +1418,11 @@ rvtest_data_begin:
 /************************************************************************************/
 .macro RVTEST_DATA_END
 .global rvtest_data_end
-// Defining this if it's not already defined because GOTO_MMODE needs it.
-#ifndef rvtest_mtrap_routine
- #ifndef mtrap_sigptr
+ #ifndef rvtest_mtrap_routine
   mtrap_sigptr:
     .fill 2,4,0xdeadbeef
  #endif
-#endif
-rvtest_data_end:
+ rvtest_data_end:
 
 /**** create identity mapped page tables here if mmu is present ****/
 .align 12
