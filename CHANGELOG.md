@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## [3.5.2] - 2022-11-22
+  - Fix Canary definition according to sigalign.
+
 ## [3.5.1] - 2022-10-28
   - Add test cases for P-ext
   - Correct TEST_PKRR_OP() macro in arch_test.h 
