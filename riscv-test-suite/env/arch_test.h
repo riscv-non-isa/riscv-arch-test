@@ -71,7 +71,6 @@
   #define REGWIDTH 8
   #define MASK 0xFFFFFFFFFFFFFFFF
 
-
 #else 
   #if XLEN==32
     #define SREG sw
@@ -79,7 +78,6 @@
     #define LREGWU lw
     #define REGWIDTH 4
   #define MASK 0xFFFFFFFF
-
 
   #endif
 #endif
@@ -94,12 +92,14 @@
     #define FLREG flw
     #define FSREG fsw
     #define FREGWIDTH 4
-    #if XLEN==64
-        #define SIGALIGN 8
-    #else
-        #define SIGALIGN 4
-    #endif
+
   #endif
+#endif
+
+#if FLEN>XLEN
+    #define SIGALIGN FREGWIDTH
+#else
+    #define SIGALIGN REGWIDTH
 #endif
 
 #if SIGALIGN==8
