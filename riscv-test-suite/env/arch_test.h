@@ -91,6 +91,17 @@
 #define MASK_XLEN(x) ((x) & ((1 << (__riscv_xlen - 1) << 1) - 1))
 #define SEXT_IMM(x)  ((x) | (-(((x) >> 11) & 1) << 11))
 
+#define REGWIDTH (XLEN>>3)	// in units of #bytes
+#define MASK ((1<<(XLEN-1))-1) + (1<<(XLEN-1))	// XLEN bits of 1s
+
+#define ALIGNSZ ((XLEN>>5)+2)	// log2(XLEN): 2,3,4 for XLEN 32,64,128
+#if XLEN>FLEN
+  #define SIGALIGN REGWIDTH
+#else
+  #define SIGALIGN FREGWIDTH
+#endif
+
+
 //==============================================================================
 // this section has RV Arch Test Constants, mostly YAML based.
 // It ensures they're defined  & defaulted if necessary)
@@ -145,16 +156,18 @@
   #endif
 #endif
 
-#define LREGWU lwu
+
 // define a bunch of XLEN dependent constants
 #if   XLEN==32
     #define SREG sw
     #define LREG lw
     #define XLEN_WIDTH 5
+    #define LREGWU lw
 #elif XLEN==64
     #define SREG sd
     #define LREG ld
     #define XLEN_WIDTH 6
+    #define LREGWU lwu
 #else
     #define SREG sq
     #define LREG lq
@@ -165,10 +178,14 @@
     #define FLREG flw
     #define FSREG fsw
     #define FREGWIDTH 4
-#else
+#elseif FLEN==64
     #define FLREG fld
     #define FSREG fsd
     #define FREGWIDTH 8
+#else
+    #define FLREG flq
+    #define FSREG fsq
+    #define FREGWIDTH 16
 #endif
 
 #if SIGALIGN==8
@@ -179,15 +196,6 @@
       .word 0x6F5CA309 
 #endif
 
-#define ALIGNSZ ((XLEN>>5)+2)	// log2(XLEN): 2,3,4 for XLEN 32,64,128
-#if XLEN>FLEN
-  #define SIGALIGN REGWIDTH
-#else
-  #define SIGALIGN FREGWIDTH
-#endif
-
-#define REGWIDTH (XLEN>>3)	// in units of #bytes
-#define MASK ((1<<(XLEN-1))-1) + (1<<(XLEN-1))	// XLEN bits of 1s
 //---------------------------mode encoding definitions-----------------------------
 .set MMODE_SIG,3   /* FIXME why don't the #defines work if they're evaluated first?? */
 .set VMODE_SIG,2
@@ -207,7 +215,8 @@
 //#endif
 #define tramp_sz       ((XLEN + 3* NUM_SPECD_INTCAUSES + 17) * 4) /* 17 is #ops from Mend..Mentry */
 
-//define a fixed offsets into the save area
+//define a fixed offsets into the save area (should rename these all to _off instead of _addr)
+#define tramp_sv_addr	 (-56-tramp_sz)
 #define xsatp_sv_addr	 (-56)
 #define mode_rtn_inst	 (-48)
 #define trampend_addr	 (-40)
@@ -215,8 +224,8 @@
 #define xtvec_new_addr	 (-24)
 #define xtvec_sav_addr	 (-16)
 #define xscr_save_addr	 ( -8)
-#define tramptbl_sv_addr ( -0)
-#define trapreg_sv_sz  (8*REGWIDTH)
+#define trapreg_sv_addr  ( -0)
+#define trapreg_sv_sz    (8*REGWIDTH)
 #define RVTEST_ISA(_STR)	//empty macro used by framework??
 
 //==============================================================================
@@ -254,24 +263,25 @@
 	addi reg,x0,val	/* <=12bit signed imm */		;\
     .elseif ((((val>>31)+1)>>1)==0)				;\
 	li   reg, val	/* <=32bit, will be auipc/addi pair */	;\
-    .elseif (((val-1)&val) ==0) /* single bit optimization */	;\
-	.set shamt, 32	;\
-	.rept 32		;\
+    .elseif (((val-1)&val)==0) /* single bit optimization */	;\
+	.set shamt, 31			;\
+	.rept 32			;\
 	  .if ((val>>shamt)&1)==1	;\
-	    addi reg, x0, 1	;\
-	    slli reg, reg, shamt;\
-	  .endif		;\
-	  .set shamt, shamt+1	;\
-	.endr			;\
-    .else			;\
-	.option pop		;\
-	.align UNROLLSZ		;\
-	.option push		;\
-	.option norvc		;\
-	 li reg,val		;\
-	.align UNROLLSZ		;\
-   .endif			;\
-   .option pop;
+	    addi reg, x0, 1		;\
+	    slli reg, reg, shamt	;\
+	  .endif			;\
+	  .set shamt, shamt+1		;\
+	.endr				;\
+    .else				;\
+	.option pop			;\
+	.align UNROLLSZ			;\
+	.option push			;\
+	.option norvc			;\
+	 li reg,val			;\
+	.align UNROLLSZ			;\
+   .option pop  ;\
+   .endif				
+   
 
 /**** fixed length LA macro ****/
 #define LA(reg,val)	;\
@@ -287,7 +297,7 @@
 /*****************************************************************/
 
 /* init regs, to ensure you catch any errors */
-#define RVTEST_INIT_GPRS 			;\
+#define RVTEST_INIT_GPRS			;\
      LI (x1,  (0xFEEDBEADFEEDBEAD & MASK))	;\
      LI (x2,  (0xFF76DF56FF76DF56 & MASK))	;\
      LI (x3,  (0x7FBB6FAB7FBB6FAB & MASK))	;\
@@ -442,52 +452,54 @@
     .endif
 .endm
 
-//////////////////////////////////////////////////////////////////////////////////////// 
-//**** This is a helper macro that saves GPRs. Normally used only inside CODE_END ****// 
-//**** Note: this needs a temp scratch register, & there isn't anything that will ****// 
-//**** will work, so we always trash some register, determined by macro param ****// 
-//**** NOTE: Only be use for debug! Xregs containing addresses won't be relocated ****// 
-//////////////////////////////////////////////////////////////////////////////////////// 
-.macro RVTEST_SAVE_GPRS BASEREG REG_SV_ADDR // optionally save GPRs 
-.option push 
-.option norvc 
-.set offset,0 
-LA( \BASEREG, \REG_SV_ADDR) //this destroys basereg, but saves rest 
-SIGUPD( \BASEREG, x1) 
-SIGUPD( \BASEREG, x2) 
-SIGUPD( \BASEREG, x3) 
-SIGUPD( \BASEREG, x4) 
-SIGUPD( \BASEREG, x5) 
-SIGUPD( \BASEREG, x6) 
-SIGUPD( \BASEREG, x7) 
-SIGUPD( \BASEREG, x8) 
-SIGUPD( \BASEREG, x9) 
-SIGUPD( \BASEREG, x10) 
-SIGUPD( \BASEREG, x11) 
-SIGUPD( \BASEREG, x12) 
-SIGUPD( \BASEREG, x13) 
-SIGUPD( \BASEREG, x14) 
-SIGUPD( \BASEREG, x15) 
-#if (! __RV32E__) 
-SIGUPD( \BASEREG, x16) 
-SIGUPD( \BASEREG, x17) 
-SIGUPD( \BASEREG, x18) 
-SIGUPD( \BASEREG, x19) 
-SIGUPD( \BASEREG, x20) 
-SIGUPD( \BASEREG, x21) 
-SIGUPD( \BASEREG, x22) 
-SIGUPD( \BASEREG, x23) 
-SIGUPD( \BASEREG, x24) 
-SIGUPD( \BASEREG, x25) 
-SIGUPD( \BASEREG, x26) 
-SIGUPD( \BASEREG, x27) 
-SIGUPD( \BASEREG, x28) 
-SIGUPD( \BASEREG, x29) 
-SIGUPD( \BASEREG, x30) 
-SIGUPD( \BASEREG, x31) 
+////////////////////////////////////////////////////////////////////////////////////////
+//**** This is a helper macro that saves GPRs. Normally used only inside CODE_END ****//
+//**** Note: this needs a temp scratch register, & there isn't anything that will ****//
+//**** will work, so we always trash some register, determined by macro param	  ****//
+//**** NOTE: Only be use for debug! Xregs containing addresses won't be relocated ****//
+////////////////////////////////////////////////////////////////////////////////////////
+
+.macro RVTEST_SAVE_GPRS BASEREG REG_SV_ADDR	// optionally save GPRs
+.option push
+.option norvc
+.set offset,0
+  LA(	  \BASEREG, \REG_SV_ADDR)		//this destroys basereg, but saves rest
+  SIGUPD( \BASEREG, x1)
+  SIGUPD( \BASEREG, x2)
+  SIGUPD( \BASEREG, x3)
+  SIGUPD( \BASEREG, x4)
+  SIGUPD( \BASEREG, x5)
+  SIGUPD( \BASEREG, x6)
+  SIGUPD( \BASEREG, x7)
+  SIGUPD( \BASEREG, x8)
+  SIGUPD( \BASEREG, x9)
+  SIGUPD( \BASEREG, x10)
+  SIGUPD( \BASEREG, x11)
+  SIGUPD( \BASEREG, x12)
+  SIGUPD( \BASEREG, x13)
+  SIGUPD( \BASEREG, x14)
+  SIGUPD( \BASEREG, x15)
+#if (! __RV32E__)
+  SIGUPD( \BASEREG, x16)
+  SIGUPD( \BASEREG, x17)
+  SIGUPD( \BASEREG, x18)
+  SIGUPD( \BASEREG, x19)
+  SIGUPD( \BASEREG, x20)
+  SIGUPD( \BASEREG, x21)
+  SIGUPD( \BASEREG, x22)
+  SIGUPD( \BASEREG, x23)
+  SIGUPD( \BASEREG, x24)
+  SIGUPD( \BASEREG, x25)
+  SIGUPD( \BASEREG, x26)
+  SIGUPD( \BASEREG, x27)
+  SIGUPD( \BASEREG, x28)
+  SIGUPD( \BASEREG, x29)
+  SIGUPD( \BASEREG, x30)
+  SIGUPD( \BASEREG, x31)
 #endif
 .option pop
-.endm 
+.endm
+
 /********************* REQUIRED FOR NEW TESTS *************************/
 /**** new macro encapsulating RVMODEL_DATA_BEGIN (signature area)  ****/
 /**** defining rvtest_sig_begin: label to enabling direct stores   ****/
@@ -510,7 +522,7 @@ SIGUPD( \BASEREG, x31)
 #define	RVTEST_SIG_END							  ;\
 									  ;\
 .global rvtest_sig_end		/* defines end of signature area       */ ;\
-CANARY			/* add one extra word of guardband     */ ;\
+CANARY				/* add one extra word of guardband     */ ;\
     RVMODEL_DATA_END		/* model specific stuff */
 
  //#define rvtest_sig_sz (rvtest_sig_end - rvtest_sig_begin) not currently used
@@ -526,7 +538,7 @@ CANARY			/* add one extra word of guardband     */ ;\
 /**** NOTE: this will overwrite non-Mmode trap status CSRs			    ****/
 /****FIXME - check that SATP and VSATP point to the identity map page table	    ****/
 /***************************************************************************************/
-  #define TESTCODE_ONLY_TVAL_ILLOP	//FIXME comment this out when Sail fixes illop 
+//  #define TESTCODE_ONLY_TVAL_ILLOP	//FIXME comment this out when Sail fixes illop
 	
 .macro	RVTEST_GOTO_MMODE
 #ifdef	rvtest_mtrap_routine		/**** FIXME this can be empty if no Umode ****/
@@ -550,7 +562,7 @@ CANARY			/* add one extra word of guardband     */ ;\
   RVMODEL_FENCEI			/* orig tramp entries now in t5,t6 for S,V   */
   auipc	t2, 0				/* set rtnaddr base= GOTO_M_OP-4 (reuse t2)  */
 // Note that if illegal op trap is delegated to be horizontal, this will infinite loop
-// Solution is either for test to disable delegation, or to 
+// Solution is either for test to disable delegation, or to
 // redefine the GOTO_M_OP to be an op that will trap vertically
   GOTO_M_OP				/* illegal op if < Mmode , else falls through*/
 					/* if delegated to S/ V, it rtns here&re-trap*/
@@ -776,16 +788,20 @@ init_\__MODE__\()satp:
 //----------------------------------------------------------------------
 init_\__MODE__\()tvec:
 	LA(	t4, \__MODE__\()trampoline)	//this is a code-relative pointer
-	SREG	t4, xtvec_new_addr(t1)	// save tramp ptr in tvec_new - overwritten if tramp is copied
+	csrr	t3, CSR_XTVEC
+	SREG	t3, xtvec_sav_addr(t1)	// save orig mtvec+mode in tvec_save
+	andi	t2, t3, 3		// merge .mode & tramp ptr and store to both XTVEC, tvec_new
+	or	t2, t4, t2
+	SREG	t2, xtvec_new_addr(t1)
+	csrw	CSR_XTVEC, t2		// write xtvec with trap_trampoline+mode, so trap will go to the trampoline
 
-	csrrw	t2, CSR_XTVEC, t4	// swap mtvec and trap_trampoline, so trap will go to the trampoline
-	SREG	t2, xtvec_sav_addr(t1)	// save orig mtvec in tvec_save (offset -16) entries before save area)
-	csrr	t3, CSR_XTVEC		// now read new_mtval back
+	csrr	t5, CSR_XTVEC		// now read new_mtval back & make sure we could write it
 #ifndef HANDLER_TESTCODE_ONLY
-	beq	t3, t4, rvtest_\__MODE__\()prolog_done // if mtvec==trap_trampoline, mtvec is writable, continue
+	beq	t5, t2, rvtest_\__MODE__\()prolog_done // if mtvec==trap_trampoline, mtvec is writable, continue
 #endif
-	csrw	CSR_XTVEC, t2		// xTVEC not completely writable, restore old value
-	SREG	t2, xtvec_new_addr(t1)	// and update tvect_new with orig mtvec
+	csrw	CSR_XTVEC, t3		// xTVEC not completely writable, restore old value & exit if uninitialized
+	beqz	t3, abort\__MODE__\()test
+	SREG	t3, xtvec_new_addr(t1)	// else update tvect_new with orig mtvec
 
   /*****************************************************************/
   /**** fixed mtvec, can't move it so move trampoline instead	****/
@@ -793,9 +809,9 @@ init_\__MODE__\()tvec:
   /*****************************************************************/
 
 init_\__MODE__\()tramp:	/**** copy trampoline at mtvec tgt; t4->t2->t1	t3=end of save ****/
-
-	addi	t1, t1, trapreg_sv_sz		// move ptr past rest save area to tramptbl save area
-	addi	t3, t2, tramp_sz		// calc addr past end of orig tramp area
+	andi	t2, t3, -4			// calc bgn of orig tramp area by rmving mode bits
+	addi	t3, t2, tramp_sz		// calc end of orig tramp area (+4)
+	addi	t1, t1, tramp_sv_addr		// calc bgn of tramp save area
 //----------------------------------------------------------------------
 	overwt_tt_\__MODE__\()loop:		// now build new tramp table w/ local offsets
 	lw	t6, 0(t2)			//  move original mtvec target to save area
@@ -809,17 +825,18 @@ init_\__MODE__\()tramp:	/**** copy trampoline at mtvec tgt; t4->t2->t1	t3=end of
 	addi	t5, t5,256			// calculate some offset into the save area
 	bgt	t5, t1, endcopy_\__MODE__\()tramp // and pretend if couldnt be written
 #endif
-	addi	t2, t2, 4			// next src  inst. index
-	addi	t1, t1, 4			// next save inst. index
-	addi	t4, t4, 4			// next tgt  inst. index
+	addi	t2, t2, 4			// next tvec  inst. index
+	addi	t1, t1, 4			// next save  inst. index
+	addi	t4, t4, 4			// next tramp inst. index
 	bne	t3, t2, overwt_tt_\__MODE__\()loop	// haven't reached end of save area,  loop
 //----------------------------------------------------------------------
   endcopy_\__MODE__\()tramp:			// vector table not writeable, restore
 	RVMODEL_FENCEI				// make sure ifetches get new code
-	csrr	t1, CSR_XSCRATCH		// load trapreg_sv from scratch
-	sw	t2, trampend_addr(t1)		//save copy progress
+	csrr	t1, CSR_XSCRATCH		// reload trapreg_sv from scratch
+	sw	t2, trampend_addr(t1)		// save copy progress
 	beq	t3,t2, rvtest_\__MODE__\()prolog_done //full loop, don't exit
-	LA     (t6, exit_\__MODE__\()cleanup)	// failure to replace trampoline **FIXME:  precalculat& put into savearea?
+abort\__MODE__\()test:
+	LA     (t6, exit_\__MODE__\()cleanup)	// trampoline rplc failure **FIXME:  precalc& put into savearea?
 	jalr   x0, t6				// this branch may be too far away, so longjmp
 
 rvtest_\__MODE__\()prolog_done:
@@ -941,15 +958,13 @@ common_\__MODE__\()entry:
 	add	t4, t1, t2			// pre-inc pointer so nested traps don't corrupt signature queue
 	SREG	t4, 0(t3)			// and save new value (old value is still in t1)
 //------end atomic------------------------------------------------
-	LA(	t3, rvtest_sig_end)		// exceeding this is an overrun, test error
-	bgtu	t4, t3, cleanup_epilogs		// abort test if pre-incremented value overruns
 	csrr	sp, CSR_XSCRATCH		// load trapreg_sv from scratch
-	LREG	t3, xtvec_new_addr(sp)		// get pointer to actual tramp table at offset -24
+	LREG	t3, xtvec_new_addr(sp)		// get pointer to actual tramp table
 //----------------------------------------------------------------
 sv_\__MODE__\()vect:
 	sub	t6, t6, t3			// cvt vec-addr in t6 to offset fm top of tramptable **FIXME: breaks if tramp crosses pg && MMU enabled
 	slli	t6, t6, 3			// make room for 3 bits; MSBs aren't useful **FIXME: won't work for SV64!)
-	or	t6, t6, t2			// insert entry size into bits 5:3
+	or	t6, t6, t2			// insert entry size into bits 5:2
 	addi	t6, t6, \__MODE__\()MODE_SIG	// insert mode# into 1:0
 	SREG	t6, 0*REGWIDTH(t1)		// save 1st sig value, (vec-offset, entrysz, trapmode)
 //----------------------------------------------------------------
@@ -966,15 +981,15 @@ sv_\__MODE__\()cause:
   /****	 depending on op alignment so trapped op isn't re-executed ****/
   /********************************************************************/
 common_\__MODE__\()excpt_handler:
-	csrr  t2, CSR_XEPC
+	csrr	t2, CSR_XEPC
 sv_\__MODE__\()epc:
-	LA(   t3, rvtest_code_begin) // test code start; compensates for different loader offsets
-	sub   t4, t2, t3	 // convert mepc to offset rel to beginning of test
-	SREG  t4, 2*REGWIDTH(t1) // save 3rd sig value, (rel mepc) into trap signature area
-adj_\__MODE__\()epc:		 // adj mepc so there is at least 4B of padding after op
-	andi  t6, t2, -0x4	 // adjust mepc to prev 4B alignment
-	addi  t6, t6,  REGWIDTH	 // adjust mepc to mepc+4 (for RV32) and mepc+8 (for RV64) & 4B aligned
-	csrw  CSR_XEPC, t6	 // restore adjusted value, w/ 2,4 or 6B of padding
+	LA(	t3, rvtest_code_begin)	// test code start; compensates for different loader offsets
+	sub	t4, t2, t3		// convert mepc to offset rel to beginning of test
+	SREG	t4, 2*REGWIDTH(t1)	// save 3rd sig value, (rel mepc) into trap signature area
+adj_\__MODE__\()epc:			// adj mepc so there is at least 4B of padding after op
+	andi	t6, t2, -0x4		// adjust mepc to prev 4B alignment (if 2B aligned)
+	addi	t6, t6,  0x8		// adjust mepc so it skips past op, has padding & 4B aligned
+	csrw	CSR_XEPC, t6		// restore adjusted value, w/ 2,4 or 6B of padding
 
   /****WARNING needs updating when insts>32b are ratified, only 4 or 6B of padding; for 64b insts,  2B or 4B of padding	  ****/
 
@@ -986,32 +1001,31 @@ adj_\__MODE__\()epc:		 // adj mepc so there is at least 4B of padding after op
   /* if illegal op, load opcode from mtval (if !=0) or from istream (if ==0)	*/
   /******************************************************************************/
 
-	csrr	t4, CSR_XCAUSE
+//	csrr	t4, CSR_XCAUSE
 	csrr	t6, CSR_XTVAL
 
   /******************************************************************************/
   /* null adjustment if exception address is neither code nor data relative; ****/
-  /* FUTURE FIXME: this will need to be updated to handle 48 or 64b opcodes  ****/
+  /* FUTURE FIXME: this may need to be updated to handle 48 or 64b opcodes   ****/
   /******************************************************************************/
 
-/* now check for address adjustments - code, data, or signature region*/
+/* now check for addr adjustments - code, data, or sig region (cause is in t5)*/
 
-illop_\__MODE__\()tval:
-#ifdef TESTCODE_ONLY_TVAL_ILLOP
-	addi	t2, t4, -CAUSE_ILLEGAL_INSTRUCTION	// spcl case mcause==2 (illegal op) no addr adj
-	beqz	t2, skp_\__MODE__\()tval// mtval is an opcode, skip storing it for testing
-#endif
+illop_\__MODE__\()tval:			// if cause is illop, save always
+	addi	t2, t5, -CAUSE_ILLEGAL_INSTRUCTION	// spcl case mcause==2 (illegal op) no addr adj
+	beqz	t2, sv_\__MODE__\()tval
+
 chk_\__MODE__\()tval:
-	LI(	t5, SET_REL_TVAL_MSK)	// now check if code or data (or sig) region adjustment
-	srl	t5, t5, t4		// put mcause bit# into LSB
-	slli	t5, t5, XLEN-1		// put mcause bit# into MSB
-	bge	t5, x0, sv_\__MODE__\()tval	// if MSB=0, no adj, sv to ensure tval was cleared
+	LI(	t4, SET_REL_TVAL_MSK)	// now check if code or data (or sig) region adjustment
+	srl	t4, t4, t5		// put mcause bit# into LSB
+	slli	t4, t4, XLEN-1		// put mcause bit# into MSB
+	bge	t4, x0, sv_\__MODE__\()tval	// if MSB=0, no adj, sv to ensure tval was cleared
 
 code_\__MODE__\()adj:
-	LI(	t5, CODE_REL_TVAL_MSK)	//bits 12, 3,1,0, -- code relative traps
-	srl	t5, t5, t4		// put mcause bit# into LSB
-	slli	t5, t5, XLEN-1		// put mcause bit# into MSB
-	bltz	t5, adj_\__MODE__\()tval// if MSB=1, use rvtest_code_begin adj (already in t3)
+	LI(	t4, CODE_REL_TVAL_MSK)	//bits 12, 3,1,0, -- code relative traps
+	srl	t4, t4, t5		// put mcause bit# into LSB
+	slli	t4, t4, XLEN-1		// put mcause bit# into MSB
+	bltz	t4, adj_\__MODE__\()tval// if MSB=1, use rvtest_code_begin adj (already in t3)
 
 data_\__MODE__\()adj:			// only possibilities left are testdata or sigdata
 	LA(	t3, rvtest_data_end)
@@ -1039,9 +1053,18 @@ skp_\__MODE__\()tval:
     .endif
   .endif
 
+chk_\__MODE__\()trapsig_overrun:	//FIXME: move trap signature check to here
+#ifdef rvtest_sig_end			// if not defined, we can't test for overrun
+#define trap_sig_sz (rvtest_sig_end-mtrap_sigptr)
+	LA(	t4, rvtest_trap_sig)
+	LREG	t4, 0(t4)		// get the preincremented trap signature ptr
+	LI(	t6, trap_sig_sz)	// length of trap sig; exceeding this is an overrun, test error
+	add	t3, t3, t6		// calculate rvtest_sig_end from mtrap_sigptr, avoiding an LA
+	bgtu	t4, t3, cleanup_epilogs	// abort test if pre-incremented value overruns
+#endif
+
   /**** vector to execption special handling routines ****/
-	csrr	t2, CSR_XCAUSE
-	LA(	t3, excpt_\__MODE__\()hndlr_tbl)// load spcl except handler jump table addr
+	li	t2, NUM_SPECD_INTCAUSES<<2	// offset of exception dispatch table bzse
 	j	spcl_\__MODE__\()handler	// jump to shared int/excpt spcl handling dispatcher
 
  /**** common return code for both interrupts and exceptions ****/
@@ -1060,24 +1083,29 @@ resto_\__MODE__\()rtn:			// restore and return
  /**** This is the interrupt specific code. It	 ****/
  /**** clears the int and saves int-specific CSRS****/
  /***************************************************/
-common_\__MODE__\()int_handler:		// t1 has sig ptr, t2 has mcause
+common_\__MODE__\()int_handler:		// t1 has sig ptr, t5 has mcause
 	LI(	t3, 1)
  //**FIXME** - make sure this is kept up-to-date with fast int extension and others
-	andi	t2,t2,XLEN-1		// rmv extranous bits if future extensions use upper bits
+	andi	t2, t5, XLEN-1		// clr INT bit	(**NOTE rmv extra bits if future extns use upper bits)
 	sll	t3, t3, t2		// create mask 1<<xcause **NOTE**: that MSB is ignored in shift amt
 	csrrc	t4, CSR_XIE, t3		// read, then attempt to clear int enable bit??
 	csrrc	t4, CSR_XIP, t3		// read, then attempt to clear int pend bit
 sv_\__MODE__\()ip:			// note: clear has no effect on MxIP
 	SREG	t4, 2*REGWIDTH(t1)	// save 3rd sig value, (xip)
 
-	LA(	t3, clrint_\__MODE__\()tbl)	// load spcl int handler dispatch table addr
+	li	t2, 0			// index of interrupt dispatch table base
 
-  /**** enter shared special int/excp handler dispatch into table in t3, indexed by mcause ****/
+/***************************************************/
+/**** shared spcl int/excp dispatcher.		****/
+/**** JR to table in t3+t2, indexed by mcause	****/
+/***************************************************/
 spcl_\__MODE__\()handler:		// case table branch to special handler code, depending on mcause
-	slli	t2, t2, 3		// convert cause to 8B aligned offset
-	add	t3, t3, t2		// index into to it, load vector, then jump to it
+	LA(	t3, clrint_\__MODE__\()tbl)	// load spcl int/excpt handler dispatch table 
+	add	t3, t3, t2		// offset into the correct table
+	slli	t2, t5, 3		// index into 8b aligned dispatch entry and jump through it
+	add	t3, t3, t2
 	LREG	t3, 0(t3)
-	jr	t3			// this defaulst to resto_\__MODE__\()rtn
+	jr	t3			// this defaults to resto_\__MODE__\()rtn
 
 /**** These are invocations of the model supplied interrupt clearing macros ****/
 /**** Note there is a copy per mode, though they could all be the same code ****/
@@ -1238,18 +1266,20 @@ resto_\__MODE__\()edeleg:
 //	csrw	CSR_XEDELEG, t2	//this handles S  mode restore
 .endif
 resto_\__MODE__\()satp:
-	LREG	t2, xsatp_sv_addr(t1)		// get saved xsatp  at offset -56
+	LREG	t2, xsatp_sv_addr(t1)		// restore saved xsatp
 	csrw	CSR_XSATP,  t2
 resto_\__MODE__\()scratch:
-	LREG	t5, xscr_save_addr(t1)		// offset -8 is xscratch_sv
-	csrw	CSR_XSCRATCH, t5		// restore mscratch
+	LREG	t5, xscr_save_addr(t1)		// restore saved xscratch
+	csrw	CSR_XSCRATCH, t5
 resto_\__MODE__\()xtvec:
-	LREG	t4, xtvec_sav_addr(t1)		// load orig mtvec addr from tvec_sv
-	csrrw	t2, CSR_XTVEC, t4		// restore mtvec (not redundant)
-	bne	t4, t2, 1f			// if saved!=mtvec, done, else need to restore tramp
+	LREG	t4, xtvec_sav_addr(t1)		// restore  orig xtvec addr & load current one
+	csrrw	t2, CSR_XTVEC, t4
+	andi	t4, t4, -4			// remove mode, so both word aligned 
+	andi	t2, t2, -4
+	bne	t4, t2, 1f			// if saved!=curr mtvec, done, else need to restore tramp
 
-resto_\__MODE__\()tramp:			// otherwise, t2 contains where to restore to
-	addi	t4, t1, trapreg_sv_sz		// t4 now contains where to restore from
+resto_\__MODE__\()tramp:			// t2 now contains where to restore to
+	addi	t4, t1, tramp_sv_addr		// t4 now contains where to restore from
 	LREG	t3, trampend_addr(t1)		// t3 tracks how much to restore
 
 resto_\__MODE__\()loop:
@@ -1280,10 +1310,16 @@ rvtest_\__MODE__\()end:
 /**** This is preceded by the current signature pointer, (@Mtrpreg_sv -64?  ****/
 /*******************************************************************************/
 .macro RVTEST_TRAP_SAVEAREA __MODE__
-.align 3
+.align 6
 .option push
 .option norvc
 .global \__MODE__\()trapreg_sv
+
+//****ASSERT: this shoud be a 64B boundary******//
+\__MODE__\()tramptbl_sv:	// save area of existing trampoline table
+.rept ((tramp_sz>>2)+1) & -2	// align to dblwd
+	j	.+0		// prototype jump instruction, offset to be filled in
+ .endr
 
 \__MODE__\()satp_sv:
 	.dword 0		// save area for incoming xsatp
@@ -1302,10 +1338,7 @@ rvtest_\__MODE__\()end:
 	.dword	0		// save area for incoming mscratch
 \__MODE__\()trapreg_sv:
 	.fill	8, REGWIDTH, 0xdeadbeef	    // handler reg save area, 2 extra, keep dbl alignment
-\__MODE__\()tramptbl_sv:	// save area of existing trampoline table
-.rept ((tramp_sz>>2)+1) & -2	// align to dblwd
-	j	.+0		// prototype jump instruction, offset to be filled in
- .endr
+
 \__MODE__\()sv_area_end:	// used to clc size, which is used to avoid CSR read
 .set \__MODE__\()sv_area_sz, (\__MODE__\()sv_area_end-\__MODE__\()satp_sv)
 
@@ -1360,7 +1393,7 @@ rvtest_code_begin:
 
 rvtest_code_end:		// COMPLIANCE_HALT should get here
   #ifdef RVTEST_GPR_SAVE	// gpr_save area is instantiated at end of signature
-    RVTEST_SAVE_GPRS  1	gpr_save
+    RVTEST_SAVE_GPRS  x1	gpr_save
   #endif
     RVTEST_GOTO_MMODE		// if only Mmode used by tests, this has no effect
 cleanup_epilogs:		// jump here to quit, will restore state for each mode
