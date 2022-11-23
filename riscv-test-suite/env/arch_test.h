@@ -509,7 +509,16 @@
 .global rvtest_sig_begin	/* defines beginning of signature area */ ;\
 									  ;\
     RVMODEL_DATA_BEGIN		/* model specific stuff		       */ ;\
-
+/* DFLT_TRAP_SIG is defined to simplify the tests. 
+Tests that don't define mtrap_routine don't need 64 words of trap signature; 
+they only need 3 at most, because any unexpected traps will write 4 words 
+and overwrite the canary and stop the test after the 4rd word is written */
+#define DFLT_TRAP_SIG		;\
+#ifndef rvtest_mtrap_routine	;\
+   tsig_begin_canary:   CANARY;	;\
+   mtrap_sigptr:        .fill 3*(XLEN/32),4,0xdeadbeef	;\
+   tsig_end_canary:    CANARY;		;\
+#endif		
 // tests allocate normal signature space here, then define
 // the mtrap_sigptr: label to separate normal and trap
 // signature space, then allocate trap signature space
@@ -520,10 +529,14 @@
 /**** into the signature area to be properLY relocated		   ****/
 /**********************************************************************/
 #define	RVTEST_SIG_END							  ;\
-									  ;\
 .global rvtest_sig_end		/* defines end of signature area       */ ;\
-CANARY				/* add one extra word of guardband     */ ;\
-    RVMODEL_DATA_END		/* model specific stuff */
+DFLT_TRAP_SIG							;\
+	#ifdef rvtest_gpr_save						;\
+  		gpr_save:  .fill 32*(XLEN/32),4,0xdeadbeef		;\
+	#endif   							;\
+sig_end_canary: CANARY;	/* add one extra word of guardband     */	;\
+rvtest_sig_end:								;\
+RVMODEL_DATA_END	/* model specific stuff */
 
  //#define rvtest_sig_sz (rvtest_sig_end - rvtest_sig_begin) not currently used
 /***************************************************************************************/
@@ -1392,7 +1405,7 @@ rvtest_code_begin:
   .global cleanup_epilogs
 
 rvtest_code_end:		// COMPLIANCE_HALT should get here
-  #ifdef RVTEST_GPR_SAVE	// gpr_save area is instantiated at end of signature
+  #ifdef rvtest_gpr_save	// gpr_save area is instantiated at end of signature
     RVTEST_SAVE_GPRS  x1	gpr_save
   #endif
     RVTEST_GOTO_MMODE		// if only Mmode used by tests, this has no effect
