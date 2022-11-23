@@ -2,6 +2,9 @@
 
 ## [3.5.2] - 2022-11-22
   - Fix Canary definition according to sigalign.
+  - Fix SIGALIGN definition.
+  - Fix inconsistencies in tests.
+  - Add Zicsr to ISA in RV32 privilege tests
 
 ## [3.5.1] - 2022-10-28
   - Add test cases for P-ext

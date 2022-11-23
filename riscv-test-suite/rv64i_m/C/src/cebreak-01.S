@@ -7,12 +7,10 @@
 // This assembly file tests the c.ebreak instruction of the RISC-V C extension.
 // 
 
-#define rvtest_mtrap_routine
-
 #include "model_test.h"
 #include "arch_test.h"
 
-RVTEST_ISA("RV64IC")
+RVTEST_ISA("RV64IC_Zicsr")
 
 # Test code region
 .section .text.init
@@ -63,8 +61,10 @@ CANARY;
 test_A_res:
   .fill 2, 4, 0xdeadbeef
 
+#ifdef rvtest_mtrap_routine
 mtrap_sigptr:
-  .fill 4, 4, 0xdeadbeef
+  .fill 8, 4, 0xdeadbeef
+#endif
 
 #ifdef rvtest_gpr_save
 gpr_save:

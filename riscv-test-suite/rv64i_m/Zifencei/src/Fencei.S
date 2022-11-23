@@ -91,6 +91,11 @@ CANARY;
 test_A_res:
     .fill 4, 4, 0xdeadbeef
 
+#ifdef rvtest_mtrap_routine
+mtrap_sigptr:
+  .fill 8, 4, 0xdeadbeef
+#endif
+
 #ifdef rvtest_gpr_save
 gpr_save:
     .fill 32*(XLEN/32), 4, 0xdeadbeef
