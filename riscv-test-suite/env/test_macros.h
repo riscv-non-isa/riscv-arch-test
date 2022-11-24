@@ -155,7 +155,7 @@
 
 // for updating signatures that include flagreg when 'rd' is a 
 // paired register (64-bit) in Zpsfoperand extension in RV32.
-#define RVTEST_SIGUPD_PK64(_BR,_R,_R_HI,_F,...)		 \
+#define RVTEST_SIGUPD_PK64(_BR,_R,_R_HI,_F,...)		 	;\
       rdov _F							;\
   .if NARG(__VA_ARGS__) == 1					;\
       .set offset,_ARG1(__VA_OPT__(__VA_ARGS__,0))		;\

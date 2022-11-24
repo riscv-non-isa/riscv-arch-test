@@ -101,7 +101,6 @@
   #define SIGALIGN FREGWIDTH
 #endif
 
-
 //==============================================================================
 // this section has RV Arch Test Constants, mostly YAML based.
 // It ensures they're defined  & defaulted if necessary)
@@ -156,7 +155,6 @@
   #endif
 #endif
 
-
 // define a bunch of XLEN dependent constants
 #if   XLEN==32
     #define SREG sw
@@ -188,6 +186,7 @@
     #define FREGWIDTH 16
 #endif
 
+
 #if SIGALIGN==8
   #define CANARY \
       .dword 0x6F5CA309E7D4B281
@@ -195,6 +194,7 @@
   #define CANARY \
       .word 0x6F5CA309 
 #endif
+
 
 //---------------------------mode encoding definitions-----------------------------
 .set MMODE_SIG,3   /* FIXME why don't the #defines work if they're evaluated first?? */
@@ -263,7 +263,7 @@
 	addi reg,x0,val	/* <=12bit signed imm */		;\
     .elseif ((((val>>31)+1)>>1)==0)				;\
 	li   reg, val	/* <=32bit, will be auipc/addi pair */	;\
-    .elseif (((val-1)&val)==0) /* single bit optimization */	;\
+    .elseif (((val-1)&val) ==0) /* single bit optimization */	;\
 	.set shamt, 31			;\
 	.rept 32			;\
 	  .if ((val>>shamt)&1)==1	;\
@@ -279,9 +279,8 @@
 	.option norvc			;\
 	 li reg,val			;\
 	.align UNROLLSZ			;\
-   .option pop  ;\
-   .endif				
-   
+   .endif				;\
+   .option pop;
 
 /**** fixed length LA macro ****/
 #define LA(reg,val)	;\
@@ -509,6 +508,7 @@
 .global rvtest_sig_begin	/* defines beginning of signature area */ ;\
 									  ;\
     RVMODEL_DATA_BEGIN		/* model specific stuff		       */ ;\
+
 /* DFLT_TRAP_SIG is defined to simplify the tests. 
 Tests that don't define mtrap_routine don't need 64 words of trap signature; 
 they only need 3 at most, because any unexpected traps will write 4 words 
@@ -1405,7 +1405,7 @@ rvtest_code_begin:
   .global cleanup_epilogs
 
 rvtest_code_end:		// COMPLIANCE_HALT should get here
-  #ifdef rvtest_gpr_save	// gpr_save area is instantiated at end of signature
+  #ifdef RVTEST_GPR_SAVE	// gpr_save area is instantiated at end of signature
     RVTEST_SAVE_GPRS  x1	gpr_save
   #endif
     RVTEST_GOTO_MMODE		// if only Mmode used by tests, this has no effect
