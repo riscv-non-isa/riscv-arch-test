@@ -8,8 +8,8 @@
 //
 //
 //This assembly file tests,Set (mseccfg.MML=1, mseccfg.RLB=1 and pmpcfg.L=1) (R=0,W=1,X=0)and 
-// now perform pmpcfg writes such pmpcfg writes are ignored, leaving pmpcfg 
-// unchanged for M-mode-only or a locked Shared-Region rule with executable privileges 
+// now perform pmpcfg writes such pmpcfg writes are not ignored now, leaving pmpcfg 
+// changed for M-mode-only or a locked Shared-Region rule with executable privileges 
 
 #define rvtest_strap_routine
 #include "model_test.h"
