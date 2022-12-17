@@ -6,15 +6,13 @@ This is a repository for the work of the RISC-V Foundation Architecture Test SIG
 - Neel Gala (InCore Semiconductors)
 - Marc Karasek (Inspire Semiconductors)
 
-Details of the RISC-V Foundation, the work of its task groups, and how to become a member can be found at [riscv.org](https://riscv.org/).
+Quick Links:
 
-For more details and documentation on the current test environment see: [doc/README.adoc](doc/README.adoc)
-
-For more details on the test format spec see: [spec/TestFormatSpec.adoc](spec/TestFormatSpec.adoc)
-
-For contributions and reporting issues please refer to [CONTRIBUTION.md](CONTRIBUTION.md)
-
-For more details on the usage of the current framework see : [RISCOF](https://riscof.readthedocs.io/)
+  - Details of the RISC-V Foundation, the work of its task groups, and how to become a member can be found at [riscv.org](https://riscv.org/).
+  - For more details and documentation on the current test environment see: [doc/README.adoc](doc/README.adoc)
+  - For more details on the test format spec see: [spec/TestFormatSpec.adoc](spec/TestFormatSpec.adoc)
+  - For contributions and reporting issues please refer to [CONTRIBUTION.md](CONTRIBUTION.md)
+  - For more details on the usage of the current framework see : [RISCOF](https://riscof.readthedocs.io/)
 
 **Note : The RISCOF framework requires a
 [riscv-config](https://github.com/riscv-software-src/riscv-config) YAML to describe the
@@ -24,7 +22,7 @@ configurations implemented by the DUT**
 
 The older 2.x version of the framework (based on Makefiles) can be found in a separate branch :
 [old-framework-2.x](https://github.com/riscv-non-isa/riscv-arch-test/tree/old-framework-2.x). This
-branch is officiall no longer supported and all changes must occur on the main branch.
+branch is no longer officially supported and all changes must occur on the main branch.
 
 ## Test Disclaimers
 
@@ -41,6 +39,11 @@ when reporting the status of pass/fail on the execution of the architectural sui
    rv32i_m/privilege and rv64i_m/privilege tests:
    1. The target must have implemented mtvec which is completely writable by the test in machine mode.
    2. The target has initialized mtvec, before entering the test (via RVMODEL_BOOT), to point to a memory location which has both read and write permissions.
+
+## Test Stats
+
+The coverage and data propogation statistics of each test are hosted on
+[Google-Drive](https://drive.google.com/drive/folders/1KBRy6OgxnOPTDgyfJDj0gcMi5VdMLtVo?usp=share_link) for reference. This to avoid bloating this repo in size.
 
 ## Contribution process
 

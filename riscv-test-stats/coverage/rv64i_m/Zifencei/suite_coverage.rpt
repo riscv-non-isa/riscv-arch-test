@@ -1,6 +1,0 @@
-fencei:
-  coverage: 1/1
-  opcode:
-    coverage: 1/1
-    detail:
-      - fence.i: 1
