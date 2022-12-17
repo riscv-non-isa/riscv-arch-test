@@ -3,6 +3,8 @@
 ## [3.5.2] - 2022-11-04
   - Fix inconsistencies in tests.
   - Add Zicsr to ISA in RV32 privilege tests
+  - Fix canary definition to depend on sigalign instead of xlen.
+  - Modify signature size requirement to multiple of 4.
 
 ## [3.5.1] - 2022-10-28
   - Add test cases for P-ext
