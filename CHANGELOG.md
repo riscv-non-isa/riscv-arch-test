@@ -5,6 +5,7 @@
   - Fix SIGALIGN definition.
   - Fix inconsistencies in tests.
   - Add Zicsr to ISA in RV32 privilege tests
+  - Modify signature size requirement to multiple of 4.
 
 ## [3.5.1] - 2022-10-28
   - Add test cases for P-ext
