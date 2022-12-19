@@ -308,24 +308,35 @@ significant amount of the framework shall depend on the existence of these macro
     - the start of this macro can be addressed using the label: `rvtest_data_end`
     
   `RVTEST_CASE(CaseName, CondStr)`::  
-    - execute this case only if condition in cond_str are met +
-    - caseName is arbitrary string  +
-    - condStr is evaluated to determine if the test-case is enabled and sets name variable +
-    - condStr can also define compile time macros required for the test-case to be enabled. +
-    - the test-case must be delimited with an #ifdef CaseName/#endif pair +
-    - the format of CondStr can be found in https://riscof.readthedocs.io/en/latest/testformat.html#rvtest-case-condition-formating
+    - execute this case only if condition described by `CondStr` are met
+    - `CaseName` is arbitrary string  
+    - `CondStr` is evaluated to determine if the test-case is enabled and sets name variable 
+    - `CondStr` can also define compile time macros required for the test-case to be enabled. 
+    - the test-case must be delimited with an `#ifdef CaseName/#endif` pair 
+    - the format of CondStr can be found below
 
 ===== *Writing the arguments for RVTEST_CASE macro*
 
 This section describes the format for the conditions `CondStr` to be followed while writing the `RVTEST_CASE` macro.
 
 ====== *Vocabulary*
-A keylist is a string of '>' separated words(keys) which is used to navigate the supplied specs. The schema may be used to specify them. Only valid keys and their combinations are allowed(as present in the scema).
+The `keylist` is used to navigate and access the various nodes in the input configuration files.
+A keylist is a string of '>' separated words(keys) which is used to navigate the supplied
+configuration files. A list of keys indicates the hierarchy of nodes to be accessed 
+in the input yaml configuration files(
+https://riscv-config.readthedocs.io/en/stable/yaml-specs.html#isa-yaml-spec[isa]  & 
+https://riscv-config.readthedocs.io/en/stable/yaml-specs.html#platform-yaml-spec[platform]).
+
+Example:
+- To refer to the `extensions` node of `misa` for an implementation with a `RV32I` base ISA the keylist would be
+  `misa>rv32>extensions`.
+- To refer to the `accessible` flag of `mstatus` for an implementation with a `RV64I` base
+  ISA the keylist would be `mstatus>rv64>implemented`.
 
 There are two types of valid statements allowed.
 
 1. `check` statements:
-  These statements get translated into the condtions which need to be true for the part to be enabled.
+  These statements get translated into the conditions which need to be true for the test case to be enabled.
   The condition can be structured in one of the following allowed ways.
   
   * `keylist:=value`
@@ -349,6 +360,7 @@ There are two types of valid statements allowed.
         `Rval` is the value against which the return value of the function is checked. The list of different functions,arguments and their return values is listed below.
 
             - `range_writable(bit_range, dep_vals, keylist_for_field)` -> `bool`
+
                 Checks whether the bits defined in _bit_range_ for a particular _csr_field_name_ is writable or not. 
                 The _bit_range_ must be specified as `<msb>:<lsb>` for range
                 specification or just `<lsb>` for a single bit specification.
@@ -368,30 +380,31 @@ There are two types of valid statements allowed.
                 is equal to the _dependency_values_list_.
 
 
-
 2. `def` statements 
     * These statements specify which macros to be defined for the part to run and their values(optional) in the following format.
     
-        def macro(s)(=value/keylist/function);
-    
-    * The macro specifies the name of the macro.
+        def <macro-name>[=value/keylist/function];
+
+    These statements specify which macros to be defined for the part to run and their values(optional).
+    * The _macro-name_ specifies the name(s) of the macro(s). Multiple comma separated names can be
+used to indicate multiple macros.
     * Multiple macros can be specified using a comma in-between them.
-    * A keylist specifying the path of the field whose value has to be passed as the value of the macro can also be given.
-    * A function along with the arguments can also be specified. At runtime the function is called using the specified arguments and its return values are assigned to the macro(s) specified. The list of functions supported are as follows.
+    * A keylist can be used to extract the value from the input configuration files. 
+    * A function(with arguments) can also be specified. At runtime the function is called using the specified arguments and its return values are assigned to the macro(s) specified. The list of functions supported are as follows.
         
             - `getlegal(dependency_values_list, num_vals, key_list_for_field)` -> `list(int)`
                 This function is valid only for _WARL_ fields in the csrs. It 
-                returns a list of legal values for the specified field when the values 
-                of the fields listed as dependency for the field in question on is equal 
-                to the _dependency_values_list_. The length of the list returned is equal 
+                returns a list of legal values(random) for the specified field when the values 
+                of the _dependency_values_list_ matches that of the dependency fields
+                specified for the csr. The length of the list returned is equal 
                 to _num_vals_. Each entry in the list is assigned to the corresponding 
                 macro listed on the left hand side of the `=` sign.
 
             - `getillegal(dependency_values_list, num_vals, key_list_for_field)` -> `list(int)`
                 This function is valid only for _WARL_ fields in the csrs. 
-                It returns a list of illegal values for the specified field when the 
-                values of the fields listed as dependency for the field in 
-                question on is equal to the _dependency_values_list_. The length of 
+                It returns a list of illegal values(random) for the specified field when the values
+                of the _dependency_values_list_ matches that of the dependency fields
+                specified for the csr. The length of 
                 the list returned is equal to _num_vals_. Each entry in the 
                 list is assigned to the corresponding macro listed on the left 
                 hand side of the `=` sign.
