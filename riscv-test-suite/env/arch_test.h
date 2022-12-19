@@ -176,7 +176,7 @@
     #define FLREG flw
     #define FSREG fsw
     #define FREGWIDTH 4
-#elseif FLEN==64
+#elif FLEN==64
     #define FLREG fld
     #define FSREG fsd
     #define FREGWIDTH 8
@@ -1053,7 +1053,11 @@ adj_\__MODE__\()tval:			// For Illegal op handling or tval not loaded - opcode n
 	sub	t6, t6, t3		// perform mtval adjust by either code, data, or sig position in t3
 
 sv_\__MODE__\()tval:
-	SREG	t6, 3*REGWIDTH(t1)	// save 4th sig value, (rel mtval) into trap signature area
+  SREG	t4, 8*REGWIDTH(sp)                  // Load t4 into stack to reuse it
+  LA(t4, common_\__MODE__\()excpt_handler)  // loaded for relative addressing
+  sub t3, t3, t4                            // Take the difference (to eliminate the offset due to different starting addresses of DUT and REF)
+	SREG	t3, 3*REGWIDTH(t1)	                // save 4rd sig value, (intID)
+  LREG  t4, 8*REGWIDTH(sp)                  // Restore t4 back after usage
 
 skp_\__MODE__\()tval:
 
@@ -1078,6 +1082,7 @@ chk_\__MODE__\()trapsig_overrun:	//FIXME: move trap signature check to here
 
   /**** vector to execption special handling routines ****/
 	li	t2, NUM_SPECD_INTCAUSES<<2	// offset of exception dispatch table bzse
+//	li	t2, XLEN<<3
 	j	spcl_\__MODE__\()handler	// jump to shared int/excpt spcl handling dispatcher
 
  /**** common return code for both interrupts and exceptions ****/
@@ -1113,7 +1118,10 @@ sv_\__MODE__\()ip:			// note: clear has no effect on MxIP
 /**** JR to table in t3+t2, indexed by mcause	****/
 /***************************************************/
 spcl_\__MODE__\()handler:		// case table branch to special handler code, depending on mcause
-	LA(	t3, clrint_\__MODE__\()tbl)	// load spcl int/excpt handler dispatch table 
+.set int_handler_tblsz,   excpt_Mhndlr_tbl-clrint_Mtbl
+	LA(	t3, clrint_\__MODE__\()tbl)
+//	LA(	t3, (clrint_\__MODE__\()tbl))	
+	// load spcl int/excpt handler dispatch table 
 	add	t3, t3, t2		// offset into the correct table
 	slli	t2, t5, 3		// index into 8b aligned dispatch entry and jump through it
 	add	t3, t3, t2
@@ -1141,7 +1149,11 @@ spcl_\__MODE__\()handler:		// case table branch to special handler code, dependi
 
 \__MODE__\()clr_Mext_int:				 // default to just return
 	RVMODEL_CLEAR_MEXT_INT
-	SREG	t3, 3*REGWIDTH(t1)	  // save 4rd sig value, (intID)
+  SREG	t4, 8*REGWIDTH(sp)        // Load t4 into stack to reuse it
+  LA(t4, clrint_\__MODE__\()tbl)  // load spcl int/excpt handler dispatch table
+  sub t3, t3, t4                  // Take the difference (to eliminate the offset due to different starting addresses of DUT and REF)
+	SREG	t3, 3*REGWIDTH(t1)	      // save 4rd sig value, (intID)
+  LREG  t4, 8*REGWIDTH(sp)        // Restore t4 back after usage
 	j	resto_\__MODE__\()rtn
 
 
@@ -1155,8 +1167,12 @@ spcl_\__MODE__\()handler:		// case table branch to special handler code, dependi
 
 \__MODE__\()clr_Sext_int:				 // default to just return
 	RVMODEL_CLEAR_SEXT_INT
-	SREG	t3, 3*REGWIDTH(t1)	 // save 4rd sig value, (intID)
-	j	resto_\__MODE__\()rtn
+  SREG	t4, 8*REGWIDTH(sp)        // Load t4 into stack to reuse it
+  LA(t4, clrint_\__MODE__\()tbl)  // load spcl int/excpt handler dispatch table
+  sub t3, t3, t4                  // Take the difference (to eliminate the offset due to different starting addresses of DUT and REF)
+	SREG	t3, 3*REGWIDTH(t1)	      // save 4rd sig value, (intID)
+  LREG  t4, 8*REGWIDTH(sp)        // Restore t4 back after usage
+		j	resto_\__MODE__\()rtn
 
 
 \__MODE__\()clr_Vsw_int:				// default to just return if not defined
@@ -1169,7 +1185,11 @@ spcl_\__MODE__\()handler:		// case table branch to special handler code, dependi
 
 \__MODE__\()clr_Vext_int:			       // default to just return
 	RVMODEL_CLEAR_VEXT_INT
-	SREG	t3, 3*REGWIDTH(t1)	// save 4rd sig value, (intID)
+  SREG	t4, 8*REGWIDTH(sp)        // Load t4 into stack to reuse it
+  LA(t4, clrint_\__MODE__\()tbl)  // load spcl int/excpt handler dispatch table
+  sub t3, t3, t4                  // Take the difference (to eliminate the offset due to different starting addresses of DUT and REF)
+	SREG	t3, 3*REGWIDTH(t1)	      // save 4rd sig value, (intID)
+  LREG  t4, 8*REGWIDTH(sp)        // Restore t4 back after usage
 	j	resto_\__MODE__\()rtn
 
 
@@ -1240,7 +1260,6 @@ clrint_\__MODE__\()tbl:			//this code should only touch t2..t6
 
 /**** this is the table of exception handling routine pointers, which ****/
 /****  could include special handlers. They default to the rtn code   ****/
-
 excpt_\__MODE__\()hndlr_tbl:		// handler code should only touch t2..t6 ****<<--must be speced!****
  .rept NUM_SPECD_EXCPTCAUSES
 	.dword	resto_\__MODE__\()rtn	// default, just return

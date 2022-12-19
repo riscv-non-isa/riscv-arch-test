@@ -2,65 +2,65 @@
 /* keeping track of the hidden offset, and ensuring it doesn't overflow	       */
 /* They're useful across many tests, but generally for specific classes of ops */
 
-#define RVTEST_FP_ENABLE()		;\
- LI(a0, MSTATUS_FS & (MSTATUS_FS >> 1)) ;\
- csrs mstatus, a0;			;\
+
+#define NAN_BOXED(__val__,__width__,__max__)    \
+    .if __width__ == 32                        ;\
+        .word __val__                          ;\
+    .else                                      ;\
+        .dword __val__                         ;\
+    .endif                                     ;\
+    .if __max__ > __width__                    ;\
+        .set pref_bytes,(__max__-__width__)/32 ;\
+    .else                                      ;\
+        .set pref_bytes, 0                     ;\
+    .endif                                     ;\
+    .rept pref_bytes                           ;\
+        .word 0xffffffff                       ;\
+    .endr                                      ;
+
+#define ZERO_EXTEND(__val__,__width__,__max__)  \
+    .if __max__ > __width__                    ;\
+        .set pref_bytes,(__max__-__width__)/32 ;\
+    .else                                      ;\
+        .set pref_bytes, 0                     ;\
+    .endif                                     ;\
+    .rept pref_bytes                           ;\
+        .word 0                                ;\
+    .endr                                      ;\
+    .if __width__ == 32                        ;\
+        .word __val__                          ;\
+    .else                                      ;\
+        .dword __val__                         ;\
+    .endif;
+
+#define RVTEST_FP_ENABLE()              \
+ LI(a0, (MSTATUS_FS & (MSTATUS_FS >> 1))); \
+ csrs mstatus, a0;                      \
  csrwi fcsr, 0
 
-	// This macro is for vector 
 #define RVTEST_VXSAT_ENABLE()\
- li a0, MSTATUS_VS & (MSTATUS_VS >> 1)	;\
- csrs mstatus, a0;			;\
+ LI(a0, (MSTATUS_VS & (MSTATUS_VS >> 1))); \
+ csrs mstatus, a0;                      \
  clrov
 
-/* RVTEST_SIGBASE(reg, label) initializes to label and clears offset */
-#define RVTEST_SIGBASE(_R,_TAG)				;\
-  LA(_R,_TAG)						;\
-  .set offset,0
+#define RVTEST_SIGBASE(_R,_TAG) \
+  LA(_R,_TAG);\
+  .set offset,0;
 
 // This macro is loading data from memory with any offset value
-#define LOAD_MEM_VAL(_LINST, _AREG, _RD, _OFF, _TREG)	 \
-    .if ((((_OFF>>11)+1)>>1)==0)			;\
-	.set _off,_OFF &   0x07FF			;\
-	LI(_TREG, _OFF &  ~0x07FF)			;\
-	and _AREG,_AREG,_TREG				;\
-    .else						;\
-	.set _off, _OFF					;\
-    .endif						;\
-    _LINST _RD, _off(_AREG)				;\
-    .if ((((_OFF>>11)+1)>>1)==0)			;\
-	or _AREG,_AREG,_TREG				;\
+#define LOAD_MEM_VAL(_LINST, _AREG, _RD, _OFF, _TREG)  \
+    .if _OFF >= 2048                                  ;\
+        .set _off, _OFF%2048                          ;\
+        LI(_TREG, _OFF-_off)                          ;\
+        add _AREG,_AREG,_TREG                         ;\
+    .else                                             ;\
+        .set _off, _OFF                               ;\
+    .endif                                            ;\
+    _LINST _RD, _off(_AREG)                           ;\
+    .if _OFF >= 2048                                  ;\
+        sub _AREG,_AREG,_TREG                         ;\
     .endif
 
- /* RVTEST_BASEUPD(basereg) - updates the basereg   to basereg+hidden offset & resets hidden offset */
- /* RVTEST_BASEUPD(basereg, newbase) - sets newbase to basereg+hidden offset & resets hidden offset */
-#define RVTEST_BASEUPD(_BR,...)				;\
-       set corr 2048-REGWIDTH				;\
-    .if offset <2048					;\
-       set corr offset					;\
-    .endif						;\
-    .set offset, offset-corr				;\
-    .if NARG(__VA_ARGS__) == 0				;\
-	addi _BR,		    _BR, corr		;\
-    .else						;\
-	addi _ARG1(__VA_ARGS__,x0) ,_BR, corr		;\
-    .endif				
-
-/* DEPRECATE - with 1 param, this loads basereg without changing the offset */
-/* with 2, it relocates it by a fixed amount without changing the offset    */
-/* use SIGBASE if relocating, and SIGUPD will relocate if required.	    */
-#define RVTEST_VALBASEUPD(_BR,...)			;\
-  .if NARG(__VA_ARGS__) == 0				;\
-      addi _BR,_BR,2040					;\
-  .endif						;\
-  .if NARG(__VA_ARGS__) == 1				;\
-      LA(_BR,_ARG1(__VA_ARGS__,x0))			;\
-   .endif
-
-  /* DEPRECATE this is redundant with RVTEST_BASEUPD(BR,_NR),	*/
-  /* except it doesn't correct for offset overflow while moving */
-#define RVTEST_VALBASEMOV(_NR,_BR)			;\
-  add _NR, _BR, x0;
 
   /* this function ensures individual sig stores don't exceed offset limits  */
   /* if they would, update the base and reduce offset by 2048 - _SZ	     */
@@ -77,12 +77,12 @@
  /* automatically adjust base and offset if offset gets too big, resetting offset				 */
  /* RVTEST_SIGUPD(basereg, sigreg)	  stores sigreg at offset(basereg) and updates offset by regwidth	 */
  /* RVTEST_SIGUPD(basereg, sigreg,newoff) stores sigreg at newoff(basereg) and updates offset to regwidth+newoff */
-#define RVTEST_SIGUPD(_BR,_R,...)			;\
-  .if NARG(__VA_ARGS__) == 1				;\
+#define RVTEST_SIGUPD(_BR,_R,...)		         \
+  .if NARG(__VA_ARGS__) == 1                            ;\
 	.set offset,_ARG1(__VA_OPT__(__VA_ARGS__,0))	;\
-  .endif						;\
-  CHK_OFFSET(_BR, REGWIDTH, 0)				;\
-  SREG _R,offset(_BR)					;\
+  .endif                                                ;\
+  CHK_OFFSET(_BR,REGWIDTH,0);\
+   SREG _R,offset(_BR)                                  ;\
   .set offset,offset+REGWIDTH
 
 /* RVTEST_SIGUPD_F(basereg, sigreg,flagreg,newoff)			 */
@@ -172,6 +172,35 @@
       SREG _F,offset(_BR)					;\
       .set offset,offset+(REGWIDTH)
 
+
+
+  /* DEPRECATE this is redundant with RVTEST_BASEUPD(BR,_NR),	*/
+  /* except it doesn't correct for offset overflow while moving */
+#define RVTEST_VALBASEMOV(_NR,_BR)			;\
+  add _NR, _BR, x0;
+
+#define RVTEST_VALBASEUPD(_BR,...)\
+  .if NARG(__VA_ARGS__) == 0;\
+      addi _BR,_BR,2040;\
+  .endif;\
+  .if NARG(__VA_ARGS__) == 1;\
+      LA(_BR,_ARG1(__VA_ARGS__,x0));\
+  .endif;
+
+/*
+ * RVTEST_BASEUPD(base reg) - updates the base register the last signature address + REGWIDTH
+ * RVTEST_BASEUPD(base reg, new reg) - moves value of the next signature region to update into new reg
+ * The hidden variable offset is reset always
+*/
+
+#define RVTEST_BASEUPD(_BR,...)\
+    .if NARG(__VA_ARGS__) == 0;\
+        addi _BR,_BR,offset;\
+    .endif;\
+    .if NARG(__VA_ARGS__) == 1;\
+        addi _ARG1(__VA_ARGS__,x0),_BR,offset;\
+    .endif;\
+    .set offset,0;
 //==============================================================================
 // This section borrows from Andrew's from Andrew Waterman's risc-v test macros
 // They are used to generate tests; some are op specific, some format specific
@@ -199,7 +228,7 @@
     j 4f				;\
     .if adj&2 == 2			;\
     .fill 2,1,0x00			;\
-    .endif				;\	
+    .endif				;\
 					;\
 4: LA(tempreg, 5b)			;\
    andi tempreg,tempreg,~(3)		;\
