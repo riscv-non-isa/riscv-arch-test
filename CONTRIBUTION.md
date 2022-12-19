@@ -27,7 +27,18 @@ Pull requests are the best way to propose changes to the codebase. We actively w
    ```
    // SPDX-License-Identifier: BSD-3-Clause
    ```
-8. Issue that pull request!
+8. Issue that pull request. We use a PR template and thus your pull request will be pre-populated
+   with a set of necessary and optional checklists which you will need to fill. The template is
+   catered towards PRs adding/modifying tests to this repo. If your PR deals with only doc updates,
+   then the template can be ignored (manually deleting it).
+
+## Uploading Test Stats
+
+If your PR is adding new tests or modifying existing tests, then you are be expected to
+run the coverage on the new tests (via [RISCOF's coverage mode]((https://riscof.readthedocs.io/en/stable/commands.html#coverage)))
+and upload the coverage and data propagation reports to [this Google Drive folder](https://drive.google.com/drive/folders/153nIRznXwzu7N1rWl9CesqwAXLqwHoEx?usp=share_link).
+In this folder create a new folder with the PR number as the name. The stat files must be zipped and
+the naming convention must follow the scheme you [see here](https://drive.google.com/drive/folders/1KBRy6OgxnOPTDgyfJDj0gcMi5VdMLtVo?usp=share_link).
 
 ## Versioning
 

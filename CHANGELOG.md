@@ -15,7 +15,7 @@
   - adding a pull request template
   - removed riscv-test-stats directory and migrated those to a gdrive folder [here](https://drive.google.com/drive/folders/1KBRy6OgxnOPTDgyfJDj0gcMi5VdMLtVo?usp=share_link)
   - updated contribution guide on steps to done to upload test stats for PRs
-  
+
 ## [3.5.1] - 2022-10-28
   - Add test cases for P-ext
   - Correct TEST_PKRR_OP() macro in arch_test.h 

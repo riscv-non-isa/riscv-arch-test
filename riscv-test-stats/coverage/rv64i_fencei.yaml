@@ -1,8 +1,0 @@
-
-fencei:
-  config: 
-    - check ISA:=regex(.*I.*Zifencei.*)
-  opcode: 
-    fence.i: 0
-
-
