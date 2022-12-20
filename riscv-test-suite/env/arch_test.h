@@ -128,14 +128,14 @@
 // if xTVAL is set to zero for some cause, then the corresponding bit in SET_REL_TVAL_MSK should be cleared
 
 #ifndef SET_REL_TVAL_MSK
-#define	SET_REL_TVAL_MSK CAUSE_MISALIGNED_FETCH | CAUSE_FETCH_ACCESS |                          CAUSE_BREAKPOINT   | \
-			 CAUSE_MISALIGNED_LOAD  | CAUSE_LOAD_ACCESS  | CAUSE_MISALIGNED_STORE | CAUSE_STORE_ACCESS | \
-			 CAUSE_FETCH_PAGE_FAULT | CAUSE_LOAD_PAGE_FAULT                       | CAUSE_STORE_PAGE_FAULT
+#define	SET_REL_TVAL_MSK  1<<CAUSE_MISALIGNED_FETCH  | 1<<CAUSE_FETCH_ACCESS     | 1<<CAUSE_BREAKPOINT       | \
+                          1<<CAUSE_MISALIGNED_LOAD    | 1<<CAUSE_LOAD_ACCESS      | 1<<CAUSE_MISALIGNED_STORE | 1<<CAUSE_STORE_ACCESS | \
+			                    1<<CAUSE_FETCH_PAGE_FAULT   | 1<<CAUSE_LOAD_PAGE_FAULT  | 1<<CAUSE_STORE_PAGE_FAULT
 #endif
 
 #ifndef CODE_REL_TVAL_MSK
-#define CODE_REL_TVAL_MSK CAUSE_MISALIGNED_FETCH | CAUSE_FETCH_ACCESS |                         CAUSE_BREAKPOINT   | \
-			  CAUSE_FETCH_PAGE_FAULT
+#define CODE_REL_TVAL_MSK 1<<CAUSE_MISALIGNED_FETCH | 1<<CAUSE_FETCH_ACCESS | 1<<CAUSE_BREAKPOINT   | \
+			  1<<CAUSE_FETCH_PAGE_FAULT
 #endif
 
 #ifndef GOTO_M_OP
@@ -227,7 +227,8 @@
 #define trapreg_sv_addr  ( -0)
 #define trapreg_sv_sz    (8*REGWIDTH)
 #define RVTEST_ISA(_STR)	//empty macro used by framework??
-
+#define code_area_sz    rvtest_code_end-rvtest_code_begin
+#define data_area_sz    rvtest_data_end-rvtest_data_begin
 //==============================================================================
 // this section has  general test helper macros, required,  optional, or just useful
 //==============================================================================
@@ -996,9 +997,21 @@ sv_\__MODE__\()cause:
 common_\__MODE__\()excpt_handler:
 	csrr	t2, CSR_XEPC
 sv_\__MODE__\()epc:
-	LA(	t3, rvtest_code_begin)	// test code start; compensates for different loader offsets
-	sub	t4, t2, t3		// convert mepc to offset rel to beginning of test
-	SREG	t4, 2*REGWIDTH(t1)	// save 3rd sig value, (rel mepc) into trap signature area
+	LA(t3, rvtest_code_end)               // Fetch the address of rvtest_code_end to compare against mepc
+  bge t2, t3, epc_data_\__MODE__\()adj  // If mepc > rvtest_code_end, (outside the code memory) 
+                                        // then trap came from data area and epc_data_\__MODE__\()adj will adjust to offset wrt to rvtest_data_begin
+  LA(	t3, rvtest_code_begin)	          // Fetch the address of rvtest_code_begin to compare against mepc.
+	blt t2, t3, epc_data_\__MODE__\()adj  // Check if mepc < rvtest_code_begin, (trap came from outside the code memory), 
+                                        // then ask epc_data_\__MODE__\()adj to adjust the offset wrt data memory starting address
+  sub t4, t2, t3                        // if mepc < rvtest_code_end, then offset will be adjusted wrt rvtest_code_begin
+	SREG	t4, 2*REGWIDTH(t1)	            // save 3rd sig value, (normalized rel mepc) into trap signature area
+  j  adj_\__MODE__\()epc
+
+epc_data_\__MODE__\()adj:
+  LA(	t4, rvtest_data_begin)          // Fetch rvtest_data_begin to adjust mepc offset against it
+	sub	t4, t2, t4                      // Offset adjustment
+	SREG	t4, 2*REGWIDTH(t1)	          // save 3rd sig value, (normalized rel mepc) into trap signature area
+		
 adj_\__MODE__\()epc:			// adj mepc so there is at least 4B of padding after op
 	andi	t6, t2, -0x4		// adjust mepc to prev 4B alignment (if 2B aligned)
 	addi	t6, t6,  0x8		// adjust mepc so it skips past op, has padding & 4B aligned
@@ -1034,11 +1047,14 @@ chk_\__MODE__\()tval:
 	slli	t4, t4, XLEN-1		// put mcause bit# into MSB
 	bge	t4, x0, sv_\__MODE__\()tval	// if MSB=0, no adj, sv to ensure tval was cleared
 
+
 code_\__MODE__\()adj:
-	LI(	t4, CODE_REL_TVAL_MSK)	//bits 12, 3,1,0, -- code relative traps
-	srl	t4, t4, t5		// put mcause bit# into LSB
-	slli	t4, t4, XLEN-1		// put mcause bit# into MSB
-	bltz	t4, adj_\__MODE__\()tval// if MSB=1, use rvtest_code_begin adj (already in t3)
+	LA(t4, rvtest_code_end)           // Fetch rvtest_code_end to compare against mtval.
+  bge t6, t4, data_\__MODE__\()adj  // Compare if mtval > rvtest_code_end ; address belong outside code area ==> will be adjusted via data memory
+  LA(	t4, rvtest_code_begin)	      // Fetch rvtest_code_end to compare against mtval.
+	blt t6, t4, data_\__MODE__\()adj  // Compare if mtval < rvtest_code_begin ; address belong outside code area ==> will be adjusted via data memory
+  addi t3, t4, 0                    // If rvtest_code_begin < mtval < rvtest_code_end ==> Adjustment will be made via code region
+  j  adj_\__MODE__\()tval
 
 data_\__MODE__\()adj:			// only possibilities left are testdata or sigdata
 	LA(	t3, rvtest_data_end)
@@ -1053,12 +1069,8 @@ adj_\__MODE__\()tval:			// For Illegal op handling or tval not loaded - opcode n
 	sub	t6, t6, t3		// perform mtval adjust by either code, data, or sig position in t3
 
 sv_\__MODE__\()tval:
-  SREG	t4, 8*REGWIDTH(sp)                  // Load t4 into stack to reuse it
-  LA(t4, common_\__MODE__\()excpt_handler)  // loaded for relative addressing
-  sub t3, t3, t4                            // Take the difference (to eliminate the offset due to different starting addresses of DUT and REF)
-	SREG	t3, 3*REGWIDTH(t1)	                // save 4rd sig value, (intID)
-  LREG  t4, 8*REGWIDTH(sp)                  // Restore t4 back after usage
-
+  SREG	t6, 3*REGWIDTH(t1)	      // save 4rd sig value, (intID)
+  
 skp_\__MODE__\()tval:
 
   .if (\__MODE__\() == M)
@@ -1081,8 +1093,7 @@ chk_\__MODE__\()trapsig_overrun:	//FIXME: move trap signature check to here
 #endif
 
   /**** vector to execption special handling routines ****/
-	li	t2, NUM_SPECD_INTCAUSES<<2	// offset of exception dispatch table bzse
-//	li	t2, XLEN<<3
+	li	t2, XLEN<<3	            // offset of exception dispatch table bzse
 	j	spcl_\__MODE__\()handler	// jump to shared int/excpt spcl handling dispatcher
 
  /**** common return code for both interrupts and exceptions ****/
@@ -1149,12 +1160,8 @@ spcl_\__MODE__\()handler:		// case table branch to special handler code, dependi
 
 \__MODE__\()clr_Mext_int:				 // default to just return
 	RVMODEL_CLEAR_MEXT_INT
-  SREG	t4, 8*REGWIDTH(sp)        // Load t4 into stack to reuse it
-  LA(t4, clrint_\__MODE__\()tbl)  // load spcl int/excpt handler dispatch table
-  sub t3, t3, t4                  // Take the difference (to eliminate the offset due to different starting addresses of DUT and REF)
-	SREG	t3, 3*REGWIDTH(t1)	      // save 4rd sig value, (intID)
-  LREG  t4, 8*REGWIDTH(sp)        // Restore t4 back after usage
-	j	resto_\__MODE__\()rtn
+ SREG	t3, 3*REGWIDTH(t1)	      // save 4rd sig value, (intID)
+  	j	resto_\__MODE__\()rtn
 
 
 \__MODE__\()clr_Ssw_int:				 // default to just return if not defined
@@ -1167,30 +1174,22 @@ spcl_\__MODE__\()handler:		// case table branch to special handler code, dependi
 
 \__MODE__\()clr_Sext_int:				 // default to just return
 	RVMODEL_CLEAR_SEXT_INT
-  SREG	t4, 8*REGWIDTH(sp)        // Load t4 into stack to reuse it
-  LA(t4, clrint_\__MODE__\()tbl)  // load spcl int/excpt handler dispatch table
-  sub t3, t3, t4                  // Take the difference (to eliminate the offset due to different starting addresses of DUT and REF)
-	SREG	t3, 3*REGWIDTH(t1)	      // save 4rd sig value, (intID)
-  LREG  t4, 8*REGWIDTH(sp)        // Restore t4 back after usage
-		j	resto_\__MODE__\()rtn
+  SREG	t3, 3*REGWIDTH(t1)	      // save 4rd sig value, (intID)
+  	j	resto_\__MODE__\()rtn
 
 
 \__MODE__\()clr_Vsw_int:				// default to just return if not defined
 	RVMODEL_CLEAR_VSW_INT
 	j	resto_\__MODE__\()rtn
 
-\__MODE__\()clr_Vtmr_int:			       // default to just return
+\__MODE__\()clr_Vtmr_intrvtest_code_begin:			       // default to just return
 	RVMODEL_CLEAR_VTIMER_INT
 	j	resto_\__MODE__\()rtn
 
 \__MODE__\()clr_Vext_int:			       // default to just return
 	RVMODEL_CLEAR_VEXT_INT
-  SREG	t4, 8*REGWIDTH(sp)        // Load t4 into stack to reuse it
-  LA(t4, clrint_\__MODE__\()tbl)  // load spcl int/excpt handler dispatch table
-  sub t3, t3, t4                  // Take the difference (to eliminate the offset due to different starting addresses of DUT and REF)
-	SREG	t3, 3*REGWIDTH(t1)	      // save 4rd sig value, (intID)
-  LREG  t4, 8*REGWIDTH(sp)        // Restore t4 back after usage
-	j	resto_\__MODE__\()rtn
+  SREG	t3, 3*REGWIDTH(t1)	      // save 4rd sig value, (intID)
+  j	resto_\__MODE__\()rtn
 
 
 /**** this is the table of interrupt clearing routine pointers, which could include special handlers ****/
