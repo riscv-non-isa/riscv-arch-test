@@ -322,8 +322,8 @@ This section describes the format for the conditions `CondStr` to be followed wh
 ====== *Vocabulary*
 The `keylist` is used to navigate and access the various nodes in the input configuration files.
 A keylist is a string of '>' separated words(keys) which is used to navigate the supplied
-configuration files. A list of keys indicates the hierarchy of nodes to be accessed 
-in the input yaml configuration files(
+configuration files. This string describes the hierarchy of nodes to be accessed 
+in the input yaml configuration files (
 https://riscv-config.readthedocs.io/en/stable/yaml-specs.html#isa-yaml-spec[isa]  & 
 https://riscv-config.readthedocs.io/en/stable/yaml-specs.html#platform-yaml-spec[platform]).
 
@@ -339,8 +339,7 @@ There are two types of valid statements allowed.
   These statements get translated into the conditions which need to be true for the test case to be enabled.
   The condition can be structured in one of the following allowed ways.
   
-  * `keylist:=value`
-  The `keylist` specifies the path to the field in the ISA YAML dictionary whose value needs to be checked. 
+  * `keylist:=value` These types of statements can be used to check the value of a particular node in the ISA yaml.
   The `value` is the value against which the entry in the input yaml is checked.
   The `value` can be a regular expression as well, in which case it should be specified as `regex("expression")`
   
@@ -348,7 +347,7 @@ There are two types of valid statements allowed.
   check ISA:=regex(.*I.*Zicsr.*);  # checks if ISA node supports I and Zicsr extensions
   check hw_data_misaligned_support:=True; # checks if the misaligned support is available.
 
-  * `keylist=key` The `keylist` specifies the path to the field whose keys needs to be checked. 
+  * `keylist=key` These statements are used to check whether a subnode exists in a particular node of the ISA yaml. 
         The `key` is the key whose presence needs to be checked in the field specified by the keylist.
     
   Example:
@@ -381,20 +380,19 @@ There are two types of valid statements allowed.
 
 
 2. `def` statements 
-    * These statements specify which macros to be defined for the part to run and their values(optional) in the following format.
+    * These statements define and optionally provide values to the macros required for the test case to run in the following format.
     
         def <macro-name>[=value/keylist/function];
 
-    These statements specify which macros to be defined for the part to run and their values(optional).
     * The _macro-name_ specifies the name(s) of the macro(s). Multiple comma separated names can be
 used to indicate multiple macros.
-    * Multiple macros can be specified using a comma in-between them.
+    * Multiple macros can be specified using a comma in-between them. Currently multiple macros are allowed in the LHS only if the RHS is a function call.
     * A keylist can be used to extract the value from the input configuration files. 
-    * A function(with arguments) can also be specified. At runtime the function is called using the specified arguments and its return values are assigned to the macro(s) specified. The list of functions supported are as follows.
+    * A function (with arguments) can also be specified. At runtime the function is called using the specified arguments and its return values are assigned to the macro(s) specified. The list of functions supported are as follows.
         
             - `getlegal(dependency_values_list, num_vals, key_list_for_field)` -> `list(int)`
                 This function is valid only for _WARL_ fields in the csrs. It 
-                returns a list of legal values(random) for the specified field when the values 
+                returns a list of legal values (random) for the specified field when the values 
                 of the _dependency_values_list_ matches that of the dependency fields
                 specified for the csr. The length of the list returned is equal 
                 to _num_vals_. Each entry in the list is assigned to the corresponding 
@@ -402,7 +400,7 @@ used to indicate multiple macros.
 
             - `getillegal(dependency_values_list, num_vals, key_list_for_field)` -> `list(int)`
                 This function is valid only for _WARL_ fields in the csrs. 
-                It returns a list of illegal values(random) for the specified field when the values
+                It returns a list of illegal values (random) for the specified field when the values
                 of the _dependency_values_list_ matches that of the dependency fields
                 specified for the csr. The length of 
                 the list returned is equal to _num_vals_. Each entry in the 
