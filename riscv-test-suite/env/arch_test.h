@@ -128,9 +128,9 @@
 // if xTVAL is set to zero for some cause, then the corresponding bit in SET_REL_TVAL_MSK should be cleared
 
 #ifndef SET_REL_TVAL_MSK
-#define	SET_REL_TVAL_MSK  1<<CAUSE_MISALIGNED_FETCH  | 1<<CAUSE_FETCH_ACCESS     | 1<<CAUSE_BREAKPOINT       | \
+#define	SET_REL_TVAL_MSK  ((1<<CAUSE_MISALIGNED_FETCH  | 1<<CAUSE_FETCH_ACCESS     | 1<<CAUSE_BREAKPOINT       | \
                           1<<CAUSE_MISALIGNED_LOAD    | 1<<CAUSE_LOAD_ACCESS      | 1<<CAUSE_MISALIGNED_STORE | 1<<CAUSE_STORE_ACCESS | \
-			                    1<<CAUSE_FETCH_PAGE_FAULT   | 1<<CAUSE_LOAD_PAGE_FAULT  | 1<<CAUSE_STORE_PAGE_FAULT
+			                    1<<CAUSE_FETCH_PAGE_FAULT   | 1<<CAUSE_LOAD_PAGE_FAULT  | 1<<CAUSE_STORE_PAGE_FAULT) & 0xFFFFFFFF)
 #endif
 
 #ifndef CODE_REL_TVAL_MSK
@@ -257,39 +257,78 @@
 // could be optimized further by fusing contiguous shifts into a single shift.
 
 /**** fixed length LI macro ****/
-#define LI(reg,val)			;\
-    .option push			;\
-    .option norvc			;\
-    .if	    ((((val>>11)+1)>>1)==0)	;\
-	addi reg,x0,val	/* <=12bit signed imm */		;\
-    .elseif ((((val>>31)+1)>>1)==0)				;\
-	li   reg, val	/* <=32bit, will be auipc/addi pair */	;\
-    .elseif (((val-1)&val) ==0) /* single bit optimization */	;\
-	.set shamt, 31			;\
-	.rept 32			;\
-	  .if ((val>>shamt)&1)==1	;\
-	    addi reg, x0, 1		;\
-	    slli reg, reg, shamt	;\
-	  .endif			;\
-	  .set shamt, shamt+1		;\
-	.endr				;\
-    .else				;\
-	.option pop			;\
-	.align UNROLLSZ			;\
-	.option push			;\
-	.option norvc			;\
-	 li reg,val			;\
-	.align UNROLLSZ			;\
-   .endif				;\
-   .option pop;
-
+#define LI(reg, imm)			                                        ;\
+    .option push			                                            ;\
+    .option norvc			                                            ;\
+    .set immx, imm&((1<<XLEN)-1)                                  ;\
+    .set absimm, immx                                             ;\
+    .if((immx>>(XLEN-1)&1)==1)                                    ;\
+      .set absimm, (~immx)&((1<<XLEN)-1)                          ;\
+    .endif                                                        ;\
+    .if (((((absimm>>31)+1)>>1)&1)==0)				                    ;\
+	    li   reg, imm	/* <= 32bit, will be lui/addi pair */	        ;\
+    .else		/* see if its a single filed bitmask */	              ;\
+      .set pos,	    0						                                  ;\
+      .set edge1,  -1	/* 1st "1" bit pos scanning r to l */	      ;\
+      .set edge2,  -1	/* 1st "0" bit pos scanning r to l */	      ;\
+      .set imme,  immx	/* imm or complement (if odd) */		      ;\
+      .if (immx&1 == 1)						                                ;\
+	      .set imme, (~immx)&((1<<XLEN)-1)	/* cvt to even num, cvt back at end */	;\
+      .endif							                                                        ;\
+/****************************************************************************/	  ;\
+/*** find first 0->1, then 1->0 transition fm LSB->MSB give even operand ***/	    ;\
+    .rept XLEN									                                                    ;\
+      .if     ((edge1==-1) && (((imme>>pos)&1)==1)) /*look for falling edge[pos] */	;\
+	      .set  edge1,pos		/* found the edge, don’t check for any more  */	          ;\
+      .elseif ((edge2==-1) && (((imme>>pos)&1)==0))  /*look for rising edge[pos] */	;\
+        .set  edge2, pos	/* found the edge, don’t check for any more  */	          ;\
+      .endif									                                                      ;\
+      .set    pos,  pos+1		/* keep looking (even if already found 	     */	        ;\
+    .endr				/* assert: edge must be found since imm!= 0  */	                    ;\
+ /****************************************************************************/	    ;\
+    .if (edge2==-1)		/* found exactly 1 edge, so its 111000 or 000111 */	          ;\
+	    li	reg, -1								                                                    ;\
+      .if (immx == imme)								                                            ;\
+	      slli	reg, reg, edge1		/* 111s followed by 000s mask	 */	                  ;\
+      .else									                                                        ;\
+	      srli	reg, reg, XLEN-edge1	/* 000s followed by 111s mask	 */	              ;\
+      .endif									                                                      ;\
+    .elseif (imme == (1<<edge1))		/* single bit case 		 */	                      ;\
+	    li	reg, 1								                                                    ;\
+	    slli	reg, reg, edge1		/* create 0001000 mask */		                          ;\
+      .if (immx != imme)								                                            ;\
+	      xori	reg, reg,-1		/* cvt to 1110111 mask if orig. odd */	                ;\
+      .endif									                                                      ;\
+    .elseif (imme == ((1<<edge2) - (1<<edge1))) /* chk for multibit mask       */	  ;\
+	    li	reg, -1								                                                    ;\
+	    srli	reg, reg, XLEN-(edge2-edge1) /* create 1s mask of right leng */	        ;\
+	    slli	reg, reg, edge1	 	/* and put it into position */		                    ;\
+      .if (immx != imme)								                                            ;\
+	      xori	reg, reg,-1		/* cvt to 1110111 mask if orig. odd */	                ;\
+      .endif									                                                      ;\
+    .elseif ((immx==imme) & ((((absimm>>(31+edge1))+1)>>1)==0)) 			              ;\
+	    li   	reg, immx>>edge1		/* <=32bit, will be auipc/addi pair */	            ;\
+	    slli	reg, reg, edge1		/* add trailing zeros */			                        ;\
+    .else					/* give up and unroll */		                                      ;\
+	    .option pop			                                                              ;\
+	    .align UNROLLSZ			                                                          ;\
+	    .option push			                                                            ;\
+	    .option norvc			                                                            ;\
+      .if(XLEN==32)                                                                 ;\
+        .warning "Should never get her for RV32"                                    ;\
+	    .endif                                                                        ;\
+      li reg,immx			                                                              ;\
+	    .align UNROLLSZ			                                                          ;\
+	  .endif				                                                                  ;\
+    .option pop                                                                     ;\
+.endif
 /**** fixed length LA macro ****/
-#define LA(reg,val)	;\
-	.option push	;\
-	.option norvc	;\
-	.align UNROLLSZ ;\
-	la reg,val	;\
-	.align UNROLLSZ ;\
+#define LA(reg,val)	                                                                ;\
+	.option push	                                                                    ;\
+	.option norvc	                                                                    ;\
+	.align UNROLLSZ                                                                   ;\
+	la reg,val	                                                                      ;\
+	.align UNROLLSZ                                                                   ;\
 	.option pop	;
 
 /*****************************************************************/
@@ -621,27 +660,30 @@ RVMODEL_DATA_END	/* model specific stuff */
    .endif				/* lv  V unchged for S or U	*/
 
   LI(	 t4, MSTATUS_MPP)
+
   csrc	 CSR_MSTATUS, t4		/* clr PP always		*/
 
   .if	 ((\LMODE\()==VSmode) | (\LMODE\()==HSmode) | (\LMODE\()==Smode))
     LI(	 t4, MPP_SMODE)			/* val for Smode		*/
+
     csrs CSR_MSTATUS, t4		/* set in PP			*/
   .endif
 	// do the same if XLEN=64
 .else				/* XLEN=64, maybe 128? FIXME for 128	*/
   .if ((\LMODE\()==Smode) | (\LMODE\()==Umode)) /* lv V unchanged here	*/
     LI(	 t4,  MSTATUS_MPP)	/* but always clear PP			*/
-  .else
+.else
     LI(	 t4, (MSTATUS_MPP | MSTATUS_MPV))	/* clr V and P		*/
-  .endif
+.endif
   csrc	 CSR_MSTATUS, t4	/* clr PP to umode & maybe Vmode	*/
 
   .if (!((\LMODE\()==HUmode) | (\LMODE\()==Umode)))  /* lv pp unchged, v=0 or unchged	*/
     .if	      (\LMODE\()==VSmode)
       LI(  t4, (MPP_SMODE | MSTATUS_MPV)) /* val for pp & v		*/
+
     .elseif ((\LMODE\()==HSmode) | (\LMODE\()==Smode))
       LI(  t4, (MPP_SMODE))	/* val for pp only			*/
-    .else			/* only VU left; set MPV only		*/
+.else			/* only VU left; set MPV only		*/
       li   t4, 1		/* optimize for single bit		*/
       slli t4, t4, 32+MPV_LSB	/* val for v only			*/
     .endif
@@ -1043,6 +1085,7 @@ illop_\__MODE__\()tval:			// if cause is illop, save always
 
 chk_\__MODE__\()tval:
 	LI(	t4, SET_REL_TVAL_MSK)	// now check if code or data (or sig) region adjustment
+
 	srl	t4, t4, t5		// put mcause bit# into LSB
 	slli	t4, t4, XLEN-1		// put mcause bit# into MSB
 	bge	t4, x0, sv_\__MODE__\()tval	// if MSB=0, no adj, sv to ensure tval was cleared
@@ -1088,7 +1131,7 @@ chk_\__MODE__\()trapsig_overrun:	//FIXME: move trap signature check to here
 	LA(	t4, rvtest_trap_sig)
 	LREG	t4, 0(t4)		// get the preincremented trap signature ptr
 	LI(	t6, trap_sig_sz)	// length of trap sig; exceeding this is an overrun, test error
-	add	t3, t3, t6		// calculate rvtest_sig_end from mtrap_sigptr, avoiding an LA
+  add	t3, t3, t6		// calculate rvtest_sig_end from mtrap_sigptr, avoiding an LA
 	bgtu	t4, t3, cleanup_epilogs	// abort test if pre-incremented value overruns
 #endif
 
