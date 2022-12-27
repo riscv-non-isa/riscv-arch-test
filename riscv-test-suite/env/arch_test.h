@@ -70,8 +70,6 @@
   #define LREGWU lwu
   #define REGWIDTH 8
   #define MASK 0xFFFFFFFFFFFFFFFF
-  #define CANARY \
-      .dword 0x6F5CA309E7D4B281
 
 #else 
   #if XLEN==32
@@ -80,8 +78,6 @@
     #define LREGWU lw
     #define REGWIDTH 4
   #define MASK 0xFFFFFFFF
-  #define CANARY \
-      .word 0x6F5CA309
 
   #endif
 #endif
@@ -96,12 +92,22 @@
     #define FLREG flw
     #define FSREG fsw
     #define FREGWIDTH 4
-    #if XLEN==64
-        #define SIGALIGN 8
-    #else
-        #define SIGALIGN 4
-    #endif
+
   #endif
+#endif
+
+#if FLEN>XLEN
+    #define SIGALIGN FREGWIDTH
+#else
+    #define SIGALIGN REGWIDTH
+#endif
+
+#if SIGALIGN==8
+  #define CANARY \
+      .dword 0x6F5CA309E7D4B281
+#else
+  #define CANARY \
+      .word 0x6F5CA309 
 #endif
 
 #define MMODE_SIG 3
