@@ -103,7 +103,7 @@
   CHK_OFFSET(_BR, SIGALIGN, 0)				;\
   FSREG _R,offset(_BR)					;\
   CHK_OFFSET(_BR, SIGALIGN, 1)				;\
-  SREG _F,offset+SIGALIGN(_BR)				;\
+  SREG _F,offset(_BR)				;\
   .set offset,offset+SIGALIGN
  
 /* RVTEST_SIGUPD_FID(basereg, sigreg,flagreg,newoff)			*/
@@ -125,7 +125,7 @@
   CHK_OFFSET(_BR, REGWIDTH, 0)				;\
   SREG _R,offset(_BR)					;\
   CHK_OFFSET(_BR, REGWIDTH, 1)				;\
-  SREG _F,offset+REGWIDTH(_BR)				;\
+  SREG _F,offset(_BR)				;\
   .set offset,offset+REGWIDTH
 
 
