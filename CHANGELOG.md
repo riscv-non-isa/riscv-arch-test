@@ -1,5 +1,5 @@
 # CHANGELOG
-## [3.4.2] - 2022-10-11
+## [3.6.0] - 2022-10-11
   - Removed the bugs in RVTEST_GOTO_LOWER_MODE macro
   - Removed the bugs in RVTEST_GOTO_MMODE macro and defined strap_routine directive.
   - Updated RVTEST_TRAP_SAVEAREA and RVTEST_TRAP_EPILOG macros to refine the definitions of per mode save area macros.
