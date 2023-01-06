@@ -3,64 +3,66 @@
 /* They're useful across many tests, but generally for specific classes of ops */
 
 
-#define NAN_BOXED(__val__,__width__,__max__)    \
-    .if __width__ == 32                        ;\
-        .word __val__                          ;\
-    .else                                      ;\
-        .dword __val__                         ;\
-    .endif                                     ;\
-    .if __max__ > __width__                    ;\
-        .set pref_bytes,(__max__-__width__)/32 ;\
-    .else                                      ;\
-        .set pref_bytes, 0                     ;\
-    .endif                                     ;\
-    .rept pref_bytes                           ;\
-        .word 0xffffffff                       ;\
-    .endr                                      ;
+#define NAN_BOXED(__val__,__width__,__max__)	;\
+    .if __width__ == 32				;\
+	.word __val__				;\
+    .else					;\
+	.dword __val__				;\
+    .endif					;\
+    .if __max__ > __width__			;\
+	.set pref_bytes,(__max__-__width__)/32	;\
+    .else					;\
+	.set pref_bytes, 0			;\
+    .endif					;\
+    .rept pref_bytes				;\
+	.word 0xffffffff			;\
+    .endr					;
 
-#define ZERO_EXTEND(__val__,__width__,__max__)  \
-    .if __max__ > __width__                    ;\
-        .set pref_bytes,(__max__-__width__)/32 ;\
-    .else                                      ;\
-        .set pref_bytes, 0                     ;\
-    .endif                                     ;\
-    .rept pref_bytes                           ;\
-        .word 0                                ;\
-    .endr                                      ;\
-    .if __width__ == 32                        ;\
-        .word __val__                          ;\
-    .else                                      ;\
-        .dword __val__                         ;\
+#define ZERO_EXTEND(__val__,__width__,__max__)	;\
+    .if __max__ > __width__			;\
+	.set pref_bytes,(__max__-__width__)/32	;\
+    .else					;\
+	.set pref_bytes, 0			;\
+    .endif					;\
+    .rept pref_bytes				;\
+	.word 0					;\
+    .endr					;\
+    .if __width__ == 32				;\
+	.word __val__				;\
+    .else					;\
+	.dword __val__				;\
     .endif;
 
-#define RVTEST_FP_ENABLE()              \
- LI(a0, (MSTATUS_FS & (MSTATUS_FS >> 1))); \
- csrs mstatus, a0;                      \
+#define RVTEST_FP_ENABLE()			;\
+ LI(a0, (MSTATUS_FS & (MSTATUS_FS >> 1)))	;\
+ csrs mstatus, a0				;\
  csrwi fcsr, 0
 
-#define RVTEST_VXSAT_ENABLE()\
- LI(a0, (MSTATUS_VS & (MSTATUS_VS >> 1))); \
- csrs mstatus, a0;                      \
+// This macro is for vector 
+#define RVTEST_VXSAT_ENABLE()			;\
+ LI(a0, (MSTATUS_VS & (MSTATUS_VS >> 1)))	;\
+ csrs mstatus, a0				;\
  clrov
 
-#define RVTEST_SIGBASE(_R,_TAG) \
-  LA(_R,_TAG);\
-  .set offset,0;
+/* RVTEST_SIGBASE(reg, label) initializes to label and clears offset */
+#define RVTEST_SIGBASE(_R,_TAG)			;\
+  LA(_R,_TAG)					;\
+  .set offset,0
 
 // This macro is loading data from memory with any offset value
-#define LOAD_MEM_VAL(_LINST, _AREG, _RD, _OFF, _TREG)  \
-    .if _OFF >= 2048                                  ;\
-        .set _off, _OFF%2048                          ;\
-        LI(_TREG, _OFF-_off)                          ;\
-        add _AREG,_AREG,_TREG                         ;\
-    .else                                             ;\
-        .set _off, _OFF                               ;\
-    .endif                                            ;\
-    _LINST _RD, _off(_AREG)                           ;\
-    .if _OFF >= 2048                                  ;\
-        sub _AREG,_AREG,_TREG                         ;\
-    .endif
-
+// This macro is loading data from memory with any offset value
+#define LOAD_MEM_VAL(_LINST, _AREG, _RD, _OFF, _TREG)	;\
+  .set cry, ((_OFF&(1<<11))<<1)	/* set if imm is neg */	;\
+  .set _off, _OFF & 0x0FFF	/* strip  hi bits    */	;\
+  .if (((_OFF & ~0x07FF)==  0)	/* fits 12b sgn off? */	 \
+      |((_OFF | 0x07FF) == -1))				;\
+   _LINST _RD, _off(_AREG)	/* yes, it fits      */	;\
+  .else				/* no, need base adj */	;\
+    LI(  _TREG, _off+cry)	/* Make   hi bits*/	;\
+    add  _AREG, _AREG, _TREG	/* modified temp base*/	;\
+    _LINST _RD, _off(_AREG)				;\
+    sub  _AREG, _AREG, _TREG	/* undo modification */	;\
+ .endif
 
   /* this function ensures individual sig stores don't exceed offset limits  */
   /* if they would, update the base and reduce offset by 2048 - _SZ	     */
@@ -77,12 +79,12 @@
  /* automatically adjust base and offset if offset gets too big, resetting offset				 */
  /* RVTEST_SIGUPD(basereg, sigreg)	  stores sigreg at offset(basereg) and updates offset by regwidth	 */
  /* RVTEST_SIGUPD(basereg, sigreg,newoff) stores sigreg at newoff(basereg) and updates offset to regwidth+newoff */
-#define RVTEST_SIGUPD(_BR,_R,...)		         \
-  .if NARG(__VA_ARGS__) == 1                            ;\
+#define RVTEST_SIGUPD(_BR,_R,...)			;\
+  .if NARG(__VA_ARGS__) == 1				;\
 	.set offset,_ARG1(__VA_OPT__(__VA_ARGS__,0))	;\
-  .endif                                                ;\
-  CHK_OFFSET(_BR,REGWIDTH,0);\
-   SREG _R,offset(_BR)                                  ;\
+  .endif						;\
+  CHK_OFFSET(_BR, REGWIDTH,0)				;\
+  SREG _R,offset(_BR)					;\
   .set offset,offset+REGWIDTH
 
 /* RVTEST_SIGUPD_F(basereg, sigreg,flagreg,newoff)			 */
@@ -103,7 +105,7 @@
   CHK_OFFSET(_BR, SIGALIGN, 0)				;\
   FSREG _R,offset(_BR)					;\
   CHK_OFFSET(_BR, SIGALIGN, 1)				;\
-  SREG _F,offset(_BR)				;\
+  SREG _F,offset(_BR)					;\
   .set offset,offset+SIGALIGN
  
 /* RVTEST_SIGUPD_FID(basereg, sigreg,flagreg,newoff)			*/
@@ -125,7 +127,7 @@
   CHK_OFFSET(_BR, REGWIDTH, 0)				;\
   SREG _R,offset(_BR)					;\
   CHK_OFFSET(_BR, REGWIDTH, 1)				;\
-  SREG _F,offset(_BR)				;\
+  SREG _F,offset(_BR)					;\
   .set offset,offset+REGWIDTH
 
 
@@ -155,7 +157,7 @@
 
 // for updating signatures that include flagreg when 'rd' is a 
 // paired register (64-bit) in Zpsfoperand extension in RV32.
-#define RVTEST_SIGUPD_PK64(_BR,_R,_R_HI,_F,...)		 	;\
+#define RVTEST_SIGUPD_PK64(_BR,_R,_R_HI,_F,...)			;\
       rdov _F							;\
   .if NARG(__VA_ARGS__) == 1					;\
       .set offset,_ARG1(__VA_OPT__(__VA_ARGS__,0))		;\
@@ -179,13 +181,13 @@
 #define RVTEST_VALBASEMOV(_NR,_BR)			;\
   add _NR, _BR, x0;
 
-#define RVTEST_VALBASEUPD(_BR,...)\
-  .if NARG(__VA_ARGS__) == 0;\
-      addi _BR,_BR,2040;\
-  .endif;\
-  .if NARG(__VA_ARGS__) == 1;\
-      LA(_BR,_ARG1(__VA_ARGS__,x0));\
-  .endif;
+#define RVTEST_VALBASEUPD(_BR,...)			;\
+  .if NARG(__VA_ARGS__) == 0				;\
+      addi _BR,_BR,2040					;\
+  .endif						;\
+  .if NARG(__VA_ARGS__) == 1				;\
+      LA(_BR,_ARG1(__VA_ARGS__,x0))			;\
+  .endif
 
 /*
  * RVTEST_BASEUPD(base reg) - updates the base register the last signature address + REGWIDTH
@@ -193,14 +195,20 @@
  * The hidden variable offset is reset always
 */
 
-#define RVTEST_BASEUPD(_BR,...)\
-    .if NARG(__VA_ARGS__) == 0;\
-        addi _BR,_BR,offset;\
-    .endif;\
-    .if NARG(__VA_ARGS__) == 1;\
-        addi _ARG1(__VA_ARGS__,x0),_BR,offset;\
-    .endif;\
-    .set offset,0;
+#define RVTEST_BASEUPD(_BR,...)				;\
+ /* deal with case where offset>=2047 */		;\
+       .set corr 2048-REGWIDTH				;\
+    .if offset <2048 					;\
+       .set corr offset					;\
+    .endif						;\
+    .set offset, offset-corr				;\
+							;\
+    .if NARG(__VA_ARGS__) == 0				;\
+	addi _BR,		    _BR, corr		;\
+    .else						;\
+	addi _ARG1(__VA_ARGS__,x0) ,_BR, corr		;\
+    .endif				
+
 //==============================================================================
 // This section borrows from Andrew's from Andrew Waterman's risc-v test macros
 // They are used to generate tests; some are op specific, some format specific
@@ -396,22 +404,22 @@ RVTEST_SIGUPD_F(swreg,destreg,flagreg)
     RVTEST_SIGUPD(BASE_REG,DEST_REG,OFFSET)
 
 
-#define TEST_CASE(testreg, destreg, correctval, swreg, offset, code... ) ;\
+#define TEST_CASE(testreg, destreg, correctval, swreg, offset, code... )	;\
     code				;\
     RVTEST_SIGUPD(swreg,destreg,offset)	;\
     RVMODEL_IO_ASSERT_GPR_EQ(testreg, destreg, correctval)
 
-#define TEST_CASE_F(testreg, destreg, correctval, swreg, flagreg, code... ) ;\
-    code				;\
-    RVTEST_SIGUPD_F(swreg,destreg,flagreg) ;\
+#define TEST_CASE_F(testreg, destreg, correctval, swreg, flagreg, code... )	;\
+    code					;\
+    RVTEST_SIGUPD_F(swreg,destreg,flagreg)	;\
     RVMODEL_IO_ASSERT_GPR_EQ(testreg, destreg, correctval)
     
-#define TEST_CASE_FID(testreg, destreg, correctval, swreg, flagreg, code... ) ;\
+#define TEST_CASE_FID(testreg, destreg, correctval, swreg, flagreg, code... )	;\
     code; \
-    RVTEST_SIGUPD_FID(swreg,destreg,flagreg) ;\
+    RVTEST_SIGUPD_FID(swreg,destreg,flagreg)	;\
     RVMODEL_IO_ASSERT_GPR_EQ(testreg, destreg, correctval)
 
-#define TEST_AUIPC(inst, destreg, correctval, imm, swreg, offset, testreg) ;\
+#define TEST_AUIPC(inst, destreg, correctval, imm, swreg, offset, testreg)	;\
     TEST_CASE(testreg, destreg, correctval, swreg, offset, \
       LA testreg, 1f			;\
       1:				;\
@@ -420,8 +428,8 @@ RVTEST_SIGUPD_F(swreg,destreg,flagreg)
       )
 
 //Tests for instructions with register-immediate operand
-#define TEST_IMM_OP( inst, destreg, reg, correctval, val, imm, swreg, offset, testreg) ;\
-    TEST_CASE(testreg, destreg, correctval, swreg, offset,	 \
+#define TEST_IMM_OP( inst, destreg, reg, correctval, val, imm, swreg, offset, testreg)	;\
+    TEST_CASE(testreg, destreg, correctval, swreg, offset,	 ;\
       LI(reg, MASK_XLEN(val))		;\
       inst destreg, reg, SEXT_IMM(imm)	;\
     )
@@ -433,7 +441,7 @@ RVTEST_SIGUPD_F(swreg,destreg,flagreg)
       LI(testreg, fcsr_val)	;\
       csrw fcsr, testreg	;\
       inst destreg, freg, rm	;\
-      csrr flagreg, fcsr      	;\
+      csrr flagreg, fcsr	;\
     )
 
 //Tests for floating-point instructions with a single register operand
@@ -443,7 +451,7 @@ RVTEST_SIGUPD_F(swreg,destreg,flagreg)
       LOAD_MEM_VAL(FLREG, valaddr_reg, freg, val_offset, testreg)	;\
       li testreg, fcsr_val; csrw fcsr, testreg	;\
       inst destreg, freg			;\
-      csrr flagreg, fcsr		      	;\
+      csrr flagreg, fcsr			;\
     )
     
 //Tests for floating-point instructions with a single register operand and integer destination register
@@ -452,7 +460,7 @@ RVTEST_SIGUPD_F(swreg,destreg,flagreg)
       LOAD_MEM_VAL(load_instr, valaddr_reg, freg, val_offset, testreg)	;\
       li testreg, fcsr_val; csrw fcsr, testreg	;\
       inst destreg, freg, rm			;\
-      csrr flagreg, fcsr    		  	;\
+      csrr flagreg, fcsr			;\
       )
     
 //Tests for floating-point instructions with a single register operand and integer operand register
@@ -471,7 +479,7 @@ RVTEST_SIGUPD_F(swreg,destreg,flagreg)
       LOAD_MEM_VAL(FLREG, valaddr_reg, freg, val_offset, testreg)	;\
       li testreg, fcsr_val; csrw fcsr, testreg	;\
       inst destreg, freg			;\
-      csrr flagreg, fcsr   		   	;\
+      csrr flagreg, fcsr			;\
       )
     
 //Tests for floating-point instructions with a single register operand and integer operand register
@@ -520,7 +528,7 @@ RVTEST_SIGUPD_F(swreg,destreg,flagreg)
 
 //Tests for floating-point instructions with register-register operand
 #define TEST_FPRR_OP(inst, destreg, freg1, freg2, rm, fcsr_val, correctval, valaddr_reg, val_offset, flagreg, swreg, testreg) \
-    TEST_CASE_F(testreg, destreg, correctval, swreg, flagreg, 			\
+    TEST_CASE_F(testreg, destreg, correctval, swreg, flagreg,			\
       LOAD_MEM_VAL(FLREG, valaddr_reg, freg1, val_offset, testreg)		;\
       LOAD_MEM_VAL(FLREG, valaddr_reg, freg2, (val_offset+FREGWIDTH), testreg)	;\
       li testreg, fcsr_val; csrw fcsr, testreg	;\
@@ -535,18 +543,18 @@ RVTEST_SIGUPD_F(swreg,destreg,flagreg)
       LOAD_MEM_VAL(FLREG, valaddr_reg, freg2, (val_offset+FREGWIDTH), testreg)	;\
       li testreg, fcsr_val; csrw fcsr, testreg	;\
       inst destreg, freg1, freg2		;\
-      csrr flagreg, fcsr     		 	;\
+      csrr flagreg, fcsr			;\
     )
 
 //Tests for floating-point R4 type instructions
 #define TEST_FPR4_OP(inst, destreg, freg1, freg2, freg3, rm , fcsr_val, correctval, valaddr_reg, val_offset, flagreg, swreg, testreg) \
-    TEST_CASE_F(testreg, destreg, correctval, swreg, flagreg, 			\
+    TEST_CASE_F(testreg, destreg, correctval, swreg, flagreg,			\
       LOAD_MEM_VAL(FLREG, valaddr_reg, freg1, val_offset, testreg)		;\
       LOAD_MEM_VAL(FLREG, valaddr_reg, freg2, (val_offset+FREGWIDTH), testreg)	;\
       LOAD_MEM_VAL(FLREG, valaddr_reg, freg3, (val_offset+2*FREGWIDTH), testreg);\
       li testreg, fcsr_val; csrw fcsr, testreg	;\
       inst destreg, freg1, freg2, freg3, rm	;\
-      csrr flagreg, fcsr      			;\
+      csrr flagreg, fcsr			;\
     )
 
 #define TEST_CNOP_OP( inst, testreg, imm_val, swreg, offset) \
@@ -921,4 +929,3 @@ RVTEST_SIGUPD_F(swreg,destreg,flagreg)
 #ifdef RVTEST_IO_CHECK
   #warning "RVTEST_IO_CHECK is deprecated in v0.2.
 #endif
-
