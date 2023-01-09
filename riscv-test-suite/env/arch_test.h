@@ -171,6 +171,7 @@
     #define SREG sq
     #define LREG lq
     #define XLEN_WIDTH 7
+    #define LREGWU lwu
 #endif
 
 #if FLEN==32
@@ -186,7 +187,6 @@
     #define FSREG fsq
     #define FREGWIDTH 16
 #endif
-
 
 #if SIGALIGN==8
   #define CANARY \
