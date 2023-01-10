@@ -11,6 +11,13 @@
   
 =======
 
+## [3.5.3] - 2022-11-22
+  - Fix Canary definition according to sigalign.
+  - Fix SIGALIGN definition.
+  - Fix inconsistencies in tests.
+  - Add Zicsr to ISA in RV32 privilege tests
+  - Modify signature size requirement to multiple of 4.
+
 ## [3.5.2] - 2022-11-25
   - adding a pull request template
   - removed riscv-test-stats directory and migrated those to a gdrive folder [here](https://drive.google.com/drive/folders/1KBRy6OgxnOPTDgyfJDj0gcMi5VdMLtVo?usp=share_link)
