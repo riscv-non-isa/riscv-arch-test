@@ -51,19 +51,17 @@
 
 // This macro is loading data from memory with any offset value
 // This macro is loading data from memory with any offset value
-#define LOAD_MEM_VAL(_LINST, _AREG, _RD, _OFF, _TREG)	;\
-  .set cry, ((_OFF&(1<<11))<<1)	/* set if imm is neg */	;\
-  .set _off, _OFF & 0x0FFF	/* strip  hi bits    */	;\
-  .if (((_OFF & ~0x07FF)==  0)	/* fits 12b sgn off? */	 \
-      |((_OFF | 0x07FF) == -1))				;\
-   _LINST _RD, _off(_AREG)	/* yes, it fits      */	;\
-  .else				/* no, need base adj */	;\
-    LI(  _TREG, _off+cry)	/* Make   hi bits*/	;\
-    add  _AREG, _AREG, _TREG	/* modified temp base*/	;\
-    _LINST _RD, _off(_AREG)				;\
-    sub  _AREG, _AREG, _TREG	/* undo modification */	;\
+#define LOAD_MEM_VAL(_LINST, _AREG, _RD, _OFF, _TREG) ;\
+   .if (((_OFF & ~0x07FF)==  0) |((_OFF |  0x07FF)== -1))                       ;\
+   _LINST _RD, _OFF(_AREG) /* yes, it fits */         ;\
+  .else                    /* no, needs base adj   */ ;\
+  .set  _off,  SEXT_IMM(_OFF) /* strip off hi bits */ ;\
+  .set cry, BIT(_off,11)<<12    ;\
+   LI(  _TREG, (_OFF & ~0x0FFF)+cry) /* strip off hi bits*/ ;\
+    add  _AREG, _AREG, _TREG /* modified temp base*/ ;\
+    _LINST _RD, _off(_AREG)                          ;\
+    sub  _AREG, _AREG, _TREG /* undo modification */ ;\
  .endif
-
   /* this function ensures individual sig stores don't exceed offset limits  */
   /* if they would, update the base and reduce offset by 2048 - _SZ	     */
   /* an option is to pre-incr offset if there was a previous signature store */

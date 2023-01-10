@@ -89,10 +89,11 @@
 #define MIN(a,b) (((a)<(b))?(a):(b))
 #define MAX(a,b) (((a)>(b))?(a):(b))
 #define MASK_XLEN(x) ((x) & ((1 << (__riscv_xlen - 1) << 1) - 1))
-#define SEXT_IMM(x)  ((x) | (-(((x) >> 11) & 1) << 11))
+#define BIT(addr, bit) (((addr)>>bit)&1)
+#define SEXT_IMM(x)    ((x&0x0FFF) | (-BIT(x,11)<<12))
 
 #define REGWIDTH (XLEN>>3)	// in units of #bytes
-#define MASK ((1<<(XLEN-1))-1) + (1<<(XLEN-1))	// XLEN bits of 1s
+#define MASK (((1<<(XLEN-1))-1) + (1<<(XLEN-1)))	// XLEN bits of 1s
 
 #define ALIGNSZ ((XLEN>>5)+2)	// log2(XLEN): 2,3,4 for XLEN 32,64,128
 #if XLEN>FLEN
@@ -245,7 +246,6 @@
 //Fixed length la, li macros; # of ops is ADDR_SZ dependent, not data dependent
 //-----------------------------------------------------------------------
 
-#define BIT(addr, bit) (((addr)>>bit)&1)
 #define COND_INCR(incr_reg, incrval, incrpos)					;\
   .if		   ((BIT(incrval,incrpos-1)+0x0FFF & (incrval>>(incrpos)))!=0)	;\
     addi reg, reg,   BIT(incrval,incrpos-1)+0x0FFF & (incrval>>(incrpos))	;\
@@ -256,31 +256,101 @@
 // and also constants handled with the addi/lui/addi but are shifted left
 	
 /**** fixed length LI macro ****/
-#define LI(reg,val)			;\
-    .option push			;\
-    .option norvc			;\
-    .if	    ((((val>>11)+1)>>1)==0)	;\
-	addi reg,x0,val	/* <=12bit signed imm */		;\
-    .elseif ((((val>>31)+1)>>1)==0)				;\
-	li   reg, val	/* <=32bit, will be auipc/addi pair */	;\
-    .elseif (((val-1)&val) ==0) /* single bit optimization */	;\
-	.set shamt, 32			;\
-	.rept 32			;\
-	  .if ((val>>shamt)&1)==1	;\
-	    addi reg, x0, 1		;\
-	    slli reg, reg, shamt	;\
-	  .endif			;\
-	  .set shamt, shamt+1		;\
-	.endr				;\
-    .else				;\
-	.option pop			;\
-	.align UNROLLSZ			;\
-	.option push			;\
-	.option norvc			;\
-	 li reg,val			;\
-	.align UNROLLSZ			;\
-   .endif				;\
-   .option pop;	
+/**** fixed length LI macro ****/
+#define LI(reg, imm)								                                        ;\
+  .option push									                                            ;\
+  .option norvc									                                            ;\
+  .set immx, imm & MASK	/* trim to XLEN (noeffect on RV64) */		            ;\
+  .set imm12, imm&0xFFF       /* Took 1st 12 bits */                       ;\
+  .if (((immx>>11)&1)==1)                                                   ;\
+      .set  imm12, imm12 - 4096                                             ;\
+  .endif                                                                    ;\
+  .set absimm, immx		/* convert to positive number to simplify code  */	  ;\
+  .if((immx>>(XLEN-1)&1)==1)							                                  ;\
+    .set absimm, ((immx)^(-1)) & MASK	/* Invert if negative */					            ;\
+  .endif									                                                  ;\
+  .if ((absimm>>12)==0)		/* are bits MSB:12 all the same?	     */	        ;\
+	    li   reg, imm12			 /* yes, <= 12bit, will be simple li */	            ;\
+  .elseif ((absimm>>31)==0)		/* are bits MSB:31 all the same?	     */	    ;\
+      .if ((immx >> 11) == 0x01FFFFF)                                       ;\
+        li reg, imm12                                                       ;\
+      .else                                                                 ;\
+        lui  reg, (((immx>>12)+((immx>>11)&1))&0xFFFFF) /* yes<= 32bit, use lui/addi pair  */	;\
+        .if ((immx&0x0FFF)!=0)	/* but skip this if lower bits are zero	     */	              ;\
+  	      addi reg, reg, imm12		                                          ;\
+        .endif                                                              ;\
+      .endif                                                                ;\
+  .else		/* see if its a single field bitmask */				                    ;\
+    .set pos,	    0								                                          ;\
+    .set edge1,  -1	/* 1st "1" bit pos scanning r to l   */			            ;\
+    .set edge2,  -1	/* 1st "0" bit pos scanning r to l   */			            ;\
+    .set imme,  immx	/* imm or complement (if odd) */			                ;\
+    .if (immx&1 == 1)								                                        ;\
+      .set imme, (immx)^(-1) /* cvt to even, cvt back at end */	            ;\
+    .endif									                                                ;\
+/****************************************************************************/	;\
+/*** find first 0->1, then 1->0 transition fm LSB->MSB give even operand ***/	  ;\
+    .rept XLEN										                                          ;\
+      .if     ((edge1==-1) && (((imme>>pos)&1)==1)) /*look for falling edge[pos]     */	;\
+        .set  edge1,pos		/* found falling edge, don’t check for more  */	              ;\
+      .elseif ((edge1>=0) && (edge2==-1) && (((imme>>pos)&1)==0))  /*look for rising edge[pos]     */	;\
+	      .set  edge2, pos		/* found rising  edge, don’t check for more  */	                          ;\
+      .endif										                                            ;\
+      .set    pos,  pos+1		/* keep looking (even if already found	     */	;\
+    .endr				/* assert: edge must be found since imm!= 0  */	            ;\
+ /****************************************************************************/		;\
+    .set shiftimm, (imm>>edge1)&0xFFFFFFFF                                            ;\
+    .set imm12, shiftimm&0xFFF       /* Took 1st 12 bits of shifted immediate value */                       ;\
+    .if (((shiftimm>>11)&1)==1)                                                   ;\
+      .set  imm12, imm12 - 4096                                             ;\
+    .endif                                                                    ;\
+    .set absimm, (absimm>>edge1)&0xFFFFFFFF		/* convert to 32bit positive number to simplify code  */	  ;\
+    .if (edge2==-1)		/* found just 1 edge, so its 111000 or 000111	*/	    ;\
+      li	reg, -1									                                          ;\
+      .if (immx == imme)								                                    ;\
+	      slli	reg, reg, edge1			/* 111s followed by 000s mask	*/	        ;\
+      .else										                                              ;\
+	      srli	reg, reg, XLEN-edge1		/* 000s followed by 111s mask	*/	    ;\
+      .endif										                                            ;\
+    .elseif (imme == (1<<edge1))		/* single bit case		*/	              ;\
+      li	reg, 1									                                          ;\
+	    slli	reg, reg, edge1			/* create 0001000 mask		*/	              ;\
+      .if (immx != imme)								                                    ;\
+	      xori	reg, reg, -1			/* orig odd, cvt to 1110111 mask*/	        ;\
+      .endif										                                            ;\
+    .elseif (imme == ((1<<edge2) - (1<<edge1))) /* chk for multibit mask	*/	;\
+      li	reg, -1									                                            ;\
+	    srli	reg, reg, XLEN-(edge2-edge1) 	/* create 1s mask of right leng */	;\
+	    slli	reg, reg, edge1			/* and put it into position     */	          ;\
+      .if (immx != imme)								                                      ;\
+	      xori	reg, reg, -1			/* orig odd, cvt to 1110111 mask*/	          ;\
+      .endif										                                              ;\
+    .elseif ((immx==imme) & ((absimm>>12)==0)) /* fits in 12b after shifting?*/	;\
+	    li   reg, imm12			  /* yes, <= 12bit, will be simple li */	            ;\
+	    slli reg, reg, edge1			/* add trailing zeros */		                            ;\
+    .elseif ((immx==imme) & ((absimm>>31)==0)) /* fits in 32b after shifting?*/	;\
+      .if ((absimm>>31)==0)			/* are bits MSB:31 all the same?     */	                ;\
+        lui  reg, (((shiftimm>>12)+((shiftimm>>11)&1))&0xFFFFF) /* yes<= 32bit, use lui/addi pair  */	;\
+          .if ((shiftimm&0x0FFF)!=0)	/* but skip this if lower bits are zero	     */	              ;\
+  	        addi reg, reg, imm12		                                          ;\
+          .endif                                                              ;\
+	      slli reg, reg, edge1			/* add trailing zeros */		                            ;\
+      .endif		     								                                                      ;\
+    .else					/* give up and unroll */		                                            ;\
+      .option pop									                                                        ;\
+      .align UNROLLSZ									                                                    ;\
+      .option push									                                                      ;\
+      .option norvc									                                                      ;\
+      .if(XLEN==32)									                                                      ;\
+	      .warning "Should never get her for RV32"					                                ;\
+      .endif										                                                          ;\
+          li reg,imm									                                                    ;\
+      .align UNROLLSZ									                                                    ;\
+    .endif										                                                            ;\
+  .endif										                                                              ;\
+  .option pop
+
+
 /**** fixed length LA macro ****/
 #define LA(reg,val)	;\
 	.option push	;\
