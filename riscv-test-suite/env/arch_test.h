@@ -90,7 +90,7 @@
 #define MAX(a,b) (((a)>(b))?(a):(b))
 #define MASK_XLEN(x) ((x) & ((1 << (__riscv_xlen - 1) << 1) - 1))
 #define BIT(addr, bit) (((addr)>>(bit&MASK))&1)
-#define SEXT_IMM(x)    ((x&0xFFF) | (-BIT(x,11)<<12))
+#define SEXT_IMM(x)    ((x&0x0FFF) | (-BIT(x,11)<<12))
 
 #define REGWIDTH (XLEN>>3)      // in units of #bytes
 #define MASK (((1<<(XLEN-1))-1) + (1<<(XLEN-1)))        // XLEN bits of 1s
@@ -1079,25 +1079,19 @@ common_\__MODE__\()excpt_handler:
         csrr    t2, CSR_XEPC
 sv_\__MODE__\()epc:
         LA(t3, rvtest_code_end)               // Fetch the address of rvtest_code_end to compare against mepc
-        bge t2, t3, epc_data_\__MODE__\()adj  // If mepc > rvtest_code_end, (outside the code memory) 
+  bge t2, t3, epc_data_\__MODE__\()adj  // If mepc > rvtest_code_end, (outside the code memory) 
                                         // then trap came from data area and epc_data_\__MODE__\()adj will adjust to offset wrt to rvtest_data_begin
-        LA(   t3, rvtest_code_begin)            // Fetch the address of rvtest_code_begin to compare against mepc.
+  LA(   t3, rvtest_code_begin)            // Fetch the address of rvtest_code_begin to compare against mepc.
         blt t2, t3, epc_data_\__MODE__\()adj  // Check if mepc < rvtest_code_begin, (trap came from outside the code memory), 
-                                // then ask epc_data_\__MODE__\()adj to adjust the offset wrt data memory starting address
-        sub t4, t2, t3                        // if mepc < rvtest_code_end, then offset will be adjusted wrt rvtest_code_begin
+                                        // then ask epc_data_\__MODE__\()adj to adjust the offset wrt data memory starting address
+  sub t4, t2, t3                        // if mepc < rvtest_code_end, then offset will be adjusted wrt rvtest_code_begin
         SREG    t4, 2*REGWIDTH(t1)                  // save 3rd sig value, (normalized rel mepc) into trap signature area
-        j  adj_\__MODE__\()epc
+  j  adj_\__MODE__\()epc
 
 epc_data_\__MODE__\()adj:
-        LA(   t4, rvtest_data_begin)          // Fetch rvtest_data_begin to adjust mepc offset against it
-        blt     t2, t4, epc_between_data_code_\__MODE__\()adj   // Trap came in between rvtest_code_end & rvtest_data_begin
-        sub     t4, t4, t2                      // Offset adjustment
-        SREG    t4, 2*REGWIDTH(t1)                // save 3rd sig value, (normalized rel mepc) into trap signature area
-epc_between_data_code_\__MODE__\()adj:
-        LA( t4, rvtest_code_begin)            // Fetch the address of rvtest_code_begin to compare against mepc.
+  LA(   t4, rvtest_data_begin)          // Fetch rvtest_data_begin to adjust mepc offset against it
         sub     t4, t2, t4                      // Offset adjustment
-        SREG    t4, 2*REGWIDTH(t1)                  // save 3rd sig value, (normalized rel mepc) into trap signature area
-        j  adj_\__MODE__\()epc
+        SREG    t4, 2*REGWIDTH(t1)                // save 3rd sig value, (normalized rel mepc) into trap signature area
 
 adj_\__MODE__\()epc:                    // adj mepc so there is at least 4B of padding after op
         andi    t6, t2, -0x4            // adjust mepc to prev 4B alignment (if 2B aligned)
@@ -1138,17 +1132,18 @@ chk_\__MODE__\()tval:
 
 code_\__MODE__\()adj:
         LA(t4, rvtest_code_end)           // Fetch rvtest_code_end to compare against mtval.
-        bgeu t6, t4, data_\__MODE__\()adj  // Compare if mtval > rvtest_code_end ; address belong outside code area ==> will be adjusted via data memory
-        LA(   t4, rvtest_code_begin)        // Fetch rvtest_code_end to compare against mtval.
-        bltu  t6, t4, sv_\__MODE__\()tval       // if mtval < rvtest_code_begin ==> No adjustment needed
-        addi t3, t4, 0                    // If rvtest_code_begin < mtval < rvtest_code_end ==> Adjustment will be made via code region
-        j  adj_\__MODE__\()tval
+  bge t6, t4, data_\__MODE__\()adj  // Compare if mtval > rvtest_code_end ; address belong outside code area ==> will be adjusted via data memory
+  LA(   t4, rvtest_code_begin)        // Fetch rvtest_code_end to compare against mtval.
+        blt t6, t4, data_\__MODE__\()adj  // Compare if mtval < rvtest_code_begin ; address belong outside code area ==> will be adjusted via data memory
+  addi t3, t4, 0                    // If rvtest_code_begin < mtval < rvtest_code_end ==> Adjustment will be made via code region
+  j  adj_\__MODE__\()tval
 
 data_\__MODE__\()adj:                   // only possibilities left are testdata or sigdata
         LA(     t3, rvtest_data_end)
-        bgeu     t6, t3, sig_\__MODE__\()adj     // after data area, must be sig, adj according to sig label
+        bge     t6, t3, sig_\__MODE__\()adj     // after data area, must be sig, adj according to sig label
         LA(     t3, rvtest_data_begin)
-        bgeu     t6, t3, adj_\__MODE__\()tval    // inside data area, lv rvtest_data_begin as adjustment amt
+        bge     t6, t3, adj_\__MODE__\()tval    // inside data area, lv rvtest_data_begin as adjustment amt
+
 sig_\__MODE__\()adj:
         LA(     t3, mtrap_sigptr)       // adj assuming sig_region access
 
