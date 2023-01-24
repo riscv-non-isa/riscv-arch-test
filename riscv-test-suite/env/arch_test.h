@@ -1,7 +1,7 @@
 // This file is divided into the following sections:
 //      RV Arch Test Constants
 //      general test and helper macros, required,  optional, or just useful
-//         _ARGn, SIG[BASE/UPD[_F/ID]],BASE_UPD,BIT,LA[U],LI[U],RVTEST_[INIT/SAVE]_GPRS, XCSR_RENAME
+//         _ARGn, SIG[BASE/UPD[_F/ID]],BASEUPD,BIT,LA[U],LI[U],RVTEST_[INIT/SAVE]_GPRS, XCSR_RENAME
 //      RV ARCH Test Interrupt Macros ****FIXME:spec which regs must not be altered
 //      primary macros used by handle: RVTEST_TRAP{_PROLOG/_HANDLER/_EPILOG/SAVEAREA}
 //      required test format spec macros:      RVTEST_{Code)/DATA/SIG}{_BEGIN/_END}
@@ -88,12 +88,21 @@
 #include "test_macros.h"
 #define MIN(a,b) (((a)<(b))?(a):(b))
 #define MAX(a,b) (((a)>(b))?(a):(b))
-#define MASK_XLEN(x) ((x) & ((1 << (__riscv_xlen - 1) << 1) - 1))
-#define BIT(addr, bit) (((addr)>>(bit&MASK))&1)
-#define SEXT_IMM(x)    ((x&0x0FFF) | (-BIT(x,11)<<12))
-
-#define REGWIDTH (XLEN>>3)      // in units of #bytes
+#define BIT(addr, bit) (((addr)>>(bit))&1)
+#define SEXT_IMM(x)  ((x & 0x0FFF) | (-BIT((x),11)<<12))
 #define MASK (((1<<(XLEN-1))-1) + (1<<(XLEN-1)))        // XLEN bits of 1s
+#define MASK_XLEN(val)  val&MASK
+#define REGWIDTH   (XLEN>>3)      // in units of #bytes
+#define WDBITS     32
+#define WDWIDTH    (WDBITS >> 3)  // in units of #bytes
+#define WDSZ       (WDWIDTH)
+#define WDMSK       3
+#define IMMSZ      12
+#define IMMSGN            (IMMSZ -1)
+#define WDSGN      (WDBITS       -1)
+#define IMMMSK     ( (1 << IMMSZ)-1)
+#define LIMMSZ     (WDBITS-IMMSZ)
+#define LIMMMSK    ( (1 <<LIMMSZ)-1)
 
 #define ALIGNSZ ((XLEN>>5)+2)   // log2(XLEN): 2,3,4 for XLEN 32,64,128
 #if XLEN>FLEN
@@ -110,11 +119,13 @@
 // set defaults
 #ifndef   NUM_SPECD_INTCAUSES
   #define NUM_SPECD_INTCAUSES 16
+  #define INT_CAUSE_MSK ((1<<4)-1)
 #endif
 
         // set defaults
 #ifndef   NUM_SPECD_EXCPTCAUSES
   #define NUM_SPECD_EXCPTCAUSES 16
+  #define EXCPT_CAUSE_MSK ((1<<4)-1)
 #endif
 
 #ifndef   RVMODEL_FENCEI
@@ -129,15 +140,15 @@
 // if xTVAL is set to zero for some cause, then the corresponding bit in SET_REL_TVAL_MSK should be cleared
 
 #ifndef SET_REL_TVAL_MSK
-#define SET_REL_TVAL_MSK ((1<<CAUSE_MISALIGNED_FETCH | 1<<CAUSE_FETCH_ACCESS    |                             1<<CAUSE_BREAKPOINT   | \
-                           1<<CAUSE_MISALIGNED_LOAD  | 1<<CAUSE_LOAD_ACCESS     | 1<<CAUSE_MISALIGNED_STORE | 1<<CAUSE_STORE_ACCESS | \
-                           1<<CAUSE_FETCH_PAGE_FAULT | 1<<CAUSE_LOAD_PAGE_FAULT |                             1<<CAUSE_STORE_PAGE_FAULT) \
+#define SET_REL_TVAL_MSK ((1<<CAUSE_MISALIGNED_FETCH | 1<<CAUSE_FETCH_ACCESS                             | 1<<CAUSE_BREAKPOINT   | \
+                           1<<CAUSE_MISALIGNED_LOAD  | 1<<CAUSE_LOAD_ACCESS  | 1<<CAUSE_MISALIGNED_STORE | 1<<CAUSE_STORE_ACCESS | \
+                           1<<CAUSE_FETCH_PAGE_FAULT | 1<<CAUSE_LOAD_PAGE_FAULT                          | 1<<CAUSE_STORE_PAGE_FAULT) \
                         & 0xFFFFFFFF)
 #endif
 
 #ifndef CODE_REL_TVAL_MSK
-#define CODE_REL_TVAL_MSK (1<<CAUSE_MISALIGNED_FETCH | 1<<CAUSE_FETCH_ACCESS                                 | 1<<CAUSE_BREAKPOINT   | \
-                           (1<<CAUSE_FETCH_PAGE_FAULT) &  0xFFFFFFFF)
+#define CODE_REL_TVAL_MSK ((1<<CAUSE_MISALIGNED_FETCH | 1<<CAUSE_FETCH_ACCESS                            | 1<<CAUSE_BREAKPOINT   | \
+                            1<<CAUSE_FETCH_PAGE_FAULT) & 0xFFFFFFFF)
 #endif
 
 #ifndef GOTO_M_OP
@@ -228,8 +239,8 @@
 #define trapreg_sv_addr  ( -0)
 #define trapreg_sv_sz    (8*REGWIDTH)
 #define RVTEST_ISA(_STR)        //empty macro used by framework??
-#define code_area_sz    rvtest_code_end-rvtest_code_begin
-#define data_area_sz    rvtest_data_end-rvtest_data_begin
+#define sv_area_sz       (Msv_area_end-Msatp_sv)
+
 //==============================================================================
 // this section has  general test helper macros, required,  optional, or just useful
 //==============================================================================
@@ -242,33 +253,25 @@
 #define NARG(...) _ARG5(__VA_OPT__(__VA_ARGS__,)4,3,2,1,0)
 #define RVTEST_CASE(_PNAME,_DSTR,...)
 
-//-----------------------------------------------------------------------
-//Fixed length la, li macros; # of ops is ADDR_SZ dependent, not data dependent
-//-----------------------------------------------------------------------
-
 #define COND_INCR(incr_reg, incrval, incrpos)                                   ;\
   .if              ((BIT(incrval,incrpos-1)+0x0FFF & (incrval>>(incrpos)))!=0)  ;\
     addi reg, reg,   BIT(incrval,incrpos-1)+0x0FFF & (incrval>>(incrpos))       ;\
  .endif
 
+
+//-----------------------------------------------------------------------
+//Fixed length la, li macros; # of ops is ADDR_SZ dependent, not data dependent
+//-----------------------------------------------------------------------
+
 // this generates a constants using the standard addi or lui/addi sequences
 // but also handles cases that are contiguous bit masks in any position,
 // and also constants handled with the addi/lui/addi but are shifted left
-        
+
 /**** fixed length LI macro ****/
-#define  WDWIDTH   (  32>>3)    // in units of #bytes
-#define  WDSZ      (WDWIDTH)
-#define WDMSK       3
-#define IMMSZ      12
-#define IMMSGN      (IMMSZ-1)
-#define WDSGN      31
-#define IMMMSK     ((1<<IMMSZ)-1)
-#define LIMMMSK    ((1<<20)-1)
-  /**** fixed length LI macro ****/
-/**** fixed length LI macro ****/
+
 #define LI(reg, imm)                                                            ;\
   .option push                                                                  ;\
-  .option norvc                                                                  ;\
+  .option norvc                                                                 ;\
   .set even,    (1-BIT(imm, 0)) /* imm has at least 1 trailing zero     */      ;\
   .set immx,    (imm & MASK)    /* trim to XLEN (noeffect on RV64)      */      ;\
   .set imm12,   (SEXT_IMM(immx))                                                ;\
@@ -294,23 +297,19 @@
   .endr                                                                         ;\
   .set immxsh, (immx>>edge1)    /* *sh variables only used if positive  */      ;\
   .set imm12sh,(SEXT_IMM(immxsh))/* look @1st 12b of shifted imm val    */      ;\
-  .set crysh,     (BIT(immxsh, IMMSGN))                                             ;\
+  .set crysh,     (BIT(immxsh, IMMSGN))                                          ;\
   .set absimmsh, immxsh         /* pos, no inversion needed, just shift */      ;\
 /*******does it fit into std li or lui+li sequence****************************/ ;\
   .if     ((absimm>>IMMSGN)==0) /* fits 12b signed imm (properly sgnext)? */    ;\
-        li   reg, imm12         /* yes, <= 12bit, will be simple li       */    ;\
-  .elseif ((absimm>> 31)==0) /* fits 32b signed imm?(properly sgnext)? */    ;\
-        lui  reg, (((immx>>12)+cry)&LIMMMSK)     /* <= 32b, use lui/addi   */   ;\
-        .if(XLEN==64 && (BIT(immx,XLEN-1)==0))                                                           ;\
-                sll  reg, reg, 32                                               ;\
-                srl  reg, reg, 32                                               ;\
-        .endif                                                                  ;\
-        .if   ((imm&IMMMSK)!=0)     /* but skip this if lower bits are zero   */;\
-                addi reg, reg, imm12                                            ;\
-        .endif                                                                  ;\
+       li   reg, imm12         /* yes, <= 12bit, will be simple li       */    ;\
+  .elseif (XLEN < 64 || (absimm+ (cry << IMMSZ) >> WDSGN)==0) /* fits 32b sgn imm?(w/ sgnext)?    */    ;\
+        lui  reg, (((immx>>IMMSZ)+cry) & LIMMMSK) /* <= 32b, use lui/addi */    ;\
+    .if   ((imm&IMMMSK)!=0)     /* but skip this if lower bits are zero   */    ;\
+        addi reg, reg, imm12                                                    ;\
+    .endif                                                                      ;\
  /*********** look for various masks 0s->1s->0s, etc **********************/    ;\
   .elseif ( even && (edge2==-1))        /* only rising  edge, so 111000   */    ;\
-        li      reg, -1                                                         ;\
+         li      reg, -1                                                         ;\
         slli    reg, reg, edge1         /* make 111s --> 000s mask        */    ;\
   .elseif (!even && (edge2==-1))        /* only falling edge, so 000111   */    ;\
         li      reg, -1                                                         ;\
@@ -322,42 +321,38 @@
         xori    reg, reg, -1            /* orig odd, cvt to 1110111 mask  */    ;\
     .endif                                                                      ;\
   .elseif (imme == ((1<<edge2) - (1<<edge1))) /* chk for multibit case    */    ;\
-        li      reg, -1                                                         ;\
+       li      reg, -1                                                         ;\
         srli    reg, reg, XLEN-(edge2-edge1) /* make multibit 1s mask     */    ;\
         slli    reg, reg, edge1         /* and put it into position       */    ;\
-     .if   (!even)                                                              ;\
+    .if   (!even)                                                               ;\
         xori    reg, reg, -1            /* orig odd, cvt to 1110111 mask  */    ;\
-     .endif                                                                     ;\
+    .endif                                                                      ;\
   /************** look for 12b or 32b imms with trailing zeroes ***********/    ;\
   .elseif ((immx==imme)&&((absimmsh>>IMMSGN)==0))/* fits 12b after shift? */    ;\
         li      reg, imm12sh            /* <= 12bit, will be simple li    */    ;\
         slli    reg, reg, edge1         /* add trailing zeros             */    ;\
-  .elseif ((immx==imme)&&((absimmsh>>WDSGN)==0)) /* fits 32b after shft?  */    ;\
-        lui     reg, ((immxsh>>IMMSZ)+crysh)&LIMMMSK /* <=32b, use lui/addi */    ;\
-         .if(XLEN==64 && (BIT(immx,XLEN-1)==0))                                                           ;\
-                sll  reg, reg, 32                                               ;\
-                srl  reg, reg, 32                                               ;\
-        .endif                                                                  ;\
-  .if   ((imm12sh&IMMMSK)!=0)         /* but skip this if low bits ==0  */    ;\
-        addi reg, reg, imm12sh                                                  ;\
+  .elseif ((immx==imme)&&(((absimmsh>>WDSGN)+crysh)==0)) /* fits 32 <<shft? */  ;\
+        lui     reg, ((immxsh>>IMMSZ)+crysh)&LIMMMSK /* <=32b, use lui/addi*/    ;\
+    .if   ((imm12sh&IMMMSK)!=0)         /* but skip this if low bits ==0  */    ;\
+        addi    reg, reg, imm12sh                                               ;\
     .endif                                                                      ;\
-        slli    reg, reg, edge1         /* add trailing zeros              */   ;\
-  .else                                 /* give up, use fixed 8op sequence */   ;\
-   /******** TBD add case of form MSB + 12b/32b (un)shifted constant? ********/ ;\
-        lui     reg, ((immx>>44)+cryh)&LIMMMSK               /* 1st 20b (63:44) */   ;\
-        .set cry,    (BIT(immx, IMMSGN+32-12))                                    ;\
-        addi    reg, reg, SEXT_IMM(immx>>32)+cry            /* nxt 12b (43:32) */   ;\
-        slli    reg, reg, 12    /* following are <12b, don't need SEXT     */   ;\
-        .set cry,    (BIT(immx, IMMSGN+32-24))                                    ;\
-        addi    reg, reg, SEXT_IMM(immx>>20)+cry      /* nxt 12b (31:20) */   ;\
-        slli    reg, reg, 12                                                    ;\
-        addi    reg, reg, SEXT_IMM(immx>>8)      /* nxt 12b (19:08) */   ;\
-        slli    reg, reg, 8                                                    ;\
-        addi    reg, reg, (immx) & (0xFF)      /* lst 8b (07:00) */   ;\
-     .if(XLEN==32)                                                              ;\
+        slli    reg, reg, edge1         /* add trailing zeros             */    ;\
+  .else                                 /* give up, use fixed 8op sequence*/    ;\
+   /******* TBD add sp case of zero short imms, rmv add/merge shifts *******/   ;\
+        lui     reg, ((immx>>(XLEN-LIMMSZ))+cryh)&LIMMMSK /* 1st 20b (63:44)*/  ;\
+        addi    reg, reg, SEXT_IMM(immx>>32)            /* nxt 12b (43:32) */   ;\
+        slli    reg, reg, 11    /* following are <12b, don't need SEXT     */   ;\
+        addi    reg, reg, (immx>>21) & (IMMMSK>>1)      /* nxt 11b (31:21) */   ;\
+        slli    reg, reg, 11                            /* mk room for 11b */   ;\
+        addi    reg, reg, (immx>>10) & (IMMMSK>>1)      /* nxt 11b (20:10) */   ;\
+        slli    reg, reg, 10                            /* mk room for 10b */   ;\
+    .if   ((imm&(IMMMSK>>2))!=0) /* but skip this if lower bits are zero   */   ;\
+        addi    reg, reg, (immx)     & (IMMMSK>>2)      /* lst 10b (09:00) */   ;\
+    .endif                                                                      ;\
+    .if (XLEN==32)                                                              ;\
         .warning "Should never get here for RV32"                               ;\
-     .endif                                                                     ;\
- .endif                                                                 ;\
+    .endif                                                                      ;\
+ .endif                                                                         ;\
  .option pop
 
 
@@ -367,6 +362,15 @@
         .option norvc   ;\
         la reg,val      ;\
         .option pop     ;
+
+#define ADDI(dst, src, imm)  /* helper */  ;\
+#if (imm<=2048)                         ;\
+        addi    dst, src, imm           ;\
+#else                                   ;\
+        LI(     dst, imm)               ;\
+        addi    dst, src, dst           ;\
+#endif
+
 
 /*****************************************************************/
 /**** initialize regs, just to make sure you catch any errors ****/
@@ -577,59 +581,68 @@
 .endm
 
 /********************* REQUIRED FOR NEW TESTS *************************/
-/**** new macro encapsulating RVMODEL_DATA_BEGIN (signature area)  ****/
+/**** new macro encapsulating RVMODEL_SIG_BEGIN (signature area)   ****/
 /**** defining rvtest_sig_begin: label to enabling direct stores   ****/
 /**** into the signature area to be properly relocated             ****/
 /**********************************************************************/
-#define RVTEST_SIG_BEGIN                                                ;\
+#define RVTEST_SIG_BEGIN                                                  ;\
 .global rvtest_sig_begin        /* defines beginning of signature area */ ;\
-                                                                        ;\
     RVMODEL_DATA_BEGIN          /* model specific stuff                */ ;\
+sig_begin_canary:                                                         ;\
+CANARY                                                                    ;\
+rvtest_sig_begin:                                                         ;\
 
-/* DFLT_TRAP_SIG is defined to simplify the tests. 
-Tests that don't define mtrap_routine don't need 64 words of trap signature; 
-they only need 3 at most, because any unexpected traps will write 4 words 
-and overwrite the canary and stop the test after the 4rd word is written */
-        
-#define DFLT_TRAP_SIG           ;\
-#ifndef rvtest_mtrap_routine    ;\
-   tsig_begin_canary:   CANARY; ;\
-   mtrap_sigptr:        .fill 3*(XLEN/32),4,0xdeadbeef  ;\
-   tsig_end_canary:    CANARY;          ;\
-#endif          
-// tests allocate normal signature space here, then define
+// Tests allocate normal signature space here, then define
 // the mtrap_sigptr: label to separate normal and trap
 // signature space, then allocate trap signature space
 
 /********************* REQUIRED FOR NEW TESTS *************************/
-/**** new macro encapsulating RVMODEL_DATA_END (signature area)    ****/
+/**** new macro encapsulating RVMODEL_TSIG_BEGIN (trap sign area)  ****/
 /**** defining rvtest_sig_end: label to enabling direct stores     ****/
 /**** into the signature area to be properLY relocated             ****/
 /**********************************************************************/
-#define RVTEST_SIG_END                                                  ;\
-.global rvtest_sig_end          /* defines end of signature area       */ ;\
-DFLT_TRAP_SIG                                                   ;\
-        #ifdef rvtest_gpr_save                                          ;\
-                gpr_save:  .fill 32*(XLEN/32),4,0xdeadbeef              ;\
-        #endif                                                          ;\
-sig_end_canary: CANARY; /* add one extra word of guardband     */       ;\
-rvtest_sig_end:                                                         ;\
+#define RVTEST_TSIG_BEGIN                                                ;\
+.global rvtest_sig_end     /* defines beginning of trap sig area      */ ;\
+                                                                         ;\
+tsig_begin_canary:                                                       ;\
+   CANARY                                                                ;\
+   mtrap_sigptr:        .fill 3*(XLEN/32),4,0xdeadbeef                   ;\
+   tsig_end_canary:                                                      ;\
+   CANARY
+
+/********************* REQUIRED FOR NEW TESTS *************************/
+/**** new macro encapsulating RVMODEL_SIG_END (signature area)     ****/
+/**** defining rvtest_sig_end: label to enabling direct stores     ****/
+/**** into the signature area to be properLY relocated             ****/
+/**********************************************************************/
+#define RVTEST_SIG_END                                                   ;\
+                                                                         ;\
+#ifdef rvtest_gpr_save                                                   ;\
+gpr_save:                                                                ;\
+  .fill 32*(XLEN/32),4,0xdeadbeef                                        ;\
+#endif                                                                   ;\
+                                                                         ;\
+sig_end_canary:                                                          ;\
+  CANARY                                                                 ;\
+  CANARY                          /* add one extra word of guardband  */ ;\
+rvtest_sig_end:                                                          ;\
 RVMODEL_DATA_END        /* model specific stuff */
 
- //#define rvtest_sig_sz (rvtest_sig_end - rvtest_sig_begin) not currently used
-/***************************************************************************************/
-/**** At end of test, this code is entered. It diverts the Mmode trampoline to code ****/
-/**** that follows this, executes an op illegal in any non-Mmode, then restores the ****/
-/**** trampoline. This either falls through if already in Mmode, or traps to mmode  ****/
-/**** because the prolog cleared all edeleg CSRs. This code makes no assumptions    ****/
-/**** about the current operating mode. and assumes that xedeleg[illegal_op]==0 to  ****/
-/**** prevent an infinite delegation loop. This will overwrite t1..t6               ****/
-/**** NOTE: that any test that sets xedeleg[illegal_op] must replace  mode_rtn_inst ****/
-/**** with an op that causes a different exception cause that isn't delegated.      ****/
-/**** NOTE: this will overwrite non-Mmode trap status CSRs                          ****/
-/****FIXME - check that SATP and VSATP point to the identity map page table         ****/
-/***************************************************************************************/
-//  #define TESTCODE_ONLY_TVAL_ILLOP    //FIXME comment this out when Sail fixes illop
+
+/***********************************************************************************/
+/**** At end of test, this code is entered. It diverts  M/S/V mode trampolines  ****/
+/**** to an op illegal in any non-Mmode, then executes that op. If in Mmode,    ****/
+/**** it falls through. Otherwise, it traps and branches to the fall-through    ****/
+/**** code in Mmode. In either case, it restores the trampoline and continues   ****/
+/**** on to the code that follows the macro, but now in Mmode.                  ****/
+/**** **NOTE**:  this assumes nothing about the current priv mode but MUST      ****/
+/**** assume that xedeleg[illegal_op]==0 to prevent infinite delegation loops.  ****/
+/**** This overwrites t1..t6                                                    ****/
+/**** NOTE:  test that sets Medeleg[illegal_op] must replace  mode_rtn_inst     ****/
+/**** with an op that causes a different exception cause that isn't delegated.  ****/
+/**** NOTE: this may overwrite non-Mmode trap status CSRs                       ****/
+/**** FIXME - check that SATP and VSATP point to the identity map page table    ****/
+/***********************************************************************************/
 
 .macro  RVTEST_GOTO_MMODE
 #ifdef  rvtest_mtrap_routine            /**** FIXME this can be empty if no Umode ****/
@@ -671,6 +684,7 @@ RVMODEL_DATA_END        /* model specific stuff */
 .option pop
 #endif                                  /* not implemented if no trap                */
 .endm
+
 
 
 /**** This is a helper macro that causes harts to transition from    ****/
@@ -719,9 +733,9 @@ RVMODEL_DATA_END        /* model specific stuff */
   .if (!((\LMODE\()==HUmode) | (\LMODE\()==Umode)))  /* lv pp unchged, v=0 or unchged   */
     .if      (\LMODE\()==VSmode)
       LI(  t4, (MPP_SMODE | MSTATUS_MPV)) /* val for pp & v             */
-  .elseif ((\LMODE\()==HSmode) | (\LMODE\()==Smode))
+    .elseif ((\LMODE\()==HSmode) | (\LMODE\()==Smode))
       LI(  t4, (MPP_SMODE))     /* val for pp only                      */
-  .else                 /* only VU left; set MPV only           */
+    .else                       /* only VU left; set MPV only           */
       li   t4, 1                /* optimize for single bit              */
       slli t4, t4, 32+MPV_LSB   /* val for v only                       */
     .endif
@@ -731,7 +745,7 @@ RVMODEL_DATA_END        /* model specific stuff */
         /**** mstatus MPV and PP now set up to desired mode    ****/
         /**** set MEPC to mret+4; requires an identity mapping ****/
   auipc t4, 0
-  addi  t4, t4, 16
+  addi  t4, t4, 4*WDSZ
   csrrw t4, CSR_MEPC, t4        /* set rtn addr to mret+4               */
   mret                          /* transition to desired mode           */
 .option pop
@@ -741,6 +755,8 @@ RVMODEL_DATA_END        /* model specific stuff */
 // Helper macro to set defaults for undefined interrupt set/clear
 // macros. This is used to populated the interrupt vector table
 //==============================================================================
+
+//****************************************************************
 
   #ifndef RVMODEL_SET_MSW_INT
        // #warning: "RVMODEL_SET_MSW_INT  is not defined by target. Executing this will end test"
@@ -853,7 +869,7 @@ RVMODEL_DATA_END        /* model specific stuff */
 
         XCSR_VRENAME \__MODE__          //retarget XCSR names to this modes CSRs, separate V/S copies
 
-        LA(     t1, \__MODE__\()trapreg_sv)     // get pointer to save area
+        LA(     t1, \__MODE__\()trapreg_sv)    // get  ptr tos ave area (will be stored in xSCRATCH)
 //----------------------------------------------------------------------
 init_\__MODE__\()scratch:
         csrrw   t3, CSR_XSCRATCH, t1    // swap xscratch with save area ptr (will be used by handler)
@@ -864,9 +880,9 @@ init_\__MODE__\()edeleg:
 .if     (\__MODE__\() == V)
         csrrw   t2, CSR_VEDELEG, t2     // special case: VS EDELEG available from Vmode
 .elseif (\__MODE__\() == M)
-#ifdef rvtest_strap_routine
+  #ifdef rvtest_strap_routine
         csrrw   t2, CSR_XEDELEG, t2     // this handles M  mode save, but only if Smode exists
-#endif
+  #endif
 .else
 //FIXME: if N-extension or anything like it is implemented, uncomment the following
 //      csrrw   t2, CSR_XEDELEG, t2     // this handles S mode
@@ -874,8 +890,8 @@ init_\__MODE__\()edeleg:
         SREG    t2, xedeleg_sv_addr(t1) // now do the save
 //----------------------------------------------------------------------
 init_\__MODE__\()satp:
-.if (\__MODE__\() != M)                 // if S or VS mode
-        LA(     t4, rvtest_\__MODE__\()root_pg_tbl)     // rplc xsatp w/ identity-mapped pg table **FIXME: fixed offset frm trapreg_sv?
+.if (\__MODE__\() != M)                 // if S or VS mode **FIXME: fixed offset frm trapreg_sv?
+        LA(     t4, rvtest_\__MODE__\()root_pg_tbl)     // rplc xsatp w/ identity-mapped pg table 
         csrrw   t4, CSR_XSATP, t4
         SREG    t4, xsatp_sv_addr(t1)
 .endif
@@ -884,7 +900,7 @@ init_\__MODE__\()tvec:
         LA(     t4, \__MODE__\()trampoline)     //this is a code-relative pointer
         csrr    t3, CSR_XTVEC
         SREG    t3, xtvec_sav_addr(t1)  // save orig mtvec+mode in tvec_save
-        andi    t2, t3, 3               // merge .mode & tramp ptr and store to both XTVEC, tvec_new
+        andi    t2, t3, WDMSK           // merge .mode & tramp ptr and store to both XTVEC, tvec_new
         or      t2, t4, t2
         SREG    t2, xtvec_new_addr(t1)
         csrw    CSR_XTVEC, t2           // write xtvec with trap_trampoline+mode, so trap will go to the trampoline
@@ -903,7 +919,7 @@ init_\__MODE__\()tvec:
   /*****************************************************************/
 
 init_\__MODE__\()tramp: /**** copy trampoline at mtvec tgt; t4->t2->t1  t3=end of save ****/
-        andi    t2, t3, -4                      // calc bgn of orig tramp area by rmving mode bits
+        andi    t2, t3, ~WDMSK                  // calc bgn of orig tramp area by rmving mode bits
         addi    t3, t2, tramp_sz                // calc end of orig tramp area (+4)
         addi    t1, t1, tramp_sv_addr           // calc bgn of tramp save area
 //----------------------------------------------------------------------
@@ -919,9 +935,9 @@ init_\__MODE__\()tramp: /**** copy trampoline at mtvec tgt; t4->t2->t1  t3=end o
         addi    t5, t5,256                      // calculate some offset into the save area
         bgt     t5, t1, endcopy_\__MODE__\()tramp // and pretend if couldnt be written
 #endif
-        addi    t2, t2, 4                       // next tvec  inst. index
-        addi    t1, t1, 4                       // next save  inst. index
-        addi    t4, t4, 4                       // next tramp inst. index
+        addi    t2, t2, WDSZ                    // next tvec  inst. index
+        addi    t1, t1, WDSZ                    // next save  inst. index
+        addi    t4, t4, WDSZ                    // next tramp inst. index
         bne     t3, t2, overwt_tt_\__MODE__\()loop      // haven't reached end of save area,  loop
 //----------------------------------------------------------------------
   endcopy_\__MODE__\()tramp:                    // vector table not writeable, restore
@@ -931,7 +947,7 @@ init_\__MODE__\()tramp: /**** copy trampoline at mtvec tgt; t4->t2->t1  t3=end o
         beq     t3,t2, rvtest_\__MODE__\()prolog_done //full loop, don't exit
 abort\__MODE__\()test:
         LA(     t6, exit_\__MODE__\()cleanup)   // trampoline rplc failure **FIXME:  precalc& put into savearea?
-        jalr   x0, t6                           // this branch may be too far away, so longjmp
+        jalr    x0, t6                          // this branch may be too far away, so longjmp
 
 rvtest_\__MODE__\()prolog_done:
 
@@ -947,6 +963,9 @@ rvtest_\__MODE__\()prolog_done:
 .align 6        // ensure that a trampoline is on a typical cacheline boundary, just in case
 .option pop
 
+#define trap_sig_sz     (rvtest_sig_end - mtrap_sigptr)
+#define nrml_sig_sz     (mtrap_sigptr   - rvtest_sig_begin)
+#define tot_sig_sz      (sig_end_canary - rvtest_sig_begin)
   /**********************************************************************/
   /**** This is the entry point for all x-modetraps, vectored or not.****/
   /**** xtvec should either point here, or trampoline code does and  ****/
@@ -988,8 +1007,14 @@ rvtest_\__MODE__\()prolog_done:
         jal     t6, common_\__MODE__\()handler  // jmp to common code, saving vector in t6
   .endr
 
- rvtest_\__MODE__\()endtest:                    // target may be too far away, so longjmp
-        LA     (t1, rvtest_\__MODE__\()end)     // FIXME: must be identity mapped if its a VA
+  /**********************************************************************/
+  /**** FIXME: could this simply instantiate RVMODEL_HALT instead of ****/
+  /**** branching to it?  might need to instantiate GOTO_MMODE here  ****/
+  /**** to take care of  VM issues that RVMODEL_HALT can't deal with ****/
+  /**********************************************************************/
+
+rvtest_\__MODE__\()endtest:                    // target may be too far away, so longjmp
+        LA(     t1, rvtest_\__MODE__\()end)     // FIXME: must be identity mapped if its a VA
         jalr    x0, t1
   /*********************************************************************/
   /**** common code for all ints & exceptions, will fork to handle  ****/
@@ -1018,7 +1043,7 @@ common_\__MODE__\()handler:                     // enter with vector addr in t6 
         csrrw   t5, CSR_XSCRATCH, sp            // restore ptr to reg sv area, and get old sp
         SREG    t5, 7*REGWIDTH(sp)              // save old sp
         auipc   t5, 0
-        addi    t5, t5, 12                      // quick calculation of common Xentry: label
+        addi    t5, t5, 3*WDSZ                  // quick calculation of common Xentry: label (3ops past auipc)
         jr      t5                              // needed if trampoline gets moved elsewhere, else it's effectively a noop
 
 common_\__MODE__\()entry:
@@ -1028,7 +1053,7 @@ common_\__MODE__\()entry:
         SREG    t1, 1*REGWIDTH(sp)              //x6  save other temporaries
 
 //------pre-update trap_sig pointer so handlers can themselves trap-----
-\__MODE__\()trapsig_ptr_upd:
+\__MODE__\()trapsig_ptr_upd:                    // calculate entry size based on int vs. excpt, int type, and h mode
         li      t2, 4*REGWIDTH                  // standard entry length
         csrr    t5, CSR_XCAUSE
         bgez    t5, \__MODE__\()xcpt_sig_sv     // Keep std length if this is an exception for now (MSB==0)
@@ -1038,6 +1063,7 @@ common_\__MODE__\()entry:
         bgez    t3, \__MODE__\()trap_sig_sv     // yes, keep std length
         li      t2, 3*REGWIDTH                  // no,  its a timer or swint, overrride preinc to 3*regsz
         j       \__MODE__\()trap_sig_sv
+
 \__MODE__\()xcpt_sig_sv:
 .if (\__MODE__\() == M)                         // exception case, don't adjust if hypervisor mode disabled
         csrr    t1, CSR_MISA
@@ -1047,6 +1073,7 @@ common_\__MODE__\()entry:
 .endif
 
 \__MODE__\()trap_sig_sv:
+
         LA(     t3, rvtest_trap_sig)            // this is where curr trap signature pointer is stored
 //------this should be atomic-------------------------------------
         LREG    t1, 0(t3)                       // get the trap signature pointer (initialized to mtrap_sigptr)
@@ -1056,9 +1083,20 @@ common_\__MODE__\()entry:
 
         LREG    t3, xtvec_new_addr(sp)          // get pointer to actual tramp table
 //----------------------------------------------------------------
-sv_\__MODE__\()vect:
-        sub     t6, t6, t3                      // cvt vec-addr in t6 to offset fm top of tramptable **FIXME: breaks if tramp crosses pg && MMU enabled
-        slli    t6, t6, 3                       // make room for 3 bits; MSBs aren't useful **FIXME: won't work for SV64!)
+
+  /*************************************************************************/
+  /****   This first entry has this format.                             ****/
+  /****   The #entries is useful for parsing and is really #bytes/entry ****/
+  /**** +---------------+-----------+----------+------+                 ****/
+  /**** | XLEN-1     16 | 15      6 | 5      2 | 1  0 |                 ****/
+  /**** +---------------+-----------+----------+------+                 ****/
+  /**** |   zeroes      | vector    | #entries | mode |                 ****/
+  /**** +---------------+-----------+----------+------+                 ****/
+  /*************************************************************************/
+
+sv_\__MODE__\()vect:                            // **FIXME?: breaks if tramp crosses pg && MMU enabled
+        sub     t6, t6, t3                      // cvt spreader-addr to vector offset fm top of tramptable 
+        slli    t6, t6, 4                       // make room for 4 bits; vector is 10b max  **FIXME: broken for SV64!)
         or      t6, t6, t2                      // insert entry size into bits 5:2
         addi    t6, t6, \__MODE__\()MODE_SIG    // insert mode# into 1:0
         SREG    t6, 0*REGWIDTH(t1)              // save 1st sig value, (vec-offset, entrysz, trapmode)
@@ -1068,114 +1106,105 @@ sv_\__MODE__\()cause:
 //----------------------------------------------------------------
         bltz    t5, common_\__MODE__\()int_handler // split off if this is an interrupt
 
-  /********************************************************************/
-  /**** This is the exceptions specific code, storing relative mepc****/
-  /**** & relative tval signatures. tval is relocated by code or   ****/
-  /**** data start, or 0 depending on mcause. mepc signature value ****/
-  /**** is relocated by code start, and restored bumped by 2..6B   ****/
-  /****  depending on op alignment so trapped op isn't re-executed ****/
-  /********************************************************************/
+  /*******************************************************************************/
+  /**** This is exception specific code, storing relative mepc & tval sigs    ****/
+  /**** The mepc sig is relocated by data or code start, depending on whether ****/
+  /**** on whether it's in the data area or not, & restored bumped by 2..6B   ****/
+  /**** depending op alignment so trapped op isn't re-executed                ****/
+  /*******************************************************************************/
+
 common_\__MODE__\()excpt_handler:
+        andi    t5, t5, EXCPT_CAUSE_MSK
         csrr    t2, CSR_XEPC
+
+code_adj_\__MODE__\()epc:
+        LA(     t3, rvtest_code_begin)          // Fetch rvtest_code_begin addr
+        LA(     t6, rvtest_code_end)            // Fetch rvtest_code_end   addr
+        bgeu    t2, t6, data_adj_\__MODE__\()epc// epc > rvtest_code_end, try data adj
+        bgeu    t2, t3,      adj_\__MODE__\()epc// epc >=rvtest_code_begin, adj and save
+
+data_adj_\__MODE__\()epc:
+        LA(     t3, rvtest_data_begin)          // Fetch rvtest_data_begin addr
+        LA(     t6, rvtest_data_end)            // Fetch rvtest_data_end   addr
+        bgeu    t2, t6, cleanup_epilogs         // mepc > rvtest_code_end,  (outside data seg), abort
+        bltu    t2, t3, cleanup_epilogs         // mepc < rvtest_code_begin (outside data seg), abort
+
+adj_\__MODE__\()epc:
+        sub     t4, t2, t3                      // Offset adjustment
+
 sv_\__MODE__\()epc:
-        LA(t3, rvtest_code_end)               // Fetch the address of rvtest_code_end to compare against mepc
-  bge t2, t3, epc_data_\__MODE__\()adj  // If mepc > rvtest_code_end, (outside the code memory) 
-                                        // then trap came from data area and epc_data_\__MODE__\()adj will adjust to offset wrt to rvtest_data_begin
-  LA(   t3, rvtest_code_begin)            // Fetch the address of rvtest_code_begin to compare against mepc.
-        blt t2, t3, epc_data_\__MODE__\()adj  // Check if mepc < rvtest_code_begin, (trap came from outside the code memory), 
-                                        // then ask epc_data_\__MODE__\()adj to adjust the offset wrt data memory starting address
-  sub t4, t2, t3                        // if mepc < rvtest_code_end, then offset will be adjusted wrt rvtest_code_begin
-        SREG    t4, 2*REGWIDTH(t1)                  // save 3rd sig value, (normalized rel mepc) into trap signature area
-  j  adj_\__MODE__\()epc
+        SREG    t4, 2*REGWIDTH(t1)      // save 3rd sig value, (rel mepc) into trap sig area
 
-epc_data_\__MODE__\()adj:
-  LA(   t4, rvtest_data_begin)          // Fetch rvtest_data_begin to adjust mepc offset against it
-        sub     t4, t2, t4                      // Offset adjustment
-        SREG    t4, 2*REGWIDTH(t1)                // save 3rd sig value, (normalized rel mepc) into trap signature area
-
-adj_\__MODE__\()epc:                    // adj mepc so there is at least 4B of padding after op
-        andi    t6, t2, -0x4            // adjust mepc to prev 4B alignment (if 2B aligned)
-        addi    t6, t6,  0x8            // adjust mepc so it skips past op, has padding & 4B aligned
+adj_\__MODE__\()epc_rtn:                // adj mepc so there is at least 4B of padding after op
+        andi    t6, t2, ~WDMSK          // adjust mepc to prev 4B alignment (if 2B aligned)
+        addi    t6, t6,  2*WDSZ         // adjust mepc so it skips past op, has padding & 4B aligned
         csrw    CSR_XEPC, t6            // restore adjusted value, w/ 2,4 or 6B of padding
 
-  /****WARNING needs updating when insts>32b are ratified, only 4 or 6B of padding; for 64b insts,  2B or 4B of padding   ****/
+  /****WARNING needs updating when insts>32b are ratified, only 4 or 6B of padding;
+        for 64b insts,  2B or 4B of padding   ****/
 
   /******************************************************************************/
-  /* Calculate relative mtval if it’s an addr (by code_begin or data_begin amt) */
-  /* Special case if its in the signature region as well.                       */
-  /* Model-defined mask values (indexed by xcause value) select which to use    */
+  /* Relocate mtval if it’s an addr (by sig, data or code regions) else by zero */
+  /* error if exception address isn't inside code, data or signature segments   */
   /* Enter with rvtest_code_begin (which is start of actual test) in t3         */
-  /* if illegal op, load opcode from mtval (if !=0) or from istream (if ==0)    */
+  /* FUTURE FIXME: this may need to be updated to handle 48 or 64b opcodes      */
   /******************************************************************************/
 
-//      csrr    t4, CSR_XCAUSE
         csrr    t6, CSR_XTVAL
-
-  /******************************************************************************/
-  /* null adjustment if exception address is neither code nor data relative; ****/
-  /* FUTURE FIXME: this may need to be updated to handle 48 or 64b opcodes   ****/
-  /******************************************************************************/
-
-/* now check for addr adjustments - code, data, or sig region (cause is in t5)*/
-
-illop_\__MODE__\()tval:                 // if cause is illop, save always
-        addi    t2, t5, -CAUSE_ILLEGAL_INSTRUCTION      // spcl case mcause==2 (illegal op) no addr adj
-        beqz    t2, sv_\__MODE__\()tval
 
 chk_\__MODE__\()tval:
         LI(     t4, SET_REL_TVAL_MSK)   // now check if code or data (or sig) region adjustment
-
         srl     t4, t4, t5              // put mcause bit# into LSB
         slli    t4, t4, XLEN-1          // put mcause bit# into MSB
         bge     t4, x0, sv_\__MODE__\()tval     // if MSB=0, no adj, sv to ensure tval was cleared
 
+sig_adj_\__MODE__\()tval:
+        LA(     t3, rvtest_sig_begin)           // Fetch rvtest_sig_begin addr
+        LA(     t6, rvtest_sig_end)             // Fetch rvtest_sig_end   addr
+        bgeu    t2, t6, code_adj_\__MODE__\()tval// tval > rvtest_sig_end, chk code seg
+        bgeu    t2, t3,      adj_\__MODE__\()tval// tval >=rvtest_sig_begin, adj & save
 
-code_\__MODE__\()adj:
-        LA(t4, rvtest_code_end)           // Fetch rvtest_code_end to compare against mtval.
-  bge t6, t4, data_\__MODE__\()adj  // Compare if mtval > rvtest_code_end ; address belong outside code area ==> will be adjusted via data memory
-  LA(   t4, rvtest_code_begin)        // Fetch rvtest_code_end to compare against mtval.
-        blt t6, t4, data_\__MODE__\()adj  // Compare if mtval < rvtest_code_begin ; address belong outside code area ==> will be adjusted via data memory
-  addi t3, t4, 0                    // If rvtest_code_begin < mtval < rvtest_code_end ==> Adjustment will be made via code region
-  j  adj_\__MODE__\()tval
+code_adj_\__MODE__\()tval:
+        LA(     t3, rvtest_code_begin)          // Fetch rvtest_code_begin addr
+        LA(     t6, rvtest_code_end)            // Fetch rvtest_code_end   addr
+        bgeu    t2, t6, data_adj_\__MODE__\()tval// tval > rvtest_code_end, chk data seg
+        bgeu    t2, t3,      adj_\__MODE__\()tval// tval >=rvtest_code_begin, adj & save
 
-data_\__MODE__\()adj:                   // only possibilities left are testdata or sigdata
-        LA(     t3, rvtest_data_end)
-        bge     t6, t3, sig_\__MODE__\()adj     // after data area, must be sig, adj according to sig label
-        LA(     t3, rvtest_data_begin)
-        bge     t6, t3, adj_\__MODE__\()tval    // inside data area, lv rvtest_data_begin as adjustment amt
+data_adj_\__MODE__\()tval:
+        LA(     t3, rvtest_data_begin)          // Fetch rvtest_data_begin addr
+        LA(     t6, rvtest_data_end)            // Fetch rvtest_data_end   addr
+        bgeu    t2, t6, cleanup_epilogs         // tval > rvtest_data_end,  (outside data seg), abort
+        bltu    t2, t3, cleanup_epilogs         // tval < rvtest_data_begin (outside data seg), abort
 
-sig_\__MODE__\()adj:
-        LA(     t3, mtrap_sigptr)       // adj assuming sig_region access
-
-adj_\__MODE__\()tval:                   // For Illegal op handling or tval not loaded - opcode not address
+adj_\__MODE__\()tval:
         sub     t6, t6, t3              // perform mtval adjust by either code, data, or sig position in t3
 
 sv_\__MODE__\()tval:
-        SREG    t6, 3*REGWIDTH(t1)            // save 4rd sig value, (intID)
+        SREG    t6, 3*REGWIDTH(t1)      // save 4th sig value, (rel tval)
 
 skp_\__MODE__\()tval:
 
   .if (\__MODE__\() == M)
     .ifdef  __H_EXT__
-        csrr    t2, CSR_MTVAL2
+        csrr    t2, CSR_MTVAL2          // **** FIXME: does this need reloc also? Its a guest phys addr
         SREG    t2, 4*REGWIDTH(t1)      // store 5th sig value, only if mmode handler and VS mode exists
         csrr    t2, CSR_MTINST
         SREG    t2, 5*REGWIDTH(t1)      // store 6th sig value, only if mmode handler and VS mode exists
     .endif
   .endif
 
-chk_\__MODE__\()trapsig_overrun:        //FIXME: move trap signature check to here
-#ifdef rvtest_sig_end                   // if not defined, we can't test for overrun
-#define trap_sig_sz (rvtest_sig_end-mtrap_sigptr)
-        LA(     t4, rvtest_trap_sig)
-        LREG    t4, 0(t4)               // get the preincremented trap signature ptr
-        LI(     t6, trap_sig_sz)        // length of trap sig; exceeding this is an overrun, test error
-        add     t3, t3, t6              // calculate rvtest_sig_end from mtrap_sigptr, avoiding an LA
-        bgtu    t4, t3, cleanup_epilogs // abort test if pre-incremented value overruns
-#endif
+chk_\__MODE__\()trapsig_overrun:
 
-  /**** vector to execption special handling routines ****/
-        li      t2, XLEN<<3                 // offset of exception dispatch table bzse
+        LA(     t3, rvtest_trap_sig)
+        LREG    t3, 0(t3)               // get the preincremented trap signature ptr
+
+// now see if the pointer has overrun sig_end
+        LA(     t4, rvtest_sig_begin)             //calculate Mmode sig_end addr
+        ADDI(   t4, t4, tot_sig_sz)
+        bgtu    t4, t3, cleanup_epilogs         // abort test if pre-incremented value overruns
+
+  /**** vector to exception special handling routines ****/
+        li      t2, XLEN*2*WDSZ                 // offset of exception dispatch table base
         j       spcl_\__MODE__\()handler        // jump to shared int/excpt spcl handling dispatcher
 
  /**** common return code for both interrupts and exceptions ****/
@@ -1194,10 +1223,10 @@ resto_\__MODE__\()rtn:                  // restore and return
  /**** This is the interrupt specific code. It   ****/
  /**** clears the int and saves int-specific CSRS****/
  /***************************************************/
-common_\__MODE__\()int_handler:         // t1 has sig ptr, t5 has mcause
+common_\__MODE__\()int_handler:         // t1 has sig ptr, t5 has mcause, sp has save area
         LI(     t3, 1)
  //**FIXME** - make sure this is kept up-to-date with fast int extension and others
-        andi    t2, t5, XLEN-1          // clr INT bit  (**NOTE rmv extra bits if future extns use upper bits)
+        andi    t2, t5, INT_CAUSE_MSK   // clr INT & unarched arched bits (**NOTE expand if future extns use them)
         sll     t3, t3, t2              // create mask 1<<xcause **NOTE**: that MSB is ignored in shift amt
         csrrc   t4, CSR_XIE, t3         // read, then attempt to clear int enable bit??
         csrrc   t4, CSR_XIP, t3         // read, then attempt to clear int pend bit
@@ -1211,115 +1240,68 @@ sv_\__MODE__\()ip:                      // note: clear has no effect on MxIP
 /**** JR to table in t3+t2, indexed by mcause   ****/
 /***************************************************/
 spcl_\__MODE__\()handler:               // case table branch to special handler code, depending on mcause
-  .set int_handler_tblsz,         excpt_Mhndlr_tbl-clrint_Mtbl
         LA(     t3, clrint_\__MODE__\()tbl)
-//      LA(     t3, (clrint_\__MODE__\()tbl))   
         // load spcl int/excpt handler dispatch table 
-        add     t3, t3, t2              // offset into the correct table
+        add     t3, t3, t2              // offset into the correct int/excpt dispatch table
         slli    t2, t5, 3               // index into 8b aligned dispatch entry and jump through it
         add     t3, t3, t2
         LREG    t3, 0(t3)
+spcl_\__MODE__\()dispatch:
         jr      t3                      // this defaults to resto_\__MODE__\()rtn
-
-\__MODE__\()clr_Msw_int:                                 // default to just return if not defined
-        RVMODEL_CLEAR_MSW_INT
-        j       resto_\__MODE__\()rtn
-
-\__MODE__\()clr_Mtmr_int:                                // default to just return
-        RVMODEL_CLEAR_MTIMER_INT
-        j       resto_\__MODE__\()rtn
-
-\__MODE__\()clr_Mext_int:                                // default to just return
-        RVMODEL_CLEAR_MEXT_INT
-        SREG    t3, 3*REGWIDTH(t1)            // save 4rd sig value, (intID)
-        j       resto_\__MODE__\()rtn
-
-
-\__MODE__\()clr_Ssw_int:                                 // default to just return if not defined
-        RVMODEL_CLEAR_SSW_INT
-        j       resto_\__MODE__\()rtn
-
-\__MODE__\()clr_Stmr_int:                                // default to just return
-        RVMODEL_CLEAR_STIMER_INT
-        j       resto_\__MODE__\()rtn
-
-\__MODE__\()clr_Sext_int:                                // default to just return
-        RVMODEL_CLEAR_SEXT_INT
-        SREG    t3, 3*REGWIDTH(t1)            // save 4rd sig value, (intID)
-        j       resto_\__MODE__\()rtn
-
-
-\__MODE__\()clr_Vsw_int:                                // default to just return if not defined
-        RVMODEL_CLEAR_VSW_INT
-        j       resto_\__MODE__\()rtn
-
-\__MODE__\()clr_Vtmr_intrvtest_code_begin:                             // default to just return
-        RVMODEL_CLEAR_VTIMER_INT
-        j       resto_\__MODE__\()rtn
-
-\__MODE__\()clr_Vext_int:                              // default to just return
-        RVMODEL_CLEAR_VEXT_INT
-        SREG    t3, 3*REGWIDTH(t1)            // save 4rd sig value, (intID)
-        j       resto_\__MODE__\()rtn
 
 /**** this is the table of interrupt clearing routine pointers, which could include special handlers ****/
 /**** They default to RVMODEL macros above, which are model supplied, then jump to rtn code          ****/
 
-  .align ALIGNSZ
 clrint_\__MODE__\()tbl:                 //this code should only touch t2..t6
-        .dword  resto_\__MODE__\()rtn   // int cause  0 is reserved, just return
-#ifdef rvtest_strap_routine
+#ifdef rvtest_vtrap_routine  //  M/S/V/U
+        .dword  resto_\__MODE__\()rtn           // int cause  0 is reserved, error
         .dword  \__MODE__\()clr_Ssw_int         // int cause  1  Smode SW int
-#else
-        .dword  cleanup_epilogs         // no Smode, impossible
+        .dword  \__MODE__\()clr_Vsw_int         // int cause  2  Vmode SW int
+        .dword  \__MODE__\()clr_Msw_int         // int cause  3  Mmode SW int
+//****************************************************************
+        .dword  resto_\__MODE__\()rtn           // int cause  4 is reserved, error
+        .dword  \__MODE__\()clr_Stmr_int        // int cause  5  Smode Tmr int
+        .dword  \__MODE__\()clr_Vtmr_int        // int cause  6  Vmode Tmr int
+        .dword  \__MODE__\()clr_Mtmr_int        // int cause  7  Mmode Tmr int
+//****************************************************************
+        .dword  resto_\__MODE__\()rtn           // int cause  8 is reserved, just return
+        .dword  \__MODE__\()clr_Sext_int        // int cause  9  Smode Ext int
+        .dword  \__MODE__\()clr_Vext_int        // int cause  A  Vmode Ext int
+        .dword  \__MODE__\()clr_Mext_int        // int cause  B  Mmode Ext int
+//****************************************************************
+#elseif rvtest_dtrap_routine  // M/S/U only
+        .dword  resto_\__MODE__\()rtn           // int cause  0 is reserved, error
+        .dword  \__MODE__\()clr_Ssw_int         // int cause  1  Smode SW int
+        .dword  cleanup_epilogs                 // int cause  2  Vmode SW int
+        .dword  \__MODE__\()clr_Msw_int         // int cause  3  Mmode SW int
+//****************************************************************
+        .dword  resto_\__MODE__\()rtn           // int cause  4 is reserved, error
+        .dword  \__MODE__\()clr_Stmr_int        // int cause  5  Smode Tmr int
+        .dword  cleanup_epilogs                 // int cause  6  Vmode Tmr int
+        .dword  \__MODE__\()clr_Mtmr_int        // int cause  7  Mmode Tmr int
+//****************************************************************
+        .dword  resto_\__MODE__\()rtn           // int cause  8 is reserved, just return
+        .dword  \__MODE__\()clr_Sext_int        // int cause  9  Smode Ext int
+        .dword  cleanup_epilogs                 // int cause  A  Vmode Ext int
+        .dword  \__MODE__\()clr_Mext_int        // int cause  B  Mmode Ext int
+//****************************************************************
+#else  // M/(U) only
+        .dword  resto_\__MODE__\()rtn           // int cause  0 is reserved, error
+        .dword  cleanup_epilogs                 // int cause  1  Smode SW int
+        .dword  cleanup_epilogs                 // int cause  2  Vmode SW int
+        .dword  \__MODE__\()clr_Msw_int         // int cause  3  Mmode SW int
+//****************************************************************
+        .dword  resto_\__MODE__\()rtn           // int cause  4 is reserved, error
+        .dword  cleanup_epilogs                 // int cause  5  Smode Tmr int
+        .dword  cleanup_epilogs                 // int cause  6  Vmode Tmr int
+        .dword  \__MODE__\()clr_Mtmr_int        // int cause  7  Mmode Tmr int
+//****************************************************************
+        .dword  resto_\__MODE__\()rtn           // int cause  8 is reserved, just return
+        .dword  cleanup_epilogs                 // int cause  9  Smode Ext int
+        .dword  cleanup_epilogs                 // int cause  A  Vmode Ext int
+        .dword  \__MODE__\()clr_Mext_int        // int cause  B  Mmode Ext int
+//****************************************************************
 #endif
-#ifdef rvtest_vtrap_routine
-        .dword  \__MODE__\()clr_Vsw_int         // int cause  2  Vmode SW int#else
-#else
-        .dword  cleanup_epilogs         // no Smode, impossible
-#endif
-#ifdef rvtest_Mtrap_routine
-        .dword  \__MODE__\()clr_Msw_int         // int cause  3  Mmode SW int#else
-#else
-        .dword  cleanup_epilogs         // no Smode, impossible
-#endif
-
-        .dword  resto_\__MODE__\()rtn   // int cause  4 is reserved, just return
-#ifdef rvtest_strap_routine
-        .dword  \__MODE__\()clr_Stmr_int                // int cause  5  Smode Tmr int
-#else
-        .dword  cleanup_epilogs         // no Smode, impossible
-#endif
-#ifdef rvtest_vtrap_routine
-        .dword  \__MODE__\()clr_Vtmr_int                // int cause  6  Vmode Tmr int
-#else
-        .dword  cleanup_epilogs         // no Vmode, impossible
-#endif
-
-#ifdef rvtest_mtrap_routine
-        .dword  \__MODE__\()clr_Mtmr_int                // int cause  7  Mmode Tmr int
-#else
-        .dword  cleanup_epilogs         // no Mmode, impossible
-#endif
-
-        .dword  resto_\__MODE__\()rtn   // int cause  8 is reserved, just return
-#ifdef rvtest_strap_routine
-        .dword  \__MODE__\()clr_Sext_int                // int cause  9  Smode Ext int
-#else
-        .dword  cleanup_epilogs         // no Smode, impossible
-#endif
-
-#ifdef rvtest_vtrap_routine
-        .dword  \__MODE__\()clr_Vext_int                // int cause  A  Vmode Ext int
-#else
-        .dword  cleanup_epilogs         // no Vmode, impossible
-#endif
-#ifdef rvtest_mtrap_routine
-        .dword  \__MODE__\()clr_Mext_int                // int cause  B  Mmode Ext int
-#else
-        .dword  cleanup_epilogs         // no Mmode, impossible
-#endif
-
  .rept NUM_SPECD_INTCAUSES-0xC
         .dword  resto_\__MODE__\()rtn   // int cause c..NUM_SPECD_INTCAUSES is reserved, just return
  .endr
@@ -1336,20 +1318,58 @@ excpt_\__MODE__\()hndlr_tbl:            // handler code should only touch t2..t6
  .rept XLEN-NUM_SPECD_INTCAUSES
         .dword  cleanup_epilogs         // impossible, quit test by jumping to epilogs
  .endr
-.option pop
-.endm
 
 /**** These are invocations of the model supplied interrupt clearing macros ****/
 /**** Note there is a copy per mode, though they could all be the same code ****/
 /****   !!!! This must be speced as to which registers they may touch !!!!  ****/
+/**** !!! Note: the ext interrupt clearing macros must leave intID in t3 !!!****/
 // **FIXME** : the spec needs to be updated with the per/mode versions, not just one
 // **FIXME**: ove these outside the handler so it can copied per mode using INSTANTIATE_MODE_MACRO
-        //Does this work if we recode like thks?:
-        //  clr_\__MODE__\()sw_int:                              // default to just return if not defined
-        //  RVMODEL_CLEAR_\__MODE__\()SW_IN
-        //  j   resto_\__MODE__\()rtn
 
+//------------- MMode----------------
+\__MODE__\()clr_Msw_int:                // int 3 default to just return if not defined
+        RVMODEL_CLEAR_MSW_INT
+        j       resto_\__MODE__\()rtn
 
+\__MODE__\()clr_Mtmr_int:               // int 7 default to just return
+        RVMODEL_CLEAR_MTIMER_INT
+        j       resto_\__MODE__\()rtn
+
+\__MODE__\()clr_Mext_int:               // int11 default to just return after saving IntID in t3
+        RVMODEL_CLEAR_MEXT_INT
+        SREG    t3, 3*REGWIDTH(t1)      // save 4rd sig value, (intID)
+        j       resto_\__MODE__\()rtn
+
+//------------- SMode----------------
+\__MODE__\()clr_Ssw_int:                // int 1 default to just return if not defined
+        RVMODEL_CLEAR_SSW_INT
+        j       resto_\__MODE__\()rtn
+
+\__MODE__\()clr_Stmr_int:               // int 5 default to just return
+        RVMODEL_CLEAR_STIMER_INT
+        j       resto_\__MODE__\()rtn
+
+\__MODE__\()clr_Sext_int:               // int 9 default to just return after saving IntID in t3
+        RVMODEL_CLEAR_SEXT_INT
+        SREG    t3, 3*REGWIDTH(t1)      // save 4rd sig value, (intID)
+        j       resto_\__MODE__\()rtn
+
+//------------- VSode----------------
+\__MODE__\()clr_Vsw_int:                // int 2 default to just return if not defined
+        RVMODEL_CLEAR_VSW_INT
+        j       resto_\__MODE__\()rtn
+
+\__MODE__\()clr_Vtmr_int:               // int 6 default to just return
+        RVMODEL_CLEAR_VTIMER_INT
+        j       resto_\__MODE__\()rtn
+
+\__MODE__\()clr_Vext_int:               // int 8 default to just return after saving IntID in t3
+        RVMODEL_CLEAR_VEXT_INT
+        SREG    t3, 3*REGWIDTH(t1)      // save 4rd sig value, (intID)
+        j       resto_\__MODE__\()rtn
+
+.option pop
+.endm
 
 /*******************************************************************************/
 /**************** cleanup code; restore xtvec or where it points to ************/
@@ -1387,8 +1407,8 @@ resto_\__MODE__\()scratch:
 resto_\__MODE__\()xtvec:
         LREG    t4, xtvec_sav_addr(t1)          // restore  orig xtvec addr & load current one
         csrrw   t2, CSR_XTVEC, t4
-        andi    t4, t4, -4                      // remove mode, so both word aligned 
-        andi    t2, t2, -4
+        andi    t4, t4, ~WDMSK                  // remove mode, so both word aligned 
+        andi    t2, t2, ~WDMSK
         bne     t4, t2, 1f                      // if saved!=curr mtvec, done, else need to restore tramp
 
 resto_\__MODE__\()tramp:                        // t2 now contains where to restore to
@@ -1398,17 +1418,17 @@ resto_\__MODE__\()tramp:                        // t2 now contains where to rest
 resto_\__MODE__\()loop:
         lw      t6, 0(t4)                       // read saved tramp entry
         sw      t6, 0(t2)                       // restore original tramp entry
-        addi    t2, t2, 4                       // next tgt  index
-        addi    t4, t4, 4                       // next save index
+        addi    t2, t2, WDSZ                    // next tgt  index
+        addi    t4, t4, WDSZ                    // next save index
         blt     t2, t3, resto_\__MODE__\()loop  // didn't get to end, continue
   1:
 .global rvtest_\__MODE__\()end
 rvtest_\__MODE__\()end:
 
 #ifdef HANDLER_TESTCODE_ONLY
-        //**fixme**: add conditional code to compare original trampoline with
+        //**FIXME**: add conditional code to compare original trampoline with
         // restored trampoline and store the deltas in the trap signature region
-        // must work for each mode
+        // as an added check? must work for each mode
 #endif
  .option pop
  .endm
@@ -1428,7 +1448,7 @@ rvtest_\__MODE__\()end:
 .option norvc
 .global \__MODE__\()trapreg_sv
 
-//****ASSERT: this shoud be a 64B boundary******//
+//****ASSERT: this should be a 64B boundary******//
 \__MODE__\()tramptbl_sv:        // save area of existing trampoline table
 .rept ((tramp_sz>>2)+1) & -2    // align to dblwd
         j       .+0             // prototype jump instruction, offset to be filled in
@@ -1452,8 +1472,7 @@ rvtest_\__MODE__\()end:
 \__MODE__\()trapreg_sv:
         .fill   8, REGWIDTH, 0xdeadbeef     // handler reg save area, 2 extra, keep dbl alignment
 
-\__MODE__\()sv_area_end:        // used to clc size, which is used to avoid CSR read
-.set \__MODE__\()sv_area_sz, (\__MODE__\()sv_area_end-\__MODE__\()satp_sv)
+\__MODE__\()sv_area_end:        // used to calc size, which is used to avoid CSR read
 
 .option pop
 .endm
@@ -1502,7 +1521,7 @@ rvtest_code_begin:
   .option push
   .option norvc
   .global rvtest_code_end       // define the label and make it available
-  .global cleanup_epilogs
+  .global cleanup_epilogs       // ****ALERT: tests must populate x1 with a point to the end of regular sig area
 
 rvtest_code_end:                // COMPLIANCE_HALT should get here
   #ifdef rvtest_gpr_save        // gpr_save area is instantiated at end of signature
@@ -1511,7 +1530,7 @@ rvtest_code_end:                // COMPLIANCE_HALT should get here
     RVTEST_GOTO_MMODE           // if only Mmode used by tests, this has no effect
 cleanup_epilogs:                // jump here to quit, will restore state for each mode
 
-        //restore xTVEC, trampoline, regs for each mode in opposite order that they were saved
+//restore xTVEC, trampoline, regs for each mode in opposite order that they were saved
 #ifdef rvtest_mtrap_routine
     #ifdef rvtest_strap_routine
         #ifdef rvtest_vtrap_routine
@@ -1521,7 +1540,6 @@ cleanup_epilogs:                // jump here to quit, will restore state for eac
     #endif
    RVTEST_TRAP_EPILOG M         // actual m-mode prolog/epilog/handler code
 #endif
-//    INSTANTIATE_MODE_MACRO RVTEST_TRAP_EPILOG //restore xTVEC, trampoline, regs for each mode
 
 /************* test done, epolog has restored everying, jump to halt ****************/
   j     exit_cleanup            //skip around handlers, go to RVMODEL_HALT
@@ -1561,7 +1579,7 @@ rvtest_trap_sig:
 
 /**** now instantiate separate save areas for each modes state     ****/
 /**** strictly speaking, should only be needed for reentrant traps ****/
-.align 3        //redundant?
+//.align 3        //redundant?
         INSTANTIATE_MODE_MACRO RVTEST_TRAP_SAVEAREA
 
 .align 4
