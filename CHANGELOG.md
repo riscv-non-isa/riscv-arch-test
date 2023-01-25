@@ -1,4 +1,15 @@
 # CHANGELOG
+## [3.6.0] - 2022-10-11
+  - Removed the bugs in RVTEST_GOTO_LOWER_MODE macro
+  - Removed the bugs in RVTEST_GOTO_MMODE macro and defined strap_routine directive.
+  - Updated RVTEST_TRAP_SAVEAREA and RVTEST_TRAP_EPILOG macros to refine the definitions of per mode save area macros.
+  - Added better indications of when the trap signature area is overrun
+  - Ensured that the trap handler keeps the trampoline 64B aligned (need for CLIC spec)
+  - fixed the handling of when xTVEC was not initialized and also could not be written
+  - rewritten the save_GPR macro to it now compiles
+  - some miscellaneous optimizations
+  
+=======
 
 ## [3.5.3] - 2022-11-22
   - Fix Canary definition according to sigalign.
