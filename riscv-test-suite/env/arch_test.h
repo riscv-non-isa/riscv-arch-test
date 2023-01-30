@@ -1398,9 +1398,11 @@ resto_\__MODE__\()edeleg:
 //FIXME: if N-extension or anything like it is implemented, uncomment the following
 //      csrw    CSR_XEDELEG, t2 //this handles S  mode restore
 .endif
+.if (\__MODE__\() != M)
 resto_\__MODE__\()satp:
         LREG    t2, xsatp_sv_addr(t1)           // restore saved xsatp
         csrw    CSR_XSATP,  t2
+.endif
 resto_\__MODE__\()scratch:
         LREG    t5, xscr_save_addr(t1)          // restore saved xscratch
         csrw    CSR_XSCRATCH, t5
