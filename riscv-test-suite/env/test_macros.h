@@ -4,7 +4,7 @@
 
 
 #define NAN_BOXED(__val__,__width__,__max__)	;\
-    .if __width__ == 32				;\
+    .if __width__ == 32 || __width__ == 16		;\
 	.word __val__				;\
     .else					;\
 	.dword __val__				;\
