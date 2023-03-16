@@ -193,6 +193,10 @@
     #define FLREG fld
     #define FSREG fsd
     #define FREGWIDTH 8
+#elif FLEN==16
+    #define FLREG flh
+    #define FSREG fsh
+    #define FREGWIDTH 2
 #else
     #define FLREG flq
     #define FSREG fsq
