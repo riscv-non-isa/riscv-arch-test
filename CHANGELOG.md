@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## [3.6.3] - 2023-04-04
+- Fix broken hyperlink in README
+
 ## [3.6.2] - 2023-02-08
 - Remove RV64IB from ISA list of zext test. 
 
