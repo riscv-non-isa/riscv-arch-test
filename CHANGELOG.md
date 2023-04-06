@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## [3.8.10] - 2023-04-06
+- Add Zfa support.
+
 ## [3.8.9] -- 2024-01-12
 - Fixed Check ISA fields to include 32/64 in Zicond tests.  Note that the riscv-ctg CGFs have not been updated.
 
