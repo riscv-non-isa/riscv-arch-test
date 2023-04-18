@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## [3.6.3] - 2023-02-28
+- Split LI() macro for RV32 and RV64 to eliminate warning messages.
+- Reduce the use of LA() macro by declaring fixed size offsets in save area.
+- Updated RVTEST_GOTO_MMODE macro
+- Updated \__MODE__\()trap_sig_sv, replaced an LA(rvtest_trap_sig) by calculating initial_Xtrap_sigptr + (Mtrap_sigptr-initial_Mtrap-sigptr) 
+- Similar changes are made in chk_\__MODE__\()trapsig_overrun macro.
+- Updated RVTEST_TRAP_SAVEAREA. Also added vmem segment in the save area.
+- Added infrastructure support traps from S/U mode with Virtualization enabled
+
 ## [3.6.2] - 2023-02-08
 - Remove RV64IB from ISA list of zext test. 
 
