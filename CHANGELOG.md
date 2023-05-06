@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [3.6.4] - 2023-05-04
+- In Zifencei test, updated the ISA string `zifencei` for `march` flag of toolchain.
+- Set the default definition of `RVMODEL_FENCEI` to `nop` in trap-handler.
+
 ## [3.6.3] - 2023-02-28
 - Split LI() macro for RV32 and RV64 to eliminate warning messages.
 - Reduce the use of LA() macro by declaring fixed size offsets in save area.

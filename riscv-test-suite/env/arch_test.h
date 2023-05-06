@@ -138,8 +138,19 @@
   #define EXCPT_CAUSE_MSK ((1<<4)-1)
 #endif
 
+//==========================================================================================
+// By default, it is defined as nop for the implementation that does not support Zifencei
+// Implementations that support Zifencei may use the fence.i instruction.
+// This only gets executed if xTVEC is not writable to point to the trap trampoline, 
+// and if it isn't writable, the model better have the zifencei extension implemented.
+//==========================================================================================
+
 #ifndef   RVMODEL_FENCEI
-  #define RVMODEL_FENCEI fence.i                                // make sure ifetches get new code
+  #ifndef ZIFENCE
+       #define RVMODEL_FENCEI nop
+  #else                            
+       #define RVMODEL_FENCEI fence.i 
+    #endif
 #endif
 
 #ifndef UNROLLSZ
@@ -900,7 +911,7 @@ init_\__MODE__\()tramp: /**** copy trampoline at mtvec tgt; t4->t2->t1  t3=end o
         bne     t3, t2, overwt_tt_\__MODE__\()loop      // haven't reached end of save area,  loop
 //----------------------------------------------------------------------
   endcopy_\__MODE__\()tramp:                    // vector table not writeable, restore
-        RVMODEL_FENCEI                          // make sure ifetches get new code
+        RVMODEL_FENCEI                          // By default it is defined as nop. See the definition
         csrr    t1, CSR_XSCRATCH                // reload trapreg_sv from scratch
         sw      t2, trampend_addr(t1)           // save copy progress
         beq     t3,t2, rvtest_\__MODE__\()prolog_done //full loop, don't exit
