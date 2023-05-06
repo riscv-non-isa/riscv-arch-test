@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## [3.6.5] - 2023-05-06
+- Fix test condition in RVTEST_CASE for `c.ebreak` (RV32 and RV64) test. 
+
 ## [3.6.4] - 2023-05-04
 - In Zifencei test, updated the ISA string `zifencei` for `march` flag of toolchain.
 - Set the default definition of `RVMODEL_FENCEI` to `nop` in trap-handler.
