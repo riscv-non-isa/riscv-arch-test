@@ -20,7 +20,7 @@ RVMODEL_BOOT
 RVTEST_CODE_BEGIN
 
 #ifdef TEST_CASE_1
-    RVTEST_CASE(1,"//check ISA:=regex(.*64.*); check ISA:=regex(.*I.*Zicsr.*.C*); def rvtest_mtrap_routine=True; def TEST_CASE_1=True",cebreak)
+    RVTEST_CASE(1,"//check ISA:=regex(.*64.*); check ISA:=regex(.*I.*C.*Zicsr); def rvtest_mtrap_routine=True; def TEST_CASE_1=True",cebreak)
 
     # ---------------------------------------------------------------------------------------------
     LA(     x1,test_A_res)
