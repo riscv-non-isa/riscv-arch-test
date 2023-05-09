@@ -1,5 +1,7 @@
 # CHANGELOG
 
+## [3.6.6] - 2023-05-08
+- Added CLIC fast-interrupt new CSR defines to encoding.h. 
 ## [3.6.5] - 2023-05-06
 - Fix test condition in RVTEST_CASE for `c.ebreak` (RV32 and RV64) test. 
 
