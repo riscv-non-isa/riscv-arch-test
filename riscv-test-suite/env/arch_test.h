@@ -1,3 +1,9 @@
+// -----------
+// Copyright (c) 2020-2023. RISC-V International. All rights reserved.
+// SPDX-License-Identifier: BSD-3-Clause
+// -----------
+
+
 // This file is divided into the following sections:
 //      RV Arch Test Constants
 //      general test and helper macros, required,  optional, or just useful
@@ -232,12 +238,9 @@
 #endif
 
 //---------------------------mode encoding definitions-----------------------------
-.set MMODE_SIG,3   /* FIXME why don't the #defines work if they're evaluated first?? */
-.set VMODE_SIG,2
-.set SMODE_SIG,1
-  //#define MMODE_SIG 3
-  //#define VMODE_SIG 2
-  //#define SMODE_SIG 1
+.set MMODE_SIG, 3
+.set SMODE_SIG, 1
+.set VMODE_SIG, 2
         /* these macros need to be defined because mode is uppercase in mode specific macros */
         /* note that vs mode uses smode return */
 
@@ -297,7 +300,7 @@
 
 /**** fixed length LI macro ****/
 #if (XLEN<64)
-#define LI(reg, imm)                                                            ;\
+  #define LI(reg, imm)                                                            ;\
   .set immx,    (imm & MASK)    /* trim to XLEN (noeffect on RV64)      */      ;\
   .set absimm,  ((immx^(-BIT(immx,XLEN-1)))&MASK) /* cvt to posnum to simplify code */  ;\
   .set cry,     (BIT(imm, IMMSGN))                                              ;\
@@ -309,15 +312,17 @@
     .if   ((imm&IMMMSK)!=0)     /* but skip this if lower bits are zero   */    ;\
         addi reg, reg, imm12                                                    ;\
     .endif                                                                      ;\
- .endif
-#else
+  .endif
+  #else
 #define LI(reg, imm)                                                            ;\
   .option push                                                                  ;\
   .option norvc                                                                 ;\
   .set immx,    (imm & MASK)    /* trim to XLEN (noeffect on RV64)      */      ;\
 /***************** used in loop that detects bitmasks                   */      ;\
-  .set edge1,   -1              /* 1st "1" bit pos scanning r to l      */      ;\
-  .set edge2,   -1              /* 1st "0" bit pos scanning r to l      */      ;\
+  .set edge1,   1               /* 1st "1" bit pos scanning r to l      */      ;\
+  .set edge2,   0               /* 1st "0" bit pos scanning r to l      */      ;\
+  .set fnd1,    -1              /* found 1st "1" bit pos scanning r to l */     ;\
+  .set fnd2,    -1              /* found 1st "0" bit pos scanning r to l */     ;\
   .set imme,    ((immx^(-BIT(immx,0     )))&MASK) /* cvt to even, cvt back at end */    ;\
   .set pos,      0                                                              ;\
 /***************** used in code that checks for 32b immediates          */      ;\
@@ -329,13 +334,15 @@
   .set cryh,    (BIT(immx, IMMSGN+32))                                          ;\
 /******** loop finding rising/falling edge fm LSB-MSB given even operand ****/  ;\
   .rept XLEN                                                                    ;\
-    .if     (edge1<0)           /* looking for first edge?              */      ;\
+    .if     (fnd1<0)            /* looking for first edge?              */      ;\
       .if (BIT(imme,pos)==1)    /* look for falling edge[pos]           */      ;\
         .set  edge1,pos         /* fnd falling edge, don’t chk for more */      ;\
+	.set  fnd1,0                                                            ;\
       .endif                                                                    ;\
-    .elseif (edge2<0)           /* looking for second edge?             */      ;\
+    .elseif (fnd2<0)            /* looking for second edge?             */      ;\
       .if (BIT(imme,pos)==0)    /* yes, found rising edge[pos]?         */      ;\
          .set  edge2, pos       /* fnd rising  edge, don’t chk for more */      ;\
+	 .set  fnd2,0                                                           ;\
       .endif                                                                    ;\
     .endif                                                                      ;\
     .set    pos,  pos+1         /* keep looking (even if already found) */      ;\
@@ -354,10 +361,10 @@
         addi reg, reg, imm12                                                    ;\
     .endif                                                                      ;\
  /*********** look for  0->1->0 masks, or inverse sgl/multbit *************/    ;\
-  .elseif ( even && (edge2==-1))        /* only rising  edge, so 111000   */    ;\
+  .elseif ( even && (fnd2<0))           /* only rising  edge, so 111000   */    ;\
         li      reg, -1                                                         ;\
         slli    reg, reg, edge1         /* make 111s --> 000s mask        */    ;\
-  .elseif (!even && (edge2==-1))        /* only falling edge, so 000111   */    ;\
+  .elseif (!even && (fnd2<0))           /* only falling edge, so 000111   */    ;\
         li      reg, -1                                                         ;\
         srli    reg, reg, XLEN-edge1    /* make 000s --> 111s mask        */    ;\
   .elseif (imme == (1<<edge1))          /* check for single bit case      */    ;\
@@ -425,41 +432,41 @@
 /*****************************************************************/
 
 /* init regs, to ensure you catch any errors */
-#define RVTEST_INIT_GPRS                        ;\
-     LI (x1,  (0xFEEDBEADFEEDBEAD & MASK))      ;\
-     LI (x2,  (0xFF76DF56FF76DF56 & MASK))      ;\
-     LI (x3,  (0x7FBB6FAB7FBB6FAB & MASK))      ;\
-     LI (x4,  (0xBFDDB7D5BFDDB7D5 & MASK))      ;\
-     LA (x5,  rvtest_code_begin)                ;\
-     LA (x6,  rvtest_data_begin)                ;\
-     LI (x7,  (0xB7FBB6FAB7FBB6FA & MASK))      ;\
-     LI (x8,  (0x5BFDDB7D5BFDDB7D & MASK))      ;\
-     LI (x9,  (0xADFEEDBEADFEEDBE & MASK))      ;\
-     LI (x10, (0x56FF76DF56FF76DF & MASK))      ;\
-     LI (x11, (0xAB7FBB6FAB7FBB6F & MASK))      ;\
-     LI (x12, (0xD5BFDDB7D5BFDDB7 & MASK))      ;\
-     LI (x13, (0xEADFEEDBEADFEEDB & MASK))      ;\
-     LI (x14, (0xF56FF76DF56FF76D & MASK))      ;\
-     LI (x15, (0xFAB7FBB6FAB7FBB6 & MASK))      ;\
-   #ifndef RVTEST_E                             ;\
-     LI (x16, (0x7D5BFDDB7D5BFDDB & MASK))      ;\
-     LI (x17, (0xBEADFEEDBEADFEED & MASK))      ;\
-     LI (x18, (0xDF56FF76DF56FF76 & MASK))      ;\
-     LI (x19, (0x6FAB7FBB6FAB7FBB & MASK))      ;\
-     LI (x20, (0xB7D5BFDDB7D5BFDD & MASK))      ;\
-     LI (x21, (0xDBEADFEEDBEADFEE & MASK))      ;\
-     LI (x22, (0x6DF56FF76DF56FF7 & MASK))      ;\
-     LI (x23, (0xB6FAB7FBB6FAB7FB & MASK))      ;\
-     LI (x24, (0xDB7D5BFDDB7D5BFD & MASK))      ;\
-     LI (x25, (0xEDBEADFEEDBEADFE & MASK))      ;\
-     LI (x26, (0x76DF56FF76DF56FF & MASK))      ;\
-     LI (x27, (0xBB6FAB7FBB6FAB7F & MASK))      ;\
-     LI (x28, (0xDDB7D5BFDDB7D5BF & MASK))      ;\
-     LI (x29, (0xEEDBEADFEEDBEADF & MASK))      ;\
-     LI (x30, (0xF76DF56FF76DF56F & MASK))      ;\
-     LI (x31, (0xFBB6FAB7FBB6FAB7 & MASK))      ;\
+.macro RVTEST_INIT_GPRS
+     LI (x1,  (0xFEEDBEADFEEDBEAD & MASK))
+     LI (x2,  (0xFF76DF56FF76DF56 & MASK))
+     LI (x3,  (0x7FBB6FAB7FBB6FAB & MASK))
+     LI (x4,  (0xBFDDB7D5BFDDB7D5 & MASK))
+     LA (x5,  (0xDFEEDBEADFEEDBEA & MASK))
+     LA (x6,  (0x6FF76DF56FF76DF5 & MASK))
+     LI (x7,  (0xB7FBB6FAB7FBB6FA & MASK))
+     LI (x8,  (0x5BFDDB7D5BFDDB7D & MASK))
+     LI (x9,  (0xADFEEDBEADFEEDBE & MASK))
+     LI (x10, (0x56FF76DF56FF76DF & MASK))
+     LI (x11, (0xAB7FBB6FAB7FBB6F & MASK))
+     LI (x12, (0xD5BFDDB7D5BFDDB7 & MASK))
+     LI (x13, (0xEADFEEDBEADFEEDB & MASK))
+     LI (x14, (0xF56FF76DF56FF76D & MASK))
+     LI (x15, (0xFAB7FBB6FAB7FBB6 & MASK))
+   #ifndef RVTEST_E
+     LI (x16, (0x7D5BFDDB7D5BFDDB & MASK))
+     LI (x17, (0xBEADFEEDBEADFEED & MASK))
+     LI (x18, (0xDF56FF76DF56FF76 & MASK))
+     LI (x19, (0x6FAB7FBB6FAB7FBB & MASK))
+     LI (x20, (0xB7D5BFDDB7D5BFDD & MASK))
+     LI (x21, (0xDBEADFEEDBEADFEE & MASK))
+     LI (x22, (0x6DF56FF76DF56FF7 & MASK))
+     LI (x23, (0xB6FAB7FBB6FAB7FB & MASK))
+     LI (x24, (0xDB7D5BFDDB7D5BFD & MASK))
+     LI (x25, (0xEDBEADFEEDBEADFE & MASK))
+     LI (x26, (0x76DF56FF76DF56FF & MASK))
+     LI (x27, (0xBB6FAB7FBB6FAB7F & MASK))
+     LI (x28, (0xDDB7D5BFDDB7D5BF & MASK))
+     LI (x29, (0xEEDBEADFEEDBEADF & MASK))
+     LI (x30, (0xF76DF56FF76DF56F & MASK))
+     LI (x31, (0xFBB6FAB7FBB6FAB7 & MASK))
    #endif
-
+.endm
 /******************************************************************************/
 /**** this is a helper macro that conditionally instantiates the macros    ****/
 /**** PROLOG/HANDLER/EPILOG/SAVEAREA depending on test type & mode support ****/
@@ -553,43 +560,43 @@
 //**** NOTE: Only be use for debug! Xregs containing addresses won't be relocated ****//
 ////////////////////////////////////////////////////////////////////////////////////////
 
-.macro RVTEST_SAVE_GPRS BASEREG REG_SV_ADDR     // optionally save GPRs
+.macro RVTEST_SAVE_GPRS BASEREG REG_SV_ADDR REGMSK=0    // optionally save GPRs
 .option push
 .option norvc
 .set offset,0
   LA(     \BASEREG, \REG_SV_ADDR)               //this destroys basereg, but saves rest
-  SIGUPD( \BASEREG, x1)
-  SIGUPD( \BASEREG, x2)
-  SIGUPD( \BASEREG, x3)
-  SIGUPD( \BASEREG, x4)
-  SIGUPD( \BASEREG, x5)
-  SIGUPD( \BASEREG, x6)
-  SIGUPD( \BASEREG, x7)
-  SIGUPD( \BASEREG, x8)
-  SIGUPD( \BASEREG, x9)
-  SIGUPD( \BASEREG, x10)
-  SIGUPD( \BASEREG, x11)
-  SIGUPD( \BASEREG, x12)
-  SIGUPD( \BASEREG, x13)
-  SIGUPD( \BASEREG, x14)
-  SIGUPD( \BASEREG, x15)
-#if (! __RV32E__)
-  SIGUPD( \BASEREG, x16)
-  SIGUPD( \BASEREG, x17)
-  SIGUPD( \BASEREG, x18)
-  SIGUPD( \BASEREG, x19)
-  SIGUPD( \BASEREG, x20)
-  SIGUPD( \BASEREG, x21)
-  SIGUPD( \BASEREG, x22)
-  SIGUPD( \BASEREG, x23)
-  SIGUPD( \BASEREG, x24)
-  SIGUPD( \BASEREG, x25)
-  SIGUPD( \BASEREG, x26)
-  SIGUPD( \BASEREG, x27)
-  SIGUPD( \BASEREG, x28)
-  SIGUPD( \BASEREG, x29)
-  SIGUPD( \BASEREG, x30)
-  SIGUPD( \BASEREG, x31)
+.if (  RVTEST_SIGUPD( \BASEREG, x1)
+  RVTEST_SIGUPD( \BASEREG, x2)
+  RVTEST_SIGUPD( \BASEREG, x3)
+  RVTEST_SIGUPD( \BASEREG, x4)
+  RVTEST_SIGUPD( \BASEREG, x5)
+  RVTEST_SIGUPD( \BASEREG, x6)
+  RVTEST_SIGUPD( \BASEREG, x7)
+  RVTEST_SIGUPD( \BASEREG, x8)
+  RVTEST_SIGUPD( \BASEREG, x9)
+  RVTEST_SIGUPD( \BASEREG, x10)
+  RVTEST_SIGUPD( \BASEREG, x11)
+  RVTEST_SIGUPD( \BASEREG, x12)
+  RVTEST_SIGUPD( \BASEREG, x13)
+  RVTEST_SIGUPD( \BASEREG, x14)
+  RVTEST_SIGUPD( \BASEREG, x15)
+#ifndef RVTEST_E   
+  RVTEST_SIGUPD( \BASEREG, x16)
+  RVTEST_SIGUPD( \BASEREG, x17)
+  RVTEST_SIGUPD( \BASEREG, x18)
+  RVTEST_SIGUPD( \BASEREG, x19)
+  RVTEST_SIGUPD( \BASEREG, x20)
+  RVTEST_SIGUPD( \BASEREG, x21)
+  RVTEST_SIGUPD( \BASEREG, x22)
+  RVTEST_SIGUPD( \BASEREG, x23)
+  RVTEST_SIGUPD( \BASEREG, x24)
+  RVTEST_SIGUPD( \BASEREG, x25)
+  RVTEST_SIGUPD( \BASEREG, x26)
+  RVTEST_SIGUPD( \BASEREG, x27)
+  RVTEST_SIGUPD( \BASEREG, x28)
+  RVTEST_SIGUPD( \BASEREG, x29)
+  RVTEST_SIGUPD( \BASEREG, x30)
+  RVTEST_SIGUPD( \BASEREG, x31)
 #endif
 .option pop
 .endm
@@ -753,7 +760,10 @@ RVMODEL_DATA_END        /* model specific stuff */
 
 //==============================================================================
 // Helper macro to set defaults for undefined interrupt set/clear
-// macros. This is used to populated the interrupt vector table
+// macros. This is used to populated the interrupt vector table.
+// These are only used during interrupt testing, so it is safe to 
+// define them as empty macros if and only if that particular interrupt
+// isn't being tested
 //==============================================================================
 //****************************************************************
 #define RVTEST_DFLT_INT_HNDLR      j cleanup_epilogs
@@ -1007,7 +1017,7 @@ common_\__MODE__\()handler:                     // enter with vector addr in t6 
         csrrw   t5, CSR_XSCRATCH, sp            // restore ptr to reg sv area, and get old sp
         SREG    t5, trap_sv_off+7*REGWIDTH(sp)  // save old sp
         auipc   t5, 0
-        addi    t5, t5, 3*WDBYTSZ                  // quick calculation of common Xentry: label (3ops past auipc)
+        addi    t5, t5, 3*WDBYTSZ               // quick calculation of common Xentry: label (3ops past auipc)
         jr      t5                              // needed if trampoline gets moved elsewhere, else it's effectively a noop
 
 common_\__MODE__\()entry:
@@ -1306,7 +1316,7 @@ sv_\__MODE__\()ip:                      // note: clear has no effect on MxIP
 
 spcl_\__MODE__\()handler:               // case table branch to special handler code, depending on mcause
         auipc   t3, 0                   // shortcut for LA(clrint_\__MODE__\()tbl) (might be 4 too large)
-        addi    t3, t3, 15*4            //shortcut to avoid LA clrint_xtbl - this is might be 4 too large
+        addi    t3, t3, 15*4            // shortcut to avoid LA clrint_xtbl - this is might be 4 too large
         add     t3, t3, t2              // offset into the correct int/excpt dispatch table
         slli    t2, t5, 3               // index into 8b aligned dispatch entry and jump through it
         add     t3, t3, t2
@@ -1323,9 +1333,12 @@ spcl_\__MODE__\()dispatch_hndling:
 spcl_\__MODE__\()dispatch:
         jr      t3                      // not a default, jump to handler
 
-/**** this is the table of interrupt clearing routine pointers, which could include special handlers ****/
-/**** They default to RVMODEL macros above, which are model supplied, then jump to rtn code          ****/
-/**** Note that the external interrupt routines are expected to return with an interrupt ID in t3    ****/
+/**** this is the table of interrupt clearing routine pointers  ****/
+/**** They could include special handlers                       ****/
+/**** They default to model supplied RVMODEL macros above,      ****/
+/**** Note that the external interrupt routines are expected to ****/
+/**** return with an interrupt ID in t3                         ****/
+
 	.align 3			//make sure this is a dblwd boundary
 clrint_\__MODE__\()tbl:                 //this code should only touch t2..t6
 #ifdef rvtest_vtrap_routine  //  M/S/V/U
@@ -1399,7 +1412,9 @@ excpt_\__MODE__\()hndlr_tbl:            // handler code should only touch t2..t6
 
 /**** These are invocations of the model supplied interrupt clearing macros ****/
 /**** Note there is a copy per mode, though they could all be the same code ****/
-/****   !!!! This must be speced as to which registers they may touch !!!!  ****/
+/**** !!! Note: These macros should only touch t2..t6, unless test is aware ****/
+/****  of other modified registers and knows they are dead-                 ****/ 
+/****  but t1 must not be modified under any circumstances                  ****/                               
 /**** !!! Note: the ext interrupt clearing macros must leave intID in t3 !!!****/
 // **FIXME** : the spec needs to be updated with the per/mode versions, not just one
 // **FIXME**: move these outside the handler so it can copied per mode using INSTANTIATE_MODE_MACRO
@@ -1580,19 +1595,19 @@ rvtest_\__MODE__\()end:
 
 \__MODE__\()code_bgn_ptr:
         .dword rvtest_code_begin// pointer to code bgn area using this mode's mapping trampsvend+0*8
-\__MODE__\()code_end_ptr:
+\__MODE__\()code_seg_sz:
         .dword rvtest_code_end-rvtest_code_begin         // code seg size in any mode trampsvend+1*8
 \__MODE__\()data_bgn_ptr:
         .dword rvtest_data_begin// pointer to data bgn area using this mode's mapping trampsvend+2*8
-\__MODE__\()data_end_ptr:
+\__MODE__\()data_seg_sz:
         .dword rvtest_data_end-rvtest_data_begin         // code seg size in any mode trampsvend+3*8
 \__MODE__\()sig_bgn_ptr:
         .dword rvtest_sig_begin // pointer to sig  bgn area using this mode's mapping trampsvend+4*8
-\__MODE__\()sig_end_ptr:
+\__MODE__\()sig_seg_sz:
         .dword rvtest_sig_end-rvtest_sig_begin           // code seg size in any mode trampsvend+5*8
 \__MODE__\()vmem_bgn_ptr:
         .dword rvtest_data_begin// pointer to vmem bgn area using this mode's mapping trampsvend+6*8
-\__MODE__\()vmem_end_ptr:
+\__MODE__\()vmem_seg_sz:
         .dword rvtest_data_end-rvtest_data_begin         // vmem seg size in any mode trampsvend+7*8
 
 \__MODE__\()trap_sig:
@@ -1611,7 +1626,7 @@ rvtest_\__MODE__\()end:
         .dword  0               // save area for incoming mscratch                    trampsvend+14*8
 
 \__MODE__\()trapreg_sv:         //****GLOBAL:*****
-        .fill   8, REGWIDTH, 0xdeadbeef   // handler regsave area, t1..t6,sp +1 extra,trampsvend+15*8; keep dbl alignment
+        .fill   8, REGWIDTH, 0xdeadbeef   // handler regsave area, T1..T6,sp +1 extra,trampsvend+15*8; keep dbl alignment
 
 \__MODE__\()sv_area_end:        // used to calc size, which is used to avoid CSR read trampsvend+15+8
 
