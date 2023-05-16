@@ -672,65 +672,6 @@
     .endif						;\
     .option pop                                         ;\
 #endif
-// #else
-//     #define RVTEST_SAVE_GPRSM(_BR, _LBL, ...)           ;\
-//         .option push					;\
-//         .option norvc					;\
-//         .set __SV_MASK__,  -1 /* default to save all */ ;\
-//     .if NARG(__VA_ARGS__) == 1                          ;\
-//         .set __SV_MASK__,  _ARG1(__VA_OPT__(__VA_ARGS__,0)) ;\
-//     .endif                                              ;\
-//     .set offset, 0					;\
-//     LA(_BR, _LBL)					;\
-//     .if (__SV_MASK__ &        (0x2)) == 0x2		;\
-//     RVTEST_SIGUPD(_BR, x1)				;\
-//     .endif						;\
-//     .if (__SV_MASK__ &        (0x4)) == 0x4		;\
-//     RVTEST_SIGUPD(_BR, x2)				;\
-//     .endif						;\
-//     .if (__SV_MASK__ &        (0x8)) == 0x8		;\
-//     RVTEST_SIGUPD(_BR, x3)				;\
-//     .endif						;\
-//     .if (__SV_MASK__ &       (0x10)) == 0x10		;\
-//     RVTEST_SIGUPD(_BR, x4)				;\
-//     .endif                                              ;\
-//     .if (__SV_MASK__ &       (0x20)) == 0x20		;\
-//     RVTEST_SIGUPD(_BR, x5)				;\
-//     .endif						;\
-//     .if (__SV_MASK__ &       (0x40)) == 0x40		;\
-//     RVTEST_SIGUPD(_BR, x6)				;\
-//     .endif						;\
-//     .if (__SV_MASK__ &       (0x80)) == 0x80		;\
-//     RVTEST_SIGUPD(_BR, x7)				;\
-//     .endif						;\
-//     .if (__SV_MASK__ &      (0x100)) == 0x100		;\
-//     RVTEST_SIGUPD(_BR, x8)				;\
-//     .endif						;\
-//     .if (__SV_MASK__ &      (0x200)) == 0x200		;\
-//     RVTEST_SIGUPD(_BR, x9)				;\
-//     .endif						;\
-//     .if (__SV_MASK__ &      (0x400)) == 0x400		;\
-//     RVTEST_SIGUPD(_BR, x10)				;\
-//     .endif						;\
-//     .if (__SV_MASK__ &      (0x800)) == 0x800		;\
-//     RVTEST_SIGUPD(_BR, x11)				;\
-//     .endif						;\
-//     .if (__SV_MASK__ &     (0x1000)) == 0x1000		;\
-//     RVTEST_SIGUPD(_BR, x12)				;\
-//     .endif						;\
-//     .if (__SV_MASK__ &     (0x2000)) == 0x2000		;\
-//     RVTEST_SIGUPD(_BR, x13)				;\
-//     .endif						;\
-//     .if (__SV_MASK__ &     (0x4000)) == 0x4000		;\
-//     RVTEST_SIGUPD(_BR, x14)				;\
-//     .endif						;\
-//     .if (__SV_MASK__ &     (0x8000)) == 0x8000		;\
-//     RVTEST_SIGUPD(_BR, x15)				;\
-//     .endif						;\
-//     .option pop;
-// #endif
-
-
 
 /********************* REQUIRED FOR NEW TESTS *************************/
 /**** new macro encapsulating RVMODEL_DATA_BEGIN (signature area)  ****/
@@ -900,53 +841,53 @@ RVMODEL_DATA_END        /* model specific stuff */
 #define RVTEST_DFLT_INT_HNDLR      j cleanup_epilogs
         //Mmode interrupts
 #ifndef RVMODEL_SET_MSW_INT    
-        .warning "RVMODEL_SET_MSW_INT    not defined. Executing this will end test. Define an empty macro to suppress this warning"
+        //.warning "RVMODEL_SET_MSW_INT    not defined. Executing this will end test. Define an empty macro to suppress this warning"
         #define  RVMODEL_SET_MSW_INT     RVTEST_DFLT_INT_HNDLR   
 #endif
 #ifndef RVMODEL_CLR_MSW_INT
-        .warning "RVMODEL_CLR_MSW_INT    not defined. Executing this will end test. Define an empty macro to suppress this warning" 
+        //.warning "RVMODEL_CLR_MSW_INT    not defined. Executing this will end test. Define an empty macro to suppress this warning" 
         #define  RVMODEL_CLR_MSW_INT     RVTEST_DFLT_INT_HNDLR   
 #endif
 #ifndef RVMODEL_CLR_MTIMER_INT 
-        .warning "RVMODEL_CLR_MTIMER_INT not defined. Executing this will end test. Define an empty macro to suppress this warning" 
+        //.warning "RVMODEL_CLR_MTIMER_INT not defined. Executing this will end test. Define an empty macro to suppress this warning" 
         #define  RVMODEL_CLR_MTIMER_INT  RVTEST_DFLT_INT_HNDLR   
 #endif
 #ifndef RVMODEL_CLR_MEXT_INT
-        .warning "RVMODEL_CLR_MEXT_INT   not defined. Executing this will end test. Define an empty macro to suppress this warning"
+        //.warning "RVMODEL_CLR_MEXT_INT   not defined. Executing this will end test. Define an empty macro to suppress this warning"
         #define  RVMODEL_CLR_MEXT_INT     RVTEST_DFLT_INT_HNDLR   
 #endif
 //Smode interrupts
 #ifndef RVMODEL_SET_SSW_INT
-        .warning "RVMODEL_SET_SSW_INT    not defined. Executing this will end test. Define an empty macro to suppress this warning"
+        //.warning "RVMODEL_SET_SSW_INT    not defined. Executing this will end test. Define an empty macro to suppress this warning"
         #define  RVMODEL_SET_SSW_INT     RVTEST_DFLT_INT_HNDLR
 #endif
 #ifndef RVMODEL_CLR_SSW_INT
-        .warning "RVMODEL_CLR_SSW_INT    not defined. Executing this will end test. Define an empty macro to suppress this warning"
+        //.warning "RVMODEL_CLR_SSW_INT    not defined. Executing this will end test. Define an empty macro to suppress this warning"
         #define  RVMODEL_CLR_SSW_INT     RVTEST_DFLT_INT_HNDLR
 #endif
 #ifndef RVMODEL_CLR_STIMER_INT
-        .warning "RVMODEL_CLR_STIMER_INT not defined. Executing this will end test. Define an empty macro to suppress this warning"
+        //.warning "RVMODEL_CLR_STIMER_INT not defined. Executing this will end test. Define an empty macro to suppress this warning"
         #define  RVMODEL_CLR_STIMER_INT  RVTEST_DFLT_INT_HNDLR
 #endif
 #ifndef RVMODEL_CLR_SEXT_INT
-        .warning "RVMODEL_CLR_SEXT_INT   not defined. Executing this will end test. Define an empty macro to suppress this warning"
+        //.warning "RVMODEL_CLR_SEXT_INT   not defined. Executing this will end test. Define an empty macro to suppress this warning"
         #define  RVMODEL_CLR_SEXT_INT  RVTEST_DFLT_INT_HNDLR
 #endif
 //Vmode interrupts
 #ifndef RVMODEL_SET_VSW_INT
-        .warning "RVMODEL_SET_VSW_INT    not defined. Executing this will end test. Define an empty macro to suppress this warning"
+        //.warning "RVMODEL_SET_VSW_INT    not defined. Executing this will end test. Define an empty macro to suppress this warning"
         #define  RVMODEL_SET_VSW_INT     RVTEST_DFLT_INT_HNDLR
 #endif
 #ifndef RVMODEL_CLR_VSW_INT
-        .warning "RVMODEL_CLR_VSW_INT    not defined. Executing this will end test. Define an empty macro to suppress this warning"
+        //.warning "RVMODEL_CLR_VSW_INT    not defined. Executing this will end test. Define an empty macro to suppress this warning"
         #define  RVMODEL_CLR_VSW_INT     RVTEST_DFLT_INT_HNDLR
 #endif
 #ifndef RVMODEL_CLR_VTIMER_INT
-        .warning "RVMODEL_CLR_VTIMER_INT not defined. Executing this will end test. Define an empty macro to suppress this warning"
+        //.warning "RVMODEL_CLR_VTIMER_INT not defined. Executing this will end test. Define an empty macro to suppress this warning"
         #define  RVMODEL_CLR_VTIMER_INT  RVTEST_DFLT_INT_HNDLR
 #endif
 #ifndef RVMODEL_CLR_VEXT_INT
-        .warning "RVMODEL_CLR_VEXT_INT   not defined. Executing this will end test. Define an empty macro to suppress this warning"
+        //.warning "RVMODEL_CLR_VEXT_INT   not defined. Executing this will end test. Define an empty macro to suppress this warning"
         #define  RVMODEL_CLR_VEXT_INT   RVTEST_DFLT_INT_HNDLR
 #endif
 
