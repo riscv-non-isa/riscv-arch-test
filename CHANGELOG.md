@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## [3.7.0] - 2023-05-16
+- Updated the LI macro
+- Make Trap handler compatible for RV32E
+- Remove the warning messages [issue #336](https://github.com/riscv-non-isa/riscv-arch-test/issues/336)
+- Added Macros for testing Virtual Memory in Sv32 mode.
+
 ## [3.6.8] - 2023-06-22
 - Fix broken hyperlink in README
 
