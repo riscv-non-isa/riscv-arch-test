@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## [3.6.6] - 2023-06-17
+- Removed stale zext.h-01.S test case superseded by zext.h_64-01.S
+
 ## [3.6.5] - 2023-05-06
 - Fix test condition in RVTEST_CASE for `c.ebreak` (RV32 and RV64) test. 
 
