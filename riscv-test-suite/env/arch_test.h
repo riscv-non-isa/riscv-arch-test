@@ -255,10 +255,11 @@
 #define MPP_SMODE  (1<<MPP_LSB)
 #define MPV_LSB    7    // bit pos of prev vmod mstatush.MPV in either mstatush or upper half of mstatus
 //define sizes
-#define tramp_sz        ((((XLEN + 3* NUM_SPECD_INTCAUSES + 6) * 4)+4) & -8) /* 16=common_xhandler to common_xentry, frc to dbvlwd size */
-#define ptr_sv_sz           (15*8)
-#define reg_sv_sz           ( 8*REGWIDTH)
-#define sv_area_sz      (tramp_sz + ptr_sv_sz +reg_sv_sz)
+#define actual_tramp_sz ((XLEN + 3* NUM_SPECD_INTCAUSES + 5) * 4)     // 5 is added ops before common entry pt
+#define tramp_sz        ((actual_tramp_sz+4) & -8)                     // round up to keep aligment
+#define ptr_sv_sz       (16*8)
+#define reg_sv_sz       ( 8*REGWIDTH)
+#define sv_area_sz      (tramp_sz + ptr_sv_sz + reg_sv_sz)           // force dblword alignment
 #define int_hndlr_tblsz (XLEN*2*WDBYTSZ)
 /*
 //#define sv_area_sz      (Msv_area_end-Mtramptbl_sv)           //sv_area start with aligned tramp_tbl
@@ -279,11 +280,12 @@
 #define trapsig_ptr_off      (tramp_sz+ 8*8)  //  (Mtrap_sig      -Mtrapreg_sv)
 #define xsatp_sv_off         (tramp_sz+ 9*8)  //  (Msatp_sv       -Mtrapreg_sv)
 #define trampend_addr        (tramp_sz+10*8)  //  (Mtrampend_sv   -Mtrapreg_sv) 
-#define xedeleg_sv_off       (tramp_sz+11*8)  //  (Medeleg_sv     -Mtrapreg_sv)
-#define xtvec_new_off        (tramp_sz+12*8)  //  (tvec_new       -Mtrapreg_sv)
-#define xtvec_sav_off        (tramp_sz+13*8)  //  (tvec_save      -Mtrapreg_sv)
-#define xscr_save_off        (tramp_sz+14*8)  //  (scratch_save   -Mtrapreg_sv)
-#define trap_sv_off          (tramp_sz+15*8)  //  (trapreg_sv     -Mtrapreg_sv)
+#define tentry_addr          (tramp_sz+11*8) //   (Mtentry_sv     -Mtrapreg_sv) 
+#define xedeleg_sv_off       (tramp_sz+12*8)  //  (Medeleg_sv     -Mtrapreg_sv)
+#define xtvec_new_off        (tramp_sz+13*8)  //  (tvec_new       -Mtrapreg_sv)
+#define xtvec_sav_off        (tramp_sz+14*8)  //  (tvec_save      -Mtrapreg_sv)
+#define xscr_save_off        (tramp_sz+15*8)  //  (scratch_save   -Mtrapreg_sv)
+#define trap_sv_off          (tramp_sz+16*8)  //  (trapreg_sv     -Mtrapreg_sv) 8 registers long
 
 //==============================================================================
 // this section has  general test helper macros, required,  optional, or just useful
@@ -427,12 +429,12 @@
         .option pop
 
 #define ADDI(dst, src, imm) /* helper*/ ;\
-#if (imm<=2048)                         ;\
+.if (imm<=2048)                         ;\
         addi    dst, src, imm           ;\
-#else                                   ;\
+.else                                   ;\
         LI(     dst, imm)               ;\
         addi    dst, src, dst           ;\
-#endif
+.endif
 
 /*****************************************************************/
 /**** initialize regs, just to make sure you catch any errors ****/
@@ -956,6 +958,8 @@ init_\__MODE__\()satp:
 //----------------------------------------------------------------------
 init_\__MODE__\()tvec:
         LA(     T4, \__MODE__\()trampoline)     //this is a code-relative pointer
+        ADDI(   T3,T4,actual_tramp_sz)
+        SREG    T3, tentry_addr(T1)      // initialize to original common entry point
         csrr    T3, CSR_XTVEC
         SREG    T3, xtvec_sav_off(T1)    // save orig mtvec+mode in tvec_save
         andi    T2, T3, WDBYTMSK         // merge .mode & tramp ptr and store to both XTVEC, tvec_new
@@ -978,8 +982,8 @@ init_\__MODE__\()tvec:
 
 init_\__MODE__\()tramp: /**** copy trampoline at mtvec tgt; T4->T2->T1  T3=end of save ****/
         andi    T2, T3, ~WDBYTMSK               // calc bgn of orig tramp area by clring mode bits
-        addi    T3, T2, tramp_sz                // calc end of orig tramp area (+4)
-        addi    T1, T1, tramp_sv_off            // calc bgn of tramp save area
+        addi    T3, T2, actual_tramp_sz         // calc end of orig tramp area (+4 maybe so bldwd aligned)
+//        addi    T1, T1, tramp_sv_off          // calc bgn of tramp save area <--buggy!!
 //----------------------------------------------------------------------
         overwt_tt_\__MODE__\()loop:             // now build new tramp table w/ local offsets
         lw      T6, 0(T2)                       //  move original mtvec target to save area
@@ -999,9 +1003,10 @@ init_\__MODE__\()tramp: /**** copy trampoline at mtvec tgt; T4->T2->T1  T3=end o
         bne     T3, T2, overwt_tt_\__MODE__\()loop      // haven't reached end of save area,  loop
 //----------------------------------------------------------------------
   endcopy_\__MODE__\()tramp:                    // vector table not writeable, restore
-        RVMODEL_FENCEI                          // By default it is defined as nop. See the definition
+        RVMODEL_FENCEI                          // By default it is defined as nop. See the definition above
         csrr    T1, CSR_XSCRATCH                // reload trapreg_sv from scratch
-        sw      T2, trampend_addr(T1)           // save copy progress
+        SREG    T2, trampend_addr(T1)           // save copy progress; used to restore orig tramp
+        SREG    T4, tentry_addr(T1)             // this is common entry point address, end of orig trampoline
         beq     T3,T2, rvtest_\__MODE__\()prolog_done //full loop, don't exit
 abort\__MODE__\()test:
         LA(     T6, exit_\__MODE__\()cleanup)   // trampoline rplc failure **FIXME:  precalc& put into savearea?
@@ -1088,8 +1093,9 @@ common_\__MODE__\()handler:                     // enter with vector addr in T6 
         SREG    T5, trap_sv_off+5*REGWIDTH(sp)  // x30  save remaining regs, starting with T5
         csrrw   T5, CSR_XSCRATCH, sp            // restore ptr to reg sv area, and get old sp
         SREG    T5, trap_sv_off+7*REGWIDTH(sp)  // save old sp
-        auipc   T5, 0
-        addi    T5, T5, 3*WDBYTSZ               // quick calculation of common Xentry: label (3ops past auipc)
+//       auipc   T5, 0
+//       addi    T5, T5, 3*WDBYTSZ               // quick calculation of common Xentry: label (3ops past auipc)
+	LREG    T5, tentry_addr(sp)  		//  get the address of the common entry ppoint
         jr      T5                              // needed if trampoline gets moved elsewhere, else it's effectively a noop
 
 common_\__MODE__\()entry:
@@ -1661,7 +1667,7 @@ rvtest_\__MODE__\()end:
 
 //****ASSERT: this should be a 64B boundary******//
 \__MODE__\()tramptbl_sv:        // save area of existing trampoline table,     // also stored in XSCRATCH!!!
-.rept (tramp_sz>>2)             // size in words (technically, legnth of j op)
+.rept (tramp_sz>>2)             // size in words (technically, length of j op) padded to be 8B aligned
         j       .+0             // prototype jump instruction, offset to be filled in
 .endr
 
@@ -1687,20 +1693,22 @@ rvtest_\__MODE__\()end:
 \__MODE__\()satp_sv:
         .dword 0                // save area for incoming xsatp                       trampsvend+9*8
 \__MODE__\()trampend_sv:
-        .dword  0               // save location of end of trampoline                 trampsvend+10*8
+        .dword  0               // save location of end of saved trampoline           trampsvend+10*8
+\__MODE__\()tentry_sv:
+        .dword  0               // save location of end of orig. trampoline           trampsvend+11*8
 \__MODE__\()edeleg_sv:
-        .dword  0               // save location for edeleg CSR                       trampsvend+11*8
+        .dword  0               // save location for edeleg CSR                       trampsvend+12*8
 \__MODE__\()tvec_new:
-        .dword  0               // points to in-use tvec, actual tramp table used     trampsvend+12*8
+        .dword  0               // points to in-use tvec, actual tramp table used     trampsvend+13*8
 \__MODE__\()tvec_save:
-        .dword  0               // save area for incoming mtvec                       trampsvend+13*8
+        .dword  0               // save area for incoming mtvec                       trampsvend+14*8
 \__MODE__\()scratch_save:
-        .dword  0               // save area for incoming mscratch                    trampsvend+14*8
+        .dword  0               // save area for incoming mscratch                    trampsvend+15*8
 
 \__MODE__\()trapreg_sv:         //****GLOBAL:*****
-        .fill   8, REGWIDTH, 0xdeadbeef   // handler regsave area, T1..T6,sp +1 extra,trampsvend+15*8; keep dbl alignment
+        .fill   8, REGWIDTH, 0xdeadbeef   // handler regsave area, T1..T6,sp +1 extra,trampsvend+16*8; keep dbl alignment
 
-\__MODE__\()sv_area_end:        // used to calc size, which is used to avoid CSR read trampsvend+15+8
+\__MODE__\()sv_area_end:        // used to calc size, which is used to avoid CSR read trampsvend+16+8
 
 .option pop
 .endm                           // end of TRAP_SAVEAREA
