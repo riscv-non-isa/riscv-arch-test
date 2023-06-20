@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## [3.8.3] - 2023-11-30
+
+- Added test suites for `zcb` from code size reduction extension.
+- Added test macro for instructions with single operand.
+
 ## [3.8.2.3] -- 2013-11-19
 -Fixed typo in regex in 3.8.2.2
 
