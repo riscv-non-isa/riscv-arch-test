@@ -1,7 +1,10 @@
 # CHANGELOG
 
-## [3.6.6] - 2023-05-23
+## [3.6.7] - 2023-06-22
 - Specify new optional model macro RVMODEL_MTVEC_ALIGN to define new macro MTVEC_ALIGN in arch_test.h for issue #351
+
+## [3.6.6] - 2023-06-17
+- Removed stale zext.h-01.S test case superseded by zext.h_64-01.S
 
 ## [3.6.5] - 2023-05-06
 - Fix test condition in RVTEST_CASE for `c.ebreak` (RV32 and RV64) test. 
