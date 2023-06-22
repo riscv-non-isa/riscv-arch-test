@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## [3.6.8] - 2023-06-22
+- Fix broken hyperlink in README
+
 ## [3.6.7] - 2023-06-22
 - Specify new optional model macro RVMODEL_MTVEC_ALIGN to define new macro MTVEC_ALIGN in arch_test.h for issue #351
 
