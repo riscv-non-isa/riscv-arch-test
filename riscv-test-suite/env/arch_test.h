@@ -121,6 +121,12 @@
   #define SIGALIGN FREGWIDTH
 #endif
 
+#ifndef RVMODEL_MTVEC_ALIGN
+  #define MTVEC_ALIGN 6    // ensure that a trampoline is on a typical cacheline boundary, just in case
+#else
+  #define MTVEC_ALIGN RVMODEL_MTVEC_ALIGN  //Let the model defined value be used for required trap handler alignment based on implemented MTVEC
+#endif
+
 //==============================================================================
 // this section has RV Arch Test Constants, mostly YAML based.
 // It ensures they're defined  & defaulted if necessary)
@@ -930,7 +936,7 @@ rvtest_\__MODE__\()prolog_done:
 .macro RVTEST_TRAP_HANDLER __MODE__
 .option push
 .option rvc     // temporarily allow compress to allow c.nop alignment
-.align 6        // ensure that a trampoline is on a typical cacheline boundary, just in case
+.align MTVEC_ALIGN
 .option pop
 
   /**********************************************************************/
