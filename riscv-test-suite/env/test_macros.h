@@ -4,18 +4,29 @@
 
 
 #define NAN_BOXED(__val__,__width__,__max__)	;\
+     .if __width__ == 16                        ;\
+        .hword __val__                         ;\
+    .endif                                     ;\
     .if __width__ == 32				;\
 	.word __val__				;\
     .else					;\
 	.dword __val__				;\
     .endif					;\
     .if __max__ > __width__			;\
-	.set pref_bytes,(__max__-__width__)/32	;\
+        .if __width__ == 16                      ;\
+         .set pref_bytes,(__max__-__width__)/16;\
+        .else				                             ;\
+         .set pref_bytes,(__max__-__width__)/32;\
+    	.endif                                   ;\
     .else					;\
 	.set pref_bytes, 0			;\
     .endif					;\
     .rept pref_bytes				;\
-	.word 0xffffffff			;\
+        .if __width__ == 16         ;\
+		      .hword 0xffff         ;\
+        .else				        ;\
+	        .word 0xffffffff		;\
+        .endif                      ;\    
     .endr					;
 
 #define ZERO_EXTEND(__val__,__width__,__max__)	;\
