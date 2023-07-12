@@ -1,5 +1,30 @@
 # CHANGELOG
 
+## [3.6.8] - 2023-06-22
+- Fix broken hyperlink in README
+
+## [3.6.7] - 2023-06-22
+- Specify new optional model macro RVMODEL_MTVEC_ALIGN to define new macro MTVEC_ALIGN in arch_test.h for issue #351
+
+## [3.6.6] - 2023-06-17
+- Removed stale zext.h-01.S test case superseded by zext.h_64-01.S
+
+## [3.6.5] - 2023-05-06
+- Fix test condition in RVTEST_CASE for `c.ebreak` (RV32 and RV64) test. 
+
+## [3.6.4] - 2023-05-04
+- In Zifencei test, updated the ISA string `zifencei` for `march` flag of toolchain.
+- Set the default definition of `RVMODEL_FENCEI` to `nop` in trap-handler.
+
+## [3.6.3] - 2023-02-28
+- Split LI() macro for RV32 and RV64 to eliminate warning messages.
+- Reduce the use of LA() macro by declaring fixed size offsets in save area.
+- Updated RVTEST_GOTO_MMODE macro
+- Updated \__MODE__\()trap_sig_sv, replaced an LA(rvtest_trap_sig) by calculating initial_Xtrap_sigptr + (Mtrap_sigptr-initial_Mtrap-sigptr) 
+- Similar changes are made in chk_\__MODE__\()trapsig_overrun macro.
+- Updated RVTEST_TRAP_SAVEAREA. Also added vmem segment in the save area.
+- Added infrastructure support traps from S/U mode with Virtualization enabled
+
 ## [3.6.2] - 2023-02-08
 - Remove RV64IB from ISA list of zext test. 
 
