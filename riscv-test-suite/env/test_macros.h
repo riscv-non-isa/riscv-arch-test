@@ -3,6 +3,61 @@
 /* They're useful across many tests, but generally for specific classes of ops */
 
 
+/* This function set up the Page table entry for Sv32 Translation scheme
+    Arguments:
+    _PAR: Register containing Physical Address
+    _PR: Register containing Permissions for Leaf PTE. 
+        (Note: No-leaf PTE (if-any) has only valid permssion (pte.v) set)
+    _TR0, _TR1, _TR2: Temporary registers used and modified by function
+    VA: Virtual address 
+    level: Level at which PTE would be setup
+        0: Two level translation
+        1: Superpage
+*/
+
+//****NOTE: label `rvtest_Sroot_pg_tbl` must be declared after RVTEST_DATA_END
+//          in the test aligned at 4kiB (use .align 12)
+
+#define PTE_SETUP_RV32(_PAR, _PR, _TR0, _TR1, VA, level)  	;\
+    srli _PAR, _PAR, 12                                         ;\
+    slli _PAR, _PAR, 10                                         ;\
+    or _PAR, _PAR, _PR                                          ;\
+    .if (level==1)                                              ;\
+        LA(_TR1, rvtest_Sroot_pg_tbl)                           ;\
+        .set vpn, ((VA>>22)&0x3FF)<<2                           ;\
+    .endif                                                      ;\
+    .if (level==0)                                              ;\
+        LA(_TR1, rvtest_slvl1_pg_tbl)                           ;\
+        .set vpn, ((VA>>12)&0x3FF)<<2                           ;\
+    .endif                                                      ;\
+    LI(_TR0, vpn)                                               ;\
+    add _TR1, _TR1, _TR0                                        ;\
+    SREG _PAR, 0(_TR1);                                          
+
+#define PTE_PERMUPD_RV32(_PR, _TR0, _TR1, VA, level)          	;\
+    .if (level==1)                                              ;\
+        LA(_TR1, rvtest_Sroot_pg_tbl)                           ;\
+        .set vpn, ((VA>>22)&0x3FF)<<2                           ;\
+    .endif                                                      ;\
+    .if (level==0)                                              ;\
+        LA(_TR1, rvtest_slvl1_pg_tbl)                           ;\
+        .set vpn, ((VA>>12)&0x3FF)<<2                           ;\
+    .endif                                                      ;\
+    LI(_TR0, vpn)                                               ;\
+    add _TR1, _TR1, _TR0                                        ;\
+    LREG _TR0, 0(_TR1)                                          ;\
+    srli _TR0, _TR0, 10                                         ;\
+    slli _TR0, _TR0, 10                                         ;\
+    or _TR0, _TR0, _PR                                          ;\
+    SREG _TR0, 0(_TR1)                                          ;\
+
+#define SATP_SETUP_SV32 ;\
+    LA(t6, rvtest_Sroot_pg_tbl) ;\
+    LI(t5, SATP32_MODE) ;\
+    srli t6, t6, 12 ;\
+    or t6, t6, t5  ;\
+    csrw satp, t6   ;\
+
 #define NAN_BOXED(__val__,__width__,__max__)	;\
     .if __width__ == 32				;\
 	.word __val__				;\
