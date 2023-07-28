@@ -933,6 +933,56 @@ RVTEST_SIGUPD_F(swreg,destreg,flagreg)
     sub x1,x1,tempreg			;\
     RVTEST_SIGUPD(swreg,x1,offset) 
 
+// for updating signatures of Zacas paired destination register (RV32/RV64).
+#define RVTEST_SIGUPD_PZACAS(_BR,_R1,_R2,...)		;\
+  .if NARG(__VA_ARGS__) == 1				;\
+      .set offset,_ARG1(__VA_OPT__(__VA_ARGS__,0))	;\
+  .endif						;\
+  .if (offset & (REGWIDTH-1)) != 0			;\
+      .warning "Signature Incorrect Offset Alignment."	;\
+     .set offset, offset&(SIGALIGN-1)+SIGALIGN		;\
+  .endif						;\
+      CHK_OFFSET(_BR,REGWIDTH,0)			;\
+      SREG _R1,offset(_BR)				;\
+      CHK_OFFSET(_BR,REGWIDTH,1)			;\
+      SREG _R2,offset(_BR)				;\
+      .set offset,offset+(REGWIDTH)
+
+// Tests for a AMOCAS where operation width is <= xlen
+// First store a value that will cause a mismatch on cas
+// Test a failing amocas followed by a successful amocas
+#define TEST_CAS_OP(inst, rd, rs1, rs2, swap_val, sigptr, offset) \
+    LI(rd, swap_val);\
+    neg rd, rd;\
+    LA(rs1, rvtest_data);\
+    SREG rd, (rs1);\
+    LI(rd, swap_val);\
+    LI(rs2, swap_val);\
+    LA(rs1, rvtest_data);\
+    inst rd, rs2, (rs1);\
+    inst rd, rs2, (rs1);\
+    RVTEST_SIGUPD(sigptr,rd,offset);
+
+// Tests for a AMOCAS where operation width is <= xlen
+// First store a value that will cause a mismatch on cas
+// Test a failing amocas followed by a successful amocas
+#define TEST_DCAS_OP(inst, rd, rd_hi, rs1, rs2, rs2_hi, swap_val, swap_val_hi, sigptr, offset) \
+    LA(rs1, rvtest_data);\
+    LI(rd, swap_val);\
+    neg rd, rd;\
+    SREG rd, (rs1);\
+    LI(rd, swap_val_hi);\
+    neg rd, rd;\
+    SREG rd, (__riscv_xlen/8)(rs1);\
+    LI(rd, swap_val);\
+    LI(rd_hi, swap_val_hi);\
+    LI(rs2, swap_val);\
+    LI(rs2_hi, swap_val_hi);\
+    LA(rs1, rvtest_data);\
+    inst rd, rs2, (rs1);\
+    LA(rs1, rvtest_data);\
+    inst rd, rs2, (rs1);\
+    RVTEST_SIGUPD_PZACAS(sigptr,rd,rd_hi,offset);
 
 //--------------------------------- Migration aliases ------------------------------------------
 #ifdef RV_COMPLIANCE_RV32M

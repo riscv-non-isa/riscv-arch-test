@@ -5,7 +5,7 @@ amocas.w:
     opcode: 
       amocas.w: 0
     rs1: 
-      <<: *all_regs
+      <<: *all_regs_mx0
     rs2: 
       <<: *all_regs
     rd: 
@@ -23,7 +23,7 @@ amocas.d_32:
     opcode:
       amocas.d_32: 0
     rs1:
-      <<: *all_regs
+      <<: *all_regs_mx0
     rs2:
       <<: *pair_regs
     rd:
