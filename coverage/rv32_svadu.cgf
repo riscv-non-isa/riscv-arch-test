@@ -1,0 +1,8 @@
+
+svadu_sv32:
+  config: 
+    - check ISA:=regex(.*I.*Svadu.*)
+  opcode: 
+    nop: 0
+
+
