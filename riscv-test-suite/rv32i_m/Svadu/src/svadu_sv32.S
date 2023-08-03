@@ -19,17 +19,14 @@ RVMODEL_BOOT
 RVTEST_CODE_BEGIN
 
 #ifdef TEST_CASE_1
-  RVTEST_CASE(0,"//check ISA:=regex(.*32.*);check ISA:=regex(.*I.*);check ISA:=regex(.*Svadu.*);def rvtest_mtrap_routine=True;def TEST_CASE_1=True;",svadu_sv32)
+  RVTEST_CASE(1,"//check ISA:=regex(.*32.*);check ISA:=regex(.*I.*);check ISA:=regex(.*Svadu.*);def rvtest_mtrap_routine=True;def TEST_CASE_1=True;",svadu_sv32)
 
   RVTEST_SIGBASE(x1, signature_x1_0)
 
-  # enable pmp to cover 4 GiB address space
-  li t0, -1
-  csrw pmpaddr0, t0
-  li t0, PMP_TOR | PMP_X | PMP_W | PMP_R
-  csrw pmpcfg0, t0
+  # Setup PMP to cover 4G of address space
+  SETUP_PMP_SVADU_TEST(x1, offset, t0, t1, t2)
 
-  # ID map the page_4k
+  # Identity map the page_4k
   la t1, page_4k
   mv t2, t1
   PTE_SETUP_SV32(t1, PTE_V, t0, s2, t2, 1)
@@ -38,12 +35,11 @@ RVTEST_CODE_BEGIN
   SATP_SETUP(t0, t1, SATP32_MODE)
 
   # test svadu
-  TEST_SVADU(x1, s2, page_4k, offset, 0x31a, MENVCFGH_HADE)
-
-  RVMODEL_HALT
+  TEST_SVADU(x1, s2, page_4k, offset, 0x31a, MENVCFGH_ADUE)
 
 #endif
 RVTEST_CODE_END
+RVMODEL_HALT
 
 RVTEST_DATA_BEGIN
   .align 12
@@ -64,8 +60,10 @@ CANARY;
 signature_x1_0:
   .fill 128*(XLEN/32),4,0xdeadbeef
 
+#ifdef rvtest_mtrap_routine
 mtrap_sigptr:
   .fill 128*4, 4, 0xdeadbeef
+#endif
 
 #ifdef rvtest_gpr_save
 gpr_save:

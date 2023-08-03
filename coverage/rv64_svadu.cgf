@@ -1,17 +1,17 @@
-svadu_sv39:
+svhad_sv39:
   config: 
-    - check ISA:=regex(.*I.*Svadu.*)
+    - check ISA:=regex(.*I.*Svhad.*)
   opcode: 
     nop: 0
 
-svadu_sv48:
+svhad_sv48:
   config: 
-    - check ISA:=regex(.*I.*Svadu.*)
+    - check ISA:=regex(.*I.*Svhad.*)
   opcode: 
     nop: 0
 
-svadu_sv57:
+svhad_sv57:
   config: 
-    - check ISA:=regex(.*I.*Svadu.*)
+    - check ISA:=regex(.*I.*Svhad.*)
   opcode: 
     nop: 0

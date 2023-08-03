@@ -984,7 +984,27 @@ RVTEST_SIGUPD_F(swreg,destreg,flagreg)
     sub x1,x1,tempreg			;\
     RVTEST_SIGUPD(swreg,x1,offset) 
 
-#define TEST_SVADU(swreg, PTE_ADDR, VA, offset, menvcfgaddr, hade_bit) \
+#define SETUP_PMP_SVADU_TEST(swreg, offset, TR0, TR1, TR2) \
+  li TR0, -1                                 ;\
+  csrw pmpaddr0, TR0                         ;\
+  j PMP_exist                                ;\
+  li TR0, 0                                  ;\
+  li TR1, 0                                  ;\
+  j Mend_PMP                                 ;\
+PMP_exist:                                   ;\
+  li TR1, PMP_TOR | PMP_X | PMP_W | PMP_R    ;\
+  csrw pmpcfg0, TR1                          ;\
+  csrr TR2, pmpcfg0                          ;\
+  beq TR1, TR2, Mend_PMP                     ;\
+no_TOR_try_NAPOT:                            ;\
+  li TR1, PMP_NAPOT | PMP_X | PMP_W | PMP_R  ;\
+  csrw pmpcfg0, TR1                          ;\
+  csrr TR2, pmpcfg0                          ;\
+Mend_PMP:                                    ;\
+  RVTEST_SIGUPD(x1,TR0,offset)               ;\
+  RVTEST_SIGUPD(x1,TR1,offset)               ;\
+
+#define TEST_SVADU(swreg, PTE_ADDR, VA, offset, menvcfgaddr, adue_bit) \
     sfence.vma                                                                          ;\
     la t0, VA                                                                           ;\
     li t2, PTE_X | PTE_W | PTE_R                                                        ;\
@@ -1057,7 +1077,7 @@ RVTEST_SIGUPD_F(swreg,destreg,flagreg)
     SREG t0, (PTE_ADDR)                                                                 ;\
     sfence.vma                                                                          ;\
 											;\
-    li t0, hade_bit                                                                     ;\
+    li t0, adue_bit                                                                     ;\
     csrs menvcfgaddr, t0                                                                ;\
 											;\
     la t0, VA                                                                           ;\
