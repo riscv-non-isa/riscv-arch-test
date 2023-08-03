@@ -17,22 +17,73 @@
 
 //****NOTE: label `rvtest_Sroot_pg_tbl` must be declared after RVTEST_DATA_END
 //          in the test aligned at 4kiB (use .align 12)
-
-#define PTE_SETUP_RV32(_PAR, _PR, _TR0, _TR1, VA, level)  	;\
-    srli _PAR, _PAR, 12                                         ;\
-    slli _PAR, _PAR, 10                                         ;\
-    or _PAR, _PAR, _PR                                          ;\
-    .if (level==1)                                              ;\
-        LA(_TR1, rvtest_Sroot_pg_tbl)                           ;\
-        .set vpn, ((VA>>22)&0x3FF)<<2                           ;\
-    .endif                                                      ;\
-    .if (level==0)                                              ;\
-        LA(_TR1, rvtest_slvl1_pg_tbl)                           ;\
-        .set vpn, ((VA>>12)&0x3FF)<<2                           ;\
-    .endif                                                      ;\
-    LI(_TR0, vpn)                                               ;\
-    add _TR1, _TR1, _TR0                                        ;\
+#define PTE_SETUP_COMMON(_PAR, _PR, _TR0, _TR1, _VAR, level)  	  ;\
+    srli _VAR, _VAR, (RISCV_PGLEVEL_BITS * level + RISCV_PGSHIFT) ;\
+    srli _PAR, _PAR, (RISCV_PGLEVEL_BITS * level + RISCV_PGSHIFT) ;\
+    slli _PAR, _PAR, (RISCV_PGLEVEL_BITS * level + RISCV_PGSHIFT) ;\
+    LI(_TR0, ((1 << RISCV_PGLEVEL_BITS) - 1))                     ;\
+    and _VAR, _VAR, _TR0                                          ;\
+    slli _VAR, _VAR, ((XLEN >> 5)+1)                              ;\
+    add _TR1, _TR1, _VAR                                          ;\
+    srli _PAR, _PAR, 12                                           ;\
+    slli _PAR, _PAR, 10                                           ;\
+    or _PAR, _PAR, _PR                                            ;\
     SREG _PAR, 0(_TR1);                                          
+
+#define PTE_SETUP_SV32(_PAR, _PR, _TR0, _TR1, _VAR, level)  	  ;\
+    .if (level==1)                                                ;\
+        LA(_TR1, rvtest_Sroot_pg_tbl)                             ;\
+    .endif                                                        ;\
+    .if (level==0)                                                ;\
+        LA(_TR1, rvtest_slvl1_pg_tbl)                             ;\
+    .endif                                                        ;\
+    PTE_SETUP_COMMON(_PAR, _PR, _TR0, _TR1, _VAR, level)
+
+#define PTE_SETUP_SV39(_PAR, _PR, _TR0, _TR1, _VAR, level)  	  ;\
+    .if (level==2)                                                ;\
+        LA(_TR1, rvtest_Sroot_pg_tbl)                             ;\
+    .endif                                                        ;\
+    .if (level==1)                                                ;\
+        LA(_TR1, rvtest_slvl2_pg_tbl)                             ;\
+    .endif                                                        ;\
+    .if (level==0)                                                ;\
+        LA(_TR1, rvtest_slvl1_pg_tbl)                             ;\
+    .endif                                                        ;\
+    PTE_SETUP_COMMON(_PAR, _PR, _TR0, _TR1, _VAR, level)
+
+#define PTE_SETUP_SV48(_PAR, _PR, _TR0, _TR1, _VAR, level)  	  ;\
+    .if (level==3)                                                ;\
+        LA(_TR1, rvtest_Sroot_pg_tbl)                             ;\
+    .endif                                                        ;\
+    .if (level==2)                                                ;\
+        LA(_TR1, rvtest_slvl3_pg_tbl)                             ;\
+    .endif                                                        ;\
+    .if (level==1)                                                ;\
+        LA(_TR1, rvtest_slvl2_pg_tbl)                             ;\
+    .endif                                                        ;\
+    .if (level==0)                                                ;\
+        LA(_TR1, rvtest_slvl1_pg_tbl)                             ;\
+    .endif                                                        ;\
+    PTE_SETUP_COMMON(_PAR, _PR, _TR0, _TR1, _VAR, level)
+
+#define PTE_SETUP_SV57(_PAR, _PR, _TR0, _TR1, _VAR, level)  	  ;\
+    .if (level==4)                                                ;\
+        LA(_TR1, rvtest_Sroot_pg_tbl)                             ;\
+    .endif                                                        ;\
+    .if (level==3)                                                ;\
+        LA(_TR1, rvtest_slvl4_pg_tbl)                             ;\
+    .endif                                                        ;\
+    .if (level==2)                                                ;\
+        LA(_TR1, rvtest_slvl3_pg_tbl)                             ;\
+    .endif                                                        ;\
+    .if (level==1)                                                ;\
+        LA(_TR1, rvtest_slvl2_pg_tbl)                             ;\
+    .endif                                                        ;\
+    .if (level==0)                                                ;\
+        LA(_TR1, rvtest_slvl1_pg_tbl)                             ;\
+    .endif                                                        ;\
+    PTE_SETUP_COMMON(_PAR, _PR, _TR0, _TR1, _VAR, level)
+
 
 #define PTE_PERMUPD_RV32(_PR, _TR0, _TR1, VA, level)          	;\
     .if (level==1)                                              ;\
@@ -51,12 +102,12 @@
     or _TR0, _TR0, _PR                                          ;\
     SREG _TR0, 0(_TR1)                                          ;\
 
-#define SATP_SETUP_SV32 ;\
-    LA(t6, rvtest_Sroot_pg_tbl) ;\
-    LI(t5, SATP32_MODE) ;\
-    srli t6, t6, 12 ;\
-    or t6, t6, t5  ;\
-    csrw satp, t6   ;\
+#define SATP_SETUP(_TR0, _TR1, MODE);\
+    LA(_TR0, rvtest_Sroot_pg_tbl) ;\
+    LI(_TR1, MODE) ;\
+    srli _TR0, _TR0, 12 ;\
+    or _TR0, _TR0, _TR1  ;\
+    csrw satp, _TR0   ;\
 
 #define NAN_BOXED(__val__,__width__,__max__)	;\
     .if __width__ == 32				;\
@@ -932,6 +983,98 @@ RVTEST_SIGUPD_F(swreg,destreg,flagreg)
    andi tempreg,tempreg,~(3)		;\
     sub x1,x1,tempreg			;\
     RVTEST_SIGUPD(swreg,x1,offset) 
+
+#define TEST_SVADU(swreg, PTE_ADDR, VA, offset, menvcfgaddr, hade_bit) \
+    sfence.vma                                                                          ;\
+    la t0, VA                                                                           ;\
+    li t2, PTE_X | PTE_W | PTE_R                                                        ;\
+1:                                                                                      ;\
+    LREG t1, (PTE_ADDR)                                                                 ;\
+    andi t1, t1, ~(PTE_X | PTE_W | PTE_R | PTE_V)                                       ;\
+    or t1, t1, t2                                                                       ;\
+    SREG t1, (PTE_ADDR)                                                                 ;\
+    sfence.vma                                                                          ;\
+											;\
+    li t1, ((MSTATUS_MPP & ~(MSTATUS_MPP<<1)) * PRV_S) | MSTATUS_SUM | MSTATUS_MPRV     ;\
+    csrs mstatus, t1                                                                    ;\
+											;\
+    .align 2                                                                            ;\
+    SREG x0, (t0)                                                                       ;\
+    unimp                                                                               ;\
+											;\
+    li t1, MSTATUS_MPRV                                                                 ;\
+    csrc mstatus, t1                                                                    ;\
+											;\
+    beqz t2, 2f                                                                         ;\
+    addi t2, t2, -1                                                                     ;\
+    li t1, PTE_W | PTE_R | PTE_V                                                        ;\
+    bne t2, t1, 1b                                                                      ;\
+    addi t2, t2, -1                                                                     ;\
+    j 1b                                                                                ;\
+2:                                                                                      ;\
+    li t0, MSTATUS_MPRV                                                                 ;\
+    csrc mstatus, t0                                                                    ;\
+    LREG t0, (PTE_ADDR)                                                                 ;\
+    and t0, t0, PTE_V | PTE_U | PTE_R | PTE_W | PTE_X | PTE_A | PTE_D                   ;\
+    RVTEST_SIGUPD(x1,t0,offset)                                                         ;\
+                                                                                        ;\
+    LREG t0, (PTE_ADDR)                                                                 ;\
+    andi t0, t0, ~(PTE_X | PTE_W | PTE_R | PTE_V | PTE_A | PTE_D | PTE_V)               ;\
+    ori t0, t0,  PTE_V | PTE_U | PTE_R | PTE_W | PTE_X | PTE_A                          ;\
+    SREG t0, (PTE_ADDR)                                                                 ;\
+    sfence.vma                                                                          ;\
+											;\
+    la t0, VA                                                                           ;\
+    li a1, ((MSTATUS_MPP & ~(MSTATUS_MPP<<1)) * PRV_S) | MSTATUS_SUM | MSTATUS_MPRV     ;\
+    csrs mstatus, a1                                                                    ;\
+                                                                                        ;\
+    .align 2                                                                            ;\
+    SREG x0, (t0)                                                                       ;\
+    unimp                                                                               ;\
+											;\
+    li t0, MSTATUS_MPRV                                                                 ;\
+    csrc mstatus, t0                                                                    ;\
+											;\
+    LREG t0, (PTE_ADDR)                                                                 ;\
+    and t0, t0, PTE_V | PTE_U | PTE_R | PTE_W | PTE_X | PTE_A | PTE_D                   ;\
+    RVTEST_SIGUPD(x1,t0,offset)                                                         ;\
+											;\
+    LREG t0, (PTE_ADDR)                                                                 ;\
+    andi t0, t0, ~(PTE_X | PTE_W | PTE_R | PTE_V | PTE_A | PTE_D | PTE_V)               ;\
+    ori t0, t0,  PTE_V | PTE_U | PTE_R | PTE_W | PTE_X | PTE_A | PTE_D                  ;\
+    SREG t0, (PTE_ADDR)                                                                 ;\
+    sfence.vma                                                                          ;\
+    la t0, VA                                                                           ;\
+    li a1, ((MSTATUS_MPP & ~(MSTATUS_MPP<<1)) * PRV_S) | MSTATUS_SUM | MSTATUS_MPRV     ;\
+    csrs mstatus, a1                                                                    ;\
+											;\
+    SREG x0, (t0)                                                                       ;\
+    j 3f                                                                                ;\
+    unimp                                                                               ;\
+3:                                                                                      ;\
+    LREG t0, (PTE_ADDR)                                                                 ;\
+    andi t0, t0, ~(PTE_D)                                                               ;\
+    SREG t0, (PTE_ADDR)                                                                 ;\
+    sfence.vma                                                                          ;\
+											;\
+    li t0, hade_bit                                                                     ;\
+    csrs menvcfgaddr, t0                                                                ;\
+											;\
+    la t0, VA                                                                           ;\
+    li a1, ((MSTATUS_MPP & ~(MSTATUS_MPP<<1)) * PRV_S) | MSTATUS_SUM | MSTATUS_MPRV     ;\
+    csrs mstatus, a1                                                                    ;\
+											;\
+    .align 2                                                                            ;\
+    SREG x0, (t0)                                                                       ;\
+    j 4f                                                                                ;\
+    unimp                                                                               ;\
+4:                                                                                      ;\
+    li t0, MSTATUS_MPRV                                                                 ;\
+    csrc mstatus, t0                                                                    ;\
+											;\
+    LREG t0, (PTE_ADDR)                                                                 ;\
+    and t0, t0, PTE_V | PTE_U | PTE_R | PTE_W | PTE_X | PTE_A | PTE_D                   ;\
+    RVTEST_SIGUPD(x1,t0,offset)
 
 
 //--------------------------------- Migration aliases ------------------------------------------
