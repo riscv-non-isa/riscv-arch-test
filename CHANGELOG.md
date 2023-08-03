@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [3.7.1] - 2023-08-03
+- Added Smclint and Ssclint tests. These tests check timer and msip interrupts.  Ssclint requires s-mode.
+- Updated encoding.h
+
 ## [3.7.0] - 2023-05-16
 - Updated the LI macro
 - Make Trap handler compatible for RV32E
