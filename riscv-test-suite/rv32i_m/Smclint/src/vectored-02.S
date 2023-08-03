@@ -118,7 +118,7 @@ RVTEST_CODE_BEGIN
 RVTEST_SIGBASE( a1,signature_a1_m) // a1 will point to signature_a1_m label in the signature region - m-mode
 
 #ifdef TEST_CASE_1
-    RVTEST_CASE(1,"//check ISA:=regex(.*32.*); check ISA:=regex(.*I.*Zicsr.*); def rvtest_mtrap_routine=True; def TEST_CASE_1=True",vectored-02)
+    RVTEST_CASE(1,"//check ISA:=regex(.*32.*); check ISA:=regex(.*I.*Zicsr.*Smclint.*); def rvtest_mtrap_routine=True; def TEST_CASE_1=True",vectored-02)
     # ---------------------------------------------------------------------------------------------
     LA(     t0,first_mtvec_handler)
     ori t0, t0, RVMODEL_MTVEC_MODE
