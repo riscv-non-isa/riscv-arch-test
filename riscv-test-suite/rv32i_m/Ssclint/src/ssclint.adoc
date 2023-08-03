@@ -1,0 +1,505 @@
+==== nodeleg-01.S 
+.Description: Verify when executing in s-mode, the m-mode interrupt will be handled even though mstatus.mie is 0:
+- generate m-mode interrupt (ssie) (not delegated to s-mode),
+- switch to s-mode (mstatus.mie disabled),
+- trigger (m-mode handler),
+- clear interrupt,
+- return to s-mode,
+- ecall back to m-mode
+[%autofit]
+----
+ RVMODEL_MSTATUS_MIE    = 0
+ RVMODEL_SET_SIE        = 0
+ RVMODEL_SET_MIE        = SIE_SSIE
+ RVMODEL_SETUP_SIP_INTS = LI(t0, SIE_SSIE); csrrs x0,CSR_MIP, t0;
+ RVMODEL_SET_SINT1      = LI(t0, SIE_SSIE); csrrs x0,CSR_SIP, t0;
+ RVMODEL_CLEAR_MINT1    = LI(t0, SIE_SSIE); csrrc x0,CSR_MIP, t0;
+----
+Coverage
+----
+mideleg 0         | verify interrupt is handled in m-mode
+mstatus.mie=0     | verify m-mode interrupt will occur in s-mode when mstatus.mie=0
+mip signature     | verify mip signature
+sip signature     | verify since ideleg is 0, sip is not visible
+mcause signature  | verify ssie signature
+----
+==== nodeleg-02.S 
+.Description: Verify when executing in s-mode, the m-mode interrupt will be handled (this time mstatus.mie is 1):
+- generate m-mode interrupt (stie),
+- switch to s-mode (mstatus.mie disabled),
+- trigger (m-mode handler),
+- clear interrupt,
+- return to s-mode,
+- ecall back to m-mode
+[%autofit]
+----
+ RVMODEL_MSTATUS_MIE    = 1
+ RVMODEL_SET_SIE        = 0
+ RVMODEL_SET_MIE        = SIE_STIE
+ RVMODEL_SETUP_SIP_INTS = LI(t0, SIE_STIE); csrrs x0,CSR_MIP, t0;
+ RVMODEL_SET_SINT1      = LI(t0, SIE_STIE); csrrs x0,CSR_SIP, t0;
+ RVMODEL_CLEAR_MINT1    = LI(t0, SIE_STIE); csrrc x0,CSR_MIE, t0;
+----
+Coverage
+----
+mideleg 0         | verify interrupt is handled in m-mode
+mstatus.mie=1     | verify m-mode interrupt will occur in s-mode when mstatus.mie=1
+mip signature     | verify mip signature
+sip signature     | verify since ideleg is 0, sip is not visible
+mcause signature  | verify stie signature
+----
+==== nodelegvec-01.S 
+.Description: Verify when executing in s-mode, the vectored m-mode interrupt will be handled even though mstatus.mie is 0:
+- generate vectored m-mode interrupt (ssie) (not delegated to s-mode),
+- switch to s-mode (mstatus.mie disabled),
+- trigger (m-mode handler),
+- clear interrupt,
+- return to s-mode,
+- ecall back to m-mode
+[%autofit]
+----
+ RVMODEL_MTVEC_MODE     = 1 
+ RVMODEL_MSTATUS_MIE    = 0
+ RVMODEL_SET_SIE        = 0
+ RVMODEL_SET_MIE        = SIE_SSIE
+ RVMODEL_SETUP_SIP_INTS = LI(t0, SIE_SSIE); csrrs x0,CSR_MIP, t0;
+ RVMODEL_SET_SINT1      = LI(t0, SIE_SSIE); csrrs x0,CSR_SIP, t0;
+ RVMODEL_CLEAR_MINT1    = LI(t0, SIE_SSIE); csrrc x0,CSR_MIP, t0;
+----
+Coverage
+----
+mideleg 0         | verify vectored interrupt is handled in m-mode
+mstatus.mie=0     | verify vectored m-mode interrupt will occur in s-mode when mstatus.mie=0
+mip signature     | verify mip signature
+sip signature     | verify since ideleg is 0, sip is not visible
+mcause signature  | verify ssie signature
+----
+==== deleg-01.S 
+.Description: Verify when executing in s-mode, an s-mode interrupt will be handled when mstatus.sie is 1:
+- generate s-mode interrupt (ssie),
+- switch to s-mode,
+- trigger (s-mode handler),
+- clear interrupt,
+- ecall back to m-mode
+[%autofit]
+----
+ RVMODEL_MSTATUS_MIE    = MSTATUS_SIE
+ RVMODEL_SET_SIE        = SIE_SSIE
+ RVMODEL_SET_MIE        = 0
+ RVMODEL_MIP_MASK       = SIE_SSIE
+ RVMODEL_SET_MIDELEG    = SIE_SSIE
+ RVMODEL_SETUP_SIP_INTS = LI(t0, SIE_SSIE); csrrs x0,CSR_MIP, t0;
+ RVMODEL_SET_SINT1      = LI(t0, SIE_SSIE); csrrs x0,CSR_SIP, t0;
+ RVMODEL_CLEAR_SINT1    = LI(t0, SIE_SSIE); csrrc x0,CSR_SIE, t0;
+----
+Coverage
+----
+mideleg           | verify interrupt is handled in s-mode
+mstatus.mie=1     | verify s-mode interrupt will occur in s-mode when mstatus.sie=1
+mip signature     | verify mip signature
+sip signature     | verify since ideleg is set, sip is visible
+scause signature  | verify ssie signature
+mcause signature  | verify ecall signature
+----
+==== deleg-02.S 
+.Description: Verify when executing in s-mode, an s-mode interrupt will be handled when mstatus.sie is 1:
+- generate s-mode interrupt (stie),
+- switch to s-mode,
+- trigger (s-mode handler),
+- clear interrupt,
+- ecall back to m-mode
+[%autofit]
+----
+ RVMODEL_MSTATUS_MIE    = MSTATUS_SIE
+ RVMODEL_SET_SIE        = SIE_STIE
+ RVMODEL_SET_MIE        = 0
+ RVMODEL_MIP_MASK       = SIE_STIE
+ RVMODEL_SET_MIDELEG    = SIE_STIE
+ RVMODEL_SETUP_SIP_INTS = LI(t0, SIE_STIE); csrrs x0,CSR_MIP, t0;
+ RVMODEL_SET_SINT1      = LI(t0, SIE_STIE); csrrs x0,CSR_SIP, t0;
+ RVMODEL_CLEAR_SINT1    = LI(t0, SIE_STIE); csrrc x0,CSR_SIE, t0;
+----
+Coverage - same as deleg-01.S except
+----
+scause signature  | verify stie signature
+----
+==== delegvec-01.S 
+.Description: Verify when executing in s-mode, a vectored s-mode interrupt will be handled when mstatus.sie is 1:
+- generate vectored s-mode interrupt (ssie),
+- switch to s-mode,
+- trigger (s-mode handler),
+- clear interrupt,
+- ecall back to m-mode
+[%autofit]
+----
+ RVMODEL_STVEC_MODE     = 1 
+ RVMODEL_MSTATUS_MIE    = MSTATUS_SIE
+ RVMODEL_SET_SIE        = SIE_SSIE
+ RVMODEL_SET_MIE        = 0
+ RVMODEL_MIP_MASK       = SIE_SSIE
+ RVMODEL_SET_MIDELEG    = SIE_SSIE
+ RVMODEL_SETUP_SIP_INTS = LI(t0, SIE_SSIE); csrrs x0,CSR_MIP, t0;
+ RVMODEL_SET_SINT1      = LI(t0, SIE_SSIE); csrrs x0,CSR_SIP, t0;
+ RVMODEL_CLEAR_SINT1    = LI(t0, SIE_SSIE); csrrc x0,CSR_SIE, t0;
+----
+Coverage - same as deleg-01.S plus
+----
+vector signature  | verify s-mode vectored interrupt occurred.
+----
+==== order-01.S 
+.Description: Verify order of 2 s-mode interrupts
+- generate 2 s-mode interrupts (ssie, stie),
+- switch to s-mode,
+- trigger (s-mode handler),
+- clear interrupts,
+- ecall back to m-mode
+[%autofit]
+----
+ RVMODEL_MSTATUS_MIE    = MSTATUS_SIE
+ RVMODEL_SET_SIE        = (SIE_SSIE | SIE_STIE)
+ RVMODEL_SET_MIE        = 0
+ RVMODEL_MIP_MASK       = (SIE_SSIE | SIE_STIE)
+ RVMODEL_SET_MIDELEG    = (SIE_SSIE | SIE_STIE)
+ RVMODEL_SETUP_SIP_INTS = LI(t0, (SIE_SSIE | SIE_STIE)); csrrs x0,CSR_MIP, t0;
+ RVMODEL_SET_SINT1      = LI(t0, SIE_SSIE); csrrs x0,CSR_SIP, t0;
+ RVMODEL_CLEAR_SINT1    = LI(t0, SIE_SSIE); csrrc x0,CSR_SIE, t0;
+ RVMODEL_SET_SINT2      = LI(t0, SIE_STIE); csrrs x0,CSR_SIP, t0;
+ RVMODEL_CLEAR_SINT2    = LI(t0, SIE_STIE); csrrc x0,CSR_SIE, t0;
+----
+Coverage - same as deleg-01.S except
+----
+scause signature  | verify priority of ssi/sti
+----
+==== order-02.S 
+.Description:
+- generate 2 s-mode interrupts (ssie, stie),
+- switch to s-mode,
+- trigger (s-mode handler),
+- only sint1 is cleared,
+- re-enable mstatus.sie
+- trigger (go to stvec_finish, capture cause signature)
+- ecall back to m-mode
+[%autofit]
+----
+ RVMODEL_MSTATUS_MIE    = MSTATUS_SIE
+ RVMODEL_SET_SIE        = (SIE_SSIE | SIE_STIE)
+ RVMODEL_SET_MIE        = 0
+ RVMODEL_MIP_MASK       = (SIE_SSIE | SIE_STIE)
+ RVMODEL_SET_MIDELEG    = (SIE_SSIE | SIE_STIE)
+ RVMODEL_SETUP_SIP_INTS = LI(t0, (SIE_SSIE | SIE_STIE)); csrrs x0,CSR_MIP, t0;
+ RVMODEL_SET_SINT1      = LI(t0, SIE_SSIE); csrrs x0,CSR_SIP, t0;
+ RVMODEL_CLEAR_SINT1    = LI(t0, SIE_SSIE); csrrc x0,CSR_SIE, t0;
+ RVMODEL_SET_SINT2      = LI(t0, SIE_STIE); csrrs x0,CSR_SIP, t0;
+----
+Coverage - same as order-01.S except
+----
+scause 2nd signature | verify sti occurs after ssi cleared and mret
+----
+==== order-03.S 
+.Description:
+- generate 2 s-mode interrupts (ssie, stie),
+- switch to s-mode,
+- trigger (s-mode handler),
+- only sint2 is cleared,
+- re-enable mstatus.sie
+- trigger (go to stvec_finish, capture cause signature)
+- ecall back to m-mode
+[%autofit]
+----
+ RVMODEL_MSTATUS_MIE    = MSTATUS_SIE
+ RVMODEL_SET_SIE        = (SIE_SSIE | SIE_STIE)
+ RVMODEL_SET_MIE        = 0
+ RVMODEL_MIP_MASK       = (SIE_SSIE | SIE_STIE)
+ RVMODEL_SET_MIDELEG    = (SIE_SSIE | SIE_STIE)
+ RVMODEL_SETUP_SIP_INTS = LI(t0, (SIE_SSIE | SIE_STIE)); csrrs x0,CSR_MIP, t0;
+ RVMODEL_SET_SINT1      = LI(t0, SIE_SSIE); csrrs x0,CSR_SIP, t0;
+ RVMODEL_SET_SINT2      = LI(t0, SIE_STIE); csrrs x0,CSR_SIP, t0;
+ RVMODEL_CLEAR_SINT2    = LI(t0, SIE_STIE); csrrc x0,CSR_SIE, t0;
+----
+Coverage - same as order-01.S except  (swapping sint1/sint2 assignment of order-02.s)
+----
+scause 2nd signature | verify ssi 2nd signature
+----
+==== order-04.S 
+.Description:
+- generate 4 m-mode interrupts (msie, mtie, ssie, stie),
+- stay in m-mode,
+- trigger (m-mode handler),
+- only mint1 is cleared,
+- do not clear mstatus_mpie so mstatus.mie is re-enabled after mret
+- trigger (go to mtvec_finish, capture cause signature)
+[%autofit]
+----
+ RVMODEL_MSTATUS_MIE    = MSTATUS_MIE
+ RVMODEL_SET_SIE        = 0
+ RVMODEL_SET_MIE        = (MIE_MSIE | MIE_MTIE | SIE_SSIE | SIE_STIE)
+ RVMODEL_MIP_MASK       = (MIE_MSIE | MIE_MTIE | SIE_SSIE | SIE_STIE)
+ RVMODEL_SET_MIDELEG    = 0
+ RVMODEL_SETUP_SIP_INTS = LI(t0, (SIE_SSIE | SIE_STIE)); csrrs x0,CSR_MIP, t0;
+ RVMODEL_SET_MINT1      = RVMODEL_SET_MSW_INT
+ RVMODEL_SET_MINT2      = RVMODEL_SET_MTIMER_INT
+ RVMODEL_CLEAR_MINT1    = RVMODEL_CLEAR_MSW_INT 
+ RVMODEL_SET_SINT1      = LI(t0, SIE_SSIE); csrrs x0,CSR_SIP, t0;
+ RVMODEL_SET_SINT2      = LI(t0, SIE_STIE); csrrs x0,CSR_SIP, t0;
+ RVMODEL_CLEAR_MSTATUS_MPIE = 0
+----
+Coverage - same as nodeleg-01.S plus
+----
+mcause 1st signature | verify msi 1st signature
+mcause 2nd signature | verify mti 2nd signature
+----
+==== order-05.S 
+.Description:
+- generate 3 m-mode interrupts (mtie, ssie, stie),
+- stay in m-mode,
+- trigger (m-mode handler),
+- only mint1 is cleared,
+- do not clear mstatus_mpie so mstatus.mie is re-enabled after mret
+- trigger (go to mtvec_finish, capture cause signature)
+[%autofit]
+----
+ RVMODEL_MSTATUS_MIE    = MSTATUS_MIE
+ RVMODEL_SET_SIE        = 0
+ RVMODEL_SET_MIE        = (           MIE_MTIE | SIE_SSIE | SIE_STIE)
+ RVMODEL_MIP_MASK       = (MIE_MSIE | MIE_MTIE | SIE_SSIE | SIE_STIE)
+ RVMODEL_SET_MIDELEG    = 0
+ RVMODEL_SETUP_SIP_INTS = LI(t0, (SIE_SSIE | SIE_STIE)); csrrs x0,CSR_MIP, t0;
+ RVMODEL_SET_MINT1      = RVMODEL_SET_MSW_INT
+ RVMODEL_SET_MINT2      = RVMODEL_SET_MTIMER_INT
+ RVMODEL_CLEAR_MINT1    = RVMODEL_CLEAR_MSW_INT
+ RVMODEL_CLEAR_MINT2    = RVMODEL_CLEAR_MTIMER_INT
+ RVMODEL_SET_SINT1      = LI(t0, SIE_SSIE); csrrs x0,CSR_SIP, t0;
+ RVMODEL_SET_SINT2      = LI(t0, SIE_STIE); csrrs x0,CSR_SIP, t0;
+ RVMODEL_CLEAR_MSTATUS_MPIE = 0
+----
+Coverage - same as order-04.S except
+----
+mcause 1st signature | verify mti 1st signature
+mcause 2nd signature | verify ssi 2nd signature
+mie.msie | verify when 0, it does not affect order of other interrupts
+----
+==== privorder-01.S 
+.Description: Verify m-mode interrupt is handled before s-mode interrupt
+- generate 1 m-mode interrupt (ssie) and 1 s-mode interrupt (stie),
+- switch to s-mode,
+- trigger (m-mode handler),
+- clear m-mode interrupt
+- return to s-mode
+- trigger (s-mode handler)
+- clear s-mode interrupt
+- return to s-mode
+- ecall back to m-mode
+[%autofit]
+----
+ RVMODEL_MSTATUS_MIE    = MSTATUS_SIE
+ RVMODEL_SET_SIE        = SIE_STIE
+ RVMODEL_SET_MIE        = SIE_SSIE
+ RVMODEL_MIP_MASK       = (SIE_SSIE | SIE_STIE)
+ RVMODEL_SET_MIDELEG    = (SIE_STIE)
+ RVMODEL_SETUP_SIP_INTS = LI(t0, (SIE_SSIE | SIE_STIE)); csrrs x0,CSR_MIP, t0;
+ RVMODEL_SET_MINT1      = LI(t0, SIE_SSIE); csrrs x0,CSR_MIP, t0;
+ RVMODEL_CLEAR_MINT1    = LI(t0, SIE_SSIE); csrrc x0,CSR_MIE, t0;
+ RVMODEL_SET_SINT2      = LI(t0, SIE_STIE); csrrs x0,CSR_SIP, t0;
+ RVMODEL_CLEAR_SINT2    = LI(t0, SIE_STIE); csrrc x0,CSR_SIE, t0;
+----
+Coverage - same as order-04.S except
+----
+mcause 1st signature | verify ssi 1st signature
+scause 2nd signature | verify sti 2nd signature
+----
+==== privorder-02.S 
+.Description: Verify m-mode vectored interrupt is handled before s-mode interrupt
+- generate 1 vectored m-mode interrupt (stie) and 1 direct s-mode interrupt (ssie),
+- switch to s-mode,
+- trigger (m-mode handler),
+- clear m-mode interrupt
+- return to s-mode
+- trigger (s-mode handler)
+- clear s-mode interrupt
+- return to s-mode
+- ecall back to m-mode
+[%autofit]
+----
+ RVMODEL_MTVEC_MODE     = 1 
+ RVMODEL_MSTATUS_MIE    = MSTATUS_SIE
+ RVMODEL_SET_SIE        = SIE_SSIE
+ RVMODEL_SET_MIE        = SIE_STIE
+ RVMODEL_MIP_MASK       = (SIE_SSIE | SIE_STIE)
+ RVMODEL_SET_MIDELEG    = (SIE_SSIE)
+ RVMODEL_SETUP_SIP_INTS = LI(t0, (SIE_SSIE | SIE_STIE)); csrrs x0,CSR_MIP, t0;
+ RVMODEL_SET_SINT1      = LI(t0, SIE_SSIE); csrrs x0,CSR_SIP, t0;
+ RVMODEL_CLEAR_SINT1    = LI(t0, SIE_SSIE); csrrc x0,CSR_SIE, t0;
+ RVMODEL_SET_MINT2      = LI(t0, SIE_STIE); csrrs x0,CSR_MIP, t0;
+ RVMODEL_CLEAR_MINT2    = LI(t0, SIE_STIE); csrrc x0,CSR_MIE, t0;
+----
+Coverage - same as privorder-01.S except
+----
+m-mode vectored signature | verify m-mode interrupt was vectored
+s-mode direct signature   | verify s-mode interrupt was direct
+----
+==== privorder-03.S 
+.Description: Verify m-mode interrupt is handled before s-mode vectored interrupt
+- generate 1 direct m-mode interrupt (ssie) and 1 vectored s-mode interrupt (stie),
+- switch to s-mode,
+- trigger (m-mode handler),
+- clear m-mode interrupt
+- return to s-mode
+- trigger (s-mode handler)
+- clear s-mode interrupt
+- return to s-mode
+- ecall back to m-mode
+[%autofit]
+----
+ RVMODEL_STVEC_MODE     = 1 
+ RVMODEL_MSTATUS_MIE    = MSTATUS_SIE
+ RVMODEL_SET_SIE        = SIE_STIE
+ RVMODEL_SET_MIE        = SIE_SSIE
+ RVMODEL_MIP_MASK       = (SIE_SSIE | SIE_STIE)
+ RVMODEL_SET_MIDELEG    = (SIE_STIE)
+ RVMODEL_SETUP_SIP_INTS = LI(t0, (SIE_SSIE | SIE_STIE)); csrrs x0,CSR_MIP, t0;
+ RVMODEL_SET_MINT1      = LI(t0, SIE_SSIE); csrrs x0,CSR_MIP, t0;
+ RVMODEL_CLEAR_MINT1    = LI(t0, SIE_SSIE); csrrc x0,CSR_MIE, t0;
+ RVMODEL_SET_SINT2      = LI(t0, SIE_STIE); csrrs x0,CSR_SIP, t0;
+ RVMODEL_CLEAR_SINT2    = LI(t0, SIE_STIE); csrrc x0,CSR_SIE, t0;
+----
+Coverage - same as privorder-01.S except
+----
+m-mode direct signature   | verify m-mode interrupt was direct
+s-mode vectored signature | verify s-mode interrupt was vectored
+----
+==== mdisable-01.S 
+.Description: Verify m-mode interrupt not taken in m-mode when mstatus.mie is 0
+- generate m-mode interrupt (ssie) (not delegated to s-mode),
+- stay in m-mode
+- wfi
+- wakeup
+- jump to done
+- ecall
+[%autofit]
+----
+ RVMODEL_SWITCH_TO_S_MODE = <EMPTY>
+ RVMODEL_MSTATUS_MIE    = 0
+ RVMODEL_SET_SIE        = 0
+ RVMODEL_SET_MIE        = SIE_SSIE
+ RVMODEL_SETUP_SIP_INTS = LI(t0, SIE_SSIE); csrrs x0,CSR_MIP, t0;
+ RVMODEL_SET_SINT1      = LI(t0, SIE_SSIE); csrrs x0,CSR_SIP, t0;
+ RVMODEL_CLEAR_SINT1    = LI(t0, SIE_SSIE); csrrc x0,CSR_SIE, t0;
+----
+Coverage 
+----
+mstatus.mie  | verify no m-mode interrupt taken when in m-mode and mstatus.mie is 0
+----
+==== mdisable-02.S 
+.Description: Verify m-mode interrupt not taken in m-mode when mie CSR is 0
+- generate m-mode interrupt (ssie) (not delegated to s-mode),
+- stay in m-mode
+- nop
+- wakeup
+- jump to done
+- ecall
+[%autofit]
+----
+ RVMODEL_WFI            = nop
+ RVMODEL_SWITCH_TO_S_MODE = <EMPTY>
+ RVMODEL_MSTATUS_MIE    = MSTATUS_MIE
+ RVMODEL_SET_SIE        = 0
+ RVMODEL_SET_MIE        = 0
+ RVMODEL_MIP_MASK       = SIE_SSIE
+ RVMODEL_SETUP_SIP_INTS = LI(t0, SIE_SSIE); csrrs x0,CSR_MIP, t0;
+ RVMODEL_SET_SINT1      = LI(t0, SIE_SSIE); csrrs x0,CSR_SIP, t0;
+ RVMODEL_CLEAR_SINT1    = LI(t0, SIE_SSIE); csrrc x0,CSR_SIE, t0;
+----
+Coverage 
+----
+mie=0  | verify m-mode interrupt not taken when in m-mode and mie is 0
+----
+==== mdisable-03.S 
+.Description: Verify s-mode interrupt not taken in m-mode
+- generate s-mode interrupt (ssie)
+- stay in m-mode
+- wfi
+- wakeup
+- jump to done
+- ecall
+[%autofit]
+----
+ RVMODEL_SWITCH_TO_S_MODE = <EMPTY>
+ RVMODEL_SET_SIE        = SIE_SSIE
+ RVMODEL_SET_MIE        = SIE_SSIE
+ RVMODEL_SET_MIDELEG    = SIE_SSIE
+ RVMODEL_SETUP_SIP_INTS = LI(t0, SIE_SSIE); csrrs x0,CSR_MIP, t0;
+ RVMODEL_SET_SINT1      = LI(t0, SIE_SSIE); csrrs x0,CSR_SIP, t0;
+ RVMODEL_CLEAR_SINT1    = LI(t0, SIE_SSIE); csrrc x0,CSR_SIE, t0;
+----
+Coverage 
+----
+mstatus.sie=1  | verify s-mode interrupt not taken when in m-mode
+----
+==== sdisable-01.S 
+.Description: Verify s-mode interrupt not taken in s-mode when mstatus.sie is 0
+- generate s-mode interrupt (ssie)
+- switch to s-mode,
+- wfi
+- wakeup
+- jump to done
+- ecall back to m-mode
+[%autofit]
+----
+ RVMODEL_MSTATUS_SIE    = 0
+ RVMODEL_SET_SIE        = SIE_SSIE
+ RVMODEL_SET_MIE        = 0
+ RVMODEL_SET_MIDELEG    = SIE_SSIE
+ RVMODEL_MIP_MASK       = SIE_STIE
+ RVMODEL_SETUP_SIP_INTS = LI(t0, SIE_SSIE); csrrs x0,CSR_MIP, t0;
+ RVMODEL_SET_SINT1      = LI(t0, SIE_SSIE); csrrs x0,CSR_SIP, t0;
+ RVMODEL_CLEAR_SINT1    = LI(t0, SIE_SSIE); csrrc x0,CSR_SIE, t0;
+----
+Coverage 
+----
+mstatus.mie=1, mstatus.sie=0  | verify s-mode interrupt not taken when in s-mode when mstatus.sie is 0
+----
+==== sdisable-02.S 
+.Description: Verify s-mode interrupt not taken in s-mode when sie CSR is 0
+- generate s-mode interrupt (ssie)
+- switch to s-mode,
+- nop
+- jump to done
+- ecall back to m-mode
+[%autofit]
+----
+ RVMODEL_WFI            = nop
+ RVMODEL_MSTATUS_MIE    = MSTATUS_SIE
+ RVMODEL_SET_SIE        = 0
+ RVMODEL_SET_MIE        = 0
+ RVMODEL_SET_MIDELEG    = SIE_SSIE
+ RVMODEL_MIP_MASK       = SIE_SSIE
+ RVMODEL_SETUP_SIP_INTS = LI(t0, SIE_SSIE); csrrs x0,CSR_MIP, t0;
+ RVMODEL_SET_SINT1      = LI(t0, SIE_SSIE); csrrs x0,CSR_SIP, t0;
+ RVMODEL_CLEAR_SINT1    = LI(t0, SIE_SSIE); csrrc x0,CSR_SIE, t0;
+----
+Coverage 
+----
+sie=0  | verify s-mode interrupt not taken when in s-mode when sie=0
+----
+==== sdisable-03.S 
+.Description: Verify s-mode interrupt not taken in m-mode when mstatus.sie is 1 (but wfi acts as nop)
+- generate s-mode interrupt (ssie)
+- wfi
+- wakeup
+- jump to done
+[%autofit]
+----
+ RVMODEL_SWITCH_TO_S_MODE = <EMPTY>
+ RVMODEL_MSTATUS_MIE    = MSTATUS_SIE
+ RVMODEL_SET_SIE        = SIE_SSIE
+ RVMODEL_SET_MIE        = 0
+ RVMODEL_SET_MIDELEG    = SIE_SSIE
+ RVMODEL_MIP_MASK       = SIE_STIE
+ RVMODEL_SETUP_SIP_INTS = LI(t0, SIE_SSIE); csrrs x0,CSR_MIP, t0;
+ RVMODEL_SET_SINT1      = LI(t0, SIE_SSIE); csrrs x0,CSR_SIP, t0;
+ RVMODEL_CLEAR_SINT1    = LI(t0, SIE_SSIE); csrrc x0,CSR_SIE, t0;
+----
+Coverage 
+----
+mstatus.sie=1, mstatus.sie=1  | verify s-mode interrupt not taken when in m-mode when mstatus.sie is 1
+----
