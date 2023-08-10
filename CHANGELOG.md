@@ -1,4 +1,6 @@
 # CHANGELOG
+## [3.7.1] - 2023-08-10
+- Added RV32E_Privilege and RV32E_Fencei tests with cgf files
 
 ## [3.7.0] - 2023-05-16
 - Updated the LI macro
