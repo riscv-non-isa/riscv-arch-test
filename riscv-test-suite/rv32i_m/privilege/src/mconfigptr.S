@@ -26,11 +26,12 @@ RVTEST_SIGBASE( a1,signature_a1_m) // a1 will point to signature_a1_m label in t
     # ---------------------------------------------------------------------------------------------
     csrr  t1, CSR_MCONFIGPTR
 
-    LI(   t0,0x12345678)
-    csrw  CSR_MCONFIGPTR, t0
+    LI(   t2,0x12345678)
+    csrw  CSR_MCONFIGPTR, t2
+    // mconfigptr is read-only, expect to take an exception
 
-    sub   t0, t0, t1    
     csrr  t0, CSR_MCONFIGPTR
+    sub   t0, t0, t1
     RVTEST_SIGUPD( a1,t0)
     
     RVMODEL_IO_WRITE_STR(x30, "# Test part A - test MCONFIGPTR\n");
