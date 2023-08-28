@@ -1,0 +1,220 @@
+==== siselect-01.S
+.Description: Test siselect
+- in m-mode, write/read siselect,
+- ignore returned value
+- Note that siselect values of 0x0..0xFFF are required to be supported, so a write of a value in that range should be guaranteed to read back the same value.
+[%autofit]
+----
+ RVMODEL_SET_MSTATEEN0_SCSRIND = <EMPTY>
+ RVMODEL_CLR_MSTATEEN0_SCSRIND = <EMPTY>
+ RVMODEL_SET_HMODE             = <EMPTY>
+ RVMODEL_SET_HSTATEEN0_SCSRIND = <EMPTY>
+ RVMODEL_CLR_HSTATEEN0_SCSRIND = <EMPTY>  
+ RVMODEL_SWITCH_TO_S_MODE      = <EMPTY>
+ RVMODEL_SWITCH_TO_VS_MODE     = <EMPTY>
+ RVMODEL_SWITCH_TO_VU_MODE     = <EMPTY>
+ RVMODEL_READ_SIREGS           = <EMPTY>
+ RVMODEL_WRITE_READ_VSISELECT  = <EMPTY>
+ RVMODEL_READ_VSIREGS          = <EMPTY>
+----
+Coverage
+----
+siselect         | verify csr read/write to miselect
+mcause  != 0x2   | verify no illegal instruction exception
+----
+
+==== vscsrind-01.S
+.Description: With hypervisor mode, in vs-mode read vsiselect, vsireg* - get virtual instruction exception
+- write/read vsiselect
+- write/read vsireg*
+- Expect virtual instruction exceptions if hypervisor is supported.
+[%autofit]
+----
+ RVMODEL_SET_MSTATEEN0_SCSRIND = <EMPTY>
+ RVMODEL_CLR_MSTATEEN0_SCSRIND = <EMPTY>
+ RVMODEL_CLR_HSTATEEN0_SCSRIND = <EMPTY>
+ RVMODEL_SWITCH_TO_S_MODE      = <EMPTY>
+ RVMODEL_SWITCH_TO_VU_MODE     = <EMPTY>
+ RVMODEL_WRITE_READ_SISELECT   = <EMPTY>
+ RVMODEL_READ_SIREGS           = <EMPTY>
+----
+Coverage
+----
+mcause  == 22     | verify virtual instruction exception
+----
+
+==== vucsrind-01.S
+.Description: (requires hypervisor mode), in vu-mode read siselect, sireg*, vsiselect, vsireg* - get virtual instruction exception
+- write/read siselect
+- write/read sireg*
+- write/read vsiselect
+- write/read vsireg*
+- Expect virtual instruction exceptions if hypervisor is supported.
+[%autofit]
+----
+ RVMODEL_SET_MSTATEEN0_SCSRIND = <EMPTY>
+ RVMODEL_CLR_MSTATEEN0_SCSRIND = <EMPTY>
+ RVMODEL_SET_HMODE             = <EMPTY>
+ RVMODEL_CLR_HSTATEEN0_SCSRIND = <EMPTY>  
+ RVMODEL_SWITCH_TO_S_MODE      = <EMPTY>
+ RVMODEL_SWITCH_TO_VS_MODE     = <EMPTY>
+----
+Coverage
+----
+mcause  == 22     | verify virtual instruction exceptions
+----
+
+==== vsiselect-01.S
+.Description: (requires hypervisor mode), in s-mode read vsiselect, ignore returned value.  vsiselect requires support for 0x0..0xFFF.
+- write/read vsiselect
+- ignore returned value
+[%autofit]
+----
+ RVMODEL_SET_MSTATEEN0_SCSRIND = <EMPTY>
+ RVMODEL_CLR_MSTATEEN0_SCSRIND = <EMPTY>
+ RVMODEL_SET_HSTATEEN0_SCSRIND = <EMPTY>
+ RVMODEL_CLR_HSTATEEN0_SCSRIND = <EMPTY>  
+ RVMODEL_SWITCH_TO_VS_MODE     = <EMPTY>
+ RVMODEL_SWITCH_TO_VU_MODE     = <EMPTY>
+ RVMODEL_WRITE_READ_VSISELECT  = <EMPTY>
+----
+Coverage
+----
+mcause  != 2     | verify no illegal instruction exceptions
+mcause  != 22    | verify no virtual instruction exceptions
+----
+
+==== clrmstateen0-01.S
+.Description: Test access to siselect, sireg*, vsiselect, vsireg* cause illegal instructions when mstateen0[SCSRIND] is 0
+- in s-mode with mstateen0[SCSRIND] = 0,
+- read siselect, sireg*, vsiselect, vsireg*,
+- get illegal instruction exceptions.
+- The behavior above would apply in any priv mode other than M-mode.
+[%autofit]
+----
+ RVMODEL_SET_MSTATEEN0_SCSRIND = <EMPTY>
+ RVMODEL_SET_HSTATEEN0_SCSRIND = <EMPTY>
+ RVMODEL_CLR_HSTATEEN0_SCSRIND = <EMPTY>  
+ RVMODEL_SWITCH_TO_VS_MODE     = <EMPTY>
+ RVMODEL_SWITCH_TO_VU_MODE     = <EMPTY>
+----
+Coverage
+----
+mcause  == 2     | verify illegal instruction exceptions
+mcause  != 22    | verify no virtual instruction exceptions
+----
+ 
+==== vsvirtual-01.S
+.Description: Test vs-mode vsiselect, vsireg* virtual instruction exceptions
+- in vs-mode with mstateen0[SCSRIND] = 1,
+- read vsiselect, vsireg*,
+- get virtual instruction exceptions.
+[%autofit]
+----
+ RVMODEL_CLR_MSTATEEN0_SCSRIND = <EMPTY>
+ RVMODEL_SET_HSTATEEN0_SCSRIND = <EMPTY>
+ RVMODEL_CLR_HSTATEEN0_SCSRIND = <EMPTY>  
+ RVMODEL_SWITCH_TO_S_MODE      = <EMPTY>
+ RVMODEL_SWITCH_TO_VU_MODE     = <EMPTY>
+ RVMODEL_WRITE_READ_SISELECT   = <EMPTY>
+ RVMODEL_READ_SIREGS           = <EMPTY>
+----
+Coverage
+----
+mcause  != 2     | verify no illegal instruction exceptions
+mcause  == 22    | verify virtual instruction exceptions
+----
+ 
+==== vuvirtual-01.S
+.Description: Test vu-mode siselect, sireg*, vsiselect, vsireg* virtual instruction exceptions
+- in vu-mode with mstateen0[SCSRIND] = 1,
+- read siselect, sireg*,
+- read vsiselect, vsireg*,
+- get virtual instruction exceptions.
+[%autofit]
+----
+ RVMODEL_CLR_MSTATEEN0_SCSRIND = <EMPTY>
+ RVMODEL_SET_HSTATEEN0_SCSRIND = <EMPTY>
+ RVMODEL_CLR_HSTATEEN0_SCSRIND = <EMPTY>  
+ RVMODEL_SWITCH_TO_S_MODE      = <EMPTY>
+ RVMODEL_SWITCH_TO_VS_MODE     = <EMPTY>
+----
+Coverage
+----
+mcause  != 2     | verify no illegal instruction exceptions
+mcause  == 22    | verify virtual instruction exceptions
+----
+
+==== vsclrhstateen-01.S
+.Description: (requires Ssstateen, hypervisor mode), in vs-mode with hstateen0[SCSRIND] = 0, read vsiselect, vsireg*, get virtual instruction exception.
+- assumes mstateen0[SCSRIND]=1.
+[%autofit]
+----
+ RVMODEL_CLR_MSTATEEN0_SCSRIND = <EMPTY>
+ RVMODEL_SET_HSTATEEN0_SCSRIND = <EMPTY>
+ RVMODEL_SWITCH_TO_S_MODE      = <EMPTY>
+ RVMODEL_SWITCH_TO_VU_MODE     = <EMPTY>
+ RVMODEL_WRITE_READ_SISELECT   = <EMPTY>
+ RVMODEL_READ_SIREGS           = <EMPTY>
+----
+Coverage
+----
+mcause  != 2     | verify no illegal instruction exceptions
+mcause  == 22    | verify virtual instruction exceptions
+----
+
+==== vuclrhstateen-01.S
+.Description: (requires Ssstateen, hypervisor mode), in vu-mode with hstateen0[SCSRIND] = 0, read siselect, sireg*, vsiselect, vsireg*, get virtual instruction exception.
+- assumes mstateen0[SCSRIND]=1.
+[%autofit]
+----
+ RVMODEL_CLR_MSTATEEN0_SCSRIND = <EMPTY>
+ RVMODEL_SET_HSTATEEN0_SCSRIND = <EMPTY>
+ RVMODEL_SWITCH_TO_S_MODE      = <EMPTY>
+ RVMODEL_SWITCH_TO_VS_MODE     = <EMPTY>
+----
+Coverage
+----
+mcause  != 2     | verify no illegal instruction exceptions
+mcause  == 22    | verify virtual instruction exceptions
+----
+
+==== vshstateen-01.S
+.Description: (requires Ssstateen, hypervisor mode), in vs-mode with hstateen0[SCSRIND] = 1, read vsiselect, vsireg*, get virtual instruction exception.
+- assumes mstateen0[SCSRIND]=1.
+[%autofit]
+----
+ RVMODEL_CLR_MSTATEEN0_SCSRIND = <EMPTY>
+ RVMODEL_CLR_HSTATEEN0_SCSRIND = <EMPTY>  
+ RVMODEL_SWITCH_TO_S_MODE      = <EMPTY>
+ RVMODEL_SWITCH_TO_VU_MODE     = <EMPTY>
+ RVMODEL_WRITE_READ_SISELECT   = <EMPTY>
+ RVMODEL_READ_SIREGS           = <EMPTY>
+----
+Coverage
+----
+mcause  != 2     | verify no illegal instruction exceptions
+mcause  == 22    | verify virtual instruction exceptions
+----
+
+==== vuhstaten-01.S
+.Description: (requires Ssstateen, hypervisor mode), in vu-mode with hstateen0[SCSRIND] = 1, read siselect, sireg*, vsiselect, vsireg*, get virtual instruction exception.
+- assumes mstateen0[SCSRIND]=1.
+[%autofit]
+----
+ RVMODEL_CLR_MSTATEEN0_SCSRIND = <EMPTY>
+ RVMODEL_CLR_HSTATEEN0_SCSRIND = <EMPTY>  
+ RVMODEL_SWITCH_TO_S_MODE      = <EMPTY>
+ RVMODEL_SWITCH_TO_VS_MODE     = <EMPTY>
+ RVMODEL_WRITE_READ_SISELECT   = <EMPTY>
+ RVMODEL_READ_SIREGS           = <EMPTY>
+ RVMODEL_WRITE_READ_VSISELECT  = <EMPTY>
+ RVMODEL_READ_VSIREGS          = <EMPTY>
+----
+Coverage
+----
+mcause  != 2     | verify no illegal instruction exceptions
+mcause  == 22    | verify virtual instruction exceptions
+----
+
+
