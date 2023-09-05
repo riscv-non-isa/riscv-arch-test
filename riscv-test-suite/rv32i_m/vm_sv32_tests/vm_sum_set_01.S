@@ -29,7 +29,7 @@ RVTEST_SIGBASE( x13,signature_x13_1)
 main:
 # ---------------------------------------------------------------------------------------------
 
-#ifdef rvtest_mtrap_routine									// Verification of existance of rvtest_mtrap_routine
+#ifdef rvtest_mtrap_routine								// Verification of existance of rvtest_mtrap_routine
 	LI a4, 0xceed
 	RVTEST_SIGUPD(x13,a4)
 #endif
@@ -38,8 +38,8 @@ main:
 	RVTEST_SIGUPD(x13,a4)
 #endif
 	
-	ALL_MEM_PMP          								     # set the PMP permissions
-	WRITE_CSR (satp,x0)  								     # write satp with all zeros (bare mode)
+	ALL_MEM_PMP          								# set the PMP permissions
+	WRITE_CSR (satp,x0)  								# write satp with all zeros (bare mode)
 
 	.set va,      0x90000000
 	.set pa,      0x80000000 
@@ -57,28 +57,41 @@ main:
 
 	/* Save Virtual addresses in of Code and Data 
 	in their respective S-mode save area */
-
 	/****** code ******/
-	LI (t0, va)
-	LA (t1, pa)
-	sub t0, t0, t1 // (VA-PA) Note: VA > PA 
-	csrr sp, mscratch
-	add t1,sp,t0
-	csrw sscratch, t1 
+	LI (t0, va)					// Load physical Address
+	LA (t1, pa)					// Load Physical Address
+	sub t0, t0, t1 					// (VA-PA) Note: VA > PA 
+	csrr sp, mscratch				// Access the Address to the save area as pointed by mscratch
+	add t1,sp,t0					// Address translation of save area address
+	csrw sscratch, t1 				// Save Virtual Address of the save area into sscratch
 	
-	LREG t1, code_bgn_off+0*sv_area_sz(sp)
-	add t2, t1, t0
-	SREG t2, code_bgn_off+1*sv_area_sz(sp)
-
+	LREG t1, code_bgn_off+0*sv_area_sz(sp)		// Copy rvtest_code_begin physical address
+	add t2, t1, t0					// Address transalation of rvtest_code_begin label
+	SREG t2, code_bgn_off+1*sv_area_sz(sp)		// Save the virtual address of rvtest_code_begin at Smode save area location
 	/******* data *******/
 	// update save area
-	LREG t1, data_bgn_off+0*sv_area_sz(sp)
-	add  t2, t1,t0
-	SREG t2, data_bgn_off+1*sv_area_sz(sp)
+	// Here va_data is the virtual address of the data area (rvtest_data label)
+	LI (t0, va_data)                               	// load the virtual address of rvtest_data in t0
+	LA (t1, rvtest_data)                            // load the physical address of rvtest_data in t1
+	sub t0, t0, t1                                  // (VA-PA) Note: VA > PA 
+	LREG t1, data_bgn_off+0*sv_area_sz(sp)          // load the address of data_bgn_off in t1
+	add  t2, t1,t0                                  // Address transalation of rvtest_data_begin label
+	SREG t2, data_bgn_off+1*sv_area_sz(sp)          // Save the virtual address of rvtest_code_begin at Smode save area location
 	//signature
-	LREG t1, sig_bgn_off+0*sv_area_sz(sp)
-	add t2, t1, t0
-	SREG t2, sig_bgn_off+1*sv_area_sz(sp) 
+	// sig_data is the virtual address of the signature area while signature_x13_1 is the physical address of the signautre area
+	LI (t0, sig_data)                               // load the virtual address of signature_x13_1 in t0
+	LA (t1, signature_x13_1)                        // load the physical address of signature_x13_1 in t1
+	sub t0, t0, t1                                  // (VA-PA) Note: VA > PA 
+	LREG t1, sig_bgn_off+0*sv_area_sz(sp)           // load the address of sig_bgn_off in t1
+	add t2, t1, t0                                  // add the offset to the base address of save area
+	SREG t2, sig_bgn_off+1*sv_area_sz(sp)           // write the address of sig_bgn_off in sscratch
+	// vmem
+	LI (t0, va_data)                                // load the virtual address of rvtest_data in t0
+	LA (t1, rvtest_data)                            // load the physical address of rvtest_data in t1
+	sub t0, t0, t1                                  // (VA-PA) Note: VA > PA
+	LREG t1, vmem_bgn_off+0*sv_area_sz(sp)          // load the address of vmem_bgn_off in t1
+	add t2, t1, t0                                  // add the offset to the base address of save area
+	SREG t2, vmem_bgn_off+1*sv_area_sz(sp)          // write the address of vmem_bgn_off in sscratch
 
 	sfence.vma
     li s7, MSTATUS_SUM
