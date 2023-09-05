@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// Verification Goal: Set PTE.A = 0 for rvtest_Data and test the write access for		        ////
-///		       level0 PTE in Supervisor mode.	Should raise store/amo page fault		////
+///		       level0 PTE in User mode.This should raise store/amo page fault		        ////
 ///                                                                                                     ////
 /// Description:       If implementation does not sets the pte.A on accessing the PTE, and PTE 	        ////
 ///		       has pte.A=0, then accessing it would raise page fault exception of the 	        ////
@@ -56,16 +56,16 @@ main:
      
         /* PTE setup for Instruction memory 0x90000000 -> 0x80000000*/
 	LA (a0, pa)                                                             // loads the address in a0
-	LI a1, ( PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V )                // sets the permission bits
+	LI a1, ( PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V | PTE_U )        // sets the permission bits
 	PTE_SETUP_RV32(a0, a1, t0, t1, va, LEVEL0)                              // setup the PTE for level0
 	/* PTE setup for rvtest_data 0x91000000 -> rvtest_data*/	
 	LA (a0, rvtest_data)                                                    // loads the address of label rvtest_data in a0
-	LI a1, ( PTE_D | PTE_V | PTE_X | PTE_W | PTE_R )                        // sets the permission bits
+	LI a1, ( PTE_D | PTE_V | PTE_X | PTE_W | PTE_R | PTE_U )                // sets the permission bits
 	PTE_SETUP_RV32(a0, a1, t0, t1, va_data, LEVEL0)                         // setup the PTE for level0
 
         /* PTE setup for 0x93003114 -> signature_x13_1*/
 	la a0, rvtest_sig_begin   						// Physical address of signature area
-	li a1, ( PTE_D | PTE_A | PTE_R | PTE_W | PTE_X | PTE_V)                 // sets the permissions bits 
+	li a1, ( PTE_D | PTE_A | PTE_R | PTE_W | PTE_X | PTE_V | PTE_U )        // sets the permissions bits 
 	PTE_SETUP_RV32(a0, a1, t0, t1, sig_data, LEVEL0) 			// PTE Setup for signature area address at pgtbl0
 
 	LI (t0, sig_data)                                                       
@@ -114,7 +114,7 @@ main:
 	SREG t2, vmem_bgn_off+1*sv_area_sz(sp)                                  // write the address of vmem_bgn_off in sscratch
 
 	sfence.vma                                                              // flush the TLB
-	RVTEST_GOTO_LOWER_MODE	Smode		                                // Switching to S mode
+	RVTEST_GOTO_LOWER_MODE	Umode		                                // Switching to U mode
 
 
 vm_en:

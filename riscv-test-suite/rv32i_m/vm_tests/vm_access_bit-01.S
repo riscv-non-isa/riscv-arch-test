@@ -57,11 +57,11 @@ main:
         /* PTE setup for Instruction memory 0x90000000 -> 0x80000000*/
 	LA (a0, pa)                                                             // loads the address in a0
 	LI a1, ( PTE_D | PTE_X | PTE_W | PTE_R | PTE_V )                        // sets the permission bits
-	PTE_SETUP_RV32(a0, a1, t0, t1, va, LEVEL0)                              // setup the PTE for level1
+	PTE_SETUP_RV32(a0, a1, t0, t1, va, LEVEL0)                              // setup the PTE for level0
 	/* PTE setup for rvtest_data 0x91000000 -> rvtest_data*/	
 	LA (a0, rvtest_data)                                                    // loads the address of label rvtest_data in a0
 	LI a1, ( PTE_D | PTE_V | PTE_X | PTE_W | PTE_R )                        // sets the permission bits
-	PTE_SETUP_RV32(a0, a1, t0, t1, va_data, LEVEL0)                         // setup the PTE for level1
+	PTE_SETUP_RV32(a0, a1, t0, t1, va_data, LEVEL0)                         // setup the PTE for level0
 
         /* PTE setup for 0x93003114 -> signature_x13_1*/
 	la a0, rvtest_sig_begin   						// Physical address of signature area
