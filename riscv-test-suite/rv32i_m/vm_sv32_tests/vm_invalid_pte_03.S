@@ -41,7 +41,7 @@ main:
 	.set va,      0x90000000
 	.set pa,      0x80000000 
 	.set va_data, 0x91000000
-        .set sig_data, 0x93003114                                               // virtual address of signature_x13_1
+        .set sig_data,0x93003114                                                // virtual address of signature_x13_1
                                                                                 // PTE setup for sig_data -> rvtest_slvl1_pg_tbl*/
 	la a0, rvtest_slvl1_pg_tbl   		                                // loads the base address of the pg_tbl0        				
 	li a1, (PTE_V)                                                          // sets the permissions bits                
