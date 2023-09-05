@@ -70,37 +70,36 @@ main:
 	in their respective S-mode save area */
 
 	/****** code ******/
-	LI (t0, va)
-	LA (t1, pa)
-	sub t0, t0, t1 // (VA-PA) Note: VA > PA 
-	csrr sp, mscratch
-	add t1,sp,t0
-	csrw sscratch, t1 
+	LI (t0, va)                                                             // load the virtual address of vm_en in t0
+	LA (t1, pa)                                                             // load the physical address of vm_en in t1
+	sub t0, t0, t1                                                          // (VA-PA) Note: VA > PA 
+	csrr sp, mscratch                                                       // load the value of mscratch in sp
+	add t1,sp,t0                                                            // add the offset to the base address of save area
+	csrw sscratch, t1                                                       // write the address of save area in sscratch
 	
-	LREG t1, code_bgn_off+0*sv_area_sz(sp)
-	add t2, t1, t0
-	SREG t2, code_bgn_off+1*sv_area_sz(sp)
-    SREG t2, code_bgn_off+2*sv_area_sz(sp)
+	LREG t1, code_bgn_off+0*sv_area_sz(sp)                                  // load the address of code_bgn_off in t1
+	add t2, t1, t0                                                          // add the offset to the base address of save area
+	SREG t2, code_bgn_off+1*sv_area_sz(sp)                                  // write the address of code_bgn_off in sscratch
+        SREG t2, code_bgn_off+2*sv_area_sz(sp)                                  // write the address of code_bgn_off in sscratch for user  access      
 
 	/******* data *******/
 	// update save area
-	LREG t1, data_bgn_off+0*sv_area_sz(sp)
-	add  t2, t1,t0
-	SREG t2, data_bgn_off+1*sv_area_sz(sp)
-    SREG t2, data_bgn_off+2*sv_area_sz(sp)
+	LREG t1, data_bgn_off+0*sv_area_sz(sp)                                   // load the address of data_bgn_off in t1
+	add  t2, t1,t0                                                           // add the offset to the base address of save area
+	SREG t2, data_bgn_off+1*sv_area_sz(sp)                                   // write the address of data_bgn_off in sscratch
+        SREG t2, data_bgn_off+2*sv_area_sz(sp)                                   // write the address of data_bgn_off in sscratch for user access
 	//signature
-	LREG t1, sig_bgn_off+0*sv_area_sz(sp)
-	add t2, t1, t0
-	SREG t2, sig_bgn_off+1*sv_area_sz(sp) 
-    SREG t2, sig_bgn_off+2*sv_area_sz(sp) 
-	sfence.vma
-	RVTEST_GOTO_LOWER_MODE	Umode		                   	    // Switching to U mode
+	LREG t1, sig_bgn_off+0*sv_area_sz(sp)                                    // load the address of sig_bgn_off in t1
+	add t2, t1, t0                                                           // add the offset to the base address of save area  
+	SREG t2, sig_bgn_off+1*sv_area_sz(sp)                                    // write the address of sig_bgn_off in sscratch
+        SREG t2, sig_bgn_off+2*sv_area_sz(sp)                                    // write the address of sig_bgn_off in sscratch for user access
+	sfence.vma                                                               // flush the TLB       
+	RVTEST_GOTO_LOWER_MODE	Umode		                   	         // Switching to U mode
 
 vm_en:
 	LA (t0, va_data)												
 	LREG x2, 0(t0)
-
-	RVTEST_GOTO_MMODE		                               	    // Switching back to M mode
+	RVTEST_GOTO_MMODE		                               	         // Switching back to M mode
 	LI (a4, 0x123)
 	RVTEST_SIGUPD(x13,a4)
 #endif
