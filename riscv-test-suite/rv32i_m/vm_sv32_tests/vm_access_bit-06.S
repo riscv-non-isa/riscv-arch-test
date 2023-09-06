@@ -6,9 +6,8 @@
 ///		       has pte.A=0, then accessing it would raise page fault exception of the 	        ////
 ///                    corresponding access type.   							////					
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-# include "model_test.h"
-# include "arch_test.h"
-# include "macros.h"
+#include "model_test.h"
+#include "arch_test.h"
 
 RVTEST_ISA("RV32I_Zicsr")
 
@@ -110,15 +109,21 @@ main:
 
 
 vm_en:
-	LA (t0, va_data)                                                        // loads the address of label rvtest_data in t0                                                   
-check_store:
-	SREG x2, 0(t0)                                                          // stores the value of x2 at address t0
-        nop                                                                     // delay slot
-
-        li s10,0xbeef                                                           // load the signature value in s10
-	RVTEST_SIGUPD(s11,s10)                                                  // Now x13 will have VA and it will do the signature update.
+	LI (a4, 0xdead)
+	RVTEST_SIGUPD(s11,a4)                                                   // Verification of virtualization enabeled
+        
+	LA (t0, va_data)                                                        
+	SREG x2, 0(t0)                                                          // test the store access 
+        nop                                             
+        
+	LI (a4, 0xbeef)                                                         // Verification of coming back from trap handler 
+	RVTEST_SIGUPD(s11,a4)
 
 	RVTEST_GOTO_MMODE		                                        // Switching back to M mode
+        
+        nop
+	LI (a4, 0x123)
+	RVTEST_SIGUPD(x13,a4)                                                   // Verification of virtualization disabled
 #endif
 
  // ---------------------------------------------------------------------------------------------
