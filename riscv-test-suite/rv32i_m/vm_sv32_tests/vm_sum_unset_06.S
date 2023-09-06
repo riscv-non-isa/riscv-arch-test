@@ -1,12 +1,13 @@
-#################################################################################################   
-# Verification Goal: Test the Execute acces in Supervisor mode for Level0 such that    		#
-#                    (PTE.x = 1, PTE.r = 1, PTE.u=1 and mstatus.SUM=0)                          #
-#		     Execute access to the PTE should raise instruction page fault	        #
-#												#												
-# Description: 	     If PTE belongs to user mode i.e. its U permission bit is set (pte.u = 1)	#
-#              	     and m/sstatus.SUM = 0, then accessing that PTE in supervisor mode would   	#
-#		     raise page fault exception of the corresponding access type. 		#
-################################################################################################# 
+//////////////////////////////////////////////////////////////////////////////////////////////////    
+// Verification Goal: Test the Execute acces in Supervisor mode for Level0 such that		//
+//                    (PTE.x = 1, PTE.r = 1, PTE.u=1 and mstatus.SUM=0)                         //
+//		      Execute access to the PTE should raise instruction page fault	        //
+//												//												
+// Description:	      If PTE belongs to user mode i.e. its U permission bit is set (pte.u = 1)	//
+//                    and m/sstatus.SUM = 0, then accessing that PTE in supervisor mode would   //
+//		      raise page fault exception of the corresponding access type. 		//
+//////////////////////////////////////////////////////////////////////////////////////////////////    
+ 
 
 #include "model_test.h"
 
@@ -38,18 +39,15 @@ main:
 	RVTEST_SIGUPD(x13,a4)
 #endif
 	
-	ALL_MEM_PMP          			                                // Set the PMP permissions
-	WRITE_CSR (satp,x0)  			                                // write satp with all zeros (bare mode)
+	ALL_MEM_PMP          							// set the PMP permissions
+	WRITE_CSR (satp,x0)  							// write satp with all zeros (bare mode)
 
- 	.set va,       0x90000#################################################################################################   
-# Verification Goal: Test the Execute acces in Supervisor mode for Level0 such that    		#
-#                    (PTE.x = 1, PTE.r = 1, PTE.u=1 and mstatus.SUM=0)                          #
-#		     Execute access to the PTE should raise instruction page fault	        #
-#												#												
-# Description: 	     If PTE belongs to user mode i.e. its U permission bit is set (pte.u = 1)	#
-#              	     and m/sstatus.SUM = 0, then accessing that PTE in supervisor mode would   	#
-#		     raise page fault exception of the corresponding access type. 		#
-################################################################################################# _tbl   		                                // loads the base address of the pg_tbl0        				
+ 	.set va,       0x90000000                                               // virtual address of vm_en
+	.set pa,       0x80000000                                               // physical address of vm_en
+        .set va_data,  0x91000000                                               // virtual address of rvtest_data 
+        .set sig_data, 0x93003110                                               // virtual address of signature_x13_1
+          									// PTE setup for sig_data -> rvtest_slvl1_pg_tbl*/
+	la a0, rvtest_slvl1_pg_tbl   		                                // loads the base address of the pg_tbl0        				
 	li a1, (PTE_V)                                                          // sets the permissions bits                
 	PTE_SETUP_RV32(a0, a1, t0, t1, sig_data, LEVEL1)	                // setup the PTE for level1 
 	                                         			        // pgtbl1 PTE Setup to point to the pgtbl0 PTE

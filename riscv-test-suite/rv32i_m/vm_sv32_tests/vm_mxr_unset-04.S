@@ -1,11 +1,11 @@
-# ###############################################################################################           
-#                                                                                               #
-# Verification Goal: Set pte.r=0 & pte.w=0 & pte.x=1 & s/mstatus.MXR=0 and test the read acces	#
-#		     for level0 PTE in User mode,Should raise load page fault.			#
-#												#												#											
-# Description:       If PTE has only execute permission (pte.x = 1) and s/mstatus.MXR=0, then 	#
-#		     read access on that PTE should raise load page fault exception.		#
-# ###############################################################################################  
+//////////////////////////////////////////////////////////////////////////////////////////////////        
+//                                                                                               //
+// Verification Goal: Set pte.r=0 & pte.w=0 & pte.x=1 & s/mstatus.MXR=0 and test the read acces	//
+//		     for level0 PTE in User mode,Should raise load page fault.			//
+//												//												#											
+// Description:       If PTE has only execute permission (pte.x = 1) and s/mstatus.MXR=0, then 	//
+//		     read access on that PTE should raise load page fault exception.		//
+//////////////////////////////////////////////////////////////////////////////////////////////////        
   
 #include "model_test.h"
 #include "arch_test.h"

@@ -1,12 +1,12 @@
-# ###############################################################################################           
-# Verification Goal: Remove execute PMP permission of translated Physical Address in pmpcfg 	#
-#	             and test the execute access for level1 PTE in User mode			#
-#                                                                                               #
-# Description:       If PTE has valid and non-reserved RWX permissions, but the translated	#
-#                    Physical address (pte.ppn of leaf PTE + offset) does not have (r,w,x) PMP	# 
-#                    permissions, then accessing the translated Physical address would raise	#
-#                    access fault exception of the corresponding access type.                   #
-# ###############################################################################################   
+//////////////////////////////////////////////////////////////////////////////////////////////////        
+// Verification Goal: Remove execute PMP permission of translated Physical Address in pmpcfg 	//
+//	             and test the execute access for level1 PTE in User mode			//
+//                                                                                              //
+// Description:       If PTE has valid and non-reserved RWX permissions, but the translated	//
+//                    Physical address (pte.ppn of leaf PTE + offset) does not have (r,w,x) PMP	// 
+//                    permissions, then accessing the translated Physical address would raise	//
+//                    access fault exception of the corresponding access type.                  //
+//////////////////////////////////////////////////////////////////////////////////////////////////        
 
 #include "model_test.h"
 #include "arch_test.h"
@@ -38,55 +38,55 @@ main:
 #endif
 	
 
-	.set va,	0x90000000							# Page table level 1  VA   
-	.set pa,	0x80000000							# rvtest_entry_point physical address
-	.set va_data,	0x91000000							# rvtest_data Virtual address set at level 0 
+	.set va,	0x90000000							// Page table level 1  VA   
+	.set pa,	0x80000000							// rvtest_entry_point physical address
+	.set va_data,	0x91000000							// rvtest_data Virtual address set at level 0 
 	.set sig_data,	0x93003110   
 
-	LA(t2, pa)									# Loads the address of PA                
-	srli t2, t2, PMP_SHIFT								# Right shift the PA by PMP_Shift(2) 
-	ori t2, t2, 0x1FF								# Selects the range of 4kB    
-	csrw pmpaddr0, t2								# Region 1 for the pmp permissions  
+	LA(t2, pa)									// Loads the address of PA                
+	srli t2, t2, PMP_SHIFT								// Right shift the PA by PMP_Shift(2) 
+	ori t2, t2, 0x1FF								// Selects the range of 4kB    
+	csrw pmpaddr0, t2								// Region 1 for the pmp permissions  
 
-	LA(t2, rvtest_slvl1_pg_tbl )							# loads the base address of level1 4kbpage table                 
-	srli t2, t2, PMP_SHIFT								# Right shift the address of level 1 page table  by PMP_Shift(2)		
-	ori t2, t2, 0x1FF								# Selects the range of 4kB								 	 										
-	csrw pmpaddr1, t2								# Region 2 for the pmp permission  
+	LA(t2, rvtest_slvl1_pg_tbl )							// loads the base address of level1 4kbpage table                 
+	srli t2, t2, PMP_SHIFT								// Right shift the address of level 1 page table  by PMP_Shift(2)		
+	ori t2, t2, 0x1FF								// Selects the range of 4kB								 	 										
+	csrw pmpaddr1, t2								// Region 2 for the pmp permission  
 
-	LA( t2, rvtest_Sroot_pg_tbl)							# loads the base address of root page table               
-	srli t2, t2, PMP_SHIFT								# Right shift the address of root page table by PMP_Shift(2)
-	ori t2, t2, 0x1FF								# Selects the range of 4kB
-	csrw pmpaddr2, t2								# Region 3 for the pmp permission   
+	LA( t2, rvtest_Sroot_pg_tbl)							// loads the base address of root page table               
+	srli t2, t2, PMP_SHIFT								// Right shift the address of root page table by PMP_Shift(2)
+	ori t2, t2, 0x1FF								// Selects the range of 4kB
+	csrw pmpaddr2, t2								// Region 3 for the pmp permission   
 
-	LA( t2, rvtest_data )								# loads the base address of rvtest_data label        
-	srli t2, t2, PMP_SHIFT								# Right shift the address of rvtest_data label by PMP_Shift(2)
-	ori t2, t2, 0									# Selects the range of 8B
-	csrw pmpaddr3, t2								# Region 4 for the pmp permission
+	LA( t2, rvtest_data )								// loads the base address of rvtest_data label        
+	srli t2, t2, PMP_SHIFT								// Right shift the address of rvtest_data label by PMP_Shift(2)
+	ori t2, t2, 0									// Selects the range of 8B
+	csrw pmpaddr3, t2								// Region 4 for the pmp permission
 
-	LA( t2, rvtest_sig_begin )							# loads the base address of rvtest_sig_begin label        
-	srli t2, t2, PMP_SHIFT								# Right shift the address of rvtest_sig_begin label by PMP_Shift(2)
-	ori t2, t2, 0xF									# Selects the range of 128B
-	csrw pmpaddr4, t2								# Region 5 for the pmp permission
+	LA( t2, rvtest_sig_begin )							// loads the base address of rvtest_sig_begin label        
+	srli t2, t2, PMP_SHIFT								// Right shift the address of rvtest_sig_begin label by PMP_Shift(2)
+	ori t2, t2, 0xF									// Selects the range of 128B
+	csrw pmpaddr4, t2								// Region 5 for the pmp permission
 
-	LI(t2, 0x1F1F1F1B)								# Region 1: NAPOT with RW PMP Permissions, Region 2, 3 4: NAPOT with RWX PMP Permissions
-	csrw pmpcfg0, t2								# Write PMP Regions Configration   
+	LI(t2, 0x1F1F1F1B)								// Region 1: NAPOT with RW PMP Permissions, Region 2, 3 4: NAPOT with RWX PMP Permissions
+	csrw pmpcfg0, t2								// Write PMP Regions Configration   
 
-	LI(t2, 0x1F)									# Region5: NAPOT with RWX PMP Permissions
-	csrw pmpcfg1, t2								# Write PMP Regions Configration       
+	LI(t2, 0x1F)									// Region5: NAPOT with RWX PMP Permissions
+	csrw pmpcfg1, t2								// Write PMP Regions Configration       
 
-	csrw satp,x0									# SATP bare mode 
+	csrw satp,x0									// SATP bare mode 
 
 	la a0, rvtest_slvl1_pg_tbl   		                             		// loads the base address of the pg_tbl0        				
 	li a1, (PTE_V)                                                       		// sets the permissions bits                
 	PTE_SETUP_RV32(a0, a1, t0, t1, sig_data, LEVEL1)	                	// setup the PTE for level1 
 
-	LI (a0, pa)									# loads the PA 
-	LI a1, (PTE_D | PTE_A | PTE_U | PTE_X | PTE_W | PTE_R | PTE_V)			# sets the permission bits 
-	PTE_SETUP_RV32(a0, a1, t0, t1, va, LEVEL1)					# function to setup level1 PTE
+	LI (a0, pa)									// loads the PA 
+	LI a1, (PTE_D | PTE_A | PTE_U | PTE_X | PTE_W | PTE_R | PTE_V)			// sets the permission bits 
+	PTE_SETUP_RV32(a0, a1, t0, t1, va, LEVEL1)					// function to setup level1 PTE
 
-	LA (a0, rvtest_data)								# loads the address of rvtest_data label
-	LI a1, (PTE_A | PTE_D | PTE_U | PTE_X | PTE_W | PTE_R | PTE_V)			# sets the permission bits
-	PTE_SETUP_RV32(a0, a1, t0, t1, va_data, LEVEL1)					# function to setup the level1 PTE
+	LA (a0, rvtest_data)								// loads the address of rvtest_data label
+	LI a1, (PTE_A | PTE_D | PTE_U | PTE_X | PTE_W | PTE_R | PTE_V)			// sets the permission bits
+	PTE_SETUP_RV32(a0, a1, t0, t1, va_data, LEVEL1)					// function to setup the level1 PTE
 
 	la a0, rvtest_sig_begin   							// Physical address of signature area
 	li a1, ( PTE_D | PTE_A | PTE_U | PTE_R | PTE_W | PTE_X | PTE_V)			// sets the permissions bits 
@@ -97,7 +97,7 @@ main:
 	sub t0, t0, t1 					        			// (VA-PA) Note: VA > PA 
 	add s11, x13, t0				        			// Translation of Signature reg
 
-	SATP_SETUP_SV32									# set the SATP for virtualization
+	SATP_SETUP_SV32									// set the SATP for virtualization
 
 # ---------------------------------------------------------------------------------------------
 

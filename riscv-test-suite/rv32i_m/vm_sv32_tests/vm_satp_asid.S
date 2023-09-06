@@ -1,10 +1,10 @@
-#################################################################################################           
-# Verification Goal:   Determine by writing one to every bit position in the ASID field, then   # 
-#                      reading back the value in satp to see which bit positions in the ASID 	#
-#                      field hold a one. Show that ASIDLEN is equal to the expected ASIDLEN		#
-#                                                                                               #
-# Description:         ASIDLEN is the number of ASID bits implemented. MAXASID bits for sv32 is #
-#################################################################################################   
+/////////////////////////////////////////////////////////////////////////////////////////////////////          
+// Verification Goal:   Determine by writing one to every bit position in the ASID field, then     // 
+//                      reading back the value in satp to see which bit positions in the ASID 	   //
+//                      field hold a one. Show that ASIDLEN is equal to the expected ASIDLEN	   //
+//                                                                                                 //
+// Description:         ASIDLEN is the number of ASID bits implemented. MAXASID bits for sv32 is 9 //
+/////////////////////////////////////////////////////////////////////////////////////////////////////   
 
 #include "model_test.h"
 
@@ -26,47 +26,31 @@ RVTEST_SIGBASE( x13,signature_x13_1)
 main:
  # ---------------------------------------------------------------------------------------------
 
-#ifdef rvtest_mtrap_routine								// Verification of existance of rvtest_mtrap_routine
+#ifdef rvtest_mtrap_routine					// Verification of existance of rvtest_mtrap_routine
 	LI (a4, 0xceed)
 	RVTEST_SIGUPD(x13,a4)
 #endif
-#ifdef rvtest_strap_routine								// Verification of existance of rvtest_strap_routine
+#ifdef rvtest_strap_routine					// Verification of existance of rvtest_strap_routine
 	LI (a4, 0xbeed)
 	RVTEST_SIGUPD(x13,a4)
 #endif
 	
-	ALL_MEM_PMP          								# set the PMP permissions
-	WRITE_CSR (satp,x0)  								# write satp with all zeros (bare mode)
+	.set EXPECTED_ASID, 0x7FC00000
+	.set ASID_IMPLEMENTED, 0x7FC00000
 
-    li t5, EXPECTED_ASID								# ASID bits expected for CVA6
-    li t0, ASID_IMPLE_CVA6								# ASID bits implemented for CVA6	
-    WRITE_CSR(satp, t0)									# Writes the ASID bits implemented to SATP				
-    READ_CSR(satp, t1)									# READS the ASID bits from the SATP
-    and t1, t1, t5										# Checks the expected ASID bits and Implemented bits
-    beq t1, t5, done									# Jumps to done if equal 
-
-	/******* code *******/
-	/******* code *******/
-	LREG t1, code_bgn_off+0*sv_area_sz(sp)
-	add t2, t1, t0
-	SREG t2, code_bgn_off+1*sv_area_sz(sp)
-
-	/******* data *******/
-	// update save area
-	LREG t1, data_bgn_off+0*sv_area_sz(sp)
-	add  t2, t1,t0
-	SREG t2, data_bgn_off+1*sv_area_sz(sp)
-	//signature
-	LREG t1, sig_bgn_off+0*sv_area_sz(sp)
-	add t2, t1, t0
-	SREG t2, sig_bgn_off+1*sv_area_sz(sp) 
+	LA (t5, EXPECTED_ASID)					// ASID bits expected for CVA6
+	LA (t0, ASID_IMPLEMENTED)				// ASID bits implemented for CVA6	
+	csrw satp, t0						// Writes the ASID bits implemented to SATP				
+	csrr t1, satp						// READS the ASID bits from the SATP
+	and t1, t1, t5						// Checks the expected ASID bits and Implemented bits
+	beq t1, t5, done					// Jumps to done if equal 
 
 sig_up:
 	LI (a4, 0x123)
 	RVTEST_SIGUPD(x13,a4)    						  
 done:
-	LI (t2, 0xabab)								      # Verification if the ASID bits expected equals to Implemented
-	csrw pmpaddr1, t2							      # If in M-mode, this instruction will work otherwise not.
+	LI (t2, 0xabab)						// Verification if the ASID bits expected equals to Implemented
+	csrw pmpaddr1, t2					// If in M-mode, this instruction will work otherwise not.
 	csrr a4, pmpaddr1
 	RVTEST_SIGUPD(x13,a4)
 #endif 
@@ -87,7 +71,7 @@ rvtest_data:
 #ifdef rvtest_strap_routine
 .align 12
 rvtest_slvl1_pg_tbl:
-		RVTEST_PTE_IDENT_MAP
+	RVTEST_PTE_IDENT_MAP
 #endif
 RVTEST_DATA_END
 RVMODEL_DATA_BEGIN

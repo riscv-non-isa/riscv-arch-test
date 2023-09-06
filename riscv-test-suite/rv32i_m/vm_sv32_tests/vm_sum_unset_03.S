@@ -1,12 +1,13 @@
-#################################################################################################    
-# Verification Goal: Test the Execute acces in Supervisor mode for Level1 such that    		#
-#                    (PTE.x = 1, PTE.w = 1, PTE.u=1 and mstatus.SUM=0)                          #
-#		     Execute access to the PTE should raise instruction page fault 		#
-#												#
-# Description: 	     If PTE belongs to user mode i.e. its U permission bit is set (pte.u = 1)	#
-#              	     and m/sstatus.SUM = 0, then accessing that PTE in supervisor mode would   	#
-#		     raise page fault exception of the corresponding access type. 		#
-#################################################################################################     
+//////////////////////////////////////////////////////////////////////////////////////////////////    
+// Verification Goal: Test the Execute acces in Supervisor mode for Level1 such that    	//
+//                    (PTE.x = 1, PTE.w = 1, PTE.u=1 and mstatus.SUM=0)                         //
+//		      Execute access to the PTE should raise instruction page fault 		//
+//												//
+// Description:       If PTE belongs to user mode i.e. its U permission bit is set (pte.u = 1)	//
+//                    and m/sstatus.SUM = 0, then accessing that PTE in supervisor mode would	//
+//		      raise page fault exception of the corresponding access type. 		//
+//////////////////////////////////////////////////////////////////////////////////////////////////        
+     
 #include "model_test.h"
 #include "arch_test.h"
 
