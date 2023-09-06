@@ -1,8 +1,8 @@
 #################################################################################################
-# Verification Goal: Set PTE.V = 0 and test the Read Acces in User mode for Level0				#
-#                    Should raise a load page fault for read access.			                #
-# 														                                        #
-# Description: 		 If PTE does not have Valid (pte.V=0) permission, then accessing it would 	#
+# Verification Goal: Set PTE.V = 0 and test the Read Acces in User mode for Level0		#
+#                    Should raise a load page fault for read access.			        #
+# 												#
+# Description: 	     If PTE does not have Valid (pte.V=0) permission, then accessing it would 	#
 #                    raise page fault exception of the corresponding access type.            	#
 ################################################################################################# 
 
@@ -26,7 +26,7 @@ RVTEST_SIGBASE( x13,signature_x13_1)
 main:
 # ---------------------------------------------------------------------------------------------
 
-#ifdef rvtest_mtrap_routine									        // Verification of existance of rvtest_mtrap_routine
+#ifdef rvtest_mtrap_routine							// Verification of existance of rvtest_mtrap_routine
 	LI a4, 0xceed
 	RVTEST_SIGUPD(x13,a4)
 #endif
@@ -62,7 +62,7 @@ main:
 
                                                                                 // PTE setup for 0x93003114 -> signature_x13_1
 	la a0, rvtest_sig_begin   						// Physical address of signature area
-	li a1, ( PTE_D | PTE_A | PTE_R | PTE_W | PTE_X | PTE_V)                 // sets the permissions bits 
+	li a1, ( PTE_D | PTE_A | PTE_U | PTE_R | PTE_W | PTE_X | PTE_V)         // sets the permissions bits 
 	PTE_SETUP_RV32(a0, a1, t0, t1, sig_data, LEVEL0) 			// PTE Setup for signature area address at pgtbl0
 
 	LI (t0, sig_data)                                                       
@@ -71,42 +71,65 @@ main:
 	add s11, x13, t0				        		// Translation of Signature reg
 
         SATP_SETUP_SV32                                                         // set the SATP for virtualization
+
 	/* Save Virtual addresses in of Code and Data 
 	in their respective S-mode save area */
 
-	/****** code ******/
-	LI (t0, va)                                                             // load the virtual address of vm_en in t0
-	LA (t1, pa)                                                             // load the physical address of vm_en in t1
-	sub t0, t0, t1                                                          // (VA-PA) Note: VA > PA 
-	csrr sp, mscratch                                                       // load the value of mscratch in sp
-	add t1,sp,t0                                                            // add the offset to the base address of save area
-	csrw sscratch, t1                                                       // write the address of save area in sscratch
-	
-	LREG t1, code_bgn_off+0*sv_area_sz(sp)                                  // load the address of code_bgn_off in t1
-	add t2, t1, t0                                                          // add the offset to the base address of save area
-	SREG t2, code_bgn_off+1*sv_area_sz(sp)                                  // write the address of code_bgn_off in sscratch
-        SREG t2, code_bgn_off+2*sv_area_sz(sp)                                  // write the address of code_bgn_off in sscratch for user  access      
-
-	/******* data *******/
-	// update save area
-	LREG t1, data_bgn_off+0*sv_area_sz(sp)                                   // load the address of data_bgn_off in t1
-	add  t2, t1,t0                                                           // add the offset to the base address of save area
-	SREG t2, data_bgn_off+1*sv_area_sz(sp)                                   // write the address of data_bgn_off in sscratch
-        SREG t2, data_bgn_off+2*sv_area_sz(sp)                                   // write the address of data_bgn_off in sscratch for user access
-	//signature
-	LREG t1, sig_bgn_off+0*sv_area_sz(sp)                                    // load the address of sig_bgn_off in t1
-	add t2, t1, t0                                                           // add the offset to the base address of save area  
-	SREG t2, sig_bgn_off+1*sv_area_sz(sp)                                    // write the address of sig_bgn_off in sscratch
-        SREG t2, sig_bgn_off+2*sv_area_sz(sp)                                    // write the address of sig_bgn_off in sscratch for user access
-	sfence.vma                                                               // flush the TLB       
-	RVTEST_GOTO_LOWER_MODE	Umode		                   	         // Switching to U mode
+ 	/****** code ******/
+        LI (t0, va)                                                             // load the virtual address of vm_en in t0
+        LA (t1, pa)                                                             // load the physical address of vm_en in t1
+        sub t0, t0, t1                                                          // (VA-PA) Note: VA > PA 
+        csrr sp, mscratch                                                       // load the value of mscratch in sp
+        add t1,sp,t0                                                            // add the offset to the base address of save area
+        csrw sscratch, t1                                                       // write the address of save area in sscratch
+        
+        LREG t1, code_bgn_off+0*sv_area_sz(sp)                                  // load the address of code_bgn_off in t1
+        add t2, t1, t0                                                          // add the offset to the base address of save area
+        SREG t2, code_bgn_off+1*sv_area_sz(sp)                                  // write the address of code_bgn_off in sscratch
+        SREG t2, code_bgn_off+2*sv_area_sz(sp)                                  // write the address of code_bgn_off in sscratch
+        /******* data *******/
+        // update save area
+        LI (t0, va_data)                                                        // load the virtual address of rvtest_data in t0
+        LA (t1, rvtest_data)                                                    // load the physical address of rvtest_data in t1
+        sub t0, t0, t1                                                          // (VA-PA) Note: VA > PA 
+        LREG t1, data_bgn_off+0*sv_area_sz(sp)                                  // load the address of data_bgn_off in t1
+        add  t2, t1,t0                                                          // add the offset to the base address of save area
+        SREG t2, data_bgn_off+1*sv_area_sz(sp)                                  // write the address of data_bgn_off in sscratch
+        SREG t2, data_bgn_off+2*sv_area_sz(sp)                                  // write the address of data_bgn_off in sscratch
+        //signature
+        LI (t0, sig_data)                                                       // load the virtual address of signature_x13_1 in t0
+        LA (t1, signature_x13_1)                                                // load the physical address of signature_x13_1 in t1
+        sub t0, t0, t1                                                          // (VA-PA) Note: VA > PA 
+        LREG t1, sig_bgn_off+0*sv_area_sz(sp)                                   // load the address of sig_bgn_off in t1
+        add t2, t1, t0                                                          // add the offset to the base address of save area
+        SREG t2, sig_bgn_off+1*sv_area_sz(sp)                                   // write the address of sig_bgn_off in sscratch
+        SREG t2, sig_bgn_off+2*sv_area_sz(sp)                                   // write the address of sig_bgn_off in sscratch
+        // vmem
+        LI (t0, va_data)                                                        // load the virtual address of rvtest_data in t0
+        LA (t1, rvtest_data)                                                    // load the physical address of rvtest_data in t1
+        sub t0, t0, t1                                                          // (VA-PA) Note: VA > PA
+        LREG t1, vmem_bgn_off+0*sv_area_sz(sp)                                  // load the address of vmem_bgn_off in t1
+        add t2, t1, t0                                                          // add the offset to the base address of save area
+        SREG t2, vmem_bgn_off+1*sv_area_sz(sp)                                  // write the address of vmem_bgn_off in sscratch
+        SREG t2, vmem_bgn_off+2*sv_area_sz(sp)                                  // write the address of vmem_bgn_off in sscratch
+        sfence.vma                                                              // flush the TLB
+        RVTEST_GOTO_LOWER_MODE  Umode                                           // Switching to S mode
 vm_en:
-	LA (t0, va_data)
-	LREG x2, 0(t0)
+	LI (a4, 0xdead)
+	RVTEST_SIGUPD(s11,a4)                                                   // Verification of virtualization enabeled
+        
+	LA (t0, va_data)                                                        
+	LREG x2, 0(t0)                                                          // test the load access (should raise an exception)
+        nop                                             
+        
+	LI (a4, 0xbeef)                                                         // Verification of coming back from trap handler 
+	RVTEST_SIGUPD(s11,a4)
 
-	RVTEST_GOTO_MMODE		                               				// Switching back to M mode
+	RVTEST_GOTO_MMODE		                                        // Switching back to M mode
+        
+        nop
 	LI (a4, 0x123)
-	RVTEST_SIGUPD(x13,a4)
+	RVTEST_SIGUPD(x13,a4)                                                   // Verification of virtualization disabled
 #endif
 
  # ---------------------------------------------------------------------------------------------

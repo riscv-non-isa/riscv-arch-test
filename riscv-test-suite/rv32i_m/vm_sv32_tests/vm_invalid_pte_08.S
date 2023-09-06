@@ -112,13 +112,22 @@ main:
 	RVTEST_GOTO_LOWER_MODE	Smode		                                // Switching to S mode
 
 vm_en:
+	LI (a4, 0xdead)
+	RVTEST_SIGUPD(s11,a4)                                                   // Verification of virtualization enabeled
+
 	LA (t0, va_data)
-    LI (t1, ALL_F_S)
-    SREG t1, 0(t0)
+        LI (t1, ALL_F_S)
+        SREG t1, 0(t0)                                                          // test the store access (should raise an exception)
+	nop
+
+	LI (a4, 0xbeef)                                                         // Verification of coming back from trap handler 
+	RVTEST_SIGUPD(s11,a4)
 
 	RVTEST_GOTO_MMODE		                                        // Switching back to M mode
+        
+        nop
 	LI (a4, 0x123)
-	RVTEST_SIGUPD(x13,a4)
+	RVTEST_SIGUPD(x13,a4)                                                   // Verification of virtualization disabled
 #endif
 
  # ---------------------------------------------------------------------------------------------

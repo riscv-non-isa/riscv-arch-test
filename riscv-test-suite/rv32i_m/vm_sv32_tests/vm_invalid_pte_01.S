@@ -1,13 +1,12 @@
-////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/// Verification Goal: Verification Goal: Set PTE.V = 0 and test the Read Acces in Supervisor mode for  ////
-///                    Level1 Should raise a load page fault for read access.                           ////                        
-///                                                                                                     ////
-/// Description:       If PTE does not have Valid (pte.V=0) permission, then accessing it would	        ////
-///                    raise page fault exception of the corresponding access type.           	        ////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////
+# ######################################################################################################
+#  Verification Goal: Verification Goal: Set PTE.V = 0 and test the Read Acces in Supervisor mode for  #
+#                    Level1 Should raise a load page fault for read access.                            #                        
+#                                                                                                      #
+# Description:       If PTE does not have Valid (pte.V=0) permission, then accessing it would	       #
+#                    raise page fault exception of the corresponding access type.           	       #
+# ######################################################################################################
 
 #include "model_test.h"
-#include "custom_macros1.h"
 #include "arch_test.h"
 
 RVTEST_ISA("RV32I_Zicsr")
@@ -38,10 +37,15 @@ main:
 	ALL_MEM_PMP          						        // set the PMP permissions
 	WRITE_CSR (satp,x0)  						        // write satp with all zeros (bare mode)
 
+        li s9, 0x34
+        la s9, rvtest_sig_begin
+        la s9, signature_x13_1
+        la s9, sig_begin_canary
+
 	.set va,       0x90000000
 	.set pa,       0x80000000 
 	.set va_data,  0x91000000
-        .set sig_data, 0x93003114                                               // virtual address of signature_x13_1
+        .set sig_data, 0x93003110                                               // virtual address of signature_x13_1
                                                                                 // PTE setup for sig_data -> rvtest_slvl1_pg_tbl*/
 	la a0, rvtest_slvl1_pg_tbl   		                                // loads the base address of the pg_tbl0        				
 	li a1, (PTE_V)                                                          // sets the permissions bits                
@@ -108,12 +112,22 @@ main:
 	RVTEST_GOTO_LOWER_MODE	Smode		                                // Switching to S mode
 
 vm_en:
+	LI (a4, 0xdead)
+	RVTEST_SIGUPD(s11,a4)                                                   // Verification of virtualization enabeled
+        
 	LA (t0, va_data)                                                        
-	LREG x2, 0(t0)                                                          // test the load access
+	LREG x2, 0(t0)                                                          // test the load access (should raise an exception)
+        nop                                             
+        
+	LI (a4, 0xbeef)                                                         // Verification of coming back from trap handler 
+	RVTEST_SIGUPD(s11,a4)
 
 	RVTEST_GOTO_MMODE		                                        // Switching back to M mode
+        
+        nop
 	LI (a4, 0x123)
-	RVTEST_SIGUPD(x13,a4)
+	RVTEST_SIGUPD(x13,a4)                                                   // Verification of virtualization disabled
+
 #endif
 
  # ---------------------------------------------------------------------------------------------

@@ -41,7 +41,7 @@ main:
 	.set va,      0x90000000
 	.set pa,      0x80000000 
 	.set va_data, 0x91000000
-        .set sig_data, 0x93003114                                               // virtual address of signature_x13_1
+        .set sig_data,0x93003110                                                // virtual address of signature_x13_1
                                                                                 // PTE setup for sig_data -> rvtest_slvl1_pg_tbl*/
 	la a0, rvtest_slvl1_pg_tbl   		                                // loads the base address of the pg_tbl0        				
 	li a1, (PTE_V)                                                          // sets the permissions bits                
@@ -108,13 +108,23 @@ main:
 	RVTEST_GOTO_LOWER_MODE	Smode		                                // Switching to S mode
 
 vm_en:
+
+	LI (a4, 0xdead)
+	RVTEST_SIGUPD(s11,a4)                                                   // Verification of virtualization enabeled
+
 	LA (t0, va_data)
         LI (t1, ALL_F_S)
-        SREG t1, 0(t0)                                                          // test the store access 
+        SREG t1, 0(t0)                                                          // test the store access (should raise an exception)
+	nop
+
+	LI (a4, 0xbeef)                                                         // Verification of coming back from trap handler 
+	RVTEST_SIGUPD(s11,a4)
 
 	RVTEST_GOTO_MMODE		                                        // Switching back to M mode
+        
+        nop
 	LI (a4, 0x123)
-	RVTEST_SIGUPD(x13,a4)
+	RVTEST_SIGUPD(x13,a4)                                                   // Verification of virtualization disabled
 #endif
 
  # ---------------------------------------------------------------------------------------------
