@@ -68,8 +68,8 @@ main:
 
 #------------------------------------------------------PTE setup--------------------------------------------------------------
     #PTE SETUP at level 1 -- Base address of PGtable stored in the PTE
-	LA a0, rvtest_slvl1_pg_tbl
-    LI a1, (PTE_V)                                          # Valid permission only--> point at level 0 page table
+	LA a0, rvtest_slvl1_pg_tbl                              
+    LI a1, (PTE_V)                                          // Valid permission only--> point at level 0 page table
 	PTE_SETUP_RV32(a0, a1, t0, t1, va, 1)
 
     #PTE SETUP at level 0 -- rvtest_entry_point physical address stored
