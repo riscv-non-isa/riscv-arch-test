@@ -1,7 +1,7 @@
 # ##############################################################################################           
 # Verification Goal: Test the Write Acces in Supervisor mode for Level1,Write access should be #
-#					 successful (PTE.w = 1 )  			       #
-# Discription: 		 If PTE belongs to supervisor mode i.e. its U permission bit is clear  #
+#		     successful (PTE.w = 1 )  						       #
+# Discription:       If PTE belongs to supervisor mode i.e. its U permission bit is clear      #
 #                    (pte.u = 0),then accessing that PTE in supervisor mode should be          #
 #                    successful if the corresponding (r,w,x) permission of PTE is granted.     #   
 #                    Otherwise raise a page fault exception of the corresponding access type   #   
@@ -109,14 +109,21 @@ main:
 	RVTEST_GOTO_LOWER_MODE	Smode		                                // Switching to S mode
 
 vm_en:
-	LA (t0, va_data)
-        LI (t1, ALL_F_S)
-        SREG t1, 0(t0)                                                          // test the store access
-        LREG t1, 0(t0)
+	LI (a4, 0xdead)
+	RVTEST_SIGUPD(s11,a4)                                                   // Verification of virtualization enabeled
+        
+	LA (t0, va_data)                                                        
+	SREG x2, 0(t0)                                                          // test the store access 
+        nop                                             
+        
+	LI (a4, 0xbeef)                                                         // Verification of coming back from trap handler 
+	RVTEST_SIGUPD(s11,a4)
 
 	RVTEST_GOTO_MMODE		                                        // Switching back to M mode
+        
+        nop
 	LI (a4, 0x123)
-	RVTEST_SIGUPD(x13,a4)
+	RVTEST_SIGUPD(x13,a4)                                                   // Verification of virtualization disabled
 #endif
 
  # ---------------------------------------------------------------------------------------------
