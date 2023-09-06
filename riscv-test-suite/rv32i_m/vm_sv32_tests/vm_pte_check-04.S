@@ -1,11 +1,20 @@
-#########################################################################################################
-# Verification Goal: - Remove read PMP permission of translated PA and test the Execute access.		#
-#		     - For page table 1 and access in supervisor mode.	 			        #
-#                    - There should be no fault                                                    	#
-#                                                                                                	#
-# Description:       If PTE does not have (r,w,x) PMP permissions, then accessing it would raise 	#
-#	             access fault exception of the corresponding access type. 	 			#
-#########################################################################################################
+// -----------
+// Copyright (c) 2020. RISC-V International. All rights reserved.
+// SPDX-License-Identifier: BSD-3-Clause
+// -----------
+//
+// This test belongs to the test plan for RISC-V Privilege Arch Compliance developed by 10xEngineers
+// which can be found here: https://docs.google.com/spreadsheets/d/1R7oxv12olrvQ9nKPJvSchSp-wxGxkUVXK82Dwk_ibEY/edit?pli=1//gid=1303473646
+//
+// This assembly file tests access to PTE in S mode.
+// As PTE does not have PMP permissions so there should be access fault exception in S mode.
+//
+/* In this test we are giving PMP RWX permissions to the code and data sections but there are no PMP permissions
+   given to the page table level 1  and we are setting PTE for vm_en in Page table 1 with permission bits reserved beside that we are
+   also setting PTE for rvtest_data in Page table 1 with permission bits reserved and then we are trying to
+   access the rvtest_data section by its virtual address from page table level 0 in S mode as PTE does not have execute PMP permissions
+   So,there should be no fault as there is nothing to execute on the PTE section.
+*/
 
 #include "model_test.h"
 #include "arch_test.h"

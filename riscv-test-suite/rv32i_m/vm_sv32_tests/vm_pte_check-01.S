@@ -12,8 +12,8 @@
 /* In this test we are giving PMP RWX permissions to the code and data sections but there are no PMP permissions
    given to the page table level 0  and we are setting PTE for vm_en in Page table 0 with permission bits reserved beside that we are
    also setting PTE for rvtest_data in Page table 0 with permission bits reserved and then we are trying to
-   access the rvtest_data section by its virtual address from page table level 0 in S mode as PTE does not have PMP permissions
-   So,there should be access fault exception.
+   access the rvtest_data section by its virtual address from page table level 0 in S mode as PTE does not have execute PMP permissions
+   So,there should be no fault as there is nothing to execute on the PTE section.
 */
 #include "model_test.h"
 #include "arch_test.h"
@@ -68,10 +68,10 @@ main:
     srli t2, t2, PMP_SHIFT                                  // Right shift the address of rvtest_data label by PMP_Shift(2)
     ori t2, t2, 0                                           // Selects the range of 4kB
     
-	WRITE_CSR (pmpaddr3, t2)		            // Region 4 for the pmp permission
+    WRITE_CSR (pmpaddr3, t2)		                    // Region 4 for the pmp permission
     LI(t2, 0x1F1F1B1F)				            // Region2: NAPOT with no X PMP Permissions, Region1,3,4: NAPOT with RWX PMP Permissions
     WRITE_CSR (pmpcfg0, t2)                                 // Write PMP Regions Configration          
-	WRITE_CSR (satp,x0)  			            // SATP bare mode
+    WRITE_CSR (satp,x0)  			            // SATP bare mode
 
 
 ///////////////////////////////// PTE SETUP /////////////////////////////////////////////// 

@@ -123,11 +123,21 @@ main:
         RVTEST_GOTO_LOWER_MODE Umode                                            // Switching to U mode
 
 vm_en:
-	LA (t0, va_data)                                                        // Loading the virtual address of rvtest_data in t0 register
-	SREG x2, 0(t0)		                                                // Storing the value from x2 register to rvtest_data
-    RVTEST_GOTO_MMODE                                                           // Switching back to M mode
-    LI(a4, 0x123)                                                               // Loading the 0x123 value in a4 register
-    RVTEST_SIGUPD(x13, a4)                                                      // Updating the signature register x13 with the value in a4 register
+	LI (a4, 0xdead)
+	RVTEST_SIGUPD(s11,a4)                                                   // Verification of virtualization enabeled
+        
+	LA (t0, va_data)                                                        
+	SREG x2, 0(t0)                                                          // test the load access (should raise an exception)
+        nop                                             
+        
+	LI (a4, 0xbeef)                                                         // Verification of coming back from trap handler 
+	RVTEST_SIGUPD(s11,a4)
+
+	RVTEST_GOTO_MMODE		                                        // Switching back to M mode
+        
+        nop
+	LI (a4, 0x123)
+	RVTEST_SIGUPD(x13,a4)                                                   // Verification of virtualization disabled
 #endif
 
 RVTEST_CODE_END

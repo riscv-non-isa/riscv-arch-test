@@ -12,8 +12,8 @@
 /* In this test we are giving PMP RWX permissions to the code and data sections but there are no PMP permissions
    given to the page table level 0  and we are setting PTE for vm_en in Page table 0 with permission bits reserved beside that we are
    also setting PTE for rvtest_data in Page table 0 with permission bits reserved and then we are trying to
-   access the rvtest_data section by its virtual address from page table level 0 in S mode as PTE does not have PMP permissions
-   So,there should be access fault exception.
+   read the PTE section by its virtual address from page table level 0 in S mode as PTE does not have PMP permissions
+   So,there should be Access Fault exception.
 */
 #include "model_test.h"
 #include "arch_test.h"
@@ -88,49 +88,50 @@ main:
     LA (a0, rvtest_data)                                    // loads the pysical address of label rvtest_data in a0
     LI a1, (PTE_A | PTE_D | PTE_X | PTE_W | PTE_R | PTE_V)  // sets the permission bits 
     PTE_SETUP_RV32(a0, a1, t0, t1, va_data, LEVEL0)         // setup the PTE for level0
+//-----------------------------------------------------------------------------------------------------------------------------
+    //PTE SETUP at level 0 -- rvtest_slvl1_pg_tbl physical address stored
+	LA (a0, rvtest_slvl1_pg_tbl)
+	LI a1, (PTE_A | PTE_D | PTE_X | PTE_W | PTE_R | PTE_V)
+	PTE_SETUP_RV32(a0, a1, t0, t1, pte_data, 0)
 
 //---------------satp mode setup-----------------//
     SATP_SETUP_SV32                             //
 //-----------------------------------------------//
 
-///////////////////////////////// SAVE AREA /////////////////////////////////////////////// 
+
+
+
+//--------------------------------------------------Save area code-------------------------------------------------------------
     /* Save Virtual addresses in of Code and Data 
-       in their respective S-mode save area */
-
-    // ****** code ******
-    LI(t0, va)                                               // Loading the virtual address of rvtest_entry_point in t0 register
-    LA(t1, pa)                                               // Loading the physical address of rvtest_entry_point in t1 register
-    sub t0, t0, t1                                           // (VA-PA) Note: VA > PA
+    in their respective S-mode save area */    
+    /****** code ******/
+    LI (t0, va)                                              // Loading the virtual address of rvtest_entry_point in t0 register                                      
+    LI (t1, pa)                                              // Loading the virtual address of rvtest_entry_point
+    sub t0, t0, t1                                           // (VA-PA) Note: VA > PA 
     csrr sp, mscratch                                        // Loading the mscratch register in sp register
-    add t1, sp, t0                                           // Adding the offset to the sp register
-    csrw sscratch, t1                                        // Saving the address of rvtest_entry_point in sscratch registe
-    LREG t1, code_bgn_off + 0 * sv_area_sz(sp)               // Loading the address of code_bgn_off in t1 register
+    add t1,sp,t0                                             // Adding the offset to the sp register
+    csrw sscratch, t1                                        // Saving the address of rvtest_entry_point in sscratch register    
+    LREG t1, code_bgn_off+0*sv_area_sz(sp)                   // Loading the address of code_bgn_off in t1 register
     add t2, t1, t0                                           // Adding the offset to the t1 register
-    SREG t2, code_bgn_off + 1 * sv_area_sz(sp)               // Storing the value from t2 register to code_bgn_off
-    SREG t2, code_bgn_off + 1 * sv_area_sz(sp)               // Storing the value from t2 register to code_bgn_off
-
-    // ******* data *******
-    // update save area
-    LREG t1, data_bgn_off + 0 * sv_area_sz(sp)               // Loading the address of data_bgn_off in t1 register
+    SREG t2, code_bgn_off+1*sv_area_sz(sp)                   // Storing the value from t2 register to code_bgn_off    
+    /******* data *******/    
+    // update save area    
+    LREG t1, data_bgn_off+0*sv_area_sz(sp)                   // Storing the value from t1 register to data_bgn_off
+    add  t2, t1,t0                                           // Adding the offset to the t1 register
+    SREG t2, data_bgn_off+1*sv_area_sz(sp)                   // Storing the value from t2 register to data_bgn_off
+    //signature    
+    LREG t1, sig_bgn_off+0*sv_area_sz(sp)                    // Storing the value from t1 register to sig_bgn_off
     add t2, t1, t0                                           // Adding the offset to the t1 register
-    SREG t2, data_bgn_off + 1 * sv_area_sz(sp)               // Storing the value from t2 register to data_bgn_off
-    SREG t2, data_bgn_off + 1 * sv_area_sz(sp)               // Storing the value from t2 register to data_bgn_off
-
-    // signature
-    LREG t1, sig_bgn_off + 0 * sv_area_sz(sp)                // Loading the address of sig_bgn_off in t1 register
-    add t2, t1, t0                                           // Adding the offset to the t1 register
-    SREG t2, sig_bgn_off + 1 * sv_area_sz(sp)                // Storing the value from t2 register to sig_bgn_off
-    SREG t2, sig_bgn_off + 1 * sv_area_sz(sp)                // Storing the value from t2 register to sig_bgn_off
-
-    sfence.vma                                               // sfence.vma instruction
+    SREG t2, sig_bgn_off+1*sv_area_sz(sp)                    // Storing the value from t2 register to sig_bgn_off    
+    sfence.vma
     RVTEST_GOTO_LOWER_MODE Smode                             // Switching to S mode
 
 vm_en:
-    LA (t0, va_data)                                         //Virtual address of rvtest_data
-    SREG x2, 0(t0)                                           //write at base address of rvtest_data
-    RVTEST_GOTO_MMODE                                        // Switching back to M mode
-    LI(a4, 0x123)                                            // Loading the 0x123 value in a4 register
-    RVTEST_SIGUPD(x13, a4)                                   // Updating the signature register x13 with the value in a4 register
+	LA t0,pte_data                                       // Virtual address of rvtest_data
+	LREG x2, 0(t0)                                       // write at base address of rvtest
+	RVTEST_GOTO_MMODE		                     // Switching back to M mode
+	LI (a4, 0x123)
+	RVTEST_SIGUPD(x13,a4)
 #endif
 
 RVTEST_CODE_END
