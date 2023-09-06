@@ -43,33 +43,33 @@ main:
 	.set va_data,	0x90011000                  #           rvtest_data Virtual address set at level 0
 	.set pte_data,	0x90031000             		#
 #-----------------------------------------------#
-    LA(t2, pa)                          					# Loads the address of PA                
-    srli t2, t2, PMP_SHIFT									# Right shift the PA by PMP_Shift(2) 
-    ori t2, t2, 0x1FF                                       # Selects the range of 4kB    
-    WRITE_CSR (pmpaddr0, t2)    	                        # Region 1 for the pmp permissions   
-    LA(t2, rvtest_slvl1_pg_tbl )                            # loads the base address of level1 4kbpage table                 
-    srli t2, t2, PMP_SHIFT 									# Right shift the address of level 1 page table  by PMP_Shift(2)		
-    ori t2, t2, 0x1FF                                       # Selects the range of 4kB
+    LA(t2, pa)                          					// Loads the address of PA                
+    srli t2, t2, PMP_SHIFT									// Right shift the PA by PMP_Shift(2) 
+    ori t2, t2, 0x1FF                                       // Selects the range of 4kB    
+    WRITE_CSR (pmpaddr0, t2)    	                        // Region 1 for the pmp permissions   
+    LA(t2, rvtest_slvl1_pg_tbl )                            // loads the base address of level1 4kbpage table                 
+    srli t2, t2, PMP_SHIFT 									// Right shift the address of level 1 page table  by PMP_Shift(2)		
+    ori t2, t2, 0x1FF                                       // Selects the range of 4kB
 												 	 										
-    WRITE_CSR (pmpaddr1, t2)                                # Region 2 for the pmp permission  
-    LA( t2, rvtest_Sroot_pg_tbl)                            # loads the base address of root page table               
-    srli t2, t2, PMP_SHIFT									# Right shift the address of root page table by PMP_Shift(2)
-    ori t2, t2, 0x1FF                                     	# Selects the range of 4kB
+    WRITE_CSR (pmpaddr1, t2)                                // Region 2 for the pmp permission  
+    LA( t2, rvtest_Sroot_pg_tbl)                            // loads the base address of root page table               
+    srli t2, t2, PMP_SHIFT									// Right shift the address of root page table by PMP_Shift(2)
+    ori t2, t2, 0x1FF                                     	// Selects the range of 4kB
   
-    WRITE_CSR ( pmpaddr2, t2)                               # Region 3 for the pmp permission            
-    LA( t2, rvtest_data )                                   # loads the base address of rvtest_data label        
-    srli t2, t2, PMP_SHIFT                                  # Right shift the address of rvtest_data label by PMP_Shift(2)
-    ori t2, t2, 0                                 			# Selects the range of 4kB
+    WRITE_CSR ( pmpaddr2, t2)                               // Region 3 for the pmp permission            
+    LA( t2, rvtest_data )                                   // loads the base address of rvtest_data label        
+    srli t2, t2, PMP_SHIFT                                  // Right shift the address of rvtest_data label by PMP_Shift(2)
+    ori t2, t2, 0                                 			// Selects the range of 4kB
     
-	WRITE_CSR (pmpaddr3, t2)								# Region 4 for the pmp permission
-    LI(t2, 0x1F1D1F1F)										# Region3: NAPOT with no W PMP Permissions, Region1,2,4: NAPOT with RWX PMP Permissions
-    WRITE_CSR (pmpcfg0, t2)                                 # Write PMP Regions Configration          
-	WRITE_CSR (satp,x0)  								    # SATP bare mode
+	WRITE_CSR (pmpaddr3, t2)								// Region 4 for the pmp permission
+    LI(t2, 0x1F1D1F1F)										// Region3: NAPOT with no W PMP Permissions, Region1,2,4: NAPOT with RWX PMP Permissions
+    WRITE_CSR (pmpcfg0, t2)                                 // Write PMP Regions Configration          
+	WRITE_CSR (satp,x0)  								    // SATP bare mode
 
 #------------------------------------------------------PTE setup--------------------------------------------------------------
     #PTE SETUP at level 1 -- Base address of PGtable stored in the PTE
-	LA a0, rvtest_slvl1_pg_tbl
-    LI a1, (PTE_V)                                          # Valid permission only--> point at level 0 page table
+	LA a0, rvtest_slvl1_pg_tbl                              
+    LI a1, (PTE_V)                                          // Valid permission only--> point at level 0 page table
 	PTE_SETUP_RV32(a0, a1, t0, t1, va, 1)
 
     #PTE SETUP at level 0 -- rvtest_entry_point physical address stored
@@ -95,27 +95,31 @@ main:
 	/* Save Virtual addresses in of Code and Data 
 	in their respective S-mode save area */
 
-	/****** code ******/
-	LI (t0, va)
-	LI (t1, pa)
-	sub t0, t0, t1 // (VA-PA) Note: VA > PA 
-	csrr sp, mscratch
-	add t1,sp,t0
-	csrw sscratch, t1 
-	
-	LREG t1, code_bgn_off+0*sv_area_sz(sp)
-	add t2, t1, t0
-	SREG t2, code_bgn_off+2*sv_area_sz(sp)
+    // ****** code ******
+    LI(t0, va)        // Loading the virtual address of rvtest_entry_point in t0 register
+    LA(t1, pa)        // Loading the physical address of rvtest_entry_point in t1 register
+    sub t0, t0, t1    // (VA-PA) Note: VA > PA
+    csrr sp, mscratch // Loading the mscratch register in sp register
+    add t1, sp, t0    // Adding the offset to the sp register
+    csrw sscratch, t1 // Saving the address of rvtest_entry_point in sscratch register
 
-	/******* data *******/
-	// update save area
-	LREG t1, data_bgn_off+0*sv_area_sz(sp)
-	add  t2, t1,t0
-	SREG t2, data_bgn_off+2*sv_area_sz(sp)
-	//signature
-	LREG t1, sig_bgn_off+0*sv_area_sz(sp)
-	add t2, t1, t0
-	SREG t2, sig_bgn_off+2*sv_area_sz(sp) 
+    LREG t1, code_bgn_off + 0 * sv_area_sz(sp)          // Loading the address of code_bgn_off in t1 register
+    add t2, t1, t0                                      // Adding the offset to the t1 register
+    SREG t2, code_bgn_off + 1 * sv_area_sz(sp)          // Storing the value from t2 register to code_bgn_off
+    SREG t2, code_bgn_off + 2 * sv_area_sz(sp)          // Storing the value from t2 register to code_bgn_off
+
+    // ******* data *******
+    // update save area
+    LREG t1, data_bgn_off + 0 * sv_area_sz(sp)          // Loading the address of data_bgn_off in t1 register
+    add t2, t1, t0                                      // Adding the offset to the t1 register
+    SREG t2, data_bgn_off + 1 * sv_area_sz(sp)          // Storing the value from t2 register to data_bgn_off
+    SREG t2, data_bgn_off + 2 * sv_area_sz(sp)          // Storing the value from t2 register to data_bgn_off
+
+    // signature
+    LREG t1, sig_bgn_off + 0 * sv_area_sz(sp)           // Loading the address of sig_bgn_off in t1 register
+    add t2, t1, t0                                      // Adding the offset to the t1 register
+    SREG t2, sig_bgn_off + 1 * sv_area_sz(sp)           // Storing the value from t2 register to sig_bgn_off
+    SREG t2, sig_bgn_off + 2 * sv_area_sz(sp)           // Storing the value from t2 register to sig_bgn_off
 
 	sfence.vma
 #-----------------------------------------------------------------------------------------------------------------------------

@@ -14,7 +14,6 @@
    by its virtual address from page table level 0 in U mode as PTE.U=0 So, there should be fetch page fault.
 */
 #include "model_test.h"
-#include "custom_macros1.h"
 #include "arch_test.h"
 
 RVTEST_ISA("RV32I_Zicsr")
@@ -75,23 +74,23 @@ main:
     add t1, sp, t0    // Adding the offset to the sp register
     csrw sscratch, t1 // Saving the address of rvtest_entry_point in sscratch register
 
-    LREG t1, code_bgn_off + 0 * sv_area_sz(sp)
-    add t2, t1, t0
-    SREG t2, code_bgn_off + 1 * sv_area_sz(sp)
-    SREG t2, code_bgn_off + 2 * sv_area_sz(sp)
+    LREG t1, code_bgn_off + 0 * sv_area_sz(sp) // Loading the address of code_bgn_off in t1 register
+    add t2, t1, t0                             // Adding the offset to the t1 register
+    SREG t2, code_bgn_off + 1 * sv_area_sz(sp) // Saving the address of code_bgn_off in t2 register
+    SREG t2, code_bgn_off + 2 * sv_area_sz(sp) // Saving the address of code_bgn_off in t2 register
 
     // ******* data *******
     // update save area
-    LREG t1, data_bgn_off + 0 * sv_area_sz(sp)
-    add t2, t1, t0
-    SREG t2, data_bgn_off + 1 * sv_area_sz(sp)
-    SREG t2, data_bgn_off + 2 * sv_area_sz(sp)
+    LREG t1, data_bgn_off + 0 * sv_area_sz(sp) // Loading the address of data_bgn_off in t1 register
+    add t2, t1, t0                             // Adding the offset to the t1 register
+    SREG t2, data_bgn_off + 1 * sv_area_sz(sp) // Saving the address of data_bgn_off in t2 register
+    SREG t2, data_bgn_off + 2 * sv_area_sz(sp) // Saving the address of data_bgn_off in t2 register
 
     // signature
-    LREG t1, sig_bgn_off + 0 * sv_area_sz(sp)
-    add t2, t1, t0
-    SREG t2, sig_bgn_off + 1 * sv_area_sz(sp)
-    SREG t2, sig_bgn_off + 2 * sv_area_sz(sp)
+    LREG t1, sig_bgn_off + 0 * sv_area_sz(sp)  // Loading the address of sig_bgn_off in t1 register
+    add t2, t1, t0                             // Adding the offset to the t1 register
+    SREG t2, sig_bgn_off + 1 * sv_area_sz(sp)  // Saving the address of sig_bgn_off in t2 register
+    SREG t2, sig_bgn_off + 2 * sv_area_sz(sp)  // Saving the address of sig_bgn_off in t2 register
 
     sfence.vma                    // sfence.vma instruction
     RVTEST_GOTO_LOWER_MODE Umode  // Switching to U mode
