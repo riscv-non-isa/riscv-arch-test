@@ -11,8 +11,8 @@
 //
 /* In this test we are setting satp Mode=Bare and the remaining fields are zero and 
    other encodings for the remaining field in satp are reserved. And we are trying to access the vm_en section
-   by its virtual address from page table level 0 as in this case we are setting (VA!=PA) So there should be fetch Access fault in U mode
-   as 0x81000000 not in the physical memory.
+   by its virtual address from page table level 0 as in this case we are setting (VA!=PA) So there should be illegal instruction fault in U mode
+   as 0x81000000 has no legal instruction in the physical memory.
 */
 #include "model_test.h"
 #include "arch_test.h"
@@ -45,7 +45,6 @@ main:
                                         
     .set va,      0x81000000       	  	                                    // rvtest_entry_point  Virtual address
     .set pa,      0x80000000           	                                    // rvtest_entry_point physical address
-    .set va_data, 0x91000000		                                        // rvtest_data Virtual address set at level 1
 
 ///////////////////////////////// PTE SETUP /////////////////////////////////////////////// 
     // PTE Setup at level 1 to point to the PTE Setup at level 0
@@ -56,10 +55,6 @@ main:
     LA (a0, pa)                                                             // loads the address in a0
     LI a1, ( PTE_D | PTE_A | PTE_W | PTE_R | PTE_V | PTE_U | PTE_X| PTE_U)  // sets the permission bits
     PTE_SETUP_RV32(a0, a1, t0, t1, va, LEVEL0)                              // setup the PTE for level 0
-    // PTE SETUP at level 0 -- rvtest_data (0x91000000 -> rvtest_data)
-    LA (a0, rvtest_data)                                                    // loads the pysical address of label rvtest_data in a0
-    LI a1, ( PTE_D | PTE_A | PTE_W | PTE_R | PTE_V | PTE_U | PTE_X| PTE_U)  // sets the permission bits 
-    PTE_SETUP_RV32(a0, a1, t0, t1, va_data, LEVEL0)                         // setup the PTE for level0
 
 ///////////////////////////////// SAVE AREA /////////////////////////////////////////////// 
     /* Save Virtual addresses in of Code and Data 
