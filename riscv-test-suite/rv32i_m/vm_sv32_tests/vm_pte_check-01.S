@@ -78,7 +78,7 @@ main:
     // PTE Setup at level 1 to point to the PTE Setup at level 0
     LA (a0, rvtest_slvl1_pg_tbl)                            // Loads the base address of pgtbl 0 address in a0
     LI (a1, PTE_V)                                          //sets the Permission bit to valid only to point to the pgtbl0 PTE
-    PTE_SETUP_RV32(a0, a1, t0, t1, va, LEVEL1)   // setup the PTE for level 1
+    PTE_SETUP_RV32(a0, a1, t0, t1, va, LEVEL1)              // setup the PTE for level 1
     // PTE setup at level 0 -- rvtest_entry_point (0x90000000 -> 0x80000000)
     LA (a0, pa)                                             // loads the address in a0
     LI a1, (PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V)  // sets the permission bits

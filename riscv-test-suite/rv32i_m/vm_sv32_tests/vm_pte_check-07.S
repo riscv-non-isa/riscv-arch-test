@@ -28,13 +28,13 @@ main:
 
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=
 
-#ifdef rvtest_mtrap_routine				                         // Verification of existance of rvtest_mtrap_routine
-	LI a4, 0xceed                                                            // Load immediate 0xceed to a4
-	RVTEST_SIGUPD(x13,a4)                                                    // Update signature with a4
+#ifdef rvtest_mtrap_routine				                        // Verification of existance of rvtest_mtrap_routine
+	LI a4, 0xceed                                                           // Load immediate 0xceed to a4
+	RVTEST_SIGUPD(x13,a4)                                                   // Update signature with a4
 #endif
-#ifdef rvtest_strap_routine					         	 // Verification of existance of rvtest_strap_routine
-	LI a4, 0xbeed                                                            // Load immediate 0xbeed to a4
-	RVTEST_SIGUPD(x13,a4)                                                    // Update signature with a4
+#ifdef rvtest_strap_routine					                // Verification of existance of rvtest_strap_routine
+	LI a4, 0xbeed                                                           // Load immediate 0xbeed to a4
+	RVTEST_SIGUPD(x13,a4)                                                   // Update signature with a4
 #endif
 
 //-------------------Adresses-----------------//
@@ -60,15 +60,15 @@ main:
     srli t2, t2, PMP_SHIFT                                                      // Right shift the address of rvtest_data label by PMP_Shift(2)
     ori t2, t2, 0                                 			        // Selects the range of 4kB
     
-	WRITE_CSR (pmpaddr3, t2)					        // Region 4 for the pmp permission
-    LI(t2, 0x1F1F1B1F)										// Region2: NAPOT with no X PMP Permissions, Region1,3,4: NAPOT with RWX PMP Permissions
-    WRITE_CSR (pmpcfg0, t2)                                 // Write PMP Regions Configration          
-	WRITE_CSR (satp,x0)  								    // SATP bare mode
+    WRITE_CSR (pmpaddr3, t2)					                // Region 4 for the pmp permission
+    LI(t2, 0x1F1F1B1F)								// Region2: NAPOT with no X PMP Permissions, Region1,3,4: NAPOT with RWX PMP Permissions
+    WRITE_CSR (pmpcfg0, t2)                                                     // Write PMP Regions Configration          
+    WRITE_CSR (satp,x0)  						        // SATP bare mode
 
 //------------------------------------------------------PTE setup--------------------------------------------------------------
     //PTE SETUP at level 1 -- Base address of PGtable stored in the PTE
 	LA a0, rvtest_slvl1_pg_tbl
-    LI a1, (PTE_V)                                          // Valid permission only--> point at level 0 page table
+    LI a1, (PTE_V)                                                              // Valid permission only--> point at level 0 page table
 	PTE_SETUP_RV32(a0, a1, t0, t1, va, 1)
 
     //PTE SETUP at level 0 -- rvtest_entry_point physical address stored
@@ -91,40 +91,40 @@ main:
 	in their respective S-mode save area */
 
     // ****** code ******
-    LI(t0, va)        // Loading the virtual address of rvtest_entry_point in t0 register
-    LA(t1, pa)        // Loading the physical address of rvtest_entry_point in t1 register
-    sub t0, t0, t1    // (VA-PA) Note: VA > PA
-    csrr sp, mscratch // Loading the mscratch register in sp register
-    add t1, sp, t0    // Adding the offset to the sp register
-    csrw sscratch, t1 // Saving the address of rvtest_entry_point in sscratch register
-
-    LREG t1, code_bgn_off + 0 * sv_area_sz(sp)          // Loading the address of code_bgn_off in t1 register
-    add t2, t1, t0                                      // Adding the offset to the t1 register
-    SREG t2, code_bgn_off + 1 * sv_area_sz(sp)          // Storing the value from t2 register to code_bgn_off
-    SREG t2, code_bgn_off + 2 * sv_area_sz(sp)          // Storing the value from t2 register to code_bgn_off
+    LI(t0, va)                                                                   // Loading the virtual address of rvtest_entry_point in t0 register
+    LA(t1, pa)                                                                   // Loading the physical address of rvtest_entry_point in t1 register
+    sub t0, t0, t1                                                               // (VA-PA) Note: VA > PA
+    csrr sp, mscratch                                                            // Loading the mscratch register in sp register
+    add t1, sp, t0                                                               // Adding the offset to the sp register
+    csrw sscratch, t1                                                            // Saving the address of rvtest_entry_point in sscratch register
+         
+    LREG t1, code_bgn_off + 0 * sv_area_sz(sp)                                   // Loading the address of code_bgn_off in t1 register
+    add t2, t1, t0                                                               // Adding the offset to the t1 register
+    SREG t2, code_bgn_off + 1 * sv_area_sz(sp)                                   // Storing the value from t2 register to code_bgn_off
+    SREG t2, code_bgn_off + 2 * sv_area_sz(sp)                                   // Storing the value from t2 register to code_bgn_off
 
     // ******* data *******
     // update save area
-    LREG t1, data_bgn_off + 0 * sv_area_sz(sp)          // Loading the address of data_bgn_off in t1 register
-    add t2, t1, t0                                      // Adding the offset to the t1 register
-    SREG t2, data_bgn_off + 1 * sv_area_sz(sp)          // Storing the value from t2 register to data_bgn_off
-    SREG t2, data_bgn_off + 2 * sv_area_sz(sp)          // Storing the value from t2 register to data_bgn_off
+    LREG t1, data_bgn_off + 0 * sv_area_sz(sp)                                   // Loading the address of data_bgn_off in t1 register
+    add t2, t1, t0                                                               // Adding the offset to the t1 register
+    SREG t2, data_bgn_off + 1 * sv_area_sz(sp)                                   // Storing the value from t2 register to data_bgn_off
+    SREG t2, data_bgn_off + 2 * sv_area_sz(sp)                                   // Storing the value from t2 register to data_bgn_off
 
     // signature
-    LREG t1, sig_bgn_off + 0 * sv_area_sz(sp)           // Loading the address of sig_bgn_off in t1 register
-    add t2, t1, t0                                      // Adding the offset to the t1 register
-    SREG t2, sig_bgn_off + 1 * sv_area_sz(sp)           // Storing the value from t2 register to sig_bgn_off
-    SREG t2, sig_bgn_off + 2 * sv_area_sz(sp)           // Storing the value from t2 register to sig_bgn_off
+    LREG t1, sig_bgn_off + 0 * sv_area_sz(sp)                                    // Loading the address of sig_bgn_off in t1 register
+    add t2, t1, t0                                                               // Adding the offset to the t1 register
+    SREG t2, sig_bgn_off + 1 * sv_area_sz(sp)                                    // Storing the value from t2 register to sig_bgn_off
+    SREG t2, sig_bgn_off + 2 * sv_area_sz(sp)                                    // Storing the value from t2 register to sig_bgn_off
 
 	sfence.vma
 //-----------------------------------------------------------------------------------------------------------------------------
 
-	RVTEST_GOTO_LOWER_MODE	Umode		                   // Switching to U mode
+	RVTEST_GOTO_LOWER_MODE	Umode		                                 // Switching to U mode
 
 //-----------------------------------------------------------------------------------------------------------------------------
 vm_en:
 	LI (t4,0X132)
-	RVTEST_GOTO_MMODE		                            // Switching back to M mode
+	RVTEST_GOTO_MMODE		                                         // Switching back to M mode
 	LI (a4, 0x123)
 	RVTEST_SIGUPD(x13,a4)
 #endif
