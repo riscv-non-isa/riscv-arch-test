@@ -114,7 +114,7 @@ main:
         SREG t2, vmem_bgn_off+1*sv_area_sz(sp)                                  // write the address of vmem_bgn_off in sscratch
         SREG t2, vmem_bgn_off+2*sv_area_sz(sp)                                  // write the address of vmem_bgn_off in sscratch
         sfence.vma                                                              // flush the TLB
-        RVTEST_GOTO_LOWER_MODE  Umode                                           // Switching to S mode
+        RVTEST_GOTO_LOWER_MODE  Umode                                           // Switching to U mode
 
 vm_en:
 	LA (t0, va_data)
