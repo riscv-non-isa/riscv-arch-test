@@ -1,8 +1,8 @@
 #################################################################################################
-# Verification Goal: Set PTE.V = 0 and test the execute Acces in User mode for Level0			#
+# Verification Goal: Set PTE.V = 0 and test the execute Acces in User mode for Level0		#
 #                    Should raise a Instruction page fault for execute access.	                #
-# 														                                        #
-# Description: 		 If PTE does not have Valid (pte.V=0) permission, then accessing it would 	#
+# 												#
+# Description: 	     If PTE does not have Valid (pte.V=0) permission, then accessing it would 	#
 #                    raise page fault exception of the corresponding access type.            	#
 ################################################################################################# 
 

@@ -1,8 +1,8 @@
 #################################################################################################
-# Verification Goal: Set PTE.V = 0 and test the write Acces in Supervisor mode for Level0  		#
-#                    Should raise a Store/AMO page fault for write access. 		                #
-# 														                                        #
-# Description: 		 If PTE does not have Valid (pte.V=0) permission, then accessing it would 	#
+# Verification Goal: Set PTE.V = 0 and test the write Acces in Supervisor mode for Level0  	#
+#                    Should raise a Store/AMO page fault for write access. 		        #
+# 												#
+# Description: 	     If PTE does not have Valid (pte.V=0) permission, then accessing it would 	#
 #                    raise page fault exception of the corresponding access type.            	#
 ################################################################################################# 
 
