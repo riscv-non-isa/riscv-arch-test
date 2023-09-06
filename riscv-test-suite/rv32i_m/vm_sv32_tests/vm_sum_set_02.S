@@ -10,7 +10,6 @@
 # ###############################################################################################   
 
 #include "model_test.h"
-#include "custom_macros1.h"
 #include "arch_test.h"
 
 RVTEST_ISA("RV32I_Zicsr")
@@ -109,8 +108,8 @@ main:
 	SREG t2, vmem_bgn_off+1*sv_area_sz(sp)                                  // write the address of vmem_bgn_off in sscratch
 
 	sfence.vma
-    li s7, MSTATUS_SUM
-    WRITE_CSR(mstatus,s7)				                        // set the mstatus.SUM = 1 
+        li s7, MSTATUS_SUM
+        WRITE_CSR(mstatus,s7)				                        // set the mstatus.SUM = 1 
 	RVTEST_GOTO_LOWER_MODE	Smode		     	                        // Switching to S mode
 
 vm_en:

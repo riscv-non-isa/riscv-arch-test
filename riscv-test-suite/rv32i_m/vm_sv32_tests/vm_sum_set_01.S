@@ -1,13 +1,13 @@
 # ###############################################################################################           
 # Verification Goal: Test the Read acces in Supervisor mode for Level1 such that (PTE.x = 1,	#
-# 					 PTE.r = 1, PTE.u=1 and mstatus.SUM=1), Read access to the PTE should be 	#
-#  					 successful                                                                 #
-#																								#		
+# 		     PTE.r = 1, PTE.u=1 and mstatus.SUM=1), Read access to the PTE should be 	#
+#  		     successful                                                                 #
+#												#												#		
 # Discription:       If PTE belongs to user mode i.e. its U permission bit is set (pte.u = 1)   #
 #                    and m/sstatus.SUM = 1, then RW access to that PTE in supervisor mode       #
 #                    would be successful but eXecute access would raise instruction page        #
 #                    fault exception in s-mode.                                                 #   
-# ###############################################################################################   
+#################################################################################################   
 
 #include "model_test.h"
 
@@ -43,7 +43,7 @@ main:
 
  	.set va,       0x90000000                                               // virtual address of vm_en
 	.set pa,       0x80000000                                               // physical address of vm_en
-        .set va_data, 0x91000000                                               // virtual address of rvtest_data 
+        .set va_data, 0x91000000                                                // virtual address of rvtest_data 
         .set sig_data, 0x93003114                                               // virtual address of signature_x13_1
           /* PTE setup for sig_data -> rvtest_slvl1_pg_tbl*/
 	la a0, rvtest_slvl1_pg_tbl   		                                // loads the base address of the pg_tbl0        				
@@ -70,56 +70,58 @@ main:
 
 
 
-    SATP_SETUP_SV32                                           			// set the SATP for virtualization
+    SATP_SETUP_SV32                                           		        // set the SATP for virtualization
 
 	/* Save Virtual addresses in of Code and Data 
 	in their respective S-mode save area */
 	/****** code ******/
-	LI (t0, va)					// Load physical Address
-	LA (t1, pa)					// Load Physical Address
-	sub t0, t0, t1 					// (VA-PA) Note: VA > PA 
-	csrr sp, mscratch				// Access the Address to the save area as pointed by mscratch
-	add t1,sp,t0					// Address translation of save area address
-	csrw sscratch, t1 				// Save Virtual Address of the save area into sscratch
-	
-	LREG t1, code_bgn_off+0*sv_area_sz(sp)		// Copy rvtest_code_begin physical address
-	add t2, t1, t0					// Address transalation of rvtest_code_begin label
-	SREG t2, code_bgn_off+1*sv_area_sz(sp)		// Save the virtual address of rvtest_code_begin at Smode save area location
+	LI (t0, va)					                        // Load physical Address
+	LA (t1, pa)					                        // Load Physical Address
+	sub t0, t0, t1 					                        // (VA-PA) Note: VA > PA 
+	csrr sp, mscratch				                        // Access the Address to the save area as pointed by mscratch
+	add t1,sp,t0					                        // Address translation of save area address
+	csrw sscratch, t1 				                        // Save Virtual Address of the save area into sscratch
+	                        
+	LREG t1, code_bgn_off+0*sv_area_sz(sp)		                        // Copy rvtest_code_begin physical address
+	add t2, t1, t0					                        // Address transalation of rvtest_code_begin label
+	SREG t2, code_bgn_off+1*sv_area_sz(sp)		                        // Save the virtual address of rvtest_code_begin at Smode save area location
 	/******* data *******/
 	// update save area
 	// Here va_data is the virtual address of the data area (rvtest_data label)
-	LI (t0, va_data)                               	// load the virtual address of rvtest_data in t0
-	LA (t1, rvtest_data)                            // load the physical address of rvtest_data in t1
-	sub t0, t0, t1                                  // (VA-PA) Note: VA > PA 
-	LREG t1, data_bgn_off+0*sv_area_sz(sp)          // load the address of data_bgn_off in t1
-	add  t2, t1,t0                                  // Address transalation of rvtest_data_begin label
-	SREG t2, data_bgn_off+1*sv_area_sz(sp)          // Save the virtual address of rvtest_code_begin at Smode save area location
+        
+	LI (t0, va_data)                               	                        // load the virtual address of rvtest_data in t0
+	LA (t1, rvtest_data)                                                    // load the physical address of rvtest_data in t1
+	sub t0, t0, t1                                                          // (VA-PA) Note: VA > PA 
+	LREG t1, data_bgn_off+0*sv_area_sz(sp)                                  // load the address of data_bgn_off in t1
+	add  t2, t1,t0                                                          // Address transalation of rvtest_data_begin label
+	SREG t2, data_bgn_off+1*sv_area_sz(sp)                                  // Save the virtual address of rvtest_code_begin at Smode save area location
 	//signature
 	// sig_data is the virtual address of the signature area while rvtest_sig_begin is the physical address of the signautre area
-	LI (t0, sig_data)                               // load the virtual address of rvtest_sig_begin in t0
-	LA (t1, rvtest_sig_begin)                       // load the physical address of rvtest_sig_begin in t1
-	sub t0, t0, t1                                  // (VA-PA) Note: VA > PA 
-	LREG t1, sig_bgn_off+0*sv_area_sz(sp)           // load the address of sig_bgn_off in t1
-	add t2, t1, t0                                  // add the offset to the base address of save area
-	SREG t2, sig_bgn_off+1*sv_area_sz(sp)           // write the address of sig_bgn_off in sscratch
+
+	LI (t0, sig_data)                                                       // load the virtual address of rvtest_sig_begin in t0
+	LA (t1, rvtest_sig_begin)                                               // load the physical address of rvtest_sig_begin in t1
+	sub t0, t0, t1                                                          // (VA-PA) Note: VA > PA 
+	LREG t1, sig_bgn_off+0*sv_area_sz(sp)                                   // load the address of sig_bgn_off in t1
+	add t2, t1, t0                                                          // add the offset to the base address of save area
+	SREG t2, sig_bgn_off+1*sv_area_sz(sp)                                   // write the address of sig_bgn_off in sscratch
 	// vmem
-	LI (t0, va_data)                                // load the virtual address of rvtest_data in t0
-	LA (t1, rvtest_data)                            // load the physical address of rvtest_data in t1
-	sub t0, t0, t1                                  // (VA-PA) Note: VA > PA
-	LREG t1, vmem_bgn_off+0*sv_area_sz(sp)          // load the address of vmem_bgn_off in t1
-	add t2, t1, t0                                  // add the offset to the base address of save area
-	SREG t2, vmem_bgn_off+1*sv_area_sz(sp)          // write the address of vmem_bgn_off in sscratch
+	LI (t0, va_data)                                                        // load the virtual address of rvtest_data in t0
+	LA (t1, rvtest_data)                                                    // load the physical address of rvtest_data in t1
+	sub t0, t0, t1                                                          // (VA-PA) Note: VA > PA
+	LREG t1, vmem_bgn_off+0*sv_area_sz(sp)                                  // load the address of vmem_bgn_off in t1
+	add t2, t1, t0                                                          // add the offset to the base address of save area
+	SREG t2, vmem_bgn_off+1*sv_area_sz(sp)                                  // write the address of vmem_bgn_off in sscratch
 
 	sfence.vma
-    li s7, MSTATUS_SUM
-    WRITE_CSR(mstatus,s7)                               // set the mstatus.SUM = 1 
-	RVTEST_GOTO_LOWER_MODE	Smode		        // Switching to S mode
+        li s7, MSTATUS_SUM
+        WRITE_CSR(mstatus,s7)                                                    // set the mstatus.SUM = 1 
+	RVTEST_GOTO_LOWER_MODE	Smode		                                 // Switching to S mode
 
 vm_en:
 	LA (t0, va_data)
 	LREG x2, 0(t0)
 	LREG x3, 4(t0)
-	RVTEST_GOTO_MMODE		                // Switching back to M mode
+	RVTEST_GOTO_MMODE		                                         // Switching back to M mode
 	LI (a4, 0x123)
 	RVTEST_SIGUPD(x13,a4)
 #endif
