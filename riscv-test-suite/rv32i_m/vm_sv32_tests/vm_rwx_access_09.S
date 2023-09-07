@@ -24,7 +24,7 @@ RVTEST_CODE_BEGIN
     RVTEST_CASE(1,"//check ISA:=regex(.*32.*); check ISA:=regex(.*I.*Zicsr.*); def rvtest_mtrap_routine=True; def rvtest_strap_routine=True; def TEST_CASE_1=True",sv32)
 
 RVTEST_SIGBASE( x13,signature_x13_1)
-  	trap
+  
 main:
 # ---------------------------------------------------------------------------------------------
 
