@@ -4,8 +4,8 @@
 // version   : 0.11.1
 // timestamp : Sat Sep 23 15:34:58 2023 GMT
 // usage     : riscv_ctg \
-//                  -- cgf //                  --cgf /home/vedvyas/rvi-code-forks/riscv-ctg/sample_cgfs/dataset.cgf \
-//                  --cgf /home/vedvyas/rvi-code-forks/riscv-ctg/sample_cgfs/zcmop.cgf \
+//                  -- cgf //                  --cgf  /riscv-ctg/sample_cgfs/dataset.cgf \
+//                  --cgf  /riscv-ctg/sample_cgfs/zcmop.cgf \
  \
 //                  -- xlen 64  \
 //                  --randomize \

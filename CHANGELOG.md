@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## [3.7.2] - 2023-09-23
+- Updated the Zcmop extension
+
 ## [3.7.0] - 2023-05-16
 - Updated the LI macro
 - Make Trap handler compatible for RV32E
