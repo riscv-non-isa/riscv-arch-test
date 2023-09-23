@@ -615,6 +615,13 @@ RVTEST_SIGUPD_F(swreg,destreg,flagreg)
       inst imm_val				;\
       )
 
+//Tests c.mop.* instructions
+#define TEST_CMOP_OP(inst, destreg, imm_val, swreg, testreg, offset) \
+    TEST_CASE(testreg, destreg, imm_val, swreg, offset,	 \
+      mv destreg, swreg; \
+      inst;                \
+      )
+
 //Tests for instructions with register-immediate operand and update the saturation flag
 #define TEST_PKIMM_OP( inst, destreg, reg, correctval, val, imm, flagreg, swreg, offset, testreg) \
     TEST_CASE(testreg, destreg, correctval, swreg, offset, \
