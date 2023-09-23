@@ -1,0 +1,71 @@
+c.mop.0:
+  config: 
+      - check ISA:=regex(.*C.*Zcmop.*) 
+  mnemonics: 
+    c.mop.0:
+  val_comb:
+    abstract_comb:
+      <<: *cbimm_val_walking
+
+c.mop.1:
+  config: 
+      - check ISA:=regex(.*C.*Zcmop.*) 
+  opcode: 
+    c.mop.1:
+  val_comb:
+    abstract_comb:
+      <<: *cbimm_val_walking
+
+c.mop.2:
+  config: 
+      - check ISA:=regex(.*C.*Zcmop.*) 
+  opcode: 
+    c.mop.2:
+  val_comb:
+    abstract_comb:
+      <<: *cbimm_val_walking
+
+c.mop.3:
+  config: 
+      - check ISA:=regex(.*C.*Zcmop.*) 
+  opcode: 
+    c.mop.3:
+  val_comb:
+    abstract_comb:
+      <<: *cbimm_val_walking
+
+c.mop.4:
+  config: 
+      - check ISA:=regex(.*C.*Zcmop.*) 
+  opcode: 
+    c.mop.4:
+  val_comb:
+    abstract_comb:
+      <<: *cbimm_val_walking
+
+c.mop.5:
+  config: 
+      - check ISA:=regex(.*C.*Zcmop.*) 
+  opcode: 
+    c.mop.5:
+  val_comb:
+    abstract_comb:
+      <<: *cbimm_val_walking
+
+c.mop.6:
+  config: 
+      - check ISA:=regex(.*C.*Zcmop.*) 
+  opcode: 
+    c.mop.6:
+  val_comb:
+    abstract_comb:
+      <<: *cbimm_val_walking
+
+c.mop.7:
+  config: 
+      - check ISA:=regex(.*C.*Zcmop.*) 
+  opcode: 
+    c.mop.7:
+  val_comb:
+    abstract_comb:
+      <<: *cbimm_val_walking
