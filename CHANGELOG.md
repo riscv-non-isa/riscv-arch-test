@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## [3.7.2] - 2023-09-27
+- Modified macros to allow assembling tests with LLVM 18+
+
 ## [3.7.1] - 2023-08-03
 - Add ACTs for Atomic Extension excluding Lr/Sc Instructions.
 - Added Test macro for the execution of atomic instructions.
