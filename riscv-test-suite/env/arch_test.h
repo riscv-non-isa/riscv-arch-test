@@ -514,18 +514,25 @@
 /**** accesses CSRs when V=1 in different modes can share the code         ****/
 /******************************************************************************/
 
- .macro XCSR_RENAME __MODE__    // enable CSR names to be parameterized, V,S merged
-    .if ((\__MODE__\() == S) || (\__MODE__\() == V))
-      .set CSR_XSTATUS, CSR_SSTATUS
-      .set CSR_XEDELEG, CSR_SEDELEG
-      .set CSR_XIE,     CSR_SIE
-      .set CSR_XIP,     CSR_SIP
-      .set CSR_XCAUSE,  CSR_SCAUSE
-      .set CSR_XEPC,    CSR_SEPC
-      .set CSR_XSATP,   CSR_SATP
-      .set CSR_XSCRATCH,CSR_SSCRATCH
-      .set CSR_XTVAL,   CSR_STVAL
-      .set CSR_XTVEC,   CSR_STVEC
+.macro _XCSR_RENAME_S
+  .set CSR_XSTATUS, CSR_SSTATUS
+  .set CSR_XEDELEG, CSR_SEDELEG
+  .set CSR_XIE,     CSR_SIE
+  .set CSR_XIP,     CSR_SIP
+  .set CSR_XCAUSE,  CSR_SCAUSE
+  .set CSR_XEPC,    CSR_SEPC
+  .set CSR_XSATP,   CSR_SATP
+  .set CSR_XSCRATCH,CSR_SSCRATCH
+  .set CSR_XTVAL,   CSR_STVAL
+  .set CSR_XTVEC,   CSR_STVEC
+.endm
+
+.macro XCSR_RENAME __MODE__    // enable CSR names to be parameterized, V,S merged
+    .ifc \__MODE__\, S
+      _XCSR_RENAME_S
+    .else
+    .ifc \__MODE__, V
+      _XCSR_RENAME_S
     .else
       .set CSR_XSTATUS, CSR_MSTATUS
       .set CSR_XEDELEG, CSR_MEDELEG
@@ -538,6 +545,7 @@
       .set CSR_XTVAL,   CSR_MTVAL
       .set CSR_XTVEC,   CSR_MTVEC
     .endif
+    .endif
 .endm
 
 /******************************************************************************/
@@ -546,7 +554,7 @@
 /**** this verasion treats Vmodes separately as opposed to XCSR_RENAME     ****/
 /******************************************************************************/
  .macro XCSR_VRENAME __MODE__   // enable CSR names to be parameterized, V,S separate 
-  .if (\__MODE__\() == V)
+  .ifc \__MODE__, V
       .set CSR_XSTATUS, CSR_HSTATUS
       .set CSR_XEDELEG, CSR_HEDELEG
       .set CSR_XIE,     CSR_HIE
@@ -937,9 +945,10 @@ init_\__MODE__\()scratch:
 //----------------------------------------------------------------------
 init_\__MODE__\()edeleg:
         li      T2, 0                   // save and clear edeleg so we can exit to Mmode
-.if     (\__MODE__\() == V)
+.ifc \__MODE__, V
         csrrw   T2, CSR_VEDELEG, T2     // special case: VS EDELEG available from Vmode
-.elseif (\__MODE__\() == M)
+.else
+.ifc \__MODE__, M
   #ifdef rvtest_strap_routine
         csrrw   T2, CSR_XEDELEG, T2     // this handles M  mode save, but only if Smode exists
   #endif
@@ -947,10 +956,11 @@ init_\__MODE__\()edeleg:
 //FIXME: if N-extension or anything like it is implemented, uncomment the following
 //      csrrw   T2, CSR_XEDELEG, T2     // this handles S mode
 .endif
+.endif
         SREG    T2, xedeleg_sv_off(T1)  // now do the save
 //----------------------------------------------------------------------
 init_\__MODE__\()satp:
-.if (\__MODE__\() != M)                 // if S or VS mode **FIXME: fixed offset frm trapreg_sv?
+.ifnc \__MODE__, M                      // if S or VS mode **FIXME: fixed offset frm trapreg_sv?
         LA(     T4, rvtest_\__MODE__\()root_pg_tbl)     // rplc xsatp w/ identity-mapped pg table 
         csrrw   T4, CSR_XSATP, T4
         SREG    T4, xsatp_sv_off(T1)
@@ -1134,7 +1144,7 @@ rvtest_\__MODE__\()endtest:                     // target may be too far away, s
         jalr    x0, T1
 
 \__MODE__\()xcpt_sig_sv:
-.if (\__MODE__\() == M)                         // exception case, don't adjust if hypervisor mode disabled
+.ifc \__MODE__, M                               // exception case, don't adjust if hypervisor mode disabled
         csrr    T1, CSR_MISA
         slli    T1, T1, XLEN-8                  // shift H bit into msb
         bgez    T1, \__MODE__\()trap_sig_sv     // no hypervisor mode, keep std width
@@ -1149,10 +1159,12 @@ rvtest_\__MODE__\()endtest:                     // target may be too far away, s
         // ****FIXME - this breaks if the signature area cross a page boundary and the mapping isn't contiguous
 
         .set sv_area_off, (-0*sv_area_sz)       // get trapsig ptr val offset  for Mmode, (M)
-.if     (\__MODE__\() == S)
+.ifc \__MODE__, S
         .set sv_area_off, (-1*sv_area_sz)       // get trapsig_ptr val  up 1 save areas   (M<-S)
-.elseif (\__MODE__\() == V)
+.else
+.ifc \__MODE__, V
         .set sv_area_off, (-2*sv_area_sz)       // get trapsig ptr val  up 2 save areas,  (M<-S<-V))
+.endif
 .endif
 //------this should be atomic-------------------------------------
         LREG    T1, sv_area_off+trapsig_ptr_off(sp)
@@ -1211,10 +1223,10 @@ common_\__MODE__\()excpt_handler:
         mv      T4, sp                  /* default reloc offset = 0*sv_area_sz  */
 
   // handle row 3:if Vmode handler, this must be horiz trap, lv default value
-.if (\__MODE__\() != V)                 /* skip the rest if in VS handler       */
+.ifnc \__MODE__, V                      /* skip the rest if in VS handler       */
 
  // handle row1,MPP==11; if this is  Mmode; can't happen in other modes
-  .if (\__MODE__\() == M)               /* vert trap into Mmode, min off= *1    */
+  .ifc \__MODE__, M                     /* vert trap into Mmode, min off= *1    */
         csrr    T6, CSR_MSTATUS
         slli    T3, T6, XLEN-MPP_LSB-2  /* move mpp into msb                    */
         bltz    T3, vmem_adj_\__MODE__\()epc /* mpp!=0, lv dflt value           */
@@ -1331,7 +1343,7 @@ sv_\__MODE__\()tval:
 
 skp_\__MODE__\()tval:
 
-  .if (\__MODE__\() == M)
+  .ifc \__MODE__, M
     .ifdef  __H_EXT__
         csrr    T2, CSR_MTVAL2          // **** FIXME: does this need reloc also? Its a guest phys addr
         SREG    T2, 4*REGWIDTH(T1)      // store 5th sig value, only if mmode handler and VS mode exists
@@ -1539,7 +1551,7 @@ excpt_\__MODE__\()hndlr_tbl:            // handler code should only touch T2..T6
         SREG    T3, 3*REGWIDTH(T1)      // save 4rd sig value, (intID)
         j       resto_\__MODE__\()rtn
 
-.if     (\__MODE__\() == M)
+.ifc \__MODE__, M
 
 /***************  Spcl handler for returning from GOTO_MMODE.            ********/
 /***************  Only gets executed if GOTO_MMODE not called from Mmode ********/
@@ -1595,17 +1607,20 @@ rtn_fm_mmode:
 
 exit_\__MODE__\()cleanup:
         csrr    T1, mscratch                // pointer to save area
-        .if(\__MODE__\()==S)
+        .ifc \__MODE__, S
                 addi T1, T1, 1*sv_area_sz
-        .elseif(\__MODE__\()==V)
+        .else
+        .ifc \__MODE__, V
                 addi T1, T1, 2*sv_area_sz
+        .endif
         .endif
 resto_\__MODE__\()edeleg:
         LREG    T2, xedeleg_sv_off(T1)          // get saved xedeleg at offset -32
 
-.if     (\__MODE__\() == V)
+.ifc \__MODE__, V
         csrw    CSR_VEDELEG, T2 //special case: VS EDELEG available from Vmode
-.elseif (\__MODE__\() == M)
+.else
+.ifc \__MODE__, M
 #ifdef rvtest_strap_routine
         csrw    CSR_XEDELEG, T2 //this handles M  mode restore, but only if Smode exists
 #endif
@@ -1613,7 +1628,8 @@ resto_\__MODE__\()edeleg:
 //FIXME: if N-extension or anything like it is implemented, uncomment the following
 //      csrw    CSR_XEDELEG, T2 //this handles S  mode restore
 .endif
-.if (\__MODE__\() != M)
+.endif
+.ifnc \__MODE__, M
 resto_\__MODE__\()satp:
         LREG    T2, xsatp_sv_off(T1)            // restore saved xsatp
         csrw    CSR_XSATP,  T2
