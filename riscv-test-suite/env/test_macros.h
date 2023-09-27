@@ -472,6 +472,18 @@ RVTEST_SIGUPD_F(swreg,destreg,flagreg)
     RVTEST_SIGUPD_FID(swreg,destreg,flagreg)	;\
     RVMODEL_IO_ASSERT_GPR_EQ(testreg, destreg, correctval)
 
+//Tests for atomic memory operation(AMO) instructions
+#define TEST_AMO_OP(inst, destreg, origptr, reg2, origval, updval, sigptr, ...) ;\
+      .if NARG(__VA_ARGS__) == 1			;\
+	.set offset,_ARG1(__VA_OPT__(__VA_ARGS__,0))	;\
+      .endif						;\
+      LI(reg2, MASK_XLEN(origval))			;\
+      RVTEST_SIGUPD(sigptr, reg2) /*Write original AMO src */ ;\
+      LI(reg2, MASK_XLEN(updval)) ;\
+      addi origptr, sigptr, offset-REGWIDTH /* Calculate where orig AMO src is stored */ ;\
+      inst destreg, reg2, (origptr) /*origval -> destreg; updated val -> (origptr) */ ;\
+      RVTEST_SIGUPD(sigptr, destreg) /* write original AMO val */
+
 #define TEST_AUIPC(inst, destreg, correctval, imm, swreg, offset, testreg)	;\
     TEST_CASE(testreg, destreg, correctval, swreg, offset, \
       LA testreg, 1f			;\
