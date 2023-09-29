@@ -1,4 +1,6 @@
 # CHANGELOG
+## [3.7.2] - 2023-08-16
+- Added RV32E_Privilege,RV32E_B and RV32E_Fencei tests with cgf files
 
 ## [3.7.2] - 2023-09-27
 - Modified macros to allow assembling tests with LLVM 18+
