@@ -145,6 +145,25 @@
     or t6, t6, t5                                               ;\
     csrw satp, t6                                               ;
 
+#define SIGNATURE_AREA(TYPE,ARG1,ARG2, ...)                     ;\
+	LI (t0, ARG1)                                           ;\
+	.if(TYPE == CODE)                                       ;\
+        LI (t1, ARG2)                                           ;\
+	    sub t0, t0, t1                                      ;\
+            csrr sp, mscratch                                   ;\
+	    add t1,sp,t0                                        ;\
+	    csrw sscratch, t1                                   ;\
+    .else                                                       ;\
+        LA (t1, ARG2)                                           ;\
+	    sub t0, t0, t1                                      ;\
+    .endif                                                      ;\
+	LREG t1, TYPE+0*sv_area_sz(sp)                          ;\
+	add t2, t1, t0                                          ;\
+	SREG t2, TYPE+1*sv_area_sz(sp)                          ;\
+	.if NARG(__VA_ARGS__) == 1                              ;\
+        SREG t2, TYPE+2*sv_area_sz(sp)                          ;\
+    .endif                                                      ;
+
 #define NAN_BOXED(__val__,__width__,__max__)	;\
     .if __width__ == 32				;\
 	.word __val__				;\
