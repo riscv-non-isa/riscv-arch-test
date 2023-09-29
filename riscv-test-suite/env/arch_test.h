@@ -101,6 +101,21 @@
 #define T5      x10
 #define T6      x11
 
+#define LEVEL0 0x0
+#define LEVEL1 0x1
+#define LEVEL2 0x2
+#define LEVEL3 0x3
+#define LEVEL4 0x4
+
+#define sv39 0x0
+#define sv48 0x1
+#define sv57 0x2
+
+#define CODE code_bgn_off
+#define DATA data_bgn_off
+#define SIG  sig_bgn_off
+#define VMEM vmem_bgn_off
+
 #define MIN(a,b) (((a)<(b))?(a):(b))
 #define MAX(a,b) (((a)>(b))?(a):(b))
 #define BIT(addr, bit) (((addr)>>(bit))&1)
