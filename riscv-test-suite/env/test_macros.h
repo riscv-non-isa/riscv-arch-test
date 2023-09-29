@@ -18,6 +18,13 @@
 //****NOTE: label `rvtest_Sroot_pg_tbl` must be declared after RVTEST_DATA_END
 //          in the test aligned at 4kiB (use .align 12)
 
+#define ALL_MEM_PMP                                             ;\
+    	li t2, -1                                               ;\
+    	csrw pmpaddr0, t2                                       ;\
+    	li t2, 0x0F	                                        ;\
+    	csrw pmpcfg0, t2                                        ;\
+    	sfence.vma                                              ;
+
 #define PTE_SETUP_RV32(_PAR, _PR, _TR0, _TR1, VA, level)  	;\
     srli _PAR, _PAR, 12                                         ;\
     slli _PAR, _PAR, 10                                         ;\
