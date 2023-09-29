@@ -1,5 +1,7 @@
 # CHANGELOG
-
+## [3.7.3] - 2023-09-29
+- Added test RV32i_m/div-01.S and RV64i_m/div-01.S tests.
+- Added tests for resolving missing coverage issue of harcoded registers[issue #306](https://github.com/riscv-non-isa/riscv-arch-test/issues/306)
 ## [3.7.0] - 2023-05-16
 - Updated the LI macro
 - Make Trap handler compatible for RV32E
