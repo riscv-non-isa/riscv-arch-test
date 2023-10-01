@@ -1,4 +1,7 @@
 # CHANGELOG
+## [3.7.3] - 2023-09-29
+- Added test RV32i_m/div-01.S and RV64i_m/div-01.S tests.
+- Added tests for resolving missing coverage issue of harcoded registers[issue #306](https://github.com/riscv-non-isa/riscv-arch-test/issues/306)
 ## [3.7.2] - 2023-08-16
 - Added RV32E_Privilege,RV32E_B and RV32E_Fencei tests with cgf files
 
