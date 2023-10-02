@@ -49,37 +49,34 @@ _start:
 	srli t2, t2, PMP_SHIFT							// Right shift the PA by PMP_Shift(2) 
 	ori t2, t2, 0x3F							// Selects the range of 512B    
 	csrw pmpaddr0, t2							// Region 1 for the pmp permissions
-	LI ( t2,( (PMP_NAPOT)))					                // sets the permission bits
-	csrs pmpcfg0,t2								// write to the pmpcfg0  
+
 
 	LA(t2, rvtest_slvl1_pg_tbl )						// loads the base address of level1 4kbpage table                 
 	srli t2, t2, PMP_SHIFT							// Right shift the address of level 1 page table  by PMP_Shift(2)
 	li t3 , 0x7FF		
 	or t2, t2, t3								// Selects the range of 12kB								 	 										
 	csrw pmpaddr1, t2							// Region 2 for the pmp permission  
-       	LI ( t2,( (PMP_NAPOT | PMP_X | PMP_W | PMP_R) << 8 ))	                // sets the permission bits
-	csrs pmpcfg0,t2								// write to the pmpcfg0
+
 
 	LA( t2, rvtest_Sroot_pg_tbl)						// loads the base address of root page table               
 	srli t2, t2, PMP_SHIFT							// Right shift the address of root page table by PMP_Shift(2)
 	ori t2, t2, 0x1FF							// Selects the range of 4kB
 	csrw pmpaddr2, t2							// Region 3 for the pmp permission   
-       	LI ( t2,( (PMP_NAPOT | PMP_X | PMP_W | PMP_R) << 16 ))	                // sets the permission bits
-	csrs pmpcfg0,t2								// write to the pmpcfg0
+
 
 	LA( t2, rvtest_data )							// loads the base address of rvtest_data label        
 	srli t2, t2, PMP_SHIFT							// Right shift the address of rvtest_data label by PMP_Shift(2)
 	ori t2, t2, 3                                                           // select the range of 32B
 	csrw pmpaddr3, t2							// Region 4 for the pmp permission
-       	LI ( t2,( (PMP_NAPOT) << 24 ))	                			// sets the permission bits
-	csrs pmpcfg0,t2								// write to the pmpcfg0
+
 
 	LA( t2, rvtest_sig_begin )						// loads the base address of rvtest_sig_begin label        
 	srli t2, t2, PMP_SHIFT							// Right shift the address of rvtest_sig_begin label by PMP_Shift(2)
-	ori t2, t2, 0xF								// Selects the range of 128B
+	ori t2, t2, 0x1FF							// Selects the range of 128B
 	csrw pmpaddr4, t2							// Region 5 for the pmp permission
-       	LI ( t2,( (PMP_NAPOT | PMP_X | PMP_W | PMP_R) << 32 ))	                // sets the permission bits
-	csrs pmpcfg0,t2								// write to the pmpcfg0  
+
+ 	LI(t2, 0x1F1F1F1F18)							// Region 1: NAPOT with no RWX PMP Permissions, Region 2, 3 4: NAPOT with RWX PMP Permissions
+	csrw pmpcfg0, t2							// Write PMP Regions Configration    
 # -------------------------------------------------------------------------
 	csrw satp, zero								// write zero to the satp (bare mode)
 # --------------------------Setting Addresses-------------------------------
@@ -87,6 +84,7 @@ _start:
 	.set pa,       	 0x80000000000000                                       // 56 bits physical address
 	.set va_data,  	 0x200000100688                                         // 48 bits virtual address of data
 	.set sig_data,   0x280000180118						// 48 bits of VA address of signature
+
 
 # -------------------------Set the PTE for level3 for sv48-----------------
 
