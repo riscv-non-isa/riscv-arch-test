@@ -1,4 +1,7 @@
 # CHANGELOG
+## [3.7.4] - 2023-10-04
+- Fix typos in CONTRIBUTION.md
+
 ## [3.7.3] - 2023-09-29
 - Added test RV32i_m/div-01.S and RV64i_m/div-01.S tests.
 - Added tests for resolving missing coverage issue of harcoded registers[issue #306](https://github.com/riscv-non-isa/riscv-arch-test/issues/306)
