@@ -453,6 +453,31 @@ RVTEST_SIGUPD_F(swreg,destreg,flagreg)
       csrr flagreg, fcsr	;\
     )
 
+#define TEST_FPSR_OP_VFWMACCBF16_VV( inst, destreg, freg, rm, fcsr_val, correctval, valaddr_reg, val_offset, flagreg, swreg, testreg) \
+  TEST_CASE_F(testreg, destreg, correctval, swreg, flagreg,             \
+              LOAD_MEM_VAL(FLREG, valaddr_reg, freg, val_offset, testreg); \
+              LI(testreg, fcsr_val)	;                                   \
+              csrw fcsr, testreg	;                                   \
+              vmv.s.x v1, x0 ;                                          \
+              vfmv.s.f v2, freg ;                                       \
+              vfmv.s.f v3, freg ;                                       \
+              inst v1, v2, v3 ;                                         \
+              vfmv.f.s destreg, v1 ;                                    \
+              csrr flagreg, fcsr	;                                   \
+              )
+
+#define TEST_FPSR_OP_VFWMACCBF16_VF( inst, destreg, freg, rm, fcsr_val, correctval, valaddr_reg, val_offset, flagreg, swreg, testreg) \
+  TEST_CASE_F(testreg, destreg, correctval, swreg, flagreg,             \
+              LOAD_MEM_VAL(FLREG, valaddr_reg, freg, val_offset, testreg); \
+              LI(testreg, fcsr_val)	;                                   \
+              csrw fcsr, testreg	;                                   \
+              vmv.s.x v1, x0 ;                                          \
+              vfmv.s.f v3, freg ;                                       \
+              inst v1, freg, v3 ;                                       \
+              vfmv.f.s destreg, v1 ;                                    \
+              csrr flagreg, fcsr	;                                   \
+              )
+
 //Tests for floating-point instructions with a single register operand
 #define TEST_FPSR_OP_V16_32( inst, destreg, freg, rm, fcsr_val, correctval, valaddr_reg, val_offset, flagreg, swreg, testreg) \
   TEST_CASE_F(testreg, destreg, correctval, swreg, flagreg,             \
