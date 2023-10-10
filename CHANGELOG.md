@@ -30,6 +30,25 @@
 ## [3.6.6] - 2023-06-17
 - Removed stale zext.h-01.S test case superseded by zext.h_64-01.S
 
+## [3.7.1] - 2023-07-22
+- Added test case for division if most negative number by -1
+- Solved the [issue #300](https://github.com/riscv-non-isa/riscv-arch-test/issues/300)
+
+## [3.7.0] - 2023-05-16
+- Updated the LI macro
+- Make Trap handler compatible for RV32E
+- Remove the warning messages [issue #336](https://github.com/riscv-non-isa/riscv-arch-test/issues/336)
+- Added Macros for testing Virtual Memory in Sv32 mode.
+
+## [3.6.8] - 2023-06-22
+- Fix broken hyperlink in README
+
+## [3.6.7] - 2023-06-22
+- Specify new optional model macro RVMODEL_MTVEC_ALIGN to define new macro MTVEC_ALIGN in arch_test.h for issue #351
+
+## [3.6.6] - 2023-06-17
+- Removed stale zext.h-01.S test case superseded by zext.h_64-01.S
+
 ## [3.6.5] - 2023-05-06
 - Fix test condition in RVTEST_CASE for `c.ebreak` (RV32 and RV64) test. 
 
