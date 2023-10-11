@@ -1,7 +1,8 @@
 # CHANGELOG
 
-# [3.7.5] - 2023-10-11
+## [3.7.5] - 2023-10-11
 Add missing check ISA fields in recently modified div and amo tests
+
 ## [3.7.4] - 2023-10-04
 - Fix typos in CONTRIBUTION.md
 
