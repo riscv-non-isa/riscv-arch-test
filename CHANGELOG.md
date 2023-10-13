@@ -34,6 +34,9 @@
 - Added test case for division if most negative number by -1
 - Solved the [issue #300](https://github.com/riscv-non-isa/riscv-arch-test/issues/300)
 
+## [3.7.1] - 2023-07-30
+- Add support for unratified Svadu extension
+
 ## [3.7.0] - 2023-05-16
 - Updated the LI macro
 - Make Trap handler compatible for RV32E
