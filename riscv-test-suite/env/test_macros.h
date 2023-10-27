@@ -438,13 +438,17 @@
     jalr x0,0(tempreg)			;\
 6:  LA(tempreg, 4f)			;\
     jalr x0,0(tempreg)			;\
-1:  .if (adj & 2 == 2) && (label == 1b)	;\
+1:  .if adj & 2 == 2			;\
+    .ifc label, 1b			;\
     .fill 2,1,0x00			;\
+    .endif				;\
     .endif				;\
     xori rd,rd, 0x1			;\
     beq x0,x0,6b			;\
-    .if (adj & 2 == 2) && (label == 1b)	;\
+    .if adj & 2 == 2			;\
+    .ifc label, 1b			;\
     .fill 2,1,0x00			;\
+    .endif				;\
     .endif				;\
     .if (imm/2) - 2 >= 0		;\
 	.set num,(imm/2)-2		;\
@@ -476,8 +480,10 @@
     .rept num				;\
     nop					;\
     .endr				;\
-3:  .if (adj & 2 == 2) && (label == 3f)	;\
+3:  .if adj & 2 == 2			;\
+    .ifc label, 3f			;\
     .fill 2,1,0x00			;\
+    .endif				;\
     .endif				;\
     xori rd,rd, 0x3			;\
     LA(tempreg, 4f)			;\
