@@ -3,6 +3,61 @@
 /* They're useful across many tests, but generally for specific classes of ops */
 
 
+/* This function set up the Page table entry for Sv32 Translation scheme
+    Arguments:
+    _PAR: Register containing Physical Address
+    _PR: Register containing Permissions for Leaf PTE. 
+        (Note: No-leaf PTE (if-any) has only valid permssion (pte.v) set)
+    _TR0, _TR1, _TR2: Temporary registers used and modified by function
+    VA: Virtual address 
+    level: Level at which PTE would be setup
+        0: Two level translation
+        1: Superpage
+*/
+
+//****NOTE: label `rvtest_Sroot_pg_tbl` must be declared after RVTEST_DATA_END
+//          in the test aligned at 4kiB (use .align 12)
+
+#define PTE_SETUP_RV32(_PAR, _PR, _TR0, _TR1, VA, level)  	;\
+    srli _PAR, _PAR, 12                                         ;\
+    slli _PAR, _PAR, 10                                         ;\
+    or _PAR, _PAR, _PR                                          ;\
+    .if (level==1)                                              ;\
+        LA(_TR1, rvtest_Sroot_pg_tbl)                           ;\
+        .set vpn, ((VA>>22)&0x3FF)<<2                           ;\
+    .endif                                                      ;\
+    .if (level==0)                                              ;\
+        LA(_TR1, rvtest_slvl1_pg_tbl)                           ;\
+        .set vpn, ((VA>>12)&0x3FF)<<2                           ;\
+    .endif                                                      ;\
+    LI(_TR0, vpn)                                               ;\
+    add _TR1, _TR1, _TR0                                        ;\
+    SREG _PAR, 0(_TR1);                                          
+
+#define PTE_PERMUPD_RV32(_PR, _TR0, _TR1, VA, level)          	;\
+    .if (level==1)                                              ;\
+        LA(_TR1, rvtest_Sroot_pg_tbl)                           ;\
+        .set vpn, ((VA>>22)&0x3FF)<<2                           ;\
+    .endif                                                      ;\
+    .if (level==0)                                              ;\
+        LA(_TR1, rvtest_slvl1_pg_tbl)                           ;\
+        .set vpn, ((VA>>12)&0x3FF)<<2                           ;\
+    .endif                                                      ;\
+    LI(_TR0, vpn)                                               ;\
+    add _TR1, _TR1, _TR0                                        ;\
+    LREG _TR0, 0(_TR1)                                          ;\
+    srli _TR0, _TR0, 10                                         ;\
+    slli _TR0, _TR0, 10                                         ;\
+    or _TR0, _TR0, _PR                                          ;\
+    SREG _TR0, 0(_TR1)                                          ;\
+
+#define SATP_SETUP_SV32 ;\
+    LA(t6, rvtest_Sroot_pg_tbl) ;\
+    LI(t5, SATP32_MODE) ;\
+    srli t6, t6, 12 ;\
+    or t6, t6, t5  ;\
+    csrw satp, t6   ;\
+
 #define NAN_BOXED(__val__,__width__,__max__)	;\
     .if __width__ == 32				;\
 	.word __val__				;\
@@ -248,13 +303,17 @@
     jalr x0,0(tempreg)			;\
 6:  LA(tempreg, 4f)			;\
     jalr x0,0(tempreg)			;\
-1:  .if (adj & 2 == 2) && (label == 1b)	;\
+1:  .if adj & 2 == 2			;\
+    .ifc label, 1b			;\
     .fill 2,1,0x00			;\
+    .endif				;\
     .endif				;\
     xori rd,rd, 0x1			;\
     beq x0,x0,6b			;\
-    .if (adj & 2 == 2) && (label == 1b)	;\
+    .if adj & 2 == 2			;\
+    .ifc label, 1b			;\
     .fill 2,1,0x00			;\
+    .endif				;\
     .endif				;\
     .if (imm/2) - 2 >= 0		;\
 	.set num,(imm/2)-2		;\
@@ -286,14 +345,18 @@
     .rept num				;\
     nop					;\
     .endr				;\
-3:  .if (adj & 2 == 2) && (label == 3f)	;\
+3:  .if adj & 2 == 2			;\
+    .ifc label, 3f			;\
     .fill 2,1,0x00			;\
+    .endif				;\
     .endif				;\
     xori rd,rd, 0x3			;\
     LA(tempreg, 4f)			;\
     jalr x0,0(tempreg)			;\
-    .if (adj&2 == 2) && (label == 3f)	;\
+    .if adj & 2 == 2			;\
+    .ifc label, 3f			;\
     .fill 2,1,0x00			;\
+    .endif				;\
     .endif				;\
 4: LA(tempreg, 5b)			;\
    andi tempreg,tempreg,~(3)		;\
@@ -416,6 +479,18 @@ RVTEST_SIGUPD_F(swreg,destreg,flagreg)
     code; \
     RVTEST_SIGUPD_FID(swreg,destreg,flagreg)	;\
     RVMODEL_IO_ASSERT_GPR_EQ(testreg, destreg, correctval)
+
+//Tests for atomic memory operation(AMO) instructions
+#define TEST_AMO_OP(inst, destreg, origptr, reg2, origval, updval, sigptr, ...) ;\
+      .if NARG(__VA_ARGS__) == 1			;\
+	.set offset,_ARG1(__VA_OPT__(__VA_ARGS__,0))	;\
+      .endif						;\
+      LI(reg2, MASK_XLEN(origval))			;\
+      RVTEST_SIGUPD(sigptr, reg2) /*Write original AMO src */ ;\
+      LI(reg2, MASK_XLEN(updval)) ;\
+      addi origptr, sigptr, offset-REGWIDTH /* Calculate where orig AMO src is stored */ ;\
+      inst destreg, reg2, (origptr) /*origval -> destreg; updated val -> (origptr) */ ;\
+      RVTEST_SIGUPD(sigptr, destreg) /* write original AMO val */
 
 #define TEST_AUIPC(inst, destreg, correctval, imm, swreg, offset, testreg)	;\
     TEST_CASE(testreg, destreg, correctval, swreg, offset, \
