@@ -488,8 +488,10 @@
     xori rd,rd, 0x3			;\
     LA(tempreg, 4f)			;\
     jalr x0,0(tempreg)			;\
-    .if (adj&2 == 2) && (label == 3f)	;\
+    .if adj & 2 == 2			;\
+    .ifc label, 3f			;\
     .fill 2,1,0x00			;\
+    .endif				;\
     .endif				;\
 4: LA(tempreg, 5b)			;\
    andi tempreg,tempreg,~(3)		;\
