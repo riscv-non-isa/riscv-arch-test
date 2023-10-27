@@ -13,7 +13,7 @@
 #define rvtest_strap_routine
 #include "model_test.h"
 #include "arch_test.h"
-RVTEST_ISA("RV32I")
+RVTEST_ISA("RV32I_Zicsr")
 
 # Test code region
 .section .text.init
@@ -29,27 +29,6 @@ RVTEST_SIGBASE( x3,signature_x3_1)
 	.attribute stack_align, 16
   	.align	2
 main: 
-////////////// SETTING DEFAULTS TO ZERO ///////////////////////////////////////
-	csrw pmpcfg0, x0
-	csrw pmpcfg1, x0
-	csrw pmpcfg2, x0
-	csrw pmpcfg3, x0
-	csrw pmpaddr0, x0
-	csrw pmpaddr1, x0
-	csrw pmpaddr2, x0
-	csrw pmpaddr3, x0
-	csrw pmpaddr4, x0
-	csrw pmpaddr5, x0
-	csrw pmpaddr6, x0
-	csrw pmpaddr7, x0
-	csrw pmpaddr8, x0
-	csrw pmpaddr9, x0
-	csrw pmpaddr10, x0
-	csrw pmpaddr11, x0
-	csrw pmpaddr12, x0
-	csrw pmpaddr13, x0
-	csrw pmpaddr14, x0
-	csrw pmpaddr15, x0
 //////////////////// Granularity TEST 1 /////////////////////////////////////////////
 detect_granule:				// AS INSTRUCTED IN RISC-V Privileged Architectures V1.12-draft
 // RISC-V Priv Architecture Manual (Article 3.7.1)
@@ -89,12 +68,10 @@ calculations:
 	RVTEST_SIGUPD(x3,x7)
 //////////////////////// DETECT pmpaddri[G-1:0] bits must be read zero in case of pmpcfgi.A[1]==0
 //////////////////////// uneffecting the underlaying actual value for G>=1
-
 	csrw pmpcfg0, 0			// WRITE 0 to pmpcfg0
 	nop				// Added nop in case of trap
 	csrw pmpaddr0, a4		// WRITE ALL 1s in pmpaddr0
 	csrr a5, pmpaddr0		// READ the address
-	
 	// DISPLAY pmpaddr0
 	RVTEST_SIGUPD(x3,a5)
 #endif

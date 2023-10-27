@@ -27,7 +27,7 @@
 */
 #include "model_test.h"
 #include "arch_test.h"
-RVTEST_ISA("RV32I")
+RVTEST_ISA("RV32I_Zicsr")
 # Test code region
 .section .text.init
 .globl rvtest_entry_point
@@ -43,7 +43,6 @@ RVTEST_SIGBASE( x3,signature_x3_1)
 	.attribute stack_align, 16
   	.align	2   
   	.option norvc
-//#define OFFSET		4		// In case of RV32 
 #define PMPCFG0		0x3A0		// Address of pmpcfg0 	(HAS BEEN USED WHILE ITERATING THE LOOP)
 #define PMPADDR0	0x3B0		// Address of pmpaddr0 	(HAS BEEN USED WHILE ITERATING THE LOOP)
 main:
@@ -54,19 +53,18 @@ main:
 	// Loop to SET ALL pmpcfg REGs to zero
 	.set pmpcfgi, PMPCFG0	// Initialize an iterating variable with the address of pmpcfg0
 	.rept 4			// START OF LOOP
-	csrw pmpcfgi , x0	// Set all pmpcfg regs to zero (initial value)
+	csrc pmpcfgi , a5	// Set all pmpcfg regs to zero (initial value)
 	.set pmpcfgi, pmpcfgi+1		// increment variable to next pmpcfg reg
 	.endr			// END OF LOOP BODY
 	// Loop to SET ALL pmpaddr REGs to zero
 	.set pmpaddri, PMPADDR0	// Initialize an iterating variable with the address of pmpaddr0
 	.rept 16		// START OF LOOP
-	csrw pmpaddri, x0	// Set all pmpaddr regs to zero (initial value)
+	csrc pmpaddri, a5	// Set all pmpaddr regs to zero (initial value)
 	.set pmpaddri, pmpaddri+1		// increment variable pmpaddri to the next pmpaddr reg
 	.endr			// END OF LOOP BODY
 
 //////////////////// Locked bit TEST 1 /////////////////////////////////////////////	
 	.set pmpcfgi, PMPCFG0	// Initialize an iterating variable with the address of pmpcfg0
-	.set OFFSET, 0
 	.rept 4			// START OF LOOP
 	csrw pmpcfgi, a5	// WRITE pmpcfgi with ALL 1s, Locked the lock-bit [7,15,23,31]
 	nop			// Added nop in case of trap
@@ -74,18 +72,15 @@ main:
 	// THIS READ WILL ALSO CONFIRM THE ZERO BITs OF PMPCFGi REG.		
 	// BIT 5-6, BIT 13-14, BIT 21-22, BIT 29-30 must be hardwired to zero
 	// Verify that LOCKED bits are HIGH, and ZERO bits are zero
-	RVTEST_SIGUPD(x3,a4, OFFSET)
-	.set OFFSET, OFFSET+REGWIDTH		// Added offset in x9	
+	RVTEST_SIGUPD(x3,a4)
 	// TRY TO WRITE CFG REGISTER AGAIN (TRAP in case of LOCKED bit is HIGH)
 	csrw pmpcfgi, x5		// WRITE pmpcfgi with some other values
 	nop				// Added nop in case of trap
 	csrr a4, pmpcfgi		// READ pmpcfgi		
 	// Since Locked bit is high, so this should return the old value!!!
-	RVTEST_SIGUPD(x3,a4,OFFSET)
-	.set OFFSET, OFFSET+REGWIDTH		// Added offset in x9	
+	RVTEST_SIGUPD(x3,a4)
 	
-
-	.set pmpaddri, pmpcfgi+(PMPADDR0-PMPCFG0)+(pmpcfgi-PMPCFG0)	
+	.set pmpaddri, PMPADDR0+4*(pmpcfgi-PMPCFG0)	
 // Initialize an iterating variable with the address of pmpaddr0 in 1st iteration (when pmpcfgi=pmpcfg0)
 // Initialize an iterating variable with the address of pmpaddr4 in 2nd iteration (when pmpcfgi=pmpcfg1)
 // Initialize an iterating variable with the address of pmpaddr8 in 3rd iteration (when pmpcfgi=pmpcfg2)
@@ -97,19 +92,15 @@ main:
 	nop				// Added nop in case of trap
 	csrr a4, pmpaddri		// READ pmpaddr0, value should not have been changed		
 	nop				// Added nop in case of trap
-	RVTEST_SIGUPD(x3,a4, OFFSET)
-	.set OFFSET, OFFSET+REGWIDTH		// Added offset in x9	
+	RVTEST_SIGUPD(x3,a4)
 	.set pmpaddri, pmpaddri+1	// increment variable pmpaddri to the next pmpaddr reg
 	.endr				// END OF INNER LOOP BODY
 		
 	.set pmpcfgi, pmpcfgi+1		// increment variable to next pmpcfg reg
 	.endr			// END OF OUTER LOOP BODY
-
 #endif
-
  # ---------------------------------------------------------------------------------------------
     # HALT
-
 RVTEST_CODE_END
 RVMODEL_HALT
 

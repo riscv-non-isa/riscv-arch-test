@@ -22,7 +22,7 @@
 
 #include "model_test.h"
 #include "arch_test.h"
-RVTEST_ISA("RV32I")
+RVTEST_ISA("RV32I_Zicsr")
 # Test code region
 .section .text.init
 .globl rvtest_entry_point
@@ -64,13 +64,13 @@ main:
 	// Loop to SET ALL pmpcfg REGs to zero
 	.set pmpcfgi, PMPCFG0	// Initialize an iterating variable with the address of pmpcfg0
 	.rept 4			// START OF LOOP
-	csrw pmpcfgi , x0	// Set all pmpcfg regs to zero (initial value)
+	csrc pmpcfgi , a5	// Set all pmpcfg regs to zero (initial value)
 	.set pmpcfgi, pmpcfgi+1		// increment variable to next pmpcfg reg
 	.endr			// END OF LOOP BODY
 	// Loop to SET ALL pmpaddr REGs to zero
 	.set pmpaddri, PMPADDR0	// Initialize an iterating variable with the address of pmpaddr0
 	.rept 16		// START OF LOOP
-	csrw pmpaddri, x0	// Set all pmpaddr regs to zero (initial value)
+	csrc pmpaddri, a5	// Set all pmpaddr regs to zero (initial value)
 	.set pmpaddri, pmpaddri+1		// increment variable pmpaddri to the next pmpaddr reg
 	.endr			// END OF LOOP BODY
 		
@@ -106,13 +106,27 @@ main:
 	csrw satp, x0			// Disable Address Translation
 // PMP Configuration
 /* PMP is configure in the following order:
-1. Address 0x0000 0000 to Address RAM_LOCATION_FOR_TEST => PMP TOR Region with RWX enabled. This region is the part of the code memory containing our code. For this purpose, pmpaddr0 has been given the value of RAM_LOCATION_FOR_TEST to declare the region from 0->RAM_LOCATION_FOR_TEST into a single PMP region.
+1. Address 0x0000 0000 to Address RAM_LOCATION_FOR_TEST => PMP TOR Region with RWX enabled. 
+This region is the part of the code memory containing our code and the region between code_end to data_begin. 
+For this purpose, pmpaddr0 has been given the value of RAM_LOCATION_FOR_TEST to 
+declare the region from 0->RAM_LOCATION_FOR_TEST into a single PMP region.
 
-2. Address TEST_FOR_EXECUTION to Address RETURN_INSTRUCTION =====> This is the PMP region under test (A 4byte region == Granularity of Sail. This region has been declared by entering TEST_FOR_EXECUTION into pmpaddr1 and RETURN_INSTRUCTION into pmpaddr2. Then a PMP region is configure into NA4 mode by setting pmpcfg0[15:8]=PMPREGION2
+2. Address TEST_FOR_EXECUTION to Address RETURN_INSTRUCTION =====> This is the PMP region under test (A 4byte region == Granularity of Sail.) 
+This region has been declared by entering TEST_FOR_EXECUTION into pmpaddr1 and RETURN_INSTRUCTION into pmpaddr2. 
+Then a PMP region is configure into NA4 mode by setting pmpcfg0[15:8]=PMPREGION2
 
-3. Address RAM_LOCATION_FOR_TEST to Address rvtest_code_end => Another PMP region under test. This region has been declared by entering rvtest_code_end into pmpaddr3 and RAM_LOCATION_FOR_TEST into pmpaddr2. configure pmpaddr2(RAM_LOCATION_FOR_TEST) to pmpaddr3(rvtest_code_end) into TOR mode by setting pmpcfg0[31:24]=((((PMP_R|PMP_W|PMP_X|PMP_L|PMP_TOR)&0xFF) << PMP3_CFG_SHIFT))
+3. Address RAM_LOCATION_FOR_TEST to Address rvtest_code_end => Another PMP region under test. 
+This region has been declared by entering rvtest_code_end into pmpaddr3 and 
+RAM_LOCATION_FOR_TEST into pmpaddr2. configure pmpaddr2(RAM_LOCATION_FOR_TEST) 
+to pmpaddr3(rvtest_code_end) into TOR mode 
+by setting pmpcfg0[31:24]=((((PMP_R|PMP_W|PMP_X|PMP_L|PMP_TOR)&0xFF) << PMP3_CFG_SHIFT))
 
-4. Address rvtest_code_end to address PMP_region_High => PMP TOR Region with RWX enabled. This region is the part of the code memory containing trap handler, epilogs, and other important macro definitions. For this purpose, configure pmpaddr3(rvtest_code_end) to pmpaddr4(PMP_region_High) into TOR mode by setting pmpcfg1[7:0]=((((PMP_R|PMP_W|PMP_X|PMP_L|PMP_TOR)&0xFF) << PMP0_CFG_SHIFT)). This PMP Region is mandatory to access signature area in S,U mode	*/
+4. Address rvtest_code_end to address PMP_region_High => PMP TOR Region with RWX enabled. 
+This region is the part of the code memory containing trap handler, epilogs, and other important macro definitions. 
+For this purpose, configure pmpaddr3(rvtest_code_end) to pmpaddr4(PMP_region_High) 
+into TOR mode by setting pmpcfg1[7:0]=((((PMP_R|PMP_W|PMP_X|PMP_L|PMP_TOR)&0xFF) << PMP0_CFG_SHIFT)). 
+This PMP Region is mandatory to access signature area in S,U mode	*/
+
     /* Assigning addresses to PMP address registers */
     	LA(x4, PMPADDRESS0)		// Value to be stored in pmpaddr0
 	srl x4, x4, PMP_SHIFT		// Shift right by 2 times
@@ -157,8 +171,8 @@ main:
 // VERIFICATION IN U-Mode
 	RVTEST_GOTO_LOWER_MODE	Umode		// SWITCH TO U-mode
 	VERIFICATION_RWX	TEST_FOR_EXECUTION	
+	nop
 	j exit
-
 RAM_LOCATION_FOR_TEST:
 	.fill 3*(XLEN/32),4,0x12345678
 TEST_FOR_EXECUTION:
@@ -175,6 +189,8 @@ RVTEST_CODE_END
 RVMODEL_HALT
 RVTEST_DATA_BEGIN
 .align 4
+
+
 
 rvtest_data:
 .word 0xbabecafe

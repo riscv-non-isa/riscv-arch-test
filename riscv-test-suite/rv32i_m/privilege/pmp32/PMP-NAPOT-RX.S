@@ -13,7 +13,7 @@
 #define rvtest_strap_routine
 #include "model_test.h"
 #include "arch_test.h"
-RVTEST_ISA("RV32I")
+RVTEST_ISA("RV32I_Zicsr")
 
 # Test code region
 .section .text.init

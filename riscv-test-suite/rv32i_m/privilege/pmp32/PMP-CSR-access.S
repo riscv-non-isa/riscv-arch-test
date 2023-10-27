@@ -17,7 +17,7 @@
 #define rvtest_strap_routine
 #include "model_test.h"
 #include "arch_test.h"
-RVTEST_ISA("RV32I")
+RVTEST_ISA("RV32I_Zicsr")
 # Test code region
 .section .text.init
 .globl rvtest_entry_point
@@ -41,13 +41,13 @@ main:
 	// Loop to SET ALL pmpcfg REGs to zero
 	.set pmpcfgi, PMPCFG0	// Initialize an iterating variable with the address of pmpcfg0
 	.rept 4			// START OF LOOP
-	csrw pmpcfgi , x0	// Set all pmpcfg regs to zero (initial value)
+	csrc pmpcfgi , a5	// Set all pmpcfg regs to zero (initial value)
 	.set pmpcfgi, pmpcfgi+1		// increment variable to next pmpcfg reg
 	.endr			// END OF LOOP BODY
 	// Loop to SET ALL pmpaddr REGs to zero
 	.set pmpaddri, PMPADDR0	// Initialize an iterating variable with the address of pmpaddr0
 	.rept 16		// START OF LOOP
-	csrw pmpaddri, x0	// Set all pmpaddr regs to zero (initial value)
+	csrc pmpaddri, a5	// Set all pmpaddr regs to zero (initial value)
 	.set pmpaddri, pmpaddri+1		// increment variable pmpaddri to the next pmpaddr reg
 	.endr			// END OF LOOP BODY
 //////////////// VERIFICATION /////////////////////////////////////////
@@ -104,7 +104,6 @@ main:
 	nop				// Added nop in case of trap
 /////////////////// Switch back to M-mode ////////////////////////////////////////////
 	RVTEST_GOTO_MMODE
-
   	csrr a4, mstatus		// VERIFICATION of M-mode
 	nop				// Added nop in case of trap
 	RVTEST_SIGUPD(x13,a4)
@@ -127,11 +126,11 @@ main:
 /////////////////// TEST 01 ////////////////////////////////////////////
 // WRITING pmpaddr registers //////////////////////////////////////////
 // Write in M-mode will be valid, Write in other modes will cause trap  	
-	csrw pmpaddr8, x2		// Write pmpaddr8 in u mode (TRAP)
+	csrw pmpaddr0, x2		// Write pmpaddr0 in u mode (TRAP)
 	nop				// Added nop in case of trap
 //////////////// VERIFICATION /////////////////////////////////////////
 // READING pmpaddr in S-mode /////////////////////////////////////////
-	csrr a4, pmpaddr12		// Reading pmpaddr12 in U mode (TRAP)
+	csrr a4, pmpaddr0		// Reading pmpaddr0 in U mode (TRAP)
 	nop				// Added nop in case of trap
 	
 #endif
