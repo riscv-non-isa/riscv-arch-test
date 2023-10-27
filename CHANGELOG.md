@@ -1,4 +1,9 @@
 # CHANGELOG
+## [3.8.0] - 2023-10-26
+- Updated trap handler to handle delegated exceptions in S-mode for both bare and virtual modes.
+- Added Hypervisor mode support in Trap handler
+- Updated the save area within the trap handler file.
+- Improved CSR Rename macro for code clarity.
 
 ## [3.7.5] - 2023-10-11
 Add missing check ISA fields in recently modified div and amo tests

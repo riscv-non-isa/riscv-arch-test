@@ -15,6 +15,47 @@
         1: Superpage
 */
 
+#define LEVEL0 0x00
+#define LEVEL1 0x01
+#define LEVEL2 0x02
+#define LEVEL3 0x03
+#define LEVEL4 0x04
+
+#define sv39 0x00
+#define sv48 0x01
+#define sv57 0x02
+
+#define CODE code_bgn_off
+#define DATA data_bgn_off
+#define SIG  sig_bgn_off
+#define VMEM vmem_bgn_off
+
+#define ALL_MEM_PMP                                               ;\
+    	li t2, -1                                                 ;\
+    	csrw pmpaddr0, t2                                         ;\
+    	li t2, 0x0F	                                          ;\
+    	csrw pmpcfg0, t2                                          ;\
+    	sfence.vma                                                ;
+
+#define SIGNATURE_AREA(TYPE,ARG1,ARG2, ...)                       ;\
+	LI (t0, ARG1)                                             ;\
+	.if(TYPE == CODE)                                         ;\
+        LI (t1, ARG2)                                             ;\
+	    sub t0, t0, t1                                        ;\
+            csrr sp, mscratch                                     ;\
+	    add t1,sp,t0                                          ;\
+	    csrw sscratch, t1                                     ;\
+    .else                                                         ;\
+        LA (t1, ARG2)                                             ;\
+	    sub t0, t0, t1                                        ;\
+    .endif                                                        ;\
+	LREG t1, TYPE+0*sv_area_sz(sp)                            ;\
+	add t2, t1, t0                                            ;\
+	SREG t2, TYPE+1*sv_area_sz(sp)                            ;\
+	.if NARG(__VA_ARGS__) == 1                                ;\
+        SREG t2, TYPE+2*sv_area_sz(sp)                            ;\
+    .endif                                                        ;
+
 //****NOTE: label `rvtest_Sroot_pg_tbl` must be declared after RVTEST_DATA_END
 //          in the test aligned at 4kiB (use .align 12)
 
@@ -34,6 +75,68 @@
     add _TR1, _TR1, _TR0                                        ;\
     SREG _PAR, 0(_TR1);                                          
 
+#define PTE_SETUP_RV64(_PAR, _PR, _TR0, _TR1, VA, level, mode)  ;\
+    srli _PAR, _PAR, 12                                         ;\
+    slli _PAR, _PAR, 10                                         ;\
+    or _PAR, _PAR, _PR                                          ;\
+    .if (mode == sv39)                                          ;\
+        .if (level == 2)                                        ;\
+            LA(_TR1, rvtest_Sroot_pg_tbl)                       ;\
+            .set vpn, ((VA >> 30) & 0x1FF) << 3                 ;\
+        .endif                                                  ;\
+        .if (level == 1)                                        ;\
+            LA(_TR1, rvtest_slvl1_pg_tbl)                       ;\
+            .set vpn, ((VA >> 21) & 0x1FF) << 3                 ;\
+        .endif                                                  ;\
+        .if (level == 0)                                        ;\
+            LA(_TR1, rvtest_slvl2_pg_tbl)                       ;\
+            .set vpn, ((VA >> 12) & 0x1FF) << 3                 ;\
+        .endif                                                  ;\
+    .endif                                                      ;\
+    .if (mode == sv48)                                          ;\
+        .if (level == 3)                                        ;\
+            LA(_TR1, rvtest_Sroot_pg_tbl)                       ;\
+            .set vpn, ((VA >> 39) & 0x1FF) << 3                 ;\
+        .endif                                                  ;\
+        .if (level == 2)                                        ;\
+            LA(_TR1, rvtest_slvl1_pg_tbl)                       ;\
+            .set vpn, ((VA >> 30) & 0x1FF) << 3                 ;\
+        .endif                                                  ;\
+        .if (level == 1)                                        ;\
+            LA(_TR1, rvtest_slvl2_pg_tbl)                       ;\
+            .set vpn, ((VA >> 21) & 0x1FF) << 3                 ;\
+        .endif                                                  ;\
+        .if (level == 0)                                        ;\
+            LA(_TR1, rvtest_slvl3_pg_tbl)                       ;\
+            .set vpn, ((VA >> 12) & 0x1FF) << 3                 ;\
+        .endif                                                  ;\
+    .endif                                                      ;\
+    .if (mode == sv57)                                          ;\
+        .if (level == 4)                                        ;\
+            LA(_TR1, rvtest_Sroot_pg_tbl)                       ;\
+            .set vpn, ((VA >> 48) & 0x1FF) << 3                 ;\
+        .endif                                                  ;\
+        .if (level == 3)                                        ;\
+            LA(_TR1, rvtest_slvl1_pg_tbl)                       ;\
+            .set vpn, ((VA >> 39) & 0x1FF) << 3                 ;\
+        .endif                                                  ;\
+        .if (level == 2)                                        ;\
+            LA(_TR1, rvtest_slvl2_pg_tbl)                       ;\
+            .set vpn, ((VA >> 30) & 0x1FF) << 3                 ;\
+        .endif                                                  ;\
+        .if (level == 1)                                        ;\
+            LA(_TR1, rvtest_slvl3_pg_tbl)                       ;\
+            .set vpn, ((VA >> 21) & 0x1FF) << 3                 ;\
+        .endif                                                  ;\
+        .if (level == 0)                                        ;\
+            LA(_TR1, rvtest_slvl3_pg_tbl)                       ;\
+            .set vpn, ((VA >> 12) & 0x1FF) << 3                 ;\
+        .endif                                                  ;\
+    .endif                                                      ;\
+    LI(_TR0, vpn)                                               ;\
+    add _TR1, _TR1, _TR0                                        ;\
+    SREG _PAR, 0(_TR1)                                          ;
+
 #define PTE_PERMUPD_RV32(_PR, _TR0, _TR1, VA, level)          	;\
     .if (level==1)                                              ;\
         LA(_TR1, rvtest_Sroot_pg_tbl)                           ;\
@@ -49,14 +152,46 @@
     srli _TR0, _TR0, 10                                         ;\
     slli _TR0, _TR0, 10                                         ;\
     or _TR0, _TR0, _PR                                          ;\
-    SREG _TR0, 0(_TR1)                                          ;\
+    SREG _TR0, 0(_TR1)                                          ;   
 
 #define SATP_SETUP_SV32 ;\
     LA(t6, rvtest_Sroot_pg_tbl) ;\
     LI(t5, SATP32_MODE) ;\
     srli t6, t6, 12 ;\
     or t6, t6, t5  ;\
-    csrw satp, t6   ;\
+    csrw satp, t6   ;
+
+#define SATP_SETUP_RV64(MODE)                                   ;\
+    LA(t6, rvtest_Sroot_pg_tbl)                                 ;\
+    .if (MODE == sv39)                                          ;\
+    LI(t5, (SATP64_MODE) & (SATP_MODE_SV39 << 60))              ;\
+    .endif                                                      ;\
+    .if (MODE == sv48)                                          ;\
+    LI(t5, (SATP64_MODE) & (SATP_MODE_SV48 << 60))              ;\
+    .endif                                                      ;\
+    .if (MODE == sv57)                                          ;\
+    LI(t5, (SATP64_MODE) & (SATP_MODE_SV57 << 60))              ;\
+    .endif                                                      ;\
+    .if (MODE == sv64)                                          ;\
+    LI(t5, (SATP64_MODE) & (SATP_MODE_SV64 << 60))              ;\
+    .endif                                                      ;\
+    srli t6, t6, 12                                             ;\
+    or t6, t6, t5                                               ;\
+    csrw satp, t6                                               ;
+
+//Tests for atomic memory operation(AMO) instructions
+#define TEST_AMO_OP(inst, destreg, origptr, reg2, origval, updval, sigptr, ...) ;\
+      .if NARG(__VA_ARGS__) == 1			;\
+	.set offset,_ARG1(__VA_OPT__(__VA_ARGS__,0))	;\
+      .endif						;\
+      LI(reg2, MASK_XLEN(origval))			;\
+      RVTEST_SIGUPD(sigptr, reg2) /*Write original AMO src */ ;\
+      LI(reg2, MASK_XLEN(updval)) ;\
+      addi origptr, sigptr, offset-REGWIDTH /* Calculate where orig AMO src is stored */ ;\
+      inst destreg, reg2, (origptr) /*origval -> destreg; updated val -> (origptr) */ ;\
+      RVTEST_SIGUPD(sigptr, destreg) /* write original AMO val */
+
+
 
 #define NAN_BOXED(__val__,__width__,__max__)	;\
     .if __width__ == 32				;\
@@ -479,18 +614,6 @@ RVTEST_SIGUPD_F(swreg,destreg,flagreg)
     code; \
     RVTEST_SIGUPD_FID(swreg,destreg,flagreg)	;\
     RVMODEL_IO_ASSERT_GPR_EQ(testreg, destreg, correctval)
-
-//Tests for atomic memory operation(AMO) instructions
-#define TEST_AMO_OP(inst, destreg, origptr, reg2, origval, updval, sigptr, ...) ;\
-      .if NARG(__VA_ARGS__) == 1			;\
-	.set offset,_ARG1(__VA_OPT__(__VA_ARGS__,0))	;\
-      .endif						;\
-      LI(reg2, MASK_XLEN(origval))			;\
-      RVTEST_SIGUPD(sigptr, reg2) /*Write original AMO src */ ;\
-      LI(reg2, MASK_XLEN(updval)) ;\
-      addi origptr, sigptr, offset-REGWIDTH /* Calculate where orig AMO src is stored */ ;\
-      inst destreg, reg2, (origptr) /*origval -> destreg; updated val -> (origptr) */ ;\
-      RVTEST_SIGUPD(sigptr, destreg) /* write original AMO val */
 
 #define TEST_AUIPC(inst, destreg, correctval, imm, swreg, offset, testreg)	;\
     TEST_CASE(testreg, destreg, correctval, swreg, offset, \
