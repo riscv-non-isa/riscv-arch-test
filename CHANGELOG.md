@@ -1,4 +1,7 @@
 # CHANGELOG
+## [3.8.2] - 2023-11-14
+- Added "most negative number divided by -1" case for RV64IM and RV32IM in remw, divw, div and rem tests
+
 ## [3.8.1] - 2023-11-01
 - Updated trap handler to avoid using mstatush when used for Priv Arch 1.11
 - Updated GOTO_Lower_Mode macro to adjust the save area when switching to Umode.
