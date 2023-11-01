@@ -1,4 +1,8 @@
 # CHANGELOG
+## [3.8.1] - 2023-11-01
+- Updated trap handler to avoid using mstatush when used for Priv Arch 1.11
+- Updated GOTO_Lower_Mode macro to adjust the save area when switching to Umode.
+
 ## [3.8.0] - 2023-10-26
 - Updated trap handler to handle delegated exceptions in S-mode for both bare and virtual modes.
 - Added Hypervisor mode support in Trap handler
