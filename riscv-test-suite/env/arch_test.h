@@ -847,7 +847,7 @@ RVMODEL_DATA_END        /* model specific stuff */
   csrr   sp, CSR_MSCRATCH       /* ensure sp points to Mmode datae area */
         /**** mstatus MPV and PP now set up to desired mode    ****/
         /**** set MEPC to mret+4; requires relocating the pc   ****/
-.if     (\LMODE\() == Vmode)     // get trapsig_ptr & init val up 2 save areas (M<-S<-V)
+.if     (\LMODE\() == Umode)     // get trapsig_ptr & init val up 2 save areas (M<-S<-V)
         LREG    T1, code_bgn_off + 2*sv_area_sz(sp)
 .elseif (\LMODE\() == Smode)     // get trapsig_ptr & init val up 1 save areas (M<-S)
         LREG    T1, code_bgn_off + 1*sv_area_sz(sp)
