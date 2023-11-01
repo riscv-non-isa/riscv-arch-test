@@ -849,7 +849,7 @@ RVMODEL_DATA_END        /* model specific stuff */
         /**** set MEPC to mret+4; requires relocating the pc   ****/
 .if     (\LMODE\() == Vmode)     // get trapsig_ptr & init val up 2 save areas (M<-S<-V)
         LREG    T1, code_bgn_off + 2*sv_area_sz(sp)
-.elseif (\LMODE\() == Smode)     // get trapsig_ptr & init val up 1 save areas (M<-S)
+.elseif (\LMODE\() == Smode || \LMODE\() == Umode)     // get trapsig_ptr & init val up 1 save areas (M<-S)
         LREG    T1, code_bgn_off + 1*sv_area_sz(sp)
 .else                            // get trapsig ptr & init val for this Mmode, (M)
         LREG    T1, code_bgn_off + 0*sv_area_sz(sp)
@@ -1299,10 +1299,10 @@ common_\__MODE__\()excpt_handler:
         addi    T4, T4, 1
         andi    T4, T4, 4               
 // extract GVA into bit 1
-      #if (XLEN==32)
+      #if (XLEN==32 && rvtest_vtrap_routine)
         csrr    T3, CSR_MSTATUSH        /* get CSR with GVA bit, but only H-ext */
         srli    T3, T3, GVA_LSB-1       /* reposition RV32 mstatush into bit1   */
-      #else
+      #elseif(XLEN==64)
         srli    T3, T6, GVA_LSB-1+32    /* reposition RV32 mstatus  into bit1   */
       #endif
         andi    T3, T3, 1<<1
@@ -1659,7 +1659,7 @@ excpt_\__MODE__\()hndlr_tbl:            // handler code should only touch T2..T6
 rtn2mmode:
         addi    T4,T5, -CAUSE_MACHINE_ECALL
         beqz    T4, rtn_fm_mmode        /* shortcut if called from Mmode        */
-#if (XLEN==32)
+#if (XLEN==32 && rvtest_vtrap_routine)
         csrr    T2, CSR_MSTATUSH        /* find out originating mode if  RV32   */
 #else
         csrr    T2, CSR_MSTATUS         /* find out originating mode if RV64/128*/
@@ -1813,7 +1813,7 @@ rvtest_\__MODE__\()end:
 \__MODE__\()trampend_sv:
         .dword  0               // save loc of end of sved trampoline prolog/epilog   trampsvend+10*8
 \__MODE__\()tentry_sv:
-        .dword  \__MODE__\()trampoline + actual_tramp_sz  // save loc of comm entry pt  trampsvend+11*8
+        .dword  \__MODE__\()trampoline + actual_tramp_sz  // save comm entry loc pt   trampsvend+11*8
 \__MODE__\()edeleg_sv:
         .dword  0               // save loc for edeleg CSR                            trampsvend+12*8:
 \__MODE__\()tvec_new:
@@ -1975,4 +1975,3 @@ rvtest_data_begin:
 #endif
 rvtest_data_end:
 .endm
-

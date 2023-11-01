@@ -51,10 +51,7 @@
     .endif                                                        ;\
 	LREG t1, TYPE+0*sv_area_sz(sp)                            ;\
 	add t2, t1, t0                                            ;\
-	SREG t2, TYPE+1*sv_area_sz(sp)                            ;\
-	.if NARG(__VA_ARGS__) == 1                                ;\
-        SREG t2, TYPE+2*sv_area_sz(sp)                            ;\
-    .endif                                                        ;
+	SREG t2, TYPE+1*sv_area_sz(sp)                            ;
 
 //****NOTE: label `rvtest_Sroot_pg_tbl` must be declared after RVTEST_DATA_END
 //          in the test aligned at 4kiB (use .align 12)
