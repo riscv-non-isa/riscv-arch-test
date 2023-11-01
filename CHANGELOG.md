@@ -1,4 +1,8 @@
 # CHANGELOG
+## [3.8.1] - 2023-11-01
+- Added the comprehensive set of self-checking assembly tests for the architectural verification of SV39
+- Added the `vm_sv39.cfg` for coverpoint definations for SV39.
+
 ## [3.8.0] - 2023-10-26
 - Updated trap handler to handle delegated exceptions in S-mode for both bare and virtual modes.
 - Added Hypervisor mode support in Trap handler
