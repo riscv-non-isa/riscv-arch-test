@@ -1,8 +1,8 @@
 # ######################################################################################################
-#  Verification Goal: Set PTE.U = 1 and PTE.WR=0 and test the Read Acces and Write Access in User mode #
-#                     for Level 3 Should raise a load page fault for read access and Store AMO fault   #
-#                     for write access                                                                 #
-# Description:        If PTE have U bit and does not Read Write (pte.WR=0) permission, 	       	       #
+#  Verification Goal: Set PTE.U = 1 and PTE.X=0 and test the Execute Access in User mode for           #
+#                     Level 3 Should raise a Fetch Access Fault  for execute access.                   #
+#                                                                                                      #
+# Description:        If PTE have U bit and does not have Execute Acesss (pte.X=0) permission, 	       #
 #                     then accessing it in User mode would raise page fault exception of the           #
 #                     corresponding access type.                                                       #
 # #################################################################################################### #
@@ -20,7 +20,7 @@ RVMODEL_BOOT
 RVTEST_CODE_BEGIN
 #ifdef TEST_CASE_1
 
-    RVTEST_CASE(1,"//check ISA:=regex(.*64.*); check ISA:=regex(.*I.*Zicsr.*); def rvtest_mtrap_routine=True; def rvtest_strap_routine=True; def TEST_CASE_1=True",sv64)
+    RVTEST_CASE(1,"//check ISA:=regex(.*64.*); check ISA:=regex(.*I.*Zicsr.*); def rvtest_mtrap_routine=True; def rvtest_strap_routine=True; def TEST_CASE_1=True",pte_u_bit_set_12)
 
 RVTEST_SIGBASE( x13,signature_x13_1)
 
@@ -57,13 +57,13 @@ _start:
 	// level 3 PTE setup for pa (0x200000000000 -> 0x80000000000000)	
 
 	LI (a0, pa)                                                             // loads the address in a0
-	LI a1, ( PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V | PTE_U )        // sets the permission bits
+	LI a1, ( PTE_D | PTE_A | PTE_V | PTE_U ) 	        		// sets the permission bits(PTE.X = 0)
 	PTE_SETUP_RV64(a0, a1, t0, t1, va, LEVEL3,sv48)                         // setup the PTE for level 3 for sv48
 							        
 	// level 3 PTE setup for rvtest_data (0x210000000688 -> rvtest_data)
 
 	LA (a0, rvtest_data)	
-	LI a1, ( PTE_D | PTE_A | PTE_X | PTE_U | PTE_V ) 	        	// sets the permission bits(PTE.WR = 0)
+	LI a1, ( PTE_D | PTE_A | PTE_U | PTE_V | PTE_W | PTE_R ) 	        // sets the permission bits(PTE.WR = 0)
 	PTE_SETUP_RV64(a0, a1, t0, t1, va_data, LEVEL3,sv48)                    // setup the PTE for level 3 for sv48
 
 # -------------------------Set the PTE for signature update-----------------

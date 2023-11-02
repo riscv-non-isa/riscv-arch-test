@@ -18,7 +18,7 @@ RVMODEL_BOOT
 RVTEST_CODE_BEGIN
 #ifdef TEST_CASE_1
 
-    RVTEST_CASE(1,"//check ISA:=regex(.*64.*); check ISA:=regex(.*I.*Zicsr.*); def rvtest_mtrap_routine=True; def rvtest_strap_routine=True; def TEST_CASE_1=True",sv64)
+    RVTEST_CASE(1,"//check ISA:=regex(.*64.*); check ISA:=regex(.*I.*Zicsr.*); def rvtest_mtrap_routine=True; def rvtest_strap_routine=True; def TEST_CASE_1=True",RWX_reserved_14)
 
 RVTEST_SIGBASE( x13,signature_x13_1)
 
@@ -59,12 +59,12 @@ _start:
 
 	// level 2 PTE setup for pa (0x200000000000 -> 0x80000000000000)	
 	LI (a0, pa)                                                             // loads the address in a0
-	LI a1, ( PTE_D | PTE_A | PTE_X | PTE_W | PTE_U  ) 	                // sets the permission bits(PTE.R = 0) 
+	LI a1, ( PTE_D | PTE_A | PTE_X | PTE_W | PTE_U | PTE_V ) 	        // sets the permission bits(PTE.R = 0) 
 	PTE_SETUP_RV64(a0, a1, t0, t1, va, LEVEL2,sv48)                         // setup the PTE for level 2 for sv48
 							        
 	// level 2 PTE setup for rvtest_data (0x201000000688 -> rvtest_data)
 	LA (a0, rvtest_data)	
-	LI a1, ( PTE_D | PTE_A | PTE_X | PTE_W | PTE_U ) 	        	// sets the permission bits(PTE.R = 0)
+	LI a1, ( PTE_D | PTE_A | PTE_W | PTE_U | PTE_V ) 	        	// sets the permission bits(PTE.R = 0)
 	PTE_SETUP_RV64(a0, a1, t0, t1, va_data, LEVEL2,sv48)                    // setup the PTE for level 2 for sv48
 
 # -------------------------Set the PTE for signature update-----------------
