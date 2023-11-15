@@ -1,4 +1,8 @@
 # CHANGELOG
+
+## [3.8.2.1] -- 2013-11-15
+- Restored *RV64 Check ISA attributes to RV64IM test cases where they were dropped in 3.8.2.  Similar to 3.7.5
+	
 ## [3.8.2] - 2023-11-14
 - Added "most negative number divided by -1" case for RV64IM and RV32IM in remw, divw, div and rem tests
 
