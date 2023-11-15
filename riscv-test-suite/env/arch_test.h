@@ -157,6 +157,16 @@
   #define EXCPT_CAUSE_MSK ((1<<4)-1)
 #endif
 
+// set defaults
+#ifndef RVMODEL_CBZ_BLOCKSIZE
+  #define RVMODEL_CBZ_BLOCKSIZE 64
+#endif
+
+// set defaults
+#ifndef RVMODEL_CMO_BLOCKSIZE
+  #define RVMODEL_CMO_BLOCKSIZE 64
+#endif
+
 //==========================================================================================
 // By default, ZIFENCE is defined as nop for the implementation that does not support Zifencei
 // Implementations that support Zifencei may use the fence.i instruction.

@@ -586,6 +586,14 @@ nop					;\
 csrr flagreg, fcsr			;\
 RVTEST_SIGUPD_F(swreg,destreg,flagreg) 
 
+#define TEST_CBO_ZERO(swreg,rs1,inst,imm_val)                               ;\
+LI(rs1,imm_val&(RVMODEL_CBZ_BLOCKSIZE-1))                                   ;\
+add rs1,rs1,swreg                                                           ;\
+inst (rs1)                                                                  ;\
+nop                                                                         ;\
+nop                                                                         ;\
+ADDI(swreg, swreg, RVMODEL_CBZ_BLOCKSIZE)
+
 #define TEST_CSR_FIELD(ADDRESS,TEMP_REG,MASK_REG,NEG_MASK_REG,VAL,DEST_REG,OFFSET,BASE_REG) ;\
     LI(TEMP_REG,VAL)			;\
     and TEMP_REG,TEMP_REG,MASK_REG	;\

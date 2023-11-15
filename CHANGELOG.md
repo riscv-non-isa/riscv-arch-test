@@ -56,6 +56,9 @@ Add missing check ISA fields in recently modified div and amo tests
 - Remove the warning messages [issue #336](https://github.com/riscv-non-isa/riscv-arch-test/issues/336)
 - Added Macros for testing Virtual Memory in Sv32 mode.
 
+## [3.6.9] - 2023-06-25
+- Add support for Zicboz extension
+
 ## [3.6.8] - 2023-06-22
 - Fix broken hyperlink in README
 
