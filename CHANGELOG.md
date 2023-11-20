@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## [3.8.2.3] -- 2013-11-19
+-Fixed typo in regex in 3.8.2.2
+
 ## [3.8.2.2] -- 2013-11-17
 - Restored *RV32 Check ISA attributes to RV32IM test cases where they were dropped in 3.8.2. Missed these on 3.8.2.1.
 
