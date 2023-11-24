@@ -1,5 +1,27 @@
 # CHANGELOG
 
+## [3.8.2.3] -- 2013-11-19
+-Fixed typo in regex in 3.8.2.2
+
+## [3.8.2.2] -- 2013-11-17
+- Restored *RV32 Check ISA attributes to RV32IM test cases where they were dropped in 3.8.2. Missed these on 3.8.2.1.
+
+## [3.8.2.1] -- 2013-11-15
+- Restored *RV64 Check ISA attributes to RV64IM test cases where they were dropped in 3.8.2.  Similar to 3.7.5
+
+## [3.8.2] - 2023-11-14
+- Added "most negative number divided by -1" case for RV64IM and RV32IM in remw, divw, div and rem tests
+
+## [3.8.1] - 2023-11-01
+- Updated trap handler to avoid using mstatush when used for Priv Arch 1.11
+- Updated GOTO_Lower_Mode macro to adjust the save area when switching to Umode.
+
+## [3.8.0] - 2023-10-26
+- Updated trap handler to handle delegated exceptions in S-mode for both bare and virtual modes.
+- Added Hypervisor mode support in Trap handler
+- Updated the save area within the trap handler file.
+- Improved CSR Rename macro for code clarity.
+
 ## [3.7.5] - 2023-10-11
 Add missing check ISA fields in recently modified div and amo tests
 
@@ -43,6 +65,9 @@ Add missing check ISA fields in recently modified div and amo tests
 - Make Trap handler compatible for RV32E
 - Remove the warning messages [issue #336](https://github.com/riscv-non-isa/riscv-arch-test/issues/336)
 - Added Macros for testing Virtual Memory in Sv32 mode.
+
+## [3.6.9] - 2023-06-25
+- Add support for Zicboz extension
 
 ## [3.6.8] - 2023-06-22
 - Fix broken hyperlink in README
