@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## [3.8.2.4] -- 2013-11-27
+-Add tests for Zicfilp extension
+
 ## [3.8.2.3] -- 2013-11-19
 -Fixed typo in regex in 3.8.2.2
 
