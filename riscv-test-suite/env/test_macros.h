@@ -1081,6 +1081,43 @@ ADDI(swreg, swreg, RVMODEL_CBZ_BLOCKSIZE)
     sub x1,x1,tempreg			;\
     RVTEST_SIGUPD(swreg,x1,offset) 
 
+#define SETUP_PMP_ZICFISS_TEST(swreg, offset, testreg) \
+  li testreg, PMP_TOR | PMP_X | PMP_W | PMP_R       ;\
+  csrw pmpcfg0, testreg                             ;\
+  csrr testreg, pmpcfg0                             ;\
+  beq  testreg, x0, no_TOR_try_NAPOT                ;\
+  li testreg, 0xFFFFFFFF                            ;\
+  csrw pmpaddr0, testreg                            ;\
+  j Mend_PMP                                        ;\
+no_TOR_try_NAPOT:                                   ;\
+  li testreg, PMP_NAPOT | PMP_X | PMP_W | PMP_R     ;\
+  csrw pmpcfg0, testreg                             ;\
+  csrr testreg, pmpcfg0                             ;\
+  beq  testreg, x0, Mend_PMP                        ;\
+  li testreg, 0x1FFFFFFF                            ;\
+  csrw pmpaddr0, testreg                            ;\
+Mend_PMP:                                           ;\
+
+#define SETUP_SHADOW_STACK_SV39(swreg, offset, testreg) \
+  rvtest_Sroot_pg_tbl:                            ;\
+  RVTEST_PTE_IDENT_MAP                            ;\
+  shadow_stack:                                   ;\
+  .align 30                                       ;\
+  .fill  4096/REGWIDTH, REGWIDTH, 0               ;\
+  la testreg, rvtest_Sroot_pg_tbl                 ;\
+  la testreg1, shadow_stack                       ;\
+  srli testreg1, testreg1, 30                     ;\
+  add testreg, testreg1, x0                       ;\
+  LREG testreg1, (testreg)                        ;\
+  xori testreg1, 0x0A                             ;\
+  SREG testreg1, (testreg)                        ;\
+
+#define TEST_SSPUSH_SSPOP_x1_OP(tempreg, swreg, offset) \
+  .if offset == 0			                            ;\
+  SETUP_PMP_ZICFISS_TEST(swreg, offset, tempreg)        ;\
+  SETUP_SHADOW_STACK_SV39(swreg, offset, testreg, x31)  ;\
+  .endif                                                ;\
+  add tempreg, swreg, x0
 
 //--------------------------------- Migration aliases ------------------------------------------
 #ifdef RV_COMPLIANCE_RV32M
