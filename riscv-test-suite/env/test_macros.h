@@ -919,7 +919,14 @@ ADDI(swreg, swreg, RVMODEL_CBZ_BLOCKSIZE)
       inst destreg, x2,imm		;\
       )
 
-//Tests for instructions with a single register operand
+//Tests for instructions with single (rd/rs1) register operand.
+#define TEST_CRD_OP(inst, destreg, correctval, val1, swreg, offset, testreg) \
+    TEST_CASE(testreg, destreg, correctval, swreg, offset, \
+      LI(destreg, MASK_XLEN(val1))		;\
+      inst destreg		;\
+      )
+
+//Tests for instructions with a destination and single source register operand
 #define TEST_RD_OP(inst, destreg, reg1, correctval, val1, swreg, offset, testreg) \
   TEST_CMV_OP(inst, destreg, reg1, correctval, val1, swreg, offset, testreg)
 
