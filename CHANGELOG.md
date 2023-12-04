@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## [3.8.3] - 2023-11-30
+## [3.8.4] - 2023-11-30
 
 - Added test suites for `zcb` from code size reduction extension.
 - Added test macro for instructions with single operand.
