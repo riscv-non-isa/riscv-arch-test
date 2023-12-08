@@ -1098,26 +1098,47 @@ no_TOR_try_NAPOT:                                   ;\
   csrw pmpaddr0, testreg                            ;\
 Mend_PMP:                                           ;\
 
-#define SETUP_SHADOW_STACK_SV39(swreg, offset, testreg) \
-  rvtest_Sroot_pg_tbl:                            ;\
-  RVTEST_PTE_IDENT_MAP                            ;\
-  shadow_stack:                                   ;\
-  .align 30                                       ;\
-  .fill  4096/REGWIDTH, REGWIDTH, 0               ;\
-  la testreg, rvtest_Sroot_pg_tbl                 ;\
-  la testreg1, shadow_stack                       ;\
-  srli testreg1, testreg1, 30                     ;\
-  add testreg, testreg1, x0                       ;\
-  LREG testreg1, (testreg)                        ;\
-  xori testreg1, 0x0A                             ;\
-  SREG testreg1, (testreg)                        ;\
+// The VA->PA mappings are setup as follows
+//  VA: 0 to 1 : PA: 2 to 3
+//  VA: 2 to 3 : PA: 2 to 3
+#define SETUP_U_SHADOW_STACK_SV39(swreg, offset, tempreg, tempreg1) \
+  j make_ss                                                                 ;\
+  shadow_stack:                                                             ;\
+  .align 12                                                                 ;\
+  .fill  4096/REGWIDTH, REGWIDTH, 0                                         ;\
+make_ss:                                                                    ;\
+  la tempreg1, rvtest_entry_point                                           ;\
+  srli tempreg1, tempreg1, 12                                               ;\
+  slli tempreg1, tempreg1, 10                                               ;\
+  li tempreg, 0x3FFFFFFF                                                    ;\
+  and tempreg1, tempreg1, tempreg                                           ;\
+  ori tempreg1, tempreg1, (PTE_A | PTE_D |PTE_U | PTE_W | PTE_V)            ;\
+  la tempreg, rvtest_Sroot_pg_tbl                                           ;\
+  SREG tempreg1, (tempreg)                                                  ;\
+  ori tempreg1, tempreg1, (PTE_A | PTE_D | PTE_U | PTE_X | PTE_W | PTE_R | PTE_V)           ;\
+  SREG tempreg1, 16(tempreg)                                                ;\
+  la tempreg, shadow_stack                                                  ;\
+  li tempreg1, 0x3FFFFFFF                                                   ;\
+  and tempreg, tempreg, tempreg1                                            ;\
+  csrw 0x11, tempreg                                                        ;\
+  la tempreg, rvtest_Sroot_pg_tbl                                           ;\
+  srli tempreg, tempreg, 12                                                 ;\
+  li tempreg1, ((SATP_MODE & ~(SATP_MODE<<1)) * SATP_MODE_SV39)             ;\
+  or tempreg, tempreg, tempreg1                                             ;\
+  csrw satp, tempreg                                                        ;\
+  sfence.vma                                                                ;\
+  RVTEST_GOTO_LOWER_MODE Umode                                              ;\
+  .word 0xCE104073                  ;\
+  RVTEST_GOTO_MMODE
 
-#define TEST_SSPUSH_SSPOP_x1_OP(tempreg, swreg, offset) \
-  .if offset == 0			                            ;\
-  SETUP_PMP_ZICFISS_TEST(swreg, offset, tempreg)        ;\
-  SETUP_SHADOW_STACK_SV39(swreg, offset, testreg, x31)  ;\
-  .endif                                                ;\
-  add tempreg, swreg, x0
+
+#define TEST_U_SSPUSH_SSPOP_x1_OP(tempreg, swreg, offset) \
+  .if(offset == 0)                                              ;\
+  SETUP_PMP_ZICFISS_TEST(swreg, offset, tempreg)                        ;\
+  SETUP_U_SHADOW_STACK_SV39(swreg, offset, tempreg, x31)                  ;\
+  .else                                             ;\
+  add tempreg, swreg, x0                                                ;\
+  .endif
 
 //--------------------------------- Migration aliases ------------------------------------------
 #ifdef RV_COMPLIANCE_RV32M
