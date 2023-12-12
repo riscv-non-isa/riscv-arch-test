@@ -48,6 +48,11 @@ Add missing check ISA fields in recently modified div and amo tests
 - Add ACTs for Atomic Extension excluding Lr/Sc Instructions.
 - Added Test macro for the execution of atomic instructions.
 
+## [3.8.0] - 2023-08-30
+- Added Smcsrind tests
+- Added Sscsrind tests
+- Updated encoding.h from spike for S*csrind CSRs
+  
 ## [3.7.0] - 2023-05-16
 - Updated the LI macro
 - Make Trap handler compatible for RV32E
