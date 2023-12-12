@@ -144,6 +144,23 @@ datasets:
     x30: 0
     x31: 0
 
+  pair_regs: &pair_regs
+    x2: 0
+    x4: 0
+    x6: 0
+    x8: 0
+    x10: 0
+    x12: 0
+    x14: 0
+    x16: 0
+    x18: 0
+    x20: 0
+    x22: 0
+    x24: 0
+    x26: 0
+    x28: 0
+    x30: 0
+
   cbfmt_immval_sgn: &cbfmt_immval_sgn
     'imm_val == (-2**(6-1))': 0
     'imm_val == 0': 0
@@ -321,3 +338,93 @@ datasets:
     'walking_zeros("imm_val", 12,False)': 0
     'alternate("imm_val",12,False)': 0
 
+  rvp64_rs1val_sgn: &rvp64_rs1val_sgn
+    'rs1_val == (-2**63)': 0
+    'rs1_val == 0': 0
+    'rs1_val == (2**63-1)': 0
+    'rs1_val == 1': 0
+
+  rvp64_rs2val_sgn: &rvp64_rs2val_sgn
+    'rs2_val == (-2**63)': 0
+    'rs2_val == 0': 0
+    'rs2_val == (2**63-1)': 0
+    'rs2_val == 1': 0
+
+  rvp64_rs1val_unsgn: &rvp64_rs1val_unsgn
+    'rs1_val == 0': 0
+    'rs1_val == (2**64-1)': 0
+    'rs1_val == 1': 0
+
+  rvp64_rs2val_unsgn: &rvp64_rs2val_unsgn
+    'rs2_val == 0': 0
+    'rs2_val == (2**64-1)': 0
+    'rs2_val == 1': 0
+
+  rvp64_rs1val_walking_sgn: &rvp64_rs1val_walking_sgn
+    'walking_ones("rs1_val", 64)': 0
+    'walking_zeros("rs1_val", 64)': 0
+    'alternate("rs1_val",64)': 0
+
+  rvp64_rs2val_walking_sgn: &rvp64_rs2val_walking_sgn
+    'walking_ones("rs2_val", 64)': 0
+    'walking_zeros("rs2_val", 64)': 0
+    'alternate("rs2_val",64)': 0
+
+  rvp64_rs1val_walking_unsgn: &rvp64_rs1val_walking_unsgn
+    'walking_ones("rs1_val", 64, signed=False)': 0
+    'walking_zeros("rs1_val", 64, signed=False)': 0
+    'alternate("rs1_val",64, signed=False)': 0
+
+  rvp64_rs2val_walking_unsgn: &rvp64_rs2val_walking_unsgn
+    'walking_ones("rs2_val", 64, signed=False)': 0
+    'walking_zeros("rs2_val", 64, signed=False)': 0
+    'alternate("rs2_val",64, signed=False)': 0
+
+  rvp128_rs1val_sgn: &rvp128_rs1val_sgn
+    'rs1_val == 0': 0
+    'rs1_val == 1': 0
+
+  rvp128_rs2val_sgn: &rvp128_rs2val_sgn
+    'rs2_val == 0': 0
+    'rs2_val == 1': 0
+
+  rvp128_rs1val_walking_sgn: &rvp128_rs1val_walking_sgn
+    'walking_ones("rs1_val", 128)': 0
+    'walking_zeros("rs1_val", 128)': 0
+    'alternate("rs1_val",128)': 0
+
+  rvp128_rs2val_walking_sgn: &rvp128_rs2val_walking_sgn
+    'walking_ones("rs2_val", 128)': 0
+    'walking_zeros("rs2_val", 128)': 0
+    'alternate("rs2_val",128)': 0
+
+  zacas_op_comb: &zacas_op_comb
+    'rs1 != rs2  and rs1 != rd and rs2 != rd': 0
+
+  zacas_dcas_rs1val_sgn: &zacas_dcas_rs1val_sgn
+    'rs1_val == 0': 0
+    'rs1_val == 1': 0
+
+  zacas_dcas_rs2val_sgn: &zacas_dcas_rs2val_sgn
+    'rs2_val == 0': 0
+    'rs2_val == 1': 0
+
+  zacas128_rs1val_walking_sgn: &zacas128_rs1val_walking_sgn
+    'walking_ones("rs1_val", 128)': 0
+    'walking_zeros("rs1_val", 128)': 0
+    'alternate("rs1_val",128)': 0
+
+  zacas128_rs2val_walking_sgn: &zacas128_rs2val_walking_sgn
+    'walking_ones("rs2_val", 128)': 0
+    'walking_zeros("rs2_val", 128)': 0
+    'alternate("rs2_val",128)': 0
+
+  zacas64_rs1val_walking_sgn: &zacas64_rs1val_walking_sgn
+    'walking_ones("rs1_val", 64)': 0
+    'walking_zeros("rs1_val", 64)': 0
+    'alternate("rs1_val",64)': 0
+
+  zacas64_rs2val_walking_sgn: &zacas64_rs2val_walking_sgn
+    'walking_ones("rs2_val", 64)': 0
+    'walking_zeros("rs2_val", 64)': 0
+    'alternate("rs2_val",64)': 0

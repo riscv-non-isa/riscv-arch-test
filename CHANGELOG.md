@@ -48,6 +48,9 @@ Add missing check ISA fields in recently modified div and amo tests
 - Add ACTs for Atomic Extension excluding Lr/Sc Instructions.
 - Added Test macro for the execution of atomic instructions.
 
+## [3.7.1] - 2023-07-28
+- Add Zacas ISA extension support.
+
 ## [3.7.0] - 2023-05-16
 - Updated the LI macro
 - Make Trap handler compatible for RV32E
