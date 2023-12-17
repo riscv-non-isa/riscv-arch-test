@@ -7,6 +7,9 @@
 - Added test suites for `zcb` from code size reduction extension.
 - Added test macro for instructions with single operand.
 
+## [3.8.2.4] -- 2023-12-17
+- Add tests for Zicfiss extension
+
 ## [3.8.2.3] -- 2013-11-19
 -Fixed typo in regex in 3.8.2.2
 
