@@ -1,4 +1,11 @@
 # CHANGELOG
+## [3.8.3] - 2023-11-30
+- Add Zicond ISA extension support
+
+## [3.8.4] - 2023-11-30
+
+- Added test suites for `zcb` from code size reduction extension.
+- Added test macro for instructions with single operand.
 
 ## [3.8.3] -- 2013-12-15
 - Renamed rv32e_unratified to rv32e_m because the E extension has been ratified January 2023
