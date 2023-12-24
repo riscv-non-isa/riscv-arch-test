@@ -30,7 +30,7 @@ RVTEST_CODE_BEGIN
 
 #ifdef TEST_CASE_1
 
-RVTEST_CASE(0,"//check ISA:=regex(.*I.*Zca.*Zcb.*.Zba.*);def TEST_CASE_1=True;",czext.w)
+RVTEST_CASE(0,"//check ISA:=regex(.*64.*I.*Zca.*Zcb.*.Zba.*);def TEST_CASE_1=True;",czext.w)
 
 RVTEST_SIGBASE(x1,signature_x1_1)
 
