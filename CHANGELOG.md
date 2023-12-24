@@ -1,7 +1,8 @@
 # CHANGELOG
 
-## [3.8.5] -- 2013-12-15
+## [3.8.5] -- 2013-12-23
 - Renamed rv32e_unratified to rv32e_m because the E extension has been ratified January 2023
+- Copied missing ebreak.S and ecall.S tests from rv32i_m/privilege to rv32e_m/privilege and update ISA for E
 
 ## [3.8.3] - 2023-11-30
 - Add Zicond ISA extension support
