@@ -32,13 +32,13 @@ RVTEST_CODE_BEGIN
 
 RVTEST_CASE(0,"//check ISA:=regex(.*E.*Zbb.*) ;def RVTEST_E = True;def TEST_CASE_1=True;",ror)
 
-RVTEST_CASE(1,"//check ISA:=regex(.*I.*Zbkb.*) ;def RVTEST_E = True;def TEST_CASE_1=True;",ror)
+RVTEST_CASE(1,"//check ISA:=regex(.*E.*Zbkb.*) ;def RVTEST_E = True;def TEST_CASE_1=True;",ror)
 
-RVTEST_CASE(2,"//check ISA:=regex(.*I.*Zk.*) ;def RVTEST_E = True;def TEST_CASE_1=True;",ror)
+RVTEST_CASE(2,"//check ISA:=regex(.*E.*Zk.*) ;def RVTEST_E = True;def TEST_CASE_1=True;",ror)
 
-RVTEST_CASE(3,"//check ISA:=regex(.*I.*Zkn.*) ;def RVTEST_E = True;def TEST_CASE_1=True;",ror)
+RVTEST_CASE(3,"//check ISA:=regex(.*E.*Zkn.*) ;def RVTEST_E = True;def TEST_CASE_1=True;",ror)
 
-RVTEST_CASE(4,"//check ISA:=regex(.*I.*Zks.*) ;def RVTEST_E = True;def TEST_CASE_1=True;",ror)
+RVTEST_CASE(4,"//check ISA:=regex(.*E.*Zks.*) ;def RVTEST_E = True;def TEST_CASE_1=True;",ror)
 
 RVTEST_SIGBASE(x2,signature_x2_1)
 
