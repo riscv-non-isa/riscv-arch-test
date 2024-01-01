@@ -996,6 +996,13 @@ init_\__MODE__\()edeleg:
 init_\__MODE__\()satp:
 .ifnc \__MODE__ , M                      // if S or VS mode **FIXME: fixed offset frm trapreg_sv?
         LA(     T4, rvtest_\__MODE__\()root_pg_tbl)     // rplc xsatp w/ identity-mapped pg table 
+        srli T4, T4, 12
+      #if (XLEN==32)
+        LI(T3, SATP32_MODE)
+      #else
+        LI(T3, (SATP64_MODE) & (SATP_MODE_SV39 << 60))
+      #endif
+        or      T4, T4, T3
         csrrw   T4, CSR_XSATP, T4
         SREG    T4, xsatp_sv_off(T1)
 .endif
