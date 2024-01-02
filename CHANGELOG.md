@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## [3.8.7] -- 2024-01-02
+- Update satp initialization macro
+
 ## [3.8.6] -- 2013-12-24
 - Fixed check ISA fields to include 32/64 in Zca and CMO tests.  Note that the riscv-ctg CGFs have not been updated.
 - Fixed check ISA fields in rv32e_m/B/src/ror-01 and rori-01 that listed I instead of E. Again, CGF has not been updated.
