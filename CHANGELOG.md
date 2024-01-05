@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## [3.8.8] -- 2024-01-04
+- Fixed macros to allow assembling tests with LLVM.
+
 ## [3.8.7] -- 2024-01-02
 - Update satp initialization macro
 
