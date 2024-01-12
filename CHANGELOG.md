@@ -1,10 +1,13 @@
 # CHANGELOG
 
-## [3.8.6] -- 2013-12-24
+## [3.8.7] -- 2024-01-12
+- Fixed Check ISA fields to include 32/64 in Zicond tests.  Note that the riscv-ctg CGFs have not been updated.
+
+## [3.8.6] -- 2023-12-24
 - Fixed check ISA fields to include 32/64 in Zca and CMO tests.  Note that the riscv-ctg CGFs have not been updated.
 - Fixed check ISA fields in rv32e_m/B/src/ror-01 and rori-01 that listed I instead of E. Again, CGF has not been updated.
 
-## [3.8.5] -- 2013-12-23
+## [3.8.5] -- 2023-12-23
 - Renamed rv32e_unratified to rv32e_m because the E extension has been ratified January 2023
 - Copied missing ebreak.S and ecall.S tests from rv32i_m/privilege to rv32e_m/privilege and update ISA for E
 
