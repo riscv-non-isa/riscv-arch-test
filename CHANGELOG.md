@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## [3.8.9] -- 2024-01-14
+- Update A extension tests with Zaamo subcomponent
+
 ## [3.8.8] -- 2024-01-04
 - Fixed macros to allow assembling tests with LLVM.
 
