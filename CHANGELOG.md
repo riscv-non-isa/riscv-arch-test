@@ -1,7 +1,13 @@
 # CHANGELOG
 
-## [3.8.7] -- 2024-01-12
+## [3.8.9] -- 2024-01-12
 - Fixed Check ISA fields to include 32/64 in Zicond tests.  Note that the riscv-ctg CGFs have not been updated.
+
+## [3.8.8] -- 2024-01-04
+- Fixed macros to allow assembling tests with LLVM.
+
+## [3.8.7] -- 2024-01-02
+- Update satp initialization macro
 
 ## [3.8.6] -- 2023-12-24
 - Fixed check ISA fields to include 32/64 in Zca and CMO tests.  Note that the riscv-ctg CGFs have not been updated.
