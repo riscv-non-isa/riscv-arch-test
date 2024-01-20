@@ -1475,9 +1475,15 @@ make_ss:                                                   ;\
 /* Go to Priv mode with Zicfiss disabled                 */;\
   RVTEST_GOTO_LOWER_MODE Priv                              ;\
                                                            ;\
-  csrr testreg, CSR_SSP                                    ;\
+/* ssrdp should be a zimop and write 0 to dest             */;\
+  LI(destreg, 1)                                           ;\
   inst destreg                                             ;\
-  xor destreg, testreg, destreg                            ;\
+  nop                                                      ;\
+  nop                                                      ;\
+  nop                                                      ;\
+  nop                                                      ;\
+  nop                                                      ;\
+  nop                                                      ;\
                                                            ;\
   LA(testreg, shadow_stack_start)                          ;\
   LREG swreg, (testreg)                                    ;\
