@@ -191,18 +191,29 @@
 
 
 #define NAN_BOXED(__val__,__width__,__max__)	;\
+     .if __width__ == 16                        ;\
+        .hword __val__                         ;\
+    .endif                                     ;\
     .if __width__ == 32				;\
 	.word __val__				;\
     .else					;\
 	.dword __val__				;\
     .endif					;\
     .if __max__ > __width__			;\
-	.set pref_bytes,(__max__-__width__)/32	;\
+        .if __width__ == 16                      ;\
+         .set pref_bytes,(__max__-__width__)/16;\
+        .else				                             ;\
+         .set pref_bytes,(__max__-__width__)/32;\
+    	.endif                                   ;\
     .else					;\
 	.set pref_bytes, 0			;\
     .endif					;\
     .rept pref_bytes				;\
-	.word 0xffffffff			;\
+        .if __width__ == 16         ;\
+		      .hword 0xffff         ;\
+        .else				        ;\
+	        .word 0xffffffff		;\
+        .endif                      ;\    
     .endr					;
 
 #define ZERO_EXTEND(__val__,__width__,__max__)	;\
@@ -645,15 +656,68 @@ ADDI(swreg, swreg, RVMODEL_CBZ_BLOCKSIZE)
       csrr flagreg, fcsr	;\
     )
 
+#define TEST_FPSR_OP_VFWMACCBF16_VV( inst, destreg, freg, rm, fcsr_val, correctval, valaddr_reg, val_offset, flagreg, swreg, testreg) \
+  TEST_CASE_F(testreg, destreg, correctval, swreg, flagreg,             \
+              LOAD_MEM_VAL(FLREG, valaddr_reg, freg, val_offset, testreg); \
+              LI(testreg, fcsr_val)	;                                   \
+              csrw fcsr, testreg	;                                   \
+              vmv.s.x v1, x0 ;                                          \
+              vfmv.s.f v2, freg ;                                       \
+              vfmv.s.f v3, freg ;                                       \
+              inst v1, v2, v3 ;                                         \
+              vfmv.f.s destreg, v1 ;                                    \
+              csrr flagreg, fcsr	;                                   \
+              )
+
+#define TEST_FPSR_OP_VFWMACCBF16_VF( inst, destreg, freg, rm, fcsr_val, correctval, valaddr_reg, val_offset, flagreg, swreg, testreg) \
+  TEST_CASE_F(testreg, destreg, correctval, swreg, flagreg,             \
+              LOAD_MEM_VAL(FLREG, valaddr_reg, freg, val_offset, testreg); \
+              LI(testreg, fcsr_val)	;                                   \
+              csrw fcsr, testreg	;                                   \
+              vmv.s.x v1, x0 ;                                          \
+              vfmv.s.f v3, freg ;                                       \
+              inst v1, freg, v3 ;                                       \
+              vfmv.f.s destreg, v1 ;                                    \
+              csrr flagreg, fcsr	;                                   \
+              )
+
+//Tests for floating-point instructions with a single register operand
+#define TEST_FPSR_OP_V16_32( inst, destreg, freg, rm, fcsr_val, correctval, valaddr_reg, val_offset, flagreg, swreg, testreg) \
+  TEST_CASE_F(testreg, destreg, correctval, swreg, flagreg,             \
+              LOAD_MEM_VAL(FLREG, valaddr_reg, freg, val_offset, testreg); \
+              LI(testreg, fcsr_val)	;                                   \
+              csrw fcsr, testreg	;                                   \
+              vsetivli x0, 1, e16, m1, ta, ma ;                         \
+              vfmv.s.f v1, freg ;                                       \
+              inst v2, v1 ;                                             \
+              vsetivli x0, 1, e32, m1, ta, ma ;                         \
+              vfmv.f.s destreg, v2 ;                                    \
+              csrr flagreg, fcsr	;                                   \
+              )
+
 //Tests for floating-point instructions with a single register operand
 //This variant does not take the rm field and set it while writing the instruction
-#define TEST_FPSR_OP_NRM( inst, destreg, freg, fcsr_val, correctval, valaddr_reg, val_offset, flagreg, swreg, testreg) \
+#define TEST_FPSR_OP_NRM_V32_16( inst, destreg, freg, fcsr_val, correctval, valaddr_reg, val_offset, flagreg, swreg, testreg) \
     TEST_CASE_F(testreg, destreg, correctval, swreg, flagreg,		 \
       LOAD_MEM_VAL(FLREG, valaddr_reg, freg, val_offset, testreg)	;\
       li testreg, fcsr_val; csrw fcsr, testreg	;\
-      inst destreg, freg			;\
+      vsetivli x0, 1, e32, m1, ta, ma ;           \
+      vfmv.s.f v1, freg ;               \
+      vsetivli x0, 1, e16, m1, ta, ma ;           \
+      inst v2, v1 ;                               \
+      vfmv.f.s destreg, v2 ;                      \
       csrr flagreg, fcsr			;\
     )
+    
+//Tests for floating-point instructions with a single register operand
+//This variant does not take the rm field and set it while writing the instruction
+#define TEST_FPSR_OP_NRM( inst, destreg, freg, fcsr_val, correctval, valaddr_reg, val_offset, flagreg, swreg, testreg) \
+  TEST_CASE_F(testreg, destreg, correctval, swreg, flagreg,             \
+              LOAD_MEM_VAL(FLREG, valaddr_reg, freg, val_offset, testreg)	; \
+              li testreg, fcsr_val; csrw fcsr, testreg	;               \
+              inst destreg, freg			;                           \
+              csrr flagreg, fcsr			;                           \
+              )
     
 //Tests for floating-point instructions with a single register operand and integer destination register
 #define TEST_FPID_OP( inst, destreg, freg, rm, fcsr_val, correctval, valaddr_reg, val_offset, flagreg, swreg, testreg,load_instr) \

@@ -242,12 +242,31 @@
     #define FLREG fld
     #define FSREG fsd
     #define FREGWIDTH 8
+#elif FLEN==16
+    #define FLREG flh
+    #define FSREG fsh
+    #define FREGWIDTH 2
 #else
     #define FLREG flq
     #define FSREG fsq
     #define FREGWIDTH 16
 #endif
-
+#if ZFINX==1
+  #define FLREG ld
+  #define FSREG sd
+  #define FREGWIDTH 8
+  #define FLEN 64
+  #if XLEN==64
+    #define SIGALIGN 8
+  #else
+      #define SIGALIGN 4
+  #endif
+#elif ZDINX==1
+  #define FLREG LREG
+  #define FSREG SREG
+  #define FREGWIDTH 8
+  #define FLEN 64
+#endif
 
 #if SIGALIGN==8
   #define CANARY \
