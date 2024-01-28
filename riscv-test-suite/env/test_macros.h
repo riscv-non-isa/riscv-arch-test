@@ -1093,8 +1093,8 @@ ADDI(swreg, swreg, RVMODEL_CBZ_BLOCKSIZE)
    value in the signature referenced by SIG using the
    help of the temporary register TMP.
  */
-#define RVTEST_SIGUPD_CSR(_SIG, _TMP, _CSR) ;\
-  csrr _TMP, _CSR                           ;\
+#define RVTEST_SIGUPD_CSR(_SIG, _TMP, _CSR) \
+  csrr _TMP, _CSR                          ;\
   RVTEST_SIGUPD(_SIG, _TMP)
 
 //--------------------------------- Migration aliases ------------------------------------------

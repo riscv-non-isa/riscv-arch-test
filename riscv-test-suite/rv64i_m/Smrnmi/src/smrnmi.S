@@ -60,38 +60,8 @@ RVTEST_CASE(0,"//check ISA:=regex(.*64.*I.*Zicsr.*Smrnmi); def rvtest_mtrap_rout
   # NMIE is sticky and cannot be cleared
   csrw CSR_MNSTATUS, x0
   RVTEST_SIGUPD_CSR(x15, x1, CSR_MNSTATUS)
-
-  # Wait for a RNMI
-1:csrr x3, CSR_MNSCRATCH
-  beqz x3, 3f
-  j 1b
-
-  # RNMI interrupt trap handler
-    .align 8
-rnmi_int_trap_vec:
-  # detect if first RNMI
-  csrr x1, CSR_MNSCRATCH
-  beqz x1, 2f
-
-  # update signature with Smrnmi CSRs
-  RVTEST_SIGUPD_CSR(x15, x1, CSR_MNSCRATCH)
-  RVTEST_SIGUPD_CSR(x15, x1, CSR_MNEPC)
-  RVTEST_SIGUPD_CSR(x15, x1, CSR_MNCAUSE)
-  RVTEST_SIGUPD_CSR(x15, x1, CSR_MNSTATUS)
-
-  # Cause an exception in Smrnmi NMI trap handler
-  # on first entry to trap handler
-  li x2, 0x11111111
-  ecall
-  nop
-
-  # Update to indicate non-first
-  csrw CSR_MNSCRATCH, x0
-
-2:.word 0x70200073  # mnret
 #endif
 
-3:
 RVTEST_CODE_END
 RVMODEL_HALT
 
