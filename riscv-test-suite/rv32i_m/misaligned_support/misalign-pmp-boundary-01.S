@@ -80,17 +80,17 @@ LOAD_CHECK:
     LI      (t3, 2)                                     // initializing register t3 with 2
     LA      (t2, pmp1_data_check)                       // loading address of PMP Region 2
     sub     t2, t2, t3                                  // subtracting t3 from address for misaligned load at boundary 
-    sw      t1, 0(t2)                                   // Attempting misaligned load
+    lw      t1, 0(t2)                                   // Attempting misaligned load
 #   OK, ERRL
     LI      (t3, 2)                                     // initializing register t3 with 2
     LA      (t2, pmp3_data_check)                       // loading address of PMP Region 4
     sub     t2, t2, t3                                  // subtracting t3 from address for misaligned load at boundary 
-    sw      t1, 0(t2)                                   // Attempting misaligned load
+    lw      t1, 0(t2)                                   // Attempting misaligned load
 #   ERRH, ERRL
     LI      (t3, 2)                                     // initializing register t3 with 2
     LA      (t2, pmp2_data_check)                       // loading address of PMP Region 3
     sub     t2, t2, t3                                  // subtracting t3 from address for misaligned load at boundary 
-    sw      t1, 0(t2)                                   // Attempting misaligned load
+    lw      t1, 0(t2)                                   // Attempting misaligned load
 #endif
 
 
