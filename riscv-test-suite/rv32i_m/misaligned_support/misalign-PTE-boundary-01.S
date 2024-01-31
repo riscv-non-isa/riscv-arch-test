@@ -152,37 +152,37 @@ vm_en:
 	RVTEST_SIGUPD(s11,a4)                                                   // Verification of virtualization enabeled
     
 STORE_CHECK:
-# #   ERRH, OK
-#     LI      (t1, 0xBEEFCAFE)                              // initializing the register for store
-#     LI      (t3, 2)
-#     LA      (t2, va1)
-#     sub     t2, t2, t3 
-#     sw      t1, 0(t2)
-# #   OK, ERRL
-#     LI      (t1, 0xBEEFCAFE)                              // initializing the register for store
-#     LI      (t3, 2)
-#     LA      (t2, va2)
-#     sub     t2, t2, t3 
-#     sw      t1, 0(t2)
-# #   ERRH, ERRL
-#     LI      (t1, 0xBEEFCAFE)                              // initializing the register for store
-#     LI      (t3, 2)
-#     LA      (t2, va1)
-#     add     t2, t2, t3 
-#     sw      t1, 0(t2)
+#   ERRH, OK
+    LI      (t1, 0xBEEFCAFE)                              // initializing the register for store
+    LI      (t3, 2)
+    LA      (t2, va1)
+    sub     t2, t2, t3 
+    sw      t1, 0(t2)
+#   OK, ERRL
+    LI      (t1, 0xBEEFCAFE)                              // initializing the register for store
+    LI      (t3, 2)
+    LA      (t2, va2)
+    sub     t2, t2, t3 
+    sw      t1, 0(t2)
+#   ERRH, ERRL
+    LI      (t1, 0xBEEFCAFE)                              // initializing the register for store
+    LI      (t3, 2)
+    LA      (t2, va1)
+    add     t2, t2, t3 
+    sw      t1, 0(t2)
 
 #   Test LW
 LOAD_CHECK:
-# #   ERRH, OK
-#     LI      (t3, 2)
-#     LA      (t2, va1)
-#     sub     t2, t2, t3 
-#     lw      t1, 0(t2)
-# #   OK, ERRL
-#     LI      (t3, 2)
-#     LA      (t2, va2)
-#     sub     t2, t2, t3 
-#     lw      t1, 0(t2)
+#   ERRH, OK
+    LI      (t3, 2)
+    LA      (t2, va1)
+    sub     t2, t2, t3 
+    lw      t1, 0(t2)
+#   OK, ERRL
+    LI      (t3, 2)
+    LA      (t2, va2)
+    sub     t2, t2, t3 
+    lw      t1, 0(t2)
 #   ERRH, ERRL
     LI      (t3, 2)
     LA      (t2, va1)
