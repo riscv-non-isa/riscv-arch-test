@@ -1215,7 +1215,9 @@ make_ss:                                                   ;\
   LREG x11, -8(x11)                                        ;\
   LI(x12, 0xdeadbeef)                                      ;\
   sub x12, x12, x11                                        ;\
-  add x10, x10, x12                                        ;\
+  seqz x12, x12                                            ;\
+  or x10, x10, x12                                         ;\
+  sllw x10, x10, 1                                         ;\
                                                            ;\
   ENABLE_ZICFISS(priv)                                     ;\
                                                            ;\
@@ -1235,35 +1237,45 @@ make_ss:                                                   ;\
   SSPOPCHK_X1()                                            ;\
   csrr x12, CSR_SSP                                        ;\
   sub x11, x11, x12                                        ;\
-  add x10, x10, x11                                        ;\
+  seqz x11, x11                                            ;\
+  or x10, x10, x11                                         ;\
+  sllw x10, x10, 1                                         ;\
                                                            ;\
   csrr x11, CSR_SSP                                        ;\
   SSPUSH_X1()                                              ;\
   SSPOPCHK_X5()                                            ;\
   csrr x12, CSR_SSP                                        ;\
   sub x11, x11, x12                                        ;\
-  add x10, x10, x11                                        ;\
+  seqz x11, x11                                            ;\
+  or x10, x10, x11                                         ;\
+  sllw x10, x10, 1                                         ;\
                                                            ;\
   csrr x11, CSR_SSP                                        ;\
   SSPUSH_X5()                                              ;\
   SSPOPCHK_X5()                                            ;\
   csrr x12, CSR_SSP                                        ;\
   sub x11, x11, x12                                        ;\
-  add x10, x10, x11                                        ;\
+  seqz x11, x11                                            ;\
+  or x10, x10, x11                                         ;\
+  sllw x10, x10, 1                                         ;\
                                                            ;\
   csrr x11, CSR_SSP                                        ;\
   SSPUSH_X5()                                              ;\
   SSPOPCHK_X1()                                            ;\
   csrr x12, CSR_SSP                                        ;\
   sub x11, x11, x12                                        ;\
-  add x10, x10, x11                                        ;\
+  seqz x11, x11                                            ;\
+  or x10, x10, x11                                         ;\
+  sllw x10, x10, 1                                         ;\
                                                            ;\
 /* Check that imm value was stored at ssp-8              */;\
   LI(x1, immval)                                           ;\
   LA(x11, shadow_stack_end)                                ;\
   LREG x11, -8(x11)                                        ;\
   sub  x11, x11, x1                                        ;\
-  add x10, x10, x11                                        ;\
+  seqz x11, x11                                            ;\
+  or x10, x10, x11                                         ;\
+  sllw x10, x10, 1                                         ;\
                                                            ;\
 /* Cause SW check exception for first invocation         */;\
   .if (offset == 0)                                        ;\
