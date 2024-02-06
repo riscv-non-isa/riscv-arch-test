@@ -1,0 +1,85 @@
+direct-01:
+  config: 
+    - check ISA:=regex(.*I.*Zicsr.*Smclint.*); def rvtest_mtrap_routine=True 
+  csr_comb:
+    mcause >> (xlen-1) == 1: 0
+
+direct-02:
+  config: 
+    - check ISA:=regex(.*I.*Zicsr.*Smclint.*); def rvtest_mtrap_routine=True 
+  csr_comb:
+    mcause >> (xlen-1) == 1: 0
+
+
+ecall-01:
+  config: 
+    - check ISA:=regex(.*I.*Zicsr.*Smclint.*); def rvtest_mtrap_routine=True 
+  csr_comb:
+    mcause >> (xlen-1) == 1: 0
+
+level-01:
+  config: 
+    - check ISA:=regex(.*I.*Zicsr.*Smclint.*); def rvtest_mtrap_routine=True 
+  csr_comb:
+    mcause >> (xlen-1) == 1: 0
+
+level-02:
+  config: 
+    - check ISA:=regex(.*I.*Zicsr.*Smclint.*); def rvtest_mtrap_routine=True 
+  csr_comb:
+    mcause >> (xlen-1) == 1: 0
+
+level-03:
+  config: 
+    - check ISA:=regex(.*I.*Zicsr.*Smclint.*); def rvtest_mtrap_routine=True 
+  csr_comb:
+    mcause >> (xlen-1) == 1: 0
+
+level-04:
+  config: 
+    - check ISA:=regex(.*I.*Zicsr.*Smclint.*); def rvtest_mtrap_routine=True 
+  csr_comb:
+    mcause >> (xlen-1) == 1: 0
+
+msw-01:
+  config: 
+    - check ISA:=regex(.*I.*Zicsr.*Smclint.*); def rvtest_mtrap_routine=True 
+  csr_comb:
+    mcause >> (xlen-1) == 1: 0
+
+mtimer-01:
+  config: 
+    - check ISA:=regex(.*I.*Zicsr.*Smclint.*); def rvtest_mtrap_routine=True 
+  csr_comb:
+    mcause >> (xlen-1) == 1: 0
+
+nomint-01:
+  config: 
+    - check ISA:=regex(.*I.*Zicsr.*Smclint.*); def rvtest_mtrap_routine=True 
+  csr_comb:
+    mcause >> (xlen-1) == 0: 0
+
+nomint-02:
+  config: 
+    - check ISA:=regex(.*I.*Zicsr.*Smclint.*); def rvtest_mtrap_routine=True 
+  csr_comb:
+    mcause >> (xlen-1) == 0: 0
+
+vectored-01:
+  config: 
+    - check ISA:=regex(.*I.*Zicsr.*Smclint.*); def rvtest_mtrap_routine=True 
+  csr_comb:
+    mcause >> (xlen-1) == 1: 0
+
+vectored-02:
+  config: 
+    - check ISA:=regex(.*I.*Zicsr.*Smclint.*); def rvtest_mtrap_routine=True 
+  csr_comb:
+    mcause >> (xlen-1) == 1: 0
+
+wfi-01:
+  config: 
+    - check ISA:=regex(.*I.*Zicsr.*Smclint.*); def rvtest_mtrap_routine=True 
+  csr_comb:
+    mcause >> (xlen-1) == 1: 0
+
