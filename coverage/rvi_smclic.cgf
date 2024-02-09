@@ -1,0 +1,54 @@
+clicdirect-01:
+  config:
+    - check ISA:=regex(.*I.*Zicsr.*Smclic.*); def rvtest_mtrap_routine=True
+  csr_comb:
+    mcause >> (xlen-1) == 1: 0
+
+cliclevel-01:
+  config:
+    - check ISA:=regex(.*I.*Zicsr.*Smclic.*); def rvtest_mtrap_routine=True
+  csr_comb:
+    mcause >> (xlen-1) == 1: 0
+
+cliclevel-02:
+  config:
+    - check ISA:=regex(.*I.*Zicsr.*Smclic.*); def rvtest_mtrap_routine=True
+  csr_comb:
+    mcause >> (xlen-1) == 1: 0
+
+cliclevel-03:
+  config:
+    - check ISA:=regex(.*I.*Zicsr.*Smclic.*); def rvtest_mtrap_routine=True
+  csr_comb:
+    mcause >> (xlen-1) == 1: 0
+
+cliclevel-04:
+  config:
+    - check ISA:=regex(.*I.*Zicsr.*Smclic.*); def rvtest_mtrap_routine=True
+  csr_comb:
+    mcause >> (xlen-1) == 1: 0
+
+clicnomint-01:
+  config:
+    - check ISA:=regex(.*I.*Zicsr.*Smclic.*); def rvtest_mtrap_routine=True
+  csr_comb:
+    mcause >> (xlen-1) == 0: 0
+
+clicnomint-02:
+  config:
+    - check ISA:=regex(.*I.*Zicsr.*Smclic.*); def rvtest_mtrap_routine=True
+  csr_comb:
+    mcause >> (xlen-1) == 0: 0
+
+clicnomint-03:
+  config:
+    - check ISA:=regex(.*I.*Zicsr.*Smclic.*); def rvtest_mtrap_routine=True
+  csr_comb:
+    mcause >> (xlen-1) == 0: 0
+
+clicwfi-01:
+  config:
+    - check ISA:=regex(.*I.*Zicsr.*Smclic.*); def rvtest_mtrap_routine=True
+  csr_comb:
+    mcause >> (xlen-1) == 1: 0
+
