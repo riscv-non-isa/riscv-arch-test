@@ -1,0 +1,96 @@
+sclicdeleg-01:
+  config:
+    - check ISA:=regex(.*I.*Zicsr.*Ssclic.*); def rvtest_mtrap_routine=True
+  csr_comb:
+    mcause >> (xlen-1) == 1: 0
+
+sclicmdisable-01:
+  config:
+    - check ISA:=regex(.*I.*Zicsr.*Ssclic.*); def rvtest_mtrap_routine=True
+  csr_comb:
+    mcause >> (xlen-1) == 0: 0
+
+sclicmdisable-02:
+  config:
+    - check ISA:=regex(.*I.*Zicsr.*Ssclic.*); def rvtest_mtrap_routine=True
+  csr_comb:
+    mcause >> (xlen-1) == 0: 0
+
+sclicmdisable-03:
+  config:
+    - check ISA:=regex(.*I.*Zicsr.*Ssclic.*); def rvtest_mtrap_routine=True
+  csr_comb:
+    mcause >> (xlen-1) == 0: 0
+
+sclicnodeleg-01:
+  config:
+    - check ISA:=regex(.*I.*Zicsr.*Ssclic.*); def rvtest_mtrap_routine=True
+  csr_comb:
+    mcause >> (xlen-1) == 1: 0
+
+sclicorder-01:
+  config:
+    - check ISA:=regex(.*I.*Zicsr.*Ssclic.*); def rvtest_mtrap_routine=True
+  csr_comb:
+    mcause >> (xlen-1) == 1: 0
+
+sclicorder-02:
+  config:
+    - check ISA:=regex(.*I.*Zicsr.*Ssclic.*); def rvtest_mtrap_routine=True
+  csr_comb:
+    mcause >> (xlen-1) == 1: 0
+
+sclicorder-03:
+  config:
+    - check ISA:=regex(.*I.*Zicsr.*Ssclic.*); def rvtest_mtrap_routine=True
+  csr_comb:
+    mcause >> (xlen-1) == 1: 0
+
+sclicorder-04:
+  config:
+    - check ISA:=regex(.*I.*Zicsr.*Ssclic.*); def rvtest_mtrap_routine=True
+  csr_comb:
+    mcause >> (xlen-1) == 1: 0
+
+sclicprivorder-01:
+  config:
+    - check ISA:=regex(.*I.*Zicsr.*Ssclic.*); def rvtest_mtrap_routine=True
+  csr_comb:
+    mcause >> (xlen-1) == 1: 0
+
+sclicprivorder-02:
+  config:
+    - check ISA:=regex(.*I.*Zicsr.*Ssclic.*); def rvtest_mtrap_routine=True
+  csr_comb:
+    mcause >> (xlen-1) == 1: 0
+
+sclicprivorder-03:
+  config:
+    - check ISA:=regex(.*I.*Zicsr.*Ssclic.*); def rvtest_mtrap_routine=True
+  csr_comb:
+    mcause >> (xlen-1) == 1: 0
+
+sclicsdisable-01:
+  config:
+    - check ISA:=regex(.*I.*Zicsr.*Ssclic.*); def rvtest_mtrap_routine=True
+  csr_comb:
+    mcause >> (xlen-1) == 0: 0
+
+sclicsdisable-02:
+  config:
+    - check ISA:=regex(.*I.*Zicsr.*Ssclic.*); def rvtest_mtrap_routine=True
+  csr_comb:
+    mcause >> (xlen-1) == 0: 0
+
+sclicsdisable-03:
+  config:
+    - check ISA:=regex(.*I.*Zicsr.*Ssclic.*); def rvtest_mtrap_routine=True
+  csr_comb:
+    mcause >> (xlen-1) == 0: 0
+
+sclicwfi-01:
+  config:
+    - check ISA:=regex(.*I.*Zicsr.*Ssclic.*); def rvtest_mtrap_routine=True
+  csr_comb:
+    mcause >> (xlen-1) == 1: 0
+
