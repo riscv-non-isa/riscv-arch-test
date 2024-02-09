@@ -1,0 +1,387 @@
+==== sclicnodeleg-01.S 
+.Description: Verify when executing in s-mode, the m-mode interrupt will be handled even though mstatus.mie is 0:
+- generate m-mode interrupt (msw)
+- switch to s-mode (mstatus.mie disabled),
+- trigger (m-mode handler),
+- clear interrupt,
+- return to s-mode,
+- ecall back to m-mode
+[%autofit]
+----
+ RVMODEL_MSTATUS_MIE    = 0
+ RVMODEL_SET_MINT1      = RVMODEL_SET_MSW_INT;
+ RVMODEL_CLEAR_MINT1    = RVMODEL_CLEAR_MSW_INT;
+ RVMODEL_MINTTHRESH     = RVMODEL_MINTTHRESH_MAX
+----
+Coverage
+----
+clicintattr[msw].mode == 11 | verify interrupt is handled in m-mode
+mstatus.mie=0     | verify m-mode interrupt will occur in s-mode when mstatus.mie=0
+mcause signature  | verify msw cause signature
+----
+==== sclicdeleg-01.S 
+.Description: Verify when executing in s-mode, an s-mode interrupt will be handled when mstatus.sie is 1:
+- generate s-mode interrupt (sint1),
+- switch to s-mode,
+- trigger (s-mode handler),
+- clear interrupt,
+- ecall back to m-mode
+[%autofit]
+----
+ RVMODEL_MSTATUS_MIE       = MSTATUS_SIE
+ RVMODEL_SINT1_CLICINTATTR = RVMODEL_CLICINTATTR_SMODE
+ RVMODEL_SET_SINT1         = RVMODEL_SET_MSW_INT
+ RVMODEL_CLEAR_SINT1       = RVMODEL_CLEAR_MSW_INT
+ RVMODEL_SINT1_EXCCODE     = 0x3
+----
+Coverage
+----
+clicintattr[sint1].mode == 01          | verify interrupt is handled in s-mode
+mstatus.sie=1     | verify s-mode interrupt will occur in s-mode when mstatus.sie=1
+scause signature  | verify msw signature
+mcause signature  | verify ecall signature
+----
+==== sclicorder-01.S 
+.Description: Verify order of 2 s-mode interrupts
+- generate 2 s-mode interrupts (msw, mtimer),
+- switch to s-mode,
+- trigger (s-mode handler),
+- clear interrupts,
+- ecall back to m-mode
+[%autofit]
+----
+ RVMODEL_MSTATUS_MIE       = MSTATUS_SIE
+ RVMODEL_SINT1_CLICINTATTR = RVMODEL_CLICINTATTR_SMODE
+ RVMODEL_SET_SINT1         = RVMODEL_SET_MSW_INT
+ RVMODEL_CLEAR_SINT1       = RVMODEL_CLEAR_MSW_INT
+ RVMODEL_SINT2_CLICINTATTR = RVMODEL_CLICINTATTR_SMODE
+ RVMODEL_SET_SINT2         = RVMODEL_SET_MTIMER_INT
+ RVMODEL_CLEAR_SINT2       = RVMODEL_CLEAR_MTIMER_INT
+ RVMODEL_SINT1_CLICINTCTL  = RVMODEL_CLICINTCTL_MAX
+ RVMODEL_SINT2_CLICINTCTL  = RVMODEL_CLICINTCTL_MIN  
+ RVMODEL_SINT1_EXCCODE     = 0x3
+ RVMODEL_SINT2_EXCCODE     = 0x7
+----
+Coverage
+----
+scause signature  | verify priority of int1/int2
+----
+==== sclicorder-02.S 
+.Description:
+- generate 2 s-mode interrupts (msw, mtimer),
+- switch to s-mode,
+- trigger (s-mode handler),
+- only sint1 is cleared,
+- re-enable mstatus.sie
+- trigger (go to stvec_finish, capture cause signature)
+- ecall back to m-mode
+[%autofit]
+----
+ RVMODEL_MSTATUS_MIE       = MSTATUS_SIE
+ RVMODEL_SINT1_CLICINTATTR = RVMODEL_CLICINTATTR_SMODE
+ RVMODEL_SET_SINT1         = RVMODEL_SET_MSW_INT
+ RVMODEL_CLEAR_SINT1       = RVMODEL_CLEAR_MSW_INT
+ RVMODEL_SINT2_CLICINTATTR = RVMODEL_CLICINTATTR_SMODE
+ RVMODEL_SET_SINT2         = RVMODEL_SET_MTIMER_INT
+ RVMODEL_SINT1_CLICINTCTL  = RVMODEL_CLICINTCTL_MAX
+ RVMODEL_SINT2_CLICINTCTL  = RVMODEL_CLICINTCTL_MIN  
+ RVMODEL_SINT1_EXCCODE     = 0x3
+ RVMODEL_SINT2_EXCCODE     = 0x7
+ RVMODEL_CLEAR_SSTATUS_SPIE = 0
+----
+Coverage - same as order-01.S except
+----
+scause 2nd signature | verify sti occurs after ssi cleared and sret
+----
+==== sclicorder-03.S 
+.Description:
+- generate 2 s-mode interrupts (msw, mtimer),
+- switch to s-mode,
+- trigger (s-mode handler),
+- only sint1 is cleared,
+- set sintthresh
+- re-enable mstatus.sie
+- ecall back to m-mode
+[%autofit]
+----
+ RVMODEL_MSTATUS_MIE       = MSTATUS_SIE
+ RVMODEL_SINT1_CLICINTATTR = RVMODEL_CLICINTATTR_SMODE
+ RVMODEL_SET_SINT1         = RVMODEL_SET_MSW_INT
+ RVMODEL_CLEAR_SINT1       = RVMODEL_CLEAR_MSW_INT
+ RVMODEL_SINT2_CLICINTATTR = RVMODEL_CLICINTATTR_SMODE
+ RVMODEL_SET_SINT2         = RVMODEL_SET_MTIMER_INT
+ RVMODEL_SINT1_CLICINTCTL  = RVMODEL_CLICINTCTL_MAX
+ RVMODEL_SINT2_CLICINTCTL  = RVMODEL_CLICINTCTL_MIN
+ RVMODEL_SINTTHRESH_HNDLR1 = RVMODEL_SINTTHRESH_MAX
+ RVMODEL_SINT1_EXCCODE     = 0x3
+ RVMODEL_SINT2_EXCCODE     = 0x7
+ RVMODEL_CLEAR_SSTATUS_SPIE = 0
+----
+Coverage - same as order-01.S except
+----
+scause 2nd signature | verify sti only occurs after ssi cleared and sret if sti level > sintthresh
+----
+==== sclicorder-04.S 
+.Description:
+- generate 2 s-mode interrupts (msw, mtimer),
+- switch to s-mode,
+- trigger (s-mode handler),
+- only sint2 is cleared,
+- re-enable mstatus.sie
+- trigger (go to stvec_finish, capture cause signature)
+- ecall back to m-mode
+[%autofit]
+----
+ RVMODEL_MSTATUS_MIE       = MSTATUS_SIE
+ RVMODEL_SINT1_CLICINTATTR = RVMODEL_CLICINTATTR_SMODE
+ RVMODEL_SET_SINT1         = RVMODEL_SET_MSW_INT
+ RVMODEL_SINT2_CLICINTATTR = RVMODEL_CLICINTATTR_SMODE
+ RVMODEL_SET_SINT2         = RVMODEL_SET_MTIMER_INT
+ RVMODEL_CLEAR_SINT2       = RVMODEL_CLEAR_MTIMER_INT
+ RVMODEL_SINT1_CLICINTCTL  = RVMODEL_CLICINTCTL_MAX
+ RVMODEL_SINT2_CLICINTCTL  = RVMODEL_CLICINTCTL_MIN  
+ RVMODEL_SINT1_EXCCODE     = 0x3
+ RVMODEL_SINT2_EXCCODE     = 0x7
+ RVMODEL_CLEAR_SSTATUS_SPIE = 0
+----
+Coverage - verify uncleared ssi interrupt will retrigger after sret
+----
+scause 2nd signature | verify 2nd signature
+----
+==== sclicprivorder-01.S 
+.Description: Verify m-mode interrupt is handled before s-mode interrupt
+- generate 1 m-mode interrupt (mtimer) and 1 s-mode interrupt (msw),
+- switch to s-mode,
+- trigger (m-mode handler),
+- clear m-mode interrupt
+- return to s-mode
+- trigger (s-mode handler)
+- clear s-mode interrupt
+- return to s-mode
+- ecall back to m-mode
+[%autofit]
+----
+ RVMODEL_MSTATUS_MIE       = MSTATUS_SIE
+ RVMODEL_SINT1_CLICINTATTR = RVMODEL_CLICINTATTR_SMODE
+ RVMODEL_SET_SINT1         = RVMODEL_SET_MSW_INT
+ RVMODEL_CLEAR_SINT1       = RVMODEL_CLEAR_MSW_INT
+ RVMODEL_MINT2_CLICINTATTR = RVMODEL_CLICINTATTR_MMODE
+ RVMODEL_SET_MINT2         = RVMODEL_SET_MTIMER_INT
+ RVMODEL_CLEAR_MINT2       = RVMODEL_CLEAR_MTIMER_INT
+ RVMODEL_SINT1_CLICINTCTL  = RVMODEL_CLICINTCTL_MAX
+ RVMODEL_MINT2_CLICINTCTL  = RVMODEL_CLICINTCTL_MIN  
+ RVMODEL_SINT1_EXCCODE     = 0x3
+ RVMODEL_MINT2_EXCCODE     = 0x7
+----
+Coverage - same as order-04.S except
+----
+mcause 1st signature | verify m-mode int 1st signature
+scause 2nd signature | verify s-mode int 2nd signature
+----
+==== sclicprivorder-02.S 
+.Description: Verify m-mode interrupt is handled before s-mode interrupt setting sintthresh to max
+- generate 1 m-mode interrupt (mtimer) and 1 s-mode interrupt (msw),
+- switch to s-mode,
+- trigger (m-mode handler),
+- clear m-mode interrupt
+- return to s-mode
+- trigger (s-mode handler)
+- clear s-mode interrupt
+- return to s-mode
+- ecall back to m-mode
+[%autofit]
+----
+ RVMODEL_MSTATUS_MIE       = MSTATUS_SIE
+ RVMODEL_SINT1_CLICINTATTR = RVMODEL_CLICINTATTR_SMODE
+ RVMODEL_SET_SINT1         = RVMODEL_SET_MSW_INT
+ RVMODEL_CLEAR_SINT1       = RVMODEL_CLEAR_MSW_INT
+ RVMODEL_MINT2_CLICINTATTR = RVMODEL_CLICINTATTR_MMODE
+ RVMODEL_SET_MINT2         = RVMODEL_SET_MTIMER_INT
+ RVMODEL_CLEAR_MINT2       = RVMODEL_CLEAR_MTIMER_INT
+ RVMODEL_SINT1_CLICINTCTL  = RVMODEL_CLICINTCTL_MAX
+ RVMODEL_MINT2_CLICINTCTL  = RVMODEL_CLICINTCTL_MIN
+ RVMODEL_SINTTHRESH_HNDLR1 = RVMODEL_SINTTHRESH_MAX
+ RVMODEL_SINT1_EXCCODE     = 0x3
+ RVMODEL_MINT2_EXCCODE     = 0x7
+----
+Coverage
+----
+mcause 1st signature | verify m-mode int 1st signature
+scause 2nd signature | verify s-mode int 2nd signature
+----
+==== sclicprivorder-03.S 
+.Description: Verify m-mode interrupt is handled before s-mode interrupt setting mintthresh to max
+- generate 1 m-mode interrupt (mtimer) and 1 s-mode interrupt (msw),
+- switch to s-mode,
+- trigger (m-mode handler),
+- clear m-mode interrupt
+- return to s-mode
+- trigger (s-mode handler)
+- clear s-mode interrupt
+- return to s-mode
+- ecall back to m-mode
+[%autofit]
+----
+ RVMODEL_MSTATUS_MIE       = MSTATUS_SIE
+ RVMODEL_SINT1_CLICINTATTR = RVMODEL_CLICINTATTR_SMODE
+ RVMODEL_SET_SINT1         = RVMODEL_SET_MSW_INT
+ RVMODEL_CLEAR_SINT1       = RVMODEL_CLEAR_MSW_INT
+ RVMODEL_MINT2_CLICINTATTR = RVMODEL_CLICINTATTR_MMODE
+ RVMODEL_SET_MINT2         = RVMODEL_SET_MTIMER_INT
+ RVMODEL_CLEAR_MINT2       = RVMODEL_CLEAR_MTIMER_INT
+ RVMODEL_SINT1_CLICINTCTL  = RVMODEL_CLICINTCTL_MAX
+ RVMODEL_MINT2_CLICINTCTL  = RVMODEL_CLICINTCTL_MIN
+ RVMODEL_MINTTHRESH_HNDLR1 = RVMODEL_MINTTHRESH_MAX
+ RVMODEL_SINT1_EXCCODE     = 0x3
+ RVMODEL_MINT2_EXCCODE     = 0x7
+----
+Coverage
+----
+mcause 1st signature | verify m-mode int 1st signature
+scause 2nd signature | verify s-mode int 2nd signature
+----
+==== sclicmdisable-01.S 
+.Description: Verify m-mode interrupt not taken in m-mode when mstatus.mie is 0
+- generate m-mode interrupt (msw)
+- stay in m-mode
+- wfi
+- wakeup
+- jump to done
+- ecall
+[%autofit]
+----
+ RVMODEL_SWITCH_TO_S_MODE  = <EMPTY>
+ RVMODEL_MSTATUS_MIE       = 0
+ RVMODEL_MINT1_CLICINTATTR = RVMODEL_CLICINTATTR_MMODE
+ RVMODEL_SET_MINT1         = RVMODEL_SET_MSW_INT
+ RVMODEL_CLEAR_MINT1       = RVMODEL_CLEAR_MSW_INT
+ RVMODEL_MINT1_EXCCODE     = 0x3
+----
+Coverage 
+----
+mstatus.mie  | verify no m-mode interrupt taken when in m-mode and clicintie is 0
+----
+==== sclicmdisable-02.S 
+.Description: Verify m-mode interrupt not taken in m-mode when clicintie is 0
+- generate m-mode interrupt (msw)
+- stay in m-mode
+- nop
+- wakeup
+- jump to done
+- ecall
+[%autofit]
+----
+ RVMODEL_WFI               = nop
+ RVMODEL_SWITCH_TO_S_MODE  = <EMPTY>
+ RVMODEL_MSTATUS_MIE       = MSTATUS_MIE
+ RVMODEL_MINT1_CLICINTIE   = 0x0
+ RVMODEL_MINT1_CLICINTATTR = RVMODEL_CLICINTATTR_MMODE
+ RVMODEL_SET_MINT1         = RVMODEL_SET_MSW_INT
+ RVMODEL_CLEAR_MINT1       = RVMODEL_CLEAR_MSW_INT
+ RVMODEL_MINT1_EXCCODE     = 0x3
+----
+Coverage 
+----
+clicintie=0  | verify m-mode interrupt not taken when in m-mode and clicintie is 0
+----
+==== sclicmdisable-03.S 
+.Description: Verify s-mode interrupt not taken in m-mode
+- generate s-mode interrupt (msw)
+- stay in m-mode
+- wfi
+- wakeup
+- jump to done
+- ecall
+[%autofit]
+----
+ RVMODEL_SWITCH_TO_S_MODE = <EMPTY>
+ RVMODEL_SINT1_CLICINTATTR = RVMODEL_CLICINTATTR_SMODE
+ RVMODEL_SET_SINT1         = RVMODEL_SET_MSW_INT
+ RVMODEL_CLEAR_SINT1       = RVMODEL_CLEAR_MSW_INT
+ RVMODEL_SINT1_EXCCODE     = 0x3
+----
+Coverage 
+----
+mstatus.sie=1  | verify s-mode interrupt not taken when in m-mode
+----
+==== sclicsdisable-01.S 
+.Description: Verify s-mode interrupt not taken in s-mode when mstatus.sie is 0
+- generate s-mode interrupt (msw)
+- switch to s-mode,
+- wfi
+- wakeup
+- jump to done
+- ecall back to m-mode
+[%autofit]
+----
+ RVMODEL_MSTATUS_SIE       = 0
+ RVMODEL_SINT1_CLICINTATTR = RVMODEL_CLICINTATTR_SMODE
+ RVMODEL_SET_SINT1         = RVMODEL_SET_MSW_INT
+ RVMODEL_CLEAR_SINT1       = RVMODEL_CLEAR_MSW_INT
+ RVMODEL_SINT1_EXCCODE     = 0x3
+----
+Coverage 
+----
+mstatus.mie=1, mstatus.sie=0  | verify s-mode interrupt not taken when in s-mode when mstatus.sie is 0
+----
+==== sclicsdisable-02.S 
+.Description: Verify s-mode interrupt not taken in s-mode when clcintie is 0
+- generate s-mode interrupt (msw)
+- switch to s-mode,
+- nop
+- jump to done
+- ecall back to m-mode
+[%autofit]
+----
+ RVMODEL_WFI               = nop
+ RVMODEL_MSTATUS_MIE       = MSTATUS_SIE
+ RVMODEL_SINT1_CLICINTIE   = 0x0
+ RVMODEL_SINT1_CLICINTATTR = RVMODEL_CLICINTATTR_SMODE
+ RVMODEL_SET_SINT1         = RVMODEL_SET_MSW_INT
+ RVMODEL_CLEAR_SINT1       = RVMODEL_CLEAR_MSW_INT
+ RVMODEL_SINT1_EXCCODE     = 0x3
+----
+Coverage 
+----
+sie=0  | verify s-mode interrupt not taken when in s-mode when clicintie=0
+----
+==== sclicsdisable-03.S 
+.Description: Verify s-mode interrupt not taken in m-mode when mstatus.sie is 1 (but wfi acts as nop)
+- generate s-mode interrupt (msw)
+- wfi
+- wakeup
+- jump to done
+[%autofit]
+----
+ RVMODEL_SWITCH_TO_S_MODE  = <EMPTY>
+ RVMODEL_MSTATUS_MIE       = MSTATUS_SIE
+ RVMODEL_SINT1_CLICINTATTR = RVMODEL_CLICINTATTR_SMODE
+ RVMODEL_SET_SINT1         = RVMODEL_SET_MSW_INT
+ RVMODEL_CLEAR_SINT1       = RVMODEL_CLEAR_MSW_INT
+ RVMODEL_SINT1_EXCCODE     = 0x3
+----
+Coverage 
+----
+mstatus.sie=1, mstatus.sie=1  | verify s-mode interrupt not taken when in m-mode when mstatus.sie is 1
+----
+==== sclicwfi-01.S
+.Description: expect wfi to behave like a nop when a single interrupt is pending when mstatus.mie is disabled
+- enable clicintie (default)
+- generate s-mode interrupt (msw)
+- wfi
+- wakeup
+- jump to finish
+[%autofit]
+----
+ RVMODEL_MSTATUS_MIE = 0
+ RVMODEL_SET_SINT1 = RVMODEL_SET_MSW_INT
+ RVMODEL_CLEAR_INT1 = RVMODEL_CLEAR_MSW_INT
+ RVMODEL_SINT1_CLICINTATTR = RVMODEL_CLICINTATTR_SMODE
+ RVMODEL_SINT1_EXCCODE     = 0x3
+----
+Coverage
+----
+mstatus.mie | verify no interrupt occurs in m-mode if mstatus.mie is 0
+wfi | verify wakeup/nop occurs with mstatus.mie = 0
+wfi | verify wakeup/nop occurs with pending interrupt
+----
