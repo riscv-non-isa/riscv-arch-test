@@ -1088,6 +1088,15 @@ ADDI(swreg, swreg, RVMODEL_CBZ_BLOCKSIZE)
     sub x1,x1,tempreg			;\
     RVTEST_SIGUPD(swreg,x1,offset) 
 
+/* RVTEST_SIGUPD_CSR(SIG, TMP, CSR)
+   This macro reads the provided CSR and stores the
+   value in the signature referenced by SIG using the
+   help of the temporary register TMP.
+ */
+#define RVTEST_SIGUPD_CSR(_SIG, _TMP, _CSR) \
+  csrr _TMP, _CSR                          ;\
+  RVTEST_SIGUPD(_SIG, _TMP)
+
 
 //--------------------------------- Migration aliases ------------------------------------------
 #ifdef RV_COMPLIANCE_RV32M
