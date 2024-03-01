@@ -574,13 +574,13 @@
 /******************************************************************************/
 
  .macro XCSR_RENAME __MODE__    // enable CSR names to be parameterized, V,S merged
-  .ifc   \__MODE__, M
+  .ifc   \__MODE__ , M
        _XCSR_RENAME_M
   .endif
-  .ifc   \__MODE__, S
+  .ifc   \__MODE__ , S
        _XCSR_RENAME_S
   .endif
-  .ifc  \__MODE__,  V
+  .ifc  \__MODE__ ,  V
        _XCSR_RENAME_S
   .endif
 .endm
@@ -593,13 +593,13 @@
 /******************************************************************************/
 
  .macro XCSR_VRENAME __MODE__   // enable CSR names to be parameterized, V,S separate 
-  .ifc   \__MODE__, M
+  .ifc   \__MODE__ , M
        _XCSR_RENAME_M
   .endif
-  .ifc   \__MODE__, S
+  .ifc   \__MODE__ , S
        _XCSR_RENAME_S
   .endif
-  .ifc  \__MODE__,  V
+  .ifc  \__MODE__ ,  V
        _XCSR_RENAME_V
   .endif
  .endm
@@ -979,10 +979,10 @@ init_\__MODE__\()scratch:
 //----------------------------------------------------------------------
 init_\__MODE__\()edeleg:
         li      T2, 0                   // save and clear edeleg so we can exit to Mmode
-.if (\__MODE__\() == V)
+.ifc \__MODE__ , V
         csrrw   T2, CSR_VEDELEG, T2     // special case: VS EDELEG available from Vmode
 .else
-  .if (\__MODE__\() == M)
+  .ifc \__MODE__ , M
     #ifdef rvtest_strap_routine
         csrrw   T2, CSR_XEDELEG, T2     // this handles M  mode save, but only if Smode exists
     #endif
