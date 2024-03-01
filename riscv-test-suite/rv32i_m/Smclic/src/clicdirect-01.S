@@ -81,7 +81,7 @@
         #define RVMODEL_INT1_EXCCODE 0x3
 #endif
 #ifndef RVMODEL_CLICINTCTL_MIN    
-        #define  RVMODEL_CLICINTCTL_MIN     0x1
+        #define  RVMODEL_CLICINTCTL_MIN     0xF
 #endif
 #ifndef RVMODEL_CLICINTCTL_MAX    
         #define  RVMODEL_CLICINTCTL_MAX     0xFF
@@ -223,6 +223,9 @@ RVTEST_SIGBASE( a1,signature_a1_m) // a1 will point to signature_a1_m label in t
 
     fence; // ensure memory mapped registers are setup
 
+    LI(     t0,MSTATUS_MPP | MSTATUS_MPIE)
+    csrrc x0, CSR_MSTATUS, t0; // initialize mpp, mpie for deterministic signatures in tests that don't take traps
+
     LI(     t0,RVMODEL_MSTATUS_MIE)
     csrrs x0, CSR_MSTATUS, t0; // enable global interrupts in m-mode
 location_1:
@@ -267,6 +270,10 @@ direct_mtvec_handler:
     csrr  t0, CSR_MINTTHRESH
     RVTEST_SIGUPD( a1,t0)
     csrr  t0, CSR_MNXTI
+    beqz t0, skip_normalization1
+    LA(     t1,mtvtval)
+    sub   t0, t0, t1    
+skip_normalization1:
     RVTEST_SIGUPD( a1,t0)  
     LI(     t0,0x12345678)
     csrrw  t0, CSR_MSCRATCHCSW, t0
@@ -289,6 +296,10 @@ direct_mtvec_handler:
     csrw    CSR_MINTTHRESH, t0
         
     csrrsi t0, CSR_MNXTI, RVMODEL_MNXTI_SIMMED
+    beqz t0, skip_normalization2
+    LA(     t1,second_mtvtval)
+    sub   t0, t0, t1    
+skip_normalization2:
     RVTEST_SIGUPD( a1,t0)
         
     csrr  t0, CSR_MCAUSE
@@ -308,6 +319,10 @@ location_2:
     LA(     t0,finish)
     csrw  CSR_MEPC, t0
     csrrci t0, CSR_MNXTI, RVMODEL_MNXTI_CIMMED
+    beqz t0, skip_normalization3
+    LA(     t1,second_mtvtval)
+    sub   t0, t0, t1    
+skip_normalization3:
     RVTEST_SIGUPD( a1,t0)
         
     csrr  t0, CSR_MCAUSE
@@ -358,6 +373,10 @@ second_direct_mtvec_handler:
     csrr  t0, CSR_MINTTHRESH
     RVTEST_SIGUPD( a1,t0)
     csrr  t0, CSR_MNXTI
+    beqz t0, skip_normalization4
+    LA(     t1,second_mtvtval)
+    sub   t0, t0, t1    
+skip_normalization4:
     RVTEST_SIGUPD( a1,t0)  
     LI(     t0,0x87654321)
     csrrw  t0, CSR_MSCRATCHCSW, t0
