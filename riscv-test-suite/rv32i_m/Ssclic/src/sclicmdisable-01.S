@@ -89,7 +89,7 @@
         #define  RVMODEL_SINTTHRESH_HNDLR1 RVMODEL_SINTTHRESH_MIN    
 #endif
 #ifndef RVMODEL_CLICINTCTL_MIN    
-        #define  RVMODEL_CLICINTCTL_MIN     0x1
+        #define  RVMODEL_CLICINTCTL_MIN     0xF
 #endif
 #ifndef RVMODEL_CLICINTCTL_MAX    
         #define  RVMODEL_CLICINTCTL_MAX     0xFF
@@ -359,6 +359,8 @@ RVTEST_SIGBASE( a1,signature_a1) // a1 will point to signature_a1 label in the s
     RVMODEL_SET_SINT2
 
     fence; // ensure memory mapped registers are setup
+    LI(     t0,MSTATUS_MPP | MSTATUS_MPIE | MSTATUS_SPIE)
+    csrrc x0, CSR_MSTATUS, t0; // initialize mpp, mpie for deterministic signatures in tests that don't take traps
 
     LI(     t0,RVMODEL_MSTATUS_MIE)
     csrrs x0, CSR_MSTATUS, t0; // enable global interrupts
@@ -371,6 +373,7 @@ location_1s:
 
     RVMODEL_WFI
 
+location_after_wfi:
     j     s_done
 
 
@@ -390,7 +393,7 @@ direct_mtvec_handler:
     and   t0, t0, t1    
     RVTEST_SIGUPD( a1,t0)
     csrr  t0, CSR_MEPC
-    LA(   t1, location_1)
+    LA(   t1, location_1s)
     sub   t0, t0, t1    
     RVTEST_SIGUPD( a1,t0)
     csrr  t0, CSR_MTVAL
@@ -422,6 +425,10 @@ direct_mtvec_handler:
     csrr  t0, CSR_MINTTHRESH
     RVTEST_SIGUPD( a1,t0)
     csrr  t0, CSR_MNXTI
+    beqz t0, skip_normalization1
+    LA(     t1,mtvtval)
+    sub   t0, t0, t1    
+skip_normalization1:
     RVTEST_SIGUPD( a1,t0)  
     LI(     t0,0x12345678)
     csrrw  t0, CSR_MSCRATCHCSW, t0
@@ -446,7 +453,7 @@ direct_mtvec_handler:
     RVMODEL_CLEAR_MINT2
     fence; // ensure memory mapped registers are setup
         
-    LA(     t0,s_done)
+    LA(     t0,location_after_wfi)
     csrw  CSR_MEPC, t0
 
     LI(     t0,RVMODEL_MINTTHRESH_HNDLR1)
@@ -456,6 +463,10 @@ direct_mtvec_handler:
     csrw    CSR_SINTTHRESH, t0
         
     csrrsi t0, CSR_MNXTI, RVMODEL_MNXTI_SIMMED
+    beqz t0, skip_normalization2
+    LA(     t1,mtvtval)
+    sub   t0, t0, t1    
+skip_normalization2:
     RVTEST_SIGUPD( a1,t0)
         
     csrr  t0, CSR_MCAUSE
@@ -493,10 +504,10 @@ direct_stvec_handler:
     RVTEST_SIGUPD( a1,t0)
     csrr  t0, CSR_SIE
     RVTEST_SIGUPD( a1,t0)
+    csrr  t0, CSR_STVEC
     LA(   t1, direct_stvec_handler)
     ori   t1, t1, RVMODEL_STVEC_MODE
     sub   t0, t0, t1    
-    csrr  t0, CSR_STVEC
     RVTEST_SIGUPD( a1,t0)
 
     csrr  t0, CSR_SINTSTATUS
@@ -504,6 +515,10 @@ direct_stvec_handler:
     csrr  t0, CSR_SINTTHRESH
     RVTEST_SIGUPD( a1,t0)
     csrr  t0, CSR_SNXTI
+    beqz t0, skip_normalization3
+    LA(     t1,stvtval)
+    sub   t0, t0, t1    
+skip_normalization3:
     RVTEST_SIGUPD( a1,t0)  
     LI(     t0,0x12345678)
     csrrw  t0, CSR_SSCRATCHCSW, t0
@@ -533,6 +548,10 @@ location_2s:
     csrw    CSR_SINTTHRESH, t0
         
     csrrsi t0, CSR_SNXTI, RVMODEL_SNXTI_SIMMED
+    beqz t0, skip_normalization4
+    LA(     t1,stvtval)
+    sub   t0, t0, t1    
+skip_normalization4:
     RVTEST_SIGUPD( a1,t0)
         
     csrr  t0, CSR_SCAUSE
@@ -817,7 +836,7 @@ RVTEST_DATA_END
 RVMODEL_DATA_BEGIN
 rvtest_sig_begin:
 signature_a1:
-    .fill 32*(XLEN/32),4,0xdeadbeef
+    .fill 96*(XLEN/32),4,0xdeadbeef
 
 sig_begin_canary:
 CANARY;
