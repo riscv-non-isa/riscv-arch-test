@@ -401,7 +401,7 @@
 
 #define TEST_JALR_OP(tempreg, rd, rs1, imm, swreg, offset,adj)	;\
 5:					;\
-    LA(rd,5b)				;\
+    auipc rd, 0             ;\
     .if adj & 1 == 1			;\
     LA(rs1, 3f-imm+adj-1)		;\
     jalr rd, imm+1(rs1)			;\

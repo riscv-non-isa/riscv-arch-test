@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [3.8.10] -- 2024-03-24
+- Updated TEST_JALR_OP in test_macros.h
+- The macro no longer works when rd = x0 in versions of GCC newer than 2023.12.20
+- riscof throws a message /home/jstine/cvw/addins/riscv-arch-test/riscv-test-suite/rv32i_m/I/src/jalr-01.S:72: Error: illegal operands `la x0,5b'
+- The TEST_JALR_OP  macro invokes LA, which does not like x0 as an operand
+- replacing LA(rd, 5b) with auipc rd, 0 in test_macros.h solves the compiler issue and produces similar code but without a bunch of preceeding nops
+
 ## [3.8.9] -- 2024-01-12
 - Fixed Check ISA fields to include 32/64 in Zicond tests.  Note that the riscv-ctg CGFs have not been updated.
 
