@@ -586,6 +586,23 @@ nop					;\
 csrr flagreg, fcsr			;\
 RVTEST_SIGUPD_F(swreg,destreg,flagreg) 
 
+#define TEST_LOAD_ZILSD(swreg,testreg,index,rs1,destreg,rd_hi,imm_val,offset,inst,adj);\
+LA(rs1,rvtest_data+(index*4)+adj-imm_val);\
+inst destreg, imm_val(rs1)      ;\
+nop                 ;\
+nop                 ;\
+RVTEST_SIGUPD(swreg,destreg) ;\
+RVTEST_SIGUPD(swreg,rd_hi)
+
+#define TEST_STORE_ZILSD(swreg,testreg,index,rs1,rs2,rd_hi,rs2_val,imm_val,offset,inst,adj) ;\
+LI(rs2,rs2_val)             ;\
+addi rs1,swreg,offset+adj       ;\
+LI(testreg,imm_val)         ;\
+sub rs1,rs1,testreg         ;\
+inst rs2, imm_val(rs1)          ;\
+nop                 ;\
+nop
+
 #define TEST_CBO_ZERO(swreg,rs1,inst,imm_val)                               ;\
 LI(rs1,imm_val&(RVMODEL_CBZ_BLOCKSIZE-1))                                   ;\
 add rs1,rs1,swreg                                                           ;\
