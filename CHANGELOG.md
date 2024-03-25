@@ -1,4 +1,7 @@
 # CHANGELOG
+## [3.7.6] - 2023-10-27
+Add PMP Tests
+
 
 ## [3.8.10] -- 2024-03-24
 - Updated TEST_JALR_OP in test_macros.h
