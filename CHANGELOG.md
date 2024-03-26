@@ -1,4 +1,8 @@
 # CHANGELOG
+## [3.8.11] - 2024-03-26
+- Added test suites for Zfh extensions.
+- Introduced half word and half width in Nan boxing functionality to accomdate Zfh extensions.
+- Added test suites for Zfinx extensions.
 
 ## [3.6.8] - 2023-06-22
 - Fix broken hyperlink in README
