@@ -1,4 +1,8 @@
 # CHANGELOG
+
+## [3.8.12] - 2024-03-26
+Corrected missing RV64 strings in RVTEST_CASE macros for Zfh fcvt.h.l and similar tests
+
 ## [3.8.11] - 2024-03-26
 - Added test suites for Zfh extensions.
 - Introduced half word and half width in Nan boxing functionality to accomdate Zfh extensions.
