@@ -1,4 +1,6 @@
 # CHANGELOG
+## [3.8.9] -- 2024-01-14
+- Update tests for B extension
 
 ## [3.8.12] - 2024-03-26
 Corrected missing RV64 strings in RVTEST_CASE macros for Zfh fcvt.h.l and similar tests
