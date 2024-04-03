@@ -594,8 +594,9 @@ nop                 ;\
 RVTEST_SIGUPD(swreg,destreg) ;\
 RVTEST_SIGUPD(swreg,rd_hi)
 
-#define TEST_STORE_ZILSD(swreg,testreg,index,rs1,rs2,rd_hi,rs2_val,imm_val,offset,inst,adj) ;\
+#define TEST_STORE_ZILSD(swreg,testreg,index,rs1,rs2,rs2_hi,rs2_val,rs2_hi_val,imm_val,offset,inst,adj) ;\
 LI(rs2,rs2_val)             ;\
+LI(rs2_hi,rs2_hi_val)             ;\
 addi rs1,swreg,offset+adj       ;\
 LI(testreg,imm_val)         ;\
 sub rs1,rs1,testreg         ;\
