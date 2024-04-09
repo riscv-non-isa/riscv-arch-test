@@ -1,7 +1,23 @@
 # CHANGELOG
 
-## [3.8.10] - 2023-04-06
+## [3.8.13] - 2023-04-06
 - Add Zfa support.
+
+## [3.8.12] - 2024-03-26
+Corrected missing RV64 strings in RVTEST_CASE macros for Zfh fcvt.h.l and similar tests
+
+## [3.8.11] - 2024-03-26
+- Added test suites for Zfh extensions.
+- Introduced half word and half width in Nan boxing functionality to accomdate Zfh extensions.
+- Added test suites for Zfinx extensions.
+
+## [3.8.10] -- 2024-03-24
+- Updated TEST_JALR_OP in test_macros.h
+- The macro no longer works when rd = x0 in versions of GCC newer than 2023.12.20
+- riscof throws a message /home/jstine/cvw/addins/riscv-arch-test/riscv-test-suite/rv32i_m/I/src/jalr-01.S:72: Error: illegal operands `la x0,5b'
+- The TEST_JALR_OP  macro invokes LA, which does not like x0 as an operand
+- replacing LA(rd, 5b) with auipc rd, 0 in test_macros.h solves the compiler issue and produces similar code but without a bunch of preceeding nops
+
 
 ## [3.8.9] -- 2024-01-12
 - Fixed Check ISA fields to include 32/64 in Zicond tests.  Note that the riscv-ctg CGFs have not been updated.

@@ -191,18 +191,29 @@
 
 
 #define NAN_BOXED(__val__,__width__,__max__)	;\
+     .if __width__ == 16                        ;\
+        .hword __val__                         ;\
+    .endif                                     ;\
     .if __width__ == 32				;\
 	.word __val__				;\
     .else					;\
 	.dword __val__				;\
     .endif					;\
     .if __max__ > __width__			;\
-	.set pref_bytes,(__max__-__width__)/32	;\
+        .if __width__ == 16                      ;\
+         .set pref_bytes,(__max__-__width__)/16;\
+        .else				                             ;\
+         .set pref_bytes,(__max__-__width__)/32;\
+    	.endif                                   ;\
     .else					;\
 	.set pref_bytes, 0			;\
     .endif					;\
     .rept pref_bytes				;\
-	.word 0xffffffff			;\
+        .if __width__ == 16         ;\
+		      .hword 0xffff         ;\
+        .else				        ;\
+	        .word 0xffffffff		;\
+        .endif                      ;\    
     .endr					;
 
 #define ZERO_EXTEND(__val__,__width__,__max__)	;\
@@ -401,7 +412,7 @@
 
 #define TEST_JALR_OP(tempreg, rd, rs1, imm, swreg, offset,adj)	;\
 5:					;\
-    LA(rd,5b)				;\
+    auipc rd, 0             ;\
     .if adj & 1 == 1			;\
     LA(rs1, 3f-imm+adj-1)		;\
     jalr rd, imm+1(rs1)			;\
