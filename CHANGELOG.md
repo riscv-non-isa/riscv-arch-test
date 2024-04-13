@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## [3.8.13] - 2024-03-26
+## [3.8.13] - 2024-04-13
 - Fixed missing `F` and `Zfh` ISA identifiers in `Zfh/flh-align-01` RVTEST_CASE macro.
 
 ## [3.8.12] - 2024-03-26
