@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## [3.8.14] - 2024-04-16
+Add missing `Zfh` ISA in RVTEST_CASE for `Zfh` fdiv related tests
+
 ## [3.8.13] - 2024-04-13
 - Fixed missing `F` and `Zfh` ISA identifiers in `Zfh/flh-align-01` RVTEST_CASE macro.
 
