@@ -24,80 +24,90 @@ rvtest_entry_point:
 RVMODEL_BOOT
 RVTEST_CODE_BEGIN
 #ifdef TEST_CASE_1
-    RVTEST_CASE(1,"//check ISA:=regex(.*32.*); check ISA:=regex(.*I.*Zicsr.*); def rvtest_mtrap_routine=True; def rvtest_strap_routine=True; def TEST_CASE_1=True",sv32)
+    RVTEST_CASE(1,"//check ISA:=regex(.*32.*); check ISA:=regex(.*I.*Zicsr.*); def rvtest_mtrap_routine=True; def rvtest_strap_routine=True; def TEST_CASE_1=True",vm_Bare_mode_03)
 
 RVTEST_SIGBASE( x13,signature_x13_1)
   	
 main:
-#ifdef rvtest_mtrap_routine       	                                        // Verification of existance of rvtest_mtrap_routine
+#ifdef rvtest_mtrap_routine       	                                    // Verification of existance of rvtest_mtrap_routine
     LI a4, 0xceed                                                           // Loading the 0xceed value in a4 register
     RVTEST_SIGUPD(x13, a4)                                                  // Updating the signature register x13 with the value in a4 register
 #endif                                                                      // END OF LOOP BODY
                                         
-#ifdef rvtest_strap_routine       	                                        // Verification of existance of rvtest_strap_routine
+#ifdef rvtest_strap_routine       	                                    // Verification of existance of rvtest_strap_routine
     LI a4, 0xbeed                                                           // Loading the 0xbeed value in a4 register
     RVTEST_SIGUPD(x13, a4)                                                  // Updating the signature register x13 with the value in a4 register
 #endif                                                                      // END OF LOOP BODY
                                         
-    ALL_MEM_PMP                   	                                        // Set the RWX PMP permissions to all memory regions
-    WRITE_CSR(satp, x0)           	                                        // Write satp with all zeros (bare mode)
+    ALL_MEM_PMP                   	                                    // Set the RWX PMP permissions to all memory regions
+	csrw satp, zero						            // write zero to the satp (bare mode)
                                         
-    .set va,      0x80000000       	  	                                    // rvtest_entry_point  Virtual address
+    .set va,      0x80000000       	  	                            // rvtest_entry_point  Virtual address
     .set pa,      0x80000000           	                                    // rvtest_entry_point physical address
-    .set va_data, 0x91000000		                                        // rvtest_data Virtual address set at level 1
-
-///////////////////////////////// PTE SETUP /////////////////////////////////////////////// 
+    .set va_data, 0x91000000		                                    // rvtest_data Virtual address set at level 1
+    .set sig_data,0x93003110 
+# -------------------------PTE SETUP---------------------------------- 
     // PTE Setup at level 1 to point to the PTE Setup at level 0
     LA (a0, rvtest_slvl1_pg_tbl)                                            // Loads the base address of pgtbl 0 address in a0
     LI (a1, PTE_V)                                                          //sets the Permission bit to valid only to point to the pgtbl0 PTE
     PTE_SETUP_RV32(a0, a1, t0, t1, va, LEVEL1)                              // setup the PTE for level 1
     // PTE setup at level 0 -- rvtest_entry_point (0x80000000 -> 0x80000000)
     LA (a0, pa)                                                             // loads the address in a0
-    LI a1, ( PTE_D | PTE_A | PTE_W | PTE_R | PTE_V | PTE_U | PTE_X| PTE_U)  // sets the permission bits
+    LI a1, ( PTE_D | PTE_A | PTE_V | PTE_X| PTE_U)                          // sets the permission bits
     PTE_SETUP_RV32(a0, a1, t0, t1, va, LEVEL0)                              // setup the PTE for level 0
     // PTE SETUP at level 0 -- rvtest_data (0x91000000 -> rvtest_data)
     LA (a0, rvtest_data)                                                    // loads the pysical address of label rvtest_data in a0
-    LI a1, ( PTE_D | PTE_A | PTE_W | PTE_R | PTE_V | PTE_U | PTE_X| PTE_U)  // sets the permission bits 
+    LI a1, ( PTE_D | PTE_A | PTE_W | PTE_R | PTE_V | PTE_U)                 // sets the permission bits 
     PTE_SETUP_RV32(a0, a1, t0, t1, va_data, LEVEL0)                         // setup the PTE for level0
 
-///////////////////////////////// SAVE AREA /////////////////////////////////////////////// 
-    /* Save Virtual addresses in of Code and Data 
-       in their respective S-mode save area */
+# -------------------------Set the PTE for signature update-----------------
 
-    // ****** code ******
-    LI(t0, va)                                                              // Loading the virtual address of rvtest_entry_point in t0 register
-    LA(t1, pa)                                                              // Loading the physical address of rvtest_entry_point in t1 register
-    sub t0, t0, t1                                                          // (VA-PA) Note: VA > PA
-    csrr sp, mscratch                                                       // Loading the mscratch register in sp register
-    add t1, sp, t0                                                          // Adding the offset to the sp register
-    csrw sscratch, t1                                                       // Saving the address of rvtest_entry_point in sscratch register
+	la a0, rvtest_sig_begin   						// Physical address of signature area
+	li a1, ( PTE_D | PTE_A | PTE_R | PTE_W | PTE_X | PTE_V)                 // sets the permissions bits 
+	PTE_SETUP_RV32(a0, a1, t0, t1, sig_data, LEVEL0) 			// PTE Setup for signature area address at pgtbl0
 
-    LREG t1, code_bgn_off + 0 * sv_area_sz(sp)
-    add t2, t1, t0
-    SREG t2, code_bgn_off + 1 * sv_area_sz(sp)
-    SREG t2, code_bgn_off + 2 * sv_area_sz(sp)
+	LI (t0, sig_data)                                                       
+	LA (t1, rvtest_sig_begin)                                                      
+	sub t0, t0, t1 					        		// (VA-PA) Note: VA > PA 
+	add s11, x13, t0				        		// Translation of Signature reg
+  
 
-    // ******* data *******
-    // update save area
-    LREG t1, data_bgn_off + 0 * sv_area_sz(sp)
-    add t2, t1, t0
-    SREG t2, data_bgn_off + 1 * sv_area_sz(sp)
-    SREG t2, data_bgn_off + 2 * sv_area_sz(sp)
+# -------------------------Save area logic----------------------------------
 
-    // signature
-    LREG t1, sig_bgn_off + 0 * sv_area_sz(sp)
-    add t2, t1, t0
-    SREG t2, sig_bgn_off + 1 * sv_area_sz(sp)
-    SREG t2, sig_bgn_off + 2 * sv_area_sz(sp)
+	SIGNATURE_AREA (CODE, va, pa)						// signature area for code 
+	SIGNATURE_AREA (DATA, va_data,rvtest_data)				// signature area for data 
+	SIGNATURE_AREA (SIG, sig_data, signature_x13_1)			        // signature area for signature 
+	SIGNATURE_AREA (VMEM, va_data, rvtest_data)				// signature area for vmem
 
-    sfence.vma                                                             // sfence.vma instruction
-    RVTEST_GOTO_LOWER_MODE Umode                                           // Switching to U mode
+	sfence.vma                                                              // flush the TLB
+	RVTEST_GOTO_LOWER_MODE	Umode		                                // Switching to U mode
 
+# -------------------------virtulization enabled----------------------------------
 vm_en:
-    LI(t0, 0x40)                                                           // Loading the 0x40 value in t0 register
-    RVTEST_GOTO_MMODE                                                      // Switching back to M mode
-    LI(a4, 0x123)                                                          // Loading the 0x123 value in a4 register
-    RVTEST_SIGUPD(x13, a4)                                                 // Updating the signature register x13 with the value in a4 register
+	LI (a4, 0xdead)
+	RVTEST_SIGUPD(x13,a4)                                                   // Verification of virtualization enabeled
+
+	LI (t0, va_data)                                                        
+	SREG x2, 0(t0)                                                          // test the store access (should raise an exception)
+	nop
+
+	LI (a4, 0xbeef)
+	RVTEST_SIGUPD(x13,a4)                                                   // Verification of virtualization enabeled
+        nop
+
+# -------------------------virtulization disabled----------------------------------
+
+	RVTEST_GOTO_MMODE		                                        // Switching back to M mode
+
+	LI (t0, sig_data)                                                       
+	LA (t1, rvtest_sig_begin)                                                      
+	sub t0, t0, t1 					        		// (VA-PA) Note: VA > PA 
+	sub x13, x13, t0				        		// Translation of Signature reg
+	addi x13,x13,REGWIDTH
+	nop
+
+	LI (a4, 0x123)
+	RVTEST_SIGUPD(x13,a4)                                                   // Verification of virtualization disabled
 #endif
 
 RVTEST_CODE_END

@@ -1,10 +1,11 @@
-# ##################################################################################################          
-# Verification Goal: Test the Execute acces in Supervisor mode for Level1 for Misaligned Superpage #
-#                    Execute access to the PTE should raise instruction page fault	           #		   
-# Discription: 	     If PTE at level1 is leaf PTE (superpage) and its pte.ppn[0]!=0, then it is a  #
-#              	     misaligned superpage and accessing that PTE would raise page fault exception  # 
-#              	     of the corresponding access type.                              		   #	 
-# ##################################################################################################
+# #################################################################################################
+# Verification Goal: Test the Read and write acces in User mode for Level1 PTE                    #
+#                    for  Misaligned Superpage should raise load page fault for read access and   #
+#                    store amo fault for store access.                                            #
+# Discription:       If PTE at level1 PTE (superpage) and its pte.ppn[0]!=0, then it is a         #
+#                    misaligned superpage and accessing that PTE would raise page fault exception #
+#                    of the corresponding access type.                                            #
+# #################################################################################################
 
 #include "model_test.h"
 
@@ -24,7 +25,6 @@ RVTEST_CODE_BEGIN
 RVTEST_SIGBASE( x13,signature_x13_1)
   	
 main:
-
 // ---------------------------------------------------------------------------------------------
 
 #ifdef rvtest_mtrap_routine							// Verification of existance of rvtest_mtrap_routine
@@ -37,26 +37,26 @@ main:
 #endif
 	
 	ALL_MEM_PMP          							// set the PMP permissions
-	WRITE_CSR (satp,x0)  							// write satp with all zeros (bare mode)
+	csrw satp, zero  							// write satp with all zeros (bare mode)
  	.set va,       0x90000000                                               // virtual address of vm_en
-	.set pa,       0x80010000                                               // physical address of vm_en
-        .set va_data, 0x91000000                                                // virtual address of rvtest_data 
+	.set pa,       0x80000000                                               // physical address of vm_en
+        .set va_data,  0x91000000                                               // virtual address of rvtest_data 
         .set sig_data, 0x93003114                                               // virtual address of signature_x13_1
           									// PTE setup for sig_data -> rvtest_slvl1_pg_tbl*/
 	la a0, rvtest_slvl1_pg_tbl   		                                // loads the base address of the pg_tbl0        				
 	li a1, (PTE_V)                                                          // sets the permissions bits                
 	PTE_SETUP_RV32(a0, a1, t0, t1, sig_data, LEVEL1)	                // setup the PTE for level1 
-                                             					// PTE setup for Instruction memory 0x90000000 -> 0x80000000
-	LA (a0, pa)                                     			// loads the address in a0
-	LI a1, ( PTE_D | PTE_A | PTE_X | PTE_V )  				// sets the permission bits
-	PTE_SETUP_RV32(a0, a1, t0, t1, va, LEVEL1)      			// setup the PTE for level1
+                                      		            			// PTE setup for Instruction memory 0x90000000 -> 0x80000000
+	LA (a0, pa)                                         			// loads the address in a0
+	LI a1, ( PTE_D | PTE_A | PTE_U | PTE_X | PTE_V )  			// sets the permission bits
+	PTE_SETUP_RV32(a0, a1, t0, t1, va, LEVEL1)          			// setup the PTE for level1
 										// PTE setup for rvtest_data 0x91000000 -> rvtest_data	
-	LA (a0, rvtest_data)                            		        // loads the address of label rvtest_data in a0
-	LI a1, (PTE_D | PTE_A | PTE_W | PTE_R | PTE_V)  		        // sets the permission bits (PTE_V == 0)
-	PTE_SETUP_RV32(a0, a1, t0, t1, va_data, LEVEL1) 		        // setup the PTE for level1
+	LA (a0, rvtest_data)                                			// loads the address of label rvtest_data in a0
+	LI a1, (PTE_D | PTE_A | PTE_U | PTE_R | PTE_W | PTE_V)      	        // sets the permission bits
+	PTE_SETUP_RV32(a0, a1, t0, t1, va_data, LEVEL1)     			// setup the PTE for level1
 
 	la a0, rvtest_sig_begin   						// Physical address of signature area
-	li a1, ( PTE_D | PTE_A | PTE_R | PTE_W | PTE_X | PTE_V)                 // sets the permissions bits 
+	li a1, ( PTE_D | PTE_A | PTE_U | PTE_R | PTE_W | PTE_X | PTE_V)         // sets the permissions bits 
 	PTE_SETUP_RV32(a0, a1, t0, t1, sig_data, LEVEL0) 			// PTE Setup for signature area address at pgtbl0
 
 	LI (t0, sig_data)                                                       
@@ -64,67 +64,56 @@ main:
 	sub t0, t0, t1 					        		// (VA-PA) Note: VA > PA 
 	add s11, x13, t0				        		// Translation of Signature reg
 
+        
         SATP_SETUP_SV32                                                         // set the SATP for virtualization
 
-	/* Save Virtual addresses in of Code and Data 
-	in their respective S-mode save area */
+# -------------------------Save area logic----------------------------------
 
-	/****** code ******/
-	LI (t0, va)                                                             // load the virtual address of vm_en in t0
-	LA (t1, pa)                                                             // load the physical address of vm_en in t1
-	sub t0, t0, t1                                                          // (VA-PA) Note: VA > PA 
-	csrr sp, mscratch                                                       // load the value of mscratch in sp
-	add t1,sp,t0                                                            // add the offset to the base address of save area
-	csrw sscratch, t1                                                       // write the address of save area in sscratch
-	
-	LREG t1, code_bgn_off+0*sv_area_sz(sp)                                  // load the address of code_bgn_off in t1
-	add t2, t1, t0                                                          // add the offset to the base address of save area
-	SREG t2, code_bgn_off+1*sv_area_sz(sp)                                  // write the address of code_bgn_off in sscratch
+	SIGNATURE_AREA (CODE, va, pa,user)                                      // signature area for code 
+	SIGNATURE_AREA (DATA, va_data,rvtest_data,user)                         // signature area for data 
+	SIGNATURE_AREA (SIG, sig_data, signature_x13_1,user)                    // signature area for signature
+	SIGNATURE_AREA (VMEM, va_data, rvtest_data,user)                        // signature area for vmem 
 
-	/******* data *******/
-	// update save area
-	LI (t0, va_data)                                                        // load the virtual address of rvtest_data in t0
-	LA (t1, rvtest_data)                                                    // load the physical address of rvtest_data in t1
-	sub t0, t0, t1                                                          // (VA-PA) Note: VA > PA 
-	LREG t1, data_bgn_off+0*sv_area_sz(sp)                                  // load the address of data_bgn_off in t1
-	add  t2, t1,t0                                                          // add the offset to the base address of save area
-	SREG t2, data_bgn_off+1*sv_area_sz(sp)                                  // write the address of data_bgn_off in sscratch
-	//signature
-	LI (t0, sig_data)                                                       // load the virtual address of signature_x13_1 in t0
-	LA (t1, signature_x13_1)                                                // load the physical address of signature_x13_1 in t1
-	sub t0, t0, t1                                                          // (VA-PA) Note: VA > PA 
-	LREG t1, sig_bgn_off+0*sv_area_sz(sp)                                   // load the address of sig_bgn_off in t1
-	add t2, t1, t0                                                          // add the offset to the base address of save area
-	SREG t2, sig_bgn_off+1*sv_area_sz(sp)                                   // write the address of sig_bgn_off in sscratch
-	// vmem
-	LI (t0, va_data)                                                        // load the virtual address of rvtest_data in t0
-	LA (t1, rvtest_data)                                                    // load the physical address of rvtest_data in t1
-	sub t0, t0, t1                                                          // (VA-PA) Note: VA > PA
-	LREG t1, vmem_bgn_off+0*sv_area_sz(sp)                                  // load the address of vmem_bgn_off in t1
-	add t2, t1, t0                                                          // add the offset to the base address of save area
-	SREG t2, vmem_bgn_off+1*sv_area_sz(sp)                                  // write the address of vmem_bgn_off in sscratch
 	sfence.vma                                                              // flush the TLB
-	LA (s7,va)                                      	   		// loads the VA of label vm_en is s7 
-	CHANGE_T0_S_MODE (s7)							// Switching to S mode (s7->mepc)
- .align 16 									// to make the PA of vm_en misaligned 
-vm_en:	
-	LA (t0, va_data)							// should raise fetch page fault
-    	LI (t1, ALL_F_S)
-    	SREG t1, 0(t0)
-    	LREG t1, 0(t0)
+	RVTEST_GOTO_LOWER_MODE	Umode		                                // Switching to U mode
 
-	RVTEST_GOTO_MMODE		                              		// Switching back to M mode
+# -------------------------virtulization enabled----------------------------------
+
+vm_en:
+	LI (a4, 0xdead)
+	RVTEST_SIGUPD(x13,a4)                                                   // Verification of virtualization enabeled
+
+	LI (t0, va_data)                                                        
+	LREG x2, 0(t0)                                                          // test the load access  (should raise an exception)
+        nop                                             
+	SREG x2, 0(t0)                                                          // test the store access (should raise an exception)
+	nop
+
+	LI (a4, 0xbeef)
+	RVTEST_SIGUPD(x13,a4)                                                   // Verification of virtualization enabeled
+        nop
+
+# -------------------------virtulization disabled----------------------------------
+
+	RVTEST_GOTO_MMODE		                                        // Switching back to M mode
+
+	LI (t0, sig_data)                                                       
+	LA (t1, rvtest_sig_begin)                                                      
+	sub t0, t0, t1 					        		// (VA-PA) Note: VA > PA 
+	sub x13, x13, t0				        		// Translation of Signature reg
+	addi x13,x13,REGWIDTH
+	nop
+
 	LI (a4, 0x123)
-	RVTEST_SIGUPD(x13,a4)
+	RVTEST_SIGUPD(x13,a4)                                                   // Verification of virtualization disabled
 #endif
 
  // ---------------------------------------------------------------------------------------------
- 
 RVTEST_CODE_END
 RVMODEL_HALT
 
 RVTEST_DATA_BEGIN
-.align 14												  // Makes the PA Mis Aligned i.e middle 10 bits of ppn[0]!= 0 (MISALIGNED SUPERPAGE) 
+.align 12									// Makes the PA Mis Aligned i.e middle 10 bits of ppn[0]!= 0 (MISALIGNED SUPERPAGE) 
 rvtest_data:
 .word 0xbeefcafe
 .word 0xbabecafe

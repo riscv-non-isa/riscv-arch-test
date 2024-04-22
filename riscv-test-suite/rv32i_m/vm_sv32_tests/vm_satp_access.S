@@ -36,58 +36,26 @@ main:
 #endif
 	
 	ALL_MEM_PMP          						      // set the PMP permissions
-	WRITE_CSR (satp,x0)  						      // write satp with all zeros (bare mode)
+	csrw satp, zero  						      // write satp with all zeros (bare mode)
 
-	/* Save Virtual addresses in of Code and Data 
-	in their respective S-mode save area */
 
-	/****** code ******/
 	.set va,      0x80000000
 	.set pa,      0x80000000 
 	.set va_data, 0x81000000
-        .set sig_data,0x82003114                                               // virtual address of signature_x13_1
+        .set sig_data,0x82003114                                              // virtual address of signature_x13_1
+ 
 
- # --------------------------save area-------------------------------------------------------------
 
 
- 	/****** code ******/
-        LI (t0, va)                                                             // load the virtual address of vm_en in t0
-        LA (t1, pa)                                                             // load the physical address of vm_en in t1
-        sub t0, t0, t1                                                          // (VA-PA) Note: VA > PA 
-        csrr sp, mscratch                                                       // load the value of mscratch in sp
-        add t1,sp,t0                                                            // add the offset to the base address of save area
-        csrw sscratch, t1                                                       // write the address of save area in sscratch
-        
-        LREG t1, code_bgn_off+0*sv_area_sz(sp)                                  // load the address of code_bgn_off in t1
-        add t2, t1, t0                                                          // add the offset to the base address of save area
-        SREG t2, code_bgn_off+1*sv_area_sz(sp)                                  // write the address of code_bgn_off in sscratch
-        SREG t2, code_bgn_off+2*sv_area_sz(sp)                                  // write the address of code_bgn_off in sscratch
-        /******* data *******/
-        // update save area
-        LI (t0, va_data)                                                        // load the virtual address of rvtest_data in t0
-        LA (t1, rvtest_data)                                                    // load the physical address of rvtest_data in t1
-        sub t0, t0, t1                                                          // (VA-PA) Note: VA > PA 
-        LREG t1, data_bgn_off+0*sv_area_sz(sp)                                  // load the address of data_bgn_off in t1
-        add  t2, t1,t0                                                          // add the offset to the base address of save area
-        SREG t2, data_bgn_off+1*sv_area_sz(sp)                                  // write the address of data_bgn_off in sscratch
-        SREG t2, data_bgn_off+2*sv_area_sz(sp)                                  // write the address of data_bgn_off in sscratch
-        //signature
-        LI (t0, sig_data)                                                       // load the virtual address of signature_x13_1 in t0
-        LA (t1, signature_x13_1)                                                // load the physical address of signature_x13_1 in t1
-        sub t0, t0, t1                                                          // (VA-PA) Note: VA > PA 
-        LREG t1, sig_bgn_off+0*sv_area_sz(sp)                                   // load the address of sig_bgn_off in t1
-        add t2, t1, t0                                                          // add the offset to the base address of save area
-        SREG t2, sig_bgn_off+1*sv_area_sz(sp)                                   // write the address of sig_bgn_off in sscratch
-        SREG t2, sig_bgn_off+2*sv_area_sz(sp)                                   // write the address of sig_bgn_off in sscratch
-        // vmem
-        LI (t0, va_data)                                                        // load the virtual address of rvtest_data in t0
-        LA (t1, rvtest_data)                                                    // load the physical address of rvtest_data in t1
-        sub t0, t0, t1                                                          // (VA-PA) Note: VA > PA
-        LREG t1, vmem_bgn_off+0*sv_area_sz(sp)                                  // load the address of vmem_bgn_off in t1
-        add t2, t1, t0                                                          // add the offset to the base address of save area
-        SREG t2, vmem_bgn_off+1*sv_area_sz(sp)                                  // write the address of vmem_bgn_off in sscratch
-        SREG t2, vmem_bgn_off+2*sv_area_sz(sp)                                  // write the address of vmem_bgn_off in sscratch
-        sfence.vma                                                              // flush the TLB
+
+# -------------------------Save area logic----------------------------------
+
+	SIGNATURE_AREA (CODE, va, pa)						// signature area for code 
+	SIGNATURE_AREA (DATA, va_data,rvtest_data)				// signature area for data 
+	SIGNATURE_AREA (SIG, sig_data, signature_x13_1)				// signature area for signature 
+	SIGNATURE_AREA (VMEM, va_data, rvtest_data)				// signature area for vmem
+
+	sfence.vma                                                              // flush the TLB
 
  # --------------------------end of save area-------------------------------------------------------------
 
@@ -95,32 +63,32 @@ main:
     	LI (s2, SATP32_PPN )							// loads the SATP32_PPN
     	LI (s3, SATP32_ASID)                                                    // loads the SATP32_ASID
  
-    	CLEAR_CSR (satp,s1)							// clear the satp by s1 	
-    	SET_CSR   (satp,s2)							// set the satp by s2
-    	WRITE_CSR (satp,s3)							// write the satp by s3
+	csrc satp, s1  						        	// clear the satp by s1 
+	csrs satp, s2  						        	// set the satp by s2
+	csrw satp, s3  						        	// write the satp by s3
 
 	RVTEST_GOTO_LOWER_MODE Smode					        // changes mode from M to S
 
-    	CLEAR_CSR (satp,s1)							// clear the satp by s1 	
-    	SET_CSR   (satp,s2)							// set the satp by s2
-    	WRITE_CSR (satp,s3)							// write the satp by s3
+	csrc satp, s1  						        	// clear the satp by s1 
+	csrs satp, s2  						        	// set the satp by s2
+	csrw satp, s3  						        	// write the satp by s3
 
 	RVTEST_GOTO_MMODE		                                       // Switching back to M mode
         nop
 
 	RVTEST_GOTO_LOWER_MODE Umode					       // changes mode from S to U
 
-	CLEAR_CSR (satp,s1)						       // Illegal instruction exception is generated when accessed in U mode 
+	csrc satp, s1						       	       // Illegal instruction exception is generated when accessed in U mode 
 	nop
 	LI (a4, 0xbeefdead)
 	RVTEST_SIGUPD(x13,a4)                                                  // Verification of first illegal instruction
 	
-	SET_CSR   (satp,s2)
+	csrs satp, s2
 	nop
 	LI (a4, 0xdeadbeef)
 	RVTEST_SIGUPD(x13,a4)                                                  // Verification of second illegal instruction
 
-    	WRITE_CSR (satp,s3)
+    	csrw satp, s3
 	nop
 	LI (a4, 0xbeefcafe)
 	RVTEST_SIGUPD(x13,a4)                                                  // Verification of third illegal instruction
