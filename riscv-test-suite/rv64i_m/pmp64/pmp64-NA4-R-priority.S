@@ -41,16 +41,16 @@ RVTEST_SIGBASE( x13,signature_x13_1)
 #define NOP 		0x13
 .macro VERIFICATION_RWX		ADDRESS	
    	LA(a5, \ADDRESS)	// Fetch the address to be checked
-    	lw	a4,0(a5)	// Load data from it (CHECK FOR READ) ; (NOT TRAP => W enabled)
+    	ld	a4,0(a5)	// Load data from it (CHECK FOR READ) ; (NOT TRAP => W enabled)
     	nop
     	nop
     	/* WRITING new value to memory region
     	TRAP if the WRITability is blocked */
 	LI(a4, 	NOP)		// Load the new value (NOP Instruction ID) 
-	sw	a4,0(a5)	// Store the new value (NOT TRAP => W enabled)
+	sd	a4,0(a5)	// Store the new value (NOT TRAP => W enabled)
 	nop
 	nop
-	lw	a4,0(a5)	// Reload for verification (CHECK IF DATA HAS BEEN UPDATED SUCCESSFULLY)
+	ld	a4,0(a5)	// Reload for verification (CHECK IF DATA HAS BEEN UPDATED SUCCESSFULLY)
 	jal	\ADDRESS	// Test for execution, an instruction is placed at this address 
 .endm
 
