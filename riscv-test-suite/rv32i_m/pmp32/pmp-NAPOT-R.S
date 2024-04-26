@@ -59,7 +59,8 @@ RVTEST_SIGBASE( x13,signature_x13_1)
 	nop
 	nop
 	lw	a4,0(a5)	// Reload for verification (CHECK IF DATA HAS BEEN UPDATED SUCCESSFULLY)
-	jal	\ADDRESS	// Test for execution, an instruction is placed at this address 
+	nop
+jal	\ADDRESS	// Test for execution, an instruction is placed at this address 
 .endm
 
 main:
