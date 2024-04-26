@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## [3.8.15] - 2024-04-20
+Corrected missing 32 string in RVTEST_CASE macros for Zcb rv32i_m/C/clh-01.S
+	
 ## [3.8.14] - 2024-04-16
 Add missing `Zfh` ISA in RVTEST_CASE for `Zfh` fdiv related tests
 
