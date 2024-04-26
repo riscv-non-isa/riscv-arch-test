@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## [3.8.16] - 2024-04-26
+- Split rv32i_m/F/fnmadd_b15.S, fnmsub_b15.S, fmadd_b15.S, fmsub_b15.S into multiple smaller tests
+
 ## [3.8.15] - 2024-04-20
 Corrected missing 32 string in RVTEST_CASE macros for Zcb rv32i_m/C/clh-01.S
 	
