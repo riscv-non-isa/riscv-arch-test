@@ -57,14 +57,23 @@ main:
 	RVTEST_SIGUPD(x13,a4)		// Storing into signature file
 	.set pmpaddri, pmpaddri+1		// increment variable pmpaddri to the next pmpaddr reg
 	.endr			// END OF LOOP BODY
+// WRITING pmpaddr in M-mode /////////////////////////////////////////
+	LI(a4,0x01)			// RANDOM VALUE
+	.set pmpaddri, PMPADDR0		// Initialize an iterating variable with the address of pmpaddr0
+	.rept 16			// START OF LOOP
+	csrw pmpaddri, a4		// WRITING pmpaddri (i is from 0-15)
+	nop				// Added nop in case of trap
+	RVTEST_SIGUPD(x13,a4)		// Storing into signature file
+	.set pmpaddri, pmpaddri+1		// increment variable pmpaddri to the next pmpaddr reg
+	.endr			// END OF LOOP BODY
 // WRITING pmpcfg registers //////////////////////////////////////////
 // Write in M-mode will be valid, Write in other modes will cause trap
 	LI(a5, PMP_R| PMP_W | PMP_X | PMP_TOR)	// LOCKED BIT IS NOT SET
 	// Loop to Write ALL pmpcfg regs
 	.set pmpcfgi, PMPCFG0	// Initialize an iterating variable with the address of pmpcfg0
 	.rept 2			// START OF LOOP
-	csrw pmpcfgi, a5			// Write pmpcfgi
-	nop					// Added nop in case of trap
+	csrw pmpcfgi, a5	// Write pmpcfgi
+	nop			// Added nop in case of trap
 	.set pmpcfgi, pmpcfgi+2		// increment variable to next pmpcfg reg	
 	.endr			// END OF LOOP BODY
 //////////////// VERIFICATION /////////////////////////////////////////
@@ -93,13 +102,43 @@ main:
 // REPEATING THE SAME TEST //////////////////////////////////////////		
 // IN Smode now
 /////////////////// TEST 01 ////////////////////////////////////////////
-// WRITING pmpaddr registers //////////////////////////////////////////
-// Write in M-mode will be valid, Write in other modes will cause trap  	
-	csrw pmpaddr0, x2		// Write pmpaddr0 in S mode (TRAP)
-	nop				// Added nop in case of trap
 // READING pmpaddr in S-mode /////////////////////////////////////////
-	csrr a4, pmpaddr0		// Reading pmpaddr0 in S mode (TRAP)
+	.set pmpaddri, PMPADDR0		// Initialize an iterating variable with the address of pmpaddr0
+	.rept 4			// START OF LOOP
+	csrr a4, pmpaddri		// READING pmpaddri (i is from 0-15)
 	nop				// Added nop in case of trap
+	RVTEST_SIGUPD(x13,a4)		// Storing into signature file
+	.set pmpaddri, pmpaddri+1		// increment variable pmpaddri to the next pmpaddr reg
+	.endr			// END OF LOOP BODY
+// WRITING pmpaddr in S-mode /////////////////////////////////////////
+	LI(a4,0x01)			// RANDOM VALUE
+	.set pmpaddri, PMPADDR0		// Initialize an iterating variable with the address of pmpaddr0
+	.rept 4			// START OF LOOP
+	csrw pmpaddri, a4		// WRITING pmpaddri (i is from 0-15)
+	nop				// Added nop in case of trap
+	RVTEST_SIGUPD(x13,a4)		// Storing into signature file
+	.set pmpaddri, pmpaddri+1		// increment variable pmpaddri to the next pmpaddr reg
+	.endr			// END OF LOOP BODY
+// WRITING pmpcfg registers //////////////////////////////////////////
+// Write in M-mode will be valid, Write in other modes will cause trap
+	LI(a5, PMP_R| PMP_W | PMP_X | PMP_TOR)	// LOCKED BIT IS NOT SET
+	// Loop to Write ALL pmpcfg regs
+	.set pmpcfgi, PMPCFG0	// Initialize an iterating variable with the address of pmpcfg0
+	.rept 2			// START OF LOOP
+	csrw pmpcfgi, a5	// Write pmpcfgi
+	nop			// Added nop in case of trap
+	.set pmpcfgi, pmpcfgi+2		// increment variable to next pmpcfg reg	
+	.endr			// END OF LOOP BODY
+//////////////// VERIFICATION /////////////////////////////////////////
+// READING pmpcfg in S-mode /////////////////////////////////////////
+	// Loop to verify the contents of pmpcfg regs
+	.set pmpcfgi, PMPCFG0		// Initialize an iterating variable with the address of pmpcfg0
+	.rept 2				// START OF LOOP
+	csrr a4, pmpcfg0		// Read pmpcfg0
+	nop				// Added nop in case of trap
+	RVTEST_SIGUPD(x13,a4)
+	.set pmpcfgi, pmpcfgi+2		// increment variable to next pmpcfg reg	
+	.endr			// END OF LOOP BODY
 /////////////////// Switch back to M-mode ////////////////////////////////////////////
 	RVTEST_GOTO_MMODE
   	csrr a4, mstatus		// VERIFICATION of M-mode
@@ -121,15 +160,43 @@ main:
 	RVTEST_GOTO_LOWER_MODE	Umode	
 // REPEATING THE SAME TEST //////////////////////////////////////////		
 // IN U-mode now
-/////////////////// TEST 01 ////////////////////////////////////////////
-// WRITING pmpaddr registers //////////////////////////////////////////
-// Write in M-mode will be valid, Write in other modes will cause trap  	
-	csrw pmpaddr0, x2		// Write pmpaddr0 in u mode (TRAP)
+// READING pmpaddr in U-mode /////////////////////////////////////////
+	.set pmpaddri, PMPADDR0		// Initialize an iterating variable with the address of pmpaddr0
+	.rept 4				// START OF LOOP
+	csrr a4, pmpaddri		// READING pmpaddri (i is from 0-15)
 	nop				// Added nop in case of trap
+	RVTEST_SIGUPD(x13,a4)		// Storing into signature file
+	.set pmpaddri, pmpaddri+1		// increment variable pmpaddri to the next pmpaddr reg
+	.endr			// END OF LOOP BODY
+// WRITING pmpaddr in U-mode /////////////////////////////////////////
+	LI(a4,0x01)			// RANDOM VALUE
+	.set pmpaddri, PMPADDR0		// Initialize an iterating variable with the address of pmpaddr0
+	.rept 4			// START OF LOOP
+	csrw pmpaddri, a4		// WRITING pmpaddri (i is from 0-15)
+	nop				// Added nop in case of trap
+	RVTEST_SIGUPD(x13,a4)		// Storing into signature file
+	.set pmpaddri, pmpaddri+1		// increment variable pmpaddri to the next pmpaddr reg
+	.endr			// END OF LOOP BODY
+// WRITING pmpcfg registers //////////////////////////////////////////
+// Write in M-mode will be valid, Write in other modes will cause trap
+	LI(a5, PMP_R| PMP_W | PMP_X | PMP_TOR)	// LOCKED BIT IS NOT SET
+	// Loop to Write ALL pmpcfg regs
+	.set pmpcfgi, PMPCFG0	// Initialize an iterating variable with the address of pmpcfg0
+	.rept 2			// START OF LOOP
+	csrw pmpcfgi, a5	// Write pmpcfgi
+	nop			// Added nop in case of trap
+	.set pmpcfgi, pmpcfgi+2		// increment variable to next pmpcfg reg	
+	.endr			// END OF LOOP BODY
 //////////////// VERIFICATION /////////////////////////////////////////
-// READING pmpaddr in S-mode /////////////////////////////////////////
-	csrr a4, pmpaddr0		// Reading pmpaddr0 in U mode (TRAP)
+// READING pmpcfg in U-mode /////////////////////////////////////////
+	// Loop to verify the contents of pmpcfg regs
+	.set pmpcfgi, PMPCFG0		// Initialize an iterating variable with the address of pmpcfg0
+	.rept 2				// START OF LOOP
+	csrr a4, pmpcfg0		// Read pmpcfg0
 	nop				// Added nop in case of trap
+	RVTEST_SIGUPD(x13,a4)
+	.set pmpcfgi, pmpcfgi+2		// increment variable to next pmpcfg reg	
+	.endr			// END OF LOOP BODY
 	
 #endif
 
@@ -161,7 +228,7 @@ signature_x13_1:
 tsig_begin_canary:
 CANARY;
 mtrap_sigptr:
-    .fill 64*(XLEN/32),4,0xdeadbeef
+    .fill 256*(XLEN/32),4,0xdeadbeef
 tsig_end_canary:
 CANARY;
 
