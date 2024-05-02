@@ -1,0 +1,321 @@
+==== clicshvinhv-01.S 
+.Description: set mepc to shv table entry, set inhv, mret
+- enable clicintie (default)
+- generate shv interrupt1
+- enable mstatus.mie
+- trigger m-mode handler
+- clear 1st interrupt
+- generate interrupt1 again (ignored)
+- set mepc to finish
+- mret to finish
+[%autofit]
+----
+ RVMODEL_TEST_INHV = 0x1  
+ RVMODEL_INT1_CLICINTIE = 0x0
+ RVMODEL_INT2_CLICINTIE = 0x0
+ RVMODEL_SET_INT1 = RVMODEL_SET_MSW_INT
+ RVMODEL_SET_INT2 = RVMODEL_SET_MSW_INT
+ RVMODEL_CLEAR_INT1 = RVMODEL_CLEAR_MSW_INT
+ RVMODEL_CLEAR_INT2 = RVMODEL_CLEAR_MSW_INT 
+ RVMODEL_MINTTHRESH = RVMODEL_MINTTHRESH_MIN
+ RVMODEL_INT1_CLICINTATTR = 0xC1
+ RVMODEL_INT2_CLICINTATTR = 0xC0
+----
+Coverage
+----
+mtvec.mode     | verify direct mode is used to handle interrupt
+no msip retrigger | verify after mstatus.mie is enabled in interrupt handler, msip will not retrigger because msip intlevel is not > mintstatus
+msip trigger | verify RVMODEL_SET_MSW_INT trigger
+msip clear   | verify RVMODEL_CLEAR_MSW_INT clear
+mcause       | verify machine software interrupt signature
+mstatus      | verify mstatus.mie/mpie/mpp signature in interrupt handler and after mret
+mtvec        | verify interrupt uses mtvec to calculate pc of interrupt handler (direct)
+mepc         | verify mepc location is jump_to_self location
+----
+
+==== clicshvdirect-01.S 
+.Description: trigger, clear, no retrigger of same interrupt.  Will hang if no interrupt occurs
+- enable clicintie (default)
+- generate shv interrupt1
+- enable mstatus.mie
+- trigger m-mode handler
+- clear 1st interrupt
+- generate interrupt1 again (ignored)
+- set mepc to finish
+- mret to finish
+[%autofit]
+----
+ RVMODEL_SET_INT1 = RVMODEL_SET_MSW_INT
+ RVMODEL_SET_INT2 = RVMODEL_SET_MSW_INT
+ RVMODEL_CLEAR_INT1 = RVMODEL_CLEAR_MSW_INT
+ RVMODEL_CLEAR_INT2 = RVMODEL_CLEAR_MSW_INT 
+ RVMODEL_MINTTHRESH = RVMODEL_MINTTHRESH_MIN
+ RVMODEL_WFI = jump_to_self  
+ RVMODEL_INT1_CLICINTATTR = 0xC1
+ RVMODEL_INT2_CLICINTATTR = 0xC0  
+----
+Coverage
+----
+mtvec.mode     | verify direct mode is used to handle interrupt
+no msip retrigger | verify after mstatus.mie is enabled in interrupt handler, msip will not retrigger because msip intlevel is not > mintstatus
+msip trigger | verify RVMODEL_SET_MSW_INT trigger
+msip clear   | verify RVMODEL_CLEAR_MSW_INT clear
+mcause       | verify machine software interrupt signature
+mstatus      | verify mstatus.mie/mpie/mpp signature in interrupt handler and after mret
+mtvec        | verify interrupt uses mtvec to calculate pc of interrupt handler (direct)
+mepc         | verify mepc location is jump_to_self location
+----
+
+==== clicshvlevel-01.S
+.Description: verify interrupt level order, 2 interrupts asserted in 1st interrupt handler, min level int followed by max level int
+- enable clicintie (default)
+- generate shv interrupt 1
+- enable mstatus.mie
+- trigger m-mode handler
+- generate non-shv interrupt 2 (both interrupts now pending)
+- if clicintctrl represents levels, mnxti csrrsi updates mcause.id for 2nd interrupt if non-shv
+- if clicintctrl represents priority, no 2nd interrupt occurs.
+- set mepc to finish
+- clear mstatus.mpie
+- mret to finish
+[%autofit]
+----
+ RVMODEL_SET_INT1 = RVMODEL_SET_MSW_INT
+ RVMODEL_SET_INT2 = RVMODEL_SET_MTIMER_INT
+ RVMODEL_CLEAR_INT1 = <EMPTY>
+ RVMODEL_CLEAR_INT2 = RVMODEL_CLEAR_MTIMER_INT
+ RVMODEL_INT1_CLICINTCTL = RVMODEL_CLICINTCTL_MIN
+ RVMODEL_INT2_CLICINTCTL = RVMODEL_CLICINTCTL_MAX  
+ RVMODEL_INT1_CLICINTATTR = 0xC1
+ RVMODEL_INT2_CLICINTATTR = 0xC0  
+----
+Coverage
+----
+Interrupt ordering - both interrupts asserted in first interrupt handler
+----
+
+==== clicshvlevel-02.S
+.Description: verify interrupt level order, 2 interrupts asserted in 1st interrupt handler, min level int followed by max level int
+- enable clicintie (default)
+- generate shv interrupt 1
+- enable mstatus.mie
+- trigger m-mode handler
+- generate non-shv interrupt 2 (both interrupts now pending)
+- if clicintctrl represents levels, trigger 2nd m-mode handler
+- if clicintctrl represents priority, no 2nd interrupt occurs.
+- set mepc to finish
+- clear mstatus.mpie
+- mret to finish
+[%autofit]
+----
+ RVMODEL_SET_INT1 = RVMODEL_SET_MSW_INT
+ RVMODEL_SET_INT2 = RVMODEL_SET_MTIMER_INT
+ RVMODEL_CLEAR_INT1 = <EMPTY>
+ RVMODEL_CLEAR_INT2 = RVMODEL_CLEAR_MTIMER_INT
+ RVMODEL_INT1_CLICINTCTL = RVMODEL_CLICINTCTL_MIN
+ RVMODEL_INT2_CLICINTCTL = RVMODEL_CLICINTCTL_MAX
+ RVMODEL_MNXTI_SIMMED = 0  
+ RVMODEL_INT1_CLICINTATTR = 0xC1
+ RVMODEL_INT2_CLICINTATTR = 0xC0  
+----
+Coverage
+----
+Interrupt ordering - both interrupts asserted in first interrupt handler
+----
+
+==== clicshvlevel-03.S
+.Description: verify interrupt level order, 2 interrupts asserted in 1st interrupt handler, max level int followed by min level int
+- enable clicintie (default)
+- generate shv interrupt 1
+- enable mstatus.mie
+- trigger m-mode handler
+- generate non-shv interrupt 2 (both interrupts now pending)
+- if clicintctrl represents levels, 2nd interrupt is lower than current interupt level, no 2nd interrupt occurs.
+- if clicintctrl represents priority, 2nd interrupt is same level, no 2nd interrupt occurs. 
+- set mepc to finish
+- clear mstatus.mpie
+- mret to finish
+[%autofit]
+----
+ RVMODEL_SET_INT1 = RVMODEL_SET_MSW_INT
+ RVMODEL_SET_INT2 = RVMODEL_SET_MTIMER_INT
+ RVMODEL_CLEAR_INT1 = <EMPTY>
+ RVMODEL_CLEAR_INT2 = RVMODEL_CLEAR_MTIMER_INT
+ RVMODEL_INT1_CLICINTCTL = RVMODEL_CLICINTCTL_MAX
+ RVMODEL_INT2_CLICINTCTL = RVMODEL_CLICINTCTL_MIN  
+ RVMODEL_INT1_CLICINTATTR = 0xC1
+ RVMODEL_INT2_CLICINTATTR = 0xC0  
+----
+Coverage
+----
+Interrupt ordering - both interrupts asserted in first interrupt handler
+----
+
+==== clicshvlevel-04.S
+.Description: verify interrupt level order, 2 interrupts asserted in 1st interrupt handler, min level int followed by max level int with max mintthresh setting.
+- enable clicintie (default)
+- generate shv interrupt 1
+- enable mstatus.mie
+- trigger m-mode handler
+- generate non-shv interrupt 2 (both interrupts now pending)
+- if clicintctrl represents levels, 2nd interrupt is higher than current interupt level but equal to mintthresh, no 2nd interrupt occurs.
+- if clicintctrl represents priority, 2nd interrupt is same level, no 2nd interrupt occurs.
+- set mepc to finish
+- clear mstatus.mpie
+- mret to finish
+[%autofit]
+----
+ RVMODEL_SET_INT1 = RVMODEL_SET_MSW_INT
+ RVMODEL_SET_INT2 = RVMODEL_SET_MTIMER_INT
+ RVMODEL_CLEAR_INT1 = <EMPTY>
+ RVMODEL_CLEAR_INT2 = RVMODEL_CLEAR_MTIMER_INT
+ RVMODEL_INT1_CLICINTCTL = RVMODEL_CLICINTCTL_MIN
+ RVMODEL_INT2_CLICINTCTL = RVMODEL_CLICINTCTL_MAX
+ RVMODEL_MINTTHRESH_HNDLR1 = RVMODEL_MINTTHRESH_MAX  
+ RVMODEL_INT1_CLICINTATTR = 0xC1
+ RVMODEL_INT2_CLICINTATTR = 0xC0  
+----
+Coverage
+----
+Interrupt ordering - both interrupts asserted in first interrupt handler
+----
+==== clicshvlevel-05.S
+.Description: same as clicshvlevel-01 but int1 is non-shv and int2 is shv
+- enable clicintie (default)
+- generate non-shv interrupt 1
+- enable mstatus.mie
+- trigger m-mode handler
+- generate shv interrupt 2 (both interrupts now pending)
+- if clicintctrl represents levels, mnxti csrrsi updates mcause.id for 2nd interrupt if non-shv
+- if clicintctrl represents priority, no 2nd interrupt occurs.
+- set mepc to finish
+- clear mstatus.mpie
+- mret to finish
+[%autofit]
+----
+ RVMODEL_SET_INT1 = RVMODEL_SET_MSW_INT
+ RVMODEL_SET_INT2 = RVMODEL_SET_MTIMER_INT
+ RVMODEL_CLEAR_INT1 = <EMPTY>
+ RVMODEL_CLEAR_INT2 = RVMODEL_CLEAR_MTIMER_INT
+ RVMODEL_INT1_CLICINTCTL = RVMODEL_CLICINTCTL_MIN
+ RVMODEL_INT2_CLICINTCTL = RVMODEL_CLICINTCTL_MAX  
+ RVMODEL_INT1_CLICINTATTR = 0xC0
+ RVMODEL_INT2_CLICINTATTR = 0xC1  
+----
+Coverage
+----
+Interrupt ordering - both interrupts asserted in first interrupt handler
+----
+
+==== clicshvlevel-06.S
+.Description: same as clicshvlevel-02 but int1 is non-shv and int2 is shv
+- enable clicintie (default)
+- generate non-shv interrupt 1
+- enable mstatus.mie
+- trigger m-mode handler
+- generate shv interrupt 2 (both interrupts now pending)
+- if clicintctrl represents levels, trigger 2nd m-mode handler
+- if clicintctrl represents priority, no 2nd interrupt occurs.
+- set mepc to finish
+- clear mstatus.mpie
+- mret to finish
+[%autofit]
+----
+ RVMODEL_SET_INT1 = RVMODEL_SET_MSW_INT
+ RVMODEL_SET_INT2 = RVMODEL_SET_MTIMER_INT
+ RVMODEL_CLEAR_INT1 = <EMPTY>
+ RVMODEL_CLEAR_INT2 = RVMODEL_CLEAR_MTIMER_INT
+ RVMODEL_INT1_CLICINTCTL = RVMODEL_CLICINTCTL_MIN
+ RVMODEL_INT2_CLICINTCTL = RVMODEL_CLICINTCTL_MAX
+ RVMODEL_MNXTI_SIMMED = 0  
+ RVMODEL_INT1_CLICINTATTR = 0xC0
+ RVMODEL_INT2_CLICINTATTR = 0xC1  
+----
+Coverage
+----
+Interrupt ordering - both interrupts asserted in first interrupt handler
+----
+
+==== clicshvlevel-07.S
+.Description: same as clicshvlevel-03 but int1 is non-shv and int2 is shv
+- enable clicintie (default)
+- generate non-shv interrupt 1
+- enable mstatus.mie
+- trigger m-mode handler
+- generate shv interrupt 2 (both interrupts now pending)
+- if clicintctrl represents levels, 2nd interrupt is lower than current interupt level, no 2nd interrupt occurs.
+- if clicintctrl represents priority, 2nd interrupt is same level, no 2nd interrupt occurs. 
+- set mepc to finish
+- clear mstatus.mpie
+- mret to finish
+[%autofit]
+----
+ RVMODEL_SET_INT1 = RVMODEL_SET_MSW_INT
+ RVMODEL_SET_INT2 = RVMODEL_SET_MTIMER_INT
+ RVMODEL_CLEAR_INT1 = <EMPTY>
+ RVMODEL_CLEAR_INT2 = RVMODEL_CLEAR_MTIMER_INT
+ RVMODEL_INT1_CLICINTCTL = RVMODEL_CLICINTCTL_MAX
+ RVMODEL_INT2_CLICINTCTL = RVMODEL_CLICINTCTL_MIN  
+ RVMODEL_INT1_CLICINTATTR = 0xC0
+ RVMODEL_INT2_CLICINTATTR = 0xC1  
+----
+Coverage
+----
+Interrupt ordering - both interrupts asserted in first interrupt handler
+----
+
+==== clicshvlevel-08.S
+.Description: same as clicshvlevel-04 but int1 is non-shv and int2 is shv
+- enable clicintie (default)
+- generate non-shv interrupt 1
+- enable mstatus.mie
+- trigger m-mode handler
+- generate shv interrupt 2 (both interrupts now pending)
+- if clicintctrl represents levels, 2nd interrupt is higher than current interupt level but equal to mintthresh, no 2nd interrupt occurs.
+- if clicintctrl represents priority, 2nd interrupt is same level, no 2nd interrupt occurs.
+- set mepc to finish
+- clear mstatus.mpie
+- mret to finish
+[%autofit]
+----
+ RVMODEL_SET_INT1 = RVMODEL_SET_MSW_INT
+ RVMODEL_SET_INT2 = RVMODEL_SET_MTIMER_INT
+ RVMODEL_CLEAR_INT1 = <EMPTY>
+ RVMODEL_CLEAR_INT2 = RVMODEL_CLEAR_MTIMER_INT
+ RVMODEL_INT1_CLICINTCTL = RVMODEL_CLICINTCTL_MIN
+ RVMODEL_INT2_CLICINTCTL = RVMODEL_CLICINTCTL_MAX
+ RVMODEL_MINTTHRESH_HNDLR1 = RVMODEL_MINTTHRESH_MAX  
+ RVMODEL_INT1_CLICINTATTR = 0xC0
+ RVMODEL_INT2_CLICINTATTR = 0xC1  
+----
+Coverage
+----
+Interrupt ordering - both interrupts asserted in first interrupt handler
+----
+==== clicshvlevel-09.S
+.Description: same as clicshvlevel-01 but both interrupts are shv
+- enable clicintie (default)
+- generate shv interrupt 1
+- enable mstatus.mie
+- trigger m-mode handler
+- generate shv interrupt 2 (both interrupts now pending)
+- if clicintctrl represents levels, mnxti csrrsi updates mcause.id for 2nd interrupt if non-shv
+- if clicintctrl represents priority, no 2nd interrupt occurs.
+- set mepc to finish
+- clear mstatus.mpie
+- mret to finish
+[%autofit]
+----
+ RVMODEL_SET_INT1 = RVMODEL_SET_MSW_INT
+ RVMODEL_SET_INT2 = RVMODEL_SET_MTIMER_INT
+ RVMODEL_CLEAR_INT1 = <EMPTY>
+ RVMODEL_CLEAR_INT2 = RVMODEL_CLEAR_MTIMER_INT
+ RVMODEL_INT1_CLICINTCTL = RVMODEL_CLICINTCTL_MIN
+ RVMODEL_INT2_CLICINTCTL = RVMODEL_CLICINTCTL_MAX  
+ RVMODEL_INT1_CLICINTATTR = 0xC1
+ RVMODEL_INT2_CLICINTATTR = 0xC1  
+----
+Coverage
+----
+Interrupt ordering - both interrupts asserted in first interrupt handler
+----
