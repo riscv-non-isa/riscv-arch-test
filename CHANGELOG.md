@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## [3.8.17] - 2024-05-03
+- Add Zfa support.
+- 
 ## [3.8.16] - 2024-04-26
 - Split rv32i_m/F/fnmadd_b15.S, fnmsub_b15.S, fmadd_b15.S, fmsub_b15.S into multiple smaller tests
 
