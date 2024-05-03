@@ -1,7 +1,17 @@
 # CHANGELOG
 
-## [3.8.13] - 2023-04-06
-- Add Zfa support.
+## [3.8.16] - 2024-04-26
+- Split rv32i_m/F/fnmadd_b15.S, fnmsub_b15.S, fmadd_b15.S, fmsub_b15.S into multiple smaller tests
+
+## [3.8.15] - 2024-04-20
+Corrected missing 32 string in RVTEST_CASE macros for Zcb rv32i_m/C/clh-01.S
+	
+## [3.8.14] - 2024-04-16
+Add missing `Zfh` ISA in RVTEST_CASE for `Zfh` fdiv related tests
+
+## [3.8.13] - 2024-04-13
+- Fixed missing `F` and `Zfh` ISA identifiers in `Zfh/flh-align-01` RVTEST_CASE macro.
+
 
 ## [3.8.12] - 2024-03-26
 Corrected missing RV64 strings in RVTEST_CASE macros for Zfh fcvt.h.l and similar tests
