@@ -899,6 +899,12 @@ ADDI(swreg, swreg, RVMODEL_CBZ_BLOCKSIZE)
       LI(reg2, MASK_XLEN(val2))			;\
       inst destreg, reg1, reg2			;\
     )
+//Tests for a instructions with single-register operand
+#define TEST_R_OP(inst, destreg, reg1, correctval, val1, swreg, offset, testreg) \
+    TEST_CASE(testreg, destreg, correctval, swreg, offset, \
+      LI(reg1, MASK_XLEN(val1))			;\
+      inst destreg, reg1    			;\
+    )
 //Tests for floating-point instructions with register-register operand
 //This variant does not take the rm field and set it while writing the instruction
 #define TEST_FPRR_OP_NRM(inst, destreg, freg1, freg2, fcsr_val, correctval, valaddr_reg, val_offset, flagreg, swreg, testreg) \
