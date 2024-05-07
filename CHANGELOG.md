@@ -1,5 +1,8 @@
 # CHANGELOG
-## [3.8.18] - 2023-07-28
+## [3.8.19] - 2024-05-08
+- Add support for unratified Svadu extension
+
+## [3.8.18] - 2024-05-08
 - Add Zacas ISA extension support.
 
 ## [3.8.17] - 2024-05-03
@@ -99,6 +102,9 @@ Add missing check ISA fields in recently modified div and amo tests
 ## [3.7.1] - 2023-08-03
 - Add ACTs for Atomic Extension excluding Lr/Sc Instructions.
 - Added Test macro for the execution of atomic instructions.
+
+## [3.7.1] - 2023-07-30
+- Add support for unratified Svadu extension
 
 ## [3.7.0] - 2023-05-16
 - Updated the LI macro
