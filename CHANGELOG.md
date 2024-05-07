@@ -1,4 +1,6 @@
 # CHANGELOG
+## [3.8.18] - 2023-07-28
+- Add Zacas ISA extension support.
 
 ## [3.8.17] - 2024-05-03
 - Add Zfa support.
@@ -116,6 +118,7 @@ Add missing check ISA fields in recently modified div and amo tests
 ## [3.7.1] - 2023-07-22
 - Added test case for division if most negative number by -1
 - Solved the [issue #300](https://github.com/riscv-non-isa/riscv-arch-test/issues/300)
+
 
 ## [3.7.0] - 2023-05-16
 - Updated the LI macro
