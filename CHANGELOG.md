@@ -1,5 +1,8 @@
 # CHANGELOG
-## [3.8.18] - 2023-07-28
+## [3.8.19] - 2024-05-08
+- Add support for unratified Svadu extension
+
+## [3.8.18] - 2024-05-08
 - Add Zacas ISA extension support.
 
 ## [3.8.17] - 2024-05-03
