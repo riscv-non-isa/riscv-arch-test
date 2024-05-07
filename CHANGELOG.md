@@ -1,4 +1,9 @@
 # CHANGELOG
+
+## [3.8.20] - 2024-05-08
+- Updated the Zcmop extension
+- Add Zimop extension.
+
 ## [3.8.19] - 2024-05-08
 - Add support for unratified Svadu extension
 
