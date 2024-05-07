@@ -30,6 +30,7 @@ RVTEST_CODE_BEGIN
 #ifdef TEST_CASE_1
 
 RVTEST_CASE(0,"//check ISA:=regex(.*I.*F.*);def TEST_CASE_1=True;",fmul_b9)
+RVTEST_CASE(1,"//check ISA:=regex(.*E.*F.*);def TEST_CASE_1=True;",fmul_b9)
 
 RVTEST_FP_ENABLE()
 RVTEST_VALBASEUPD(x3,test_dataset_0)
