@@ -1,5 +1,6 @@
 # CHANGELOG
-
+## [3.8.18] - 2023-07-28
+- Add Zacas ISA extension support.
 
 ## [3.8.17] - 2024-05-03
 - Add Zfa support.
