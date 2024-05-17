@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [3.8.21] - 2024-04-26
+- Split rv32i_m/F/fnmadd_b15.S, fnmsub_b15.S, fmadd_b15.S, fmsub_b15.S into multiple smaller tests
+- Split each _b15 file into 50 files consists of 768 (128*6) tests
+
 ## [3.8.20] - 2024-05-08
 - Updated the Zcmop extension
 - Add Zimop extension.
