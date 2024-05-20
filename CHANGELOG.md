@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## [3.9] - 2024-05-17
+- Cleanup: Fix RVTEST_CASE macros for Zfa tests.
+- Fix warning assembler warning message from test_macros.h
+
 ## [3.8.20] - 2024-05-08
 - Updated the Zcmop extension
 - Add Zimop extension.
