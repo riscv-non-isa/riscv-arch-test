@@ -1,4 +1,7 @@
 # CHANGELOG
+## [3.9.1] - 2024-05-24
+- Split rv32i_m/F/fnmadd_b15.S, fnmsub_b15.S, fmadd_b15.S, fmsub_b15.S into multiple smaller tests
+- Split each _b15 file into 50 files consists of 768 (128*6) tests
 
 ## [3.9] - 2024-05-17
 - Cleanup: Fix RVTEST_CASE macros for Zfa tests.
