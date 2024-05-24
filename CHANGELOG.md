@@ -1,4 +1,6 @@
 # CHANGELOG
+## [3.8.9] -- 2024-01-14
+- Update tests for B extension
 
 ## [3.9] - 2024-05-17
 - Cleanup: Fix RVTEST_CASE macros for Zfa tests.
