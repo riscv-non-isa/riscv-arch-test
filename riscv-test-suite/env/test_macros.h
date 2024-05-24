@@ -385,7 +385,7 @@ Mend_PMP:                                    ;\
 		      .hword 0xffff         ;\
         .else				        ;\
 	        .word 0xffffffff		;\
-        .endif                      ;\    
+        .endif                      ;\
     .endr					;
 
 #define ZERO_EXTEND(__val__,__width__,__max__)	;\
