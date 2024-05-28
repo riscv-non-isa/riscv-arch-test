@@ -52,6 +52,9 @@ Corrected missing RV64 strings in RVTEST_CASE macros for Zfh fcvt.h.l and simila
 ## [3.8.9] -- 2024-01-12
 - Fixed Check ISA fields to include 32/64 in Zicond tests.  Note that the riscv-ctg CGFs have not been updated.
 
+## [3.8.9] -- 2024-01-14
+- Update A extension tests with Zaamo subcomponent
+
 ## [3.8.8] -- 2024-01-04
 - Fixed macros to allow assembling tests with LLVM.
 
