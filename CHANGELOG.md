@@ -96,6 +96,9 @@ Corrected missing RV64 strings in RVTEST_CASE macros for Zfh fcvt.h.l and simila
 - Updated the save area within the trap handler file.
 - Improved CSR Rename macro for code clarity.
 
+## [3.7.6] - 2023-10-30
+- Add Zabha extension tests
+
 ## [3.7.5] - 2023-10-11
 Add missing check ISA fields in recently modified div and amo tests
 
