@@ -1,0 +1,179 @@
+# testlist generated on 2024-06-03 16:17 GMT
+/home/user/Work/Tests/riscv-test-suite/rv32i_m/privilege/src/ebreak.S:
+  commit_id: '-'
+  work_dir: /home/user/Work/New_Repo/riscv-arch-test/riscof_work/src/ebreak.S
+  macros:
+  - rvtest_mtrap_routine=True
+  - TEST_CASE_1=True
+  - XLEN=32
+  isa: RV32I_Zicsr
+  coverage_labels:
+  - ebreak
+  test_path: /home/user/Work/Tests/riscv-test-suite/rv32i_m/privilege/src/ebreak.S
+/home/user/Work/Tests/riscv-test-suite/rv32i_m/privilege/src/ecall.S:
+  commit_id: '-'
+  work_dir: /home/user/Work/New_Repo/riscv-arch-test/riscof_work/src/ecall.S
+  macros:
+  - rvtest_mtrap_routine=True
+  - TEST_CASE_1=True
+  - XLEN=32
+  isa: RV32I_Zicsr
+  coverage_labels:
+  - ecall
+  test_path: /home/user/Work/Tests/riscv-test-suite/rv32i_m/privilege/src/ecall.S
+/home/user/Work/Tests/riscv-test-suite/rv32i_m/privilege/src/misalign-beq-01.S:
+  commit_id: '-'
+  work_dir: /home/user/Work/New_Repo/riscv-arch-test/riscof_work/src/misalign-beq-01.S
+  macros:
+  - rvtest_mtrap_routine=True
+  - TEST_CASE_1=True
+  - XLEN=32
+  isa: RV32I_Zicsr
+  coverage_labels:
+  - misalign-beq
+  - misalign-beq
+  test_path: /home/user/Work/Tests/riscv-test-suite/rv32i_m/privilege/src/misalign-beq-01.S
+/home/user/Work/Tests/riscv-test-suite/rv32i_m/privilege/src/misalign-bge-01.S:
+  commit_id: '-'
+  work_dir: /home/user/Work/New_Repo/riscv-arch-test/riscof_work/src/misalign-bge-01.S
+  macros:
+  - rvtest_mtrap_routine=True
+  - TEST_CASE_1=True
+  - XLEN=32
+  isa: RV32I_Zicsr
+  coverage_labels:
+  - misalign-bge
+  - misalign-bge
+  test_path: /home/user/Work/Tests/riscv-test-suite/rv32i_m/privilege/src/misalign-bge-01.S
+/home/user/Work/Tests/riscv-test-suite/rv32i_m/privilege/src/misalign-bgeu-01.S:
+  commit_id: '-'
+  work_dir: /home/user/Work/New_Repo/riscv-arch-test/riscof_work/src/misalign-bgeu-01.S
+  macros:
+  - rvtest_mtrap_routine=True
+  - TEST_CASE_1=True
+  - XLEN=32
+  isa: RV32I_Zicsr
+  coverage_labels:
+  - misalign-bgeu
+  - misalign-bgeu
+  test_path: /home/user/Work/Tests/riscv-test-suite/rv32i_m/privilege/src/misalign-bgeu-01.S
+/home/user/Work/Tests/riscv-test-suite/rv32i_m/privilege/src/misalign-blt-01.S:
+  commit_id: '-'
+  work_dir: /home/user/Work/New_Repo/riscv-arch-test/riscof_work/src/misalign-blt-01.S
+  macros:
+  - rvtest_mtrap_routine=True
+  - TEST_CASE_1=True
+  - XLEN=32
+  isa: RV32I_Zicsr
+  coverage_labels:
+  - misalign-blt
+  - misalign-blt
+  test_path: /home/user/Work/Tests/riscv-test-suite/rv32i_m/privilege/src/misalign-blt-01.S
+/home/user/Work/Tests/riscv-test-suite/rv32i_m/privilege/src/misalign-bltu-01.S:
+  commit_id: '-'
+  work_dir: /home/user/Work/New_Repo/riscv-arch-test/riscof_work/src/misalign-bltu-01.S
+  macros:
+  - rvtest_mtrap_routine=True
+  - TEST_CASE_1=True
+  - XLEN=32
+  isa: RV32I_Zicsr
+  coverage_labels:
+  - misalign-bltu
+  - misalign-bltu
+  test_path: /home/user/Work/Tests/riscv-test-suite/rv32i_m/privilege/src/misalign-bltu-01.S
+/home/user/Work/Tests/riscv-test-suite/rv32i_m/privilege/src/misalign-bne-01.S:
+  commit_id: '-'
+  work_dir: /home/user/Work/New_Repo/riscv-arch-test/riscof_work/src/misalign-bne-01.S
+  macros:
+  - rvtest_mtrap_routine=True
+  - TEST_CASE_1=True
+  - XLEN=32
+  isa: RV32I_Zicsr
+  coverage_labels:
+  - misalign-bne
+  - misalign-bne
+  test_path: /home/user/Work/Tests/riscv-test-suite/rv32i_m/privilege/src/misalign-bne-01.S
+/home/user/Work/Tests/riscv-test-suite/rv32i_m/privilege/src/misalign-jal-01.S:
+  commit_id: '-'
+  work_dir: /home/user/Work/New_Repo/riscv-arch-test/riscof_work/src/misalign-jal-01.S
+  macros:
+  - rvtest_mtrap_routine=True
+  - TEST_CASE_1=True
+  - XLEN=32
+  isa: RV32I_Zicsr
+  coverage_labels:
+  - misalign-jal
+  - misalign-jal
+  test_path: /home/user/Work/Tests/riscv-test-suite/rv32i_m/privilege/src/misalign-jal-01.S
+/home/user/Work/Tests/riscv-test-suite/rv32i_m/privilege/src/misalign-lh-01.S:
+  commit_id: '-'
+  work_dir: /home/user/Work/New_Repo/riscv-arch-test/riscof_work/src/misalign-lh-01.S
+  macros:
+  - rvtest_mtrap_routine=True
+  - TEST_CASE_1=True
+  - XLEN=32
+  isa: RV32I_Zicsr
+  coverage_labels:
+  - misalign-lh
+  - misalign-lh
+  test_path: /home/user/Work/Tests/riscv-test-suite/rv32i_m/privilege/src/misalign-lh-01.S
+/home/user/Work/Tests/riscv-test-suite/rv32i_m/privilege/src/misalign-lhu-01.S:
+  commit_id: '-'
+  work_dir: /home/user/Work/New_Repo/riscv-arch-test/riscof_work/src/misalign-lhu-01.S
+  macros:
+  - rvtest_mtrap_routine=True
+  - TEST_CASE_1=True
+  - XLEN=32
+  isa: RV32I_Zicsr
+  coverage_labels:
+  - misalign-lhu
+  - misalign-lhu
+  test_path: /home/user/Work/Tests/riscv-test-suite/rv32i_m/privilege/src/misalign-lhu-01.S
+/home/user/Work/Tests/riscv-test-suite/rv32i_m/privilege/src/misalign-lw-01.S:
+  commit_id: '-'
+  work_dir: /home/user/Work/New_Repo/riscv-arch-test/riscof_work/src/misalign-lw-01.S
+  macros:
+  - rvtest_mtrap_routine=True
+  - TEST_CASE_1=True
+  - XLEN=32
+  isa: RV32I_Zicsr
+  coverage_labels:
+  - misalign-lw
+  - misalign-lw
+  test_path: /home/user/Work/Tests/riscv-test-suite/rv32i_m/privilege/src/misalign-lw-01.S
+/home/user/Work/Tests/riscv-test-suite/rv32i_m/privilege/src/misalign-sh-01.S:
+  commit_id: '-'
+  work_dir: /home/user/Work/New_Repo/riscv-arch-test/riscof_work/src/misalign-sh-01.S
+  macros:
+  - rvtest_mtrap_routine=True
+  - TEST_CASE_1=True
+  - XLEN=32
+  isa: RV32I_Zicsr
+  coverage_labels:
+  - misalign-sh
+  - misalign-sh
+  test_path: /home/user/Work/Tests/riscv-test-suite/rv32i_m/privilege/src/misalign-sh-01.S
+/home/user/Work/Tests/riscv-test-suite/rv32i_m/privilege/src/misalign-sw-01.S:
+  commit_id: '-'
+  work_dir: /home/user/Work/New_Repo/riscv-arch-test/riscof_work/src/misalign-sw-01.S
+  macros:
+  - rvtest_mtrap_routine=True
+  - TEST_CASE_1=True
+  - XLEN=32
+  isa: RV32I_Zicsr
+  coverage_labels:
+  - misalign-sw
+  - misalign-sw
+  test_path: /home/user/Work/Tests/riscv-test-suite/rv32i_m/privilege/src/misalign-sw-01.S
+/home/user/Work/Tests/riscv-test-suite/rv32i_m/privilege/src/misalign2-jalr-01.S:
+  commit_id: '-'
+  work_dir: /home/user/Work/New_Repo/riscv-arch-test/riscof_work/src/misalign2-jalr-01.S
+  macros:
+  - rvtest_mtrap_routine=True
+  - TEST_CASE_1=True
+  - XLEN=32
+  isa: RV32I_Zicsr
+  coverage_labels:
+  - misalign2-jalr
+  - misalign2-jalr
+  test_path: /home/user/Work/Tests/riscv-test-suite/rv32i_m/privilege/src/misalign2-jalr-01.S

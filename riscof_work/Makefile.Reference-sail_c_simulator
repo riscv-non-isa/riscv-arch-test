@@ -1,0 +1,61 @@
+
+
+.PHONY : ebreak
+ebreak :
+	@cd /home/user/Work/New_Repo/riscv-arch-test/riscof_work/src/ebreak.S/ref;riscv32-unknown-elf-gcc -march=rv32i_zicsr          -static -mcmodel=medany -fvisibility=hidden -nostdlib -nostartfiles -T /home/user/Tools/riscof-plugins/sail_cSim/env/link.ld                -I /home/user/Tools/riscof-plugins/sail_cSim/env/                -I /home/user/Work/Tests/riscv-test-suite/env -mabi=ilp32  /home/user/Work/Tests/riscv-test-suite/rv32i_m/privilege/src/ebreak.S -o ref.elf -Drvtest_mtrap_routine=True -DTEST_CASE_1=True -DXLEN=32;riscv32-unknown-elf-objdump -D ref.elf > ref.disass;riscv_sim_RV32 -i -v --enable-pmp --test-signature=Reference-sail_c_simulator.signature ref.elf > ebreak.log 2>&1;
+
+.PHONY : ecall
+ecall :
+	@cd /home/user/Work/New_Repo/riscv-arch-test/riscof_work/src/ecall.S/ref;riscv32-unknown-elf-gcc -march=rv32i_zicsr          -static -mcmodel=medany -fvisibility=hidden -nostdlib -nostartfiles -T /home/user/Tools/riscof-plugins/sail_cSim/env/link.ld                -I /home/user/Tools/riscof-plugins/sail_cSim/env/                -I /home/user/Work/Tests/riscv-test-suite/env -mabi=ilp32  /home/user/Work/Tests/riscv-test-suite/rv32i_m/privilege/src/ecall.S -o ref.elf -Drvtest_mtrap_routine=True -DTEST_CASE_1=True -DXLEN=32;riscv32-unknown-elf-objdump -D ref.elf > ref.disass;riscv_sim_RV32 -i -v --enable-pmp --test-signature=Reference-sail_c_simulator.signature ref.elf > ecall.log 2>&1;
+
+.PHONY : misalign-beq-01
+misalign-beq-01 :
+	@cd /home/user/Work/New_Repo/riscv-arch-test/riscof_work/src/misalign-beq-01.S/ref;riscv32-unknown-elf-gcc -march=rv32i_zicsr          -static -mcmodel=medany -fvisibility=hidden -nostdlib -nostartfiles -T /home/user/Tools/riscof-plugins/sail_cSim/env/link.ld                -I /home/user/Tools/riscof-plugins/sail_cSim/env/                -I /home/user/Work/Tests/riscv-test-suite/env -mabi=ilp32  /home/user/Work/Tests/riscv-test-suite/rv32i_m/privilege/src/misalign-beq-01.S -o ref.elf -Drvtest_mtrap_routine=True -DTEST_CASE_1=True -DXLEN=32;riscv32-unknown-elf-objdump -D ref.elf > ref.disass;riscv_sim_RV32 -i -v --enable-pmp --test-signature=Reference-sail_c_simulator.signature ref.elf > misalign-beq-01.log 2>&1;
+
+.PHONY : misalign-bge-01
+misalign-bge-01 :
+	@cd /home/user/Work/New_Repo/riscv-arch-test/riscof_work/src/misalign-bge-01.S/ref;riscv32-unknown-elf-gcc -march=rv32i_zicsr          -static -mcmodel=medany -fvisibility=hidden -nostdlib -nostartfiles -T /home/user/Tools/riscof-plugins/sail_cSim/env/link.ld                -I /home/user/Tools/riscof-plugins/sail_cSim/env/                -I /home/user/Work/Tests/riscv-test-suite/env -mabi=ilp32  /home/user/Work/Tests/riscv-test-suite/rv32i_m/privilege/src/misalign-bge-01.S -o ref.elf -Drvtest_mtrap_routine=True -DTEST_CASE_1=True -DXLEN=32;riscv32-unknown-elf-objdump -D ref.elf > ref.disass;riscv_sim_RV32 -i -v --enable-pmp --test-signature=Reference-sail_c_simulator.signature ref.elf > misalign-bge-01.log 2>&1;
+
+.PHONY : misalign-bgeu-01
+misalign-bgeu-01 :
+	@cd /home/user/Work/New_Repo/riscv-arch-test/riscof_work/src/misalign-bgeu-01.S/ref;riscv32-unknown-elf-gcc -march=rv32i_zicsr          -static -mcmodel=medany -fvisibility=hidden -nostdlib -nostartfiles -T /home/user/Tools/riscof-plugins/sail_cSim/env/link.ld                -I /home/user/Tools/riscof-plugins/sail_cSim/env/                -I /home/user/Work/Tests/riscv-test-suite/env -mabi=ilp32  /home/user/Work/Tests/riscv-test-suite/rv32i_m/privilege/src/misalign-bgeu-01.S -o ref.elf -Drvtest_mtrap_routine=True -DTEST_CASE_1=True -DXLEN=32;riscv32-unknown-elf-objdump -D ref.elf > ref.disass;riscv_sim_RV32 -i -v --enable-pmp --test-signature=Reference-sail_c_simulator.signature ref.elf > misalign-bgeu-01.log 2>&1;
+
+.PHONY : misalign-blt-01
+misalign-blt-01 :
+	@cd /home/user/Work/New_Repo/riscv-arch-test/riscof_work/src/misalign-blt-01.S/ref;riscv32-unknown-elf-gcc -march=rv32i_zicsr          -static -mcmodel=medany -fvisibility=hidden -nostdlib -nostartfiles -T /home/user/Tools/riscof-plugins/sail_cSim/env/link.ld                -I /home/user/Tools/riscof-plugins/sail_cSim/env/                -I /home/user/Work/Tests/riscv-test-suite/env -mabi=ilp32  /home/user/Work/Tests/riscv-test-suite/rv32i_m/privilege/src/misalign-blt-01.S -o ref.elf -Drvtest_mtrap_routine=True -DTEST_CASE_1=True -DXLEN=32;riscv32-unknown-elf-objdump -D ref.elf > ref.disass;riscv_sim_RV32 -i -v --enable-pmp --test-signature=Reference-sail_c_simulator.signature ref.elf > misalign-blt-01.log 2>&1;
+
+.PHONY : misalign-bltu-01
+misalign-bltu-01 :
+	@cd /home/user/Work/New_Repo/riscv-arch-test/riscof_work/src/misalign-bltu-01.S/ref;riscv32-unknown-elf-gcc -march=rv32i_zicsr          -static -mcmodel=medany -fvisibility=hidden -nostdlib -nostartfiles -T /home/user/Tools/riscof-plugins/sail_cSim/env/link.ld                -I /home/user/Tools/riscof-plugins/sail_cSim/env/                -I /home/user/Work/Tests/riscv-test-suite/env -mabi=ilp32  /home/user/Work/Tests/riscv-test-suite/rv32i_m/privilege/src/misalign-bltu-01.S -o ref.elf -Drvtest_mtrap_routine=True -DTEST_CASE_1=True -DXLEN=32;riscv32-unknown-elf-objdump -D ref.elf > ref.disass;riscv_sim_RV32 -i -v --enable-pmp --test-signature=Reference-sail_c_simulator.signature ref.elf > misalign-bltu-01.log 2>&1;
+
+.PHONY : misalign-bne-01
+misalign-bne-01 :
+	@cd /home/user/Work/New_Repo/riscv-arch-test/riscof_work/src/misalign-bne-01.S/ref;riscv32-unknown-elf-gcc -march=rv32i_zicsr          -static -mcmodel=medany -fvisibility=hidden -nostdlib -nostartfiles -T /home/user/Tools/riscof-plugins/sail_cSim/env/link.ld                -I /home/user/Tools/riscof-plugins/sail_cSim/env/                -I /home/user/Work/Tests/riscv-test-suite/env -mabi=ilp32  /home/user/Work/Tests/riscv-test-suite/rv32i_m/privilege/src/misalign-bne-01.S -o ref.elf -Drvtest_mtrap_routine=True -DTEST_CASE_1=True -DXLEN=32;riscv32-unknown-elf-objdump -D ref.elf > ref.disass;riscv_sim_RV32 -i -v --enable-pmp --test-signature=Reference-sail_c_simulator.signature ref.elf > misalign-bne-01.log 2>&1;
+
+.PHONY : misalign-jal-01
+misalign-jal-01 :
+	@cd /home/user/Work/New_Repo/riscv-arch-test/riscof_work/src/misalign-jal-01.S/ref;riscv32-unknown-elf-gcc -march=rv32i_zicsr          -static -mcmodel=medany -fvisibility=hidden -nostdlib -nostartfiles -T /home/user/Tools/riscof-plugins/sail_cSim/env/link.ld                -I /home/user/Tools/riscof-plugins/sail_cSim/env/                -I /home/user/Work/Tests/riscv-test-suite/env -mabi=ilp32  /home/user/Work/Tests/riscv-test-suite/rv32i_m/privilege/src/misalign-jal-01.S -o ref.elf -Drvtest_mtrap_routine=True -DTEST_CASE_1=True -DXLEN=32;riscv32-unknown-elf-objdump -D ref.elf > ref.disass;riscv_sim_RV32 -i -v --enable-pmp --test-signature=Reference-sail_c_simulator.signature ref.elf > misalign-jal-01.log 2>&1;
+
+.PHONY : misalign-lh-01
+misalign-lh-01 :
+	@cd /home/user/Work/New_Repo/riscv-arch-test/riscof_work/src/misalign-lh-01.S/ref;riscv32-unknown-elf-gcc -march=rv32i_zicsr          -static -mcmodel=medany -fvisibility=hidden -nostdlib -nostartfiles -T /home/user/Tools/riscof-plugins/sail_cSim/env/link.ld                -I /home/user/Tools/riscof-plugins/sail_cSim/env/                -I /home/user/Work/Tests/riscv-test-suite/env -mabi=ilp32  /home/user/Work/Tests/riscv-test-suite/rv32i_m/privilege/src/misalign-lh-01.S -o ref.elf -Drvtest_mtrap_routine=True -DTEST_CASE_1=True -DXLEN=32;riscv32-unknown-elf-objdump -D ref.elf > ref.disass;riscv_sim_RV32 -i -v --enable-pmp --test-signature=Reference-sail_c_simulator.signature ref.elf > misalign-lh-01.log 2>&1;
+
+.PHONY : misalign-lhu-01
+misalign-lhu-01 :
+	@cd /home/user/Work/New_Repo/riscv-arch-test/riscof_work/src/misalign-lhu-01.S/ref;riscv32-unknown-elf-gcc -march=rv32i_zicsr          -static -mcmodel=medany -fvisibility=hidden -nostdlib -nostartfiles -T /home/user/Tools/riscof-plugins/sail_cSim/env/link.ld                -I /home/user/Tools/riscof-plugins/sail_cSim/env/                -I /home/user/Work/Tests/riscv-test-suite/env -mabi=ilp32  /home/user/Work/Tests/riscv-test-suite/rv32i_m/privilege/src/misalign-lhu-01.S -o ref.elf -Drvtest_mtrap_routine=True -DTEST_CASE_1=True -DXLEN=32;riscv32-unknown-elf-objdump -D ref.elf > ref.disass;riscv_sim_RV32 -i -v --enable-pmp --test-signature=Reference-sail_c_simulator.signature ref.elf > misalign-lhu-01.log 2>&1;
+
+.PHONY : misalign-lw-01
+misalign-lw-01 :
+	@cd /home/user/Work/New_Repo/riscv-arch-test/riscof_work/src/misalign-lw-01.S/ref;riscv32-unknown-elf-gcc -march=rv32i_zicsr          -static -mcmodel=medany -fvisibility=hidden -nostdlib -nostartfiles -T /home/user/Tools/riscof-plugins/sail_cSim/env/link.ld                -I /home/user/Tools/riscof-plugins/sail_cSim/env/                -I /home/user/Work/Tests/riscv-test-suite/env -mabi=ilp32  /home/user/Work/Tests/riscv-test-suite/rv32i_m/privilege/src/misalign-lw-01.S -o ref.elf -Drvtest_mtrap_routine=True -DTEST_CASE_1=True -DXLEN=32;riscv32-unknown-elf-objdump -D ref.elf > ref.disass;riscv_sim_RV32 -i -v --enable-pmp --test-signature=Reference-sail_c_simulator.signature ref.elf > misalign-lw-01.log 2>&1;
+
+.PHONY : misalign-sh-01
+misalign-sh-01 :
+	@cd /home/user/Work/New_Repo/riscv-arch-test/riscof_work/src/misalign-sh-01.S/ref;riscv32-unknown-elf-gcc -march=rv32i_zicsr          -static -mcmodel=medany -fvisibility=hidden -nostdlib -nostartfiles -T /home/user/Tools/riscof-plugins/sail_cSim/env/link.ld                -I /home/user/Tools/riscof-plugins/sail_cSim/env/                -I /home/user/Work/Tests/riscv-test-suite/env -mabi=ilp32  /home/user/Work/Tests/riscv-test-suite/rv32i_m/privilege/src/misalign-sh-01.S -o ref.elf -Drvtest_mtrap_routine=True -DTEST_CASE_1=True -DXLEN=32;riscv32-unknown-elf-objdump -D ref.elf > ref.disass;riscv_sim_RV32 -i -v --enable-pmp --test-signature=Reference-sail_c_simulator.signature ref.elf > misalign-sh-01.log 2>&1;
+
+.PHONY : misalign-sw-01
+misalign-sw-01 :
+	@cd /home/user/Work/New_Repo/riscv-arch-test/riscof_work/src/misalign-sw-01.S/ref;riscv32-unknown-elf-gcc -march=rv32i_zicsr          -static -mcmodel=medany -fvisibility=hidden -nostdlib -nostartfiles -T /home/user/Tools/riscof-plugins/sail_cSim/env/link.ld                -I /home/user/Tools/riscof-plugins/sail_cSim/env/                -I /home/user/Work/Tests/riscv-test-suite/env -mabi=ilp32  /home/user/Work/Tests/riscv-test-suite/rv32i_m/privilege/src/misalign-sw-01.S -o ref.elf -Drvtest_mtrap_routine=True -DTEST_CASE_1=True -DXLEN=32;riscv32-unknown-elf-objdump -D ref.elf > ref.disass;riscv_sim_RV32 -i -v --enable-pmp --test-signature=Reference-sail_c_simulator.signature ref.elf > misalign-sw-01.log 2>&1;
+
+.PHONY : misalign2-jalr-01
+misalign2-jalr-01 :
+	@cd /home/user/Work/New_Repo/riscv-arch-test/riscof_work/src/misalign2-jalr-01.S/ref;riscv32-unknown-elf-gcc -march=rv32i_zicsr          -static -mcmodel=medany -fvisibility=hidden -nostdlib -nostartfiles -T /home/user/Tools/riscof-plugins/sail_cSim/env/link.ld                -I /home/user/Tools/riscof-plugins/sail_cSim/env/                -I /home/user/Work/Tests/riscv-test-suite/env -mabi=ilp32  /home/user/Work/Tests/riscv-test-suite/rv32i_m/privilege/src/misalign2-jalr-01.S -o ref.elf -Drvtest_mtrap_routine=True -DTEST_CASE_1=True -DXLEN=32;riscv32-unknown-elf-objdump -D ref.elf > ref.disass;riscv_sim_RV32 -i -v --enable-pmp --test-signature=Reference-sail_c_simulator.signature ref.elf > misalign2-jalr-01.log 2>&1;
