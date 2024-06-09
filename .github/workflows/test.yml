@@ -33,7 +33,8 @@ jobs:
         isa_group: 
           - RV32IMCZicsr_Zifencei
           - RV64IMCZicsr_Zifencei
-
+          - RV32IMFDZicsr
+          - RV64IMFDZicsr
 
     steps:
 
