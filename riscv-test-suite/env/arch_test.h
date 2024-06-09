@@ -1945,7 +1945,7 @@ abort_tests:
     INSTANTIATE_MODE_MACRO RVTEST_TRAP_HANDLER
 
 exit_cleanup:                   // *** RVMODEL_HALT MUST follow this***, then data
-RVMODEL_HALT
+//RVMODEL_HALT
   .option pop
 .endm                           // end of RVTEST_CODE_END
 
