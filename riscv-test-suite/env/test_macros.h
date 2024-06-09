@@ -796,7 +796,11 @@ ADDI(swreg, swreg, RVMODEL_CBZ_BLOCKSIZE)
 #define TEST_CASE_F(testreg, destreg, correctval, swreg, flagreg, code... )	;\
     code					;\
     RVTEST_SIGUPD_F(swreg,destreg,flagreg)	;\
-    RVMODEL_IO_ASSERT_GPR_EQ(testreg, destreg, correctval)
+#if FLEN==32 \
+    RVMODEL_IO_ASSERT_SFPR_EQ(testreg, destreg, correctval);\
+#elif FLEN==64 \
+    RVMODEL_IO_ASSERT_DFPR_EQ(testreg, destreg, correctval);\
+#endif
     
 #define TEST_CASE_FID(testreg, destreg, correctval, swreg, flagreg, code... )	;\
     code; \
