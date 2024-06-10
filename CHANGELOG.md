@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## [3.10] - 2024-06-10
+- Add Smctr/Ssctr extension support.
+
 ## [3.9] - 2024-05-17
 - Cleanup: Fix RVTEST_CASE macros for Zfa tests.
 - Fix warning assembler warning message from test_macros.h
