@@ -31,8 +31,8 @@ jobs:
       fail-fast: false
       matrix:
         isa_group: 
-          - RV32IMCZicsr_Zifencei
-          - RV64IMCZicsr_Zifencei
+          - RV32IMFDCZicsr_Zifencei
+          - RV64IMFDCZicsr_Zifencei
           - RV32IFDZicsr
           - RV64IFDZicsr
 
