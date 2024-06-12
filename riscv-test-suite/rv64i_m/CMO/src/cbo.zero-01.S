@@ -20,7 +20,7 @@
 // 
 #include "model_test.h"
 #include "arch_test.h"
-RVTEST_ISA("RV64IZicboz")
+RVTEST_ISA("RV64IZicboz_Zicsr")
 
 .section .text.init
 .globl rvtest_entry_point
