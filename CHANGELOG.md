@@ -1,9 +1,14 @@
 # CHANGELOG
 
-## [3.9.2] - 2024-06-11
+## [3.9.1] - 2024-07-01
+- Converted one of the CANARY words to a delta instret count (there is a variable that will enable that)
+- Converted CODE/DATA/SIG_BEGIN/END to include all the little incidental code, so the tests template improves
+- Minor bug fixes to the trap handler in the cases of traps delegated to S-mode with virtualization enabled.
+- Rewrote the identity map macro. The macro now takes 3 parameters: BASE, LVLS, PERMS and generates a page of PTE entries with the most significant PPN counting from 0..511 (or 1023 if RV32). The macro takes into account the 2 different PTE formats, based on XLEN. Whereever the macro is used, it defaults BASE to 0 (so VA==PA) and uses ALL_PERMS
+- Add misaligned c.jalr and c.jr instruction test
 - Fixed reversed order of zicboz and Zicsr in cbo.zero RVTEST_ISA/RVTET_CASE strings.  Note that Sail does not yet handle cbo.zero
-	
-## [3.9.1] - 2024-05-24
+- Add Github Action CI test for this repo
+- Correct IO assertion macros
 - Split rv32i_m/F/fnmadd_b15.S, fnmsub_b15.S, fmadd_b15.S, fmsub_b15.S into multiple smaller tests
 - Split each _b15 file into 50 files consists of 768 (128*6) tests
 
