@@ -1,4 +1,8 @@
 # CHANGELOG
+
+## [3.9.2] - 2024-06-11
+- Fixed reversed order of zicboz and Zicsr in cbo.zero RVTEST_ISA/RVTET_CASE strings.  Note that Sail does not yet handle cbo.zero
+	
 ## [3.9.1] - 2024-05-24
 - Split rv32i_m/F/fnmadd_b15.S, fnmsub_b15.S, fmadd_b15.S, fmsub_b15.S into multiple smaller tests
 - Split each _b15 file into 50 files consists of 768 (128*6) tests
