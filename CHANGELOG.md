@@ -1,8 +1,4 @@
 # CHANGELOG
-## [3.9.2] - 2024-06-09
-- converted one of the CANARY words to a delta instret count (there is a variable that will enable that...)
-- converted CODE/DATA/SIG_BEGIN/END to include all the little incidental code, so the tests template improves
-- minor bug fixes to the trap handler in the cases of traps delegated to S-mode with virtualization enabled.
 
 ## [3.9.1] - 2024-05-24
 - Split rv32i_m/F/fnmadd_b15.S, fnmsub_b15.S, fmadd_b15.S, fmsub_b15.S into multiple smaller tests
