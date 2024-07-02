@@ -9,7 +9,7 @@
 #include "arch_test.h"
 
 # Test Virtual Machine (TVM) used by program.
-RVTEST_ISA("RV64I")
+RVTEST_ISA("RV64I_Zifencei")
 
 # Test code region
 .section .text.init
@@ -90,6 +90,11 @@ sig_begin_canary:
 CANARY;
 test_A_res:
     .fill 4, 4, 0xdeadbeef
+
+#ifdef rvtest_mtrap_routine
+mtrap_sigptr:
+  .fill 8, 4, 0xdeadbeef
+#endif
 
 #ifdef rvtest_gpr_save
 gpr_save:

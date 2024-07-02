@@ -128,6 +128,22 @@ misalign1-jalr:
     'imm_val%2 == 1 and ea_align == 1': 0
     'imm_val%2 == 0 and ea_align == 1': 0
 
+misalign1-cjalr:
+  config: 
+    - check ISA:=regex(.*I.*C.*); def rvtest_mtrap_routine=True
+  mnemonics:
+    c.jalr: 0
+  val_comb:
+    'ea_align == 1': 0
+
+misalign1-cjr:
+  config: 
+    - check ISA:=regex(.*I.*C.*); def rvtest_mtrap_routine=True
+  mnemonics:
+    c.jr: 0
+  val_comb:
+    'ea_align == 1': 0
+
 misalign-jal:
   config:
     - check ISA:=regex(.*I.*C.*)
