@@ -23,7 +23,7 @@ RVMODEL_BOOT
 RVTEST_CODE_BEGIN
 
 #ifdef TEST_CASE_1
-    RVTEST_CASE(1,"//check ISA:=regex(.*64.*); check ISA:=regex(.*I.*Zicsr.*); def rvtest_mtrap_routine=True; def rvtest_strap_routine=True; def TEST_CASE_1=True",PMP_NA4_priority_rx)
+    RVTEST_CASE(1,"//check ISA:=regex(.*64.*); check ISA:=regex(.*I.*Zicsr.*); def rvtest_mtrap_routine=True; def rvtest_strap_routine=True; def TEST_CASE_1=True; mac PMP_MACROS; mac PMP_helper_Coverpoints",PMP_NA4_priority_rx)
 RVTEST_SIGBASE( x13,signature_x13_1)
 	.attribute unaligned_access, 0
 	.attribute stack_align, 16
@@ -40,18 +40,39 @@ RVTEST_SIGBASE( x13,signature_x13_1)
 #define NOP 		0x13
 .macro VERIFICATION_RWX		ADDRESS	
    	LA(a5, \ADDRESS)	// Fetch the address to be checked
+		LI(a4, 	NOP)		// Load the new value (NOP Instruction ID)
+		sb	a4,0(a5)	// Store the new value (NOT TRAP => W enabled)
+		nop
+		nop
+		sh	a4,0(a5)	// store data
+		nop
+		nop
+		sw	a4,0(a5)	// Load data from it (CHECK FOR READ) ; (NOT TRAP => W enabled)
+		nop
+		nop
+		sd	a4,0(a5)	// Load data from it (CHECK FOR READ) ; (NOT TRAP => W enabled)
+		nop
+		nop
+ 	  	lb	a4,0(a5)	// Load data from it (CHECK FOR READ) ; (NOT TRAP => W enabled)
+    	nop
+    	nop
+		RVTEST_SIGUPD(x13,a4)															//verify that the data is stored successfuly
+    	lh	a4,0(a5)	// Load data from it (CHECK FOR READ) ; (NOT TRAP => W enabled)
+    	nop
+    	nop
+		RVTEST_SIGUPD(x13,a4)
+    	lw	a4,0(a5)	// Load data from it (CHECK FOR READ) ; (NOT TRAP => W enabled)
+    	nop
+    	nop
     	ld	a4,0(a5)	// Load data from it (CHECK FOR READ) ; (NOT TRAP => W enabled)
     	nop
     	nop
-    	/* WRITING new value to memory region
-    	TRAP if the WRITability is blocked */
-	LI(a4, 	NOP)		// Load the new value (NOP Instruction ID) 
-	sd	a4,0(a5)	// Store the new value (NOT TRAP => W enabled)
-	nop
-	nop
-	ld	a4,0(a5)	// Reload for verification (CHECK IF DATA HAS BEEN UPDATED SUCCESSFULLY)
-	nop
+		RVTEST_SIGUPD(x13,a4)
+		jal	\ADDRESS	// Test for execution, an instruction is placed at this address
+		nop
+		nop
 jal	\ADDRESS	// Test for execution, an instruction is placed at this address 
+
 .endm
 
 main:
@@ -173,7 +194,7 @@ signature_x13_1:
 tsig_begin_canary:
 CANARY;
 mtrap_sigptr:
-    .fill 64*(XLEN/32),4,0xdeadbeef
+    .fill 128*(XLEN/32),4,0xdeadbeef
 tsig_end_canary:
 CANARY;
 
