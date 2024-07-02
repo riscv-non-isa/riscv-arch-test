@@ -36,12 +36,8 @@ PMP_NAPOT_r:
     # Check Lock bit is set, R bit is set, W bit not set, X bit not set, NAPOT Mode is set
     "(pmpcfg0 >> 8) & ${PMPCFG_ALL_BIT} == ${PMPCFG_L_BIT}+${PMPCFG_NAPOT_MODE}+${PMPCFG_ONLY_R_SET}": 0
   val_comb:
-    #Check for store fault on sb instruction
-    mnemonic == 'sb' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
-    #Check for store fault on sh instruction
-    mnemonic == 'sh' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
-    #Check for store fault on sw instruction
-    mnemonic == 'sw' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
+    #Check for store fault on sb , sh, sw instruction
+    mnemonic == {'sb', 'sh', 'sw'} and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
     #Check for execute fault
     mode == 'M' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_FETCH_ACCESS}): 0
     #Check the napot region is accessed at least once
@@ -58,18 +54,10 @@ PMP_NAPOT_x:
     # Check Lock bit is set, R bit is set, W bit not set, X bit not set, NAPOT Mode is set
     "(pmpcfg0 >> 8) & ${PMPCFG_ALL_BIT} == ${PMPCFG_L_BIT}+${PMPCFG_NAPOT_MODE}+${PMPCFG_ONLY_X_SET}": 0
   val_comb:
-    #Check for store fault on sb instruction
-    mnemonic == 'sb' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
-    #Check for store fault on sh instruction
-    mnemonic == 'sh' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
-    #Check for store fault on sw instruction
-    mnemonic == 'sw' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
-    #Check for load fault on sb instruction
-    mnemonic == 'lb' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_LOAD_ACCESS}): 0
-    #Check for load fault on sh instruction
-    mnemonic == 'lh' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_LOAD_ACCESS}): 0
-    #Check for load fault on sw instruction
-    mnemonic == 'lw' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_LOAD_ACCESS}): 0
+    #Check for store fault on sb , sh, sw instruction
+    mnemonic == {'sb', 'sh', 'sw'} and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
+    #Check for load fault on lb, lh, lw instruction
+    mnemonic == {'lb', 'lh', 'lw'} and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_LOAD_ACCESS}): 0
     #Check the napot region is accessed at least once
     '(mnemonic == {"lw", "lh", "lb", "sw", "sh", "sb"}) and ((pmpcfg0 >> 8) & 0x9F == 0x9C) and ${NAPOT_REGION_ADDRESS_MATCH}': 0
     
@@ -100,12 +88,8 @@ PMP_NAPOT_rx:
     # Check Lock bit is set, R bit is set, W bit not set, X bit not set, NAPOT Mode is set
     "(pmpcfg0 >> 8) & ${PMPCFG_ALL_BIT} == ${PMPCFG_L_BIT}+${PMPCFG_NAPOT_MODE}+${PMPCFG_ONLY_RX_SET}": 0
   val_comb:
-    #Check for store fault on sb instruction
-    mnemonic == 'sb' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
-    #Check for store fault on sh instruction
-    mnemonic == 'sh' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
-    #Check for store fault on sw instruction
-    mnemonic == 'sw' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
+    #Check for store fault on sb , sh, sw instruction
+    mnemonic == {'sb', 'sh', 'sw'} and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
     #Check the napot region is accessed at least once
     '(mnemonic == {"lw", "lh", "lb", "sw", "sh", "sb"}) and ((pmpcfg0 >> 8) & 0x9F == 0x9D) and ${NAPOT_REGION_ADDRESS_MATCH}': 0
 
@@ -134,12 +118,8 @@ PMP_TOR_r:
     # Check Lock bit is set, R bit is set, W bit not set, X bit not set, NAPOT Mode is set
     "(pmpcfg0 >> 16) & ${PMPCFG_ALL_BIT} == ${PMPCFG_L_BIT}+${PMPCFG_TOR_MODE}+${PMPCFG_ONLY_R_SET}": 0
   val_comb:
-    #Check for store fault on sb instruction
-    mnemonic == 'sb' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
-    #Check for store fault on sh instruction
-    mnemonic == 'sh' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
-    #Check for store fault on sw instruction
-    mnemonic == 'sw' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
+    #Check for store fault on sb , sh, sw instruction
+    mnemonic == {'sb', 'sh', 'sw'} and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
     #Check for execute fault
     mode == 'M' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_FETCH_ACCESS}): 0
     #Check the tor region is accessed at least once
@@ -156,18 +136,10 @@ PMP_TOR_x:
     # Check Lock bit is set, R bit not set, W bit not set, X bit is set, NAPOT Mode is set
     "(pmpcfg0 >> 16) & ${PMPCFG_ALL_BIT} == ${PMPCFG_L_BIT}+${PMPCFG_TOR_MODE}+${PMPCFG_ONLY_X_SET}": 0
   val_comb:
-    #Check for store fault on sb instruction
-    mnemonic == 'sb' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
-    #Check for store fault on sh instruction
-    mnemonic == 'sh' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
-    #Check for store fault on sw instruction
-    mnemonic == 'sw' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
-    #Check for load fault on sb instruction
-    mnemonic == 'lb' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_LOAD_ACCESS}): 0
-    #Check for load fault on sh instruction
-    mnemonic == 'lh' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_LOAD_ACCESS}): 0
-    #Check for load fault on sw instruction
-    mnemonic == 'lw' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_LOAD_ACCESS}): 0
+    #Check for store fault on sb , sh, sw instruction
+    mnemonic == {'sb', 'sh', 'sw'} and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
+    #Check for load fault on lb, lh, lw instruction
+    mnemonic == {'lb', 'lh', 'lw'} and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_LOAD_ACCESS}): 0
     #Check the tor region is accessed at least once
     '(mnemonic == {"lw", "lh", "lb", "sw", "sh", "sb"}) and ((pmpcfg0 >> 16) & 0x9F == 0x8C) and ${TOR_REGION_ADDRESS_MATCH}': 0
 
@@ -198,12 +170,8 @@ PMP_TOR_rx:
     # Check Lock bit is set, R bit is set, W bit not set, X bit is set, TOR Mode is set
     "(pmpcfg0 >> 16) & ${PMPCFG_ALL_BIT} == ${PMPCFG_L_BIT}+${PMPCFG_TOR_MODE}+${PMPCFG_ONLY_RX_SET}": 0
   val_comb:
-    #Check for store fault on sb instruction
-    mnemonic == 'sb' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
-    #Check for store fault on sh instruction
-    mnemonic == 'sh' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
-    #Check for store fault on sw instruction
-    mnemonic == 'sw' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
+    #Check for store fault on sb , sh, sw instruction
+    mnemonic == {'sb', 'sh', 'sw'} and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
     #Check the tor region is accessed at least once
     '(mnemonic == {"lw", "lh", "lb", "sw", "sh", "sb"}) and ((pmpcfg0 >> 16) & 0x9F == 0x8D) and ${NAPOT_REGION_ADDRESS_MATCH}': 0
 
@@ -232,12 +200,8 @@ PMP_NA4_r:
     # Check Lock bit is set, R bit is set, W bit not set, X bit not set, NAPOT Mode is set
     "(pmpcfg0 >> 8) & ${PMPCFG_ALL_BIT} == ${PMPCFG_L_BIT}+${PMPCFG_NA4_MODE}+${PMPCFG_ONLY_R_SET}": 0
   val_comb:
-    #Check for store fault on sb instruction
-    mnemonic == 'sb' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
-    #Check for store fault on sh instruction
-    mnemonic == 'sh' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
-    #Check for store fault on sw instruction
-    mnemonic == 'sw' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
+    #Check for store fault on sb , sh, sw instruction
+    mnemonic == {'sb', 'sh', 'sw'} and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
     #Check for execute fault
     mode == 'M' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_FETCH_ACCESS}): 0
     #Check the na4 region is accessed at least once
@@ -254,18 +218,10 @@ PMP_NA4_x:
     # Check Lock bit is set, R bit not set, W bit not set, X bit set, NA4 Mode is set
     "(pmpcfg0 >> 8) & ${PMPCFG_ALL_BIT} == ${PMPCFG_L_BIT}+${PMPCFG_NA4_MODE}+${PMPCFG_ONLY_X_SET}": 0
   val_comb:
-    #Check for store fault on sb instruction
-    mnemonic == 'sb' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
-    #Check for store fault on sh instruction
-    mnemonic == 'sh' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
-    #Check for store fault on sw instruction
-    mnemonic == 'sw' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
-    #Check for load fault on sb instruction
-    mnemonic == 'lb' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_LOAD_ACCESS}): 0
-    #Check for load fault on sh instruction
-    mnemonic == 'lh' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_LOAD_ACCESS}): 0
-    #Check for load fault on sw instruction
-    mnemonic == 'lw' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_LOAD_ACCESS}): 0
+    #Check for store fault on sb , sh, sw instruction
+    mnemonic == {'sb', 'sh', 'sw'} and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
+    #Check for load fault on lb, lh, lw instruction
+    mnemonic == {'lb', 'lh', 'lw'} and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_LOAD_ACCESS}): 0
     #Check the na4 region is accessed at least once
     '(mnemonic == {"lw", "lh", "lb", "sw", "sh", "sb"}) and ((pmpcfg0 >> 8) & 0x9F == 0x94) and ${NA4_REGION_ADDRESS_MATCH}': 0
 
@@ -296,12 +252,8 @@ PMP_NA4_rx:
     # Check Lock bit is set, R bit is set, W bit not set, X bit not set, NAPOT Mode is set
     "(pmpcfg0 >> 8) & ${PMPCFG_ALL_BIT} == ${PMPCFG_L_BIT}+${PMPCFG_NA4_MODE}+${PMPCFG_ONLY_RX_SET}": 0
   val_comb:
-    #Check for store fault on sb instruction
-    mnemonic == 'sb' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
-    #Check for store fault on sh instruction
-    mnemonic == 'sh' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
-    #Check for store fault on sw instruction
-    mnemonic == 'sw' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
+    #Check for store fault on sb , sh, sw instruction
+    mnemonic == {'sb', 'sh', 'sw'} and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
     #Check the napot region is accessed at least once
     '(mnemonic == {"lw", "lh", "lb", "sw", "sh", "sb"}) and ((pmpcfg0 >> 8) & 0x9F == 0x95) and ${NA4_REGION_ADDRESS_MATCH}': 0
 
@@ -335,12 +287,8 @@ PMP_NAPOT_priority_r:
     # High priority entry -- Check Lock bit is set, R bit is set, W bit not set, X bit not set, NAPOT Mode is set
     "(pmpcfg0 >> 24) & ${PMPCFG_ALL_BIT} == ${PMPCFG_L_BIT}+${PMPCFG_NAPOT_MODE}+${PMPCFG_ONLY_R_SET}": 0
   val_comb:
-    #Check for store fault on sb instruction
-    mnemonic == 'sb' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
-    #Check for store fault on sh instruction
-    mnemonic == 'sh' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
-    #Check for store fault on sw instruction
-    mnemonic == 'sw' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
+    #Check for store fault on sb , sh, sw instruction
+    mnemonic == {'sb', 'sh', 'sw'} and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
     #Check for execute fault
     mode == 'M' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_FETCH_ACCESS}): 0
     #Check the napot region is accessed at least once
@@ -362,18 +310,10 @@ PMP_NAPOT_priority_x:
     # High priority entry -- Check Lock bit is set, R bit is set, W bit not set, X bit not set, NAPOT Mode is set
     "(pmpcfg0 >> 24) & ${PMPCFG_ALL_BIT} == ${PMPCFG_L_BIT}+${PMPCFG_NAPOT_MODE}+${PMPCFG_ONLY_X_SET}": 0
   val_comb:
-    #Check for store fault on sb instruction
-    mnemonic == 'sb' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
-    #Check for store fault on sh instruction
-    mnemonic == 'sh' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
-    #Check for store fault on sw instruction
-    mnemonic == 'sw' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
-    #Check for load fault on lb instruction
-    mnemonic == 'lb' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_LOAD_ACCESS}): 0
-    #Check for load fault on lh instruction
-    mnemonic == 'lh' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_LOAD_ACCESS}): 0
-    #Check for load fault on lw instruction
-    mnemonic == 'lw' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_LOAD_ACCESS}): 0
+    #Check for store fault on sb , sh, sw instruction
+    mnemonic == {'sb', 'sh', 'sw'} and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
+    #Check for load fault on lb, lh, lw instruction
+    mnemonic == {'lb', 'lh', 'lw'} and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_LOAD_ACCESS}): 0
     #Check the napot region is accessed at least once
     '(mnemonic == {"lw", "lh", "lb", "sw", "sh", "sb"}) and ((pmpcfg0 >> 24) & 0x9F == 0x9C) and ${NAPOT_PRIORITY_REGION_MATCH}': 0
 
@@ -414,12 +354,8 @@ PMP_NAPOT_priority_rx:
     # High priority entry -- Check Lock bit is set, R bit is set, W bit not set, X bit is set, NAPOT Mode is set
     "(pmpcfg0 >> 24) & ${PMPCFG_ALL_BIT} == ${PMPCFG_L_BIT}+${PMPCFG_NAPOT_MODE}+${PMPCFG_ONLY_RX_SET}": 0
   val_comb:
-    #Check for store fault on sb instruction
-    mnemonic == 'sb' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
-    #Check for store fault on sh instruction
-    mnemonic == 'sh' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
-    #Check for store fault on sw instruction
-    mnemonic == 'sw' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
+    #Check for store fault on sb , sh, sw instruction
+    mnemonic == {'sb', 'sh', 'sw'} and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
     #Check the napot region is accessed at least once
     '(mnemonic == {"lw", "lh", "lb", "sw", "sh", "sb"}) and ((pmpcfg0 >> 24) & 0x9F == 0x9D) and ${NAPOT_PRIORITY_REGION_MATCH}': 0
 
@@ -439,12 +375,8 @@ PMP_TOR_priority_r:
     # High priority entry -- Check Lock bit is set, R bit is set, W bit not set, X bit not set, TOR Mode is set
     "(pmpcfg0 >> 24) & ${PMPCFG_ALL_BIT} == ${PMPCFG_L_BIT}+${PMPCFG_TOR_MODE}+${PMPCFG_ONLY_R_SET}": 0
   val_comb:
-    #Check for store fault on sb instruction
-    mnemonic == 'sb' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
-    #Check for store fault on sh instruction
-    mnemonic == 'sh' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
-    #Check for store fault on sw instruction
-    mnemonic == 'sw' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
+    #Check for store fault on sb , sh, sw instruction
+    mnemonic == {'sb', 'sh', 'sw'} and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
     #Check for execute fault
     mode == 'M' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_FETCH_ACCESS}): 0
     #Check the napot region is accessed at least once
@@ -466,18 +398,10 @@ PMP_TOR_priority_x:
     # High priority entry -- Check Lock bit is set, R bit is set, W bit is set, X bit not set, TOR Mode is set
     "(pmpcfg0 >> 24) & ${PMPCFG_ALL_BIT} == ${PMPCFG_L_BIT}+${PMPCFG_TOR_MODE}+${PMPCFG_ONLY_X_SET}": 0
   val_comb:
-    #Check for store fault on sb instruction
-    mnemonic == 'sb' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
-    #Check for store fault on sh instruction
-    mnemonic == 'sh' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
-    #Check for store fault on sw instruction
-    mnemonic == 'sw' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
-    #Check for load fault on lb instruction
-    mnemonic == 'lb' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_LOAD_ACCESS}): 0
-    #Check for load fault on lh instruction
-    mnemonic == 'lh' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_LOAD_ACCESS}): 0
-    #Check for load fault on lw instruction
-    mnemonic == 'lw' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_LOAD_ACCESS}): 0
+    #Check for store fault on sb , sh, sw instruction
+    mnemonic == {'sb', 'sh', 'sw'} and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
+    #Check for load fault on lb, lh, lw instruction
+    mnemonic == {'lb', 'lh', 'lw'} and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_LOAD_ACCESS}): 0
     #Check the napot region is accessed at least once
     '(mnemonic == {"lw", "lh", "lb", "sw", "sh", "sb"}) and ((pmpcfg0 >> 24) & 0x9F == 0x8C) and ${TOR_PRIORITY_REGION_MATCH}': 0
 
@@ -518,12 +442,8 @@ PMP_TOR_priority_rx:
     # High priority entry -- Check Lock bit is set, R bit is set, W bit not set, X bit is set, TOR Mode is set
     "(pmpcfg0 >> 24) & ${PMPCFG_ALL_BIT} == ${PMPCFG_L_BIT}+${PMPCFG_TOR_MODE}+${PMPCFG_ONLY_RX_SET}": 0
   val_comb:
-    #Check for store fault on sb instruction
-    mnemonic == 'sb' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
-    #Check for store fault on sh instruction
-    mnemonic == 'sh' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
-    #Check for store fault on sw instruction
-    mnemonic == 'sw' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
+    #Check for store fault on sb , sh, sw instruction
+    mnemonic == {'sb', 'sh', 'sw'} and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
     #Check the napot region is accessed at least once
     '(mnemonic == {"lw", "lh", "lb", "sw", "sh", "sb"}) and ((pmpcfg0 >> 24) & 0x9F == 0x8D) and ${TOR_PRIORITY_REGION_MATCH}': 0
 
@@ -543,12 +463,8 @@ PMP_NA4_priority_r:
     # High priority entry -- Check Lock bit is set, R bit is set, W bit not set, X bit not set, NA4 Mode is set
     "(pmpcfg0 >> 24) & ${PMPCFG_ALL_BIT} == ${PMPCFG_L_BIT}+${PMPCFG_NA4_MODE}+${PMPCFG_ONLY_R_SET}": 0
   val_comb:
-    #Check for store fault on sb instruction
-    mnemonic == 'sb' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
-    #Check for store fault on sh instruction
-    mnemonic == 'sh' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
-    #Check for store fault on sw instruction
-    mnemonic == 'sw' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
+    #Check for store fault on sb , sh, sw instruction
+    mnemonic == {'sb', 'sh', 'sw'} and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
     #Check for execute fault
     mode == 'M' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_FETCH_ACCESS}): 0
     #Check the na4 region is accessed at least once
@@ -570,18 +486,10 @@ PMP_NA4_priority_x:
     # High priority entry -- Check Lock bit is set, R bit is set, W bit is set, X bit not set, NA4 Mode is set
     "(pmpcfg0 >> 24) & ${PMPCFG_ALL_BIT} == ${PMPCFG_L_BIT}+${PMPCFG_NA4_MODE}+${PMPCFG_ONLY_X_SET}": 0
   val_comb:
-    #Check for store fault on sb instruction
-    mnemonic == 'sb' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
-    #Check for store fault on sh instruction
-    mnemonic == 'sh' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
-    #Check for store fault on sw instruction
-    mnemonic == 'sw' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
-    #Check for load fault on lb instruction
-    mnemonic == 'lb' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_LOAD_ACCESS}): 0
-    #Check for load fault on lh instruction
-    mnemonic == 'lh' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_LOAD_ACCESS}): 0
-    #Check for load fault on lw instruction
-    mnemonic == 'lw' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_LOAD_ACCESS}): 0
+    #Check for store fault on sb , sh, sw instruction
+    mnemonic == {'sb', 'sh', 'sw'} and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
+    #Check for load fault on lb, lh, lw instruction
+    mnemonic == {'lb', 'lh', 'lw'} and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_LOAD_ACCESS}): 0
     #Check the na4 region is accessed at least once
     '(mnemonic == {"lw", "lh", "lb", "sw", "sh", "sb"}) and ((pmpcfg0 >> 24) & 0x9F == 0x94) and ${NA4_PRIORITY_REGION_MATCH}': 0
 
@@ -622,12 +530,8 @@ PMP_NA4_priority_rx:
     # High priority entry -- Check Lock bit is set, R bit is set, W bit not set, X bit is set, NA4 Mode is set
     "(pmpcfg0 >> 24) & ${PMPCFG_ALL_BIT} == ${PMPCFG_L_BIT}+${PMPCFG_NA4_MODE}+${PMPCFG_ONLY_RX_SET}": 0
   val_comb:
-    #Check for store fault on sb instruction
-    mnemonic == 'sb' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
-    #Check for store fault on sh instruction
-    mnemonic == 'sh' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
-    #Check for store fault on sw instruction
-    mnemonic == 'sw' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
+    #Check for store fault on sb , sh, sw instruction
+    mnemonic == {'sb', 'sh', 'sw'} and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
     #Check the na4 region is accessed at least once
     '(mnemonic == {"lw", "lh", "lb", "sw", "sh", "sb"}) and ((pmpcfg0 >> 24) & 0x9F == 0x95) and ${NA4_PRIORITY_REGION_MATCH}': 0
 
@@ -650,12 +554,8 @@ PMP_NAPOT_priority_r_level_2:
     # Higest priority entry  -- Check Lock bit is set, R bit is set, W bit not set, X bit not set, NAPOT Mode is set
     "(pmpcfg0 >> 8) & ${PMPCFG_ALL_BIT} == ${PMPCFG_L_BIT}+${PMPCFG_NAPOT_MODE}+${PMPCFG_ONLY_R_SET}": 0
   val_comb:
-    #Check for store fault on sb instruction
-    mnemonic == 'sb' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
-    #Check for store fault on sh instruction
-    mnemonic == 'sh' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
-    #Check for store fault on sw instruction
-    mnemonic == 'sw' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
+    #Check for store fault on sb , sh, sw instruction
+    mnemonic == {'sb', 'sh', 'sw'} and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
     #Check for execute fault
     mode == 'M' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_FETCH_ACCESS}): 0
     #Check the napot region is accessed at least once
@@ -680,18 +580,10 @@ PMP_NAPOT_priority_x_level_2:
     # Higest priority entry  -- Check Lock bit is set, R bit not set, W bit not set, X bit is set, NAPOT Mode is set
     "(pmpcfg0 >> 8) & ${PMPCFG_ALL_BIT} == ${PMPCFG_L_BIT}+${PMPCFG_NAPOT_MODE}+${PMPCFG_ONLY_X_SET}": 0
   val_comb:
-    #Check for store fault on sb instruction
-    mnemonic == 'sb' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
-    #Check for store fault on sh instruction
-    mnemonic == 'sh' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
-    #Check for store fault on sw instruction
-    mnemonic == 'sw' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
-    #Check for load fault on lb instruction
-    mnemonic == 'lb' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_LOAD_ACCESS}): 0
-    #Check for load fault on lh instruction
-    mnemonic == 'lh' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_LOAD_ACCESS}): 0
-    #Check for load fault on lw instruction
-    mnemonic == 'lw' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_LOAD_ACCESS}): 0
+    #Check for store fault on sb , sh, sw instruction
+    mnemonic == {'sb', 'sh', 'sw'} and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
+    #Check for load fault on lb, lh, lw instruction
+    mnemonic == {'lb', 'lh', 'lw'} and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_LOAD_ACCESS}): 0
     #Check the napot region is accessed at least once
     '(mnemonic == {"lw", "lh", "lb", "sw", "sh", "sb"}) and ((pmpcfg0 >> 8) & 0x9F == 0x9C) and ${NAPOT_PRIORITY_2_REGION_MATCH}': 0
 
@@ -738,12 +630,8 @@ PMP_NAPOT_priority_rx_level_2:
     # Higest priority entry  -- Check Lock bit is set, R bit is set, W bit not set, X bit is set, NAPOT Mode is set
     "(pmpcfg0 >> 8) & ${PMPCFG_ALL_BIT} == ${PMPCFG_L_BIT}+${PMPCFG_NAPOT_MODE}+${PMPCFG_ONLY_RX_SET}": 0
   val_comb:
-    #Check for store fault on sb instruction
-    mnemonic == 'sb' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
-    #Check for store fault on sh instruction
-    mnemonic == 'sh' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
-    #Check for store fault on sw instruction
-    mnemonic == 'sw' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
+    #Check for store fault on sb , sh, sw instruction
+    mnemonic == {'sb', 'sh', 'sw'} and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
     #Check the napot region is accessed at least once
     '(mnemonic == {"lw", "lh", "lb", "sw", "sh", "sb"}) and ((pmpcfg0 >> 8) & 0x9F == 0x9D) and ${NAPOT_PRIORITY_2_REGION_MATCH}': 0
 
@@ -766,12 +654,8 @@ PMP_TOR_priority_r_level_2:
     # Higest priority entry  -- Check Lock bit is set, R bit is set, W bit not set, X bit not set, TOR Mode is set
     "(pmpcfg0 >> 8) & ${PMPCFG_ALL_BIT} == ${PMPCFG_L_BIT}+${PMPCFG_TOR_MODE}+${PMPCFG_ONLY_R_SET}": 0
   val_comb:
-    #Check for store fault on sb instruction
-    mnemonic == 'sb' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
-    #Check for store fault on sh instruction
-    mnemonic == 'sh' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
-    #Check for store fault on sw instruction
-    mnemonic == 'sw' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
+    #Check for store fault on sb , sh, sw instruction
+    mnemonic == {'sb', 'sh', 'sw'} and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
     #Check for execute fault
     mode == 'M' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_FETCH_ACCESS}): 0
     #Check the napot region is accessed at least once
@@ -796,18 +680,10 @@ PMP_TOR_priority_x_level_2:
     # Higest priority entry  -- Check Lock bit is set, R bit not set, W bit not set, X bit is set, TOR Mode is set
     "(pmpcfg0 >> 8) & ${PMPCFG_ALL_BIT} == ${PMPCFG_L_BIT}+${PMPCFG_TOR_MODE}+${PMPCFG_ONLY_X_SET}": 0
   val_comb:
-    #Check for store fault on sb instruction
-    mnemonic == 'sb' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
-    #Check for store fault on sh instruction
-    mnemonic == 'sh' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
-    #Check for store fault on sw instruction
-    mnemonic == 'sw' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
-    #Check for load fault on lb instruction
-    mnemonic == 'lb' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_LOAD_ACCESS}): 0
-    #Check for load fault on lh instruction
-    mnemonic == 'lh' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_LOAD_ACCESS}): 0
-    #Check for load fault on lw instruction
-    mnemonic == 'lw' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_LOAD_ACCESS}): 0
+    #Check for store fault on sb , sh, sw instruction
+    mnemonic == {'sb', 'sh', 'sw'} and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
+    #Check for load fault on lb, lh, lw instruction
+    mnemonic == {'lb', 'lh', 'lw'} and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_LOAD_ACCESS}): 0
     #Check the napot region is accessed at least once
     '(mnemonic == {"lw", "lh", "lb", "sw", "sh", "sb"}) and ((pmpcfg0 >> 8) & 0x9F == 0x8C) and ${TOR_PRIORITY_2_REGION_MATCH}': 0
 
@@ -854,12 +730,8 @@ PMP_TOR_priority_rx_level_2:
     # Higest priority entry  -- Check Lock bit is set, R bit is set, W bit not set, X bit is set, TOR Mode is set
     "(pmpcfg0 >> 8) & ${PMPCFG_ALL_BIT} == ${PMPCFG_L_BIT}+${PMPCFG_TOR_MODE}+${PMPCFG_ONLY_RX_SET}": 0
   val_comb:
-    #Check for store fault on sb instruction
-    mnemonic == 'sb' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
-    #Check for store fault on sh instruction
-    mnemonic == 'sh' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
-    #Check for store fault on sw instruction
-    mnemonic == 'sw' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
+    #Check for store fault on sb , sh, sw instruction
+    mnemonic == {'sb', 'sh', 'sw'} and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
     #Check the napot region is accessed at least once
     '(mnemonic == {"lw", "lh", "lb", "sw", "sh", "sb"}) and ((pmpcfg0 >> 8) & 0x9F == 0x8D) and ${TOR_PRIORITY_2_REGION_MATCH}': 0
 
@@ -882,12 +754,8 @@ PMP_NA4_priority_r_level_2:
     # Higest priority entry  -- Check Lock bit is set, R bit is set, W bit not set, X bit not set, NA4 Mode is set
     "(pmpcfg0 >> 8) & ${PMPCFG_ALL_BIT} == ${PMPCFG_L_BIT}+${PMPCFG_NA4_MODE}+${PMPCFG_ONLY_R_SET}": 0
   val_comb:
-    #Check for store fault on sb instruction
-    mnemonic == 'sb' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
-    #Check for store fault on sh instruction
-    mnemonic == 'sh' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
-    #Check for store fault on sw instruction
-    mnemonic == 'sw' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
+    #Check for store fault on sb , sh, sw instruction
+    mnemonic == {'sb', 'sh', 'sw'} and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
     #Check for execute fault
     mode == 'M' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_FETCH_ACCESS}): 0
     #Check the napot region is accessed at least once
@@ -936,18 +804,10 @@ PMP_NA4_priority_x_level_2:
     # Higest priority entry  -- Check Lock bit is set, R bit not set, W bit not set, X bit is set, NA4 Mode is set
     "(pmpcfg0 >> 8) & ${PMPCFG_ALL_BIT} == ${PMPCFG_L_BIT}+${PMPCFG_NA4_MODE}+${PMPCFG_ONLY_X_SET}": 0
   val_comb:
-    #Check for store fault on sb instruction
-    mnemonic == 'sb' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
-    #Check for store fault on sh instruction
-    mnemonic == 'sh' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
-    #Check for store fault on sw instruction
-    mnemonic == 'sw' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
-    #Check for load fault on lb instruction
-    mnemonic == 'lb' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_LOAD_ACCESS}): 0
-    #Check for load fault on lh instruction
-    mnemonic == 'lh' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_LOAD_ACCESS}): 0
-    #Check for load fault on lw instruction
-    mnemonic == 'lw' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_LOAD_ACCESS}): 0
+    #Check for store fault on sb , sh, sw instruction
+    mnemonic == {'sb', 'sh', 'sw'} and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
+    #Check for load fault on lb, lh, lw instruction
+    mnemonic == {'lb', 'lh', 'lw'} and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_LOAD_ACCESS}): 0
     #Check the napot region is accessed at least once
     '(mnemonic == {"lw", "lh", "lb", "sw", "sh", "sb"}) and ((pmpcfg0 >> 8) & 0x9F == 0x94) and ${NA4_PRIORITY_2_REGION_MATCH}': 0
 
@@ -970,11 +830,7 @@ PMP_NA4_priority_rx_level_2:
     # Higest priority entry  -- Check Lock bit is set, R bit is set, W bit not set, X bit is set, NA4 Mode is set
     "(pmpcfg0 >> 8) & ${PMPCFG_ALL_BIT} == ${PMPCFG_L_BIT}+${PMPCFG_NA4_MODE}+${PMPCFG_ONLY_RX_SET}": 0
   val_comb:
-    #Check for store fault on sb instruction
-    mnemonic == 'sb' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
-    #Check for store fault on sh instruction
-    mnemonic == 'sh' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
-    #Check for store fault on sw instruction
-    mnemonic == 'sw' and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
+    #Check for store fault on sb , sh, sw instruction
+    mnemonic == {'sb', 'sh', 'sw'} and mode_change == {'M to M', 'U to M', 'S to M'} and (mcause == ${CAUSE_STORE_ACCESS}): 0
     #Check the napot region is accessed at least once
     '(mnemonic == {"lw", "lh", "lb", "sw", "sh", "sb"}) and ((pmpcfg0 >> 8) & 0x9F == 0x95) and ${NA4_PRIORITY_2_REGION_MATCH}': 0
