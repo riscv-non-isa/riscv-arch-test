@@ -22,12 +22,24 @@ RVMODEL_BOOT
 RVTEST_CODE_BEGIN
 
 #ifdef TEST_CASE_1
-  RVTEST_CASE(1,"//check ISA:=regex(.*32.*);check ISA:=regex(.*Sdtrig.*);def rvtest_mtrap_routine=True;def TEST_CASE_1=True;",svadu_sv32)
+  RVTEST_CASE(1,"check ISA:=regex(.*32.*);check ISA:=regex(.*Sdtrig.*);def rvtest_mtrap_routine=True;def TEST_CASE_1=True;",svadu_sv32)
 
   RVTEST_SIGBASE(x1, signature_x1_0)
 
   csrw  CSR_TSELECT, zero
-  li    t1, (CSR_TDATA1_TYPE_MCONTROL6 | \
+
+  // Write 0 to tdata1
+  csrw  CSR_TDATA1, zero
+
+  // Write desired values to tdata2 and tdata3.
+  la    t1, break_here
+  csrw  CSR_TDATA2, t1
+  csrr  t2, CSR_TDATA2
+  bne   t1, t2, unsupported
+  RVTEST_SIGUPD(x1, t2)
+
+  // Write desired value to tdata1.
+  LI(t1, CSR_TDATA1_TYPE_MCONTROL6 | \
             CSR_MCONTROL6_ACTION_BREAKPOINT | \
             CSR_MCONTROL6_SELECT_ADDRESS | \
             CSR_MCONTROL6_SIZE_ANY | \
@@ -38,19 +50,27 @@ RVTEST_CODE_BEGIN
             CSR_MCONTROL6_UNCERTAINEN_ENABLED | \
             CSR_MCONTROL6_EXECUTE)
   csrw  CSR_TDATA1, t1
+  csrr  t2, CSR_TDATA1
+  // If the trigger is not supported, the value we read back is not specified,
+  // so don't make it part of the signature.
+  bne   t1, t2, unsupported
+  RVTEST_SIGUPD(x1, t2)
 
-  # Setup PMP to cover 4G of address space
-  //SETUP_PMP_SVADU_TEST(x1, offset, t0, t1, t2)
+  // The default trap handler will log mepc (and some other CSRs) to the
+  // signature, so there's no need to do any testing that the trap handler was
+  // invoked from the right place etc.
+break_here:
+  nop
 
-  # Identity map the page_4k
-  //la t1, page_4k
-  //mv t2, t1
-  //PTE_SETUP_SV32(t1, PTE_V, t0, s2, t2, 1)
+  j    end
 
-  # test svadu
-  //TEST_SVADU(x1, s2, page_4k, offset, 0x31a, MENVCFGH_ADUE)
+unsupported:
+  LI(t1, 0x21737570)
+  RVTEST_SIGUPD(x1, t1)
+  j     end
 
 #endif
+end:
 RVTEST_CODE_END
 RVMODEL_HALT
 
