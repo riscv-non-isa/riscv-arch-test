@@ -1,0 +1,107 @@
+             22	         7	000000c8	f1402573	csrrs	x10,mhartid,x0	  x0:0x00000000 x10=0x00000000
+             24	         8	000000cc	00051063	bne	x10,x0,cc	 x10:0x00000000  x0:0x00000000
+             26	         9	000000d0	00000193	addi	x3,x0,0	  x0:0x00000000  x3=0x00000000
+             28	        10	000000d4	00000297	auipc	x5,0x0	  x5=0x000000d4
+             30	        11	000000d8	fb028293	addi	x5,x5,-80	  x5:0x000000d4  x5=0x00000084
+             32	        12	000000dc	30529073	csrrw	x0,mtvec,x5	  x5:0x00000084  x0=0x00000000
+             34	        13	000000e0	00100513	addi	x10,x0,1	  x0:0x00000000 x10=0x00000001
+             36	        14	000000e4	01f51513	slli	x10,x10,0x1f	 x10:0x00000001 x10=0x80000000
+             40	        16	000000e8	00054863	blt	x10,x0,f8	 x10:0x80000000  x0:0x00000000
+             44	        18	000000f8	00000293	addi	x5,x0,0	  x0:0x00000000  x5=0x00000000
+             48	        20	000000fc	00028e63	beq	x5,x0,118	  x5:0x00000000  x0:0x00000000
+             52	        22	00000118	30005073	csrrwi	x0,mstatus,0	  x0=0x00000000
+             58	        25	0000011c	00002537	lui	x10,0x2	 x10=0x00002000
+             60	        26	00000120	80050513	addi	x10,x10,-2048	 x10:0x00002000 x10=0x00001800
+             62	        27	00000124	30052073	csrrs	x0,mstatus,x10	 x10:0x00001800  x0=0x00000000
+             68	        30	00000128	00000297	auipc	x5,0x0	  x5=0x00000128
+             70	        31	0000012c	01428293	addi	x5,x5,20	  x5:0x00000128  x5=0x0000013c
+             72	        32	00000130	34129073	csrrw	x0,mepc,x5	  x5:0x0000013c  x0=0x00000000
+             74	        33	00000134	f1402573	csrrs	x10,mhartid,x0	  x0:0x00000000 x10=0x00000000
+             76	        34	00000138	30200073	mret	
+             82	        37	0000013c	00000013	addi	x0,x0,0	  x0:0x00000000  x0=0x00000000
+             84	        38	00000140	feedc0b7	lui	x1,0xfeedc	  x1=0xfeedc000
+             86	        39	00000144	ead08093	addi	x1,x1,-339	  x1:0xfeedc000  x1=0xfeedbead
+             88	        40	00000148	ff76e137	lui	x2,0xff76e	  x2=0xff76e000
+             90	        41	0000014c	f5610113	addi	x2,x2,-170	  x2:0xff76e000  x2=0xff76df56
+             92	        42	00000150	7fbb71b7	lui	x3,0x7fbb7	  x3=0x7fbb7000
+             94	        43	00000154	fab18193	addi	x3,x3,-85	  x3:0x7fbb7000  x3=0x7fbb6fab
+             96	        44	00000158	bfddb237	lui	x4,0xbfddb	  x4=0xbfddb000
+             98	        45	0000015c	7d520213	addi	x4,x4,2005	  x4:0xbfddb000  x4=0xbfddb7d5
+            100	        46	00000160	00000297	auipc	x5,0x0	  x5=0x00000160
+            102	        47	00000164	0d828293	addi	x5,x5,216	  x5:0x00000160  x5=0x00000238
+            104	        48	00000168	00002317	auipc	x6,0x2	  x6=0x00002168
+            106	        49	0000016c	e9830313	addi	x6,x6,-360	  x6:0x00002168  x6=0x00002000
+            108	        50	00000170	b7fbb3b7	lui	x7,0xb7fbb	  x7=0xb7fbb000
+            110	        51	00000174	6fa38393	addi	x7,x7,1786	  x7:0xb7fbb000  x7=0xb7fbb6fa
+            112	        52	00000178	5bfde437	lui	x8,0x5bfde	  x8=0x5bfde000
+            114	        53	0000017c	b7d40413	addi	x8,x8,-1155	  x8:0x5bfde000  x8=0x5bfddb7d
+            116	        54	00000180	adfef4b7	lui	x9,0xadfef	  x9=0xadfef000
+            118	        55	00000184	dbe48493	addi	x9,x9,-578	  x9:0xadfef000  x9=0xadfeedbe
+            120	        56	00000188	56ff7537	lui	x10,0x56ff7	 x10=0x56ff7000
+            122	        57	0000018c	6df50513	addi	x10,x10,1759	 x10:0x56ff7000 x10=0x56ff76df
+            124	        58	00000190	ab7fc5b7	lui	x11,0xab7fc	 x11=0xab7fc000
+            126	        59	00000194	b6f58593	addi	x11,x11,-1169	 x11:0xab7fc000 x11=0xab7fbb6f
+            128	        60	00000198	d5bfe637	lui	x12,0xd5bfe	 x12=0xd5bfe000
+            130	        61	0000019c	db760613	addi	x12,x12,-585	 x12:0xd5bfe000 x12=0xd5bfddb7
+            132	        62	000001a0	eadff6b7	lui	x13,0xeadff	 x13=0xeadff000
+            134	        63	000001a4	edb68693	addi	x13,x13,-293	 x13:0xeadff000 x13=0xeadfeedb
+            136	        64	000001a8	f56ff737	lui	x14,0xf56ff	 x14=0xf56ff000
+            138	        65	000001ac	76d70713	addi	x14,x14,1901	 x14:0xf56ff000 x14=0xf56ff76d
+            140	        66	000001b0	fab807b7	lui	x15,0xfab80	 x15=0xfab80000
+            142	        67	000001b4	bb678793	addi	x15,x15,-1098	 x15:0xfab80000 x15=0xfab7fbb6
+            144	        68	000001b8	7d5c0837	lui	x16,0x7d5c0	 x16=0x7d5c0000
+            146	        69	000001bc	ddb80813	addi	x16,x16,-549	 x16:0x7d5c0000 x16=0x7d5bfddb
+            148	        70	000001c0	beae08b7	lui	x17,0xbeae0	 x17=0xbeae0000
+            150	        71	000001c4	eed88893	addi	x17,x17,-275	 x17:0xbeae0000 x17=0xbeadfeed
+            152	        72	000001c8	df570937	lui	x18,0xdf570	 x18=0xdf570000
+            154	        73	000001cc	f7690913	addi	x18,x18,-138	 x18:0xdf570000 x18=0xdf56ff76
+            156	        74	000001d0	6fab89b7	lui	x19,0x6fab8	 x19=0x6fab8000
+            158	        75	000001d4	fbb98993	addi	x19,x19,-69	 x19:0x6fab8000 x19=0x6fab7fbb
+            160	        76	000001d8	b7d5ca37	lui	x20,0xb7d5c	 x20=0xb7d5c000
+            162	        77	000001dc	fdda0a13	addi	x20,x20,-35	 x20:0xb7d5c000 x20=0xb7d5bfdd
+            164	        78	000001e0	dbeaeab7	lui	x21,0xdbeae	 x21=0xdbeae000
+            166	        79	000001e4	feea8a93	addi	x21,x21,-18	 x21:0xdbeae000 x21=0xdbeadfee
+            168	        80	000001e8	6df57b37	lui	x22,0x6df57	 x22=0x6df57000
+            170	        81	000001ec	ff7b0b13	addi	x22,x22,-9	 x22:0x6df57000 x22=0x6df56ff7
+            172	        82	000001f0	b6fabbb7	lui	x23,0xb6fab	 x23=0xb6fab000
+            174	        83	000001f4	7fbb8b93	addi	x23,x23,2043	 x23:0xb6fab000 x23=0xb6fab7fb
+            176	        84	000001f8	db7d6c37	lui	x24,0xdb7d6	 x24=0xdb7d6000
+            178	        85	000001fc	bfdc0c13	addi	x24,x24,-1027	 x24:0xdb7d6000 x24=0xdb7d5bfd
+            180	        86	00000200	edbebcb7	lui	x25,0xedbeb	 x25=0xedbeb000
+            182	        87	00000204	dfec8c93	addi	x25,x25,-514	 x25:0xedbeb000 x25=0xedbeadfe
+            184	        88	00000208	76df5d37	lui	x26,0x76df5	 x26=0x76df5000
+            186	        89	0000020c	6ffd0d13	addi	x26,x26,1791	 x26:0x76df5000 x26=0x76df56ff
+            188	        90	00000210	bb6fbdb7	lui	x27,0xbb6fb	 x27=0xbb6fb000
+            190	        91	00000214	b7fd8d93	addi	x27,x27,-1153	 x27:0xbb6fb000 x27=0xbb6fab7f
+            192	        92	00000218	ddb7de37	lui	x28,0xddb7d	 x28=0xddb7d000
+            194	        93	0000021c	5bfe0e13	addi	x28,x28,1471	 x28:0xddb7d000 x28=0xddb7d5bf
+            196	        94	00000220	eedbfeb7	lui	x29,0xeedbf	 x29=0xeedbf000
+            198	        95	00000224	adfe8e93	addi	x29,x29,-1313	 x29:0xeedbf000 x29=0xeedbeadf
+            200	        96	00000228	f76dff37	lui	x30,0xf76df	 x30=0xf76df000
+            202	        97	0000022c	56ff0f13	addi	x30,x30,1391	 x30:0xf76df000 x30=0xf76df56f
+            204	        98	00000230	fbb70fb7	lui	x31,0xfbb70	 x31=0xfbb70000
+            206	        99	00000234	ab7f8f93	addi	x31,x31,-1353	 x31:0xfbb70000 x31=0xfbb6fab7
+            208	       100	00000238	00002497	auipc	x9,0x2	  x9=0x00002238
+            210	       101	0000023c	dc848493	addi	x9,x9,-568	  x9:0x00002238  x9=0x00002000
+            212	       102	00000240	fff00413	addi	x8,x0,-1	  x0:0x00000000  x8=0xffffffff
+            216	       104	00000244	0084a023	sw	x8,0(x9)	  x9:0x00002000  x8:0xffffffff PA:0x00002000 store:0xffffffff load:0x0ff0000f
+            218	       105	00000248	0ff0000f	fence	iorw,iorw	
+            222	       107	0000024c	0004a183	lw	x3,0(x9)	  x9:0x00002000  x3=0xffffffff PA:0x00002000 store:0x00000000
+            224	       108	00000250	00002497	auipc	x9,0x2	  x9=0x00002250
+            226	       109	00000254	dc048493	addi	x9,x9,-576	  x9:0x00002250  x9=0x00002010
+            230	       111	00000258	0034a023	sw	x3,0(x9)	  x9:0x00002010  x3:0xffffffff PA:0x00002010 store:0xffffffff load:0x00000013
+            232	       112	0000025c	00000013	addi	x0,x0,0	  x0:0x00000000  x0=0x00000000
+            234	       113	00000260	00002297	auipc	x5,0x2	  x5=0x00002260
+            236	       114	00000264	db028293	addi	x5,x5,-592	  x5:0x00002260  x5=0x00002010
+            238	       115	00000268	00020337	lui	x6,0x20	  x6=0x00020000
+            240	       116	0000026c	00430313	addi	x6,x6,4	  x6:0x00020000  x6=0x00020004
+            244	       118	00000270	00532023	sw	x5,0(x6)	  x6:0x00020004  x5:0x00002010 PA:0x00020004 store:0x00002010 load:0x00000000
+            246	       119	00000274	00002297	auipc	x5,0x2	  x5=0x00002274
+            248	       120	00000278	dac28293	addi	x5,x5,-596	  x5:0x00002274  x5=0x00002020
+            250	       121	0000027c	00020337	lui	x6,0x20	  x6=0x00020000
+            252	       122	00000280	00830313	addi	x6,x6,8	  x6:0x00020000  x6=0x00020008
+            256	       124	00000284	00532023	sw	x5,0(x6)	  x6:0x00020008  x5:0x00002020 PA:0x00020008 store:0x00002020 load:0x00000000
+            258	       125	00000288	00100293	addi	x5,x0,1	  x0:0x00000000  x5=0x00000001
+            260	       126	0000028c	00020337	lui	x6,0x20	  x6=0x00020000
+            264	       128	00000290	00532023	sw	x5,0(x6)	  x6:0x00020000  x5:0x00000001 PA:0x00020000 store:0x00000001 load:0x00000000
+            266	       129	00000294	0ff0000f	fence	iorw,iorw	

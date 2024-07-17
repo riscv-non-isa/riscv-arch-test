@@ -6,20 +6,33 @@
 # Ensure you have set the following Variables
 #
 #
-export ROOTDIR    = $(shell pwd)
-export WORK      ?= $(ROOTDIR)/work
+export ROOTDIR    =$(shell pwd)# set the variable ROOTDIR to the root directory of the riscv-arch-test 
+export WORK      ?=$(ROOTDIR)/work# a new directory will be created in the ROOTDIR to store the compiled elfs and signatures 
 
 include Makefile.include
 
-pipe:= |
+pipe:= |# define a pipe character 
 empty:=
 comma:= ,
 space:= $(empty) $(empty)
 
-RISCV_ISA_ALL = $(shell ls $(TARGETDIR)/$(RISCV_TARGET)/device/rv$(XLEN)i_m)
+$(info --------------------------------)
+$(info --- Setting up variables)
+$(info --------------------------------)
+
+# RISCV_TARGET=ibex
+# XLEN = 32 normally
+# TARGETDIR = $(ROOTDIR)/riscv-target
+RISCV_ISA_ALL = $(shell ls $(TARGETDIR)/$(RISCV_TARGET)/device/rv$(XLEN)i_m)# if TARGETDIR is not set, it will default to $(ROOTDIR)/riscv-target
+
+# replace all spaces with pipes in RISCV_ISA_ALL
 RISCV_ISA_OPT = $(subst $(space),$(pipe),$(RISCV_ISA_ALL))
 
-RISCV_ISA_ALL := $(filter-out Makefile.include,$(RISCV_ISA_ALL))
+RISCV_ISA_ALL := $(filter-out Makefile.include,$(RISCV_ISA_ALL))#	filter out Makefile.include from RISCV_ISA_ALL
+
+$(info --- RISCV_ISA_ALL: ${RISCV_ISA_ALL})
+$(info --- RISCV_ISA_OPT: ${RISCV_ISA_OPT})
+$(info --- RISCV_ISA_ALL (filtered): ${RISCV_ISA_ALL})
 
 ifeq ($(RISCV_DEVICE),)
     RISCV_DEVICE = I
@@ -28,6 +41,9 @@ else
     DEFAULT_TARGET=variant
 endif
 export SUITEDIR   = $(ROOTDIR)/riscv-test-suite/rv$(XLEN)i_m/$(RISCV_DEVICE)
+
+$(info --- DEFAULT_TARGET: ${DEFAULT_TARGET})
+$(info --- SUITEDIR: ${SUITEDIR})
 
 $(info )
 $(info ============================ VARIABLE INFO ==================================)
@@ -75,18 +91,28 @@ run: simulate
 clean_all: clean
 
 compile:
+	$(info --------------------------------)
+	$(info --- compiling)
+	$(info --------------------------------)
 	$(MAKE) $(JOBS) \
 		RISCV_TARGET=$(RISCV_TARGET) \
 		RISCV_DEVICE=$(RISCV_DEVICE) \
 		compile -C $(SUITEDIR)
 
 simulate:
+	$(info --------------------------------)
+	$(info --- simulating)
+	$(info --------------------------------)
+
 	$(MAKE) $(JOBS) \
 		RISCV_TARGET=$(RISCV_TARGET) \
 		RISCV_DEVICE=$(RISCV_DEVICE) \
 		run -C $(SUITEDIR)
 
 verify: simulate
+	$(info --------------------------------)
+	$(info --- verify)
+	$(info --------------------------------)
 	riscv-test-env/verify.sh
 
 postverify:

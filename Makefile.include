@@ -5,13 +5,13 @@ export TARGETDIR ?= $(ROOTDIR)/riscv-target
 export XLEN               ?= 32
 
 # name of the target. Note a folder of the same name must exist in the TARGETDIR directory
-export RISCV_TARGET       ?= spike
+export RISCV_TARGET       ?= ibex
 
 #set the RISCV_DEVICE environment to the extension you want to compile, simulate and verify. Leave
 #this blank if you want to iterate through all the supported extensions of your target. Allowed values
 #are the individual names of the extensions supported by your target like: I, M, C or Zifencei, etc. 
 #Only one extension can be selected at once.
-export RISCV_DEVICE       ?= 
+export RISCV_DEVICE       ?= I
 
 # set RISCV_TEST to the name of a test to run only that single test in the selected device. It is an error
 # to specify a test that doesn't exist in the selected device.
