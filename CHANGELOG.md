@@ -1,8 +1,5 @@
 # CHANGELOG
 
-## [3.9.2] - 2024-07-02
-- Added pmp32 and pmp64 ACTs with coverpoints
-
 ## [3.9.1] - 2024-07-01
 - Converted one of the CANARY words to a delta instret count (there is a variable that will enable that)
 - Converted CODE/DATA/SIG_BEGIN/END to include all the little incidental code, so the tests template improves
