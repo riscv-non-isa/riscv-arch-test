@@ -1,35 +1,52 @@
 # This is a basic workflow to help you get started with Actions
 
-name: test
+name: CI test
 
 # Controls when the action will run. 
 on:
-  # Triggers the workflow on push or pull request events but only for the main branch
-  pull_request:
-    branches: [ main ]
 
-  # Allows you to run this workflow manually from the Actions tab
+  # Triggers the workflow on pull request events but only for the main & dev branch
+  pull_request:
+    branches: [ main , dev ]
+  
+  # Triggers the workflow on push events
+  push:
+    branches: [ main , dev ]
+
+  # Allows you to run this workflow Actions manually
   workflow_dispatch:
+
+   # Triggers the action 2am every day
+  schedule:
+    - cron: "0 2 * * *"
+
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  check-version:
+
+  ACT-sail-spike:
     runs-on: ubuntu-latest
+    container: ghcr.io/riscv-software-src/riscof/act:latest
+    strategy:
+      fail-fast: false
+      matrix:
+        isa_group: 
+          - RV32IMCZicsr_Zifencei
+          - RV64IMCZicsr_Zifencei
+
+
     steps:
-      - uses: actions/checkout@v2
-      
-      - uses: actions-ecosystem/action-get-latest-tag@v1
-        id: get-latest-tag
-      
-      - name: version check
+
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Config riscof
         run: |
-          export CHNGVER=$(grep -P -o '(?<=## \[).*(?=\])' -m1 CHANGELOG.md); 
-          echo "CHANGELOG VERSION: $CHNGVER"
-          export TAGVER=${{ steps.get-latest-tag.outputs.tag }}; 
-          echo "TAG VERSION: $TAGVER"
-          if [ "$CHNGVER" = "$TAGVER" ]; then
-              echo "No changelog update."
-              exit 1
-          else
-              echo "Changelog updated."
-          fi
+          git config --global --add safe.directory '*'
+          riscof setup --dutname=spike
+          cp .github/isa_templates/${{ matrix.isa_group }}.yaml spike/spike_isa.yaml
+
+
+      - name: Run riscof
+        run: |
+          riscof --verbose debug run --suite . --env ./riscv-test-suite/env
