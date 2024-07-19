@@ -1,0 +1,47 @@
+Smcsrind:
+==== miselect-01.S
+.Description: Tests miselect
+- write/read miselect,
+- ignore returned value.
+[%autofit]
+----
+ RVMODEL_SET_MSTATEEN0_SCSRIND = <EMPTY>
+ RVMODEL_CLR_MSTATEEN0_SCSRIND = <EMPTY>
+----
+Coverage
+----
+miselect         | verify csr read/write to miselect
+mcause  != 0x2   | verify no illegal instruction exception
+----
+==== miselect-02.S
+.Description: Tests miselect with mstateen0[SCSRIND] = 0
+- if Smstateen is included, start in m-mode with mstateen0[SCSRIND] = 0, else expect illegal inst exception
+- write/read miselect,
+- ignore returned value. (WARL)
+[%autofit]
+----
+ RVMODEL_SET_MSTATEEN0_SCSRIND = <EMPTY>
+----
+Coverage
+----
+miselect            | verify csr read/write to miselect
+mcause != 0x2       | verify no illegal instruction exception
+csr_mstateen0[SCSRIND] == 0 | verify csr_mstateen0[SCSRIND] is cleared
+----
+
+==== miselect-03.S
+.Description: Tests miselect with mstateen0[SCSRIND] = 1
+- if Smstateen is included, start in m-mode with mstateen0[SCSRIND] = 1, else expect illegal inst exception
+- write/read miselect,
+- ignore returned value. (WARL)
+[%autofit]
+----
+ RVMODEL_CLR_MSTATEEN0_SCSRIND = <EMPTY>
+----
+Coverage
+----
+miselect            | verify csr read/write to miselect
+mcause != 0x2       | verify no illegal instruction exception
+csr_mstateen0[SCSRIND] == 1 | verify csr_mstateen0[SCSRIND] is set
+----
+
