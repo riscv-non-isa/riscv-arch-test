@@ -1878,7 +1878,6 @@ rvtest_\__MODE__\()end:
 rvtest_init:                            //instantiate prologs here
   INSTANTIATE_MODE_MACRO RVTEST_TRAP_PROLOG
 rvtest_entrypoint:
-  RVMODEL_BOOT
   RVTEST_INIT_GPRS                      // 0xF0E1D2C3B4A59687
 rvtest_code_begin:
  .option pop
