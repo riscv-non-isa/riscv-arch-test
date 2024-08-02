@@ -7,8 +7,8 @@ pmp_cfg_locked_write_unrelated:
     "{csrrs, csrrw}" : 0
   csr_comb:
     # (Lock bit set) and (req) and (old_value_pmpcfg != 0)
-    (old("pmpaddr{0 ... 15}") ^ (pmpaddr$1) == 0x00) and (pmpcfg{0,2}{[$1/8]} >> {0, 8, 16, 24, 32, 40, 48, 56}{[$1%5]} & 0x80 == 0x80): 0
-    (pmpcfg{0, 2}  >> {0, 8, 16, 24, 32, 40, 48, 56} & 0x80 == 0x80) and ((old("pmpcfg$1") & (0xFF << $2)) ^ (pmpcfg$1 & (0xFF << $2)) == 0x00) and old("pmpcfg$1") != 0: 0 
+    (old("pmpaddr{0 ... 15}") ^ (pmpaddr$1) == 0x00) and (pmpcfg{0,2}{[$1/8]} >> {[($1%8)*8]} & 0x80 == 0x80): 0
+    (pmpcfg{0, 2}  >> {[($1%8)*8]} & 0x80 == 0x80) and ((old("pmpcfg$1") & (0xFF << $2)) ^ (pmpcfg$1 & (0xFF << $2)) == 0x00) and old("pmpcfg$1") != 0: 0 
 
 #This coverpoint checks the coverage of pmp-CSR-access.cgf (PMP CSRs accesses in different modes)
 #Checks pmpcgf and pmpaddr are only accessible in M mode and gets fault in S and U mode when accessed.
