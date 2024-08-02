@@ -7,7 +7,7 @@ pmp_cfg_locked_write_unrelated:
     "{csrrs, csrrw}" : 0
   csr_comb:
     # (Lock bit set) and (req) and (old_value_pmpcfg != 0)
-    (pmpcfg{{0 ... 15} >> 2} >> {0, 8, 16, 24}{[$2%4]} & 0x80 == 0x80) and (((old("pmpcfg$2") ^ pmpcfg$2) >> $2 & 0xFF) == 0x00) and old("pmpcfg$2") != 0: 0 
+    (pmpcfg{{0 ... 15} >> 2} >> {0, 8, 16, 24}{[$2%4]} & 0x80 == 0x80) and (((old("pmpcfg$2") ^ pmpcfg$2) >> $3 & 0xFF) == 0x00) and old("pmpcfg$2") != 0: 0 
     (pmpcfg{{0 ... 15} >> 2} >> {0, 8, 16, 24}{[$1%4]} & 0x80 == 0x80) and (old("pmpaddr$1") == (pmpaddr$1)) and (pmpcfg$2 != 0): 0
 
 #This coverpoint checks the coverage of pmp-CSR-access.cgf (PMP CSRs accesses in different modes)
