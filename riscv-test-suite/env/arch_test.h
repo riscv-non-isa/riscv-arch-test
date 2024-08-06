@@ -1431,7 +1431,7 @@ adj_\__MODE__\()epc_rtn:                // adj mepc so there is at least 4B of p
 
 /**** FIXME: if in Mmode and mode!=bare & MPRV=1, then T4 be altered to point to
              the mode of the mstatus.mpp that is stored in Xtrampend_sv ****/
-
+#ifndef PMM_EXT_ENAB
         csrr    T2, CSR_XTVAL
 
 chk_\__MODE__\()tval:
@@ -1474,7 +1474,7 @@ adj_\__MODE__\()tval:
 
 sv_\__MODE__\()tval:
         SREG    T3, 3*REGWIDTH(T1)      // save 4th sig value, (rel tval)
-
+#endif
 skp_\__MODE__\()tval:
 
   .ifc \__MODE__ , M
