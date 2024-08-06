@@ -54,7 +54,7 @@ main:
 
 	/* Save Virtual addresses in of Code and Data 
 	in their respective S-mode save area */
-	LI (t0, va_rvtest_data_begin) 
+	LI (x8, va_rvtest_data_begin) 
 	LA (t1, rvtest_data_begin) 
 	sub t0, t0, t1         
 	addi t3, t0, sv_area_sz
@@ -71,7 +71,7 @@ main:
 	add t2, t1, t0                        
 	SREG t2, code_bgn_off+1*sv_area_sz(sp)
 
-	LI (t0, va_rvtest_data_begin)                                                        // load the virtual address of rvtest_data in t0
+	LI (x8, va_rvtest_data_begin)                                                        // load the virtual address of rvtest_data in t0
 	LA (t1, rvtest_data_begin)                                                    // load the physical address of rvtest_data in t1
 	sub t0, t0, t1                                                          // (VA-PA) Note: VA > PA 
 	LREG t1, data_bgn_off+0*sv_area_sz(sp)                                  // load the address of data_bgn_off in t1
@@ -128,28 +128,28 @@ main:
 
 # # -------------------------Testing PMM on PA------------------------
 
-	LA (t0, rvtest_data)
-        LREG x2, 0(t0)                                                          // test the load access
+	LA (x8, rvtest_data)
+        LREG x9, 0(x8)                                                          // test the load access
         nop                                             
-	SREG x2, 0(t0)                                                          // test the store access
+	SREG x9, 0(x8)                                                          // test the store access
 	nop
-	lb   x2, 0(t0)                                                          // test the load access
+	lb   x9, 0(x8)                                                          // test the load access
 	nop
-	sb   x2, 0(t0)                                                          // test the store access
+	sb   x9, 0(x8)                                                          // test the store access
 	nop
-	lh   x2, 0(t0)                                                          // test the load access
+	lh   x9, 0(x8)                                                          // test the load access
 	nop
-	sh   x2, 0(t0)                                                          // test the store access
+	sh   x9, 0(x8)                                                          // test the store access
 	nop
-	ld   x2, 0(t0)                                                          // test the load access
+	ld   x9, 0(x8)                                                          // test the load access
 	nop
-	sd   x2, 0(t0)                                                          // test the store access
+	sd   x9, 0(x8)                                                          // test the store access
 	nop
-	lbu  x2, 0(t0)                                                          // test the load access
+	lbu  x9, 0(x8)                                                          // test the load access
 	nop
-	lhu  x2, 0(t0)                                                          // test the load access	
+	lhu  x9, 0(x8)                                                          // test the load access	
 	nop
-	lwu  x2, 0(t0)
+	lwu  x9, 0(x8)
 
 # -------------------------Set the SATP for virtulization------------------
 	sfence.vma                                                              // flush the TLB          
@@ -164,28 +164,28 @@ main:
 vm_en:
 	LI (a4, 0xdead)                                                         // Loads 0xdead in a4
         nop     
-	LI (t0, va_rvtest_data_begin)                                                        
-	LREG x2, 0(t0)                                                          // test the load access
+	LI (x8, va_rvtest_data_begin)                                                        
+	LREG x9, 0(x8)                                                          // test the load access
         nop                                             
-	SREG x2, 0(t0)                                                          // test the store access
+	SREG x9, 0(x8)                                                          // test the store access
 	nop
-	lb   x2, 0(t0)                                                          // test the load access
+	lb   x9, 0(x8)                                                          // test the load access
 	nop
-	sb   x2, 0(t0)                                                          // test the store access
+	sb   x9, 0(x8)                                                          // test the store access
 	nop
-	lh   x2, 0(t0)                                                          // test the load access
+	lh   x9, 0(x8)                                                          // test the load access
 	nop
-	sh   x2, 0(t0)                                                          // test the store access
+	sh   x9, 0(x8)                                                          // test the store access
 	nop
-	ld   x2, 0(t0)                                                          // test the load access
+	ld   x9, 0(x8)                                                          // test the load access
 	nop
-	sd   x2, 0(t0)                                                          // test the store access
+	sd   x9, 0(x8)                                                          // test the store access
 	nop
-	lbu  x2, 0(t0)                                                          // test the load access
+	lbu  x9, 0(x8)                                                          // test the load access
 	nop
-	lhu  x2, 0(t0)                                                          // test the load access	
+	lhu  x9, 0(x8)                                                          // test the load access	
 	nop
-	lwu  x2, 0(t0)
+	lwu  x9, 0(x8)
 	nop
 			
 
