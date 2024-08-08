@@ -54,7 +54,7 @@ main:
 
 	/* Save Virtual addresses in of Code and Data 
 	in their respective S-mode save area */
-	LI (x8, va_rvtest_data_begin) 
+	LI (t0, va_rvtest_data_begin) 
 	LA (t1, rvtest_data_begin) 
 	sub t0, t0, t1         
 	addi t3, t0, sv_area_sz
@@ -71,7 +71,7 @@ main:
 	add t2, t1, t0                        
 	SREG t2, code_bgn_off+1*sv_area_sz(sp)
 
-	LI (x8, va_rvtest_data_begin)                                                        // load the virtual address of rvtest_data in t0
+	LI (t0, va_rvtest_data_begin)                                                        // load the virtual address of rvtest_data in t0
 	LA (t1, rvtest_data_begin)                                                    // load the physical address of rvtest_data in t1
 	sub t0, t0, t1                                                          // (VA-PA) Note: VA > PA 
 	LREG t1, data_bgn_off+0*sv_area_sz(sp)                                  // load the address of data_bgn_off in t1
