@@ -6381,12 +6381,8 @@ signature_x1_6:
 
 tsig_begin_canary:
 CANARY;
-tsig_begin_canary:
-CANARY;
 mtrap_sigptr:
     .fill 64*(XLEN/32),4,0xdeadbeef
-tsig_end_canary:
-CANARY;
 tsig_end_canary:
 CANARY;
 
