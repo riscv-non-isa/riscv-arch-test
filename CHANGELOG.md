@@ -1,4 +1,6 @@
 # CHANGELOG
+## [3.8.9] -- 2024-01-14
+- Update tests for B extension
 
 ## [3.9.1] - 2024-07-01
 - Converted one of the CANARY words to a delta instret count (there is a variable that will enable that)
