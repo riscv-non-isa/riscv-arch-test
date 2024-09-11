@@ -92,7 +92,6 @@ OPS = {
     'cjformat': [],
     'ckformat': ['rs1'],
     'kformat': ['rs1','rd'],
-    'ckformat': ['rs1'],
     # 'frformat': ['rs1', 'rs2', 'rd'],
     'fsrformat': ['rs1', 'rd'],
     # 'fr4format': ['rs1', 'rs2', 'rs3', 'rd'],
@@ -147,7 +146,6 @@ VALS = {
     'cjformat': "['imm_val']",
     'ckformat': "['rs1_val']",
     'kformat': "['rs1_val']",
-    'ckformat': "['rs1_val']",
     # 'frformat': "['rs1_val', 'rs2_val', 'rm_val', 'fcsr']",
     'fsrformat': "['rs1_val','fcsr'] + get_rm(opcode) + \
         ([] if not is_nan_box else ['rs1_nan_prefix']) + \
