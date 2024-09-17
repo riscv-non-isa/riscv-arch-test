@@ -21,7 +21,7 @@ RVMODEL_BOOT
 RVTEST_CODE_BEGIN
 #ifdef TEST_CASE_1
 
-    RVTEST_CASE(1,"//check ISA:=regex(.*64.*); check ISA:=regex(.*I.*C.*Zicsr.*); def rvtest_mtrap_routine=True; def rvtest_strap_routine=True; def TEST_CASE_1=True; mac PMM_MACROS",pm_atomic_S_mode_SV57_tag0)
+    RVTEST_CASE(1,"//check ISA:=regex(.*64.*); check ISA:=regex(.*I.*C.*Zicsr.*); def rvtest_mtrap_routine=True; def rvtest_strap_routine=True; def TEST_CASE_1=True; mac PMM_MACROS",pm_compressed_U_mode_SV48_tag00)
 
 RVTEST_SIGBASE( x13,signature_x13_1)
 
@@ -124,22 +124,39 @@ satp_setup:
 vm_en:
 	LI (x8, va_rvtest_data_begin)
         nop
-	c.lw x9, 0(x8)                                                            // test the load access
+		c.lw x9, 0(x8)                                                            // test the load access
+        nop
         nop                                             
         c.sw x9, 0(x8)                                                            // test the store access
         nop
+        nop                                             
+		nop
         c.ld x9, 0(x8)                                                            // test the load access
+        nop
+        nop                                             
         nop                                             
         c.sd x9, 0(x8)                                                            // test the store access
         nop
+        nop                                             
+        nop
+		LI (x2, va_rvtest_data_begin)
+        nop
         c.lwsp x9, 0(x2)                                                          // test the load access
+        nop
+        nop                                             
         nop                                             
         c.swsp x9, 0(x2)                                                          // test the store access
         nop
+        nop                                             
+        nop                                             
         c.ldsp x9, 0(x2)                                                          // test the load access
+        nop
+        nop                                             
         nop                                             
         c.sdsp x9, 0(x2)                                                          // test the store access
-        nop 	 	 	 	  
+        nop
+        nop                                             
+        nop                                             
 
 # -------------------- Disable Virtualization ---------------------------------
 
@@ -162,22 +179,39 @@ vm_en:
 vm_en_with_pointer_masking:
 	LI (x8, va_rvtest_data_begin)
         nop
-	c.lw x9, 0(x8)                                                            // test the load access
+		c.lw x9, 0(x8)                                                            // test the load access
+        nop
         nop                                             
         c.sw x9, 0(x8)                                                            // test the store access
         nop
+        nop                                             
+		nop
         c.ld x9, 0(x8)                                                            // test the load access
+        nop
+        nop                                             
         nop                                             
         c.sd x9, 0(x8)                                                            // test the store access
         nop
+        nop                                             
+        nop
+		LI (x2, va_rvtest_data_begin)
+        nop
         c.lwsp x9, 0(x2)                                                          // test the load access
+        nop
+        nop                                             
         nop                                             
         c.swsp x9, 0(x2)                                                          // test the store access
         nop
+        nop                                             
+        nop                                             
         c.ldsp x9, 0(x2)                                                          // test the load access
+        nop
+        nop                                             
         nop                                             
         c.sdsp x9, 0(x2)                                                          // test the store access
-        nop 	 	 	 	  
+        nop
+        nop                                             
+        nop                                             
 
 # -------------------- Disable Virtualization ---------------------------------
 

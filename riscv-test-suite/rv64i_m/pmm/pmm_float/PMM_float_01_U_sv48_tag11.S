@@ -11,7 +11,7 @@ due to the invalid Virtual Address,
 #include "model_test.h"
 #include "arch_test.h"
 
-RVTEST_ISA("RV64IF_Zicsr")
+RVTEST_ISA("RV64IFD_Zicsr")
 
 # Test code region
 .section .text.init
@@ -21,7 +21,7 @@ RVMODEL_BOOT
 RVTEST_CODE_BEGIN
 #ifdef TEST_CASE_1
 
-    RVTEST_CASE(1,"//check ISA:=regex(.*64.*); check ISA:=regex(.*I.*F.*Zicsr.*); def rvtest_mtrap_routine=True; def rvtest_strap_routine=True; def TEST_CASE_1=True; mac PMM_MACROS",pm_atomic_S_mode_SV57_tag0)
+    RVTEST_CASE(1,"//check ISA:=regex(.*64.*); check ISA:=regex(.*I.*F.*D.*Zicsr.*); def rvtest_mtrap_routine=True; def rvtest_strap_routine=True; def TEST_CASE_1=True; mac PMM_MACROS",pm_float_U_mode_SV48_tag03)
 
 RVTEST_SIGBASE( x13,signature_x13_1)
 
@@ -116,6 +116,10 @@ satp_setup:
 	SATP_SETUP_RV64(sv48)                  // Set SATP for SV48 mode
 
 # -------------------- Enter and Exit M Mode ----------------------------------
+	csrr    t0, mstatus       # Read the mstatus register into temporary register t0
+	li      t1, 0x00006000    # Load the FS field value to enable the FPU (set FS = 11)
+	or      t0, t0, t1        # Set the FS field in mstatus
+	csrw    mstatus, t0       # Write the modified value back to the mstatus register
 
 	RVTEST_GOTO_LOWER_MODE Umode           // Go back to User mode
 
@@ -146,6 +150,10 @@ vm_en:
 
 	sfence.vma                             // Flush the TLB
 	SATP_SETUP_RV64(sv48)                  // Set SATP for SV48 mode
+	csrr    t0, mstatus       # Read the mstatus register into temporary register t0
+	li      t1, 0x00006000    # Load the FS field value to enable the FPU (set FS = 11)
+	or      t0, t0, t1        # Set the FS field in mstatus
+	csrw    mstatus, t0       # Write the modified value back to the mstatus register
 	RVTEST_GOTO_LOWER_MODE Umode           // Go back to User mode
 
 # -------------------- Test PMM with Masking Enabled --------------------------

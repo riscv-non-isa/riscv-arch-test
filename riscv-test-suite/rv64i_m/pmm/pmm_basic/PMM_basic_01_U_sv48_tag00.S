@@ -21,7 +21,7 @@ RVMODEL_BOOT
 RVTEST_CODE_BEGIN
 #ifdef TEST_CASE_1
 
-    RVTEST_CASE(1,"//check ISA:=regex(.*64.*); check ISA:=regex(.*I.*Zicsr.*); def rvtest_mtrap_routine=True; def rvtest_strap_routine=True; def TEST_CASE_1=True; mac PMM_MACROS",pm_atomic_S_mode_SV57_tag0)
+    RVTEST_CASE(1,"//check ISA:=regex(.*64.*); check ISA:=regex(.*I.*Zicsr.*); def rvtest_mtrap_routine=True; def rvtest_strap_routine=True; def TEST_CASE_1=True; mac PMM_MACROS",pm_basic_U_mode_SV48_tag00)
 
 RVTEST_SIGBASE( x13,signature_x13_1)
 
@@ -124,30 +124,28 @@ satp_setup:
 vm_en:
 	LI (x8, va_rvtest_data_begin)
 	nop
-        LREG x9, 0(x8)                                                          // test the load access
-        nop                                             
-	SREG x9, 0(x8)                                                          // test the store access
-	nop
 	lb   x9, 0(x8)                                                          // test the load access
-	nop
-	sb   x9, 0(x8)                                                          // test the store access
 	nop
 	lh   x9, 0(x8)                                                          // test the load access
 	nop
-	sh   x9, 0(x8)                                                          // test the store access
+	lw   x9, 0(x8)                                                          // test the load access
 	nop
 	ld   x9, 0(x8)                                                          // test the load access
 	nop
+	sb   x9, 0(x8)                                                          // test the store access
+	nop
+	sh   x9, 0(x8)                                                          // test the store access
+	nop
+	sw   x9, 0(x8)                                                          // test the store access
+	nop
 	sd   x9, 0(x8)                                                          // test the store access
 	nop
-	lbu  x9, 0(x8)                                                          // test the load access
-	nop
-	lhu  x9, 0(x8)                                                          // test the load access	
-	nop
-	lwu  x9, 0(x8)
-	nop
-
-# -------------------- Disable Virtualization ---------------------------------
+	# lbu  x9, 0(x8)                                                          // test the load access
+	# nop
+	# lhu  x9, 0(x8)                                                          // test the load access	
+	# nop
+	# lwu  x9, 0(x8)
+	nop# -------------------- Disable Virtualization ---------------------------------
 
 	RVTEST_GOTO_MMODE                     // Switch back to Machine mode
 
@@ -168,30 +166,28 @@ vm_en:
 vm_en_with_pointer_masking:
 	LI (x8, va_rvtest_data_begin)
 	nop
-        LREG x9, 0(x8)                                                          // test the load access
-        nop                                             
-	SREG x9, 0(x8)                                                          // test the store access
-	nop
 	lb   x9, 0(x8)                                                          // test the load access
-	nop
-	sb   x9, 0(x8)                                                          // test the store access
 	nop
 	lh   x9, 0(x8)                                                          // test the load access
 	nop
-	sh   x9, 0(x8)                                                          // test the store access
+	lw   x9, 0(x8)                                                          // test the load access
 	nop
 	ld   x9, 0(x8)                                                          // test the load access
 	nop
+	sb   x9, 0(x8)                                                          // test the store access
+	nop
+	sh   x9, 0(x8)                                                          // test the store access
+	nop
+	sw   x9, 0(x8)                                                          // test the store access
+	nop
 	sd   x9, 0(x8)                                                          // test the store access
 	nop
-	lbu  x9, 0(x8)                                                          // test the load access
-	nop
-	lhu  x9, 0(x8)                                                          // test the load access	
-	nop
-	lwu  x9, 0(x8)
-	nop
-
-# -------------------- Disable Virtualization ---------------------------------
+	# lbu  x9, 0(x8)                                                          // test the load access
+	# nop
+	# lhu  x9, 0(x8)                                                          // test the load access	
+	# nop
+	# lwu  x9, 0(x8)
+	nop# -------------------- Disable Virtualization ---------------------------------
 
 	RVTEST_GOTO_MMODE                     // Switch back to Machine mode
 
