@@ -140,11 +140,11 @@ vm_en:
 	nop
 	sd   x9, 0(x8)                                                          // test the store access
 	nop
-	# lbu  x9, 0(x8)                                                          // test the load access
-	# nop
-	# lhu  x9, 0(x8)                                                          // test the load access	
-	# nop
-	# lwu  x9, 0(x8)
+	lbu  x9, 0(x8)                                                          // test the load access
+	nop
+	lhu  x9, 0(x8)                                                          // test the load access	
+	nop
+	lwu  x9, 0(x8)
 	nop
 # -------------------- Disable Virtualization ---------------------------------
 
@@ -182,12 +182,13 @@ vm_en_with_pointer_masking:
 	nop
 	sd   x9, 0(x8)                                                          // test the store access
 	nop
-	# lbu  x9, 0(x8)                                                          // test the load access
-	# nop
-	# lhu  x9, 0(x8)                                                          // test the load access	
-	# nop
-	# lwu  x9, 0(x8)
-	nop# -------------------- Disable Virtualization ---------------------------------
+	lbu  x9, 0(x8)                                                          // test the load access
+	nop
+	lhu  x9, 0(x8)                                                          // test the load access	
+	nop
+	lwu  x9, 0(x8)
+	nop
+# -------------------- Disable Virtualization ---------------------------------
 
 	RVTEST_GOTO_MMODE                     // Switch back to Machine mode
 
@@ -240,7 +241,7 @@ signature_x13_1:
 // trap signatures initialization
 #ifdef rvtest_mtrap_routine
 mtrap_sigptr:
-    .fill 64*(XLEN/64),4,0xdeadbeef
+    .fill 256*(XLEN/64),4,0xdeadbeef
 #endif
 
 sig_end_canary:

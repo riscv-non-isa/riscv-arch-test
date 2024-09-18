@@ -24,7 +24,7 @@ RVTEST_CODE_BEGIN
     RVTEST_CASE(1,"//check ISA:=regex(.*64.*); check ISA:=regex(.*I.*F.*D.*Zicsr.*); def rvtest_mtrap_routine=True; def rvtest_strap_routine=True; def TEST_CASE_1=True; mac PMM_MACROS",pm_float_S_mode_SV48_tag03)
 
 RVTEST_SIGBASE( x13,signature_x13_1)
-
+RVTEST_FP_ENABLE()
 
 main:
 # ------------------------ Set the PMP for all memory regions -----------------
@@ -116,10 +116,6 @@ satp_setup:
 	SATP_SETUP_RV64(sv48)                  // Set SATP for SV48 mode
 
 # -------------------- Enter and Exit M Mode ----------------------------------
-	csrr    t0, mstatus       # Read the mstatus register into temporary register t0
-	li      t1, 0x00006000    # Load the FS field value to enable the FPU (set FS = 11)
-	or      t0, t0, t1        # Set the FS field in mstatus
-	csrw    mstatus, t0       # Write the modified value back to the mstatus register
 
 	RVTEST_GOTO_LOWER_MODE Smode           // Go back to Supervisor mode
 
@@ -150,10 +146,6 @@ vm_en:
 
 	sfence.vma                             // Flush the TLB
 	SATP_SETUP_RV64(sv48)                  // Set SATP for SV48 mode
-	csrr    t0, mstatus       # Read the mstatus register into temporary register t0
-	li      t1, 0x00006000    # Load the FS field value to enable the FPU (set FS = 11)
-	or      t0, t0, t1        # Set the FS field in mstatus
-	csrw    mstatus, t0       # Write the modified value back to the mstatus register
 	RVTEST_GOTO_LOWER_MODE Smode           // Go back to Supervisor mode
 
 # -------------------- Test PMM with Masking Enabled --------------------------
@@ -223,7 +215,7 @@ signature_x13_1:
 // trap signatures initialization
 #ifdef rvtest_mtrap_routine
 mtrap_sigptr:
-    .fill 64*(XLEN/64),4,0xdeadbeef
+    .fill 256*(XLEN/64),4,0xdeadbeef
 #endif
 
 sig_end_canary:

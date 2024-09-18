@@ -266,7 +266,7 @@ signature_x13_1:
 // trap signatures initialization
 #ifdef rvtest_mtrap_routine
 mtrap_sigptr:
-    .fill 64*(XLEN/64),4,0xdeadbeef
+    .fill 256*(XLEN/64),4,0xdeadbeef
 #endif
 
 sig_end_canary:
