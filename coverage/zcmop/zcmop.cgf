@@ -10,7 +10,7 @@ c.mop.1:
 c.mop.3:
   config: 
       - check ISA:=regex(.*C.*Zcmop.*) 
-  opcode: 
+  mnemonics: 
     c.mop.3:
   val_comb:
     abstract_comb:
@@ -19,7 +19,7 @@ c.mop.3:
 c.mop.5:
   config: 
       - check ISA:=regex(.*C.*Zcmop.*) 
-  opcode: 
+  mnemonics: 
     c.mop.5:
   val_comb:
     abstract_comb:
@@ -28,7 +28,7 @@ c.mop.5:
 c.mop.7:
   config: 
       - check ISA:=regex(.*C.*Zcmop.*) 
-  opcode: 
+  mnemonics: 
     c.mop.7:
   val_comb:
     abstract_comb:
@@ -37,7 +37,7 @@ c.mop.7:
 c.mop.9:
   config: 
       - check ISA:=regex(.*C.*Zcmop.*) 
-  opcode: 
+  mnemonics: 
     c.mop.9:
   val_comb:
     abstract_comb:
@@ -46,7 +46,7 @@ c.mop.9:
 c.mop.11:
   config: 
       - check ISA:=regex(.*C.*Zcmop.*) 
-  opcode: 
+  mnemonics: 
     c.mop.11:
   val_comb:
     abstract_comb:
@@ -55,7 +55,7 @@ c.mop.11:
 c.mop.13:
   config: 
       - check ISA:=regex(.*C.*Zcmop.*) 
-  opcode: 
+  mnemonics: 
     c.mop.13:
   val_comb:
     abstract_comb:
@@ -64,7 +64,7 @@ c.mop.13:
 c.mop.15:
   config: 
       - check ISA:=regex(.*C.*Zcmop.*) 
-  opcode: 
+  mnemonics: 
     c.mop.15:
   val_comb:
     abstract_comb:

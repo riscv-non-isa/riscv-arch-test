@@ -1,7 +1,7 @@
 czero.eqz:
     config: 
       - check ISA:=regex(.*Zicond.*)
-    opcode: 
+    mnemonics: 
       czero.eqz: 0
     rs1: 
       <<: *all_regs
@@ -20,7 +20,7 @@ czero.eqz:
 czero.nez:
     config: 
       - check ISA:=regex(.*Zicond.*)
-    opcode: 
+    mnemonics: 
       czero.nez: 0
     rs1: 
       <<: *all_regs
