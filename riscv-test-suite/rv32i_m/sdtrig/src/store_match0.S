@@ -10,13 +10,14 @@ RVMODEL_BOOT
 RVTEST_CODE_BEGIN
 
 #ifdef TEST_CASE_1
-  RVTEST_CASE(1,"//check ISA:=regex(.*I.*Zicsr.*Sdtrig.*);def TEST_CASE_1=True;",load_match0)
+  RVTEST_CASE(1,"//check ISA:=regex(.*I.*Zicsr.*Sdtrig.*);def TEST_CASE_1=True;",store_match0)
   RVTEST_SIGBASE(x1, signature_x1_0)
-      # Set mtvec to the address of the trap handler
+      
+  # Set mtvec to the address of the trap handler
   la a0, trap_handler
   csrw mtvec, a0 
   
-  #Read the misa value 
+ #Read the misa value 
   csrr t2, misa
   RVTEST_SIGUPD(x1,t2)           
   li t1, (1 << 18)        
@@ -41,7 +42,7 @@ RVTEST_CODE_BEGIN
     li t1, 2
     j resume_code    
 
-resume_code:    
+resume_code: 
   
    # Write 0 to tselect, read back and append it to the signature
   csrw tselect, zero
@@ -52,6 +53,7 @@ resume_code:
   csrr t6, tinfo
   RVTEST_SIGUPD(x1, t6)
 
+  
   csrw tdata1, zero
   csrr a3, tdata1
   RVTEST_SIGUPD(x1, a3)
@@ -72,14 +74,14 @@ resume_code:
          CSR_MCONTROL6_ACTION_BREAKPOINT << 12 | \
          CSR_MCONTROL6_MATCH_EQUAL << 7 | \
          CSR_MCONTROL6_M | \
-         CSR_MCONTROL6_LOAD)
+         CSR_MCONTROL6_STORE)
   csrw tdata1, t2
   csrr t4,tdata1
   RVTEST_SIGUPD(x1, t4)
   
   # Trigger setup complete; now perform an instruction that will hit the trigger
   la t4, 0x80001234
-  lw t5, 0(t4)       # This should trigger the breakpoint
+  sw t5, 0(t4)       
   nop
   nop
   
@@ -121,6 +123,11 @@ CANARY;
 
 signature_x1_0:
   .fill 128*(XLEN/32),4,0xdeadbeef
+
+#ifdef rvtest_mtrap_routine
+mtrap_sigptr:
+  .fill 128*4, 4, 0xdeadbeef
+#endif
 
 #ifdef rvtest_gpr_save
 gpr_save:

@@ -10,15 +10,14 @@ RVMODEL_BOOT
 RVTEST_CODE_BEGIN
 
 #ifdef TEST_CASE_1
-  RVTEST_CASE(1,"//check ISA:=regex(.*I.*Zicsr.*Sdtrig.*);def TEST_CASE_1=True;",load_match0)
+  RVTEST_CASE(1,"//check ISA:=regex(.*I.*Zicsr.*Sdtrig.*);def TEST_CASE_1=True;",execute_match5)
   RVTEST_SIGBASE(x1, signature_x1_0)
       # Set mtvec to the address of the trap handler
   la a0, trap_handler
   csrw mtvec, a0 
   
-  #Read the misa value 
-  csrr t2, misa
-  RVTEST_SIGUPD(x1,t2)           
+   csrr t2, misa
+  RVTEST_SIGUPD(x1,t2) 
   li t1, (1 << 18)        
   and t2,t2,t1     
 
@@ -30,7 +29,6 @@ RVTEST_CODE_BEGIN
     csrw mstatus, t1        
     csrr t4, mstatus        
     RVTEST_SIGUPD(x1, t4)
-    li t1, 1
     j resume_code
 
   implement_tcontrol:   
@@ -38,10 +36,9 @@ RVTEST_CODE_BEGIN
     li t3, (1<<3)             
     csrw tcontrol, t3
     csrr t4, tcontrol
-    li t1, 2
     j resume_code    
 
-resume_code:    
+resume_code:
   
    # Write 0 to tselect, read back and append it to the signature
   csrw tselect, zero
@@ -52,16 +49,18 @@ resume_code:
   csrr t6, tinfo
   RVTEST_SIGUPD(x1, t6)
 
+  
+  # Set the value of tdata1 for address match trigger
   csrw tdata1, zero
   csrr a3, tdata1
   RVTEST_SIGUPD(x1, a3)
  
   # Set the address for tdata2 where the trigger should occur
-  la t2, 0x80001234
-  csrw tdata2, t2
-  csrr t6, tdata2
-  RVTEST_SIGUPD(x1, t6)
-  
+   la t2, 0x80010001   # Set the data value to match
+   csrw tdata2, t2
+   csrr t6,tdata2
+   RVTEST_SIGUPD(x1, t6)
+
   # Set up trigger to cause a trap on a breakpoint
   # Configure tdata1 for address match control
   li t2, (CSR_TDATA1_TYPE_MCONTROL6 << 28 | \
@@ -70,16 +69,16 @@ resume_code:
          CSR_MCONTROL6_SIZE_ANY << 16 | \
          CSR_MCONTROL6_CHAIN_DISABLED << 11 | \
          CSR_MCONTROL6_ACTION_BREAKPOINT << 12 | \
-         CSR_MCONTROL6_MATCH_EQUAL << 7 | \
+         CSR_MCONTROL6_MATCH_MASK_HIGH << 7 | \
          CSR_MCONTROL6_M | \
-         CSR_MCONTROL6_LOAD)
+         CSR_MCONTROL6_EXECUTE)
   csrw tdata1, t2
   csrr t4,tdata1
   RVTEST_SIGUPD(x1, t4)
   
   # Trigger setup complete; now perform an instruction that will hit the trigger
-  la t4, 0x80001234
-  lw t5, 0(t4)       # This should trigger the breakpoint
+    la t4, 0x00010001
+    jalr x0,0(t4)
   nop
   nop
   
@@ -94,7 +93,7 @@ trap_handler:
   RVTEST_SIGUPD(x1, t1)   # Update signature with mepc
   RVTEST_SIGUPD(x1, t2)   # Update signature with mtval
 
- #  # Check if the trigger hit bit is set (bit 22 in tdata1)
+   # Check if the trigger hit bit is set (bit 22 in tdata1)
   csrr t3, tdata1
   RVTEST_SIGUPD(x1, t3)
  
@@ -121,6 +120,11 @@ CANARY;
 
 signature_x1_0:
   .fill 128*(XLEN/32),4,0xdeadbeef
+
+#ifdef rvtest_mtrap_routine
+mtrap_sigptr:
+  .fill 128*4, 4, 0xdeadbeef
+#endif
 
 #ifdef rvtest_gpr_save
 gpr_save:
