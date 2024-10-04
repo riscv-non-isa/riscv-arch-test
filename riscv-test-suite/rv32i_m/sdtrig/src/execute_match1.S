@@ -12,7 +12,8 @@ RVTEST_CODE_BEGIN
 #ifdef TEST_CASE_1
   RVTEST_CASE(1,"//check ISA:=regex(.*I.*Zicsr.*Sdtrig.*);def TEST_CASE_1=True;",execute_match1)
   RVTEST_SIGBASE(x1, signature_x1_0)
-      # Set mtvec to the address of the trap handler
+  
+  # Set mtvec to the address of the trap handler
   la a0, trap_handler
   csrw mtvec, a0 
   
@@ -29,7 +30,6 @@ implement_mie:
     li t1,(1<<3)
     csrw mstatus, t1        
     csrr t4, mstatus        
-    RVTEST_SIGUPD(x1, t4)
     j resume_code
 
 implement_tcontrol:   
@@ -46,19 +46,17 @@ resume_code:
   csrr t0, tselect
   RVTEST_SIGUPD(x1, t0)
   
-  # Read tinfo and append it to the signature
-  csrr t6, tinfo
-  RVTEST_SIGUPD(x1, t6)
+  # Read tinfo 
+    csrr t6, tinfo
+  
+   # Set the value of tdata
+   csrw tdata1, zero
+   csrr a3, tdata1
 
-  csrw tdata1, zero
-  csrr a3, tdata1
-  RVTEST_SIGUPD(x1, a3)
- 
-  # Set the address for tdata2 where the trigger should occur
+   # Set the address for tdata2 where the trigger should occur
    la t2, 0x80001001   # Set the data value to match
    csrw tdata2, t2
-   csrr t6,tdata2
-   RVTEST_SIGUPD(x1, t6)
+   
 
   # Set up trigger to cause a trap on a breakpoint
   # Configure tdata1 for address match control
@@ -74,6 +72,8 @@ resume_code:
   csrw tdata1, t2
   csrr t4,tdata1
   RVTEST_SIGUPD(x1, t4)
+  csrr t6,tdata2
+  RVTEST_SIGUPD(x1, t6)
   
   # Trigger setup complete; now perform an instruction that will hit the trigger
     la t4, 0x80001000
@@ -100,17 +100,6 @@ end:
 RVTEST_CODE_END
 RVMODEL_HALT
 
-RVTEST_DATA_BEGIN
-  .align 12
-   page_4k:
-  .fill   4096/REGWIDTH, REGWIDTH, 0
-RVTEST_DATA_END
-
-.align 12
-rvtest_Sroot_pg_tbl:
-  .fill   4096/REGWIDTH, REGWIDTH, 0
-.section .data
-
 # Output data section.
 RVMODEL_DATA_BEGIN
 rvtest_sig_begin:
@@ -119,16 +108,6 @@ CANARY;
 
 signature_x1_0:
   .fill 128*(XLEN/32),4,0xdeadbeef
-
-#ifdef rvtest_mtrap_routine
-mtrap_sigptr:
-  .fill 128*4, 4, 0xdeadbeef
-#endif
-
-#ifdef rvtest_gpr_save
-gpr_save:
-  .fill 32*(XLEN/32), 4, 0xdeadbeef
-#endif
 
 sig_end_canary:
 CANARY;
