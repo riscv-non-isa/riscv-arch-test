@@ -1,0 +1,8 @@
+click
+colorlog
+gitpython
+pluggy
+pyelftools==0.26
+pytablewriter
+pyyaml
+ruamel.yaml>=0.16.0
