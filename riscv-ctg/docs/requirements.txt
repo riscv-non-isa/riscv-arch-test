@@ -31,7 +31,7 @@ sphinxcontrib-mermaid
 sphinxcontrib-websupport==1.1.2
 sphinxcontrib-bibtex==1.0.0
 stevedore==1.30.1
-urllib3==1.25.3
+urllib3==1.26.19
 twine==1.13.0
 sphinx_tabs
 m2r2==0.2.7
