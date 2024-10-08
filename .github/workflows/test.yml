@@ -69,6 +69,30 @@ jobs:
           cd riscv-ctg
           pip3 install --editable .
       
+      - name: Install Spike
+        run: |
+          git clone https://github.com/riscv/riscv-isa-sim.git
+          sudo apt-get install device-tree-compiler libboost-regex-dev libboost-system-dev
+          cd riscv-isa-sim
+          mkdir build
+          cd build
+          ../configure --prefix=$GITHUB_WORKSPACE/riscv64
+          make -j$(nproc)
+          sudo make install
+          echo $GITHUB_WORKSPACE/riscv64/bin >> $GITHUB_PATH      
+
+      - name: Install Sail
+        run: |
+          sudo apt-get install opam build-essential libgmp-dev z3 pkg-config zlib1g-dev
+          opam init -y --disable-sandboxing
+          opam switch create ocaml-base-compiler
+          opam install sail -y
+          eval $(opam config env)
+          git clone https://github.com/riscv/sail-riscv.git
+          cd sail-riscv
+          ARCH=RV32 make
+          ARCH=RV64 make
+          echo $PWD/c_emulator >> $GITHUB_PATH            
       
       - name: Config and run riscof for RV32
         run: |
