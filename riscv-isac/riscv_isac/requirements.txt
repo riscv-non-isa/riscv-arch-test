@@ -13,7 +13,7 @@ gitdb2==2.0.5
 gitpython
 idna==2.8
 imagesize==1.1.0
-Jinja2==2.10.1
+Jinja2
 m2r2==0.2.7
 MarkupSafe==1.1.1
 mistune==0.8.4
