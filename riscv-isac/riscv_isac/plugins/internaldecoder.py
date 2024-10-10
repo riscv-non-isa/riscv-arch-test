@@ -408,7 +408,11 @@ class disassembler():
     @plugins.decoderHookImpl
     def setup(self, arch):
         self.arch = arch
-
+    @plugins.decoderHookImpl
+    def setupz(self, zilsdFlg,arch: str):
+        self.arch = arch
+        self.zilsdFlg = zilsdFlg
+    
     FIRST2_MASK = 0x00000003
     OPCODE_MASK = 0x0000007f
     FUNCT3_MASK = 0x00007000
@@ -529,6 +533,8 @@ class disassembler():
             instrObj.instr_name = 'lwu'
         if funct3 == 0b011:
             instrObj.instr_name = 'ld'
+        if funct3 == 0b011 and self.arch == 'rv32' and self.zilsdFlg is True :
+            instrObj.instr_name = 'ldz'
 
         return instrObj
 
@@ -553,6 +559,8 @@ class disassembler():
             instrObj.instr_name = 'sw'
         if funct3 == 0b011:
             instrObj.instr_name = 'sd'
+        if funct3 == 0b011 and self.arch == 'rv32' and self.zilsdFlg is True :
+            instrObj.instr_name = 'sdz'
 
         return instrObj
 
@@ -2049,7 +2057,12 @@ class disassembler():
             instrObj.imm = uimm_6_5_3_2
 
         elif funct3 == 0b011:
-            if self.arch == 'rv32':
+            if self.arch == 'rv32' and self.zilsdFlg is True :
+                instrObj.instr_name = 'c.ldz'
+                instrObj.rd = (8 + rdprime, 'x')
+                instrObj.rs1 = (8 + rs1prime, 'x')
+                instrObj.imm = uimm_7_6_5_3
+            elif self.arch == 'rv32':
                 instrObj.instr_name = 'c.flw'
                 instrObj.rd = (8 + rdprime, 'f')
                 instrObj.rs1 = (8 + rs1prime, 'x')
@@ -2073,7 +2086,12 @@ class disassembler():
             instrObj.imm = uimm_6_5_3_2
 
         elif funct3 == 0b111:
-            if self.arch == 'rv32':
+            if self.arch == 'rv32' and self.zilsdFlg is True :
+                instrObj.instr_name = 'c.sdz'
+                instrObj.rs1 = (8 + rs1prime, 'x')
+                instrObj.rs2 = (8 + rs2prime, 'x')
+                instrObj.imm = uimm_7_6_5_3
+            elif self.arch == 'rv32':
                 instrObj.instr_name = 'c.fsw'
                 instrObj.rs1 = (8 + rs1prime, 'x')
                 instrObj.rs2 = (8 + rs2prime, 'f')
@@ -2275,6 +2293,11 @@ class disassembler():
             instrObj.rs1 = (2, 'x')
             instrObj.rd = (rd, 'x')
             instrObj.imm = imm_lwsp
+        elif funct3 == 3 and self.arch == 'rv32' and self.zilsdFlg is True:
+            instrObj.instr_name = 'c.ldspz'
+            instrObj.rd = (rd, 'x')
+            instrObj.rs1 = (2, 'x')
+            instrObj.imm = imm_ldsp
         elif funct3 == 3 and self.arch == 'rv32':
             instrObj.instr_name = 'c.flwsp'
             instrObj.rd = (rd, 'f')
@@ -2282,7 +2305,7 @@ class disassembler():
             instrObj.imm = imm_lwsp
         elif funct3 == 3 and self.arch == 'rv64':
             instrObj.instr_name = 'c.ldsp'
-            instrObj.rd = (rd, 'f')
+            instrObj.rd = (rd, 'x')
             instrObj.rs1 = (2, 'x')
             instrObj.imm = imm_ldsp
         elif funct3 == 4 and rs1 != 0 and imm_5 == 0 and rs2 == 0:
@@ -2314,6 +2337,11 @@ class disassembler():
             instrObj.rs2 = (rs2, 'x')
             instrObj.imm = imm_swsp
             instrObj.rs1 = (2 , 'x')
+        elif funct3 == 7 and self.arch == 'rv32' and self.zilsdFlg is True:
+            instrObj.instr_name = 'c.sdspz'
+            instrObj.rs2 = (rs2, 'x')
+            instrObj.rs1 = (2, 'x')
+            instrObj.imm = imm_fsdsp
         elif funct3 == 7 and self.arch == 'rv32':
             instrObj.instr_name = 'c.fswsp'
             instrObj.rs2 = (rs2, 'f')
