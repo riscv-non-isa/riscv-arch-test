@@ -104,6 +104,11 @@ class spike_simple(pluginTemplate):
           self.isa += 'd'
       if "C" in ispec["ISA"]:
           self.isa += 'c'
+      if "Zilsd" in ispec["ISA"]:
+          self.isa += 'Zilsd'
+        #   self.zilsdflg = True
+      if "Zclsd" in ispec["ISA"]:
+          self.isa += '_Zclsd'
 
       #TODO: The following assumes you are using the riscv-gcc toolchain. If
       #      not please change appropriately

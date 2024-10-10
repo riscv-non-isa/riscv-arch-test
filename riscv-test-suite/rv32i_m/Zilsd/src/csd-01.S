@@ -16,11 +16,11 @@
 // SPDX-License-Identifier: BSD-3-Clause
 // -----------
 //
-// This assembly file tests the c.sdz instruction of the RISC-V RV32CZilsd_Zcmlsd extension for the csd covergroup.
+// This assembly file tests the c.sdz instruction of the RISC-V RV32CZilsd_Zclsd extension for the csd covergroup.
 // 
 #include "model_test.h"
 #include "arch_test.h"
-RVTEST_ISA("RV32ICZilsd_Zcmlsd")
+RVTEST_ISA("RV32ICZilsd_Zclsd")
 
 .section .text.init
 .globl rvtest_entry_point
@@ -30,7 +30,7 @@ RVTEST_CODE_BEGIN
 
 #ifdef TEST_CASE_1
 
-RVTEST_CASE(0,"//check ISA:=regex(.*I.*C.*Zilsd.*Zcmlsd.*);def TEST_CASE_1=True;",csd)
+RVTEST_CASE(0,"//check ISA:=regex(.*I.*C.*Zilsd.*Zclsd.*);def TEST_CASE_1=True;",csd)
 
 RVTEST_SIGBASE(x1,signature_x1_1)
 
