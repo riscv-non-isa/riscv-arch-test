@@ -1,0 +1,211 @@
+#For lr-sc-01.S
+lr-sc-01:
+  config:
+    - check ISA:=regex(.*32.*);check ISA:=regex(.*I.*A.*Zicsr.*); def rvtest_mtrap_routine=True;
+  mnemonics:
+    lr.w: 0
+    sc.w: 0
+  op_comb:
+    "mnemonic == 'lr.w' and aq != 0x1": 0       #no aq flag used
+    "mnemonic == 'sc.w' and rl != 0x1": 0       #no rl flag used
+  val_comb:
+    mnemonic == 'lr.w' and get_mem_val(rs1_val, 4) == rd_val: 0
+    mnemonic == 'sc.w' and rs2_val == get_mem_val(rs1_val, 4) and rd_val == 0: 0
+
+#For lr-sc-fail-01.S
+lr-sc-fail-01:
+  config:
+    - check ISA:=regex(.*32.*);check ISA:=regex(.*I.*A.*Zicsr.*); def rvtest_mtrap_routine=True;
+  mnemonics:
+    lr.w: 0
+    sc.w: 0
+  op_comb:
+    "mnemonic == 'lr.w' and aq != 0x1": 0       #no aq flag used
+    "mnemonic == 'sc.w' and rl != 0x1": 0       #no rl flag used
+  val_comb:
+    #reservation successfull
+    mnemonic == 'lr.w' and get_mem_val(rs1_val, 4) == rd_val: 0
+    #rd -> non-zero on sc 
+    mnemonic == 'sc.w' and get_mem_val(rs1_val, 4) != rs1_val and rd_val!=0: 0
+
+#For lr-sc-fail-02.S
+lr-sc-fail-02:
+  config:
+    - check ISA:=regex(.*32.*);check ISA:=regex(.*I.*A.*Zicsr.*); def rvtest_mtrap_routine=True;
+  mnemonics:
+    lr.w: 0
+    sc.w: 0
+  op_comb:
+    "mnemonic == 'lr.w' and aq != 0x1": 0       #no aq flag used
+    "mnemonic == 'sc.w' and rl != 0x1": 0       #no rl flag used
+  val_comb:
+    #reservation successfull - it should hit 4 times
+    mnemonic == 'lr.w' and get_mem_val(rs1_val, 4) == rd_val  : 0
+    #rd -> 1 on sc -- it should hit 8 times
+    mnemonic == 'sc.w' and get_mem_val(rs1_val, 4) != rs2_val and rd_val!=0: 0
+
+#For lr-sc-sw.S
+lr-sc-sw:
+  config:
+    - check ISA:=regex(.*32.*);check ISA:=regex(.*I.*A.*Zicsr.*); def rvtest_mtrap_routine=True;
+  mnemonics:
+    lr.w: 0
+    sc.w: 0
+    sw: 0
+  op_comb:
+    "mnemonic == 'lr.w' and aq == 0x1": 0       #aq flag used
+    "mnemonic == 'sc.w' and rl != 0x1": 0       #no rl flag used
+  val_comb:
+    #reservation successfull - it should hit 2 times
+    mnemonic == 'lr.w' and get_mem_val(rs1_val, 4) == rd_val  : 0
+    #check store word successfull? imm_val is zero.
+    mnemonic == 'sw' and get_mem_val(rs1_val, 4) == rs2_val : 0
+    #rd -> 0 on sc -- it should hit 2 times
+    mnemonic == 'sc.w' and get_mem_val(rs1_val, 4) == rs2_val and rd_val==0: 0
+
+#For lr-aq-sc-01.S
+lr-aq-sc-01:
+  config:
+    - check ISA:=regex(.*32.*);check ISA:=regex(.*I.*A.*Zicsr.*); def rvtest_mtrap_routine=True;
+  mnemonics:
+    lr.w: 0
+    sc.w: 0
+  op_comb:
+    "mnemonic == 'lr.w' and aq == 0x1": 0       #aq flag used
+    "mnemonic == 'sc.w' and rl != 0x1": 0       #no rl flag used
+  val_comb:
+    #reservation successfull - it should hit 4 times
+    mnemonic == 'lr.w' and get_mem_val(rs1_val, 4) == rd_val  : 0
+    #rd -> 0 on sc -- it should hit 4 times
+    mnemonic == 'sc.w' and get_mem_val(rs1_val, 4) == rs2_val and rd_val==0: 0
+
+#For lr-aq-sc-rl-01.S
+lr-aq-sc-rl-01:
+  config:
+    - check ISA:=regex(.*32.*);check ISA:=regex(.*I.*A.*Zicsr.*); def rvtest_mtrap_routine=True;
+  mnemonics:
+    lr.w: 0
+    sc.w: 0
+  op_comb:
+    "mnemonic == 'lr.w' and aq == 0x1": 0       #aq flag used
+    "mnemonic == 'sc.w' and rl == 0x1": 0       #rl flag used
+  val_comb:
+    #reservation successfull - it should hit 4 times
+    mnemonic == 'lr.w' and get_mem_val(rs1_val, 4) == rd_val  : 0
+    #rd -> 0 on sc -- it should hit 4 times
+    mnemonic == 'sc.w' and get_mem_val(rs1_val, 4) == rs2_val and rd_val==0: 0
+
+#For lr-sc-constrained-loop-01.S
+lr-sc-constrained-loop-01:
+  config:
+    - check ISA:=regex(.*32.*);check ISA:=regex(.*I.*A.*Zicsr.*); def rvtest_mtrap_routine=True;
+  mnemonics:
+    lr.w: 0
+    sc.w: 0
+  op_comb:
+    "mnemonic == 'lr.w' and aq == 0x1": 0       #aq flag used
+    "mnemonic == 'sc.w' and rl == 0x1": 0       #rl flag used
+  val_comb:
+    #reservation successfull - it should hit 1 times
+    mnemonic == 'lr.w' and get_mem_val(rs1_val, 4) == rd_val  : 0
+    #rd -> 0 on sc -- it should hit 1 times
+    mnemonic == 'sc.w' and get_mem_val(rs1_val, 4) == rs2_val and rd_val==0: 0
+
+#For lr-sc-constrained-loop-02.S
+lr-sc-constrained-loop-02:
+  config:
+    - check ISA:=regex(.*32.*);check ISA:=regex(.*I.*A.*Zicsr.*); def rvtest_mtrap_routine=True;
+  mnemonics:
+    lr.w: 0
+    sc.w: 0
+  op_comb:
+    "mnemonic == 'lr.w' and rs1 == 'x31' and aq == 0x1": 0       #aq flag used
+    "mnemonic == 'sc.w' and rs1 == 'x26' and rl == 0x1": 0       #rl flag used for some other register  
+  val_comb:
+    #reservation successfull - it should hit 4 times
+    mnemonic == 'lr.w' and get_mem_val(rs1_val, 4) == rd_val  : 0
+    #rd -> 1 on sc -- it should hit 4 times
+    mnemonic == 'sc.w' and get_mem_val(rs1_val, 4) != rs2_val and rd_val!=0: 0
+
+#For lr-sc-constrained-loop-03.S
+lr-sc-constrained-loop-03:
+  config:
+    - check ISA:=regex(.*32.*);check ISA:=regex(.*I.*A.*Zicsr.*); def rvtest_mtrap_routine=True;
+  mnemonics:
+    lr.w: 0
+    sc.w: 0
+  op_comb:
+    "mnemonic == 'lr.w' and aq == 0x1": 0       #aq flag used
+    "mnemonic == 'sc.w' and rl == 0x1": 0       #rl flag used  
+  val_comb:
+    #reservation successfull - it should hit 1 times
+    mnemonic == 'lr.w' and get_mem_val(rs1_val, 4) == rd_val  : 0
+    #rd -> 1 on sc -- it should hit 1 times
+    mnemonic == 'sc.w' and get_mem_val(rs1_val, 4) == rs2_val and rd_val==0: 0
+
+#For lr-sc-constrained-loop-04.S
+lr-sc-constrained-loop-04:
+  config:
+    - check ISA:=regex(.*32.*);check ISA:=regex(.*I.*A.*Zicsr.*); def rvtest_mtrap_routine=True;
+  mnemonics:
+    lr.w: 0
+    sc.w: 0
+  op_comb:
+    "mnemonic == 'lr.w' and aq == 0x1": 0       #aq flag used
+    "mnemonic == 'sc.w' and rl == 0x1": 0       #rl flag used  
+  val_comb:
+    #reservation successfull - it should hit 1 times
+    mnemonic == 'lr.w' and get_mem_val(rs1_val, 4) == rd_val  : 0
+    #rd -> 1 on sc -- it should hit 4 times
+    mnemonic == 'sc.w' and get_mem_val(rs1_val, 4) != rs2_val and rd_val!=0: 0
+
+#For lr-sc-unconstrained-loop-01.S
+lr-sc-unconstrained-loop-01:
+  config:
+    - check ISA:=regex(.*32.*);check ISA:=regex(.*I.*A.*Zicsr.*); def rvtest_mtrap_routine=True;
+  mnemonics:
+    lr.w: 0
+    sc.w: 0
+  op_comb:
+    "mnemonic == 'lr.w' and aq == 0x1": 0       #aq flag used
+    "mnemonic == 'sc.w' and rl == 0x1": 0       #rl flag used  
+  val_comb:
+    #reservation successfull - it should hit 2 times
+    mnemonic == 'lr.w' and get_mem_val(rs1_val, 4) == rd_val  : 0
+    #rd -> 0 on sc -- it should hit 2 times
+    mnemonic == 'sc.w' and get_mem_val(rs1_val, 4) == rs2_val and rd_val==0: 0
+
+#For lr-sc-rl-01.S
+lr-sc-rl-01:
+  config:
+    - check ISA:=regex(.*32.*);check ISA:=regex(.*I.*A.*Zicsr.*); def rvtest_mtrap_routine=True;
+  mnemonics:
+    lr.w: 0
+    sc.w: 0
+  op_comb:
+    "mnemonic == 'lr.w' and aq == 0x0": 0       #no aq flag used
+    "mnemonic == 'sc.w' and rl == 0x1": 0       #rl flag used  
+  val_comb:
+    #reservation successfull - it should hit 4 times
+    mnemonic == 'lr.w' and get_mem_val(rs1_val, 4) == rd_val  : 0
+    #rd -> 0 on sc -- it should hit 4 times
+    mnemonic == 'sc.w' and get_mem_val(rs1_val, 4) == rs2_val and rd_val==0: 0
+
+#For lr-sc-misaligned-01.S
+lr-sc-misaligned-01:
+  config:
+    - check ISA:=regex(.*32.*);check ISA:=regex(.*I.*A.*Zicsr.*); def rvtest_mtrap_routine=True;
+  mnemonics:
+    lr.w: 0
+    sc.w: 0
+  op_comb:
+    "mnemonic == 'lr.w' and aq == 0x0": 0       #no aq flag used
+    "mnemonic == 'sc.w' and rl == 0x0": 0       #no rl flag used  
+  csr_comb:
+    #misaligned store/amo fault -- it should hit 3 times
+    mcause == 0x06: 0
+  val_comb:
+    #reservation failed - it should hit 3 times
+    mnemonic == 'lr.w' and get_mem_val(rs1_val, 4) != rd_val  : 0
+    #rd -> 1 on sc -- it should hit 3 times
+    mnemonic == 'sc.w' and get_mem_val(rs1_val, 4) != rs2_val and rd_val!=0: 0
