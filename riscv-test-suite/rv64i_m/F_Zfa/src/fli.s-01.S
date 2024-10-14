@@ -4,13 +4,12 @@
 //
 // This assembly file tests the fli.s instruction
 // for the following ISA configurations:
-// * RV32IF_Zfa
 // * RV64IF_Zfa
 
 #include "model_test.h"
 #include "arch_test.h"
 
-RVTEST_ISA("RV32IF_Zfa,RV64IF_Zfa")
+RVTEST_ISA("RV64IF_Zfa")
 
 .section .text.init
 .globl rvtest_entry_point
@@ -22,7 +21,7 @@ RVTEST_CODE_BEGIN
 
 #ifdef TEST_CASE_1
 
-RVTEST_CASE(0,"//check ISA:=regex(.*I.*F.*Zfa.*);def TEST_CASE_1=True;",fli.s)
+RVTEST_CASE(0,"//check ISA:=regex(.*RV64.*I.*F.*Zfa.*);def TEST_CASE_1=True;",fli.s)
 
 // Registers with a special purpose
 #define SIG_BASEREG x1
