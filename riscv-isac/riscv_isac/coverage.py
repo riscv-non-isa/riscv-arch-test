@@ -1059,7 +1059,7 @@ def compute_per_line(queue, event, cgf_queue, stats_queue, cgf, xlen, flen, addr
             globals()['get_pte_prop'] = get_pte_prop
 
             if enable :
-                print(instr_vars)
+                # print(instr_vars)
                 ucovpt = []
                 covpt = []
                 csr_covpt = []
@@ -1491,7 +1491,7 @@ def compute_per_line(queue, event, cgf_queue, stats_queue, cgf, xlen, flen, addr
         stats_queue.close()
 
 def compute(trace_file, test_name, cgf, parser_name, decoder_name, detailed, xlen, flen, addr_pairs
-        , dump, cov_labels, sig_addrs, window_size, inxFlg, elf, no_count=False, procs=1):
+        , dump, cov_labels, sig_addrs, window_size, inxFlg, elf, zilsdFlg, no_count=False, procs=1):
     '''Compute the Coverage'''
 
     global arch_state
@@ -1565,6 +1565,7 @@ def compute(trace_file, test_name, cgf, parser_name, decoder_name, detailed, xle
     decoder_pm.register(decoderclass())
     decoder = decoder_pm.hook
     decoder.setup(inxFlag=inxFlg, arch="rv"+str(xlen))
+    decoder.setupz(zilsdFlg=zilsdFlg, arch="rv"+str(xlen))
 
     iterator = iter(parser.__iter__()[0])
 
