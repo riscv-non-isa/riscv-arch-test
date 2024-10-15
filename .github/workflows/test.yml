@@ -25,12 +25,12 @@ on:
 jobs:
 
   ACT-sail-spike:
+    name: ACT-sail-spike (RV${{ matrix.xlen }})
     runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
       matrix:
-        isa_group: 
-          - RVIMAFDCZicsr_Zifencei
+        xlen: [32, 64]
 
     steps:
 
@@ -45,19 +45,12 @@ jobs:
           sudo apt-get install autoconf automake autotools-dev curl python3 python3-pip libmpc-dev libmpfr-dev libgmp-dev gawk build-essential bison flex texinfo gperf libtool patchutils bc zlib1g-dev libexpat-dev ninja-build git cmake libglib2.0-dev libslirp-dev pkg-config
           pip3 install git+https://github.com/riscv/riscof.git
       
-      - name: Build RISCV-GNU Toolchain (32 bit)
+      - name: Build RISCV-GNU Toolchain (${{ matrix.xlen }} bit)
         run: |
-          wget -c https://github.com/riscv-collab/riscv-gnu-toolchain/releases/download/2024.09.03/riscv32-elf-ubuntu-20.04-gcc-nightly-2024.09.03-nightly.tar.gz
-          tar -xzf riscv32-elf-ubuntu-20.04-gcc-nightly-2024.09.03-nightly.tar.gz
-          mv riscv riscv32  
-          echo $GITHUB_WORKSPACE/riscv32/bin >> $GITHUB_PATH
-
-      - name: Build RISCV-GNU Toolchain (64 bit)
-        run: |
-          wget -c https://github.com/riscv-collab/riscv-gnu-toolchain/releases/download/2024.09.03/riscv64-elf-ubuntu-20.04-gcc-nightly-2024.09.03-nightly.tar.gz
-          tar -xzf riscv64-elf-ubuntu-20.04-gcc-nightly-2024.09.03-nightly.tar.gz
-          mv riscv riscv64  
-          echo $GITHUB_WORKSPACE/riscv64/bin >> $GITHUB_PATH
+          wget -c https://github.com/riscv-collab/riscv-gnu-toolchain/releases/download/2024.09.03/riscv${{ matrix.xlen }}-elf-ubuntu-20.04-gcc-nightly-2024.09.03-nightly.tar.gz
+          tar -xzf riscv${{ matrix.xlen }}-elf-ubuntu-20.04-gcc-nightly-2024.09.03-nightly.tar.gz
+          mv riscv riscv${{ matrix.xlen }}
+          echo $GITHUB_WORKSPACE/riscv${{ matrix.xlen }}/bin >> $GITHUB_PATH
 
       - name: Install riscv-isac
         run: |
@@ -87,16 +80,10 @@ jobs:
           curl --location https://github.com/rems-project/sail/releases/download/0.18-linux-binary/sail.tar.gz | sudo tar xvz --directory=/usr/local --strip-components=1
           git clone https://github.com/riscv/sail-riscv.git
           cd sail-riscv
-          ARCH=RV32 make
-          ARCH=RV64 make
+          ARCH=RV${{ matrix.xlen }} make
           echo $PWD/c_emulator >> $GITHUB_PATH            
       
-      - name: Config and run riscof for RV32
+      - name: Config and run riscof for RV${{ matrix.xlen }}
         run: |
-          cd riscof-plugins/rv32
-          riscof run --config config.ini --suite ../../riscv-test-suite/rv32i_m/ --env ../../riscv-test-suite/env
-
-      - name: Config and run riscof for RV64
-        run: |
-          cd riscof-plugins/rv64
-          riscof run --config config.ini --suite ../../riscv-test-suite/rv64i_m/ --env ../../riscv-test-suite/env
+          cd riscof-plugins/rv${{ matrix.xlen }}
+          riscof run --config config.ini --suite ../../riscv-test-suite/rv${{ matrix.xlen }}i_m/ --env ../../riscv-test-suite/env
