@@ -12,49 +12,18 @@ RVTEST_CODE_BEGIN
 #ifdef TEST_CASE_1
   RVTEST_CASE(1,"//check ISA:=regex(.*I.*Zicsr.*Sdtrig.*);def TEST_CASE_1=True;",execute_match4)
   RVTEST_SIGBASE(x1, signature_x1_0)
-      
-  # Set mtvec to the address of the trap handler
-  la a0, trap_handler
-  csrw mtvec, a0 
   
-  csrr t2, misa
-  RVTEST_SIGUPD(x1,t2) 
-  li t1, (1 << 18)        
-  and t2,t2,t1     
-
-  bnez t2, implement_mie
-  beqz t2 , implement_tcontrol
-
-  implement_mie:                                   
-    li t1,(1<<3)
-    csrw mstatus, t1        
-    csrr t4, mstatus        
-    j resume_code
-
-  implement_tcontrol:   
-
-    li t3, (1<<3)             
-    csrw tcontrol, t3
-    csrr t4, tcontrol
-    j resume_code    
-
-resume_code:  
-   # Write 0 to tselect, read back and append it to the signature
-  csrw tselect, zero
-  csrr t0, tselect
-  RVTEST_SIGUPD(x1, t0)
+  CHECK_MISA_AND_SETUP_TRIGGERS()
   
-  # Read tinfo 
-  csrr t6, tinfo
-
-   # Set the value of tdata
-   csrw tdata1, zero
-   csrr a3, tdata1
- 
   # Set the address for tdata2 where the trigger should occur
-   la t2, 0x80008000   
-   csrw tdata2, t2
- 
+  la t2, break_here
+  li t3, 0xffff
+  and t4, t2, t3
+  li t3, 0xffff0000
+  or t4, t3, t4
+  csrw tdata2, t4
+  break_here: nop
+  
   # Set up trigger to cause a trap on a breakpoint
   # Configure tdata1 for address match control
   li t2, (CSR_TDATA1_TYPE_MCONTROL6 << 28 | \
@@ -73,7 +42,7 @@ resume_code:
   RVTEST_SIGUPD(x1, t6)
 
   # Trigger setup complete; now perform an instruction that will hit the trigger
-    la t4, 0x80008000
+    la t4, 0xffff01ea
     jalr x0,0(t4)
   nop
   nop

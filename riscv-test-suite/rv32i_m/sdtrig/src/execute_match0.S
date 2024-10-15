@@ -12,49 +12,13 @@ RVTEST_CODE_BEGIN
 #ifdef TEST_CASE_1
   RVTEST_CASE(1,"//check ISA:=regex(.*I.*Zicsr.*Sdtrig.*);def TEST_CASE_1=True;",execute_match0)
   RVTEST_SIGBASE(x1, signature_x1_0)
-      # Set mtvec to the address of the trap handler
-  la a0, trap_handler
-  csrw mtvec, a0 
   
-  # Read the misa 
-  csrr t2, misa
-  RVTEST_SIGUPD(x1,t2) 
-  li t1, (1 << 18)        
-  and t2,t2,t1     
-
-  bnez t2, implement_mie
-  beqz t2 , implement_tcontrol
-
-implement_mie:                                   
-    li t1,(1<<3)
-    csrw mstatus, t1        
-    csrr t4, mstatus        
-    j resume_code
-
-implement_tcontrol:   
-
-    li t3, (1<<3)             
-    csrw tcontrol, t3
-    csrr t4, tcontrol
-    j resume_code    
-
-resume_code: 
-   # Write 0 to tselect, read back and append it to the signature
-  csrw tselect, zero
-  csrr t0, tselect
-  RVTEST_SIGUPD(x1, t0)
-  
-  # Read tinfo 
-   csrr t6, tinfo
-
-  # Set the value of tdata
-   csrw tdata1, zero
-   csrr a3, tdata1
+  CHECK_MISA_AND_SETUP_TRIGGERS()
  
   # Set the address for tdata2 where the trigger should occur
    la t2, 0x80001234  # Set the data value to match
-   csrw tdata2, t2
-  
+    csrw tdata2, t4
+   
 
   # Set up trigger to cause a trap on a breakpoint
   # Configure tdata1 for address match control
@@ -64,7 +28,7 @@ resume_code:
          CSR_MCONTROL6_SIZE_ANY << 16 | \
          CSR_MCONTROL6_CHAIN_DISABLED << 11 | \
          CSR_MCONTROL6_ACTION_BREAKPOINT << 12 | \
-         CSR_MCONTROL6_MATCH_EQUAL << 7 | \
+         CSR_MCONTROL6_MATCH_MASK_HIGH << 7 | \
          CSR_MCONTROL6_M | \
          CSR_MCONTROL6_EXECUTE)
   csrw tdata1, t2

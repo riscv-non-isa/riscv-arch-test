@@ -12,48 +12,17 @@ RVTEST_CODE_BEGIN
 #ifdef TEST_CASE_1
   RVTEST_CASE(1,"//check ISA:=regex(.*I.*Zicsr.*Sdtrig.*);def TEST_CASE_1=True;",store_match4)
   RVTEST_SIGBASE(x1, signature_x1_0)
-  # Set mtvec to the address of the trap handler
-    la a0, trap_handler
-    csrw mtvec, a0
-
- # Read the misa value 
-  csrr t2, misa
-  RVTEST_SIGUPD(x1,t2)           
-  li t1, (1 << 18)        
-  and t2,t2,t1     
-
-  bnez t2, implement_mie
-  beqz t2 , implement_tcontrol
-
-  implement_mie:                                   
-    li t1,(1<<3)
-    csrw mstatus, t1        
-    csrr t4, mstatus        
-    j resume_code
-
-  implement_tcontrol:   
-
-    li t3, (1<<3)             
-    csrw tcontrol, t3
-    csrr t4, tcontrol
-    j resume_code    
-
-resume_code: 
-
- #write 0 to tselect,read back and append it to the signature
-  csrw tselect,zero
-  csrr t0,tselect
-  RVTEST_SIGUPD(x1, t0)
   
-    # Read tinfo
-   csrr t6, tinfo
-  
-   csrw tdata1, zero
-   csrr a3, tdata1
-  
+   CHECK_MISA_AND_SETUP_TRIGGERS()
+     
    # Set the value of tdata2 to the address to match
-    la t2,0x80010001
-    csrw tdata2, t2
+   la t2, break_here
+   li t3, 0xffff
+   and t4, t2, t3
+   li t3, 0xffff0000
+   or t4, t3, t4
+   csrw tdata2, t4
+   break_here: nop
     
     # Set the value of tdata1 for address match trigger
     li t2, (CSR_TDATA1_TYPE_MCONTROL6 << 28 |\
@@ -72,7 +41,7 @@ resume_code:
     RVTEST_SIGUPD(x1, t6)
    
         # Trigger setup complete; now perform an instruction that will hit the trigger
-        la t4,0x00010001
+        la t4,0xffff01ea
 	sw t4, 0(t4)      
         nop
         nop

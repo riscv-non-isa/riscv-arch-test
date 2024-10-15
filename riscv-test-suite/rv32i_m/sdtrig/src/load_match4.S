@@ -12,67 +12,38 @@ RVTEST_CODE_BEGIN
 #ifdef TEST_CASE_1
   RVTEST_CASE(1,"//check ISA:=regex(.*I.*Zicsr.*Sdtrig.*);def TEST_CASE_1=True;",load_match4)
   RVTEST_SIGBASE(x1, signature_x1_0)
-  # Set mtvec to the address of the trap handler
-    la a0, trap_handler
-    csrw mtvec, a0
-
-  #Read the misa value 
-  csrr t2, misa
-  RVTEST_SIGUPD(x1,t2)           
-  li t1, (1 << 18)        
-  and t2,t2,t1     
-
-  bnez t2, implement_mie
-  beqz t2 , implement_tcontrol
-
-  implement_mie:                                   
-    li t1,(1<<3)
-    csrw mstatus, t1        
-    csrr t4, mstatus        
-    j resume_code
-
-  implement_tcontrol:   
-
-    li t3, (1<<3)             
-    csrw tcontrol, t3
-    csrr t4, tcontrol
-    j resume_code    
-
-resume_code:    
- #write 0 to tselect,read back and append it to the signature
-   csrw tselect, zero
-   csrr t0, tselect
-   RVTEST_SIGUPD(x1, t0)
-   
-    # Read tinfo 
-   csrr t6, tinfo
-
-  csrw tdata1, zero
-  csrr a3, tdata1
   
-  # Set the value of tdata2 to the address to match
-    la t2,0x80010001
-    csrw tdata2, t2
+  CHECK_MISA_AND_SETUP_TRIGGERS()
+  
+  # Set the address for tdata2 where the trigger should occur
+  la t2, break_here
+  li t3, 0xffff
+  and t4, t2, t3
+  li t3, 0xffff0000
+  or t4, t3, t4
+  csrw tdata2, t4
+  break_here: nop
+  
+  # Set up trigger to cause a trap on a breakpoint
+  # Configure tdata1 for address match control
+  li t2, (CSR_TDATA1_TYPE_MCONTROL6 << 28 | \
+         CSR_TDATA1_DMODE_BOTH << 27 | \
+         CSR_MCONTROL6_SELECT_ADDRESS << 21 | \
+         CSR_MCONTROL6_SIZE_ANY << 16 | \
+         CSR_MCONTROL6_CHAIN_DISABLED << 11 | \
+         CSR_MCONTROL6_ACTION_BREAKPOINT << 12 | \
+         CSR_MCONTROL6_MATCH_MASK_LOW << 7 | \
+         CSR_MCONTROL6_M | \
+         CSR_MCONTROL6_LOAD)
+  csrw tdata1, t2
+  csrr t4,tdata1
+  RVTEST_SIGUPD(x1, t4)
+  csrr t6,tdata2
+  RVTEST_SIGUPD(x1, t6)
 
-   # Set the value of tdata1 for address match trigger
-    li t2, (CSR_TDATA1_TYPE_MCONTROL6 << 28 |\
-           CSR_TDATA1_DMODE_BOTH << 27  | \
-           CSR_MCONTROL6_SELECT_ADDRESS << 21|\
-           CSR_MCONTROL6_SIZE_ANY << 16  |\
-           CSR_MCONTROL6_CHAIN_DISABLED <<11  | \
-           CSR_MCONTROL6_ACTION_BREAKPOINT <<12 |\
-           CSR_MCONTROL6_MATCH_MASK_LOW <<7 | \
-           CSR_MCONTROL6_M |\
-           CSR_MCONTROL6_LOAD)
-    csrw tdata1,t2
-    csrr a3,tdata1
-    RVTEST_SIGUPD(x1,a3)
-    csrr t6,tdata2
-    RVTEST_SIGUPD(x1, t6)
-    
-    # Trigger setup complete; now perform an instruction that will hit the trigger
-    la t4,0x00010001
-    lw t4, 0(t4)       # Load to trigger match (this should trigger the break)
+  # Trigger setup complete; now perform an instruction that will hit the trigger
+    la t4, 0xffff01ea
+    lw t4, 0(t4) # Load to trigger match (this should trigger the break)
     nop
     nop
 
