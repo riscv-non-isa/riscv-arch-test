@@ -94,18 +94,41 @@ jobs:
           path: ${{ github.workspace }}/spike
           key: ${{ steps.cache-spike-restore.outputs.cache-primary-key }}
 
+      - name: Get Latest Sail Commit
+        run: |
+              SAIL_HASH=$(git ls-remote https://github.com/riscv/sail-riscv.git HEAD | awk '{ print $1}')
+              echo "SAIL_HASH=$SAIL_HASH" >> "$GITHUB_ENV"
+
+      - name: Restore cached Sail
+        id: cache-sail-restore
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ github.workspace }}/sail
+          key: sail-${{ env.SAIL_HASH }}-RV${{ matrix.xlen }}
+
       - name: Install Sail
+        if: steps.cache-sail-restore.outputs.cache-hit != 'true'
         run: |
           sudo mkdir -p /usr/local
           curl --location https://github.com/rems-project/sail/releases/download/0.18-linux-binary/sail.tar.gz | sudo tar xvz --directory=/usr/local --strip-components=1
           git clone https://github.com/riscv/sail-riscv.git
           cd sail-riscv
           ARCH=RV${{ matrix.xlen }} make
-          echo $PWD/c_emulator >> $GITHUB_PATH
+          mkdir -p $GITHUB_WORKSPACE/sail
+          mv c_emulator/riscv_sim_RV${{ matrix.xlen }} $GITHUB_WORKSPACE/sail/riscv_sim_RV${{ matrix.xlen }}
+
+      - name: Save cached Sail
+        if: steps.cache-sail-restore.outputs.cache-hit != 'true'
+        id: cache-sail-save
+        uses: actions/cache/save@v4
+        with:
+          path: ${{ github.workspace }}/sail
+          key: ${{ steps.cache-sail-restore.outputs.cache-primary-key }}
 
       - name: Set PATH
         run: |
               echo $GITHUB_WORKSPACE/spike/bin >> $GITHUB_PATH
+              echo $GITHUB_WORKSPACE/sail >> $GITHUB_PATH
       
       - name: Config and run riscof for RV${{ matrix.xlen }}
         run: |
