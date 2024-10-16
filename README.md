@@ -209,22 +209,23 @@ Note: Use sudo if the installation path requires administrative privileges.
 
 
 ### 2. SAIL (SAIL C-emulator)
+First install the [Sail Compiler](https://github.com/rems-project/sail/). It is recommended to use the pre-compiled [binary release](https://github.com/rems-project/sail/releases). This can be performed as follows:
 
 ```bash
-$ sudo apt-get install opam build-essential libgmp-dev z3 pkg-config zlib1g-dev
-$ opam init -y --disable-sandboxing
-$ opam switch create ocaml-base-compiler
-$ opam install sail -y
-$ eval $(opam config env)
+$ sudo apt-get install libgmp-dev pkg-config zlib1g-dev curl
+$ curl --location https://github.com/rems-project/sail/releases/download/0.18-linux-binary/sail.tar.gz | [sudo] tar xvz --directory=/path/to/install --strip-components=1
+```
+Note: Make sure to add the path `/path/to/install` to your `$PATH`.
+
+Then build the RISC-V Sail Model:
+```bash
 $ git clone https://github.com/riscv/sail-riscv.git
 $ cd sail-riscv
 $ ARCH=RV32 make
 $ ARCH=RV64 make
-$ ln -s sail-riscv/c_emulator/riscv_sim_RV64 /usr/bin/riscv_sim_RV64
-$ ln -s sail-riscv/c_emulator/riscv_sim_RV32 /usr/bin/riscv_sim_RV32
 ```
 
-This will create a C simulator in `c_emulator/riscv_sim_RV64` and `c_emulator/riscv_sim_RV32`. You will need to add these paths to your `$PATH` or create an alias to execute them from the command line.
+This will create a C simulator in `c_emulator/riscv_sim_RV64` and `c_emulator/riscv_sim_RV32`. You will need to add this path to your `$PATH` or create an alias to execute them from the command line.
 
 
 ## Necessary Env Files
