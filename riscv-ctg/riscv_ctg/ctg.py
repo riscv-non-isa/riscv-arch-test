@@ -106,7 +106,7 @@ def ctg(verbose, out, random ,xlen_arg,flen_arg, cgf_file,num_procs,base_isa, ma
     logger.info('Copyright (c) 2020, InCore Semiconductors Pvt. Ltd.')
     logger.info('All Rights Reserved.')
     logger.info("Copying env folder to Output directory.")
-    env_dir = os.path.join(out,"env")
+    env_dir = os.path.expanduser("~/riscv-arch-test/riscv-test-suite/env")
     if not os.path.exists(env_dir):
         shutil.copytree(const.env,env_dir)
     xlen = int(xlen_arg)
