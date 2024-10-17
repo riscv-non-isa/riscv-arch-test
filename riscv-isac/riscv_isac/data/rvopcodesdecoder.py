@@ -452,6 +452,10 @@ class disassembler():
                     temp_instrobj.rm = int(get_arg_val(arg)(mcode), 2)
                 if arg == 'csr':
                     temp_instrobj.imm = int(get_arg_val(arg)(mcode), 2)
+                if arg == 'bs':
+                    temp_instrobj.imm = int(get_arg_val(arg)(mcode), 2)
+                if arg == 'rnum':
+                    temp_instrobj.imm = int(get_arg_val(arg)(mcode), 2)
                 if arg.find('imm') != -1:
                     if arg in ['imm12', 'imm20', 'zimm', 'imm2', 'imm3', 'imm4', 'imm5']:
                         imm = get_arg_val(arg)(mcode)
