@@ -1,0 +1,97 @@
+a_and_d_bit_hart_upd_S_mode:
+  config:
+    - check ISA:=regex(.*32.*); check ISA:=regex(.*I.*Zicsr.*); def rvtest_mtrap_routine=True; def rvtest_strap_routine=True;
+  mnemonics:
+    "{sw, csrrc, csrrs, csrrw, lw, jalr}": 0
+  op_comb:
+    #Check that the satp is active --> in S mode & also check that SV32 is configured
+    'mode == "S" and (satp >> 31) ==  ${SATP_MODE_SV32}': 0
+  csr_comb:
+    #The ppn of rvtest_Sroot_pg_tbl should be equal to the satp lower 22 bits (when the satp is active)
+    '((satp) & 0x003FFFFF)  == get_addr("rvtest_Sroot_pg_tbl") >> 12': 0
+  val_comb:
+    #CASES at LEVEL 1
+    # Test Case:1 -> No D bit   set and A bit   set and RWX set -> NO FAULT and PTE update -- LEVEL 1
+    'mode == "S" and get_pte_prop("ARWX",   dptw1cont) ==  1 and get_pte_prop("D",  dptw1cont) == 0 and dptw0cont == None': 0
+    # Test Case:2 ->    D bit   set and A bit   set and RWX set -> NO FAULT -- LEVEL 1
+    'mode == "S" and get_pte_prop("ADRWX",   dptw1cont) ==  1 and                                        dptw0cont == None': 0
+    # Test Case:3 ->    D bit   set but A bit unset and RWX set -> NO FAULT and PTE update -- LEVEL 1
+    'mode == "S" and get_pte_prop("DRWX",   dptw1cont) ==  1  and get_pte_prop("A",  dptw1cont) == 0 and dptw0cont == None': 0
+    # Test Case:4 -> No D bit unset but A bit unset and RWX set -> NO FAULT and PTE update -- LEVEL 1
+    'mode == "S" and get_pte_prop("RWX",   dptw1cont) ==  1 and get_pte_prop("AD",  dptw1cont) == 0  and dptw0cont == None': 0
+    #CASES at LEVEL 0
+    # Test Case:5 -> No D bit   set and A bit   set and RWX set -> NO FAULT and PTE update -- LEVEL 0
+    'mode == "S" and get_pte_prop("RWX", dptw1cont) == 0 and get_pte_prop("ARWX", dptw0cont) ==  1 and get_pte_prop("D", dptw0cont) == 0': 0
+    # Test Case:6 ->    D bit   set and A bit   set and RWX set -> NO FAULT and PTE update -- LEVEL 0
+    'mode == "S" and get_pte_prop("RWX", dptw1cont) == 0 and get_pte_prop("ADRWX", dptw0cont) ==  1': 0
+    # Test Case:7 ->    D bit   set and A bit unset and RWX set -> NO FAULT and PTE update -- LEVEL 0
+    'mode == "S" and get_pte_prop("RWX", dptw1cont) == 0 and get_pte_prop("DRWX", dptw0cont) ==  1 and get_pte_prop("A", dptw0cont) == 0': 0
+    # Test Case:8 -> No D bit   set and A bit unset and RWX set -> NO FAULT and PTE update -- LEVEL 0
+    'mode == "S" and get_pte_prop("RWX", dptw1cont) == 0 and get_pte_prop("RWX", dptw0cont) ==  1 and get_pte_prop("AD", dptw0cont) == 0': 0
+    #Faults check at LEVEL 1 and LEVEL 0
+    #Test Case:1 --> successfull page table walk
+    'mode == "S" and get_pte_prop("ARWX",   dptw1cont) ==  1 and get_pte_prop("D",  dptw1cont) == 0 and dptw0cont == None   and len_dptw == 1': 0
+    #Test Case:2 --> successfull page table walk
+    'mode == "S" and get_pte_prop("ADRWX",   dptw1cont) ==  1 and                                        dptw0cont == None  and len_dptw == 1': 0
+    #Test Case:3 --> successfull page table walk
+    'mode == "S" and get_pte_prop("DRWX",   dptw1cont) ==  1  and get_pte_prop("A",  dptw1cont) == 0 and dptw0cont == None  and len_dptw == 1': 0
+    #Test Case:4 --> successfull page table walk
+    'mode == "S" and get_pte_prop("RWX",   dptw1cont) ==  1 and get_pte_prop("AD",  dptw1cont) == 0  and dptw0cont == None  and len_dptw == 1': 0
+    #Test Case:5 --> successfull page table walk
+    'mode == "S" and get_pte_prop("RWX", dptw1cont) == 0 and get_pte_prop("ARWX", dptw0cont) ==  1 and get_pte_prop("D", dptw0cont) == 0 and len_dptw == 2': 0
+    #Test Case:6 --> successfull page table walk
+    'mode == "S" and get_pte_prop("RWX", dptw1cont) == 0 and get_pte_prop("ADRWX", dptw0cont) ==  1                         and len_dptw == 2': 0
+    #Test Case:7 --> successfull page table walk
+    'mode == "S" and get_pte_prop("RWX", dptw1cont) == 0 and get_pte_prop("DRWX", dptw0cont) ==  1 and get_pte_prop("A", dptw0cont) == 0 and len_dptw == 2': 0
+    #Test Case:8 --> successfull page table walk
+    'mode == "S" and get_pte_prop("RWX", dptw1cont) == 0 and get_pte_prop("RWX", dptw0cont) ==  1 and get_pte_prop("AD", dptw0cont) == 0 and len_dptw == 2': 0
+
+a_and_d_bit_hart_upd_U_mode:
+  config:
+    # Ensure that the ISA is 32-bit, and the supported extensions include I and Zicsr.
+    - check ISA:=regex(.*32.*); check ISA:=regex(.*I.*Zicsr.*); def rvtest_mtrap_routine=True; def rvtest_strap_routine=True;
+  mnemonics:
+    # Verify that the following instructions are tested: sw, csrrc, csrrs, csrrw, lw, jalr.
+    "{sw, csrrc, csrrs, csrrw, lw, jalr}": 0
+  op_comb:
+    # Check if the `satp` is active in Supervisor mode (S) and verify that the SV32 paging scheme is configured.
+    'mode == "U" and (satp >> 31) == ${SATP_MODE_SV32}': 0
+  csr_comb:
+    # Ensure that the Physical Page Number (PPN) of `rvtest_Sroot_pg_tbl` matches the lower 22 bits of the `satp` register when `satp` is active.
+    '((satp) & 0x003FFFFF) == get_addr("rvtest_Sroot_pg_tbl") >> 12': 0
+  val_comb:
+    # LEVEL 1 Test Cases:
+    # Test Case 1: A bit set, D bit not set, RWX set --> No fault, and the PTE should be updated.
+    'mode == "U" and get_pte_prop("ARWUX", dptw1cont) == 1 and get_pte_prop("D", dptw1cont) == 0 and dptw0cont == None': 0
+    # Test Case 2: Both A and D bits set, RWX set --> No fault.
+    'mode == "U" and get_pte_prop("ADRWUX", dptw1cont) == 1 and dptw0cont == None': 0
+    # Test Case 3: D bit set, A bit not set, RWX set --> No fault, and the PTE should be updated.
+    'mode == "U" and get_pte_prop("DRWUX", dptw1cont) == 1 and get_pte_prop("A", dptw1cont) == 0 and dptw0cont == None': 0
+    # Test Case 4: Neither A nor D bits set, RWX set --> No fault, and the PTE should be updated.
+    'mode == "U" and get_pte_prop("RWUX", dptw1cont) == 1 and get_pte_prop("AD", dptw1cont) == 0 and dptw0cont == None': 0
+    # LEVEL 0 Test Cases:
+    # Test Case 5: A bit set, D bit not set, RWX set --> No fault, and the PTE should be updated.
+    'mode == "U" and get_pte_prop("RWUX", dptw1cont) == 0 and get_pte_prop("ARWUX", dptw0cont) == 1 and get_pte_prop("D", dptw0cont) == 0': 0
+    # Test Case 6: Both A and D bits set, RWX set --> No fault, and the PTE should be updated.
+    'mode == "U" and get_pte_prop("RWUX", dptw1cont) == 0 and get_pte_prop("ADRWUX", dptw0cont) == 1': 0
+    # Test Case 7: D bit set, A bit not set, RWX set --> No fault, and the PTE should be updated.
+    'mode == "U" and get_pte_prop("RWUX", dptw1cont) == 0 and get_pte_prop("DRWUX", dptw0cont) == 1 and get_pte_prop("A", dptw0cont) == 0': 0
+    # Test Case 8: Neither A nor D bits set, RWX set --> No fault, and the PTE should be updated.
+    'mode == "U" and get_pte_prop("RWUX", dptw1cont) == 0 and get_pte_prop("RWUX", dptw0cont) == 1 and get_pte_prop("AD", dptw0cont) == 0': 0
+    # Fault Checks:
+    # Test Case 1: Successful page table walk at Level 1.
+    'mode == "U" and get_pte_prop("ARWUX", dptw1cont) == 1 and get_pte_prop("D", dptw1cont) == 0 and dptw0cont == None and len_dptw == 1': 0
+    # Test Case 2: Successful page table walk at Level 1.
+    'mode == "U" and get_pte_prop("ADRWUX", dptw1cont) == 1 and dptw0cont == None and len_dptw == 1': 0
+    # Test Case 3: Successful page table walk at Level 1.
+    'mode == "U" and get_pte_prop("DRWUX", dptw1cont) == 1 and get_pte_prop("A", dptw1cont) == 0 and dptw0cont == None and len_dptw == 1': 0
+    # Test Case 4: Successful page table walk at Level 1.
+    'mode == "U" and get_pte_prop("RWUX", dptw1cont) == 1 and get_pte_prop("AD", dptw1cont) == 0 and dptw0cont == None and len_dptw == 1': 0
+    # Test Case 5: Successful page table walk at Level 0.
+    'mode == "U" and get_pte_prop("RWUX", dptw1cont) == 0 and get_pte_prop("ARWUX", dptw0cont) == 1 and get_pte_prop("D", dptw0cont) == 0 and len_dptw == 2': 0
+    # Test Case 6: Successful page table walk at Level 0.
+    'mode == "U" and get_pte_prop("RWUX", dptw1cont) == 0 and get_pte_prop("ADRWUX", dptw0cont) == 1 and len_dptw == 2': 0
+    # Test Case 7: Successful page table walk at Level 0.
+    'mode == "U" and get_pte_prop("RWUX", dptw1cont) == 0 and get_pte_prop("DRWUX", dptw0cont) == 1 and get_pte_prop("A", dptw0cont) == 0 and len_dptw == 2': 0
+    # Test Case 8: Successful page table walk at Level 0.
+    'mode == "U" and get_pte_prop("RWUX", dptw1cont) == 0 and get_pte_prop("RWUX", dptw0cont) == 1 and get_pte_prop("AD", dptw0cont) == 0 and len_dptw == 2': 0
