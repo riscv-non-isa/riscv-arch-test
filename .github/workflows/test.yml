@@ -143,8 +143,8 @@ jobs:
         run: |
           folder_size=$(du -sm /home/runner/work/riscv-arch-test/riscv-arch-test/riscof-plugins/rv${{ matrix.xlen }}/riscof_work | cut -f1)
           echo "Folder size: ${folder_size} MB"
-          if [ "$folder_size" -gt 150 ]; then
-            echo "Size exceeds 150 MB. Skipping upload."
+          if [ "$folder_size" -gt 1000 ]; then
+            echo "Size exceeds 1 GB. Skipping upload."
             echo "upload=false" >> $GITHUB_ENV  # Set an environment variable to skip upload
           else
             echo "Size is within limit. Proceeding with upload."
