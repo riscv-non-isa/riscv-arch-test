@@ -151,8 +151,8 @@ jobs:
             echo "upload=true" >> $GITHUB_ENV  # Set an environment variable to proceed with upload
           fi
 
-     # Upload the riscof_work for rv ${{ matrix.xlen }} folder if size check passes
-      - name: Upload the riscof_work for rv ${{ matrix.xlen }} folder
+     # Upload the riscof_work for rv${{ matrix.xlen }} folder if size check passes
+      - name: Upload the riscof_work for rv${{ matrix.xlen }} folder
         # Proceed with upload only if the size is within limit  
         if: ${{ env.upload == 'true' }}
         uses: actions/upload-artifact@v4
@@ -161,6 +161,6 @@ jobs:
           path: /home/runner/work/riscv-arch-test/riscv-arch-test/riscof-plugins/rv${{ matrix.xlen }}/riscof_work/
           if-no-files-found: warn
           retention-days: 3
-          compression-level: 6  # Default compression level; adjust if needed
-          overwrite: true  # Allows overwriting existing artifacts with the same name
-          include-hidden-files: false  # Only uploads visible files (adjust if hidden files are required)
+          compression-level: 6
+          overwrite: true
+          include-hidden-files: false
