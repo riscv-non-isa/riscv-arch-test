@@ -51,6 +51,8 @@
 // Total Expected Faults: 14
 // ----------------------------------------------------------------------------------------------------------------------
 
+//TODO: instead of using two different tests, use a single test for hart/software update.
+
 #include "model_test.h"
 
 #include "arch_test.h"
@@ -307,7 +309,7 @@ main:
 #endif
 //---------------------------------------------------------------------------------------------------------------------------------
 RVTEST_CODE_END
-
+RVMODEL_HALT
 RVTEST_DATA_BEGIN
 .align 22
 

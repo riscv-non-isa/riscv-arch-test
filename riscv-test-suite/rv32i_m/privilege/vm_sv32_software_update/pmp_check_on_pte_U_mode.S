@@ -237,7 +237,7 @@ After this region till 0xFFFFFFFF, RWX permissions via TOR
 #endif
 //---------------------------------------------------------------------------------------------------------------------------------
 RVTEST_CODE_END
-
+RVMODEL_HALT
 RVTEST_DATA_BEGIN
 .align 22
 

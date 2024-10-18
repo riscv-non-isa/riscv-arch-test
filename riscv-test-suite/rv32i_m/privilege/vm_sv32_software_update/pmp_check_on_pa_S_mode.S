@@ -238,7 +238,7 @@ Then, Region 3 till 0xFFFFFFFF with RWX and as a TOR Region above rvtest_data_1_
 #endif
 //---------------------------------------------------------------------------------------------------------------------------------
 RVTEST_CODE_END
-
+RVMODEL_HALT
 RVTEST_DATA_BEGIN
 .align 22
 

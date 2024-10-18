@@ -21,6 +21,8 @@
 #define LEVEL3 0x03
 #define LEVEL4 0x04
 
+#define ALL_F_S 0xFFFFFFFF
+
 #define sv39 0x00
 #define sv48 0x01
 #define sv57 0x02
