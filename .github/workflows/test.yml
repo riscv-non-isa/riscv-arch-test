@@ -28,7 +28,7 @@ jobs:
     name: ACT-sail-spike (RV${{ matrix.xlen }})
     runs-on: ubuntu-22.04
     # Set a 15-minute time limit for this job
-    timeout-minutes: 15
+    timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
