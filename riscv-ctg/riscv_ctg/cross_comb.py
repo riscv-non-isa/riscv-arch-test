@@ -3,13 +3,11 @@ import random
 from constraint import *
 
 import riscv_isac.utils as isac_utils
-from riscv_ctg import constants
 
 import riscv_ctg.utils as utils
 import riscv_ctg.constants as const
 from riscv_ctg.constants import *
 from riscv_ctg.log import logger
-from riscv_ctg.__init__ import __version__
 from riscv_ctg.generator import OPS
 from riscv_ctg.dsp_function import *
 

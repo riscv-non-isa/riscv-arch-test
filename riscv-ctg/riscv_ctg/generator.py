@@ -1,5 +1,4 @@
 # See LICENSE.incore for details
-import random
 from collections import defaultdict
 from constraint import *
 import re
@@ -7,12 +6,10 @@ from riscv_ctg.constants import *
 from riscv_ctg.log import logger
 from riscv_ctg.helpers import *
 from riscv_isac.InstructionObject import instructionObject
-import time
 from math import *
 import struct
 import sys
 import itertools
-import re
 
 # F
 one_operand_finstructions = ["fsqrt.s","fmv.x.w","fcvt.wu.s","fcvt.w.s","fclass.s","fcvt.l.s","fcvt.lu.s","fcvt.s.l","fcvt.s.lu"]

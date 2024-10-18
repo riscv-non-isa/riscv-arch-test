@@ -1,7 +1,6 @@
 # See LICENSE.incore for details
 
 """Common Utils """
-import sys
 import os
 import subprocess
 import shlex
@@ -213,7 +212,7 @@ class Command():
         """
         kwargs.setdefault('shell', self._is_shell_command())
         cwd = self._path2str(kwargs.get(
-            'cwd')) if not kwargs.get('cwd') is None else self._path2str(
+            'cwd')) if kwargs.get('cwd') is not None else self._path2str(
                 os.getcwd())
         kwargs.update({'cwd': cwd})
         logger.debug(cwd)

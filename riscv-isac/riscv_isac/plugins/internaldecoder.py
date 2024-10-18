@@ -2331,7 +2331,7 @@ class disassembler():
         opcode = self.FIRST2_MASK & instr
         try:
             instrObj = self.C_OPCODES[opcode](instrObj_temp)
-        except KeyError as e:
+        except KeyError:
             print("Instruction not found", hex(instr))
             return None
 
@@ -2346,7 +2346,7 @@ class disassembler():
         opcode = self.extractOpcode(instr)
         try:
             instrObj = self.OPCODES[opcode](instrObj_temp)
-        except KeyError as e:
+        except KeyError:
             print("Instruction not found", hex(instr))
             return None
 

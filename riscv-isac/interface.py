@@ -1,7 +1,6 @@
 import importlib
 import pluggy
 from riscv_isac.plugins.specification import *
-import riscv_isac.plugins as plugins
 
 
 def interface (trace, arch, mode):

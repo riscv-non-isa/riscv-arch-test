@@ -9,7 +9,6 @@ from constants import *
 import riscv_isac.plugins as plugins
 from riscv_isac.log import logger
 
-from riscv_isac.InstructionObject import instructionObject
 
 # Closure to get argument value
 def get_arg_val(arg: str):

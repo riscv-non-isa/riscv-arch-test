@@ -300,7 +300,7 @@ class GeneratorCSRComb():
                             logger.error(f'Skipping invalid csr_comb solution with modifiers on more than one registers for the coverpoint: {covpt}')
                             continue
 
-                    if not csr_reg in reg_mask_val_mod_dict:
+                    if csr_reg not in reg_mask_val_mod_dict:
                         if mod == 'old':
                             reg_mask_val_mod_dict[csr_reg] = [0, 0, 0, 0, mask, val]
                         elif mod == 'write':

@@ -1,13 +1,10 @@
 # See LICENSE.incore for details
 from math import *
-import pprint
 import riscv_isac.utils as utils
 import itertools
 import random
-import copy
 from riscv_isac.fp_dataset import *
 
-import time
 
 def twos(val,bits):
     '''

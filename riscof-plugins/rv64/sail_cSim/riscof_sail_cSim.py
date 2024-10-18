@@ -1,17 +1,9 @@
 import os
-import re
 import shutil
-import subprocess
-import shlex
 import logging
-import random
-import string
-from string import Template
 
 import riscof.utils as utils
 from riscof.pluginTemplate import pluginTemplate
-import riscof.constants as constants
-from riscv_isac.isac import isac
 
 logger = logging.getLogger()
 

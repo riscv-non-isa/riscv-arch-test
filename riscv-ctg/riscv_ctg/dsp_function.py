@@ -27,13 +27,13 @@ def simd_val_vars(operand, xlen, bit_width):
 
 def get_fmt_sz(bit_width):
     if bit_width == 8:
-        fmt = f"#02x"
+        fmt = "#02x"
     elif bit_width == 16:
-        fmt = f"#04x"
+        fmt = "#04x"
     elif bit_width == 32:
-        fmt = f"#08x"
+        fmt = "#08x"
     else:
-        fmt = f"#016x"
+        fmt = "#016x"
     if bit_width == 8:
         sz = "b"
     elif bit_width == 16:
@@ -55,13 +55,13 @@ def gen_fmt(bit_width):
     '''
 
     if bit_width == 8:
-        fmt = f"#02x"
+        fmt = "#02x"
     elif bit_width == 16:
-        fmt = f"#04x"
+        fmt = "#04x"
     elif bit_width == 32:
-        fmt = f"#08x"
+        fmt = "#08x"
     else:
-        fmt = f"#016x"
+        fmt = "#016x"
     return fmt
 
 def gen_sz(bit_width):
@@ -111,7 +111,7 @@ def concat_simd_data(instr_dict, xlen, _bit_width):
                 rs1_val = int(instr['rs1_val'])
                 if rs1_val < 0:
                     rs1_val = rs1_val + twocompl_offset
-                instr['rs1_val'] = format(rs1_val, f"#0x")
+                instr['rs1_val'] = format(rs1_val, "#0x")
             else:   # concatenates all element of a SIMD register into a single value
                 rs1_val = 0
                 for i in range(xlen//bit_width1):
@@ -131,7 +131,7 @@ def concat_simd_data(instr_dict, xlen, _bit_width):
                 rs2_val = int(instr['rs2_val'])
                 if rs2_val < 0:
                     rs2_val = rs2_val + twocompl_offset
-                instr['rs2_val'] = format(rs2_val, f"#0x")
+                instr['rs2_val'] = format(rs2_val, "#0x")
             else:   # concatenates all element of a SIMD register into a single value
                 rs2_val = 0
                 for i in range(xlen//bit_width2):
@@ -143,7 +143,7 @@ def concat_simd_data(instr_dict, xlen, _bit_width):
                 instr['rs2_val'] = format(rs2_val, f"#0{xlen//4}x")
         if 'imm_val' in instr:
             imm_val = int(instr['imm_val'])
-            instr['imm_val'] = format(imm_val, f"#0x")
+            instr['imm_val'] = format(imm_val, "#0x")
 
 def incr_reg_num(reg):
     name = reg[0]
@@ -208,7 +208,7 @@ def gen_pair_reg_data(instr_dict, xlen, _bit_width, p64_profile):
             else:
                 instr['rs1_val'] = format(rs1_val, f"#0{2+xlen//4}x")
             if rs1_width == 64 and (len(p64_profile) >= 3):
-                instr['rs1_val64'] = format(rs1_val, f"#018x")
+                instr['rs1_val64'] = format(rs1_val, "#018x")
 
         if 'rs2' in instr:
             twocompl_offset = 1<<bit_width2
@@ -233,11 +233,11 @@ def gen_pair_reg_data(instr_dict, xlen, _bit_width, p64_profile):
             else:
                 instr['rs2_val'] = format(rs2_val, f"#0{2+xlen//4}x")
             if rs2_width == 64 and (len(p64_profile) >= 3):
-                instr['rs2_val64'] = format(rs2_val, f"#018x")
+                instr['rs2_val64'] = format(rs2_val, "#018x")
 
         if 'rd' in instr and rd_width > xlen:
             instr['rd_hi'] = incr_reg_num(instr['rd'])
 
         if 'imm_val' in instr:
             imm_val = int(instr['imm_val'])
-            instr['imm_val'] = format(imm_val, f"#0x")
+            instr['imm_val'] = format(imm_val, "#0x")

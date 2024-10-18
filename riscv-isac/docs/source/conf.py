@@ -15,7 +15,6 @@
 
 import sys
 import os
-import shlex
 import re
 
 def get_version():

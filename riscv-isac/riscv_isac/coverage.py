@@ -3,26 +3,18 @@
 # See LICENSE.iitm for details
 
 from itertools import islice
-from threading import local
 
 import ruamel
-from ruamel.yaml import YAML
 import riscv_isac.utils as utils
 from riscv_isac.constants import *
 from riscv_isac.log import logger
-from collections import Counter
 import sys
-from riscv_isac.utils import yaml
 from riscv_isac.cgf_normalize import *
-import riscv_isac.fp_dataset as fmt
-import struct
 import pytablewriter
 import importlib
 import pluggy
-import riscv_isac.plugins as plugins
 from riscv_isac.plugins.specification import *
 import math
-from itertools import islice
 import multiprocessing as mp
 from collections.abc import MutableMapping
 import re

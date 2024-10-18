@@ -1,7 +1,7 @@
 # See LICENSE.incore file for details
 
 import copy
-import os,re
+import os
 import multiprocessing as mp
 
 import time

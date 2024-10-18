@@ -536,11 +536,11 @@ class instructionObject():
         return self.evaluate_reg_val_p_ext(self.rs1[0], self.rs1_nregs, arch_state)
 
    
-    @evaluator_func("rs1_val", lambda **params: not params['instr_name'] in unsgn_rs1 and not params['is_rvp'] and params['rs1'] is not None and params['rs1'][1] == 'x' and not params['inxFlag'])
+    @evaluator_func("rs1_val", lambda **params: params['instr_name'] not in unsgn_rs1 and not params['is_rvp'] and params['rs1'] is not None and params['rs1'][1] == 'x' and not params['inxFlag'])
     def evaluate_rs1_val_sgn(self, instr_vars, arch_state):
         return self.evaluate_reg_val_sgn(self.rs1[0], instr_vars['xlen'], arch_state)
 
-    @evaluator_func("rs1_val", lambda **params: not params['instr_name'] in unsgn_rs1 and not params['is_rvp'] and params['rs1'] is not None and (params['rs1'][1] == 'f' or params['inxFlag']))
+    @evaluator_func("rs1_val", lambda **params: params['instr_name'] not in unsgn_rs1 and not params['is_rvp'] and params['rs1'] is not None and (params['rs1'][1] == 'f' or params['inxFlag']))
     def evaluate_rs1_val_fsgn(self, instr_vars, arch_state):
         return self.evaluate_reg_val_fsgn(self.rs1[0], instr_vars['flen'], instr_vars['xlen'],arch_state)
    
@@ -561,12 +561,12 @@ class instructionObject():
         return self.evaluate_reg_val_p_ext(self.rs2[0], self.rs2_nregs, arch_state)
 
 
-    @evaluator_func("rs2_val", lambda **params: not params['instr_name'] in unsgn_rs2 and not params['is_rvp'] and params['rs2'] is not None and params['rs2'][1] == 'x'  and not params['inxFlag'])
+    @evaluator_func("rs2_val", lambda **params: params['instr_name'] not in unsgn_rs2 and not params['is_rvp'] and params['rs2'] is not None and params['rs2'][1] == 'x'  and not params['inxFlag'])
     def evaluate_rs2_val_sgn(self, instr_vars, arch_state):
         return self.evaluate_reg_val_sgn(self.rs2[0], instr_vars['xlen'], arch_state)
 
 
-    @evaluator_func("rs2_val", lambda **params: not params['instr_name'] in unsgn_rs2 and not params['is_rvp'] and params['rs2'] is not None and (params['rs2'][1] == 'f' or params['inxFlag']))
+    @evaluator_func("rs2_val", lambda **params: params['instr_name'] not in unsgn_rs2 and not params['is_rvp'] and params['rs2'] is not None and (params['rs2'][1] == 'f' or params['inxFlag']))
     def evaluate_rs2_val_fsgn(self, instr_vars, arch_state):
         return self.evaluate_reg_val_fsgn(self.rs2[0], instr_vars['flen'], instr_vars['xlen'], arch_state)
 
@@ -594,7 +594,7 @@ class instructionObject():
     def evaluate_rd_val_unsgn(self, instr_vars, arch_state):
         return self.evaluate_reg_val_unsgn(self.rd[0], instr_vars['xlen'], arch_state)
 
-    @evaluator_func("rd_val", lambda **params: not params['instr_name'] in unsgn_rd and params['rd'] is not None  and params['rd'][1] == 'x')
+    @evaluator_func("rd_val", lambda **params: params['instr_name'] not in unsgn_rd and params['rd'] is not None  and params['rd'][1] == 'x')
     def evaluate_rd_val_sgn(self, instr_vars, arch_state):
         return self.evaluate_reg_val_sgn(self.rd[0], instr_vars['xlen'], arch_state)
 

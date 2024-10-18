@@ -1,7 +1,6 @@
 # See Licence.incore for details.
 from click.testing import CliRunner
 from riscv_ctg.main import cli
-from riscv_ctg.ctg import ctg
 import pytest
 
 @pytest.fixture
