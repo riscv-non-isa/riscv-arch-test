@@ -116,13 +116,15 @@ def simd_imm_val(imm, bit_width):
 
 def sp_vals(bit_width,signed):
     if signed:
-        conv_func = lambda x: twos(x,bit_width)
+        def conv_func(x):
+            return twos(x, bit_width)
         sqrt_min = int(-sqrt(2**(bit_width-1)))
         sqrt_max = int(sqrt((2**(bit_width-1)-1)))
     else:
         sqrt_min = 0
         sqrt_max = int(sqrt((2**bit_width)-1))
-        conv_func = lambda x: (int(x,16) if '0x' in x else int(x,2)) if isinstance(x,str) else x
+        def conv_func(x):
+            return (int(x, 16) if '0x' in x else int(x, 2)) if isinstance(x, str) else x
     dataset = [3, "0x"+"".join(["5"]*int(bit_width/4)), "0x"+"".join(["a"]*int(bit_width/4)), 5, "0x"+"".join(["3"]*int(bit_width/4)), "0x"+"".join(["6"]*int(bit_width/4))]
     dataset = list(map(conv_func,dataset)) + [int(sqrt(abs(conv_func("0x8"+"".join(["0"]*int((bit_width/4)-1)))))*(-1 if signed else 1))] + [sqrt_min,sqrt_max]
     return dataset + [x - 1 if x>0 else 0 for x in dataset] + [x+1 for x in dataset]
@@ -149,9 +151,11 @@ def bitmanip_dataset(bit_width,var_lst=["rs1_val","rs2_val"],signed=True):
     datasets = []
     coverpoints = []
     if signed:
-        conv_func = lambda x: twos(x,bit_width)
+        def conv_func(x):
+            return twos(x, bit_width)
     else:
-        conv_func = lambda x: (int(x,16) if '0x' in x else int(x,2)) if isinstance(x,str) else x
+        def conv_func(x):
+            return (int(x, 16) if '0x' in x else int(x, 2)) if isinstance(x, str) else x
 # dataset for 0x5, 0xa, 0x3, 0xc, 0x6, 0x9 patterns
     dataset = ["0x"+"".join(["5"]*int(bit_width/4)), "0x"+"".join(["a"]*int(bit_width/4)), "0x"+"".join(["3"]*int(bit_width/4)), "0x"+"".join(["c"]*int(bit_width/4)),"0x"+"".join(["6"]*int(bit_width/4)),"0x"+"".join(["9"]*int(bit_width/4))]
     dataset = list(map(conv_func,dataset))
@@ -587,7 +591,7 @@ def expand_cgf(cgf_files, xlen,flen, log_redundant=False):
                     # Substitute with tuple of instructions
                     for i in range(len(ops)):
                         exp_alias = utils.import_instr_alias(ops[i])
-                        if exp_alias != None:
+                        if exp_alias is not None:
                             ops[i] = tuple(exp_alias).__str__().replace("'", '').replace(" ", '')
 
                     data[0] = '[' + ':'.join(ops) + ']'

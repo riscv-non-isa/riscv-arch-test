@@ -80,13 +80,15 @@ def gen_sp_dataset(bit_width,sign=True):
      :return: a list of integers
     '''
     if sign:
-        conv_func = lambda x: twos(x,bit_width)
+        def conv_func(x):
+            return twos(x, bit_width)
         sqrt_min = int(-sqrt(2**(bit_width-1)))
         sqrt_max = int(sqrt((2**(bit_width-1)-1)))
     else:
         sqrt_min = 0
         sqrt_max = int(sqrt((2**bit_width)-1))
-        conv_func = lambda x:(int(x,16) if '0x' in x else int(x,2)) if isinstance(x,str) else x
+        def conv_func(x):
+            return (int(x, 16) if "0x" in x else int(x, 2)) if isinstance(x, str) else x
 
     dataset = [3, "0x"+"".join(["5"]*int(bit_width/4)), "0x"+"".join(["a"]*int(bit_width/4)), 5, "0x"+"".join(["3"]*int(bit_width/4)), "0x"+"".join(["6"]*int(bit_width/4))]
     dataset = list(map(conv_func,dataset)) + [int(sqrt(abs(conv_func("0x8"+"".join(["0"]*int((bit_width/4)-1)))))*(-1 if sign else 1))] + [sqrt_min,sqrt_max]
@@ -173,9 +175,11 @@ def gen_bitmanip_dataset(bit_width,sign=True):
      :return: a list of integers
     '''
     if sign:
-        conv_func = lambda x: twos(x,bit_width)
+        def conv_func(x):
+            return twos(x, bit_width)
     else:
-        conv_func = lambda x:(int(x,16) if '0x' in x else int(x,2)) if isinstance(x,str) else x
+        def conv_func(x):
+            return (int(x, 16) if "0x" in x else int(x, 2)) if isinstance(x, str) else x
 
 # dataset for 0x5, 0xa, 0x3, 0xc, 0x6, 0x9 patterns
 

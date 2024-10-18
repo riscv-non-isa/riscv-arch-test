@@ -46,7 +46,8 @@ def is_fp_instruction(insn):
 
 from riscv_ctg.dsp_function import *
 
-twos_xlen = lambda x: twos(x,xlen)
+def twos_xlen(x):
+    return twos(x, xlen)
 
 def toint(x: str):
     if '0x' in x:
@@ -89,7 +90,6 @@ OPS = {
     'cjformat': [],
     'ckformat': ['rs1'],
     'kformat': ['rs1','rd'],
-    'ckformat': ['rs1'],
     # 'frformat': ['rs1', 'rs2', 'rd'],
     'fsrformat': ['rs1', 'rd'],
     # 'fr4format': ['rs1', 'rs2', 'rs3', 'rd'],
@@ -144,7 +144,6 @@ VALS = {
     'cjformat': "['imm_val']",
     'ckformat': "['rs1_val']",
     'kformat': "['rs1_val']",
-    'ckformat': "['rs1_val']",
     # 'frformat': "['rs1_val', 'rs2_val', 'rm_val', 'fcsr']",
     'fsrformat': "['rs1_val','fcsr'] + get_rm(opcode) + \
         ([] if not is_nan_box else ['rs1_nan_prefix']) + \
@@ -187,7 +186,8 @@ def isInt(s):
 
 def get_default_registers(ops, datasets):
     problem = Problem()
-    not_x0 = lambda x: x not in ['x0']
+    def not_x0(x):
+        return x not in ["x0"]
 
     for op in ops:
         dataset = datasets[op]
@@ -348,7 +348,8 @@ class Generator():
                 op_conds[op] = set([])
         individual = False
         nodiff = False
-        construct_constraint = lambda val: (lambda x: bool(x in val))
+        def construct_constraint(val):
+            return lambda x: bool(x in val)
         while any([len(op_conds[x])!=0 for x in op_conds]+[len(op_comb)!=0]):
             cond_str = ''
             cond_vars = []
@@ -536,7 +537,8 @@ class Generator():
         if val:
             cond_str += val[-1]
         instr = {'inst':self.opcode,'index':'0', 'comment':cond_str}
-        labelize = lambda x: (str((-x)%2**21),'1b') if x < 0 else (str((x%2**21)),'3f')
+        def labelize(x):
+            return (str(-x % 2 ** 21), "1b") if x < 0 else (str(x % 2 ** 21), "3f")
         if op:
             for var,reg in zip(self.op_vars,op):
                 instr[var] = str(reg)
@@ -572,7 +574,8 @@ class Generator():
         instr = {'inst':self.opcode,'index':'0', 'comment':cond_str}
 
 
-        labelize = lambda x: (str((-x)%2048),'1b') if x < 0 else (str((x%2048)),'3f')
+        def labelize(x):
+            return (str(-x % 2048), "1b") if x < 0 else (str(x % 2048), "3f")
 
         if op:
             for var,reg in zip(self.op_vars,op):
@@ -603,7 +606,8 @@ class Generator():
         instr = {'inst':self.opcode,'index':'0', 'comment':cond_str}
 
 
-        labelize = lambda x: (str((-x)%257),'1b') if x < 0 else (str((x%257)),'3f')
+        def labelize(x):
+            return (str(-x % 257), "1b") if x < 0 else (str(x % 257), "3f")
 
         if op:
             for var,reg in zip(self.op_vars,op):
@@ -634,7 +638,8 @@ class Generator():
         instr = {'inst':self.opcode,'index':'0', 'comment':cond_str}
 
 
-        labelize = lambda x: (str((-x)%2048),'1b') if x < 0 else (str((x%2048)),'3f')
+        def labelize(x):
+            return (str(-x % 2048), "1b") if x < 0 else (str(x % 2048), "3f")
 
         if op:
             for var,reg in zip(self.op_vars,op):
@@ -1264,7 +1269,8 @@ class Generator():
                 for i in range(len(instr_dict)):
                     instr_dict[i]['correctval_hi'] = '0'
         if self.fmt in ['caformat','crformat']:
-            normalise = lambda x,y: 0 if y['rs1']=='x0' else x
+            def normalise(x, y):
+                return 0 if y["rs1"] == "x0" else x
         else:
             normalise = (lambda x,y: x) if 'rd' not in self.op_vars else (lambda x,y: 0 if y['rd']=='x0' else x)
         if self.operation:

@@ -136,10 +136,6 @@ csr_reg_num_to_str = {
     1005: 'pmpaddr61',
     1006: 'pmpaddr62',
     1007: 'pmpaddr63',
-    928: 'pmpcfg0',
-    929: 'pmpcfg1',
-    930: 'pmpcfg2',
-    931: 'pmpcfg3',
     932: 'pmpcfg4',
     933: 'pmpcfg5',
     934: 'pmpcfg6',
@@ -921,7 +917,7 @@ def compute_per_line(queue, event, cgf_queue, stats_queue, cgf, xlen, flen, addr
 
     # Enter the loop only when Event is not set or when the
     # instruction object queue is not empty
-    while (event.is_set() == False) or (queue.empty() == False):
+    while (event.is_set() is False) or (queue.empty() is False):
 
         # If there are instructions in queue, compute coverage
         if queue.empty() is False:
