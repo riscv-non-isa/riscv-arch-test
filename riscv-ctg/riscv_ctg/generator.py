@@ -1,12 +1,13 @@
 # See LICENSE.incore for details
 from collections import defaultdict
-from constraint import *
+from string import Template
+from constraint import Problem, MinConflictsSolver, AllDifferentConstraint
 import re
-from riscv_ctg.constants import *
+from riscv_ctg.constants import twos, e_regset, signode_template, case_template, part_template, test_template, default_regset
 from riscv_ctg.log import logger
-from riscv_ctg.helpers import *
+from riscv_ctg.helpers import nan_box, sgn_extd, merge_fields_f, ExtractException
+from riscv_ctg.dsp_function import gen_pair_reg_data, concat_simd_data
 from riscv_isac.InstructionObject import instructionObject
-from math import *
 import struct
 import sys
 import itertools
@@ -41,10 +42,7 @@ def is_fp_instruction(insn):
 
     :param insn: String representing an instruction (e.g. 'fadd.s', 'lw')
     '''
-    return type(insn) == str and insn.lower()[0] == 'f'
-
-
-from riscv_ctg.dsp_function import *
+    return type(insn) is str and insn.lower()[0] == 'f'
 
 def twos_xlen(x):
     return twos(x, xlen)
@@ -991,10 +989,10 @@ class Generator():
         if 'val' in self.opnode:
             paired_regs=0
             if self.xlen == 32 and 'p64_profile' in self.opnode:
-                p64_profile = self.opnode['p64_profile']
+                _p64_profile = self.opnode['p64_profile']
                 paired_regs = self.opnode['p64_profile'].count('p')
             if 'dcas_profile' in self.opnode:
-                dcas_profile = self.opnode['dcas_profile']
+                _dcas_profile = self.opnode['dcas_profile']
                 paired_regs = self.opnode['dcas_profile'].count('p')
 
             regset = e_regset if 'e' in self.base_isa else default_regset
@@ -1012,7 +1010,7 @@ class Generator():
             else:
                 FLEN = 0
             XLEN = max(self.opnode['xlen'])
-            SIGALIGN = max(XLEN,FLEN)/8
+            _SIGALIGN = max(XLEN,FLEN)/8
             stride_sz = eval(suffix)
             template = Template(eval(self.opnode['val']['val_template']))
             width = self.iflen if self.is_fext else self.flen
@@ -1117,10 +1115,10 @@ class Generator():
 
         paired_regs=0
         if self.xlen == 32 and 'p64_profile' in self.opnode:
-            p64_profile = self.opnode['p64_profile']
+            _p64_profile = self.opnode['p64_profile']
             paired_regs = self.opnode['p64_profile'].count('p')
         if 'dcas_profile' in self.opnode:
-            dcas_profile = self.opnode['dcas_profile']
+            _dcas_profile = self.opnode['dcas_profile']
             paired_regs = self.opnode['dcas_profile'].count('p')
 
         regset = e_regset if 'e' in self.base_isa else default_regset
@@ -1137,7 +1135,7 @@ class Generator():
         else:
             FLEN = 0
         XLEN = max(self.opnode['xlen'])
-        SIGALIGN = max(XLEN,FLEN)/8
+        _SIGALIGN = max(XLEN,FLEN)/8
         stride_sz = eval(suffix)
         for instr in instr_dict:
             if 'rs1' in instr and instr['rs1'] in available_reg:
@@ -1385,14 +1383,14 @@ class Generator():
         if any('IP' in isa for isa in self.opnode['isa']):
             code.append("RVTEST_VXSAT_ENABLE()")
         if self.xlen == 32 and 'p64_profile' in self.opnode:
-            p64_profile = self.opnode['p64_profile']
+            _p64_profile = self.opnode['p64_profile']
         if 'dcas_profile' in self.opnode:
-            dcas_profile = self.opnode['dcas_profile']
+            _dcas_profile = self.opnode['dcas_profile']
 
         n = 0
-        is_int_src = any([self.opcode.endswith(x) for x in ['.x','.w','.l','.wu','.lu']]) or self.inxFlag
+        _is_int_src = any([self.opcode.endswith(x) for x in ['.x','.w','.l','.wu','.lu']]) or self.inxFlag
         src_len = xlen if self.opcode.endswith('.x') else (32 if 'w' in self.opcode else 64)
-        sz = 'word' if src_len == 32 else 'dword'
+        _sz = 'word' if src_len == 32 else 'dword'
         opcode = instr_dict[0]['inst']
         op_node_isa = ""
         extension = ""
@@ -1405,13 +1403,13 @@ class Generator():
         op_node_isa = op_node_isa.replace("I","E") if 'e' in self.base_isa else op_node_isa
         extension = op_node_isa.replace('I',"").replace('E',"")
         count = 0
-        neg_offset = 0
+        _neg_offset = 0
         width = self.iflen if not self.is_nan_box else self.flen
         dset_n = 0
         sig_sz = '(({0})/4)'.format(self.opnode['sig']['sz'])
-        cond_prefix = '' if self.is_fext else 'check ISA:=regex(.*{0}.*);'.format(self.xlen)
+        _cond_prefix = '' if self.is_fext else 'check ISA:=regex(.*{0}.*);'.format(self.xlen)
         for instr in instr_dict:
-            switch = False
+            _switch = False
             res = '\ninst_{0}:'.format(str(count))
             res += Template(op_node['template']).safe_substitute(instr)
             if 'val' in self.opnode:

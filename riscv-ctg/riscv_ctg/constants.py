@@ -1,9 +1,8 @@
 # See LICENSE.incore for details
 
 import os
-from math import *
+from math import sqrt
 from string import Template
-from riscv_isac.fp_dataset import *
 
 root = os.path.abspath(os.path.dirname(__file__))
 

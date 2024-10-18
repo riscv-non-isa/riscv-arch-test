@@ -95,10 +95,10 @@ def concat_simd_data(instr_dict, xlen, _bit_width):
     :type xlen: int
     :type bit_width: int
     '''
-    if type(_bit_width)==str:
+    if type(_bit_width) is str:
         _bit_width = eval(_bit_width)
 
-    if type(_bit_width)==tuple:
+    if type(_bit_width) is tuple:
         bit_width1, bit_width2 = _bit_width
     else:
         bit_width1, bit_width2 = _bit_width, _bit_width
@@ -167,10 +167,10 @@ def gen_pair_reg_data(instr_dict, xlen, _bit_width, p64_profile):
     :type p64_profile: string
 
     '''
-    if type(_bit_width)==str:
+    if type(_bit_width) is str:
         _bit_width = eval(_bit_width)
 
-    if type(_bit_width)==tuple:
+    if type(_bit_width) is tuple:
         bit_width1, bit_width2 = _bit_width
     else:
         bit_width1, bit_width2 = _bit_width, _bit_width

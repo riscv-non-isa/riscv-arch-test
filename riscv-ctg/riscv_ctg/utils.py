@@ -1,7 +1,9 @@
 # See LICENSE.incore for details
 
 """Common Utils """
+import logging
 import os
+import pathlib
 import subprocess
 import shlex
 from riscv_ctg.log import logger

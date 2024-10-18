@@ -3,7 +3,7 @@ import re
 import functools
 
 from riscv_ctg.log import logger
-from riscv_ctg.constants import *
+from riscv_ctg.constants import case_template, part_template, signode_template, csr_reg_read_and_sig_upd_template, csr_reg_restore_template, csr_comb_test_template, csr_reg_write_to_field_template
 
 import tokenize as tkn
 from io import BytesIO
@@ -281,7 +281,7 @@ class GeneratorCSRComb():
             try:
                 bool_expr = parse_csr_covpt(covpt)
                 sols = bool_expr.SAT()
-            except:
+            except Exception:
                 logger.error(f'Invalid csr_comb coverpoint: {covpt}')
                 continue
 
@@ -295,7 +295,8 @@ class GeneratorCSRComb():
                         logger.error(f'Skipping invalid csr_comb coverpoint condition clause: {clause}')
                         continue
                     if mod is not None:
-                        if reg_with_mod is None: reg_with_mod = csr_reg
+                        if reg_with_mod is None:
+                            reg_with_mod = csr_reg
                         elif reg_with_mod != csr_reg:
                             logger.error(f'Skipping invalid csr_comb solution with modifiers on more than one registers for the coverpoint: {covpt}')
                             continue

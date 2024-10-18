@@ -678,13 +678,13 @@ class instructionObject():
 
         if iflen == 16:
             e_sz = 5
-            m_sz = 10
+            _m_sz = 10
         elif iflen == 32:
             e_sz = 8
-            m_sz = 23
+            _m_sz = 23
         else:
             e_sz = 11
-            m_sz = 52
+            _m_sz = 52
         bin_val = ('{:0'+str(flen)+'b}').format(reg_val) 
         
 

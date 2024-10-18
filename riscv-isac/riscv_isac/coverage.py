@@ -2,18 +2,18 @@
 # See LICENSE.incore for details
 # See LICENSE.iitm for details
 
+import copy
 from itertools import islice
 
 import ruamel
 import riscv_isac.utils as utils
-from riscv_isac.constants import *
+from riscv_isac.constants import dpr_template
 from riscv_isac.log import logger
 import sys
-from riscv_isac.cgf_normalize import *
 import pytablewriter
 import importlib
 import pluggy
-from riscv_isac.plugins.specification import *
+from riscv_isac.plugins.specification import ParserSpec, DecoderSpec
 import math
 import multiprocessing as mp
 from collections.abc import MutableMapping
@@ -451,7 +451,6 @@ class cross():
     def get_stats(self):
         return self.stats
 
-
 class csr_registers(MutableMapping):
     '''
     Defines the architectural state of CSR Register file.
@@ -602,7 +601,7 @@ class archState:
     Defines the architectural state of the RISC-V device.
     '''
 
-    def __init__ (self, xlen, flen,inxFlg):
+    def __init__ (self, xlen, flen, inxFlg):
         '''
         Class constructor
 
@@ -631,7 +630,6 @@ class archState:
             self.fcsr = 0
         elif flen == 32:
             self.f_rf = ['00000000']*32
-            
         else:
             self.f_rf = ['0000000000000000']*32
         self.pc = 0
@@ -688,7 +686,6 @@ def pretty_print_yaml(yaml_obj):
     return res
 
 def pretty_print_regfile(regfile):
-    res = ""
     for index in range(0, 32, 4):
         print('x'+str(index) +   ' : ' + regfile[index] + '\t' +\
               'x'+str(index+1) + ' : ' + regfile[index+1] + '\t' + \
@@ -725,7 +722,7 @@ def gen_report(cgf, detailed):
                     for coverpoints, coverage in value[categories].items():
                         if coverage == 0:
                             uncovered += 1
-                    percentage_covered = str((len(value[categories]) - uncovered)/len(value[categories]))
+                    _percentage_covered = str((len(value[categories]) - uncovered)/len(value[categories]))
                     node_level_str =  '  ' + categories + ':\n'
                     node_level_str += '    coverage: ' + \
                             str(len(value[categories]) - uncovered) + \
@@ -905,7 +902,6 @@ def compute_per_line(queue, event, cgf_queue, stats_queue, cgf, xlen, flen, addr
     # List to hold hit coverpoints
     hit_covpts = []
     rcgf = copy.deepcopy(cgf)
-    inxFlg = arch_state.inxFlg
 
     # Set of elements to monitor for tracking signature updates
     tracked_regs_immutable = set()
@@ -1723,10 +1719,8 @@ def compute(trace_file, test_name, cgf, parser_name, decoder_name, detailed, xle
             writer.value_matrix.append(row)
             count += 1
         f =open(test_name+'.md','w')
-        if xlen == 64:
-            sig_count = 2*len(stats.stat5)
-        else:
-            sig_count = len(stats.stat5)
+
+        _sig_count = 2*len(stats.stat5) if xlen == 64 else len(stats.stat5)
 
         stat2_log = ''
         for _l in stats.stat2:

@@ -1,15 +1,15 @@
 # See LICENSE.incore for details
 import random
-from constraint import *
+from constraint import Problem
+from string import Template
 
 import riscv_isac.utils as isac_utils
 
 import riscv_ctg.utils as utils
 import riscv_ctg.constants as const
-from riscv_ctg.constants import *
+from riscv_ctg.constants import case_template, part_template, signode_template
 from riscv_ctg.log import logger
 from riscv_ctg.generator import OPS
-from riscv_ctg.dsp_function import *
 
 INSTR_FORMAT = {
     'rformat'     : '$instr $rd, $rs1, $rs2',

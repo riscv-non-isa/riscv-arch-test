@@ -1,4 +1,5 @@
 #Translator -- (cgf/yaml based file --> cgf)
+import logging
 import os
 import re
 import math

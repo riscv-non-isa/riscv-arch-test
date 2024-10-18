@@ -17,6 +17,8 @@ import sys
 import os
 import re
 
+import sphinx_rtd_theme
+
 def get_version():
     changelog = open('../../CHANGELOG.md','r').read()
     x = re.findall(r'## \[(.*?)\] -',changelog)[0]
@@ -108,13 +110,11 @@ html_show_sourcelink = True
 #
 #html_theme = 'bootstrap'
 #html_theme = 'alabaster'
-import sphinx_rtd_theme
 html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 html_theme = 'sphinx_rtd_theme'
 html_theme_options = {
         'prev_next_buttons_location': 'both',
         'display_version': True,
-        'includehidden': False,
         'collapse_navigation':True,
         'sticky_navigation': True,
         'navigation_depth': 4,

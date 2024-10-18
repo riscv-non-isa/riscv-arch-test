@@ -3,15 +3,15 @@ def get_cond_generator(opcode,fmt,val_vars,xlen,flen):
         def condition(*argv):
             rs1_val = argv[0]
             rs2_val = argv[1]
-            rm = argv[2]
+            _rm = argv[2]
             bin_val = '{:064b}'.format(rs1_val)
-            fs1 = int(bin_val[0],2)
-            fe1 = int(bin_val[1:12],2)
-            fm1 = int(bin_val[12:],2)
+            _fs1 = int(bin_val[0],2)
+            _fe1 = int(bin_val[1:12],2)
+            _fm1 = int(bin_val[12:],2)
             bin_val = '{:064b}'.format(rs2_val)
-            fs2 = int(bin_val[0],2)
-            fe2 = int(bin_val[1:12],2)
-            fm2 = int(bin_val[12:],2)
+            _fs2 = int(bin_val[0],2)
+            _fe2 = int(bin_val[1:12],2)
+            _fm2 = int(bin_val[12:],2)
             return eval(req_val_comb)
         return condition
 
@@ -19,58 +19,58 @@ def get_cond_generator(opcode,fmt,val_vars,xlen,flen):
         def condition(*argv):
             rs1_val = argv[0]
             rs2_val = argv[1]
-            rm = argv[2]
+            _rm = argv[2]
             bin_val = '{:032b}'.format(rs1_val)
-            fs1 = int(bin_val[0],2)
-            fe1 = int(bin_val[1:9],2)
-            fm1 = int(bin_val[9:],2)
+            _fs1 = int(bin_val[0],2)
+            _fe1 = int(bin_val[1:9],2)
+            _fm1 = int(bin_val[9:],2)
             bin_val = '{:032b}'.format(rs2_val)
-            fs2 = int(bin_val[0],2)
-            fe2 = int(bin_val[1:9],2)
-            fm2 = int(bin_val[9:],2)
+            _fs2 = int(bin_val[0],2)
+            _fe2 = int(bin_val[1:9],2)
+            _fm2 = int(bin_val[9:],2)
             return eval(req_val_comb)
         return condition
-        
+
     def fsr64_generator(req_val_comb):
         def condition(*argv):
             rs1_val = argv[0]
-            rm = argv[1]
+            _rm = argv[1]
             bin_val = '{:064b}'.format(rs1_val)
-            fs1 = int(bin_val[0],2)
-            fe1 = int(bin_val[1:12],2)
-            fm1 = int(bin_val[12:],2)
+            _fs1 = int(bin_val[0],2)
+            _fe1 = int(bin_val[1:12],2)
+            _fm1 = int(bin_val[12:],2)
             return eval(req_val_comb)
         return condition
 
     def fsr32_generator(req_val_comb):
         def condition(*argv):
             rs1_val = argv[0]
-            rm = argv[1]
+            _rm = argv[1]
             bin_val = '{:032b}'.format(rs1_val)
-            fs1 = int(bin_val[0],2)
-            fe1 = int(bin_val[1:9],2)
-            fm1 = int(bin_val[9:],2)
+            _fs1 = int(bin_val[0],2)
+            _fe1 = int(bin_val[1:9],2)
+            _fm1 = int(bin_val[9:],2)
             return eval(req_val_comb)
-        return condition   
-        
+        return condition
+
     def fr4_64_generator(req_val_comb):
         def condition(*argv):
             rs1_val = argv[0]
             rs2_val = argv[1]
             rs3_val = argv[2]
-            rm = argv[3]
+            _rm = argv[3]
             bin_val = '{:064b}'.format(rs1_val)
-            fs1 = int(bin_val[0],2)
-            fe1 = int(bin_val[1:12],2)
-            fm1 = int(bin_val[12:],2)
+            _fs1 = int(bin_val[0],2)
+            _fe1 = int(bin_val[1:12],2)
+            _fm1 = int(bin_val[12:],2)
             bin_val = '{:064b}'.format(rs2_val)
-            fs2 = int(bin_val[0],2)
-            fe2 = int(bin_val[1:12],2)
-            fm2 = int(bin_val[12:],2)
+            _fs2 = int(bin_val[0],2)
+            _fe2 = int(bin_val[1:12],2)
+            _fm2 = int(bin_val[12:],2)
             bin_val = '{:064b}'.format(rs3_val)
-            fs3 = int(bin_val[0],2)
-            fe3 = int(bin_val[1:12],2)
-            fm3 = int(bin_val[12:],2)
+            _fs3 = int(bin_val[0],2)
+            _fe3 = int(bin_val[1:12],2)
+            _fm3 = int(bin_val[12:],2)
             return eval(req_val_comb)
         return condition
 
@@ -79,21 +79,21 @@ def get_cond_generator(opcode,fmt,val_vars,xlen,flen):
             rs1_val = argv[0]
             rs2_val = argv[1]
             rs3_val = argv[2]
-            rm = argv[3]
+            _rm = argv[3]
             bin_val = '{:032b}'.format(rs1_val)
-            fs1 = int(bin_val[0],2)
-            fe1 = int(bin_val[1:9],2)
-            fm1 = int(bin_val[9:],2)
+            _fs1 = int(bin_val[0],2)
+            _fe1 = int(bin_val[1:9],2)
+            _fm1 = int(bin_val[9:],2)
             bin_val = '{:032b}'.format(rs2_val)
-            fs2 = int(bin_val[0],2)
-            fe2 = int(bin_val[1:9],2)
-            fm2 = int(bin_val[9:],2)
+            _fs2 = int(bin_val[0],2)
+            _fe2 = int(bin_val[1:9],2)
+            _fm2 = int(bin_val[9:],2)
             bin_val = '{:032b}'.format(rs3_val)
-            fs3 = int(bin_val[0],2)
-            fe3 = int(bin_val[1:9],2)
-            fm3 = int(bin_val[9:],2)
+            _fs3 = int(bin_val[0],2)
+            _fe3 = int(bin_val[1:9],2)
+            _fm3 = int(bin_val[9:],2)
             return eval(req_val_comb)
-        return condition     
+        return condition
 
     def i_generator(req_val_comb):
         def condition(*argv):
@@ -112,12 +112,12 @@ def get_cond_generator(opcode,fmt,val_vars,xlen,flen):
         if flen == 32:
             return fsr32_generator
         else:
-            return fsr64_generator    
+            return fsr64_generator
       elif fmt == 'fr4format':
         if flen == 32:
             return fr4_32_generator
         else:
-            return fr4_64_generator                   
+            return fr4_64_generator
     else:
         return i_generator
 
@@ -249,12 +249,12 @@ def get_filter_generator(opcode,fmt,val_vars,xlen,flen):
         if flen == 32:
             return fsr32_generator
         else:
-            return fsr64_generator    
+            return fsr64_generator
       elif fmt == 'fr4format':
         if flen == 32:
             return fr4_32_generator
         else:
-            return fr4_64_generator                   
+            return fr4_64_generator
     else:
         return i_generator
 

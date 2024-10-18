@@ -2,7 +2,9 @@
 
 """Common Utils """
 import io
+import logging
 import os
+import pathlib
 import subprocess
 import shlex
 import riscv_isac
@@ -32,7 +34,7 @@ def collect_label_address(elf, label):
         elffile = ELFFile(f)
         # elfclass is a public attribute of ELFFile, read from its header
         symtab = elffile.get_section_by_name('.symtab')
-        size = symtab.num_symbols()
+        _size = symtab.num_symbols()
         mains = symtab.get_symbol_by_name(label)
         main = mains[0]
     return int(main.entry['st_value'])

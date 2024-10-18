@@ -11,7 +11,7 @@ from riscv_isac.isac import preprocessing
 from riscv_isac.__init__ import __version__
 from riscv_isac.log import logger
 import riscv_isac.utils as utils
-from riscv_isac.cgf_normalize import *
+from riscv_isac.cgf_normalize import expand_cgf
 import riscv_isac.coverage as cov
 from riscv_isac.plugins.translator_cgf import Translate_cgf
 

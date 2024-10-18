@@ -5,7 +5,6 @@ import riscv_isac.utils as utils
 import riscv_isac.coverage as cov
 import re
 from ruamel.yaml import YAML
-from ruamel import yaml
 
 yaml = YAML(typ="rt")
 yaml.default_flow_style = False

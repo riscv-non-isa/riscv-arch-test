@@ -2231,10 +2231,10 @@ class disassembler():
         imm_5 = self.get_bit(instr, 12) << 5
         imm_4_0 = (instr & 0x007c) >> 2
         imm_4_3 = (instr & 0x0060) >> 2
-        imm_4 = self.get_bit(instr, 6) << 4
+        _imm_4 = self.get_bit(instr, 6) << 4
         imm_4_2 = (instr & 0x0070) >> 2
         imm_8_6 = (instr & 0x001C) << 5
-        imm_9_6 = (instr & 0x003C) << 5
+        _imm_9_6 = (instr & 0x003C) << 5
         imm_7_6 = (instr & 0x000C) << 4
         imm_8_6 = (instr & 0x001C) << 4
 

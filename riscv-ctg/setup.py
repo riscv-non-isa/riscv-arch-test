@@ -2,6 +2,7 @@
 
 """The setup script."""
 
+import codecs
 from setuptools import setup, find_packages
 import os
 import riscv_ctg

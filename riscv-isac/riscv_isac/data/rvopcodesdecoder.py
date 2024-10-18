@@ -3,9 +3,9 @@ from operator import itemgetter
 from collections import defaultdict
 import pprint
 import os
+import re
 
-from constants import *
-#from riscv_isac.data.constants import *
+from riscv_isac.data.constants import arg_lut, single_fixed, pseudo_regex, imported_regex, fixed_ranges
 import riscv_isac.plugins as plugins
 from riscv_isac.log import logger
 
@@ -298,9 +298,9 @@ class disassembler():
         keys = func_dict.keys()
         num_keys = len(keys)
         for key in keys:
-            if type(key) == str and num_keys == 1:
+            if type(key) is str and num_keys == 1:
                 return (key, func_dict[key])
-            elif type(key) == tuple:
+            elif type(key) is tuple:
                 val = get_funct(key, mcode)
             else:                                       # There must be pseudo-ops
                 instr = (key, func_dict[key])

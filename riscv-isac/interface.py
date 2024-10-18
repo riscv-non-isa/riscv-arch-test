@@ -1,6 +1,6 @@
 import importlib
 import pluggy
-from riscv_isac.plugins.specification import *
+from riscv_isac.plugins.specification import ParserSpec, DecoderSpec
 
 
 def interface (trace, arch, mode):
@@ -34,4 +34,4 @@ def interface (trace, arch, mode):
 
     for instr, mnemonic, addr, commitvalue in iterator: 
         if instr is not None:
-            instrObj = decoder.decode(instr=instr, addr=addr)
+            _instrObj = decoder.decode(instr=instr, addr=addr)
