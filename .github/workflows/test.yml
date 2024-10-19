@@ -1,38 +1,36 @@
-# This is a basic workflow to help you get started with Actions
-
 name: CI test
 
-# Controls when the action will run. 
+# Controls when the action will run.
 on:
-
-  # Triggers the workflow on pull request events but only for the main & dev branch
   pull_request:
     branches: [ '**'  ]
-  
-  # Triggers the workflow on push events
   push:
     branches: [ '**'  ]
-
-  # Allows you to run this workflow Actions manually
   workflow_dispatch:
-
-   # Triggers the action 2am every day
+  # Triggers the action 2am every day
   schedule:
     - cron: "0 2 * * *"
 
-
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-
   ACT-sail-spike:
-    name: ACT-sail-spike (RV${{ matrix.xlen }})
+    name: ACT-sail-spike (RV${{ matrix.xlen }}${{ matrix.extensions }})
     runs-on: ubuntu-22.04
     # Set a 15-minute time limit for this job
     timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
-        xlen: [32, 64]
+        xlen: ["32", "64"]
+        extensions: ["IMACZicsr_Zifencei"]
+        include:
+          # include an entry for each isa string with the reset value for the bottom 25 bits (7 hex digits) of MISA
+          - extensions: "IMACZicsr_Zifencei"
+            misa_lower: "0001105"
+          # XLEN and zero-padding for MISA reset value
+          - xlen: "32"
+            misa_upper: "4"
+          - xlen: "64"
+            misa_upper: "800000000"
 
     steps:
 
@@ -47,7 +45,7 @@ jobs:
           sudo apt-get install -y autoconf automake autotools-dev curl python3 python3-pip libmpc-dev libmpfr-dev libgmp-dev gawk build-essential bison flex texinfo gperf libtool patchutils bc zlib1g-dev libexpat-dev ninja-build git cmake libglib2.0-dev libslirp-dev pkg-config
           sudo apt-get install -y device-tree-compiler libboost-regex-dev libboost-system-dev
           pip3 install git+https://github.com/riscv/riscof.git
-      
+
       - name: Build RISCV-GNU Toolchain (${{ matrix.xlen }} bit)
         run: |
           wget -c https://github.com/riscv-collab/riscv-gnu-toolchain/releases/download/2024.09.03/riscv${{ matrix.xlen }}-elf-ubuntu-20.04-gcc-nightly-2024.09.03-nightly.tar.gz
@@ -131,13 +129,16 @@ jobs:
         run: |
               echo $GITHUB_WORKSPACE/spike/bin >> $GITHUB_PATH
               echo $GITHUB_WORKSPACE/sail >> $GITHUB_PATH
-      
-      - name: Config and run riscof for RV${{ matrix.xlen }}
+
+      - name: Config and run riscof for RV${{ matrix.xlen }}${{ matrix.extensions }}
         run: |
           cd riscof-plugins/rv${{ matrix.xlen }}
+          sed -i "/^  ISA: /c\  ISA: RV${{ matrix.xlen }}${{ matrix.extensions }}" spike_simple/spike_simple_isa.yaml
+          sed -i "/^   reset-val: /c\   reset-val: 0x${{ matrix.misa_upper }}${{ matrix.misa_lower }}" spike_simple/spike_simple_isa.yaml
+          sed -i "/^                - extensions[25:0]/c\                - extensions[25:0] bitmask [0x${{ matrix.misa_lower}}, 0x0000000]" spike_simple/spike_simple_isa.yaml
           riscof run --config config.ini --suite ../../riscv-test-suite/rv${{ matrix.xlen }}i_m/ --env ../../riscv-test-suite/env
 
-        
+
       - name: Check size of riscof_work folder
         id: check_size
         run: |
@@ -151,9 +152,9 @@ jobs:
             echo "upload=true" >> $GITHUB_ENV  # Set an environment variable to proceed with upload
           fi
 
-     # Upload the riscof_work for rv${{ matrix.xlen }} folder if size check passes
+      # Upload the riscof_work for rv${{ matrix.xlen }} folder if size check passes
       - name: Upload the riscof_work for rv${{ matrix.xlen }} folder
-        # Proceed with upload only if the size is within limit  
+        # Proceed with upload only if the size is within limit
         if: ${{ env.upload == 'true' }}
         uses: actions/upload-artifact@v4
         with:
