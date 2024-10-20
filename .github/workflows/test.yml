@@ -146,24 +146,43 @@ jobs:
             folder_size=$(du -sm $GITHUB_WORKSPACE/riscof-plugins/rv${{ matrix.xlen }}/riscof_work | cut -f1)
             echo "Folder size: ${folder_size} MB"
             if [ "$folder_size" -gt 1000 ]; then
-              echo "Size exceeds 1 GB. Skipping upload."
-              echo "upload=false" >> $GITHUB_ENV  # Set environment variable to skip upload
+              echo "Size exceeds 1 GB, and report file exists. Uploading only the report."
+            #Make sure that the report file is also available
+              if [ -f "$GITHUB_WORKSPACE/riscof-plugins/rv${{ matrix.xlen }}/riscof_work/report.html" ]; then
+                echo "upload_report=true" >> $GITHUB_ENV
+                echo "upload_folder=false" >> $GITHUB_ENV
+              else
+                echo "upload_report=false" >> $GITHUB_ENV
+                echo "upload_folder=false" >> $GITHUB_ENV
+                echo "Report for riscof_work-rv${{ matrix.xlen }} does not exist. Skipping size check."
+              fi
             else
-              echo "Size is within limit. Proceeding with upload."
-              echo "upload=true" >> $GITHUB_ENV  # Set environment variable to proceed with upload
+              echo "Size is within limit. Uploading the whole riscof_work folder."
+              echo "upload_folder=true" >> $GITHUB_ENV
+              echo "upload_report=false" >> $GITHUB_ENV
             fi
           else
-            echo "riscof_work folder does not exist. Skipping size check."
-            echo "upload=false" >> $GITHUB_ENV  # Skip upload if folder doesn't exist
+            echo "riscof_work-rv${{ matrix.xlen }} folder does not exist. Skipping size check."
+            echo "upload_folder=false" >> $GITHUB_ENV
+            echo "upload_report=false" >> $GITHUB_ENV
           fi
- 
-     # Upload the riscof_work for rv${{ matrix.xlen }} folder if size check passes
-      - name: Upload the riscof_work for rv${{ matrix.xlen }} folder
-        # Proceed with upload only if the size is within limit
-        if: always() && env.upload == 'true'
+  
+      # Upload the riscof_work folder if the size is under 1GB
+      - name: Upload the riscof_work folder for rv${{ matrix.xlen }} 
+        if: always() && env.upload_folder == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: riscof-work-folder-rv${{ matrix.xlen }}
+          path: ${{ github.workspace }}/riscof-plugins/rv${{ matrix.xlen }}/riscof_work/
+          compression-level: 6
+          overwrite: true
+    
+      # Upload only the report if the size exceeds 1GB
+      - name: Upload the riscof report for rv${{ matrix.xlen }}
+        if: always() && env.upload_report == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: riscof-test-report-rv${{ matrix.xlen }}
-          path: /home/runner/work/riscv-arch-test/riscv-arch-test/riscof-plugins/rv${{ matrix.xlen }}/riscof_work/
+          path: ${{ github.workspace }}/riscof-plugins/rv${{ matrix.xlen }}/riscof_work/report.html
           compression-level: 6
           overwrite: true
