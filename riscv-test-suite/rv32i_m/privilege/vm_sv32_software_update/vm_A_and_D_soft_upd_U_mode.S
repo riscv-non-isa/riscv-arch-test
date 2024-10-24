@@ -344,7 +344,7 @@ rvtest_data_1_l0:
 //---------------------------------------------------------------------------------------------------------------------------------
 
 #ifdef rvtest_strap_routine
-.align 12                       //complete the 4KB permission memory range
+.align 12
 rvtest_slvl1_pg_tbl:
 		RVTEST_PTE_IDENT_MAP(0,1,PTE_V | PTE_A | PTE_D | PTE_G)
 #endif

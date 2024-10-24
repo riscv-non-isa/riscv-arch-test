@@ -257,6 +257,7 @@ rvtest_slvl1_pg_tbl:
 #endif
 
 RVTEST_DATA_END                               
+.align 12
 RVMODEL_DATA_BEGIN
 rvtest_sig_begin:
 sig_begin_canary:
