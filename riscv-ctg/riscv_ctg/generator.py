@@ -4,9 +4,11 @@ from string import Template
 from constraint import Problem, MinConflictsSolver, AllDifferentConstraint
 import re
 from riscv_ctg.constants import twos, e_regset, signode_template, case_template, part_template, test_template, default_regset
+from riscv_ctg.constants import *  # noqa: F403
 from riscv_ctg.log import logger
 from riscv_ctg.helpers import nan_box, sgn_extd, merge_fields_f, ExtractException
 from riscv_ctg.dsp_function import gen_pair_reg_data, concat_simd_data
+from riscv_ctg.dsp_function import *  # noqa: F403
 from riscv_isac.InstructionObject import instructionObject
 import struct
 import sys
@@ -1010,7 +1012,7 @@ class Generator():
             else:
                 FLEN = 0
             XLEN = max(self.opnode['xlen'])
-            _SIGALIGN = max(XLEN,FLEN)/8
+            SIGALIGN = max(XLEN,FLEN)/8  # noqa: F841
             stride_sz = eval(suffix)
             template = Template(eval(self.opnode['val']['val_template']))
             width = self.iflen if self.is_fext else self.flen
@@ -1135,7 +1137,7 @@ class Generator():
         else:
             FLEN = 0
         XLEN = max(self.opnode['xlen'])
-        _SIGALIGN = max(XLEN,FLEN)/8
+        SIGALIGN = max(XLEN,FLEN)/8  # noqa: F841
         stride_sz = eval(suffix)
         for instr in instr_dict:
             if 'rs1' in instr and instr['rs1'] in available_reg:

@@ -1,9 +1,11 @@
 # See LICENSE.incore for details
 from math import ceil, sqrt
+from math import *  # noqa: F403
 import riscv_isac.utils as utils
 import itertools
 import random
 from riscv_isac.fp_dataset import logger
+from riscv_isac.fp_dataset import *  # noqa: F403
 
 
 def twos(val,bits):

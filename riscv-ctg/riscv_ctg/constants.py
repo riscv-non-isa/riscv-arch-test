@@ -2,6 +2,7 @@
 
 import os
 from math import sqrt
+from math import *  # noqa: F403
 from string import Template
 
 root = os.path.abspath(os.path.dirname(__file__))
