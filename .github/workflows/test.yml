@@ -143,7 +143,7 @@ jobs:
         id: check_size
         run: |
           work_folder="${{ github.workspace }}/riscof-plugins/rv${{ matrix.xlen }}/riscof_work/"
-          report_file="${{ github.workspace }}/riscof-plugins/rv${{ matrix.xlen }}/riscof_work/report.html"
+          report_file="$work_folder/report.html"
           if [ -d "$work_folder" ]; then
             folder_size=$(du -sm "$work_folder" | cut -f1)
             echo "Folder size: ${folder_size} MB"
