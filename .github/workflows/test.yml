@@ -135,7 +135,7 @@ jobs:
       - name: Config and run riscof for RV${{ matrix.xlen }}
         run: |
           cd riscof-plugins/rv${{ matrix.xlen }}
-          riscof run --config config.ini --suite ../../riscv-test-suite/rv${{ matrix.xlen }}i_m/privilege --env ../../riscv-test-suite/env
+          riscof run --config config.ini --suite ../../riscv-test-suite/rv${{ matrix.xlen }}i_m --env ../../riscv-test-suite/env
 
       #Check the existance of the riscof work folder, and add the PATH to environment variable
       - name: Check size and determine upload path
