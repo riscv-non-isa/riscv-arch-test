@@ -1,0 +1,101 @@
+# testlist generated on 2024-10-24 07:36 GMT
+/home/user/Work/Tests/riscv-test-suite/rv32i_m/M/src/div-01.S:
+  commit_id: '-'
+  work_dir: 
+    /home/user/Work/New_Repo/riscv-arch-test-PR/riscof-plugins/rv32/riscof_work/src/div-01.S
+  macros:
+  - TEST_CASE_1=True
+  - XLEN=32
+  isa: RV32IM
+  mac: []
+  coverage_labels:
+  - div
+  test_path: /home/user/Work/Tests/riscv-test-suite/rv32i_m/M/src/div-01.S
+/home/user/Work/Tests/riscv-test-suite/rv32i_m/M/src/divu-01.S:
+  commit_id: '-'
+  work_dir: 
+    /home/user/Work/New_Repo/riscv-arch-test-PR/riscof-plugins/rv32/riscof_work/src/divu-01.S
+  macros:
+  - TEST_CASE_1=True
+  - XLEN=32
+  isa: RV32IM
+  mac: []
+  coverage_labels:
+  - divu
+  test_path: /home/user/Work/Tests/riscv-test-suite/rv32i_m/M/src/divu-01.S
+/home/user/Work/Tests/riscv-test-suite/rv32i_m/M/src/mul-01.S:
+  commit_id: '-'
+  work_dir: 
+    /home/user/Work/New_Repo/riscv-arch-test-PR/riscof-plugins/rv32/riscof_work/src/mul-01.S
+  macros:
+  - TEST_CASE_1=True
+  - XLEN=32
+  isa: RV32IM
+  mac: []
+  coverage_labels:
+  - mul
+  - mul
+  test_path: /home/user/Work/Tests/riscv-test-suite/rv32i_m/M/src/mul-01.S
+/home/user/Work/Tests/riscv-test-suite/rv32i_m/M/src/mulh-01.S:
+  commit_id: '-'
+  work_dir: 
+    /home/user/Work/New_Repo/riscv-arch-test-PR/riscof-plugins/rv32/riscof_work/src/mulh-01.S
+  macros:
+  - TEST_CASE_1=True
+  - XLEN=32
+  isa: RV32IM
+  mac: []
+  coverage_labels:
+  - mulh
+  - mulh
+  test_path: /home/user/Work/Tests/riscv-test-suite/rv32i_m/M/src/mulh-01.S
+/home/user/Work/Tests/riscv-test-suite/rv32i_m/M/src/mulhsu-01.S:
+  commit_id: '-'
+  work_dir: 
+    /home/user/Work/New_Repo/riscv-arch-test-PR/riscof-plugins/rv32/riscof_work/src/mulhsu-01.S
+  macros:
+  - TEST_CASE_1=True
+  - XLEN=32
+  isa: RV32IM
+  mac: []
+  coverage_labels:
+  - mulhsu
+  - mulhsu
+  test_path: /home/user/Work/Tests/riscv-test-suite/rv32i_m/M/src/mulhsu-01.S
+/home/user/Work/Tests/riscv-test-suite/rv32i_m/M/src/mulhu-01.S:
+  commit_id: '-'
+  work_dir: 
+    /home/user/Work/New_Repo/riscv-arch-test-PR/riscof-plugins/rv32/riscof_work/src/mulhu-01.S
+  macros:
+  - TEST_CASE_1=True
+  - XLEN=32
+  isa: RV32IM
+  mac: []
+  coverage_labels:
+  - mulhu
+  - mulhu
+  test_path: /home/user/Work/Tests/riscv-test-suite/rv32i_m/M/src/mulhu-01.S
+/home/user/Work/Tests/riscv-test-suite/rv32i_m/M/src/rem-01.S:
+  commit_id: '-'
+  work_dir: 
+    /home/user/Work/New_Repo/riscv-arch-test-PR/riscof-plugins/rv32/riscof_work/src/rem-01.S
+  macros:
+  - TEST_CASE_1=True
+  - XLEN=32
+  isa: RV32IM
+  mac: []
+  coverage_labels:
+  - rem
+  test_path: /home/user/Work/Tests/riscv-test-suite/rv32i_m/M/src/rem-01.S
+/home/user/Work/Tests/riscv-test-suite/rv32i_m/M/src/remu-01.S:
+  commit_id: '-'
+  work_dir: 
+    /home/user/Work/New_Repo/riscv-arch-test-PR/riscof-plugins/rv32/riscof_work/src/remu-01.S
+  macros:
+  - TEST_CASE_1=True
+  - XLEN=32
+  isa: RV32IM
+  mac: []
+  coverage_labels:
+  - remu
+  test_path: /home/user/Work/Tests/riscv-test-suite/rv32i_m/M/src/remu-01.S

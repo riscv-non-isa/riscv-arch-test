@@ -93,8 +93,6 @@ main:
 					// of whole physical memory
 	csrr t0, pmpaddr0		// Verify its value by reading back
 	nop				// Added nop in case of trap
-	RVTEST_SIGUPD(x13,t0)
-	nop				// Added nop in case of trap
 	LI(a5, PMP_L| PMP_R| PMP_W | PMP_X | PMP_TOR)		// LOCKED BIT IS SET
 	csrw pmpcfg0, a5
 
@@ -150,8 +148,6 @@ main:
 	csrw pmpaddr0, t2		// Updated pmpaddr0 to define PMP region consisting
 					// of whole physical memory
 	csrr t0, pmpaddr0		// Verify its value by reading back
-	nop				// Added nop in case of trap
-	RVTEST_SIGUPD(x13,t0)
 	nop				// Added nop in case of trap
 	LI(a5, PMP_L| PMP_R| PMP_W | PMP_X | PMP_TOR)		// LOCKED BIT IS SET
 	csrw pmpcfg0, a5
