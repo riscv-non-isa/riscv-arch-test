@@ -166,7 +166,7 @@ class cross():
 
     BASE_REG_DICT = { 'x'+str(i) : 'x'+str(i) for i in range(32)}
 
-    def __init__(self,label,coverpoint,xlen,flen,addr_pairs,sig_addrs,window_size):
+    def __init__(self,label,coverpoint,xlen,flen,addr_pairs,sig_addrs,window_size,inxFlg):
 
         self.label = label
         self.coverpoint = coverpoint
@@ -1536,7 +1536,7 @@ def compute(trace_file, test_name, cgf, parser_name, decoder_name, detailed, xle
             if 'cross_comb' in value and len(value['cross_comb'])!=0:
                 for coverpt in value['cross_comb'].keys():
                     if(isinstance(coverpt,str)):
-                        new_obj = cross(cov_labels,coverpt,xlen,flen,addr_pairs,sig_addrs,window_size)
+                        new_obj = cross(cov_labels,coverpt,xlen,flen,addr_pairs,sig_addrs,window_size,inxFlg)
                         obj_dict[(cov_labels,coverpt)] = new_obj
 
 
