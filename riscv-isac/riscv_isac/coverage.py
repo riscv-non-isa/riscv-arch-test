@@ -693,9 +693,9 @@ class statistics:
 
         return temp
 
-def pretty_print_yaml(yaml):
+def pretty_print_yaml(yaml_obj):
     res = ''''''
-    for line in ruamel.yaml.round_trip_dump(yaml, indent=5, block_seq_indent=3).splitlines(True):
+    for line in utils.dump_yaml(yaml_obj, indent=5, block_seq_indent=3).splitlines(True):
         res += line
     return res
 
@@ -1524,7 +1524,7 @@ def compute(trace_file, test_name, cgf, parser_name, decoder_name, detailed, xle
 
     if dump is not None:
         dump_f = open(dump, 'w')
-        dump_f.write(ruamel.yaml.round_trip_dump(cgf, indent=5, block_seq_indent=3))
+        dump_f.write(utils.dump_yaml(cgf, indent=5, block_seq_indent=3))
         dump_f.close()
         sys.exit(0)
 
@@ -1686,7 +1686,7 @@ def compute(trace_file, test_name, cgf, parser_name, decoder_name, detailed, xle
     rpt_str = gen_report(rcgf, detailed)
     logger.info('Writing out updated cgf : ' + test_name + '.cgf')
     dump_file = open(test_name+'.cgf', 'w')
-    dump_file.write(ruamel.yaml.round_trip_dump(rcgf, indent=5, block_seq_indent=3))
+    dump_file.write(utils.dump_yaml(rcgf, indent=5, block_seq_indent=3))
     dump_file.close()
 
     if sig_addrs:
