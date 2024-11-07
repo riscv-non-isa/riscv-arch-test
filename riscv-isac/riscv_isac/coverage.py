@@ -1059,7 +1059,6 @@ def compute_per_line(queue, event, cgf_queue, stats_queue, cgf, xlen, flen, addr
             globals()['get_pte_prop'] = get_pte_prop
 
             if enable :
-                # print(instr_vars)
                 ucovpt = []
                 covpt = []
                 csr_covpt = []

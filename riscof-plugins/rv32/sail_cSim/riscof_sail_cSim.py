@@ -138,16 +138,12 @@ class sail_cSim(pluginTemplate):
 
             execute += self.objdump_cmd.format(elf, self.xlen, 'ref.disass')
             sig_file = os.path.join(test_dir, self.name[:-1] + ".signature")
-            # if 'c' not in  self.isa:
-            #     cmd = self.sail_exe[self.xlen]+' -C' + ' -F '
-            # else:
-            #     cmd = self.sail_exe[self.xlen] + ' -F '
             cmd = ''
             if "Zilsd" in self.isa:
                 cmd = cmd + ' --enable-zilsd'  
             if "Zclsd" in self.isa:
                 cmd = cmd + ' --enable-zclsd'
-            execute += self.sail_exe[self.xlen] + cmd + '  -i -v   --test-signature={0} {1} > {2}.log 2>&1;'.format(sig_file, elf, test_name)
+            execute += self.sail_exe[self.xlen] + cmd + '  -i -v --trace=step  --pmp-count=16 --pmp-grain=0  --test-signature={0} {1} > {2}.log 2>&1;'.format(sig_file, elf, test_name)
             execute +=  f'perl -pi -e \'s/^\[/\\n\\n\[/\' {test_name}.log;'
             cov_str = ' '
             for label in testentry['coverage_labels']:
