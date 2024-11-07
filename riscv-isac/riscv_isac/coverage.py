@@ -1157,10 +1157,10 @@ def compute_per_line(queue, event, cgf_queue, stats_queue, cgf, xlen, flen, addr
                                     lcls={}
                                     if instr.is_rvp and "rs1" in value:
                                         op_width = 64 if instr.rs1_nregs == 2 else xlen
-                                        simd_val_unpack(value['val_comb'], op_width, "rs1", rs1_val, lcls)
+                                        simd_val_unpack(value['val_comb'], op_width, "rs1", instr_vars['rs1_val'], lcls)
                                     if instr.is_rvp and "rs2" in value:
                                         op_width = 64 if instr.rs2_nregs == 2 else xlen
-                                        simd_val_unpack(value['val_comb'], op_width, "rs2", rs2_val, lcls)
+                                        simd_val_unpack(value['val_comb'], op_width, "rs2", instr_vars['rs2_val'], lcls)
                                     instr_vars.update(lcls)
                                     for coverpoints in value['val_comb']:
                                         if eval(coverpoints, globals(), instr_vars):
