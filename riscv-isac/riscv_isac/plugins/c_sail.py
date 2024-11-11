@@ -20,6 +20,7 @@ irrespective of their original size.')
     instr_pattern_c_sail_csr_reg_val = re.compile('(?P<CSR>CSR|clint::tick)\s(?P<reg>[a-z0-9]+)\s<-\s(?P<val>[0-9xABCDEF]+)(?:\s\(input:\s(?P<input_val>[0-9xABCDEF]+)\))?')
     instr_pattern_c_sail_mem_val = re.compile('mem\[(?P<addr>[0-9xABCDEF]+)\]\s<-\s(?P<val>[0-9xABCDEF]+)')
     instr_pattern_c_sail_trap = re.compile(r'trapping\sfrom\s(?P<mode_change>\w+\sto\s\w+)\sto\shandle\s(?P<call_type>\w+.*)\shandling\sexc#(?P<exc_num>0x[0-9a-fA-F]+)\sat\spriv\s\w\swith\stval\s(?P<tval>0x[0-9a-fA-F]+)')
+    instr_pattern_c_sail_interrupt = re.compile(r'Handling\s(?P<call_type>\w+):\s(?P<intr_num>0x[0-9a-fA-F]+)\shandling\sint#0x[0-9a-fA-F]+\sat\spriv\s\w\swith\stval\s(?P<tval>0x[0-9a-fA-F]+)')
     instr_pattern_c_sail_ret  = re.compile(r'ret-ing\sfrom\s(?P<mode_change>\w+\sto\s\w+)')
     def extractInstruction(self, line):
         instr_pattern = self.instr_pattern_c_sail
@@ -125,6 +126,7 @@ irrespective of their original size.')
     
     def extracttrapvals(self, line):
         instr_trap_pattern = self.instr_pattern_c_sail_trap.search(line)
+        instr_interrupt_pattern  = self.instr_pattern_c_sail_interrupt.search(line)
         trap_dict = {"mode_change": None, "call_type": None, "exc_num": None, "tval": None}
 
         #ret will tell us to delete the previous state of the cause registers
@@ -136,6 +138,14 @@ irrespective of their original size.')
             trap_dict["tval"]        = instr_trap_pattern.group("tval")
             self.old_trap_dict = trap_dict
 
+        #update the cause registers if there is interrupt
+        elif instr_interrupt_pattern:
+            trap_dict["mode_change"] = None
+            trap_dict["call_type"]   = instr_interrupt_pattern.group("call_type")
+            trap_dict["exc_num"]     = instr_interrupt_pattern.group("intr_num")
+            trap_dict["tval"]        = instr_interrupt_pattern.group("tval")
+            self.old_trap_dict = trap_dict
+ 
         elif instr_ret_pattern:
             #if ret_signal is 1 then clear the values of the mode_change, call_type, exc_num, tval
             trap_dict = {"mode_change": None, "call_type": None, "exc_num": None, "tval": None}

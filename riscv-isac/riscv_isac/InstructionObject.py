@@ -509,6 +509,16 @@ class instructionObject():
                 if "mcause" not in instr_vars:
                     instr_vars['mcause']      = None
                     instr_vars['mtval']       = None
+        
+        #Handle interrupt Case
+        # TODO: update the interrupt case for delegation !
+        elif trap_dict["mode_change"] is None and trap_dict['call_type'] == "interrupt":
+                instr_vars['mcause']      = trap_dict['exc_num']
+                instr_vars['mtval']       = trap_dict['tval']
+                #only update on the initialization
+                if "scause" not in instr_vars:
+                    instr_vars['scause']      = None
+                    instr_vars['stval']       = None
 
         else:
                 #initialize them to None for the first time in the instr_vars
