@@ -115,3 +115,7 @@ ENV/
 
 # IDE settings
 .vscode/
+
+# Coverage Report Files
+*.rpt
+*.html

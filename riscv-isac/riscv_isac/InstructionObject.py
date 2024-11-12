@@ -492,6 +492,8 @@ class instructionObject():
         instr_vars['mode_change']   = trap_dict['mode_change']
         instr_vars['call_type']     = trap_dict['call_type']
 
+        mcause_interrupt = {32: 0x80000000, 64: 0x8000000000000000}
+
         if trap_dict["mode_change"] is not None:
             #update the registers depending upon the mode change
             if trap_dict["mode_change"].split()[2] == "M":
@@ -513,7 +515,8 @@ class instructionObject():
         #Handle interrupt Case
         # TODO: update the interrupt case for delegation !
         elif trap_dict["mode_change"] is None and trap_dict['call_type'] == "interrupt":
-                instr_vars['mcause']      = trap_dict['exc_num']
+                #upper most bit should be 1 in case of interrupt
+                instr_vars['mcause'] = mcause_interrupt[instr_vars['xlen']] | int(trap_dict['exc_num'], 16)
                 instr_vars['mtval']       = trap_dict['tval']
                 #only update on the initialization
                 if "scause" not in instr_vars:
