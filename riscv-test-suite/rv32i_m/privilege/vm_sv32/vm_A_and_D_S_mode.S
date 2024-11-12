@@ -66,8 +66,13 @@ rvtest_entry_point:
 RVMODEL_BOOT
 RVTEST_CODE_BEGIN
 
+/*
+	! If the hardware updates the A and D bit, Please add  " def HARDWARE_UPDATE_A_D=True; " in the RVTEST_CASE
+	SOFTWARE_UPDATE_A_D=True is defined here by default, replace when using the hardware update
+*/
+
 #ifdef TEST_CASE_1
-    RVTEST_CASE(1,"//check ISA:=regex(.*32.*); check ISA:=regex(.*I.*Zicsr.*); def rvtest_mtrap_routine=True; def rvtest_strap_routine=True; def TEST_CASE_1=True; mac SV32_MACROS",a_and_d_bit_soft_upd_S_mode)
+    RVTEST_CASE(1,"//check ISA:=regex(.*32.*); check ISA:=regex(.*I.*Zicsr.*); def rvtest_mtrap_routine=True; def SOFTWARE_UPDATE_A_D=True; def rvtest_strap_routine=True; def TEST_CASE_1=True; mac SV32_MACROS", a_and_d_bit_soft_upd, a_and_d_bit_hart_upd)
 
 RVTEST_SIGBASE( x13,signature_x13_1)
 // ------------------------------------------------------------------------------------------------------------
@@ -238,8 +243,10 @@ main:
 	PTE_SETUP_RV32_New(rvtest_data_1_l1, (PTE_D | PTE_X| PTE_W| PTE_R| PTE_V), va_data, LEVEL1)
 	sfence.vma
 
+	#ifdef SOFTWARE_UPDATE_A_D
 	PTE_SETUP_RV32_New(rvtest_data_1_l1, (PTE_D | PTE_A | PTE_R | PTE_W | PTE_X | PTE_V), va_return_page_l1, LEVEL1)
 	sfence.vma
+	#endif
 
 	TEST_CASES_RUNNER Smode, va_data, LEVEL1
 
@@ -250,8 +257,10 @@ main:
 	PTE_SETUP_RV32_New(rvtest_data_1_l1, (PTE_X| PTE_W| PTE_R| PTE_V), va_data, LEVEL1)
 	sfence.vma
 
+	#ifdef SOFTWARE_UPDATE_A_D
 	PTE_SETUP_RV32_New(rvtest_data_1_l1, (PTE_D | PTE_A | PTE_R | PTE_W | PTE_X | PTE_V), va_return_page_l1, LEVEL1)
 	sfence.vma
+	#endif
 
 	TEST_CASES_RUNNER Smode, va_data, LEVEL1
 
@@ -286,9 +295,11 @@ main:
 	PTE_SETUP_RV32_New(rvtest_data_1_l0, (PTE_D |PTE_X| PTE_W| PTE_R| PTE_V), va_data, LEVEL0)
 	sfence.vma
 
+	#ifdef SOFTWARE_UPDATE_A_D
 	PTE_SETUP_RV32_New(rvtest_slvl1_pg_tbl, (PTE_V), va_return_page_l0, LEVEL1)
 	PTE_SETUP_RV32_New(rvtest_data_1_l0, (PTE_D | PTE_A | PTE_R | PTE_W | PTE_X | PTE_V), va_return_page_l0, LEVEL0)
 	sfence.vma
+	#endif
 
 	TEST_CASES_RUNNER Smode, va_data, LEVEL0
 
@@ -300,9 +311,11 @@ main:
 	PTE_SETUP_RV32_New(rvtest_data_1_l0, (PTE_X| PTE_W| PTE_R| PTE_V), va_data, LEVEL0)
 	sfence.vma
 
+	#ifdef SOFTWARE_UPDATE_A_D
 	PTE_SETUP_RV32_New(rvtest_slvl1_pg_tbl, (PTE_V), va_return_page_l0, LEVEL1)
 	PTE_SETUP_RV32_New(rvtest_data_1_l0, (PTE_D | PTE_A | PTE_R | PTE_W | PTE_X | PTE_V), va_return_page_l0, LEVEL0)
 	sfence.vma
+	#endif
 
 	TEST_CASES_RUNNER Smode, va_data, LEVEL0
 

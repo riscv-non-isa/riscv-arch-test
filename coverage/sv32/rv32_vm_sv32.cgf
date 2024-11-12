@@ -1,663 +1,238 @@
-a_and_d_bit_soft_upd_S_mode:
+#If A and D are not set, then hardware will update it atomically with the access and no faults!
+a_and_d_bit_hart_upd:
   config:
-    # Ensure that the ISA is 32-bit, and the supported extensions include I and Zicsr.
-    - check ISA:=regex(.*32.*); check ISA:=regex(.*I.*Zicsr.*); def rvtest_mtrap_routine=True; def rvtest_strap_routine=True;
+    - check ISA:=regex(.*32.*); check ISA:=regex(.*I.*Zicsr.*); def rvtest_mtrap_routine=True; def rvtest_strap_routine=True; def HARDWARE_UPDATE_A_D=True; 
   mnemonics:
-    # Verify that the following instructions are tested: sw, csrrc, csrrs, csrrw, lw, jalr.
     "{sw, csrrc, csrrs, csrrw, lw, jal, jalr}": 0
   op_comb:
-    # Check if the `satp` is active in Supervisor mode (S) and verify that the SV32 paging scheme is configured.
-    'mode == "S" and (satp >> 31) == ${SATP_MODE_SV32}': 0
+    'mode == {"S", "U"} and (satp >> 31) ==  ${SATP_MODE_SV32}': 0
   csr_comb:
-    # Ensure that the Physical Page Number (PPN) of `rvtest_Sroot_pg_tbl` matches the lower 22 bits of the `satp` register when `satp` is active.
-    '((satp) & 0x003FFFFF) == get_addr("rvtest_Sroot_pg_tbl") >> 12': 0
+    '((satp) & 0x003FFFFF)  == get_addr("rvtest_Sroot_pg_tbl") >> 12': 0
   val_comb:
-    # LEVEL 1 Test Cases:
-    # Test Case 1: A bit set, D bit not set, RWX set --> No fault, and the PTE should be updated.
-    'mode == "S" and get_pte_prop("ARWX", dptw1cont) == 1 and get_pte_prop("D", dptw1cont) == 0 and dptw0cont == None': 0
-    # Test Case 2: Both A and D bits set, RWX set --> No fault.
-    'mode == "S" and get_pte_prop("ADRWX", dptw1cont) == 1 and dptw0cont == None': 0
-    # Test Case 3: D bit set, A bit not set, RWX set --> No fault, and the PTE should be updated.
-    'mode == "S" and get_pte_prop("DRWX", dptw1cont) == 1 and get_pte_prop("A", dptw1cont) == 0 and dptw0cont == None': 0
-    # Test Case 4: Neither A nor D bits set, RWX set --> No fault, and the PTE should be updated.
-    'mode == "S" and get_pte_prop("RWX", dptw1cont) == 1 and get_pte_prop("AD", dptw1cont) == 0 and dptw0cont == None': 0
-    # LEVEL 0 Test Cases:
-    # Test Case 5: A bit set, D bit not set, RWX set --> No fault, and the PTE should be updated.
-    'mode == "S" and get_pte_prop("RWX", dptw1cont) == 0 and get_pte_prop("ARWX", dptw0cont) == 1 and get_pte_prop("D", dptw0cont) == 0': 0
-    # Test Case 6: Both A and D bits set, RWX set --> No fault, and the PTE should be updated.
-    'mode == "S" and get_pte_prop("RWX", dptw1cont) == 0 and get_pte_prop("ADRWX", dptw0cont) == 1': 0
-    # Test Case 7: D bit set, A bit not set, RWX set --> No fault, and the PTE should be updated.
-    'mode == "S" and get_pte_prop("RWX", dptw1cont) == 0 and get_pte_prop("DRWX", dptw0cont) == 1 and get_pte_prop("A", dptw0cont) == 0': 0
-    # Test Case 8: Neither A nor D bits set, RWX set --> No fault, and the PTE should be updated.
-    'mode == "S" and get_pte_prop("RWX", dptw1cont) == 0 and get_pte_prop("RWX", dptw0cont) == 1 and get_pte_prop("AD", dptw0cont) == 0': 0
-    # Fault Checks:
-    # Test Case 1: Store Page Fault, successful page table walk for load, fetch.
-    'mode == "S" and get_pte_prop("ARWX", dptw1cont) == 1 and get_pte_prop("D", dptw1cont) == 0 and dptw0cont == None and len_dptw == 1': 0
-    'mode == "S" and mnemonic == "sw" and get_pte_prop("ARWX", dptw1cont) == 1 and get_pte_prop("D", dptw1cont) == 0 and dptw0cont == None and mcause == ${CAUSE_STORE_PAGE_FAULT}': 0
-    # Test Case 2: Successful page table walk at Level 1.
-    'mode == "S" and get_pte_prop("ADRWX", dptw1cont) == 1 and dptw0cont == None and len_dptw == 1': 0
-    #Test Case  3: expected: Load-page-fault, Store-page-fault, Fetch-page-fault
-    'mode == "S" and mnemonic == {"sw", "lw"} and get_pte_prop("RWX", dptw1cont) == 1 and get_pte_prop("AD", dptw1cont) == 0 and dptw0cont == None and mcause == {15, 13}{[$1]}': 0
-    'mode == "M" and get_pte_prop("RWX", iptw1cont) == 1 and get_pte_prop("AD", iptw1cont) == 0 and iptw0cont == None and mcause == ${CAUSE_FETCH_PAGE_FAULT}': 0
-    #Test Case  4: expected: Load-page-fault, Store-page-fault, Fetch-page-fault
-    'mode == "S" and mnemonic == {"sw", "lw"} and get_pte_prop("DRWX", dptw1cont) == 1 and get_pte_prop("A", dptw1cont) == 0 and dptw0cont == None and mcause == {15, 13}{[$1]}': 0
-    'mode == "M" and get_pte_prop("DRWX", iptw1cont) == 1 and get_pte_prop("A", iptw1cont) == 0 and iptw0cont == None and mcause == ${CAUSE_FETCH_PAGE_FAULT}': 0
-    # Test Case 5: Store Page Fault, successful page table walk for load, fetch.
-    'mode == "S" and get_pte_prop("RWX", dptw1cont) == 0 and get_pte_prop("ARWX", dptw0cont) == 1 and get_pte_prop("D", dptw0cont) == 0 and len_dptw == 2': 0
-    'mode == "S" and mnemonic == "sw" and get_pte_prop("RWX", dptw1cont) == 0 and get_pte_prop("ARWX", dptw0cont) == 1 and get_pte_prop("D", dptw0cont) == 0 and mcause == ${CAUSE_STORE_PAGE_FAULT}': 0
-    # Test Case 6: Successful page table walk at Level 0.
-    'mode == "S" and get_pte_prop("RWX", dptw1cont) == 0 and get_pte_prop("ADRWX", dptw0cont) == 1 and len_dptw == 2': 0
-    #Test Case  7: expected: Load-page-fault, Store-page-fault, Fetch-page-fault
-    'mode == "S" and mnemonic == {"sw", "lw"} and get_pte_prop("RWX", dptw1cont) == 0 and get_pte_prop("DRWX", dptw0cont) == 1 and get_pte_prop("A", dptw0cont) == 0 and mcause == {15, 13}{[$1]}': 0
-    'mode == "M" and get_pte_prop("RWX", iptw1cont) == 0 and get_pte_prop("DRWX", iptw0cont) == 1 and get_pte_prop("A", iptw0cont) == 0 and mcause == ${CAUSE_FETCH_PAGE_FAULT}': 0
-    #Test Case  8: expected: Load-page-fault, Store-page-fault, Fetch-page-fault
-    'mode == "S" and mnemonic == {"sw", "lw"} and get_pte_prop("RWX", dptw1cont) == 0 and get_pte_prop("RWX", dptw0cont) == 1 and get_pte_prop("AD", dptw0cont) == 0 and mcause == {15, 13}{[$1]}': 0
-    'mode == "M" and get_pte_prop("RWX", iptw1cont) == 0 and get_pte_prop("RWX", iptw0cont) == 1 and get_pte_prop("AD", iptw0cont) == 0 and mcause == ${CAUSE_FETCH_PAGE_FAULT}': 0
+    'mode == {"S", "U"} and get_pte_prop({"AdRWX", "ADRWX", "aDRWX", "adRWX"},   dptw1cont) ==  1 and dptw0cont == None': 0
+    'mode == {"S", "U"} and get_pte_prop("rwx", dptw1cont) == 1 and get_pte_prop({"AdRWX", "ADRWX", "aDRWX", "adRWX"}, dptw0cont) ==  1': 0
+    #Faults check at LEVEL 1 and LEVEL 0
+    'mode == {"S", "U"} and get_pte_prop({"AdRWX", "ADRWX", "aDRWX", "adRWX"},   dptw1cont) ==  1 and dptw0cont == None and len_dptw == 1': 0
+    'mode == {"S", "U"} and get_pte_prop("rwx", dptw1cont) == 1 and get_pte_prop({"AdRWX", "ADRWX", "aDRWX", "adRWX"}, dptw0cont) ==  1 and len_dptw == 2': 0
 
-a_and_d_bit_soft_upd_U_mode:
+#If A and D are not set, then hardware will NOT update it and we will get a respective fault !
+a_and_d_bit_soft_upd:
   config:
-    # Ensure that the ISA is 32-bit, and the supported extensions include I and Zicsr.
-    - check ISA:=regex(.*32.*); check ISA:=regex(.*I.*Zicsr.*); def rvtest_mtrap_routine=True; def rvtest_strap_routine=True;
+    - check ISA:=regex(.*32.*); check ISA:=regex(.*I.*Zicsr.*); def rvtest_mtrap_routine=True; def rvtest_strap_routine=True; def HARDWARE_UPDATE_A_D=True; 
   mnemonics:
-    # Verify that the following instructions are tested: sw, csrrc, csrrs, csrrw, lw, jalr.
     "{sw, csrrc, csrrs, csrrw, lw, jal, jalr}": 0
   op_comb:
-    # Check if the `satp` is active in Supervisor mode (S) and verify that the SV32 paging scheme is configured.
-    'mode == "U" and (satp >> 31) == ${SATP_MODE_SV32}': 0
+    'mode == {"S", "U"} and (satp >> 31) ==  ${SATP_MODE_SV32}': 0
   csr_comb:
-    # Ensure that the Physical Page Number (PPN) of `rvtest_Sroot_pg_tbl` matches the lower 22 bits of the `satp` register when `satp` is active.
-    '((satp) & 0x003FFFFF) == get_addr("rvtest_Sroot_pg_tbl") >> 12': 0
+    '((satp) & 0x003FFFFF)  == get_addr("rvtest_Sroot_pg_tbl") >> 12': 0
   val_comb:
-    # LEVEL 1 Test Cases:
-    # Test Case 1: A bit set, D bit not set, RWX set --> No fault, and the PTE should be updated.
-    'mode == "U" and get_pte_prop("ARWUX", dptw1cont) == 1 and get_pte_prop("D", dptw1cont) == 0 and dptw0cont == None': 0
-    # Test Case 2: Both A and D bits set, RWX set --> No fault.
-    'mode == "U" and get_pte_prop("ADRWUX", dptw1cont) == 1 and dptw0cont == None': 0
-    # Test Case 3: D bit set, A bit not set, RWX set --> No fault, and the PTE should be updated.
-    'mode == "U" and get_pte_prop("DRWUX", dptw1cont) == 1 and get_pte_prop("A", dptw1cont) == 0 and dptw0cont == None': 0
-    # Test Case 4: Neither A nor D bits set, RWX set --> No fault, and the PTE should be updated.
-    'mode == "U" and get_pte_prop("RWUX", dptw1cont) == 1 and get_pte_prop("AD", dptw1cont) == 0 and dptw0cont == None': 0
-    # LEVEL 0 Test Cases:
-    # Test Case 5: A bit set, D bit not set, RWX set --> No fault, and the PTE should be updated.
-    'mode == "U" and get_pte_prop("RWUX", dptw1cont) == 0 and get_pte_prop("ARWUX", dptw0cont) == 1 and get_pte_prop("D", dptw0cont) == 0': 0
-    # Test Case 6: Both A and D bits set, RWX set --> No fault, and the PTE should be updated.
-    'mode == "U" and get_pte_prop("RWUX", dptw1cont) == 0 and get_pte_prop("ADRWUX", dptw0cont) == 1': 0
-    # Test Case 7: D bit set, A bit not set, RWX set --> No fault, and the PTE should be updated.
-    'mode == "U" and get_pte_prop("RWUX", dptw1cont) == 0 and get_pte_prop("DRWUX", dptw0cont) == 1 and get_pte_prop("A", dptw0cont) == 0': 0
-    # Test Case 8: Neither A nor D bits set, RWX set --> No fault, and the PTE should be updated.
-    'mode == "U" and get_pte_prop("RWUX", dptw1cont) == 0 and get_pte_prop("RWUX", dptw0cont) == 1 and get_pte_prop("AD", dptw0cont) == 0': 0
-    # Fault Checks:
-    # Test Case 1: Store Page Fault, successful page table walk for load, fetch.
-    'mode == "U" and get_pte_prop("ARWUX", dptw1cont) == 1 and get_pte_prop("D", dptw1cont) == 0 and dptw0cont == None and len_dptw == 1': 0
-    'mode == "U" and mnemonic == "sw" and get_pte_prop("ARWUX", dptw1cont) == 1 and get_pte_prop("D", dptw1cont) == 0 and dptw0cont == None and mcause == ${CAUSE_STORE_PAGE_FAULT}': 0
-    # Test Case 2: Successful page table walk at Level 1.
-    'mode == "U" and get_pte_prop("ADRWUX", dptw1cont) == 1 and dptw0cont == None and len_dptw == 1': 0
-    #Test Case  3: expected: Load-page-fault, Store-page-fault, Fetch-page-fault
-    'mode == "U" and mnemonic == {"sw", "lw"} and get_pte_prop("RWUX", dptw1cont) == 1 and get_pte_prop("AD", dptw1cont) == 0 and dptw0cont == None and mcause == {15, 13}{[$1]}': 0
-    'mode == "M" and get_pte_prop("RWUX", iptw1cont) == 1 and get_pte_prop("AD", iptw1cont) == 0 and iptw0cont == None and mcause == ${CAUSE_FETCH_PAGE_FAULT}': 0
-    #Test Case  4: expected: Load-page-fault, Store-page-fault, Fetch-page-fault
-    'mode == "U" and mnemonic == {"sw", "lw"} and get_pte_prop("DRWUX", dptw1cont) == 1 and get_pte_prop("A", dptw1cont) == 0 and dptw0cont == None and mcause == {15, 13}{[$1]}': 0
-    'mode == "M" and get_pte_prop("DRWUX", iptw1cont) == 1 and get_pte_prop("A", iptw1cont) == 0 and iptw0cont == None and mcause == ${CAUSE_FETCH_PAGE_FAULT}': 0
-    # Test Case 5: Store Page Fault, successful page table walk for load, fetch.
-    'mode == "U" and get_pte_prop("RWUX", dptw1cont) == 0 and get_pte_prop("ARWUX", dptw0cont) == 1 and get_pte_prop("D", dptw0cont) == 0 and len_dptw == 2': 0
-    'mode == "U" and mnemonic == "sw" and get_pte_prop("RWUX", dptw1cont) == 0 and get_pte_prop("ARWUX", dptw0cont) == 1 and get_pte_prop("D", dptw0cont) == 0 and mcause == ${CAUSE_STORE_PAGE_FAULT}': 0
-    # Test Case 6: Successful page table walk at Level 0.
-    'mode == "U" and get_pte_prop("RWUX", dptw1cont) == 0 and get_pte_prop("ADRWUX", dptw0cont) == 1 and len_dptw == 2': 0
-    #Test Case  7: expected: Load-page-fault, Store-page-fault, Fetch-page-fault
-    'mode == "U" and mnemonic == {"sw", "lw"} and get_pte_prop("RWUX", dptw1cont) == 0 and get_pte_prop("DRWUX", dptw0cont) == 1 and get_pte_prop("A", dptw0cont) == 0 and mcause == {15, 13}{[$1]}': 0
-    'mode == "M" and get_pte_prop("RWUX", iptw1cont) == 0 and get_pte_prop("DRWUX", iptw0cont) == 1 and get_pte_prop("A", iptw0cont) == 0 and mcause == ${CAUSE_FETCH_PAGE_FAULT}': 0
-    #Test Case  8: expected: Load-page-fault, Store-page-fault, Fetch-page-fault
-    'mode == "U" and mnemonic == {"sw", "lw"} and get_pte_prop("RWUX", dptw1cont) == 0 and get_pte_prop("RWUX", dptw0cont) == 1 and get_pte_prop("AD", dptw0cont) == 0 and mcause == {15, 13}{[$1]}': 0
-    'mode == "M" and get_pte_prop("RWUX", iptw1cont) == 0 and get_pte_prop("RWUX", iptw0cont) == 1 and get_pte_prop("AD", iptw0cont) == 0 and mcause == ${CAUSE_FETCH_PAGE_FAULT}': 0
+    'mode == {"S", "U"} and get_pte_prop({"AdRWX", "ADRWX", "aDRWX", "adRWX"},   dptw1cont) ==  1 and dptw0cont == None': 0
+    'mode == {"S", "U"} and get_pte_prop("RWX", dptw1cont) == 0 and get_pte_prop({"AdRWX", "ADRWX", "aDRWX", "adRWX"}, dptw0cont) ==  1': 0
+    #Faults check at LEVEL 1
+    #Successful Accesses Cases
+    'mode == {"S", "U"} and get_pte_prop({"AdRWX", "ADRWX"},   dptw1cont) ==  1 and dptw0cont == None and len_dptw == 1': 0
+    #Load, Store Fault Accesses Cases
+    'mode == {"S", "U"} and get_pte_prop({"aDRWX", "adRWX"},   dptw1cont) ==  1 and dptw0cont == None and mcause == {15, 13}': 0
+    #Store Fault Accesses Cases
+    'mode == {"S", "U"} and get_pte_prop("AdRWX",   dptw1cont) ==  1 and dptw0cont == None and mcause == 15': 0
+    #Fetch Page Faults
+    'mode == "M" and get_pte_prop({"aDRWX", "adRWX"}, iptw1cont) == 1 and iptw0cont == None and mcause == ${CAUSE_FETCH_PAGE_FAULT}': 0
+    #Faults check at LEVEL 0
+    #Successful Accesses Cases
+    'mode == {"S", "U"} and get_pte_prop("rwx", dptw1cont) == 1 and get_pte_prop({"AdRWX", "ADRWX"},   dptw0cont) ==  1 and len_dptw == 2': 0
+    #Load, Store Fault Accesses Cases
+    'mode == {"S", "U"} and get_pte_prop("rwx", dptw1cont) == 1 and get_pte_prop({"aDRWX", "adRWX"},   dptw0cont) ==  1 and mcause == {15, 13}': 0
+    #Store Fault Accesses Cases
+    'mode == {"S", "U"} and get_pte_prop("rwx", dptw1cont) == 1 and get_pte_prop("AdRWX",   dptw0cont) ==  1 and mcause == 15': 0
+    #Fetch Page Faults
+    'mode == "M" and get_pte_prop("rwx", iptw1cont) == 1 and get_pte_prop({"aDRWX", "adRWX"}, iptw0cont) == 1 and mcause == ${CAUSE_FETCH_PAGE_FAULT}': 0
 
-pmp_check_pa_S_mode:
+#Check that when PA has no PMP Permissions, it should give Load, Store and Fetch access Faults.
+pmp_check_pa:
   config:
-    # Ensure that the ISA is 32-bit, and the supported extensions include I and Zicsr.
     - check ISA:=regex(.*32.*); check ISA:=regex(.*I.*Zicsr.*); def rvtest_mtrap_routine=True; def rvtest_strap_routine=True;
   mnemonics:
-    # Verify that the following instructions are tested: sw, csrrc, csrrs, csrrw, lw, jalr.
     "{sw, csrrc, csrrs, csrrw, lw, jal, jalr}": 0
   op_comb:
-    # Check if the `satp` is active in Supervisor mode (S) and verify that the SV32 paging scheme is configured.
-    'mode == "S" and (satp >> 31) == ${SATP_MODE_SV32}': 0
+    'mode == {"S", "U"} and (satp >> 31) == ${SATP_MODE_SV32}': 0
   csr_comb:
-    # Ensure that the Physical Page Number (PPN) of `rvtest_Sroot_pg_tbl` matches the lower 22 bits of the `satp` register when `satp` is active.
-    '((satp) & 0x003FFFFF) == get_addr("rvtest_Sroot_pg_tbl") >> 12': 0
-    # Region of Interest -> Test Section has No PMP RWX permissions set | ONLY TOR is selected in pmpcfg
-    '(pmpcfg0 >> 8) & ${PMPCFG_ALL_BIT} == ${PMPCFG_TOR_MODE}': 0
+    'mode == {"S", "U"} and ((satp) & 0x003FFFFF) == get_addr("rvtest_Sroot_pg_tbl") >> 12': 0
+    'mode == {"S", "U"} and (pmpcfg0 >> 8) & ${PMPCFG_ALL_BIT} == ${PMPCFG_TOR_MODE}': 0
   val_comb:
-    # LEVEL 1 Test Cases:
-    # Test Case 1: A bit set, D bit set, RWX set, NO PMP Permissions on PA --> Load-access-fault, Store-access-fault, Fetch-access-fault.
-    'mode == "S" and get_pte_prop("ADRWX", dptw1cont) == 1 and dptw0cont == None': 0
-    # LEVEL 0 Test Cases:
-    # Test Case 1: A bit set, D bit set, RWX set, NO PMP Permissions on PA --> Load-access-fault, Store-access-fault, Fetch-access-fault.
-    'mode == "S" and get_pte_prop("RWX", dptw1cont) == 0 and get_pte_prop("ADRWX", dptw0cont) == 1': 0
+    'mode == {"S", "U"} and get_pte_prop({"AuDRWX", "AUDRWX"}{[$1]}, dptw1cont) == 1 and dptw0cont == None': 0  #Level 1
+    'mode == {"S", "U"} and get_pte_prop("rwx", dptw1cont) == 1 and get_pte_prop({"AuDRWX", "AUDRWX"}{[$1]}, dptw0cont) == 1': 0  #Level 0
     # Fault Checks:
-    # Test Case 1 and 2: Load-access-fault, Store-access-fault, Fetch-access-fault
-    'mode == "S" and mnemonic == {"sw", "lw"} and mcause == {7, 5}{[$1]}': 0
-    'mode == "M" and mnemonic == "jal" and mcause == 1': 0
+    'mode == {"S", "U"} and mnemonic == {"sw", "lw"} and mcause == {7, 5}{[$2]}': 0
+    'mode == "M" and mnemonic == "jal" and mcause == ${CAUSE_FETCH_ACCESS}': 0
 
-pmp_check_pa_U_mode:
+#Check that when PA has no PMP Permissions, it should give Load, Store and Fetch access Faults.
+pmp_check_pte:
   config:
-    # Ensure that the ISA is 32-bit, and the supported extensions include I and Zicsr.
     - check ISA:=regex(.*32.*); check ISA:=regex(.*I.*Zicsr.*); def rvtest_mtrap_routine=True; def rvtest_strap_routine=True;
   mnemonics:
-    # Verify that the following instructions are tested: sw, csrrc, csrrs, csrrw, lw, jalr.
     "{sw, csrrc, csrrs, csrrw, lw, jal, jalr}": 0
   op_comb:
-    # Check if the `satp` is active in Supervisor mode (S) and verify that the SV32 paging scheme is configured.
-    'mode == "U" and (satp >> 31) == ${SATP_MODE_SV32}': 0
+    'mode == {"S", "U"} and (satp >> 31) == ${SATP_MODE_SV32}': 0
   csr_comb:
-    # Ensure that the Physical Page Number (PPN) of `rvtest_Sroot_pg_tbl` matches the lower 22 bits of the `satp` register when `satp` is active.
-    '((satp) & 0x003FFFFF) == get_addr("rvtest_Sroot_pg_tbl") >> 12': 0
-    # Region of Interest -> Test Section has No PMP RWX permissions set | ONLY TOR is selected in pmpcfg
-    '(pmpcfg0 >> 8) & ${PMPCFG_ALL_BIT} == ${PMPCFG_TOR_MODE}': 0
-  val_comb:
-    # LEVEL 1 Test Cases:
-    # Test Case 1: A bit set, D bit set, RWX set, NO PMP Permissions on PA --> Load-access-fault, Store-access-fault, Fetch-access-fault.
-    'mode == "U" and get_pte_prop("ADRWUX", dptw1cont) == 1 and dptw0cont == None': 0
-    # LEVEL 0 Test Cases:
-    # Test Case 1: A bit set, D bit set, RWX set, NO PMP Permissions on PA --> Load-access-fault, Store-access-fault, Fetch-access-fault.
-    'mode == "U" and get_pte_prop("RWX", dptw1cont) == 0 and get_pte_prop("ADRWUX", dptw0cont) == 1': 0
-    # Fault Checks:
-    # Test Case 1 and 2: Load-access-fault, Store-access-fault, Fetch-access-fault
-    'mode == "U" and mnemonic == {"sw", "lw"} and mcause == {7, 5}{[$1]}': 0
-    'mode == "M" and mnemonic == "jal" and mcause == 1': 0
-
-pmp_check_pte_U_mode:
-  config:
-    # Ensure that the ISA is 32-bit, and the supported extensions include I and Zicsr.
-    - check ISA:=regex(.*32.*); check ISA:=regex(.*I.*Zicsr.*); def rvtest_mtrap_routine=True; def rvtest_strap_routine=True;
-  mnemonics:
-    # Verify that the following instructions are tested: sw, csrrc, csrrs, csrrw, lw, jalr.
-    "{sw, csrrc, csrrs, csrrw, lw, jal, jalr}": 0
-  op_comb:
-    # Check if the `satp` is active in Supervisor mode (S) and verify that the SV32 paging scheme is configured.
-    'mode == "U" and (satp >> 31) == ${SATP_MODE_SV32}': 0
-  csr_comb:
-    # Ensure that the Physical Page Number (PPN) of `rvtest_Sroot_pg_tbl` matches the lower 22 bits of the `satp` register when `satp` is active.
-    '((satp) & 0x003FFFFF) == get_addr("rvtest_Sroot_pg_tbl") >> 12': 0
-    # Region of Interest -> Page Table Entry has No PMP RWX permissions set | ONLY TOR is selected in pmpcfg
-    '(pmpcfg0 >> 8) & ${PMPCFG_ALL_BIT} == ${PMPCFG_NA4_MODE}': 0
+    'mode == {"S", "U"} and ((satp) & 0x003FFFFF) == get_addr("rvtest_Sroot_pg_tbl") >> 12': 0
+    'mode == {"S", "U"} and ((pmpcfg0 >> 8) & ${PMPCFG_ALL_BIT}) == ${PMPCFG_NA4_MODE}': 0
   val_comb:
     #Note: No way to check the PTW since we will get the access fault before we are able to check the PTW, therefore, no coverpoints!
     #For this case, the only way to verify that the Virtual Memory is enabled is by checking the satp register.
     # Fault Checks:
-    # Test Case 1 and 2: Load-access-fault, Store-access-fault, Fetch-access-fault
-    'mode == "U" and mnemonic == {"sw", "lw"} and mcause == {7, 5}{[$1]} and len_dptw == 0': 0
-    'mode == "M" and mnemonic == "jal" and mcause == 1 and len_iptw == 0': 0
+    'mode == {"S", "U"} and mnemonic == {"sw", "lw"} and mcause == {7, 5}{[$2]}': 0
+    'mode == "M" and mnemonic == "jal" and mcause == ${CAUSE_FETCH_ACCESS}': 0
 
-pmp_check_pte_S_mode:
+#if the Valid bit is not set, then there should be load, store, fetch page fault
+invalid_pte:
   config:
-    # Ensure that the ISA is 32-bit, and the supported extensions include I and Zicsr.
     - check ISA:=regex(.*32.*); check ISA:=regex(.*I.*Zicsr.*); def rvtest_mtrap_routine=True; def rvtest_strap_routine=True;
   mnemonics:
-    # Verify that the following instructions are tested: sw, csrrc, csrrs, csrrw, lw, jalr.
-    "{sw, csrrc, csrrs, csrrw, lw, jal, jalr}": 0
+    "{sw, csrrc, csrrs, csrrw, lw, jalr}": 0
   op_comb:
-    # Check if the `satp` is active in Supervisor mode (S) and verify that the SV32 paging scheme is configured.
-    'mode == "S" and (satp >> 31) == ${SATP_MODE_SV32}': 0
+    'mode == {"S", "U"} and (satp >> 31) ==  ${SATP_MODE_SV32}': 0
   csr_comb:
-    # Ensure that the Physical Page Number (PPN) of `rvtest_Sroot_pg_tbl` matches the lower 22 bits of the `satp` register when `satp` is active.
-    '((satp) & 0x003FFFFF) == get_addr("rvtest_Sroot_pg_tbl") >> 12': 0
-    # Region of Interest -> Page Table Entry has No PMP RWX permissions set | ONLY TOR is selected in pmpcfg
-    '(pmpcfg0 >> 8) & ${PMPCFG_ALL_BIT} == ${PMPCFG_NA4_MODE}': 0
-  val_comb:
-    #Note: No way to check the PTW since we will get the access fault before we are able to check the PTW, therefore, no coverpoints!
-    #For this case, the only way to verify that the Virtual Memory is enabled is by checking the satp register.
-    # Fault Checks:
-    # Test Case 1 and 2: Load-access-fault, Store-access-fault, Fetch-access-fault
-    'mode == "S" and mnemonic == {"sw", "lw"} and mcause == {7, 5}{[$1]} and len_dptw == 0': 0
-    'mode == "M" and mnemonic == "jal" and mcause == 1 and len_iptw == 0': 0
-
-invalid_pte_SMode:
-  config:
-    - check ISA:=regex(.*32.*); check ISA:=regex(.*I.*Zicsr.*); def rvtest_mtrap_routine=True; def rvtest_strap_routine=True;
-  mnemonics:
-    "{sw, csrrc, csrrs, csrrw, lw, jalr}": 0
-  csr_comb:
-    #Check that the satp is active --> in S mode & also check that SV32 is configured
-    'mode == "S" and (satp >> 31) ==  ${SATP_MODE_SV32}': 0
-    #The ppn of rvtest_Sroot_pg_tbl should be equal to the satp lower 22 bits (when the satp is active)
     '((satp) & 0x003FFFFF)  == get_addr("rvtest_Sroot_pg_tbl") >> 12': 0
   val_comb:
-    # Test Case:1 -> No V bit set but RWX set -> load, store, fetch page fault
-    'mode == "S" and get_pte_prop("RWX",   dptw1cont) ==  1 and get_pte_prop("V",  dptw1cont) == 0 and dptw0cont == None': 0
-    # Test Case:2
-    'mode == "S" and get_pte_prop("RWX", dptw1cont) == 0 and get_pte_prop("RWX", dptw0cont) ==  1 and get_pte_prop("V", dptw0cont) == 0': 0
-    #checks for load, store and page faults begin from here.
-    #Test Case 1: expected: load-page-fault, store-page-fault, page-fault-fault
-    'mode == "S" and mnemonic == {"sw", "lw"} and get_pte_prop("RWX", dptw1cont) == 1 and get_pte_prop("V", dptw0cont) == 0 and mcause == {15, 13}{[$1]}': 0
-    #Test Case 2: expected: load-page-fault, store-page-fault, fetch-page-fault
-    'mode == "S" and mnemonic == {"sw", "lw"} and get_pte_prop("RWX", dptw1cont) == 0 and get_pte_prop("RWX", dptw0cont) == 1 and get_pte_prop("V", dptw0cont) == 0 and mcause == {15, 13}{[$1]}': 0
-    #fetch-page-fault check -> mtval value should be equal to the virtual address va_data_1_l1(address space with No U Bit) + 4MB - 4 in the case of level 1
-    '(${va_data_sv32} + ${LEVEL_1_JUMP_SIZE}) == mtval and mcause == ${CAUSE_FETCH_PAGE_FAULT}': 0
-    # #fetch-page-fault check -> mtval value should be equal to the virtual address va_data_1_l0(address space with no U bit) + 4KB - 4 in the case of level 0
+    'mode == {"S", "U"} and get_pte_prop("RWXv",   dptw1cont) ==  1 and dptw0cont == None': 0
+    'mode == {"S", "U"} and get_pte_prop("rwx", dptw1cont) == 1 and get_pte_prop("RWXv", dptw0cont) ==  1': 0
+    #Fault Checks
+    'mode == {"S", "U"} and mnemonic == {"sw", "lw"} and get_pte_prop("RWXv", dptw1cont) == 1 and mcause == {15, 13}{[$2]}': 0
+    'mode == {"S", "U"} and mnemonic == {"sw", "lw"} and get_pte_prop("rwx",  dptw1cont) == 1 and get_pte_prop("RWXv", dptw0cont) == 1 and mcause == {15, 13}{[$2]}': 0
+    'mode == "M" and (${va_data_sv32} + ${LEVEL_1_JUMP_SIZE}) == mtval and mcause == ${CAUSE_FETCH_PAGE_FAULT}': 0
     'mode == "M" and (${va_data_sv32} + ${LEVEL_0_JUMP_SIZE}) == mtval and mcause == ${CAUSE_FETCH_PAGE_FAULT}': 0
 
-invalid_pte_UMode:
+#Test Section (PA of our test VA) is misaligned -> We will get a Load, Store, Fetch Page Fault
+misaligned_superpage:
   config:
     - check ISA:=regex(.*32.*); check ISA:=regex(.*I.*Zicsr.*); def rvtest_mtrap_routine=True; def rvtest_strap_routine=True;
   mnemonics:
     "{sw, csrrc, csrrs, csrrw, lw, jalr}": 0
+  op_comb:
+    'mode == {"S", "U"} and (satp >> 31) ==  ${SATP_MODE_SV32}': 0  
   csr_comb:
-    #Check that the satp is active --> in S mode & also check that SV32 is configured
-    'mode == "U" and (satp >> 31) ==  ${SATP_MODE_SV32}': 0
-    #The ppn of rvtest_Sroot_pg_tbl should be equal to the satp lower 22 bits (when the satp is active)
     '((satp) & 0x003FFFFF)  == get_addr("rvtest_Sroot_pg_tbl") >> 12': 0
   val_comb:
-    # Test Case:1 -> No V bit set but RWX set -> load, store, fetch page fault
-    'mode == "U" and get_pte_prop("RWX",   dptw1cont) ==  1 and get_pte_prop("V",  dptw1cont) == 0 and dptw0cont == None': 0
-    # Test Case:2
-    'mode == "U" and get_pte_prop("RWX", dptw1cont) == 0 and get_pte_prop("RWX", dptw0cont) ==  1 and get_pte_prop("V", dptw0cont) == 0': 0
-    #checks for load, store and page faults begin from here.
-    #Test Case 1: expected: load-page-fault, store-page-fault, page-fault-fault
-    'mode == "U" and mnemonic == {"sw", "lw"} and get_pte_prop("RWX", dptw1cont) == 1 and get_pte_prop("V", dptw1cont) == 0 and dptw0cont == None and mcause == {15, 13}{[$1]}': 0
-    #Test Case 2: expected: load-page-fault, store-page-fault, fetch-page-fault
-    'mode == "U" and mnemonic == {"sw", "lw"} and get_pte_prop("RWX", dptw1cont) == 0 and get_pte_prop("RWX", dptw0cont) == 1 and get_pte_prop("V", dptw0cont) == 0 and mcause == {15, 13}{[$1]}': 0
-    #fetch-page-fault check -> mtval value should be equal to the virtual address va_data_1_l1(address space with No U Bit) + 4MB - 4 in the case of level 1
-    '(${va_data_sv32} + ${LEVEL_1_JUMP_SIZE}) == mtval and mcause == ${CAUSE_FETCH_PAGE_FAULT}': 0
-    # #fetch-page-fault check -> mtval value should be equal to the virtual address va_data_1_l0(address space with no U bit) + 4KB - 4 in the case of level 0
-    'mode == "M" and (${va_data_sv32} + ${LEVEL_0_JUMP_SIZE}) == mtval and mcause == ${CAUSE_FETCH_PAGE_FAULT}': 0
+    'mode == {"S", "U"} and get_pte_prop("ADRWXV", dptw1cont) == 1 and dptw0cont == None and len_dptw == 1': 0 #Make sure we get a page table walk level 1
+    #Fault Checks
+    'mode == {"S", "U"} and mnemonic == {"sw", "lw"} and get_pte_prop("ADRWXV", dptw1cont) == 1 and dptw0cont == None and mcause == {15, 13}{[$2]}': 0
+    'mode == "M" and (${va_data_sv32} + ${LEVEL_1_JUMP_SIZE}) == mtval and mcause == ${CAUSE_FETCH_PAGE_FAULT}': 0
 
-misaligned_superpage_SMode:
+# If MXR bit is set, then make the exec. readable and just give a store page fault else give both load and store page fault
+MXR_bit:
   config:
     - check ISA:=regex(.*32.*); check ISA:=regex(.*I.*Zicsr.*); def rvtest_mtrap_routine=True; def rvtest_strap_routine=True;
   mnemonics:
     "{sw, csrrc, csrrs, csrrw, lw, jalr}": 0
+  op_comb:
+    'mode == {"S", "U"} and (satp >> 31) ==  ${SATP_MODE_SV32}': 0
   csr_comb:
-    #Check that the satp is active --> in S mode & also check that SV32 is configured
-    'mode == "S" and (satp >> 31) ==  ${SATP_MODE_SV32}': 0
-    #The ppn of rvtest_Sroot_pg_tbl should be equal to the satp lower 22 bits (when the satp is active)
     '((satp) & 0x003FFFFF)  == get_addr("rvtest_Sroot_pg_tbl") >> 12': 0
-  val_comb:
-    # Check that the page table walk length is equal to the required walk set by the ISA. For both the {i}nstruction and {d}ata access.
-    'mode == "S" and len_dptw == 1': 0
-    # Test Case:1 -> All permissions given for RWX -> still we will get RWX fault because of the misaligned super page.
-    'mode == "S" and get_pte_prop("RWX", dptw1cont) == 1 and dptw0cont == None': 0
-    #checks for load, store and page faults begin from here.
-    #Test Case 1: expected: load-page-fault, store-page-fault, fetch-page-fault
-    'mode == "S" and mnemonic == {"sw", "lw"} and get_pte_prop("RWX", dptw1cont) == 1 and dptw0cont == None and mcause == {15, 13}{[$1]}': 0
-    # #fetch-page-fault check -> mtval value should be equal to the virtual address va_data_1_l0(address space with no U bit) + 4KB - 4 in the case of level 0
-    'mode == "M" and mcause == ${CAUSE_FETCH_PAGE_FAULT}': 0
-
-misaligned_superpage_UMode:
-  config:
-    - check ISA:=regex(.*32.*); check ISA:=regex(.*I.*Zicsr.*); def rvtest_mtrap_routine=True; def rvtest_strap_routine=True;
-  mnemonics:
-    "{sw, csrrc, csrrs, csrrw, lw, jalr}": 0
-  csr_comb:
-    #Check that the satp is active --> in S mode & also check that SV32 is configured
-    'mode == "U" and (satp >> 31) ==  ${SATP_MODE_SV32}': 0
-    #The ppn of rvtest_Sroot_pg_tbl should be equal to the satp lower 22 bits (when the satp is active)
-    '((satp) & 0x003FFFFF)  == get_addr("rvtest_Sroot_pg_tbl") >> 12': 0
-  val_comb:
-    # Check that the page table walk length is equal to the required walk set by the ISA. For both the {i}nstruction and {d}ata access.
-    'mode == "U" and len_dptw == 1': 0
-    # Test Case:1 -> All permissions given for RWX -> still we will get RWX fault because of the misaligned super page.
-    'mode == "U" and get_pte_prop("RWX", dptw1cont) == 1 and dptw0cont == None': 0
-    #checks for load, store and page faults begin from here.
-    #Test Case 1: expected: load-page-fault, store-page-fault, fetch-page-fault
-    'mode == "U" and mnemonic == {"sw", "lw"} and get_pte_prop("RWX", dptw1cont) == 1 and dptw0cont == None and mcause == {15, 13}{[$1]}': 0
-    # #fetch-page-fault check -> mtval value should be equal to the virtual address va_data_1_l0(address space with no U bit) + 4KB - 4 in the case of level 0
-    'mode == "M" and mcause == ${CAUSE_FETCH_PAGE_FAULT}': 0
-
-MXR_bit_SMode:
-  config:
-    - check ISA:=regex(.*32.*); check ISA:=regex(.*I.*Zicsr.*); def rvtest_mtrap_routine=True; def rvtest_strap_routine=True;
-  mnemonics:
-    "{sw, csrrc, csrrs, csrrw, lw, jalr}": 0
-  csr_comb:
-    #Check that the satp is active --> in S mode & also check that SV32 is configured
-    'mode == "S" and (satp >> 31) ==  ${SATP_MODE_SV32}': 0
-    #The ppn of rvtest_Sroot_pg_tbl should be equal to the satp lower 22 bits (when the satp is active)
-    '((satp) & 0x003FFFFF)  == get_addr("rvtest_Sroot_pg_tbl") >> 12': 0
-    #CHECK THE SUM BIT IS SET in MSTATUS:
     '(mstatus & ${MSTATUS_MXR}) == ${MSTATUS_MXR}': 0
   val_comb:
-    # Check that the page table walk length is equal to the required walk set by the ISA. For both the {i}nstruction and {d}ata access.
-    'mode == "S" and len_{i,d}ptw == {1,2}': 0
-    # Test Case:1
-    'mode == "S" and get_pte_prop("X",   dptw1cont) ==  1 and get_pte_prop("RW",  dptw1cont) == 0 and  {i, d}ptw0cont == None': 0
-    # Test Case:10
-    'mode == "S" and get_pte_prop("RWX", dptw1cont) == 0 and get_pte_prop("X",  dptw0cont) ==   1 and get_pte_prop("RW", dptw0cont) == 0': 0
-    #Checks for Loads, Store, fetch Faults start from here
-    #Test Case 1: expected: store-page-fault
-    'mode == "S" and ((mstatus & ${MSTATUS_MXR}) == ${MSTATUS_MXR}) and mnemonic == "sw" and get_pte_prop("X", dptw1cont) == 1 and get_pte_prop("RW", dptw1cont) == 0 and dptw0cont == None and mcause == 15': 0
-    #Test Case 2: expected: store-page-fault, load-page-fault -> No MXR set with No R, so expected load page fault
-    'mode == "S" and ((mstatus & ${MSTATUS_MXR}) != ${MSTATUS_MXR}) and mnemonic == {"sw", "lw"} and get_pte_prop("X", dptw1cont) == 1 and get_pte_prop("RW", dptw1cont) == 0 and dptw0cont == None and mcause == {15, 13}{[$1]}': 0
-    #Test Case 3: expected: store-page-fault
-    'mode == "S" and ((mstatus & ${MSTATUS_MXR}) == ${MSTATUS_MXR}) and mnemonic == "sw" and get_pte_prop("RWX", dptw1cont) == 0 and get_pte_prop("X", dptw0cont) == 1 and get_pte_prop("RW", dptw0cont) == 0 and mcause == 15': 0
-    #Test Case 3: expected: load-page-fault, store-page-fault -> No MXR set with No R, so expected load page fault
-    'mode == "S" and ((mstatus & ${MSTATUS_MXR}) != ${MSTATUS_MXR}) and mnemonic == {"sw", "lw"} and get_pte_prop("RWX", dptw1cont) == 0 and get_pte_prop("X", dptw0cont) == 1 and get_pte_prop("RW", dptw0cont) == 0 and mcause == {15, 13}{[$1]}': 0
+    'mode == {"S", "U"} and get_pte_prop("rwX",   dptw1cont) ==  1 and dptw0cont == None': 0
+    'mode == {"S", "U"} and get_pte_prop("rwx", dptw1cont) == 1 and get_pte_prop("rwX",  dptw0cont) ==   1': 0
+    #Fault Checks
+    'mode == {"S", "U"} and ((mstatus & ${MSTATUS_MXR}) == ${MSTATUS_MXR}) and mnemonic == "sw" and get_pte_prop("rwX", dptw1cont) == 1 and dptw0cont == None and mcause == 15': 0
+    'mode == {"S", "U"} and ((mstatus & ${MSTATUS_MXR}) != ${MSTATUS_MXR}) and mnemonic == {"sw", "lw"} and get_pte_prop("rwX", dptw1cont) == 1 and dptw0cont == None and mcause == {15, 13}{[$2]}': 0
+    'mode == {"S", "U"} and ((mstatus & ${MSTATUS_MXR}) == ${MSTATUS_MXR}) and mnemonic == "sw" and get_pte_prop("rwx", dptw1cont) == 1 and get_pte_prop("rwX", dptw0cont) == 1 and mcause == 15': 0
+    'mode == {"S", "U"} and ((mstatus & ${MSTATUS_MXR}) != ${MSTATUS_MXR}) and mnemonic == {"sw", "lw"} and get_pte_prop("rwx", dptw1cont) == 1 and get_pte_prop("rwX", dptw0cont) == 1 and mcause == {15, 13}{[$2]}': 0
 
-MXR_bit_UMode:
+#If a PTE at Level 0 has no RWX permissions i.e., similar to non leaf pte then give a load, store, fetch page fault
+nonleaf_pte_level0:
   config:
     - check ISA:=regex(.*32.*); check ISA:=regex(.*I.*Zicsr.*); def rvtest_mtrap_routine=True; def rvtest_strap_routine=True;
   mnemonics:
     "{sw, csrrc, csrrs, csrrw, lw, jalr}": 0
+  op_comb:
+    'mode == {"S", "U"} and (satp >> 31) ==  ${SATP_MODE_SV32}': 0
   csr_comb:
-    #Check that the satp is active --> in S mode & also check that SV32 is configured
-    'mode == "U" and (satp >> 31) ==  ${SATP_MODE_SV32}': 0
-    #The ppn of rvtest_Sroot_pg_tbl should be equal to the satp lower 22 bits (when the satp is active)
-    '((satp) & 0x003FFFFF)  == get_addr("rvtest_Sroot_pg_tbl") >> 12': 0
-    #CHECK THE SUM BIT IS SET in MSTATUS:
-    '(mstatus & ${MSTATUS_MXR}) == ${MSTATUS_MXR}': 0
-  val_comb:
-    # Check that the page table walk length is equal to the required walk set by the ISA. For both the {i}nstruction and {d}ata access.
-    'mode == "U" and len_{i,d}ptw == {1,2}': 0
-    # Test Case:1
-    'mode == "U" and get_pte_prop("X",   dptw1cont) ==  1 and get_pte_prop("RW",  dptw1cont) == 0 and  {i, d}ptw0cont == None': 0
-    # Test Case:10
-    'mode == "U" and get_pte_prop("RWX", dptw1cont) == 0 and get_pte_prop("X",  dptw0cont) ==   1 and get_pte_prop("RW", dptw0cont) == 0': 0
-    #Checks for Loads, Store, fetch Faults start from here
-    #Test Case 1: expected: store-page-fault
-    'mode == "U" and ((mstatus & ${MSTATUS_MXR}) == ${MSTATUS_MXR}) and mnemonic == "sw" and get_pte_prop("X", dptw1cont) == 1 and get_pte_prop("RW", dptw1cont) == 0 and dptw0cont == None and mcause == 15': 0
-    #Test Case 2: expected: store-page-fault, load-page-fault -> No MXR set with No R, so expected load page fault
-    'mode == "U" and ((mstatus & ${MSTATUS_MXR}) != ${MSTATUS_MXR}) and mnemonic == {"sw", "lw"} and get_pte_prop("X", dptw1cont) == 1 and get_pte_prop("RW", dptw1cont) == 0 and dptw0cont == None and mcause == {15, 13}{[$1]}': 0
-    #Test Case 3: expected: store-page-fault
-    'mode == "U" and ((mstatus & ${MSTATUS_MXR}) == ${MSTATUS_MXR}) and mnemonic == "sw" and get_pte_prop("RWX", dptw1cont) == 0 and get_pte_prop("X", dptw0cont) == 1 and get_pte_prop("RW", dptw0cont) == 0 and mcause == 15': 0
-    #Test Case 3: expected: load-page-fault, store-page-fault -> No MXR set with No R, so expected load page fault
-    'mode == "U" and ((mstatus & ${MSTATUS_MXR}) != ${MSTATUS_MXR}) and mnemonic == {"sw", "lw"} and get_pte_prop("RWX", dptw1cont) == 0 and get_pte_prop("X", dptw0cont) == 1 and get_pte_prop("RW", dptw0cont) == 0 and mcause == {15, 13}{[$1]}': 0
-
-nonleaf_pte_level0_SMode:
-  config:
-    - check ISA:=regex(.*32.*); check ISA:=regex(.*I.*Zicsr.*); def rvtest_mtrap_routine=True; def rvtest_strap_routine=True;
-  mnemonics:
-    "{sw, csrrc, csrrs, csrrw, lw, jalr}": 0
-  csr_comb:
-    #Check that the satp is active --> in S mode & also check that SV32 is configured
-    'mode == "S" and (satp >> 31) ==  ${SATP_MODE_SV32}': 0
-    #The ppn of rvtest_Sroot_pg_tbl should be equal to the satp lower 22 bits (when the satp is active)
     '((satp) & 0x003FFFFF)  == get_addr("rvtest_Sroot_pg_tbl") >> 12': 0
   val_comb:
-    # Check that the page table walk length is equal to the required walk set by the ISA. For both the {i}nstruction and {d}ata access.
-    'mode == "S" and len_dptw == 2': 0
-    # Test Case:1
-    'mode == "S" and get_pte_prop("RWX", {i, d}ptw1cont) == 0 and get_pte_prop("RWX", $1ptw0cont) == 0': 0
-    #checks for load, store and page faults begin from here.
-    #Test Case 1: expected: load-page-fault, store-page-fault, fetch-page-fault
-    'mode == "S" and mnemonic == {"sw", "lw"} and get_pte_prop("RWX", {i, d}ptw1cont) == 0 and get_pte_prop("RWX", $2ptw0cont) == 0 and mcause == {15, 13}{[$1]}': 0
-    # #fetch-page-fault check -> mtval value should be equal to the virtual address va_data_1_l0(address space with no U bit) + 4KB - 4 in the case of level 0
+    'mode == {"S", "U"} and get_pte_prop("rwx", dptw1cont) == 1 and get_pte_prop("rwx", dptw0cont) == 1': 0
+    #Fault Checks
+    'mode == {"S", "U"} and mnemonic == {"sw", "lw"} and get_pte_prop("rwx", dptw1cont) == 1 and get_pte_prop("rwx", dptw0cont) == 1 and mcause == {15, 13}{[$2]}': 0
     'mode == "M" and (${va_data_sv32} + ${LEVEL_0_JUMP_SIZE}) == mtval and mcause == ${CAUSE_FETCH_PAGE_FAULT}': 0
 
-nonleaf_pte_level0_UMode:
+#If reserved PTE permissions are chosen, then get a load, store and fetch page fault
+reserved_pte_perm:
   config:
     - check ISA:=regex(.*32.*); check ISA:=regex(.*I.*Zicsr.*); def rvtest_mtrap_routine=True; def rvtest_strap_routine=True;
   mnemonics:
     "{sw, csrrc, csrrs, csrrw, lw, jalr}": 0
+  op_comb:
+    'mode == {"S", "U"} and (satp >> 31) ==  ${SATP_MODE_SV32}': 0
   csr_comb:
-    #Check that the satp is active --> in S mode & also check that SV32 is configured
-    'mode == "U" and (satp >> 31) ==  ${SATP_MODE_SV32}': 0
-    #The ppn of rvtest_Sroot_pg_tbl should be equal to the satp lower 22 bits (when the satp is active)
     '((satp) & 0x003FFFFF)  == get_addr("rvtest_Sroot_pg_tbl") >> 12': 0
   val_comb:
-    # Check that the page table walk length is equal to the required walk set by the ISA. For both the {i}nstruction and {d}ata access.
-    'mode == "U" and len_dptw == 2': 0
-    # Test Case:1
-    'mode == "U" and get_pte_prop("RWX", {i, d}ptw1cont) == 0 and get_pte_prop("RWX", $1ptw0cont) == 0': 0
-    #checks for load, store and page faults begin from here.
-    #Test Case 1: expected: load-page-fault, store-page-fault, fetch-page-fault
-    'mode == "U" and mnemonic == {"sw", "lw"} and get_pte_prop("RWX", {i, d}ptw1cont) == 0 and get_pte_prop("RWX", $2ptw0cont) == 0 and mcause == {15, 13}{[$1]}': 0
-    # #fetch-page-fault check -> mtval value should be equal to the virtual address va_data_1_l0(address space with no U bit) + 4KB - 4 in the case of level 0
+    'mode == {"S", "U"} and get_pte_prop({"rWX", "rWx"},   dptw1cont) ==  1 and dptw0cont == None': 0
+    'mode == {"S", "U"} and get_pte_prop("rwx", dptw1cont) == 1 and get_pte_prop({"rWX", "rWx"},   dptw0cont) ==  1': 0
+    #Fault Checks
+    'mode == {"S", "U"} and mnemonic == {"sw", "lw"} and get_pte_prop({"rWX", "rWx"},   dptw1cont) ==  1 and dptw0cont == None and mcause == {15, 13}{[$2]}': 0
+    'mode == {"S", "U"} and mnemonic == {"sw", "lw"} and get_pte_prop("rwx", dptw1cont) == 1 and get_pte_prop({"rWX", "rWx"},   dptw0cont) ==  1 and mcause == {15, 13}{[$2]}': 0
+    'mode == "M" and (${va_data_sv32} + ${LEVEL_1_JUMP_SIZE}) == mtval and mcause == ${CAUSE_FETCH_PAGE_FAULT}': 0
     'mode == "M" and (${va_data_sv32} + ${LEVEL_0_JUMP_SIZE}) == mtval and mcause == ${CAUSE_FETCH_PAGE_FAULT}': 0
 
-reserved_pte_perm_SMode:
-  config:
-    - check ISA:=regex(.*32.*); check ISA:=regex(.*I.*Zicsr.*); def rvtest_mtrap_routine=True; def rvtest_strap_routine=True;
-  mnemonics:
-    "{sw, csrrc, csrrs, csrrw, lw, jalr}": 0
-  csr_comb:
-    #Check that the satp is active --> in S mode & also check that SV32 is configured
-    'mode == "S" and (satp >> 31) ==  ${SATP_MODE_SV32}': 0
-    #The ppn of rvtest_Sroot_pg_tbl should be equal to the satp lower 22 bits (when the satp is active)
-    '((satp) & 0x003FFFFF)  == get_addr("rvtest_Sroot_pg_tbl") >> 12': 0
-  val_comb:
-    # Check that the page table walk length is equal to the required walk set by the ISA. For both the {i}nstruction and {d}ata access.
-    'mode == "S" and len_dptw == {1,2}': 0
-    # Test Case:1
-    'mode == "S" and get_pte_prop("WX",   dptw1cont) ==  1 and get_pte_prop("R",  dptw1cont) == 0 and dptw0cont == None': 0
-    # Test Case:2
-    'mode == "S" and get_pte_prop("W",  dptw1cont) ==  1 and get_pte_prop("RX",   dptw1cont) == 0 and dptw0cont == None': 0
-    # Test Case:3
-    'mode == "S" and get_pte_prop("RWX", dptw1cont) == 0 and get_pte_prop("WX", dptw0cont) ==   1 and get_pte_prop("R", dptw0cont) == 0': 0
-    # Test Case:4
-    'mode == "S" and get_pte_prop("RWX", dptw1cont) == 0 and get_pte_prop("W", dptw0cont) ==  1 and get_pte_prop("RX", dptw0cont) == 0': 0
-
-    #checks for load, store and page faults begin from here.
-    #Test Case 1: expected: load-page-fault, store-page-fault, page-fault-fault
-    'mode == "S" and mnemonic == {"sw", "lw"} and get_pte_prop("WX", dptw1cont) == 1 and get_pte_prop("R", dptw0cont) == 0 and mcause == {15, 13}{[$1]}': 0
-    #Test Case 2: expected: load-page-fault, store-page-fault, page-fault-fault
-    'mode == "S" and mnemonic == {"sw", "lw"} and get_pte_prop("W", dptw1cont) == 1 and get_pte_prop("RX", dptw0cont) == 0 and mcause == {15, 13}{[$1]}': 0
-    #Test Case 3: expected: load-page-fault, store-page-fault, fetch-page-fault
-    'mode == "S" and mnemonic == {"sw", "lw"} and get_pte_prop("RWX", dptw1cont) == 0 and get_pte_prop("WX", dptw0cont) == 1 and get_pte_prop("R", dptw0cont) == 0 and mcause == {15, 13}{[$1]}': 0
-    #Test Case 4: expected: load-page-fault, store-page-fault, fetch-page-fault
-    'mode == "S" and mnemonic == {"sw", "lw"} and get_pte_prop("RWX", dptw1cont) == 0 and get_pte_prop("W", dptw0cont) == 1 and get_pte_prop("RX", dptw0cont) == 0 and mcause == {15, 13}{[$1]}': 0
-    #fetch-page-fault check -> mtval value should be equal to the virtual address va_data_1_l1(address space with No U Bit) + 4MB - 4 in the case of level 1
-    '(${va_data_sv32} + ${LEVEL_1_JUMP_SIZE}) == mtval and mcause == ${CAUSE_FETCH_PAGE_FAULT}': 0
-    # #fetch-page-fault check -> mtval value should be equal to the virtual address va_data_1_l0(address space with no U bit) + 4KB - 4 in the case of level 0
-    'mode == "M" and (${va_data_sv32} + ${LEVEL_0_JUMP_SIZE}) == mtval and mcause == ${CAUSE_FETCH_PAGE_FAULT}': 0
-
-reserved_pte_perm_UMode:
-  config:
-    - check ISA:=regex(.*32.*); check ISA:=regex(.*I.*Zicsr.*); def rvtest_mtrap_routine=True; def rvtest_strap_routine=True;
-  mnemonics:
-    "{sw, csrrc, csrrs, csrrw, lw, jalr}": 0
-  csr_comb:
-    #Check that the satp is active --> in S mode & also check that SV32 is configured
-    'mode == "U" and (satp >> 31) ==  ${SATP_MODE_SV32}': 0
-    #The ppn of rvtest_Sroot_pg_tbl should be equal to the satp lower 22 bits (when the satp is active)
-    '((satp) & 0x003FFFFF)  == get_addr("rvtest_Sroot_pg_tbl") >> 12': 0
-  val_comb:
-    # Check that the page table walk length is equal to the required walk set by the ISA. For both the {i}nstruction and {d}ata access.
-    'mode == "U" and len_dptw == {1,2}': 0
-    # Test Case:1
-    'mode == "U" and get_pte_prop("WX",   dptw1cont) ==  1 and get_pte_prop("R",  dptw1cont) == 0 and dptw0cont == None': 0
-    # Test Case:2
-    'mode == "U" and get_pte_prop("W",  dptw1cont) ==  1 and get_pte_prop("RX",   dptw1cont) == 0 and dptw0cont == None': 0
-    # Test Case:3
-    'mode == "U" and get_pte_prop("RWX", dptw1cont) == 0 and get_pte_prop("WX", dptw0cont) ==   1 and get_pte_prop("R", dptw0cont) == 0': 0
-    # Test Case:4
-    'mode == "U" and get_pte_prop("RWX", dptw1cont) == 0 and get_pte_prop("W", dptw0cont) ==  1 and get_pte_prop("RX", dptw0cont) == 0': 0
-
-    #checks for load, store and page faults begin from here.
-    #Test Case 1: expected: load-page-fault, store-page-fault, page-fault-fault
-    'mode == "U" and mnemonic == {"sw", "lw"} and get_pte_prop("WX", dptw1cont) == 1 and get_pte_prop("R", dptw0cont) == 0 and mcause == {15, 13}{[$1]}': 0
-    #Test Case 2: expected: load-page-fault, store-page-fault, page-fault-fault
-    'mode == "U" and mnemonic == {"sw", "lw"} and get_pte_prop("W", dptw1cont) == 1 and get_pte_prop("RX", dptw0cont) == 0 and mcause == {15, 13}{[$1]}': 0
-    #Test Case 3: expected: load-page-fault, store-page-fault, fetch-page-fault
-    'mode == "U" and mnemonic == {"sw", "lw"} and get_pte_prop("RWX", dptw1cont) == 0 and get_pte_prop("WX", dptw0cont) == 1 and get_pte_prop("R", dptw0cont) == 0 and mcause == {15, 13}{[$1]}': 0
-    #Test Case 4: expected: load-page-fault, store-page-fault, fetch-page-fault
-    'mode == "U" and mnemonic == {"sw", "lw"} and get_pte_prop("RWX", dptw1cont) == 0 and get_pte_prop("W", dptw0cont) == 1 and get_pte_prop("RX", dptw0cont) == 0 and mcause == {15, 13}{[$1]}': 0
-    #fetch-page-fault check -> mtval value should be equal to the virtual address va_data_1_l1(address space with No U Bit) + 4MB - 4 in the case of level 1
-    '(${va_data_sv32} + ${LEVEL_1_JUMP_SIZE}) == mtval and mcause == ${CAUSE_FETCH_PAGE_FAULT}': 0
-    # #fetch-page-fault check -> mtval value should be equal to the virtual address va_data_1_l0(address space with no U bit) + 4KB - 4 in the case of level 0
-    'mode == "M" and (${va_data_sv32} + ${LEVEL_0_JUMP_SIZE}) == mtval and mcause == ${CAUSE_FETCH_PAGE_FAULT}': 0
-
+#If SUM bit is set, then User mode pages can be accessed in the Supervisor mode.
 U_bit_sum_set_in_SMode:
   config:
     - check ISA:=regex(.*32.*); check ISA:=regex(.*I.*Zicsr.*); def rvtest_mtrap_routine=True; def rvtest_strap_routine=True;
   mnemonics:
     "{sw, csrrc, csrrs, csrrw, lw, jalr}": 0
-  csr_comb:
-    #Check that the satp is active --> in S mode & also check that SV32 is configured
+  op_comb:
     'mode == "S" and (satp >> 31) ==  ${SATP_MODE_SV32}': 0
-    #The ppn of rvtest_Sroot_pg_tbl should be equal to the satp lower 22 bits (when the satp is active)
+  csr_comb:
     '((satp) & 0x003FFFFF)  == get_addr("rvtest_Sroot_pg_tbl") >> 12': 0
-    #CHECK THE SUM BIT IS SET in MSTATUS:
     '(mstatus & ${MSTATUS_SUM}) == ${MSTATUS_SUM}': 0
   val_comb:
-    # Check that the page table walk length is equal to the required walk set by the ISA. For both the {i}nstruction and {d}ata access.
-    'mode == "S" and len_{i,d}ptw == {1,2}': 0
-    # Test Case:1
-    'mode == "S" and get_pte_prop("URWX", dptw1cont) == 1 and                                           dptw0cont == None': 0
-    # Test Case:2
-    'mode == "S" and get_pte_prop("UX",   dptw1cont) ==  1 and get_pte_prop("RW",  dptw1cont) == 0 and dptw0cont == None': 0
-    # Test Case:3
-    'mode == "S" and get_pte_prop("URX",  dptw1cont) ==  1 and get_pte_prop("W",   dptw1cont) == 0 and dptw0cont == None': 0
-    # Test Case:4
-    'mode == "S" and get_pte_prop("URW",  dptw1cont) ==  1 and get_pte_prop("X",   dptw1cont) == 0  and dptw0cont == None': 0
-    # Test Case:5
-    'mode == "S" and get_pte_prop("UR",   dptw1cont) ==  1 and get_pte_prop("WX",  dptw1cont) == 0 and dptw0cont == None': 0
-    # Test Case:6
-    'mode == "S" and get_pte_prop("RWX", dptw1cont) == 0 and get_pte_prop("URWX", dptw0cont) == 1': 0
-    # Test Case:7
-    'mode == "S" and get_pte_prop("RWX", dptw1cont) == 0 and get_pte_prop("UX", dptw0cont) ==   1 and get_pte_prop("RW", dptw0cont) == 0': 0
-    # Test Case:8
-    'mode == "S" and get_pte_prop("RWX", dptw1cont) == 0 and get_pte_prop("URX", dptw0cont) ==  1 and get_pte_prop("W", dptw0cont) == 0': 0
-    # Test Case:9
-    'mode == "S" and get_pte_prop("RWX", dptw1cont) == 0 and get_pte_prop("URW", dptw0cont) ==   1 and get_pte_prop("X", dptw0cont) == 0': 0
-    # Test Case:10
-    'mode == "S" and get_pte_prop("RWX", dptw1cont) == 0 and get_pte_prop("UR",  dptw0cont) ==   1 and get_pte_prop("WX", dptw0cont) == 0': 0
-    #Checks for the load, store and fetch page faults begin here
-    #Test Case 2: expected: load-page-fault, store-page-fault
-    'mode == "S" and mnemonic == {"sw", "lw"} and get_pte_prop("UX", dptw1cont) == 1 and get_pte_prop("RW", dptw1cont) == 0 and dptw0cont == None and mcause == {15, 13}{[$1]}': 0
-    #Test Case 3: expected: store-page-fault
-    'mode == "S" and mnemonic == "sw" and get_pte_prop("URX", dptw1cont) == 1 and get_pte_prop("W", dptw1cont) == 0 and dptw0cont == None and mcause == 15': 0
-    #Test Case 5: expected: fetch-page-fault, store-page-fault
-    'mode == "S" and mnemonic == "sw" and get_pte_prop("UR", dptw1cont) == 1 and get_pte_prop("WX", dptw1cont) == 0 and dptw0cont == None and mcause == 15': 0
-    #fetch-page-fault check -> mtval value should be equal to the virtual address va_data_1_l1(address space with No U Bit) + 4MB - 4 in the case of level 1
+    'mode == "S" and get_pte_prop({"URWX", "UrwX", "URwX", "URWx", "URwx"}, dptw1cont) == 1 and dptw0cont == None': 0
+    'mode == "S" and get_pte_prop("rwx", dptw1cont) == 1 and get_pte_prop({"URWX", "UrwX", "URwX", "URWx", "URwx"}, dptw0cont) == 1': 0
+    #Fault Check
+    'mode == "S" and mnemonic == {"sw", "lw"} and get_pte_prop("UrwX", dptw1cont) == 1 and dptw0cont == None and mcause == {15, 13}{[$1]}': 0
+    'mode == "S" and mnemonic == "sw" and get_pte_prop({"URwX", "URwx"}, dptw1cont) == 1 and dptw0cont == None and mcause == 15': 0
+    'mode == "S" and mnemonic == {"sw", "lw"} and get_pte_prop("rwx", dptw1cont) == 1 and get_pte_prop("UrwX", dptw0cont) == 1 and mcause == {15, 13}{[$1]}': 0
+    'mode == "S" and mnemonic == "sw" and get_pte_prop("rwx", dptw1cont) == 1 and get_pte_prop({"URwX", "URwx"}, dptw0cont) == 1 and mcause == 15': 0
     'mode == "M" and (${va_data_sv32} + ${LEVEL_1_JUMP_SIZE}) == mtval and mcause == ${CAUSE_FETCH_PAGE_FAULT}': 0
-    #Test Case 2: expected: load-page-fault, store-page-fault
-    'mode == "S" and mnemonic == {"sw", "lw"} and get_pte_prop("RWX", dptw1cont) == 0 and get_pte_prop("UX", dptw0cont) == 1 and get_pte_prop("RW", dptw0cont) == 0 and mcause == {15, 13}{[$1]}': 0
-    #Test Case 3: expected: store-page-fault
-    'mode == "S" and mnemonic == "sw" and get_pte_prop("RWX", dptw1cont) == 0 and get_pte_prop("URX", dptw0cont) == 1 and get_pte_prop("W", dptw0cont) == 0 and mcause == 15': 0
-    #Test Case 5: expected: fetch-page-fault, store-page-fault
-    'mode == "S" and mnemonic == "sw" and get_pte_prop("RWX", dptw1cont) == 0 and get_pte_prop("UR", dptw0cont) == 1 and get_pte_prop("WX", dptw0cont) == 0 and mcause == 15': 0
-    #fetch-page-fault check -> mtval value should be equal to the virtual address va_data_1_l0(address space with no U bit) + 4KB - 4 in the case of level 0
     'mode == "M" and (${va_data_sv32} + ${LEVEL_0_JUMP_SIZE}) == mtval and mcause == ${CAUSE_FETCH_PAGE_FAULT}': 0
 
+#If SUM bit is set, then User mode pages can be accessed in the Supervisor mode.
 U_bit_no_sum_set_in_SMode:
   config:
     - check ISA:=regex(.*32.*); check ISA:=regex(.*I.*Zicsr.*); def rvtest_mtrap_routine=True; def rvtest_strap_routine=True;
   mnemonics:
     "{sw, csrrc, csrrs, csrrw, lw, jalr}": 0
-  csr_comb:
-    #Check that the satp is active --> in S mode & also check that SV32 is configured
+  op_comb:
     'mode == "S" and (satp >> 31) ==  ${SATP_MODE_SV32}': 0
-    #The ppn of rvtest_Sroot_pg_tbl should be equal to the satp lower 22 bits (when the satp is active)
+  csr_comb:
     '((satp) & 0x003FFFFF)  == get_addr("rvtest_Sroot_pg_tbl") >> 12': 0
-    #CHECK THE SUM BIT IS SET in MSTATUS:
     '(mstatus & ${MSTATUS_SUM}) != ${MSTATUS_SUM}': 0
   val_comb:
-    # Check that the page table walk length is equal to the required walk set by the ISA. For both the {i}nstruction and {d}ata access.
-    'mode == "S" and len_{i,d}ptw == {1,2}': 0
-    # Test Case:1
-    'mode == "S" and get_pte_prop("URWX", dptw1cont) == 1 and                                           dptw0cont == None': 0
-    # Test Case:2
-    'mode == "S" and get_pte_prop("UX",   dptw1cont) ==  1 and get_pte_prop("RW",  dptw1cont) == 0 and dptw0cont == None': 0
-    # Test Case:3
-    'mode == "S" and get_pte_prop("URX",  dptw1cont) ==  1 and get_pte_prop("W",   dptw1cont) == 0 and dptw0cont == None': 0
-    # Test Case:4
-    'mode == "S" and get_pte_prop("URW",  dptw1cont) ==  1 and get_pte_prop("X",   dptw1cont) == 0  and dptw0cont == None': 0
-    # Test Case:5
-    'mode == "S" and get_pte_prop("UR",   dptw1cont) ==  1 and get_pte_prop("WX",  dptw1cont) == 0 and dptw0cont == None': 0
-    # Test Case:6
-    'mode == "S" and get_pte_prop("RWX", dptw1cont) == 0 and get_pte_prop("URWX", dptw0cont) == 1': 0
-    # Test Case:7
-    'mode == "S" and get_pte_prop("RWX", dptw1cont) == 0 and get_pte_prop("UX", dptw0cont) ==   1 and get_pte_prop("RW", dptw0cont) == 0': 0
-    # Test Case:8
-    'mode == "S" and get_pte_prop("RWX", dptw1cont) == 0 and get_pte_prop("URX", dptw0cont) ==  1 and get_pte_prop("W", dptw0cont) == 0': 0
-    # Test Case:9
-    'mode == "S" and get_pte_prop("RWX", dptw1cont) == 0 and get_pte_prop("URW", dptw0cont) ==   1 and get_pte_prop("X", dptw0cont) == 0': 0
-    # Test Case:10
-    'mode == "S" and get_pte_prop("RWX", dptw1cont) == 0 and get_pte_prop("UR",  dptw0cont) ==   1 and get_pte_prop("WX", dptw0cont) == 0': 0
-    #Checks for Loads, Store, fetch Faults start from here
-    #Test Case 2: expected: load-page-fault, store-page-fault, fetch-page-fault
-    'mode == "S" and mnemonic == {"sw", "lw"} and get_pte_prop("UX", dptw1cont) == 1 and get_pte_prop("RW", dptw1cont) == 0 and dptw0cont == None and mcause == {15, 13}{[$1]}': 0
-    #Test Case 3: expected: load-page-fault, store-page-fault, fetch-page-fault
-    'mode == "S" and mnemonic == {"sw", "lw"} and get_pte_prop("URX", dptw1cont) == 1 and get_pte_prop("W", dptw1cont) == 0 and dptw0cont == None and mcause == {15, 13}{[$1]}': 0
-    #Test Case 5: expected: load-page-fault, store-page-fault, fetch-page-fault
-    'mode == "S" and mnemonic == {"sw", "lw"} and get_pte_prop("UR", dptw1cont) == 1 and get_pte_prop("WX", dptw1cont) == 0 and dptw0cont == None and mcause == {15, 13}{[$1]}': 0
-    #fetch-page-fault check -> mtval value should be equal to the virtual address va_data_1_l1(address space with No U Bit) + 4MB - 4 in the case of level 1
+    'mode == "S" and get_pte_prop({"URWX", "UrwX", "URwX", "URWx", "URwx"}, dptw1cont) == 1 and dptw0cont == None': 0
+    'mode == "S" and get_pte_prop("rwx", dptw1cont) == 1 and get_pte_prop({"URWX", "UrwX", "URwX", "URWx", "URwx"}, dptw0cont) == 1': 0
+    #Fault Check
+    'mode == "S" and mnemonic == {"sw", "lw"} and get_pte_prop({"UrwX", "URwX", "URwx"}, dptw1cont) == 1 and dptw0cont == None and mcause == {15, 13}{[$1]}': 0
+    'mode == "S" and mnemonic == {"sw", "lw"} and get_pte_prop("rwx", dptw1cont) == 1 and get_pte_prop({"UrwX", "URwX", "URwx"}, dptw0cont) == 1 and mcause == {15, 13}{[$1]}': 0
     'mode == "M" and (${va_data_sv32} + ${LEVEL_1_JUMP_SIZE}) == mtval and mcause == ${CAUSE_FETCH_PAGE_FAULT}': 0
-    #Test Case 2: expected: load-page-fault, store-page-fault
-    'mode == "S" and mnemonic == {"sw", "lw"} and get_pte_prop("RWX", dptw1cont) == 0 and get_pte_prop("UX", dptw0cont) == 1 and get_pte_prop("RW", dptw0cont) == 0 and mcause == {15, 13}{[$1]}': 0
-    #Test Case 3: expected: store-page-fault
-    'mode == "S" and mnemonic == {"sw", "lw"} and get_pte_prop("RWX", dptw1cont) == 0 and get_pte_prop("URX", dptw0cont) == 1 and get_pte_prop("W", dptw0cont) == 0 and mcause == {15, 13}{[$1]}': 0
-    #Test Case 5: expected: fetch-page-fault, store-page-fault
-    'mode == "S" and mnemonic == {"sw", "lw"} and get_pte_prop("RWX", dptw1cont) == 0 and get_pte_prop("UR", dptw0cont) == 1 and get_pte_prop("WX", dptw0cont) == 0 and mcause == {15, 13}{[$1]}': 0
-    #fetch-page-fault check -> mtval value should be equal to the virtual address va_data_1_l0(address space with no U bit) + 4KB - 4 in the case of level 0
     'mode == "M" and (${va_data_sv32} + ${LEVEL_0_JUMP_SIZE}) == mtval and mcause == ${CAUSE_FETCH_PAGE_FAULT}': 0
 
+#If U bit is set in U mode, then page should be accessed successfully.
 U_bit_set_in_UMode:
   config:
     - check ISA:=regex(.*32.*); check ISA:=regex(.*I.*Zicsr.*); def rvtest_mtrap_routine=True; def rvtest_strap_routine=True;
   mnemonics:
     "{sw, csrrc, csrrs, csrrw, lw, jalr}": 0
   csr_comb:
-    #Set up checks (Mostly M Mode)
-    #Check that the satp is active --> in U mode & also check that SV32 is configured
     'mode == "U" and (satp >> 31) ==  ${SATP_MODE_SV32}': 0
-    #The ppn of rvtest_Sroot_pg_tbl should be equal to the satp lower 22 bits (when the satp is active)
     '((satp) & 0x003FFFFF)  == get_addr("rvtest_Sroot_pg_tbl") >> 12': 0
   val_comb:
-    # Testing Checks (Mostly U Mode)
-    # '(mnemonic == "sw" and (get_pte_prop("U", get_addr("vm_en"), rs1_val+imm_val, get_addr("rvtest_slvl1_pg_tbl")) == 1)) if ieva is not None else False': 0
-    # Check that the page table walk length is equal to the required walk set by the ISA. For both the {i}nstruction and {d}ata access.
-    'mode == "U" and len_{i,d}ptw == {1,2}': 0
-    #----------------------------------------------------------------------------------------------
-    #                               Test Cases for Level 1
-    #----------------------------------------------------------------------------------------------
-    #We expect that the U bit is set at the level 1, we are going to use the cross comb such that the
-    # U bit is set for the PTE at level 1 (U Mode) and the RWX is set
-    # Nothing is available for the PTE at the level 0
-    # Side Note: This is done by the jalr instruction only at level 1 because we have no instruction at level 1 in the test
-    # except the jalr :(
-    # Test Case:1
-    'mode == "U" and get_pte_prop("URWX", {i, d}ptw1cont) == 1 and                                           $1ptw0cont == None': 0
-    # Test Case:2
-    'mode == "U" and get_pte_prop("UX",   {i, d}ptw1cont) ==  1 and get_pte_prop("RW",  $1ptw1cont) == 0 and $1ptw0cont == None': 0
-    # Test Case:3
-    'mode == "U" and get_pte_prop("URX",  {i, d}ptw1cont) ==  1 and get_pte_prop("W",   $1ptw1cont) == 0 and $1ptw0cont == None': 0
-    # Test Case:4
-    'mode == "U" and get_pte_prop("URW",      dptw1cont)  ==  1 and get_pte_prop("X",   dptw1cont) == 0  and dptw0cont == None': 0
-    # Test Case:5
-    'mode == "U" and get_pte_prop("UR",       dptw1cont)  ==  1 and get_pte_prop("WX",  dptw1cont) == 0 and dptw0cont == None': 0
-    #----------------------------------------------------------------------------------------------
-    #                               Test Cases for Level 0
-    #----------------------------------------------------------------------------------------------
-    #We expect that the U bit is set at the level 0, we are going to use the cross comb such that the
-    # The RWX is zero meaning that it is a pointer to level 0!!!
-    # U bit is set for the PTE at level 1 (U Mode) and the RWX is set
-    # Test Case:6
-    'mode == "U" and get_pte_prop("RWX", {i, d}ptw1cont) == 0 and get_pte_prop("URWX", $1ptw0cont) == 1': 0
-    # Test Case:7
-    'mode == "U" and get_pte_prop("RWX", {i, d}ptw1cont) == 0 and get_pte_prop("UX", $1ptw0cont) ==   1 and get_pte_prop("RW", $1ptw0cont) == 0': 0
-    # Test Case:8
-    'mode == "U" and get_pte_prop("RWX", dptw1cont) == 0 and get_pte_prop("URX", dptw0cont) ==  1 and get_pte_prop("W", dptw0cont) == 0': 0
-    # Test Case:9
-    'mode == "U" and get_pte_prop("RWX",      dptw1cont) == 0 and get_pte_prop("URW", dptw0cont) ==   1 and get_pte_prop("X", dptw0cont) == 0': 0
-    # Test Case:10
-    'mode == "U" and get_pte_prop("RWX",      dptw1cont) == 0 and get_pte_prop("UR",  dptw0cont) ==   1 and get_pte_prop("WX", dptw0cont) == 0': 0
-    #----------------------------------------------------------------------------------------------
-
-    #Now, we going to check that we get the required load, store, execute page faults for the ptes
-    #Load and stores can be checked using the same condition
-    #We set the U bit equal to zero and set the RWX equal to 1 but still get page fault because of no U bit in U mode
-
-    #----------------------------------------------------------------------------------------------
-    #                               Test Cases for Level 1
-    #----------------------------------------------------------------------------------------------
-    #Test Case 2: expected: load-page-fault, store-page-fault
-    'mode == "U" and mnemonic == {"sw", "lw"} and get_pte_prop("UX", dptw1cont) == 1 and get_pte_prop("RW", dptw1cont) == 0 and dptw0cont == None and mcause == {15, 13}{[$1]}': 0
-    #Test Case 3: expected: store-page-fault
-    'mode == "U" and mnemonic == "sw" and get_pte_prop("URX", dptw1cont) == 1 and get_pte_prop("W", dptw1cont) == 0 and dptw0cont == None and mcause == 15': 0
-    #Test Case 5: expected: fetch-page-fault, store-page-fault
-    'mode == "U" and mnemonic == "sw" and get_pte_prop("UR", dptw1cont) == 1 and get_pte_prop("WX", dptw1cont) == 0 and dptw0cont == None and mcause == 15': 0
-    #fetch-page-fault check -> mtval value should be equal to the virtual address va_data_1_l1(address space with No U Bit) + 4MB - 4 in the case of level 1
+    'mode == "U" and get_pte_prop({"URWX", "UrwX", "URwX", "URWx", "URwx"}, dptw1cont) == 1 and dptw0cont == None': 0
+    'mode == "U" and get_pte_prop("rwx", dptw1cont) == 1 and get_pte_prop({"URWX", "UrwX", "URwX", "URWx", "URwx"}, dptw0cont) == 1': 0
+    #Fault Checks
+    'mode == "U" and mnemonic == {"sw", "lw"} and get_pte_prop("UrwX", dptw1cont) == 1 and dptw0cont == None and mcause == {15, 13}{[$1]}': 0
+    'mode == "U" and mnemonic == "sw" and get_pte_prop({"URwX", "URwx"}, dptw1cont) == 1 and dptw0cont == None and mcause == 15': 0
+    'mode == "U" and mnemonic == {"sw", "lw"} and get_pte_prop("rwx", dptw1cont) == 1 and get_pte_prop("UrwX", dptw0cont) == 1 and mcause == {15, 13}{[$1]}': 0
+    'mode == "U" and mnemonic == "sw" and get_pte_prop("rwx", dptw1cont) == 1 and get_pte_prop({"URwX", "URwx"}, dptw0cont) == 1 and mcause == 15': 0
     'mode == "M" and (${va_data_sv32} + ${LEVEL_1_JUMP_SIZE}) == mtval and mcause == ${CAUSE_FETCH_PAGE_FAULT}': 0
-
-    #----------------------------------------------------------------------------------------------
-    #                               Test Cases for Level 0
-    #----------------------------------------------------------------------------------------------
-    #Test Case 2: expected: load-page-fault, store-page-fault
-    'mode == "U" and mnemonic == {"sw", "lw"} and get_pte_prop("RWX", dptw1cont) == 0 and get_pte_prop("UX", dptw0cont) == 1 and get_pte_prop("RW", dptw0cont) == 0 and mcause == {15, 13}{[$1]}': 0
-    #Test Case 3: expected: store-page-fault
-    'mode == "U" and mnemonic == "sw" and get_pte_prop("RWX", dptw1cont) == 0 and get_pte_prop("URX", dptw0cont) == 1 and get_pte_prop("W", dptw0cont) == 0 and mcause == 15': 0
-    #Test Case 5: expected: fetch-page-fault, store-page-fault
-    'mode == "U" and mnemonic == "sw" and get_pte_prop("RWX", dptw1cont) == 0 and get_pte_prop("UR", dptw0cont) == 1 and get_pte_prop("WX", dptw0cont) == 0 and mcause == 15': 0
-    #fetch-page-fault check -> mtval value should be equal to the virtual address va_data_1_l0(address space with no U bit) + 4KB - 4 in the case of level 0
     'mode == "M" and (${va_data_sv32} + ${LEVEL_0_JUMP_SIZE}) == mtval and mcause == ${CAUSE_FETCH_PAGE_FAULT}': 0
 
 U_bit_unset_in_UMode:
@@ -666,49 +241,15 @@ U_bit_unset_in_UMode:
   mnemonics:
     "{sw, csrrc, csrrs, csrrw, lw, jalr}": 0
   csr_comb:
-    #Check that the satp is active --> in U mode & also check that SV32 is configured
     'mode == "U" and (satp >> 31) ==  ${SATP_MODE_SV32}': 0
-    #The ppn of rvtest_Sroot_pg_tbl should be equal to the satp lower 22 bits (when the satp is active)
     '((satp) & 0x003FFFFF)  == get_addr("rvtest_Sroot_pg_tbl") >> 12': 0
   val_comb:
-    # Check that the page table walk length is equal to the required walk set by the ISA. For both the {i}nstruction and {d}ata access.
-    'mode == "U" and len_{i,d}ptw == {1,2}': 0
-    # Test Case:1 -> RWX with NO U
-    'mode == "U" and get_pte_prop("RWX",  dptw1cont) ==  1 and  get_pte_prop("U",  dptw1cont) == 0   and dptw0cont == None': 0
-    # Test Case:2 -> X with NO U
-    'mode == "U" and get_pte_prop("X",    dptw1cont) ==  1 and  get_pte_prop("URW",  dptw1cont) == 0 and dptw0cont == None': 0
-    # Test Case:3 -> RX with NO U
-    'mode == "U" and get_pte_prop("RX",   dptw1cont) ==  1 and  get_pte_prop("UW",   dptw1cont) == 0 and dptw0cont == None': 0
-    # Test Case:4 -> RW with NO U
-    'mode == "U" and get_pte_prop("RW",   dptw1cont)  == 1 and  get_pte_prop("UX",   dptw1cont) == 0  and dptw0cont == None': 0
-    # Test Case:5 -> R with NO U
-    'mode == "U" and get_pte_prop("R",    dptw1cont)  == 1 and  get_pte_prop("UWX",  dptw1cont) == 0  and dptw0cont == None': 0
-    # Test Case:6 -> RWX with NO U
-    'mode == "U" and get_pte_prop("RWX",  dptw1cont) == 0  and  get_pte_prop("U",  dptw0cont) == 0   and  get_pte_prop("RWX", dptw0cont) == 1': 0
-    # Test Case:7 -> X with NO U
-    'mode == "U" and get_pte_prop("RWX",  dptw1cont) == 0  and  get_pte_prop("X", dptw0cont) ==   1  and get_pte_prop("URW", dptw0cont) == 0': 0
-    # Test Case:8 -> RX with NO U
-    'mode == "U" and get_pte_prop("RWX",  dptw1cont) == 0  and  get_pte_prop("RX", dptw0cont) ==  1  and get_pte_prop("UW", dptw0cont) == 0': 0
-    # Test Case:9 -> X with NO U
-    'mode == "U" and get_pte_prop("RWX",  dptw1cont) == 0  and  get_pte_prop("RW", dptw0cont) ==   1  and get_pte_prop("UX", dptw0cont) == 0': 0
-    # Test Case:10-> R with NO U
-    'mode == "U" and get_pte_prop("RWX",  dptw1cont) == 0  and  get_pte_prop("R",  dptw0cont) ==   1  and get_pte_prop("UWX", dptw0cont) == 0': 0
-    #Checks for Loads, Store, fetch Faults start from here
-    #Test Case 2: expected: load-page-fault, store-page-fault, fetch-page-fault
-    'mode == "U" and mnemonic == {"sw", "lw"} and get_pte_prop("X", dptw1cont) == 1 and get_pte_prop("URW", dptw1cont) == 0 and dptw0cont == None and mcause == {15, 13}{[$1]}': 0
-    #Test Case 3: expected: load-page-fault, store-page-fault, fetch-page-fault
-    'mode == "U" and mnemonic == {"sw", "lw"} and get_pte_prop("RX", dptw1cont) == 1 and get_pte_prop("UW", dptw1cont) == 0 and dptw0cont == None and mcause == {15, 13}{[$1]}': 0
-    #Test Case 5: expected: load-page-fault, store-page-fault, fetch-page-fault
-    'mode == "U" and mnemonic == {"sw", "lw"} and get_pte_prop("R", dptw1cont) == 1 and get_pte_prop("UWX", dptw1cont) == 0 and dptw0cont == None and mcause == {15, 13}{[$1]}': 0
-    #fetch-page-fault check -> mtval value should be equal to the virtual address va_data_1_l1(address space with No U Bit) + 4MB - 4 in the case of level 1
+    'mode == "U" and get_pte_prop({"uRWX", "urwX", "uRwX", "uRWx", "uRwx"}, dptw1cont) == 1 and dptw0cont == None': 0
+    'mode == "U" and get_pte_prop("rwx", dptw1cont) == 1 and get_pte_prop({"uRWX", "urwX", "uRwX", "uRWx", "uRwx"}, dptw0cont) == 1': 0
+    #Fault Checks
+    'mode == "U" and mnemonic == {"sw", "lw"} and get_pte_prop({"uRWX", "urwX", "uRwX", "uRWx", "uRwx"}, dptw1cont) == 1 and dptw0cont == None and mcause == {15, 13}{[$1]}': 0
+    'mode == "U" and mnemonic == {"sw", "lw"} and get_pte_prop("rwx", dptw1cont) == 1 and get_pte_prop({"uRWX", "urwX", "uRwX", "uRWx", "uRwx"}, dptw0cont) == 1 and mcause == {15, 13}{[$1]}': 0
     'mode == "M" and (${va_data_sv32} + ${LEVEL_1_JUMP_SIZE}) == mtval and mcause == ${CAUSE_FETCH_PAGE_FAULT}': 0
-    #Test Case 2: expected: load-page-fault, store-page-fault
-    'mode == "U" and mnemonic == {"sw", "lw"} and get_pte_prop("RWX", dptw1cont) == 0 and get_pte_prop("X", dptw0cont) == 1 and get_pte_prop("URW", dptw0cont) == 0 and mcause == {15, 13}{[$1]}': 0
-    #Test Case 3: expected: store-page-fault
-    'mode == "U" and mnemonic == {"sw", "lw"} and get_pte_prop("RWX", dptw1cont) == 0 and get_pte_prop("RX", dptw0cont) == 1 and get_pte_prop("UW", dptw0cont) == 0 and mcause == {15, 13}{[$1]}': 0
-    #Test Case 5: expected: fetch-page-fault, store-page-fault
-    'mode == "U" and mnemonic == {"sw", "lw"} and get_pte_prop("RWX", dptw1cont) == 0 and get_pte_prop("R", dptw0cont) == 1 and get_pte_prop("UWX", dptw0cont) == 0 and mcause == {15, 13}{[$1]}': 0
-    #fetch-page-fault check -> mtval value should be equal to the virtual address va_data_1_l0(address space with no U bit) + 4KB - 4 in the case of level 0
     'mode == "M" and (${va_data_sv32} + ${LEVEL_0_JUMP_SIZE}) == mtval and mcause == ${CAUSE_FETCH_PAGE_FAULT}': 0
 
 U_bit_unset_in_SMode:
@@ -717,145 +258,15 @@ U_bit_unset_in_SMode:
   mnemonics:
     "{sw, csrrc, csrrs, csrrw, lw, jalr}": 0
   csr_comb:
-    #Check that the satp is active --> in U mode & also check that SV32 is configured
     'mode == "S" and (satp >> 31) ==  ${SATP_MODE_SV32}': 0
-    #The ppn of rvtest_Sroot_pg_tbl should be equal to the satp lower 22 bits (when the satp is active)
     '((satp) & 0x003FFFFF)  == get_addr("rvtest_Sroot_pg_tbl") >> 12': 0
   val_comb:
-    # Check that the page table walk length is equal to the required walk set by the ISA. For both the {i}nstruction and {d}ata access.
-    'mode == "S" and len_{i,d}ptw == {1,2}': 0
-    # Test Case:1
-    'mode == "S" and get_pte_prop("RWX", {i, d}ptw1cont) == 1 and  get_pte_prop("U",  $1ptw1cont) == 0  and $1ptw0cont == None': 0
-    # Test Case:2
-    'mode == "S" and get_pte_prop("X",   {i, d}ptw1cont) ==  1 and get_pte_prop("URW",  $1ptw1cont) == 0 and $1ptw0cont == None': 0
-    # Test Case:3
-    'mode == "S" and get_pte_prop("RX",  {i, d}ptw1cont) ==  1 and get_pte_prop("UW",   $1ptw1cont) == 0 and $1ptw0cont == None': 0
-    # Test Case:4
-    'mode == "S" and get_pte_prop("RW",      dptw1cont)  ==  1 and get_pte_prop("UX",   dptw1cont) == 0  and dptw0cont == None': 0
-    # Test Case:5
-    'mode == "S" and get_pte_prop("R",       dptw1cont)  ==  1 and get_pte_prop("UWX",  dptw1cont) == 0 and dptw0cont == None': 0
-    # Test Case:6
-    'mode == "S" and get_pte_prop("RWX", {i, d}ptw1cont) == 0 and  get_pte_prop("RWX", $1ptw0cont) == 1 and get_pte_prop("U",  $1ptw0cont) == 0 ': 0
-    # Test Case:7
-    'mode == "S" and get_pte_prop("RWX", {i, d}ptw1cont) == 0 and  get_pte_prop("X", $1ptw0cont) ==   1 and get_pte_prop("URW", $1ptw0cont) == 0': 0
-    # Test Case:8
-    'mode == "S" and get_pte_prop("RWX", {i, d}ptw1cont) == 0 and  get_pte_prop("RX", $1ptw0cont) ==  1 and get_pte_prop("UW", $1ptw0cont) == 0': 0
-    # Test Case:9
-    'mode == "S" and get_pte_prop("RWX",      dptw1cont) == 0 and  get_pte_prop("RW", dptw0cont) ==   1 and get_pte_prop("UX", dptw0cont) == 0': 0
-    # Test Case:10
-    'mode == "S" and get_pte_prop("RWX",      dptw1cont) == 0 and get_pte_prop("R",  dptw0cont) ==   1 and get_pte_prop("UWX", dptw0cont) == 0': 0
-    #Checks for Load, store, fetch page faults start from here
-    #Test Case 2: expected: load-page-fault, store-page-fault
-    'mode == "S" and mnemonic == {"sw", "lw"} and get_pte_prop("X", dptw1cont) == 1 and get_pte_prop("URW", dptw1cont) == 0 and dptw0cont == None and mcause == {15, 13}{[$1]}': 0
-    #Test Case 3: expected: store-page-fault
-    'mode == "S" and mnemonic == "sw" and get_pte_prop("RX", dptw1cont) == 1 and get_pte_prop("UW", dptw1cont) == 0 and dptw0cont == None and mcause == 15': 0
-    #Test Case 5: expected: fetch-page-fault, store-page-fault
-    'mode == "S" and mnemonic == "sw" and get_pte_prop("R", dptw1cont) == 1 and get_pte_prop("UWX", dptw1cont) == 0 and dptw0cont == None and mcause == 15': 0
-    #fetch-page-fault check -> mtval value should be equal to the virtual address va_data_1_l1(address space with No U Bit) + 4MB - 4 in the case of level 1
+    'mode == "S" and get_pte_prop({"uRWX", "urwX", "uRwX", "uRWx", "uRwx"}, dptw1cont) == 1 and dptw0cont == None': 0
+    'mode == "S" and get_pte_prop("rwx", dptw1cont) == 1 and get_pte_prop({"uRWX", "urwX", "uRwX", "uRWx", "uRwx"}, dptw0cont) == 1': 0
+    #Fault Checks
+    'mode == "S" and mnemonic == {"sw", "lw"} and get_pte_prop("urwX", dptw1cont) == 1 and dptw0cont == None and mcause == {15, 13}{[$1]}': 0
+    'mode == "S" and mnemonic == "sw" and get_pte_prop({"uRwX", "uRwx"}, dptw1cont) == 1 and dptw0cont == None and mcause == 15': 0
+    'mode == "S" and mnemonic == {"sw", "lw"} and get_pte_prop("rwx", dptw1cont) == 1 and get_pte_prop("urwX", dptw0cont) == 1 and mcause == {15, 13}{[$1]}': 0
+    'mode == "S" and mnemonic == "sw" and get_pte_prop("rwx", dptw1cont) == 1 and get_pte_prop({"uRwX", "uRwx"}, dptw0cont) == 1 and mcause == 15': 0
     'mode == "M" and (${va_data_sv32} + ${LEVEL_1_JUMP_SIZE}) == mtval and mcause == ${CAUSE_FETCH_PAGE_FAULT}': 0
-    #Test Case 2: expected: load-page-fault, store-page-fault
-    'mode == "S" and mnemonic == {"sw", "lw"} and get_pte_prop("RWX", dptw1cont) == 0 and get_pte_prop("X", dptw0cont) == 1 and get_pte_prop("URW", dptw0cont) == 0 and mcause == {15, 13}{[$1]}': 0
-    #Test Case 3: expected: store-page-fault
-    'mode == "S" and mnemonic == "sw" and get_pte_prop("RWX", dptw1cont) == 0 and get_pte_prop("RX", dptw0cont) == 1 and get_pte_prop("UW", dptw0cont) == 0 and mcause == 15': 0
-    #Test Case 5: expected: fetch-page-fault, store-page-fault
-    'mode == "S" and mnemonic == "sw" and get_pte_prop("RWX", dptw1cont) == 0 and get_pte_prop("R", dptw0cont) == 1 and get_pte_prop("UWX", dptw0cont) == 0 and mcause == 15': 0
-    #fetch-page-fault check -> mtval value should be equal to the virtual address va_data_1_l0(address space with no U bit) + 4KB - 4 in the case of level 0
     'mode == "M" and (${va_data_sv32} + ${LEVEL_0_JUMP_SIZE}) == mtval and mcause == ${CAUSE_FETCH_PAGE_FAULT}': 0
-
-a_and_d_bit_hart_upd_S_mode:
-  config:
-    - check ISA:=regex(.*32.*); check ISA:=regex(.*I.*Zicsr.*); def rvtest_mtrap_routine=True; def rvtest_strap_routine=True;
-  mnemonics:
-    "{sw, csrrc, csrrs, csrrw, lw, jalr}": 0
-  op_comb:
-    #Check that the satp is active --> in S mode & also check that SV32 is configured
-    'mode == "S" and (satp >> 31) ==  ${SATP_MODE_SV32}': 0
-  csr_comb:
-    #The ppn of rvtest_Sroot_pg_tbl should be equal to the satp lower 22 bits (when the satp is active)
-    '((satp) & 0x003FFFFF)  == get_addr("rvtest_Sroot_pg_tbl") >> 12': 0
-  val_comb:
-    #CASES at LEVEL 1
-    # Test Case:1 -> No D bit   set and A bit   set and RWX set -> NO FAULT and PTE update -- LEVEL 1
-    'mode == "S" and get_pte_prop("ARWX",   dptw1cont) ==  1 and get_pte_prop("D",  dptw1cont) == 0 and dptw0cont == None': 0
-    # Test Case:2 ->    D bit   set and A bit   set and RWX set -> NO FAULT -- LEVEL 1
-    'mode == "S" and get_pte_prop("ADRWX",   dptw1cont) ==  1 and                                        dptw0cont == None': 0
-    # Test Case:3 ->    D bit   set but A bit unset and RWX set -> NO FAULT and PTE update -- LEVEL 1
-    'mode == "S" and get_pte_prop("DRWX",   dptw1cont) ==  1  and get_pte_prop("A",  dptw1cont) == 0 and dptw0cont == None': 0
-    # Test Case:4 -> No D bit unset but A bit unset and RWX set -> NO FAULT and PTE update -- LEVEL 1
-    'mode == "S" and get_pte_prop("RWX",   dptw1cont) ==  1 and get_pte_prop("AD",  dptw1cont) == 0  and dptw0cont == None': 0
-    #CASES at LEVEL 0
-    # Test Case:5 -> No D bit   set and A bit   set and RWX set -> NO FAULT and PTE update -- LEVEL 0
-    'mode == "S" and get_pte_prop("RWX", dptw1cont) == 0 and get_pte_prop("ARWX", dptw0cont) ==  1 and get_pte_prop("D", dptw0cont) == 0': 0
-    # Test Case:6 ->    D bit   set and A bit   set and RWX set -> NO FAULT and PTE update -- LEVEL 0
-    'mode == "S" and get_pte_prop("RWX", dptw1cont) == 0 and get_pte_prop("ADRWX", dptw0cont) ==  1': 0
-    # Test Case:7 ->    D bit   set and A bit unset and RWX set -> NO FAULT and PTE update -- LEVEL 0
-    'mode == "S" and get_pte_prop("RWX", dptw1cont) == 0 and get_pte_prop("DRWX", dptw0cont) ==  1 and get_pte_prop("A", dptw0cont) == 0': 0
-    # Test Case:8 -> No D bit   set and A bit unset and RWX set -> NO FAULT and PTE update -- LEVEL 0
-    'mode == "S" and get_pte_prop("RWX", dptw1cont) == 0 and get_pte_prop("RWX", dptw0cont) ==  1 and get_pte_prop("AD", dptw0cont) == 0': 0
-    #Faults check at LEVEL 1 and LEVEL 0
-    #Test Case:1 --> successfull page table walk
-    'mode == "S" and get_pte_prop("ARWX",   dptw1cont) ==  1 and get_pte_prop("D",  dptw1cont) == 0 and dptw0cont == None   and len_dptw == 1': 0
-    #Test Case:2 --> successfull page table walk
-    'mode == "S" and get_pte_prop("ADRWX",   dptw1cont) ==  1 and                                        dptw0cont == None  and len_dptw == 1': 0
-    #Test Case:3 --> successfull page table walk
-    'mode == "S" and get_pte_prop("DRWX",   dptw1cont) ==  1  and get_pte_prop("A",  dptw1cont) == 0 and dptw0cont == None  and len_dptw == 1': 0
-    #Test Case:4 --> successfull page table walk
-    'mode == "S" and get_pte_prop("RWX",   dptw1cont) ==  1 and get_pte_prop("AD",  dptw1cont) == 0  and dptw0cont == None  and len_dptw == 1': 0
-    #Test Case:5 --> successfull page table walk
-    'mode == "S" and get_pte_prop("RWX", dptw1cont) == 0 and get_pte_prop("ARWX", dptw0cont) ==  1 and get_pte_prop("D", dptw0cont) == 0 and len_dptw == 2': 0
-    #Test Case:6 --> successfull page table walk
-    'mode == "S" and get_pte_prop("RWX", dptw1cont) == 0 and get_pte_prop("ADRWX", dptw0cont) ==  1                         and len_dptw == 2': 0
-    #Test Case:7 --> successfull page table walk
-    'mode == "S" and get_pte_prop("RWX", dptw1cont) == 0 and get_pte_prop("DRWX", dptw0cont) ==  1 and get_pte_prop("A", dptw0cont) == 0 and len_dptw == 2': 0
-    #Test Case:8 --> successfull page table walk
-    'mode == "S" and get_pte_prop("RWX", dptw1cont) == 0 and get_pte_prop("RWX", dptw0cont) ==  1 and get_pte_prop("AD", dptw0cont) == 0 and len_dptw == 2': 0
-
-a_and_d_bit_hart_upd_U_mode:
-  config:
-    # Ensure that the ISA is 32-bit, and the supported extensions include I and Zicsr.
-    - check ISA:=regex(.*32.*); check ISA:=regex(.*I.*Zicsr.*); def rvtest_mtrap_routine=True; def rvtest_strap_routine=True;
-  mnemonics:
-    # Verify that the following instructions are tested: sw, csrrc, csrrs, csrrw, lw, jalr.
-    "{sw, csrrc, csrrs, csrrw, lw, jalr}": 0
-  op_comb:
-    # Check if the `satp` is active in Supervisor mode (S) and verify that the SV32 paging scheme is configured.
-    'mode == "U" and (satp >> 31) == ${SATP_MODE_SV32}': 0
-  csr_comb:
-    # Ensure that the Physical Page Number (PPN) of `rvtest_Sroot_pg_tbl` matches the lower 22 bits of the `satp` register when `satp` is active.
-    '((satp) & 0x003FFFFF) == get_addr("rvtest_Sroot_pg_tbl") >> 12': 0
-  val_comb:
-    # LEVEL 1 Test Cases:
-    # Test Case 1: A bit set, D bit not set, RWX set --> No fault, and the PTE should be updated.
-    'mode == "U" and get_pte_prop("ARWUX", dptw1cont) == 1 and get_pte_prop("D", dptw1cont) == 0 and dptw0cont == None': 0
-    # Test Case 2: Both A and D bits set, RWX set --> No fault.
-    'mode == "U" and get_pte_prop("ADRWUX", dptw1cont) == 1 and dptw0cont == None': 0
-    # Test Case 3: D bit set, A bit not set, RWX set --> No fault, and the PTE should be updated.
-    'mode == "U" and get_pte_prop("DRWUX", dptw1cont) == 1 and get_pte_prop("A", dptw1cont) == 0 and dptw0cont == None': 0
-    # Test Case 4: Neither A nor D bits set, RWX set --> No fault, and the PTE should be updated.
-    'mode == "U" and get_pte_prop("RWUX", dptw1cont) == 1 and get_pte_prop("AD", dptw1cont) == 0 and dptw0cont == None': 0
-    # LEVEL 0 Test Cases:
-    # Test Case 5: A bit set, D bit not set, RWX set --> No fault, and the PTE should be updated.
-    'mode == "U" and get_pte_prop("RWUX", dptw1cont) == 0 and get_pte_prop("ARWUX", dptw0cont) == 1 and get_pte_prop("D", dptw0cont) == 0': 0
-    # Test Case 6: Both A and D bits set, RWX set --> No fault, and the PTE should be updated.
-    'mode == "U" and get_pte_prop("RWUX", dptw1cont) == 0 and get_pte_prop("ADRWUX", dptw0cont) == 1': 0
-    # Test Case 7: D bit set, A bit not set, RWX set --> No fault, and the PTE should be updated.
-    'mode == "U" and get_pte_prop("RWUX", dptw1cont) == 0 and get_pte_prop("DRWUX", dptw0cont) == 1 and get_pte_prop("A", dptw0cont) == 0': 0
-    # Test Case 8: Neither A nor D bits set, RWX set --> No fault, and the PTE should be updated.
-    'mode == "U" and get_pte_prop("RWUX", dptw1cont) == 0 and get_pte_prop("RWUX", dptw0cont) == 1 and get_pte_prop("AD", dptw0cont) == 0': 0
-    # Fault Checks:
-    # Test Case 1: Successful page table walk at Level 1.
-    'mode == "U" and get_pte_prop("ARWUX", dptw1cont) == 1 and get_pte_prop("D", dptw1cont) == 0 and dptw0cont == None and len_dptw == 1': 0
-    # Test Case 2: Successful page table walk at Level 1.
-    'mode == "U" and get_pte_prop("ADRWUX", dptw1cont) == 1 and dptw0cont == None and len_dptw == 1': 0
-    # Test Case 3: Successful page table walk at Level 1.
-    'mode == "U" and get_pte_prop("DRWUX", dptw1cont) == 1 and get_pte_prop("A", dptw1cont) == 0 and dptw0cont == None and len_dptw == 1': 0
-    # Test Case 4: Successful page table walk at Level 1.
-    'mode == "U" and get_pte_prop("RWUX", dptw1cont) == 1 and get_pte_prop("AD", dptw1cont) == 0 and dptw0cont == None and len_dptw == 1': 0
-    # Test Case 5: Successful page table walk at Level 0.
-    'mode == "U" and get_pte_prop("RWUX", dptw1cont) == 0 and get_pte_prop("ARWUX", dptw0cont) == 1 and get_pte_prop("D", dptw0cont) == 0 and len_dptw == 2': 0
-    # Test Case 6: Successful page table walk at Level 0.
-    'mode == "U" and get_pte_prop("RWUX", dptw1cont) == 0 and get_pte_prop("ADRWUX", dptw0cont) == 1 and len_dptw == 2': 0
-    # Test Case 7: Successful page table walk at Level 0.
-    'mode == "U" and get_pte_prop("RWUX", dptw1cont) == 0 and get_pte_prop("DRWUX", dptw0cont) == 1 and get_pte_prop("A", dptw0cont) == 0 and len_dptw == 2': 0
-    # Test Case 8: Successful page table walk at Level 0.
-    'mode == "U" and get_pte_prop("RWUX", dptw1cont) == 0 and get_pte_prop("RWUX", dptw0cont) == 1 and get_pte_prop("AD", dptw0cont) == 0 and len_dptw == 2': 0
