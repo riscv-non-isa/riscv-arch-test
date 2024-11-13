@@ -119,3 +119,6 @@ ENV/
 # Coverage Report Files
 *.rpt
 *.html
+
+__pycache__
+riscof_work
