@@ -186,6 +186,18 @@ class instructionObject():
 
         imm_val = instr_vars.get('imm_val', None)
 
+        #update the variable for the length of the load or store:
+        if self.instr_name in ['ld','lw','lb','lh','sd','sw','sb','sh']:
+            if self.instr_name in ['ld','sd']:
+                instr_vars['access_len'] = 8
+            if self.instr_name in ['lw','sw']:
+                instr_vars['access_len'] = 4
+            if self.instr_name in ['lh','sh']:
+                instr_vars['access_len'] = 2
+            if self.instr_name in ['lb','sb']:
+                instr_vars['access_len'] = 1
+        else:
+            instr_vars['access_len'] = None
         #Update the values for the trap registers
         self.trap_registers_update(instr_vars,self.trap_dict)
 
@@ -487,21 +499,24 @@ class instructionObject():
                 instr_vars['mtval']       = trap_dict['tval']
                 #only update on the initialization
                 if "scause" not in instr_vars:
-                    instr_vars['scause']      = '0'
-                    instr_vars['stval']       = '0'
+                    instr_vars['scause']      = None
+                    instr_vars['stval']       = None
 
             elif trap_dict["mode_change"].split()[2] == "S":
                 instr_vars['scause']      = trap_dict['exc_num']
                 instr_vars['stval']       = trap_dict['tval']
                 #only update on the initialization
                 if "mcause" not in instr_vars:
-                    instr_vars['mcause']      = '0'
-                    instr_vars['mtval']       = '0'
+                    instr_vars['mcause']      = None
+                    instr_vars['mtval']       = None
+
         else:
-                instr_vars['mcause']      = '0'
-                instr_vars['mtval']       = '0'
-                instr_vars['scause']      = '0'
-                instr_vars['stval']       = '0'
+                #initialize them to None for the first time in the instr_vars
+                #reset them to None in case the mode change is ret
+                instr_vars['mcause']      = None
+                instr_vars['mtval']       = None
+                instr_vars['scause']      = None
+                instr_vars['stval']       = None
 
         return None
 
