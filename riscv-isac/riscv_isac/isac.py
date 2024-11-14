@@ -3,10 +3,8 @@ import os
 from riscv_isac.log import logger
 import riscv_isac.utils as utils
 import riscv_isac.coverage as cov
-from elftools.elf.elffile import ELFFile
 import re
 from ruamel.yaml import YAML
-from ruamel import yaml
 
 yaml = YAML(typ="rt")
 yaml.default_flow_style = False

@@ -1,7 +1,7 @@
 # See LICENSE.incore file for details
 
 import copy
-import os,re
+import os
 import multiprocessing as mp
 
 import time
@@ -13,11 +13,9 @@ from riscv_isac.cgf_normalize import expand_cgf
 from riscv_ctg.generator import Generator
 from riscv_ctg.cross_comb import cross
 from riscv_ctg.csr_comb import GeneratorCSRComb
-from math import *
 from riscv_ctg.__init__ import __version__
 
 def create_test(usage_str, node,label,base_isa,max_inst, op_template, randomize, out_dir, xlen, flen, inxFlag):
-    iflen = 0
     if 'mnemonics' not in node and 'csr_comb' not in node:
         logger.warning("Neither mnemonics nor csr_comb node not found in covergroup: " + str(label))
         return
@@ -134,6 +132,6 @@ def ctg(verbose, out, random ,xlen_arg,flen_arg, cgf_file,num_procs,base_isa, ma
     op_template = utils.load_yaml(const.template_files)
     cgf = expand_cgf(cgf_file,xlen,flen)
     pool = mp.Pool(num_procs)
-    results = pool.starmap(create_test, [(usage_str, node,label,base_isa,max_inst, op_template,
+    pool.starmap(create_test, [(usage_str, node,label,base_isa,max_inst, op_template,
         randomize, out_dir, xlen, flen, inxFlag) for label,node in cgf.items()])
     pool.close()

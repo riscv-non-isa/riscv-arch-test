@@ -1,13 +1,12 @@
 # See LICENSE.incore for details
-from math import *
-import pprint
+from math import ceil, sqrt
+from math import *  # noqa: F403
 import riscv_isac.utils as utils
 import itertools
 import random
-import copy
-from riscv_isac.fp_dataset import *
+from riscv_isac.fp_dataset import logger
+from riscv_isac.fp_dataset import *  # noqa: F403
 
-import time
 
 def twos(val,bits):
     '''
@@ -119,13 +118,15 @@ def simd_imm_val(imm, bit_width):
 
 def sp_vals(bit_width,signed):
     if signed:
-        conv_func = lambda x: twos(x,bit_width)
+        def conv_func(x):
+            return twos(x, bit_width)
         sqrt_min = int(-sqrt(2**(bit_width-1)))
         sqrt_max = int(sqrt((2**(bit_width-1)-1)))
     else:
         sqrt_min = 0
         sqrt_max = int(sqrt((2**bit_width)-1))
-        conv_func = lambda x: (int(x,16) if '0x' in x else int(x,2)) if isinstance(x,str) else x
+        def conv_func(x):
+            return (int(x, 16) if '0x' in x else int(x, 2)) if isinstance(x, str) else x
     dataset = [3, "0x"+"".join(["5"]*int(bit_width/4)), "0x"+"".join(["a"]*int(bit_width/4)), 5, "0x"+"".join(["3"]*int(bit_width/4)), "0x"+"".join(["6"]*int(bit_width/4))]
     dataset = list(map(conv_func,dataset)) + [int(sqrt(abs(conv_func("0x8"+"".join(["0"]*int((bit_width/4)-1)))))*(-1 if signed else 1))] + [sqrt_min,sqrt_max]
     return dataset + [x - 1 if x>0 else 0 for x in dataset] + [x+1 for x in dataset]
@@ -152,9 +153,11 @@ def bitmanip_dataset(bit_width,var_lst=["rs1_val","rs2_val"],signed=True):
     datasets = []
     coverpoints = []
     if signed:
-        conv_func = lambda x: twos(x,bit_width)
+        def conv_func(x):
+            return twos(x, bit_width)
     else:
-        conv_func = lambda x: (int(x,16) if '0x' in x else int(x,2)) if isinstance(x,str) else x
+        def conv_func(x):
+            return (int(x, 16) if '0x' in x else int(x, 2)) if isinstance(x, str) else x
 # dataset for 0x5, 0xa, 0x3, 0xc, 0x6, 0x9 patterns
     dataset = ["0x"+"".join(["5"]*int(bit_width/4)), "0x"+"".join(["a"]*int(bit_width/4)), "0x"+"".join(["3"]*int(bit_width/4)), "0x"+"".join(["c"]*int(bit_width/4)),"0x"+"".join(["6"]*int(bit_width/4)),"0x"+"".join(["9"]*int(bit_width/4))]
     dataset = list(map(conv_func,dataset))
@@ -289,40 +292,40 @@ def byte_count(xlen, variables=['rs1_val','rs2_val','imm_val'], overlap = "N"):
     cvpt = ""
     max = 255
     if overlap == "Y":
-    	max += xlen/16
+        max += xlen/16
     while(i<=max):
-    	hex_str = "{:02x}".format(i % 256) + hex_str
-    	if((len(hex_str)/2)%(xlen/8) == 0):
-    		rs2.append('0x'+hex_str)
-    		hex_str = ""
-    		if(overlap == "Y"):
-    			i=int(i-(xlen/16))
-    	i=i+1
+        hex_str = "{:02x}".format(i % 256) + hex_str
+        if((len(hex_str)/2)%(xlen/8) == 0):
+            rs2.append('0x'+hex_str)
+            hex_str = ""
+            if(overlap == "Y"):
+                i=int(i-(xlen/16))
+        i=i+1
 
     if xlen == 32:
-    	for i in range(len(rs2)):
-    		for j in range(4):
-    			coverpoints.append(variables[0] +' == '+ str(rs1) +' and '+ variables[1] +' == '+ rs2[i] + ' and '+ variables[2] +' == '+ str(j) + ' #nosat')
+        for i in range(len(rs2)):
+            for j in range(4):
+                coverpoints.append(variables[0] +' == '+ str(rs1) +' and '+ variables[1] +' == '+ rs2[i] + ' and '+ variables[2] +' == '+ str(j) + ' #nosat')
     else:
-    	if variables[1] == "rs2_val":
-    		for i in range(len(rs2)):
-    			if((i+1)%2==0):
-    				y = rs2[i-1]
-    				x = rs2[i]
-    			else:
-    				x = rs2[i]
-    				y = rs2[i+1]
-    			cvpt = variables[0] +' == '+ x +' and '+ variables[1] +' == '+ y
-    			if len(variables)==3:
-    				if variables[2] == "imm_val":
-    					for j in range(4):
-    						coverpoints.append(cvpt+' and imm_val == '+ str(j) + ' #nosat')
-    			else:
-    				coverpoints.append(cvpt + ' #nosat')
-    			cvpt = ""
-    	elif variables[1] == "imm_val":
-    		for i in range(len(rs2)):
-    			coverpoints.append(variables[0] +' == '+ rs2[i] +' and '+ variables[1] +' == 0xA' + ' #nosat')
+        if variables[1] == "rs2_val":
+            for i in range(len(rs2)):
+                if((i+1)%2==0):
+                    y = rs2[i-1]
+                    x = rs2[i]
+                else:
+                    x = rs2[i]
+                    y = rs2[i+1]
+                cvpt = variables[0] +' == '+ x +' and '+ variables[1] +' == '+ y
+                if len(variables)==3:
+                    if variables[2] == "imm_val":
+                        for j in range(4):
+                            coverpoints.append(cvpt+' and imm_val == '+ str(j) + ' #nosat')
+                else:
+                    coverpoints.append(cvpt + ' #nosat')
+                cvpt = ""
+        elif variables[1] == "imm_val":
+            for i in range(len(rs2)):
+                coverpoints.append(variables[0] +' == '+ rs2[i] +' and '+ variables[1] +' == 0xA' + ' #nosat')
     return [(coverpoint,"Byte Count") for coverpoint in coverpoints]
 
 def uniform_random(N=10, seed=9, variables=['rs1_val','rs2_val','imm_val'], size=[32,32,2]):
@@ -347,14 +350,14 @@ def uniform_random(N=10, seed=9, variables=['rs1_val','rs2_val','imm_val'], size
 
     coverpoints = []
     while N!= 0:
-    	random_vals = []
-    	for v in range(len(variables)):
-    		val = random.randint(0,2**int(size[v])-1)
-    		random_vals.append(variables[v] + \
-    		' == {0:#0{1}x}'.format(val,int(size[v]/4)+2))
-    	coverpoints.append((" and ".join(random_vals) + " #nosat",\
+        random_vals = []
+        for v in range(len(variables)):
+            val = random.randint(0,2**int(size[v])-1)
+            random_vals.append(variables[v] + \
+            ' == {0:#0{1}x}'.format(val,int(size[v]/4)+2))
+        coverpoints.append((" and ".join(random_vals) + " #nosat",\
                 "Uniform Random "+str(N)))
-    	N = N-1
+        N = N-1
 
     return coverpoints
 
@@ -590,7 +593,7 @@ def expand_cgf(cgf_files, xlen,flen, log_redundant=False):
                     # Substitute with tuple of instructions
                     for i in range(len(ops)):
                         exp_alias = utils.import_instr_alias(ops[i])
-                        if exp_alias != None:
+                        if exp_alias is not None:
                             ops[i] = tuple(exp_alias).__str__().replace("'", '').replace(" ", '')
 
                     data[0] = '[' + ':'.join(ops) + ']'
@@ -600,7 +603,6 @@ def expand_cgf(cgf_files, xlen,flen, log_redundant=False):
 
                 cgf[labels].insert(1, 'cross_comb', temp)
 
-            l = len(cats.items())
             i = 0
             for label,node in cats.items():
                 if isinstance(node,dict):

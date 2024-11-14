@@ -3,13 +3,12 @@ from operator import itemgetter
 from collections import defaultdict
 import pprint
 import os
+import re
 
-from constants import *
-#from riscv_isac.data.constants import *
+from riscv_isac.data.constants import arg_lut, single_fixed, pseudo_regex, imported_regex, fixed_ranges
 import riscv_isac.plugins as plugins
 from riscv_isac.log import logger
 
-from riscv_isac.InstructionObject import instructionObject
 
 # Closure to get argument value
 def get_arg_val(arg: str):
@@ -43,7 +42,8 @@ class disassembler():
         self.inxFlag = inxFlag
 
         # Create nested dictionary
-        nested_dict = lambda: defaultdict(nested_dict)
+        def nested_dict():
+            return defaultdict(nested_dict)
         disassembler.INST_DICT = nested_dict()
         disassembler.create_inst_dict('*')
 
@@ -283,7 +283,7 @@ class disassembler():
 
                 new_path = inst_dict[funct[0]][funct[1]]
                 a = disassembler.build_instr_dict(new_path)
-                if a == None:
+                if a is None:
                     continue
                 else:
                     return a
@@ -298,9 +298,9 @@ class disassembler():
         keys = func_dict.keys()
         num_keys = len(keys)
         for key in keys:
-            if type(key) == str and num_keys == 1:
+            if type(key) is str and num_keys == 1:
                 return (key, func_dict[key])
-            elif type(key) == tuple:
+            elif type(key) is tuple:
                 val = get_funct(key, mcode)
             else:                                       # There must be pseudo-ops
                 instr = (key, func_dict[key])
@@ -308,7 +308,7 @@ class disassembler():
             temp_func_dict = func_dict[key][val]
             if temp_func_dict.keys():
                 a = disassembler.get_instr(temp_func_dict, mcode)
-                if a == None:
+                if a is None:
                     continue
                 else:
                     return a
@@ -356,11 +356,11 @@ class disassembler():
             reg_type = 'x'
             if file_name in ['rv_f', 'rv64_f', 'rv_d','rv64_d']:
                 reg_type = 'f'
-            if file_name in ['rv_f','rv64_f'] and temp_instrobj.inxFlg == True:
+            if file_name in ['rv_f','rv64_f'] and temp_instrobj.inxFlg is True:
                 reg_type = 'x'
             if file_name in ['rv_zfh','rv_d_zfh','rv64_zfh']:
                 reg_type = 'f'
-            if file_name in ['rv_zfh','rv_d_zfh','rv64_zfh'] and temp_instrobj.inxFlg == True:
+            if file_name in ['rv_zfh','rv_d_zfh','rv64_zfh'] and temp_instrobj.inxFlg is True:
                 reg_type = 'x'
             for arg in args[:-1]:
                 if 'rd' in arg:
@@ -371,7 +371,7 @@ class disassembler():
                         treg = 'x'
                     temp_instrobj.rd = (int(get_arg_val(arg)(mcode), 2), treg)
 
-                if 'rd' in arg and self.inxFlag == True:
+                if 'rd' in arg and self.inxFlag is True:
                     treg = reg_type
                     if any([instr_name.startswith(x) for x in [
                             'fcvt.w','fcvt.l','fmv.s','fmv.d','flt','feq','fle','fclass','fmv.x','fsqrt','fmax','fmin','fadd','fsub','feq','flt','fle','fmul','fdiv','fsgnj','fsgnjn','fsgnjx','fcvt.lu','fcvt.wu']]):
@@ -385,7 +385,7 @@ class disassembler():
                         treg = 'x'
                     temp_instrobj.rs1 = (int(get_arg_val(arg)(mcode), 2), treg)
                     
-                if 'rs1' in arg and self.inxFlag == True:
+                if 'rs1' in arg and self.inxFlag is True:
                     treg = reg_type
                     if any([instr_name.startswith(x) for x in [
                             'fsh', 'fsw','fsd','fcvt.s','fcvt.d','fmv.w','fmv.l','fcvt.h','fmv.h','flh','fclass','fsqrt','fmax','fmin','fadd','fsub','feq','fle','flt','fmul','fdiv','fsgnj','fsgnjn','fsgnjx','fcvt.lu','fcvt.w','fcvt.wu']]):
@@ -395,7 +395,7 @@ class disassembler():
                 if 'rs2' in arg:
                     treg = reg_type
                     temp_instrobj.rs2 = (int(get_arg_val(arg)(mcode), 2), treg)
-                if 'rs2' in arg and self.inxFlag == True:
+                if 'rs2' in arg and self.inxFlag is True:
                     treg = reg_type
                     if any([instr_name.startswith(x) for x in [
                             'fsh', 'fsw','fsd','fcvt.s','fcvt.d','fmv.w','fmv.l','fcvt.h','fmv.h','flh','fclass','fsqrt','fmax','fmin','fadd','fsub','feq','fle','flt','fmul','fdiv','fsgnj','fsgnjn','fsgnjx']]):

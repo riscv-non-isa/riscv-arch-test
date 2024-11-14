@@ -1,8 +1,9 @@
 # See LICENSE.incore for details
 
 """Common Utils """
-import sys
+import logging
 import os
+import pathlib
 import subprocess
 import shlex
 from riscv_ctg.log import logger
@@ -42,7 +43,8 @@ def gen_format_data():
     op_template = load_yaml(const.template_files)
 
     # Initialize nested dictionary
-    nested_dict = lambda: defaultdict(nested_dict)
+    def nested_dict():
+        return defaultdict(nested_dict)
     format_dict = nested_dict()
     
     for mnemonic, data in op_template.items():
@@ -213,7 +215,7 @@ class Command():
         """
         kwargs.setdefault('shell', self._is_shell_command())
         cwd = self._path2str(kwargs.get(
-            'cwd')) if not kwargs.get('cwd') is None else self._path2str(
+            'cwd')) if kwargs.get('cwd') is not None else self._path2str(
                 os.getcwd())
         kwargs.update({'cwd': cwd})
         logger.debug(cwd)

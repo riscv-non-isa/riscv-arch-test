@@ -1,18 +1,18 @@
 # See LICENSE.incore for details
-import random
 from collections import defaultdict
-from constraint import *
+from string import Template
+from constraint import Problem, MinConflictsSolver, AllDifferentConstraint
 import re
-from riscv_ctg.constants import *
+from riscv_ctg.constants import twos, e_regset, signode_template, case_template, part_template, test_template, default_regset
+from riscv_ctg.constants import *  # noqa: F403
 from riscv_ctg.log import logger
-from riscv_ctg.helpers import *
+from riscv_ctg.helpers import nan_box, sgn_extd, merge_fields_f, ExtractException
+from riscv_ctg.dsp_function import gen_pair_reg_data, concat_simd_data
+from riscv_ctg.dsp_function import *  # noqa: F403
 from riscv_isac.InstructionObject import instructionObject
-import time
-from math import *
 import struct
 import sys
 import itertools
-import re
 
 # F
 one_operand_finstructions = ["fsqrt.s","fmv.x.w","fcvt.wu.s","fcvt.w.s","fclass.s","fcvt.l.s","fcvt.lu.s","fcvt.s.l","fcvt.s.lu"]
@@ -44,12 +44,10 @@ def is_fp_instruction(insn):
 
     :param insn: String representing an instruction (e.g. 'fadd.s', 'lw')
     '''
-    return type(insn) == str and insn.lower()[0] == 'f'
+    return type(insn) is str and insn.lower()[0] == 'f'
 
-
-from riscv_ctg.dsp_function import *
-
-twos_xlen = lambda x: twos(x,xlen)
+def twos_xlen(x):
+    return twos(x, xlen)
 
 def toint(x: str):
     if '0x' in x:
@@ -92,7 +90,6 @@ OPS = {
     'cjformat': [],
     'ckformat': ['rs1'],
     'kformat': ['rs1','rd'],
-    'ckformat': ['rs1'],
     # 'frformat': ['rs1', 'rs2', 'rd'],
     'fsrformat': ['rs1', 'rd'],
     # 'fr4format': ['rs1', 'rs2', 'rs3', 'rd'],
@@ -147,7 +144,6 @@ VALS = {
     'cjformat': "['imm_val']",
     'ckformat': "['rs1_val']",
     'kformat': "['rs1_val']",
-    'ckformat': "['rs1_val']",
     # 'frformat': "['rs1_val', 'rs2_val', 'rm_val', 'fcsr']",
     'fsrformat': "['rs1_val','fcsr'] + get_rm(opcode) + \
         ([] if not is_nan_box else ['rs1_nan_prefix']) + \
@@ -190,7 +186,8 @@ def isInt(s):
 
 def get_default_registers(ops, datasets):
     problem = Problem()
-    not_x0 = lambda x: x not in ['x0']
+    def not_x0(x):
+        return x not in ["x0"]
 
     for op in ops:
         dataset = datasets[op]
@@ -351,7 +348,8 @@ class Generator():
                 op_conds[op] = set([])
         individual = False
         nodiff = False
-        construct_constraint = lambda val: (lambda x: bool(x in val))
+        def construct_constraint(val):
+            return lambda x: bool(x in val)
         while any([len(op_conds[x])!=0 for x in op_conds]+[len(op_comb)!=0]):
             cond_str = ''
             cond_vars = []
@@ -539,7 +537,8 @@ class Generator():
         if val:
             cond_str += val[-1]
         instr = {'inst':self.opcode,'index':'0', 'comment':cond_str}
-        labelize = lambda x: (str((-x)%2**21),'1b') if x < 0 else (str((x%2**21)),'3f')
+        def labelize(x):
+            return (str(-x % 2 ** 21), "1b") if x < 0 else (str(x % 2 ** 21), "3f")
         if op:
             for var,reg in zip(self.op_vars,op):
                 instr[var] = str(reg)
@@ -575,7 +574,8 @@ class Generator():
         instr = {'inst':self.opcode,'index':'0', 'comment':cond_str}
 
 
-        labelize = lambda x: (str((-x)%2048),'1b') if x < 0 else (str((x%2048)),'3f')
+        def labelize(x):
+            return (str(-x % 2048), "1b") if x < 0 else (str(x % 2048), "3f")
 
         if op:
             for var,reg in zip(self.op_vars,op):
@@ -606,7 +606,8 @@ class Generator():
         instr = {'inst':self.opcode,'index':'0', 'comment':cond_str}
 
 
-        labelize = lambda x: (str((-x)%257),'1b') if x < 0 else (str((x%257)),'3f')
+        def labelize(x):
+            return (str(-x % 257), "1b") if x < 0 else (str(x % 257), "3f")
 
         if op:
             for var,reg in zip(self.op_vars,op):
@@ -637,7 +638,8 @@ class Generator():
         instr = {'inst':self.opcode,'index':'0', 'comment':cond_str}
 
 
-        labelize = lambda x: (str((-x)%2048),'1b') if x < 0 else (str((x%2048)),'3f')
+        def labelize(x):
+            return (str(-x % 2048), "1b") if x < 0 else (str(x % 2048), "3f")
 
         if op:
             for var,reg in zip(self.op_vars,op):
@@ -989,10 +991,10 @@ class Generator():
         if 'val' in self.opnode:
             paired_regs=0
             if self.xlen == 32 and 'p64_profile' in self.opnode:
-                p64_profile = self.opnode['p64_profile']
+                _p64_profile = self.opnode['p64_profile']
                 paired_regs = self.opnode['p64_profile'].count('p')
             if 'dcas_profile' in self.opnode:
-                dcas_profile = self.opnode['dcas_profile']
+                _dcas_profile = self.opnode['dcas_profile']
                 paired_regs = self.opnode['dcas_profile'].count('p')
 
             regset = e_regset if 'e' in self.base_isa else default_regset
@@ -1010,7 +1012,7 @@ class Generator():
             else:
                 FLEN = 0
             XLEN = max(self.opnode['xlen'])
-            SIGALIGN = max(XLEN,FLEN)/8
+            SIGALIGN = max(XLEN,FLEN)/8  # noqa: F841
             stride_sz = eval(suffix)
             template = Template(eval(self.opnode['val']['val_template']))
             width = self.iflen if self.is_fext else self.flen
@@ -1115,10 +1117,10 @@ class Generator():
 
         paired_regs=0
         if self.xlen == 32 and 'p64_profile' in self.opnode:
-            p64_profile = self.opnode['p64_profile']
+            _p64_profile = self.opnode['p64_profile']
             paired_regs = self.opnode['p64_profile'].count('p')
         if 'dcas_profile' in self.opnode:
-            dcas_profile = self.opnode['dcas_profile']
+            _dcas_profile = self.opnode['dcas_profile']
             paired_regs = self.opnode['dcas_profile'].count('p')
 
         regset = e_regset if 'e' in self.base_isa else default_regset
@@ -1135,7 +1137,7 @@ class Generator():
         else:
             FLEN = 0
         XLEN = max(self.opnode['xlen'])
-        SIGALIGN = max(XLEN,FLEN)/8
+        SIGALIGN = max(XLEN,FLEN)/8  # noqa: F841
         stride_sz = eval(suffix)
         for instr in instr_dict:
             if 'rs1' in instr and instr['rs1'] in available_reg:
@@ -1267,7 +1269,8 @@ class Generator():
                 for i in range(len(instr_dict)):
                     instr_dict[i]['correctval_hi'] = '0'
         if self.fmt in ['caformat','crformat']:
-            normalise = lambda x,y: 0 if y['rs1']=='x0' else x
+            def normalise(x, y):
+                return 0 if y["rs1"] == "x0" else x
         else:
             normalise = (lambda x,y: x) if 'rd' not in self.op_vars else (lambda x,y: 0 if y['rd']=='x0' else x)
         if self.operation:
@@ -1382,14 +1385,14 @@ class Generator():
         if any('IP' in isa for isa in self.opnode['isa']):
             code.append("RVTEST_VXSAT_ENABLE()")
         if self.xlen == 32 and 'p64_profile' in self.opnode:
-            p64_profile = self.opnode['p64_profile']
+            _p64_profile = self.opnode['p64_profile']
         if 'dcas_profile' in self.opnode:
-            dcas_profile = self.opnode['dcas_profile']
+            _dcas_profile = self.opnode['dcas_profile']
 
         n = 0
-        is_int_src = any([self.opcode.endswith(x) for x in ['.x','.w','.l','.wu','.lu']]) or self.inxFlag
+        _is_int_src = any([self.opcode.endswith(x) for x in ['.x','.w','.l','.wu','.lu']]) or self.inxFlag
         src_len = xlen if self.opcode.endswith('.x') else (32 if 'w' in self.opcode else 64)
-        sz = 'word' if src_len == 32 else 'dword'
+        _sz = 'word' if src_len == 32 else 'dword'
         opcode = instr_dict[0]['inst']
         op_node_isa = ""
         extension = ""
@@ -1402,13 +1405,13 @@ class Generator():
         op_node_isa = op_node_isa.replace("I","E") if 'e' in self.base_isa else op_node_isa
         extension = op_node_isa.replace('I',"").replace('E',"")
         count = 0
-        neg_offset = 0
+        _neg_offset = 0
         width = self.iflen if not self.is_nan_box else self.flen
         dset_n = 0
         sig_sz = '(({0})/4)'.format(self.opnode['sig']['sz'])
-        cond_prefix = '' if self.is_fext else 'check ISA:=regex(.*{0}.*);'.format(self.xlen)
+        _cond_prefix = '' if self.is_fext else 'check ISA:=regex(.*{0}.*);'.format(self.xlen)
         for instr in instr_dict:
-            switch = False
+            _switch = False
             res = '\ninst_{0}:'.format(str(count))
             res += Template(op_node['template']).safe_substitute(instr)
             if 'val' in self.opnode:

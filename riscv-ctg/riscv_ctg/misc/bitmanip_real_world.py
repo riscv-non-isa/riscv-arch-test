@@ -267,7 +267,7 @@ config_ZKn = ['aes64ds','aes64dsm','aes64es','aes64esm','sha256sig0','sha256sig1
 
 config_ZKs = ['sm3p0','sm3p1','sm4ed','sm4ks']
 
-if os.path.isdir(os.getcwd()+"/real_world_tests") == False:
+if os.path.isdir(os.getcwd()+"/real_world_tests") is False:
 	os.mkdir(os.getcwd()+"/real_world_tests")
 	os.mkdir(os.getcwd()+"/real_world_tests/RV32IK")
 	os.mkdir(os.getcwd()+"/real_world_tests/RV64IK")
