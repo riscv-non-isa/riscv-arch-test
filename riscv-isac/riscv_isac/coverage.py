@@ -1038,29 +1038,39 @@ def compute_per_line(queue, event, cgf_queue, stats_queue, cgf, xlen, flen, addr
                     return None
 
             def get_pte_prop(prop_name, pte_addr):
-                '''
-                Function to return whether a specific Permission is given to the PTE or not
-                :param prop_name: an input property ., example: 'U' for U bit or 'RWX' for a combination of bits
-                :param pte_addr: PTE address for which we want to get the information
+                """
+                Function to check specific permissions of a PTE.
 
-                :type prop_name: str
-                :type pte_addr: hex/int
-
-                :return: 1 or 0 depending whether the specific (or combination of) permission/s is set or not respectively.
-                '''
-                bitmask_dict = {'v': 0x01, 'r': 0x02, 'w': 0x04, 'x': 0x08, 'u': 0x10, 'g': 0x20, 'a': 0x40, 'd': 0x80}
-                
-                if pte_addr is not None:
-                    # Get the permissions bit out of the pte_addr
-                    pte_per = pte_addr & 0x3FF
-                    
-                    # Check each character in prop_name
-                    for char in prop_name.lower():
-                        if char in bitmask_dict and (pte_per & bitmask_dict[char] == 0):
-                            return 0
-                    return 1
-                else:
+                :param prop_name: string containing properties to check.
+                                Uppercase letters mean the bits should be set.
+                                Lowercase letters mean the bits should NOT be set.
+                                Example: "uAdW" checks U and D bits are NOT set,
+                                        while A and W bits are set.
+                :param pte_addr: PTE address to examine (int or hex).
+                :return: 1 if conditions are met, 0 otherwise.
+                """
+                if pte_addr is None:
                     return 0
+                
+                bitmask_dict = {
+                    'V': 0x01, 'R': 0x02, 'W': 0x04, 'X': 0x08,
+                    'U': 0x10, 'G': 0x20, 'A': 0x40, 'D': 0x80
+                }
+
+                # Get permission bits from PTE address
+                pte_per = pte_addr & 0x3FF
+
+                # Check each property in prop_name
+                for char in prop_name:
+                    # Check if uppercase character should be set or lowercase should NOT be set
+                    bitmask = bitmask_dict.get(char.upper())
+                    if bitmask is None:
+                        return 0  # If unrecognized character, then return overall zero prematurely.
+
+                    if (char.isupper() and not (pte_per & bitmask)) or (char.islower() and (pte_per & bitmask)):
+                        return 0
+
+                return 1
 
             globals()['get_addr'] = check_label_address
             globals()['get_mem_val'] = get_mem_val
