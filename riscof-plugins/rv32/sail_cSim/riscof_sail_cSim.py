@@ -88,6 +88,11 @@ class sail_cSim(pluginTemplate):
             self.isa += 'f'
         if "D" in ispec["ISA"]:
             self.isa += 'd'
+        if "Zilsd" in ispec["ISA"]:
+            self.isa += 'Zilsd'
+            self.zilsdflg = True
+        if "Zclsd" in ispec["ISA"]:
+            self.isa += '_Zclsd'
         objdump = "riscv{0}-unknown-elf-objdump".format(self.xlen)
         if not self.docker:
             if shutil.which(objdump) is None:
@@ -133,9 +138,13 @@ class sail_cSim(pluginTemplate):
 
             execute += self.objdump_cmd.format(elf, self.xlen, 'ref.disass')
             sig_file = os.path.join(test_dir, self.name[:-1] + ".signature")
-
-            execute += self.sail_exe[self.xlen] + '  -i -v --trace=step  --pmp-count=16 --pmp-grain=0  --test-signature={0} {1} > {2}.log 2>&1;'.format(sig_file, elf, test_name)
-
+            cmd = ''
+            if "Zilsd" in self.isa:
+                cmd = cmd + ' --enable-zilsd'  
+            if "Zclsd" in self.isa:
+                cmd = cmd + ' --enable-zclsd'
+            execute += self.sail_exe[self.xlen] + cmd + '  -i -v --trace=step  --pmp-count=16 --pmp-grain=0  --test-signature={0} {1} > {2}.log 2>&1;'.format(sig_file, elf, test_name)
+            execute +=  f'perl -pi -e \'s/^\[/\\n\\n\[/\' {test_name}.log;'
             cov_str = ' '
             for label in testentry['coverage_labels']:
                 cov_str+=' -l '+label
@@ -153,8 +162,8 @@ class sail_cSim(pluginTemplate):
                         -t {0}.log --parser-name c_sail -o coverage.rpt  \
                         --sig-label begin_signature  end_signature \
                         --test-label rvtest_code_begin rvtest_code_end \
-                        -e ref.elf -c {1} -x{2} {3} {4} {5};'.format(\
-                        test_name, ' -c '.join(cgf_file), self.xlen, cov_str, header_file_flag, cgf_mac)
+                        -e ref.elf -c {1} --zilsdFlg {6} -x{2} {3} {4} {5};'.format(\
+                        test_name, ' -c '.join(cgf_file), self.xlen, cov_str, header_file_flag, cgf_mac,self.zilsdflg)
             else:
                 coverage_cmd = ''
 
