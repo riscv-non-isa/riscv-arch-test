@@ -90,7 +90,8 @@ class instructionObject():
         mem_val =  None,
         trap_dict = None,
         inxFlag = None,
-        is_sgn_extd = None
+        is_sgn_extd = None,
+        mip_updated_val = None
     ):
 
         '''
@@ -135,6 +136,7 @@ class instructionObject():
         self.matches_for_options = None
         self.mem_val = mem_val
         self.trap_dict = trap_dict
+        self.mip_updated_val = mip_updated_val
 
     def is_sig_update(self):
         return self.instr_name in instrs_sig_update
@@ -198,8 +200,16 @@ class instructionObject():
                 instr_vars['access_len'] = 1
         else:
             instr_vars['access_len'] = None
+
         #Update the values for the trap registers
         self.trap_registers_update(instr_vars,self.trap_dict)
+
+        #Update the value of MIP as soon as the hart updates it.
+        if self.mip_updated_val is not None:
+            if isinstance(csr_regfile['mip'], str):
+                csr_regfile['mip'] = int(csr_regfile['mip'], 16) | self.mip_updated_val
+            else:
+                csr_regfile['mip'] = csr_regfile['mip'] | self.mip_updated_val
 
         # capture the register operand values
         rs1_val = self.evaluate_instr_var("rs1_val", instr_vars, arch_state)
