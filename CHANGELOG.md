@@ -68,6 +68,9 @@ Corrected missing RV64 strings in RVTEST_CASE macros for Zfh fcvt.h.l and simila
 - replacing LA(rd, 5b) with auipc rd, 0 in test_macros.h solves the compiler issue and produces similar code but without a bunch of preceeding nops
 
 
+## [3.8.10] -- 2024-02-21
+- Adds tests for LR/SC instructions in Atomic (A) Extension.
+
 ## [3.8.9] -- 2024-01-12
 - Fixed Check ISA fields to include 32/64 in Zicond tests.  Note that the riscv-ctg CGFs have not been updated.
 
