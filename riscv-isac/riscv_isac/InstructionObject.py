@@ -542,6 +542,10 @@ class instructionObject():
 
     @evaluator_func("rs1_val", lambda **params: not params['instr_name'] in unsgn_rs1 and not params['is_rvp'] and params['rs1'] is not None and (params['rs1'][1] == 'f' or params['inxFlag']))
     def evaluate_rs1_val_fsgn(self, instr_vars, arch_state):
+        return self.evaluate_reg_val_zdinx32_ext(self.rs1[0], self.rs1_nregs,instr_vars['flen'],instr_vars['xlen'],arch_state)
+        
+    @evaluator_func("rs1_val", lambda **params: not params['instr_name'] in unsgn_rs1 and not params['is_rvp'] and params['rs1'] is not None and (params['rs1'][1] == 'f' or params['inxFlag']))
+    def evaluate_rs1_val_fsgn(self, instr_vars, arch_state):
         return self.evaluate_reg_val_fsgn(self.rs1[0], instr_vars['flen'], instr_vars['xlen'],arch_state)
    
 
@@ -566,6 +570,10 @@ class instructionObject():
         return self.evaluate_reg_val_sgn(self.rs2[0], instr_vars['xlen'], arch_state)
 
 
+    @evaluator_func("rs2_val", lambda **params: params['is_rvp'] and params['rs2'] is not None)
+    def evaluate_rs2_val_fsgn(self, instr_vars, arch_state):
+        return self.evaluate_reg_val_zdinx32_ext(self.rs2[0],instr_vars['flen'], instr_vars['xlen'], self.rs2_nregs, arch_state)
+        
     @evaluator_func("rs2_val", lambda **params: not params['instr_name'] in unsgn_rs2 and not params['is_rvp'] and params['rs2'] is not None and (params['rs2'][1] == 'f' or params['inxFlag']))
     def evaluate_rs2_val_fsgn(self, instr_vars, arch_state):
         return self.evaluate_reg_val_fsgn(self.rs2[0], instr_vars['flen'], instr_vars['xlen'], arch_state)
@@ -651,6 +659,13 @@ class instructionObject():
             reg_val = (reg_hi_val << 32) | reg_val
         return reg_val
     
+    def evaluate_reg_val_zdinx32_ext(self, reg_idx, nregs, flen,arch_state,xlen):
+        reg_val = self.evaluate_reg_val_fsgn(reg_idx,flen,arch_state,xlen)
+        if nregs == 2:
+            reg_hi_val = self.evaluate_reg_val_fsgn(reg_idx+1,flen,arch_state,xlen)
+            reg_val = (reg_hi_val << 32) | reg_val
+        return reg_val
+        
     def sign_extend(self, value, e_bits, v_bits ):
         return bin(value | ((1<<e_bits) - (1<<v_bits)))
     
