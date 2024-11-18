@@ -37,27 +37,31 @@ trap_handler:
     RVTEST_SIGUPD(x1, t6)
     RVTEST_SIGUPD(x1, t2)
 
-    la t0, user_mode                
-    csrw mepc, t0
-    mret                    #upon mret switch to switch to user mode
+    # Prepare to jump to user_mode
+    la t3, user_mode          # Load address of user_mode code
+    csrw mepc, t3             # Set User mode entry point
+    mret                      # Return to User mode
     
 user_mode:           
-    csrr t1, mstatus               
-    li t0, (0 << 11) 
-    and t1, t1, t0              
-    csrw mstatus, t1              
+    # Execute one instruction in U-mode
+    addi a0, zero, 1
+    addi a0, a0, 1
+    addi a0, a0, 1
+    addi a0, a0, 1
+    nop                       # No-operation placeholder
+    RVTEST_SIGUPD(x1, a0)
+    csrr a3, tdata1           # Read the trigger status
+    RVTEST_SIGUPD(x1, a3)     # Log trigger status
     
-    li a0, 42                          
-
-    csrr t1, mstatus
-    li t0, (3 << 11)              
-    or t1, t1, t0                
-    csrw mstatus, t1              
-
+    # Prepare to jump back to Machine mode
+    la t0, trap_exit          # Load address of exit point
+    csrw mepc, t0             # Set Machine mode return address
+    mret                      # Return to Machine mode
     
-    csrr a3,tdata1
-    RVTEST_SIGUPD(x1,a3)  # checking if hit bit is set
-
+trap_exit:
+    nop                       # Placeholder for post-trap processing
+    j end                     # Jump to end to avoid re-entering the trap
+		
 end:
 RVTEST_CODE_END
 RVMODEL_HALT
@@ -70,6 +74,17 @@ CANARY;
 
 signature_x1_0:
   .fill 128*(XLEN/32),4,0xdeadbeef
+
+#ifdef rvtest_mtrap_routine
+
+tsig_begin_canary:
+CANARY;
+mtrap_sigptr:
+    .fill 64*(XLEN/32),4,0xdeadbeef
+tsig_end_canary:
+CANARY;
+
+#endif
 
 sig_end_canary:
 CANARY;
