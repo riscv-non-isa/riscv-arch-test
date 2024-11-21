@@ -933,3 +933,8 @@ PMP_helper_Coverpoints:
  NA4_REGION_ADDRESS_MATCH: (rs1_val + imm_val == (pmpaddr1 << 2))
  NA4_PRIORITY_REGION_MATCH: (rs1_val + imm_val == (pmpaddr3 << 2))
  NA4_PRIORITY_2_REGION_MATCH: (rs1_val + imm_val == (pmpaddr1 << 2))
+ 
+Interrupt_Macros:
+ MSIP_BASE: 0x02000000
+ MTIMECMP_BASE: 0x02004000
+ MTIME_BASE: 0x0200bff8
