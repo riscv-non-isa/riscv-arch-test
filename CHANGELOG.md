@@ -1,4 +1,6 @@
 # CHANGELOG
+## [3.8.9] -- 2024-01-14
+- Update tests for B extension
 
 ## [3.10.0] - 2024-11-04
 - Add support for Zvk* extensions
