@@ -17,6 +17,7 @@ Jinja2
 m2r2>=0.2.7
 MarkupSafe>=1.1.1
 mistune>=0.8.4
+ordered-set>=4.1.0
 oyaml>=0.9
 packaging>=19.0
 pbr>=5.3.1
