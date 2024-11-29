@@ -1744,6 +1744,8 @@ class disassembler():
         instrObj.rm = rm
 
         # fadd, fsub, fmul, fdiv
+        if funct7 == 0b0000010:
+            instrObj.instr_name = 'fadd.h'
         if funct7 == 0b0000000:
             instrObj.instr_name = 'fadd.s'
         elif funct7 == 0b0000100:
@@ -1761,6 +1763,54 @@ class disassembler():
         elif funct7 == 0b0001101:
             instrObj.instr_name = 'fdiv.d'
 
+        
+        if funct7 == 0b1110010:
+            instrObj.instr_name = 'fclass.h'
+
+        if funct7 == 0b1100010:
+            if rs2[0] == 0b01:
+                instrObj.instr_name = 'fcvt.wu.h'
+            elif rs2[0] == 0b0:
+                instrObj.instr_name = 'fcvt.w.h'
+        if funct7 == 0b1110:
+            instrObj.instr_name = 'fdiv'
+        
+        if funct7 == 0b1010010:
+            if rm == 0b01:
+                instrObj.instr_name = 'flt'
+            elif rm == 0b00:
+                instrObj.instr_name = 'fle'
+            elif rm == 0b10:
+                instrObj.instr_name = 'feq'
+        
+        if funct7 == 0b10110:
+            if rs2[0] == 0b11111:
+                instrObj.instr_name = 'fmax.h'
+            elif rs2[0] == 0b11110:
+                instrObj.instr_name = 'fmin.h'
+
+        if funct7 == 0b1111010:
+            instrObj.instr_name = 'fmv.h.x'
+
+        if funct7 == 0b1110010:
+            instrObj.instr_name = 'fmv.x.h'
+        
+        if funct7 == 0b10010:
+            if rm == 0b01:
+                instrObj.instr_name = 'fsgnjn'
+            elif rm == 0b00:
+                instrObj.instr_name = 'fsgnj'
+            elif rm == 0b10:
+                instrObj.instr_name = 'fsgnjx'
+
+        if funct7 == 0b101110:
+            instrObj.instr_name = 'fsqrt'
+        
+
+        
+        
+        
+        
         # fsqrt
         if funct7 == 0b0101100:
             instrObj.instr_name = 'fsqrt.s'
@@ -1828,6 +1878,23 @@ class disassembler():
                 instrObj.instr_name = 'fcvt.lu.s'
                 return instrObj
 
+        #fcvt.d.h fcvt.s.h fcvt.h.d fcvt.h.s
+        if funct7 == 0b100001:
+            if rs2[0] == 0b10:
+                instrObj.instr_name = 'fcvt.d.h'
+                return instrObj
+        elif funct7 == 0b100000:
+            if rs2[0] == 0b10:
+                instrObj.instr_name = 'fcvt.s.h'
+                return instrObj
+        elif funct7 == 0b100010:
+            if rs2[0] == 0b1:
+                instrObj.instr_name = 'fcvt.h.d'
+                return instrObj
+            elif rs2[0] == 0:
+                instrObj.instr_name = 'fcvt.h.s'
+                return instrObj
+        
         # fcvt.s.d, fcvt.d.s
         if funct7 == 0b0100000:
             if rs2[0] == 0b00001:
