@@ -14,13 +14,13 @@
 // Test cases are as follows:
 // ----------------------------------------------------------------------------------------------------------------------
 // 1. WX Permissions is Set for the page at level 1:
-//		Then, in S-Mode, the page is accessed --> required: Load-page-fault, Store-page-fault, Fetch-page-fault
+//		Then, in U-Mode, the page is accessed --> required: Load-page-fault, Store-page-fault, Fetch-page-fault
 // 2. W Permissions is Set for the page at level 1:
-//		Then, in S-Mode, the page is accessed --> required: Load-page-fault, Store-page-fault, Fetch-page-fault
+//		Then, in U-Mode, the page is accessed --> required: Load-page-fault, Store-page-fault, Fetch-page-fault
 // 3. WX Permissions is Set for the page at level 0:
-//		Then, in S-Mode, the page is accessed --> required: Load-page-fault, Store-page-fault, Fetch-page-fault
+//		Then, in U-Mode, the page is accessed --> required: Load-page-fault, Store-page-fault, Fetch-page-fault
 // 4. W Permissions is Set for the page at level 0:
-//		Then, in S-Mode, the page is accessed --> required: Load-page-fault, Store-page-fault, Fetch-page-fault
+//		Then, in U-Mode, the page is accessed --> required: Load-page-fault, Store-page-fault, Fetch-page-fault
 // Total Expected Faults :: 12
 //-------------------------------------------------------------------------------------------------------------------
 
@@ -38,7 +38,7 @@ RVMODEL_BOOT
 RVTEST_CODE_BEGIN
 
 #ifdef TEST_CASE_1
-    RVTEST_CASE(1,"//check ISA:=regex(.*32.*); check ISA:=regex(.*I.*Zicsr.*); def rvtest_mtrap_routine=True; def rvtest_strap_routine=True; def TEST_CASE_1=True; mac SV32_MACROS",reserved_pte_perm)
+    RVTEST_CASE(1,"//check ISA:=regex(.*32.*); check ISA:=regex(.*I.*Zicsr.*); def rvtest_mtrap_routine=True; def rvtest_strap_routine=True; def TEST_CASE_1=True; mac SV32_MACROS",reserved_rwx_pte_perm)
 
 RVTEST_SIGBASE( x13,signature_x13_1)
 # ---------------------------------------------------------------------------------------------
@@ -93,7 +93,7 @@ RVTEST_SIGBASE( x13,signature_x13_1)
 .endm
 
 .macro TEST_CASES_RUNNER LOWER_MODE, VA, level
-	RVTEST_GOTO_LOWER_MODE	\LOWER_MODE		                                // Switching to S mode
+	RVTEST_GOTO_LOWER_MODE	\LOWER_MODE		                                // Switching to U mode
 	.align 2
 
 	//JUMP TO LOAD, STORE, EXECUTE CHECK MACRO (SEE ON TOP)
@@ -134,14 +134,14 @@ main:
 	.set  va_rvtest_vmem_begin, 0x940003F0									// virtual address of rvtest_vmem_begin
 
 //													PTE setup for Code Region
-	PTE_SETUP_RV32_New(rvtest_code_begin, (PTE_D | PTE_A | PTE_X |PTE_R | PTE_V), va_rvtest_code_begin, LEVEL1)
+	PTE_SETUP_RV32_New(rvtest_code_begin, (PTE_D | PTE_A | PTE_U | PTE_X |PTE_R | PTE_V), va_rvtest_code_begin, LEVEL1)
 	sfence.vma
 //													PTE setup for Data Region
-	PTE_SETUP_RV32_New(rvtest_data_begin, (PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V), va_rvtest_data_begin, LEVEL1)
+	PTE_SETUP_RV32_New(rvtest_data_begin, (PTE_D | PTE_U | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V), va_rvtest_data_begin, LEVEL1)
 	sfence.vma
 //													PTE setup for Signature Region
 	PTE_SETUP_RV32_New(rvtest_slvl1_pg_tbl, (PTE_V), va_rvtest_sig_begin, LEVEL1)
-	PTE_SETUP_RV32_New(rvtest_sig_begin,  (PTE_D | PTE_A | PTE_R | PTE_W | PTE_V), va_rvtest_sig_begin, LEVEL0)
+	PTE_SETUP_RV32_New(rvtest_sig_begin,  (PTE_D | PTE_A | PTE_R | PTE_W | PTE_U | PTE_V), va_rvtest_sig_begin, LEVEL0)
 	sfence.vma
 //								register setup for the signature save in virtualization mode
 	LI (t0, va_rvtest_sig_begin)                                                       
@@ -183,28 +183,28 @@ main:
 //---------------------------------------------------------------------------------------------------------------------------------
 //					4MB PAGE	Region 1 under test at level 1 -- WX permissions given to the region
 //---------------------------------------------------------------------------------------------------------------------------------
-	// Test case 1: Test in S-Mode | WX bit set | expected = RWX fault 
-	PTE_SETUP_RV32_New(rvtest_data_1_l1, (PTE_D | PTE_A | PTE_X | PTE_W | PTE_V), va_data, LEVEL1)
+	// Test case 1: Test in U-Mode | WX bit set | expected = RWX fault 
+	PTE_SETUP_RV32_New(rvtest_data_1_l1, (PTE_D | PTE_A | PTE_U | PTE_X | PTE_W | PTE_V), va_data, LEVEL1)
 	sfence.vma
 
 	//return page PTE
-	PTE_SETUP_RV32_New(rvtest_data_1_l1, (PTE_D | PTE_A | PTE_R | PTE_W | PTE_X | PTE_V), va_return_page_l1, LEVEL1)
+	PTE_SETUP_RV32_New(rvtest_data_1_l1, (PTE_D | PTE_A | PTE_U | PTE_R | PTE_W | PTE_X | PTE_V), va_return_page_l1, LEVEL1)
 	sfence.vma
 
-	TEST_CASES_RUNNER Smode, va_data, LEVEL1
+	TEST_CASES_RUNNER Umode, va_data, LEVEL1
 
 //---------------------------------------------------------------------------------------------------------------------------------
 //					4MB PAGE	Region 1 under test at level 1 -- W permissions given to the region
 //---------------------------------------------------------------------------------------------------------------------------------
-	// Test case 2: Test in S-Mode | W bit set | expected = RWX fault 
-	PTE_SETUP_RV32_New(rvtest_data_1_l1, (PTE_D | PTE_A | PTE_W | PTE_V), va_data, LEVEL1)
+	// Test case 2: Test in U-Mode | W bit set | expected = RWX fault 
+	PTE_SETUP_RV32_New(rvtest_data_1_l1, (PTE_D | PTE_A | PTE_U | PTE_W | PTE_V), va_data, LEVEL1)
 	sfence.vma
 
 	//return page PTE
-	PTE_SETUP_RV32_New(rvtest_data_1_l1, (PTE_D | PTE_A | PTE_R | PTE_W | PTE_X | PTE_V), va_return_page_l1, LEVEL1)
+	PTE_SETUP_RV32_New(rvtest_data_1_l1, (PTE_D | PTE_A | PTE_U | PTE_R | PTE_W | PTE_X | PTE_V), va_return_page_l1, LEVEL1)
 	sfence.vma
 
-	TEST_CASES_RUNNER Smode, va_data, LEVEL1
+	TEST_CASES_RUNNER Umode, va_data, LEVEL1
 
 //---------------------------------------------------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------------------------------------------------
@@ -212,32 +212,32 @@ main:
 //---------------------------------------------------------------------------------------------------------------------------------
 //					4KB PAGE	Region 1 under test at level 0 -- WX permissions given to the region
 //---------------------------------------------------------------------------------------------------------------------------------
-	// Test case 3: Test in S-Mode | WX bit set | expected = WX fault 
+	// Test case 3: Test in U-Mode | WX bit set | expected = WX fault 
 	PTE_SETUP_RV32_New(rvtest_slvl1_pg_tbl, (PTE_V), va_data, LEVEL1)
-	PTE_SETUP_RV32_New(rvtest_data_1_l0, (PTE_D | PTE_A | PTE_X | PTE_W | PTE_V), va_data, LEVEL0)
+	PTE_SETUP_RV32_New(rvtest_data_1_l0, (PTE_D | PTE_A | PTE_U | PTE_X | PTE_W | PTE_V), va_data, LEVEL0)
 	sfence.vma
 
 	//return page PTE
 	PTE_SETUP_RV32_New(rvtest_slvl1_pg_tbl, (PTE_V), va_return_page_l0, LEVEL1)
-	PTE_SETUP_RV32_New(rvtest_data_1_l0, (PTE_D | PTE_A | PTE_R | PTE_W | PTE_X | PTE_V), va_return_page_l0, LEVEL0)
+	PTE_SETUP_RV32_New(rvtest_data_1_l0, (PTE_D | PTE_A | PTE_U | PTE_R | PTE_W | PTE_X | PTE_V), va_return_page_l0, LEVEL0)
 	sfence.vma
 
-	TEST_CASES_RUNNER Smode, va_data, LEVEL0
+	TEST_CASES_RUNNER Umode, va_data, LEVEL0
 
 //---------------------------------------------------------------------------------------------------------------------------------
 //					4KB PAGE	Region 2 under test at level 0 -- W permissions given to the region
 //---------------------------------------------------------------------------------------------------------------------------------
-	// Test case 3: Test in S-Mode | WX bit set | expected = W fault 
+	// Test case 3: Test in U-Mode | WX bit set | expected = W fault 
 	PTE_SETUP_RV32_New(rvtest_slvl1_pg_tbl, (PTE_V), va_data, LEVEL1)
-	PTE_SETUP_RV32_New(rvtest_data_1_l0, (PTE_D | PTE_A | PTE_W | PTE_V), va_data, LEVEL0)
+	PTE_SETUP_RV32_New(rvtest_data_1_l0, (PTE_D | PTE_A | PTE_U | PTE_W | PTE_V), va_data, LEVEL0)
 	sfence.vma
 
 	//return page PTE
 	PTE_SETUP_RV32_New(rvtest_slvl1_pg_tbl, (PTE_V), va_return_page_l0, LEVEL1)
-	PTE_SETUP_RV32_New(rvtest_data_1_l0, (PTE_D | PTE_A | PTE_R | PTE_W | PTE_X | PTE_V), va_return_page_l0, LEVEL0)
+	PTE_SETUP_RV32_New(rvtest_data_1_l0, (PTE_D | PTE_A | PTE_U | PTE_R | PTE_W | PTE_X | PTE_V), va_return_page_l0, LEVEL0)
 	sfence.vma
 
-	TEST_CASES_RUNNER Smode, va_data, LEVEL0
+	TEST_CASES_RUNNER Umode, va_data, LEVEL0
 
 #endif
 //---------------------------------------------------------------------------------------------------------------------------------

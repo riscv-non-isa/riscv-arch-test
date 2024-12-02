@@ -175,7 +175,7 @@ nonleaf_pte_level0:
     'mode == "M" and (${va_data_sv32} + ${LEVEL_0_JUMP_SIZE}) == mtval and mcause == ${CAUSE_FETCH_PAGE_FAULT}': 0
 
 #If reserved PTE permissions are chosen, then get a load, store and fetch page fault
-reserved_pte_perm:
+reserved_rwx_pte_perm:
   config:
     - check ISA:=regex(.*32.*); check ISA:=regex(.*I.*Zicsr.*); def rvtest_mtrap_routine=True; def rvtest_strap_routine=True;
   mnemonics:
@@ -292,3 +292,52 @@ U_bit_unset_in_SMode:
     'mode == "S" and mnemonic == "sw" and get_pte_prop("rwx", dptw1cont) == 1 and get_pte_prop({"uRwX", "uRwx"}, dptw0cont) == 1 and mcause == 15': 0
     'mode == "M" and (${va_data_sv32} + ${LEVEL_1_JUMP_SIZE}) == mtval and mcause == ${CAUSE_FETCH_PAGE_FAULT}': 0
     'mode == "M" and (${va_data_sv32} + ${LEVEL_0_JUMP_SIZE}) == mtval and mcause == ${CAUSE_FETCH_PAGE_FAULT}': 0
+
+#Access satp register in all three M, S, U modes and expect illegal instruction expection in U Mode.
+satp_access_all_modes:
+  config:
+    - check ISA:=regex(.*32.*); check ISA:=regex(.*I.*Zicsr.*); def rvtest_mtrap_routine=True; def rvtest_strap_routine=True;
+  mnemonics:
+    "{csrrc, csrrs, csrrw}": 0
+  csr_comb:
+  #Make sure we have some value in case of satp access in M, S modes
+    'mode == "M" and mnemonic == "csrrw" and satp != 0': 0
+    'mode == "M" and mnemonic == "csrrs" and satp != 0': 0
+    'mode == "M" and mnemonic == "csrrc" and satp != 0': 0
+    'mode == "S" and mnemonic == "csrrw" and satp != 0': 0
+    'mode == "S" and mnemonic == "csrrs" and satp != 0': 0
+    'mode == "S" and mnemonic == "csrrc" and satp != 0': 0
+  #Make sure we have illegal instruction fault for satp access in U mode
+    'mode == "U" and mnemonic == "csrrw" and satp != 0 and mcause == ${CAUSE_ILLEGAL_INSTRUCTION}': 0
+    'mode == "U" and mnemonic == "csrrs" and satp != 0 and mcause == ${CAUSE_ILLEGAL_INSTRUCTION}': 0
+    'mode == "U" and mnemonic == "csrrc" and satp != 0 and mcause == ${CAUSE_ILLEGAL_INSTRUCTION}': 0
+  #check all ones
+    'mode == "M" and mnemonic == "csrrw" and satp == 0x3FFFFF': 0
+  #check walking ones on the PPN Width
+    'mode == "M" and mnemonic == "csrrw" and satp == 1 << {0 ... 21}': 0
+
+#When mstatus TVM bit is set, accessing satp and sfence.vma in S-Mode should raise illegal instruction fault.
+mstatus_tvm:
+  config:
+    - check ISA:=regex(.*32.*); check ISA:=regex(.*I.*Zicsr.*); def rvtest_mtrap_routine=True; def rvtest_strap_routine=True;
+  mnemonics:
+    csrrw: 0
+  csr_comb:
+  #Make sure we have some value in case of satp access in M mode
+    'mode == "M" and (mstatus & ${MSTATUS_TVM} == ${MSTATUS_TVM}) and mnemonic == "csrrw" and satp != 0': 0
+  #Make sure we have illegal instruction fault for satp access in S mode
+    'mode == "S" and (mstatus & ${MSTATUS_TVM} == ${MSTATUS_TVM}) and mnemonic == "csrrw" and mcause == ${CAUSE_ILLEGAL_INSTRUCTION}': 0
+
+#If reserved PTE permissions bits (RSW) are set, then the Page table walk should give no RSW set in return
+reserved_rsw_pte_perm:
+  config:
+    - check ISA:=regex(.*32.*); check ISA:=regex(.*I.*Zicsr.*); def rvtest_mtrap_routine=True; def rvtest_strap_routine=True;
+  mnemonics:
+    "{sw, csrrw, lw}": 0
+  op_comb:
+    'mode == {"S", "U"} and (satp >> 31) ==  ${SATP_MODE_SV32}': 0
+  csr_comb:
+    '((satp) & 0x003FFFFF)  == get_addr("rvtest_Sroot_pg_tbl") >> 12': 0
+  val_comb:
+    'mode == {"S", "U"} and get_pte_prop("RWXAD",   dptw1cont) ==  1 and dptw0cont == None': 0
+    'mode == {"S", "U"} and get_pte_prop("rwx", dptw1cont) == 1 and get_pte_prop("RWXAD",   dptw0cont) ==  1': 0
