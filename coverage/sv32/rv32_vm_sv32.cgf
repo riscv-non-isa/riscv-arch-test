@@ -118,7 +118,7 @@ misaligned_superpage:
     'mode == {"S", "U"} and mnemonic == {"sw", "lw"} and get_pte_prop("ADRWXV", dptw1cont) == 1 and dptw0cont == None and mcause == {15, 13}{[$2]}': 0
     'mode == "M" and (${va_data_sv32} + ${LEVEL_1_JUMP_SIZE}) == mtval and mcause == ${CAUSE_FETCH_PAGE_FAULT}': 0
 
-# If MVPV bit is set, then make the exec. readable and just give a store page fault else give both load and store page fault
+# If MVPV bit is set, then do page table walk in machine mode for loads and stores.
 MPRV_bit:
   config:
     - check ISA:=regex(.*32.*); check ISA:=regex(.*I.*Zicsr.*); def rvtest_mtrap_routine=True; def rvtest_strap_routine=True;
@@ -341,3 +341,24 @@ reserved_rsw_pte_perm:
   val_comb:
     'mode == {"S", "U"} and get_pte_prop("RWXAD",   dptw1cont) ==  1 and dptw0cont == None': 0
     'mode == {"S", "U"} and get_pte_prop("rwx", dptw1cont) == 1 and get_pte_prop("RWXAD",   dptw0cont) ==  1': 0
+
+# If MVPV bit is set, then do page table walk in machine mode for loads and stores.
+MPRV_SUM_bit:
+  config:
+    - check ISA:=regex(.*32.*); check ISA:=regex(.*I.*Zicsr.*); def rvtest_mtrap_routine=True; def rvtest_strap_routine=True;
+  mnemonics:
+    "{sw, csrrc, csrrs, csrrw, lw, jal, jalr}": 0
+  op_comb:
+    'mode == "M" and (satp >> 31) ==  ${SATP_MODE_SV32}': 0
+  csr_comb:
+    '((satp) & 0x003FFFFF)  == get_addr("rvtest_Sroot_pg_tbl") >> 12': 0
+    #check mstatus has: Case 1: MPP=S, SUM=1, MPRV=1 Case 2: MPP=S, SUM=0, MPRV=1
+    mstatus == {0x00060800, 0x00020800}: 0       
+  val_comb:
+    'mode == "M" and mnemonic == {"lw", "sw"} and old_csr_val("mstatus") == {0x00060800, 0x00020800} and get_pte_prop("ADURWXV",   dptw1cont) ==  1 and dptw0cont == None': 0
+    'mode == "M" and mnemonic == {"lw", "sw"} and old_csr_val("mstatus") == {0x00060800, 0x00020800} and get_pte_prop("rwx", dptw1cont) == 1 and get_pte_prop("ADURWXV",  dptw0cont) ==   1': 0
+    #Fault Checks
+    'mode == "M" and old_csr_val("mstatus") == 0x00060800 and get_pte_prop("ADURWXV",   dptw1cont) ==  1 and dptw0cont == None and len_dptw == 1': 0
+    'mode == "M" and old_csr_val("mstatus") == 0x00060800 and get_pte_prop("rwx", dptw1cont) == 1 and get_pte_prop("ADURWXV",  dptw0cont) == 1 and len_dptw == 2': 0
+    'mode == "M" and old_csr_val("mstatus") == 0x00020800 and get_pte_prop("ADURWXV",   dptw1cont) ==  1 and dptw0cont == None and mcause == {${CAUSE_LOAD_PAGE_FAULT}, ${CAUSE_STORE_PAGE_FAULT}}': 0
+    'mode == "M" and old_csr_val("mstatus") == 0x00020800 and get_pte_prop("rwx", dptw1cont) == 1 and get_pte_prop("ADURWXV",  dptw0cont) == 1 and mcause == {${CAUSE_LOAD_PAGE_FAULT}, ${CAUSE_STORE_PAGE_FAULT}}': 0
