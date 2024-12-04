@@ -149,6 +149,7 @@ walking_ones_satp:
 	csrw satp, t0
 	csrr t1, satp
 	RVTEST_SIGUPD(x14,t1)
+	addi x14, x14, REGWIDTH
 	bne t3, t2, walking_ones_satp
 
 #endif
