@@ -961,6 +961,7 @@ def compute_per_line(queue, event, cgf_queue, stats_queue, cgf, xlen, flen, addr
                     old_csr_regfile[i] = int(csr_regfile[i],16)
                 else:
                     old_csr_regfile[i] = csr_regfile[i]
+
             def old_fn_csr_comb_covpt(csr_reg):
                 return old_csr_regfile[csr_reg]
 
@@ -1072,7 +1073,9 @@ def compute_per_line(queue, event, cgf_queue, stats_queue, cgf, xlen, flen, addr
 
                 return 1
 
+
             globals()['get_addr'] = check_label_address
+            globals()['old_csr_val'] = old_fn_csr_comb_covpt
             globals()['get_mem_val'] = get_mem_val
             globals()['get_pte'] = get_pte
             globals()['get_pte_prop'] = get_pte_prop
@@ -1206,7 +1209,7 @@ def compute_per_line(queue, event, cgf_queue, stats_queue, cgf, xlen, flen, addr
                                                             return key
                                                     return None
                                                 #check the old_csr_value only for the register of interest
-                                                pattern_csr = r'old\("([^"]+)"\)'
+                                                pattern_csr = r'old_csr_val\("([^"]+)"\)'
                                                 match = re.search(pattern_csr, coverpoints)
                                                 if match:
                                                     required_csr = match.group(1)
@@ -1217,7 +1220,7 @@ def compute_per_line(queue, event, cgf_queue, stats_queue, cgf, xlen, flen, addr
                                                     coverpoints,
                                                     {
                                                         "__builtins__":None,
-                                                        "old": old_fn_csr_comb_covpt,
+                                                        "old_csr_val": old_fn_csr_comb_covpt,
                                                         "write": write_fn_csr_comb_covpt,
                                                         "get_addr": check_label_address,
                                                         "get_mem_val":get_mem_val,
@@ -1248,7 +1251,7 @@ def compute_per_line(queue, event, cgf_queue, stats_queue, cgf, xlen, flen, addr
                                                 coverpoints,
                                                 {
                                                     "__builtins__":None,
-                                                    "old": old_fn_csr_comb_covpt,
+                                                    "old_csr_val": old_fn_csr_comb_covpt,
                                                     "write": write_fn_csr_comb_covpt,
                                                     "get_addr": check_label_address,
                                                     "get_mem_val":get_mem_val,
