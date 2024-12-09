@@ -1,6 +1,10 @@
 #ifndef _COMPLIANCE_MODEL_H
 #define _COMPLIANCE_MODEL_H
 
+#define RVMODEL_MSIP_BASE               0x02000000
+#define RVMODEL_MTIME_BASE              0x0200bff8
+#define RVMODEL_MTIMECMP_BASE           0x02004000
+
 #define RVMODEL_DATA_SECTION \
         .pushsection .tohost,"aw",@progbits;                            \
         .align 8; .global tohost; tohost: .dword 0;                     \
@@ -45,13 +49,32 @@ begin_signature:
 //RVTEST_IO_ASSERT_DFPR_EQ
 #define RVMODEL_IO_ASSERT_DFPR_EQ(_D, _R, _I)
 
-#define RVMODEL_SET_MSW_INT
+#define RVMODEL_SET_MSW_INT           ;\
+    LI(  T1,  1)                      ;\
+    LI(  T2,  RVMODEL_MSIP_BASE)              ;\
+    SREG T1,  0(T2)	              ;\
+    nop	              ;
 
-#define RVMODEL_CLEAR_MSW_INT
+#define RVMODEL_CLR_MSW_INT           ;\
+    LI(  T2,  RVMODEL_MSIP_BASE)              ;\
+    SREG x0,  0(T2)	              ;\
+    nop	              ; 
 
-#define RVMODEL_CLEAR_MTIMER_INT
+#define RVMODEL_SET_MTIMER_INT        ;\
+    LI(  T1,  0xFFFFF)                ;\
+    LI(  T2,  RVMODEL_MTIME_BASE)             ;\
+    SREG T1,  0(T2)	              ;\
+    nop	              ;\
+    LI(  T2,  RVMODEL_MTIMECMP_BASE)          ;\
+    SREG T1,  0(T2)	              ;\
+    nop	              ;
+    
+#define RVMODEL_CLR_MTIMER_INT        ;\
+    LI(  T1,  -1)                     ;\
+    LI(  T2,  RVMODEL_MTIMECMP_BASE)          ;\
+    SREG T1,  0(T2)	              ;\
+    nop	              ; 
 
-#define RVMODEL_CLEAR_MEXT_INT
-
+#define RVMODEL_CLR_MEXT_INT
 
 #endif // _COMPLIANCE_MODEL_H
