@@ -1,0 +1,27 @@
+{
+    "name": "riscv-arch-test dev",
+    "build": {
+        "dockerfile": "Dockerfile"
+    },
+    "onCreateCommand": "${containerWorkspaceFolder}/.devcontainer/onCreateCommand.sh",
+    "remoteEnv": {
+        "DISPLAY": ":0"
+    },
+    // vscode extensions
+    "customizations": {
+        "vscode": {
+            "settings": {
+                "files.exclude": {},
+                "files.watcherExclude": {}
+            },
+            "extensions": [
+                "charliermarsh.ruff",
+                "redhat.vscode-yaml",
+                "zhwu95.riscv"
+            ]
+        }
+    },
+    "forwardPorts": [
+        // 8080
+    ]
+}
