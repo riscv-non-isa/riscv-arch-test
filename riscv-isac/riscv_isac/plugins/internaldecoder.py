@@ -13,7 +13,7 @@ class disassembler():
             0b0100011: self.store_ops,
             0b0010011: self.arithi_ops,
             0b0110011: self.arith_ops,
-            0b0001111: self.fence_ops,
+            0b0001111: self.mem_ops,
             0b1110011: self.priviledged_ops,
             0b0011011: self.rv64i_arithi_ops,
             0b0111011: self.rv64i_arith_ops,
@@ -565,6 +565,11 @@ class disassembler():
         funct6 = (instr & self.FUNCT6_MASK) >> 26
         funct7 = (instr >> 25)
         rd = ((instr & self.RD_MASK) >> 7, 'x')
+
+        if funct3 == 0b110:
+            if rd[0] == 0:
+                return self.prefetch_ops(instrObj)
+
         rs1 = ((instr & self.RS1_MASK) >> 15, 'x')
         rs2 = ((instr & self.RS2_MASK) >> 20, 'x')
         rs3 = ((instr & self.RS3_MASK) >> 27, 'x')
@@ -1305,6 +1310,14 @@ class disassembler():
 
         return instrObj
 
+    def mem_ops(self, instrObj):
+        instr = instrObj.instr
+        func3 = (instr & self.FUNCT3_MASK) >> 12
+        if func3 == 0b000 or func3 == 0b001:
+            return self.fence_ops(instrObj)
+        elif func3 == 0b010 :
+            return self.cbo_ops(instrObj)
+
     def fence_ops(self, instrObj):
         instr = instrObj.instr
         funct3 = (instr & self.FUNCT3_MASK) >> 12
@@ -1319,6 +1332,37 @@ class disassembler():
         if funct3 == 0b001:
             instrObj.instr_name = 'fence.i'
 
+        return instrObj
+
+    def cbo_ops(self, instrObj):
+        instr = instrObj.instr
+        func = (instr) >> 20
+        instrObj.rs1 = ((instr & self.RS1_MASK) >> 15, 'x')
+        instrObj.imm = 0
+        if func == 0b1:
+            instrObj.instr_name = "cbo.clean"
+        elif func == 0b10:
+            instrObj.instr_name = "cbo.flush"
+        elif func == 0b0:
+            instrObj.instr_name = "cbo.inval"
+        elif func == 0b100:
+            instrObj.instr_name = "cbo.zero"
+        return instrObj
+
+    def prefetch_ops(self, instrObj):
+        instr = instrObj.instr
+        func = (instr & self.RS2_MASK) >> 20
+        instrObj.rs1 = ((instr & self.RS1_MASK) >> 15, 'x')
+
+        imm_11_5 = (instr & 0xfe000000) >> 20
+        instrObj.imm = self.twos_comp(imm_11_5, 12)
+
+        if func == 0b0:
+            instrObj.instr_name = "prefetch.i"
+        elif func == 0b1:
+            instrObj.instr_name = "prefetch.r"
+        elif func == 0b11:
+            instrObj.instr_name = "prefetch.w"
         return instrObj
 
     def priviledged_ops(self, instrObj):

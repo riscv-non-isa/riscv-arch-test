@@ -22,6 +22,7 @@ unsgn_rs1 = ['sw','sd','sh','sb','ld','lw','lwu','lh','lhu','lb', 'lbu','flw','f
         'sm4ed','sm4ks','ror','rol','rori','rorw','rolw','roriw','clmul','clmulh','clmulr',\
         'andn','orn','xnor','pack','packh','packu','packuw','packw',\
         'xperm.n','xperm.b','grevi','aes64ks1i', 'shfli', 'unshfli', \
+        'cbo.clean', 'cbo.flush', 'cbo.inval', 'cbo.zero', 'prefetch.i','prefetch.r','prefetch.w', \
         'aes32esmi', 'aes32esi', 'aes32dsmi', 'aes32dsi','bclr','bext','binv',\
         'bset','zext.h','sext.h','sext.b','zext.b','zext.w','minu','maxu','orc.b','add.uw','sh1add.uw',\
         'sh2add.uw','sh3add.uw','slli.uw','clz','clzw','ctz','ctzw','cpop','cpopw','rev8',\
@@ -326,7 +327,7 @@ class instructionObject():
         arch_state.pc = self.instr_addr
 
         commitvalue = self.reg_commit
-        if commitvalue is not None:
+        if commitvalue is not None and len(self.rd) >= 1:
             if self.rd[1] == 'x':
                 arch_state.x_rf[int(commitvalue[1])] =  str(commitvalue[2][2:])
             elif self.rd[1] == 'f':
