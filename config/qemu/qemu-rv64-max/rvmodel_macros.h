@@ -250,4 +250,15 @@
   li _R2, PLIC_SENABLE_ADDRESS;                 \
   sw zero, 0(_R2);
 
+#define RVMODEL_SET_SSW_INT(_R1, _R2)
+
+#define RVMODEL_CLR_SSW_INT(_R1, _R2)
+
+##### Sscofpmf #####
+#define RVMODEL_MHPMCOUNTER    mhpmcounter3
+#define RVMODEL_MHPMEVENT      mhpmevent3
+#define RVMODEL_MHPMEVENT_VAL  0x02   // RISCV_PMU_EVENT_HW_INSTRUCTIONS
+#define RVMODEL_MHPMEVENT_CODE(_R1, _R2) \
+    nop
+
 #endif // _RVMODEL_MACROS_H

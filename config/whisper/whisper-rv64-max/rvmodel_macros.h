@@ -194,4 +194,21 @@
   li      _R2, 2; \
   sw      _R2, 0(_R1); /* clear source 2 interrupt */
 
+#define RVMODEL_SET_SSW_INT(_R1, _R2) \
+  li _R1, 1; \
+  li _R2, WHISPER_SSIP_ADDRESS; \
+  sw _R1, 0(_R2);
+
+#define RVMODEL_CLR_SSW_INT(_R1, _R2) \
+  li _R2, WHISPER_SSIP_ADDRESS; \
+  sw zero, 0(_R2);
+
+##### Sscofpmf #####
+
+#define RVMODEL_MHPMEVENT   mhpmevent3
+#define RVMODEL_MHPMCOUNTER mhpmcounter3
+#define RVMODEL_MHPMEVENT_VAL  14
+#define RVMODEL_MHPMEVENT_CODE(_R1, _R2)  \
+    lw _R2, 0(_R1);
+
 #endif // _RVMODEL_MACROS_H
