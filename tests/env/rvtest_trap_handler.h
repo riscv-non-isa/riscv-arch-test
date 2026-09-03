@@ -1222,11 +1222,25 @@ common_\__MODE__\()handler:                      // entered with T6 = vector add
 //   orig sp saved at trap_sv_off+7*REGWIDTH(sp)
 //   a0/a1  untouched — they carry the T-SBI operation code/argument (if any)
 
-common_\__MODE__\()entry:                        // common entry for all traps in this mode
+common_\__MODE__\()entry:                       // common entry for all traps in this mode
         SREG    T4, trap_sv_off+4*REGWIDTH(sp)  // save T4 (x9)
         SREG    T3, trap_sv_off+3*REGWIDTH(sp)  // save T3 (x8)
         SREG    T2, trap_sv_off+2*REGWIDTH(sp)  // save T2 (x7)
         SREG    T1, trap_sv_off+1*REGWIDTH(sp)  // save T1 (x6)
+        csrr    T5, CSR_XCAUSE                  // T5 = xcause
+
+  // Route illegal-instructions to invisible trap handler in M-mode
+  .ifc \__MODE__ , M
+      LI(T4, CAUSE_ILLEGAL_INSTRUCTION)
+      bne T5, T4, invisible_Mcontinue
+      #ifdef RVTEST_INVISIBLE_TRAP_HANDLER
+          LA(T4, invisible_Mhandler)
+      #else
+          LA(T4, invisible_Mcontinue)
+      #endif
+      jr T4
+      invisible_Mcontinue:
+  .endif
 
         // ---- Global trap counter: shared by every privilege mode's handler ----
         // T1..T4 were just saved above, so they are free scratch here.
@@ -1234,8 +1248,6 @@ common_\__MODE__\()entry:                        // common entry for all traps i
         LREG    T2, 0(T1)                        // T2 = current count
         addi    T2, T2, 1                         // count++
         SREG    T2, 0(T1)                        // store back
-
-        csrr    T5, CSR_XCAUSE                   // T5 = xcause (T5 is x14, so caller's a0 is NOT disturbed)
 
 //==============================================================================
 // T-SBI DISPATCH — M-MODE

@@ -22,6 +22,10 @@
 #endif
 
 ########## rvmodel_macros.h CHECKS ##########
+#if defined(RVMODEL_INVISIBLE_TRAP_HANDLER) || defined(RVTEST_EMULATE_TIME_CSR)
+  #define RVTEST_INVISIBLE_TRAP_HANDLER
+#endif
+
 #ifndef RVMODEL_DATA_SECTION
   #error "RVMODEL_DATA_SECTION not defined. Make sure to define it in rvmodel_macros.h."
 #endif
@@ -45,6 +49,12 @@
 
 ##### MTIME #####
 // If RVMODEL_MTIME_ADDRESS is not defined, no machine timer interrupts are tested
+
+#ifdef RVTEST_EMULATE_TIME_CSR
+  #ifndef RVMODEL_MTIME_ADDRESS
+    #error "RVMODEL_MTIME_ADDRESS is required to emulate the time CSR"
+  #endif
+#endif
 
 #ifdef RVMODEL_MTIME_ADDRESS
   // If RVMODEL_MTIME_ADDRESS is defined, these other MTIME-related macros must also be defined
