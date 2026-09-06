@@ -11,10 +11,10 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-`define COVER_INTERRUPTSSSTC
+`define COVER_INTERRUPTSSSTCS
 
 
-covergroup InterruptsSstc_cg with function sample(ins_t ins);
+covergroup InterruptsSstcS_cg with function sample(ins_t ins);
     option.per_instance = 0;
     `include "general/RISCV_coverage_standard_coverpoints.svh"
 
@@ -30,9 +30,6 @@ covergroup InterruptsSstc_cg with function sample(ins_t ins);
     mstatus_mie: coverpoint ins.prev.csr[CSR_MSTATUS][3]  {
         // autofill 0/1
     }
-    mstatus_mie_one: coverpoint ins.prev.csr[CSR_MSTATUS][3] {
-        bins one = {1};
-    }
     // mstatus_sie uses ins.current because SIE is set before the sample nop and is not
     // cleared by hardware until the interrupt is actually taken (which happens after the sample).
     mstatus_sie: coverpoint ins.current.csr[CSR_MSTATUS][1] {
@@ -40,12 +37,6 @@ covergroup InterruptsSstc_cg with function sample(ins_t ins);
     }
     mideleg_sti: coverpoint ins.current.csr[CSR_MIDELEG][5] {
         // autofill 0/1
-    }
-    mideleg_sti_zero: coverpoint ins.current.csr[CSR_MIDELEG][5] {
-        bins zero = {0};
-    }
-    mideleg_sti_one: coverpoint ins.current.csr[CSR_MIDELEG][5] {
-        bins one = {1};
     }
     mie_stie: coverpoint ins.current.csr[CSR_MIE][5] {
         // autofill 0/1
@@ -57,21 +48,9 @@ covergroup InterruptsSstc_cg with function sample(ins_t ins);
         menvcfg_stce: coverpoint ins.current.csr[CSR_MENVCFG][63] {
             // autofill 0/1
         }
-        menvcfg_stce_one: coverpoint ins.current.csr[CSR_MENVCFG][63] {
-            bins one = {1};
-        }
-        menvcfg_stce_zero: coverpoint ins.current.csr[CSR_MENVCFG][63] {
-            bins zero = {0};
-        }
     `else
         menvcfg_stce: coverpoint ins.current.csr[CSR_MENVCFGH][31] {
             // autofill 0/1
-        }
-        menvcfg_stce_one: coverpoint ins.current.csr[CSR_MENVCFGH][31] {
-            bins one = {1};
-        }
-        menvcfg_stce_zero: coverpoint ins.current.csr[CSR_MENVCFGH][31] {
-            bins zero = {0};
         }
     `endif
     csrr: coverpoint ins.current.insn[6:0] {
@@ -90,11 +69,6 @@ covergroup InterruptsSstc_cg with function sample(ins_t ins);
     }
 
     // main coverpoints
-    cp_machine_sti:     cross priv_mode_m, menvcfg_stce_one, mstatus_mie_one, mideleg_sti, mie_stie, stimecmp_zero;
-    cp_machine_tm:      cross priv_mode_m, csrr, read_stimecmp, mcounteren_tm;
-    cp_machine_stce:    cross priv_mode_m, csrr, read_stimecmp, menvcfg_stce;
-
-
     cp_supervisor_sti_deleg: cross priv_mode_s, menvcfg_stce, mstatus_mie, mstatus_sie, mideleg_sti, mie_stie, stimecmp_zero;
     cp_supervisor_tm:   cross priv_mode_s, csrr, read_stimecmp, mcounteren_tm;
     cp_supervisor_stce: cross priv_mode_s, csrr, read_stimecmp, menvcfg_stce;
@@ -109,9 +83,6 @@ covergroup InterruptsSstc_cg with function sample(ins_t ins);
 
     // also read STIMECMPH for RV32
     `ifdef UDB_MXLEN_32
-        cp_machine_tm_h:      cross priv_mode_m, csrr, read_stimecmph, mcounteren_tm;
-        cp_machine_stce_h:    cross priv_mode_m, csrr, read_stimecmph, menvcfg_stce;
-
         cp_supervisor_tm_h:   cross priv_mode_s, csrr, read_stimecmph, mcounteren_tm;
         cp_supervisor_stce_h: cross priv_mode_s, csrr, read_stimecmph, menvcfg_stce;
 
@@ -123,6 +94,6 @@ covergroup InterruptsSstc_cg with function sample(ins_t ins);
 endgroup
 
 
-function void interruptssstc_sample(int hart, int issue, ins_t ins);
-    InterruptsSstc_cg.sample(ins);
+function void interruptssstcs_sample(int hart, int issue, ins_t ins);
+    InterruptsSstcS_cg.sample(ins);
 endfunction
