@@ -119,8 +119,8 @@
 `ifdef INTERRUPTSSM_COVERAGE
   `include "InterruptsSm_coverage.svh"
 `endif
-`ifdef INTERRUPTSSSTC_COVERAGE
-  `include "InterruptsSstc_coverage.svh"
+`ifdef INTERRUPTSSSTCS_COVERAGE
+  `include "InterruptsSstcS_coverage.svh"
 `endif
 `ifdef INTERRUPTSU_COVERAGE
   `include "InterruptsU_coverage.svh"
