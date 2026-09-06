@@ -247,6 +247,14 @@
   // .data (scratch, begin_signature, etc.) have identical addresses in both
   // the .elf and .sig.elf builds.
   .pushsection .text.rvmodel,"ax",@progbits
+
+  // Instantiate invisible trap handler if required
+  #ifdef STANDARD_SM_SUPPORTED
+    #ifdef RVTEST_INVISIBLE_TRAP_HANDLER
+      RVTEST_INVISIBLE_TRAP_HANDLER_CODE
+    #endif
+  #endif
+
   // Model specific boot code
   rvmodel_boot:
     #ifdef RVMODEL_BOOT
@@ -831,7 +839,7 @@
     // Delegate exceptions to S-mode, except those that must be directed to M-mode
     // medeleg[0] = 1: delegate instruction address misaligned exception
     // medeleg[1] = 1: delegate instruction access fault exception
-    // medeleg[2] = 1: delegate illegal instruction exception
+    // medeleg[2] = 1: delegate illegal instruction exception unless M-mode must check for invisible traps
     // medeleg[3] = 1: delegate breakpoint exception
     // medeleg[4] = 1: delegate load address misaligned exception
     // medeleg[5] = 1: delegate load access fault exception
@@ -854,8 +862,11 @@
     // medeleg[22] = 1: delegate virtual instruction
     // mideleg[23] = 1: delegate store guest-page fault
     // higher bits are reserved or custom
-    li t0, 0x0FCB5FF
-    li t0, 0x0FCB0FF # *** dh 4/24/26 temporary don't delegate any ecalls until SBI forwarding is implemented
+    #ifdef RVTEST_INVISIBLE_TRAP_HANDLER
+      li t0, 0x0FCB0FB // 0x0FCB5FB TODO: temporarily don't delegate any ecalls until SBI forwarding is implemented
+    #else
+      li t0, 0x0FCB0FF // 0x0FCB5FF TODO: temporarily don't delegate any ecalls until SBI forwarding is implemented
+    #endif
     csrw medeleg, t0
 
     // Delegate supervisor interrupts to S-mode. Do not delege M-mode interrupts.

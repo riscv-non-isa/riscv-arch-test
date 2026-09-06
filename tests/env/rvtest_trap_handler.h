@@ -2638,6 +2638,16 @@ trap_handler_fastillegalinstr:
         sub  a1, a1, a2                 // a1 = mepc - code_begin (wraps if mepc is below it)
         LREG a2, code_seg_siz(a0)       // a2 = code segment size
         bgeu a1, a2, fast_Mbootrap      // outside the test code — use the standard handler
+#ifdef RVTEST_INVISIBLE_TRAP_HANDLER
+        // Let the invisible handler try emulation before recording this trap.
+        li   a1, 1
+        SREG a1, rvmodel_sv_off(a0)     // Mark a declined M-mode trap for the fast path.
+        j    fast_Mbootrap              // Restore a2, which the range check clobbered.
+#else
+        nop
+        nop
+        nop
+#endif
         LREG a2, rvmodel_sv_off+3*REGWIDTH(a0)  // restore caller's a2
         LREG a1, rvmodel_sv_off+2*REGWIDTH(a0)  // restore caller's a1
         csrrw a0, CSR_MSCRATCH, a0      // restore mscratch = save ptr; a0 = caller's a0
