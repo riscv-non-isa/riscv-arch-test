@@ -89,8 +89,6 @@ The macro names begin with RVMODEL, so they are called _RVMODEL DUT-Specific Mac
 
 The RVMODEL DUT-Specific Macros rely on the capabilities of the SoC and/or testbench.  For example, a SoC with a 16550-compatible UART sends a character by writing a byte to the UART's memory-mapped Transmit Holding Register. A SoC without a UART may have a testbench that monitors writes to a specific memory address and prints the byte written to that address.
 
-Most macros are implemented in config/cores/<core>/<version>/rvmodel_macros.h.  RVMODEL_ACCESS_FAULT_ADDRESS is defined in rvtest_config.h and rvtest_config.svh for the test programs and coverpoints, respectively.
-
 ==== Macros
 
 The RVMODEL DUT-Specific Macros are given in <<t-rvmodel>>. The "Can Be Empty?" field indicates circumstances under which the macro can be empty. The Mode column indicates the privilege mode from which the macro is called.
@@ -123,6 +121,7 @@ The RVMODEL DUT-Specific Macros are given in <<t-rvmodel>>. The "Can Be Empty?" 
 |RVMODEL_TIMER_INT_SOON_DELAY|The delay (in timer ticks) before a timer interrupt fires when using `set_mtimer_int_soon()`. Sets `mtimecmp = mtime + delay`. Should be long enough that the core can run a few instructions before the interrupt fires.| If Machine timer interrupts are not tested. | n/a
 |RVMODEL_MAX_CYCLES_PER_TIMER_TICK|The highest possible ratio of the clock frequency to the timer frequency in any mode of operation. Defaults to 1 if not defined | If Machine timer interrupts are not tested. | n/a
 |RVMODEL_DATA_SECTION|DUT-specific data that will be placed in a .data section. Used for memory-mapped regions like `tohost`/`fromhost`.  |Yes, if not needed by DUT. | n/a
+|RVMODEL_INVISIBLE_TRAP_HANDLER(_PC_REG, _INSTRUCTION_REG, _VALUE_REG, _ACTION_REG, _SCRATCH_REG)|Optionally emulates an illegal instruction in the M-mode invisible trap handler. `_PC_REG` and `_INSTRUCTION_REG` are read-only and contain the trapping PR and the trapping instruction respectivelt. Set `_ACTION_REG` to 0 to use the normal illegal-instruction path, 1 when the instruction was handled without writing a result, or 2 to write `_VALUE_REG` to the rd field of the trapping instruction. `_SCRATCH_REG` may be trashed.|Omit if the DUT has no invisible trap emulation. | Machine
 |===
 
 [NOTE]
