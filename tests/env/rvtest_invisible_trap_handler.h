@@ -5,13 +5,6 @@
 // SPDX-License-Identifier: Apache-2.0
 //
 // Invisible trap handler for emulated instructions.
-#define RVTEST_INVISIBLE_READ_GPR(_INDEX, _VALUE) \
-  SREG    T6, trap_sv_off(sp);                    \
-  mv      T5, _INDEX;                             \
-  jal     T6, invisible_Mread_gpr;                \
-  LREG    T6, trap_sv_off(sp);                    \
-  mv      _VALUE, T3
-
 .macro RVTEST_INVISIBLE_TRAP_HANDLER_CODE
   invisible_Mhandler:
     // Reconstruct the illegal instruction.
@@ -250,102 +243,6 @@
     invisible_Mwrite_x30: mv x30, T3; j invisible_Mtrap_return
     invisible_Mwrite_x31: mv x31, T3; j invisible_Mtrap_return
   #endif
-
-  // Read the original value of GPR T5 into T3.
-  invisible_Mread_gpr:
-  #ifdef E_SUPPORTED
-    andi    T5, T5, (INSN_FIELD_RD_E >> 8)
-  #else
-    andi    T5, T5, (INSN_FIELD_RD >> 7)
-  #endif
-  #if UDB_MXLEN == 32
-    slli    T5, T5, 2
-  #else
-    slli    T5, T5, 3
-  #endif
-    LA(     T4, invisible_Mread_gpr_table)
-    add     T4, T4, T5
-    LREG    T4, 0(T4)
-    jr      T4
-
-    .balign REGWIDTH
-  invisible_Mread_gpr_table:
-    RVTEST_WORD_PTR invisible_Mread_x0
-    RVTEST_WORD_PTR invisible_Mread_x1
-    RVTEST_WORD_PTR invisible_Mread_x2
-    RVTEST_WORD_PTR invisible_Mread_x3
-    RVTEST_WORD_PTR invisible_Mread_x4
-    RVTEST_WORD_PTR invisible_Mread_x5
-    RVTEST_WORD_PTR invisible_Mread_x6
-    RVTEST_WORD_PTR invisible_Mread_x7
-    RVTEST_WORD_PTR invisible_Mread_x8
-    RVTEST_WORD_PTR invisible_Mread_x9
-    RVTEST_WORD_PTR invisible_Mread_x10
-    RVTEST_WORD_PTR invisible_Mread_x11
-    RVTEST_WORD_PTR invisible_Mread_x12
-    RVTEST_WORD_PTR invisible_Mread_x13
-    RVTEST_WORD_PTR invisible_Mread_x14
-    RVTEST_WORD_PTR invisible_Mread_x15
-  #ifndef E_SUPPORTED
-    RVTEST_WORD_PTR invisible_Mread_x16
-    RVTEST_WORD_PTR invisible_Mread_x17
-    RVTEST_WORD_PTR invisible_Mread_x18
-    RVTEST_WORD_PTR invisible_Mread_x19
-    RVTEST_WORD_PTR invisible_Mread_x20
-    RVTEST_WORD_PTR invisible_Mread_x21
-    RVTEST_WORD_PTR invisible_Mread_x22
-    RVTEST_WORD_PTR invisible_Mread_x23
-    RVTEST_WORD_PTR invisible_Mread_x24
-    RVTEST_WORD_PTR invisible_Mread_x25
-    RVTEST_WORD_PTR invisible_Mread_x26
-    RVTEST_WORD_PTR invisible_Mread_x27
-    RVTEST_WORD_PTR invisible_Mread_x28
-    RVTEST_WORD_PTR invisible_Mread_x29
-    RVTEST_WORD_PTR invisible_Mread_x30
-    RVTEST_WORD_PTR invisible_Mread_x31
-  #else
-    .rept 16
-    RVTEST_WORD_PTR invisible_Mread_x0
-    .endr
-  #endif
-
-  invisible_Mread_x0:  li T3, 0; j invisible_Mread_gpr_return
-  invisible_Mread_x1:  mv T3, x1; j invisible_Mread_gpr_return
-  invisible_Mread_x2:  LREG T3, trap_sv_off+7*REGWIDTH(sp); j invisible_Mread_gpr_return
-  invisible_Mread_x3:  mv T3, x3; j invisible_Mread_gpr_return
-  invisible_Mread_x4:  mv T3, x4; j invisible_Mread_gpr_return
-  invisible_Mread_x5:  mv T3, x5; j invisible_Mread_gpr_return
-  invisible_Mread_x6:  LREG T3, trap_sv_off+1*REGWIDTH(sp); j invisible_Mread_gpr_return
-  invisible_Mread_x7:  LREG T3, trap_sv_off+2*REGWIDTH(sp); j invisible_Mread_gpr_return
-  invisible_Mread_x8:  LREG T3, trap_sv_off+3*REGWIDTH(sp); j invisible_Mread_gpr_return
-  invisible_Mread_x9:  LREG T3, trap_sv_off+4*REGWIDTH(sp); j invisible_Mread_gpr_return
-  invisible_Mread_x10: mv T3, x10; j invisible_Mread_gpr_return
-  invisible_Mread_x11: mv T3, x11; j invisible_Mread_gpr_return
-  invisible_Mread_x12: mv T3, x12; j invisible_Mread_gpr_return
-  invisible_Mread_x13: mv T3, x13; j invisible_Mread_gpr_return
-  invisible_Mread_x14: LREG T3, trap_sv_off+5*REGWIDTH(sp); j invisible_Mread_gpr_return
-  invisible_Mread_x15: LREG T3, trap_sv_off+6*REGWIDTH(sp); j invisible_Mread_gpr_return
-  #ifndef E_SUPPORTED
-    invisible_Mread_x16: mv T3, x16; j invisible_Mread_gpr_return
-    invisible_Mread_x17: mv T3, x17; j invisible_Mread_gpr_return
-    invisible_Mread_x18: mv T3, x18; j invisible_Mread_gpr_return
-    invisible_Mread_x19: mv T3, x19; j invisible_Mread_gpr_return
-    invisible_Mread_x20: mv T3, x20; j invisible_Mread_gpr_return
-    invisible_Mread_x21: mv T3, x21; j invisible_Mread_gpr_return
-    invisible_Mread_x22: mv T3, x22; j invisible_Mread_gpr_return
-    invisible_Mread_x23: mv T3, x23; j invisible_Mread_gpr_return
-    invisible_Mread_x24: mv T3, x24; j invisible_Mread_gpr_return
-    invisible_Mread_x25: mv T3, x25; j invisible_Mread_gpr_return
-    invisible_Mread_x26: mv T3, x26; j invisible_Mread_gpr_return
-    invisible_Mread_x27: mv T3, x27; j invisible_Mread_gpr_return
-    invisible_Mread_x28: mv T3, x28; j invisible_Mread_gpr_return
-    invisible_Mread_x29: mv T3, x29; j invisible_Mread_gpr_return
-    invisible_Mread_x30: mv T3, x30; j invisible_Mread_gpr_return
-    invisible_Mread_x31: mv T3, x31; j invisible_Mread_gpr_return
-  #endif
-
-  invisible_Mread_gpr_return:
-    jr      T6                              // return to the instruction emulator
 
   invisible_Mtrap_return:
     // Skip the trapped instruction and return to the interrupted code.
