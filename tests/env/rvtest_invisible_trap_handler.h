@@ -6,11 +6,11 @@
 //
 // Invisible trap handler for emulated instructions.
 #define RVTEST_INVISIBLE_READ_GPR(_INDEX, _VALUE) \
-        SREG    T6, trap_sv_off(sp);                \
-        mv      T5, _INDEX;                        \
-        jal     T6, invisible_Mread_gpr;           \
-        LREG    T6, trap_sv_off(sp);                \
-        mv      _VALUE, T3
+  SREG    T6, trap_sv_off(sp);                    \
+  mv      T5, _INDEX;                             \
+  jal     T6, invisible_Mread_gpr;                \
+  LREG    T6, trap_sv_off(sp);                    \
+  mv      _VALUE, T3
 
 .macro RVTEST_INVISIBLE_TRAP_HANDLER_CODE
   invisible_Mhandler:
