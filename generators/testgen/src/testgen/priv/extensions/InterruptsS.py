@@ -16,14 +16,17 @@ from testgen.priv.extensions.InterruptsCommon import (
     INTR_IMPL_DEFINES,
     REG_TRIGGER_DEFINES,
     SHARED_GENERATORS,
+    SSTC_TRIGGER_DEFINES,
     emit_interrupts,
     guard_close,
     guard_open,
+    int_coverpoint,
+    int_guard,
     int_macro,
     mode_enter,
     mode_exit,
-    reg_impl,
     reg_ints,
+    sstc_ints,
     supervisor_ints,
 )
 from testgen.priv.registry import add_priv_test_generator
@@ -46,19 +49,19 @@ def _generate_cp_trigger(test_data: TestData, test_chunks: list[TestChunk], suit
     tc.code += guard_open(suite, priv)
     tmp_reg = test_data.int_regs.get_register()
 
-    for int_type in [*supervisor_ints, *reg_ints]:
+    for int_type in [*supervisor_ints, *reg_ints, *sstc_ints]:
         if int_type not in int_macro:
             continue  # no RVTEST_SET/CLR macros for this interrupt yet
         macro = int_macro[int_type]
-        impl = reg_impl.get(int_type, int_type)
-        cp = "cp_trigger_reg" if int_type in reg_ints else coverpoint
+        guard = int_guard.get(int_type, f"UDB_{int_type}_INTR_IMPL")
+        cp = int_coverpoint.get(int_type, "cp_trigger")
         for mode in [0, 1]:
             for enable in [0, 1]:
                 # stvec.MODE
                 modecmd = "csrs" if mode == 1 else "csrc"
                 enablecmd = "csrs" if enable == 1 else "csrc"
                 tc.code += [
-                    f"#ifdef UDB_{impl}_INTR_IMPL",
+                    f"#ifdef {guard}",
                     f"LI(x{tmp_reg}, -1)",
                     f"csrw sie, x{tmp_reg} # sie = 1s",
                     f"#ifdef UDB_STVEC_MODES_{mode}",
@@ -77,7 +80,7 @@ def _generate_cp_trigger(test_data: TestData, test_chunks: list[TestChunk], suit
                     f"RVTEST_IDLE_FOR_INTERRUPT(x{tmp_reg}) # Wait for interrupt to fire",
                     f"RVTEST_CLR_{macro}_INT_{priv} # Clear the interrupt if the interrupt handler hasn't done so",
                     *mode_exit(suite, priv),
-                    f"#endif // UDB_{impl}_INTR_IMPL",
+                    f"#endif // {guard}",
                     "",
                 ]
 
@@ -88,7 +91,7 @@ def _generate_cp_trigger(test_data: TestData, test_chunks: list[TestChunk], suit
 @add_priv_test_generator(
     SUITE,
     required_extensions=["S"],
-    extra_defines=[*INTR_IMPL_DEFINES, *REG_TRIGGER_DEFINES, "#define BOOT_TO_SMODE"],
+    extra_defines=[*INTR_IMPL_DEFINES, *REG_TRIGGER_DEFINES, *SSTC_TRIGGER_DEFINES, "#define BOOT_TO_SMODE"],
 )
 def make_interruptss(test_data: TestData) -> list[TestChunk]:
     """Generate tests for InterruptsS interrupt behavior that does not rely on M-mode."""

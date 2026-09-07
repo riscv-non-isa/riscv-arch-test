@@ -16,15 +16,18 @@ from testgen.priv.extensions.InterruptsCommon import (
     INTR_IMPL_DEFINES,
     REG_TRIGGER_DEFINES,
     SHARED_GENERATORS,
+    SSTC_TRIGGER_DEFINES,
     emit_interrupts,
     guard_close,
     guard_open,
+    int_coverpoint,
+    int_guard,
     int_macro,
     machine_ints,
     mode_enter,
     mode_exit,
-    reg_impl,
     reg_ints,
+    sstc_ints,
     supervisor_ints,
 )
 from testgen.priv.registry import add_priv_test_generator
@@ -47,12 +50,12 @@ def _generate_cp_trigger(test_data: TestData, test_chunks: list[TestChunk], suit
     tc.code += guard_open(suite, priv)
     tmp_reg = test_data.int_regs.get_register()
 
-    for int_type in [*machine_ints, *supervisor_ints, *reg_ints]:
+    for int_type in [*machine_ints, *supervisor_ints, *reg_ints, *sstc_ints]:
         if int_type not in int_macro:
             continue  # no RVTEST_SET/CLR macros for this interrupt yet
         macro = int_macro[int_type]
-        impl = reg_impl.get(int_type, int_type)
-        cp = "cp_trigger_reg" if int_type in reg_ints else coverpoint
+        guard = int_guard.get(int_type, f"UDB_{int_type}_INTR_IMPL")
+        cp = int_coverpoint.get(int_type, "cp_trigger")
         for mideleg in [0, -1]:
             delegstr = "zeros" if mideleg == 0 else "ones"
             # mideleg only exists with S-mode: guard the write, and skip the delegated sweep entirely
@@ -65,7 +68,7 @@ def _generate_cp_trigger(test_data: TestData, test_chunks: list[TestChunk], suit
                     modecmd = "csrs" if mode == 1 else "csrc"
                     enablecmd = "csrs" if enable == 1 else "csrc"
                     tc.code += [
-                        f"#ifdef UDB_{impl}_INTR_IMPL",
+                        f"#ifdef {guard}",
                         *case_open,
                         f"LI(x{tmp_reg}, 0x2)",
                         f"csrs mstatus, x{tmp_reg} # mstatus.SIE = 1",
@@ -93,7 +96,7 @@ def _generate_cp_trigger(test_data: TestData, test_chunks: list[TestChunk], suit
                         f"RVTEST_CLR_{macro}_INT_{priv} # Clear the interrupt if the interrupt handler hasn't done so",
                         *mode_exit(suite, priv),
                         *case_close,
-                        f"#endif // UDB_{impl}_INTR_IMPL",
+                        f"#endif // {guard}",
                         "",
                     ]
 
@@ -108,7 +111,7 @@ def _generate_cp_priority_mideleg(test_data: TestData, test_chunks: list[TestChu
 @add_priv_test_generator(
     SUITE,
     required_extensions=["Sm"],
-    extra_defines=[*INTR_IMPL_DEFINES, *REG_TRIGGER_DEFINES, "#define BOOT_TO_MMODE"],
+    extra_defines=[*INTR_IMPL_DEFINES, *REG_TRIGGER_DEFINES, *SSTC_TRIGGER_DEFINES, "#define BOOT_TO_MMODE"],
 )
 def make_interruptssm(test_data: TestData) -> list[TestChunk]:
     """Generate tests for InterruptsSm interrupt behavior that relies on M-mode, including M-mode interrupts and delegation."""
