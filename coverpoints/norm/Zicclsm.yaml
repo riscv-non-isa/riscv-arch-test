@@ -26,7 +26,7 @@ normative_rule_definitions:
         "{MisalignV_vl1re16_v_cg,MisalignV_vl1re32_v_cg,MisalignV_vl1re64_v_cg,MisalignV_vl1re8_v_cg,MisalignV_vl2re16_v_cg,MisalignV_vl2re32_v_cg,MisalignV_vl2re64_v_cg,MisalignV_vl2re8_v_cg,MisalignV_vl4re16_v_cg,MisalignV_vl4re32_v_cg,MisalignV_vl4re64_v_cg,MisalignV_vl4re8_v_cg,MisalignV_vl8re16_v_cg,MisalignV_vl8re32_v_cg,MisalignV_vl8re64_v_cg,MisalignV_vl8re8_v_cg,MisalignV_vs1r_v_cg,MisalignV_vs2r_v_cg,MisalignV_vs4r_v_cg,MisalignV_vs8r_v_cg}/{cp_misalignv_ls_wholereg_misaligned}",
         # MisalignV: unit-stride, strided, indexed, fault-only-first, mask and segment
         # vector loads and stores with element-misaligned addresses
-        "{MisalignedV_*_v_cg}/{cp_misalignv_ls_element_misaligned}",
+        "{MisalignV_*_v_cg}/{cp_misalignv_ls_element_misaligned}",
         # Exception suites: with MISALIGNED_LDST=true these misaligned scalar loads and stores
         # must complete without an address-misaligned exception (M, S, U modes, FP, compressed)
         "{ExceptionsSm_cg,ExceptionsS_cg,ExceptionsU_cg,ExceptionsF_cg,ExceptionsZc_cg}/{cp_load_address_misaligned,cp_store_address_misaligned}",

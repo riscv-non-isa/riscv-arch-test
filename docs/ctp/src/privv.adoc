@@ -3,6 +3,7 @@
 
 All of the vector privileged suites are collected in this section.
 
+[[MisalignV]]
 ==== MisalignV Vector Misalignment
 
 MisalignV tests misaligned vector loads and stores.  Unlike scalar misaligned suites, they are privileged tests that run whether or not misaligned accesses are supported, so they may trap or not depending on TODO UDBParameter.

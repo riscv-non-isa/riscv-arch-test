@@ -188,8 +188,9 @@ Only SdtrigSm is listed here but the others are the same and also cover the same
 
 [[t-SdtrigSm-coverpoints]]
 .SdtrigSm Coverpoints
-
+,===
 https://docs.google.com/spreadsheets/d/1jvJCSf9vdZ23PEaaYETLxfwZoyq_PzpyJzIB1OhdhcQ/edit?gid=1209377334#gid=1209377334[Google Sheet Testplan]
+,===
 
 include::norm/SdtrigSm_norm_rules.adoc[]
 
