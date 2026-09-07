@@ -63,6 +63,34 @@ def clr_mtimer_int(r_temp: int, r_mtimecmp: int) -> list[str]:
     ]
 
 
+def wait_mtimer_int_clear(r_mip: int, r_counter: int) -> list[str]:
+    """Wait in M-mode until the platform has deasserted mip.MTIP.
+
+    Updating MTIMECMP and observing MTIP are not required to be synchronous.
+    Callers must invoke this helper while executing in M-mode, after disabling
+    interrupts and programming MTIMECMP to a non-pending value.
+
+    The bounded loop avoids turning a platform integration error into an
+    infinite test hang. A subsequent test comparison will still expose MTIP if
+    it remains asserted after the synchronization window.
+    """
+    return [
+        f"{INDENT}# Synchronize MTIMECMP update with mip.MTIP deassertion (M-mode only)",
+        "#ifdef RVMODEL_MTIMECMP_ADDRESS",
+        "fence iorw, iorw",
+        f"LI(x{r_counter}, 100000)",
+        "98:",
+        f"csrr x{r_mip}, mip",
+        f"ANDI x{r_mip}, x{r_mip}, 0x80",
+        f"BEQZ x{r_mip}, 99f",
+        f"ADDI x{r_counter}, x{r_counter}, -1",
+        f"BNEZ x{r_counter}, 98b",
+        "99:",
+        "fence iorw, iorw",
+        "#endif",
+    ]
+
+
 def set_mtimer_int_soon(
     r_mtime: int,
     r_mtimecmp: int,
@@ -126,6 +154,10 @@ def set_stimer_int(r_mtime: int, r_temp: int, r_temp2: int, r_scratch: int, r_st
     """
     lines = [
         f"{INDENT}# Set supervisor timer interrupt",
+        "#ifdef SM1P11P0_SUPPORTED",
+        f"LI(x{r_temp}, 0x20) # Priv 1.11 has no Sstc/stimecmp",
+        f"csrrs x{r_temp}, mip, x{r_temp}",
+        "#else",
     ]
 
     # If STCE not pre-read, read menvcfg (assumes M-mode)
@@ -175,6 +207,7 @@ def set_stimer_int(r_mtime: int, r_temp: int, r_temp2: int, r_scratch: int, r_st
             f"csrc mstatus, x{r_temp}",
             "",
             "2: # Continue",
+            "#endif",
         ]
     )
 
@@ -193,6 +226,10 @@ def clr_stimer_int(r_temp: int, r_stimecmp: int, r_scratch: int, r_stce: int) ->
     """
     lines = [
         f"{INDENT}# Clear supervisor timer interrupt",
+        "#ifdef SM1P11P0_SUPPORTED",
+        f"LI(x{r_temp}, 0x20) # Priv 1.11 has no Sstc/stimecmp",
+        f"csrrc x{r_temp}, mip, x{r_temp}",
+        "#else",
     ]
 
     # If STCE not pre-read, read menvcfg (assumes M-mode)
@@ -230,6 +267,7 @@ def clr_stimer_int(r_temp: int, r_stimecmp: int, r_scratch: int, r_stce: int) ->
             f"csrrc x{r_temp}, mip, x{r_temp}",
             "",
             "2: # Continue",
+            "#endif",
         ]
     )
 

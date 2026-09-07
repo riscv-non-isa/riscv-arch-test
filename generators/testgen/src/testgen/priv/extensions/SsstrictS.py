@@ -38,6 +38,7 @@ _S_CSR_SKIP: frozenset[int] = frozenset(
     | {
         0x180,  # satp: TLB flush / address-translation mode change
         0x105,  # stvec: overwriting stvec breaks the delegated-trap handler
+        0x10A,  # senvcfg: absent on the U74 privileged-architecture 1.11 implementation
         0x140,  # sscratch: avoid corrupting framework save area
         0x5A8,  # scontext: Sail traps, Spike does not
     }

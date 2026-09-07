@@ -855,7 +855,7 @@
     // mideleg[23] = 1: delegate store guest-page fault
     // higher bits are reserved or custom
     li t0, 0x0FCB5FF
-    li t0, 0x0FCB0FF # *** dh 4/24/26 temporary don't delegate any ecalls until SBI forwarding is implemented
+    li t0, 0x0FCB05D # *** dh 4/24/26 temporary don't delegate any ecalls until SBI forwarding is implemented
     csrw medeleg, t0
 
     // Delegate supervisor interrupts to S-mode. Do not delege M-mode interrupts.
@@ -974,6 +974,81 @@
         slli    \tmpreg\(), \oldreg\(), UDB_MXLEN-\shamt
         srli    \dstreg\(), \oldreg\(),           \shamt
         or      \dstreg\(), \dstreg\(), \tmpreg\()
+.endm
+
+/************************************ RVTEST_INIT_FPRS ********************************/
+/**** Initialize floating-point registers when real F registers are supported       ****/
+/**************************************************************************************/
+.macro RVTEST_INIT_FPRS
+  #if defined(F_SUPPORTED) && defined(__riscv_flen)
+    #if __riscv_flen >= 64
+      fmv.d.x f0,  x0
+      fmv.d.x f1,  x0
+      fmv.d.x f2,  x0
+      fmv.d.x f3,  x0
+      fmv.d.x f4,  x0
+      fmv.d.x f5,  x0
+      fmv.d.x f6,  x0
+      fmv.d.x f7,  x0
+      fmv.d.x f8,  x0
+      fmv.d.x f9,  x0
+      fmv.d.x f10, x0
+      fmv.d.x f11, x0
+      fmv.d.x f12, x0
+      fmv.d.x f13, x0
+      fmv.d.x f14, x0
+      fmv.d.x f15, x0
+      fmv.d.x f16, x0
+      fmv.d.x f17, x0
+      fmv.d.x f18, x0
+      fmv.d.x f19, x0
+      fmv.d.x f20, x0
+      fmv.d.x f21, x0
+      fmv.d.x f22, x0
+      fmv.d.x f23, x0
+      fmv.d.x f24, x0
+      fmv.d.x f25, x0
+      fmv.d.x f26, x0
+      fmv.d.x f27, x0
+      fmv.d.x f28, x0
+      fmv.d.x f29, x0
+      fmv.d.x f30, x0
+      fmv.d.x f31, x0
+    #else
+      fmv.w.x f0,  x0
+      fmv.w.x f1,  x0
+      fmv.w.x f2,  x0
+      fmv.w.x f3,  x0
+      fmv.w.x f4,  x0
+      fmv.w.x f5,  x0
+      fmv.w.x f6,  x0
+      fmv.w.x f7,  x0
+      fmv.w.x f8,  x0
+      fmv.w.x f9,  x0
+      fmv.w.x f10, x0
+      fmv.w.x f11, x0
+      fmv.w.x f12, x0
+      fmv.w.x f13, x0
+      fmv.w.x f14, x0
+      fmv.w.x f15, x0
+      fmv.w.x f16, x0
+      fmv.w.x f17, x0
+      fmv.w.x f18, x0
+      fmv.w.x f19, x0
+      fmv.w.x f20, x0
+      fmv.w.x f21, x0
+      fmv.w.x f22, x0
+      fmv.w.x f23, x0
+      fmv.w.x f24, x0
+      fmv.w.x f25, x0
+      fmv.w.x f26, x0
+      fmv.w.x f27, x0
+      fmv.w.x f28, x0
+      fmv.w.x f29, x0
+      fmv.w.x f30, x0
+      fmv.w.x f31, x0
+    #endif
+  #endif
 .endm
 
 /************************************ RVTEST_INIT_REGS ********************************/

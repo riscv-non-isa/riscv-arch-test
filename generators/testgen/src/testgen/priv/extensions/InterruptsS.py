@@ -16,10 +16,80 @@ from testgen.asm.interrupts import (
     set_mtimer_int_soon,
     set_stimer_int,
     set_stimer_mmode,
+    wait_mtimer_int_clear,
 )
 from testgen.data.state import TestData
 from testgen.data.test_chunk import TestChunk
 from testgen.priv.registry import add_priv_test_generator
+
+
+def _irq_section_trace(
+    stage: int,
+    slot: int,
+    testcase_line: str,
+    r_value: int,
+    r_addr: int,
+) -> list[str]:
+    """Record an optional M-mode interrupt checkpoint without using UART."""
+    if not 0 <= slot < 128:
+        raise ValueError(f"IRQ trace slot out of range: {slot}")
+
+    testcase_symbol = testcase_line.split(":", maxsplit=1)[0].strip()
+    record_offset = slot * 64
+    return [
+        "#ifdef ACT_IRQ_SECTION_TRACE",
+        f"LI(x{r_value}, 0x{stage:x})",
+        f"LA(x{r_addr}, irqdbg_stage)",
+        f"SREG x{r_value}, 0(x{r_addr})",
+        f"csrr x{r_value}, mideleg",
+        f"LA(x{r_addr}, irqdbg_pre_mideleg)",
+        f"SREG x{r_value}, 0(x{r_addr})",
+        f"csrr x{r_value}, mie",
+        f"LA(x{r_addr}, irqdbg_pre_mie)",
+        f"SREG x{r_value}, 0(x{r_addr})",
+        f"csrr x{r_value}, mip",
+        f"LA(x{r_addr}, irqdbg_pre_mip)",
+        f"SREG x{r_value}, 0(x{r_addr})",
+        f"csrr x{r_value}, mstatus",
+        f"LA(x{r_addr}, irqdbg_pre_mstatus)",
+        f"SREG x{r_value}, 0(x{r_addr})",
+        f"csrr x{r_value}, sip",
+        f"LA(x{r_addr}, irqdbg_pre_sip)",
+        f"SREG x{r_value}, 0(x{r_addr})",
+        f"csrr x{r_value}, sie",
+        f"LA(x{r_addr}, irqdbg_pre_sie)",
+        f"SREG x{r_value}, 0(x{r_addr})",
+        f"csrr x{r_value}, stvec",
+        f"LA(x{r_addr}, irqdbg_pre_stvec)",
+        f"SREG x{r_value}, 0(x{r_addr})",
+        f"LA(x{r_addr}, irqret_s_count)",
+        f"LREG x{r_value}, 0(x{r_addr})",
+        f"LA(x{r_addr}, irqdbg_pre_s_trap_count)",
+        f"SREG x{r_value}, 0(x{r_addr})",
+        f"LA(x{r_addr}, irqdbg_trace)",
+        f"LI(x{r_value}, {record_offset})",
+        f"add x{r_addr}, x{r_addr}, x{r_value}",
+        f"LI(x{r_value}, 0x{stage:x})",
+        f"SREG x{r_value}, 0(x{r_addr})",
+        f"LA(x{r_value}, {testcase_symbol})",
+        f"SREG x{r_value}, 8(x{r_addr})",
+        f"csrr x{r_value}, mideleg",
+        f"SREG x{r_value}, 16(x{r_addr})",
+        f"csrr x{r_value}, mie",
+        f"SREG x{r_value}, 24(x{r_addr})",
+        f"csrr x{r_value}, mip",
+        f"SREG x{r_value}, 32(x{r_addr})",
+        f"csrr x{r_value}, mstatus",
+        f"SREG x{r_value}, 40(x{r_addr})",
+        f"csrr x{r_value}, sip",
+        f"SREG x{r_value}, 48(x{r_addr})",
+        f"csrr x{r_value}, sie",
+        f"SREG x{r_value}, 56(x{r_addr})",
+        f"LI(x{r_value}, {slot + 1})",
+        f"LA(x{r_addr}, irqdbg_trace_count)",
+        f"SREG x{r_value}, 0(x{r_addr})",
+        "#endif",
+    ]
 
 
 def _generate_trigger_sti_tests(test_data: TestData) -> list[str]:
@@ -33,6 +103,8 @@ def _generate_trigger_sti_tests(test_data: TestData) -> list[str]:
     coverpoint = "cp_trigger_sti"
 
     r_mtime, r_temp, r_temp2, r_stimecmp, r_scratch, r_stce = test_data.int_regs.get_registers(6)
+    r_trace_value = r_temp2
+    r_trace_addr = r_scratch
 
     lines = [
         comment_banner(
@@ -48,6 +120,8 @@ def _generate_trigger_sti_tests(test_data: TestData) -> list[str]:
             mideleg_name = ["nodeleg", "deleg"][mideleg_val]
             sie_name = f"sie_{sie_val}"
             binname = f"{mideleg_name}_{sie_name}"
+            case_index = (mideleg_val * 2) + sie_val
+            testcase_line = test_data.add_testcase(binname, coverpoint, covergroup)
 
             lines.extend(
                 [
@@ -109,8 +183,35 @@ def _generate_trigger_sti_tests(test_data: TestData) -> list[str]:
             )
 
             lines.append("# 8. Set STIP: stimecmp=0 fires immediately (mtime>0 always); legacy: direct mip write")
-            lines.append(test_data.add_testcase(binname, coverpoint, covergroup))
-            lines.extend(set_stimer_int(r_mtime, r_temp, r_temp2, r_scratch, r_stce))
+            lines.append(testcase_line)
+            lines.extend(
+                _irq_section_trace(
+                    0x1000 + (case_index * 0x10),
+                    case_index * 3,
+                    testcase_line,
+                    r_trace_value,
+                    r_trace_addr,
+                )
+            )
+            lines.extend(
+                [
+                "#ifndef SM1P11P0_SUPPORTED",
+                *set_stimer_int(r_mtime, r_temp, r_temp2, r_scratch, r_stce),
+                "#else",
+                f"LI(x{r_scratch}, 0x20)",
+                f"csrs mip, x{r_scratch}    # priv 1.11: set mip.STIP directly",
+                "#endif",
+                ]
+            )
+            lines.extend(
+                _irq_section_trace(
+                    0x1001 + (case_index * 0x10),
+                    (case_index * 3) + 1,
+                    testcase_line,
+                    r_trace_value,
+                    r_trace_addr,
+                )
+            )
 
             lines.extend(
                 [
@@ -127,6 +228,13 @@ def _generate_trigger_sti_tests(test_data: TestData) -> list[str]:
                 [
                     "# 10. Return and cleanup",
                     "RVTEST_GOTO_MMODE",
+                    *_irq_section_trace(
+                        0x1002 + (case_index * 0x10),
+                        (case_index * 3) + 2,
+                        testcase_line,
+                        r_trace_value,
+                        r_trace_addr,
+                    ),
                     "# Complete state cleanup",
                     "csrci mstatus, 8 # Clear MIE",
                     "csrci mstatus, 2 # Clear SIE",
@@ -152,6 +260,8 @@ def _generate_trigger_ssi_mip_tests(test_data: TestData) -> list[str]:
     covergroup = "InterruptsS_cg"
 
     r_mtime, r_temp, r_temp2, r_stimecmp, r_scratch, r_stce = test_data.int_regs.get_registers(6)
+    r_trace_value = r_temp2
+    r_trace_addr = r_scratch
 
     lines = [
         comment_banner(
@@ -176,6 +286,8 @@ def _generate_trigger_ssi_mip_tests(test_data: TestData) -> list[str]:
                 enable_name = f"mie_{int_enable_val}"
 
             binname = f"{mideleg_name}_{enable_name}"
+            case_index = (mideleg_val * 2) + int_enable_val
+            testcase_line = test_data.add_testcase(binname, coverpoint, covergroup)
 
             lines.extend(
                 [
@@ -227,13 +339,29 @@ def _generate_trigger_ssi_mip_tests(test_data: TestData) -> list[str]:
             )
 
             lines.append("# 7. Set SSIP by writing to mip.SSIP")
-            lines.append(test_data.add_testcase(binname, coverpoint, covergroup))
+            lines.append(testcase_line)
+            lines.extend(
+                _irq_section_trace(
+                    0x1100 + (case_index * 0x10),
+                    12 + (case_index * 3),
+                    testcase_line,
+                    r_trace_value,
+                    r_trace_addr,
+                )
+            )
             lines.extend(
                 [
                     f"LI(x{r_scratch}, 0x2) # SSIP bit",
                     f"csrs mip, x{r_scratch} # Set via CSR write",
                     "nop",
                     "nop",
+                    *_irq_section_trace(
+                        0x1101 + (case_index * 0x10),
+                        13 + (case_index * 3),
+                        testcase_line,
+                        r_trace_value,
+                        r_trace_addr,
+                    ),
                 ]
             )
 
@@ -250,6 +378,13 @@ def _generate_trigger_ssi_mip_tests(test_data: TestData) -> list[str]:
                 [
                     "# 9. Return and cleanup",
                     "RVTEST_GOTO_MMODE",
+                    *_irq_section_trace(
+                        0x1102 + (case_index * 0x10),
+                        14 + (case_index * 3),
+                        testcase_line,
+                        r_trace_value,
+                        r_trace_addr,
+                    ),
                     "csrci mstatus, 8 # Clear MIE",
                     "csrci mstatus, 2 # Clear SIE",
                     "csrw mideleg, zero # Clear delegation",
@@ -273,7 +408,7 @@ def _generate_trigger_ssi_sip_tests(test_data: TestData) -> list[str]:
     covergroup = "InterruptsS_cg"
     coverpoint = "cp_trigger_ssi_sip"
 
-    r_scratch = test_data.int_regs.get_register()
+    r_scratch, r_temp, r_trace_value, r_trace_addr = test_data.int_regs.get_registers(4)
 
     lines = [
         comment_banner(
@@ -288,6 +423,8 @@ def _generate_trigger_ssi_sip_tests(test_data: TestData) -> list[str]:
             mideleg_name = ["nodeleg", "deleg"][mideleg_val]
             sie_name = f"sie_{sie_val}"
             binname = f"{mideleg_name}_{sie_name}"
+            case_index = (mideleg_val * 2) + sie_val
+            testcase_line = test_data.add_testcase(binname, coverpoint, covergroup)
 
             lines.extend(
                 [
@@ -319,8 +456,15 @@ def _generate_trigger_ssi_sip_tests(test_data: TestData) -> list[str]:
                     "# enable all interrupts in mie",
                     f"LI(x{r_scratch}, -1)",
                     f"csrw mie, x{r_scratch}",
+                    *_irq_section_trace(
+                        0x1200 + (case_index * 0x10),
+                        24 + (case_index * 2),
+                        testcase_line,
+                        r_trace_value,
+                        r_trace_addr,
+                    ),
                     "RVTEST_GOTO_LOWER_MODE Smode",
-                    test_data.add_testcase(binname, coverpoint, covergroup),
+                    testcase_line,
                     "# Write sip.SSIP from S-mode",
                     f"LI(x{r_scratch}, 0x02)",
                     f"csrs sip, x{r_scratch}",
@@ -329,11 +473,18 @@ def _generate_trigger_ssi_sip_tests(test_data: TestData) -> list[str]:
                     f"LI(x{r_scratch}, 0x02) # SIE bit",
                     f"csrc sip, x{r_scratch}",
                     "RVTEST_GOTO_MMODE",
+                    *_irq_section_trace(
+                        0x1202 + (case_index * 0x10),
+                        25 + (case_index * 2),
+                        testcase_line,
+                        r_trace_value,
+                        r_trace_addr,
+                    ),
                     "nop",
                 ]
             )
 
-    test_data.int_regs.return_registers([r_scratch])
+    test_data.int_regs.return_registers([r_scratch, r_temp, r_trace_value, r_trace_addr])
     return lines
 
 
@@ -347,7 +498,7 @@ def _generate_trigger_sei_tests(test_data: TestData) -> list[str]:
     covergroup = "InterruptsS_cg"
     coverpoint = "cp_trigger_sei"
 
-    r_scratch, r_temp, r_stimecmp = test_data.int_regs.get_registers(3)
+    r_scratch, r_temp, r_stimecmp, r_trace_value, r_trace_addr = test_data.int_regs.get_registers(5)
 
     lines = [
         comment_banner(
@@ -363,6 +514,8 @@ def _generate_trigger_sei_tests(test_data: TestData) -> list[str]:
             sie_name = f"sie_{sie_val}"
             binname = f"{mideleg_name}_{sie_name}"
             effective_coverpoint = coverpoint if mideleg_val else "cp_trigger_sei_m"
+            case_index = (mideleg_val * 2) + sie_val
+            testcase_line = test_data.add_testcase(binname, effective_coverpoint, covergroup)
 
             lines.extend(
                 [
@@ -412,9 +565,28 @@ def _generate_trigger_sei_tests(test_data: TestData) -> list[str]:
 
             lines.extend(
                 [
-                    test_data.add_testcase(binname, effective_coverpoint, covergroup),
+                    testcase_line,
+                    "#ifdef ACT_IRQ_ROUTE_DEBUG",
+                    "# Capture the first trap belonging to this external-interrupt case",
+                    f"LA(x{r_trace_addr}, irqdbg_first_valid)",
+                    f"SREG zero, 0(x{r_trace_addr})",
+                    "#endif",
+                    *_irq_section_trace(
+                        0x1300 + (case_index * 0x10),
+                        32 + (case_index * 3),
+                        testcase_line,
+                        r_trace_value,
+                        r_trace_addr,
+                    ),
                     "# Set SEIP in M-mode using macro",
                     "RVTEST_SET_SEXT_INT",
+                    *_irq_section_trace(
+                        0x1301 + (case_index * 0x10),
+                        33 + (case_index * 3),
+                        testcase_line,
+                        r_trace_value,
+                        r_trace_addr,
+                    ),
                     "nop",
                 ]
             )
@@ -440,6 +612,13 @@ def _generate_trigger_sei_tests(test_data: TestData) -> list[str]:
                 [
                     "# Return and cleanup",
                     "RVTEST_GOTO_MMODE",
+                    *_irq_section_trace(
+                        0x1302 + (case_index * 0x10),
+                        34 + (case_index * 3),
+                        testcase_line,
+                        r_trace_value,
+                        r_trace_addr,
+                    ),
                     "# Complete state cleanup",
                     "csrci mstatus, 8 # Clear MIE",
                     "csrci mstatus, 2 # Clear SIE",
@@ -451,7 +630,7 @@ def _generate_trigger_sei_tests(test_data: TestData) -> list[str]:
             lines.append("# Clear SEIP")
             lines.append("RVTEST_CLR_SEXT_INT")
 
-    test_data.int_regs.return_registers([r_scratch, r_temp, r_stimecmp])
+    test_data.int_regs.return_registers([r_scratch, r_temp, r_stimecmp, r_trace_value, r_trace_addr])
     return lines
 
 
@@ -465,7 +644,7 @@ def _generate_trigger_sei_seip_tests(test_data: TestData) -> list[str]:
     covergroup = "InterruptsS_cg"
     coverpoint = "cp_trigger_sei_seip"
 
-    r_scratch = test_data.int_regs.get_register()
+    r_scratch, r_temp, r_trace_value, r_trace_addr = test_data.int_regs.get_registers(4)
 
     lines = [
         comment_banner(
@@ -479,6 +658,7 @@ def _generate_trigger_sei_seip_tests(test_data: TestData) -> list[str]:
     for sie_val in [0, 1]:
         sie_name = f"sie_{sie_val}"
         binname = f"deleg_{sie_name}"
+        testcase_line = test_data.add_testcase(binname, coverpoint, covergroup)
 
         lines.extend(
             [
@@ -516,10 +696,24 @@ def _generate_trigger_sei_seip_tests(test_data: TestData) -> list[str]:
 
         lines.extend(
             [
-                test_data.add_testcase(binname, coverpoint, covergroup),
+                testcase_line,
+                *_irq_section_trace(
+                    0x1400 + (sie_val * 0x10),
+                    44 + (sie_val * 3),
+                    testcase_line,
+                    r_trace_value,
+                    r_trace_addr,
+                ),
                 "# Write mip.SEIP from M-mode",
                 f"LI(x{r_scratch}, 0x200) # SEIP bit (bit 9)",
                 f"csrs mip, x{r_scratch}",
+                *_irq_section_trace(
+                    0x1401 + (sie_val * 0x10),
+                    45 + (sie_val * 3),
+                    testcase_line,
+                    r_trace_value,
+                    r_trace_addr,
+                ),
                 "# Enter S-mode",
                 "RVTEST_GOTO_LOWER_MODE Smode",
                 f"RVTEST_IDLE_FOR_INTERRUPT(x{r_scratch})",
@@ -530,6 +724,13 @@ def _generate_trigger_sei_seip_tests(test_data: TestData) -> list[str]:
             [
                 "# Return and cleanup",
                 "RVTEST_GOTO_MMODE",
+                *_irq_section_trace(
+                    0x1402 + (sie_val * 0x10),
+                    46 + (sie_val * 3),
+                    testcase_line,
+                    r_trace_value,
+                    r_trace_addr,
+                ),
                 "# Clear mip.SEIP",
                 f"csrc mip, x{r_scratch}",
                 "csrci mstatus, 8",
@@ -539,7 +740,7 @@ def _generate_trigger_sei_seip_tests(test_data: TestData) -> list[str]:
             ]
         )
 
-    test_data.int_regs.return_registers([r_scratch])
+    test_data.int_regs.return_registers([r_scratch, r_temp, r_trace_value, r_trace_addr])
     return lines
 
 
@@ -605,7 +806,17 @@ def _generate_changingtos_sti_tests(test_data: TestData) -> list[str]:
 
     lines.append("# Set STIP in M-mode")
     lines.append(test_data.add_testcase("changingtos_sti", coverpoint, covergroup))
-    lines.extend(set_stimer_int(r_mtime, r_temp, r_temp2, r_scratch, r_stce))
+    lines.extend(
+        [
+            "#ifndef SM1P11P0_SUPPORTED",
+            *set_stimer_int(r_mtime, r_temp, r_temp2, r_scratch, r_stce),
+            "#else",
+            # priv 1.11 fallback: set STIP directly via mip since stimecmp/STCE don't exist
+            f"LI(x{r_scratch}, 0x20)",
+            f"csrs mip, x{r_scratch}             # set mip.STIP directly",
+            "#endif",
+        ]
+    )
 
     lines.extend(
         [
@@ -914,7 +1125,6 @@ def _generate_interrupts_s_tests(test_data: TestData) -> list[str]:
                                 "#endif",
                             ]
                         )
-                        lines.extend(set_stimer_int(r_mtime, r_temp, r_temp2, r_scratch, r_stce))
                     else:  # mtip
                         lines.extend(set_mtimer_int(r_mtime, r_stimecmp, r_temp, r_temp2))
                 else:
@@ -961,6 +1171,8 @@ def _generate_vectored_s_tests(test_data: TestData) -> list[str]:
     coverpoint = "cp_vectored_s"
 
     r_mtime, r_temp, r_temp2, r_stimecmp, r_scratch, r_stce = test_data.int_regs.get_registers(6)
+    r_trace_value = r_temp2
+    r_trace_addr = r_scratch
 
     lines = [
         comment_banner(
@@ -983,8 +1195,10 @@ def _generate_vectored_s_tests(test_data: TestData) -> list[str]:
     for stvec_mode in [0, 1]:  # direct, vectored
         stvec_mode_name = ["direct", "vectored"][stvec_mode]
 
-        for int_name, int_bit, int_set, int_clr, uses_timer in interrupts:
+        for interrupt_index, (int_name, int_bit, int_set, int_clr, uses_timer) in enumerate(interrupts):
             binname = f"{stvec_mode_name}_{int_name}"
+            case_index = (stvec_mode * len(interrupts)) + interrupt_index
+            testcase_line = test_data.add_testcase(binname, coverpoint, covergroup)
 
             lines.extend(
                 [
@@ -1000,6 +1214,9 @@ def _generate_vectored_s_tests(test_data: TestData) -> list[str]:
             lines.extend(
                 [
                     "# Clear all interrupts",
+                    "# Quiesce platform external sources before testing WFI",
+                    "RVTEST_CLR_MEXT_INT",
+                    "RVTEST_CLR_SEXT_INT",
                     f"LI(x{r_scratch}, 0x2)",
                     f"csrc mip, x{r_scratch}",
                     "RVTEST_CLR_MSW_INT",
@@ -1010,6 +1227,7 @@ def _generate_vectored_s_tests(test_data: TestData) -> list[str]:
             )
             lines.extend(clr_stimer_int(r_temp, r_stimecmp, r_scratch, 0))
             lines.extend(clr_mtimer_int(r_temp, r_stimecmp))
+            lines.extend(wait_mtimer_int_clear(r_temp, r_scratch))
 
             lines.extend(
                 [
@@ -1055,7 +1273,16 @@ def _generate_vectored_s_tests(test_data: TestData) -> list[str]:
             )
 
             lines.append("# Set interrupt in M-mode (MIE=0, so no trap yet)")
-            lines.append(test_data.add_testcase(binname, coverpoint, covergroup))
+            lines.append(testcase_line)
+            lines.extend(
+                _irq_section_trace(
+                    0x1500 + (case_index * 0x10),
+                    50 + (case_index * 3),
+                    testcase_line,
+                    r_trace_value,
+                    r_trace_addr,
+                )
+            )
 
             if uses_timer:
                 if int_name == "stip":
@@ -1074,12 +1301,21 @@ def _generate_vectored_s_tests(test_data: TestData) -> list[str]:
                             "#endif",
                         ]
                     )
-                    lines.extend(set_stimer_int(r_mtime, r_temp, r_temp2, r_scratch, r_stce))
                 else:
                     lines.append("# mtip")
                     lines.extend(set_mtimer_int(r_mtime, r_stimecmp, r_temp, r_temp2))
             else:
                 lines.extend([int_set, "nop"])
+
+            lines.extend(
+                _irq_section_trace(
+                    0x1501 + (case_index * 0x10),
+                    51 + (case_index * 3),
+                    testcase_line,
+                    r_trace_value,
+                    r_trace_addr,
+                )
+            )
 
             lines.append("# Enter S-mode (interrupt fires immediately or when timer matures)")
             lines.append("RVTEST_GOTO_LOWER_MODE Smode")
@@ -1089,6 +1325,13 @@ def _generate_vectored_s_tests(test_data: TestData) -> list[str]:
                 [
                     "# Cleanup",
                     "RVTEST_GOTO_MMODE",
+                    *_irq_section_trace(
+                        0x1502 + (case_index * 0x10),
+                        52 + (case_index * 3),
+                        testcase_line,
+                        r_trace_value,
+                        r_trace_addr,
+                    ),
                     "csrci mstatus, 8",
                     "csrci mstatus, 2",
                     "csrw mideleg, zero",
@@ -1699,6 +1942,7 @@ def _generate_wfi_s_tests(test_data: TestData) -> list[str]:
                         "",
                         f"# Test: MIE={mie_val}, SIE={sie_val}, mideleg={mideleg_name}",
                         "RVTEST_GOTO_MMODE",
+                        "csrw medeleg, zero # WFI illegal-instruction traps are not delegated",
                         "csrw mie, zero",
                         "csrci mstatus, 8 # MIE=0",
                         "csrci mstatus, 2 # SIE=0",
@@ -2456,6 +2700,7 @@ def _generate_wfi_u_tests(test_data: TestData) -> list[str]:
                         "",
                         f"# Test: MIE={mie_val}, SIE={sie_val}, mideleg={mideleg_name}",
                         "RVTEST_GOTO_MMODE",
+                        "csrw medeleg, zero # U-mode WFI illegal-instruction traps are not delegated",
                         "csrw mie, zero",
                         "csrci mstatus, 8 # MIE=0",
                         "csrci mstatus, 2 # SIE=0",
@@ -2464,6 +2709,14 @@ def _generate_wfi_u_tests(test_data: TestData) -> list[str]:
 
                 lines.append("# Clear timer interrupt")
                 lines.extend(clr_mtimer_int(r_temp, r_stimecmp))
+                lines.extend(wait_mtimer_int_clear(r_temp, r_scratch))
+                lines.extend(
+                    [
+                        "# Quiesce unrelated platform external sources before WFI",
+                        "RVTEST_CLR_MEXT_INT",
+                        "RVTEST_CLR_SEXT_INT",
+                    ]
+                )
 
                 lines.append("# Write mideleg value based on bins")
                 if mideleg_val:
@@ -2534,11 +2787,8 @@ def _generate_wfi_u_tests(test_data: TestData) -> list[str]:
                         "    wfi # TW=0: waits, TW=1: illegal instruction",
                         "    nop",
                         "    nop",
-                        "# Idle in U-mode until the armed machine timer interrupt is taken,",
-                        "# scaled to match the 8x arming delay above",
-                        f"    LI(x{r_scratch}, (RVTEST_TIMER_INT_SOON_DELAY_CYCLES)* 2)",
-                        f"    98: addi x{r_scratch}, x{r_scratch}, -1",
-                        f"    bnez x{r_scratch}, 98b",
+                        "# Give the platform timer enough time to assert MTIP before cleanup",
+                        f"RVTEST_IDLE_FOR_TIMER_INTERRUPT(x{r_scratch})",
                     ]
                 )
 

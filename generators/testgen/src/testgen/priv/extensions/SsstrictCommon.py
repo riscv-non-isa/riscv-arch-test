@@ -74,8 +74,11 @@ PRIVILEGED_000_EXCLUSIONS: tuple[str, ...] = (
     "1XXX11XXXXXX00000000000001110011",  # custom system
     "00X10000001000000000000001110011",  # mret/sret
     "00000000000000000000000001110011",  # ecall
+    "00000000000100000000000001110011",  # ebreak: may enter Debug Mode and halt the hart
     "00010000010100000000000001110011",  # wfi
+    "00110000010100000000000001110011",  # SiFive CEASE: stops retirement until reset
     "01110000001000000000000001110011",  # MNRET (Smrnmi)
+    "01111011001000000000000001110011",  # dret: unsafe debug control flow
 )
 
 
@@ -261,6 +264,7 @@ def _generate_csr_sweep_body(
     csr_addresses: list[int],
     chunk_preamble: list[str] | None = None,
     section_header: str | None = None,
+    csr_guards: dict[int, str] | None = None,
 ) -> list[TestChunk]:
     """Emit the CSR read/write/set/clear sweep as self-contained chunks.
 
@@ -269,6 +273,7 @@ def _generate_csr_sweep_body(
     `section_header` is attached to the first chunk only.
     """
     test_chunks: list[TestChunk] = []
+    csr_guards = csr_guards or {}
     for batch_start in range(0, len(csr_addresses), CSRS_PER_CHUNK):
         batch = csr_addresses[batch_start : batch_start + CSRS_PER_CHUNK]
         tc = test_data.begin_test_chunk("CSR")
@@ -284,6 +289,9 @@ def _generate_csr_sweep_body(
             r1, r2, r3 = test_data.int_regs.get_registers(3)
 
             ih = hex(csr_addr)
+            guard = csr_guards.get(csr_addr)
+            if guard:
+                lines.append(f"#ifdef {guard}")
             lines.extend(
                 [
                     f"# CSR {ih}",
@@ -302,6 +310,8 @@ def _generate_csr_sweep_body(
                     "",
                 ]
             )
+            if guard:
+                lines.append("#endif")
             test_data.int_regs.return_registers([r1, r2, r3])
         _finalize_chunk(test_data, lines, test_chunks)
     return test_chunks
@@ -725,8 +735,14 @@ def _generate_csr_sweep(test_data: TestData, suite: str, priv_mode: str, csr_ski
         "Higher-privilege, custom, and reserved CSRs are excluded via the\n"
         "suite's skip set (architecturally-known traps add no coverage).",
     )
+    csr_guards = {0xC01: "UDB_TIME_CSR_IMPLEMENTED"} if priv_mode == "M" else None
     return _generate_csr_sweep_body(
-        test_data, covergroup, all_csrs, chunk_preamble=preamble, section_header=section_header
+        test_data,
+        covergroup,
+        all_csrs,
+        chunk_preamble=preamble,
+        section_header=section_header,
+        csr_guards=csr_guards,
     )
 
 

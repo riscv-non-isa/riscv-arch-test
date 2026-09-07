@@ -1,0 +1,7 @@
+name: visionfive2-rv64gc
+compiler_exe: riscv64-unknown-elf-gcc
+objdump_exe: riscv64-unknown-elf-objdump
+ref_model_exe: /home/lpt-10xe/riscv-sail-0.13/bin/sail_riscv_sim
+udb_config: visionfive2-rv64gc.yaml
+linker_script: link.ld
+dut_include_dir: .

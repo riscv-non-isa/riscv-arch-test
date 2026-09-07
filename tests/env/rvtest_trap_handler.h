@@ -923,7 +923,11 @@ init_\__MODE__\()scratch:
 #ifdef RVMODEL_MTIMECMP_ADDRESS            // this looks a bit odd to keep it constant size
 init_\__MODE__\()timecmp:               // init MTIMECMP to largest value if its address is defined
         LI(  T2,  -1)
+  #ifdef RVMODEL_LOAD_MTIMECMP_ADDR          // board hook: address doesn't fit a plain LI (e.g. relocatable symbol needed)
+        RVMODEL_LOAD_MTIMECMP_ADDR(T4)
+  #else
         LI(  T4,  RVMODEL_MTIMECMP_ADDRESS)
+  #endif
         SREG T2,  0(T4)
   .if (UDB_MXLEN==32)
         SREG T2,  4(T4)
@@ -1834,6 +1838,141 @@ tsbi_instr_table:
         LREG    T3, sig_bgn_off+          0(sp)    // T3 = this mode's signature begin address
         add     T1, T1, T3                          // T1 = this mode's current trap sig write address
 
+#ifdef ACT_DEBUG_TRAP_SLOT
+        // Debug capture for trap-slot sequencing.
+        // IMPORTANT: Do not clobber T1/T2/T5/T6 here. T6 is still needed below
+        // for vector encoding, T5 holds xcause, T2 holds entry size, and T1 is
+        // the current trap-signature slot used by TRAP_SIGUPD. T3/T4 are safe
+        // temporaries at this point because sv_<MODE>vect reloads them next.
+        la      T3, dbg_trap_slot_t1
+        SREG    T1, 0(T3)        // current slot address used by TRAP_SIGUPD
+
+        la      T3, dbg_trap_slot_t4
+        SREG    T4, 0(T3)        // next-free global trap pointer
+
+        la      T3, dbg_trap_entry_size
+        SREG    T2, 0(T3)        // trap entry size in bytes
+
+        csrr    T3, CSR_XEPC
+        la      T4, dbg_trap_xepc
+        SREG    T3, 0(T4)
+
+        csrr    T3, CSR_XCAUSE
+        la      T4, dbg_trap_xcause
+        SREG    T3, 0(T4)
+
+        csrr    T3, CSR_XTVAL
+        la      T4, dbg_trap_xtval
+        SREG    T3, 0(T4)
+#endif
+
+#ifdef ACT_IRQ_ROUTE_DEBUG
+        // Always update this compact snapshot. The first_* fields below
+        // preserve the first trap, while these fields expose a later trap
+        // that may have interrupted the expected handler/return sequence.
+        la      T4, irqdbg_stage
+        LREG    T3, 0(T4)
+        addi    T3, T3, 1
+        SREG    T3, 0(T4)
+
+        csrr    T3, CSR_XIE
+        la      T4, irqdbg_pre_mie
+        SREG    T3, 0(T4)
+        csrr    T3, CSR_XIP
+        la      T4, irqdbg_pre_mip
+        SREG    T3, 0(T4)
+        csrr    T3, CSR_XSTATUS
+        la      T4, irqdbg_pre_mstatus
+        SREG    T3, 0(T4)
+
+.ifc \__MODE__ , M
+        csrr    T3, mideleg
+        la      T4, irqdbg_pre_mideleg
+        SREG    T3, 0(T4)
+        csrr    T3, sip
+        la      T4, irqdbg_pre_sip
+        SREG    T3, 0(T4)
+        csrr    T3, sie
+        la      T4, irqdbg_pre_sie
+        SREG    T3, 0(T4)
+.else
+  .ifc \__MODE__ , S
+        csrr    T3, sip
+        la      T4, irqdbg_pre_sip
+        SREG    T3, 0(T4)
+        csrr    T3, sie
+        la      T4, irqdbg_pre_sie
+        SREG    T3, 0(T4)
+  .endif
+.endif
+
+        // Latch only the first trap after the selected interrupt scenario
+        // resets irqdbg_first_valid. Later level-triggered UART interrupts
+        // must not overwrite the primary routing evidence. T3/T4 are safe
+        // temporaries here; T1/T2/T5/T6 retain trap-signature state.
+        la      T4, irqdbg_first_valid
+        LREG    T3, 0(T4)
+        bnez    T3, 98f
+        li      T3, 1
+        SREG    T3, 0(T4)
+
+.ifc \__MODE__ , M
+        li      T3, 3
+.else
+  .ifc \__MODE__ , S
+        li      T3, 1
+  .else
+        li      T3, 0
+  .endif
+.endif
+        la      T4, irqdbg_first_mode
+        SREG    T3, 0(T4)
+
+        csrr    T3, CSR_XEPC
+        la      T4, irqdbg_first_xepc
+        SREG    T3, 0(T4)
+        csrr    T3, CSR_XCAUSE
+        la      T4, irqdbg_first_xcause
+        SREG    T3, 0(T4)
+        csrr    T3, CSR_XTVAL
+        la      T4, irqdbg_first_xtval
+        SREG    T3, 0(T4)
+        csrr    T3, CSR_XSTATUS
+        la      T4, irqdbg_first_xstatus
+        SREG    T3, 0(T4)
+
+.ifc \__MODE__ , M
+        csrr    T3, mideleg
+        la      T4, irqdbg_first_mideleg
+        SREG    T3, 0(T4)
+        csrr    T3, mip
+        la      T4, irqdbg_first_mip
+        SREG    T3, 0(T4)
+        csrr    T3, mie
+        la      T4, irqdbg_first_mie
+        SREG    T3, 0(T4)
+.endif
+
+.ifc \__MODE__ , M
+        csrr    T3, sip
+        la      T4, irqdbg_first_sip
+        SREG    T3, 0(T4)
+        csrr    T3, sie
+        la      T4, irqdbg_first_sie
+        SREG    T3, 0(T4)
+.else
+  .ifc \__MODE__ , S
+        csrr    T3, sip
+        la      T4, irqdbg_first_sip
+        SREG    T3, 0(T4)
+        csrr    T3, sie
+        la      T4, irqdbg_first_sie
+        SREG    T3, 0(T4)
+  .endif
+.endif
+98:
+#endif
+
         // Snapshot xEPC/xCAUSE/xTVAL/xSTATUS to the saved_x* slots before the
         // first TRAP_SIGUPD so failedtest_print_csr_context reports THIS trap's
         // CSRs on any word's mismatch.  They must be captured here rather than
@@ -1934,6 +2073,25 @@ sv_\__MODE__\()vect:
 //---------- Trap Signature Word 1: xcause ----------
 sv_\__MODE__\()cause:
         mv      T3, T5                               // T3 = xcause (for TRAP_SIGUPD)
+#ifdef ACT_DEBUG_TRAP_SLOT
+        // Capture the exact state consumed by the xcause self-check.
+        la      T4, dbg_mcause_sigptr
+        SREG    T1, 0(T4)
+        la      T4, dbg_mcause_actual
+        SREG    T3, 0(T4)
+        LREG    T4, 1*REGWIDTH(T1)
+        la      T2, dbg_mcause_expected
+        SREG    T4, 0(T2)
+        csrr    T4, CSR_XEPC
+        la      T2, dbg_mcause_live_xepc
+        SREG    T4, 0(T2)
+        csrr    T4, CSR_XCAUSE
+        la      T2, dbg_mcause_live_xcause
+        SREG    T4, 0(T2)
+        csrr    T4, CSR_XTVAL
+        la      T2, dbg_mcause_live_xtval
+        SREG    T4, 0(T2)
+#endif
         TRAP_SIGUPD(T4, T3, 1, sv_\__MODE__\()cause, sv_\__MODE__\()cause_str) // write word 1
 
         bltz    T5, common_\__MODE__\()int_handler   // if MSB=1 -> interrupt -> branch to int handler
@@ -2079,6 +2237,23 @@ adj_\__MODE__\()epc:
         sub     T3, T3, T2                            // T3 = EPC - segment_begin (relocated offset)
 
 sv_\__MODE__\()epc:
+#ifdef ACT_DEBUG_TRAP_SLOT
+        // Capture the relocated xEPC value immediately before the xepc self-check.
+        la      T4, dbg_mepc_sigptr
+        SREG    T1, 0(T4)
+        la      T4, dbg_mepc_actual
+        SREG    T3, 0(T4)
+        LREG    T4, 2*REGWIDTH(T1)
+        la      T2, dbg_mepc_expected
+        SREG    T4, 0(T2)
+        csrr    T4, CSR_XEPC
+        la      T2, dbg_mepc_live_xepc
+        SREG    T4, 0(T2)
+        csrr    T4, CSR_XCAUSE
+        la      T2, dbg_mepc_live_xcause
+        SREG    T4, 0(T2)
+#endif
+
 #ifdef SDTRIG_IMPRECISE_XEPC
         csrr    T2, CSR_XCAUSE                        // breakpoint-trigger epc differs across DUTs (trigger fires
         LI(     T6, CAUSE_BREAKPOINT)                 //   at a slightly different instr) -> don't record xEPC for
@@ -2328,7 +2503,11 @@ excpt_\__MODE__\()hndlr_tbl:
 \__MODE__\()clr_Mtmr_int:                            // M-mode timer interrupt: write max to mtimecmp
         li T5, -1
         #ifdef RVMODEL_MTIMECMP_ADDRESS
+          #ifdef RVMODEL_LOAD_MTIMECMP_ADDR    // board hook: same override as init_Mtimecmp above, mirrored here for the clear path
+                RVMODEL_LOAD_MTIMECMP_ADDR(T2)
+          #else
                 la T2, RVMODEL_MTIMECMP_ADDRESS
+          #endif
                 SREG T5, 0(T2)
         #endif
         #if(UDB_MXLEN == 32)
@@ -2431,6 +2610,23 @@ excpt_\__MODE__\()hndlr_tbl:
 .ifc \__MODE__ , M
 
 \__MODE__\()rtn2mmode:
+#ifdef ACT_IRQ_RETURN_DEBUG
+        la      T2, irqret_gotom_count
+        LREG    T3, 0(T2)
+        addi    T3, T3, 1
+        SREG    T3, 0(T2)
+        la      T2, irqret_gotom_entry_sp
+        SREG    sp, 0(T2)
+        csrr    T3, mscratch
+        la      T2, irqret_gotom_entry_mscratch
+        SREG    T3, 0(T2)
+        csrr    T3, mepc
+        la      T2, irqret_gotom_entry_mepc
+        SREG    T3, 0(T2)
+        csrr    T3, mstatus
+        la      T2, irqret_gotom_entry_mstatus
+        SREG    T3, 0(T2)
+#endif
         csrr    T2, CSR_MSTATUS                       // read mstatus to determine caller's mode
         srli    T4, T2,  MPP_LSB                      // extract MPP
         andi    T4, T4,  MMODE_SIG                    // T4 = MPP value
@@ -2823,9 +3019,11 @@ resto_\__MODE__\()xtvec:
         andi    T4, T4, ~WDBYTMSK                  // clear mode bits from saved xtvec
         andi    T2, T2, ~WDBYTMSK                  // clear mode bits from current xtvec
         bne     T4, T2, 1f                          // if saved != current -> trampoline wasn't overwritten, skip
+        blt     T2, zero, 1f                        // skip high/canonical targets that are not safe to patch
 
 resto_\__MODE__\()tramp:                           // trampoline WAS overwritten -> restore original code
         addi    T4, T1, tramp_sv_off               // T4 = saved trampoline code in save area
+        add     T3, T2, T3                          // T3 = end of target trampoline area
 
 resto_\__MODE__\()loop:
         lw      T6, 0(T4)                          // read saved original instruction
@@ -2910,3 +3108,97 @@ rvtest_\__MODE__\()end:                            // epilog is done for this mo
 
 .option pop
 .endm                                              // end of RVTEST_TRAP_SAVEAREA
+
+
+#ifdef ACT_DEBUG_TRAP_SLOT
+//------------------------------------------------------------------------------
+// Debug storage for trap-slot sequencing probes.
+// These labels intentionally live outside RVTEST_TRAP_SAVEAREA so there is one
+// shared capture area for the active trap that reached TRAP_SIGUPD.
+//------------------------------------------------------------------------------
+.pushsection .data,"aw",@progbits
+.align ALIGNSZ
+.global dbg_trap_slot_t1
+.global dbg_trap_slot_t4
+.global dbg_trap_entry_size
+.global dbg_trap_xepc
+.global dbg_trap_xcause
+.global dbg_trap_xtval
+.global dbg_mcause_sigptr
+.global dbg_mcause_actual
+.global dbg_mcause_expected
+.global dbg_mcause_live_xepc
+.global dbg_mcause_live_xcause
+.global dbg_mcause_live_xtval
+.global dbg_mepc_sigptr
+.global dbg_mepc_actual
+.global dbg_mepc_expected
+.global dbg_mepc_live_xepc
+.global dbg_mepc_live_xcause
+dbg_trap_slot_t1:      .fill 1, REGWIDTH, 0
+dbg_trap_slot_t4:      .fill 1, REGWIDTH, 0
+dbg_trap_entry_size:   .fill 1, REGWIDTH, 0
+dbg_trap_xepc:         .fill 1, REGWIDTH, 0
+dbg_trap_xcause:       .fill 1, REGWIDTH, 0
+dbg_trap_xtval:        .fill 1, REGWIDTH, 0
+dbg_mcause_sigptr:     .fill 1, REGWIDTH, 0
+dbg_mcause_actual:     .fill 1, REGWIDTH, 0
+dbg_mcause_expected:   .fill 1, REGWIDTH, 0
+dbg_mcause_live_xepc:  .fill 1, REGWIDTH, 0
+dbg_mcause_live_xcause:.fill 1, REGWIDTH, 0
+dbg_mcause_live_xtval: .fill 1, REGWIDTH, 0
+dbg_mepc_sigptr:       .fill 1, REGWIDTH, 0
+dbg_mepc_actual:       .fill 1, REGWIDTH, 0
+dbg_mepc_expected:     .fill 1, REGWIDTH, 0
+dbg_mepc_live_xepc:    .fill 1, REGWIDTH, 0
+dbg_mepc_live_xcause:  .fill 1, REGWIDTH, 0
+.popsection
+#endif // ACT_DEBUG_TRAP_SLOT
+
+#ifdef ACT_IRQ_RETURN_DEBUG
+// Non-invasive snapshots of the M-external clear and legacy GOTO_MMODE return
+// paths. The runner reads these only after the payload has stopped.
+.pushsection .data,"aw",@progbits
+.align ALIGNSZ
+.global irqret_mext_count
+.global irqret_mext_pre_sp
+.global irqret_mext_pre_mscratch
+.global irqret_mext_pre_saved_sp
+.global irqret_mext_pre_mepc
+.global irqret_mext_pre_mcause
+.global irqret_mext_post_sp
+.global irqret_mext_post_mscratch
+.global irqret_mext_post_saved_sp
+.global irqret_mext_post_mepc
+.global irqret_mext_post_mcause
+.global irqret_gotom_count
+.global irqret_gotom_entry_sp
+.global irqret_gotom_entry_mscratch
+.global irqret_gotom_entry_mepc
+.global irqret_gotom_entry_mstatus
+.global irqret_gotom_final_sp
+.global irqret_gotom_final_mscratch
+.global irqret_gotom_final_t2
+.global irqret_gotom_final_t4
+irqret_mext_count:             .fill 1, REGWIDTH, 0
+irqret_mext_pre_sp:            .fill 1, REGWIDTH, 0
+irqret_mext_pre_mscratch:      .fill 1, REGWIDTH, 0
+irqret_mext_pre_saved_sp:      .fill 1, REGWIDTH, 0
+irqret_mext_pre_mepc:          .fill 1, REGWIDTH, 0
+irqret_mext_pre_mcause:        .fill 1, REGWIDTH, 0
+irqret_mext_post_sp:           .fill 1, REGWIDTH, 0
+irqret_mext_post_mscratch:     .fill 1, REGWIDTH, 0
+irqret_mext_post_saved_sp:     .fill 1, REGWIDTH, 0
+irqret_mext_post_mepc:         .fill 1, REGWIDTH, 0
+irqret_mext_post_mcause:       .fill 1, REGWIDTH, 0
+irqret_gotom_count:            .fill 1, REGWIDTH, 0
+irqret_gotom_entry_sp:         .fill 1, REGWIDTH, 0
+irqret_gotom_entry_mscratch:   .fill 1, REGWIDTH, 0
+irqret_gotom_entry_mepc:       .fill 1, REGWIDTH, 0
+irqret_gotom_entry_mstatus:    .fill 1, REGWIDTH, 0
+irqret_gotom_final_sp:         .fill 1, REGWIDTH, 0
+irqret_gotom_final_mscratch:   .fill 1, REGWIDTH, 0
+irqret_gotom_final_t2:         .fill 1, REGWIDTH, 0
+irqret_gotom_final_t4:         .fill 1, REGWIDTH, 0
+.popsection
+#endif // ACT_IRQ_RETURN_DEBUG

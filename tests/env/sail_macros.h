@@ -30,6 +30,29 @@
         .pushsection .tohost,"aw",@progbits;                \
         .balign 8; .global tohost; tohost: .dword 0;         \
         .balign 8; .global fromhost; fromhost: .dword 0;     \
+        .balign 8; .global rvmodel_boot_hartid;              \
+        rvmodel_boot_hartid: .dword 0;                       \
+        .balign 8; .global rvmodel_last_plic_claim;          \
+        rvmodel_last_plic_claim: .dword 0;                   \
+        .balign 8; .global irqdbg_first_valid;               \
+        irqdbg_first_valid: .dword 0;                        \
+        .global irqdbg_first_mode; irqdbg_first_mode: .dword 0; \
+        .global irqdbg_first_xepc; irqdbg_first_xepc: .dword 0; \
+        .global irqdbg_first_xcause; irqdbg_first_xcause: .dword 0; \
+        .global irqdbg_first_xtval; irqdbg_first_xtval: .dword 0; \
+        .global irqdbg_first_xstatus; irqdbg_first_xstatus: .dword 0; \
+        .global irqdbg_first_mideleg; irqdbg_first_mideleg: .dword 0; \
+        .global irqdbg_first_mip; irqdbg_first_mip: .dword 0; \
+        .global irqdbg_first_mie; irqdbg_first_mie: .dword 0; \
+        .global irqdbg_first_sip; irqdbg_first_sip: .dword 0; \
+        .global irqdbg_first_sie; irqdbg_first_sie: .dword 0; \
+        .global irqdbg_stage; irqdbg_stage: .dword 0;         \
+        .global irqdbg_pre_mideleg; irqdbg_pre_mideleg: .dword 0; \
+        .global irqdbg_pre_mie; irqdbg_pre_mie: .dword 0;    \
+        .global irqdbg_pre_mip; irqdbg_pre_mip: .dword 0;    \
+        .global irqdbg_pre_mstatus; irqdbg_pre_mstatus: .dword 0; \
+        .global irqdbg_pre_sip; irqdbg_pre_sip: .dword 0;    \
+        .global irqdbg_pre_sie; irqdbg_pre_sie: .dword 0;    \
         .popsection
 
 ##### STARTUP #####
@@ -38,7 +61,10 @@
 # DUT-specific behavior such as turning on a memory controller or
 # initializing custom state.
 #undef RVMODEL_BOOT
-// #define RVMODEL_BOOT
+#define RVMODEL_BOOT                     \
+  csrr T1, mhartid;                      \
+  la T2, rvmodel_boot_hartid;            \
+  SREG T1, 0(T2)
 
 ##### TERMINATION #####
 
@@ -121,8 +147,11 @@
 #undef RVMODEL_INTERRUPT_LATENCY
 #define RVMODEL_INTERRUPT_LATENCY 1
 
-#undef RVMODEL_TIMER_INT_SOON_DELAY
-#define RVMODEL_TIMER_INT_SOON_DELAY 100
+// Sail reports mhartid=1 to match VF2, but its single-hart CLINT exposes only
+// slot 0. This is a reference-model MMIO limitation, not a hart-ID mismatch in
+// the test. The hardware macros continue to use the physical hart-1 slots.
+#undef RVMODEL_MTIMECMP_ADDRESS
+#define RVMODEL_MTIMECMP_ADDRESS 0x02004000
 
 #undef RVMODEL_SET_MEXT_INT
 #define RVMODEL_SET_MEXT_INT(_R1, _R2)        \
