@@ -1,10 +1,10 @@
 
 === Zicntr
 
-These privileged tests exercise counters and HPMs reads (`time`, `cycle`, `instret`, `hpmcounter[31:3]`)
-from lower privilege modes, as controlled by `mcounteren`, etc..
-Note that the <<t-Zicntr-coverpoints, Zicntr>> and <<t-Zihpm-coverpoints, Zihpm>> unprivileged tests exercise access to these counters from U-mode
-and the <<t-Sm-coverpoints, Sm>> tests exercise access to `mcycle`, `minstret`, `mhpmcounter`, etc. from M-mode.
+These privileged tests exercise counter and HPM reads (`time`, `cycle`, `instret`, `hpmcounter[31:3]`)
+from lower privilege modes, as controlled by `mcounteren` and `scounteren`.
+Note that the <<t-Zicntr-coverpoints, Zicntr>> and <<t-Zihpm-coverpoints, Zihpm>> unprivileged tests exercise access to these counters
+from U-mode (or from M-mode when U-mode is not supported), and the <<t-Sm-coverpoints, Sm>> tests exercise access to `mcycle`, `minstret`, `mhpmcounter`, etc. from M-mode.
 
 ==== ZicntrS Supervisor-Mode Counter Reads
 
