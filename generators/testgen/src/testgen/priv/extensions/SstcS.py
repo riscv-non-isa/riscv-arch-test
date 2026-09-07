@@ -54,8 +54,9 @@ def lower_sti_tests(test_data: TestData, covergroup: str, mode: str) -> list[str
     """STI cross of menvcfg_stce x sstatus_sie x sie_stie (8 bins), with mcounteren.TM=1.
 
     S-mode (cp_supervisor_sti): for STCE=1, write stimecmp=0 in S-mode so the interrupt fires
-    while already in S-mode. For STCE=0, stimecmp=0 is written through T-SBI (STCE=0 keeps
-    STIP from asserting and makes stimecmp inaccessible below M-mode), so S-mode runs freely.
+    while already in S-mode. For STCE=0, stimecmp=0 is written through T-SBI before the testcase
+    label (STCE=0 keeps STIP from asserting and makes stimecmp inaccessible below M-mode), so
+    S-mode runs freely and the labeled nop samples the CSR state.
 
     U-mode (cp_user_sti): from S-mode, stimecmp = TIME+RVMODEL_TIMER_INT_SOON_DELAY immediately
     before entering U-mode so the interrupt fires in U-mode; it is delegated to S-mode
@@ -89,8 +90,15 @@ def lower_sti_tests(test_data: TestData, covergroup: str, mode: str) -> list[str
                 lines.append("csrsi sstatus, 2" if sie else "csrci sstatus, 2")
 
                 if mode == "S":
-                    lines.append(test_data.add_testcase(binname, coverpoint, covergroup))
-                    lines += set_stimecmp_zero() if stce else _tsbi_stimecmp_zero()
+                    if stce:
+                        # sampled at the stimecmp write itself, which raises the interrupt
+                        lines.append(test_data.add_testcase(binname, coverpoint, covergroup))
+                        lines += set_stimecmp_zero()
+                    else:
+                        # stimecmp is only reachable through T-SBI while STCE=0; sample the nop after it returns
+                        lines += _tsbi_stimecmp_zero()
+                        lines.append(test_data.add_testcase(binname, coverpoint, covergroup))
+                        lines.append("nop")
                     lines.append(f"RVTEST_IDLE_FOR_INTERRUPT(x{r_scratch})")
                 else:
                     if stce:
