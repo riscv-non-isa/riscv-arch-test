@@ -39,20 +39,30 @@ covergroup SscofpmfS_cg with function sample(ins_t ins);
             bins stip = {3'b010};
             bins ssip = {3'b001};
     }
+    priv_mode_s_after: coverpoint {ins.current.mode_virt, ins.current.mode} {
+            type_option.weight = 0;
+            bins S_mode = {3'b001};
+    }
+    sstatus_sie_one_prev: coverpoint ins.prev.csr[CSR_SSTATUS][1] { bins one = {1}; }
+    sie_state_prev: coverpoint (ins.prev.csr[CSR_SIE]) {
+            bins all_zeros = {'0};
+            bins all_ones  = {'1};
+    }
+
 
     cp_sinh_inhibits_smode:    cross priv_mode_s, mhpmevent_sinh, mhpmevent_xinh_combos, hpmcounter_nonzero, mhpmevent_of_zero;
     cp_of_set_on_overflow:     cross priv_mode_s, mip_clear, mie_clear, mhpmevent_of, mhpmevent_inhibits_pattern;
     `ifdef UDB_MXLEN_64
-        cp_overflow_hw_only: cross priv_mode_s, mip_clear, mie_clear, mhpmcounter_write_extremes, mhpmevent_all_zero;
+        cp_overflow_hw_only:   cross priv_mode_s, mip_clear, mie_clear, mhpmcounter_write_extremes, mhpmevent_all_zero;
     `else
-        cp_overflow_hw_only: cross priv_mode_s, mip_clear, mie_clear, mhpmcounter_write_extremes, mhpmevent_all_zero, mhpmevent_base_zero;
+        cp_overflow_hw_only:   cross priv_mode_s, mip_clear, mie_clear, mhpmcounter_write_extremes, mhpmevent_all_zero, mhpmevent_base_zero;
     `endif
     cp_lcofip_hw_only:         cross priv_mode_s, mhpmevent_of;
-    cp_scountovf_shadow:       cross priv_mode_s, mcounteren_write_all_ones, of_pattern_class, of_walking_one;
-    cp_scountovf_mcounteren:   cross priv_mode_s, of_write_pattern, mcounteren_write_pattern, mcounteren_walking_one;
+    cp_scountovf_shadow:       cross priv_mode_s, mcounteren_write_all_ones, of_stimulus_pattern, scountovf_of_match;
+    cp_scountovf_mcounteren:   cross priv_mode_s, of_write_pattern, mcounteren_stimulus_pattern, scountovf_of_match;
     cp_sscofpmf_access:        cross priv_mode_s, csr_access_pattern, hpm_csr_target ;
-    cp_lcofi_sip_s:            cross priv_mode_s, sstatus_sie_set, sie_lcofi, sip_lcofi, lcofi_mideleg_one;
-    cp_lcofip_priority_s:      cross priv_mode_s, mhpmevent_inhibits_all_zeros, mstatus_mie_set, sstatus_sie_set, mie_clear, lcofi_ip_one, sip_other_pending;
+    cp_lcofi_sip_s:            cross priv_mode_s, sstatus_sie_set, sie_lcofi_prev, sip_lcofi, lcofi_mideleg_one;
+    cp_lcofip_priority_s:      cross priv_mode_s_after, mhpmevent_inhibits_all_zeros, sstatus_sie_one_prev, sie_state_prev, lcofi_ip_one, sip_other_pending, trap_taken;
 endgroup
 
 function void sscofpmfs_sample(int hart, int issue, ins_t ins);

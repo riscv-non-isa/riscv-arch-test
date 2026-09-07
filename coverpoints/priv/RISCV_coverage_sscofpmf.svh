@@ -97,8 +97,6 @@
                 bins zero = {0};
         }
     `endif
-    sip_lcofi: coverpoint ins.current.csr[CSR_SIP][13] {}
-    sie_lcofi: coverpoint ins.current.csr[CSR_SIE][13] {}
     hpmcounter_nonzero: coverpoint (ins.current.csr[CSR_MHPMCOUNTER3] != 0) {}
     mip_clear: coverpoint (ins.current.csr[CSR_MIP] == 0) {
             bins yes = {1};
@@ -111,50 +109,53 @@
         wildcard bins write_zeros = {CSRRW} iff (ins.current.insn[31:20] == CSR_MHPMCOUNTER3 && ins.current.rs1_val == '0);
    }
 
-    of_walking_one: coverpoint $clog2(`OF_VEC) iff ($onehot(`OF_VEC)) {
-            bins b_of[] = {[0:28]};  // one bin per OF bit position (mhpmevent3..mhpmevent31 = 29 bits)
-    }
-    of_pattern_class: coverpoint $countones(`OF_VEC) {
-            bins all_zeros   = {0};
-            bins all_ones    = {29};
-    }
-
     mcounteren_write_all_ones: coverpoint ins.current.insn {
                 wildcard bins write_ones = {CSRRW} iff (ins.current.insn[31:20] == CSR_MCOUNTEREN &&
                                                   ins.current.rs1_val[31:3] == '1);
     }
-    mcounteren_walking_one: coverpoint $clog2(ins.current.rs1_val[31:3])
-        iff (ins.current.insn[31:20] == CSR_MCOUNTEREN && (ins.current.insn ==? CSRRW || ins.current.insn ==? CSRRS || ins.current.insn ==? CSRRC) && $onehot(ins.current.rs1_val[31:3])) {
-                bins pos[] = {[0:28]};
-}
 
     scountovf_of_match: coverpoint ((ins.current.csr[CSR_SCOUNTOVF][31:3] & ins.current.csr[CSR_MCOUNTEREN][31:3]) == (`OF_VEC & ins.current.csr[CSR_MCOUNTEREN][31:3])) {
             bins match = {1};
     }
+    mcounteren_stimulus_pattern: coverpoint (ins.current.rs1_val[31:3])
+        iff (ins.current.insn[31:20] == CSR_MCOUNTEREN && (ins.current.insn ==? CSRRW || ins.current.insn ==? CSRRS || ins.current.insn ==? CSRRC)) {
+                bins all_zeros = {29'h0};
+                bins all_ones  = {29'h1FFFFFFF};
+                bins walking[] = {29'h1, 29'h2, 29'h4, 29'h8, 29'h10, 29'h20, 29'h40, 29'h80,
+                                  29'h100, 29'h200, 29'h400, 29'h800, 29'h1000, 29'h2000,
+                                  29'h4000, 29'h8000, 29'h10000, 29'h20000, 29'h40000,
+                                  29'h80000, 29'h100000, 29'h200000, 29'h400000, 29'h800000,
+                                  29'h1000000, 29'h2000000, 29'h4000000, 29'h8000000, 29'h10000000};
+   }
+    of_stimulus_pattern: coverpoint (`OF_VEC) {
+        bins all_zeros = {29'h0};
+        bins all_ones  = {29'h1FFFFFFF};
+        bins walking[] = {29'h1, 29'h2, 29'h4, 29'h8, 29'h10, 29'h20, 29'h40, 29'h80,
+                           29'h100, 29'h200, 29'h400, 29'h800, 29'h1000, 29'h2000,
+                           29'h4000, 29'h8000, 29'h10000, 29'h20000, 29'h40000,
+                           29'h80000, 29'h100000, 29'h200000, 29'h400000, 29'h800000,
+                           29'h1000000, 29'h2000000, 29'h4000000, 29'h8000000, 29'h10000000};
+   }
 
     of_write_pattern: coverpoint (`OF_VEC) {
             bins all_ones     = {29'h1FFFFFFF};
             bins checker_even = {29'b1_0101_0101_0101_0101_0101_0101_0101}; // even-indexed OF bits set
             bins checker_odd  = {29'b0_1010_1010_1010_1010_1010_1010_1010}; // odd-indexed OF bits set
     }
-    mcounteren_write_pattern: coverpoint $countones(ins.current.rs1_val[31:3])
-                        iff (ins.current.insn[31:20] == CSR_MCOUNTEREN && (ins.current.insn ==? CSRRW || ins.current.insn ==? CSRRS || ins.current.insn ==? CSRRC)) {
-            bins all_zeros   = {0};
-            bins walking_one = {1};
-            bins all_ones    = {29};
-    }
+    sip_lcofi:      coverpoint ins.current.csr[CSR_SIP][13] {}
+    sie_lcofi_prev: coverpoint ins.prev.csr[CSR_SIE][13] {}
 
     `ifdef UDB_MXLEN_64
-        mhpmevent_all_zero: coverpoint ins.current.insn {
-                wildcard bins write_zero = {CSRRW} iff (ins.current.insn[31:20] == CSR_MHPMEVENT3 && ins.current.rs1_val == '0);
+        mhpmevent_all_zero: coverpoint (ins.current.csr[CSR_MHPMEVENT3] == '0) {
+                bins yes = {1};
         }
     `else
-        mhpmevent_all_zero: coverpoint ins.current.insn {
-                wildcard bins write_zero = {CSRRW} iff (ins.current.insn[31:20] == CSR_MHPMEVENT3 + 12'h400 && ins.current.rs1_val == '0);
+        mhpmevent_all_zero: coverpoint (ins.current.csr[CSR_MHPMEVENT3 + 12'h400] == '0) {
+                bins yes = {1};
         }
-        mhpmevent_base_zero: coverpoint ins.current.insn {
-            wildcard bins write_zero = {CSRRW} iff (ins.current.insn[31:20] == CSR_MHPMEVENT3 && ins.current.rs1_val == '0);
-    }
+        mhpmevent_base_zero: coverpoint (ins.current.csr[CSR_MHPMEVENT3] == '0) {
+                bins yes = {1};
+        }
     `endif
 
     csrops: coverpoint ins.current.insn {
@@ -181,37 +182,24 @@
     lcofi_ip_one: coverpoint ins.current.csr[CSR_MIP][13] {
             bins one  = {1};
     }
-    lcofi_ip_zero: coverpoint ins.current.csr[CSR_MIP][13] {
-            bins zero = {0};
-    }
     lcofi_ip: coverpoint ins.current.csr[CSR_MIP][13] {}
     lcofi_ie:      coverpoint ins.current.csr[CSR_MIE][13] {}
     lcofi_mideleg: coverpoint ins.current.csr[CSR_MIDELEG][13] {}
     lcofi_mideleg_one: coverpoint ins.current.csr[CSR_MIDELEG][13] {
             bins one  = {1};
     }
-    lcofi_mideleg_zero: coverpoint ins.current.csr[CSR_MIDELEG][13] {
-            bins zero = {0};
-    }
-    mstatus_mie_clear: coverpoint ins.current.csr[CSR_MSTATUS][3] {
+    mstatus_mie_clear: coverpoint ins.prev.csr[CSR_MSTATUS][3] {
             bins zero = {0};
     }
     mstatus_mie_set: coverpoint ins.current.csr[CSR_MSTATUS][3] {
             bins one = {1};
     }
-    mstatus_sie_set: coverpoint ins.current.csr[CSR_SSTATUS][1] {
+    mstatus_sie_set: coverpoint ins.current.csr[CSR_MSTATUS][1] {
             bins one = {1};
     }
     sstatus_sie_set: coverpoint ins.current.csr[CSR_SSTATUS][1] {
             bins one = {1};
     }
-    mip_other_pending: coverpoint {ins.current.csr[CSR_MIP][11], ins.current.csr[CSR_MIP][7], ins.current.csr[CSR_MIP][3],
-                                    ins.current.csr[CSR_MIP][9],  ins.current.csr[CSR_MIP][5], ins.current.csr[CSR_MIP][1]} {
-            bins none = {6'b000000};
-            bins meip = {6'b100000};
-            bins mtip = {6'b010000};
-            bins msip = {6'b001000};
-            bins seip = {6'b000100};
-            bins stip = {6'b000010};
-            bins ssip = {6'b000001};
+    trap_taken: coverpoint ins.current.trap {
+            bins yes = {1};
     }
