@@ -50,29 +50,25 @@ def _mode_suffix(mode: str) -> str:
     return mode.lower()
 
 
+_INHIBIT_MODE_SUFFIX = {"Sm": "mmode", "S": "smode", "U": "umode"}
+
+
 def _generate_xinh_inhibits_tests(test_data: TestData, priv_mode: str) -> list[str]:
-    """cp_xinh_inhibits_xmode: xINH bit inhibits counting in (M/S/U)-mode.
-    x tracks priv_mode: MINH(bit 62) for Sm, SINH(bit 61) for S, UINH(bit 60) for U.
-    """
-    _INHIBIT_BIT_POS = {"Sm": 62, "S": 61, "U": 60}  # MINH, SINH, UINH in mhpmevent[62:58]
+    _INHIBIT_BIT_POS = {"Sm": 62, "S": 61, "U": 60}
     _INHIBIT_PREFIX = {"Sm": "m", "S": "s", "U": "u"}
 
-    ######################################
     covergroup = "Sscofpmf_cg"
     inh_prefix = _INHIBIT_PREFIX[priv_mode]
-    coverpoint = f"cp_{inh_prefix}inh_inhibits_{priv_mode.lower()}mode"
+    coverpoint = f"cp_{inh_prefix}inh_inhibits_{_INHIBIT_MODE_SUFFIX[priv_mode]}"
     inh_bit_pos = _INHIBIT_BIT_POS[priv_mode]
-    ######################################
+    inh_bit_pos_32 = inh_bit_pos - 32  # RV32 position within mhpmevent3h
 
     r_val, r_temp = test_data.int_regs.get_registers(2, exclude_regs=[0, 31])
 
     lines = [
         comment_banner(
             coverpoint,
-            f"{inh_prefix.upper()}INH bit (mhpmevent[{inh_bit_pos}]) inhibits counting in "
-            f"{priv_mode}-mode.\n"
-            "No mip/mie involvement here, so no interrupt/T-SBI ordering hazard;\n"
-            "mode switch simply wraps the SBI-mediated CSR accesses per spec.",
+            f"{inh_prefix.upper()}INH bit (mhpmevent[{inh_bit_pos}]) inhibits counting in {priv_mode}-mode.",
         ),
         "",
     ]
@@ -83,37 +79,98 @@ def _generate_xinh_inhibits_tests(test_data: TestData, priv_mode: str) -> list[s
 
     for inh_val in [0, 1]:
         binname = f"{inh_prefix}inh_{inh_val}_{priv_mode.lower()}"
-
         lines.extend(
             [
                 f"{indent}# Testcase: {inh_prefix}inh = {inh_val}",
+                f"{indent}#if __riscv_xlen == 32",
+                f"{indent}LI(x{r_val}, RVMODEL_MHPMEVENT_VAL)",
+                f"{indent}{_csr_access(f'csrw RVMODEL_MHPMEVENT, x{r_val}', priv_mode)}",
+                f"{indent}LI(x{r_val}, {inh_val} << {inh_bit_pos_32})",
+                f"{indent}{_csr_access(f'csrw CSR_MHPMEVENT3H, x{r_val}', priv_mode)}",
+                f"{indent}#else",
                 f"{indent}LI(x{r_val}, RVMODEL_MHPMEVENT_VAL | {inh_val} << {inh_bit_pos})",
                 f"{indent}{_csr_access(f'csrw RVMODEL_MHPMEVENT, x{r_val}', priv_mode)}",
-                f"{indent}{_csr_access('csrw RVMODEL_MHPMCOUNTER, zero   # reset counter to 0 before running', priv_mode)}",
+                f"{indent}#endif",
+                f"{indent}{_csr_access('csrw RVMODEL_MHPMCOUNTER, zero', priv_mode)}",
                 "",
                 f"{indent}LA(x{r_temp}, scratch)",
-                f"{indent}# Incrementing RVMODEL_MHPMCOUNTER in DUT specific way",
                 f"{indent}RVMODEL_MHPMEVENT_CODE(x{r_temp}, x{r_val})",
                 "",
                 f"{indent}{test_data.add_testcase(binname, coverpoint, covergroup)}",
-                f"{indent}{_csr_access(f'csrr x{r_temp}, RVMODEL_MHPMCOUNTER   # sample point for hpmcounter_nonzero', priv_mode)}",
+                f"{indent}{_csr_access(f'csrr x{r_temp}, RVMODEL_MHPMCOUNTER', priv_mode)}",
                 "",
             ]
         )
 
-    # Clear the inhibit bit before leaving, so mhpmevent isn't left with
-    # the inhibit asserted for whatever runs next.
     lines.extend(
         [
-            f"{indent}# Cleanup: clear {inh_prefix}inh bit before exiting",
             f"{indent}LI(x{r_val}, RVMODEL_MHPMEVENT_VAL)",
             f"{indent}{_csr_access(f'csrw RVMODEL_MHPMEVENT, x{r_val}', priv_mode)}",
+            f"{indent}#if __riscv_xlen == 32",
+            f"{indent}{_csr_access('csrw CSR_MHPMEVENT3H, zero', priv_mode)}",
+            f"{indent}#endif",
             "",
         ]
     )
 
     if priv_mode != "Sm":
         lines.append("RVTEST_GOTO_MMODE")
+
+    if priv_mode == "Sm":
+        sweep_coverpoint = "cp_minh_inhibits_mmode"
+        r_hval = test_data.int_regs.get_register(exclude_regs=[0, 31])
+        lines.extend(
+            [
+                "",
+                "csrw mip, zero",
+                "csrw mie, zero",
+                "",
+                "#if __riscv_xlen == 32",
+            ]
+        )
+        for combo in range(8):
+            binname = f"xinh_combo_{combo:03b}_mmode"
+            lines.extend(
+                [
+                    f"LI(x{r_val}, RVMODEL_MHPMEVENT_VAL)",
+                    f"csrw RVMODEL_MHPMEVENT, x{r_val}",
+                    f"LI(x{r_hval}, {combo} << 28)",
+                    f"csrw CSR_MHPMEVENT3H, x{r_hval}",
+                    "csrw RVMODEL_MHPMCOUNTER, zero",
+                    "",
+                    test_data.add_testcase(binname, sweep_coverpoint, covergroup),
+                    f"csrr x{r_temp}, CSR_MHPMEVENT3H",
+                    write_sigupd(r_temp, test_data),
+                    "",
+                ]
+            )
+        lines.append("#else")
+        for combo in range(32):
+            binname = f"xinh_combo_{combo:05b}_mmode"
+            lines.extend(
+                [
+                    f"LI(x{r_val}, RVMODEL_MHPMEVENT_VAL | ({combo} << 58))",
+                    f"csrw RVMODEL_MHPMEVENT, x{r_val}",
+                    "csrw RVMODEL_MHPMCOUNTER, zero",
+                    "",
+                    test_data.add_testcase(binname, sweep_coverpoint, covergroup),
+                    f"csrr x{r_temp}, RVMODEL_MHPMEVENT",
+                    write_sigupd(r_temp, test_data),
+                    "",
+                ]
+            )
+        lines.extend(
+            [
+                "#endif",
+                "csrw RVMODEL_MHPMEVENT, zero",
+                "#if __riscv_xlen == 32",
+                "csrw CSR_MHPMEVENT3H, zero",
+                "#endif",
+                "csrw RVMODEL_MHPMCOUNTER, zero",
+                "",
+            ]
+        )
+        test_data.int_regs.return_registers([r_hval])
 
     test_data.int_regs.return_registers([r_val, r_temp])
     return lines
