@@ -11,10 +11,10 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-`define COVER_INTERRUPTSSSTCS
+`define COVER_SSTCS
 
 
-covergroup InterruptsSstcS_cg with function sample(ins_t ins);
+covergroup SstcS_cg with function sample(ins_t ins);
     option.per_instance = 0;
     `include "general/RISCV_coverage_standard_coverpoints.svh"
 
@@ -33,9 +33,6 @@ covergroup InterruptsSstcS_cg with function sample(ins_t ins);
     // mstatus_sie uses ins.current because SIE is set before the sample nop and is not
     // cleared by hardware until the interrupt is actually taken (which happens after the sample).
     mstatus_sie: coverpoint ins.current.csr[CSR_MSTATUS][1] {
-        // autofill 0/1
-    }
-    mideleg_sti: coverpoint ins.current.csr[CSR_MIDELEG][5] {
         // autofill 0/1
     }
     mie_stie: coverpoint ins.current.csr[CSR_MIE][5] {
@@ -69,11 +66,12 @@ covergroup InterruptsSstcS_cg with function sample(ins_t ins);
     }
 
     // main coverpoints
-    cp_supervisor_sti_deleg: cross priv_mode_s, menvcfg_stce, mstatus_mie, mstatus_sie, mideleg_sti, mie_stie, stimecmp_zero;
+    // mideleg.STI stays at its boot value of 1; the delegation cross is in SstcSm
+    cp_supervisor_sti: cross priv_mode_s, menvcfg_stce, mstatus_mie, mstatus_sie, mie_stie, stimecmp_zero;
     cp_supervisor_tm:   cross priv_mode_s, csrr, read_stimecmp, mcounteren_tm;
     cp_supervisor_stce: cross priv_mode_s, csrr, read_stimecmp, menvcfg_stce;
 
-    cp_user_sti:        cross priv_mode_u, menvcfg_stce, mstatus_mie, mstatus_sie, mideleg_sti, mie_stie, sip_stip_one {
+    cp_user_sti:        cross priv_mode_u, menvcfg_stce, mstatus_mie, mstatus_sie, mie_stie, sip_stip_one {
         // With Sstc disabled (STCE=0), stimecmp cannot raise STIP; legacy mip.STIP writes
         // are not exercised here, so sip.STIP=1 is unreachable when STCE=0.
         ignore_bins stce_disabled = binsof(menvcfg_stce) intersect {0} && binsof(sip_stip_one) intersect {1};
@@ -94,6 +92,6 @@ covergroup InterruptsSstcS_cg with function sample(ins_t ins);
 endgroup
 
 
-function void interruptssstcs_sample(int hart, int issue, ins_t ins);
-    InterruptsSstcS_cg.sample(ins);
+function void sstcs_sample(int hart, int issue, ins_t ins);
+    SstcS_cg.sample(ins);
 endfunction

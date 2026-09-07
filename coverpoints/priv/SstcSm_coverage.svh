@@ -11,10 +11,10 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-`define COVER_INTERRUPTSSSTCSM
+`define COVER_SSTCSM
 
 
-covergroup InterruptsSstcSm_cg with function sample(ins_t ins);
+covergroup SstcSm_cg with function sample(ins_t ins);
     option.per_instance = 0;
     `include "general/RISCV_coverage_standard_coverpoints.svh"
 
@@ -83,6 +83,6 @@ covergroup InterruptsSstcSm_cg with function sample(ins_t ins);
 endgroup
 
 
-function void interruptssstcsm_sample(int hart, int issue, ins_t ins);
-    InterruptsSstcSm_cg.sample(ins);
+function void sstcsm_sample(int hart, int issue, ins_t ins);
+    SstcSm_cg.sample(ins);
 endfunction

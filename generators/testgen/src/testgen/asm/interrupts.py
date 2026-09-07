@@ -427,7 +427,7 @@ def set_mpie(r_scratch: int, enable: bool) -> list[str]:
 def mmode_sti_setup(r_scratch: int, r_stce: int, mideleg_sti: int, mie_stie: int) -> list[str]:
     """Common M-mode setup for Sstc STI tests: disable interrupts, set mideleg/mie/STCE, stimecmp=max.
 
-    Leaves interrupts globally disabled (MIE=0, SIE=0) with stimecmp=-1 (no pending STI).
+    Must be called from M-mode. Leaves interrupts globally disabled (MIE=0, SIE=0) with stimecmp=-1 (no pending STI).
     Caller must enable MIE/SIE as needed for the specific test.
 
     Args:
@@ -437,7 +437,6 @@ def mmode_sti_setup(r_scratch: int, r_stce: int, mideleg_sti: int, mie_stie: int
         mie_stie: 1 to enable STIE in mie, 0 to disable
     """
     lines = [
-        "RVTEST_GOTO_MMODE",
         "csrw mie, zero",
         "csrci mstatus, 8 # MIE=0",
         "csrci mstatus, 2 # SIE=0",
@@ -463,9 +462,8 @@ def mmode_sti_setup(r_scratch: int, r_stce: int, mideleg_sti: int, mie_stie: int
 
 
 def mmode_sti_cleanup(r_scratch: int, r_stce: int) -> list[str]:
-    """Restore M-mode state after an Sstc STI test."""
+    """Restore M-mode state after an Sstc STI test. Must be called from M-mode."""
     return [
-        "RVTEST_GOTO_MMODE",
         "csrci mstatus, 8",
         "csrci mstatus, 2",
         "csrw mideleg, zero",
