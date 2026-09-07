@@ -1157,10 +1157,10 @@
     // medeleg[17] = 0: reserved
     // medeleg[18] = 1: delegate software check
     // medeleg[19] = 1: delegate hardware check
-    // mideleg[20] = 1: delegate instruction guest-page fault
-    // mideleg[21] = 1: delegate load guest-page fault
+    // medeleg[20] = 1: delegate instruction guest-page fault
+    // medeleg[21] = 1: delegate load guest-page fault
     // medeleg[22] = 1: delegate virtual instruction
-    // mideleg[23] = 1: delegate store guest-page fault
+    // medeleg[23] = 1: delegate store guest-page fault
     // higher bits are reserved or custom
     li t0, 0x0FCB5FF
     li t0, 0x0FCB0FF # *** dh 4/24/26 temporary don't delegate any ecalls until SBI forwarding is implemented
