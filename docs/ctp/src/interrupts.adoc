@@ -86,5 +86,3 @@ https://docs.google.com/spreadsheets/d/18S2xJ6lxXhe2X9N9zcahoPMdvrqEnBFKdldi1fc7
 ,===
 
 include::norm/SstcS_norm_rules.adoc[]
-
-TODO: beef up testing stimecmp values, behavior near wraparound
