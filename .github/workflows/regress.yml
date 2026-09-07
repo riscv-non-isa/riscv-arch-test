@@ -13,9 +13,9 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  SAIL_VERSION: "0.13"
-  RISCV_TOOLCHAIN_VERSION: "2026.07.15"
-  LLVM_VERSION: "22"
+  SAIL_VERSION: "0.13.1"
+  RISCV_TOOLCHAIN_VERSION: "2026.08.27"
+  LLVM_VERSION: "23"
 
 permissions:
   contents: read
@@ -35,7 +35,7 @@ jobs:
         uses: ./.github/actions/setup-tools
 
       - name: Run prek
-        uses: j178/prek-action@5337cb91e0fa35a7ff31b9ca345126d8bbbcdf16 # v2.0.6
+        uses: j178/prek-action@4e14d07f9231acabce116ccfca13b13dd9755ece # v3.0.0
 
   # Data-driven regression.
   # Configs are auto-discovered from the config directory.
@@ -290,11 +290,11 @@ jobs:
         uses: ./.github/actions/setup-tools
 
       - name: Regenerate tests and coverpoints
-        run: make clean-tests tests
+        run: make tests
 
       - name: Check for differences
         run: |
-          dirs=(tests/rv32i tests/rv32e tests/rv64i tests/rv64e coverpoints/unpriv coverpoints/coverage)
+          dirs=(tests coverpoints)
           changed=$(git diff --name-only -- "${dirs[@]}")
           untracked=$(git ls-files --others --exclude-standard -- "${dirs[@]}")
           if [ -n "$changed" ] || [ -n "$untracked" ]; then

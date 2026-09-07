@@ -61,6 +61,9 @@
 # MARCH: rv32i_zicsr_zifencei_zicboz
 ##### END_TEST_CONFIG #####
 
+// TODO: Remove BOOT_TO_MMODE when converting this test to T-SBI.
+#define BOOT_TO_MMODE
+
 #define SIGUPD_COUNT 30
 
 
@@ -177,6 +180,7 @@ main:
 //                    4MB PAGE    Region 1 under test at level 1 -- RWX permissions given to the region
 //---------------------------------------------------------------------------------------------------------------------------------
 
+#ifdef S1P12P0_OR_LATER_SUPPORTED
   // Test case 2: Test in S-Mode | WX bit set | Expected = Store Page fault
   SUPERPAGE_PTE_SETUP_SV32(rvtest_data_1, (PTE_D | PTE_A | PTE_X | PTE_W | PTE_V), va_data, LEVEL1)
   sfence.vma
@@ -192,6 +196,7 @@ main:
   sfence.vma
 
   TEST_CASES_RUNNER Smode, va_data, LEVEL1, test3
+#endif
 
 //---------------------------------------------------------------------------------------------------------------------------------
 //                    4MB PAGE    Region 1 under test at level 1 -- RWX permissions given to the region
@@ -261,11 +266,13 @@ main:
 //                    4MB PAGE    Region 1 under test at level 1 -- RWX permission given to the region
 //---------------------------------------------------------------------------------------------------------------------------------
 
+#ifdef RVMODEL_ACCESS_FAULT_ADDRESS   // skipped when the DUT has no reliably-faulting address
   // Test case 10: Test in S-Mode | RWX bit set | Expected = Store access fault
   SUPERPAGE_PTE_SETUP_SV32(RVMODEL_ACCESS_FAULT_ADDRESS, (PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL1)
   sfence.vma
 
   TEST_CASES_RUNNER_2 Smode, RVMODEL_ACCESS_FAULT_ADDRESS, va_data, LEVEL1, test10
+#endif
 
 
 //---------------------------------------------------------------------------------------------------------------------------------
@@ -286,6 +293,7 @@ main:
 //                    4KB PAGE    Region 1 under test at level 0 -- RWX permissions given to the region
 //---------------------------------------------------------------------------------------------------------------------------------
 
+#ifdef S1P12P0_OR_LATER_SUPPORTED
   // Test case 12: Test in S-Mode | WX bit set | Expected = Store Page fault
   PTE_SETUP_SV32(rvtest_slvl0_pg_tbl, (PTE_V), va_data, LEVEL1)
   PTE_SETUP_SV32(rvtest_data_1, (PTE_D | PTE_A | PTE_X | PTE_W | PTE_V), va_data, LEVEL0)
@@ -303,6 +311,7 @@ main:
   sfence.vma
 
   TEST_CASES_RUNNER Smode, va_data, LEVEL0, test13
+#endif
 
 //---------------------------------------------------------------------------------------------------------------------------------
 //                    4KB PAGE    Region 1 under test at level 0 -- RWX permissions given to the region
@@ -378,28 +387,33 @@ main:
 //                    4KB PAGE    Region 1 under test at level 0 -- RWX permission given to the region
 //---------------------------------------------------------------------------------------------------------------------------------
 
+#ifdef RVMODEL_ACCESS_FAULT_ADDRESS   // skipped when the DUT has no reliably-faulting address
   // Test case 20: Test in S-Mode | Incorrect PTE setup | Expected = Store access fault
   PTE_SETUP_SV32(RVMODEL_ACCESS_FAULT_ADDRESS, (PTE_V), va_data, LEVEL1)
   PTE_SETUP_SV32(rvtest_data_1, (PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL0)
   sfence.vma
 
   TEST_CASES_RUNNER_2 Smode, RVMODEL_ACCESS_FAULT_ADDRESS, va_data, LEVEL0, test20
+#endif
 
 //---------------------------------------------------------------------------------------------------------------------------------
 //                    4KB PAGE    Region 1 under test at level 0 -- RWX permission given to the region
 //---------------------------------------------------------------------------------------------------------------------------------
 
+#ifdef RVMODEL_ACCESS_FAULT_ADDRESS   // skipped when the DUT has no reliably-faulting address
   // Test case 21: Test in S-Mode | RWX bit set | Expected = Store access fault
   PTE_SETUP_SV32(rvtest_slvl0_pg_tbl, (PTE_V), va_data, LEVEL1)
   PTE_SETUP_SV32(RVMODEL_ACCESS_FAULT_ADDRESS, (PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL0)
   sfence.vma
 
   TEST_CASES_RUNNER_2 Smode, RVMODEL_ACCESS_FAULT_ADDRESS, va_data, LEVEL0, test21
+#endif
 
 //---------------------------------------------------------------------------------------------------------------------------------
 //                    4KB PAGE    Region 1 under test at level 0 -- RWX permission given to the region
 //---------------------------------------------------------------------------------------------------------------------------------
 
+#ifdef S1P12P0_OR_LATER_SUPPORTED
   // Test case 22: Test in S-Mode | PTE.D set for level 1 PTE | Expected = Store Page fault
   PTE_SETUP_SV32(rvtest_slvl0_pg_tbl, (PTE_D | PTE_V), va_data, LEVEL1)
   PTE_SETUP_SV32(rvtest_data_1, (PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL0)
@@ -428,6 +442,7 @@ main:
   sfence.vma
 
   TEST_CASES_RUNNER Smode, va_data, LEVEL0, test24
+#endif
 
 
 //---------------------------------------------------------------------------------------------------------------------------------

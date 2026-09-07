@@ -18,6 +18,9 @@
 # MARCH: rv64i_zicsr_zifencei
 ##### END_TEST_CONFIG #####
 
+// TODO: Remove BOOT_TO_MMODE when converting this test to T-SBI.
+#define BOOT_TO_MMODE
+
 #define SIGUPD_COUNT 15
 #define TRAP_SIGUPD_COUNT 50
 
@@ -25,6 +28,8 @@
 #include "riscv_arch_test.h"
 
 RVTEST_BEGIN
+
+#ifdef S1P12P0_OR_LATER_SUPPORTED
 
 //---------------------------------------------------------------------------------------------------------------------------------
 // Test RWX permissions
@@ -98,10 +103,11 @@ main:
 
   SATP_SETUP_RV64(sv39)                                                  // Set SATP for virtualization
   sfence.vma                                                             // Flush TLB
-#ifndef SM1P11P0_SUPPORTED
-  LI(   t0, MENVCFG_PBMTE)
-  csrc  menvcfg, t0                                                     // Clear menvcfg.PBMTE (Disable SVPBMT)
-#endif
+  #ifdef SM1P12P0_OR_LATER_SUPPORTED
+      LI(t0, MENVCFG_PBMTE)
+      csrc menvcfg, t0                                                  // Clear menvcfg.PBMTE (Disable SVPBMT)
+  #endif
+
 //---------------------------------------------------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------------------------------------------------
 //                                                    TESTS AT LEVEL 2
@@ -137,6 +143,8 @@ main:
 
 
 //---------------------------------------------------------------------------------------------------------------------------------
+#endif
+
 RVTEST_CODE_END
 RVTEST_DATA_BEGIN
 
