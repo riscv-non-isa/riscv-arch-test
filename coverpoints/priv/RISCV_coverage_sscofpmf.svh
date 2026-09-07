@@ -10,7 +10,6 @@
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
-
     // helper coverpoints for the Sscofpmf extension
     csr_access_pattern: coverpoint ins.current.insn {
         wildcard bins csrrw0    = {CSRRW} iff (ins.current.rs1_val ==  0);
@@ -19,6 +18,15 @@
         wildcard bins csrrc1    = {CSRRC} iff (ins.current.rs1_val == '1);
         wildcard bins read_only = {CSRRS} iff (ins.current.rs1_val ==  0);
    }
+   `ifdef UDB_MXLEN_64
+        mhpmevent_xinh_combos: coverpoint ins.current.csr[CSR_MHPMEVENT3][62:58] {
+            bins combo[] = {[0:31]};  // all MINH/SINH/UINH/VSINH/VUINH combinations
+        }
+    `else
+        mhpmevent_xinh_combos: coverpoint ins.current.csr[CSR_MHPMEVENT3 + 12'h400][30:26] {
+            bins combo[] = {[0:31]};
+        }
+    `endif
 
     // Pack the 29 OF bits (mhpmevent3..mhpmevent31) into one expression via macro
     // NOTE: must be defined before any coverpoint below that uses `OF_VEC
@@ -56,32 +64,30 @@
                      ins.current.csr[CSR_MHPMEVENT3H][31]}
     `endif
 
+    // State-based (not instruction-gated) so these are valid regardless of which
+    // privilege mode the CSR write itself retired in.
     `ifdef UDB_MXLEN_64
-        mhpmevent_inhibits_pattern: coverpoint ins.current.insn {
-                wildcard bins none_set  = {CSRRW} iff (ins.current.insn[31:20] == CSR_MHPMEVENT3 && ins.current.rs1_val[62:58] == 5'b00000);
-                wildcard bins msu_set   = {CSRRW} iff (ins.current.insn[31:20] == CSR_MHPMEVENT3 && ins.current.rs1_val[62:58] == 5'b11100);
-                wildcard bins minh_only = {CSRRW} iff (ins.current.insn[31:20] == CSR_MHPMEVENT3 && ins.current.rs1_val[62:58] == 5'b10000);
-                wildcard bins sinh_only = {CSRRW} iff (ins.current.insn[31:20] == CSR_MHPMEVENT3 && ins.current.rs1_val[62:58] == 5'b01000);
-                wildcard bins uinh_only = {CSRRW} iff (ins.current.insn[31:20] == CSR_MHPMEVENT3 && ins.current.rs1_val[62:58] == 5'b00100);
+        mhpmevent_inhibits_pattern_state: coverpoint (ins.current.csr[CSR_MHPMEVENT3][62:58]) {
+                bins none_set  = {5'b00000};
+                bins msu_set   = {5'b11100};
+                bins minh_only = {5'b10000};
+                bins sinh_only = {5'b01000};
+                bins uinh_only = {5'b00100};
         }
-        `else
-        // On RV32, MINH/SINH/UINH/VSINH/VUINH live in mhpmevent*h[30:26] (address + 0x400)
-        mhpmevent_inhibits_pattern: coverpoint ins.current.insn {
-                wildcard bins none_set  = {CSRRW} iff (ins.current.insn[31:20] == CSR_MHPMEVENT3 + 12'h400 && ins.current.rs1_val[30:26] == 5'b00000);
-                wildcard bins msu_set   = {CSRRW} iff (ins.current.insn[31:20] == CSR_MHPMEVENT3 + 12'h400 && ins.current.rs1_val[30:26] == 5'b11100);
-                wildcard bins minh_only = {CSRRW} iff (ins.current.insn[31:20] == CSR_MHPMEVENT3 + 12'h400 && ins.current.rs1_val[30:26] == 5'b10000);
-                wildcard bins sinh_only = {CSRRW} iff (ins.current.insn[31:20] == CSR_MHPMEVENT3 + 12'h400 && ins.current.rs1_val[30:26] == 5'b01000);
-                wildcard bins uinh_only = {CSRRW} iff (ins.current.insn[31:20] == CSR_MHPMEVENT3 + 12'h400 && ins.current.rs1_val[30:26] == 5'b00100);
-        }
-    `endif
-    `ifdef UDB_MXLEN_64
-        mhpmevent_inhibits_all_zeros: coverpoint ins.current.insn {
-                wildcard bins write_pattern = {CSRRW} iff (ins.current.insn[31:20] == CSR_MHPMEVENT3 && ins.current.rs1_val[62:58] == 5'b00000);
+        mhpmevent_inhibits_zero_state: coverpoint (ins.current.csr[CSR_MHPMEVENT3][62:58] == 5'b00000) {
+                bins yes = {1};
         }
     `else
         // On RV32, MINH/SINH/UINH/VSINH/VUINH live in mhpmevent*h[30:26] (address + 0x400)
-        mhpmevent_inhibits_all_zeros: coverpoint ins.current.insn {
-                wildcard bins write_pattern = {CSRRW} iff (ins.current.insn[31:20] == CSR_MHPMEVENT3 + 12'h400 && ins.current.rs1_val[30:26] == 5'b00000);
+        mhpmevent_inhibits_pattern_state: coverpoint (ins.current.csr[CSR_MHPMEVENT3 + 12'h400][30:26]) {
+                bins none_set  = {5'b00000};
+                bins msu_set   = {5'b11100};
+                bins minh_only = {5'b10000};
+                bins sinh_only = {5'b01000};
+                bins uinh_only = {5'b00100};
+        }
+        mhpmevent_inhibits_zero_state: coverpoint (ins.current.csr[CSR_MHPMEVENT3 + 12'h400][30:26] == 5'b00000) {
+                bins yes = {1};
         }
     `endif
 
@@ -90,11 +96,17 @@
         mhpmevent_of_zero: coverpoint ins.current.csr[CSR_MHPMEVENT3][63] {
                 bins zero = {0};
         }
+        mhpmevent_of_one: coverpoint ins.current.csr[CSR_MHPMEVENT3 + 12'h400][31] {
+                bins one = {1};
+        }
     `else
         // On RV32, Sscofpmf bits (including OF) live in mhpmevent*h[31:28] (CSR address + 0x400)
         mhpmevent_of: coverpoint ins.current.csr[CSR_MHPMEVENT3 + 12'h400][31] {}
         mhpmevent_of_zero: coverpoint ins.current.csr[CSR_MHPMEVENT3 + 12'h400][31] {
                 bins zero = {0};
+        }
+        mhpmevent_of_one: coverpoint ins.current.csr[CSR_MHPMEVENT3 + 12'h400][31] {
+                bins one = {1};
         }
     `endif
     hpmcounter_nonzero: coverpoint (ins.current.csr[CSR_MHPMCOUNTER3] != 0) {}
@@ -104,29 +116,26 @@
     mie_clear: coverpoint (ins.current.csr[CSR_MIE] == 0) {
             bins yes = {1};
     }
-    mhpmcounter_write_extremes: coverpoint ins.current.insn {
-        wildcard bins write_ones  = {CSRRW} iff (ins.current.insn[31:20] == CSR_MHPMCOUNTER3 && ins.current.rs1_val == '1);
-        wildcard bins write_zeros = {CSRRW} iff (ins.current.insn[31:20] == CSR_MHPMCOUNTER3 && ins.current.rs1_val == '0);
-   }
 
-    mcounteren_write_all_ones: coverpoint ins.current.insn {
-                wildcard bins write_ones = {CSRRW} iff (ins.current.insn[31:20] == CSR_MCOUNTEREN &&
-                                                  ins.current.rs1_val[31:3] == '1);
+    mhpmcounter_extreme_state: coverpoint (ins.current.csr[CSR_MHPMCOUNTER3]) {
+            bins all_ones  = {'1};
+            bins all_zeros = {'0};
     }
 
-    scountovf_of_match: coverpoint ((ins.current.csr[CSR_SCOUNTOVF][31:3] & ins.current.csr[CSR_MCOUNTEREN][31:3]) == (`OF_VEC & ins.current.csr[CSR_MCOUNTEREN][31:3])) {
-            bins match = {1};
+    mcounteren_all_ones_state: coverpoint (ins.current.csr[CSR_MCOUNTEREN][31:3] == '1) {
+            bins yes = {1};
     }
-    mcounteren_stimulus_pattern: coverpoint (ins.current.rs1_val[31:3])
-        iff (ins.current.insn[31:20] == CSR_MCOUNTEREN && (ins.current.insn ==? CSRRW || ins.current.insn ==? CSRRS || ins.current.insn ==? CSRRC)) {
-                bins all_zeros = {29'h0};
-                bins all_ones  = {29'h1FFFFFFF};
-                bins walking[] = {29'h1, 29'h2, 29'h4, 29'h8, 29'h10, 29'h20, 29'h40, 29'h80,
-                                  29'h100, 29'h200, 29'h400, 29'h800, 29'h1000, 29'h2000,
-                                  29'h4000, 29'h8000, 29'h10000, 29'h20000, 29'h40000,
-                                  29'h80000, 29'h100000, 29'h200000, 29'h400000, 29'h800000,
-                                  29'h1000000, 29'h2000000, 29'h4000000, 29'h8000000, 29'h10000000};
-   }
+
+    mcounteren_stimulus_pattern_state: coverpoint (ins.current.csr[CSR_MCOUNTEREN][31:3]) {
+        bins all_zeros = {29'h0};
+        bins all_ones  = {29'h1FFFFFFF};
+        bins walking[] = {29'h1, 29'h2, 29'h4, 29'h8, 29'h10, 29'h20, 29'h40, 29'h80,
+                           29'h100, 29'h200, 29'h400, 29'h800, 29'h1000, 29'h2000,
+                           29'h4000, 29'h8000, 29'h10000, 29'h20000, 29'h40000,
+                           29'h80000, 29'h100000, 29'h200000, 29'h400000, 29'h800000,
+                           29'h1000000, 29'h2000000, 29'h4000000, 29'h8000000, 29'h10000000};
+    }
+
     of_stimulus_pattern: coverpoint (`OF_VEC) {
         bins all_zeros = {29'h0};
         bins all_ones  = {29'h1FFFFFFF};
@@ -135,15 +144,16 @@
                            29'h4000, 29'h8000, 29'h10000, 29'h20000, 29'h40000,
                            29'h80000, 29'h100000, 29'h200000, 29'h400000, 29'h800000,
                            29'h1000000, 29'h2000000, 29'h4000000, 29'h8000000, 29'h10000000};
-   }
+    }
 
     of_write_pattern: coverpoint (`OF_VEC) {
             bins all_ones     = {29'h1FFFFFFF};
             bins checker_even = {29'b1_0101_0101_0101_0101_0101_0101_0101}; // even-indexed OF bits set
             bins checker_odd  = {29'b0_1010_1010_1010_1010_1010_1010_1010}; // odd-indexed OF bits set
     }
-    sip_lcofi:      coverpoint ins.current.csr[CSR_SIP][13] {}
-    sie_lcofi_prev: coverpoint ins.prev.csr[CSR_SIE][13] {}
+
+    sip_lcofi: coverpoint ins.current.csr[CSR_SIP][13] {}
+    sie_lcofi: coverpoint ins.current.csr[CSR_SIE][13] {}
 
     `ifdef UDB_MXLEN_64
         mhpmevent_all_zero: coverpoint (ins.current.csr[CSR_MHPMEVENT3] == '0) {
@@ -179,16 +189,18 @@
                                 CSR_MHPMEVENT30H, CSR_MHPMEVENT31H};
              `endif
     }
+
     lcofi_ip_one: coverpoint ins.current.csr[CSR_MIP][13] {
             bins one  = {1};
     }
     lcofi_ip: coverpoint ins.current.csr[CSR_MIP][13] {}
-    lcofi_ie:      coverpoint ins.current.csr[CSR_MIE][13] {}
+    lcofi_ie: coverpoint ins.current.csr[CSR_MIE][13] {}
     lcofi_mideleg: coverpoint ins.current.csr[CSR_MIDELEG][13] {}
     lcofi_mideleg_one: coverpoint ins.current.csr[CSR_MIDELEG][13] {
             bins one  = {1};
     }
-    mstatus_mie_clear: coverpoint ins.prev.csr[CSR_MSTATUS][3] {
+
+    mstatus_mie_clear: coverpoint ins.current.csr[CSR_MSTATUS][3] {
             bins zero = {0};
     }
     mstatus_mie_set: coverpoint ins.current.csr[CSR_MSTATUS][3] {
@@ -200,6 +212,19 @@
     sstatus_sie_set: coverpoint ins.current.csr[CSR_SSTATUS][1] {
             bins one = {1};
     }
-    trap_taken: coverpoint ins.current.trap {
-            bins yes = {1};
+
+    mie_state: coverpoint (ins.current.csr[CSR_MIE]) {
+            bins all_zeros = {'0};
+            bins all_ones  = {'1};
+    }
+    sie_state: coverpoint (ins.current.csr[CSR_SIE]) {
+            bins all_zeros = {'0};
+            bins all_ones  = {'1};
+    }
+
+    mip_other_pending: coverpoint {ins.current.csr[CSR_MIP][11], ins.current.csr[CSR_MIP][7], ins.current.csr[CSR_MIP][3]} {
+            bins none = {3'b000};
+            bins meip = {3'b100};
+            bins mtip = {3'b010};
+            bins msip = {3'b001};
     }
