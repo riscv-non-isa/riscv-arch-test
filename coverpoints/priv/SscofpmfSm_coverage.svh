@@ -17,7 +17,7 @@ covergroup SscofpmfSm_cg with function sample(ins_t ins);
     `include "RISCV_coverage_sscofpmf.svh"
 
     cp_minh_inhibits_mmode:    cross priv_mode_m, mhpmevent_xinh_combos, mhpmevent_of_zero;
-    cp_of_set_on_overflow:     cross priv_mode_m, mip_clear, mie_clear, mhpmevent_inhibits_pattern_state, mhpmevent_of_one;
+    cp_of_set_on_overflow:     cross priv_mode_m, lcofi_ip_one, mie_clear, mhpmevent_inhibits_pattern_state, mhpmevent_of_one;
     `ifdef UDB_MXLEN_64
         cp_overflow_hw_only:   cross priv_mode_m, mip_clear, mie_clear, mhpmcounter_extreme_state, mhpmevent_all_zero;
     `else
