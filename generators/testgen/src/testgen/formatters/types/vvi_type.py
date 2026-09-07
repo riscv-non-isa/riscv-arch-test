@@ -7,13 +7,14 @@
 
 from testgen.asm.vector_helpers import (
     VectorLoad,
-    handle_lmul_ifdef,
+    handle_parameter_exclusions,
     load_test_vtype,
     load_vec_regs,
     load_vxrm,
     prep_mask_v,
     write_sigupd_v,
     write_sigupd_v_len,
+    write_sigupd_vxsat,
 )
 from testgen.data.params import InstructionParams
 from testgen.data.state import TestData
@@ -85,6 +86,7 @@ def format_vvi_sat(
 ) -> tuple[list[str], list[str], list[str]]:
     setup, test, check = format_vvi_like_type(instr_str, test_data, params, "VVI_SAT")
     setup = ["csrwi vxsat, 0"] + setup
+    check = write_sigupd_vxsat(test_data) + check
     return setup, test, check
 
 
@@ -118,9 +120,9 @@ def format_vvi_like_type(
     assert params.vd is not None and params.vd_val_pointer is not None, (
         f"vd and vd_val_pointer must be provided for {type_name}-type instructions"
     )
-    assert params.temp_reg is not None, f"temp_reg must provided for be {type_name}-type instructions"
-    assert params.sew is not None, f"sew must provided for be {type_name}-type instructions"
-    assert params.lmul is not None, f"lmul must provided for be {type_name}-type instructions"
+    assert params.temp_reg is not None, f"temp_reg must be provided for {type_name}-type instructions"
+    assert params.sew is not None, f"sew must be provided for {type_name}-type instructions"
+    assert params.lmul is not None, f"lmul must be provided for {type_name}-type instructions"
     assert test_data.test_chunk is not None, f"format_{type_name.lower()}_type must be used with an active TestChunk"
 
     if widen is None:
@@ -170,7 +172,7 @@ def format_vvi_like_type(
 
     if params.vector_suite == "length":
         sig_lmul = params.lmul * (2 if "vd" in widen else 1)
-        check = [*write_sigupd_v_len(test_data, params, 1, sig_lmul, widen_vd="vd" in widen)]
+        check = [*write_sigupd_v_len(test_data, params, sig_lmul, widen_vd="vd" in widen)]
     else:
         check = [*write_sigupd_v(test_data, params, widen_vd="vd" in widen)]
 
@@ -178,6 +180,6 @@ def format_vvi_like_type(
     if params.maskval:
         test_data.vec_regs.return_register(0)
 
-    handle_lmul_ifdef(params.lmul, setup, check)
+    handle_parameter_exclusions(params.lmul, setup, check)
 
     return (setup, test, check)

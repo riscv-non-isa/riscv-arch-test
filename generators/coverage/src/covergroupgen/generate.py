@@ -7,8 +7,6 @@
 # Generate functional covergroups for RISC-V instructions
 ##################################
 
-from __future__ import annotations
-
 import csv
 import importlib.resources
 import math
@@ -290,8 +288,9 @@ def _parse_testplan_csv(csv_path: Path) -> dict[tuple[str, str], list[str]]:
                 if not isinstance(value, str) or value == "":
                     continue
                 if key == "Type":
-                    # TODO: Alias sample functions that are the same!
-                    cps.append(f"sample_{value}")
+                    # TODO: Expand the list of aliased types to avoid duplicate sample function templates
+                    sample_type = value.removesuffix("_RD_NX0")
+                    cps.append(f"sample_{sample_type}")
                 else:
                     # For special entries, append the value as a suffix
                     # e.g. cp_rd_edges with value "lui" becomes cp_rd_edges_lui
@@ -544,9 +543,14 @@ def _resolve_coverpoint(cp: str, arch: str, instr: str) -> str | None:
     if arch.startswith("SsstrictV") and instr in SSSTRICTV_SKIP_COMBINATIONS.get(cp, ()):
         return None
 
-    # cp_custom_ffLS requires LMUL=2; skip where that is infeasible at this SEW.
+    # cp_custom_ffLS requires LMUL=2; Use a fallback when this isn't possible
     if cp == "cp_custom_ffLS" and _is_vector(arch) and not _ffLS_feasible(instr, int(_get_effew(arch))):
-        return None
+        cp = "cp_custom_ffLS_lmul_lt2"
+
+        eew_m = re.search(r"e(\d+)ff", instr)
+        eew = int(eew_m.group(1)) if eew_m else 0
+        if eew >= 32:
+            cp += f"_eew{eew}"
 
     # _sew_ge{N}: only applies when arch SEW >= N; strip the suffix when it does.
     ge_match = re.search(r"_sew_ge(\d+)$", cp)
@@ -634,11 +638,9 @@ def _gen_instrs(
             covergroup_lines.append('    `include "general/RISCV_coverage_ssstrictv_helpers.svh"\n')
 
         # Coverpoint entries (skip metadata columns: sample_*, RV32, RV64, EFFEW*)
-        # VCS requires coverpoints to be declared before they are referenced by cross coverpoints.
-        # Some templates embed cross definitions (for example, *_frm templates), so prioritize
-        # cp_frm_* declarations first, then regular coverpoints, then explicit cross templates.
-        frm_coverpoints = {"cp_frm_2", "cp_frm_3", "cp_frm_4"}
-        ordered_cps = sorted(cps, key=lambda cp: (0 if cp in frm_coverpoints else 2 if cp.startswith("cr_") else 1, cp))
+        # VCS requires coverpoints to be declared before cross references.
+        early_cps = {"cp_frm_2", "cp_frm_3", "cp_frm_4", "std_vec"}
+        ordered_cps = sorted(cps, key=lambda cp: (0 if cp in early_cps else 2 if cp.startswith("cr_") else 1, cp))
         # Per-operand cross filtering depends only on the instruction, so resolve
         # its operand presence and max LMUL once rather than per coverpoint.
         has_vd, has_vs1, has_vs2 = _operand_presence(_instr_type)

@@ -6,8 +6,6 @@
 
 """Smstateen privileged extension test generator."""
 
-from __future__ import annotations
-
 from testgen.asm.csr import csr_walk_test
 from testgen.asm.helpers import comment_banner
 from testgen.constants import INDENT
@@ -561,8 +559,9 @@ def _generate_fcsr_lower_fp_instrs(test_data: TestData) -> list[str]:
 
 @add_priv_test_generator(
     "Smstateen",
-    required_extensions=["S", "Zicsr", "Smstateen"],
+    required_extensions=["Smstateen"],
     march_extensions=["Smstateen", "Zcmt", "Zfinx"],
+    extra_defines=["#define BOOT_TO_MMODE"],
 )
 def make_smstateen(test_data: TestData) -> list[TestChunk]:
     """Generate tests for Smstateen state-enable extension testsuite."""
@@ -574,7 +573,7 @@ def make_smstateen(test_data: TestData) -> list[TestChunk]:
     tc.code.extend(_generate_walking_ones(test_data))
 
     # cp_envcfg — only when SM1P11P0 is not present
-    tc.code.append("#ifndef SM1P11P0_SUPPORTED")
+    tc.code.append("#ifdef SM1P12P0_OR_LATER_SUPPORTED")
     tc.code.extend(
         _generate_bit_controlled(
             test_data,
@@ -636,7 +635,7 @@ def make_smstateen(test_data: TestData) -> list[TestChunk]:
     tc.code.append("#endif  // SDTRIG_SUPPORTED")
 
     # cp_p1p13 — only when Sm1p13 + Hypervisor present
-    tc.code.append("#if defined(SM1P13_SUPPORTED) && defined(H_SUPPORTED)")
+    tc.code.append("#if defined(SM1P13P0_OR_LATER_SUPPORTED) && defined(H_SUPPORTED)")
     tc.code.extend(
         _generate_bit_controlled(
             test_data,
@@ -647,7 +646,7 @@ def make_smstateen(test_data: TestData) -> list[TestChunk]:
             csrs=["hedelegh"],
         )
     )
-    tc.code.append("#endif  // SM1P13_SUPPORTED && H_SUPPORTED")
+    tc.code.append("#endif  // SM1P13P0_OR_LATER_SUPPORTED && H_SUPPORTED")
 
     # cp_srmcfg — only when Ssqosid is present
     tc.code.append("#ifdef SSQOSID_SUPPORTED")
