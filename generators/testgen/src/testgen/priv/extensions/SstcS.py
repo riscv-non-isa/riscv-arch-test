@@ -9,8 +9,7 @@
 """Sstc interrupt test generator (supervisor and user modes).
 
 The suite boots to S-mode, leaves mideleg.STI at its boot value of 1, and reaches M-mode
-CSRs (mstatus.MIE, mie, mcounteren, menvcfg, stimecmp while STCE=0) only through T-SBI
-calls. U-mode bins are set up from S-mode and entered with RVTEST_TSBI_GOTO_UMODE.
+CSRs (mcounteren, menvcfg, stimecmp while STCE=0) only through T-SBI calls. U-mode bins are set up from S-mode and entered with RVTEST_TSBI_GOTO_UMODE.
 """
 
 from testgen.asm.helpers import comment_banner
@@ -20,8 +19,6 @@ from testgen.data.state import TestData
 from testgen.data.test_chunk import TestChunk
 from testgen.priv.extensions.SstcCommon import (
     MODE_NAMES,
-    goto_mode,
-    mcounteren_tm,
     menvcfg_stce,
     stce_tests,
     tm_tests,
@@ -30,11 +27,6 @@ from testgen.priv.registry import add_priv_test_generator
 
 _CG = "SstcS_cg"
 _MODES = ["S", "U"]
-
-
-def _tsbi_mstatus_mie(reg: int, enable: int) -> list[str]:
-    # MPIE | MIE: the T-SBI handler returns with mret, which copies MPIE into MIE.
-    return [f"LI(x{reg}, 0x88)", tsbi_call(f"{'csrs' if enable else 'csrc'} mstatus, x{reg}")]
 
 
 def _tsbi_stimecmp_max(reg: int) -> list[str]:
@@ -59,7 +51,7 @@ def _tsbi_stimecmp_zero() -> list[str]:
 
 
 def lower_sti_tests(test_data: TestData, covergroup: str, mode: str) -> list[str]:
-    """STI cross of menvcfg_stce x mstatus_mie x mstatus_sie x mie_stie (16 bins).
+    """STI cross of menvcfg_stce x sstatus_sie x sie_stie (8 bins), with mcounteren.TM=1.
 
     S-mode (cp_supervisor_sti): for STCE=1, write stimecmp=0 in S-mode so the interrupt fires
     while already in S-mode. For STCE=0, stimecmp=0 is written through T-SBI (STCE=0 keeps
@@ -69,59 +61,53 @@ def lower_sti_tests(test_data: TestData, covergroup: str, mode: str) -> list[str
     before entering U-mode so the interrupt fires in U-mode; it is delegated to S-mode
     regardless of SIE. With STCE=0 no timer interrupt fires and only the CSR state is sampled.
 
-    Entry and exit state for each bin: STCE=0, stimecmp=-1, sie=0, SIE=0, MIE=0.
+    Entry and exit state for each bin: STCE=0, stimecmp=-1, sie=0, SIE=0.
     """
     coverpoint = f"cp_{MODE_NAMES[mode]}_sti"
     r_scratch, r_time, r_hi = test_data.int_regs.get_registers(3)
 
     lines = [
-        comment_banner(coverpoint, f"{mode}-mode STI: menvcfg_stce x mstatus_mie x mstatus_sie x mie_stie (16 bins)"),
+        comment_banner(coverpoint, f"{mode}-mode STI: menvcfg_stce x sstatus_sie x sie_stie (8 bins)"),
         "",
     ]
 
     for stce in [0, 1]:
-        for mie in [0, 1]:
-            for sie in [0, 1]:
-                for stie in [0, 1]:
-                    binname = f"stce{stce}_mie{mie}_sie{sie}_stie{stie}"
-                    lines += [
-                        "",
-                        f"# {coverpoint}: STCE={stce} MIE={mie} SIE={sie} STIE={stie}",
-                    ]
-                    if stce:
-                        lines += menvcfg_stce(r_scratch, True, mode)
-                    # sie.STIE is writable in S-mode because mideleg.STI=1
-                    if stie:
-                        lines += [f"LI(x{r_scratch}, 0x20)", f"csrw sie, x{r_scratch}"]
-                    else:
-                        lines.append("csrw sie, zero")
-                    lines += _tsbi_mstatus_mie(r_scratch, mie)
-                    lines.append("csrsi sstatus, 2" if sie else "csrci sstatus, 2")
+        for sie in [0, 1]:
+            for stie in [0, 1]:
+                binname = f"stce{stce}_sie{sie}_stie{stie}"
+                lines += [
+                    "",
+                    f"# {coverpoint}: STCE={stce} SIE={sie} STIE={stie}",
+                ]
+                if stce:
+                    lines += menvcfg_stce(r_scratch, True, mode)
+                # sie.STIE is writable in S-mode because mideleg.STI=1
+                if stie:
+                    lines += [f"LI(x{r_scratch}, 0x20)", f"csrw sie, x{r_scratch}"]
+                else:
+                    lines.append("csrw sie, zero")
+                lines.append("csrsi sstatus, 2" if sie else "csrci sstatus, 2")
 
-                    if mode == "S":
-                        lines.append(test_data.add_testcase(binname, coverpoint, covergroup))
-                        lines += set_stimecmp_zero() if stce else _tsbi_stimecmp_zero()
-                        lines.append(f"RVTEST_IDLE_FOR_INTERRUPT(x{r_scratch})")
-                    else:
-                        if stce:
-                            lines += set_stimecmp_soon(r_scratch, r_time, r_hi)
-                        lines += [
-                            goto_mode("U"),
-                            test_data.add_testcase(binname, coverpoint, covergroup),
-                            f"RVTEST_IDLE_FOR_TIMER_INTERRUPT(x{r_scratch})",
-                            goto_mode("S"),
-                        ]
-
-                    lines += [
-                        "csrci sstatus, 2",
-                        *_tsbi_mstatus_mie(r_scratch, 0),
-                        "csrw sie, zero",
-                    ]
+                if mode == "S":
+                    lines.append(test_data.add_testcase(binname, coverpoint, covergroup))
+                    lines += set_stimecmp_zero() if stce else _tsbi_stimecmp_zero()
+                    lines.append(f"RVTEST_IDLE_FOR_INTERRUPT(x{r_scratch})")
+                else:
                     if stce:
-                        lines += set_stimecmp_max(r_scratch)
-                        lines += menvcfg_stce(r_scratch, False, mode)
-                    elif mode == "S":
-                        lines += _tsbi_stimecmp_max(r_scratch)
+                        lines += set_stimecmp_soon(r_scratch, r_time, r_hi)
+                    lines += [
+                        "RVTEST_TSBI_GOTO_UMODE",
+                        test_data.add_testcase(binname, coverpoint, covergroup),
+                        f"RVTEST_IDLE_FOR_TIMER_INTERRUPT(x{r_scratch})",
+                        "RVTEST_TSBI_GOTO_SMODE",
+                    ]
+
+                lines += ["csrci sstatus, 2", "csrw sie, zero"]
+                if stce:
+                    lines += set_stimecmp_max(r_scratch)
+                    lines += menvcfg_stce(r_scratch, False, mode)
+                elif mode == "S":
+                    lines += _tsbi_stimecmp_max(r_scratch)
 
     test_data.int_regs.return_registers([r_scratch, r_time, r_hi])
     return lines
@@ -134,9 +120,10 @@ def emit_lower_tests(test_data: TestData, covergroup: str, mode: str) -> list[Te
     tc.code = [
         comment_banner("SstcS", f"Supervisor timer (Sstc) interrupt tests from {mode}-mode"),
         "",
-        "# Initial state: mideleg.STI=1 from boot; stimecmp=-1 and mcounteren.TM=1 so S-mode can access stimecmp when STCE=1",
+        "# Boot state: mideleg.STI=1, mcounteren=-1, scounteren=-1, STCE=0, so S-mode can access",
+        "# stimecmp once STCE=1 and only mcounteren.TM/STCE gate U-mode reads. stimecmp has no",
+        "# reset value, so park it at -1 before any test sets STCE.",
         *_tsbi_stimecmp_max(r_scratch),
-        *mcounteren_tm(r_scratch, 1, mode),
         "",
     ]
     test_data.int_regs.return_registers([r_scratch])
@@ -148,7 +135,7 @@ def emit_lower_tests(test_data: TestData, covergroup: str, mode: str) -> list[Te
 
 @add_priv_test_generator(
     "SstcS",
-    required_extensions=["Sm", "S", "Sstc"],
+    required_extensions=["S", "Sstc"],
     extra_defines=["#define BOOT_TO_SMODE"],
 )
 def make_sstcs(test_data: TestData) -> list[TestChunk]:

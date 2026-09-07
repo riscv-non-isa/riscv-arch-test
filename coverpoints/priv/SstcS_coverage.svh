@@ -24,31 +24,18 @@ covergroup SstcS_cg with function sample(ins_t ins);
     stimecmp_zero: coverpoint ins.current.csr[CSR_STIMECMP] {
         bins zero = {0};
     }
-    // mstatus_mie uses ins.prev because the sample instruction is the stimecmp write that
-    // triggers the interrupt; hardware clears MIE in ins.current when it takes the trap.
-    // Sampling prev captures MIE as it was programmed before the interrupt fires.
-    mstatus_mie: coverpoint ins.prev.csr[CSR_MSTATUS][3]  {
-        // autofill 0/1
-    }
-    // mstatus_sie uses ins.current because SIE is set before the sample nop and is not
+    // sstatus_sie uses ins.current because SIE is set before the sample and is not
     // cleared by hardware until the interrupt is actually taken (which happens after the sample).
-    mstatus_sie: coverpoint ins.current.csr[CSR_MSTATUS][1] {
-        // autofill 0/1
-    }
-    mie_stie: coverpoint ins.current.csr[CSR_MIE][5] {
-        // autofill 0/1
-    }
-    mcounteren_tm: coverpoint ins.current.csr[CSR_MCOUNTEREN][1] {
-        // autofill 0/1
-    }
+    sstatus_sie: coverpoint ins.current.csr[CSR_SSTATUS][1];
+    sie_stie: coverpoint ins.current.csr[CSR_SIE][5];
+    mcounteren_tm: coverpoint ins.current.csr[CSR_MCOUNTEREN][1];
+    `ifdef S_SUPPORTED
+        scounteren_tm: coverpoint ins.current.csr[CSR_SCOUNTEREN][1];
+    `endif
     `ifdef UDB_MXLEN_64
-        menvcfg_stce: coverpoint ins.current.csr[CSR_MENVCFG][63] {
-            // autofill 0/1
-        }
+        menvcfg_stce: coverpoint ins.current.csr[CSR_MENVCFG][63];
     `else
-        menvcfg_stce: coverpoint ins.current.csr[CSR_MENVCFGH][31] {
-            // autofill 0/1
-        }
+        menvcfg_stce: coverpoint ins.current.csr[CSR_MENVCFGH][31];
     `endif
     csrr: coverpoint ins.current.insn[6:0] {
         bins csrr = {7'b1110011};
@@ -56,35 +43,41 @@ covergroup SstcS_cg with function sample(ins_t ins);
     read_stimecmp: coverpoint ins.current.insn[31:20] {
         bins read_stimecmp = {CSR_STIMECMP};
     }
-    `ifdef UDB_MXLEN_32
-        read_stimecmph: coverpoint ins.current.insn[31:20] {
-            bins read_stimecmp = {CSR_STIMECMPH};
-        }
-    `endif
     sip_stip_one: coverpoint ins.current.csr[CSR_SIP][5]{
         bins one = {1};
     }
 
     // main coverpoints
-    // mideleg.STI stays at its boot value of 1; the delegation cross is in SstcSm
-    cp_supervisor_sti: cross priv_mode_s, menvcfg_stce, mstatus_mie, mstatus_sie, mie_stie, stimecmp_zero;
+    // mideleg.STI stays at its boot value of 1 and mcounteren.TM=1; the delegation cross is in SstcSm
+    cp_supervisor_sti: cross priv_mode_s, menvcfg_stce, sstatus_sie, sie_stie, stimecmp_zero;
     cp_supervisor_tm:   cross priv_mode_s, csrr, read_stimecmp, mcounteren_tm;
     cp_supervisor_stce: cross priv_mode_s, csrr, read_stimecmp, menvcfg_stce;
 
-    cp_user_sti:        cross priv_mode_u, menvcfg_stce, mstatus_mie, mstatus_sie, mie_stie, sip_stip_one {
+    cp_user_sti:        cross priv_mode_u, menvcfg_stce, sstatus_sie, sie_stie, sip_stip_one {
         // With Sstc disabled (STCE=0), stimecmp cannot raise STIP; legacy mip.STIP writes
         // are not exercised here, so sip.STIP=1 is unreachable when STCE=0.
         ignore_bins stce_disabled = binsof(menvcfg_stce) intersect {0} && binsof(sip_stip_one) intersect {1};
     }
-    cp_user_tm:         cross priv_mode_u, csrr, read_stimecmp, mcounteren_tm;
+    `ifdef S_SUPPORTED
+        cp_user_tm:     cross priv_mode_u, csrr, read_stimecmp, mcounteren_tm, scounteren_tm;
+    `else
+        cp_user_tm:     cross priv_mode_u, csrr, read_stimecmp, mcounteren_tm;
+    `endif
     cp_user_stce:       cross priv_mode_u, csrr, read_stimecmp, menvcfg_stce;
 
     // also read STIMECMPH for RV32
     `ifdef UDB_MXLEN_32
+        read_stimecmph: coverpoint ins.current.insn[31:20] {
+            bins read_stimecmp = {CSR_STIMECMPH};
+        }
         cp_supervisor_tm_h:   cross priv_mode_s, csrr, read_stimecmph, mcounteren_tm;
         cp_supervisor_stce_h: cross priv_mode_s, csrr, read_stimecmph, menvcfg_stce;
 
-        cp_user_tm_h:         cross priv_mode_u, csrr, read_stimecmph, mcounteren_tm;
+        `ifdef S_SUPPORTED
+            cp_user_tm_h:     cross priv_mode_u, csrr, read_stimecmph, mcounteren_tm, scounteren_tm;
+        `else
+            cp_user_tm_h:     cross priv_mode_u, csrr, read_stimecmph, mcounteren_tm;
+        `endif
         cp_user_stce_h:       cross priv_mode_u, csrr, read_stimecmph, menvcfg_stce;
 
     `endif

@@ -31,31 +31,18 @@ covergroup SstcSm_cg with function sample(ins_t ins);
     mstatus_mie_one: coverpoint ins.prev.csr[CSR_MSTATUS][3] {
         bins one = {1};
     }
-    mideleg_sti: coverpoint ins.current.csr[CSR_MIDELEG][5] {
-        // autofill 0/1
-    }
-    mie_stie: coverpoint ins.current.csr[CSR_MIE][5] {
-        // autofill 0/1
-    }
-    mcounteren_tm: coverpoint ins.current.csr[CSR_MCOUNTEREN][1] {
-        // autofill 0/1
-    }
+    mideleg_sti: coverpoint ins.current.csr[CSR_MIDELEG][5];
+    mie_stie: coverpoint ins.current.csr[CSR_MIE][5];
+    mcounteren_tm: coverpoint ins.current.csr[CSR_MCOUNTEREN][1];
     `ifdef UDB_MXLEN_64
-        menvcfg_stce: coverpoint ins.current.csr[CSR_MENVCFG][63] {
-            // autofill 0/1
-        }
+        menvcfg_stce: coverpoint ins.current.csr[CSR_MENVCFG][63];
         menvcfg_stce_one: coverpoint ins.current.csr[CSR_MENVCFG][63] {
             bins one = {1};
         }
     `else
-        menvcfg_stce: coverpoint ins.current.csr[CSR_MENVCFGH][31] {
-            // autofill 0/1
-        }
+        menvcfg_stce: coverpoint ins.current.csr[CSR_MENVCFGH][31];
         menvcfg_stce_one: coverpoint ins.current.csr[CSR_MENVCFGH][31] {
             bins one = {1};
-        }
-        menvcfg_stce_zero: coverpoint ins.current.csr[CSR_MENVCFGH][31] {
-            bins zero = {0};
         }
     `endif
     csrr: coverpoint ins.current.insn[6:0] {
