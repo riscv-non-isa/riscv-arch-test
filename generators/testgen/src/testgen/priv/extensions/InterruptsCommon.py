@@ -9,34 +9,81 @@
 
 """Shared interrupt test generators"""
 
-from testgen.asm.helpers import comment_banner
+from collections.abc import Callable
+
 from testgen.asm.tsbi import tsbi_call
 from testgen.data.state import TestData
 from testgen.data.test_chunk import TestChunk
 
 machine_ints = {"MEI": 11, "MTI": 7, "MSI": 3}
 supervisor_ints = {"LCOFI": 13, "SEI": 9, "STI": 5, "SSI": 1, "VSEI": 10, "VSTI": 6, "VSSI": 2}
+# Interrupts raised by writing a pending bit directly instead of through the platform (cp_trigger_reg)
+reg_ints = {"MIP_SEIP": 9, "MIP_SSIP": 1, "SIP_SSIP": 1}
+# UDB_<int>_INTR_IMPL guard for each register-triggered interrupt
+reg_impl = {"MIP_SEIP": "SEI", "MIP_SSIP": "SSI", "SIP_SSIP": "SSI"}
 
 # TODO: remove once https://github.com/riscv/riscv-unified-db/pull/1963 is merged and UDB emits these
 # from the MEI/MTI/MSI/SEI/STI/SSI_INTR_IMPL parameters. UDB_LCOFI_INTR_IMPL stays derived from
-# SSCOFPMF_SUPPORTED in tests/env/derived_config.h.
+# SSCOFPMF_SUPPORTED in tests/env/derived_config.h.  VS*I_INTR_IMPL also need to be added to UDB.
 INTR_IMPL_DEFINES = [
+    '#include "rvtest_config.h"',
     "#define UDB_MEI_INTR_IMPL",
     "#define UDB_MTI_INTR_IMPL",
     "#define UDB_MSI_INTR_IMPL",
+    "#ifdef S_SUPPORTED",
     "#define UDB_SEI_INTR_IMPL",
     "#define UDB_STI_INTR_IMPL",
     "#define UDB_SSI_INTR_IMPL",
+    "#endif // S_SUPPORTED",
+    "#ifdef H_SUPPORTED",
+    "#define UDB_VSEI_INTR_IMPL",
+    "#define UDB_VSTI_INTR_IMPL",
+    "#define UDB_VSSI_INTR_IMPL",
+    "#endif // H_SUPPORTED",
 ]
 
 # RVTEST_SET/CLR_<name>_INT_<priv> macro name (tests/env/utils.h) for each interrupt type.
 # Types missing here have no trigger macros yet; their UDB_<int>_INTR_IMPL guard is never defined.
-_int_macro = {"MEI": "MEXT", "MTI": "MTIME", "MSI": "MSW", "SEI": "SEXT", "STI": "STIME", "SSI": "SSW"}
+int_macro = {"MEI": "MEXT", "MTI": "MTIME", "MSI": "MSW", "SEI": "SEXT", "STI": "STIME", "SSI": "SSW"}
+int_macro |= {name: name for name in reg_ints}
+
+# RVTEST_SET/CLR_<name>_INT_<priv> for the register-triggered interrupts. M-mode writes mip and sip
+# directly, S-mode writes sip directly and mip through T-SBI, and U-mode uses T-SBI for both.
+REG_TRIGGER_DEFINES = [
+    "#define RVTEST_SET_MIP_SEIP_INT_M li a1, 1<<9; csrs mip, a1",
+    "#define RVTEST_CLR_MIP_SEIP_INT_M li a1, 1<<9; csrc mip, a1",
+    "#define RVTEST_SET_MIP_SSIP_INT_M csrsi mip, 1<<1",
+    "#define RVTEST_CLR_MIP_SSIP_INT_M csrci mip, 1<<1",
+    "#define RVTEST_SET_SIP_SSIP_INT_M csrsi sip, 1<<1",
+    "#define RVTEST_CLR_SIP_SSIP_INT_M csrci sip, 1<<1",
+    "#define RVTEST_SET_MIP_SEIP_INT_S RVTEST_TSBI_CSR_SET(CSR_MIP, 1<<9)",
+    "#define RVTEST_CLR_MIP_SEIP_INT_S RVTEST_TSBI_CSR_CLEAR(CSR_MIP, 1<<9)",
+    "#define RVTEST_SET_MIP_SSIP_INT_S RVTEST_TSBI_CSR_SET(CSR_MIP, 1<<1)",
+    "#define RVTEST_CLR_MIP_SSIP_INT_S RVTEST_TSBI_CSR_CLEAR(CSR_MIP, 1<<1)",
+    "#define RVTEST_SET_SIP_SSIP_INT_S csrsi sip, 1<<1",
+    "#define RVTEST_CLR_SIP_SSIP_INT_S csrci sip, 1<<1",
+    "#define RVTEST_SET_MIP_SEIP_INT_U RVTEST_TSBI_CSR_SET(CSR_MIP, 1<<9)",
+    "#define RVTEST_CLR_MIP_SEIP_INT_U RVTEST_TSBI_CSR_CLEAR(CSR_MIP, 1<<9)",
+    "#define RVTEST_SET_MIP_SSIP_INT_U RVTEST_TSBI_CSR_SET(CSR_MIP, 1<<1)",
+    "#define RVTEST_CLR_MIP_SSIP_INT_U RVTEST_TSBI_CSR_CLEAR(CSR_MIP, 1<<1)",
+    "#define RVTEST_SET_SIP_SSIP_INT_U RVTEST_TSBI_CSR_SET(CSR_SIP, 1<<1)",
+    "#define RVTEST_CLR_SIP_SSIP_INT_U RVTEST_TSBI_CSR_CLEAR(CSR_SIP, 1<<1)",
+]
 
 # Privilege needed to access a CSR, keyed by name prefix, and privilege held by each test mode.
 # HS-mode can reach h* and vs* CSRs directly; VS-mode reaches only its own s* aliases.
 _CSR_LEVEL = {"m": 3, "h": 2, "vs": 2, "s": 1}
 _MODE_LEVEL = {"M": 3, "S": 2, "VS": 1, "U": 0, "VU": 0}
+
+# Mode each suite boots into, and the preprocessor symbol required for each test mode.
+# InterruptsS requires S and therefore U, so only the virtualized modes need a guard there.
+_BOOT_MODE = {"InterruptsSm": "M", "InterruptsS": "S"}
+_MODE_GUARD = {
+    "InterruptsSm": {"M": None, "S": "S_SUPPORTED", "U": "U_SUPPORTED", "VS": "H_SUPPORTED", "VU": "H_SUPPORTED"},
+    "InterruptsS": {"S": None, "U": None, "VS": "H_SUPPORTED", "VU": "H_SUPPORTED"},
+}
+
+Generator = Callable[[TestData, list[TestChunk], str, str], None]
 
 
 def _csr_level(instr: str) -> int:
@@ -50,7 +97,7 @@ def _csr_level(instr: str) -> int:
     return 0
 
 
-def _csr_access(instr: str, mode: str) -> str:
+def csr_access(instr: str, mode: str) -> str:
     """A CSR instruction issued directly when ``mode`` can access the CSR, otherwise through T-SBI.
 
     U-mode reaches m*, s*, h*, and vs* CSRs through T-SBI; S-mode reaches m* CSRs through T-SBI.
@@ -58,178 +105,84 @@ def _csr_access(instr: str, mode: str) -> str:
     return instr if _MODE_LEVEL[mode] >= _csr_level(instr) else tsbi_call(instr)
 
 
-def mode_guard(suite: str, priv: str) -> str | None:
-    """Preprocessor symbol that must be defined for ``priv`` tests in ``suite`` to be assembled.
-
-    InterruptsS requires S and therefore U, so only the virtualized modes need a guard there.
-    """
-    if suite == "InterruptsSm":
-        return {"M": None, "S": "S_SUPPORTED", "U": "U_SUPPORTED", "VS": "H_SUPPORTED", "VU": "H_SUPPORTED"}[priv]
-    return {"S": None, "U": None, "VS": "H_SUPPORTED", "VU": "H_SUPPORTED"}[priv]
-
-
 def guard_open(suite: str, priv: str) -> list[str]:
     """#ifdef line for tests that run in ``priv``, or nothing when the mode is always present."""
-    guard = mode_guard(suite, priv)
+    guard = _MODE_GUARD[suite][priv]
     return [f"#ifdef {guard}"] if guard else []
 
 
 def guard_close(suite: str, priv: str) -> list[str]:
     """Matching #endif for guard_open; must be emitted in the same test chunk."""
-    guard = mode_guard(suite, priv)
+    guard = _MODE_GUARD[suite][priv]
     return [f"#endif // {guard}"] if guard else []
 
 
 def mode_enter(suite: str, priv: str) -> list[str]:
-    """Switch from the suite's boot mode (M for InterruptsSm, S for InterruptsS) into ``priv``.
+    """Switch from the suite's boot mode into ``priv``.
 
     Emitted at the start of every chunk because chunks may be split into separate files,
     each of which boots afresh. Clobbers a0 only.
     """
-    boot = "M" if suite == "InterruptsSm" else "S"
-    if priv == boot:
+    if priv == _BOOT_MODE[suite]:
         return []
     return [f"RVTEST_TSBI_GOTO_{priv}MODE # enter {priv}-mode"]
 
 
 def mode_exit(suite: str, priv: str) -> list[str]:
     """Return from ``priv`` to the suite's boot mode at the end of a chunk. Clobbers a0 only."""
-    boot = "M" if suite == "InterruptsSm" else "S"
+    boot = _BOOT_MODE[suite]
     if priv == boot:
         return []
     return [f"RVTEST_TSBI_GOTO_{boot}MODE # return to {boot}-mode"]
 
 
-def _generate_cp_trigger(test_data: TestData, test_chunks: list, suite: str, priv: str) -> None:
-    """Trigger each interrupt."""
-
-    ######################################
-    coverpoint = "cp_trigger"
-    ######################################
-    tc = test_data.new_test_chunk(test_chunks, "trigger")
-    tc.section_header = comment_banner(
-        coverpoint,
-        f"Trigger each interrupt in {priv} mode",
-    )
-    tc.code += guard_open(suite, priv)
-    tc.code += mode_enter(suite, priv)
-    tmp_reg, tmp_reg2 = test_data.int_regs.get_registers(2)  # TODO: fix number
-
-    types = list(machine_ints)
-    if suite == "InterruptsSm":
-        types += list(supervisor_ints)
-    for int_type in types:
-        if int_type not in _int_macro:
-            continue  # no RVTEST_SET/CLR macros for this interrupt yet
-        macro = _int_macro[int_type]
-        if int_type in supervisor_ints:
-            tc.code.append("#ifdef S_SUPPORTED")
-        tc.code.append(f"#ifdef UDB_{int_type}_INTR_IMPL")
-        if suite == "InterruptsSm":
-            tc.code += [
-                f"LI(x{tmp_reg}, 0x2)",
-                _csr_access(f"csrs mstatus, x{tmp_reg} # mstatus.SIE = 1", priv),
-            ]
-            for mideleg in [0, -1]:
-                delegstr = "zeros" if mideleg == 0 else "ones"
-                # mideleg only exists with S-mode; without it, skip the write and the delegated sweep
-                tc.code += [
-                    "#ifdef S_SUPPORTED",
-                    f"LI(x{tmp_reg}, {mideleg})",
-                    _csr_access(f"csrw mideleg, x{tmp_reg} # mideleg = {delegstr}", priv),
-                ]
-                if mideleg == 0:
-                    tc.code.append("#endif // S_SUPPORTED")
-                for mode in [0, 1]:
-                    cmd = "csrs" if mode == 1 else "csrc"
-                    tc.code += [
-                        f"#ifdef UDB_MTVEC_MODES_{mode}",
-                        f"LI(x{tmp_reg}, 1)",
-                        _csr_access(f"{cmd} mtvec, x{tmp_reg} # mtvec.mode = {mode}", priv),
-                    ]
-                    for enable in [0, 1]:
-                        cmd = "csrs" if enable == 1 else "csrc"
-                        tc.code += [
-                            # The trap handler clears the taken interrupt's xIE bit, so re-enable before every case
-                            f"LI(x{tmp_reg}, -1)",
-                            _csr_access(f"csrw mie, x{tmp_reg} # mie = 1s", priv),
-                            f"LI(x{tmp_reg}, 0x88) # MIE, MPIE",
-                            _csr_access(f"{cmd} mstatus, x{tmp_reg} # mstatus.MIE = {enable}", priv),
-                        ]
-                        tc.code += [
-                            test_data.add_testcase(
-                                f"priv_{priv}_{int_type}_mideleg_{delegstr}_mode_{mode}_enable_{enable}",
-                                coverpoint,
-                                covergroup,
-                            ),
-                            f"RVTEST_SET_{macro}_INT_{priv} # Set the interrupt",
-                            f"RVTEST_IDLE_FOR_INTERRUPT(x{tmp_reg}) # Wait for interrupt to fire",
-                            f"RVTEST_CLR_{macro}_INT_{priv} # Clear the interrupt if the interrupt handler hasn't done so",
-                            "",
-                        ]
-                    tc.code.append(f"#endif // UDB_MTVEC_MODES_{mode}")
-                if mideleg == -1:
-                    tc.code.append("#endif // S_SUPPORTED")
-        else:  # suite = InterruptsS
-            pass
-        tc.code.append(f"#endif // UDB_{int_type}_INTR_IMPL")
-        if int_type in supervisor_ints:
-            tc.code.append("#endif // S_SUPPORTED")
-        tc.code.append("")
-
-    test_data.int_regs.return_registers([tmp_reg, tmp_reg2])
-    tc.code += mode_exit(suite, priv)
-    tc.code += guard_close(suite, priv)
-
-
-def _generate_cp_trigger_reg(test_data: TestData, test_chunks: list, suite: str, priv: str) -> None:
+def _generate_cp_trigger_reg(test_data: TestData, test_chunks: list[TestChunk], suite: str, priv: str) -> None:
     """Trigger interrupts using mip/sip register writes."""
 
 
-def _generate_cp_trigger_sti_sstc(test_data: TestData, test_chunks: list, suite: str, priv: str) -> None:
+def _generate_cp_trigger_sti_sstc(test_data: TestData, test_chunks: list[TestChunk], suite: str, priv: str) -> None:
     """Trigger STI with SSTC"""
 
 
-def _generate_cp_enable(test_data: TestData, test_chunks: list, suite: str, priv: str) -> None:
+def _generate_cp_enable(test_data: TestData, test_chunks: list[TestChunk], suite: str, priv: str) -> None:
     """Test interrupt enables"""
 
 
-def _generate_cp_priority_pending(test_data: TestData, test_chunks: list, suite: str, priv: str) -> None:
+def _generate_cp_priority_pending(test_data: TestData, test_chunks: list[TestChunk], suite: str, priv: str) -> None:
     """Test priority of multiple pending interrupts"""
 
 
-def _generate_cp_priority_enable(test_data: TestData, test_chunks: list, suite: str, priv: str) -> None:
+def _generate_cp_priority_enable(test_data: TestData, test_chunks: list[TestChunk], suite: str, priv: str) -> None:
     """Test priority of multiple enabled inputs"""
 
 
-def _generate_cp_wfi(test_data: TestData, test_chunks: list, suite: str, priv: str) -> None:
+def _generate_cp_wfi(test_data: TestData, test_chunks: list[TestChunk], suite: str, priv: str) -> None:
     """Test WFI with timer interrupt"""
 
 
-def _generate_cp_wfi_timeout(test_data: TestData, test_chunks: list, suite: str, priv: str) -> None:
+def _generate_cp_wfi_timeout(test_data: TestData, test_chunks: list[TestChunk], suite: str, priv: str) -> None:
     """Test WFI timeout"""
 
 
-def _generate_cp_priority_mideleg(test_data: TestData, test_chunks: list, suite: str, priv: str) -> None:
-    """Test priority of multiple delegated interrupts (machine only)"""
+# Coverpoints common to both suites, in emission order; each suite prepends its own cp_trigger.
+SHARED_GENERATORS: list[Generator] = [
+    _generate_cp_trigger_reg,
+    _generate_cp_trigger_sti_sstc,
+    _generate_cp_enable,
+    _generate_cp_priority_pending,
+    _generate_cp_priority_enable,
+    _generate_cp_wfi,
+    _generate_cp_wfi_timeout,
+]
 
 
-def emit_interrupts(test_data: TestData, test_chunks: list[TestChunk], suite: str, priv: str) -> list[TestChunk]:
-    """Emit all interrupt coverpoints for the given suite and privilege level."""
+def emit_interrupts(
+    test_data: TestData, test_chunks: list[TestChunk], suite: str, priv: str, generators: list[Generator]
+) -> list[TestChunk]:
+    """Run each coverpoint generator for ``priv`` and close the final test chunk."""
 
-    global covergroup
-    covergroup = f"{suite}_cg"
-
-    _generate_cp_trigger(test_data, test_chunks, suite, priv)
-    _generate_cp_trigger_reg(test_data, test_chunks, suite, priv)
-    _generate_cp_trigger_sti_sstc(test_data, test_chunks, suite, priv)
-    _generate_cp_enable(test_data, test_chunks, suite, priv)
-    _generate_cp_priority_pending(test_data, test_chunks, suite, priv)
-    _generate_cp_priority_enable(test_data, test_chunks, suite, priv)
-    _generate_cp_wfi(test_data, test_chunks, suite, priv)
-    _generate_cp_wfi_timeout(test_data, test_chunks, suite, priv)
-    if suite == "InterruptsSm":
-        _generate_cp_priority_mideleg(test_data, test_chunks, suite, priv)
+    for generate in generators:
+        generate(test_data, test_chunks, suite, priv)
 
     test_chunks.append(test_data.end_test_chunk())
     return test_chunks
