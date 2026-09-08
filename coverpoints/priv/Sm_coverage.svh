@@ -82,18 +82,28 @@ covergroup Sm_mcause_cg with function sample(ins_t ins);
         // exclude reserved and custom fields
         //bins b_0_reserved = {0};
         bins b_1_supervisor_software = {1};
-        bins b_2_vs_software = {2};
+        `ifdef H_SUPPORTED
+            bins b_2_vs_software = {2};
+        `endif
         bins b_3_machine_software = {3};
         //bins b_4_reserved = {4};
         bins b_5_supervisor_timer = {5};
-        bins b_6_vs_timer = {6};
+        `ifdef H_SUPPORTED
+            bins b_6_vs_timer = {6};
+        `endif
         bins b_7_machine_timer = {7};
         //bins b_8_reserved = {8};
         bins b_9_supervisor_external = {9};
-        bins b_10_vs_external = {10};
+        `ifdef H_SUPPORTED
+            bins b_10_vs_external = {10};
+        `endif
         bins b_11_machine_external = {11};
-        bins b_12_supervisor_guest_external = {12};
-        bins b_13_counter_overflow = {13};
+        `ifdef H_SUPPORTED
+            bins b_12_supervisor_guest_external = {12};
+        `endif
+        `ifdef SSCOFPMF_SUPPORTED
+            bins b_13_counter_overflow = {13};
+        `endif
         //bins b_14_reserved = {14};
         //bins b_15_reserved = {15};
     }

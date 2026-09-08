@@ -104,9 +104,20 @@ def _generate_mcause_tests(test_data: TestData) -> list[str]:
     ######################################
     coverpoint = "cp_mcause_write_interrupt"
     ######################################
+    gated_interrupts = {
+        2: "#ifdef H_SUPPORTED",  # VS software interrupt
+        6: "#ifdef H_SUPPORTED",  # VS timer interrupt
+        10: "#ifdef H_SUPPORTED",  # VS external interrupt
+        12: "#ifdef H_SUPPORTED",  # S guest external interrupt
+        13: "#ifdef SSCOFPMF_SUPPORTED",  # local counter overflow interrupt
+    }
+
     for i in range(14):
         if i in {0, 4, 8}:  # skip reserved causes
             continue
+        guard = gated_interrupts.get(i)
+        if guard is not None:
+            lines.append(guard)
         lines.extend(
             [
                 "",
@@ -117,6 +128,8 @@ def _generate_mcause_tests(test_data: TestData) -> list[str]:
                 gen_csr_write_sigupd(check_reg, "mcause", test_data),
             ]
         )
+        if guard is not None:
+            lines.append("#endif")
 
     lines.append(f"\ncsrw mcause, x{save_reg}       # restore CSR")
 
