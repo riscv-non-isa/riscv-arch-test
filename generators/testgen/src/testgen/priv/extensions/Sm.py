@@ -442,6 +442,61 @@ def _add_shadow(
     )
 
 
+def _add_deleg_alias(r1: int, r2: int, coverpoint: str, covergroup: str, test_data: TestData) -> list[str]:
+    """sip/sie alias the delegated bits of mip/mie and read as zero for the bits mideleg does not delegate."""
+
+    def read(csr: str, bin_name: str, comment: str) -> list[str]:
+        return [
+            f"# {comment}",
+            test_data.add_testcase(bin_name, coverpoint, covergroup),
+            gen_csr_read_sigupd(r2, (csr, None), test_data),
+        ]
+
+    lines = [
+        "# Test mip/sip and mie/sie with delegation on and off",
+        f"LI(x{r1}, 0x3666) # all delegatable interrupts",
+        "csrw mideleg, zero # delegate nothing",
+        "csrw mie, zero",
+        "csrw mip, zero",
+        *read("sip", "sip_readback_zero", "sip reads zero"),
+        *read("sie", "sie_readback_zero", "sie reads zero"),
+        f"csrw mip, x{r1} # set all interrupts in mip",
+        *read("sip", "sip_readback_zero_masked", "sip reads zero because nothing is delegated"),
+        "csrw sip, zero # ignored because nothing is delegated",
+        *read("mip", "mip_readback_nonzero_masked", "mip keeps its value because the sip write is ignored"),
+        "csrw mip, zero",
+        f"csrw mie, x{r1} # set all interrupts in mie",
+        *read("sie", "sie_readback_zero_masked", "sie reads zero because nothing is delegated"),
+        "csrw sie, zero # ignored because nothing is delegated",
+        *read("mie", "mie_readback_nonzero_masked", "mie keeps its value because the sie write is ignored"),
+        "csrw mie, zero",
+        "",
+        f"csrw mideleg, x{r1} # delegate all interrupts to S-mode",
+        *read("sip", "sip_readback_zero_2", "sip reads zero"),
+        *read("sie", "sie_readback_zero_2", "sie reads zero"),
+        f"csrw mip, x{r1} # set all interrupts in mip",
+        *read("sip", "sip_readback_nonzero", "sip reads the delegated bits"),
+        "csrw sip, zero # clears SSIP and LCOFIP; STIP and SEIP are read-only in sip",
+        *read("mip", "mip_readback_partiallyzero", "mip keeps STIP and SEIP"),
+        f"csrw mie, x{r1} # set all interrupts in mie",
+        *read("sie", "sie_readback_nonzero_deleg", "sie reads the delegated bits"),
+        "csrw sie, zero # clears every delegated S-level enable",
+        *read("mie", "mie_readback_zero_deleg", "mie reads zero"),
+        "",
+        "# Delegate one interrupt at a time; sip and sie show just that bit",
+        f"csrw mip, x{r1} # set all interrupts in mip",
+        f"csrw mie, x{r1} # set all interrupts in mie",
+    ]
+    for name, bit in [("SSI", 1), ("STI", 5), ("SEI", 9), ("LCOFI", 13), ("MSI", 3), ("MTI", 7), ("MEI", 11)]:
+        lines += [
+            f"LI(x{r1}, {1 << bit:#x})",
+            f"csrw mideleg, x{r1} # delegate only {name}",
+            *read("sip", f"deleg_sip_{name}", f"sip reads only {name}P if delegable"),
+            *read("sie", f"deleg_sie_{name}", f"sie reads only {name}E if delegable"),
+        ]
+    return lines
+
+
 def _generate_mcsr_tests(test_data: TestData, test_chunks: list) -> None:
     """Generate CSR tests"""
     covergroup = "Sm_mcsr_cg"
@@ -763,10 +818,18 @@ def _generate_mcsr_tests(test_data: TestData, test_chunks: list) -> None:
             _add_shadow(r1, r2, rmask, rsave, "mstatus", "sstatus", 0xCFFFFFFCF, coverpoint, covergroup, test_data),
             _add_shadow(r1, r2, rmask, rsave, "sstatus", "mstatus", 0xCFFFFFFCF, coverpoint, covergroup, test_data),
             f"LI(x{r1}, 0xFFFF) # all interrupts",
+            "# Without delegation, S-mode should not see any of the M-mode interrupts",
             _add_shadow(r1, r2, rmask, rsave, "mie", "sie", 0x3666, coverpoint, covergroup, test_data),
             _add_shadow(r1, r2, rmask, rsave, "mip", "sip", 0x3666, coverpoint, covergroup, test_data),
             _add_shadow(r1, r2, rmask, rsave, "sie", "mie", 0x3666, coverpoint, covergroup, test_data),
             _add_shadow(r1, r2, rmask, rsave, "sip", "mip", 0x3666, coverpoint, covergroup, test_data),
+            "# With delegation, S-mode should see the delegated M-mode interrupts",
+            f"csrw mideleg, x{r1} # delegate all interrupts to S-mode",
+            _add_shadow(r1, r2, rmask, rsave, "mie", "sie", 0x3666, coverpoint, covergroup, test_data),
+            _add_shadow(r1, r2, rmask, rsave, "mip", "sip", 0x3666, coverpoint, covergroup, test_data),
+            _add_shadow(r1, r2, rmask, rsave, "sie", "mie", 0x3666, coverpoint, covergroup, test_data),
+            _add_shadow(r1, r2, rmask, rsave, "sip", "mip", 0x3666, coverpoint, covergroup, test_data),
+            *_add_deleg_alias(r1, r2, coverpoint, covergroup, test_data),
             "#endif // S_SUPPORTED",
         ]
     )
