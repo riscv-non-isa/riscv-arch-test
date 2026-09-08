@@ -680,14 +680,16 @@
           LI(a2, RVMODEL_TIMER_INT_SOON_DELAY)
           #if UDB_MXLEN == 32
             RVTEST_TSBI_LW // lw a0, 0(a1) // read mtime low word
-            add a0, a0, a2 // add delay to mtime low word
+            add a2, a0, a2 // stimecmp low word = mtime low word + delay
+            mv a1, a2
             RVTEST_TSBI_CSR_WRITE_A1(CSR_STIMECMP) // write low word of timer compare
-            mv a2, a0 // save stimecmp low word
+            LA(a1, RVMODEL_MTIME_ADDRESS)
             RVTEST_TSBI_LWP4 // lw a0, 4(a1) // read mtime high word
             LI(a1, RVMODEL_TIMER_INT_SOON_DELAY)
             bgeu a2, a1, 1f // skip if didn't wrap
             addi a0, a0, 1 // increment mtime high word
             1:
+            mv a1, a0
             RVTEST_TSBI_CSR_WRITE_A1(CSR_STIMECMPH) // write high word of timer compare
           #else
             RVTEST_TSBI_LD // ld a0, 0(a1) // read mtime
