@@ -36,15 +36,15 @@ COVERGROUP = f"{SUITE}_cg"
 
 
 def _generate_cp_trigger(test_data: TestData, test_chunks: list[TestChunk], suite: str, priv: str) -> None:
-    """Trigger each interrupt."""
+    """Trigger each interrupt across stvec.MODE and sstatus.SIE."""
 
     ######################################
-    coverpoint = "cp_trigger / cp_trigger_reg"
+    coverpoint = "cp_trigger / cp_trigger_reg / cp_trigger_sti_sstc"
     ######################################
-    tc = test_data.new_test_chunk(test_chunks, "trigger")
+    tc = test_data.new_test_chunk(test_chunks, f"trigger_{priv}")
     tc.section_header = comment_banner(
         coverpoint,
-        f"Trigger each interrupt in {priv} mode",
+        f"Trigger each interrupt in {priv} mode with sie=1s x stvec.MODE=DIRECT/VECTORED x sstatus.SIE=0/1",
     )
     tc.code += guard_open(suite, priv)
     tmp_reg = test_data.int_regs.get_register()

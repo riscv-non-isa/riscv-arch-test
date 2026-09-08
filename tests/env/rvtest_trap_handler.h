@@ -2398,8 +2398,10 @@ clrint_\__MODE__\()tbl:
   #endif
 #endif
 
- .rept NUM_SPECD_INTCAUSES-0xC
-        .dword  1                                    // causes 12..23: reserved -> default return
+        .dword  1                                    // cause 12: SGEI -> default return
+        .dword  \__MODE__\()clr_Lcof_int             // cause 13: local counter overflow interrupt
+ .rept NUM_SPECD_INTCAUSES-0xE
+        .dword  1                                    // causes 14..23: reserved -> default return
  .endr
  .rept UDB_MXLEN-NUM_SPECD_INTCAUSES
         .dword  0                       // impossible, quit test by jumping to  epilogs
@@ -2537,6 +2539,10 @@ excpt_\__MODE__\()hndlr_tbl:
 
 \__MODE__\()clr_Vext_int:                            // VS-mode external interrupt: clear + save intID
         RVMODEL_CLR_VEXT_INT
+        la      T2, resto_\__MODE__\()rtn
+        jr      T2
+
+\__MODE__\()clr_Lcof_int:                            // local counter overflow interrupt: xIP.LCOFIP already cleared
         la      T2, resto_\__MODE__\()rtn
         jr      T2
 

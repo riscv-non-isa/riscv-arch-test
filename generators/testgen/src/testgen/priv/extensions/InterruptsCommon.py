@@ -10,6 +10,7 @@
 """Shared interrupt test generators"""
 
 from collections.abc import Callable
+from itertools import combinations
 
 from testgen.asm.helpers import comment_banner
 from testgen.asm.tsbi import tsbi_call
@@ -51,7 +52,7 @@ INTR_IMPL_DEFINES = [
 # RVTEST_SET/CLR_<name>_INT_<priv> macro name (tests/env/utils.h) for each interrupt type.
 # Types missing here have no trigger macros yet; their UDB_<int>_INTR_IMPL guard is never defined.
 int_macro = {"MEI": "MEXT", "MTI": "MTIME", "MSI": "MSW", "SEI": "SEXT", "STI": "STIME", "SSI": "SSW"}
-int_macro |= {name: name for name in [*reg_ints, *sstc_ints]}
+int_macro |= {name: name for name in ["LCOFI", *reg_ints, *sstc_ints]}
 
 # RVTEST_SET/CLR_<name>_INT_<priv> for the register-triggered interrupts. M-mode writes mip and sip
 # directly, S-mode writes sip directly and mip through T-SBI, and U-mode uses T-SBI for both.
@@ -74,6 +75,13 @@ REG_TRIGGER_DEFINES = [
     "#define RVTEST_CLR_MIP_SSIP_INT_U RVTEST_TSBI_CSR_CLEAR(CSR_MIP, 1<<1)",
     "#define RVTEST_SET_SIP_SSIP_INT_U RVTEST_TSBI_CSR_SET(CSR_SIP, 1<<1)",
     "#define RVTEST_CLR_SIP_SSIP_INT_U RVTEST_TSBI_CSR_CLEAR(CSR_SIP, 1<<1)",
+    # LCOFI has no platform source; raise and clear it through mip.LCOFIP
+    "#define RVTEST_SET_LCOFI_INT_M li a1, 1<<13; csrs mip, a1",
+    "#define RVTEST_CLR_LCOFI_INT_M li a1, 1<<13; csrc mip, a1",
+    "#define RVTEST_SET_LCOFI_INT_S RVTEST_TSBI_CSR_SET(CSR_MIP, 1<<13)",
+    "#define RVTEST_CLR_LCOFI_INT_S RVTEST_TSBI_CSR_CLEAR(CSR_MIP, 1<<13)",
+    "#define RVTEST_SET_LCOFI_INT_U RVTEST_TSBI_CSR_SET(CSR_MIP, 1<<13)",
+    "#define RVTEST_CLR_LCOFI_INT_U RVTEST_TSBI_CSR_CLEAR(CSR_MIP, 1<<13)",
 ]
 
 # RVTEST_SET/CLR_SSTC_STCE<n>_INT_<priv>: write menvcfg.STCE, then raise STI through stimecmp; clearing
@@ -179,18 +187,23 @@ def _generate_cp_trigger_sti_sstc(test_data: TestData, test_chunks: list[TestChu
     """Trigger STI with SSTC"""
 
 
-# cp_enable setup per suite: the interrupts to raise, the enable CSR to write, the global enable
-# written in the suite's boot mode, and any delegation setup.
+# Per-suite setup shared by cp_enable and cp_priority: the interrupts to raise, the pending and enable
+# CSRs, the global enable written in the suite's boot mode, and the default delegation setup.
 # InterruptsSm clears mideleg so every interrupt is enabled by mie alone.
-_ENABLE = {
+_SETUP = {
     "InterruptsSm": {
         "types": [*machine_ints, *supervisor_ints],
+        # MEI and SEI usually share one PLIC source, so priority pairs raise SEI through mip.SEIP instead
+        "priority_types": ["MEI", "MTI", "MSI", "MIP_SEIP", "STI", "SSI", "LCOFI"],
+        "ip": "mip",
         "ie": "mie",
         "status": ("mstatus", 0x88, "MIE"),
         "deleg": ["#ifdef S_SUPPORTED", "csrw mideleg, zero # mideleg = zeros", "#endif // S_SUPPORTED"],
     },
     "InterruptsS": {
         "types": [*supervisor_ints],
+        "priority_types": ["SEI", "STI", "SSI", "LCOFI"],
+        "ip": "sip",
         "ie": "sie",
         "status": ("sstatus", 0x22, "SIE"),
         "deleg": [],
@@ -204,13 +217,12 @@ def _generate_cp_enable(test_data: TestData, test_chunks: list[TestChunk], suite
     ######################################
     coverpoint = "cp_enable"
     ######################################
-    setup = _ENABLE[suite]
+    setup = _SETUP[suite]
     ie = setup["ie"]
     status_csr, status_mask, status_field = setup["status"]
     tc = test_data.new_test_chunk(test_chunks, "enable")
     tc.section_header = comment_banner(
-        coverpoint,
-        f"Enable each interrupt alone and all but itself in {ie} in {priv} mode",
+        coverpoint, f"Enable each interrupt in {priv} mode with {status_csr}.{status_field} = 1, {ie} = only/others"
     )
     tc.code += guard_open(suite, priv)
     tmp_reg = test_data.int_regs.get_register()
@@ -244,12 +256,125 @@ def _generate_cp_enable(test_data: TestData, test_chunks: list[TestChunk], suite
     tc.code += guard_close(suite, priv)
 
 
+def guard_symbol(int_type: str) -> str:
+    """Preprocessor symbol that must be defined for ``int_type`` to be raised on the target."""
+    return int_guard.get(int_type, f"UDB_{int_type}_INTR_IMPL")
+
+
+def _raise(raised: list[str], pair: list[str], op: str, priv: str) -> list[str]:
+    """RVTEST_<op>_<int>_INT_<priv> lines (op = SET or CLR) for every interrupt in ``raised``.
+
+    The case that calls this is already wrapped in the guard symbols of both members of ``pair``,
+    so their lines need no guard. In the ie flavor ``raised`` also includes every other interrupt,
+    and each of those is wrapped in its own guard so a target that lacks it (for example S-level
+    interrupts without S-mode) does not reference a macro or trap-handler routine it does not have.
+    """
+    lines = []
+    for int_type in raised:
+        line = f"RVTEST_{op}_{int_macro[int_type]}_INT_{priv} # {op} {int_type}"
+        if int_type in pair:
+            lines.append(line)
+        else:
+            lines += [f"#ifdef {guard_symbol(int_type)}", line, f"#endif // {guard_symbol(int_type)}"]
+    return lines
+
+
+def _generate_cp_priority(test_data: TestData, test_chunks: list[TestChunk], suite: str, priv: str, vary: str) -> None:
+    """Raise pairs of interrupts so the higher priority one is taken first.
+
+    ``vary`` is the CSR that distinguishes the pair: "ip" (pair pending, all enabled), "ie" (all pending,
+    pair enabled), or "mideleg" (pair pending and enabled, one of the pair delegated).
+    """
+    setup = _SETUP[suite]
+    ie = setup["ie"]
+    status_csr, status_mask, status_field = setup["status"]
+    csr = {"ip": setup["ip"], "ie": ie, "mideleg": "mideleg"}[vary]
+    ######################################
+    coverpoint = f"cp_priority_{csr}"
+    ######################################
+    tc = test_data.new_test_chunk(test_chunks, f"priority_{csr}")
+    tc.section_header = comment_banner(
+        coverpoint,
+        f"Priority of pairs of interrupts distinguished by {csr} in {priv} mode that are otherwise enabled and pending",
+    )
+    tc.code += guard_open(suite, priv)
+    tmp_reg = test_data.int_regs.get_register()
+
+    types = setup["priority_types"]
+    bits = machine_ints | supervisor_ints | reg_ints
+    # delegated interrupts are only taken in S-mode with sstatus.SIE set
+    if vary == "mideleg":
+        status_mask |= 0x22
+    # Only S-level interrupts can be delegated; the register-triggered ones share their bit positions
+    supervisor_bits = supervisor_ints.values()
+    delegatable = []
+    for int_type in types:
+        if bits[int_type] in supervisor_bits:
+            delegatable.append(int_type)
+    for first, second in combinations(types, 2):
+        pair = [first, second]
+        # ie: everything is pending and only the pair is enabled; otherwise only the pair is pending
+        raised = types if vary == "ie" else pair
+        # ie: enable only the pair; otherwise enable everything
+        ie_after = (1 << bits[first]) | (1 << bits[second]) if vary == "ie" else -1
+        # mideleg: one case per delegatable member of the pair, delegating that member;
+        # otherwise a single case with nothing delegated
+        delegations: list[str | None] = [None]
+        if vary == "mideleg":
+            delegations = []
+            for member in pair:
+                if member in delegatable:
+                    delegations.append(member)
+        for deleg in delegations:
+            deleg_lines = setup["deleg"]
+            bin_name = f"priv_{priv}_{first}_{second}"
+            if deleg is not None:
+                deleg_lines = [
+                    "#ifdef S_SUPPORTED",
+                    f"LI(x{tmp_reg}, {1 << bits[deleg]:#x})",
+                    f"csrw mideleg, x{tmp_reg} # mideleg = {deleg}",
+                    "#endif // S_SUPPORTED",
+                ]
+                bin_name += f"_deleg_{deleg}"
+            tc.code += [
+                f"#ifdef {guard_symbol(first)}",
+                f"#ifdef {guard_symbol(second)}",
+                *deleg_lines,
+                f"LI(x{tmp_reg}, {status_mask:#x})",
+                f"csrs {status_csr}, x{tmp_reg} # {status_csr}.{status_field} = 1",
+                f"LI(x{tmp_reg}, 0)",
+                f"csrw {ie}, x{tmp_reg} # {ie} = 0",
+                test_data.add_testcase(bin_name, coverpoint, f"{suite}_cg"),
+                *mode_enter(suite, priv),
+                *_raise(raised, pair, "SET", priv),
+                # enable after everything is pending so the pair is arbitrated together, not raced by latency
+                f"LI(x{tmp_reg}, {ie_after})",
+                csr_access(f"csrw {ie}, x{tmp_reg} # {ie} = {ie_after:#x}", priv),
+                f"RVTEST_IDLE_FOR_INTERRUPT(x{tmp_reg}) # Wait for interrupts to fire in priority order",
+                *_raise(raised, pair, "CLR", priv),
+                *mode_exit(suite, priv),
+                f"#endif // {guard_symbol(second)}",
+                f"#endif // {guard_symbol(first)}",
+                "",
+            ]
+
+    test_data.int_regs.return_register(tmp_reg)
+    tc.code += guard_close(suite, priv)
+
+
 def _generate_cp_priority_pending(test_data: TestData, test_chunks: list[TestChunk], suite: str, priv: str) -> None:
-    """Test priority of multiple pending interrupts"""
+    """Priority of pending interrupts: pair pending, all enabled."""
+    _generate_cp_priority(test_data, test_chunks, suite, priv, "ip")
 
 
 def _generate_cp_priority_enable(test_data: TestData, test_chunks: list[TestChunk], suite: str, priv: str) -> None:
-    """Test priority of multiple enabled inputs"""
+    """Priority of enabled interrupts: all pending, pair enabled."""
+    _generate_cp_priority(test_data, test_chunks, suite, priv, "ie")
+
+
+def generate_cp_priority_mideleg(test_data: TestData, test_chunks: list[TestChunk], suite: str, priv: str) -> None:
+    """Priority of delegated interrupts: pair pending and enabled, one of them delegated (InterruptsSm)."""
+    _generate_cp_priority(test_data, test_chunks, suite, priv, "mideleg")
 
 
 def _generate_cp_wfi(test_data: TestData, test_chunks: list[TestChunk], suite: str, priv: str) -> None:

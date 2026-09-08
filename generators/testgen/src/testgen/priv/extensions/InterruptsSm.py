@@ -18,6 +18,7 @@ from testgen.priv.extensions.InterruptsCommon import (
     SHARED_GENERATORS,
     SSTC_TRIGGER_DEFINES,
     emit_interrupts,
+    generate_cp_priority_mideleg,
     guard_close,
     guard_open,
     int_coverpoint,
@@ -40,12 +41,12 @@ def _generate_cp_trigger(test_data: TestData, test_chunks: list[TestChunk], suit
     """Trigger each interrupt across mideleg, mtvec.MODE, and mstatus.MIE."""
 
     ######################################
-    coverpoint = "cp_trigger / cp_trigger_reg"
+    coverpoint = "cp_trigger / cp_trigger_reg / cp_trigger_sti_sstc"
     ######################################
-    tc = test_data.new_test_chunk(test_chunks, "trigger")
+    tc = test_data.new_test_chunk(test_chunks, f"trigger_{priv}")
     tc.section_header = comment_banner(
         coverpoint,
-        f"Trigger each interrupt in {priv} mode",
+        f"Trigger each interrupt in {priv} mode with mie=1s x mideleg = zeros/ones x mtvec.MODE=DIRECT/VECTORED x mstatus.MIE=0/1",
     )
     tc.code += guard_open(suite, priv)
     tmp_reg = test_data.int_regs.get_register()
@@ -104,10 +105,6 @@ def _generate_cp_trigger(test_data: TestData, test_chunks: list[TestChunk], suit
     tc.code += guard_close(suite, priv)
 
 
-def _generate_cp_priority_mideleg(test_data: TestData, test_chunks: list[TestChunk], suite: str, priv: str) -> None:
-    """Test priority of multiple delegated interrupts"""
-
-
 @add_priv_test_generator(
     SUITE,
     required_extensions=["Sm"],
@@ -116,7 +113,7 @@ def _generate_cp_priority_mideleg(test_data: TestData, test_chunks: list[TestChu
 def make_interruptssm(test_data: TestData) -> list[TestChunk]:
     """Generate tests for InterruptsSm interrupt behavior that relies on M-mode, including M-mode interrupts and delegation."""
     test_chunks: list[TestChunk] = []
-    generators = [_generate_cp_trigger, *SHARED_GENERATORS, _generate_cp_priority_mideleg]
+    generators = [_generate_cp_trigger, *SHARED_GENERATORS, generate_cp_priority_mideleg]
 
     emit_interrupts(test_data, test_chunks, SUITE, ["M", "S", "U"], generators)  # + "VS", "VU"
 
