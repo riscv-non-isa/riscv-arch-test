@@ -522,7 +522,7 @@
   jal rvtest_clr_stime_int_su     /* Clear supervisor timer interrupt */
 
 #define RVTEST_SET_SSW_INT_S \
-  jal rvtest_set_ssw_int_su     /* Trigger supervisor software interrupt */
+  jal rvtest_set_ssw_int_s     /* Trigger supervisor software interrupt */
 
 #define RVTEST_CLR_SSW_INT_S \
   jal rvtest_clr_ssw_int_su     /* Clear supervisor software interrupt */
@@ -572,7 +572,7 @@
   jal rvtest_clr_stime_int_su     /* Clear supervisor timer interrupt */
 
 #define RVTEST_SET_SSW_INT_U \
-  jal rvtest_set_ssw_int_su     /* Trigger supervisor software interrupt */
+  jal rvtest_set_ssw_int_u     /* Trigger supervisor software interrupt */
 
 #define RVTEST_CLR_SSW_INT_U \
   jal rvtest_clr_ssw_int_su     /* Clear supervisor software interrupt */

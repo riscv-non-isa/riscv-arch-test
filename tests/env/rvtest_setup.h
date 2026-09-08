@@ -650,12 +650,21 @@
       RVTEST_TSBI_CSR_CLEAR(CSR_MIP, 1<<5) // clear mip.STIP
       ret
 
-    rvtest_set_ssw_int_su:
-      // trigger with platform-specific interrupt controller if it exists, otherwise with mip.SSIP
+    rvtest_set_ssw_int_s:
+      // trigger with platform-specific interrupt controller if it exists, otherwise with sip.SSIP
       #ifdef RVMODEL_SET_SSW_INT
         RVMODEL_SET_SSW_INT(a0, a1)
       #else
-        RVTEST_TSBI_CSR_SET(CSR_MIP, 1<<1) // set mip.SSIP
+        csrsi sip, 1<<1
+      #endif
+      ret
+
+    rvtest_set_ssw_int_u:
+      // trigger with platform-specific interrupt controller if it exists, otherwise with sip.SSIP
+      #ifdef RVMODEL_SET_SSW_INT
+        RVMODEL_SET_SSW_INT(a0, a1)
+      #else
+        RVTEST_TSBI_CSR_SET(CSR_SIP, 1<<1) // set sip.SSIP
       #endif
       ret
 
@@ -733,7 +742,6 @@
         #endif
         ret
     #endif // SSTC_SUPPORTED
-
   #endif // S_SUPPORTED
 
   nop // Padding to ensure valid memory at the edge of the section

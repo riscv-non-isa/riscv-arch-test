@@ -2490,12 +2490,12 @@ excpt_\__MODE__\()hndlr_tbl:
         RVTEST_DFLT_INT_HNDLR
 #endif
 
+#ifdef S_SUPPORTED
 \__MODE__\()clr_Stmr_int:                            // S-mode timer interrupt
         RVTEST_CLR_STIMER_INT
         la      T2, resto_\__MODE__\()rtn
         jr      T2
 
-#ifdef S_SUPPORTED
 \__MODE__\()clr_Sext_int:                            // S-mode external interrupt
         CLR_INT_ENTER
         // A PLIC may drive the M and S external contexts from one source, so
@@ -2521,6 +2521,8 @@ excpt_\__MODE__\()hndlr_tbl:
   .endif
 2:      CLR_INT_RETURN \__MODE__
 #else
+\__MODE__\()clr_Stmr_int:
+        RVTEST_DFLT_INT_HNDLR
 \__MODE__\()clr_Sext_int:
         RVTEST_DFLT_INT_HNDLR
 #endif
