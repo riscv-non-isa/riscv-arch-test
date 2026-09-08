@@ -210,7 +210,7 @@
 //   bits[6:0]   == 0x73 (SYSTEM opcode)    AND
 //   bits[14:12] != 0    (funct3 selects CSRRW/CSRRS/CSRRC/CSRRWI/CSRRSI/CSRRCI)
 // The caller constructs this encoding. Example for "csrrs a0, mstatus, x0":
-//   encoding = 0x30052573  (CSR=0x300, rs1=x0=0, funct3=010, rd=a0=x10)
+//   encoding = 0x30002573  (CSR=0x300, rs1=x0=0, funct3=010, rd=a0=x10)
 
 #define TSBI_RESERVED_RET   (-1)                 // return value for unrecognized operations
 
@@ -517,7 +517,7 @@
 //   RVTEST_TSBI_GOTO_MMODE              // switch to M-mode, clobbers a0
 //   RVTEST_TSBI_GOTO_UMODE              // switch to U-mode, clobbers a0
 //   RVTEST_TSBI_ECALL_TEST              // test ecall path, result in a0
-//   RVTEST_TSBI_CSR_ACCESS 0x30052573   // read mstatus into a0
+//   RVTEST_TSBI_CSR_ACCESS 0x30002573   // read mstatus into a0
 //
 // CLOBBERS: a0 (operation code / return value), a1 (CSR_ACCESS argument only)
 // PRESERVES: all other registers
