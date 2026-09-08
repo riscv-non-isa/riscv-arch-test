@@ -431,6 +431,7 @@
     #ifdef SSTC_SUPPORTED
       rvtest_set_sstc_int_soon_m:
         #if defined(RVMODEL_MTIME_ADDRESS) && defined(RVMODEL_TIMER_INT_SOON_DELAY)
+          LA(a1, RVMODEL_MTIME_ADDRESS)
           LI(a2, RVMODEL_TIMER_INT_SOON_DELAY)
           #if UDB_MXLEN == 32
             li a0, -1
@@ -447,7 +448,6 @@
             1:
             csrw stimecmph, a0 // write high word of timer compare
           #else
-            LA(a1, RVMODEL_MTIME_ADDRESS)
             ld a0, 0(a1) // read mtime
             add a1, a2, a0 // add delay to mtime
             csrw stimecmp, a1 // write to timer compare
