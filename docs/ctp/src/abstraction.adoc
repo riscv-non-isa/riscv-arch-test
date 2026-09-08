@@ -93,7 +93,7 @@ Most macros are implemented in config/cores/<core>/<version>/rvmodel_macros.h.  
 
 ==== Macros
 
-The RVMODEL DUT-Specific Macros are given in <<t-rvmodel>>. The "Can Be Empty?" field indicates circumstances under which the macro can be empty. The Mode column indicates the privilege mode from which the macro can be called.  All macros can clobber `a0`, `a1`, and `a2` if needed to make T-SBI calls.
+The RVMODEL DUT-Specific Macros are given in <<t-rvmodel>>. The "Can Be Undefined?" field indicates circumstances under which the macro can be omitted. The Mode column indicates the privilege mode from which the macro can be called.  All macros can clobber `a0`, `a1`, and `a2` if needed to make T-SBI calls.
 
 [[t-rvmodel]]
 .RVMODEL DUT-Specific Macros

@@ -20,8 +20,8 @@ from testgen.priv.extensions.InterruptsCommon import (
     emit_interrupts,
     guard_close,
     guard_open,
+    guard_symbol,
     int_coverpoint,
-    int_guard,
     int_macro,
     mode_enter,
     mode_exit,
@@ -39,11 +39,11 @@ def _generate_cp_trigger_s(test_data: TestData, test_chunks: list[TestChunk], su
     """Trigger each interrupt across stvec.MODE and sstatus.SIE."""
 
     ######################################
-    coverpoint = "cp_trigger / cp_trigger_reg / cp_trigger_sti_sstc"
+    banner = "cp_trigger / cp_trigger_reg / cp_trigger_sti_sstc"
     ######################################
     tc = test_data.new_test_chunk(test_chunks, f"trigger_{priv}")
     tc.section_header = comment_banner(
-        coverpoint,
+        banner,
         f"Trigger each interrupt in {priv} mode with sie=1s x stvec.MODE=DIRECT/VECTORED x sstatus.SIE=0/1",
     )
     tc.code += guard_open(suite, priv)
@@ -53,7 +53,7 @@ def _generate_cp_trigger_s(test_data: TestData, test_chunks: list[TestChunk], su
         if int_type not in int_macro:
             continue  # no RVTEST_SET/CLR macros for this interrupt yet
         macro = int_macro[int_type]
-        guard = int_guard.get(int_type, f"UDB_{int_type}_INTR_IMPL")
+        guard = guard_symbol(int_type)
         cp = int_coverpoint.get(int_type, "cp_trigger")
         for mode in [0, 1]:
             for enable in [0, 1]:
@@ -78,7 +78,7 @@ def _generate_cp_trigger_s(test_data: TestData, test_chunks: list[TestChunk], su
                     *mode_enter(suite, priv),
                     f"RVTEST_SET_{macro}_INT_{priv} # Set the interrupt",
                     f"RVTEST_IDLE_FOR_INTERRUPT(x{tmp_reg}) # Wait for interrupt to fire",
-                    f"RVTEST_CLR_{macro}_INT_{priv} # Clear the interrupt if the interrupt handler hasn't done so",
+                    f"RVTEST_CLR_{macro}_INT_{priv} # Clear the interrupt if the handler hasn't done so",
                     *mode_exit(suite, priv),
                     f"#endif // {guard}",
                     "",

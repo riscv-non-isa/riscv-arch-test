@@ -18,11 +18,11 @@ from testgen.priv.extensions.InterruptsCommon import (
     SHARED_GENERATORS,
     SSTC_TRIGGER_DEFINES,
     emit_interrupts,
-    generate_cp_priority_mideleg,
+    generate_cp_priority,
     guard_close,
     guard_open,
+    guard_symbol,
     int_coverpoint,
-    int_guard,
     int_macro,
     machine_ints,
     mode_enter,
@@ -42,11 +42,11 @@ def _generate_cp_trigger_sm(test_data: TestData, test_chunks: list[TestChunk], s
     """Trigger each interrupt across mideleg, mtvec.MODE, mstatus.SIE, and mstatus.MIE."""
 
     ######################################
-    coverpoint = "cp_trigger / cp_trigger_reg / cp_trigger_sti_sstc"
+    banner = "cp_trigger / cp_trigger_reg / cp_trigger_sti_sstc"
     ######################################
     tc = test_data.new_test_chunk(test_chunks, f"trigger_{priv}")
     tc.section_header = comment_banner(
-        coverpoint,
+        banner,
         f"Trigger each interrupt in {priv} mode with mie=1s x mideleg = zeros/ones x mtvec.MODE=DIRECT/VECTORED"
         " x mstatus.SIE=0/1 x mstatus.MIE=0/1",
     )
@@ -57,11 +57,12 @@ def _generate_cp_trigger_sm(test_data: TestData, test_chunks: list[TestChunk], s
         if int_type not in int_macro:
             continue  # no RVTEST_SET/CLR macros for this interrupt yet
         macro = int_macro[int_type]
-        guard = int_guard.get(int_type, f"UDB_{int_type}_INTR_IMPL")
+        guard = guard_symbol(int_type)
         cp = int_coverpoint.get(int_type, "cp_trigger")
         for mideleg in [0, -1]:
             delegstr = "zeros" if mideleg == 0 else "ones"
-            # mideleg only exists with S-mode: guard the write, and skip the delegated sweep entirely
+            # mideleg only exists with S-mode. Without it the mideleg = zeros cases still run and just
+            # skip the write, while the mideleg = ones cases are meaningless and are left out entirely.
             case_open = ["#ifdef S_SUPPORTED // only test delegation if S_SUPPORTED"] if mideleg == -1 else []
             case_close = ["#endif // S_SUPPORTED"] if mideleg == -1 else []
             write_open = ["#ifdef S_SUPPORTED // only write mideleg if S_SUPPORTED"] if mideleg == 0 else []
@@ -98,7 +99,7 @@ def _generate_cp_trigger_sm(test_data: TestData, test_chunks: list[TestChunk], s
                             *mode_enter(suite, priv),
                             f"RVTEST_SET_{macro}_INT_{priv} # Set the interrupt",
                             f"RVTEST_IDLE_FOR_INTERRUPT(x{tmp_reg}) # Wait for interrupt to fire",
-                            f"RVTEST_CLR_{macro}_INT_{priv} # Clear the interrupt if the interrupt handler hasn't done so",
+                            f"RVTEST_CLR_{macro}_INT_{priv} # Clear the interrupt if the handler hasn't done so",
                             *mode_exit(suite, priv),
                             *case_close,
                             f"#endif // {guard}",
@@ -107,6 +108,11 @@ def _generate_cp_trigger_sm(test_data: TestData, test_chunks: list[TestChunk], s
 
     test_data.int_regs.return_register(tmp_reg)
     tc.code += guard_close(suite, priv)
+
+
+def _generate_cp_priority_mideleg(test_data: TestData, test_chunks: list[TestChunk], suite: str, priv: str) -> None:
+    """Priority of delegated interrupts: pair pending and enabled, one of them delegated."""
+    generate_cp_priority(test_data, test_chunks, suite, priv, "mideleg")
 
 
 def _generate_cp_write_stip_sstc(test_data: TestData, test_chunks: list[TestChunk], suite: str, priv: str) -> None:
@@ -151,12 +157,12 @@ def _generate_cp_write_stip_sstc(test_data: TestData, test_chunks: list[TestChun
     extra_defines=[*INTR_IMPL_DEFINES, *REG_TRIGGER_DEFINES, *SSTC_TRIGGER_DEFINES, "#define BOOT_TO_MMODE"],
 )
 def make_interruptssm(test_data: TestData) -> list[TestChunk]:
-    """Generate tests for InterruptsSm interrupt behavior that relies on M-mode, including M-mode interrupts and delegation."""
+    """Generate InterruptsSm tests: interrupt behavior that relies on M-mode, including delegation."""
     test_chunks: list[TestChunk] = []
     generators = [
         _generate_cp_trigger_sm,
         *SHARED_GENERATORS,
-        generate_cp_priority_mideleg,
+        _generate_cp_priority_mideleg,
         _generate_cp_write_stip_sstc,
     ]
 

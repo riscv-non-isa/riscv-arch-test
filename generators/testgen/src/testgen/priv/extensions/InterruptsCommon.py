@@ -23,15 +23,25 @@ supervisor_ints = {"LCOFI": 13, "SEI": 9, "STI": 5, "SSI": 1, "VSEI": 10, "VSTI"
 reg_ints = {"MIP_SEIP": 9, "MIP_SSIP": 1, "SIP_SSIP": 1}
 # STI raised through stimecmp with menvcfg.STCE = 0 or 1 (cp_trigger_sti_sstc)
 sstc_ints = {"SSTC_STCE0": 5, "SSTC_STCE1": 5}
+# mip/mie bit position of every interrupt type
+int_bit = machine_ints | supervisor_ints | reg_ints | sstc_ints
 # Guard symbol and coverpoint for types that do not use the UDB_<int>_INTR_IMPL / cp_trigger defaults
 int_guard = {"MIP_SEIP": "UDB_SEI_INTR_IMPL", "MIP_SSIP": "UDB_SSI_INTR_IMPL", "SIP_SSIP": "UDB_SSI_INTR_IMPL"}
 int_guard |= {name: "SSTC_SUPPORTED" for name in sstc_ints}
 int_coverpoint = {name: "cp_trigger_reg" for name in reg_ints}
 int_coverpoint |= {name: "cp_trigger_sti_sstc" for name in sstc_ints}
 
+
+def guard_symbol(int_type: str) -> str:
+    """Preprocessor symbol that must be defined for ``int_type`` to be raised on the target."""
+    return int_guard.get(int_type, f"UDB_{int_type}_INTR_IMPL")
+
+
 # TODO: remove once https://github.com/riscv/riscv-unified-db/pull/1963 is merged and UDB emits these
 # from the MEI/MTI/MSI/SEI/STI/SSI_INTR_IMPL parameters. UDB_LCOFI_INTR_IMPL stays derived from
 # SSCOFPMF_SUPPORTED in tests/env/derived_config.h.  VS*I_INTR_IMPL also need to be added to UDB.
+# These defines precede the riscv_arch_test.h include, so rvtest_config.h (include-guarded) is pulled
+# in first to make S_SUPPORTED and H_SUPPORTED visible to the guards below.
 INTR_IMPL_DEFINES = [
     '#include "rvtest_config.h"',
     "#define UDB_MEI_INTR_IMPL",
@@ -189,7 +199,7 @@ _SETUP = {
         "priority_types": ["MEI", "MTI", "MSI", "MIP_SEIP", "STI", "SSI", "LCOFI"],
         "ip": "mip",
         "ie": "mie",
-        "status": ("mstatus", 0x88, "MIE"),
+        "status": {"csr": "mstatus", "mask": 0x88, "field": "MIE"},
         # cp_wfi: wake on the machine timer, enabled by mie.MTIE, pending in mip.MTIP
         "wfi": {
             "guard": "UDB_MTI_INTR_IMPL",
@@ -205,7 +215,7 @@ _SETUP = {
         "priority_types": ["SEI", "STI", "SSI", "LCOFI"],
         "ip": "sip",
         "ie": "sie",
-        "status": ("sstatus", 0x22, "SIE"),
+        "status": {"csr": "sstatus", "mask": 0x22, "field": "SIE"},
         # cp_wfi: wake on the Sstc supervisor timer, enabled by sie.STIE, pending in sip.STIP
         "wfi": {
             "guard": "SSTC_SUPPORTED",
@@ -227,10 +237,11 @@ def _generate_cp_enable(test_data: TestData, test_chunks: list[TestChunk], suite
     ######################################
     setup = _SETUP[suite]
     ie = setup["ie"]
-    status_csr, status_mask, status_field = setup["status"]
+    status = setup["status"]
     tc = test_data.new_test_chunk(test_chunks, "enable")
     tc.section_header = comment_banner(
-        coverpoint, f"Enable each interrupt in {priv} mode with {status_csr}.{status_field} = 1, {ie} = only/others"
+        coverpoint,
+        f"Enable each interrupt in {priv} mode with {status['csr']}.{status['field']} = 1, {ie} = only/others",
     )
     tc.code += guard_open(suite, priv)
     tmp_reg = test_data.int_regs.get_register()
@@ -239,15 +250,15 @@ def _generate_cp_enable(test_data: TestData, test_chunks: list[TestChunk], suite
         if int_type not in int_macro:
             continue  # no RVTEST_SET/CLR macros for this interrupt yet
         macro = int_macro[int_type]
-        guard = int_guard.get(int_type, f"UDB_{int_type}_INTR_IMPL")
-        bit = (machine_ints | supervisor_ints)[int_type]
+        guard = guard_symbol(int_type)
+        bit = int_bit[int_type]
         # enable only this interrupt (fires), then every interrupt except this one (does not fire)
         for enable, ie_val in [("only", 1 << bit), ("others", ~(1 << bit))]:
             tc.code += [
                 f"#ifdef {guard}",
                 *setup["deleg"],
-                f"LI(x{tmp_reg}, {status_mask:#x})",
-                f"csrs {status_csr}, x{tmp_reg} # {status_csr}.{status_field} = 1",
+                f"LI(x{tmp_reg}, {status['mask']:#x})",
+                f"csrs {status['csr']}, x{tmp_reg} # {status['csr']}.{status['field']} = 1",
                 f"LI(x{tmp_reg}, {ie_val})",
                 f"csrw {ie}, x{tmp_reg} # {ie} = {int_type} {enable}",
                 test_data.add_testcase(f"priv_{priv}_{int_type}_{ie}_{enable}", coverpoint, f"{suite}_cg"),
@@ -262,11 +273,6 @@ def _generate_cp_enable(test_data: TestData, test_chunks: list[TestChunk], suite
 
     test_data.int_regs.return_register(tmp_reg)
     tc.code += guard_close(suite, priv)
-
-
-def guard_symbol(int_type: str) -> str:
-    """Preprocessor symbol that must be defined for ``int_type`` to be raised on the target."""
-    return int_guard.get(int_type, f"UDB_{int_type}_INTR_IMPL")
 
 
 def _raise(raised: list[str], pair: list[str], op: str, priv: str) -> list[str]:
@@ -287,7 +293,7 @@ def _raise(raised: list[str], pair: list[str], op: str, priv: str) -> list[str]:
     return lines
 
 
-def _generate_cp_priority(test_data: TestData, test_chunks: list[TestChunk], suite: str, priv: str, vary: str) -> None:
+def generate_cp_priority(test_data: TestData, test_chunks: list[TestChunk], suite: str, priv: str, vary: str) -> None:
     """Raise pairs of interrupts so the higher priority one is taken first.
 
     ``vary`` is the CSR that distinguishes the pair: "ip" (pair pending, all enabled), "ie" (all pending,
@@ -295,7 +301,7 @@ def _generate_cp_priority(test_data: TestData, test_chunks: list[TestChunk], sui
     """
     setup = _SETUP[suite]
     ie = setup["ie"]
-    status_csr, status_mask, status_field = setup["status"]
+    status = setup["status"]
     csr = {"ip": setup["ip"], "ie": ie, "mideleg": "mideleg"}[vary]
     ######################################
     coverpoint = f"cp_priority_{csr}"
@@ -309,22 +315,20 @@ def _generate_cp_priority(test_data: TestData, test_chunks: list[TestChunk], sui
     tmp_reg = test_data.int_regs.get_register()
 
     types = setup["priority_types"]
-    bits = machine_ints | supervisor_ints | reg_ints
     # delegated interrupts are only taken in S-mode with sstatus.SIE set
-    if vary == "mideleg":
-        status_mask |= 0x22
+    status_mask = status["mask"] | 0x22 if vary == "mideleg" else status["mask"]
     # Only S-level interrupts can be delegated; the register-triggered ones share their bit positions
     supervisor_bits = supervisor_ints.values()
     delegatable = []
     for int_type in types:
-        if bits[int_type] in supervisor_bits:
+        if int_bit[int_type] in supervisor_bits:
             delegatable.append(int_type)
     for first, second in combinations(types, 2):
         pair = [first, second]
         # ie: everything is pending and only the pair is enabled; otherwise only the pair is pending
         raised = types if vary == "ie" else pair
         # ie: enable only the pair; otherwise enable everything
-        ie_after = (1 << bits[first]) | (1 << bits[second]) if vary == "ie" else -1
+        ie_after = (1 << int_bit[first]) | (1 << int_bit[second]) if vary == "ie" else -1
         # mideleg: one case per delegatable member of the pair, delegating that member;
         # otherwise a single case with nothing delegated
         delegations: list[str | None] = [None]
@@ -339,7 +343,7 @@ def _generate_cp_priority(test_data: TestData, test_chunks: list[TestChunk], sui
             if deleg is not None:
                 deleg_lines = [
                     "#ifdef S_SUPPORTED",
-                    f"LI(x{tmp_reg}, {1 << bits[deleg]:#x})",
+                    f"LI(x{tmp_reg}, {1 << int_bit[deleg]:#x})",
                     f"csrw mideleg, x{tmp_reg} # mideleg = {deleg}",
                     "#endif // S_SUPPORTED",
                 ]
@@ -349,7 +353,7 @@ def _generate_cp_priority(test_data: TestData, test_chunks: list[TestChunk], sui
                 f"#ifdef {guard_symbol(second)}",
                 *deleg_lines,
                 f"LI(x{tmp_reg}, {status_mask:#x})",
-                f"csrs {status_csr}, x{tmp_reg} # {status_csr}.{status_field} = 1",
+                f"csrs {status['csr']}, x{tmp_reg} # {status['csr']}.{status['field']} = 1",
                 f"LI(x{tmp_reg}, 0)",
                 f"csrw {ie}, x{tmp_reg} # {ie} = 0",
                 test_data.add_testcase(bin_name, coverpoint, f"{suite}_cg"),
@@ -372,29 +376,24 @@ def _generate_cp_priority(test_data: TestData, test_chunks: list[TestChunk], sui
 
 def _generate_cp_priority_pending(test_data: TestData, test_chunks: list[TestChunk], suite: str, priv: str) -> None:
     """Priority of pending interrupts: pair pending, all enabled."""
-    _generate_cp_priority(test_data, test_chunks, suite, priv, "ip")
+    generate_cp_priority(test_data, test_chunks, suite, priv, "ip")
 
 
 def _generate_cp_priority_enable(test_data: TestData, test_chunks: list[TestChunk], suite: str, priv: str) -> None:
     """Priority of enabled interrupts: all pending, pair enabled."""
-    _generate_cp_priority(test_data, test_chunks, suite, priv, "ie")
-
-
-def generate_cp_priority_mideleg(test_data: TestData, test_chunks: list[TestChunk], suite: str, priv: str) -> None:
-    """Priority of delegated interrupts: pair pending and enabled, one of them delegated (InterruptsSm)."""
-    _generate_cp_priority(test_data, test_chunks, suite, priv, "mideleg")
+    generate_cp_priority(test_data, test_chunks, suite, priv, "ie")
 
 
 def write_stce(enable: bool, mode: str, tmp_reg: int) -> list[str]:
     """Set or clear menvcfg.STCE (menvcfgh on RV32) from ``mode``, through T-SBI when below M."""
     op = "csrs" if enable else "csrc"
     return [
-        f"li x{tmp_reg}, 1",
+        f"LI(x{tmp_reg}, 1)",
         "#if __riscv_xlen == 64",
-        f"slli x{tmp_reg}, x{tmp_reg},63 # STCE in msb",
+        f"slli x{tmp_reg}, x{tmp_reg}, 63 # STCE in msb",
         csr_access(f"{op} menvcfg, x{tmp_reg} # menvcfg.STCE = {int(enable)}", mode),
         "#else",
-        f"slli x{tmp_reg}, x{tmp_reg},31 # STCE in msb",
+        f"slli x{tmp_reg}, x{tmp_reg}, 31 # STCE in msb",
         csr_access(f"{op} menvcfgh, x{tmp_reg} # menvcfgh.STCE = {int(enable)}", mode),
         "#endif",
     ]
@@ -412,13 +411,13 @@ def _generate_cp_wfi(test_data: TestData, test_chunks: list[TestChunk], suite: s
     # With S-mode implemented, U-mode WFI traps after a bounded time (cp_wfi_timeout), so it cannot wait
     if priv == "U" and boot == "S":
         return
-    status_csr, status_mask, status_field = setup["status"]
+    status = setup["status"]
     ie_name, ie_mask = wfi["ie"]
     ip_csr, ip_name, ip_mask = wfi["ip"]
     tc = test_data.new_test_chunk(test_chunks, f"wfi_{priv}")
     tc.section_header = comment_banner(
         coverpoint,
-        f"WFI until the timer interrupt in {priv} mode with {status_csr}.{status_field} = 0/1",
+        f"WFI until the timer interrupt in {priv} mode with {status['csr']}.{status['field']} = 0/1",
     )
     tc.code += guard_open(suite, priv)
     if priv == "U":
@@ -439,11 +438,11 @@ def _generate_cp_wfi(test_data: TestData, test_chunks: list[TestChunk], suite: s
                 *(write_stce(True, boot, tmp_reg) if wfi["stce"] else []),
                 f"LI(x{tmp_reg}, 0x200000)",
                 csr_access(f"{twcmd} mstatus, x{tmp_reg} # mstatus.TW = {tw}", boot),
-                f"LI(x{tmp_reg}, {status_mask:#x})",
-                f"{enablecmd} {status_csr}, x{tmp_reg} # {status_csr}.{status_field} = {enable}",
+                f"LI(x{tmp_reg}, {status['mask']:#x})",
+                f"{enablecmd} {status['csr']}, x{tmp_reg} # {status['csr']}.{status['field']} = {enable}",
                 f"LI(x{tmp_reg}, {ie_mask:#x})",
                 f"csrw {setup['ie']}, x{tmp_reg} # {setup['ie']}.{ie_name} = 1",
-                test_data.add_testcase(f"priv_{priv}_tw_{tw}_{status_field}_{enable}", coverpoint, f"{suite}_cg"),
+                test_data.add_testcase(f"priv_{priv}_tw_{tw}_{status['field']}_{enable}", coverpoint, f"{suite}_cg"),
                 *mode_enter(suite, priv),
                 # Below M-mode the SOON macro reaches the timer through T-SBI traps; RVMODEL_TIMER_INT_SOON_DELAY
                 # is sized so the interrupt cannot fire before those return and the trap count is sampled.
@@ -498,12 +497,12 @@ def _generate_cp_wfi_timeout(test_data: TestData, test_chunks: list[TestChunk], 
         return  # the timeout does not apply to M-mode
     setup = _SETUP[suite]
     boot = _BOOT_MODE[suite]
-    status_csr, status_mask, status_field = setup["status"]
+    status = setup["status"]
     ie_name, ie_mask = setup["wfi"]["ie"]
     tc = test_data.new_test_chunk(test_chunks, f"wfi_timeout_{priv}")
     tc.section_header = comment_banner(
         coverpoint,
-        f"WFI timeout in {priv} mode with {status_csr}.{status_field} = 0/1 x {setup['ie']}.{ie_name} = 0/1",
+        f"WFI timeout in {priv} mode with {status['csr']}.{status['field']} = 0/1 x {setup['ie']}.{ie_name} = 0/1",
     )
     tc.code += guard_open(suite, priv)
     tmp_reg = test_data.int_regs.get_register()
@@ -521,12 +520,12 @@ def _generate_cp_wfi_timeout(test_data: TestData, test_chunks: list[TestChunk], 
                     ),
                     f"LI(x{tmp_reg}, 0x200000)",
                     csr_access(f"{twcmd} mstatus, x{tmp_reg} # mstatus.TW = {tw}", boot),
-                    f"LI(x{tmp_reg}, {status_mask:#x})",
-                    f"{enablecmd} {status_csr}, x{tmp_reg} # {status_csr}.{status_field} = {enable}",
+                    f"LI(x{tmp_reg}, {status['mask']:#x})",
+                    f"{enablecmd} {status['csr']}, x{tmp_reg} # {status['csr']}.{status['field']} = {enable}",
                     f"LI(x{tmp_reg}, {ie * ie_mask:#x})",
                     f"csrw {setup['ie']}, x{tmp_reg} # {setup['ie']}.{ie_name} = {ie}",
                     test_data.add_testcase(
-                        f"priv_{priv}_tw_{tw}_{status_field}_{enable}_{ie_name}_{ie}", coverpoint, f"{suite}_cg"
+                        f"priv_{priv}_tw_{tw}_{status['field']}_{enable}_{ie_name}_{ie}", coverpoint, f"{suite}_cg"
                     ),
                     *mode_enter(suite, priv),
                     "wfi # nothing is pending, so this times out and traps as an illegal instruction",
