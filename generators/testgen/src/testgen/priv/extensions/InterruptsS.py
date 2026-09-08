@@ -35,7 +35,7 @@ SUITE = "InterruptsS"
 COVERGROUP = f"{SUITE}_cg"
 
 
-def _generate_cp_trigger(test_data: TestData, test_chunks: list[TestChunk], suite: str, priv: str) -> None:
+def _generate_cp_trigger_s(test_data: TestData, test_chunks: list[TestChunk], suite: str, priv: str) -> None:
     """Trigger each interrupt across stvec.MODE and sstatus.SIE."""
 
     ######################################
@@ -96,7 +96,7 @@ def _generate_cp_trigger(test_data: TestData, test_chunks: list[TestChunk], suit
 def make_interruptss(test_data: TestData) -> list[TestChunk]:
     """Generate tests for InterruptsS interrupt behavior that does not rely on M-mode."""
     test_chunks: list[TestChunk] = []
-    generators = [_generate_cp_trigger, *SHARED_GENERATORS]
+    generators = [_generate_cp_trigger_s, *SHARED_GENERATORS]
 
     emit_interrupts(test_data, test_chunks, SUITE, ["S", "U"], generators)  # + "VS", "VU"
 

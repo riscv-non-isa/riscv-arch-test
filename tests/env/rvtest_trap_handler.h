@@ -925,9 +925,7 @@
 #ifndef RVMODEL_CLR_STIMER_INT
         #define  RVMODEL_CLR_STIMER_INT  RVTEST_DFLT_INT_HNDLR  // S-mode timer interrupt clear: abort
 #endif
-#ifndef RVMODEL_CLR_SEXT_INT
-        #define  RVMODEL_CLR_SEXT_INT(_R1, _R2) RVTEST_DFLT_INT_HNDLR  // S-mode ext interrupt clear: abort
-#endif
+// RVMODEL_CLR_SEXT_INT has no default: when undefined, rvtest_clr_sext_int_* clear mip.SEIP instead
 
 // VS-mode interrupt defaults
 #ifndef RVMODEL_SET_VSW_INT

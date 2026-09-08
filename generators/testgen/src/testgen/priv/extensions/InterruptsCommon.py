@@ -179,14 +179,6 @@ def mode_exit(suite: str, priv: str) -> list[str]:
     return [f"RVTEST_TSBI_GOTO_{boot}MODE # return to {boot}-mode"]
 
 
-def _generate_cp_trigger_reg(test_data: TestData, test_chunks: list[TestChunk], suite: str, priv: str) -> None:
-    """Trigger interrupts using mip/sip register writes."""
-
-
-def _generate_cp_trigger_sti_sstc(test_data: TestData, test_chunks: list[TestChunk], suite: str, priv: str) -> None:
-    """Trigger STI with SSTC"""
-
-
 # Per-suite setup shared by cp_enable and cp_priority: the interrupts to raise, the pending and enable
 # CSRs, the global enable written in the suite's boot mode, and the default delegation setup.
 # InterruptsSm clears mideleg so every interrupt is enabled by mie alone.
@@ -198,6 +190,14 @@ _SETUP = {
         "ip": "mip",
         "ie": "mie",
         "status": ("mstatus", 0x88, "MIE"),
+        # cp_wfi: wake on the machine timer, enabled by mie.MTIE, pending in mip.MTIP
+        "wfi": {
+            "guard": "UDB_MTI_INTR_IMPL",
+            "timer": "MTIME",
+            "ie": ("MTIE", 0x80),
+            "ip": ("mip", "MTIP", 0x80),
+            "stce": False,
+        },
         "deleg": ["#ifdef S_SUPPORTED", "csrw mideleg, zero # mideleg = zeros", "#endif // S_SUPPORTED"],
     },
     "InterruptsS": {
@@ -206,6 +206,14 @@ _SETUP = {
         "ip": "sip",
         "ie": "sie",
         "status": ("sstatus", 0x22, "SIE"),
+        # cp_wfi: wake on the Sstc supervisor timer, enabled by sie.STIE, pending in sip.STIP
+        "wfi": {
+            "guard": "SSTC_SUPPORTED",
+            "timer": "SSTC",
+            "ie": ("STIE", 0x20),
+            "ip": ("sip", "STIP", 0x20),
+            "stce": True,
+        },
         "deleg": [],
     },
 }
@@ -377,18 +385,162 @@ def generate_cp_priority_mideleg(test_data: TestData, test_chunks: list[TestChun
     _generate_cp_priority(test_data, test_chunks, suite, priv, "mideleg")
 
 
+def write_stce(enable: bool, mode: str, tmp_reg: int) -> list[str]:
+    """Set or clear menvcfg.STCE (menvcfgh on RV32) from ``mode``, through T-SBI when below M."""
+    op = "csrs" if enable else "csrc"
+    return [
+        f"li x{tmp_reg}, 1",
+        "#if __riscv_xlen == 64",
+        f"slli x{tmp_reg}, x{tmp_reg},63 # STCE in msb",
+        csr_access(f"{op} menvcfg, x{tmp_reg} # menvcfg.STCE = {int(enable)}", mode),
+        "#else",
+        f"slli x{tmp_reg}, x{tmp_reg},31 # STCE in msb",
+        csr_access(f"{op} menvcfgh, x{tmp_reg} # menvcfgh.STCE = {int(enable)}", mode),
+        "#endif",
+    ]
+
+
 def _generate_cp_wfi(test_data: TestData, test_chunks: list[TestChunk], suite: str, priv: str) -> None:
-    """Test WFI with timer interrupt"""
+    """WFI waits for a timer interrupt whether or not the interrupt is globally enabled."""
+
+    ######################################
+    coverpoint = "cp_wfi"
+    ######################################
+    setup = _SETUP[suite]
+    wfi = setup["wfi"]
+    boot = _BOOT_MODE[suite]
+    # With S-mode implemented, U-mode WFI traps after a bounded time (cp_wfi_timeout), so it cannot wait
+    if priv == "U" and boot == "S":
+        return
+    status_csr, status_mask, status_field = setup["status"]
+    ie_name, ie_mask = wfi["ie"]
+    ip_csr, ip_name, ip_mask = wfi["ip"]
+    tc = test_data.new_test_chunk(test_chunks, f"wfi_{priv}")
+    tc.section_header = comment_banner(
+        coverpoint,
+        f"WFI until the timer interrupt in {priv} mode with {status_csr}.{status_field} = 0/1",
+    )
+    tc.code += guard_open(suite, priv)
+    if priv == "U":
+        tc.code.append("#ifndef S_SUPPORTED // U-mode WFI only waits when S-mode is not implemented")
+    count_reg, tmp_reg = test_data.int_regs.get_registers(2)
+
+    # mstatus.TW only affects modes below M, so sweep it in M-mode where it must not matter
+    for tw in [0, 1] if priv == "M" else [0]:
+        for enable in [0, 1]:
+            twcmd = "csrs" if tw == 1 else "csrc"
+            enablecmd = "csrs" if enable == 1 else "csrc"
+            # The interrupt is taken unless it is masked in the boot mode itself (M with MIE = 0, or the
+            # S-mode suite with SIE = 0); lower modes take it regardless of the global enable.
+            taken = enable == 1 or priv != boot
+            tc.code += [
+                f"#ifdef {wfi['guard']}",
+                *setup["deleg"],
+                *(write_stce(True, boot, tmp_reg) if wfi["stce"] else []),
+                f"LI(x{tmp_reg}, 0x200000)",
+                csr_access(f"{twcmd} mstatus, x{tmp_reg} # mstatus.TW = {tw}", boot),
+                f"LI(x{tmp_reg}, {status_mask:#x})",
+                f"{enablecmd} {status_csr}, x{tmp_reg} # {status_csr}.{status_field} = {enable}",
+                f"LI(x{tmp_reg}, {ie_mask:#x})",
+                f"csrw {setup['ie']}, x{tmp_reg} # {setup['ie']}.{ie_name} = 1",
+                test_data.add_testcase(f"priv_{priv}_tw_{tw}_{status_field}_{enable}", coverpoint, f"{suite}_cg"),
+                *mode_enter(suite, priv),
+                # Below M-mode the SOON macro reaches the timer through T-SBI traps; RVMODEL_TIMER_INT_SOON_DELAY
+                # is sized so the interrupt cannot fire before those return and the trap count is sampled.
+                f"RVTEST_SET_{wfi['timer']}_INT_SOON_{priv} # timer interrupt after RVMODEL_TIMER_INT_SOON_DELAY",
+                # Every trap, including the interrupt, bumps rvtest_trap_count. Sample it after the last
+                # trap of the setup so that any later change means the timer interrupt was taken.
+                f"LA(x{count_reg}, rvtest_trap_count)",
+                f"LREG x{count_reg}, 0(x{count_reg}) # trap count before waiting",
+                # WFI may return before the timer fires (it may even be a no-op), so repeat it until the interrupt
+                # has arrived. Check before each WFI: if the interrupt was already taken, a WFI would sleep with
+                # nothing left to wake it.
+                "1:",
+                f"LA(x{tmp_reg}, rvtest_trap_count)",
+                f"LREG x{tmp_reg}, 0(x{tmp_reg})",
+                f"bne x{tmp_reg}, x{count_reg}, 2f # timer interrupt taken",
+                *(
+                    []
+                    if taken
+                    # Masked here, the interrupt is never taken, so the trap count never changes; WFI still
+                    # wakes once it is pending, which is the only observable sign that it fired.
+                    else [
+                        f"csrr x{tmp_reg}, {ip_csr}",
+                        f"andi x{tmp_reg}, x{tmp_reg}, {ip_mask:#x} # {ip_csr}.{ip_name}",
+                        f"bnez x{tmp_reg}, 2f # timer interrupt pending but masked",
+                    ]
+                ),
+                "wfi",
+                "j 1b",
+                "2:",
+                f"RVTEST_CLR_{wfi['timer']}_INT_{priv} # Clear the timer interrupt",
+                *mode_exit(suite, priv),
+                f"#endif // {wfi['guard']}",
+                "",
+            ]
+
+    test_data.int_regs.return_registers([count_reg, tmp_reg])
+    if priv == "U":
+        tc.code.append("#endif // S_SUPPORTED")
+    tc.code += guard_close(suite, priv)
 
 
 def _generate_cp_wfi_timeout(test_data: TestData, test_chunks: list[TestChunk], suite: str, priv: str) -> None:
-    """Test WFI timeout"""
+    """With nothing pending, WFI below M-mode times out and traps as an illegal instruction.
+
+    mstatus.TW = 1 makes any lower mode trap; with S-mode implemented, U-mode traps even with TW = 0.
+    """
+
+    ######################################
+    coverpoint = "cp_wfi_timeout"
+    ######################################
+    if priv == "M":
+        return  # the timeout does not apply to M-mode
+    setup = _SETUP[suite]
+    boot = _BOOT_MODE[suite]
+    status_csr, status_mask, status_field = setup["status"]
+    ie_name, ie_mask = setup["wfi"]["ie"]
+    tc = test_data.new_test_chunk(test_chunks, f"wfi_timeout_{priv}")
+    tc.section_header = comment_banner(
+        coverpoint,
+        f"WFI timeout in {priv} mode with {status_csr}.{status_field} = 0/1 x {setup['ie']}.{ie_name} = 0/1",
+    )
+    tc.code += guard_open(suite, priv)
+    tmp_reg = test_data.int_regs.get_register()
+
+    for tw in [1, 0] if priv == "U" else [1]:
+        twcmd = "csrs" if tw == 1 else "csrc"
+        for enable in [0, 1]:
+            for ie in [0, 1]:
+                enablecmd = "csrs" if enable == 1 else "csrc"
+                tc.code += [
+                    *(
+                        ["#ifdef S_SUPPORTED // U-mode WFI also times out with TW = 0 when S-mode exists"]
+                        if tw == 0
+                        else []
+                    ),
+                    f"LI(x{tmp_reg}, 0x200000)",
+                    csr_access(f"{twcmd} mstatus, x{tmp_reg} # mstatus.TW = {tw}", boot),
+                    f"LI(x{tmp_reg}, {status_mask:#x})",
+                    f"{enablecmd} {status_csr}, x{tmp_reg} # {status_csr}.{status_field} = {enable}",
+                    f"LI(x{tmp_reg}, {ie * ie_mask:#x})",
+                    f"csrw {setup['ie']}, x{tmp_reg} # {setup['ie']}.{ie_name} = {ie}",
+                    test_data.add_testcase(
+                        f"priv_{priv}_tw_{tw}_{status_field}_{enable}_{ie_name}_{ie}", coverpoint, f"{suite}_cg"
+                    ),
+                    *mode_enter(suite, priv),
+                    "wfi # nothing is pending, so this times out and traps as an illegal instruction",
+                    *mode_exit(suite, priv),
+                    *(["#endif // S_SUPPORTED"] if tw == 0 else []),
+                    "",
+                ]
+
+    test_data.int_regs.return_register(tmp_reg)
+    tc.code += guard_close(suite, priv)
 
 
 # Coverpoints common to both suites, in emission order; each suite prepends its own cp_trigger.
 SHARED_GENERATORS: list[Generator] = [
-    _generate_cp_trigger_reg,
-    _generate_cp_trigger_sti_sstc,
     _generate_cp_enable,
     _generate_cp_priority_pending,
     _generate_cp_priority_enable,
