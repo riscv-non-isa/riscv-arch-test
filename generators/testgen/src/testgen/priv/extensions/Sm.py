@@ -496,11 +496,11 @@ def _add_deleg_alias(r1: int, r2: int, coverpoint: str, covergroup: str, test_da
             *read("sip", f"deleg_sip_{name}", f"sip reads only {name}P if delegable"),
             *read("sie", f"deleg_sie_{name}", f"sie reads only {name}E if delegable"),
         ]
-        lines += [
-            "csrw mip, zero # restore mip",
-            "csrw mie, zero # restore mie",
-            "csrw mideleg, zero # restore mideleg",
-        ]
+    lines += [
+        "csrw mip, zero # restore mip",
+        "csrw mie, zero # restore mie",
+        "csrw mideleg, zero # restore mideleg",
+    ]
     return lines
 
 
