@@ -1636,11 +1636,18 @@ tsbi_\__MODE__\()ecall_test:
 
         //--- S-mode GOTO_xMODE dispatch ---
 tsbi_\__MODE__\()goto_mode:
+        // a0 still holds the caller's operation code
+  #ifdef H_SUPPORTED
+        // forward_to_m bumps sepc itself, so check the forwarded modes before bumping below
+        li      T2, TSBI_GOTO_VSMODE                 // GOTO_VSMODE: needs M-mode
+        beq     a0, T2, tsbi_\__MODE__\()forward_to_m
+        li      T2, TSBI_GOTO_VUMODE                 // GOTO_VUMODE: needs M-mode
+        beq     a0, T2, tsbi_\__MODE__\()forward_to_m
+  #endif
         csrr    T4, CSR_XEPC                        // T4 = sepc (caller's ecall address)
         addi    T4, T4, 4                            // skip ecall
         csrw    CSR_XEPC, T4                         // sepc += 4
 
-        // a0 still holds the caller's operation code
         li      T2, TSBI_GOTO_MMODE                  // can't handle GOTO_MMODE from S-mode
         beq     a0, T2, tsbi_\__MODE__\()forward_goto_m // -> forward to M-mode; caller resumes in M
 
@@ -1649,13 +1656,6 @@ tsbi_\__MODE__\()goto_mode:
 
         li      T2, TSBI_GOTO_UMODE                  // GOTO_UMODE: return to U-mode
         beq     a0, T2, tsbi_\__MODE__\()goto_u
-
-  #ifdef H_SUPPORTED
-        li      T2, TSBI_GOTO_VSMODE                 // GOTO_VSMODE: needs M-mode
-        beq     a0, T2, tsbi_\__MODE__\()forward_to_m
-        li      T2, TSBI_GOTO_VUMODE                 // GOTO_VUMODE: needs M-mode
-        beq     a0, T2, tsbi_\__MODE__\()forward_to_m
-  #endif
 
         li      a0, TSBI_RESERVED_RET                // shouldn't reach here, return -1
         j       resto_\__MODE__\()rtn
@@ -1720,13 +1720,7 @@ tsbi_\__MODE__\()csr_access:
         andi    T2, T2, 0x3                         // T2 = CSR_addr[11:10] (2 MSBs of CSR address)
         li      T4, 3                               // T4 = 3 (M-mode CSR indicator: addr[11:10]==11)
         bne     T2, T4, 11f                         // S/U CSR -> handle locally below
-        // M-mode CSR -> forward to the M-mode handler.  Bump sepc past the caller's ecall FIRST:
-        // M-mode bumps only its own mepc (the forwarding stub's ecall), and the stub's sret
-        // returns to sepc -- without this bump the caller re-executes its ecall forever.
-        csrr    T3, CSR_XEPC                        // T3 = sepc (caller's ecall address)
-        addi    T3, T3, 4                            // skip past ecall
-        csrw    CSR_XEPC, T3                         // sepc += 4
-        j       tsbi_\__MODE__\()forward_to_m
+        j       tsbi_\__MODE__\()forward_to_m      // M-mode CSR -> forward to the M-mode handler
 11:
         // TODO: Replace this with dispatch table, remove code below
 
