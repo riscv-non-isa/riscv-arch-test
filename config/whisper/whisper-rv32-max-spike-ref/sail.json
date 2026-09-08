@@ -203,7 +203,9 @@
         // Similarly, a misaligned AMO and LR/SC can be configured with the same
         // option values.
         "amo": { "Some": "AccessFault" },
-        "lrsc": { "Some": "AccessFault" }
+        "lrsc": {
+          "None": null
+        }
       },
       // If a misaligned access was specified to have no fault in `exceptions` above, the
       // fields below specify how it is handled.
