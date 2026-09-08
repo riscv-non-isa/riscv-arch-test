@@ -11,6 +11,7 @@
 
 from collections.abc import Callable
 
+from testgen.asm.helpers import comment_banner
 from testgen.asm.tsbi import tsbi_call
 from testgen.data.state import TestData
 from testgen.data.test_chunk import TestChunk
@@ -178,8 +179,69 @@ def _generate_cp_trigger_sti_sstc(test_data: TestData, test_chunks: list[TestChu
     """Trigger STI with SSTC"""
 
 
+# cp_enable setup per suite: the interrupts to raise, the enable CSR to write, the global enable
+# written in the suite's boot mode, and any delegation setup.
+# InterruptsSm clears mideleg so every interrupt is enabled by mie alone.
+_ENABLE = {
+    "InterruptsSm": {
+        "types": [*machine_ints, *supervisor_ints],
+        "ie": "mie",
+        "status": ("mstatus", 0x88, "MIE"),
+        "deleg": ["#ifdef S_SUPPORTED", "csrw mideleg, zero # mideleg = zeros", "#endif // S_SUPPORTED"],
+    },
+    "InterruptsS": {
+        "types": [*supervisor_ints],
+        "ie": "sie",
+        "status": ("sstatus", 0x22, "SIE"),
+        "deleg": [],
+    },
+}
+
+
 def _generate_cp_enable(test_data: TestData, test_chunks: list[TestChunk], suite: str, priv: str) -> None:
-    """Test interrupt enables"""
+    """Raise each interrupt with only its enable bit set, then with every enable bit but its own."""
+
+    ######################################
+    coverpoint = "cp_enable"
+    ######################################
+    setup = _ENABLE[suite]
+    ie = setup["ie"]
+    status_csr, status_mask, status_field = setup["status"]
+    tc = test_data.new_test_chunk(test_chunks, "enable")
+    tc.section_header = comment_banner(
+        coverpoint,
+        f"Enable each interrupt alone and all but itself in {ie} in {priv} mode",
+    )
+    tc.code += guard_open(suite, priv)
+    tmp_reg = test_data.int_regs.get_register()
+
+    for int_type in setup["types"]:
+        if int_type not in int_macro:
+            continue  # no RVTEST_SET/CLR macros for this interrupt yet
+        macro = int_macro[int_type]
+        guard = int_guard.get(int_type, f"UDB_{int_type}_INTR_IMPL")
+        bit = (machine_ints | supervisor_ints)[int_type]
+        # enable only this interrupt (fires), then every interrupt except this one (does not fire)
+        for enable, ie_val in [("only", 1 << bit), ("others", ~(1 << bit))]:
+            tc.code += [
+                f"#ifdef {guard}",
+                *setup["deleg"],
+                f"LI(x{tmp_reg}, {status_mask:#x})",
+                f"csrs {status_csr}, x{tmp_reg} # {status_csr}.{status_field} = 1",
+                f"LI(x{tmp_reg}, {ie_val})",
+                f"csrw {ie}, x{tmp_reg} # {ie} = {int_type} {enable}",
+                test_data.add_testcase(f"priv_{priv}_{int_type}_{ie}_{enable}", coverpoint, f"{suite}_cg"),
+                *mode_enter(suite, priv),
+                f"RVTEST_SET_{macro}_INT_{priv} # Set the interrupt",
+                f"RVTEST_IDLE_FOR_INTERRUPT(x{tmp_reg}) # Wait for interrupt to fire",
+                f"RVTEST_CLR_{macro}_INT_{priv} # Clear the interrupt if the interrupt handler hasn't done so",
+                *mode_exit(suite, priv),
+                f"#endif // {guard}",
+                "",
+            ]
+
+    test_data.int_regs.return_register(tmp_reg)
+    tc.code += guard_close(suite, priv)
 
 
 def _generate_cp_priority_pending(test_data: TestData, test_chunks: list[TestChunk], suite: str, priv: str) -> None:
@@ -211,12 +273,13 @@ SHARED_GENERATORS: list[Generator] = [
 
 
 def emit_interrupts(
-    test_data: TestData, test_chunks: list[TestChunk], suite: str, priv: str, generators: list[Generator]
+    test_data: TestData, test_chunks: list[TestChunk], suite: str, privs: list[str], generators: list[Generator]
 ) -> list[TestChunk]:
-    """Run each coverpoint generator for ``priv`` and close the final test chunk."""
+    """Run each coverpoint generator for every privilege mode, keeping each coverpoint's chunks contiguous."""
 
     for generate in generators:
-        generate(test_data, test_chunks, suite, priv)
+        for priv in privs:
+            generate(test_data, test_chunks, suite, priv)
 
     test_chunks.append(test_data.end_test_chunk())
     return test_chunks

@@ -98,7 +98,6 @@ def make_interruptss(test_data: TestData) -> list[TestChunk]:
     test_chunks: list[TestChunk] = []
     generators = [_generate_cp_trigger, *SHARED_GENERATORS]
 
-    for priv in ["S", "U"]:  # , "VS", "VU"
-        emit_interrupts(test_data, test_chunks, SUITE, priv, generators)
+    emit_interrupts(test_data, test_chunks, SUITE, ["S", "U"], generators)  # + "VS", "VU"
 
     return test_chunks
