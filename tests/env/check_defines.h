@@ -88,7 +88,7 @@
 
 #ifndef RVMODEL_MSIP_ADDRESS
   #ifndef RVMODEL_SET_MSW_INT
-    #error "RVMODEL_MSIP_ADDRESS not defined. Make sure to define it in rvmodel_macros.h."
+    #error "Neither RVMODEL_MSIP_ADDRESS nor RVMODEL_SET_MSW_INT is defined. Define one of them in rvmodel_macros.h."
   #endif
 
   #ifndef RVMODEL_CLR_MSW_INT

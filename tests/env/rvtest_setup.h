@@ -650,21 +650,14 @@
       RVTEST_TSBI_CSR_CLEAR(CSR_MIP, 1<<5) // clear mip.STIP
       ret
 
-    rvtest_set_ssw_int_s:
-      // trigger with platform-specific interrupt controller if it exists, otherwise with sip.SSIP
+    rvtest_set_ssw_int_su:
+      // trigger with platform-specific interrupt controller if it exists, otherwise with mip.SSIP.
+      // sip.SSIP is read-only zero unless SSI is delegated, so write mip.SSIP through T-SBI,
+      // which works whether or not mideleg.SSI is set.
       #ifdef RVMODEL_SET_SSW_INT
         RVMODEL_SET_SSW_INT(a0, a1)
       #else
-        csrsi sip, 1<<1
-      #endif
-      ret
-
-    rvtest_set_ssw_int_u:
-      // trigger with platform-specific interrupt controller if it exists, otherwise with sip.SSIP
-      #ifdef RVMODEL_SET_SSW_INT
-        RVMODEL_SET_SSW_INT(a0, a1)
-      #else
-        RVTEST_TSBI_CSR_SET(CSR_SIP, 1<<1) // set sip.SSIP
+        RVTEST_TSBI_CSR_SET(CSR_MIP, 1<<1) // set mip.SSIP
       #endif
       ret
 
