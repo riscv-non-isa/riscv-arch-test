@@ -122,6 +122,10 @@
         `cover_info("//      ExceptionsZicboS - Enabled");
         `include "ExceptionsZicboS_coverage_init.svh"
     `endif
+    `ifdef COVER_EXCEPTIONSZICBOSM
+        `cover_info("//      ExceptionsZicboSm - Enabled");
+        `include "ExceptionsZicboSm_coverage_init.svh"
+    `endif
     `ifdef COVER_EXCEPTIONSZICBOU
         `cover_info("//      ExceptionsZicboU - Enabled");
         `include "ExceptionsZicboU_coverage_init.svh"
@@ -638,9 +642,17 @@
         `cover_info("//      Zknh - Enabled");
         `include "Zknh_coverage_init.svh"
     `endif
-    `ifdef COVER_ZKR
-        `cover_info("//      Zkr - Enabled");
-        `include "Zkr_coverage_init.svh"
+    `ifdef COVER_ZKRS
+        `cover_info("//      ZkrS - Enabled");
+        `include "ZkrS_coverage_init.svh"
+    `endif
+    `ifdef COVER_ZKRSM
+        `cover_info("//      ZkrSm - Enabled");
+        `include "ZkrSm_coverage_init.svh"
+    `endif
+    `ifdef COVER_ZKRU
+        `cover_info("//      ZkrU - Enabled");
+        `include "ZkrU_coverage_init.svh"
     `endif
     `ifdef COVER_ZKSED
         `cover_info("//      Zksed - Enabled");
