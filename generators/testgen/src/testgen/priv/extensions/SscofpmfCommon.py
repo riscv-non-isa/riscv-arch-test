@@ -71,12 +71,17 @@ def _generate_xinh_inhibits_tests(test_data: TestData, priv_mode: str) -> list[s
             f"{inh_prefix.upper()}INH bit (mhpmevent[{inh_bit_pos}]) inhibits counting in {priv_mode}-mode.",
         ),
         "",
+        "# === M-MODE SETUP ===",
+        "csrw mip, zero   # clear pending before toggle/sweep",
+        "csrw mie, zero   # disable interrupts before toggle/sweep",
+        "",
     ]
 
     if priv_mode != "Sm":
         lines.append(f"RVTEST_GOTO_LOWER_MODE {priv_mode}mode")
     indent = "" if priv_mode == "Sm" else "    "
 
+    # --- individual 0/1 single-bit toggle ---
     for inh_val in [0, 1]:
         binname = f"{inh_prefix}inh_{inh_val}_{priv_mode.lower()}"
         lines.extend(
@@ -113,64 +118,69 @@ def _generate_xinh_inhibits_tests(test_data: TestData, priv_mode: str) -> list[s
         ]
     )
 
+    r_hval = test_data.int_regs.get_register(exclude_regs=[0, 31])
+    lines.append(f"{indent}#if __riscv_xlen == 32")
+    for combo in range(32):
+        binname = f"xinh_combo_{combo:05b}_{priv_mode.lower()}_rv32"
+        lines.extend(
+            [
+                f"{indent}LI(x{r_val}, RVMODEL_MHPMEVENT_VAL)",
+                f"{indent}{_csr_access(f'csrw RVMODEL_MHPMEVENT, x{r_val}', priv_mode)}",
+                f"{indent}LI(x{r_hval}, {combo} << 26)",  # 58-32 = 26
+                f"{indent}{_csr_access(f'csrw CSR_MHPMEVENT3H, x{r_hval}', priv_mode)}",
+                f"{indent}{_csr_access('csrw RVMODEL_MHPMCOUNTER, zero', priv_mode)}",
+                "",
+                f"{indent}{test_data.add_testcase(binname, coverpoint, covergroup)}",
+                f"{indent}{_csr_access(f'csrr x{r_temp}, CSR_MHPMEVENT3H', priv_mode)}",
+                # Mask off VSINH/VUINH (bits 27:26 of this H-half, i.e. bits 59:58 of the
+                # full CSR) before signing off: Sail has no Hypervisor support at all right
+                # now (framework-wide, see riscv_arch_test.sv), so its reference signature
+                # always reports those two bits as hardwired 0, regardless of what a given
+                # DUT actually implements for them.  Comparing the raw readback fails on any
+                # DUT (e.g. whisper, qemu) that treats them as writable.
+                f"{indent}LI(x{r_hval}, 0xF3FFFFFF)   # clear bits 27:26 (VSINH/VUINH) -- H unsupported by Sail",
+                f"{indent}and x{r_temp}, x{r_temp}, x{r_hval}",
+                f"{indent}{write_sigupd(r_temp, test_data)}",
+                "",
+            ]
+        )
+    lines.append(f"{indent}#else")
+    for combo in range(32):
+        binname = f"xinh_combo_{combo:05b}_{priv_mode.lower()}_rv64"
+        lines.extend(
+            [
+                f"{indent}LI(x{r_val}, RVMODEL_MHPMEVENT_VAL | ({combo} << 58))",
+                f"{indent}{_csr_access(f'csrw RVMODEL_MHPMEVENT, x{r_val}', priv_mode)}",
+                f"{indent}{_csr_access('csrw RVMODEL_MHPMCOUNTER, zero', priv_mode)}",
+                "",
+                f"{indent}{test_data.add_testcase(binname, coverpoint, covergroup)}",
+                f"{indent}{_csr_access(f'csrr x{r_temp}, RVMODEL_MHPMEVENT', priv_mode)}",
+                # Mask off VSINH/VUINH (bits 59:58): Sail has no Hypervisor support at all
+                # right now (framework-wide, see riscv_arch_test.sv), so its reference
+                # signature always reports those two bits as hardwired 0, regardless of what
+                # a given DUT actually implements for them. Comparing the raw readback fails
+                # on any DUT (e.g. whisper, qemu) that treats them as writable.
+                f"{indent}LI(x{r_val}, 0xF3FFFFFFFFFFFFFF)   # clear bits 59:58 (VSINH/VUINH) -- H unsupported by Sail",
+                f"{indent}and x{r_temp}, x{r_temp}, x{r_val}",
+                f"{indent}{write_sigupd(r_temp, test_data)}",
+                "",
+            ]
+        )
+    lines.append(f"{indent}#endif")
+    lines.extend(
+        [
+            f"{indent}{_csr_access('csrw RVMODEL_MHPMEVENT, zero', priv_mode)}",
+            f"{indent}#if __riscv_xlen == 32",
+            f"{indent}{_csr_access('csrw CSR_MHPMEVENT3H, zero', priv_mode)}",
+            f"{indent}#endif",
+            f"{indent}{_csr_access('csrw RVMODEL_MHPMCOUNTER, zero', priv_mode)}",
+            "",
+        ]
+    )
+    test_data.int_regs.return_registers([r_hval])
+
     if priv_mode != "Sm":
         lines.append("RVTEST_GOTO_MMODE")
-
-    if priv_mode == "Sm":
-        sweep_coverpoint = "cp_minh_inhibits_mmode"
-        r_hval = test_data.int_regs.get_register(exclude_regs=[0, 31])
-        lines.extend(
-            [
-                "",
-                "csrw mip, zero",
-                "csrw mie, zero",
-                "",
-                "#if __riscv_xlen == 32",
-            ]
-        )
-        for combo in range(8):
-            binname = f"xinh_combo_{combo:03b}_mmode"
-            lines.extend(
-                [
-                    f"LI(x{r_val}, RVMODEL_MHPMEVENT_VAL)",
-                    f"csrw RVMODEL_MHPMEVENT, x{r_val}",
-                    f"LI(x{r_hval}, {combo} << 28)",
-                    f"csrw CSR_MHPMEVENT3H, x{r_hval}",
-                    "csrw RVMODEL_MHPMCOUNTER, zero",
-                    "",
-                    test_data.add_testcase(binname, sweep_coverpoint, covergroup),
-                    f"csrr x{r_temp}, CSR_MHPMEVENT3H",
-                    write_sigupd(r_temp, test_data),
-                    "",
-                ]
-            )
-        lines.append("#else")
-        for combo in range(32):
-            binname = f"xinh_combo_{combo:05b}_mmode"
-            lines.extend(
-                [
-                    f"LI(x{r_val}, RVMODEL_MHPMEVENT_VAL | ({combo} << 58))",
-                    f"csrw RVMODEL_MHPMEVENT, x{r_val}",
-                    "csrw RVMODEL_MHPMCOUNTER, zero",
-                    "",
-                    test_data.add_testcase(binname, sweep_coverpoint, covergroup),
-                    f"csrr x{r_temp}, RVMODEL_MHPMEVENT",
-                    write_sigupd(r_temp, test_data),
-                    "",
-                ]
-            )
-        lines.extend(
-            [
-                "#endif",
-                "csrw RVMODEL_MHPMEVENT, zero",
-                "#if __riscv_xlen == 32",
-                "csrw CSR_MHPMEVENT3H, zero",
-                "#endif",
-                "csrw RVMODEL_MHPMCOUNTER, zero",
-                "",
-            ]
-        )
-        test_data.int_regs.return_registers([r_hval])
 
     test_data.int_regs.return_registers([r_val, r_temp])
     return lines
@@ -489,49 +499,95 @@ def _generate_scountovf_mcounteren_tests(test_data: TestData, mode: str) -> list
         "checker_odd": lambda i: 1 if i % 2 == 1 else 0,
     }
 
+    indent = "" if mode == "Sm" else "    "
+    if mode != "Sm":
+        lines.append(f"RVTEST_GOTO_LOWER_MODE {mode}mode")
+
     for of_name, of_bit_fn in of_patterns.items():
         r_of_bit = test_data.int_regs.get_register(exclude_regs=[0, 31])
 
-        lines.append("#if __riscv_xlen == 32")
-        lines.append(f"LI(x{r_of_bit}, {1 << 31})   # OF bit (bit 31 of mhpmeventh, RV32)")
-        lines.append(f"# --- Write OF pattern: {of_name} across mhpmeventh3..31 (RV32) ---")
+        lines.append(f"{indent}#if __riscv_xlen == 32")
+        lines.append(f"{indent}LI(x{r_of_bit}, {1 << 31})   # OF bit (bit 31 of mhpmeventh, RV32)")
+        lines.append(f"{indent}# --- Write OF pattern: {of_name} across mhpmeventh3..31 (RV32) ---")
         for i, csr_name in enumerate(MHPMEVENTH_CSRS):
             op = "csrs" if of_bit_fn(i) else "csrc"
             lines.append(
-                _csr_access(
+                f"{indent}"
+                + _csr_access(
                     f"{op} {csr_name}, x{r_of_bit}   # {'set' if of_bit_fn(i) else 'clear'} OF bit -- {csr_name}", mode
                 )
             )
-        lines.append("#else")
-        lines.append(f"LI(x{r_of_bit}, {1 << 63})   # OF bit (bit 63 of mhpmevent, RV64)")
-        lines.append(f"# --- Write OF pattern: {of_name} across mhpmevent3..31 (RV64) ---")
+        lines.append(f"{indent}#else")
+        lines.append(f"{indent}LI(x{r_of_bit}, {1 << 63})   # OF bit (bit 63 of mhpmevent, RV64)")
+        lines.append(f"{indent}# --- Write OF pattern: {of_name} across mhpmevent3..31 (RV64) ---")
         for i, csr_name in enumerate(MHPMEVENT_CSRS):
             op = "csrs" if of_bit_fn(i) else "csrc"
             lines.append(
-                _csr_access(
+                f"{indent}"
+                + _csr_access(
                     f"{op} {csr_name}, x{r_of_bit}   # {'set' if of_bit_fn(i) else 'clear'} OF bit -- {csr_name}", mode
                 )
             )
-        lines.append("#endif")
+        lines.append(f"{indent}#endif")
         lines.append("")
 
         test_data.int_regs.return_registers([r_of_bit])
 
-        lines.extend(
-            csr_walk_test(
-                test_data,
-                csr=("mcounteren", 0xFFFFFFF8),
-                covergroup=covergroup,
-                coverpoint=f"{coverpoint}_{of_name}_{_mode_suffix(mode)}",
-                start_bit=3,
-                walk_zeros=True,
-            )
-        )
+        walk_coverpoint = f"{coverpoint}_{of_name}_{_mode_suffix(mode)}"
 
-        r_scountovf = test_data.int_regs.get_register(exclude_regs=[0, 31])
-        lines.append(_csr_access(f"csrr x{r_scountovf}, scountovf   # sample point", mode))
-        lines.append("")
-        test_data.int_regs.return_registers([r_scountovf])
+        if mode == "Sm":
+            lines.extend(
+                csr_walk_test(
+                    test_data,
+                    csr=("mcounteren", 0xFFFFFFF8),
+                    covergroup=covergroup,
+                    coverpoint=walk_coverpoint,
+                    start_bit=3,
+                    walk_zeros=True,
+                )
+            )
+
+            r_scountovf = test_data.int_regs.get_register(exclude_regs=[0, 31])
+            lines.append(_csr_access(f"csrr x{r_scountovf}, scountovf   # sample point", mode))
+            lines.append("")
+            test_data.int_regs.return_registers([r_scountovf])
+        else:
+            # mcounteren is M-only, so the generic csr_walk_test helper (which writes it
+            # directly) would trap here -- hand-roll the sweep through _csr_access (T-SBI)
+            # so it executes at actual {mode} privilege and priv_mode_{mode} gets sampled
+            # alongside the mcounteren state, matching _generate_scountovf_shadow_tests.
+            r_mcounteren, r_scountovf = test_data.int_regs.get_registers(2, exclude_regs=[0, 31])
+
+            for state_name, val in [("all_zeros", 0), ("all_ones", 0xFFFFFFF8)]:
+                binname = f"mcounteren_{state_name}"
+                lines.extend(
+                    [
+                        f"{indent}LI(x{r_mcounteren}, {hex(val)})",
+                        f"{indent}{_csr_access(f'csrw mcounteren, x{r_mcounteren}', mode)}",
+                        f"{indent}{test_data.add_testcase(binname, walk_coverpoint, covergroup)}",
+                        f"{indent}{_csr_access(f'csrr x{r_scountovf}, scountovf   # sample point', mode)}",
+                        "",
+                    ]
+                )
+
+            for bit in range(3, 32):
+                binname = f"mcounteren_walk_bit_{bit}"
+                lines.extend(
+                    [
+                        f"{indent}LI(x{r_mcounteren}, {1 << bit})",
+                        f"{indent}{_csr_access(f'csrw mcounteren, x{r_mcounteren}', mode)}",
+                        f"{indent}{test_data.add_testcase(binname, walk_coverpoint, covergroup)}",
+                        f"{indent}{_csr_access(f'csrr x{r_scountovf}, scountovf   # sample point', mode)}",
+                        "",
+                    ]
+                )
+
+            lines.append(f"{indent}{_csr_access('csrw mcounteren, zero', mode)}")
+            lines.append("")
+            test_data.int_regs.return_registers([r_mcounteren, r_scountovf])
+
+    if mode != "Sm":
+        lines.append("RVTEST_GOTO_MMODE")
 
     return lines
 
@@ -765,6 +821,8 @@ def generate_sscofpmf_suite(test_data: TestData, mode: str) -> list[TestChunk]:
     tc = test_data.begin_test_chunk()
     tc.code.extend(_generate_xinh_inhibits_tests(test_data, mode))
     tc.code.extend(_generate_of_set_on_overflow_tests(test_data, mode))
+    tc.code.extend(_generate_overflow_hw_only_tests(test_data, mode))
+    tc.code.extend(_generate_lcofip_hw_only_tests(test_data, mode))
     tc.code.extend(_generate_scountovf_mcounteren_tests(test_data, mode))
     tc.code.extend(_generate_sscofpmf_access_tests(test_data, mode))
     tc.code.extend(_generate_scountovf_shadow_tests(test_data, mode))

@@ -16,7 +16,7 @@ from testgen.priv.registry import add_priv_test_generator
 def _generate_lcofi_sip_s_tests(test_data: TestData) -> list[str]:
     ######################################
     covergroup = "Sscofpmf_cg"
-    coverpoint = "cp_lcofi_s"
+    coverpoint = "cp_lcofi_sip_s"
     ######################################
 
     LCOFI_BIT = 1 << 13
@@ -33,6 +33,9 @@ def _generate_lcofi_sip_s_tests(test_data: TestData) -> list[str]:
             "sip.LCOFIP x sie.LCOFIE.\n",
         ),
         "",
+        # BOOT_TO_SMODE lands execution here at S-mode, not M -- get back to M
+        # before touching mip/mie/mideleg/mstatus directly.
+        "RVTEST_GOTO_MMODE",
         "# === M-MODE SETUP ===",
         "csrw mip, zero      # clear all pending",
         "csrw mie, zero      # disable all interrupts",
@@ -40,7 +43,7 @@ def _generate_lcofi_sip_s_tests(test_data: TestData) -> list[str]:
         f"LI(x{r_val}, {hex(LCOFI_BIT)})",
         f"csrs mideleg, x{r_val}   # mideleg.LCOFI = 1 (fixed)",
         f"LI(x{r_val}, {hex(SIE_BIT)})",
-        f"csrs mstatus, x{r_val}   # sstatus.SIE = 1 (fixed, via mstatus)",
+        f"csrs sstatus, x{r_val}   # sstatus.SIE = 1 (fixed)",
     ]
 
     for lcofip in [0, 1]:
@@ -53,15 +56,16 @@ def _generate_lcofi_sip_s_tests(test_data: TestData) -> list[str]:
                 ]
             )
 
+            lines.append(f"LI(x{r_val}, {hex(LCOFI_BIT)})")
             if lcofip:
+                lines.append(f"csrs sip, x{r_val}   # set sip.LCOFIP directly")
+            else:
                 lines.extend(
                     [
-                        f"LI(x{r_val}, {hex(LCOFI_BIT)})",
-                        f"csrs sip, x{r_val}   # set sip.LCOFIP directly",
+                        "csrw RVMODEL_MHPMCOUNTER, zero   # keep counter clear -- no overflow",
+                        f"csrc sip, x{r_val}   # explicitly hold sip.LCOFIP = 0 (touch it so it samples)",
                     ]
                 )
-            else:
-                lines.append("csrw RVMODEL_MHPMCOUNTER, zero   # keep counter clear -- no overflow")
 
             lines.extend(
                 [
@@ -89,7 +93,7 @@ def _generate_lcofi_sip_s_tests(test_data: TestData) -> list[str]:
             f"csrc sie, x{r_temp}      # clear LCOFIE",
             f"csrc mideleg, x{r_temp}  # clear mideleg.LCOFI",
             f"LI(x{r_val}, {hex(SIE_BIT)})",
-            f"csrc mstatus, x{r_val}   # clear sstatus.SIE (via mstatus)",
+            f"csrc sstatus, x{r_val}   # clear sstatus.SIE",
             "csrw RVMODEL_MHPMCOUNTER, zero",
             "csrw RVMODEL_MHPMEVENT, zero",
         ]
@@ -245,7 +249,7 @@ def _generate_lcofip_priority_s_tests(test_data: TestData) -> list[str]:
     "SscofpmfS",
     required_extensions=["S", "Sscofpmf"],
     march_extensions=[],
-    extra_defines=[],
+    extra_defines=["#define BOOT_TO_SMODE"],
 )
 def make_sscofpmfs(test_data: TestData) -> list[TestChunk]:
     """Generate tests for the SscofpmfS performance-counter-overflow testsuite."""

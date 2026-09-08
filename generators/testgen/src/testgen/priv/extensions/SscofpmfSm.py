@@ -106,7 +106,7 @@ def _generate_lcofip_priority_sm_tests(test_data: TestData) -> list[str]:
     """cp_lcofip_priority: priority of LCOFI interrupt."""
     ######################################
     covergroup = "Sscofpmf_cg"
-    coverpoint = "cp_lcofip_priority"
+    coverpoint = "cp_lcofip_priority_m"
     ######################################
 
     r_mtime, r_mtimecmp, r_val, r_temp, r_temp2, r_addr = test_data.int_regs.get_registers(6, exclude_regs=[0, 31])
