@@ -120,10 +120,11 @@ jobs:
           release_args=(
             --title "$release_name"
             --notes "$release_body"
-            --latest
           )
           if [ "$PRERELEASE" = "true" ]; then
             release_args+=(--prerelease)
+          else
+            release_args+=(--latest)
           fi
 
           gh release create "$tag_name" \
