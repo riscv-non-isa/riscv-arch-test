@@ -30,6 +30,12 @@ covergroup SscofpmfU_cg with function sample(ins_t ins);
     `endif
     cp_lcofip_hw_only:         cross priv_mode_u, mhpmevent_of, lcofi_ip;
     `ifdef S_SUPPORTED
+        sstatus_sie_set: coverpoint ins.current.csr[CSR_SSTATUS][1] {
+                bins one = {1};
+        }
+        sie_lcofi: coverpoint ins.current.csr[CSR_SIE][13] {}
+        sip_lcofi: coverpoint ins.current.csr[CSR_SIP][13] {}
+
         cp_lcofi_sip_u: cross priv_mode_u, sstatus_sie_set, sie_lcofi, sip_lcofi;
     `else
         cp_lcofi_sip_u: cross priv_mode_u, mstatus_sie_set, lcofi_ie, lcofi_ip;

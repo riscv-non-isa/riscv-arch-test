@@ -22,6 +22,15 @@ covergroup SscofpmfS_cg with function sample(ins_t ins);
             bins stip = {3'b010};
             bins ssip = {3'b001};
     }
+    sip_lcofi: coverpoint ins.current.csr[CSR_SIP][13] {}
+    sie_lcofi: coverpoint ins.current.csr[CSR_SIE][13] {}
+    sstatus_sie_set: coverpoint ins.current.csr[CSR_SSTATUS][1] {
+            bins one = {1};
+    }
+    sie_state: coverpoint (ins.current.csr[CSR_SIE]) {
+            bins all_zeros = {'0};
+            bins all_ones  = {'1};
+    }
 
     cp_sinh_inhibits_smode:    cross priv_mode_s, mhpmevent_xinh_combos, mhpmevent_of_zero;
     cp_of_set_on_overflow:     cross priv_mode_s, mip_clear, mie_clear, mhpmevent_of_one, mhpmevent_inhibits_pattern_state;
