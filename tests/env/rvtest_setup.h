@@ -352,9 +352,12 @@
 
     rvtest_set_mtime_int_soon_m:
       #if defined(RVMODEL_MTIME_ADDRESS) && defined(RVMODEL_MTIMECMP_ADDRESS) && defined(RVMODEL_TIMER_INT_SOON_DELAY)
-        LA(a1, RVMODEL_MTIME_ADDRESS)
         LI(a2, RVMODEL_TIMER_INT_SOON_DELAY)
         #if UDB_MXLEN == 32
+          LA(a1, RVMODEL_MTIMECMP_ADDRESS)
+          li a0, -1
+          sw a0, 4(a1) // mtimecmp high word = all 1s so the split update cannot fire early
+          LA(a1, RVMODEL_MTIME_ADDRESS)
           lw a0, 0(a1) // read mtime low word
           add a0, a0, a2 // add delay to mtime low word
           LA(a1, RVMODEL_MTIMECMP_ADDRESS)
@@ -369,6 +372,7 @@
           LA(a1, RVMODEL_MTIMECMP_ADDRESS)
           sw a0, 4(a1) // write to mtimecmp high word
         #else
+          LA(a1, RVMODEL_MTIME_ADDRESS)
           ld a0, 0(a1) // read mtime
           add a0, a2, a0 // add delay to mtime
           LA(a1, RVMODEL_MTIMECMP_ADDRESS)
@@ -427,9 +431,10 @@
     #ifdef SSTC_SUPPORTED
       rvtest_set_sstc_int_soon_m:
         #if defined(RVMODEL_MTIME_ADDRESS) && defined(RVMODEL_TIMER_INT_SOON_DELAY)
-          LA(a1, RVMODEL_MTIME_ADDRESS)
           LI(a2, RVMODEL_TIMER_INT_SOON_DELAY)
           #if UDB_MXLEN == 32
+            li a0, -1
+            csrw stimecmph, a0 // stimecmp high word = all 1s so the split update cannot fire early
             lw a0, 0(a1) // read mtime low word
             add a1, a0, a2 // add delay to mtime low word
             csrw stimecmp, a1 // write low word of timer compare
@@ -442,6 +447,7 @@
             1:
             csrw stimecmph, a0 // write high word of timer compare
           #else
+            LA(a1, RVMODEL_MTIME_ADDRESS)
             ld a0, 0(a1) // read mtime
             add a1, a2, a0 // add delay to mtime
             csrw stimecmp, a1 // write to timer compare
@@ -523,9 +529,13 @@
 
     rvtest_set_mtime_int_soon_su:
       #if defined(RVMODEL_MTIME_ADDRESS) && defined(RVMODEL_MTIMECMP_ADDRESS) && defined(RVMODEL_TIMER_INT_SOON_DELAY)
-        LA(a1, RVMODEL_MTIME_ADDRESS)
         LI(a2, RVMODEL_TIMER_INT_SOON_DELAY)
         #if UDB_MXLEN == 32
+          LA(a1, RVMODEL_MTIMECMP_ADDRESS)
+          li a2, -1
+          RVTEST_TSBI_SWP4 // sw a2, 4(a1) // mtimecmp high word = all 1s so the split update cannot fire early
+          LA(a1, RVMODEL_MTIME_ADDRESS)
+          LI(a2, RVMODEL_TIMER_INT_SOON_DELAY)
           RVTEST_TSBI_LW // lw a0, 0(a1) // read mtime low word
           add a2, a0, a2 // add delay to mtime low word
           LA(a1, RVMODEL_MTIMECMP_ADDRESS)
@@ -540,6 +550,7 @@
           mv a2, a0 // Save mtimecmp high word
           RVTEST_TSBI_SWP4 // sw a2, 4(a1) // write to mtimecmp high word
         #else
+          LA(a1, RVMODEL_MTIME_ADDRESS)
           RVTEST_TSBI_LD // ld a0, 0(a1) // read mtime
           add a2, a2, a0 // add delay to mtime
           LA(a1, RVMODEL_MTIMECMP_ADDRESS)
@@ -610,6 +621,8 @@
           LA(a1, RVMODEL_MTIME_ADDRESS)
           LI(a2, RVMODEL_TIMER_INT_SOON_DELAY)
           #if UDB_MXLEN == 32
+            li a0, -1
+            csrw stimecmph, a0 // stimecmp high word = all 1s so the split update cannot fire early
             RVTEST_TSBI_LW // lw a0, 0(a1) // read mtime low word
             add a0, a0, a2 // add delay to mtime low word
             csrw stimecmp, a0 // write low word of timer compare
@@ -676,9 +689,11 @@
     #ifdef SSTC_SUPPORTED
       rvtest_set_sstc_int_soon_u:
         #if defined(RVMODEL_MTIME_ADDRESS) && defined(RVMODEL_TIMER_INT_SOON_DELAY)
-          LA(a1, RVMODEL_MTIME_ADDRESS)
           LI(a2, RVMODEL_TIMER_INT_SOON_DELAY)
           #if UDB_MXLEN == 32
+            li a1, -1
+            RVTEST_TSBI_CSR_WRITE_A1(CSR_STIMECMPH) // stimecmp high word = all 1s so the split update cannot fire early
+            LA(a1, RVMODEL_MTIME_ADDRESS)
             RVTEST_TSBI_LW // lw a0, 0(a1) // read mtime low word
             add a2, a0, a2 // stimecmp low word = mtime low word + delay
             mv a1, a2
@@ -692,6 +707,7 @@
             mv a1, a0
             RVTEST_TSBI_CSR_WRITE_A1(CSR_STIMECMPH) // write high word of timer compare
           #else
+            LA(a1, RVMODEL_MTIME_ADDRESS)
             RVTEST_TSBI_LD // ld a0, 0(a1) // read mtime
             add a1, a2, a0 // add delay to mtime
             RVTEST_TSBI_CSR_WRITE_A1(CSR_STIMECMP) // write timer compare
