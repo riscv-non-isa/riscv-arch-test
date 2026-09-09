@@ -60,16 +60,25 @@ def counteren_walk_tests(
     csrs: list[str],
     mode: Mode,
     mcounteren: Counteren | None = None,
+    scounteren_ones: bool = False,
     tag: str = "",
 ) -> list[str]:
     """
     Walk a 1 and then a 0 through every bit of each CSR in csrs (the same value in each), reading
     every counter after each write. Everything runs in mode; writes that mode cannot make directly
-    go through T-SBI. mcounteren optionally presets that register to all ones or all zeros first.
+    go through T-SBI. mcounteren optionally presets that register to all ones or all zeros first, and
+    scounteren_ones presets scounteren to all ones when S-mode exists.
     tag prefixes the testcase names so a coverpoint tested with several mcounteren settings stays unique.
     """
     read_reg, ones_reg, walk_reg, inv_reg = test_data.int_regs.get_registers(4)
     lines = [comment_banner(coverpoint, description), ""]
+    if scounteren_ones:
+        lines += [
+            "#ifdef S_SUPPORTED",
+            f"LI(x{ones_reg}, -1)",
+            _write_counteren("scounteren", f"x{ones_reg}", mode, "enable all counters for U-mode"),
+            "#endif // S_SUPPORTED",
+        ]
     if mcounteren == "ones":
         lines += [
             f"LI(x{ones_reg}, -1)",

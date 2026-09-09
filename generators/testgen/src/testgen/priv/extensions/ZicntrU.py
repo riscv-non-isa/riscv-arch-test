@@ -30,9 +30,10 @@ def make_zicntru(test_data: TestData) -> list[TestChunk]:
             test_data,
             covergroup,
             "cp_mcounteren_access_u",
-            "Write walking 1s and 0s to mcounteren.  Read from corresponding counter and counterh in U-mode",
+            "If S_SUPPORTED, write scounteren = 1s.  Write walking 1s and 0s to mcounteren.  Read from corresponding counter and counterh in U-mode",
             csrs=["mcounteren"],
             mode="U",
+            scounteren_ones=True,
         )
     )
     tc.code.extend(counter_inc_inaccessible_tests(test_data, covergroup, "U"))
