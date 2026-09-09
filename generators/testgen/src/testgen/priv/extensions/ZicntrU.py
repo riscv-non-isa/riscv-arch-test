@@ -6,7 +6,7 @@
 # SPDX-License-Identifier: Apache-2.0
 ##################################
 
-"""ZicntrU extension test generator: counter access from U-mode, with mcounteren written via T-SBI."""
+"""ZicntrU extension test generator: counter access from U-mode."""
 
 from testgen.data.state import TestData
 from testgen.data.test_chunk import TestChunk
@@ -30,10 +30,9 @@ def make_zicntru(test_data: TestData) -> list[TestChunk]:
             test_data,
             covergroup,
             "cp_mcounteren_access_u",
-            "Write walking 1s and 0s to mcounteren via T-SBI.  Read from corresponding counter and counterh in U-mode",
+            "Write walking 1s and 0s to mcounteren.  Read from corresponding counter and counterh in U-mode",
             csrs=["mcounteren"],
-            run_mode="U",
-            read_mode="U",
+            mode="U",
         )
     )
     tc.code.extend(counter_inc_inaccessible_tests(test_data, covergroup, "U"))

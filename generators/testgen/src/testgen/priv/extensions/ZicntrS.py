@@ -32,10 +32,9 @@ def make_zicntrs(test_data: TestData) -> list[TestChunk]:
             test_data,
             covergroup,
             "cp_mcounteren_access_s",
-            "Write walking 1s and 0s to mcounteren via T-SBI.  Read from corresponding counter and counterh in S-mode",
+            "Write walking 1s and 0s to mcounteren.  Read from corresponding counter and counterh in S-mode",
             csrs=["mcounteren"],
-            run_mode="S",
-            read_mode="S",
+            mode="S",
         )
     )
     tc.code.extend(
@@ -45,11 +44,11 @@ def make_zicntrs(test_data: TestData) -> list[TestChunk]:
             "cp_scounteren_access_s",
             "Write walking 1s and 0s to scounteren with mcounteren = all 1s.  Read from corresponding counter and counterh in S-mode",
             csrs=["scounteren"],
-            run_mode="S",
-            read_mode="S",
-            mcounteren_settings=("ones",),
+            mode="S",
+            mcounteren="ones",
         )
     )
+    tc.code.append("RVTEST_TSBI_GOTO_UMODE")
     tc.code.extend(
         counteren_walk_tests(
             test_data,
@@ -57,9 +56,8 @@ def make_zicntrs(test_data: TestData) -> list[TestChunk]:
             "cp_scounteren_access_u",
             "Write walking 1s and 0s to scounteren with mcounteren = all 1s.  Read from corresponding counter and counterh in U-mode",
             csrs=["scounteren"],
-            run_mode="S",
-            read_mode="U",
-            mcounteren_settings=("ones",),
+            mode="U",
+            mcounteren="ones",
         )
     )
     tc.code.extend(
@@ -67,12 +65,12 @@ def make_zicntrs(test_data: TestData) -> list[TestChunk]:
             test_data,
             covergroup,
             "cp_mcounteren_access_u",
-            "Write walking 1s and 0s to both mcounteren (via T-SBI) and scounteren (same value in each).  Read from corresponding counter and counterh in U-mode",
+            "Write walking 1s and 0s to both mcounteren and scounteren (same value in each).  Read from corresponding counter and counterh in U-mode",
             csrs=["mcounteren", "scounteren"],
-            run_mode="S",
-            read_mode="U",
+            mode="U",
         )
     )
+    tc.code.append("RVTEST_TSBI_GOTO_SMODE")
     tc.code.extend(counter_inc_inaccessible_tests(test_data, covergroup, "S"))
     test_chunks.append(test_data.end_test_chunk())
     return test_chunks
