@@ -158,7 +158,7 @@ def vaddr_walk_test(
     return lines
 
 
-def vaddr_value_tests(test_data: TestData, csr_name: str, covergroup: str) -> list[str]:
+def addr_value_tests(test_data: TestData, csr_name: str, covergroup: str) -> list[str]:
     """Write physical addresses (the current pc and scratch) to csr_name and check they read back exactly.
 
     These are valid addresses even when address translation is off, so unlike the
@@ -209,7 +209,7 @@ def addr_csr_tests(
     )
     for csr_name, (held_low, gated_bits) in vaddr_csrs.items():
         tc = test_data.new_test_chunk(test_chunks)
-        tc.code.extend(vaddr_value_tests(test_data, csr_name, covergroup))
+        tc.code.extend(addr_value_tests(test_data, csr_name, covergroup))
         tc.code.extend(vaddr_walk_test(test_data, csr_name, covergroup, held_low=held_low, gated_bits=gated_bits))
 
 

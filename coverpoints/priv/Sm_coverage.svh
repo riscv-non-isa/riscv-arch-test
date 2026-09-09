@@ -495,23 +495,12 @@ covergroup Sm_mcsr_cg with function sample(ins_t ins);
     `ifdef SM_VADDR_WALK_MSB
         // mepc: bit 0 is always 0; bit 1 is 0 unless Zca allows 2-byte instruction alignment
         xepc_vaddr_walk1: coverpoint $clog2(ins.current.rs1_val) iff ($onehot(ins.current.rs1_val)) {
-            `ifdef ZCA_SUPPORTED
-                bins b_1[] = { [1:`SM_VADDR_WALK_MSB] };
-            `else
-                bins b_1[] = { [2:`SM_VADDR_WALK_MSB] };
-            `endif
+            bins b_1[] = { [0:`SM_VADDR_WALK_MSB] };
         }
-        `ifdef ZCA_SUPPORTED
-            xepc_vaddr_walk0: coverpoint $clog2(~(ins.current.rs1_val | 1))
+        xepc_vaddr_walk0: coverpoint $clog2(~(ins.current.rs1_val | 1))
                               iff ($onehot(~(ins.current.rs1_val | 1))) {
-                bins b_0[] = { [1:`SM_VADDR_WALK_MSB] };
-            }
-        `else
-            xepc_vaddr_walk0: coverpoint $clog2(~(ins.current.rs1_val | 3))
-                              iff ($onehot(~(ins.current.rs1_val | 3))) {
-                bins b_0[] = { [2:`SM_VADDR_WALK_MSB] };
-            }
-        `endif
+            bins b_0[] = { [0:`SM_VADDR_WALK_MSB] };
+        }
         // mtval: any byte address is a valid virtual address
         mtval_vaddr_walk1: coverpoint $clog2(ins.current.rs1_val) iff ($onehot(ins.current.rs1_val)) {
             bins b_1[] = { [0:`SM_VADDR_WALK_MSB] };
