@@ -119,13 +119,13 @@ normative_rule_definitions:
   # SFENCE.VMA is also used to invalidate entries in the address-translation cache
   # associated with a hart (see &lt;&lt;sv32algorithm&gt;&gt;).
   - name: sfence_vma_invalidation
-    coverpoint: ["Sv_sfence_cg/cp_ins"]
+    coverpoint: [""]
 
   # If rs1=x0 and rs2=x0, the fence orders all reads and writes made to any level of
   # the page tables, for all address spaces. The fence also invalidates all
   # address-translation cache entries, for all address spaces.
   - name: sfence_vma_all_asid_va
-    coverpoint: ["Sv_sfence_cg/cp_ins"]
+    coverpoint: [""]
 
   # If rs1=x0 and rs2{ne}x0, the fence orders all reads and writes made to any level
   # of the page tables, but only for the address space identified by integer
@@ -277,7 +277,7 @@ normative_rule_definitions:
 
   # The 27-bit VPN is translated into a 44-bit PPN via a three-level page table.
   - name: Sv39_levels
-    coverpoint: ["Sv_vm_permissions_cg/{PageType_i,PageType_d}"]
+    coverpoint: [""]
 
   # The 12-bit page offset is untranslated.
   - name: Sv39_page_offset_sz
@@ -326,11 +326,11 @@ normative_rule_definitions:
 
   # Any level of PTE may be a leaf PTE.
   - name: Sv39_leaf_any_level
-    coverpoint: ["Sv_vm_permissions_cg/{PageType_i,PageType_d}"]
+    coverpoint: [""]
 
   # In addition to 4 KiB pages, Sv39 supports 2 MiB megapages and 1 GiB gigapages.
   - name: Sv39_page_sizes
-    coverpoint: ["Sv_vm_permissions_cg/{PageType_i,PageType_d}"]
+    coverpoint: [""]
 
   # Each superpage must be virtually and physically aligned to a boundary equal to
   # its size.
@@ -348,7 +348,7 @@ normative_rule_definitions:
   # The algorithm for virtual-to-physical address translation is the same as for
   # Sv32, except LEVELS equals 3.
   - name: Sv39_LEVELS
-    coverpoint: ["Sv_vm_permissions_cg/{PageType_i,PageType_d}"]
+    coverpoint: [""]
 
   # The algorithm for virtual-to-physical address translation is the same as for
   # Sv32, except PTESIZE equals 8.
@@ -386,7 +386,7 @@ normative_rule_definitions:
 
   # The 36-bit VPN is translated into a 44-bit PPN via a four-level page table.
   - name: Sv48_levels
-    coverpoint: ["Sv_vm_permissions_cg/{PageType_i,PageType_d}"]
+    coverpoint: [""]
 
   # The 12-bit page offset is untranslated.
   - name: Sv48_page_offset_sz
@@ -394,12 +394,12 @@ normative_rule_definitions:
 
   # Any level of PTE may be a leaf PTE.
   - name: Sv48_leaf_any_level
-    coverpoint: ["Sv_vm_permissions_cg/{PageType_i,PageType_d}"]
+    coverpoint: [""]
 
   # In addition to 4 KiB pages, Sv48 supports 2 MiB megapages, 1 GiB gigapages, and
   # 512 GiB terapages.
   - name: Sv48_page_sizes
-    coverpoint: ["Sv_vm_permissions_cg/{PageType_i,PageType_d}"]
+    coverpoint: [""]
 
   # Each superpage must be virtually and physically aligned to a boundary equal to
   # its size.
@@ -417,7 +417,7 @@ normative_rule_definitions:
   # The algorithm for virtual-to-physical address translation is the same as for
   # Sv32, except LEVELS equals 4.
   - name: Sv48_LEVELS
-    coverpoint: ["Sv_vm_permissions_cg/{PageType_i,PageType_d}"]
+    coverpoint: [""]
 
   # The algorithm for virtual-to-physical address translation is the same as for
   # Sv32, except PTESIZE equals 8.
