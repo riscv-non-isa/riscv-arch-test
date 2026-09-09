@@ -497,8 +497,8 @@ covergroup Sm_mcsr_cg with function sample(ins_t ins);
         xepc_vaddr_walk1: coverpoint $clog2(ins.current.rs1_val) iff ($onehot(ins.current.rs1_val)) {
             bins b_1[] = { [0:`SM_VADDR_WALK_MSB] };
         }
-        xepc_vaddr_walk0: coverpoint $clog2(~(ins.current.rs1_val | 1))
-                              iff ($onehot(~(ins.current.rs1_val | 1))) {
+        xepc_vaddr_walk0: coverpoint $clog2(~(ins.current.rs1_val))
+                              iff ($onehot(~(ins.current.rs1_val))) {
             bins b_0[] = { [0:`SM_VADDR_WALK_MSB] };
         }
         // mtval: any byte address is a valid virtual address

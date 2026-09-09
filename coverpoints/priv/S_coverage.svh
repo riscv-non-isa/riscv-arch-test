@@ -317,8 +317,8 @@ covergroup S_scsr_cg with function sample(ins_t ins);
         sepc_vaddr_walk1: coverpoint $clog2(ins.current.rs1_val) iff ($onehot(ins.current.rs1_val)) {
             bins b_1[] = { [0:`S_VADDR_WALK_MSB] };
         }
-        sepc_vaddr_walk0: coverpoint $clog2(~(ins.current.rs1_val | 1))
-                            iff ($onehot(~(ins.current.rs1_val | 1))) {
+        sepc_vaddr_walk0: coverpoint $clog2(~(ins.current.rs1_val))
+                            iff ($onehot(~(ins.current.rs1_val))) {
             bins b_0[] = { [0:`S_VADDR_WALK_MSB] };
         }
         // stval: any byte address is a valid virtual address
