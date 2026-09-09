@@ -52,6 +52,15 @@ def _generate_cp_trigger_s(test_data: TestData, test_chunks: list[TestChunk], su
     for int_type in [*supervisor_ints, *reg_ints, *sstc_ints]:
         if int_type not in int_macro:
             continue  # no RVTEST_SET/CLR macros for this interrupt yet
+        if priv == "U" and int_type == "SSTC_STCE0":
+            # Arming Sstc from U mode goes through T-SBI.  This suite boots to S mode with
+            # medeleg delegating U-mode ecalls, so the S-mode handler services the request and
+            # executes the stimecmp write at S privilege.  That access is illegal while
+            # menvcfg.STCE = 0, and the trap fires inside the handler after it has swapped
+            # sscratch, so re-entry overwrites the saved context instead of recording a test
+            # trap.  InterruptsSm covers priv U with STCE = 0: it boots to M mode, leaving
+            # medeleg = 0, so the same request reaches M mode where stimecmp is accessible.
+            continue
         macro = int_macro[int_type]
         guard = guard_symbol(int_type)
         cp = int_coverpoint.get(int_type, "cp_trigger")
