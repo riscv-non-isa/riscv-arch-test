@@ -11,7 +11,7 @@ across different privilege-modes."""
 
 from typing import NamedTuple
 
-from testgen.asm.helpers import comment_banner
+from testgen.asm.helpers import comment_banner, write_sigupd
 from testgen.asm.tsbi import tsbi_call
 from testgen.data.state import TestData
 from testgen.data.test_chunk import TestChunk
@@ -42,6 +42,28 @@ _CBO_FIELDS: dict[str, _CboField] = {
     ),
     "cbze": _CboField(shift=7, bins=["0", "1"], instrs=["cbo.zero"], guard="ZICBOZ_SUPPORTED"),
 }
+
+
+# Sentinel written to the start of scratch before each cbo.zero, so the readback after it
+# distinguishes "the block was zeroed" from "the instruction did nothing". scratch is
+# 256-byte aligned and every cache block is naturally aligned and at least 4 bytes, so the
+# first word is inside the zeroed block whatever the implementation's block size is.
+_CBOZ_SENTINEL = 0x0C0B0000
+
+
+def _cboz_prime(addr_reg: int, val_reg: int) -> list[str]:
+    return [
+        f"LI(x{val_reg}, {_CBOZ_SENTINEL:#x})  # sentinel so a no-op cbo.zero is detectable",
+        f"sw x{val_reg}, 0(x{addr_reg})",
+    ]
+
+
+def _cboz_check(addr_reg: int, val_reg: int, test_data: TestData) -> list[str]:
+    """Read the first word of the block back: 0 if cbo.zero ran, the sentinel if it trapped."""
+    return [
+        f"lw x{val_reg}, 0(x{addr_reg})",
+        write_sigupd(val_reg, test_data),
+    ]
 
 
 def _csr_op(op: str, csr: str, reg: int, mode: str) -> str:
@@ -82,7 +104,7 @@ def cbo_config_helper(
 
     description = f"Exercise {', '.join(instrs)} across menvcfg.{field}"
 
-    addr_reg, cfg_reg, mask_reg = test_data.int_regs.get_registers(3)
+    addr_reg, cfg_reg, mask_reg, val_reg = test_data.int_regs.get_registers(4)
 
     lines = [
         comment_banner(coverpoint, description),
@@ -120,8 +142,10 @@ def cbo_config_helper(
                 name = f"{instr}{mode_tag}_menvcfg.{field}{m_val}"
                 lines.extend(
                     [
+                        *(_cboz_prime(addr_reg, val_reg) if instr == "cbo.zero" else []),
                         test_data.add_testcase(name, coverpoint, covergroup),
                         f"{instr}    0(x{addr_reg})",
+                        *(_cboz_check(addr_reg, val_reg, test_data) if instr == "cbo.zero" else []),
                     ]
                 )
         else:
@@ -140,8 +164,10 @@ def cbo_config_helper(
                     name = f"{instr}{mode_tag}_menvcfg.{field}{m_val}{senvcfg_tag}"
                     lines.extend(
                         [
+                            *(_cboz_prime(addr_reg, val_reg) if instr == "cbo.zero" else []),
                             test_data.add_testcase(name, coverpoint, covergroup),
                             f"{instr}    0(x{addr_reg})",
+                            *(_cboz_check(addr_reg, val_reg, test_data) if instr == "cbo.zero" else []),
                         ]
                     )
             lines.append("#else")
@@ -149,8 +175,10 @@ def cbo_config_helper(
                 name = f"{instr}{mode_tag}_menvcfg.{field}{m_val}"
                 lines.extend(
                     [
+                        *(_cboz_prime(addr_reg, val_reg) if instr == "cbo.zero" else []),
                         test_data.add_testcase(name, coverpoint, covergroup),
                         f"{instr}    0(x{addr_reg})",
+                        *(_cboz_check(addr_reg, val_reg, test_data) if instr == "cbo.zero" else []),
                     ]
                 )
             lines.append("#endif // S1P12P0_OR_LATER_SUPPORTED")
@@ -160,7 +188,7 @@ def cbo_config_helper(
         lines.append("#endif // U_SUPPORTED")
     lines.append("#endif // SM1P12P0_OR_LATER_SUPPORTED")
 
-    test_data.int_regs.return_registers([addr_reg, cfg_reg, mask_reg])
+    test_data.int_regs.return_registers([addr_reg, cfg_reg, mask_reg, val_reg])
     return lines
 
 
