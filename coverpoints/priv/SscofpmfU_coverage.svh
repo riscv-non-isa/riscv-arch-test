@@ -23,22 +23,19 @@ covergroup SscofpmfU_cg with function sample(ins_t ins);
 
     `ifdef S_SUPPORTED
 
-        sstatus_sie_set: coverpoint ins.current.csr[CSR_SSTATUS][1] {
-                bins one = {1};
-        }
         sie_lcofi: coverpoint ins.current.csr[CSR_SIE][13] {}
         sip_lcofi: coverpoint ins.current.csr[CSR_SIP][13] {}
         sip_lcofi_one: coverpoint ins.current.csr[CSR_SIP][13] {
                 bins one = {1};
         }
 
-        // The interrupt fires on the mret that enters U, so the trap record is the
-        // mret, retired in M -- priv_mode_u (ins.prev.mode) is false for it. Sample
-        // ins.current.mode instead, as cp_user_sei_handled_s does via priv_mode_s_after
-        // in InterruptsS_coverage.svh, to catch that instruction.
-        priv_mode_u_after: coverpoint {ins.current.mode_virt, ins.current.mode} {
+        sret_insn: coverpoint ins.current.insn {
                 type_option.weight = 0;
-                bins U_mode = {3'b000};
+                bins sret = {SRET};
+        }
+        old_sstatus_spp_u: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "sstatus", "spp")[0] {
+                type_option.weight = 0;
+                bins to_u = {0};
         }
     `endif
 
@@ -61,9 +58,11 @@ covergroup SscofpmfU_cg with function sample(ins_t ins);
         cp_lcofip_hw_only:     cross priv_mode_u, mhpmevent_of, lcofi_ip;
     `endif
     `ifdef S_SUPPORTED
-        cp_lcofi_sip_u: cross priv_mode_u_after, sstatus_sie_set, sie_lcofi, sip_lcofi;
+
+        cp_lcofi_sip_u: cross sret_insn, old_sstatus_spp_u, sie_lcofi, sip_lcofi;
     `else
-        cp_lcofi_sip_u: cross priv_mode_u, mstatus_sie_set, lcofi_ie, lcofi_ip;
+
+        cp_lcofi_sip_u: cross priv_mode_u, lcofi_ie, lcofi_ip;
     `endif
 
 endgroup
