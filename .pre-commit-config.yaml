@@ -69,11 +69,10 @@ repos:
       - id: uv-lock
 
   # Check GitHub Actions workflows
-  - repo: https://github.com/rhysd/actionlint
-    rev: 914e7df21a07ef503a81201c76d2b11c789d3fca # frozen: v1.7.12
+  - repo: https://github.com/kjanat/actionlint
+    rev: 12b4eec2b4964a2c9ed7c2360c79a9e37c872a47 # frozen: v1.16
     hooks:
-      - id: actionlint
-        args: [-shellcheck=mise exec -- shellcheck]
+      - id: actionlint-shellcheck
 
   # Find security issues in GitHub Actions workflows
   - repo: https://github.com/zizmorcore/zizmor-pre-commit
