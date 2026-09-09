@@ -295,7 +295,8 @@ def _umode_image_map(xlen: int) -> list[str]:
       [rvtest_code_end, data page)     supervisor only -- trap handlers and save areas
       [data page, _end)                PTE_U -- test data and the signature region
 
-    where ``data page`` is ``rvtest_data_begin`` rounded down. The handler still writes trap
+    where ``data page`` is ``rvtest_data_begin`` rounded UP, so the page holding the
+    S-mode save area stays supervisor-only. The handler still writes trap
     signatures into the user-mapped signature region, which is why the caller also sets
     ``sstatus.SUM``.
 
@@ -326,10 +327,15 @@ def _umode_image_map(xlen: int) -> list[str]:
         "add t2, t2, t1",
         "LA(t1, _end)",
         "LA(t3, rvtest_code_end)   # first page that must not be user-executable",
+        "li t6, 4096",
+        "# Round rvtest_data_begin UP: the S-mode save area sits just below it and the",
+        "# T-SBI S-mode handler executes its CSR instruction out of that save area, so its",
+        "# page must stay supervisor-only or S-mode cannot fetch the scratch code.",
         "LA(t4, rvtest_data_begin)",
+        "add t4, t4, t6",
+        "addi t4, t4, -1",
         "srli t4, t4, 12",
         "slli t4, t4, 12          # first page of the user-writable data region",
-        "li t6, 4096",
         "1:",
         "bgeu t0, t1, 2f",
         "srli t5, t0, 12",
