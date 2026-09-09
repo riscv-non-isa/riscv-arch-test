@@ -85,7 +85,8 @@ def _generate_medeleg_msu_tests(test_data: TestData, mode_tag: str, priv_mode: i
             ]
         )
 
-        # Illegal instruction zeros
+        # Illegal instruction zeros. The all-zero word advances execution by 4 with or
+        # without Zca; see generate_illegal_instruction_tests in ExceptionsCommon.py.
         lines.extend(
             [
                 test_data.add_testcase(f"illegalinstr_zeros_{tag}", coverpoint, covergroup),

@@ -77,6 +77,8 @@ def _generate_stvec_tests(test_data: TestData, mode_tag: str, priv_mode: int) ->
     elif priv_mode == 0:
         lines.append("RVTEST_TSBI_GOTO_UMODE")
 
+    # Both words advance execution by 4 with or without Zca; see
+    # generate_illegal_instruction_tests in ExceptionsCommon.py for why.
     for name, word in (("zeros", "0x00000000"), ("ones", "0xFFFFFFFF")):
         lines.extend(
             [
