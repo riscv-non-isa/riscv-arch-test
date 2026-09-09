@@ -9,7 +9,7 @@ from testgen.asm.helpers import comment_banner, write_sigupd
 from testgen.asm.interrupts import clr_mtimer_int, set_mtimer_int
 from testgen.data.state import TestData
 from testgen.data.test_chunk import TestChunk
-from testgen.priv.extensions.SscofpmfCommon import generate_sscofpmf_suite
+from testgen.priv.extensions.SscofpmfCommon import generate_sscofpmf_suite, nonzero_not_all_ones
 from testgen.priv.registry import add_priv_test_generator
 
 
@@ -183,6 +183,7 @@ def _generate_lcofip_priority_sm_tests(test_data: TestData) -> list[str]:
                 f"csrr x{r_val}, RVMODEL_MHPMEVENT   # sample point for mhpmevent_of",
                 write_sigupd(r_val, test_data),
                 f"csrr x{r_temp}, RVMODEL_MHPMCOUNTER   # sample point for hpmcounter_nonzero/non-all-1s",
+                *nonzero_not_all_ones(r_temp, r_addr),
                 write_sigupd(r_temp, test_data),
                 "",
                 f"RVTEST_IDLE_FOR_INTERRUPT(x{r_temp})",

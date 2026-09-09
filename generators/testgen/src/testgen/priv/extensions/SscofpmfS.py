@@ -9,7 +9,7 @@ from testgen.asm.helpers import comment_banner, write_sigupd
 from testgen.asm.interrupts import clr_stimer_mmode, set_stimer_mmode
 from testgen.data.state import TestData
 from testgen.data.test_chunk import TestChunk
-from testgen.priv.extensions.SscofpmfCommon import generate_sscofpmf_suite
+from testgen.priv.extensions.SscofpmfCommon import _csr_access, generate_sscofpmf_suite, nonzero_not_all_ones
 from testgen.priv.registry import add_priv_test_generator
 
 
@@ -24,6 +24,9 @@ def _generate_lcofi_sip_s_tests(test_data: TestData) -> list[str]:
 
     r_val, r_temp = test_data.int_regs.get_registers(2, exclude_regs=[0, 31])
 
+    # BOOT_TO_SMODE lands execution here at S-mode and it stays there throughout:
+    # sip/sie/sstatus are S-accessible and stay direct; mip/mie/mideleg/RVMODEL_MHPMEVENT/
+    # RVMODEL_MHPMCOUNTER are M-only and go through T-SBI.
     lines = [
         comment_banner(
             coverpoint,
@@ -33,15 +36,15 @@ def _generate_lcofi_sip_s_tests(test_data: TestData) -> list[str]:
             "sip.LCOFIP x sie.LCOFIE.\n",
         ),
         "",
-        # BOOT_TO_SMODE lands execution here at S-mode, not M -- get back to M
-        # before touching mip/mie/mideleg/mstatus directly.
-        "RVTEST_GOTO_MMODE",
-        "# === M-MODE SETUP ===",
-        "csrw mip, zero      # clear all pending",
-        "csrw mie, zero      # disable all interrupts",
-        "csrw RVMODEL_MHPMEVENT, zero",
+        _csr_access("csrw mip, zero      # clear all pending", "S"),
+        _csr_access("csrw mie, zero      # disable all interrupts", "S"),
+        _csr_access("csrw RVMODEL_MHPMEVENT, zero", "S"),
+        # mideleg is deliberately excluded from the T-SBI dispatch table (see
+        # docs/tsbi-changes.md) -- it needs an actual, one-time mode change, not T-SBI.
         f"LI(x{r_val}, {hex(LCOFI_BIT)})",
+        "RVTEST_TSBI_GOTO_MMODE",
         f"csrs mideleg, x{r_val}   # mideleg.LCOFI = 1 (fixed)",
+        "RVTEST_TSBI_GOTO_SMODE",
         f"LI(x{r_val}, {hex(SIE_BIT)})",
         f"csrs sstatus, x{r_val}   # sstatus.SIE = 1 (fixed)",
     ]
@@ -62,7 +65,7 @@ def _generate_lcofi_sip_s_tests(test_data: TestData) -> list[str]:
             else:
                 lines.extend(
                     [
-                        "csrw RVMODEL_MHPMCOUNTER, zero   # keep counter clear -- no overflow",
+                        _csr_access("csrw RVMODEL_MHPMCOUNTER, zero   # keep counter clear -- no overflow", "S"),
                         f"csrc sip, x{r_val}   # explicitly hold sip.LCOFIP = 0 (touch it so it samples)",
                     ]
                 )
@@ -73,11 +76,9 @@ def _generate_lcofi_sip_s_tests(test_data: TestData) -> list[str]:
                     f"{'csrs' if lcofie else 'csrc'} sie, x{r_temp}   # sie.LCOFIE = {lcofie}",
                     "",
                     test_data.add_testcase(binname, coverpoint, covergroup),
-                    "    # sstatus.SIE=1 and mideleg.LCOFI=1 held fixed; only sie.LCOFIE",
-                    "    # gates the trap given sip.LCOFIP. Fires during the idle window",
-                    "RVTEST_TSBI_GOTO_SMODE",
-                    f"    RVTEST_IDLE_FOR_INTERRUPT(x{r_temp})",
-                    "RVTEST_GOTO_MMODE",
+                    # sstatus.SIE=1 and mideleg.LCOFI=1 held fixed; only sie.LCOFIE gates the
+                    # trap given sip.LCOFIP. Fires during the idle window below if both are set.
+                    f"RVTEST_IDLE_FOR_INTERRUPT(x{r_temp})",
                     "",
                     f"csrc sip, x{r_temp}   # clear LCOFIP for next iteration (if it latched)" if lcofip else "",
                     "csrw sie, zero        # disable LCOFIE before next iteration",
@@ -87,15 +88,16 @@ def _generate_lcofi_sip_s_tests(test_data: TestData) -> list[str]:
     lines.extend(
         [
             "",
-            "# === M-MODE CLEANUP ===",
             f"LI(x{r_temp}, {hex(LCOFI_BIT)})",
             f"csrc sip, x{r_temp}      # clear LCOFIP",
             f"csrc sie, x{r_temp}      # clear LCOFIE",
+            "RVTEST_TSBI_GOTO_MMODE",
             f"csrc mideleg, x{r_temp}  # clear mideleg.LCOFI",
+            "RVTEST_TSBI_GOTO_SMODE",
             f"LI(x{r_val}, {hex(SIE_BIT)})",
             f"csrc sstatus, x{r_val}   # clear sstatus.SIE",
-            "csrw RVMODEL_MHPMCOUNTER, zero",
-            "csrw RVMODEL_MHPMEVENT, zero",
+            _csr_access("csrw RVMODEL_MHPMCOUNTER, zero", "S"),
+            _csr_access("csrw RVMODEL_MHPMEVENT, zero", "S"),
         ]
     )
 
@@ -132,13 +134,16 @@ def _generate_lcofip_priority_s_tests(test_data: TestData) -> list[str]:
             ),
         ),
         "",
-        "# === M-MODE SETUP ===",
-        "csrw mip, zero      # clear all pending",
-        "csrw mie, zero      # disable all interrupts",
-        "csrw RVMODEL_MHPMEVENT, zero",
+        _csr_access("csrw mip, zero      # clear all pending", "S"),
+        _csr_access("csrw mie, zero      # disable all interrupts", "S"),
+        _csr_access("csrw RVMODEL_MHPMEVENT, zero", "S"),
+        # mideleg is deliberately excluded from the T-SBI dispatch table (see
+        # docs/tsbi-changes.md) -- it needs an actual, one-time mode change, not T-SBI.
         f"LI(x{r_val}, {hex(DELEG_MASK)})",
+        "RVTEST_TSBI_GOTO_MMODE",
         f"csrs mideleg, x{r_val}   # delegate SSI|STI|SEI|LCOFI to S-mode",
-        f"csrsi mstatus, {hex(SIE_BIT)}   # mstatus.SIE = 1 (== sstatus.SIE)",
+        "RVTEST_TSBI_GOTO_SMODE",
+        f"csrsi sstatus, {hex(SIE_BIT)}   # sstatus.SIE = 1",
     ]
 
     other_interrupts = [
@@ -156,9 +161,9 @@ def _generate_lcofip_priority_s_tests(test_data: TestData) -> list[str]:
                 "",
                 f"# Testcase: competing interrupt = {other_int}",
                 f"LI(x{r_val}, RVMODEL_MHPMEVENT_VAL)   # select a real event",
-                f"csrw RVMODEL_MHPMEVENT, x{r_val}",
+                _csr_access(f"csrw RVMODEL_MHPMEVENT, x{r_val}", "S"),
                 f"LI(x{r_scratch}, -1)",
-                f"csrw RVMODEL_MHPMCOUNTER, x{r_scratch}   # all 1s -> next count overflows",
+                _csr_access(f"csrw RVMODEL_MHPMCOUNTER, x{r_scratch}   # all 1s -> next count overflows", "S"),
                 f"LA(x{r_temp}, scratch)",
                 "# Incrementing RVMODEL_MHPMCOUNTER in DUT specific way",
                 f"RVMODEL_MHPMEVENT_CODE(x{r_temp}, x{r_scratch})",
@@ -170,13 +175,16 @@ def _generate_lcofip_priority_s_tests(test_data: TestData) -> list[str]:
             lines.append("RVTEST_SET_SEXT_INT")
 
         elif other_int == "stip":
+            # set_stimer_mmode writes mip directly and must run at M.
+            lines.append("RVTEST_TSBI_GOTO_MMODE")
             lines.extend(set_stimer_mmode(r_temp2))
+            lines.append("RVTEST_TSBI_GOTO_SMODE")
 
         elif other_int == "ssip":
             lines.extend(
                 [
                     f"LI(x{r_temp2}, {hex(SSI_BIT)})",
-                    f"csrs mip, x{r_temp2}   # mip.SSIP = 1 (directly writable, unlike LCOFIP)",
+                    _csr_access(f"csrs mip, x{r_temp2}   # mip.SSIP = 1 (directly writable, unlike LCOFIP)", "S"),
                 ]
             )
 
@@ -185,7 +193,7 @@ def _generate_lcofip_priority_s_tests(test_data: TestData) -> list[str]:
         lines.extend(
             [
                 f"LI(x{r_temp}, -1)",
-                f"csrs mie, x{r_temp}   # sie = all 1s (LCOFIE + SSIE/STIE/SEIE)",
+                _csr_access(f"csrs sie, x{r_temp}   # sie = all 1s (LCOFIE + SSIE/STIE/SEIE)", "S"),
                 "",
                 test_data.add_testcase(binname, coverpoint, covergroup),
                 # -------------------------------------------------
@@ -194,17 +202,18 @@ def _generate_lcofip_priority_s_tests(test_data: TestData) -> list[str]:
                 # value we set above, which is fine since we're
                 # done using it for the counter-priming block.
                 # -------------------------------------------------
-                f"csrr x{r_val}, RVMODEL_MHPMEVENT   # sample point for mhpmevent_of",
+                _csr_access(f"csrr x{r_val}, RVMODEL_MHPMEVENT   # sample point for mhpmevent_of", "S"),
                 write_sigupd(r_val, test_data),
-                f"csrr x{r_scratch}, RVMODEL_MHPMCOUNTER   # sample point for hpmcounter_nonzero/non-all-1s",
+                _csr_access(
+                    f"csrr x{r_scratch}, RVMODEL_MHPMCOUNTER   # sample point for hpmcounter_nonzero/non-all-1s", "S"
+                ),
+                *nonzero_not_all_ones(r_scratch, r_temp),
                 write_sigupd(r_scratch, test_data),
                 "",
-                "# Enter S-mode (interrupt fires immediately or on timer maturity)",
-                "RVTEST_GOTO_LOWER_MODE Smode",
+                # Already at S throughout -- interrupt fires immediately or on timer maturity.
                 f"RVTEST_IDLE_FOR_INTERRUPT(x{r_temp})",
                 f"csrr x{r_temp2}, sip   # sample point for lcofip priority outcome",
                 write_sigupd(r_temp2, test_data),
-                "RVTEST_GOTO_MMODE",
                 "",
             ]
         )
@@ -213,30 +222,33 @@ def _generate_lcofip_priority_s_tests(test_data: TestData) -> list[str]:
             lines.append("RVTEST_CLR_SEXT_INT")
 
         elif other_int == "stip":
+            lines.append("RVTEST_TSBI_GOTO_MMODE")
             lines.extend(clr_stimer_mmode(r_temp2))
+            lines.append("RVTEST_TSBI_GOTO_SMODE")
 
         elif other_int == "ssip":
             lines.extend(
                 [
                     f"LI(x{r_temp2}, {hex(SSI_BIT)})",
-                    f"csrc mip, x{r_temp2}",
+                    _csr_access(f"csrc mip, x{r_temp2}", "S"),
                 ]
             )
 
         lines.extend(
             [
-                "csrw RVMODEL_MHPMCOUNTER, zero   # reset counter before next iteration",
-                "csrw RVMODEL_MHPMEVENT, zero",
-                "csrw mie, zero   # disable all before next iteration",
+                _csr_access("csrw RVMODEL_MHPMCOUNTER, zero   # reset counter before next iteration", "S"),
+                _csr_access("csrw RVMODEL_MHPMEVENT, zero", "S"),
+                _csr_access("csrw mie, zero   # disable all before next iteration", "S"),
             ]
         )
 
     lines.extend(
         [
             "",
-            "# === M-MODE CLEANUP ===",
+            "RVTEST_TSBI_GOTO_MMODE",
             f"csrc mideleg, x{r_val}   # remove delegation",
-            f"csrci mstatus, {hex(SIE_BIT)}   # mstatus.SIE = 0",
+            "RVTEST_TSBI_GOTO_SMODE",
+            f"csrci sstatus, {hex(SIE_BIT)}   # sstatus.SIE = 0",
         ]
     )
 

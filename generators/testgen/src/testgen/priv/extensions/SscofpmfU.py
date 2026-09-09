@@ -8,7 +8,7 @@
 from testgen.asm.helpers import comment_banner
 from testgen.data.state import TestData
 from testgen.data.test_chunk import TestChunk
-from testgen.priv.extensions.SscofpmfCommon import generate_sscofpmf_suite
+from testgen.priv.extensions.SscofpmfCommon import _csr_access, generate_sscofpmf_suite
 from testgen.priv.registry import add_priv_test_generator
 
 
@@ -23,28 +23,29 @@ def _generate_lcofi_sip_u_tests(test_data: TestData) -> list[str]:
 
     r_val, r_temp = test_data.int_regs.get_registers(2, exclude_regs=[0, 31])
 
+    # U is the default boot mode and this suite stays there throughout: sip/sie/sstatus
+    # are not U-accessible either (only S can reach them directly), so every CSR touch
+    # here goes through T-SBI.
     lines = [
         comment_banner(
             coverpoint,
             "Interrupt pending and enable, mode = U.\n"
             "mideleg.LCOFI=1 held fixed (required to reach U-mode with LCOFI\n"
             "delegated below M), sstatus.SIE=1 held fixed per testplan; sweep is\n"
-            "sip.LCOFIP x sie.LCOFIE. sip/sie are only accessible from M or\n"
-            "S-mode, so writes stay in M-mode; only the idle-wait executes at\n"
-            "privilege U.\n",
+            "sip.LCOFIP x sie.LCOFIE.\n",
         ),
         "",
-        # This test boots straight to U-mode (no BOOT_TO_MMODE/BOOT_TO_SMODE
-        # define) -- get back to M before touching mip/mie/mideleg/mstatus directly.
-        "RVTEST_GOTO_MMODE",
-        "# === M-MODE SETUP ===",
-        "csrw mip, zero      # clear all pending",
-        "csrw mie, zero      # disable all interrupts",
-        "csrw RVMODEL_MHPMEVENT, zero",
+        _csr_access("csrw mip, zero      # clear all pending", "U"),
+        _csr_access("csrw mie, zero      # disable all interrupts", "U"),
+        _csr_access("csrw RVMODEL_MHPMEVENT, zero", "U"),
+        # mideleg is deliberately excluded from the T-SBI dispatch table (see
+        # docs/tsbi-changes.md) -- it needs an actual, one-time mode change, not T-SBI.
         f"LI(x{r_val}, {hex(LCOFI_BIT)})",
+        "RVTEST_TSBI_GOTO_MMODE",
         f"csrs mideleg, x{r_val}   # mideleg.LCOFI = 1 (fixed)",
+        "RVTEST_TSBI_GOTO_UMODE",
         f"LI(x{r_val}, {hex(SIE_BIT)})",
-        f"csrs sstatus, x{r_val}   # sstatus.SIE = 1 (fixed)",
+        _csr_access(f"csrs sstatus, x{r_val}   # sstatus.SIE = 1 (fixed)", "U"),
     ]
 
     for lcofip in [0, 1]:
@@ -59,47 +60,49 @@ def _generate_lcofi_sip_u_tests(test_data: TestData) -> list[str]:
 
             lines.append(f"LI(x{r_val}, {hex(LCOFI_BIT)})")
             if lcofip:
-                lines.append(f"csrs sip, x{r_val}   # set sip.LCOFIP directly (still M-mode)")
+                lines.append(_csr_access(f"csrs sip, x{r_val}   # set sip.LCOFIP directly", "U"))
             else:
                 lines.extend(
                     [
-                        "csrw RVMODEL_MHPMCOUNTER, zero   # keep counter clear -- no overflow",
-                        f"csrc sip, x{r_val}   # explicitly hold sip.LCOFIP = 0 (touch it so it samples)",
+                        _csr_access("csrw RVMODEL_MHPMCOUNTER, zero   # keep counter clear -- no overflow", "U"),
+                        _csr_access(
+                            f"csrc sip, x{r_val}   # explicitly hold sip.LCOFIP = 0 (touch it so it samples)", "U"
+                        ),
                     ]
                 )
 
             lines.extend(
                 [
                     f"LI(x{r_temp}, {hex(LCOFI_BIT)})",
-                    f"{'csrs' if lcofie else 'csrc'} sie, x{r_temp}   # sie.LCOFIE = {lcofie} (still M-mode)",
+                    _csr_access(f"{'csrs' if lcofie else 'csrc'} sie, x{r_temp}   # sie.LCOFIE = {lcofie}", "U"),
                     "",
                     test_data.add_testcase(binname, coverpoint, covergroup),
-                    "    # sstatus.SIE=1 and mideleg.LCOFI=1 held fixed; only sie.LCOFIE",
-                    "    # gates the trap given sip.LCOFIP. Fires during the idle window",
-                    "    # below if LCOFIP=1 & LCOFIE=1; else falls through once the",
-                    "    # countdown expires. sip/sie writes stay in M-mode above --",
-                    "    # only the idle-wait itself runs at privilege U.",
-                    "RVTEST_TSBI_GOTO_UMODE",
-                    f"    RVTEST_IDLE_FOR_INTERRUPT(x{r_temp})",
-                    "RVTEST_GOTO_MMODE",
+                    # sstatus.SIE=1 and mideleg.LCOFI=1 held fixed; only sie.LCOFIE gates the
+                    # trap given sip.LCOFIP. Fires during the idle window below if both are set.
+                    f"RVTEST_IDLE_FOR_INTERRUPT(x{r_temp})",
                     "",
-                    f"csrc sip, x{r_temp}   # clear LCOFIP for next iteration (if it latched)" if lcofip else "",
-                    "csrw sie, zero        # disable LCOFIE before next iteration",
+                    (
+                        _csr_access(f"csrc sip, x{r_temp}   # clear LCOFIP for next iteration (if it latched)", "U")
+                        if lcofip
+                        else ""
+                    ),
+                    _csr_access("csrw sie, zero        # disable LCOFIE before next iteration", "U"),
                 ]
             )
 
     lines.extend(
         [
             "",
-            "# === M-MODE CLEANUP ===",
             f"LI(x{r_temp}, {hex(LCOFI_BIT)})",
-            f"csrc sip, x{r_temp}      # clear LCOFIP",
-            f"csrc sie, x{r_temp}      # clear LCOFIE",
+            _csr_access(f"csrc sip, x{r_temp}      # clear LCOFIP", "U"),
+            _csr_access(f"csrc sie, x{r_temp}      # clear LCOFIE", "U"),
+            "RVTEST_TSBI_GOTO_MMODE",
             f"csrc mideleg, x{r_temp}  # clear mideleg.LCOFI",
+            "RVTEST_TSBI_GOTO_UMODE",
             f"LI(x{r_val}, {hex(SIE_BIT)})",
-            f"csrc sstatus, x{r_val}   # clear sstatus.SIE",
-            "csrw RVMODEL_MHPMCOUNTER, zero",
-            "csrw RVMODEL_MHPMEVENT, zero",
+            _csr_access(f"csrc sstatus, x{r_val}   # clear sstatus.SIE", "U"),
+            _csr_access("csrw RVMODEL_MHPMCOUNTER, zero", "U"),
+            _csr_access("csrw RVMODEL_MHPMEVENT, zero", "U"),
         ]
     )
 
@@ -111,9 +114,7 @@ def _generate_lcofi_sip_u_tests(test_data: TestData) -> list[str]:
     "SscofpmfU",
     required_extensions=["U", "Sscofpmf"],
     march_extensions=[],
-    extra_defines=[
-        "#define RVTEST_TEMP_BOOT_TO_U",
-    ],
+    extra_defines=[],
 )
 def make_sscofpmfu(test_data: TestData) -> list[TestChunk]:
     """Generate tests for the SscofpmfU performance-counter-overflow testsuite."""
