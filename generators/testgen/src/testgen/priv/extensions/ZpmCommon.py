@@ -17,6 +17,7 @@ from dataclasses import dataclass
 
 from testgen.asm.csr import gen_csr_write_sigupd
 from testgen.asm.helpers import comment_banner, write_sigupd
+from testgen.asm.tsbi import tsbi_call
 from testgen.data.state import TestData
 
 # ── Constants ──────────────────────────────────────────────────────────────
@@ -241,30 +242,57 @@ def _tid(prefix: str, upper: int, mnemonic: str) -> str:
 # ── Factoring helpers (PMM / FS+VS / JALR pad / data pages) ────────────────
 
 
-def set_pmm_field(csr: str, shift: int, val: int, pmlen: int, tmp: int) -> list[str]:
+def csr_op(op: str, csr: str, value: int, tmp: int, tsbi: bool = False) -> list[str]:
+    """csrs/csrc/csrw *csr* with *value*, directly or through a T-SBI call."""
+    instr = f"{op} {csr}, x{tmp}"
+    return [f"LI(x{tmp}, {hex(value)})", tsbi_call(instr) if tsbi else instr]
+
+
+def csr_read(csr: str, dst: int, tsbi: bool = False) -> list[str]:
+    instr = f"csrr x{dst}, {csr}"
+    return [tsbi_call(instr) if tsbi else instr]
+
+
+def set_pmm_field(csr: str, shift: int, val: int, pmlen: int, tmp: int, tsbi: bool = False) -> list[str]:
     """Clear then set the 2-bit PMM field in *csr* at *shift*."""
-    mask = 0b11 << shift
-    lines = [
-        f"# {csr}.PMM={val:#04b} PMLEN={pmlen}",
-        f"LI(x{tmp}, {hex(mask)})",
-        f"csrc {csr}, x{tmp}",
-    ]
+    lines = [f"# {csr}.PMM={val:#04b} PMLEN={pmlen}"]
+    lines += csr_op("csrc", csr, 0b11 << shift, tmp, tsbi)
     if val:
-        lines += [
-            f"LI(x{tmp}, {hex(val << shift)})",
-            f"csrs {csr}, x{tmp}",
-        ]
+        lines += csr_op("csrs", csr, val << shift, tmp, tsbi)
     return lines
+
+
+def satp_setup(mode: str, regs: Regs, tsbi: bool = False) -> list[str]:
+    """Point satp at the framework root table in *mode*, from S-mode directly or from U-mode through T-SBI."""
+    if not tsbi:
+        return ["sfence.vma", f"SATP_SETUP_RV64({mode})", "sfence.vma"]
+    return [
+        f"LA(x{regs.tmp}, rvtest_Sroot_pg_tbl)",
+        f"srli x{regs.tmp}, x{regs.tmp}, 12",
+        f"LI(x{regs.chk}, (SATP64_MODE) & (SATP_MODE_{mode.upper()} << 60))",
+        f"or x{regs.tmp}, x{regs.tmp}, x{regs.chk}",
+        tsbi_call("sfence.vma"),
+        tsbi_call(f"csrw satp, x{regs.tmp}"),
+        tsbi_call("sfence.vma"),
+    ]
+
+
+def satp_clear(regs: Regs, tsbi: bool = False) -> list[str]:
+    if not tsbi:
+        return ["csrwi satp, 0", "sfence.vma"]
+    return [f"li x{regs.tmp}, 0", tsbi_call(f"csrw satp, x{regs.tmp}"), tsbi_call("sfence.vma")]
 
 
 def enable_fp_vector_state(
     regs: Regs,
     extra_bits: int = 0,
     extra_comment: str | None = None,
+    status_csr: str = "mstatus",
+    tsbi: bool = False,
 ) -> list[str]:
     """Enable FS/VS dirty so FP and vector probes are legal.
 
-    *extra_bits* is ORed into the same mstatus write (e.g. SUM for Ssnpm).
+    *extra_bits* is ORed into the same status write (e.g. SUM for Ssnpm).
     *extra_comment* replaces the default one-line comment when supplied.
     """
     bits = _MSTATUS_FS_DIRTY | _MSTATUS_VS_DIRTY | extra_bits
@@ -272,12 +300,7 @@ def enable_fp_vector_state(
         comment = extra_comment
     else:
         comment = "# FP and vector state must be enabled for the FP/vector probes to be legal."
-    return [
-        "",
-        comment,
-        f"LI(x{regs.tmp}, {hex(bits)})",
-        f"csrs mstatus, x{regs.tmp}",
-    ]
+    return ["", comment, *csr_op("csrs", status_csr, bits, regs.tmp, tsbi)]
 
 
 def jalr_pad_asm(regs: Regs) -> list[str]:
@@ -287,7 +310,6 @@ def jalr_pad_asm(regs: Regs) -> list[str]:
         f"addi x{regs.chk}, x{regs.chk}, 1",
         "jr ra",
         "pm_jalr_pad_end:",
-        "RVTEST_GOTO_MMODE",
         "",
     ]
 
@@ -441,9 +463,9 @@ def build_data_only_u_map_asm(mode: str, img_tables: list[str], td: TestData) ->
         # framework data range
         f"LA(x{s1}, rvtest_data_begin)",
         f"LA(x{s2}, end_signature)",
-        f"sub  x{s2}, x{s2}, x{s1}",  # x{s2} = size of framework data range
-        f"sub  x{s1}, x{r0}, x{s1}",  # x{s1} = offset from data_begin
-        f"bgeu x{s1}, x{s2}, 3f",  # ← ADD THIS: if offset >= size, skip PTE_U (go to 3)
+        f"sub  x{s2}, x{s2}, x{s1}                  # x{s2} = size of the framework data range",
+        f"sub  x{s1}, x{r0}, x{s1}                  # x{s1} = offset from data begin",
+        f"bgeu x{s1}, x{s2}, 3f                     # outside the data segment -> keep U clear",
         "2:",
         f"ori  x{s0}, x{s0}, PTE_U",
         "3:",
@@ -466,7 +488,7 @@ def build_data_only_u_map_asm(mode: str, img_tables: list[str], td: TestData) ->
 # ── envcfg (menvcfg/senvcfg) setup helper ──────────────────────────────────
 
 
-def enable_envcfg_cbo_sse(regs: Regs, csr: str = "menvcfg") -> list[str]:
+def enable_envcfg_cbo_sse(regs: Regs, csr: str = "menvcfg", tsbi: bool = False) -> list[str]:
     """Grant the next-lower privilege level permission to run cbo.*/
     prefetch.* and the Zicfiss shadow-stack atomics.
 
@@ -481,25 +503,21 @@ def enable_envcfg_cbo_sse(regs: Regs, csr: str = "menvcfg") -> list[str]:
     return [
         f"# {csr}: let the probes run cbo.*/prefetch.* (CBIE=11, CBCFE=1, CBZE=1)",
         "# and the Zicfiss shadow-stack atomics (SSE=1)",
-        f"LI(x{regs.tmp}, {hex(cbo_fields)})",
-        f"csrs {csr}, x{regs.tmp}",
+        *csr_op("csrs", csr, cbo_fields, regs.tmp, tsbi),
     ]
 
 
 def enable_cascaded_envcfg_cbo_sse(regs: Regs) -> list[str]:
     """Grant U-mode permission to run cbo.*/prefetch.* and the Zicfiss
-    shadow-stack atomics, cascading the grant through menvcfg down to senvcfg.
-    Used when the probes run in U-mode under an M-mode-configured PMM
-    ( SmnpmU)
+    shadow-stack atomics, cascading the grant through menvcfg (via T-SBI)
+    down to senvcfg (directly). Used by Ssnpm, which configures from S-mode.
     """
     cbo_fields = (0b11 << _ENVCFG_CBIE_SHIFT) | (1 << _ENVCFG_CBCFE_SHIFT) | (1 << _ENVCFG_CBZE_SHIFT) | _ENVCFG_SSE_BIT
     return [
         "# Let U-mode run cbo.*/prefetch.* (CBIE=11, CBCFE=1, CBZE=1) and the Zicfiss",
         "# shadow-stack atomics (SSE=1). menvcfg gates senvcfg, so both are written.",
-        f"LI(x{regs.tmp}, {hex(_ENVCFG_SSE_BIT)})",
-        f"csrs menvcfg, x{regs.tmp}",
-        f"LI(x{regs.tmp}, {hex(cbo_fields)})",
-        f"csrs senvcfg, x{regs.tmp}",
+        *csr_op("csrs", "menvcfg", _ENVCFG_SSE_BIT, regs.tmp, tsbi=True),
+        *csr_op("csrs", "senvcfg", cbo_fields, regs.tmp),
     ]
 
 
@@ -601,11 +619,9 @@ def build_finegrained_text_map_asm(mode: str, img_tables: list[str], td: TestDat
     # Not in text or PM range -- check the U-accessible framework data range.
     lines += [
         f"LA(x{s1}, rvtest_data_begin)",
-        f"srli x{s1}, x{s1}, 12",
-        f"slli x{s1}, x{s1}, 12                     # page-align down to include the scratch page",
         f"LA(x{s2}, end_signature)",
-        f"sub  x{s2}, x{s2}, x{s1}                  # x{s2} = size from page base",
-        f"sub  x{s1}, x{r0}, x{s1}                  # x{s1} = offset from (page-aligned) start",
+        f"sub  x{s2}, x{s2}, x{s1}                  # x{s2} = size of the U-accessible data",
+        f"sub  x{s1}, x{r0}, x{s1}                  # x{s1} = offset from data begin",
         f"bgeu x{s1}, x{s2}, 3f                     # outside the data segment -> keep U clear",
         "2:",
         f"ori  x{s0}, x{s0}, PTE_U",
@@ -709,7 +725,8 @@ def _probe_fp_load(mn: str, mv: str, tid: str, td: TestData, regs: Regs, cg: str
         f"{mv} f{regs.fp}, x{regs.chk}   # poison the FP destination",
         td.add_testcase(tid, CP_MASKING, cg),
         *_fixed(f"{mn} f{regs.fp}, 0(x{regs.a})"),
-        write_sigupd(regs.fp, td, "float"),
+        f"fmv.x.{mv.split('.')[1]} x{regs.chk}, f{regs.fp}",
+        write_sigupd(regs.chk, td),
     ]
 
 
@@ -783,7 +800,8 @@ def _probe_cd_load_sp(tid: str, td: TestData, regs: Regs, cg: str) -> list[str]:
         td.add_testcase(tid, CP_MASKING, cg),
         f"c.fldsp f{regs.fp_c}, 0(sp)",
         f"mv sp, x{regs.tmp}",
-        write_sigupd(regs.fp_c, td, "float"),
+        f"fmv.x.d x{regs.chk}, f{regs.fp_c}",
+        write_sigupd(regs.chk, td),
     ]
 
 
@@ -1010,10 +1028,10 @@ def pass_c_misaligned(cfg: object | None, prefix: str, td: TestData, regs: Regs,
     return lines
 
 
-def set_mxr(enable: bool, tmp: int, status_csr: str = "sstatus") -> list[str]:
+def set_mxr(enable: bool, tmp: int, status_csr: str = "sstatus", tsbi: bool = False) -> list[str]:
     """MXR gates pointer masking off entirely when set in priv modes below M"""
     op = "csrs" if enable else "csrc"
-    return [f"# {status_csr}.MXR = {int(enable)}", f"LI(x{tmp}, {hex(_MSTATUS_MXR)})", f"{op} {status_csr}, x{tmp}"]
+    return [f"# {status_csr}.MXR = {int(enable)}", *csr_op(op, status_csr, _MSTATUS_MXR, tmp, tsbi)]
 
 
 def pass_d_mxr(
@@ -1022,14 +1040,12 @@ def pass_d_mxr(
     td: TestData,
     regs: Regs,
     cg: str,
-    goto_target_mode: str = "RVTEST_GOTO_LOWER_MODE Umode",
     status_csr: str = "sstatus",
+    tsbi: bool = False,
 ) -> list[str]:
     """sw/lw with MXR set. MXR suppresses masking, so tagged pointers must fault."""
     lines = [comment_banner(f"{prefix}: {status_csr}.MXR=1 suppresses pointer masking")]
-    lines += ["RVTEST_GOTO_MMODE", *set_mxr(True, regs.tmp, status_csr)]
-    if goto_target_mode:
-        lines.append(goto_target_mode)
+    lines += set_mxr(True, regs.tmp, status_csr, tsbi)
     lines += [f"LA(x{regs.base}, pm_lo_page)"]
     for upper in UPPER_PATTERNS:
         lines += [f"LI(x{regs.tmp}, {hex(upper << 48)})", f"or x{regs.a}, x{regs.base}, x{regs.tmp}"]
@@ -1110,18 +1126,20 @@ def pass_clear_on_xlen_change(
     ifdef_guard: str | None = None,
 ) -> list[str]:
     """Setting status_csr's 2-bit field to 01 (RV32) must clear pmm_csr.PMM to 00.
-    Generalizes Ssnpm's, SmnpmU's UXL-clear pass and SmnpmS's SXL-clear pass.
 
     ifdef_guard names the UDB define (UDB_UXLEN_32 / UDB_SXLEN_32) that says the mode
     can actually be switched to RV32; on a fixed-XLEN-64 config the write is a WARL
     no-op and the pass is skipped (the matching coverpoint is guarded the same way).
+
+    Runs in a mode whose own XLEN is unaffected (M in Smmpm, S in Ssnpm): the
+    affected mode could neither execute the RV64 test code that follows nor see
+    bits 33:32 of a CSR value returned by a T-SBI read.
     """
     lines = [""]
     if ifdef_guard:
         lines.append(f"#ifdef {ifdef_guard}")
     lines += [
         comment_banner(f"{prefix}: {status_csr} field=01 must clear {pmm_csr}.PMM"),
-        "RVTEST_GOTO_MMODE",
         "",
         f"csrr x{regs.chk}, {pmm_csr}",
         f"srli x{regs.chk}, x{regs.chk}, {pmm_shift}",
@@ -1238,11 +1256,7 @@ def _mprv_satp_loop(
             )
             lines += _mprv_lw_sw_probe(mpp, cp, prefix, td, regs, cg)
             if satp_mode != "bare":
-                lines += [
-                    "RVTEST_GOTO_MMODE",
-                    "csrwi satp, 0",
-                    "sfence.vma",
-                ]
+                lines += ["csrwi satp, 0", "sfence.vma"]
     return lines
 
 
@@ -1276,7 +1290,6 @@ def pass_i_mprv_mxr_pmm_loop(
             "MPRV=1 causes effective privilege = MPP, so mseccfg.PMM is ignored."
             "MPP=M: no SATP. MPP=U: no S guard. MPP=S and senvcfg: S_SUPPORTED only.",
         ),
-        "RVTEST_GOTO_MMODE",
         "",
     ]
 

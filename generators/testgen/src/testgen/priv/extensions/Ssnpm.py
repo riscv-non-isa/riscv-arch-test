@@ -37,6 +37,8 @@ from testgen.priv.extensions.ZpmCommon import (
     pass_d_mxr,
     pass_e_jalr,
     pass_f_fault_address,
+    satp_clear,
+    satp_setup,
     set_mxr,
     set_pmm_field,
 )
@@ -62,10 +64,7 @@ def _emit_mode(mode: str, td: TestData, regs: Regs, finegrained_map: list[str] |
     ]
 
     lines += enable_cascaded_envcfg_cbo_sse(regs)
-    lines += enable_fp_vector_state(
-        regs,
-        extra_bits=_MSTATUS_SUM,
-    )
+    lines += enable_fp_vector_state(regs, extra_bits=_MSTATUS_SUM, status_csr="sstatus")
 
     if not is_bare:
         # finegrained_map was built in make_ssnpm() before regs claimed the
@@ -74,17 +73,19 @@ def _emit_mode(mode: str, td: TestData, regs: Regs, finegrained_map: list[str] |
         assert finegrained_map is not None, f"missing finegrained map for mode={mode}"
         lines += ["", *finegrained_map]
         lines += ["", *_pte_chain_asm(mode, HIGH_VA[mode], "pm_hi_page")]
-        lines += ["sfence.vma", f"SATP_SETUP_RV64({mode})", "sfence.vma"]
+
+    # S-mode cannot fetch from the U-marked test text once satp is on, so U-mode
+    # turns satp on and off itself and writes senvcfg/sstatus through T-SBI.
+    lines += ["RVTEST_TSBI_GOTO_UMODE"]
+    if not is_bare:
+        lines += satp_setup(mode, regs, tsbi=True)
 
     for pmm, pmlen, label in PMM_CONFIGS:
         prefix = f"{label}_{mode}"
         lines.append(comment_banner(f"PMM={pmm:#04b} (PMLEN={pmlen}), satp={mode.upper()}"))
-        lines += (
-            ["RVTEST_GOTO_MMODE"]
-            + set_pmm_field("senvcfg", _SENVCFG_PMM, pmm, pmlen, regs.tmp)
-            + set_mxr(False, regs.tmp)
-        )
-        lines += ["RVTEST_GOTO_LOWER_MODE Umode", f"LA(x{regs.base}, pm_lo_page)"]
+        lines += set_pmm_field("senvcfg", _SENVCFG_PMM, pmm, pmlen, regs.tmp, tsbi=True)
+        lines += set_mxr(False, regs.tmp, tsbi=True)
+        lines += [f"LA(x{regs.base}, pm_lo_page)"]
 
         lines += pass_a_all_instructions(None, prefix, td, regs, COVERGROUP)
         if not is_bare:
@@ -92,10 +93,16 @@ def _emit_mode(mode: str, td: TestData, regs: Regs, finegrained_map: list[str] |
         lines += pass_c_misaligned(None, prefix, td, regs, COVERGROUP)
         lines += pass_e_jalr(None, prefix, td, regs, COVERGROUP, mxr=0)
         lines += pass_f_fault_address(None, prefix, td, regs, COVERGROUP)
-        lines += pass_d_mxr(None, prefix, td, regs, COVERGROUP)
+        lines += pass_d_mxr(None, prefix, td, regs, COVERGROUP, tsbi=True)
         lines += pass_e_jalr(None, prefix, td, regs, COVERGROUP, mxr=1)
+        lines += set_mxr(False, regs.tmp, tsbi=True)
 
-        lines += ["RVTEST_GOTO_MMODE", *set_mxr(False, regs.tmp)]
+    if not is_bare:
+        lines += satp_clear(regs, tsbi=True)
+    lines += ["RVTEST_TSBI_GOTO_SMODE"]
+    for pmm, pmlen, label in PMM_CONFIGS:
+        prefix = f"{label}_{mode}"
+        lines += set_pmm_field("senvcfg", _SENVCFG_PMM, pmm, pmlen, regs.tmp)
         lines += pass_clear_on_xlen_change(
             None,
             prefix,
@@ -104,16 +111,14 @@ def _emit_mode(mode: str, td: TestData, regs: Regs, finegrained_map: list[str] |
             cp=CP_UXL_CLEAR,
             cg=COVERGROUP,
             pmm_csr="senvcfg",
-            pmm_shift=32,
+            pmm_shift=_SENVCFG_PMM,
             status_csr="sstatus",
             status_shift=32,
             ifdef_guard="UDB_UXLEN_32",
         )
 
-    lines += ["RVTEST_GOTO_MMODE"]
     lines += set_pmm_field("senvcfg", _SENVCFG_PMM, 0b00, 0, regs.tmp)
     lines += set_mxr(False, regs.tmp)
-    lines += ["csrwi satp, 0", "sfence.vma"]
     lines += [".p2align 12", "pm_utext_end:"]
     if guard:
         lines.append(f"#endif // {guard}")
@@ -124,6 +129,7 @@ def _emit_mode(mode: str, td: TestData, regs: Regs, finegrained_map: list[str] |
     "Ssnpm",
     required_extensions=["Ssnpm"],
     march_extensions=["I", "A", "F", "D", "C", "V", "Zabha", "Zacas", "Zicbom", "Zicbop", "Zicboz"],
+    extra_defines=["#define BOOT_TO_SMODE", "#define RVTEST_ALLOW_OOS_FETCH_EPC"],
 )
 def make_ssnpm(td: TestData) -> list[TestChunk]:
     # Build the fine-grained U-text/data page-table setup for every non-bare

@@ -190,6 +190,7 @@
 #define TSBI_GOTO_VSMODE    0x00000004
 #define TSBI_GOTO_VUMODE    0x00000005
 #define TSBI_ECALL_TEST     0x00000073
+#define TSBI_SFENCE_VMA     0x12000073           // sfence.vma x0, x0: flush address-translation caches
 
 // CSR_ACCESS is not a single #define — it's any value where:
 //   bits[6:0]   == 0x73 (SYSTEM opcode)    AND
@@ -545,6 +546,17 @@
   li   a0, TSBI_ECALL_TEST                      // a0 = 0x73 (ECALL_TEST operation code)
   ecall                                          // trap to handler; handler reads xEPC into a0
   // a0 now contains the address of the ecall instruction above
+  .option pop
+.endm
+
+// Execute sfence.vma x0, x0 via T-SBI, for a U-mode test that has set satp through
+// TSBI_CSR_WRITE and cannot execute sfence.vma itself. Runs in the S-mode handler when
+// one exists, otherwise in the M-mode handler. Clobbers a0.
+.macro RVTEST_TSBI_SFENCE_VMA
+  .option push
+  .option norvc                                  // ensure consistent code size
+  li   a0, TSBI_SFENCE_VMA                      // a0 = sfence.vma encoding
+  ecall                                          // trap to handler; handler executes sfence.vma
   .option pop
 .endm
 
@@ -1519,6 +1531,8 @@ tsbi_\__MODE__\()dispatch:
         andi    T2, a0, 0x7F                       // T2 = a0[6:0]
         LI(     T4, 0x73)                           // T4 = SYSTEM opcode
         bne     T2, T4, tsbi_\__MODE__\()reserved   // not SYSTEM -> reserved
+        LI(     T4, TSBI_SFENCE_VMA)                // sfence.vma is legal in S-mode: execute it locally
+        beq     a0, T4, tsbi_\__MODE__\()exec_local
         srli    T2, a0, 12                          // T2 = a0[14:12]
         andi    T2, T2, 0x7                         // T2 = funct3
         beqz    T2, tsbi_\__MODE__\()reserved       // funct3==0 -> not CSR -> reserved
@@ -1629,9 +1643,10 @@ tsbi_\__MODE__\()csr_access:
         csrw    CSR_XEPC, T3                         // sepc += 4
         j       tsbi_\__MODE__\()forward_to_m
 11:
+tsbi_\__MODE__\()exec_local:
         // TODO: Replace this with dispatch table, remove code below
 
-        // S-mode or U-mode CSR: can handle locally using scratch execution
+        // S-mode or U-mode CSR, or sfence.vma: can handle locally using scratch execution
         addi    T2, sp, tsbi_csr_scratch_off       // T2 -> scratch memory in rvmodel_sv area
         sw      a0, 0(T2)                          // write CSR instruction to scratch[0:3]
         LI(     T3, 0x00008067)                    // T3 = "ret" encoding (jalr x0, ra, 0)
@@ -1790,6 +1805,10 @@ tsbi_instr_table:
                 sd a2, 0(a1)
                 ret
         #endif  // RV64
+        #ifdef S_SUPPORTED
+                sfence.vma                       // TSBI_SFENCE_VMA
+                ret
+        #endif  // S_SUPPORTED
         .word 0 // sentinel to mark end of table
 
 .endif  // end of M-mode-only T-SBI instruction dispatch and table
@@ -2104,13 +2123,18 @@ data_adj_\__MODE__\()epc:
         mv      T3, T2                                // relocated offset
         j       sv_\__MODE__\()epc
 
-// Fetch access/page/guest-page fault at a deliberately out-of-segment target
-// (PM JALR-through-tagged-pointer probes, Sv/PMP execute-permission probes):
-// xEPC is the bogus target itself, not segment-relocatable, so record it raw
-// -- it's a test-chosen constant, deterministic on DUT and reference model,
-// and the return path below resumes via ra regardless. Any other cause here
-// is a genuine runaway EPC and still aborts.
+// xEPC outside every known segment. By default this is a runaway EPC and the
+// test aborts. A test that deliberately jumps to an out-of-segment address and
+// expects the fetch fault (the pointer-masking suites' JALR-through-tagged-
+// pointer probes) opts in with
+//
+//   #define RVTEST_ALLOW_OOS_FETCH_EPC    (in the test file, before the handler)
+//
+// With the define, a fetch access/page/guest-page fault records xEPC raw: the
+// value is the test-chosen target, deterministic on DUT and reference model,
+// and the return path below resumes via ra. Any other cause still aborts.
 oos_\__MODE__\()epc:
+#ifdef RVTEST_ALLOW_OOS_FETCH_EPC
         csrr    T2, CSR_XCAUSE
         LI(     T6, CAUSE_FETCH_ACCESS)
         beq     T2, T6, sv_\__MODE__\()epc
@@ -2118,6 +2142,7 @@ oos_\__MODE__\()epc:
         beq     T2, T6, sv_\__MODE__\()epc
         LI(     T6, CAUSE_FETCH_GUEST_PAGE_FAULT)
         beq     T2, T6, sv_\__MODE__\()epc
+#endif
         j       abort_test                            // runaway EPC -> abort
 
 adj_\__MODE__\()epc:
