@@ -1294,6 +1294,7 @@
         addi a2, a2, 1
         lw a0, failing_reg
         jal failedtest_dec_to_str
+        j failedtest_report_print_regstr
     failedtest_report_vxsat:
         LA(a0, vxsatstr)
         call rvmodel_io_write_str
@@ -2421,6 +2422,12 @@
         .string "fflags\n"
     canary_mismatch:
         .string "Testcase signature canary mismatch!"
+    regular_sig_offset_header:
+        .string "Signature offset mismatch!\n"
+    regular_sig_offset_actual_str:
+        .string "RVCP: Actual signature offset:   0x"
+    regular_sig_offset_expected_str:
+        .string "\nRVCP: Expected signature offset: 0x"
 
     //==========================================================================
     // TRAP DIAGNOSTIC STRINGS

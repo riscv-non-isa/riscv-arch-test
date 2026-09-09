@@ -166,13 +166,14 @@
 //   4. Otherwise       -> RESERVED        (return -1)
 //==============================================================================
 
-#define ALT_GOTO_MMODE      0x00000000           // a0 value: Used by RVTEST_GOTO_DELEGATED_MMODE
-#define TSBI_GOTO_MMODE     0x00000001           // a0 value: switch to Machine mode
-#define TSBI_GOTO_SMODE     0x00000002           // a0 value: switch to Supervisor (or HS) mode
-#define TSBI_GOTO_UMODE     0x00000003           // a0 value: switch to User mode
-#define TSBI_GOTO_VSMODE    0x00000004           // a0 value: switch to Virtual Supervisor mode (requires H)
-#define TSBI_GOTO_VUMODE    0x00000005           // a0 value: switch to Virtual User mode (requires H)
-#define TSBI_ECALL_TEST     0x00000073           // a0 value: test ecall trap path, returns xEPC in a0
+// a0 values for TSBI_GOTO_xMODE.  ALT_GOTO_MODE is used by RVTEST_GOTO_DELEGATED_MMODE
+#define ALT_GOTO_MMODE      0x00000000
+#define TSBI_GOTO_MMODE     0x00000001
+#define TSBI_GOTO_SMODE     0x00000002
+#define TSBI_GOTO_UMODE     0x00000003
+#define TSBI_GOTO_VSMODE    0x00000004
+#define TSBI_GOTO_VUMODE    0x00000005
+#define TSBI_ECALL_TEST     0x00000073
 
 // CSR_ACCESS is not a single #define — it's any value where:
 //   bits[6:0]   == 0x73 (SYSTEM opcode)    AND
@@ -721,7 +722,7 @@
    .if     ((\LMODE\()==VUmode) || (\LMODE\()==VSmode))
      LI    T2, (1<<MPV_LSB)
 #if (UDB_MXLEN==32)
-  #ifndef SM1P11P0_SUPPORTED
+  #ifdef SM1P12P0_OR_LATER_SUPPORTED
      csrs  CSR_MSTATUSH, T2     /* set V RV32                   */
   #endif
 #else
@@ -731,7 +732,7 @@
    .elseif ((\LMODE\()==HSmode))
      LI    T2, (1<<MPV_LSB)
 #if (UDB_MXLEN==32)
-  #ifndef SM1P11P0_SUPPORTED
+  #ifdef SM1P12P0_OR_LATER_SUPPORTED
     csrc  CSR_MSTATUSH, T2     /* clr V RV32                   */
   #endif
 #else
@@ -1360,7 +1361,7 @@ tsbi_\__MODE__\()goto_m:
   #ifdef H_SUPPORTED
         LI(     T2, (1<<MPV_LSB))                    // T2 = MPV bit mask
     #if (UDB_MXLEN==32)
-        #ifndef SM1P11P0_SUPPORTED
+        #ifdef SM1P12P0_OR_LATER_SUPPORTED
                 csrc    CSR_MSTATUSH, T2             // RV32: clear MPV in mstatush (not virtual)
         #endif
     #else
@@ -1379,7 +1380,7 @@ tsbi_\__MODE__\()goto_s:
   #ifdef H_SUPPORTED
         LI(     T2, (1<<MPV_LSB))                    // T2 = MPV bit mask
     #if (UDB_MXLEN==32)
-        #ifndef SM1P11P0_SUPPORTED
+        #ifdef SM1P12P0_OR_LATER_SUPPORTED
                 csrc    CSR_MSTATUSH, T2             // RV32: clear MPV (not virtual)
         #endif
     #else
@@ -1396,7 +1397,7 @@ tsbi_\__MODE__\()goto_u:
   #ifdef H_SUPPORTED
         LI(     T2, (1<<MPV_LSB))                    // T2 = MPV bit mask
     #if (UDB_MXLEN==32)
-        #ifndef SM1P11P0_SUPPORTED
+        #ifdef SM1P12P0_OR_LATER_SUPPORTED
                 csrc    CSR_MSTATUSH, T2             // RV32: clear MPV (not virtual)
         #endif
     #else
@@ -1415,7 +1416,7 @@ tsbi_\__MODE__\()goto_vs:
         csrs    CSR_MSTATUS, T4                       // set MPP = 01 (S-mode)
         LI(     T2, (1<<MPV_LSB))                    // T2 = MPV bit mask
     #if (UDB_MXLEN==32)
-        #ifndef SM1P11P0_SUPPORTED
+        #ifdef SM1P12P0_OR_LATER_SUPPORTED
                 csrs    CSR_MSTATUSH, T2                      // RV32: set MPV=1 in mstatush (virtualized)
         #endif
     #else
@@ -1430,7 +1431,7 @@ tsbi_\__MODE__\()goto_vu:
         csrc    CSR_MSTATUS, T4                       // clear MPP = 00 (U-mode)
         LI(     T2, (1<<MPV_LSB))                    // T2 = MPV bit mask
     #if (UDB_MXLEN==32)
-        #ifndef SM1P11P0_SUPPORTED
+        #ifdef SM1P12P0_OR_LATER_SUPPORTED
                 csrs    CSR_MSTATUSH, T2             // RV32: set MPV=1 in mstatush (virtualized)
         #endif
     #else
@@ -1529,7 +1530,7 @@ tsbi_\__MODE__\()goto_mode:
 
         // a0 still holds the caller's operation code
         li      T2, TSBI_GOTO_MMODE                  // can't handle GOTO_MMODE from S-mode
-        beq     a0, T2, tsbi_\__MODE__\()forward_to_m // -> forward to M-mode
+        beq     a0, T2, tsbi_\__MODE__\()forward_goto_m // -> forward to M-mode; caller resumes in M
 
         li      T2, TSBI_GOTO_SMODE                  // GOTO_SMODE: return to S-mode
         beq     a0, T2, tsbi_\__MODE__\()goto_s
@@ -1571,10 +1572,30 @@ tsbi_\__MODE__\()forward_to_m:
         LREG    T6, trap_sv_off+6*REGWIDTH(sp)    // restore T6 (x15)
         LREG    sp, trap_sv_off+7*REGWIDTH(sp)    // restore original sp (undo the xSCRATCH swap)
         ecall                                      // trap to M-mode with a0/a1 intact
-        // For GOTO_MMODE: M-mode's rtn2mmode returns directly to caller in M-mode (never returns here)
-        // For GOTO_VS/VU: M-mode sets MPP/MPV and mrets to target (never returns here)
-        // For CSR_ACCESS: M-mode executes CSR, mrets back to S-mode handler (here), which srets to caller
-        sret                                       // if M-mode returned here: sret back to U-mode caller
+        // For CSR_ACCESS: M-mode executes the CSR op and mrets back here in S-mode with the
+        //   result in a0; sret returns to the caller (sepc was bumped past its ecall already).
+        // For GOTO_VS/VU (H only): M-mode sets MPP/MPV and mrets back here in the target virtual
+        //   mode; the sret then uses the virtual sepc, which is NOT the caller's address -- known
+        //   limitation, use tsbi_*forward_goto_m-style handling when H support is completed.
+        sret                                       // sret back to the caller
+
+        //--- S-mode forwarding of GOTO_MMODE to M-mode ---
+        // Same forwarding as above, but the caller must RESUME IN M-MODE, so the plain sret path
+        // cannot be used: the M-mode handler sets MPP=M and mrets back to the instruction after
+        // our ecall (mepc = this stub, not the caller), leaving us in M-mode here.  sepc still
+        // holds the caller's ecall+4 (bumped in tsbi goto_mode before forwarding), so jump there
+        // directly, staying in M-mode.  a0 is documented as clobbered by RVTEST_TSBI_GOTO_*.
+tsbi_\__MODE__\()forward_goto_m:
+        LREG    T1, trap_sv_off+1*REGWIDTH(sp)    // restore T1 (x6)
+        LREG    T2, trap_sv_off+2*REGWIDTH(sp)    // restore T2 (x7)
+        LREG    T3, trap_sv_off+3*REGWIDTH(sp)    // restore T3 (x8)
+        LREG    T4, trap_sv_off+4*REGWIDTH(sp)    // restore T4 (x9)
+        LREG    T5, trap_sv_off+5*REGWIDTH(sp)    // restore T5 (x14)
+        LREG    T6, trap_sv_off+6*REGWIDTH(sp)    // restore T6 (x15)
+        LREG    sp, trap_sv_off+7*REGWIDTH(sp)    // restore original sp (undo the xSCRATCH swap)
+        ecall                                      // trap to M-mode; M sets MPP=M and mrets back HERE in M-mode
+        csrr    a0, CSR_XEPC                       // caller's ecall+4 (bumped before forwarding)
+        jr      a0                                 // continue at the caller, in M-mode
 
         //--- S-mode CSR_ACCESS ---
 tsbi_\__MODE__\()csr_access:
@@ -1583,7 +1604,15 @@ tsbi_\__MODE__\()csr_access:
         srli    T2, a0, 28                          // T2 = encoding[31:28] (top 4 bits)
         andi    T2, T2, 0x3                         // T2 = CSR_addr[11:10] (2 MSBs of CSR address)
         li      T4, 3                               // T4 = 3 (M-mode CSR indicator: addr[11:10]==11)
-        beq     T2, T4, tsbi_\__MODE__\()forward_to_m // M-mode CSR -> must forward to M-mode handler
+        bne     T2, T4, 11f                         // S/U CSR -> handle locally below
+        // M-mode CSR -> forward to the M-mode handler.  Bump sepc past the caller's ecall FIRST:
+        // M-mode bumps only its own mepc (the forwarding stub's ecall), and the stub's sret
+        // returns to sepc -- without this bump the caller re-executes its ecall forever.
+        csrr    T3, CSR_XEPC                        // T3 = sepc (caller's ecall address)
+        addi    T3, T3, 4                            // skip past ecall
+        csrw    CSR_XEPC, T3                         // sepc += 4
+        j       tsbi_\__MODE__\()forward_to_m
+11:
         // TODO: Replace this with dispatch table, remove code below
 
         // S-mode or U-mode CSR: can handle locally using scratch execution
@@ -1700,8 +1729,8 @@ tsbi_instr_not_found:
 tsbi_instr_table:
 
         TSBI_CSR_INSTR_TABLE(0x300) // mstatus
-        //TSBI_CSR_INSTR_TABLE(0x302) // medeleg  // TODO: This might need to record the intended delegation state for delegating in software when bits are read-only zero
-        //TSBI_CSR_INSTR_TABLE(0x303) // mideleg  // TODO: This might need to record the intended delegation state for delegating in software when bits are read-only zero
+        //TSBI_CSR_INSTR_TABLE(0x302) // medeleg - shouldn't be changed below M-mode.
+        //TSBI_CSR_INSTR_TABLE(0x303) // mideleg - shouldn't be changed below M-mode.
         TSBI_CSR_INSTR_TABLE(0x304) // mie
         //TSBI_CSR_INSTR_TABLE(0x305) // mtvec
         TSBI_CSR_INSTR_TABLE(0x306) // mcounteren
@@ -1898,7 +1927,7 @@ sv_\__MODE__\()vect:
   #if (UDB_MXLEN==64)
         srli    T4, T4, UDB_MXLEN-32                 // align to mstatush
   #else
-        #ifndef SM1P11P0_SUPPORTED
+        #ifdef SM1P12P0_OR_LATER_SUPPORTED
           csrr    T4, CSR_MSTATUSH
         #else
           li      T4, 0                   // no H: GVA/MPV/xPV always 0
@@ -1969,7 +1998,7 @@ common_\__MODE__\()excpt_handler:
         #if (UDB_MXLEN==64)
                 csrr    T6, CSR_MSTATUS
         #else
-          #ifndef SM1P11P0_SUPPORTED
+          #ifdef SM1P12P0_OR_LATER_SUPPORTED
                 csrr    T6, CSR_MSTATUSH
           #else
             li      T6, 0                   // no H: MPV always 0
@@ -2440,7 +2469,7 @@ excpt_\__MODE__\()hndlr_tbl:
         addi    sp, sp, sv_area_sz                    // adjust sp to access other save areas
 
   #if (UDB_MXLEN==32)
-        #ifndef SM1P11P0_SUPPORTED
+        #ifdef SM1P12P0_OR_LATER_SUPPORTED
           csrr    T2, CSR_MSTATUSH        /* find Vbit  if RV32                   */
         #else
           li      T2, 0                   // no H: V always 0
@@ -2519,9 +2548,10 @@ rtn_fm_mmode:
 //  Ssstrict CSR and instruction-encoding sweeps, 150k+ traps). The standard
 //  RVTEST_TRAP_HANDLER records several words per trap into the dedicated
 //  trap-signature region, which those sweeps would overflow. This handler
-//  instead writes three words (xcause, xepc, xtval) per illegal-instruction
-//  trap directly to the regular test signature (x2), advances xEPC past the
-//  trapping instruction, and returns.
+//  records three words (xcause, xepc, xtval) per illegal-instruction trap in
+//  the regular test signature (x2), advances xEPC past the trapping
+//  instruction, and returns. In self-check mode, each word is compared before
+//  x2 advances.
 //
 //  Enabled with:    #define RVTEST_USE_FAST_TRAP_HANDLER   (in the test file)
 //  Instantiated by: RVTEST_CODE_END, alongside the standard trap handlers
@@ -2564,6 +2594,26 @@ rtn_fm_mmode:
 //==============================================================================
 //==============================================================================
 
+// RVTEST_FAST_TRAP_FAILURE(epc, cause, tval, status, check, description)
+// Reports a fast-trap field mismatch. This path is cold, so it can use extra
+// registers to snapshot the trapping CSRs for the normal trap diagnostics.
+#define RVTEST_FAST_TRAP_FAILURE(_EPC, _CAUSE, _TVAL, _STATUS, _CHECK, _DESCRIPTION) \
+        csrr x9, _EPC                                      ;\
+        LA(x7, saved_xepc)                                 ;\
+        SREG x9, 0(x7)                                     ;\
+        csrr x9, _CAUSE                                    ;\
+        SREG x9, REGWIDTH(x7)                              ;\
+        csrr x9, _TVAL                                     ;\
+        SREG x9, 2*REGWIDTH(x7)                            ;\
+        csrr x9, _STATUS                                   ;\
+        SREG x9, 3*REGWIDTH(x7)                            ;\
+        mv x6, a0                                          ;\
+        mv x4, a1                                          ;\
+        jal x7, failedtest_trap_x7_x9                      ;\
+        RVTEST_WORD_PTR _CHECK                             ;\
+        RVTEST_WORD_PTR _DESCRIPTION                       ;\
+        .word _EPC
+
 .macro RVTEST_FAST_TRAP_HANDLER
 .option push
 .option norvc                                    // all handler code must be uncompressed
@@ -2588,18 +2638,29 @@ trap_handler_fastillegalinstr:
         csrr a1, mcause                 // read trap cause
         xori a1, a1, 2                  // a1 = 0 iff cause == 2 (illegal instruction)
         bnez a1, fast_Mothertrap        // not illegal — restore regs and use regular handler
+        // Only traps taken in the test body may use the fast path. It signature-updates
+        // through x2, which RVTEST_INIT_REGS does not load until the end of boot, so a
+        // trap taken earlier — e.g. a boot-time CSR write that the reference model does
+        // not implement — would write through an uninitialized register. Forward those to
+        // the standard handler, which works off mscratch and records nothing in the
+        // signature (so the reference model taking such a trap does not diverge from a DUT
+        // that does not). Ask whether xEPC is in the test code segment rather than
+        // inferring it from x2's contents. This compares unrelocated addresses, which is
+        // already the fast path's assumption: RVTEST_SIGUPD_FAST_TRAP writes through x2 raw.
+        SREG a2, rvmodel_sv_off+3*REGWIDTH(a0)  // stash caller's a2 (rvmodel_sv slot 3 is free)
+        csrr a1, mepc
+        LREG a2, code_bgn_off(a0)       // a2 = rvtest_code_begin
+        sub  a1, a1, a2                 // a1 = mepc - code_begin (wraps if mepc is below it)
+        LREG a2, code_seg_siz(a0)       // a2 = code segment size
+        bgeu a1, a2, fast_Mbootrap      // outside the test code — use the standard handler
+        LREG a2, rvmodel_sv_off+3*REGWIDTH(a0)  // restore caller's a2
         LREG a1, rvmodel_sv_off+2*REGWIDTH(a0)  // restore caller's a1
         csrrw a0, CSR_MSCRATCH, a0      // restore mscratch = save ptr; a0 = caller's a0
 fast_Millegalinstruction:
-        csrr a0, mcause
-        SREG a0, 0(x2)                  // store mcause (=2) to signature
-        addi x2, x2, SIG_STRIDE
-        csrr a0, mepc
-        SREG a0, 0(x2)                  // store mepc to signature
-        addi x2, x2, SIG_STRIDE
-        csrr a0, mtval
-        SREG a0, 0(x2)                  // store mtval to signature
-        addi x2, x2, SIG_STRIDE
+        RVTEST_SIGUPD_FAST_TRAP(x2, a1, a0, CSR_MCAUSE, 0, fast_Mcause_mismatch)
+        RVTEST_SIGUPD_FAST_TRAP(x2, a1, a0, CSR_MEPC, SIG_STRIDE, fast_Mepc_mismatch)
+        RVTEST_SIGUPD_FAST_TRAP(x2, a1, a0, CSR_MTVAL, 2*SIG_STRIDE, fast_Mtval_mismatch)
+        addi x2, x2, 3*SIG_STRIDE
         // mepc advance using only a0 — reads bits[1:0] from *mepc using lhu
         // (lhu because mepc is only guaranteed 2-byte aligned).
         csrr a0, mepc
@@ -2618,10 +2679,19 @@ fast_Mdone:
         csrw mepc, a0
         mret
 
+fast_Mbootrap:
+        LREG a2, rvmodel_sv_off+3*REGWIDTH(a0)  // restore caller's a2, then fall through
 fast_Mothertrap:
         LREG a1, rvmodel_sv_off+2*REGWIDTH(a0)  // restore caller's a1
         csrrw a0, CSR_MSCRATCH, a0      // restore mscratch = save ptr; a0 = caller's a0
         j    Mtrampoline                // hand off all non-illegal-instruction traps
+
+fast_Mcause_mismatch:
+        RVTEST_FAST_TRAP_FAILURE(CSR_MEPC, CSR_MCAUSE, CSR_MTVAL, CSR_MSTATUS, fast_Mcause_mismatch, sv_Mcause_str)
+fast_Mepc_mismatch:
+        RVTEST_FAST_TRAP_FAILURE(CSR_MEPC, CSR_MCAUSE, CSR_MTVAL, CSR_MSTATUS, fast_Mepc_mismatch, sv_Mepc_str)
+fast_Mtval_mismatch:
+        RVTEST_FAST_TRAP_FAILURE(CSR_MEPC, CSR_MCAUSE, CSR_MTVAL, CSR_MSTATUS, fast_Mtval_mismatch, sv_Mtval_str)
 
 #ifdef S_SUPPORTED
 // ── Fast S-mode handler (stvec) ─────────────────────────────────────────────
@@ -2643,18 +2713,23 @@ strap_handler_fastillegalinstr:
         bnez a1, fast_Sothertrap        // not illegal — restore regs and use the S framework handler
                                         // (NOT fast_Mothertrap: the M trampoline's mscratch access
                                         // is itself illegal from S-mode and creates a trap loop)
+        // Same test-body check as the M handler: only traps taken in the test code segment
+        // may use the fast path, because it signature-updates through x2, which is not
+        // loaded until the end of boot. See the M handler for the full rationale.
+        SREG a2, rvmodel_sv_off+3*REGWIDTH(a0)  // stash caller's a2 (rvmodel_sv slot 3 is free)
+        csrr a1, sepc
+        LREG a2, code_bgn_off(a0)       // a2 = rvtest_code_begin
+        sub  a1, a1, a2                 // a1 = sepc - code_begin (wraps if sepc is below it)
+        LREG a2, code_seg_siz(a0)       // a2 = code segment size
+        bgeu a1, a2, fast_Sbootrap      // outside the test code — use the S framework handler
+        LREG a2, rvmodel_sv_off+3*REGWIDTH(a0)  // restore caller's a2
         LREG a1, rvmodel_sv_off+2*REGWIDTH(a0)  // restore caller's a1
         csrrw a0, CSR_SSCRATCH, a0      // restore sscratch = save ptr; a0 = caller's a0
 fast_Sillegalinstruction:
-        csrr a0, scause
-        SREG a0, 0(x2)                  // store scause (=2) to signature
-        addi x2, x2, SIG_STRIDE
-        csrr a0, sepc
-        SREG a0, 0(x2)                  // store sepc to signature
-        addi x2, x2, SIG_STRIDE
-        csrr a0, stval
-        SREG a0, 0(x2)                  // store stval to signature
-        addi x2, x2, SIG_STRIDE
+        RVTEST_SIGUPD_FAST_TRAP(x2, a1, a0, CSR_SCAUSE, 0, fast_Scause_mismatch)
+        RVTEST_SIGUPD_FAST_TRAP(x2, a1, a0, CSR_SEPC, SIG_STRIDE, fast_Sepc_mismatch)
+        RVTEST_SIGUPD_FAST_TRAP(x2, a1, a0, CSR_STVAL, 2*SIG_STRIDE, fast_Stval_mismatch)
+        addi x2, x2, 3*SIG_STRIDE
         // Width detection: lhu at sepc (2-byte aligned -> no misalign trap).
         csrr a0, sepc
         lhu  a0, 0(a0)                  // load lower 16 bits of faulting instruction
@@ -2674,10 +2749,19 @@ fast_Sdone:
                                         // is itself an illegal instruction and re-enters this
                                         // handler forever
 
+fast_Sbootrap:
+        LREG a2, rvmodel_sv_off+3*REGWIDTH(a0)  // restore caller's a2, then fall through
 fast_Sothertrap:
         LREG a1, rvmodel_sv_off+2*REGWIDTH(a0)  // restore caller's a1
         csrrw a0, CSR_SSCRATCH, a0      // restore sscratch = save ptr; a0 = caller's a0
         j    Strampoline                // hand off all non-illegal-instruction traps
+
+fast_Scause_mismatch:
+        RVTEST_FAST_TRAP_FAILURE(CSR_SEPC, CSR_SCAUSE, CSR_STVAL, CSR_SSTATUS, fast_Scause_mismatch, sv_Scause_str)
+fast_Sepc_mismatch:
+        RVTEST_FAST_TRAP_FAILURE(CSR_SEPC, CSR_SCAUSE, CSR_STVAL, CSR_SSTATUS, fast_Sepc_mismatch, sv_Sepc_str)
+fast_Stval_mismatch:
+        RVTEST_FAST_TRAP_FAILURE(CSR_SEPC, CSR_SCAUSE, CSR_STVAL, CSR_SSTATUS, fast_Stval_mismatch, sv_Stval_str)
 #endif // S_SUPPORTED
 
 .option pop
