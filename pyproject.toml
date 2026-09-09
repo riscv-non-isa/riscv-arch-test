@@ -29,7 +29,6 @@ lint.extend-select = [
 lint.ignore = [
   "N", # Naming requirements
 ]
-lint.preview = true
 
 ##### PYPROJECT-FMT CONFIG #####
 [tool.pyproject-fmt]
