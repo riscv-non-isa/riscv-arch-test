@@ -472,7 +472,7 @@ def _add_deleg_alias(r1: int, r2: int, coverpoint: str, covergroup: str, test_da
         *read("mie", "mie_readback_nonzero_masked", "mie keeps its value because the sie write is ignored"),
         "csrw mie, zero",
         "",
-        f"csrw mideleg, x{r1} # delegate all interrupts to S-mode",
+        f"csrw mideleg, x{r1} # delegate all delegable interrupts to S-mode",
         *read("sip", "sip_readback_zero_2", "sip reads zero"),
         *read("sie", "sie_readback_zero_2", "sie reads zero"),
         f"csrw mip, x{r1} # set all interrupts in mip",
@@ -838,7 +838,7 @@ def _generate_mcsr_tests(test_data: TestData, test_chunks: list) -> None:
             _add_shadow(r1, r2, rmask, rsave, "sie", "mie", 0x3EEE, coverpoint, covergroup, test_data, "_deleg"),
             _add_shadow(r1, r2, rmask, rsave, "sip", "mip", 0x3EEE, coverpoint, covergroup, test_data, "_deleg"),
             *_add_deleg_alias(r1, r2, coverpoint, covergroup, test_data),
-            "csrw mideleg, zero # disable delegation",
+            # mideleg restored to 0 by _add_deleg_alias()
             "#endif // S_SUPPORTED",
         ]
     )
