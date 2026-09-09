@@ -494,11 +494,9 @@ covergroup Sm_mcsr_cg with function sample(ins_t ins);
     cp_misa_dependencies :      cross priv_mode_m, csrrw, misa, misa_dependencies;
     cp_misa_clear_c :           cross priv_mode_m, csrc, misa_c_0, pc_1;
 
-    `ifdef UDB_TIME_CSR_IMPLEMENTED
-        cp_mtime_write :        cross priv_mode_m, csrr,  time_csr; // assumes mtime has been written
-        `ifdef UDB_MXLEN_32
-            cp_mtimeh_write :   cross priv_mode_m, csrr,  timeh_csr; // assumes mtimeh has been written
-        `endif
+    cp_mtime_write :            cross priv_mode_m, csrr,  time_csr; // assumes mtime has been written
+    `ifdef UDB_MXLEN_32
+        cp_mtimeh_write :       cross priv_mode_m, csrr,  timeh_csr; // assumes mtimeh has been written
     `endif
 
     `ifdef SM1P13P0_OR_LATER_SUPPORTED
