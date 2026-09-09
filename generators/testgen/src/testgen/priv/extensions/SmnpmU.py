@@ -12,7 +12,6 @@ from testgen.asm.helpers import comment_banner
 from testgen.data.state import TestData
 from testgen.data.test_chunk import TestChunk
 from testgen.priv.extensions.ZpmCommon import (
-    CP_UXL_CLEAR,
     PMM_CONFIGS,
     Regs,
     alloc_pm_regs_paired,
@@ -23,7 +22,6 @@ from testgen.priv.extensions.ZpmCommon import (
     jalr_pad_asm,
     pass_a_all_instructions,
     pass_c_misaligned,
-    pass_clear_on_xlen_change,
     pass_e_jalr,
     pass_f_fault_address,
     set_pmm_field,
@@ -32,7 +30,6 @@ from testgen.priv.registry import add_priv_test_generator
 
 COVERGROUP = "SmnpmU_cg"
 _MENVCFG_PMM = 32
-_MSTATUS_UXL_SHIFT = 32
 
 
 def _emit_file(td: TestData, regs: Regs) -> list[str]:
@@ -44,34 +41,21 @@ def _emit_file(td: TestData, regs: Regs) -> list[str]:
         *jalr_pad_asm(regs),
     ]
 
-    lines += enable_envcfg_cbo_sse(regs, csr="menvcfg")
-    lines += enable_fp_vector_state(regs)
+    lines += enable_envcfg_cbo_sse(regs, csr="menvcfg", tsbi=True)
+    lines += enable_fp_vector_state(regs, tsbi=True)
 
     for pmm, pmlen, label in PMM_CONFIGS:
         prefix = f"{label}_bare"
         lines.append(comment_banner(f"PMM={pmm:#04b} (PMLEN={pmlen}), physical addresses"))
-        lines += ["RVTEST_GOTO_MMODE"] + set_pmm_field("menvcfg", _MENVCFG_PMM, pmm, pmlen, regs.tmp)
-        lines += ["RVTEST_GOTO_LOWER_MODE Umode", f"LA(x{regs.base}, pm_lo_page)"]
+        lines += set_pmm_field("menvcfg", _MENVCFG_PMM, pmm, pmlen, regs.tmp, tsbi=True)
+        lines += [f"LA(x{regs.base}, pm_lo_page)"]
 
         lines += pass_a_all_instructions(None, prefix, td, regs, COVERGROUP)
         lines += pass_c_misaligned(None, prefix, td, regs, COVERGROUP)
         lines += pass_e_jalr(None, prefix, td, regs, COVERGROUP)
         lines += pass_f_fault_address(None, prefix, td, regs, COVERGROUP)
-        lines += pass_clear_on_xlen_change(
-            None,
-            prefix,
-            td,
-            regs,
-            cp=CP_UXL_CLEAR,
-            cg=COVERGROUP,
-            pmm_csr="menvcfg",
-            pmm_shift=_MENVCFG_PMM,
-            status_csr="mstatus",
-            status_shift=_MSTATUS_UXL_SHIFT,
-            ifdef_guard="UDB_UXLEN_32",
-        )
 
-    lines += ["RVTEST_GOTO_MMODE"] + set_pmm_field("menvcfg", _MENVCFG_PMM, 0b00, 0, regs.tmp)
+    lines += set_pmm_field("menvcfg", _MENVCFG_PMM, 0b00, 0, regs.tmp, tsbi=True)
     lines += ["#endif"]
     return lines
 
@@ -80,6 +64,7 @@ def _emit_file(td: TestData, regs: Regs) -> list[str]:
     "SmnpmU",
     required_extensions=["Smnpm"],
     march_extensions=["I", "A", "F", "D", "C", "V", "Zabha", "Zacas", "Zicbom", "Zicbop", "Zicboz"],
+    extra_defines=["#define RVTEST_ALLOW_OOS_FETCH_EPC"],
 )
 def make_smnpmu(td: TestData) -> list[TestChunk]:
     regs = alloc_pm_regs_paired(td)

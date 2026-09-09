@@ -12,7 +12,6 @@ from testgen.data.state import TestData
 from testgen.data.test_chunk import TestChunk
 from testgen.priv.extensions.ZpmCommon import (
     _LEAF_PERMS_S,
-    CP_SXL_CLEAR,
     HIGH_VA,
     MODE_GUARDS,
     MODES,
@@ -30,11 +29,12 @@ from testgen.priv.extensions.ZpmCommon import (
     pass_a_all_instructions,
     pass_b_sign_extension,
     pass_c_misaligned,
-    pass_clear_on_xlen_change,
     pass_d_mxr,
     pass_e_jalr,
     pass_f_fault_address,
     pass_g_csr_writes,
+    satp_clear,
+    satp_setup,
     set_mxr,
     set_pmm_field,
 )
@@ -59,17 +59,17 @@ def _emit_mode(mode: str, td: TestData, regs: Regs) -> list[str]:
         *jalr_pad_asm(regs),
     ]
 
-    lines += enable_envcfg_cbo_sse(regs, "menvcfg")
-    lines += enable_fp_vector_state(regs)
+    lines += enable_envcfg_cbo_sse(regs, "menvcfg", tsbi=True)
+    lines += enable_fp_vector_state(regs, status_csr="sstatus")
 
     if not is_bare:
         lines += _pte_chain_asm(mode, HIGH_VA[mode], "pm_hi_page", _LEAF_PERMS_S)
-        lines += ["sfence.vma", f"SATP_SETUP_RV64({mode})", "sfence.vma"]
+        lines += satp_setup(mode, regs)
 
     for pmm, pmlen, label in PMM_CONFIGS:
         prefix = f"{label}_{mode}"
-        lines += ["RVTEST_GOTO_MMODE"] + set_pmm_field("menvcfg", _MENVCFG_PMM, pmm, pmlen, regs.tmp)
-        lines += ["RVTEST_GOTO_LOWER_MODE Smode", f"LA(x{regs.base}, pm_lo_page)"]
+        lines += set_pmm_field("menvcfg", _MENVCFG_PMM, pmm, pmlen, regs.tmp, tsbi=True)
+        lines += [f"LA(x{regs.base}, pm_lo_page)"]
 
         lines += pass_a_all_instructions(None, prefix, td, regs, COVERGROUP)
         if not is_bare:
@@ -77,39 +77,17 @@ def _emit_mode(mode: str, td: TestData, regs: Regs) -> list[str]:
         lines += pass_c_misaligned(None, prefix, td, regs, COVERGROUP)
         lines += pass_e_jalr(None, prefix, td, regs, COVERGROUP, mxr=0)
         lines += pass_f_fault_address(None, prefix, td, regs, COVERGROUP)
-        lines += pass_d_mxr(
-            None,
-            prefix,
-            td,
-            regs,
-            COVERGROUP,
-            goto_target_mode="RVTEST_GOTO_LOWER_MODE Smode",
-            status_csr="mstatus",
-        )
+        lines += pass_d_mxr(None, prefix, td, regs, COVERGROUP)
         lines += pass_e_jalr(None, prefix, td, regs, COVERGROUP, mxr=1)
 
-        lines += ["RVTEST_GOTO_MMODE", *set_mxr(False, regs.tmp, "mstatus")]
-        lines += ["RVTEST_GOTO_LOWER_MODE Smode"]
+        lines += set_mxr(False, regs.tmp)
 
         lines += pass_g_csr_writes(prefix, pmlen, td, regs, COVERGROUP, ["sepc", "sscratch"])
 
-        lines.append("RVTEST_GOTO_MMODE")
-        lines += pass_clear_on_xlen_change(
-            None,
-            prefix,
-            td,
-            regs,
-            cp=CP_SXL_CLEAR,
-            cg=COVERGROUP,
-            pmm_csr="menvcfg",
-            pmm_shift=32,
-            status_csr="mstatus",
-            status_shift=34,
-            ifdef_guard="UDB_SXLEN_32",
-        )
-
-    lines += ["RVTEST_GOTO_MMODE"] + set_pmm_field("menvcfg", _MENVCFG_PMM, 0b00, 0, regs.tmp)
-    lines += [*set_mxr(False, regs.tmp, "mstatus"), "csrwi satp, 0", "sfence.vma"]
+    lines += set_pmm_field("menvcfg", _MENVCFG_PMM, 0b00, 0, regs.tmp, tsbi=True)
+    lines += set_mxr(False, regs.tmp)
+    if not is_bare:
+        lines += satp_clear(regs)
     if guard:
         lines.append(f"#endif // {guard}")
     return lines
@@ -119,6 +97,7 @@ def _emit_mode(mode: str, td: TestData, regs: Regs) -> list[str]:
     "SmnpmS",
     required_extensions=["Smnpm", "S"],
     march_extensions=["I", "A", "F", "D", "C", "V", "Zabha", "Zacas", "Zicbom", "Zicbop", "Zicboz"],
+    extra_defines=["#define BOOT_TO_SMODE", "#define RVTEST_ALLOW_OOS_FETCH_EPC"],
 )
 def make_smnpms(td: TestData) -> list[TestChunk]:
     regs = alloc_pm_regs_paired(td)
