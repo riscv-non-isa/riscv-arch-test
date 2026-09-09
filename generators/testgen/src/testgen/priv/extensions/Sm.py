@@ -455,7 +455,7 @@ def _add_deleg_alias(r1: int, r2: int, coverpoint: str, covergroup: str, test_da
 
     lines = [
         "# Test mip/sip and mie/sie with delegation on and off",
-        f"LI(x{r1}, 0x3EEE) # all S- and M-level interrupts",
+        f"LI(x{r1}, 0x3EEE) # all S-, VS-, and M-level interrupts",
         "csrw mideleg, zero # delegate nothing",
         "csrw mie, zero",
         "csrw mip, zero",
