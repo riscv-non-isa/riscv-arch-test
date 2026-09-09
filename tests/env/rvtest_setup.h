@@ -99,7 +99,7 @@
   // mscratch and other M-mode CSRs, so every entry path must switch to M-mode first.
   cleanup_epilogs:
     #ifdef STANDARD_SM_SUPPORTED
-      RVTEST_GOTO_MMODE
+      RVTEST_TSBI_GOTO_MMODE
       #ifdef S_SUPPORTED
         #ifdef H_SUPPORTED
           RVTEST_TRAP_EPILOG V        // actual v-mode prolog/epilog/handler code
@@ -109,6 +109,49 @@
       #endif
       RVTEST_TRAP_EPILOG M            // actual m-mode prolog/epilog/handler code
     #endif
+
+  #ifndef RVTEST_NOSIG
+    // Check the regular signature offset to make sure the correct number of
+    // signature updates occurred.
+    check_regular_sig_offset:
+      LA(     T1, signature_base)
+      sub     T1, DEFAULT_SIG_REG, T1
+      LA(     T3, final_sig_offset)
+    #ifdef RVTEST_SELFCHECK
+      LREG    DEFAULT_TEMP_REG, 0(T3)
+      beq     DEFAULT_TEMP_REG, T1, check_regular_sig_offset_done
+    #else
+      SREG    T1, 0(T3)
+      beq     x0, x0, check_regular_sig_offset_done
+    #endif
+
+      // Print only the expected and actual offsets for this framework error.
+      LA(a0, failstr)
+      call rvmodel_io_write_str
+      LA(a0, begin_debugstr)
+      call rvmodel_io_write_str
+      LA(a0, regular_sig_offset_header)
+      call rvmodel_io_write_str
+      LA(a0, regular_sig_offset_actual_str)
+      call rvmodel_io_write_str
+      mv      a0, T1
+      li      a1, UDB_MXLEN
+      jal     ra, failedtest_hex_to_str
+      LA(a0, ascii_buffer)
+      call rvmodel_io_write_str
+      LA(a0, regular_sig_offset_expected_str)
+      call rvmodel_io_write_str
+      LA(T3, final_sig_offset)
+      LREG    a0, 0(T3)
+      li      a1, UDB_MXLEN
+      jal     ra, failedtest_hex_to_str
+      LA(a0, ascii_buffer)
+      call rvmodel_io_write_str
+      LA(a0, endstr)
+      call rvmodel_io_write_str
+      call rvmodel_halt_fail
+    check_regular_sig_offset_done:
+  #endif
 
   #ifdef STANDARD_SM_SUPPORTED
     check_trap_sig_overflow:
@@ -473,9 +516,11 @@
         // Initialize remaining signature region to known value for initial pass
         .fill SIGUPD_COUNT*(SIG_STRIDE>>2),4,0xdeadbeef
 
-      // Fixed diagnostic slot for the final trap signature byte count.
-      // sig_modify.py inserts the final_trap_sig_offset label after this canary
-      // in self-checking builds, where the raw signature data is included.
+      // Fixed diagnostic slots for the final signature offsets.
+      final_sig_offset_canary:
+        FINAL_SIG_OFFSET_CANARY
+      final_sig_offset:
+        .fill (REGWIDTH>>2),4,0xdeadbeef
       final_trap_sig_offset_canary:
         FINAL_TRAP_OFFSET_CANARY
       final_trap_sig_offset:
@@ -810,7 +855,6 @@
     // mideleg[23] = 1: delegate store guest-page fault
     // higher bits are reserved or custom
     li t0, 0x0FCB5FF
-    li t0, 0x0FCB0FF # *** dh 4/24/26 temporary don't delegate any ecalls until SBI forwarding is implemented
     csrw medeleg, t0
 
     // Delegate supervisor interrupts to S-mode. Do not delege M-mode interrupts.
