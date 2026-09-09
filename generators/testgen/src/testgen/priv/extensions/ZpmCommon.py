@@ -2,7 +2,7 @@
 # priv/extensions/ZpmCommon.py
 #
 # Pointer masking (Ssnpm/Smmpm/Smnpm) shared test generators.
-# Author :  Umer Shahid & Ammarah Wakeel  email:ammarahwakeel9@gmail.com (UET, JULY 2026)
+# Author :  David Harris, Umer Shahid & Ammarah Wakeel  email:ammarahwakeel9@gmail.com (UET, JULY 2026)
 # SPDX-License-Identifier: Apache-2.0
 ##################################
 
