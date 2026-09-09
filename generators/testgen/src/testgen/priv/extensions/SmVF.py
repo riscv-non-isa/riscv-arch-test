@@ -106,12 +106,12 @@ def _gen_fs_state_nonaffecting(test_data: TestData, temp_reg: int) -> list[str]:
     lines = [
         comment_banner(coverpoint, "vfadd.vv under FS=Initial/Clean across all 4 vs1_zero × vs2_zero combinations"),
     ]
-    # 4 combinations: (vs1_zero, vs2_zero)
-    # vs1 = v1 (1.0 nonzero) vs v2 (0) ; vs2 likewise
+    # 4 combinations, listed as (vs2_reg, vs1_reg, name) to match the unpack below.
+    # v1 and v4 hold 1.0; v2 holds 0.
     pattern_pairs = [
         ("v2", "v2", "vs1_0_vs2_0"),  # both zero
-        ("v1", "v2", "vs1_n_vs2_0"),  # vs1!=0, vs2=0
-        ("v2", "v1", "vs1_0_vs2_n"),  # vs1=0, vs2!=0
+        ("v1", "v2", "vs1_0_vs2_n"),  # vs1=0, vs2!=0
+        ("v2", "v1", "vs1_n_vs2_0"),  # vs1!=0, vs2=0
         ("v1", "v4", "vs1_n_vs2_n"),  # both nonzero
     ]
     for fs in (1, 2):
@@ -137,8 +137,8 @@ def _gen_fs_off(test_data: TestData, temp_reg: int) -> list[str]:
     ]
     pattern_pairs = [
         ("v2", "v2", "vs1_0_vs2_0"),
-        ("v1", "v2", "vs1_n_vs2_0"),
-        ("v2", "v1", "vs1_0_vs2_n"),
+        ("v1", "v2", "vs1_0_vs2_n"),
+        ("v2", "v1", "vs1_n_vs2_0"),
         ("v1", "v4", "vs1_n_vs2_n"),
     ]
     for vs2_reg, vs1_reg, name in pattern_pairs:
