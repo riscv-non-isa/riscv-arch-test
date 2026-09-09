@@ -64,7 +64,7 @@ def make_zicntrs(test_data: TestData) -> list[TestChunk]:
         counteren_walk_tests(
             test_data,
             covergroup,
-            "cp_mcounteren_access_u",
+            "cp_mscounteren_access_u",
             "Write walking 1s and 0s to both mcounteren and scounteren (same value in each).  Read from corresponding counter and counterh in U-mode",
             csrs=["mcounteren", "scounteren"],
             mode="U",
