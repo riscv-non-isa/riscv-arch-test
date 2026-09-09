@@ -61,6 +61,9 @@ SHIM_SYMBOLS: tuple[str, ...] = (
     "rvmodel_clr_mext_int_h",
     "rvmodel_clr_ssw_int_h",
     "rvmodel_clr_sext_int_h",
+    "rvmodel_clr_vsw_int_h",
+    "rvmodel_clr_vtimer_int_h",
+    "rvmodel_clr_vext_int_h",
 )
 
 # CSR_SEDELEG/CSR_SIDELEG are .set to undefined symbols in rvtest_trap_handler.h
@@ -80,6 +83,7 @@ class KitTest:
     mabi: str
     xlen: int
     flen: str
+    results: Path | None = None  # golden signature file, for the provenance digest
 
 
 def _mabi(xlen: int, e_ext: bool) -> str:
@@ -87,14 +91,12 @@ def _mabi(xlen: int, e_ext: bool) -> str:
     return f"{'i' if xlen == 32 else ''}lp{xlen}{'e' if e_ext else ''}"
 
 
-def _kit_compiler_cmd(config: Config, tests_dir: Path, udb_header_dir: Path, empty_include: Path) -> list[str]:
+def _kit_compiler_cmd(config: Config, xlen: int, tests_dir: Path, udb_header_dir: Path, empty_include: Path) -> list[str]:
     """Compiler prefix for certified objects, with an empty dir in place of the
     DUT include dir so a stray rvmodel_macros.h reference fails the build."""
-    from act.config import CompilerType
+    from act.toolchain import Toolchain
 
-    cmd = [str(config.compiler_exe)]
-    if config.compiler_type == CompilerType.CLANG:
-        cmd.append("-fuse-ld=lld")
+    cmd = list(Toolchain(config.compiler_exe, config.compiler_type).compile_prefix(xlen))
     cmd.extend(
         [
             f"-I{empty_include}",
@@ -158,7 +160,8 @@ def _gen_kit_tasks(
     """
     # Reuse build_plan's command helpers so the compile flags stay in sync (they
     # drifted once already when the main build added -DTEST_FILE and platform defines).
-    from act.build_plan import _compiler_cmd, _ref_model_sig_cmd, _sail_platform_defines
+    from act.build_plan import _ref_model_sig_cmd, _sail_platform_defines
+    from act.toolchain import Toolchain
 
     config_wkdir = workdir / config.name
     build_dir = config_wkdir / "package_build"
@@ -167,8 +170,20 @@ def _gen_kit_tasks(
     empty_include = config_wkdir / "_kit_no_dut_include"
     empty_include.mkdir(parents=True, exist_ok=True)
 
-    sig_cmd_prefix = _compiler_cmd(config, xlen, tests_dir, config_wkdir)
-    kit_cmd_prefix = _kit_compiler_cmd(config, tests_dir, config_wkdir, empty_include)
+    toolchain = Toolchain(config.compiler_exe, config.compiler_type)
+    env_dir = tests_dir / "env"
+    sig_cmd_prefix = [
+        *toolchain.compile_prefix(xlen),
+        f"-I{config.dut_include_dir.absolute()}",
+        f"-T{config.linker_script.absolute()}",
+        "-O0",
+        "-g",
+        "-mcmodel=medany",
+        "-nostdlib",
+        f"-I{env_dir}",
+        f"-I{config_wkdir.absolute()}",
+    ]
+    kit_cmd_prefix = _kit_compiler_cmd(config, xlen, tests_dir, config_wkdir, empty_include)
 
     env_headers = tuple(sorted(p.absolute() for p in (tests_dir / "env").iterdir() if p.is_file()))
     dut_headers = tuple(sorted(p.absolute() for p in config.dut_include_dir.iterdir() if p.suffix == ".h"))
@@ -195,6 +210,7 @@ def _gen_kit_tasks(
             continue
 
         march = meta.march.replace("${XLEN}", str(xlen))
+        march_flags = list(toolchain.march_flags(xlen, meta.march, assembly=True, e_ext=meta.e_ext))
         mabi = _mabi(xlen, meta.e_ext)
         flen = meta.flen
         test_file_define = f'-DTEST_FILE="{name.name}"'
@@ -221,7 +237,7 @@ def _gen_kit_tasks(
                             *sig_cmd_prefix,
                             "-o",
                             str(sig_elf),
-                            f"-march={march}",
+                            *march_flags,
                             f"-mabi={mabi}",
                             "-DSIGNATURE",
                             *signature_compile_flags,
@@ -257,7 +273,18 @@ def _gen_kit_tasks(
                     intermediate=True,
                 )
             )
-            obj_deps = (results,)
+            # Bake a digest of the golden signature block into the object so the
+            # DUT log can state which signatures the run was checked against.
+            digest_h = build_dir / name.with_suffix(".sigdigest.h")
+            tasks.append(
+                BuildTask(
+                    outputs=(digest_h,),
+                    deps=(results,),
+                    action=PythonAction(fn=write_sigdigest_header, args=(results, digest_h)),
+                    intermediate=True,
+                )
+            )
+            obj_deps = (results, digest_h)
             sig_flag = f'-DSIGNATURE_FILE="{results}"'
 
         # 4. the certified object: signature baked in, no DUT include dir
@@ -272,11 +299,12 @@ def _gen_kit_tasks(
                         "-c",
                         "-o",
                         str(obj),
-                        f"-march={march}",
+                        *march_flags,
                         f"-mabi={mabi}",
                         "-DRVTEST_SELFCHECK",
                         "-DRVMODEL_SHIM_EXTERN",
                         sig_flag,
+                        *(["-include", str(build_dir / name.with_suffix(".sigdigest.h"))] if meta.needs_signature else []),
                         f"-DXLEN={xlen}",
                         f"-DTEST_FLEN={flen}",
                         test_file_define,
@@ -297,9 +325,24 @@ def _gen_kit_tasks(
             )
         )
 
-        inventory.append(KitTest(name=str(name.with_suffix("")), obj=obj, march=march, mabi=mabi, xlen=xlen, flen=flen))
+        inventory.append(
+            KitTest(
+                name=str(name.with_suffix("")), obj=obj, march=march, mabi=mabi, xlen=xlen, flen=flen,
+                results=results if meta.needs_signature else None,
+            )
+        )
 
     return tasks, inventory
+
+
+def write_sigdigest_header(results: Path, out: Path) -> None:
+    """Emit `#define RVCP_SIG_DIGEST` holding the sha256 of the golden signatures."""
+    digest = hashlib.sha256(results.read_bytes()).hexdigest()
+    out.write_text(f'#define RVCP_SIG_DIGEST "{digest}"\n')
+
+
+def signature_digest(results: Path) -> str:
+    return hashlib.sha256(results.read_bytes()).hexdigest()
 
 
 def _check_and_stamp(obj: Path, objdump_exe: Path | None, stamp: Path) -> None:
@@ -311,10 +354,10 @@ _BUILD_SCRIPT = """#!/bin/bash
 # build_kit.sh -- build the certification-test ELFs.
 #
 # You supply rvmodel_macros.h; nothing in it leaves your machine. This script
-# assembles it into the model shim and links that with the pre-certified test
-# objects shipped in objects/.
+# builds it into librvmodel.a and links that against the certified test archives
+# in lib/, which already contain the expected results.
 #
-# Usage:  ./build_kit.sh <path-to-dir-containing-rvmodel_macros.h> [outdir]
+# Usage:  ./build_kit.sh <dir-containing-rvmodel_macros.h> [outdir]
 set -euo pipefail
 
 DUT_INCLUDE="${1:?usage: ./build_kit.sh <dir-with-rvmodel_macros.h> [outdir]}"
@@ -322,6 +365,7 @@ OUTDIR="${2:-elfs}"
 KIT="$(cd "$(dirname "$0")" && pwd)"
 
 CC="${CC:-%(compiler)s}"
+AR="${AR:-%(ar)s}"
 MARCH="%(march)s"
 MABI="%(mabi)s"
 XLEN=%(xlen)d
@@ -329,32 +373,43 @@ XLEN=%(xlen)d
 [ -f "$DUT_INCLUDE/rvmodel_macros.h" ] || {
   echo "error: no rvmodel_macros.h in $DUT_INCLUDE" >&2; exit 1; }
 
-mkdir -p "$OUTDIR"
+mkdir -p "$OUTDIR" "$OUTDIR/.work"
 
-echo "Assembling model shim from your rvmodel_macros.h ..."
-"$CC" -I"$DUT_INCLUDE" -I"$KIT/include" -O0 -g -mcmodel=medany -nostdlib \\
-      -march="$MARCH" -mabi="$MABI" -DXLEN=$XLEN -DTEST_FLEN=64 \\
-      -DRVTEST_SELFCHECK -c -o "$OUTDIR/rvmodel_shim.o" "$KIT/rvmodel_shim.S"
+echo "==> Verifying kit integrity"
+( cd "$KIT" && sha256sum -c checksums.sha256 --quiet ) && echo "    all objects and archives match the manifest"
 
-echo "Linking $(grep -c '"object"' "$KIT/manifest.json") test objects ..."
-fail=0
-while IFS=$'\\t' read -r name obj march mabi; do
+echo "==> Building your model library (librvmodel.a) from your private macros"
+"$CC" -I"$DUT_INCLUDE" -I"$KIT/include" -O0 -g -mcmodel=medany -nostdlib \
+      -march="$MARCH" -mabi="$MABI" -DXLEN=$XLEN -DTEST_FLEN=64 \
+      -DRVTEST_SELFCHECK -c -o "$OUTDIR/.work/rvmodel_shim.o" "$KIT/rvmodel_shim.S"
+"$AR" rcs "$OUTDIR/librvmodel.a" "$OUTDIR/.work/rvmodel_shim.o"
+echo "    $OUTDIR/librvmodel.a"
+
+echo "==> Linking certified tests against your model library"
+fail=0; n=0
+while IFS=$'\t' read -r name obj march mabi; do
   out="$OUTDIR/$(basename "$name").elf"
-  mkdir -p "$(dirname "$out")"
-  if ! "$CC" -T"$KIT/act_link.ld" -nostdlib -mcmodel=medany \\
-        -march="$march" -mabi="$mabi" -Wl,--no-relax -Wl,--no-warn-rwx-segments \\
-        -o "$out" "$KIT/$obj" "$OUTDIR/rvmodel_shim.o"; then
+  if "$CC" -T"$KIT/act_link.ld" -nostdlib -mcmodel=medany \
+        -march="$march" -mabi="$mabi" -Wl,--no-relax -Wl,--no-warn-rwx-segments \
+        -o "$out" "$KIT/$obj" -L"$OUTDIR" -Wl,--whole-archive -lrvmodel -Wl,--no-whole-archive; then
+    n=$((n+1))
+  else
     echo "  FAILED: $name" >&2; fail=$((fail+1))
   fi
 done < <(python3 -c "
 import json,sys
 m=json.load(open('$KIT/manifest.json'))
 for t in m['tests']:
-    print('\\t'.join([t['name'],t['object'],t['march'],t['mabi']]))
+    print('\t'.join([t['name'],t['object'],t['march'],t['mabi']]))
 ")
 
 echo
-if [ $fail -eq 0 ]; then echo \"All ELFs built into $OUTDIR/\"; else echo \"$fail link failure(s)\" >&2; exit 1; fi
+if [ $fail -eq 0 ]; then
+  echo "Built $n ELFs into $OUTDIR/"
+  echo "Run them on your DUT and return the logs."
+else
+  echo "$fail link failure(s)" >&2; exit 1
+fi
 """
 
 
@@ -437,19 +492,58 @@ def _write_kit_files(
         dest = kit_dir / rel
         dest.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(t.obj, dest)
+        sig_digest = signature_digest(t.results) if t.results and t.results.exists() else None
+        sig_values = (
+            len([ln for ln in t.results.read_text().splitlines() if ln.strip()])
+            if t.results and t.results.exists()
+            else 0
+        )
         entries.append(
             {
                 "name": t.name,
                 "object": str(rel),
+                "suite": str(Path(t.name).parent),
                 "march": t.march,
                 "mabi": t.mabi,
                 "xlen": t.xlen,
                 "flen": t.flen,
                 "sha256": _sha256(dest),
+                "signature_sha256": sig_digest,
+                "signature_values": sig_values,
             }
         )
+    # Bundle the certified objects into one static archive per suite. This is what
+    # the customer receives and links against.
+    lib_dir = kit_dir / "lib"
+    lib_dir.mkdir(parents=True, exist_ok=True)
+    ar = Path(str(config.compiler_exe).replace("-gcc", "-ar"))
+    if not ar.exists():
+        ar = Path("ar")
+    archives = []
+    by_suite: dict[str, list[dict]] = {}
+    for e in entries:
+        by_suite.setdefault(e["suite"], []).append(e)
+    for suite, members in sorted(by_suite.items()):
+        libname = "libact-" + suite.replace("/", "-") + ".a"
+        libpath = lib_dir / libname
+        libpath.unlink(missing_ok=True)
+        subprocess.run(
+            [str(ar), "rcs", str(libpath), *[str(kit_dir / m["object"]) for m in members]],
+            check=True, capture_output=True,
+        )
+        for m in members:
+            m["archive"] = f"lib/{libname}"
+        archives.append(
+            {
+                "archive": f"lib/{libname}",
+                "suite": suite,
+                "members": len(members),
+                "sha256": _sha256(libpath),
+            }
+        )
+
     manifest = {
-        "kit_version": 1,
+        "kit_version": 2,
         "config": config.name,
         "xlen": xlen,
         "generated": datetime.now(timezone.utc).isoformat(timespec="seconds"),
@@ -462,18 +556,28 @@ def _write_kit_files(
         "shim_source": "rvmodel_shim.S",
         "shim_symbols": list(SHIM_SYMBOLS),
         "test_count": len(entries),
+        "archive_count": len(archives),
+        "archives": archives,
         "tests": entries,
     }
     (kit_dir / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
 
     # Standalone checksum file so the customer can verify without parsing JSON
-    (kit_dir / "checksums.sha256").write_text("".join(f"{e['sha256']}  {e['object']}\n" for e in entries))
+    (kit_dir / "checksums.sha256").write_text(
+        "".join(f"{a['sha256']}  {a['archive']}\n" for a in archives)
+        + "".join(f"{e['sha256']}  {e['object']}\n" for e in entries)
+    )
+    # Sign the manifest itself: one digest that covers every object, archive and
+    # signature digest in the kit.
+    manifest_digest = _sha256(kit_dir / "manifest.json")
+    (kit_dir / "MANIFEST.sha256").write_text(f"{manifest_digest}  manifest.json\n")
 
     marches = {t.march for t in tests}
     (kit_dir / "build_kit.sh").write_text(
         _BUILD_SCRIPT
         % {
             "compiler": Path(str(config.compiler_exe)).name,
+            "ar": Path(str(config.compiler_exe)).name.replace("-gcc", "-ar"),
             "march": min(marches) if marches else f"rv{xlen}i",
             "mabi": _mabi(xlen, False),
             "xlen": xlen,

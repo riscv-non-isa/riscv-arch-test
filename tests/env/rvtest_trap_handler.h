@@ -2341,6 +2341,16 @@ excpt_\__MODE__\()hndlr_tbl:
   #define RVTEST_MODEL_INT_CLR(_SHIM, _MACRO) _MACRO(T2, T5)
 #endif
 
+// Same, for the VS-mode clears, which take no arguments.
+#ifdef RVMODEL_SHIM_EXTERN
+  #define RVTEST_MODEL_INT_CLR0(_SHIM, _MACRO)                  \
+        SREG    ra, trap_sv_off+0*REGWIDTH(sp)                 ;\
+        call    _SHIM                                          ;\
+        LREG    ra, trap_sv_off+0*REGWIDTH(sp)
+#else
+  #define RVTEST_MODEL_INT_CLR0(_SHIM, _MACRO) _MACRO
+#endif
+
 .pushsection .text.rvmodel, "ax"
 
 // These routines are placed after .data, which can be larger than the jal range
@@ -2435,17 +2445,17 @@ excpt_\__MODE__\()hndlr_tbl:
         jr      T2
 
 \__MODE__\()clr_Vsw_int:                             // VS-mode software interrupt
-        RVMODEL_CLR_VSW_INT
+        RVTEST_MODEL_INT_CLR0(rvmodel_clr_vsw_int_h, RVMODEL_CLR_VSW_INT)
         la      T2, resto_\__MODE__\()rtn
         jr      T2
 
 \__MODE__\()clr_Vtmr_int:                            // VS-mode timer interrupt
-        RVMODEL_CLR_VTIMER_INT
+        RVTEST_MODEL_INT_CLR0(rvmodel_clr_vtimer_int_h, RVMODEL_CLR_VTIMER_INT)
         la      T2, resto_\__MODE__\()rtn
         jr      T2
 
 \__MODE__\()clr_Vext_int:                            // VS-mode external interrupt: clear + save intID
-        RVMODEL_CLR_VEXT_INT
+        RVTEST_MODEL_INT_CLR0(rvmodel_clr_vext_int_h, RVMODEL_CLR_VEXT_INT)
         la      T2, resto_\__MODE__\()rtn
         jr      T2
 

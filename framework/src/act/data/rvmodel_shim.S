@@ -132,6 +132,40 @@
     RVMODEL_CLR_SEXT_INT(T2, T5)
     ret
 
+  // ---- VS-mode interrupt clear (handler context, no arguments) ----------
+  // Same ra/T2/T5 contract as the routines above.
+  // A DUT without VS-mode leaves these undefined; fall back to the framework
+  // default of aborting the test, exactly as the inline path used to.
+  .global rvmodel_clr_vsw_int_h
+  rvmodel_clr_vsw_int_h:
+    #ifdef RVMODEL_CLR_VSW_INT
+      RVMODEL_CLR_VSW_INT
+      ret
+    #else
+      la T1, cleanup_epilogs
+      jr T1
+    #endif
+
+  .global rvmodel_clr_vtimer_int_h
+  rvmodel_clr_vtimer_int_h:
+    #ifdef RVMODEL_CLR_VTIMER_INT
+      RVMODEL_CLR_VTIMER_INT
+      ret
+    #else
+      la T1, cleanup_epilogs
+      jr T1
+    #endif
+
+  .global rvmodel_clr_vext_int_h
+  rvmodel_clr_vext_int_h:
+    #ifdef RVMODEL_CLR_VEXT_INT
+      RVMODEL_CLR_VEXT_INT
+      ret
+    #else
+      la T1, cleanup_epilogs
+      jr T1
+    #endif
+
   nop // Padding to ensure valid memory at the edge of the section
 
   .popsection

@@ -34,6 +34,8 @@ from rich import print as rprint
 
 # The summary line run_tests.py emits, same regex it parses.
 _SUMMARY_RE = re.compile(r'RVCP-SUMMARY: TEST (PASSED|FAILED|SIGRUN) - Test File "([^"]*)"')
+# Provenance line the test prints on the pass path: which signature set it checked against.
+_SIGDIGEST_RE = re.compile(r"RVCP-SIGNATURES: results verified against sha256=([0-9a-f]{64})")
 
 
 @dataclass
@@ -44,21 +46,28 @@ class LogReport:
     failed: list[str] = field(default_factory=list)
     sigrun: list[str] = field(default_factory=list)
     missing: list[str] = field(default_factory=list)  # certified but no result returned
+    sig_mismatch: list[str] = field(default_factory=list)  # log's signature digest != manifest
+    sig_verified: int = 0
     unknown: list[str] = field(default_factory=list)  # result returned for a non-kit test
     duplicated: list[str] = field(default_factory=list)
 
     @property
     def ok(self) -> bool:
-        return not (self.failed or self.sigrun or self.missing or self.unknown or self.duplicated)
+        return not (
+            self.failed or self.sigrun or self.missing or self.unknown or self.duplicated or self.sig_mismatch
+        )
 
     def summary(self) -> str:
         parts = [f"{len(self.passed)} passed"]
+        if self.sig_verified:
+            parts.append(f"{self.sig_verified} signature digests verified")
         for label, items in (
             ("failed", self.failed),
             ("SIGRUN", self.sigrun),
             ("missing", self.missing),
             ("unknown", self.unknown),
             ("duplicated", self.duplicated),
+            ("signature-mismatch", self.sig_mismatch),
         ):
             if items:
                 parts.append(f"{len(items)} {label}")
@@ -77,17 +86,23 @@ def _expected_test_files(manifest: dict) -> dict[str, str]:
     return out
 
 
-def scan_logs(log_paths: list[Path]) -> dict[str, list[str]]:
-    """Return {test-file basename: [outcomes]} found across the given files."""
+def scan_logs(log_paths: list[Path]) -> tuple[dict[str, list[str]], dict[str, str]]:
+    """Return ({test-file: [outcomes]}, {test-file: signature digest}) across the files."""
     found: dict[str, list[str]] = {}
+    digests: dict[str, str] = {}
     for p in log_paths:
         try:
             text = p.read_text(errors="replace")
         except OSError:
             continue
-        for outcome, test_file in _SUMMARY_RE.findall(text):
+        hits = _SUMMARY_RE.findall(text)
+        for outcome, test_file in hits:
             found.setdefault(test_file, []).append(outcome)
-    return found
+        # The provenance line has no test name, so tie it to the test this log reports.
+        sig = _SIGDIGEST_RE.search(text)
+        if sig and len(hits) == 1:
+            digests[hits[0][1]] = sig.group(1)
+    return found, digests
 
 
 def verify(manifest_file: Path, logs_dir: Path) -> LogReport:
@@ -96,7 +111,10 @@ def verify(manifest_file: Path, logs_dir: Path) -> LogReport:
     expected = _expected_test_files(manifest)
 
     log_files = sorted(p for p in logs_dir.rglob("*") if p.is_file() and p.suffix in (".log", ".txt"))
-    found = scan_logs(log_files)
+    found, digests = scan_logs(log_files)
+    want_digest = {
+        f"{Path(t['name']).name}.S": t.get("signature_sha256") for t in manifest.get("tests", [])
+    }
 
     report = LogReport()
     for test_file, outcomes in sorted(found.items()):
@@ -111,6 +129,13 @@ def verify(manifest_file: Path, logs_dir: Path) -> LogReport:
             continue
         outcome = outcomes[0]
         {"PASSED": report.passed, "FAILED": report.failed, "SIGRUN": report.sigrun}[outcome].append(name)
+        # Cross-check the signatures the run says it validated against.
+        expect_d, got_d = want_digest.get(test_file), digests.get(test_file)
+        if expect_d and got_d:
+            if expect_d == got_d:
+                report.sig_verified += 1
+            else:
+                report.sig_mismatch.append(f"{name} (log {got_d[:12]}… != kit {expect_d[:12]}…)")
 
     accounted = set(report.passed) | set(report.failed) | set(report.sigrun)
     accounted |= {d.split(" (")[0] for d in report.duplicated}
@@ -173,6 +198,7 @@ def main() -> None:
             ("MISSING (certified, no result returned)", report.missing, "bold red"),
             ("UNKNOWN (result for a test not in the kit)", report.unknown, "yellow"),
             ("DUPLICATED (more than one result)", report.duplicated, "yellow"),
+            ("SIGNATURE MISMATCH (ran against different signatures)", report.sig_mismatch, "bold red"),
         ):
             if items:
                 rprint(f"\n[{style}]{label}: {len(items)}[/]")

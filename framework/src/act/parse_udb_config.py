@@ -183,7 +183,11 @@ def prepare_dut_outputs(configs: list[Config], workdir: Path, jobs: int, verbose
             BuildTask(
                 outputs=(config_dir / "rvmodel_macros.svh",),
                 action=PythonAction(generate_rvmodel_svh, (cfg.dut_include_dir, config_dir)),
-                extra_inputs=(cfg.dut_include_dir / "rvmodel_macros.h",),
+                extra_inputs=(
+                    (cfg.dut_include_dir / "rvmodel_macros.h",)
+                    if (cfg.dut_include_dir / "rvmodel_macros.h").exists()
+                    else ()
+                ),
             )
         )
 

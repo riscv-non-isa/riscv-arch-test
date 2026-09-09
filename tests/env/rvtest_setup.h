@@ -203,7 +203,25 @@
   exit_cleanup:
     LA(a0, successstr)
     call rvmodel_io_write_str
+    LA(a0, rvcp_sigdigest_str)
+    call rvmodel_io_write_str
     call rvmodel_halt_pass
+
+  // Signature provenance for the returned log. The two instructions above are
+  // emitted unconditionally so the reference and final builds stay the same size;
+  // only the string differs, and it lives in .text.rvmodel (after .data) so its
+  // length can never move a signature-visible symbol.
+  #ifndef RVCP_SIG_DIGEST
+    #define RVCP_SIG_DIGEST "reference-build"
+  #endif
+  .pushsection .text.rvmodel,"ax",@progbits
+  .balign 4
+  rvcp_sigdigest_str:
+    .ascii "RVCP-SIGNATURES: results verified against sha256="
+    .ascii RVCP_SIG_DIGEST
+    .asciz "\n"
+  .balign 4                 // string length is variable; keep following code aligned
+  .popsection
 
   // Terminate the test with a failure message
   // Does not include any debug information.
