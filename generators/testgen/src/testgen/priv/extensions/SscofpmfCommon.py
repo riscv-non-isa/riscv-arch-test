@@ -17,16 +17,6 @@ from testgen.data.state import TestData
 from testgen.data.test_chunk import TestChunk
 
 _FIXED_TSBI_ALIASES = {
-    # tsbi_call() encodes its ecall argument as a literal hex immediate at Python
-    # generation time, before any config's rvmodel_macros.h is preprocessed, so it
-    # cannot follow whatever counter a platform's RVMODEL_MHPMEVENT/RVMODEL_MHPMCOUNTER
-    # macro happens to name -- counter 3 is hard-coded here instead. Every config in
-    # config/ (Spike, Sail, Whisper, QEMU, Imperas) already defines those macros to
-    # counter 3 (spelled either as the bare name mhpmevent3/mhpmcounter3, on Spike and
-    # Imperas, or as CSR_MHPMEVENT3/CSR_MHPMCOUNTER3 elsewhere), so this matches every
-    # supported platform today; a future config that picked a different counter would
-    # need this table (and the tsbi_instr_table entries in rvtest_trap_handler.h) updated
-    # to match.
     "RVMODEL_MHPMEVENT": "0x323",  # mhpmevent3
     "RVMODEL_MHPMCOUNTER": "0xb03",  # mhpmcounter3
     "scountovf": "0xda0",
@@ -59,11 +49,7 @@ _S_ACCESSIBLE_CSRS = ("sip", "sie", "sstatus", "scountovf")
 
 
 def _csr_access(instr: str, mode: str) -> str:
-    """Direct access at Sm. Also direct at S for CSRs S-mode can natively read/write
-    (sip/sie/sstatus/scountovf) -- routing those through T-SBI would execute the access
-    in the M-mode handler, defeating tests that check the S-mode view. Everything else
-    (M-only CSRs, and S-accessible CSRs from U, which cannot reach them directly) goes
-    through T-SBI."""
+    """Direct at Sm, and at S for sip/sie/sstatus/scountovf. Everything else via T-SBI."""
     if mode == "Sm":
         return instr
     code = instr.split("#", 1)[0]
@@ -73,15 +59,8 @@ def _csr_access(instr: str, mode: str) -> str:
 
 
 def nonzero_not_all_ones(reg: int, scratch: int) -> list[str]:
-    """Reduce x{reg} (a live hpmcounter readback) to a 0/1 "changed from what we
-    wrote" boolean, in place. hpmcounter keeps ticking on ordinary instruction
-    retirement even though RVMODEL_MHPMEVENT_CODE can't force a controlled
-    overflow on Sail, so its raw value differs by however many extra
-    instructions the -DSIGNATURE reference pass and the final self-checking
-    pass happen to retire before this point -- comparing the raw value via
-    write_sigupd is not reproducible across that build split. The coverpoint
-    only needs the qualitative property its own label already says:
-    nonzero and not all-1s."""
+    """Reduce x{reg} in place to a 0/1 "nonzero and not all-1s" boolean; raw hpmcounter
+    values aren't reproducible across the signature/self-check build split."""
     return [
         f"snez x{scratch}, x{reg}          # x{scratch} = (val != 0)",
         f"addi x{reg}, x{reg}, 1            # x{reg} = val + 1 (wraps to 0 iff val was all-1s)",
@@ -106,9 +85,6 @@ def _generate_xinh_inhibits_tests(test_data: TestData, priv_mode: str) -> list[s
 
     r_val, r_temp = test_data.int_regs.get_registers(2, exclude_regs=[0, 31])
 
-    # Runs entirely at the boot mode (M for Sm, S/U for the others): M-only CSRs
-    # (mip/mie/mhpmevent/mhpmcounter) go through T-SBI when not at Sm; no mode
-    # change is needed since the suite already boots to priv_mode and stays there.
     lines = [
         comment_banner(
             coverpoint,
@@ -605,10 +581,6 @@ def _generate_scountovf_mcounteren_tests(test_data: TestData, mode: str) -> list
             lines.append("")
             test_data.int_regs.return_registers([r_scountovf])
         else:
-            # mcounteren is M-only, so the generic csr_walk_test helper (which writes it
-            # directly) would trap here -- hand-roll the sweep through _csr_access (T-SBI)
-            # so it executes at actual {mode} privilege and priv_mode_{mode} gets sampled
-            # alongside the mcounteren state, matching _generate_scountovf_shadow_tests.
             r_mcounteren, r_scountovf = test_data.int_regs.get_registers(2, exclude_regs=[0, 31])
 
             for state_name, val in [("all_zeros", 0), ("all_ones", 0xFFFFFFF8)]:

@@ -1931,6 +1931,7 @@ tsbi_instr_table:
         TSBI_CSR_INSTR_TABLE(0x73D) // mhpmevent29h (RV32)
         TSBI_CSR_INSTR_TABLE(0x73E) // mhpmevent30h (RV32)
         TSBI_CSR_INSTR_TABLE(0x73F) // mhpmevent31h (RV32)
+        TSBI_CSR_INSTR_TABLE(0xB83) // mhpmcounter3h (RV32)
         // loads and stores (these must not fault; the recursive trap handler may not save registers correctly)
         lw a0, 0(a1)
         ret

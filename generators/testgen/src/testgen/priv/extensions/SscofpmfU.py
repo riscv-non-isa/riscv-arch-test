@@ -23,9 +23,6 @@ def _generate_lcofi_sip_u_tests(test_data: TestData) -> list[str]:
 
     r_val, r_temp = test_data.int_regs.get_registers(2, exclude_regs=[0, 31])
 
-    # U is the default boot mode and this suite stays there throughout: sip/sie/sstatus
-    # are not U-accessible either (only S can reach them directly), so every CSR touch
-    # here goes through T-SBI.
     lines = [
         comment_banner(
             coverpoint,
@@ -38,8 +35,6 @@ def _generate_lcofi_sip_u_tests(test_data: TestData) -> list[str]:
         _csr_access("csrw mip, zero      # clear all pending", "U"),
         _csr_access("csrw mie, zero      # disable all interrupts", "U"),
         _csr_access("csrw RVMODEL_MHPMEVENT, zero", "U"),
-        # mideleg is deliberately excluded from the T-SBI dispatch table (see
-        # docs/tsbi-changes.md) -- it needs an actual, one-time mode change, not T-SBI.
         f"LI(x{r_val}, {hex(LCOFI_BIT)})",
         "RVTEST_TSBI_GOTO_MMODE",
         f"csrs mideleg, x{r_val}   # mideleg.LCOFI = 1 (fixed)",
@@ -77,8 +72,6 @@ def _generate_lcofi_sip_u_tests(test_data: TestData) -> list[str]:
                     _csr_access(f"{'csrs' if lcofie else 'csrc'} sie, x{r_temp}   # sie.LCOFIE = {lcofie}", "U"),
                     "",
                     test_data.add_testcase(binname, coverpoint, covergroup),
-                    # sstatus.SIE=1 and mideleg.LCOFI=1 held fixed; only sie.LCOFIE gates the
-                    # trap given sip.LCOFIP. Fires during the idle window below if both are set.
                     f"RVTEST_IDLE_FOR_INTERRUPT(x{r_temp})",
                     "",
                     (

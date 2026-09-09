@@ -23,10 +23,6 @@ def _generate_lcofi_sip_s_tests(test_data: TestData) -> list[str]:
     SIE_BIT = 0x2
 
     r_val, r_temp = test_data.int_regs.get_registers(2, exclude_regs=[0, 31])
-
-    # BOOT_TO_SMODE lands execution here at S-mode and it stays there throughout:
-    # sip/sie/sstatus are S-accessible and stay direct; mip/mie/mideleg/RVMODEL_MHPMEVENT/
-    # RVMODEL_MHPMCOUNTER are M-only and go through T-SBI.
     lines = [
         comment_banner(
             coverpoint,
