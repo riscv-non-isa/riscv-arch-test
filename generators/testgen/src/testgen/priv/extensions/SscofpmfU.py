@@ -27,9 +27,8 @@ def _generate_lcofi_sip_u_tests(test_data: TestData) -> list[str]:
         comment_banner(
             coverpoint,
             "Interrupt pending and enable, mode = U.\n"
-            "mideleg.LCOFI=1 held fixed (required to reach U-mode with LCOFI\n"
-            "delegated below M), sstatus.SIE=1 held fixed per testplan; sweep is\n"
-            "sip.LCOFIP x sie.LCOFIE.\n",
+            "mideleg.LCOFI=1 and sstatus.SIE=0 held fixed; sweep sip.LCOFIP x sie.LCOFIE.\n"
+            "Sample point is the T-SBI delegate's sret back to U (sstatus.SPP=0).\n",
         ),
         "",
         _csr_access("csrw mip, zero      # clear all pending", "U"),
@@ -37,10 +36,10 @@ def _generate_lcofi_sip_u_tests(test_data: TestData) -> list[str]:
         _csr_access("csrw RVMODEL_MHPMEVENT, zero", "U"),
         f"LI(x{r_val}, {hex(LCOFI_BIT)})",
         "RVTEST_TSBI_GOTO_MMODE",
-        f"csrs mideleg, x{r_val}   # mideleg.LCOFI = 1 (fixed)",
+        f"csrs mideleg, x{r_val}   # mideleg.LCOFI = 1 ",
         "RVTEST_TSBI_GOTO_UMODE",
         f"LI(x{r_val}, {hex(SIE_BIT)})",
-        _csr_access(f"csrs sstatus, x{r_val}   # sstatus.SIE = 1 (fixed)", "U"),
+        _csr_access(f"csrc sstatus, x{r_val}   # sstatus.SIE = 0 ", "U"),
     ]
 
     for lcofip in [0, 1]:
@@ -55,31 +54,25 @@ def _generate_lcofi_sip_u_tests(test_data: TestData) -> list[str]:
 
             lines.append(f"LI(x{r_val}, {hex(LCOFI_BIT)})")
             if lcofip:
-                lines.append(_csr_access(f"csrs sip, x{r_val}   # set sip.LCOFIP directly", "U"))
+                lines.append(_csr_access(f"csrs sip, x{r_val}   # sip.LCOFIP = 1", "U"))
             else:
                 lines.extend(
                     [
-                        _csr_access("csrw RVMODEL_MHPMCOUNTER, zero   # keep counter clear -- no overflow", "U"),
-                        _csr_access(
-                            f"csrc sip, x{r_val}   # explicitly hold sip.LCOFIP = 0 (touch it so it samples)", "U"
-                        ),
+                        _csr_access("csrw RVMODEL_MHPMCOUNTER, zero   # no overflow", "U"),
+                        _csr_access(f"csrc sip, x{r_val}   # sip.LCOFIP = 0", "U"),
                     ]
                 )
 
             lines.extend(
                 [
                     f"LI(x{r_temp}, {hex(LCOFI_BIT)})",
+                    test_data.add_testcase(binname, coverpoint, covergroup),
                     _csr_access(f"{'csrs' if lcofie else 'csrc'} sie, x{r_temp}   # sie.LCOFIE = {lcofie}", "U"),
                     "",
-                    test_data.add_testcase(binname, coverpoint, covergroup),
                     f"RVTEST_IDLE_FOR_INTERRUPT(x{r_temp})",
                     "",
-                    (
-                        _csr_access(f"csrc sip, x{r_temp}   # clear LCOFIP for next iteration (if it latched)", "U")
-                        if lcofip
-                        else ""
-                    ),
-                    _csr_access("csrw sie, zero        # disable LCOFIE before next iteration", "U"),
+                    (_csr_access(f"csrc sip, x{r_temp}   # clear LCOFIP", "U") if lcofip else ""),
+                    _csr_access("csrw sie, zero        # clear LCOFIE", "U"),
                 ]
             )
 
