@@ -12,7 +12,7 @@
 # REQUIRED_EXTENSIONS: ['I', 'Zibi']
 # params:
 #   MXLEN: 32
-# MARCH: rv32i_zicsr_zifencei
+# MARCH: rv32i_zibi_zicsr_zifencei
 ##### END_TEST_CONFIG #####
 
 // Define the size of the signature region
@@ -37,7 +37,7 @@ RVTEST_BEGIN
   RVTEST_TESTDATA_LOAD_INT(x3, x0) # load rs1: x0 = 0xaedfb723
   RVTEST_TESTDATA_LOAD_INT(x3, x26) # load branch taken value: x26 = 0x7a3eccee
 Zibi_beqi_cg_cp_rs1_b0:
-  .insn b 0x63, 2, x0, x6, 1f # beqi x0, 6, 1f; perform operation
+  beqi x0, 6, 1f # perform operation
   LI(x26, -1) # branch not taken, set temp_reg to -1
 1:
   # Check if x26 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
@@ -47,7 +47,7 @@ Zibi_beqi_cg_cp_rs1_b0:
   RVTEST_TESTDATA_LOAD_INT(x3, x1) # load rs1: x1 = 0xb8bea34c
   RVTEST_TESTDATA_LOAD_INT(x3, x30) # load branch taken value: x30 = 0xc3215457
 Zibi_beqi_cg_cp_rs1_b1:
-  .insn b 0x63, 2, x1, x27, 1f # beqi x1, 27, 1f; perform operation
+  beqi x1, 27, 1f # perform operation
   LI(x30, -1) # branch not taken, set temp_reg to -1
 1:
   # Check if x30 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
@@ -58,7 +58,7 @@ Zibi_beqi_cg_cp_rs1_b1:
   RVTEST_TESTDATA_LOAD_INT(x3, x2) # load rs1: x2 = 0x14806bd5
   RVTEST_TESTDATA_LOAD_INT(x3, x28) # load branch taken value: x28 = 0xf7cbbb30
 Zibi_beqi_cg_cp_rs1_b2:
-  .insn b 0x63, 2, x2, x3, 1f # beqi x2, 3, 1f; perform operation
+  beqi x2, 3, 1f # perform operation
   LI(x28, -1) # branch not taken, set temp_reg to -1
 1:
   # Check if x28 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
@@ -69,7 +69,7 @@ Zibi_beqi_cg_cp_rs1_b2:
   RVTEST_TESTDATA_LOAD_INT(x30, x3) # load rs1: x3 = 0x986fd0a3
   RVTEST_TESTDATA_LOAD_INT(x30, x29) # load branch taken value: x29 = 0x52ccadfa
 Zibi_beqi_cg_cp_rs1_b3:
-  .insn b 0x63, 2, x3, x1, 1f # beqi x3, 1, 1f; perform operation
+  beqi x3, 1, 1f # perform operation
   LI(x29, -1) # branch not taken, set temp_reg to -1
 1:
   # Check if x29 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
@@ -81,7 +81,7 @@ Zibi_beqi_cg_cp_rs1_b3:
   RVTEST_TESTDATA_LOAD_INT(x30, x4) # load rs1: x4 = 0x5b9c4cce
   RVTEST_TESTDATA_LOAD_INT(x30, x3) # load branch taken value: x3 = 0x57fd3001
 Zibi_beqi_cg_cp_rs1_b4:
-  .insn b 0x63, 2, x4, x12, 1f # beqi x4, 12, 1f; perform operation
+  beqi x4, 12, 1f # perform operation
   LI(x3, -1) # branch not taken, set temp_reg to -1
 1:
   # Check if x3 contains the expected result. x1 is the signature ptr, x8 is the link ptr, x7 is a temp reg.
@@ -91,7 +91,7 @@ Zibi_beqi_cg_cp_rs1_b4:
   RVTEST_TESTDATA_LOAD_INT(x30, x5) # load rs1: x5 = 0x62506cac
   RVTEST_TESTDATA_LOAD_INT(x30, x28) # load branch taken value: x28 = 0xf84c9107
 Zibi_beqi_cg_cp_rs1_b5:
-  .insn b 0x63, 2, x5, x6, 1f # beqi x5, 6, 1f; perform operation
+  beqi x5, 6, 1f # perform operation
   LI(x28, -1) # branch not taken, set temp_reg to -1
 1:
   # Check if x28 contains the expected result. x1 is the signature ptr, x8 is the link ptr, x7 is a temp reg.
@@ -101,7 +101,7 @@ Zibi_beqi_cg_cp_rs1_b5:
   RVTEST_TESTDATA_LOAD_INT(x30, x6) # load rs1: x6 = 0xb6ac146b
   RVTEST_TESTDATA_LOAD_INT(x30, x26) # load branch taken value: x26 = 0xc54bcb67
 Zibi_beqi_cg_cp_rs1_b6:
-  .insn b 0x63, 2, x6, x25, 1f # beqi x6, 25, 1f; perform operation
+  beqi x6, 25, 1f # perform operation
   LI(x26, -1) # branch not taken, set temp_reg to -1
 1:
   # Check if x26 contains the expected result. x1 is the signature ptr, x8 is the link ptr, x7 is a temp reg.
@@ -113,7 +113,7 @@ Zibi_beqi_cg_cp_rs1_b6:
   RVTEST_TESTDATA_LOAD_INT(x30, x7) # load rs1: x7 = 0x321db357
   RVTEST_TESTDATA_LOAD_INT(x30, x20) # load branch taken value: x20 = 0x20353f5a
 Zibi_beqi_cg_cp_rs1_b7:
-  .insn b 0x63, 2, x7, x16, 1f # beqi x7, 16, 1f; perform operation
+  beqi x7, 16, 1f # perform operation
   LI(x20, -1) # branch not taken, set temp_reg to -1
 1:
   # Check if x20 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
@@ -123,7 +123,7 @@ Zibi_beqi_cg_cp_rs1_b7:
   RVTEST_TESTDATA_LOAD_INT(x30, x8) # load rs1: x8 = 0x3864a286
   RVTEST_TESTDATA_LOAD_INT(x30, x12) # load branch taken value: x12 = 0x5f704e75
 Zibi_beqi_cg_cp_rs1_b8:
-  .insn b 0x63, 2, x8, x22, 1f # beqi x8, 22, 1f; perform operation
+  beqi x8, 22, 1f # perform operation
   LI(x12, -1) # branch not taken, set temp_reg to -1
 1:
   # Check if x12 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
@@ -133,7 +133,7 @@ Zibi_beqi_cg_cp_rs1_b8:
   RVTEST_TESTDATA_LOAD_INT(x30, x9) # load rs1: x9 = 0xac27a305
   RVTEST_TESTDATA_LOAD_INT(x30, x7) # load branch taken value: x7 = 0x94d7fbc3
 Zibi_beqi_cg_cp_rs1_b9:
-  .insn b 0x63, 2, x9, x31, 1f # beqi x9, 31, 1f; perform operation
+  beqi x9, 31, 1f # perform operation
   LI(x7, -1) # branch not taken, set temp_reg to -1
 1:
   # Check if x7 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
@@ -143,7 +143,7 @@ Zibi_beqi_cg_cp_rs1_b9:
   RVTEST_TESTDATA_LOAD_INT(x30, x10) # load rs1: x10 = 0x25dd32b4
   RVTEST_TESTDATA_LOAD_INT(x30, x28) # load branch taken value: x28 = 0x78c51b71
 Zibi_beqi_cg_cp_rs1_b10:
-  .insn b 0x63, 2, x10, x10, 1f # beqi x10, 10, 1f; perform operation
+  beqi x10, 10, 1f # perform operation
   LI(x28, -1) # branch not taken, set temp_reg to -1
 1:
   # Check if x28 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
@@ -153,7 +153,7 @@ Zibi_beqi_cg_cp_rs1_b10:
   RVTEST_TESTDATA_LOAD_INT(x30, x11) # load rs1: x11 = 0xb21430d5
   RVTEST_TESTDATA_LOAD_INT(x30, x21) # load branch taken value: x21 = 0x575dabe5
 Zibi_beqi_cg_cp_rs1_b11:
-  .insn b 0x63, 2, x11, x29, 1f # beqi x11, 29, 1f; perform operation
+  beqi x11, 29, 1f # perform operation
   LI(x21, -1) # branch not taken, set temp_reg to -1
 1:
   # Check if x21 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
@@ -163,7 +163,7 @@ Zibi_beqi_cg_cp_rs1_b11:
   RVTEST_TESTDATA_LOAD_INT(x30, x12) # load rs1: x12 = 0x5ef36889
   RVTEST_TESTDATA_LOAD_INT(x30, x29) # load branch taken value: x29 = 0x3aa03aeb
 Zibi_beqi_cg_cp_rs1_b12:
-  .insn b 0x63, 2, x12, x31, 1f # beqi x12, 31, 1f; perform operation
+  beqi x12, 31, 1f # perform operation
   LI(x29, -1) # branch not taken, set temp_reg to -1
 1:
   # Check if x29 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
@@ -173,7 +173,7 @@ Zibi_beqi_cg_cp_rs1_b12:
   RVTEST_TESTDATA_LOAD_INT(x30, x13) # load rs1: x13 = 0x5602898b
   RVTEST_TESTDATA_LOAD_INT(x30, x18) # load branch taken value: x18 = 0xbfa712f9
 Zibi_beqi_cg_cp_rs1_b13:
-  .insn b 0x63, 2, x13, x27, 1f # beqi x13, 27, 1f; perform operation
+  beqi x13, 27, 1f # perform operation
   LI(x18, -1) # branch not taken, set temp_reg to -1
 1:
   # Check if x18 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
@@ -183,7 +183,7 @@ Zibi_beqi_cg_cp_rs1_b13:
   RVTEST_TESTDATA_LOAD_INT(x30, x14) # load rs1: x14 = 0x2a2051d4
   RVTEST_TESTDATA_LOAD_INT(x30, x10) # load branch taken value: x10 = 0xab201315
 Zibi_beqi_cg_cp_rs1_b14:
-  .insn b 0x63, 2, x14, x1, 1f # beqi x14, 1, 1f; perform operation
+  beqi x14, 1, 1f # perform operation
   LI(x10, -1) # branch not taken, set temp_reg to -1
 1:
   # Check if x10 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
@@ -193,7 +193,7 @@ Zibi_beqi_cg_cp_rs1_b14:
   RVTEST_TESTDATA_LOAD_INT(x30, x15) # load rs1: x15 = 0xe4f53e47
   RVTEST_TESTDATA_LOAD_INT(x30, x11) # load branch taken value: x11 = 0xde57d0e9
 Zibi_beqi_cg_cp_rs1_b15:
-  .insn b 0x63, 2, x15, x6, 1f # beqi x15, 6, 1f; perform operation
+  beqi x15, 6, 1f # perform operation
   LI(x11, -1) # branch not taken, set temp_reg to -1
 1:
   # Check if x11 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
@@ -203,7 +203,7 @@ Zibi_beqi_cg_cp_rs1_b15:
   RVTEST_TESTDATA_LOAD_INT(x30, x16) # load rs1: x16 = 0x96c150de
   RVTEST_TESTDATA_LOAD_INT(x30, x15) # load branch taken value: x15 = 0xa66dfa22
 Zibi_beqi_cg_cp_rs1_b16:
-  .insn b 0x63, 2, x16, x3, 1f # beqi x16, 3, 1f; perform operation
+  beqi x16, 3, 1f # perform operation
   LI(x15, -1) # branch not taken, set temp_reg to -1
 1:
   # Check if x15 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
@@ -213,7 +213,7 @@ Zibi_beqi_cg_cp_rs1_b16:
   RVTEST_TESTDATA_LOAD_INT(x30, x17) # load rs1: x17 = 0xf6190a31
   RVTEST_TESTDATA_LOAD_INT(x30, x25) # load branch taken value: x25 = 0x19754fb0
 Zibi_beqi_cg_cp_rs1_b17:
-  .insn b 0x63, 2, x17, x25, 1f # beqi x17, 25, 1f; perform operation
+  beqi x17, 25, 1f # perform operation
   LI(x25, -1) # branch not taken, set temp_reg to -1
 1:
   # Check if x25 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
@@ -223,7 +223,7 @@ Zibi_beqi_cg_cp_rs1_b17:
   RVTEST_TESTDATA_LOAD_INT(x30, x18) # load rs1: x18 = 0xb5d0fe8c
   RVTEST_TESTDATA_LOAD_INT(x30, x23) # load branch taken value: x23 = 0x076a5e64
 Zibi_beqi_cg_cp_rs1_b18:
-  .insn b 0x63, 2, x18, x18, 1f # beqi x18, 18, 1f; perform operation
+  beqi x18, 18, 1f # perform operation
   LI(x23, -1) # branch not taken, set temp_reg to -1
 1:
   # Check if x23 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
@@ -233,7 +233,7 @@ Zibi_beqi_cg_cp_rs1_b18:
   RVTEST_TESTDATA_LOAD_INT(x30, x19) # load rs1: x19 = 0xbd55c136
   RVTEST_TESTDATA_LOAD_INT(x30, x28) # load branch taken value: x28 = 0x0aaca22a
 Zibi_beqi_cg_cp_rs1_b19:
-  .insn b 0x63, 2, x19, x15, 1f # beqi x19, 15, 1f; perform operation
+  beqi x19, 15, 1f # perform operation
   LI(x28, -1) # branch not taken, set temp_reg to -1
 1:
   # Check if x28 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
@@ -243,7 +243,7 @@ Zibi_beqi_cg_cp_rs1_b19:
   RVTEST_TESTDATA_LOAD_INT(x30, x20) # load rs1: x20 = 0x31260a03
   RVTEST_TESTDATA_LOAD_INT(x30, x9) # load branch taken value: x9 = 0x8a8f5938
 Zibi_beqi_cg_cp_rs1_b20:
-  .insn b 0x63, 2, x20, x7, 1f # beqi x20, 7, 1f; perform operation
+  beqi x20, 7, 1f # perform operation
   LI(x9, -1) # branch not taken, set temp_reg to -1
 1:
   # Check if x9 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
@@ -253,7 +253,7 @@ Zibi_beqi_cg_cp_rs1_b20:
   RVTEST_TESTDATA_LOAD_INT(x30, x21) # load rs1: x21 = 0xff2ba57f
   RVTEST_TESTDATA_LOAD_INT(x30, x16) # load branch taken value: x16 = 0xae0e4312
 Zibi_beqi_cg_cp_rs1_b21:
-  .insn b 0x63, 2, x21, x12, 1f # beqi x21, 12, 1f; perform operation
+  beqi x21, 12, 1f # perform operation
   LI(x16, -1) # branch not taken, set temp_reg to -1
 1:
   # Check if x16 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
@@ -263,7 +263,7 @@ Zibi_beqi_cg_cp_rs1_b21:
   RVTEST_TESTDATA_LOAD_INT(x30, x22) # load rs1: x22 = 0x94e01e20
   RVTEST_TESTDATA_LOAD_INT(x30, x10) # load branch taken value: x10 = 0x4674a90c
 Zibi_beqi_cg_cp_rs1_b22:
-  .insn b 0x63, 2, x22, x2, 1f # beqi x22, 2, 1f; perform operation
+  beqi x22, 2, 1f # perform operation
   LI(x10, -1) # branch not taken, set temp_reg to -1
 1:
   # Check if x10 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
@@ -273,7 +273,7 @@ Zibi_beqi_cg_cp_rs1_b22:
   RVTEST_TESTDATA_LOAD_INT(x30, x23) # load rs1: x23 = 0x51cc08ab
   RVTEST_TESTDATA_LOAD_INT(x30, x25) # load branch taken value: x25 = 0x599ad8bc
 Zibi_beqi_cg_cp_rs1_b23:
-  .insn b 0x63, 2, x23, x26, 1f # beqi x23, 26, 1f; perform operation
+  beqi x23, 26, 1f # perform operation
   LI(x25, -1) # branch not taken, set temp_reg to -1
 1:
   # Check if x25 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
@@ -283,7 +283,7 @@ Zibi_beqi_cg_cp_rs1_b23:
   RVTEST_TESTDATA_LOAD_INT(x30, x24) # load rs1: x24 = 0x975e8862
   RVTEST_TESTDATA_LOAD_INT(x30, x3) # load branch taken value: x3 = 0x62d65f21
 Zibi_beqi_cg_cp_rs1_b24:
-  .insn b 0x63, 2, x24, x2, 1f # beqi x24, 2, 1f; perform operation
+  beqi x24, 2, 1f # perform operation
   LI(x3, -1) # branch not taken, set temp_reg to -1
 1:
   # Check if x3 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
@@ -293,7 +293,7 @@ Zibi_beqi_cg_cp_rs1_b24:
   RVTEST_TESTDATA_LOAD_INT(x30, x25) # load rs1: x25 = 0xf45d51a9
   RVTEST_TESTDATA_LOAD_INT(x30, x9) # load branch taken value: x9 = 0x6500c9d1
 Zibi_beqi_cg_cp_rs1_b25:
-  .insn b 0x63, 2, x25, x20, 1f # beqi x25, 20, 1f; perform operation
+  beqi x25, 20, 1f # perform operation
   LI(x9, -1) # branch not taken, set temp_reg to -1
 1:
   # Check if x9 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
@@ -303,7 +303,7 @@ Zibi_beqi_cg_cp_rs1_b25:
   RVTEST_TESTDATA_LOAD_INT(x30, x26) # load rs1: x26 = 0xae65d87d
   RVTEST_TESTDATA_LOAD_INT(x30, x16) # load branch taken value: x16 = 0xf3bbd6c0
 Zibi_beqi_cg_cp_rs1_b26:
-  .insn b 0x63, 2, x26, x22, 1f # beqi x26, 22, 1f; perform operation
+  beqi x26, 22, 1f # perform operation
   LI(x16, -1) # branch not taken, set temp_reg to -1
 1:
   # Check if x16 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
@@ -313,7 +313,7 @@ Zibi_beqi_cg_cp_rs1_b26:
   RVTEST_TESTDATA_LOAD_INT(x30, x27) # load rs1: x27 = 0x0f824143
   RVTEST_TESTDATA_LOAD_INT(x30, x15) # load branch taken value: x15 = 0xe800cc2f
 Zibi_beqi_cg_cp_rs1_b27:
-  .insn b 0x63, 2, x27, x31, 1f # beqi x27, 31, 1f; perform operation
+  beqi x27, 31, 1f # perform operation
   LI(x15, -1) # branch not taken, set temp_reg to -1
 1:
   # Check if x15 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
@@ -323,7 +323,7 @@ Zibi_beqi_cg_cp_rs1_b27:
   RVTEST_TESTDATA_LOAD_INT(x30, x28) # load rs1: x28 = 0x8bfea8a7
   RVTEST_TESTDATA_LOAD_INT(x30, x27) # load branch taken value: x27 = 0x5f41d0db
 Zibi_beqi_cg_cp_rs1_b28:
-  .insn b 0x63, 2, x28, x28, 1f # beqi x28, 28, 1f; perform operation
+  beqi x28, 28, 1f # perform operation
   LI(x27, -1) # branch not taken, set temp_reg to -1
 1:
   # Check if x27 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
@@ -333,7 +333,7 @@ Zibi_beqi_cg_cp_rs1_b28:
   RVTEST_TESTDATA_LOAD_INT(x30, x29) # load rs1: x29 = 0x86a9eee3
   RVTEST_TESTDATA_LOAD_INT(x30, x11) # load branch taken value: x11 = 0x2a63a012
 Zibi_beqi_cg_cp_rs1_b29:
-  .insn b 0x63, 2, x29, x23, 1f # beqi x29, 23, 1f; perform operation
+  beqi x29, 23, 1f # perform operation
   LI(x11, -1) # branch not taken, set temp_reg to -1
 1:
   # Check if x11 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
@@ -344,7 +344,7 @@ Zibi_beqi_cg_cp_rs1_b29:
   RVTEST_TESTDATA_LOAD_INT(x23, x30) # load rs1: x30 = 0xa3efb220
   RVTEST_TESTDATA_LOAD_INT(x23, x16) # load branch taken value: x16 = 0xd6184251
 Zibi_beqi_cg_cp_rs1_b30:
-  .insn b 0x63, 2, x30, x15, 1f # beqi x30, 15, 1f; perform operation
+  beqi x30, 15, 1f # perform operation
   LI(x16, -1) # branch not taken, set temp_reg to -1
 1:
   # Check if x16 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
@@ -354,7 +354,7 @@ Zibi_beqi_cg_cp_rs1_b30:
   RVTEST_TESTDATA_LOAD_INT(x23, x31) # load rs1: x31 = 0xb6ccca82
   RVTEST_TESTDATA_LOAD_INT(x23, x26) # load branch taken value: x26 = 0x9acba4e6
 Zibi_beqi_cg_cp_rs1_b31:
-  .insn b 0x63, 2, x31, x24, 1f # beqi x31, 24, 1f; perform operation
+  beqi x31, 24, 1f # perform operation
   LI(x26, -1) # branch not taken, set temp_reg to -1
 1:
   # Check if x26 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
@@ -368,7 +368,7 @@ Zibi_beqi_cg_cp_rs1_b31:
   RVTEST_TESTDATA_LOAD_INT(x23, x11) # load rs1: x11 = 0x00000000
   RVTEST_TESTDATA_LOAD_INT(x23, x7) # load branch taken value: x7 = 0x715ddc3e
 Zibi_beqi_cg_cp_rs1_edges_0x0:
-  .insn b 0x63, 2, x11, x7, 1f # beqi x11, 7, 1f; perform operation
+  beqi x11, 7, 1f # perform operation
   LI(x7, -1) # branch not taken, set temp_reg to -1
 1:
   # Check if x7 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
@@ -378,7 +378,7 @@ Zibi_beqi_cg_cp_rs1_edges_0x0:
   RVTEST_TESTDATA_LOAD_INT(x23, x22) # load rs1: x22 = 0x00000001
   RVTEST_TESTDATA_LOAD_INT(x23, x10) # load branch taken value: x10 = 0x7eeba146
 Zibi_beqi_cg_cp_rs1_edges_0x1:
-  .insn b 0x63, 2, x22, x11, 1f # beqi x22, 11, 1f; perform operation
+  beqi x22, 11, 1f # perform operation
   LI(x10, -1) # branch not taken, set temp_reg to -1
 1:
   # Check if x10 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
@@ -388,7 +388,7 @@ Zibi_beqi_cg_cp_rs1_edges_0x1:
   RVTEST_TESTDATA_LOAD_INT(x23, x21) # load rs1: x21 = 0x00000002
   RVTEST_TESTDATA_LOAD_INT(x23, x6) # load branch taken value: x6 = 0xf9c51348
 Zibi_beqi_cg_cp_rs1_edges_0x2:
-  .insn b 0x63, 2, x21, x16, 1f # beqi x21, 16, 1f; perform operation
+  beqi x21, 16, 1f # perform operation
   LI(x6, -1) # branch not taken, set temp_reg to -1
 1:
   # Check if x6 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
@@ -398,7 +398,7 @@ Zibi_beqi_cg_cp_rs1_edges_0x2:
   RVTEST_TESTDATA_LOAD_INT(x23, x11) # load rs1: x11 = 0x80000000
   RVTEST_TESTDATA_LOAD_INT(x23, x7) # load branch taken value: x7 = 0xb8817d0d
 Zibi_beqi_cg_cp_rs1_edges_0x80000000:
-  .insn b 0x63, 2, x11, x11, 1f # beqi x11, 11, 1f; perform operation
+  beqi x11, 11, 1f # perform operation
   LI(x7, -1) # branch not taken, set temp_reg to -1
 1:
   # Check if x7 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
@@ -408,7 +408,7 @@ Zibi_beqi_cg_cp_rs1_edges_0x80000000:
   RVTEST_TESTDATA_LOAD_INT(x23, x27) # load rs1: x27 = 0x80000001
   RVTEST_TESTDATA_LOAD_INT(x23, x15) # load branch taken value: x15 = 0x3a5c867a
 Zibi_beqi_cg_cp_rs1_edges_0x80000001:
-  .insn b 0x63, 2, x27, x26, 1f # beqi x27, 26, 1f; perform operation
+  beqi x27, 26, 1f # perform operation
   LI(x15, -1) # branch not taken, set temp_reg to -1
 1:
   # Check if x15 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
@@ -418,7 +418,7 @@ Zibi_beqi_cg_cp_rs1_edges_0x80000001:
   RVTEST_TESTDATA_LOAD_INT(x23, x6) # load rs1: x6 = 0x7fffffff
   RVTEST_TESTDATA_LOAD_INT(x23, x15) # load branch taken value: x15 = 0x627490e0
 Zibi_beqi_cg_cp_rs1_edges_0x7fffffff:
-  .insn b 0x63, 2, x6, x1, 1f # beqi x6, 1, 1f; perform operation
+  beqi x6, 1, 1f # perform operation
   LI(x15, -1) # branch not taken, set temp_reg to -1
 1:
   # Check if x15 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
@@ -428,7 +428,7 @@ Zibi_beqi_cg_cp_rs1_edges_0x7fffffff:
   RVTEST_TESTDATA_LOAD_INT(x23, x30) # load rs1: x30 = 0x7ffffffe
   RVTEST_TESTDATA_LOAD_INT(x23, x27) # load branch taken value: x27 = 0x27b70a74
 Zibi_beqi_cg_cp_rs1_edges_0x7ffffffe:
-  .insn b 0x63, 2, x30, x24, 1f # beqi x30, 24, 1f; perform operation
+  beqi x30, 24, 1f # perform operation
   LI(x27, -1) # branch not taken, set temp_reg to -1
 1:
   # Check if x27 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
@@ -438,7 +438,7 @@ Zibi_beqi_cg_cp_rs1_edges_0x7ffffffe:
   RVTEST_TESTDATA_LOAD_INT(x23, x13) # load rs1: x13 = 0xffffffff
   RVTEST_TESTDATA_LOAD_INT(x23, x22) # load branch taken value: x22 = 0x00fe622c
 Zibi_beqi_cg_cp_rs1_edges_0xffffffff:
-  .insn b 0x63, 2, x13, x29, 1f # beqi x13, 29, 1f; perform operation
+  beqi x13, 29, 1f # perform operation
   LI(x22, -1) # branch not taken, set temp_reg to -1
 1:
   # Check if x22 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
@@ -448,7 +448,7 @@ Zibi_beqi_cg_cp_rs1_edges_0xffffffff:
   RVTEST_TESTDATA_LOAD_INT(x23, x16) # load rs1: x16 = 0xfffffffe
   RVTEST_TESTDATA_LOAD_INT(x23, x19) # load branch taken value: x19 = 0x6e92ff70
 Zibi_beqi_cg_cp_rs1_edges_0xfffffffe:
-  .insn b 0x63, 2, x16, x5, 1f # beqi x16, 5, 1f; perform operation
+  beqi x16, 5, 1f # perform operation
   LI(x19, -1) # branch not taken, set temp_reg to -1
 1:
   # Check if x19 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
@@ -458,7 +458,7 @@ Zibi_beqi_cg_cp_rs1_edges_0xfffffffe:
   RVTEST_TESTDATA_LOAD_INT(x23, x8) # load rs1: x8 = 0x5bbc8872
   RVTEST_TESTDATA_LOAD_INT(x23, x22) # load branch taken value: x22 = 0x365d8a0e
 Zibi_beqi_cg_cp_rs1_edges_0x5bbc8872:
-  .insn b 0x63, 2, x8, x0, 1f # beqi x8, -1, 1f; perform operation
+  beqi x8, -1, 1f # perform operation
   LI(x22, -1) # branch not taken, set temp_reg to -1
 1:
   # Check if x22 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
@@ -468,7 +468,7 @@ Zibi_beqi_cg_cp_rs1_edges_0x5bbc8872:
   RVTEST_TESTDATA_LOAD_INT(x23, x3) # load rs1: x3 = 0xaaaaaaaa
   RVTEST_TESTDATA_LOAD_INT(x23, x25) # load branch taken value: x25 = 0x52067c78
 Zibi_beqi_cg_cp_rs1_edges_0xaaaaaaaa:
-  .insn b 0x63, 2, x3, x23, 1f # beqi x3, 23, 1f; perform operation
+  beqi x3, 23, 1f # perform operation
   LI(x25, -1) # branch not taken, set temp_reg to -1
 1:
   # Check if x25 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
@@ -478,7 +478,7 @@ Zibi_beqi_cg_cp_rs1_edges_0xaaaaaaaa:
   RVTEST_TESTDATA_LOAD_INT(x23, x11) # load rs1: x11 = 0x55555555
   RVTEST_TESTDATA_LOAD_INT(x23, x24) # load branch taken value: x24 = 0x75d5649d
 Zibi_beqi_cg_cp_rs1_edges_0x55555555:
-  .insn b 0x63, 2, x11, x5, 1f # beqi x11, 5, 1f; perform operation
+  beqi x11, 5, 1f # perform operation
   LI(x24, -1) # branch not taken, set temp_reg to -1
 1:
   # Check if x24 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
@@ -494,12 +494,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000000_imm_m1:
   RVTEST_TESTDATA_LOAD_INT(x23, x26) # load rs1: x26 = 0x00000000
   LI(x6, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x6, x6, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x26, x0, 1b # beqi x26, -1, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x26, x0, 4f # beqi x26, -1, 4f; forward branch, positive offset
+1: ori x6, x6, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x26, -1, 1b # backward branch
+3: beqi x26, -1, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x6, x6, 1 # forward branch (positive offset) taken
+4: ori x6, x6, 1 # forward branch taken
 5: # done with test
   # Check if x6 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x6, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000000_imm_m1, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000000_imm_m1_str)
@@ -509,12 +509,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000000_imm_1:
   RVTEST_TESTDATA_LOAD_INT(x23, x29) # load rs1: x29 = 0x00000000
   LI(x20, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x20, x20, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x29, x1, 1b # beqi x29, 1, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x29, x1, 4f # beqi x29, 1, 4f; forward branch, positive offset
+1: ori x20, x20, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x29, 1, 1b # backward branch
+3: beqi x29, 1, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x20, x20, 1 # forward branch (positive offset) taken
+4: ori x20, x20, 1 # forward branch taken
 5: # done with test
   # Check if x20 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x20, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000000_imm_1, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000000_imm_1_str)
@@ -524,12 +524,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000000_imm_2:
   RVTEST_TESTDATA_LOAD_INT(x23, x21) # load rs1: x21 = 0x00000000
   LI(x6, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x6, x6, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x21, x2, 1b # beqi x21, 2, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x21, x2, 4f # beqi x21, 2, 4f; forward branch, positive offset
+1: ori x6, x6, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x21, 2, 1b # backward branch
+3: beqi x21, 2, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x6, x6, 1 # forward branch (positive offset) taken
+4: ori x6, x6, 1 # forward branch taken
 5: # done with test
   # Check if x6 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x6, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000000_imm_2, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000000_imm_2_str)
@@ -539,12 +539,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000000_imm_3:
   RVTEST_TESTDATA_LOAD_INT(x23, x30) # load rs1: x30 = 0x00000000
   LI(x8, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x8, x8, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x30, x3, 1b # beqi x30, 3, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x30, x3, 4f # beqi x30, 3, 4f; forward branch, positive offset
+1: ori x8, x8, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x30, 3, 1b # backward branch
+3: beqi x30, 3, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x8, x8, 1 # forward branch (positive offset) taken
+4: ori x8, x8, 1 # forward branch taken
 5: # done with test
   # Check if x8 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x8, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000000_imm_3, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000000_imm_3_str)
@@ -554,12 +554,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000000_imm_4:
   RVTEST_TESTDATA_LOAD_INT(x23, x8) # load rs1: x8 = 0x00000000
   LI(x24, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x24, x24, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x8, x4, 1b # beqi x8, 4, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x8, x4, 4f # beqi x8, 4, 4f; forward branch, positive offset
+1: ori x24, x24, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x8, 4, 1b # backward branch
+3: beqi x8, 4, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x24, x24, 1 # forward branch (positive offset) taken
+4: ori x24, x24, 1 # forward branch taken
 5: # done with test
   # Check if x24 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x24, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000000_imm_4, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000000_imm_4_str)
@@ -569,12 +569,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000000_imm_8:
   RVTEST_TESTDATA_LOAD_INT(x23, x22) # load rs1: x22 = 0x00000000
   LI(x13, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x13, x13, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x22, x8, 1b # beqi x22, 8, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x22, x8, 4f # beqi x22, 8, 4f; forward branch, positive offset
+1: ori x13, x13, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x22, 8, 1b # backward branch
+3: beqi x22, 8, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x13, x13, 1 # forward branch (positive offset) taken
+4: ori x13, x13, 1 # forward branch taken
 5: # done with test
   # Check if x13 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x13, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000000_imm_8, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000000_imm_8_str)
@@ -584,12 +584,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000000_imm_16:
   RVTEST_TESTDATA_LOAD_INT(x23, x14) # load rs1: x14 = 0x00000000
   LI(x29, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x29, x29, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x14, x16, 1b # beqi x14, 16, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x14, x16, 4f # beqi x14, 16, 4f; forward branch, positive offset
+1: ori x29, x29, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x14, 16, 1b # backward branch
+3: beqi x14, 16, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x29, x29, 1 # forward branch (positive offset) taken
+4: ori x29, x29, 1 # forward branch taken
 5: # done with test
   # Check if x29 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x29, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000000_imm_16, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000000_imm_16_str)
@@ -599,12 +599,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000000_imm_30:
   RVTEST_TESTDATA_LOAD_INT(x23, x11) # load rs1: x11 = 0x00000000
   LI(x9, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x9, x9, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x11, x30, 1b # beqi x11, 30, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x11, x30, 4f # beqi x11, 30, 4f; forward branch, positive offset
+1: ori x9, x9, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x11, 30, 1b # backward branch
+3: beqi x11, 30, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x9, x9, 1 # forward branch (positive offset) taken
+4: ori x9, x9, 1 # forward branch taken
 5: # done with test
   # Check if x9 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x9, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000000_imm_30, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000000_imm_30_str)
@@ -614,12 +614,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000000_imm_31:
   RVTEST_TESTDATA_LOAD_INT(x23, x7) # load rs1: x7 = 0x00000000
   LI(x3, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x3, x3, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x7, x31, 1b # beqi x7, 31, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x7, x31, 4f # beqi x7, 31, 4f; forward branch, positive offset
+1: ori x3, x3, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x7, 31, 1b # backward branch
+3: beqi x7, 31, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x3, x3, 1 # forward branch (positive offset) taken
+4: ori x3, x3, 1 # forward branch taken
 5: # done with test
   # Check if x3 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x3, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000000_imm_31, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000000_imm_31_str)
@@ -629,12 +629,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000001_imm_m1:
   RVTEST_TESTDATA_LOAD_INT(x23, x22) # load rs1: x22 = 0x00000001
   LI(x29, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x29, x29, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x22, x0, 1b # beqi x22, -1, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x22, x0, 4f # beqi x22, -1, 4f; forward branch, positive offset
+1: ori x29, x29, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x22, -1, 1b # backward branch
+3: beqi x22, -1, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x29, x29, 1 # forward branch (positive offset) taken
+4: ori x29, x29, 1 # forward branch taken
 5: # done with test
   # Check if x29 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x29, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000001_imm_m1, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000001_imm_m1_str)
@@ -644,12 +644,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000001_imm_1:
   RVTEST_TESTDATA_LOAD_INT(x23, x31) # load rs1: x31 = 0x00000001
   LI(x17, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x17, x17, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x31, x1, 1b # beqi x31, 1, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x31, x1, 4f # beqi x31, 1, 4f; forward branch, positive offset
+1: ori x17, x17, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x31, 1, 1b # backward branch
+3: beqi x31, 1, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x17, x17, 1 # forward branch (positive offset) taken
+4: ori x17, x17, 1 # forward branch taken
 5: # done with test
   # Check if x17 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x17, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000001_imm_1, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000001_imm_1_str)
@@ -659,12 +659,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000001_imm_2:
   RVTEST_TESTDATA_LOAD_INT(x23, x25) # load rs1: x25 = 0x00000001
   LI(x7, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x7, x7, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x25, x2, 1b # beqi x25, 2, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x25, x2, 4f # beqi x25, 2, 4f; forward branch, positive offset
+1: ori x7, x7, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x25, 2, 1b # backward branch
+3: beqi x25, 2, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x7, x7, 1 # forward branch (positive offset) taken
+4: ori x7, x7, 1 # forward branch taken
 5: # done with test
   # Check if x7 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x7, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000001_imm_2, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000001_imm_2_str)
@@ -674,12 +674,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000001_imm_3:
   RVTEST_TESTDATA_LOAD_INT(x23, x13) # load rs1: x13 = 0x00000001
   LI(x21, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x21, x21, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x13, x3, 1b # beqi x13, 3, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x13, x3, 4f # beqi x13, 3, 4f; forward branch, positive offset
+1: ori x21, x21, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x13, 3, 1b # backward branch
+3: beqi x13, 3, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x21, x21, 1 # forward branch (positive offset) taken
+4: ori x21, x21, 1 # forward branch taken
 5: # done with test
   # Check if x21 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x21, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000001_imm_3, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000001_imm_3_str)
@@ -689,12 +689,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000001_imm_4:
   RVTEST_TESTDATA_LOAD_INT(x23, x28) # load rs1: x28 = 0x00000001
   LI(x16, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x16, x16, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x28, x4, 1b # beqi x28, 4, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x28, x4, 4f # beqi x28, 4, 4f; forward branch, positive offset
+1: ori x16, x16, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x28, 4, 1b # backward branch
+3: beqi x28, 4, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x16, x16, 1 # forward branch (positive offset) taken
+4: ori x16, x16, 1 # forward branch taken
 5: # done with test
   # Check if x16 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x16, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000001_imm_4, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000001_imm_4_str)
@@ -704,12 +704,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000001_imm_8:
   RVTEST_TESTDATA_LOAD_INT(x23, x28) # load rs1: x28 = 0x00000001
   LI(x21, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x21, x21, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x28, x8, 1b # beqi x28, 8, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x28, x8, 4f # beqi x28, 8, 4f; forward branch, positive offset
+1: ori x21, x21, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x28, 8, 1b # backward branch
+3: beqi x28, 8, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x21, x21, 1 # forward branch (positive offset) taken
+4: ori x21, x21, 1 # forward branch taken
 5: # done with test
   # Check if x21 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x21, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000001_imm_8, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000001_imm_8_str)
@@ -719,12 +719,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000001_imm_16:
   RVTEST_TESTDATA_LOAD_INT(x23, x8) # load rs1: x8 = 0x00000001
   LI(x14, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x14, x14, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x8, x16, 1b # beqi x8, 16, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x8, x16, 4f # beqi x8, 16, 4f; forward branch, positive offset
+1: ori x14, x14, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x8, 16, 1b # backward branch
+3: beqi x8, 16, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x14, x14, 1 # forward branch (positive offset) taken
+4: ori x14, x14, 1 # forward branch taken
 5: # done with test
   # Check if x14 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x14, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000001_imm_16, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000001_imm_16_str)
@@ -734,12 +734,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000001_imm_30:
   RVTEST_TESTDATA_LOAD_INT(x23, x25) # load rs1: x25 = 0x00000001
   LI(x10, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x10, x10, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x25, x30, 1b # beqi x25, 30, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x25, x30, 4f # beqi x25, 30, 4f; forward branch, positive offset
+1: ori x10, x10, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x25, 30, 1b # backward branch
+3: beqi x25, 30, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x10, x10, 1 # forward branch (positive offset) taken
+4: ori x10, x10, 1 # forward branch taken
 5: # done with test
   # Check if x10 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x10, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000001_imm_30, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000001_imm_30_str)
@@ -749,12 +749,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000001_imm_31:
   RVTEST_TESTDATA_LOAD_INT(x23, x19) # load rs1: x19 = 0x00000001
   LI(x3, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x3, x3, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x19, x31, 1b # beqi x19, 31, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x19, x31, 4f # beqi x19, 31, 4f; forward branch, positive offset
+1: ori x3, x3, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x19, 31, 1b # backward branch
+3: beqi x19, 31, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x3, x3, 1 # forward branch (positive offset) taken
+4: ori x3, x3, 1 # forward branch taken
 5: # done with test
   # Check if x3 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x3, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000001_imm_31, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000001_imm_31_str)
@@ -764,12 +764,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000002_imm_m1:
   RVTEST_TESTDATA_LOAD_INT(x23, x22) # load rs1: x22 = 0x00000002
   LI(x21, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x21, x21, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x22, x0, 1b # beqi x22, -1, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x22, x0, 4f # beqi x22, -1, 4f; forward branch, positive offset
+1: ori x21, x21, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x22, -1, 1b # backward branch
+3: beqi x22, -1, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x21, x21, 1 # forward branch (positive offset) taken
+4: ori x21, x21, 1 # forward branch taken
 5: # done with test
   # Check if x21 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x21, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000002_imm_m1, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000002_imm_m1_str)
@@ -779,12 +779,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000002_imm_1:
   RVTEST_TESTDATA_LOAD_INT(x23, x3) # load rs1: x3 = 0x00000002
   LI(x31, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x31, x31, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x3, x1, 1b # beqi x3, 1, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x3, x1, 4f # beqi x3, 1, 4f; forward branch, positive offset
+1: ori x31, x31, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x3, 1, 1b # backward branch
+3: beqi x3, 1, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x31, x31, 1 # forward branch (positive offset) taken
+4: ori x31, x31, 1 # forward branch taken
 5: # done with test
   # Check if x31 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x31, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000002_imm_1, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000002_imm_1_str)
@@ -794,12 +794,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000002_imm_2:
   RVTEST_TESTDATA_LOAD_INT(x23, x15) # load rs1: x15 = 0x00000002
   LI(x31, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x31, x31, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x15, x2, 1b # beqi x15, 2, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x15, x2, 4f # beqi x15, 2, 4f; forward branch, positive offset
+1: ori x31, x31, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x15, 2, 1b # backward branch
+3: beqi x15, 2, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x31, x31, 1 # forward branch (positive offset) taken
+4: ori x31, x31, 1 # forward branch taken
 5: # done with test
   # Check if x31 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x31, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000002_imm_2, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000002_imm_2_str)
@@ -809,12 +809,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000002_imm_3:
   RVTEST_TESTDATA_LOAD_INT(x23, x12) # load rs1: x12 = 0x00000002
   LI(x14, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x14, x14, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x12, x3, 1b # beqi x12, 3, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x12, x3, 4f # beqi x12, 3, 4f; forward branch, positive offset
+1: ori x14, x14, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x12, 3, 1b # backward branch
+3: beqi x12, 3, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x14, x14, 1 # forward branch (positive offset) taken
+4: ori x14, x14, 1 # forward branch taken
 5: # done with test
   # Check if x14 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x14, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000002_imm_3, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000002_imm_3_str)
@@ -824,12 +824,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000002_imm_4:
   RVTEST_TESTDATA_LOAD_INT(x23, x6) # load rs1: x6 = 0x00000002
   LI(x22, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x22, x22, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x6, x4, 1b # beqi x6, 4, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x6, x4, 4f # beqi x6, 4, 4f; forward branch, positive offset
+1: ori x22, x22, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x6, 4, 1b # backward branch
+3: beqi x6, 4, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x22, x22, 1 # forward branch (positive offset) taken
+4: ori x22, x22, 1 # forward branch taken
 5: # done with test
   # Check if x22 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x22, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000002_imm_4, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000002_imm_4_str)
@@ -839,12 +839,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000002_imm_8:
   RVTEST_TESTDATA_LOAD_INT(x23, x21) # load rs1: x21 = 0x00000002
   LI(x6, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x6, x6, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x21, x8, 1b # beqi x21, 8, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x21, x8, 4f # beqi x21, 8, 4f; forward branch, positive offset
+1: ori x6, x6, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x21, 8, 1b # backward branch
+3: beqi x21, 8, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x6, x6, 1 # forward branch (positive offset) taken
+4: ori x6, x6, 1 # forward branch taken
 5: # done with test
   # Check if x6 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x6, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000002_imm_8, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000002_imm_8_str)
@@ -854,12 +854,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000002_imm_16:
   RVTEST_TESTDATA_LOAD_INT(x23, x19) # load rs1: x19 = 0x00000002
   LI(x6, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x6, x6, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x19, x16, 1b # beqi x19, 16, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x19, x16, 4f # beqi x19, 16, 4f; forward branch, positive offset
+1: ori x6, x6, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x19, 16, 1b # backward branch
+3: beqi x19, 16, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x6, x6, 1 # forward branch (positive offset) taken
+4: ori x6, x6, 1 # forward branch taken
 5: # done with test
   # Check if x6 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x6, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000002_imm_16, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000002_imm_16_str)
@@ -869,12 +869,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000002_imm_30:
   RVTEST_TESTDATA_LOAD_INT(x23, x11) # load rs1: x11 = 0x00000002
   LI(x9, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x9, x9, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x11, x30, 1b # beqi x11, 30, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x11, x30, 4f # beqi x11, 30, 4f; forward branch, positive offset
+1: ori x9, x9, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x11, 30, 1b # backward branch
+3: beqi x11, 30, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x9, x9, 1 # forward branch (positive offset) taken
+4: ori x9, x9, 1 # forward branch taken
 5: # done with test
   # Check if x9 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x9, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000002_imm_30, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000002_imm_30_str)
@@ -884,12 +884,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000002_imm_31:
   RVTEST_TESTDATA_LOAD_INT(x23, x31) # load rs1: x31 = 0x00000002
   LI(x17, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x17, x17, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x31, x31, 1b # beqi x31, 31, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x31, x31, 4f # beqi x31, 31, 4f; forward branch, positive offset
+1: ori x17, x17, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x31, 31, 1b # backward branch
+3: beqi x31, 31, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x17, x17, 1 # forward branch (positive offset) taken
+4: ori x17, x17, 1 # forward branch taken
 5: # done with test
   # Check if x17 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x17, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000002_imm_31, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x00000002_imm_31_str)
@@ -899,12 +899,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x80000000_imm_m1:
   RVTEST_TESTDATA_LOAD_INT(x23, x8) # load rs1: x8 = 0x80000000
   LI(x6, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x6, x6, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x8, x0, 1b # beqi x8, -1, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x8, x0, 4f # beqi x8, -1, 4f; forward branch, positive offset
+1: ori x6, x6, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x8, -1, 1b # backward branch
+3: beqi x8, -1, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x6, x6, 1 # forward branch (positive offset) taken
+4: ori x6, x6, 1 # forward branch taken
 5: # done with test
   # Check if x6 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x6, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x80000000_imm_m1, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x80000000_imm_m1_str)
@@ -914,12 +914,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x80000000_imm_1:
   RVTEST_TESTDATA_LOAD_INT(x23, x10) # load rs1: x10 = 0x80000000
   LI(x28, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x28, x28, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x10, x1, 1b # beqi x10, 1, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x10, x1, 4f # beqi x10, 1, 4f; forward branch, positive offset
+1: ori x28, x28, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x10, 1, 1b # backward branch
+3: beqi x10, 1, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x28, x28, 1 # forward branch (positive offset) taken
+4: ori x28, x28, 1 # forward branch taken
 5: # done with test
   # Check if x28 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x28, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x80000000_imm_1, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x80000000_imm_1_str)
@@ -929,12 +929,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x80000000_imm_2:
   RVTEST_TESTDATA_LOAD_INT(x23, x29) # load rs1: x29 = 0x80000000
   LI(x16, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x16, x16, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x29, x2, 1b # beqi x29, 2, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x29, x2, 4f # beqi x29, 2, 4f; forward branch, positive offset
+1: ori x16, x16, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x29, 2, 1b # backward branch
+3: beqi x29, 2, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x16, x16, 1 # forward branch (positive offset) taken
+4: ori x16, x16, 1 # forward branch taken
 5: # done with test
   # Check if x16 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x16, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x80000000_imm_2, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x80000000_imm_2_str)
@@ -944,12 +944,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x80000000_imm_3:
   RVTEST_TESTDATA_LOAD_INT(x23, x20) # load rs1: x20 = 0x80000000
   LI(x6, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x6, x6, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x20, x3, 1b # beqi x20, 3, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x20, x3, 4f # beqi x20, 3, 4f; forward branch, positive offset
+1: ori x6, x6, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x20, 3, 1b # backward branch
+3: beqi x20, 3, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x6, x6, 1 # forward branch (positive offset) taken
+4: ori x6, x6, 1 # forward branch taken
 5: # done with test
   # Check if x6 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x6, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x80000000_imm_3, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x80000000_imm_3_str)
@@ -959,12 +959,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x80000000_imm_4:
   RVTEST_TESTDATA_LOAD_INT(x23, x31) # load rs1: x31 = 0x80000000
   LI(x27, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x27, x27, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x31, x4, 1b # beqi x31, 4, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x31, x4, 4f # beqi x31, 4, 4f; forward branch, positive offset
+1: ori x27, x27, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x31, 4, 1b # backward branch
+3: beqi x31, 4, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x27, x27, 1 # forward branch (positive offset) taken
+4: ori x27, x27, 1 # forward branch taken
 5: # done with test
   # Check if x27 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x27, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x80000000_imm_4, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x80000000_imm_4_str)
@@ -974,12 +974,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x80000000_imm_8:
   RVTEST_TESTDATA_LOAD_INT(x23, x26) # load rs1: x26 = 0x80000000
   LI(x7, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x7, x7, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x26, x8, 1b # beqi x26, 8, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x26, x8, 4f # beqi x26, 8, 4f; forward branch, positive offset
+1: ori x7, x7, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x26, 8, 1b # backward branch
+3: beqi x26, 8, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x7, x7, 1 # forward branch (positive offset) taken
+4: ori x7, x7, 1 # forward branch taken
 5: # done with test
   # Check if x7 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x7, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x80000000_imm_8, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x80000000_imm_8_str)
@@ -989,12 +989,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x80000000_imm_16:
   RVTEST_TESTDATA_LOAD_INT(x23, x11) # load rs1: x11 = 0x80000000
   LI(x7, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x7, x7, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x11, x16, 1b # beqi x11, 16, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x11, x16, 4f # beqi x11, 16, 4f; forward branch, positive offset
+1: ori x7, x7, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x11, 16, 1b # backward branch
+3: beqi x11, 16, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x7, x7, 1 # forward branch (positive offset) taken
+4: ori x7, x7, 1 # forward branch taken
 5: # done with test
   # Check if x7 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x7, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x80000000_imm_16, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x80000000_imm_16_str)
@@ -1004,12 +1004,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x80000000_imm_30:
   RVTEST_TESTDATA_LOAD_INT(x23, x20) # load rs1: x20 = 0x80000000
   LI(x25, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x25, x25, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x20, x30, 1b # beqi x20, 30, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x20, x30, 4f # beqi x20, 30, 4f; forward branch, positive offset
+1: ori x25, x25, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x20, 30, 1b # backward branch
+3: beqi x20, 30, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x25, x25, 1 # forward branch (positive offset) taken
+4: ori x25, x25, 1 # forward branch taken
 5: # done with test
   # Check if x25 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x25, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x80000000_imm_30, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x80000000_imm_30_str)
@@ -1019,12 +1019,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x80000000_imm_31:
   RVTEST_TESTDATA_LOAD_INT(x23, x24) # load rs1: x24 = 0x80000000
   LI(x11, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x11, x11, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x24, x31, 1b # beqi x24, 31, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x24, x31, 4f # beqi x24, 31, 4f; forward branch, positive offset
+1: ori x11, x11, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x24, 31, 1b # backward branch
+3: beqi x24, 31, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x11, x11, 1 # forward branch (positive offset) taken
+4: ori x11, x11, 1 # forward branch taken
 5: # done with test
   # Check if x11 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x11, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x80000000_imm_31, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x80000000_imm_31_str)
@@ -1034,12 +1034,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x80000001_imm_m1:
   RVTEST_TESTDATA_LOAD_INT(x23, x17) # load rs1: x17 = 0x80000001
   LI(x13, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x13, x13, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x17, x0, 1b # beqi x17, -1, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x17, x0, 4f # beqi x17, -1, 4f; forward branch, positive offset
+1: ori x13, x13, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x17, -1, 1b # backward branch
+3: beqi x17, -1, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x13, x13, 1 # forward branch (positive offset) taken
+4: ori x13, x13, 1 # forward branch taken
 5: # done with test
   # Check if x13 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x13, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x80000001_imm_m1, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x80000001_imm_m1_str)
@@ -1049,12 +1049,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x80000001_imm_1:
   RVTEST_TESTDATA_LOAD_INT(x23, x26) # load rs1: x26 = 0x80000001
   LI(x3, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x3, x3, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x26, x1, 1b # beqi x26, 1, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x26, x1, 4f # beqi x26, 1, 4f; forward branch, positive offset
+1: ori x3, x3, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x26, 1, 1b # backward branch
+3: beqi x26, 1, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x3, x3, 1 # forward branch (positive offset) taken
+4: ori x3, x3, 1 # forward branch taken
 5: # done with test
   # Check if x3 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x3, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x80000001_imm_1, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x80000001_imm_1_str)
@@ -1064,12 +1064,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x80000001_imm_2:
   RVTEST_TESTDATA_LOAD_INT(x23, x7) # load rs1: x7 = 0x80000001
   LI(x13, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x13, x13, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x7, x2, 1b # beqi x7, 2, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x7, x2, 4f # beqi x7, 2, 4f; forward branch, positive offset
+1: ori x13, x13, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x7, 2, 1b # backward branch
+3: beqi x7, 2, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x13, x13, 1 # forward branch (positive offset) taken
+4: ori x13, x13, 1 # forward branch taken
 5: # done with test
   # Check if x13 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x13, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x80000001_imm_2, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x80000001_imm_2_str)
@@ -1079,12 +1079,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x80000001_imm_3:
   RVTEST_TESTDATA_LOAD_INT(x23, x31) # load rs1: x31 = 0x80000001
   LI(x21, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x21, x21, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x31, x3, 1b # beqi x31, 3, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x31, x3, 4f # beqi x31, 3, 4f; forward branch, positive offset
+1: ori x21, x21, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x31, 3, 1b # backward branch
+3: beqi x31, 3, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x21, x21, 1 # forward branch (positive offset) taken
+4: ori x21, x21, 1 # forward branch taken
 5: # done with test
   # Check if x21 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x21, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x80000001_imm_3, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x80000001_imm_3_str)
@@ -1094,12 +1094,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x80000001_imm_4:
   RVTEST_TESTDATA_LOAD_INT(x23, x3) # load rs1: x3 = 0x80000001
   LI(x24, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x24, x24, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x3, x4, 1b # beqi x3, 4, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x3, x4, 4f # beqi x3, 4, 4f; forward branch, positive offset
+1: ori x24, x24, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x3, 4, 1b # backward branch
+3: beqi x3, 4, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x24, x24, 1 # forward branch (positive offset) taken
+4: ori x24, x24, 1 # forward branch taken
 5: # done with test
   # Check if x24 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x24, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x80000001_imm_4, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x80000001_imm_4_str)
@@ -1109,12 +1109,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x80000001_imm_8:
   RVTEST_TESTDATA_LOAD_INT(x23, x7) # load rs1: x7 = 0x80000001
   LI(x8, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x8, x8, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x7, x8, 1b # beqi x7, 8, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x7, x8, 4f # beqi x7, 8, 4f; forward branch, positive offset
+1: ori x8, x8, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x7, 8, 1b # backward branch
+3: beqi x7, 8, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x8, x8, 1 # forward branch (positive offset) taken
+4: ori x8, x8, 1 # forward branch taken
 5: # done with test
   # Check if x8 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x8, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x80000001_imm_8, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x80000001_imm_8_str)
@@ -1124,12 +1124,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x80000001_imm_16:
   RVTEST_TESTDATA_LOAD_INT(x23, x15) # load rs1: x15 = 0x80000001
   LI(x24, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x24, x24, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x15, x16, 1b # beqi x15, 16, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x15, x16, 4f # beqi x15, 16, 4f; forward branch, positive offset
+1: ori x24, x24, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x15, 16, 1b # backward branch
+3: beqi x15, 16, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x24, x24, 1 # forward branch (positive offset) taken
+4: ori x24, x24, 1 # forward branch taken
 5: # done with test
   # Check if x24 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x24, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x80000001_imm_16, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x80000001_imm_16_str)
@@ -1139,12 +1139,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x80000001_imm_30:
   RVTEST_TESTDATA_LOAD_INT(x23, x6) # load rs1: x6 = 0x80000001
   LI(x27, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x27, x27, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x6, x30, 1b # beqi x6, 30, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x6, x30, 4f # beqi x6, 30, 4f; forward branch, positive offset
+1: ori x27, x27, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x6, 30, 1b # backward branch
+3: beqi x6, 30, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x27, x27, 1 # forward branch (positive offset) taken
+4: ori x27, x27, 1 # forward branch taken
 5: # done with test
   # Check if x27 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x27, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x80000001_imm_30, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x80000001_imm_30_str)
@@ -1154,12 +1154,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x80000001_imm_31:
   RVTEST_TESTDATA_LOAD_INT(x23, x6) # load rs1: x6 = 0x80000001
   LI(x31, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x31, x31, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x6, x31, 1b # beqi x6, 31, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x6, x31, 4f # beqi x6, 31, 4f; forward branch, positive offset
+1: ori x31, x31, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x6, 31, 1b # backward branch
+3: beqi x6, 31, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x31, x31, 1 # forward branch (positive offset) taken
+4: ori x31, x31, 1 # forward branch taken
 5: # done with test
   # Check if x31 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x31, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x80000001_imm_31, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x80000001_imm_31_str)
@@ -1169,12 +1169,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x7fffffff_imm_m1:
   RVTEST_TESTDATA_LOAD_INT(x23, x11) # load rs1: x11 = 0x7fffffff
   LI(x20, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x20, x20, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x11, x0, 1b # beqi x11, -1, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x11, x0, 4f # beqi x11, -1, 4f; forward branch, positive offset
+1: ori x20, x20, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x11, -1, 1b # backward branch
+3: beqi x11, -1, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x20, x20, 1 # forward branch (positive offset) taken
+4: ori x20, x20, 1 # forward branch taken
 5: # done with test
   # Check if x20 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x20, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x7fffffff_imm_m1, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x7fffffff_imm_m1_str)
@@ -1184,12 +1184,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x7fffffff_imm_1:
   RVTEST_TESTDATA_LOAD_INT(x23, x11) # load rs1: x11 = 0x7fffffff
   LI(x3, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x3, x3, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x11, x1, 1b # beqi x11, 1, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x11, x1, 4f # beqi x11, 1, 4f; forward branch, positive offset
+1: ori x3, x3, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x11, 1, 1b # backward branch
+3: beqi x11, 1, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x3, x3, 1 # forward branch (positive offset) taken
+4: ori x3, x3, 1 # forward branch taken
 5: # done with test
   # Check if x3 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x3, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x7fffffff_imm_1, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x7fffffff_imm_1_str)
@@ -1199,12 +1199,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x7fffffff_imm_2:
   RVTEST_TESTDATA_LOAD_INT(x23, x3) # load rs1: x3 = 0x7fffffff
   LI(x21, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x21, x21, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x3, x2, 1b # beqi x3, 2, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x3, x2, 4f # beqi x3, 2, 4f; forward branch, positive offset
+1: ori x21, x21, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x3, 2, 1b # backward branch
+3: beqi x3, 2, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x21, x21, 1 # forward branch (positive offset) taken
+4: ori x21, x21, 1 # forward branch taken
 5: # done with test
   # Check if x21 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x21, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x7fffffff_imm_2, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x7fffffff_imm_2_str)
@@ -1214,12 +1214,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x7fffffff_imm_3:
   RVTEST_TESTDATA_LOAD_INT(x23, x6) # load rs1: x6 = 0x7fffffff
   LI(x8, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x8, x8, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x6, x3, 1b # beqi x6, 3, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x6, x3, 4f # beqi x6, 3, 4f; forward branch, positive offset
+1: ori x8, x8, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x6, 3, 1b # backward branch
+3: beqi x6, 3, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x8, x8, 1 # forward branch (positive offset) taken
+4: ori x8, x8, 1 # forward branch taken
 5: # done with test
   # Check if x8 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x8, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x7fffffff_imm_3, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x7fffffff_imm_3_str)
@@ -1229,12 +1229,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x7fffffff_imm_4:
   RVTEST_TESTDATA_LOAD_INT(x23, x16) # load rs1: x16 = 0x7fffffff
   LI(x17, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x17, x17, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x16, x4, 1b # beqi x16, 4, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x16, x4, 4f # beqi x16, 4, 4f; forward branch, positive offset
+1: ori x17, x17, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x16, 4, 1b # backward branch
+3: beqi x16, 4, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x17, x17, 1 # forward branch (positive offset) taken
+4: ori x17, x17, 1 # forward branch taken
 5: # done with test
   # Check if x17 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x17, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x7fffffff_imm_4, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x7fffffff_imm_4_str)
@@ -1244,12 +1244,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x7fffffff_imm_8:
   RVTEST_TESTDATA_LOAD_INT(x23, x18) # load rs1: x18 = 0x7fffffff
   LI(x9, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x9, x9, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x18, x8, 1b # beqi x18, 8, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x18, x8, 4f # beqi x18, 8, 4f; forward branch, positive offset
+1: ori x9, x9, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x18, 8, 1b # backward branch
+3: beqi x18, 8, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x9, x9, 1 # forward branch (positive offset) taken
+4: ori x9, x9, 1 # forward branch taken
 5: # done with test
   # Check if x9 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x9, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x7fffffff_imm_8, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x7fffffff_imm_8_str)
@@ -1259,12 +1259,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x7fffffff_imm_16:
   RVTEST_TESTDATA_LOAD_INT(x23, x30) # load rs1: x30 = 0x7fffffff
   LI(x16, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x16, x16, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x30, x16, 1b # beqi x30, 16, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x30, x16, 4f # beqi x30, 16, 4f; forward branch, positive offset
+1: ori x16, x16, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x30, 16, 1b # backward branch
+3: beqi x30, 16, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x16, x16, 1 # forward branch (positive offset) taken
+4: ori x16, x16, 1 # forward branch taken
 5: # done with test
   # Check if x16 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x16, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x7fffffff_imm_16, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x7fffffff_imm_16_str)
@@ -1274,12 +1274,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x7fffffff_imm_30:
   RVTEST_TESTDATA_LOAD_INT(x23, x18) # load rs1: x18 = 0x7fffffff
   LI(x3, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x3, x3, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x18, x30, 1b # beqi x18, 30, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x18, x30, 4f # beqi x18, 30, 4f; forward branch, positive offset
+1: ori x3, x3, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x18, 30, 1b # backward branch
+3: beqi x18, 30, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x3, x3, 1 # forward branch (positive offset) taken
+4: ori x3, x3, 1 # forward branch taken
 5: # done with test
   # Check if x3 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x3, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x7fffffff_imm_30, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x7fffffff_imm_30_str)
@@ -1289,12 +1289,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x7fffffff_imm_31:
   RVTEST_TESTDATA_LOAD_INT(x23, x11) # load rs1: x11 = 0x7fffffff
   LI(x21, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x21, x21, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x11, x31, 1b # beqi x11, 31, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x11, x31, 4f # beqi x11, 31, 4f; forward branch, positive offset
+1: ori x21, x21, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x11, 31, 1b # backward branch
+3: beqi x11, 31, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x21, x21, 1 # forward branch (positive offset) taken
+4: ori x21, x21, 1 # forward branch taken
 5: # done with test
   # Check if x21 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x21, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x7fffffff_imm_31, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x7fffffff_imm_31_str)
@@ -1304,12 +1304,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x7ffffffe_imm_m1:
   RVTEST_TESTDATA_LOAD_INT(x23, x16) # load rs1: x16 = 0x7ffffffe
   LI(x22, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x22, x22, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x16, x0, 1b # beqi x16, -1, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x16, x0, 4f # beqi x16, -1, 4f; forward branch, positive offset
+1: ori x22, x22, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x16, -1, 1b # backward branch
+3: beqi x16, -1, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x22, x22, 1 # forward branch (positive offset) taken
+4: ori x22, x22, 1 # forward branch taken
 5: # done with test
   # Check if x22 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x22, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x7ffffffe_imm_m1, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x7ffffffe_imm_m1_str)
@@ -1319,12 +1319,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x7ffffffe_imm_1:
   RVTEST_TESTDATA_LOAD_INT(x23, x12) # load rs1: x12 = 0x7ffffffe
   LI(x10, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x10, x10, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x12, x1, 1b # beqi x12, 1, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x12, x1, 4f # beqi x12, 1, 4f; forward branch, positive offset
+1: ori x10, x10, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x12, 1, 1b # backward branch
+3: beqi x12, 1, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x10, x10, 1 # forward branch (positive offset) taken
+4: ori x10, x10, 1 # forward branch taken
 5: # done with test
   # Check if x10 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x10, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x7ffffffe_imm_1, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x7ffffffe_imm_1_str)
@@ -1334,12 +1334,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x7ffffffe_imm_2:
   RVTEST_TESTDATA_LOAD_INT(x23, x10) # load rs1: x10 = 0x7ffffffe
   LI(x27, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x27, x27, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x10, x2, 1b # beqi x10, 2, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x10, x2, 4f # beqi x10, 2, 4f; forward branch, positive offset
+1: ori x27, x27, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x10, 2, 1b # backward branch
+3: beqi x10, 2, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x27, x27, 1 # forward branch (positive offset) taken
+4: ori x27, x27, 1 # forward branch taken
 5: # done with test
   # Check if x27 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x27, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x7ffffffe_imm_2, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x7ffffffe_imm_2_str)
@@ -1349,12 +1349,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x7ffffffe_imm_3:
   RVTEST_TESTDATA_LOAD_INT(x23, x6) # load rs1: x6 = 0x7ffffffe
   LI(x16, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x16, x16, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x6, x3, 1b # beqi x6, 3, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x6, x3, 4f # beqi x6, 3, 4f; forward branch, positive offset
+1: ori x16, x16, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x6, 3, 1b # backward branch
+3: beqi x6, 3, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x16, x16, 1 # forward branch (positive offset) taken
+4: ori x16, x16, 1 # forward branch taken
 5: # done with test
   # Check if x16 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x16, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x7ffffffe_imm_3, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x7ffffffe_imm_3_str)
@@ -1364,12 +1364,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x7ffffffe_imm_4:
   RVTEST_TESTDATA_LOAD_INT(x23, x25) # load rs1: x25 = 0x7ffffffe
   LI(x17, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x17, x17, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x25, x4, 1b # beqi x25, 4, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x25, x4, 4f # beqi x25, 4, 4f; forward branch, positive offset
+1: ori x17, x17, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x25, 4, 1b # backward branch
+3: beqi x25, 4, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x17, x17, 1 # forward branch (positive offset) taken
+4: ori x17, x17, 1 # forward branch taken
 5: # done with test
   # Check if x17 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x17, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x7ffffffe_imm_4, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x7ffffffe_imm_4_str)
@@ -1379,12 +1379,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x7ffffffe_imm_8:
   RVTEST_TESTDATA_LOAD_INT(x23, x26) # load rs1: x26 = 0x7ffffffe
   LI(x27, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x27, x27, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x26, x8, 1b # beqi x26, 8, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x26, x8, 4f # beqi x26, 8, 4f; forward branch, positive offset
+1: ori x27, x27, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x26, 8, 1b # backward branch
+3: beqi x26, 8, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x27, x27, 1 # forward branch (positive offset) taken
+4: ori x27, x27, 1 # forward branch taken
 5: # done with test
   # Check if x27 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x27, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x7ffffffe_imm_8, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x7ffffffe_imm_8_str)
@@ -1394,12 +1394,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x7ffffffe_imm_16:
   RVTEST_TESTDATA_LOAD_INT(x23, x26) # load rs1: x26 = 0x7ffffffe
   LI(x8, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x8, x8, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x26, x16, 1b # beqi x26, 16, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x26, x16, 4f # beqi x26, 16, 4f; forward branch, positive offset
+1: ori x8, x8, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x26, 16, 1b # backward branch
+3: beqi x26, 16, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x8, x8, 1 # forward branch (positive offset) taken
+4: ori x8, x8, 1 # forward branch taken
 5: # done with test
   # Check if x8 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x8, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x7ffffffe_imm_16, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x7ffffffe_imm_16_str)
@@ -1409,12 +1409,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x7ffffffe_imm_30:
   RVTEST_TESTDATA_LOAD_INT(x23, x15) # load rs1: x15 = 0x7ffffffe
   LI(x3, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x3, x3, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x15, x30, 1b # beqi x15, 30, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x15, x30, 4f # beqi x15, 30, 4f; forward branch, positive offset
+1: ori x3, x3, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x15, 30, 1b # backward branch
+3: beqi x15, 30, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x3, x3, 1 # forward branch (positive offset) taken
+4: ori x3, x3, 1 # forward branch taken
 5: # done with test
   # Check if x3 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x3, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x7ffffffe_imm_30, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x7ffffffe_imm_30_str)
@@ -1424,12 +1424,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x7ffffffe_imm_31:
   RVTEST_TESTDATA_LOAD_INT(x23, x14) # load rs1: x14 = 0x7ffffffe
   LI(x27, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x27, x27, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x14, x31, 1b # beqi x14, 31, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x14, x31, 4f # beqi x14, 31, 4f; forward branch, positive offset
+1: ori x27, x27, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x14, 31, 1b # backward branch
+3: beqi x14, 31, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x27, x27, 1 # forward branch (positive offset) taken
+4: ori x27, x27, 1 # forward branch taken
 5: # done with test
   # Check if x27 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x27, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x7ffffffe_imm_31, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x7ffffffe_imm_31_str)
@@ -1439,12 +1439,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xffffffff_imm_m1:
   RVTEST_TESTDATA_LOAD_INT(x23, x31) # load rs1: x31 = 0xffffffff
   LI(x30, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x30, x30, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x31, x0, 1b # beqi x31, -1, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x31, x0, 4f # beqi x31, -1, 4f; forward branch, positive offset
+1: ori x30, x30, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x31, -1, 1b # backward branch
+3: beqi x31, -1, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x30, x30, 1 # forward branch (positive offset) taken
+4: ori x30, x30, 1 # forward branch taken
 5: # done with test
   # Check if x30 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x30, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xffffffff_imm_m1, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xffffffff_imm_m1_str)
@@ -1454,12 +1454,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xffffffff_imm_1:
   RVTEST_TESTDATA_LOAD_INT(x23, x8) # load rs1: x8 = 0xffffffff
   LI(x9, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x9, x9, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x8, x1, 1b # beqi x8, 1, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x8, x1, 4f # beqi x8, 1, 4f; forward branch, positive offset
+1: ori x9, x9, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x8, 1, 1b # backward branch
+3: beqi x8, 1, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x9, x9, 1 # forward branch (positive offset) taken
+4: ori x9, x9, 1 # forward branch taken
 5: # done with test
   # Check if x9 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x9, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xffffffff_imm_1, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xffffffff_imm_1_str)
@@ -1469,12 +1469,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xffffffff_imm_2:
   RVTEST_TESTDATA_LOAD_INT(x23, x27) # load rs1: x27 = 0xffffffff
   LI(x12, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x12, x12, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x27, x2, 1b # beqi x27, 2, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x27, x2, 4f # beqi x27, 2, 4f; forward branch, positive offset
+1: ori x12, x12, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x27, 2, 1b # backward branch
+3: beqi x27, 2, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x12, x12, 1 # forward branch (positive offset) taken
+4: ori x12, x12, 1 # forward branch taken
 5: # done with test
   # Check if x12 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x12, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xffffffff_imm_2, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xffffffff_imm_2_str)
@@ -1484,12 +1484,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xffffffff_imm_3:
   RVTEST_TESTDATA_LOAD_INT(x23, x29) # load rs1: x29 = 0xffffffff
   LI(x15, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x15, x15, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x29, x3, 1b # beqi x29, 3, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x29, x3, 4f # beqi x29, 3, 4f; forward branch, positive offset
+1: ori x15, x15, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x29, 3, 1b # backward branch
+3: beqi x29, 3, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x15, x15, 1 # forward branch (positive offset) taken
+4: ori x15, x15, 1 # forward branch taken
 5: # done with test
   # Check if x15 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x15, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xffffffff_imm_3, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xffffffff_imm_3_str)
@@ -1499,12 +1499,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xffffffff_imm_4:
   RVTEST_TESTDATA_LOAD_INT(x23, x26) # load rs1: x26 = 0xffffffff
   LI(x31, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x31, x31, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x26, x4, 1b # beqi x26, 4, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x26, x4, 4f # beqi x26, 4, 4f; forward branch, positive offset
+1: ori x31, x31, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x26, 4, 1b # backward branch
+3: beqi x26, 4, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x31, x31, 1 # forward branch (positive offset) taken
+4: ori x31, x31, 1 # forward branch taken
 5: # done with test
   # Check if x31 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x31, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xffffffff_imm_4, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xffffffff_imm_4_str)
@@ -1514,12 +1514,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xffffffff_imm_8:
   RVTEST_TESTDATA_LOAD_INT(x23, x7) # load rs1: x7 = 0xffffffff
   LI(x13, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x13, x13, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x7, x8, 1b # beqi x7, 8, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x7, x8, 4f # beqi x7, 8, 4f; forward branch, positive offset
+1: ori x13, x13, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x7, 8, 1b # backward branch
+3: beqi x7, 8, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x13, x13, 1 # forward branch (positive offset) taken
+4: ori x13, x13, 1 # forward branch taken
 5: # done with test
   # Check if x13 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x13, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xffffffff_imm_8, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xffffffff_imm_8_str)
@@ -1529,12 +1529,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xffffffff_imm_16:
   RVTEST_TESTDATA_LOAD_INT(x23, x31) # load rs1: x31 = 0xffffffff
   LI(x10, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x10, x10, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x31, x16, 1b # beqi x31, 16, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x31, x16, 4f # beqi x31, 16, 4f; forward branch, positive offset
+1: ori x10, x10, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x31, 16, 1b # backward branch
+3: beqi x31, 16, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x10, x10, 1 # forward branch (positive offset) taken
+4: ori x10, x10, 1 # forward branch taken
 5: # done with test
   # Check if x10 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x10, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xffffffff_imm_16, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xffffffff_imm_16_str)
@@ -1544,12 +1544,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xffffffff_imm_30:
   RVTEST_TESTDATA_LOAD_INT(x23, x16) # load rs1: x16 = 0xffffffff
   LI(x21, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x21, x21, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x16, x30, 1b # beqi x16, 30, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x16, x30, 4f # beqi x16, 30, 4f; forward branch, positive offset
+1: ori x21, x21, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x16, 30, 1b # backward branch
+3: beqi x16, 30, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x21, x21, 1 # forward branch (positive offset) taken
+4: ori x21, x21, 1 # forward branch taken
 5: # done with test
   # Check if x21 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x21, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xffffffff_imm_30, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xffffffff_imm_30_str)
@@ -1559,12 +1559,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xffffffff_imm_31:
   RVTEST_TESTDATA_LOAD_INT(x23, x13) # load rs1: x13 = 0xffffffff
   LI(x16, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x16, x16, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x13, x31, 1b # beqi x13, 31, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x13, x31, 4f # beqi x13, 31, 4f; forward branch, positive offset
+1: ori x16, x16, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x13, 31, 1b # backward branch
+3: beqi x13, 31, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x16, x16, 1 # forward branch (positive offset) taken
+4: ori x16, x16, 1 # forward branch taken
 5: # done with test
   # Check if x16 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x16, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xffffffff_imm_31, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xffffffff_imm_31_str)
@@ -1574,12 +1574,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xfffffffe_imm_m1:
   RVTEST_TESTDATA_LOAD_INT(x23, x10) # load rs1: x10 = 0xfffffffe
   LI(x30, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x30, x30, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x10, x0, 1b # beqi x10, -1, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x10, x0, 4f # beqi x10, -1, 4f; forward branch, positive offset
+1: ori x30, x30, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x10, -1, 1b # backward branch
+3: beqi x10, -1, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x30, x30, 1 # forward branch (positive offset) taken
+4: ori x30, x30, 1 # forward branch taken
 5: # done with test
   # Check if x30 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x30, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xfffffffe_imm_m1, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xfffffffe_imm_m1_str)
@@ -1589,12 +1589,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xfffffffe_imm_1:
   RVTEST_TESTDATA_LOAD_INT(x23, x27) # load rs1: x27 = 0xfffffffe
   LI(x19, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x19, x19, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x27, x1, 1b # beqi x27, 1, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x27, x1, 4f # beqi x27, 1, 4f; forward branch, positive offset
+1: ori x19, x19, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x27, 1, 1b # backward branch
+3: beqi x27, 1, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x19, x19, 1 # forward branch (positive offset) taken
+4: ori x19, x19, 1 # forward branch taken
 5: # done with test
   # Check if x19 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x19, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xfffffffe_imm_1, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xfffffffe_imm_1_str)
@@ -1604,12 +1604,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xfffffffe_imm_2:
   RVTEST_TESTDATA_LOAD_INT(x23, x26) # load rs1: x26 = 0xfffffffe
   LI(x10, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x10, x10, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x26, x2, 1b # beqi x26, 2, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x26, x2, 4f # beqi x26, 2, 4f; forward branch, positive offset
+1: ori x10, x10, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x26, 2, 1b # backward branch
+3: beqi x26, 2, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x10, x10, 1 # forward branch (positive offset) taken
+4: ori x10, x10, 1 # forward branch taken
 5: # done with test
   # Check if x10 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x10, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xfffffffe_imm_2, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xfffffffe_imm_2_str)
@@ -1619,12 +1619,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xfffffffe_imm_3:
   RVTEST_TESTDATA_LOAD_INT(x23, x19) # load rs1: x19 = 0xfffffffe
   LI(x6, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x6, x6, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x19, x3, 1b # beqi x19, 3, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x19, x3, 4f # beqi x19, 3, 4f; forward branch, positive offset
+1: ori x6, x6, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x19, 3, 1b # backward branch
+3: beqi x19, 3, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x6, x6, 1 # forward branch (positive offset) taken
+4: ori x6, x6, 1 # forward branch taken
 5: # done with test
   # Check if x6 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x6, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xfffffffe_imm_3, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xfffffffe_imm_3_str)
@@ -1634,12 +1634,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xfffffffe_imm_4:
   RVTEST_TESTDATA_LOAD_INT(x23, x3) # load rs1: x3 = 0xfffffffe
   LI(x13, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x13, x13, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x3, x4, 1b # beqi x3, 4, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x3, x4, 4f # beqi x3, 4, 4f; forward branch, positive offset
+1: ori x13, x13, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x3, 4, 1b # backward branch
+3: beqi x3, 4, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x13, x13, 1 # forward branch (positive offset) taken
+4: ori x13, x13, 1 # forward branch taken
 5: # done with test
   # Check if x13 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x13, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xfffffffe_imm_4, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xfffffffe_imm_4_str)
@@ -1649,12 +1649,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xfffffffe_imm_8:
   RVTEST_TESTDATA_LOAD_INT(x23, x31) # load rs1: x31 = 0xfffffffe
   LI(x17, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x17, x17, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x31, x8, 1b # beqi x31, 8, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x31, x8, 4f # beqi x31, 8, 4f; forward branch, positive offset
+1: ori x17, x17, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x31, 8, 1b # backward branch
+3: beqi x31, 8, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x17, x17, 1 # forward branch (positive offset) taken
+4: ori x17, x17, 1 # forward branch taken
 5: # done with test
   # Check if x17 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x17, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xfffffffe_imm_8, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xfffffffe_imm_8_str)
@@ -1664,12 +1664,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xfffffffe_imm_16:
   RVTEST_TESTDATA_LOAD_INT(x23, x8) # load rs1: x8 = 0xfffffffe
   LI(x27, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x27, x27, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x8, x16, 1b # beqi x8, 16, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x8, x16, 4f # beqi x8, 16, 4f; forward branch, positive offset
+1: ori x27, x27, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x8, 16, 1b # backward branch
+3: beqi x8, 16, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x27, x27, 1 # forward branch (positive offset) taken
+4: ori x27, x27, 1 # forward branch taken
 5: # done with test
   # Check if x27 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x27, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xfffffffe_imm_16, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xfffffffe_imm_16_str)
@@ -1679,12 +1679,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xfffffffe_imm_30:
   RVTEST_TESTDATA_LOAD_INT(x23, x31) # load rs1: x31 = 0xfffffffe
   LI(x9, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x9, x9, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x31, x30, 1b # beqi x31, 30, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x31, x30, 4f # beqi x31, 30, 4f; forward branch, positive offset
+1: ori x9, x9, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x31, 30, 1b # backward branch
+3: beqi x31, 30, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x9, x9, 1 # forward branch (positive offset) taken
+4: ori x9, x9, 1 # forward branch taken
 5: # done with test
   # Check if x9 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x9, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xfffffffe_imm_30, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xfffffffe_imm_30_str)
@@ -1694,12 +1694,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xfffffffe_imm_31:
   RVTEST_TESTDATA_LOAD_INT(x23, x25) # load rs1: x25 = 0xfffffffe
   LI(x19, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x19, x19, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x25, x31, 1b # beqi x25, 31, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x25, x31, 4f # beqi x25, 31, 4f; forward branch, positive offset
+1: ori x19, x19, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x25, 31, 1b # backward branch
+3: beqi x25, 31, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x19, x19, 1 # forward branch (positive offset) taken
+4: ori x19, x19, 1 # forward branch taken
 5: # done with test
   # Check if x19 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x19, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xfffffffe_imm_31, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xfffffffe_imm_31_str)
@@ -1709,12 +1709,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x5bbc8872_imm_m1:
   RVTEST_TESTDATA_LOAD_INT(x23, x11) # load rs1: x11 = 0x5bbc8872
   LI(x17, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x17, x17, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x11, x0, 1b # beqi x11, -1, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x11, x0, 4f # beqi x11, -1, 4f; forward branch, positive offset
+1: ori x17, x17, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x11, -1, 1b # backward branch
+3: beqi x11, -1, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x17, x17, 1 # forward branch (positive offset) taken
+4: ori x17, x17, 1 # forward branch taken
 5: # done with test
   # Check if x17 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x17, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x5bbc8872_imm_m1, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x5bbc8872_imm_m1_str)
@@ -1724,12 +1724,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x5bbc8872_imm_1:
   RVTEST_TESTDATA_LOAD_INT(x23, x20) # load rs1: x20 = 0x5bbc8872
   LI(x12, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x12, x12, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x20, x1, 1b # beqi x20, 1, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x20, x1, 4f # beqi x20, 1, 4f; forward branch, positive offset
+1: ori x12, x12, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x20, 1, 1b # backward branch
+3: beqi x20, 1, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x12, x12, 1 # forward branch (positive offset) taken
+4: ori x12, x12, 1 # forward branch taken
 5: # done with test
   # Check if x12 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x12, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x5bbc8872_imm_1, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x5bbc8872_imm_1_str)
@@ -1739,12 +1739,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x5bbc8872_imm_2:
   RVTEST_TESTDATA_LOAD_INT(x23, x19) # load rs1: x19 = 0x5bbc8872
   LI(x22, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x22, x22, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x19, x2, 1b # beqi x19, 2, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x19, x2, 4f # beqi x19, 2, 4f; forward branch, positive offset
+1: ori x22, x22, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x19, 2, 1b # backward branch
+3: beqi x19, 2, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x22, x22, 1 # forward branch (positive offset) taken
+4: ori x22, x22, 1 # forward branch taken
 5: # done with test
   # Check if x22 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x22, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x5bbc8872_imm_2, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x5bbc8872_imm_2_str)
@@ -1754,12 +1754,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x5bbc8872_imm_3:
   RVTEST_TESTDATA_LOAD_INT(x23, x13) # load rs1: x13 = 0x5bbc8872
   LI(x28, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x28, x28, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x13, x3, 1b # beqi x13, 3, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x13, x3, 4f # beqi x13, 3, 4f; forward branch, positive offset
+1: ori x28, x28, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x13, 3, 1b # backward branch
+3: beqi x13, 3, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x28, x28, 1 # forward branch (positive offset) taken
+4: ori x28, x28, 1 # forward branch taken
 5: # done with test
   # Check if x28 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x28, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x5bbc8872_imm_3, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x5bbc8872_imm_3_str)
@@ -1769,12 +1769,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x5bbc8872_imm_4:
   RVTEST_TESTDATA_LOAD_INT(x23, x11) # load rs1: x11 = 0x5bbc8872
   LI(x3, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x3, x3, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x11, x4, 1b # beqi x11, 4, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x11, x4, 4f # beqi x11, 4, 4f; forward branch, positive offset
+1: ori x3, x3, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x11, 4, 1b # backward branch
+3: beqi x11, 4, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x3, x3, 1 # forward branch (positive offset) taken
+4: ori x3, x3, 1 # forward branch taken
 5: # done with test
   # Check if x3 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x3, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x5bbc8872_imm_4, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x5bbc8872_imm_4_str)
@@ -1784,12 +1784,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x5bbc8872_imm_8:
   RVTEST_TESTDATA_LOAD_INT(x23, x12) # load rs1: x12 = 0x5bbc8872
   LI(x3, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x3, x3, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x12, x8, 1b # beqi x12, 8, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x12, x8, 4f # beqi x12, 8, 4f; forward branch, positive offset
+1: ori x3, x3, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x12, 8, 1b # backward branch
+3: beqi x12, 8, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x3, x3, 1 # forward branch (positive offset) taken
+4: ori x3, x3, 1 # forward branch taken
 5: # done with test
   # Check if x3 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x3, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x5bbc8872_imm_8, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x5bbc8872_imm_8_str)
@@ -1799,12 +1799,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x5bbc8872_imm_16:
   RVTEST_TESTDATA_LOAD_INT(x23, x8) # load rs1: x8 = 0x5bbc8872
   LI(x3, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x3, x3, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x8, x16, 1b # beqi x8, 16, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x8, x16, 4f # beqi x8, 16, 4f; forward branch, positive offset
+1: ori x3, x3, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x8, 16, 1b # backward branch
+3: beqi x8, 16, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x3, x3, 1 # forward branch (positive offset) taken
+4: ori x3, x3, 1 # forward branch taken
 5: # done with test
   # Check if x3 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x3, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x5bbc8872_imm_16, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x5bbc8872_imm_16_str)
@@ -1814,12 +1814,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x5bbc8872_imm_30:
   RVTEST_TESTDATA_LOAD_INT(x23, x9) # load rs1: x9 = 0x5bbc8872
   LI(x7, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x7, x7, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x9, x30, 1b # beqi x9, 30, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x9, x30, 4f # beqi x9, 30, 4f; forward branch, positive offset
+1: ori x7, x7, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x9, 30, 1b # backward branch
+3: beqi x9, 30, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x7, x7, 1 # forward branch (positive offset) taken
+4: ori x7, x7, 1 # forward branch taken
 5: # done with test
   # Check if x7 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x7, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x5bbc8872_imm_30, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x5bbc8872_imm_30_str)
@@ -1829,12 +1829,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x5bbc8872_imm_31:
   RVTEST_TESTDATA_LOAD_INT(x23, x10) # load rs1: x10 = 0x5bbc8872
   LI(x13, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x13, x13, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x10, x31, 1b # beqi x10, 31, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x10, x31, 4f # beqi x10, 31, 4f; forward branch, positive offset
+1: ori x13, x13, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x10, 31, 1b # backward branch
+3: beqi x10, 31, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x13, x13, 1 # forward branch (positive offset) taken
+4: ori x13, x13, 1 # forward branch taken
 5: # done with test
   # Check if x13 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x13, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x5bbc8872_imm_31, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x5bbc8872_imm_31_str)
@@ -1844,12 +1844,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xaaaaaaaa_imm_m1:
   RVTEST_TESTDATA_LOAD_INT(x23, x20) # load rs1: x20 = 0xaaaaaaaa
   LI(x19, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x19, x19, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x20, x0, 1b # beqi x20, -1, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x20, x0, 4f # beqi x20, -1, 4f; forward branch, positive offset
+1: ori x19, x19, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x20, -1, 1b # backward branch
+3: beqi x20, -1, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x19, x19, 1 # forward branch (positive offset) taken
+4: ori x19, x19, 1 # forward branch taken
 5: # done with test
   # Check if x19 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x19, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xaaaaaaaa_imm_m1, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xaaaaaaaa_imm_m1_str)
@@ -1859,12 +1859,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xaaaaaaaa_imm_1:
   RVTEST_TESTDATA_LOAD_INT(x23, x7) # load rs1: x7 = 0xaaaaaaaa
   LI(x9, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x9, x9, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x7, x1, 1b # beqi x7, 1, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x7, x1, 4f # beqi x7, 1, 4f; forward branch, positive offset
+1: ori x9, x9, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x7, 1, 1b # backward branch
+3: beqi x7, 1, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x9, x9, 1 # forward branch (positive offset) taken
+4: ori x9, x9, 1 # forward branch taken
 5: # done with test
   # Check if x9 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x9, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xaaaaaaaa_imm_1, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xaaaaaaaa_imm_1_str)
@@ -1874,12 +1874,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xaaaaaaaa_imm_2:
   RVTEST_TESTDATA_LOAD_INT(x23, x29) # load rs1: x29 = 0xaaaaaaaa
   LI(x7, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x7, x7, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x29, x2, 1b # beqi x29, 2, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x29, x2, 4f # beqi x29, 2, 4f; forward branch, positive offset
+1: ori x7, x7, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x29, 2, 1b # backward branch
+3: beqi x29, 2, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x7, x7, 1 # forward branch (positive offset) taken
+4: ori x7, x7, 1 # forward branch taken
 5: # done with test
   # Check if x7 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x7, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xaaaaaaaa_imm_2, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xaaaaaaaa_imm_2_str)
@@ -1889,12 +1889,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xaaaaaaaa_imm_3:
   RVTEST_TESTDATA_LOAD_INT(x23, x3) # load rs1: x3 = 0xaaaaaaaa
   LI(x21, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x21, x21, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x3, x3, 1b # beqi x3, 3, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x3, x3, 4f # beqi x3, 3, 4f; forward branch, positive offset
+1: ori x21, x21, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x3, 3, 1b # backward branch
+3: beqi x3, 3, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x21, x21, 1 # forward branch (positive offset) taken
+4: ori x21, x21, 1 # forward branch taken
 5: # done with test
   # Check if x21 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x21, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xaaaaaaaa_imm_3, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xaaaaaaaa_imm_3_str)
@@ -1904,12 +1904,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xaaaaaaaa_imm_4:
   RVTEST_TESTDATA_LOAD_INT(x23, x14) # load rs1: x14 = 0xaaaaaaaa
   LI(x27, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x27, x27, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x14, x4, 1b # beqi x14, 4, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x14, x4, 4f # beqi x14, 4, 4f; forward branch, positive offset
+1: ori x27, x27, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x14, 4, 1b # backward branch
+3: beqi x14, 4, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x27, x27, 1 # forward branch (positive offset) taken
+4: ori x27, x27, 1 # forward branch taken
 5: # done with test
   # Check if x27 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x27, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xaaaaaaaa_imm_4, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xaaaaaaaa_imm_4_str)
@@ -1919,12 +1919,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xaaaaaaaa_imm_8:
   RVTEST_TESTDATA_LOAD_INT(x23, x9) # load rs1: x9 = 0xaaaaaaaa
   LI(x11, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x11, x11, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x9, x8, 1b # beqi x9, 8, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x9, x8, 4f # beqi x9, 8, 4f; forward branch, positive offset
+1: ori x11, x11, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x9, 8, 1b # backward branch
+3: beqi x9, 8, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x11, x11, 1 # forward branch (positive offset) taken
+4: ori x11, x11, 1 # forward branch taken
 5: # done with test
   # Check if x11 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x11, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xaaaaaaaa_imm_8, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xaaaaaaaa_imm_8_str)
@@ -1934,12 +1934,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xaaaaaaaa_imm_16:
   RVTEST_TESTDATA_LOAD_INT(x23, x18) # load rs1: x18 = 0xaaaaaaaa
   LI(x21, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x21, x21, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x18, x16, 1b # beqi x18, 16, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x18, x16, 4f # beqi x18, 16, 4f; forward branch, positive offset
+1: ori x21, x21, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x18, 16, 1b # backward branch
+3: beqi x18, 16, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x21, x21, 1 # forward branch (positive offset) taken
+4: ori x21, x21, 1 # forward branch taken
 5: # done with test
   # Check if x21 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x21, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xaaaaaaaa_imm_16, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xaaaaaaaa_imm_16_str)
@@ -1949,12 +1949,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xaaaaaaaa_imm_30:
   RVTEST_TESTDATA_LOAD_INT(x23, x25) # load rs1: x25 = 0xaaaaaaaa
   LI(x15, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x15, x15, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x25, x30, 1b # beqi x25, 30, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x25, x30, 4f # beqi x25, 30, 4f; forward branch, positive offset
+1: ori x15, x15, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x25, 30, 1b # backward branch
+3: beqi x25, 30, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x15, x15, 1 # forward branch (positive offset) taken
+4: ori x15, x15, 1 # forward branch taken
 5: # done with test
   # Check if x15 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x15, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xaaaaaaaa_imm_30, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xaaaaaaaa_imm_30_str)
@@ -1964,12 +1964,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xaaaaaaaa_imm_31:
   RVTEST_TESTDATA_LOAD_INT(x23, x24) # load rs1: x24 = 0xaaaaaaaa
   LI(x10, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x10, x10, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x24, x31, 1b # beqi x24, 31, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x24, x31, 4f # beqi x24, 31, 4f; forward branch, positive offset
+1: ori x10, x10, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x24, 31, 1b # backward branch
+3: beqi x24, 31, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x10, x10, 1 # forward branch (positive offset) taken
+4: ori x10, x10, 1 # forward branch taken
 5: # done with test
   # Check if x10 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x10, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xaaaaaaaa_imm_31, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0xaaaaaaaa_imm_31_str)
@@ -1979,12 +1979,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x55555555_imm_m1:
   RVTEST_TESTDATA_LOAD_INT(x23, x8) # load rs1: x8 = 0x55555555
   LI(x27, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x27, x27, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x8, x0, 1b # beqi x8, -1, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x8, x0, 4f # beqi x8, -1, 4f; forward branch, positive offset
+1: ori x27, x27, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x8, -1, 1b # backward branch
+3: beqi x8, -1, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x27, x27, 1 # forward branch (positive offset) taken
+4: ori x27, x27, 1 # forward branch taken
 5: # done with test
   # Check if x27 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x27, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x55555555_imm_m1, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x55555555_imm_m1_str)
@@ -1994,12 +1994,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x55555555_imm_1:
   RVTEST_TESTDATA_LOAD_INT(x23, x3) # load rs1: x3 = 0x55555555
   LI(x19, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x19, x19, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x3, x1, 1b # beqi x3, 1, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x3, x1, 4f # beqi x3, 1, 4f; forward branch, positive offset
+1: ori x19, x19, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x3, 1, 1b # backward branch
+3: beqi x3, 1, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x19, x19, 1 # forward branch (positive offset) taken
+4: ori x19, x19, 1 # forward branch taken
 5: # done with test
   # Check if x19 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x19, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x55555555_imm_1, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x55555555_imm_1_str)
@@ -2009,12 +2009,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x55555555_imm_2:
   RVTEST_TESTDATA_LOAD_INT(x23, x2) # load rs1: x2 = 0x55555555
   LI(x17, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x17, x17, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x2, x2, 1b # beqi x2, 2, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x2, x2, 4f # beqi x2, 2, 4f; forward branch, positive offset
+1: ori x17, x17, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x2, 2, 1b # backward branch
+3: beqi x2, 2, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x17, x17, 1 # forward branch (positive offset) taken
+4: ori x17, x17, 1 # forward branch taken
 5: # done with test
   # Check if x17 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x17, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x55555555_imm_2, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x55555555_imm_2_str)
@@ -2024,12 +2024,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x55555555_imm_3:
   RVTEST_TESTDATA_LOAD_INT(x23, x7) # load rs1: x7 = 0x55555555
   LI(x3, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x3, x3, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x7, x3, 1b # beqi x7, 3, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x7, x3, 4f # beqi x7, 3, 4f; forward branch, positive offset
+1: ori x3, x3, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x7, 3, 1b # backward branch
+3: beqi x7, 3, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x3, x3, 1 # forward branch (positive offset) taken
+4: ori x3, x3, 1 # forward branch taken
 5: # done with test
   # Check if x3 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x3, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x55555555_imm_3, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x55555555_imm_3_str)
@@ -2039,12 +2039,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x55555555_imm_4:
   RVTEST_TESTDATA_LOAD_INT(x23, x2) # load rs1: x2 = 0x55555555
   LI(x25, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x25, x25, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x2, x4, 1b # beqi x2, 4, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x2, x4, 4f # beqi x2, 4, 4f; forward branch, positive offset
+1: ori x25, x25, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x2, 4, 1b # backward branch
+3: beqi x2, 4, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x25, x25, 1 # forward branch (positive offset) taken
+4: ori x25, x25, 1 # forward branch taken
 5: # done with test
   # Check if x25 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x25, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x55555555_imm_4, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x55555555_imm_4_str)
@@ -2054,12 +2054,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x55555555_imm_8:
   RVTEST_TESTDATA_LOAD_INT(x23, x13) # load rs1: x13 = 0x55555555
   LI(x9, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x9, x9, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x13, x8, 1b # beqi x13, 8, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x13, x8, 4f # beqi x13, 8, 4f; forward branch, positive offset
+1: ori x9, x9, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x13, 8, 1b # backward branch
+3: beqi x13, 8, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x9, x9, 1 # forward branch (positive offset) taken
+4: ori x9, x9, 1 # forward branch taken
 5: # done with test
   # Check if x9 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x9, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x55555555_imm_8, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x55555555_imm_8_str)
@@ -2069,12 +2069,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x55555555_imm_16:
   RVTEST_TESTDATA_LOAD_INT(x23, x11) # load rs1: x11 = 0x55555555
   LI(x28, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x28, x28, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x11, x16, 1b # beqi x11, 16, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x11, x16, 4f # beqi x11, 16, 4f; forward branch, positive offset
+1: ori x28, x28, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x11, 16, 1b # backward branch
+3: beqi x11, 16, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x28, x28, 1 # forward branch (positive offset) taken
+4: ori x28, x28, 1 # forward branch taken
 5: # done with test
   # Check if x28 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x28, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x55555555_imm_16, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x55555555_imm_16_str)
@@ -2084,12 +2084,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x55555555_imm_30:
   RVTEST_TESTDATA_LOAD_INT(x23, x9) # load rs1: x9 = 0x55555555
   LI(x24, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x24, x24, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x9, x30, 1b # beqi x9, 30, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x9, x30, 4f # beqi x9, 30, 4f; forward branch, positive offset
+1: ori x24, x24, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x9, 30, 1b # backward branch
+3: beqi x9, 30, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x24, x24, 1 # forward branch (positive offset) taken
+4: ori x24, x24, 1 # forward branch taken
 5: # done with test
   # Check if x24 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x24, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x55555555_imm_30, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x55555555_imm_30_str)
@@ -2099,12 +2099,12 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x55555555_imm_31:
   RVTEST_TESTDATA_LOAD_INT(x23, x9) # load rs1: x9 = 0x55555555
   LI(x19, 0) # marker: records which branches are taken
   j 2f # enter the test past the backward-branch target
-1: ori x19, x19, 2 # backward branch (negative offset) taken
-  j 3f # jump forward; the backward branch is never re-executed (no infinite loop)
-2: .insn b 0x63, 2, x9, x31, 1b # beqi x9, 31, 1b; backward branch, negative offset
-3: .insn b 0x63, 2, x9, x31, 4f # beqi x9, 31, 4f; forward branch, positive offset
+1: ori x19, x19, 2 # backward branch taken
+  j 3f # continue with the forward branch
+2: beqi x9, 31, 1b # backward branch
+3: beqi x9, 31, 4f # forward branch
   j 5f # forward branch not taken
-4: ori x19, x19, 1 # forward branch (positive offset) taken
+4: ori x19, x19, 1 # forward branch taken
 5: # done with test
   # Check if x19 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x19, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x55555555_imm_31, Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x55555555_imm_31_str)
@@ -2120,7 +2120,7 @@ Zibi_beqi_cg_cr_rs1_imm_edges_5bit_u_n0_offset_rs1_0x55555555_imm_31:
 1: addi x22, x22, 4 # backward branch target, increment check value
   j 3f # jump past backward branch
 Zibi_beqi_cg_cp_offset_neg:
-2: .insn b 0x63, 2, x0, x1, 1b # beqi x0, 1, 1b; backward branch
+2: beqi x0, 1, 1b # backward branch
   addi x22, x22, -2 # branch not taken, decrement check value
 3:  # done with sequence
   # Check if x22 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
@@ -2134,7 +2134,7 @@ Zibi_beqi_cg_cp_offset_neg:
   RVTEST_TESTDATA_LOAD_INT(x23, x25) # load rs1: x25 = 0xee723fb5
   RVTEST_TESTDATA_LOAD_INT(x23, x12) # load branch taken value: x12 = 0x328984ca
 Zibi_beqi_cg_cp_imm_edges_5bit_u_n0_m0x1:
-  .insn b 0x63, 2, x25, x0, 1f # beqi x25, -1, 1f; perform operation
+  beqi x25, -1, 1f # perform operation
   LI(x12, -1) # branch not taken, set temp_reg to -1
 1:
   # Check if x12 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
@@ -2144,7 +2144,7 @@ Zibi_beqi_cg_cp_imm_edges_5bit_u_n0_m0x1:
   RVTEST_TESTDATA_LOAD_INT(x23, x8) # load rs1: x8 = 0xe49266ba
   RVTEST_TESTDATA_LOAD_INT(x23, x30) # load branch taken value: x30 = 0x48079b03
 Zibi_beqi_cg_cp_imm_edges_5bit_u_n0_0x1:
-  .insn b 0x63, 2, x8, x1, 1f # beqi x8, 1, 1f; perform operation
+  beqi x8, 1, 1f # perform operation
   LI(x30, -1) # branch not taken, set temp_reg to -1
 1:
   # Check if x30 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
@@ -2154,7 +2154,7 @@ Zibi_beqi_cg_cp_imm_edges_5bit_u_n0_0x1:
   RVTEST_TESTDATA_LOAD_INT(x23, x17) # load rs1: x17 = 0x51b02cc6
   RVTEST_TESTDATA_LOAD_INT(x23, x14) # load branch taken value: x14 = 0x8857db92
 Zibi_beqi_cg_cp_imm_edges_5bit_u_n0_0x2:
-  .insn b 0x63, 2, x17, x2, 1f # beqi x17, 2, 1f; perform operation
+  beqi x17, 2, 1f # perform operation
   LI(x14, -1) # branch not taken, set temp_reg to -1
 1:
   # Check if x14 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
@@ -2164,7 +2164,7 @@ Zibi_beqi_cg_cp_imm_edges_5bit_u_n0_0x2:
   RVTEST_TESTDATA_LOAD_INT(x23, x25) # load rs1: x25 = 0xf230852b
   RVTEST_TESTDATA_LOAD_INT(x23, x7) # load branch taken value: x7 = 0xbcc6bfcc
 Zibi_beqi_cg_cp_imm_edges_5bit_u_n0_0x3:
-  .insn b 0x63, 2, x25, x3, 1f # beqi x25, 3, 1f; perform operation
+  beqi x25, 3, 1f # perform operation
   LI(x7, -1) # branch not taken, set temp_reg to -1
 1:
   # Check if x7 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
@@ -2174,7 +2174,7 @@ Zibi_beqi_cg_cp_imm_edges_5bit_u_n0_0x3:
   RVTEST_TESTDATA_LOAD_INT(x23, x3) # load rs1: x3 = 0x05db6419
   RVTEST_TESTDATA_LOAD_INT(x23, x12) # load branch taken value: x12 = 0xdd1312c8
 Zibi_beqi_cg_cp_imm_edges_5bit_u_n0_0x4:
-  .insn b 0x63, 2, x3, x4, 1f # beqi x3, 4, 1f; perform operation
+  beqi x3, 4, 1f # perform operation
   LI(x12, -1) # branch not taken, set temp_reg to -1
 1:
   # Check if x12 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
@@ -2184,7 +2184,7 @@ Zibi_beqi_cg_cp_imm_edges_5bit_u_n0_0x4:
   RVTEST_TESTDATA_LOAD_INT(x23, x26) # load rs1: x26 = 0x98ee387d
   RVTEST_TESTDATA_LOAD_INT(x23, x6) # load branch taken value: x6 = 0xb68defcb
 Zibi_beqi_cg_cp_imm_edges_5bit_u_n0_0x8:
-  .insn b 0x63, 2, x26, x8, 1f # beqi x26, 8, 1f; perform operation
+  beqi x26, 8, 1f # perform operation
   LI(x6, -1) # branch not taken, set temp_reg to -1
 1:
   # Check if x6 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
@@ -2194,7 +2194,7 @@ Zibi_beqi_cg_cp_imm_edges_5bit_u_n0_0x8:
   RVTEST_TESTDATA_LOAD_INT(x23, x12) # load rs1: x12 = 0x5052e61a
   RVTEST_TESTDATA_LOAD_INT(x23, x6) # load branch taken value: x6 = 0xd7aa6a7f
 Zibi_beqi_cg_cp_imm_edges_5bit_u_n0_0x10:
-  .insn b 0x63, 2, x12, x16, 1f # beqi x12, 16, 1f; perform operation
+  beqi x12, 16, 1f # perform operation
   LI(x6, -1) # branch not taken, set temp_reg to -1
 1:
   # Check if x6 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
@@ -2204,7 +2204,7 @@ Zibi_beqi_cg_cp_imm_edges_5bit_u_n0_0x10:
   RVTEST_TESTDATA_LOAD_INT(x23, x28) # load rs1: x28 = 0x0ef57e28
   RVTEST_TESTDATA_LOAD_INT(x23, x18) # load branch taken value: x18 = 0x75845ac1
 Zibi_beqi_cg_cp_imm_edges_5bit_u_n0_0x1e:
-  .insn b 0x63, 2, x28, x30, 1f # beqi x28, 30, 1f; perform operation
+  beqi x28, 30, 1f # perform operation
   LI(x18, -1) # branch not taken, set temp_reg to -1
 1:
   # Check if x18 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
@@ -2214,7 +2214,7 @@ Zibi_beqi_cg_cp_imm_edges_5bit_u_n0_0x1e:
   RVTEST_TESTDATA_LOAD_INT(x23, x14) # load rs1: x14 = 0x75787007
   RVTEST_TESTDATA_LOAD_INT(x23, x17) # load branch taken value: x17 = 0xc8e3c643
 Zibi_beqi_cg_cp_imm_edges_5bit_u_n0_0x1f:
-  .insn b 0x63, 2, x14, x31, 1f # beqi x14, 31, 1f; perform operation
+  beqi x14, 31, 1f # perform operation
   LI(x17, -1) # branch not taken, set temp_reg to -1
 1:
   # Check if x17 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.

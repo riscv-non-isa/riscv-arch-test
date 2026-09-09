@@ -7,7 +7,7 @@
 
 """cp_offset coverpoint generator."""
 
-from testgen.asm.helpers import format_zibi_branch, load_int_reg, write_sigupd
+from testgen.asm.helpers import load_int_reg, write_sigupd
 from testgen.constants import INDENT
 from testgen.coverpoints.registry import add_coverpoint_generator
 from testgen.data.state import TestData, return_testcase_registers
@@ -54,21 +54,11 @@ def make_offset(instr_name: str, instr_type: str, coverpoint: str, test_data: Te
                 f"1: addi x{params.temp_reg}, x{params.temp_reg}, 4 # backward branch target, increment check value",
                 "j 3f # jump past backward branch",
                 test_data.add_testcase("neg", coverpoint),
-            ]
-        )
-
-        if instr_type != "BI":
-            tc.code.append(
-                f"2: {instr_name} x{params.rs1}, {f'x{params.rs2},' if params.rs2 is not None else ''} 1b # backward branch"
-            )
-        else:
-            tc.code.append(
-                f"2: {format_zibi_branch(instr_name, params.rs1, 1, '1b')} "
-                f"# {instr_name} x{params.rs1}, 1, 1b; backward branch"
-            )
-
-        tc.code.extend(
-            [
+                (
+                    f"2: {instr_name} x{params.rs1}, "
+                    f"{f'x{params.rs2},' if params.rs2 is not None else '1,' if instr_type == 'BI' else ''} "
+                    "1b # backward branch"
+                ),
                 f"addi x{params.temp_reg}, x{params.temp_reg}, -2 # branch not taken, decrement check value",
                 "3:  # done with sequence",
                 write_sigupd(params.temp_reg, test_data),
