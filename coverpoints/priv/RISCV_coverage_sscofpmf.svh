@@ -41,8 +41,6 @@
         `endif
     `endif
 
-    // Pack the 29 OF bits (mhpmevent3..mhpmevent31) into one expression via macro
-    // NOTE: must be defined before any coverpoint below that uses `OF_VEC
     `ifdef UDB_MXLEN_64
         `define OF_VEC {ins.current.csr[CSR_MHPMEVENT31][63], ins.current.csr[CSR_MHPMEVENT30][63], \
                      ins.current.csr[CSR_MHPMEVENT29][63], ins.current.csr[CSR_MHPMEVENT28][63], \
@@ -77,8 +75,6 @@
                      ins.current.csr[CSR_MHPMEVENT3H][31]}
     `endif
 
-    // State-based (not instruction-gated) so these are valid regardless of which
-    // privilege mode the CSR write itself retired in.
     `ifdef UDB_MXLEN_64
         mhpmevent_inhibits_pattern_state: coverpoint (ins.current.csr[CSR_MHPMEVENT3][62:58]) {
                 bins none_set  = {5'b00000};
@@ -186,18 +182,6 @@
 
     hpm_csr_target: coverpoint ins.current.insn[31:20] {
             bins scountovf   = {CSR_SCOUNTOVF};
-            `ifdef UDB_MXLEN_32
-                bins mhpmevent[] = {CSR_MHPMEVENT3H,  CSR_MHPMEVENT4H,  CSR_MHPMEVENT5H,
-                                CSR_MHPMEVENT6H,  CSR_MHPMEVENT7H,  CSR_MHPMEVENT8H,
-                                CSR_MHPMEVENT9H,  CSR_MHPMEVENT10H, CSR_MHPMEVENT11H,
-                                CSR_MHPMEVENT12H, CSR_MHPMEVENT13H, CSR_MHPMEVENT14H,
-                                CSR_MHPMEVENT15H, CSR_MHPMEVENT16H, CSR_MHPMEVENT17H,
-                                CSR_MHPMEVENT18H, CSR_MHPMEVENT19H, CSR_MHPMEVENT20H,
-                                CSR_MHPMEVENT21H, CSR_MHPMEVENT22H, CSR_MHPMEVENT23H,
-                                CSR_MHPMEVENT24H, CSR_MHPMEVENT25H, CSR_MHPMEVENT26H,
-                                CSR_MHPMEVENT27H, CSR_MHPMEVENT28H, CSR_MHPMEVENT29H,
-                                CSR_MHPMEVENT30H, CSR_MHPMEVENT31H};
-             `endif
     }
 
     lcofi_ip_one: coverpoint ins.current.csr[CSR_MIP][13] {
@@ -220,9 +204,9 @@
             bins one = {1};
     }
 
-    mie_state: coverpoint (ins.current.csr[CSR_MIE]) {
-            bins all_zeros = {'0};
-            bins all_ones  = {'1};
+    mie_state: coverpoint (ins.current.csr[CSR_MIE][15:0]) {
+            bins all_zeros = {16'b0};
+            wildcard bins all_ones = {16'b??1?1???1???1???};
     }
     mip_other_pending: coverpoint {ins.current.csr[CSR_MIP][11], ins.current.csr[CSR_MIP][7], ins.current.csr[CSR_MIP][3]} {
             bins none = {3'b000};

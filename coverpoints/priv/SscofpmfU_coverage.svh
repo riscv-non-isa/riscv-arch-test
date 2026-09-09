@@ -21,22 +21,47 @@ covergroup SscofpmfU_cg with function sample(ins_t ins);
             bins zero = {0};
     }
 
-    cp_uinh_inhibits_umode:    cross priv_mode_u, mhpmevent_xinh_combos, mhpmevent_of_zero;
-    cp_of_set_on_overflow:     cross priv_mode_u, mip_clear, mie_clear, mhpmevent_of_one, mhpmevent_inhibits_pattern_state;
-    `ifdef UDB_MXLEN_64
-        cp_overflow_hw_only:   cross priv_mode_u, mip_clear, mie_clear, mhpmcounter_extreme_state, mhpmevent_all_zero;
-    `else
-        cp_overflow_hw_only:   cross priv_mode_u, mip_clear, mie_clear, mhpmcounter_extreme_state, mhpmevent_all_zero, mhpmevent_base_zero;
-    `endif
-    cp_lcofip_hw_only:         cross priv_mode_u, mhpmevent_of, lcofi_ip;
     `ifdef S_SUPPORTED
+
         sstatus_sie_set: coverpoint ins.current.csr[CSR_SSTATUS][1] {
                 bins one = {1};
         }
         sie_lcofi: coverpoint ins.current.csr[CSR_SIE][13] {}
         sip_lcofi: coverpoint ins.current.csr[CSR_SIP][13] {}
+        sip_lcofi_one: coverpoint ins.current.csr[CSR_SIP][13] {
+                bins one = {1};
+        }
 
-        cp_lcofi_sip_u: cross priv_mode_u, sstatus_sie_set, sie_lcofi, sip_lcofi;
+        // The interrupt fires on the mret that enters U, so the trap record is the
+        // mret, retired in M -- priv_mode_u (ins.prev.mode) is false for it. Sample
+        // ins.current.mode instead, as cp_user_sei_handled_s does via priv_mode_s_after
+        // in InterruptsS_coverage.svh, to catch that instruction.
+        priv_mode_u_after: coverpoint {ins.current.mode_virt, ins.current.mode} {
+                type_option.weight = 0;
+                bins U_mode = {3'b000};
+        }
+    `endif
+
+    cp_uinh_inhibits_umode:    cross priv_mode_u, mhpmevent_xinh_combos, mhpmevent_of_zero;
+    `ifdef S_SUPPORTED
+
+        cp_of_set_on_overflow: cross priv_mode_u, sip_lcofi_one, mie_clear, mhpmevent_of_one, mhpmevent_inhibits_pattern_state;
+    `else
+        cp_of_set_on_overflow: cross priv_mode_u, lcofi_ip_one, mie_clear, mhpmevent_of_one, mhpmevent_inhibits_pattern_state;
+    `endif
+    `ifdef UDB_MXLEN_64
+        cp_overflow_hw_only:   cross priv_mode_u, mip_clear, mie_clear, mhpmcounter_extreme_state, mhpmevent_all_zero;
+    `else
+        cp_overflow_hw_only:   cross priv_mode_u, mip_clear, mie_clear, mhpmcounter_extreme_state, mhpmevent_all_zero, mhpmevent_base_zero;
+    `endif
+    `ifdef S_SUPPORTED
+
+        cp_lcofip_hw_only:     cross priv_mode_u, mhpmevent_of, sip_lcofi;
+    `else
+        cp_lcofip_hw_only:     cross priv_mode_u, mhpmevent_of, lcofi_ip;
+    `endif
+    `ifdef S_SUPPORTED
+        cp_lcofi_sip_u: cross priv_mode_u_after, sstatus_sie_set, sie_lcofi, sip_lcofi;
     `else
         cp_lcofi_sip_u: cross priv_mode_u, mstatus_sie_set, lcofi_ie, lcofi_ip;
     `endif
