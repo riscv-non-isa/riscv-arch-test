@@ -274,6 +274,11 @@ def add_csr_instructions(
     return t_lines
 
 
+# Bytes of scratch read back after a misaligned FP store: max offset (15) + widest store (fsd, 8),
+# rounded up to a word.
+_STORE_READBACK_BYTES = 24
+
+
 def add_fp_load_misaligned_test(
     op: str,
     offset: int,
@@ -321,16 +326,17 @@ def add_fp_store_misaligned_test(
         f"addi x{addr_reg}, x{addr_reg}, {offset}",
         test_data.add_testcase(f"{op}_off{offset}", coverpoint, covergroup),
         f"{op} f{data_reg}, 0(x{addr_reg})",
-        # Read back scratch memory to verify store result
+        # Read back scratch memory to verify store result. The window must cover the
+        # widest store at the highest offset: fsd (8 bytes) at offset 15 reaches byte 22.
         f"LA(x{addr_reg}, scratch)",
-        f"lw x{check_reg}, 0(x{addr_reg})",
-        write_sigupd(check_reg, test_data),
-        f"lw x{check_reg}, 4(x{addr_reg})",
-        write_sigupd(check_reg, test_data),
-        f"lw x{check_reg}, 8(x{addr_reg})",
-        write_sigupd(check_reg, test_data),
-        f"lw x{check_reg}, 12(x{addr_reg})",
-        write_sigupd(check_reg, test_data),
+    ]
+    t_lines += [
+        line
+        for word_off in range(0, _STORE_READBACK_BYTES, 4)
+        for line in (
+            f"lw x{check_reg}, {word_off}(x{addr_reg})",
+            write_sigupd(check_reg, test_data),
+        )
     ]
 
     test_data.int_regs.return_registers([addr_reg, check_reg])
