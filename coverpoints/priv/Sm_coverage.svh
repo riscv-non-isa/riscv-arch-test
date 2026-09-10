@@ -197,7 +197,7 @@ covergroup Sm_mprivinst_cg with function sample(ins_t ins);
         old_mstatus_tvm: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "mstatus", "tvm")[0] {
         }
         cp_sret_s:     cross priv_mode_s, sret, old_sstatus_spp, old_sstatus_spie, old_sstatus_sie, old_mstatus_tsr;
-        cp_sfence_tvm: cross priv_mode_s, sfence, old_mstatus_tvm;
+        cp_sfence_tvm: cross priv_mode_m_s, sfence, old_mstatus_tvm;
     `endif
 endgroup
 

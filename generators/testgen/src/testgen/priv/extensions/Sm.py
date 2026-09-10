@@ -242,8 +242,9 @@ def _generate_sfence_tvm_tests(test_data: TestData) -> list[str]:
         "#ifdef S_SUPPORTED",
         comment_banner(
             coverpoint,
-            "Execute sfence.vma in S-mode under both mstatus.TVM settings\n"
-            "TVM=0 permits it and it takes no trap.  TVM=1 raises an illegal instruction.",
+            "Execute sfence.vma in M-mode and S-mode under both mstatus.TVM settings\n"
+            "TVM restricts S-mode only: TVM=1 raises an illegal instruction there.\n"
+            "M-mode, and S-mode with TVM=0, execute it with no trap.",
         ),
         "",
         "# Setup",
@@ -256,10 +257,12 @@ def _generate_sfence_tvm_tests(test_data: TestData) -> list[str]:
         lines.extend(
             [
                 "",
-                f"# Testcase: sfence.vma from S-mode with tvm = {tvm}",
+                f"# Testcase: sfence.vma with tvm = {tvm}",
                 f"{set_or_clear} mstatus, x{tvm_reg}          # {'set' if tvm else 'clear'} TVM bit",
-                "RVTEST_TSBI_GOTO_SMODE      # sfence.vma must run in S-mode for TVM to apply",
-                test_data.add_testcase(f"sfence_vma_tvm{tvm}", coverpoint, covergroup),
+                test_data.add_testcase(f"sfence_vma_m_tvm{tvm}", coverpoint, covergroup),
+                "sfence.vma             # permitted in M-mode whatever TVM says",
+                "RVTEST_TSBI_GOTO_SMODE      # TVM restricts S-mode only",
+                test_data.add_testcase(f"sfence_vma_s_tvm{tvm}", coverpoint, covergroup),
                 "sfence.vma             # test sfence.vma instruction",
                 "RVTEST_TSBI_GOTO_MMODE      # back to M-mode to twiddle mstatus.TVM",
             ]

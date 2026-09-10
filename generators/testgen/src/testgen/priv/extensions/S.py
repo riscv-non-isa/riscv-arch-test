@@ -426,9 +426,6 @@ def make_s(test_data: TestData) -> list[TestChunk]:
     tc.code.extend(_generate_srets_tests(test_data))
     tc.code.extend(_generate_scause_tests(test_data))
     tc.code.extend(_generate_sstatus_sd_tests(test_data))
-    # sfence.vma is in this list for the cp_sprivinst bin, but unlike the others it is
-    # permitted here: mstatus.TVM is 0, so it executes in S-mode and takes no trap. The
-    # TVM=0/1 sweep lives in the Sm suite, where the TVM=1 trap can be taken in M-mode.
     tc.code.extend(
         priv_inst_trap_tests(
             test_data,
