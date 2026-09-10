@@ -9,7 +9,7 @@ from testgen.asm.helpers import comment_banner, write_sigupd
 from testgen.asm.interrupts import clr_mtimer_int, set_mtimer_int
 from testgen.data.state import TestData
 from testgen.data.test_chunk import TestChunk
-from testgen.priv.extensions.SscofpmfCommon import generate_sscofpmf_suite, nonzero_not_all_ones
+from testgen.priv.extensions.SscofpmfCommon import generate_sscofpmf_suite, prime_counter_overflow
 from testgen.priv.registry import add_priv_test_generator
 
 
@@ -115,8 +115,9 @@ def _generate_lcofip_priority_sm_tests(test_data: TestData) -> list[str]:
         comment_banner(
             coverpoint,
             "LCOFI priority with MEIP, MTIP, MSIP, or no other pending interrupt.\n"
-            "LCOFIP is set by actual hpmcounter overflow. Highest-priority interrupt fires;\n"
-            "LCOFI fires only when no other interrupt is pending.",
+            "LCOFIP is raised by a real hpmcounter overflow through RVMODEL_MHPMEVENT_CODE.\n"
+            "Each case holds with mie = all 0s (nothing fires), then with mie = all 1s:\n"
+            "the competing interrupt fires first and LCOFI only after it.",
         ),
         "",
         "# Setup: mstatus.MIE=1, mstatus.SIE=1",
@@ -141,15 +142,8 @@ def _generate_lcofip_priority_sm_tests(test_data: TestData) -> list[str]:
                 f"# Testcase: competing interrupt = {other_int}",
                 "csrw mip, zero   # clear LCOFIP and other pending bits",
                 "csrw mie, zero   # disable interrupts (clear LCOFIE)",
-                f"LI(x{r_val}, RVMODEL_MHPMEVENT_VAL)   # event_index = 0, OF starts at 0",
-                f"csrw RVMODEL_MHPMEVENT, x{r_val}",
-                f"LI(x{r_temp}, -1)",
-                f"csrw RVMODEL_MHPMCOUNTER, x{r_temp}   # all 1s -> next count overflows",
-                "",
-                f"LA(x{r_addr}, scratch)",
-                "# Overflow must occur only via RVMODEL_MHPMEVENT_CODE; run at least twice per spec",
-                f"RVMODEL_MHPMEVENT_CODE(x{r_addr}, x{r_val})",
-                f"RVMODEL_MHPMEVENT_CODE(x{r_addr}, x{r_val})   # this sets LCOFIP via a real overflow",
+                *prime_counter_overflow(r_val, r_temp2, r_temp, r_addr, "Sm"),
+                "# the overflow sets OF and raises LCOFIP; mie = 0, so nothing fires yet",
                 "",
             ]
         )
@@ -172,19 +166,22 @@ def _generate_lcofip_priority_sm_tests(test_data: TestData) -> list[str]:
 
         lines.extend(
             [
-                f"LI(x{r_temp}, -1)",
-                f"csrw mie, x{r_temp}   # mie = all 1s",
                 "",
+                test_data.add_testcase(
+                    f"{binname}_mie_off",
+                    coverpoint,
+                    covergroup,
+                ),
+                "# mie = all 0s: LCOFIP and the competing interrupt stay pending, nothing fires",
+                f"RVTEST_IDLE_FOR_INTERRUPT(x{r_temp})",
+                "",
+                f"LI(x{r_temp}, -1)",
                 test_data.add_testcase(
                     binname,
                     coverpoint,
                     covergroup,
                 ),
-                f"csrr x{r_val}, RVMODEL_MHPMEVENT   # sample point for mhpmevent_of",
-                write_sigupd(r_val, test_data),
-                f"csrr x{r_temp}, RVMODEL_MHPMCOUNTER   # sample point for hpmcounter_nonzero/non-all-1s",
-                *nonzero_not_all_ones(r_temp, r_addr),
-                write_sigupd(r_temp, test_data),
+                f"csrw mie, x{r_temp}   # mie = all 1s: competing interrupt fires first, then LCOFI",
                 "",
                 f"RVTEST_IDLE_FOR_INTERRUPT(x{r_temp})",
                 "",
@@ -215,6 +212,16 @@ def _generate_lcofip_priority_sm_tests(test_data: TestData) -> list[str]:
                 "",
             ]
         )
+
+    lines.extend(
+        [
+            "csrw RVMODEL_MHPMEVENT, zero   # stop counting, clear OF",
+            "#if __riscv_xlen == 32",
+            "csrw CSR_MHPMEVENT3H, zero",
+            "#endif",
+            "csrw RVMODEL_MHPMCOUNTER, zero",
+        ]
+    )
 
     test_data.int_regs.return_registers([r_mtime, r_mtimecmp, r_val, r_temp, r_temp2, r_addr])
 

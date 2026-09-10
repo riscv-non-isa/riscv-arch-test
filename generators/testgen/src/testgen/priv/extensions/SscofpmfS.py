@@ -9,7 +9,7 @@ from testgen.asm.helpers import comment_banner, write_sigupd
 from testgen.asm.interrupts import clr_stimer_mmode, set_stimer_mmode
 from testgen.data.state import TestData
 from testgen.data.test_chunk import TestChunk
-from testgen.priv.extensions.SscofpmfCommon import _csr_access, generate_sscofpmf_suite, nonzero_not_all_ones
+from testgen.priv.extensions.SscofpmfCommon import _csr_access, generate_sscofpmf_suite, prime_counter_overflow
 from testgen.priv.registry import add_priv_test_generator
 
 
@@ -115,23 +115,25 @@ def _generate_lcofip_priority_s_tests(test_data: TestData) -> list[str]:
     SIE_BIT = 0x2  # mstatus/sstatus bit 1
     DELEG_MASK = SSI_BIT | STI_BIT | SEI_BIT | LCOFI_BIT  # 0x2222
 
-    r_val, r_temp, r_temp2, r_scratch = test_data.int_regs.get_registers(4, exclude_regs=[0, 31])
+    r_val, r_temp, r_temp2, r_addr = test_data.int_regs.get_registers(4, exclude_regs=[0, 31])
 
     lines = [
         comment_banner(
             coverpoint,
             (
                 "Priority of LCOFI interrupt in S-mode (4 cases).\n"
-                "sstatus.SIE=1, sie=all 0s.\n"
-                "sip = 1 in LCOFIP (via real counter overflow, not a direct\n"
-                "write -- see cp_lcofi_sip_s) and one of {SEIP,STIP,SSIP,none}.\n"
-                "sie = all 1s. Highest priority interrupt fires; LCOFIP only\n"
-                "fires if none of the others are pending (lowest priority)."
+                "sstatus.SIE=1; LCOFIP is raised by a real hpmcounter overflow through\n"
+                "RVMODEL_MHPMEVENT_CODE, together with one of {SEIP,STIP,SSIP,none}.\n"
+                "Each case holds with sie = all 0s (nothing fires), then with sie = all 1s:\n"
+                "the competing interrupt fires first and LCOFI only after it (lowest priority).\n"
+                "Other pending bits go through mip, which cp_lcofip_priority_s samples;\n"
+                "enables stay in sie, written only here."
             ),
         ),
         "",
         _csr_access("csrw mip, zero      # clear all pending", "S"),
         _csr_access("csrw mie, zero      # disable all interrupts", "S"),
+        _csr_access("csrw sie, zero", "S"),
         _csr_access("csrw RVMODEL_MHPMEVENT, zero", "S"),
         # mideleg is deliberately excluded from the T-SBI dispatch table (see
         # docs/tsbi-changes.md) -- it needs an actual, one-time mode change, not T-SBI.
@@ -156,14 +158,9 @@ def _generate_lcofip_priority_s_tests(test_data: TestData) -> list[str]:
             [
                 "",
                 f"# Testcase: competing interrupt = {other_int}",
-                f"LI(x{r_val}, RVMODEL_MHPMEVENT_VAL)   # select a real event",
-                _csr_access(f"csrw RVMODEL_MHPMEVENT, x{r_val}", "S"),
-                f"LI(x{r_scratch}, -1)",
-                _csr_access(f"csrw RVMODEL_MHPMCOUNTER, x{r_scratch}   # all 1s -> next count overflows", "S"),
-                f"LA(x{r_temp}, scratch)",
-                "# Incrementing RVMODEL_MHPMCOUNTER in DUT specific way",
-                f"RVMODEL_MHPMEVENT_CODE(x{r_temp}, x{r_scratch})",
-                f"RVMODEL_MHPMEVENT_CODE(x{r_temp}, x{r_scratch})   # run at least twice per spec",
+                "# RVMODEL_MHPMEVENT/RVMODEL_MHPMCOUNTER writes go via T-SBI from S-mode, per spec",
+                *prime_counter_overflow(r_val, r_temp2, r_temp, r_addr, "S"),
+                "# the overflow sets OF and raises LCOFIP; sie = 0, so nothing fires yet",
             ]
         )
 
@@ -180,7 +177,7 @@ def _generate_lcofip_priority_s_tests(test_data: TestData) -> list[str]:
             lines.extend(
                 [
                     f"LI(x{r_temp2}, {hex(SSI_BIT)})",
-                    _csr_access(f"csrs mip, x{r_temp2}   # mip.SSIP = 1 (directly writable, unlike LCOFIP)", "S"),
+                    _csr_access(f"csrs mip, x{r_temp2}   # mip.SSIP = 1", "S"),
                 ]
             )
 
@@ -188,23 +185,14 @@ def _generate_lcofip_priority_s_tests(test_data: TestData) -> list[str]:
 
         lines.extend(
             [
-                f"LI(x{r_temp}, -1)",
-                _csr_access(f"csrs sie, x{r_temp}   # sie = all 1s (LCOFIE + SSIE/STIE/SEIE)", "S"),
                 "",
+                test_data.add_testcase(f"{binname}_sie_off", coverpoint, covergroup),
+                "# sie = all 0s: LCOFIP and the competing interrupt stay pending, nothing fires",
+                f"RVTEST_IDLE_FOR_INTERRUPT(x{r_temp})",
+                "",
+                f"LI(x{r_temp}, -1)",
                 test_data.add_testcase(binname, coverpoint, covergroup),
-                # -------------------------------------------------
-                # Sample MHPMEVENT and dump it to the signature.
-                # r_val is free again here -- overwrites the event
-                # value we set above, which is fine since we're
-                # done using it for the counter-priming block.
-                # -------------------------------------------------
-                _csr_access(f"csrr x{r_val}, RVMODEL_MHPMEVENT   # sample point for mhpmevent_of", "S"),
-                write_sigupd(r_val, test_data),
-                _csr_access(
-                    f"csrr x{r_scratch}, RVMODEL_MHPMCOUNTER   # sample point for hpmcounter_nonzero/non-all-1s", "S"
-                ),
-                *nonzero_not_all_ones(r_scratch, r_temp),
-                write_sigupd(r_scratch, test_data),
+                _csr_access(f"csrs sie, x{r_temp}   # sie = all 1s: competing interrupt fires first, then LCOFI", "S"),
                 "",
                 # Already at S throughout -- interrupt fires immediately or on timer maturity.
                 f"RVTEST_IDLE_FOR_INTERRUPT(x{r_temp})",
@@ -232,23 +220,27 @@ def _generate_lcofip_priority_s_tests(test_data: TestData) -> list[str]:
 
         lines.extend(
             [
-                _csr_access("csrw RVMODEL_MHPMCOUNTER, zero   # reset counter before next iteration", "S"),
-                _csr_access("csrw RVMODEL_MHPMEVENT, zero", "S"),
-                _csr_access("csrw mie, zero   # disable all before next iteration", "S"),
+                f"LI(x{r_val}, {hex(LCOFI_BIT)})",
+                _csr_access(f"csrc mip, x{r_val}   # clear LCOFIP for next iteration", "S"),
+                _csr_access("csrw sie, zero   # disable all before next iteration", "S"),
             ]
         )
 
     lines.extend(
         [
             "",
-            "RVTEST_TSBI_GOTO_MMODE",
-            f"csrc mideleg, x{r_val}   # remove delegation",
-            "RVTEST_TSBI_GOTO_SMODE",
+            "# mideleg stays delegating SSI|STI|SEI|LCOFI: the shared S suite that follows",
+            "# reads sip.LCOFIP, which reads 0 unless LCOFI is delegated",
             f"csrci sstatus, {hex(SIE_BIT)}   # sstatus.SIE = 0",
+            _csr_access("csrw RVMODEL_MHPMEVENT, zero   # stop counting, clear OF", "S"),
+            "#if __riscv_xlen == 32",
+            _csr_access("csrw CSR_MHPMEVENT3H, zero", "S"),
+            "#endif",
+            _csr_access("csrw RVMODEL_MHPMCOUNTER, zero", "S"),
         ]
     )
 
-    test_data.int_regs.return_registers([r_val, r_temp, r_temp2, r_scratch])
+    test_data.int_regs.return_registers([r_val, r_temp, r_temp2, r_addr])
 
     return lines
 
