@@ -18,8 +18,7 @@ def _generate_scounteren_tests(test_data: TestData) -> list[str]:
     lines = [
         comment_banner(
             coverpoint,
-            "Set and clear each bit individually in scounteren.\n"
-            "Runs in S-mode, which the suite boots into, so priv_mode_s is sampled in the cross.",
+            "Set and clear each bit individually in scounteren.",
         ),
         "",
     ]
