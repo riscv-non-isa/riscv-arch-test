@@ -47,7 +47,7 @@ covergroup SscofpmfSm_cg with function sample(ins_t ins);
                 bins yes = {1};
         }
     `else
-        mhpmevent_inhibits_zero_state: coverpoint (ins.current.csr[CSR_MHPMEVENT3 + 12'h400][30:26] == 5'b00000) {
+        mhpmevent_inhibits_zero_state: coverpoint (ins.current.csr[CSR_MHPMEVENT3H][30:26] == 5'b00000) {
                 bins yes = {1};
         }
     `endif
@@ -112,11 +112,7 @@ covergroup SscofpmfSm_cg with function sample(ins_t ins);
 
     cp_minh_inhibits_mmode:    cross priv_mode_m, mhpmevent_xinh_combos, mhpmevent_of_zero;
     cp_of_set_on_overflow:     cross priv_mode_m, lcofi_ip_one, mie_clear, mhpmevent_inhibits_pattern_state, mhpmevent_of_one;
-    `ifdef UDB_MXLEN_64
-        cp_overflow_hw_only:   cross priv_mode_m, mip_clear, mie_clear, mhpmcounter_extreme_state, mhpmevent_all_zero;
-    `else
-        cp_overflow_hw_only:   cross priv_mode_m, mip_clear, mie_clear, mhpmcounter_extreme_state, mhpmevent_all_zero, mhpmevent_base_zero;
-    `endif
+    cp_overflow_hw_only:       cross priv_mode_m, mip_clear, mie_clear, mhpmcounter_extreme_state, mhpmevent_all_zero;
     cp_lcofip_hw_only:         cross priv_mode_m, mhpmevent_of, lcofi_ip_zero;
     cp_scountovf_mcounteren:   cross priv_mode_m, of_write_pattern, mcounteren_stimulus_pattern_state;
     cp_scountovf_shadow:       cross priv_mode_m, mcounteren_all_ones_state, of_stimulus_pattern;

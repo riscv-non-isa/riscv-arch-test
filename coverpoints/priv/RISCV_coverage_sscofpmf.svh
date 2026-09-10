@@ -25,11 +25,11 @@
         `endif
     `else
         `ifdef H_SUPPORTED
-                mhpmevent_xinh_combos: coverpoint ins.current.csr[CSR_MHPMEVENT3 + 12'h400][30:26] {
+                mhpmevent_xinh_combos: coverpoint ins.current.csr[CSR_MHPMEVENT3H][30:26] {
                 bins combo[] = {[0:31]};
                 }
         `else
-                mhpmevent_xinh_combos: coverpoint ins.current.csr[CSR_MHPMEVENT3 + 12'h400][30:28] {
+                mhpmevent_xinh_combos: coverpoint ins.current.csr[CSR_MHPMEVENT3H][30:28] {
                 bins combo[] = {[0:7]};
                 }
         `endif
@@ -78,8 +78,8 @@
                 bins uinh_only = {5'b00100};
         }
     `else
-        // On RV32, MINH/SINH/UINH/VSINH/VUINH live in mhpmevent*h[30:26] (address + 0x400)
-        mhpmevent_inhibits_pattern_state: coverpoint (ins.current.csr[CSR_MHPMEVENT3 + 12'h400][30:26]) {
+        // On RV32, MINH/SINH/UINH/VSINH/VUINH live in mhpmevent*h[30:26]
+        mhpmevent_inhibits_pattern_state: coverpoint (ins.current.csr[CSR_MHPMEVENT3H][30:26]) {
                 bins none_set  = {5'b00000};
                 bins msu_set   = {5'b11100};
                 bins minh_only = {5'b10000};
@@ -97,12 +97,12 @@
                 bins one = {1};
         }
     `else
-        // On RV32, Sscofpmf bits (including OF) live in mhpmevent*h[31:28] (CSR address + 0x400)
-        mhpmevent_of: coverpoint ins.current.csr[CSR_MHPMEVENT3 + 12'h400][31] {}
-        mhpmevent_of_zero: coverpoint ins.current.csr[CSR_MHPMEVENT3 + 12'h400][31] {
+        // On RV32, Sscofpmf bits (including OF) live in mhpmevent*h[31:28]
+        mhpmevent_of: coverpoint ins.current.csr[CSR_MHPMEVENT3H][31] {}
+        mhpmevent_of_zero: coverpoint ins.current.csr[CSR_MHPMEVENT3H][31] {
                 bins zero = {0};
         }
-        mhpmevent_of_one: coverpoint ins.current.csr[CSR_MHPMEVENT3 + 12'h400][31] {
+        mhpmevent_of_one: coverpoint ins.current.csr[CSR_MHPMEVENT3H][31] {
                 bins one = {1};
         }
     `endif
@@ -123,10 +123,8 @@
                 bins yes = {1};
         }
     `else
-        mhpmevent_all_zero: coverpoint (ins.current.csr[CSR_MHPMEVENT3 + 12'h400] == '0) {
-                bins yes = {1};
-        }
-        mhpmevent_base_zero: coverpoint (ins.current.csr[CSR_MHPMEVENT3] == '0) {
+        // On RV32 the 64-bit mhpmevent3 is split across mhpmevent3h:mhpmevent3
+        mhpmevent_all_zero: coverpoint ({ins.current.csr[CSR_MHPMEVENT3H], ins.current.csr[CSR_MHPMEVENT3]} == '0) {
                 bins yes = {1};
         }
     `endif

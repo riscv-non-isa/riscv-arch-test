@@ -29,10 +29,6 @@ covergroup SscofpmfS_cg with function sample(ins_t ins);
             bins one = {1};
     }
 
-    // cp_lcofip_priority_s takes pending bits from mip, as InterruptsS does: the trace reports
-    // changes made by M-mode writes, MMIO and traps only against mip, so sip goes stale. With the
-    // S-level interrupts delegated (mideleg_s_ints) the mip bits are the sip bits. SIE is read
-    // from ins.prev because taking the interrupt is recorded on the instruction that enables it.
     prev_mstatus_sie_one: coverpoint ins.prev.csr[CSR_MSTATUS][1] {
             bins one = {1};
     }
@@ -70,7 +66,7 @@ covergroup SscofpmfS_cg with function sample(ins_t ins);
                 bins yes = {1};
         }
     `else
-        mhpmevent_inhibits_zero_state: coverpoint (ins.current.csr[CSR_MHPMEVENT3 + 12'h400][30:26] == 5'b00000) {
+        mhpmevent_inhibits_zero_state: coverpoint (ins.current.csr[CSR_MHPMEVENT3H][30:26] == 5'b00000) {
                 bins yes = {1};
         }
     `endif
@@ -115,11 +111,7 @@ covergroup SscofpmfS_cg with function sample(ins_t ins);
 
     cp_sinh_inhibits_smode:    cross priv_mode_s, mhpmevent_xinh_combos, mhpmevent_of_zero;
     cp_of_set_on_overflow:     cross priv_mode_s, sip_lcofi_one, mie_clear, mhpmevent_of_one, mhpmevent_inhibits_pattern_state;
-    `ifdef UDB_MXLEN_64
-        cp_overflow_hw_only:   cross priv_mode_s, mip_clear, mie_clear, mhpmcounter_extreme_state, mhpmevent_all_zero;
-    `else
-        cp_overflow_hw_only:   cross priv_mode_s, mip_clear, mie_clear, mhpmcounter_extreme_state, mhpmevent_all_zero, mhpmevent_base_zero;
-    `endif
+    cp_overflow_hw_only:       cross priv_mode_s, mip_clear, mie_clear, mhpmcounter_extreme_state, mhpmevent_all_zero;
     cp_lcofip_hw_only:         cross priv_mode_s, mhpmevent_of, sip_lcofi_zero;
     cp_scountovf_shadow:       cross priv_mode_s, mcounteren_all_ones_state, of_stimulus_pattern;
     cp_scountovf_mcounteren:   cross priv_mode_s, of_write_pattern, mcounteren_stimulus_pattern_state;
