@@ -189,7 +189,15 @@ covergroup Sm_mprivinst_cg with function sample(ins_t ins);
         }
         old_sstatus_sie: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "sstatus", "sie")[0] {
         }
-        cp_sret_s:    cross priv_mode_s, sret, old_sstatus_spp, old_sstatus_spie, old_sstatus_sie, old_mstatus_tsr;
+        // sfence.vma is here rather than in S for the same reason: TVM also makes the S-mode
+        // handler's satp read illegal, so a delegated illegal instruction would trap loop
+        sfence: coverpoint ins.current.insn  {
+            wildcard bins sfence_vma = {SFENCE_VMA};
+        }
+        old_mstatus_tvm: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "mstatus", "tvm")[0] {
+        }
+        cp_sret_s:     cross priv_mode_s, sret, old_sstatus_spp, old_sstatus_spie, old_sstatus_sie, old_mstatus_tsr;
+        cp_sfence_tvm: cross priv_mode_s, sfence, old_mstatus_tvm;
     `endif
 endgroup
 

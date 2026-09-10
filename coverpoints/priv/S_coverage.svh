@@ -158,14 +158,8 @@ covergroup S_sprivinst_cg with function sample(ins_t ins);
     }
     old_sstatus_sie: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "sstatus", "sie")[0] {
     }
-    sfence: coverpoint ins.current.insn  {
-        wildcard bins sfence_vma = {SFENCE_VMA};
-    }
-    mstatus_tvm: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "mstatus", "tvm")[0] {
-    }
     // main coverpoints
     cp_sprivinst: cross priv_mode_s, privinstrs;
-    cp_sfence_tvm: cross priv_mode_s, sfence, mstatus_tvm;
     cp_sret_s:    cross priv_mode_s, sret, old_sstatus_spp, old_sstatus_spie, old_sstatus_sie;
 endgroup
 

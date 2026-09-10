@@ -230,6 +230,53 @@ def _generate_priv_inst_tests(test_data: TestData) -> list[str]:
     return lines
 
 
+def _generate_sfence_tvm_tests(test_data: TestData) -> list[str]:
+    """Generate sfence.vma from S-mode under both mstatus.TVM settings (cp_sfence_tvm)."""
+    ######################################
+    covergroup = "Sm_mprivinst_cg"
+    coverpoint = "cp_sfence_tvm"
+    ######################################
+    tvm_reg = test_data.int_regs.get_register()
+
+    lines = [
+        "#ifdef S_SUPPORTED",
+        comment_banner(
+            coverpoint,
+            "Execute sfence.vma in S-mode under both mstatus.TVM settings\n"
+            "TVM=0 permits it and it takes no trap.  TVM=1 raises an illegal instruction.",
+        ),
+        "",
+        "# Setup",
+        "csrci medeleg, 1 << 2          # turn off delegating illegal instruction exceptions so TVM won't cause a trap loop on sfence.vma",
+        f"LI(x{tvm_reg}, {1 << 20:#x})          # mstatus.TVM bit",
+    ]
+
+    for tvm in (0, 1):
+        set_or_clear = "csrs" if tvm else "csrc"
+        lines.extend(
+            [
+                "",
+                f"# Testcase: sfence.vma from S-mode with tvm = {tvm}",
+                f"{set_or_clear} mstatus, x{tvm_reg}          # {'set' if tvm else 'clear'} TVM bit",
+                "RVTEST_TSBI_GOTO_SMODE      # sfence.vma must run in S-mode for TVM to apply",
+                test_data.add_testcase(f"sfence_vma_tvm{tvm}", coverpoint, covergroup),
+                "sfence.vma             # test sfence.vma instruction",
+                "RVTEST_TSBI_GOTO_MMODE      # back to M-mode to twiddle mstatus.TVM",
+            ]
+        )
+
+    lines.extend(
+        [
+            "",
+            f"csrc mstatus, x{tvm_reg}          # clear TVM bit",
+            "csrsi medeleg, 1 << 2          # restore delegating illegal instructions",
+            "#endif // S_SUPPORTED",
+        ]
+    )
+    test_data.int_regs.return_registers([tvm_reg])
+    return lines
+
+
 def _generate_mret_tests(test_data: TestData) -> list[str]:
     """Generate mret tests with mpp, mprv, mpie, mie sweep."""
     ######################################
@@ -1382,6 +1429,7 @@ def make_sm(test_data: TestData) -> list[TestChunk]:
 
     tc = test_data.begin_test_chunk("inst")
     tc.code.extend(_generate_priv_inst_tests(test_data))
+    tc.code.extend(_generate_sfence_tvm_tests(test_data))
     test_chunks.append(test_data.end_test_chunk())
 
     tc = test_data.begin_test_chunk("xret")
