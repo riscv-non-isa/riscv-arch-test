@@ -326,8 +326,7 @@ def add_fp_store_misaligned_test(
         f"addi x{addr_reg}, x{addr_reg}, {offset}",
         test_data.add_testcase(f"{op}_off{offset}", coverpoint, covergroup),
         f"{op} f{data_reg}, 0(x{addr_reg})",
-        # Read back scratch memory to verify store result. The window must cover the
-        # widest store at the highest offset: fsd (8 bytes) at offset 15 reaches byte 22.
+        # Read back scratch memory to verify store result
         f"LA(x{addr_reg}, scratch)",
     ]
     t_lines += [
