@@ -11,17 +11,14 @@ from testgen.asm.helpers import comment_banner, write_sigupd
 from testgen.asm.tsbi import tsbi_call
 from testgen.data.state import TestData
 
-# seed[29:24] is reserved and reads as zero on every conforming implementation. It is the
-# only field of seed that can be signed: OPST (bits 31:30) may legally be any of its four
-# values at any poll, and the entropy in bits 15:0 is nondeterministic when OPST is ES16.
+# seed[29:24] is the only signable field: it reads as zero, while OPST (bits 31:30) may
+# take any value at any poll and the entropy in bits 15:0 is nondeterministic.
 _SEED_RESERVED_SHIFT = 24
 _SEED_RESERVED_MASK = 0x3F
 
 
 def _check_seed_reserved(dest_reg: int, test_data: TestData) -> list[str]:
-    """Isolate seed's reserved field and commit it. Zero after a legal read; after an
-    illegal one the access traps and dest_reg still holds the poison, which is equally
-    deterministic and shows the read did not happen."""
+    """Commit seed's reserved field: zero after a legal read, the poison after a trap."""
     return [
         f"srli x{dest_reg}, x{dest_reg}, {_SEED_RESERVED_SHIFT}",
         f"andi x{dest_reg}, x{dest_reg}, {_SEED_RESERVED_MASK:#x}  # seed[29:24], reserved, reads zero",
