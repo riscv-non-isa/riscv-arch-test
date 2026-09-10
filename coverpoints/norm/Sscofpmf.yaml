@@ -41,21 +41,16 @@ normative_rule_definitions:
       ]
     coverpoint: ["{SscofpmfSm_cg,SscofpmfS_cg}/{cp_sscofpmf_access}"]
 
-  - name:
-      [
-        count_overflow_triggermip_lcofip_mie_lcofie_op,
-        mip_lcofip_acc,
-        sip_sie_Sscofpmf,
-      ]
+  - name: [count_overflow_triggermip_lcofip_mie_lcofie_op, mip_lcofip_acc]
     coverpoint: ["SscofpmfSm_cg/cp_lcofi_m"]
 
   - name: sip_sie_Sscofpmf
     coverpoint: ["SscofpmfS_cg/cp_lcofi_sip_s"]
 
-  - names: sip_sie_Sscofpmf
+  - name: sip_sie_Sscofpmf
     coverpoint: ["SscofpmfU_cg/cp_lcofi_sip_u"]
 
-  - name: [intr_M_mode_pri, sip_sie_priority_bit_order]
+  - name: [intr_M_mode_pri]
     coverpoint: ["SscofpmfSm_cg/cp_lcofip_priority_m"]
 
   - name: [sip_sie_priority_bit_order]
