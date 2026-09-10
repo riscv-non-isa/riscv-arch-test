@@ -572,9 +572,11 @@
 // one exists, otherwise in the M-mode handler. Clobbers a0.
 .macro RVTEST_TSBI_SFENCE_VMA
   .option push
-  .option norvc                                  // ensure consistent code size
-  li   a0, TSBI_SFENCE_VMA                      // a0 = sfence.vma encoding
-  ecall                                          // trap to handler; handler executes sfence.vma
+  .option norvc
+  li   a0, TSBI_SFENCE_VMA
+  ecall
+  .option pop
+.endm                                         // trap to handler; handler executes sfence.vma
 .macro RVTEST_TSBI_LW
   .option push
   .option norvc                                  // ensure consistent code size
