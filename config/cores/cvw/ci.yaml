@@ -7,7 +7,11 @@
 # Sv: https://github.com/openhwgroup/cvw/issues/1766
 # ExceptionsSvZalrsc: Wally should produce access fault rather than misaligned fault on misaligned LRSC. https://github.com/openhwgroup/cvw/issues/1809
 ci_enabled: true
-exclude_extensions: "ExceptionsSvZalrsc,Sv"
+# Sail 0.14 changed illegal-write handling for the WLRL `scause`/`mcause` CSRs: it now
+#   retains the previous legal value, where 0.13.1 stored the written value verbatim. Both
+#   are permitted for WLRL, but ACT exact-matches the reference, so `S`/`Sm` mismatch on
+#   every DUT that stores the raw value. Excluded until the cause-code testcases are relaxed.
+exclude_extensions: "ExceptionsSvZalrsc,Sv,S,Sm"
 apt_packages: "autoconf flex bison help2man libfl-dev ccache"
 install_script: ".github/scripts/install-cvw.sh"
 setup_script: ".github/scripts/setup-cvw.sh"

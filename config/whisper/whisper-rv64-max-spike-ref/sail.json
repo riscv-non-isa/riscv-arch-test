@@ -368,7 +368,7 @@
       "supported": true
     },
     "H": {
-      "supported": true,
+      "supported": false,
       // GEILEN, the number of guest external interrupts. The maximum is XLEN-1.
       "geilen": 63,
       // Whether a guest-page fault writes the faulting guest physical address
@@ -623,25 +623,25 @@
     // Enabling Sha requires H, Ssstateen, Shcounterenw, Shgatpa, Shtvala,
     // Shvsatpa, Shvstvala and Shvstvecd.
     "Sha": {
-      "supported": true
+      "supported": false
     },
     "Shcounterenw": {
-      "supported": true
+      "supported": false
     },
     "Shgatpa": {
-      "supported": true
+      "supported": false
     },
     "Shtvala": {
-      "supported": true
+      "supported": false
     },
     "Shvsatpa": {
-      "supported": true
+      "supported": false
     },
     "Shvstvala": {
-      "supported": true
+      "supported": false
     },
     "Shvstvecd": {
-      "supported": true
+      "supported": false
     },
     "Sscounterenw": {
       "supported": true

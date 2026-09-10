@@ -8,7 +8,11 @@
 # ExceptionsSvZalrsc: Whisper reports page faults where Sail expects access faults.
 # Sdtrig* not yet implemented in Sail
 ci_enabled: true
-exclude_extensions: "SsstrictSm,SsstrictS,SsstrictU,ExceptionsSvZalrsc,Smstateen,SdtrigSm,SdtrigS,SdtrigU"
+# Sail 0.14 changed illegal-write handling for the WLRL `scause`/`mcause` CSRs: it now
+#   retains the previous legal value, where 0.13.1 stored the written value verbatim. Both
+#   are permitted for WLRL, but ACT exact-matches the reference, so `S`/`Sm` mismatch on
+#   every DUT that stores the raw value. Excluded until the cause-code testcases are relaxed.
+exclude_extensions: "SsstrictSm,SsstrictS,SsstrictU,ExceptionsSvZalrsc,Smstateen,SdtrigSm,SdtrigS,SdtrigU,S,Sm"
 exclude_configs:
   - whisper-rv32-max-spike-ref
   - whisper-rv64-max-spike-ref
