@@ -121,7 +121,7 @@ The RVMODEL DUT-Specific Macros are given in <<t-rvmodel>>. The "Can Be Empty?" 
 |RVMODEL_TIMER_INT_SOON_DELAY|The delay (in timer ticks) before a timer interrupt fires when using `set_mtimer_int_soon()`. Sets `mtimecmp = mtime + delay`. Should be long enough that the core can run a few instructions before the interrupt fires.| If Machine timer interrupts are not tested. | n/a
 |RVMODEL_MAX_CYCLES_PER_TIMER_TICK|The highest possible ratio of the clock frequency to the timer frequency in any mode of operation. Defaults to 1 if not defined | If Machine timer interrupts are not tested. | n/a
 |RVMODEL_DATA_SECTION|DUT-specific data that will be placed in a .data section. Used for memory-mapped regions like `tohost`/`fromhost`.  |Yes, if not needed by DUT. | n/a
-|RVMODEL_INVISIBLE_TRAP_HANDLER(_PC_REG, _INSTRUCTION_REG, _VALUE_REG, _ACTION_REG, _SCRATCH_REG)|Optionally emulates an illegal instruction in the M-mode invisible trap handler. `_PC_REG` and `_INSTRUCTION_REG` are read-only and contain the trapping PC and instruction, respectively. `_VALUE_REG`, `_ACTION_REG`, and `_SCRATCH_REG` may be changed. See <<invisible-traps>> for full details.|Omit if the DUT has no invisible trap emulation. | Machine
+|RVMODEL_INVISIBLE_TRAP_HANDLER(_PC_REG, _INSTRUCTION_REG, _ACTION_REG, _DEST_REG, _VALUE_REG)|Optionally emulates an illegal instruction in the M-mode invisible trap handler. `_PC_REG` and `_INSTRUCTION_REG` are read-only and contain the trapping PC and instruction, respectively. `_ACTION_REG`, `_DEST_REG`, and `_VALUE_REG` may be changed. See <<invisible-traps>> for full details.|Omit if the DUT has no invisible trap emulation. | Machine
 |===
 
 [NOTE]
@@ -143,15 +143,15 @@ Custom invisible traps implemented using the `RVMODEL_INVISIBLE_TRAP_HANDLER` ma
 
   - `_PC_REG`: A register containing the trapping PC. Read-only.
   - `_INSTRUCTION_REG`: A register containing the trapping instruction. Read-only.
-  - `_VALUE_REG`: The value associated with the instruction being emulated.
   - `_ACTION_REG`: The action to be taken by the trap handler.
-  - `_SCRATCH_REG`: A scratch register that can be clobbered.
+  - `_DEST_REG`: The destination GPR number for action 2.
+  - `_VALUE_REG`: The value to write for action 2.
 
 The supported return codes in the `_ACTION_REG` are:
 
   - `0`: The macro did not handle the instruction. Continue with the normal trap handling. `_ACTION_REG` is preset to 0 before `RVMODEL_INVISIBLE_TRAP_HANDLER`.
   - `1`: The macro handled the instruction and wrote all required architectural state. Resume after the instruction.
-  - `2`: The macro handled the instruction and needs to write a GPR result. Write `_VALUE_REG` to the `rd` field in bits 11:7, then resume after the instruction.
+  - `2`: The macro handled the instruction and needs to write a GPR result. Write `_VALUE_REG` to the GPR whose number is in `_DEST_REG`, then resume after the instruction.
   - Any other code is invalid and the test will produce an error.
 
 Action 2 must be used to write GPR results because a direct write to a saved GPR would be lost when the trap
@@ -164,12 +164,14 @@ The mask ignores the `rd` field and CSR function bit 12.
 
 [source,c]
 ----
-#define RVMODEL_INVISIBLE_TRAP_HANDLER(_PC_REG, _INSTRUCTION_REG, _VALUE_REG, _ACTION_REG, _SCRATCH_REG) \
+#define RVMODEL_INVISIBLE_TRAP_HANDLER(_PC_REG, _INSTRUCTION_REG, _ACTION_REG, _DEST_REG, _VALUE_REG) \
   li  _VALUE_REG, INSN_FIELD_CSR | INSN_FIELD_RS1 | INSN_FIELD_OPCODE | (2 << 12); \
-  and _SCRATCH_REG, _INSTRUCTION_REG, _VALUE_REG;                                      \
+  and _DEST_REG, _INSTRUCTION_REG, _VALUE_REG;                                         \
   li  _VALUE_REG, (0xBC0 << 20) | (2 << 12) | 0x73;                                   \
-  bne _SCRATCH_REG, _VALUE_REG, 1f;                                                    \
+  bne _DEST_REG, _VALUE_REG, 1f;                                                       \
   li  _VALUE_REG, 42;                                                                  \
+  srli _DEST_REG, _INSTRUCTION_REG, 7;                                                  \
+  andi _DEST_REG, _DEST_REG, 0x1F;                                                     \
   li  _ACTION_REG, 2;                                                                  \
 1:
 ----

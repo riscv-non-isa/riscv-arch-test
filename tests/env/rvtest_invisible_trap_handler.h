@@ -31,27 +31,24 @@
   invisible_Mcustom:
     // Give the model a chance to emulate the instruction first.
     #ifdef RVMODEL_INVISIBLE_TRAP_HANDLER
-      li      T4, 0
-      // T1=mepc and T2=instruction are read-only. T3=value to write to rd, T4=action, and T5=scratch.
+      li      T3, 0
+      // T1=mepc and T2=instruction are read-only. T3=action, T4=destination GPR number, and T5=value.
       RVMODEL_INVISIBLE_TRAP_HANDLER(T1, T2, T3, T4, T5)
+      // Action 0 indicates no custom emulation was done.
+      beqz    T3, invisible_Mcustom_done
       // Action 1 means the model updated all architectural state directly.
-      li      T5, 1
-      bne     T4, T5, 1f
-      j       invisible_Mtrap_return
-      1:
-        // Action 2 indicates a GPR must be written before returning.
-        li      T5, 2
-        bne     T4, T5, 1f
-        j       invisible_Mwrite_gpr
-      1:
-        // Action 0 indicates no custom emulation was done.
-        beqz    T4, invisible_Mcustom_done
+      addi    T3, T3, -1
+      beqz    T3, invisible_Mtrap_return
+      // Action 2 writes T5 to the GPR number in T4 before returning.
+      addi    T3, T3, -1
+      beqz    T3, invisible_Mwrite_gpr
 
-      // An invalid action is an integration error. Report it and stop the test.
+      // An invalid action is an integration error. Restore its value, report it, and stop the test.
+      addi    T3, T3, 2
       invisible_Minvalid_action:
         LA(a0, invisible_Minvalid_action_str)
         call    rvmodel_io_write_str
-        mv      a0, T4
+        mv      a0, T3
         li      a1, UDB_MXLEN
         call    failedtest_hex_to_str
         LA(a0, ascii_buffer)
@@ -103,7 +100,10 @@
         slli    T4, T4, 2
         add     T3, T3, T4
       #endif
-      LREG    T3, 0(T3)
+      LREG    T5, 0(T3)
+      // The CSR rd field uses the standard bits 11:7 location.
+      srli    T4, T2, 7
+      andi    T4, T4, (INSN_FIELD_RD >> 7)
       j       invisible_Mwrite_gpr
     #endif
 
@@ -180,18 +180,17 @@
     LA(     T4, invisible_Mcontinue)
     jr      T4
 
-  // Write T3 to bits 11:7 (rd) of a 32-bit instruction. Writes to registers
-  // saved by the trap entry update their save slots so the restore keeps the result.
+  // Write T5 to the GPR number in T4. Writes to registers saved by the trap
+  // entry update their save slots so the restore keeps the result.
   invisible_Mwrite_gpr:
-    srli    T4, T2, 7
-    andi    T4, T4, (INSN_FIELD_RD >> 7)
+    // Scale the GPR number by the jump-table entry size.
   #if UDB_MXLEN == 32
     slli    T4, T4, 2
   #else
     slli    T4, T4, 3
   #endif
-    LA(     T1, invisible_Mgpr_table)
-    add     T4, T4, T1
+    LA(     T3, invisible_Mgpr_table)
+    add     T4, T4, T3
     LREG    T4, 0(T4)
     jr      T4
 
@@ -237,38 +236,38 @@
   #endif
 
   invisible_Mwrite_x0:  j invisible_Mtrap_return
-  invisible_Mwrite_x1:  mv x1, T3;  j invisible_Mtrap_return
-  invisible_Mwrite_x2:  SREG T3, trap_sv_off+7*REGWIDTH(sp); j invisible_Mtrap_return
-  invisible_Mwrite_x3:  mv x3, T3;  j invisible_Mtrap_return
-  invisible_Mwrite_x4:  mv x4, T3;  j invisible_Mtrap_return
-  invisible_Mwrite_x5:  mv x5, T3;  j invisible_Mtrap_return
-  invisible_Mwrite_x6:  SREG T3, trap_sv_off+1*REGWIDTH(sp); j invisible_Mtrap_return
-  invisible_Mwrite_x7:  SREG T3, trap_sv_off+2*REGWIDTH(sp); j invisible_Mtrap_return
-  invisible_Mwrite_x8:  SREG T3, trap_sv_off+3*REGWIDTH(sp); j invisible_Mtrap_return
-  invisible_Mwrite_x9:  SREG T3, trap_sv_off+4*REGWIDTH(sp); j invisible_Mtrap_return
-  invisible_Mwrite_x10: mv x10, T3; j invisible_Mtrap_return
-  invisible_Mwrite_x11: mv x11, T3; j invisible_Mtrap_return
-  invisible_Mwrite_x12: mv x12, T3; j invisible_Mtrap_return
-  invisible_Mwrite_x13: mv x13, T3; j invisible_Mtrap_return
-  invisible_Mwrite_x14: SREG T3, trap_sv_off+5*REGWIDTH(sp); j invisible_Mtrap_return
-  invisible_Mwrite_x15: SREG T3, trap_sv_off+6*REGWIDTH(sp); j invisible_Mtrap_return
+  invisible_Mwrite_x1:  mv x1, T5;  j invisible_Mtrap_return
+  invisible_Mwrite_x2:  SREG T5, trap_sv_off+7*REGWIDTH(sp); j invisible_Mtrap_return
+  invisible_Mwrite_x3:  mv x3, T5;  j invisible_Mtrap_return
+  invisible_Mwrite_x4:  mv x4, T5;  j invisible_Mtrap_return
+  invisible_Mwrite_x5:  mv x5, T5;  j invisible_Mtrap_return
+  invisible_Mwrite_x6:  SREG T5, trap_sv_off+1*REGWIDTH(sp); j invisible_Mtrap_return
+  invisible_Mwrite_x7:  SREG T5, trap_sv_off+2*REGWIDTH(sp); j invisible_Mtrap_return
+  invisible_Mwrite_x8:  SREG T5, trap_sv_off+3*REGWIDTH(sp); j invisible_Mtrap_return
+  invisible_Mwrite_x9:  SREG T5, trap_sv_off+4*REGWIDTH(sp); j invisible_Mtrap_return
+  invisible_Mwrite_x10: mv x10, T5; j invisible_Mtrap_return
+  invisible_Mwrite_x11: mv x11, T5; j invisible_Mtrap_return
+  invisible_Mwrite_x12: mv x12, T5; j invisible_Mtrap_return
+  invisible_Mwrite_x13: mv x13, T5; j invisible_Mtrap_return
+  invisible_Mwrite_x14: SREG T5, trap_sv_off+5*REGWIDTH(sp); j invisible_Mtrap_return
+  invisible_Mwrite_x15: SREG T5, trap_sv_off+6*REGWIDTH(sp); j invisible_Mtrap_return
   #ifndef E_SUPPORTED
-    invisible_Mwrite_x16: mv x16, T3; j invisible_Mtrap_return
-    invisible_Mwrite_x17: mv x17, T3; j invisible_Mtrap_return
-    invisible_Mwrite_x18: mv x18, T3; j invisible_Mtrap_return
-    invisible_Mwrite_x19: mv x19, T3; j invisible_Mtrap_return
-    invisible_Mwrite_x20: mv x20, T3; j invisible_Mtrap_return
-    invisible_Mwrite_x21: mv x21, T3; j invisible_Mtrap_return
-    invisible_Mwrite_x22: mv x22, T3; j invisible_Mtrap_return
-    invisible_Mwrite_x23: mv x23, T3; j invisible_Mtrap_return
-    invisible_Mwrite_x24: mv x24, T3; j invisible_Mtrap_return
-    invisible_Mwrite_x25: mv x25, T3; j invisible_Mtrap_return
-    invisible_Mwrite_x26: mv x26, T3; j invisible_Mtrap_return
-    invisible_Mwrite_x27: mv x27, T3; j invisible_Mtrap_return
-    invisible_Mwrite_x28: mv x28, T3; j invisible_Mtrap_return
-    invisible_Mwrite_x29: mv x29, T3; j invisible_Mtrap_return
-    invisible_Mwrite_x30: mv x30, T3; j invisible_Mtrap_return
-    invisible_Mwrite_x31: mv x31, T3; j invisible_Mtrap_return
+    invisible_Mwrite_x16: mv x16, T5; j invisible_Mtrap_return
+    invisible_Mwrite_x17: mv x17, T5; j invisible_Mtrap_return
+    invisible_Mwrite_x18: mv x18, T5; j invisible_Mtrap_return
+    invisible_Mwrite_x19: mv x19, T5; j invisible_Mtrap_return
+    invisible_Mwrite_x20: mv x20, T5; j invisible_Mtrap_return
+    invisible_Mwrite_x21: mv x21, T5; j invisible_Mtrap_return
+    invisible_Mwrite_x22: mv x22, T5; j invisible_Mtrap_return
+    invisible_Mwrite_x23: mv x23, T5; j invisible_Mtrap_return
+    invisible_Mwrite_x24: mv x24, T5; j invisible_Mtrap_return
+    invisible_Mwrite_x25: mv x25, T5; j invisible_Mtrap_return
+    invisible_Mwrite_x26: mv x26, T5; j invisible_Mtrap_return
+    invisible_Mwrite_x27: mv x27, T5; j invisible_Mtrap_return
+    invisible_Mwrite_x28: mv x28, T5; j invisible_Mtrap_return
+    invisible_Mwrite_x29: mv x29, T5; j invisible_Mtrap_return
+    invisible_Mwrite_x30: mv x30, T5; j invisible_Mtrap_return
+    invisible_Mwrite_x31: mv x31, T5; j invisible_Mtrap_return
   #endif
 
   invisible_Mtrap_return:
