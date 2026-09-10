@@ -38,6 +38,62 @@ covergroup SscofpmfS_cg with function sample(ins_t ins);
             wildcard bins all_ones = {16'b??1???1???1???1?};
     }
 
+    csr_access_pattern: coverpoint ins.current.insn {
+        wildcard bins csrrw0    = {CSRRW} iff (ins.current.rs1_val ==  0);
+        wildcard bins csrrw1    = {CSRRW} iff (ins.current.rs1_val == '1);
+        wildcard bins csrrs1    = {CSRRS} iff (ins.current.rs1_val == '1);
+        wildcard bins csrrc1    = {CSRRC} iff (ins.current.rs1_val == '1);
+        wildcard bins read_only = {CSRRS} iff (ins.current.rs1_val ==  0);
+    }
+
+    `ifdef UDB_MXLEN_64
+        mhpmevent_inhibits_zero_state: coverpoint (ins.current.csr[CSR_MHPMEVENT3][62:58] == 5'b00000) {
+                bins yes = {1};
+        }
+    `else
+        mhpmevent_inhibits_zero_state: coverpoint (ins.current.csr[CSR_MHPMEVENT3 + 12'h400][30:26] == 5'b00000) {
+                bins yes = {1};
+        }
+    `endif
+
+    mcounteren_all_ones_state: coverpoint (ins.current.csr[CSR_MCOUNTEREN][31:3] == '1) {
+            bins yes = {1};
+    }
+
+    mcounteren_stimulus_pattern_state: coverpoint (ins.current.csr[CSR_MCOUNTEREN][31:3]) {
+        bins all_zeros = {29'h0};
+        bins all_ones  = {29'h1FFFFFFF};
+        bins walking[] = {29'h1, 29'h2, 29'h4, 29'h8, 29'h10, 29'h20, 29'h40, 29'h80,
+                           29'h100, 29'h200, 29'h400, 29'h800, 29'h1000, 29'h2000,
+                           29'h4000, 29'h8000, 29'h10000, 29'h20000, 29'h40000,
+                           29'h80000, 29'h100000, 29'h200000, 29'h400000, 29'h800000,
+                           29'h1000000, 29'h2000000, 29'h4000000, 29'h8000000, 29'h10000000};
+    }
+
+    of_stimulus_pattern: coverpoint (`OF_VEC) {
+        bins all_zeros = {29'h0};
+        bins all_ones  = {29'h1FFFFFFF};
+        bins walking[] = {29'h1, 29'h2, 29'h4, 29'h8, 29'h10, 29'h20, 29'h40, 29'h80,
+                           29'h100, 29'h200, 29'h400, 29'h800, 29'h1000, 29'h2000,
+                           29'h4000, 29'h8000, 29'h10000, 29'h20000, 29'h40000,
+                           29'h80000, 29'h100000, 29'h200000, 29'h400000, 29'h800000,
+                           29'h1000000, 29'h2000000, 29'h4000000, 29'h8000000, 29'h10000000};
+    }
+
+    of_write_pattern: coverpoint (`OF_VEC) {
+            bins all_ones     = {29'h1FFFFFFF};
+            bins checker_even = {29'b1_0101_0101_0101_0101_0101_0101_0101}; // even-indexed OF bits set
+            bins checker_odd  = {29'b0_1010_1010_1010_1010_1010_1010_1010}; // odd-indexed OF bits set
+    }
+
+    hpm_csr_target: coverpoint ins.current.insn[31:20] {
+            bins scountovf   = {CSR_SCOUNTOVF};
+    }
+
+    lcofi_mideleg_one: coverpoint ins.current.csr[CSR_MIDELEG][13] {
+            bins one  = {1};
+    }
+
     cp_sinh_inhibits_smode:    cross priv_mode_s, mhpmevent_xinh_combos, mhpmevent_of_zero;
     cp_of_set_on_overflow:     cross priv_mode_s, sip_lcofi_one, mie_clear, mhpmevent_of_one, mhpmevent_inhibits_pattern_state;
     `ifdef UDB_MXLEN_64

@@ -10,15 +10,9 @@
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    // helper coverpoints for the Sscofpmf extension
-    csr_access_pattern: coverpoint ins.current.insn {
-        wildcard bins csrrw0    = {CSRRW} iff (ins.current.rs1_val ==  0);
-        wildcard bins csrrw1    = {CSRRW} iff (ins.current.rs1_val == '1);
-        wildcard bins csrrs1    = {CSRRS} iff (ins.current.rs1_val == '1);
-        wildcard bins csrrc1    = {CSRRC} iff (ins.current.rs1_val == '1);
-        wildcard bins read_only = {CSRRS} iff (ins.current.rs1_val ==  0);
-   }
-   `ifdef UDB_MXLEN_64
+    // helper coverpoints crossed by all three Sscofpmf covergroups; helpers only some of them
+    // cross are defined in those covergroups
+    `ifdef UDB_MXLEN_64
         `ifdef H_SUPPORTED
                 mhpmevent_xinh_combos: coverpoint ins.current.csr[CSR_MHPMEVENT3][62:58] {
                 bins combo[] = {[0:31]};
@@ -83,9 +77,6 @@
                 bins sinh_only = {5'b01000};
                 bins uinh_only = {5'b00100};
         }
-        mhpmevent_inhibits_zero_state: coverpoint (ins.current.csr[CSR_MHPMEVENT3][62:58] == 5'b00000) {
-                bins yes = {1};
-        }
     `else
         // On RV32, MINH/SINH/UINH/VSINH/VUINH live in mhpmevent*h[30:26] (address + 0x400)
         mhpmevent_inhibits_pattern_state: coverpoint (ins.current.csr[CSR_MHPMEVENT3 + 12'h400][30:26]) {
@@ -94,9 +85,6 @@
                 bins minh_only = {5'b10000};
                 bins sinh_only = {5'b01000};
                 bins uinh_only = {5'b00100};
-        }
-        mhpmevent_inhibits_zero_state: coverpoint (ins.current.csr[CSR_MHPMEVENT3 + 12'h400][30:26] == 5'b00000) {
-                bins yes = {1};
         }
     `endif
 
@@ -118,7 +106,6 @@
                 bins one = {1};
         }
     `endif
-    hpmcounter_nonzero: coverpoint (ins.current.csr[CSR_MHPMCOUNTER3] != 0) {}
     mip_clear: coverpoint (ins.current.csr[CSR_MIP] == 0) {
             bins yes = {1};
     }
@@ -129,36 +116,6 @@
     mhpmcounter_extreme_state: coverpoint (ins.current.csr[CSR_MHPMCOUNTER3]) {
             bins all_ones  = {'1};
             bins all_zeros = {'0};
-    }
-
-    mcounteren_all_ones_state: coverpoint (ins.current.csr[CSR_MCOUNTEREN][31:3] == '1) {
-            bins yes = {1};
-    }
-
-    mcounteren_stimulus_pattern_state: coverpoint (ins.current.csr[CSR_MCOUNTEREN][31:3]) {
-        bins all_zeros = {29'h0};
-        bins all_ones  = {29'h1FFFFFFF};
-        bins walking[] = {29'h1, 29'h2, 29'h4, 29'h8, 29'h10, 29'h20, 29'h40, 29'h80,
-                           29'h100, 29'h200, 29'h400, 29'h800, 29'h1000, 29'h2000,
-                           29'h4000, 29'h8000, 29'h10000, 29'h20000, 29'h40000,
-                           29'h80000, 29'h100000, 29'h200000, 29'h400000, 29'h800000,
-                           29'h1000000, 29'h2000000, 29'h4000000, 29'h8000000, 29'h10000000};
-    }
-
-    of_stimulus_pattern: coverpoint (`OF_VEC) {
-        bins all_zeros = {29'h0};
-        bins all_ones  = {29'h1FFFFFFF};
-        bins walking[] = {29'h1, 29'h2, 29'h4, 29'h8, 29'h10, 29'h20, 29'h40, 29'h80,
-                           29'h100, 29'h200, 29'h400, 29'h800, 29'h1000, 29'h2000,
-                           29'h4000, 29'h8000, 29'h10000, 29'h20000, 29'h40000,
-                           29'h80000, 29'h100000, 29'h200000, 29'h400000, 29'h800000,
-                           29'h1000000, 29'h2000000, 29'h4000000, 29'h8000000, 29'h10000000};
-    }
-
-    of_write_pattern: coverpoint (`OF_VEC) {
-            bins all_ones     = {29'h1FFFFFFF};
-            bins checker_even = {29'b1_0101_0101_0101_0101_0101_0101_0101}; // even-indexed OF bits set
-            bins checker_odd  = {29'b0_1010_1010_1010_1010_1010_1010_1010}; // odd-indexed OF bits set
     }
 
     `ifdef UDB_MXLEN_64
@@ -173,44 +130,3 @@
                 bins yes = {1};
         }
     `endif
-
-    csrops: coverpoint ins.current.insn {
-            wildcard bins csrw = {CSRRW};
-            wildcard bins csrs = {CSRRS};
-            wildcard bins csrc = {CSRRC};
-    }
-
-    hpm_csr_target: coverpoint ins.current.insn[31:20] {
-            bins scountovf   = {CSR_SCOUNTOVF};
-    }
-
-    lcofi_ip_one: coverpoint ins.current.csr[CSR_MIP][13] {
-            bins one  = {1};
-    }
-    lcofi_ip: coverpoint ins.current.csr[CSR_MIP][13] {}
-    lcofi_ie: coverpoint ins.current.csr[CSR_MIE][13] {}
-    lcofi_mideleg: coverpoint ins.current.csr[CSR_MIDELEG][13] {}
-    lcofi_mideleg_one: coverpoint ins.current.csr[CSR_MIDELEG][13] {
-            bins one  = {1};
-    }
-
-    mstatus_mie_clear: coverpoint ins.current.csr[CSR_MSTATUS][3] {
-            bins zero = {0};
-    }
-    mstatus_mie_set: coverpoint ins.prev.csr[CSR_MSTATUS][3] {
-            bins one = {1};
-    }
-    mstatus_sie_set: coverpoint ins.prev.csr[CSR_MSTATUS][1] {
-            bins one = {1};
-    }
-
-    mie_state: coverpoint (ins.current.csr[CSR_MIE][15:0]) {
-            bins all_zeros = {16'b0};
-            wildcard bins all_ones = {16'b??1?1???1???1???};
-    }
-    mip_other_pending: coverpoint {ins.current.csr[CSR_MIP][11], ins.current.csr[CSR_MIP][7], ins.current.csr[CSR_MIP][3]} {
-            bins none = {3'b000};
-            bins meip = {3'b100};
-            bins mtip = {3'b010};
-            bins msip = {3'b001};
-    }

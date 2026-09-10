@@ -17,10 +17,6 @@ covergroup SscofpmfU_cg with function sample(ins_t ins);
     `include "general/RISCV_coverage_standard_coverpoints.svh"
     `include "RISCV_coverage_sscofpmf.svh"
 
-    sstatus_sie_clear: coverpoint ins.current.csr[CSR_SSTATUS][1] {
-            bins zero = {0};
-    }
-
     `ifdef S_SUPPORTED
 
         sie_lcofi: coverpoint ins.current.csr[CSR_SIE][13] {}
@@ -37,6 +33,12 @@ covergroup SscofpmfU_cg with function sample(ins_t ins);
                 type_option.weight = 0;
                 bins to_u = {0};
         }
+    `else
+        lcofi_ip_one: coverpoint ins.current.csr[CSR_MIP][13] {
+                bins one  = {1};
+        }
+        lcofi_ip: coverpoint ins.current.csr[CSR_MIP][13] {}
+        lcofi_ie: coverpoint ins.current.csr[CSR_MIE][13] {}
     `endif
 
     cp_uinh_inhibits_umode:    cross priv_mode_u, mhpmevent_xinh_combos, mhpmevent_of_zero;
