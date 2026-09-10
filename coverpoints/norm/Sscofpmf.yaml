@@ -8,14 +8,27 @@ normative_rule_definitions:
         "{SscofpmfSm_cg,SscofpmfS_cg,SscofpmfU_cg}/{cp_minh_inhibits_mmode,cp_sinh_inhibits_smode,cp_uinh_inhibits_umode}",
       ]
 
-  - name:
-      [
-        mhpmevent_of_op,
-        mhpmevent_of_bit_set,
-        hpmcounter_overflow,
-        count_overflow_interrupt,
-        LCOFIP_op,
-      ]
+  - name: mhpmevent_of_op
+    coverpoint:
+      ["{SscofpmfSm_cg,SscofpmfS_cg,SscofpmfU_cg}/{cp_of_set_on_overflow}"]
+
+  - name: mhpmevent_of_bit_set
+    coverpoint:
+      ["{SscofpmfSm_cg,SscofpmfS_cg,SscofpmfU_cg}/{cp_of_set_on_overflow}"]
+
+  - name: hpmcounter_overflow
+    coverpoint:
+      ["{SscofpmfSm_cg,SscofpmfS_cg,SscofpmfU_cg}/{cp_of_set_on_overflow}"]
+
+  - name: count_overflow_interrupt
+    coverpoint:
+      ["{SscofpmfSm_cg,SscofpmfS_cg,SscofpmfU_cg}/{cp_of_set_on_overflow}"]
+
+  - name: mip_lcofip_op
+    coverpoint:
+      ["{SscofpmfSm_cg,SscofpmfS_cg,SscofpmfU_cg}/{cp_of_set_on_overflow}"]
+
+  - name: sip_lcofip_op
     coverpoint:
       ["{SscofpmfSm_cg,SscofpmfS_cg,SscofpmfU_cg}/{cp_of_set_on_overflow}"]
 
@@ -23,38 +36,60 @@ normative_rule_definitions:
     coverpoint:
       ["{SscofpmfSm_cg,SscofpmfS_cg,SscofpmfU_cg}/{cp_overflow_hw_only}"]
 
-  - names: LCOFIP_op
+  - name: mip_lcofip_op
+    coverpoint:
+      ["{SscofpmfSm_cg,SscofpmfS_cg,SscofpmfU_cg}/{cp_lcofip_hw_only}"]
+
+  - name: sip_lcofip_op
     coverpoint:
       ["{SscofpmfSm_cg,SscofpmfS_cg,SscofpmfU_cg}/{cp_lcofip_hw_only}"]
 
   - name: scountovf_op
     coverpoint: ["{SscofpmfSm_cg,SscofpmfS_cg}/{cp_scountovf_shadow}"]
 
-  - name: [scountovf_mmode_read_access, scountovf_smode_read_access]
-    coverpoint: ["{SscofpmfSm_cg,SscofpmfS_cg}/{cp_scountovf_mcounteren}"]
-
-  - name:
+  - names:
       [
         scountovf_mmode_read_access,
         scountovf_smode_read_access,
-        mhpmeventh_presence,
+        scountovf_smode_read_access_control,
       ]
+    coverpoint:
+      ["{SscofpmfSm_cg,SscofpmfS_cg,SscofpmfS_cg}/{cp_scountovf_mcounteren}"]
+
+  - names: [scountovf_mmode_read_access, scountovf_smode_read_access]
     coverpoint: ["{SscofpmfSm_cg,SscofpmfS_cg}/{cp_sscofpmf_access}"]
 
-  - name: [count_overflow_triggermip_lcofip_mie_lcofie_op, mip_lcofip_acc]
+  - name: mhpmeventh_presence
+    coverpoint: ["SscofpmfSm_cg/cp_sscofpmf_access"]
+
+  - names:
+      [count_overflow_trigger, mie_lcofie_op, mip_lcofip_op, mip_lcofip_acc]
     coverpoint: ["SscofpmfSm_cg/cp_lcofi_m"]
 
-  - name: sip_sie_Sscofpmf
+  - names:
+      [
+        sip_lcofip_Sscofpmf_acc,
+        sip_lcofip_Sscofpmf_op,
+        sie_lcofip_Sscofpmf_acc,
+        sie_lcofip_Sscofpmf_op,
+      ]
     coverpoint: ["SscofpmfS_cg/cp_lcofi_sip_s"]
 
-  - name: sip_sie_Sscofpmf
+  - names:
+      [
+        sip_lcofip_Sscofpmf_acc,
+        sip_lcofip_Sscofpmf_op,
+        sie_lcofip_Sscofpmf_acc,
+        sie_lcofip_Sscofpmf_op,
+      ]
     coverpoint: ["SscofpmfU_cg/cp_lcofi_sip_u"]
 
-  - name: [intr_M_mode_pri]
+  - names: [intr_M_mode_pri]
     coverpoint: ["SscofpmfSm_cg/cp_lcofip_priority_m"]
 
-  - name: [sip_sie_priority_bit_order]
+  - names: [sip_priority_bit_order, sie_priority_bit_order]
     coverpoint: ["SscofpmfS_cg/cp_lcofip_priority_s"]
 
+  # VS-mode is out of scope for these suites: the SscofpmfSm/S/U suites never run in VS-mode.
   - name: scountovf_vsmode_read_access
     coverpoint: [""]
