@@ -274,10 +274,6 @@ def add_csr_instructions(
     return t_lines
 
 
-# rs1 for the csrrs/csrrc frm read-modify-write cases: RMM (0b100), a legal rounding mode.
-_FRM_RMW_BIT = 0b100
-
-
 def add_fp_load_misaligned_test(
     op: str,
     offset: int,
@@ -405,10 +401,9 @@ def _generate_mstatus_fs_legal_tests(test_data: TestData) -> list[str]:
     lines = [
         comment_banner(coverpoint, "Test that instructions execute correctly when mstatus.fs is set to 1 (Clean)\n"),
         f"LI(x{clear_mask_reg}, 0x6000) # MSTATUS_FS mask",
-        # rs1 for the csrrs/csrrc frm cases below. It must be non-zero or those
-        # instructions set and clear nothing, and it must leave frm legal: frm values
-        # 5-7 are reserved, and a later FP op with dynamic rounding would then trap.
-        f"LI(x{frm_reg}, {_FRM_RMW_BIT}) # frm = RMM, a legal rounding mode",
+        # rs1 for the csrrs/csrrc frm cases below. Must be non-zero, or they set and clear
+        # nothing, and must leave frm legal: 5-7 are reserved rounding modes.
+        f"LI(x{frm_reg}, 0b100) # frm = RMM, a legal rounding mode",
     ]
 
     for i in range(1, 4):
