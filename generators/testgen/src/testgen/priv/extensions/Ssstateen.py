@@ -35,10 +35,16 @@ _LOWER_MODES = [
 
 
 def _write_se0(temp_reg: int, *, enable: bool) -> list[str]:
-    """Set (enable=True) or clear (enable=False) SE0 in mstateen0/mstateen0h."""
+    """Set (enable=True) or clear (enable=False) SE0 in mstateen0/mstateen0h.
+
+    Skipped entirely where Smstateen is absent: mstateen0 does not exist there, and an
+    illegal access made through T-SBI faults inside the handler rather than in test code,
+    which aborts the run. Without Smstateen sstateen0 is simply ungated.
+    """
     action = "csrs" if enable else "csrc"
     description = "set SE0=1" if enable else "clear SE0=0"
     return [
+        "#ifdef SMSTATEEN_SUPPORTED",
         "#if __riscv_xlen == 64",
         f"LI(x{temp_reg}, 0x8000000000000000)  # SE0 = bit 63 of mstateen0",
         tsbi_call(f"{action} mstateen0, x{temp_reg}  # {description}"),
@@ -46,26 +52,31 @@ def _write_se0(temp_reg: int, *, enable: bool) -> list[str]:
         f"LI(x{temp_reg}, 0x80000000)  # SE0 = bit 31 of mstateen0h",
         tsbi_call(f"{action} mstateen0h, x{temp_reg}  # {description}"),
         "#endif",
+        "#endif  // SMSTATEEN_SUPPORTED",
     ]
 
 
 def _save_mstateen(save_reg: int, save_regh: int) -> list[str]:
     """Save mstateen0 (and mstateen0h on RV32) into separate registers."""
     return [
+        "#ifdef SMSTATEEN_SUPPORTED",
         tsbi_call(f"csrr x{save_reg}, mstateen0  # save mstateen0"),
         "#if __riscv_xlen == 32",
         tsbi_call(f"csrr x{save_regh}, mstateen0h  # save mstateen0h on RV32"),
         "#endif",
+        "#endif  // SMSTATEEN_SUPPORTED",
     ]
 
 
 def _restore_mstateen(save_reg: int, save_regh: int) -> list[str]:
     """Restore mstateen0 (and mstateen0h on RV32) from separate registers."""
     return [
+        "#ifdef SMSTATEEN_SUPPORTED",
         tsbi_call(f"csrw mstateen0, x{save_reg}  # restore mstateen0"),
         "#if __riscv_xlen == 32",
         tsbi_call(f"csrw mstateen0h, x{save_regh}  # restore mstateen0h on RV32"),
         "#endif",
+        "#endif  // SMSTATEEN_SUPPORTED",
     ]
 
 

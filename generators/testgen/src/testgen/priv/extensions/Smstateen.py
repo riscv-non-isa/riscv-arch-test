@@ -625,7 +625,6 @@ def _generate_se0_controls_sstateen0(test_data: TestData, *, se0: int) -> list[s
     return lines
 
 
-
 @add_priv_test_generator(
     "Smstateen",
     required_extensions=["Smstateen"],
