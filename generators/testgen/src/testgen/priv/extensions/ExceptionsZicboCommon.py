@@ -44,10 +44,9 @@ _CBO_FIELDS: dict[str, _CboField] = {
 }
 
 
-# Sentinel written to the start of scratch before each cbo.zero, so the readback after it
-# distinguishes "the block was zeroed" from "the instruction did nothing". scratch is
-# 256-byte aligned and every cache block is naturally aligned and at least 4 bytes, so the
-# first word is inside the zeroed block whatever the implementation's block size is.
+# Sentinel written to the start of scratch before each cbo.zero, so the readback tells a
+# zeroed block from a no-op. scratch is 256-byte aligned, so its first word is inside the
+# block whatever the implementation's block size is.
 _CBOZ_SENTINEL = 0x0C0B0000
 
 
