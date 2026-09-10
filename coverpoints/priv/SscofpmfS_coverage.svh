@@ -16,18 +16,24 @@ covergroup SscofpmfS_cg with function sample(ins_t ins);
     `include "general/RISCV_coverage_standard_coverpoints.svh"
     `include "RISCV_coverage_sscofpmf.svh"
 
-    sip_other_pending: coverpoint {ins.current.csr[CSR_SIP][9], ins.current.csr[CSR_SIP][5], ins.current.csr[CSR_SIP][1]} {
-            bins none = {3'b000};
-            bins seip = {3'b100};
-            bins stip = {3'b010};
-            bins ssip = {3'b001};
-    }
     sip_lcofi: coverpoint ins.current.csr[CSR_SIP][13] {}
     sip_lcofi_one: coverpoint ins.current.csr[CSR_SIP][13] {
             bins one = {1};
     }
+    sip_lcofi_zero: coverpoint ins.current.csr[CSR_SIP][13] {
+            bins zero = {0};
+    }
+
     sie_lcofi: coverpoint ins.current.csr[CSR_SIE][13] {}
     sstatus_sie_set: coverpoint ins.current.csr[CSR_SSTATUS][1] {
+            bins one = {1};
+    }
+
+    // cp_lcofip_priority_s takes pending bits from mip, as InterruptsS does: the trace reports
+    // changes made by M-mode writes, MMIO and traps only against mip, so sip goes stale. With the
+    // S-level interrupts delegated (mideleg_s_ints) the mip bits are the sip bits. SIE is read
+    // from ins.prev because taking the interrupt is recorded on the instruction that enables it.
+    prev_mstatus_sie_one: coverpoint ins.prev.csr[CSR_MSTATUS][1] {
             bins one = {1};
     }
     sie_state: coverpoint (ins.current.csr[CSR_SIE][15:0]) {
@@ -36,6 +42,19 @@ covergroup SscofpmfS_cg with function sample(ins_t ins);
             // ones" means all ones in the bits this coverpoint actually cares about
             // (LCOFIE + the 3 standard S-mode enables), not a literal all-1s register.
             wildcard bins all_ones = {16'b??1???1???1???1?};
+    }
+    lcofi_ip_one: coverpoint ins.current.csr[CSR_MIP][13] {
+            bins one  = {1};
+    }
+    mip_other_pending_s: coverpoint {ins.current.csr[CSR_MIP][9], ins.current.csr[CSR_MIP][5], ins.current.csr[CSR_MIP][1]} {
+            bins none = {3'b000};
+            bins seip = {3'b100};
+            bins stip = {3'b010};
+            bins ssip = {3'b001};
+    }
+    mideleg_s_ints: coverpoint {ins.current.csr[CSR_MIDELEG][13], ins.current.csr[CSR_MIDELEG][9],
+                                ins.current.csr[CSR_MIDELEG][5],  ins.current.csr[CSR_MIDELEG][1]} {
+            bins delegated = {4'b1111};
     }
 
     csr_access_pattern: coverpoint ins.current.insn {
@@ -101,12 +120,12 @@ covergroup SscofpmfS_cg with function sample(ins_t ins);
     `else
         cp_overflow_hw_only:   cross priv_mode_s, mip_clear, mie_clear, mhpmcounter_extreme_state, mhpmevent_all_zero, mhpmevent_base_zero;
     `endif
-    cp_lcofip_hw_only:         cross priv_mode_s, mhpmevent_of, sip_lcofi;
+    cp_lcofip_hw_only:         cross priv_mode_s, mhpmevent_of, sip_lcofi_zero;
     cp_scountovf_shadow:       cross priv_mode_s, mcounteren_all_ones_state, of_stimulus_pattern;
     cp_scountovf_mcounteren:   cross priv_mode_s, of_write_pattern, mcounteren_stimulus_pattern_state;
     cp_sscofpmf_access:        cross priv_mode_s, csr_access_pattern, hpm_csr_target;
     cp_lcofi_sip_s:            cross priv_mode_s, sstatus_sie_set, sie_lcofi, sip_lcofi, lcofi_mideleg_one;
-    cp_lcofip_priority_s:      cross priv_mode_s, mhpmevent_inhibits_zero_state, sstatus_sie_set, sie_state, sip_lcofi_one, sip_other_pending;
+    cp_lcofip_priority_s:      cross priv_mode_s, mhpmevent_inhibits_zero_state, prev_mstatus_sie_one, sie_state, lcofi_ip_one, mip_other_pending_s, mideleg_s_ints;
 endgroup
 
 function void sscofpmfs_sample(int hart, int issue, ins_t ins);

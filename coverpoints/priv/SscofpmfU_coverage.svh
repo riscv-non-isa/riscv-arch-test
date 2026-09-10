@@ -24,6 +24,9 @@ covergroup SscofpmfU_cg with function sample(ins_t ins);
         sip_lcofi_one: coverpoint ins.current.csr[CSR_SIP][13] {
                 bins one = {1};
         }
+        sip_lcofi_zero: coverpoint ins.current.csr[CSR_SIP][13] {
+            bins zero = {0};
+        }
 
         sret_insn: coverpoint ins.current.insn {
                 type_option.weight = 0;
@@ -37,6 +40,10 @@ covergroup SscofpmfU_cg with function sample(ins_t ins);
         lcofi_ip_one: coverpoint ins.current.csr[CSR_MIP][13] {
                 bins one  = {1};
         }
+        lcofi_ip_zero: coverpoint ins.current.csr[CSR_MIP][13] {
+                bins zero  = {0};
+        }
+
         lcofi_ip: coverpoint ins.current.csr[CSR_MIP][13] {}
         lcofi_ie: coverpoint ins.current.csr[CSR_MIE][13] {}
     `endif
@@ -55,9 +62,10 @@ covergroup SscofpmfU_cg with function sample(ins_t ins);
     `endif
     `ifdef S_SUPPORTED
 
-        cp_lcofip_hw_only:     cross priv_mode_u, mhpmevent_of, sip_lcofi;
+        cp_lcofip_hw_only:     cross priv_mode_u, mhpmevent_of, sip_lcofi_zero ;
+
     `else
-        cp_lcofip_hw_only:     cross priv_mode_u, mhpmevent_of, lcofi_ip;
+        cp_lcofip_hw_only:     cross priv_mode_u, mhpmevent_of, lcofi_ip_zero;
     `endif
     `ifdef S_SUPPORTED
 

@@ -85,6 +85,9 @@ covergroup SscofpmfSm_cg with function sample(ins_t ins);
     lcofi_ip_one: coverpoint ins.current.csr[CSR_MIP][13] {
             bins one  = {1};
     }
+    lcofi_ip_zero: coverpoint ins.current.csr[CSR_MIP][13] {
+                bins zero  = {0};
+    }
     lcofi_ip: coverpoint ins.current.csr[CSR_MIP][13] {}
     lcofi_ie: coverpoint ins.current.csr[CSR_MIE][13] {}
     lcofi_mideleg: coverpoint ins.current.csr[CSR_MIDELEG][13] {}
@@ -114,7 +117,7 @@ covergroup SscofpmfSm_cg with function sample(ins_t ins);
     `else
         cp_overflow_hw_only:   cross priv_mode_m, mip_clear, mie_clear, mhpmcounter_extreme_state, mhpmevent_all_zero, mhpmevent_base_zero;
     `endif
-    cp_lcofip_hw_only:         cross priv_mode_m, mhpmevent_of, lcofi_ip;
+    cp_lcofip_hw_only:         cross priv_mode_m, mhpmevent_of, lcofi_ip_zero;
     cp_scountovf_mcounteren:   cross priv_mode_m, of_write_pattern, mcounteren_stimulus_pattern_state;
     cp_scountovf_shadow:       cross priv_mode_m, mcounteren_all_ones_state, of_stimulus_pattern;
     cp_sscofpmf_access:        cross priv_mode_m, csr_access_pattern, hpm_csr_target_m;
