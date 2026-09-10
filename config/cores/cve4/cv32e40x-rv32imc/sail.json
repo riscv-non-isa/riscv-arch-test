@@ -31,6 +31,18 @@
       "len": 32,
       "value": "0x00000008"
     },
+    // The bits in this value control whether the corresponding bits
+    // of the `hcounteren` CSR that control access to HPM counters,
+    // and `cycle`, `time` and `instret` registers from VS/VU-mode,
+    // are read-only zero. A set bit specifies that the corresponding
+    // bit of `hcounteren` is writable, otherwise the bit is read-only
+    // zero. Same layout as `mcounteren`. If Shcounterenw is supported the
+    // top 29 bits must be a superset of the top 29 bits of
+    // `writable_hpm_counters`.
+    "hcounteren_writable_bits": {
+      "len": 32,
+      "value": "0x00000008"
+    },
     // `mtvec.{direct,vectored}.supported` indicates whether the
     // corresponding mode is supported for `mtvec`.  At least one mode
     // should be supported.  If both modes are supported, the mode on
@@ -65,6 +77,20 @@
         "base_alignment": 2
       }
     },
+    // Similar to `stvec` above. If the `H` extension is not supported,
+    // these values need to be present and legal but are ignored.
+    "vstvec": {
+      // The spec requires `base_alignment` for `vstvec.direct` to be 2
+      // (i.e. 4-byte alignment), hence there is no configuration
+      // parameter for it.
+      "direct": {
+        "supported": false
+      },
+      "vectored": {
+        "supported": false,
+        "base_alignment": 2
+      }
+    },
     "medeleg": {
       "delegatable_bits": {
         "len": 64,
@@ -83,18 +109,23 @@
     "xtval_nonzero": {
       // mtval is hardwired to 0 in cv32e40x (WARL 0x0 per CSR doc).
       "illegal_instruction": false,
+      "virtual_instruction": true,
       "software_breakpoint": false,
       "hardware_breakpoint": false,
       "load_address_misaligned": false,
       "load_access_fault": false,
       "load_page_fault": false,
+      "load_guest_page_fault": true,
       "samo_address_misaligned": false,
       "samo_access_fault": false,
       "samo_page_fault": false,
+      "samo_guest_page_fault": true,
       "fetch_address_misaligned": false,
       "fetch_access_fault": false,
       "fetch_page_fault": false,
+      "fetch_guest_page_fault": true,
       "software_check": false,
+      "hardware_error": true,
       "reserved_exceptions": false
     },
     "reserved_behavior": {
@@ -129,6 +160,19 @@
   },
   "memory": {
     "physaddr_bits": 32,
+    // This specifies the number of implemented ASID bits (ASIDLEN) in
+    // the `satp` register.  If ASIDLEN > 0, ASID[ASIDLEN-1:0] is writable and bits above that are
+    // read-only zero. The maximal value (ASIDMAX) is 9 for Sv32 or 16 for
+    // Sv39, Sv48, and Sv57. A value of 0 means no ASID bits are
+    // implemented (all ASID bits read as zero).
+    "asidlen": 9,
+    // This specifies the number of implemented VMID bits (VMIDLEN) in
+    // the `hgatp` register.  If VMIDLEN > 0, VMID[VMIDLEN-1:0] is
+    // writable and bits above that are read-only zero. The maximal
+    // value (VMIDMAX) is 7 for Sv32x4 and 14 for Sv39x4, Sv48x4, and
+    // Sv57x4. A value of 0 means no VMID bits are implemented (all
+    // VMID bits read as zero).
+    "vmidlen": 7,
     // cv32e40x has no PMP (no pmpcfg/pmpaddr CSRs)
     "pmp": {
       "grain": 0,
@@ -147,9 +191,11 @@
         "load_store": { "None": null },
         // SCHEMA-REQUIRED: cv32e40x has no V extension.
         "vector": { "None": null },
-        // SCHEMA-REQUIRED: A_EXT=A_NONE by default; LR/SC opcodes decode as illegal.
-        "lrsc": "AccessFault",
-        // SCHEMA-REQUIRED: A_EXT=A_NONE by default; AMO opcodes decode as illegal.
+        "lrsc": {
+          "Some": "AccessFault"
+        },
+        // Similarly, a misaligned AMO and LR/SC can be configured with the same
+        // option values.
         "amo": { "Some": "AccessFault" }
       },
       "default_allowed_within_exp": 0,
@@ -188,7 +234,8 @@
             // SCHEMA-REQUIRED: no V extension.
             "vector": { "None": null },
             // SCHEMA-REQUIRED: no A extension.
-            "amo": "AccessFault"
+            "amo": "AccessFault",
+            "lrsc": "AccessFault"
           },
           "atomic_support": "AMONone",
           "misaligned_atomicity_granule_size_exp": 0,
@@ -226,7 +273,8 @@
             // SCHEMA-REQUIRED: no V extension.
             "vector": { "None": null },
             // SCHEMA-REQUIRED: no A extension.
-            "amo": "AccessFault"
+            "amo": "AccessFault",
+            "lrsc": "AccessFault"
           },
           "atomic_support": "AMONone",
           "misaligned_atomicity_granule_size_exp": 0,
@@ -255,6 +303,19 @@
       "reservation_set_size_exp": 3,
       "require_exact_reservation_addr": false,
       "invalidate_on_same_hart_store": false
+    },
+    "interrupts": {
+      "machine": {
+        "software": {
+          "supported": true
+        },
+        "external": {
+          "supported": true
+        },
+        "timer": {
+          "supported": true
+        }
+      }
     },
     "clint": {
       "supported": true,
@@ -312,10 +373,49 @@
       "supported": false
     },
     "S": {
-      "supported": false
+      "supported": false,
+      "interrupts": {
+        "software": {
+          "supported": true
+        },
+        "external": {
+          "supported": true
+        },
+        // This should be set to true if the Sstc extension is supported.
+        "timer": {
+          "supported": true
+        }
+      }
     },
     "U": {
       "supported": false
+    },
+    "H": {
+      "supported": false,
+      // GEILEN, the number of guest external interrupts. The maximum is XLEN-1.
+      "geilen": 31,
+      // Whether a guest-page fault writes the faulting guest physical address
+      // to `htval`/`mtval2`. If false, `htval`/`mtval2` is written as zero.
+      // Enabling Shtvala requires this option to be enabled.
+      "guest_page_fault_writes_htval": true,
+      // Which G-stage translation modes `hgatp` supports. Bare is always
+      // supported.  Shgatpa requires an SvNNx4 mode for every SvNN mode
+      // supported in `satp`.
+      "hgatp_modes": {
+        "Sv32x4": false,
+        "Sv39x4": false,
+        "Sv48x4": false,
+        "Sv57x4": false
+      },
+      // Which VS-stage translation modes `vsatp` supports. Bare is always
+      // supported.  Shvsatpa requires every mode supported in `satp` to
+      // also be supported here.
+      "vsatp_modes": {
+        "Sv32": false,
+        "Sv39": false,
+        "Sv48": false,
+        "Sv57": false
+      }
     },
     "Zibi": {
       "supported": false
@@ -373,6 +473,9 @@
     },
     "Zihpm": {
       "supported": true
+    },
+    "Zilx": {
+      "supported": false
     },
     "Zimop": {
       "supported": false
@@ -508,6 +611,29 @@
     "Sscofpmf": {
       "supported": false
     },
+    // Enabling Sha requires H, Ssstateen, Shcounterenw, Shgatpa, Shtvala,
+    // Shvsatpa, Shvstvala and Shvstvecd.
+    "Sha": {
+      "supported": false
+    },
+    "Shcounterenw": {
+      "supported": false
+    },
+    "Shgatpa": {
+      "supported": false
+    },
+    "Shtvala": {
+      "supported": false
+    },
+    "Shvsatpa": {
+      "supported": false
+    },
+    "Shvstvala": {
+      "supported": false
+    },
+    "Shvstvecd": {
+      "supported": false
+    },
     "Sscounterenw": {
       "supported": false
     },
@@ -515,6 +641,11 @@
       "supported": false
     },
     "Sstvala": {
+      "supported": false
+    },
+    // Enabling Sstvecd requires that `stvec` supports the `direct` mode,
+    // see `base.stvec.direct.supported`.
+    "Sstvecd": {
       "supported": false
     },
     "Svade": {
@@ -527,6 +658,9 @@
       "supported": false
     },
     "Svnapot": {
+      "supported": false
+    },
+    "Svukte": {
       "supported": false
     },
     "Ssnpm": {

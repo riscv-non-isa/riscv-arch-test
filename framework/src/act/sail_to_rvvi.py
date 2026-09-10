@@ -15,7 +15,9 @@ from pathlib import Path
 def sailLog2Trace(inputLogFile: Path, outputTraceFile: Path) -> None:
     # Regular expression to match instruction lines
     #                             [STEP]     [MODE]:    0xPC              (0xINSN)           DISASM
-    insn_pattern = re.compile(r"\[(\d+)\] \[([MSU])\]: 0x([0-9a-fA-F]+) \(0x([0-9a-fA-F]+)\) (.*)")
+    # Sail labels supervisor mode `HS` (and guest modes `VS`/`VU`) once the H extension
+    # is supported, so match the multi-character labels before the single-character ones.
+    insn_pattern = re.compile(r"\[(\d+)\] \[(HS|VS|VU|M|S|U)\]: 0x([0-9a-fA-F]+) \(0x([0-9a-fA-F]+)\) (.*)")
 
     # Regular expressions to match register updates
     reg_patterns = {
@@ -25,8 +27,9 @@ def sailLog2Trace(inputLogFile: Path, outputTraceFile: Path) -> None:
         "V": re.compile(r"v(\d+) <- 0x([0-9a-fA-F]+)"),
     }
 
-    # Mode mapping
-    mode_map = {"M": "3", "S": "1", "U": "0"}
+    # Mode mapping. `HS` is supervisor mode; the virtualized modes carry the
+    # privilege level of their non-virtualized counterpart.
+    mode_map = {"M": "3", "S": "1", "HS": "1", "VS": "1", "U": "0", "VU": "0"}
 
     # TODO: Add support for parsing traps, interrupts, and VM signals
 
