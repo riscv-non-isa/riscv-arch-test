@@ -2639,6 +2639,7 @@ excpt_\__MODE__\()hndlr_tbl:
     1:
         la      T2, resto_\__MODE__\()rtn
         jr      T2
+#endif
 \__MODE__\()clr_Lcofi_int:                           // Local counter-overflow interrupt (Sscofpmf), cause 13
         .ifc \__MODE__ , M
             li T2, (1<<13)
