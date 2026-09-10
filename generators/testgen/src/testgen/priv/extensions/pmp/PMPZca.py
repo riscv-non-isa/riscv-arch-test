@@ -266,9 +266,8 @@ def _make_zc_chunk(test_data: TestData, subset: str) -> TestChunk:
     chunk.section_header = comment_banner("cp_cfg_RW", _ZC_TEST_CASES[subset])
     generator = {"zcb": gen_zcb, "zcd": gen_zcd, "zcf": gen_zcf}[subset]
     chunk.code.extend(lxwr_walk_body(test_data, LOCKED_LXWR_CASES, "napot", generator, "cp_cfg_RW"))
-    # Two c.nops per .rept word: these tests build with Zca, so a bare `nop` would
-    # compress to 2 bytes and leave the region half a PMP grain short, letting the
-    # locked region cover the trap handler's data (see _make_legal_chunk).
+    # Two c.nops per .rept word: these tests build with Zca, where a bare `nop` compresses
+    # to 2 bytes and leaves the region half a PMP grain short (see _make_legal_chunk).
     chunk.raw_data.extend(make_exec_region((TOR_REGION_WORDS, "c.nop\nc.nop")))
     return test_data.end_test_chunk()
 
