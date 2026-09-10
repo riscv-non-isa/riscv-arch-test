@@ -288,11 +288,9 @@ def _gen_vsetvl_rs2_vill(test_data: TestData, temp_reg: int) -> list[str]:
     lines.append(f"LI(x{msb_reg}, 0x8000000000000000)")
     lines.append("#endif")
     for sew_name, sew_v in _SEW_VALUES:
-        # Clear vill with the config's smallest supported SEW and lmul=1, which is legal
-        # everywhere. A sweep of several SEWs would not work: each vsetvl overwrites the
-        # previous, so only the final vtype survives, and ending on an SEW the part does
-        # not implement leaves vill set and makes the coverpoint's vtype_prev_vill_clear
-        # term unreachable.
+        # Clear vill with the config's smallest supported SEW and LMUL=1. Sweeping several
+        # SEWs would not work: only the last vsetvl survives, and ending on an unsupported
+        # SEW leaves vill set.
         lines.append("#if UDB_SEW_MIN == 8")
         lines.append(f"LI(x{rs2_reg}, 0x00)  # SEW=8, LMUL=1")
         lines.append("#elif UDB_SEW_MIN == 16")
