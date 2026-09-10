@@ -169,19 +169,12 @@ def generate_ecall_tests(
 def generate_illegal_instruction_tests(test_data: TestData, covergroup: str) -> list[str]:
     """Illegal-instruction traps from two reserved 32-bit encodings.
 
-    The all-zero word is deliberate, and so is the .p2align 2 in front of it. Both
-    encodings advance execution by exactly 4 bytes whether or not the DUT implements
-    Zca, which is what lets this generator serve every configuration:
-
-    - Without Zca the handler adds 4 unconditionally (IALIGN=32), so 0x00000000 traps
-      once and resumes at the next instruction.
-    - With Zca the handler re-fetches the halfword at xEPC and advances by its width
-      (rvtest_trap_handler.h, adj_epc_rtn). 0x0000 is a reserved illegal compressed
-      encoding, so the word traps twice, at A and again at A+2, and resumes at A+4.
-
-    The extra trap record is harmless: TRAP_SIGUPD_COUNT is a capacity bound checked
-    only for overflow, and the reference signature is regenerated per configuration, so
-    each DUT is compared against a reference with its own record count.
+    The all-zero word and its .p2align 2 are deliberate: both encodings advance execution
+    by exactly 4 bytes with or without Zca, which is what lets this generator serve every
+    configuration. Without Zca the handler adds 4 unconditionally (IALIGN=32) and the word
+    traps once; with Zca it advances by the width of the halfword at xEPC
+    (rvtest_trap_handler.h, adj_epc_rtn), so the reserved 0x0000 compressed encoding traps
+    twice, at A and again at A+2, before resuming at A+4.
 
     Do not "fix" this to the 2-byte .insn 0x00 that ExceptionsZc uses. That suite
     requires Zca, so it always has IALIGN=16; here a 2-byte hole would leave every
