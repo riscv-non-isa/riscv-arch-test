@@ -8,7 +8,13 @@
 
 """Unprivileged floating-point fcsr tests generator."""
 
-from testgen.asm.csr import csr_access_test, csr_walk_test, gen_csr_read_sigupd, gen_csr_write_sigupd
+from testgen.asm.csr import (
+    csr_access_test,
+    csr_walk_test,
+    frm_reserved_fields,
+    gen_csr_read_sigupd,
+    gen_csr_write_sigupd,
+)
 from testgen.asm.helpers import comment_banner, load_float_reg, write_sigupd
 from testgen.constants import INDENT
 from testgen.data.state import TestData
@@ -52,13 +58,15 @@ def _generate_fcsr_walk(test_data: TestData) -> list[str]:
         )
     ]
 
-    csrf = [("fcsr", None), ("fflags", None), ("frm", None)]
-
     # frm 5-7 are reserved: the walk writes them, so those iterations check only that
-    # the field holds a legal rounding mode
-    FRM_RESERVED = {"fcsr": [("frm", 5, 3, v) for v in (5, 6, 7)], "frm": [("frm", 0, 3, v) for v in (5, 6, 7)]}
-    for csr in csrf:
-        lines.extend(csr_walk_test(test_data, csr, covergroup, coverpoint, warl_fields=FRM_RESERVED.get(csr[0])))
+    # the field holds a legal rounding mode.
+    walks = [
+        (("fcsr", None), frm_reserved_fields(5)),
+        (("fflags", None), None),
+        (("frm", None), frm_reserved_fields(0)),
+    ]
+    for csr, warl_fields in walks:
+        lines.extend(csr_walk_test(test_data, csr, covergroup, coverpoint, warl_fields=warl_fields))
 
     return lines
 

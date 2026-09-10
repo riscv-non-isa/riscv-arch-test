@@ -8,7 +8,7 @@
 
 """UF privileged extension test generator."""
 
-from testgen.asm.csr import csr_access_test, csr_walk_test
+from testgen.asm.csr import csr_access_test, csr_walk_test, frm_reserved_fields
 from testgen.asm.helpers import comment_banner
 from testgen.data.state import TestData
 from testgen.data.test_chunk import TestChunk
@@ -47,10 +47,14 @@ def _generate_ufcsr_tests(test_data: TestData) -> list[str]:
     )
 
     # frm 5-7 are reserved: the walk writes them, so those iterations check only that
-    # the field holds a legal rounding mode
-    FRM_RESERVED = {"fcsr": [("frm", 5, 3, v) for v in (5, 6, 7)], "frm": [("frm", 0, 3, v) for v in (5, 6, 7)]}
-    for csr in csrf:
-        lines.extend(csr_walk_test(test_data, csr, covergroup, coverpoint, warl_fields=FRM_RESERVED.get(csr[0])))
+    # the field holds a legal rounding mode.
+    walks = [
+        (("fcsr", None), frm_reserved_fields(5)),
+        (("frm", None), frm_reserved_fields(0)),
+        (("fflags", None), None),
+    ]
+    for csr, warl_fields in walks:
+        lines.extend(csr_walk_test(test_data, csr, covergroup, coverpoint, warl_fields=warl_fields))
 
     return lines
 
