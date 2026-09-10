@@ -294,6 +294,7 @@ covergroup Smstateen_cg with function sample(ins_t ins);
 `endif
 
 
+`ifdef SSSTATEEN_SUPPORTED
     // Only sstateen0 is gated by mstateen0.SE0 in this suite; sstateen1-3 are
     // exercised from the Ssstateen suite instead.
     sstateen0_csr: coverpoint ins.current.insn[31:20] {
@@ -312,10 +313,13 @@ covergroup Smstateen_cg with function sample(ins_t ins);
                 bins se0_enabled  = {1'b1};
         }
     `endif
+`endif
 
     cp_csr_illegal_accesses: cross priv_mode_maybes_u, mstateen_csrs, csrops;
     cp_walking_ones: cross priv_mode_m, mstateen_walk_csrs, csrops, csr_walk;
+`ifdef SSSTATEEN_SUPPORTED
     cp_mstateen0_se0_controls_sstateen0: cross csrops, priv_mode_s, se0, sstateen0_csr;
+`endif
 
 `ifdef ZFINX_SUPPORTED
     cp_fcsr: cross misa_F, priv_mode_m, mstateen0_fcsr_bit, csrops, fscr_csr {

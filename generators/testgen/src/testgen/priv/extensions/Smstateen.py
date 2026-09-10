@@ -750,12 +750,12 @@ def make_smstateen(test_data: TestData) -> list[TestChunk]:
     test_chunks.append(test_data.end_test_chunk())
 
     # mstateen0.SE0 gating of sstateen0, kept in its own chunk so it lands in its own file.
-    # The accesses run in S-mode, which Smstateen alone does not imply.
+    # sstateen0 only exists under Ssstateen, which also implies S-mode.
     tc = test_data.begin_test_chunk()
-    tc.code.append("#ifdef S_SUPPORTED")
+    tc.code.append("#ifdef SSSTATEEN_SUPPORTED")
     tc.code.extend(_generate_se0_controls_sstateen0(test_data, se0=0))
     tc.code.extend(_generate_se0_controls_sstateen0(test_data, se0=1))
-    tc.code.append("#endif  // S_SUPPORTED")
+    tc.code.append("#endif  // SSSTATEEN_SUPPORTED")
     test_chunks.append(test_data.end_test_chunk())
 
     return test_chunks
