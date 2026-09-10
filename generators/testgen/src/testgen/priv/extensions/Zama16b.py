@@ -103,6 +103,19 @@ _AMO_OPS: list[tuple[str, int, str]] = [
 _SCRATCH_INIT_WORDS = [0x44556677, 0x00112233, 0x89ABCDEF, 0x01234567]
 
 
+_SCRATCH_BYTES = b"".join(w.to_bytes(4, "little") for w in _SCRATCH_INIT_WORDS)
+
+
+def _scratch_operand(offset: int, size: int) -> list[int]:
+    """Value the scratch pattern holds at [offset, offset+size), low register first."""
+    raw = int.from_bytes(_SCRATCH_BYTES[offset : offset + size], "little")
+    if size == 16:
+        return [raw & ((1 << 64) - 1), raw >> 64]
+    if size == 4 and raw >> 31:
+        raw -= 1 << 32  # amocas.w compares a sign-extended word
+    return [raw]
+
+
 def _emit_scratch_init(base_reg: int, data_reg: int) -> list[str]:
     """Re-initialize the 16-byte scratch region with a known distinct pattern."""
     out = [f"LA(x{base_reg}, scratch)   # reload base — init 16-byte region"]
@@ -328,16 +341,29 @@ def _generate_amo_tests(test_data: TestData) -> list[str]:
             lines.extend(_emit_scratch_init(base_reg, src_reg))
 
             # Compute effective address after re-init
-            lines.extend(
+            setup = [
+                f"addi x{addr_reg}, x{base_reg}, {offset}   # effective address = base + {offset}",
+                f"LI(x{src_reg}, 0xABC)                      # value AMO will write into memory",
+            ]
+            if size == 16:
+                setup.append(f"LI(x{src_reg + 1}, 0xDEF)                  # upper half of the 128-bit source")
+            if mnemonic.startswith("amocas"):
+                # amocas compares rd against memory, so preload it with the scratch
+                # pattern; otherwise the compare fails and nothing is written
+                for k, value in enumerate(_scratch_operand(offset, size)):
+                    setup.append(f"LI(x{dest_reg + k}, {value:#x})   # amocas compare operand")
+            setup.extend(
                 [
-                    f"addi x{addr_reg}, x{base_reg}, {offset}   # effective address = base + {offset}",
-                    f"LI(x{src_reg}, 0xABC)                      # value AMO will write into memory",
                     test_data.add_testcase(f"{bin_name}_off{offset}", coverpoint, covergroup),
                     f"{mnemonic} x{dest_reg}, x{src_reg}, (x{addr_reg})",
                 ]
             )
+            lines.extend(setup)
 
-            # Dump all 16 bytes to signature — shows exactly which bytes the AMO touched
+            # Sign the old memory value the AMO returned, then all 16 bytes of scratch
+            lines.append(write_sigupd(dest_reg, test_data))
+            if size == 16:
+                lines.append(write_sigupd(dest_reg + 1, test_data))
             lines.extend(_emit_sig_dump(base_reg, dest_reg, test_data))
 
     if prev_guard is not None:
