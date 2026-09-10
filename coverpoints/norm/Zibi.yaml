@@ -39,11 +39,13 @@ normative_rule_definitions:
   # An instruction-address-misaligned exception is generated only when the
   # branch condition is true and its target is not IALIGN-bit aligned. Zibi
   # follows the general conditional-branch exception behavior, which is tested
-  # in M-mode for both taken and not-taken branches.
+  # in M-, S-, and U-mode for both taken and not-taken branches.
   - name: zibi_misaligned_exception
     coverpoint:
       [
         "ExceptionsSm_cg/{cp_instr_adr_misaligned_zibi_branch, cp_instr_adr_misaligned_zibi_branch_nottaken}",
+        "ExceptionsS_cg/{cp_instr_adr_misaligned_zibi_branch, cp_instr_adr_misaligned_zibi_branch_nottaken}",
+        "ExceptionsU_cg/{cp_instr_adr_misaligned_zibi_branch, cp_instr_adr_misaligned_zibi_branch_nottaken}",
       ]
 
   # BEQI branches when rs1 equals the XLEN-bit comparison constant decoded
