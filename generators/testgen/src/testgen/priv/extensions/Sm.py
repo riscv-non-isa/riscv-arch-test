@@ -461,12 +461,12 @@ def _add_deleg_alias(r1: int, r2: int, coverpoint: str, covergroup: str, test_da
         "csrw mip, zero",
         *read("sip", "sip_readback_zero", "sip reads zero"),
         *read("sie", "sie_readback_zero", "sie reads zero"),
-        f"csrw mip, x{r1} # set all interrupts in mip",
+        f"csrw mip, x{r1} # set all writable interrupts in mip",
         *read("sip", "sip_readback_zero_masked", "sip reads zero because nothing is delegated"),
         "csrw sip, zero # ignored because nothing is delegated",
         *read("mip", "mip_readback_nonzero_masked", "mip keeps its value because the sip write is ignored"),
         "csrw mip, zero",
-        f"csrw mie, x{r1} # set all interrupts in mie",
+        f"csrw mie, x{r1} # set all writable interrupts in mie",
         *read("sie", "sie_readback_zero_masked", "sie reads zero because nothing is delegated"),
         "csrw sie, zero # ignored because nothing is delegated",
         *read("mie", "mie_readback_nonzero_masked", "mie keeps its value because the sie write is ignored"),
@@ -478,7 +478,7 @@ def _add_deleg_alias(r1: int, r2: int, coverpoint: str, covergroup: str, test_da
         f"csrw mip, x{r1} # set all interrupts in mip",
         *read("sip", "sip_readback_nonzero", "sip reads the delegated bits"),
         "csrw sip, zero # clears SSIP and LCOFIP; STIP and SEIP are read-only in sip",
-        *read("mip", "mip_readback_partiallyzero", "mip keeps STIP and SEIP"),
+        *read("mip", "mip_readback_partiallyzero", "mip typically keeps STIP and SEIP"),
         f"csrw mie, x{r1} # set all interrupts in mie",
         *read("sie", "sie_readback_nonzero_deleg", "sie reads the delegated bits"),
         "csrw sie, zero # clears every delegated S-level enable",
@@ -488,8 +488,20 @@ def _add_deleg_alias(r1: int, r2: int, coverpoint: str, covergroup: str, test_da
         f"csrw mip, x{r1} # set all interrupts in mip",
         f"csrw mie, x{r1} # set all interrupts in mie",
     ]
-    # Test all delegation bits individually. Machine mode bits should be read-only in mideleg and thus have no effect.
-    for name, bit in [("SSI", 1), ("STI", 5), ("SEI", 9), ("LCOFI", 13), ("MSI", 3), ("MTI", 7), ("MEI", 11)]:
+    # Test all delegation bits individually. Machine mode bits are usually but not necessarily read-only in mideleg and thus have no effect.
+    # https://github.com/riscv/riscv-isa-manual/issues/153
+    for name, bit in [
+        ("SSI", 1),
+        ("STI", 5),
+        ("SEI", 9),
+        ("LCOFI", 13),
+        ("MSI", 3),
+        ("MTI", 7),
+        ("MEI", 11),
+        ("VSSI", 2),
+        ("VSTI", 6),
+        ("VSEI", 10),
+    ]:
         lines += [
             f"LI(x{r1}, {1 << bit:#x})",
             f"csrw mideleg, x{r1} # delegate only {name}",
