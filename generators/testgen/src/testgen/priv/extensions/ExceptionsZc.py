@@ -83,18 +83,13 @@ def _add_store_test(
     is_sp = op.endswith("sp")
     t_lines = []
 
-    # Prime the readback window with a sentinel distinct from the value about to be
-    # stored, so every testcase starts from a known state. Without this, a store whose
-    # source happens to equal what a previous testcase left behind (the sp variants at
-    # offset 0) would be indistinguishable from no store at all.
+    # Prime the readback window so a store that never happened is distinguishable from a
+    # correct one, which it is not when the source matches what a previous testcase left.
     t_lines.append(f"LA(x{addr_reg}, scratch)")
     t_lines.append(f"LI(x{base_reg}, {_PRIME_SENTINEL | offset:#x})")
     t_lines.extend(f"sw x{base_reg}, {word_off}(x{addr_reg})" for word_off in range(0, _READBACK_BYTES, 4))
 
-    # Initialize store register to a known value before setting up address. The float
-    # source must come from outside the readback window below: sourcing it from
-    # scratch+0 makes the offset-0 store write back the bytes it just read, so a DUT
-    # that performed no store at all would be indistinguishable from a correct one.
+    # Initialize store register to a known value before setting up address
     if is_float:
         t_lines.append(f"LA(x{addr_reg}, scratch)")
         t_lines.append(f"addi x{addr_reg}, x{addr_reg}, {_FLOAT_SRC_OFFSET}")
