@@ -22,9 +22,8 @@ _VS_MASK = 3 << 9  # mstatus.VS = bits [10:9]
 def _check_vset(rd_reg: int, check_reg: int, test_data: TestData) -> list[str]:
     """Commit what a vset* produced: the vl written to rd, and the resulting vtype.
 
-    Given the config's VLEN, ELEN and SEW_MIN the spec fully determines both, so they are
-    exact checks rather than WARL noise: an illegal request yields vill=1 with the rest of
-    vtype zero, and vl follows from the AVL and VLMAX.
+    The config's VLEN, ELEN and SEW_MIN fully determine both, so these are exact checks
+    rather than WARL noise.
     """
     return [
         write_sigupd(rd_reg, test_data),
@@ -170,9 +169,8 @@ def _gen_misa_v(test_data: TestData, temp_reg: int) -> list[str]:
     lines.append(f"LI(x{temp_reg}, 0x200000)  # misa.V")
     lines.append(test_data.add_testcase("misa_v_csrrc", coverpoint, _CG))
     lines.append(f"csrc misa, x{temp_reg}")
-    # No signature word here: misa's extension bits are WARL and whether V can be
-    # disabled is implementation-defined, so the value after the clear is not
-    # architecturally determined. Sail keeps V set; QEMU clears it. Both conform.
+    # No signature word here: whether misa.V can be cleared is implementation-defined
+    # (Sail keeps V set, QEMU clears it), so the value after the clear is not determined.
     lines.append(test_data.add_testcase("misa_v_csrrs", coverpoint, _CG))
     lines.append(f"csrs misa, x{temp_reg}")
     # After the set, V must read 1 on any machine that implements V, whether or not the
@@ -220,9 +218,8 @@ def _gen_sew_lmul_vset_i_vli(test_data: TestData, temp_reg: int) -> list[str]:
     lines.append(f"LI(x{rs1_reg}, 1)  # vl = 1")
     for sew_name, _ in _SEW_VALUES:
         for lmul_name, _ in _LMUL_VALUES:
-            # The coverpoint reads SEW/LMUL from ins.prev.insn, so each testcase needs a
-            # vset with the same SEW/LMUL immediately before it. Use ta,ma and a different
-            # AVL so the testcase instruction still changes vtype and vl observably.
+            # The coverpoint reads SEW/LMUL from ins.prev.insn, so prime it with a matching
+            # vset; ta,ma and a different AVL keep the testcase's own effect observable.
             lines.append(f"vsetvli x{temp_reg}, x0, {sew_name}, {lmul_name}, ta, ma  # prime prev.insn")
             lines.append(test_data.add_testcase(f"vsetvli_{sew_name}_{lmul_name}", coverpoint, _CG))
             lines.append(f"vsetvli x{temp_reg}, x{rs1_reg}, {sew_name}, {lmul_name}, tu, mu")

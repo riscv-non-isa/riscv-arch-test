@@ -128,10 +128,8 @@ def _gen_fs_state_nonaffecting(test_data: TestData, temp_reg: int) -> list[str]:
             lines.append(test_data.add_testcase(f"vfadd_{name}_fs{fs}", coverpoint, _CG))
             # vfadd.vv vd, vs2, vs1  — operand order: result = vs2 + vs1
             lines.append(f"vfadd.vv v3, {vs2_reg}, {vs1_reg}")
-            # All four operand patterns are exact, so no flag may be raised. That is the
-            # evidence no FP state moved. mstatus.FS is deliberately not committed: an
-            # instruction that does not deterministically update FP state may legally
-            # leave FS alone or dirty it, which is why SmF.py skips those cases too.
+            # All four patterns are exact, so no flag may be raised: that is the evidence
+            # no FP state moved. FS is not committed; it may legally stay or go dirty.
             lines.append(write_sigupd(None, test_data, "fflags"))
     return lines
 
