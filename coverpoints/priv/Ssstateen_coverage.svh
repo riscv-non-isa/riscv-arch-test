@@ -24,11 +24,10 @@ covergroup Ssstateen_cg with function sample(ins_t ins);
     sstateen_walk_csr: coverpoint ins.current.insn[31:20] {
             bins sstateen0 = {CSR_SSTATEEN0};
     }
+    // Ssstateen implies S-mode, so both bins are always reachable.
     priv_mode_maybes_u: coverpoint {ins.prev.mode_virt, ins.prev.mode} {
             bins U_mode = {3'b000};
-            `ifdef S_SUPPORTED
-                    bins S_mode = {3'b001};
-            `endif
+            bins S_mode = {3'b001};
     }
 
     `ifdef UDB_MXLEN_64

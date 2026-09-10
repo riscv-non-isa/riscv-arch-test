@@ -23,19 +23,15 @@ MSTATEEN_CSRS_H = ["mstateen0h", "mstateen1h", "mstateen2h", "mstateen3h"]
 CSR_OPS = ["csrrw", "csrrs", "csrrc", "csrr"]
 
 
-# RVTEST mode-switch macros, emitted as plain assembly (see other priv generators).
-GOTO_UMODE = "RVTEST_TSBI_GOTO_UMODE  # enter U-mode"
-GOTO_SMODE = "RVTEST_TSBI_GOTO_SMODE  # enter S-mode"
-GOTO_MMODE = "RVTEST_TSBI_GOTO_MMODE  # return to M-mode"
 IN_MMODE = f"{INDENT}# already in M-mode"  # M-mode is the default; just a marker comment
 
 # Mode dispatch for the priv_mode_m_maybes_u coverpoints. Each entry is
 # (label, line that switches into the mode, whether an S_SUPPORTED guard is needed).
-# GOTO_MMODE returns from any lower mode. Lower-mode-only coverpoints slice [1:].
+# RVTEST_TSBI_GOTO_MMODE returns from any lower mode. Lower-mode-only coverpoints slice [1:].
 _MODES_MUS = [
     ("mmode", IN_MMODE, False),
-    ("umode", GOTO_UMODE, False),
-    ("smode", GOTO_SMODE, True),
+    ("umode", "RVTEST_TSBI_GOTO_UMODE", False),
+    ("smode", "RVTEST_TSBI_GOTO_SMODE", True),
 ]
 
 
@@ -67,7 +63,7 @@ def _generate_csr_illegal_accesses(test_data: TestData) -> list[str]:
     temp_reg = test_data.int_regs.get_register()
 
     # ── U-mode ──────────────────────────────────────────────────────────────
-    lines.append(GOTO_UMODE)
+    lines.append("RVTEST_TSBI_GOTO_UMODE")
 
     for csr in MSTATEEN_CSRS_64:
         for op in CSR_OPS:
@@ -91,11 +87,11 @@ def _generate_csr_illegal_accesses(test_data: TestData) -> list[str]:
             )
     lines.append("#endif  // __riscv_xlen == 32")
 
-    lines.append(GOTO_MMODE)
+    lines.append("RVTEST_TSBI_GOTO_MMODE")
 
     # ── S-mode ──────────────────────────────────────────────────────────────
     lines.append("#ifdef S_SUPPORTED")
-    lines.append(GOTO_SMODE)
+    lines.append("RVTEST_TSBI_GOTO_SMODE")
 
     for csr in MSTATEEN_CSRS_64:
         for op in CSR_OPS:
@@ -119,7 +115,7 @@ def _generate_csr_illegal_accesses(test_data: TestData) -> list[str]:
             )
     lines.append("#endif  // __riscv_xlen == 32")
 
-    lines.append(GOTO_MMODE)
+    lines.append("RVTEST_TSBI_GOTO_MMODE")
     lines.append("#endif  // S_SUPPORTED")
 
     test_data.int_regs.return_registers([temp_reg])
@@ -255,7 +251,7 @@ def _generate_bit_controlled(
                 lines.append("#else  // RV32")
                 lines.extend(emit_ops(csrs_rv32, state, mode_label))
                 lines.append("#endif  // __riscv_xlen")
-            lines.append(GOTO_MMODE)
+            lines.append("RVTEST_TSBI_GOTO_MMODE")
             if needs_guard:
                 lines.append("#endif  // S_SUPPORTED")
 
@@ -314,7 +310,7 @@ def _generate_jvt(test_data: TestData) -> list[str]:
                         _csr_insn(op, temp_reg, "jvt", ones_reg),
                     ]
                 )
-            lines.append(GOTO_MMODE)
+            lines.append("RVTEST_TSBI_GOTO_MMODE")
         if needs_guard:
             lines.append("#endif  // S_SUPPORTED")
 
@@ -485,7 +481,7 @@ def _generate_fcsr_lower(test_data: TestData) -> list[str]:
                             _csr_insn(op, temp_reg, csr, ones_reg),
                         ]
                     )
-            lines.append(GOTO_MMODE)
+            lines.append("RVTEST_TSBI_GOTO_MMODE")
         if needs_guard:
             lines.append("#endif  // S_SUPPORTED")
 
@@ -544,7 +540,7 @@ def _generate_fcsr_lower_fp_instrs(test_data: TestData) -> list[str]:
                         insn,
                     ]
                 )
-            lines.append(GOTO_MMODE)
+            lines.append("RVTEST_TSBI_GOTO_MMODE")
         if needs_guard:
             lines.append("#endif  // S_SUPPORTED")
 
@@ -578,8 +574,7 @@ def _generate_se0_controls_sstateen0(test_data: TestData, *, se0: int) -> list[s
     The subject is the M-mode control bit, which is why this lives in Smstateen rather
     than Ssstateen. The accesses themselves run in S-mode to hit the priv_mode_s bin.
     """
-    state_word = "one" if se0 else "zero"
-    coverpoint = f"cp_mstateen0_se0_{state_word}_controls_sstateen0"
+    coverpoint = "cp_mstateen0_se0_controls_sstateen0"
     detail = "SE0=1 (access permitted)" if se0 else "SE0=0 (should trap)"
 
     lines = [comment_banner(coverpoint, f"CSR ops to sstateen0 from S-mode with mstateen0.{detail}")]
@@ -597,7 +592,7 @@ def _generate_se0_controls_sstateen0(test_data: TestData, *, se0: int) -> list[s
         ]
     )
     lines.extend(_write_se0(temp_reg, enable=bool(se0)))
-    lines.append(GOTO_SMODE)
+    lines.append("RVTEST_TSBI_GOTO_SMODE")
 
     for op in CSR_OPS:
         insn = f"{op} x{temp_reg}, sstateen0" if op == "csrr" else f"{op} x{temp_reg}, sstateen0, x{ones_reg}"
@@ -611,7 +606,7 @@ def _generate_se0_controls_sstateen0(test_data: TestData, *, se0: int) -> list[s
 
     lines.extend(
         [
-            GOTO_MMODE,
+            "RVTEST_TSBI_GOTO_MMODE",
             "",
             f"csrw sstateen0, x{save_sstateen}  # restore sstateen0",
             f"csrw mstateen0, x{save_mstateen}  # restore mstateen0",
@@ -755,9 +750,12 @@ def make_smstateen(test_data: TestData) -> list[TestChunk]:
     test_chunks.append(test_data.end_test_chunk())
 
     # mstateen0.SE0 gating of sstateen0, kept in its own chunk so it lands in its own file.
+    # The accesses run in S-mode, which Smstateen alone does not imply.
     tc = test_data.begin_test_chunk()
+    tc.code.append("#ifdef S_SUPPORTED")
     tc.code.extend(_generate_se0_controls_sstateen0(test_data, se0=0))
     tc.code.extend(_generate_se0_controls_sstateen0(test_data, se0=1))
+    tc.code.append("#endif  // S_SUPPORTED")
     test_chunks.append(test_data.end_test_chunk())
 
     return test_chunks
