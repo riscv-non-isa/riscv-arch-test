@@ -27,17 +27,14 @@ def _generate_lcofi_sip_u_tests(test_data: TestData) -> list[str]:
         comment_banner(
             coverpoint,
             "Interrupt pending and enable, mode = U.\n"
-            "mideleg.LCOFI=1 and sstatus.SIE=0 held fixed; sweep sip.LCOFIP x sie.LCOFIE.\n"
+            "mideleg.LCOFI=1 (from the boot setup) and sstatus.SIE=0 held fixed;\n"
+            "sweep sip.LCOFIP x sie.LCOFIE.\n"
             "Sample point is the T-SBI delegate's sret back to U (sstatus.SPP=0).\n",
         ),
         "",
         _csr_access("csrw mip, zero      # clear all pending", "U"),
         _csr_access("csrw mie, zero      # disable all interrupts", "U"),
         _csr_access("csrw RVMODEL_MHPMEVENT, zero", "U"),
-        f"LI(x{r_val}, {hex(LCOFI_BIT)})",
-        "RVTEST_TSBI_GOTO_MMODE",
-        f"csrs mideleg, x{r_val}   # mideleg.LCOFI = 1 ",
-        "RVTEST_TSBI_GOTO_UMODE",
         f"LI(x{r_val}, {hex(SIE_BIT)})",
         _csr_access(f"csrc sstatus, x{r_val}   # sstatus.SIE = 0 ", "U"),
     ]
@@ -82,9 +79,6 @@ def _generate_lcofi_sip_u_tests(test_data: TestData) -> list[str]:
             f"LI(x{r_temp}, {hex(LCOFI_BIT)})",
             _csr_access(f"csrc sip, x{r_temp}      # clear LCOFIP", "U"),
             _csr_access(f"csrc sie, x{r_temp}      # clear LCOFIE", "U"),
-            "RVTEST_TSBI_GOTO_MMODE",
-            f"csrc mideleg, x{r_temp}  # clear mideleg.LCOFI",
-            "RVTEST_TSBI_GOTO_UMODE",
             f"LI(x{r_val}, {hex(SIE_BIT)})",
             _csr_access(f"csrc sstatus, x{r_val}   # clear sstatus.SIE", "U"),
             _csr_access("csrw RVMODEL_MHPMCOUNTER, zero", "U"),

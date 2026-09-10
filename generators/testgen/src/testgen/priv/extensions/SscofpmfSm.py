@@ -149,7 +149,7 @@ def _generate_lcofip_priority_sm_tests(test_data: TestData) -> list[str]:
         )
 
         if other_int == "meip":
-            lines.append("RVTEST_SET_MEXT_INT")
+            lines.append("RVTEST_SET_MEXT_INT_M")
 
         elif other_int == "mtip":
             lines.extend(
@@ -162,7 +162,7 @@ def _generate_lcofip_priority_sm_tests(test_data: TestData) -> list[str]:
             )
 
         elif other_int == "msip":
-            lines.append("RVTEST_SET_MSW_INT")
+            lines.append("RVTEST_SET_MSW_INT_M")
 
         lines.extend(
             [
@@ -192,7 +192,7 @@ def _generate_lcofip_priority_sm_tests(test_data: TestData) -> list[str]:
         )
 
         if other_int == "meip":
-            lines.append("RVTEST_CLR_MEXT_INT")
+            lines.append("RVTEST_CLR_MEXT_INT_M")
 
         elif other_int == "mtip":
             lines.extend(
@@ -203,7 +203,7 @@ def _generate_lcofip_priority_sm_tests(test_data: TestData) -> list[str]:
             )
 
         elif other_int == "msip":
-            lines.append("RVTEST_CLR_MSW_INT")
+            lines.append("RVTEST_CLR_MSW_INT_M")
 
         lines.extend(
             [
