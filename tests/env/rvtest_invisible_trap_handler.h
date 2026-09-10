@@ -47,10 +47,19 @@
         // Action 0 indicates no custom emulation was done.
         beqz    T4, invisible_Mcustom_done
 
-      // An invalid action is an integration error; take the normal trap path.
-      li      T5, CAUSE_ILLEGAL_INSTRUCTION
-      j       invisible_Mnormal_trap
-    invisible_Mcustom_done:
+      // An invalid action is an integration error. Report it and stop the test.
+      invisible_Minvalid_action:
+        LA(a0, invisible_Minvalid_action_str)
+        call    rvmodel_io_write_str
+        mv      a0, T4
+        li      a1, UDB_MXLEN
+        call    failedtest_hex_to_str
+        LA(a0, ascii_buffer)
+        call    rvmodel_io_write_str
+        LA(a0, failstr)
+        call    rvmodel_io_write_str
+        call    rvmodel_halt_fail
+      invisible_Mcustom_done:
     #endif
 
   #ifdef RVTEST_EMULATE_TIME_CSR
