@@ -10,6 +10,7 @@
 
 from testgen.asm.csr import csr_access_test, csr_walk_test, gen_csr_read_sigupd, gen_csr_write_sigupd
 from testgen.asm.helpers import comment_banner, write_sigupd
+from testgen.asm.tsbi import tsbi_call
 from testgen.constants import INDENT
 from testgen.data.state import TestData
 from testgen.data.test_chunk import TestChunk
@@ -413,6 +414,30 @@ def _generate_scsr_tests(test_data: TestData, test_chunks: list[TestChunk]) -> N
     csr_ro_write_tests(test_data, test_chunks, covergroup, [range(0xC00, 0xF00)], "scsr_ro")
 
 
+def _generate_sfence_tvm_tests(test_data: TestData) -> list[str]:
+    """sfence.vma from S-mode: legal with mstatus.TVM=0, illegal instruction with TVM=1."""
+    covergroup = "S_sprivinst_cg"
+    coverpoint = "cp_sfence_tvm"
+    tvm_reg = test_data.int_regs.get_register()
+
+    lines = [
+        comment_banner(
+            coverpoint,
+            "sfence.vma executed in S-mode with mstatus.TVM clear (permitted)\nand set (illegal instruction)",
+        ),
+        f"LI(x{tvm_reg}, {1 << 20:#x})   # mstatus.TVM",
+        tsbi_call(f"csrc mstatus, x{tvm_reg}"),
+        test_data.add_testcase("sfence_vma_tvm0", coverpoint, covergroup),
+        "sfence.vma    # permitted: TVM is clear",
+        tsbi_call(f"csrs mstatus, x{tvm_reg}"),
+        test_data.add_testcase("sfence_vma_tvm1", coverpoint, covergroup),
+        "sfence.vma    # traps: TVM is set",
+        tsbi_call(f"csrc mstatus, x{tvm_reg}"),
+    ]
+    test_data.int_regs.return_registers([tvm_reg])
+    return lines
+
+
 @add_priv_test_generator(
     "S",
     required_extensions=["S"],
@@ -426,13 +451,14 @@ def make_s(test_data: TestData) -> list[TestChunk]:
     tc.code.extend(_generate_srets_tests(test_data))
     tc.code.extend(_generate_scause_tests(test_data))
     tc.code.extend(_generate_sstatus_sd_tests(test_data))
+    tc.code.extend(_generate_sfence_tvm_tests(test_data))
     tc.code.extend(
         priv_inst_trap_tests(
             test_data,
             "S_sprivinst_cg",
             "cp_sprivinst",
             "Executing ecall and ebreak and mret should cause an exception",
-            ["ebreak", "mret", "sfence.vma"],
+            ["ebreak", "mret"],
         )
     )
 
