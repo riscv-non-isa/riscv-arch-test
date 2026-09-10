@@ -176,8 +176,8 @@ The mask ignores the `rd` field and CSR function bit 12.
 1:
 ----
 
-The built-in `time` emulation in `tests/env/rvtest_invisible_trap_handler.h` is a larger example.
-It checks the CSR instruction and counter permissions, reads `RVMODEL_MTIME_ADDRESS`, and returns the value through the same GPR write path as action 2.
+The built-in `RVTEST_INVISIBLE_TIME_HANDLER` macro in `tests/env/rvtest_invisible_trap_handler.h` uses the same interface and is a larger example.
+It checks the CSR instruction and counter permissions, reads `RVMODEL_MTIME_ADDRESS`, and returns the value with action 2.
 
 ==== RVMODEL_BOOT Requirements
 

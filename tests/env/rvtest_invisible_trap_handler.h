@@ -10,6 +10,58 @@
 // This handler fetches the trapped instruction, calls the DUT hook, and then
 // tries the framework time-CSR emulation. A handled instruction resumes without
 // a trap signature. An unhandled instruction returns to the normal trap path.
+
+.macro RVTEST_INVISIBLE_TIME_HANDLER PC_REG, INSTRUCTION_REG, ACTION_REG, DEST_REG, VALUE_REG
+  // Match CSRRS/CSRRC time reads with rs1/uimm equal to zero.
+  li      \VALUE_REG, INSN_FIELD_CSR | INSN_FIELD_RS1 | INSN_FIELD_OPCODE | (2 << 12)
+  and     \DEST_REG, \INSTRUCTION_REG, \VALUE_REG
+  li      \VALUE_REG, (CSR_TIME << 20) | (2 << 12) | 0x73
+  beq     \DEST_REG, \VALUE_REG, invisible_Mtime_check_access
+  #if UDB_MXLEN == 32
+    li      \VALUE_REG, (CSR_TIMEH << 20) | (2 << 12) | 0x73
+    bne     \DEST_REG, \VALUE_REG, invisible_Mtime_done
+  #else
+    j       invisible_Mtime_done
+  #endif
+
+  invisible_Mtime_check_access:
+    // Check counter permissions before emulating the missing CSR.
+    // TODO: Check hcounteren when H is supported.
+    csrr    \DEST_REG, mstatus
+    li      \VALUE_REG, MSTATUS_MPP
+    and     \DEST_REG, \DEST_REG, \VALUE_REG
+    beq     \DEST_REG, \VALUE_REG, invisible_Mtime_read    // If in M-mode, proceed to read the time CSR
+    csrr    \VALUE_REG, mcounteren
+    andi    \VALUE_REG, \VALUE_REG, MCOUNTEREN_TIME
+    beqz    \VALUE_REG, invisible_Mtime_done
+    #ifdef S_SUPPORTED
+      bnez    \DEST_REG, invisible_Mtime_read              // S-mode access only needs mcounteren.TIME
+      csrr    \VALUE_REG, scounteren
+      andi    \VALUE_REG, \VALUE_REG, MCOUNTEREN_TIME      // U-mode access also needs scounteren.TIME
+      beqz    \VALUE_REG, invisible_Mtime_done
+    #endif
+
+  invisible_Mtime_read:
+    li      \VALUE_REG, RVMODEL_MTIME_ADDRESS
+    #if UDB_MXLEN == 32
+      // timeh differs from time in CSR address bit 7, which is
+      // instruction bit 27. Convert that bit to byte offset 4 so timeh reads
+      // the high word at RVMODEL_MTIME_ADDRESS + 4.
+      srli    \DEST_REG, \INSTRUCTION_REG, 27
+      andi    \DEST_REG, \DEST_REG, 1
+      slli    \DEST_REG, \DEST_REG, 2
+      add     \VALUE_REG, \VALUE_REG, \DEST_REG
+      lw      \VALUE_REG, 0(\VALUE_REG)
+    #else
+      ld      \VALUE_REG, 0(\VALUE_REG)
+    #endif
+    // The CSR rd field uses the standard bits 11:7 location.
+    srli    \DEST_REG, \INSTRUCTION_REG, 7
+    andi    \DEST_REG, \DEST_REG, (INSN_FIELD_RD >> 7)
+    li      \ACTION_REG, 2
+  invisible_Mtime_done:
+.endm
+
 .macro RVTEST_INVISIBLE_TRAP_HANDLER_CODE
   invisible_Mhandler:
     // Reconstruct the illegal instruction.
@@ -28,84 +80,40 @@
   invisible_Minstruction_restore_status:
     csrw    mstatus, T4                      // restore mstatus
 
-  invisible_Mcustom:
-    // Give the model a chance to emulate the instruction first.
+  invisible_Memulate:
+    li      T3, 0
+    // T1=mepc and T2=instruction are read-only. T3=action, T4=destination GPR number, and T5=value.
     #ifdef RVMODEL_INVISIBLE_TRAP_HANDLER
-      li      T3, 0
-      // T1=mepc and T2=instruction are read-only. T3=action, T4=destination GPR number, and T5=value.
       RVMODEL_INVISIBLE_TRAP_HANDLER(T1, T2, T3, T4, T5)
-      // Action 0 indicates no custom emulation was done.
-      beqz    T3, invisible_Mcustom_done
-      // Action 1 means the model updated all architectural state directly.
-      addi    T3, T3, -1
-      beqz    T3, invisible_Mtrap_return
-      // Action 2 writes T5 to the GPR number in T4 before returning.
-      addi    T3, T3, -1
-      beqz    T3, invisible_Mwrite_gpr
-
-      // An invalid action is an integration error. Restore its value, report it, and stop the test.
-      addi    T3, T3, 2
-      invisible_Minvalid_action:
-        LA(a0, invisible_Minvalid_action_str)
-        call    rvmodel_io_write_str
-        mv      a0, T3
-        li      a1, UDB_MXLEN
-        call    failedtest_hex_to_str
-        LA(a0, ascii_buffer)
-        call    rvmodel_io_write_str
-        LA(a0, failstr)
-        call    rvmodel_io_write_str
-        call    rvmodel_halt_fail
-      invisible_Mcustom_done:
+      bnez    T3, invisible_Mdispatch
+    #endif
+    #ifdef RVTEST_EMULATE_TIME_CSR
+      RVTEST_INVISIBLE_TIME_HANDLER T1, T2, T3, T4, T5
     #endif
 
-  #ifdef RVTEST_EMULATE_TIME_CSR
-  invisible_Mtime:
-    // Match CSRRS/CSRRC time reads with rs1/uimm equal to zero.
-    LI(     T3, INSN_FIELD_CSR | INSN_FIELD_RS1 | INSN_FIELD_OPCODE | (2 << 12))
-    and     T4, T2, T3
-    LI(     T3, (CSR_TIME << 20) | (2 << 12) | 0x73)
-    beq     T4, T3, invisible_Mtime_check_access
-    #if UDB_MXLEN == 32
-      LI(     T3, (CSR_TIMEH << 20) | (2 << 12) | 0x73)
-      bne     T4, T3, invisible_Mnot_handled
-    #else
-      j       invisible_Mnot_handled
-    #endif
-    invisible_Mtime_check_access:
-      // Check counter permissions before emulating the missing CSR.
-      // TODO: Check hcounteren when H is supported.
-      csrr    T4, mstatus
-      LI(     T3, MSTATUS_MPP)
-      and     T4, T4, T3
-      beq     T4, T3, invisible_Mtime_read      // If in M-mode, proceed to read the time CSR
-      csrr    T3, mcounteren
-      andi    T3, T3, MCOUNTEREN_TIME           // mcounteren.TIME
-      beqz    T3, invisible_Mnot_handled
-      #ifdef S_SUPPORTED
-        bnez    T4, invisible_Mtime_read          // S-mode access only needs mcounteren.TIME
-        csrr    T3, scounteren
-        andi    T3, T3, MCOUNTEREN_TIME           // U-mode access also needs scounteren.TIME
-        beqz    T3, invisible_Mnot_handled
-      #endif
+  invisible_Mdispatch:
+    // Action 0 indicates no emulation was done.
+    beqz    T3, invisible_Mnot_handled
+    // Action 1 means the handler updated all architectural state directly.
+    addi    T3, T3, -1
+    beqz    T3, invisible_Mtrap_return
+    // Action 2 writes T5 to the GPR number in T4 before returning.
+    addi    T3, T3, -1
+    beqz    T3, invisible_Mwrite_gpr
 
-    invisible_Mtime_read:
-      LI(     T3, RVMODEL_MTIME_ADDRESS)
-      #if UDB_MXLEN == 32
-        // timeh differs from time in CSR address bit 7, which is
-        // instruction bit 27. Convert that bit to byte offset 4 so timeh reads
-        // the high word at RVMODEL_MTIME_ADDRESS + 4.
-        srli    T4, T2, 27
-        andi    T4, T4, 1
-        slli    T4, T4, 2
-        add     T3, T3, T4
-      #endif
-      LREG    T5, 0(T3)
-      // The CSR rd field uses the standard bits 11:7 location.
-      srli    T4, T2, 7
-      andi    T4, T4, (INSN_FIELD_RD >> 7)
-      j       invisible_Mwrite_gpr
-    #endif
+    // An invalid action is an integration error. Restore its value, report it, and stop the test.
+    addi    T3, T3, 2
+  invisible_Minvalid_action:
+    LA(a0, invisible_Minvalid_action_str)
+    call    rvmodel_io_write_str
+    mv      a0, T3
+    li      a1, UDB_MXLEN
+    call    failedtest_hex_to_str
+    LA(a0, ascii_buffer)
+    call    rvmodel_io_write_str
+    LA(a0, failstr)
+    call    rvmodel_io_write_str
+    call    rvmodel_halt_fail
 
   invisible_Mnot_handled:
     // Keep an unhandled instruction on the normal illegal-instruction path.
