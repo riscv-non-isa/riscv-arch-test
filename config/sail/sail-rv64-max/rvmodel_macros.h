@@ -130,16 +130,6 @@
   sw _R1, 0(_R2)            ; /* Clear SEXT interrupt */ \
 
 
-#define RVMODEL_SET_SSW_INT(_R1, _R2)        \
-  li _R1, (1 << 31) | (1 << 1);               \
-  li _R2, SIG_ADDRESS;    \
-  sw _R1, 0(_R2)            ; /* Set SSW interrupt */ \
-
-#define RVMODEL_CLR_SSW_INT(_R1, _R2)        \
-  li _R1, (1 << 1);               \
-  li _R2, SIG_ADDRESS;    \
-  sw _R1, 0(_R2)            ; /* Clear SSW interrupt */ \
-
 ##### Sscofpmf #####
 
 #define RVMODEL_MHPMEVENT   CSR_MHPMEVENT3

@@ -113,8 +113,8 @@
 
 ##### Sscofpmf #####
 
-#define RVMODEL_MHPMEVENT   mhpmevent3
-#define RVMODEL_MHPMCOUNTER mhpmcounter3
+#define RVMODEL_MHPMEVENT   CSR_MHPMEVENT3
+#define RVMODEL_MHPMCOUNTER CSR_MHPMCOUNTER3
 #define RVMODEL_MHPMEVENT_VAL 0x00000000  // will be updated once there is a way to increment counters
 #define RVMODEL_MHPMEVENT_CODE(_R1, _R2) \
     nop // will be updated once there is a way to increment counters
