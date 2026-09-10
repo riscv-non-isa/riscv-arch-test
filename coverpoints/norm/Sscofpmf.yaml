@@ -24,10 +24,11 @@ normative_rule_definitions:
       ["{SscofpmfSm_cg,SscofpmfS_cg,SscofpmfU_cg}/{cp_overflow_hw_only}"]
 
   - names: LCOFIP_op
-    coverpoint: ["SscofpmfS_cg/cp_lcofip_hw_only"]
+    coverpoint:
+      ["{SscofpmfSm_cg,SscofpmfS_cg,SscofpmfU_cg}/{cp_lcofip_hw_only}"]
 
   - name: scountovf_op
-    coverpoint: ["SscofpmfS_cg/cp_scountovf_shadow"]
+    coverpoint: ["{SscofpmfSm_cg,SscofpmfS_cg}/{cp_scountovf_shadow}"]
 
   - name: [scountovf_mmode_read_access, scountovf_smode_read_access]
     coverpoint: ["{SscofpmfSm_cg,SscofpmfS_cg}/{cp_scountovf_mcounteren}"]
@@ -46,7 +47,7 @@ normative_rule_definitions:
         mip_lcofip_acc,
         sip_sie_Sscofpmf,
       ]
-    coverpoint: ["{SscofpmfSm_cg,SscofpmfS_cg,SscofpmfU_cg}/{cp_lcofi}"]
+    coverpoint: ["SscofpmfSm_cg/cp_lcofi_m"]
 
   - name: sip_sie_Sscofpmf
     coverpoint: ["SscofpmfS_cg/cp_lcofi_sip_s"]
@@ -55,8 +56,10 @@ normative_rule_definitions:
     coverpoint: ["SscofpmfU_cg/cp_lcofi_sip_u"]
 
   - name: [intr_M_mode_pri, sip_sie_priority_bit_order]
-    coverpoint:
-      ["{SscofpmfSm_cg,SscofpmfS_cg,SscofpmfU_cg}/{cp_lcofip_priority}"]
+    coverpoint: ["SscofpmfSm_cg/cp_lcofip_priority_m"]
+
+  - name: [sip_sie_priority_bit_order]
+    coverpoint: ["SscofpmfS_cg/cp_lcofip_priority_s"]
 
   - name: scountovf_vsmode_read_access
     coverpoint: [""]
