@@ -135,5 +135,7 @@
   },
 
   "wfi_timeout": 200,
-  "mmode_perf_event_map": { "Load": 11 }
+  "mmode_perf_event_map": {
+    "Load": 11
+  }
 }
