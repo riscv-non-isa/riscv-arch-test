@@ -34,14 +34,22 @@ normative_rule_definitions:
   - name: scountovf_op
     coverpoint: ["{SscofpmfSm_cg,SscofpmfS_cg}/{cp_scountovf_shadow}"]
 
-  - names: [scountovf_mmode_read_access, scountovf_smode_read_access]
-    coverpoint: ["{SscofpmfSm_cg,SscofpmfS_cg}/{cp_scountovf_mcounteren}"]
+  - name: scountovf_mmode_read_access
+    coverpoint:
+      [
+        "SscofpmfSm_cg/cp_scountovf_mcounteren",
+        "SscofpmfSm_cg/cp_sscofpmf_access",
+      ]
+
+  - name: scountovf_smode_read_access
+    coverpoint:
+      [
+        "SscofpmfS_cg/cp_scountovf_mcounteren",
+        "SscofpmfS_cg/cp_sscofpmf_access",
+      ]
 
   - name: scountovf_smode_read_access_control
     coverpoint: ["SscofpmfS_cg/cp_scountovf_mcounteren"]
-
-  - names: [scountovf_mmode_read_access, scountovf_smode_read_access]
-    coverpoint: ["{SscofpmfSm_cg,SscofpmfS_cg}/{cp_sscofpmf_access}"]
 
   - name: mhpmeventh_presence
     coverpoint: ["SscofpmfSm_cg/cp_sscofpmf_access"]
@@ -49,14 +57,7 @@ normative_rule_definitions:
   - names: [mie_lcofie_op, mip_lcofip_op, mip_lcofip_acc]
     coverpoint: ["SscofpmfSm_cg/cp_lcofi_m"]
 
-  - names:
-      [
-        sip_lcofip_op,
-        sip_lcofip_Sscofpmf_acc,
-        sip_lcofip_Sscofpmf_op,
-        sie_lcofip_Sscofpmf_acc,
-        sie_lcofip_Sscofpmf_op,
-      ]
+  - name: sip_lcofip_op
     coverpoint: ["SscofpmfS_cg/cp_lcofi_sip_s"]
 
   - names:
@@ -66,7 +67,7 @@ normative_rule_definitions:
         sie_lcofip_Sscofpmf_acc,
         sie_lcofip_Sscofpmf_op,
       ]
-    coverpoint: ["SscofpmfU_cg/cp_lcofi_sip_u"]
+    coverpoint: ["SscofpmfS_cg/cp_lcofi_sip_s", "SscofpmfU_cg/cp_lcofi_sip_u"]
 
   - names: [intr_M_mode_pri]
     coverpoint: ["SscofpmfSm_cg/cp_lcofip_priority_m"]
