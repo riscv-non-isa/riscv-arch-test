@@ -323,14 +323,14 @@ def add_fp_store_misaligned_test(
         f"{op} f{data_reg}, 0(x{addr_reg})",
         # Read back scratch memory to verify store result
         f"LA(x{addr_reg}, scratch)",
-        f"lw x{check_reg}, 0(x{addr_reg})",
-        write_sigupd(check_reg, test_data),
-        f"lw x{check_reg}, 4(x{addr_reg})",
-        write_sigupd(check_reg, test_data),
-        f"lw x{check_reg}, 8(x{addr_reg})",
-        write_sigupd(check_reg, test_data),
-        f"lw x{check_reg}, 12(x{addr_reg})",
-        write_sigupd(check_reg, test_data),
+    ]
+    t_lines += [
+        line
+        for word_off in range(0, 24, 4)
+        for line in (
+            f"lw x{check_reg}, {word_off}(x{addr_reg})",
+            write_sigupd(check_reg, test_data),
+        )
     ]
 
     test_data.int_regs.return_registers([addr_reg, check_reg])
