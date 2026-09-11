@@ -1211,7 +1211,7 @@
     // Delegate exceptions to S-mode, except those that must be directed to M-mode
     // medeleg[0] = 1: delegate instruction address misaligned exception
     // medeleg[1] = 1: delegate instruction access fault exception
-    // medeleg[2] = 1: delegate illegal instruction exception unless M-mode must check for invisible traps
+    // medeleg[2] = 1: logically delegate illegal instruction exceptions to S-mode
     // medeleg[3] = 1: delegate breakpoint exception
     // medeleg[4] = 1: delegate load address misaligned exception
     // medeleg[5] = 1: delegate load access fault exception
@@ -1234,11 +1234,7 @@
     // medeleg[22] = 1: delegate virtual instruction
     // mideleg[23] = 1: delegate store guest-page fault
     // higher bits are reserved or custom
-    #ifdef RVTEST_INVISIBLE_TRAP_HANDLER
-      li t0, 0x0FCB5FB
-    #else
-      li t0, 0x0FCB5FF
-    #endif
+    li t0, 0x0FCB5FF
     csrw medeleg, t0
 
     // Delegate supervisor interrupts to S-mode. Do not delege M-mode interrupts.

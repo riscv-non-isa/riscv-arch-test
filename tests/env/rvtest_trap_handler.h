@@ -54,7 +54,8 @@
 //    tramp_sz + 13*8        | 8             | xtvec_new      — trampoline address currently in xTVEC
 //    tramp_sz + 14*8        | 8             | xtvec_save     — original xTVEC value before prolog
 //    tramp_sz + 15*8        | 8             | xscratch_save  — original xSCRATCH value before prolog
-//    tramp_sz + 16*8        | 8*REGWIDTH    | trapreg_sv     — ra scratch (slot 0), T1..T6 (slots 1-6), sp (slot 7)
+//    tramp_sz + 16*8        | 8             | medeleg_illegal_sv — shadow value of medeleg[2]
+//    tramp_sz + 17*8        | 8*REGWIDTH    | trapreg_sv     — ra scratch (slot 0), T1..T6 (slots 1-6), sp (slot 7)
 //    (after trapreg_sv)     | 8*REGWIDTH    | rvmodel_sv     — shared scratch area:
 //                           |               |   first 8 bytes: T-SBI CSR instruction and return
 //                           |               |   slot 0: fast-handler invisible-trap handoff marker
@@ -274,7 +275,7 @@
 
 #define actual_tramp_sz ((UDB_MXLEN + 3* NUM_SPECD_INTCAUSES + 9 + 5) * 4)  // total trampoline bytes
 #define tramp_sz        ((actual_tramp_sz+4) & -8)                       // round up to dword alignment
-#define ptr_sv_sz       (16*8)                                           // 16 pointer slots × 8 bytes each
+#define ptr_sv_sz       (17*8)                                           // 17 metadata slots × 8 bytes each
 #define reg_sv_sz       ( 8*REGWIDTH)                                    // 8 handler temp regs saved
 #define model_sv_sz     ( 8*REGWIDTH)                                    // 8 slots for RVMODEL macro scratch
 #define int_clr_sv_sz   ( 4*REGWIDTH)                                    // 4 slots: a0-a2 across interrupt clearing
@@ -292,9 +293,10 @@
 //   [tramp_sz + 0*8]            code_bgn_off    — rvtest_code_begin phys addr
 //   [tramp_sz + 1*8]            code_seg_siz    — code segment size
 //   ...                         (see full layout in FILE OVERVIEW above)
-//   [tramp_sz + 16*8]           trap_sv_off     — start of handler register save (T1..T6,sp,spare)
-//   [tramp_sz + 24*8]           rvmodel_sv_off  — start of RVMODEL macro scratch area
-//   [tramp_sz + 32*8]           int_clr_sv_off  — a0-a2 save across interrupt clearing
+//   [tramp_sz + 16*8]           medeleg_illegal_sv_off — logical medeleg[2] value
+//   [tramp_sz + 17*8]           trap_sv_off     — start of handler register save (T1..T6,sp,spare)
+//   [after trap_sv]             rvmodel_sv_off  — start of RVMODEL macro scratch area
+//   [after rvmodel_sv]          int_clr_sv_off  — a0-a2 save across interrupt clearing
 //
 // T-SBI CSR_ACCESS reuses the first 8 bytes at rvmodel_sv_off for its dynamic
 // instruction scratch. On RV32 these are slots 0-1; on RV64 this is slot 0.
@@ -322,7 +324,8 @@
 #define xtvec_new_off               (tramp_sz+13*8) // offset to new xTVEC value (trampoline addr)
 #define xtvec_sav_off               (tramp_sz+14*8) // offset to saved original xTVEC value
 #define xscr_save_off               (tramp_sz+15*8) // offset to saved original xSCRATCH value
-#define trap_sv_off                 (tramp_sz+16*8) // offset to handler register save area (8 regs)
+#define medeleg_illegal_sv_off      (tramp_sz+16*8) // offset to logical medeleg[2] value
+#define trap_sv_off                 (tramp_sz+17*8) // offset to handler register save area (8 regs)
 // rvmodel_sv starts right after the 8 REGWIDTH-sized trapreg_sv slots. This must
 // be expressed in REGWIDTH (not 8*8) so the offset also matches the emitted
 // .data layout on RV32, where REGWIDTH is 4.
@@ -339,6 +342,55 @@
 // neither can be active while RVTEST_GOTO_LOWER_MODE executes.
 #define goto_lower_sv_off (rvmodel_sv_off+4*(REGWIDTH)) // GOTO_LOWER_MODE T1/T2/T4/T3 save slots
 #define int_clr_sv_off  (rvmodel_sv_off+8*(REGWIDTH))   // a0/a1/a2 save slots for interrupt clearing routines
+
+// Keep medeleg[2] clear while lower-mode code runs when invisible traps are sent to the M-mode invisible trap handler.
+// The saved value controls whether an unhandled instruction is then forwarded to S-mode.
+.macro RVTEST_SAVE_MEDELEG_ILLEGAL SAVE_AREA_REG, TMP_REG
+#if defined(RVTEST_INVISIBLE_TRAP_HANDLER) && defined(S_SUPPORTED)
+  csrr    \TMP_REG, CSR_MEDELEG
+  andi    \TMP_REG, \TMP_REG, (1 << CAUSE_ILLEGAL_INSTRUCTION)
+  SREG    \TMP_REG, medeleg_illegal_sv_off(\SAVE_AREA_REG)
+  csrci   CSR_MEDELEG, (1 << CAUSE_ILLEGAL_INSTRUCTION)
+#else
+  nop
+  nop
+  nop
+  nop
+#endif
+.endm
+
+.macro RVTEST_RESTORE_MEDELEG_ILLEGAL SAVE_AREA_REG, TMP_REG
+#if defined(RVTEST_INVISIBLE_TRAP_HANDLER) && defined(S_SUPPORTED)
+  csrci   CSR_MEDELEG, (1 << CAUSE_ILLEGAL_INSTRUCTION)
+  LREG    \TMP_REG, medeleg_illegal_sv_off(\SAVE_AREA_REG)
+  csrs    CSR_MEDELEG, \TMP_REG
+#else
+  nop
+  nop
+  nop
+#endif
+.endm
+
+// A T-SBI request can enter M-mode from M-mode or a lower mode. Save a new
+// logical value only when M-mode test code made the request.
+.macro RVTEST_PREPARE_MEDELEG_FOR_LOWER SAVE_AREA_REG, STATUS_REG, TMP_REG
+  csrr    \STATUS_REG, CSR_MSTATUS
+  LI(     \TMP_REG, MSTATUS_MPP)
+  and     \STATUS_REG, \STATUS_REG, \TMP_REG
+  bne     \STATUS_REG, \TMP_REG, 1f
+  RVTEST_SAVE_MEDELEG_ILLEGAL \SAVE_AREA_REG, \TMP_REG
+1:
+.endm
+
+// Restore the logical value only when lower-mode code requested M-mode.
+.macro RVTEST_PREPARE_MEDELEG_FOR_M SAVE_AREA_REG, STATUS_REG, TMP_REG
+  csrr    \STATUS_REG, CSR_MSTATUS
+  LI(     \TMP_REG, MSTATUS_MPP)
+  and     \STATUS_REG, \STATUS_REG, \TMP_REG
+  beq     \STATUS_REG, \TMP_REG, 1f
+  RVTEST_RESTORE_MEDELEG_ILLEGAL \SAVE_AREA_REG, \TMP_REG
+1:
+.endm
 
 //==============================================================================
 // SECTION 8: INSTANTIATE_MODE_MACRO
@@ -812,6 +864,10 @@
         SREG   T4, goto_lower_sv_off+2*REGWIDTH(T3) // save T4
         csrrw  T1, CSR_MSCRATCH, T3               // T1 = orig T3; mscratch = save area ptr (restored)
         SREG   T1, goto_lower_sv_off+3*REGWIDTH(T3) // save orig T3
+
+  .if (\LMODE\()!=Mmode)
+        RVTEST_SAVE_MEDELEG_ILLEGAL T3, T2
+  .endif
 
         //---- Step 1: Set/clear mstatus.MPV (virtualization bit) ----
    .if     ((\LMODE\()==VUmode) || (\LMODE\()==VSmode))
@@ -1483,6 +1539,7 @@ tsbi_\__MODE__\()goto_mode:
 
         //--- GOTO M-mode: set MPP=11 (M), clear MPV ---
 tsbi_\__MODE__\()goto_m:
+        RVTEST_PREPARE_MEDELEG_FOR_M sp, T2, T4
         LI(     T4, MSTATUS_MPP)                     // T4 = MPP field mask (bits 12:11)
         csrs    CSR_MSTATUS, T4                       // set MPP = 11 (M-mode): sets both bits
   #ifdef H_SUPPORTED
@@ -1500,6 +1557,7 @@ tsbi_\__MODE__\()goto_m:
 
         //--- GOTO S-mode: set MPP=01 (S), clear MPV ---
 tsbi_\__MODE__\()goto_s:
+        RVTEST_PREPARE_MEDELEG_FOR_LOWER sp, T2, T4
         LI(     T4, MSTATUS_MPP)                     // T4 = MPP field mask
         csrc    CSR_MSTATUS, T4                       // clear MPP bits first (to 00)
         LI(     T4, MPP_SMODE)                        // T4 = 01 << 11 (S-mode MPP value)
@@ -1519,6 +1577,7 @@ tsbi_\__MODE__\()goto_s:
 
         //--- GOTO U-mode: set MPP=00 (U), clear MPV ---
 tsbi_\__MODE__\()goto_u:
+        RVTEST_PREPARE_MEDELEG_FOR_LOWER sp, T2, T4
         LI(     T4, MSTATUS_MPP)                     // T4 = MPP field mask
         csrc    CSR_MSTATUS, T4                       // clear MPP = 00 (U-mode)
   #ifdef H_SUPPORTED
@@ -1537,6 +1596,7 @@ tsbi_\__MODE__\()goto_u:
   #ifdef H_SUPPORTED
         //--- GOTO VS-mode: set MPP=01 (S), set MPV=1 (virtual) ---
 tsbi_\__MODE__\()goto_vs:
+        RVTEST_PREPARE_MEDELEG_FOR_LOWER sp, T2, T4
         LI(     T4, MSTATUS_MPP)                     // T4 = MPP field mask
         csrc    CSR_MSTATUS, T4                       // clear MPP first
         LI(     T4, MPP_SMODE)                        // T4 = S-mode MPP value (VS uses S-mode MPP with MPV=1)
@@ -1554,6 +1614,7 @@ tsbi_\__MODE__\()goto_vs:
 
         //--- GOTO VU-mode: set MPP=00 (U), set MPV=1 (virtual) ---
 tsbi_\__MODE__\()goto_vu:
+        RVTEST_PREPARE_MEDELEG_FOR_LOWER sp, T2, T4
         LI(     T4, MSTATUS_MPP)                     // T4 = MPP field mask
         csrc    CSR_MSTATUS, T4                       // clear MPP = 00 (U-mode)
         LI(     T2, (1<<MPV_LSB))                    // T2 = MPV bit mask
@@ -2623,6 +2684,7 @@ from_hs_u:
         sub     T2, T2, T6                             // T2 = mepc - caller_code_begin (relative offset)
         addi    sp, sp, -sv_area_sz                    // undo sp adjustment
         LREG    T4, code_bgn_off-0*sv_area_sz(sp)     // T4 = M-mode code_begin
+        RVTEST_RESTORE_MEDELEG_ILLEGAL sp, T3
 
 rtn_fm_mmode:
         add     T2, T4, T2                             // T2 = M-mode code_begin + relative offset = return addr
@@ -3065,6 +3127,7 @@ rvtest_\__MODE__\()end:                            // epilog is done for this mo
 \__MODE__\()tvec_new:      .dword  0                                         // current xTVEC value (trampoline)
 \__MODE__\()tvec_save:     .dword  0                                         // original xTVEC before prolog
 \__MODE__\()scratch_save:  .dword  0                                         // original xSCRATCH before prolog
+\__MODE__\()medeleg_illegal_sv: .dword 0                                     // logical medeleg[2] value
 \__MODE__\()trapreg_sv:    .fill   8, REGWIDTH, 0xdeadbeef                   // handler reg save: ra scratch (slot 0), T1..T6 (1-6), sp (7)
 
 // rvmodel_sv is shared scratch space. T-SBI CSR_ACCESS writes an instruction

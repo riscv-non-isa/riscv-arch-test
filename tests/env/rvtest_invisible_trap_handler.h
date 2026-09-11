@@ -119,13 +119,15 @@
     // Keep an unhandled instruction on the normal illegal-instruction path.
     li      T5, CAUSE_ILLEGAL_INSTRUCTION     // the custom hook may use T5 as scratch
     #ifdef S_SUPPORTED
-      // medeleg[2] is clear so M-mode can try invisible emulation first. If the
-      // trap came from S-mode or U-mode and was not handled, reproduce the
-      // architectural effects that direct delegation to S-mode would have made.
+      // medeleg[2] is clear while lower-mode code runs so M-mode can try
+      // invisible emulation first. Forward an unhandled trap only when the
+      // saved shadow value of medeleg[2] requests delegation.
       csrr    T1, mstatus
       LI(     T4, MSTATUS_MPP)
       and     T3, T1, T4
       beq     T3, T4, invisible_Mnot_handled_in_M
+      LREG    T4, medeleg_illegal_sv_off(sp)
+      beqz    T4, invisible_Mnot_handled_in_M
 
       // Copy the M-mode trap state to the corresponding S-mode CSRs (xepc, xcause, xtval).
       csrr    T4, mepc
