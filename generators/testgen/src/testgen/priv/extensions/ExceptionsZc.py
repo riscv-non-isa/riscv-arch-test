@@ -59,16 +59,6 @@ def _add_load_test(
     return t_lines
 
 
-# Bytes of scratch read back after each store, and primed before it.
-_READBACK_BYTES = 16
-# Offset into scratch of the value a float store sends. It must sit outside the window
-# read back below, or the offset-0 case stores the bytes it just read.
-_FLOAT_SRC_OFFSET = 32
-# Sentinel written across the readback window before each store; the low bits carry the
-# offset so consecutive testcases start from different memory.
-_PRIME_SENTINEL = 0x0C0DE000
-
-
 def _add_store_test(
     op: str,
     offset: int,
@@ -83,16 +73,22 @@ def _add_store_test(
     is_sp = op.endswith("sp")
     t_lines = []
 
-    # Prime the readback window so a store that never happened is distinguishable from a
-    # correct one, which it is not when the source matches what a previous testcase left.
-    t_lines.append(f"LA(x{addr_reg}, scratch)")
-    t_lines.append(f"LI(x{base_reg}, {_PRIME_SENTINEL | offset:#x})")
-    t_lines.extend(f"sw x{base_reg}, {word_off}(x{addr_reg})" for word_off in range(0, _READBACK_BYTES, 4))
+    # Initialize scratch before each store so a missing store changes the signature.
+    t_lines.extend(
+        (
+            f"LA(x{addr_reg}, scratch)",
+            f"LI(x{base_reg}, {0x0C0DE000 | offset:#x})",
+            f"sw x{base_reg}, 0(x{addr_reg})",
+            f"sw x{base_reg}, 4(x{addr_reg})",
+            f"sw x{base_reg}, 8(x{addr_reg})",
+            f"sw x{base_reg}, 12(x{addr_reg})",
+        )
+    )
 
-    # Initialize store register to a known value before setting up address
+    # Load the floating-point value from outside the bytes checked below.
     if is_float:
         t_lines.append(f"LA(x{addr_reg}, scratch)")
-        t_lines.append(f"addi x{addr_reg}, x{addr_reg}, {_FLOAT_SRC_OFFSET}")
+        t_lines.append(f"addi x{addr_reg}, x{addr_reg}, 32")
         if "fld" in op or "fsd" in op:
             t_lines.append(f"fld f{fp_reg}, 0(x{addr_reg})")
         else:
@@ -120,11 +116,16 @@ def _add_store_test(
         t_lines.append(test_data.add_testcase(f"{op.lower()}_off{offset}", coverpoint, covergroup))
         t_lines.append(f"{op} {reg_str}, 0(x{addr_reg})")
 
-    # Read the primed window back as signature to verify the store result
+    # Read scratch back as the signature to verify the store result
     t_lines.append(f"LA(x{addr_reg}, scratch)")
-    for word_off in range(0, _READBACK_BYTES, 4):
-        t_lines.append(f"lw x{check_reg}, {word_off}(x{addr_reg})")
-        t_lines.append(write_sigupd(check_reg, test_data))
+    t_lines.append(f"lw x{check_reg}, 0(x{addr_reg})")
+    t_lines.append(write_sigupd(check_reg, test_data))
+    t_lines.append(f"lw x{check_reg}, 4(x{addr_reg})")
+    t_lines.append(write_sigupd(check_reg, test_data))
+    t_lines.append(f"lw x{check_reg}, 8(x{addr_reg})")
+    t_lines.append(write_sigupd(check_reg, test_data))
+    t_lines.append(f"lw x{check_reg}, 12(x{addr_reg})")
+    t_lines.append(write_sigupd(check_reg, test_data))
 
     test_data.int_regs.return_registers([addr_reg, base_reg, check_reg])
     test_data.float_regs.return_registers([fp_reg])
