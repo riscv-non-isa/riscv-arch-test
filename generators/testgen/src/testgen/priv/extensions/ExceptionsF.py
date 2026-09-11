@@ -237,14 +237,14 @@ def add_csr_instructions(
         "",
         tsbi_call(f"csrc mstatus, x{clear_mask_reg}"),
         tsbi_call(f"csrs mstatus, x{set_mask_reg}"),
-        f"LI(x{check_reg}, -1)",
+        # frm is 0 here, from the csrw above, so this sets it to RMM
         test_data.add_testcase(f"csrrs_frm_{fs_val}_{coverpoint[2:]}", coverpoint, covergroup),
         f"csrrs x{check_reg}, frm, x{frm_reg}",
         gen_csr_read_sigupd(check_reg, ("frm", None), test_data),
         "",
         tsbi_call(f"csrc mstatus, x{clear_mask_reg}"),
         tsbi_call(f"csrs mstatus, x{set_mask_reg}"),
-        f"LI(x{check_reg}, 0)",
+        # and this clears it back to 0
         test_data.add_testcase(f"csrrc_frm_{fs_val}_{coverpoint[2:]}", coverpoint, covergroup),
         f"csrrc x{check_reg}, frm, x{frm_reg}",
         gen_csr_read_sigupd(check_reg, ("frm", None), test_data),
@@ -401,7 +401,9 @@ def _generate_mstatus_fs_legal_tests(test_data: TestData) -> list[str]:
     lines = [
         comment_banner(coverpoint, "Test that instructions execute correctly when mstatus.fs is set to 1 (Clean)\n"),
         f"LI(x{clear_mask_reg}, 0x6000) # MSTATUS_FS mask",
-        f"LI(x{frm_reg}, 0)",
+        # rs1 for the csrrs/csrrc frm cases below. Must be non-zero, or they set and clear
+        # nothing, and must leave frm legal: 5-7 are reserved rounding modes.
+        f"LI(x{frm_reg}, 0b100) # frm = RMM, a legal rounding mode",
     ]
 
     for i in range(1, 4):
