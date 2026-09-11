@@ -39,7 +39,7 @@ RVTEST_BEGIN
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x29
 #endif
@@ -47,7 +47,7 @@ RVTEST_BEGIN
 Zicsr_csrrc_cg_cp_rs1_b0:
 // perform operation
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x26, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x26, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrc x26, RVTEST_TEST_CSR, x0
 #endif
@@ -56,7 +56,7 @@ Zicsr_csrrc_cg_cp_rs1_b0:
   RVTEST_SIGUPD(x2, x5, x4, x26, Zicsr_csrrc_cg_cp_rs1_b0, Zicsr_csrrc_cg_cp_rs1_b0_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x29, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x29, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x29, RVTEST_TEST_CSR, x0
 #endif
@@ -70,7 +70,7 @@ Zicsr_csrrc_cg_cp_rs1_b0:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x22
 #endif
@@ -90,7 +90,7 @@ Zicsr_csrrc_cg_cp_rs1_b1:
   RVTEST_SIGUPD(x2, x5, x4, x7, Zicsr_csrrc_cg_cp_rs1_b1, Zicsr_csrrc_cg_cp_rs1_b1_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x22, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x22, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x22, RVTEST_TEST_CSR, x0
 #endif
@@ -105,7 +105,7 @@ Zicsr_csrrc_cg_cp_rs1_b1:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x24
 #endif
@@ -125,7 +125,7 @@ Zicsr_csrrc_cg_cp_rs1_b2:
   RVTEST_SIGUPD(x21, x5, x4, x7, Zicsr_csrrc_cg_cp_rs1_b2, Zicsr_csrrc_cg_cp_rs1_b2_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x24, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x24, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x24, RVTEST_TEST_CSR, x0
 #endif
@@ -140,7 +140,7 @@ Zicsr_csrrc_cg_cp_rs1_b2:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x19
 #endif
@@ -160,7 +160,7 @@ Zicsr_csrrc_cg_cp_rs1_b3:
   RVTEST_SIGUPD(x21, x5, x4, x10, Zicsr_csrrc_cg_cp_rs1_b3, Zicsr_csrrc_cg_cp_rs1_b3_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x19, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x19, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x19, RVTEST_TEST_CSR, x0
 #endif
@@ -176,7 +176,7 @@ Zicsr_csrrc_cg_cp_rs1_b3:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x30
 #endif
@@ -196,7 +196,7 @@ Zicsr_csrrc_cg_cp_rs1_b4:
   RVTEST_SIGUPD(x21, x8, x7, x15, Zicsr_csrrc_cg_cp_rs1_b4, Zicsr_csrrc_cg_cp_rs1_b4_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x30, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x30, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x30, RVTEST_TEST_CSR, x0
 #endif
@@ -210,7 +210,7 @@ Zicsr_csrrc_cg_cp_rs1_b4:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x3
 #endif
@@ -230,7 +230,7 @@ Zicsr_csrrc_cg_cp_rs1_b5:
   RVTEST_SIGUPD(x21, x8, x7, x25, Zicsr_csrrc_cg_cp_rs1_b5, Zicsr_csrrc_cg_cp_rs1_b5_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x3, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x3, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x3, RVTEST_TEST_CSR, x0
 #endif
@@ -244,7 +244,7 @@ Zicsr_csrrc_cg_cp_rs1_b5:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x23
 #endif
@@ -264,7 +264,7 @@ Zicsr_csrrc_cg_cp_rs1_b6:
   RVTEST_SIGUPD(x21, x8, x7, x14, Zicsr_csrrc_cg_cp_rs1_b6, Zicsr_csrrc_cg_cp_rs1_b6_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x23, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x23, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x23, RVTEST_TEST_CSR, x0
 #endif
@@ -280,7 +280,7 @@ Zicsr_csrrc_cg_cp_rs1_b6:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x26
 #endif
@@ -300,7 +300,7 @@ Zicsr_csrrc_cg_cp_rs1_b7:
   RVTEST_SIGUPD(x21, x14, x13, x19, Zicsr_csrrc_cg_cp_rs1_b7, Zicsr_csrrc_cg_cp_rs1_b7_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x26, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x26, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x26, RVTEST_TEST_CSR, x0
 #endif
@@ -314,7 +314,7 @@ Zicsr_csrrc_cg_cp_rs1_b7:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x3
 #endif
@@ -334,7 +334,7 @@ Zicsr_csrrc_cg_cp_rs1_b8:
   RVTEST_SIGUPD(x21, x14, x13, x12, Zicsr_csrrc_cg_cp_rs1_b8, Zicsr_csrrc_cg_cp_rs1_b8_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x3, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x3, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x3, RVTEST_TEST_CSR, x0
 #endif
@@ -348,7 +348,7 @@ Zicsr_csrrc_cg_cp_rs1_b8:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x30
 #endif
@@ -368,7 +368,7 @@ Zicsr_csrrc_cg_cp_rs1_b9:
   RVTEST_SIGUPD(x21, x14, x13, x10, Zicsr_csrrc_cg_cp_rs1_b9, Zicsr_csrrc_cg_cp_rs1_b9_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x30, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x30, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x30, RVTEST_TEST_CSR, x0
 #endif
@@ -382,7 +382,7 @@ Zicsr_csrrc_cg_cp_rs1_b9:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x30
 #endif
@@ -402,7 +402,7 @@ Zicsr_csrrc_cg_cp_rs1_b10:
   RVTEST_SIGUPD(x21, x14, x13, x18, Zicsr_csrrc_cg_cp_rs1_b10, Zicsr_csrrc_cg_cp_rs1_b10_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x30, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x30, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x30, RVTEST_TEST_CSR, x0
 #endif
@@ -416,7 +416,7 @@ Zicsr_csrrc_cg_cp_rs1_b10:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x6
 #endif
@@ -436,7 +436,7 @@ Zicsr_csrrc_cg_cp_rs1_b11:
   RVTEST_SIGUPD(x21, x14, x13, x1, Zicsr_csrrc_cg_cp_rs1_b11, Zicsr_csrrc_cg_cp_rs1_b11_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x6, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x6, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x6, RVTEST_TEST_CSR, x0
 #endif
@@ -450,7 +450,7 @@ Zicsr_csrrc_cg_cp_rs1_b11:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x9
 #endif
@@ -470,7 +470,7 @@ Zicsr_csrrc_cg_cp_rs1_b12:
   RVTEST_SIGUPD(x21, x14, x13, x24, Zicsr_csrrc_cg_cp_rs1_b12, Zicsr_csrrc_cg_cp_rs1_b12_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x9, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x9, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x9, RVTEST_TEST_CSR, x0
 #endif
@@ -486,7 +486,7 @@ Zicsr_csrrc_cg_cp_rs1_b12:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x11
 #endif
@@ -506,7 +506,7 @@ Zicsr_csrrc_cg_cp_rs1_b13:
   RVTEST_SIGUPD(x21, x8, x7, x4, Zicsr_csrrc_cg_cp_rs1_b13, Zicsr_csrrc_cg_cp_rs1_b13_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x11, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x11, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x11, RVTEST_TEST_CSR, x0
 #endif
@@ -520,7 +520,7 @@ Zicsr_csrrc_cg_cp_rs1_b13:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x5
 #endif
@@ -540,7 +540,7 @@ Zicsr_csrrc_cg_cp_rs1_b14:
   RVTEST_SIGUPD(x21, x8, x7, x29, Zicsr_csrrc_cg_cp_rs1_b14, Zicsr_csrrc_cg_cp_rs1_b14_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x5, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x5, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x5, RVTEST_TEST_CSR, x0
 #endif
@@ -554,7 +554,7 @@ Zicsr_csrrc_cg_cp_rs1_b14:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x6
 #endif
@@ -574,7 +574,7 @@ Zicsr_csrrc_cg_cp_rs1_b15:
   RVTEST_SIGUPD(x21, x8, x7, x29, Zicsr_csrrc_cg_cp_rs1_b15, Zicsr_csrrc_cg_cp_rs1_b15_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x6, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x6, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x6, RVTEST_TEST_CSR, x0
 #endif
@@ -589,7 +589,7 @@ Zicsr_csrrc_cg_cp_rs1_b15:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x2
 #endif
@@ -609,7 +609,7 @@ Zicsr_csrrc_cg_cp_rs1_b16:
   RVTEST_SIGUPD(x21, x8, x7, x4, Zicsr_csrrc_cg_cp_rs1_b16, Zicsr_csrrc_cg_cp_rs1_b16_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x2, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x2, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x2, RVTEST_TEST_CSR, x0
 #endif
@@ -623,7 +623,7 @@ Zicsr_csrrc_cg_cp_rs1_b16:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x3
 #endif
@@ -643,7 +643,7 @@ Zicsr_csrrc_cg_cp_rs1_b17:
   RVTEST_SIGUPD(x21, x8, x7, x22, Zicsr_csrrc_cg_cp_rs1_b17, Zicsr_csrrc_cg_cp_rs1_b17_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x3, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x3, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x3, RVTEST_TEST_CSR, x0
 #endif
@@ -657,7 +657,7 @@ Zicsr_csrrc_cg_cp_rs1_b17:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x15
 #endif
@@ -677,7 +677,7 @@ Zicsr_csrrc_cg_cp_rs1_b18:
   RVTEST_SIGUPD(x21, x8, x7, x12, Zicsr_csrrc_cg_cp_rs1_b18, Zicsr_csrrc_cg_cp_rs1_b18_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x15, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x15, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x15, RVTEST_TEST_CSR, x0
 #endif
@@ -691,7 +691,7 @@ Zicsr_csrrc_cg_cp_rs1_b18:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x16
 #endif
@@ -711,7 +711,7 @@ Zicsr_csrrc_cg_cp_rs1_b19:
   RVTEST_SIGUPD(x21, x8, x7, x26, Zicsr_csrrc_cg_cp_rs1_b19, Zicsr_csrrc_cg_cp_rs1_b19_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x16, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x16, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x16, RVTEST_TEST_CSR, x0
 #endif
@@ -725,7 +725,7 @@ Zicsr_csrrc_cg_cp_rs1_b19:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x18
 #endif
@@ -745,7 +745,7 @@ Zicsr_csrrc_cg_cp_rs1_b20:
   RVTEST_SIGUPD(x21, x8, x7, x24, Zicsr_csrrc_cg_cp_rs1_b20, Zicsr_csrrc_cg_cp_rs1_b20_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x18, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x18, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x18, RVTEST_TEST_CSR, x0
 #endif
@@ -760,7 +760,7 @@ Zicsr_csrrc_cg_cp_rs1_b20:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x15
 #endif
@@ -780,7 +780,7 @@ Zicsr_csrrc_cg_cp_rs1_b21:
   RVTEST_SIGUPD(x6, x8, x7, x25, Zicsr_csrrc_cg_cp_rs1_b21, Zicsr_csrrc_cg_cp_rs1_b21_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x15, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x15, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x15, RVTEST_TEST_CSR, x0
 #endif
@@ -794,7 +794,7 @@ Zicsr_csrrc_cg_cp_rs1_b21:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x11
 #endif
@@ -814,7 +814,7 @@ Zicsr_csrrc_cg_cp_rs1_b22:
   RVTEST_SIGUPD(x6, x8, x7, x5, Zicsr_csrrc_cg_cp_rs1_b22, Zicsr_csrrc_cg_cp_rs1_b22_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x11, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x11, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x11, RVTEST_TEST_CSR, x0
 #endif
@@ -828,7 +828,7 @@ Zicsr_csrrc_cg_cp_rs1_b22:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x14
 #endif
@@ -848,7 +848,7 @@ Zicsr_csrrc_cg_cp_rs1_b23:
   RVTEST_SIGUPD(x6, x8, x7, x3, Zicsr_csrrc_cg_cp_rs1_b23, Zicsr_csrrc_cg_cp_rs1_b23_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x14, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x14, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x14, RVTEST_TEST_CSR, x0
 #endif
@@ -862,7 +862,7 @@ Zicsr_csrrc_cg_cp_rs1_b23:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x3
 #endif
@@ -882,7 +882,7 @@ Zicsr_csrrc_cg_cp_rs1_b24:
   RVTEST_SIGUPD(x6, x8, x7, x29, Zicsr_csrrc_cg_cp_rs1_b24, Zicsr_csrrc_cg_cp_rs1_b24_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x3, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x3, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x3, RVTEST_TEST_CSR, x0
 #endif
@@ -896,7 +896,7 @@ Zicsr_csrrc_cg_cp_rs1_b24:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x13
 #endif
@@ -916,7 +916,7 @@ Zicsr_csrrc_cg_cp_rs1_b25:
   RVTEST_SIGUPD(x6, x8, x7, x20, Zicsr_csrrc_cg_cp_rs1_b25, Zicsr_csrrc_cg_cp_rs1_b25_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x13, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x13, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x13, RVTEST_TEST_CSR, x0
 #endif
@@ -930,7 +930,7 @@ Zicsr_csrrc_cg_cp_rs1_b25:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x19
 #endif
@@ -950,7 +950,7 @@ Zicsr_csrrc_cg_cp_rs1_b26:
   RVTEST_SIGUPD(x6, x8, x7, x21, Zicsr_csrrc_cg_cp_rs1_b26, Zicsr_csrrc_cg_cp_rs1_b26_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x19, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x19, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x19, RVTEST_TEST_CSR, x0
 #endif
@@ -964,7 +964,7 @@ Zicsr_csrrc_cg_cp_rs1_b26:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x4
 #endif
@@ -984,7 +984,7 @@ Zicsr_csrrc_cg_cp_rs1_b27:
   RVTEST_SIGUPD(x6, x8, x7, x18, Zicsr_csrrc_cg_cp_rs1_b27, Zicsr_csrrc_cg_cp_rs1_b27_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x4, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x4, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x4, RVTEST_TEST_CSR, x0
 #endif
@@ -998,7 +998,7 @@ Zicsr_csrrc_cg_cp_rs1_b27:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x5
 #endif
@@ -1018,7 +1018,7 @@ Zicsr_csrrc_cg_cp_rs1_b28:
   RVTEST_SIGUPD(x6, x8, x7, x19, Zicsr_csrrc_cg_cp_rs1_b28, Zicsr_csrrc_cg_cp_rs1_b28_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x5, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x5, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x5, RVTEST_TEST_CSR, x0
 #endif
@@ -1032,7 +1032,7 @@ Zicsr_csrrc_cg_cp_rs1_b28:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x14
 #endif
@@ -1052,7 +1052,7 @@ Zicsr_csrrc_cg_cp_rs1_b29:
   RVTEST_SIGUPD(x6, x8, x7, x13, Zicsr_csrrc_cg_cp_rs1_b29, Zicsr_csrrc_cg_cp_rs1_b29_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x14, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x14, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x14, RVTEST_TEST_CSR, x0
 #endif
@@ -1066,7 +1066,7 @@ Zicsr_csrrc_cg_cp_rs1_b29:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x23
 #endif
@@ -1086,7 +1086,7 @@ Zicsr_csrrc_cg_cp_rs1_b30:
   RVTEST_SIGUPD(x6, x8, x7, x1, Zicsr_csrrc_cg_cp_rs1_b30, Zicsr_csrrc_cg_cp_rs1_b30_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x23, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x23, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x23, RVTEST_TEST_CSR, x0
 #endif
@@ -1101,7 +1101,7 @@ Zicsr_csrrc_cg_cp_rs1_b30:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x25
 #endif
@@ -1121,7 +1121,7 @@ Zicsr_csrrc_cg_cp_rs1_b31:
   RVTEST_SIGUPD(x6, x8, x7, x23, Zicsr_csrrc_cg_cp_rs1_b31, Zicsr_csrrc_cg_cp_rs1_b31_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x25, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x25, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x25, RVTEST_TEST_CSR, x0
 #endif
@@ -1139,7 +1139,7 @@ Zicsr_csrrc_cg_cp_rs1_b31:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x14
 #endif
@@ -1147,7 +1147,7 @@ Zicsr_csrrc_cg_cp_rs1_b31:
 Zicsr_csrrc_cg_cp_rd_b0:
 // perform operation
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrc x0, RVTEST_TEST_CSR, x4
 #endif
@@ -1156,7 +1156,7 @@ Zicsr_csrrc_cg_cp_rd_b0:
   RVTEST_SIGUPD(x6, x8, x7, x0, Zicsr_csrrc_cg_cp_rd_b0, Zicsr_csrrc_cg_cp_rd_b0_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x14, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x14, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x14, RVTEST_TEST_CSR, x0
 #endif
@@ -1170,7 +1170,7 @@ Zicsr_csrrc_cg_cp_rd_b0:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x10
 #endif
@@ -1190,7 +1190,7 @@ Zicsr_csrrc_cg_cp_rd_b1:
   RVTEST_SIGUPD(x6, x8, x7, x1, Zicsr_csrrc_cg_cp_rd_b1, Zicsr_csrrc_cg_cp_rd_b1_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x10, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x10, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x10, RVTEST_TEST_CSR, x0
 #endif
@@ -1204,7 +1204,7 @@ Zicsr_csrrc_cg_cp_rd_b1:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x22
 #endif
@@ -1224,7 +1224,7 @@ Zicsr_csrrc_cg_cp_rd_b2:
   RVTEST_SIGUPD(x6, x8, x7, x2, Zicsr_csrrc_cg_cp_rd_b2, Zicsr_csrrc_cg_cp_rd_b2_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x22, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x22, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x22, RVTEST_TEST_CSR, x0
 #endif
@@ -1238,7 +1238,7 @@ Zicsr_csrrc_cg_cp_rd_b2:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x4
 #endif
@@ -1258,7 +1258,7 @@ Zicsr_csrrc_cg_cp_rd_b3:
   RVTEST_SIGUPD(x6, x8, x7, x3, Zicsr_csrrc_cg_cp_rd_b3, Zicsr_csrrc_cg_cp_rd_b3_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x4, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x4, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x4, RVTEST_TEST_CSR, x0
 #endif
@@ -1272,7 +1272,7 @@ Zicsr_csrrc_cg_cp_rd_b3:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x3
 #endif
@@ -1292,7 +1292,7 @@ Zicsr_csrrc_cg_cp_rd_b4:
   RVTEST_SIGUPD(x6, x8, x7, x4, Zicsr_csrrc_cg_cp_rd_b4, Zicsr_csrrc_cg_cp_rd_b4_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x3, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x3, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x3, RVTEST_TEST_CSR, x0
 #endif
@@ -1306,7 +1306,7 @@ Zicsr_csrrc_cg_cp_rd_b4:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x20
 #endif
@@ -1326,7 +1326,7 @@ Zicsr_csrrc_cg_cp_rd_b5:
   RVTEST_SIGUPD(x6, x8, x7, x5, Zicsr_csrrc_cg_cp_rd_b5, Zicsr_csrrc_cg_cp_rd_b5_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x20, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x20, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x20, RVTEST_TEST_CSR, x0
 #endif
@@ -1341,7 +1341,7 @@ Zicsr_csrrc_cg_cp_rd_b5:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x4
 #endif
@@ -1361,7 +1361,7 @@ Zicsr_csrrc_cg_cp_rd_b6:
   RVTEST_SIGUPD(x28, x8, x7, x6, Zicsr_csrrc_cg_cp_rd_b6, Zicsr_csrrc_cg_cp_rd_b6_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x4, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x4, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x4, RVTEST_TEST_CSR, x0
 #endif
@@ -1377,7 +1377,7 @@ Zicsr_csrrc_cg_cp_rd_b6:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x25
 #endif
@@ -1397,7 +1397,7 @@ Zicsr_csrrc_cg_cp_rd_b7:
   RVTEST_SIGUPD(x28, x14, x13, x7, Zicsr_csrrc_cg_cp_rd_b7, Zicsr_csrrc_cg_cp_rd_b7_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x25, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x25, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x25, RVTEST_TEST_CSR, x0
 #endif
@@ -1411,7 +1411,7 @@ Zicsr_csrrc_cg_cp_rd_b7:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x25
 #endif
@@ -1431,7 +1431,7 @@ Zicsr_csrrc_cg_cp_rd_b8:
   RVTEST_SIGUPD(x28, x14, x13, x8, Zicsr_csrrc_cg_cp_rd_b8, Zicsr_csrrc_cg_cp_rd_b8_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x25, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x25, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x25, RVTEST_TEST_CSR, x0
 #endif
@@ -1445,7 +1445,7 @@ Zicsr_csrrc_cg_cp_rd_b8:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x15
 #endif
@@ -1465,7 +1465,7 @@ Zicsr_csrrc_cg_cp_rd_b9:
   RVTEST_SIGUPD(x28, x14, x13, x9, Zicsr_csrrc_cg_cp_rd_b9, Zicsr_csrrc_cg_cp_rd_b9_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x15, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x15, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x15, RVTEST_TEST_CSR, x0
 #endif
@@ -1479,7 +1479,7 @@ Zicsr_csrrc_cg_cp_rd_b9:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x21
 #endif
@@ -1499,7 +1499,7 @@ Zicsr_csrrc_cg_cp_rd_b10:
   RVTEST_SIGUPD(x28, x14, x13, x10, Zicsr_csrrc_cg_cp_rd_b10, Zicsr_csrrc_cg_cp_rd_b10_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x21, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x21, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x21, RVTEST_TEST_CSR, x0
 #endif
@@ -1513,7 +1513,7 @@ Zicsr_csrrc_cg_cp_rd_b10:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x9
 #endif
@@ -1533,7 +1533,7 @@ Zicsr_csrrc_cg_cp_rd_b11:
   RVTEST_SIGUPD(x28, x14, x13, x11, Zicsr_csrrc_cg_cp_rd_b11, Zicsr_csrrc_cg_cp_rd_b11_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x9, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x9, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x9, RVTEST_TEST_CSR, x0
 #endif
@@ -1547,7 +1547,7 @@ Zicsr_csrrc_cg_cp_rd_b11:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x20
 #endif
@@ -1567,7 +1567,7 @@ Zicsr_csrrc_cg_cp_rd_b12:
   RVTEST_SIGUPD(x28, x14, x13, x12, Zicsr_csrrc_cg_cp_rd_b12, Zicsr_csrrc_cg_cp_rd_b12_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x20, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x20, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x20, RVTEST_TEST_CSR, x0
 #endif
@@ -1583,7 +1583,7 @@ Zicsr_csrrc_cg_cp_rd_b12:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x15
 #endif
@@ -1603,7 +1603,7 @@ Zicsr_csrrc_cg_cp_rd_b13:
   RVTEST_SIGUPD(x28, x8, x7, x13, Zicsr_csrrc_cg_cp_rd_b13, Zicsr_csrrc_cg_cp_rd_b13_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x15, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x15, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x15, RVTEST_TEST_CSR, x0
 #endif
@@ -1617,7 +1617,7 @@ Zicsr_csrrc_cg_cp_rd_b13:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x25
 #endif
@@ -1637,7 +1637,7 @@ Zicsr_csrrc_cg_cp_rd_b14:
   RVTEST_SIGUPD(x28, x8, x7, x14, Zicsr_csrrc_cg_cp_rd_b14, Zicsr_csrrc_cg_cp_rd_b14_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x25, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x25, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x25, RVTEST_TEST_CSR, x0
 #endif
@@ -1651,7 +1651,7 @@ Zicsr_csrrc_cg_cp_rd_b14:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x29
 #endif
@@ -1659,7 +1659,7 @@ Zicsr_csrrc_cg_cp_rd_b14:
 Zicsr_csrrc_cg_cp_rd_b15:
 // perform operation
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x15, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x15, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrc x15, RVTEST_TEST_CSR, x0
 #endif
@@ -1668,7 +1668,7 @@ Zicsr_csrrc_cg_cp_rd_b15:
   RVTEST_SIGUPD(x28, x8, x7, x15, Zicsr_csrrc_cg_cp_rd_b15, Zicsr_csrrc_cg_cp_rd_b15_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x29, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x29, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x29, RVTEST_TEST_CSR, x0
 #endif
@@ -1682,7 +1682,7 @@ Zicsr_csrrc_cg_cp_rd_b15:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x1
 #endif
@@ -1702,7 +1702,7 @@ Zicsr_csrrc_cg_cp_rd_b16:
   RVTEST_SIGUPD(x28, x8, x7, x16, Zicsr_csrrc_cg_cp_rd_b16, Zicsr_csrrc_cg_cp_rd_b16_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x1, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x1, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x1, RVTEST_TEST_CSR, x0
 #endif
@@ -1716,7 +1716,7 @@ Zicsr_csrrc_cg_cp_rd_b16:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x18
 #endif
@@ -1736,7 +1736,7 @@ Zicsr_csrrc_cg_cp_rd_b17:
   RVTEST_SIGUPD(x28, x8, x7, x17, Zicsr_csrrc_cg_cp_rd_b17, Zicsr_csrrc_cg_cp_rd_b17_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x18, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x18, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x18, RVTEST_TEST_CSR, x0
 #endif
@@ -1750,7 +1750,7 @@ Zicsr_csrrc_cg_cp_rd_b17:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x20
 #endif
@@ -1770,7 +1770,7 @@ Zicsr_csrrc_cg_cp_rd_b18:
   RVTEST_SIGUPD(x28, x8, x7, x18, Zicsr_csrrc_cg_cp_rd_b18, Zicsr_csrrc_cg_cp_rd_b18_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x20, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x20, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x20, RVTEST_TEST_CSR, x0
 #endif
@@ -1785,7 +1785,7 @@ Zicsr_csrrc_cg_cp_rd_b18:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x20
 #endif
@@ -1805,7 +1805,7 @@ Zicsr_csrrc_cg_cp_rd_b19:
   RVTEST_SIGUPD(x28, x8, x7, x19, Zicsr_csrrc_cg_cp_rd_b19, Zicsr_csrrc_cg_cp_rd_b19_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x20, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x20, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x20, RVTEST_TEST_CSR, x0
 #endif
@@ -1819,7 +1819,7 @@ Zicsr_csrrc_cg_cp_rd_b19:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x24
 #endif
@@ -1839,7 +1839,7 @@ Zicsr_csrrc_cg_cp_rd_b20:
   RVTEST_SIGUPD(x28, x8, x7, x20, Zicsr_csrrc_cg_cp_rd_b20, Zicsr_csrrc_cg_cp_rd_b20_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x24, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x24, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x24, RVTEST_TEST_CSR, x0
 #endif
@@ -1853,7 +1853,7 @@ Zicsr_csrrc_cg_cp_rd_b20:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x31
 #endif
@@ -1873,7 +1873,7 @@ Zicsr_csrrc_cg_cp_rd_b21:
   RVTEST_SIGUPD(x28, x8, x7, x21, Zicsr_csrrc_cg_cp_rd_b21, Zicsr_csrrc_cg_cp_rd_b21_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x31, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x31, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x31, RVTEST_TEST_CSR, x0
 #endif
@@ -1887,7 +1887,7 @@ Zicsr_csrrc_cg_cp_rd_b21:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x13
 #endif
@@ -1907,7 +1907,7 @@ Zicsr_csrrc_cg_cp_rd_b22:
   RVTEST_SIGUPD(x28, x8, x7, x22, Zicsr_csrrc_cg_cp_rd_b22, Zicsr_csrrc_cg_cp_rd_b22_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x13, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x13, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x13, RVTEST_TEST_CSR, x0
 #endif
@@ -1921,7 +1921,7 @@ Zicsr_csrrc_cg_cp_rd_b22:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x18
 #endif
@@ -1941,7 +1941,7 @@ Zicsr_csrrc_cg_cp_rd_b23:
   RVTEST_SIGUPD(x28, x8, x7, x23, Zicsr_csrrc_cg_cp_rd_b23, Zicsr_csrrc_cg_cp_rd_b23_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x18, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x18, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x18, RVTEST_TEST_CSR, x0
 #endif
@@ -1955,7 +1955,7 @@ Zicsr_csrrc_cg_cp_rd_b23:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x10
 #endif
@@ -1975,7 +1975,7 @@ Zicsr_csrrc_cg_cp_rd_b24:
   RVTEST_SIGUPD(x28, x8, x7, x24, Zicsr_csrrc_cg_cp_rd_b24, Zicsr_csrrc_cg_cp_rd_b24_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x10, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x10, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x10, RVTEST_TEST_CSR, x0
 #endif
@@ -1989,7 +1989,7 @@ Zicsr_csrrc_cg_cp_rd_b24:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x26
 #endif
@@ -2009,7 +2009,7 @@ Zicsr_csrrc_cg_cp_rd_b25:
   RVTEST_SIGUPD(x28, x8, x7, x25, Zicsr_csrrc_cg_cp_rd_b25, Zicsr_csrrc_cg_cp_rd_b25_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x26, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x26, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x26, RVTEST_TEST_CSR, x0
 #endif
@@ -2023,7 +2023,7 @@ Zicsr_csrrc_cg_cp_rd_b25:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x27
 #endif
@@ -2043,7 +2043,7 @@ Zicsr_csrrc_cg_cp_rd_b26:
   RVTEST_SIGUPD(x28, x8, x7, x26, Zicsr_csrrc_cg_cp_rd_b26, Zicsr_csrrc_cg_cp_rd_b26_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x27, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x27, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x27, RVTEST_TEST_CSR, x0
 #endif
@@ -2057,7 +2057,7 @@ Zicsr_csrrc_cg_cp_rd_b26:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x15
 #endif
@@ -2077,7 +2077,7 @@ Zicsr_csrrc_cg_cp_rd_b27:
   RVTEST_SIGUPD(x28, x8, x7, x27, Zicsr_csrrc_cg_cp_rd_b27, Zicsr_csrrc_cg_cp_rd_b27_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x15, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x15, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x15, RVTEST_TEST_CSR, x0
 #endif
@@ -2092,7 +2092,7 @@ Zicsr_csrrc_cg_cp_rd_b27:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x4
 #endif
@@ -2112,7 +2112,7 @@ Zicsr_csrrc_cg_cp_rd_b28:
   RVTEST_SIGUPD(x22, x8, x7, x28, Zicsr_csrrc_cg_cp_rd_b28, Zicsr_csrrc_cg_cp_rd_b28_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x4, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x4, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x4, RVTEST_TEST_CSR, x0
 #endif
@@ -2126,7 +2126,7 @@ Zicsr_csrrc_cg_cp_rd_b28:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x31
 #endif
@@ -2146,7 +2146,7 @@ Zicsr_csrrc_cg_cp_rd_b29:
   RVTEST_SIGUPD(x22, x8, x7, x29, Zicsr_csrrc_cg_cp_rd_b29, Zicsr_csrrc_cg_cp_rd_b29_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x31, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x31, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x31, RVTEST_TEST_CSR, x0
 #endif
@@ -2160,7 +2160,7 @@ Zicsr_csrrc_cg_cp_rd_b29:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x12
 #endif
@@ -2180,7 +2180,7 @@ Zicsr_csrrc_cg_cp_rd_b30:
   RVTEST_SIGUPD(x22, x8, x7, x30, Zicsr_csrrc_cg_cp_rd_b30, Zicsr_csrrc_cg_cp_rd_b30_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x12, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x12, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x12, RVTEST_TEST_CSR, x0
 #endif
@@ -2194,7 +2194,7 @@ Zicsr_csrrc_cg_cp_rd_b30:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x9
 #endif
@@ -2214,7 +2214,7 @@ Zicsr_csrrc_cg_cp_rd_b31:
   RVTEST_SIGUPD(x22, x8, x7, x31, Zicsr_csrrc_cg_cp_rd_b31, Zicsr_csrrc_cg_cp_rd_b31_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x9, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x9, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x9, RVTEST_TEST_CSR, x0
 #endif
@@ -2232,7 +2232,7 @@ Zicsr_csrrc_cg_cp_rd_b31:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x12
 #endif
@@ -2252,7 +2252,7 @@ Zicsr_csrrc_cg_cp_rs1_edges_0x0:
   RVTEST_SIGUPD(x22, x8, x7, x19, Zicsr_csrrc_cg_cp_rs1_edges_0x0, Zicsr_csrrc_cg_cp_rs1_edges_0x0_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x12, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x12, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x12, RVTEST_TEST_CSR, x0
 #endif
@@ -2266,7 +2266,7 @@ Zicsr_csrrc_cg_cp_rs1_edges_0x0:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x11
 #endif
@@ -2286,7 +2286,7 @@ Zicsr_csrrc_cg_cp_rs1_edges_0x1:
   RVTEST_SIGUPD(x22, x8, x7, x15, Zicsr_csrrc_cg_cp_rs1_edges_0x1, Zicsr_csrrc_cg_cp_rs1_edges_0x1_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x11, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x11, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x11, RVTEST_TEST_CSR, x0
 #endif
@@ -2300,7 +2300,7 @@ Zicsr_csrrc_cg_cp_rs1_edges_0x1:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x31
 #endif
@@ -2320,7 +2320,7 @@ Zicsr_csrrc_cg_cp_rs1_edges_0x2:
   RVTEST_SIGUPD(x22, x8, x7, x15, Zicsr_csrrc_cg_cp_rs1_edges_0x2, Zicsr_csrrc_cg_cp_rs1_edges_0x2_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x31, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x31, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x31, RVTEST_TEST_CSR, x0
 #endif
@@ -2334,7 +2334,7 @@ Zicsr_csrrc_cg_cp_rs1_edges_0x2:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x23
 #endif
@@ -2354,7 +2354,7 @@ Zicsr_csrrc_cg_cp_rs1_edges_0x8000000000000000:
   RVTEST_SIGUPD(x22, x8, x7, x10, Zicsr_csrrc_cg_cp_rs1_edges_0x8000000000000000, Zicsr_csrrc_cg_cp_rs1_edges_0x8000000000000000_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x23, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x23, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x23, RVTEST_TEST_CSR, x0
 #endif
@@ -2368,7 +2368,7 @@ Zicsr_csrrc_cg_cp_rs1_edges_0x8000000000000000:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x13
 #endif
@@ -2388,7 +2388,7 @@ Zicsr_csrrc_cg_cp_rs1_edges_0x8000000000000001:
   RVTEST_SIGUPD(x22, x8, x7, x23, Zicsr_csrrc_cg_cp_rs1_edges_0x8000000000000001, Zicsr_csrrc_cg_cp_rs1_edges_0x8000000000000001_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x13, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x13, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x13, RVTEST_TEST_CSR, x0
 #endif
@@ -2402,7 +2402,7 @@ Zicsr_csrrc_cg_cp_rs1_edges_0x8000000000000001:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x10
 #endif
@@ -2422,7 +2422,7 @@ Zicsr_csrrc_cg_cp_rs1_edges_0x7fffffffffffffff:
   RVTEST_SIGUPD(x22, x8, x7, x24, Zicsr_csrrc_cg_cp_rs1_edges_0x7fffffffffffffff, Zicsr_csrrc_cg_cp_rs1_edges_0x7fffffffffffffff_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x10, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x10, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x10, RVTEST_TEST_CSR, x0
 #endif
@@ -2436,7 +2436,7 @@ Zicsr_csrrc_cg_cp_rs1_edges_0x7fffffffffffffff:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x10
 #endif
@@ -2456,7 +2456,7 @@ Zicsr_csrrc_cg_cp_rs1_edges_0x7ffffffffffffffe:
   RVTEST_SIGUPD(x22, x8, x7, x24, Zicsr_csrrc_cg_cp_rs1_edges_0x7ffffffffffffffe, Zicsr_csrrc_cg_cp_rs1_edges_0x7ffffffffffffffe_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x10, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x10, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x10, RVTEST_TEST_CSR, x0
 #endif
@@ -2470,7 +2470,7 @@ Zicsr_csrrc_cg_cp_rs1_edges_0x7ffffffffffffffe:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x12
 #endif
@@ -2490,7 +2490,7 @@ Zicsr_csrrc_cg_cp_rs1_edges_0xffffffffffffffff:
   RVTEST_SIGUPD(x22, x8, x7, x28, Zicsr_csrrc_cg_cp_rs1_edges_0xffffffffffffffff, Zicsr_csrrc_cg_cp_rs1_edges_0xffffffffffffffff_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x12, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x12, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x12, RVTEST_TEST_CSR, x0
 #endif
@@ -2504,7 +2504,7 @@ Zicsr_csrrc_cg_cp_rs1_edges_0xffffffffffffffff:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x21
 #endif
@@ -2524,7 +2524,7 @@ Zicsr_csrrc_cg_cp_rs1_edges_0xfffffffffffffffe:
   RVTEST_SIGUPD(x22, x8, x7, x24, Zicsr_csrrc_cg_cp_rs1_edges_0xfffffffffffffffe, Zicsr_csrrc_cg_cp_rs1_edges_0xfffffffffffffffe_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x21, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x21, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x21, RVTEST_TEST_CSR, x0
 #endif
@@ -2538,7 +2538,7 @@ Zicsr_csrrc_cg_cp_rs1_edges_0xfffffffffffffffe:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x24
 #endif
@@ -2558,7 +2558,7 @@ Zicsr_csrrc_cg_cp_rs1_edges_0x5bbc887763ae86f2:
   RVTEST_SIGUPD(x22, x8, x7, x17, Zicsr_csrrc_cg_cp_rs1_edges_0x5bbc887763ae86f2, Zicsr_csrrc_cg_cp_rs1_edges_0x5bbc887763ae86f2_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x24, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x24, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x24, RVTEST_TEST_CSR, x0
 #endif
@@ -2572,7 +2572,7 @@ Zicsr_csrrc_cg_cp_rs1_edges_0x5bbc887763ae86f2:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x15
 #endif
@@ -2592,7 +2592,7 @@ Zicsr_csrrc_cg_cp_rs1_edges_0xaaaaaaaaaaaaaaaa:
   RVTEST_SIGUPD(x22, x8, x7, x11, Zicsr_csrrc_cg_cp_rs1_edges_0xaaaaaaaaaaaaaaaa, Zicsr_csrrc_cg_cp_rs1_edges_0xaaaaaaaaaaaaaaaa_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x15, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x15, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x15, RVTEST_TEST_CSR, x0
 #endif
@@ -2606,7 +2606,7 @@ Zicsr_csrrc_cg_cp_rs1_edges_0xaaaaaaaaaaaaaaaa:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x12
 #endif
@@ -2626,7 +2626,7 @@ Zicsr_csrrc_cg_cp_rs1_edges_0x5555555555555555:
   RVTEST_SIGUPD(x22, x8, x7, x15, Zicsr_csrrc_cg_cp_rs1_edges_0x5555555555555555, Zicsr_csrrc_cg_cp_rs1_edges_0x5555555555555555_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x12, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x12, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x12, RVTEST_TEST_CSR, x0
 #endif
@@ -2640,7 +2640,7 @@ Zicsr_csrrc_cg_cp_rs1_edges_0x5555555555555555:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x17
 #endif
@@ -2660,7 +2660,7 @@ Zicsr_csrrc_cg_cp_rs1_edges_0xffffffff:
   RVTEST_SIGUPD(x22, x8, x7, x24, Zicsr_csrrc_cg_cp_rs1_edges_0xffffffff, Zicsr_csrrc_cg_cp_rs1_edges_0xffffffff_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x17, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x17, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x17, RVTEST_TEST_CSR, x0
 #endif
@@ -2674,7 +2674,7 @@ Zicsr_csrrc_cg_cp_rs1_edges_0xffffffff:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x3
 #endif
@@ -2694,7 +2694,7 @@ Zicsr_csrrc_cg_cp_rs1_edges_0xfffffffe:
   RVTEST_SIGUPD(x22, x8, x7, x13, Zicsr_csrrc_cg_cp_rs1_edges_0xfffffffe, Zicsr_csrrc_cg_cp_rs1_edges_0xfffffffe_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x3, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x3, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x3, RVTEST_TEST_CSR, x0
 #endif
@@ -2708,7 +2708,7 @@ Zicsr_csrrc_cg_cp_rs1_edges_0xfffffffe:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x11
 #endif
@@ -2728,7 +2728,7 @@ Zicsr_csrrc_cg_cp_rs1_edges_0x100000000:
   RVTEST_SIGUPD(x22, x8, x7, x28, Zicsr_csrrc_cg_cp_rs1_edges_0x100000000, Zicsr_csrrc_cg_cp_rs1_edges_0x100000000_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x11, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x11, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x11, RVTEST_TEST_CSR, x0
 #endif
@@ -2742,7 +2742,7 @@ Zicsr_csrrc_cg_cp_rs1_edges_0x100000000:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x14
 #endif
@@ -2762,7 +2762,7 @@ Zicsr_csrrc_cg_cp_rs1_edges_0x100000001:
   RVTEST_SIGUPD(x22, x8, x7, x5, Zicsr_csrrc_cg_cp_rs1_edges_0x100000001, Zicsr_csrrc_cg_cp_rs1_edges_0x100000001_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x14, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x14, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x14, RVTEST_TEST_CSR, x0
 #endif
@@ -2780,7 +2780,7 @@ Zicsr_csrrc_cg_cp_rs1_edges_0x100000001:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x30
 #endif
@@ -2788,7 +2788,7 @@ Zicsr_csrrc_cg_cp_rs1_edges_0x100000001:
 Zicsr_csrrc_cg_cmp_rd_rs1_b0:
 // perform operation
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrc x0, RVTEST_TEST_CSR, x0
 #endif
@@ -2797,7 +2797,7 @@ Zicsr_csrrc_cg_cmp_rd_rs1_b0:
   RVTEST_SIGUPD(x22, x8, x7, x0, Zicsr_csrrc_cg_cmp_rd_rs1_b0, Zicsr_csrrc_cg_cmp_rd_rs1_b0_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x30, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x30, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x30, RVTEST_TEST_CSR, x0
 #endif
@@ -2811,7 +2811,7 @@ Zicsr_csrrc_cg_cmp_rd_rs1_b0:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x25
 #endif
@@ -2831,7 +2831,7 @@ Zicsr_csrrc_cg_cmp_rd_rs1_b1:
   RVTEST_SIGUPD(x22, x8, x7, x1, Zicsr_csrrc_cg_cmp_rd_rs1_b1, Zicsr_csrrc_cg_cmp_rd_rs1_b1_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x25, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x25, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x25, RVTEST_TEST_CSR, x0
 #endif
@@ -2846,7 +2846,7 @@ Zicsr_csrrc_cg_cmp_rd_rs1_b1:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x27
 #endif
@@ -2866,7 +2866,7 @@ Zicsr_csrrc_cg_cmp_rd_rs1_b2:
   RVTEST_SIGUPD(x22, x8, x7, x2, Zicsr_csrrc_cg_cmp_rd_rs1_b2, Zicsr_csrrc_cg_cmp_rd_rs1_b2_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x27, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x27, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x27, RVTEST_TEST_CSR, x0
 #endif
@@ -2880,7 +2880,7 @@ Zicsr_csrrc_cg_cmp_rd_rs1_b2:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x5
 #endif
@@ -2900,7 +2900,7 @@ Zicsr_csrrc_cg_cmp_rd_rs1_b3:
   RVTEST_SIGUPD(x22, x8, x7, x3, Zicsr_csrrc_cg_cmp_rd_rs1_b3, Zicsr_csrrc_cg_cmp_rd_rs1_b3_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x5, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x5, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x5, RVTEST_TEST_CSR, x0
 #endif
@@ -2914,7 +2914,7 @@ Zicsr_csrrc_cg_cmp_rd_rs1_b3:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x2
 #endif
@@ -2934,7 +2934,7 @@ Zicsr_csrrc_cg_cmp_rd_rs1_b4:
   RVTEST_SIGUPD(x22, x8, x7, x4, Zicsr_csrrc_cg_cmp_rd_rs1_b4, Zicsr_csrrc_cg_cmp_rd_rs1_b4_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x2, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x2, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x2, RVTEST_TEST_CSR, x0
 #endif
@@ -2948,7 +2948,7 @@ Zicsr_csrrc_cg_cmp_rd_rs1_b4:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x21
 #endif
@@ -2968,7 +2968,7 @@ Zicsr_csrrc_cg_cmp_rd_rs1_b5:
   RVTEST_SIGUPD(x22, x8, x7, x5, Zicsr_csrrc_cg_cmp_rd_rs1_b5, Zicsr_csrrc_cg_cmp_rd_rs1_b5_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x21, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x21, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x21, RVTEST_TEST_CSR, x0
 #endif
@@ -2982,7 +2982,7 @@ Zicsr_csrrc_cg_cmp_rd_rs1_b5:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x30
 #endif
@@ -3002,7 +3002,7 @@ Zicsr_csrrc_cg_cmp_rd_rs1_b6:
   RVTEST_SIGUPD(x22, x8, x7, x6, Zicsr_csrrc_cg_cmp_rd_rs1_b6, Zicsr_csrrc_cg_cmp_rd_rs1_b6_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x30, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x30, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x30, RVTEST_TEST_CSR, x0
 #endif
@@ -3018,7 +3018,7 @@ Zicsr_csrrc_cg_cmp_rd_rs1_b6:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x4
 #endif
@@ -3038,7 +3038,7 @@ Zicsr_csrrc_cg_cmp_rd_rs1_b7:
   RVTEST_SIGUPD(x22, x14, x13, x7, Zicsr_csrrc_cg_cmp_rd_rs1_b7, Zicsr_csrrc_cg_cmp_rd_rs1_b7_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x4, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x4, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x4, RVTEST_TEST_CSR, x0
 #endif
@@ -3052,7 +3052,7 @@ Zicsr_csrrc_cg_cmp_rd_rs1_b7:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x10
 #endif
@@ -3072,7 +3072,7 @@ Zicsr_csrrc_cg_cmp_rd_rs1_b8:
   RVTEST_SIGUPD(x22, x14, x13, x8, Zicsr_csrrc_cg_cmp_rd_rs1_b8, Zicsr_csrrc_cg_cmp_rd_rs1_b8_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x10, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x10, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x10, RVTEST_TEST_CSR, x0
 #endif
@@ -3086,7 +3086,7 @@ Zicsr_csrrc_cg_cmp_rd_rs1_b8:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x26
 #endif
@@ -3106,7 +3106,7 @@ Zicsr_csrrc_cg_cmp_rd_rs1_b9:
   RVTEST_SIGUPD(x22, x14, x13, x9, Zicsr_csrrc_cg_cmp_rd_rs1_b9, Zicsr_csrrc_cg_cmp_rd_rs1_b9_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x26, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x26, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x26, RVTEST_TEST_CSR, x0
 #endif
@@ -3120,7 +3120,7 @@ Zicsr_csrrc_cg_cmp_rd_rs1_b9:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x17
 #endif
@@ -3140,7 +3140,7 @@ Zicsr_csrrc_cg_cmp_rd_rs1_b10:
   RVTEST_SIGUPD(x22, x14, x13, x10, Zicsr_csrrc_cg_cmp_rd_rs1_b10, Zicsr_csrrc_cg_cmp_rd_rs1_b10_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x17, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x17, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x17, RVTEST_TEST_CSR, x0
 #endif
@@ -3154,7 +3154,7 @@ Zicsr_csrrc_cg_cmp_rd_rs1_b10:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x9
 #endif
@@ -3174,7 +3174,7 @@ Zicsr_csrrc_cg_cmp_rd_rs1_b11:
   RVTEST_SIGUPD(x22, x14, x13, x11, Zicsr_csrrc_cg_cmp_rd_rs1_b11, Zicsr_csrrc_cg_cmp_rd_rs1_b11_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x9, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x9, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x9, RVTEST_TEST_CSR, x0
 #endif
@@ -3188,7 +3188,7 @@ Zicsr_csrrc_cg_cmp_rd_rs1_b11:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x25
 #endif
@@ -3208,7 +3208,7 @@ Zicsr_csrrc_cg_cmp_rd_rs1_b12:
   RVTEST_SIGUPD(x22, x14, x13, x12, Zicsr_csrrc_cg_cmp_rd_rs1_b12, Zicsr_csrrc_cg_cmp_rd_rs1_b12_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x25, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x25, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x25, RVTEST_TEST_CSR, x0
 #endif
@@ -3224,7 +3224,7 @@ Zicsr_csrrc_cg_cmp_rd_rs1_b12:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x1
 #endif
@@ -3244,7 +3244,7 @@ Zicsr_csrrc_cg_cmp_rd_rs1_b13:
   RVTEST_SIGUPD(x22, x5, x4, x13, Zicsr_csrrc_cg_cmp_rd_rs1_b13, Zicsr_csrrc_cg_cmp_rd_rs1_b13_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x1, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x1, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x1, RVTEST_TEST_CSR, x0
 #endif
@@ -3258,7 +3258,7 @@ Zicsr_csrrc_cg_cmp_rd_rs1_b13:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x2
 #endif
@@ -3278,7 +3278,7 @@ Zicsr_csrrc_cg_cmp_rd_rs1_b14:
   RVTEST_SIGUPD(x22, x5, x4, x14, Zicsr_csrrc_cg_cmp_rd_rs1_b14, Zicsr_csrrc_cg_cmp_rd_rs1_b14_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x2, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x2, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x2, RVTEST_TEST_CSR, x0
 #endif
@@ -3292,7 +3292,7 @@ Zicsr_csrrc_cg_cmp_rd_rs1_b14:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x12
 #endif
@@ -3312,7 +3312,7 @@ Zicsr_csrrc_cg_cmp_rd_rs1_b15:
   RVTEST_SIGUPD(x22, x5, x4, x15, Zicsr_csrrc_cg_cmp_rd_rs1_b15, Zicsr_csrrc_cg_cmp_rd_rs1_b15_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x12, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x12, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x12, RVTEST_TEST_CSR, x0
 #endif
@@ -3326,7 +3326,7 @@ Zicsr_csrrc_cg_cmp_rd_rs1_b15:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x14
 #endif
@@ -3346,7 +3346,7 @@ Zicsr_csrrc_cg_cmp_rd_rs1_b16:
   RVTEST_SIGUPD(x22, x5, x4, x16, Zicsr_csrrc_cg_cmp_rd_rs1_b16, Zicsr_csrrc_cg_cmp_rd_rs1_b16_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x14, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x14, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x14, RVTEST_TEST_CSR, x0
 #endif
@@ -3360,7 +3360,7 @@ Zicsr_csrrc_cg_cmp_rd_rs1_b16:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x24
 #endif
@@ -3380,7 +3380,7 @@ Zicsr_csrrc_cg_cmp_rd_rs1_b17:
   RVTEST_SIGUPD(x22, x5, x4, x17, Zicsr_csrrc_cg_cmp_rd_rs1_b17, Zicsr_csrrc_cg_cmp_rd_rs1_b17_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x24, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x24, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x24, RVTEST_TEST_CSR, x0
 #endif
@@ -3394,7 +3394,7 @@ Zicsr_csrrc_cg_cmp_rd_rs1_b17:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x13
 #endif
@@ -3414,7 +3414,7 @@ Zicsr_csrrc_cg_cmp_rd_rs1_b18:
   RVTEST_SIGUPD(x22, x5, x4, x18, Zicsr_csrrc_cg_cmp_rd_rs1_b18, Zicsr_csrrc_cg_cmp_rd_rs1_b18_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x13, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x13, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x13, RVTEST_TEST_CSR, x0
 #endif
@@ -3428,7 +3428,7 @@ Zicsr_csrrc_cg_cmp_rd_rs1_b18:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x25
 #endif
@@ -3448,7 +3448,7 @@ Zicsr_csrrc_cg_cmp_rd_rs1_b19:
   RVTEST_SIGUPD(x22, x5, x4, x19, Zicsr_csrrc_cg_cmp_rd_rs1_b19, Zicsr_csrrc_cg_cmp_rd_rs1_b19_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x25, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x25, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x25, RVTEST_TEST_CSR, x0
 #endif
@@ -3462,7 +3462,7 @@ Zicsr_csrrc_cg_cmp_rd_rs1_b19:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x9
 #endif
@@ -3482,7 +3482,7 @@ Zicsr_csrrc_cg_cmp_rd_rs1_b20:
   RVTEST_SIGUPD(x22, x5, x4, x20, Zicsr_csrrc_cg_cmp_rd_rs1_b20, Zicsr_csrrc_cg_cmp_rd_rs1_b20_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x9, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x9, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x9, RVTEST_TEST_CSR, x0
 #endif
@@ -3496,7 +3496,7 @@ Zicsr_csrrc_cg_cmp_rd_rs1_b20:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x17
 #endif
@@ -3516,7 +3516,7 @@ Zicsr_csrrc_cg_cmp_rd_rs1_b21:
   RVTEST_SIGUPD(x22, x5, x4, x21, Zicsr_csrrc_cg_cmp_rd_rs1_b21, Zicsr_csrrc_cg_cmp_rd_rs1_b21_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x17, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x17, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x17, RVTEST_TEST_CSR, x0
 #endif
@@ -3531,7 +3531,7 @@ Zicsr_csrrc_cg_cmp_rd_rs1_b21:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x2
 #endif
@@ -3551,7 +3551,7 @@ Zicsr_csrrc_cg_cmp_rd_rs1_b22:
   RVTEST_SIGUPD(x30, x5, x4, x22, Zicsr_csrrc_cg_cmp_rd_rs1_b22, Zicsr_csrrc_cg_cmp_rd_rs1_b22_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x2, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x2, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x2, RVTEST_TEST_CSR, x0
 #endif
@@ -3566,7 +3566,7 @@ Zicsr_csrrc_cg_cmp_rd_rs1_b22:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x28
 #endif
@@ -3586,7 +3586,7 @@ Zicsr_csrrc_cg_cmp_rd_rs1_b23:
   RVTEST_SIGUPD(x30, x5, x4, x23, Zicsr_csrrc_cg_cmp_rd_rs1_b23, Zicsr_csrrc_cg_cmp_rd_rs1_b23_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x28, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x28, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x28, RVTEST_TEST_CSR, x0
 #endif
@@ -3600,7 +3600,7 @@ Zicsr_csrrc_cg_cmp_rd_rs1_b23:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x2
 #endif
@@ -3620,7 +3620,7 @@ Zicsr_csrrc_cg_cmp_rd_rs1_b24:
   RVTEST_SIGUPD(x30, x5, x4, x24, Zicsr_csrrc_cg_cmp_rd_rs1_b24, Zicsr_csrrc_cg_cmp_rd_rs1_b24_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x2, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x2, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x2, RVTEST_TEST_CSR, x0
 #endif
@@ -3634,7 +3634,7 @@ Zicsr_csrrc_cg_cmp_rd_rs1_b24:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x11
 #endif
@@ -3654,7 +3654,7 @@ Zicsr_csrrc_cg_cmp_rd_rs1_b25:
   RVTEST_SIGUPD(x30, x5, x4, x25, Zicsr_csrrc_cg_cmp_rd_rs1_b25, Zicsr_csrrc_cg_cmp_rd_rs1_b25_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x11, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x11, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x11, RVTEST_TEST_CSR, x0
 #endif
@@ -3668,7 +3668,7 @@ Zicsr_csrrc_cg_cmp_rd_rs1_b25:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x19
 #endif
@@ -3688,7 +3688,7 @@ Zicsr_csrrc_cg_cmp_rd_rs1_b26:
   RVTEST_SIGUPD(x30, x5, x4, x26, Zicsr_csrrc_cg_cmp_rd_rs1_b26, Zicsr_csrrc_cg_cmp_rd_rs1_b26_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x19, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x19, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x19, RVTEST_TEST_CSR, x0
 #endif
@@ -3702,7 +3702,7 @@ Zicsr_csrrc_cg_cmp_rd_rs1_b26:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x12
 #endif
@@ -3722,7 +3722,7 @@ Zicsr_csrrc_cg_cmp_rd_rs1_b27:
   RVTEST_SIGUPD(x30, x5, x4, x27, Zicsr_csrrc_cg_cmp_rd_rs1_b27, Zicsr_csrrc_cg_cmp_rd_rs1_b27_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x12, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x12, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x12, RVTEST_TEST_CSR, x0
 #endif
@@ -3736,7 +3736,7 @@ Zicsr_csrrc_cg_cmp_rd_rs1_b27:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x25
 #endif
@@ -3756,7 +3756,7 @@ Zicsr_csrrc_cg_cmp_rd_rs1_b28:
   RVTEST_SIGUPD(x30, x5, x4, x28, Zicsr_csrrc_cg_cmp_rd_rs1_b28, Zicsr_csrrc_cg_cmp_rd_rs1_b28_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x25, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x25, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x25, RVTEST_TEST_CSR, x0
 #endif
@@ -3770,7 +3770,7 @@ Zicsr_csrrc_cg_cmp_rd_rs1_b28:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x19
 #endif
@@ -3790,7 +3790,7 @@ Zicsr_csrrc_cg_cmp_rd_rs1_b29:
   RVTEST_SIGUPD(x30, x5, x4, x29, Zicsr_csrrc_cg_cmp_rd_rs1_b29, Zicsr_csrrc_cg_cmp_rd_rs1_b29_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x19, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x19, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x19, RVTEST_TEST_CSR, x0
 #endif
@@ -3805,7 +3805,7 @@ Zicsr_csrrc_cg_cmp_rd_rs1_b29:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x27
 #endif
@@ -3825,7 +3825,7 @@ Zicsr_csrrc_cg_cmp_rd_rs1_b30:
   RVTEST_SIGUPD(x28, x5, x4, x30, Zicsr_csrrc_cg_cmp_rd_rs1_b30, Zicsr_csrrc_cg_cmp_rd_rs1_b30_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x27, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x27, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x27, RVTEST_TEST_CSR, x0
 #endif
@@ -3840,7 +3840,7 @@ Zicsr_csrrc_cg_cmp_rd_rs1_b30:
 // Initialize CSR with random value
 // Pick most suitable CSR to test based on supported extensions
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x0, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x0, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrw x0, RVTEST_TEST_CSR, x14
 #endif
@@ -3860,7 +3860,7 @@ Zicsr_csrrc_cg_cmp_rd_rs1_b31:
   RVTEST_SIGUPD(x28, x5, x4, x31, Zicsr_csrrc_cg_cmp_rd_rs1_b31, Zicsr_csrrc_cg_cmp_rd_rs1_b31_str)
 // read back CSR to check updated value
 #ifdef RVTEST_READ_ONLY_TEST_CSR
-  li x14, 0 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
+  li x14, 0x42 # avoid write to read-only CSR, or inconsistent result with rs1 or rd = 0
 #else
   csrrs x14, RVTEST_TEST_CSR, x0
 #endif

@@ -18,7 +18,7 @@ def zicsr_accessi(instr_name: str, rd: int, rs2: int, immval: int) -> str:
     """Helper function to determine which CSR to use for testing based on supported extensions."""
     # instret requires special treatment because it is not writable, and the value is not initialized
     if instr_name in ["csrrw", "csrrwi"] or rs2 == 0 or rd == 0:
-        read_only_access = f"li x{rd}, 0 # avoid write to read-only CSR, or inconsistent result with rs2 or rd = 0"
+        read_only_access = f"li x{rd}, 0x42 # avoid write to read-only CSR, or inconsistent result with rs2 or rd = 0"
     else:
         read_only_access = (
             f"{instr_name} x{rs2}, RVTEST_TEST_CSR, 0\n"
