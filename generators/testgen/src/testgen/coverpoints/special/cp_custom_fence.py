@@ -41,7 +41,10 @@ def make_custom_fence(instr_name: str, instr_type: str, coverpoint: str, test_da
         ]
     )
 
-    # Reserved fence encodings
+    # FENCE rd and rs1 are reserved for finer-grain fences in future extensions, and base
+    # implementations ignore them. The encodings below write no register, so there is nothing to
+    # capture in the signature; the only failure they can show is a trap, which the framework
+    # already detects.
     tc.code.extend(
         [
             "# Testcase cp_custom_fence (reserved fence encodings)",
