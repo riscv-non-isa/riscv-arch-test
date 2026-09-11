@@ -84,6 +84,7 @@ def generate_instr_adr_misaligned_jal_tests(test_data: TestData, covergroup: str
 
     lines = [
         comment_banner(coverpoint, "Instruction Address Misaligned JAL"),
+        ".p2align 2",
         test_data.add_testcase("jal_misaligned", coverpoint, covergroup),
         "jal x0, .+6",
         "# branch by 6 lands in upper half of next instruction 0x0001 which is generated into a c.nop",
