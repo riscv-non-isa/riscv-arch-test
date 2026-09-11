@@ -13,9 +13,8 @@ from testgen.formatters.registry import InstructionTypeConfig, add_instruction_f
 cbp_config = InstructionTypeConfig(
     required_params={"rs1", "rs1val", "immval"},
     reg_range=range(8, 16),
-    imm_bits="xlen_log2",
+    imm_bits=6,  # c.andi immediate is a fixed 6-bit signed field on RV32 and RV64
     imm_signed=True,
-    imm_nonzero=True,
 )
 
 
