@@ -288,8 +288,7 @@ def _gen_vsetvl_rs2_vill(test_data: TestData, temp_reg: int) -> list[str]:
     lines.append(f"LI(x{msb_reg}, 0x8000000000000000)")
     lines.append("#endif")
     for sew_name, sew_v in _SEW_VALUES:
-        # Clear vill with the config's smallest supported SEW and LMUL=1, a combination
-        # every part implements.
+        # Clear vill with the config's smallest supported SEW and LMUL=1
         lines.append("#if UDB_SEW_MIN == 8")
         lines.append(f"LI(x{rs2_reg}, 0x00)  # SEW=8, LMUL=1")
         lines.append("#elif UDB_SEW_MIN == 16")
