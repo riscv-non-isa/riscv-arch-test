@@ -101,8 +101,6 @@ _AMO_OPS: list[tuple[str, int, str]] = [
 
 
 _SCRATCH_INIT_WORDS = [0x44556677, 0x00112233, 0x89ABCDEF, 0x01234567]
-
-
 _SCRATCH_BYTES = b"".join(w.to_bytes(4, "little") for w in _SCRATCH_INIT_WORDS)
 
 
@@ -127,6 +125,14 @@ def _emit_scratch_init(base_reg: int, data_reg: int) -> list[str]:
     return out
 
 
+def _size_coverpoint(mnemonic: str, size: int) -> str:
+    if size == 16:
+        # The 16-byte group has no baseline instruction, so it's split
+        # into an fp (flq/fsq) cross and a separate cas (amocas.q) cross.
+        return "cp_zama16b_16byte_cas" if mnemonic.startswith("amocas") else "cp_zama16b_16byte_fp"
+    return f"cp_zama16b_{size}byte"
+
+
 def _emit_sig_dump(base_reg: int, check_reg: int, test_data: TestData) -> list[str]:
     """Dump all 16 bytes of scratch to the signature so modified bytes are visible."""
     out = []
@@ -139,7 +145,7 @@ def _emit_sig_dump(base_reg: int, check_reg: int, test_data: TestData) -> list[s
 
 
 def _generate_load_tests(test_data: TestData) -> list[str]:
-    """Generate per-instruction load tests matching SV coverpoint names (cp_<mnemonic>_load)."""
+    """Generate per-instruction load tests."""
     covergroup = "Zama16b_cg"
     addr_reg, dest_reg, sentinel_reg, base_reg = test_data.int_regs.get_registers(4)
     fp_reg = test_data.float_regs.get_register()  # allocate one FP reg for load result
@@ -166,7 +172,7 @@ def _generate_load_tests(test_data: TestData) -> list[str]:
             prev_guard = guard
 
         bin_name = mnemonic.replace(".", "_")
-        coverpoint = f"cp_{bin_name}_load"
+        coverpoint = _size_coverpoint(mnemonic, size)
 
         for offset in range(16 - size + 1):
             lines.extend(
@@ -205,9 +211,7 @@ def _generate_load_tests(test_data: TestData) -> list[str]:
 
 
 def _generate_store_tests(test_data: TestData) -> list[str]:
-    """Generate per-instruction store tests matching SV coverpoint names (cp_<mnemonic>_store).
-
-    For each store instruction, sweep offsets [0, 16 - size]. The scratch region
+    """For each store instruction, sweep offsets [0, 16 - size]. The scratch region
     is re-initialized before each store; after each store all 16 bytes are written
     to the signature so the exact bytes modified by the store are visible.
     """
@@ -237,7 +241,7 @@ def _generate_store_tests(test_data: TestData) -> list[str]:
             prev_guard = guard
 
         bin_name = mnemonic.replace(".", "_")
-        coverpoint = f"cp_{bin_name}_store"
+        coverpoint = _size_coverpoint(mnemonic, size)
 
         # FP needs a value preloaded into f{fp_reg} once per guard block (matches the FP store width).
         if is_fp and guard != last_fp_preload_guard:
@@ -289,8 +293,7 @@ def _generate_store_tests(test_data: TestData) -> list[str]:
 
 
 def _generate_amo_tests(test_data: TestData) -> list[str]:
-    """Generate per-instruction AMO tests matching SV coverpoint names (cp_<mnemonic>_amo).
-
+    """
     AMOs have no immediate offset — the address is in rs1 directly.
     Base address is 16-byte aligned; rs1 is set to base + offset for
     each offset in [0, 16 - size]. Scratch is re-initialized before each
@@ -330,7 +333,7 @@ def _generate_amo_tests(test_data: TestData) -> list[str]:
             prev_guard = guard
 
         bin_name = mnemonic.replace(".", "_")
-        coverpoint = f"cp_{bin_name}_amo"
+        coverpoint = _size_coverpoint(mnemonic, size)
 
         for offset in range(16 - size + 1):
             lines.append(
@@ -360,7 +363,7 @@ def _generate_amo_tests(test_data: TestData) -> list[str]:
             )
             lines.extend(setup)
 
-            # Sign the old memory value the AMO returned, then all 16 bytes of scratch
+            # Dump all 16 bytes to signature — shows exactly which bytes the AMO touched
             lines.append(write_sigupd(dest_reg, test_data))
             if size == 16:
                 lines.append(write_sigupd(dest_reg + 1, test_data))
