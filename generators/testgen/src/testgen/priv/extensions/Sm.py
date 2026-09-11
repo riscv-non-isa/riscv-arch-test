@@ -17,6 +17,7 @@ from testgen.priv.extensions.PrivCommon import (
     S_CSR_SENVCFG,
     S_CSRS,
     S_SSTATUS_MASK,
+    SV_GATE,
     addr_csr_tests,
     csr_insufficient_priv_tests,
     csr_ro_write_tests,
@@ -239,7 +240,10 @@ def _generate_sfence_tvm_tests(test_data: TestData) -> list[str]:
     tvm_reg = test_data.int_regs.get_register()
 
     lines = [
-        "#ifdef S_SUPPORTED",
+        # sfence.vma may raise an illegal instruction on a hart that makes satp.MODE read-only zero
+        # (norm:satp-mode_roz_sfence_illegal), so these cases need a supported Sv mode, which in turn
+        # implies S-mode.
+        SV_GATE,
         comment_banner(
             coverpoint,
             "Execute sfence.vma in M-mode and S-mode under both mstatus.TVM settings\n"
@@ -273,7 +277,7 @@ def _generate_sfence_tvm_tests(test_data: TestData) -> list[str]:
             "",
             f"csrc mstatus, x{tvm_reg}          # clear TVM bit",
             "csrsi medeleg, 1 << 2          # restore delegating illegal instructions",
-            "#endif // S_SUPPORTED",
+            f"#endif // {SV_GATE.split(' ', 1)[1]}",
         ]
     )
     test_data.int_regs.return_registers([tvm_reg])
