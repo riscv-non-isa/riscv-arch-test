@@ -7,7 +7,7 @@
 
 """cp_misalign coverpoint generator."""
 
-from testgen.asm.helpers import load_int_reg, write_sigupd
+from testgen.asm.helpers import load_float_reg, load_int_reg, write_sigupd
 from testgen.constants import INDENT
 from testgen.coverpoints.registry import add_coverpoint_generator
 from testgen.data.state import TestData
@@ -111,19 +111,21 @@ def make_misalign(instr_name: str, instr_type: str, coverpoint: str, test_data: 
                     f"sw x{r2}, 8(x{r1}) # store at offset 8",
                     load_int_reg("testdata_0", r2, 0x01234567, test_data),
                     f"sw x{r2}, 12(x{r1}) # store at offset 12",
-                    load_int_reg("rs2", r2, val, test_data),
                 ]
             )
             if instr_type == "S":
                 tc.code.extend(
                     [
+                        load_int_reg("rs2", r2, val, test_data),
                         test_data.add_testcase(f"{alignment}", coverpoint),
                         f"{instr_name} x{r2}, {alignment}(x{r1}) # perform store to scratch memory",
                     ]
                 )
             elif instr_type == "FS":
+                # The stored operand is an FP register, so it must be loaded as one.
                 tc.code.extend(
                     [
+                        load_float_reg("fs2", r2, val, test_data),
                         test_data.add_testcase(f"{alignment}", coverpoint),
                         f"{instr_name} f{r2}, {alignment}(x{r1}) # perform store to scratch memory",
                     ]
@@ -131,6 +133,7 @@ def make_misalign(instr_name: str, instr_type: str, coverpoint: str, test_data: 
             elif instr_type == "CS":
                 tc.code.extend(
                     [
+                        load_int_reg("rs2", r2, val, test_data),
                         f"addi x{r1}, x{r1}, {alignment} # adjust for alignment",
                         test_data.add_testcase(f"{alignment}", coverpoint),
                         f"{instr_name} x{r2}, 0(x{r1}) # perform store",
@@ -138,6 +141,7 @@ def make_misalign(instr_name: str, instr_type: str, coverpoint: str, test_data: 
                     ]
                 )
             elif instr_type == "CSS":
+                tc.code.append(load_int_reg("rs2", r2, val, test_data))
                 asm = test_data.int_regs.consume_registers([2])
                 if asm:
                     tc.code.append(asm)
