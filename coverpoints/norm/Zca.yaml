@@ -18,7 +18,7 @@ normative_rule_definitions:
   - name: c-addi4spn_op
     coverpoint: ["Zca_c_addi4spn_cg/{cp_imm_mul_addi4spn}"]
   - name: c-addi_nop
-    coverpoint: ["Zca_c_nop_cg/{cp_asm_count}"]
+    coverpoint: ["Zca_c_nop_cg/{cp_asm_count_nop}"]
   - name: c-addi_op
     coverpoint: ["Zca_c_addi_cg/{cp_rs1_nx0, cr_rs1_imm_edges_6bit_n0}"]
   - name: c-addiw_op
@@ -58,7 +58,7 @@ normative_rule_definitions:
   - name: c-mv_op
     coverpoint: ["Zca_c_mv_cg/{cp_rd_nx0, cp_rs2_nx0}"]
   - name: c-nop_op
-    coverpoint: ["Zca_c_nop_cg/{cp_asm_count}"]
+    coverpoint: ["Zca_c_nop_cg/{cp_asm_count_nop}"]
   - name: c-or_op
     coverpoint: ["Zca_c_or_cg/{cp_rs1_p, cp_rs2_p, cr_rs1_rs2_edges}"]
   - name: c-sd_op
@@ -68,13 +68,13 @@ normative_rule_definitions:
   - name: c-slli_op
     coverpoint: ["Zca_c_slli_cg/{cp_rs1_nx0, cr_rs1_imm_edges_c}"]
   - name: c-slli_shamt5
-    coverpoint: ["Zca_c_slli_cg/{cp_slli_uimm_n0}"]
+    coverpoint: ["Zca_c_slli_cg/{cp_uimm_n0}"]
   - name: c-srai_op
     coverpoint: ["Zca_c_srai_cg/{cp_rs1_p, cr_rs1_imm_edges_c}"]
   - name: c-srli_op
     coverpoint: ["Zca_c_srli_cg/{cp_rs1_p, cr_rs1_imm_edges_c}"]
   - name: c-srli_shamt5
-    coverpoint: ["Zca_c_srli_cg/{cp_slli_uimm_n0}"]
+    coverpoint: ["Zca_c_srli_cg/{cp_uimm_n0}"]
   - name: c-sub_op
     coverpoint: ["Zca_c_sub_cg/{cp_rs1_p, cp_rs2_p, cr_rs1_rs2_edges}"]
   - name: c-subw_op
