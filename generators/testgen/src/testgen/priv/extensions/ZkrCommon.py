@@ -11,17 +11,12 @@ from testgen.asm.helpers import comment_banner, write_sigupd
 from testgen.asm.tsbi import tsbi_call
 from testgen.data.state import TestData
 
-# seed[29:24] is the only signable field: it reads as zero, while OPST (bits 31:30) may
-# take any value at any poll and the entropy in bits 15:0 is nondeterministic.
-_SEED_RESERVED_SHIFT = 24
-_SEED_RESERVED_MASK = 0x3F
 
-
-def _check_seed_reserved(dest_reg: int, test_data: TestData) -> list[str]:
-    """Commit seed's reserved field: zero after a legal read, the poison after a trap."""
+def _record_seed_reserved(dest_reg: int, test_data: TestData) -> list[str]:
+    """Write seed[29:24] to the signature."""
     return [
-        f"srli x{dest_reg}, x{dest_reg}, {_SEED_RESERVED_SHIFT}",
-        f"andi x{dest_reg}, x{dest_reg}, {_SEED_RESERVED_MASK:#x}  # seed[29:24], reserved, reads zero",
+        f"srli x{dest_reg}, x{dest_reg}, 24",
+        f"andi x{dest_reg}, x{dest_reg}, 0x3f",
         write_sigupd(dest_reg, test_data),
     ]
 
@@ -67,15 +62,15 @@ def gen_seed_csrrw_tests(test_data: TestData, covergroup: str, mode: str) -> lis
                             _mseccfg(mode, f"csrw mseccfg, x{mseccfg_reg}"),
                         ],
                     ),
-                    # nonzero and zero rs1 to cover both insn[19:15] bins
-                    f"LI(x{dest_reg}, -1)  # poison, so a read that never happens is visible",
+                    # Test both rs1 fields and record the reserved read-only-zero bits in rd.
+                    f"LI(x{dest_reg}, -1)",
                     test_data.add_testcase(f"{mode}_{tag}", coverpoint, covergroup),
                     f"csrrw x{dest_reg}, seed, x{src_reg}",
-                    *_check_seed_reserved(dest_reg, test_data),
+                    *_record_seed_reserved(dest_reg, test_data),
                     f"LI(x{dest_reg}, -1)",
                     test_data.add_testcase(f"{mode}_zero_{tag}", coverpoint, covergroup),
                     f"csrrw x{dest_reg}, seed, x0",
-                    *_check_seed_reserved(dest_reg, test_data),
+                    *_record_seed_reserved(dest_reg, test_data),
                 ]
             )
 
