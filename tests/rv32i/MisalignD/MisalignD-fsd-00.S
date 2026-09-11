@@ -45,7 +45,7 @@ RVTEST_BEGIN
   sw x14, 8(x10) # store at offset 8
   RVTEST_TESTDATA_LOAD_INT(x3, x14) # load testdata_0: x14 = 0x01234567
   sw x14, 12(x10) # store at offset 12
-  RVTEST_TESTDATA_LOAD_INT(x3, x14) # load rs2: x14 = 0x0f1e2d3c
+  RVTEST_TESTDATA_LOAD_FLOAT_DOUBLE(x3, f14) # load fs2: f14 = 0x000000000f1e2d3c
 MisalignD_fsd_cg_cp_misalign_0:
   fsd f14, 0(x10) # perform store to scratch memory
   # Check all 16 bytes as signature
@@ -73,7 +73,7 @@ MisalignD_fsd_cg_cp_misalign_0:
   sw x14, 8(x10) # store at offset 8
   RVTEST_TESTDATA_LOAD_INT(x3, x14) # load testdata_0: x14 = 0x01234567
   sw x14, 12(x10) # store at offset 12
-  RVTEST_TESTDATA_LOAD_INT(x3, x14) # load rs2: x14 = 0x0f1e2d3c
+  RVTEST_TESTDATA_LOAD_FLOAT_DOUBLE(x3, f14) # load fs2: f14 = 0x000000000f1e2d3c
 MisalignD_fsd_cg_cp_misalign_1:
   fsd f14, 1(x10) # perform store to scratch memory
   # Check all 16 bytes as signature
@@ -101,7 +101,7 @@ MisalignD_fsd_cg_cp_misalign_1:
   sw x14, 8(x10) # store at offset 8
   RVTEST_TESTDATA_LOAD_INT(x3, x14) # load testdata_0: x14 = 0x01234567
   sw x14, 12(x10) # store at offset 12
-  RVTEST_TESTDATA_LOAD_INT(x3, x14) # load rs2: x14 = 0x0f1e2d3c
+  RVTEST_TESTDATA_LOAD_FLOAT_DOUBLE(x3, f14) # load fs2: f14 = 0x000000000f1e2d3c
 MisalignD_fsd_cg_cp_misalign_2:
   fsd f14, 2(x10) # perform store to scratch memory
   # Check all 16 bytes as signature
@@ -129,7 +129,7 @@ MisalignD_fsd_cg_cp_misalign_2:
   sw x14, 8(x10) # store at offset 8
   RVTEST_TESTDATA_LOAD_INT(x3, x14) # load testdata_0: x14 = 0x01234567
   sw x14, 12(x10) # store at offset 12
-  RVTEST_TESTDATA_LOAD_INT(x3, x14) # load rs2: x14 = 0x0f1e2d3c
+  RVTEST_TESTDATA_LOAD_FLOAT_DOUBLE(x3, f14) # load fs2: f14 = 0x000000000f1e2d3c
 MisalignD_fsd_cg_cp_misalign_3:
   fsd f14, 3(x10) # perform store to scratch memory
   # Check all 16 bytes as signature
@@ -157,7 +157,7 @@ MisalignD_fsd_cg_cp_misalign_3:
   sw x14, 8(x10) # store at offset 8
   RVTEST_TESTDATA_LOAD_INT(x3, x14) # load testdata_0: x14 = 0x01234567
   sw x14, 12(x10) # store at offset 12
-  RVTEST_TESTDATA_LOAD_INT(x3, x14) # load rs2: x14 = 0x0f1e2d3c
+  RVTEST_TESTDATA_LOAD_FLOAT_DOUBLE(x3, f14) # load fs2: f14 = 0x000000000f1e2d3c
 MisalignD_fsd_cg_cp_misalign_4:
   fsd f14, 4(x10) # perform store to scratch memory
   # Check all 16 bytes as signature
@@ -185,7 +185,7 @@ MisalignD_fsd_cg_cp_misalign_4:
   sw x14, 8(x10) # store at offset 8
   RVTEST_TESTDATA_LOAD_INT(x3, x14) # load testdata_0: x14 = 0x01234567
   sw x14, 12(x10) # store at offset 12
-  RVTEST_TESTDATA_LOAD_INT(x3, x14) # load rs2: x14 = 0x0f1e2d3c
+  RVTEST_TESTDATA_LOAD_FLOAT_DOUBLE(x3, f14) # load fs2: f14 = 0x000000000f1e2d3c
 MisalignD_fsd_cg_cp_misalign_5:
   fsd f14, 5(x10) # perform store to scratch memory
   # Check all 16 bytes as signature
@@ -213,7 +213,7 @@ MisalignD_fsd_cg_cp_misalign_5:
   sw x14, 8(x10) # store at offset 8
   RVTEST_TESTDATA_LOAD_INT(x3, x14) # load testdata_0: x14 = 0x01234567
   sw x14, 12(x10) # store at offset 12
-  RVTEST_TESTDATA_LOAD_INT(x3, x14) # load rs2: x14 = 0x0f1e2d3c
+  RVTEST_TESTDATA_LOAD_FLOAT_DOUBLE(x3, f14) # load fs2: f14 = 0x000000000f1e2d3c
 MisalignD_fsd_cg_cp_misalign_6:
   fsd f14, 6(x10) # perform store to scratch memory
   # Check all 16 bytes as signature
@@ -241,7 +241,7 @@ MisalignD_fsd_cg_cp_misalign_6:
   sw x14, 8(x10) # store at offset 8
   RVTEST_TESTDATA_LOAD_INT(x3, x14) # load testdata_0: x14 = 0x01234567
   sw x14, 12(x10) # store at offset 12
-  RVTEST_TESTDATA_LOAD_INT(x3, x14) # load rs2: x14 = 0x0f1e2d3c
+  RVTEST_TESTDATA_LOAD_FLOAT_DOUBLE(x3, f14) # load fs2: f14 = 0x000000000f1e2d3c
 MisalignD_fsd_cg_cp_misalign_7:
   fsd f14, 7(x10) # perform store to scratch memory
   # Check all 16 bytes as signature
@@ -269,7 +269,7 @@ MisalignD_fsd_cg_cp_misalign_7:
   sw x14, 8(x10) # store at offset 8
   RVTEST_TESTDATA_LOAD_INT(x3, x14) # load testdata_0: x14 = 0x01234567
   sw x14, 12(x10) # store at offset 12
-  RVTEST_TESTDATA_LOAD_INT(x3, x14) # load rs2: x14 = 0x0f1e2d3c
+  RVTEST_TESTDATA_LOAD_FLOAT_DOUBLE(x3, f14) # load fs2: f14 = 0x000000000f1e2d3c
 MisalignD_fsd_cg_cp_misalign_8:
   fsd f14, 8(x10) # perform store to scratch memory
   # Check all 16 bytes as signature
