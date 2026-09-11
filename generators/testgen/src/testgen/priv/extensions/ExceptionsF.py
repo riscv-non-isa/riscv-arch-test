@@ -274,11 +274,6 @@ def add_csr_instructions(
     return t_lines
 
 
-# Bytes of scratch read back after a misaligned FP store: max offset (15) + widest store (fsd, 8),
-# rounded up to a word.
-_STORE_READBACK_BYTES = 24
-
-
 def add_fp_load_misaligned_test(
     op: str,
     offset: int,
@@ -331,7 +326,7 @@ def add_fp_store_misaligned_test(
     ]
     t_lines += [
         line
-        for word_off in range(0, _STORE_READBACK_BYTES, 4)
+        for word_off in range(0, 24, 4)
         for line in (
             f"lw x{check_reg}, {word_off}(x{addr_reg})",
             write_sigupd(check_reg, test_data),
