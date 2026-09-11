@@ -82,7 +82,7 @@ normative_rule_definitions:
   - name: c-sw_op
     coverpoint: ["Zca_c_sw_cg/{cp_rs1_p, cp_rs2_p, cp_rs2_edges, cp_imm_mul}"]
   - name: c-swsp_op
-    coverpoint: ["Zca_c_swsp_cg/{cp_rs2, cp_rs2_edges, cp_imm_mul}"]
+    coverpoint: ["Zca_c_swsp_cg/{cp_rs2, cp_rs2_edges, cp_imm_mul_4sp}"]
   - name: c-xor_op
     coverpoint: ["Zca_c_xor_cg/{cp_rs1_p, cp_rs2_p, cr_rs1_rs2_edges}"]
 
