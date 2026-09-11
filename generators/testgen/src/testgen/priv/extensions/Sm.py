@@ -824,6 +824,55 @@ def _generate_mcsr_tests(test_data: TestData, test_chunks: list) -> None:
     tc.code.append("#endif // S_SUPPORTED")
 
     ######################################
+    coverpoint = "cp_satp_from_m"
+    ######################################
+    tc = test_data.new_test_chunk(test_chunks, "satp_from_m")
+    tc.section_header = comment_banner(coverpoint, "Read satp from M-mode with mstatus.TVM = 1 and 0")
+    temp_reg, tvm_reg = test_data.int_regs.get_registers(2)
+    tc.code.extend(
+        [
+            "#ifdef S_SUPPORTED",
+            f"LI(x{tvm_reg}, 0x00100000) # mstatus.TVM (bit 20)",
+            f"csrs mstatus, x{tvm_reg}",
+            test_data.add_testcase("tvm_enabled", coverpoint, covergroup),
+            f"csrr x{temp_reg}, satp # read satp with mstatus.TVM = 1; TVM only traps S-mode, so expect no trap",
+            f"csrc mstatus, x{tvm_reg}",
+            test_data.add_testcase("tvm_disabled", coverpoint, covergroup),
+            f"csrr x{temp_reg}, satp # read satp with mstatus.TVM = 0; expect no trap.  Value is WARL and unpredictable so don't sigupd it",
+            "#endif // S_SUPPORTED",
+        ]
+    )
+    test_data.int_regs.return_registers([temp_reg, tvm_reg])
+
+    ######################################
+    coverpoint = "cp_satp_from_s"
+    ######################################
+    tc = test_data.new_test_chunk(test_chunks, "satp_from_s")
+    tc.section_header = comment_banner(coverpoint, "Read satp from S-mode with mstatus.TVM = 1 and 0")
+    temp_reg, tvm_reg = test_data.int_regs.get_registers(2)
+    # This suite does not delegate illegal instructions, so the TVM = 1 trap is taken in M-mode,
+    # whose handler can read satp.  The S suite cannot host this case: it delegates to S-mode and
+    # the S-mode handler reads satp itself.
+    tc.code.extend(
+        [
+            "#ifdef S_SUPPORTED",
+            f"LI(x{tvm_reg}, 0x00100000) # mstatus.TVM (bit 20)",
+            f"csrs mstatus, x{tvm_reg}",
+            "RVTEST_TSBI_GOTO_SMODE",
+            test_data.add_testcase("tvm_enabled", coverpoint, covergroup),
+            f"csrr x{temp_reg}, satp # read satp from S-mode with mstatus.TVM = 1; expect illegal instruction trap",
+            "RVTEST_TSBI_GOTO_MMODE",
+            f"csrc mstatus, x{tvm_reg}",
+            "RVTEST_TSBI_GOTO_SMODE",
+            test_data.add_testcase("tvm_disabled", coverpoint, covergroup),
+            f"csrr x{temp_reg}, satp # read satp from S-mode with mstatus.TVM = 0; expect no trap.  Value is WARL and unpredictable so don't sigupd it",
+            "RVTEST_TSBI_GOTO_MMODE",
+            "#endif // S_SUPPORTED",
+        ]
+    )
+    test_data.int_regs.return_registers([temp_reg, tvm_reg])
+
+    ######################################
     coverpoint = "cp_shadow"
     ######################################
     tc = test_data.new_test_chunk(test_chunks, "shadow")
