@@ -24,37 +24,21 @@ normative_rule_definitions:
     coverpoint:
       ["{SscofpmfSm_cg,SscofpmfS_cg,SscofpmfU_cg}/{cp_of_set_on_overflow}"]
 
-  - name: mip_lcofip_op
-    coverpoint:
-      ["{SscofpmfSm_cg,SscofpmfS_cg,SscofpmfU_cg}/{cp_of_set_on_overflow}"]
-
-  - name: sip_lcofip_op
-    coverpoint:
-      ["{SscofpmfSm_cg,SscofpmfS_cg,SscofpmfU_cg}/{cp_of_set_on_overflow}"]
-
   - name: count_overflow_trigger
     coverpoint:
-      ["{SscofpmfSm_cg,SscofpmfS_cg,SscofpmfU_cg}/{cp_overflow_hw_only}"]
-
-  - name: mip_lcofip_op
-    coverpoint:
-      ["{SscofpmfSm_cg,SscofpmfS_cg,SscofpmfU_cg}/{cp_lcofip_hw_only}"]
-
-  - name: sip_lcofip_op
-    coverpoint:
-      ["{SscofpmfSm_cg,SscofpmfS_cg,SscofpmfU_cg}/{cp_lcofip_hw_only}"]
+      [
+        "{SscofpmfSm_cg,SscofpmfS_cg,SscofpmfU_cg}/{cp_overflow_hw_only}",
+        "{SscofpmfSm_cg,SscofpmfS_cg,SscofpmfU_cg}/{cp_lcofip_hw_only}",
+      ]
 
   - name: scountovf_op
     coverpoint: ["{SscofpmfSm_cg,SscofpmfS_cg}/{cp_scountovf_shadow}"]
 
-  - names:
-      [
-        scountovf_mmode_read_access,
-        scountovf_smode_read_access,
-        scountovf_smode_read_access_control,
-      ]
-    coverpoint:
-      ["{SscofpmfSm_cg,SscofpmfS_cg,SscofpmfS_cg}/{cp_scountovf_mcounteren}"]
+  - names: [scountovf_mmode_read_access, scountovf_smode_read_access]
+    coverpoint: ["{SscofpmfSm_cg,SscofpmfS_cg}/{cp_scountovf_mcounteren}"]
+
+  - name: scountovf_smode_read_access_control
+    coverpoint: ["SscofpmfS_cg/cp_scountovf_mcounteren"]
 
   - names: [scountovf_mmode_read_access, scountovf_smode_read_access]
     coverpoint: ["{SscofpmfSm_cg,SscofpmfS_cg}/{cp_sscofpmf_access}"]
@@ -62,12 +46,12 @@ normative_rule_definitions:
   - name: mhpmeventh_presence
     coverpoint: ["SscofpmfSm_cg/cp_sscofpmf_access"]
 
-  - names:
-      [count_overflow_trigger, mie_lcofie_op, mip_lcofip_op, mip_lcofip_acc]
+  - names: [mie_lcofie_op, mip_lcofip_op, mip_lcofip_acc]
     coverpoint: ["SscofpmfSm_cg/cp_lcofi_m"]
 
   - names:
       [
+        sip_lcofip_op,
         sip_lcofip_Sscofpmf_acc,
         sip_lcofip_Sscofpmf_op,
         sie_lcofip_Sscofpmf_acc,
