@@ -118,6 +118,11 @@ def generate_all_tests(
     # Build list of test generation tasks
     tasks: list[UnprivTask | PrivTask] = []
 
+    skipped_for_e = sorted(set(unpriv_ext_list) - E_EXTENSION_TESTS)
+    if skipped_for_e:
+        # An RVE part gets no tests at all for these, which is otherwise indistinguishable from passing.
+        print(f"No RV32E/RV64E tests generated for: {', '.join(skipped_for_e)}")
+
     for xlen in [32, 64]:
         for E_ext in [False, True]:
             for testsuite in sorted(unpriv_ext_list):
