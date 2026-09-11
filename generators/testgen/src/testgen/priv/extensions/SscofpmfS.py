@@ -163,8 +163,6 @@ def _generate_lcofip_priority_s_tests(test_data: TestData) -> list[str]:
                 test_data.add_testcase(binname, coverpoint, covergroup),
                 _csr_access(f"csrs sie, x{r_temp}   # sie = all 1s: competing interrupt fires first, then LCOFI", "S"),
                 "",
-                # Already at S throughout -- the interrupt fires as soon as sie enables it,
-                # or once stimecmp is reached for the timer case.
                 f"RVTEST_IDLE_FOR_INTERRUPT(x{r_temp})",
                 f"csrr x{r_temp2}, sip   # sample point for lcofip priority outcome",
                 write_sigupd(r_temp2, test_data),
