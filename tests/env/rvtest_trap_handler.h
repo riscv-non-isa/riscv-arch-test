@@ -343,8 +343,20 @@
 #define goto_lower_sv_off (rvmodel_sv_off+4*(REGWIDTH)) // GOTO_LOWER_MODE T1/T2/T4/T3 save slots
 #define int_clr_sv_off  (rvmodel_sv_off+8*(REGWIDTH))   // a0/a1/a2 save slots for interrupt clearing routines
 
-// Keep medeleg[2] clear while lower-mode code runs when invisible traps are sent to the M-mode invisible trap handler.
-// The saved value controls whether an unhandled instruction is then forwarded to S-mode.
+
+// Invisible trap handling requires illegal instruction exceptions to always go through M-mode for possible
+// emulation. When emulation does not occur, the trap must be forwarded to S-mode if delegation is supposed to
+// be enabled and to the normal M-mode trap handler if delegation is supposed to be disabled. This requires an
+// alternative way of tracking the desired state of medeleg[2] since it needs to be cleared in lower priv modes
+// even when we want delegation to happen. The desired state is stored in the save area at medeleg_illegal_sv_off
+// and is saved/restored during privilege mode switches using the macros below. When switching to M-mode, the real
+// value of medeleg[2] must be restored so that code that reads medeleg seems the correct value. When switching to
+// a lower-priv mode, the value of medeleg[2] must be saved and then cleared so that illegal instructions go
+// through M-mode.
+
+
+// Record the current value of medeleg[2] in the save area and clear it in the actual CSR.
+// Used when switching from M-mode to a lower priv mode.
 .macro RVTEST_SAVE_MEDELEG_ILLEGAL SAVE_AREA_REG, TMP_REG
 #if defined(RVTEST_INVISIBLE_TRAP_HANDLER) && defined(S_SUPPORTED)
   csrr    \TMP_REG, CSR_MEDELEG
@@ -359,6 +371,8 @@
 #endif
 .endm
 
+// Restore the saved value of medeleg[2] to the actual CSR.
+// Used when switching from a lower priv mode back to M-mode.
 .macro RVTEST_RESTORE_MEDELEG_ILLEGAL SAVE_AREA_REG, TMP_REG
 #if defined(RVTEST_INVISIBLE_TRAP_HANDLER) && defined(S_SUPPORTED)
   csrci   CSR_MEDELEG, (1 << CAUSE_ILLEGAL_INSTRUCTION)
@@ -371,8 +385,9 @@
 #endif
 .endm
 
-// A T-SBI request can enter M-mode from M-mode or a lower mode. Save a new
-// logical value only when M-mode test code made the request.
+// Check the mode we are going to and save the current value of medeleg[2]
+// if we are switching to a lower-priv mode. Used when doing a mode-switch
+// to anything other than M-mode.
 .macro RVTEST_PREPARE_MEDELEG_FOR_LOWER SAVE_AREA_REG, STATUS_REG, TMP_REG
   csrr    \STATUS_REG, CSR_MSTATUS
   LI(     \TMP_REG, MSTATUS_MPP)
@@ -382,7 +397,8 @@
 1:
 .endm
 
-// Restore the logical value only when lower-mode code requested M-mode.
+// Check the mode we are coming from and restore the saved value of medeleg[2]
+// if we are switching from a lower-priv mode. Used when doing a mode-switch to M-mode.
 .macro RVTEST_PREPARE_MEDELEG_FOR_M SAVE_AREA_REG, STATUS_REG, TMP_REG
   csrr    \STATUS_REG, CSR_MSTATUS
   LI(     \TMP_REG, MSTATUS_MPP)
