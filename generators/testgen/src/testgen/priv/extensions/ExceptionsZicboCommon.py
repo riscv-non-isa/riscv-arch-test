@@ -44,25 +44,38 @@ _CBO_FIELDS: dict[str, _CboField] = {
 }
 
 
-# Sentinel written to the start of scratch before each cbo.zero, so the readback tells a
-# zeroed block from a no-op. scratch is 256-byte aligned, so its first word is inside the
-# block whatever the implementation's block size is.
-_CBOZ_SENTINEL = 0x0C0B0000
-
-
-def _cboz_prime(addr_reg: int, val_reg: int) -> list[str]:
-    return [
-        f"LI(x{val_reg}, {_CBOZ_SENTINEL:#x})  # sentinel so a no-op cbo.zero is detectable",
-        f"sw x{val_reg}, 0(x{addr_reg})",
-    ]
-
-
-def _cboz_check(addr_reg: int, val_reg: int, test_data: TestData) -> list[str]:
-    """Read the first word of the block back: 0 if cbo.zero ran, the sentinel if it trapped."""
-    return [
-        f"lw x{val_reg}, 0(x{addr_reg})",
-        write_sigupd(val_reg, test_data),
-    ]
+def _cbo_test(
+    instr: str,
+    name: str,
+    coverpoint: str,
+    covergroup: str,
+    addr_reg: int,
+    val_reg: int,
+    test_data: TestData,
+) -> list[str]:
+    lines = []
+    if instr == "cbo.zero":
+        lines.extend(
+            [
+                "# Store a nonzero value so the test can check cbo.zero",
+                f"LI(x{val_reg}, {0x0C0B0000:#x})",
+                f"sw x{val_reg}, 0(x{addr_reg})",
+            ]
+        )
+    lines.extend(
+        [
+            test_data.add_testcase(name, coverpoint, covergroup),
+            f"{instr}    0(x{addr_reg})",
+        ]
+    )
+    if instr == "cbo.zero":
+        lines.extend(
+            [
+                f"lw x{val_reg}, 0(x{addr_reg})",
+                write_sigupd(val_reg, test_data),
+            ]
+        )
+    return lines
 
 
 def _csr_op(op: str, csr: str, reg: int, mode: str) -> str:
@@ -139,14 +152,7 @@ def cbo_config_helper(
         if not cross_senvcfg:
             for instr in instrs:
                 name = f"{instr}{mode_tag}_menvcfg.{field}{m_val}"
-                lines.extend(
-                    [
-                        *(_cboz_prime(addr_reg, val_reg) if instr == "cbo.zero" else []),
-                        test_data.add_testcase(name, coverpoint, covergroup),
-                        f"{instr}    0(x{addr_reg})",
-                        *(_cboz_check(addr_reg, val_reg, test_data) if instr == "cbo.zero" else []),
-                    ]
-                )
+                lines.extend(_cbo_test(instr, name, coverpoint, covergroup, addr_reg, val_reg, test_data))
         else:
             lines.append("#ifdef S1P12P0_OR_LATER_SUPPORTED")
             for s_val in bins:
@@ -161,25 +167,11 @@ def cbo_config_helper(
                     )
                 for instr in instrs:
                     name = f"{instr}{mode_tag}_menvcfg.{field}{m_val}{senvcfg_tag}"
-                    lines.extend(
-                        [
-                            *(_cboz_prime(addr_reg, val_reg) if instr == "cbo.zero" else []),
-                            test_data.add_testcase(name, coverpoint, covergroup),
-                            f"{instr}    0(x{addr_reg})",
-                            *(_cboz_check(addr_reg, val_reg, test_data) if instr == "cbo.zero" else []),
-                        ]
-                    )
+                    lines.extend(_cbo_test(instr, name, coverpoint, covergroup, addr_reg, val_reg, test_data))
             lines.append("#else")
             for instr in instrs:
                 name = f"{instr}{mode_tag}_menvcfg.{field}{m_val}"
-                lines.extend(
-                    [
-                        *(_cboz_prime(addr_reg, val_reg) if instr == "cbo.zero" else []),
-                        test_data.add_testcase(name, coverpoint, covergroup),
-                        f"{instr}    0(x{addr_reg})",
-                        *(_cboz_check(addr_reg, val_reg, test_data) if instr == "cbo.zero" else []),
-                    ]
-                )
+                lines.extend(_cbo_test(instr, name, coverpoint, covergroup, addr_reg, val_reg, test_data))
             lines.append("#endif // S1P12P0_OR_LATER_SUPPORTED")
 
     lines.append("#endif")
@@ -274,7 +266,7 @@ def cbo_misaligned_helper(
     mode: str,
     cross_senvcfg: bool = False,
 ) -> list[str]:
-    """Generate cbo/prefetch misaligned-address trap tests."""
+    """Generate cbo/prefetch tests showing a misaligned address does not trap."""
     assert not (mode == "Sm" and cross_senvcfg), "senvcfg is not applicable in M-mode"
     coverpoint = "cp_cbo_address_misaligned"
     addr_reg, cfg_reg = test_data.int_regs.get_registers(2)
