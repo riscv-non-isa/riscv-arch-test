@@ -32,8 +32,7 @@ def _generate_lcofi_sip_u_tests(test_data: TestData) -> list[str]:
             "Sample point is the T-SBI delegate's sret back to U (sstatus.SPP=0).\n",
         ),
         "",
-        _csr_access("csrw mip, zero      # clear all pending", "U"),
-        _csr_access("csrw mie, zero      # disable all interrupts", "U"),
+        _csr_access("csrw sie, zero      # disable all S-mode interrupts", "U"),
         _csr_access("csrw RVMODEL_MHPMEVENT, zero", "U"),
         f"LI(x{r_val}, {hex(SIE_BIT)})",
         _csr_access(f"csrc sstatus, x{r_val}   # sstatus.SIE = 0 ", "U"),
@@ -93,8 +92,6 @@ def _generate_lcofi_sip_u_tests(test_data: TestData) -> list[str]:
 @add_priv_test_generator(
     "SscofpmfU",
     required_extensions=["U", "Sscofpmf"],
-    march_extensions=[],
-    extra_defines=[],
 )
 def make_sscofpmfu(test_data: TestData) -> list[TestChunk]:
     """Generate tests for the SscofpmfU performance-counter-overflow testsuite."""

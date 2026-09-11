@@ -115,9 +115,11 @@
 
 #define RVMODEL_MHPMEVENT   CSR_MHPMEVENT3
 #define RVMODEL_MHPMCOUNTER CSR_MHPMCOUNTER3
-#define RVMODEL_MHPMEVENT_VAL 0x00000000  // will be updated once there is a way to increment counters
+// No event code counts: there are no plans for Imperas to support HPM events, so this is
+// not expected to change in the foreseeable future.
+#define RVMODEL_MHPMEVENT_VAL 0x00000000
 #define RVMODEL_MHPMEVENT_CODE(_R1, _R2) \
-    nop // will be updated once there is a way to increment counters
+    nop
 
 
 #endif // _RVMODEL_MACROS_H

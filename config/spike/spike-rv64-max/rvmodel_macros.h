@@ -182,11 +182,13 @@
   lw _R1, 0(_R2);                               \
   sw _R1, 0(_R2);
 
-
-#define RVMODEL_MHPMEVENT   mhpmevent3
-#define RVMODEL_MHPMCOUNTER mhpmcounter3
-#define RVMODEL_MHPMEVENT_VAL 0x0  // will be updated once there is a way to increment counters Spike issue: https://github.com/riscv/sail-riscv/issues/1733
+##### Sscofpmf ######
+// No event code counts yet: spike does not increment HPM counters
+// (https://github.com/riscv-software-src/riscv-isa-sim/issues/2370)
+#define RVMODEL_MHPMEVENT   CSR_MHPMEVENT3
+#define RVMODEL_MHPMCOUNTER CSR_MHPMCOUNTER3
+#define RVMODEL_MHPMEVENT_VAL 0x0
 #define RVMODEL_MHPMEVENT_CODE(_R1, _R2) \
-    nop // will be updated once there is a way to increment counters Spike issue: https://github.com/riscv/sail-riscv/issues/1733
+    nop
 
 #endif // _RVMODEL_MACROS_H

@@ -34,7 +34,7 @@ def _generate_lcofi_m_tests(test_data: TestData) -> list[str]:
         ),
         "",
         "# === M-MODE SETUP ===",
-        "csrw mip, zero      # clear all pending",
+        "csrw mip, zero      # clear all pending (sip may not exist in this suite)",
         "csrw mie, zero      # disable all interrupts",
         "csrw RVMODEL_MHPMEVENT, zero",
         f"LI(x{r_val}, {hex(MIE_BIT)})",

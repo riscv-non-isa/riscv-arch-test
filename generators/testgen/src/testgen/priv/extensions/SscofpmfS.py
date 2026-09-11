@@ -31,8 +31,7 @@ def _generate_lcofi_sip_s_tests(test_data: TestData) -> list[str]:
             "sip.LCOFIP x sie.LCOFIE.\n",
         ),
         "",
-        _csr_access("csrw mip, zero      # clear all pending", "S"),
-        _csr_access("csrw mie, zero      # disable all interrupts", "S"),
+        "csrw sie, zero      # disable all S-mode interrupts",
         _csr_access("csrw RVMODEL_MHPMEVENT, zero", "S"),
         f"LI(x{r_val}, {hex(SIE_BIT)})",
         f"csrs sstatus, x{r_val}   # sstatus.SIE = 1 (fixed)",
@@ -112,14 +111,12 @@ def _generate_lcofip_priority_s_tests(test_data: TestData) -> list[str]:
                 "RVMODEL_MHPMEVENT_CODE, together with one of {SEIP,STIP,SSIP,none}.\n"
                 "Each case holds with sie = all 0s (nothing fires), then with sie = all 1s:\n"
                 "the competing interrupt fires first and LCOFI only after it (lowest priority).\n"
-                "Other pending bits go through mip, which cp_lcofip_priority_s samples;\n"
+                "The competing interrupts are raised through the RVTEST_SET_*_INT_S macros;\n"
                 "enables stay in sie, written only here."
             ),
         ),
         "",
-        _csr_access("csrw mip, zero      # clear all pending", "S"),
-        _csr_access("csrw mie, zero      # disable all interrupts", "S"),
-        _csr_access("csrw sie, zero", "S"),
+        "csrw sie, zero      # disable all S-mode interrupts",
         _csr_access("csrw RVMODEL_MHPMEVENT, zero", "S"),
         f"csrsi sstatus, {hex(SIE_BIT)}   # sstatus.SIE = 1",
     ]
@@ -166,7 +163,8 @@ def _generate_lcofip_priority_s_tests(test_data: TestData) -> list[str]:
                 test_data.add_testcase(binname, coverpoint, covergroup),
                 _csr_access(f"csrs sie, x{r_temp}   # sie = all 1s: competing interrupt fires first, then LCOFI", "S"),
                 "",
-                # Already at S throughout -- interrupt fires immediately or on timer maturity.
+                # Already at S throughout -- the interrupt fires as soon as sie enables it,
+                # or once stimecmp is reached for the timer case.
                 f"RVTEST_IDLE_FOR_INTERRUPT(x{r_temp})",
                 f"csrr x{r_temp2}, sip   # sample point for lcofip priority outcome",
                 write_sigupd(r_temp2, test_data),
@@ -186,8 +184,8 @@ def _generate_lcofip_priority_s_tests(test_data: TestData) -> list[str]:
         lines.extend(
             [
                 f"LI(x{r_val}, {hex(LCOFI_BIT)})",
-                _csr_access(f"csrc mip, x{r_val}   # clear LCOFIP for next iteration", "S"),
-                _csr_access("csrw sie, zero   # disable all before next iteration", "S"),
+                f"csrc sip, x{r_val}   # clear LCOFIP for next iteration",
+                "csrw sie, zero   # disable all before next iteration",
             ]
         )
 

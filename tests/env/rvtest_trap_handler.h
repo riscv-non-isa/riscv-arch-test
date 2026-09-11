@@ -2609,36 +2609,6 @@ excpt_\__MODE__\()hndlr_tbl:
         la      T2, resto_\__MODE__\()rtn
         jr      T2
 
-\__MODE__\()clr_Sext_int:                            // S-mode external interrupt: clear + save intID
-        .ifc \__MODE__ , M
-            li T3, 0x200
-            csrc mip, T3                             // Clear mip.SEIP
-            csrr T3, mip
-        .else
-                .ifc \__MODE__ , S
-                        // Handler-context GOTO_MMODE: RVTEST_GOTO_MMODE clobbers a0,
-                        // but here a0 belongs to the interrupted test and is NOT part
-                        // of the saved/restored register set. Use T5 to hold a0
-                        // instead — T5 is restored from the save area by resto_Srtn,
-                        // so its use here is invisible to the test.
-                        mv   T5, a0               // save a0 (T5 survives the nested trap: the
-                                                  // M-handler restores it from its save slot)
-                        li   a0, 0                // a0==0 signals legacy GOTO_MMODE
-                        ecall                     // trap to M-mode; returns here in M-mode
-                        mv   a0, T5               // restore a0
-                        li T3, 0x200
-                        csrc mip, T3
-                        csrr T3, mip
-                        RVTEST_GOTO_LOWER_MODE Smode
-                .endif
-        .endif
-        li T1, 0x800
-        and T3, T3, T1
-        beq T1, T3, 1f
-        RVMODEL_CLR_SEXT_INT(T2, T5)
-    1:
-        la      T2, resto_\__MODE__\()rtn
-        jr      T2
 #endif
 \__MODE__\()clr_Lcofi_int:                           // Local counter-overflow interrupt (Sscofpmf), cause 13
         .ifc \__MODE__ , M
