@@ -27,12 +27,12 @@ def _enable_menvcfg_stce(priv: str, r: int) -> list[str]:
     """menvcfg.STCE = 1 (bit 63 on RV64, bit 31 of menvcfgh on RV32); an M-mode CSR reached via T-SBI below M-mode."""
     return [
         "# Enable menvcfg.STCE",
-        "#if __riscv_xlen == 64",
         f"LI(x{r}, 1)",
+        "#if __riscv_xlen == 64",
         f"slli x{r}, x{r}, 63",
         m_csr(priv, f"csrs menvcfg, x{r}"),
         "#else",
-        f"LI(x{r}, 0x80000000)",
+        f"slli x{r}, x{r}, 31",
         m_csr(priv, f"csrs menvcfgh, x{r}"),
         "#endif",
     ]
@@ -72,28 +72,14 @@ def _sstatus_sie(priv: str, r_temp: int, value: int) -> list[str]:
 
 
 def _disable_interrupts(priv: str, r_temp: int) -> list[str]:
-    """mie = 0, mstatus.MIE = MPIE = 0, and SIE = 0 where it exists."""
+    """mie = 0, mstatus.MIE = MPIE = 0, and SPIE/SIE = 0 where it exists."""
     lines = [
         "# Disable all interrupts in mie",
         m_csr(priv, "csrw mie, zero"),
+        "# mstatus.MPIE, SPIE, MIE, AND SIE = 0",
+        f"LI(x{r_temp}, 0xAA)",
+        m_csr(priv, f"csrc mstatus, x{r_temp}"),
     ]
-    if priv == "M":
-        lines.extend(
-            [
-                "# mstatus.MPIE, SIE and MIE = 0",
-                f"LI(x{r_temp}, 0x8A)",
-                f"csrc mstatus, x{r_temp}",
-            ]
-        )
-    else:
-        lines.extend(
-            [
-                "# mstatus.MPIE and MIE = 0",
-                f"LI(x{r_temp}, 0x88)",
-                m_csr(priv, f"csrc mstatus, x{r_temp}"),
-                *_sstatus_sie(priv, r_temp, 0),
-            ]
-        )
     return lines
 
 
@@ -111,24 +97,7 @@ def wrs_resume_helper(
     r_cause, r_temp, r_temp2 = test_data.int_regs.get_registers(3)
 
     lower = priv != "M"
-    description = [
-        f"Generate {priv} mode WRS instruction resume when interrupt pending tests",
-        "",
-        *(
-            ["For DUTs that support S mode but do not have Sstc, the WRS resume behavior is tested with MTIP", ""]
-            if lower
-            else []
-        ),
-        "cross lr instruction to set up reservation.",
-        "mstatus.TW = 0" if lower else "mstatus.TW = {0/1}",
-        "cross with mie.MTIE = 1" + (" (if Sstc supported use STIP, cross menvcfg.STCE = 1)" if lower else ""),
-        "mstatus.MIE = {0/1}",
-        *([f"mstatus.SIE = {{0/1}}{' (if S supported)' if priv == 'U' else ''}"] if lower else []),
-        "Set up timer to interrupt soon",
-        f"execute {{WRS.NTO/WRS.STO}} in {priv} mode",
-        "2 x 2 x 2 bins",
-    ]
-    lines = [comment_banner(coverpoint, "\n".join(description))]
+    lines = [comment_banner(coverpoint, f"Generate {priv} mode WRS instruction resume when interrupt pending tests")]
     if lower:
         sie_list = [0, 1]
         tw_list = [0]
@@ -294,27 +263,9 @@ def wrs_no_mie_helper(
                 "###### Setup ######",
                 "# Disable all interrupts in mie",
                 m_csr(priv, "csrw mie, zero"),
-            ]
-        )
-        if lower:
-            lines.extend(
-                [
-                    "# mstatus.MIE and MPIE = 1",
-                    f"LI(x{r_temp}, 0x88)",
-                    m_csr(priv, f"csrs mstatus, x{r_temp}"),
-                    *_sstatus_sie(priv, r_temp, 1),
-                ]
-            )
-        else:
-            lines.extend(
-                [
-                    "# mstatus.MIE, SIE and MPIE = 1",
-                    f"LI(x{r_temp}, 0x8A)",
-                    f"csrs mstatus, x{r_temp}",
-                ]
-            )
-        lines.extend(
-            [
+                "# mstatus.MIE, SIE, MPIE, and SPIE = 1",
+                f"LI(x{r_temp}, 0xAA)",
+                m_csr(priv, f"csrs mstatus, x{r_temp}"),
                 "# Set all M mode interrupts pending",
                 f"RVTEST_SET_MEXT_INT_{priv}",
                 f"RVTEST_SET_MSW_INT_{priv}",
