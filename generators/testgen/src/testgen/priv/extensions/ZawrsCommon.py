@@ -9,15 +9,6 @@
 """Functions for generating Zawrs tests in all priv modes"""
 
 from testgen.asm.helpers import comment_banner, write_sigupd
-from testgen.asm.interrupts import (
-    clr_mtimer_int,
-    set_menvcfg_stce,
-    set_mtimer_int,
-    set_mtimer_int_soon,
-    set_stimecmp_max,
-    set_stimer_int_soon_sstc,
-    set_stimer_mmode,
-)
 from testgen.asm.tsbi import tsbi_call
 from testgen.data.state import TestData
 
@@ -30,6 +21,33 @@ def m_csr(priv: str, instr: str) -> str:
 def s_csr(priv: str, instr: str) -> str:
     """S-mode CSR instruction; a T-SBI call when the test runs in U-mode."""
     return instr if priv != "U" else tsbi_call(instr)
+
+
+def _enable_menvcfg_stce(priv: str, r: int) -> list[str]:
+    """menvcfg.STCE = 1 (bit 63 on RV64, bit 31 of menvcfgh on RV32); an M-mode CSR reached via T-SBI below M-mode."""
+    return [
+        "# Enable menvcfg.STCE",
+        "#if __riscv_xlen == 64",
+        f"LI(x{r}, 1)",
+        f"slli x{r}, x{r}, 63",
+        m_csr(priv, f"csrs menvcfg, x{r}"),
+        "#else",
+        f"LI(x{r}, 0x80000000)",
+        m_csr(priv, f"csrs menvcfgh, x{r}"),
+        "#endif",
+    ]
+
+
+def _disable_stimecmp(priv: str, r: int) -> list[str]:
+    """stimecmp = -1 to disarm the Sstc timer; an S-mode CSR reached via T-SBI from U-mode."""
+    return [
+        "# Disable Sstc timer: stimecmp = -1",
+        f"LI(x{r}, -1)",
+        "#if __riscv_xlen == 32",
+        s_csr(priv, f"csrw stimecmph, x{r}"),
+        "#endif",
+        s_csr(priv, f"csrw stimecmp, x{r}"),
+    ]
 
 
 def _read_trap_count_helper(r_temp: int) -> list[str]:
@@ -90,7 +108,7 @@ def wrs_resume_helper(
     coverpoint = "cp_wrs_resume"
     ######################################
 
-    r_time, r_temp3, r_cause, r_temp, r_temp2, r_timecmp = test_data.int_regs.get_registers(6)
+    r_cause, r_temp, r_temp2 = test_data.int_regs.get_registers(3)
 
     lower = priv != "M"
     description = [
@@ -124,8 +142,8 @@ def wrs_resume_helper(
                 "#ifdef SSTC_SUPPORTED",
                 "# Enable Sstc (menvcfg.STCE) so stimecmp drives sip.STIP, then disarm the comparator",
                 "# so whatever stimecmp held before does not raise STIP once STIE is set",
-                *set_menvcfg_stce(r_temp, True, tsbi=True),
-                *set_stimecmp_max(r_temp, tsbi=priv == "U"),
+                *_enable_menvcfg_stce(priv, r_temp),
+                *_disable_stimecmp(priv, r_temp),
                 "#endif",
             ]
         )
@@ -154,31 +172,14 @@ def wrs_resume_helper(
                                 "# Set sie.STIE",
                                 f"LI(x{r_temp}, 0x20)",
                                 s_csr(priv, f"csrs sie, x{r_temp}"),
-                                "# Set stimer interrupt soon; from U-mode the stimecmp write is a T-SBI call, so",
-                                "# leave enough delay for that round trip on DUTs whose time ticks once per instruction",
-                                *set_stimer_int_soon_sstc(
-                                    r_time,
-                                    r_temp,
-                                    r_temp2,
-                                    r_temp3,
-                                    r_cause,
-                                    delay="(RVMODEL_TIMER_INT_SOON_DELAY * 16)" if priv == "U" else None,
-                                    tsbi=priv == "U",
-                                ),
+                                "# Set stimer interrupt soon",
+                                f"RVTEST_SET_SSTC_INT_SOON_{priv}",
                                 "#else",
                                 "# Set mie.MTIE",
                                 f"LI(x{r_temp}, 0x80)",
                                 m_csr(priv, f"csrs mie, x{r_temp}"),
                                 "# Set mtimer interrupt soon",
-                                *set_mtimer_int_soon(
-                                    r_time,
-                                    r_timecmp,
-                                    r_temp,
-                                    r_temp2,
-                                    r_temp3,
-                                    r_cause,
-                                    delay="(RVMODEL_TIMER_INT_SOON_DELAY * 8)",
-                                ),
+                                f"RVTEST_SET_MTIME_INT_SOON_{priv}",
                                 "#endif",
                             ]
                         )
@@ -189,7 +190,7 @@ def wrs_resume_helper(
                                 f"LI(x{r_temp}, 0x80)",
                                 f"csrs mie, x{r_temp}",
                                 "# Set mtimer interrupt soon",
-                                *set_mtimer_int_soon(r_time, r_timecmp, r_temp, r_temp2, r_temp3, r_cause),
+                                "RVTEST_SET_MTIME_INT_SOON_M",
                             ]
                         )
 
@@ -243,17 +244,17 @@ def wrs_resume_helper(
                         ]
                     )
                     # Disarm timers so no pending interrupt carries into the next testcase
-                    lines.extend(clr_mtimer_int(r_temp, r_timecmp))
+                    lines.append(f"RVTEST_CLR_MTIME_INT_{priv}")
                     if lower:
                         lines.extend(
                             [
                                 "#ifdef SSTC_SUPPORTED",
-                                *set_stimecmp_max(r_temp, tsbi=priv == "U"),
+                                *_disable_stimecmp(priv, r_temp),
                                 "#endif",
                             ]
                         )
 
-    test_data.int_regs.return_registers([r_time, r_temp3, r_cause, r_temp, r_temp2, r_timecmp])
+    test_data.int_regs.return_registers([r_cause, r_temp, r_temp2])
     return lines
 
 
@@ -268,7 +269,7 @@ def wrs_no_mie_helper(
     coverpoint = "cp_wrs_no_mie"
     ######################################
 
-    r_time, r_cause, r_temp, r_temp2, r_timecmp = test_data.int_regs.get_registers(5)
+    r_cause, r_temp, r_temp2 = test_data.int_regs.get_registers(3)
 
     lower = priv != "M"
     description = [
@@ -315,9 +316,9 @@ def wrs_no_mie_helper(
         lines.extend(
             [
                 "# Set all M mode interrupts pending",
-                "RVTEST_SET_MEXT_INT_M",
-                "RVTEST_SET_MSW_INT_M",
-                *set_mtimer_int(r_time, r_timecmp, r_temp, r_temp2),
+                f"RVTEST_SET_MEXT_INT_{priv}",
+                f"RVTEST_SET_MSW_INT_{priv}",
+                f"RVTEST_SET_MTIME_INT_{priv}",
             ]
         )
         if lower:
@@ -325,7 +326,7 @@ def wrs_no_mie_helper(
                 [
                     "# Set the S mode interrupts if supported",
                     "#ifdef S_SUPPORTED",
-                    *set_stimer_mmode(r_temp, tsbi=True),
+                    f"RVTEST_SET_STIME_INT_{priv}",
                     "# set SSI and SEI through mip",
                     f"LI(x{r_temp}, 0x202)",
                     m_csr(priv, f"csrs mip, x{r_temp}"),
@@ -385,12 +386,12 @@ def wrs_no_mie_helper(
         lines.extend(
             [
                 "# Clear M mode interrupts",
-                "RVTEST_CLR_MEXT_INT_M",
-                "RVTEST_CLR_MSW_INT_M",
-                *clr_mtimer_int(r_temp, r_temp2),
+                f"RVTEST_CLR_MEXT_INT_{priv}",
+                f"RVTEST_CLR_MSW_INT_{priv}",
+                f"RVTEST_CLR_MTIME_INT_{priv}",
             ]
         )
-    test_data.int_regs.return_registers([r_time, r_cause, r_temp, r_temp2, r_timecmp])
+    test_data.int_regs.return_registers([r_cause, r_temp, r_temp2])
     return lines
 
 
