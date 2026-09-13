@@ -222,6 +222,10 @@
         `cover_info("//      S - Enabled");
         `include "S_coverage_init.svh"
     `endif
+    `ifdef COVER_SDTRIGSM
+        `cover_info("//      SdtrigSm - Enabled");
+        `include "SdtrigSm_coverage_init.svh"
+    `endif
     `ifdef COVER_SM
         `cover_info("//      Sm - Enabled");
         `include "Sm_coverage_init.svh"
@@ -601,6 +605,10 @@
     `ifdef COVER_ZICNTRS
         `cover_info("//      ZicntrS - Enabled");
         `include "ZicntrS_coverage_init.svh"
+    `endif
+    `ifdef COVER_ZICNTRSM
+        `cover_info("//      ZicntrSm - Enabled");
+        `include "ZicntrSm_coverage_init.svh"
     `endif
     `ifdef COVER_ZICNTRU
         `cover_info("//      ZicntrU - Enabled");

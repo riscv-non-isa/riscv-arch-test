@@ -169,6 +169,9 @@
     `ifdef COVER_S
         s_sample(hart, issue, ins);
     `endif
+    `ifdef COVER_SDTRIGSM
+        sdtrigsm_sample(hart, issue, ins);
+    `endif
     `ifdef COVER_SM
         sm_sample(hart, issue, ins);
     `endif
@@ -453,6 +456,9 @@
     `endif
     `ifdef COVER_ZICNTRS
         zicntrs_sample(hart, issue, ins);
+    `endif
+    `ifdef COVER_ZICNTRSM
+        zicntrsm_sample(hart, issue, ins);
     `endif
     `ifdef COVER_ZICNTRU
         zicntru_sample(hart, issue, ins);
