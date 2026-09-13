@@ -164,7 +164,7 @@
     #define RVTEST_SIGUPD_F(_SIG_PTR, _LINK_REG, _TEMP_REG, _F_TEMP_REG, _FR, _INST_PTR, _STR_PTR)  \
       .option push                                           ;\
       .option norvc                                          ;\
-      LA(_LINK_REG, scratch)                                 ;\
+      LA(_LINK_REG, fp_sigupd_scratch)                       ;\
       FSREG _FR, 0(_LINK_REG)                                ;\
       LREG _LINK_REG, 0(_LINK_REG)                           ;\
       LREG _TEMP_REG, 0(_SIG_PTR)                            ;\
@@ -173,7 +173,7 @@
       RVTEST_WORD_PTR _INST_PTR                              ;\
       RVTEST_WORD_PTR _STR_PTR                               ;\
       1:                                                     ;\
-      LA(_LINK_REG, scratch)                                 ;\
+      LA(_LINK_REG, fp_sigupd_scratch)                       ;\
       FSREG _FR, 0(_LINK_REG)                                ;\
       LREG _LINK_REG, REGWIDTH(_LINK_REG)                    ;\
       LREG _TEMP_REG, SIG_STRIDE(_SIG_PTR)                   ;\
@@ -189,7 +189,7 @@
     #define RVTEST_SIGUPD_F(_SIG_PTR, _LINK_REG, _TEMP_REG, _F_TEMP_REG, _FR, _INST_PTR, _STR_PTR)  \
       .option push                                           ;\
       .option norvc                                          ;\
-      LA(_LINK_REG, scratch)                                 ;\
+      LA(_LINK_REG, fp_sigupd_scratch)                       ;\
       FSREG _FR, 0(_LINK_REG)                                ;\
       LREG _LINK_REG, 0(_LINK_REG)                           ;\
       SREG _LINK_REG, 0(_SIG_PTR)                            ;\
@@ -198,7 +198,7 @@
       RVTEST_WORD_PTR _INST_PTR                              ;\
       RVTEST_WORD_PTR _STR_PTR                               ;\
       1:                                                     ;\
-      LA(_LINK_REG, scratch)                                 ;\
+      LA(_LINK_REG, fp_sigupd_scratch)                       ;\
       FSREG _FR, 0(_LINK_REG)                                ;\
       LREG _LINK_REG, REGWIDTH(_LINK_REG)                    ;\
       SREG _LINK_REG, SIG_STRIDE(_SIG_PTR)                   ;\
@@ -216,7 +216,7 @@
     #define RVTEST_SIGUPD_F(_SIG_PTR, _LINK_REG, _TEMP_REG, _F_TEMP_REG, _FR, _INST_PTR, _STR_PTR)  \
       .option push                                           ;\
       .option norvc                                          ;\
-      LA(_LINK_REG, scratch)                                 ;\
+      LA(_LINK_REG, fp_sigupd_scratch)                       ;\
       FSREG _FR, 0(_LINK_REG)                                ;\
       FP_LREG _LINK_REG, 0(_LINK_REG)                        ;\
       LREG _TEMP_REG, 0(_SIG_PTR)                            ;\
@@ -232,7 +232,7 @@
     #define RVTEST_SIGUPD_F(_SIG_PTR, _LINK_REG, _TEMP_REG, _F_TEMP_REG, _FR, _INST_PTR, _STR_PTR)  \
       .option push                                           ;\
       .option norvc                                          ;\
-      LA(_LINK_REG, scratch)                                 ;\
+      LA(_LINK_REG, fp_sigupd_scratch)                       ;\
       FSREG _FR, 0(_LINK_REG)                                ;\
       FP_LREG _LINK_REG, 0(_LINK_REG)                        ;\
       SREG _LINK_REG, 0(_SIG_PTR)                            ;\

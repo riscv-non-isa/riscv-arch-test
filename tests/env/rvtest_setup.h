@@ -789,6 +789,15 @@
     .dword 0xDEAD001FFFE0BEEF, 0xDEAD0020FFDFBEEF
     .dword 0xDEAD0021FFDEBEEF
 
+  // Private spill slot for RVTEST_SIGUPD_F, which round-trips a floating point
+  // register through memory to compare it as integers. Kept out of the scratch
+  // region above, which belongs to the test: cp_misalign, for one, builds a byte
+  // pattern there and reads it back across every testcase.
+  // 16 bytes so an fsq fits.
+  .p2align 4
+  fp_sigupd_scratch:
+    .dword 0xDEADF001FFFEBEEF, 0xDEADF002FFFDBEEF
+
   // Global counter of the number of traps taken, incremented by every mode's
   // trap handler. Lives in .data (NOT the signature region) so it does not
   // participate in signature self-checking. Readable from any privilege mode
