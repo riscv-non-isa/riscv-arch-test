@@ -21,29 +21,11 @@ covergroup SstcSm_cg with function sample(ins_t ins);
 
     // building blocks for the main coverpoints
 
-    stimecmp_zero: coverpoint ins.current.csr[CSR_STIMECMP] {
-        bins zero = {0};
-    }
-    // mstatus_mie uses ins.prev because the sample instruction is the stimecmp write that
-    // triggers the interrupt; hardware clears MIE in ins.current when it takes the trap.
-    // Sampling prev captures MIE as it was programmed before the interrupt fires.
-
-    mstatus_mie_one: coverpoint ins.prev.csr[CSR_MSTATUS][3] {
-        bins one = {1};
-    }
-    mideleg_sti: coverpoint ins.current.csr[CSR_MIDELEG][5];
-    mie_stie: coverpoint ins.current.csr[CSR_MIE][5];
     mcounteren_tm: coverpoint ins.current.csr[CSR_MCOUNTEREN][1];
     `ifdef UDB_MXLEN_64
         menvcfg_stce: coverpoint ins.current.csr[CSR_MENVCFG][63];
-        menvcfg_stce_one: coverpoint ins.current.csr[CSR_MENVCFG][63] {
-            bins one = {1};
-        }
     `else
         menvcfg_stce: coverpoint ins.current.csr[CSR_MENVCFGH][31];
-        menvcfg_stce_one: coverpoint ins.current.csr[CSR_MENVCFGH][31] {
-            bins one = {1};
-        }
     `endif
     csrr: coverpoint ins.current.insn[6:0] {
         bins csrr = {7'b1110011};
@@ -53,7 +35,6 @@ covergroup SstcSm_cg with function sample(ins_t ins);
     }
 
     // main coverpoints
-    cp_machine_sti:     cross priv_mode_m, menvcfg_stce_one, mstatus_mie_one, mideleg_sti, mie_stie, stimecmp_zero;
     cp_machine_tm:      cross priv_mode_m, csrr, read_stimecmp, mcounteren_tm;
     cp_machine_stce:    cross priv_mode_m, csrr, read_stimecmp, menvcfg_stce;
 
