@@ -1,0 +1,7 @@
+name: milkv-megrez-p550
+compiler_exe: riscv64-unknown-elf-gcc
+objdump_exe: riscv64-unknown-elf-objdump
+ref_model_exe: sail_riscv_sim
+udb_config: milkv-megrez-p550.yaml
+linker_script: link.ld
+dut_include_dir: .
