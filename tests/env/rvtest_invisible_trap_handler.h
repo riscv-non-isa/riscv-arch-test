@@ -73,8 +73,8 @@
     #else
       ld      \VALUE_REG, 0(\VALUE_REG)
     #endif
-    #ifdef H_SUPPORTED
-      // time reads as mtime + htimedelta in VS and VU.
+    #if defined(H_SUPPORTED) && !defined(RVMODEL_HTIMEDELTA_UNIMPLEMENTED)
+      // time reads as mtime + htimedelta in VS and VU. Without htimedelta, the offset is 0.
       #if UDB_MXLEN == 32
         csrr    T6, CSR_MSTATUSH
         andi    T6, T6, (1 << MPV_LSB)

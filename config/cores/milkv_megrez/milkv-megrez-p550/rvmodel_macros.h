@@ -481,4 +481,8 @@
 #undef SM1P12P0_OR_LATER_SUPPORTED
 #undef S1P12P0_OR_LATER_SUPPORTED
 
+// htimedelta traps on the P550 (csr_probe 2026-10-05, no time CSR either), so the
+// H boot code must not write it.
+#define RVMODEL_HTIMEDELTA_UNIMPLEMENTED 1
+
 #endif // _RVMODEL_MACROS_H

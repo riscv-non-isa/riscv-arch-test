@@ -1405,9 +1405,13 @@
       #endif
       csrw vsstatus, t0
 
+      // RVMODEL_HTIMEDELTA_UNIMPLEMENTED: the DUT has no htimedelta (it traps), e.g. a core
+      // without a time CSR whose H implementation predates ratified 1.0.
+      #ifndef RVMODEL_HTIMEDELTA_UNIMPLEMENTED
       csrw htimedelta, zero
       #if __riscv_xlen == 32
         csrw htimedeltah, zero
+      #endif
       #endif
 
       // No pending virtual interrupts and no guest external interrupts enabled.
