@@ -473,4 +473,12 @@
   li _R2, SIG_ADDRESS;    \
   sw _R1, 0(_R2)            ; /* Clear SSW interrupt */ \
 
+// The P550 implements privileged ISA 1.11: menvcfg, senvcfg and henvcfg do not
+// exist and trap (csr_probe 2026-10-05). The UDB config declares S/Sm 1.12 only
+// because UDB's H 1.0 model requires it, so drop the derived 1.12 markers here
+// (included after derived_config.h). On RV64 they only gate those *envcfg writes
+// in the test boot code; the other uses are RV32 mstatush accesses.
+#undef SM1P12P0_OR_LATER_SUPPORTED
+#undef S1P12P0_OR_LATER_SUPPORTED
+
 #endif // _RVMODEL_MACROS_H
