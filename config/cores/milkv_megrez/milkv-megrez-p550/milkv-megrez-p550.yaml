@@ -128,12 +128,12 @@ params:
   WFI_FINITE: false
   TRAP_ON_EBREAK: true
   MARCHID_IMPLEMENTED: true
-  # UNVERIFIED: marchid/mimpid/mvendorid not yet read on Megrez (U74 values kept).
-  ARCH_ID_VALUE: 0x8000000000000007
+  # csr_probe 2026-10-05 on the board: mvendorid 0x489, marchid 0x8000000000000008, mimpid 0x6220425.
+  ARCH_ID_VALUE: 0x8000000000000008
   MIMPID_IMPLEMENTED: true
-  IMP_ID_VALUE: 0x100
-  VENDOR_ID_BANK: 0xC
-  VENDOR_ID_OFFSET: 0x2
+  IMP_ID_VALUE: 0x6220425
+  VENDOR_ID_BANK: 0x9
+  VENDOR_ID_OFFSET: 0x9
   # TRM 3.4 (mcause): misaligned loads/stores trap for emulation, or raise an
   # access fault where emulation is unsafe (I/O). Fault priority UNVERIFIED.
   MISALIGNED_LDST: false
@@ -194,8 +194,8 @@ params:
   SV39_VSMODE_TRANSLATION: true
   SV48_VSMODE_TRANSLATION: true
   SV57_VSMODE_TRANSLATION: false
-  VMID_WIDTH: 14                        # UNVERIFIED: TRM field [57:44]; implemented width unknown
-  NUM_EXTERNAL_GUEST_INTERRUPTS: 0      # UNVERIFIED: no AIA/IMSIC on P550 (TRM lists hgeie RW)
+  VMID_WIDTH: 0                         # csr_probe 2026-10-05: hgatp.VMID has no writable bits
+  NUM_EXTERNAL_GUEST_INTERRUPTS: 0      # csr_probe 2026-10-05: hgeie writable mask is 0
   # HPM counters 3-6 (mirrors MCOUNTENABLE_EN).
   HCOUNTENABLE_EN: [false, false, false, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false]
   VSSI_INTR_IMPL: true                  # TRM 3-60 hideleg bit 2
@@ -243,11 +243,11 @@ params:
 
   # OpenSBI on Megrez: MHPM Info 4 (0x00000078) = mhpmcounter3-6.
   HPM_COUNTER_EN: [false, false, false, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false]
-  # UNVERIFIED: counter width (OpenSBI measures it but does not print it).
-  HPM_COUNTER3_WIDTH: 40
-  HPM_COUNTER4_WIDTH: 40
-  HPM_COUNTER5_WIDTH: 40
-  HPM_COUNTER6_WIDTH: 40
+  # csr_probe 2026-10-05: mhpmcounter3 <- ~0 reads back 48 bits.
+  HPM_COUNTER3_WIDTH: 48
+  HPM_COUNTER4_WIDTH: 48
+  HPM_COUNTER5_WIDTH: 48
+  HPM_COUNTER6_WIDTH: 48
   HPM_EVENTS: [0]
   # cycle, instret and mhpmcounter3-6 (inhibit for HPM3-6 UNVERIFIED).
   COUNTINHIBIT_EN: [true, false, true, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false]

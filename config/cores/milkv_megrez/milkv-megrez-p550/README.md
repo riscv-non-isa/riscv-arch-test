@@ -50,13 +50,13 @@ board), `RV64GC_Zba_Zbb_Sscofpmf` + H (TRM), Sv48 (TRM, DTB).
 | PLIC | `0x0C000000`, 520 sources, hart1 M ctx 2, S ctx 3 | confirmed | DTB `interrupts-extended`; TRM |
 | UART0 | `0x50900000`, shift 2, 32-bit access, PLIC source 100 | confirmed | DTB (U-Boot's DTS says 16-bit; both work for TX) |
 | Cycles per timer tick | 2048 bound | derived | 1.8 GHz max (Milk-V) / 1 MHz mtime |
-| mvendorid / marchid / mimpid | U74 values kept | **UNVERIFIED** | not in TRM; read on hardware |
-| HPM counter width | 40 | **UNVERIFIED** | OpenSBI measures but does not print it |
-| time CSR implemented | false | **UNVERIFIED** | TRM lists the CSR; may trap to M-mode |
+| mvendorid / marchid / mimpid | 0x489 / 0x8000000000000008 / 0x6220425 | measured | csr_probe 2026-10-05 |
+| HPM counter width | 48 | measured | csr_probe 2026-10-05 (mhpmcounter3 <- ~0) |
+| time CSR implemented | false | measured | csr_probe 2026-10-05: `time` traps (illegal instruction) |
 | LR/SC reservation, misaligned fault priority, xtval reporting, WFI | U74 values | **UNVERIFIED** | probe on hardware |
-| VMID width | 14 (field size) | **UNVERIFIED** | TRM hgatp field is 14 bits; implemented width unknown |
+| VMID width | 0 | measured | csr_probe 2026-10-05: hgatp.VMID has no writable bits; hgeie mask 0 |
 | Sscounterenw, Sstvecd | enabled | **UNVERIFIED** (Sstvecd consistent with TRM) | |
-| RVMODEL_ACCESS_FAULT_ADDRESS | `0x0` | **UNVERIFIED** | confirm address 0 faults on Megrez |
+| RVMODEL_ACCESS_FAULT_ADDRESS | `0x0` | measured | csr_probe 2026-10-05: load from 0 raises a load access fault |
 
 ## Hypervisor (this branch: official `riscv/riscv-arch-test` `hypervisor`)
 
@@ -99,3 +99,12 @@ investigation; candidate: A/D-bit handling, Svade/Svadu not declared).
   (410 steps) all succeeded; 162 hardware ELFs load and enter inside
   `0x90000000`-`0xB0000000`.
 - Not yet run on Megrez hardware.
+
+## Probe-measured values (2026-10-05)
+
+Ported from the `sifive_u74` Megrez config (csr_probe on the board): medeleg
+writable mask 0xf0b55d (sail.json), IDs, HPM width 48, VMID width 0, and Sail
+resolved from PATH. The probe also measured hedeleg mask 0xb1ff and hideleg
+0x444, and that `menvcfg`, `henvcfg`, `mconfigptr` and `stimecmp` trap: tests
+that need those CSRs because S/Sm are declared 1.12 for UDB are expected to
+fail on this priv-1.11 core.

@@ -51,7 +51,7 @@
     "medeleg": {
       "delegatable_bits": {
         "len": 64,
-        "value": "0x0000_0000_00f0_b7ff"
+        "value": "0x0000_0000_00f0_b55d"
       }
     },
     "mideleg": {
@@ -98,7 +98,7 @@
   "memory": {
     "physaddr_bits": 41,
     "asidlen": 0,
-    "vmidlen": 14,
+    "vmidlen": 0,
     "pmp": {
       "grain": 10,
       "count": 16,
@@ -287,8 +287,8 @@
   },
   "platform": {
     "vendorid": 1161,
-    "archid": 9223372036854775815,
-    "impid": 69272615,
+    "archid": 9223372036854775816,
+    "impid": 102892581,
     "hartid": 0,
     "cache_block_size_exp": 6,
     "reservation": {
