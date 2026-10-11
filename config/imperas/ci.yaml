@@ -8,22 +8,20 @@
 # the Imperas RISC-V model (HMC's fixes for the Solvnet cases below; at HMC:
 # export IMPERAS_VLNV=/proj/wally/imperas/Imperas-HMC101126-eng-build/lib/Linux64/ImperasLib), so they are commented out of
 # exclude_extensions at the end of this file. Use the commented-out line when running stock Y-2026.09.
-# - SsstrictSm/S/U, SsstrictV, Smstateen also fail on this branch for reasons that are not Imperas bugs: its Imperas
-#   configs predate act4 #2505, #2729, #2733 and #2741 and should pass once act4 is merged. sail.json disables
-#   hcontext/mcontext/scontext (Sail traps hcontext 0x6a8 in SsstrictS/Sm on rv64-max and keeps mstateen0.CONTEXT
-#   read-only zero where Imperas makes it writable); imperas-rv64-mu's sail.json has SE0_readonly_zero false and its
-#   yaml and sail.json lack the Smdbltrp that imperas.ic enables (SsstrictV_rv64_p21 ends in a double trap); and on
-#   rv32gck/rv32gcv SsstrictS/Sm/U_VectorInstr-00 overflows its signature region under Sail.
 # - SsstrictSm/S/U: on the vector configs, Imperas does not enforce the vector register-group
 #   overlap constraints, so it executes reserved widening encodings such as
 #   vwmaccu.vv v14, v9, v15, v0.t instead of raising an illegal instruction:
 #   https://solvnetplus.synopsys.com/s/case/500WQ0000230O4P/imperas-treats-vwmaccuvv-v14-v9-v15-v0t-as-legal
 #   The VectorInstr tests are the only Ssstrict failures; rv32gck, which has no vector unit, passes all three.
+#   (fixed in Imperas-HMC101126-eng-build)
+# - SsstrictV passes on stock Y-2026.09 too, so it is no longer excluded.
 # - Smstateen:
 #   - imperas-rv64-max: Imperas lets mstateen0.P1P13 be written on RV64:
 #     https://solvnetplus.synopsys.com/s/case/500WQ0000289tyxYAA/mstateen0p1p13-should-be-readonly-zero-on-rv64
-#   - imperas-rv64-mu: Imperas implements scontext but keeps mstateen0.CONTEXT read-only zero, which Sail
-#     cannot model yet (https://github.com/riscv/sail-riscv/issues/2013)
+#     (fixed in Imperas-HMC101126-eng-build)
+#   - imperas-rv64-mu: Imperas implements scontext but keeps mstateen0.CONTEXT read-only zero (legal without
+#     S-mode), which Sail cannot model yet (https://github.com/riscv/sail-riscv/issues/2013): with scontext off,
+#     Sail traps M-mode scontext accesses; with it on, Sail makes CONTEXT writable. This keeps Smstateen excluded.
 #   imperas-rv32gck and rv32gcv pass.
 # - ExceptionsVx: https://solvnetplus.synopsys.com/s/case/500WQ000023l1CPYAY/vmvnrrv-does-not-raise-an-illegalinstruction-exception-when-vtypevill-1
 #   (fixed in Imperas-HMC101126-eng-build)
@@ -78,6 +76,6 @@
 #
 ci_enabled: false
 # Stock ImperasDV Y-2026.09:
-# exclude_extensions: "SsstrictSm,SsstrictS,SsstrictU,SsstrictV,Smstateen,ExceptionsVx,SdtrigS,SdtrigU,PMPH,SvH,SvHZicbo,InterruptsH,SstcH,SstcHSm,SmstateenH,SsnpmH,ZicfilpSm,ZicfilpS,ZicfilpH,Svnapot,Ssnpm,SsnpmSm,Smmpm,SmnpmS,SmnpmSSm,SmnpmU,SmnpmUSm"
+# exclude_extensions: "SsstrictSm,SsstrictS,SsstrictU,Smstateen,ExceptionsVx,SdtrigS,SdtrigU,PMPH,SvH,SvHZicbo,InterruptsH,SstcH,SstcHSm,SmstateenH,SsnpmH,ZicfilpSm,ZicfilpS,ZicfilpH,Svnapot,Ssnpm,SsnpmSm,Smmpm,SmnpmS,SmnpmSSm,SmnpmU,SmnpmUSm"
 # Imperas-HMC101126-eng-build:
-exclude_extensions: "SsstrictSm,SsstrictS,SsstrictU,SsstrictV,Smstateen,SdtrigS,SdtrigU,Ssnpm,SsnpmSm,Smmpm,SmnpmS,SmnpmSSm,SmnpmU,SmnpmUSm"
+exclude_extensions: "Smstateen,SdtrigS,SdtrigU,Ssnpm,SsnpmSm,Smmpm,SmnpmS,SmnpmSSm,SmnpmU,SmnpmUSm"
