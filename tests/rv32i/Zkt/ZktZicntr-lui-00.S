@@ -33,11 +33,9 @@ RVTEST_BEGIN
 // cp_zkt_pc
 /////////////////////////////////
 
-# Each testcase runs twice, counted down in x21, and times the second run:
-#   load the operands, then xor them into x24 so the loads complete before timing starts
-#   time the instruction between two reads of cycle into x24 and x31, starting at a
-#   64-byte boundary so the instructions after it share an instruction-cache line
-#   record x31 - x24 - the first testcase's latency in x6, which must be 0
+# Each testcase times the instruction twice, counted down in
+# x21, and writes the second run's latency (x31 - x24) minus the
+# first testcase's (x6), which must be 0. See the Zkt section of the CTP.
 
 # Testcase cp_zkt_pc (timed)
   LI(x21, 2)
@@ -45,15 +43,15 @@ RVTEST_BEGIN
   .balign 64
   csrr x24, cycle
 ZktZicntr_lui_cg_cp_zkt_pc_timed:
-  lui x15, 727001 # perform operation
+  lui x18, 248040 # perform operation
   csrr x31, cycle
   addi x21, x21, -1
   bnez x21, 1b
   sub x31, x31, x24
   mv x6, x31
   sub x31, x31, x6
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, ZktZicntr_lui_cg_cp_zkt_pc_timed, ZktZicntr_lui_cg_cp_zkt_pc_timed_str)
+  # Check if x18 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x18, ZktZicntr_lui_cg_cp_zkt_pc_timed, ZktZicntr_lui_cg_cp_zkt_pc_timed_str)
   # Check if x31 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x31, ZktZicntr_lui_cg_cp_zkt_pc_timed, ZktZicntr_lui_cg_cp_zkt_pc_timed_str)
 

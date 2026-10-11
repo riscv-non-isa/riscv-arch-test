@@ -33,11 +33,9 @@ RVTEST_BEGIN
 // cp_zkt_rs1
 /////////////////////////////////
 
-# Each testcase runs twice, counted down in x9, and times the second run:
-#   load the operands, then xor them into x13 so the loads complete before timing starts
-#   time the instruction between two reads of cycle into x13 and x25, starting at a
-#   64-byte boundary so the instructions after it share an instruction-cache line
-#   record x25 - x13 - the first testcase's latency in x14, which must be 0
+# Each testcase times the instruction twice, counted down in
+# x9, and writes the second run's latency (x25 - x13) minus the
+# first testcase's (x14), which must be 0. See the Zkt section of the CTP.
 
 # Testcase cp_zkt_rs1 (rs1val=0x0)
   LI(x9, 2)
@@ -47,8 +45,10 @@ RVTEST_BEGIN
   xor x13, x11, x11
   .balign 64
   csrr x13, cycle
+  sltu x29, x13, x0
+  or x11, x11, x29
 ZktZicntrZca_c_slli_cg_cp_zkt_rs1_rs1val_0x0:
-  c.slli x11, 20 # perform operation
+  c.slli x11, 21 # perform operation
   csrr x25, cycle
   addi x9, x9, -1
   bnez x9, 1b
@@ -69,8 +69,10 @@ ZktZicntrZca_c_slli_cg_cp_zkt_rs1_rs1val_0x0:
   xor x13, x11, x11
   .balign 64
   csrr x13, cycle
+  sltu x29, x13, x0
+  or x11, x11, x29
 ZktZicntrZca_c_slli_cg_cp_zkt_rs1_rs1val_0x1:
-  c.slli x11, 20 # perform operation
+  c.slli x11, 21 # perform operation
   csrr x25, cycle
   addi x9, x9, -1
   bnez x9, 1b
@@ -90,8 +92,10 @@ ZktZicntrZca_c_slli_cg_cp_zkt_rs1_rs1val_0x1:
   xor x13, x11, x11
   .balign 64
   csrr x13, cycle
+  sltu x29, x13, x0
+  or x11, x11, x29
 ZktZicntrZca_c_slli_cg_cp_zkt_rs1_rs1val_0x2:
-  c.slli x11, 20 # perform operation
+  c.slli x11, 21 # perform operation
   csrr x25, cycle
   addi x9, x9, -1
   bnez x9, 1b
@@ -111,8 +115,10 @@ ZktZicntrZca_c_slli_cg_cp_zkt_rs1_rs1val_0x2:
   xor x13, x11, x11
   .balign 64
   csrr x13, cycle
+  sltu x29, x13, x0
+  or x11, x11, x29
 ZktZicntrZca_c_slli_cg_cp_zkt_rs1_rs1val_0x8000000000000000:
-  c.slli x11, 20 # perform operation
+  c.slli x11, 21 # perform operation
   csrr x25, cycle
   addi x9, x9, -1
   bnez x9, 1b
@@ -132,8 +138,10 @@ ZktZicntrZca_c_slli_cg_cp_zkt_rs1_rs1val_0x8000000000000000:
   xor x13, x11, x11
   .balign 64
   csrr x13, cycle
+  sltu x29, x13, x0
+  or x11, x11, x29
 ZktZicntrZca_c_slli_cg_cp_zkt_rs1_rs1val_0x8000000000000001:
-  c.slli x11, 20 # perform operation
+  c.slli x11, 21 # perform operation
   csrr x25, cycle
   addi x9, x9, -1
   bnez x9, 1b
@@ -153,8 +161,10 @@ ZktZicntrZca_c_slli_cg_cp_zkt_rs1_rs1val_0x8000000000000001:
   xor x13, x11, x11
   .balign 64
   csrr x13, cycle
+  sltu x29, x13, x0
+  or x11, x11, x29
 ZktZicntrZca_c_slli_cg_cp_zkt_rs1_rs1val_0x7fffffffffffffff:
-  c.slli x11, 20 # perform operation
+  c.slli x11, 21 # perform operation
   csrr x25, cycle
   addi x9, x9, -1
   bnez x9, 1b
@@ -174,8 +184,10 @@ ZktZicntrZca_c_slli_cg_cp_zkt_rs1_rs1val_0x7fffffffffffffff:
   xor x13, x11, x11
   .balign 64
   csrr x13, cycle
+  sltu x29, x13, x0
+  or x11, x11, x29
 ZktZicntrZca_c_slli_cg_cp_zkt_rs1_rs1val_0x7ffffffffffffffe:
-  c.slli x11, 20 # perform operation
+  c.slli x11, 21 # perform operation
   csrr x25, cycle
   addi x9, x9, -1
   bnez x9, 1b
@@ -195,8 +207,10 @@ ZktZicntrZca_c_slli_cg_cp_zkt_rs1_rs1val_0x7ffffffffffffffe:
   xor x13, x11, x11
   .balign 64
   csrr x13, cycle
+  sltu x29, x13, x0
+  or x11, x11, x29
 ZktZicntrZca_c_slli_cg_cp_zkt_rs1_rs1val_0xffffffffffffffff:
-  c.slli x11, 20 # perform operation
+  c.slli x11, 21 # perform operation
   csrr x25, cycle
   addi x9, x9, -1
   bnez x9, 1b
@@ -216,8 +230,10 @@ ZktZicntrZca_c_slli_cg_cp_zkt_rs1_rs1val_0xffffffffffffffff:
   xor x13, x11, x11
   .balign 64
   csrr x13, cycle
+  sltu x29, x13, x0
+  or x11, x11, x29
 ZktZicntrZca_c_slli_cg_cp_zkt_rs1_rs1val_0xfffffffffffffffe:
-  c.slli x11, 20 # perform operation
+  c.slli x11, 21 # perform operation
   csrr x25, cycle
   addi x9, x9, -1
   bnez x9, 1b
@@ -237,8 +253,10 @@ ZktZicntrZca_c_slli_cg_cp_zkt_rs1_rs1val_0xfffffffffffffffe:
   xor x13, x11, x11
   .balign 64
   csrr x13, cycle
+  sltu x29, x13, x0
+  or x11, x11, x29
 ZktZicntrZca_c_slli_cg_cp_zkt_rs1_rs1val_0x5bbc887763ae86f2:
-  c.slli x11, 20 # perform operation
+  c.slli x11, 21 # perform operation
   csrr x25, cycle
   addi x9, x9, -1
   bnez x9, 1b
@@ -258,8 +276,10 @@ ZktZicntrZca_c_slli_cg_cp_zkt_rs1_rs1val_0x5bbc887763ae86f2:
   xor x13, x11, x11
   .balign 64
   csrr x13, cycle
+  sltu x29, x13, x0
+  or x11, x11, x29
 ZktZicntrZca_c_slli_cg_cp_zkt_rs1_rs1val_0xaaaaaaaaaaaaaaaa:
-  c.slli x11, 20 # perform operation
+  c.slli x11, 21 # perform operation
   csrr x25, cycle
   addi x9, x9, -1
   bnez x9, 1b
@@ -279,8 +299,10 @@ ZktZicntrZca_c_slli_cg_cp_zkt_rs1_rs1val_0xaaaaaaaaaaaaaaaa:
   xor x13, x11, x11
   .balign 64
   csrr x13, cycle
+  sltu x29, x13, x0
+  or x11, x11, x29
 ZktZicntrZca_c_slli_cg_cp_zkt_rs1_rs1val_0x5555555555555555:
-  c.slli x11, 20 # perform operation
+  c.slli x11, 21 # perform operation
   csrr x25, cycle
   addi x9, x9, -1
   bnez x9, 1b
@@ -300,8 +322,10 @@ ZktZicntrZca_c_slli_cg_cp_zkt_rs1_rs1val_0x5555555555555555:
   xor x13, x11, x11
   .balign 64
   csrr x13, cycle
+  sltu x29, x13, x0
+  or x11, x11, x29
 ZktZicntrZca_c_slli_cg_cp_zkt_rs1_rs1val_0xffffffff:
-  c.slli x11, 20 # perform operation
+  c.slli x11, 21 # perform operation
   csrr x25, cycle
   addi x9, x9, -1
   bnez x9, 1b
@@ -321,8 +345,10 @@ ZktZicntrZca_c_slli_cg_cp_zkt_rs1_rs1val_0xffffffff:
   xor x13, x11, x11
   .balign 64
   csrr x13, cycle
+  sltu x29, x13, x0
+  or x11, x11, x29
 ZktZicntrZca_c_slli_cg_cp_zkt_rs1_rs1val_0xfffffffe:
-  c.slli x11, 20 # perform operation
+  c.slli x11, 21 # perform operation
   csrr x25, cycle
   addi x9, x9, -1
   bnez x9, 1b
@@ -342,8 +368,10 @@ ZktZicntrZca_c_slli_cg_cp_zkt_rs1_rs1val_0xfffffffe:
   xor x13, x11, x11
   .balign 64
   csrr x13, cycle
+  sltu x29, x13, x0
+  or x11, x11, x29
 ZktZicntrZca_c_slli_cg_cp_zkt_rs1_rs1val_0x100000000:
-  c.slli x11, 20 # perform operation
+  c.slli x11, 21 # perform operation
   csrr x25, cycle
   addi x9, x9, -1
   bnez x9, 1b
@@ -363,8 +391,10 @@ ZktZicntrZca_c_slli_cg_cp_zkt_rs1_rs1val_0x100000000:
   xor x13, x11, x11
   .balign 64
   csrr x13, cycle
+  sltu x29, x13, x0
+  or x11, x11, x29
 ZktZicntrZca_c_slli_cg_cp_zkt_rs1_rs1val_0x100000001:
-  c.slli x11, 20 # perform operation
+  c.slli x11, 21 # perform operation
   csrr x25, cycle
   addi x9, x9, -1
   bnez x9, 1b
@@ -384,8 +414,10 @@ ZktZicntrZca_c_slli_cg_cp_zkt_rs1_rs1val_0x100000001:
   xor x13, x11, x11
   .balign 64
   csrr x13, cycle
+  sltu x29, x13, x0
+  or x11, x11, x29
 ZktZicntrZca_c_slli_cg_cp_zkt_rs1_rs1val_0x80000000:
-  c.slli x11, 20 # perform operation
+  c.slli x11, 21 # perform operation
   csrr x25, cycle
   addi x9, x9, -1
   bnez x9, 1b
@@ -405,8 +437,10 @@ ZktZicntrZca_c_slli_cg_cp_zkt_rs1_rs1val_0x80000000:
   xor x13, x11, x11
   .balign 64
   csrr x13, cycle
+  sltu x29, x13, x0
+  or x11, x11, x29
 ZktZicntrZca_c_slli_cg_cp_zkt_rs1_rs1val_0x7fffffff:
-  c.slli x11, 20 # perform operation
+  c.slli x11, 21 # perform operation
   csrr x25, cycle
   addi x9, x9, -1
   bnez x9, 1b

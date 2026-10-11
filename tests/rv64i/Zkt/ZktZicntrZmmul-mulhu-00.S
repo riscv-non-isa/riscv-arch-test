@@ -33,23 +33,23 @@ RVTEST_BEGIN
 // cp_zkt_rs1_rs2
 /////////////////////////////////
 
-# Each testcase runs twice, counted down in x26, and times the second run:
-#   load the operands, then xor them into x1 so the loads complete before timing starts
-#   time the instruction between two reads of cycle into x1 and x22, starting at a
-#   64-byte boundary so the instructions after it share an instruction-cache line
-#   record x22 - x1 - the first testcase's latency in x17, which must be 0
+# Each testcase times the instruction twice, counted down in
+# x26, and writes the second run's latency (x22 - x1) minus the
+# first testcase's (x17), which must be 0. See the Zkt section of the CTP.
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x0, rs2val=0x0)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000000000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000000000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000000000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000000000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x0:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -65,14 +65,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x0:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x0, rs2val=0x1)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000000000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000000000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000000000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000000000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x1:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -87,14 +89,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x1:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x0, rs2val=0x2)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000000000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000000000002
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000000000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000000000002
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x2:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -109,14 +113,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x2:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x0, rs2val=0x8000000000000000)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000000000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x8000000000000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000000000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x8000000000000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x8000000000000000:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -131,14 +137,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x8000000000000000:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x0, rs2val=0x8000000000000001)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000000000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x8000000000000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000000000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x8000000000000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x8000000000000001:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -153,14 +161,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x8000000000000001:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x0, rs2val=0x7fffffffffffffff)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000000000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x7fffffffffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000000000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x7fffffffffffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x7fffffffffffffff:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -175,14 +185,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x7fffffffffffffff:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x0, rs2val=0x7ffffffffffffffe)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000000000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x7ffffffffffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000000000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x7ffffffffffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x7ffffffffffffffe:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -197,14 +209,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x7ffffffffffffffe:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x0, rs2val=0xffffffffffffffff)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000000000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0xffffffffffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000000000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0xffffffffffffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0xffffffffffffffff:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -219,14 +233,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0xffffffffffffffff:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x0, rs2val=0xfffffffffffffffe)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000000000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0xfffffffffffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000000000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0xfffffffffffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0xfffffffffffffffe:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -241,14 +257,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0xfffffffffffffffe:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x0, rs2val=0x5bbc887763ae86f2)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000000000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x5bbc887763ae86f2
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000000000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x5bbc887763ae86f2
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x5bbc887763ae86f2:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -263,14 +281,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x5bbc887763ae86f2:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x0, rs2val=0xaaaaaaaaaaaaaaaa)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000000000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0xaaaaaaaaaaaaaaaa
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000000000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0xaaaaaaaaaaaaaaaa
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0xaaaaaaaaaaaaaaaa:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -285,14 +305,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0xaaaaaaaaaaaaaaaa:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x0, rs2val=0x5555555555555555)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000000000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x5555555555555555
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000000000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x5555555555555555
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x5555555555555555:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -307,14 +329,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x5555555555555555:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x0, rs2val=0xffffffff)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000000000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x00000000ffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000000000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x00000000ffffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0xffffffff:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -329,14 +353,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0xffffffff:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x0, rs2val=0xfffffffe)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000000000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x00000000fffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000000000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x00000000fffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0xfffffffe:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -351,14 +377,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0xfffffffe:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x0, rs2val=0x100000000)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000000000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000100000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000000000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000100000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x100000000:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -373,14 +401,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x100000000:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x0, rs2val=0x100000001)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000000000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000100000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000000000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000100000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x100000001:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -395,14 +425,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x100000001:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x0, rs2val=0x80000000)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000000000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000080000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000000000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000080000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x80000000:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -417,14 +449,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x80000000:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x0, rs2val=0x7fffffff)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000000000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x000000007fffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000000000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x000000007fffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x7fffffff:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -439,14 +473,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x7fffffff:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x1, rs2val=0x0)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000000000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000000000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000000000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000000000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x0:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -461,14 +497,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x0:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x1, rs2val=0x1)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000000000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000000000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000000000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000000000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x1:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -483,14 +521,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x1:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x1, rs2val=0x2)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000000000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000000000002
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000000000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000000000002
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x2:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -505,14 +545,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x2:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x1, rs2val=0x8000000000000000)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000000000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x8000000000000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000000000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x8000000000000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x8000000000000000:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -527,14 +569,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x8000000000000000:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x1, rs2val=0x8000000000000001)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000000000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x8000000000000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000000000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x8000000000000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x8000000000000001:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -549,14 +593,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x8000000000000001:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x1, rs2val=0x7fffffffffffffff)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000000000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x7fffffffffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000000000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x7fffffffffffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x7fffffffffffffff:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -571,14 +617,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x7fffffffffffffff:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x1, rs2val=0x7ffffffffffffffe)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000000000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x7ffffffffffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000000000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x7ffffffffffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x7ffffffffffffffe:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -593,14 +641,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x7ffffffffffffffe:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x1, rs2val=0xffffffffffffffff)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000000000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0xffffffffffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000000000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0xffffffffffffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0xffffffffffffffff:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -615,14 +665,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0xffffffffffffffff:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x1, rs2val=0xfffffffffffffffe)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000000000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0xfffffffffffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000000000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0xfffffffffffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0xfffffffffffffffe:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -637,14 +689,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0xfffffffffffffffe:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x1, rs2val=0x5bbc887763ae86f2)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000000000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x5bbc887763ae86f2
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000000000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x5bbc887763ae86f2
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x5bbc887763ae86f2:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -659,14 +713,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x5bbc887763ae86f2:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x1, rs2val=0xaaaaaaaaaaaaaaaa)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000000000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0xaaaaaaaaaaaaaaaa
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000000000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0xaaaaaaaaaaaaaaaa
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0xaaaaaaaaaaaaaaaa:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -681,14 +737,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0xaaaaaaaaaaaaaaaa:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x1, rs2val=0x5555555555555555)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000000000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x5555555555555555
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000000000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x5555555555555555
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x5555555555555555:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -703,14 +761,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x5555555555555555:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x1, rs2val=0xffffffff)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000000000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x00000000ffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000000000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x00000000ffffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0xffffffff:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -725,14 +785,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0xffffffff:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x1, rs2val=0xfffffffe)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000000000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x00000000fffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000000000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x00000000fffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0xfffffffe:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -747,14 +809,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0xfffffffe:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x1, rs2val=0x100000000)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000000000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000100000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000000000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000100000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x100000000:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -769,14 +833,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x100000000:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x1, rs2val=0x100000001)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000000000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000100000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000000000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000100000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x100000001:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -791,14 +857,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x100000001:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x1, rs2val=0x80000000)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000000000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000080000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000000000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000080000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x80000000:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -813,14 +881,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x80000000:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x1, rs2val=0x7fffffff)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000000000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x000000007fffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000000000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x000000007fffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x7fffffff:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -835,14 +905,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x7fffffff:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x2, rs2val=0x0)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000000000002
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000000000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000000000002
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000000000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x0:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -857,14 +929,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x0:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x2, rs2val=0x1)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000000000002
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000000000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000000000002
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000000000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x1:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -879,14 +953,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x1:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x2, rs2val=0x2)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000000000002
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000000000002
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000000000002
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000000000002
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x2:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -901,14 +977,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x2:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x2, rs2val=0x8000000000000000)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000000000002
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x8000000000000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000000000002
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x8000000000000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x8000000000000000:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -923,14 +1001,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x8000000000000000:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x2, rs2val=0x8000000000000001)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000000000002
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x8000000000000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000000000002
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x8000000000000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x8000000000000001:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -945,14 +1025,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x8000000000000001:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x2, rs2val=0x7fffffffffffffff)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000000000002
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x7fffffffffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000000000002
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x7fffffffffffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x7fffffffffffffff:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -967,14 +1049,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x7fffffffffffffff:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x2, rs2val=0x7ffffffffffffffe)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000000000002
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x7ffffffffffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000000000002
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x7ffffffffffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x7ffffffffffffffe:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -989,14 +1073,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x7ffffffffffffffe:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x2, rs2val=0xffffffffffffffff)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000000000002
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0xffffffffffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000000000002
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0xffffffffffffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0xffffffffffffffff:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -1011,14 +1097,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0xffffffffffffffff:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x2, rs2val=0xfffffffffffffffe)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000000000002
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0xfffffffffffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000000000002
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0xfffffffffffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0xfffffffffffffffe:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -1033,14 +1121,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0xfffffffffffffffe:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x2, rs2val=0x5bbc887763ae86f2)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000000000002
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x5bbc887763ae86f2
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000000000002
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x5bbc887763ae86f2
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x5bbc887763ae86f2:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -1055,14 +1145,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x5bbc887763ae86f2:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x2, rs2val=0xaaaaaaaaaaaaaaaa)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000000000002
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0xaaaaaaaaaaaaaaaa
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000000000002
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0xaaaaaaaaaaaaaaaa
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0xaaaaaaaaaaaaaaaa:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -1077,14 +1169,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0xaaaaaaaaaaaaaaaa:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x2, rs2val=0x5555555555555555)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000000000002
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x5555555555555555
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000000000002
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x5555555555555555
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x5555555555555555:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -1099,14 +1193,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x5555555555555555:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x2, rs2val=0xffffffff)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000000000002
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x00000000ffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000000000002
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x00000000ffffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0xffffffff:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -1121,14 +1217,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0xffffffff:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x2, rs2val=0xfffffffe)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000000000002
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x00000000fffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000000000002
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x00000000fffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0xfffffffe:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -1143,14 +1241,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0xfffffffe:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x2, rs2val=0x100000000)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000000000002
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000100000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000000000002
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000100000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x100000000:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -1165,14 +1265,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x100000000:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x2, rs2val=0x100000001)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000000000002
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000100000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000000000002
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000100000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x100000001:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -1187,14 +1289,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x100000001:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x2, rs2val=0x80000000)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000000000002
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000080000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000000000002
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000080000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x80000000:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -1209,14 +1313,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x80000000:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x2, rs2val=0x7fffffff)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000000000002
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x000000007fffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000000000002
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x000000007fffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x7fffffff:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -1231,14 +1337,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x7fffffff:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x8000000000000000, rs2val=0x0)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x8000000000000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000000000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x8000000000000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000000000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x8000000000000000_rs2val_0x0:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -1253,14 +1361,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x8000000000000000_rs2val_0x0:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x8000000000000000, rs2val=0x1)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x8000000000000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000000000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x8000000000000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000000000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x8000000000000000_rs2val_0x1:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -1275,14 +1385,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x8000000000000000_rs2val_0x1:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x8000000000000000, rs2val=0x2)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x8000000000000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000000000002
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x8000000000000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000000000002
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x8000000000000000_rs2val_0x2:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -1297,14 +1409,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x8000000000000000_rs2val_0x2:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x8000000000000000, rs2val=0x8000000000000000)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x8000000000000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x8000000000000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x8000000000000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x8000000000000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x8000000000000000_rs2val_0x8000000000000000:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -1319,14 +1433,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x8000000000000000_rs2val_0x800000
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x8000000000000000, rs2val=0x8000000000000001)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x8000000000000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x8000000000000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x8000000000000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x8000000000000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x8000000000000000_rs2val_0x8000000000000001:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -1341,14 +1457,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x8000000000000000_rs2val_0x800000
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x8000000000000000, rs2val=0x7fffffffffffffff)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x8000000000000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x7fffffffffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x8000000000000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x7fffffffffffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x8000000000000000_rs2val_0x7fffffffffffffff:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -1363,14 +1481,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x8000000000000000_rs2val_0x7fffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x8000000000000000, rs2val=0x7ffffffffffffffe)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x8000000000000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x7ffffffffffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x8000000000000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x7ffffffffffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x8000000000000000_rs2val_0x7ffffffffffffffe:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -1385,14 +1505,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x8000000000000000_rs2val_0x7fffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x8000000000000000, rs2val=0xffffffffffffffff)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x8000000000000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0xffffffffffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x8000000000000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0xffffffffffffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x8000000000000000_rs2val_0xffffffffffffffff:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -1407,14 +1529,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x8000000000000000_rs2val_0xffffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x8000000000000000, rs2val=0xfffffffffffffffe)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x8000000000000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0xfffffffffffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x8000000000000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0xfffffffffffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x8000000000000000_rs2val_0xfffffffffffffffe:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -1429,14 +1553,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x8000000000000000_rs2val_0xffffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x8000000000000000, rs2val=0x5bbc887763ae86f2)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x8000000000000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x5bbc887763ae86f2
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x8000000000000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x5bbc887763ae86f2
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x8000000000000000_rs2val_0x5bbc887763ae86f2:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -1451,14 +1577,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x8000000000000000_rs2val_0x5bbc88
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x8000000000000000, rs2val=0xaaaaaaaaaaaaaaaa)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x8000000000000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0xaaaaaaaaaaaaaaaa
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x8000000000000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0xaaaaaaaaaaaaaaaa
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x8000000000000000_rs2val_0xaaaaaaaaaaaaaaaa:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -1473,14 +1601,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x8000000000000000_rs2val_0xaaaaaa
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x8000000000000000, rs2val=0x5555555555555555)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x8000000000000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x5555555555555555
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x8000000000000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x5555555555555555
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x8000000000000000_rs2val_0x5555555555555555:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -1495,14 +1625,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x8000000000000000_rs2val_0x555555
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x8000000000000000, rs2val=0xffffffff)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x8000000000000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x00000000ffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x8000000000000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x00000000ffffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x8000000000000000_rs2val_0xffffffff:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -1517,14 +1649,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x8000000000000000_rs2val_0xffffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x8000000000000000, rs2val=0xfffffffe)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x8000000000000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x00000000fffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x8000000000000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x00000000fffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x8000000000000000_rs2val_0xfffffffe:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -1539,14 +1673,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x8000000000000000_rs2val_0xffffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x8000000000000000, rs2val=0x100000000)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x8000000000000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000100000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x8000000000000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000100000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x8000000000000000_rs2val_0x100000000:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -1561,14 +1697,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x8000000000000000_rs2val_0x100000
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x8000000000000000, rs2val=0x100000001)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x8000000000000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000100000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x8000000000000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000100000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x8000000000000000_rs2val_0x100000001:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -1583,14 +1721,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x8000000000000000_rs2val_0x100000
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x8000000000000000, rs2val=0x80000000)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x8000000000000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000080000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x8000000000000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000080000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x8000000000000000_rs2val_0x80000000:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -1605,14 +1745,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x8000000000000000_rs2val_0x800000
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x8000000000000000, rs2val=0x7fffffff)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x8000000000000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x000000007fffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x8000000000000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x000000007fffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x8000000000000000_rs2val_0x7fffffff:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -1627,14 +1769,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x8000000000000000_rs2val_0x7fffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x8000000000000001, rs2val=0x0)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x8000000000000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000000000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x8000000000000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000000000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x8000000000000001_rs2val_0x0:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -1649,14 +1793,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x8000000000000001_rs2val_0x0:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x8000000000000001, rs2val=0x1)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x8000000000000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000000000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x8000000000000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000000000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x8000000000000001_rs2val_0x1:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -1671,14 +1817,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x8000000000000001_rs2val_0x1:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x8000000000000001, rs2val=0x2)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x8000000000000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000000000002
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x8000000000000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000000000002
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x8000000000000001_rs2val_0x2:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -1693,14 +1841,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x8000000000000001_rs2val_0x2:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x8000000000000001, rs2val=0x8000000000000000)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x8000000000000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x8000000000000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x8000000000000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x8000000000000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x8000000000000001_rs2val_0x8000000000000000:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -1715,14 +1865,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x8000000000000001_rs2val_0x800000
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x8000000000000001, rs2val=0x8000000000000001)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x8000000000000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x8000000000000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x8000000000000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x8000000000000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x8000000000000001_rs2val_0x8000000000000001:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -1737,14 +1889,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x8000000000000001_rs2val_0x800000
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x8000000000000001, rs2val=0x7fffffffffffffff)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x8000000000000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x7fffffffffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x8000000000000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x7fffffffffffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x8000000000000001_rs2val_0x7fffffffffffffff:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -1759,14 +1913,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x8000000000000001_rs2val_0x7fffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x8000000000000001, rs2val=0x7ffffffffffffffe)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x8000000000000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x7ffffffffffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x8000000000000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x7ffffffffffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x8000000000000001_rs2val_0x7ffffffffffffffe:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -1781,14 +1937,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x8000000000000001_rs2val_0x7fffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x8000000000000001, rs2val=0xffffffffffffffff)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x8000000000000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0xffffffffffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x8000000000000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0xffffffffffffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x8000000000000001_rs2val_0xffffffffffffffff:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -1803,14 +1961,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x8000000000000001_rs2val_0xffffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x8000000000000001, rs2val=0xfffffffffffffffe)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x8000000000000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0xfffffffffffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x8000000000000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0xfffffffffffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x8000000000000001_rs2val_0xfffffffffffffffe:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -1825,14 +1985,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x8000000000000001_rs2val_0xffffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x8000000000000001, rs2val=0x5bbc887763ae86f2)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x8000000000000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x5bbc887763ae86f2
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x8000000000000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x5bbc887763ae86f2
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x8000000000000001_rs2val_0x5bbc887763ae86f2:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -1847,14 +2009,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x8000000000000001_rs2val_0x5bbc88
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x8000000000000001, rs2val=0xaaaaaaaaaaaaaaaa)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x8000000000000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0xaaaaaaaaaaaaaaaa
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x8000000000000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0xaaaaaaaaaaaaaaaa
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x8000000000000001_rs2val_0xaaaaaaaaaaaaaaaa:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -1869,14 +2033,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x8000000000000001_rs2val_0xaaaaaa
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x8000000000000001, rs2val=0x5555555555555555)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x8000000000000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x5555555555555555
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x8000000000000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x5555555555555555
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x8000000000000001_rs2val_0x5555555555555555:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -1891,14 +2057,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x8000000000000001_rs2val_0x555555
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x8000000000000001, rs2val=0xffffffff)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x8000000000000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x00000000ffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x8000000000000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x00000000ffffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x8000000000000001_rs2val_0xffffffff:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -1913,14 +2081,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x8000000000000001_rs2val_0xffffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x8000000000000001, rs2val=0xfffffffe)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x8000000000000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x00000000fffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x8000000000000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x00000000fffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x8000000000000001_rs2val_0xfffffffe:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -1935,14 +2105,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x8000000000000001_rs2val_0xffffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x8000000000000001, rs2val=0x100000000)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x8000000000000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000100000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x8000000000000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000100000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x8000000000000001_rs2val_0x100000000:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -1957,14 +2129,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x8000000000000001_rs2val_0x100000
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x8000000000000001, rs2val=0x100000001)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x8000000000000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000100000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x8000000000000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000100000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x8000000000000001_rs2val_0x100000001:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -1979,14 +2153,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x8000000000000001_rs2val_0x100000
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x8000000000000001, rs2val=0x80000000)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x8000000000000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000080000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x8000000000000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000080000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x8000000000000001_rs2val_0x80000000:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -2001,14 +2177,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x8000000000000001_rs2val_0x800000
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x8000000000000001, rs2val=0x7fffffff)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x8000000000000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x000000007fffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x8000000000000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x000000007fffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x8000000000000001_rs2val_0x7fffffff:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -2023,14 +2201,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x8000000000000001_rs2val_0x7fffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7fffffffffffffff, rs2val=0x0)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x7fffffffffffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000000000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x7fffffffffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000000000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffffffffffff_rs2val_0x0:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -2045,14 +2225,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffffffffffff_rs2val_0x0:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7fffffffffffffff, rs2val=0x1)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x7fffffffffffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000000000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x7fffffffffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000000000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffffffffffff_rs2val_0x1:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -2067,14 +2249,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffffffffffff_rs2val_0x1:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7fffffffffffffff, rs2val=0x2)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x7fffffffffffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000000000002
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x7fffffffffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000000000002
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffffffffffff_rs2val_0x2:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -2089,14 +2273,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffffffffffff_rs2val_0x2:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7fffffffffffffff, rs2val=0x8000000000000000)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x7fffffffffffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x8000000000000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x7fffffffffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x8000000000000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffffffffffff_rs2val_0x8000000000000000:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -2111,14 +2297,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffffffffffff_rs2val_0x800000
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7fffffffffffffff, rs2val=0x8000000000000001)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x7fffffffffffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x8000000000000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x7fffffffffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x8000000000000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffffffffffff_rs2val_0x8000000000000001:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -2133,14 +2321,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffffffffffff_rs2val_0x800000
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7fffffffffffffff, rs2val=0x7fffffffffffffff)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x7fffffffffffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x7fffffffffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x7fffffffffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x7fffffffffffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffffffffffff_rs2val_0x7fffffffffffffff:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -2155,14 +2345,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffffffffffff_rs2val_0x7fffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7fffffffffffffff, rs2val=0x7ffffffffffffffe)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x7fffffffffffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x7ffffffffffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x7fffffffffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x7ffffffffffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffffffffffff_rs2val_0x7ffffffffffffffe:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -2177,14 +2369,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffffffffffff_rs2val_0x7fffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7fffffffffffffff, rs2val=0xffffffffffffffff)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x7fffffffffffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0xffffffffffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x7fffffffffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0xffffffffffffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffffffffffff_rs2val_0xffffffffffffffff:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -2199,14 +2393,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffffffffffff_rs2val_0xffffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7fffffffffffffff, rs2val=0xfffffffffffffffe)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x7fffffffffffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0xfffffffffffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x7fffffffffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0xfffffffffffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffffffffffff_rs2val_0xfffffffffffffffe:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -2221,14 +2417,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffffffffffff_rs2val_0xffffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7fffffffffffffff, rs2val=0x5bbc887763ae86f2)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x7fffffffffffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x5bbc887763ae86f2
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x7fffffffffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x5bbc887763ae86f2
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffffffffffff_rs2val_0x5bbc887763ae86f2:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -2243,14 +2441,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffffffffffff_rs2val_0x5bbc88
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7fffffffffffffff, rs2val=0xaaaaaaaaaaaaaaaa)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x7fffffffffffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0xaaaaaaaaaaaaaaaa
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x7fffffffffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0xaaaaaaaaaaaaaaaa
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffffffffffff_rs2val_0xaaaaaaaaaaaaaaaa:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -2265,14 +2465,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffffffffffff_rs2val_0xaaaaaa
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7fffffffffffffff, rs2val=0x5555555555555555)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x7fffffffffffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x5555555555555555
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x7fffffffffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x5555555555555555
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffffffffffff_rs2val_0x5555555555555555:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -2287,14 +2489,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffffffffffff_rs2val_0x555555
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7fffffffffffffff, rs2val=0xffffffff)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x7fffffffffffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x00000000ffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x7fffffffffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x00000000ffffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffffffffffff_rs2val_0xffffffff:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -2309,14 +2513,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffffffffffff_rs2val_0xffffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7fffffffffffffff, rs2val=0xfffffffe)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x7fffffffffffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x00000000fffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x7fffffffffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x00000000fffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffffffffffff_rs2val_0xfffffffe:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -2331,14 +2537,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffffffffffff_rs2val_0xffffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7fffffffffffffff, rs2val=0x100000000)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x7fffffffffffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000100000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x7fffffffffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000100000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffffffffffff_rs2val_0x100000000:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -2353,14 +2561,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffffffffffff_rs2val_0x100000
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7fffffffffffffff, rs2val=0x100000001)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x7fffffffffffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000100000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x7fffffffffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000100000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffffffffffff_rs2val_0x100000001:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -2375,14 +2585,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffffffffffff_rs2val_0x100000
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7fffffffffffffff, rs2val=0x80000000)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x7fffffffffffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000080000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x7fffffffffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000080000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffffffffffff_rs2val_0x80000000:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -2397,14 +2609,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffffffffffff_rs2val_0x800000
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7fffffffffffffff, rs2val=0x7fffffff)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x7fffffffffffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x000000007fffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x7fffffffffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x000000007fffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffffffffffff_rs2val_0x7fffffff:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -2419,14 +2633,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffffffffffff_rs2val_0x7fffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7ffffffffffffffe, rs2val=0x0)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x7ffffffffffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000000000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x7ffffffffffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000000000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffffffffffe_rs2val_0x0:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -2441,14 +2657,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffffffffffe_rs2val_0x0:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7ffffffffffffffe, rs2val=0x1)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x7ffffffffffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000000000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x7ffffffffffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000000000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffffffffffe_rs2val_0x1:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -2463,14 +2681,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffffffffffe_rs2val_0x1:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7ffffffffffffffe, rs2val=0x2)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x7ffffffffffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000000000002
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x7ffffffffffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000000000002
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffffffffffe_rs2val_0x2:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -2485,14 +2705,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffffffffffe_rs2val_0x2:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7ffffffffffffffe, rs2val=0x8000000000000000)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x7ffffffffffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x8000000000000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x7ffffffffffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x8000000000000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffffffffffe_rs2val_0x8000000000000000:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -2507,14 +2729,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffffffffffe_rs2val_0x800000
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7ffffffffffffffe, rs2val=0x8000000000000001)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x7ffffffffffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x8000000000000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x7ffffffffffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x8000000000000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffffffffffe_rs2val_0x8000000000000001:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -2529,14 +2753,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffffffffffe_rs2val_0x800000
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7ffffffffffffffe, rs2val=0x7fffffffffffffff)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x7ffffffffffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x7fffffffffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x7ffffffffffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x7fffffffffffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffffffffffe_rs2val_0x7fffffffffffffff:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -2551,14 +2777,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffffffffffe_rs2val_0x7fffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7ffffffffffffffe, rs2val=0x7ffffffffffffffe)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x7ffffffffffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x7ffffffffffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x7ffffffffffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x7ffffffffffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffffffffffe_rs2val_0x7ffffffffffffffe:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -2573,14 +2801,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffffffffffe_rs2val_0x7fffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7ffffffffffffffe, rs2val=0xffffffffffffffff)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x7ffffffffffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0xffffffffffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x7ffffffffffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0xffffffffffffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffffffffffe_rs2val_0xffffffffffffffff:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -2595,14 +2825,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffffffffffe_rs2val_0xffffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7ffffffffffffffe, rs2val=0xfffffffffffffffe)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x7ffffffffffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0xfffffffffffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x7ffffffffffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0xfffffffffffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffffffffffe_rs2val_0xfffffffffffffffe:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -2617,14 +2849,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffffffffffe_rs2val_0xffffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7ffffffffffffffe, rs2val=0x5bbc887763ae86f2)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x7ffffffffffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x5bbc887763ae86f2
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x7ffffffffffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x5bbc887763ae86f2
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffffffffffe_rs2val_0x5bbc887763ae86f2:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -2639,14 +2873,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffffffffffe_rs2val_0x5bbc88
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7ffffffffffffffe, rs2val=0xaaaaaaaaaaaaaaaa)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x7ffffffffffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0xaaaaaaaaaaaaaaaa
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x7ffffffffffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0xaaaaaaaaaaaaaaaa
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffffffffffe_rs2val_0xaaaaaaaaaaaaaaaa:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -2661,14 +2897,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffffffffffe_rs2val_0xaaaaaa
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7ffffffffffffffe, rs2val=0x5555555555555555)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x7ffffffffffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x5555555555555555
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x7ffffffffffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x5555555555555555
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffffffffffe_rs2val_0x5555555555555555:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -2683,14 +2921,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffffffffffe_rs2val_0x555555
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7ffffffffffffffe, rs2val=0xffffffff)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x7ffffffffffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x00000000ffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x7ffffffffffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x00000000ffffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffffffffffe_rs2val_0xffffffff:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -2705,14 +2945,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffffffffffe_rs2val_0xffffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7ffffffffffffffe, rs2val=0xfffffffe)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x7ffffffffffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x00000000fffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x7ffffffffffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x00000000fffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffffffffffe_rs2val_0xfffffffe:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -2727,14 +2969,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffffffffffe_rs2val_0xffffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7ffffffffffffffe, rs2val=0x100000000)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x7ffffffffffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000100000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x7ffffffffffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000100000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffffffffffe_rs2val_0x100000000:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -2749,14 +2993,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffffffffffe_rs2val_0x100000
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7ffffffffffffffe, rs2val=0x100000001)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x7ffffffffffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000100000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x7ffffffffffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000100000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffffffffffe_rs2val_0x100000001:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -2771,14 +3017,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffffffffffe_rs2val_0x100000
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7ffffffffffffffe, rs2val=0x80000000)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x7ffffffffffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000080000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x7ffffffffffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000080000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffffffffffe_rs2val_0x80000000:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -2793,14 +3041,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffffffffffe_rs2val_0x800000
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7ffffffffffffffe, rs2val=0x7fffffff)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x7ffffffffffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x000000007fffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x7ffffffffffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x000000007fffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffffffffffe_rs2val_0x7fffffff:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -2815,14 +3065,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffffffffffe_rs2val_0x7fffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xffffffffffffffff, rs2val=0x0)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0xffffffffffffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000000000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0xffffffffffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000000000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xffffffffffffffff_rs2val_0x0:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -2837,14 +3089,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xffffffffffffffff_rs2val_0x0:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xffffffffffffffff, rs2val=0x1)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0xffffffffffffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000000000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0xffffffffffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000000000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xffffffffffffffff_rs2val_0x1:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -2859,14 +3113,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xffffffffffffffff_rs2val_0x1:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xffffffffffffffff, rs2val=0x2)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0xffffffffffffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000000000002
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0xffffffffffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000000000002
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xffffffffffffffff_rs2val_0x2:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -2881,14 +3137,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xffffffffffffffff_rs2val_0x2:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xffffffffffffffff, rs2val=0x8000000000000000)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0xffffffffffffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x8000000000000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0xffffffffffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x8000000000000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xffffffffffffffff_rs2val_0x8000000000000000:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -2903,14 +3161,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xffffffffffffffff_rs2val_0x800000
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xffffffffffffffff, rs2val=0x8000000000000001)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0xffffffffffffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x8000000000000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0xffffffffffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x8000000000000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xffffffffffffffff_rs2val_0x8000000000000001:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -2925,14 +3185,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xffffffffffffffff_rs2val_0x800000
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xffffffffffffffff, rs2val=0x7fffffffffffffff)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0xffffffffffffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x7fffffffffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0xffffffffffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x7fffffffffffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xffffffffffffffff_rs2val_0x7fffffffffffffff:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -2947,14 +3209,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xffffffffffffffff_rs2val_0x7fffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xffffffffffffffff, rs2val=0x7ffffffffffffffe)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0xffffffffffffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x7ffffffffffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0xffffffffffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x7ffffffffffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xffffffffffffffff_rs2val_0x7ffffffffffffffe:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -2969,14 +3233,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xffffffffffffffff_rs2val_0x7fffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xffffffffffffffff, rs2val=0xffffffffffffffff)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0xffffffffffffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0xffffffffffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0xffffffffffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0xffffffffffffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xffffffffffffffff_rs2val_0xffffffffffffffff:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -2991,14 +3257,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xffffffffffffffff_rs2val_0xffffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xffffffffffffffff, rs2val=0xfffffffffffffffe)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0xffffffffffffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0xfffffffffffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0xffffffffffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0xfffffffffffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xffffffffffffffff_rs2val_0xfffffffffffffffe:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -3013,14 +3281,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xffffffffffffffff_rs2val_0xffffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xffffffffffffffff, rs2val=0x5bbc887763ae86f2)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0xffffffffffffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x5bbc887763ae86f2
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0xffffffffffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x5bbc887763ae86f2
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xffffffffffffffff_rs2val_0x5bbc887763ae86f2:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -3035,14 +3305,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xffffffffffffffff_rs2val_0x5bbc88
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xffffffffffffffff, rs2val=0xaaaaaaaaaaaaaaaa)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0xffffffffffffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0xaaaaaaaaaaaaaaaa
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0xffffffffffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0xaaaaaaaaaaaaaaaa
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xffffffffffffffff_rs2val_0xaaaaaaaaaaaaaaaa:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -3057,14 +3329,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xffffffffffffffff_rs2val_0xaaaaaa
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xffffffffffffffff, rs2val=0x5555555555555555)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0xffffffffffffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x5555555555555555
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0xffffffffffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x5555555555555555
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xffffffffffffffff_rs2val_0x5555555555555555:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -3079,14 +3353,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xffffffffffffffff_rs2val_0x555555
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xffffffffffffffff, rs2val=0xffffffff)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0xffffffffffffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x00000000ffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0xffffffffffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x00000000ffffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xffffffffffffffff_rs2val_0xffffffff:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -3101,14 +3377,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xffffffffffffffff_rs2val_0xffffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xffffffffffffffff, rs2val=0xfffffffe)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0xffffffffffffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x00000000fffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0xffffffffffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x00000000fffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xffffffffffffffff_rs2val_0xfffffffe:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -3123,14 +3401,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xffffffffffffffff_rs2val_0xffffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xffffffffffffffff, rs2val=0x100000000)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0xffffffffffffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000100000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0xffffffffffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000100000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xffffffffffffffff_rs2val_0x100000000:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -3145,14 +3425,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xffffffffffffffff_rs2val_0x100000
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xffffffffffffffff, rs2val=0x100000001)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0xffffffffffffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000100000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0xffffffffffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000100000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xffffffffffffffff_rs2val_0x100000001:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -3167,14 +3449,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xffffffffffffffff_rs2val_0x100000
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xffffffffffffffff, rs2val=0x80000000)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0xffffffffffffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000080000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0xffffffffffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000080000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xffffffffffffffff_rs2val_0x80000000:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -3189,14 +3473,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xffffffffffffffff_rs2val_0x800000
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xffffffffffffffff, rs2val=0x7fffffff)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0xffffffffffffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x000000007fffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0xffffffffffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x000000007fffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xffffffffffffffff_rs2val_0x7fffffff:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -3211,14 +3497,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xffffffffffffffff_rs2val_0x7fffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xfffffffffffffffe, rs2val=0x0)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0xfffffffffffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000000000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0xfffffffffffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000000000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffffffffffe_rs2val_0x0:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -3233,14 +3521,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffffffffffe_rs2val_0x0:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xfffffffffffffffe, rs2val=0x1)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0xfffffffffffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000000000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0xfffffffffffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000000000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffffffffffe_rs2val_0x1:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -3255,14 +3545,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffffffffffe_rs2val_0x1:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xfffffffffffffffe, rs2val=0x2)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0xfffffffffffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000000000002
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0xfffffffffffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000000000002
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffffffffffe_rs2val_0x2:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -3277,14 +3569,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffffffffffe_rs2val_0x2:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xfffffffffffffffe, rs2val=0x8000000000000000)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0xfffffffffffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x8000000000000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0xfffffffffffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x8000000000000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffffffffffe_rs2val_0x8000000000000000:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -3299,14 +3593,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffffffffffe_rs2val_0x800000
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xfffffffffffffffe, rs2val=0x8000000000000001)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0xfffffffffffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x8000000000000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0xfffffffffffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x8000000000000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffffffffffe_rs2val_0x8000000000000001:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -3321,14 +3617,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffffffffffe_rs2val_0x800000
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xfffffffffffffffe, rs2val=0x7fffffffffffffff)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0xfffffffffffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x7fffffffffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0xfffffffffffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x7fffffffffffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffffffffffe_rs2val_0x7fffffffffffffff:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -3343,14 +3641,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffffffffffe_rs2val_0x7fffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xfffffffffffffffe, rs2val=0x7ffffffffffffffe)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0xfffffffffffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x7ffffffffffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0xfffffffffffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x7ffffffffffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffffffffffe_rs2val_0x7ffffffffffffffe:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -3365,14 +3665,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffffffffffe_rs2val_0x7fffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xfffffffffffffffe, rs2val=0xffffffffffffffff)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0xfffffffffffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0xffffffffffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0xfffffffffffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0xffffffffffffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffffffffffe_rs2val_0xffffffffffffffff:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -3387,14 +3689,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffffffffffe_rs2val_0xffffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xfffffffffffffffe, rs2val=0xfffffffffffffffe)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0xfffffffffffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0xfffffffffffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0xfffffffffffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0xfffffffffffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffffffffffe_rs2val_0xfffffffffffffffe:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -3409,14 +3713,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffffffffffe_rs2val_0xffffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xfffffffffffffffe, rs2val=0x5bbc887763ae86f2)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0xfffffffffffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x5bbc887763ae86f2
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0xfffffffffffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x5bbc887763ae86f2
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffffffffffe_rs2val_0x5bbc887763ae86f2:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -3431,14 +3737,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffffffffffe_rs2val_0x5bbc88
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xfffffffffffffffe, rs2val=0xaaaaaaaaaaaaaaaa)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0xfffffffffffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0xaaaaaaaaaaaaaaaa
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0xfffffffffffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0xaaaaaaaaaaaaaaaa
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffffffffffe_rs2val_0xaaaaaaaaaaaaaaaa:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -3453,14 +3761,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffffffffffe_rs2val_0xaaaaaa
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xfffffffffffffffe, rs2val=0x5555555555555555)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0xfffffffffffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x5555555555555555
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0xfffffffffffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x5555555555555555
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffffffffffe_rs2val_0x5555555555555555:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -3475,14 +3785,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffffffffffe_rs2val_0x555555
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xfffffffffffffffe, rs2val=0xffffffff)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0xfffffffffffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x00000000ffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0xfffffffffffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x00000000ffffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffffffffffe_rs2val_0xffffffff:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -3497,14 +3809,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffffffffffe_rs2val_0xffffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xfffffffffffffffe, rs2val=0xfffffffe)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0xfffffffffffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x00000000fffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0xfffffffffffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x00000000fffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffffffffffe_rs2val_0xfffffffe:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -3519,14 +3833,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffffffffffe_rs2val_0xffffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xfffffffffffffffe, rs2val=0x100000000)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0xfffffffffffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000100000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0xfffffffffffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000100000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffffffffffe_rs2val_0x100000000:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -3541,14 +3857,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffffffffffe_rs2val_0x100000
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xfffffffffffffffe, rs2val=0x100000001)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0xfffffffffffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000100000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0xfffffffffffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000100000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffffffffffe_rs2val_0x100000001:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -3563,14 +3881,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffffffffffe_rs2val_0x100000
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xfffffffffffffffe, rs2val=0x80000000)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0xfffffffffffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000080000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0xfffffffffffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000080000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffffffffffe_rs2val_0x80000000:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -3585,14 +3905,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffffffffffe_rs2val_0x800000
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xfffffffffffffffe, rs2val=0x7fffffff)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0xfffffffffffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x000000007fffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0xfffffffffffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x000000007fffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffffffffffe_rs2val_0x7fffffff:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -3607,14 +3929,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffffffffffe_rs2val_0x7fffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x5bbc887763ae86f2, rs2val=0x0)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x5bbc887763ae86f2
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000000000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x5bbc887763ae86f2
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000000000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc887763ae86f2_rs2val_0x0:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -3629,14 +3953,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc887763ae86f2_rs2val_0x0:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x5bbc887763ae86f2, rs2val=0x1)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x5bbc887763ae86f2
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000000000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x5bbc887763ae86f2
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000000000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc887763ae86f2_rs2val_0x1:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -3651,14 +3977,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc887763ae86f2_rs2val_0x1:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x5bbc887763ae86f2, rs2val=0x2)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x5bbc887763ae86f2
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000000000002
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x5bbc887763ae86f2
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000000000002
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc887763ae86f2_rs2val_0x2:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -3673,14 +4001,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc887763ae86f2_rs2val_0x2:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x5bbc887763ae86f2, rs2val=0x8000000000000000)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x5bbc887763ae86f2
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x8000000000000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x5bbc887763ae86f2
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x8000000000000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc887763ae86f2_rs2val_0x8000000000000000:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -3695,14 +4025,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc887763ae86f2_rs2val_0x800000
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x5bbc887763ae86f2, rs2val=0x8000000000000001)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x5bbc887763ae86f2
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x8000000000000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x5bbc887763ae86f2
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x8000000000000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc887763ae86f2_rs2val_0x8000000000000001:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -3717,14 +4049,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc887763ae86f2_rs2val_0x800000
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x5bbc887763ae86f2, rs2val=0x7fffffffffffffff)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x5bbc887763ae86f2
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x7fffffffffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x5bbc887763ae86f2
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x7fffffffffffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc887763ae86f2_rs2val_0x7fffffffffffffff:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -3739,14 +4073,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc887763ae86f2_rs2val_0x7fffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x5bbc887763ae86f2, rs2val=0x7ffffffffffffffe)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x5bbc887763ae86f2
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x7ffffffffffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x5bbc887763ae86f2
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x7ffffffffffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc887763ae86f2_rs2val_0x7ffffffffffffffe:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -3761,14 +4097,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc887763ae86f2_rs2val_0x7fffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x5bbc887763ae86f2, rs2val=0xffffffffffffffff)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x5bbc887763ae86f2
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0xffffffffffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x5bbc887763ae86f2
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0xffffffffffffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc887763ae86f2_rs2val_0xffffffffffffffff:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -3783,14 +4121,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc887763ae86f2_rs2val_0xffffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x5bbc887763ae86f2, rs2val=0xfffffffffffffffe)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x5bbc887763ae86f2
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0xfffffffffffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x5bbc887763ae86f2
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0xfffffffffffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc887763ae86f2_rs2val_0xfffffffffffffffe:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -3805,14 +4145,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc887763ae86f2_rs2val_0xffffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x5bbc887763ae86f2, rs2val=0x5bbc887763ae86f2)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x5bbc887763ae86f2
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x5bbc887763ae86f2
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x5bbc887763ae86f2
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x5bbc887763ae86f2
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc887763ae86f2_rs2val_0x5bbc887763ae86f2:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -3827,14 +4169,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc887763ae86f2_rs2val_0x5bbc88
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x5bbc887763ae86f2, rs2val=0xaaaaaaaaaaaaaaaa)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x5bbc887763ae86f2
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0xaaaaaaaaaaaaaaaa
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x5bbc887763ae86f2
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0xaaaaaaaaaaaaaaaa
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc887763ae86f2_rs2val_0xaaaaaaaaaaaaaaaa:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -3849,14 +4193,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc887763ae86f2_rs2val_0xaaaaaa
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x5bbc887763ae86f2, rs2val=0x5555555555555555)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x5bbc887763ae86f2
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x5555555555555555
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x5bbc887763ae86f2
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x5555555555555555
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc887763ae86f2_rs2val_0x5555555555555555:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -3871,14 +4217,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc887763ae86f2_rs2val_0x555555
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x5bbc887763ae86f2, rs2val=0xffffffff)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x5bbc887763ae86f2
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x00000000ffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x5bbc887763ae86f2
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x00000000ffffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc887763ae86f2_rs2val_0xffffffff:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -3893,14 +4241,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc887763ae86f2_rs2val_0xffffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x5bbc887763ae86f2, rs2val=0xfffffffe)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x5bbc887763ae86f2
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x00000000fffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x5bbc887763ae86f2
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x00000000fffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc887763ae86f2_rs2val_0xfffffffe:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -3915,14 +4265,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc887763ae86f2_rs2val_0xffffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x5bbc887763ae86f2, rs2val=0x100000000)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x5bbc887763ae86f2
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000100000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x5bbc887763ae86f2
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000100000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc887763ae86f2_rs2val_0x100000000:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -3937,14 +4289,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc887763ae86f2_rs2val_0x100000
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x5bbc887763ae86f2, rs2val=0x100000001)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x5bbc887763ae86f2
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000100000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x5bbc887763ae86f2
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000100000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc887763ae86f2_rs2val_0x100000001:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -3959,14 +4313,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc887763ae86f2_rs2val_0x100000
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x5bbc887763ae86f2, rs2val=0x80000000)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x5bbc887763ae86f2
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000080000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x5bbc887763ae86f2
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000080000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc887763ae86f2_rs2val_0x80000000:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -3981,14 +4337,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc887763ae86f2_rs2val_0x800000
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x5bbc887763ae86f2, rs2val=0x7fffffff)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x5bbc887763ae86f2
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x000000007fffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x5bbc887763ae86f2
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x000000007fffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc887763ae86f2_rs2val_0x7fffffff:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -4003,14 +4361,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc887763ae86f2_rs2val_0x7fffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xaaaaaaaaaaaaaaaa, rs2val=0x0)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0xaaaaaaaaaaaaaaaa
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000000000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0xaaaaaaaaaaaaaaaa
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000000000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaaaaaaaaaa_rs2val_0x0:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -4025,14 +4385,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaaaaaaaaaa_rs2val_0x0:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xaaaaaaaaaaaaaaaa, rs2val=0x1)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0xaaaaaaaaaaaaaaaa
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000000000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0xaaaaaaaaaaaaaaaa
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000000000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaaaaaaaaaa_rs2val_0x1:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -4047,14 +4409,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaaaaaaaaaa_rs2val_0x1:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xaaaaaaaaaaaaaaaa, rs2val=0x2)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0xaaaaaaaaaaaaaaaa
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000000000002
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0xaaaaaaaaaaaaaaaa
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000000000002
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaaaaaaaaaa_rs2val_0x2:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -4069,14 +4433,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaaaaaaaaaa_rs2val_0x2:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xaaaaaaaaaaaaaaaa, rs2val=0x8000000000000000)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0xaaaaaaaaaaaaaaaa
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x8000000000000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0xaaaaaaaaaaaaaaaa
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x8000000000000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaaaaaaaaaa_rs2val_0x8000000000000000:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -4091,14 +4457,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaaaaaaaaaa_rs2val_0x800000
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xaaaaaaaaaaaaaaaa, rs2val=0x8000000000000001)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0xaaaaaaaaaaaaaaaa
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x8000000000000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0xaaaaaaaaaaaaaaaa
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x8000000000000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaaaaaaaaaa_rs2val_0x8000000000000001:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -4113,14 +4481,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaaaaaaaaaa_rs2val_0x800000
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xaaaaaaaaaaaaaaaa, rs2val=0x7fffffffffffffff)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0xaaaaaaaaaaaaaaaa
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x7fffffffffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0xaaaaaaaaaaaaaaaa
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x7fffffffffffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaaaaaaaaaa_rs2val_0x7fffffffffffffff:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -4135,14 +4505,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaaaaaaaaaa_rs2val_0x7fffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xaaaaaaaaaaaaaaaa, rs2val=0x7ffffffffffffffe)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0xaaaaaaaaaaaaaaaa
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x7ffffffffffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0xaaaaaaaaaaaaaaaa
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x7ffffffffffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaaaaaaaaaa_rs2val_0x7ffffffffffffffe:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -4157,14 +4529,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaaaaaaaaaa_rs2val_0x7fffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xaaaaaaaaaaaaaaaa, rs2val=0xffffffffffffffff)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0xaaaaaaaaaaaaaaaa
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0xffffffffffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0xaaaaaaaaaaaaaaaa
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0xffffffffffffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaaaaaaaaaa_rs2val_0xffffffffffffffff:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -4179,14 +4553,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaaaaaaaaaa_rs2val_0xffffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xaaaaaaaaaaaaaaaa, rs2val=0xfffffffffffffffe)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0xaaaaaaaaaaaaaaaa
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0xfffffffffffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0xaaaaaaaaaaaaaaaa
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0xfffffffffffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaaaaaaaaaa_rs2val_0xfffffffffffffffe:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -4201,14 +4577,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaaaaaaaaaa_rs2val_0xffffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xaaaaaaaaaaaaaaaa, rs2val=0x5bbc887763ae86f2)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0xaaaaaaaaaaaaaaaa
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x5bbc887763ae86f2
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0xaaaaaaaaaaaaaaaa
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x5bbc887763ae86f2
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaaaaaaaaaa_rs2val_0x5bbc887763ae86f2:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -4223,14 +4601,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaaaaaaaaaa_rs2val_0x5bbc88
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xaaaaaaaaaaaaaaaa, rs2val=0xaaaaaaaaaaaaaaaa)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0xaaaaaaaaaaaaaaaa
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0xaaaaaaaaaaaaaaaa
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0xaaaaaaaaaaaaaaaa
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0xaaaaaaaaaaaaaaaa
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaaaaaaaaaa_rs2val_0xaaaaaaaaaaaaaaaa:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -4245,14 +4625,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaaaaaaaaaa_rs2val_0xaaaaaa
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xaaaaaaaaaaaaaaaa, rs2val=0x5555555555555555)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0xaaaaaaaaaaaaaaaa
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x5555555555555555
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0xaaaaaaaaaaaaaaaa
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x5555555555555555
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaaaaaaaaaa_rs2val_0x5555555555555555:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -4267,14 +4649,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaaaaaaaaaa_rs2val_0x555555
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xaaaaaaaaaaaaaaaa, rs2val=0xffffffff)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0xaaaaaaaaaaaaaaaa
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x00000000ffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0xaaaaaaaaaaaaaaaa
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x00000000ffffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaaaaaaaaaa_rs2val_0xffffffff:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -4289,14 +4673,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaaaaaaaaaa_rs2val_0xffffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xaaaaaaaaaaaaaaaa, rs2val=0xfffffffe)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0xaaaaaaaaaaaaaaaa
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x00000000fffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0xaaaaaaaaaaaaaaaa
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x00000000fffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaaaaaaaaaa_rs2val_0xfffffffe:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -4311,14 +4697,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaaaaaaaaaa_rs2val_0xffffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xaaaaaaaaaaaaaaaa, rs2val=0x100000000)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0xaaaaaaaaaaaaaaaa
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000100000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0xaaaaaaaaaaaaaaaa
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000100000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaaaaaaaaaa_rs2val_0x100000000:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -4333,14 +4721,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaaaaaaaaaa_rs2val_0x100000
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xaaaaaaaaaaaaaaaa, rs2val=0x100000001)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0xaaaaaaaaaaaaaaaa
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000100000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0xaaaaaaaaaaaaaaaa
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000100000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaaaaaaaaaa_rs2val_0x100000001:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -4355,14 +4745,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaaaaaaaaaa_rs2val_0x100000
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xaaaaaaaaaaaaaaaa, rs2val=0x80000000)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0xaaaaaaaaaaaaaaaa
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000080000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0xaaaaaaaaaaaaaaaa
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000080000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaaaaaaaaaa_rs2val_0x80000000:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -4377,14 +4769,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaaaaaaaaaa_rs2val_0x800000
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xaaaaaaaaaaaaaaaa, rs2val=0x7fffffff)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0xaaaaaaaaaaaaaaaa
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x000000007fffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0xaaaaaaaaaaaaaaaa
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x000000007fffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaaaaaaaaaa_rs2val_0x7fffffff:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -4399,14 +4793,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaaaaaaaaaa_rs2val_0x7fffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x5555555555555555, rs2val=0x0)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x5555555555555555
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000000000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x5555555555555555
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000000000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x5555555555555555_rs2val_0x0:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -4421,14 +4817,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x5555555555555555_rs2val_0x0:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x5555555555555555, rs2val=0x1)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x5555555555555555
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000000000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x5555555555555555
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000000000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x5555555555555555_rs2val_0x1:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -4443,14 +4841,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x5555555555555555_rs2val_0x1:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x5555555555555555, rs2val=0x2)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x5555555555555555
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000000000002
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x5555555555555555
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000000000002
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x5555555555555555_rs2val_0x2:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -4465,14 +4865,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x5555555555555555_rs2val_0x2:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x5555555555555555, rs2val=0x8000000000000000)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x5555555555555555
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x8000000000000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x5555555555555555
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x8000000000000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x5555555555555555_rs2val_0x8000000000000000:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -4487,14 +4889,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x5555555555555555_rs2val_0x800000
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x5555555555555555, rs2val=0x8000000000000001)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x5555555555555555
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x8000000000000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x5555555555555555
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x8000000000000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x5555555555555555_rs2val_0x8000000000000001:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -4509,14 +4913,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x5555555555555555_rs2val_0x800000
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x5555555555555555, rs2val=0x7fffffffffffffff)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x5555555555555555
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x7fffffffffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x5555555555555555
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x7fffffffffffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x5555555555555555_rs2val_0x7fffffffffffffff:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -4531,14 +4937,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x5555555555555555_rs2val_0x7fffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x5555555555555555, rs2val=0x7ffffffffffffffe)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x5555555555555555
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x7ffffffffffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x5555555555555555
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x7ffffffffffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x5555555555555555_rs2val_0x7ffffffffffffffe:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -4553,14 +4961,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x5555555555555555_rs2val_0x7fffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x5555555555555555, rs2val=0xffffffffffffffff)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x5555555555555555
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0xffffffffffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x5555555555555555
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0xffffffffffffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x5555555555555555_rs2val_0xffffffffffffffff:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -4575,14 +4985,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x5555555555555555_rs2val_0xffffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x5555555555555555, rs2val=0xfffffffffffffffe)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x5555555555555555
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0xfffffffffffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x5555555555555555
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0xfffffffffffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x5555555555555555_rs2val_0xfffffffffffffffe:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -4597,14 +5009,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x5555555555555555_rs2val_0xffffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x5555555555555555, rs2val=0x5bbc887763ae86f2)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x5555555555555555
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x5bbc887763ae86f2
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x5555555555555555
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x5bbc887763ae86f2
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x5555555555555555_rs2val_0x5bbc887763ae86f2:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -4619,14 +5033,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x5555555555555555_rs2val_0x5bbc88
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x5555555555555555, rs2val=0xaaaaaaaaaaaaaaaa)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x5555555555555555
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0xaaaaaaaaaaaaaaaa
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x5555555555555555
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0xaaaaaaaaaaaaaaaa
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x5555555555555555_rs2val_0xaaaaaaaaaaaaaaaa:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -4641,14 +5057,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x5555555555555555_rs2val_0xaaaaaa
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x5555555555555555, rs2val=0x5555555555555555)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x5555555555555555
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x5555555555555555
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x5555555555555555
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x5555555555555555
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x5555555555555555_rs2val_0x5555555555555555:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -4663,14 +5081,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x5555555555555555_rs2val_0x555555
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x5555555555555555, rs2val=0xffffffff)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x5555555555555555
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x00000000ffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x5555555555555555
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x00000000ffffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x5555555555555555_rs2val_0xffffffff:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -4685,14 +5105,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x5555555555555555_rs2val_0xffffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x5555555555555555, rs2val=0xfffffffe)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x5555555555555555
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x00000000fffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x5555555555555555
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x00000000fffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x5555555555555555_rs2val_0xfffffffe:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -4707,14 +5129,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x5555555555555555_rs2val_0xffffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x5555555555555555, rs2val=0x100000000)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x5555555555555555
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000100000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x5555555555555555
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000100000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x5555555555555555_rs2val_0x100000000:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -4729,14 +5153,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x5555555555555555_rs2val_0x100000
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x5555555555555555, rs2val=0x100000001)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x5555555555555555
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000100000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x5555555555555555
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000100000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x5555555555555555_rs2val_0x100000001:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -4751,14 +5177,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x5555555555555555_rs2val_0x100000
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x5555555555555555, rs2val=0x80000000)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x5555555555555555
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000080000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x5555555555555555
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000080000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x5555555555555555_rs2val_0x80000000:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -4773,14 +5201,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x5555555555555555_rs2val_0x800000
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x5555555555555555, rs2val=0x7fffffff)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x5555555555555555
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x000000007fffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x5555555555555555
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x000000007fffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x5555555555555555_rs2val_0x7fffffff:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -4795,14 +5225,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x5555555555555555_rs2val_0x7fffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xffffffff, rs2val=0x0)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x00000000ffffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000000000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x00000000ffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000000000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x0:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -4817,14 +5249,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x0:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xffffffff, rs2val=0x1)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x00000000ffffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000000000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x00000000ffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000000000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x1:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -4839,14 +5273,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x1:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xffffffff, rs2val=0x2)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x00000000ffffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000000000002
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x00000000ffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000000000002
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x2:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -4861,14 +5297,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x2:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xffffffff, rs2val=0x8000000000000000)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x00000000ffffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x8000000000000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x00000000ffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x8000000000000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x8000000000000000:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -4883,14 +5321,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x80000000000000
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xffffffff, rs2val=0x8000000000000001)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x00000000ffffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x8000000000000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x00000000ffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x8000000000000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x8000000000000001:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -4905,14 +5345,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x80000000000000
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xffffffff, rs2val=0x7fffffffffffffff)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x00000000ffffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x7fffffffffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x00000000ffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x7fffffffffffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x7fffffffffffffff:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -4927,14 +5369,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x7fffffffffffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xffffffff, rs2val=0x7ffffffffffffffe)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x00000000ffffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x7ffffffffffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x00000000ffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x7ffffffffffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x7ffffffffffffffe:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -4949,14 +5393,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x7fffffffffffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xffffffff, rs2val=0xffffffffffffffff)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x00000000ffffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0xffffffffffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x00000000ffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0xffffffffffffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0xffffffffffffffff:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -4971,14 +5417,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0xffffffffffffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xffffffff, rs2val=0xfffffffffffffffe)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x00000000ffffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0xfffffffffffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x00000000ffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0xfffffffffffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0xfffffffffffffffe:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -4993,14 +5441,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0xffffffffffffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xffffffff, rs2val=0x5bbc887763ae86f2)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x00000000ffffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x5bbc887763ae86f2
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x00000000ffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x5bbc887763ae86f2
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x5bbc887763ae86f2:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -5015,14 +5465,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x5bbc887763ae86
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xffffffff, rs2val=0xaaaaaaaaaaaaaaaa)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x00000000ffffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0xaaaaaaaaaaaaaaaa
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x00000000ffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0xaaaaaaaaaaaaaaaa
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0xaaaaaaaaaaaaaaaa:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -5037,14 +5489,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0xaaaaaaaaaaaaaa
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xffffffff, rs2val=0x5555555555555555)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x00000000ffffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x5555555555555555
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x00000000ffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x5555555555555555
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x5555555555555555:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -5059,14 +5513,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x55555555555555
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xffffffff, rs2val=0xffffffff)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x00000000ffffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x00000000ffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x00000000ffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x00000000ffffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0xffffffff:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -5081,14 +5537,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0xffffffff:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xffffffff, rs2val=0xfffffffe)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x00000000ffffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x00000000fffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x00000000ffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x00000000fffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0xfffffffe:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -5103,14 +5561,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0xfffffffe:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xffffffff, rs2val=0x100000000)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x00000000ffffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000100000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x00000000ffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000100000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x100000000:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -5125,14 +5585,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x100000000:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xffffffff, rs2val=0x100000001)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x00000000ffffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000100000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x00000000ffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000100000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x100000001:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -5147,14 +5609,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x100000001:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xffffffff, rs2val=0x80000000)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x00000000ffffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000080000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x00000000ffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000080000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x80000000:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -5169,14 +5633,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x80000000:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xffffffff, rs2val=0x7fffffff)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x00000000ffffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x000000007fffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x00000000ffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x000000007fffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x7fffffff:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -5191,14 +5657,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x7fffffff:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xfffffffe, rs2val=0x0)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x00000000fffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000000000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x00000000fffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000000000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x0:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -5213,14 +5681,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x0:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xfffffffe, rs2val=0x1)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x00000000fffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000000000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x00000000fffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000000000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x1:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -5235,14 +5705,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x1:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xfffffffe, rs2val=0x2)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x00000000fffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000000000002
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x00000000fffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000000000002
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x2:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -5257,14 +5729,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x2:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xfffffffe, rs2val=0x8000000000000000)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x00000000fffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x8000000000000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x00000000fffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x8000000000000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x8000000000000000:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -5279,14 +5753,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x80000000000000
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xfffffffe, rs2val=0x8000000000000001)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x00000000fffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x8000000000000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x00000000fffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x8000000000000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x8000000000000001:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -5301,14 +5777,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x80000000000000
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xfffffffe, rs2val=0x7fffffffffffffff)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x00000000fffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x7fffffffffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x00000000fffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x7fffffffffffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x7fffffffffffffff:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -5323,14 +5801,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x7fffffffffffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xfffffffe, rs2val=0x7ffffffffffffffe)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x00000000fffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x7ffffffffffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x00000000fffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x7ffffffffffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x7ffffffffffffffe:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -5345,14 +5825,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x7fffffffffffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xfffffffe, rs2val=0xffffffffffffffff)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x00000000fffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0xffffffffffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x00000000fffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0xffffffffffffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0xffffffffffffffff:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -5367,14 +5849,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0xffffffffffffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xfffffffe, rs2val=0xfffffffffffffffe)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x00000000fffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0xfffffffffffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x00000000fffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0xfffffffffffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0xfffffffffffffffe:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -5389,14 +5873,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0xffffffffffffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xfffffffe, rs2val=0x5bbc887763ae86f2)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x00000000fffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x5bbc887763ae86f2
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x00000000fffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x5bbc887763ae86f2
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x5bbc887763ae86f2:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -5411,14 +5897,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x5bbc887763ae86
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xfffffffe, rs2val=0xaaaaaaaaaaaaaaaa)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x00000000fffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0xaaaaaaaaaaaaaaaa
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x00000000fffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0xaaaaaaaaaaaaaaaa
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0xaaaaaaaaaaaaaaaa:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -5433,14 +5921,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0xaaaaaaaaaaaaaa
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xfffffffe, rs2val=0x5555555555555555)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x00000000fffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x5555555555555555
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x00000000fffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x5555555555555555
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x5555555555555555:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -5455,14 +5945,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x55555555555555
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xfffffffe, rs2val=0xffffffff)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x00000000fffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x00000000ffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x00000000fffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x00000000ffffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0xffffffff:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -5477,14 +5969,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0xffffffff:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xfffffffe, rs2val=0xfffffffe)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x00000000fffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x00000000fffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x00000000fffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x00000000fffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0xfffffffe:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -5499,14 +5993,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0xfffffffe:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xfffffffe, rs2val=0x100000000)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x00000000fffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000100000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x00000000fffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000100000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x100000000:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -5521,14 +6017,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x100000000:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xfffffffe, rs2val=0x100000001)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x00000000fffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000100000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x00000000fffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000100000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x100000001:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -5543,14 +6041,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x100000001:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xfffffffe, rs2val=0x80000000)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x00000000fffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000080000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x00000000fffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000080000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x80000000:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -5565,14 +6065,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x80000000:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xfffffffe, rs2val=0x7fffffff)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x00000000fffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x000000007fffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x00000000fffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x000000007fffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x7fffffff:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -5587,14 +6089,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x7fffffff:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x100000000, rs2val=0x0)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000100000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000000000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000100000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000000000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x100000000_rs2val_0x0:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -5609,14 +6113,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x100000000_rs2val_0x0:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x100000000, rs2val=0x1)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000100000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000000000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000100000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000000000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x100000000_rs2val_0x1:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -5631,14 +6137,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x100000000_rs2val_0x1:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x100000000, rs2val=0x2)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000100000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000000000002
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000100000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000000000002
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x100000000_rs2val_0x2:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -5653,14 +6161,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x100000000_rs2val_0x2:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x100000000, rs2val=0x8000000000000000)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000100000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x8000000000000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000100000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x8000000000000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x100000000_rs2val_0x8000000000000000:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -5675,14 +6185,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x100000000_rs2val_0x8000000000000
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x100000000, rs2val=0x8000000000000001)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000100000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x8000000000000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000100000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x8000000000000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x100000000_rs2val_0x8000000000000001:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -5697,14 +6209,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x100000000_rs2val_0x8000000000000
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x100000000, rs2val=0x7fffffffffffffff)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000100000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x7fffffffffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000100000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x7fffffffffffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x100000000_rs2val_0x7fffffffffffffff:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -5719,14 +6233,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x100000000_rs2val_0x7ffffffffffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x100000000, rs2val=0x7ffffffffffffffe)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000100000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x7ffffffffffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000100000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x7ffffffffffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x100000000_rs2val_0x7ffffffffffffffe:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -5741,14 +6257,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x100000000_rs2val_0x7ffffffffffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x100000000, rs2val=0xffffffffffffffff)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000100000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0xffffffffffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000100000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0xffffffffffffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x100000000_rs2val_0xffffffffffffffff:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -5763,14 +6281,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x100000000_rs2val_0xfffffffffffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x100000000, rs2val=0xfffffffffffffffe)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000100000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0xfffffffffffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000100000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0xfffffffffffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x100000000_rs2val_0xfffffffffffffffe:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -5785,14 +6305,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x100000000_rs2val_0xfffffffffffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x100000000, rs2val=0x5bbc887763ae86f2)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000100000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x5bbc887763ae86f2
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000100000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x5bbc887763ae86f2
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x100000000_rs2val_0x5bbc887763ae86f2:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -5807,14 +6329,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x100000000_rs2val_0x5bbc887763ae8
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x100000000, rs2val=0xaaaaaaaaaaaaaaaa)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000100000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0xaaaaaaaaaaaaaaaa
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000100000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0xaaaaaaaaaaaaaaaa
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x100000000_rs2val_0xaaaaaaaaaaaaaaaa:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -5829,14 +6353,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x100000000_rs2val_0xaaaaaaaaaaaaa
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x100000000, rs2val=0x5555555555555555)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000100000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x5555555555555555
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000100000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x5555555555555555
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x100000000_rs2val_0x5555555555555555:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -5851,14 +6377,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x100000000_rs2val_0x5555555555555
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x100000000, rs2val=0xffffffff)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000100000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x00000000ffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000100000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x00000000ffffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x100000000_rs2val_0xffffffff:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -5873,14 +6401,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x100000000_rs2val_0xffffffff:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x100000000, rs2val=0xfffffffe)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000100000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x00000000fffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000100000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x00000000fffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x100000000_rs2val_0xfffffffe:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -5895,14 +6425,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x100000000_rs2val_0xfffffffe:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x100000000, rs2val=0x100000000)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000100000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000100000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000100000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000100000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x100000000_rs2val_0x100000000:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -5917,14 +6449,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x100000000_rs2val_0x100000000:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x100000000, rs2val=0x100000001)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000100000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000100000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000100000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000100000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x100000000_rs2val_0x100000001:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -5939,14 +6473,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x100000000_rs2val_0x100000001:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x100000000, rs2val=0x80000000)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000100000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000080000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000100000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000080000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x100000000_rs2val_0x80000000:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -5961,14 +6497,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x100000000_rs2val_0x80000000:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x100000000, rs2val=0x7fffffff)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000100000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x000000007fffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000100000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x000000007fffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x100000000_rs2val_0x7fffffff:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -5983,14 +6521,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x100000000_rs2val_0x7fffffff:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x100000001, rs2val=0x0)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000100000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000000000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000100000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000000000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x100000001_rs2val_0x0:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -6005,14 +6545,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x100000001_rs2val_0x0:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x100000001, rs2val=0x1)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000100000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000000000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000100000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000000000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x100000001_rs2val_0x1:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -6027,14 +6569,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x100000001_rs2val_0x1:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x100000001, rs2val=0x2)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000100000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000000000002
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000100000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000000000002
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x100000001_rs2val_0x2:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -6049,14 +6593,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x100000001_rs2val_0x2:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x100000001, rs2val=0x8000000000000000)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000100000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x8000000000000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000100000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x8000000000000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x100000001_rs2val_0x8000000000000000:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -6071,14 +6617,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x100000001_rs2val_0x8000000000000
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x100000001, rs2val=0x8000000000000001)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000100000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x8000000000000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000100000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x8000000000000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x100000001_rs2val_0x8000000000000001:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -6093,14 +6641,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x100000001_rs2val_0x8000000000000
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x100000001, rs2val=0x7fffffffffffffff)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000100000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x7fffffffffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000100000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x7fffffffffffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x100000001_rs2val_0x7fffffffffffffff:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -6115,14 +6665,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x100000001_rs2val_0x7ffffffffffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x100000001, rs2val=0x7ffffffffffffffe)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000100000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x7ffffffffffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000100000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x7ffffffffffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x100000001_rs2val_0x7ffffffffffffffe:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -6137,14 +6689,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x100000001_rs2val_0x7ffffffffffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x100000001, rs2val=0xffffffffffffffff)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000100000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0xffffffffffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000100000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0xffffffffffffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x100000001_rs2val_0xffffffffffffffff:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -6159,14 +6713,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x100000001_rs2val_0xfffffffffffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x100000001, rs2val=0xfffffffffffffffe)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000100000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0xfffffffffffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000100000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0xfffffffffffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x100000001_rs2val_0xfffffffffffffffe:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -6181,14 +6737,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x100000001_rs2val_0xfffffffffffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x100000001, rs2val=0x5bbc887763ae86f2)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000100000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x5bbc887763ae86f2
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000100000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x5bbc887763ae86f2
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x100000001_rs2val_0x5bbc887763ae86f2:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -6203,14 +6761,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x100000001_rs2val_0x5bbc887763ae8
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x100000001, rs2val=0xaaaaaaaaaaaaaaaa)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000100000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0xaaaaaaaaaaaaaaaa
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000100000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0xaaaaaaaaaaaaaaaa
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x100000001_rs2val_0xaaaaaaaaaaaaaaaa:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -6225,14 +6785,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x100000001_rs2val_0xaaaaaaaaaaaaa
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x100000001, rs2val=0x5555555555555555)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000100000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x5555555555555555
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000100000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x5555555555555555
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x100000001_rs2val_0x5555555555555555:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -6247,14 +6809,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x100000001_rs2val_0x5555555555555
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x100000001, rs2val=0xffffffff)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000100000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x00000000ffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000100000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x00000000ffffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x100000001_rs2val_0xffffffff:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -6269,14 +6833,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x100000001_rs2val_0xffffffff:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x100000001, rs2val=0xfffffffe)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000100000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x00000000fffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000100000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x00000000fffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x100000001_rs2val_0xfffffffe:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -6291,14 +6857,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x100000001_rs2val_0xfffffffe:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x100000001, rs2val=0x100000000)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000100000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000100000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000100000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000100000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x100000001_rs2val_0x100000000:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -6313,14 +6881,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x100000001_rs2val_0x100000000:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x100000001, rs2val=0x100000001)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000100000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000100000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000100000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000100000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x100000001_rs2val_0x100000001:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -6335,14 +6905,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x100000001_rs2val_0x100000001:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x100000001, rs2val=0x80000000)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000100000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000080000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000100000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000080000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x100000001_rs2val_0x80000000:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -6357,14 +6929,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x100000001_rs2val_0x80000000:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x100000001, rs2val=0x7fffffff)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000100000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x000000007fffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000100000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x000000007fffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x100000001_rs2val_0x7fffffff:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -6379,14 +6953,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x100000001_rs2val_0x7fffffff:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x80000000, rs2val=0x0)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000080000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000000000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000080000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000000000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x0:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -6401,14 +6977,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x0:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x80000000, rs2val=0x1)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000080000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000000000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000080000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000000000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x1:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -6423,14 +7001,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x1:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x80000000, rs2val=0x2)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000080000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000000000002
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000080000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000000000002
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x2:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -6445,14 +7025,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x2:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x80000000, rs2val=0x8000000000000000)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000080000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x8000000000000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000080000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x8000000000000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x8000000000000000:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -6467,14 +7049,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x80000000000000
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x80000000, rs2val=0x8000000000000001)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000080000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x8000000000000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000080000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x8000000000000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x8000000000000001:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -6489,14 +7073,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x80000000000000
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x80000000, rs2val=0x7fffffffffffffff)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000080000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x7fffffffffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000080000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x7fffffffffffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x7fffffffffffffff:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -6511,14 +7097,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x7fffffffffffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x80000000, rs2val=0x7ffffffffffffffe)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000080000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x7ffffffffffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000080000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x7ffffffffffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x7ffffffffffffffe:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -6533,14 +7121,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x7fffffffffffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x80000000, rs2val=0xffffffffffffffff)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000080000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0xffffffffffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000080000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0xffffffffffffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0xffffffffffffffff:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -6555,14 +7145,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0xffffffffffffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x80000000, rs2val=0xfffffffffffffffe)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000080000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0xfffffffffffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000080000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0xfffffffffffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0xfffffffffffffffe:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -6577,14 +7169,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0xffffffffffffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x80000000, rs2val=0x5bbc887763ae86f2)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000080000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x5bbc887763ae86f2
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000080000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x5bbc887763ae86f2
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x5bbc887763ae86f2:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -6599,14 +7193,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x5bbc887763ae86
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x80000000, rs2val=0xaaaaaaaaaaaaaaaa)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000080000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0xaaaaaaaaaaaaaaaa
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000080000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0xaaaaaaaaaaaaaaaa
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0xaaaaaaaaaaaaaaaa:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -6621,14 +7217,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0xaaaaaaaaaaaaaa
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x80000000, rs2val=0x5555555555555555)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000080000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x5555555555555555
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000080000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x5555555555555555
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x5555555555555555:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -6643,14 +7241,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x55555555555555
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x80000000, rs2val=0xffffffff)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000080000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x00000000ffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000080000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x00000000ffffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0xffffffff:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -6665,14 +7265,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0xffffffff:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x80000000, rs2val=0xfffffffe)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000080000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x00000000fffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000080000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x00000000fffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0xfffffffe:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -6687,14 +7289,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0xfffffffe:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x80000000, rs2val=0x100000000)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000080000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000100000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000080000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000100000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x100000000:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -6709,14 +7313,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x100000000:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x80000000, rs2val=0x100000001)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000080000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000100000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000080000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000100000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x100000001:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -6731,14 +7337,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x100000001:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x80000000, rs2val=0x80000000)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000080000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000080000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000080000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000080000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x80000000:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -6753,14 +7361,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x80000000:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x80000000, rs2val=0x7fffffff)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x0000000080000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x000000007fffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x0000000080000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x000000007fffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x7fffffff:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -6775,14 +7385,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x7fffffff:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7fffffff, rs2val=0x0)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x000000007fffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000000000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x000000007fffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000000000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x0:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -6797,14 +7409,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x0:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7fffffff, rs2val=0x1)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x000000007fffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000000000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x000000007fffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000000000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x1:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -6819,14 +7433,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x1:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7fffffff, rs2val=0x2)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x000000007fffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000000000002
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x000000007fffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000000000002
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x2:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -6841,14 +7457,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x2:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7fffffff, rs2val=0x8000000000000000)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x000000007fffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x8000000000000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x000000007fffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x8000000000000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x8000000000000000:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -6863,14 +7481,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x80000000000000
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7fffffff, rs2val=0x8000000000000001)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x000000007fffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x8000000000000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x000000007fffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x8000000000000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x8000000000000001:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -6885,14 +7505,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x80000000000000
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7fffffff, rs2val=0x7fffffffffffffff)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x000000007fffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x7fffffffffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x000000007fffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x7fffffffffffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x7fffffffffffffff:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -6907,14 +7529,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x7fffffffffffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7fffffff, rs2val=0x7ffffffffffffffe)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x000000007fffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x7ffffffffffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x000000007fffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x7ffffffffffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x7ffffffffffffffe:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -6929,14 +7553,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x7fffffffffffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7fffffff, rs2val=0xffffffffffffffff)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x000000007fffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0xffffffffffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x000000007fffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0xffffffffffffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0xffffffffffffffff:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -6951,14 +7577,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0xffffffffffffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7fffffff, rs2val=0xfffffffffffffffe)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x000000007fffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0xfffffffffffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x000000007fffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0xfffffffffffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0xfffffffffffffffe:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -6973,14 +7601,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0xffffffffffffff
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7fffffff, rs2val=0x5bbc887763ae86f2)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x000000007fffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x5bbc887763ae86f2
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x000000007fffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x5bbc887763ae86f2
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x5bbc887763ae86f2:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -6995,14 +7625,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x5bbc887763ae86
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7fffffff, rs2val=0xaaaaaaaaaaaaaaaa)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x000000007fffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0xaaaaaaaaaaaaaaaa
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x000000007fffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0xaaaaaaaaaaaaaaaa
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0xaaaaaaaaaaaaaaaa:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -7017,14 +7649,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0xaaaaaaaaaaaaaa
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7fffffff, rs2val=0x5555555555555555)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x000000007fffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x5555555555555555
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x000000007fffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x5555555555555555
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x5555555555555555:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -7039,14 +7673,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x55555555555555
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7fffffff, rs2val=0xffffffff)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x000000007fffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x00000000ffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x000000007fffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x00000000ffffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0xffffffff:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -7061,14 +7697,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0xffffffff:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7fffffff, rs2val=0xfffffffe)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x000000007fffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x00000000fffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x000000007fffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x00000000fffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0xfffffffe:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -7083,14 +7721,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0xfffffffe:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7fffffff, rs2val=0x100000000)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x000000007fffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000100000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x000000007fffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000100000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x100000000:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -7105,14 +7745,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x100000000:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7fffffff, rs2val=0x100000001)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x000000007fffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000100000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x000000007fffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000100000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x100000001:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -7127,14 +7769,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x100000001:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7fffffff, rs2val=0x80000000)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x000000007fffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x0000000080000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x000000007fffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x0000000080000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x80000000:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b
@@ -7149,14 +7793,16 @@ ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x80000000:
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7fffffff, rs2val=0x7fffffff)
   LI(x26, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x13) # load rs1: x13 = 0x000000007fffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs2: x18 = 0x000000007fffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x18) # load rs1: x18 = 0x000000007fffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x27) # load rs2: x27 = 0x000000007fffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x1, x13, x18
+  xor x1, x18, x27
   .balign 64
   csrr x1, cycle
+  sltu x13, x1, x0
+  or x18, x18, x13
 ZktZicntrZmmul_mulhu_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x7fffffff:
-  mulhu x14, x13, x18 # perform operation
+  mulhu x14, x18, x27 # perform operation
   csrr x22, cycle
   addi x26, x26, -1
   bnez x26, 1b

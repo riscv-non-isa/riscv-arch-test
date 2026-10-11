@@ -33,11 +33,9 @@ RVTEST_BEGIN
 // cp_zkt_rs1
 /////////////////////////////////
 
-# Each testcase runs twice, counted down in x14, and times the second run:
-#   load the operands, then xor them into x15 so the loads complete before timing starts
-#   time the instruction between two reads of cycle into x15 and x17, starting at a
-#   64-byte boundary so the instructions after it share an instruction-cache line
-#   record x17 - x15 - the first testcase's latency in x7, which must be 0
+# Each testcase times the instruction twice, counted down in
+# x14, and writes the second run's latency (x17 - x15) minus the
+# first testcase's (x7), which must be 0. See the Zkt section of the CTP.
 
 # Testcase cp_zkt_rs1 (rs1val=0x0)
   LI(x14, 2)
@@ -47,6 +45,8 @@ RVTEST_BEGIN
   xor x15, x25, x25
   .balign 64
   csrr x15, cycle
+  sltu x31, x15, x0
+  or x25, x25, x31
 ZktZicntrZknh_sha256sum1_cg_cp_zkt_rs1_rs1val_0x0:
   sha256sum1 x20, x25 # perform operation
   csrr x17, cycle
@@ -69,6 +69,8 @@ ZktZicntrZknh_sha256sum1_cg_cp_zkt_rs1_rs1val_0x0:
   xor x15, x25, x25
   .balign 64
   csrr x15, cycle
+  sltu x31, x15, x0
+  or x25, x25, x31
 ZktZicntrZknh_sha256sum1_cg_cp_zkt_rs1_rs1val_0x1:
   sha256sum1 x20, x25 # perform operation
   csrr x17, cycle
@@ -90,6 +92,8 @@ ZktZicntrZknh_sha256sum1_cg_cp_zkt_rs1_rs1val_0x1:
   xor x15, x25, x25
   .balign 64
   csrr x15, cycle
+  sltu x31, x15, x0
+  or x25, x25, x31
 ZktZicntrZknh_sha256sum1_cg_cp_zkt_rs1_rs1val_0x2:
   sha256sum1 x20, x25 # perform operation
   csrr x17, cycle
@@ -111,6 +115,8 @@ ZktZicntrZknh_sha256sum1_cg_cp_zkt_rs1_rs1val_0x2:
   xor x15, x25, x25
   .balign 64
   csrr x15, cycle
+  sltu x31, x15, x0
+  or x25, x25, x31
 ZktZicntrZknh_sha256sum1_cg_cp_zkt_rs1_rs1val_0x8000000000000000:
   sha256sum1 x20, x25 # perform operation
   csrr x17, cycle
@@ -132,6 +138,8 @@ ZktZicntrZknh_sha256sum1_cg_cp_zkt_rs1_rs1val_0x8000000000000000:
   xor x15, x25, x25
   .balign 64
   csrr x15, cycle
+  sltu x31, x15, x0
+  or x25, x25, x31
 ZktZicntrZknh_sha256sum1_cg_cp_zkt_rs1_rs1val_0x8000000000000001:
   sha256sum1 x20, x25 # perform operation
   csrr x17, cycle
@@ -153,6 +161,8 @@ ZktZicntrZknh_sha256sum1_cg_cp_zkt_rs1_rs1val_0x8000000000000001:
   xor x15, x25, x25
   .balign 64
   csrr x15, cycle
+  sltu x31, x15, x0
+  or x25, x25, x31
 ZktZicntrZknh_sha256sum1_cg_cp_zkt_rs1_rs1val_0x7fffffffffffffff:
   sha256sum1 x20, x25 # perform operation
   csrr x17, cycle
@@ -174,6 +184,8 @@ ZktZicntrZknh_sha256sum1_cg_cp_zkt_rs1_rs1val_0x7fffffffffffffff:
   xor x15, x25, x25
   .balign 64
   csrr x15, cycle
+  sltu x31, x15, x0
+  or x25, x25, x31
 ZktZicntrZknh_sha256sum1_cg_cp_zkt_rs1_rs1val_0x7ffffffffffffffe:
   sha256sum1 x20, x25 # perform operation
   csrr x17, cycle
@@ -195,6 +207,8 @@ ZktZicntrZknh_sha256sum1_cg_cp_zkt_rs1_rs1val_0x7ffffffffffffffe:
   xor x15, x25, x25
   .balign 64
   csrr x15, cycle
+  sltu x31, x15, x0
+  or x25, x25, x31
 ZktZicntrZknh_sha256sum1_cg_cp_zkt_rs1_rs1val_0xffffffffffffffff:
   sha256sum1 x20, x25 # perform operation
   csrr x17, cycle
@@ -216,6 +230,8 @@ ZktZicntrZknh_sha256sum1_cg_cp_zkt_rs1_rs1val_0xffffffffffffffff:
   xor x15, x25, x25
   .balign 64
   csrr x15, cycle
+  sltu x31, x15, x0
+  or x25, x25, x31
 ZktZicntrZknh_sha256sum1_cg_cp_zkt_rs1_rs1val_0xfffffffffffffffe:
   sha256sum1 x20, x25 # perform operation
   csrr x17, cycle
@@ -237,6 +253,8 @@ ZktZicntrZknh_sha256sum1_cg_cp_zkt_rs1_rs1val_0xfffffffffffffffe:
   xor x15, x25, x25
   .balign 64
   csrr x15, cycle
+  sltu x31, x15, x0
+  or x25, x25, x31
 ZktZicntrZknh_sha256sum1_cg_cp_zkt_rs1_rs1val_0x5bbc887763ae86f2:
   sha256sum1 x20, x25 # perform operation
   csrr x17, cycle
@@ -258,6 +276,8 @@ ZktZicntrZknh_sha256sum1_cg_cp_zkt_rs1_rs1val_0x5bbc887763ae86f2:
   xor x15, x25, x25
   .balign 64
   csrr x15, cycle
+  sltu x31, x15, x0
+  or x25, x25, x31
 ZktZicntrZknh_sha256sum1_cg_cp_zkt_rs1_rs1val_0xaaaaaaaaaaaaaaaa:
   sha256sum1 x20, x25 # perform operation
   csrr x17, cycle
@@ -279,6 +299,8 @@ ZktZicntrZknh_sha256sum1_cg_cp_zkt_rs1_rs1val_0xaaaaaaaaaaaaaaaa:
   xor x15, x25, x25
   .balign 64
   csrr x15, cycle
+  sltu x31, x15, x0
+  or x25, x25, x31
 ZktZicntrZknh_sha256sum1_cg_cp_zkt_rs1_rs1val_0x5555555555555555:
   sha256sum1 x20, x25 # perform operation
   csrr x17, cycle
@@ -300,6 +322,8 @@ ZktZicntrZknh_sha256sum1_cg_cp_zkt_rs1_rs1val_0x5555555555555555:
   xor x15, x25, x25
   .balign 64
   csrr x15, cycle
+  sltu x31, x15, x0
+  or x25, x25, x31
 ZktZicntrZknh_sha256sum1_cg_cp_zkt_rs1_rs1val_0xffffffff:
   sha256sum1 x20, x25 # perform operation
   csrr x17, cycle
@@ -321,6 +345,8 @@ ZktZicntrZknh_sha256sum1_cg_cp_zkt_rs1_rs1val_0xffffffff:
   xor x15, x25, x25
   .balign 64
   csrr x15, cycle
+  sltu x31, x15, x0
+  or x25, x25, x31
 ZktZicntrZknh_sha256sum1_cg_cp_zkt_rs1_rs1val_0xfffffffe:
   sha256sum1 x20, x25 # perform operation
   csrr x17, cycle
@@ -342,6 +368,8 @@ ZktZicntrZknh_sha256sum1_cg_cp_zkt_rs1_rs1val_0xfffffffe:
   xor x15, x25, x25
   .balign 64
   csrr x15, cycle
+  sltu x31, x15, x0
+  or x25, x25, x31
 ZktZicntrZknh_sha256sum1_cg_cp_zkt_rs1_rs1val_0x100000000:
   sha256sum1 x20, x25 # perform operation
   csrr x17, cycle
@@ -363,6 +391,8 @@ ZktZicntrZknh_sha256sum1_cg_cp_zkt_rs1_rs1val_0x100000000:
   xor x15, x25, x25
   .balign 64
   csrr x15, cycle
+  sltu x31, x15, x0
+  or x25, x25, x31
 ZktZicntrZknh_sha256sum1_cg_cp_zkt_rs1_rs1val_0x100000001:
   sha256sum1 x20, x25 # perform operation
   csrr x17, cycle
@@ -384,6 +414,8 @@ ZktZicntrZknh_sha256sum1_cg_cp_zkt_rs1_rs1val_0x100000001:
   xor x15, x25, x25
   .balign 64
   csrr x15, cycle
+  sltu x31, x15, x0
+  or x25, x25, x31
 ZktZicntrZknh_sha256sum1_cg_cp_zkt_rs1_rs1val_0x80000000:
   sha256sum1 x20, x25 # perform operation
   csrr x17, cycle
@@ -405,6 +437,8 @@ ZktZicntrZknh_sha256sum1_cg_cp_zkt_rs1_rs1val_0x80000000:
   xor x15, x25, x25
   .balign 64
   csrr x15, cycle
+  sltu x31, x15, x0
+  or x25, x25, x31
 ZktZicntrZknh_sha256sum1_cg_cp_zkt_rs1_rs1val_0x7fffffff:
   sha256sum1 x20, x25 # perform operation
   csrr x17, cycle

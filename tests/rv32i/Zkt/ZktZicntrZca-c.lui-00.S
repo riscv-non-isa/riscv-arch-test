@@ -33,11 +33,9 @@ RVTEST_BEGIN
 // cp_zkt_pc
 /////////////////////////////////
 
-# Each testcase runs twice, counted down in x12, and times the second run:
-#   load the operands, then xor them into x31 so the loads complete before timing starts
-#   time the instruction between two reads of cycle into x31 and x1, starting at a
-#   64-byte boundary so the instructions after it share an instruction-cache line
-#   record x1 - x31 - the first testcase's latency in x11, which must be 0
+# Each testcase times the instruction twice, counted down in
+# x12, and writes the second run's latency (x1 - x31) minus the
+# first testcase's (x11), which must be 0. See the Zkt section of the CTP.
 
 # Testcase cp_zkt_pc (timed)
   LI(x12, 2)

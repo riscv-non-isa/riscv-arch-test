@@ -33,23 +33,23 @@ RVTEST_BEGIN
 // cp_zkt_rs1_rs2
 /////////////////////////////////
 
-# Each testcase runs twice, counted down in x23, and times the second run:
-#   load the operands, then xor them into x8 so the loads complete before timing starts
-#   time the instruction between two reads of cycle into x8 and x10, starting at a
-#   64-byte boundary so the instructions after it share an instruction-cache line
-#   record x10 - x8 - the first testcase's latency in x14, which must be 0
+# Each testcase times the instruction twice, counted down in
+# x23, and writes the second run's latency (x10 - x8) minus the
+# first testcase's (x14), which must be 0. See the Zkt section of the CTP.
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x0, rs2val=0x0)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x00000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x00000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x00000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x00000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x0:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
@@ -57,3154 +57,3440 @@ ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x0:
   sub x10, x10, x8
   mv x14, x10
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x0, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x0_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x0, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x0_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x0, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x0_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x0, rs2val=0x1)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x00000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x00000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x00000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x00000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x1:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x1, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x1_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x1, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x1_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x1, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x1_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x0, rs2val=0x2)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x00000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x00000002
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x00000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x00000002
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x2:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x2, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x2_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x2, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x2_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x2, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x2_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x0, rs2val=0x80000000)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x00000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x80000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x00000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x80000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x80000000:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x80000000, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x80000000_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x80000000, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x80000000_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x80000000, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x80000000_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x0, rs2val=0x80000001)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x00000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x80000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x00000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x80000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x80000001:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x80000001, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x80000001_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x80000001, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x80000001_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x80000001, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x80000001_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x0, rs2val=0x7fffffff)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x00000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x7fffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x00000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x7fffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x7fffffff:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x7fffffff, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x7fffffff_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x7fffffff, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x7fffffff_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x7fffffff, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x7fffffff_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x0, rs2val=0x7ffffffe)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x00000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x7ffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x00000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x7ffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x7ffffffe:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x7ffffffe, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x7ffffffe_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x7ffffffe, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x7ffffffe_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x7ffffffe, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x7ffffffe_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x0, rs2val=0xffffffff)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x00000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0xffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x00000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0xffffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0xffffffff:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0xffffffff, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0xffffffff_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0xffffffff, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0xffffffff_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0xffffffff, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0xffffffff_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x0, rs2val=0xfffffffe)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x00000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0xfffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x00000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0xfffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0xfffffffe:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0xfffffffe, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0xfffffffe_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0xfffffffe, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0xfffffffe_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0xfffffffe, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0xfffffffe_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x0, rs2val=0x5bbc8872)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x00000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x5bbc8872
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x00000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x5bbc8872
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x5bbc8872:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x5bbc8872, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x5bbc8872_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x5bbc8872, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x5bbc8872_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x5bbc8872, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x5bbc8872_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x0, rs2val=0xaaaaaaaa)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x00000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0xaaaaaaaa
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x00000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0xaaaaaaaa
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0xaaaaaaaa:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0xaaaaaaaa, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0xaaaaaaaa_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0xaaaaaaaa, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0xaaaaaaaa_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0xaaaaaaaa, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0xaaaaaaaa_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x0, rs2val=0x55555555)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x00000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x55555555
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x00000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x55555555
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x55555555:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x55555555, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x55555555_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x55555555, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x55555555_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x55555555, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x0_rs2val_0x55555555_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x1, rs2val=0x0)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x00000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x00000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x00000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x00000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x0:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x0, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x0_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x0, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x0_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x0, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x0_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x1, rs2val=0x1)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x00000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x00000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x00000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x00000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x1:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x1, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x1_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x1, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x1_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x1, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x1_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x1, rs2val=0x2)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x00000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x00000002
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x00000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x00000002
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x2:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x2, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x2_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x2, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x2_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x2, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x2_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x1, rs2val=0x80000000)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x00000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x80000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x00000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x80000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x80000000:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x80000000, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x80000000_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x80000000, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x80000000_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x80000000, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x80000000_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x1, rs2val=0x80000001)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x00000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x80000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x00000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x80000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x80000001:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x80000001, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x80000001_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x80000001, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x80000001_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x80000001, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x80000001_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x1, rs2val=0x7fffffff)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x00000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x7fffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x00000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x7fffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x7fffffff:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x7fffffff, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x7fffffff_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x7fffffff, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x7fffffff_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x7fffffff, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x7fffffff_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x1, rs2val=0x7ffffffe)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x00000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x7ffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x00000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x7ffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x7ffffffe:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x7ffffffe, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x7ffffffe_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x7ffffffe, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x7ffffffe_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x7ffffffe, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x7ffffffe_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x1, rs2val=0xffffffff)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x00000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0xffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x00000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0xffffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0xffffffff:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0xffffffff, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0xffffffff_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0xffffffff, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0xffffffff_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0xffffffff, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0xffffffff_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x1, rs2val=0xfffffffe)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x00000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0xfffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x00000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0xfffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0xfffffffe:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0xfffffffe, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0xfffffffe_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0xfffffffe, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0xfffffffe_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0xfffffffe, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0xfffffffe_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x1, rs2val=0x5bbc8872)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x00000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x5bbc8872
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x00000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x5bbc8872
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x5bbc8872:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x5bbc8872, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x5bbc8872_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x5bbc8872, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x5bbc8872_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x5bbc8872, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x5bbc8872_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x1, rs2val=0xaaaaaaaa)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x00000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0xaaaaaaaa
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x00000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0xaaaaaaaa
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0xaaaaaaaa:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0xaaaaaaaa, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0xaaaaaaaa_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0xaaaaaaaa, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0xaaaaaaaa_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0xaaaaaaaa, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0xaaaaaaaa_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x1, rs2val=0x55555555)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x00000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x55555555
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x00000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x55555555
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x55555555:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x55555555, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x55555555_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x55555555, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x55555555_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x55555555, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x1_rs2val_0x55555555_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x2, rs2val=0x0)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x00000002
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x00000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x00000002
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x00000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x0:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x0, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x0_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x0, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x0_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x0, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x0_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x2, rs2val=0x1)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x00000002
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x00000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x00000002
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x00000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x1:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x1, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x1_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x1, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x1_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x1, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x1_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x2, rs2val=0x2)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x00000002
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x00000002
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x00000002
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x00000002
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x2:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x2, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x2_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x2, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x2_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x2, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x2_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x2, rs2val=0x80000000)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x00000002
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x80000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x00000002
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x80000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x80000000:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x80000000, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x80000000_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x80000000, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x80000000_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x80000000, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x80000000_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x2, rs2val=0x80000001)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x00000002
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x80000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x00000002
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x80000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x80000001:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x80000001, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x80000001_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x80000001, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x80000001_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x80000001, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x80000001_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x2, rs2val=0x7fffffff)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x00000002
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x7fffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x00000002
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x7fffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x7fffffff:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x7fffffff, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x7fffffff_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x7fffffff, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x7fffffff_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x7fffffff, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x7fffffff_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x2, rs2val=0x7ffffffe)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x00000002
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x7ffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x00000002
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x7ffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x7ffffffe:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x7ffffffe, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x7ffffffe_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x7ffffffe, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x7ffffffe_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x7ffffffe, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x7ffffffe_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x2, rs2val=0xffffffff)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x00000002
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0xffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x00000002
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0xffffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0xffffffff:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0xffffffff, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0xffffffff_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0xffffffff, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0xffffffff_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0xffffffff, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0xffffffff_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x2, rs2val=0xfffffffe)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x00000002
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0xfffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x00000002
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0xfffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0xfffffffe:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0xfffffffe, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0xfffffffe_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0xfffffffe, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0xfffffffe_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0xfffffffe, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0xfffffffe_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x2, rs2val=0x5bbc8872)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x00000002
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x5bbc8872
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x00000002
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x5bbc8872
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x5bbc8872:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x5bbc8872, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x5bbc8872_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x5bbc8872, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x5bbc8872_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x5bbc8872, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x5bbc8872_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x2, rs2val=0xaaaaaaaa)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x00000002
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0xaaaaaaaa
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x00000002
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0xaaaaaaaa
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0xaaaaaaaa:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0xaaaaaaaa, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0xaaaaaaaa_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0xaaaaaaaa, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0xaaaaaaaa_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0xaaaaaaaa, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0xaaaaaaaa_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x2, rs2val=0x55555555)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x00000002
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x55555555
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x00000002
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x55555555
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x55555555:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x55555555, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x55555555_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x55555555, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x55555555_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x55555555, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x2_rs2val_0x55555555_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x80000000, rs2val=0x0)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x80000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x00000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x80000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x00000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x0:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x0, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x0_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x0, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x0_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x0, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x0_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x80000000, rs2val=0x1)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x80000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x00000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x80000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x00000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x1:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x1, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x1_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x1, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x1_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x1, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x1_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x80000000, rs2val=0x2)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x80000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x00000002
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x80000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x00000002
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x2:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x2, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x2_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x2, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x2_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x2, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x2_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x80000000, rs2val=0x80000000)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x80000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x80000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x80000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x80000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x80000000:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x80000000, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x80000000_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x80000000, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x80000000_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x80000000, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x80000000_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x80000000, rs2val=0x80000001)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x80000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x80000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x80000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x80000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x80000001:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x80000001, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x80000001_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x80000001, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x80000001_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x80000001, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x80000001_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x80000000, rs2val=0x7fffffff)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x80000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x7fffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x80000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x7fffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x7fffffff:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x7fffffff, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x7fffffff_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x7fffffff, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x7fffffff_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x7fffffff, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x7fffffff_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x80000000, rs2val=0x7ffffffe)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x80000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x7ffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x80000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x7ffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x7ffffffe:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x7ffffffe, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x7ffffffe_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x7ffffffe, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x7ffffffe_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x7ffffffe, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x7ffffffe_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x80000000, rs2val=0xffffffff)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x80000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0xffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x80000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0xffffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0xffffffff:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0xffffffff, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0xffffffff_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0xffffffff, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0xffffffff_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0xffffffff, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0xffffffff_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x80000000, rs2val=0xfffffffe)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x80000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0xfffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x80000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0xfffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0xfffffffe:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0xfffffffe, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0xfffffffe_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0xfffffffe, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0xfffffffe_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0xfffffffe, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0xfffffffe_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x80000000, rs2val=0x5bbc8872)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x80000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x5bbc8872
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x80000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x5bbc8872
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x5bbc8872:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x5bbc8872, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x5bbc8872_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x5bbc8872, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x5bbc8872_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x5bbc8872, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x5bbc8872_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x80000000, rs2val=0xaaaaaaaa)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x80000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0xaaaaaaaa
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x80000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0xaaaaaaaa
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0xaaaaaaaa:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0xaaaaaaaa, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0xaaaaaaaa_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0xaaaaaaaa, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0xaaaaaaaa_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0xaaaaaaaa, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0xaaaaaaaa_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x80000000, rs2val=0x55555555)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x80000000
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x55555555
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x80000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x55555555
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x55555555:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x55555555, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x55555555_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x55555555, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x55555555_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x55555555, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000000_rs2val_0x55555555_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x80000001, rs2val=0x0)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x80000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x00000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x80000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x00000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0x0:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0x0, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0x0_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0x0, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0x0_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0x0, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0x0_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x80000001, rs2val=0x1)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x80000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x00000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x80000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x00000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0x1:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0x1, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0x1_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0x1, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0x1_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0x1, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0x1_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x80000001, rs2val=0x2)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x80000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x00000002
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x80000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x00000002
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0x2:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0x2, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0x2_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0x2, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0x2_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0x2, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0x2_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x80000001, rs2val=0x80000000)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x80000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x80000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x80000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x80000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0x80000000:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0x80000000, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0x80000000_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0x80000000, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0x80000000_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0x80000000, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0x80000000_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x80000001, rs2val=0x80000001)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x80000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x80000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x80000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x80000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0x80000001:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0x80000001, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0x80000001_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0x80000001, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0x80000001_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0x80000001, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0x80000001_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x80000001, rs2val=0x7fffffff)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x80000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x7fffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x80000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x7fffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0x7fffffff:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0x7fffffff, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0x7fffffff_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0x7fffffff, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0x7fffffff_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0x7fffffff, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0x7fffffff_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x80000001, rs2val=0x7ffffffe)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x80000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x7ffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x80000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x7ffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0x7ffffffe:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0x7ffffffe, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0x7ffffffe_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0x7ffffffe, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0x7ffffffe_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0x7ffffffe, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0x7ffffffe_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x80000001, rs2val=0xffffffff)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x80000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0xffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x80000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0xffffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0xffffffff:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0xffffffff, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0xffffffff_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0xffffffff, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0xffffffff_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0xffffffff, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0xffffffff_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x80000001, rs2val=0xfffffffe)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x80000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0xfffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x80000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0xfffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0xfffffffe:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0xfffffffe, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0xfffffffe_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0xfffffffe, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0xfffffffe_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0xfffffffe, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0xfffffffe_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x80000001, rs2val=0x5bbc8872)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x80000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x5bbc8872
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x80000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x5bbc8872
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0x5bbc8872:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0x5bbc8872, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0x5bbc8872_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0x5bbc8872, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0x5bbc8872_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0x5bbc8872, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0x5bbc8872_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x80000001, rs2val=0xaaaaaaaa)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x80000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0xaaaaaaaa
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x80000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0xaaaaaaaa
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0xaaaaaaaa:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0xaaaaaaaa, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0xaaaaaaaa_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0xaaaaaaaa, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0xaaaaaaaa_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0xaaaaaaaa, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0xaaaaaaaa_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x80000001, rs2val=0x55555555)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x80000001
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x55555555
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x80000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x55555555
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0x55555555:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0x55555555, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0x55555555_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0x55555555, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0x55555555_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0x55555555, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x80000001_rs2val_0x55555555_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7fffffff, rs2val=0x0)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x7fffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x00000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x7fffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x00000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x0:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x0, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x0_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x0, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x0_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x0, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x0_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7fffffff, rs2val=0x1)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x7fffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x00000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x7fffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x00000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x1:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x1, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x1_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x1, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x1_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x1, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x1_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7fffffff, rs2val=0x2)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x7fffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x00000002
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x7fffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x00000002
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x2:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x2, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x2_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x2, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x2_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x2, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x2_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7fffffff, rs2val=0x80000000)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x7fffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x80000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x7fffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x80000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x80000000:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x80000000, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x80000000_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x80000000, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x80000000_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x80000000, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x80000000_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7fffffff, rs2val=0x80000001)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x7fffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x80000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x7fffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x80000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x80000001:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x80000001, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x80000001_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x80000001, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x80000001_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x80000001, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x80000001_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7fffffff, rs2val=0x7fffffff)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x7fffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x7fffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x7fffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x7fffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x7fffffff:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x7fffffff, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x7fffffff_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x7fffffff, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x7fffffff_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x7fffffff, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x7fffffff_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7fffffff, rs2val=0x7ffffffe)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x7fffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x7ffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x7fffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x7ffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x7ffffffe:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x7ffffffe, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x7ffffffe_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x7ffffffe, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x7ffffffe_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x7ffffffe, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x7ffffffe_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7fffffff, rs2val=0xffffffff)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x7fffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0xffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x7fffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0xffffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0xffffffff:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0xffffffff, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0xffffffff_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0xffffffff, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0xffffffff_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0xffffffff, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0xffffffff_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7fffffff, rs2val=0xfffffffe)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x7fffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0xfffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x7fffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0xfffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0xfffffffe:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0xfffffffe, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0xfffffffe_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0xfffffffe, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0xfffffffe_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0xfffffffe, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0xfffffffe_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7fffffff, rs2val=0x5bbc8872)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x7fffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x5bbc8872
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x7fffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x5bbc8872
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x5bbc8872:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x5bbc8872, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x5bbc8872_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x5bbc8872, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x5bbc8872_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x5bbc8872, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x5bbc8872_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7fffffff, rs2val=0xaaaaaaaa)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x7fffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0xaaaaaaaa
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x7fffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0xaaaaaaaa
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0xaaaaaaaa:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0xaaaaaaaa, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0xaaaaaaaa_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0xaaaaaaaa, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0xaaaaaaaa_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0xaaaaaaaa, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0xaaaaaaaa_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7fffffff, rs2val=0x55555555)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x7fffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x55555555
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x7fffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x55555555
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x55555555:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x55555555, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x55555555_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x55555555, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x55555555_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x55555555, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7fffffff_rs2val_0x55555555_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7ffffffe, rs2val=0x0)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x7ffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x00000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x7ffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x00000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0x0:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0x0, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0x0_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0x0, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0x0_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0x0, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0x0_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7ffffffe, rs2val=0x1)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x7ffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x00000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x7ffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x00000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0x1:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0x1, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0x1_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0x1, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0x1_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0x1, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0x1_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7ffffffe, rs2val=0x2)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x7ffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x00000002
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x7ffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x00000002
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0x2:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0x2, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0x2_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0x2, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0x2_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0x2, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0x2_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7ffffffe, rs2val=0x80000000)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x7ffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x80000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x7ffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x80000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0x80000000:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0x80000000, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0x80000000_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0x80000000, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0x80000000_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0x80000000, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0x80000000_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7ffffffe, rs2val=0x80000001)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x7ffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x80000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x7ffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x80000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0x80000001:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0x80000001, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0x80000001_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0x80000001, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0x80000001_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0x80000001, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0x80000001_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7ffffffe, rs2val=0x7fffffff)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x7ffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x7fffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x7ffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x7fffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0x7fffffff:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0x7fffffff, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0x7fffffff_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0x7fffffff, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0x7fffffff_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0x7fffffff, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0x7fffffff_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7ffffffe, rs2val=0x7ffffffe)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x7ffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x7ffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x7ffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x7ffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0x7ffffffe:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0x7ffffffe, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0x7ffffffe_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0x7ffffffe, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0x7ffffffe_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0x7ffffffe, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0x7ffffffe_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7ffffffe, rs2val=0xffffffff)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x7ffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0xffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x7ffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0xffffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0xffffffff:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0xffffffff, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0xffffffff_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0xffffffff, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0xffffffff_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0xffffffff, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0xffffffff_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7ffffffe, rs2val=0xfffffffe)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x7ffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0xfffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x7ffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0xfffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0xfffffffe:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0xfffffffe, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0xfffffffe_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0xfffffffe, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0xfffffffe_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0xfffffffe, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0xfffffffe_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7ffffffe, rs2val=0x5bbc8872)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x7ffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x5bbc8872
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x7ffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x5bbc8872
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0x5bbc8872:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0x5bbc8872, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0x5bbc8872_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0x5bbc8872, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0x5bbc8872_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0x5bbc8872, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0x5bbc8872_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7ffffffe, rs2val=0xaaaaaaaa)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x7ffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0xaaaaaaaa
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x7ffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0xaaaaaaaa
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0xaaaaaaaa:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0xaaaaaaaa, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0xaaaaaaaa_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0xaaaaaaaa, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0xaaaaaaaa_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0xaaaaaaaa, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0xaaaaaaaa_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x7ffffffe, rs2val=0x55555555)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x7ffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x55555555
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x7ffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x55555555
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0x55555555:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0x55555555, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0x55555555_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0x55555555, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0x55555555_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0x55555555, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x7ffffffe_rs2val_0x55555555_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xffffffff, rs2val=0x0)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0xffffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x00000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0xffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x00000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x0:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x0, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x0_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x0, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x0_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x0, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x0_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xffffffff, rs2val=0x1)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0xffffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x00000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0xffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x00000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x1:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x1, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x1_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x1, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x1_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x1, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x1_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xffffffff, rs2val=0x2)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0xffffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x00000002
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0xffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x00000002
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x2:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x2, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x2_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x2, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x2_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x2, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x2_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xffffffff, rs2val=0x80000000)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0xffffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x80000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0xffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x80000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x80000000:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x80000000, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x80000000_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x80000000, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x80000000_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x80000000, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x80000000_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xffffffff, rs2val=0x80000001)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0xffffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x80000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0xffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x80000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x80000001:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x80000001, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x80000001_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x80000001, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x80000001_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x80000001, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x80000001_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xffffffff, rs2val=0x7fffffff)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0xffffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x7fffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0xffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x7fffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x7fffffff:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x7fffffff, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x7fffffff_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x7fffffff, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x7fffffff_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x7fffffff, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x7fffffff_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xffffffff, rs2val=0x7ffffffe)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0xffffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x7ffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0xffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x7ffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x7ffffffe:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x7ffffffe, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x7ffffffe_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x7ffffffe, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x7ffffffe_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x7ffffffe, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x7ffffffe_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xffffffff, rs2val=0xffffffff)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0xffffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0xffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0xffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0xffffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0xffffffff:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0xffffffff, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0xffffffff_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0xffffffff, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0xffffffff_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0xffffffff, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0xffffffff_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xffffffff, rs2val=0xfffffffe)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0xffffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0xfffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0xffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0xfffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0xfffffffe:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0xfffffffe, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0xfffffffe_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0xfffffffe, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0xfffffffe_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0xfffffffe, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0xfffffffe_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xffffffff, rs2val=0x5bbc8872)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0xffffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x5bbc8872
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0xffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x5bbc8872
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x5bbc8872:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x5bbc8872, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x5bbc8872_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x5bbc8872, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x5bbc8872_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x5bbc8872, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x5bbc8872_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xffffffff, rs2val=0xaaaaaaaa)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0xffffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0xaaaaaaaa
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0xffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0xaaaaaaaa
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0xaaaaaaaa:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0xaaaaaaaa, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0xaaaaaaaa_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0xaaaaaaaa, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0xaaaaaaaa_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0xaaaaaaaa, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0xaaaaaaaa_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xffffffff, rs2val=0x55555555)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0xffffffff
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x55555555
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0xffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x55555555
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x55555555:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x55555555, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x55555555_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x55555555, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x55555555_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x55555555, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xffffffff_rs2val_0x55555555_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xfffffffe, rs2val=0x0)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0xfffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x00000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0xfffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x00000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x0:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x0, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x0_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x0, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x0_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x0, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x0_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xfffffffe, rs2val=0x1)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0xfffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x00000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0xfffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x00000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x1:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x1, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x1_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x1, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x1_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x1, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x1_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xfffffffe, rs2val=0x2)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0xfffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x00000002
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0xfffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x00000002
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x2:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x2, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x2_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x2, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x2_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x2, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x2_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xfffffffe, rs2val=0x80000000)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0xfffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x80000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0xfffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x80000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x80000000:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x80000000, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x80000000_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x80000000, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x80000000_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x80000000, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x80000000_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xfffffffe, rs2val=0x80000001)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0xfffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x80000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0xfffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x80000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x80000001:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x80000001, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x80000001_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x80000001, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x80000001_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x80000001, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x80000001_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xfffffffe, rs2val=0x7fffffff)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0xfffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x7fffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0xfffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x7fffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x7fffffff:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x7fffffff, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x7fffffff_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x7fffffff, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x7fffffff_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x7fffffff, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x7fffffff_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xfffffffe, rs2val=0x7ffffffe)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0xfffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x7ffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0xfffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x7ffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x7ffffffe:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x7ffffffe, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x7ffffffe_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x7ffffffe, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x7ffffffe_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x7ffffffe, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x7ffffffe_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xfffffffe, rs2val=0xffffffff)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0xfffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0xffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0xfffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0xffffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0xffffffff:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0xffffffff, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0xffffffff_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0xffffffff, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0xffffffff_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0xffffffff, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0xffffffff_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xfffffffe, rs2val=0xfffffffe)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0xfffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0xfffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0xfffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0xfffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0xfffffffe:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0xfffffffe, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0xfffffffe_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0xfffffffe, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0xfffffffe_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0xfffffffe, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0xfffffffe_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xfffffffe, rs2val=0x5bbc8872)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0xfffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x5bbc8872
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0xfffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x5bbc8872
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x5bbc8872:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x5bbc8872, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x5bbc8872_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x5bbc8872, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x5bbc8872_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x5bbc8872, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x5bbc8872_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xfffffffe, rs2val=0xaaaaaaaa)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0xfffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0xaaaaaaaa
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0xfffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0xaaaaaaaa
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0xaaaaaaaa:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0xaaaaaaaa, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0xaaaaaaaa_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0xaaaaaaaa, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0xaaaaaaaa_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0xaaaaaaaa, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0xaaaaaaaa_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xfffffffe, rs2val=0x55555555)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0xfffffffe
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x55555555
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0xfffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x55555555
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x55555555:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x55555555, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x55555555_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x55555555, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x55555555_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x55555555, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xfffffffe_rs2val_0x55555555_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x5bbc8872, rs2val=0x0)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x5bbc8872
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x00000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x5bbc8872
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x00000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0x0:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0x0, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0x0_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0x0, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0x0_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0x0, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0x0_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x5bbc8872, rs2val=0x1)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x5bbc8872
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x00000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x5bbc8872
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x00000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0x1:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0x1, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0x1_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0x1, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0x1_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0x1, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0x1_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x5bbc8872, rs2val=0x2)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x5bbc8872
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x00000002
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x5bbc8872
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x00000002
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0x2:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0x2, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0x2_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0x2, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0x2_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0x2, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0x2_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x5bbc8872, rs2val=0x80000000)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x5bbc8872
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x80000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x5bbc8872
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x80000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0x80000000:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0x80000000, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0x80000000_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0x80000000, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0x80000000_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0x80000000, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0x80000000_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x5bbc8872, rs2val=0x80000001)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x5bbc8872
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x80000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x5bbc8872
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x80000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0x80000001:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0x80000001, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0x80000001_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0x80000001, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0x80000001_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0x80000001, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0x80000001_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x5bbc8872, rs2val=0x7fffffff)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x5bbc8872
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x7fffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x5bbc8872
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x7fffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0x7fffffff:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0x7fffffff, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0x7fffffff_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0x7fffffff, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0x7fffffff_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0x7fffffff, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0x7fffffff_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x5bbc8872, rs2val=0x7ffffffe)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x5bbc8872
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x7ffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x5bbc8872
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x7ffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0x7ffffffe:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0x7ffffffe, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0x7ffffffe_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0x7ffffffe, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0x7ffffffe_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0x7ffffffe, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0x7ffffffe_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x5bbc8872, rs2val=0xffffffff)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x5bbc8872
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0xffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x5bbc8872
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0xffffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0xffffffff:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0xffffffff, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0xffffffff_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0xffffffff, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0xffffffff_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0xffffffff, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0xffffffff_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x5bbc8872, rs2val=0xfffffffe)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x5bbc8872
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0xfffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x5bbc8872
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0xfffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0xfffffffe:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0xfffffffe, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0xfffffffe_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0xfffffffe, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0xfffffffe_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0xfffffffe, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0xfffffffe_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x5bbc8872, rs2val=0x5bbc8872)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x5bbc8872
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x5bbc8872
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x5bbc8872
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x5bbc8872
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0x5bbc8872:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0x5bbc8872, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0x5bbc8872_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0x5bbc8872, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0x5bbc8872_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0x5bbc8872, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0x5bbc8872_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x5bbc8872, rs2val=0xaaaaaaaa)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x5bbc8872
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0xaaaaaaaa
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x5bbc8872
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0xaaaaaaaa
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0xaaaaaaaa:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0xaaaaaaaa, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0xaaaaaaaa_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0xaaaaaaaa, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0xaaaaaaaa_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0xaaaaaaaa, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0xaaaaaaaa_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x5bbc8872, rs2val=0x55555555)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x5bbc8872
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x55555555
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x5bbc8872
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x55555555
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0x55555555:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0x55555555, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0x55555555_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0x55555555, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0x55555555_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0x55555555, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x5bbc8872_rs2val_0x55555555_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xaaaaaaaa, rs2val=0x0)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0xaaaaaaaa
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x00000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0xaaaaaaaa
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x00000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0x0:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0x0, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0x0_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0x0, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0x0_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0x0, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0x0_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xaaaaaaaa, rs2val=0x1)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0xaaaaaaaa
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x00000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0xaaaaaaaa
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x00000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0x1:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0x1, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0x1_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0x1, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0x1_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0x1, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0x1_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xaaaaaaaa, rs2val=0x2)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0xaaaaaaaa
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x00000002
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0xaaaaaaaa
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x00000002
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0x2:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0x2, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0x2_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0x2, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0x2_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0x2, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0x2_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xaaaaaaaa, rs2val=0x80000000)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0xaaaaaaaa
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x80000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0xaaaaaaaa
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x80000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0x80000000:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0x80000000, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0x80000000_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0x80000000, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0x80000000_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0x80000000, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0x80000000_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xaaaaaaaa, rs2val=0x80000001)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0xaaaaaaaa
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x80000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0xaaaaaaaa
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x80000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0x80000001:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0x80000001, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0x80000001_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0x80000001, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0x80000001_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0x80000001, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0x80000001_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xaaaaaaaa, rs2val=0x7fffffff)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0xaaaaaaaa
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x7fffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0xaaaaaaaa
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x7fffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0x7fffffff:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0x7fffffff, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0x7fffffff_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0x7fffffff, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0x7fffffff_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0x7fffffff, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0x7fffffff_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xaaaaaaaa, rs2val=0x7ffffffe)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0xaaaaaaaa
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x7ffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0xaaaaaaaa
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x7ffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0x7ffffffe:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0x7ffffffe, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0x7ffffffe_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0x7ffffffe, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0x7ffffffe_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0x7ffffffe, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0x7ffffffe_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xaaaaaaaa, rs2val=0xffffffff)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0xaaaaaaaa
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0xffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0xaaaaaaaa
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0xffffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0xffffffff:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0xffffffff, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0xffffffff_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0xffffffff, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0xffffffff_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0xffffffff, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0xffffffff_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xaaaaaaaa, rs2val=0xfffffffe)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0xaaaaaaaa
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0xfffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0xaaaaaaaa
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0xfffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0xfffffffe:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0xfffffffe, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0xfffffffe_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0xfffffffe, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0xfffffffe_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0xfffffffe, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0xfffffffe_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xaaaaaaaa, rs2val=0x5bbc8872)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0xaaaaaaaa
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x5bbc8872
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0xaaaaaaaa
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x5bbc8872
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0x5bbc8872:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0x5bbc8872, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0x5bbc8872_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0x5bbc8872, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0x5bbc8872_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0x5bbc8872, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0x5bbc8872_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xaaaaaaaa, rs2val=0xaaaaaaaa)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0xaaaaaaaa
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0xaaaaaaaa
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0xaaaaaaaa
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0xaaaaaaaa
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0xaaaaaaaa:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0xaaaaaaaa, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0xaaaaaaaa_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0xaaaaaaaa, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0xaaaaaaaa_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0xaaaaaaaa, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0xaaaaaaaa_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0xaaaaaaaa, rs2val=0x55555555)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0xaaaaaaaa
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x55555555
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0xaaaaaaaa
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x55555555
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0x55555555:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0x55555555, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0x55555555_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0x55555555, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0x55555555_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0x55555555, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0xaaaaaaaa_rs2val_0x55555555_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x55555555, rs2val=0x0)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x55555555
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x00000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x55555555
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x00000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0x0:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0x0, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0x0_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0x0, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0x0_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0x0, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0x0_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x55555555, rs2val=0x1)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x55555555
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x00000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x55555555
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x00000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0x1:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0x1, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0x1_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0x1, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0x1_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0x1, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0x1_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x55555555, rs2val=0x2)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x55555555
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x00000002
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x55555555
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x00000002
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0x2:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0x2, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0x2_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0x2, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0x2_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0x2, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0x2_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x55555555, rs2val=0x80000000)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x55555555
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x80000000
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x55555555
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x80000000
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0x80000000:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0x80000000, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0x80000000_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0x80000000, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0x80000000_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0x80000000, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0x80000000_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x55555555, rs2val=0x80000001)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x55555555
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x80000001
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x55555555
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x80000001
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0x80000001:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0x80000001, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0x80000001_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0x80000001, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0x80000001_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0x80000001, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0x80000001_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x55555555, rs2val=0x7fffffff)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x55555555
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x7fffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x55555555
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x7fffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0x7fffffff:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0x7fffffff, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0x7fffffff_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0x7fffffff, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0x7fffffff_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0x7fffffff, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0x7fffffff_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x55555555, rs2val=0x7ffffffe)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x55555555
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x7ffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x55555555
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x7ffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0x7ffffffe:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0x7ffffffe, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0x7ffffffe_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0x7ffffffe, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0x7ffffffe_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0x7ffffffe, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0x7ffffffe_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x55555555, rs2val=0xffffffff)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x55555555
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0xffffffff
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x55555555
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0xffffffff
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0xffffffff:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0xffffffff, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0xffffffff_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0xffffffff, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0xffffffff_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0xffffffff, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0xffffffff_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x55555555, rs2val=0xfffffffe)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x55555555
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0xfffffffe
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x55555555
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0xfffffffe
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0xfffffffe:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0xfffffffe, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0xfffffffe_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0xfffffffe, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0xfffffffe_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0xfffffffe, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0xfffffffe_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x55555555, rs2val=0x5bbc8872)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x55555555
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x5bbc8872
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x55555555
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x5bbc8872
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0x5bbc8872:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0x5bbc8872, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0x5bbc8872_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0x5bbc8872, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0x5bbc8872_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0x5bbc8872, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0x5bbc8872_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x55555555, rs2val=0xaaaaaaaa)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x55555555
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0xaaaaaaaa
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x55555555
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0xaaaaaaaa
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0xaaaaaaaa:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0xaaaaaaaa, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0xaaaaaaaa_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0xaaaaaaaa, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0xaaaaaaaa_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0xaaaaaaaa, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0xaaaaaaaa_str)
 
 # Testcase cp_zkt_rs1_rs2 (rs1val=0x55555555, rs2val=0x55555555)
   LI(x23, 2)
 1:
-  RVTEST_TESTDATA_LOAD_INT(x3, x11) # load rs1: x11 = 0x55555555
-  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs2: x29 = 0x55555555
+  RVTEST_TESTDATA_LOAD_INT(x3, x29) # load rs1: x29 = 0x55555555
+  RVTEST_TESTDATA_LOAD_INT(x3, x22) # load rs2: x22 = 0x55555555
   addi x3, x3, -2*SIG_STRIDE
-  xor x8, x11, x29
+  xor x8, x29, x22
   .balign 64
   csrr x8, cycle
+  sltu x17, x8, x0
+  or x29, x29, x17
 ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0x55555555:
-  mulh x20, x11, x29 # perform operation
+  mulh x11, x29, x22 # perform operation
   csrr x10, cycle
   addi x23, x23, -1
   bnez x23, 1b
   addi x3, x3, 2*SIG_STRIDE
   sub x10, x10, x8
   sub x10, x10, x14
-  # Check if x20 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x20, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0x55555555, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0x55555555_str)
+  # Check if x11 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x11, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0x55555555, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0x55555555_str)
   # Check if x10 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x10, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0x55555555, ZktZicntrZmmul_mulh_cg_cp_zkt_rs1_rs2_rs1val_0x55555555_rs2val_0x55555555_str)
 

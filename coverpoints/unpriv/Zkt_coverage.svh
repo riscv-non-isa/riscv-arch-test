@@ -15,8 +15,8 @@
 `ifdef ZICNTR_SUPPORTED
 covergroup ZktZicntr_add_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -51,8 +51,8 @@ covergroup ZktZicntr_add_cg with function sample(ins_t ins);
             wildcard bins random = {64'b01???????????????????????????????????????????????????????????010};
         `endif
     }
-    // rs2 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs2 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -95,8 +95,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntr_addi_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -136,8 +136,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntr_and_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -172,8 +172,8 @@ covergroup ZktZicntr_and_cg with function sample(ins_t ins);
             wildcard bins random = {64'b01???????????????????????????????????????????????????????????010};
         `endif
     }
-    // rs2 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs2 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -216,8 +216,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntr_andi_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -257,7 +257,7 @@ endgroup
 // ---------------------
 covergroup ZktZicntr_auipc_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // Instruction without data operands timed between two reads of cycle
+    // Instruction without data operands that directly follows csrr cycle
     cp_zkt_pc : coverpoint (ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  iff (ins.trap == 0)  {
         bins timed = {1};
     }
@@ -266,7 +266,7 @@ endgroup
 // ---------------------
 covergroup ZktZicntr_lui_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // Instruction without data operands timed between two reads of cycle
+    // Instruction without data operands that directly follows csrr cycle
     cp_zkt_pc : coverpoint (ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  iff (ins.trap == 0)  {
         bins timed = {1};
     }
@@ -275,8 +275,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntr_or_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -311,8 +311,8 @@ covergroup ZktZicntr_or_cg with function sample(ins_t ins);
             wildcard bins random = {64'b01???????????????????????????????????????????????????????????010};
         `endif
     }
-    // rs2 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs2 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -355,8 +355,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntr_ori_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -396,8 +396,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntr_sll_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -432,8 +432,8 @@ covergroup ZktZicntr_sll_cg with function sample(ins_t ins);
             wildcard bins random = {64'b01???????????????????????????????????????????????????????????010};
         `endif
     }
-    // rs2 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs2 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -476,8 +476,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntr_slli_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -517,8 +517,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntr_slt_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -553,8 +553,8 @@ covergroup ZktZicntr_slt_cg with function sample(ins_t ins);
             wildcard bins random = {64'b01???????????????????????????????????????????????????????????010};
         `endif
     }
-    // rs2 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs2 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -597,8 +597,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntr_slti_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -638,8 +638,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntr_sltiu_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -679,8 +679,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntr_sltu_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -715,8 +715,8 @@ covergroup ZktZicntr_sltu_cg with function sample(ins_t ins);
             wildcard bins random = {64'b01???????????????????????????????????????????????????????????010};
         `endif
     }
-    // rs2 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs2 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -759,8 +759,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntr_sra_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -795,8 +795,8 @@ covergroup ZktZicntr_sra_cg with function sample(ins_t ins);
             wildcard bins random = {64'b01???????????????????????????????????????????????????????????010};
         `endif
     }
-    // rs2 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs2 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -839,8 +839,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntr_srai_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -880,8 +880,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntr_srl_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -916,8 +916,8 @@ covergroup ZktZicntr_srl_cg with function sample(ins_t ins);
             wildcard bins random = {64'b01???????????????????????????????????????????????????????????010};
         `endif
     }
-    // rs2 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs2 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -960,8 +960,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntr_srli_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -1001,8 +1001,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntr_sub_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -1037,8 +1037,8 @@ covergroup ZktZicntr_sub_cg with function sample(ins_t ins);
             wildcard bins random = {64'b01???????????????????????????????????????????????????????????010};
         `endif
     }
-    // rs2 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs2 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -1081,8 +1081,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntr_xor_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -1117,8 +1117,8 @@ covergroup ZktZicntr_xor_cg with function sample(ins_t ins);
             wildcard bins random = {64'b01???????????????????????????????????????????????????????????010};
         `endif
     }
-    // rs2 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs2 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -1161,8 +1161,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntr_xori_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -1203,8 +1203,8 @@ endgroup
 `ifdef UDB_MXLEN_64
 covergroup ZktZicntr_addiw_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -1244,8 +1244,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntr_addw_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -1280,8 +1280,8 @@ covergroup ZktZicntr_addw_cg with function sample(ins_t ins);
             wildcard bins random = {64'b01???????????????????????????????????????????????????????????010};
         `endif
     }
-    // rs2 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs2 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -1324,8 +1324,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntr_slliw_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -1365,8 +1365,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntr_sllw_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -1401,8 +1401,8 @@ covergroup ZktZicntr_sllw_cg with function sample(ins_t ins);
             wildcard bins random = {64'b01???????????????????????????????????????????????????????????010};
         `endif
     }
-    // rs2 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs2 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -1445,8 +1445,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntr_sraiw_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -1486,8 +1486,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntr_sraw_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -1522,8 +1522,8 @@ covergroup ZktZicntr_sraw_cg with function sample(ins_t ins);
             wildcard bins random = {64'b01???????????????????????????????????????????????????????????010};
         `endif
     }
-    // rs2 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs2 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -1566,8 +1566,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntr_srliw_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -1607,8 +1607,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntr_srlw_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -1643,8 +1643,8 @@ covergroup ZktZicntr_srlw_cg with function sample(ins_t ins);
             wildcard bins random = {64'b01???????????????????????????????????????????????????????????010};
         `endif
     }
-    // rs2 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs2 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -1687,8 +1687,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntr_subw_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -1723,8 +1723,8 @@ covergroup ZktZicntr_subw_cg with function sample(ins_t ins);
             wildcard bins random = {64'b01???????????????????????????????????????????????????????????010};
         `endif
     }
-    // rs2 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs2 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -1771,8 +1771,8 @@ endgroup
 `ifdef ZBB_SUPPORTED
 covergroup ZktZicntrZbb_andn_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -1807,8 +1807,8 @@ covergroup ZktZicntrZbb_andn_cg with function sample(ins_t ins);
             wildcard bins random = {64'b01???????????????????????????????????????????????????????????010};
         `endif
     }
-    // rs2 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs2 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -1851,8 +1851,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntrZbb_orn_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -1887,8 +1887,8 @@ covergroup ZktZicntrZbb_orn_cg with function sample(ins_t ins);
             wildcard bins random = {64'b01???????????????????????????????????????????????????????????010};
         `endif
     }
-    // rs2 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs2 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -1931,8 +1931,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntrZbb_rev8_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -1972,8 +1972,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntrZbb_rol_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -2008,8 +2008,8 @@ covergroup ZktZicntrZbb_rol_cg with function sample(ins_t ins);
             wildcard bins random = {64'b01???????????????????????????????????????????????????????????010};
         `endif
     }
-    // rs2 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs2 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -2052,8 +2052,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntrZbb_ror_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -2088,8 +2088,8 @@ covergroup ZktZicntrZbb_ror_cg with function sample(ins_t ins);
             wildcard bins random = {64'b01???????????????????????????????????????????????????????????010};
         `endif
     }
-    // rs2 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs2 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -2132,8 +2132,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntrZbb_rori_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -2173,8 +2173,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntrZbb_xnor_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -2209,8 +2209,8 @@ covergroup ZktZicntrZbb_xnor_cg with function sample(ins_t ins);
             wildcard bins random = {64'b01???????????????????????????????????????????????????????????010};
         `endif
     }
-    // rs2 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs2 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -2254,8 +2254,8 @@ endgroup
 `ifdef UDB_MXLEN_64
 covergroup ZktZicntrZbb_rolw_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -2290,8 +2290,8 @@ covergroup ZktZicntrZbb_rolw_cg with function sample(ins_t ins);
             wildcard bins random = {64'b01???????????????????????????????????????????????????????????010};
         `endif
     }
-    // rs2 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs2 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -2334,8 +2334,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntrZbb_roriw_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -2375,8 +2375,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntrZbb_rorw_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -2411,8 +2411,8 @@ covergroup ZktZicntrZbb_rorw_cg with function sample(ins_t ins);
             wildcard bins random = {64'b01???????????????????????????????????????????????????????????010};
         `endif
     }
-    // rs2 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs2 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -2460,8 +2460,8 @@ endgroup
 `ifdef ZBC_SUPPORTED
 covergroup ZktZicntrZbc_clmul_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -2496,8 +2496,8 @@ covergroup ZktZicntrZbc_clmul_cg with function sample(ins_t ins);
             wildcard bins random = {64'b01???????????????????????????????????????????????????????????010};
         `endif
     }
-    // rs2 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs2 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -2540,8 +2540,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntrZbc_clmulh_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -2576,8 +2576,8 @@ covergroup ZktZicntrZbc_clmulh_cg with function sample(ins_t ins);
             wildcard bins random = {64'b01???????????????????????????????????????????????????????????010};
         `endif
     }
-    // rs2 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs2 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -2624,8 +2624,8 @@ endgroup
 `ifdef ZBKB_SUPPORTED
 covergroup ZktZicntrZbkb_andn_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -2660,8 +2660,8 @@ covergroup ZktZicntrZbkb_andn_cg with function sample(ins_t ins);
             wildcard bins random = {64'b01???????????????????????????????????????????????????????????010};
         `endif
     }
-    // rs2 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs2 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -2704,8 +2704,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntrZbkb_brev8_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -2745,8 +2745,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntrZbkb_orn_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -2781,8 +2781,8 @@ covergroup ZktZicntrZbkb_orn_cg with function sample(ins_t ins);
             wildcard bins random = {64'b01???????????????????????????????????????????????????????????010};
         `endif
     }
-    // rs2 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs2 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -2825,8 +2825,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntrZbkb_pack_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -2861,8 +2861,8 @@ covergroup ZktZicntrZbkb_pack_cg with function sample(ins_t ins);
             wildcard bins random = {64'b01???????????????????????????????????????????????????????????010};
         `endif
     }
-    // rs2 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs2 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -2905,8 +2905,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntrZbkb_packh_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -2941,8 +2941,8 @@ covergroup ZktZicntrZbkb_packh_cg with function sample(ins_t ins);
             wildcard bins random = {64'b01???????????????????????????????????????????????????????????010};
         `endif
     }
-    // rs2 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs2 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -2985,8 +2985,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntrZbkb_rev8_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -3026,8 +3026,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntrZbkb_rol_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -3062,8 +3062,8 @@ covergroup ZktZicntrZbkb_rol_cg with function sample(ins_t ins);
             wildcard bins random = {64'b01???????????????????????????????????????????????????????????010};
         `endif
     }
-    // rs2 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs2 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -3106,8 +3106,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntrZbkb_ror_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -3142,8 +3142,8 @@ covergroup ZktZicntrZbkb_ror_cg with function sample(ins_t ins);
             wildcard bins random = {64'b01???????????????????????????????????????????????????????????010};
         `endif
     }
-    // rs2 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs2 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -3186,8 +3186,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntrZbkb_rori_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -3227,8 +3227,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntrZbkb_xnor_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -3263,8 +3263,8 @@ covergroup ZktZicntrZbkb_xnor_cg with function sample(ins_t ins);
             wildcard bins random = {64'b01???????????????????????????????????????????????????????????010};
         `endif
     }
-    // rs2 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs2 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -3308,8 +3308,8 @@ endgroup
 `ifdef UDB_MXLEN_32
 covergroup ZktZicntrZbkb_unzip_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -3349,8 +3349,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntrZbkb_zip_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -3392,8 +3392,8 @@ endgroup
 `ifdef UDB_MXLEN_64
 covergroup ZktZicntrZbkb_packw_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -3428,8 +3428,8 @@ covergroup ZktZicntrZbkb_packw_cg with function sample(ins_t ins);
             wildcard bins random = {64'b01???????????????????????????????????????????????????????????010};
         `endif
     }
-    // rs2 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs2 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -3472,8 +3472,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntrZbkb_rolw_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -3508,8 +3508,8 @@ covergroup ZktZicntrZbkb_rolw_cg with function sample(ins_t ins);
             wildcard bins random = {64'b01???????????????????????????????????????????????????????????010};
         `endif
     }
-    // rs2 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs2 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -3552,8 +3552,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntrZbkb_roriw_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -3593,8 +3593,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntrZbkb_rorw_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -3629,8 +3629,8 @@ covergroup ZktZicntrZbkb_rorw_cg with function sample(ins_t ins);
             wildcard bins random = {64'b01???????????????????????????????????????????????????????????010};
         `endif
     }
-    // rs2 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs2 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -3678,8 +3678,8 @@ endgroup
 `ifdef ZBKC_SUPPORTED
 covergroup ZktZicntrZbkc_clmul_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -3714,8 +3714,8 @@ covergroup ZktZicntrZbkc_clmul_cg with function sample(ins_t ins);
             wildcard bins random = {64'b01???????????????????????????????????????????????????????????010};
         `endif
     }
-    // rs2 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs2 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -3758,8 +3758,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntrZbkc_clmulh_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -3794,8 +3794,8 @@ covergroup ZktZicntrZbkc_clmulh_cg with function sample(ins_t ins);
             wildcard bins random = {64'b01???????????????????????????????????????????????????????????010};
         `endif
     }
-    // rs2 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs2 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -3842,8 +3842,8 @@ endgroup
 `ifdef ZBKX_SUPPORTED
 covergroup ZktZicntrZbkx_xperm4_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -3878,8 +3878,8 @@ covergroup ZktZicntrZbkx_xperm4_cg with function sample(ins_t ins);
             wildcard bins random = {64'b01???????????????????????????????????????????????????????????010};
         `endif
     }
-    // rs2 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs2 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -3922,8 +3922,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntrZbkx_xperm8_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -3958,8 +3958,8 @@ covergroup ZktZicntrZbkx_xperm8_cg with function sample(ins_t ins);
             wildcard bins random = {64'b01???????????????????????????????????????????????????????????010};
         `endif
     }
-    // rs2 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs2 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -4006,8 +4006,8 @@ endgroup
 `ifdef ZCA_SUPPORTED
 covergroup ZktZicntrZca_c_add_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -4042,8 +4042,8 @@ covergroup ZktZicntrZca_c_add_cg with function sample(ins_t ins);
             wildcard bins random = {64'b01???????????????????????????????????????????????????????????010};
         `endif
     }
-    // rs2 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs2 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -4086,8 +4086,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntrZca_c_addi_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -4127,8 +4127,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntrZca_c_and_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -4163,8 +4163,8 @@ covergroup ZktZicntrZca_c_and_cg with function sample(ins_t ins);
             wildcard bins random = {64'b01???????????????????????????????????????????????????????????010};
         `endif
     }
-    // rs2 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs2 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -4207,8 +4207,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntrZca_c_andi_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -4248,7 +4248,7 @@ endgroup
 // ---------------------
 covergroup ZktZicntrZca_c_lui_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // Instruction without data operands timed between two reads of cycle
+    // Instruction without data operands that directly follows csrr cycle
     cp_zkt_pc : coverpoint (ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  iff (ins.trap == 0)  {
         bins timed = {1};
     }
@@ -4257,8 +4257,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntrZca_c_mv_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs2 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs2 : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs2 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs2 : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -4298,7 +4298,7 @@ endgroup
 // ---------------------
 covergroup ZktZicntrZca_c_nop_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // Instruction without data operands timed between two reads of cycle
+    // Instruction without data operands that directly follows csrr cycle
     cp_zkt_pc : coverpoint (ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  iff (ins.trap == 0)  {
         bins timed = {1};
     }
@@ -4307,8 +4307,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntrZca_c_or_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -4343,8 +4343,8 @@ covergroup ZktZicntrZca_c_or_cg with function sample(ins_t ins);
             wildcard bins random = {64'b01???????????????????????????????????????????????????????????010};
         `endif
     }
-    // rs2 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs2 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -4387,8 +4387,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntrZca_c_slli_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -4428,8 +4428,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntrZca_c_srai_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -4469,8 +4469,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntrZca_c_srli_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -4510,8 +4510,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntrZca_c_sub_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -4546,8 +4546,8 @@ covergroup ZktZicntrZca_c_sub_cg with function sample(ins_t ins);
             wildcard bins random = {64'b01???????????????????????????????????????????????????????????010};
         `endif
     }
-    // rs2 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs2 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -4590,8 +4590,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntrZca_c_xor_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -4626,8 +4626,8 @@ covergroup ZktZicntrZca_c_xor_cg with function sample(ins_t ins);
             wildcard bins random = {64'b01???????????????????????????????????????????????????????????010};
         `endif
     }
-    // rs2 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs2 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -4671,8 +4671,8 @@ endgroup
 `ifdef UDB_MXLEN_64
 covergroup ZktZicntrZca_c_addiw_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -4712,8 +4712,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntrZca_c_addw_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -4748,8 +4748,8 @@ covergroup ZktZicntrZca_c_addw_cg with function sample(ins_t ins);
             wildcard bins random = {64'b01???????????????????????????????????????????????????????????010};
         `endif
     }
-    // rs2 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs2 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -4792,8 +4792,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntrZca_c_subw_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -4828,8 +4828,8 @@ covergroup ZktZicntrZca_c_subw_cg with function sample(ins_t ins);
             wildcard bins random = {64'b01???????????????????????????????????????????????????????????010};
         `endif
     }
-    // rs2 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs2 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -4877,8 +4877,8 @@ endgroup
 `ifdef ZCB_SUPPORTED
 covergroup ZktZicntrZcb_c_not_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -4918,8 +4918,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntrZcb_c_zext_b_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -4964,8 +4964,8 @@ endgroup
 `ifdef ZMMUL_SUPPORTED
 covergroup ZktZicntrZcbZmmul_c_mul_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -5000,8 +5000,8 @@ covergroup ZktZicntrZcbZmmul_c_mul_cg with function sample(ins_t ins);
             wildcard bins random = {64'b01???????????????????????????????????????????????????????????010};
         `endif
     }
-    // rs2 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs2 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -5049,8 +5049,8 @@ endgroup
 `ifdef ZICOND_SUPPORTED
 covergroup ZktZicntrZicond_czero_eqz_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -5085,8 +5085,8 @@ covergroup ZktZicntrZicond_czero_eqz_cg with function sample(ins_t ins);
             wildcard bins random = {64'b01???????????????????????????????????????????????????????????010};
         `endif
     }
-    // rs2 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs2 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -5129,8 +5129,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntrZicond_czero_nez_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -5165,8 +5165,8 @@ covergroup ZktZicntrZicond_czero_nez_cg with function sample(ins_t ins);
             wildcard bins random = {64'b01???????????????????????????????????????????????????????????010};
         `endif
     }
-    // rs2 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs2 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -5214,8 +5214,8 @@ endgroup
 `ifdef UDB_MXLEN_32
 covergroup ZktZicntrZknd_aes32dsi_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -5250,8 +5250,8 @@ covergroup ZktZicntrZknd_aes32dsi_cg with function sample(ins_t ins);
             wildcard bins random = {64'b01???????????????????????????????????????????????????????????010};
         `endif
     }
-    // rs2 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs2 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -5294,8 +5294,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntrZknd_aes32dsmi_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -5330,8 +5330,8 @@ covergroup ZktZicntrZknd_aes32dsmi_cg with function sample(ins_t ins);
             wildcard bins random = {64'b01???????????????????????????????????????????????????????????010};
         `endif
     }
-    // rs2 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs2 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -5376,8 +5376,8 @@ endgroup
 `ifdef UDB_MXLEN_64
 covergroup ZktZicntrZknd_aes64ds_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -5412,8 +5412,8 @@ covergroup ZktZicntrZknd_aes64ds_cg with function sample(ins_t ins);
             wildcard bins random = {64'b01???????????????????????????????????????????????????????????010};
         `endif
     }
-    // rs2 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs2 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -5456,8 +5456,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntrZknd_aes64dsm_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -5492,8 +5492,8 @@ covergroup ZktZicntrZknd_aes64dsm_cg with function sample(ins_t ins);
             wildcard bins random = {64'b01???????????????????????????????????????????????????????????010};
         `endif
     }
-    // rs2 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs2 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -5536,8 +5536,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntrZknd_aes64im_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -5577,8 +5577,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntrZknd_aes64ks1i_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -5618,8 +5618,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntrZknd_aes64ks2_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -5654,8 +5654,8 @@ covergroup ZktZicntrZknd_aes64ks2_cg with function sample(ins_t ins);
             wildcard bins random = {64'b01???????????????????????????????????????????????????????????010};
         `endif
     }
-    // rs2 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs2 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -5704,8 +5704,8 @@ endgroup
 `ifdef UDB_MXLEN_32
 covergroup ZktZicntrZkne_aes32esi_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -5740,8 +5740,8 @@ covergroup ZktZicntrZkne_aes32esi_cg with function sample(ins_t ins);
             wildcard bins random = {64'b01???????????????????????????????????????????????????????????010};
         `endif
     }
-    // rs2 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs2 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -5784,8 +5784,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntrZkne_aes32esmi_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -5820,8 +5820,8 @@ covergroup ZktZicntrZkne_aes32esmi_cg with function sample(ins_t ins);
             wildcard bins random = {64'b01???????????????????????????????????????????????????????????010};
         `endif
     }
-    // rs2 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs2 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -5866,8 +5866,8 @@ endgroup
 `ifdef UDB_MXLEN_64
 covergroup ZktZicntrZkne_aes64es_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -5902,8 +5902,8 @@ covergroup ZktZicntrZkne_aes64es_cg with function sample(ins_t ins);
             wildcard bins random = {64'b01???????????????????????????????????????????????????????????010};
         `endif
     }
-    // rs2 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs2 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -5946,8 +5946,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntrZkne_aes64esm_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -5982,8 +5982,8 @@ covergroup ZktZicntrZkne_aes64esm_cg with function sample(ins_t ins);
             wildcard bins random = {64'b01???????????????????????????????????????????????????????????010};
         `endif
     }
-    // rs2 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs2 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -6026,8 +6026,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntrZkne_aes64ks1i_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -6067,8 +6067,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntrZkne_aes64ks2_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -6103,8 +6103,8 @@ covergroup ZktZicntrZkne_aes64ks2_cg with function sample(ins_t ins);
             wildcard bins random = {64'b01???????????????????????????????????????????????????????????010};
         `endif
     }
-    // rs2 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs2 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -6152,8 +6152,8 @@ endgroup
 `ifdef ZKNH_SUPPORTED
 covergroup ZktZicntrZknh_sha256sig0_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -6193,8 +6193,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntrZknh_sha256sig1_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -6234,8 +6234,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntrZknh_sha256sum0_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -6275,8 +6275,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntrZknh_sha256sum1_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -6317,8 +6317,8 @@ endgroup
 `ifdef UDB_MXLEN_32
 covergroup ZktZicntrZknh_sha512sig0h_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -6353,8 +6353,8 @@ covergroup ZktZicntrZknh_sha512sig0h_cg with function sample(ins_t ins);
             wildcard bins random = {64'b01???????????????????????????????????????????????????????????010};
         `endif
     }
-    // rs2 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs2 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -6397,8 +6397,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntrZknh_sha512sig0l_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -6433,8 +6433,8 @@ covergroup ZktZicntrZknh_sha512sig0l_cg with function sample(ins_t ins);
             wildcard bins random = {64'b01???????????????????????????????????????????????????????????010};
         `endif
     }
-    // rs2 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs2 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -6477,8 +6477,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntrZknh_sha512sig1h_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -6513,8 +6513,8 @@ covergroup ZktZicntrZknh_sha512sig1h_cg with function sample(ins_t ins);
             wildcard bins random = {64'b01???????????????????????????????????????????????????????????010};
         `endif
     }
-    // rs2 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs2 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -6557,8 +6557,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntrZknh_sha512sig1l_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -6593,8 +6593,8 @@ covergroup ZktZicntrZknh_sha512sig1l_cg with function sample(ins_t ins);
             wildcard bins random = {64'b01???????????????????????????????????????????????????????????010};
         `endif
     }
-    // rs2 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs2 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -6637,8 +6637,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntrZknh_sha512sum0r_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -6673,8 +6673,8 @@ covergroup ZktZicntrZknh_sha512sum0r_cg with function sample(ins_t ins);
             wildcard bins random = {64'b01???????????????????????????????????????????????????????????010};
         `endif
     }
-    // rs2 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs2 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -6717,8 +6717,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntrZknh_sha512sum1r_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -6753,8 +6753,8 @@ covergroup ZktZicntrZknh_sha512sum1r_cg with function sample(ins_t ins);
             wildcard bins random = {64'b01???????????????????????????????????????????????????????????010};
         `endif
     }
-    // rs2 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs2 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -6799,8 +6799,8 @@ endgroup
 `ifdef UDB_MXLEN_64
 covergroup ZktZicntrZknh_sha512sig0_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -6840,8 +6840,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntrZknh_sha512sig1_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -6881,8 +6881,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntrZknh_sha512sum0_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -6922,8 +6922,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntrZknh_sha512sum1_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -6968,8 +6968,8 @@ endgroup
 `ifdef ZKSED_SUPPORTED
 covergroup ZktZicntrZksed_sm4ed_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -7004,8 +7004,8 @@ covergroup ZktZicntrZksed_sm4ed_cg with function sample(ins_t ins);
             wildcard bins random = {64'b01???????????????????????????????????????????????????????????010};
         `endif
     }
-    // rs2 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs2 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -7048,8 +7048,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntrZksed_sm4ks_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -7084,8 +7084,8 @@ covergroup ZktZicntrZksed_sm4ks_cg with function sample(ins_t ins);
             wildcard bins random = {64'b01???????????????????????????????????????????????????????????010};
         `endif
     }
-    // rs2 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs2 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -7132,8 +7132,8 @@ endgroup
 `ifdef ZKSH_SUPPORTED
 covergroup ZktZicntrZksh_sm3p0_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -7173,8 +7173,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntrZksh_sm3p1_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -7218,8 +7218,8 @@ endgroup
 `ifdef ZMMUL_SUPPORTED
 covergroup ZktZicntrZmmul_mul_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -7254,8 +7254,8 @@ covergroup ZktZicntrZmmul_mul_cg with function sample(ins_t ins);
             wildcard bins random = {64'b01???????????????????????????????????????????????????????????010};
         `endif
     }
-    // rs2 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs2 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -7298,8 +7298,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntrZmmul_mulh_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -7334,8 +7334,8 @@ covergroup ZktZicntrZmmul_mulh_cg with function sample(ins_t ins);
             wildcard bins random = {64'b01???????????????????????????????????????????????????????????010};
         `endif
     }
-    // rs2 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs2 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -7378,8 +7378,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntrZmmul_mulhsu_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -7414,8 +7414,8 @@ covergroup ZktZicntrZmmul_mulhsu_cg with function sample(ins_t ins);
             wildcard bins random = {64'b01???????????????????????????????????????????????????????????010};
         `endif
     }
-    // rs2 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs2 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -7458,8 +7458,8 @@ endgroup
 // ---------------------
 covergroup ZktZicntrZmmul_mulhu_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -7494,8 +7494,8 @@ covergroup ZktZicntrZmmul_mulhu_cg with function sample(ins_t ins);
             wildcard bins random = {64'b01???????????????????????????????????????????????????????????010};
         `endif
     }
-    // rs2 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs2 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -7539,8 +7539,8 @@ endgroup
 `ifdef UDB_MXLEN_64
 covergroup ZktZicntrZmmul_mulw_cg with function sample(ins_t ins);
     option.per_instance = 0;
-    // rs1 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs1_edges : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};
@@ -7575,8 +7575,8 @@ covergroup ZktZicntrZmmul_mulw_cg with function sample(ins_t ins);
             wildcard bins random = {64'b01???????????????????????????????????????????????????????????010};
         `endif
     }
-    // rs2 edge values of an instruction timed between two reads of cycle
-    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & ins.prev.inst_name == "csrrs" & ins.prev.insn[31:20] == CSR_CYCLE)  {
+    // rs2 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
+    cp_zkt_rs2_edges : coverpoint unsigned'(ins.current.rs2_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};

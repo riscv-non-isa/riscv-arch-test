@@ -33,11 +33,9 @@ RVTEST_BEGIN
 // cp_zkt_rs1
 /////////////////////////////////
 
-# Each testcase runs twice, counted down in x29, and times the second run:
-#   load the operands, then xor them into x16 so the loads complete before timing starts
-#   time the instruction between two reads of cycle into x16 and x9, starting at a
-#   64-byte boundary so the instructions after it share an instruction-cache line
-#   record x9 - x16 - the first testcase's latency in x19, which must be 0
+# Each testcase times the instruction twice, counted down in
+# x29, and writes the second run's latency (x9 - x16) minus the
+# first testcase's (x19), which must be 0. See the Zkt section of the CTP.
 
 # Testcase cp_zkt_rs1 (rs1val=0x0)
   LI(x29, 2)
@@ -47,6 +45,8 @@ RVTEST_BEGIN
   xor x16, x24, x24
   .balign 64
   csrr x16, cycle
+  sltu x30, x16, x0
+  or x24, x24, x30
 ZktZicntrZksh_sm3p0_cg_cp_zkt_rs1_rs1val_0x0:
   sm3p0 x11, x24 # perform operation
   csrr x9, cycle
@@ -69,6 +69,8 @@ ZktZicntrZksh_sm3p0_cg_cp_zkt_rs1_rs1val_0x0:
   xor x16, x24, x24
   .balign 64
   csrr x16, cycle
+  sltu x30, x16, x0
+  or x24, x24, x30
 ZktZicntrZksh_sm3p0_cg_cp_zkt_rs1_rs1val_0x1:
   sm3p0 x11, x24 # perform operation
   csrr x9, cycle
@@ -90,6 +92,8 @@ ZktZicntrZksh_sm3p0_cg_cp_zkt_rs1_rs1val_0x1:
   xor x16, x24, x24
   .balign 64
   csrr x16, cycle
+  sltu x30, x16, x0
+  or x24, x24, x30
 ZktZicntrZksh_sm3p0_cg_cp_zkt_rs1_rs1val_0x2:
   sm3p0 x11, x24 # perform operation
   csrr x9, cycle
@@ -111,6 +115,8 @@ ZktZicntrZksh_sm3p0_cg_cp_zkt_rs1_rs1val_0x2:
   xor x16, x24, x24
   .balign 64
   csrr x16, cycle
+  sltu x30, x16, x0
+  or x24, x24, x30
 ZktZicntrZksh_sm3p0_cg_cp_zkt_rs1_rs1val_0x8000000000000000:
   sm3p0 x11, x24 # perform operation
   csrr x9, cycle
@@ -132,6 +138,8 @@ ZktZicntrZksh_sm3p0_cg_cp_zkt_rs1_rs1val_0x8000000000000000:
   xor x16, x24, x24
   .balign 64
   csrr x16, cycle
+  sltu x30, x16, x0
+  or x24, x24, x30
 ZktZicntrZksh_sm3p0_cg_cp_zkt_rs1_rs1val_0x8000000000000001:
   sm3p0 x11, x24 # perform operation
   csrr x9, cycle
@@ -153,6 +161,8 @@ ZktZicntrZksh_sm3p0_cg_cp_zkt_rs1_rs1val_0x8000000000000001:
   xor x16, x24, x24
   .balign 64
   csrr x16, cycle
+  sltu x30, x16, x0
+  or x24, x24, x30
 ZktZicntrZksh_sm3p0_cg_cp_zkt_rs1_rs1val_0x7fffffffffffffff:
   sm3p0 x11, x24 # perform operation
   csrr x9, cycle
@@ -174,6 +184,8 @@ ZktZicntrZksh_sm3p0_cg_cp_zkt_rs1_rs1val_0x7fffffffffffffff:
   xor x16, x24, x24
   .balign 64
   csrr x16, cycle
+  sltu x30, x16, x0
+  or x24, x24, x30
 ZktZicntrZksh_sm3p0_cg_cp_zkt_rs1_rs1val_0x7ffffffffffffffe:
   sm3p0 x11, x24 # perform operation
   csrr x9, cycle
@@ -195,6 +207,8 @@ ZktZicntrZksh_sm3p0_cg_cp_zkt_rs1_rs1val_0x7ffffffffffffffe:
   xor x16, x24, x24
   .balign 64
   csrr x16, cycle
+  sltu x30, x16, x0
+  or x24, x24, x30
 ZktZicntrZksh_sm3p0_cg_cp_zkt_rs1_rs1val_0xffffffffffffffff:
   sm3p0 x11, x24 # perform operation
   csrr x9, cycle
@@ -216,6 +230,8 @@ ZktZicntrZksh_sm3p0_cg_cp_zkt_rs1_rs1val_0xffffffffffffffff:
   xor x16, x24, x24
   .balign 64
   csrr x16, cycle
+  sltu x30, x16, x0
+  or x24, x24, x30
 ZktZicntrZksh_sm3p0_cg_cp_zkt_rs1_rs1val_0xfffffffffffffffe:
   sm3p0 x11, x24 # perform operation
   csrr x9, cycle
@@ -237,6 +253,8 @@ ZktZicntrZksh_sm3p0_cg_cp_zkt_rs1_rs1val_0xfffffffffffffffe:
   xor x16, x24, x24
   .balign 64
   csrr x16, cycle
+  sltu x30, x16, x0
+  or x24, x24, x30
 ZktZicntrZksh_sm3p0_cg_cp_zkt_rs1_rs1val_0x5bbc887763ae86f2:
   sm3p0 x11, x24 # perform operation
   csrr x9, cycle
@@ -258,6 +276,8 @@ ZktZicntrZksh_sm3p0_cg_cp_zkt_rs1_rs1val_0x5bbc887763ae86f2:
   xor x16, x24, x24
   .balign 64
   csrr x16, cycle
+  sltu x30, x16, x0
+  or x24, x24, x30
 ZktZicntrZksh_sm3p0_cg_cp_zkt_rs1_rs1val_0xaaaaaaaaaaaaaaaa:
   sm3p0 x11, x24 # perform operation
   csrr x9, cycle
@@ -279,6 +299,8 @@ ZktZicntrZksh_sm3p0_cg_cp_zkt_rs1_rs1val_0xaaaaaaaaaaaaaaaa:
   xor x16, x24, x24
   .balign 64
   csrr x16, cycle
+  sltu x30, x16, x0
+  or x24, x24, x30
 ZktZicntrZksh_sm3p0_cg_cp_zkt_rs1_rs1val_0x5555555555555555:
   sm3p0 x11, x24 # perform operation
   csrr x9, cycle
@@ -300,6 +322,8 @@ ZktZicntrZksh_sm3p0_cg_cp_zkt_rs1_rs1val_0x5555555555555555:
   xor x16, x24, x24
   .balign 64
   csrr x16, cycle
+  sltu x30, x16, x0
+  or x24, x24, x30
 ZktZicntrZksh_sm3p0_cg_cp_zkt_rs1_rs1val_0xffffffff:
   sm3p0 x11, x24 # perform operation
   csrr x9, cycle
@@ -321,6 +345,8 @@ ZktZicntrZksh_sm3p0_cg_cp_zkt_rs1_rs1val_0xffffffff:
   xor x16, x24, x24
   .balign 64
   csrr x16, cycle
+  sltu x30, x16, x0
+  or x24, x24, x30
 ZktZicntrZksh_sm3p0_cg_cp_zkt_rs1_rs1val_0xfffffffe:
   sm3p0 x11, x24 # perform operation
   csrr x9, cycle
@@ -342,6 +368,8 @@ ZktZicntrZksh_sm3p0_cg_cp_zkt_rs1_rs1val_0xfffffffe:
   xor x16, x24, x24
   .balign 64
   csrr x16, cycle
+  sltu x30, x16, x0
+  or x24, x24, x30
 ZktZicntrZksh_sm3p0_cg_cp_zkt_rs1_rs1val_0x100000000:
   sm3p0 x11, x24 # perform operation
   csrr x9, cycle
@@ -363,6 +391,8 @@ ZktZicntrZksh_sm3p0_cg_cp_zkt_rs1_rs1val_0x100000000:
   xor x16, x24, x24
   .balign 64
   csrr x16, cycle
+  sltu x30, x16, x0
+  or x24, x24, x30
 ZktZicntrZksh_sm3p0_cg_cp_zkt_rs1_rs1val_0x100000001:
   sm3p0 x11, x24 # perform operation
   csrr x9, cycle
@@ -384,6 +414,8 @@ ZktZicntrZksh_sm3p0_cg_cp_zkt_rs1_rs1val_0x100000001:
   xor x16, x24, x24
   .balign 64
   csrr x16, cycle
+  sltu x30, x16, x0
+  or x24, x24, x30
 ZktZicntrZksh_sm3p0_cg_cp_zkt_rs1_rs1val_0x80000000:
   sm3p0 x11, x24 # perform operation
   csrr x9, cycle
@@ -405,6 +437,8 @@ ZktZicntrZksh_sm3p0_cg_cp_zkt_rs1_rs1val_0x80000000:
   xor x16, x24, x24
   .balign 64
   csrr x16, cycle
+  sltu x30, x16, x0
+  or x24, x24, x30
 ZktZicntrZksh_sm3p0_cg_cp_zkt_rs1_rs1val_0x7fffffff:
   sm3p0 x11, x24 # perform operation
   csrr x9, cycle
