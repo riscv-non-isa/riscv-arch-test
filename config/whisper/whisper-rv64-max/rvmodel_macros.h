@@ -192,5 +192,10 @@
   li      _R2, 2; \
   sw      _R2, 0(_R1); /* clear source 2 interrupt */
 
+// whisper.json sets trigger_use_tcontrol on configs without S-mode, so tcontrol.mte gates
+// M-mode triggers with action=0
+#ifndef S_SUPPORTED
+  #define RVMODEL_SDTRIG_USE_TCONTROL
+#endif
 
 #endif // _RVMODEL_MACROS_H
