@@ -84,7 +84,7 @@ def _retry_after_valid(
     enter, leave = mode_switch(mode, "Smode")
     lines = []
     for access, fault, retry in _accesses(addr_reg, value_reg, result_reg):
-        label = test_data.add_testcase(f"test{number}_{access}", f"cp_retry_{access}", f"{test_data.testsuite}_cg")
+        label = test_data.add_testcase(f"test{number}_{access}", f"cp_{access}", f"{test_data.testsuite}_cg")
         lines.extend(
             [
                 f"// {access.capitalize()}: page fault on V=0, then retry after setting V=1 without SFENCE.VMA",
@@ -113,7 +113,9 @@ def _retry_after_valid(
 
 
 def _make_svvptc_mode(test_data: TestData, sv: SvMode, mode: str) -> TestChunk:
-    chunk = begin_sv_test(test_data, sv, mode, f"{sv.name}_{mode}", coverpoint="cp_retry", sig_init="")
+    chunk = begin_sv_test(
+        test_data, sv, mode, f"{sv.name}_{mode}", coverpoint="cp_load, cp_store, cp_fetch", sig_init=""
+    )
     # The PTE_SETUP macros clobber t0 and t1. The result register also builds the address, before each access.
     addr_reg, value_reg, result_reg, delay_reg = test_data.int_regs.get_registers(4, exclude_regs=[5, 6])
     regs = (addr_reg, value_reg, result_reg, delay_reg)

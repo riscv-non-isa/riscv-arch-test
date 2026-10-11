@@ -7,4 +7,4 @@ normative_rule_definitions:
   # by that hart to such PTEs.
   # The bound is implementation-defined, so each test waits a fixed time before the retry.
   - name: Svvptc_explicit_stores_update_valid_bit
-    coverpoint: ["Svvptc_cg/cp_retry_{load, store, fetch}"]
+    coverpoint: ["Svvptc_cg/cp_{load, store, fetch}"]

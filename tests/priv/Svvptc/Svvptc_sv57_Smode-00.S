@@ -30,7 +30,7 @@ RVTEST_BEGIN
 
 
 /////////////////////////////////
-// cp_retry
+// cp_load, cp_store, cp_fetch
 /////////////////////////////////
 
 
@@ -77,10 +77,10 @@ main:
   addi x15, x15, -1
   bnez x15, 1b
   LI(x13, 0)
-Svvptc_cg_cp_retry_load_test1_load:
+Svvptc_cg_cp_load_test1_load:
   lw x13, 20(x8)
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Svvptc_cg_cp_retry_load_test1_load, Svvptc_cg_cp_retry_load_test1_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x13, Svvptc_cg_cp_load_test1_load, Svvptc_cg_cp_load_test1_load_str)
 
 // Store: page fault on V=0, then retry after setting V=1 without SFENCE.VMA
   SUPERPAGE_PTE_SETUP_SV57(rvtest_data_1, (PTE_D | PTE_A | PTE_X | PTE_W | PTE_R), va_data, LEVEL4)
@@ -98,11 +98,11 @@ Svvptc_cg_cp_retry_load_test1_load:
   addi x15, x15, -1
   bnez x15, 1b
   LI(x13, 0)
-Svvptc_cg_cp_retry_store_test1_store:
+Svvptc_cg_cp_store_test1_store:
   sw x9, 20(x8)
   lw x13, 20(x8)
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Svvptc_cg_cp_retry_store_test1_store, Svvptc_cg_cp_retry_store_test1_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x13, Svvptc_cg_cp_store_test1_store, Svvptc_cg_cp_store_test1_store_str)
 
 // Fetch: page fault on V=0, then retry after setting V=1 without SFENCE.VMA
   SUPERPAGE_PTE_SETUP_SV57(rvtest_data_1, (PTE_D | PTE_A | PTE_X | PTE_W | PTE_R), va_data, LEVEL4)
@@ -120,10 +120,10 @@ Svvptc_cg_cp_retry_store_test1_store:
   addi x15, x15, -1
   bnez x15, 1b
   LI(x13, 0)
-Svvptc_cg_cp_retry_fetch_test1_fetch:
+Svvptc_cg_cp_fetch_test1_fetch:
   jalr ra, x8, 0
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Svvptc_cg_cp_retry_fetch_test1_fetch, Svvptc_cg_cp_retry_fetch_test1_fetch_str)
+  RVTEST_SIGUPD(x2, x5, x4, x13, Svvptc_cg_cp_fetch_test1_fetch, Svvptc_cg_cp_fetch_test1_fetch_str)
 
 
 // Test case 2: 512GB page, leaf PTE at level 3 changes from V=0 to V=1
@@ -144,10 +144,10 @@ Svvptc_cg_cp_retry_fetch_test1_fetch:
   addi x15, x15, -1
   bnez x15, 1b
   LI(x13, 0)
-Svvptc_cg_cp_retry_load_test2_load:
+Svvptc_cg_cp_load_test2_load:
   lw x13, 20(x8)
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Svvptc_cg_cp_retry_load_test2_load, Svvptc_cg_cp_retry_load_test2_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x13, Svvptc_cg_cp_load_test2_load, Svvptc_cg_cp_load_test2_load_str)
 
 // Store: page fault on V=0, then retry after setting V=1 without SFENCE.VMA
   PTE_SETUP_SV57(rvtest_slvl3_pg_tbl, (PTE_V), va_data, LEVEL4)
@@ -166,11 +166,11 @@ Svvptc_cg_cp_retry_load_test2_load:
   addi x15, x15, -1
   bnez x15, 1b
   LI(x13, 0)
-Svvptc_cg_cp_retry_store_test2_store:
+Svvptc_cg_cp_store_test2_store:
   sw x9, 20(x8)
   lw x13, 20(x8)
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Svvptc_cg_cp_retry_store_test2_store, Svvptc_cg_cp_retry_store_test2_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x13, Svvptc_cg_cp_store_test2_store, Svvptc_cg_cp_store_test2_store_str)
 
 // Fetch: page fault on V=0, then retry after setting V=1 without SFENCE.VMA
   PTE_SETUP_SV57(rvtest_slvl3_pg_tbl, (PTE_V), va_data, LEVEL4)
@@ -189,10 +189,10 @@ Svvptc_cg_cp_retry_store_test2_store:
   addi x15, x15, -1
   bnez x15, 1b
   LI(x13, 0)
-Svvptc_cg_cp_retry_fetch_test2_fetch:
+Svvptc_cg_cp_fetch_test2_fetch:
   jalr ra, x8, 0
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Svvptc_cg_cp_retry_fetch_test2_fetch, Svvptc_cg_cp_retry_fetch_test2_fetch_str)
+  RVTEST_SIGUPD(x2, x5, x4, x13, Svvptc_cg_cp_fetch_test2_fetch, Svvptc_cg_cp_fetch_test2_fetch_str)
 
 
 // Test case 3: 1GB page, leaf PTE at level 2 changes from V=0 to V=1
@@ -214,10 +214,10 @@ Svvptc_cg_cp_retry_fetch_test2_fetch:
   addi x15, x15, -1
   bnez x15, 1b
   LI(x13, 0)
-Svvptc_cg_cp_retry_load_test3_load:
+Svvptc_cg_cp_load_test3_load:
   lw x13, 20(x8)
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Svvptc_cg_cp_retry_load_test3_load, Svvptc_cg_cp_retry_load_test3_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x13, Svvptc_cg_cp_load_test3_load, Svvptc_cg_cp_load_test3_load_str)
 
 // Store: page fault on V=0, then retry after setting V=1 without SFENCE.VMA
   PTE_SETUP_SV57(rvtest_slvl3_pg_tbl, (PTE_V), va_data, LEVEL4)
@@ -237,11 +237,11 @@ Svvptc_cg_cp_retry_load_test3_load:
   addi x15, x15, -1
   bnez x15, 1b
   LI(x13, 0)
-Svvptc_cg_cp_retry_store_test3_store:
+Svvptc_cg_cp_store_test3_store:
   sw x9, 20(x8)
   lw x13, 20(x8)
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Svvptc_cg_cp_retry_store_test3_store, Svvptc_cg_cp_retry_store_test3_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x13, Svvptc_cg_cp_store_test3_store, Svvptc_cg_cp_store_test3_store_str)
 
 // Fetch: page fault on V=0, then retry after setting V=1 without SFENCE.VMA
   PTE_SETUP_SV57(rvtest_slvl3_pg_tbl, (PTE_V), va_data, LEVEL4)
@@ -261,10 +261,10 @@ Svvptc_cg_cp_retry_store_test3_store:
   addi x15, x15, -1
   bnez x15, 1b
   LI(x13, 0)
-Svvptc_cg_cp_retry_fetch_test3_fetch:
+Svvptc_cg_cp_fetch_test3_fetch:
   jalr ra, x8, 0
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Svvptc_cg_cp_retry_fetch_test3_fetch, Svvptc_cg_cp_retry_fetch_test3_fetch_str)
+  RVTEST_SIGUPD(x2, x5, x4, x13, Svvptc_cg_cp_fetch_test3_fetch, Svvptc_cg_cp_fetch_test3_fetch_str)
 
 
 // Test case 4: 2MB page, leaf PTE at level 1 changes from V=0 to V=1
@@ -287,10 +287,10 @@ Svvptc_cg_cp_retry_fetch_test3_fetch:
   addi x15, x15, -1
   bnez x15, 1b
   LI(x13, 0)
-Svvptc_cg_cp_retry_load_test4_load:
+Svvptc_cg_cp_load_test4_load:
   lw x13, 20(x8)
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Svvptc_cg_cp_retry_load_test4_load, Svvptc_cg_cp_retry_load_test4_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x13, Svvptc_cg_cp_load_test4_load, Svvptc_cg_cp_load_test4_load_str)
 
 // Store: page fault on V=0, then retry after setting V=1 without SFENCE.VMA
   PTE_SETUP_SV57(rvtest_slvl3_pg_tbl, (PTE_V), va_data, LEVEL4)
@@ -311,11 +311,11 @@ Svvptc_cg_cp_retry_load_test4_load:
   addi x15, x15, -1
   bnez x15, 1b
   LI(x13, 0)
-Svvptc_cg_cp_retry_store_test4_store:
+Svvptc_cg_cp_store_test4_store:
   sw x9, 20(x8)
   lw x13, 20(x8)
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Svvptc_cg_cp_retry_store_test4_store, Svvptc_cg_cp_retry_store_test4_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x13, Svvptc_cg_cp_store_test4_store, Svvptc_cg_cp_store_test4_store_str)
 
 // Fetch: page fault on V=0, then retry after setting V=1 without SFENCE.VMA
   PTE_SETUP_SV57(rvtest_slvl3_pg_tbl, (PTE_V), va_data, LEVEL4)
@@ -336,10 +336,10 @@ Svvptc_cg_cp_retry_store_test4_store:
   addi x15, x15, -1
   bnez x15, 1b
   LI(x13, 0)
-Svvptc_cg_cp_retry_fetch_test4_fetch:
+Svvptc_cg_cp_fetch_test4_fetch:
   jalr ra, x8, 0
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Svvptc_cg_cp_retry_fetch_test4_fetch, Svvptc_cg_cp_retry_fetch_test4_fetch_str)
+  RVTEST_SIGUPD(x2, x5, x4, x13, Svvptc_cg_cp_fetch_test4_fetch, Svvptc_cg_cp_fetch_test4_fetch_str)
 
 
 // Test case 5: 4KB page, leaf PTE at level 0 changes from V=0 to V=1
@@ -363,10 +363,10 @@ Svvptc_cg_cp_retry_fetch_test4_fetch:
   addi x15, x15, -1
   bnez x15, 1b
   LI(x13, 0)
-Svvptc_cg_cp_retry_load_test5_load:
+Svvptc_cg_cp_load_test5_load:
   lw x13, 20(x8)
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Svvptc_cg_cp_retry_load_test5_load, Svvptc_cg_cp_retry_load_test5_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x13, Svvptc_cg_cp_load_test5_load, Svvptc_cg_cp_load_test5_load_str)
 
 // Store: page fault on V=0, then retry after setting V=1 without SFENCE.VMA
   PTE_SETUP_SV57(rvtest_slvl3_pg_tbl, (PTE_V), va_data, LEVEL4)
@@ -388,11 +388,11 @@ Svvptc_cg_cp_retry_load_test5_load:
   addi x15, x15, -1
   bnez x15, 1b
   LI(x13, 0)
-Svvptc_cg_cp_retry_store_test5_store:
+Svvptc_cg_cp_store_test5_store:
   sw x9, 20(x8)
   lw x13, 20(x8)
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Svvptc_cg_cp_retry_store_test5_store, Svvptc_cg_cp_retry_store_test5_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x13, Svvptc_cg_cp_store_test5_store, Svvptc_cg_cp_store_test5_store_str)
 
 // Fetch: page fault on V=0, then retry after setting V=1 without SFENCE.VMA
   PTE_SETUP_SV57(rvtest_slvl3_pg_tbl, (PTE_V), va_data, LEVEL4)
@@ -414,10 +414,10 @@ Svvptc_cg_cp_retry_store_test5_store:
   addi x15, x15, -1
   bnez x15, 1b
   LI(x13, 0)
-Svvptc_cg_cp_retry_fetch_test5_fetch:
+Svvptc_cg_cp_fetch_test5_fetch:
   jalr ra, x8, 0
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Svvptc_cg_cp_retry_fetch_test5_fetch, Svvptc_cg_cp_retry_fetch_test5_fetch_str)
+  RVTEST_SIGUPD(x2, x5, x4, x13, Svvptc_cg_cp_fetch_test5_fetch, Svvptc_cg_cp_fetch_test5_fetch_str)
 
 
 // Test case 6: 4KB page, non-leaf PTE at level 4 changes from V=0 to V=1
@@ -441,10 +441,10 @@ Svvptc_cg_cp_retry_fetch_test5_fetch:
   addi x15, x15, -1
   bnez x15, 1b
   LI(x13, 0)
-Svvptc_cg_cp_retry_load_test6_load:
+Svvptc_cg_cp_load_test6_load:
   lw x13, 20(x8)
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Svvptc_cg_cp_retry_load_test6_load, Svvptc_cg_cp_retry_load_test6_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x13, Svvptc_cg_cp_load_test6_load, Svvptc_cg_cp_load_test6_load_str)
 
 // Store: page fault on V=0, then retry after setting V=1 without SFENCE.VMA
   PTE_SETUP_SV57(rvtest_slvl3_pg_tbl, (0), va_data, LEVEL4)
@@ -466,11 +466,11 @@ Svvptc_cg_cp_retry_load_test6_load:
   addi x15, x15, -1
   bnez x15, 1b
   LI(x13, 0)
-Svvptc_cg_cp_retry_store_test6_store:
+Svvptc_cg_cp_store_test6_store:
   sw x9, 20(x8)
   lw x13, 20(x8)
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Svvptc_cg_cp_retry_store_test6_store, Svvptc_cg_cp_retry_store_test6_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x13, Svvptc_cg_cp_store_test6_store, Svvptc_cg_cp_store_test6_store_str)
 
 // Fetch: page fault on V=0, then retry after setting V=1 without SFENCE.VMA
   PTE_SETUP_SV57(rvtest_slvl3_pg_tbl, (0), va_data, LEVEL4)
@@ -492,10 +492,10 @@ Svvptc_cg_cp_retry_store_test6_store:
   addi x15, x15, -1
   bnez x15, 1b
   LI(x13, 0)
-Svvptc_cg_cp_retry_fetch_test6_fetch:
+Svvptc_cg_cp_fetch_test6_fetch:
   jalr ra, x8, 0
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Svvptc_cg_cp_retry_fetch_test6_fetch, Svvptc_cg_cp_retry_fetch_test6_fetch_str)
+  RVTEST_SIGUPD(x2, x5, x4, x13, Svvptc_cg_cp_fetch_test6_fetch, Svvptc_cg_cp_fetch_test6_fetch_str)
 
 
 // Test case 7: 4KB page, non-leaf PTE at level 3 changes from V=0 to V=1
@@ -519,10 +519,10 @@ Svvptc_cg_cp_retry_fetch_test6_fetch:
   addi x15, x15, -1
   bnez x15, 1b
   LI(x13, 0)
-Svvptc_cg_cp_retry_load_test7_load:
+Svvptc_cg_cp_load_test7_load:
   lw x13, 20(x8)
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Svvptc_cg_cp_retry_load_test7_load, Svvptc_cg_cp_retry_load_test7_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x13, Svvptc_cg_cp_load_test7_load, Svvptc_cg_cp_load_test7_load_str)
 
 // Store: page fault on V=0, then retry after setting V=1 without SFENCE.VMA
   PTE_SETUP_SV57(rvtest_slvl3_pg_tbl, (PTE_V), va_data, LEVEL4)
@@ -544,11 +544,11 @@ Svvptc_cg_cp_retry_load_test7_load:
   addi x15, x15, -1
   bnez x15, 1b
   LI(x13, 0)
-Svvptc_cg_cp_retry_store_test7_store:
+Svvptc_cg_cp_store_test7_store:
   sw x9, 20(x8)
   lw x13, 20(x8)
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Svvptc_cg_cp_retry_store_test7_store, Svvptc_cg_cp_retry_store_test7_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x13, Svvptc_cg_cp_store_test7_store, Svvptc_cg_cp_store_test7_store_str)
 
 // Fetch: page fault on V=0, then retry after setting V=1 without SFENCE.VMA
   PTE_SETUP_SV57(rvtest_slvl3_pg_tbl, (PTE_V), va_data, LEVEL4)
@@ -570,10 +570,10 @@ Svvptc_cg_cp_retry_store_test7_store:
   addi x15, x15, -1
   bnez x15, 1b
   LI(x13, 0)
-Svvptc_cg_cp_retry_fetch_test7_fetch:
+Svvptc_cg_cp_fetch_test7_fetch:
   jalr ra, x8, 0
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Svvptc_cg_cp_retry_fetch_test7_fetch, Svvptc_cg_cp_retry_fetch_test7_fetch_str)
+  RVTEST_SIGUPD(x2, x5, x4, x13, Svvptc_cg_cp_fetch_test7_fetch, Svvptc_cg_cp_fetch_test7_fetch_str)
 
 
 // Test case 8: 4KB page, non-leaf PTE at level 2 changes from V=0 to V=1
@@ -597,10 +597,10 @@ Svvptc_cg_cp_retry_fetch_test7_fetch:
   addi x15, x15, -1
   bnez x15, 1b
   LI(x13, 0)
-Svvptc_cg_cp_retry_load_test8_load:
+Svvptc_cg_cp_load_test8_load:
   lw x13, 20(x8)
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Svvptc_cg_cp_retry_load_test8_load, Svvptc_cg_cp_retry_load_test8_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x13, Svvptc_cg_cp_load_test8_load, Svvptc_cg_cp_load_test8_load_str)
 
 // Store: page fault on V=0, then retry after setting V=1 without SFENCE.VMA
   PTE_SETUP_SV57(rvtest_slvl3_pg_tbl, (PTE_V), va_data, LEVEL4)
@@ -622,11 +622,11 @@ Svvptc_cg_cp_retry_load_test8_load:
   addi x15, x15, -1
   bnez x15, 1b
   LI(x13, 0)
-Svvptc_cg_cp_retry_store_test8_store:
+Svvptc_cg_cp_store_test8_store:
   sw x9, 20(x8)
   lw x13, 20(x8)
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Svvptc_cg_cp_retry_store_test8_store, Svvptc_cg_cp_retry_store_test8_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x13, Svvptc_cg_cp_store_test8_store, Svvptc_cg_cp_store_test8_store_str)
 
 // Fetch: page fault on V=0, then retry after setting V=1 without SFENCE.VMA
   PTE_SETUP_SV57(rvtest_slvl3_pg_tbl, (PTE_V), va_data, LEVEL4)
@@ -648,10 +648,10 @@ Svvptc_cg_cp_retry_store_test8_store:
   addi x15, x15, -1
   bnez x15, 1b
   LI(x13, 0)
-Svvptc_cg_cp_retry_fetch_test8_fetch:
+Svvptc_cg_cp_fetch_test8_fetch:
   jalr ra, x8, 0
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Svvptc_cg_cp_retry_fetch_test8_fetch, Svvptc_cg_cp_retry_fetch_test8_fetch_str)
+  RVTEST_SIGUPD(x2, x5, x4, x13, Svvptc_cg_cp_fetch_test8_fetch, Svvptc_cg_cp_fetch_test8_fetch_str)
 
 
 // Test case 9: 4KB page, non-leaf PTE at level 1 changes from V=0 to V=1
@@ -675,10 +675,10 @@ Svvptc_cg_cp_retry_fetch_test8_fetch:
   addi x15, x15, -1
   bnez x15, 1b
   LI(x13, 0)
-Svvptc_cg_cp_retry_load_test9_load:
+Svvptc_cg_cp_load_test9_load:
   lw x13, 20(x8)
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Svvptc_cg_cp_retry_load_test9_load, Svvptc_cg_cp_retry_load_test9_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x13, Svvptc_cg_cp_load_test9_load, Svvptc_cg_cp_load_test9_load_str)
 
 // Store: page fault on V=0, then retry after setting V=1 without SFENCE.VMA
   PTE_SETUP_SV57(rvtest_slvl3_pg_tbl, (PTE_V), va_data, LEVEL4)
@@ -700,11 +700,11 @@ Svvptc_cg_cp_retry_load_test9_load:
   addi x15, x15, -1
   bnez x15, 1b
   LI(x13, 0)
-Svvptc_cg_cp_retry_store_test9_store:
+Svvptc_cg_cp_store_test9_store:
   sw x9, 20(x8)
   lw x13, 20(x8)
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Svvptc_cg_cp_retry_store_test9_store, Svvptc_cg_cp_retry_store_test9_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x13, Svvptc_cg_cp_store_test9_store, Svvptc_cg_cp_store_test9_store_str)
 
 // Fetch: page fault on V=0, then retry after setting V=1 without SFENCE.VMA
   PTE_SETUP_SV57(rvtest_slvl3_pg_tbl, (PTE_V), va_data, LEVEL4)
@@ -726,10 +726,10 @@ Svvptc_cg_cp_retry_store_test9_store:
   addi x15, x15, -1
   bnez x15, 1b
   LI(x13, 0)
-Svvptc_cg_cp_retry_fetch_test9_fetch:
+Svvptc_cg_cp_fetch_test9_fetch:
   jalr ra, x8, 0
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Svvptc_cg_cp_retry_fetch_test9_fetch, Svvptc_cg_cp_retry_fetch_test9_fetch_str)
+  RVTEST_SIGUPD(x2, x5, x4, x13, Svvptc_cg_cp_fetch_test9_fetch, Svvptc_cg_cp_fetch_test9_fetch_str)
 
 
 // Instantiate trap handlers and other epilog code, call RVMODEL_HALT at end of test
@@ -766,33 +766,33 @@ rvtest_slvl3_pg_tbl:
   .skip(4096)
 
 // Testcase strings
-Svvptc_cg_cp_retry_load_test1_load_str: .string "\"test: 1; cg: Svvptc_cg; cp: cp_retry_load; bin: test1_load\""
-Svvptc_cg_cp_retry_store_test1_store_str: .string "\"test: 2; cg: Svvptc_cg; cp: cp_retry_store; bin: test1_store\""
-Svvptc_cg_cp_retry_fetch_test1_fetch_str: .string "\"test: 3; cg: Svvptc_cg; cp: cp_retry_fetch; bin: test1_fetch\""
-Svvptc_cg_cp_retry_load_test2_load_str: .string "\"test: 4; cg: Svvptc_cg; cp: cp_retry_load; bin: test2_load\""
-Svvptc_cg_cp_retry_store_test2_store_str: .string "\"test: 5; cg: Svvptc_cg; cp: cp_retry_store; bin: test2_store\""
-Svvptc_cg_cp_retry_fetch_test2_fetch_str: .string "\"test: 6; cg: Svvptc_cg; cp: cp_retry_fetch; bin: test2_fetch\""
-Svvptc_cg_cp_retry_load_test3_load_str: .string "\"test: 7; cg: Svvptc_cg; cp: cp_retry_load; bin: test3_load\""
-Svvptc_cg_cp_retry_store_test3_store_str: .string "\"test: 8; cg: Svvptc_cg; cp: cp_retry_store; bin: test3_store\""
-Svvptc_cg_cp_retry_fetch_test3_fetch_str: .string "\"test: 9; cg: Svvptc_cg; cp: cp_retry_fetch; bin: test3_fetch\""
-Svvptc_cg_cp_retry_load_test4_load_str: .string "\"test: 10; cg: Svvptc_cg; cp: cp_retry_load; bin: test4_load\""
-Svvptc_cg_cp_retry_store_test4_store_str: .string "\"test: 11; cg: Svvptc_cg; cp: cp_retry_store; bin: test4_store\""
-Svvptc_cg_cp_retry_fetch_test4_fetch_str: .string "\"test: 12; cg: Svvptc_cg; cp: cp_retry_fetch; bin: test4_fetch\""
-Svvptc_cg_cp_retry_load_test5_load_str: .string "\"test: 13; cg: Svvptc_cg; cp: cp_retry_load; bin: test5_load\""
-Svvptc_cg_cp_retry_store_test5_store_str: .string "\"test: 14; cg: Svvptc_cg; cp: cp_retry_store; bin: test5_store\""
-Svvptc_cg_cp_retry_fetch_test5_fetch_str: .string "\"test: 15; cg: Svvptc_cg; cp: cp_retry_fetch; bin: test5_fetch\""
-Svvptc_cg_cp_retry_load_test6_load_str: .string "\"test: 16; cg: Svvptc_cg; cp: cp_retry_load; bin: test6_load\""
-Svvptc_cg_cp_retry_store_test6_store_str: .string "\"test: 17; cg: Svvptc_cg; cp: cp_retry_store; bin: test6_store\""
-Svvptc_cg_cp_retry_fetch_test6_fetch_str: .string "\"test: 18; cg: Svvptc_cg; cp: cp_retry_fetch; bin: test6_fetch\""
-Svvptc_cg_cp_retry_load_test7_load_str: .string "\"test: 19; cg: Svvptc_cg; cp: cp_retry_load; bin: test7_load\""
-Svvptc_cg_cp_retry_store_test7_store_str: .string "\"test: 20; cg: Svvptc_cg; cp: cp_retry_store; bin: test7_store\""
-Svvptc_cg_cp_retry_fetch_test7_fetch_str: .string "\"test: 21; cg: Svvptc_cg; cp: cp_retry_fetch; bin: test7_fetch\""
-Svvptc_cg_cp_retry_load_test8_load_str: .string "\"test: 22; cg: Svvptc_cg; cp: cp_retry_load; bin: test8_load\""
-Svvptc_cg_cp_retry_store_test8_store_str: .string "\"test: 23; cg: Svvptc_cg; cp: cp_retry_store; bin: test8_store\""
-Svvptc_cg_cp_retry_fetch_test8_fetch_str: .string "\"test: 24; cg: Svvptc_cg; cp: cp_retry_fetch; bin: test8_fetch\""
-Svvptc_cg_cp_retry_load_test9_load_str: .string "\"test: 25; cg: Svvptc_cg; cp: cp_retry_load; bin: test9_load\""
-Svvptc_cg_cp_retry_store_test9_store_str: .string "\"test: 26; cg: Svvptc_cg; cp: cp_retry_store; bin: test9_store\""
-Svvptc_cg_cp_retry_fetch_test9_fetch_str: .string "\"test: 27; cg: Svvptc_cg; cp: cp_retry_fetch; bin: test9_fetch\""
+Svvptc_cg_cp_load_test1_load_str: .string "\"test: 1; cg: Svvptc_cg; cp: cp_load; bin: test1_load\""
+Svvptc_cg_cp_store_test1_store_str: .string "\"test: 2; cg: Svvptc_cg; cp: cp_store; bin: test1_store\""
+Svvptc_cg_cp_fetch_test1_fetch_str: .string "\"test: 3; cg: Svvptc_cg; cp: cp_fetch; bin: test1_fetch\""
+Svvptc_cg_cp_load_test2_load_str: .string "\"test: 4; cg: Svvptc_cg; cp: cp_load; bin: test2_load\""
+Svvptc_cg_cp_store_test2_store_str: .string "\"test: 5; cg: Svvptc_cg; cp: cp_store; bin: test2_store\""
+Svvptc_cg_cp_fetch_test2_fetch_str: .string "\"test: 6; cg: Svvptc_cg; cp: cp_fetch; bin: test2_fetch\""
+Svvptc_cg_cp_load_test3_load_str: .string "\"test: 7; cg: Svvptc_cg; cp: cp_load; bin: test3_load\""
+Svvptc_cg_cp_store_test3_store_str: .string "\"test: 8; cg: Svvptc_cg; cp: cp_store; bin: test3_store\""
+Svvptc_cg_cp_fetch_test3_fetch_str: .string "\"test: 9; cg: Svvptc_cg; cp: cp_fetch; bin: test3_fetch\""
+Svvptc_cg_cp_load_test4_load_str: .string "\"test: 10; cg: Svvptc_cg; cp: cp_load; bin: test4_load\""
+Svvptc_cg_cp_store_test4_store_str: .string "\"test: 11; cg: Svvptc_cg; cp: cp_store; bin: test4_store\""
+Svvptc_cg_cp_fetch_test4_fetch_str: .string "\"test: 12; cg: Svvptc_cg; cp: cp_fetch; bin: test4_fetch\""
+Svvptc_cg_cp_load_test5_load_str: .string "\"test: 13; cg: Svvptc_cg; cp: cp_load; bin: test5_load\""
+Svvptc_cg_cp_store_test5_store_str: .string "\"test: 14; cg: Svvptc_cg; cp: cp_store; bin: test5_store\""
+Svvptc_cg_cp_fetch_test5_fetch_str: .string "\"test: 15; cg: Svvptc_cg; cp: cp_fetch; bin: test5_fetch\""
+Svvptc_cg_cp_load_test6_load_str: .string "\"test: 16; cg: Svvptc_cg; cp: cp_load; bin: test6_load\""
+Svvptc_cg_cp_store_test6_store_str: .string "\"test: 17; cg: Svvptc_cg; cp: cp_store; bin: test6_store\""
+Svvptc_cg_cp_fetch_test6_fetch_str: .string "\"test: 18; cg: Svvptc_cg; cp: cp_fetch; bin: test6_fetch\""
+Svvptc_cg_cp_load_test7_load_str: .string "\"test: 19; cg: Svvptc_cg; cp: cp_load; bin: test7_load\""
+Svvptc_cg_cp_store_test7_store_str: .string "\"test: 20; cg: Svvptc_cg; cp: cp_store; bin: test7_store\""
+Svvptc_cg_cp_fetch_test7_fetch_str: .string "\"test: 21; cg: Svvptc_cg; cp: cp_fetch; bin: test7_fetch\""
+Svvptc_cg_cp_load_test8_load_str: .string "\"test: 22; cg: Svvptc_cg; cp: cp_load; bin: test8_load\""
+Svvptc_cg_cp_store_test8_store_str: .string "\"test: 23; cg: Svvptc_cg; cp: cp_store; bin: test8_store\""
+Svvptc_cg_cp_fetch_test8_fetch_str: .string "\"test: 24; cg: Svvptc_cg; cp: cp_fetch; bin: test8_fetch\""
+Svvptc_cg_cp_load_test9_load_str: .string "\"test: 25; cg: Svvptc_cg; cp: cp_load; bin: test9_load\""
+Svvptc_cg_cp_store_test9_store_str: .string "\"test: 26; cg: Svvptc_cg; cp: cp_store; bin: test9_store\""
+Svvptc_cg_cp_fetch_test9_fetch_str: .string "\"test: 27; cg: Svvptc_cg; cp: cp_fetch; bin: test9_fetch\""
 
 // End of test data section and model specific data
 RVTEST_DATA_END
