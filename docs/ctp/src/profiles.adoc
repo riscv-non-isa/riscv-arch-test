@@ -302,7 +302,6 @@ All privileged suites require at least version 1.12 of the privileged specificat
 |Ziccamoc|Main memory PMA supports AMOCASQ ||||x|x
 |Zkt|Constant-time scalar crypto|||x|x|x
 |Zvkt|Constant-time vector crypto|||x|x|x
-|Svvptc|Valid PTEs appear within bounded time without fence||||x|x
 |===
 
 Furthermore, the following features are not supported in this version of the certification test plan:

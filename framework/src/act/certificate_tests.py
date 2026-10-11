@@ -163,6 +163,7 @@ RVA23_TEST_SUITES = frozenset(
         "Svpbmt",
         "SvPMP",
         "SvPMPZicbo",
+        "Svvptc",
         "SvZicbo",
     }
 )
