@@ -33,6 +33,32 @@ include::norm/Zksh_norm_rules.adoc[]
 
 ==== Zkt Constant-Time Instructions
 
-Not tested yet.
+Zkt requires the instructions it lists to have data-independent execution latency.
+Latency is not architecturally visible, so the suite measures it with the `cycle` counter and requires Zicntr.
+Each row also requires the extension of its instruction, so the suite times every listed instruction the hart implements.
+
+Each testcase loads the source operands and consumes them with an `xor` so that the loads complete before timing starts.
+It then executes `csrr rA, cycle`, the instruction under test, and `csrr rB, cycle` within one aligned 16-byte block, so the timed sequence is laid out identically in every testcase.
+The difference between the two reads is the latency.
+The first testcase of each instruction records its latency as the baseline, and every testcase writes the difference between its latency and the baseline to the signature, which must be 0.
+The reference models count one cycle per instruction, so the signature never holds a raw cycle count.
+Each testcase also writes the result of the instruction to the signature.
+
+Registers and immediates are part of the instruction encoding and may legally affect the latency, so they are fixed for each instruction and only the register data varies.
+HINT encodings, such as those with _rd_=`x0`, are not covered by Zkt and are not tested.
+
+include::{testplansdir}/Zkt.adoc[]
 
 include::norm/Zkt_norm_rules.adoc[]
+
+[[t-Zkt-coverpoint-definition]]
+.Zkt Coverpoint Definitions
+[cols="2, 1, 4" options=header]
+[%autowidth]
+|===
+|Coverpoint|Bins|Definition
+|cp_zkt_rs1_rs2|144 (324 on RV64)|Cross of the rs1 and rs2 edge values (as in `cr_rs1_rs2_edges`) for an instruction timed between two reads of `cycle`.
+|cp_zkt_rs1|12 (18 on RV64)|rs1 edge values (as in `cp_rs1_edges`) for an instruction timed between two reads of `cycle`.
+|cp_zkt_rs2|12 (18 on RV64)|rs2 edge values (as in `cp_rs2_edges`) for an instruction timed between two reads of `cycle`. Used for `c.mv`, whose only source is rs2.
+|cp_zkt_pc|1|An instruction without data operands (`lui`, `auipc`, `c.lui`, `c.nop`) timed between two reads of `cycle`.
+|===

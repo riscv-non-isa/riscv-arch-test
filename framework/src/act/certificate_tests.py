@@ -24,6 +24,8 @@ RVA23_TEST_SUITES = frozenset(
         "Zimop",
         # Zm extensions
         "Zmmul",
+        # Zk extensions
+        "Zkt",
         # Za extensions
         "Zaamo",
         "Zabha",
