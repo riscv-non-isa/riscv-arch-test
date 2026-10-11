@@ -108,4 +108,7 @@
 //#define RVMODEL_SET_SEXT_INT(_R1, _R2)        nop
 //#define RVMODEL_CLR_SEXT_INT(_R1, _R2)        nop
 
+// Imperas implements tcontrol and gates M-mode triggers with action=0 on tcontrol.mte
+#define RVMODEL_SDTRIG_USE_TCONTROL
+
 #endif // _RVMODEL_MACROS_H

@@ -182,4 +182,11 @@
   lw _R1, 0(_R2);                               \
   sw _R1, 0(_R2);
 
+##### Debug Triggers #####
+
+// Without S-mode, Spike implements tcontrol and gates M-mode triggers with action=0 on tcontrol.mte
+#ifndef S_SUPPORTED
+  #define RVMODEL_SDTRIG_USE_TCONTROL
+#endif
+
 #endif // _RVMODEL_MACROS_H
