@@ -503,6 +503,9 @@
 `ifdef ZKSH_COVERAGE
   `include "Zksh_coverage.svh"
 `endif
+`ifdef ZKT_COVERAGE
+  `include "Zkt_coverage.svh"
+`endif
 `ifdef ZMMUL_COVERAGE
   `include "Zmmul_coverage.svh"
 `endif
