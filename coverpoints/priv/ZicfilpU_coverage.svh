@@ -18,7 +18,7 @@
 covergroup ZicfilpU_cg with function sample(ins_t ins);
     option.per_instance = 0;
     `include "general/RISCV_coverage_standard_coverpoints.svh"
-    `include "Zicfilp_coverpoints.svh"
+    `include "general/Zicfilp_coverpoints.svh"
 
     `ifdef S_SUPPORTED
         // U-mode landing pad enable

@@ -17,7 +17,7 @@
 covergroup ZicfilpSm_cg with function sample(ins_t ins);
     option.per_instance = 0;
     `include "general/RISCV_coverage_standard_coverpoints.svh"
-    `include "Zicfilp_coverpoints.svh"
+    `include "general/Zicfilp_coverpoints.svh"
 
     // M-mode landing pad enable
     lpe: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_CURRENT, "mseccfg", "mlpe") {
