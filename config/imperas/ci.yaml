@@ -7,9 +7,10 @@
 # - SsstrictSm/S/U: on the vector configs, Imperas does not enforce the vector register-group
 #   overlap constraints, so it executes reserved widening encodings such as
 #   vwmaccu.vv v14, v9, v15, v0.t instead of raising an illegal instruction:
-#   https://solvnetplus.synopsys.com/s/case/500WQ0000230O4P/imperas-treats-vwmaccuvv-v14-v9-v15-v0t-as-legal
+#   https://solvnetplus.synopsys.com/s/case/500WQ0000230O4PYAU/imperas-treats-vwmaccuvv-v14-v9-v15-v0t-as-legal
 #   imperas-rv32gcv also executed the draft Zvqmac encodings in VectorInstr-00/-03; that is worked around
-#   in its imperas.ic (Zvqmac=F).
+#   in its imperas.ic (Zvqmac=F):
+#   https://solvnetplus.synopsys.com/s/case/500WQ00002CEtKrYAL/the-vqmacc-draft-zvqmac-encodings-execute-on-named-v-variants-with-vectorversion10ratified
 #   The VectorInstr tests are the only Ssstrict failures; rv32gck, which has no vector unit, passes all three.
 # - Smstateen:
 #   - imperas-rv64-max: Imperas lets mstateen0.P1P13 be written on RV64:
@@ -20,7 +21,8 @@
 # - ExceptionsVx: https://solvnetplus.synopsys.com/s/case/500WQ000023l1CPYAY/vmvnrrv-does-not-raise-an-illegalinstruction-exception-when-vtypevill-1
 # - Sdtrig*: Sail does not implement Sdtrig yet (https://github.com/riscv/sail-riscv/issues/222)
 # - Svnapot: Imperas accepts N=1 on superpage leaf PTEs instead of page faulting
-#   (validSvnapotEntry checks only for a leaf, not level 0, and fillTLBEntry skips the alignment check)
+#   (validSvnapotEntry checks only for a leaf, not level 0, and fillTLBEntry skips the alignment check):
+#   https://solvnetplus.synopsys.com/s/case/500WQ00002AsSN9YAN/svnapot-n1-accepted-on-superpage-leaf-ptes-instead-of-raising-a-page-fault
 # - Ssnpm,SsnpmSm,Smmpm,SmnpmS,SmnpmSSm,SmnpmU,SmnpmUSm:Imperas still applies pointer masking when MXR is set, contradicting the spec rule.
 #   Issue filed (https://solvnetplus.synopsys.com/s/case/500WQ000025qNCkYAM/pointer-masking-should-be-disabled-when-mxr1)
 #
