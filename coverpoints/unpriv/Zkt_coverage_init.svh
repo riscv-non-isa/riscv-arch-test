@@ -45,6 +45,28 @@
 `endif
 `endif
 `ifdef ZICNTR_SUPPORTED
+`ifdef ZBB_SUPPORTED
+    ZktZicntrZbb_andn_cg = new(); ZktZicntrZbb_andn_cg.set_inst_name("obj_ZktZicntrZbb_andn");
+    ZktZicntrZbb_orn_cg = new(); ZktZicntrZbb_orn_cg.set_inst_name("obj_ZktZicntrZbb_orn");
+    ZktZicntrZbb_rev8_cg = new(); ZktZicntrZbb_rev8_cg.set_inst_name("obj_ZktZicntrZbb_rev8");
+    ZktZicntrZbb_rol_cg = new(); ZktZicntrZbb_rol_cg.set_inst_name("obj_ZktZicntrZbb_rol");
+    ZktZicntrZbb_ror_cg = new(); ZktZicntrZbb_ror_cg.set_inst_name("obj_ZktZicntrZbb_ror");
+    ZktZicntrZbb_rori_cg = new(); ZktZicntrZbb_rori_cg.set_inst_name("obj_ZktZicntrZbb_rori");
+    ZktZicntrZbb_xnor_cg = new(); ZktZicntrZbb_xnor_cg.set_inst_name("obj_ZktZicntrZbb_xnor");
+`ifdef UDB_MXLEN_64
+    ZktZicntrZbb_rolw_cg = new(); ZktZicntrZbb_rolw_cg.set_inst_name("obj_ZktZicntrZbb_rolw");
+    ZktZicntrZbb_roriw_cg = new(); ZktZicntrZbb_roriw_cg.set_inst_name("obj_ZktZicntrZbb_roriw");
+    ZktZicntrZbb_rorw_cg = new(); ZktZicntrZbb_rorw_cg.set_inst_name("obj_ZktZicntrZbb_rorw");
+`endif
+`endif
+`endif
+`ifdef ZICNTR_SUPPORTED
+`ifdef ZBC_SUPPORTED
+    ZktZicntrZbc_clmul_cg = new(); ZktZicntrZbc_clmul_cg.set_inst_name("obj_ZktZicntrZbc_clmul");
+    ZktZicntrZbc_clmulh_cg = new(); ZktZicntrZbc_clmulh_cg.set_inst_name("obj_ZktZicntrZbc_clmulh");
+`endif
+`endif
+`ifdef ZICNTR_SUPPORTED
 `ifdef ZBKB_SUPPORTED
     ZktZicntrZbkb_andn_cg = new(); ZktZicntrZbkb_andn_cg.set_inst_name("obj_ZktZicntrZbkb_andn");
     ZktZicntrZbkb_brev8_cg = new(); ZktZicntrZbkb_brev8_cg.set_inst_name("obj_ZktZicntrZbkb_brev8");
@@ -145,6 +167,8 @@
 `ifdef UDB_MXLEN_64
     ZktZicntrZkne_aes64es_cg = new(); ZktZicntrZkne_aes64es_cg.set_inst_name("obj_ZktZicntrZkne_aes64es");
     ZktZicntrZkne_aes64esm_cg = new(); ZktZicntrZkne_aes64esm_cg.set_inst_name("obj_ZktZicntrZkne_aes64esm");
+    ZktZicntrZkne_aes64ks1i_cg = new(); ZktZicntrZkne_aes64ks1i_cg.set_inst_name("obj_ZktZicntrZkne_aes64ks1i");
+    ZktZicntrZkne_aes64ks2_cg = new(); ZktZicntrZkne_aes64ks2_cg.set_inst_name("obj_ZktZicntrZkne_aes64ks2");
 `endif
 `endif
 `endif
