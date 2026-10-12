@@ -10,4 +10,4 @@ coverpoints:
     description: Read Machine, Hypervisor, Supervisor CSRS100-3FF, 500-7FF, 900-BFF, D000-FFF
   - name: cp_csr_ro
     description: Write User read-only CSRs C00-CFF
-  - heading: Accessing user-mode CSRs such as F, V, Zicntr, Zihpm from machine mode are tested in Sm_F, Sm_V, Zicntr, Zihpm and are not tested again here.
+  - heading: User-mode access to the F and V CSRs is tested in U_F and U_V, and to the counters in Zicntr and Zihpm.

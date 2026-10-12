@@ -67,18 +67,36 @@ macro could spin until they fire, but needs to know if they should fire (e.g. no
 ==== U User-Mode CSRs and Instructions
 
 These test additional CSRs that exist in user mode, and privileged instructions in user mode.
+The U suite also contains the <<U_F User-Mode Floating-Point CSRs,U_F>>, <<U_V User-Mode Vector CSRs,U_V>>, and <<U_VF User-Mode Vector Floating-Point State,U_VF>> tests, which run only when F, Zve32x, or Zve32f is also supported.
 
 include::{testplansdir}/priv/U.adoc[]
 
 include::norm/U_norm_rules.adoc[]
 
-==== UF User-Mode Floating-Point CSRs
+===== U_F User-Mode Floating-Point CSRs
 
-These test additional CSR scenarios that exist when floating-point and user mode are supported.
+These access the floating-point CSRs from user mode, and repeat the <<t-Sm_F-coverpoints,Sm_F>> tests from user mode, setting and reading `mstatus.FS` through T-SBI calls.
+They are the `U_F-NN.S` tests of the U suite and run when F is supported.
+Their normative rules are listed in <<t-U-normative-rules>> and <<t-Sm-normative-rules>>.
 
-include::{testplansdir}/priv/UF.adoc[]
+include::{testplansdir}/priv/U_F.adoc[]
 
-include::norm/UF_norm_rules.adoc[]
+===== U_V User-Mode Vector CSRs
+
+These access the vector CSRs from user mode, and repeat the <<t-Sm_V-coverpoints,Sm_V>> tests from user mode, setting and reading `mstatus.VS` through T-SBI calls.
+`misa` is not accessible in user mode, so U_V omits `cp_misa_v_clear_set` and its VS=Off coverpoints are not crossed with `misa.V`.
+They are the `U_V_*-NN.S` tests of the U suite and run when Zve32x is supported.
+Their normative rules are listed in <<t-Sm-normative-rules>> and <<t-Vx-normative-rules>>.
+
+include::{testplansdir}/priv/U_V.adoc[]
+
+===== U_VF User-Mode Vector Floating-Point State
+
+These repeat the <<t-Sm_VF-coverpoints,Sm_VF>> tests from user mode, setting and reading `mstatus.FS` through T-SBI calls.
+They are the `U_VF-NN.S` tests of the U suite and run when Zve32f is supported.
+Their normative rules are listed in <<t-Vx-normative-rules>>.
+
+include::{testplansdir}/priv/U_VF.adoc[]
 
 ==== Zkr Entropy CSR
 
