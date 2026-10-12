@@ -14,9 +14,9 @@ ci_enabled: true
 #   F-fmadd.s, F-fmsub.s, F-fnmadd.s, F-fnmsub.s
 #                 FMA sets UF when the result rounds up to the smallest normal: cvfpu:fpnew_fma_multi.sv#L801-L803
 #   ZicsrF        fmul.s has the same UF bug: cvfpu:fpnew_fma_multi.sv#L801-L803
-#   Zfa-fleq/fltq, ZfaD-fleq/fltq/fround/froundnx/fcvtmod groups
-#                 fleq/fltq raise NV on a quiet NaN: fpu:zfa_post_process.sv#L88-L98; fround.s/froundnx.s ignore
-#                 NaN-boxing; fcvtmod.w.d drops NX
+#   Zfa-fleq/fltq, ZfaD-fleq/fltq/fround/froundnx/fcvtmod/fmaxm.s/fminm.s groups
+#                 fleq/fltq raise NV on a quiet NaN: fpu:zfa_post_process.sv#L88-L98; fround.s/froundnx.s and
+#                 fmaxm.s/fminm.s ignore NaN-boxing; fcvtmod.w.d drops NX
 #   Zfhmin-fcvt.h.s/fcvt.s.h, ZfhminD-fcvt.d.h/fcvt.h.d/fcvt.s.h
 #                 fcvt.s.h/fcvt.d.h ignore NaN-boxing; fcvt.h.s/fcvt.h.d round a tiny value up under RMM: fpu:conv_zfhmin.sv
 #   Sm_F, S_F     csrr mstatus/sstatus just after an FP write reads SD = 0: csr:csr_bsc.sv#L1009
@@ -32,6 +32,9 @@ ci_enabled: true
 #   InterruptsSm_priority_mideleg
 #                 mideleg is applied after the interrupt is picked by cause, so a delegated SEI hides an M-level STI:
 #                 csr:csr_bsc.sv#L1888-L1936
+#   InterruptsSm_trigger
+#                 Once a trigger case sets mie to all ones, the hart takes a supervisor timer interrupt (mcause 5)
+#                 that Sail does not have pending; seen since the xtval seeding added in #2749, not yet root-caused
 #   Sv_sv39_canonical, Sv_sv39_nleaf_pte_DAU, Sv_sv39_pte_reserved, Sv_sv39_svnapot, Sv_sv39_svpbmt
 #                 A non-canonical VA gives an access fault and is checked at 41 bits:
 #                 core:datapath/rtl/exe_stage/rtl/load_store_queue.sv#L197; bad PTEs hang or give the wrong fault
@@ -43,7 +46,7 @@ ci_enabled: true
 #   H             hedeleg[10] and hedeleg[23:20] are writable but must be read-only zero: csr:csr_bsc.sv#L1320-L1339;
 #                 an hlv.d page fault in HS mode matches Sail's cause and tval but not the rest of its trap signature
 #                 (status/GVA/htinst; HS-mode trap CSR writes: csr:csr_bsc.sv#L2086-L2099)
-exclude_extensions: "F-fmadd.s,F-fmsub.s,F-fnmadd.s,F-fnmsub.s,ZicsrF,Zfa-fleq.s,Zfa-fltq.s,ZfaD-fcvtmod.w.d,ZfaD-fleq.d,ZfaD-fleq.s,ZfaD-fltq.d,ZfaD-fltq.s,ZfaD-fround.s,ZfaD-froundnx.s,Zfhmin-fcvt.h.s,Zfhmin-fcvt.s.h,ZfhminD-fcvt.d.h,ZfhminD-fcvt.h.d,ZfhminD-fcvt.s.h,Zicntr,ZicntrS,ZicntrU,Zifencei,Sm_F,Sm_mcsr_access,Sm_mcsr_walk,Sm_scsr,Sm_shadow,S_F,S_scsr-,S_scsr_addr,InterruptsSm_priority_mideleg,Sv_sv39_canonical,Sv_sv39_nleaf_pte_DAU,Sv_sv39_pte_reserved,Sv_sv39_svnapot,Sv_sv39_svpbmt,SvZicbo_sv39_zicbom,SvZicbo_sv39_zicboz,ExceptionsSv,ExceptionsSvZalrsc,H"
+exclude_extensions: "F-fmadd.s,F-fmsub.s,F-fnmadd.s,F-fnmsub.s,ZicsrF,Zfa-fleq.s,Zfa-fltq.s,ZfaD-fcvtmod.w.d,ZfaD-fleq.d,ZfaD-fleq.s,ZfaD-fltq.d,ZfaD-fltq.s,ZfaD-fround.s,ZfaD-froundnx.s,ZfaD-fmaxm.s,ZfaD-fminm.s,Zfhmin-fcvt.h.s,Zfhmin-fcvt.s.h,ZfhminD-fcvt.d.h,ZfhminD-fcvt.h.d,ZfhminD-fcvt.s.h,Zicntr,ZicntrS,ZicntrU,Zifencei,Sm_F,Sm_mcsr_access,Sm_mcsr_walk,Sm_scsr,Sm_shadow,S_F,S_scsr-,S_scsr_addr,InterruptsSm_priority_mideleg,InterruptsSm_trigger,Sv_sv39_canonical,Sv_sv39_nleaf_pte_DAU,Sv_sv39_pte_reserved,Sv_sv39_svnapot,Sv_sv39_svpbmt,SvZicbo_sv39_zicbom,SvZicbo_sv39_zicboz,ExceptionsSv,ExceptionsSvZalrsc,H"
 
 apt_packages: "autoconf flex bison help2man libfl-dev ccache device-tree-compiler libboost-dev libboost-regex-dev libboost-system-dev"
 install_script: ".github/scripts/install-sargantana.sh"
