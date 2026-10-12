@@ -4,7 +4,7 @@
 # Imperas is proprietary and cannot run in public CI.
 
 # These exclusions don't affect CI because it doesn't run, but they help tracking incomplete features
-# - SsstrictSm/S/U: on the vector configs, Imperas does not enforce the vector register-group
+# - SsstrictSm/S/U _VectorInstr: on the vector configs, Imperas does not enforce the vector register-group
 #   overlap constraints, so it executes reserved widening encodings such as
 #   vwmaccu.vv v14, v9, v15, v0.t instead of raising an illegal instruction:
 #   https://solvnetplus.synopsys.com/s/case/500WQ0000230O4P/imperas-treats-vwmaccuvv-v14-v9-v15-v0t-as-legal
@@ -16,14 +16,16 @@
 #     cannot model yet (https://github.com/riscv/sail-riscv/issues/2013)
 #   imperas-rv32gck and rv32gcv pass.
 # - ExceptionsVx: https://solvnetplus.synopsys.com/s/case/500WQ000023l1CPYAY/vmvnrrv-does-not-raise-an-illegalinstruction-exception-when-vtypevill-1
-# - Sdtrig*: Sail does not implement Sdtrig yet (https://github.com/riscv/sail-riscv/issues/222)
-# - Svnapot: Imperas accepts N=1 on superpage leaf PTEs instead of page faulting
+# - SdtrigS/SdtrigU _Mcontrol6: Sail 0.15 lacks mcontrol6 triggers, so it expects an illegal-instruction trap where the hart
+#   takes the breakpoint (https://github.com/riscv/sail-riscv/issues/222). SdtrigSm passes.
+# - Svnapot_sv{39,48,57}_Svnapot_reserved: Imperas accepts N=1 on superpage leaf PTEs instead of page faulting
 #   (validSvnapotEntry checks only for a leaf, not level 0, and fillTLBEntry skips the alignment check)
 # - Zama16b is not declared. The model has no misaligned atomicity granule: Zam=T performs every
 #   misaligned AMO, including SSAMOSWAP (riscv-isa-manual#3426), so the configs use Zam=F, where
 #   misaligned AMOs, SSAMOSWAP and LR/SC raise store/AMO access faults.
-# - Ssnpm,SsnpmSm,Smmpm,SmnpmS,SmnpmSSm,SmnpmU,SmnpmUSm:Imperas still applies pointer masking when MXR is set, contradicting the spec rule.
+# - Ssnpm_*/SmnpmS_* (bare, and sv* pmm10/pmm11 edgecases), SsnpmSm, Smmpm_mprv/pmm00/pmm10, SmnpmSSm, SmnpmU_pmm00/pmm10,
+#   SmnpmUSm: Imperas still applies pointer masking when MXR is set, contradicting the spec rule.
 #   Issue filed (https://solvnetplus.synopsys.com/s/case/500WQ000025qNCkYAM/pointer-masking-should-be-disabled-when-mxr1)
 #
 ci_enabled: false
-exclude_extensions: "SsstrictSm,SsstrictS,SsstrictU,SsstrictV,Smstateen,ExceptionsVx,SdtrigSm,SdtrigS,SdtrigU,Svnapot,Ssnpm,SsnpmSm,Smmpm,SmnpmS,SmnpmSSm,SmnpmU,SmnpmUSm"
+exclude_extensions: "SsstrictSm_VectorInstr,SsstrictS_VectorInstr,SsstrictU_VectorInstr,SsstrictV,Smstateen,ExceptionsVx,SdtrigS_Mcontrol6,SdtrigU_Mcontrol6,Svnapot_sv39_Svnapot_reserved,Svnapot_sv48_Svnapot_reserved,Svnapot_sv57_Svnapot_reserved,Ssnpm_bare_pmm00,Ssnpm_bare_pmm10,Ssnpm_bare_pmm11_edgecases,Ssnpm_sv39_pmm10_edgecases,Ssnpm_sv39_pmm11_edgecases,Ssnpm_sv48_pmm10_edgecases,Ssnpm_sv48_pmm11_edgecases,Ssnpm_sv57_pmm10_edgecases,Ssnpm_sv57_pmm11_edgecases,SsnpmSm,Smmpm_mprv,Smmpm_pmm00,Smmpm_pmm10,SmnpmS_bare_pmm00,SmnpmS_bare_pmm10,SmnpmS_bare_pmm11_edgecases,SmnpmS_sv39_pmm10_edgecases,SmnpmS_sv39_pmm11_edgecases,SmnpmS_sv48_pmm10_edgecases,SmnpmS_sv48_pmm11_edgecases,SmnpmS_sv57_pmm10_edgecases,SmnpmS_sv57_pmm11_edgecases,SmnpmSSm,SmnpmU_pmm00,SmnpmU_pmm10,SmnpmUSm"
