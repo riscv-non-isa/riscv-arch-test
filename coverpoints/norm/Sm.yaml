@@ -1158,6 +1158,9 @@ normative_rule_definitions:
       [
         "Sm_mcsr_cg/cp_cntr_access/minstret",
         "Sm_mcsr_cg/cp_minstret_wraparound",
+        "ZicntrSm_cg/cp_instret_add",
+        "ZicntrSm_cg/cp_instret_mret",
+        "ZicntrSm_cg/cp_instret_sret",
       ]
 
   # The hardware performance monitor includes 29 additional 64-bit event counters,
@@ -1402,11 +1405,9 @@ normative_rule_definitions:
       ]
 
   # For other traps, mtval is set to zero
+  # ECALL and interrupt entries record mtval; cp_trigger leaves it nonzero before each interrupt.
   - name: mtval_other_traps_zero
-    coverpoint:
-      [
-        "TODO: record mtval after ECALL and interrupts; their trap signatures omit it",
-      ]
+    coverpoint: ["ExceptionsSm_cg/cp_ecall_m", "InterruptsSm_cg/cp_trigger"]
 
   # must be able to hold all valid virtual addresses and the value zero.
   - name: mtval_vaddr_and_0_sz
