@@ -3,7 +3,7 @@
 $schema: config_schema.json#
 kind: architecture configuration
 type: fully configured
-name: milkv-megrez-p550
+name: milkv-megrez-p550-h
 description: >-
   Milk-V Megrez, ESWIN EIC7700X, SiFive P550 (hart 1 runs ACT payloads).
   ISA rv64imafdch_zicntr_zicsr_zifencei_zihpm_zba_zbb_sscofpmf (Linux),
