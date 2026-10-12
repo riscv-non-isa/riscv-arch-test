@@ -3,8 +3,8 @@
 # CI configuration for Whisper simulator
 
 # SsstrictSm: Sail 0.15 lacks Smaia and Smrnmi, whose CSRs Whisper implements
-# SmstateenH: on RV32, whisper d50ee73 makes henvcfg.CBIE bit 4 read-only zero
-#   (https://github.com/tenstorrent/whisper/issues/107)
+# SmstateenH, H, HSm, SvHZicbo: on RV32, whisper makes henvcfg.CBIE bit 4 read-only zero (d50ee73 and 35f7a7a;
+#   https://github.com/tenstorrent/whisper/issues/107). H, HSm and SvHZicbo pass on the RV64 configs.
 # SstcH, SstcHSm: whisper-rv64-max-notime, whose time CSR does not exist, does not raise VSTIP when time +
 #   htimedelta >= vstimecmp (SstcHSm_vstip with vstimecmp = 0 never sees hip.VSTIP); whisper-rv64-max passes (no issue filed)
 # Smstateen: the -mu configs pass. On the max configs Whisper implements Sscsrind and Ssaia, so
@@ -14,7 +14,7 @@
 # Sdtrig* not yet implemented in Sail (https://github.com/riscv/sail-riscv/issues/222)
 # Ssnpm,SsnpmSm,Smmpm,SmnpmS,SmnpmSSm,SmnpmU,SmnpmUSm : Failing due to mismatch in stval/mtval ,Issue Link (https://github.com/riscv/sail-riscv/issues/1962)
 ci_enabled: true
-exclude_extensions: "SsstrictSm,SsstrictS,Smstateen,SdtrigSm,SdtrigS,SdtrigU,SmstateenH,SstcH,SstcHSm,Ssnpm,SsnpmSm,Smmpm,SmnpmS,SmnpmSSm,SmnpmU,SmnpmUSm"
+exclude_extensions: "SsstrictSm,SsstrictS,Smstateen,SdtrigSm,SdtrigS,SdtrigU,H,HSm,SmstateenH,SvHZicbo,SstcH,SstcHSm,Ssnpm,SsnpmSm,Smmpm,SmnpmS,SmnpmSSm,SmnpmU,SmnpmUSm"
 exclude_configs:
   - whisper-rv32-max-spike-ref
   - whisper-rv64-max-spike-ref
