@@ -182,10 +182,11 @@
   li _R2, SAIL_SIG_ADDRESS;    \
   sw _R1, 0(_R2)            ; /* Clear SSW interrupt */ \
 
+
+
 ##### Sscofpmf #####
-# The reference build triggers Sail's own event instead of the DUT's. It counts only where the
-# DUT's sail.json maps EV_FENCE to RVMODEL_MHPMEVENT_VAL in base.event_selectors. The selector
-# value stays the DUT's, so both builds load the same constants and have the same code size.
+# The reference build triggers Sail's own event counter instead of the DUT's.
+# The Sail model is configured to count fences.
 #undef RVMODEL_MHPMEVENT_CODE
 #define RVMODEL_MHPMEVENT_CODE(_R1, _R2) \
   fence

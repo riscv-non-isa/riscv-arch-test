@@ -2214,8 +2214,7 @@ tsbi_instr_table:
                 sfence.vma                       // TSBI_SFENCE_VMA
                 ret
         #endif  // S_SUPPORTED
-        // Sscofpmf performance-monitoring CSRs. They sit at the end of the table so the dispatcher's
-        // linear scan does not pass them on the way to any other entry.
+        // Sscofpmf performance-monitoring CSRs
         #ifdef SSCOFPMF_SUPPORTED
         TSBI_CSR_INSTR_TABLE(0xB03) // mhpmcounter3
         TSBI_CSR_INSTR_TABLE(0xDA0) // scountovf
@@ -2276,7 +2275,7 @@ tsbi_instr_table:
         TSBI_CSR_INSTR_TABLE(0xB1D) // mhpmcounter29
         TSBI_CSR_INSTR_TABLE(0xB1E) // mhpmcounter30
         TSBI_CSR_INSTR_TABLE(0xB1F) // mhpmcounter31
-          #if (UDB_MXLEN==32)
+        #if (UDB_MXLEN==32)
         TSBI_CSR_INSTR_TABLE(0x723) // mhpmevent3h
         TSBI_CSR_INSTR_TABLE(0xB83) // mhpmcounter3h
         TSBI_CSR_INSTR_TABLE(0x724) // mhpmevent4h
@@ -2335,7 +2334,7 @@ tsbi_instr_table:
         TSBI_CSR_INSTR_TABLE(0xB9D) // mhpmcounter29h
         TSBI_CSR_INSTR_TABLE(0xB9E) // mhpmcounter30h
         TSBI_CSR_INSTR_TABLE(0xB9F) // mhpmcounter31h
-          #endif
+        #endif  // UDB_MXLEN==32
         #endif  // SSCOFPMF_SUPPORTED
         .word 0 // sentinel to mark end of table
 

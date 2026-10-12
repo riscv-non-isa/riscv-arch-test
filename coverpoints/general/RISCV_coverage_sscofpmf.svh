@@ -25,11 +25,8 @@
         `define SSCOFPMF_MHPMEVENTH     `SSCOFPMF_CSRH(mhpmevent, `RVMODEL_HPM_COUNTER)
         `define SSCOFPMF_MHPMCOUNTER    `SSCOFPMF_CSR(mhpmcounter, `RVMODEL_HPM_COUNTER)
         `define SSCOFPMF_MHPMCOUNTERH   `SSCOFPMF_CSRH(mhpmcounter, `RVMODEL_HPM_COUNTER)
-    `endif
-
-    // A counter preset to all 1s holds 2^width - 1
-    `ifndef SSCOFPMF_COUNTER_MAX
-        `define SSCOFPMF_COUNTER_MAX ((64'd1 << `SSCOFPMF_WIDTH(`RVMODEL_HPM_COUNTER)) - 64'd1)
+        // A counter preset to all 1s holds 2^width - 1
+        `define SSCOFPMF_COUNTER_MAX    ((64'd1 << `SSCOFPMF_WIDTH(`RVMODEL_HPM_COUNTER)) - 64'd1)
     `endif
     `ifdef UDB_MXLEN_64
         `ifdef H_SUPPORTED
