@@ -10,210 +10,178 @@
 // SPDX-License-Identifier: Apache-2.0
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
-`ifdef ZICNTR_SUPPORTED
-    ZktZicntr_add_cg = new(); ZktZicntr_add_cg.set_inst_name("obj_ZktZicntr_add");
-    ZktZicntr_addi_cg = new(); ZktZicntr_addi_cg.set_inst_name("obj_ZktZicntr_addi");
-    ZktZicntr_and_cg = new(); ZktZicntr_and_cg.set_inst_name("obj_ZktZicntr_and");
-    ZktZicntr_andi_cg = new(); ZktZicntr_andi_cg.set_inst_name("obj_ZktZicntr_andi");
-    ZktZicntr_auipc_cg = new(); ZktZicntr_auipc_cg.set_inst_name("obj_ZktZicntr_auipc");
-    ZktZicntr_lui_cg = new(); ZktZicntr_lui_cg.set_inst_name("obj_ZktZicntr_lui");
-    ZktZicntr_or_cg = new(); ZktZicntr_or_cg.set_inst_name("obj_ZktZicntr_or");
-    ZktZicntr_ori_cg = new(); ZktZicntr_ori_cg.set_inst_name("obj_ZktZicntr_ori");
-    ZktZicntr_sll_cg = new(); ZktZicntr_sll_cg.set_inst_name("obj_ZktZicntr_sll");
-    ZktZicntr_slli_cg = new(); ZktZicntr_slli_cg.set_inst_name("obj_ZktZicntr_slli");
-    ZktZicntr_slt_cg = new(); ZktZicntr_slt_cg.set_inst_name("obj_ZktZicntr_slt");
-    ZktZicntr_slti_cg = new(); ZktZicntr_slti_cg.set_inst_name("obj_ZktZicntr_slti");
-    ZktZicntr_sltiu_cg = new(); ZktZicntr_sltiu_cg.set_inst_name("obj_ZktZicntr_sltiu");
-    ZktZicntr_sltu_cg = new(); ZktZicntr_sltu_cg.set_inst_name("obj_ZktZicntr_sltu");
-    ZktZicntr_sra_cg = new(); ZktZicntr_sra_cg.set_inst_name("obj_ZktZicntr_sra");
-    ZktZicntr_srai_cg = new(); ZktZicntr_srai_cg.set_inst_name("obj_ZktZicntr_srai");
-    ZktZicntr_srl_cg = new(); ZktZicntr_srl_cg.set_inst_name("obj_ZktZicntr_srl");
-    ZktZicntr_srli_cg = new(); ZktZicntr_srli_cg.set_inst_name("obj_ZktZicntr_srli");
-    ZktZicntr_sub_cg = new(); ZktZicntr_sub_cg.set_inst_name("obj_ZktZicntr_sub");
-    ZktZicntr_xor_cg = new(); ZktZicntr_xor_cg.set_inst_name("obj_ZktZicntr_xor");
-    ZktZicntr_xori_cg = new(); ZktZicntr_xori_cg.set_inst_name("obj_ZktZicntr_xori");
+    Zkt_add_cg = new(); Zkt_add_cg.set_inst_name("obj_Zkt_add");
+    Zkt_addi_cg = new(); Zkt_addi_cg.set_inst_name("obj_Zkt_addi");
+    Zkt_and_cg = new(); Zkt_and_cg.set_inst_name("obj_Zkt_and");
+    Zkt_andi_cg = new(); Zkt_andi_cg.set_inst_name("obj_Zkt_andi");
+    Zkt_auipc_cg = new(); Zkt_auipc_cg.set_inst_name("obj_Zkt_auipc");
+    Zkt_lui_cg = new(); Zkt_lui_cg.set_inst_name("obj_Zkt_lui");
+    Zkt_or_cg = new(); Zkt_or_cg.set_inst_name("obj_Zkt_or");
+    Zkt_ori_cg = new(); Zkt_ori_cg.set_inst_name("obj_Zkt_ori");
+    Zkt_sll_cg = new(); Zkt_sll_cg.set_inst_name("obj_Zkt_sll");
+    Zkt_slli_cg = new(); Zkt_slli_cg.set_inst_name("obj_Zkt_slli");
+    Zkt_slt_cg = new(); Zkt_slt_cg.set_inst_name("obj_Zkt_slt");
+    Zkt_slti_cg = new(); Zkt_slti_cg.set_inst_name("obj_Zkt_slti");
+    Zkt_sltiu_cg = new(); Zkt_sltiu_cg.set_inst_name("obj_Zkt_sltiu");
+    Zkt_sltu_cg = new(); Zkt_sltu_cg.set_inst_name("obj_Zkt_sltu");
+    Zkt_sra_cg = new(); Zkt_sra_cg.set_inst_name("obj_Zkt_sra");
+    Zkt_srai_cg = new(); Zkt_srai_cg.set_inst_name("obj_Zkt_srai");
+    Zkt_srl_cg = new(); Zkt_srl_cg.set_inst_name("obj_Zkt_srl");
+    Zkt_srli_cg = new(); Zkt_srli_cg.set_inst_name("obj_Zkt_srli");
+    Zkt_sub_cg = new(); Zkt_sub_cg.set_inst_name("obj_Zkt_sub");
+    Zkt_xor_cg = new(); Zkt_xor_cg.set_inst_name("obj_Zkt_xor");
+    Zkt_xori_cg = new(); Zkt_xori_cg.set_inst_name("obj_Zkt_xori");
 `ifdef UDB_MXLEN_64
-    ZktZicntr_addiw_cg = new(); ZktZicntr_addiw_cg.set_inst_name("obj_ZktZicntr_addiw");
-    ZktZicntr_addw_cg = new(); ZktZicntr_addw_cg.set_inst_name("obj_ZktZicntr_addw");
-    ZktZicntr_slliw_cg = new(); ZktZicntr_slliw_cg.set_inst_name("obj_ZktZicntr_slliw");
-    ZktZicntr_sllw_cg = new(); ZktZicntr_sllw_cg.set_inst_name("obj_ZktZicntr_sllw");
-    ZktZicntr_sraiw_cg = new(); ZktZicntr_sraiw_cg.set_inst_name("obj_ZktZicntr_sraiw");
-    ZktZicntr_sraw_cg = new(); ZktZicntr_sraw_cg.set_inst_name("obj_ZktZicntr_sraw");
-    ZktZicntr_srliw_cg = new(); ZktZicntr_srliw_cg.set_inst_name("obj_ZktZicntr_srliw");
-    ZktZicntr_srlw_cg = new(); ZktZicntr_srlw_cg.set_inst_name("obj_ZktZicntr_srlw");
-    ZktZicntr_subw_cg = new(); ZktZicntr_subw_cg.set_inst_name("obj_ZktZicntr_subw");
+    Zkt_addiw_cg = new(); Zkt_addiw_cg.set_inst_name("obj_Zkt_addiw");
+    Zkt_addw_cg = new(); Zkt_addw_cg.set_inst_name("obj_Zkt_addw");
+    Zkt_slliw_cg = new(); Zkt_slliw_cg.set_inst_name("obj_Zkt_slliw");
+    Zkt_sllw_cg = new(); Zkt_sllw_cg.set_inst_name("obj_Zkt_sllw");
+    Zkt_sraiw_cg = new(); Zkt_sraiw_cg.set_inst_name("obj_Zkt_sraiw");
+    Zkt_sraw_cg = new(); Zkt_sraw_cg.set_inst_name("obj_Zkt_sraw");
+    Zkt_srliw_cg = new(); Zkt_srliw_cg.set_inst_name("obj_Zkt_srliw");
+    Zkt_srlw_cg = new(); Zkt_srlw_cg.set_inst_name("obj_Zkt_srlw");
+    Zkt_subw_cg = new(); Zkt_subw_cg.set_inst_name("obj_Zkt_subw");
 `endif
-`endif
-`ifdef ZICNTR_SUPPORTED
 `ifdef ZBB_SUPPORTED
-    ZktZicntrZbb_andn_cg = new(); ZktZicntrZbb_andn_cg.set_inst_name("obj_ZktZicntrZbb_andn");
-    ZktZicntrZbb_orn_cg = new(); ZktZicntrZbb_orn_cg.set_inst_name("obj_ZktZicntrZbb_orn");
-    ZktZicntrZbb_rev8_cg = new(); ZktZicntrZbb_rev8_cg.set_inst_name("obj_ZktZicntrZbb_rev8");
-    ZktZicntrZbb_rol_cg = new(); ZktZicntrZbb_rol_cg.set_inst_name("obj_ZktZicntrZbb_rol");
-    ZktZicntrZbb_ror_cg = new(); ZktZicntrZbb_ror_cg.set_inst_name("obj_ZktZicntrZbb_ror");
-    ZktZicntrZbb_rori_cg = new(); ZktZicntrZbb_rori_cg.set_inst_name("obj_ZktZicntrZbb_rori");
-    ZktZicntrZbb_xnor_cg = new(); ZktZicntrZbb_xnor_cg.set_inst_name("obj_ZktZicntrZbb_xnor");
+    ZktZbb_andn_cg = new(); ZktZbb_andn_cg.set_inst_name("obj_ZktZbb_andn");
+    ZktZbb_orn_cg = new(); ZktZbb_orn_cg.set_inst_name("obj_ZktZbb_orn");
+    ZktZbb_rev8_cg = new(); ZktZbb_rev8_cg.set_inst_name("obj_ZktZbb_rev8");
+    ZktZbb_rol_cg = new(); ZktZbb_rol_cg.set_inst_name("obj_ZktZbb_rol");
+    ZktZbb_ror_cg = new(); ZktZbb_ror_cg.set_inst_name("obj_ZktZbb_ror");
+    ZktZbb_rori_cg = new(); ZktZbb_rori_cg.set_inst_name("obj_ZktZbb_rori");
+    ZktZbb_xnor_cg = new(); ZktZbb_xnor_cg.set_inst_name("obj_ZktZbb_xnor");
 `ifdef UDB_MXLEN_64
-    ZktZicntrZbb_rolw_cg = new(); ZktZicntrZbb_rolw_cg.set_inst_name("obj_ZktZicntrZbb_rolw");
-    ZktZicntrZbb_roriw_cg = new(); ZktZicntrZbb_roriw_cg.set_inst_name("obj_ZktZicntrZbb_roriw");
-    ZktZicntrZbb_rorw_cg = new(); ZktZicntrZbb_rorw_cg.set_inst_name("obj_ZktZicntrZbb_rorw");
+    ZktZbb_rolw_cg = new(); ZktZbb_rolw_cg.set_inst_name("obj_ZktZbb_rolw");
+    ZktZbb_roriw_cg = new(); ZktZbb_roriw_cg.set_inst_name("obj_ZktZbb_roriw");
+    ZktZbb_rorw_cg = new(); ZktZbb_rorw_cg.set_inst_name("obj_ZktZbb_rorw");
 `endif
 `endif
-`endif
-`ifdef ZICNTR_SUPPORTED
 `ifdef ZBC_SUPPORTED
-    ZktZicntrZbc_clmul_cg = new(); ZktZicntrZbc_clmul_cg.set_inst_name("obj_ZktZicntrZbc_clmul");
-    ZktZicntrZbc_clmulh_cg = new(); ZktZicntrZbc_clmulh_cg.set_inst_name("obj_ZktZicntrZbc_clmulh");
+    ZktZbc_clmul_cg = new(); ZktZbc_clmul_cg.set_inst_name("obj_ZktZbc_clmul");
+    ZktZbc_clmulh_cg = new(); ZktZbc_clmulh_cg.set_inst_name("obj_ZktZbc_clmulh");
 `endif
-`endif
-`ifdef ZICNTR_SUPPORTED
 `ifdef ZBKB_SUPPORTED
-    ZktZicntrZbkb_andn_cg = new(); ZktZicntrZbkb_andn_cg.set_inst_name("obj_ZktZicntrZbkb_andn");
-    ZktZicntrZbkb_brev8_cg = new(); ZktZicntrZbkb_brev8_cg.set_inst_name("obj_ZktZicntrZbkb_brev8");
-    ZktZicntrZbkb_orn_cg = new(); ZktZicntrZbkb_orn_cg.set_inst_name("obj_ZktZicntrZbkb_orn");
-    ZktZicntrZbkb_pack_cg = new(); ZktZicntrZbkb_pack_cg.set_inst_name("obj_ZktZicntrZbkb_pack");
-    ZktZicntrZbkb_packh_cg = new(); ZktZicntrZbkb_packh_cg.set_inst_name("obj_ZktZicntrZbkb_packh");
-    ZktZicntrZbkb_rev8_cg = new(); ZktZicntrZbkb_rev8_cg.set_inst_name("obj_ZktZicntrZbkb_rev8");
-    ZktZicntrZbkb_rol_cg = new(); ZktZicntrZbkb_rol_cg.set_inst_name("obj_ZktZicntrZbkb_rol");
-    ZktZicntrZbkb_ror_cg = new(); ZktZicntrZbkb_ror_cg.set_inst_name("obj_ZktZicntrZbkb_ror");
-    ZktZicntrZbkb_rori_cg = new(); ZktZicntrZbkb_rori_cg.set_inst_name("obj_ZktZicntrZbkb_rori");
-    ZktZicntrZbkb_xnor_cg = new(); ZktZicntrZbkb_xnor_cg.set_inst_name("obj_ZktZicntrZbkb_xnor");
+    ZktZbkb_andn_cg = new(); ZktZbkb_andn_cg.set_inst_name("obj_ZktZbkb_andn");
+    ZktZbkb_brev8_cg = new(); ZktZbkb_brev8_cg.set_inst_name("obj_ZktZbkb_brev8");
+    ZktZbkb_orn_cg = new(); ZktZbkb_orn_cg.set_inst_name("obj_ZktZbkb_orn");
+    ZktZbkb_pack_cg = new(); ZktZbkb_pack_cg.set_inst_name("obj_ZktZbkb_pack");
+    ZktZbkb_packh_cg = new(); ZktZbkb_packh_cg.set_inst_name("obj_ZktZbkb_packh");
+    ZktZbkb_rev8_cg = new(); ZktZbkb_rev8_cg.set_inst_name("obj_ZktZbkb_rev8");
+    ZktZbkb_rol_cg = new(); ZktZbkb_rol_cg.set_inst_name("obj_ZktZbkb_rol");
+    ZktZbkb_ror_cg = new(); ZktZbkb_ror_cg.set_inst_name("obj_ZktZbkb_ror");
+    ZktZbkb_rori_cg = new(); ZktZbkb_rori_cg.set_inst_name("obj_ZktZbkb_rori");
+    ZktZbkb_xnor_cg = new(); ZktZbkb_xnor_cg.set_inst_name("obj_ZktZbkb_xnor");
 `ifdef UDB_MXLEN_32
-    ZktZicntrZbkb_unzip_cg = new(); ZktZicntrZbkb_unzip_cg.set_inst_name("obj_ZktZicntrZbkb_unzip");
-    ZktZicntrZbkb_zip_cg = new(); ZktZicntrZbkb_zip_cg.set_inst_name("obj_ZktZicntrZbkb_zip");
+    ZktZbkb_unzip_cg = new(); ZktZbkb_unzip_cg.set_inst_name("obj_ZktZbkb_unzip");
+    ZktZbkb_zip_cg = new(); ZktZbkb_zip_cg.set_inst_name("obj_ZktZbkb_zip");
 `endif
 `ifdef UDB_MXLEN_64
-    ZktZicntrZbkb_packw_cg = new(); ZktZicntrZbkb_packw_cg.set_inst_name("obj_ZktZicntrZbkb_packw");
-    ZktZicntrZbkb_rolw_cg = new(); ZktZicntrZbkb_rolw_cg.set_inst_name("obj_ZktZicntrZbkb_rolw");
-    ZktZicntrZbkb_roriw_cg = new(); ZktZicntrZbkb_roriw_cg.set_inst_name("obj_ZktZicntrZbkb_roriw");
-    ZktZicntrZbkb_rorw_cg = new(); ZktZicntrZbkb_rorw_cg.set_inst_name("obj_ZktZicntrZbkb_rorw");
+    ZktZbkb_packw_cg = new(); ZktZbkb_packw_cg.set_inst_name("obj_ZktZbkb_packw");
+    ZktZbkb_rolw_cg = new(); ZktZbkb_rolw_cg.set_inst_name("obj_ZktZbkb_rolw");
+    ZktZbkb_roriw_cg = new(); ZktZbkb_roriw_cg.set_inst_name("obj_ZktZbkb_roriw");
+    ZktZbkb_rorw_cg = new(); ZktZbkb_rorw_cg.set_inst_name("obj_ZktZbkb_rorw");
 `endif
 `endif
-`endif
-`ifdef ZICNTR_SUPPORTED
 `ifdef ZBKC_SUPPORTED
-    ZktZicntrZbkc_clmul_cg = new(); ZktZicntrZbkc_clmul_cg.set_inst_name("obj_ZktZicntrZbkc_clmul");
-    ZktZicntrZbkc_clmulh_cg = new(); ZktZicntrZbkc_clmulh_cg.set_inst_name("obj_ZktZicntrZbkc_clmulh");
+    ZktZbkc_clmul_cg = new(); ZktZbkc_clmul_cg.set_inst_name("obj_ZktZbkc_clmul");
+    ZktZbkc_clmulh_cg = new(); ZktZbkc_clmulh_cg.set_inst_name("obj_ZktZbkc_clmulh");
 `endif
-`endif
-`ifdef ZICNTR_SUPPORTED
 `ifdef ZBKX_SUPPORTED
-    ZktZicntrZbkx_xperm4_cg = new(); ZktZicntrZbkx_xperm4_cg.set_inst_name("obj_ZktZicntrZbkx_xperm4");
-    ZktZicntrZbkx_xperm8_cg = new(); ZktZicntrZbkx_xperm8_cg.set_inst_name("obj_ZktZicntrZbkx_xperm8");
+    ZktZbkx_xperm4_cg = new(); ZktZbkx_xperm4_cg.set_inst_name("obj_ZktZbkx_xperm4");
+    ZktZbkx_xperm8_cg = new(); ZktZbkx_xperm8_cg.set_inst_name("obj_ZktZbkx_xperm8");
 `endif
-`endif
-`ifdef ZICNTR_SUPPORTED
 `ifdef ZCA_SUPPORTED
-    ZktZicntrZca_c_add_cg = new(); ZktZicntrZca_c_add_cg.set_inst_name("obj_ZktZicntrZca_c_add");
-    ZktZicntrZca_c_addi_cg = new(); ZktZicntrZca_c_addi_cg.set_inst_name("obj_ZktZicntrZca_c_addi");
-    ZktZicntrZca_c_and_cg = new(); ZktZicntrZca_c_and_cg.set_inst_name("obj_ZktZicntrZca_c_and");
-    ZktZicntrZca_c_andi_cg = new(); ZktZicntrZca_c_andi_cg.set_inst_name("obj_ZktZicntrZca_c_andi");
-    ZktZicntrZca_c_lui_cg = new(); ZktZicntrZca_c_lui_cg.set_inst_name("obj_ZktZicntrZca_c_lui");
-    ZktZicntrZca_c_mv_cg = new(); ZktZicntrZca_c_mv_cg.set_inst_name("obj_ZktZicntrZca_c_mv");
-    ZktZicntrZca_c_nop_cg = new(); ZktZicntrZca_c_nop_cg.set_inst_name("obj_ZktZicntrZca_c_nop");
-    ZktZicntrZca_c_or_cg = new(); ZktZicntrZca_c_or_cg.set_inst_name("obj_ZktZicntrZca_c_or");
-    ZktZicntrZca_c_slli_cg = new(); ZktZicntrZca_c_slli_cg.set_inst_name("obj_ZktZicntrZca_c_slli");
-    ZktZicntrZca_c_srai_cg = new(); ZktZicntrZca_c_srai_cg.set_inst_name("obj_ZktZicntrZca_c_srai");
-    ZktZicntrZca_c_srli_cg = new(); ZktZicntrZca_c_srli_cg.set_inst_name("obj_ZktZicntrZca_c_srli");
-    ZktZicntrZca_c_sub_cg = new(); ZktZicntrZca_c_sub_cg.set_inst_name("obj_ZktZicntrZca_c_sub");
-    ZktZicntrZca_c_xor_cg = new(); ZktZicntrZca_c_xor_cg.set_inst_name("obj_ZktZicntrZca_c_xor");
+    ZktZca_c_add_cg = new(); ZktZca_c_add_cg.set_inst_name("obj_ZktZca_c_add");
+    ZktZca_c_addi_cg = new(); ZktZca_c_addi_cg.set_inst_name("obj_ZktZca_c_addi");
+    ZktZca_c_and_cg = new(); ZktZca_c_and_cg.set_inst_name("obj_ZktZca_c_and");
+    ZktZca_c_andi_cg = new(); ZktZca_c_andi_cg.set_inst_name("obj_ZktZca_c_andi");
+    ZktZca_c_lui_cg = new(); ZktZca_c_lui_cg.set_inst_name("obj_ZktZca_c_lui");
+    ZktZca_c_mv_cg = new(); ZktZca_c_mv_cg.set_inst_name("obj_ZktZca_c_mv");
+    ZktZca_c_nop_cg = new(); ZktZca_c_nop_cg.set_inst_name("obj_ZktZca_c_nop");
+    ZktZca_c_or_cg = new(); ZktZca_c_or_cg.set_inst_name("obj_ZktZca_c_or");
+    ZktZca_c_slli_cg = new(); ZktZca_c_slli_cg.set_inst_name("obj_ZktZca_c_slli");
+    ZktZca_c_srai_cg = new(); ZktZca_c_srai_cg.set_inst_name("obj_ZktZca_c_srai");
+    ZktZca_c_srli_cg = new(); ZktZca_c_srli_cg.set_inst_name("obj_ZktZca_c_srli");
+    ZktZca_c_sub_cg = new(); ZktZca_c_sub_cg.set_inst_name("obj_ZktZca_c_sub");
+    ZktZca_c_xor_cg = new(); ZktZca_c_xor_cg.set_inst_name("obj_ZktZca_c_xor");
 `ifdef UDB_MXLEN_64
-    ZktZicntrZca_c_addiw_cg = new(); ZktZicntrZca_c_addiw_cg.set_inst_name("obj_ZktZicntrZca_c_addiw");
-    ZktZicntrZca_c_addw_cg = new(); ZktZicntrZca_c_addw_cg.set_inst_name("obj_ZktZicntrZca_c_addw");
-    ZktZicntrZca_c_subw_cg = new(); ZktZicntrZca_c_subw_cg.set_inst_name("obj_ZktZicntrZca_c_subw");
+    ZktZca_c_addiw_cg = new(); ZktZca_c_addiw_cg.set_inst_name("obj_ZktZca_c_addiw");
+    ZktZca_c_addw_cg = new(); ZktZca_c_addw_cg.set_inst_name("obj_ZktZca_c_addw");
+    ZktZca_c_subw_cg = new(); ZktZca_c_subw_cg.set_inst_name("obj_ZktZca_c_subw");
 `endif
 `endif
-`endif
-`ifdef ZICNTR_SUPPORTED
 `ifdef ZCB_SUPPORTED
-    ZktZicntrZcb_c_not_cg = new(); ZktZicntrZcb_c_not_cg.set_inst_name("obj_ZktZicntrZcb_c_not");
-    ZktZicntrZcb_c_zext_b_cg = new(); ZktZicntrZcb_c_zext_b_cg.set_inst_name("obj_ZktZicntrZcb_c_zext_b");
+    ZktZcb_c_not_cg = new(); ZktZcb_c_not_cg.set_inst_name("obj_ZktZcb_c_not");
+    ZktZcb_c_zext_b_cg = new(); ZktZcb_c_zext_b_cg.set_inst_name("obj_ZktZcb_c_zext_b");
 `endif
-`endif
-`ifdef ZICNTR_SUPPORTED
 `ifdef ZCB_SUPPORTED
 `ifdef ZMMUL_SUPPORTED
-    ZktZicntrZcbZmmul_c_mul_cg = new(); ZktZicntrZcbZmmul_c_mul_cg.set_inst_name("obj_ZktZicntrZcbZmmul_c_mul");
+    ZktZcbZmmul_c_mul_cg = new(); ZktZcbZmmul_c_mul_cg.set_inst_name("obj_ZktZcbZmmul_c_mul");
 `endif
 `endif
-`endif
-`ifdef ZICNTR_SUPPORTED
 `ifdef ZICOND_SUPPORTED
-    ZktZicntrZicond_czero_eqz_cg = new(); ZktZicntrZicond_czero_eqz_cg.set_inst_name("obj_ZktZicntrZicond_czero_eqz");
-    ZktZicntrZicond_czero_nez_cg = new(); ZktZicntrZicond_czero_nez_cg.set_inst_name("obj_ZktZicntrZicond_czero_nez");
+    ZktZicond_czero_eqz_cg = new(); ZktZicond_czero_eqz_cg.set_inst_name("obj_ZktZicond_czero_eqz");
+    ZktZicond_czero_nez_cg = new(); ZktZicond_czero_nez_cg.set_inst_name("obj_ZktZicond_czero_nez");
 `endif
-`endif
-`ifdef ZICNTR_SUPPORTED
 `ifdef ZKND_SUPPORTED
 `ifdef UDB_MXLEN_32
-    ZktZicntrZknd_aes32dsi_cg = new(); ZktZicntrZknd_aes32dsi_cg.set_inst_name("obj_ZktZicntrZknd_aes32dsi");
-    ZktZicntrZknd_aes32dsmi_cg = new(); ZktZicntrZknd_aes32dsmi_cg.set_inst_name("obj_ZktZicntrZknd_aes32dsmi");
+    ZktZknd_aes32dsi_cg = new(); ZktZknd_aes32dsi_cg.set_inst_name("obj_ZktZknd_aes32dsi");
+    ZktZknd_aes32dsmi_cg = new(); ZktZknd_aes32dsmi_cg.set_inst_name("obj_ZktZknd_aes32dsmi");
 `endif
 `ifdef UDB_MXLEN_64
-    ZktZicntrZknd_aes64ds_cg = new(); ZktZicntrZknd_aes64ds_cg.set_inst_name("obj_ZktZicntrZknd_aes64ds");
-    ZktZicntrZknd_aes64dsm_cg = new(); ZktZicntrZknd_aes64dsm_cg.set_inst_name("obj_ZktZicntrZknd_aes64dsm");
-    ZktZicntrZknd_aes64im_cg = new(); ZktZicntrZknd_aes64im_cg.set_inst_name("obj_ZktZicntrZknd_aes64im");
-    ZktZicntrZknd_aes64ks1i_cg = new(); ZktZicntrZknd_aes64ks1i_cg.set_inst_name("obj_ZktZicntrZknd_aes64ks1i");
-    ZktZicntrZknd_aes64ks2_cg = new(); ZktZicntrZknd_aes64ks2_cg.set_inst_name("obj_ZktZicntrZknd_aes64ks2");
+    ZktZknd_aes64ds_cg = new(); ZktZknd_aes64ds_cg.set_inst_name("obj_ZktZknd_aes64ds");
+    ZktZknd_aes64dsm_cg = new(); ZktZknd_aes64dsm_cg.set_inst_name("obj_ZktZknd_aes64dsm");
+    ZktZknd_aes64im_cg = new(); ZktZknd_aes64im_cg.set_inst_name("obj_ZktZknd_aes64im");
+    ZktZknd_aes64ks1i_cg = new(); ZktZknd_aes64ks1i_cg.set_inst_name("obj_ZktZknd_aes64ks1i");
+    ZktZknd_aes64ks2_cg = new(); ZktZknd_aes64ks2_cg.set_inst_name("obj_ZktZknd_aes64ks2");
 `endif
 `endif
-`endif
-`ifdef ZICNTR_SUPPORTED
 `ifdef ZKNE_SUPPORTED
 `ifdef UDB_MXLEN_32
-    ZktZicntrZkne_aes32esi_cg = new(); ZktZicntrZkne_aes32esi_cg.set_inst_name("obj_ZktZicntrZkne_aes32esi");
-    ZktZicntrZkne_aes32esmi_cg = new(); ZktZicntrZkne_aes32esmi_cg.set_inst_name("obj_ZktZicntrZkne_aes32esmi");
+    ZktZkne_aes32esi_cg = new(); ZktZkne_aes32esi_cg.set_inst_name("obj_ZktZkne_aes32esi");
+    ZktZkne_aes32esmi_cg = new(); ZktZkne_aes32esmi_cg.set_inst_name("obj_ZktZkne_aes32esmi");
 `endif
 `ifdef UDB_MXLEN_64
-    ZktZicntrZkne_aes64es_cg = new(); ZktZicntrZkne_aes64es_cg.set_inst_name("obj_ZktZicntrZkne_aes64es");
-    ZktZicntrZkne_aes64esm_cg = new(); ZktZicntrZkne_aes64esm_cg.set_inst_name("obj_ZktZicntrZkne_aes64esm");
-    ZktZicntrZkne_aes64ks1i_cg = new(); ZktZicntrZkne_aes64ks1i_cg.set_inst_name("obj_ZktZicntrZkne_aes64ks1i");
-    ZktZicntrZkne_aes64ks2_cg = new(); ZktZicntrZkne_aes64ks2_cg.set_inst_name("obj_ZktZicntrZkne_aes64ks2");
+    ZktZkne_aes64es_cg = new(); ZktZkne_aes64es_cg.set_inst_name("obj_ZktZkne_aes64es");
+    ZktZkne_aes64esm_cg = new(); ZktZkne_aes64esm_cg.set_inst_name("obj_ZktZkne_aes64esm");
+    ZktZkne_aes64ks1i_cg = new(); ZktZkne_aes64ks1i_cg.set_inst_name("obj_ZktZkne_aes64ks1i");
+    ZktZkne_aes64ks2_cg = new(); ZktZkne_aes64ks2_cg.set_inst_name("obj_ZktZkne_aes64ks2");
 `endif
 `endif
-`endif
-`ifdef ZICNTR_SUPPORTED
 `ifdef ZKNH_SUPPORTED
-    ZktZicntrZknh_sha256sig0_cg = new(); ZktZicntrZknh_sha256sig0_cg.set_inst_name("obj_ZktZicntrZknh_sha256sig0");
-    ZktZicntrZknh_sha256sig1_cg = new(); ZktZicntrZknh_sha256sig1_cg.set_inst_name("obj_ZktZicntrZknh_sha256sig1");
-    ZktZicntrZknh_sha256sum0_cg = new(); ZktZicntrZknh_sha256sum0_cg.set_inst_name("obj_ZktZicntrZknh_sha256sum0");
-    ZktZicntrZknh_sha256sum1_cg = new(); ZktZicntrZknh_sha256sum1_cg.set_inst_name("obj_ZktZicntrZknh_sha256sum1");
+    ZktZknh_sha256sig0_cg = new(); ZktZknh_sha256sig0_cg.set_inst_name("obj_ZktZknh_sha256sig0");
+    ZktZknh_sha256sig1_cg = new(); ZktZknh_sha256sig1_cg.set_inst_name("obj_ZktZknh_sha256sig1");
+    ZktZknh_sha256sum0_cg = new(); ZktZknh_sha256sum0_cg.set_inst_name("obj_ZktZknh_sha256sum0");
+    ZktZknh_sha256sum1_cg = new(); ZktZknh_sha256sum1_cg.set_inst_name("obj_ZktZknh_sha256sum1");
 `ifdef UDB_MXLEN_32
-    ZktZicntrZknh_sha512sig0h_cg = new(); ZktZicntrZknh_sha512sig0h_cg.set_inst_name("obj_ZktZicntrZknh_sha512sig0h");
-    ZktZicntrZknh_sha512sig0l_cg = new(); ZktZicntrZknh_sha512sig0l_cg.set_inst_name("obj_ZktZicntrZknh_sha512sig0l");
-    ZktZicntrZknh_sha512sig1h_cg = new(); ZktZicntrZknh_sha512sig1h_cg.set_inst_name("obj_ZktZicntrZknh_sha512sig1h");
-    ZktZicntrZknh_sha512sig1l_cg = new(); ZktZicntrZknh_sha512sig1l_cg.set_inst_name("obj_ZktZicntrZknh_sha512sig1l");
-    ZktZicntrZknh_sha512sum0r_cg = new(); ZktZicntrZknh_sha512sum0r_cg.set_inst_name("obj_ZktZicntrZknh_sha512sum0r");
-    ZktZicntrZknh_sha512sum1r_cg = new(); ZktZicntrZknh_sha512sum1r_cg.set_inst_name("obj_ZktZicntrZknh_sha512sum1r");
+    ZktZknh_sha512sig0h_cg = new(); ZktZknh_sha512sig0h_cg.set_inst_name("obj_ZktZknh_sha512sig0h");
+    ZktZknh_sha512sig0l_cg = new(); ZktZknh_sha512sig0l_cg.set_inst_name("obj_ZktZknh_sha512sig0l");
+    ZktZknh_sha512sig1h_cg = new(); ZktZknh_sha512sig1h_cg.set_inst_name("obj_ZktZknh_sha512sig1h");
+    ZktZknh_sha512sig1l_cg = new(); ZktZknh_sha512sig1l_cg.set_inst_name("obj_ZktZknh_sha512sig1l");
+    ZktZknh_sha512sum0r_cg = new(); ZktZknh_sha512sum0r_cg.set_inst_name("obj_ZktZknh_sha512sum0r");
+    ZktZknh_sha512sum1r_cg = new(); ZktZknh_sha512sum1r_cg.set_inst_name("obj_ZktZknh_sha512sum1r");
 `endif
 `ifdef UDB_MXLEN_64
-    ZktZicntrZknh_sha512sig0_cg = new(); ZktZicntrZknh_sha512sig0_cg.set_inst_name("obj_ZktZicntrZknh_sha512sig0");
-    ZktZicntrZknh_sha512sig1_cg = new(); ZktZicntrZknh_sha512sig1_cg.set_inst_name("obj_ZktZicntrZknh_sha512sig1");
-    ZktZicntrZknh_sha512sum0_cg = new(); ZktZicntrZknh_sha512sum0_cg.set_inst_name("obj_ZktZicntrZknh_sha512sum0");
-    ZktZicntrZknh_sha512sum1_cg = new(); ZktZicntrZknh_sha512sum1_cg.set_inst_name("obj_ZktZicntrZknh_sha512sum1");
+    ZktZknh_sha512sig0_cg = new(); ZktZknh_sha512sig0_cg.set_inst_name("obj_ZktZknh_sha512sig0");
+    ZktZknh_sha512sig1_cg = new(); ZktZknh_sha512sig1_cg.set_inst_name("obj_ZktZknh_sha512sig1");
+    ZktZknh_sha512sum0_cg = new(); ZktZknh_sha512sum0_cg.set_inst_name("obj_ZktZknh_sha512sum0");
+    ZktZknh_sha512sum1_cg = new(); ZktZknh_sha512sum1_cg.set_inst_name("obj_ZktZknh_sha512sum1");
 `endif
 `endif
-`endif
-`ifdef ZICNTR_SUPPORTED
 `ifdef ZKSED_SUPPORTED
-    ZktZicntrZksed_sm4ed_cg = new(); ZktZicntrZksed_sm4ed_cg.set_inst_name("obj_ZktZicntrZksed_sm4ed");
-    ZktZicntrZksed_sm4ks_cg = new(); ZktZicntrZksed_sm4ks_cg.set_inst_name("obj_ZktZicntrZksed_sm4ks");
+    ZktZksed_sm4ed_cg = new(); ZktZksed_sm4ed_cg.set_inst_name("obj_ZktZksed_sm4ed");
+    ZktZksed_sm4ks_cg = new(); ZktZksed_sm4ks_cg.set_inst_name("obj_ZktZksed_sm4ks");
 `endif
-`endif
-`ifdef ZICNTR_SUPPORTED
 `ifdef ZKSH_SUPPORTED
-    ZktZicntrZksh_sm3p0_cg = new(); ZktZicntrZksh_sm3p0_cg.set_inst_name("obj_ZktZicntrZksh_sm3p0");
-    ZktZicntrZksh_sm3p1_cg = new(); ZktZicntrZksh_sm3p1_cg.set_inst_name("obj_ZktZicntrZksh_sm3p1");
+    ZktZksh_sm3p0_cg = new(); ZktZksh_sm3p0_cg.set_inst_name("obj_ZktZksh_sm3p0");
+    ZktZksh_sm3p1_cg = new(); ZktZksh_sm3p1_cg.set_inst_name("obj_ZktZksh_sm3p1");
 `endif
-`endif
-`ifdef ZICNTR_SUPPORTED
 `ifdef ZMMUL_SUPPORTED
-    ZktZicntrZmmul_mul_cg = new(); ZktZicntrZmmul_mul_cg.set_inst_name("obj_ZktZicntrZmmul_mul");
-    ZktZicntrZmmul_mulh_cg = new(); ZktZicntrZmmul_mulh_cg.set_inst_name("obj_ZktZicntrZmmul_mulh");
-    ZktZicntrZmmul_mulhsu_cg = new(); ZktZicntrZmmul_mulhsu_cg.set_inst_name("obj_ZktZicntrZmmul_mulhsu");
-    ZktZicntrZmmul_mulhu_cg = new(); ZktZicntrZmmul_mulhu_cg.set_inst_name("obj_ZktZicntrZmmul_mulhu");
+    ZktZmmul_mul_cg = new(); ZktZmmul_mul_cg.set_inst_name("obj_ZktZmmul_mul");
+    ZktZmmul_mulh_cg = new(); ZktZmmul_mulh_cg.set_inst_name("obj_ZktZmmul_mulh");
+    ZktZmmul_mulhsu_cg = new(); ZktZmmul_mulhsu_cg.set_inst_name("obj_ZktZmmul_mulhsu");
+    ZktZmmul_mulhu_cg = new(); ZktZmmul_mulhu_cg.set_inst_name("obj_ZktZmmul_mulhu");
 `ifdef UDB_MXLEN_64
-    ZktZicntrZmmul_mulw_cg = new(); ZktZicntrZmmul_mulw_cg.set_inst_name("obj_ZktZicntrZmmul_mulw");
-`endif
+    ZktZmmul_mulw_cg = new(); ZktZmmul_mulw_cg.set_inst_name("obj_ZktZmmul_mulw");
 `endif
 `endif

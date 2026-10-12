@@ -8,17 +8,18 @@
 """Zkt data-independent execution latency coverpoint generators (cp_zkt_*).
 
 Zkt requires the listed instructions to take the same time for any operand data. Each testcase
-times one instruction with the cycle counter:
+times one instruction with RVTEST_CYCLE_CSR, which utils.h defines as cycle when Zicntr is supported
+and as mcycle otherwise. The mcycle tests boot to M-mode; the cycle tests boot to the lowest mode.
 
     LI(runs, 2)
   1: load the operands
     xor start, rs1, rs2            # drain: the loads complete before timing starts
     .balign 64
-    csrr start, cycle
+    csrr start, RVTEST_CYCLE_CSR
     sltu dep, start, x0            # dep = 0, but it is ready only after the first cycle read
     or src, src, dep               # src keeps its value and now depends on the first cycle read
     <instruction under test>       # reads src
-    csrr end, cycle
+    csrr end, RVTEST_CYCLE_CSR
     addi runs, runs, -1
     bnez runs, 1b                  # run twice and time the second run
 
@@ -35,10 +36,11 @@ first cycle read and hide its latency. sltu and or are themselves Zkt instructio
 constant time that cancels below. One source carries the dependency; the instruction cannot start
 until it is ready. Instructions without data operands (cp_zkt_pc) have nothing to depend on.
 
-The second read cannot take a dependency: csrrs with rs1 != x0 writes the CSR, and writing cycle
-raises an illegal-instruction exception. The method therefore assumes that CSR reads execute in
-order at commit, as is typical. A core that reads cycle early loses sensitivity but does not fail
-falsely. FENCE does not order CSR reads against arithmetic instructions, so it is not used.
+The second read cannot take a dependency: csrrs with rs1 != x0 writes the CSR. Writing cycle
+raises an illegal-instruction exception, and writing mcycle changes the count. The method therefore
+assumes that CSR reads execute in order at commit, as is typical. A core that reads the counter
+early loses sensitivity but does not fail falsely. FENCE does not order CSR reads against
+arithmetic instructions, so it is not used.
 
 Signature: reference models count one cycle per instruction, while real cores differ, so a raw
 cycle count is not portable. The first testcase's latency is the baseline, and every testcase
@@ -60,7 +62,7 @@ from testgen.instructions.params import generate_random_params
 
 @add_coverpoint_generator("cp_zkt_rs1_rs2", "cp_zkt_rs1", "cp_zkt_rs2", "cp_zkt_pc")
 def make_cp_zkt(instr_name: str, instr_type: str, coverpoint: str, test_data: TestData) -> list[TestChunk]:
-    """Time the instruction with the cycle counter across edge values of its source operands."""
+    """Time the instruction with cycle or mcycle across edge values of its source operands."""
     tc = test_data.begin_test_chunk()
     start, end, baseline, runs, dep = test_data.int_regs.get_registers(5, exclude_regs=[0])
     # x0 is excluded because rd=x0 forms are HINTs, which Zkt does not cover
@@ -113,7 +115,7 @@ def make_cp_zkt(instr_name: str, instr_type: str, coverpoint: str, test_data: Te
             tc.code.extend([setup, f"addi x{data_reg}, x{data_reg}, -{data_bytes}"])
         if loaded_regs:
             tc.code.append(f"xor x{start}, x{loaded_regs[0]}, x{loaded_regs[-1]}")  # drain the loads
-        tc.code.extend([".balign 64", f"csrr x{start}, cycle"])
+        tc.code.extend([".balign 64", f"csrr x{start}, RVTEST_CYCLE_CSR"])
         if dep_src is not None:
             # Zero-valued dependency on the first cycle read
             tc.code.extend([f"sltu x{dep}, x{start}, x0", f"or x{dep_src}, x{dep_src}, x{dep}"])
@@ -121,7 +123,7 @@ def make_cp_zkt(instr_name: str, instr_type: str, coverpoint: str, test_data: Te
             [
                 label_line,
                 test,
-                f"csrr x{end}, cycle",
+                f"csrr x{end}, RVTEST_CYCLE_CSR",
                 f"addi x{runs}, x{runs}, -1",
                 f"bnez x{runs}, 1b",
             ]

@@ -1,5 +1,5 @@
-    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle; sltu; or (or c.or)
-    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE)  {
+    // rs1 edge values of an instruction that follows the Zkt timing sequence csrr cycle (or mcycle); sltu; or (or c.or)
+    cp_zkt_rs1 : coverpoint unsigned'(ins.current.rs1_val)  iff (ins.trap == 0 & (ins.prev.inst_name == "or" | ins.prev.inst_name == "c.or") & ins.traceDataQ[ins.hart][ins.issue][2].inst_name == "sltu" & ins.traceDataQ[ins.hart][ins.issue][3].inst_name == "csrrs" & (ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_CYCLE | ins.traceDataQ[ins.hart][ins.issue][3].insn[31:20] == CSR_MCYCLE))  {
         `ifdef UDB_MXLEN_32
             bins zero     = {0};
             bins one      = {32'b00000000000000000000000000000001};

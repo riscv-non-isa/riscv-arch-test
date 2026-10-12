@@ -9,8 +9,8 @@ normative_rule_definitions:
     # Use representative coverpoints; every instruction in the Zkt testplan has a cp_zkt coverpoint
     coverpoint:
       [
-        "ZktZicntr_add_cg/cp_zkt_rs1_rs2",
-        "ZktZicntrZmmul_mulh_cg/cp_zkt_rs1_rs2",
-        "ZktZicntrZca_c_addi_cg/cp_zkt_rs1",
-        "ZktZicntr_auipc_cg/cp_zkt_pc",
+        "Zkt_add_cg/cp_zkt_rs1_rs2",
+        "ZktZmmul_mulh_cg/cp_zkt_rs1_rs2",
+        "ZktZca_c_addi_cg/cp_zkt_rs1",
+        "Zkt_auipc_cg/cp_zkt_pc",
       ]
