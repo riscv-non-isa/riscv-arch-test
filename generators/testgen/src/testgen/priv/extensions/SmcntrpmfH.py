@@ -29,15 +29,18 @@ _BODY_INSTRUCTIONS = 4
 
 
 def _write_cfg(csr: str, inhibits: list[str], reg: int) -> list[str]:
-    """Write the xINH bits of mcyclecfg or minstretcfg (bits 63:32, in the upper-half CSR on RV32)."""
+    """Write the xINH bits of mcyclecfg or minstretcfg (bits 63:32, in the upper-half CSR on RV32).
+
+    The CSRs are named by number because Clang knows their names only with Smcntrpmf in -march, which it rejects.
+    """
     return [
         "#if __riscv_xlen == 64",
         f"LI(x{reg}, {' | '.join(f'MHPMEVENT_{bit}' for bit in inhibits)})",
-        f"csrw {csr}, x{reg}",
+        f"csrw CSR_{csr.upper()}, x{reg}",
         "#else",
         f"LI(x{reg}, {' | '.join(f'MHPMEVENTH_{bit}' for bit in inhibits)})",
-        f"csrw {csr}h, x{reg}",
-        f"csrw {csr}, zero",
+        f"csrw CSR_{csr.upper()}H, x{reg}",
+        f"csrw CSR_{csr.upper()}, zero",
         "#endif",
     ]
 
@@ -74,8 +77,8 @@ def _filter_tests(test_data: TestData, counter: Literal["cycle", "instret"], mod
                 write_sigupd(val_reg, test_data),
             ]
         )
-    lines.append(f"csrw {csr}, zero")
-    lines.extend(["#if __riscv_xlen == 32", f"csrw {csr}h, zero", "#endif"])
+    lines.append(f"csrw CSR_{csr.upper()}, zero")
+    lines.extend(["#if __riscv_xlen == 32", f"csrw CSR_{csr.upper()}H, zero", "#endif"])
     test_data.int_regs.return_registers([base_reg, val_reg, body_reg])
     return lines
 
@@ -83,6 +86,8 @@ def _filter_tests(test_data: TestData, counter: Literal["cycle", "instret"], mod
 @add_priv_test_generator(
     "SmcntrpmfH",
     required_extensions=["H", "Smcntrpmf"],
+    # Smcntrpmf adds only CSRs, and Clang rejects it in -march
+    march_extensions=["H"],
     extra_defines=["#define BOOT_TO_MMODE"],
 )
 def make_smcntrpmfh(test_data: TestData) -> list[TestChunk]:

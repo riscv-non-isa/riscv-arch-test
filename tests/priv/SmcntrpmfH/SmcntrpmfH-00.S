@@ -11,7 +11,7 @@
 ##### START_TEST_CONFIG #####
 # REQUIRED_EXTENSIONS: ['I', 'H', 'Smcntrpmf']
 # # # no param constraints
-# MARCH: rv${XLEN}ih_zicsr_zifencei_smcntrpmf
+# MARCH: rv${XLEN}ih_zicsr_zifencei
 ##### END_TEST_CONFIG #####
 
 // Define the size of the signature region
@@ -37,11 +37,11 @@ RVTEST_BEGIN
 /////////////////////////////////
 #if __riscv_xlen == 64
   LI(x9, MHPMEVENT_MINH | MHPMEVENT_SINH | MHPMEVENT_UINH | MHPMEVENT_VSINH | MHPMEVENT_VUINH)
-  csrw mcyclecfg, x9
+  csrw CSR_MCYCLECFG, x9
 #else
   LI(x9, MHPMEVENTH_MINH | MHPMEVENTH_SINH | MHPMEVENTH_UINH | MHPMEVENTH_VSINH | MHPMEVENTH_VUINH)
-  csrw mcyclecfgh, x9
-  csrw mcyclecfg, zero
+  csrw CSR_MCYCLECFGH, x9
+  csrw CSR_MCYCLECFG, zero
 #endif
   csrr x13, mcycle
   RVTEST_TSBI_GOTO_VSMODE
@@ -58,11 +58,11 @@ SmcntrpmfH_cg_cp_mcyclecfg_vs_inhibit_all:
   RVTEST_SIGUPD(x2, x5, x4, x9, SmcntrpmfH_cg_cp_mcyclecfg_vs_inhibit_all, SmcntrpmfH_cg_cp_mcyclecfg_vs_inhibit_all_str)
 #if __riscv_xlen == 64
   LI(x9, MHPMEVENT_MINH | MHPMEVENT_SINH | MHPMEVENT_UINH | MHPMEVENT_VUINH)
-  csrw mcyclecfg, x9
+  csrw CSR_MCYCLECFG, x9
 #else
   LI(x9, MHPMEVENTH_MINH | MHPMEVENTH_SINH | MHPMEVENTH_UINH | MHPMEVENTH_VUINH)
-  csrw mcyclecfgh, x9
-  csrw mcyclecfg, zero
+  csrw CSR_MCYCLECFGH, x9
+  csrw CSR_MCYCLECFG, zero
 #endif
   csrr x13, mcycle
   RVTEST_TSBI_GOTO_VSMODE
@@ -77,9 +77,9 @@ SmcntrpmfH_cg_cp_mcyclecfg_vs_count_only_vs:
   snez x9, x9    # the number of cycles varies
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, SmcntrpmfH_cg_cp_mcyclecfg_vs_count_only_vs, SmcntrpmfH_cg_cp_mcyclecfg_vs_count_only_vs_str)
-  csrw mcyclecfg, zero
+  csrw CSR_MCYCLECFG, zero
 #if __riscv_xlen == 32
-  csrw mcyclecfgh, zero
+  csrw CSR_MCYCLECFGH, zero
 #endif
 
 
@@ -90,11 +90,11 @@ SmcntrpmfH_cg_cp_mcyclecfg_vs_count_only_vs:
 /////////////////////////////////
 #if __riscv_xlen == 64
   LI(x8, MHPMEVENT_MINH | MHPMEVENT_SINH | MHPMEVENT_UINH | MHPMEVENT_VSINH | MHPMEVENT_VUINH)
-  csrw mcyclecfg, x8
+  csrw CSR_MCYCLECFG, x8
 #else
   LI(x8, MHPMEVENTH_MINH | MHPMEVENTH_SINH | MHPMEVENTH_UINH | MHPMEVENTH_VSINH | MHPMEVENTH_VUINH)
-  csrw mcyclecfgh, x8
-  csrw mcyclecfg, zero
+  csrw CSR_MCYCLECFGH, x8
+  csrw CSR_MCYCLECFG, zero
 #endif
   csrr x6, mcycle
   RVTEST_TSBI_GOTO_VUMODE
@@ -111,11 +111,11 @@ SmcntrpmfH_cg_cp_mcyclecfg_vu_inhibit_all:
   RVTEST_SIGUPD(x2, x5, x4, x8, SmcntrpmfH_cg_cp_mcyclecfg_vu_inhibit_all, SmcntrpmfH_cg_cp_mcyclecfg_vu_inhibit_all_str)
 #if __riscv_xlen == 64
   LI(x8, MHPMEVENT_MINH | MHPMEVENT_SINH | MHPMEVENT_UINH | MHPMEVENT_VSINH)
-  csrw mcyclecfg, x8
+  csrw CSR_MCYCLECFG, x8
 #else
   LI(x8, MHPMEVENTH_MINH | MHPMEVENTH_SINH | MHPMEVENTH_UINH | MHPMEVENTH_VSINH)
-  csrw mcyclecfgh, x8
-  csrw mcyclecfg, zero
+  csrw CSR_MCYCLECFGH, x8
+  csrw CSR_MCYCLECFG, zero
 #endif
   csrr x6, mcycle
   RVTEST_TSBI_GOTO_VUMODE
@@ -130,9 +130,9 @@ SmcntrpmfH_cg_cp_mcyclecfg_vu_count_only_vu:
   snez x8, x8    # the number of cycles varies
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x8, SmcntrpmfH_cg_cp_mcyclecfg_vu_count_only_vu, SmcntrpmfH_cg_cp_mcyclecfg_vu_count_only_vu_str)
-  csrw mcyclecfg, zero
+  csrw CSR_MCYCLECFG, zero
 #if __riscv_xlen == 32
-  csrw mcyclecfgh, zero
+  csrw CSR_MCYCLECFGH, zero
 #endif
 
 
@@ -143,11 +143,11 @@ SmcntrpmfH_cg_cp_mcyclecfg_vu_count_only_vu:
 /////////////////////////////////
 #if __riscv_xlen == 64
   LI(x14, MHPMEVENT_MINH | MHPMEVENT_SINH | MHPMEVENT_UINH | MHPMEVENT_VSINH | MHPMEVENT_VUINH)
-  csrw minstretcfg, x14
+  csrw CSR_MINSTRETCFG, x14
 #else
   LI(x14, MHPMEVENTH_MINH | MHPMEVENTH_SINH | MHPMEVENTH_UINH | MHPMEVENTH_VSINH | MHPMEVENTH_VUINH)
-  csrw minstretcfgh, x14
-  csrw minstretcfg, zero
+  csrw CSR_MINSTRETCFGH, x14
+  csrw CSR_MINSTRETCFG, zero
 #endif
   csrr x9, minstret
   RVTEST_TSBI_GOTO_VSMODE
@@ -163,11 +163,11 @@ SmcntrpmfH_cg_cp_minstretcfg_vs_inhibit_all:
   RVTEST_SIGUPD(x2, x5, x4, x14, SmcntrpmfH_cg_cp_minstretcfg_vs_inhibit_all, SmcntrpmfH_cg_cp_minstretcfg_vs_inhibit_all_str)
 #if __riscv_xlen == 64
   LI(x14, MHPMEVENT_MINH | MHPMEVENT_SINH | MHPMEVENT_UINH | MHPMEVENT_VUINH)
-  csrw minstretcfg, x14
+  csrw CSR_MINSTRETCFG, x14
 #else
   LI(x14, MHPMEVENTH_MINH | MHPMEVENTH_SINH | MHPMEVENTH_UINH | MHPMEVENTH_VUINH)
-  csrw minstretcfgh, x14
-  csrw minstretcfg, zero
+  csrw CSR_MINSTRETCFGH, x14
+  csrw CSR_MINSTRETCFG, zero
 #endif
   csrr x9, minstret
   RVTEST_TSBI_GOTO_VSMODE
@@ -181,9 +181,9 @@ SmcntrpmfH_cg_cp_minstretcfg_vs_count_only_vs:
   sub x14, x14, x9
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x14, SmcntrpmfH_cg_cp_minstretcfg_vs_count_only_vs, SmcntrpmfH_cg_cp_minstretcfg_vs_count_only_vs_str)
-  csrw minstretcfg, zero
+  csrw CSR_MINSTRETCFG, zero
 #if __riscv_xlen == 32
-  csrw minstretcfgh, zero
+  csrw CSR_MINSTRETCFGH, zero
 #endif
 
 
@@ -194,11 +194,11 @@ SmcntrpmfH_cg_cp_minstretcfg_vs_count_only_vs:
 /////////////////////////////////
 #if __riscv_xlen == 64
   LI(x13, MHPMEVENT_MINH | MHPMEVENT_SINH | MHPMEVENT_UINH | MHPMEVENT_VSINH | MHPMEVENT_VUINH)
-  csrw minstretcfg, x13
+  csrw CSR_MINSTRETCFG, x13
 #else
   LI(x13, MHPMEVENTH_MINH | MHPMEVENTH_SINH | MHPMEVENTH_UINH | MHPMEVENTH_VSINH | MHPMEVENTH_VUINH)
-  csrw minstretcfgh, x13
-  csrw minstretcfg, zero
+  csrw CSR_MINSTRETCFGH, x13
+  csrw CSR_MINSTRETCFG, zero
 #endif
   csrr x14, minstret
   RVTEST_TSBI_GOTO_VUMODE
@@ -214,11 +214,11 @@ SmcntrpmfH_cg_cp_minstretcfg_vu_inhibit_all:
   RVTEST_SIGUPD(x2, x5, x4, x13, SmcntrpmfH_cg_cp_minstretcfg_vu_inhibit_all, SmcntrpmfH_cg_cp_minstretcfg_vu_inhibit_all_str)
 #if __riscv_xlen == 64
   LI(x13, MHPMEVENT_MINH | MHPMEVENT_SINH | MHPMEVENT_UINH | MHPMEVENT_VSINH)
-  csrw minstretcfg, x13
+  csrw CSR_MINSTRETCFG, x13
 #else
   LI(x13, MHPMEVENTH_MINH | MHPMEVENTH_SINH | MHPMEVENTH_UINH | MHPMEVENTH_VSINH)
-  csrw minstretcfgh, x13
-  csrw minstretcfg, zero
+  csrw CSR_MINSTRETCFGH, x13
+  csrw CSR_MINSTRETCFG, zero
 #endif
   csrr x14, minstret
   RVTEST_TSBI_GOTO_VUMODE
@@ -232,9 +232,9 @@ SmcntrpmfH_cg_cp_minstretcfg_vu_count_only_vu:
   sub x13, x13, x14
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x13, SmcntrpmfH_cg_cp_minstretcfg_vu_count_only_vu, SmcntrpmfH_cg_cp_minstretcfg_vu_count_only_vu_str)
-  csrw minstretcfg, zero
+  csrw CSR_MINSTRETCFG, zero
 #if __riscv_xlen == 32
-  csrw minstretcfgh, zero
+  csrw CSR_MINSTRETCFGH, zero
 #endif
 
 // Instantiate trap handlers and other epilog code, call RVMODEL_HALT at end of test
