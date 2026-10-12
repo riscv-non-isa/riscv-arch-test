@@ -20,8 +20,8 @@ implemented_extensions:
   - { name: D, version: "= 2.2.0" }
   - { name: C, version: "= 2.0" }
   - { name: U, version: "= 1.0.0" }
-  - { name: S, version: "= 1.12.0" }  # DEVIATION: hardware is 1.11 (TRM, OpenSBI); UDB H 1.0 requires S>=1.12. Test selection only; sail.json stays Privileged_ISA_1_11.
-  - { name: Sm, version: "= 1.12.0" }  # DEVIATION: hardware is 1.11 (TRM, OpenSBI); UDB H 1.0 requires S>=1.12. Test selection only; sail.json stays Privileged_ISA_1_11.
+  - { name: S, version: "= 1.12.0" }  # DEVIATION: hardware is 1.11 (TRM, OpenSBI); UDB H 1.0 requires S>=1.12. sail.json matches it (Privileged_ISA_1_12, riscv-arch-test #2717).
+  - { name: Sm, version: "= 1.12.0" }  # DEVIATION: hardware is 1.11 (TRM, OpenSBI); UDB H 1.0 requires S>=1.12. sail.json matches it (Privileged_ISA_1_12, riscv-arch-test #2717).
   - { name: Zicsr, version: "= 2.0" }
   - { name: Zifencei, version: "= 2.0.0" }
   - { name: Zihpm, version: "= 2.0.0" }

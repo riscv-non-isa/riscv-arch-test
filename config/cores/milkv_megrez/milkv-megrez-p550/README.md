@@ -71,10 +71,23 @@ Deliberate deviations, for test selection only:
 | S, Sm version | 1.12.0 | 1.11 (TRM, OpenSBI) | UDB H 1.0 requires S >= 1.12 |
 | CONFIG_PTR_ADDRESS | 0 | no mconfigptr (1.11) | required by Sm 1.12 |
 
-`sail.json` keeps `Privileged_ISA_1_11` so expected values model the
-hardware; tests that depend on 1.12-only state fail in the Sail build and
-are dropped. `extensions.H.geilen` is 0 to match
-`NUM_EXTERNAL_GUEST_INTERRUPTS: 0`.
+`sail.json` declares `Privileged_ISA_1_12`, the same version as the UDB
+config. With `Privileged_ISA_1_11` the two disagreed: the tests assume
+`menvcfg` exists (S/Sm 1.12), Sail had none, so the SvH/SvHSm writes to
+`menvcfg.ADUE`/`PBMTE` through T-SBI trapped in M-mode and looped until the
+trap signature overflowed (`TRAP_SIGUPD_COUNT`); 39 of 41 SvH/SvHSm tests
+failed their Sail self-check and never reached the board (riscv-arch-test
+issue #2717, analysis by David Harris). With 1.12 all 121 H-suite tests
+build and pass the Sail self-check (Sail 0.14.1, 2026-10-12).
+
+Consequence on hardware: expected values now model privileged 1.12, so a
+test that touches a 1.12-only CSR (`menvcfg`, `senvcfg`, `henvcfg`,
+`mconfigptr`) fails on this priv-1.11 core with an illegal-instruction trap
+on that CSR. That is a known deviation of the board, not a hardware bug: the
+SvH/SvHSm tests write `menvcfg` in the test body and cannot pass on a
+priv-1.11 hart as written (#2717). The boot code's `*envcfg` writes stay
+skipped (`#undef SM1P12P0_OR_LATER_SUPPORTED` in `rvmodel_macros.h`).
+`extensions.H.geilen` is 0 to match `NUM_EXTERNAL_GUEST_INTERRUPTS: 0`.
 
 H parameter sources: TRM tables 3-13 (hgatp Sv39x4/Sv48x4, 14-bit VMID
 field), 3-30 (H CSRs), 3-31 (hstatus), 3-60 (hideleg 2/6/10), 3-61 (hedeleg

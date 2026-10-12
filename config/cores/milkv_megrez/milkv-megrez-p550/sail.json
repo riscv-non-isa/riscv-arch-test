@@ -93,7 +93,7 @@
       "fs_legal_states": "ExtContext_FourState",
       "vs_legal_states": "ExtContext_Off"
     },
-    "privileged_isa_version": "Privileged_ISA_1_11"
+    "privileged_isa_version": "Privileged_ISA_1_12"
   },
   "memory": {
     "physaddr_bits": 41,
