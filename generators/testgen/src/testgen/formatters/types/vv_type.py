@@ -172,6 +172,8 @@ def format_vv_like_type(
         test_data.vec_regs.return_register(0)
 
     min_vlen = compute_egs_vlen(params.sew, lmul, egs)
-    handle_parameter_exclusions(lmul, setup, check, min_vlen=min_vlen)
+    # Guard on the LMUL in vtype; for VMVR, lmul is the register count encoded in the instruction
+    vtype_lmul = params.lmul if params.lmul is not None else lmul
+    handle_parameter_exclusions(vtype_lmul, setup, check, min_vlen=min_vlen)
 
     return (setup, test, check)
