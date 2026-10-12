@@ -2,7 +2,14 @@
   "base": {
     "xlen": 64,
     "E": false,
-    "writable_misa": false,
+    // Sail 0.15: hpmcounter/hpmevent widths, mcountinhibit, self-write increment.
+    "hpmcounter_width_bits": 64,
+    "hpmevent_width_bits": 56,
+    "hpmcounter_increments_in_self_hpmevent_write": false,
+    "mcountinhibit": {
+      "supported": true,
+      "writable_bits": { "len": 32, "value": "0x7d" }
+    },
     "writable_fiom": true,
     "writable_hpm_counters": {
       "len": 32,
@@ -286,6 +293,7 @@
     ]
   },
   "platform": {
+    "event_selectors": [],
     "vendorid": 1161,
     "archid": 9223372036854775816,
     "impid": 102892581,
@@ -325,20 +333,31 @@
     "max_time_to_wait": 200
   },
   "extensions": {
+    // Sail 0.15 extension blocks (C: misa mutability; the others not implemented).
+    "C": { "mutable_misa": false },
+    "Sdtrig": {"supported": false, "num_triggers": 16, "breakpoint_reentrancy": "Use_interrupt_enables", "mcontext": {"supported": true}, "hcontext": {"supported": true}, "scontext": {"supported": true}, "icount": {"supported": true, "count_hardwired_one": false, "self_write_sets_pending": true}, "etrigger": {"supported": true, "supported_exceptions": {"len": "xlen", "value": "0x0000_0000_00fd_bfff"}}, "itrigger": {"supported": true, "supported_interrupts": {"len": "xlen", "value": "0x0000_0000_0000_3eee"}}},
+    "Smdbltrp": { "supported": false },
+    "Ssdbltrp": { "supported": false },
+    "Ssstrict": { "supported": false },
     "M": {
+      "mutable_misa": false,
       "supported": true
     },
     "A": {
+      "mutable_misa": false,
       "supported": true
     },
     "F": {
+      "mutable_misa": false,
       "supported": true,
       "fflags_dirty_policy": "Fflags_Dirty_Instruction"
     },
     "D": {
+      "mutable_misa": false,
       "supported": true
     },
     "V": {
+      "mutable_misa": false,
       "support_level": "Disabled",
       "vlen_exp": 7,
       "elen_exp": 6,
@@ -356,9 +375,11 @@
       }
     },
     "B": {
+      "mutable_misa": false,
       "supported": false
     },
     "S": {
+      "mutable_misa": false,
       "supported": true,
       "interrupts": {
         "software": {
@@ -373,9 +394,21 @@
       }
     },
     "U": {
+      "mutable_misa": false,
       "supported": true
     },
     "H": {
+      "transformed_instruction": {
+        "load_address_misaligned": false,
+        "load_access_fault": false,
+        "load_page_fault": false,
+        "load_guest_page_fault": false,
+        "samo_address_misaligned": false,
+        "samo_access_fault": false,
+        "samo_page_fault": false,
+        "samo_guest_page_fault": false
+      },
+      "mutable_misa": false,
       "supported": true,
       "geilen": 0,
       "guest_page_fault_writes_htval": true,
