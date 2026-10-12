@@ -347,9 +347,110 @@ covergroup S_scsr_cg with function sample(ins_t ins);
     `endif
 endgroup
 
+// S_F, S_V and S_VF tests (S_F-NN.S, S_V_*-NN.S, S_VF-NN.S) are part of the S suite and run only
+// when F, Zve32x or Zve32f is also supported. They parallel Sm_F, Sm_V and Sm_VF in Sm_coverage.svh,
+// using sstatus in S-mode, and share their coverpoints through the general/RISCV_coverage_priv_*
+// includes. misa is writable only in M-mode, so S_V has no counterpart to Sm_V's cp_misa_v_clear_set.
+`ifdef F_SUPPORTED
+covergroup S_F_cg with function sample(ins_t ins);
+    option.per_instance = 0;
+    `include "general/RISCV_coverage_priv_f_coverpoints.svh"
+
+    sstatus_FS: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "sstatus", "fs")[1:0] {
+    }
+    sstatus_FS_off_dirty: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "sstatus", "fs")[1:0] {
+        bins off     = {2'b00};
+        bins dirty   = {2'b11};
+    }
+
+    // main coverpoints
+    cp_fcsr_access:           cross fcsrname, csraccesses, sstatus_FS; // superset of ZicsrF cp_fcsr_access crossing with sstatus.FS
+    cp_sstatus_FS_transition: cross deterministic_instrs, sstatus_FS;
+    cp_sstatus_FS_transition_nondeterministic: cross nondeterministic_instrs, sstatus_FS_off_dirty;
+endgroup
+`endif
+
+`ifdef ZVE32X_SUPPORTED
+covergroup S_V_cg with function sample(ins_t ins);
+    option.per_instance = 0;
+    `include "general/RISCV_coverage_priv_v_coverpoints.svh"
+
+    //////////////////////////////////////////////////////////////////////////////////
+    // cp_sstatus_vs_*
+    // tests sstatus ability to set clean and initial to dirty only when supposed to
+    //////////////////////////////////////////////////////////////////////////////////
+
+    sstatus_vs_initial_clean : coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "sstatus", "vs") {
+        bins first = {1};
+        bins clean  = {2};
+    }
+
+    sstatus_vs_inactive    : coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "sstatus", "vs") {
+        bins inactive = {0};
+    }
+
+    cp_sstatus_vs_set_dirty_arithmetic  : cross std_vec,        vector_vector_arithmetic_instruction,   sstatus_vs_initial_clean;
+    cp_sstatus_vs_set_dirty_csr         : cross std_vec,        vsetvli_instruction,                    sstatus_vs_initial_clean;
+    cp_sstatus_vs_set_dirty_vcsr        : cross vcsrs_writable, csrops,                                 sstatus_vs_initial_clean;
+
+    // misa is not visible in S-mode, so unlike Sm_V these do not cross misa_v_active
+    cp_sstatus_vs_off_arithmetic        : cross sstatus_vs_inactive,     vector_vector_arithmetic_instruction iff (get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "vtype", "vill") == 0 &
+                                                                                                                                  get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "vstart", "vstart") == 0 &
+                                                                                                                                  get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "vl", "vl") != 0 );
+    cp_sstatus_vs_off_csr               : cross sstatus_vs_inactive,     vsetvli_instruction iff (get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "vtype", "vill") == 0 &
+                                                                                                                 get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "vstart", "vstart") == 0 &
+                                                                                                                 get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "vl", "vl") != 0 );
+
+endgroup
+`endif
+
+`ifdef ZVE32F_SUPPORTED
+covergroup S_VF_cg with function sample(ins_t ins);
+    option.per_instance = 0;
+    `include "general/RISCV_coverage_priv_vf_coverpoints.svh"
+
+    //cross vtype_prev_vill_clear, vstart_zero, vl_nonzero;
+    std_trap_vec : coverpoint {get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "vtype", "vill") == 0 &
+                        get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "vstart", "vstart") == 0 &
+                        get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "vl", "vl") != 0 &
+                        get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "sstatus", "vs") != 0
+                    }
+    {
+        bins true = {1'b1};
+    }
+
+    sstatus_fs_initial_clean : coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "sstatus", "fs") {
+        bins first_state = {1};
+        bins clean  = {2};
+    }
+
+    sstatus_fs_off : coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "sstatus", "fs") {
+        bins off = {0};
+    }
+
+    cp_vectorfp_sstatus_fs_state_affecting_register : cross std_vec, vfmv_f_s, sstatus_fs_initial_clean;
+    cp_vectorfp_sstatus_fs_state_affecting_csr      : cross std_vec, vector_vector_arithmetic_fp_instruction, sstatus_fs_initial_clean, fflags_modified_after_clear;
+    cp_vectorfp_sstatus_fs_state_nonaffecting       : cross std_vec, vector_vector_arithmetic_fp_instruction, sstatus_fs_initial_clean, vs1_zero, vs2_zero;
+    cp_vectorfp_sstatus_fs_off                      : cross std_trap_vec, vector_vector_arithmetic_fp_instruction, sstatus_fs_off, vs1_zero, vs2_zero;
+
+endgroup
+`endif
+
 function void s_sample(int hart, int issue, ins_t ins);
     S_scause_cg.sample(ins);
     S_sstatus_cg.sample(ins);
     S_sprivinst_cg.sample(ins);
     S_scsr_cg.sample(ins);
+    // S_F_cg, S_V_cg and S_VF_cg count only instructions executed in S-mode, not the M-mode trap handler
+    if ({ins.prev.mode_virt, ins.prev.mode} == 3'b001) begin
+    `ifdef F_SUPPORTED
+        S_F_cg.sample(ins);
+    `endif
+    `ifdef ZVE32X_SUPPORTED
+        S_V_cg.sample(ins);
+    `endif
+    `ifdef ZVE32F_SUPPORTED
+        S_VF_cg.sample(ins);
+    `endif
+    end
 endfunction

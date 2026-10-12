@@ -52,6 +52,7 @@ include::{testplansdir}/priv/Sm_VF.adoc[]
 ==== S Supervisor-Mode CSRs and Instructions
 
 These test additional CSRs that exist in supervisor mode, and privileged instructions in supervisor mode.
+The S suite also contains the <<S_F Supervisor-Mode Floating-Point CSRs,S_F>>, <<S_V Supervisor-Mode Vector CSRs,S_V>>, and <<S_VF Supervisor-Mode Vector Floating-Point State,S_VF>> tests, which run only when F, Zve32x, or Zve32f is also supported.
 
 include::{testplansdir}/priv/S.adoc[]
 
@@ -63,6 +64,31 @@ sie_sip_strap_time_constraint is not tested yet.  How to handle timing constrain
 How to handle interrupts that don't get evaluated immediately after the macro sets them? The
 macro could spin until they fire, but needs to know if they should fire (e.g. not blocked by xstatus.xIE).
 ====
+
+===== S_F Supervisor-Mode Floating-Point CSRs
+
+These repeat the <<t-Sm_F-coverpoints,Sm_F>> tests from supervisor mode, using `sstatus.FS` in place of `mstatus.FS`.
+They are the `S_F-NN.S` tests of the S suite and run when F is supported.
+Their normative rules are listed in <<t-Sm-normative-rules>>.
+
+include::{testplansdir}/priv/S_F.adoc[]
+
+===== S_V Supervisor-Mode Vector CSRs
+
+These repeat the <<t-Sm_V-coverpoints,Sm_V>> tests from supervisor mode, using `sstatus.VS` in place of `mstatus.VS`.
+`misa` is not accessible in supervisor mode, so S_V omits `cp_misa_v_clear_set` and its VS=Off coverpoints are not crossed with `misa.V`.
+They are the `S_V_*-NN.S` tests of the S suite and run when Zve32x is supported.
+Their normative rules are listed in <<t-Sm-normative-rules>> and <<t-Vx-normative-rules>>.
+
+include::{testplansdir}/priv/S_V.adoc[]
+
+===== S_VF Supervisor-Mode Vector Floating-Point State
+
+These repeat the <<t-Sm_VF-coverpoints,Sm_VF>> tests from supervisor mode, using `sstatus.FS` in place of `mstatus.FS`.
+They are the `S_VF-NN.S` tests of the S suite and run when Zve32f is supported.
+Their normative rules are listed in <<t-Vx-normative-rules>>.
+
+include::{testplansdir}/priv/S_VF.adoc[]
 
 ==== U User-Mode CSRs and Instructions
 

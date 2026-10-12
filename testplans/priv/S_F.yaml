@@ -1,0 +1,22 @@
+# yaml-language-server: $schema=testplan.schema.json
+suite: S_F
+coverpoints:
+  - name: cp_fcsr_access
+    goal: |-
+      Writing to the CSR field
+      (WARL)
+    description: Write 0s and 1s to fcsr, frm, fflags cross with sstatus.FS init/clean/dirty
+  - name: cp_sstatus_FS_transition
+    goal: |-
+      Writing to the CSR field
+      (WARL)
+    description: Each different type of floating-point instruction crossed with four values of FS
+    rules:
+      - check FS becomes dirty where appropriate
+  - name: cp_sstatus_FS_transition_nondeterministic
+    goal: |-
+      Writing to the CSR field
+      (WARL)
+    description: Floating-point instructions that need not modify floating-point state (fsw, fcvt.w.s, feq.s, fmv.x.w, fclass.s, csrr of the FP CSRs, fmvh.x.d) crossed with sstatus.FS = Off and Dirty
+    expectation: Illegal-instruction trap when FS = Off; FS stays Dirty when Dirty. Initial and Clean are omitted because these instructions may dirty FS imprecisely.
+  - heading: Tests run in S mode
