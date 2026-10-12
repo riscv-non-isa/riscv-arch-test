@@ -164,15 +164,6 @@
 `ifdef SM_COVERAGE
   `include "Sm_coverage.svh"
 `endif
-`ifdef SMF_COVERAGE
-  `include "SmF_coverage.svh"
-`endif
-`ifdef SMV_COVERAGE
-  `include "SmV_coverage.svh"
-`endif
-`ifdef SMVF_COVERAGE
-  `include "SmVF_coverage.svh"
-`endif
 `ifdef SMMPM_COVERAGE
   `include "Smmpm_coverage.svh"
 `endif

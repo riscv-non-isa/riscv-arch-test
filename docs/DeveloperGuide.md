@@ -754,6 +754,8 @@ To opt in to named splits, pass a name to `test_data.begin_test_chunk(split_name
 
 Length-based splitting still applies _within_ each named group, so a large named scope can still become `<testsuite>_<split_name>-00.S`, `<testsuite>_<split_name>-01.S`, etc.
 
+A suite can also hold tests that need an extension beyond the suite's own, such as the floating-point tests of Sm. Register their generator under the base suite with its own `required_extensions`, e.g. `add_priv_test_generator("Sm", required_extensions=["Sm", "F"])`, and start its split names with the group, so its tests are `tests/priv/Sm/Sm_F-00.S` or `Sm_V_vcsr-00.S` and run only where the extra extension is supported. Name its covergroup `<suite>_<group>_cg` (`Sm_F_cg`) in the base suite's coverage file under `` `ifdef F_SUPPORTED ``, and give it its own test plan, `testplans/priv/Sm_F.yaml`. The Sm_F, Sm_V and Sm_VF generators (`FCommon.py`, `VCommon.py`, `VFCommon.py`) take the privilege mode and reach the status CSR through `tsbi_call_or_direct`, and their mode-independent coverpoints are in `coverpoints/general/RISCV_coverage_priv_*_coverpoints.svh`, so S- and U-mode versions can share them.
+
 ## Debugging Coverage
 
 After writing initial drafts of coverpoints and tests, run them with `make coverage EXTENSIONS=ExceptionsZc`. Omit the `--jobs` flag so they run in order and it is easier to localize which one failed. By giving the name of the test suite (e.g. ExceptionsZc), you only run the new suite of interest, saving runtime.

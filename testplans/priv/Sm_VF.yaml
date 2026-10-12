@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=testplan.schema.json
-suite: SmVF
+suite: Sm_VF
 source: https://docs.google.com/spreadsheets/d/11VGlIA__UYr7H47ZNqXtyYnGH5Fb41E8P9h53rN72ok/edit?gid=1892166886#gid=1892166886
 coverpoints:
   - heading: It should be understood that for most coverpoints that are based on arithmetic instructions, the coverpoints will check to make sure they're non-trivial, meaning that vl != 0, vstart=0, vill=0, and they do not trap. It may be useful to know that when using vsetvl{i} instructions if rd != x0 and rs1 = x0, vl = vlmax

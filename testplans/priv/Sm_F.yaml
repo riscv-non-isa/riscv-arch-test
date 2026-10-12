@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=testplan.schema.json
-suite: SmF
+suite: Sm_F
 source: https://docs.google.com/spreadsheets/d/10NX0T4MgueqA4p7JNg4whCq2k3YZ9R73UCV88MtcIUA/edit?gid=29805079#gid=29805079
 coverpoints:
   - name: cp_fcsr_access
@@ -14,4 +14,10 @@ coverpoints:
     description: Each different type of floating-point instruction crossed with four values of FS
     rules:
       - check FS becomes dirty where appropriate
+  - name: cp_mstatus_FS_transition_nondeterministic
+    goal: |-
+      Writing to the CSR field
+      (WARL)
+    description: Floating-point instructions that need not modify floating-point state (fsw, fcvt.w.s, feq.s, fmv.x.w, fclass.s, csrr of the FP CSRs, fmvh.x.d) crossed with mstatus.FS = Off and Dirty
+    expectation: Illegal-instruction trap when FS = Off; FS stays Dirty when Dirty. Initial and Clean are omitted because these instructions may dirty FS imprecisely.
   - heading: Tests run in M mode

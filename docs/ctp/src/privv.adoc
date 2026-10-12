@@ -2,6 +2,7 @@
 === Vector Privileged Test Suites
 
 All of the vector privileged suites are collected in this section.
+The machine-mode vector CSR test plans, <<t-Sm_V-coverpoints,Sm_V>> and <<t-Sm_VF-coverpoints,Sm_VF>>, are part of the <<Sm Machine-Mode CSRs and Instructions,Sm>> suite.
 
 [[MisalignV]]
 ==== MisalignV Vector Misalignment
@@ -46,26 +47,6 @@ include::{testplansdir}/priv/ExceptionsVls.adoc[]
 
 include::norm/ExceptionsVls_norm_rules.adoc[]
 
-
-==== SmV
-
-Machine-mode access to vector CSRs.
-
-include::{testplansdir}/priv/SmV.adoc[]
-
-include::norm/SmV_norm_rules.adoc[]
-
-TODO: Many of these tests should be replicated in UV.
-
-==== SmVF
-
-Machine-mode access to vector floating-point CSRs.
-
-include::{testplansdir}/priv/SmVF.adoc[]
-
-include::norm/SmVF_norm_rules.adoc[]
-
-TODO: Many of these tests should be replicated in UV.
 
 ==== UV
 

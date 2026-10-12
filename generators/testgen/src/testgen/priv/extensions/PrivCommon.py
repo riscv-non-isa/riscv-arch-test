@@ -10,8 +10,33 @@
 
 from testgen.asm.csr import gen_csr_read_sigupd, gen_csr_write_sigupd
 from testgen.asm.helpers import comment_banner, write_sigupd
+from testgen.asm.tsbi import tsbi_call_or_direct
 from testgen.data.state import TestData
 from testgen.data.test_chunk import TestChunk
+
+# Status CSR holding FS and VS for code running in each privilege mode. U-mode reaches mstatus
+# through T-SBI, which exists with or without S-mode.
+STATUS_CSR = {"M": "mstatus", "S": "sstatus", "U": "mstatus"}
+FS_MASK = 3 << 13  # xstatus.FS = bits [14:13]
+VS_MASK = 3 << 9  # xstatus.VS = bits [10:9]
+
+
+def set_status_fields(temp_reg: int, priv: str, fs: int | None = None, vs: int | None = None) -> list[str]:
+    """Set xstatus.FS and/or xstatus.VS from code running in priv ("M", "S" or "U").
+
+    Writes the mode's status CSR directly, or through T-SBI when priv cannot write it.
+    """
+    status = STATUS_CSR[priv]
+    fields = [(name, val) for name, val in (("FS", fs), ("VS", vs)) if val is not None]
+    mask = (FS_MASK if fs is not None else 0) | (VS_MASK if vs is not None else 0)
+    value = ((fs or 0) << 13) | ((vs or 0) << 9)
+    return [
+        f"LI(x{temp_reg}, {mask})",
+        tsbi_call_or_direct(f"csrc {status}, x{temp_reg}  # clear {' and '.join(n for n, _ in fields)}", priv),
+        f"LI(x{temp_reg}, {value})",
+        tsbi_call_or_direct(f"csrs {status}, x{temp_reg}  # {', '.join(f'{n}={v}' for n, v in fields)}", priv),
+    ]
+
 
 # Some Sv translation mode is supported. Sv48 and Sv57 imply Sv39, so Sv39 and Sv32 between them
 # cover every case and the wider modes need not be named.

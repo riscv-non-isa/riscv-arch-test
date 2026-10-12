@@ -15,6 +15,7 @@ where they should throw an Illegal Instruction exception if not implemented.
 ==== Sm Machine-Mode CSRs and Instructions
 
 These test CSRs and privileged instructions in machine mode.
+The Sm suite also contains the <<Sm_F Machine-Mode Floating-Point CSRs,Sm_F>>, <<Sm_V Machine-Mode Vector CSRs,Sm_V>>, and <<Sm_VF Machine-Mode Vector Floating-Point State,Sm_VF>> tests, which run only when F, Zve32x, or Zve32f is also supported.
 
 include::{testplansdir}/priv/Sm.adoc[]
 
@@ -23,6 +24,30 @@ TODO: Plan how to check WARL, WPRI, WLRL fields.  It seems every CSR needs param
 include::norm/Sm_norm_rules.adoc[]
 
 TODO: Many new normative rules have been added since this was written.  Update Sm.yaml.
+
+===== Sm_F Machine-Mode Floating-Point CSRs
+
+These test the floating-point CSRs and `mstatus.FS` from machine mode.
+They are the `Sm_F-NN.S` tests of the Sm suite and run when F is supported.
+Their normative rules are listed in <<t-Sm-normative-rules>>.
+
+include::{testplansdir}/priv/Sm_F.adoc[]
+
+===== Sm_V Machine-Mode Vector CSRs
+
+These test the vector CSRs, `vset{i}vl{i}`, `vstart`, `mstatus.VS`, and `misa.V` from machine mode.
+They are the `Sm_V_*-NN.S` tests of the Sm suite and run when Zve32x is supported.
+Their normative rules are listed in <<t-Sm-normative-rules>> and <<t-Vx-normative-rules>>.
+
+include::{testplansdir}/priv/Sm_V.adoc[]
+
+===== Sm_VF Machine-Mode Vector Floating-Point State
+
+These test how vector floating-point instructions interact with `mstatus.FS` from machine mode.
+They are the `Sm_VF-NN.S` tests of the Sm suite and run when Zve32f is supported.
+Their normative rules are listed in <<t-Vx-normative-rules>>.
+
+include::{testplansdir}/priv/Sm_VF.adoc[]
 
 ==== S Supervisor-Mode CSRs and Instructions
 
@@ -46,14 +71,6 @@ These test additional CSRs that exist in user mode, and privileged instructions 
 include::{testplansdir}/priv/U.adoc[]
 
 include::norm/U_norm_rules.adoc[]
-
-==== SmF Floating-Point CSRs
-
-These test additional CSRs that exist when floating-point is supported.
-
-include::{testplansdir}/priv/SmF.adoc[]
-
-include::norm/SmF_norm_rules.adoc[]
 
 ==== UF User-Mode Floating-Point CSRs
 
