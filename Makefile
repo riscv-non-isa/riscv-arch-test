@@ -55,6 +55,10 @@ override EXCLUDE_EXTENSIONS := $(subst $(space),$(empty),$(EXCLUDE_EXTENSIONS))
 # Setting to 1 is helpful for debugging test hangs so that only a single test runs at a time.
 JOBS ?= $(or $(patsubst -j%,%,$(filter -j%,$(MAKEFLAGS))),0)
 
+# RUN_JOBS limits how many tests the run targets (make <config>, make regression) simulate at once.
+# Leave blank to run one per CPU.
+RUN_JOBS ?=
+
 # Suppress "make[1]: Entering/Leaving directory ..." from recursive sub-makes
 MAKEFLAGS += --no-print-directory
 
@@ -146,6 +150,8 @@ help:
 	@printf '  Each directory name in a config path becomes a target that builds ELFs and\n'
 	@printf '  runs every config beneath it. Available targets:\n'
 	@printf '    %s\n' $(ALL_RUN_TARGETS) | fold -s -w 76 | sed 's/^/  /'
+	@printf '  \033[36m%-20s\033[0m %s\n' \
+	  'cva6-vector'         'Run the vector suites on CVA6 + Ara (too slow for CI); builds Ara on first use'
 	@printf '\n\033[1mCommon variables:\033[0m\n'
 	@printf '  \033[36m%-20s\033[0m %s\n' \
 	  'CONFIG_FILES'        'Configs for the default elfs target' \
@@ -154,6 +160,7 @@ help:
 	  'CERTIFICATE'         'Only select tests for the specified certificate' \
 	  'ENABLE_EXPERIMENTAL_EXTENSIONS' 'Enable tests for unratified extensions' \
 	  'JOBS'                'Parallel build jobs (0 = auto, also honors -j)' \
+	  'RUN_JOBS'            'Tests simulated at once by run targets (default: one per CPU)' \
 	  'DEBUG'               'Emit objdump/trace/trap reports (slower)' \
 	  'FAST'                'Skip objdump for faster ELF builds' \
 	  'CLEAN_INTERMEDIATES' 'Delete intermediate build/ dirs after build (saves disk)' \
@@ -249,7 +256,7 @@ regression: clean
 	CONFIG_FILES="$(patsubst %/run_cmd.txt,%/test_config.yaml,$(RUN_CMD_FILES))" \
 	$(MAKE) elfs || exit_code=1; \
 	$(foreach f,$(RUN_CMD_FILES),\
-	  ./run_tests.py $(if $(DEBUG),--debug) $(if $(VERBOSE),--verbose) "$$(cat $(f))" $(WORKDIR)/$(notdir $(patsubst %/run_cmd.txt,%,$(f)))/elfs || exit_code=1; ) \
+	  ./run_tests.py $(if $(DEBUG),--debug) $(if $(VERBOSE),--verbose) $(if $(RUN_JOBS),-j $(RUN_JOBS)) "$$(cat $(f))" $(WORKDIR)/$(notdir $(patsubst %/run_cmd.txt,%,$(f)))/elfs || exit_code=1; ) \
 	exit $$exit_code
 
 
@@ -293,11 +300,40 @@ $(1): tests
 	$$(MAKE) elfs
 	@exit_code=0; \
 	$(foreach f,$(_TARGETS_$(1)),\
-	  ./run_tests.py $(if $(DEBUG),--debug) $(if $(VERBOSE),--verbose) "$$$$(cat $(f))" $$(WORKDIR)/$(notdir $(patsubst %/run_cmd.txt,%,$(f)))/elfs || exit_code=1; ) \
+	  ./run_tests.py $(if $(DEBUG),--debug) $(if $(VERBOSE),--verbose) $(if $(RUN_JOBS),-j $(RUN_JOBS)) "$$$$(cat $(f))" $$(WORKDIR)/$(notdir $(patsubst %/run_cmd.txt,%,$(f)))/elfs || exit_code=1; ) \
 	exit $$$$exit_code
 endef
 
 $(foreach t,$(ALL_RUN_TARGETS),$(eval $(call run-target,$(t))))
+
+# The vector suites are too slow on the CVA6 + Ara Verilator model for CI, so config/cores/cva6/ci.yaml
+# excludes them and `make cva6-vector` runs them locally. Ara is built into ARA_DIR on first use and
+# rebuilt whenever .github/scripts/install-ara.sh changes (about 10 minutes). run_tests.py runs every
+# ELF in the config's elfs directory, so the vector suites get their own work directory, and suites
+# left there by an earlier, wider selection are dropped.
+ARA_DIR ?= $(HOME)/.cache/act/ara
+CVA6_VECTOR_SUITES ?= Vx8,Vx16,Vx32,Vx64,Vls8,Vls16,Vls32,Vls64,Vf32,Vf64
+CVA6_VECTOR_WORKDIR ?= $(WORKDIR)/cva6-vector
+
+.PHONY: cva6-vector
+cva6-vector:
+	@stamp=$$(sha256sum .github/scripts/install-ara.sh | cut -d' ' -f1); \
+	if [ "$$(cat $(ARA_DIR)/.install-ara.sha256 2>/dev/null)" != "$$stamp" ]; then \
+		if [ -e $(ARA_DIR) ] && [ ! -f $(ARA_DIR)/.install-ara.sha256 ]; then \
+			echo "$(ARA_DIR) was not built by make cva6-vector; remove it or set ARA_DIR"; exit 1; \
+		fi; \
+		echo "Building CVA6 + Ara in $(ARA_DIR)"; \
+		rm -rf $(ARA_DIR) && mkdir -p $(ARA_DIR) && echo incomplete > $(ARA_DIR)/.install-ara.sha256 && \
+		.github/scripts/install-ara.sh $(ARA_DIR) > $(ARA_DIR)/install.log 2>&1 || \
+			{ echo "Ara build failed; see $(ARA_DIR)/install.log"; exit 1; }; \
+		echo $$stamp > $(ARA_DIR)/.install-ara.sha256; \
+	fi
+	@for d in $(CVA6_VECTOR_WORKDIR)/cv64a6_imafdcv_sv39/elfs/*/*/; do \
+		case ",$(CVA6_VECTOR_SUITES)," in *,$$(basename $$d),*) ;; *) rm -rf $$d ;; esac; \
+	done
+	@PATH="$(ARA_DIR)/bin:$$PATH" ARA_SNAPSHOT=$(ARA_DIR)/build \
+		$(MAKE) cv64a6_imafdcv_sv39 WORKDIR=$(CVA6_VECTOR_WORKDIR) EXTENSIONS=$(CVA6_VECTOR_SUITES) \
+		EXCLUDE_EXTENSIONS=
 
 
 

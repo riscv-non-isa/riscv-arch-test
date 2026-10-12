@@ -1,0 +1,861 @@
+diff --git a/hardware/src/ara_dispatcher.sv b/hardware/src/ara_dispatcher.sv
+index e9bc911..c0fc11c 100644
+--- a/hardware/src/ara_dispatcher.sv
++++ b/hardware/src/ara_dispatcher.sv
+@@ -110,6 +110,17 @@ module ara_dispatcher import ara_pkg::*; import rvv_pkg::*; #(
+     endcase
+   endfunction : next_lmul
+
++  // A mask-producing instruction writes one register, which may overlap a source register group
++  // only at the group's lowest-numbered register (RVV 1.0, section 5.2).
++  function automatic logic mask_vd_overlaps(logic [4:0] vd, logic [4:0] vs, vlmul_e lmul);
++    unique case (lmul)
++      LMUL_2 : mask_vd_overlaps = (vd & 5'b11110) == vs && vd != vs;
++      LMUL_4 : mask_vd_overlaps = (vd & 5'b11100) == vs && vd != vs;
++      LMUL_8 : mask_vd_overlaps = (vd & 5'b11000) == vs && vd != vs;
++      default: mask_vd_overlaps = 1'b0;
++    endcase
++  endfunction : mask_vd_overlaps
++
+   // Calculates prev(lmul)
+   function automatic vlmul_e prev_lmul(vlmul_e lmul);
+     unique case (lmul)
+@@ -757,25 +768,6 @@ module ara_dispatcher import ara_pkg::*; import rvv_pkg::*; #(
+                   end
+                   6'b010001: begin
+                     ara_req.op        = ara_pkg::VMADC;
+-
+-                    // Check whether we can access vs1 and vs2
+-                    unique case (ara_req.emul)
+-                      LMUL_2:
+-                        if (((insn.varith_type.rs1 & 5'b00001) == (insn.varith_type.rd & 5'b00001)) ||
+-                            ((insn.varith_type.rs2 & 5'b00001) == (insn.varith_type.rd & 5'b00001)))
+-                          illegal_insn = 1'b1;
+-                      LMUL_4:
+-                        if (((insn.varith_type.rs1 & 5'b00011) == (insn.varith_type.rd & 5'b00011)) ||
+-                            ((insn.varith_type.rs2 & 5'b00011) == (insn.varith_type.rd & 5'b00011)))
+-                          illegal_insn = 1'b1;
+-                      LMUL_8:
+-                        if (((insn.varith_type.rs1 & 5'b00111) == (insn.varith_type.rd & 5'b00111)) ||
+-                            ((insn.varith_type.rs2 & 5'b00111) == (insn.varith_type.rd & 5'b00111)))
+-                          illegal_insn = 1'b1;
+-                      default:
+-                        if ((insn.varith_type.rs1 == insn.varith_type.rd) ||
+-                            (insn.varith_type.rs2 == insn.varith_type.rd)) illegal_insn = 1'b1;
+-                    endcase
+                   end
+                   6'b010010: begin
+                     ara_req.op = ara_pkg::VSBC;
+@@ -786,25 +778,6 @@ module ara_dispatcher import ara_pkg::*; import rvv_pkg::*; #(
+                   end
+                   6'b010011: begin
+                     ara_req.op        = ara_pkg::VMSBC;
+-
+-                    // Check whether we can access vs1 and vs2
+-                    unique case (ara_req.emul)
+-                      LMUL_2:
+-                        if (((insn.varith_type.rs1 & 5'b00001) == (insn.varith_type.rd & 5'b00001)) ||
+-                            ((insn.varith_type.rs2 & 5'b00001) == ( insn.varith_type.rd & 5'b00001)))
+-                          illegal_insn = 1'b1;
+-                      LMUL_4:
+-                        if (((insn.varith_type.rs1 & 5'b00011) == (insn.varith_type.rd & 5'b00011)) ||
+-                            ((insn.varith_type.rs2 & 5'b00011) == (insn.varith_type.rd & 5'b00011)))
+-                          illegal_insn = 1'b1;
+-                      LMUL_8:
+-                        if (((insn.varith_type.rs1 & 5'b00111) == (insn.varith_type.rd & 5'b00111)) ||
+-                            ((insn.varith_type.rs2 & 5'b00111) == (insn.varith_type.rd & 5'b00111)))
+-                          illegal_insn = 1'b1;
+-                      default:
+-                        if ((insn.varith_type.rs1 == insn.varith_type.rd) ||
+-                            (insn.varith_type.rs2 == insn.varith_type.rd)) illegal_insn = 1'b1;
+-                    endcase
+                   end
+                   6'b011000: begin
+                     ara_req.op         = ara_pkg::VMSEQ;
+@@ -960,17 +933,27 @@ module ara_dispatcher import ara_pkg::*; import rvv_pkg::*; #(
+                   unique case (ara_req.emul)
+                     LMUL_2: if ((insn.varith_type.rs1 & 5'b00001) != 5'b00000 ||
+                           (insn.varith_type.rs2 & 5'b00001) != 5'b00000 ||
+-                          (insn.varith_type.rd & 5'b00001) != 5'b00000) illegal_insn = 1'b1;
++                          ((insn.varith_type.rd & 5'b00001) != 5'b00000 &&
++                         !(ara_req.op inside {[VMSEQ:VMSBC]}))) illegal_insn = 1'b1;
+                     LMUL_4: if ((insn.varith_type.rs1 & 5'b00011) != 5'b00000 ||
+                           (insn.varith_type.rs2 & 5'b00011) != 5'b00000 ||
+-                          (insn.varith_type.rd & 5'b00011) != 5'b00000) illegal_insn = 1'b1;
++                          ((insn.varith_type.rd & 5'b00011) != 5'b00000 &&
++                         !(ara_req.op inside {[VMSEQ:VMSBC]}))) illegal_insn = 1'b1;
+                     LMUL_8: if ((insn.varith_type.rs1 & 5'b00111) != 5'b00000 ||
+                           (insn.varith_type.rs2 & 5'b00111) != 5'b00000 ||
+-                          (insn.varith_type.rd & 5'b00111) != 5'b00000) illegal_insn = 1'b1;
++                          ((insn.varith_type.rd & 5'b00111) != 5'b00000 &&
++                         !(ara_req.op inside {[VMSEQ:VMSBC]}))) illegal_insn = 1'b1;
+                     default:;
+                   endcase
+                 end
+
++                // A mask destination may overlap a source group only at its lowest register.
++                if (ara_req.op inside {[VMFEQ:VMSBC]} &&
++                    (mask_vd_overlaps(insn.varith_type.rd, insn.varith_type.rs2, csr_vtype_q.vlmul) ||
++                     ara_req.use_vs1 && mask_vd_overlaps(insn.varith_type.rd, insn.varith_type.rs1,
++                                                         csr_vtype_q.vlmul)))
++                  illegal_insn = 1'b1;
++
+                 // Instruction is invalid if the vtype is invalid
+                 if (csr_vtype_q.vill) illegal_insn = 1'b1;
+               end
+@@ -1039,20 +1022,6 @@ module ara_dispatcher import ara_pkg::*; import rvv_pkg::*; #(
+                   end
+                   6'b010001: begin
+                     ara_req.op        = ara_pkg::VMADC;
+-
+-                    // Check whether we can access vs1 and vs2
+-                    unique case (ara_req.emul)
+-                      LMUL_2:
+-                        if ((insn.varith_type.rs2 & 5'b00001) == (insn.varith_type.rd & 5'b00001))
+-                          illegal_insn = 1'b1;
+-                      LMUL_4:
+-                        if ((insn.varith_type.rs2 & 5'b00011) == (insn.varith_type.rd & 5'b00011))
+-                          illegal_insn = 1'b1;
+-                      LMUL_8:
+-                        if ((insn.varith_type.rs2 & 5'b00111) == (insn.varith_type.rd & 5'b00111))
+-                          illegal_insn = 1'b1;
+-                      default: if (insn.varith_type.rs2 == insn.varith_type.rd) illegal_insn = 1'b1;
+-                    endcase
+                   end
+                   6'b010010: begin
+                     ara_req.op = ara_pkg::VSBC;
+@@ -1065,20 +1034,6 @@ module ara_dispatcher import ara_pkg::*; import rvv_pkg::*; #(
+                   end
+                   6'b010011: begin
+                     ara_req.op        = ara_pkg::VMSBC;
+-
+-                    // Check whether we can access vs1 and vs2
+-                    unique case (ara_req.emul)
+-                      LMUL_2:
+-                        if ((insn.varith_type.rs2 & 5'b00001) == (insn.varith_type.rd & 5'b00001))
+-                          illegal_insn = 1'b1;
+-                      LMUL_4:
+-                        if ((insn.varith_type.rs2 & 5'b00011) == (insn.varith_type.rd & 5'b00011))
+-                          illegal_insn = 1'b1;
+-                      LMUL_8:
+-                        if ((insn.varith_type.rs2 & 5'b00111) == (insn.varith_type.rd & 5'b00111))
+-                          illegal_insn = 1'b1;
+-                      default: if (insn.varith_type.rs2 == insn.varith_type.rd) illegal_insn = 1'b1;
+-                    endcase
+                   end
+                   6'b011000: begin
+                     ara_req.op         = ara_pkg::VMSEQ;
+@@ -1212,14 +1167,24 @@ module ara_dispatcher import ara_pkg::*; import rvv_pkg::*; #(
+                 // access.
+                 unique case (ara_req.emul)
+                   LMUL_2: if ((insn.varith_type.rs2 & 5'b00001) != 5'b00000 ||
+-                        (insn.varith_type.rd & 5'b00001) != 5'b00000) illegal_insn = 1'b1;
++                        ((insn.varith_type.rd & 5'b00001) != 5'b00000 &&
++                         !(ara_req.op inside {[VMSEQ:VMSBC]}))) illegal_insn = 1'b1;
+                   LMUL_4: if ((insn.varith_type.rs2 & 5'b00011) != 5'b00000 ||
+-                        (insn.varith_type.rd & 5'b00011) != 5'b00000) illegal_insn = 1'b1;
++                        ((insn.varith_type.rd & 5'b00011) != 5'b00000 &&
++                         !(ara_req.op inside {[VMSEQ:VMSBC]}))) illegal_insn = 1'b1;
+                   LMUL_8: if ((insn.varith_type.rs2 & 5'b00111) != 5'b00000 ||
+-                        (insn.varith_type.rd & 5'b00111) != 5'b00000) illegal_insn = 1'b1;
++                        ((insn.varith_type.rd & 5'b00111) != 5'b00000 &&
++                         !(ara_req.op inside {[VMSEQ:VMSBC]}))) illegal_insn = 1'b1;
+                   default:;
+                 endcase
+
++                // A mask destination may overlap a source group only at its lowest register.
++                if (ara_req.op inside {[VMFEQ:VMSBC]} &&
++                    (mask_vd_overlaps(insn.varith_type.rd, insn.varith_type.rs2, csr_vtype_q.vlmul) ||
++                     ara_req.use_vs1 && mask_vd_overlaps(insn.varith_type.rd, insn.varith_type.rs1,
++                                                         csr_vtype_q.vlmul)))
++                  illegal_insn = 1'b1;
++
+                 // Instruction is invalid if the vtype is invalid
+                 if (csr_vtype_q.vill) illegal_insn = 1'b1;
+               end
+@@ -1287,20 +1252,6 @@ module ara_dispatcher import ara_pkg::*; import rvv_pkg::*; #(
+                   end
+                   6'b010001: begin
+                     ara_req.op        = ara_pkg::VMADC;
+-
+-                    // Check whether we can access vs1 and vs2
+-                    unique case (ara_req.emul)
+-                      LMUL_2:
+-                        if ((insn.varith_type.rs2 & 5'b00001) == (insn.varith_type.rd & 5'b00001))
+-                          illegal_insn = 1'b1;
+-                      LMUL_4:
+-                        if ((insn.varith_type.rs2 & 5'b00011) == (insn.varith_type.rd & 5'b00011))
+-                          illegal_insn = 1'b1;
+-                      LMUL_8:
+-                        if ((insn.varith_type.rs2 & 5'b00111) == (insn.varith_type.rd & 5'b00111))
+-                          illegal_insn = 1'b1;
+-                      default: if (insn.varith_type.rs2 == insn.varith_type.rd) illegal_insn = 1'b1;
+-                    endcase
+                   end
+                   6'b011000: begin
+                     ara_req.op         = ara_pkg::VMSEQ;
+@@ -1457,14 +1408,24 @@ module ara_dispatcher import ara_pkg::*; import rvv_pkg::*; #(
+                 // access.
+                 unique case (ara_req.emul)
+                   LMUL_2: if ((insn.varith_type.rs2 & 5'b00001) != 5'b00000 ||
+-                        (insn.varith_type.rd & 5'b00001) != 5'b00000) illegal_insn = 1'b1;
++                        ((insn.varith_type.rd & 5'b00001) != 5'b00000 &&
++                         !(ara_req.op inside {[VMSEQ:VMSBC]}))) illegal_insn = 1'b1;
+                   LMUL_4: if ((insn.varith_type.rs2 & 5'b00011) != 5'b00000 ||
+-                        (insn.varith_type.rd & 5'b00011) != 5'b00000) illegal_insn = 1'b1;
++                        ((insn.varith_type.rd & 5'b00011) != 5'b00000 &&
++                         !(ara_req.op inside {[VMSEQ:VMSBC]}))) illegal_insn = 1'b1;
+                   LMUL_8: if ((insn.varith_type.rs2 & 5'b00111) != 5'b00000 ||
+-                        (insn.varith_type.rd & 5'b00111) != 5'b00000) illegal_insn = 1'b1;
++                        ((insn.varith_type.rd & 5'b00111) != 5'b00000 &&
++                         !(ara_req.op inside {[VMSEQ:VMSBC]}))) illegal_insn = 1'b1;
+                   default:;
+                 endcase
+
++                // A mask destination may overlap a source group only at its lowest register.
++                if (ara_req.op inside {[VMFEQ:VMSBC]} &&
++                    (mask_vd_overlaps(insn.varith_type.rd, insn.varith_type.rs2, csr_vtype_q.vlmul) ||
++                     ara_req.use_vs1 && mask_vd_overlaps(insn.varith_type.rd, insn.varith_type.rs1,
++                                                         csr_vtype_q.vlmul)))
++                  illegal_insn = 1'b1;
++
+                 // Instruction is invalid if the vtype is invalid
+                 if (csr_vtype_q.vill) illegal_insn = 1'b1;
+               end
+@@ -1935,6 +1896,20 @@ module ara_dispatcher import ara_pkg::*; import rvv_pkg::*; #(
+                   default: illegal_insn = 1'b1;
+                 endcase
+
++                // A mask register operand is one register whatever LMUL is.
++                if (ara_req.op inside {[VMSBF:VMSIF], [VMANDNOT:VMXNOR]}) skip_lmul_checks = 1'b1;
++                if (ara_req.op == VIOTA) lmul_vs2 = LMUL_1;
++                // A reduction's vd and vs1 hold one element; only vs2 is a register group.
++                if (ara_req.op inside {[VREDSUM:VREDMAX]}) begin
++                  skip_lmul_checks = 1'b1;
++                  unique case (lmul_vs2)
++                    LMUL_2: if ((insn.varith_type.rs2 & 5'b00001) != 5'b00000) illegal_insn = 1'b1;
++                    LMUL_4: if ((insn.varith_type.rs2 & 5'b00011) != 5'b00000) illegal_insn = 1'b1;
++                    LMUL_8: if ((insn.varith_type.rs2 & 5'b00111) != 5'b00000) illegal_insn = 1'b1;
++                    default:;
++                  endcase
++                end
++
+                 // Instructions with an integer LMUL have extra constraints on the registers they can
+                 // access. These constraints can be different for the two source operands and the
+                 // destination register.
+@@ -1991,9 +1966,7 @@ module ara_dispatcher import ara_pkg::*; import rvv_pkg::*; #(
+                     ara_req.eew_vs2 = csr_vtype_q.vsew;
+                     // Request will need reshuffling
+                     ara_req.scale_vl = 1'b1;
+-                    // If stride > vl, the vslideup has no effects
+-                    if (|ara_req.stride[$bits(ara_req.stride)-1:$bits(csr_vl_q)] ||
+-                      (vlen_t'(ara_req.stride) >= csr_vl_q)) null_vslideup = 1'b1;
++                    // vd[0] gets the scalar even when vl == 1, so this is never a null slide
+                   end
+                   6'b001111: begin // vslide1down
+                     ara_req.op      = ara_pkg::VSLIDEDOWN;
+@@ -2177,6 +2150,18 @@ module ara_dispatcher import ara_pkg::*; import rvv_pkg::*; #(
+                   default: illegal_insn = 1'b1;
+                 endcase
+
++                // A widening .vx/.wx instruction uses only the low SEW bits of rs1, extended like a
++                // vs1 element; the lanes replicate the scalar at the wider destination EEW.
++                if (ara_req.conversion_vs1 inside {OpQueueConversionZExt2, OpQueueConversionSExt2}) begin
++                  automatic logic sext = ara_req.conversion_vs1 == OpQueueConversionSExt2;
++                  unique case (csr_vtype_q.vsew)
++                    EW8 : ara_req.scalar_op = {{56{sext & acc_req_i.rs1[ 7]}}, acc_req_i.rs1[ 7:0]};
++                    EW16: ara_req.scalar_op = {{48{sext & acc_req_i.rs1[15]}}, acc_req_i.rs1[15:0]};
++                    EW32: ara_req.scalar_op = {{32{sext & acc_req_i.rs1[31]}}, acc_req_i.rs1[31:0]};
++                    default:;
++                  endcase
++                end
++
+                 // Instructions with an integer LMUL have extra constraints on the registers they can
+                 // access. The constraints can be different for the two source operands and the
+                 // destination register.
+@@ -2594,14 +2579,28 @@ module ara_dispatcher import ara_pkg::*; import rvv_pkg::*; #(
+                     default: illegal_insn = 1'b1;
+                   endcase
+
++                  // A reduction's vd and vs1 hold one element; vs2 is an LMUL group.
++                  if (ara_req.op inside {[VFREDUSUM:VFWREDOSUM]}) begin
++                    skip_lmul_checks = 1'b1;
++                    unique case (csr_vtype_q.vlmul)
++                      LMUL_2: if ((insn.varith_type.rs2 & 5'b00001) != 5'b00000) illegal_insn = 1'b1;
++                      LMUL_4: if ((insn.varith_type.rs2 & 5'b00011) != 5'b00000) illegal_insn = 1'b1;
++                      LMUL_8: if ((insn.varith_type.rs2 & 5'b00111) != 5'b00000) illegal_insn = 1'b1;
++                      default:;
++                    endcase
++                  end
++
+                   // Instructions with an integer LMUL have extra constraints on the registers they
+                   // can access. The constraints can be different for the two source operands and the
+                   // destination register.
+                   if (!skip_lmul_checks) begin
+                     unique case (ara_req.emul)
+-                      LMUL_2   : if ((insn.varith_type.rd & 5'b00001) != 5'b00000) illegal_insn = ara_req.use_vd;
+-                      LMUL_4   : if ((insn.varith_type.rd & 5'b00011) != 5'b00000) illegal_insn = ara_req.use_vd;
+-                      LMUL_8   : if ((insn.varith_type.rd & 5'b00111) != 5'b00000) illegal_insn = ara_req.use_vd;
++                      LMUL_2   : if ((insn.varith_type.rd & 5'b00001) != 5'b00000 &&
++                                   !(ara_req.op inside {[VMFEQ:VMFGE]})) illegal_insn = ara_req.use_vd;
++                      LMUL_4   : if ((insn.varith_type.rd & 5'b00011) != 5'b00000 &&
++                                   !(ara_req.op inside {[VMFEQ:VMFGE]})) illegal_insn = ara_req.use_vd;
++                      LMUL_8   : if ((insn.varith_type.rd & 5'b00111) != 5'b00000 &&
++                                   !(ara_req.op inside {[VMFEQ:VMFGE]})) illegal_insn = ara_req.use_vd;
+                       LMUL_RSVD: illegal_insn = 1'b1;
+                       default:;
+                     endcase
+@@ -2621,6 +2620,13 @@ module ara_dispatcher import ara_pkg::*; import rvv_pkg::*; #(
+                     endcase
+                   end
+
++                  // A mask destination may overlap a source group only at its lowest register.
++                  if (ara_req.op inside {[VMFEQ:VMSBC]} &&
++                      (mask_vd_overlaps(insn.varith_type.rd, insn.varith_type.rs2, csr_vtype_q.vlmul) ||
++                       ara_req.use_vs1 && mask_vd_overlaps(insn.varith_type.rd, insn.varith_type.rs1,
++                                                           csr_vtype_q.vlmul)))
++                    illegal_insn = 1'b1;
++
+                   // Ara can support 8-bit float, 16-bit float, 32-bit float, 64-bit float.
+                   // Ara cannot support instructions who operates on more than 64 bits.
+                   unique case (FPUSupport)
+@@ -2687,9 +2693,7 @@ module ara_dispatcher import ara_pkg::*; import rvv_pkg::*; #(
+                     ara_req.eew_vs2  = csr_vtype_q.vsew;
+                     // Request will need reshuffling
+                     ara_req.scale_vl = 1'b1;
+-                    // If stride > vl, the vslideup has no effects
+-                    if (|ara_req.stride[$bits(ara_req.stride)-1:$bits(csr_vl_q)] ||
+-                      (vlen_t'(ara_req.stride) >= csr_vl_q)) null_vslideup = 1'b1;
++                    // vd[0] gets the scalar even when vl == 1, so this is never a null slide
+                     end
+                     6'b001111: begin // vfslide1down
+                       ara_req.op     = ara_pkg::VSLIDEDOWN;
+@@ -2899,9 +2903,12 @@ module ara_dispatcher import ara_pkg::*; import rvv_pkg::*; #(
+                   // destination register.
+                   if (!skip_lmul_checks) begin
+                     unique case (ara_req.emul)
+-                      LMUL_2   : if ((insn.varith_type.rd & 5'b00001) != 5'b00000) illegal_insn = ara_req.use_vd;
+-                      LMUL_4   : if ((insn.varith_type.rd & 5'b00011) != 5'b00000) illegal_insn = ara_req.use_vd;
+-                      LMUL_8   : if ((insn.varith_type.rd & 5'b00111) != 5'b00000) illegal_insn = ara_req.use_vd;
++                      LMUL_2   : if ((insn.varith_type.rd & 5'b00001) != 5'b00000 &&
++                                   !(ara_req.op inside {[VMFEQ:VMFGE]})) illegal_insn = ara_req.use_vd;
++                      LMUL_4   : if ((insn.varith_type.rd & 5'b00011) != 5'b00000 &&
++                                   !(ara_req.op inside {[VMFEQ:VMFGE]})) illegal_insn = ara_req.use_vd;
++                      LMUL_8   : if ((insn.varith_type.rd & 5'b00111) != 5'b00000 &&
++                                   !(ara_req.op inside {[VMFEQ:VMFGE]})) illegal_insn = ara_req.use_vd;
+                       LMUL_RSVD: illegal_insn = 1'b1;
+                       default:;
+                     endcase
+@@ -2914,6 +2921,13 @@ module ara_dispatcher import ara_pkg::*; import rvv_pkg::*; #(
+                     endcase
+                   end
+
++                  // A mask destination may overlap a source group only at its lowest register.
++                  if (ara_req.op inside {[VMFEQ:VMSBC]} &&
++                      (mask_vd_overlaps(insn.varith_type.rd, insn.varith_type.rs2, csr_vtype_q.vlmul) ||
++                       ara_req.use_vs1 && mask_vd_overlaps(insn.varith_type.rd, insn.varith_type.rs1,
++                                                           csr_vtype_q.vlmul)))
++                    illegal_insn = 1'b1;
++
+                   // Ara can support 16-bit float, 32-bit float, 64-bit float.
+                   // Ara cannot support instructions who operates on more than 64 bits.
+                   unique case (FPUSupport)
+@@ -3047,6 +3061,8 @@ module ara_dispatcher import ara_pkg::*; import rvv_pkg::*; #(
+             // For memory operations: EMUL = LMUL * (EEW / SEW)
+             // EEW is encoded in the instruction
+             ara_req.emul = vlmul_e'(csr_vtype_q.vlmul + (ara_req.vtype.vsew - csr_vtype_q.vsew));
++            // vlm.v and vsm.v access one mask register whatever LMUL is
++            if (insn.vmem_type.mop == 2'b00 && insn.vmem_type.rs2 == 5'b01011) ara_req.emul = LMUL_1;
+
+             // Exception if EMUL > 8 or < 1/8
+             unique case ({csr_vtype_q.vlmul[2], ara_req.emul[2]})
+@@ -3292,6 +3308,8 @@ module ara_dispatcher import ara_pkg::*; import rvv_pkg::*; #(
+             // For memory operations: EMUL = LMUL * (EEW / SEW)
+             // EEW is encoded in the instruction
+             ara_req.emul = vlmul_e'(csr_vtype_q.vlmul + (ara_req.vtype.vsew - csr_vtype_q.vsew));
++            // vlm.v and vsm.v access one mask register whatever LMUL is
++            if (insn.vmem_type.mop == 2'b00 && insn.vmem_type.rs2 == 5'b01011) ara_req.emul = LMUL_1;
+
+             // Exception if EMUL > 8 or < 1/8
+             unique case ({csr_vtype_q.vlmul[2], ara_req.emul[2]})
+diff --git a/hardware/src/lane/fixed_p_rounding.sv b/hardware/src/lane/fixed_p_rounding.sv
+index 6ff416a..a86e509 100644
+--- a/hardware/src/lane/fixed_p_rounding.sv
++++ b/hardware/src/lane/fixed_p_rounding.sv
+@@ -39,145 +39,44 @@ module fixed_p_rounding import ara_pkg::*; import rvv_pkg::*; #(
+   vxrm_t vxrm;
+   assign vxrm = vxrm_i;
+
+-  elen_t [DataWidth-1:0] bit_select;
+-  int j;
++  // Rounding increment for v >> d under vxrm (RVV 1.0, 3.8). d is already reduced to the
++  // element's shift range, so v[d] is in range; d == 0 shifts nothing and never rounds.
++  function automatic logic round_incr(logic [63:0] v, int unsigned d, vxrm_t mode);
++    logic below, last, kept;
++    if (d == 0) return 1'b0;
++    last  = v[d-1];
++    kept  = v[d];
++    below = (d > 1) ? |(v & ((64'd1 << (d-1)) - 64'd1)) : 1'b0;
++    unique case (mode)
++      2'b00: return last;                   // rnu
++      2'b01: return last & (below | kept);  // rne
++      2'b10: return 1'b0;                   // rdn
++      2'b11: return !kept & (last | below); // rod
++    endcase
++  endfunction
+
++  // vssra/vssrl round SEW-wide elements; vnclip/vnclipu round their 2*SEW-wide source.
++  // r_o[i] belongs to the i-th element of that width in the 64-bit word.
+   always_comb begin
+-    j   =  0;
+     r_o = '0;
+-
+     if (valid_i) begin
+       unique case (op_i)
+-        VSSRA, VSSRL, VNCLIP, VNCLIPU : begin
+-          unique case (vew_i)
+-            EW8 : begin
+-              unique case (vxrm)
+-                2'b00: begin
+-                  for (int i=0; i<8; i++) begin
+-                    j      = opa.w8[i];
+-                    r_o[i] = opb.w8[i][j-1];
+-                  end
+-                end
+-                2'b01: begin
+-                  for (int i=0; i<8; i++) begin
+-                    j      = opa.w8[i];
+-                    r_o[i] = opb.w8[i][j-1] & opb.w8[i][j];
+-                  end
+-                end
+-                2'b10: begin
+-                  r_o = '0;
+-                end
+-                2'b11: begin
+-                  for (int i=0; i<8; i++) begin
+-                    j      = opa.w8[i];
+-                    r_o[i] = !opb.w8[i][j] & |(opb.w8[i] & bit_select);
+-                  end
+-                end
+-              endcase
+-            end
+-            EW16: begin
+-              unique case (vxrm)
+-                2'b00: begin
+-                  for (int i=0; i<4; i++) begin
+-                    j      = opa.w16[i];
+-                    r_o[i] = opb.w16[i][j-1];
+-                  end
+-                end
+-                2'b01: begin
+-                  for (int i=0; i<4; i++) begin
+-                    j      = opa.w16[i];
+-                    r_o[i] = opb.w16[i][j-1] & opb.w16[i][j];
+-                  end
+-                end
+-                2'b10: begin
+-                  r_o = '0;
+-                end
+-                2'b11: begin
+-                  for (int i=0; i<4; i++) begin
+-                    j      = opa.w16[i];
+-                    r_o[i] = !opb.w16[i][j] & |(opb.w16[i] & bit_select);
+-                  end
+-                end
+-              endcase
+-            end
+-            EW32: begin
+-              unique case (vxrm)
+-                2'b00: begin
+-                  for (int i=0; i<2; i++) begin
+-                    j      = opa.w32[i];
+-                    r_o[i] = opb.w32[i][j-1];
+-                  end
+-                end
+-                2'b01: begin
+-                  for (int i=0; i<2; i++) begin
+-                    j      = opa.w32[i];
+-                    r_o[i] = opb.w32[i][j-1] & opb.w32[i][j];
+-                  end
+-                end
+-                2'b10: begin
+-                  r_o = '0;
+-                end
+-                2'b11: begin
+-                  for (int i=0; i<2; i++) begin
+-                    j      = opa.w32[i];
+-                    r_o[i] = !opb.w32[i][j] & |(opb.w32[i] & bit_select);
+-                  end
+-                end
+-              endcase
+-            end
+-            EW64: begin
+-              unique case (vxrm)
+-                2'b00: begin
+-                  for (int i=0; i<1; i++) begin
+-                    j      = opa.w64[i];
+-                    r_o[i] = opb.w64[i][j-1];
+-                  end
+-                end
+-                2'b01: begin
+-                  for (int i=0; i<1; i++) begin
+-                    j      = opa.w64[i];
+-                    r_o[i] = opb.w64[i][j-1] & opb.w64[i][j];
+-                  end
+-                end
+-                2'b10: begin
+-                  r_o = '0;
+-                end
+-                2'b11: begin
+-                  for (int i=0; i<1; i++) begin
+-                    j      = opa.w64[i];
+-                    r_o[i] = !opb.w64[i][j] & |(opb.w64[i] & bit_select);
+-                  end
+-                end
+-              endcase
+-            end
+-          endcase
+-        end
+-        default: r_o = '0;
++        VSSRA, VSSRL: unique case (vew_i)
++          EW8 : for (int i = 0; i < 8; i++) r_o[i] = round_incr(64'(opb.w8[i]),  opa.w8[i][2:0],  vxrm);
++          EW16: for (int i = 0; i < 4; i++) r_o[i] = round_incr(64'(opb.w16[i]), opa.w16[i][3:0], vxrm);
++          EW32: for (int i = 0; i < 2; i++) r_o[i] = round_incr(64'(opb.w32[i]), opa.w32[i][4:0], vxrm);
++          EW64: r_o[0] = round_incr(opb.w64[0], opa.w64[0][5:0], vxrm);
++          default:;
++        endcase
++        VNCLIP, VNCLIPU: unique case (vew_i)
++          EW8 : for (int i = 0; i < 4; i++) r_o[i] = round_incr(64'(opb.w16[i]), opa.w16[i][3:0], vxrm);
++          EW16: for (int i = 0; i < 2; i++) r_o[i] = round_incr(64'(opb.w32[i]), opa.w32[i][4:0], vxrm);
++          EW32: r_o[0] = round_incr(opb.w64[0], opa.w64[0][5:0], vxrm);
++          default:;
++        endcase
++        default:;
+       endcase
+-    end else begin
+-      r_o = '0;
+     end
+   end
+
+-  //////////////////
+-  // Lookup Table //
+-  //////////////////
+-
+-  assign bit_select = {64'h0000000000000000, 64'h0000000000000001, 64'h0000000000000003, 64'h0000000000000007,
+-                       64'h000000000000000F, 64'h000000000000001F, 64'h000000000000003F, 64'h000000000000007F,
+-                       64'h00000000000000FF, 64'h00000000000001FF, 64'h00000000000003FF, 64'h00000000000007FF,
+-                       64'h0000000000000FFF, 64'h0000000000001FFF, 64'h0000000000003FFF, 64'h0000000000007FFF,
+-                       64'h000000000000FFFF, 64'h000000000001FFFF, 64'h000000000003FFFF, 64'h000000000007FFFF,
+-                       64'h00000000000FFFFF, 64'h00000000001FFFFF, 64'h00000000003FFFFF, 64'h00000000007FFFFF,
+-                       64'h0000000000FFFFFF, 64'h0000000001FFFFFF, 64'h0000000003FFFFFF, 64'h0000000007FFFFFF,
+-                       64'h000000000FFFFFFF, 64'h000000001FFFFFFF, 64'h000000003FFFFFFF, 64'h000000007FFFFFFF,
+-                       64'h00000000FFFFFFFF, 64'h00000001FFFFFFFF, 64'h00000003FFFFFFFF, 64'h00000007FFFFFFFF,
+-                       64'h0000000FFFFFFFFF, 64'h0000001FFFFFFFFF, 64'h0000003FFFFFFFFF, 64'h0000007FFFFFFFFF,
+-                       64'h000000FFFFFFFFFF, 64'h000001FFFFFFFFFF, 64'h000003FFFFFFFFFF, 64'h000007FFFFFFFFFF,
+-                       64'h00000FFFFFFFFFFF, 64'h00001FFFFFFFFFFF, 64'h00003FFFFFFFFFFF, 64'h00007FFFFFFFFFFF,
+-                       64'h0000FFFFFFFFFFFF, 64'h0001FFFFFFFFFFFF, 64'h0003FFFFFFFFFFFF, 64'h0007FFFFFFFFFFFF,
+-                       64'h000FFFFFFFFFFFFF, 64'h001FFFFFFFFFFFFF, 64'h003FFFFFFFFFFFFF, 64'h007FFFFFFFFFFFFF,
+-                       64'h00FFFFFFFFFFFFFF, 64'h01FFFFFFFFFFFFFF, 64'h03FFFFFFFFFFFFFF, 64'h07FFFFFFFFFFFFFF,
+-                       64'h0FFFFFFFFFFFFFFF, 64'h1FFFFFFFFFFFFFFF, 64'h3FFFFFFFFFFFFFFF, 64'h7FFFFFFFFFFFFFFF};
+-
+ endmodule : fixed_p_rounding
+diff --git a/hardware/src/lane/simd_alu.sv b/hardware/src/lane/simd_alu.sv
+index b970165..517d701 100644
+--- a/hardware/src/lane/simd_alu.sv
++++ b/hardware/src/lane/simd_alu.sv
+@@ -185,44 +185,52 @@ module simd_alu import ara_pkg::*; import rvv_pkg::*; #(
+           endcase
+         VAADD, VAADDU: if (FixPtSupport == FixedPointEnable) unique case (vew_i)
+             EW8: for (int b = 0; b < 8; b++) begin
+-              automatic logic [ 8:0] sum = opa.w8 [b] + opb.w8 [b];
++              automatic logic [ 8:0] sum = (op_i == VAADDU) ?
++                  {1'b0, opa.w8[b]} + {1'b0, opb.w8[b]} :
++                  {opa.w8[b][7], opa.w8[b]} + {opb.w8[b][7], opb.w8[b]};
+                 unique case (vxrm)
+                   2'b00: r = sum[0];
+                   2'b01: r = &sum[1:0];
+                   2'b10: r = 1'b0;
+                   2'b11: r = !sum[1] & (sum[0]!=0);
+                 endcase
+-                res.w8[b] = (op_i == VAADDU) ? sum[8:1] + r : {sum[7], sum[7:1]} + r;
++                res.w8[b] = sum[8:1] + r;
+               end
+             EW16: for (int b = 0; b < 4; b++) begin
+-                automatic logic [16:0] sum = opa.w16[b] + opb.w16[b];
++                automatic logic [16:0] sum = (op_i == VAADDU) ?
++                  {1'b0, opa.w16[b]} + {1'b0, opb.w16[b]} :
++                  {opa.w16[b][15], opa.w16[b]} + {opb.w16[b][15], opb.w16[b]};
+                 unique case (vxrm)
+                   2'b00: r = sum[0];
+                   2'b01: r = &sum[1:0];
+                   2'b10: r = 1'b0;
+                   2'b11: r = !sum[1] & (sum[0]!=0);
+                 endcase
+-                res.w16[b] = (op_i == VAADDU) ? sum[16:1] + r : {sum[15], sum[15:1]} + r;
++                res.w16[b] = sum[16:1] + r;
+               end
+             EW32: for (int b = 0; b < 2; b++) begin
+-                automatic logic [32:0] sum = opa.w32[b] + opb.w32[b];
++                automatic logic [32:0] sum = (op_i == VAADDU) ?
++                  {1'b0, opa.w32[b]} + {1'b0, opb.w32[b]} :
++                  {opa.w32[b][31], opa.w32[b]} + {opb.w32[b][31], opb.w32[b]};
+                 unique case (vxrm)
+                   2'b00: r = sum[0];
+                   2'b01: r = &sum[1:0];
+                   2'b10: r = 1'b0;
+                   2'b11: r = !sum[1] & (sum[0]!=0);
+                 endcase
+-                res.w32[b] = (op_i == VAADDU) ? sum[32:1] + r : {sum[31], sum[31:1]} + r;
++                res.w32[b] = sum[32:1] + r;
+               end
+             EW64: for (int b = 0; b < 1; b++) begin
+-                automatic logic [64:0] sum = opa.w64[b] + opb.w64[b];
++                automatic logic [64:0] sum = (op_i == VAADDU) ?
++                  {1'b0, opa.w64[b]} + {1'b0, opb.w64[b]} :
++                  {opa.w64[b][63], opa.w64[b]} + {opb.w64[b][63], opb.w64[b]};
+                 unique case (vxrm)
+                   2'b00: r = sum[0];
+                   2'b01: r = &sum[1:0];
+                   2'b10: r = 1'b0;
+                   2'b11: r = !sum[1] & (sum[0]!=0);
+                 endcase
+-                res.w64[b] = (op_i == VAADDU) ? sum[64:1] + r : {sum[63], sum[63:1]} + r;
++                res.w64[b] = sum[64:1] + r;
+               end
+           endcase
+         VADD, VADC, VMADC, VREDSUM, VWREDSUMU, VWREDSUM: unique case (vew_i)
+@@ -325,44 +333,52 @@ module simd_alu import ara_pkg::*; import rvv_pkg::*; #(
+           endcase
+         VASUB, VASUBU: if (FixPtSupport == FixedPointEnable) unique case (vew_i)
+             EW8: for (int b = 0; b < 8; b++) begin
+-                automatic logic [ 8:0] sub = opb.w8 [b] - opa.w8 [b];
++                automatic logic [ 8:0] sub = (op_i == VASUBU) ?
++                  {1'b0, opb.w8[b]} - {1'b0, opa.w8[b]} :
++                  {opb.w8[b][7], opb.w8[b]} - {opa.w8[b][7], opa.w8[b]};
+                 unique case (vxrm)
+                   2'b00: r = sub[0];
+                   2'b01: r = &sub[1:0];
+                   2'b10: r = 1'b0;
+                   2'b11: r = !sub[1] & (sub[0]!=0);
+                 endcase
+-                res.w8[b] = (op_i == VASUBU) ? (sub[7:0] >> 1) + r : ($signed(sub[7:0]) >>> 1) + r;
++                res.w8[b] = sub[8:1] + r;
+               end
+             EW16: for (int b = 0; b < 4; b++) begin
+-                automatic logic [ 16:0] sub = opb.w16[b] - opa.w16[b];
++                automatic logic [16:0] sub = (op_i == VASUBU) ?
++                  {1'b0, opb.w16[b]} - {1'b0, opa.w16[b]} :
++                  {opb.w16[b][15], opb.w16[b]} - {opa.w16[b][15], opa.w16[b]};
+                 unique case (vxrm)
+                   2'b00: r = sub[0];
+                   2'b01: r = &sub[1:0];
+                   2'b10: r = 1'b0;
+                   2'b11: r = !sub[1] & (sub[0]!=0);
+                 endcase
+-                res.w16[b] = (op_i == VASUBU) ? (sub[15:0] >> 1) + r : ($signed(sub[15:0]) >>> 1) + r;
++                res.w16[b] = sub[16:1] + r;
+               end
+             EW32: for (int b = 0; b < 2; b++) begin
+-                automatic logic [ 32:0] sub = opb.w32[b] - opa.w32[b];
++                automatic logic [32:0] sub = (op_i == VASUBU) ?
++                  {1'b0, opb.w32[b]} - {1'b0, opa.w32[b]} :
++                  {opb.w32[b][31], opb.w32[b]} - {opa.w32[b][31], opa.w32[b]};
+                 unique case (vxrm)
+                   2'b00: r = sub[0];
+                   2'b01: r = &sub[1:0];
+                   2'b10: r = 1'b0;
+                   2'b11: r = !sub[1] & (sub[0]!=0);
+                 endcase
+-                res.w32[b] = (op_i == VASUBU) ? (sub[31:0] >> 1) + r : ($signed(sub[31:0]) >>> 1) + r;
++                res.w32[b] = sub[32:1] + r;
+               end
+             EW64: for (int b = 0; b < 1; b++) begin
+-                automatic logic [ 64:0] sub = opb.w64[b] - opa.w64[b];
++                automatic logic [64:0] sub = (op_i == VASUBU) ?
++                  {1'b0, opb.w64[b]} - {1'b0, opa.w64[b]} :
++                  {opb.w64[b][63], opb.w64[b]} - {opa.w64[b][63], opa.w64[b]};
+                 unique case (vxrm)
+                   2'b00: r = sub[0];
+                   2'b01: r = &sub[1:0];
+                   2'b10: r = 1'b0;
+                   2'b11: r = !sub[1] & (sub[0]!=0);
+                 endcase
+-                res.w64[b] = (op_i == VASUBU) ? (sub[63:0] >> 1) + r : ($signed(sub[63:0]) >>> 1) + r;
++                res.w64[b] = sub[64:1] + r;
+               end
+           endcase
+
+@@ -423,56 +439,70 @@ module simd_alu import ara_pkg::*; import rvv_pkg::*; #(
+           endcase
+         VSSRL: if (FixPtSupport == FixedPointEnable) unique case (vew_i)
+             EW8: for (int b = 0; b < 8; b++) begin
+-                automatic logic [8:0] srl = opb.w8 [b] >> opa.w8 [b];
++                automatic logic [8:0] srl = opb.w8[b] >> opa.w8[b][2:0];
+                 res.w8[b] = srl + rm[b];
+               end
+             EW16: for (int b = 0; b < 4; b++) begin
+-                automatic logic [16:0] srl = opb.w16[b] >> opa.w16[b];
++                automatic logic [16:0] srl = opb.w16[b] >> opa.w16[b][3:0];
+                 res.w16[b] = srl + rm[b];
+               end
+             EW32: for (int b = 0; b < 2; b++) begin
+-                automatic logic [32:0] srl = opb.w32[b] >> opa.w32[b];
++                automatic logic [32:0] srl = opb.w32[b] >> opa.w32[b][4:0];
+                 res.w32[b] = srl + rm[b];
+               end
+             EW64: for (int b = 0; b < 1; b++) begin
+-                automatic logic [64:0] srl = opb.w64[b] >> opa.w64[b];
++                automatic logic [64:0] srl = opb.w64[b] >> opa.w64[b][5:0];
+                 res.w64[b] = srl + rm[b];
+               end
+           endcase
+
+         // Fixed point clip instructions
++        // Narrowing clips: round the 2*SEW source, then saturate to SEW. vxsat marks the bytes
++        // of the destination element.
+         VNCLIP: if (FixPtSupport == FixedPointEnable) unique case (vew_i)
+             EW8 : for (int b = 0; b < 4; b++) begin
+-                automatic logic [15:0] clip = $signed(opb.w16[b]) >>> opa.w16[b][3:0];
+-                vxsat.w8[b]   = |clip[15:8];
+-                res.w8 [2*b + narrowing_select_i] = ($signed(opb.w16[b]) >>> opa.w16[b][3:0]) + rm[b];
++                automatic logic signed [15:0] clip = ($signed(opb.w16[b]) >>> opa.w16[b][3:0]) +
++                    $signed({1'b0, rm[b]});
++                automatic logic hi = clip > 16'sd127;
++                automatic logic lo = clip < -16'sd128;
++                res.w8[2*b + narrowing_select_i]   = hi ? 8'h7f : lo ? 8'h80 : clip[7:0];
++                vxsat.w8[2*b + narrowing_select_i] = {1{hi | lo}};
+               end
+             EW16: for (int b = 0; b < 2; b++) begin
+-                automatic logic [31:0] clip = $signed(opb.w32[b]) >>> opa.w32[b][4:0];
+-                vxsat.w8[b]   = |clip[31:16];
+-                res.w16[2*b + narrowing_select_i] = ($signed(opb.w32[b]) >>> opa.w32[b][4:0]) + rm[b];
++                automatic logic signed [31:0] clip = ($signed(opb.w32[b]) >>> opa.w32[b][4:0]) +
++                    $signed({1'b0, rm[b]});
++                automatic logic hi = clip > 32'sd32767;
++                automatic logic lo = clip < -32'sd32768;
++                res.w16[2*b + narrowing_select_i]   = hi ? 16'h7fff : lo ? 16'h8000 : clip[15:0];
++                vxsat.w16[2*b + narrowing_select_i] = {2{hi | lo}};
+               end
+             EW32: for (int b = 0; b < 1; b++) begin
+-                automatic logic [63:0] clip = $signed(opb.w64[b]) >>> opa.w64[b][5:0];
+-                vxsat.w8[b]   = |clip[63:32];
+-                res.w32[2*b + narrowing_select_i] = ($signed(opb.w64[b]) >>> opa.w64[b][5:0]) + rm[b];
++                automatic logic signed [63:0] clip = ($signed(opb.w64[b]) >>> opa.w64[b][5:0]) +
++                    $signed({1'b0, rm[b]});
++                automatic logic hi = clip > 64'sd2147483647;
++                automatic logic lo = clip < -64'sd2147483648;
++                res.w32[2*b + narrowing_select_i]   = hi ? 32'h7fffffff : lo ? 32'h80000000 : clip[31:0];
++                vxsat.w32[2*b + narrowing_select_i] = {4{hi | lo}};
+               end
+           endcase
+         VNCLIPU: if (FixPtSupport == FixedPointEnable) unique case (vew_i)
+             EW8 : for (int b = 0; b < 4; b++) begin
+-                automatic logic [15:0] clipu = opb.w16[b] >> opa.w16[b][3:0];
+-                vxsat.w8[b]   = |clipu[15:8];
+-                res.w8 [2*b + narrowing_select_i] = (opb.w16[b] >> opa.w16[b][3:0]) + rm[b];
++                automatic logic [16:0] clip = (opb.w16[b] >> opa.w16[b][3:0]) + rm[b];
++                automatic logic hi = clip > 17'd255;
++                res.w8[2*b + narrowing_select_i]   = hi ? 8'hff : clip[7:0];
++                vxsat.w8[2*b + narrowing_select_i] = {1{hi}};
+               end
+             EW16: for (int b = 0; b < 2; b++) begin
+-                automatic logic [31:0] clipu = opb.w32[b] >> opa.w32[b][4:0];
+-                vxsat.w8[b]   = |clipu[31:16];
+-                res.w16[2*b + narrowing_select_i] = (opb.w32[b] >> opa.w32[b][4:0]) + rm[b];
++                automatic logic [32:0] clip = (opb.w32[b] >> opa.w32[b][4:0]) + rm[b];
++                automatic logic hi = clip > 33'd65535;
++                res.w16[2*b + narrowing_select_i]   = hi ? 16'hffff : clip[15:0];
++                vxsat.w16[2*b + narrowing_select_i] = {2{hi}};
+               end
+             EW32: for (int b = 0; b < 1; b++) begin
+-                automatic logic [63:0] clipu = opb.w64[b] >> opa.w64[b][5:0];
+-                vxsat.w8[b]   = |clipu[63:32];
+-                res.w32[2*b + narrowing_select_i] = (opb.w64[b] >> opa.w64[b][5:0]) + rm[b];
++                automatic logic [64:0] clip = (opb.w64[b] >> opa.w64[b][5:0]) + rm[b];
++                automatic logic hi = clip > 65'd4294967295;
++                res.w32[2*b + narrowing_select_i]   = hi ? 32'hffffffff : clip[31:0];
++                vxsat.w32[2*b + narrowing_select_i] = {4{hi}};
+               end
+           endcase
+
+diff --git a/hardware/src/lane/simd_mul.sv b/hardware/src/lane/simd_mul.sv
+index 2a2228d..d51026d 100644
+--- a/hardware/src/lane/simd_mul.sv
++++ b/hardware/src/lane/simd_mul.sv
+@@ -156,7 +156,8 @@ module simd_mul import ara_pkg::*; import rvv_pkg::*; #(
+       assign mul_res.w128[l] =
+       $signed({opa.w64[l][63] & signed_a, opa.w64[l]}) * $signed({opb.w64[l][63] & signed_b, opb.w64[l]});
+       if (FixPtSupport == FixedPointEnable)
+-        assign vxsat.w64[l] = (op == VSMUL) ? result_o[(l+1)*64-1] ^ mul_res.w128[l][127] : '0;
++        assign vxsat.w64[l] = (op == VSMUL) ? (opa.w64[l] == {1'b1, {63{1'b0}}} &&
++                                             opb.w64[l] == {1'b1, {63{1'b0}}}) : '0;
+       else
+         assign vxsat.w64[l] = '0;
+     end : gen_mul
+@@ -193,13 +194,17 @@ module simd_mul import ara_pkg::*; import rvv_pkg::*; #(
+         end
+         default: result_o = '0;
+       endcase
++      // vsmul overflows only for (-2^(SEW-1))^2, which saturates to 2^(SEW-1)-1
++      if (op == VSMUL)
++        for (int l = 0; l < 1; l++) if (vxsat.w64[l]) result_o[64*l +: 64] = {1'b0, {63{1'b1}}};
+     end
+   end : gen_p_mul_ew64 else if (ElementWidth == EW32) begin: gen_p_mul_ew32
+     for (genvar l = 0; l < 2; l++) begin: gen_mul
+       assign mul_res.w64[l] =
+       $signed({opa.w32[l][31] & signed_a, opa.w32[l]}) * $signed({opb.w32[l][31] & signed_b, opb.w32[l]});
+       if (FixPtSupport == FixedPointEnable)
+-        assign vxsat.w32[l] = (op == VSMUL) ? result_o[(l+1)*32-1] ^ mul_res.w64[l][63] : '0;
++        assign vxsat.w32[l] = (op == VSMUL) ? (opa.w32[l] == {1'b1, {31{1'b0}}} &&
++                                             opb.w32[l] == {1'b1, {31{1'b0}}}) : '0;
+       else
+         assign vxsat.w32[l] = '0;
+     end: gen_mul
+@@ -231,13 +236,17 @@ module simd_mul import ara_pkg::*; import rvv_pkg::*; #(
+           end
+         default: result_o = '0;
+       endcase
++      // vsmul overflows only for (-2^(SEW-1))^2, which saturates to 2^(SEW-1)-1
++      if (op == VSMUL)
++        for (int l = 0; l < 2; l++) if (vxsat.w32[l]) result_o[32*l +: 32] = {1'b0, {31{1'b1}}};
+     end
+   end : gen_p_mul_ew32 else if (ElementWidth == EW16) begin: gen_p_mul_ew16
+     for (genvar l = 0; l < 4; l++) begin: gen_mul
+       assign mul_res.w32[l] =
+       $signed({opa.w16[l][15] & signed_a, opa.w16[l]}) * $signed({opb.w16[l] [15] & signed_b, opb.w16[l]});
+       if (FixPtSupport == FixedPointEnable)
+-        assign vxsat.w16[l] = (op == VSMUL) ? result_o[(l+1)*16-1] ^ mul_res.w32[l][31] : '0;
++        assign vxsat.w16[l] = (op == VSMUL) ? (opa.w16[l] == {1'b1, {15{1'b0}}} &&
++                                             opb.w16[l] == {1'b1, {15{1'b0}}}) : '0;
+       else
+         assign vxsat.w16[l] = '0;
+     end : gen_mul
+@@ -269,13 +278,17 @@ module simd_mul import ara_pkg::*; import rvv_pkg::*; #(
+           end
+         default: result_o = '0;
+       endcase
++      // vsmul overflows only for (-2^(SEW-1))^2, which saturates to 2^(SEW-1)-1
++      if (op == VSMUL)
++        for (int l = 0; l < 4; l++) if (vxsat.w16[l]) result_o[16*l +: 16] = {1'b0, {15{1'b1}}};
+     end
+   end : gen_p_mul_ew16 else if (ElementWidth == EW8) begin: gen_p_mul_ew8
+     for (genvar l = 0; l < 8; l++) begin: gen_mul
+       assign mul_res.w16[l] =
+       $signed({opa.w8[l][7] & signed_a, opa.w8[l]}) * $signed({opb.w8[l][7] & signed_b, opb.w8[l]});
+       if (FixPtSupport == FixedPointEnable)
+-        assign vxsat.w8[l] = (op == VSMUL) ? result_o[(l+1)*8-1] ^ mul_res.w16[l][15] : '0;
++        assign vxsat.w8[l] = (op == VSMUL) ? (opa.w8[l] == {1'b1, {7{1'b0}}} &&
++                                             opb.w8[l] == {1'b1, {7{1'b0}}}) : '0;
+       else
+         assign vxsat.w8[l] = '0;
+     end : gen_mul
+@@ -305,6 +318,9 @@ module simd_mul import ara_pkg::*; import rvv_pkg::*; #(
+         VNMSUB: for (int l = 0; l < 8; l++) result_o[8*l +: 8] = -mul_res.w16[l][7:0] + opc.w8[l];
+         default: result_o = '0;
+       endcase
++      // vsmul overflows only for (-2^(SEW-1))^2, which saturates to 2^(SEW-1)-1
++      if (op == VSMUL)
++        for (int l = 0; l < 8; l++) if (vxsat.w8[l]) result_o[8*l +: 8] = {1'b0, {7{1'b1}}};
+     end
+   end : gen_p_mul_ew8 else begin: gen_p_mul_error
+     $error("[simd_vmul] Invalid ElementWidth.");
