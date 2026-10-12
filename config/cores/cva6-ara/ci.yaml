@@ -1,6 +1,6 @@
 # Copyright (c) 2026, Harvey Mudd College
 # SPDX-License-Identifier: Apache-2.0
-# CI configuration for the cva6 family (only cv64a6_imafdcv_sv39 is runnable)
+# CI configuration for CVA6 + Ara
 
 ci_enabled: true
 
