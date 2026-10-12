@@ -17,13 +17,9 @@
 #   https://solvnetplus.synopsys.com/s/case/500WQ00002CEtKrYAL/the-vqmacc-draft-zvqmac-encodings-execute-on-named-v-variants-with-vectorversion10ratified
 #   The VectorInstr tests are the only Ssstrict failures; rv32gck, which has no vector unit, passes all three.
 #   Both issues are fixed in Imperas-HMC101126-eng-build.
-# - Smstateen:
-#   - imperas-rv64-max: Imperas lets mstateen0.P1P13 be written on RV64:
-#     https://solvnetplus.synopsys.com/s/case/500WQ0000289tyxYAA/mstateen0p1p13-should-be-readonly-zero-on-rv64
-#     (fixed in Imperas-HMC101126-eng-build)
-#   - imperas-rv64-mu: Imperas implements scontext but keeps mstateen0.CONTEXT read-only zero, which Sail
-#     cannot model yet (https://github.com/riscv/sail-riscv/issues/2013)
-#   imperas-rv32gck and rv32gcv pass. Smstateen stays excluded for imperas-rv64-mu.
+# - Smstateen: imperas-rv64-max: Imperas lets mstateen0.P1P13 be written on RV64:
+#   https://solvnetplus.synopsys.com/s/case/500WQ0000289tyxYAA/mstateen0p1p13-should-be-readonly-zero-on-rv64
+#   (fixed in Imperas-HMC101126-eng-build). The other configs pass.
 # - ExceptionsVx: https://solvnetplus.synopsys.com/s/case/500WQ000023l1CPYAY/vmvnrrv-does-not-raise-an-illegalinstruction-exception-when-vtypevill-1
 #   (fixed in Imperas-HMC101126-eng-build)
 # - SdtrigS, SdtrigU: Sail has no mcontrol/mcontrol6 (a type-6 tdata1 write reads back as type 15), so its
@@ -34,6 +30,9 @@
 #   (validSvnapotEntry checks only for a leaf, not level 0, and fillTLBEntry skips the alignment check):
 #   https://solvnetplus.synopsys.com/s/case/500WQ00002AsSN9YAN/svnapot-n1-accepted-on-superpage-leaf-ptes-instead-of-raising-a-page-fault
 #   (fixed in Imperas-HMC101126-eng-build)
+# - Zama16b is not declared. The model has no misaligned atomicity granule: Zam=T performs every
+#   misaligned AMO, including SSAMOSWAP (riscv-isa-manual#3426), so the configs use Zam=F, where
+#   misaligned AMOs, SSAMOSWAP and LR/SC raise store/AMO access faults.
 # - Ssnpm,SsnpmSm,Smmpm,SmnpmS,SmnpmSSm,SmnpmU,SmnpmUSm:Imperas still applies pointer masking when MXR is set, contradicting the spec rule.
 #   Issue filed (https://solvnetplus.synopsys.com/s/case/500WQ000025qNCkYAM/pointer-masking-should-be-disabled-when-mxr1)
 #   The MXR part is fixed in Imperas-HMC101126-eng-build. These suites still fail on their xtval checks: for a faulting
@@ -46,4 +45,4 @@ ci_enabled: false
 # Stock ImperasDV Y-2026.09:
 # exclude_extensions: "SsstrictSm,SsstrictS,SsstrictU,Smstateen,ExceptionsVx,SdtrigS,SdtrigU,Svnapot,Ssnpm,SsnpmSm,Smmpm,SmnpmS,SmnpmSSm,SmnpmU,SmnpmUSm"
 # Imperas-HMC101126-eng-build:
-exclude_extensions: "Smstateen,SdtrigS,SdtrigU,Ssnpm,SsnpmSm,Smmpm,SmnpmS,SmnpmSSm,SmnpmU,SmnpmUSm"
+exclude_extensions: "SdtrigS,SdtrigU,Ssnpm,SsnpmSm,Smmpm,SmnpmS,SmnpmSSm,SmnpmU,SmnpmUSm"
