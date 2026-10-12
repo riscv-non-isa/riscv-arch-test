@@ -61,7 +61,7 @@ HSTATUS_MASK = (
 
 # hedeleg bits the spec requires to be writable (1-8, 12, 13, 15) or read-only zero (9-11, 16, 20-23).
 # Bit 0 depends on IALIGN.
-HEDELEG_MASK = 0xF3BFFE
+HEDELEG_MASK = 0xF1BFFE
 # Bits 18 (software check) and 19 (hardware error) must be writable only from Priv 1.13, which defined
 # those cause codes; in 1.12 they are reserved, so each bit may be writable or read-only zero.
 HEDELEG_P113_WRITABLE = (1 << 18) | (1 << 19)

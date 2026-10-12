@@ -110,13 +110,13 @@ HSm_mcsr_cg_cp_hcsr_access_masked_hstatus_csrrc_all:
 
 # CSR Access Tests for hedeleg
   csrr x15, hedeleg    # Save CSR
-  LI(x9, 15974398)    # Load mask (0xf3bffe)
+  LI(x9, 15843326)    # Load mask (0xf1bffe)
   LI(x6, -1)             # write all 1s
 HSm_mcsr_cg_cp_hcsr_access_hedeleg_csrrw1:
   csrw hedeleg, x6    # Write all 1s to CSR
   # Read hedeleg into x14, keep only bits specified by mask, and check against expected.
   csrr x14, hedeleg    # Read CSR
-  and x14, x14, x9    # keep only masked bits 0xf3bffe
+  and x14, x14, x9    # keep only masked bits 0xf1bffe
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x14, HSm_mcsr_cg_cp_hcsr_access_hedeleg_csrrw1, HSm_mcsr_cg_cp_hcsr_access_hedeleg_csrrw1_str)
 
@@ -124,7 +124,7 @@ HSm_mcsr_cg_cp_hcsr_access_hedeleg_csrrw0:
   csrw hedeleg, zero   # Write all 0s to CSR
   # Read hedeleg into x14, keep only bits specified by mask, and check against expected.
   csrr x14, hedeleg    # Read CSR
-  and x14, x14, x9    # keep only masked bits 0xf3bffe
+  and x14, x14, x9    # keep only masked bits 0xf1bffe
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x14, HSm_mcsr_cg_cp_hcsr_access_hedeleg_csrrw0, HSm_mcsr_cg_cp_hcsr_access_hedeleg_csrrw0_str)
 
@@ -132,7 +132,7 @@ HSm_mcsr_cg_cp_hcsr_access_hedeleg_csrs_all:
   csrs hedeleg, x6    # Set all 1s
   # Read hedeleg into x14, keep only bits specified by mask, and check against expected.
   csrr x14, hedeleg    # Read CSR
-  and x14, x14, x9    # keep only masked bits 0xf3bffe
+  and x14, x14, x9    # keep only masked bits 0xf1bffe
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x14, HSm_mcsr_cg_cp_hcsr_access_hedeleg_csrs_all, HSm_mcsr_cg_cp_hcsr_access_hedeleg_csrs_all_str)
 
@@ -140,7 +140,7 @@ HSm_mcsr_cg_cp_hcsr_access_hedeleg_csrrc_all:
   csrc hedeleg, x6    # Clear all 1s
   # Read hedeleg into x14, keep only bits specified by mask, and check against expected.
   csrr x14, hedeleg    # Read CSR
-  and x14, x14, x9    # keep only masked bits 0xf3bffe
+  and x14, x14, x9    # keep only masked bits 0xf1bffe
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x14, HSm_mcsr_cg_cp_hcsr_access_hedeleg_csrrc_all, HSm_mcsr_cg_cp_hcsr_access_hedeleg_csrrc_all_str)
   csrw hedeleg, x15       # Restore CSR

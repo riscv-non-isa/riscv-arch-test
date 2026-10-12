@@ -1337,14 +1337,14 @@ H_hscsr_cg_cp_hcsrwalk_masked_hstatus_clr_bit_63:
 # CSR Walk Tests for hedeleg
   csrr x8, hedeleg      # Save CSR
   LI(x9, 1)              # 1 in bit 0
-  LI(x14, 15974398)    # Load mask (0xf3bffe)
+  LI(x14, 15843326)    # Load mask (0xf1bffe)
   LI(x13, -1)             # x13 = all 1s
   csrw hedeleg, zero    # clear all bits
   csrs hedeleg, x9     # set walking 1 in column 0
 H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_0:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_0, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_0_str)
   slli x9, x9, 1      # walk the 1
@@ -1353,7 +1353,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_0:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_1:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_1, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_1_str)
   slli x9, x9, 1      # walk the 1
@@ -1362,7 +1362,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_1:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_2:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_2, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_2_str)
   slli x9, x9, 1      # walk the 1
@@ -1371,7 +1371,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_2:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_3:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_3, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_3_str)
   slli x9, x9, 1      # walk the 1
@@ -1380,7 +1380,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_3:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_4:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_4, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_4_str)
   slli x9, x9, 1      # walk the 1
@@ -1389,7 +1389,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_4:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_5:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_5, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_5_str)
   slli x9, x9, 1      # walk the 1
@@ -1398,7 +1398,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_5:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_6:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_6, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_6_str)
   slli x9, x9, 1      # walk the 1
@@ -1407,7 +1407,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_6:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_7:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_7, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_7_str)
   slli x9, x9, 1      # walk the 1
@@ -1416,7 +1416,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_7:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_8:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_8, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_8_str)
   slli x9, x9, 1      # walk the 1
@@ -1425,7 +1425,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_8:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_9:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_9, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_9_str)
   slli x9, x9, 1      # walk the 1
@@ -1434,7 +1434,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_9:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_10:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_10, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_10_str)
   slli x9, x9, 1      # walk the 1
@@ -1443,7 +1443,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_10:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_11:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_11, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_11_str)
   slli x9, x9, 1      # walk the 1
@@ -1452,7 +1452,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_11:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_12:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_12, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_12_str)
   slli x9, x9, 1      # walk the 1
@@ -1461,7 +1461,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_12:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_13:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_13, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_13_str)
   slli x9, x9, 1      # walk the 1
@@ -1470,7 +1470,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_13:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_14:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_14, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_14_str)
   slli x9, x9, 1      # walk the 1
@@ -1479,7 +1479,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_14:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_15:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_15, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_15_str)
   slli x9, x9, 1      # walk the 1
@@ -1488,7 +1488,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_15:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_16:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_16, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_16_str)
   slli x9, x9, 1      # walk the 1
@@ -1497,7 +1497,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_16:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_17:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_17, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_17_str)
   slli x9, x9, 1      # walk the 1
@@ -1506,7 +1506,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_17:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_18:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_18, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_18_str)
   slli x9, x9, 1      # walk the 1
@@ -1515,7 +1515,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_18:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_19:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_19, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_19_str)
   slli x9, x9, 1      # walk the 1
@@ -1524,7 +1524,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_19:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_20:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_20, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_20_str)
   slli x9, x9, 1      # walk the 1
@@ -1533,7 +1533,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_20:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_21:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_21, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_21_str)
   slli x9, x9, 1      # walk the 1
@@ -1542,7 +1542,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_21:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_22:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_22, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_22_str)
   slli x9, x9, 1      # walk the 1
@@ -1551,7 +1551,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_22:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_23:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_23, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_23_str)
   slli x9, x9, 1      # walk the 1
@@ -1560,7 +1560,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_23:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_24:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_24, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_24_str)
   slli x9, x9, 1      # walk the 1
@@ -1569,7 +1569,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_24:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_25:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_25, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_25_str)
   slli x9, x9, 1      # walk the 1
@@ -1578,7 +1578,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_25:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_26:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_26, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_26_str)
   slli x9, x9, 1      # walk the 1
@@ -1587,7 +1587,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_26:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_27:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_27, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_27_str)
   slli x9, x9, 1      # walk the 1
@@ -1596,7 +1596,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_27:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_28:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_28, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_28_str)
   slli x9, x9, 1      # walk the 1
@@ -1605,7 +1605,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_28:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_29:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_29, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_29_str)
   slli x9, x9, 1      # walk the 1
@@ -1614,7 +1614,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_29:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_30:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_30, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_30_str)
   slli x9, x9, 1      # walk the 1
@@ -1623,7 +1623,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_30:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_31:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_31, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_31_str)
   slli x9, x9, 1      # walk the 1
@@ -1634,7 +1634,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_31:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_32:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_32, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_32_str)
   slli x9, x9, 1      # walk the 1
@@ -1643,7 +1643,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_32:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_33:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_33, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_33_str)
   slli x9, x9, 1      # walk the 1
@@ -1652,7 +1652,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_33:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_34:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_34, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_34_str)
   slli x9, x9, 1      # walk the 1
@@ -1661,7 +1661,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_34:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_35:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_35, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_35_str)
   slli x9, x9, 1      # walk the 1
@@ -1670,7 +1670,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_35:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_36:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_36, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_36_str)
   slli x9, x9, 1      # walk the 1
@@ -1679,7 +1679,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_36:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_37:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_37, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_37_str)
   slli x9, x9, 1      # walk the 1
@@ -1688,7 +1688,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_37:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_38:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_38, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_38_str)
   slli x9, x9, 1      # walk the 1
@@ -1697,7 +1697,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_38:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_39:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_39, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_39_str)
   slli x9, x9, 1      # walk the 1
@@ -1706,7 +1706,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_39:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_40:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_40, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_40_str)
   slli x9, x9, 1      # walk the 1
@@ -1715,7 +1715,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_40:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_41:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_41, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_41_str)
   slli x9, x9, 1      # walk the 1
@@ -1724,7 +1724,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_41:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_42:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_42, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_42_str)
   slli x9, x9, 1      # walk the 1
@@ -1733,7 +1733,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_42:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_43:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_43, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_43_str)
   slli x9, x9, 1      # walk the 1
@@ -1742,7 +1742,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_43:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_44:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_44, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_44_str)
   slli x9, x9, 1      # walk the 1
@@ -1751,7 +1751,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_44:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_45:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_45, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_45_str)
   slli x9, x9, 1      # walk the 1
@@ -1760,7 +1760,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_45:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_46:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_46, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_46_str)
   slli x9, x9, 1      # walk the 1
@@ -1769,7 +1769,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_46:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_47:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_47, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_47_str)
   slli x9, x9, 1      # walk the 1
@@ -1778,7 +1778,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_47:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_48:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_48, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_48_str)
   slli x9, x9, 1      # walk the 1
@@ -1787,7 +1787,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_48:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_49:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_49, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_49_str)
   slli x9, x9, 1      # walk the 1
@@ -1796,7 +1796,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_49:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_50:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_50, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_50_str)
   slli x9, x9, 1      # walk the 1
@@ -1805,7 +1805,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_50:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_51:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_51, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_51_str)
   slli x9, x9, 1      # walk the 1
@@ -1814,7 +1814,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_51:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_52:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_52, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_52_str)
   slli x9, x9, 1      # walk the 1
@@ -1823,7 +1823,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_52:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_53:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_53, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_53_str)
   slli x9, x9, 1      # walk the 1
@@ -1832,7 +1832,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_53:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_54:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_54, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_54_str)
   slli x9, x9, 1      # walk the 1
@@ -1841,7 +1841,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_54:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_55:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_55, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_55_str)
   slli x9, x9, 1      # walk the 1
@@ -1850,7 +1850,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_55:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_56:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_56, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_56_str)
   slli x9, x9, 1      # walk the 1
@@ -1859,7 +1859,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_56:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_57:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_57, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_57_str)
   slli x9, x9, 1      # walk the 1
@@ -1868,7 +1868,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_57:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_58:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_58, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_58_str)
   slli x9, x9, 1      # walk the 1
@@ -1877,7 +1877,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_58:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_59:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_59, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_59_str)
   slli x9, x9, 1      # walk the 1
@@ -1886,7 +1886,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_59:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_60:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_60, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_60_str)
   slli x9, x9, 1      # walk the 1
@@ -1895,7 +1895,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_60:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_61:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_61, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_61_str)
   slli x9, x9, 1      # walk the 1
@@ -1904,7 +1904,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_61:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_62:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_62, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_62_str)
   slli x9, x9, 1      # walk the 1
@@ -1913,7 +1913,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_62:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_63:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_63, H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_63_str)
   slli x9, x9, 1      # walk the 1
@@ -1925,7 +1925,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_set_bit_63:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_0:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_0, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_0_str)
   slli x9, x9, 1      # walk the 1
@@ -1934,7 +1934,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_0:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_1:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_1, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_1_str)
   slli x9, x9, 1      # walk the 1
@@ -1943,7 +1943,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_1:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_2:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_2, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_2_str)
   slli x9, x9, 1      # walk the 1
@@ -1952,7 +1952,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_2:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_3:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_3, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_3_str)
   slli x9, x9, 1      # walk the 1
@@ -1961,7 +1961,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_3:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_4:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_4, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_4_str)
   slli x9, x9, 1      # walk the 1
@@ -1970,7 +1970,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_4:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_5:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_5, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_5_str)
   slli x9, x9, 1      # walk the 1
@@ -1979,7 +1979,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_5:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_6:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_6, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_6_str)
   slli x9, x9, 1      # walk the 1
@@ -1988,7 +1988,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_6:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_7:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_7, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_7_str)
   slli x9, x9, 1      # walk the 1
@@ -1997,7 +1997,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_7:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_8:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_8, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_8_str)
   slli x9, x9, 1      # walk the 1
@@ -2006,7 +2006,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_8:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_9:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_9, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_9_str)
   slli x9, x9, 1      # walk the 1
@@ -2015,7 +2015,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_9:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_10:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_10, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_10_str)
   slli x9, x9, 1      # walk the 1
@@ -2024,7 +2024,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_10:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_11:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_11, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_11_str)
   slli x9, x9, 1      # walk the 1
@@ -2033,7 +2033,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_11:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_12:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_12, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_12_str)
   slli x9, x9, 1      # walk the 1
@@ -2042,7 +2042,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_12:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_13:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_13, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_13_str)
   slli x9, x9, 1      # walk the 1
@@ -2051,7 +2051,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_13:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_14:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_14, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_14_str)
   slli x9, x9, 1      # walk the 1
@@ -2060,7 +2060,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_14:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_15:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_15, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_15_str)
   slli x9, x9, 1      # walk the 1
@@ -2069,7 +2069,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_15:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_16:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_16, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_16_str)
   slli x9, x9, 1      # walk the 1
@@ -2078,7 +2078,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_16:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_17:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_17, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_17_str)
   slli x9, x9, 1      # walk the 1
@@ -2087,7 +2087,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_17:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_18:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_18, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_18_str)
   slli x9, x9, 1      # walk the 1
@@ -2096,7 +2096,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_18:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_19:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_19, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_19_str)
   slli x9, x9, 1      # walk the 1
@@ -2105,7 +2105,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_19:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_20:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_20, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_20_str)
   slli x9, x9, 1      # walk the 1
@@ -2114,7 +2114,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_20:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_21:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_21, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_21_str)
   slli x9, x9, 1      # walk the 1
@@ -2123,7 +2123,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_21:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_22:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_22, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_22_str)
   slli x9, x9, 1      # walk the 1
@@ -2132,7 +2132,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_22:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_23:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_23, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_23_str)
   slli x9, x9, 1      # walk the 1
@@ -2141,7 +2141,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_23:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_24:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_24, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_24_str)
   slli x9, x9, 1      # walk the 1
@@ -2150,7 +2150,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_24:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_25:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_25, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_25_str)
   slli x9, x9, 1      # walk the 1
@@ -2159,7 +2159,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_25:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_26:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_26, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_26_str)
   slli x9, x9, 1      # walk the 1
@@ -2168,7 +2168,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_26:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_27:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_27, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_27_str)
   slli x9, x9, 1      # walk the 1
@@ -2177,7 +2177,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_27:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_28:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_28, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_28_str)
   slli x9, x9, 1      # walk the 1
@@ -2186,7 +2186,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_28:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_29:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_29, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_29_str)
   slli x9, x9, 1      # walk the 1
@@ -2195,7 +2195,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_29:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_30:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_30, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_30_str)
   slli x9, x9, 1      # walk the 1
@@ -2204,7 +2204,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_30:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_31:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_31, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_31_str)
   slli x9, x9, 1      # walk the 1
@@ -2215,7 +2215,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_31:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_32:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_32, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_32_str)
   slli x9, x9, 1      # walk the 1
@@ -2224,7 +2224,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_32:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_33:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_33, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_33_str)
   slli x9, x9, 1      # walk the 1
@@ -2233,7 +2233,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_33:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_34:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_34, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_34_str)
   slli x9, x9, 1      # walk the 1
@@ -2242,7 +2242,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_34:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_35:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_35, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_35_str)
   slli x9, x9, 1      # walk the 1
@@ -2251,7 +2251,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_35:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_36:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_36, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_36_str)
   slli x9, x9, 1      # walk the 1
@@ -2260,7 +2260,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_36:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_37:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_37, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_37_str)
   slli x9, x9, 1      # walk the 1
@@ -2269,7 +2269,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_37:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_38:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_38, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_38_str)
   slli x9, x9, 1      # walk the 1
@@ -2278,7 +2278,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_38:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_39:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_39, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_39_str)
   slli x9, x9, 1      # walk the 1
@@ -2287,7 +2287,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_39:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_40:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_40, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_40_str)
   slli x9, x9, 1      # walk the 1
@@ -2296,7 +2296,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_40:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_41:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_41, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_41_str)
   slli x9, x9, 1      # walk the 1
@@ -2305,7 +2305,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_41:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_42:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_42, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_42_str)
   slli x9, x9, 1      # walk the 1
@@ -2314,7 +2314,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_42:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_43:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_43, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_43_str)
   slli x9, x9, 1      # walk the 1
@@ -2323,7 +2323,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_43:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_44:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_44, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_44_str)
   slli x9, x9, 1      # walk the 1
@@ -2332,7 +2332,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_44:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_45:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_45, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_45_str)
   slli x9, x9, 1      # walk the 1
@@ -2341,7 +2341,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_45:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_46:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_46, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_46_str)
   slli x9, x9, 1      # walk the 1
@@ -2350,7 +2350,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_46:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_47:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_47, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_47_str)
   slli x9, x9, 1      # walk the 1
@@ -2359,7 +2359,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_47:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_48:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_48, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_48_str)
   slli x9, x9, 1      # walk the 1
@@ -2368,7 +2368,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_48:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_49:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_49, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_49_str)
   slli x9, x9, 1      # walk the 1
@@ -2377,7 +2377,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_49:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_50:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_50, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_50_str)
   slli x9, x9, 1      # walk the 1
@@ -2386,7 +2386,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_50:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_51:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_51, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_51_str)
   slli x9, x9, 1      # walk the 1
@@ -2395,7 +2395,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_51:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_52:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_52, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_52_str)
   slli x9, x9, 1      # walk the 1
@@ -2404,7 +2404,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_52:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_53:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_53, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_53_str)
   slli x9, x9, 1      # walk the 1
@@ -2413,7 +2413,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_53:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_54:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_54, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_54_str)
   slli x9, x9, 1      # walk the 1
@@ -2422,7 +2422,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_54:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_55:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_55, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_55_str)
   slli x9, x9, 1      # walk the 1
@@ -2431,7 +2431,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_55:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_56:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_56, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_56_str)
   slli x9, x9, 1      # walk the 1
@@ -2440,7 +2440,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_56:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_57:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_57, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_57_str)
   slli x9, x9, 1      # walk the 1
@@ -2449,7 +2449,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_57:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_58:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_58, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_58_str)
   slli x9, x9, 1      # walk the 1
@@ -2458,7 +2458,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_58:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_59:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_59, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_59_str)
   slli x9, x9, 1      # walk the 1
@@ -2467,7 +2467,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_59:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_60:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_60, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_60_str)
   slli x9, x9, 1      # walk the 1
@@ -2476,7 +2476,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_60:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_61:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_61, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_61_str)
   slli x9, x9, 1      # walk the 1
@@ -2485,7 +2485,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_61:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_62:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_62, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_62_str)
   slli x9, x9, 1      # walk the 1
@@ -2494,7 +2494,7 @@ H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_62:
 H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_63:
   # Read hedeleg into x15, keep only bits specified by mask, and check against expected.
   csrr x15, hedeleg    # Read CSR
-  and x15, x15, x14    # keep only masked bits 0xf3bffe
+  and x15, x15, x14    # keep only masked bits 0xf1bffe
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_63, H_hscsr_cg_cp_hcsrwalk_hedeleg_clr_bit_63_str)
   slli x9, x9, 1      # walk the 1
