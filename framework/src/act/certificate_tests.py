@@ -19,7 +19,6 @@ RVA23_TEST_SUITES = frozenset(
         "Zicsr",
         "Zifencei",
         "Zihintntl",
-        "ZihintntlZca",
         "Zihintpause",
         "Zihpm",
         "Zimop",
@@ -29,23 +28,15 @@ RVA23_TEST_SUITES = frozenset(
         "Zaamo",
         "Zabha",
         "Zacas",
-        "ZacasZabha",
         "Zalrsc",
         # Zf extensions
-        "ZfaD",
-        "ZfaF",
-        "ZfaZfh",
-        "ZfaZfhD",
-        "ZfaZvfh",
+        "Zfa",
         "Zfbfmin",
         "Zfh",
         "Zfhmin",
         # Zc extensions
         "Zca",
         "Zcb",
-        "ZcbM",
-        "ZcbZba",
-        "ZcbZbb",
         "Zcd",
         "Zcmop",
         # Zb extensions
@@ -89,10 +80,7 @@ RVA23_TEST_SUITES = frozenset(
         "Zvksh32",
         # Misaligned access tests
         "Misalign",
-        "MisalignD",
-        "MisalignF",
         "MisalignV",
-        "MisalignZca",
         ### Priv Tests
         "U",
         "S",
