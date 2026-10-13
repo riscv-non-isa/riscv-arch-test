@@ -420,7 +420,7 @@ RVTEST_BEGIN
   sfence.vma
   hfence.gvma
   hfence.vvma
-  fence.i
+  RVTEST_FENCEI
   RVTEST_TSBI_GOTO_VSMODE
   LA(ra, 1f)
 PMPH_cp_pmp_after_translation_vs_gva_vs_jalr:
@@ -474,7 +474,7 @@ PMPH_cp_pmp_after_translation_vs_gva_g_lw:
   sfence.vma
   hfence.gvma
   hfence.vvma
-  fence.i
+  RVTEST_FENCEI
   RVTEST_TSBI_GOTO_VSMODE
   LA(ra, 1f)
 PMPH_cp_pmp_after_translation_vs_spa_vs_jalr:
@@ -529,7 +529,7 @@ PMPH_cp_pmp_after_translation_vs_spa_g_lw:
   sfence.vma
   hfence.gvma
   hfence.vvma
-  fence.i
+  RVTEST_FENCEI
   RVTEST_TSBI_GOTO_VSMODE
   LA(ra, 1f)
 PMPH_cp_pmp_pt_vs_vlvl1_vs_jalr:
@@ -584,7 +584,7 @@ PMPH_cp_pmp_pt_vs_vlvl1_g_lw:
   sfence.vma
   hfence.gvma
   hfence.vvma
-  fence.i
+  RVTEST_FENCEI
   RVTEST_TSBI_GOTO_VSMODE
   LA(ra, 1f)
 PMPH_cp_pmp_pt_vs_vlvl0_vs_jalr:
@@ -638,7 +638,7 @@ PMPH_cp_pmp_pt_vs_vlvl0_g_lw:
   sfence.vma
   hfence.gvma
   hfence.vvma
-  fence.i
+  RVTEST_FENCEI
   RVTEST_TSBI_GOTO_VSMODE
   LA(ra, 1f)
 PMPH_cp_pmp_pt_gpa_vs_vlvl0_gpa_vs_jalr:
@@ -727,7 +727,7 @@ PMPH_cp_pmp_pt_gpa_vs_vlvl0_gpa_g_lw:
   sfence.vma
   hfence.gvma
   hfence.vvma
-  fence.i
+  RVTEST_FENCEI
   RVTEST_TSBI_GOTO_VSMODE
   LA(ra, 1f)
 PMPH_cp_pmp_pf_priority_vs_spa_leaf_r_vs_jalr:
@@ -816,7 +816,7 @@ PMPH_cp_pmp_pf_priority_vs_spa_leaf_r_g_lw:
   sfence.vma
   hfence.gvma
   hfence.vvma
-  fence.i
+  RVTEST_FENCEI
   RVTEST_TSBI_GOTO_VSMODE
   LA(ra, 1f)
 PMPH_cp_pmp_pf_priority_vs_spa_leaf_x_vs_jalr:
@@ -905,7 +905,7 @@ PMPH_cp_pmp_pf_priority_vs_spa_leaf_x_g_lw:
   sfence.vma
   hfence.gvma
   hfence.vvma
-  fence.i
+  RVTEST_FENCEI
   RVTEST_TSBI_GOTO_VSMODE
   LA(ra, 1f)
 PMPH_cp_pmp_pt_priority_vs_leaf_invalid_vlvl0_vs_jalr:
@@ -1329,7 +1329,7 @@ PMPH_cp_pmp_pt_priority_vs_leaf_invalid_vlvl0_g_lw:
   sfence.vma
   hfence.gvma
   hfence.vvma
-  fence.i
+  RVTEST_FENCEI
   RVTEST_TSBI_GOTO_VUMODE
   LA(ra, 1f)
 PMPH_cp_pmp_after_translation_vu_gva_vs_jalr:
@@ -1383,7 +1383,7 @@ PMPH_cp_pmp_after_translation_vu_gva_g_lw:
   sfence.vma
   hfence.gvma
   hfence.vvma
-  fence.i
+  RVTEST_FENCEI
   RVTEST_TSBI_GOTO_VUMODE
   LA(ra, 1f)
 PMPH_cp_pmp_after_translation_vu_spa_vs_jalr:
@@ -1438,7 +1438,7 @@ PMPH_cp_pmp_after_translation_vu_spa_g_lw:
   sfence.vma
   hfence.gvma
   hfence.vvma
-  fence.i
+  RVTEST_FENCEI
   RVTEST_TSBI_GOTO_VUMODE
   LA(ra, 1f)
 PMPH_cp_pmp_pt_vu_vlvl1_vs_jalr:
@@ -1493,7 +1493,7 @@ PMPH_cp_pmp_pt_vu_vlvl1_g_lw:
   sfence.vma
   hfence.gvma
   hfence.vvma
-  fence.i
+  RVTEST_FENCEI
   RVTEST_TSBI_GOTO_VUMODE
   LA(ra, 1f)
 PMPH_cp_pmp_pt_vu_vlvl0_vs_jalr:
@@ -1547,7 +1547,7 @@ PMPH_cp_pmp_pt_vu_vlvl0_g_lw:
   sfence.vma
   hfence.gvma
   hfence.vvma
-  fence.i
+  RVTEST_FENCEI
   RVTEST_TSBI_GOTO_VUMODE
   LA(ra, 1f)
 PMPH_cp_pmp_pt_gpa_vu_vlvl0_gpa_vs_jalr:
@@ -1636,7 +1636,7 @@ PMPH_cp_pmp_pt_gpa_vu_vlvl0_gpa_g_lw:
   sfence.vma
   hfence.gvma
   hfence.vvma
-  fence.i
+  RVTEST_FENCEI
   RVTEST_TSBI_GOTO_VUMODE
   LA(ra, 1f)
 PMPH_cp_pmp_pf_priority_vu_spa_leaf_r_vs_jalr:
@@ -1725,7 +1725,7 @@ PMPH_cp_pmp_pf_priority_vu_spa_leaf_r_g_lw:
   sfence.vma
   hfence.gvma
   hfence.vvma
-  fence.i
+  RVTEST_FENCEI
   RVTEST_TSBI_GOTO_VUMODE
   LA(ra, 1f)
 PMPH_cp_pmp_pf_priority_vu_spa_leaf_x_vs_jalr:
@@ -1814,7 +1814,7 @@ PMPH_cp_pmp_pf_priority_vu_spa_leaf_x_g_lw:
   sfence.vma
   hfence.gvma
   hfence.vvma
-  fence.i
+  RVTEST_FENCEI
   RVTEST_TSBI_GOTO_VUMODE
   LA(ra, 1f)
 PMPH_cp_pmp_pt_priority_vu_leaf_invalid_vlvl0_vs_jalr:

@@ -312,7 +312,7 @@ def _guest_scenarios(test_data: TestData, mode: str, scenarios: list[_Scenario])
             (address.format(gva0=f"x{gva_vs}", gva1=f"x{gva_g}", vlvl0_gpa=f"x{vlvl0_gpa}"), entry, ones)
             for address, entry, ones in scenario.regions
         ]
-        body.extend([*_deny(regions), "fence.i", f"RVTEST_TSBI_GOTO_{mode.upper()}MODE"])
+        body.extend([*_deny(regions), "RVTEST_FENCEI", f"RVTEST_TSBI_GOTO_{mode.upper()}MODE"])
         checks = []
         rds = test_data.int_regs.get_registers(2)
         for mapping, gva, rd in zip(_MAPPINGS, (gva_vs, gva_g), rds, strict=True):
