@@ -425,7 +425,7 @@ Sscofpmf_cg_cp_overflow_hw_only_overflow_hw_only_s_all_0s:
 
 /////////////////////////////////
 // cp_lcofip_hw_only
-//   OF being set by software alone must never make LCOFIP pend --
+//   OF being set by software alone must never make LCOFIP pending --
 //   only a real hardware counter-register increment through overflow
 //   may set OF (and therefore LCOFIP). No pending/enable sweep here:
 //   this coverpoint tests the absence of a software-only path to LCOFIP.

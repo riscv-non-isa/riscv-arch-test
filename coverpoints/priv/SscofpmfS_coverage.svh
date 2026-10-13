@@ -63,6 +63,11 @@ covergroup SscofpmfS_cg with function sample(ins_t ins);
             bins delegated = {4'b1111};
     }
 
+    // csrr scountovf (csrrs rd, scountovf, x0)
+    scountovf_read: coverpoint ins.current.insn {
+        wildcard bins read = {CSRR} iff (ins.current.insn[31:20] == CSR_SCOUNTOVF);
+    }
+
     csr_access_pattern: coverpoint ins.current.insn {
         wildcard bins csrrw0    = {CSRRW} iff (ins.current.rs1_val ==  0);
         wildcard bins csrrw1    = {CSRRW} iff (ins.current.rs1_val == '1);
@@ -134,8 +139,8 @@ covergroup SscofpmfS_cg with function sample(ins_t ins);
     cp_of_already_set:         cross mhpmevent_of_was_one, mhpmevent_of_one, mhpmcounter_wraps, sip_lcofi_zero;
     cp_overflow_hw_only:       cross priv_mode_s, sip_clear, mie_clear, mhpmcounter_extreme_state, mhpmevent_all_zero;
     cp_lcofip_hw_only:         cross priv_mode_s, mhpmevent_of, sip_lcofi_zero;
-    cp_scountovf_shadow:       cross priv_mode_s, mcounteren_all_ones_state, of_stimulus_pattern;
-    cp_scountovf_mcounteren:   cross priv_mode_s, of_write_pattern, mcounteren_stimulus_pattern_state;
+    cp_scountovf_shadow:       cross priv_mode_s, scountovf_read, mcounteren_all_ones_state, of_stimulus_pattern;
+    cp_scountovf_mcounteren:   cross priv_mode_s, scountovf_read, of_write_pattern, mcounteren_stimulus_pattern_state;
     cp_sscofpmf_access:        cross priv_mode_s, csr_access_pattern, hpm_csr_target;
     cp_lcofi_sip_s:            cross priv_mode_s, sstatus_sie_set, sie_lcofi, sip_lcofi, lcofi_mideleg_one;
     cp_lcofip_priority_s:      cross priv_mode_s, mhpmevent_minh_only_state, prev_mstatus_sie_one, sie_state, lcofi_ip_one, mip_other_pending_s, mideleg_s_ints;
