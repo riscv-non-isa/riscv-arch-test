@@ -901,6 +901,7 @@ function `XLEN_BITS get_csr_val_addr(int hart, int issue, int prev, int addr, st
       "load" : val = val & 'h1;
       "m" : val = (val >> 6) & 'h1;
       "match" : val = (val >> 7) & 'hf;
+      "s" : val = (val >> 4) & 'h1;
       "select" : val = (val >> 21) & 'h1;
       "size" : val = (val >> 16) & 'h7;
       "store" : val = (val >> 1) & 'h1;
