@@ -15,7 +15,7 @@
 ##### END_TEST_CONFIG #####
 
 // Define the size of the signature region
-#define SIGUPD_COUNT 44
+#define SIGUPD_COUNT 28
 
 // Extra defines (if needed) to enable trap handlers, fpu, vector, etc.
 #define TRAP_SIGUPD_COUNT 1500
@@ -118,516 +118,401 @@ Sscofpmf_cg_cp_uinh_inhibits_umode_uinh_1_u:
   # T-SBI call to execute instruction: csrw RVTEST_CSR_MHPMEVENTH, x6
   mv a1, x6
   RVTEST_TSBI_CSR_WRITE_A1(RVTEST_CSR_MHPMEVENTH)
-
-Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00000_u_rv32:
-  # T-SBI call to execute instruction: csrr x14, RVTEST_CSR_MHPMEVENTH
-  RVTEST_TSBI_CSR_READ(RVTEST_CSR_MHPMEVENTH)
-  mv x14, a0
-#ifndef H_SUPPORTED
-  LI(x6, 0xF3FFFFFF)   # clear bits 27:26 (VSINH/VUINH)
-  and x14, x14, x6
-#endif
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00000_u_rv32, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00000_u_rv32_str)
-
-  LI(x6, (((RVMODEL_MHPMEVENT_VAL) >> 32) & 0xFFFFFF) | (1 << 26))
-  # T-SBI call to execute instruction: csrw RVTEST_CSR_MHPMEVENTH, x6
-  mv a1, x6
-  RVTEST_TSBI_CSR_WRITE_A1(RVTEST_CSR_MHPMEVENTH)
-
-Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00001_u_rv32:
-  # T-SBI call to execute instruction: csrr x14, RVTEST_CSR_MHPMEVENTH
-  RVTEST_TSBI_CSR_READ(RVTEST_CSR_MHPMEVENTH)
-  mv x14, a0
-#ifndef H_SUPPORTED
-  LI(x6, 0xF3FFFFFF)   # clear bits 27:26 (VSINH/VUINH)
-  and x14, x14, x6
-#endif
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00001_u_rv32, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00001_u_rv32_str)
-
-  LI(x6, (((RVMODEL_MHPMEVENT_VAL) >> 32) & 0xFFFFFF) | (2 << 26))
-  # T-SBI call to execute instruction: csrw RVTEST_CSR_MHPMEVENTH, x6
-  mv a1, x6
-  RVTEST_TSBI_CSR_WRITE_A1(RVTEST_CSR_MHPMEVENTH)
-
-Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00010_u_rv32:
-  # T-SBI call to execute instruction: csrr x14, RVTEST_CSR_MHPMEVENTH
-  RVTEST_TSBI_CSR_READ(RVTEST_CSR_MHPMEVENTH)
-  mv x14, a0
-#ifndef H_SUPPORTED
-  LI(x6, 0xF3FFFFFF)   # clear bits 27:26 (VSINH/VUINH)
-  and x14, x14, x6
-#endif
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00010_u_rv32, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00010_u_rv32_str)
-
-  LI(x6, (((RVMODEL_MHPMEVENT_VAL) >> 32) & 0xFFFFFF) | (3 << 26))
-  # T-SBI call to execute instruction: csrw RVTEST_CSR_MHPMEVENTH, x6
-  mv a1, x6
-  RVTEST_TSBI_CSR_WRITE_A1(RVTEST_CSR_MHPMEVENTH)
-
-Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00011_u_rv32:
-  # T-SBI call to execute instruction: csrr x14, RVTEST_CSR_MHPMEVENTH
-  RVTEST_TSBI_CSR_READ(RVTEST_CSR_MHPMEVENTH)
-  mv x14, a0
-#ifndef H_SUPPORTED
-  LI(x6, 0xF3FFFFFF)   # clear bits 27:26 (VSINH/VUINH)
-  and x14, x14, x6
-#endif
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00011_u_rv32, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00011_u_rv32_str)
-
-  LI(x6, (((RVMODEL_MHPMEVENT_VAL) >> 32) & 0xFFFFFF) | (4 << 26))
-  # T-SBI call to execute instruction: csrw RVTEST_CSR_MHPMEVENTH, x6
-  mv a1, x6
-  RVTEST_TSBI_CSR_WRITE_A1(RVTEST_CSR_MHPMEVENTH)
-
-Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00100_u_rv32:
-  # T-SBI call to execute instruction: csrr x14, RVTEST_CSR_MHPMEVENTH
-  RVTEST_TSBI_CSR_READ(RVTEST_CSR_MHPMEVENTH)
-  mv x14, a0
-#ifndef H_SUPPORTED
-  LI(x6, 0xF3FFFFFF)   # clear bits 27:26 (VSINH/VUINH)
-  and x14, x14, x6
-#endif
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00100_u_rv32, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00100_u_rv32_str)
-
-  LI(x6, (((RVMODEL_MHPMEVENT_VAL) >> 32) & 0xFFFFFF) | (5 << 26))
-  # T-SBI call to execute instruction: csrw RVTEST_CSR_MHPMEVENTH, x6
-  mv a1, x6
-  RVTEST_TSBI_CSR_WRITE_A1(RVTEST_CSR_MHPMEVENTH)
-
-Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00101_u_rv32:
-  # T-SBI call to execute instruction: csrr x14, RVTEST_CSR_MHPMEVENTH
-  RVTEST_TSBI_CSR_READ(RVTEST_CSR_MHPMEVENTH)
-  mv x14, a0
-#ifndef H_SUPPORTED
-  LI(x6, 0xF3FFFFFF)   # clear bits 27:26 (VSINH/VUINH)
-  and x14, x14, x6
-#endif
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00101_u_rv32, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00101_u_rv32_str)
-
-  LI(x6, (((RVMODEL_MHPMEVENT_VAL) >> 32) & 0xFFFFFF) | (6 << 26))
-  # T-SBI call to execute instruction: csrw RVTEST_CSR_MHPMEVENTH, x6
-  mv a1, x6
-  RVTEST_TSBI_CSR_WRITE_A1(RVTEST_CSR_MHPMEVENTH)
-
-Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00110_u_rv32:
-  # T-SBI call to execute instruction: csrr x14, RVTEST_CSR_MHPMEVENTH
-  RVTEST_TSBI_CSR_READ(RVTEST_CSR_MHPMEVENTH)
-  mv x14, a0
-#ifndef H_SUPPORTED
-  LI(x6, 0xF3FFFFFF)   # clear bits 27:26 (VSINH/VUINH)
-  and x14, x14, x6
-#endif
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00110_u_rv32, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00110_u_rv32_str)
-
-  LI(x6, (((RVMODEL_MHPMEVENT_VAL) >> 32) & 0xFFFFFF) | (7 << 26))
-  # T-SBI call to execute instruction: csrw RVTEST_CSR_MHPMEVENTH, x6
-  mv a1, x6
-  RVTEST_TSBI_CSR_WRITE_A1(RVTEST_CSR_MHPMEVENTH)
-
-Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00111_u_rv32:
-  # T-SBI call to execute instruction: csrr x14, RVTEST_CSR_MHPMEVENTH
-  RVTEST_TSBI_CSR_READ(RVTEST_CSR_MHPMEVENTH)
-  mv x14, a0
-#ifndef H_SUPPORTED
-  LI(x6, 0xF3FFFFFF)   # clear bits 27:26 (VSINH/VUINH)
-  and x14, x14, x6
-#endif
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00111_u_rv32, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00111_u_rv32_str)
-
-  LI(x6, (((RVMODEL_MHPMEVENT_VAL) >> 32) & 0xFFFFFF) | (8 << 26))
-  # T-SBI call to execute instruction: csrw RVTEST_CSR_MHPMEVENTH, x6
-  mv a1, x6
-  RVTEST_TSBI_CSR_WRITE_A1(RVTEST_CSR_MHPMEVENTH)
-
-Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01000_u_rv32:
-  # T-SBI call to execute instruction: csrr x14, RVTEST_CSR_MHPMEVENTH
-  RVTEST_TSBI_CSR_READ(RVTEST_CSR_MHPMEVENTH)
-  mv x14, a0
-#ifndef H_SUPPORTED
-  LI(x6, 0xF3FFFFFF)   # clear bits 27:26 (VSINH/VUINH)
-  and x14, x14, x6
-#endif
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01000_u_rv32, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01000_u_rv32_str)
-
-  LI(x6, (((RVMODEL_MHPMEVENT_VAL) >> 32) & 0xFFFFFF) | (9 << 26))
-  # T-SBI call to execute instruction: csrw RVTEST_CSR_MHPMEVENTH, x6
-  mv a1, x6
-  RVTEST_TSBI_CSR_WRITE_A1(RVTEST_CSR_MHPMEVENTH)
-
-Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01001_u_rv32:
-  # T-SBI call to execute instruction: csrr x14, RVTEST_CSR_MHPMEVENTH
-  RVTEST_TSBI_CSR_READ(RVTEST_CSR_MHPMEVENTH)
-  mv x14, a0
-#ifndef H_SUPPORTED
-  LI(x6, 0xF3FFFFFF)   # clear bits 27:26 (VSINH/VUINH)
-  and x14, x14, x6
-#endif
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01001_u_rv32, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01001_u_rv32_str)
-
-  LI(x6, (((RVMODEL_MHPMEVENT_VAL) >> 32) & 0xFFFFFF) | (10 << 26))
-  # T-SBI call to execute instruction: csrw RVTEST_CSR_MHPMEVENTH, x6
-  mv a1, x6
-  RVTEST_TSBI_CSR_WRITE_A1(RVTEST_CSR_MHPMEVENTH)
-
-Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01010_u_rv32:
-  # T-SBI call to execute instruction: csrr x14, RVTEST_CSR_MHPMEVENTH
-  RVTEST_TSBI_CSR_READ(RVTEST_CSR_MHPMEVENTH)
-  mv x14, a0
-#ifndef H_SUPPORTED
-  LI(x6, 0xF3FFFFFF)   # clear bits 27:26 (VSINH/VUINH)
-  and x14, x14, x6
-#endif
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01010_u_rv32, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01010_u_rv32_str)
-
-  LI(x6, (((RVMODEL_MHPMEVENT_VAL) >> 32) & 0xFFFFFF) | (11 << 26))
-  # T-SBI call to execute instruction: csrw RVTEST_CSR_MHPMEVENTH, x6
-  mv a1, x6
-  RVTEST_TSBI_CSR_WRITE_A1(RVTEST_CSR_MHPMEVENTH)
-
-Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01011_u_rv32:
-  # T-SBI call to execute instruction: csrr x14, RVTEST_CSR_MHPMEVENTH
-  RVTEST_TSBI_CSR_READ(RVTEST_CSR_MHPMEVENTH)
-  mv x14, a0
-#ifndef H_SUPPORTED
-  LI(x6, 0xF3FFFFFF)   # clear bits 27:26 (VSINH/VUINH)
-  and x14, x14, x6
-#endif
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01011_u_rv32, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01011_u_rv32_str)
-
-  LI(x6, (((RVMODEL_MHPMEVENT_VAL) >> 32) & 0xFFFFFF) | (12 << 26))
-  # T-SBI call to execute instruction: csrw RVTEST_CSR_MHPMEVENTH, x6
-  mv a1, x6
-  RVTEST_TSBI_CSR_WRITE_A1(RVTEST_CSR_MHPMEVENTH)
-
-Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01100_u_rv32:
-  # T-SBI call to execute instruction: csrr x14, RVTEST_CSR_MHPMEVENTH
-  RVTEST_TSBI_CSR_READ(RVTEST_CSR_MHPMEVENTH)
-  mv x14, a0
-#ifndef H_SUPPORTED
-  LI(x6, 0xF3FFFFFF)   # clear bits 27:26 (VSINH/VUINH)
-  and x14, x14, x6
-#endif
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01100_u_rv32, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01100_u_rv32_str)
-
-  LI(x6, (((RVMODEL_MHPMEVENT_VAL) >> 32) & 0xFFFFFF) | (13 << 26))
-  # T-SBI call to execute instruction: csrw RVTEST_CSR_MHPMEVENTH, x6
-  mv a1, x6
-  RVTEST_TSBI_CSR_WRITE_A1(RVTEST_CSR_MHPMEVENTH)
-
-Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01101_u_rv32:
-  # T-SBI call to execute instruction: csrr x14, RVTEST_CSR_MHPMEVENTH
-  RVTEST_TSBI_CSR_READ(RVTEST_CSR_MHPMEVENTH)
-  mv x14, a0
-#ifndef H_SUPPORTED
-  LI(x6, 0xF3FFFFFF)   # clear bits 27:26 (VSINH/VUINH)
-  and x14, x14, x6
-#endif
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01101_u_rv32, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01101_u_rv32_str)
-
-  LI(x6, (((RVMODEL_MHPMEVENT_VAL) >> 32) & 0xFFFFFF) | (14 << 26))
-  # T-SBI call to execute instruction: csrw RVTEST_CSR_MHPMEVENTH, x6
-  mv a1, x6
-  RVTEST_TSBI_CSR_WRITE_A1(RVTEST_CSR_MHPMEVENTH)
-
-Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01110_u_rv32:
-  # T-SBI call to execute instruction: csrr x14, RVTEST_CSR_MHPMEVENTH
-  RVTEST_TSBI_CSR_READ(RVTEST_CSR_MHPMEVENTH)
-  mv x14, a0
-#ifndef H_SUPPORTED
-  LI(x6, 0xF3FFFFFF)   # clear bits 27:26 (VSINH/VUINH)
-  and x14, x14, x6
-#endif
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01110_u_rv32, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01110_u_rv32_str)
-
-  LI(x6, (((RVMODEL_MHPMEVENT_VAL) >> 32) & 0xFFFFFF) | (15 << 26))
-  # T-SBI call to execute instruction: csrw RVTEST_CSR_MHPMEVENTH, x6
-  mv a1, x6
-  RVTEST_TSBI_CSR_WRITE_A1(RVTEST_CSR_MHPMEVENTH)
-
-Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01111_u_rv32:
-  # T-SBI call to execute instruction: csrr x14, RVTEST_CSR_MHPMEVENTH
-  RVTEST_TSBI_CSR_READ(RVTEST_CSR_MHPMEVENTH)
-  mv x14, a0
-#ifndef H_SUPPORTED
-  LI(x6, 0xF3FFFFFF)   # clear bits 27:26 (VSINH/VUINH)
-  and x14, x14, x6
-#endif
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01111_u_rv32, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01111_u_rv32_str)
-
 #else
   LI(x9, RVMODEL_MHPMEVENT_VAL | (0 << 58))
   # T-SBI call to execute instruction: csrw RVTEST_CSR_MHPMEVENT, x9
   mv a1, x9
   RVTEST_TSBI_CSR_WRITE_A1(RVTEST_CSR_MHPMEVENT)
+#endif
 
-Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00000_u_rv64:
+Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00000_u:
+#if __riscv_xlen == 32
+  # T-SBI call to execute instruction: csrr x14, RVTEST_CSR_MHPMEVENTH
+  RVTEST_TSBI_CSR_READ(RVTEST_CSR_MHPMEVENTH)
+  mv x14, a0
+#else
   # T-SBI call to execute instruction: csrr x14, RVTEST_CSR_MHPMEVENT
   RVTEST_TSBI_CSR_READ(RVTEST_CSR_MHPMEVENT)
   mv x14, a0
-#ifndef H_SUPPORTED
-  LI(x9, 0xF3FFFFFFFFFFFFFF)   # clear bits 59:58 (VSINH/VUINH)
-  and x14, x14, x9
 #endif
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00000_u_rv64, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00000_u_rv64_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00000_u, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00000_u_str)
 
+#if __riscv_xlen == 32
+  LI(x6, (((RVMODEL_MHPMEVENT_VAL) >> 32) & 0xFFFFFF) | (1 << 26))
+  # T-SBI call to execute instruction: csrw RVTEST_CSR_MHPMEVENTH, x6
+  mv a1, x6
+  RVTEST_TSBI_CSR_WRITE_A1(RVTEST_CSR_MHPMEVENTH)
+#else
   LI(x9, RVMODEL_MHPMEVENT_VAL | (1 << 58))
   # T-SBI call to execute instruction: csrw RVTEST_CSR_MHPMEVENT, x9
   mv a1, x9
   RVTEST_TSBI_CSR_WRITE_A1(RVTEST_CSR_MHPMEVENT)
+#endif
 
-Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00001_u_rv64:
+Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00001_u:
+#if __riscv_xlen == 32
+  # T-SBI call to execute instruction: csrr x14, RVTEST_CSR_MHPMEVENTH
+  RVTEST_TSBI_CSR_READ(RVTEST_CSR_MHPMEVENTH)
+  mv x14, a0
+#else
   # T-SBI call to execute instruction: csrr x14, RVTEST_CSR_MHPMEVENT
   RVTEST_TSBI_CSR_READ(RVTEST_CSR_MHPMEVENT)
   mv x14, a0
-#ifndef H_SUPPORTED
-  LI(x9, 0xF3FFFFFFFFFFFFFF)   # clear bits 59:58 (VSINH/VUINH)
-  and x14, x14, x9
 #endif
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00001_u_rv64, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00001_u_rv64_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00001_u, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00001_u_str)
 
+#if __riscv_xlen == 32
+  LI(x6, (((RVMODEL_MHPMEVENT_VAL) >> 32) & 0xFFFFFF) | (2 << 26))
+  # T-SBI call to execute instruction: csrw RVTEST_CSR_MHPMEVENTH, x6
+  mv a1, x6
+  RVTEST_TSBI_CSR_WRITE_A1(RVTEST_CSR_MHPMEVENTH)
+#else
   LI(x9, RVMODEL_MHPMEVENT_VAL | (2 << 58))
   # T-SBI call to execute instruction: csrw RVTEST_CSR_MHPMEVENT, x9
   mv a1, x9
   RVTEST_TSBI_CSR_WRITE_A1(RVTEST_CSR_MHPMEVENT)
+#endif
 
-Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00010_u_rv64:
+Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00010_u:
+#if __riscv_xlen == 32
+  # T-SBI call to execute instruction: csrr x14, RVTEST_CSR_MHPMEVENTH
+  RVTEST_TSBI_CSR_READ(RVTEST_CSR_MHPMEVENTH)
+  mv x14, a0
+#else
   # T-SBI call to execute instruction: csrr x14, RVTEST_CSR_MHPMEVENT
   RVTEST_TSBI_CSR_READ(RVTEST_CSR_MHPMEVENT)
   mv x14, a0
-#ifndef H_SUPPORTED
-  LI(x9, 0xF3FFFFFFFFFFFFFF)   # clear bits 59:58 (VSINH/VUINH)
-  and x14, x14, x9
 #endif
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00010_u_rv64, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00010_u_rv64_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00010_u, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00010_u_str)
 
+#if __riscv_xlen == 32
+  LI(x6, (((RVMODEL_MHPMEVENT_VAL) >> 32) & 0xFFFFFF) | (3 << 26))
+  # T-SBI call to execute instruction: csrw RVTEST_CSR_MHPMEVENTH, x6
+  mv a1, x6
+  RVTEST_TSBI_CSR_WRITE_A1(RVTEST_CSR_MHPMEVENTH)
+#else
   LI(x9, RVMODEL_MHPMEVENT_VAL | (3 << 58))
   # T-SBI call to execute instruction: csrw RVTEST_CSR_MHPMEVENT, x9
   mv a1, x9
   RVTEST_TSBI_CSR_WRITE_A1(RVTEST_CSR_MHPMEVENT)
+#endif
 
-Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00011_u_rv64:
+Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00011_u:
+#if __riscv_xlen == 32
+  # T-SBI call to execute instruction: csrr x14, RVTEST_CSR_MHPMEVENTH
+  RVTEST_TSBI_CSR_READ(RVTEST_CSR_MHPMEVENTH)
+  mv x14, a0
+#else
   # T-SBI call to execute instruction: csrr x14, RVTEST_CSR_MHPMEVENT
   RVTEST_TSBI_CSR_READ(RVTEST_CSR_MHPMEVENT)
   mv x14, a0
-#ifndef H_SUPPORTED
-  LI(x9, 0xF3FFFFFFFFFFFFFF)   # clear bits 59:58 (VSINH/VUINH)
-  and x14, x14, x9
 #endif
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00011_u_rv64, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00011_u_rv64_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00011_u, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00011_u_str)
 
+#if __riscv_xlen == 32
+  LI(x6, (((RVMODEL_MHPMEVENT_VAL) >> 32) & 0xFFFFFF) | (4 << 26))
+  # T-SBI call to execute instruction: csrw RVTEST_CSR_MHPMEVENTH, x6
+  mv a1, x6
+  RVTEST_TSBI_CSR_WRITE_A1(RVTEST_CSR_MHPMEVENTH)
+#else
   LI(x9, RVMODEL_MHPMEVENT_VAL | (4 << 58))
   # T-SBI call to execute instruction: csrw RVTEST_CSR_MHPMEVENT, x9
   mv a1, x9
   RVTEST_TSBI_CSR_WRITE_A1(RVTEST_CSR_MHPMEVENT)
+#endif
 
-Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00100_u_rv64:
+Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00100_u:
+#if __riscv_xlen == 32
+  # T-SBI call to execute instruction: csrr x14, RVTEST_CSR_MHPMEVENTH
+  RVTEST_TSBI_CSR_READ(RVTEST_CSR_MHPMEVENTH)
+  mv x14, a0
+#else
   # T-SBI call to execute instruction: csrr x14, RVTEST_CSR_MHPMEVENT
   RVTEST_TSBI_CSR_READ(RVTEST_CSR_MHPMEVENT)
   mv x14, a0
-#ifndef H_SUPPORTED
-  LI(x9, 0xF3FFFFFFFFFFFFFF)   # clear bits 59:58 (VSINH/VUINH)
-  and x14, x14, x9
 #endif
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00100_u_rv64, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00100_u_rv64_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00100_u, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00100_u_str)
 
+#if __riscv_xlen == 32
+  LI(x6, (((RVMODEL_MHPMEVENT_VAL) >> 32) & 0xFFFFFF) | (5 << 26))
+  # T-SBI call to execute instruction: csrw RVTEST_CSR_MHPMEVENTH, x6
+  mv a1, x6
+  RVTEST_TSBI_CSR_WRITE_A1(RVTEST_CSR_MHPMEVENTH)
+#else
   LI(x9, RVMODEL_MHPMEVENT_VAL | (5 << 58))
   # T-SBI call to execute instruction: csrw RVTEST_CSR_MHPMEVENT, x9
   mv a1, x9
   RVTEST_TSBI_CSR_WRITE_A1(RVTEST_CSR_MHPMEVENT)
+#endif
 
-Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00101_u_rv64:
+Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00101_u:
+#if __riscv_xlen == 32
+  # T-SBI call to execute instruction: csrr x14, RVTEST_CSR_MHPMEVENTH
+  RVTEST_TSBI_CSR_READ(RVTEST_CSR_MHPMEVENTH)
+  mv x14, a0
+#else
   # T-SBI call to execute instruction: csrr x14, RVTEST_CSR_MHPMEVENT
   RVTEST_TSBI_CSR_READ(RVTEST_CSR_MHPMEVENT)
   mv x14, a0
-#ifndef H_SUPPORTED
-  LI(x9, 0xF3FFFFFFFFFFFFFF)   # clear bits 59:58 (VSINH/VUINH)
-  and x14, x14, x9
 #endif
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00101_u_rv64, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00101_u_rv64_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00101_u, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00101_u_str)
 
+#if __riscv_xlen == 32
+  LI(x6, (((RVMODEL_MHPMEVENT_VAL) >> 32) & 0xFFFFFF) | (6 << 26))
+  # T-SBI call to execute instruction: csrw RVTEST_CSR_MHPMEVENTH, x6
+  mv a1, x6
+  RVTEST_TSBI_CSR_WRITE_A1(RVTEST_CSR_MHPMEVENTH)
+#else
   LI(x9, RVMODEL_MHPMEVENT_VAL | (6 << 58))
   # T-SBI call to execute instruction: csrw RVTEST_CSR_MHPMEVENT, x9
   mv a1, x9
   RVTEST_TSBI_CSR_WRITE_A1(RVTEST_CSR_MHPMEVENT)
+#endif
 
-Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00110_u_rv64:
+Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00110_u:
+#if __riscv_xlen == 32
+  # T-SBI call to execute instruction: csrr x14, RVTEST_CSR_MHPMEVENTH
+  RVTEST_TSBI_CSR_READ(RVTEST_CSR_MHPMEVENTH)
+  mv x14, a0
+#else
   # T-SBI call to execute instruction: csrr x14, RVTEST_CSR_MHPMEVENT
   RVTEST_TSBI_CSR_READ(RVTEST_CSR_MHPMEVENT)
   mv x14, a0
-#ifndef H_SUPPORTED
-  LI(x9, 0xF3FFFFFFFFFFFFFF)   # clear bits 59:58 (VSINH/VUINH)
-  and x14, x14, x9
 #endif
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00110_u_rv64, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00110_u_rv64_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00110_u, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00110_u_str)
 
+#if __riscv_xlen == 32
+  LI(x6, (((RVMODEL_MHPMEVENT_VAL) >> 32) & 0xFFFFFF) | (7 << 26))
+  # T-SBI call to execute instruction: csrw RVTEST_CSR_MHPMEVENTH, x6
+  mv a1, x6
+  RVTEST_TSBI_CSR_WRITE_A1(RVTEST_CSR_MHPMEVENTH)
+#else
   LI(x9, RVMODEL_MHPMEVENT_VAL | (7 << 58))
   # T-SBI call to execute instruction: csrw RVTEST_CSR_MHPMEVENT, x9
   mv a1, x9
   RVTEST_TSBI_CSR_WRITE_A1(RVTEST_CSR_MHPMEVENT)
+#endif
 
-Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00111_u_rv64:
+Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00111_u:
+#if __riscv_xlen == 32
+  # T-SBI call to execute instruction: csrr x14, RVTEST_CSR_MHPMEVENTH
+  RVTEST_TSBI_CSR_READ(RVTEST_CSR_MHPMEVENTH)
+  mv x14, a0
+#else
   # T-SBI call to execute instruction: csrr x14, RVTEST_CSR_MHPMEVENT
   RVTEST_TSBI_CSR_READ(RVTEST_CSR_MHPMEVENT)
   mv x14, a0
-#ifndef H_SUPPORTED
-  LI(x9, 0xF3FFFFFFFFFFFFFF)   # clear bits 59:58 (VSINH/VUINH)
-  and x14, x14, x9
 #endif
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00111_u_rv64, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00111_u_rv64_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00111_u, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00111_u_str)
 
+#if __riscv_xlen == 32
+  LI(x6, (((RVMODEL_MHPMEVENT_VAL) >> 32) & 0xFFFFFF) | (8 << 26))
+  # T-SBI call to execute instruction: csrw RVTEST_CSR_MHPMEVENTH, x6
+  mv a1, x6
+  RVTEST_TSBI_CSR_WRITE_A1(RVTEST_CSR_MHPMEVENTH)
+#else
   LI(x9, RVMODEL_MHPMEVENT_VAL | (8 << 58))
   # T-SBI call to execute instruction: csrw RVTEST_CSR_MHPMEVENT, x9
   mv a1, x9
   RVTEST_TSBI_CSR_WRITE_A1(RVTEST_CSR_MHPMEVENT)
+#endif
 
-Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01000_u_rv64:
+Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01000_u:
+#if __riscv_xlen == 32
+  # T-SBI call to execute instruction: csrr x14, RVTEST_CSR_MHPMEVENTH
+  RVTEST_TSBI_CSR_READ(RVTEST_CSR_MHPMEVENTH)
+  mv x14, a0
+#else
   # T-SBI call to execute instruction: csrr x14, RVTEST_CSR_MHPMEVENT
   RVTEST_TSBI_CSR_READ(RVTEST_CSR_MHPMEVENT)
   mv x14, a0
-#ifndef H_SUPPORTED
-  LI(x9, 0xF3FFFFFFFFFFFFFF)   # clear bits 59:58 (VSINH/VUINH)
-  and x14, x14, x9
 #endif
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01000_u_rv64, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01000_u_rv64_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01000_u, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01000_u_str)
 
+#if __riscv_xlen == 32
+  LI(x6, (((RVMODEL_MHPMEVENT_VAL) >> 32) & 0xFFFFFF) | (9 << 26))
+  # T-SBI call to execute instruction: csrw RVTEST_CSR_MHPMEVENTH, x6
+  mv a1, x6
+  RVTEST_TSBI_CSR_WRITE_A1(RVTEST_CSR_MHPMEVENTH)
+#else
   LI(x9, RVMODEL_MHPMEVENT_VAL | (9 << 58))
   # T-SBI call to execute instruction: csrw RVTEST_CSR_MHPMEVENT, x9
   mv a1, x9
   RVTEST_TSBI_CSR_WRITE_A1(RVTEST_CSR_MHPMEVENT)
+#endif
 
-Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01001_u_rv64:
+Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01001_u:
+#if __riscv_xlen == 32
+  # T-SBI call to execute instruction: csrr x14, RVTEST_CSR_MHPMEVENTH
+  RVTEST_TSBI_CSR_READ(RVTEST_CSR_MHPMEVENTH)
+  mv x14, a0
+#else
   # T-SBI call to execute instruction: csrr x14, RVTEST_CSR_MHPMEVENT
   RVTEST_TSBI_CSR_READ(RVTEST_CSR_MHPMEVENT)
   mv x14, a0
-#ifndef H_SUPPORTED
-  LI(x9, 0xF3FFFFFFFFFFFFFF)   # clear bits 59:58 (VSINH/VUINH)
-  and x14, x14, x9
 #endif
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01001_u_rv64, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01001_u_rv64_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01001_u, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01001_u_str)
 
+#if __riscv_xlen == 32
+  LI(x6, (((RVMODEL_MHPMEVENT_VAL) >> 32) & 0xFFFFFF) | (10 << 26))
+  # T-SBI call to execute instruction: csrw RVTEST_CSR_MHPMEVENTH, x6
+  mv a1, x6
+  RVTEST_TSBI_CSR_WRITE_A1(RVTEST_CSR_MHPMEVENTH)
+#else
   LI(x9, RVMODEL_MHPMEVENT_VAL | (10 << 58))
   # T-SBI call to execute instruction: csrw RVTEST_CSR_MHPMEVENT, x9
   mv a1, x9
   RVTEST_TSBI_CSR_WRITE_A1(RVTEST_CSR_MHPMEVENT)
+#endif
 
-Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01010_u_rv64:
+Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01010_u:
+#if __riscv_xlen == 32
+  # T-SBI call to execute instruction: csrr x14, RVTEST_CSR_MHPMEVENTH
+  RVTEST_TSBI_CSR_READ(RVTEST_CSR_MHPMEVENTH)
+  mv x14, a0
+#else
   # T-SBI call to execute instruction: csrr x14, RVTEST_CSR_MHPMEVENT
   RVTEST_TSBI_CSR_READ(RVTEST_CSR_MHPMEVENT)
   mv x14, a0
-#ifndef H_SUPPORTED
-  LI(x9, 0xF3FFFFFFFFFFFFFF)   # clear bits 59:58 (VSINH/VUINH)
-  and x14, x14, x9
 #endif
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01010_u_rv64, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01010_u_rv64_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01010_u, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01010_u_str)
 
+#if __riscv_xlen == 32
+  LI(x6, (((RVMODEL_MHPMEVENT_VAL) >> 32) & 0xFFFFFF) | (11 << 26))
+  # T-SBI call to execute instruction: csrw RVTEST_CSR_MHPMEVENTH, x6
+  mv a1, x6
+  RVTEST_TSBI_CSR_WRITE_A1(RVTEST_CSR_MHPMEVENTH)
+#else
   LI(x9, RVMODEL_MHPMEVENT_VAL | (11 << 58))
   # T-SBI call to execute instruction: csrw RVTEST_CSR_MHPMEVENT, x9
   mv a1, x9
   RVTEST_TSBI_CSR_WRITE_A1(RVTEST_CSR_MHPMEVENT)
+#endif
 
-Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01011_u_rv64:
+Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01011_u:
+#if __riscv_xlen == 32
+  # T-SBI call to execute instruction: csrr x14, RVTEST_CSR_MHPMEVENTH
+  RVTEST_TSBI_CSR_READ(RVTEST_CSR_MHPMEVENTH)
+  mv x14, a0
+#else
   # T-SBI call to execute instruction: csrr x14, RVTEST_CSR_MHPMEVENT
   RVTEST_TSBI_CSR_READ(RVTEST_CSR_MHPMEVENT)
   mv x14, a0
-#ifndef H_SUPPORTED
-  LI(x9, 0xF3FFFFFFFFFFFFFF)   # clear bits 59:58 (VSINH/VUINH)
-  and x14, x14, x9
 #endif
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01011_u_rv64, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01011_u_rv64_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01011_u, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01011_u_str)
 
+#if __riscv_xlen == 32
+  LI(x6, (((RVMODEL_MHPMEVENT_VAL) >> 32) & 0xFFFFFF) | (12 << 26))
+  # T-SBI call to execute instruction: csrw RVTEST_CSR_MHPMEVENTH, x6
+  mv a1, x6
+  RVTEST_TSBI_CSR_WRITE_A1(RVTEST_CSR_MHPMEVENTH)
+#else
   LI(x9, RVMODEL_MHPMEVENT_VAL | (12 << 58))
   # T-SBI call to execute instruction: csrw RVTEST_CSR_MHPMEVENT, x9
   mv a1, x9
   RVTEST_TSBI_CSR_WRITE_A1(RVTEST_CSR_MHPMEVENT)
+#endif
 
-Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01100_u_rv64:
+Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01100_u:
+#if __riscv_xlen == 32
+  # T-SBI call to execute instruction: csrr x14, RVTEST_CSR_MHPMEVENTH
+  RVTEST_TSBI_CSR_READ(RVTEST_CSR_MHPMEVENTH)
+  mv x14, a0
+#else
   # T-SBI call to execute instruction: csrr x14, RVTEST_CSR_MHPMEVENT
   RVTEST_TSBI_CSR_READ(RVTEST_CSR_MHPMEVENT)
   mv x14, a0
-#ifndef H_SUPPORTED
-  LI(x9, 0xF3FFFFFFFFFFFFFF)   # clear bits 59:58 (VSINH/VUINH)
-  and x14, x14, x9
 #endif
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01100_u_rv64, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01100_u_rv64_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01100_u, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01100_u_str)
 
+#if __riscv_xlen == 32
+  LI(x6, (((RVMODEL_MHPMEVENT_VAL) >> 32) & 0xFFFFFF) | (13 << 26))
+  # T-SBI call to execute instruction: csrw RVTEST_CSR_MHPMEVENTH, x6
+  mv a1, x6
+  RVTEST_TSBI_CSR_WRITE_A1(RVTEST_CSR_MHPMEVENTH)
+#else
   LI(x9, RVMODEL_MHPMEVENT_VAL | (13 << 58))
   # T-SBI call to execute instruction: csrw RVTEST_CSR_MHPMEVENT, x9
   mv a1, x9
   RVTEST_TSBI_CSR_WRITE_A1(RVTEST_CSR_MHPMEVENT)
+#endif
 
-Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01101_u_rv64:
+Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01101_u:
+#if __riscv_xlen == 32
+  # T-SBI call to execute instruction: csrr x14, RVTEST_CSR_MHPMEVENTH
+  RVTEST_TSBI_CSR_READ(RVTEST_CSR_MHPMEVENTH)
+  mv x14, a0
+#else
   # T-SBI call to execute instruction: csrr x14, RVTEST_CSR_MHPMEVENT
   RVTEST_TSBI_CSR_READ(RVTEST_CSR_MHPMEVENT)
   mv x14, a0
-#ifndef H_SUPPORTED
-  LI(x9, 0xF3FFFFFFFFFFFFFF)   # clear bits 59:58 (VSINH/VUINH)
-  and x14, x14, x9
 #endif
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01101_u_rv64, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01101_u_rv64_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01101_u, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01101_u_str)
 
+#if __riscv_xlen == 32
+  LI(x6, (((RVMODEL_MHPMEVENT_VAL) >> 32) & 0xFFFFFF) | (14 << 26))
+  # T-SBI call to execute instruction: csrw RVTEST_CSR_MHPMEVENTH, x6
+  mv a1, x6
+  RVTEST_TSBI_CSR_WRITE_A1(RVTEST_CSR_MHPMEVENTH)
+#else
   LI(x9, RVMODEL_MHPMEVENT_VAL | (14 << 58))
   # T-SBI call to execute instruction: csrw RVTEST_CSR_MHPMEVENT, x9
   mv a1, x9
   RVTEST_TSBI_CSR_WRITE_A1(RVTEST_CSR_MHPMEVENT)
+#endif
 
-Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01110_u_rv64:
+Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01110_u:
+#if __riscv_xlen == 32
+  # T-SBI call to execute instruction: csrr x14, RVTEST_CSR_MHPMEVENTH
+  RVTEST_TSBI_CSR_READ(RVTEST_CSR_MHPMEVENTH)
+  mv x14, a0
+#else
   # T-SBI call to execute instruction: csrr x14, RVTEST_CSR_MHPMEVENT
   RVTEST_TSBI_CSR_READ(RVTEST_CSR_MHPMEVENT)
   mv x14, a0
-#ifndef H_SUPPORTED
-  LI(x9, 0xF3FFFFFFFFFFFFFF)   # clear bits 59:58 (VSINH/VUINH)
-  and x14, x14, x9
 #endif
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01110_u_rv64, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01110_u_rv64_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01110_u, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01110_u_str)
 
+#if __riscv_xlen == 32
+  LI(x6, (((RVMODEL_MHPMEVENT_VAL) >> 32) & 0xFFFFFF) | (15 << 26))
+  # T-SBI call to execute instruction: csrw RVTEST_CSR_MHPMEVENTH, x6
+  mv a1, x6
+  RVTEST_TSBI_CSR_WRITE_A1(RVTEST_CSR_MHPMEVENTH)
+#else
   LI(x9, RVMODEL_MHPMEVENT_VAL | (15 << 58))
   # T-SBI call to execute instruction: csrw RVTEST_CSR_MHPMEVENT, x9
   mv a1, x9
   RVTEST_TSBI_CSR_WRITE_A1(RVTEST_CSR_MHPMEVENT)
+#endif
 
-Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01111_u_rv64:
+Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01111_u:
+#if __riscv_xlen == 32
+  # T-SBI call to execute instruction: csrr x14, RVTEST_CSR_MHPMEVENTH
+  RVTEST_TSBI_CSR_READ(RVTEST_CSR_MHPMEVENTH)
+  mv x14, a0
+#else
   # T-SBI call to execute instruction: csrr x14, RVTEST_CSR_MHPMEVENT
   RVTEST_TSBI_CSR_READ(RVTEST_CSR_MHPMEVENT)
   mv x14, a0
-#ifndef H_SUPPORTED
-  LI(x9, 0xF3FFFFFFFFFFFFFF)   # clear bits 59:58 (VSINH/VUINH)
-  and x14, x14, x9
 #endif
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01111_u_rv64, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01111_u_rv64_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01111_u, Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01111_u_str)
 
-#endif
   # T-SBI call to execute instruction: csrw RVTEST_CSR_MHPMEVENT, zero
   mv a1, x0
   RVTEST_TSBI_CSR_WRITE_A1(RVTEST_CSR_MHPMEVENT)
@@ -653,38 +538,22 @@ RVTEST_DATA_BEGIN
 // Testcase strings
 Sscofpmf_cg_cp_uinh_inhibits_umode_uinh_0_u_str: .string "\"test: 5; cg: Sscofpmf_cg; cp: cp_uinh_inhibits_umode; bin: uinh_0_u\""
 Sscofpmf_cg_cp_uinh_inhibits_umode_uinh_1_u_str: .string "\"test: 6; cg: Sscofpmf_cg; cp: cp_uinh_inhibits_umode; bin: uinh_1_u\""
-Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00000_u_rv32_str: .string "\"test: 7; cg: Sscofpmf_cg; cp: cp_uinh_inhibits_umode; bin: xinh_combo_00000_u_rv32\""
-Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00001_u_rv32_str: .string "\"test: 8; cg: Sscofpmf_cg; cp: cp_uinh_inhibits_umode; bin: xinh_combo_00001_u_rv32\""
-Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00010_u_rv32_str: .string "\"test: 9; cg: Sscofpmf_cg; cp: cp_uinh_inhibits_umode; bin: xinh_combo_00010_u_rv32\""
-Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00011_u_rv32_str: .string "\"test: 10; cg: Sscofpmf_cg; cp: cp_uinh_inhibits_umode; bin: xinh_combo_00011_u_rv32\""
-Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00100_u_rv32_str: .string "\"test: 11; cg: Sscofpmf_cg; cp: cp_uinh_inhibits_umode; bin: xinh_combo_00100_u_rv32\""
-Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00101_u_rv32_str: .string "\"test: 12; cg: Sscofpmf_cg; cp: cp_uinh_inhibits_umode; bin: xinh_combo_00101_u_rv32\""
-Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00110_u_rv32_str: .string "\"test: 13; cg: Sscofpmf_cg; cp: cp_uinh_inhibits_umode; bin: xinh_combo_00110_u_rv32\""
-Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00111_u_rv32_str: .string "\"test: 14; cg: Sscofpmf_cg; cp: cp_uinh_inhibits_umode; bin: xinh_combo_00111_u_rv32\""
-Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01000_u_rv32_str: .string "\"test: 15; cg: Sscofpmf_cg; cp: cp_uinh_inhibits_umode; bin: xinh_combo_01000_u_rv32\""
-Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01001_u_rv32_str: .string "\"test: 16; cg: Sscofpmf_cg; cp: cp_uinh_inhibits_umode; bin: xinh_combo_01001_u_rv32\""
-Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01010_u_rv32_str: .string "\"test: 17; cg: Sscofpmf_cg; cp: cp_uinh_inhibits_umode; bin: xinh_combo_01010_u_rv32\""
-Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01011_u_rv32_str: .string "\"test: 18; cg: Sscofpmf_cg; cp: cp_uinh_inhibits_umode; bin: xinh_combo_01011_u_rv32\""
-Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01100_u_rv32_str: .string "\"test: 19; cg: Sscofpmf_cg; cp: cp_uinh_inhibits_umode; bin: xinh_combo_01100_u_rv32\""
-Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01101_u_rv32_str: .string "\"test: 20; cg: Sscofpmf_cg; cp: cp_uinh_inhibits_umode; bin: xinh_combo_01101_u_rv32\""
-Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01110_u_rv32_str: .string "\"test: 21; cg: Sscofpmf_cg; cp: cp_uinh_inhibits_umode; bin: xinh_combo_01110_u_rv32\""
-Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01111_u_rv32_str: .string "\"test: 22; cg: Sscofpmf_cg; cp: cp_uinh_inhibits_umode; bin: xinh_combo_01111_u_rv32\""
-Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00000_u_rv64_str: .string "\"test: 23; cg: Sscofpmf_cg; cp: cp_uinh_inhibits_umode; bin: xinh_combo_00000_u_rv64\""
-Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00001_u_rv64_str: .string "\"test: 24; cg: Sscofpmf_cg; cp: cp_uinh_inhibits_umode; bin: xinh_combo_00001_u_rv64\""
-Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00010_u_rv64_str: .string "\"test: 25; cg: Sscofpmf_cg; cp: cp_uinh_inhibits_umode; bin: xinh_combo_00010_u_rv64\""
-Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00011_u_rv64_str: .string "\"test: 26; cg: Sscofpmf_cg; cp: cp_uinh_inhibits_umode; bin: xinh_combo_00011_u_rv64\""
-Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00100_u_rv64_str: .string "\"test: 27; cg: Sscofpmf_cg; cp: cp_uinh_inhibits_umode; bin: xinh_combo_00100_u_rv64\""
-Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00101_u_rv64_str: .string "\"test: 28; cg: Sscofpmf_cg; cp: cp_uinh_inhibits_umode; bin: xinh_combo_00101_u_rv64\""
-Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00110_u_rv64_str: .string "\"test: 29; cg: Sscofpmf_cg; cp: cp_uinh_inhibits_umode; bin: xinh_combo_00110_u_rv64\""
-Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00111_u_rv64_str: .string "\"test: 30; cg: Sscofpmf_cg; cp: cp_uinh_inhibits_umode; bin: xinh_combo_00111_u_rv64\""
-Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01000_u_rv64_str: .string "\"test: 31; cg: Sscofpmf_cg; cp: cp_uinh_inhibits_umode; bin: xinh_combo_01000_u_rv64\""
-Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01001_u_rv64_str: .string "\"test: 32; cg: Sscofpmf_cg; cp: cp_uinh_inhibits_umode; bin: xinh_combo_01001_u_rv64\""
-Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01010_u_rv64_str: .string "\"test: 33; cg: Sscofpmf_cg; cp: cp_uinh_inhibits_umode; bin: xinh_combo_01010_u_rv64\""
-Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01011_u_rv64_str: .string "\"test: 34; cg: Sscofpmf_cg; cp: cp_uinh_inhibits_umode; bin: xinh_combo_01011_u_rv64\""
-Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01100_u_rv64_str: .string "\"test: 35; cg: Sscofpmf_cg; cp: cp_uinh_inhibits_umode; bin: xinh_combo_01100_u_rv64\""
-Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01101_u_rv64_str: .string "\"test: 36; cg: Sscofpmf_cg; cp: cp_uinh_inhibits_umode; bin: xinh_combo_01101_u_rv64\""
-Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01110_u_rv64_str: .string "\"test: 37; cg: Sscofpmf_cg; cp: cp_uinh_inhibits_umode; bin: xinh_combo_01110_u_rv64\""
-Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01111_u_rv64_str: .string "\"test: 38; cg: Sscofpmf_cg; cp: cp_uinh_inhibits_umode; bin: xinh_combo_01111_u_rv64\""
+Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00000_u_str: .string "\"test: 7; cg: Sscofpmf_cg; cp: cp_uinh_inhibits_umode; bin: xinh_combo_00000_u\""
+Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00001_u_str: .string "\"test: 8; cg: Sscofpmf_cg; cp: cp_uinh_inhibits_umode; bin: xinh_combo_00001_u\""
+Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00010_u_str: .string "\"test: 9; cg: Sscofpmf_cg; cp: cp_uinh_inhibits_umode; bin: xinh_combo_00010_u\""
+Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00011_u_str: .string "\"test: 10; cg: Sscofpmf_cg; cp: cp_uinh_inhibits_umode; bin: xinh_combo_00011_u\""
+Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00100_u_str: .string "\"test: 11; cg: Sscofpmf_cg; cp: cp_uinh_inhibits_umode; bin: xinh_combo_00100_u\""
+Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00101_u_str: .string "\"test: 12; cg: Sscofpmf_cg; cp: cp_uinh_inhibits_umode; bin: xinh_combo_00101_u\""
+Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00110_u_str: .string "\"test: 13; cg: Sscofpmf_cg; cp: cp_uinh_inhibits_umode; bin: xinh_combo_00110_u\""
+Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_00111_u_str: .string "\"test: 14; cg: Sscofpmf_cg; cp: cp_uinh_inhibits_umode; bin: xinh_combo_00111_u\""
+Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01000_u_str: .string "\"test: 15; cg: Sscofpmf_cg; cp: cp_uinh_inhibits_umode; bin: xinh_combo_01000_u\""
+Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01001_u_str: .string "\"test: 16; cg: Sscofpmf_cg; cp: cp_uinh_inhibits_umode; bin: xinh_combo_01001_u\""
+Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01010_u_str: .string "\"test: 17; cg: Sscofpmf_cg; cp: cp_uinh_inhibits_umode; bin: xinh_combo_01010_u\""
+Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01011_u_str: .string "\"test: 18; cg: Sscofpmf_cg; cp: cp_uinh_inhibits_umode; bin: xinh_combo_01011_u\""
+Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01100_u_str: .string "\"test: 19; cg: Sscofpmf_cg; cp: cp_uinh_inhibits_umode; bin: xinh_combo_01100_u\""
+Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01101_u_str: .string "\"test: 20; cg: Sscofpmf_cg; cp: cp_uinh_inhibits_umode; bin: xinh_combo_01101_u\""
+Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01110_u_str: .string "\"test: 21; cg: Sscofpmf_cg; cp: cp_uinh_inhibits_umode; bin: xinh_combo_01110_u\""
+Sscofpmf_cg_cp_uinh_inhibits_umode_xinh_combo_01111_u_str: .string "\"test: 22; cg: Sscofpmf_cg; cp: cp_uinh_inhibits_umode; bin: xinh_combo_01111_u\""
 
 // End of test data section and model specific data
 RVTEST_DATA_END

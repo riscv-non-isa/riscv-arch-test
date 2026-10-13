@@ -43,13 +43,6 @@ HIGHER_MODE_PATTERN = {mode: bits >> 58 for mode, bits in HIGHER_MODE_INHIBITS.i
 EVENT_VAL_HI = "(((RVMODEL_MHPMEVENT_VAL) >> 32) & 0xFFFFFF)"
 
 
-def read_counter_preset(r_preset: int, priv_mode: str) -> list[str]:
-    """Read back the counter just preset to all 1s: only its implemented bits are set."""
-    return [
-        tsbi_call_or_direct(f"csrr x{r_preset}, RVTEST_CSR_MHPMCOUNTER   # preset as read back", priv_mode),
-    ]
-
-
 def counted_since_preset(reg: int, r_preset: int) -> list[str]:
     """Reduce x{reg} to 1 if the counter moved off the preset in x{r_preset}, else 0."""
     return [
@@ -93,20 +86,15 @@ def prime_counter_overflow(r_val: int, r_hval: int, r_temp: int, r_addr: int, pr
     ]
 
 
-_INHIBIT_MODE_SUFFIX = {"M": "mmode", "S": "smode", "U": "umode"}
-
-
 def _generate_xinh_inhibits_tests(
     test_data: TestData, priv_mode: str, combos: range = range(32), toggles: bool = True
 ) -> list[str]:
     """xINH toggles (when ``toggles``) and the MINH/SINH/UINH/VSINH/VUINH combinations in ``combos``."""
-    _INHIBIT_BIT_POS = {"M": 62, "S": 61, "U": 60}
-    _INHIBIT_PREFIX = {"M": "m", "S": "s", "U": "u"}
 
     covergroup = "Sscofpmf_cg"
-    inh_prefix = _INHIBIT_PREFIX[priv_mode]
-    coverpoint = f"cp_{inh_prefix}inh_inhibits_{_INHIBIT_MODE_SUFFIX[priv_mode]}"
-    inh_bit_pos = _INHIBIT_BIT_POS[priv_mode]
+    inh_prefix = priv_mode.lower()
+    coverpoint = f"cp_{inh_prefix}inh_inhibits_{inh_prefix}mode"
+    inh_bit_pos = {"M": 62, "S": 61, "U": 60}[priv_mode]
     inh_bit_pos_32 = inh_bit_pos - 32
 
     r_val, r_temp = test_data.int_regs.get_registers(2)
@@ -117,7 +105,7 @@ def _generate_xinh_inhibits_tests(
     lines = [
         comment_banner(
             coverpoint,
-            f"{inh_prefix.upper()}INH bit (mhpmevent[{inh_bit_pos}]) inhibits counting in {priv_mode}-mode.\n"
+            f"{priv_mode}INH bit (mhpmevent[{inh_bit_pos}]) inhibits counting in {priv_mode}-mode.\n"
             "Counting stays inhibited in the modes above the one under test, so the counter\n"
             "only ever reflects the workload and never the T-SBI round trip that reaches the\n"
             "M-level counter CSRs.",
@@ -126,43 +114,43 @@ def _generate_xinh_inhibits_tests(
         tsbi_call_or_direct("csrw mie, zero   # disable interrupts before toggle/sweep", priv_mode),
         "",
     ]
-    indent = ""
 
+    # Toggle the xINH bit and test its effect
     for inh_val in [0, 1] if toggles else []:
         binname = f"{inh_prefix}inh_{inh_val}_{priv_mode.lower()}"
         lines.extend(
             [
-                f"{indent}# Testcase: {inh_prefix}inh = {inh_val}",
-                f"{indent}#if __riscv_xlen == 32",
-                f"{indent}LI(x{r_val}, RVMODEL_MHPMEVENT_VAL)",
-                f"{indent}{tsbi_call_or_direct(f'csrw RVTEST_CSR_MHPMEVENT, x{r_val}', priv_mode)}",
-                f"{indent}LI(x{r_val}, {EVENT_VAL_HI} | {hex(higher_inhibits_32 | (inh_val << inh_bit_pos_32))})",
-                f"{indent}{tsbi_call_or_direct(f'csrw RVTEST_CSR_MHPMEVENTH, x{r_val}', priv_mode)}",
-                f"{indent}#else",
-                f"{indent}LI(x{r_val}, RVMODEL_MHPMEVENT_VAL | {hex(higher_inhibits | (inh_val << inh_bit_pos))})",
-                f"{indent}{tsbi_call_or_direct(f'csrw RVTEST_CSR_MHPMEVENT, x{r_val}', priv_mode)}",
-                f"{indent}#endif",
-                f"{indent}{tsbi_call_or_direct('csrw RVTEST_CSR_MHPMCOUNTER, zero', priv_mode)}",
+                f"# Testcase: {inh_prefix}inh = {inh_val}",
+                "#if __riscv_xlen == 32",
+                f"LI(x{r_val}, RVMODEL_MHPMEVENT_VAL)",
+                f"{tsbi_call_or_direct(f'csrw RVTEST_CSR_MHPMEVENT, x{r_val}', priv_mode)}",
+                f"LI(x{r_val}, {EVENT_VAL_HI} | {hex(higher_inhibits_32 | (inh_val << inh_bit_pos_32))})",
+                f"{tsbi_call_or_direct(f'csrw RVTEST_CSR_MHPMEVENTH, x{r_val}', priv_mode)}",
+                "#else",
+                f"LI(x{r_val}, RVMODEL_MHPMEVENT_VAL | {hex(higher_inhibits | (inh_val << inh_bit_pos))})",
+                f"{tsbi_call_or_direct(f'csrw RVTEST_CSR_MHPMEVENT, x{r_val}', priv_mode)}",
+                "#endif",
+                f"{tsbi_call_or_direct('csrw RVTEST_CSR_MHPMCOUNTER, zero', priv_mode)}",
                 "",
-                f"{indent}LA(x{r_temp}, scratch)",
-                f"{indent}RVMODEL_MHPMEVENT_CODE(x{r_temp}, x{r_val})",
+                f"LA(x{r_temp}, scratch)",
+                f"RVMODEL_MHPMEVENT_CODE(x{r_temp}, x{r_val})",
                 "",
-                f"{indent}{test_data.add_testcase(binname, coverpoint, covergroup)}",
-                f"{indent}{tsbi_call_or_direct(f'csrr x{r_temp}, RVTEST_CSR_MHPMCOUNTER', priv_mode)}",
-                f"{indent}snez x{r_temp}, x{r_temp}",
-                f"{indent}{write_sigupd(r_temp, test_data)}",
+                f"{test_data.add_testcase(binname, coverpoint, covergroup)}",
+                f"{tsbi_call_or_direct(f'csrr x{r_temp}, RVTEST_CSR_MHPMCOUNTER', priv_mode)}",
+                f"snez x{r_temp}, x{r_temp}",
+                f"{write_sigupd(r_temp, test_data)}",
                 "",
             ]
         )
 
     lines.extend(
         [
-            f"{indent}LI(x{r_val}, RVMODEL_MHPMEVENT_VAL)",
-            f"{indent}{tsbi_call_or_direct(f'csrw RVTEST_CSR_MHPMEVENT, x{r_val}', priv_mode)}",
-            f"{indent}#if __riscv_xlen == 32",
-            f"{indent}LI(x{r_val}, {EVENT_VAL_HI})",
-            f"{indent}{tsbi_call_or_direct(f'csrw RVTEST_CSR_MHPMEVENTH, x{r_val}', priv_mode)}",
-            f"{indent}#endif",
+            f"LI(x{r_val}, RVMODEL_MHPMEVENT_VAL)",
+            f"{tsbi_call_or_direct(f'csrw RVTEST_CSR_MHPMEVENT, x{r_val}', priv_mode)}",
+            "#if __riscv_xlen == 32",
+            f"LI(x{r_val}, {EVENT_VAL_HI})",
+            f"{tsbi_call_or_direct(f'csrw RVTEST_CSR_MHPMEVENTH, x{r_val}', priv_mode)}",
+            "#endif",
             "",
         ]
     )
@@ -176,62 +164,45 @@ def _generate_xinh_inhibits_tests(
         if priv_mode != "M":
             return []
         return [
-            f"{indent}csrw RVTEST_CSR_MHPMCOUNTER, zero",
-            f"{indent}LA(x{r_temp}, scratch)",
-            f"{indent}RVMODEL_MHPMEVENT_CODE(x{r_temp}, x{r_hval})",
-            f"{indent}csrr x{r_temp}, RVTEST_CSR_MHPMCOUNTER",
-            f"{indent}snez x{r_temp}, x{r_temp}   # counted iff MINH = 0",
-            f"{indent}{write_sigupd(r_temp, test_data)}",
+            "csrw RVTEST_CSR_MHPMCOUNTER, zero",
+            f"LA(x{r_temp}, scratch)",
+            f"RVMODEL_MHPMEVENT_CODE(x{r_temp}, x{r_hval})",
+            f"csrr x{r_temp}, RVTEST_CSR_MHPMCOUNTER",
+            f"snez x{r_temp}, x{r_temp}   # counted iff MINH = 0",
+            f"{write_sigupd(r_temp, test_data)}",
         ]
 
-    lines.append(f"{indent}#if __riscv_xlen == 32")
     for combo in combos:
-        binname = f"xinh_combo_{combo:05b}_{priv_mode.lower()}_rv32"
+        binname = f"xinh_combo_{combo:05b}_{priv_mode.lower()}"
         lines.extend(
             [
-                f"{indent}LI(x{r_hval}, {EVENT_VAL_HI} | ({combo} << 26))",
-                f"{indent}{tsbi_call_or_direct(f'csrw RVTEST_CSR_MHPMEVENTH, x{r_hval}', priv_mode)}",
-                "",
-                f"{indent}{test_data.add_testcase(binname, coverpoint, covergroup)}",
-                f"{indent}{tsbi_call_or_direct(f'csrr x{r_temp}, RVTEST_CSR_MHPMEVENTH', priv_mode)}",
-                # VSINH/VUINH are read-only zero without H, so check them only on an H hart.
-                "#ifndef H_SUPPORTED",
-                f"{indent}LI(x{r_hval}, 0xF3FFFFFF)   # clear bits 27:26 (VSINH/VUINH)",
-                f"{indent}and x{r_temp}, x{r_temp}, x{r_hval}",
+                "#if __riscv_xlen == 32",
+                f"LI(x{r_hval}, {EVENT_VAL_HI} | ({combo} << 26))",
+                f"{tsbi_call_or_direct(f'csrw RVTEST_CSR_MHPMEVENTH, x{r_hval}', priv_mode)}",
+                "#else",
+                f"LI(x{r_val}, RVMODEL_MHPMEVENT_VAL | ({combo} << 58))",
+                f"{tsbi_call_or_direct(f'csrw RVTEST_CSR_MHPMEVENT, x{r_val}', priv_mode)}",
                 "#endif",
-                f"{indent}{write_sigupd(r_temp, test_data)}",
+                "",
+                f"{test_data.add_testcase(binname, coverpoint, covergroup)}",
+                "#if __riscv_xlen == 32",
+                f"{tsbi_call_or_direct(f'csrr x{r_temp}, RVTEST_CSR_MHPMEVENTH', priv_mode)}",
+                "#else",
+                f"{tsbi_call_or_direct(f'csrr x{r_temp}, RVTEST_CSR_MHPMEVENT', priv_mode)}",
+                "#endif",
+                f"{write_sigupd(r_temp, test_data)}",
                 *combo_counts(),
                 "",
             ]
         )
-    lines.append(f"{indent}#else")
-    for combo in combos:
-        binname = f"xinh_combo_{combo:05b}_{priv_mode.lower()}_rv64"
-        lines.extend(
-            [
-                f"{indent}LI(x{r_val}, RVMODEL_MHPMEVENT_VAL | ({combo} << 58))",
-                f"{indent}{tsbi_call_or_direct(f'csrw RVTEST_CSR_MHPMEVENT, x{r_val}', priv_mode)}",
-                "",
-                f"{indent}{test_data.add_testcase(binname, coverpoint, covergroup)}",
-                f"{indent}{tsbi_call_or_direct(f'csrr x{r_temp}, RVTEST_CSR_MHPMEVENT', priv_mode)}",
-                # VSINH/VUINH are read-only zero without H, so check them only on an H hart.
-                "#ifndef H_SUPPORTED",
-                f"{indent}LI(x{r_val}, 0xF3FFFFFFFFFFFFFF)   # clear bits 59:58 (VSINH/VUINH)",
-                f"{indent}and x{r_temp}, x{r_temp}, x{r_val}",
-                "#endif",
-                f"{indent}{write_sigupd(r_temp, test_data)}",
-                *combo_counts(),
-                "",
-            ]
-        )
-    lines.append(f"{indent}#endif")
+
     lines.extend(
         [
-            f"{indent}{tsbi_call_or_direct('csrw RVTEST_CSR_MHPMEVENT, zero', priv_mode)}",
-            f"{indent}#if __riscv_xlen == 32",
-            f"{indent}{tsbi_call_or_direct('csrw RVTEST_CSR_MHPMEVENTH, zero', priv_mode)}",
-            f"{indent}#endif",
-            f"{indent}{tsbi_call_or_direct('csrw RVTEST_CSR_MHPMCOUNTER, zero', priv_mode)}",
+            f"{tsbi_call_or_direct('csrw RVTEST_CSR_MHPMEVENT, zero', priv_mode)}",
+            "#if __riscv_xlen == 32",
+            f"{tsbi_call_or_direct('csrw RVTEST_CSR_MHPMEVENTH, zero', priv_mode)}",
+            "#endif",
+            f"{tsbi_call_or_direct('csrw RVTEST_CSR_MHPMCOUNTER, zero', priv_mode)}",
             "",
         ]
     )
@@ -319,7 +290,7 @@ def _generate_of_set_on_overflow_tests(test_data: TestData, priv_mode: str) -> l
                 [
                     *write_event_pattern(r_val, r_hval, inhibit_pattern, priv_mode),
                     *write_counter_all_ones(r_temp, priv_mode),
-                    *read_counter_preset(r_preset, priv_mode),
+                    tsbi_call_or_direct(f"csrr x{r_preset}, RVTEST_CSR_MHPMCOUNTER   # preset as read back", priv_mode),
                     "",
                     f"LA(x{r_addr}, scratch)",
                     "# One counted event is enough to wrap the all-1s counter and set OF",
@@ -349,7 +320,7 @@ def _generate_of_set_on_overflow_tests(test_data: TestData, priv_mode: str) -> l
                     test_data.add_testcase(binname, coverpoint, covergroup),
                     *write_event_pattern(r_val, r_hval, inhibit_pattern, priv_mode),
                     *write_counter_all_ones(r_temp, priv_mode),
-                    *read_counter_preset(r_preset, priv_mode),
+                    tsbi_call_or_direct(f"csrr x{r_preset}, RVTEST_CSR_MHPMCOUNTER   # preset as read back", priv_mode),
                     "",
                     f"LA(x{r_addr}, scratch)",
                     "# One counted event is enough to wrap the all-1s counter and set OF",
@@ -413,7 +384,7 @@ def _generate_of_set_on_overflow_tests(test_data: TestData, priv_mode: str) -> l
             tsbi_call_or_direct(f"csrw RVTEST_CSR_MHPMEVENT, x{r_val}", priv_mode),
             "#endif",
             *write_counter_all_ones(r_temp, priv_mode),
-            *read_counter_preset(r_preset, priv_mode),
+            tsbi_call_or_direct(f"csrr x{r_preset}, RVTEST_CSR_MHPMCOUNTER   # preset as read back", priv_mode),
             *clear_lcofip(r_temp, priv_mode),
             "",
             f"LA(x{r_addr}, scratch)",
@@ -645,8 +616,6 @@ def _generate_scountovf_mcounteren_tests(
         "",
     ]
 
-    indent = ""
-
     for of_name in of_names:
         of_bit_fn = MCOUNTEREN_OF_PATTERNS[of_name]
         r_of_bit = test_data.int_regs.get_register()
@@ -680,11 +649,11 @@ def _generate_scountovf_mcounteren_tests(
                 binname = f"mcounteren_{state_name}"
                 lines.extend(
                     [
-                        f"{indent}LI(x{r_mcounteren}, {hex(val)})",
-                        f"{indent}{tsbi_call_or_direct(f'csrw mcounteren, x{r_mcounteren}', mode)}",
-                        f"{indent}{test_data.add_testcase(binname, walk_coverpoint, covergroup)}",
-                        f"{indent}{tsbi_call_or_direct(f'csrr x{r_scountovf}, scountovf   # sample point', mode)}",
-                        f"{indent}{write_sigupd(r_scountovf, test_data)}",
+                        f"LI(x{r_mcounteren}, {hex(val)})",
+                        f"{tsbi_call_or_direct(f'csrw mcounteren, x{r_mcounteren}', mode)}",
+                        f"{test_data.add_testcase(binname, walk_coverpoint, covergroup)}",
+                        f"{tsbi_call_or_direct(f'csrr x{r_scountovf}, scountovf   # sample point', mode)}",
+                        f"{write_sigupd(r_scountovf, test_data)}",
                         "",
                     ]
                 )
@@ -693,16 +662,16 @@ def _generate_scountovf_mcounteren_tests(
                 binname = f"mcounteren_walk_bit_{bit}"
                 lines.extend(
                     [
-                        f"{indent}LI(x{r_mcounteren}, {1 << bit})",
-                        f"{indent}{tsbi_call_or_direct(f'csrw mcounteren, x{r_mcounteren}', mode)}",
-                        f"{indent}{test_data.add_testcase(binname, walk_coverpoint, covergroup)}",
-                        f"{indent}{tsbi_call_or_direct(f'csrr x{r_scountovf}, scountovf   # sample point', mode)}",
-                        f"{indent}{write_sigupd(r_scountovf, test_data)}",
+                        f"LI(x{r_mcounteren}, {1 << bit})",
+                        f"{tsbi_call_or_direct(f'csrw mcounteren, x{r_mcounteren}', mode)}",
+                        f"{test_data.add_testcase(binname, walk_coverpoint, covergroup)}",
+                        f"{tsbi_call_or_direct(f'csrr x{r_scountovf}, scountovf   # sample point', mode)}",
+                        f"{write_sigupd(r_scountovf, test_data)}",
                         "",
                     ]
                 )
 
-            lines.append(f"{indent}{tsbi_call_or_direct('csrw mcounteren, zero', mode)}")
+            lines.append(f"{tsbi_call_or_direct('csrw mcounteren, zero', mode)}")
             lines.append("")
             test_data.int_regs.return_registers([r_mcounteren, r_scountovf])
 
@@ -785,8 +754,6 @@ def _generate_scountovf_shadow_tests(
     coverpoint = "cp_scountovf_shadow"
     ######################################
 
-    indent = ""
-
     lines = [
         comment_banner(
             coverpoint,
@@ -800,8 +767,8 @@ def _generate_scountovf_shadow_tests(
     r_mcounteren = test_data.int_regs.get_register()
     lines.extend(
         [
-            f"{indent}LI(x{r_mcounteren}, -1)",
-            f"{indent}{tsbi_call_or_direct(f'csrw mcounteren, x{r_mcounteren}   # mcounteren = all 1s (fixed for this coverpoint)', priv_mode)}",
+            f"LI(x{r_mcounteren}, -1)",
+            f"{tsbi_call_or_direct(f'csrw mcounteren, x{r_mcounteren}   # mcounteren = all 1s (fixed for this coverpoint)', priv_mode)}",
             "",
         ]
     )
@@ -813,11 +780,11 @@ def _generate_scountovf_shadow_tests(
         test_data.int_regs.return_registers([r_of_bit])
 
         binname = f"scountovf_shadow_{priv_mode.lower()}_{pattern_name}"
-        lines.append(f"{indent}{test_data.add_testcase(binname, coverpoint, covergroup)}")
+        lines.append(f"{test_data.add_testcase(binname, coverpoint, covergroup)}")
         lines.append(
-            f"{indent}{tsbi_call_or_direct(f'csrr x{r_scountovf}, scountovf   # sample point -- must match OF pattern', priv_mode)}"
+            f"{tsbi_call_or_direct(f'csrr x{r_scountovf}, scountovf   # sample point -- must match OF pattern', priv_mode)}"
         )
-        lines.append(f"{indent}{write_sigupd(r_scountovf, test_data)}")
+        lines.append(f"{write_sigupd(r_scountovf, test_data)}")
         lines.append("")
 
         test_data.int_regs.return_registers([r_scountovf])

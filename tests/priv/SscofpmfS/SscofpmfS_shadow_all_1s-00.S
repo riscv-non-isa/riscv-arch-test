@@ -238,7 +238,7 @@ RVTEST_DATA_BEGIN
 
 
 // Testcase strings
-Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_all_1s_str: .string "\"test: 216; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_s_all_1s\""
+Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_all_1s_str: .string "\"test: 184; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_s_all_1s\""
 
 // End of test data section and model specific data
 RVTEST_DATA_END
