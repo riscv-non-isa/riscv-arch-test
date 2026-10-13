@@ -243,7 +243,16 @@ def _generate_of_set_on_overflow_tests(test_data: TestData, priv_mode: str) -> l
         ]
 
     pending_csr, enable_csr = ("sip", "sie") if priv_mode == "S" else ("mip", "mie")
-    lcofip_csr = pending_csr
+    if priv_mode == "U":
+        lcofip_read = [
+            "#ifdef S_SUPPORTED",
+            tsbi_call_or_direct(f"csrr x{r_lcofip}, sip   # sample point for lcofip", priv_mode),
+            "#else",
+            tsbi_call_or_direct(f"csrr x{r_lcofip}, mip   # sample point for lcofip", priv_mode),
+            "#endif",
+        ]
+    else:
+        lcofip_read = [tsbi_call_or_direct(f"csrr x{r_lcofip}, {pending_csr}   # sample point for lcofip", priv_mode)]
 
     lines = [
         comment_banner(
@@ -260,7 +269,6 @@ def _generate_of_set_on_overflow_tests(test_data: TestData, priv_mode: str) -> l
         lines.extend(
             [
                 "",
-                "# === M-MODE SETUP ===",
                 f"# Testcase: mode = {priv_mode}, inhibit pattern = {inhibit_pattern:05b}, OF initial = 0",
             ]
         )
@@ -285,90 +293,34 @@ def _generate_of_set_on_overflow_tests(test_data: TestData, priv_mode: str) -> l
                 ]
             )
 
-        if priv_mode == "M":
-            lines.extend(
-                [
-                    *write_event_pattern(r_val, r_hval, inhibit_pattern, priv_mode),
-                    *write_counter_all_ones(r_temp, priv_mode),
-                    tsbi_call_or_direct(f"csrr x{r_preset}, RVTEST_CSR_MHPMCOUNTER   # preset as read back", priv_mode),
-                    "",
-                    f"LA(x{r_addr}, scratch)",
-                    "# One counted event is enough to wrap the all-1s counter and set OF",
-                    f"RVMODEL_MHPMEVENT_CODE(x{r_addr}, x{r_val})",
-                    "",
-                    test_data.add_testcase(binname, coverpoint, covergroup),
-                    *read_event_config_bits(),
-                    write_sigupd(r_temp, test_data),
+        lines.extend(
+            [
+                *write_event_pattern(r_val, r_hval, inhibit_pattern, priv_mode),
+                *write_counter_all_ones(r_temp, priv_mode),
+                tsbi_call_or_direct(f"csrr x{r_preset}, RVTEST_CSR_MHPMCOUNTER   # preset as read back", priv_mode),
+                "",
+                f"LA(x{r_addr}, scratch)",
+                "# One counted event is enough to wrap the all-1s counter and set OF",
+                f"RVMODEL_MHPMEVENT_CODE(x{r_addr}, x{r_val})",
+                "",
+                test_data.add_testcase(binname, coverpoint, covergroup),
+                *read_event_config_bits(),
+                write_sigupd(r_temp, test_data),
+                tsbi_call_or_direct(
                     f"csrr x{r_temp}, RVTEST_CSR_MHPMCOUNTER   # sample point: did the counter move off the preset?",
-                    *counted_since_preset(r_temp, r_preset),
-                    write_sigupd(r_temp, test_data),
-                    "",
-                    f"RVTEST_IDLE_FOR_INTERRUPT(x{r_temp})   # wait for RVMODEL_INTERRUPT_LATENCY",
-                    f"csrr x{r_lcofip}, {lcofip_csr}   # sample point for lcofip",
-                    write_sigupd(r_lcofip, test_data),
-                ]
-            )
+                    priv_mode,
+                ),
+                *counted_since_preset(r_temp, r_preset),
+                write_sigupd(r_temp, test_data),
+                "",
+                f"RVTEST_IDLE_FOR_INTERRUPT(x{r_temp})   # wait for RVMODEL_INTERRUPT_LATENCY",
+                *lcofip_read,
+                write_sigupd(r_lcofip, test_data),
+            ]
+        )
 
-        else:
-            mhpmcounter_read = (
-                f"csrr x{r_temp}, RVTEST_CSR_MHPMCOUNTER   # sample point: did the counter move off the preset?"
-            )
-
-            lines.extend(
-                [
-                    f"# RVTEST_CSR_MHPMEVENT/RVTEST_CSR_MHPMCOUNTER writes go via T-SBI from {priv_mode}-mode, per spec",
-                    test_data.add_testcase(binname, coverpoint, covergroup),
-                    *write_event_pattern(r_val, r_hval, inhibit_pattern, priv_mode),
-                    *write_counter_all_ones(r_temp, priv_mode),
-                    tsbi_call_or_direct(f"csrr x{r_preset}, RVTEST_CSR_MHPMCOUNTER   # preset as read back", priv_mode),
-                    "",
-                    f"LA(x{r_addr}, scratch)",
-                    "# One counted event is enough to wrap the all-1s counter and set OF",
-                    f"RVMODEL_MHPMEVENT_CODE(x{r_addr}, x{r_val})",
-                    "",
-                    *read_event_config_bits(),
-                    write_sigupd(r_temp, test_data),
-                    tsbi_call_or_direct(mhpmcounter_read, priv_mode),
-                    *counted_since_preset(r_temp, r_preset),
-                    write_sigupd(r_temp, test_data),
-                    "",
-                    f"RVTEST_IDLE_FOR_INTERRUPT(x{r_temp})   # wait for RVMODEL_INTERRUPT_LATENCY",
-                ]
-            )
-
-            if priv_mode == "U":
-                lines.extend(
-                    [
-                        "#ifdef S_SUPPORTED",
-                        tsbi_call_or_direct(f"csrr x{r_lcofip}, sip   # sample point for lcofip", priv_mode),
-                        "#else",
-                        tsbi_call_or_direct(f"csrr x{r_lcofip}, mip   # sample point for lcofip", priv_mode),
-                        "#endif",
-                        write_sigupd(r_lcofip, test_data),
-                    ]
-                )
-            else:
-                lines.extend(
-                    [
-                        tsbi_call_or_direct(f"csrr x{r_lcofip}, {lcofip_csr}   # sample point for lcofip", priv_mode),
-                        write_sigupd(r_lcofip, test_data),
-                    ]
-                )
-
-    # OF already 1: the overflow must leave OF set and must not request LCOFI.
+    # OF already 1: the overflow must leave OF set and must not set LCOFIP.
     already_set_coverpoint = "cp_of_already_set"
-    if priv_mode == "U":
-        lcofip_read = [
-            "#ifdef S_SUPPORTED",
-            tsbi_call_or_direct(f"csrr x{r_lcofip}, sip   # sample point -- LCOFIP must stay 0", priv_mode),
-            "#else",
-            tsbi_call_or_direct(f"csrr x{r_lcofip}, mip   # sample point -- LCOFIP must stay 0", priv_mode),
-            "#endif",
-        ]
-    else:
-        lcofip_read = [
-            tsbi_call_or_direct(f"csrr x{r_lcofip}, {lcofip_csr}   # sample point -- LCOFIP must stay 0", priv_mode)
-        ]
     lines.extend(
         [
             "",

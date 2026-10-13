@@ -870,7 +870,6 @@ Sscofpmf_cg_cp_minh_inhibits_mmode_xinh_combo_11111_m:
 /////////////////////////////////
 
 
-# === M-MODE SETUP ===
 # Testcase: mode = M, inhibit pattern = 00000, OF initial = 0
   csrw mip, zero   # clear LCOFIP
   csrw mie, zero   # disable interrupts (clear LCOFIE)
@@ -917,7 +916,6 @@ Sscofpmf_cg_cp_of_set_on_overflow_of_overflow_m_ei_00000:
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x8, Sscofpmf_cg_cp_of_set_on_overflow_of_overflow_m_ei_00000, Sscofpmf_cg_cp_of_set_on_overflow_of_overflow_m_ei_00000_str)
 
-# === M-MODE SETUP ===
 # Testcase: mode = M, inhibit pattern = 11100, OF initial = 0
   csrw mip, zero   # clear LCOFIP
   csrw mie, zero   # disable interrupts (clear LCOFIE)
@@ -964,7 +962,6 @@ Sscofpmf_cg_cp_of_set_on_overflow_of_overflow_m_ei_11100:
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x8, Sscofpmf_cg_cp_of_set_on_overflow_of_overflow_m_ei_11100, Sscofpmf_cg_cp_of_set_on_overflow_of_overflow_m_ei_11100_str)
 
-# === M-MODE SETUP ===
 # Testcase: mode = M, inhibit pattern = 10000, OF initial = 0
   csrw mip, zero   # clear LCOFIP
   csrw mie, zero   # disable interrupts (clear LCOFIE)
@@ -1011,7 +1008,6 @@ Sscofpmf_cg_cp_of_set_on_overflow_of_overflow_m_ei_10000:
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x8, Sscofpmf_cg_cp_of_set_on_overflow_of_overflow_m_ei_10000, Sscofpmf_cg_cp_of_set_on_overflow_of_overflow_m_ei_10000_str)
 
-# === M-MODE SETUP ===
 # Testcase: mode = M, inhibit pattern = 01000, OF initial = 0
   csrw mip, zero   # clear LCOFIP
   csrw mie, zero   # disable interrupts (clear LCOFIE)
@@ -1058,7 +1054,6 @@ Sscofpmf_cg_cp_of_set_on_overflow_of_overflow_m_ei_01000:
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x8, Sscofpmf_cg_cp_of_set_on_overflow_of_overflow_m_ei_01000, Sscofpmf_cg_cp_of_set_on_overflow_of_overflow_m_ei_01000_str)
 
-# === M-MODE SETUP ===
 # Testcase: mode = M, inhibit pattern = 00100, OF initial = 0
   csrw mip, zero   # clear LCOFIP
   csrw mie, zero   # disable interrupts (clear LCOFIE)
@@ -1146,7 +1141,7 @@ Sscofpmf_cg_cp_of_already_set_of_overflow_m_of_already_set:
   snez x6, x6               # x6 = counted at least one event
   # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x6, Sscofpmf_cg_cp_of_already_set_of_overflow_m_of_already_set, Sscofpmf_cg_cp_of_already_set_of_overflow_m_of_already_set_str)
-  csrr x8, mip   # sample point -- LCOFIP must stay 0
+  csrr x8, mip   # sample point for lcofip
   srli x8, x8, 13
   andi x8, x8, 1   # isolate LCOFIP
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.

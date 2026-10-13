@@ -35,12 +35,9 @@ RVTEST_BEGIN
 /////////////////////////////////
 
 
-# === M-MODE SETUP ===
 # Testcase: mode = S, inhibit pattern = 10000, OF initial = 0
   csrw sip, zero   # clear LCOFIP
   csrw sie, zero   # disable interrupts (clear LCOFIE)
-# RVTEST_CSR_MHPMEVENT/RVTEST_CSR_MHPMCOUNTER writes go via T-SBI from S-mode, per spec
-Sscofpmf_cg_cp_of_set_on_overflow_of_overflow_s_ei_10000:
 #if __riscv_xlen == 32
   LI(x14, RVMODEL_MHPMEVENT_VAL)
   # T-SBI call to execute instruction: csrw RVTEST_CSR_MHPMEVENT, x14
@@ -73,6 +70,7 @@ Sscofpmf_cg_cp_of_set_on_overflow_of_overflow_s_ei_10000:
 # One counted event is enough to wrap the all-1s counter and set OF
   RVMODEL_MHPMEVENT_CODE(x8, x14)
 
+Sscofpmf_cg_cp_of_set_on_overflow_of_overflow_s_ei_10000:
 #if __riscv_xlen == 32
   # T-SBI call to execute instruction: csrr x9, RVTEST_CSR_MHPMEVENTH   # sample point for mhpmevent_of
   RVTEST_TSBI_CSR_READ(RVTEST_CSR_MHPMEVENTH)
@@ -101,12 +99,9 @@ Sscofpmf_cg_cp_of_set_on_overflow_of_overflow_s_ei_10000:
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, Sscofpmf_cg_cp_of_set_on_overflow_of_overflow_s_ei_10000, Sscofpmf_cg_cp_of_set_on_overflow_of_overflow_s_ei_10000_str)
 
-# === M-MODE SETUP ===
 # Testcase: mode = S, inhibit pattern = 10100, OF initial = 0
   csrw sip, zero   # clear LCOFIP
   csrw sie, zero   # disable interrupts (clear LCOFIE)
-# RVTEST_CSR_MHPMEVENT/RVTEST_CSR_MHPMCOUNTER writes go via T-SBI from S-mode, per spec
-Sscofpmf_cg_cp_of_set_on_overflow_of_overflow_s_ei_10100:
 #if __riscv_xlen == 32
   LI(x14, RVMODEL_MHPMEVENT_VAL)
   # T-SBI call to execute instruction: csrw RVTEST_CSR_MHPMEVENT, x14
@@ -139,6 +134,7 @@ Sscofpmf_cg_cp_of_set_on_overflow_of_overflow_s_ei_10100:
 # One counted event is enough to wrap the all-1s counter and set OF
   RVMODEL_MHPMEVENT_CODE(x8, x14)
 
+Sscofpmf_cg_cp_of_set_on_overflow_of_overflow_s_ei_10100:
 #if __riscv_xlen == 32
   # T-SBI call to execute instruction: csrr x9, RVTEST_CSR_MHPMEVENTH   # sample point for mhpmevent_of
   RVTEST_TSBI_CSR_READ(RVTEST_CSR_MHPMEVENTH)
@@ -167,12 +163,9 @@ Sscofpmf_cg_cp_of_set_on_overflow_of_overflow_s_ei_10100:
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, Sscofpmf_cg_cp_of_set_on_overflow_of_overflow_s_ei_10100, Sscofpmf_cg_cp_of_set_on_overflow_of_overflow_s_ei_10100_str)
 
-# === M-MODE SETUP ===
 # Testcase: mode = S, inhibit pattern = 11000, OF initial = 0
   csrw sip, zero   # clear LCOFIP
   csrw sie, zero   # disable interrupts (clear LCOFIE)
-# RVTEST_CSR_MHPMEVENT/RVTEST_CSR_MHPMCOUNTER writes go via T-SBI from S-mode, per spec
-Sscofpmf_cg_cp_of_set_on_overflow_of_overflow_s_ei_11000:
 #if __riscv_xlen == 32
   LI(x14, RVMODEL_MHPMEVENT_VAL)
   # T-SBI call to execute instruction: csrw RVTEST_CSR_MHPMEVENT, x14
@@ -205,6 +198,7 @@ Sscofpmf_cg_cp_of_set_on_overflow_of_overflow_s_ei_11000:
 # One counted event is enough to wrap the all-1s counter and set OF
   RVMODEL_MHPMEVENT_CODE(x8, x14)
 
+Sscofpmf_cg_cp_of_set_on_overflow_of_overflow_s_ei_11000:
 #if __riscv_xlen == 32
   # T-SBI call to execute instruction: csrr x9, RVTEST_CSR_MHPMEVENTH   # sample point for mhpmevent_of
   RVTEST_TSBI_CSR_READ(RVTEST_CSR_MHPMEVENTH)
@@ -233,12 +227,9 @@ Sscofpmf_cg_cp_of_set_on_overflow_of_overflow_s_ei_11000:
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, Sscofpmf_cg_cp_of_set_on_overflow_of_overflow_s_ei_11000, Sscofpmf_cg_cp_of_set_on_overflow_of_overflow_s_ei_11000_str)
 
-# === M-MODE SETUP ===
 # Testcase: mode = S, inhibit pattern = 11100, OF initial = 0
   csrw sip, zero   # clear LCOFIP
   csrw sie, zero   # disable interrupts (clear LCOFIE)
-# RVTEST_CSR_MHPMEVENT/RVTEST_CSR_MHPMCOUNTER writes go via T-SBI from S-mode, per spec
-Sscofpmf_cg_cp_of_set_on_overflow_of_overflow_s_ei_11100:
 #if __riscv_xlen == 32
   LI(x14, RVMODEL_MHPMEVENT_VAL)
   # T-SBI call to execute instruction: csrw RVTEST_CSR_MHPMEVENT, x14
@@ -271,6 +262,7 @@ Sscofpmf_cg_cp_of_set_on_overflow_of_overflow_s_ei_11100:
 # One counted event is enough to wrap the all-1s counter and set OF
   RVMODEL_MHPMEVENT_CODE(x8, x14)
 
+Sscofpmf_cg_cp_of_set_on_overflow_of_overflow_s_ei_11100:
 #if __riscv_xlen == 32
   # T-SBI call to execute instruction: csrr x9, RVTEST_CSR_MHPMEVENTH   # sample point for mhpmevent_of
   RVTEST_TSBI_CSR_READ(RVTEST_CSR_MHPMEVENTH)
@@ -360,7 +352,7 @@ Sscofpmf_cg_cp_of_already_set_of_overflow_s_of_already_set:
   snez x9, x9               # x9 = counted at least one event
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, Sscofpmf_cg_cp_of_already_set_of_overflow_s_of_already_set, Sscofpmf_cg_cp_of_already_set_of_overflow_s_of_already_set_str)
-  csrr x15, sip   # sample point -- LCOFIP must stay 0
+  csrr x15, sip   # sample point for lcofip
   srli x15, x15, 13
   andi x15, x15, 1   # isolate LCOFIP
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
