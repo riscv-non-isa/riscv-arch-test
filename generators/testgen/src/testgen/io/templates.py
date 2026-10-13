@@ -231,6 +231,11 @@ def get_vector_base_extension(testsuite: str, instr_name: str, xlen: int, sew: i
         mapped.remove("Zve32x")
         mapped.append("Zve64x")
 
+    if "Zve64f" in mapped and instr_name == "vfwcvt.f.f.v" and sew == 32:
+        # vfwcvt.f.f.v at SEW=32 writes FP64 elements, which Zve64f does not support. They need Zve64d and D.
+        mapped.remove("Zve64f")
+        mapped.extend(["Zve64d", "D"])
+
     if mapped == []:
         return ["V"]
 
