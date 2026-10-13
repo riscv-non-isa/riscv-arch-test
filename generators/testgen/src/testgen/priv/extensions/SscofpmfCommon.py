@@ -497,10 +497,10 @@ def of_bit_writes(
 
 
 def write_of_pattern(
-    r_of_bit: int, pattern_name: str, of_bit_fn: Callable[[int], int], mode: str, of_state: list[int | None]
+    r_of_bit: int, pattern_name: str, of_bit_fn: Callable[[int], int], mode: str, of_state: list[int]
 ) -> list[str]:
     """Set or clear OF in mhpmevent3..31 per of_bit_fn(counter - 3). of_state holds the OF value
-    last written to each counter (None if unknown) and is updated in place, so only the counters
+    last written to each counter and is updated in place, so only the counters
     whose OF changes are written. Below M each write is a T-SBI call."""
     new_state = [of_bit_fn(i) for i in range(NUM_OF_BITS)]
     changes = [(i, bool(of)) for i, (of, old) in enumerate(zip(new_state, of_state)) if of != old]
@@ -524,9 +524,7 @@ MCOUNTEREN_OF_PATTERNS: dict[str, Callable[[int], int]] = {
 }
 
 
-def _generate_scountovf_mcounteren_tests(
-    test_data: TestData, mode: str, of_state: list[int | None], of_names: list[str]
-) -> list[str]:
+def _generate_scountovf_mcounteren_tests(test_data: TestData, mode: str, of_names: list[str]) -> list[str]:
     ######################################
     covergroup = "Sscofpmf_cg"
     coverpoint = "cp_scountovf_mcounteren"
@@ -542,6 +540,8 @@ def _generate_scountovf_mcounteren_tests(
         "",
     ]
 
+    # rvtest_setup.h clears mhpmevent3..31 and the RV32 high halves at boot, so OF starts at 0.
+    of_state = [0] * NUM_OF_BITS
     for of_name in of_names:
         of_bit_fn = MCOUNTEREN_OF_PATTERNS[of_name]
         r_of_bit = test_data.int_regs.get_register()
@@ -624,7 +624,6 @@ SHADOW_PATTERNS: dict[str, list[tuple[str, Callable[[int], int]]]] = {
 def _generate_scountovf_shadow_tests(
     test_data: TestData,
     priv_mode: str,
-    of_state: list[int | None],
     patterns: list[tuple[str, Callable[[int], int]]],
 ) -> list[str]:
     if priv_mode == "U":
@@ -635,6 +634,8 @@ def _generate_scountovf_shadow_tests(
     coverpoint = "cp_scountovf_shadow"
     ######################################
 
+    # rvtest_setup.h clears mhpmevent3..31 and the RV32 high halves at boot, so OF starts at 0.
+    of_state = [0] * NUM_OF_BITS
     r_mcounteren = test_data.int_regs.get_register()
     lines = [
         comment_banner(
@@ -671,25 +672,8 @@ def _generate_scountovf_shadow_tests(
 
 
 def generate_sscofpmf_suite(test_data: TestData, mode: str) -> list[TestChunk]:
-    """Assemble the shared Sscofpmf tests for ``mode`` ("M"/"S"/"U").
-
-    M accesses the CSRs directly, so its tests stay together. Below M every access to an
-    M-level CSR is a T-SBI call, so the S and U tests are split into small named test files."""
+    """Assemble the shared Sscofpmf tests for ``mode`` ("M"/"S"/"U")."""
     test_chunks: list[TestChunk] = []
-
-    if mode == "M":
-        of_state: list[int | None] = [None] * NUM_OF_BITS  # earlier tests may have changed OF
-        tc = test_data.begin_test_chunk()
-        tc.code.extend(_generate_xinh_inhibits_tests(test_data, mode))
-        tc.code.extend(_generate_of_set_on_overflow_tests(test_data, mode))
-        tc.code.extend(_generate_overflow_hw_only_tests(test_data, mode))
-        tc.code.extend(_generate_lcofip_hw_only_tests(test_data, mode))
-        tc.code.extend(_generate_scountovf_mcounteren_tests(test_data, mode, of_state, list(MCOUNTEREN_OF_PATTERNS)))
-        tc.code.extend(_generate_sscofpmf_access_tests(test_data, mode))
-        for patterns in SHADOW_PATTERNS.values():
-            tc.code.extend(_generate_scountovf_shadow_tests(test_data, mode, of_state, patterns))
-        test_chunks.append(test_data.end_test_chunk())
-        return test_chunks
 
     tc = test_data.begin_test_chunk("inhibit_lo")
     tc.code.extend(_generate_xinh_inhibits_tests(test_data, mode, combos=range(16)))
@@ -710,8 +694,7 @@ def generate_sscofpmf_suite(test_data: TestData, mode: str) -> list[TestChunk]:
 
     for of_name in MCOUNTEREN_OF_PATTERNS:
         tc = test_data.begin_test_chunk(f"mcounteren_{of_name}")
-        # rvtest_setup.h clears mhpmevent3..31 and the RV32 high halves at boot, so OF starts at 0.
-        tc.code.extend(_generate_scountovf_mcounteren_tests(test_data, mode, [0] * NUM_OF_BITS, [of_name]))
+        tc.code.extend(_generate_scountovf_mcounteren_tests(test_data, mode, [of_name]))
         test_chunks.append(test_data.end_test_chunk())
 
     tc = test_data.begin_test_chunk("access")
@@ -720,6 +703,6 @@ def generate_sscofpmf_suite(test_data: TestData, mode: str) -> list[TestChunk]:
 
     for split_name, patterns in SHADOW_PATTERNS.items():
         tc = test_data.begin_test_chunk(split_name)
-        tc.code.extend(_generate_scountovf_shadow_tests(test_data, mode, [0] * NUM_OF_BITS, patterns))
+        tc.code.extend(_generate_scountovf_shadow_tests(test_data, mode, patterns))
         test_chunks.append(test_data.end_test_chunk())
     return test_chunks

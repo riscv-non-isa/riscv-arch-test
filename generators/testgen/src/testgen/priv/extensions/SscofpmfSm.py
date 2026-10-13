@@ -228,7 +228,7 @@ def _generate_lcofip_priority_sm_tests(test_data: TestData) -> list[str]:
 def make_sscofpmfsm(test_data: TestData) -> list[TestChunk]:
     """Generate tests for the SscofpmfSm performance-counter-overflow testsuite."""
     test_chunks: list[TestChunk] = []
-    tc = test_data.begin_test_chunk()
+    tc = test_data.begin_test_chunk("interrupt")
     tc.code.extend(_generate_lcofi_m_tests(test_data))
     tc.code.extend(_generate_lcofip_priority_sm_tests(test_data))
     test_chunks.append(test_data.end_test_chunk())
