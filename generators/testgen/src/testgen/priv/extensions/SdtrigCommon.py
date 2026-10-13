@@ -42,10 +42,20 @@ VA2_TARGET_RV64 = 0x180802000
 _PTE_INVALID = "PTE_D | PTE_A | PTE_U | PTE_X | PTE_W | PTE_R"  # no PTE_V
 _PTE_UPAGE = "PTE_D | PTE_A | PTE_U | PTE_X | PTE_W | PTE_R | PTE_V"
 
-# Dropped: 0 iam (jalr clears bit 0), 3 bp (medeleg[3]=0 sends ebreak to M, can't fire),
-# 4/6 lam/sam (Spike and Whisper handle misaligned accesses in hardware).
-_ETRIGGER_BASE_CODES = (1, 2, 5, 7, 12, 13, 15)  # common to every mode
-_ETRIGGER_ECALL_CODE = {"Sm": 11, "S": 9, "U": 8}
+# # Dropped: 0 iam (jalr clears bit 0), 3 bp (medeleg[3]=0 sends ebreak to M, can't fire),
+# # 4/6 lam/sam (Spike and Whisper handle misaligned accesses in hardware).
+# _ETRIGGER_BASE_CODES = (1, 2, 5, 7, 12, 13, 15)  # common to every mode
+# _ETRIGGER_ECALL_CODE = {"Sm": 11, "S": 9, "U": 8}
+
+# Codes where the exception itself is raised (match case) in every mode. ipf is not raisable in Sm.
+_ETRIGGER_BASE_CODES = (1, 2, 5, 7, 12, 13, 15)
+# Codes tested with a mismatch case only (an illegal instruction is raised while tdata2 selects the code),
+# because the code itself cannot be raised portably:
+#   0 iam: jalr clears bit 0, and with Zca it cannot occur. 3 bp: medeleg[3]=0 sends ebreak to M.
+#   4/6 lam/sam: Spike, Sail and Whisper handle misaligned accesses in hardware.
+_ETRIGGER_MISMATCH_ONLY_CODES = (0, 3, 4, 6)
+_ETRIGGER_ECALL_CODE = {"Sm": 11, "S": 9, "U": 8}  # each mode raises only its own ecall
+_ETRIGGER_NOT_DELEGATABLE = (3, 11)  # medeleg[3] must stay 0 (trigger breakpoint goes to M); medeleg[11] is read-only 0
 
 # maps mcause exception code -> short mnemonic used in binnames / ifdef names
 ETRIGGER_EXCODE_NAMES = {
@@ -355,18 +365,36 @@ def pf_mode_disarm(mode: str) -> list[str]:
     return lines
 
 
-def _etrigger_codes_to_test(mode: str, cross_priv: bool = False) -> tuple[int, ...]:
-    """Return exception codes that can be raised from ``mode``."""
+# def _etrigger_codes_to_test(mode: str, cross_priv: bool = False) -> tuple[int, ...]:
+#     """Return exception codes that can be raised from ``mode``."""
+#     valid_modes = ("S", "U") if cross_priv else ("Sm", "S", "U")
+#     if mode not in valid_modes:
+#         raise ValueError(f"Unsupported {'target ' if cross_priv else ''}mode: {mode}")
+
+#     codes = set(_ETRIGGER_BASE_CODES) | {_ETRIGGER_ECALL_CODE[mode]}
+
+#     if mode == "Sm":
+#         codes.discard(12)
+
+#     return tuple(sorted(codes))
+
+
+def _etrigger_codes_to_test(mode: str, cross_priv: bool = False) -> dict[int, bool]:
+    """Return {code: raisable} for every exception code tested from ``mode``.
+
+    raisable=True : match case and mismatch case.
+    raisable=False: the code cannot be raised here, so mismatch case only.
+    """
     valid_modes = ("S", "U") if cross_priv else ("Sm", "S", "U")
     if mode not in valid_modes:
         raise ValueError(f"Unsupported {'target ' if cross_priv else ''}mode: {mode}")
 
-    codes = set(_ETRIGGER_BASE_CODES) | {_ETRIGGER_ECALL_CODE[mode]}
-
+    raisable = set(_ETRIGGER_BASE_CODES) | {_ETRIGGER_ECALL_CODE[mode]}
     if mode == "Sm":
-        codes.discard(12)
+        raisable.discard(12)  # M-mode fetches are never translated
 
-    return tuple(sorted(codes))
+    generated = set(_ETRIGGER_BASE_CODES) | set(_ETRIGGER_MISMATCH_ONLY_CODES) | set(_ETRIGGER_ECALL_CODE.values())
+    return {code: code in raisable for code in sorted(generated)}
 
 
 def _read_trigger_hit(temp_reg: int, trig_num: int, mode: str, test_data: TestData) -> list[str]:
@@ -2068,10 +2096,10 @@ def _generate_etrigger_tests(test_data: TestData, mode: str) -> list[TestChunk]:
 
     for trig_num in range(UDB_NUM_TRIGGERS):
         lines.append(f"\n#ifdef UDB_SDTRIG_ETRIGGER_SUPPORTED{trig_num}")
-        for code in codes_to_test:
+        for code, raisable in codes_to_test.items():
             name = ETRIGGER_EXCODE_NAMES[code]
             lines.append(f"\n#ifdef UDB_EXCEPTION_{name.upper()}_SUPPORTED")
-            raised_codes = (code,) if code == 2 else (code, 2)
+            raised_codes = (code, 2) if raisable and code != 2 else (2,)
             for priv_en in (0, 1):
                 privbits = MODE_PRIVBIT[mode] if priv_en else 0
                 for raised_code in raised_codes:
@@ -2149,14 +2177,14 @@ def etrigger_cross_priv_delegate_test(test_data: TestData, target_mode: str) -> 
 
     for trig_num in range(UDB_NUM_TRIGGERS):
         lines.append(f"\n#ifdef UDB_SDTRIG_ETRIGGER_SUPPORTED{trig_num}")
-        for code in codes_to_test:
+        for code, raisable in codes_to_test.items():
             name = ETRIGGER_EXCODE_NAMES[code]
             lines.append(f"\n#ifdef UDB_EXCEPTION_{name.upper()}_SUPPORTED")
-            raised_codes = (code,) if code == 2 else (code, 2)
+            raised_codes = (code, 2) if raisable and code != 2 else (2,)
 
             for priv_en in (0, 1):
                 privbits = MODE_PRIVBIT[target_mode] if priv_en else 0
-                for medeleg_en in (0, 1):
+                for medeleg_en in (0,) if code in _ETRIGGER_NOT_DELEGATABLE else (0, 1):
                     for raised_code in raised_codes:
                         outcome = "match" if raised_code == code else "mismatch"
                         is_pf = raised_code in _PAGE_FAULT_CODES
@@ -2169,7 +2197,7 @@ def etrigger_cross_priv_delegate_test(test_data: TestData, target_mode: str) -> 
                             [
                                 _add_tc(test_data, binname, coverpoint, covergroup),
                                 *_config_etrigger(cfg_reg, trig_num, 1 << code, "Sm", privbits=privbits),
-                                *(_set_medeleg(temp_reg, raised_code, bool(medeleg_en)) if raised_code == code else []),
+                                *_set_medeleg(temp_reg, code, bool(medeleg_en)),
                                 *_set_medeleg(temp_reg, 3, False),  # Trigger -> Breakpoint handled in M-mode
                                 goto_target,
                             ]
@@ -2182,7 +2210,7 @@ def etrigger_cross_priv_delegate_test(test_data: TestData, target_mode: str) -> 
                         lines.extend(
                             [
                                 "RVTEST_GOTO_DELEGATED_MMODE" if code in (8, 9) else "RVTEST_TSBI_GOTO_MMODE",
-                                *(_set_medeleg(temp_reg, raised_code, False) if raised_code == code else []),
+                                *_set_medeleg(temp_reg, code, False),
                             ]
                         )
                         lines.extend(_read_trigger_hit(data_reg, trig_num, "Sm", test_data))
