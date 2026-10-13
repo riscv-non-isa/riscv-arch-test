@@ -20,11 +20,13 @@ normative_rule_definitions:
   # All cimm encodings are valid. The field is not sign-extended: cimm=0
   # represents -1, and cimm=1..31 represents the corresponding positive
   # constant. The immediate coverpoint includes -1 and selected positive edge
-  # values; the cross also checks those values against rs1 edge values.
+  # values. One cross checks those values against rs1 edge values. Another
+  # checks each value with rs1 equal to it, one above, one below, and (RV64) with
+  # only the low word equal.
   - name: zibi_cimm_decode
     coverpoint:
       [
-        "{Zibi_beqi_cg, Zibi_bnei_cg}/{cp_imm_edges_5bit_u_n0, cr_rs1_imm_edges_5bit_u_n0_offset}",
+        "{Zibi_beqi_cg, Zibi_bnei_cg}/{cp_imm_edges_5bit_u_n0, cr_rs1_imm_edges_5bit_u_n0_offset, cr_imm_edges_5bit_u_n0_rs1_rel}",
       ]
 
   # An instruction-address-misaligned exception is generated only when the

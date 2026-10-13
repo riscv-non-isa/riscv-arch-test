@@ -16,7 +16,7 @@
 ##### END_TEST_CONFIG #####
 
 // Define the size of the signature region
-#define SIGUPD_COUNT 172
+#define SIGUPD_COUNT 199
 
 // Extra defines (if needed) to enable trap handlers, fpu, vector, etc.
 #define RVTEST_EXPERIMENTAL
@@ -2220,6 +2220,280 @@ Zibi_beqi_cg_cp_imm_edges_5bit_u_n0_0x1f:
   # Check if x17 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x1, x5, x4, x17, Zibi_beqi_cg_cp_imm_edges_5bit_u_n0_0x1f, Zibi_beqi_cg_cp_imm_edges_5bit_u_n0_0x1f_str)
 
+/////////////////////////////////
+// cr_imm_edges_5bit_u_n0_rs1_rel
+/////////////////////////////////
+
+# Testcase cr_imm_edges_5bit_u_n0_rs1_rel (imm = -1, rs1 = 0xffffffff, equal)
+  RVTEST_TESTDATA_LOAD_INT(x23, x13) # load rs1: x13 = 0xffffffff
+  RVTEST_TESTDATA_LOAD_INT(x23, x28) # load branch taken value: x28 = 0x37bd4daa
+Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_m0x1_equal:
+  beqi x13, -1, 1f # perform operation
+  LI(x28, -1) # branch not taken, set temp_reg to -1
+1:
+  # Check if x28 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x1, x5, x4, x28, Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_m0x1_equal, Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_m0x1_equal_str)
+
+# Testcase cr_imm_edges_5bit_u_n0_rs1_rel (imm = -1, rs1 = 0x00000000, plus1)
+  RVTEST_TESTDATA_LOAD_INT(x23, x22) # load rs1: x22 = 0x00000000
+  RVTEST_TESTDATA_LOAD_INT(x23, x24) # load branch taken value: x24 = 0x7c1372f1
+Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_m0x1_plus1:
+  beqi x22, -1, 1f # perform operation
+  LI(x24, -1) # branch not taken, set temp_reg to -1
+1:
+  # Check if x24 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x1, x5, x4, x24, Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_m0x1_plus1, Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_m0x1_plus1_str)
+
+# Testcase cr_imm_edges_5bit_u_n0_rs1_rel (imm = -1, rs1 = 0xfffffffe, minus1)
+  RVTEST_TESTDATA_LOAD_INT(x23, x28) # load rs1: x28 = 0xfffffffe
+  RVTEST_TESTDATA_LOAD_INT(x23, x15) # load branch taken value: x15 = 0x59d57e76
+Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_m0x1_minus1:
+  beqi x28, -1, 1f # perform operation
+  LI(x15, -1) # branch not taken, set temp_reg to -1
+1:
+  # Check if x15 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x1, x5, x4, x15, Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_m0x1_minus1, Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_m0x1_minus1_str)
+
+# Testcase cr_imm_edges_5bit_u_n0_rs1_rel (imm = 1, rs1 = 0x00000001, equal)
+  RVTEST_TESTDATA_LOAD_INT(x23, x28) # load rs1: x28 = 0x00000001
+  RVTEST_TESTDATA_LOAD_INT(x23, x16) # load branch taken value: x16 = 0x2b7c3754
+Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x1_equal:
+  beqi x28, 1, 1f # perform operation
+  LI(x16, -1) # branch not taken, set temp_reg to -1
+1:
+  # Check if x16 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x1, x5, x4, x16, Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x1_equal, Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x1_equal_str)
+
+# Testcase cr_imm_edges_5bit_u_n0_rs1_rel (imm = 1, rs1 = 0x00000002, plus1)
+  RVTEST_TESTDATA_LOAD_INT(x23, x26) # load rs1: x26 = 0x00000002
+  RVTEST_TESTDATA_LOAD_INT(x23, x13) # load branch taken value: x13 = 0x9291cbd8
+Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x1_plus1:
+  beqi x26, 1, 1f # perform operation
+  LI(x13, -1) # branch not taken, set temp_reg to -1
+1:
+  # Check if x13 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x1, x5, x4, x13, Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x1_plus1, Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x1_plus1_str)
+
+# Testcase cr_imm_edges_5bit_u_n0_rs1_rel (imm = 1, rs1 = 0x00000000, minus1)
+  RVTEST_TESTDATA_LOAD_INT(x23, x18) # load rs1: x18 = 0x00000000
+  RVTEST_TESTDATA_LOAD_INT(x23, x6) # load branch taken value: x6 = 0xa597991a
+Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x1_minus1:
+  beqi x18, 1, 1f # perform operation
+  LI(x6, -1) # branch not taken, set temp_reg to -1
+1:
+  # Check if x6 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x1, x5, x4, x6, Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x1_minus1, Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x1_minus1_str)
+
+# Testcase cr_imm_edges_5bit_u_n0_rs1_rel (imm = 2, rs1 = 0x00000002, equal)
+  RVTEST_TESTDATA_LOAD_INT(x23, x30) # load rs1: x30 = 0x00000002
+  RVTEST_TESTDATA_LOAD_INT(x23, x6) # load branch taken value: x6 = 0xf7462224
+Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x2_equal:
+  beqi x30, 2, 1f # perform operation
+  LI(x6, -1) # branch not taken, set temp_reg to -1
+1:
+  # Check if x6 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x1, x5, x4, x6, Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x2_equal, Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x2_equal_str)
+
+# Testcase cr_imm_edges_5bit_u_n0_rs1_rel (imm = 2, rs1 = 0x00000003, plus1)
+  RVTEST_TESTDATA_LOAD_INT(x23, x25) # load rs1: x25 = 0x00000003
+  RVTEST_TESTDATA_LOAD_INT(x23, x9) # load branch taken value: x9 = 0xa3de161f
+Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x2_plus1:
+  beqi x25, 2, 1f # perform operation
+  LI(x9, -1) # branch not taken, set temp_reg to -1
+1:
+  # Check if x9 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x1, x5, x4, x9, Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x2_plus1, Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x2_plus1_str)
+
+# Testcase cr_imm_edges_5bit_u_n0_rs1_rel (imm = 2, rs1 = 0x00000001, minus1)
+  RVTEST_TESTDATA_LOAD_INT(x23, x25) # load rs1: x25 = 0x00000001
+  RVTEST_TESTDATA_LOAD_INT(x23, x12) # load branch taken value: x12 = 0x5e0e3a54
+Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x2_minus1:
+  beqi x25, 2, 1f # perform operation
+  LI(x12, -1) # branch not taken, set temp_reg to -1
+1:
+  # Check if x12 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x1, x5, x4, x12, Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x2_minus1, Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x2_minus1_str)
+
+# Testcase cr_imm_edges_5bit_u_n0_rs1_rel (imm = 3, rs1 = 0x00000003, equal)
+  RVTEST_TESTDATA_LOAD_INT(x23, x20) # load rs1: x20 = 0x00000003
+  RVTEST_TESTDATA_LOAD_INT(x23, x8) # load branch taken value: x8 = 0x29a5c71c
+Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x3_equal:
+  beqi x20, 3, 1f # perform operation
+  LI(x8, -1) # branch not taken, set temp_reg to -1
+1:
+  # Check if x8 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x1, x5, x4, x8, Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x3_equal, Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x3_equal_str)
+
+# Testcase cr_imm_edges_5bit_u_n0_rs1_rel (imm = 3, rs1 = 0x00000004, plus1)
+  RVTEST_TESTDATA_LOAD_INT(x23, x29) # load rs1: x29 = 0x00000004
+  RVTEST_TESTDATA_LOAD_INT(x23, x14) # load branch taken value: x14 = 0xf75916a4
+Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x3_plus1:
+  beqi x29, 3, 1f # perform operation
+  LI(x14, -1) # branch not taken, set temp_reg to -1
+1:
+  # Check if x14 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x1, x5, x4, x14, Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x3_plus1, Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x3_plus1_str)
+
+# Testcase cr_imm_edges_5bit_u_n0_rs1_rel (imm = 3, rs1 = 0x00000002, minus1)
+  RVTEST_TESTDATA_LOAD_INT(x23, x29) # load rs1: x29 = 0x00000002
+  RVTEST_TESTDATA_LOAD_INT(x23, x12) # load branch taken value: x12 = 0x6eb5f132
+Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x3_minus1:
+  beqi x29, 3, 1f # perform operation
+  LI(x12, -1) # branch not taken, set temp_reg to -1
+1:
+  # Check if x12 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x1, x5, x4, x12, Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x3_minus1, Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x3_minus1_str)
+
+# Testcase cr_imm_edges_5bit_u_n0_rs1_rel (imm = 4, rs1 = 0x00000004, equal)
+  RVTEST_TESTDATA_LOAD_INT(x23, x7) # load rs1: x7 = 0x00000004
+  RVTEST_TESTDATA_LOAD_INT(x23, x30) # load branch taken value: x30 = 0xd6d6d1f6
+Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x4_equal:
+  beqi x7, 4, 1f # perform operation
+  LI(x30, -1) # branch not taken, set temp_reg to -1
+1:
+  # Check if x30 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x1, x5, x4, x30, Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x4_equal, Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x4_equal_str)
+
+# Testcase cr_imm_edges_5bit_u_n0_rs1_rel (imm = 4, rs1 = 0x00000005, plus1)
+  RVTEST_TESTDATA_LOAD_INT(x23, x20) # load rs1: x20 = 0x00000005
+  RVTEST_TESTDATA_LOAD_INT(x23, x12) # load branch taken value: x12 = 0xe0dbde40
+Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x4_plus1:
+  beqi x20, 4, 1f # perform operation
+  LI(x12, -1) # branch not taken, set temp_reg to -1
+1:
+  # Check if x12 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x1, x5, x4, x12, Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x4_plus1, Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x4_plus1_str)
+
+# Testcase cr_imm_edges_5bit_u_n0_rs1_rel (imm = 4, rs1 = 0x00000003, minus1)
+  RVTEST_TESTDATA_LOAD_INT(x23, x22) # load rs1: x22 = 0x00000003
+  RVTEST_TESTDATA_LOAD_INT(x23, x15) # load branch taken value: x15 = 0x6b46732b
+Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x4_minus1:
+  beqi x22, 4, 1f # perform operation
+  LI(x15, -1) # branch not taken, set temp_reg to -1
+1:
+  # Check if x15 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x1, x5, x4, x15, Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x4_minus1, Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x4_minus1_str)
+
+# Testcase cr_imm_edges_5bit_u_n0_rs1_rel (imm = 8, rs1 = 0x00000008, equal)
+  RVTEST_TESTDATA_LOAD_INT(x23, x22) # load rs1: x22 = 0x00000008
+  RVTEST_TESTDATA_LOAD_INT(x23, x11) # load branch taken value: x11 = 0xd0078c2b
+Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x8_equal:
+  beqi x22, 8, 1f # perform operation
+  LI(x11, -1) # branch not taken, set temp_reg to -1
+1:
+  # Check if x11 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x1, x5, x4, x11, Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x8_equal, Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x8_equal_str)
+
+# Testcase cr_imm_edges_5bit_u_n0_rs1_rel (imm = 8, rs1 = 0x00000009, plus1)
+  RVTEST_TESTDATA_LOAD_INT(x23, x21) # load rs1: x21 = 0x00000009
+  RVTEST_TESTDATA_LOAD_INT(x23, x29) # load branch taken value: x29 = 0x1c2dce02
+Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x8_plus1:
+  beqi x21, 8, 1f # perform operation
+  LI(x29, -1) # branch not taken, set temp_reg to -1
+1:
+  # Check if x29 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x1, x5, x4, x29, Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x8_plus1, Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x8_plus1_str)
+
+# Testcase cr_imm_edges_5bit_u_n0_rs1_rel (imm = 8, rs1 = 0x00000007, minus1)
+  RVTEST_TESTDATA_LOAD_INT(x23, x3) # load rs1: x3 = 0x00000007
+  RVTEST_TESTDATA_LOAD_INT(x23, x28) # load branch taken value: x28 = 0x81bec854
+Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x8_minus1:
+  beqi x3, 8, 1f # perform operation
+  LI(x28, -1) # branch not taken, set temp_reg to -1
+1:
+  # Check if x28 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x1, x5, x4, x28, Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x8_minus1, Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x8_minus1_str)
+
+# Testcase cr_imm_edges_5bit_u_n0_rs1_rel (imm = 16, rs1 = 0x00000010, equal)
+  RVTEST_TESTDATA_LOAD_INT(x23, x29) # load rs1: x29 = 0x00000010
+  RVTEST_TESTDATA_LOAD_INT(x23, x17) # load branch taken value: x17 = 0xb30899bc
+Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x10_equal:
+  beqi x29, 16, 1f # perform operation
+  LI(x17, -1) # branch not taken, set temp_reg to -1
+1:
+  # Check if x17 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x1, x5, x4, x17, Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x10_equal, Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x10_equal_str)
+
+# Testcase cr_imm_edges_5bit_u_n0_rs1_rel (imm = 16, rs1 = 0x00000011, plus1)
+  RVTEST_TESTDATA_LOAD_INT(x23, x20) # load rs1: x20 = 0x00000011
+  RVTEST_TESTDATA_LOAD_INT(x23, x21) # load branch taken value: x21 = 0xd70f43b9
+Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x10_plus1:
+  beqi x20, 16, 1f # perform operation
+  LI(x21, -1) # branch not taken, set temp_reg to -1
+1:
+  # Check if x21 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x1, x5, x4, x21, Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x10_plus1, Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x10_plus1_str)
+
+# Testcase cr_imm_edges_5bit_u_n0_rs1_rel (imm = 16, rs1 = 0x0000000f, minus1)
+  RVTEST_TESTDATA_LOAD_INT(x23, x31) # load rs1: x31 = 0x0000000f
+  RVTEST_TESTDATA_LOAD_INT(x23, x24) # load branch taken value: x24 = 0x0bc41449
+Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x10_minus1:
+  beqi x31, 16, 1f # perform operation
+  LI(x24, -1) # branch not taken, set temp_reg to -1
+1:
+  # Check if x24 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x1, x5, x4, x24, Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x10_minus1, Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x10_minus1_str)
+
+# Testcase cr_imm_edges_5bit_u_n0_rs1_rel (imm = 30, rs1 = 0x0000001e, equal)
+  RVTEST_TESTDATA_LOAD_INT(x23, x10) # load rs1: x10 = 0x0000001e
+  RVTEST_TESTDATA_LOAD_INT(x23, x12) # load branch taken value: x12 = 0xb245a39f
+Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x1e_equal:
+  beqi x10, 30, 1f # perform operation
+  LI(x12, -1) # branch not taken, set temp_reg to -1
+1:
+  # Check if x12 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x1, x5, x4, x12, Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x1e_equal, Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x1e_equal_str)
+
+# Testcase cr_imm_edges_5bit_u_n0_rs1_rel (imm = 30, rs1 = 0x0000001f, plus1)
+  RVTEST_TESTDATA_LOAD_INT(x23, x7) # load rs1: x7 = 0x0000001f
+  RVTEST_TESTDATA_LOAD_INT(x23, x12) # load branch taken value: x12 = 0x205f66fb
+Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x1e_plus1:
+  beqi x7, 30, 1f # perform operation
+  LI(x12, -1) # branch not taken, set temp_reg to -1
+1:
+  # Check if x12 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x1, x5, x4, x12, Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x1e_plus1, Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x1e_plus1_str)
+
+# Testcase cr_imm_edges_5bit_u_n0_rs1_rel (imm = 30, rs1 = 0x0000001d, minus1)
+  RVTEST_TESTDATA_LOAD_INT(x23, x21) # load rs1: x21 = 0x0000001d
+  RVTEST_TESTDATA_LOAD_INT(x23, x28) # load branch taken value: x28 = 0xe7e2fb12
+Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x1e_minus1:
+  beqi x21, 30, 1f # perform operation
+  LI(x28, -1) # branch not taken, set temp_reg to -1
+1:
+  # Check if x28 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x1, x5, x4, x28, Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x1e_minus1, Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x1e_minus1_str)
+
+# Testcase cr_imm_edges_5bit_u_n0_rs1_rel (imm = 31, rs1 = 0x0000001f, equal)
+  RVTEST_TESTDATA_LOAD_INT(x23, x8) # load rs1: x8 = 0x0000001f
+  RVTEST_TESTDATA_LOAD_INT(x23, x28) # load branch taken value: x28 = 0xffbe9674
+Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x1f_equal:
+  beqi x8, 31, 1f # perform operation
+  LI(x28, -1) # branch not taken, set temp_reg to -1
+1:
+  # Check if x28 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x1, x5, x4, x28, Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x1f_equal, Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x1f_equal_str)
+
+# Testcase cr_imm_edges_5bit_u_n0_rs1_rel (imm = 31, rs1 = 0x00000020, plus1)
+  RVTEST_TESTDATA_LOAD_INT(x23, x8) # load rs1: x8 = 0x00000020
+  RVTEST_TESTDATA_LOAD_INT(x23, x12) # load branch taken value: x12 = 0x0766f8f5
+Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x1f_plus1:
+  beqi x8, 31, 1f # perform operation
+  LI(x12, -1) # branch not taken, set temp_reg to -1
+1:
+  # Check if x12 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x1, x5, x4, x12, Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x1f_plus1, Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x1f_plus1_str)
+
+# Testcase cr_imm_edges_5bit_u_n0_rs1_rel (imm = 31, rs1 = 0x0000001e, minus1)
+  RVTEST_TESTDATA_LOAD_INT(x23, x13) # load rs1: x13 = 0x0000001e
+  RVTEST_TESTDATA_LOAD_INT(x23, x7) # load branch taken value: x7 = 0x5d386c07
+Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x1f_minus1:
+  beqi x13, 31, 1f # perform operation
+  LI(x7, -1) # branch not taken, set temp_reg to -1
+1:
+  # Check if x7 contains the expected result. x1 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x1, x5, x4, x7, Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x1f_minus1, Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x1f_minus1_str)
+
   mv x2, x1 # restore signature pointer to default register for teardown
 
 // Instantiate trap handlers and other epilog code, call RVMODEL_HALT at end of test
@@ -2444,6 +2718,60 @@ RVTEST_DATA_BEGIN
 .word 0x75845ac1
 .word 0x75787007
 .word 0xc8e3c643
+.word 0xffffffff
+.word 0x37bd4daa
+.word 0x00000000
+.word 0x7c1372f1
+.word 0xfffffffe
+.word 0x59d57e76
+.word 0x00000001
+.word 0x2b7c3754
+.word 0x00000002
+.word 0x9291cbd8
+.word 0x00000000
+.word 0xa597991a
+.word 0x00000002
+.word 0xf7462224
+.word 0x00000003
+.word 0xa3de161f
+.word 0x00000001
+.word 0x5e0e3a54
+.word 0x00000003
+.word 0x29a5c71c
+.word 0x00000004
+.word 0xf75916a4
+.word 0x00000002
+.word 0x6eb5f132
+.word 0x00000004
+.word 0xd6d6d1f6
+.word 0x00000005
+.word 0xe0dbde40
+.word 0x00000003
+.word 0x6b46732b
+.word 0x00000008
+.word 0xd0078c2b
+.word 0x00000009
+.word 0x1c2dce02
+.word 0x00000007
+.word 0x81bec854
+.word 0x00000010
+.word 0xb30899bc
+.word 0x00000011
+.word 0xd70f43b9
+.word 0x0000000f
+.word 0x0bc41449
+.word 0x0000001e
+.word 0xb245a39f
+.word 0x0000001f
+.word 0x205f66fb
+.word 0x0000001d
+.word 0xe7e2fb12
+.word 0x0000001f
+.word 0xffbe9674
+.word 0x00000020
+.word 0x0766f8f5
+.word 0x0000001e
+.word 0x5d386c07
 
 // Testcase strings
 Zibi_beqi_cg_cp_rs1_b0_str: .string "\"test: 1; cg: Zibi_beqi_cg; cp: cp_rs1; bin: b0\""
@@ -2608,6 +2936,33 @@ Zibi_beqi_cg_cp_imm_edges_5bit_u_n0_0x8_str: .string "\"test: 159; cg: Zibi_beqi
 Zibi_beqi_cg_cp_imm_edges_5bit_u_n0_0x10_str: .string "\"test: 160; cg: Zibi_beqi_cg; cp: cp_imm_edges_5bit_u_n0; bin: 0x10\""
 Zibi_beqi_cg_cp_imm_edges_5bit_u_n0_0x1e_str: .string "\"test: 161; cg: Zibi_beqi_cg; cp: cp_imm_edges_5bit_u_n0; bin: 0x1e\""
 Zibi_beqi_cg_cp_imm_edges_5bit_u_n0_0x1f_str: .string "\"test: 162; cg: Zibi_beqi_cg; cp: cp_imm_edges_5bit_u_n0; bin: 0x1f\""
+Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_m0x1_equal_str: .string "\"test: 163; cg: Zibi_beqi_cg; cp: cr_imm_edges_5bit_u_n0_rs1_rel; bin: -0x1_equal\""
+Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_m0x1_plus1_str: .string "\"test: 164; cg: Zibi_beqi_cg; cp: cr_imm_edges_5bit_u_n0_rs1_rel; bin: -0x1_plus1\""
+Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_m0x1_minus1_str: .string "\"test: 165; cg: Zibi_beqi_cg; cp: cr_imm_edges_5bit_u_n0_rs1_rel; bin: -0x1_minus1\""
+Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x1_equal_str: .string "\"test: 166; cg: Zibi_beqi_cg; cp: cr_imm_edges_5bit_u_n0_rs1_rel; bin: 0x1_equal\""
+Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x1_plus1_str: .string "\"test: 167; cg: Zibi_beqi_cg; cp: cr_imm_edges_5bit_u_n0_rs1_rel; bin: 0x1_plus1\""
+Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x1_minus1_str: .string "\"test: 168; cg: Zibi_beqi_cg; cp: cr_imm_edges_5bit_u_n0_rs1_rel; bin: 0x1_minus1\""
+Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x2_equal_str: .string "\"test: 169; cg: Zibi_beqi_cg; cp: cr_imm_edges_5bit_u_n0_rs1_rel; bin: 0x2_equal\""
+Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x2_plus1_str: .string "\"test: 170; cg: Zibi_beqi_cg; cp: cr_imm_edges_5bit_u_n0_rs1_rel; bin: 0x2_plus1\""
+Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x2_minus1_str: .string "\"test: 171; cg: Zibi_beqi_cg; cp: cr_imm_edges_5bit_u_n0_rs1_rel; bin: 0x2_minus1\""
+Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x3_equal_str: .string "\"test: 172; cg: Zibi_beqi_cg; cp: cr_imm_edges_5bit_u_n0_rs1_rel; bin: 0x3_equal\""
+Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x3_plus1_str: .string "\"test: 173; cg: Zibi_beqi_cg; cp: cr_imm_edges_5bit_u_n0_rs1_rel; bin: 0x3_plus1\""
+Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x3_minus1_str: .string "\"test: 174; cg: Zibi_beqi_cg; cp: cr_imm_edges_5bit_u_n0_rs1_rel; bin: 0x3_minus1\""
+Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x4_equal_str: .string "\"test: 175; cg: Zibi_beqi_cg; cp: cr_imm_edges_5bit_u_n0_rs1_rel; bin: 0x4_equal\""
+Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x4_plus1_str: .string "\"test: 176; cg: Zibi_beqi_cg; cp: cr_imm_edges_5bit_u_n0_rs1_rel; bin: 0x4_plus1\""
+Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x4_minus1_str: .string "\"test: 177; cg: Zibi_beqi_cg; cp: cr_imm_edges_5bit_u_n0_rs1_rel; bin: 0x4_minus1\""
+Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x8_equal_str: .string "\"test: 178; cg: Zibi_beqi_cg; cp: cr_imm_edges_5bit_u_n0_rs1_rel; bin: 0x8_equal\""
+Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x8_plus1_str: .string "\"test: 179; cg: Zibi_beqi_cg; cp: cr_imm_edges_5bit_u_n0_rs1_rel; bin: 0x8_plus1\""
+Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x8_minus1_str: .string "\"test: 180; cg: Zibi_beqi_cg; cp: cr_imm_edges_5bit_u_n0_rs1_rel; bin: 0x8_minus1\""
+Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x10_equal_str: .string "\"test: 181; cg: Zibi_beqi_cg; cp: cr_imm_edges_5bit_u_n0_rs1_rel; bin: 0x10_equal\""
+Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x10_plus1_str: .string "\"test: 182; cg: Zibi_beqi_cg; cp: cr_imm_edges_5bit_u_n0_rs1_rel; bin: 0x10_plus1\""
+Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x10_minus1_str: .string "\"test: 183; cg: Zibi_beqi_cg; cp: cr_imm_edges_5bit_u_n0_rs1_rel; bin: 0x10_minus1\""
+Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x1e_equal_str: .string "\"test: 184; cg: Zibi_beqi_cg; cp: cr_imm_edges_5bit_u_n0_rs1_rel; bin: 0x1e_equal\""
+Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x1e_plus1_str: .string "\"test: 185; cg: Zibi_beqi_cg; cp: cr_imm_edges_5bit_u_n0_rs1_rel; bin: 0x1e_plus1\""
+Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x1e_minus1_str: .string "\"test: 186; cg: Zibi_beqi_cg; cp: cr_imm_edges_5bit_u_n0_rs1_rel; bin: 0x1e_minus1\""
+Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x1f_equal_str: .string "\"test: 187; cg: Zibi_beqi_cg; cp: cr_imm_edges_5bit_u_n0_rs1_rel; bin: 0x1f_equal\""
+Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x1f_plus1_str: .string "\"test: 188; cg: Zibi_beqi_cg; cp: cr_imm_edges_5bit_u_n0_rs1_rel; bin: 0x1f_plus1\""
+Zibi_beqi_cg_cr_imm_edges_5bit_u_n0_rs1_rel_0x1f_minus1_str: .string "\"test: 189; cg: Zibi_beqi_cg; cp: cr_imm_edges_5bit_u_n0_rs1_rel; bin: 0x1f_minus1\""
 
 // End of test data section and model specific data
 RVTEST_DATA_END
