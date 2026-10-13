@@ -7,46 +7,18 @@
 
 """Shared Sscofpmf test-case generators, called with priv_mode in {"Sm", "S", "U"}."""
 
-import re
 from collections.abc import Callable
 
 from testgen.asm.csr import csr_walk_test
 from testgen.asm.helpers import comment_banner, write_sigupd
+from testgen.asm.tsbi import tsbi_call_or_direct
 from testgen.data.state import TestData
 from testgen.data.test_chunk import TestChunk
 
-_CSR_INSTR_RE = re.compile(r"\s*(csrr|csrw|csrs|csrc)\s+([^,\s]+)\s*,\s*([^,\s#]+)")
-
-_S_ACCESSIBLE_CSRS = ("sip", "sie", "sstatus", "scountovf")
-
-
-def _csr_number(csr: str) -> str:
-    """A macro is used as is, and a CSR name becomes its CSR_* macro from encoding.h."""
-    return csr if csr.startswith(("CSR_", "RVTEST_CSR_")) else f"CSR_{csr.upper()}"
-
 
 def csr_access(instr: str, mode: str) -> str:
-    """Direct at Sm, and at S for sip/sie/sstatus/scountovf. Everything else is a T-SBI call
-    through the RVTEST_TSBI_CSR macros, which take the value in a1 and return a read in a0."""
-    if mode == "Sm":
-        return instr
-    code = instr.split("#", 1)[0]
-    if mode == "S" and any(re.search(rf"\b{name}\b", code) for name in _S_ACCESSIBLE_CSRS):
-        return instr
-    match = _CSR_INSTR_RE.match(code)
-    if match is None:
-        raise ValueError(f"Unsupported CSR instruction for T-SBI: {instr}")
-    op, first, second = match.groups()
-    if op == "csrr":
-        lines = [f"RVTEST_TSBI_CSR_READ({_csr_number(second)})", f"mv {first}, a0"]
-    else:
-        tsbi = {
-            "csrw": "RVTEST_TSBI_CSR_WRITE_A1({csr})",
-            "csrs": "RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET({csr})",
-            "csrc": "RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR({csr})",
-        }[op]
-        lines = [f"mv a1, {second}", tsbi.format(csr=_csr_number(first))]
-    return "\n".join([f"# T-SBI call: {instr.strip()}", *lines])
+    """CSR instruction run directly when ``mode`` may access the CSR, else through T-SBI."""
+    return tsbi_call_or_direct(instr, "M" if mode == "Sm" else mode)
 
 
 def clear_lcofip(r_tmp: int, priv_mode: str) -> list[str]:
@@ -142,7 +114,7 @@ def _generate_xinh_inhibits_tests(
     inh_bit_pos = _INHIBIT_BIT_POS[priv_mode]
     inh_bit_pos_32 = inh_bit_pos - 32
 
-    r_val, r_temp = test_data.int_regs.get_registers(2, exclude_regs=[0, 31])
+    r_val, r_temp = test_data.int_regs.get_registers(2)
 
     higher_inhibits = HIGHER_MODE_INHIBITS[priv_mode]
     higher_inhibits_32 = HIGHER_MODE_INHIBITS_32[priv_mode]
@@ -200,7 +172,7 @@ def _generate_xinh_inhibits_tests(
         ]
     )
 
-    r_hval = test_data.int_regs.get_register(exclude_regs=[0, 31])
+    r_hval = test_data.int_regs.get_register()
 
     def combo_counts() -> list[str]:
         """In M-mode, run the workload so each combination checks that only MINH decides
@@ -288,7 +260,7 @@ def _generate_of_set_on_overflow_tests(test_data: TestData, priv_mode: str) -> l
     coverpoint = "cp_of_set_on_overflow"
     ######################################
 
-    r_val, r_temp, r_lcofip, r_addr, r_hval, r_preset = test_data.int_regs.get_registers(6, exclude_regs=[0, 31])
+    r_val, r_temp, r_lcofip, r_addr, r_hval, r_preset = test_data.int_regs.get_registers(6)
 
     def read_event_config_bits() -> list[str]:
         """Read OF and the 5-bit inhibit field into x{r_temp}, masked to those bits."""
@@ -480,7 +452,7 @@ def _generate_overflow_hw_only_tests(test_data: TestData, priv_mode: str) -> lis
     coverpoint = "cp_overflow_hw_only"
     ######################################
 
-    r_val, r_of = test_data.int_regs.get_registers(2, exclude_regs=[0, 31])
+    r_val, r_of = test_data.int_regs.get_registers(2)
 
     lines = [
         comment_banner(
@@ -530,7 +502,7 @@ def _generate_lcofip_hw_only_tests(test_data: TestData, priv_mode: str) -> list[
     coverpoint = "cp_lcofip_hw_only"
     ######################################
 
-    r_val, r_temp = test_data.int_regs.get_registers(2, exclude_regs=[0, 31])
+    r_val, r_temp = test_data.int_regs.get_registers(2)
 
     def set_of(op: str, desc: str) -> list[str]:
         return [
@@ -674,7 +646,7 @@ def _generate_scountovf_mcounteren_tests(
 
     for of_name in of_names:
         of_bit_fn = MCOUNTEREN_OF_PATTERNS[of_name]
-        r_of_bit = test_data.int_regs.get_register(exclude_regs=[0, 31])
+        r_of_bit = test_data.int_regs.get_register()
         lines.extend(write_of_pattern(r_of_bit, of_name, of_bit_fn, mode, of_state))
         test_data.int_regs.return_registers([r_of_bit])
 
@@ -692,14 +664,14 @@ def _generate_scountovf_mcounteren_tests(
                 )
             )
 
-            r_scountovf = test_data.int_regs.get_register(exclude_regs=[0, 31])
+            r_scountovf = test_data.int_regs.get_register()
             lines.append(test_data.add_testcase(f"scountovf_{of_name}_{mode.lower()}", coverpoint, covergroup))
             lines.append(csr_access(f"csrr x{r_scountovf}, scountovf   # sample point", mode))
             lines.append(write_sigupd(r_scountovf, test_data))
             lines.append("")
             test_data.int_regs.return_registers([r_scountovf])
         else:
-            r_mcounteren, r_scountovf = test_data.int_regs.get_registers(2, exclude_regs=[0, 31])
+            r_mcounteren, r_scountovf = test_data.int_regs.get_registers(2)
 
             for state_name, val in [("all_zeros", 0), ("all_ones", 0xFFFFFFF8)]:
                 binname = f"mcounteren_{state_name}"
@@ -744,7 +716,7 @@ def _generate_sscofpmf_access_tests(test_data: TestData, mode: str) -> list[str]
     ######################################
 
     access_types = ["read", "write_ones", "write_zeros", "set", "clear"]
-    r_val = test_data.int_regs.get_register(exclude_regs=[0, 31])
+    r_val = test_data.int_regs.get_register()
 
     lines = [
         comment_banner(
@@ -822,7 +794,7 @@ def _generate_scountovf_shadow_tests(
         "",
     ]
 
-    r_mcounteren = test_data.int_regs.get_register(exclude_regs=[0, 31])
+    r_mcounteren = test_data.int_regs.get_register()
     lines.extend(
         [
             f"{indent}LI(x{r_mcounteren}, -1)",
@@ -833,7 +805,7 @@ def _generate_scountovf_shadow_tests(
     test_data.int_regs.return_registers([r_mcounteren])
 
     def emit_pattern(pattern_name: str, of_bit_fn: Callable[[int], int]) -> None:
-        r_of_bit, r_scountovf = test_data.int_regs.get_registers(2, exclude_regs=[0, 31])
+        r_of_bit, r_scountovf = test_data.int_regs.get_registers(2)
         lines.extend(write_of_pattern(r_of_bit, pattern_name, of_bit_fn, priv_mode, of_state))
         test_data.int_regs.return_registers([r_of_bit])
 
@@ -874,15 +846,15 @@ def generate_sscofpmf_suite(test_data: TestData, mode: str) -> list[TestChunk]:
         test_chunks.append(test_data.end_test_chunk())
         return test_chunks
 
-    tc = test_data.begin_test_chunk(split_name="inhibit_lo")
+    tc = test_data.begin_test_chunk("inhibit_lo")
     tc.code.extend(_generate_xinh_inhibits_tests(test_data, mode, combos=range(16)))
     test_chunks.append(test_data.end_test_chunk())
 
-    tc = test_data.begin_test_chunk(split_name="inhibit_hi")
+    tc = test_data.begin_test_chunk("inhibit_hi")
     tc.code.extend(_generate_xinh_inhibits_tests(test_data, mode, combos=range(16, 32), toggles=False))
     test_chunks.append(test_data.end_test_chunk())
 
-    tc = test_data.begin_test_chunk(split_name="overflow")
+    tc = test_data.begin_test_chunk("overflow")
     tc.code.extend(_generate_of_set_on_overflow_tests(test_data, mode))
     tc.code.extend(_generate_overflow_hw_only_tests(test_data, mode))
     tc.code.extend(_generate_lcofip_hw_only_tests(test_data, mode))
@@ -892,16 +864,16 @@ def generate_sscofpmf_suite(test_data: TestData, mode: str) -> list[TestChunk]:
         return test_chunks
 
     for of_name in MCOUNTEREN_OF_PATTERNS:
-        tc = test_data.begin_test_chunk(split_name=f"mcounteren_{of_name}")
+        tc = test_data.begin_test_chunk(f"mcounteren_{of_name}")
         tc.code.extend(_generate_scountovf_mcounteren_tests(test_data, mode, boot_of_state(), [of_name]))
         test_chunks.append(test_data.end_test_chunk())
 
-    tc = test_data.begin_test_chunk(split_name="access")
+    tc = test_data.begin_test_chunk("access")
     tc.code.extend(_generate_sscofpmf_access_tests(test_data, mode))
     test_chunks.append(test_data.end_test_chunk())
 
     for split_name, patterns in SHADOW_PATTERNS.items():
-        tc = test_data.begin_test_chunk(split_name=split_name)
+        tc = test_data.begin_test_chunk(split_name)
         tc.code.extend(_generate_scountovf_shadow_tests(test_data, mode, boot_of_state(), patterns))
         test_chunks.append(test_data.end_test_chunk())
     return test_chunks

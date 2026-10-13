@@ -22,7 +22,7 @@ def _generate_lcofi_m_tests(test_data: TestData) -> list[str]:
     MIE_BIT = 0x8
     SIE_BIT = 0x2
 
-    r_val, r_temp, r_idle = test_data.int_regs.get_registers(3, exclude_regs=[0, 31])
+    r_val, r_temp, r_idle = test_data.int_regs.get_registers(3)
 
     lines = [
         comment_banner(
@@ -107,7 +107,7 @@ def _generate_lcofip_priority_sm_tests(test_data: TestData) -> list[str]:
     coverpoint = "cp_lcofip_priority_m"
     ######################################
 
-    r_val, r_temp, r_temp2, r_addr = test_data.int_regs.get_registers(4, exclude_regs=[0, 31])
+    r_val, r_temp, r_temp2, r_addr = test_data.int_regs.get_registers(4)
 
     lines = [
         comment_banner(

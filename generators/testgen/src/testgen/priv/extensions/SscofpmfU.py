@@ -21,7 +21,7 @@ def _generate_lcofi_sip_u_tests(test_data: TestData) -> list[str]:
     LCOFI_BIT = 1 << 13
     SIE_BIT = 0x2
 
-    r_val, r_temp = test_data.int_regs.get_registers(2, exclude_regs=[0, 31])
+    r_val, r_temp = test_data.int_regs.get_registers(2)
 
     lines = [
         comment_banner(
@@ -45,10 +45,10 @@ def _generate_lcofi_sip_u_tests(test_data: TestData) -> list[str]:
                 [
                     "",
                     f"# Testcase: sip.LCOFIP={lcofip}, sie.LCOFIE={lcofie}, mode=U",
+                    f"LI(x{r_val}, {hex(LCOFI_BIT)})",
                 ]
             )
 
-            lines.append(f"LI(x{r_val}, {hex(LCOFI_BIT)})")
             if lcofip:
                 lines.append(csr_access(f"csrs sip, x{r_val}   # sip.LCOFIP = 1", "U"))
             else:
@@ -96,7 +96,7 @@ def _generate_lcofi_sip_u_tests(test_data: TestData) -> list[str]:
 def make_sscofpmfu(test_data: TestData) -> list[TestChunk]:
     """Generate tests for the SscofpmfU performance-counter-overflow testsuite."""
     test_chunks: list[TestChunk] = []
-    tc = test_data.begin_test_chunk(split_name="interrupt")
+    tc = test_data.begin_test_chunk("interrupt")
     tc.code.extend(_generate_lcofi_sip_u_tests(test_data))
     test_chunks.append(test_data.end_test_chunk())
     test_chunks.extend(generate_sscofpmf_suite(test_data, "U"))

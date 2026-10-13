@@ -25,7 +25,7 @@ def _generate_lcofi_sip_s_tests(test_data: TestData) -> list[str]:
     LCOFI_BIT = 1 << 13
     SIE_BIT = 0x2
 
-    r_val, r_temp = test_data.int_regs.get_registers(2, exclude_regs=[0, 31])
+    r_val, r_temp = test_data.int_regs.get_registers(2)
     lines = [
         comment_banner(
             coverpoint,
@@ -102,7 +102,7 @@ def _generate_lcofip_priority_s_tests(test_data: TestData) -> list[str]:
     LCOFI_BIT = 1 << 13
     SIE_BIT = 0x2
 
-    r_val, r_temp, r_temp2, r_addr = test_data.int_regs.get_registers(4, exclude_regs=[0, 31])
+    r_val, r_temp, r_temp2, r_addr = test_data.int_regs.get_registers(4)
 
     lines = [
         comment_banner(
@@ -218,7 +218,7 @@ def _generate_lcofip_priority_s_tests(test_data: TestData) -> list[str]:
 def make_sscofpmfs(test_data: TestData) -> list[TestChunk]:
     """Generate tests for the SscofpmfS performance-counter-overflow testsuite."""
     test_chunks: list[TestChunk] = []
-    tc = test_data.begin_test_chunk(split_name="interrupt")
+    tc = test_data.begin_test_chunk("interrupt")
     tc.code.extend(_generate_lcofi_sip_s_tests(test_data))
     tc.code.extend(_generate_lcofip_priority_s_tests(test_data))
     test_chunks.append(test_data.end_test_chunk())
