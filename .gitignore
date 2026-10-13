@@ -38,7 +38,6 @@ tests/priv/headers
 tests/priv/**/*.S
 !tests/priv/PMP*/**/*.S
 !tests/priv/*Sv*/**/*.S
-!tests/priv/Sscofpmf*/**/*.S
 
 # docs
 docs/ctp/mismatch_report.txt
