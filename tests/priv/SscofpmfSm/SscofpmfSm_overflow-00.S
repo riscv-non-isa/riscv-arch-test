@@ -282,7 +282,7 @@ Sscofpmf_cg_cp_of_set_on_overflow_of_overflow_m_ei_00100:
   csrw RVTEST_CSR_MHPMCOUNTERH, x14   # high half must also be all 1s
 #endif
   csrr x13, RVTEST_CSR_MHPMCOUNTER   # preset as read back
-  LI(x14, 0x2000)
+  LI(x14, MIP_LCOFIP)
   csrc mip, x14   # clear LCOFIP
 
   LA(x8, scratch)
@@ -324,7 +324,7 @@ Sscofpmf_cg_cp_of_already_set_of_overflow_m_of_already_set:
 #if __riscv_xlen == 32
   csrw RVTEST_CSR_MHPMEVENTH, zero   # clear OF and xINH left by earlier tests
 #endif
-  LI(x13, 0x2000)
+  LI(x13, MIP_LCOFIP)
   csrc mip, x13   # clear LCOFIP
 
 # Testcase: software write RVTEST_CSR_MHPMCOUNTER = all_1s, mode = M
@@ -369,7 +369,7 @@ Sscofpmf_cg_cp_overflow_hw_only_overflow_hw_only_m_all_0s:
 /////////////////////////////////
 
   csrw mie, zero   # disable interrupts
-  LI(x9, 0x2000)
+  LI(x9, MIP_LCOFIP)
   csrc mip, x9   # clear LCOFIP
 
 # Testcase: software-set OF bit directly (no HW increment)

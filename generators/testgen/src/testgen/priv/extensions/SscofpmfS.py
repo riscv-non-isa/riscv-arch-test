@@ -10,88 +10,11 @@ from testgen.asm.tsbi import tsbi_call_or_direct
 from testgen.data.state import TestData
 from testgen.data.test_chunk import TestChunk
 from testgen.priv.extensions.SscofpmfCommon import (
+    generate_lcofi_sip_tests,
     generate_sscofpmf_suite,
     prime_counter_overflow,
 )
 from testgen.priv.registry import add_priv_test_generator
-
-
-def _generate_lcofi_sip_s_tests(test_data: TestData) -> list[str]:
-    ######################################
-    covergroup = "Sscofpmf_cg"
-    coverpoint = "cp_lcofi_sip_s"
-    ######################################
-
-    LCOFI_BIT = 1 << 13
-    SIE_BIT = 0x2
-
-    r_val, r_temp = test_data.int_regs.get_registers(2)
-    lines = [
-        comment_banner(
-            coverpoint,
-            "Interrupt pending and enable, mode = S.\n"
-            "mideleg.LCOFI=1 from the boot-to-S setup (required to reach S-mode with\n"
-            "LCOFI visible), sstatus.SIE=1 held fixed per testplan; sweep is\n"
-            "sip.LCOFIP x sie.LCOFIE.\n",
-        ),
-        "",
-        "csrw sie, zero      # disable all S-mode interrupts",
-        tsbi_call_or_direct("csrw RVTEST_CSR_MHPMEVENT, zero", "S"),
-        f"LI(x{r_val}, {hex(SIE_BIT)})",
-        f"csrs sstatus, x{r_val}   # sstatus.SIE = 1 (fixed)",
-    ]
-
-    for lcofip in [0, 1]:
-        for lcofie in [0, 1]:
-            binname = f"lcofi_s_lcofip_{lcofip}_lcofie_{lcofie}"
-            lines.extend(
-                [
-                    "",
-                    f"# Testcase: sip.LCOFIP={lcofip}, sie.LCOFIE={lcofie}, mode=S",
-                ]
-            )
-
-            lines.append(f"LI(x{r_val}, {hex(LCOFI_BIT)})")
-            if lcofip:
-                lines.append(f"csrs sip, x{r_val}   # set sip.LCOFIP directly")
-            else:
-                lines.extend(
-                    [
-                        tsbi_call_or_direct(
-                            "csrw RVTEST_CSR_MHPMCOUNTER, zero   # keep counter clear -- no overflow", "S"
-                        ),
-                        f"csrc sip, x{r_val}   # explicitly hold sip.LCOFIP = 0 (touch it so it samples)",
-                    ]
-                )
-
-            lines.extend(
-                [
-                    f"LI(x{r_temp}, {hex(LCOFI_BIT)})",
-                    f"{'csrs' if lcofie else 'csrc'} sie, x{r_temp}   # sie.LCOFIE = {lcofie}",
-                    "",
-                    test_data.add_testcase(binname, coverpoint, covergroup),
-                    f"RVTEST_IDLE_FOR_INTERRUPT(x{r_temp})",
-                    "",
-                    f"csrc sip, x{r_temp}   # clear LCOFIP for next iteration (if it latched)" if lcofip else "",
-                    "csrw sie, zero        # disable LCOFIE before next iteration",
-                ]
-            )
-
-    lines.extend(
-        [
-            "",
-            f"LI(x{r_temp}, {hex(LCOFI_BIT)})",
-            f"csrc sip, x{r_temp}      # clear LCOFIP",
-            f"csrc sie, x{r_temp}      # clear LCOFIE",
-            f"LI(x{r_val}, {hex(SIE_BIT)})",
-            f"csrc sstatus, x{r_val}   # clear sstatus.SIE",
-            tsbi_call_or_direct("csrw RVTEST_CSR_MHPMCOUNTER, zero", "S"),
-            tsbi_call_or_direct("csrw RVTEST_CSR_MHPMEVENT, zero", "S"),
-        ]
-    )
-
-    test_data.int_regs.return_registers([r_val, r_temp])
-    return lines
 
 
 def _generate_lcofip_priority_s_tests(test_data: TestData) -> list[str]:
@@ -100,9 +23,6 @@ def _generate_lcofip_priority_s_tests(test_data: TestData) -> list[str]:
     covergroup = "Sscofpmf_cg"
     coverpoint = "cp_lcofip_priority_s"
     ######################################
-
-    LCOFI_BIT = 1 << 13
-    SIE_BIT = 0x2
 
     r_val, r_temp, r_temp2, r_addr = test_data.int_regs.get_registers(4)
 
@@ -122,7 +42,7 @@ def _generate_lcofip_priority_s_tests(test_data: TestData) -> list[str]:
         "",
         "csrw sie, zero      # disable all S-mode interrupts",
         tsbi_call_or_direct("csrw RVTEST_CSR_MHPMEVENT, zero", "S"),
-        f"csrsi sstatus, {hex(SIE_BIT)}   # sstatus.SIE = 1",
+        "csrsi sstatus, SSTATUS_SIE   # sstatus.SIE = 1",
     ]
 
     # Each competing interrupt is raised only where the platform implements it
@@ -188,7 +108,7 @@ def _generate_lcofip_priority_s_tests(test_data: TestData) -> list[str]:
 
         lines.extend(
             [
-                f"LI(x{r_val}, {hex(LCOFI_BIT)})",
+                f"LI(x{r_val}, MIP_LCOFIP)",
                 f"csrc sip, x{r_val}   # clear LCOFIP for next iteration",
                 "csrw sie, zero   # disable all before next iteration",
             ]
@@ -199,7 +119,7 @@ def _generate_lcofip_priority_s_tests(test_data: TestData) -> list[str]:
     lines.extend(
         [
             "",
-            f"csrci sstatus, {hex(SIE_BIT)}   # sstatus.SIE = 0",
+            "csrci sstatus, SSTATUS_SIE   # sstatus.SIE = 0",
             tsbi_call_or_direct("csrw RVTEST_CSR_MHPMEVENT, zero   # stop counting, clear OF", "S"),
             "#if __riscv_xlen == 32",
             tsbi_call_or_direct("csrw RVTEST_CSR_MHPMEVENTH, zero", "S"),
@@ -223,7 +143,7 @@ def make_sscofpmfs(test_data: TestData) -> list[TestChunk]:
     """Generate tests for the SscofpmfS performance-counter-overflow testsuite."""
     test_chunks: list[TestChunk] = []
     tc = test_data.begin_test_chunk("interrupt")
-    tc.code.extend(_generate_lcofi_sip_s_tests(test_data))
+    tc.code.extend(generate_lcofi_sip_tests(test_data, "S"))
     tc.code.extend(_generate_lcofip_priority_s_tests(test_data))
     test_chunks.append(test_data.end_test_chunk())
     test_chunks.extend(generate_sscofpmf_suite(test_data, "S"))

@@ -18,10 +18,6 @@ def _generate_lcofi_m_tests(test_data: TestData) -> list[str]:
     coverpoint = "cp_lcofi_m"
     ######################################
 
-    LCOFI_BIT = 1 << 13
-    MIE_BIT = 0x8
-    SIE_BIT = 0x2
-
     r_val, r_temp, r_idle = test_data.int_regs.get_registers(3)
 
     lines = [
@@ -36,9 +32,9 @@ def _generate_lcofi_m_tests(test_data: TestData) -> list[str]:
         "csrw mip, zero      # clear all pending (sip may not exist in this suite)",
         "csrw mie, zero      # disable all interrupts",
         "csrw RVTEST_CSR_MHPMEVENT, zero",
-        f"LI(x{r_val}, {hex(MIE_BIT)})",
+        f"LI(x{r_val}, MSTATUS_MIE)",
         f"csrs mstatus, x{r_val}   # mstatus.MIE = 1 (fixed)",
-        f"LI(x{r_val}, {hex(SIE_BIT)})",
+        f"LI(x{r_val}, SSTATUS_SIE)",
         f"csrs mstatus, x{r_val}   # mstatus.SIE = 1 (fixed)",
     ]
 
@@ -56,7 +52,7 @@ def _generate_lcofi_m_tests(test_data: TestData) -> list[str]:
                 if lcofip:
                     lines.extend(
                         [
-                            f"LI(x{r_val}, {hex(LCOFI_BIT)})",
+                            f"LI(x{r_val}, MIP_LCOFIP)",
                             f"csrs mip, x{r_val}   # set mip.LCOFIP directly",
                         ]
                     )
@@ -65,7 +61,7 @@ def _generate_lcofi_m_tests(test_data: TestData) -> list[str]:
 
                 lines.extend(
                     [
-                        f"LI(x{r_temp}, {hex(LCOFI_BIT)})",
+                        f"LI(x{r_temp}, MIP_LCOFIP)",
                         f"{'csrs' if mideleg_bit else 'csrc'} mideleg, x{r_temp}   # mideleg.LCOFI = {mideleg_bit}",
                         f"{'csrs' if lcofie else 'csrc'} mie, x{r_temp}   # mie.LCOFIE = {lcofie}",
                         "",
@@ -86,11 +82,11 @@ def _generate_lcofi_m_tests(test_data: TestData) -> list[str]:
         [
             "",
             "# === M-MODE CLEANUP ===",
-            f"LI(x{r_temp}, {hex(LCOFI_BIT)})",
+            f"LI(x{r_temp}, MIP_LCOFIP)",
             f"csrc mip, x{r_temp}      # clear LCOFIP",
             f"csrc mie, x{r_temp}      # clear LCOFIE",
             f"csrc mideleg, x{r_temp}  # clear mideleg.LCOFI",
-            f"LI(x{r_val}, {hex(MIE_BIT | SIE_BIT)})",
+            f"LI(x{r_val}, MSTATUS_MIE | MSTATUS_SIE)",
             f"csrc mstatus, x{r_val}   # clear mstatus.MIE and mstatus.SIE",
             "csrw RVTEST_CSR_MHPMCOUNTER, zero",
             "csrw RVTEST_CSR_MHPMEVENT, zero",
@@ -119,8 +115,8 @@ def _generate_lcofip_priority_sm_tests(test_data: TestData) -> list[str]:
         ),
         "",
         "# Setup: mstatus.MIE=1, mstatus.SIE=1",
-        "csrsi mstatus, 0x8   # MIE",
-        "csrsi mstatus, 0x2   # SIE",
+        "csrsi mstatus, MSTATUS_MIE   # MIE",
+        "csrsi mstatus, MSTATUS_SIE   # SIE",
         "csrw mie, zero      # mie = all 0s initially",
         "",
     ]

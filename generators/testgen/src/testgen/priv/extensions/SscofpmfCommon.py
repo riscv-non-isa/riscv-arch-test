@@ -33,9 +33,88 @@ def lcofip_access(priv_mode: str, instr: Callable[[str], str]) -> list[str]:
 
 def clear_lcofip(r_tmp: int, priv_mode: str) -> list[str]:
     return [
-        f"LI(x{r_tmp}, {hex(1 << 13)})",
+        f"LI(x{r_tmp}, MIP_LCOFIP)",
         *lcofip_access(priv_mode, lambda csr: f"csrc {csr}, x{r_tmp}   # clear LCOFIP"),
     ]
+
+
+def generate_lcofi_sip_tests(test_data: TestData, priv_mode: str) -> list[str]:
+    """Sweep sip.LCOFIP x sie.LCOFIE with sstatus.SIE fixed (1 in S, 0 in U)."""
+    ######################################
+    covergroup = "Sscofpmf_cg"
+    coverpoint = f"cp_lcofi_sip_{priv_mode.lower()}"
+    ######################################
+
+    mode = priv_mode.lower()
+    sie_set = priv_mode == "S"
+    r_val, r_temp = test_data.int_regs.get_registers(2)
+    lines = [
+        comment_banner(
+            coverpoint,
+            f"Interrupt pending and enable, mode = {priv_mode}.\n"
+            "mideleg.LCOFI=1 (from the boot setup) and "
+            f"sstatus.SIE={int(sie_set)} held fixed;\n"
+            "sweep sip.LCOFIP x sie.LCOFIE.\n",
+        ),
+        "",
+        tsbi_call_or_direct("csrw sie, zero      # disable all S-mode interrupts", priv_mode),
+        tsbi_call_or_direct("csrw RVTEST_CSR_MHPMEVENT, zero", priv_mode),
+        f"LI(x{r_val}, SSTATUS_SIE)",
+        tsbi_call_or_direct(
+            f"{'csrs' if sie_set else 'csrc'} sstatus, x{r_val}   # sstatus.SIE = {int(sie_set)} (fixed)", priv_mode
+        ),
+    ]
+
+    for lcofip in [0, 1]:
+        for lcofie in [0, 1]:
+            binname = f"lcofi_{mode}_lcofip_{lcofip}_lcofie_{lcofie}"
+            lines.extend(
+                [
+                    "",
+                    f"# Testcase: sip.LCOFIP={lcofip}, sie.LCOFIE={lcofie}, mode={priv_mode}",
+                    f"LI(x{r_val}, MIP_LCOFIP)",
+                ]
+            )
+            if lcofip:
+                lines.append(tsbi_call_or_direct(f"csrs sip, x{r_val}   # sip.LCOFIP = 1", priv_mode))
+            else:
+                lines.extend(
+                    [
+                        tsbi_call_or_direct("csrw RVTEST_CSR_MHPMCOUNTER, zero   # no overflow", priv_mode),
+                        tsbi_call_or_direct(f"csrc sip, x{r_val}   # sip.LCOFIP = 0", priv_mode),
+                    ]
+                )
+
+            lines.extend(
+                [
+                    f"LI(x{r_temp}, MIP_LCOFIP)",
+                    test_data.add_testcase(binname, coverpoint, covergroup),
+                    tsbi_call_or_direct(
+                        f"{'csrs' if lcofie else 'csrc'} sie, x{r_temp}   # sie.LCOFIE = {lcofie}", priv_mode
+                    ),
+                    "",
+                    f"RVTEST_IDLE_FOR_INTERRUPT(x{r_temp})",
+                    "",
+                    tsbi_call_or_direct(f"csrc sip, x{r_temp}   # clear LCOFIP", priv_mode) if lcofip else "",
+                    tsbi_call_or_direct("csrw sie, zero        # clear LCOFIE", priv_mode),
+                ]
+            )
+
+    lines.extend(
+        [
+            "",
+            f"LI(x{r_temp}, MIP_LCOFIP)",
+            tsbi_call_or_direct(f"csrc sip, x{r_temp}      # clear LCOFIP", priv_mode),
+            tsbi_call_or_direct(f"csrc sie, x{r_temp}      # clear LCOFIE", priv_mode),
+            f"LI(x{r_val}, SSTATUS_SIE)",
+            tsbi_call_or_direct(f"csrc sstatus, x{r_val}   # clear sstatus.SIE", priv_mode),
+            tsbi_call_or_direct("csrw RVTEST_CSR_MHPMCOUNTER, zero", priv_mode),
+            tsbi_call_or_direct("csrw RVTEST_CSR_MHPMEVENT, zero", priv_mode),
+        ]
+    )
+
+    test_data.int_regs.return_registers([r_val, r_temp])
+    return lines
 
 
 # Every T-SBI call runs the M-mode handler, and a call from U is delegated through S

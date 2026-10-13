@@ -40,14 +40,14 @@ RVTEST_BEGIN
   csrw mip, zero      # clear all pending (sip may not exist in this suite)
   csrw mie, zero      # disable all interrupts
   csrw RVTEST_CSR_MHPMEVENT, zero
-  LI(x8, 0x8)
+  LI(x8, MSTATUS_MIE)
   csrs mstatus, x8   # mstatus.MIE = 1 (fixed)
-  LI(x8, 0x2)
+  LI(x8, SSTATUS_SIE)
   csrs mstatus, x8   # mstatus.SIE = 1 (fixed)
 
 # Testcase: mip.LCOFIP=0, mie.LCOFIE=0, mideleg.LCOFI=0, mode=M
   csrw RVTEST_CSR_MHPMCOUNTER, zero   # keep counter clear -- no overflow
-  LI(x13, 0x2000)
+  LI(x13, MIP_LCOFIP)
   csrc mideleg, x13   # mideleg.LCOFI = 0
   csrc mie, x13   # mie.LCOFIE = 0
 
@@ -64,7 +64,7 @@ Sscofpmf_cg_cp_lcofi_m_lcofi_m_lcofip_0_lcofie_0_mideleg_0:
 
 # Testcase: mip.LCOFIP=0, mie.LCOFIE=0, mideleg.LCOFI=1, mode=M
   csrw RVTEST_CSR_MHPMCOUNTER, zero   # keep counter clear -- no overflow
-  LI(x13, 0x2000)
+  LI(x13, MIP_LCOFIP)
   csrs mideleg, x13   # mideleg.LCOFI = 1
   csrc mie, x13   # mie.LCOFIE = 0
 
@@ -81,7 +81,7 @@ Sscofpmf_cg_cp_lcofi_m_lcofi_m_lcofip_0_lcofie_0_mideleg_1:
 
 # Testcase: mip.LCOFIP=0, mie.LCOFIE=1, mideleg.LCOFI=0, mode=M
   csrw RVTEST_CSR_MHPMCOUNTER, zero   # keep counter clear -- no overflow
-  LI(x13, 0x2000)
+  LI(x13, MIP_LCOFIP)
   csrc mideleg, x13   # mideleg.LCOFI = 0
   csrs mie, x13   # mie.LCOFIE = 1
 
@@ -98,7 +98,7 @@ Sscofpmf_cg_cp_lcofi_m_lcofi_m_lcofip_0_lcofie_1_mideleg_0:
 
 # Testcase: mip.LCOFIP=0, mie.LCOFIE=1, mideleg.LCOFI=1, mode=M
   csrw RVTEST_CSR_MHPMCOUNTER, zero   # keep counter clear -- no overflow
-  LI(x13, 0x2000)
+  LI(x13, MIP_LCOFIP)
   csrs mideleg, x13   # mideleg.LCOFI = 1
   csrs mie, x13   # mie.LCOFIE = 1
 
@@ -114,9 +114,9 @@ Sscofpmf_cg_cp_lcofi_m_lcofi_m_lcofip_0_lcofie_1_mideleg_1:
   csrw mie, zero        # disable LCOFIE before next iteration
 
 # Testcase: mip.LCOFIP=1, mie.LCOFIE=0, mideleg.LCOFI=0, mode=M
-  LI(x8, 0x2000)
+  LI(x8, MIP_LCOFIP)
   csrs mip, x8   # set mip.LCOFIP directly
-  LI(x13, 0x2000)
+  LI(x13, MIP_LCOFIP)
   csrc mideleg, x13   # mideleg.LCOFI = 0
   csrc mie, x13   # mie.LCOFIE = 0
 
@@ -132,9 +132,9 @@ Sscofpmf_cg_cp_lcofi_m_lcofi_m_lcofip_1_lcofie_0_mideleg_0:
   csrw mie, zero        # disable LCOFIE before next iteration
 
 # Testcase: mip.LCOFIP=1, mie.LCOFIE=0, mideleg.LCOFI=1, mode=M
-  LI(x8, 0x2000)
+  LI(x8, MIP_LCOFIP)
   csrs mip, x8   # set mip.LCOFIP directly
-  LI(x13, 0x2000)
+  LI(x13, MIP_LCOFIP)
   csrs mideleg, x13   # mideleg.LCOFI = 1
   csrc mie, x13   # mie.LCOFIE = 0
 
@@ -150,9 +150,9 @@ Sscofpmf_cg_cp_lcofi_m_lcofi_m_lcofip_1_lcofie_0_mideleg_1:
   csrw mie, zero        # disable LCOFIE before next iteration
 
 # Testcase: mip.LCOFIP=1, mie.LCOFIE=1, mideleg.LCOFI=0, mode=M
-  LI(x8, 0x2000)
+  LI(x8, MIP_LCOFIP)
   csrs mip, x8   # set mip.LCOFIP directly
-  LI(x13, 0x2000)
+  LI(x13, MIP_LCOFIP)
   csrc mideleg, x13   # mideleg.LCOFI = 0
   csrs mie, x13   # mie.LCOFIE = 1
 
@@ -168,9 +168,9 @@ Sscofpmf_cg_cp_lcofi_m_lcofi_m_lcofip_1_lcofie_1_mideleg_0:
   csrw mie, zero        # disable LCOFIE before next iteration
 
 # Testcase: mip.LCOFIP=1, mie.LCOFIE=1, mideleg.LCOFI=1, mode=M
-  LI(x8, 0x2000)
+  LI(x8, MIP_LCOFIP)
   csrs mip, x8   # set mip.LCOFIP directly
-  LI(x13, 0x2000)
+  LI(x13, MIP_LCOFIP)
   csrs mideleg, x13   # mideleg.LCOFI = 1
   csrs mie, x13   # mie.LCOFIE = 1
 
@@ -186,11 +186,11 @@ Sscofpmf_cg_cp_lcofi_m_lcofi_m_lcofip_1_lcofie_1_mideleg_1:
   csrw mie, zero        # disable LCOFIE before next iteration
 
 # === M-MODE CLEANUP ===
-  LI(x13, 0x2000)
+  LI(x13, MIP_LCOFIP)
   csrc mip, x13      # clear LCOFIP
   csrc mie, x13      # clear LCOFIE
   csrc mideleg, x13  # clear mideleg.LCOFI
-  LI(x8, 0xa)
+  LI(x8, MSTATUS_MIE | MSTATUS_SIE)
   csrc mstatus, x8   # clear mstatus.MIE and mstatus.SIE
   csrw RVTEST_CSR_MHPMCOUNTER, zero
   csrw RVTEST_CSR_MHPMEVENT, zero
@@ -205,8 +205,8 @@ Sscofpmf_cg_cp_lcofi_m_lcofi_m_lcofip_1_lcofie_1_mideleg_1:
 /////////////////////////////////
 
 # Setup: mstatus.MIE=1, mstatus.SIE=1
-  csrsi mstatus, 0x8   # MIE
-  csrsi mstatus, 0x2   # SIE
+  csrsi mstatus, MSTATUS_MIE   # MIE
+  csrsi mstatus, MSTATUS_SIE   # SIE
   csrw mie, zero      # mie = all 0s initially
 
 #ifdef UDB_MEI_INTR_IMPL

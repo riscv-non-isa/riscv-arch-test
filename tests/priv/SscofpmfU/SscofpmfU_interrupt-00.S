@@ -9,7 +9,7 @@
 ///////////////////////////////////////////
 
 ##### START_TEST_CONFIG #####
-# REQUIRED_EXTENSIONS: ['I', 'Sscofpmf']
+# REQUIRED_EXTENSIONS: ['I', 'Sscofpmf', 'U']
 # # # no param constraints
 # MARCH: rv${XLEN}i_zicsr_zifencei_sscofpmf
 ##### END_TEST_CONFIG #####
@@ -33,7 +33,6 @@ RVTEST_BEGIN
 //   Interrupt pending and enable, mode = U.
 //   mideleg.LCOFI=1 (from the boot setup) and sstatus.SIE=0 held fixed;
 //   sweep sip.LCOFIP x sie.LCOFIE.
-//   Sample point is the T-SBI delegate's sret back to U (sstatus.SPP=0).
 /////////////////////////////////
 
   # T-SBI call to execute instruction: csrw sie, zero      # disable all S-mode interrupts
@@ -42,20 +41,20 @@ RVTEST_BEGIN
   # T-SBI call to execute instruction: csrw RVTEST_CSR_MHPMEVENT, zero
   mv a1, x0
   RVTEST_TSBI_CSR_WRITE_A1(RVTEST_CSR_MHPMEVENT)
-  LI(x9, 0x2)
-  # T-SBI call to execute instruction: csrc sstatus, x9   # sstatus.SIE = 0 
+  LI(x9, SSTATUS_SIE)
+  # T-SBI call to execute instruction: csrc sstatus, x9   # sstatus.SIE = 0 (fixed)
   mv a1, x9
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_SSTATUS)
 
 # Testcase: sip.LCOFIP=0, sie.LCOFIE=0, mode=U
-  LI(x9, 0x2000)
+  LI(x9, MIP_LCOFIP)
   # T-SBI call to execute instruction: csrw RVTEST_CSR_MHPMCOUNTER, zero   # no overflow
   mv a1, x0
   RVTEST_TSBI_CSR_WRITE_A1(RVTEST_CSR_MHPMCOUNTER)
   # T-SBI call to execute instruction: csrc sip, x9   # sip.LCOFIP = 0
   mv a1, x9
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_SIP)
-  LI(x15, 0x2000)
+  LI(x15, MIP_LCOFIP)
 Sscofpmf_cg_cp_lcofi_sip_u_lcofi_u_lcofip_0_lcofie_0:
   # T-SBI call to execute instruction: csrc sie, x15   # sie.LCOFIE = 0
   mv a1, x15
@@ -69,14 +68,14 @@ Sscofpmf_cg_cp_lcofi_sip_u_lcofi_u_lcofip_0_lcofie_0:
   RVTEST_TSBI_CSR_WRITE_A1(CSR_SIE)
 
 # Testcase: sip.LCOFIP=0, sie.LCOFIE=1, mode=U
-  LI(x9, 0x2000)
+  LI(x9, MIP_LCOFIP)
   # T-SBI call to execute instruction: csrw RVTEST_CSR_MHPMCOUNTER, zero   # no overflow
   mv a1, x0
   RVTEST_TSBI_CSR_WRITE_A1(RVTEST_CSR_MHPMCOUNTER)
   # T-SBI call to execute instruction: csrc sip, x9   # sip.LCOFIP = 0
   mv a1, x9
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_SIP)
-  LI(x15, 0x2000)
+  LI(x15, MIP_LCOFIP)
 Sscofpmf_cg_cp_lcofi_sip_u_lcofi_u_lcofip_0_lcofie_1:
   # T-SBI call to execute instruction: csrs sie, x15   # sie.LCOFIE = 1
   mv a1, x15
@@ -90,11 +89,11 @@ Sscofpmf_cg_cp_lcofi_sip_u_lcofi_u_lcofip_0_lcofie_1:
   RVTEST_TSBI_CSR_WRITE_A1(CSR_SIE)
 
 # Testcase: sip.LCOFIP=1, sie.LCOFIE=0, mode=U
-  LI(x9, 0x2000)
+  LI(x9, MIP_LCOFIP)
   # T-SBI call to execute instruction: csrs sip, x9   # sip.LCOFIP = 1
   mv a1, x9
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_SIP)
-  LI(x15, 0x2000)
+  LI(x15, MIP_LCOFIP)
 Sscofpmf_cg_cp_lcofi_sip_u_lcofi_u_lcofip_1_lcofie_0:
   # T-SBI call to execute instruction: csrc sie, x15   # sie.LCOFIE = 0
   mv a1, x15
@@ -110,11 +109,11 @@ Sscofpmf_cg_cp_lcofi_sip_u_lcofi_u_lcofip_1_lcofie_0:
   RVTEST_TSBI_CSR_WRITE_A1(CSR_SIE)
 
 # Testcase: sip.LCOFIP=1, sie.LCOFIE=1, mode=U
-  LI(x9, 0x2000)
+  LI(x9, MIP_LCOFIP)
   # T-SBI call to execute instruction: csrs sip, x9   # sip.LCOFIP = 1
   mv a1, x9
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_SIP)
-  LI(x15, 0x2000)
+  LI(x15, MIP_LCOFIP)
 Sscofpmf_cg_cp_lcofi_sip_u_lcofi_u_lcofip_1_lcofie_1:
   # T-SBI call to execute instruction: csrs sie, x15   # sie.LCOFIE = 1
   mv a1, x15
@@ -129,14 +128,14 @@ Sscofpmf_cg_cp_lcofi_sip_u_lcofi_u_lcofip_1_lcofie_1:
   mv a1, x0
   RVTEST_TSBI_CSR_WRITE_A1(CSR_SIE)
 
-  LI(x15, 0x2000)
+  LI(x15, MIP_LCOFIP)
   # T-SBI call to execute instruction: csrc sip, x15      # clear LCOFIP
   mv a1, x15
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_SIP)
   # T-SBI call to execute instruction: csrc sie, x15      # clear LCOFIE
   mv a1, x15
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_SIE)
-  LI(x9, 0x2)
+  LI(x9, SSTATUS_SIE)
   # T-SBI call to execute instruction: csrc sstatus, x9   # clear sstatus.SIE
   mv a1, x9
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_SSTATUS)

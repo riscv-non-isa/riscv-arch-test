@@ -5,102 +5,21 @@
 # SPDX-License-Identifier: Apache-2.0
 ##################################
 
-from testgen.asm.helpers import comment_banner
-from testgen.asm.tsbi import tsbi_call_or_direct
 from testgen.data.state import TestData
 from testgen.data.test_chunk import TestChunk
-from testgen.priv.extensions.SscofpmfCommon import generate_sscofpmf_suite
+from testgen.priv.extensions.SscofpmfCommon import generate_lcofi_sip_tests, generate_sscofpmf_suite
 from testgen.priv.registry import add_priv_test_generator
-
-
-def _generate_lcofi_sip_u_tests(test_data: TestData) -> list[str]:
-    ######################################
-    covergroup = "Sscofpmf_cg"
-    coverpoint = "cp_lcofi_sip_u"
-    ######################################
-
-    LCOFI_BIT = 1 << 13
-    SIE_BIT = 0x2
-
-    r_val, r_temp = test_data.int_regs.get_registers(2)
-
-    lines = [
-        comment_banner(
-            coverpoint,
-            "Interrupt pending and enable, mode = U.\n"
-            "mideleg.LCOFI=1 (from the boot setup) and sstatus.SIE=0 held fixed;\n"
-            "sweep sip.LCOFIP x sie.LCOFIE.\n"
-            "Sample point is the T-SBI delegate's sret back to U (sstatus.SPP=0).\n",
-        ),
-        "",
-        tsbi_call_or_direct("csrw sie, zero      # disable all S-mode interrupts", "U"),
-        tsbi_call_or_direct("csrw RVTEST_CSR_MHPMEVENT, zero", "U"),
-        f"LI(x{r_val}, {hex(SIE_BIT)})",
-        tsbi_call_or_direct(f"csrc sstatus, x{r_val}   # sstatus.SIE = 0 ", "U"),
-    ]
-
-    for lcofip in [0, 1]:
-        for lcofie in [0, 1]:
-            binname = f"lcofi_u_lcofip_{lcofip}_lcofie_{lcofie}"
-            lines.extend(
-                [
-                    "",
-                    f"# Testcase: sip.LCOFIP={lcofip}, sie.LCOFIE={lcofie}, mode=U",
-                    f"LI(x{r_val}, {hex(LCOFI_BIT)})",
-                ]
-            )
-
-            if lcofip:
-                lines.append(tsbi_call_or_direct(f"csrs sip, x{r_val}   # sip.LCOFIP = 1", "U"))
-            else:
-                lines.extend(
-                    [
-                        tsbi_call_or_direct("csrw RVTEST_CSR_MHPMCOUNTER, zero   # no overflow", "U"),
-                        tsbi_call_or_direct(f"csrc sip, x{r_val}   # sip.LCOFIP = 0", "U"),
-                    ]
-                )
-
-            lines.extend(
-                [
-                    f"LI(x{r_temp}, {hex(LCOFI_BIT)})",
-                    test_data.add_testcase(binname, coverpoint, covergroup),
-                    tsbi_call_or_direct(
-                        f"{'csrs' if lcofie else 'csrc'} sie, x{r_temp}   # sie.LCOFIE = {lcofie}", "U"
-                    ),
-                    "",
-                    f"RVTEST_IDLE_FOR_INTERRUPT(x{r_temp})",
-                    "",
-                    (tsbi_call_or_direct(f"csrc sip, x{r_temp}   # clear LCOFIP", "U") if lcofip else ""),
-                    tsbi_call_or_direct("csrw sie, zero        # clear LCOFIE", "U"),
-                ]
-            )
-
-    lines.extend(
-        [
-            "",
-            f"LI(x{r_temp}, {hex(LCOFI_BIT)})",
-            tsbi_call_or_direct(f"csrc sip, x{r_temp}      # clear LCOFIP", "U"),
-            tsbi_call_or_direct(f"csrc sie, x{r_temp}      # clear LCOFIE", "U"),
-            f"LI(x{r_val}, {hex(SIE_BIT)})",
-            tsbi_call_or_direct(f"csrc sstatus, x{r_val}   # clear sstatus.SIE", "U"),
-            tsbi_call_or_direct("csrw RVTEST_CSR_MHPMCOUNTER, zero", "U"),
-            tsbi_call_or_direct("csrw RVTEST_CSR_MHPMEVENT, zero", "U"),
-        ]
-    )
-
-    test_data.int_regs.return_registers([r_val, r_temp])
-    return lines
 
 
 @add_priv_test_generator(
     "SscofpmfU",
-    required_extensions=["Sscofpmf"],
+    required_extensions=["Sscofpmf", "U"],
 )
 def make_sscofpmfu(test_data: TestData) -> list[TestChunk]:
     """Generate tests for the SscofpmfU performance-counter-overflow testsuite."""
     test_chunks: list[TestChunk] = []
     tc = test_data.begin_test_chunk("interrupt")
-    tc.code.extend(_generate_lcofi_sip_u_tests(test_data))
+    tc.code.extend(generate_lcofi_sip_tests(test_data, "U"))
     test_chunks.append(test_data.end_test_chunk())
     test_chunks.extend(generate_sscofpmf_suite(test_data, "U"))
     return test_chunks

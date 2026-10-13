@@ -9,7 +9,7 @@
 ///////////////////////////////////////////
 
 ##### START_TEST_CONFIG #####
-# REQUIRED_EXTENSIONS: ['I', 'Sscofpmf']
+# REQUIRED_EXTENSIONS: ['I', 'Sscofpmf', 'U']
 # # # no param constraints
 # MARCH: rv${XLEN}i_zicsr_zifencei_sscofpmf
 ##### END_TEST_CONFIG #####

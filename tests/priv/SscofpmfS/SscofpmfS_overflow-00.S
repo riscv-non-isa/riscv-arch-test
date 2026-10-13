@@ -322,7 +322,7 @@ Sscofpmf_cg_cp_of_set_on_overflow_of_overflow_s_ei_11100:
   # T-SBI call to execute instruction: csrr x13, RVTEST_CSR_MHPMCOUNTER   # preset as read back
   RVTEST_TSBI_CSR_READ(RVTEST_CSR_MHPMCOUNTER)
   mv x13, a0
-  LI(x9, 0x2000)
+  LI(x9, MIP_LCOFIP)
   csrc sip, x9   # clear LCOFIP
 
   LA(x8, scratch)
@@ -376,7 +376,7 @@ Sscofpmf_cg_cp_of_already_set_of_overflow_s_of_already_set:
   mv a1, x0
   RVTEST_TSBI_CSR_WRITE_A1(RVTEST_CSR_MHPMEVENTH)
 #endif
-  LI(x9, 0x2000)
+  LI(x9, MIP_LCOFIP)
   csrc sip, x9   # clear LCOFIP
 
 # Testcase: software write RVTEST_CSR_MHPMCOUNTER = all_1s, mode = S
@@ -435,7 +435,7 @@ Sscofpmf_cg_cp_overflow_hw_only_overflow_hw_only_s_all_0s:
   # T-SBI call to execute instruction: csrw mie, zero   # disable interrupts
   mv a1, x0
   RVTEST_TSBI_CSR_WRITE_A1(CSR_MIE)
-  LI(x14, 0x2000)
+  LI(x14, MIP_LCOFIP)
   csrc sip, x14   # clear LCOFIP
 
 # Testcase: software-set OF bit directly (no HW increment)

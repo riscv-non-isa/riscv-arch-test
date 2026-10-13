@@ -9,7 +9,7 @@
 ///////////////////////////////////////////
 
 ##### START_TEST_CONFIG #####
-# REQUIRED_EXTENSIONS: ['I', 'Sscofpmf']
+# REQUIRED_EXTENSIONS: ['I', 'Sscofpmf', 'U']
 # # # no param constraints
 # MARCH: rv${XLEN}i_zicsr_zifencei_sscofpmf
 ##### END_TEST_CONFIG #####
@@ -235,7 +235,7 @@ Sscofpmf_cg_cp_of_set_on_overflow_of_overflow_u_ei_11100:
   # T-SBI call to execute instruction: csrr x6, RVTEST_CSR_MHPMCOUNTER   # preset as read back
   RVTEST_TSBI_CSR_READ(RVTEST_CSR_MHPMCOUNTER)
   mv x6, a0
-  LI(x8, 0x2000)
+  LI(x8, MIP_LCOFIP)
 #ifdef S_SUPPORTED
   # T-SBI call to execute instruction: csrc sip, x8   # clear LCOFIP
   mv a1, x8
@@ -305,7 +305,7 @@ Sscofpmf_cg_cp_of_already_set_of_overflow_u_of_already_set:
   mv a1, x0
   RVTEST_TSBI_CSR_WRITE_A1(RVTEST_CSR_MHPMEVENTH)
 #endif
-  LI(x14, 0x2000)
+  LI(x14, MIP_LCOFIP)
 #ifdef S_SUPPORTED
   # T-SBI call to execute instruction: csrc sip, x14   # clear LCOFIP
   mv a1, x14
@@ -372,7 +372,7 @@ Sscofpmf_cg_cp_overflow_hw_only_overflow_hw_only_u_all_0s:
   # T-SBI call to execute instruction: csrw mie, zero   # disable interrupts
   mv a1, x0
   RVTEST_TSBI_CSR_WRITE_A1(CSR_MIE)
-  LI(x13, 0x2000)
+  LI(x13, MIP_LCOFIP)
 #ifdef S_SUPPORTED
   # T-SBI call to execute instruction: csrc sip, x13   # clear LCOFIP
   mv a1, x13

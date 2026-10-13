@@ -32,76 +32,75 @@ RVTEST_BEGIN
 /////////////////////////////////
 // cp_lcofi_sip_s
 //   Interrupt pending and enable, mode = S.
-//   mideleg.LCOFI=1 from the boot-to-S setup (required to reach S-mode with
-//   LCOFI visible), sstatus.SIE=1 held fixed per testplan; sweep is
-//   sip.LCOFIP x sie.LCOFIE.
+//   mideleg.LCOFI=1 (from the boot setup) and sstatus.SIE=1 held fixed;
+//   sweep sip.LCOFIP x sie.LCOFIE.
 /////////////////////////////////
 
   csrw sie, zero      # disable all S-mode interrupts
   # T-SBI call to execute instruction: csrw RVTEST_CSR_MHPMEVENT, zero
   mv a1, x0
   RVTEST_TSBI_CSR_WRITE_A1(RVTEST_CSR_MHPMEVENT)
-  LI(x13, 0x2)
+  LI(x13, SSTATUS_SIE)
   csrs sstatus, x13   # sstatus.SIE = 1 (fixed)
 
 # Testcase: sip.LCOFIP=0, sie.LCOFIE=0, mode=S
-  LI(x13, 0x2000)
-  # T-SBI call to execute instruction: csrw RVTEST_CSR_MHPMCOUNTER, zero   # keep counter clear -- no overflow
+  LI(x13, MIP_LCOFIP)
+  # T-SBI call to execute instruction: csrw RVTEST_CSR_MHPMCOUNTER, zero   # no overflow
   mv a1, x0
   RVTEST_TSBI_CSR_WRITE_A1(RVTEST_CSR_MHPMCOUNTER)
-  csrc sip, x13   # explicitly hold sip.LCOFIP = 0 (touch it so it samples)
-  LI(x15, 0x2000)
+  csrc sip, x13   # sip.LCOFIP = 0
+  LI(x15, MIP_LCOFIP)
+Sscofpmf_cg_cp_lcofi_sip_s_lcofi_s_lcofip_0_lcofie_0:
   csrc sie, x15   # sie.LCOFIE = 0
 
-Sscofpmf_cg_cp_lcofi_sip_s_lcofi_s_lcofip_0_lcofie_0:
   RVTEST_IDLE_FOR_INTERRUPT(x15)
 
 
-  csrw sie, zero        # disable LCOFIE before next iteration
+  csrw sie, zero        # clear LCOFIE
 
 # Testcase: sip.LCOFIP=0, sie.LCOFIE=1, mode=S
-  LI(x13, 0x2000)
-  # T-SBI call to execute instruction: csrw RVTEST_CSR_MHPMCOUNTER, zero   # keep counter clear -- no overflow
+  LI(x13, MIP_LCOFIP)
+  # T-SBI call to execute instruction: csrw RVTEST_CSR_MHPMCOUNTER, zero   # no overflow
   mv a1, x0
   RVTEST_TSBI_CSR_WRITE_A1(RVTEST_CSR_MHPMCOUNTER)
-  csrc sip, x13   # explicitly hold sip.LCOFIP = 0 (touch it so it samples)
-  LI(x15, 0x2000)
+  csrc sip, x13   # sip.LCOFIP = 0
+  LI(x15, MIP_LCOFIP)
+Sscofpmf_cg_cp_lcofi_sip_s_lcofi_s_lcofip_0_lcofie_1:
   csrs sie, x15   # sie.LCOFIE = 1
 
-Sscofpmf_cg_cp_lcofi_sip_s_lcofi_s_lcofip_0_lcofie_1:
   RVTEST_IDLE_FOR_INTERRUPT(x15)
 
 
-  csrw sie, zero        # disable LCOFIE before next iteration
+  csrw sie, zero        # clear LCOFIE
 
 # Testcase: sip.LCOFIP=1, sie.LCOFIE=0, mode=S
-  LI(x13, 0x2000)
-  csrs sip, x13   # set sip.LCOFIP directly
-  LI(x15, 0x2000)
+  LI(x13, MIP_LCOFIP)
+  csrs sip, x13   # sip.LCOFIP = 1
+  LI(x15, MIP_LCOFIP)
+Sscofpmf_cg_cp_lcofi_sip_s_lcofi_s_lcofip_1_lcofie_0:
   csrc sie, x15   # sie.LCOFIE = 0
 
-Sscofpmf_cg_cp_lcofi_sip_s_lcofi_s_lcofip_1_lcofie_0:
   RVTEST_IDLE_FOR_INTERRUPT(x15)
 
-  csrc sip, x15   # clear LCOFIP for next iteration (if it latched)
-  csrw sie, zero        # disable LCOFIE before next iteration
+  csrc sip, x15   # clear LCOFIP
+  csrw sie, zero        # clear LCOFIE
 
 # Testcase: sip.LCOFIP=1, sie.LCOFIE=1, mode=S
-  LI(x13, 0x2000)
-  csrs sip, x13   # set sip.LCOFIP directly
-  LI(x15, 0x2000)
+  LI(x13, MIP_LCOFIP)
+  csrs sip, x13   # sip.LCOFIP = 1
+  LI(x15, MIP_LCOFIP)
+Sscofpmf_cg_cp_lcofi_sip_s_lcofi_s_lcofip_1_lcofie_1:
   csrs sie, x15   # sie.LCOFIE = 1
 
-Sscofpmf_cg_cp_lcofi_sip_s_lcofi_s_lcofip_1_lcofie_1:
   RVTEST_IDLE_FOR_INTERRUPT(x15)
 
-  csrc sip, x15   # clear LCOFIP for next iteration (if it latched)
-  csrw sie, zero        # disable LCOFIE before next iteration
+  csrc sip, x15   # clear LCOFIP
+  csrw sie, zero        # clear LCOFIE
 
-  LI(x15, 0x2000)
+  LI(x15, MIP_LCOFIP)
   csrc sip, x15      # clear LCOFIP
   csrc sie, x15      # clear LCOFIE
-  LI(x13, 0x2)
+  LI(x13, SSTATUS_SIE)
   csrc sstatus, x13   # clear sstatus.SIE
   # T-SBI call to execute instruction: csrw RVTEST_CSR_MHPMCOUNTER, zero
   mv a1, x0
@@ -126,7 +125,7 @@ Sscofpmf_cg_cp_lcofi_sip_s_lcofi_s_lcofip_1_lcofie_1:
   # T-SBI call to execute instruction: csrw RVTEST_CSR_MHPMEVENT, zero
   mv a1, x0
   RVTEST_TSBI_CSR_WRITE_A1(RVTEST_CSR_MHPMEVENT)
-  csrsi sstatus, 0x2   # sstatus.SIE = 1
+  csrsi sstatus, SSTATUS_SIE   # sstatus.SIE = 1
 
 #ifdef UDB_SEI_INTR_IMPL
 # Testcase: competing interrupt = seip
@@ -174,7 +173,7 @@ Sscofpmf_cg_cp_lcofip_priority_s_lcofip_priority_s_seip:
   RVTEST_SIGUPD(x2, x5, x4, x13, Sscofpmf_cg_cp_lcofip_priority_s_lcofip_priority_s_seip, Sscofpmf_cg_cp_lcofip_priority_s_lcofip_priority_s_seip_str)
 
   RVTEST_CLR_SEXT_INT_S
-  LI(x8, 0x2000)
+  LI(x8, MIP_LCOFIP)
   csrc sip, x8   # clear LCOFIP for next iteration
   csrw sie, zero   # disable all before next iteration
 #endif
@@ -225,7 +224,7 @@ Sscofpmf_cg_cp_lcofip_priority_s_lcofip_priority_s_stip:
   RVTEST_SIGUPD(x2, x5, x4, x13, Sscofpmf_cg_cp_lcofip_priority_s_lcofip_priority_s_stip, Sscofpmf_cg_cp_lcofip_priority_s_lcofip_priority_s_stip_str)
 
   RVTEST_CLR_STIME_INT_S
-  LI(x8, 0x2000)
+  LI(x8, MIP_LCOFIP)
   csrc sip, x8   # clear LCOFIP for next iteration
   csrw sie, zero   # disable all before next iteration
 #endif
@@ -276,7 +275,7 @@ Sscofpmf_cg_cp_lcofip_priority_s_lcofip_priority_s_ssip:
   RVTEST_SIGUPD(x2, x5, x4, x13, Sscofpmf_cg_cp_lcofip_priority_s_lcofip_priority_s_ssip, Sscofpmf_cg_cp_lcofip_priority_s_lcofip_priority_s_ssip_str)
 
   RVTEST_CLR_SSW_INT_S
-  LI(x8, 0x2000)
+  LI(x8, MIP_LCOFIP)
   csrc sip, x8   # clear LCOFIP for next iteration
   csrw sie, zero   # disable all before next iteration
 #endif
@@ -324,11 +323,11 @@ Sscofpmf_cg_cp_lcofip_priority_s_lcofip_priority_s_none:
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x13, Sscofpmf_cg_cp_lcofip_priority_s_lcofip_priority_s_none, Sscofpmf_cg_cp_lcofip_priority_s_lcofip_priority_s_none_str)
 
-  LI(x8, 0x2000)
+  LI(x8, MIP_LCOFIP)
   csrc sip, x8   # clear LCOFIP for next iteration
   csrw sie, zero   # disable all before next iteration
 
-  csrci sstatus, 0x2   # sstatus.SIE = 0
+  csrci sstatus, SSTATUS_SIE   # sstatus.SIE = 0
   # T-SBI call to execute instruction: csrw RVTEST_CSR_MHPMEVENT, zero   # stop counting, clear OF
   mv a1, x0
   RVTEST_TSBI_CSR_WRITE_A1(RVTEST_CSR_MHPMEVENT)
