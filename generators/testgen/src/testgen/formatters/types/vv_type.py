@@ -130,7 +130,7 @@ def format_vv_like_type(
         setup.extend(prep_mask_v(params.maskval, test_data, params))
 
     # The register group size: for VMVR it is the register count encoded in the instruction,
-    # otherwise the LMUL in vtype
+    # otherwise it is the LMUL in vtype
     lmul = lmul_override if lmul_override is not None else params.lmul
 
     vd_vl = params.vl if params.vector_suite == "base" else "vlmax"
@@ -170,7 +170,7 @@ def format_vv_like_type(
         test_data.vec_regs.return_register(0)
 
     min_vlen = compute_egs_vlen(params.sew, lmul, egs)
-    # Guard on the LMUL in vtype, which differs from lmul for VMVR
+    # Guard on the LMUL in vtype, which differs from the lmul variable for VMVR
     handle_parameter_exclusions(params.lmul, setup, check, min_vlen=min_vlen)
 
     return (setup, test, check)
