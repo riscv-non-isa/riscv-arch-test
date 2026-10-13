@@ -13,6 +13,10 @@ from testgen.asm.tsbi import tsbi_call_or_direct
 from testgen.constants import INDENT
 from testgen.data.state import TestData
 
+# CSRs whose SGEIE/SGEI bit is read-only zero in the reference when GEILEN is zero.
+# Some DUTs keep it writable because their H extension enables the bit unconditionally.
+_OPTIONAL_GUEST_INTERRUPT_CSRS = ("mie", "mideleg")
+
 
 def gen_csr_read_sigupd(check_reg: int, csr: tuple, test_data: TestData, mask_reg: int | None = None) -> str:
     """
@@ -35,6 +39,16 @@ def gen_csr_read_sigupd(check_reg: int, csr: tuple, test_data: TestData, mask_re
     csr_name, mask = csr
     assert test_data.test_chunk is not None, "No active test chunk — call begin_test_chunk() first"
     if mask is None:
+        if csr_name in _OPTIONAL_GUEST_INTERRUPT_CSRS:
+            temp_reg = test_data.int_regs.get_register()
+            lines = [
+                f"{INDENT}# Read {csr_name} into x{check_reg} and check against expected.",
+                f"csrr x{check_reg}, {csr_name}    # Read CSR",
+                *_clear_optional_guest_interrupt_bits(check_reg, temp_reg),
+                write_sigupd(check_reg, test_data),
+            ]
+            test_data.int_regs.return_register(temp_reg)
+            return "\n".join(lines)
         test_data.test_chunk.sigupd_count += 1
         return (
             f"{INDENT}# Read {csr_name} into x{check_reg} and check against expected.\n"
@@ -42,12 +56,17 @@ def gen_csr_read_sigupd(check_reg: int, csr: tuple, test_data: TestData, mask_re
         )
     else:
         assert mask_reg is not None, "mask_reg must be provided when csr mask is not None"
-        return (
-            f"{INDENT}# Read {csr_name} into x{check_reg}, keep only bits specified by mask, and check against expected.\n"
-            f"csrr x{check_reg}, {csr_name}    # Read CSR\n"
-            f"and x{check_reg}, x{check_reg}, x{mask_reg}    # keep only masked bits {mask:#x}\n"
-            + write_sigupd(check_reg, test_data)
-        )
+        lines = [
+            f"{INDENT}# Read {csr_name} into x{check_reg}, keep only bits specified by mask, and check against expected.",
+            f"csrr x{check_reg}, {csr_name}    # Read CSR",
+            f"and x{check_reg}, x{check_reg}, x{mask_reg}    # keep only masked bits {mask:#x}",
+        ]
+        if csr_name in _OPTIONAL_GUEST_INTERRUPT_CSRS:
+            temp_reg = test_data.int_regs.get_register()
+            lines.extend(_clear_optional_guest_interrupt_bits(check_reg, temp_reg))
+            test_data.int_regs.return_register(temp_reg)
+        lines.append(write_sigupd(check_reg, test_data))
+        return "\n".join(lines)
 
 
 def gen_csr_write_sigupd(check_reg: int, csr_name: str, test_data: TestData) -> str:
@@ -71,6 +90,16 @@ def gen_csr_write_sigupd(check_reg: int, csr_name: str, test_data: TestData) -> 
         f"{INDENT}# Write x{check_reg} to {csr_name}, read back and check against expected.\n"
         f"RVTEST_SIGUPD_CSR_WRITE({csr_name}, x{check_reg}, {test_data.current_testcase_label}, {test_data.current_testcase_label}_str)"
     )
+
+
+def _clear_optional_guest_interrupt_bits(check_reg: int, temp_reg: int) -> list[str]:
+    """Clear SGEIE/SGEI from a readback; they are read-only zero in the reference when GEILEN=0."""
+    return [
+        "#if defined(UDB_NUM_EXTERNAL_GUEST_INTERRUPTS) && UDB_NUM_EXTERNAL_GUEST_INTERRUPTS == 0",
+        f"LI(x{temp_reg}, ~(1 << 12))",
+        f"and x{check_reg}, x{check_reg}, x{temp_reg}",
+        "#endif",
+    ]
 
 
 def csr_access_test(

@@ -13,7 +13,7 @@
   "clear_tinst_on_cbo_inval": false,
   "enable_pmp_na4": false,
   "enable_pmp_tor": true,
-  "guest_interrupt_count": 5,
+  "guest_interrupt_count": 63,
   "indexed_nmi": false,
 
   "memmap": {
@@ -74,6 +74,9 @@
       "mask": "0x000007FF"
     },
     "scounteren": {
+      "mask": "0x000007FF"
+    },
+    "hcounteren": {
       "mask": "0x000007FF"
     }
   },

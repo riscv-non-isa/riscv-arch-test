@@ -610,7 +610,7 @@
     "H": {
       "mutable_misa": true,
       "supported": true,
-      "geilen": 63,
+      "geilen": 0,
       "guest_page_fault_writes_htval": true,
       // Whether a trap into M or HS mode caused by the specified exception
       // writes the transformed trapping instruction to `mtinst`/`htinst`.
