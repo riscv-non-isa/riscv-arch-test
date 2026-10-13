@@ -6,9 +6,10 @@
 ##################################
 
 from testgen.asm.helpers import comment_banner
+from testgen.asm.tsbi import tsbi_call_or_direct
 from testgen.data.state import TestData
 from testgen.data.test_chunk import TestChunk
-from testgen.priv.extensions.SscofpmfCommon import csr_access, generate_sscofpmf_suite
+from testgen.priv.extensions.SscofpmfCommon import generate_sscofpmf_suite
 from testgen.priv.registry import add_priv_test_generator
 
 
@@ -32,10 +33,10 @@ def _generate_lcofi_sip_u_tests(test_data: TestData) -> list[str]:
             "Sample point is the T-SBI delegate's sret back to U (sstatus.SPP=0).\n",
         ),
         "",
-        csr_access("csrw sie, zero      # disable all S-mode interrupts", "U"),
-        csr_access("csrw RVTEST_CSR_MHPMEVENT, zero", "U"),
+        tsbi_call_or_direct("csrw sie, zero      # disable all S-mode interrupts", "U"),
+        tsbi_call_or_direct("csrw RVTEST_CSR_MHPMEVENT, zero", "U"),
         f"LI(x{r_val}, {hex(SIE_BIT)})",
-        csr_access(f"csrc sstatus, x{r_val}   # sstatus.SIE = 0 ", "U"),
+        tsbi_call_or_direct(f"csrc sstatus, x{r_val}   # sstatus.SIE = 0 ", "U"),
     ]
 
     for lcofip in [0, 1]:
@@ -50,12 +51,12 @@ def _generate_lcofi_sip_u_tests(test_data: TestData) -> list[str]:
             )
 
             if lcofip:
-                lines.append(csr_access(f"csrs sip, x{r_val}   # sip.LCOFIP = 1", "U"))
+                lines.append(tsbi_call_or_direct(f"csrs sip, x{r_val}   # sip.LCOFIP = 1", "U"))
             else:
                 lines.extend(
                     [
-                        csr_access("csrw RVTEST_CSR_MHPMCOUNTER, zero   # no overflow", "U"),
-                        csr_access(f"csrc sip, x{r_val}   # sip.LCOFIP = 0", "U"),
+                        tsbi_call_or_direct("csrw RVTEST_CSR_MHPMCOUNTER, zero   # no overflow", "U"),
+                        tsbi_call_or_direct(f"csrc sip, x{r_val}   # sip.LCOFIP = 0", "U"),
                     ]
                 )
 
@@ -63,12 +64,14 @@ def _generate_lcofi_sip_u_tests(test_data: TestData) -> list[str]:
                 [
                     f"LI(x{r_temp}, {hex(LCOFI_BIT)})",
                     test_data.add_testcase(binname, coverpoint, covergroup),
-                    csr_access(f"{'csrs' if lcofie else 'csrc'} sie, x{r_temp}   # sie.LCOFIE = {lcofie}", "U"),
+                    tsbi_call_or_direct(
+                        f"{'csrs' if lcofie else 'csrc'} sie, x{r_temp}   # sie.LCOFIE = {lcofie}", "U"
+                    ),
                     "",
                     f"RVTEST_IDLE_FOR_INTERRUPT(x{r_temp})",
                     "",
-                    (csr_access(f"csrc sip, x{r_temp}   # clear LCOFIP", "U") if lcofip else ""),
-                    csr_access("csrw sie, zero        # clear LCOFIE", "U"),
+                    (tsbi_call_or_direct(f"csrc sip, x{r_temp}   # clear LCOFIP", "U") if lcofip else ""),
+                    tsbi_call_or_direct("csrw sie, zero        # clear LCOFIE", "U"),
                 ]
             )
 
@@ -76,12 +79,12 @@ def _generate_lcofi_sip_u_tests(test_data: TestData) -> list[str]:
         [
             "",
             f"LI(x{r_temp}, {hex(LCOFI_BIT)})",
-            csr_access(f"csrc sip, x{r_temp}      # clear LCOFIP", "U"),
-            csr_access(f"csrc sie, x{r_temp}      # clear LCOFIE", "U"),
+            tsbi_call_or_direct(f"csrc sip, x{r_temp}      # clear LCOFIP", "U"),
+            tsbi_call_or_direct(f"csrc sie, x{r_temp}      # clear LCOFIE", "U"),
             f"LI(x{r_val}, {hex(SIE_BIT)})",
-            csr_access(f"csrc sstatus, x{r_val}   # clear sstatus.SIE", "U"),
-            csr_access("csrw RVTEST_CSR_MHPMCOUNTER, zero", "U"),
-            csr_access("csrw RVTEST_CSR_MHPMEVENT, zero", "U"),
+            tsbi_call_or_direct(f"csrc sstatus, x{r_val}   # clear sstatus.SIE", "U"),
+            tsbi_call_or_direct("csrw RVTEST_CSR_MHPMCOUNTER, zero", "U"),
+            tsbi_call_or_direct("csrw RVTEST_CSR_MHPMEVENT, zero", "U"),
         ]
     )
 

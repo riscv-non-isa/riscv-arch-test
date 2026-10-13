@@ -143,7 +143,7 @@ def _generate_lcofip_priority_sm_tests(test_data: TestData) -> list[str]:
                 f"# Testcase: competing interrupt = {other_int}",
                 "csrw mip, zero   # clear LCOFIP and other pending bits",
                 "csrw mie, zero   # disable interrupts (clear LCOFIE)",
-                *prime_counter_overflow(r_val, r_temp2, r_temp, r_addr, "Sm"),
+                *prime_counter_overflow(r_val, r_temp2, r_temp, r_addr, "M"),
                 "# the overflow sets OF and raises LCOFIP; mie = 0, so nothing fires yet",
                 "",
             ]
@@ -232,5 +232,5 @@ def make_sscofpmfsm(test_data: TestData) -> list[TestChunk]:
     tc.code.extend(_generate_lcofi_m_tests(test_data))
     tc.code.extend(_generate_lcofip_priority_sm_tests(test_data))
     test_chunks.append(test_data.end_test_chunk())
-    test_chunks.extend(generate_sscofpmf_suite(test_data, "Sm"))
+    test_chunks.extend(generate_sscofpmf_suite(test_data, "M"))
     return test_chunks
