@@ -324,7 +324,6 @@ def make_cp_custom_ordered_index_overlap(
     Tests a data overlap in the index register for the ordered case.
     """
 
-    assert test_data.config.sew is not None, "SEW must be set for vector instructions"
     index_eew = parse_vector_instruction_info(instr_name, instr_type).index_eew
     assert index_eew is not None, f"Could not extract index EEW from {instr_name}"
     # vs2 is loaded with the index EEW, so the data must be index-EEW wide and aligned
