@@ -15,7 +15,7 @@
 ##### END_TEST_CONFIG #####
 
 // Define the size of the signature region
-#define SIGUPD_COUNT 10
+#define SIGUPD_COUNT 14
 
 // Extra defines (if needed) to enable trap handlers, fpu, vector, etc.
 #define BOOT_TO_SMODE
@@ -36,24 +36,29 @@ RVTEST_BEGIN
 //   If RV32: mhpmeventh3...31
 /////////////////////////////////
 
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_scountovf_read_s:
-  csrr x15, scountovf
+# CSR Access Tests for scountovf
+  csrr x15, scountovf    # Save CSR
+  LI(x9, -1)             # write all 1s
+Sscofpmf_cg_cp_sscofpmf_access_scountovf_csrrw1:
+  csrw scountovf, x9    # Write all 1s to CSR
+  # Read scountovf into x13 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(scountovf, x13, Sscofpmf_cg_cp_sscofpmf_access_scountovf_csrrw1, Sscofpmf_cg_cp_sscofpmf_access_scountovf_csrrw1_str)
 
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_scountovf_write_ones_s:
-  LI(x15, -1)
-  csrw scountovf, x15
+Sscofpmf_cg_cp_sscofpmf_access_scountovf_csrrw0:
+  csrw scountovf, zero   # Write all 0s to CSR
+  # Read scountovf into x13 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(scountovf, x13, Sscofpmf_cg_cp_sscofpmf_access_scountovf_csrrw0, Sscofpmf_cg_cp_sscofpmf_access_scountovf_csrrw0_str)
 
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_scountovf_write_zeros_s:
-  csrw scountovf, zero
+Sscofpmf_cg_cp_sscofpmf_access_scountovf_csrs_all:
+  csrs scountovf, x9    # Set all 1s
+  # Read scountovf into x13 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(scountovf, x13, Sscofpmf_cg_cp_sscofpmf_access_scountovf_csrs_all, Sscofpmf_cg_cp_sscofpmf_access_scountovf_csrs_all_str)
 
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_scountovf_set_s:
-  LI(x15, -1)
-  csrs scountovf, x15
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_scountovf_clear_s:
-  LI(x15, -1)
-  csrc scountovf, x15
-
+Sscofpmf_cg_cp_sscofpmf_access_scountovf_csrrc_all:
+  csrc scountovf, x9    # Clear all 1s
+  # Read scountovf into x13 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(scountovf, x13, Sscofpmf_cg_cp_sscofpmf_access_scountovf_csrrc_all, Sscofpmf_cg_cp_sscofpmf_access_scountovf_csrrc_all_str)
+  csrw scountovf, x15       # Restore CSR
 
 // Instantiate trap handlers and other epilog code, call RVMODEL_HALT at end of test
 RVTEST_CODE_END
@@ -65,11 +70,10 @@ RVTEST_DATA_BEGIN
 
 
 // Testcase strings
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_scountovf_read_s_str: .string "\"test: 149; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_scountovf_read_s\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_scountovf_write_ones_s_str: .string "\"test: 150; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_scountovf_write_ones_s\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_scountovf_write_zeros_s_str: .string "\"test: 151; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_scountovf_write_zeros_s\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_scountovf_set_s_str: .string "\"test: 152; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_scountovf_set_s\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_scountovf_clear_s_str: .string "\"test: 153; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_scountovf_clear_s\""
+Sscofpmf_cg_cp_sscofpmf_access_scountovf_csrrw1_str: .string "\"test: 149; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: scountovf_csrrw1\""
+Sscofpmf_cg_cp_sscofpmf_access_scountovf_csrrw0_str: .string "\"test: 150; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: scountovf_csrrw0\""
+Sscofpmf_cg_cp_sscofpmf_access_scountovf_csrs_all_str: .string "\"test: 151; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: scountovf_csrs_all\""
+Sscofpmf_cg_cp_sscofpmf_access_scountovf_csrrc_all_str: .string "\"test: 152; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: scountovf_csrrc_all\""
 
 // End of test data section and model specific data
 RVTEST_DATA_END

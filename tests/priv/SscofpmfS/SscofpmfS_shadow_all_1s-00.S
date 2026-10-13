@@ -36,196 +36,196 @@ RVTEST_BEGIN
 //   mhpmevent3...31.OF: all 0s, walking 1s, all 1s. Read scountovf.
 /////////////////////////////////
 
-  LI(x13, -1)
-  # T-SBI call to execute instruction: csrw mcounteren, x13   # mcounteren = all 1s (fixed for this coverpoint)
-  mv a1, x13
+  LI(x6, -1)
+  # T-SBI call to execute instruction: csrw mcounteren, x6   # mcounteren = all 1s (fixed for this coverpoint)
+  mv a1, x6
   RVTEST_TSBI_CSR_WRITE_A1(CSR_MCOUNTEREN)
 
 # --- Write OF pattern: all_1s across mhpmevent3..31 ---
 #if __riscv_xlen == 32
-  LI(x9, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT3H, x9   # set OF
-  mv a1, x9
+  LI(x6, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT3H, x6   # set OF
+  mv a1, x6
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT3H)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT4H, x9   # set OF
-  mv a1, x9
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT4H, x6   # set OF
+  mv a1, x6
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT4H)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT5H, x9   # set OF
-  mv a1, x9
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT5H, x6   # set OF
+  mv a1, x6
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT5H)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT6H, x9   # set OF
-  mv a1, x9
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT6H, x6   # set OF
+  mv a1, x6
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT6H)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT7H, x9   # set OF
-  mv a1, x9
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT7H, x6   # set OF
+  mv a1, x6
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT7H)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT8H, x9   # set OF
-  mv a1, x9
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT8H, x6   # set OF
+  mv a1, x6
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT8H)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT9H, x9   # set OF
-  mv a1, x9
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT9H, x6   # set OF
+  mv a1, x6
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT9H)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT10H, x9   # set OF
-  mv a1, x9
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT10H, x6   # set OF
+  mv a1, x6
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT10H)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT11H, x9   # set OF
-  mv a1, x9
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT11H, x6   # set OF
+  mv a1, x6
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT11H)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT12H, x9   # set OF
-  mv a1, x9
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT12H, x6   # set OF
+  mv a1, x6
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT12H)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT13H, x9   # set OF
-  mv a1, x9
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT13H, x6   # set OF
+  mv a1, x6
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT13H)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT14H, x9   # set OF
-  mv a1, x9
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT14H, x6   # set OF
+  mv a1, x6
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT14H)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT15H, x9   # set OF
-  mv a1, x9
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT15H, x6   # set OF
+  mv a1, x6
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT15H)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT16H, x9   # set OF
-  mv a1, x9
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT16H, x6   # set OF
+  mv a1, x6
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT16H)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT17H, x9   # set OF
-  mv a1, x9
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT17H, x6   # set OF
+  mv a1, x6
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT17H)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT18H, x9   # set OF
-  mv a1, x9
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT18H, x6   # set OF
+  mv a1, x6
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT18H)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT19H, x9   # set OF
-  mv a1, x9
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT19H, x6   # set OF
+  mv a1, x6
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT19H)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT20H, x9   # set OF
-  mv a1, x9
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT20H, x6   # set OF
+  mv a1, x6
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT20H)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT21H, x9   # set OF
-  mv a1, x9
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT21H, x6   # set OF
+  mv a1, x6
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT21H)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT22H, x9   # set OF
-  mv a1, x9
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT22H, x6   # set OF
+  mv a1, x6
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT22H)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT23H, x9   # set OF
-  mv a1, x9
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT23H, x6   # set OF
+  mv a1, x6
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT23H)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT24H, x9   # set OF
-  mv a1, x9
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT24H, x6   # set OF
+  mv a1, x6
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT24H)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT25H, x9   # set OF
-  mv a1, x9
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT25H, x6   # set OF
+  mv a1, x6
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT25H)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT26H, x9   # set OF
-  mv a1, x9
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT26H, x6   # set OF
+  mv a1, x6
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT26H)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT27H, x9   # set OF
-  mv a1, x9
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT27H, x6   # set OF
+  mv a1, x6
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT27H)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT28H, x9   # set OF
-  mv a1, x9
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT28H, x6   # set OF
+  mv a1, x6
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT28H)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT29H, x9   # set OF
-  mv a1, x9
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT29H, x6   # set OF
+  mv a1, x6
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT29H)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT30H, x9   # set OF
-  mv a1, x9
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT30H, x6   # set OF
+  mv a1, x6
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT30H)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT31H, x9   # set OF
-  mv a1, x9
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT31H, x6   # set OF
+  mv a1, x6
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT31H)
 #else
-  LI(x9, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT3, x9   # set OF
-  mv a1, x9
+  LI(x6, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT3, x6   # set OF
+  mv a1, x6
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT3)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT4, x9   # set OF
-  mv a1, x9
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT4, x6   # set OF
+  mv a1, x6
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT4)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT5, x9   # set OF
-  mv a1, x9
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT5, x6   # set OF
+  mv a1, x6
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT5)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT6, x9   # set OF
-  mv a1, x9
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT6, x6   # set OF
+  mv a1, x6
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT6)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT7, x9   # set OF
-  mv a1, x9
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT7, x6   # set OF
+  mv a1, x6
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT7)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT8, x9   # set OF
-  mv a1, x9
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT8, x6   # set OF
+  mv a1, x6
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT8)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT9, x9   # set OF
-  mv a1, x9
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT9, x6   # set OF
+  mv a1, x6
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT9)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT10, x9   # set OF
-  mv a1, x9
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT10, x6   # set OF
+  mv a1, x6
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT10)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT11, x9   # set OF
-  mv a1, x9
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT11, x6   # set OF
+  mv a1, x6
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT11)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT12, x9   # set OF
-  mv a1, x9
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT12, x6   # set OF
+  mv a1, x6
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT12)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT13, x9   # set OF
-  mv a1, x9
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT13, x6   # set OF
+  mv a1, x6
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT13)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT14, x9   # set OF
-  mv a1, x9
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT14, x6   # set OF
+  mv a1, x6
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT14)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT15, x9   # set OF
-  mv a1, x9
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT15, x6   # set OF
+  mv a1, x6
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT15)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT16, x9   # set OF
-  mv a1, x9
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT16, x6   # set OF
+  mv a1, x6
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT16)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT17, x9   # set OF
-  mv a1, x9
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT17, x6   # set OF
+  mv a1, x6
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT17)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT18, x9   # set OF
-  mv a1, x9
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT18, x6   # set OF
+  mv a1, x6
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT18)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT19, x9   # set OF
-  mv a1, x9
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT19, x6   # set OF
+  mv a1, x6
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT19)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT20, x9   # set OF
-  mv a1, x9
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT20, x6   # set OF
+  mv a1, x6
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT20)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT21, x9   # set OF
-  mv a1, x9
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT21, x6   # set OF
+  mv a1, x6
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT21)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT22, x9   # set OF
-  mv a1, x9
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT22, x6   # set OF
+  mv a1, x6
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT22)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT23, x9   # set OF
-  mv a1, x9
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT23, x6   # set OF
+  mv a1, x6
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT23)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT24, x9   # set OF
-  mv a1, x9
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT24, x6   # set OF
+  mv a1, x6
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT24)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT25, x9   # set OF
-  mv a1, x9
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT25, x6   # set OF
+  mv a1, x6
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT25)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT26, x9   # set OF
-  mv a1, x9
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT26, x6   # set OF
+  mv a1, x6
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT26)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT27, x9   # set OF
-  mv a1, x9
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT27, x6   # set OF
+  mv a1, x6
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT27)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT28, x9   # set OF
-  mv a1, x9
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT28, x6   # set OF
+  mv a1, x6
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT28)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT29, x9   # set OF
-  mv a1, x9
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT29, x6   # set OF
+  mv a1, x6
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT29)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT30, x9   # set OF
-  mv a1, x9
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT30, x6   # set OF
+  mv a1, x6
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT30)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT31, x9   # set OF
-  mv a1, x9
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT31, x6   # set OF
+  mv a1, x6
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT31)
 #endif
 
 Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_all_1s:
-  csrr x6, scountovf   # sample point -- must match OF pattern
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_all_1s, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_all_1s_str)
+  csrr x13, scountovf   # sample point -- must match OF pattern
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_all_1s, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_all_1s_str)
 
 
 // Instantiate trap handlers and other epilog code, call RVMODEL_HALT at end of test
@@ -238,7 +238,7 @@ RVTEST_DATA_BEGIN
 
 
 // Testcase strings
-Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_all_1s_str: .string "\"test: 184; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_s_all_1s\""
+Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_all_1s_str: .string "\"test: 183; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_s_all_1s\""
 
 // End of test data section and model specific data
 RVTEST_DATA_END

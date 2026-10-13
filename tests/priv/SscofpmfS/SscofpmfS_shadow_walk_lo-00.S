@@ -36,16 +36,16 @@ RVTEST_BEGIN
 //   mhpmevent3...31.OF: all 0s, walking 1s, all 1s. Read scountovf.
 /////////////////////////////////
 
-  LI(x9, -1)
-  # T-SBI call to execute instruction: csrw mcounteren, x9   # mcounteren = all 1s (fixed for this coverpoint)
-  mv a1, x9
+  LI(x8, -1)
+  # T-SBI call to execute instruction: csrw mcounteren, x8   # mcounteren = all 1s (fixed for this coverpoint)
+  mv a1, x8
   RVTEST_TSBI_CSR_WRITE_A1(CSR_MCOUNTEREN)
 
 # --- Write OF pattern: all_0s across mhpmevent3..31 ---
 #if __riscv_xlen == 32
-  LI(x13, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
+  LI(x15, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
 #else
-  LI(x13, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
+  LI(x15, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
 #endif
 
 Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_all_0s:
@@ -55,117 +55,117 @@ Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_all_0s:
 
 # --- Write OF pattern: walking1_0 across mhpmevent3..31 ---
 #if __riscv_xlen == 32
-  LI(x15, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT3H, x15   # set OF
-  mv a1, x15
+  LI(x14, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT3H, x14   # set OF
+  mv a1, x14
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT3H)
 #else
-  LI(x15, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT3, x15   # set OF
-  mv a1, x15
+  LI(x14, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT3, x14   # set OF
+  mv a1, x14
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT3)
 #endif
 
 Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_0:
-  csrr x8, scountovf   # sample point -- must match OF pattern
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_0, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_0_str)
+  csrr x6, scountovf   # sample point -- must match OF pattern
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_0, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_0_str)
 
 # --- Write OF pattern: walking1_1 across mhpmevent3..31 ---
 #if __riscv_xlen == 32
-  LI(x14, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
-  # T-SBI call to execute instruction: csrc CSR_MHPMEVENT3H, x14   # clear OF
-  mv a1, x14
+  LI(x8, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
+  # T-SBI call to execute instruction: csrc CSR_MHPMEVENT3H, x8   # clear OF
+  mv a1, x8
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MHPMEVENT3H)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT4H, x14   # set OF
-  mv a1, x14
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT4H, x8   # set OF
+  mv a1, x8
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT4H)
 #else
-  LI(x14, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
-  # T-SBI call to execute instruction: csrc CSR_MHPMEVENT3, x14   # clear OF
-  mv a1, x14
+  LI(x8, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
+  # T-SBI call to execute instruction: csrc CSR_MHPMEVENT3, x8   # clear OF
+  mv a1, x8
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MHPMEVENT3)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT4, x14   # set OF
-  mv a1, x14
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT4, x8   # set OF
+  mv a1, x8
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT4)
 #endif
 
 Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_1:
-  csrr x6, scountovf   # sample point -- must match OF pattern
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_1, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_1_str)
+  csrr x13, scountovf   # sample point -- must match OF pattern
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_1, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_1_str)
 
 # --- Write OF pattern: walking1_2 across mhpmevent3..31 ---
 #if __riscv_xlen == 32
-  LI(x8, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
-  # T-SBI call to execute instruction: csrc CSR_MHPMEVENT4H, x8   # clear OF
-  mv a1, x8
+  LI(x15, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
+  # T-SBI call to execute instruction: csrc CSR_MHPMEVENT4H, x15   # clear OF
+  mv a1, x15
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MHPMEVENT4H)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT5H, x8   # set OF
-  mv a1, x8
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT5H, x15   # set OF
+  mv a1, x15
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT5H)
 #else
-  LI(x8, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
-  # T-SBI call to execute instruction: csrc CSR_MHPMEVENT4, x8   # clear OF
-  mv a1, x8
+  LI(x15, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
+  # T-SBI call to execute instruction: csrc CSR_MHPMEVENT4, x15   # clear OF
+  mv a1, x15
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MHPMEVENT4)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT5, x8   # set OF
-  mv a1, x8
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT5, x15   # set OF
+  mv a1, x15
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT5)
 #endif
 
 Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_2:
-  csrr x13, scountovf   # sample point -- must match OF pattern
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_2, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_2_str)
+  csrr x6, scountovf   # sample point -- must match OF pattern
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_2, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_2_str)
 
 # --- Write OF pattern: walking1_3 across mhpmevent3..31 ---
 #if __riscv_xlen == 32
-  LI(x15, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
-  # T-SBI call to execute instruction: csrc CSR_MHPMEVENT5H, x15   # clear OF
-  mv a1, x15
+  LI(x6, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
+  # T-SBI call to execute instruction: csrc CSR_MHPMEVENT5H, x6   # clear OF
+  mv a1, x6
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MHPMEVENT5H)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT6H, x15   # set OF
-  mv a1, x15
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT6H, x6   # set OF
+  mv a1, x6
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT6H)
 #else
-  LI(x15, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
-  # T-SBI call to execute instruction: csrc CSR_MHPMEVENT5, x15   # clear OF
-  mv a1, x15
+  LI(x6, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
+  # T-SBI call to execute instruction: csrc CSR_MHPMEVENT5, x6   # clear OF
+  mv a1, x6
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MHPMEVENT5)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT6, x15   # set OF
-  mv a1, x15
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT6, x6   # set OF
+  mv a1, x6
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT6)
 #endif
 
 Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_3:
-  csrr x6, scountovf   # sample point -- must match OF pattern
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_3, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_3_str)
+  csrr x14, scountovf   # sample point -- must match OF pattern
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_3, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_3_str)
 
 # --- Write OF pattern: walking1_4 across mhpmevent3..31 ---
 #if __riscv_xlen == 32
-  LI(x6, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
-  # T-SBI call to execute instruction: csrc CSR_MHPMEVENT6H, x6   # clear OF
-  mv a1, x6
+  LI(x8, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
+  # T-SBI call to execute instruction: csrc CSR_MHPMEVENT6H, x8   # clear OF
+  mv a1, x8
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MHPMEVENT6H)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT7H, x6   # set OF
-  mv a1, x6
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT7H, x8   # set OF
+  mv a1, x8
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT7H)
 #else
-  LI(x6, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
-  # T-SBI call to execute instruction: csrc CSR_MHPMEVENT6, x6   # clear OF
-  mv a1, x6
+  LI(x8, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
+  # T-SBI call to execute instruction: csrc CSR_MHPMEVENT6, x8   # clear OF
+  mv a1, x8
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MHPMEVENT6)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT7, x6   # set OF
-  mv a1, x6
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT7, x8   # set OF
+  mv a1, x8
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT7)
 #endif
 
 Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_4:
-  csrr x14, scountovf   # sample point -- must match OF pattern
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_4, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_4_str)
+  csrr x13, scountovf   # sample point -- must match OF pattern
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_4, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_4_str)
 
 # --- Write OF pattern: walking1_5 across mhpmevent3..31 ---
 #if __riscv_xlen == 32
@@ -193,116 +193,116 @@ Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_5:
 
 # --- Write OF pattern: walking1_6 across mhpmevent3..31 ---
 #if __riscv_xlen == 32
-  LI(x8, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
-  # T-SBI call to execute instruction: csrc CSR_MHPMEVENT8H, x8   # clear OF
-  mv a1, x8
+  LI(x13, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
+  # T-SBI call to execute instruction: csrc CSR_MHPMEVENT8H, x13   # clear OF
+  mv a1, x13
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MHPMEVENT8H)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT9H, x8   # set OF
-  mv a1, x8
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT9H, x13   # set OF
+  mv a1, x13
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT9H)
 #else
-  LI(x8, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
-  # T-SBI call to execute instruction: csrc CSR_MHPMEVENT8, x8   # clear OF
-  mv a1, x8
+  LI(x13, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
+  # T-SBI call to execute instruction: csrc CSR_MHPMEVENT8, x13   # clear OF
+  mv a1, x13
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MHPMEVENT8)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT9, x8   # set OF
-  mv a1, x8
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT9, x13   # set OF
+  mv a1, x13
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT9)
 #endif
 
 Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_6:
-  csrr x13, scountovf   # sample point -- must match OF pattern
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_6, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_6_str)
+  csrr x6, scountovf   # sample point -- must match OF pattern
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_6, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_6_str)
 
 # --- Write OF pattern: walking1_7 across mhpmevent3..31 ---
 #if __riscv_xlen == 32
-  LI(x13, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
-  # T-SBI call to execute instruction: csrc CSR_MHPMEVENT9H, x13   # clear OF
-  mv a1, x13
+  LI(x8, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
+  # T-SBI call to execute instruction: csrc CSR_MHPMEVENT9H, x8   # clear OF
+  mv a1, x8
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MHPMEVENT9H)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT10H, x13   # set OF
-  mv a1, x13
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT10H, x8   # set OF
+  mv a1, x8
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT10H)
 #else
-  LI(x13, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
-  # T-SBI call to execute instruction: csrc CSR_MHPMEVENT9, x13   # clear OF
-  mv a1, x13
+  LI(x8, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
+  # T-SBI call to execute instruction: csrc CSR_MHPMEVENT9, x8   # clear OF
+  mv a1, x8
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MHPMEVENT9)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT10, x13   # set OF
-  mv a1, x13
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT10, x8   # set OF
+  mv a1, x8
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT10)
 #endif
 
 Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_7:
-  csrr x6, scountovf   # sample point -- must match OF pattern
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_7, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_7_str)
+  csrr x9, scountovf   # sample point -- must match OF pattern
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_7, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_7_str)
 
 # --- Write OF pattern: walking1_8 across mhpmevent3..31 ---
 #if __riscv_xlen == 32
-  LI(x8, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
-  # T-SBI call to execute instruction: csrc CSR_MHPMEVENT10H, x8   # clear OF
-  mv a1, x8
+  LI(x15, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
+  # T-SBI call to execute instruction: csrc CSR_MHPMEVENT10H, x15   # clear OF
+  mv a1, x15
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MHPMEVENT10H)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT11H, x8   # set OF
-  mv a1, x8
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT11H, x15   # set OF
+  mv a1, x15
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT11H)
 #else
-  LI(x8, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
-  # T-SBI call to execute instruction: csrc CSR_MHPMEVENT10, x8   # clear OF
-  mv a1, x8
+  LI(x15, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
+  # T-SBI call to execute instruction: csrc CSR_MHPMEVENT10, x15   # clear OF
+  mv a1, x15
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MHPMEVENT10)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT11, x8   # set OF
-  mv a1, x8
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT11, x15   # set OF
+  mv a1, x15
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT11)
 #endif
 
 Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_8:
-  csrr x9, scountovf   # sample point -- must match OF pattern
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_8, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_8_str)
+  csrr x14, scountovf   # sample point -- must match OF pattern
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_8, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_8_str)
 
 # --- Write OF pattern: walking1_9 across mhpmevent3..31 ---
 #if __riscv_xlen == 32
-  LI(x15, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
-  # T-SBI call to execute instruction: csrc CSR_MHPMEVENT11H, x15   # clear OF
-  mv a1, x15
+  LI(x13, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
+  # T-SBI call to execute instruction: csrc CSR_MHPMEVENT11H, x13   # clear OF
+  mv a1, x13
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MHPMEVENT11H)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT12H, x15   # set OF
-  mv a1, x15
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT12H, x13   # set OF
+  mv a1, x13
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT12H)
 #else
-  LI(x15, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
-  # T-SBI call to execute instruction: csrc CSR_MHPMEVENT11, x15   # clear OF
-  mv a1, x15
+  LI(x13, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
+  # T-SBI call to execute instruction: csrc CSR_MHPMEVENT11, x13   # clear OF
+  mv a1, x13
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MHPMEVENT11)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT12, x15   # set OF
-  mv a1, x15
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT12, x13   # set OF
+  mv a1, x13
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT12)
 #endif
 
 Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_9:
-  csrr x14, scountovf   # sample point -- must match OF pattern
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_9, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_9_str)
+  csrr x15, scountovf   # sample point -- must match OF pattern
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_9, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_9_str)
 
 # --- Write OF pattern: walking1_10 across mhpmevent3..31 ---
 #if __riscv_xlen == 32
-  LI(x13, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
-  # T-SBI call to execute instruction: csrc CSR_MHPMEVENT12H, x13   # clear OF
-  mv a1, x13
+  LI(x9, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
+  # T-SBI call to execute instruction: csrc CSR_MHPMEVENT12H, x9   # clear OF
+  mv a1, x9
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MHPMEVENT12H)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT13H, x13   # set OF
-  mv a1, x13
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT13H, x9   # set OF
+  mv a1, x9
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT13H)
 #else
-  LI(x13, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
-  # T-SBI call to execute instruction: csrc CSR_MHPMEVENT12, x13   # clear OF
-  mv a1, x13
+  LI(x9, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
+  # T-SBI call to execute instruction: csrc CSR_MHPMEVENT12, x9   # clear OF
+  mv a1, x9
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MHPMEVENT12)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT13, x13   # set OF
-  mv a1, x13
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT13, x9   # set OF
+  mv a1, x9
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT13)
 #endif
 
@@ -313,51 +313,51 @@ Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_10:
 
 # --- Write OF pattern: walking1_11 across mhpmevent3..31 ---
 #if __riscv_xlen == 32
-  LI(x9, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
-  # T-SBI call to execute instruction: csrc CSR_MHPMEVENT13H, x9   # clear OF
-  mv a1, x9
+  LI(x8, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
+  # T-SBI call to execute instruction: csrc CSR_MHPMEVENT13H, x8   # clear OF
+  mv a1, x8
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MHPMEVENT13H)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT14H, x9   # set OF
-  mv a1, x9
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT14H, x8   # set OF
+  mv a1, x8
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT14H)
 #else
-  LI(x9, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
-  # T-SBI call to execute instruction: csrc CSR_MHPMEVENT13, x9   # clear OF
-  mv a1, x9
+  LI(x8, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
+  # T-SBI call to execute instruction: csrc CSR_MHPMEVENT13, x8   # clear OF
+  mv a1, x8
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MHPMEVENT13)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT14, x9   # set OF
-  mv a1, x9
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT14, x8   # set OF
+  mv a1, x8
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT14)
 #endif
 
 Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_11:
-  csrr x15, scountovf   # sample point -- must match OF pattern
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_11, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_11_str)
+  csrr x14, scountovf   # sample point -- must match OF pattern
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_11, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_11_str)
 
 # --- Write OF pattern: walking1_12 across mhpmevent3..31 ---
 #if __riscv_xlen == 32
-  LI(x8, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
-  # T-SBI call to execute instruction: csrc CSR_MHPMEVENT14H, x8   # clear OF
-  mv a1, x8
+  LI(x15, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
+  # T-SBI call to execute instruction: csrc CSR_MHPMEVENT14H, x15   # clear OF
+  mv a1, x15
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MHPMEVENT14H)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT15H, x8   # set OF
-  mv a1, x8
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT15H, x15   # set OF
+  mv a1, x15
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT15H)
 #else
-  LI(x8, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
-  # T-SBI call to execute instruction: csrc CSR_MHPMEVENT14, x8   # clear OF
-  mv a1, x8
+  LI(x15, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
+  # T-SBI call to execute instruction: csrc CSR_MHPMEVENT14, x15   # clear OF
+  mv a1, x15
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MHPMEVENT14)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT15, x8   # set OF
-  mv a1, x8
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT15, x15   # set OF
+  mv a1, x15
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT15)
 #endif
 
 Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_12:
-  csrr x14, scountovf   # sample point -- must match OF pattern
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_12, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_12_str)
+  csrr x6, scountovf   # sample point -- must match OF pattern
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_12, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_12_str)
 
 # --- Write OF pattern: walking1_13 across mhpmevent3..31 ---
 #if __riscv_xlen == 32
@@ -379,33 +379,33 @@ Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_12:
 #endif
 
 Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_13:
-  csrr x6, scountovf   # sample point -- must match OF pattern
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_13, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_13_str)
+  csrr x13, scountovf   # sample point -- must match OF pattern
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_13, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_13_str)
 
 # --- Write OF pattern: walking1_14 across mhpmevent3..31 ---
 #if __riscv_xlen == 32
-  LI(x15, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
-  # T-SBI call to execute instruction: csrc CSR_MHPMEVENT16H, x15   # clear OF
-  mv a1, x15
+  LI(x6, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
+  # T-SBI call to execute instruction: csrc CSR_MHPMEVENT16H, x6   # clear OF
+  mv a1, x6
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MHPMEVENT16H)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT17H, x15   # set OF
-  mv a1, x15
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT17H, x6   # set OF
+  mv a1, x6
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT17H)
 #else
-  LI(x15, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
-  # T-SBI call to execute instruction: csrc CSR_MHPMEVENT16, x15   # clear OF
-  mv a1, x15
+  LI(x6, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
+  # T-SBI call to execute instruction: csrc CSR_MHPMEVENT16, x6   # clear OF
+  mv a1, x6
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MHPMEVENT16)
-  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT17, x15   # set OF
-  mv a1, x15
+  # T-SBI call to execute instruction: csrs CSR_MHPMEVENT17, x6   # set OF
+  mv a1, x6
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MHPMEVENT17)
 #endif
 
 Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_14:
-  csrr x13, scountovf   # sample point -- must match OF pattern
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_14, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_14_str)
+  csrr x14, scountovf   # sample point -- must match OF pattern
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_14, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_14_str)
 
 
 // Instantiate trap handlers and other epilog code, call RVMODEL_HALT at end of test
@@ -418,22 +418,22 @@ RVTEST_DATA_BEGIN
 
 
 // Testcase strings
-Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_all_0s_str: .string "\"test: 154; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_s_all_0s\""
-Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_0_str: .string "\"test: 155; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_s_walking1_0\""
-Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_1_str: .string "\"test: 156; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_s_walking1_1\""
-Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_2_str: .string "\"test: 157; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_s_walking1_2\""
-Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_3_str: .string "\"test: 158; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_s_walking1_3\""
-Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_4_str: .string "\"test: 159; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_s_walking1_4\""
-Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_5_str: .string "\"test: 160; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_s_walking1_5\""
-Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_6_str: .string "\"test: 161; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_s_walking1_6\""
-Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_7_str: .string "\"test: 162; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_s_walking1_7\""
-Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_8_str: .string "\"test: 163; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_s_walking1_8\""
-Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_9_str: .string "\"test: 164; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_s_walking1_9\""
-Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_10_str: .string "\"test: 165; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_s_walking1_10\""
-Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_11_str: .string "\"test: 166; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_s_walking1_11\""
-Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_12_str: .string "\"test: 167; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_s_walking1_12\""
-Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_13_str: .string "\"test: 168; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_s_walking1_13\""
-Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_14_str: .string "\"test: 169; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_s_walking1_14\""
+Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_all_0s_str: .string "\"test: 153; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_s_all_0s\""
+Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_0_str: .string "\"test: 154; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_s_walking1_0\""
+Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_1_str: .string "\"test: 155; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_s_walking1_1\""
+Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_2_str: .string "\"test: 156; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_s_walking1_2\""
+Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_3_str: .string "\"test: 157; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_s_walking1_3\""
+Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_4_str: .string "\"test: 158; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_s_walking1_4\""
+Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_5_str: .string "\"test: 159; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_s_walking1_5\""
+Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_6_str: .string "\"test: 160; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_s_walking1_6\""
+Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_7_str: .string "\"test: 161; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_s_walking1_7\""
+Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_8_str: .string "\"test: 162; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_s_walking1_8\""
+Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_9_str: .string "\"test: 163; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_s_walking1_9\""
+Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_10_str: .string "\"test: 164; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_s_walking1_10\""
+Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_11_str: .string "\"test: 165; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_s_walking1_11\""
+Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_12_str: .string "\"test: 166; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_s_walking1_12\""
+Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_13_str: .string "\"test: 167; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_s_walking1_13\""
+Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_s_walking1_14_str: .string "\"test: 168; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_s_walking1_14\""
 
 // End of test data section and model specific data
 RVTEST_DATA_END

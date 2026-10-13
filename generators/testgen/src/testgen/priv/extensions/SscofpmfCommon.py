@@ -9,6 +9,7 @@
 
 from collections.abc import Callable
 
+from testgen.asm.csr import csr_access_test
 from testgen.asm.helpers import comment_banner, write_sigupd
 from testgen.asm.tsbi import tsbi_call_or_direct
 from testgen.data.state import TestData
@@ -585,16 +586,10 @@ def _generate_scountovf_mcounteren_tests(
 
 
 def _generate_sscofpmf_access_tests(test_data: TestData, mode: str) -> list[str]:
-    if mode == "U":
-        return []
-
     ######################################
     covergroup = "Sscofpmf_cg"
     coverpoint = "cp_sscofpmf_access"
     ######################################
-
-    access_types = ["read", "write_ones", "write_zeros", "set", "clear"]
-    r_val = test_data.int_regs.get_register()
 
     lines = [
         comment_banner(
@@ -602,35 +597,15 @@ def _generate_sscofpmf_access_tests(test_data: TestData, mode: str) -> list[str]
             f"Attempt to read, write 1s, write 0s, set, clear from mode = {mode}:\n"
             "scountovf\nIf RV32: mhpmeventh3...31",
         ),
-        "",
     ]
+    lines.extend(csr_access_test(test_data, ("scountovf", None), covergroup, coverpoint))
 
-    def emit_accesses(csr_name: str) -> None:
-        for access in access_types:
-            binname = f"sscofpmf_access_{csr_name}_{access}_{mode.lower()}"
-            lines.append(test_data.add_testcase(binname, coverpoint, covergroup))
-
-            if access == "read":
-                lines.append(tsbi_call_or_direct(f"csrr x{r_val}, {csr_name}", mode))
-            elif access == "write_ones":
-                lines.extend([f"LI(x{r_val}, -1)", tsbi_call_or_direct(f"csrw {csr_name}, x{r_val}", mode)])
-            elif access == "write_zeros":
-                lines.append(tsbi_call_or_direct(f"csrw {csr_name}, zero", mode))
-            elif access == "set":
-                lines.extend([f"LI(x{r_val}, -1)", tsbi_call_or_direct(f"csrs {csr_name}, x{r_val}", mode)])
-            elif access == "clear":
-                lines.extend([f"LI(x{r_val}, -1)", tsbi_call_or_direct(f"csrc {csr_name}, x{r_val}", mode)])
-            lines.append("")
-
-    emit_accesses("scountovf")
-
-    if mode == "M":  # mhpmeventh3..31 sweep is M-mode only per spec
+    if mode == "M":  # mhpmeventh3..31 sweep is M-mode only
         lines.append("#if __riscv_xlen == 32")
         for n in range(3, 32):
-            emit_accesses(f"CSR_MHPMEVENT{n}H")
+            lines.extend(csr_access_test(test_data, (f"CSR_MHPMEVENT{n}H", None), covergroup, coverpoint))
         lines.append("#endif")
 
-    test_data.int_regs.return_registers([r_val])
     return lines
 
 
@@ -660,6 +635,7 @@ def _generate_scountovf_shadow_tests(
     coverpoint = "cp_scountovf_shadow"
     ######################################
 
+    r_mcounteren = test_data.int_regs.get_register()
     lines = [
         comment_banner(
             coverpoint,
@@ -668,32 +644,25 @@ def _generate_scountovf_shadow_tests(
             "mhpmevent3...31.OF: all 0s, walking 1s, all 1s. Read scountovf.\n",
         ),
         "",
+        f"LI(x{r_mcounteren}, -1)",
+        f"{tsbi_call_or_direct(f'csrw mcounteren, x{r_mcounteren}   # mcounteren = all 1s (fixed for this coverpoint)', priv_mode)}",
+        "",
     ]
-
-    r_mcounteren = test_data.int_regs.get_register()
-    lines.extend(
-        [
-            f"LI(x{r_mcounteren}, -1)",
-            f"{tsbi_call_or_direct(f'csrw mcounteren, x{r_mcounteren}   # mcounteren = all 1s (fixed for this coverpoint)', priv_mode)}",
-            "",
-        ]
-    )
     test_data.int_regs.return_registers([r_mcounteren])
 
     def emit_pattern(pattern_name: str, of_bit_fn: Callable[[int], int]) -> None:
         r_of_bit, r_scountovf = test_data.int_regs.get_registers(2)
-        lines.extend(write_of_pattern(r_of_bit, pattern_name, of_bit_fn, priv_mode, of_state))
-        test_data.int_regs.return_registers([r_of_bit])
-
         binname = f"scountovf_shadow_{priv_mode.lower()}_{pattern_name}"
-        lines.append(f"{test_data.add_testcase(binname, coverpoint, covergroup)}")
-        lines.append(
-            f"{tsbi_call_or_direct(f'csrr x{r_scountovf}, scountovf   # sample point -- must match OF pattern', priv_mode)}"
+        lines.extend(
+            [
+                *write_of_pattern(r_of_bit, pattern_name, of_bit_fn, priv_mode, of_state),
+                f"{test_data.add_testcase(binname, coverpoint, covergroup)}",
+                f"{tsbi_call_or_direct(f'csrr x{r_scountovf}, scountovf   # sample point -- must match OF pattern', priv_mode)}",
+                f"{write_sigupd(r_scountovf, test_data)}",
+                "",
+            ]
         )
-        lines.append(f"{write_sigupd(r_scountovf, test_data)}")
-        lines.append("")
-
-        test_data.int_regs.return_registers([r_scountovf])
+        test_data.int_regs.return_registers([r_of_bit, r_scountovf])
 
     for pattern_name, of_bit_fn in patterns:
         emit_pattern(pattern_name, of_bit_fn)

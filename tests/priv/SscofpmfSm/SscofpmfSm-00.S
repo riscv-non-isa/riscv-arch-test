@@ -15,7 +15,7 @@
 ##### END_TEST_CONFIG #####
 
 // Define the size of the signature region
-#define SIGUPD_COUNT 226
+#define SIGUPD_COUNT 346
 
 // Extra defines (if needed) to enable trap handlers, fpu, vector, etc.
 #define BOOT_TO_MMODE
@@ -2436,547 +2436,726 @@ Sscofpmf_cg_cp_scountovf_mcounteren_checker_odd_m_mcounteren_walk_bit_31:
 //   If RV32: mhpmeventh3...31
 /////////////////////////////////
 
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_scountovf_read_m:
-  csrr x6, scountovf
+# CSR Access Tests for scountovf
+  csrr x6, scountovf    # Save CSR
+  LI(x8, -1)             # write all 1s
+Sscofpmf_cg_cp_sscofpmf_access_scountovf_csrrw1:
+  csrw scountovf, x8    # Write all 1s to CSR
+  # Read scountovf into x14 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(scountovf, x14, Sscofpmf_cg_cp_sscofpmf_access_scountovf_csrrw1, Sscofpmf_cg_cp_sscofpmf_access_scountovf_csrrw1_str)
 
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_scountovf_write_ones_m:
-  LI(x6, -1)
-  csrw scountovf, x6
+Sscofpmf_cg_cp_sscofpmf_access_scountovf_csrrw0:
+  csrw scountovf, zero   # Write all 0s to CSR
+  # Read scountovf into x14 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(scountovf, x14, Sscofpmf_cg_cp_sscofpmf_access_scountovf_csrrw0, Sscofpmf_cg_cp_sscofpmf_access_scountovf_csrrw0_str)
 
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_scountovf_write_zeros_m:
-  csrw scountovf, zero
+Sscofpmf_cg_cp_sscofpmf_access_scountovf_csrs_all:
+  csrs scountovf, x8    # Set all 1s
+  # Read scountovf into x14 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(scountovf, x14, Sscofpmf_cg_cp_sscofpmf_access_scountovf_csrs_all, Sscofpmf_cg_cp_sscofpmf_access_scountovf_csrs_all_str)
 
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_scountovf_set_m:
-  LI(x6, -1)
-  csrs scountovf, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_scountovf_clear_m:
-  LI(x6, -1)
-  csrc scountovf, x6
-
+Sscofpmf_cg_cp_sscofpmf_access_scountovf_csrrc_all:
+  csrc scountovf, x8    # Clear all 1s
+  # Read scountovf into x14 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(scountovf, x14, Sscofpmf_cg_cp_sscofpmf_access_scountovf_csrrc_all, Sscofpmf_cg_cp_sscofpmf_access_scountovf_csrrc_all_str)
+  csrw scountovf, x6       # Restore CSR
 #if __riscv_xlen == 32
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT3H_read_m:
-  csrr x6, CSR_MHPMEVENT3H
 
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT3H_write_ones_m:
-  LI(x6, -1)
-  csrw CSR_MHPMEVENT3H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT3H_write_zeros_m:
-  csrw CSR_MHPMEVENT3H, zero
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT3H_set_m:
-  LI(x6, -1)
-  csrs CSR_MHPMEVENT3H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT3H_clear_m:
-  LI(x6, -1)
-  csrc CSR_MHPMEVENT3H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT4H_read_m:
-  csrr x6, CSR_MHPMEVENT4H
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT4H_write_ones_m:
-  LI(x6, -1)
-  csrw CSR_MHPMEVENT4H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT4H_write_zeros_m:
-  csrw CSR_MHPMEVENT4H, zero
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT4H_set_m:
-  LI(x6, -1)
-  csrs CSR_MHPMEVENT4H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT4H_clear_m:
-  LI(x6, -1)
-  csrc CSR_MHPMEVENT4H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT5H_read_m:
-  csrr x6, CSR_MHPMEVENT5H
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT5H_write_ones_m:
-  LI(x6, -1)
-  csrw CSR_MHPMEVENT5H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT5H_write_zeros_m:
-  csrw CSR_MHPMEVENT5H, zero
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT5H_set_m:
-  LI(x6, -1)
-  csrs CSR_MHPMEVENT5H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT5H_clear_m:
-  LI(x6, -1)
-  csrc CSR_MHPMEVENT5H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT6H_read_m:
-  csrr x6, CSR_MHPMEVENT6H
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT6H_write_ones_m:
-  LI(x6, -1)
-  csrw CSR_MHPMEVENT6H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT6H_write_zeros_m:
-  csrw CSR_MHPMEVENT6H, zero
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT6H_set_m:
-  LI(x6, -1)
-  csrs CSR_MHPMEVENT6H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT6H_clear_m:
-  LI(x6, -1)
-  csrc CSR_MHPMEVENT6H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT7H_read_m:
-  csrr x6, CSR_MHPMEVENT7H
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT7H_write_ones_m:
-  LI(x6, -1)
-  csrw CSR_MHPMEVENT7H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT7H_write_zeros_m:
-  csrw CSR_MHPMEVENT7H, zero
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT7H_set_m:
-  LI(x6, -1)
-  csrs CSR_MHPMEVENT7H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT7H_clear_m:
-  LI(x6, -1)
-  csrc CSR_MHPMEVENT7H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT8H_read_m:
-  csrr x6, CSR_MHPMEVENT8H
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT8H_write_ones_m:
-  LI(x6, -1)
-  csrw CSR_MHPMEVENT8H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT8H_write_zeros_m:
-  csrw CSR_MHPMEVENT8H, zero
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT8H_set_m:
-  LI(x6, -1)
-  csrs CSR_MHPMEVENT8H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT8H_clear_m:
-  LI(x6, -1)
-  csrc CSR_MHPMEVENT8H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT9H_read_m:
-  csrr x6, CSR_MHPMEVENT9H
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT9H_write_ones_m:
-  LI(x6, -1)
-  csrw CSR_MHPMEVENT9H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT9H_write_zeros_m:
-  csrw CSR_MHPMEVENT9H, zero
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT9H_set_m:
-  LI(x6, -1)
-  csrs CSR_MHPMEVENT9H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT9H_clear_m:
-  LI(x6, -1)
-  csrc CSR_MHPMEVENT9H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT10H_read_m:
-  csrr x6, CSR_MHPMEVENT10H
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT10H_write_ones_m:
-  LI(x6, -1)
-  csrw CSR_MHPMEVENT10H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT10H_write_zeros_m:
-  csrw CSR_MHPMEVENT10H, zero
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT10H_set_m:
-  LI(x6, -1)
-  csrs CSR_MHPMEVENT10H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT10H_clear_m:
-  LI(x6, -1)
-  csrc CSR_MHPMEVENT10H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT11H_read_m:
-  csrr x6, CSR_MHPMEVENT11H
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT11H_write_ones_m:
-  LI(x6, -1)
-  csrw CSR_MHPMEVENT11H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT11H_write_zeros_m:
-  csrw CSR_MHPMEVENT11H, zero
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT11H_set_m:
-  LI(x6, -1)
-  csrs CSR_MHPMEVENT11H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT11H_clear_m:
-  LI(x6, -1)
-  csrc CSR_MHPMEVENT11H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT12H_read_m:
-  csrr x6, CSR_MHPMEVENT12H
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT12H_write_ones_m:
-  LI(x6, -1)
-  csrw CSR_MHPMEVENT12H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT12H_write_zeros_m:
-  csrw CSR_MHPMEVENT12H, zero
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT12H_set_m:
-  LI(x6, -1)
-  csrs CSR_MHPMEVENT12H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT12H_clear_m:
-  LI(x6, -1)
-  csrc CSR_MHPMEVENT12H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT13H_read_m:
-  csrr x6, CSR_MHPMEVENT13H
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT13H_write_ones_m:
-  LI(x6, -1)
-  csrw CSR_MHPMEVENT13H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT13H_write_zeros_m:
-  csrw CSR_MHPMEVENT13H, zero
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT13H_set_m:
-  LI(x6, -1)
-  csrs CSR_MHPMEVENT13H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT13H_clear_m:
-  LI(x6, -1)
-  csrc CSR_MHPMEVENT13H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT14H_read_m:
-  csrr x6, CSR_MHPMEVENT14H
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT14H_write_ones_m:
-  LI(x6, -1)
-  csrw CSR_MHPMEVENT14H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT14H_write_zeros_m:
-  csrw CSR_MHPMEVENT14H, zero
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT14H_set_m:
-  LI(x6, -1)
-  csrs CSR_MHPMEVENT14H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT14H_clear_m:
-  LI(x6, -1)
-  csrc CSR_MHPMEVENT14H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT15H_read_m:
-  csrr x6, CSR_MHPMEVENT15H
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT15H_write_ones_m:
-  LI(x6, -1)
-  csrw CSR_MHPMEVENT15H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT15H_write_zeros_m:
-  csrw CSR_MHPMEVENT15H, zero
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT15H_set_m:
-  LI(x6, -1)
-  csrs CSR_MHPMEVENT15H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT15H_clear_m:
-  LI(x6, -1)
-  csrc CSR_MHPMEVENT15H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT16H_read_m:
-  csrr x6, CSR_MHPMEVENT16H
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT16H_write_ones_m:
-  LI(x6, -1)
-  csrw CSR_MHPMEVENT16H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT16H_write_zeros_m:
-  csrw CSR_MHPMEVENT16H, zero
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT16H_set_m:
-  LI(x6, -1)
-  csrs CSR_MHPMEVENT16H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT16H_clear_m:
-  LI(x6, -1)
-  csrc CSR_MHPMEVENT16H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT17H_read_m:
-  csrr x6, CSR_MHPMEVENT17H
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT17H_write_ones_m:
-  LI(x6, -1)
-  csrw CSR_MHPMEVENT17H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT17H_write_zeros_m:
-  csrw CSR_MHPMEVENT17H, zero
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT17H_set_m:
-  LI(x6, -1)
-  csrs CSR_MHPMEVENT17H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT17H_clear_m:
-  LI(x6, -1)
-  csrc CSR_MHPMEVENT17H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT18H_read_m:
-  csrr x6, CSR_MHPMEVENT18H
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT18H_write_ones_m:
-  LI(x6, -1)
-  csrw CSR_MHPMEVENT18H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT18H_write_zeros_m:
-  csrw CSR_MHPMEVENT18H, zero
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT18H_set_m:
-  LI(x6, -1)
-  csrs CSR_MHPMEVENT18H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT18H_clear_m:
-  LI(x6, -1)
-  csrc CSR_MHPMEVENT18H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT19H_read_m:
-  csrr x6, CSR_MHPMEVENT19H
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT19H_write_ones_m:
-  LI(x6, -1)
-  csrw CSR_MHPMEVENT19H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT19H_write_zeros_m:
-  csrw CSR_MHPMEVENT19H, zero
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT19H_set_m:
-  LI(x6, -1)
-  csrs CSR_MHPMEVENT19H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT19H_clear_m:
-  LI(x6, -1)
-  csrc CSR_MHPMEVENT19H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT20H_read_m:
-  csrr x6, CSR_MHPMEVENT20H
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT20H_write_ones_m:
-  LI(x6, -1)
-  csrw CSR_MHPMEVENT20H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT20H_write_zeros_m:
-  csrw CSR_MHPMEVENT20H, zero
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT20H_set_m:
-  LI(x6, -1)
-  csrs CSR_MHPMEVENT20H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT20H_clear_m:
-  LI(x6, -1)
-  csrc CSR_MHPMEVENT20H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT21H_read_m:
-  csrr x6, CSR_MHPMEVENT21H
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT21H_write_ones_m:
-  LI(x6, -1)
-  csrw CSR_MHPMEVENT21H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT21H_write_zeros_m:
-  csrw CSR_MHPMEVENT21H, zero
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT21H_set_m:
-  LI(x6, -1)
-  csrs CSR_MHPMEVENT21H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT21H_clear_m:
-  LI(x6, -1)
-  csrc CSR_MHPMEVENT21H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT22H_read_m:
-  csrr x6, CSR_MHPMEVENT22H
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT22H_write_ones_m:
-  LI(x6, -1)
-  csrw CSR_MHPMEVENT22H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT22H_write_zeros_m:
-  csrw CSR_MHPMEVENT22H, zero
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT22H_set_m:
-  LI(x6, -1)
-  csrs CSR_MHPMEVENT22H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT22H_clear_m:
-  LI(x6, -1)
-  csrc CSR_MHPMEVENT22H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT23H_read_m:
-  csrr x6, CSR_MHPMEVENT23H
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT23H_write_ones_m:
-  LI(x6, -1)
-  csrw CSR_MHPMEVENT23H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT23H_write_zeros_m:
-  csrw CSR_MHPMEVENT23H, zero
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT23H_set_m:
-  LI(x6, -1)
-  csrs CSR_MHPMEVENT23H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT23H_clear_m:
-  LI(x6, -1)
-  csrc CSR_MHPMEVENT23H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT24H_read_m:
-  csrr x6, CSR_MHPMEVENT24H
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT24H_write_ones_m:
-  LI(x6, -1)
-  csrw CSR_MHPMEVENT24H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT24H_write_zeros_m:
-  csrw CSR_MHPMEVENT24H, zero
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT24H_set_m:
-  LI(x6, -1)
-  csrs CSR_MHPMEVENT24H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT24H_clear_m:
-  LI(x6, -1)
-  csrc CSR_MHPMEVENT24H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT25H_read_m:
-  csrr x6, CSR_MHPMEVENT25H
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT25H_write_ones_m:
-  LI(x6, -1)
-  csrw CSR_MHPMEVENT25H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT25H_write_zeros_m:
-  csrw CSR_MHPMEVENT25H, zero
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT25H_set_m:
-  LI(x6, -1)
-  csrs CSR_MHPMEVENT25H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT25H_clear_m:
-  LI(x6, -1)
-  csrc CSR_MHPMEVENT25H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT26H_read_m:
-  csrr x6, CSR_MHPMEVENT26H
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT26H_write_ones_m:
-  LI(x6, -1)
-  csrw CSR_MHPMEVENT26H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT26H_write_zeros_m:
-  csrw CSR_MHPMEVENT26H, zero
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT26H_set_m:
-  LI(x6, -1)
-  csrs CSR_MHPMEVENT26H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT26H_clear_m:
-  LI(x6, -1)
-  csrc CSR_MHPMEVENT26H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT27H_read_m:
-  csrr x6, CSR_MHPMEVENT27H
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT27H_write_ones_m:
-  LI(x6, -1)
-  csrw CSR_MHPMEVENT27H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT27H_write_zeros_m:
-  csrw CSR_MHPMEVENT27H, zero
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT27H_set_m:
-  LI(x6, -1)
-  csrs CSR_MHPMEVENT27H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT27H_clear_m:
-  LI(x6, -1)
-  csrc CSR_MHPMEVENT27H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT28H_read_m:
-  csrr x6, CSR_MHPMEVENT28H
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT28H_write_ones_m:
-  LI(x6, -1)
-  csrw CSR_MHPMEVENT28H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT28H_write_zeros_m:
-  csrw CSR_MHPMEVENT28H, zero
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT28H_set_m:
-  LI(x6, -1)
-  csrs CSR_MHPMEVENT28H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT28H_clear_m:
-  LI(x6, -1)
-  csrc CSR_MHPMEVENT28H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT29H_read_m:
-  csrr x6, CSR_MHPMEVENT29H
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT29H_write_ones_m:
-  LI(x6, -1)
-  csrw CSR_MHPMEVENT29H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT29H_write_zeros_m:
-  csrw CSR_MHPMEVENT29H, zero
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT29H_set_m:
-  LI(x6, -1)
-  csrs CSR_MHPMEVENT29H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT29H_clear_m:
-  LI(x6, -1)
-  csrc CSR_MHPMEVENT29H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT30H_read_m:
-  csrr x6, CSR_MHPMEVENT30H
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT30H_write_ones_m:
-  LI(x6, -1)
-  csrw CSR_MHPMEVENT30H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT30H_write_zeros_m:
-  csrw CSR_MHPMEVENT30H, zero
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT30H_set_m:
-  LI(x6, -1)
-  csrs CSR_MHPMEVENT30H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT30H_clear_m:
-  LI(x6, -1)
-  csrc CSR_MHPMEVENT30H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT31H_read_m:
-  csrr x6, CSR_MHPMEVENT31H
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT31H_write_ones_m:
-  LI(x6, -1)
-  csrw CSR_MHPMEVENT31H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT31H_write_zeros_m:
-  csrw CSR_MHPMEVENT31H, zero
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT31H_set_m:
-  LI(x6, -1)
-  csrs CSR_MHPMEVENT31H, x6
-
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT31H_clear_m:
-  LI(x6, -1)
-  csrc CSR_MHPMEVENT31H, x6
-
+# CSR Access Tests for CSR_MHPMEVENT3H
+  csrr x6, CSR_MHPMEVENT3H    # Save CSR
+  LI(x15, -1)             # write all 1s
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT3H_csrrw1:
+  csrw CSR_MHPMEVENT3H, x15    # Write all 1s to CSR
+  # Read CSR_MHPMEVENT3H into x13 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT3H, x13, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT3H_csrrw1, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT3H_csrrw1_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT3H_csrrw0:
+  csrw CSR_MHPMEVENT3H, zero   # Write all 0s to CSR
+  # Read CSR_MHPMEVENT3H into x13 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT3H, x13, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT3H_csrrw0, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT3H_csrrw0_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT3H_csrs_all:
+  csrs CSR_MHPMEVENT3H, x15    # Set all 1s
+  # Read CSR_MHPMEVENT3H into x13 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT3H, x13, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT3H_csrs_all, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT3H_csrs_all_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT3H_csrrc_all:
+  csrc CSR_MHPMEVENT3H, x15    # Clear all 1s
+  # Read CSR_MHPMEVENT3H into x13 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT3H, x13, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT3H_csrrc_all, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT3H_csrrc_all_str)
+  csrw CSR_MHPMEVENT3H, x6       # Restore CSR
+
+# CSR Access Tests for CSR_MHPMEVENT4H
+  csrr x6, CSR_MHPMEVENT4H    # Save CSR
+  LI(x8, -1)             # write all 1s
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT4H_csrrw1:
+  csrw CSR_MHPMEVENT4H, x8    # Write all 1s to CSR
+  # Read CSR_MHPMEVENT4H into x13 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT4H, x13, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT4H_csrrw1, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT4H_csrrw1_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT4H_csrrw0:
+  csrw CSR_MHPMEVENT4H, zero   # Write all 0s to CSR
+  # Read CSR_MHPMEVENT4H into x13 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT4H, x13, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT4H_csrrw0, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT4H_csrrw0_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT4H_csrs_all:
+  csrs CSR_MHPMEVENT4H, x8    # Set all 1s
+  # Read CSR_MHPMEVENT4H into x13 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT4H, x13, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT4H_csrs_all, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT4H_csrs_all_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT4H_csrrc_all:
+  csrc CSR_MHPMEVENT4H, x8    # Clear all 1s
+  # Read CSR_MHPMEVENT4H into x13 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT4H, x13, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT4H_csrrc_all, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT4H_csrrc_all_str)
+  csrw CSR_MHPMEVENT4H, x6       # Restore CSR
+
+# CSR Access Tests for CSR_MHPMEVENT5H
+  csrr x13, CSR_MHPMEVENT5H    # Save CSR
+  LI(x9, -1)             # write all 1s
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT5H_csrrw1:
+  csrw CSR_MHPMEVENT5H, x9    # Write all 1s to CSR
+  # Read CSR_MHPMEVENT5H into x15 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT5H, x15, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT5H_csrrw1, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT5H_csrrw1_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT5H_csrrw0:
+  csrw CSR_MHPMEVENT5H, zero   # Write all 0s to CSR
+  # Read CSR_MHPMEVENT5H into x15 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT5H, x15, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT5H_csrrw0, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT5H_csrrw0_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT5H_csrs_all:
+  csrs CSR_MHPMEVENT5H, x9    # Set all 1s
+  # Read CSR_MHPMEVENT5H into x15 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT5H, x15, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT5H_csrs_all, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT5H_csrs_all_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT5H_csrrc_all:
+  csrc CSR_MHPMEVENT5H, x9    # Clear all 1s
+  # Read CSR_MHPMEVENT5H into x15 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT5H, x15, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT5H_csrrc_all, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT5H_csrrc_all_str)
+  csrw CSR_MHPMEVENT5H, x13       # Restore CSR
+
+# CSR Access Tests for CSR_MHPMEVENT6H
+  csrr x15, CSR_MHPMEVENT6H    # Save CSR
+  LI(x14, -1)             # write all 1s
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT6H_csrrw1:
+  csrw CSR_MHPMEVENT6H, x14    # Write all 1s to CSR
+  # Read CSR_MHPMEVENT6H into x8 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT6H, x8, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT6H_csrrw1, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT6H_csrrw1_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT6H_csrrw0:
+  csrw CSR_MHPMEVENT6H, zero   # Write all 0s to CSR
+  # Read CSR_MHPMEVENT6H into x8 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT6H, x8, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT6H_csrrw0, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT6H_csrrw0_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT6H_csrs_all:
+  csrs CSR_MHPMEVENT6H, x14    # Set all 1s
+  # Read CSR_MHPMEVENT6H into x8 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT6H, x8, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT6H_csrs_all, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT6H_csrs_all_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT6H_csrrc_all:
+  csrc CSR_MHPMEVENT6H, x14    # Clear all 1s
+  # Read CSR_MHPMEVENT6H into x8 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT6H, x8, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT6H_csrrc_all, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT6H_csrrc_all_str)
+  csrw CSR_MHPMEVENT6H, x15       # Restore CSR
+
+# CSR Access Tests for CSR_MHPMEVENT7H
+  csrr x14, CSR_MHPMEVENT7H    # Save CSR
+  LI(x6, -1)             # write all 1s
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT7H_csrrw1:
+  csrw CSR_MHPMEVENT7H, x6    # Write all 1s to CSR
+  # Read CSR_MHPMEVENT7H into x9 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT7H, x9, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT7H_csrrw1, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT7H_csrrw1_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT7H_csrrw0:
+  csrw CSR_MHPMEVENT7H, zero   # Write all 0s to CSR
+  # Read CSR_MHPMEVENT7H into x9 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT7H, x9, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT7H_csrrw0, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT7H_csrrw0_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT7H_csrs_all:
+  csrs CSR_MHPMEVENT7H, x6    # Set all 1s
+  # Read CSR_MHPMEVENT7H into x9 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT7H, x9, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT7H_csrs_all, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT7H_csrs_all_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT7H_csrrc_all:
+  csrc CSR_MHPMEVENT7H, x6    # Clear all 1s
+  # Read CSR_MHPMEVENT7H into x9 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT7H, x9, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT7H_csrrc_all, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT7H_csrrc_all_str)
+  csrw CSR_MHPMEVENT7H, x14       # Restore CSR
+
+# CSR Access Tests for CSR_MHPMEVENT8H
+  csrr x6, CSR_MHPMEVENT8H    # Save CSR
+  LI(x13, -1)             # write all 1s
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT8H_csrrw1:
+  csrw CSR_MHPMEVENT8H, x13    # Write all 1s to CSR
+  # Read CSR_MHPMEVENT8H into x9 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT8H, x9, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT8H_csrrw1, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT8H_csrrw1_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT8H_csrrw0:
+  csrw CSR_MHPMEVENT8H, zero   # Write all 0s to CSR
+  # Read CSR_MHPMEVENT8H into x9 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT8H, x9, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT8H_csrrw0, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT8H_csrrw0_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT8H_csrs_all:
+  csrs CSR_MHPMEVENT8H, x13    # Set all 1s
+  # Read CSR_MHPMEVENT8H into x9 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT8H, x9, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT8H_csrs_all, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT8H_csrs_all_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT8H_csrrc_all:
+  csrc CSR_MHPMEVENT8H, x13    # Clear all 1s
+  # Read CSR_MHPMEVENT8H into x9 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT8H, x9, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT8H_csrrc_all, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT8H_csrrc_all_str)
+  csrw CSR_MHPMEVENT8H, x6       # Restore CSR
+
+# CSR Access Tests for CSR_MHPMEVENT9H
+  csrr x6, CSR_MHPMEVENT9H    # Save CSR
+  LI(x14, -1)             # write all 1s
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT9H_csrrw1:
+  csrw CSR_MHPMEVENT9H, x14    # Write all 1s to CSR
+  # Read CSR_MHPMEVENT9H into x9 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT9H, x9, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT9H_csrrw1, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT9H_csrrw1_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT9H_csrrw0:
+  csrw CSR_MHPMEVENT9H, zero   # Write all 0s to CSR
+  # Read CSR_MHPMEVENT9H into x9 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT9H, x9, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT9H_csrrw0, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT9H_csrrw0_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT9H_csrs_all:
+  csrs CSR_MHPMEVENT9H, x14    # Set all 1s
+  # Read CSR_MHPMEVENT9H into x9 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT9H, x9, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT9H_csrs_all, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT9H_csrs_all_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT9H_csrrc_all:
+  csrc CSR_MHPMEVENT9H, x14    # Clear all 1s
+  # Read CSR_MHPMEVENT9H into x9 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT9H, x9, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT9H_csrrc_all, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT9H_csrrc_all_str)
+  csrw CSR_MHPMEVENT9H, x6       # Restore CSR
+
+# CSR Access Tests for CSR_MHPMEVENT10H
+  csrr x15, CSR_MHPMEVENT10H    # Save CSR
+  LI(x6, -1)             # write all 1s
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT10H_csrrw1:
+  csrw CSR_MHPMEVENT10H, x6    # Write all 1s to CSR
+  # Read CSR_MHPMEVENT10H into x14 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT10H, x14, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT10H_csrrw1, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT10H_csrrw1_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT10H_csrrw0:
+  csrw CSR_MHPMEVENT10H, zero   # Write all 0s to CSR
+  # Read CSR_MHPMEVENT10H into x14 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT10H, x14, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT10H_csrrw0, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT10H_csrrw0_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT10H_csrs_all:
+  csrs CSR_MHPMEVENT10H, x6    # Set all 1s
+  # Read CSR_MHPMEVENT10H into x14 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT10H, x14, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT10H_csrs_all, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT10H_csrs_all_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT10H_csrrc_all:
+  csrc CSR_MHPMEVENT10H, x6    # Clear all 1s
+  # Read CSR_MHPMEVENT10H into x14 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT10H, x14, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT10H_csrrc_all, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT10H_csrrc_all_str)
+  csrw CSR_MHPMEVENT10H, x15       # Restore CSR
+
+# CSR Access Tests for CSR_MHPMEVENT11H
+  csrr x13, CSR_MHPMEVENT11H    # Save CSR
+  LI(x9, -1)             # write all 1s
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT11H_csrrw1:
+  csrw CSR_MHPMEVENT11H, x9    # Write all 1s to CSR
+  # Read CSR_MHPMEVENT11H into x14 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT11H, x14, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT11H_csrrw1, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT11H_csrrw1_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT11H_csrrw0:
+  csrw CSR_MHPMEVENT11H, zero   # Write all 0s to CSR
+  # Read CSR_MHPMEVENT11H into x14 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT11H, x14, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT11H_csrrw0, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT11H_csrrw0_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT11H_csrs_all:
+  csrs CSR_MHPMEVENT11H, x9    # Set all 1s
+  # Read CSR_MHPMEVENT11H into x14 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT11H, x14, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT11H_csrs_all, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT11H_csrs_all_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT11H_csrrc_all:
+  csrc CSR_MHPMEVENT11H, x9    # Clear all 1s
+  # Read CSR_MHPMEVENT11H into x14 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT11H, x14, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT11H_csrrc_all, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT11H_csrrc_all_str)
+  csrw CSR_MHPMEVENT11H, x13       # Restore CSR
+
+# CSR Access Tests for CSR_MHPMEVENT12H
+  csrr x13, CSR_MHPMEVENT12H    # Save CSR
+  LI(x14, -1)             # write all 1s
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT12H_csrrw1:
+  csrw CSR_MHPMEVENT12H, x14    # Write all 1s to CSR
+  # Read CSR_MHPMEVENT12H into x8 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT12H, x8, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT12H_csrrw1, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT12H_csrrw1_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT12H_csrrw0:
+  csrw CSR_MHPMEVENT12H, zero   # Write all 0s to CSR
+  # Read CSR_MHPMEVENT12H into x8 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT12H, x8, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT12H_csrrw0, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT12H_csrrw0_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT12H_csrs_all:
+  csrs CSR_MHPMEVENT12H, x14    # Set all 1s
+  # Read CSR_MHPMEVENT12H into x8 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT12H, x8, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT12H_csrs_all, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT12H_csrs_all_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT12H_csrrc_all:
+  csrc CSR_MHPMEVENT12H, x14    # Clear all 1s
+  # Read CSR_MHPMEVENT12H into x8 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT12H, x8, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT12H_csrrc_all, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT12H_csrrc_all_str)
+  csrw CSR_MHPMEVENT12H, x13       # Restore CSR
+
+# CSR Access Tests for CSR_MHPMEVENT13H
+  csrr x13, CSR_MHPMEVENT13H    # Save CSR
+  LI(x15, -1)             # write all 1s
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT13H_csrrw1:
+  csrw CSR_MHPMEVENT13H, x15    # Write all 1s to CSR
+  # Read CSR_MHPMEVENT13H into x8 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT13H, x8, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT13H_csrrw1, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT13H_csrrw1_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT13H_csrrw0:
+  csrw CSR_MHPMEVENT13H, zero   # Write all 0s to CSR
+  # Read CSR_MHPMEVENT13H into x8 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT13H, x8, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT13H_csrrw0, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT13H_csrrw0_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT13H_csrs_all:
+  csrs CSR_MHPMEVENT13H, x15    # Set all 1s
+  # Read CSR_MHPMEVENT13H into x8 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT13H, x8, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT13H_csrs_all, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT13H_csrs_all_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT13H_csrrc_all:
+  csrc CSR_MHPMEVENT13H, x15    # Clear all 1s
+  # Read CSR_MHPMEVENT13H into x8 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT13H, x8, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT13H_csrrc_all, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT13H_csrrc_all_str)
+  csrw CSR_MHPMEVENT13H, x13       # Restore CSR
+
+# CSR Access Tests for CSR_MHPMEVENT14H
+  csrr x6, CSR_MHPMEVENT14H    # Save CSR
+  LI(x8, -1)             # write all 1s
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT14H_csrrw1:
+  csrw CSR_MHPMEVENT14H, x8    # Write all 1s to CSR
+  # Read CSR_MHPMEVENT14H into x13 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT14H, x13, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT14H_csrrw1, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT14H_csrrw1_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT14H_csrrw0:
+  csrw CSR_MHPMEVENT14H, zero   # Write all 0s to CSR
+  # Read CSR_MHPMEVENT14H into x13 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT14H, x13, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT14H_csrrw0, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT14H_csrrw0_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT14H_csrs_all:
+  csrs CSR_MHPMEVENT14H, x8    # Set all 1s
+  # Read CSR_MHPMEVENT14H into x13 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT14H, x13, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT14H_csrs_all, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT14H_csrs_all_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT14H_csrrc_all:
+  csrc CSR_MHPMEVENT14H, x8    # Clear all 1s
+  # Read CSR_MHPMEVENT14H into x13 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT14H, x13, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT14H_csrrc_all, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT14H_csrrc_all_str)
+  csrw CSR_MHPMEVENT14H, x6       # Restore CSR
+
+# CSR Access Tests for CSR_MHPMEVENT15H
+  csrr x6, CSR_MHPMEVENT15H    # Save CSR
+  LI(x8, -1)             # write all 1s
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT15H_csrrw1:
+  csrw CSR_MHPMEVENT15H, x8    # Write all 1s to CSR
+  # Read CSR_MHPMEVENT15H into x13 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT15H, x13, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT15H_csrrw1, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT15H_csrrw1_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT15H_csrrw0:
+  csrw CSR_MHPMEVENT15H, zero   # Write all 0s to CSR
+  # Read CSR_MHPMEVENT15H into x13 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT15H, x13, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT15H_csrrw0, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT15H_csrrw0_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT15H_csrs_all:
+  csrs CSR_MHPMEVENT15H, x8    # Set all 1s
+  # Read CSR_MHPMEVENT15H into x13 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT15H, x13, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT15H_csrs_all, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT15H_csrs_all_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT15H_csrrc_all:
+  csrc CSR_MHPMEVENT15H, x8    # Clear all 1s
+  # Read CSR_MHPMEVENT15H into x13 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT15H, x13, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT15H_csrrc_all, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT15H_csrrc_all_str)
+  csrw CSR_MHPMEVENT15H, x6       # Restore CSR
+
+# CSR Access Tests for CSR_MHPMEVENT16H
+  csrr x9, CSR_MHPMEVENT16H    # Save CSR
+  LI(x13, -1)             # write all 1s
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT16H_csrrw1:
+  csrw CSR_MHPMEVENT16H, x13    # Write all 1s to CSR
+  # Read CSR_MHPMEVENT16H into x15 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT16H, x15, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT16H_csrrw1, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT16H_csrrw1_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT16H_csrrw0:
+  csrw CSR_MHPMEVENT16H, zero   # Write all 0s to CSR
+  # Read CSR_MHPMEVENT16H into x15 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT16H, x15, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT16H_csrrw0, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT16H_csrrw0_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT16H_csrs_all:
+  csrs CSR_MHPMEVENT16H, x13    # Set all 1s
+  # Read CSR_MHPMEVENT16H into x15 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT16H, x15, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT16H_csrs_all, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT16H_csrs_all_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT16H_csrrc_all:
+  csrc CSR_MHPMEVENT16H, x13    # Clear all 1s
+  # Read CSR_MHPMEVENT16H into x15 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT16H, x15, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT16H_csrrc_all, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT16H_csrrc_all_str)
+  csrw CSR_MHPMEVENT16H, x9       # Restore CSR
+
+# CSR Access Tests for CSR_MHPMEVENT17H
+  csrr x6, CSR_MHPMEVENT17H    # Save CSR
+  LI(x9, -1)             # write all 1s
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT17H_csrrw1:
+  csrw CSR_MHPMEVENT17H, x9    # Write all 1s to CSR
+  # Read CSR_MHPMEVENT17H into x14 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT17H, x14, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT17H_csrrw1, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT17H_csrrw1_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT17H_csrrw0:
+  csrw CSR_MHPMEVENT17H, zero   # Write all 0s to CSR
+  # Read CSR_MHPMEVENT17H into x14 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT17H, x14, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT17H_csrrw0, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT17H_csrrw0_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT17H_csrs_all:
+  csrs CSR_MHPMEVENT17H, x9    # Set all 1s
+  # Read CSR_MHPMEVENT17H into x14 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT17H, x14, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT17H_csrs_all, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT17H_csrs_all_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT17H_csrrc_all:
+  csrc CSR_MHPMEVENT17H, x9    # Clear all 1s
+  # Read CSR_MHPMEVENT17H into x14 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT17H, x14, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT17H_csrrc_all, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT17H_csrrc_all_str)
+  csrw CSR_MHPMEVENT17H, x6       # Restore CSR
+
+# CSR Access Tests for CSR_MHPMEVENT18H
+  csrr x8, CSR_MHPMEVENT18H    # Save CSR
+  LI(x6, -1)             # write all 1s
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT18H_csrrw1:
+  csrw CSR_MHPMEVENT18H, x6    # Write all 1s to CSR
+  # Read CSR_MHPMEVENT18H into x9 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT18H, x9, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT18H_csrrw1, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT18H_csrrw1_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT18H_csrrw0:
+  csrw CSR_MHPMEVENT18H, zero   # Write all 0s to CSR
+  # Read CSR_MHPMEVENT18H into x9 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT18H, x9, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT18H_csrrw0, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT18H_csrrw0_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT18H_csrs_all:
+  csrs CSR_MHPMEVENT18H, x6    # Set all 1s
+  # Read CSR_MHPMEVENT18H into x9 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT18H, x9, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT18H_csrs_all, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT18H_csrs_all_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT18H_csrrc_all:
+  csrc CSR_MHPMEVENT18H, x6    # Clear all 1s
+  # Read CSR_MHPMEVENT18H into x9 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT18H, x9, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT18H_csrrc_all, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT18H_csrrc_all_str)
+  csrw CSR_MHPMEVENT18H, x8       # Restore CSR
+
+# CSR Access Tests for CSR_MHPMEVENT19H
+  csrr x15, CSR_MHPMEVENT19H    # Save CSR
+  LI(x8, -1)             # write all 1s
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT19H_csrrw1:
+  csrw CSR_MHPMEVENT19H, x8    # Write all 1s to CSR
+  # Read CSR_MHPMEVENT19H into x13 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT19H, x13, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT19H_csrrw1, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT19H_csrrw1_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT19H_csrrw0:
+  csrw CSR_MHPMEVENT19H, zero   # Write all 0s to CSR
+  # Read CSR_MHPMEVENT19H into x13 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT19H, x13, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT19H_csrrw0, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT19H_csrrw0_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT19H_csrs_all:
+  csrs CSR_MHPMEVENT19H, x8    # Set all 1s
+  # Read CSR_MHPMEVENT19H into x13 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT19H, x13, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT19H_csrs_all, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT19H_csrs_all_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT19H_csrrc_all:
+  csrc CSR_MHPMEVENT19H, x8    # Clear all 1s
+  # Read CSR_MHPMEVENT19H into x13 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT19H, x13, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT19H_csrrc_all, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT19H_csrrc_all_str)
+  csrw CSR_MHPMEVENT19H, x15       # Restore CSR
+
+# CSR Access Tests for CSR_MHPMEVENT20H
+  csrr x9, CSR_MHPMEVENT20H    # Save CSR
+  LI(x13, -1)             # write all 1s
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT20H_csrrw1:
+  csrw CSR_MHPMEVENT20H, x13    # Write all 1s to CSR
+  # Read CSR_MHPMEVENT20H into x14 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT20H, x14, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT20H_csrrw1, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT20H_csrrw1_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT20H_csrrw0:
+  csrw CSR_MHPMEVENT20H, zero   # Write all 0s to CSR
+  # Read CSR_MHPMEVENT20H into x14 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT20H, x14, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT20H_csrrw0, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT20H_csrrw0_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT20H_csrs_all:
+  csrs CSR_MHPMEVENT20H, x13    # Set all 1s
+  # Read CSR_MHPMEVENT20H into x14 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT20H, x14, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT20H_csrs_all, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT20H_csrs_all_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT20H_csrrc_all:
+  csrc CSR_MHPMEVENT20H, x13    # Clear all 1s
+  # Read CSR_MHPMEVENT20H into x14 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT20H, x14, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT20H_csrrc_all, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT20H_csrrc_all_str)
+  csrw CSR_MHPMEVENT20H, x9       # Restore CSR
+
+# CSR Access Tests for CSR_MHPMEVENT21H
+  csrr x15, CSR_MHPMEVENT21H    # Save CSR
+  LI(x13, -1)             # write all 1s
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT21H_csrrw1:
+  csrw CSR_MHPMEVENT21H, x13    # Write all 1s to CSR
+  # Read CSR_MHPMEVENT21H into x14 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT21H, x14, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT21H_csrrw1, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT21H_csrrw1_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT21H_csrrw0:
+  csrw CSR_MHPMEVENT21H, zero   # Write all 0s to CSR
+  # Read CSR_MHPMEVENT21H into x14 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT21H, x14, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT21H_csrrw0, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT21H_csrrw0_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT21H_csrs_all:
+  csrs CSR_MHPMEVENT21H, x13    # Set all 1s
+  # Read CSR_MHPMEVENT21H into x14 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT21H, x14, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT21H_csrs_all, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT21H_csrs_all_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT21H_csrrc_all:
+  csrc CSR_MHPMEVENT21H, x13    # Clear all 1s
+  # Read CSR_MHPMEVENT21H into x14 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT21H, x14, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT21H_csrrc_all, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT21H_csrrc_all_str)
+  csrw CSR_MHPMEVENT21H, x15       # Restore CSR
+
+# CSR Access Tests for CSR_MHPMEVENT22H
+  csrr x8, CSR_MHPMEVENT22H    # Save CSR
+  LI(x15, -1)             # write all 1s
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT22H_csrrw1:
+  csrw CSR_MHPMEVENT22H, x15    # Write all 1s to CSR
+  # Read CSR_MHPMEVENT22H into x13 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT22H, x13, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT22H_csrrw1, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT22H_csrrw1_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT22H_csrrw0:
+  csrw CSR_MHPMEVENT22H, zero   # Write all 0s to CSR
+  # Read CSR_MHPMEVENT22H into x13 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT22H, x13, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT22H_csrrw0, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT22H_csrrw0_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT22H_csrs_all:
+  csrs CSR_MHPMEVENT22H, x15    # Set all 1s
+  # Read CSR_MHPMEVENT22H into x13 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT22H, x13, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT22H_csrs_all, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT22H_csrs_all_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT22H_csrrc_all:
+  csrc CSR_MHPMEVENT22H, x15    # Clear all 1s
+  # Read CSR_MHPMEVENT22H into x13 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT22H, x13, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT22H_csrrc_all, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT22H_csrrc_all_str)
+  csrw CSR_MHPMEVENT22H, x8       # Restore CSR
+
+# CSR Access Tests for CSR_MHPMEVENT23H
+  csrr x15, CSR_MHPMEVENT23H    # Save CSR
+  LI(x9, -1)             # write all 1s
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT23H_csrrw1:
+  csrw CSR_MHPMEVENT23H, x9    # Write all 1s to CSR
+  # Read CSR_MHPMEVENT23H into x14 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT23H, x14, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT23H_csrrw1, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT23H_csrrw1_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT23H_csrrw0:
+  csrw CSR_MHPMEVENT23H, zero   # Write all 0s to CSR
+  # Read CSR_MHPMEVENT23H into x14 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT23H, x14, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT23H_csrrw0, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT23H_csrrw0_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT23H_csrs_all:
+  csrs CSR_MHPMEVENT23H, x9    # Set all 1s
+  # Read CSR_MHPMEVENT23H into x14 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT23H, x14, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT23H_csrs_all, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT23H_csrs_all_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT23H_csrrc_all:
+  csrc CSR_MHPMEVENT23H, x9    # Clear all 1s
+  # Read CSR_MHPMEVENT23H into x14 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT23H, x14, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT23H_csrrc_all, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT23H_csrrc_all_str)
+  csrw CSR_MHPMEVENT23H, x15       # Restore CSR
+
+# CSR Access Tests for CSR_MHPMEVENT24H
+  csrr x14, CSR_MHPMEVENT24H    # Save CSR
+  LI(x9, -1)             # write all 1s
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT24H_csrrw1:
+  csrw CSR_MHPMEVENT24H, x9    # Write all 1s to CSR
+  # Read CSR_MHPMEVENT24H into x13 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT24H, x13, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT24H_csrrw1, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT24H_csrrw1_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT24H_csrrw0:
+  csrw CSR_MHPMEVENT24H, zero   # Write all 0s to CSR
+  # Read CSR_MHPMEVENT24H into x13 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT24H, x13, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT24H_csrrw0, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT24H_csrrw0_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT24H_csrs_all:
+  csrs CSR_MHPMEVENT24H, x9    # Set all 1s
+  # Read CSR_MHPMEVENT24H into x13 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT24H, x13, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT24H_csrs_all, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT24H_csrs_all_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT24H_csrrc_all:
+  csrc CSR_MHPMEVENT24H, x9    # Clear all 1s
+  # Read CSR_MHPMEVENT24H into x13 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT24H, x13, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT24H_csrrc_all, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT24H_csrrc_all_str)
+  csrw CSR_MHPMEVENT24H, x14       # Restore CSR
+
+# CSR Access Tests for CSR_MHPMEVENT25H
+  csrr x9, CSR_MHPMEVENT25H    # Save CSR
+  LI(x13, -1)             # write all 1s
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT25H_csrrw1:
+  csrw CSR_MHPMEVENT25H, x13    # Write all 1s to CSR
+  # Read CSR_MHPMEVENT25H into x14 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT25H, x14, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT25H_csrrw1, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT25H_csrrw1_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT25H_csrrw0:
+  csrw CSR_MHPMEVENT25H, zero   # Write all 0s to CSR
+  # Read CSR_MHPMEVENT25H into x14 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT25H, x14, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT25H_csrrw0, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT25H_csrrw0_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT25H_csrs_all:
+  csrs CSR_MHPMEVENT25H, x13    # Set all 1s
+  # Read CSR_MHPMEVENT25H into x14 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT25H, x14, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT25H_csrs_all, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT25H_csrs_all_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT25H_csrrc_all:
+  csrc CSR_MHPMEVENT25H, x13    # Clear all 1s
+  # Read CSR_MHPMEVENT25H into x14 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT25H, x14, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT25H_csrrc_all, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT25H_csrrc_all_str)
+  csrw CSR_MHPMEVENT25H, x9       # Restore CSR
+
+# CSR Access Tests for CSR_MHPMEVENT26H
+  csrr x9, CSR_MHPMEVENT26H    # Save CSR
+  LI(x14, -1)             # write all 1s
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT26H_csrrw1:
+  csrw CSR_MHPMEVENT26H, x14    # Write all 1s to CSR
+  # Read CSR_MHPMEVENT26H into x8 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT26H, x8, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT26H_csrrw1, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT26H_csrrw1_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT26H_csrrw0:
+  csrw CSR_MHPMEVENT26H, zero   # Write all 0s to CSR
+  # Read CSR_MHPMEVENT26H into x8 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT26H, x8, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT26H_csrrw0, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT26H_csrrw0_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT26H_csrs_all:
+  csrs CSR_MHPMEVENT26H, x14    # Set all 1s
+  # Read CSR_MHPMEVENT26H into x8 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT26H, x8, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT26H_csrs_all, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT26H_csrs_all_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT26H_csrrc_all:
+  csrc CSR_MHPMEVENT26H, x14    # Clear all 1s
+  # Read CSR_MHPMEVENT26H into x8 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT26H, x8, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT26H_csrrc_all, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT26H_csrrc_all_str)
+  csrw CSR_MHPMEVENT26H, x9       # Restore CSR
+
+# CSR Access Tests for CSR_MHPMEVENT27H
+  csrr x8, CSR_MHPMEVENT27H    # Save CSR
+  LI(x14, -1)             # write all 1s
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT27H_csrrw1:
+  csrw CSR_MHPMEVENT27H, x14    # Write all 1s to CSR
+  # Read CSR_MHPMEVENT27H into x6 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT27H, x6, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT27H_csrrw1, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT27H_csrrw1_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT27H_csrrw0:
+  csrw CSR_MHPMEVENT27H, zero   # Write all 0s to CSR
+  # Read CSR_MHPMEVENT27H into x6 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT27H, x6, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT27H_csrrw0, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT27H_csrrw0_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT27H_csrs_all:
+  csrs CSR_MHPMEVENT27H, x14    # Set all 1s
+  # Read CSR_MHPMEVENT27H into x6 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT27H, x6, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT27H_csrs_all, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT27H_csrs_all_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT27H_csrrc_all:
+  csrc CSR_MHPMEVENT27H, x14    # Clear all 1s
+  # Read CSR_MHPMEVENT27H into x6 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT27H, x6, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT27H_csrrc_all, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT27H_csrrc_all_str)
+  csrw CSR_MHPMEVENT27H, x8       # Restore CSR
+
+# CSR Access Tests for CSR_MHPMEVENT28H
+  csrr x15, CSR_MHPMEVENT28H    # Save CSR
+  LI(x14, -1)             # write all 1s
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT28H_csrrw1:
+  csrw CSR_MHPMEVENT28H, x14    # Write all 1s to CSR
+  # Read CSR_MHPMEVENT28H into x13 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT28H, x13, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT28H_csrrw1, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT28H_csrrw1_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT28H_csrrw0:
+  csrw CSR_MHPMEVENT28H, zero   # Write all 0s to CSR
+  # Read CSR_MHPMEVENT28H into x13 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT28H, x13, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT28H_csrrw0, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT28H_csrrw0_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT28H_csrs_all:
+  csrs CSR_MHPMEVENT28H, x14    # Set all 1s
+  # Read CSR_MHPMEVENT28H into x13 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT28H, x13, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT28H_csrs_all, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT28H_csrs_all_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT28H_csrrc_all:
+  csrc CSR_MHPMEVENT28H, x14    # Clear all 1s
+  # Read CSR_MHPMEVENT28H into x13 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT28H, x13, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT28H_csrrc_all, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT28H_csrrc_all_str)
+  csrw CSR_MHPMEVENT28H, x15       # Restore CSR
+
+# CSR Access Tests for CSR_MHPMEVENT29H
+  csrr x6, CSR_MHPMEVENT29H    # Save CSR
+  LI(x13, -1)             # write all 1s
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT29H_csrrw1:
+  csrw CSR_MHPMEVENT29H, x13    # Write all 1s to CSR
+  # Read CSR_MHPMEVENT29H into x14 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT29H, x14, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT29H_csrrw1, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT29H_csrrw1_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT29H_csrrw0:
+  csrw CSR_MHPMEVENT29H, zero   # Write all 0s to CSR
+  # Read CSR_MHPMEVENT29H into x14 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT29H, x14, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT29H_csrrw0, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT29H_csrrw0_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT29H_csrs_all:
+  csrs CSR_MHPMEVENT29H, x13    # Set all 1s
+  # Read CSR_MHPMEVENT29H into x14 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT29H, x14, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT29H_csrs_all, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT29H_csrs_all_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT29H_csrrc_all:
+  csrc CSR_MHPMEVENT29H, x13    # Clear all 1s
+  # Read CSR_MHPMEVENT29H into x14 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT29H, x14, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT29H_csrrc_all, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT29H_csrrc_all_str)
+  csrw CSR_MHPMEVENT29H, x6       # Restore CSR
+
+# CSR Access Tests for CSR_MHPMEVENT30H
+  csrr x13, CSR_MHPMEVENT30H    # Save CSR
+  LI(x8, -1)             # write all 1s
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT30H_csrrw1:
+  csrw CSR_MHPMEVENT30H, x8    # Write all 1s to CSR
+  # Read CSR_MHPMEVENT30H into x15 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT30H, x15, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT30H_csrrw1, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT30H_csrrw1_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT30H_csrrw0:
+  csrw CSR_MHPMEVENT30H, zero   # Write all 0s to CSR
+  # Read CSR_MHPMEVENT30H into x15 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT30H, x15, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT30H_csrrw0, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT30H_csrrw0_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT30H_csrs_all:
+  csrs CSR_MHPMEVENT30H, x8    # Set all 1s
+  # Read CSR_MHPMEVENT30H into x15 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT30H, x15, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT30H_csrs_all, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT30H_csrs_all_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT30H_csrrc_all:
+  csrc CSR_MHPMEVENT30H, x8    # Clear all 1s
+  # Read CSR_MHPMEVENT30H into x15 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT30H, x15, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT30H_csrrc_all, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT30H_csrrc_all_str)
+  csrw CSR_MHPMEVENT30H, x13       # Restore CSR
+
+# CSR Access Tests for CSR_MHPMEVENT31H
+  csrr x14, CSR_MHPMEVENT31H    # Save CSR
+  LI(x13, -1)             # write all 1s
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT31H_csrrw1:
+  csrw CSR_MHPMEVENT31H, x13    # Write all 1s to CSR
+  # Read CSR_MHPMEVENT31H into x15 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT31H, x15, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT31H_csrrw1, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT31H_csrrw1_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT31H_csrrw0:
+  csrw CSR_MHPMEVENT31H, zero   # Write all 0s to CSR
+  # Read CSR_MHPMEVENT31H into x15 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT31H, x15, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT31H_csrrw0, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT31H_csrrw0_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT31H_csrs_all:
+  csrs CSR_MHPMEVENT31H, x13    # Set all 1s
+  # Read CSR_MHPMEVENT31H into x15 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT31H, x15, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT31H_csrs_all, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT31H_csrs_all_str)
+
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT31H_csrrc_all:
+  csrc CSR_MHPMEVENT31H, x13    # Clear all 1s
+  # Read CSR_MHPMEVENT31H into x15 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(CSR_MHPMEVENT31H, x15, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT31H_csrrc_all, Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT31H_csrrc_all_str)
+  csrw CSR_MHPMEVENT31H, x14       # Restore CSR
 #endif
 
 
@@ -2987,88 +3166,88 @@ Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT31H_clear_m:
 //   mhpmevent3...31.OF: all 0s, walking 1s, all 1s. Read scountovf.
 /////////////////////////////////
 
-  LI(x8, -1)
-  csrw mcounteren, x8   # mcounteren = all 1s (fixed for this coverpoint)
+  LI(x15, -1)
+  csrw mcounteren, x15   # mcounteren = all 1s (fixed for this coverpoint)
 
 # --- Write OF pattern: all_0s across mhpmevent3..31 ---
 #if __riscv_xlen == 32
-  LI(x8, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
-  csrc CSR_MHPMEVENT4H, x8   # clear OF
-  csrc CSR_MHPMEVENT6H, x8   # clear OF
-  csrc CSR_MHPMEVENT8H, x8   # clear OF
-  csrc CSR_MHPMEVENT10H, x8   # clear OF
-  csrc CSR_MHPMEVENT12H, x8   # clear OF
-  csrc CSR_MHPMEVENT14H, x8   # clear OF
-  csrc CSR_MHPMEVENT16H, x8   # clear OF
-  csrc CSR_MHPMEVENT18H, x8   # clear OF
-  csrc CSR_MHPMEVENT20H, x8   # clear OF
-  csrc CSR_MHPMEVENT22H, x8   # clear OF
-  csrc CSR_MHPMEVENT24H, x8   # clear OF
-  csrc CSR_MHPMEVENT26H, x8   # clear OF
-  csrc CSR_MHPMEVENT28H, x8   # clear OF
-  csrc CSR_MHPMEVENT30H, x8   # clear OF
+  LI(x9, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
+  csrc CSR_MHPMEVENT4H, x9   # clear OF
+  csrc CSR_MHPMEVENT6H, x9   # clear OF
+  csrc CSR_MHPMEVENT8H, x9   # clear OF
+  csrc CSR_MHPMEVENT10H, x9   # clear OF
+  csrc CSR_MHPMEVENT12H, x9   # clear OF
+  csrc CSR_MHPMEVENT14H, x9   # clear OF
+  csrc CSR_MHPMEVENT16H, x9   # clear OF
+  csrc CSR_MHPMEVENT18H, x9   # clear OF
+  csrc CSR_MHPMEVENT20H, x9   # clear OF
+  csrc CSR_MHPMEVENT22H, x9   # clear OF
+  csrc CSR_MHPMEVENT24H, x9   # clear OF
+  csrc CSR_MHPMEVENT26H, x9   # clear OF
+  csrc CSR_MHPMEVENT28H, x9   # clear OF
+  csrc CSR_MHPMEVENT30H, x9   # clear OF
 #else
-  LI(x8, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
-  csrc CSR_MHPMEVENT4, x8   # clear OF
-  csrc CSR_MHPMEVENT6, x8   # clear OF
-  csrc CSR_MHPMEVENT8, x8   # clear OF
-  csrc CSR_MHPMEVENT10, x8   # clear OF
-  csrc CSR_MHPMEVENT12, x8   # clear OF
-  csrc CSR_MHPMEVENT14, x8   # clear OF
-  csrc CSR_MHPMEVENT16, x8   # clear OF
-  csrc CSR_MHPMEVENT18, x8   # clear OF
-  csrc CSR_MHPMEVENT20, x8   # clear OF
-  csrc CSR_MHPMEVENT22, x8   # clear OF
-  csrc CSR_MHPMEVENT24, x8   # clear OF
-  csrc CSR_MHPMEVENT26, x8   # clear OF
-  csrc CSR_MHPMEVENT28, x8   # clear OF
-  csrc CSR_MHPMEVENT30, x8   # clear OF
+  LI(x9, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
+  csrc CSR_MHPMEVENT4, x9   # clear OF
+  csrc CSR_MHPMEVENT6, x9   # clear OF
+  csrc CSR_MHPMEVENT8, x9   # clear OF
+  csrc CSR_MHPMEVENT10, x9   # clear OF
+  csrc CSR_MHPMEVENT12, x9   # clear OF
+  csrc CSR_MHPMEVENT14, x9   # clear OF
+  csrc CSR_MHPMEVENT16, x9   # clear OF
+  csrc CSR_MHPMEVENT18, x9   # clear OF
+  csrc CSR_MHPMEVENT20, x9   # clear OF
+  csrc CSR_MHPMEVENT22, x9   # clear OF
+  csrc CSR_MHPMEVENT24, x9   # clear OF
+  csrc CSR_MHPMEVENT26, x9   # clear OF
+  csrc CSR_MHPMEVENT28, x9   # clear OF
+  csrc CSR_MHPMEVENT30, x9   # clear OF
 #endif
 
 Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_all_0s:
-  csrr x6, scountovf   # sample point -- must match OF pattern
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_all_0s, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_all_0s_str)
+  csrr x14, scountovf   # sample point -- must match OF pattern
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_all_0s, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_all_0s_str)
 
 # --- Write OF pattern: walking1_0 across mhpmevent3..31 ---
 #if __riscv_xlen == 32
-  LI(x15, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
-  csrs CSR_MHPMEVENT3H, x15   # set OF
+  LI(x8, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
+  csrs CSR_MHPMEVENT3H, x8   # set OF
 #else
-  LI(x15, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
-  csrs CSR_MHPMEVENT3, x15   # set OF
+  LI(x8, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
+  csrs CSR_MHPMEVENT3, x8   # set OF
 #endif
 
 Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_0:
-  csrr x6, scountovf   # sample point -- must match OF pattern
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_0, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_0_str)
+  csrr x13, scountovf   # sample point -- must match OF pattern
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_0, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_0_str)
 
 # --- Write OF pattern: walking1_1 across mhpmevent3..31 ---
 #if __riscv_xlen == 32
-  LI(x14, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
-  csrc CSR_MHPMEVENT3H, x14   # clear OF
-  csrs CSR_MHPMEVENT4H, x14   # set OF
+  LI(x8, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
+  csrc CSR_MHPMEVENT3H, x8   # clear OF
+  csrs CSR_MHPMEVENT4H, x8   # set OF
 #else
-  LI(x14, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
-  csrc CSR_MHPMEVENT3, x14   # clear OF
-  csrs CSR_MHPMEVENT4, x14   # set OF
+  LI(x8, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
+  csrc CSR_MHPMEVENT3, x8   # clear OF
+  csrs CSR_MHPMEVENT4, x8   # set OF
 #endif
 
 Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_1:
-  csrr x13, scountovf   # sample point -- must match OF pattern
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_1, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_1_str)
+  csrr x9, scountovf   # sample point -- must match OF pattern
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_1, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_1_str)
 
 # --- Write OF pattern: walking1_2 across mhpmevent3..31 ---
 #if __riscv_xlen == 32
-  LI(x6, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
-  csrc CSR_MHPMEVENT4H, x6   # clear OF
-  csrs CSR_MHPMEVENT5H, x6   # set OF
+  LI(x14, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
+  csrc CSR_MHPMEVENT4H, x14   # clear OF
+  csrs CSR_MHPMEVENT5H, x14   # set OF
 #else
-  LI(x6, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
-  csrc CSR_MHPMEVENT4, x6   # clear OF
-  csrs CSR_MHPMEVENT5, x6   # set OF
+  LI(x14, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
+  csrc CSR_MHPMEVENT4, x14   # clear OF
+  csrs CSR_MHPMEVENT5, x14   # set OF
 #endif
 
 Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_2:
@@ -3078,29 +3257,29 @@ Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_2:
 
 # --- Write OF pattern: walking1_3 across mhpmevent3..31 ---
 #if __riscv_xlen == 32
-  LI(x15, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
-  csrc CSR_MHPMEVENT5H, x15   # clear OF
-  csrs CSR_MHPMEVENT6H, x15   # set OF
+  LI(x13, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
+  csrc CSR_MHPMEVENT5H, x13   # clear OF
+  csrs CSR_MHPMEVENT6H, x13   # set OF
 #else
-  LI(x15, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
-  csrc CSR_MHPMEVENT5, x15   # clear OF
-  csrs CSR_MHPMEVENT6, x15   # set OF
+  LI(x13, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
+  csrc CSR_MHPMEVENT5, x13   # clear OF
+  csrs CSR_MHPMEVENT6, x13   # set OF
 #endif
 
 Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_3:
-  csrr x13, scountovf   # sample point -- must match OF pattern
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_3, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_3_str)
+  csrr x6, scountovf   # sample point -- must match OF pattern
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_3, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_3_str)
 
 # --- Write OF pattern: walking1_4 across mhpmevent3..31 ---
 #if __riscv_xlen == 32
-  LI(x13, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
-  csrc CSR_MHPMEVENT6H, x13   # clear OF
-  csrs CSR_MHPMEVENT7H, x13   # set OF
+  LI(x8, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
+  csrc CSR_MHPMEVENT6H, x8   # clear OF
+  csrs CSR_MHPMEVENT7H, x8   # set OF
 #else
-  LI(x13, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
-  csrc CSR_MHPMEVENT6, x13   # clear OF
-  csrs CSR_MHPMEVENT7, x13   # set OF
+  LI(x8, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
+  csrc CSR_MHPMEVENT6, x8   # clear OF
+  csrs CSR_MHPMEVENT7, x8   # set OF
 #endif
 
 Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_4:
@@ -3110,61 +3289,61 @@ Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_4:
 
 # --- Write OF pattern: walking1_5 across mhpmevent3..31 ---
 #if __riscv_xlen == 32
-  LI(x13, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
-  csrc CSR_MHPMEVENT7H, x13   # clear OF
-  csrs CSR_MHPMEVENT8H, x13   # set OF
+  LI(x15, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
+  csrc CSR_MHPMEVENT7H, x15   # clear OF
+  csrs CSR_MHPMEVENT8H, x15   # set OF
 #else
-  LI(x13, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
-  csrc CSR_MHPMEVENT7, x13   # clear OF
-  csrs CSR_MHPMEVENT8, x13   # set OF
+  LI(x15, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
+  csrc CSR_MHPMEVENT7, x15   # clear OF
+  csrs CSR_MHPMEVENT8, x15   # set OF
 #endif
 
 Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_5:
-  csrr x14, scountovf   # sample point -- must match OF pattern
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_5, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_5_str)
+  csrr x6, scountovf   # sample point -- must match OF pattern
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_5, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_5_str)
 
 # --- Write OF pattern: walking1_6 across mhpmevent3..31 ---
 #if __riscv_xlen == 32
-  LI(x8, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
-  csrc CSR_MHPMEVENT8H, x8   # clear OF
-  csrs CSR_MHPMEVENT9H, x8   # set OF
+  LI(x15, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
+  csrc CSR_MHPMEVENT8H, x15   # clear OF
+  csrs CSR_MHPMEVENT9H, x15   # set OF
 #else
-  LI(x8, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
-  csrc CSR_MHPMEVENT8, x8   # clear OF
-  csrs CSR_MHPMEVENT9, x8   # set OF
+  LI(x15, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
+  csrc CSR_MHPMEVENT8, x15   # clear OF
+  csrs CSR_MHPMEVENT9, x15   # set OF
 #endif
 
 Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_6:
-  csrr x14, scountovf   # sample point -- must match OF pattern
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_6, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_6_str)
+  csrr x8, scountovf   # sample point -- must match OF pattern
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_6, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_6_str)
 
 # --- Write OF pattern: walking1_7 across mhpmevent3..31 ---
 #if __riscv_xlen == 32
-  LI(x15, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
-  csrc CSR_MHPMEVENT9H, x15   # clear OF
-  csrs CSR_MHPMEVENT10H, x15   # set OF
+  LI(x6, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
+  csrc CSR_MHPMEVENT9H, x6   # clear OF
+  csrs CSR_MHPMEVENT10H, x6   # set OF
 #else
-  LI(x15, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
-  csrc CSR_MHPMEVENT9, x15   # clear OF
-  csrs CSR_MHPMEVENT10, x15   # set OF
+  LI(x6, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
+  csrc CSR_MHPMEVENT9, x6   # clear OF
+  csrs CSR_MHPMEVENT10, x6   # set OF
 #endif
 
 Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_7:
-  csrr x6, scountovf   # sample point -- must match OF pattern
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_7, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_7_str)
+  csrr x13, scountovf   # sample point -- must match OF pattern
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_7, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_7_str)
 
 # --- Write OF pattern: walking1_8 across mhpmevent3..31 ---
 #if __riscv_xlen == 32
-  LI(x15, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
-  csrc CSR_MHPMEVENT10H, x15   # clear OF
-  csrs CSR_MHPMEVENT11H, x15   # set OF
+  LI(x8, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
+  csrc CSR_MHPMEVENT10H, x8   # clear OF
+  csrs CSR_MHPMEVENT11H, x8   # set OF
 #else
-  LI(x15, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
-  csrc CSR_MHPMEVENT10, x15   # clear OF
-  csrs CSR_MHPMEVENT11, x15   # set OF
+  LI(x8, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
+  csrc CSR_MHPMEVENT10, x8   # clear OF
+  csrs CSR_MHPMEVENT11, x8   # set OF
 #endif
 
 Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_8:
@@ -3174,51 +3353,51 @@ Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_8:
 
 # --- Write OF pattern: walking1_9 across mhpmevent3..31 ---
 #if __riscv_xlen == 32
-  LI(x6, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
-  csrc CSR_MHPMEVENT11H, x6   # clear OF
-  csrs CSR_MHPMEVENT12H, x6   # set OF
+  LI(x14, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
+  csrc CSR_MHPMEVENT11H, x14   # clear OF
+  csrs CSR_MHPMEVENT12H, x14   # set OF
 #else
-  LI(x6, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
-  csrc CSR_MHPMEVENT11, x6   # clear OF
-  csrs CSR_MHPMEVENT12, x6   # set OF
+  LI(x14, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
+  csrc CSR_MHPMEVENT11, x14   # clear OF
+  csrs CSR_MHPMEVENT12, x14   # set OF
 #endif
 
 Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_9:
-  csrr x13, scountovf   # sample point -- must match OF pattern
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_9, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_9_str)
+  csrr x9, scountovf   # sample point -- must match OF pattern
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_9, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_9_str)
 
 # --- Write OF pattern: walking1_10 across mhpmevent3..31 ---
 #if __riscv_xlen == 32
-  LI(x9, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
-  csrc CSR_MHPMEVENT12H, x9   # clear OF
-  csrs CSR_MHPMEVENT13H, x9   # set OF
+  LI(x15, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
+  csrc CSR_MHPMEVENT12H, x15   # clear OF
+  csrs CSR_MHPMEVENT13H, x15   # set OF
 #else
-  LI(x9, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
-  csrc CSR_MHPMEVENT12, x9   # clear OF
-  csrs CSR_MHPMEVENT13, x9   # set OF
+  LI(x15, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
+  csrc CSR_MHPMEVENT12, x15   # clear OF
+  csrs CSR_MHPMEVENT13, x15   # set OF
 #endif
 
 Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_10:
-  csrr x6, scountovf   # sample point -- must match OF pattern
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_10, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_10_str)
+  csrr x8, scountovf   # sample point -- must match OF pattern
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_10, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_10_str)
 
 # --- Write OF pattern: walking1_11 across mhpmevent3..31 ---
 #if __riscv_xlen == 32
-  LI(x14, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
-  csrc CSR_MHPMEVENT13H, x14   # clear OF
-  csrs CSR_MHPMEVENT14H, x14   # set OF
+  LI(x15, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
+  csrc CSR_MHPMEVENT13H, x15   # clear OF
+  csrs CSR_MHPMEVENT14H, x15   # set OF
 #else
-  LI(x14, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
-  csrc CSR_MHPMEVENT13, x14   # clear OF
-  csrs CSR_MHPMEVENT14, x14   # set OF
+  LI(x15, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
+  csrc CSR_MHPMEVENT13, x15   # clear OF
+  csrs CSR_MHPMEVENT14, x15   # set OF
 #endif
 
 Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_11:
-  csrr x9, scountovf   # sample point -- must match OF pattern
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_11, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_11_str)
+  csrr x6, scountovf   # sample point -- must match OF pattern
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_11, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_11_str)
 
 # --- Write OF pattern: walking1_12 across mhpmevent3..31 ---
 #if __riscv_xlen == 32
@@ -3232,41 +3411,41 @@ Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_11:
 #endif
 
 Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_12:
-  csrr x6, scountovf   # sample point -- must match OF pattern
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_12, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_12_str)
+  csrr x8, scountovf   # sample point -- must match OF pattern
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_12, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_12_str)
 
 # --- Write OF pattern: walking1_13 across mhpmevent3..31 ---
 #if __riscv_xlen == 32
-  LI(x15, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
-  csrc CSR_MHPMEVENT15H, x15   # clear OF
-  csrs CSR_MHPMEVENT16H, x15   # set OF
+  LI(x13, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
+  csrc CSR_MHPMEVENT15H, x13   # clear OF
+  csrs CSR_MHPMEVENT16H, x13   # set OF
 #else
-  LI(x15, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
-  csrc CSR_MHPMEVENT15, x15   # clear OF
-  csrs CSR_MHPMEVENT16, x15   # set OF
+  LI(x13, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
+  csrc CSR_MHPMEVENT15, x13   # clear OF
+  csrs CSR_MHPMEVENT16, x13   # set OF
 #endif
 
 Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_13:
-  csrr x6, scountovf   # sample point -- must match OF pattern
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_13, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_13_str)
+  csrr x14, scountovf   # sample point -- must match OF pattern
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_13, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_13_str)
 
 # --- Write OF pattern: walking1_14 across mhpmevent3..31 ---
 #if __riscv_xlen == 32
-  LI(x13, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
-  csrc CSR_MHPMEVENT16H, x13   # clear OF
-  csrs CSR_MHPMEVENT17H, x13   # set OF
+  LI(x6, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
+  csrc CSR_MHPMEVENT16H, x6   # clear OF
+  csrs CSR_MHPMEVENT17H, x6   # set OF
 #else
-  LI(x13, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
-  csrc CSR_MHPMEVENT16, x13   # clear OF
-  csrs CSR_MHPMEVENT17, x13   # set OF
+  LI(x6, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
+  csrc CSR_MHPMEVENT16, x6   # clear OF
+  csrs CSR_MHPMEVENT17, x6   # set OF
 #endif
 
 Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_14:
-  csrr x9, scountovf   # sample point -- must match OF pattern
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_14, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_14_str)
+  csrr x8, scountovf   # sample point -- must match OF pattern
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_14, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_14_str)
 
 
 
@@ -3282,35 +3461,35 @@ Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_14:
 
 # --- Write OF pattern: walking1_15 across mhpmevent3..31 ---
 #if __riscv_xlen == 32
-  LI(x15, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
-  csrc CSR_MHPMEVENT17H, x15   # clear OF
-  csrs CSR_MHPMEVENT18H, x15   # set OF
+  LI(x13, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
+  csrc CSR_MHPMEVENT17H, x13   # clear OF
+  csrs CSR_MHPMEVENT18H, x13   # set OF
 #else
-  LI(x15, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
-  csrc CSR_MHPMEVENT17, x15   # clear OF
-  csrs CSR_MHPMEVENT18, x15   # set OF
+  LI(x13, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
+  csrc CSR_MHPMEVENT17, x13   # clear OF
+  csrs CSR_MHPMEVENT18, x13   # set OF
 #endif
 
 Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_15:
-  csrr x9, scountovf   # sample point -- must match OF pattern
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_15, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_15_str)
+  csrr x6, scountovf   # sample point -- must match OF pattern
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_15, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_15_str)
 
 # --- Write OF pattern: walking1_16 across mhpmevent3..31 ---
 #if __riscv_xlen == 32
-  LI(x13, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
-  csrc CSR_MHPMEVENT18H, x13   # clear OF
-  csrs CSR_MHPMEVENT19H, x13   # set OF
+  LI(x6, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
+  csrc CSR_MHPMEVENT18H, x6   # clear OF
+  csrs CSR_MHPMEVENT19H, x6   # set OF
 #else
-  LI(x13, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
-  csrc CSR_MHPMEVENT18, x13   # clear OF
-  csrs CSR_MHPMEVENT19, x13   # set OF
+  LI(x6, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
+  csrc CSR_MHPMEVENT18, x6   # clear OF
+  csrs CSR_MHPMEVENT19, x6   # set OF
 #endif
 
 Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_16:
-  csrr x14, scountovf   # sample point -- must match OF pattern
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_16, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_16_str)
+  csrr x8, scountovf   # sample point -- must match OF pattern
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_16, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_16_str)
 
 # --- Write OF pattern: walking1_17 across mhpmevent3..31 ---
 #if __riscv_xlen == 32
@@ -3324,57 +3503,57 @@ Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_16:
 #endif
 
 Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_17:
-  csrr x8, scountovf   # sample point -- must match OF pattern
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_17, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_17_str)
+  csrr x14, scountovf   # sample point -- must match OF pattern
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_17, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_17_str)
 
 # --- Write OF pattern: walking1_18 across mhpmevent3..31 ---
 #if __riscv_xlen == 32
-  LI(x13, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
-  csrc CSR_MHPMEVENT20H, x13   # clear OF
-  csrs CSR_MHPMEVENT21H, x13   # set OF
+  LI(x6, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
+  csrc CSR_MHPMEVENT20H, x6   # clear OF
+  csrs CSR_MHPMEVENT21H, x6   # set OF
 #else
-  LI(x13, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
-  csrc CSR_MHPMEVENT20, x13   # clear OF
-  csrs CSR_MHPMEVENT21, x13   # set OF
+  LI(x6, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
+  csrc CSR_MHPMEVENT20, x6   # clear OF
+  csrs CSR_MHPMEVENT21, x6   # set OF
 #endif
 
 Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_18:
-  csrr x15, scountovf   # sample point -- must match OF pattern
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_18, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_18_str)
+  csrr x13, scountovf   # sample point -- must match OF pattern
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_18, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_18_str)
 
 # --- Write OF pattern: walking1_19 across mhpmevent3..31 ---
 #if __riscv_xlen == 32
-  LI(x8, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
-  csrc CSR_MHPMEVENT21H, x8   # clear OF
-  csrs CSR_MHPMEVENT22H, x8   # set OF
+  LI(x15, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
+  csrc CSR_MHPMEVENT21H, x15   # clear OF
+  csrs CSR_MHPMEVENT22H, x15   # set OF
 #else
-  LI(x8, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
-  csrc CSR_MHPMEVENT21, x8   # clear OF
-  csrs CSR_MHPMEVENT22, x8   # set OF
+  LI(x15, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
+  csrc CSR_MHPMEVENT21, x15   # clear OF
+  csrs CSR_MHPMEVENT22, x15   # set OF
 #endif
 
 Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_19:
-  csrr x6, scountovf   # sample point -- must match OF pattern
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_19, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_19_str)
+  csrr x14, scountovf   # sample point -- must match OF pattern
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_19, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_19_str)
 
 # --- Write OF pattern: walking1_20 across mhpmevent3..31 ---
 #if __riscv_xlen == 32
-  LI(x15, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
-  csrc CSR_MHPMEVENT22H, x15   # clear OF
-  csrs CSR_MHPMEVENT23H, x15   # set OF
+  LI(x8, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
+  csrc CSR_MHPMEVENT22H, x8   # clear OF
+  csrs CSR_MHPMEVENT23H, x8   # set OF
 #else
-  LI(x15, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
-  csrc CSR_MHPMEVENT22, x15   # clear OF
-  csrs CSR_MHPMEVENT23, x15   # set OF
+  LI(x8, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
+  csrc CSR_MHPMEVENT22, x8   # clear OF
+  csrs CSR_MHPMEVENT23, x8   # set OF
 #endif
 
 Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_20:
-  csrr x8, scountovf   # sample point -- must match OF pattern
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_20, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_20_str)
+  csrr x15, scountovf   # sample point -- must match OF pattern
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_20, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_20_str)
 
 # --- Write OF pattern: walking1_21 across mhpmevent3..31 ---
 #if __riscv_xlen == 32
@@ -3404,57 +3583,57 @@ Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_21:
 #endif
 
 Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_22:
-  csrr x14, scountovf   # sample point -- must match OF pattern
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_22, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_22_str)
+  csrr x9, scountovf   # sample point -- must match OF pattern
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_22, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_22_str)
 
 # --- Write OF pattern: walking1_23 across mhpmevent3..31 ---
 #if __riscv_xlen == 32
-  LI(x13, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
-  csrc CSR_MHPMEVENT25H, x13   # clear OF
-  csrs CSR_MHPMEVENT26H, x13   # set OF
+  LI(x6, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
+  csrc CSR_MHPMEVENT25H, x6   # clear OF
+  csrs CSR_MHPMEVENT26H, x6   # set OF
 #else
-  LI(x13, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
-  csrc CSR_MHPMEVENT25, x13   # clear OF
-  csrs CSR_MHPMEVENT26, x13   # set OF
+  LI(x6, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
+  csrc CSR_MHPMEVENT25, x6   # clear OF
+  csrs CSR_MHPMEVENT26, x6   # set OF
 #endif
 
 Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_23:
-  csrr x9, scountovf   # sample point -- must match OF pattern
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_23, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_23_str)
+  csrr x15, scountovf   # sample point -- must match OF pattern
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_23, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_23_str)
 
 # --- Write OF pattern: walking1_24 across mhpmevent3..31 ---
 #if __riscv_xlen == 32
-  LI(x13, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
-  csrc CSR_MHPMEVENT26H, x13   # clear OF
-  csrs CSR_MHPMEVENT27H, x13   # set OF
+  LI(x9, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
+  csrc CSR_MHPMEVENT26H, x9   # clear OF
+  csrs CSR_MHPMEVENT27H, x9   # set OF
 #else
-  LI(x13, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
-  csrc CSR_MHPMEVENT26, x13   # clear OF
-  csrs CSR_MHPMEVENT27, x13   # set OF
+  LI(x9, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
+  csrc CSR_MHPMEVENT26, x9   # clear OF
+  csrs CSR_MHPMEVENT27, x9   # set OF
 #endif
 
 Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_24:
-  csrr x9, scountovf   # sample point -- must match OF pattern
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_24, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_24_str)
+  csrr x15, scountovf   # sample point -- must match OF pattern
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_24, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_24_str)
 
 # --- Write OF pattern: walking1_25 across mhpmevent3..31 ---
 #if __riscv_xlen == 32
-  LI(x6, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
-  csrc CSR_MHPMEVENT27H, x6   # clear OF
-  csrs CSR_MHPMEVENT28H, x6   # set OF
+  LI(x9, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
+  csrc CSR_MHPMEVENT27H, x9   # clear OF
+  csrs CSR_MHPMEVENT28H, x9   # set OF
 #else
-  LI(x6, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
-  csrc CSR_MHPMEVENT27, x6   # clear OF
-  csrs CSR_MHPMEVENT28, x6   # set OF
+  LI(x9, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
+  csrc CSR_MHPMEVENT27, x9   # clear OF
+  csrs CSR_MHPMEVENT28, x9   # set OF
 #endif
 
 Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_25:
-  csrr x9, scountovf   # sample point -- must match OF pattern
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_25, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_25_str)
+  csrr x13, scountovf   # sample point -- must match OF pattern
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_25, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_25_str)
 
 # --- Write OF pattern: walking1_26 across mhpmevent3..31 ---
 #if __riscv_xlen == 32
@@ -3474,29 +3653,29 @@ Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_26:
 
 # --- Write OF pattern: walking1_27 across mhpmevent3..31 ---
 #if __riscv_xlen == 32
-  LI(x6, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
-  csrc CSR_MHPMEVENT29H, x6   # clear OF
-  csrs CSR_MHPMEVENT30H, x6   # set OF
+  LI(x8, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
+  csrc CSR_MHPMEVENT29H, x8   # clear OF
+  csrs CSR_MHPMEVENT30H, x8   # set OF
 #else
-  LI(x6, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
-  csrc CSR_MHPMEVENT29, x6   # clear OF
-  csrs CSR_MHPMEVENT30, x6   # set OF
+  LI(x8, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
+  csrc CSR_MHPMEVENT29, x8   # clear OF
+  csrs CSR_MHPMEVENT30, x8   # set OF
 #endif
 
 Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_27:
-  csrr x14, scountovf   # sample point -- must match OF pattern
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_27, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_27_str)
+  csrr x15, scountovf   # sample point -- must match OF pattern
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_27, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_27_str)
 
 # --- Write OF pattern: walking1_28 across mhpmevent3..31 ---
 #if __riscv_xlen == 32
-  LI(x9, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
-  csrc CSR_MHPMEVENT30H, x9   # clear OF
-  csrs CSR_MHPMEVENT31H, x9   # set OF
+  LI(x15, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
+  csrc CSR_MHPMEVENT30H, x15   # clear OF
+  csrs CSR_MHPMEVENT31H, x15   # set OF
 #else
-  LI(x9, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
-  csrc CSR_MHPMEVENT30, x9   # clear OF
-  csrs CSR_MHPMEVENT31, x9   # set OF
+  LI(x15, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
+  csrc CSR_MHPMEVENT30, x15   # clear OF
+  csrs CSR_MHPMEVENT31, x15   # set OF
 #endif
 
 Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_28:
@@ -3513,76 +3692,76 @@ Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_28:
 //   mhpmevent3...31.OF: all 0s, walking 1s, all 1s. Read scountovf.
 /////////////////////////////////
 
-  LI(x14, -1)
-  csrw mcounteren, x14   # mcounteren = all 1s (fixed for this coverpoint)
+  LI(x9, -1)
+  csrw mcounteren, x9   # mcounteren = all 1s (fixed for this coverpoint)
 
 # --- Write OF pattern: all_1s across mhpmevent3..31 ---
 #if __riscv_xlen == 32
-  LI(x13, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
-  csrs CSR_MHPMEVENT3H, x13   # set OF
-  csrs CSR_MHPMEVENT4H, x13   # set OF
-  csrs CSR_MHPMEVENT5H, x13   # set OF
-  csrs CSR_MHPMEVENT6H, x13   # set OF
-  csrs CSR_MHPMEVENT7H, x13   # set OF
-  csrs CSR_MHPMEVENT8H, x13   # set OF
-  csrs CSR_MHPMEVENT9H, x13   # set OF
-  csrs CSR_MHPMEVENT10H, x13   # set OF
-  csrs CSR_MHPMEVENT11H, x13   # set OF
-  csrs CSR_MHPMEVENT12H, x13   # set OF
-  csrs CSR_MHPMEVENT13H, x13   # set OF
-  csrs CSR_MHPMEVENT14H, x13   # set OF
-  csrs CSR_MHPMEVENT15H, x13   # set OF
-  csrs CSR_MHPMEVENT16H, x13   # set OF
-  csrs CSR_MHPMEVENT17H, x13   # set OF
-  csrs CSR_MHPMEVENT18H, x13   # set OF
-  csrs CSR_MHPMEVENT19H, x13   # set OF
-  csrs CSR_MHPMEVENT20H, x13   # set OF
-  csrs CSR_MHPMEVENT21H, x13   # set OF
-  csrs CSR_MHPMEVENT22H, x13   # set OF
-  csrs CSR_MHPMEVENT23H, x13   # set OF
-  csrs CSR_MHPMEVENT24H, x13   # set OF
-  csrs CSR_MHPMEVENT25H, x13   # set OF
-  csrs CSR_MHPMEVENT26H, x13   # set OF
-  csrs CSR_MHPMEVENT27H, x13   # set OF
-  csrs CSR_MHPMEVENT28H, x13   # set OF
-  csrs CSR_MHPMEVENT29H, x13   # set OF
-  csrs CSR_MHPMEVENT30H, x13   # set OF
+  LI(x9, 0x80000000)   # OF bit (bit 31 of mhpmeventh, RV32)
+  csrs CSR_MHPMEVENT3H, x9   # set OF
+  csrs CSR_MHPMEVENT4H, x9   # set OF
+  csrs CSR_MHPMEVENT5H, x9   # set OF
+  csrs CSR_MHPMEVENT6H, x9   # set OF
+  csrs CSR_MHPMEVENT7H, x9   # set OF
+  csrs CSR_MHPMEVENT8H, x9   # set OF
+  csrs CSR_MHPMEVENT9H, x9   # set OF
+  csrs CSR_MHPMEVENT10H, x9   # set OF
+  csrs CSR_MHPMEVENT11H, x9   # set OF
+  csrs CSR_MHPMEVENT12H, x9   # set OF
+  csrs CSR_MHPMEVENT13H, x9   # set OF
+  csrs CSR_MHPMEVENT14H, x9   # set OF
+  csrs CSR_MHPMEVENT15H, x9   # set OF
+  csrs CSR_MHPMEVENT16H, x9   # set OF
+  csrs CSR_MHPMEVENT17H, x9   # set OF
+  csrs CSR_MHPMEVENT18H, x9   # set OF
+  csrs CSR_MHPMEVENT19H, x9   # set OF
+  csrs CSR_MHPMEVENT20H, x9   # set OF
+  csrs CSR_MHPMEVENT21H, x9   # set OF
+  csrs CSR_MHPMEVENT22H, x9   # set OF
+  csrs CSR_MHPMEVENT23H, x9   # set OF
+  csrs CSR_MHPMEVENT24H, x9   # set OF
+  csrs CSR_MHPMEVENT25H, x9   # set OF
+  csrs CSR_MHPMEVENT26H, x9   # set OF
+  csrs CSR_MHPMEVENT27H, x9   # set OF
+  csrs CSR_MHPMEVENT28H, x9   # set OF
+  csrs CSR_MHPMEVENT29H, x9   # set OF
+  csrs CSR_MHPMEVENT30H, x9   # set OF
 #else
-  LI(x13, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
-  csrs CSR_MHPMEVENT3, x13   # set OF
-  csrs CSR_MHPMEVENT4, x13   # set OF
-  csrs CSR_MHPMEVENT5, x13   # set OF
-  csrs CSR_MHPMEVENT6, x13   # set OF
-  csrs CSR_MHPMEVENT7, x13   # set OF
-  csrs CSR_MHPMEVENT8, x13   # set OF
-  csrs CSR_MHPMEVENT9, x13   # set OF
-  csrs CSR_MHPMEVENT10, x13   # set OF
-  csrs CSR_MHPMEVENT11, x13   # set OF
-  csrs CSR_MHPMEVENT12, x13   # set OF
-  csrs CSR_MHPMEVENT13, x13   # set OF
-  csrs CSR_MHPMEVENT14, x13   # set OF
-  csrs CSR_MHPMEVENT15, x13   # set OF
-  csrs CSR_MHPMEVENT16, x13   # set OF
-  csrs CSR_MHPMEVENT17, x13   # set OF
-  csrs CSR_MHPMEVENT18, x13   # set OF
-  csrs CSR_MHPMEVENT19, x13   # set OF
-  csrs CSR_MHPMEVENT20, x13   # set OF
-  csrs CSR_MHPMEVENT21, x13   # set OF
-  csrs CSR_MHPMEVENT22, x13   # set OF
-  csrs CSR_MHPMEVENT23, x13   # set OF
-  csrs CSR_MHPMEVENT24, x13   # set OF
-  csrs CSR_MHPMEVENT25, x13   # set OF
-  csrs CSR_MHPMEVENT26, x13   # set OF
-  csrs CSR_MHPMEVENT27, x13   # set OF
-  csrs CSR_MHPMEVENT28, x13   # set OF
-  csrs CSR_MHPMEVENT29, x13   # set OF
-  csrs CSR_MHPMEVENT30, x13   # set OF
+  LI(x9, 0x8000000000000000)   # OF bit (bit 63 of mhpmevent, RV64)
+  csrs CSR_MHPMEVENT3, x9   # set OF
+  csrs CSR_MHPMEVENT4, x9   # set OF
+  csrs CSR_MHPMEVENT5, x9   # set OF
+  csrs CSR_MHPMEVENT6, x9   # set OF
+  csrs CSR_MHPMEVENT7, x9   # set OF
+  csrs CSR_MHPMEVENT8, x9   # set OF
+  csrs CSR_MHPMEVENT9, x9   # set OF
+  csrs CSR_MHPMEVENT10, x9   # set OF
+  csrs CSR_MHPMEVENT11, x9   # set OF
+  csrs CSR_MHPMEVENT12, x9   # set OF
+  csrs CSR_MHPMEVENT13, x9   # set OF
+  csrs CSR_MHPMEVENT14, x9   # set OF
+  csrs CSR_MHPMEVENT15, x9   # set OF
+  csrs CSR_MHPMEVENT16, x9   # set OF
+  csrs CSR_MHPMEVENT17, x9   # set OF
+  csrs CSR_MHPMEVENT18, x9   # set OF
+  csrs CSR_MHPMEVENT19, x9   # set OF
+  csrs CSR_MHPMEVENT20, x9   # set OF
+  csrs CSR_MHPMEVENT21, x9   # set OF
+  csrs CSR_MHPMEVENT22, x9   # set OF
+  csrs CSR_MHPMEVENT23, x9   # set OF
+  csrs CSR_MHPMEVENT24, x9   # set OF
+  csrs CSR_MHPMEVENT25, x9   # set OF
+  csrs CSR_MHPMEVENT26, x9   # set OF
+  csrs CSR_MHPMEVENT27, x9   # set OF
+  csrs CSR_MHPMEVENT28, x9   # set OF
+  csrs CSR_MHPMEVENT29, x9   # set OF
+  csrs CSR_MHPMEVENT30, x9   # set OF
 #endif
 
 Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_all_1s:
-  csrr x9, scountovf   # sample point -- must match OF pattern
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_all_1s, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_all_1s_str)
+  csrr x15, scountovf   # sample point -- must match OF pattern
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_all_1s, Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_all_1s_str)
 
 
 // Instantiate trap handlers and other epilog code, call RVMODEL_HALT at end of test
@@ -3748,187 +3927,157 @@ Sscofpmf_cg_cp_scountovf_mcounteren_checker_odd_m_mcounteren_walk_bit_28_str: .s
 Sscofpmf_cg_cp_scountovf_mcounteren_checker_odd_m_mcounteren_walk_bit_29_str: .string "\"test: 151; cg: Sscofpmf_cg; cp: cp_scountovf_mcounteren_checker_odd_m; bin: mcounteren_walk_bit_29\""
 Sscofpmf_cg_cp_scountovf_mcounteren_checker_odd_m_mcounteren_walk_bit_30_str: .string "\"test: 152; cg: Sscofpmf_cg; cp: cp_scountovf_mcounteren_checker_odd_m; bin: mcounteren_walk_bit_30\""
 Sscofpmf_cg_cp_scountovf_mcounteren_checker_odd_m_mcounteren_walk_bit_31_str: .string "\"test: 153; cg: Sscofpmf_cg; cp: cp_scountovf_mcounteren_checker_odd_m; bin: mcounteren_walk_bit_31\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_scountovf_read_m_str: .string "\"test: 154; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_scountovf_read_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_scountovf_write_ones_m_str: .string "\"test: 155; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_scountovf_write_ones_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_scountovf_write_zeros_m_str: .string "\"test: 156; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_scountovf_write_zeros_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_scountovf_set_m_str: .string "\"test: 157; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_scountovf_set_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_scountovf_clear_m_str: .string "\"test: 158; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_scountovf_clear_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT3H_read_m_str: .string "\"test: 159; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT3H_read_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT3H_write_ones_m_str: .string "\"test: 160; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT3H_write_ones_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT3H_write_zeros_m_str: .string "\"test: 161; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT3H_write_zeros_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT3H_set_m_str: .string "\"test: 162; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT3H_set_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT3H_clear_m_str: .string "\"test: 163; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT3H_clear_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT4H_read_m_str: .string "\"test: 164; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT4H_read_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT4H_write_ones_m_str: .string "\"test: 165; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT4H_write_ones_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT4H_write_zeros_m_str: .string "\"test: 166; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT4H_write_zeros_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT4H_set_m_str: .string "\"test: 167; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT4H_set_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT4H_clear_m_str: .string "\"test: 168; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT4H_clear_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT5H_read_m_str: .string "\"test: 169; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT5H_read_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT5H_write_ones_m_str: .string "\"test: 170; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT5H_write_ones_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT5H_write_zeros_m_str: .string "\"test: 171; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT5H_write_zeros_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT5H_set_m_str: .string "\"test: 172; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT5H_set_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT5H_clear_m_str: .string "\"test: 173; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT5H_clear_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT6H_read_m_str: .string "\"test: 174; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT6H_read_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT6H_write_ones_m_str: .string "\"test: 175; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT6H_write_ones_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT6H_write_zeros_m_str: .string "\"test: 176; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT6H_write_zeros_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT6H_set_m_str: .string "\"test: 177; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT6H_set_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT6H_clear_m_str: .string "\"test: 178; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT6H_clear_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT7H_read_m_str: .string "\"test: 179; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT7H_read_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT7H_write_ones_m_str: .string "\"test: 180; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT7H_write_ones_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT7H_write_zeros_m_str: .string "\"test: 181; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT7H_write_zeros_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT7H_set_m_str: .string "\"test: 182; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT7H_set_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT7H_clear_m_str: .string "\"test: 183; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT7H_clear_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT8H_read_m_str: .string "\"test: 184; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT8H_read_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT8H_write_ones_m_str: .string "\"test: 185; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT8H_write_ones_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT8H_write_zeros_m_str: .string "\"test: 186; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT8H_write_zeros_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT8H_set_m_str: .string "\"test: 187; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT8H_set_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT8H_clear_m_str: .string "\"test: 188; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT8H_clear_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT9H_read_m_str: .string "\"test: 189; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT9H_read_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT9H_write_ones_m_str: .string "\"test: 190; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT9H_write_ones_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT9H_write_zeros_m_str: .string "\"test: 191; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT9H_write_zeros_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT9H_set_m_str: .string "\"test: 192; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT9H_set_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT9H_clear_m_str: .string "\"test: 193; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT9H_clear_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT10H_read_m_str: .string "\"test: 194; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT10H_read_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT10H_write_ones_m_str: .string "\"test: 195; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT10H_write_ones_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT10H_write_zeros_m_str: .string "\"test: 196; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT10H_write_zeros_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT10H_set_m_str: .string "\"test: 197; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT10H_set_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT10H_clear_m_str: .string "\"test: 198; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT10H_clear_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT11H_read_m_str: .string "\"test: 199; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT11H_read_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT11H_write_ones_m_str: .string "\"test: 200; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT11H_write_ones_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT11H_write_zeros_m_str: .string "\"test: 201; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT11H_write_zeros_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT11H_set_m_str: .string "\"test: 202; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT11H_set_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT11H_clear_m_str: .string "\"test: 203; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT11H_clear_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT12H_read_m_str: .string "\"test: 204; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT12H_read_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT12H_write_ones_m_str: .string "\"test: 205; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT12H_write_ones_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT12H_write_zeros_m_str: .string "\"test: 206; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT12H_write_zeros_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT12H_set_m_str: .string "\"test: 207; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT12H_set_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT12H_clear_m_str: .string "\"test: 208; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT12H_clear_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT13H_read_m_str: .string "\"test: 209; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT13H_read_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT13H_write_ones_m_str: .string "\"test: 210; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT13H_write_ones_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT13H_write_zeros_m_str: .string "\"test: 211; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT13H_write_zeros_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT13H_set_m_str: .string "\"test: 212; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT13H_set_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT13H_clear_m_str: .string "\"test: 213; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT13H_clear_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT14H_read_m_str: .string "\"test: 214; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT14H_read_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT14H_write_ones_m_str: .string "\"test: 215; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT14H_write_ones_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT14H_write_zeros_m_str: .string "\"test: 216; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT14H_write_zeros_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT14H_set_m_str: .string "\"test: 217; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT14H_set_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT14H_clear_m_str: .string "\"test: 218; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT14H_clear_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT15H_read_m_str: .string "\"test: 219; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT15H_read_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT15H_write_ones_m_str: .string "\"test: 220; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT15H_write_ones_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT15H_write_zeros_m_str: .string "\"test: 221; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT15H_write_zeros_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT15H_set_m_str: .string "\"test: 222; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT15H_set_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT15H_clear_m_str: .string "\"test: 223; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT15H_clear_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT16H_read_m_str: .string "\"test: 224; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT16H_read_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT16H_write_ones_m_str: .string "\"test: 225; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT16H_write_ones_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT16H_write_zeros_m_str: .string "\"test: 226; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT16H_write_zeros_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT16H_set_m_str: .string "\"test: 227; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT16H_set_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT16H_clear_m_str: .string "\"test: 228; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT16H_clear_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT17H_read_m_str: .string "\"test: 229; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT17H_read_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT17H_write_ones_m_str: .string "\"test: 230; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT17H_write_ones_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT17H_write_zeros_m_str: .string "\"test: 231; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT17H_write_zeros_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT17H_set_m_str: .string "\"test: 232; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT17H_set_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT17H_clear_m_str: .string "\"test: 233; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT17H_clear_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT18H_read_m_str: .string "\"test: 234; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT18H_read_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT18H_write_ones_m_str: .string "\"test: 235; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT18H_write_ones_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT18H_write_zeros_m_str: .string "\"test: 236; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT18H_write_zeros_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT18H_set_m_str: .string "\"test: 237; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT18H_set_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT18H_clear_m_str: .string "\"test: 238; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT18H_clear_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT19H_read_m_str: .string "\"test: 239; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT19H_read_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT19H_write_ones_m_str: .string "\"test: 240; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT19H_write_ones_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT19H_write_zeros_m_str: .string "\"test: 241; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT19H_write_zeros_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT19H_set_m_str: .string "\"test: 242; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT19H_set_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT19H_clear_m_str: .string "\"test: 243; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT19H_clear_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT20H_read_m_str: .string "\"test: 244; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT20H_read_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT20H_write_ones_m_str: .string "\"test: 245; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT20H_write_ones_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT20H_write_zeros_m_str: .string "\"test: 246; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT20H_write_zeros_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT20H_set_m_str: .string "\"test: 247; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT20H_set_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT20H_clear_m_str: .string "\"test: 248; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT20H_clear_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT21H_read_m_str: .string "\"test: 249; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT21H_read_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT21H_write_ones_m_str: .string "\"test: 250; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT21H_write_ones_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT21H_write_zeros_m_str: .string "\"test: 251; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT21H_write_zeros_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT21H_set_m_str: .string "\"test: 252; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT21H_set_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT21H_clear_m_str: .string "\"test: 253; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT21H_clear_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT22H_read_m_str: .string "\"test: 254; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT22H_read_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT22H_write_ones_m_str: .string "\"test: 255; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT22H_write_ones_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT22H_write_zeros_m_str: .string "\"test: 256; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT22H_write_zeros_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT22H_set_m_str: .string "\"test: 257; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT22H_set_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT22H_clear_m_str: .string "\"test: 258; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT22H_clear_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT23H_read_m_str: .string "\"test: 259; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT23H_read_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT23H_write_ones_m_str: .string "\"test: 260; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT23H_write_ones_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT23H_write_zeros_m_str: .string "\"test: 261; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT23H_write_zeros_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT23H_set_m_str: .string "\"test: 262; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT23H_set_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT23H_clear_m_str: .string "\"test: 263; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT23H_clear_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT24H_read_m_str: .string "\"test: 264; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT24H_read_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT24H_write_ones_m_str: .string "\"test: 265; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT24H_write_ones_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT24H_write_zeros_m_str: .string "\"test: 266; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT24H_write_zeros_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT24H_set_m_str: .string "\"test: 267; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT24H_set_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT24H_clear_m_str: .string "\"test: 268; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT24H_clear_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT25H_read_m_str: .string "\"test: 269; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT25H_read_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT25H_write_ones_m_str: .string "\"test: 270; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT25H_write_ones_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT25H_write_zeros_m_str: .string "\"test: 271; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT25H_write_zeros_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT25H_set_m_str: .string "\"test: 272; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT25H_set_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT25H_clear_m_str: .string "\"test: 273; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT25H_clear_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT26H_read_m_str: .string "\"test: 274; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT26H_read_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT26H_write_ones_m_str: .string "\"test: 275; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT26H_write_ones_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT26H_write_zeros_m_str: .string "\"test: 276; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT26H_write_zeros_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT26H_set_m_str: .string "\"test: 277; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT26H_set_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT26H_clear_m_str: .string "\"test: 278; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT26H_clear_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT27H_read_m_str: .string "\"test: 279; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT27H_read_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT27H_write_ones_m_str: .string "\"test: 280; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT27H_write_ones_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT27H_write_zeros_m_str: .string "\"test: 281; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT27H_write_zeros_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT27H_set_m_str: .string "\"test: 282; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT27H_set_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT27H_clear_m_str: .string "\"test: 283; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT27H_clear_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT28H_read_m_str: .string "\"test: 284; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT28H_read_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT28H_write_ones_m_str: .string "\"test: 285; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT28H_write_ones_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT28H_write_zeros_m_str: .string "\"test: 286; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT28H_write_zeros_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT28H_set_m_str: .string "\"test: 287; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT28H_set_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT28H_clear_m_str: .string "\"test: 288; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT28H_clear_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT29H_read_m_str: .string "\"test: 289; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT29H_read_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT29H_write_ones_m_str: .string "\"test: 290; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT29H_write_ones_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT29H_write_zeros_m_str: .string "\"test: 291; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT29H_write_zeros_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT29H_set_m_str: .string "\"test: 292; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT29H_set_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT29H_clear_m_str: .string "\"test: 293; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT29H_clear_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT30H_read_m_str: .string "\"test: 294; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT30H_read_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT30H_write_ones_m_str: .string "\"test: 295; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT30H_write_ones_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT30H_write_zeros_m_str: .string "\"test: 296; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT30H_write_zeros_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT30H_set_m_str: .string "\"test: 297; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT30H_set_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT30H_clear_m_str: .string "\"test: 298; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT30H_clear_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT31H_read_m_str: .string "\"test: 299; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT31H_read_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT31H_write_ones_m_str: .string "\"test: 300; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT31H_write_ones_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT31H_write_zeros_m_str: .string "\"test: 301; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT31H_write_zeros_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT31H_set_m_str: .string "\"test: 302; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT31H_set_m\""
-Sscofpmf_cg_cp_sscofpmf_access_sscofpmf_access_CSR_MHPMEVENT31H_clear_m_str: .string "\"test: 303; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: sscofpmf_access_CSR_MHPMEVENT31H_clear_m\""
-Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_all_0s_str: .string "\"test: 304; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_m_all_0s\""
-Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_0_str: .string "\"test: 305; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_m_walking1_0\""
-Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_1_str: .string "\"test: 306; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_m_walking1_1\""
-Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_2_str: .string "\"test: 307; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_m_walking1_2\""
-Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_3_str: .string "\"test: 308; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_m_walking1_3\""
-Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_4_str: .string "\"test: 309; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_m_walking1_4\""
-Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_5_str: .string "\"test: 310; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_m_walking1_5\""
-Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_6_str: .string "\"test: 311; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_m_walking1_6\""
-Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_7_str: .string "\"test: 312; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_m_walking1_7\""
-Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_8_str: .string "\"test: 313; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_m_walking1_8\""
-Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_9_str: .string "\"test: 314; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_m_walking1_9\""
-Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_10_str: .string "\"test: 315; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_m_walking1_10\""
-Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_11_str: .string "\"test: 316; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_m_walking1_11\""
-Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_12_str: .string "\"test: 317; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_m_walking1_12\""
-Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_13_str: .string "\"test: 318; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_m_walking1_13\""
-Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_14_str: .string "\"test: 319; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_m_walking1_14\""
-Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_15_str: .string "\"test: 320; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_m_walking1_15\""
-Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_16_str: .string "\"test: 321; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_m_walking1_16\""
-Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_17_str: .string "\"test: 322; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_m_walking1_17\""
-Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_18_str: .string "\"test: 323; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_m_walking1_18\""
-Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_19_str: .string "\"test: 324; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_m_walking1_19\""
-Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_20_str: .string "\"test: 325; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_m_walking1_20\""
-Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_21_str: .string "\"test: 326; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_m_walking1_21\""
-Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_22_str: .string "\"test: 327; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_m_walking1_22\""
-Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_23_str: .string "\"test: 328; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_m_walking1_23\""
-Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_24_str: .string "\"test: 329; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_m_walking1_24\""
-Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_25_str: .string "\"test: 330; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_m_walking1_25\""
-Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_26_str: .string "\"test: 331; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_m_walking1_26\""
-Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_27_str: .string "\"test: 332; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_m_walking1_27\""
-Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_28_str: .string "\"test: 333; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_m_walking1_28\""
-Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_all_1s_str: .string "\"test: 334; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_m_all_1s\""
+Sscofpmf_cg_cp_sscofpmf_access_scountovf_csrrw1_str: .string "\"test: 154; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: scountovf_csrrw1\""
+Sscofpmf_cg_cp_sscofpmf_access_scountovf_csrrw0_str: .string "\"test: 155; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: scountovf_csrrw0\""
+Sscofpmf_cg_cp_sscofpmf_access_scountovf_csrs_all_str: .string "\"test: 156; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: scountovf_csrs_all\""
+Sscofpmf_cg_cp_sscofpmf_access_scountovf_csrrc_all_str: .string "\"test: 157; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: scountovf_csrrc_all\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT3H_csrrw1_str: .string "\"test: 158; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT3H_csrrw1\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT3H_csrrw0_str: .string "\"test: 159; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT3H_csrrw0\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT3H_csrs_all_str: .string "\"test: 160; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT3H_csrs_all\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT3H_csrrc_all_str: .string "\"test: 161; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT3H_csrrc_all\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT4H_csrrw1_str: .string "\"test: 162; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT4H_csrrw1\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT4H_csrrw0_str: .string "\"test: 163; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT4H_csrrw0\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT4H_csrs_all_str: .string "\"test: 164; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT4H_csrs_all\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT4H_csrrc_all_str: .string "\"test: 165; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT4H_csrrc_all\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT5H_csrrw1_str: .string "\"test: 166; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT5H_csrrw1\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT5H_csrrw0_str: .string "\"test: 167; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT5H_csrrw0\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT5H_csrs_all_str: .string "\"test: 168; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT5H_csrs_all\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT5H_csrrc_all_str: .string "\"test: 169; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT5H_csrrc_all\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT6H_csrrw1_str: .string "\"test: 170; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT6H_csrrw1\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT6H_csrrw0_str: .string "\"test: 171; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT6H_csrrw0\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT6H_csrs_all_str: .string "\"test: 172; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT6H_csrs_all\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT6H_csrrc_all_str: .string "\"test: 173; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT6H_csrrc_all\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT7H_csrrw1_str: .string "\"test: 174; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT7H_csrrw1\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT7H_csrrw0_str: .string "\"test: 175; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT7H_csrrw0\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT7H_csrs_all_str: .string "\"test: 176; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT7H_csrs_all\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT7H_csrrc_all_str: .string "\"test: 177; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT7H_csrrc_all\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT8H_csrrw1_str: .string "\"test: 178; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT8H_csrrw1\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT8H_csrrw0_str: .string "\"test: 179; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT8H_csrrw0\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT8H_csrs_all_str: .string "\"test: 180; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT8H_csrs_all\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT8H_csrrc_all_str: .string "\"test: 181; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT8H_csrrc_all\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT9H_csrrw1_str: .string "\"test: 182; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT9H_csrrw1\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT9H_csrrw0_str: .string "\"test: 183; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT9H_csrrw0\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT9H_csrs_all_str: .string "\"test: 184; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT9H_csrs_all\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT9H_csrrc_all_str: .string "\"test: 185; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT9H_csrrc_all\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT10H_csrrw1_str: .string "\"test: 186; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT10H_csrrw1\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT10H_csrrw0_str: .string "\"test: 187; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT10H_csrrw0\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT10H_csrs_all_str: .string "\"test: 188; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT10H_csrs_all\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT10H_csrrc_all_str: .string "\"test: 189; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT10H_csrrc_all\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT11H_csrrw1_str: .string "\"test: 190; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT11H_csrrw1\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT11H_csrrw0_str: .string "\"test: 191; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT11H_csrrw0\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT11H_csrs_all_str: .string "\"test: 192; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT11H_csrs_all\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT11H_csrrc_all_str: .string "\"test: 193; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT11H_csrrc_all\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT12H_csrrw1_str: .string "\"test: 194; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT12H_csrrw1\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT12H_csrrw0_str: .string "\"test: 195; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT12H_csrrw0\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT12H_csrs_all_str: .string "\"test: 196; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT12H_csrs_all\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT12H_csrrc_all_str: .string "\"test: 197; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT12H_csrrc_all\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT13H_csrrw1_str: .string "\"test: 198; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT13H_csrrw1\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT13H_csrrw0_str: .string "\"test: 199; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT13H_csrrw0\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT13H_csrs_all_str: .string "\"test: 200; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT13H_csrs_all\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT13H_csrrc_all_str: .string "\"test: 201; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT13H_csrrc_all\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT14H_csrrw1_str: .string "\"test: 202; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT14H_csrrw1\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT14H_csrrw0_str: .string "\"test: 203; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT14H_csrrw0\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT14H_csrs_all_str: .string "\"test: 204; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT14H_csrs_all\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT14H_csrrc_all_str: .string "\"test: 205; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT14H_csrrc_all\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT15H_csrrw1_str: .string "\"test: 206; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT15H_csrrw1\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT15H_csrrw0_str: .string "\"test: 207; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT15H_csrrw0\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT15H_csrs_all_str: .string "\"test: 208; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT15H_csrs_all\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT15H_csrrc_all_str: .string "\"test: 209; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT15H_csrrc_all\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT16H_csrrw1_str: .string "\"test: 210; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT16H_csrrw1\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT16H_csrrw0_str: .string "\"test: 211; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT16H_csrrw0\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT16H_csrs_all_str: .string "\"test: 212; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT16H_csrs_all\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT16H_csrrc_all_str: .string "\"test: 213; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT16H_csrrc_all\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT17H_csrrw1_str: .string "\"test: 214; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT17H_csrrw1\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT17H_csrrw0_str: .string "\"test: 215; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT17H_csrrw0\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT17H_csrs_all_str: .string "\"test: 216; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT17H_csrs_all\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT17H_csrrc_all_str: .string "\"test: 217; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT17H_csrrc_all\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT18H_csrrw1_str: .string "\"test: 218; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT18H_csrrw1\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT18H_csrrw0_str: .string "\"test: 219; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT18H_csrrw0\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT18H_csrs_all_str: .string "\"test: 220; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT18H_csrs_all\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT18H_csrrc_all_str: .string "\"test: 221; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT18H_csrrc_all\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT19H_csrrw1_str: .string "\"test: 222; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT19H_csrrw1\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT19H_csrrw0_str: .string "\"test: 223; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT19H_csrrw0\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT19H_csrs_all_str: .string "\"test: 224; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT19H_csrs_all\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT19H_csrrc_all_str: .string "\"test: 225; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT19H_csrrc_all\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT20H_csrrw1_str: .string "\"test: 226; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT20H_csrrw1\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT20H_csrrw0_str: .string "\"test: 227; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT20H_csrrw0\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT20H_csrs_all_str: .string "\"test: 228; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT20H_csrs_all\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT20H_csrrc_all_str: .string "\"test: 229; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT20H_csrrc_all\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT21H_csrrw1_str: .string "\"test: 230; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT21H_csrrw1\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT21H_csrrw0_str: .string "\"test: 231; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT21H_csrrw0\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT21H_csrs_all_str: .string "\"test: 232; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT21H_csrs_all\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT21H_csrrc_all_str: .string "\"test: 233; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT21H_csrrc_all\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT22H_csrrw1_str: .string "\"test: 234; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT22H_csrrw1\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT22H_csrrw0_str: .string "\"test: 235; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT22H_csrrw0\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT22H_csrs_all_str: .string "\"test: 236; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT22H_csrs_all\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT22H_csrrc_all_str: .string "\"test: 237; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT22H_csrrc_all\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT23H_csrrw1_str: .string "\"test: 238; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT23H_csrrw1\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT23H_csrrw0_str: .string "\"test: 239; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT23H_csrrw0\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT23H_csrs_all_str: .string "\"test: 240; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT23H_csrs_all\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT23H_csrrc_all_str: .string "\"test: 241; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT23H_csrrc_all\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT24H_csrrw1_str: .string "\"test: 242; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT24H_csrrw1\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT24H_csrrw0_str: .string "\"test: 243; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT24H_csrrw0\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT24H_csrs_all_str: .string "\"test: 244; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT24H_csrs_all\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT24H_csrrc_all_str: .string "\"test: 245; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT24H_csrrc_all\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT25H_csrrw1_str: .string "\"test: 246; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT25H_csrrw1\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT25H_csrrw0_str: .string "\"test: 247; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT25H_csrrw0\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT25H_csrs_all_str: .string "\"test: 248; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT25H_csrs_all\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT25H_csrrc_all_str: .string "\"test: 249; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT25H_csrrc_all\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT26H_csrrw1_str: .string "\"test: 250; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT26H_csrrw1\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT26H_csrrw0_str: .string "\"test: 251; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT26H_csrrw0\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT26H_csrs_all_str: .string "\"test: 252; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT26H_csrs_all\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT26H_csrrc_all_str: .string "\"test: 253; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT26H_csrrc_all\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT27H_csrrw1_str: .string "\"test: 254; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT27H_csrrw1\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT27H_csrrw0_str: .string "\"test: 255; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT27H_csrrw0\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT27H_csrs_all_str: .string "\"test: 256; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT27H_csrs_all\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT27H_csrrc_all_str: .string "\"test: 257; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT27H_csrrc_all\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT28H_csrrw1_str: .string "\"test: 258; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT28H_csrrw1\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT28H_csrrw0_str: .string "\"test: 259; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT28H_csrrw0\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT28H_csrs_all_str: .string "\"test: 260; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT28H_csrs_all\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT28H_csrrc_all_str: .string "\"test: 261; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT28H_csrrc_all\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT29H_csrrw1_str: .string "\"test: 262; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT29H_csrrw1\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT29H_csrrw0_str: .string "\"test: 263; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT29H_csrrw0\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT29H_csrs_all_str: .string "\"test: 264; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT29H_csrs_all\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT29H_csrrc_all_str: .string "\"test: 265; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT29H_csrrc_all\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT30H_csrrw1_str: .string "\"test: 266; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT30H_csrrw1\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT30H_csrrw0_str: .string "\"test: 267; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT30H_csrrw0\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT30H_csrs_all_str: .string "\"test: 268; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT30H_csrs_all\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT30H_csrrc_all_str: .string "\"test: 269; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT30H_csrrc_all\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT31H_csrrw1_str: .string "\"test: 270; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT31H_csrrw1\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT31H_csrrw0_str: .string "\"test: 271; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT31H_csrrw0\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT31H_csrs_all_str: .string "\"test: 272; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT31H_csrs_all\""
+Sscofpmf_cg_cp_sscofpmf_access_CSR_MHPMEVENT31H_csrrc_all_str: .string "\"test: 273; cg: Sscofpmf_cg; cp: cp_sscofpmf_access; bin: CSR_MHPMEVENT31H_csrrc_all\""
+Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_all_0s_str: .string "\"test: 274; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_m_all_0s\""
+Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_0_str: .string "\"test: 275; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_m_walking1_0\""
+Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_1_str: .string "\"test: 276; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_m_walking1_1\""
+Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_2_str: .string "\"test: 277; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_m_walking1_2\""
+Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_3_str: .string "\"test: 278; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_m_walking1_3\""
+Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_4_str: .string "\"test: 279; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_m_walking1_4\""
+Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_5_str: .string "\"test: 280; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_m_walking1_5\""
+Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_6_str: .string "\"test: 281; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_m_walking1_6\""
+Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_7_str: .string "\"test: 282; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_m_walking1_7\""
+Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_8_str: .string "\"test: 283; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_m_walking1_8\""
+Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_9_str: .string "\"test: 284; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_m_walking1_9\""
+Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_10_str: .string "\"test: 285; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_m_walking1_10\""
+Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_11_str: .string "\"test: 286; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_m_walking1_11\""
+Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_12_str: .string "\"test: 287; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_m_walking1_12\""
+Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_13_str: .string "\"test: 288; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_m_walking1_13\""
+Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_14_str: .string "\"test: 289; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_m_walking1_14\""
+Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_15_str: .string "\"test: 290; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_m_walking1_15\""
+Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_16_str: .string "\"test: 291; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_m_walking1_16\""
+Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_17_str: .string "\"test: 292; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_m_walking1_17\""
+Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_18_str: .string "\"test: 293; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_m_walking1_18\""
+Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_19_str: .string "\"test: 294; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_m_walking1_19\""
+Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_20_str: .string "\"test: 295; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_m_walking1_20\""
+Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_21_str: .string "\"test: 296; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_m_walking1_21\""
+Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_22_str: .string "\"test: 297; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_m_walking1_22\""
+Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_23_str: .string "\"test: 298; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_m_walking1_23\""
+Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_24_str: .string "\"test: 299; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_m_walking1_24\""
+Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_25_str: .string "\"test: 300; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_m_walking1_25\""
+Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_26_str: .string "\"test: 301; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_m_walking1_26\""
+Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_27_str: .string "\"test: 302; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_m_walking1_27\""
+Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_walking1_28_str: .string "\"test: 303; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_m_walking1_28\""
+Sscofpmf_cg_cp_scountovf_shadow_scountovf_shadow_m_all_1s_str: .string "\"test: 304; cg: Sscofpmf_cg; cp: cp_scountovf_shadow; bin: scountovf_shadow_m_all_1s\""
 
 // End of test data section and model specific data
 RVTEST_DATA_END
