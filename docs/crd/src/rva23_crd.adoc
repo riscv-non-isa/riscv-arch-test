@@ -68,7 +68,7 @@ The RISC-V Certification Tests certifies processors, not platforms.  Nevertheles
 * Print characters to a console to report test results
 * Terminate a test with a success or failure code under software control, either via a testbench for RTL or a hardware signal for silicon
 * Run tests on several harts at once, if the DUT has more than one, to stress memory ordering and atomicity
-* Implement memory-mapped 'MTIME' register if it is not part of the hart
+* Implement memory-mapped `mtime` register if it is not part of the hart
 
 The developer must supply a configuration directory containing the following files.  See the Certification Test Plan (CTP) for more details.
 
