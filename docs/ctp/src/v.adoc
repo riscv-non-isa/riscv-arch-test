@@ -47,8 +47,7 @@ fcov
         ExceptionsVfmin_coverage.svh
         MisalignV_coverage.svh
         SsstrictV_coverage.svh
-        SmV_coverage.svh
-        SmVF_coverage.svh
+        Sm_coverage.svh (Sm_V_cg, Sm_VF_cg)
         UV_coverage.svh
 tests
     rv32
@@ -114,8 +113,7 @@ tests
         ExceptionsVf32
         MisalignV
         SsstrictV
-        SmV
-        SmVF
+        Sm (Sm_V_*.S, Sm_VF-*.S)
         UV
 ----
 
@@ -244,14 +242,6 @@ Zvfhmin only exercises the widening and narrowing conversions: `vfwcvt.f.f.v` an
 include::{testplansdir}/Zvfhmin.adoc[]
 
 include::norm/Zvfhmin_norm_rules.adoc[]
-
-==== ZfaZvfh Half-Precision Load Immediate
-
-When Zfa and Zvfh are both implemented, RISC-V provides a `fli.h` instruction (<<t-ZfaZvfh-coverpoints>>) even if full Zfh is not supported.
-
-include::{testplansdir}/ZfaZvfh.adoc[]
-
-include::norm/ZfaZvfh_norm_rules.adoc[]
 
 ==== Zvfbfmin BF16 Conversions
 

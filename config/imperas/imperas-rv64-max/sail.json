@@ -115,7 +115,7 @@
       // not exist.
       "delegatable_bits": {
         "len": 64,
-        "value": "0x0000_0000_00fc_b7af"
+        "value": "0x0000_0000_00fc_b7ff"
       }
     },
     "mideleg": {
@@ -404,7 +404,7 @@
             "lrsc": "AccessFault"
           },
           "atomic_support": "AMOCASQ",
-          "misaligned_atomicity_granule_size_exp": 6,
+          "misaligned_atomicity_granule_size_exp": 0,
           "vector_misaligned_atomicity_granule_size_exp": 6,
           "reservability": "RsrvEventual",
           "supports_cbo_zero": true,
@@ -732,7 +732,7 @@
     // cacheable main memory region is >= 4, otherwise you will get a
     // config validation error.
     "Zama16b": {
-      "supported": true
+      "supported": false
     },
     "Zawrs": {
       "supported": true,
@@ -990,7 +990,7 @@
         // value is ignored when `etrigger` is not supported.
         "supported_exceptions": { "len": "xlen", "value": "0" }
       },
-      "hcontext": { "supported": false },
+      "hcontext": { "supported": true },
       // Triggers
       "icount": {
         "supported": true,
@@ -1009,12 +1009,12 @@
         "supported_interrupts": { "len": "xlen", "value": "0" }
       },
       // CSRs
-      "mcontext": { "supported": false },
+      "mcontext": { "supported": true },
       // The number of supported triggers.  This has to be
       // non-negative, and greater than 0 if Sdtrig is supported.
       // The model does not support more than 16 triggers.
       "num_triggers": 16,
-      "scontext": { "supported": false }
+      "scontext": { "supported": true }
     },
     "Smdbltrp": { "supported": true },
     "Ssdbltrp": { "supported": true },

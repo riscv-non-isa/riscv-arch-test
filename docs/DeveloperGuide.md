@@ -84,7 +84,7 @@ test suite
 
 - **Test file**: A complete `.S` assembly file that is compiled into a self-checking ELF. Each test file contains one or more test chunks. When an instruction has many testcases (e.g., hundreds of register/immediate combinations), the framework splits the chunks across multiple test files using `TESTCASES_PER_FILE` as the limit. Test files are named like `I-add-00.S`, `I-add-01.S`, etc., where the suffix indicates the file index. Privileged tests use the same length-based splitting (limit `TESTCASES_PER_PRIV_FILE`) and can additionally be split into named groups — see [Splitting Privileged Tests](#splitting-privileged-tests).
 
-- **Test suite**: All test files in a given directory. Each test suite corresponds to one extension or combination of extensions (e.g., `I`, `Zcb`, `ZcbZbb`, `ExceptionsSm`) and maps to a single coverage file. Unprivileged test suites contain one or more test files per instruction. For privileged tests, a test suite contains one or more test files covering all coverpoints for that feature — a single file unless splitting kicks in.
+- **Test suite**: All test files in a given directory. Each test suite corresponds to one extension or combination of extensions (e.g., `I`, `Zcb`, `Misalign`, `ExceptionsSm`) and maps to a single coverage file. Unprivileged test suites contain one or more test files per instruction. For privileged tests, a test suite contains one or more test files covering all coverpoints for that feature — a single file unless splitting kicks in.
 
 ## Test YAML Header
 
@@ -274,7 +274,7 @@ All testplan CSVs must include the following keys:
 - `Instruction`: The instruction mnemonic. For example, `add`, `mul`, `fadd.d`, etc.
 - `Type`: The instruction type. Note that these types are more specific than the ISA manual types and take the kind of register, size of immediate, etc. into account. For example, `R`, `I`, `IS`, `ISW`. TODO: Document the list of instruction types?
 - `RV32`/`RV64`: Which XLENs the instruction exists for. Place an `x` in the relevant columns.
-- `REQUIRED_EXTENSIONS` (optional, after `RV64`): An extension a row needs beyond the testplan's own (e.g. `D`). Leave it empty for ordinary rows. The row's tests go in the testplan's suite directory as `<suite><ext>-<instr>-NN.S`, with the extension added to `REQUIRED_EXTENSIONS` in the test header, and its covergroups are named `<suite><ext>_<instr>_cg` inside `` `ifdef <EXT>_SUPPORTED ``. For example, the `D` rows of [`Zfhmin.csv`](../testplans/Zfhmin.csv) produce `ZfhminD-flh-00.S` and `ZfhminD_flh_cg`, which apply only when D is also implemented.
+- `ExtraExtensions` (optional, after `RV64`): Extensions a row needs beyond the testplan's own, separated by colons (e.g. `D` or `Zfh:D`). Leave it empty for ordinary rows. The row's tests go in the testplan's suite directory as `<suite><ext>[<ext>...]-<instr>-NN.S`, with the extensions added to `REQUIRED_EXTENSIONS` in the test header, and its covergroups are named `<suite><ext>[<ext>...]_<instr>_cg` inside an `` `ifdef <EXT>_SUPPORTED `` for each extension. For example, the `D` rows of [`Zfhmin.csv`](../testplans/Zfhmin.csv) produce `ZfhminD-flh-00.S` and `ZfhminD_flh_cg`, which apply only when D is also implemented, and the `Zfh:D` rows of [`Zfa.csv`](../testplans/Zfa.csv) produce `ZfaZfhD-fli.h-00.S` and `ZfaZfhD_fli_h_cg`.
 - coverpoints: Which coverpoints apply to the instruction. Place an `x` in the column corresponding to the relevant coverpoints in each instruction's row.
   - Some coverpoints have multiple variants. To indicate that a variant of the coverpoint should be used for a particular instruction, use the variant's suffix in the CSV instead of an `x`. See the `20bit` variant of the `cp_imm_edges` coverpoint for the `auipc` instruction below.
 
@@ -753,6 +753,8 @@ To opt in to named splits, pass a name to `test_data.begin_test_chunk(split_name
 - Reusing a name after a different name has already closed that group (i.e. non-contiguous reuse) raises an error.
 
 Length-based splitting still applies _within_ each named group, so a large named scope can still become `<testsuite>_<split_name>-00.S`, `<testsuite>_<split_name>-01.S`, etc.
+
+A suite can also hold tests that need an extension beyond the suite's own, such as the floating-point tests of Sm. Register their generator under the base suite with its own `required_extensions`, e.g. `add_priv_test_generator("Sm", required_extensions=["Sm", "F"])`, and start its split names with the group, so its tests are `tests/priv/Sm/Sm_F-00.S` or `Sm_V_vcsr-00.S` and run only where the extra extension is supported. Name its covergroup `<suite>_<group>_cg` (`Sm_F_cg`) in the base suite's coverage file under `` `ifdef F_SUPPORTED ``, and put its test plan rows under a heading in the base suite's test plan, `testplans/priv/Sm.yaml`.
 
 ## Debugging Coverage
 
