@@ -28,6 +28,18 @@ coverpoints:
     rules:
       - Zicfilp_lpad_expected
       - Zicfilp_indirect_branch_lpad
+  - name: cp_zicfilp_direct_ct_no_elp
+    goal: Verify that direct jumps and taken branches do not set ELP.
+    description: |-
+      Test Environment:
+       xLPE=1,
+      execute JAL (rd=x0 and rd=x1), C.J, C.JAL (RV32 with Zca) and a taken BEQ to a non-LPAD target, each skipping the instruction after it.
+    expectation: No software-check exception. Only JALR, C.JR and C.JALR are Indirect_CTs, so ELP stays NO_LP_EXPECTED at the target.
+    bins: "JAL, taken branch, plus C.J with Zca and C.JAL on RV32 with Zca"
+    id: Zicfilp_lpad_expected
+    rules:
+      - Zicfilp_lpad_expected
+      - cfi_call_term
   - name: cp_zicfilp_lpad_zero_label_bypass
     goal: Verify that LPAD with LPL=0 bypasses label comparison during landing pad validation.
     description: |-

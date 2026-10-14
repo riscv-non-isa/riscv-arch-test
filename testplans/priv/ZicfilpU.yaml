@@ -26,6 +26,7 @@ coverpoints:
   - name: |-
       cp_zicfilp_indirect_elp_state_update
       cp_zicfilp_indirect_elp_state_update_c
+      cp_zicfilp_direct_ct_no_elp
       cp_zicfilp_lpad_zero_label_bypass
       cp_zicfilp_lpad_valid_execution
       cp_zicfilp_lpad_missing_instruction_exception
