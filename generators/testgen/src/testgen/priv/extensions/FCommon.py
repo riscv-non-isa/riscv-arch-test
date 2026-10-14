@@ -13,15 +13,13 @@ from testgen.asm.csr import gen_csr_read_sigupd
 from testgen.asm.helpers import comment_banner, load_float_reg
 from testgen.constants import INDENT
 from testgen.data.state import TestData
-from testgen.priv.extensions.PrivCommon import STATUS_CSR, gen_status_read_sigupd, set_status_fields, status_csr_instr
+from testgen.priv.extensions.PrivCommon import STATUS_CSR, gen_status_read_sigupd, set_status_fields
 
 
 def _gen_fp_csr_init(csr_name: str, value: int, temp_reg: int, priv: str) -> str:
     """Initialize an FP CSR while xstatus.FS is Dirty."""
-    status = STATUS_CSR[priv]
     lines = [
-        f"LI(x{temp_reg}, MSTATUS_FS)",
-        status_csr_instr(f"csrs {status}, x{temp_reg} # Set {status}.FS to dirty", priv),
+        *set_status_fields(temp_reg, priv, fs=3),
         f"LI(x{temp_reg}, {value})",
         f"csrw {csr_name}, x{temp_reg} # Initialize {csr_name}",
     ]

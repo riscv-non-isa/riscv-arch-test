@@ -263,16 +263,17 @@ vl_not_max: coverpoint (get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "vl", "
     bins target = {1'b0};
 }
 
-rd_n0 : coverpoint ins.current.insn[11:7] {
-    bins not_zero = {[1:31]};
+// rd and rs1 are GPRs only for vsetvli and vsetvl, the instructions these coverpoints are crossed with
+rd_n0 : coverpoint ins.get_gpr_reg(ins.current.rd) iff (ins.ins_str inside {"vsetvli", "vsetvl"}) {
+    bins not_zero = {[x1:x31]};
 }
 
-rs1_x0 : coverpoint ins.current.insn[19:15] {
-    bins zero = {0};
+rs1_x0 : coverpoint ins.get_gpr_reg(ins.current.rs1) iff (ins.ins_str inside {"vsetvli", "vsetvl"}) {
+    bins zero = {x0};
 }
 
-rd_x0 : coverpoint ins.current.insn[19:15] {
-    bins zero = {0};
+rd_x0 : coverpoint ins.get_gpr_reg(ins.current.rd) iff (ins.ins_str inside {"vsetvli", "vsetvl"}) {
+    bins zero = {x0};
 }
 
 vset_i_vli_vlmax_unchanged : coverpoint (get_vtype_vlmax(ins.hart, ins.issue, `SAMPLE_BEFORE)
@@ -301,7 +302,7 @@ vtype_all_lmul_supported : coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_B
 // tests edge case avl behavior on the vset instructions
 //////////////////////////////////////////////////////////////////////////////////
 
-rs1_eq_zero : coverpoint (ins.current.rs1_val == 0 & ins.current.insn[19:15] != 0) {
+rs1_eq_zero : coverpoint (ins.current.rs1_val == 0 & ins.get_gpr_reg(ins.current.rs1) != x0) iff (ins.ins_str inside {"vsetvli", "vsetvl"}) {
     bins true = {1};
 }
 
