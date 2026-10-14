@@ -1554,12 +1554,6 @@ common_\__MODE__\()entry:                       // common entry for all traps in
       invisible_Mcontinue:
   .endif
 
-        // ---- Global trap counter: shared by every privilege mode's handler ----
-        // T1..T4 were just saved above, so they are free scratch here.
-        LA(     T1, rvtest_trap_count)          // T1 = address of trap_count
-        LREG    T2, 0(T1)                        // T2 = current count
-        addi    T2, T2, 1                         // count++
-        SREG    T2, 0(T1)                        // store back
 
 //==============================================================================
 // T-SBI DISPATCH — M-MODE
@@ -2356,7 +2350,11 @@ tsbi_instr_table:
 //   6. Restores registers and returns via xret
 //==============================================================================
 
-\__MODE__\()trapsig_ptr_upd:                     // pre-update trap signature pointer
+\__MODE__\()trapsig_ptr_upd:                      // pre-update trap signature pointer
+        LA(     T1, rvtest_trap_count)            // T1 = address of trap_count
+        LREG    T2, 0(T1)                         // T2 = current count
+        addi    T2, T2, 1                         // count++
+        SREG    T2, 0(T1)                         // store back
         li      T2, 4*REGWIDTH                    // T2 = entry size (4 words)
 
 \__MODE__\()trap_sig_sz:                          // check for hypervisor (6-word entry)

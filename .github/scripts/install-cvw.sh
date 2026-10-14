@@ -35,7 +35,7 @@ git submodule update --init addins/verilog-ethernet
 export WALLY="$INSTALL_DIR/cvw"
 export PATH="$INSTALL_DIR/bin:$PATH" # Verilator was just `make install`ed here
 
-for WALLYCONF in rv32gc rv32imc rv64gc; do
+for WALLYCONF in rv32i rv64i rv32gc rv32imc rv64gc; do
   echo "Prebuilding Verilator model for $WALLYCONF ..."
   make -j"$(nproc)" -C "$WALLY/sim/verilator" \
     WALLYCONF="$WALLYCONF" \

@@ -842,10 +842,6 @@ covergroup Sm_V_cg with function sample(ins_t ins);
     // tests mstatus ability to set clean and initial to dirty only when supposed to
     //////////////////////////////////////////////////////////////////////////////////
 
-    misa_v_active : coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "misa", "exts")[21] {
-        bins vector = {1};
-    }
-
     mstatus_vs_initial_clean : coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "mstatus", "vs") {
         bins first = {1};
         bins clean  = {2};
@@ -859,12 +855,12 @@ covergroup Sm_V_cg with function sample(ins_t ins);
     cp_mstatus_vs_set_dirty_csr         : cross priv_mode_m, std_vec,        vsetvli_instruction,                    mstatus_vs_initial_clean;
     cp_mstatus_vs_set_dirty_vcsr        : cross priv_mode_m, vcsrs_writable, csrops,                                 mstatus_vs_initial_clean;
 
-    cp_mstatus_vs_off_arithmetic        : cross priv_mode_m, misa_v_active, mstatus_vs_inactive,     vector_vector_arithmetic_instruction iff (get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "vtype", "vill") == 0 &
-                                                                                                                                  get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "vstart", "vstart") == 0 &
-                                                                                                                                  get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "vl", "vl") != 0 );
-    cp_mstatus_vs_off_csr               : cross priv_mode_m, misa_v_active, mstatus_vs_inactive,     vsetvli_instruction iff (get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "vtype", "vill") == 0 &
-                                                                                                                 get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "vstart", "vstart") == 0 &
-                                                                                                                 get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "vl", "vl") != 0 );
+    cp_mstatus_vs_off_arithmetic        : cross priv_mode_m, mstatus_vs_inactive,     vector_vector_arithmetic_instruction iff (get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "vtype", "vill") == 0 &
+                                                                                                                   get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "vstart", "vstart") == 0 &
+                                                                                                                   get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "vl", "vl") != 0 );
+    cp_mstatus_vs_off_csr               : cross priv_mode_m, mstatus_vs_inactive,     vsetvli_instruction iff (get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "vtype", "vill") == 0 &
+                                                                                                  get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "vstart", "vstart") == 0 &
+                                                                                                  get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "vl", "vl") != 0 );
 
 endgroup
 `endif

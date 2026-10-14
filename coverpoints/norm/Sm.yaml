@@ -720,6 +720,16 @@ normative_rule_definitions:
   # state imprecisely by reporting the state to be dirty even when it has not been
   # modified. On some implementations, some instructions that do not mutate the
   # floating-point state may cause the state to transition from Initial or Clean to
+  # Dirty.
+  - name: mstatus_fs_imprecise
+    # Instructions that need not modify FP state run only at FS=Off and FS=Dirty, where imprecise
+    # dirtiness tracking cannot change the result
+    coverpoint: ["Sm_F_cg/cp_mstatus_FS_transition_nondeterministic"]
+
+  # Implementations may choose to track the dirtiness of the floating-point register
+  # state imprecisely by reporting the state to be dirty even when it has not been
+  # modified. On some implementations, some instructions that do not mutate the
+  # floating-point state may cause the state to transition from Initial or Clean to
   # Dirty. Implementations may choose to track the dirtiness of the vector register
   # state in an analogous imprecise fashion, including possibly setting VS to Dirty
   # when software attempts to set VS=Initial or VS=Clean.
