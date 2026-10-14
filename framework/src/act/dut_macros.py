@@ -25,6 +25,11 @@ _MIRRORED_HOOKS: list[str] = [
     "RVMODEL_SET_GUEST_EXT_INT",
 ]
 
+# Defines mirrored as plain decimal numbers, so SystemVerilog can paste them into a name.
+_MIRRORED_INDEX_DEFINES: list[str] = [
+    "RVMODEL_HPM_COUNTER",
+]
+
 _DEFINE_RE = re.compile(r"^\s*#define\s+(\w+)\s+(0[xX][0-9a-fA-F]+|\d+)\b")
 _HOOK_RE = re.compile(r"^\s*#define\s+(\w+)")
 
@@ -57,7 +62,7 @@ def _scan_h_hooks(h_path: Path, names: list[str]) -> set[str]:
 def generate_rvmodel_svh(dut_include_dir: Path, output_dir: Path) -> None:
     """Generate rvmodel_macros.svh in output_dir derived from rvmodel_macros.h.
 
-    Emits a `define for each macro in _MIRRORED_DEFINES and _MIRRORED_HOOKS that
+    Emits a `define for each macro in _MIRRORED_DEFINES, _MIRRORED_INDEX_DEFINES and _MIRRORED_HOOKS that
     has an active `#define` in the input header.
     """
     input_h = dut_include_dir / "rvmodel_macros.h"
@@ -65,7 +70,7 @@ def generate_rvmodel_svh(dut_include_dir: Path, output_dir: Path) -> None:
     if not input_h.exists():
         raise FileNotFoundError(f"rvmodel_macros.h not found at {input_h}")
 
-    defines = _scan_h_defines(input_h, _MIRRORED_DEFINES)
+    defines = _scan_h_defines(input_h, _MIRRORED_DEFINES + _MIRRORED_INDEX_DEFINES)
     hooks = _scan_h_hooks(input_h, _MIRRORED_HOOKS)
 
     guard = f"_RVMODEL_MACROS_SVH_{dut_include_dir.name.upper().replace('-', '_')}_"
@@ -82,6 +87,9 @@ def generate_rvmodel_svh(dut_include_dir: Path, output_dir: Path) -> None:
             value = defines[name]
             hex_value = value[2:] if value.lower().startswith("0x") else f"{int(value):x}"
             lines.append(f"`define {name} 64'h{hex_value}")
+    for name in _MIRRORED_INDEX_DEFINES:
+        if name in defines:
+            lines.append(f"`define {name} {int(defines[name], 0)}")
     lines += [f"`define {name}" for name in _MIRRORED_HOOKS if name in hooks]
     lines += ["", f"`endif // {guard}", ""]
 

@@ -8,10 +8,59 @@
 
 """Shared test generation for the privileged mode suites (Sm, S, U)."""
 
-from testgen.asm.csr import gen_csr_read_sigupd, gen_csr_write_sigupd
+from collections.abc import Callable
+
+from testgen.asm.csr import gen_csr_read_sigupd, gen_csr_read_sigupd_in_mode, gen_csr_write_sigupd
 from testgen.asm.helpers import comment_banner, write_sigupd
+from testgen.asm.tsbi import tsbi_call, tsbi_call_or_direct
 from testgen.data.state import TestData
 from testgen.data.test_chunk import TestChunk
+
+# Status CSR whose FS and VS fields the tests in each privilege mode check; it also names their
+# coverpoints and testcase labels. U-mode code reaches the fields through T-SBI (see _status_access).
+STATUS_CSR = {"M": "mstatus", "S": "sstatus", "U": "mstatus"}
+
+
+def _status_access(priv: str, instr: Callable[[str], str]) -> list[str]:
+    """Run instr(csr), an access to the status CSR, from code running in priv ("M", "S" or "U").
+
+    M- and S-mode access STATUS_CSR[priv] directly. U-mode goes through T-SBI, to sstatus when
+    S-mode is supported and to mstatus otherwise.
+    """
+    if priv != "U":
+        return [tsbi_call_or_direct(instr(STATUS_CSR[priv]), priv)]
+    return ["#ifdef S_SUPPORTED", tsbi_call(instr("sstatus")), "#else", tsbi_call(instr("mstatus")), "#endif"]
+
+
+def gen_status_read_sigupd(check_reg: int, test_data: TestData, priv: str, mask_reg: int | None = None) -> str:
+    """Read the status CSR from code running in priv into the signature, keeping only the bits in mask_reg if given."""
+    if mask_reg is None and priv != "U":
+        return gen_csr_read_sigupd_in_mode(check_reg, (STATUS_CSR[priv], None), test_data, priv)
+    lines = _status_access(priv, lambda csr: f"csrr x{check_reg}, {csr}")
+    if mask_reg is not None:
+        lines.append(f"and x{check_reg}, x{check_reg}, x{mask_reg}    # keep only the masked bits")
+    lines.append(write_sigupd(check_reg, test_data))
+    return "\n".join(lines)
+
+
+def set_status_fields(temp_reg: int, priv: str, fs: int | None = None, vs: int | None = None) -> list[str]:
+    """Set xstatus.FS and/or xstatus.VS from code running in priv ("M", "S" or "U").
+
+    The fields are named by their encoding.h masks, and a field value is that many times the mask's
+    lowest bit.
+    """
+    fields = [(name, val) for name, val in (("FS", fs), ("VS", vs)) if val is not None]
+    names = " and ".join(name for name, _ in fields)
+    mask = " | ".join(f"MSTATUS_{name}" for name, _ in fields)
+    value = " | ".join(f"{val} * (MSTATUS_{name} & -MSTATUS_{name})" for name, val in fields if val) or "0"
+    settings = ", ".join(f"{name}={val}" for name, val in fields)
+    return [
+        f"LI(x{temp_reg}, {mask})",
+        *_status_access(priv, lambda csr: f"csrc {csr}, x{temp_reg}  # clear {names}"),
+        f"LI(x{temp_reg}, {value})",
+        *_status_access(priv, lambda csr: f"csrs {csr}, x{temp_reg}  # {settings}"),
+    ]
+
 
 # Some Sv translation mode is supported. Sv48 and Sv57 imply Sv39, so Sv39 and Sv32 between them
 # cover every case and the wider modes need not be named.

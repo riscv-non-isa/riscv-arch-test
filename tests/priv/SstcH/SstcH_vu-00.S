@@ -39,25 +39,13 @@ RVTEST_BEGIN
 #if __riscv_xlen == 64
   LI(x6, MENVCFG_STCE)
   # T-SBI call to execute instruction: csrs menvcfg, x6
-  # Copy rs1 (x6) to a1 for T-SBI call
   mv a1, x6
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x30a5a073) # csrs menvcfg, x6
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MENVCFG)
 #else
   LI(x6, MENVCFGH_STCE)
   # T-SBI call to execute instruction: csrs menvcfgh, x6
-  # Copy rs1 (x6) to a1 for T-SBI call
   mv a1, x6
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x31a5a073) # csrs menvcfgh, x6
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MENVCFGH)
 #endif
 #if __riscv_xlen == 64
   LI(x9, HENVCFG_STCE)
@@ -68,14 +56,8 @@ RVTEST_BEGIN
 #endif
   LI(x15, MCOUNTEREN_TIME)
   # T-SBI call to execute instruction: csrs mcounteren, x15
-  # Copy rs1 (x15) to a1 for T-SBI call
   mv a1, x15
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x3065a073) # csrs mcounteren, x15
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MCOUNTEREN)
   LI(x9, MCOUNTEREN_TIME)
   csrs hcounteren, x9
 #if __riscv_xlen == 64
@@ -100,25 +82,13 @@ RVTEST_BEGIN
 #if __riscv_xlen == 64
   LI(x14, MENVCFG_STCE)
   # T-SBI call to execute instruction: csrc menvcfg, x14
-  # Copy rs1 (x14) to a1 for T-SBI call
   mv a1, x14
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x30a5b073) # csrc menvcfg, x14
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MENVCFG)
 #else
   LI(x14, MENVCFGH_STCE)
   # T-SBI call to execute instruction: csrc menvcfgh, x14
-  # Copy rs1 (x14) to a1 for T-SBI call
   mv a1, x14
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x31a5b073) # csrc menvcfgh, x14
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MENVCFGH)
 #endif
 #if __riscv_xlen == 64
   LI(x9, HENVCFG_STCE)
@@ -129,14 +99,8 @@ RVTEST_BEGIN
 #endif
   LI(x13, MCOUNTEREN_TIME)
   # T-SBI call to execute instruction: csrc mcounteren, x13
-  # Copy rs1 (x13) to a1 for T-SBI call
   mv a1, x13
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x3065b073) # csrc mcounteren, x13
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MCOUNTEREN)
   LI(x9, MCOUNTEREN_TIME)
   csrc hcounteren, x9
   RVTEST_TSBI_GOTO_VUMODE
@@ -169,25 +133,13 @@ SstcH_vu_cg_cp_vu_timecmp_inaccessible_vstimecmph_mstce0_hstce0_mtm0_htm0:
 #if __riscv_xlen == 64
   LI(x6, MENVCFG_STCE)
   # T-SBI call to execute instruction: csrc menvcfg, x6
-  # Copy rs1 (x6) to a1 for T-SBI call
   mv a1, x6
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x30a5b073) # csrc menvcfg, x6
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MENVCFG)
 #else
   LI(x6, MENVCFGH_STCE)
   # T-SBI call to execute instruction: csrc menvcfgh, x6
-  # Copy rs1 (x6) to a1 for T-SBI call
   mv a1, x6
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x31a5b073) # csrc menvcfgh, x6
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MENVCFGH)
 #endif
 #if __riscv_xlen == 64
   LI(x9, HENVCFG_STCE)
@@ -198,14 +150,8 @@ SstcH_vu_cg_cp_vu_timecmp_inaccessible_vstimecmph_mstce0_hstce0_mtm0_htm0:
 #endif
   LI(x14, MCOUNTEREN_TIME)
   # T-SBI call to execute instruction: csrc mcounteren, x14
-  # Copy rs1 (x14) to a1 for T-SBI call
   mv a1, x14
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x3065b073) # csrc mcounteren, x14
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MCOUNTEREN)
   LI(x9, MCOUNTEREN_TIME)
   csrs hcounteren, x9
   RVTEST_TSBI_GOTO_VUMODE
@@ -238,25 +184,13 @@ SstcH_vu_cg_cp_vu_timecmp_inaccessible_vstimecmph_mstce0_hstce0_mtm0_htm1:
 #if __riscv_xlen == 64
   LI(x14, MENVCFG_STCE)
   # T-SBI call to execute instruction: csrc menvcfg, x14
-  # Copy rs1 (x14) to a1 for T-SBI call
   mv a1, x14
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x30a5b073) # csrc menvcfg, x14
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MENVCFG)
 #else
   LI(x14, MENVCFGH_STCE)
   # T-SBI call to execute instruction: csrc menvcfgh, x14
-  # Copy rs1 (x14) to a1 for T-SBI call
   mv a1, x14
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x31a5b073) # csrc menvcfgh, x14
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MENVCFGH)
 #endif
 #if __riscv_xlen == 64
   LI(x9, HENVCFG_STCE)
@@ -267,14 +201,8 @@ SstcH_vu_cg_cp_vu_timecmp_inaccessible_vstimecmph_mstce0_hstce0_mtm0_htm1:
 #endif
   LI(x6, MCOUNTEREN_TIME)
   # T-SBI call to execute instruction: csrs mcounteren, x6
-  # Copy rs1 (x6) to a1 for T-SBI call
   mv a1, x6
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x3065a073) # csrs mcounteren, x6
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MCOUNTEREN)
   LI(x9, MCOUNTEREN_TIME)
   csrc hcounteren, x9
   RVTEST_TSBI_GOTO_VUMODE
@@ -307,25 +235,13 @@ SstcH_vu_cg_cp_vu_timecmp_inaccessible_vstimecmph_mstce0_hstce0_mtm1_htm0:
 #if __riscv_xlen == 64
   LI(x9, MENVCFG_STCE)
   # T-SBI call to execute instruction: csrc menvcfg, x9
-  # Copy rs1 (x9) to a1 for T-SBI call
   mv a1, x9
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x30a5b073) # csrc menvcfg, x9
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MENVCFG)
 #else
   LI(x9, MENVCFGH_STCE)
   # T-SBI call to execute instruction: csrc menvcfgh, x9
-  # Copy rs1 (x9) to a1 for T-SBI call
   mv a1, x9
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x31a5b073) # csrc menvcfgh, x9
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MENVCFGH)
 #endif
 #if __riscv_xlen == 64
   LI(x13, HENVCFG_STCE)
@@ -336,14 +252,8 @@ SstcH_vu_cg_cp_vu_timecmp_inaccessible_vstimecmph_mstce0_hstce0_mtm1_htm0:
 #endif
   LI(x9, MCOUNTEREN_TIME)
   # T-SBI call to execute instruction: csrs mcounteren, x9
-  # Copy rs1 (x9) to a1 for T-SBI call
   mv a1, x9
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x3065a073) # csrs mcounteren, x9
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MCOUNTEREN)
   LI(x13, MCOUNTEREN_TIME)
   csrs hcounteren, x13
   RVTEST_TSBI_GOTO_VUMODE
@@ -376,25 +286,13 @@ SstcH_vu_cg_cp_vu_timecmp_inaccessible_vstimecmph_mstce0_hstce0_mtm1_htm1:
 #if __riscv_xlen == 64
   LI(x9, MENVCFG_STCE)
   # T-SBI call to execute instruction: csrs menvcfg, x9
-  # Copy rs1 (x9) to a1 for T-SBI call
   mv a1, x9
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x30a5a073) # csrs menvcfg, x9
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MENVCFG)
 #else
   LI(x9, MENVCFGH_STCE)
   # T-SBI call to execute instruction: csrs menvcfgh, x9
-  # Copy rs1 (x9) to a1 for T-SBI call
   mv a1, x9
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x31a5a073) # csrs menvcfgh, x9
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MENVCFGH)
 #endif
 #if __riscv_xlen == 64
   LI(x6, HENVCFG_STCE)
@@ -405,14 +303,8 @@ SstcH_vu_cg_cp_vu_timecmp_inaccessible_vstimecmph_mstce0_hstce0_mtm1_htm1:
 #endif
   LI(x14, MCOUNTEREN_TIME)
   # T-SBI call to execute instruction: csrc mcounteren, x14
-  # Copy rs1 (x14) to a1 for T-SBI call
   mv a1, x14
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x3065b073) # csrc mcounteren, x14
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MCOUNTEREN)
   LI(x6, MCOUNTEREN_TIME)
   csrc hcounteren, x6
   RVTEST_TSBI_GOTO_VUMODE
@@ -445,25 +337,13 @@ SstcH_vu_cg_cp_vu_timecmp_inaccessible_vstimecmph_mstce1_hstce0_mtm0_htm0:
 #if __riscv_xlen == 64
   LI(x13, MENVCFG_STCE)
   # T-SBI call to execute instruction: csrs menvcfg, x13
-  # Copy rs1 (x13) to a1 for T-SBI call
   mv a1, x13
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x30a5a073) # csrs menvcfg, x13
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MENVCFG)
 #else
   LI(x13, MENVCFGH_STCE)
   # T-SBI call to execute instruction: csrs menvcfgh, x13
-  # Copy rs1 (x13) to a1 for T-SBI call
   mv a1, x13
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x31a5a073) # csrs menvcfgh, x13
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MENVCFGH)
 #endif
 #if __riscv_xlen == 64
   LI(x15, HENVCFG_STCE)
@@ -474,14 +354,8 @@ SstcH_vu_cg_cp_vu_timecmp_inaccessible_vstimecmph_mstce1_hstce0_mtm0_htm0:
 #endif
   LI(x14, MCOUNTEREN_TIME)
   # T-SBI call to execute instruction: csrc mcounteren, x14
-  # Copy rs1 (x14) to a1 for T-SBI call
   mv a1, x14
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x3065b073) # csrc mcounteren, x14
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MCOUNTEREN)
   LI(x15, MCOUNTEREN_TIME)
   csrs hcounteren, x15
   RVTEST_TSBI_GOTO_VUMODE
@@ -514,25 +388,13 @@ SstcH_vu_cg_cp_vu_timecmp_inaccessible_vstimecmph_mstce1_hstce0_mtm0_htm1:
 #if __riscv_xlen == 64
   LI(x9, MENVCFG_STCE)
   # T-SBI call to execute instruction: csrs menvcfg, x9
-  # Copy rs1 (x9) to a1 for T-SBI call
   mv a1, x9
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x30a5a073) # csrs menvcfg, x9
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MENVCFG)
 #else
   LI(x9, MENVCFGH_STCE)
   # T-SBI call to execute instruction: csrs menvcfgh, x9
-  # Copy rs1 (x9) to a1 for T-SBI call
   mv a1, x9
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x31a5a073) # csrs menvcfgh, x9
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MENVCFGH)
 #endif
 #if __riscv_xlen == 64
   LI(x14, HENVCFG_STCE)
@@ -543,14 +405,8 @@ SstcH_vu_cg_cp_vu_timecmp_inaccessible_vstimecmph_mstce1_hstce0_mtm0_htm1:
 #endif
   LI(x15, MCOUNTEREN_TIME)
   # T-SBI call to execute instruction: csrs mcounteren, x15
-  # Copy rs1 (x15) to a1 for T-SBI call
   mv a1, x15
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x3065a073) # csrs mcounteren, x15
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MCOUNTEREN)
   LI(x14, MCOUNTEREN_TIME)
   csrc hcounteren, x14
   RVTEST_TSBI_GOTO_VUMODE
@@ -583,25 +439,13 @@ SstcH_vu_cg_cp_vu_timecmp_inaccessible_vstimecmph_mstce1_hstce0_mtm1_htm0:
 #if __riscv_xlen == 64
   LI(x13, MENVCFG_STCE)
   # T-SBI call to execute instruction: csrs menvcfg, x13
-  # Copy rs1 (x13) to a1 for T-SBI call
   mv a1, x13
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x30a5a073) # csrs menvcfg, x13
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MENVCFG)
 #else
   LI(x13, MENVCFGH_STCE)
   # T-SBI call to execute instruction: csrs menvcfgh, x13
-  # Copy rs1 (x13) to a1 for T-SBI call
   mv a1, x13
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x31a5a073) # csrs menvcfgh, x13
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MENVCFGH)
 #endif
 #if __riscv_xlen == 64
   LI(x15, HENVCFG_STCE)
@@ -612,14 +456,8 @@ SstcH_vu_cg_cp_vu_timecmp_inaccessible_vstimecmph_mstce1_hstce0_mtm1_htm0:
 #endif
   LI(x6, MCOUNTEREN_TIME)
   # T-SBI call to execute instruction: csrs mcounteren, x6
-  # Copy rs1 (x6) to a1 for T-SBI call
   mv a1, x6
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x3065a073) # csrs mcounteren, x6
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MCOUNTEREN)
   LI(x15, MCOUNTEREN_TIME)
   csrs hcounteren, x15
   RVTEST_TSBI_GOTO_VUMODE
@@ -652,25 +490,13 @@ SstcH_vu_cg_cp_vu_timecmp_inaccessible_vstimecmph_mstce1_hstce0_mtm1_htm1:
 #if __riscv_xlen == 64
   LI(x15, MENVCFG_STCE)
   # T-SBI call to execute instruction: csrs menvcfg, x15
-  # Copy rs1 (x15) to a1 for T-SBI call
   mv a1, x15
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x30a5a073) # csrs menvcfg, x15
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MENVCFG)
 #else
   LI(x15, MENVCFGH_STCE)
   # T-SBI call to execute instruction: csrs menvcfgh, x15
-  # Copy rs1 (x15) to a1 for T-SBI call
   mv a1, x15
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x31a5a073) # csrs menvcfgh, x15
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MENVCFGH)
 #endif
 #if __riscv_xlen == 64
   LI(x14, HENVCFG_STCE)
@@ -681,14 +507,8 @@ SstcH_vu_cg_cp_vu_timecmp_inaccessible_vstimecmph_mstce1_hstce0_mtm1_htm1:
 #endif
   LI(x6, MCOUNTEREN_TIME)
   # T-SBI call to execute instruction: csrc mcounteren, x6
-  # Copy rs1 (x6) to a1 for T-SBI call
   mv a1, x6
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x3065b073) # csrc mcounteren, x6
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MCOUNTEREN)
   LI(x14, MCOUNTEREN_TIME)
   csrc hcounteren, x14
   RVTEST_TSBI_GOTO_VUMODE
@@ -721,25 +541,13 @@ SstcH_vu_cg_cp_vu_timecmp_inaccessible_vstimecmph_mstce1_hstce1_mtm0_htm0:
 #if __riscv_xlen == 64
   LI(x9, MENVCFG_STCE)
   # T-SBI call to execute instruction: csrs menvcfg, x9
-  # Copy rs1 (x9) to a1 for T-SBI call
   mv a1, x9
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x30a5a073) # csrs menvcfg, x9
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MENVCFG)
 #else
   LI(x9, MENVCFGH_STCE)
   # T-SBI call to execute instruction: csrs menvcfgh, x9
-  # Copy rs1 (x9) to a1 for T-SBI call
   mv a1, x9
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x31a5a073) # csrs menvcfgh, x9
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MENVCFGH)
 #endif
 #if __riscv_xlen == 64
   LI(x6, HENVCFG_STCE)
@@ -750,14 +558,8 @@ SstcH_vu_cg_cp_vu_timecmp_inaccessible_vstimecmph_mstce1_hstce1_mtm0_htm0:
 #endif
   LI(x13, MCOUNTEREN_TIME)
   # T-SBI call to execute instruction: csrc mcounteren, x13
-  # Copy rs1 (x13) to a1 for T-SBI call
   mv a1, x13
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x3065b073) # csrc mcounteren, x13
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MCOUNTEREN)
   LI(x6, MCOUNTEREN_TIME)
   csrs hcounteren, x6
   RVTEST_TSBI_GOTO_VUMODE
@@ -790,25 +592,13 @@ SstcH_vu_cg_cp_vu_timecmp_inaccessible_vstimecmph_mstce1_hstce1_mtm0_htm1:
 #if __riscv_xlen == 64
   LI(x15, MENVCFG_STCE)
   # T-SBI call to execute instruction: csrs menvcfg, x15
-  # Copy rs1 (x15) to a1 for T-SBI call
   mv a1, x15
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x30a5a073) # csrs menvcfg, x15
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MENVCFG)
 #else
   LI(x15, MENVCFGH_STCE)
   # T-SBI call to execute instruction: csrs menvcfgh, x15
-  # Copy rs1 (x15) to a1 for T-SBI call
   mv a1, x15
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x31a5a073) # csrs menvcfgh, x15
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MENVCFGH)
 #endif
 #if __riscv_xlen == 64
   LI(x13, HENVCFG_STCE)
@@ -819,14 +609,8 @@ SstcH_vu_cg_cp_vu_timecmp_inaccessible_vstimecmph_mstce1_hstce1_mtm0_htm1:
 #endif
   LI(x14, MCOUNTEREN_TIME)
   # T-SBI call to execute instruction: csrs mcounteren, x14
-  # Copy rs1 (x14) to a1 for T-SBI call
   mv a1, x14
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x3065a073) # csrs mcounteren, x14
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MCOUNTEREN)
   LI(x13, MCOUNTEREN_TIME)
   csrc hcounteren, x13
   RVTEST_TSBI_GOTO_VUMODE
@@ -859,25 +643,13 @@ SstcH_vu_cg_cp_vu_timecmp_inaccessible_vstimecmph_mstce1_hstce1_mtm1_htm0:
 #if __riscv_xlen == 64
   LI(x15, MENVCFG_STCE)
   # T-SBI call to execute instruction: csrs menvcfg, x15
-  # Copy rs1 (x15) to a1 for T-SBI call
   mv a1, x15
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x30a5a073) # csrs menvcfg, x15
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MENVCFG)
 #else
   LI(x15, MENVCFGH_STCE)
   # T-SBI call to execute instruction: csrs menvcfgh, x15
-  # Copy rs1 (x15) to a1 for T-SBI call
   mv a1, x15
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x31a5a073) # csrs menvcfgh, x15
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MENVCFGH)
 #endif
 #if __riscv_xlen == 64
   LI(x13, HENVCFG_STCE)
@@ -888,14 +660,8 @@ SstcH_vu_cg_cp_vu_timecmp_inaccessible_vstimecmph_mstce1_hstce1_mtm1_htm0:
 #endif
   LI(x9, MCOUNTEREN_TIME)
   # T-SBI call to execute instruction: csrs mcounteren, x9
-  # Copy rs1 (x9) to a1 for T-SBI call
   mv a1, x9
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x3065a073) # csrs mcounteren, x9
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MCOUNTEREN)
   LI(x13, MCOUNTEREN_TIME)
   csrs hcounteren, x13
   RVTEST_TSBI_GOTO_VUMODE
@@ -928,25 +694,13 @@ SstcH_vu_cg_cp_vu_timecmp_inaccessible_vstimecmph_mstce1_hstce1_mtm1_htm1:
 #if __riscv_xlen == 64
   LI(x14, MENVCFG_STCE)
   # T-SBI call to execute instruction: csrc menvcfg, x14
-  # Copy rs1 (x14) to a1 for T-SBI call
   mv a1, x14
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x30a5b073) # csrc menvcfg, x14
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MENVCFG)
 #else
   LI(x14, MENVCFGH_STCE)
   # T-SBI call to execute instruction: csrc menvcfgh, x14
-  # Copy rs1 (x14) to a1 for T-SBI call
   mv a1, x14
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x31a5b073) # csrc menvcfgh, x14
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MENVCFGH)
 #endif
 #if __riscv_xlen == 64
   LI(x9, HENVCFG_STCE)
@@ -957,14 +711,8 @@ SstcH_vu_cg_cp_vu_timecmp_inaccessible_vstimecmph_mstce1_hstce1_mtm1_htm1:
 #endif
   LI(x6, MCOUNTEREN_TIME)
   # T-SBI call to execute instruction: csrs mcounteren, x6
-  # Copy rs1 (x6) to a1 for T-SBI call
   mv a1, x6
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x3065a073) # csrs mcounteren, x6
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MCOUNTEREN)
   LI(x9, MCOUNTEREN_TIME)
   csrs hcounteren, x9
 
@@ -978,25 +726,13 @@ SstcH_vu_cg_cp_vu_timecmp_inaccessible_vstimecmph_mstce1_hstce1_mtm1_htm1:
 #if __riscv_xlen == 64
   LI(x8, MENVCFG_STCE)
   # T-SBI call to execute instruction: csrc menvcfg, x8
-  # Copy rs1 (x8) to a1 for T-SBI call
   mv a1, x8
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x30a5b073) # csrc menvcfg, x8
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MENVCFG)
 #else
   LI(x8, MENVCFGH_STCE)
   # T-SBI call to execute instruction: csrc menvcfgh, x8
-  # Copy rs1 (x8) to a1 for T-SBI call
   mv a1, x8
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x31a5b073) # csrc menvcfgh, x8
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MENVCFGH)
 #endif
 #if __riscv_xlen == 64
   LI(x15, HENVCFG_STCE)
@@ -1007,14 +743,8 @@ SstcH_vu_cg_cp_vu_timecmp_inaccessible_vstimecmph_mstce1_hstce1_mtm1_htm1:
 #endif
   LI(x8, MCOUNTEREN_TIME)
   # T-SBI call to execute instruction: csrc mcounteren, x8
-  # Copy rs1 (x8) to a1 for T-SBI call
   mv a1, x8
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x3065b073) # csrc mcounteren, x8
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MCOUNTEREN)
   LI(x15, MCOUNTEREN_TIME)
   csrc hcounteren, x15
   RVTEST_TSBI_GOTO_UMODE
@@ -1047,25 +777,13 @@ SstcH_u_cg_cp_u_timecmp_inaccessible_vstimecmph_mstce0_hstce0_mtm0_htm0:
 #if __riscv_xlen == 64
   LI(x6, MENVCFG_STCE)
   # T-SBI call to execute instruction: csrc menvcfg, x6
-  # Copy rs1 (x6) to a1 for T-SBI call
   mv a1, x6
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x30a5b073) # csrc menvcfg, x6
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MENVCFG)
 #else
   LI(x6, MENVCFGH_STCE)
   # T-SBI call to execute instruction: csrc menvcfgh, x6
-  # Copy rs1 (x6) to a1 for T-SBI call
   mv a1, x6
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x31a5b073) # csrc menvcfgh, x6
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MENVCFGH)
 #endif
 #if __riscv_xlen == 64
   LI(x14, HENVCFG_STCE)
@@ -1076,14 +794,8 @@ SstcH_u_cg_cp_u_timecmp_inaccessible_vstimecmph_mstce0_hstce0_mtm0_htm0:
 #endif
   LI(x8, MCOUNTEREN_TIME)
   # T-SBI call to execute instruction: csrc mcounteren, x8
-  # Copy rs1 (x8) to a1 for T-SBI call
   mv a1, x8
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x3065b073) # csrc mcounteren, x8
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MCOUNTEREN)
   LI(x14, MCOUNTEREN_TIME)
   csrs hcounteren, x14
   RVTEST_TSBI_GOTO_UMODE
@@ -1116,25 +828,13 @@ SstcH_u_cg_cp_u_timecmp_inaccessible_vstimecmph_mstce0_hstce0_mtm0_htm1:
 #if __riscv_xlen == 64
   LI(x8, MENVCFG_STCE)
   # T-SBI call to execute instruction: csrc menvcfg, x8
-  # Copy rs1 (x8) to a1 for T-SBI call
   mv a1, x8
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x30a5b073) # csrc menvcfg, x8
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MENVCFG)
 #else
   LI(x8, MENVCFGH_STCE)
   # T-SBI call to execute instruction: csrc menvcfgh, x8
-  # Copy rs1 (x8) to a1 for T-SBI call
   mv a1, x8
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x31a5b073) # csrc menvcfgh, x8
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MENVCFGH)
 #endif
 #if __riscv_xlen == 64
   LI(x13, HENVCFG_STCE)
@@ -1145,14 +845,8 @@ SstcH_u_cg_cp_u_timecmp_inaccessible_vstimecmph_mstce0_hstce0_mtm0_htm1:
 #endif
   LI(x14, MCOUNTEREN_TIME)
   # T-SBI call to execute instruction: csrs mcounteren, x14
-  # Copy rs1 (x14) to a1 for T-SBI call
   mv a1, x14
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x3065a073) # csrs mcounteren, x14
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MCOUNTEREN)
   LI(x13, MCOUNTEREN_TIME)
   csrc hcounteren, x13
   RVTEST_TSBI_GOTO_UMODE
@@ -1185,25 +879,13 @@ SstcH_u_cg_cp_u_timecmp_inaccessible_vstimecmph_mstce0_hstce0_mtm1_htm0:
 #if __riscv_xlen == 64
   LI(x15, MENVCFG_STCE)
   # T-SBI call to execute instruction: csrc menvcfg, x15
-  # Copy rs1 (x15) to a1 for T-SBI call
   mv a1, x15
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x30a5b073) # csrc menvcfg, x15
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MENVCFG)
 #else
   LI(x15, MENVCFGH_STCE)
   # T-SBI call to execute instruction: csrc menvcfgh, x15
-  # Copy rs1 (x15) to a1 for T-SBI call
   mv a1, x15
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x31a5b073) # csrc menvcfgh, x15
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MENVCFGH)
 #endif
 #if __riscv_xlen == 64
   LI(x8, HENVCFG_STCE)
@@ -1214,14 +896,8 @@ SstcH_u_cg_cp_u_timecmp_inaccessible_vstimecmph_mstce0_hstce0_mtm1_htm0:
 #endif
   LI(x14, MCOUNTEREN_TIME)
   # T-SBI call to execute instruction: csrs mcounteren, x14
-  # Copy rs1 (x14) to a1 for T-SBI call
   mv a1, x14
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x3065a073) # csrs mcounteren, x14
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MCOUNTEREN)
   LI(x8, MCOUNTEREN_TIME)
   csrs hcounteren, x8
   RVTEST_TSBI_GOTO_UMODE
@@ -1254,25 +930,13 @@ SstcH_u_cg_cp_u_timecmp_inaccessible_vstimecmph_mstce0_hstce0_mtm1_htm1:
 #if __riscv_xlen == 64
   LI(x15, MENVCFG_STCE)
   # T-SBI call to execute instruction: csrs menvcfg, x15
-  # Copy rs1 (x15) to a1 for T-SBI call
   mv a1, x15
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x30a5a073) # csrs menvcfg, x15
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MENVCFG)
 #else
   LI(x15, MENVCFGH_STCE)
   # T-SBI call to execute instruction: csrs menvcfgh, x15
-  # Copy rs1 (x15) to a1 for T-SBI call
   mv a1, x15
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x31a5a073) # csrs menvcfgh, x15
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MENVCFGH)
 #endif
 #if __riscv_xlen == 64
   LI(x14, HENVCFG_STCE)
@@ -1283,14 +947,8 @@ SstcH_u_cg_cp_u_timecmp_inaccessible_vstimecmph_mstce0_hstce0_mtm1_htm1:
 #endif
   LI(x8, MCOUNTEREN_TIME)
   # T-SBI call to execute instruction: csrc mcounteren, x8
-  # Copy rs1 (x8) to a1 for T-SBI call
   mv a1, x8
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x3065b073) # csrc mcounteren, x8
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MCOUNTEREN)
   LI(x14, MCOUNTEREN_TIME)
   csrc hcounteren, x14
   RVTEST_TSBI_GOTO_UMODE
@@ -1323,25 +981,13 @@ SstcH_u_cg_cp_u_timecmp_inaccessible_vstimecmph_mstce1_hstce0_mtm0_htm0:
 #if __riscv_xlen == 64
   LI(x6, MENVCFG_STCE)
   # T-SBI call to execute instruction: csrs menvcfg, x6
-  # Copy rs1 (x6) to a1 for T-SBI call
   mv a1, x6
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x30a5a073) # csrs menvcfg, x6
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MENVCFG)
 #else
   LI(x6, MENVCFGH_STCE)
   # T-SBI call to execute instruction: csrs menvcfgh, x6
-  # Copy rs1 (x6) to a1 for T-SBI call
   mv a1, x6
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x31a5a073) # csrs menvcfgh, x6
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MENVCFGH)
 #endif
 #if __riscv_xlen == 64
   LI(x13, HENVCFG_STCE)
@@ -1352,14 +998,8 @@ SstcH_u_cg_cp_u_timecmp_inaccessible_vstimecmph_mstce1_hstce0_mtm0_htm0:
 #endif
   LI(x6, MCOUNTEREN_TIME)
   # T-SBI call to execute instruction: csrc mcounteren, x6
-  # Copy rs1 (x6) to a1 for T-SBI call
   mv a1, x6
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x3065b073) # csrc mcounteren, x6
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MCOUNTEREN)
   LI(x13, MCOUNTEREN_TIME)
   csrs hcounteren, x13
   RVTEST_TSBI_GOTO_UMODE
@@ -1392,25 +1032,13 @@ SstcH_u_cg_cp_u_timecmp_inaccessible_vstimecmph_mstce1_hstce0_mtm0_htm1:
 #if __riscv_xlen == 64
   LI(x15, MENVCFG_STCE)
   # T-SBI call to execute instruction: csrs menvcfg, x15
-  # Copy rs1 (x15) to a1 for T-SBI call
   mv a1, x15
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x30a5a073) # csrs menvcfg, x15
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MENVCFG)
 #else
   LI(x15, MENVCFGH_STCE)
   # T-SBI call to execute instruction: csrs menvcfgh, x15
-  # Copy rs1 (x15) to a1 for T-SBI call
   mv a1, x15
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x31a5a073) # csrs menvcfgh, x15
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MENVCFGH)
 #endif
 #if __riscv_xlen == 64
   LI(x14, HENVCFG_STCE)
@@ -1421,14 +1049,8 @@ SstcH_u_cg_cp_u_timecmp_inaccessible_vstimecmph_mstce1_hstce0_mtm0_htm1:
 #endif
   LI(x15, MCOUNTEREN_TIME)
   # T-SBI call to execute instruction: csrs mcounteren, x15
-  # Copy rs1 (x15) to a1 for T-SBI call
   mv a1, x15
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x3065a073) # csrs mcounteren, x15
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MCOUNTEREN)
   LI(x14, MCOUNTEREN_TIME)
   csrc hcounteren, x14
   RVTEST_TSBI_GOTO_UMODE
@@ -1461,25 +1083,13 @@ SstcH_u_cg_cp_u_timecmp_inaccessible_vstimecmph_mstce1_hstce0_mtm1_htm0:
 #if __riscv_xlen == 64
   LI(x8, MENVCFG_STCE)
   # T-SBI call to execute instruction: csrs menvcfg, x8
-  # Copy rs1 (x8) to a1 for T-SBI call
   mv a1, x8
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x30a5a073) # csrs menvcfg, x8
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MENVCFG)
 #else
   LI(x8, MENVCFGH_STCE)
   # T-SBI call to execute instruction: csrs menvcfgh, x8
-  # Copy rs1 (x8) to a1 for T-SBI call
   mv a1, x8
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x31a5a073) # csrs menvcfgh, x8
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MENVCFGH)
 #endif
 #if __riscv_xlen == 64
   LI(x14, HENVCFG_STCE)
@@ -1490,14 +1100,8 @@ SstcH_u_cg_cp_u_timecmp_inaccessible_vstimecmph_mstce1_hstce0_mtm1_htm0:
 #endif
   LI(x6, MCOUNTEREN_TIME)
   # T-SBI call to execute instruction: csrs mcounteren, x6
-  # Copy rs1 (x6) to a1 for T-SBI call
   mv a1, x6
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x3065a073) # csrs mcounteren, x6
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MCOUNTEREN)
   LI(x14, MCOUNTEREN_TIME)
   csrs hcounteren, x14
   RVTEST_TSBI_GOTO_UMODE
@@ -1530,25 +1134,13 @@ SstcH_u_cg_cp_u_timecmp_inaccessible_vstimecmph_mstce1_hstce0_mtm1_htm1:
 #if __riscv_xlen == 64
   LI(x8, MENVCFG_STCE)
   # T-SBI call to execute instruction: csrs menvcfg, x8
-  # Copy rs1 (x8) to a1 for T-SBI call
   mv a1, x8
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x30a5a073) # csrs menvcfg, x8
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MENVCFG)
 #else
   LI(x8, MENVCFGH_STCE)
   # T-SBI call to execute instruction: csrs menvcfgh, x8
-  # Copy rs1 (x8) to a1 for T-SBI call
   mv a1, x8
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x31a5a073) # csrs menvcfgh, x8
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MENVCFGH)
 #endif
 #if __riscv_xlen == 64
   LI(x6, HENVCFG_STCE)
@@ -1559,14 +1151,8 @@ SstcH_u_cg_cp_u_timecmp_inaccessible_vstimecmph_mstce1_hstce0_mtm1_htm1:
 #endif
   LI(x14, MCOUNTEREN_TIME)
   # T-SBI call to execute instruction: csrc mcounteren, x14
-  # Copy rs1 (x14) to a1 for T-SBI call
   mv a1, x14
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x3065b073) # csrc mcounteren, x14
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MCOUNTEREN)
   LI(x6, MCOUNTEREN_TIME)
   csrc hcounteren, x6
   RVTEST_TSBI_GOTO_UMODE
@@ -1599,25 +1185,13 @@ SstcH_u_cg_cp_u_timecmp_inaccessible_vstimecmph_mstce1_hstce1_mtm0_htm0:
 #if __riscv_xlen == 64
   LI(x15, MENVCFG_STCE)
   # T-SBI call to execute instruction: csrs menvcfg, x15
-  # Copy rs1 (x15) to a1 for T-SBI call
   mv a1, x15
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x30a5a073) # csrs menvcfg, x15
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MENVCFG)
 #else
   LI(x15, MENVCFGH_STCE)
   # T-SBI call to execute instruction: csrs menvcfgh, x15
-  # Copy rs1 (x15) to a1 for T-SBI call
   mv a1, x15
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x31a5a073) # csrs menvcfgh, x15
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MENVCFGH)
 #endif
 #if __riscv_xlen == 64
   LI(x6, HENVCFG_STCE)
@@ -1628,14 +1202,8 @@ SstcH_u_cg_cp_u_timecmp_inaccessible_vstimecmph_mstce1_hstce1_mtm0_htm0:
 #endif
   LI(x15, MCOUNTEREN_TIME)
   # T-SBI call to execute instruction: csrc mcounteren, x15
-  # Copy rs1 (x15) to a1 for T-SBI call
   mv a1, x15
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x3065b073) # csrc mcounteren, x15
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MCOUNTEREN)
   LI(x6, MCOUNTEREN_TIME)
   csrs hcounteren, x6
   RVTEST_TSBI_GOTO_UMODE
@@ -1668,25 +1236,13 @@ SstcH_u_cg_cp_u_timecmp_inaccessible_vstimecmph_mstce1_hstce1_mtm0_htm1:
 #if __riscv_xlen == 64
   LI(x14, MENVCFG_STCE)
   # T-SBI call to execute instruction: csrs menvcfg, x14
-  # Copy rs1 (x14) to a1 for T-SBI call
   mv a1, x14
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x30a5a073) # csrs menvcfg, x14
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MENVCFG)
 #else
   LI(x14, MENVCFGH_STCE)
   # T-SBI call to execute instruction: csrs menvcfgh, x14
-  # Copy rs1 (x14) to a1 for T-SBI call
   mv a1, x14
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x31a5a073) # csrs menvcfgh, x14
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MENVCFGH)
 #endif
 #if __riscv_xlen == 64
   LI(x13, HENVCFG_STCE)
@@ -1697,14 +1253,8 @@ SstcH_u_cg_cp_u_timecmp_inaccessible_vstimecmph_mstce1_hstce1_mtm0_htm1:
 #endif
   LI(x15, MCOUNTEREN_TIME)
   # T-SBI call to execute instruction: csrs mcounteren, x15
-  # Copy rs1 (x15) to a1 for T-SBI call
   mv a1, x15
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x3065a073) # csrs mcounteren, x15
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MCOUNTEREN)
   LI(x13, MCOUNTEREN_TIME)
   csrc hcounteren, x13
   RVTEST_TSBI_GOTO_UMODE
@@ -1737,25 +1287,13 @@ SstcH_u_cg_cp_u_timecmp_inaccessible_vstimecmph_mstce1_hstce1_mtm1_htm0:
 #if __riscv_xlen == 64
   LI(x15, MENVCFG_STCE)
   # T-SBI call to execute instruction: csrs menvcfg, x15
-  # Copy rs1 (x15) to a1 for T-SBI call
   mv a1, x15
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x30a5a073) # csrs menvcfg, x15
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MENVCFG)
 #else
   LI(x15, MENVCFGH_STCE)
   # T-SBI call to execute instruction: csrs menvcfgh, x15
-  # Copy rs1 (x15) to a1 for T-SBI call
   mv a1, x15
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x31a5a073) # csrs menvcfgh, x15
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MENVCFGH)
 #endif
 #if __riscv_xlen == 64
   LI(x14, HENVCFG_STCE)
@@ -1766,14 +1304,8 @@ SstcH_u_cg_cp_u_timecmp_inaccessible_vstimecmph_mstce1_hstce1_mtm1_htm0:
 #endif
   LI(x6, MCOUNTEREN_TIME)
   # T-SBI call to execute instruction: csrs mcounteren, x6
-  # Copy rs1 (x6) to a1 for T-SBI call
   mv a1, x6
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x3065a073) # csrs mcounteren, x6
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MCOUNTEREN)
   LI(x14, MCOUNTEREN_TIME)
   csrs hcounteren, x14
   RVTEST_TSBI_GOTO_UMODE
@@ -1806,25 +1338,13 @@ SstcH_u_cg_cp_u_timecmp_inaccessible_vstimecmph_mstce1_hstce1_mtm1_htm1:
 #if __riscv_xlen == 64
   LI(x8, MENVCFG_STCE)
   # T-SBI call to execute instruction: csrc menvcfg, x8
-  # Copy rs1 (x8) to a1 for T-SBI call
   mv a1, x8
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x30a5b073) # csrc menvcfg, x8
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MENVCFG)
 #else
   LI(x8, MENVCFGH_STCE)
   # T-SBI call to execute instruction: csrc menvcfgh, x8
-  # Copy rs1 (x8) to a1 for T-SBI call
   mv a1, x8
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x31a5b073) # csrc menvcfgh, x8
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MENVCFGH)
 #endif
 #if __riscv_xlen == 64
   LI(x15, HENVCFG_STCE)
@@ -1835,14 +1355,8 @@ SstcH_u_cg_cp_u_timecmp_inaccessible_vstimecmph_mstce1_hstce1_mtm1_htm1:
 #endif
   LI(x6, MCOUNTEREN_TIME)
   # T-SBI call to execute instruction: csrs mcounteren, x6
-  # Copy rs1 (x6) to a1 for T-SBI call
   mv a1, x6
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x3065a073) # csrs mcounteren, x6
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MCOUNTEREN)
   LI(x15, MCOUNTEREN_TIME)
   csrs hcounteren, x15
 

@@ -11,9 +11,12 @@
 # - SsstrictSm/S/U: on the vector configs, Imperas does not enforce the vector register-group
 #   overlap constraints, so it executes reserved widening encodings such as
 #   vwmaccu.vv v14, v9, v15, v0.t instead of raising an illegal instruction:
-#   https://solvnetplus.synopsys.com/s/case/500WQ0000230O4P/imperas-treats-vwmaccuvv-v14-v9-v15-v0t-as-legal
+#   https://solvnetplus.synopsys.com/s/case/500WQ0000230O4PYAU/imperas-treats-vwmaccuvv-v14-v9-v15-v0t-as-legal
+#   imperas-rv32gcv also executed the draft Zvqmac encodings in VectorInstr-00/-03; that is worked around
+#   in its imperas.ic (Zvqmac=F):
+#   https://solvnetplus.synopsys.com/s/case/500WQ00002CEtKrYAL/the-vqmacc-draft-zvqmac-encodings-execute-on-named-v-variants-with-vectorversion10ratified
 #   The VectorInstr tests are the only Ssstrict failures; rv32gck, which has no vector unit, passes all three.
-#   (fixed in Imperas-HMC101126-eng-build)
+#   Both issues are fixed in Imperas-HMC101126-eng-build.
 # - SsstrictV passes on stock Y-2026.09 too, so it is no longer excluded.
 # - Smstateen:
 #   - imperas-rv64-max: Imperas lets mstateen0.P1P13 be written on RV64:
@@ -64,9 +67,15 @@
 #   for an SRET executed in VS-mode (vsstatus.SPELP stays 1).
 #   https://solvnetplus.synopsys.com/s/case/500WQ000029smeCYAQ/mretsret-do-not-set-mpelpspelp-to-nolpexpected
 #   (fixed in Imperas-HMC101126-eng-build)
+# - Sscofpmf*: there are no plans for Imperas to support HPM events, so this one is not
+#   expected to be resolved in the foreseeable future.
 # - Svnapot: Imperas accepts N=1 on superpage leaf PTEs instead of page faulting
-#   (validSvnapotEntry checks only for a leaf, not level 0, and fillTLBEntry skips the alignment check)
+#   (validSvnapotEntry checks only for a leaf, not level 0, and fillTLBEntry skips the alignment check):
+#   https://solvnetplus.synopsys.com/s/case/500WQ00002AsSN9YAN/svnapot-n1-accepted-on-superpage-leaf-ptes-instead-of-raising-a-page-fault
 #   (fixed in Imperas-HMC101126-eng-build)
+# - Zama16b is not declared. The model has no misaligned atomicity granule: Zam=T performs every
+#   misaligned AMO, including SSAMOSWAP (riscv-isa-manual#3426), so the configs use Zam=F, where
+#   misaligned AMOs, SSAMOSWAP and LR/SC raise store/AMO access faults.
 # - Ssnpm,SsnpmSm,Smmpm,SmnpmS,SmnpmSSm,SmnpmU,SmnpmUSm:Imperas still applies pointer masking when MXR is set, contradicting the spec rule.
 #   Issue filed (https://solvnetplus.synopsys.com/s/case/500WQ000025qNCkYAM/pointer-masking-should-be-disabled-when-mxr1)
 #   The MXR part is fixed in Imperas-HMC101126-eng-build. These suites still fail on their xtval checks: for a faulting
@@ -76,6 +85,6 @@
 #
 ci_enabled: false
 # Stock ImperasDV Y-2026.09:
-# exclude_extensions: "SsstrictSm,SsstrictS,SsstrictU,Smstateen,ExceptionsVx,SdtrigS,SdtrigU,PMPH,SvH,SvHZicbo,InterruptsH,SstcH,SstcHSm,SmstateenH,SsnpmH,ZicfilpSm,ZicfilpS,ZicfilpH,Svnapot,Ssnpm,SsnpmSm,Smmpm,SmnpmS,SmnpmSSm,SmnpmU,SmnpmUSm"
+# exclude_extensions: "SsstrictSm,SsstrictS,SsstrictU,Smstateen,ExceptionsVx,SdtrigS,SdtrigU,PMPH,SvH,SvHZicbo,InterruptsH,SstcH,SstcHSm,SmstateenH,SsnpmH,ZicfilpSm,ZicfilpS,ZicfilpH,Svnapot,Ssnpm,SsnpmSm,Smmpm,SmnpmS,SmnpmSSm,SmnpmU,SmnpmUSm,SscofpmfSm,SscofpmfS,SscofpmfU"
 # Imperas-HMC101126-eng-build:
-exclude_extensions: "Smstateen,SdtrigS,SdtrigU,Ssnpm,SsnpmSm,Smmpm,SmnpmS,SmnpmSSm,SmnpmU,SmnpmUSm"
+exclude_extensions: "Smstateen,SdtrigS,SdtrigU,Ssnpm,SsnpmSm,Smmpm,SmnpmS,SmnpmSSm,SmnpmU,SmnpmUSm,SscofpmfSm,SscofpmfS,SscofpmfU"

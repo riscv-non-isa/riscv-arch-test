@@ -334,4 +334,10 @@
 
 #endif // SMAIA_SUPPORTED
 
+##### Sscofpmf #####
+#define RVMODEL_HPM_COUNTER 3   // HPM counter used by the Sscofpmf tests (3 to 31)
+#define RVMODEL_MHPMEVENT_VAL  0x02   // RISCV_PMU_EVENT_HW_INSTRUCTIONS
+#define RVMODEL_MHPMEVENT_CODE(_R1, _R2) \
+    nop
+
 #endif // _RVMODEL_MACROS_H

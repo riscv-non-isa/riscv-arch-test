@@ -132,37 +132,27 @@ def _gen_encodings(
     return results
 
 
-# The sweeps include legal loads and stores with random 12-bit offsets (such as the scalar FP widths of
-# the vector load/store opcodes), so the base points to the middle of a buffer that covers every offset.
-# The framework's 264-byte scratch region is followed by trap-handler state that such stores would corrupt.
-SWEEP_BUFFER = "ssstrict_sweep_buffer"
-SWEEP_BUFFER_HALF = 2048
+# The sweeps include legal loads and stores with random 12-bit offsets (such as the scalar FP widths
+# of the vector load/store opcodes). The suites enlarge the scratch region to 4 KiB plus the widest
+# access (16 bytes) and point the base at its middle, so every access stays inside it.
+SCRATCH_SIZE = 4096 + 16
+SCRATCH_SIZE_DEFINE = f"#define SCRATCH_SIZE {SCRATCH_SIZE}"
 
 
 def _scratch_setup(lines: list[str], test_data: TestData, scratch_base: int) -> None:
-    """Per-chunk setup: point the scratch base register at the middle of the sweep buffer.
+    """Per-chunk setup: point the scratch base register at the middle of the scratch region.
 
     Each chunk may begin a fresh split file, so it must re-establish the scratch
     base. Memory templates use this register as rs1, so it is the only one that
     must hold a valid mapped address before the encodings run. FP/vector state
-    (mstatus.FS/VS) is already enabled by RVTEST_BEGIN in every file. Every chunk
-    also declares the buffer; .ifndef keeps one copy per file.
+    (mstatus.FS/VS) is already enabled by RVTEST_BEGIN in every file.
     """
-    tc = test_data.test_chunk
-    assert tc is not None, "No active test chunk for the sweep buffer"
-    tc.raw_data += [
-        f".ifndef {SWEEP_BUFFER}",
-        ".p2align 4",
-        f"{SWEEP_BUFFER}:",
-        f".fill {2 * SWEEP_BUFFER_HALF}, 1, 0",
-        ".endif",
-    ]
     lines += [
         "",
-        f"\t# x{scratch_base} = sweep buffer base pointer",
+        f"\t# x{scratch_base} = scratch base pointer",
         "\tnop",
         "\tnop",
-        f"\tla x{scratch_base}, {SWEEP_BUFFER}+{SWEEP_BUFFER_HALF}",
+        f"\tla x{scratch_base}, scratch+2048",
         "",
     ]
 
@@ -233,6 +223,9 @@ def _emit_raw_words(
         lines.append(f"# {comment}{part}  ({len(group)} of {total} encodings) template {template}")
         for enc in group:
             lines.append(f"\t{directive} 0b{enc}")
+        if length == 16:
+            # Without Zca (IALIGN=32) the hart can reach only 4-byte-aligned code after an odd count of halfwords
+            lines.append("\t.balign 4")
         tc.num_testcases += len(group)
         _finalize_chunk(test_data, lines, test_chunks)
     test_data.int_regs.return_register(scratch_base)

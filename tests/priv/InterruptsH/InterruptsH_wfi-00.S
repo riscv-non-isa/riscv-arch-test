@@ -45,14 +45,8 @@ RVTEST_BEGIN
   csrc hstatus, x8
   LI(x8, MSTATUS_TW)
   # T-SBI call to execute instruction: csrc mstatus, x8
-  # Copy rs1 (x8) to a1 for T-SBI call
   mv a1, x8
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x3005b073) # csrc mstatus, x8
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MSTATUS)
   RVTEST_TSBI_GOTO_VSMODE
 InterruptsH_hs_cg_cp_wfi_vs_tw0_vtw0:
   wfi
@@ -72,14 +66,8 @@ InterruptsH_hs_cg_cp_wfi_vs_tw0_vtw0:
   csrs hstatus, x8
   LI(x8, MSTATUS_TW)
   # T-SBI call to execute instruction: csrc mstatus, x8
-  # Copy rs1 (x8) to a1 for T-SBI call
   mv a1, x8
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x3005b073) # csrc mstatus, x8
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MSTATUS)
   RVTEST_OPTIONAL_TRAP(x8, x15, InterruptsH_hs_cg_cp_wfi_vs_tw0_vtw1, CAUSE_VIRTUAL_INSTRUCTION)
   RVTEST_TSBI_GOTO_VSMODE
 InterruptsH_hs_cg_cp_wfi_vs_tw0_vtw1:
@@ -101,14 +89,8 @@ InterruptsH_hs_cg_cp_wfi_vs_tw0_vtw1:
   csrc hstatus, x8
   LI(x8, MSTATUS_TW)
   # T-SBI call to execute instruction: csrs mstatus, x8
-  # Copy rs1 (x8) to a1 for T-SBI call
   mv a1, x8
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x3005a073) # csrs mstatus, x8
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MSTATUS)
   RVTEST_OPTIONAL_TRAP(x8, x15, InterruptsH_hs_cg_cp_wfi_vs_tw1_vtw0, CAUSE_ILLEGAL_INSTRUCTION)
   RVTEST_TSBI_GOTO_VSMODE
 InterruptsH_hs_cg_cp_wfi_vs_tw1_vtw0:
@@ -130,14 +112,8 @@ InterruptsH_hs_cg_cp_wfi_vs_tw1_vtw0:
   csrs hstatus, x8
   LI(x8, MSTATUS_TW)
   # T-SBI call to execute instruction: csrs mstatus, x8
-  # Copy rs1 (x8) to a1 for T-SBI call
   mv a1, x8
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x3005a073) # csrs mstatus, x8
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MSTATUS)
   RVTEST_OPTIONAL_TRAP(x8, x15, InterruptsH_hs_cg_cp_wfi_vs_tw1_vtw1, CAUSE_ILLEGAL_INSTRUCTION)
   RVTEST_TSBI_GOTO_VSMODE
 InterruptsH_hs_cg_cp_wfi_vs_tw1_vtw1:
@@ -165,14 +141,8 @@ InterruptsH_hs_cg_cp_wfi_vs_tw1_vtw1:
   csrc hstatus, x8
   LI(x8, MSTATUS_TW)
   # T-SBI call to execute instruction: csrc mstatus, x8
-  # Copy rs1 (x8) to a1 for T-SBI call
   mv a1, x8
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x3005b073) # csrc mstatus, x8
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MSTATUS)
   RVTEST_TSBI_GOTO_VUMODE
 InterruptsH_hs_cg_cp_wfi_vu_tw0_vtw0:
   wfi
@@ -192,14 +162,8 @@ InterruptsH_hs_cg_cp_wfi_vu_tw0_vtw0:
   csrs hstatus, x8
   LI(x8, MSTATUS_TW)
   # T-SBI call to execute instruction: csrc mstatus, x8
-  # Copy rs1 (x8) to a1 for T-SBI call
   mv a1, x8
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x3005b073) # csrc mstatus, x8
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MSTATUS)
   RVTEST_TSBI_GOTO_VUMODE
 InterruptsH_hs_cg_cp_wfi_vu_tw0_vtw1:
   wfi
@@ -219,14 +183,8 @@ InterruptsH_hs_cg_cp_wfi_vu_tw0_vtw1:
   csrc hstatus, x8
   LI(x8, MSTATUS_TW)
   # T-SBI call to execute instruction: csrs mstatus, x8
-  # Copy rs1 (x8) to a1 for T-SBI call
   mv a1, x8
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x3005a073) # csrs mstatus, x8
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MSTATUS)
   RVTEST_OPTIONAL_TRAP(x8, x15, InterruptsH_hs_cg_cp_wfi_vu_tw1_vtw0, CAUSE_ILLEGAL_INSTRUCTION)
   RVTEST_TSBI_GOTO_VUMODE
 InterruptsH_hs_cg_cp_wfi_vu_tw1_vtw0:
@@ -248,14 +206,8 @@ InterruptsH_hs_cg_cp_wfi_vu_tw1_vtw0:
   csrs hstatus, x8
   LI(x8, MSTATUS_TW)
   # T-SBI call to execute instruction: csrs mstatus, x8
-  # Copy rs1 (x8) to a1 for T-SBI call
   mv a1, x8
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x3005a073) # csrs mstatus, x8
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MSTATUS)
   RVTEST_OPTIONAL_TRAP(x8, x15, InterruptsH_hs_cg_cp_wfi_vu_tw1_vtw1, CAUSE_ILLEGAL_INSTRUCTION)
   RVTEST_TSBI_GOTO_VUMODE
 InterruptsH_hs_cg_cp_wfi_vu_tw1_vtw1:
@@ -268,14 +220,8 @@ InterruptsH_hs_cg_cp_wfi_vu_tw1_vtw1:
   csrw hvip, zero
   LI(x8, MSTATUS_TW)
   # T-SBI call to execute instruction: csrc mstatus, x8
-  # Copy rs1 (x8) to a1 for T-SBI call
   mv a1, x8
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x3005b073) # csrc mstatus, x8
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MSTATUS)
   LI(x8, HSTATUS_VTW)
   csrc hstatus, x8
   csrw hideleg, zero

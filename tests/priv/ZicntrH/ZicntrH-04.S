@@ -38,34 +38,16 @@ RVTEST_BEGIN
 
   LI(x8, -1)
   # T-SBI call to execute instruction: csrw mcounteren, x8  # enable all counters
-  # Copy rs1 (x8) to a1 for T-SBI call
   mv a1, x8
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x30659073) # csrw mcounteren, x8  # enable all counters
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_WRITE_A1(CSR_MCOUNTEREN)
   LI(x8, -1)
   # T-SBI call to execute instruction: csrw hcounteren, x8  # enable all counters
-  # Copy rs1 (x8) to a1 for T-SBI call
   mv a1, x8
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x60659073) # csrw hcounteren, x8  # enable all counters
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_WRITE_A1(CSR_HCOUNTEREN)
   LI(x13, 1)
   # T-SBI call to execute instruction: csrw scounteren, x13  # set only the current bit
-  # Copy rs1 (x13) to a1 for T-SBI call
   mv a1, x13
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x10659073) # csrw scounteren, x13  # set only the current bit
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_WRITE_A1(CSR_SCOUNTEREN)
 ZicntrH_cg_cp_scounteren_access_vu_walking_1_0_read:
   csrr x9, cycle
 ZicntrH_cg_cp_scounteren_access_vu_walking_1_0_write:
@@ -78,14 +60,8 @@ ZicntrH_cg_cp_scounteren_access_vu_walking_1_0_writeh:
 #endif
   slli x13, x13, 1
   # T-SBI call to execute instruction: csrw scounteren, x13  # set only the current bit
-  # Copy rs1 (x13) to a1 for T-SBI call
   mv a1, x13
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x10659073) # csrw scounteren, x13  # set only the current bit
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_WRITE_A1(CSR_SCOUNTEREN)
 ZicntrH_cg_cp_scounteren_access_vu_walking_1_1_read:
   csrr x9, time
 ZicntrH_cg_cp_scounteren_access_vu_walking_1_1_write:
@@ -98,14 +74,8 @@ ZicntrH_cg_cp_scounteren_access_vu_walking_1_1_writeh:
 #endif
   slli x13, x13, 1
   # T-SBI call to execute instruction: csrw scounteren, x13  # set only the current bit
-  # Copy rs1 (x13) to a1 for T-SBI call
   mv a1, x13
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x10659073) # csrw scounteren, x13  # set only the current bit
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_WRITE_A1(CSR_SCOUNTEREN)
 ZicntrH_cg_cp_scounteren_access_vu_walking_1_2_read:
   csrr x9, instret
 ZicntrH_cg_cp_scounteren_access_vu_walking_1_2_write:
@@ -118,14 +88,8 @@ ZicntrH_cg_cp_scounteren_access_vu_walking_1_2_writeh:
 #endif
   slli x13, x13, 1
   # T-SBI call to execute instruction: csrw scounteren, x13  # set only the current bit
-  # Copy rs1 (x13) to a1 for T-SBI call
   mv a1, x13
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x10659073) # csrw scounteren, x13  # set only the current bit
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_WRITE_A1(CSR_SCOUNTEREN)
 #if defined(ZIHPM_SUPPORTED) && defined(UDB_HPM_COUNTER_EN_3)
 ZicntrH_cg_cp_scounteren_access_vu_walking_1_3_read:
   csrr x9, hpmcounter3
@@ -140,14 +104,8 @@ ZicntrH_cg_cp_scounteren_access_vu_walking_1_3_writeh:
 #endif
   slli x13, x13, 1
   # T-SBI call to execute instruction: csrw scounteren, x13  # set only the current bit
-  # Copy rs1 (x13) to a1 for T-SBI call
   mv a1, x13
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x10659073) # csrw scounteren, x13  # set only the current bit
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_WRITE_A1(CSR_SCOUNTEREN)
 #if defined(ZIHPM_SUPPORTED) && defined(UDB_HPM_COUNTER_EN_4)
 ZicntrH_cg_cp_scounteren_access_vu_walking_1_4_read:
   csrr x9, hpmcounter4
@@ -162,14 +120,8 @@ ZicntrH_cg_cp_scounteren_access_vu_walking_1_4_writeh:
 #endif
   slli x13, x13, 1
   # T-SBI call to execute instruction: csrw scounteren, x13  # set only the current bit
-  # Copy rs1 (x13) to a1 for T-SBI call
   mv a1, x13
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x10659073) # csrw scounteren, x13  # set only the current bit
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_WRITE_A1(CSR_SCOUNTEREN)
 #if defined(ZIHPM_SUPPORTED) && defined(UDB_HPM_COUNTER_EN_5)
 ZicntrH_cg_cp_scounteren_access_vu_walking_1_5_read:
   csrr x9, hpmcounter5
@@ -184,14 +136,8 @@ ZicntrH_cg_cp_scounteren_access_vu_walking_1_5_writeh:
 #endif
   slli x13, x13, 1
   # T-SBI call to execute instruction: csrw scounteren, x13  # set only the current bit
-  # Copy rs1 (x13) to a1 for T-SBI call
   mv a1, x13
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x10659073) # csrw scounteren, x13  # set only the current bit
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_WRITE_A1(CSR_SCOUNTEREN)
 #if defined(ZIHPM_SUPPORTED) && defined(UDB_HPM_COUNTER_EN_6)
 ZicntrH_cg_cp_scounteren_access_vu_walking_1_6_read:
   csrr x9, hpmcounter6
@@ -206,14 +152,8 @@ ZicntrH_cg_cp_scounteren_access_vu_walking_1_6_writeh:
 #endif
   slli x13, x13, 1
   # T-SBI call to execute instruction: csrw scounteren, x13  # set only the current bit
-  # Copy rs1 (x13) to a1 for T-SBI call
   mv a1, x13
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x10659073) # csrw scounteren, x13  # set only the current bit
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_WRITE_A1(CSR_SCOUNTEREN)
 #if defined(ZIHPM_SUPPORTED) && defined(UDB_HPM_COUNTER_EN_7)
 ZicntrH_cg_cp_scounteren_access_vu_walking_1_7_read:
   csrr x9, hpmcounter7
@@ -228,14 +168,8 @@ ZicntrH_cg_cp_scounteren_access_vu_walking_1_7_writeh:
 #endif
   slli x13, x13, 1
   # T-SBI call to execute instruction: csrw scounteren, x13  # set only the current bit
-  # Copy rs1 (x13) to a1 for T-SBI call
   mv a1, x13
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x10659073) # csrw scounteren, x13  # set only the current bit
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_WRITE_A1(CSR_SCOUNTEREN)
 #if defined(ZIHPM_SUPPORTED) && defined(UDB_HPM_COUNTER_EN_8)
 ZicntrH_cg_cp_scounteren_access_vu_walking_1_8_read:
   csrr x9, hpmcounter8
@@ -250,14 +184,8 @@ ZicntrH_cg_cp_scounteren_access_vu_walking_1_8_writeh:
 #endif
   slli x13, x13, 1
   # T-SBI call to execute instruction: csrw scounteren, x13  # set only the current bit
-  # Copy rs1 (x13) to a1 for T-SBI call
   mv a1, x13
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x10659073) # csrw scounteren, x13  # set only the current bit
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_WRITE_A1(CSR_SCOUNTEREN)
 #if defined(ZIHPM_SUPPORTED) && defined(UDB_HPM_COUNTER_EN_9)
 ZicntrH_cg_cp_scounteren_access_vu_walking_1_9_read:
   csrr x9, hpmcounter9
@@ -272,14 +200,8 @@ ZicntrH_cg_cp_scounteren_access_vu_walking_1_9_writeh:
 #endif
   slli x13, x13, 1
   # T-SBI call to execute instruction: csrw scounteren, x13  # set only the current bit
-  # Copy rs1 (x13) to a1 for T-SBI call
   mv a1, x13
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x10659073) # csrw scounteren, x13  # set only the current bit
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_WRITE_A1(CSR_SCOUNTEREN)
 #if defined(ZIHPM_SUPPORTED) && defined(UDB_HPM_COUNTER_EN_10)
 ZicntrH_cg_cp_scounteren_access_vu_walking_1_10_read:
   csrr x9, hpmcounter10
@@ -294,14 +216,8 @@ ZicntrH_cg_cp_scounteren_access_vu_walking_1_10_writeh:
 #endif
   slli x13, x13, 1
   # T-SBI call to execute instruction: csrw scounteren, x13  # set only the current bit
-  # Copy rs1 (x13) to a1 for T-SBI call
   mv a1, x13
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x10659073) # csrw scounteren, x13  # set only the current bit
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_WRITE_A1(CSR_SCOUNTEREN)
 #if defined(ZIHPM_SUPPORTED) && defined(UDB_HPM_COUNTER_EN_11)
 ZicntrH_cg_cp_scounteren_access_vu_walking_1_11_read:
   csrr x9, hpmcounter11
@@ -316,14 +232,8 @@ ZicntrH_cg_cp_scounteren_access_vu_walking_1_11_writeh:
 #endif
   slli x13, x13, 1
   # T-SBI call to execute instruction: csrw scounteren, x13  # set only the current bit
-  # Copy rs1 (x13) to a1 for T-SBI call
   mv a1, x13
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x10659073) # csrw scounteren, x13  # set only the current bit
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_WRITE_A1(CSR_SCOUNTEREN)
 #if defined(ZIHPM_SUPPORTED) && defined(UDB_HPM_COUNTER_EN_12)
 ZicntrH_cg_cp_scounteren_access_vu_walking_1_12_read:
   csrr x9, hpmcounter12
@@ -338,14 +248,8 @@ ZicntrH_cg_cp_scounteren_access_vu_walking_1_12_writeh:
 #endif
   slli x13, x13, 1
   # T-SBI call to execute instruction: csrw scounteren, x13  # set only the current bit
-  # Copy rs1 (x13) to a1 for T-SBI call
   mv a1, x13
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x10659073) # csrw scounteren, x13  # set only the current bit
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_WRITE_A1(CSR_SCOUNTEREN)
 #if defined(ZIHPM_SUPPORTED) && defined(UDB_HPM_COUNTER_EN_13)
 ZicntrH_cg_cp_scounteren_access_vu_walking_1_13_read:
   csrr x9, hpmcounter13
@@ -360,14 +264,8 @@ ZicntrH_cg_cp_scounteren_access_vu_walking_1_13_writeh:
 #endif
   slli x13, x13, 1
   # T-SBI call to execute instruction: csrw scounteren, x13  # set only the current bit
-  # Copy rs1 (x13) to a1 for T-SBI call
   mv a1, x13
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x10659073) # csrw scounteren, x13  # set only the current bit
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_WRITE_A1(CSR_SCOUNTEREN)
 #if defined(ZIHPM_SUPPORTED) && defined(UDB_HPM_COUNTER_EN_14)
 ZicntrH_cg_cp_scounteren_access_vu_walking_1_14_read:
   csrr x9, hpmcounter14
@@ -382,14 +280,8 @@ ZicntrH_cg_cp_scounteren_access_vu_walking_1_14_writeh:
 #endif
   slli x13, x13, 1
   # T-SBI call to execute instruction: csrw scounteren, x13  # set only the current bit
-  # Copy rs1 (x13) to a1 for T-SBI call
   mv a1, x13
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x10659073) # csrw scounteren, x13  # set only the current bit
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_WRITE_A1(CSR_SCOUNTEREN)
 #if defined(ZIHPM_SUPPORTED) && defined(UDB_HPM_COUNTER_EN_15)
 ZicntrH_cg_cp_scounteren_access_vu_walking_1_15_read:
   csrr x9, hpmcounter15
@@ -404,14 +296,8 @@ ZicntrH_cg_cp_scounteren_access_vu_walking_1_15_writeh:
 #endif
   slli x13, x13, 1
   # T-SBI call to execute instruction: csrw scounteren, x13  # set only the current bit
-  # Copy rs1 (x13) to a1 for T-SBI call
   mv a1, x13
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x10659073) # csrw scounteren, x13  # set only the current bit
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_WRITE_A1(CSR_SCOUNTEREN)
 #if defined(ZIHPM_SUPPORTED) && defined(UDB_HPM_COUNTER_EN_16)
 ZicntrH_cg_cp_scounteren_access_vu_walking_1_16_read:
   csrr x9, hpmcounter16
@@ -426,14 +312,8 @@ ZicntrH_cg_cp_scounteren_access_vu_walking_1_16_writeh:
 #endif
   slli x13, x13, 1
   # T-SBI call to execute instruction: csrw scounteren, x13  # set only the current bit
-  # Copy rs1 (x13) to a1 for T-SBI call
   mv a1, x13
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x10659073) # csrw scounteren, x13  # set only the current bit
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_WRITE_A1(CSR_SCOUNTEREN)
 #if defined(ZIHPM_SUPPORTED) && defined(UDB_HPM_COUNTER_EN_17)
 ZicntrH_cg_cp_scounteren_access_vu_walking_1_17_read:
   csrr x9, hpmcounter17
@@ -448,14 +328,8 @@ ZicntrH_cg_cp_scounteren_access_vu_walking_1_17_writeh:
 #endif
   slli x13, x13, 1
   # T-SBI call to execute instruction: csrw scounteren, x13  # set only the current bit
-  # Copy rs1 (x13) to a1 for T-SBI call
   mv a1, x13
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x10659073) # csrw scounteren, x13  # set only the current bit
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_WRITE_A1(CSR_SCOUNTEREN)
 #if defined(ZIHPM_SUPPORTED) && defined(UDB_HPM_COUNTER_EN_18)
 ZicntrH_cg_cp_scounteren_access_vu_walking_1_18_read:
   csrr x9, hpmcounter18
@@ -470,14 +344,8 @@ ZicntrH_cg_cp_scounteren_access_vu_walking_1_18_writeh:
 #endif
   slli x13, x13, 1
   # T-SBI call to execute instruction: csrw scounteren, x13  # set only the current bit
-  # Copy rs1 (x13) to a1 for T-SBI call
   mv a1, x13
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x10659073) # csrw scounteren, x13  # set only the current bit
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_WRITE_A1(CSR_SCOUNTEREN)
 #if defined(ZIHPM_SUPPORTED) && defined(UDB_HPM_COUNTER_EN_19)
 ZicntrH_cg_cp_scounteren_access_vu_walking_1_19_read:
   csrr x9, hpmcounter19
@@ -492,14 +360,8 @@ ZicntrH_cg_cp_scounteren_access_vu_walking_1_19_writeh:
 #endif
   slli x13, x13, 1
   # T-SBI call to execute instruction: csrw scounteren, x13  # set only the current bit
-  # Copy rs1 (x13) to a1 for T-SBI call
   mv a1, x13
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x10659073) # csrw scounteren, x13  # set only the current bit
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_WRITE_A1(CSR_SCOUNTEREN)
 #if defined(ZIHPM_SUPPORTED) && defined(UDB_HPM_COUNTER_EN_20)
 ZicntrH_cg_cp_scounteren_access_vu_walking_1_20_read:
   csrr x9, hpmcounter20
@@ -514,14 +376,8 @@ ZicntrH_cg_cp_scounteren_access_vu_walking_1_20_writeh:
 #endif
   slli x13, x13, 1
   # T-SBI call to execute instruction: csrw scounteren, x13  # set only the current bit
-  # Copy rs1 (x13) to a1 for T-SBI call
   mv a1, x13
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x10659073) # csrw scounteren, x13  # set only the current bit
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_WRITE_A1(CSR_SCOUNTEREN)
 #if defined(ZIHPM_SUPPORTED) && defined(UDB_HPM_COUNTER_EN_21)
 ZicntrH_cg_cp_scounteren_access_vu_walking_1_21_read:
   csrr x9, hpmcounter21
@@ -536,14 +392,8 @@ ZicntrH_cg_cp_scounteren_access_vu_walking_1_21_writeh:
 #endif
   slli x13, x13, 1
   # T-SBI call to execute instruction: csrw scounteren, x13  # set only the current bit
-  # Copy rs1 (x13) to a1 for T-SBI call
   mv a1, x13
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x10659073) # csrw scounteren, x13  # set only the current bit
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_WRITE_A1(CSR_SCOUNTEREN)
 #if defined(ZIHPM_SUPPORTED) && defined(UDB_HPM_COUNTER_EN_22)
 ZicntrH_cg_cp_scounteren_access_vu_walking_1_22_read:
   csrr x9, hpmcounter22
@@ -558,14 +408,8 @@ ZicntrH_cg_cp_scounteren_access_vu_walking_1_22_writeh:
 #endif
   slli x13, x13, 1
   # T-SBI call to execute instruction: csrw scounteren, x13  # set only the current bit
-  # Copy rs1 (x13) to a1 for T-SBI call
   mv a1, x13
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x10659073) # csrw scounteren, x13  # set only the current bit
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_WRITE_A1(CSR_SCOUNTEREN)
 #if defined(ZIHPM_SUPPORTED) && defined(UDB_HPM_COUNTER_EN_23)
 ZicntrH_cg_cp_scounteren_access_vu_walking_1_23_read:
   csrr x9, hpmcounter23
@@ -580,14 +424,8 @@ ZicntrH_cg_cp_scounteren_access_vu_walking_1_23_writeh:
 #endif
   slli x13, x13, 1
   # T-SBI call to execute instruction: csrw scounteren, x13  # set only the current bit
-  # Copy rs1 (x13) to a1 for T-SBI call
   mv a1, x13
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x10659073) # csrw scounteren, x13  # set only the current bit
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_WRITE_A1(CSR_SCOUNTEREN)
 #if defined(ZIHPM_SUPPORTED) && defined(UDB_HPM_COUNTER_EN_24)
 ZicntrH_cg_cp_scounteren_access_vu_walking_1_24_read:
   csrr x9, hpmcounter24
@@ -602,14 +440,8 @@ ZicntrH_cg_cp_scounteren_access_vu_walking_1_24_writeh:
 #endif
   slli x13, x13, 1
   # T-SBI call to execute instruction: csrw scounteren, x13  # set only the current bit
-  # Copy rs1 (x13) to a1 for T-SBI call
   mv a1, x13
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x10659073) # csrw scounteren, x13  # set only the current bit
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_WRITE_A1(CSR_SCOUNTEREN)
 #if defined(ZIHPM_SUPPORTED) && defined(UDB_HPM_COUNTER_EN_25)
 ZicntrH_cg_cp_scounteren_access_vu_walking_1_25_read:
   csrr x9, hpmcounter25
@@ -624,14 +456,8 @@ ZicntrH_cg_cp_scounteren_access_vu_walking_1_25_writeh:
 #endif
   slli x13, x13, 1
   # T-SBI call to execute instruction: csrw scounteren, x13  # set only the current bit
-  # Copy rs1 (x13) to a1 for T-SBI call
   mv a1, x13
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x10659073) # csrw scounteren, x13  # set only the current bit
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_WRITE_A1(CSR_SCOUNTEREN)
 #if defined(ZIHPM_SUPPORTED) && defined(UDB_HPM_COUNTER_EN_26)
 ZicntrH_cg_cp_scounteren_access_vu_walking_1_26_read:
   csrr x9, hpmcounter26
@@ -646,14 +472,8 @@ ZicntrH_cg_cp_scounteren_access_vu_walking_1_26_writeh:
 #endif
   slli x13, x13, 1
   # T-SBI call to execute instruction: csrw scounteren, x13  # set only the current bit
-  # Copy rs1 (x13) to a1 for T-SBI call
   mv a1, x13
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x10659073) # csrw scounteren, x13  # set only the current bit
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_WRITE_A1(CSR_SCOUNTEREN)
 #if defined(ZIHPM_SUPPORTED) && defined(UDB_HPM_COUNTER_EN_27)
 ZicntrH_cg_cp_scounteren_access_vu_walking_1_27_read:
   csrr x9, hpmcounter27
@@ -668,14 +488,8 @@ ZicntrH_cg_cp_scounteren_access_vu_walking_1_27_writeh:
 #endif
   slli x13, x13, 1
   # T-SBI call to execute instruction: csrw scounteren, x13  # set only the current bit
-  # Copy rs1 (x13) to a1 for T-SBI call
   mv a1, x13
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x10659073) # csrw scounteren, x13  # set only the current bit
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_WRITE_A1(CSR_SCOUNTEREN)
 #if defined(ZIHPM_SUPPORTED) && defined(UDB_HPM_COUNTER_EN_28)
 ZicntrH_cg_cp_scounteren_access_vu_walking_1_28_read:
   csrr x9, hpmcounter28
@@ -690,14 +504,8 @@ ZicntrH_cg_cp_scounteren_access_vu_walking_1_28_writeh:
 #endif
   slli x13, x13, 1
   # T-SBI call to execute instruction: csrw scounteren, x13  # set only the current bit
-  # Copy rs1 (x13) to a1 for T-SBI call
   mv a1, x13
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x10659073) # csrw scounteren, x13  # set only the current bit
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_WRITE_A1(CSR_SCOUNTEREN)
 #if defined(ZIHPM_SUPPORTED) && defined(UDB_HPM_COUNTER_EN_29)
 ZicntrH_cg_cp_scounteren_access_vu_walking_1_29_read:
   csrr x9, hpmcounter29
@@ -712,14 +520,8 @@ ZicntrH_cg_cp_scounteren_access_vu_walking_1_29_writeh:
 #endif
   slli x13, x13, 1
   # T-SBI call to execute instruction: csrw scounteren, x13  # set only the current bit
-  # Copy rs1 (x13) to a1 for T-SBI call
   mv a1, x13
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x10659073) # csrw scounteren, x13  # set only the current bit
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_WRITE_A1(CSR_SCOUNTEREN)
 #if defined(ZIHPM_SUPPORTED) && defined(UDB_HPM_COUNTER_EN_30)
 ZicntrH_cg_cp_scounteren_access_vu_walking_1_30_read:
   csrr x9, hpmcounter30
@@ -734,14 +536,8 @@ ZicntrH_cg_cp_scounteren_access_vu_walking_1_30_writeh:
 #endif
   slli x13, x13, 1
   # T-SBI call to execute instruction: csrw scounteren, x13  # set only the current bit
-  # Copy rs1 (x13) to a1 for T-SBI call
   mv a1, x13
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x10659073) # csrw scounteren, x13  # set only the current bit
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_WRITE_A1(CSR_SCOUNTEREN)
 #if defined(ZIHPM_SUPPORTED) && defined(UDB_HPM_COUNTER_EN_31)
 ZicntrH_cg_cp_scounteren_access_vu_walking_1_31_read:
   csrr x9, hpmcounter31
@@ -758,14 +554,8 @@ ZicntrH_cg_cp_scounteren_access_vu_walking_1_31_writeh:
   LI(x13, 1)
   not x15, x13  # all bits but the current one
   # T-SBI call to execute instruction: csrw scounteren, x15  # clear only the current bit
-  # Copy rs1 (x15) to a1 for T-SBI call
   mv a1, x15
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x10659073) # csrw scounteren, x15  # clear only the current bit
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_WRITE_A1(CSR_SCOUNTEREN)
 ZicntrH_cg_cp_scounteren_access_vu_walking_0_0_read:
   csrr x9, cycle
 ZicntrH_cg_cp_scounteren_access_vu_walking_0_0_write:
@@ -779,14 +569,8 @@ ZicntrH_cg_cp_scounteren_access_vu_walking_0_0_writeh:
   slli x13, x13, 1
   not x15, x13  # all bits but the current one
   # T-SBI call to execute instruction: csrw scounteren, x15  # clear only the current bit
-  # Copy rs1 (x15) to a1 for T-SBI call
   mv a1, x15
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x10659073) # csrw scounteren, x15  # clear only the current bit
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_WRITE_A1(CSR_SCOUNTEREN)
 ZicntrH_cg_cp_scounteren_access_vu_walking_0_1_read:
   csrr x9, time
 ZicntrH_cg_cp_scounteren_access_vu_walking_0_1_write:
@@ -800,14 +584,8 @@ ZicntrH_cg_cp_scounteren_access_vu_walking_0_1_writeh:
   slli x13, x13, 1
   not x15, x13  # all bits but the current one
   # T-SBI call to execute instruction: csrw scounteren, x15  # clear only the current bit
-  # Copy rs1 (x15) to a1 for T-SBI call
   mv a1, x15
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x10659073) # csrw scounteren, x15  # clear only the current bit
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_WRITE_A1(CSR_SCOUNTEREN)
 ZicntrH_cg_cp_scounteren_access_vu_walking_0_2_read:
   csrr x9, instret
 ZicntrH_cg_cp_scounteren_access_vu_walking_0_2_write:
@@ -821,14 +599,8 @@ ZicntrH_cg_cp_scounteren_access_vu_walking_0_2_writeh:
   slli x13, x13, 1
   not x15, x13  # all bits but the current one
   # T-SBI call to execute instruction: csrw scounteren, x15  # clear only the current bit
-  # Copy rs1 (x15) to a1 for T-SBI call
   mv a1, x15
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x10659073) # csrw scounteren, x15  # clear only the current bit
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_WRITE_A1(CSR_SCOUNTEREN)
 #if defined(ZIHPM_SUPPORTED) && defined(UDB_HPM_COUNTER_EN_3)
 ZicntrH_cg_cp_scounteren_access_vu_walking_0_3_read:
   csrr x9, hpmcounter3
@@ -844,14 +616,8 @@ ZicntrH_cg_cp_scounteren_access_vu_walking_0_3_writeh:
   slli x13, x13, 1
   not x15, x13  # all bits but the current one
   # T-SBI call to execute instruction: csrw scounteren, x15  # clear only the current bit
-  # Copy rs1 (x15) to a1 for T-SBI call
   mv a1, x15
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x10659073) # csrw scounteren, x15  # clear only the current bit
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_WRITE_A1(CSR_SCOUNTEREN)
 #if defined(ZIHPM_SUPPORTED) && defined(UDB_HPM_COUNTER_EN_4)
 ZicntrH_cg_cp_scounteren_access_vu_walking_0_4_read:
   csrr x9, hpmcounter4
@@ -867,14 +633,8 @@ ZicntrH_cg_cp_scounteren_access_vu_walking_0_4_writeh:
   slli x13, x13, 1
   not x15, x13  # all bits but the current one
   # T-SBI call to execute instruction: csrw scounteren, x15  # clear only the current bit
-  # Copy rs1 (x15) to a1 for T-SBI call
   mv a1, x15
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x10659073) # csrw scounteren, x15  # clear only the current bit
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_WRITE_A1(CSR_SCOUNTEREN)
 #if defined(ZIHPM_SUPPORTED) && defined(UDB_HPM_COUNTER_EN_5)
 ZicntrH_cg_cp_scounteren_access_vu_walking_0_5_read:
   csrr x9, hpmcounter5
@@ -890,14 +650,8 @@ ZicntrH_cg_cp_scounteren_access_vu_walking_0_5_writeh:
   slli x13, x13, 1
   not x15, x13  # all bits but the current one
   # T-SBI call to execute instruction: csrw scounteren, x15  # clear only the current bit
-  # Copy rs1 (x15) to a1 for T-SBI call
   mv a1, x15
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x10659073) # csrw scounteren, x15  # clear only the current bit
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_WRITE_A1(CSR_SCOUNTEREN)
 #if defined(ZIHPM_SUPPORTED) && defined(UDB_HPM_COUNTER_EN_6)
 ZicntrH_cg_cp_scounteren_access_vu_walking_0_6_read:
   csrr x9, hpmcounter6
@@ -913,14 +667,8 @@ ZicntrH_cg_cp_scounteren_access_vu_walking_0_6_writeh:
   slli x13, x13, 1
   not x15, x13  # all bits but the current one
   # T-SBI call to execute instruction: csrw scounteren, x15  # clear only the current bit
-  # Copy rs1 (x15) to a1 for T-SBI call
   mv a1, x15
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x10659073) # csrw scounteren, x15  # clear only the current bit
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_WRITE_A1(CSR_SCOUNTEREN)
 #if defined(ZIHPM_SUPPORTED) && defined(UDB_HPM_COUNTER_EN_7)
 ZicntrH_cg_cp_scounteren_access_vu_walking_0_7_read:
   csrr x9, hpmcounter7
@@ -936,14 +684,8 @@ ZicntrH_cg_cp_scounteren_access_vu_walking_0_7_writeh:
   slli x13, x13, 1
   not x15, x13  # all bits but the current one
   # T-SBI call to execute instruction: csrw scounteren, x15  # clear only the current bit
-  # Copy rs1 (x15) to a1 for T-SBI call
   mv a1, x15
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x10659073) # csrw scounteren, x15  # clear only the current bit
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_WRITE_A1(CSR_SCOUNTEREN)
 #if defined(ZIHPM_SUPPORTED) && defined(UDB_HPM_COUNTER_EN_8)
 ZicntrH_cg_cp_scounteren_access_vu_walking_0_8_read:
   csrr x9, hpmcounter8
@@ -959,14 +701,8 @@ ZicntrH_cg_cp_scounteren_access_vu_walking_0_8_writeh:
   slli x13, x13, 1
   not x15, x13  # all bits but the current one
   # T-SBI call to execute instruction: csrw scounteren, x15  # clear only the current bit
-  # Copy rs1 (x15) to a1 for T-SBI call
   mv a1, x15
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x10659073) # csrw scounteren, x15  # clear only the current bit
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_WRITE_A1(CSR_SCOUNTEREN)
 #if defined(ZIHPM_SUPPORTED) && defined(UDB_HPM_COUNTER_EN_9)
 ZicntrH_cg_cp_scounteren_access_vu_walking_0_9_read:
   csrr x9, hpmcounter9
@@ -982,14 +718,8 @@ ZicntrH_cg_cp_scounteren_access_vu_walking_0_9_writeh:
   slli x13, x13, 1
   not x15, x13  # all bits but the current one
   # T-SBI call to execute instruction: csrw scounteren, x15  # clear only the current bit
-  # Copy rs1 (x15) to a1 for T-SBI call
   mv a1, x15
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x10659073) # csrw scounteren, x15  # clear only the current bit
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_WRITE_A1(CSR_SCOUNTEREN)
 #if defined(ZIHPM_SUPPORTED) && defined(UDB_HPM_COUNTER_EN_10)
 ZicntrH_cg_cp_scounteren_access_vu_walking_0_10_read:
   csrr x9, hpmcounter10
@@ -1005,14 +735,8 @@ ZicntrH_cg_cp_scounteren_access_vu_walking_0_10_writeh:
   slli x13, x13, 1
   not x15, x13  # all bits but the current one
   # T-SBI call to execute instruction: csrw scounteren, x15  # clear only the current bit
-  # Copy rs1 (x15) to a1 for T-SBI call
   mv a1, x15
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x10659073) # csrw scounteren, x15  # clear only the current bit
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_WRITE_A1(CSR_SCOUNTEREN)
 #if defined(ZIHPM_SUPPORTED) && defined(UDB_HPM_COUNTER_EN_11)
 ZicntrH_cg_cp_scounteren_access_vu_walking_0_11_read:
   csrr x9, hpmcounter11
@@ -1028,14 +752,8 @@ ZicntrH_cg_cp_scounteren_access_vu_walking_0_11_writeh:
   slli x13, x13, 1
   not x15, x13  # all bits but the current one
   # T-SBI call to execute instruction: csrw scounteren, x15  # clear only the current bit
-  # Copy rs1 (x15) to a1 for T-SBI call
   mv a1, x15
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x10659073) # csrw scounteren, x15  # clear only the current bit
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_WRITE_A1(CSR_SCOUNTEREN)
 #if defined(ZIHPM_SUPPORTED) && defined(UDB_HPM_COUNTER_EN_12)
 ZicntrH_cg_cp_scounteren_access_vu_walking_0_12_read:
   csrr x9, hpmcounter12
@@ -1051,14 +769,8 @@ ZicntrH_cg_cp_scounteren_access_vu_walking_0_12_writeh:
   slli x13, x13, 1
   not x15, x13  # all bits but the current one
   # T-SBI call to execute instruction: csrw scounteren, x15  # clear only the current bit
-  # Copy rs1 (x15) to a1 for T-SBI call
   mv a1, x15
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x10659073) # csrw scounteren, x15  # clear only the current bit
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_WRITE_A1(CSR_SCOUNTEREN)
 #if defined(ZIHPM_SUPPORTED) && defined(UDB_HPM_COUNTER_EN_13)
 ZicntrH_cg_cp_scounteren_access_vu_walking_0_13_read:
   csrr x9, hpmcounter13
@@ -1074,14 +786,8 @@ ZicntrH_cg_cp_scounteren_access_vu_walking_0_13_writeh:
   slli x13, x13, 1
   not x15, x13  # all bits but the current one
   # T-SBI call to execute instruction: csrw scounteren, x15  # clear only the current bit
-  # Copy rs1 (x15) to a1 for T-SBI call
   mv a1, x15
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x10659073) # csrw scounteren, x15  # clear only the current bit
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_WRITE_A1(CSR_SCOUNTEREN)
 #if defined(ZIHPM_SUPPORTED) && defined(UDB_HPM_COUNTER_EN_14)
 ZicntrH_cg_cp_scounteren_access_vu_walking_0_14_read:
   csrr x9, hpmcounter14
@@ -1097,14 +803,8 @@ ZicntrH_cg_cp_scounteren_access_vu_walking_0_14_writeh:
   slli x13, x13, 1
   not x15, x13  # all bits but the current one
   # T-SBI call to execute instruction: csrw scounteren, x15  # clear only the current bit
-  # Copy rs1 (x15) to a1 for T-SBI call
   mv a1, x15
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x10659073) # csrw scounteren, x15  # clear only the current bit
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_WRITE_A1(CSR_SCOUNTEREN)
 #if defined(ZIHPM_SUPPORTED) && defined(UDB_HPM_COUNTER_EN_15)
 ZicntrH_cg_cp_scounteren_access_vu_walking_0_15_read:
   csrr x9, hpmcounter15
@@ -1120,14 +820,8 @@ ZicntrH_cg_cp_scounteren_access_vu_walking_0_15_writeh:
   slli x13, x13, 1
   not x15, x13  # all bits but the current one
   # T-SBI call to execute instruction: csrw scounteren, x15  # clear only the current bit
-  # Copy rs1 (x15) to a1 for T-SBI call
   mv a1, x15
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x10659073) # csrw scounteren, x15  # clear only the current bit
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_WRITE_A1(CSR_SCOUNTEREN)
 #if defined(ZIHPM_SUPPORTED) && defined(UDB_HPM_COUNTER_EN_16)
 ZicntrH_cg_cp_scounteren_access_vu_walking_0_16_read:
   csrr x9, hpmcounter16
@@ -1143,14 +837,8 @@ ZicntrH_cg_cp_scounteren_access_vu_walking_0_16_writeh:
   slli x13, x13, 1
   not x15, x13  # all bits but the current one
   # T-SBI call to execute instruction: csrw scounteren, x15  # clear only the current bit
-  # Copy rs1 (x15) to a1 for T-SBI call
   mv a1, x15
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x10659073) # csrw scounteren, x15  # clear only the current bit
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_WRITE_A1(CSR_SCOUNTEREN)
 #if defined(ZIHPM_SUPPORTED) && defined(UDB_HPM_COUNTER_EN_17)
 ZicntrH_cg_cp_scounteren_access_vu_walking_0_17_read:
   csrr x9, hpmcounter17
@@ -1166,14 +854,8 @@ ZicntrH_cg_cp_scounteren_access_vu_walking_0_17_writeh:
   slli x13, x13, 1
   not x15, x13  # all bits but the current one
   # T-SBI call to execute instruction: csrw scounteren, x15  # clear only the current bit
-  # Copy rs1 (x15) to a1 for T-SBI call
   mv a1, x15
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x10659073) # csrw scounteren, x15  # clear only the current bit
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_WRITE_A1(CSR_SCOUNTEREN)
 #if defined(ZIHPM_SUPPORTED) && defined(UDB_HPM_COUNTER_EN_18)
 ZicntrH_cg_cp_scounteren_access_vu_walking_0_18_read:
   csrr x9, hpmcounter18
@@ -1189,14 +871,8 @@ ZicntrH_cg_cp_scounteren_access_vu_walking_0_18_writeh:
   slli x13, x13, 1
   not x15, x13  # all bits but the current one
   # T-SBI call to execute instruction: csrw scounteren, x15  # clear only the current bit
-  # Copy rs1 (x15) to a1 for T-SBI call
   mv a1, x15
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x10659073) # csrw scounteren, x15  # clear only the current bit
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_WRITE_A1(CSR_SCOUNTEREN)
 #if defined(ZIHPM_SUPPORTED) && defined(UDB_HPM_COUNTER_EN_19)
 ZicntrH_cg_cp_scounteren_access_vu_walking_0_19_read:
   csrr x9, hpmcounter19
@@ -1212,14 +888,8 @@ ZicntrH_cg_cp_scounteren_access_vu_walking_0_19_writeh:
   slli x13, x13, 1
   not x15, x13  # all bits but the current one
   # T-SBI call to execute instruction: csrw scounteren, x15  # clear only the current bit
-  # Copy rs1 (x15) to a1 for T-SBI call
   mv a1, x15
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x10659073) # csrw scounteren, x15  # clear only the current bit
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_WRITE_A1(CSR_SCOUNTEREN)
 #if defined(ZIHPM_SUPPORTED) && defined(UDB_HPM_COUNTER_EN_20)
 ZicntrH_cg_cp_scounteren_access_vu_walking_0_20_read:
   csrr x9, hpmcounter20
@@ -1235,14 +905,8 @@ ZicntrH_cg_cp_scounteren_access_vu_walking_0_20_writeh:
   slli x13, x13, 1
   not x15, x13  # all bits but the current one
   # T-SBI call to execute instruction: csrw scounteren, x15  # clear only the current bit
-  # Copy rs1 (x15) to a1 for T-SBI call
   mv a1, x15
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x10659073) # csrw scounteren, x15  # clear only the current bit
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_WRITE_A1(CSR_SCOUNTEREN)
 #if defined(ZIHPM_SUPPORTED) && defined(UDB_HPM_COUNTER_EN_21)
 ZicntrH_cg_cp_scounteren_access_vu_walking_0_21_read:
   csrr x9, hpmcounter21
@@ -1258,14 +922,8 @@ ZicntrH_cg_cp_scounteren_access_vu_walking_0_21_writeh:
   slli x13, x13, 1
   not x15, x13  # all bits but the current one
   # T-SBI call to execute instruction: csrw scounteren, x15  # clear only the current bit
-  # Copy rs1 (x15) to a1 for T-SBI call
   mv a1, x15
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x10659073) # csrw scounteren, x15  # clear only the current bit
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_WRITE_A1(CSR_SCOUNTEREN)
 #if defined(ZIHPM_SUPPORTED) && defined(UDB_HPM_COUNTER_EN_22)
 ZicntrH_cg_cp_scounteren_access_vu_walking_0_22_read:
   csrr x9, hpmcounter22
@@ -1281,14 +939,8 @@ ZicntrH_cg_cp_scounteren_access_vu_walking_0_22_writeh:
   slli x13, x13, 1
   not x15, x13  # all bits but the current one
   # T-SBI call to execute instruction: csrw scounteren, x15  # clear only the current bit
-  # Copy rs1 (x15) to a1 for T-SBI call
   mv a1, x15
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x10659073) # csrw scounteren, x15  # clear only the current bit
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_WRITE_A1(CSR_SCOUNTEREN)
 #if defined(ZIHPM_SUPPORTED) && defined(UDB_HPM_COUNTER_EN_23)
 ZicntrH_cg_cp_scounteren_access_vu_walking_0_23_read:
   csrr x9, hpmcounter23
@@ -1304,14 +956,8 @@ ZicntrH_cg_cp_scounteren_access_vu_walking_0_23_writeh:
   slli x13, x13, 1
   not x15, x13  # all bits but the current one
   # T-SBI call to execute instruction: csrw scounteren, x15  # clear only the current bit
-  # Copy rs1 (x15) to a1 for T-SBI call
   mv a1, x15
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x10659073) # csrw scounteren, x15  # clear only the current bit
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_WRITE_A1(CSR_SCOUNTEREN)
 #if defined(ZIHPM_SUPPORTED) && defined(UDB_HPM_COUNTER_EN_24)
 ZicntrH_cg_cp_scounteren_access_vu_walking_0_24_read:
   csrr x9, hpmcounter24
@@ -1327,14 +973,8 @@ ZicntrH_cg_cp_scounteren_access_vu_walking_0_24_writeh:
   slli x13, x13, 1
   not x15, x13  # all bits but the current one
   # T-SBI call to execute instruction: csrw scounteren, x15  # clear only the current bit
-  # Copy rs1 (x15) to a1 for T-SBI call
   mv a1, x15
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x10659073) # csrw scounteren, x15  # clear only the current bit
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_WRITE_A1(CSR_SCOUNTEREN)
 #if defined(ZIHPM_SUPPORTED) && defined(UDB_HPM_COUNTER_EN_25)
 ZicntrH_cg_cp_scounteren_access_vu_walking_0_25_read:
   csrr x9, hpmcounter25
@@ -1350,14 +990,8 @@ ZicntrH_cg_cp_scounteren_access_vu_walking_0_25_writeh:
   slli x13, x13, 1
   not x15, x13  # all bits but the current one
   # T-SBI call to execute instruction: csrw scounteren, x15  # clear only the current bit
-  # Copy rs1 (x15) to a1 for T-SBI call
   mv a1, x15
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x10659073) # csrw scounteren, x15  # clear only the current bit
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_WRITE_A1(CSR_SCOUNTEREN)
 #if defined(ZIHPM_SUPPORTED) && defined(UDB_HPM_COUNTER_EN_26)
 ZicntrH_cg_cp_scounteren_access_vu_walking_0_26_read:
   csrr x9, hpmcounter26
@@ -1373,14 +1007,8 @@ ZicntrH_cg_cp_scounteren_access_vu_walking_0_26_writeh:
   slli x13, x13, 1
   not x15, x13  # all bits but the current one
   # T-SBI call to execute instruction: csrw scounteren, x15  # clear only the current bit
-  # Copy rs1 (x15) to a1 for T-SBI call
   mv a1, x15
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x10659073) # csrw scounteren, x15  # clear only the current bit
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_WRITE_A1(CSR_SCOUNTEREN)
 #if defined(ZIHPM_SUPPORTED) && defined(UDB_HPM_COUNTER_EN_27)
 ZicntrH_cg_cp_scounteren_access_vu_walking_0_27_read:
   csrr x9, hpmcounter27
@@ -1396,14 +1024,8 @@ ZicntrH_cg_cp_scounteren_access_vu_walking_0_27_writeh:
   slli x13, x13, 1
   not x15, x13  # all bits but the current one
   # T-SBI call to execute instruction: csrw scounteren, x15  # clear only the current bit
-  # Copy rs1 (x15) to a1 for T-SBI call
   mv a1, x15
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x10659073) # csrw scounteren, x15  # clear only the current bit
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_WRITE_A1(CSR_SCOUNTEREN)
 #if defined(ZIHPM_SUPPORTED) && defined(UDB_HPM_COUNTER_EN_28)
 ZicntrH_cg_cp_scounteren_access_vu_walking_0_28_read:
   csrr x9, hpmcounter28
@@ -1419,14 +1041,8 @@ ZicntrH_cg_cp_scounteren_access_vu_walking_0_28_writeh:
   slli x13, x13, 1
   not x15, x13  # all bits but the current one
   # T-SBI call to execute instruction: csrw scounteren, x15  # clear only the current bit
-  # Copy rs1 (x15) to a1 for T-SBI call
   mv a1, x15
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x10659073) # csrw scounteren, x15  # clear only the current bit
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_WRITE_A1(CSR_SCOUNTEREN)
 #if defined(ZIHPM_SUPPORTED) && defined(UDB_HPM_COUNTER_EN_29)
 ZicntrH_cg_cp_scounteren_access_vu_walking_0_29_read:
   csrr x9, hpmcounter29
@@ -1442,14 +1058,8 @@ ZicntrH_cg_cp_scounteren_access_vu_walking_0_29_writeh:
   slli x13, x13, 1
   not x15, x13  # all bits but the current one
   # T-SBI call to execute instruction: csrw scounteren, x15  # clear only the current bit
-  # Copy rs1 (x15) to a1 for T-SBI call
   mv a1, x15
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x10659073) # csrw scounteren, x15  # clear only the current bit
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_WRITE_A1(CSR_SCOUNTEREN)
 #if defined(ZIHPM_SUPPORTED) && defined(UDB_HPM_COUNTER_EN_30)
 ZicntrH_cg_cp_scounteren_access_vu_walking_0_30_read:
   csrr x9, hpmcounter30
@@ -1465,14 +1075,8 @@ ZicntrH_cg_cp_scounteren_access_vu_walking_0_30_writeh:
   slli x13, x13, 1
   not x15, x13  # all bits but the current one
   # T-SBI call to execute instruction: csrw scounteren, x15  # clear only the current bit
-  # Copy rs1 (x15) to a1 for T-SBI call
   mv a1, x15
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x10659073) # csrw scounteren, x15  # clear only the current bit
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_WRITE_A1(CSR_SCOUNTEREN)
 #if defined(ZIHPM_SUPPORTED) && defined(UDB_HPM_COUNTER_EN_31)
 ZicntrH_cg_cp_scounteren_access_vu_walking_0_31_read:
   csrr x9, hpmcounter31
