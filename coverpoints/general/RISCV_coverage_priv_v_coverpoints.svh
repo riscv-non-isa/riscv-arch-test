@@ -10,7 +10,8 @@
 //
 // Description:
 //   Vector CSR, vset* and vstart coverpoints common to Sm_V_cg and S_V_cg
-//   Coverpoints that name mstatus/sstatus stay in each covergroup.
+//   Coverpoints that name mstatus/sstatus, and the crosses, which add the
+//   covergroup's privilege mode, stay in each covergroup.
 //
 ///////////////////////////////////////////
 
@@ -34,8 +35,6 @@ csrops: coverpoint ins.current.insn {
     wildcard bins csrrc     = {CSRRC};
     wildcard bins csrrw     = {CSRRW};
 }
-
-cp_vcsrrswc: cross vcsrs, csrops;
 
 vcsrs_writable: coverpoint ins.current.insn[31:20] {
     bins vstart = {CSR_VSTART};
@@ -63,8 +62,6 @@ walking_ones_rs1: coverpoint $clog2(ins.current.rs1_val) iff ($onehot(ins.curren
     bins b_1[] = { [0:`UDB_MXLEN-1] };
 }
 
-cp_vcsrs_walking1s: cross writable_vcsrs, csrw, walking_ones_rs1;
-
 //////////////////////////////////////////////////////////////////////////////////
 // building blocks for the xstatus.VS coverpoints (cp_mstatus_vs_*, cp_sstatus_vs_*)
 //////////////////////////////////////////////////////////////////////////////////
@@ -84,7 +81,7 @@ vector_vector_arithmetic_instruction: coverpoint ins.current.insn[14:0] {
     wildcard bins arithmetic_vv_opcode = {15'b000_?????_1010111};
 }
 vsetvli_instruction: coverpoint ins.current.insn {
-    wildcard bins vsetvli   =   {32'b0000_?_?_???_???_?????_111_?????_1010111};
+    wildcard bins vsetvli   =   {VSETVLI};
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -93,8 +90,8 @@ vsetvli_instruction: coverpoint ins.current.insn {
 //////////////////////////////////////////////////////////////////////////////////
 
 vset_i_vli_instructions: coverpoint ins.current.insn {
-    wildcard bins vsetvli   =   {32'b0000_?_?_???_???_?????_111_?????_1010111};
-    wildcard bins vsetivli  =   {32'b1100_?_?_???_???_?????_111_?????_1010111};
+    wildcard bins vsetvli   =   {VSETVLI};
+    wildcard bins vsetivli  =   {VSETIVLI};
 }
 
 vsetvl_instruction: coverpoint ins.current.insn {
@@ -133,9 +130,6 @@ rs2_sew : coverpoint ins.current.rs2_val[5:3] {
     ignore_bins reserved_110 = {3'b110};
     ignore_bins reserved_111 = {3'b111};
 }
-
-cp_sew_lmul_vsetvl:         cross vsetvl_instruction, rs2_vtype_legal, rs2_lmul, rs2_sew;
-cp_sew_lmul_vset_i_vli:     cross vset_i_vli_instructions, vset_sew, vset_lmul;
 
 //////////////////////////////////////////////////////////////////////////////////
 // cr_vill_vset*
@@ -207,9 +201,6 @@ current_vset_lmul_8 : coverpoint ins.current.insn[22:20] {
     bins eight = {3'b011};
 }
 
-cp_vill_vsetvl:     cross vsetvl_instruction,       vtype_prev_vill_set, rs2_vtype_legal,   rs2_sew_all_supported,         rs2_lmul_8;
-cp_vill_vset_i_vli: cross vset_i_vli_instructions,  vtype_prev_vill_set,                    current_vset_sew_all_supported, current_vset_lmul_8;
-
 //////////////////////////////////////////////////////////////////////////////////
 // cp_vill_vsetvl_rs2_vill
 // make sure even if vill bit is already set, writing with another illegal value
@@ -225,8 +216,6 @@ rs2_vill_set : coverpoint ins.current.rs2_val[`UDB_MXLEN-1] {
 rs2_vtype_legal_no_msb : coverpoint ins.current.rs2_val[`UDB_MXLEN-2:8] {
     bins legal = {0};
 }
-
-cp_vill_vsetvl_rs2_vill : cross vsetvl_instruction, vtype_prev_vill_set, rs2_vtype_legal_no_msb, rs2_sew_all_supported, rs2_lmul_8, rs2_vill_set;
 
 //////////////////////////////////////////////////////////////////////////////////
 // cp_vsetvl_rs2_vill
@@ -245,8 +234,6 @@ vtype_prev_vill_clear: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFOR
     bins vill_not_set = {0};
 }
 
-cp_vsetvl_rs2_vill : cross vsetvl_instruction, rs2_vill_set, rs2_sew_supported, rs2_lmul_1, rs2_vtype_legal_no_msb, vtype_prev_vill_clear;
-
 //////////////////////////////////////////////////////////////////////////////////
 // cp_vtype_vill_set_vl_0
 // confirms vl = 0 when vill is set to 1
@@ -261,15 +248,13 @@ vl_nonzero: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "vl", "v
     bins target = {[64'h1:64'h10000]};
 }
 
-cp_vtype_vill_set_vl_0 : cross vsetvl_instruction, rs1_non_zero, rs2_vill_set, vl_nonzero;
-
 //////////////////////////////////////////////////////////////////////////////////
 // cp_vsetvl_i_rd_*_rs1_*
 // checks behavior regarding setting the vl register to max or leave unchanged
 //////////////////////////////////////////////////////////////////////////////////
 
 vsetvl_i_instructions: coverpoint ins.current.insn {
-    wildcard bins vsetvli   =   {32'b0000_?_?_???_???_?????_111_?????_1010111};
+    wildcard bins vsetvli   =   {VSETVLI};
     wildcard bins vsetvl    =   {VSETVL};
 }
 
@@ -311,19 +296,6 @@ vtype_all_lmul_supported : coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_B
     bins eight  = {3};
 }
 
-cp_vsetvl_i_rd_nx0_rs1_x0 : cross vsetvl_i_instructions, vl_not_max, rd_n0, rs1_x0, vtype_all_sew_supported, vtype_all_lmul_supported {
-    // SEW > LMUL*ELEN sets vill=1 and forces vtype.vsew/vlmul to 0,
-    // so these BEFORE-state (sew, lmul) pairs are architecturally unreachable.
-    ignore_bins illegal_sew_lmul =
-        (binsof(vtype_all_sew_supported.sixtyfour) && binsof(vtype_all_lmul_supported.half))   ||
-        (binsof(vtype_all_sew_supported.sixtyfour) && binsof(vtype_all_lmul_supported.fourth)) ||
-        (binsof(vtype_all_sew_supported.sixtyfour) && binsof(vtype_all_lmul_supported.eighth)) ||
-        (binsof(vtype_all_sew_supported.thirtytwo) && binsof(vtype_all_lmul_supported.fourth)) ||
-        (binsof(vtype_all_sew_supported.thirtytwo) && binsof(vtype_all_lmul_supported.eighth)) ||
-        (binsof(vtype_all_sew_supported.sixteen)   && binsof(vtype_all_lmul_supported.eighth));
-}
-cp_vsetvl_i_rd_x0_rs1_x0  : cross vsetvl_i_instructions, vl_nonzero, rd_x0, rs1_x0, vset_i_vli_vlmax_unchanged;
-
 //////////////////////////////////////////////////////////////////////////////////
 // cp_vsetvl_i_avl_*
 // tests edge case avl behavior on the vset instructions
@@ -351,7 +323,7 @@ rs1_gt_2x_vlmax : coverpoint (ins.current.rs1_val > `UDB_MXLEN'(2 * get_vtype_vl
 }
 
 vsetivli_instruction : coverpoint ins.current.insn {
-    wildcard bins vsetivli  =   {32'b1100_?_?_???_???_?????_111_?????_1010111};
+    wildcard bins vsetivli  =   {VSETIVLI};
 }
 
 imm5_edges : coverpoint ins.current.insn[19:15] {
@@ -361,14 +333,6 @@ imm5_edges : coverpoint ins.current.insn[19:15] {
 vtype_lmul_1: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "vtype", "vlmul") {
     bins one = {0};
 }
-
-cp_vsetvl_i_avl_eq_zero     : cross vsetvl_i_instructions, rs1_eq_zero;
-cp_vsetvl_i_avl_eq_vlmax    : cross vsetvl_i_instructions, rs1_eq_vlmax;
-cp_vsetvl_i_avl_lt_2x_vlmax : cross vsetvl_i_instructions, rs1_lt_2x_vlmax_gt_vlmax;
-cp_vsetvl_i_avl_eq_2x_vlmax : cross vsetvl_i_instructions, rs1_eq_2x_vlmax;
-cp_vsetvl_i_avl_gt_2x_vlmax : cross vsetvl_i_instructions, rs1_gt_2x_vlmax;
-
-cp_vsetivli_avl_edges     : cross vsetivli_instruction, vtype_all_sew_supported, imm5_edges, vtype_lmul_1;
 
 //////////////////////////////////////////////////////////////////////////////////
 // cp_vstart_out_of_bounds
@@ -387,8 +351,6 @@ rs1_2_to_16 : coverpoint (ins.current.rs1_val == 2 ** 16) {
     bins true = {1'b1};
 }
 
-cp_vstart_out_of_bounds : cross vstart_csr, csr_write, rs1_2_to_16;
-
 //////////////////////////////////////////////////////////////////////////////////
 // cp_vl_walking1s_sew_lmul
 // attempts to write walking ones to the vl register for each sew lmul combination
@@ -403,12 +365,10 @@ csr_vl: coverpoint ins.current.insn[31:20]  {
 }
 
 vsetivli_prev_instruction: coverpoint ins.prev.insn {
-    wildcard bins vsetivli  =   {32'b1100_?_?_???_???_?????_111_?????_1010111};
+    wildcard bins vsetivli  =   {VSETIVLI};
 }
 
 vsetivli_prev_sew_lmul : coverpoint ins.prev.insn[24:20] iff (~ins.prev.insn[25]){
     // all bins
     wildcard ignore_bins undefined_lmul = {5'b??100};
 }
-
-cp_vl_walking1s_sew_lmul : cross vsetivli_prev_instruction, vsetivli_prev_sew_lmul, csrrw, csr_vl, walking_ones_rs1;

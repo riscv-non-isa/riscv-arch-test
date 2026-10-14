@@ -19,7 +19,6 @@ from testgen.priv.registry import add_priv_test_generator
     "Sm",
     required_extensions=["Sm", "F"],
     march_extensions=["F", "D", "Zfa"],
-    # TODO: Remove BOOT_TO_MMODE when converting this test to T-SBI.
     extra_defines=["#define BOOT_TO_MMODE"],
 )
 def make_smf(test_data: TestData) -> list[TestChunk]:

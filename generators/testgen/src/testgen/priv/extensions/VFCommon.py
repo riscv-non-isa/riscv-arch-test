@@ -2,18 +2,17 @@
 # priv/extensions/VFCommon.py
 #
 # Shared vector floating-point test generation for Sm_VF (M-mode, mstatus.FS), S_VF (S-mode,
-# sstatus.FS) and U_VF (U-mode, mstatus.FS through T-SBI).
+# sstatus.FS) and U_VF (U-mode, sstatus.FS or mstatus.FS through T-SBI).
 # Vector floating-point interactions with xstatus.FS state transitions.
 # SPDX-License-Identifier: Apache-2.0
 ##################################
 
 """Functions for generating vector-FP × xstatus.FS state tests in M-, S- and U-mode."""
 
-from testgen.asm.csr import gen_csr_read_sigupd_in_mode
 from testgen.asm.helpers import comment_banner, write_sigupd
 from testgen.data.state import TestData
 from testgen.data.test_chunk import TestChunk
-from testgen.priv.extensions.PrivCommon import STATUS_CSR, set_status_fields
+from testgen.priv.extensions.PrivCommon import STATUS_CSR, gen_status_read_sigupd, set_status_fields
 
 # vfadd.vv operand patterns as (vs2_reg, vs1_reg, name), covering the 4 vs1_zero x vs2_zero
 # combinations. v1 and v4 hold 1.0; v2 holds 0.
@@ -59,7 +58,7 @@ def _gen_fs_state_affecting_register(test_data: TestData, temp_reg: int, covergr
         lines.extend(set_status_fields(temp_reg, priv, fs=fs, vs=3))
         lines.append(test_data.add_testcase(f"vfmv_f_s_fs{fs}", coverpoint, covergroup))
         lines.append("vfmv.f.s f1, v2")
-        lines.append(gen_csr_read_sigupd_in_mode(temp_reg, (status, None), test_data, priv))
+        lines.append(gen_status_read_sigupd(temp_reg, test_data, priv))
     return lines
 
 
@@ -81,7 +80,7 @@ def _gen_fs_state_affecting_csr(test_data: TestData, temp_reg: int, covergroup: 
             lines.append(test_data.add_testcase(f"vfdiv_vv_fs{fs}_t{trial}", coverpoint, covergroup))
             lines.append("vfdiv.vv v3, v1, v2  # 1.0/0.0 -> +inf, DZ flag")
             # xstatus first: reading fflags may itself dirty FS on a conservative DUT
-            lines.append(gen_csr_read_sigupd_in_mode(temp_reg, (status, None), test_data, priv))
+            lines.append(gen_status_read_sigupd(temp_reg, test_data, priv))
             lines.append(write_sigupd(None, test_data, "fflags"))
     # Also exercise an exception with vfadd inf-inf and vfmul 0*inf
     for fs in (1, 2):
@@ -96,7 +95,7 @@ def _gen_fs_state_affecting_csr(test_data: TestData, temp_reg: int, covergroup: 
         lines.extend(set_status_fields(temp_reg, priv, fs=fs, vs=3))
         lines.append(test_data.add_testcase(f"vfadd_inf_minf_fs{fs}", coverpoint, covergroup))
         lines.append("vfadd.vv v3, v6, v7  # inf + -inf -> NV flag")
-        lines.append(gen_csr_read_sigupd_in_mode(temp_reg, (status, None), test_data, priv))
+        lines.append(gen_status_read_sigupd(temp_reg, test_data, priv))
         lines.append(write_sigupd(None, test_data, "fflags"))
     return lines
 
