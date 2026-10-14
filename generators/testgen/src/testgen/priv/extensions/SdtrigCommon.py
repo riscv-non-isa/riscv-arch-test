@@ -42,11 +42,6 @@ VA2_TARGET_RV64 = 0x180802000
 _PTE_INVALID = "PTE_D | PTE_A | PTE_U | PTE_X | PTE_W | PTE_R"  # no PTE_V
 _PTE_UPAGE = "PTE_D | PTE_A | PTE_U | PTE_X | PTE_W | PTE_R | PTE_V"
 
-# # Dropped: 0 iam (jalr clears bit 0), 3 bp (medeleg[3]=0 sends ebreak to M, can't fire),
-# # 4/6 lam/sam (Spike and Whisper handle misaligned accesses in hardware).
-# _ETRIGGER_BASE_CODES = (1, 2, 5, 7, 12, 13, 15)  # common to every mode
-# _ETRIGGER_ECALL_CODE = {"Sm": 11, "S": 9, "U": 8}
-
 # Codes where the exception itself is raised (match case) in every mode. ipf is not raisable in Sm.
 _ETRIGGER_BASE_CODES = (1, 2, 5, 7, 12, 13, 15)
 # Codes tested with a mismatch case only (an illegal instruction is raised while tdata2 selects the code),
@@ -114,6 +109,8 @@ UDB_DEFINES = [
     "#define UDB_SDTRIG_HIT_IMPLEMENTED",
     # Sims that do not follow Suggested Trigger Timing in spec or fires several cycles after will mismatch MEPC in trap handler
     "#define SDTRIG_IMPRECISE_XEPC",
+    # etrigger fires after the trap is taken, so xEPC is inside the S trap vector; the handler must not advance it
+    "#define SDTRIG_ETRIGGER_XEPC_IN_VECTOR",
 ]
 
 XSL_UDB_NAMES = ("LOAD", "STORE", "EXECUTE")  # mcontrol6 xsl bits 0, 1, 2
@@ -365,20 +362,6 @@ def pf_mode_disarm(mode: str) -> list[str]:
     return lines
 
 
-# def _etrigger_codes_to_test(mode: str, cross_priv: bool = False) -> tuple[int, ...]:
-#     """Return exception codes that can be raised from ``mode``."""
-#     valid_modes = ("S", "U") if cross_priv else ("Sm", "S", "U")
-#     if mode not in valid_modes:
-#         raise ValueError(f"Unsupported {'target ' if cross_priv else ''}mode: {mode}")
-
-#     codes = set(_ETRIGGER_BASE_CODES) | {_ETRIGGER_ECALL_CODE[mode]}
-
-#     if mode == "Sm":
-#         codes.discard(12)
-
-#     return tuple(sorted(codes))
-
-
 def _etrigger_codes_to_test(mode: str, cross_priv: bool = False) -> dict[int, bool]:
     """Return {code: raisable} for every exception code tested from ``mode``.
 
@@ -428,18 +411,6 @@ def _cause_exception(
 ) -> list[str]:
     """Emit assembly that synchronously raises mcause exception ``code``."""
 
-    if code == 0:  # instruction address misaligned
-        if addr_reg is None:
-            raise ValueError("addr_reg is required for instruction address misaligned")
-
-        return [
-            ".p2align 2",
-            f"auipc x{addr_reg}, 0 # x{addr_reg} = PC (word-aligned by the .p2align above)",
-            f"addi x{addr_reg}, x{addr_reg}, 5",
-            f"jalr ra, 0(x{addr_reg}) # instruction address misaligned",
-            "nop # spacer; trap handler returns here",
-        ]
-
     if code == 1:  # instruction access fault
         if addr_reg is None:
             raise ValueError("addr_reg is required for instruction access fault")
@@ -453,19 +424,6 @@ def _cause_exception(
     if code == 2:  # illegal instruction
         return [".word 0xffffffff # illegal instruction"]
 
-    if code == 3:  # breakpoint
-        return ["ebreak # breakpoint"]
-
-    if code == 4:  # load address misaligned
-        if addr_reg is None:
-            raise ValueError("addr_reg is required for load address misaligned")
-
-        return [
-            f"LA(x{addr_reg}, scratch)",
-            f"addi x{addr_reg}, x{addr_reg}, 1",
-            f"lw x{data_reg}, 0(x{addr_reg}) # load address misaligned",
-        ]
-
     if code == 5:  # load access fault
         if addr_reg is None:
             raise ValueError("addr_reg is required for load access fault")
@@ -473,17 +431,6 @@ def _cause_exception(
         return [
             f"LA(x{addr_reg}, RVMODEL_ACCESS_FAULT_ADDRESS)",
             f"lw x{data_reg}, 0(x{addr_reg}) # load access fault",
-        ]
-
-    if code == 6:  # store/AMO address misaligned
-        if addr_reg is None:
-            raise ValueError("addr_reg is required for store/AMO address misaligned")
-
-        return [
-            f"LI(x{data_reg}, 0xDEADBEEF)",
-            f"LA(x{addr_reg}, scratch)",
-            f"addi x{addr_reg}, x{addr_reg}, 1",
-            f"sw x{data_reg}, 0(x{addr_reg}) # store/AMO address misaligned",
         ]
 
     if code == 7:
@@ -2075,7 +2022,7 @@ def _generate_etrigger_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     )
 
     ######################################
-    coverpoint = "cp_etrigger"
+    coverpoint = f"cp_etrigger_{ {'Sm': 'm', 'S': 's', 'U': 'u'}[mode] }"
     ######################################
     lines.append(
         comment_banner(
@@ -2090,9 +2037,6 @@ def _generate_etrigger_tests(test_data: TestData, mode: str) -> list[TestChunk]:
 
     if any(code in _PAGE_FAULT_CODES for code in codes_to_test):
         lines.extend(pf_data_section())
-
-    # Exception value CSR for the current privilege mode.
-    tval_csr = "mtval" if mode == "Sm" else "stval"
 
     for trig_num in range(UDB_NUM_TRIGGERS):
         lines.append(f"\n#ifdef UDB_SDTRIG_ETRIGGER_SUPPORTED{trig_num}")
@@ -2128,12 +2072,6 @@ def _generate_etrigger_tests(test_data: TestData, mode: str) -> list[TestChunk]:
                     )
                     if is_pf:
                         lines.extend(pf_mode_disarm(mode))
-                    lines.extend(
-                        [
-                            f"csrr x{data_reg}, {tval_csr} # 0 iff matched",
-                            write_sigupd(data_reg, test_data),
-                        ]
-                    )
                     lines.extend(_read_trigger_hit(data_reg, trig_num, mode, test_data))
             lines.append(f"#endif // UDB_EXCEPTION_{name.upper()}_SUPPORTED")
         lines.extend(_disable_trigger(temp_reg, trig_num, mode))
@@ -2148,7 +2086,7 @@ def etrigger_cross_priv_delegate_test(test_data: TestData, target_mode: str) -> 
     if target_mode not in ("S", "U"):
         raise ValueError(f"etrigger_cross_priv_delegate_test: target_mode must be 'S' or 'U', got {target_mode!r}")
 
-    covergroup = f"SdtrigSm_etrigger_cross_priv_{target_mode}_cg"
+    covergroup = "SdtrigSm_etrigger_cg"
     tc = test_data.begin_test_chunk(f"EtriggerCrossPriv{target_mode}")
     lines: list[str] = tc.code
     lines.append("#ifdef S_SUPPORTED")
@@ -2158,7 +2096,7 @@ def etrigger_cross_priv_delegate_test(test_data: TestData, target_mode: str) -> 
     )
 
     ######################################
-    coverpoint = "cp_sdtrig_etrigger"
+    coverpoint = f"cp_etrigger_{target_mode.lower()}"
     ######################################
     lines.append(
         comment_banner(
@@ -2185,6 +2123,11 @@ def etrigger_cross_priv_delegate_test(test_data: TestData, target_mode: str) -> 
             for priv_en in (0, 1):
                 privbits = MODE_PRIVBIT[target_mode] if priv_en else 0
                 for medeleg_en in (0,) if code in _ETRIGGER_NOT_DELEGATABLE else (0, 1):
+                    if code == 2 and priv_en and medeleg_en:
+                        # T-SBI clears medeleg[2], so a DUT that emulates the time CSR forwards the
+                        # illegal instruction to S in software and the etrigger does not fire, while the
+                        # reference delegates in hardware and fires.
+                        continue
                     for raised_code in raised_codes:
                         outcome = "match" if raised_code == code else "mismatch"
                         is_pf = raised_code in _PAGE_FAULT_CODES
