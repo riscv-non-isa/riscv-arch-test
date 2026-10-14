@@ -28,6 +28,8 @@
 #   Imperas also writes the PC to xtval on an icount breakpoint instead of zero
 #   (https://solvnetplus.synopsys.com/s/case/500WQ00002BsufNYAR/an-icount-trigger-that-fires-with-action0-writes-the-pc-to-mtval-instead-of-zero)
 #   (fixed in Imperas-HMC101126-eng-build).
+# - Sscofpmf*: there are no plans for Imperas to support HPM events, so this one is not
+#   expected to be resolved in the foreseeable future.
 # - Svnapot: Imperas accepts N=1 on superpage leaf PTEs instead of page faulting
 #   (validSvnapotEntry checks only for a leaf, not level 0, and fillTLBEntry skips the alignment check):
 #   https://solvnetplus.synopsys.com/s/case/500WQ00002AsSN9YAN/svnapot-n1-accepted-on-superpage-leaf-ptes-instead-of-raising-a-page-fault
@@ -45,6 +47,6 @@
 #
 ci_enabled: false
 # Stock ImperasDV Y-2026.09:
-# exclude_extensions: "SsstrictSm,SsstrictS,SsstrictU,Smstateen,ExceptionsVx,SdtrigSm,SdtrigS,SdtrigU,Svnapot,Ssnpm,SsnpmSm,Smmpm,SmnpmS,SmnpmSSm,SmnpmU,SmnpmUSm"
+# exclude_extensions: "SsstrictSm,SsstrictS,SsstrictU,Smstateen,ExceptionsVx,SdtrigSm,SdtrigS,SdtrigU,Svnapot,Ssnpm,SsnpmSm,Smmpm,SmnpmS,SmnpmSSm,SmnpmU,SmnpmUSm,SscofpmfSm,SscofpmfS,SscofpmfU"
 # Imperas-HMC101126-eng-build:
-exclude_extensions: "SdtrigSm,SdtrigS,SdtrigU,Ssnpm,SsnpmSm,Smmpm,SmnpmS,SmnpmSSm,SmnpmU,SmnpmUSm"
+exclude_extensions: "SdtrigSm,SdtrigS,SdtrigU,Ssnpm,SsnpmSm,Smmpm,SmnpmS,SmnpmSSm,SmnpmU,SmnpmUSm,SscofpmfSm,SscofpmfS,SscofpmfU"
