@@ -730,11 +730,17 @@
 
 // Switch to M-mode via T-SBI.
 // After this macro, the processor is in M-mode and a0 is undefined.
+// The S-mode handler forwards a GOTO_MMODE from U, VS or VU to M-mode and then
+// resumes here in M-mode with jr a0, which sets ELP when mseccfg.MLPE=1 (Zicfilp).
+// So the instruction after the ecall is a 4-byte-aligned lpad 0, which is a no-op
+// when the handler returns here with mret instead.
 .macro RVTEST_TSBI_GOTO_MMODE
   .option push
+  .p2align 2                                     // align the lpad below (c.nop padding if needed)
   .option norvc                                  // ensure consistent code size
   li   a0, TSBI_GOTO_MMODE                      // a0 = 1 (GOTO_MMODE operation code)
   ecall                                          // trap to handler; handler sets MPP=M, mrets
+  auipc x0, 0                                    // lpad 0: landing pad for the forwarded jr a0
   .option pop
 .endm
 
@@ -1364,8 +1370,8 @@ endcopy_\__MODE__\()tramp:
 abort\__MODE__\()test:
         LA(     T6, rvtest_trap_prolog_error)
         SREG    T5, 0(T6)
-        LA(     T6, exit_\__MODE__\()cleanup)        // load address of cleanup label
-        jr      T6                                   // long jump to cleanup (may be too far for branch)
+        LA(     T2, exit_\__MODE__\()cleanup)        // load address of cleanup label
+        jr      T2                                   // long jump to cleanup; x7 does not set ELP (Zicfilp)
 
 rvtest_\__MODE__\()prolog_done:
         nop                                          // prevent label from collapsing with next section
@@ -1525,8 +1531,8 @@ rvtest_\__MODE__\()prolog_done:
 // Long-jumps to rvtest_Xend which is the epilog cleanup entry.
 
 rvtest_\__MODE__\()endtest:                      // impossible cause landed here
-        LA(     T1, rvtest_\__MODE__\()end)      // load epilog cleanup address (may be far away)
-        jr      T1                                // long jump to epilog cleanup
+        LA(     T2, rvtest_\__MODE__\()end)      // load epilog cleanup address (may be far away)
+        jr      T2                                // long jump to epilog cleanup; x7 does not set ELP (Zicfilp)
 
 //---------- Common Handler ----------
 // Entered via jal from per-cause stub. T6 has the stub's return address
@@ -1572,12 +1578,14 @@ common_\__MODE__\()entry:                       // common entry for all traps in
   .ifc \__MODE__ , M
       LI(T4, CAUSE_ILLEGAL_INSTRUCTION)
       bne T5, T4, invisible_Mcontinue
+      // Jump through T2 (x7), which was saved above: a jump through x7 does not set
+      // ELP, so neither target needs a Zicfilp landing pad.
       #ifdef RVTEST_INVISIBLE_TRAP_HANDLER
-          LA(T4, invisible_Mhandler)
+          LA(T2, invisible_Mhandler)
       #else
-          LA(T4, invisible_Mcontinue)
+          LA(T2, invisible_Mcontinue)
       #endif
-      jr T4
+      jr T2
       invisible_Mcontinue:
   .endif
 
@@ -2065,7 +2073,8 @@ tsbi_\__MODE__\()forward_goto_m:
         LREG    sp, trap_sv_off+7*REGWIDTH(sp)    // restore original sp (undo the xSCRATCH swap)
         ecall                                      // trap to M-mode; M sets MPP=M and mrets back HERE in M-mode
         csrr    a0, CSR_XEPC                       // caller's ecall+4 (bumped before forwarding)
-        jr      a0                                 // continue at the caller, in M-mode
+        jr      a0                                 // continue at the caller, in M-mode, at the lpad 0
+                                                   // that RVTEST_TSBI_GOTO_MMODE places after its ecall
 
         //--- S-mode CSR_ACCESS ---
 tsbi_\__MODE__\()csr_access:
@@ -3159,19 +3168,22 @@ spcl_\__MODE__\()handler:
         slli    T2, T5, 3                            // T2 = cause * 8 (dword-aligned index)
         add     T3, T3, T2                           // T3 = table_base + cause*8
         andi    T3, T3, -8                           // align to dword boundary
-        LREG    T3, 0(T3)                            // T3 = dispatch table entry (handler addr or special value)
+        LREG    T2, 0(T3)                            // T2 = dispatch table entry (handler addr or special value)
 
 spcl_\__MODE__\()dispatch_handling:
-        beqz    T3, 1f                  // if address is 0, this is an error, exit test
-        slli    T2, T3, UDB_MXLEN-1     // look at LSB and dispatch if even
-        bge     T2, x0, spcl_\__MODE__\()dispatch
-        srli    T3, T3,1                //odd entry>0, remove LSB, normalizing to cause range
-        beq     T5, T3, resto_\__MODE__\()rtn // case range matches, not an error, just noop
+        beqz    T2, 1f                  // if address is 0, this is an error, exit test
+        slli    T3, T2, UDB_MXLEN-1     // look at LSB and dispatch if even
+        bge     T3, x0, spcl_\__MODE__\()dispatch
+        srli    T2, T2,1                //odd entry>0, remove LSB, normalizing to cause range
+        beq     T5, T2, resto_\__MODE__\()rtn // case range matches, not an error, just noop
 1:
         j       abort_test
 
+// The entry is in T2 (x7) because a jump through x7 does not set ELP (Zicfilp), so the
+// handler routines need no landing pad. The 15*4 offset above counts the instructions
+// from the auipc to the table, so keep this sequence the same length.
 spcl_\__MODE__\()dispatch:
-        jr      T3                                   // jump to handler routine (clr_Msw_int, etc.)
+        jr      T2                                   // jump to handler routine (clr_Msw_int, etc.)
 
 //==============================================================================
 // INTERRUPT DISPATCH TABLES

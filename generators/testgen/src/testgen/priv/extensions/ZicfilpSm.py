@@ -11,6 +11,7 @@
 from testgen.data.state import TestData
 from testgen.data.test_chunk import TestChunk
 from testgen.priv.extensions.ZicfilpCommon import (
+    async_interrupt_tests,
     elp_state_preservation_tests,
     guarded_trap_entry_tests,
     make_zicfilp_tests,
@@ -35,4 +36,5 @@ def make_zicfilpsm(test_data: TestData) -> list[TestChunk]:
         trap_entry_tests(test_data, "M", covergroup),
         guarded_trap_entry_tests(test_data, "M", covergroup),
         trap_return_tests(test_data, "M", covergroup),
+        async_interrupt_tests(test_data, covergroup),
     ]

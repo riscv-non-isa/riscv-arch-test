@@ -424,10 +424,60 @@ def lpad_alignment_tests(test_data: TestData, priv: str, covergroup: str) -> Tes
     return test_data.end_test_chunk()
 
 
+def direct_jump_tests(test_data: TestData, priv: str, covergroup: str) -> TestChunk:
+    """Direct jumps and taken branches are not Indirect_CTs, so they leave ELP=NO_LP_EXPECTED."""
+    coverpoint = "cp_zicfilp_direct_ct_no_elp"
+    temp_reg = test_data.int_regs.get_register()
+    tc = test_data.begin_test_chunk()
+    lines = [
+        comment_banner(
+            coverpoint,
+            f"{priv}-mode xLPE=1: jal, c.j, c.jal and a taken branch to a non-LPAD target. Only indirect jumps\n"
+            "set ELP=LP_EXPECTED, so the target and the nop after it execute without a software-check exception.",
+        ),
+        *set_lpe(priv, priv, temp_reg, True),
+    ]
+    # Every jump skips the instruction after it, so a taken branch is distinguishable from falling through.
+    # Compressed jumps are raw halfwords (Zca is not in the suite's march): offset +4 skips the c.nop
+    # after them, so the target is 4-byte aligned. c.jal exists only on RV32.
+    skip = "addi x0, x0, 0 # skipped"
+    cases = [
+        ("jal_x0", ["jal x0, {target}", skip], None),
+        ("jal_x1", ["jal x1, {target}", skip], None),
+        ("c_j", [".hword 0xa011 # c.j +4", ".hword 0x0001 # c.nop, skipped"], "defined(ZCA_SUPPORTED)"),
+        (
+            "c_jal",
+            [".hword 0x2011 # c.jal +4", ".hword 0x0001 # c.nop, skipped"],
+            "defined(ZCA_SUPPORTED) && __riscv_xlen == 32",
+        ),
+        ("branch_taken", ["beq x0, x0, {target}", skip], None),
+    ]
+    for bin_name, jump_lines, condition in cases:
+        label = test_data.add_testcase(bin_name, coverpoint, covergroup)
+        target_label = f"{test_data.current_testcase_label}_target"
+        case = [
+            "",
+            ".p2align 2",
+            label,
+            *(line.format(target=target_label) for line in jump_lines),
+            ".p2align 2",
+            f"{target_label}:",
+            "addi x0, x0, 0 # non-LPAD target",
+            *RESUME,
+            *check_trap_count(test_data, temp_reg),
+        ]
+        lines.extend([f"#if {condition}", *case, "#endif"] if condition else case)
+    lines.extend(set_lpe(priv, priv, temp_reg, False))
+    tc.code.extend(lines)
+    test_data.int_regs.return_registers([temp_reg])
+    return test_data.end_test_chunk()
+
+
 def make_zicfilp_tests(test_data: TestData, priv: str, covergroup: str) -> list[TestChunk]:
     """Tests shared by every Zicfilp suite, in test plan order."""
     return [
         *(indirect_elp_state_update_tests(test_data, priv, covergroup, kind) for kind in JUMP_KINDS),
+        direct_jump_tests(test_data, priv, covergroup),
         lpad_label_tests(test_data, priv, covergroup),
         disabled_tests(test_data, priv, covergroup),
         exception_priority_tests(test_data, priv, covergroup),
@@ -658,6 +708,50 @@ def _trap_return_cases(
                 body.extend(check_trap_count(test_data, temp_reg))
         lines.extend([f"#ifdef {guard}", *body, "#endif"] if guard else body)
     return lines
+
+
+def async_interrupt_tests(test_data: TestData, covergroup: str) -> TestChunk:
+    """An interrupt taken right after an MRET that restored ELP=LP_EXPECTED saves MPELP=1."""
+    coverpoint = "cp_elp_async_interrupt_zicfilp"
+    temp_reg, save_reg, mie_reg = test_data.int_regs.get_registers(3)
+    tc = test_data.begin_test_chunk()
+    tc.code.extend(
+        [
+            "#ifdef S_SUPPORTED",
+            comment_banner(
+                coverpoint,
+                "MRET to S-mode with MPELP=1 and menvcfg.LPE=1 restores ELP=LP_EXPECTED, while an S-mode software\n"
+                "interrupt is pending, enabled and not delegated. Interrupts are evaluated right after the MRET, so the\n"
+                "interrupt is taken before the non-LPAD target and saves MPELP=1. Returning from it restores ELP, so the\n"
+                "target then raises a software-check exception. A hart that does not save ELP on interrupts takes one trap.",
+            ),
+            *set_lpe("M", "S", temp_reg, True),
+            f"csrrci x{mie_reg}, mstatus, MSTATUS_MIE # the SSI must not be taken in M-mode",
+            f"csrr x{save_reg}, mideleg",
+            "csrci mideleg, 1 << 1 # SSI is taken in M-mode",
+            "csrsi mie, 1 << 1     # mie.SSIE",
+            "RVTEST_SET_SSW_INT_M  # pending, but not taken in M-mode with mstatus.MIE=0",
+            *_set_status("M", "S", 1, temp_reg),
+            f"LA(x{temp_reg}, {coverpoint}_target)",
+            f"csrw mepc, x{temp_reg}",
+            test_data.add_testcase("mret_to_s_pelp_1_ssi_pending", coverpoint, covergroup),
+            "mret",
+            ".p2align 2",
+            f"{coverpoint}_target:",
+            "addi x0, x0, 0 # SSI taken here first; then a software-check exception",
+            "lpad 0         # resume point after the software-check exception",
+            "RVTEST_TSBI_GOTO_MMODE",
+            "csrci mie, 1 << 1",
+            f"csrw mideleg, x{save_reg}",
+            f"andi x{mie_reg}, x{mie_reg}, MSTATUS_MIE",
+            f"csrs mstatus, x{mie_reg} # restore mstatus.MIE",
+            *set_lpe("M", "S", temp_reg, False),
+            *check_trap_count(test_data, temp_reg),
+            "#endif",
+        ]
+    )
+    test_data.int_regs.return_registers([temp_reg, save_reg, mie_reg])
+    return test_data.end_test_chunk()
 
 
 def trap_return_tests(test_data: TestData, priv: str, covergroup: str) -> TestChunk:

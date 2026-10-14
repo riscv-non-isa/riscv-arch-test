@@ -58,33 +58,28 @@ covergroup ZicfilpSm_cg with function sample(ins_t ins);
     cp_zicfilp_indirect_elp_state_update: cross priv_mode_m, lpe, indirect_ct_prev, rs1_all_prev, lpad_dest;
 
     `ifdef ZCA_SUPPORTED
-        cp_zicfilp_indirect_elp_state_update_c: cross priv_mode_m, lpe, indirect_ct_prev_c, rs1_all_prev_c, lpad_dest;
+        cp_zicfilp_indirect_elp_state_update_c: cross priv_mode_m, lpe, indirect_ct_prev_c, rs1_all_prev, lpad_dest;
     `endif
+
+    // Direct jumps and taken branches are not Indirect_CTs: ELP stays clear at a non-LPAD target
+    cp_zicfilp_direct_ct_no_elp: cross priv_mode_m, lpe_enabled, direct_ct_prev, not_lpad;
 
     cp_zicfilp_lpad_zero_label_bypass: cross priv_mode_m, lpe_enabled, lp_branch_prev, lpad_lpl_zero, x7_label;
 
-    cp_zicfilp_lpad_valid_execution: cross priv_mode_m, lpe_enabled, lp_branch_prev, lpad_valid;
+    cp_zicfilp_lpad_valid_execution: cross priv_mode_m, lpe_enabled, lp_branch_prev, lpad_valid, x7_low_bits;
 
     cp_zicfilp_lpad_missing_instruction_exception: cross priv_mode_m, lpe_enabled, lp_branch_prev, not_lpad;
 
-    cp_zicfilp_lpad_label_mismatch: cross priv_mode_m, lpe_enabled, lp_branch_prev, lpad_lpl_nonzero, lpl_match, x7_label {
-        ignore_bins ig_match   = binsof(lpl_match.match);
-        ignore_bins ig_x7_zero = binsof(x7_label.label_zero);
-    }
+    cp_zicfilp_lpad_label_mismatch: cross priv_mode_m, lpe_enabled, lp_branch_prev, lpad_lpl_nonzero, lpl_mismatch_only, x7_label_nonzero, x7_low_bits;
 
     cp_zicfilp_lpad_label_match_mismatch: cross priv_mode_m, lpe_enabled, lp_branch_prev, lpad_scenario;
 
-    cp_zicfilp_lpad_label_exception_delivery: cross priv_mode_m, lpe_enabled, lp_branch_prev, lpad_lpl_nonzero, lpl_match,
-                                                    x7_label, sw_check_exc, xtval_lpad, mpelp {
-        ignore_bins ig_match   = binsof(lpl_match.match);
-        ignore_bins ig_x7_zero = binsof(x7_label.label_zero);
-    }
+    cp_zicfilp_lpad_label_exception_delivery: cross priv_mode_m, lpe_enabled, lp_branch_prev, lpad_lpl_nonzero, lpl_mismatch_only,
+                                                    x7_label_nonzero, sw_check_exc, xtval_lpad, mpelp;
 
     cp_disabled_zicfilp: cross priv_mode_m, lpe_disabled, lp_branch_prev, lpad_lpl_nonzero;
 
-    cp_lpad_no_sw_exception_elp_clear_zicfilp: cross priv_mode_m, lpe_enabled, lp_branch_prev, lpad_lpl_nonzero, lpl_match, pc_aligned {
-        ignore_bins ig_mismatch = binsof(lpl_match.mismatch);
-    }
+    cp_lpad_no_sw_exception_elp_clear_zicfilp: cross priv_mode_m, lpe_enabled, lp_branch_prev, lpad_lpl_nonzero, lpl_match_only, pc_aligned;
 
     cp_exception_priority_zicfilp: cross priv_mode_m, lpe_enabled, priority_case;
 
@@ -119,7 +114,7 @@ covergroup ZicfilpSm_cg with function sample(ins_t ins);
     `endif
 
     // ELP before the current instruction: the previous instruction set it
-    elp_before: coverpoint (`ZICFILP_LP_BRANCH(ins.prev.insn) &&
+    elp_before: coverpoint (`ZICFILP_LP_BRANCH(ins.prev) &&
                             get_csr_val(ins.hart, ins.issue, `SAMPLE_PREV, "mseccfg", "mlpe")) {
         bins no_lp_expected = {1'b0};
     }
@@ -130,7 +125,7 @@ covergroup ZicfilpSm_cg with function sample(ins_t ins);
     // A software-guarded branch (rs1 = x1/x5/x7) with MLPE=1 leaves ELP clear, so an ECALL at its target saves MPELP=0
     cp_pelp_trap_entry_m_guarded_zicfilp: cross priv_mode_m, lpe_enabled, indirect_ct_prev, rs1_link_prev, ecall;
     `ifdef ZCA_SUPPORTED
-        cp_pelp_trap_entry_m_guarded_zicfilp_c: cross priv_mode_m, lpe_enabled, indirect_ct_prev_c, rs1_link_prev_c, ecall;
+        cp_pelp_trap_entry_m_guarded_zicfilp_c: cross priv_mode_m, lpe_enabled, indirect_ct_prev_c, rs1_link_prev, ecall;
     `endif
 
     // MRET to a non-LPAD instruction, sampled at that instruction:
@@ -169,6 +164,37 @@ covergroup ZicfilpSm_cg with function sample(ins_t ins);
         cp_pelp_trap_return_m_zicfilp: cross priv_mode_m_u, mret_prev, mseccfg_mlpe, menvcfg_lpe, mpelp_before_mret, not_lpad;
     `else
         cp_pelp_trap_return_m_zicfilp: cross priv_mode_m, mret_prev, mseccfg_mlpe, mpelp_before_mret, not_lpad;
+    `endif
+
+    // An S-mode software interrupt pending, enabled and not delegated at an MRET to S-mode with MPELP=1 and
+    // menvcfg.LPE=1: the interrupt is taken right after the MRET, before its target, and must save MPELP=1
+    `ifdef S_SUPPORTED
+        mret_current: coverpoint ins.current.insn {
+            bins mret = {MRET};
+        }
+        mpp_s: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "mstatus", "mpp")[1:0] {
+            bins s_mode = {2'b01};
+        }
+        `ifdef UDB_MXLEN_32
+            mpelp_set_before: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "mstatush", "mpelp") {
+                bins lp_expected = {1};
+            }
+        `else
+            mpelp_set_before: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "mstatus", "mpelp") {
+                bins lp_expected = {1};
+            }
+        `endif
+        menvcfg_lpe_enabled: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "menvcfg", "lpe") {
+            bins enabled = {1};
+        }
+        // {mip.SSIP, mie.SSIE, mideleg.SSI}
+        ssi_pending_undelegated: coverpoint {get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "mip", "ssip")[0],
+                                             get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "mie", "ssie")[0],
+                                             get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "mideleg", "ssip")[0]} {
+            bins pending = {3'b110};
+        }
+        cp_elp_async_interrupt_zicfilp: cross priv_mode_m, mret_current, mpp_s, mpelp_set_before, menvcfg_lpe_enabled,
+                                              ssi_pending_undelegated;
     `endif
 
 endgroup

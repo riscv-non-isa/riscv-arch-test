@@ -37,9 +37,9 @@ covergroup ZicfilpH_cg with function sample(ins_t ins);
     // Previous instruction was an indirect jump through a register other than x1/x5/x7, which sets
     // ELP = LP_EXPECTED when landing pads are enabled
     lp_branch_prev: coverpoint (
-        `ZICFILP_LP_JALR(ins.prev.insn)                                ? 2'd1 :
-        (`ZICFILP_LP_CJUMP(ins.prev.insn) && (ins.prev.insn ==? C_JR)) ? 2'd2 :
-        `ZICFILP_LP_CJUMP(ins.prev.insn)                               ? 2'd3 : 2'd0) {
+        `ZICFILP_LP_JALR(ins.prev)                                ? 2'd1 :
+        (`ZICFILP_LP_CJUMP(ins.prev) && (ins.prev.insn ==? C_JR)) ? 2'd2 :
+        `ZICFILP_LP_CJUMP(ins.prev)                               ? 2'd3 : 2'd0) {
         bins jalr = {2'd1};
         `ifdef ZCA_SUPPORTED
             bins c_jr   = {2'd2};
@@ -63,8 +63,8 @@ covergroup ZicfilpH_cg with function sample(ins_t ins);
 
     // Trap from VS or VU-mode with ELP = LP_EXPECTED (a non-LPAD target of an ELP-setting jalr)
     // or NO_LP_EXPECTED (an ebreak after anything else), into VS-mode or HS-mode
-    trap_elp: coverpoint {(`ZICFILP_LP_JALR(ins.prev.insn) && !(ins.current.insn ==? LPAD)),
-                          (!`ZICFILP_LP_BRANCH(ins.prev.insn) && (ins.current.insn == EBREAK))} {
+    trap_elp: coverpoint {(`ZICFILP_LP_JALR(ins.prev) && !(ins.current.insn ==? LPAD)),
+                          (!`ZICFILP_LP_BRANCH(ins.prev) && (ins.current.insn == EBREAK))} {
         bins lp_expected    = {2'b10};
         bins no_lp_expected = {2'b01};
     }

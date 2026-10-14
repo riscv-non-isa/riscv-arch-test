@@ -1,0 +1,39 @@
+# Normative rule to coverpoint mappings
+# Generated from riscv-isa-manual normative rule definitions
+#
+# ZicfilpH covers the hypervisor parts of the Zicfilp rules: henvcfg.LPE for VS-mode, senvcfg.LPE for VU-mode,
+# and vsstatus.SPELP on traps into VS-mode and on SRET.
+
+normative_rule_definitions:
+  # The Zicfilp extension adds the LPE field in henvcfg. When the LPE field is set to 1, the Zicfilp extension
+  # is enabled in VS-mode.
+  - name: henvcfg_lpe_op
+    coverpoint: ["ZicfilpH_cg/{cp_vs_lpe, cp_vu_lpe}"]
+
+  # The Zicfilp extension adds the LPE field in senvcfg. When the LPE field is set to 1,
+  # the Zicfilp extension is enabled in VU/U-mode.
+  - name: senvcfg_lpe_Zicfilp
+    coverpoint: ["ZicfilpH_cg/cp_vu_lpe (VU-mode)"]
+
+  # To store the previous ELP state on traps to VS-mode, a SPELP bit is defined in
+  # the vsstatus (VS-modes version of sstatus).
+  - name: vsstatus_spelp_exists
+    coverpoint: ["ZicfilpH_cg/{cp_trap_entry_spelp, cp_vs_sret_spelp}"]
+
+  # The Zicfilp extension adds the SPELP field that holds the previous ELP.
+  - name: vsstatus_spelp_op
+    coverpoint: ["ZicfilpH_cg/{cp_trap_entry_spelp, cp_vs_sret_spelp, cp_hs_sret_spelp, cp_vs_sstatus_spelp}"]
+
+  # Access to the SPELP field, added by Zicfilp, accesses the homonymous fields of mstatus
+  # when V=0, and the homonymous fields of vsstatus when V=1.
+  - name: sstatus_spelp
+    coverpoint: ["ZicfilpH_cg/{cp_vs_sstatus_spelp, cp_vs_sret_spelp} (V=1)"]
+
+  # When a trap is taken into privilege mode x, the xPELP is set to ELP and ELP is set to NO_LP_EXPECTED.
+  - name: Zicfilp_pelp_trap
+    coverpoint: ["ZicfilpH_cg/cp_trap_entry_spelp (traps into VS-mode and HS-mode from VS-mode and VU-mode)"]
+
+  # When executing an xret instruction, if the new privilege mode is y, then ELP is set to the value of xPELP
+  # if yLPE is 1; otherwise, it is set to NO_LP_EXPECTED; xPELP is set to NO_LP_EXPECTED.
+  - name: Zicfilp_pelp_trap_return
+    coverpoint: ["ZicfilpH_cg/{cp_vs_sret_spelp, cp_hs_sret_spelp} (SRET into VS-mode and VU-mode)"]
