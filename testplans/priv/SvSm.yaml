@@ -5,7 +5,7 @@ coverpoints:
   - heading: "General Test Environment (SvSm):\n- Sm suite: boots to M-mode (BOOT_TO_MMODE) because each coverpoint needs M-mode state (mstatus.MPRV/MPP, mstatus.TVM, mstatus.SBE or an M-mode CSR access). Mode changes use RVTEST_TSBI_GOTO_*.\n- These coverpoints were split out of Sv. Faults taken in M-mode are sampled from mcause.\n- Run for every supported translation mode: Sv32 on RV32; Sv39, Sv48 and Sv57 on RV64, as selected by the UDB configuration.\n- Split from Sv: the M-mode half of cp_access_m_s (now cp_access_m) and all of Sv_mstatus_mprv_cg."
   - name: cp_access_m
     goal: Verify satp is readable and writable from M-mode with csrrw, csrrs and csrrc
-    description: "Sv32 and Sv39 configurations, M-mode: csrrw satp with 1, csrrs with 2, csrrc with 1, reading satp back after each; and the same three accesses with satp = 0 while mstatus.TVM=1, which does not restrict M-mode."
+    description: "Sv32 and Sv39 configurations, M-mode: csrrw satp with MODE = the suite's translation mode and PPN = 0, then csrrs and csrrc with the lowest ASID bit, reading satp back after each; and csrrw, csrrs and csrrc satp with 0 while mstatus.TVM=1, which does not restrict M-mode. satp is never written with MODE=Bare and a nonzero PPN or ASID, which is UNSPECIFIED."
     expectation: No exception; each read returns the value produced by the write.
     bins: |-
       cp_ins x Mcause x tvm_mstatus x mode {M-mode}
