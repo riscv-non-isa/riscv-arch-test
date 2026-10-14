@@ -63,24 +63,34 @@
   csrr _R, _CSR                                                             ;\
   RVTEST_FAST_TRAP_CHECK(_SIG_PTR, _TMPREG, _R, _OFF, _MISMATCH)
 
-// RVTEST_SIGUPD_FAST_TRAP_TVAL(sigptr, tempreg, sigreg, csr, offset, mismatch)
+// RVTEST_SIGUPD_FAST_TRAP_TVAL(sigptr, tempreg, sigreg, csr, epccsr, offset, mismatch)
 // Same as RVTEST_SIGUPD_FAST_TRAP for xTVAL on an illegal-instruction trap.
 // Without Zca, an encoding whose low two bits are not 11 may be reported either
 // as its 16-bit parcel or as the 32-bit word it begins: a hart without the
 // compressed extension may treat those encoding spaces as 32-bit instructions
 // (unprivileged ISA, Base Instruction-Length Encoding), and xTVAL holds the
-// actual faulting instruction. Keep only the 16-bit parcel so both are accepted.
+// actual faulting instruction. When xTVAL is exactly the word at xEPC, reduce
+// it to the 16-bit parcel so both reports match the parcel the reference model
+// records; any other upper half is a genuine mismatch and is compared in full.
+// (Without Zca the handler always advances xEPC by 4, so every sweep entry owns
+// a 4-byte slot and the lhu at xEPC+2 stays inside fetched test code.)
 #ifdef ZCA_SUPPORTED
-  #define RVTEST_SIGUPD_FAST_TRAP_TVAL(_SIG_PTR, _TMPREG, _R, _CSR, _OFF, _MISMATCH) \
+  #define RVTEST_SIGUPD_FAST_TRAP_TVAL(_SIG_PTR, _TMPREG, _R, _CSR, _EPC, _OFF, _MISMATCH) \
     RVTEST_SIGUPD_FAST_TRAP(_SIG_PTR, _TMPREG, _R, _CSR, _OFF, _MISMATCH)
 #else
-  #define RVTEST_SIGUPD_FAST_TRAP_TVAL(_SIG_PTR, _TMPREG, _R, _CSR, _OFF, _MISMATCH) \
+  #define RVTEST_SIGUPD_FAST_TRAP_TVAL(_SIG_PTR, _TMPREG, _R, _CSR, _EPC, _OFF, _MISMATCH) \
     csrr _R, _CSR                                                           ;\
     andi _TMPREG, _R, 3                                                     ;\
     xori _TMPREG, _TMPREG, 3                                                ;\
     beqz _TMPREG, 1f                  /* 32-bit encoding: keep all of it */ ;\
+    csrr _TMPREG, _EPC                                                      ;\
+    lhu  _TMPREG, 2(_TMPREG)          /* upper parcel of the word at xEPC */;\
+    slli _TMPREG, _TMPREG, 16                                               ;\
+    xor  _TMPREG, _TMPREG, _R         /* == parcel iff xTVAL is that word */;\
+    srli _TMPREG, _TMPREG, 16                                               ;\
+    bnez _TMPREG, 1f                  /* parcel or junk: compare in full  */ ;\
     slli _R, _R, __riscv_xlen-16                                            ;\
-    srli _R, _R, __riscv_xlen-16                                            ;\
+    srli _R, _R, __riscv_xlen-16      /* word report: reduce to the parcel */;\
   1:                                                                        ;\
     RVTEST_FAST_TRAP_CHECK(_SIG_PTR, _TMPREG, _R, _OFF, _MISMATCH)
 #endif
