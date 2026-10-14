@@ -2805,6 +2805,9 @@ skp_\__MODE__\()tval:
         TRAP_SIGUPD_ZERO(T4, T3, 4, T2, sv_\__MODE__\()Htval2, sv_Htval2_str) // write word 4: htval
         csrr    T3, CSR_HTINST
       .endif
+        // The checks below take the same path whatever the hart wrote, so the handler retires the same
+        // number of instructions on every hart (the Zicntr instret tests count them); only the trapping
+        // instruction and the cause choose the path.
         // Record a transformation of the trapping instruction (T6) as zero, which is always legal
         // (hypervisor.adoc tinst values; cmo.adoc for CBOs): loads, stores, AMOs, HLV/HSV and CBOs on
         // causes 4-7, 13, 15, 21 and 23. A compressed load or store is expanded, transformed, and
@@ -2886,7 +2889,9 @@ skp_\__MODE__\()tval:
 13:     or      T5, T5, T2                           // expected transformation, bit 1 cleared
         LI(     T4, ~0xF8000)
         and     T4, T4, T3                           // recorded value without Addr. Offset
-        bne     T4, T5, 7f
+        xor     T4, T4, T5                           // nonzero if it is not the transformation
+        LA(     T5, rvtest_xtinst_mismatch)
+        SREG    T4, 0(T5)
         j       20f
 6:      andi    T4, T6, 0x5B                         // LOAD, LOAD-FP, STORE and STORE-FP -> 0x03
         LI(     T2, 0x03)
@@ -2921,12 +2926,17 @@ skp_\__MODE__\()tval:
 4:      and     T2, T2, T6                           // transformation with Addr. Offset = 0
         LI(     T4, ~0xF8000)
         and     T4, T4, T3                           // recorded value without Addr. Offset
-        bne     T4, T2, 7f
+        xor     T4, T4, T2                           // nonzero if it is not the transformation
+        LA(     T2, rvtest_xtinst_mismatch)
+        SREG    T4, 0(T2)
         j       20f
 2:      LI(     T2, 0xFFF07FFF)                      // CBO: bits 19:15 are 0 (cmo.adoc)
         and     T2, T2, T6
-        bne     T3, T2, 7f
-        j       8f
+        xor     T2, T2, T3
+        snez    T2, T2
+        neg     T2, T2                               // all ones unless the recorded value is the transformation
+        and     T3, T3, T2                           // record the transformation as zero
+        j       7f
         // Addr. Offset (bits 19:15) must be xtval minus the original address, rs1 + immediate
 20:     andi    T2, T6, 3
         addi    T2, T2, -3
@@ -3069,8 +3079,13 @@ skp_\__MODE__\()tval:
         sub     T4, T4, T2                           // required Addr. Offset
         srli    T2, T3, 15
         andi    T2, T2, 0x1F
-        bne     T2, T4, 7f
-8:      LI(     T3, 0)
+        xor     T2, T2, T4                           // nonzero if the recorded Addr. Offset is wrong
+        LA(     T4, rvtest_xtinst_mismatch)
+        LREG    T4, 0(T4)
+        or      T2, T2, T4
+        snez    T2, T2
+        neg     T2, T2                               // all ones unless the recorded value is the transformation
+        and     T3, T3, T2                           // record the transformation as zero
 7:      csrr    T5, CSR_XCAUSE
         // A pseudoinstruction is required only when mtval2/htval is nonzero
       .ifc \__MODE__ , M

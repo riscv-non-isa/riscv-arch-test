@@ -129,15 +129,16 @@
 
 // TRAP_SIGUPD_ZERO(tempreg, sigreg, offset, zeroreg, instptr, strptr)
 // TRAP_SIGUPD for a trap CSR that may hold zero in place of the reference model's value.
-// In Self Check mode, zero in sigreg also matches when zeroreg is nonzero. Both compile
-// modes emit the same instructions so the signature and self-check ELFs have identical
-// code layout.
+// In Self Check mode, zero in sigreg also matches when zeroreg is nonzero. Each pass path
+// executes four instructions, so the handler's instruction count does not depend on which
+// legal value the hart wrote. Both compile modes emit the same instructions so the signature
+// and self-check ELFs have identical code layout.
 #ifdef RVTEST_SELFCHECK
   #define TRAP_SIGUPD_ZERO(_TMPREG, _R, _OFF, _ZREG, _INST_PTR, _STR_PTR) \
     .option push                                                ;\
     .option norvc                                               ;\
     LREG _TMPREG, _OFF*REGWIDTH(T1)                             ;\
-    beq  _TMPREG, _R, 2f                                        ;\
+    beq  _TMPREG, _R, 1f                                        ;\
     bnez _R, 3f                                                 ;\
     bnez _ZREG, 2f                                              ;\
     3:                                                          ;\
@@ -147,6 +148,9 @@
     RVTEST_WORD_PTR _INST_PTR                                   ;\
     RVTEST_WORD_PTR _STR_PTR                                    ;\
     .word CSR_XEPC                                              ;\
+    1:                                                          ;\
+    nop                                                         ;\
+    nop                                                         ;\
     2:                                                          ;\
     .option pop
 #else
@@ -154,7 +158,7 @@
     .option push                                                ;\
     .option norvc                                               ;\
     SREG _R, _OFF*REGWIDTH(T1)                                  ;\
-    beq  x0, x0, 2f                                             ;\
+    beq  x0, x0, 1f                                             ;\
     nop                                                         ;\
     nop                                                         ;\
     mv   T1, _R                                                 ;\
@@ -163,6 +167,9 @@
     RVTEST_WORD_PTR _INST_PTR                                   ;\
     RVTEST_WORD_PTR _STR_PTR                                    ;\
     .word CSR_XEPC                                              ;\
+    1:                                                          ;\
+    nop                                                         ;\
+    nop                                                         ;\
     2:                                                          ;\
     .option pop
 #endif
@@ -173,14 +180,16 @@
 // every invalid address, and an implementation may write some other invalid address in its place
 // (norm:mepc_inv_addr_conv, sepc_acc_invalid_addr, mtval_inv_addr_conv, stval_inv_addr_conv; vsepc and
 // vstval hold the same values as sepc and stval).  In Self Check mode the value passes if it matches the
-// reference, or if the reference and the value are both invalid.  T2 is scratch.  Both compile modes
-// emit the same instructions so the signature and self-check ELFs have identical code layout.
+// reference, or if the reference and the value are both invalid.  T2 is scratch.  Each pass path
+// executes ten instructions, so the handler's instruction count does not depend on which legal value
+// the hart wrote.  Both compile modes emit the same instructions so the signature and self-check ELFs
+// have identical code layout.
 #ifdef RVTEST_SELFCHECK
   #define TRAP_SIGUPD_INVALID_ADDR(_TMPREG, _R, _OFF, _INST_PTR, _STR_PTR) \
     .option push                                                ;\
     .option norvc                                               ;\
     LREG _TMPREG, _OFF*REGWIDTH(T1)                             ;\
-    beq  _TMPREG, _R, 2f                                        ;\
+    beq  _TMPREG, _R, 1f                                        ;\
     srai T2, _TMPREG, INVALID_VA_WIDTH-1                        ;\
     addi T2, T2, 1                                              ;\
     sltiu T2, T2, 2                                             ;\
@@ -196,6 +205,15 @@
     RVTEST_WORD_PTR _INST_PTR                                   ;\
     RVTEST_WORD_PTR _STR_PTR                                    ;\
     .word CSR_XEPC                                              ;\
+    1:                                                          ;\
+    nop                                                         ;\
+    nop                                                         ;\
+    nop                                                         ;\
+    nop                                                         ;\
+    nop                                                         ;\
+    nop                                                         ;\
+    nop                                                         ;\
+    nop                                                         ;\
     2:                                                          ;\
     .option pop
 #else
@@ -203,7 +221,7 @@
     .option push                                                ;\
     .option norvc                                               ;\
     SREG _R, _OFF*REGWIDTH(T1)                                  ;\
-    beq  x0, x0, 2f                                             ;\
+    beq  x0, x0, 1f                                             ;\
     nop                                                         ;\
     nop                                                         ;\
     nop                                                         ;\
@@ -218,6 +236,15 @@
     RVTEST_WORD_PTR _INST_PTR                                   ;\
     RVTEST_WORD_PTR _STR_PTR                                    ;\
     .word CSR_XEPC                                              ;\
+    1:                                                          ;\
+    nop                                                         ;\
+    nop                                                         ;\
+    nop                                                         ;\
+    nop                                                         ;\
+    nop                                                         ;\
+    nop                                                         ;\
+    nop                                                         ;\
+    nop                                                         ;\
     2:                                                          ;\
     .option pop
 #endif
