@@ -84,6 +84,12 @@ coverpoints:
     id: pmp_pf_prio_v0
     rules:
       - norm:pmp_with_paging
+  - name: cp_pmp_pt_gpa
+    goal: Verify PMP checks the supervisor physical address of a VS-stage page-table read, not its guest physical address
+    description: |-
+      The VS-stage walk of the VS-stage kilopage mapping reaches its last table, vlvl0, through a G-stage kilopage that maps a guest physical address (the page after the G-stage test page) to vlvl0's different supervisor physical address.  PMP denies that guest physical address (4 KiB NAPOT region).  In VS-mode and VU-mode, jalr, sw and lw through the VS-stage kilopage mapping and the G-stage kilopage mapping.
+    expectation: No access fault; the accesses complete.  The cp_pmp_pt vlvl0 case, where PMP denies vlvl0's supervisor physical address, still raises an access fault.
+    bins: "{VS, VU} x {jalr, sw, lw} x {VS-stage mapping, G-stage mapping} x PMP denies vlvl0 GPA x vsatp paged x hgatp paged"
   - name: cp_pmp_exec_fault_h
     goal: PMP exec violation in virtualized mode
     description: VS/HS instruction fetch denied by PMP

@@ -4,9 +4,11 @@ source: https://docs.google.com/spreadsheets/d/1DWBEoprndjQzLTXQTzPI8jW1HydtkYRR
 coverpoints:
   - name: cp_exceptionsHV_vs
     description: mstatus.VS and vsstatus.VS are selected correctly according to the privilege level to disable vector instructions when off.
-    expectation: Set misa.V to 1.  Cross mstatus.VS = {00, 01, 10, 11}, vsstatus.vs = {00, 01 10, 11}, mode = {M/HS/VS/VU/U}.  Attempt csrr t0, vl and vadd.vv v1, v2, v3.  Read back mstatus.VS and vssstatus.VS.
-    bins: Illegal instruction if mstatus.VS = 00 or ((mode = VS or VU) and vsstatus.VS = 00).  Otherwise, vadd.vv sets mstatus.VS to 11, and also sets vsstatus.VS to 11 if mode = VS or VU.
-    id: 4 * 4 * 5
+    expectation: Set misa.V to 1.  Cross mstatus.VS = {00, 01, 10, 11}, vsstatus.vs = {00, 01 10, 11}, mode = {HS/VS/VU/U}.  Attempt csrr t0, vl and vadd.vv v1, v2, v3.  Read back mstatus.VS and vssstatus.VS.
+    bins: |-
+      Illegal instruction if mstatus.VS = 00 or ((mode = VS or VU) and vsstatus.VS = 00).  Otherwise, vadd.vv sets mstatus.VS to 11, and also sets vsstatus.VS to 11 if mode = VS or VU.
+      A field written Initial (01) or Clean (10) and not dirtied reads back exactly only on configurations with precise dirty tracking that support Initial and Clean; otherwise the check is only that it is not Off.
+    id: 4 * 4 * 4
     rules:
       - "When V=1, both vsstatus.VS and mstatus.VS are in effect: attempts to execute any vector instruction, or to access the vector CSRs, raise an illegal-instruction exception when either field is set to Off. Modifying the vector"
       - state when V=1 causes both fields to be set to 3 (Dirty).

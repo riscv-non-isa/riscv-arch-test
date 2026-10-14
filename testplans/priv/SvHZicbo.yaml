@@ -2,7 +2,8 @@
 suite: SvHZicbo
 source: https://docs.google.com/spreadsheets/d/1DWBEoprndjQzLTXQTzPI8jW1HydtkYRR3tg58q59fdk/edit?gid=2005939128#gid=2005939128
 notes: |
-  *** also includes hypervisor instructions, CSRs related to hypervisor
+  SvHZicbo boots to HS-mode with hedeleg clear, so every trap from VS-mode and VU-mode is taken in HS-mode and
+  read from scause.  PMP on the final address of a CBO is checked in SvHZicboSm (cp_pmp), which boots to M-mode.
 coverpoints:
   - heading: Be sure hgatp WARL fields are exercised in VM tests.
   - name: vs_invalid_pte_cbo
@@ -166,10 +167,25 @@ coverpoints:
       Test Case: Probe caches.
     expectation: Without HFENCE, stale; with HFENCE, correct.
     bins: "{reuse, fresh}"
-  - name: pmp_deny_spa
-    goal: PMP denies SPA for CBO
+  - name: cp_cbie_vs
+    goal: menvcfg.CBIE and henvcfg.CBIE control cbo.inval in VS-mode
     description: |-
-      Env: GPA valid, but PMP denies SPA.
-      Test Case: Execute CBO.
-    expectation: Store access fault.
-    bins: PMP deny bit
+      Environment: vsatp and hgatp Bare.  From HS-mode, write menvcfg.CBIE (through T-SBI) and henvcfg.CBIE with each of 00, 01 and 11.
+      Test Case: In VS-mode, store a random value to a scratch word, execute cbo.inval on it, and load it back.
+    expectation: |-
+      menvcfg.CBIE = 00: illegal-instruction exception.
+      Otherwise henvcfg.CBIE = 00: virtual-instruction exception.
+      Otherwise, if either field is 01, cbo.inval performs a flush, so the load returns the value stored before it.
+      Both 11: cbo.inval executes without exception.
+    bins: priv_mode VS x cbo.inval x menvcfg.CBIE {00, 01, 11} x henvcfg.CBIE {00, 01, 11} x vsatp Bare = 9 bins
+  - name: cp_cbie_vu
+    goal: menvcfg.CBIE, henvcfg.CBIE and senvcfg.CBIE control cbo.inval in VU-mode
+    description: |-
+      Environment: vsatp and hgatp Bare.  From HS-mode, write menvcfg.CBIE (through T-SBI), henvcfg.CBIE and senvcfg.CBIE with each of 00, 01 and 11.
+      Test Case: In VU-mode, store a random value to a scratch word, execute cbo.inval on it, and load it back.
+    expectation: |-
+      menvcfg.CBIE = 00: illegal-instruction exception.
+      Otherwise henvcfg.CBIE = 00 or senvcfg.CBIE = 00: virtual-instruction exception.
+      Otherwise, if any of the three fields is 01, cbo.inval performs a flush, so the load returns the value stored before it.
+      All 11: cbo.inval executes without exception.
+    bins: priv_mode VU x cbo.inval x menvcfg.CBIE {00, 01, 11} x henvcfg.CBIE {00, 01, 11} x senvcfg.CBIE {00, 01, 11} x vsatp Bare = 27 bins

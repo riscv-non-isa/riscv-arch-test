@@ -663,7 +663,7 @@ coverpoints:
   - name: cp_canonical_read_s
     goal: Verify a non-canonical virtual address raises a load page fault on a load from S-mode
     description: "RV64 (Sv39/48/57), S-mode: va_data has bit 63 set, so its upper bits are not a sign extension of the top VA bit. Valid RWX leaf PTE with PTE.U=0 for the canonical part, at every page-table level (4 KiB page and each superpage size of the Sv mode). Load (lw) from the page through va_data."
-    expectation: Load page fault (scause = 13); stval = faulting virtual address.
+    expectation: Load page fault (scause = 13); stval = faulting virtual address. An implementation may convert an invalid address to another invalid address before writing it, so any invalid address is accepted.
     bins: |-
       PTE_canonical_d x canonical_page_d x load_page_fault x read_acc
       = 7 bins on RV64 (RV64 only)
@@ -673,7 +673,7 @@ coverpoints:
   - name: cp_canonical_read_u
     goal: Verify a non-canonical virtual address raises a load page fault on a load from U-mode
     description: "RV64 (Sv39/48/57), U-mode: va_data has bit 63 set, so its upper bits are not a sign extension of the top VA bit. Valid RWX leaf PTE with PTE.U=1 for the canonical part, at every page-table level (4 KiB page and each superpage size of the Sv mode). Load (lw) from the page through va_data."
-    expectation: Load page fault (scause = 13); stval = faulting virtual address.
+    expectation: Load page fault (scause = 13); stval = faulting virtual address. An implementation may convert an invalid address to another invalid address before writing it, so any invalid address is accepted.
     bins: |-
       PTE_canonical_d x canonical_page_d x load_page_fault x read_acc
       = 7 bins on RV64 (RV64 only)
@@ -683,7 +683,7 @@ coverpoints:
   - name: cp_canonical_write_s
     goal: Verify a non-canonical virtual address raises a store/AMO page fault on a store from S-mode
     description: "RV64 (Sv39/48/57), S-mode: va_data has bit 63 set, so its upper bits are not a sign extension of the top VA bit. Valid RWX leaf PTE with PTE.U=0 for the canonical part, at every page-table level (4 KiB page and each superpage size of the Sv mode). Store (sw) to the page through va_data."
-    expectation: Store/AMO page fault (scause = 15); stval = faulting virtual address.
+    expectation: Store/AMO page fault (scause = 15); stval = faulting virtual address. An implementation may convert an invalid address to another invalid address before writing it, so any invalid address is accepted.
     bins: |-
       PTE_canonical_d x canonical_page_d x store_page_fault x write_acc
       = 7 bins on RV64 (RV64 only)
@@ -693,7 +693,7 @@ coverpoints:
   - name: cp_canonical_write_u
     goal: Verify a non-canonical virtual address raises a store/AMO page fault on a store from U-mode
     description: "RV64 (Sv39/48/57), U-mode: va_data has bit 63 set, so its upper bits are not a sign extension of the top VA bit. Valid RWX leaf PTE with PTE.U=1 for the canonical part, at every page-table level (4 KiB page and each superpage size of the Sv mode). Store (sw) to the page through va_data."
-    expectation: Store/AMO page fault (scause = 15); stval = faulting virtual address.
+    expectation: Store/AMO page fault (scause = 15); stval = faulting virtual address. An implementation may convert an invalid address to another invalid address before writing it, so any invalid address is accepted.
     bins: |-
       PTE_canonical_d x canonical_page_d x store_page_fault x write_acc
       = 7 bins on RV64 (RV64 only)
@@ -703,7 +703,7 @@ coverpoints:
   - name: cp_canonical_exec_s
     goal: Verify a non-canonical virtual address raises an instruction page fault on an instruction fetch from S-mode
     description: "RV64 (Sv39/48/57), S-mode: va_data has bit 63 set, so its upper bits are not a sign extension of the top VA bit. Valid RWX leaf PTE with PTE.U=0 for the canonical part, at every page-table level (4 KiB page and each superpage size of the Sv mode). Jump (jalr) into the page through va_data."
-    expectation: Instruction page fault (scause = 12); stval = faulting virtual address.
+    expectation: Instruction page fault (scause = 12); sepc and stval = faulting virtual address. An implementation may convert an invalid address to another invalid address before writing it, so any invalid address is accepted.
     bins: |-
       PTE_canonical_i x canonical_page_i x ins_page_fault x exec_acc
       = 7 bins on RV64 (RV64 only)
@@ -713,7 +713,7 @@ coverpoints:
   - name: cp_canonical_exec_u
     goal: Verify a non-canonical virtual address raises an instruction page fault on an instruction fetch from U-mode
     description: "RV64 (Sv39/48/57), U-mode: va_data has bit 63 set, so its upper bits are not a sign extension of the top VA bit. Valid RWX leaf PTE with PTE.U=1 for the canonical part, at every page-table level (4 KiB page and each superpage size of the Sv mode). Jump (jalr) into the page through va_data."
-    expectation: Instruction page fault (scause = 12); stval = faulting virtual address.
+    expectation: Instruction page fault (scause = 12); sepc and stval = faulting virtual address. An implementation may convert an invalid address to another invalid address before writing it, so any invalid address is accepted.
     bins: |-
       PTE_canonical_i x canonical_page_i x ins_page_fault x exec_acc
       = 7 bins on RV64 (RV64 only)

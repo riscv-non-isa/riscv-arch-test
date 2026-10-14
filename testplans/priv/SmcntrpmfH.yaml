@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=testplan.schema.json
+suite: SmcntrpmfH
+notes: |
+  SmcntrpmfH boots to M-mode.  Each testcase writes the xINH bits of mcyclecfg or minstretcfg (bits 63:32, in
+  mcyclecfgh or minstretcfgh on RV32), reads mcycle or minstret in M-mode, runs four instructions in VS-mode or
+  VU-mode and reads the counter again in M-mode.  mcountinhibit.CY and IR are cleared so the counters run.
+  inhibit_all sets MINH, SINH, UINH, VSINH and VUINH; count_only_vs and count_only_vu clear only VSINH or VUINH.
+coverpoints:
+  - name: cp_mcyclecfg_vs
+    goal: mcyclecfg.VSINH inhibits cycle in VS-mode
+    description: Read mcycle in M-mode, run four instructions in VS-mode and read mcycle again, with mcyclecfg inhibiting every mode, then every mode but VS
+    expectation: "inhibit_all: mcycle does not change.  count_only_vs: mcycle advances"
+    bins: inhibit_all, count_only_vs
+  - name: cp_mcyclecfg_vu
+    goal: mcyclecfg.VUINH inhibits cycle in VU-mode
+    description: Read mcycle in M-mode, run four instructions in VU-mode and read mcycle again, with mcyclecfg inhibiting every mode, then every mode but VU
+    expectation: "inhibit_all: mcycle does not change.  count_only_vu: mcycle advances"
+    bins: inhibit_all, count_only_vu
+  - name: cp_minstretcfg_vs
+    goal: minstretcfg.VSINH inhibits instret in VS-mode
+    description: Read minstret in M-mode, run four instructions in VS-mode and read minstret again, with minstretcfg inhibiting every mode, then every mode but VS
+    expectation: "inhibit_all: minstret does not change.  count_only_vs: minstret advances by exactly the instructions retired in VS-mode (the mret that enters VS-mode retires in M-mode and the ecall that leaves it does not retire)"
+    bins: inhibit_all, count_only_vs
+  - name: cp_minstretcfg_vu
+    goal: minstretcfg.VUINH inhibits instret in VU-mode
+    description: Read minstret in M-mode, run four instructions in VU-mode and read minstret again, with minstretcfg inhibiting every mode, then every mode but VU
+    expectation: "inhibit_all: minstret does not change.  count_only_vu: minstret advances by exactly the instructions retired in VU-mode (the mret that enters VU-mode retires in M-mode and the ecall that leaves it does not retire)"
+    bins: inhibit_all, count_only_vu

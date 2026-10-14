@@ -87,6 +87,8 @@ SmcntrpmfH checks that the VSINH and VUINH bits of mcyclecfg and minstretcfg sto
 and VU-mode.  With every mode inhibited the counter must not change across a visit to VS-mode or VU-mode; with
 only that mode counting, cycle must advance and instret must advance by exactly the instructions retired there.
 
+include::{testplansdir}/priv/SmcntrpmfH.adoc[]
+
 include::norm/SmcntrpmfH_norm_rules.adoc[]
 
 ==== PMPH Hypervisor Physical Memory Protection
@@ -118,6 +120,8 @@ reporting, and the henvcfg enables in VS and VU modes.  SvHZicboSm boots to M-mo
 address.
 
 include::{testplansdir}/priv/SvHZicbo.adoc[]
+
+include::{testplansdir}/priv/SvHZicboSm.adoc[]
 
 include::norm/SvHZicboSm_norm_rules.adoc[]
 
@@ -189,11 +193,7 @@ control.
 
 include::{testplansdir}/priv/SsstateenH.adoc[]
 
-[[t-SmstateenH-coverpoints]]
-.SmstateenH Coverpoints
-,===
-See <<t-SmstateenH-normative-rules>>
-,===
+include::{testplansdir}/priv/SmstateenH.adoc[]
 
 include::norm/SsstateenH_norm_rules.adoc[]
 

@@ -8,12 +8,13 @@ coverpoints:
   - heading: VS trap handler should log scause/spec/stval/sstatus (these will be the VS versions).  Save sstatu.SPP, SPIE
   - name: cp_hedeleg
     goal: Delegation to HS or VS
-    description: Attempt {instruction/load/store access fault, instruction/load/store misaligned fault, illegal instruction, ebreak} crossed with privilege mode M/HS/VS/VU/U crossed with medeleg = {0s/1111_0000_1011_0111_1111_111?} crossed with hedeleg = {0s/ 0000_11?0_1?11_0001_1111_111?/(walking 1s in hedeleg[8:1])}
+    description: Attempt {instruction/load/store access fault, instruction/load/store misaligned fault, illegal instruction, ebreak, ecall} crossed with privilege mode M/HS/VS/VU/U crossed with medeleg = {0s/1111_0000_1011_0111_1111_111?} crossed with hedeleg = {0s/ 0000_11?0_1?11_0001_1111_111?/(walking 1s in hedeleg[8:1])}
     expectation: |-
       VU/U/VS delegate to VS when bit is set in both delegation registers.
       Check xcause, xtval, xtinst, xepc, mtval2, xstatus.GVA field, other xtstaus bits relevant to traps and other fields visible at the receiving priv level.
+      The ecall is checked through the trap record, which shows the mode that took it and its cause.
     bins: |-
-      8 faults * 5 priv modes  * 2 medeleg * 9 hedeleg
+      9 exceptions * 5 priv modes  * 2 medeleg * 9 hedeleg
       *** might be too many
     id: "*** a version of this is needed in VMH for page faults.  Umer doing this."
     rules:
@@ -60,7 +61,6 @@ coverpoints:
       execute hlv.w, hlvx.wu, hsv.w, hfence.vvma, hfence.gvma
       read vstval, htval
       with mstatus.TVM = 0, read satp, vsatp
-      wfi with hstatus.VTW=1, mstatus.TW=0, no interrupt firing
       sret with hstatus.VTSR=1
       {sfence.vma, sinval.vma, read satp} with hstatus.VTVM=1
       RV32 only:
@@ -69,6 +69,7 @@ coverpoints:
     expectation: virtual instruction exception
     bins: 14+
     id: "*** check which fences belong in each."
+    notes: wfi with hstatus.VTW=1 moved to InterruptsH cp_wfi_vs.
   - name: cp_virtual_instruction_vu
     goal: exercise all ways to trigger virtual-instruction exceptions from VU
     description: |-
@@ -88,6 +89,21 @@ coverpoints:
     expectation: virtual instruction exception
     bins: 14+
     id: "*** check which fences belong in each."
+  - name: cp_virtual_instr_vs_tvm
+    goal: mstatus.TVM does not affect VS-mode
+    description: With mstatus.TVM = 1 and hstatus.VTVM = 0, in VS-mode csrr hgatp and vsatp
+    expectation: Virtual instruction exception, not illegal instruction
+    bins: 2 CSRs
+  - name: cp_virtual_instr_vu_tvm
+    goal: mstatus.TVM does not affect VU-mode
+    description: With mstatus.TVM = 1 and hstatus.VTVM = 0, in VU-mode csrr satp, vsatp and hgatp
+    expectation: Virtual instruction exception, not illegal instruction
+    bins: 3 CSRs
+  - name: cp_tsr_vs_sret
+    goal: mstatus.TSR does not affect VS-mode
+    description: "ExceptionsHSm (boots to M-mode): with mstatus.TSR = 1 and hstatus.VTSR = {0/1}, execute sret in VS-mode with vsstatus.SPP = 1 and SPIE = 0"
+    expectation: sret executes and stays in VS-mode when VTSR = 0; virtual instruction exception when VTSR = 1
+    bins: 2 VTSR
   - name: cp_loadstore_priv
     goal: Valid privilege modes of hypervisor load/store
     description: In each privilege mode {M/HS/VS/U/VU} with hstatus.HU={0/1}, attempt {HLV.W, HLVX.W, HSV.W} from scratch memory

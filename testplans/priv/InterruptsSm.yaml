@@ -150,7 +150,9 @@ coverpoints:
     bins: 4priv * 2 MIE + M mode * 2 MIE * 2 TW
     rules:
       - mstatus_tw_op
-  - name: cp_wfi_timeout
+  - name: |-
+      cp_wfi_timeout
+      cp_wfi_timeout_tw_zero
     goal: WFI waits until timeout
     description: |-
       Only applies to modes < M
@@ -158,7 +160,7 @@ coverpoints:
       write mstatus.MIE = {0/1}
       write mie.MTIE = {0/1}
       WFI instruction
-    expectation: "Note: may need sufficient Sail parameter to determine if we get illegal instruction or if WFI just retires.  Or may need to accept both behaviors."
+    expectation: WFI either completes or raises illegal instruction; both are accepted, and any other exception fails.
     bins: 4 priv * 2 MIE * 2 MTIE
     rules:
       - mstatus_tw_op

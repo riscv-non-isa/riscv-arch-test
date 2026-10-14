@@ -9,8 +9,9 @@ coverpoints:
     expectation: If both STCE = 1 and vstimecmp = 0, hip.VSTIP = 1.  Else hip.VSTIP = hvip.VSTIP.
   - name: cp_htimedelta
     goal: htimedelta affects vstimecmp
-    description: menvcfg.STCE = 1, henvcfg.STCE = 1, hvip.VSTIP = 0, htimedelta = {0, 2^30, 2^60, 2^-30, 2^-60}, vstimecmp = {0, 2^29, 2^31, 2^61, -2^29, -2^31, -2^61}.  Check hip.VSTIP.  For RV32, htimedletah and vstimecmph are involved.
-    expectation: hip.VSTIP = (htimedelta >= vstimecmp)
+    description: menvcfg.STCE = 1, henvcfg.STCE = 1, hvip.VSTIP = 0, htimedelta = {0, 2^30, 2^32-1, 2^60, -1, -2^30, -2^60}, vstimecmp = {0, 2^29, 2^31, 2^61, -2^29, -2^31, -2^61}.  Check hip.VSTIP against the value computed from a read of time.  For RV32, htimedeltah and vstimecmph are involved; htimedelta = 2^32-1 exercises the carry into the high half and -1 the 64-bit wrap.
+    expectation: hip.VSTIP = ((time + htimedelta) mod 2^64 >= vstimecmp), unsigned
+    bins: 7 htimedelta * 7 vstimecmp
   - name: cp_m_vstimecmp_accessible
     goal: TM and STCE control access depending on priv level
     description: With cross of menvcfg.STCE = {0/1}, henvcfg.STCE = {0/1} mcounteren.TM = {0/1}, hcounteren.TM = {0/1} read vstimecmp.  For RV32, also vstimecmph

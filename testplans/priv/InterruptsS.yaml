@@ -119,10 +119,13 @@ coverpoints:
       RVTEST_CLR_SSTC_INT
     expectation: Wait for timer interrupt.  MIE and SIE not affect results.
     bins: 4 priv * 2 SIE
-  - name: cp_wfi_timeout
+  - name: |-
+      cp_wfi_timeout
+      cp_wfi_timeout_tw_zero
     goal: WFI waits until timeout
     description: |-
       write mstatus.TW = 1 (also 0 in U-mode if S_SUPPORTED)
       write sie.STIE = {0/1}
       write sstatus.SIE = {0/1}
       WFI instruction
+    expectation: WFI either completes or raises illegal instruction; both are accepted, and any other exception fails.

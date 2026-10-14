@@ -9,11 +9,11 @@ coverpoints:
     expectation: always succeeds
     rules:
       - Reading back counter is part of test program but not coverpoint
-  - name: cp_delta
+  - name: cp_delta_m
     goal: htimedelta does not affect time in M mode
-    description: "With htimedelta = {0, 2^30, 2^60, -2^30, -2^60}, read time.   In RV32, this also involves htimedeltah and timeh. Note: do not check time directly against reference model, which might tick differently.  Only look at the range of values."
-    expectation: 0 < time < 2^30 in all circumstances
-    bins: "5"
+    description: "With htimedelta = {0, 2^30, 2^32-1, 2^60, -1, -2^30, -2^60}, read time.   In RV32, this also involves htimedeltah and timeh; 2^32-1 exercises the carry into the high half and -1 the 64-bit wrap. Note: do not check time directly against reference model, which might tick differently.  Only look at the range of values: compare against a baseline time read just before with htimedelta = 0."
+    expectation: 0 <= time - baseline < 2^30 in all circumstances
+    bins: 7 htimedelta values * time (and timeh on RV32)
     id: norm:csr:htimedleta:delta
   - heading: in HS mode
   - name: cp_scounteren_access_hs
@@ -22,11 +22,11 @@ coverpoints:
     expectation: always succeeds
     rules:
       - Reading back counter is part of test program but not coverpoint
-  - name: cp_delta
+  - name: cp_delta_hs
     goal: htimedelta does not affect time in HS mode
-    description: "With htimedelta = {0, 2^30, 2^60, -2^30, -2^60}, read time.   In RV32, this also involves htimedeltah and timeh. Note: do not check time directly against reference model, which might tick differently.  Only look at the range of values."
-    expectation: 0 < time < 2^30 in all circumstances
-    bins: "5"
+    description: "With htimedelta = {0, 2^30, 2^32-1, 2^60, -1, -2^30, -2^60}, read time.   In RV32, this also involves htimedeltah and timeh; 2^32-1 exercises the carry into the high half and -1 the 64-bit wrap. Note: do not check time directly against reference model, which might tick differently.  Only look at the range of values: compare against a baseline time read just before with htimedelta = 0."
+    expectation: 0 <= time - baseline < 2^30 in all circumstances
+    bins: 7 htimedelta values * time (and timeh on RV32)
   - heading: in VS mode
   - name: cp_mcounteren_access_vs
     goal: vscounters
@@ -34,22 +34,21 @@ coverpoints:
     expectation: fails when 0
     rules:
       - Reading back counter is part of test program but not coverpoint
+  - name: cp_mcounteren_access_vs_h0
+    goal: vscounters
+    description: Write walking 1s and 0s to mcounteren with hcounteren = all 0s and scounteren = all 0s.  Read from corresponding counter and counterh in VS-mode
+    expectation: Illegal instruction when the mcounteren bit is 0; virtual instruction when it is 1, because the hcounteren bit is 0
   - name: cp_hcounteren_access_vs
     goal: vscounters
     description: Write walking 1s and 0s to hcounteren with mcounteren = all 1s  and scounteren = all 0s.  Read from corresponding counter and counterh in VS-mode (should fail when 0)
     expectation: fails when 0
     rules:
       - Reading back counter is part of test program but not coverpoint
-  - name: cp_delta
+  - name: cp_delta_vs
     goal: htimedelta affects time in VS mode
-    description: "With htimedelta = {0, 2^30, 2^60, -2^30, -2^60}, read time.   In RV32, this also involves htimedeltah and timeh. Note: do not check time directly against reference model, which might tick differently.  Only look at the range of values."
-    expectation: |-
-      0: 0 < time < 2^30
-      2^30: 2^30 < time < 2^60
-      2^60: 2^60 < time ^ 2^61
-      -2^30: -2^30 < time < 0
-      -2^60: -2^60 < time < 2^-59
-    bins: "5"
+    description: "With htimedelta = {0, 2^30, 2^32-1, 2^60, -1, -2^30, -2^60}, read time.   In RV32, this also involves htimedeltah and timeh; 2^32-1 exercises the carry into the high half and -1 the 64-bit wrap. Note: do not check time directly against reference model, which might tick differently.  Only look at the range of values: compare against a baseline time read just before with htimedelta = 0."
+    expectation: (time - baseline - htimedelta) mod 2^64 < 2^30 for each htimedelta, so time + htimedelta wraps modulo 2^64
+    bins: 7 htimedelta values * time (and timeh on RV32)
   - heading: in U mode
   - name: cp_scounteren_access_u
     goal: vscounters
@@ -57,12 +56,20 @@ coverpoints:
     expectation: fails when 0
     rules:
       - Reading back counter is part of test program but not coverpoint
-  - name: cp_delta
+  - name: cp_delta_u
     goal: htimedelta does not affect time in U mode
-    description: "With htimedelta = {0, 2^30, 2^60, -2^30, -2^60}, read time.   In RV32, this also involves htimedeltah and timeh. Note: do not check time directly against reference model, which might tick differently.  Only look at the range of values."
-    expectation: 0 < time < 2^30 in all circumstances
-    bins: "5"
+    description: "With htimedelta = {0, 2^30, 2^32-1, 2^60, -1, -2^30, -2^60}, read time.   In RV32, this also involves htimedeltah and timeh; 2^32-1 exercises the carry into the high half and -1 the 64-bit wrap. Note: do not check time directly against reference model, which might tick differently.  Only look at the range of values: compare against a baseline time read just before with htimedelta = 0."
+    expectation: 0 <= time - baseline < 2^30 in all circumstances
+    bins: 7 htimedelta values * time (and timeh on RV32)
   - heading: in VU mode
+  - name: cp_mcounteren_access_vu
+    goal: vscounters
+    description: Write walking 1s and 0s to mcounteren with hcounteren = scounteren = all 1s.  Read from corresponding counter and counterh in VU-mode
+    expectation: Illegal instruction when the mcounteren bit is 0; succeeds when it is 1
+  - name: cp_mcounteren_access_vu_hs0
+    goal: vscounters
+    description: Write walking 1s and 0s to mcounteren with hcounteren = scounteren = all 0s.  Read from corresponding counter and counterh in VU-mode
+    expectation: Illegal instruction when the mcounteren bit is 0; virtual instruction when it is 1, because the hcounteren and scounteren bits are 0
   - name: cp_hcounteren_access_vu
     goal: vscounters
     description: Write walking 1s and 0s to hcounteren with mcounteren = scounteren = all 1s.  Read from corresponding counter and counterh in VU-mode (should fail when 0)
@@ -73,15 +80,10 @@ coverpoints:
     goal: vscounters
     description: Write walking 1s and 0s to scounteren with mcounteren = hcounteren = all 1s.  Read from corresponding counter and counterh in VU-mode (should fail when 0)
     expectation: fails when 0
-  - name: cp_delta
+  - name: cp_delta_vu
     goal: htimedelta affects time in VU mode
-    description: "With htimedelta = {0, 2^30, 2^60, -2^30, -2^60}, read time.   In RV32, this also involves htimedeltah and timeh. Note: do not check time directly against reference model, which might tick differently.  Only look at the range of values."
-    expectation: |-
-      0: 0 < time < 2^30
-      2^30: 2^30 < time < 2^60
-      2^60: 2^60 < time ^ 2^61
-      -2^30: -2^30 < time < 0
-      -2^60: -2^60 < time < 2^-59
-    bins: "5"
+    description: "With htimedelta = {0, 2^30, 2^32-1, 2^60, -1, -2^30, -2^60}, read time.   In RV32, this also involves htimedeltah and timeh; 2^32-1 exercises the carry into the high half and -1 the 64-bit wrap. Note: do not check time directly against reference model, which might tick differently.  Only look at the range of values: compare against a baseline time read just before with htimedelta = 0."
+    expectation: (time - baseline - htimedelta) mod 2^64 < 2^30 for each htimedelta, so time + htimedelta wraps modulo 2^64
+    bins: 7 htimedelta values * time (and timeh on RV32)
   - heading: "NOTE: xcounteren are WARL and some bits could be read-only zero.  Currently, the coverpoints won't be hit.  What should we do about this?"
   - heading: "*** move everything related to htimedelta from ZicsrH to here"

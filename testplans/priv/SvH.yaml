@@ -12,6 +12,8 @@ coverpoints:
       - Set privilege bits such as MPRV, MPV, SPVP, SUM, MXR, and VU carefully per test requirement.
       - After modifying hgatp, vsatp, or page tables, always execute sfence.vma (and vma.all) to flush stale TLBs.
       - Run in VS-mode unless otherwise specified.
+      - The permission, SUM, MXR, ADUE, PBMT, GPA-width, implicit-access and HLV crosses of SvH_vsstage_cg, SvH_gstage_cg, SvH_twostage_cg and SvH_hlv_cg have a bin for each supported mode instead of one for any paged mode: vsatp_mode (Sv32, or Sv39, Sv48 and Sv57), hgatp_mode (Sv32x4, or Sv39x4, Sv48x4 and Sv57x4) and stage_modes (the pairs Sv32/Sv32x4, Sv39/Sv39x4, Sv48/Sv48x4 and Sv57/Sv57x4).  The tests run in each mode the hart supports.
+      - The straddle tests (cp_straddle) need Zca, and the NAPOT tests (cp_vsatp_napot, cp_hgatp_napot, cp_twostage_napot) need Svnapot.  They, the canonical-address tests and the Sv48/Sv48x4 and Sv57/Sv57x4 tests, including their GPA-width tests, are separate test files that run only when the hart has the extension or the VS-stage and G-stage mode parameters they need.
 
       Valid Perms means XWRV=1111, A/D = 11 unless otherwise specified.  MODE is Sv32 for RV32 or Sv39 for RV64 when exercising virtual memory, unless otherwise specified.  Access means Read, Write, and Execute.
   - name: cp_vsatp_mode_field
@@ -508,6 +510,37 @@ coverpoints:
       PTE.U=0 with access from Supervisor/HS/VS
 
       PTE.U=1 with access from U/VU
+  - name: cp_hlvx_perm
+    goal: HLVX needs execute permission in both stages
+    description: |-
+      In HS-mode with hstatus.SPVP = 1, execute hlvx.wu on a VS-stage read-only page (G-stage RWX) and on a G-stage read-only page (VS-stage RWX), with each vsstatus.MXR and sstatus.MXR.
+    expectation: Load page fault for the VS-stage read-only page, load guest-page fault for the G-stage read-only page.  MXR makes executable pages readable but does not grant execute permission, so it never avoids the fault.
+    bins: stage_modes x 2 vsstatus.MXR x 2 sstatus.MXR x {load page fault, load guest-page fault}
+  - name: cp_twostage_canonical
+    goal: Non-canonical guest virtual addresses
+    description: |-
+      RV64 only.  For each supported pair Sv39/Sv39x4, Sv48/Sv48x4 and Sv57/Sv57x4, in VS-mode and VU-mode, store, load and fetch at the mapped guest virtual address with the bit just above the VS-stage VA width set, and with all bits from that bit to 63 set.  The top VA bit is clear, so both addresses are non-canonical.
+    expectation: Store/AMO, load or instruction page fault (not a guest-page fault).  stval, and sepc for the fetch, may hold any invalid address, because an implementation may convert an invalid address to another invalid address before writing it.
+    bins: "{VS, VU} x {lw, sw, jalr} x {Sv39, Sv48, Sv57 that the hart supports with the matching x4 mode} x page fault"
+  - name: cp_twostage_gpa_width
+    goal: VS-stage PTE guest physical address wider than the G-stage mode
+    description: |-
+      RV64 only, hgatp = Sv39x4 or Sv48x4.  In VS-mode, store, load and fetch through a VS-stage leaf whose PPN sets guest physical address bit 41 (Sv39x4) or 50 (Sv48x4), or bit 55, and through a VS-stage level-1 PTE that points to the leaf table at such an address.
+    expectation: Store/AMO, load or instruction guest-page fault.  A hart that drops the high bits reaches a valid G-stage leaf instead.
+    bins: VS x {lw, sw, jalr} x vsatp paged x {Sv39x4, Sv48x4 with htval bits above the G-stage width nonzero} x guest-page fault
+  - name: |-
+      cp_hfence_vvma
+      cp_hfence_gvma
+      cp_sfence_vma_vs
+    goal: Fences remove stale VS-stage and G-stage translations (SvH_fence_cg)
+    description: |-
+      Sv32/Sv32x4 and Sv39/Sv39x4.  Map a guest virtual address through the VS-stage to guest physical page A and through the G-stage to physical page A, and load from it in VS-mode.  HS-mode then points the VS-stage leaf at guest page B, or the G-stage leaf of page A at physical page B, and runs hfence.vvma or hfence.gvma in HS-mode, or sfence.vma in VS-mode.  rs1 is x0 or the address (the guest virtual address, or the guest physical address >> 2 for hfence.gvma); rs2 is x0 or the current ASID (hfence.vvma, sfence.vma) or VMID (hfence.gvma), and the address is also used with all ASIDMAX or VMIDMAX bits set in rs2.  The cases run with every implemented vsatp.ASID and hgatp.VMID bit set.
+      Isolation cases load under VMID or ASID 0, switch to the other ID, change the leaf and fence only the new ID: hfence.gvma with rs2 = VMID, hfence.vvma with x0 after a VMID switch and with rs2 = ASID after an ASID switch, and sfence.vma in VS-mode with x0 after a VMID switch.
+    expectation: The VS-mode load after the fence reads page B.  Both loads are recorded.  A hart that caches no translation passes.
+    bins: |-
+      cp_hfence_vvma: HS x hfence.vvma x vsatp paged x hgatp paged x rs1 {x0, register} x rs2 {x0, register}
+      cp_hfence_gvma: HS x hfence.gvma x vsatp paged x hgatp paged x rs1 {x0, register} x rs2 {x0, register}
+      cp_sfence_vma_vs: VS x sfence.vma x vsatp paged x hgatp paged x rs1 {x0, register} x rs2 {x0, register}
   - heading: "*** hgatp misaligned super pages and 16KB  (US)"
   - heading: "*** tests exercising successful translation with any bits of the GPA (including 33:32 for Sv32x4)"
   - heading: "*** need some tests involving translation through both G and VS-stage"
