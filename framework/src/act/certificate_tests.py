@@ -93,7 +93,6 @@ RVA23_EXTENSIONS = frozenset(
         "Ssnpm",
         "Smnpm",
         # Sv extensions
-        "Sv32",
         "Sv39",
         "Sv48",
         "Sv57",
