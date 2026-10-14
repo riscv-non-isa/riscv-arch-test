@@ -61,7 +61,7 @@ def _compare_param(test_value: object, config_value: object) -> bool:
 def check_test_extensions(
     required_extensions: frozenset[ExtensionRequirement],
     forbidden_extensions: frozenset[str],
-    implemented_extensions: set[str],
+    implemented_extensions: frozenset[str],
 ) -> bool:
     """Check required, alternative, and forbidden extension constraints."""
     if not forbidden_extensions.isdisjoint(implemented_extensions):
@@ -97,7 +97,7 @@ def check_test_params(test_params: dict[str, int | bool | str], config_params: d
 
 def select_tests(
     test_dict: dict[str, TestMetadata],
-    implemented_extensions: set[str],
+    implemented_extensions: frozenset[str],
     config_params: dict[str, ConfigParamValue],
     harts: int = 1,
     *,
@@ -136,7 +136,7 @@ def filter_tests_by_certificate(test_dict: dict[str, TestMetadata], certificate:
     return {
         test_name: test_metadata
         for test_name, test_metadata in test_dict.items()
-        if check_test_extensions(test_metadata.required_extensions, frozenset(), set(certificate_extensions))
+        if check_test_extensions(test_metadata.required_extensions, frozenset(), certificate_extensions)
     }
 
 
