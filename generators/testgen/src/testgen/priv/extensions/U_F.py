@@ -7,7 +7,7 @@
 # SPDX-License-Identifier: Apache-2.0
 ##################################
 
-"""U_F test generator: floating-point CSRs and mstatus.FS (through T-SBI) in U-mode, part of the U suite."""
+"""U_F test generator: floating-point CSRs and xstatus.FS (through T-SBI) in U-mode, part of the U suite."""
 
 from testgen.asm.csr import csr_access_test, csr_walk_test
 from testgen.asm.helpers import comment_banner

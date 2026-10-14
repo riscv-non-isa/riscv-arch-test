@@ -102,6 +102,9 @@
 --override cpu*/Smdbltrp=T
 --override cpu*/d_requires_f=T
 
+# Debug triggers
+--override cpu*/scontext_undefined=T # no scontext or its mscontext alias: they hold the supervisor context and this hart has no S-mode
+
 # PMA Settings
 # 'r': read access allowed
 # 'w': write access allowed

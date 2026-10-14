@@ -9,7 +9,7 @@
     "suite": {
       "type": "string",
       "pattern": "^[A-Za-z0-9_]+$",
-      "description": "Test plan name, e.g. InterruptsSm; must match the covergroup <suite>_cg or <suite>_<group>_cg. A plan folded into a base suite, such as Sm_F in Sm, keeps its own name while its covergroup is declared in the base suite's coverage file."
+      "description": "Suite name, e.g. InterruptsSm; must match the covergroup <suite>_cg and coverpoints/norm/<suite>.yaml."
     },
     "title": {
       "type": "string",

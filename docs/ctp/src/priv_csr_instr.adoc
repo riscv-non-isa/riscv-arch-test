@@ -15,7 +15,7 @@ where they should throw an Illegal Instruction exception if not implemented.
 ==== Sm Machine-Mode CSRs and Instructions
 
 These test CSRs and privileged instructions in machine mode.
-The Sm suite also contains the <<Sm_F Machine-Mode Floating-Point CSRs,Sm_F>>, <<Sm_V Machine-Mode Vector CSRs,Sm_V>>, and <<Sm_VF Machine-Mode Vector Floating-Point State,Sm_VF>> tests, which run only when F, Zve32x, or Zve32f is also supported.
+The Sm suite also contains the Sm_F, Sm_V, and Sm_VF tests of the floating-point and vector CSRs and `mstatus.FS`/`mstatus.VS`, which run only when F, Zve32x, or Zve32f is also supported.
 
 include::{testplansdir}/priv/Sm.adoc[]
 
@@ -25,34 +25,10 @@ include::norm/Sm_norm_rules.adoc[]
 
 TODO: Many new normative rules have been added since this was written.  Update Sm.yaml.
 
-===== Sm_F Machine-Mode Floating-Point CSRs
-
-These test the floating-point CSRs and `mstatus.FS` from machine mode.
-They are the `Sm_F-NN.S` tests of the Sm suite and run when F is supported.
-Their normative rules are listed in <<t-Sm-normative-rules>>.
-
-include::{testplansdir}/priv/Sm_F.adoc[]
-
-===== Sm_V Machine-Mode Vector CSRs
-
-These test the vector CSRs, `vset{i}vl{i}`, `vstart`, `mstatus.VS`, and `misa.V` from machine mode.
-They are the `Sm_V_*-NN.S` tests of the Sm suite and run when Zve32x is supported.
-Their normative rules are listed in <<t-Sm-normative-rules>> and <<t-Vx-normative-rules>>.
-
-include::{testplansdir}/priv/Sm_V.adoc[]
-
-===== Sm_VF Machine-Mode Vector Floating-Point State
-
-These test how vector floating-point instructions interact with `mstatus.FS` from machine mode.
-They are the `Sm_VF-NN.S` tests of the Sm suite and run when Zve32f is supported.
-Their normative rules are listed in <<t-Vx-normative-rules>>.
-
-include::{testplansdir}/priv/Sm_VF.adoc[]
-
 ==== S Supervisor-Mode CSRs and Instructions
 
 These test additional CSRs that exist in supervisor mode, and privileged instructions in supervisor mode.
-The S suite also contains the <<S_F Supervisor-Mode Floating-Point CSRs,S_F>>, <<S_V Supervisor-Mode Vector CSRs,S_V>>, and <<S_VF Supervisor-Mode Vector Floating-Point State,S_VF>> tests, which run only when F, Zve32x, or Zve32f is also supported.
+The S suite also contains the S_F, S_V, and S_VF tests, which repeat the Sm_F, Sm_V, and Sm_VF tests from supervisor mode using `sstatus.FS` and `sstatus.VS` when F, Zve32x, or Zve32f is also supported.
 
 include::{testplansdir}/priv/S.adoc[]
 
@@ -65,64 +41,14 @@ How to handle interrupts that don't get evaluated immediately after the macro se
 macro could spin until they fire, but needs to know if they should fire (e.g. not blocked by xstatus.xIE).
 ====
 
-===== S_F Supervisor-Mode Floating-Point CSRs
-
-These repeat the <<t-Sm_F-coverpoints,Sm_F>> tests from supervisor mode, using `sstatus.FS` in place of `mstatus.FS`.
-They are the `S_F-NN.S` tests of the S suite and run when F is supported.
-Their normative rules are listed in <<t-Sm-normative-rules>>.
-
-include::{testplansdir}/priv/S_F.adoc[]
-
-===== S_V Supervisor-Mode Vector CSRs
-
-These repeat the <<t-Sm_V-coverpoints,Sm_V>> tests from supervisor mode, using `sstatus.VS` in place of `mstatus.VS`.
-`misa` is not accessible in supervisor mode, so S_V omits `cp_misa_v_clear_set` and its VS=Off coverpoints are not crossed with `misa.V`.
-They are the `S_V_*-NN.S` tests of the S suite and run when Zve32x is supported.
-Their normative rules are listed in <<t-Sm-normative-rules>> and <<t-Vx-normative-rules>>.
-
-include::{testplansdir}/priv/S_V.adoc[]
-
-===== S_VF Supervisor-Mode Vector Floating-Point State
-
-These repeat the <<t-Sm_VF-coverpoints,Sm_VF>> tests from supervisor mode, using `sstatus.FS` in place of `mstatus.FS`.
-They are the `S_VF-NN.S` tests of the S suite and run when Zve32f is supported.
-Their normative rules are listed in <<t-Vx-normative-rules>>.
-
-include::{testplansdir}/priv/S_VF.adoc[]
-
 ==== U User-Mode CSRs and Instructions
 
 These test additional CSRs that exist in user mode, and privileged instructions in user mode.
-The U suite also contains the <<U_F User-Mode Floating-Point CSRs,U_F>>, <<U_V User-Mode Vector CSRs,U_V>>, and <<U_VF User-Mode Vector Floating-Point State,U_VF>> tests, which run only when F, Zve32x, or Zve32f is also supported.
+The U suite also contains the U_F, U_V, and U_VF tests, which repeat the Sm_F, Sm_V, and Sm_VF tests from user mode when F, Zve32x, or Zve32f is also supported, setting and reading `sstatus.FS` and `sstatus.VS` through T-SBI calls (`mstatus` when S-mode is not supported).
 
 include::{testplansdir}/priv/U.adoc[]
 
 include::norm/U_norm_rules.adoc[]
-
-===== U_F User-Mode Floating-Point CSRs
-
-These access the floating-point CSRs from user mode, and repeat the <<t-Sm_F-coverpoints,Sm_F>> tests from user mode, setting and reading `mstatus.FS` through T-SBI calls.
-They are the `U_F-NN.S` tests of the U suite and run when F is supported.
-Their normative rules are listed in <<t-U-normative-rules>> and <<t-Sm-normative-rules>>.
-
-include::{testplansdir}/priv/U_F.adoc[]
-
-===== U_V User-Mode Vector CSRs
-
-These access the vector CSRs from user mode, and repeat the <<t-Sm_V-coverpoints,Sm_V>> tests from user mode, setting and reading `mstatus.VS` through T-SBI calls.
-`misa` is not accessible in user mode, so U_V omits `cp_misa_v_clear_set` and its VS=Off coverpoints are not crossed with `misa.V`.
-They are the `U_V_*-NN.S` tests of the U suite and run when Zve32x is supported.
-Their normative rules are listed in <<t-Sm-normative-rules>> and <<t-Vx-normative-rules>>.
-
-include::{testplansdir}/priv/U_V.adoc[]
-
-===== U_VF User-Mode Vector Floating-Point State
-
-These repeat the <<t-Sm_VF-coverpoints,Sm_VF>> tests from user mode, setting and reading `mstatus.FS` through T-SBI calls.
-They are the `U_VF-NN.S` tests of the U suite and run when Zve32f is supported.
-Their normative rules are listed in <<t-Vx-normative-rules>>.
-
-include::{testplansdir}/priv/U_VF.adoc[]
 
 ==== Zkr Entropy CSR
 
