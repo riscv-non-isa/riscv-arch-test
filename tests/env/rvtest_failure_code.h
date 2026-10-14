@@ -2,6 +2,30 @@
 # riscv-arch-test assembly test failure handling code
 # Jordan Carlin jcarlin@hmc.edu October 2025
 # SPDX-License-Identifier: Apache-2.0
+// Load the UDB_MXLEN-sized pointer at _OFF(DEFAULT_LINK_REG) into x6. The pointers follow
+// the jal of a failed check, which can follow compressed code, so they are only halfword
+// aligned. Load them with lhu so cores without misaligned-load support do not trap.
+// Clobbers x7 and x8.
+#ifdef UDB_MXLEN_64
+  #define FAILURE_LOAD_LINK_PTR(_OFF)            \
+        lhu x6, _OFF(DEFAULT_LINK_REG)          ;\
+        lhu x7, _OFF+2(DEFAULT_LINK_REG)        ;\
+        slli x7, x7, 16                         ;\
+        or x6, x6, x7                           ;\
+        lhu x7, _OFF+4(DEFAULT_LINK_REG)        ;\
+        lhu x8, _OFF+6(DEFAULT_LINK_REG)        ;\
+        slli x8, x8, 16                         ;\
+        or x7, x7, x8                           ;\
+        slli x7, x7, 32                         ;\
+        or x6, x6, x7
+#else
+  #define FAILURE_LOAD_LINK_PTR(_OFF)            \
+        lhu x6, _OFF(DEFAULT_LINK_REG)          ;\
+        lhu x7, _OFF+2(DEFAULT_LINK_REG)        ;\
+        slli x7, x7, 16                         ;\
+        or x6, x6, x7
+#endif
+
 // Macro to define failure detection code (functions)
 // This is instantiated after test code near the end of RVTEST_CODE_END in test_setup.h
 .macro RVTEST_FAILURE_CODE
@@ -350,68 +374,69 @@
         # We need to ensure that VS is set in mstatus here, as VS off is an exceptions test
         RVTEST_TSBI_CSR_SET(CSR_MSTATUS, 0x600)
         la x6, vecreg_scratch              # vecreg_scratch base address
+        li x7, VLEN_BYTES                  # too large for an addi immediate once VLEN >= 16384
         vs1r.v v0, (x6)
-        addi x6, x6, VLEN_BYTES            # increment by one vector's bytes
+        add x6, x6, x7                     # increment by one vector's bytes
         vs1r.v v1, (x6)
-        addi x6, x6, VLEN_BYTES
+        add x6, x6, x7
         vs1r.v v2, (x6)
-        addi x6, x6, VLEN_BYTES
+        add x6, x6, x7
         vs1r.v v3, (x6)
-        addi x6, x6, VLEN_BYTES
+        add x6, x6, x7
         vs1r.v v4, (x6)
-        addi x6, x6, VLEN_BYTES
+        add x6, x6, x7
         vs1r.v v5, (x6)
-        addi x6, x6, VLEN_BYTES
+        add x6, x6, x7
         vs1r.v v6, (x6)
-        addi x6, x6, VLEN_BYTES
+        add x6, x6, x7
         vs1r.v v7, (x6)
-        addi x6, x6, VLEN_BYTES
+        add x6, x6, x7
         vs1r.v v8, (x6)
-        addi x6, x6, VLEN_BYTES
+        add x6, x6, x7
         vs1r.v v9, (x6)
-        addi x6, x6, VLEN_BYTES
+        add x6, x6, x7
         vs1r.v v10, (x6)
-        addi x6, x6, VLEN_BYTES
+        add x6, x6, x7
         vs1r.v v11, (x6)
-        addi x6, x6, VLEN_BYTES
+        add x6, x6, x7
         vs1r.v v12, (x6)
-        addi x6, x6, VLEN_BYTES
+        add x6, x6, x7
         vs1r.v v13, (x6)
-        addi x6, x6, VLEN_BYTES
+        add x6, x6, x7
         vs1r.v v14, (x6)
-        addi x6, x6, VLEN_BYTES
+        add x6, x6, x7
         vs1r.v v15, (x6)
-        addi x6, x6, VLEN_BYTES
+        add x6, x6, x7
         vs1r.v v16, (x6)
-        addi x6, x6, VLEN_BYTES
+        add x6, x6, x7
         vs1r.v v17, (x6)
-        addi x6, x6, VLEN_BYTES
+        add x6, x6, x7
         vs1r.v v18, (x6)
-        addi x6, x6, VLEN_BYTES
+        add x6, x6, x7
         vs1r.v v19, (x6)
-        addi x6, x6, VLEN_BYTES
+        add x6, x6, x7
         vs1r.v v20, (x6)
-        addi x6, x6, VLEN_BYTES
+        add x6, x6, x7
         vs1r.v v21, (x6)
-        addi x6, x6, VLEN_BYTES
+        add x6, x6, x7
         vs1r.v v22, (x6)
-        addi x6, x6, VLEN_BYTES
+        add x6, x6, x7
         vs1r.v v23, (x6)
-        addi x6, x6, VLEN_BYTES
+        add x6, x6, x7
         vs1r.v v24, (x6)
-        addi x6, x6, VLEN_BYTES
+        add x6, x6, x7
         vs1r.v v25, (x6)
-        addi x6, x6, VLEN_BYTES
+        add x6, x6, x7
         vs1r.v v26, (x6)
-        addi x6, x6, VLEN_BYTES
+        add x6, x6, x7
         vs1r.v v27, (x6)
-        addi x6, x6, VLEN_BYTES
+        add x6, x6, x7
         vs1r.v v28, (x6)
-        addi x6, x6, VLEN_BYTES
+        add x6, x6, x7
         vs1r.v v29, (x6)
-        addi x6, x6, VLEN_BYTES
+        add x6, x6, x7
         vs1r.v v30, (x6)
-        addi x6, x6, VLEN_BYTES
+        add x6, x6, x7
         vs1r.v v31, (x6)
     #endif // RVTEST_VECTOR
 
@@ -615,14 +640,7 @@
         # --------------------------------------------------
         # Save failing instruction, address and vd
         # --------------------------------------------------
-    #ifdef UDB_MXLEN_64
-        lwu x6, 0(DEFAULT_LINK_REG)      # load lower 32 bits of instruction address
-        lw  x7, 4(DEFAULT_LINK_REG)      # load upper 32 bits
-        slli x7, x7, 32
-        or x6, x6, x7                    # combine into 64-bit value
-    #else
-        lw x6, 0(DEFAULT_LINK_REG)       # RV32: 4-byte aligned, safe
-    #endif
+        FAILURE_LOAD_LINK_PTR(0)         # instruction address
 
         # Fetch the failing instruction using INSTR_PTR address
         lhu x7, 0(x6)       # get lower half of the failing instruction
@@ -941,7 +959,7 @@
     //
     // Strategy: identify which trap signature word mismatched by examining the
     // failure string pointer. The string encodes both the mode (M/S/H/V) and
-    // the field (vect/cause/epc/tval/ip/intID/mtval2/mtinst). We compare
+    // the field (vect/cause/epc/tval/ip/intID/mtval2/xtinst). We compare
     // against the known string addresses to determine the subtype, then report
     // the already-recorded expected/actual values from the common failure slots.
     //==========================================================================
@@ -950,28 +968,14 @@
         //--------------------------------------------------------------
         // Load the failure string pointer from the embedded data
         //--------------------------------------------------------------
-    #ifdef UDB_MXLEN_64
-        lwu x6, REGWIDTH(DEFAULT_LINK_REG)
-        lw  x7, REGWIDTH+4(DEFAULT_LINK_REG)
-        slli x7, x7, 32
-        or x6, x6, x7
-    #else
-        lw x6, REGWIDTH(DEFAULT_LINK_REG)
-    #endif
+        FAILURE_LOAD_LINK_PTR(REGWIDTH)
         la x16, trap_diag_fail_str_ptr
         SREG x6, 0(x16)                            # save for later printing
 
         //--------------------------------------------------------------
         // Load the address of the failing check (instruction pointer)
         //--------------------------------------------------------------
-    #ifdef UDB_MXLEN_64
-        lwu x6, 0(DEFAULT_LINK_REG)
-        lw  x7, 4(DEFAULT_LINK_REG)
-        slli x7, x7, 32
-        or x6, x6, x7
-    #else
-        lw x6, 0(DEFAULT_LINK_REG)
-    #endif
+        FAILURE_LOAD_LINK_PTR(0)
         SREG x6, 264(DEFAULT_TEMP_REG)              # store as failing_addr
 
         //--------------------------------------------------------------
@@ -1036,7 +1040,7 @@
     1:
         la x7, sv_Mtinst_str
         bne x6, x7, 1f
-        li x8, 7                                     # subtype: mtinst
+        li x8, 7                                     # subtype: xtinst
         li x9, 0
         j trap_diag_field_identified
     1:
@@ -1070,6 +1074,18 @@
         bne x6, x7, 1f
         li x8, 5
         li x9, 1
+        j trap_diag_field_identified
+    1:
+        la x7, sv_Htval2_str
+        bne x6, x7, 1f
+        li x8, 6                                     # subtype: second trap value (htval here)
+        li x9, 1                                     # mode: S/HS
+        j trap_diag_field_identified
+    1:
+        la x7, sv_Htinst_str
+        bne x6, x7, 1f
+        li x8, 7                                     # subtype: xtinst (htinst here)
+        li x9, 1                                     # mode: S/HS
         j trap_diag_field_identified
     1:
 
@@ -1200,15 +1216,7 @@
         # The jal returns to DEFAULT_LINK_REG, which points to the data after jal  (i.e., the first pointer itself)
 
         # Save failing address (loaded from embedded instruction pointer after jal)
-        # Only guaranteed to be 4-byte aligned, so need to load in 4-byte chunks on rv64
-    #ifdef UDB_MXLEN_64
-        lwu x6, 0(DEFAULT_LINK_REG)      # load lower 32 bits of instruction address
-        lw  x7, 4(DEFAULT_LINK_REG)      # load upper 32 bits
-        slli x7, x7, 32
-        or x6, x6, x7                    # combine into 64-bit value
-    #else
-        lw x6, 0(DEFAULT_LINK_REG)       # RV32: 4-byte aligned, safe
-    #endif
+        FAILURE_LOAD_LINK_PTR(0)
         SREG x6, 264(DEFAULT_TEMP_REG)
 
         # Fetch the failing instruction using INSTR_PTR address
@@ -1224,15 +1232,7 @@
         sw x7, 256(DEFAULT_TEMP_REG)      # record failing instruction (16 or 32 bits)
 
         # Get pointer to failure string (loaded from second embedded pointer after jal)
-        # Only guaranteed to be 4-byte aligned, so need to load in 4-byte chunks on rv64
-    #ifdef UDB_MXLEN_64
-        lwu x6, REGWIDTH(DEFAULT_LINK_REG)       # load lower 32 bits of string pointer
-        lw  x7, REGWIDTH+4(DEFAULT_LINK_REG)      # load upper 32 bits
-        slli x7, x7, 32
-        or x6, x6, x7                     # combine into 64-bit value
-    #else
-        lw x6, REGWIDTH(DEFAULT_LINK_REG) # RV32: 4-byte aligned, safe
-    #endif
+        FAILURE_LOAD_LINK_PTR(REGWIDTH)
         SREG x6, 288(DEFAULT_TEMP_REG)    # save the string pointer
 
     failedtest_report:
@@ -2096,6 +2096,7 @@
     failure_diag_type:                         # 0=none, 1=bad reconstructed LREG, 2=bad expected pointer
         .word 0
 #if defined(F_SUPPORTED) && CONFIG_FLEN > UDB_MXLEN
+    .balign 8                                    # stored with 64-bit stores
     failing_value_upper:
         .fill 2, 4, 0xfeedf00dbaaaaaad
     expected_value_upper:
@@ -2106,6 +2107,7 @@
         .fill 1, 4, 0xfeedf00d
     failing_index:                               # element index of first mismatch
         .fill 1, 4, 0xbaaaaaad
+    .balign 8                                    # failing_vl and failing_vtype are stored with SREG
     failing_vl:                                  # vl at point of failure
         .fill 2, 4, 0xfeedf00d
     failing_vtype:                               # vtype at point of failure
@@ -2123,7 +2125,7 @@
     //==========================================================================
     .p2align 4
     trap_diag_subtype:                           # 0=unknown, 1=vect, 2=cause, 3=epc, 4=tval,
-                                                 # 5=xip, 6=mtval2, 7=mtinst, 8=intID, 9=offset
+                                                 # 5=xip, 6=mtval2, 7=xtinst, 8=intID, 9=offset
         .word 0
     trap_diag_mode:                              # 0=M, 1=S, 2=HS, 3=VS
         .word 0
@@ -2388,8 +2390,12 @@
         .string "\"Mismatch in vstval value! Trap was being handled in VS-Mode.\"";
     sv_Mtval2_str:
         .string "\"Mismatch in mtval2 value! Trap was being handled in M-Mode.\"";
+    sv_Htval2_str:
+        .string "\"Mismatch in htval value! Trap was being handled in HS-Mode.\"";
     sv_Mtinst_str:
         .string "\"Mismatch in mtinst value! Trap was being handled in M-Mode.\"";
+    sv_Htinst_str:
+        .string "\"Mismatch in htinst value! Trap was being handled in HS-Mode.\"";
     sv_Mip_str:
         .string "\"Mismatch in mip value! Trap was being handled in M-Mode.\"";
     sv_Sip_str:
@@ -2520,7 +2526,7 @@
     trap_diag_field_tval2_str:
         .string "MTVAL2 (trap signature word 4, hypervisor)\n"
     trap_diag_field_tinst_str:
-        .string "MTINST (trap signature word 5, hypervisor)\n"
+        .string "XTINST (trap signature word 5, hypervisor)\n"
     trap_diag_field_intid_str:
         .string "External Interrupt ID (trap signature word 3)\n"
     trap_diag_field_unknown_str:
@@ -2555,7 +2561,8 @@
     trap_diag_hint_tval_str:
         .ascii  "RVCP: HINT: XTVAL mismatch. For illegal instructions, xtval should contain the\n"
         .ascii  "RVCP:       instruction encoding (or 0). For address faults, it should contain the\n"
-        .asciz  "RVCP:       faulting address. Check DUT's xtval reporting behavior.\n"
+        .ascii  "RVCP:       faulting address. On an interrupt it must be 0. Check DUT's xtval\n"
+        .asciz  "RVCP:       reporting behavior.\n"
     trap_diag_hint_ip_str:
         .ascii  "RVCP: HINT: XIP mismatch means interrupt pending bits differ. Check: interrupt\n"
         .ascii  "RVCP:       controller configuration, RVMODEL interrupt set/clear macros, timer\n"
