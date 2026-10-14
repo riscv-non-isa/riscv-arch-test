@@ -8,6 +8,8 @@
 
 """Shared test generation for the privileged mode suites (Sm, S, U)."""
 
+from collections.abc import Callable
+
 from testgen.asm.csr import gen_csr_read_sigupd, gen_csr_read_sigupd_in_mode, gen_csr_write_sigupd
 from testgen.asm.helpers import comment_banner, write_sigupd
 from testgen.asm.tsbi import tsbi_call, tsbi_call_or_direct
@@ -15,34 +17,26 @@ from testgen.data.state import TestData
 from testgen.data.test_chunk import TestChunk
 
 # Status CSR whose FS and VS fields the tests in each privilege mode check; it also names their
-# coverpoints and testcase labels. U-mode code reaches the fields through T-SBI (see status_csr_instr).
+# coverpoints and testcase labels. U-mode code reaches the fields through T-SBI (see _status_access).
 STATUS_CSR = {"M": "mstatus", "S": "sstatus", "U": "mstatus"}
 
 
-def status_csr_instr(instr: str, priv: str) -> str:
-    """Run instr, a csrr/csrw/csrs/csrc of STATUS_CSR[priv], from code running in priv ("M", "S" or "U").
+def _status_access(priv: str, instr: Callable[[str], str]) -> list[str]:
+    """Run instr(csr), an access to the status CSR, from code running in priv ("M", "S" or "U").
 
-    M- and S-mode run it directly. U-mode runs it through T-SBI on sstatus when S-mode is supported,
-    and on mstatus otherwise.
+    M- and S-mode access STATUS_CSR[priv] directly. U-mode goes through T-SBI, to sstatus when
+    S-mode is supported and to mstatus otherwise.
     """
     if priv != "U":
-        return tsbi_call_or_direct(instr, priv)
-    return "\n".join(
-        [
-            "#ifdef S_SUPPORTED",
-            tsbi_call(instr.replace("mstatus", "sstatus")),
-            "#else",
-            tsbi_call(instr),
-            "#endif",
-        ]
-    )
+        return [tsbi_call_or_direct(instr(STATUS_CSR[priv]), priv)]
+    return ["#ifdef S_SUPPORTED", tsbi_call(instr("sstatus")), "#else", tsbi_call(instr("mstatus")), "#endif"]
 
 
 def gen_status_read_sigupd(check_reg: int, test_data: TestData, priv: str, mask_reg: int | None = None) -> str:
-    """Read STATUS_CSR[priv] from code running in priv into the signature, keeping only the bits in mask_reg if given."""
+    """Read the status CSR from code running in priv into the signature, keeping only the bits in mask_reg if given."""
     if mask_reg is None and priv != "U":
         return gen_csr_read_sigupd_in_mode(check_reg, (STATUS_CSR[priv], None), test_data, priv)
-    lines = [status_csr_instr(f"csrr x{check_reg}, {STATUS_CSR[priv]}", priv)]
+    lines = _status_access(priv, lambda csr: f"csrr x{check_reg}, {csr}")
     if mask_reg is not None:
         lines.append(f"and x{check_reg}, x{check_reg}, x{mask_reg}    # keep only the masked bits")
     lines.append(write_sigupd(check_reg, test_data))
@@ -55,15 +49,16 @@ def set_status_fields(temp_reg: int, priv: str, fs: int | None = None, vs: int |
     The fields are named by their encoding.h masks, and a field value is that many times the mask's
     lowest bit.
     """
-    status = STATUS_CSR[priv]
     fields = [(name, val) for name, val in (("FS", fs), ("VS", vs)) if val is not None]
+    names = " and ".join(name for name, _ in fields)
     mask = " | ".join(f"MSTATUS_{name}" for name, _ in fields)
     value = " | ".join(f"{val} * (MSTATUS_{name} & -MSTATUS_{name})" for name, val in fields if val) or "0"
+    settings = ", ".join(f"{name}={val}" for name, val in fields)
     return [
         f"LI(x{temp_reg}, {mask})",
-        status_csr_instr(f"csrc {status}, x{temp_reg}  # clear {' and '.join(n for n, _ in fields)}", priv),
+        *_status_access(priv, lambda csr: f"csrc {csr}, x{temp_reg}  # clear {names}"),
         f"LI(x{temp_reg}, {value})",
-        status_csr_instr(f"csrs {status}, x{temp_reg}  # {', '.join(f'{n}={v}' for n, v in fields)}", priv),
+        *_status_access(priv, lambda csr: f"csrs {csr}, x{temp_reg}  # {settings}"),
     ]
 
 
