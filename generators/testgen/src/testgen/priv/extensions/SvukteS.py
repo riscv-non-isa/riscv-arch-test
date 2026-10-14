@@ -13,6 +13,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from testgen.asm.helpers import comment_banner
+from testgen.asm.tsbi import tsbi_call
 from testgen.data.state import TestData
 from testgen.data.test_chunk import TestChunk
 from testgen.priv.extensions.SvukteCommon import (
@@ -181,7 +182,7 @@ def _umode_case(
         lines.extend(asm)
         results.append((label, check_reg))
 
-    lines.append("RVTEST_TSBI_GOTO_MMODE")
+    lines.append("RVTEST_TSBI_GOTO_SMODE")
     lines.extend(
         deferred_sigupds(
             test_data,
@@ -205,7 +206,7 @@ def _mode_block(
         # Clear those delegation bits so the M-mode handler can resume the test.
         "# Clear medeleg for instruction, load, and store/AMO page faults.",
         f"LI(x{regs.scratch}, 0xb000)",
-        f"csrc medeleg, x{regs.scratch}",
+        tsbi_call(f"csrc medeleg, x{regs.scratch}"),
     ]
 
     for va, perms, cases, description in (
@@ -279,7 +280,7 @@ def _mode_block(
     required_extensions=["Svukte", "S", "Sm"],
     march_extensions=[],
     params=["MXLEN: 64"],
-    extra_defines=["#define BOOT_TO_MMODE"],
+    extra_defines=["#define BOOT_TO_SMODE"],
 )
 def make_svuktes(test_data: TestData) -> list[TestChunk]:
     """Generate SvukteS U-mode tests for every supported RV64 mode."""

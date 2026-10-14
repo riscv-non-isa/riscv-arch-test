@@ -19,7 +19,7 @@
 #define SIGUPD_COUNT 82
 
 // Extra defines (if needed) to enable trap handlers, fpu, vector, etc.
-#define BOOT_TO_MMODE
+#define BOOT_TO_SMODE
 #define TRAP_SIGUPD_COUNT 160
 #define RVTEST_EXPERIMENTAL
 
@@ -65,7 +65,9 @@ rvtest_data_1:
   sfence.vma
 # Clear medeleg for instruction, load, and store/AMO page faults.
   LI(x14, 0xb000)
-  csrc medeleg, x14
+  # T-SBI call to execute instruction: csrc medeleg, x14
+  mv a1, x14
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MEDELEG)
 
 # unmapped supervisor-half address
   SUPERPAGE_PTE_SETUP_SV39(rvtest_data_1, (0), 0xffffffc000000000, LEVEL2)
@@ -95,7 +97,7 @@ SvukteS_cg_cp_unmapped_high_ukte_clear_read_sv39_ukte_clear_unmapped_high_load:
 SvukteS_cg_cp_unmapped_high_ukte_clear_i_sv39_ukte_clear_unmapped_high_exec:
   jalr ra, x6, 0
   nop
-  RVTEST_TSBI_GOTO_MMODE
+  RVTEST_TSBI_GOTO_SMODE
 # Check each access after returning to the driver mode.
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, SvukteS_cg_cp_unmapped_high_ukte_clear_write_sv39_ukte_clear_unmapped_high_store, SvukteS_cg_cp_unmapped_high_ukte_clear_write_sv39_ukte_clear_unmapped_high_store_str)
@@ -127,7 +129,7 @@ SvukteS_cg_cp_unmapped_high_ukte_set_read_sv39_ukte_set_unmapped_high_load:
 SvukteS_cg_cp_unmapped_high_ukte_set_i_sv39_ukte_set_unmapped_high_exec:
   jalr ra, x6, 0
   nop
-  RVTEST_TSBI_GOTO_MMODE
+  RVTEST_TSBI_GOTO_SMODE
 # Check each access after returning to the driver mode.
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, SvukteS_cg_cp_unmapped_high_ukte_set_write_sv39_ukte_set_unmapped_high_store, SvukteS_cg_cp_unmapped_high_ukte_set_write_sv39_ukte_set_unmapped_high_store_str)
@@ -164,7 +166,7 @@ SvukteS_cg_cp_not_svukte_qualified_disabled_sv39_ukte_clear_mapped_high_load:
 SvukteS_cg_cp_not_svukte_qualified_disabled_i_sv39_ukte_clear_mapped_high_exec:
   jalr ra, x6, 0
   nop
-  RVTEST_TSBI_GOTO_MMODE
+  RVTEST_TSBI_GOTO_SMODE
 # Check each access after returning to the driver mode.
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, SvukteS_cg_cp_not_svukte_qualified_disabled_sv39_ukte_clear_mapped_high_store, SvukteS_cg_cp_not_svukte_qualified_disabled_sv39_ukte_clear_mapped_high_store_str)
@@ -196,7 +198,7 @@ SvukteS_cg_cp_svukte_qualified_read_fault_sv39_ukte_set_mapped_high_load:
 SvukteS_cg_cp_svukte_qualified_exec_fault_sv39_ukte_set_mapped_high_exec:
   jalr ra, x6, 0
   nop
-  RVTEST_TSBI_GOTO_MMODE
+  RVTEST_TSBI_GOTO_SMODE
 # Check each access after returning to the driver mode.
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, SvukteS_cg_cp_svukte_qualified_write_fault_sv39_ukte_set_mapped_high_store, SvukteS_cg_cp_svukte_qualified_write_fault_sv39_ukte_set_mapped_high_store_str)
@@ -233,7 +235,7 @@ SvukteS_cg_cp_unmapped_low_ukte_clear_read_sv39_ukte_clear_unmapped_low_load:
 SvukteS_cg_cp_unmapped_low_ukte_clear_i_sv39_ukte_clear_unmapped_low_exec:
   jalr ra, x6, 0
   nop
-  RVTEST_TSBI_GOTO_MMODE
+  RVTEST_TSBI_GOTO_SMODE
 # Check each access after returning to the driver mode.
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, SvukteS_cg_cp_unmapped_low_ukte_clear_write_sv39_ukte_clear_unmapped_low_store, SvukteS_cg_cp_unmapped_low_ukte_clear_write_sv39_ukte_clear_unmapped_low_store_str)
@@ -265,7 +267,7 @@ SvukteS_cg_cp_unmapped_low_ukte_set_read_sv39_ukte_set_unmapped_low_load:
 SvukteS_cg_cp_unmapped_low_ukte_set_i_sv39_ukte_set_unmapped_low_exec:
   jalr ra, x6, 0
   nop
-  RVTEST_TSBI_GOTO_MMODE
+  RVTEST_TSBI_GOTO_SMODE
 # Check each access after returning to the driver mode.
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, SvukteS_cg_cp_unmapped_low_ukte_set_write_sv39_ukte_set_unmapped_low_store, SvukteS_cg_cp_unmapped_low_ukte_set_write_sv39_ukte_set_unmapped_low_store_str)
@@ -302,7 +304,7 @@ SvukteS_cg_cp_not_svukte_qualified_addr_clear_sv39_ukte_clear_mapped_low_load:
 SvukteS_cg_cp_not_svukte_qualified_addr_clear_i_sv39_ukte_clear_mapped_low_exec:
   jalr ra, x6, 0
   nop
-  RVTEST_TSBI_GOTO_MMODE
+  RVTEST_TSBI_GOTO_SMODE
 # Check each access after returning to the driver mode.
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, SvukteS_cg_cp_not_svukte_qualified_addr_clear_sv39_ukte_clear_mapped_low_store, SvukteS_cg_cp_not_svukte_qualified_addr_clear_sv39_ukte_clear_mapped_low_store_str)
@@ -334,7 +336,7 @@ SvukteS_cg_cp_not_svukte_qualified_addr_sv39_ukte_set_mapped_low_load:
 SvukteS_cg_cp_not_svukte_qualified_addr_i_sv39_ukte_set_mapped_low_exec:
   jalr ra, x6, 0
   nop
-  RVTEST_TSBI_GOTO_MMODE
+  RVTEST_TSBI_GOTO_SMODE
 # Check each access after returning to the driver mode.
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, SvukteS_cg_cp_not_svukte_qualified_addr_sv39_ukte_set_mapped_low_store, SvukteS_cg_cp_not_svukte_qualified_addr_sv39_ukte_set_mapped_low_store_str)
@@ -360,7 +362,9 @@ SvukteS_cg_cp_not_svukte_qualified_addr_i_sv39_ukte_set_mapped_low_exec:
   sfence.vma
 # Clear medeleg for instruction, load, and store/AMO page faults.
   LI(x14, 0xb000)
-  csrc medeleg, x14
+  # T-SBI call to execute instruction: csrc medeleg, x14
+  mv a1, x14
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MEDELEG)
 
 # unmapped supervisor-half address
   SUPERPAGE_PTE_SETUP_SV48(rvtest_data_1, (0), 0xffff800000000000, LEVEL3)
@@ -390,7 +394,7 @@ SvukteS_cg_cp_unmapped_high_ukte_clear_read_sv48_ukte_clear_unmapped_high_load:
 SvukteS_cg_cp_unmapped_high_ukte_clear_i_sv48_ukte_clear_unmapped_high_exec:
   jalr ra, x6, 0
   nop
-  RVTEST_TSBI_GOTO_MMODE
+  RVTEST_TSBI_GOTO_SMODE
 # Check each access after returning to the driver mode.
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, SvukteS_cg_cp_unmapped_high_ukte_clear_write_sv48_ukte_clear_unmapped_high_store, SvukteS_cg_cp_unmapped_high_ukte_clear_write_sv48_ukte_clear_unmapped_high_store_str)
@@ -422,7 +426,7 @@ SvukteS_cg_cp_unmapped_high_ukte_set_read_sv48_ukte_set_unmapped_high_load:
 SvukteS_cg_cp_unmapped_high_ukte_set_i_sv48_ukte_set_unmapped_high_exec:
   jalr ra, x6, 0
   nop
-  RVTEST_TSBI_GOTO_MMODE
+  RVTEST_TSBI_GOTO_SMODE
 # Check each access after returning to the driver mode.
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, SvukteS_cg_cp_unmapped_high_ukte_set_write_sv48_ukte_set_unmapped_high_store, SvukteS_cg_cp_unmapped_high_ukte_set_write_sv48_ukte_set_unmapped_high_store_str)
@@ -459,7 +463,7 @@ SvukteS_cg_cp_not_svukte_qualified_disabled_sv48_ukte_clear_mapped_high_load:
 SvukteS_cg_cp_not_svukte_qualified_disabled_i_sv48_ukte_clear_mapped_high_exec:
   jalr ra, x6, 0
   nop
-  RVTEST_TSBI_GOTO_MMODE
+  RVTEST_TSBI_GOTO_SMODE
 # Check each access after returning to the driver mode.
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, SvukteS_cg_cp_not_svukte_qualified_disabled_sv48_ukte_clear_mapped_high_store, SvukteS_cg_cp_not_svukte_qualified_disabled_sv48_ukte_clear_mapped_high_store_str)
@@ -491,7 +495,7 @@ SvukteS_cg_cp_svukte_qualified_read_fault_sv48_ukte_set_mapped_high_load:
 SvukteS_cg_cp_svukte_qualified_exec_fault_sv48_ukte_set_mapped_high_exec:
   jalr ra, x6, 0
   nop
-  RVTEST_TSBI_GOTO_MMODE
+  RVTEST_TSBI_GOTO_SMODE
 # Check each access after returning to the driver mode.
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, SvukteS_cg_cp_svukte_qualified_write_fault_sv48_ukte_set_mapped_high_store, SvukteS_cg_cp_svukte_qualified_write_fault_sv48_ukte_set_mapped_high_store_str)
@@ -528,7 +532,7 @@ SvukteS_cg_cp_unmapped_low_ukte_clear_read_sv48_ukte_clear_unmapped_low_load:
 SvukteS_cg_cp_unmapped_low_ukte_clear_i_sv48_ukte_clear_unmapped_low_exec:
   jalr ra, x6, 0
   nop
-  RVTEST_TSBI_GOTO_MMODE
+  RVTEST_TSBI_GOTO_SMODE
 # Check each access after returning to the driver mode.
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, SvukteS_cg_cp_unmapped_low_ukte_clear_write_sv48_ukte_clear_unmapped_low_store, SvukteS_cg_cp_unmapped_low_ukte_clear_write_sv48_ukte_clear_unmapped_low_store_str)
@@ -560,7 +564,7 @@ SvukteS_cg_cp_unmapped_low_ukte_set_read_sv48_ukte_set_unmapped_low_load:
 SvukteS_cg_cp_unmapped_low_ukte_set_i_sv48_ukte_set_unmapped_low_exec:
   jalr ra, x6, 0
   nop
-  RVTEST_TSBI_GOTO_MMODE
+  RVTEST_TSBI_GOTO_SMODE
 # Check each access after returning to the driver mode.
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, SvukteS_cg_cp_unmapped_low_ukte_set_write_sv48_ukte_set_unmapped_low_store, SvukteS_cg_cp_unmapped_low_ukte_set_write_sv48_ukte_set_unmapped_low_store_str)
@@ -597,7 +601,7 @@ SvukteS_cg_cp_not_svukte_qualified_addr_clear_sv48_ukte_clear_mapped_low_load:
 SvukteS_cg_cp_not_svukte_qualified_addr_clear_i_sv48_ukte_clear_mapped_low_exec:
   jalr ra, x6, 0
   nop
-  RVTEST_TSBI_GOTO_MMODE
+  RVTEST_TSBI_GOTO_SMODE
 # Check each access after returning to the driver mode.
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, SvukteS_cg_cp_not_svukte_qualified_addr_clear_sv48_ukte_clear_mapped_low_store, SvukteS_cg_cp_not_svukte_qualified_addr_clear_sv48_ukte_clear_mapped_low_store_str)
@@ -629,7 +633,7 @@ SvukteS_cg_cp_not_svukte_qualified_addr_sv48_ukte_set_mapped_low_load:
 SvukteS_cg_cp_not_svukte_qualified_addr_i_sv48_ukte_set_mapped_low_exec:
   jalr ra, x6, 0
   nop
-  RVTEST_TSBI_GOTO_MMODE
+  RVTEST_TSBI_GOTO_SMODE
 # Check each access after returning to the driver mode.
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, SvukteS_cg_cp_not_svukte_qualified_addr_sv48_ukte_set_mapped_low_store, SvukteS_cg_cp_not_svukte_qualified_addr_sv48_ukte_set_mapped_low_store_str)
@@ -655,7 +659,9 @@ SvukteS_cg_cp_not_svukte_qualified_addr_i_sv48_ukte_set_mapped_low_exec:
   sfence.vma
 # Clear medeleg for instruction, load, and store/AMO page faults.
   LI(x14, 0xb000)
-  csrc medeleg, x14
+  # T-SBI call to execute instruction: csrc medeleg, x14
+  mv a1, x14
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MEDELEG)
 
 # unmapped supervisor-half address
   SUPERPAGE_PTE_SETUP_SV57(rvtest_data_1, (0), 0xff00000000000000, LEVEL4)
@@ -685,7 +691,7 @@ SvukteS_cg_cp_unmapped_high_ukte_clear_read_sv57_ukte_clear_unmapped_high_load:
 SvukteS_cg_cp_unmapped_high_ukte_clear_i_sv57_ukte_clear_unmapped_high_exec:
   jalr ra, x6, 0
   nop
-  RVTEST_TSBI_GOTO_MMODE
+  RVTEST_TSBI_GOTO_SMODE
 # Check each access after returning to the driver mode.
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, SvukteS_cg_cp_unmapped_high_ukte_clear_write_sv57_ukte_clear_unmapped_high_store, SvukteS_cg_cp_unmapped_high_ukte_clear_write_sv57_ukte_clear_unmapped_high_store_str)
@@ -717,7 +723,7 @@ SvukteS_cg_cp_unmapped_high_ukte_set_read_sv57_ukte_set_unmapped_high_load:
 SvukteS_cg_cp_unmapped_high_ukte_set_i_sv57_ukte_set_unmapped_high_exec:
   jalr ra, x6, 0
   nop
-  RVTEST_TSBI_GOTO_MMODE
+  RVTEST_TSBI_GOTO_SMODE
 # Check each access after returning to the driver mode.
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, SvukteS_cg_cp_unmapped_high_ukte_set_write_sv57_ukte_set_unmapped_high_store, SvukteS_cg_cp_unmapped_high_ukte_set_write_sv57_ukte_set_unmapped_high_store_str)
@@ -754,7 +760,7 @@ SvukteS_cg_cp_not_svukte_qualified_disabled_sv57_ukte_clear_mapped_high_load:
 SvukteS_cg_cp_not_svukte_qualified_disabled_i_sv57_ukte_clear_mapped_high_exec:
   jalr ra, x6, 0
   nop
-  RVTEST_TSBI_GOTO_MMODE
+  RVTEST_TSBI_GOTO_SMODE
 # Check each access after returning to the driver mode.
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, SvukteS_cg_cp_not_svukte_qualified_disabled_sv57_ukte_clear_mapped_high_store, SvukteS_cg_cp_not_svukte_qualified_disabled_sv57_ukte_clear_mapped_high_store_str)
@@ -786,7 +792,7 @@ SvukteS_cg_cp_svukte_qualified_read_fault_sv57_ukte_set_mapped_high_load:
 SvukteS_cg_cp_svukte_qualified_exec_fault_sv57_ukte_set_mapped_high_exec:
   jalr ra, x6, 0
   nop
-  RVTEST_TSBI_GOTO_MMODE
+  RVTEST_TSBI_GOTO_SMODE
 # Check each access after returning to the driver mode.
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, SvukteS_cg_cp_svukte_qualified_write_fault_sv57_ukte_set_mapped_high_store, SvukteS_cg_cp_svukte_qualified_write_fault_sv57_ukte_set_mapped_high_store_str)
@@ -823,7 +829,7 @@ SvukteS_cg_cp_unmapped_low_ukte_clear_read_sv57_ukte_clear_unmapped_low_load:
 SvukteS_cg_cp_unmapped_low_ukte_clear_i_sv57_ukte_clear_unmapped_low_exec:
   jalr ra, x6, 0
   nop
-  RVTEST_TSBI_GOTO_MMODE
+  RVTEST_TSBI_GOTO_SMODE
 # Check each access after returning to the driver mode.
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, SvukteS_cg_cp_unmapped_low_ukte_clear_write_sv57_ukte_clear_unmapped_low_store, SvukteS_cg_cp_unmapped_low_ukte_clear_write_sv57_ukte_clear_unmapped_low_store_str)
@@ -855,7 +861,7 @@ SvukteS_cg_cp_unmapped_low_ukte_set_read_sv57_ukte_set_unmapped_low_load:
 SvukteS_cg_cp_unmapped_low_ukte_set_i_sv57_ukte_set_unmapped_low_exec:
   jalr ra, x6, 0
   nop
-  RVTEST_TSBI_GOTO_MMODE
+  RVTEST_TSBI_GOTO_SMODE
 # Check each access after returning to the driver mode.
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, SvukteS_cg_cp_unmapped_low_ukte_set_write_sv57_ukte_set_unmapped_low_store, SvukteS_cg_cp_unmapped_low_ukte_set_write_sv57_ukte_set_unmapped_low_store_str)
@@ -892,7 +898,7 @@ SvukteS_cg_cp_not_svukte_qualified_addr_clear_sv57_ukte_clear_mapped_low_load:
 SvukteS_cg_cp_not_svukte_qualified_addr_clear_i_sv57_ukte_clear_mapped_low_exec:
   jalr ra, x6, 0
   nop
-  RVTEST_TSBI_GOTO_MMODE
+  RVTEST_TSBI_GOTO_SMODE
 # Check each access after returning to the driver mode.
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, SvukteS_cg_cp_not_svukte_qualified_addr_clear_sv57_ukte_clear_mapped_low_store, SvukteS_cg_cp_not_svukte_qualified_addr_clear_sv57_ukte_clear_mapped_low_store_str)
@@ -924,7 +930,7 @@ SvukteS_cg_cp_not_svukte_qualified_addr_sv57_ukte_set_mapped_low_load:
 SvukteS_cg_cp_not_svukte_qualified_addr_i_sv57_ukte_set_mapped_low_exec:
   jalr ra, x6, 0
   nop
-  RVTEST_TSBI_GOTO_MMODE
+  RVTEST_TSBI_GOTO_SMODE
 # Check each access after returning to the driver mode.
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, SvukteS_cg_cp_not_svukte_qualified_addr_sv57_ukte_set_mapped_low_store, SvukteS_cg_cp_not_svukte_qualified_addr_sv57_ukte_set_mapped_low_store_str)
