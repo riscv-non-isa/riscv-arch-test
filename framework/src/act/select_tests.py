@@ -106,8 +106,11 @@ def select_tests(
     for test_name, test_metadata in test_dict.items():
         if harts < test_metadata.min_harts:
             continue
-        # Skip privileged tests if disabled
-        if not include_priv_tests and _requires_extension_from(test_metadata.required_extensions, PRIV_EXTENSIONS):
+        # Skip privileged tests if disabled. Some list only an extension that implies a privilege mode (e.g. Sv32)
+        if not include_priv_tests and (
+            "priv" in test_metadata.test_path.parts
+            or _requires_extension_from(test_metadata.required_extensions, PRIV_EXTENSIONS)
+        ):
             continue
         # Skip experimental extensions unless enabled
         if not enable_experimental_extensions and _requires_extension_from(
