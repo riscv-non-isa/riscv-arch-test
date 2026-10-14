@@ -417,6 +417,7 @@ def gen_coverage_tasks(
     verbose: bool = False,
     dry_run: bool = False,
     enable_experimental_extensions: bool = False,
+    exclude_sm: bool = False,
 ) -> list[BuildTask]:
     """Generate BuildTasks for coverage UCDB generation, reports, and summary merging."""
     tasks: list[BuildTask] = []
@@ -491,6 +492,8 @@ def gen_coverage_tasks(
             coverage_define_list.append("FCOV_VERBOSE")
         if enable_experimental_extensions:
             coverage_define_list.append("ENABLE_EXPERIMENTAL_EXTENSIONS")
+        if exclude_sm:
+            coverage_define_list.append("EXCLUDE_SM")
         coverage_defines = " ".join(coverage_define_list)
         if coverage_simulator == CoverageSimulator.QUESTA:
             do_script = (
@@ -582,6 +585,7 @@ def generate_build_plan(
     verbose: bool = False,
     dry_run: bool = False,
     enable_experimental_extensions: bool = False,
+    exclude_sm: bool = False,
 ) -> list[BuildTask]:
     """Build the full DAG of tasks for a single config."""
     if coverage_enabled and config.ref_model_type != RefModelType.SAIL:
@@ -689,6 +693,7 @@ def generate_build_plan(
                 verbose,
                 dry_run,
                 enable_experimental_extensions,
+                exclude_sm,
             )
         )
 
