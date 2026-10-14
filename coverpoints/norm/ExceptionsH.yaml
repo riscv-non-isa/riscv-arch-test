@@ -5,7 +5,10 @@ normative_rule_definitions:
   # medeleg sends exceptions to HS-mode, and hedeleg further delegates those from VS and VU (not HS and U) to VS-mode
   - names:
       [hedeleg_op, H_trap_deleg, hedeleg_bits_required, hedeleg_bit0_ialign32]
-    coverpoint: ["ExceptionsH_cg/cp_hedeleg_{breakpoint, ecall, hs_u_breakpoint, hs_u_ecall, hs_u_illegal_instruction, hs_u_instr_access_fault, hs_u_instr_misaligned_jalr, hs_u_load_access_fault, hs_u_load_misaligned, hs_u_store_access_fault, hs_u_store_misaligned, illegal_instruction, instr_access_fault, instr_misaligned_jalr, load_access_fault, load_misaligned, store_access_fault, store_misaligned}"]
+    coverpoint:
+      [
+        "ExceptionsH_cg/cp_hedeleg_{breakpoint, ecall, hs_u_breakpoint, hs_u_ecall, hs_u_illegal_instruction, hs_u_instr_access_fault, hs_u_instr_misaligned_jalr, hs_u_load_access_fault, hs_u_load_misaligned, hs_u_store_access_fault, hs_u_store_misaligned, illegal_instruction, instr_access_fault, instr_misaligned_jalr, load_access_fault, load_misaligned, store_access_fault, store_misaligned}",
+      ]
 
   # A trap into HS-mode writes sstatus.SPP/SPIE/SIE and hstatus.SPV/GVA, and writes SPVP only for traps from V = 1
   - names: [H_trap_hs_csrwrites, hstatus_spv_op, hstatus_spvp_op]
@@ -166,22 +169,34 @@ normative_rule_definitions:
   # trap is taken into HS-mode, htval is written with additional exception-specific
   # information, alongside stval, to assist software in handling the trap.
   - name: htval_sz_acc_op
-    coverpoint: ["ExceptionsH_cg/cp_xtinst_{breakpoint, ecall, illegalinstr, instr_access, instr_misaligned, load_access, load_misaligned, store_access, store_misaligned, virtinstr}"]
+    coverpoint:
+      [
+        "ExceptionsH_cg/cp_xtinst_{breakpoint, ecall, illegalinstr, instr_access, instr_misaligned, load_access, load_misaligned, store_access, store_misaligned, virtinstr}",
+      ]
   # The htinst register is an HSXLEN-bit read/write register formatted as shown in . When
   # a trap is taken into HS-mode, htinst is written with a value that, if nonzero,
   # provides information about the instruction that trapped, to assist software in
   # handling the trap. The values that may be written to htinst on a trap are documented
   # in .
   - name: htinst_sz_acc_op
-    coverpoint: ["ExceptionsH_cg/cp_xtinst_{breakpoint, ecall, illegalinstr, instr_access, instr_misaligned, load_access, load_misaligned, store_access, store_misaligned, virtinstr}"]
+    coverpoint:
+      [
+        "ExceptionsH_cg/cp_xtinst_{breakpoint, ecall, illegalinstr, instr_access, instr_misaligned, load_access, load_misaligned, store_access, store_misaligned, virtinstr}",
+      ]
   # On any trap into M-mode or HS-mode, one of these values is written automatically into
   # the appropriate trap instruction CSR, mtinst or htinst:
   - name: H_trap_xtinst
-    coverpoint: ["ExceptionsH_cg/cp_xtinst_{breakpoint, ecall, illegalinstr, instr_access, instr_misaligned, load_access, load_misaligned, store_access, store_misaligned, virtinstr}"]
+    coverpoint:
+      [
+        "ExceptionsH_cg/cp_xtinst_{breakpoint, ecall, illegalinstr, instr_access, instr_misaligned, load_access, load_misaligned, store_access, store_misaligned, virtinstr}",
+      ]
   # On a synchronous exception, if a nonzero value is written, one of the following shall
   # be true about the value:
   - name: H_trap_xtinst_exception_lead_in
-    coverpoint: ["ExceptionsH_cg/cp_xtinst_{breakpoint, ecall, illegalinstr, instr_access, instr_misaligned, load_access, load_misaligned, store_access, store_misaligned, virtinstr}"]
+    coverpoint:
+      [
+        "ExceptionsH_cg/cp_xtinst_{breakpoint, ecall, illegalinstr, instr_access, instr_misaligned, load_access, load_misaligned, store_access, store_misaligned, virtinstr}",
+      ]
   # Bit 0 is 1, and replacing bit 1 with 1 makes the value into a valid encoding of a
   # standard instruction. In this case, the instruction that trapped is the same kind as
   # indicated by the register value, and the register value is the transformation of the
@@ -195,7 +210,10 @@ normative_rule_definitions:
   # specified by this standard. The value is one of the special pseudoinstructions defined
   # later, all of which have bits 1:0 equal to 00.
   - name: H_trap_xtinst_exception_list
-    coverpoint: ["ExceptionsH_cg/cp_xtinst_{breakpoint, ecall, illegalinstr, instr_access, instr_misaligned, load_access, load_misaligned, store_access, store_misaligned, virtinstr}"]
+    coverpoint:
+      [
+        "ExceptionsH_cg/cp_xtinst_{breakpoint, ecall, illegalinstr, instr_access, instr_misaligned, load_access, load_misaligned, store_access, store_misaligned, virtinstr}",
+      ]
   # shows the values that may be automatically written to the trap instruction register
   # for each standard exception cause. For exceptions that prevent the fetching of an
   # instruction, only zero or a pseudoinstruction value may be written. A custom value may
@@ -203,12 +221,18 @@ normative_rule_definitions:
   # standard or extension may permit other values to be written, chosen from the set of
   # allowed values established earlier.
   - name: H_trap_xtinst_val
-    coverpoint: ["ExceptionsH_cg/cp_xtinst_{breakpoint, ecall, illegalinstr, instr_access, instr_misaligned, load_access, load_misaligned, store_access, store_misaligned, virtinstr}"]
+    coverpoint:
+      [
+        "ExceptionsH_cg/cp_xtinst_{breakpoint, ecall, illegalinstr, instr_access, instr_misaligned, load_access, load_misaligned, store_access, store_misaligned, virtinstr}",
+      ]
   # Except when a pseudoinstruction value is required (described later), the value written
   # to mtinst or htinst may always be zero, indicating that the hardware is providing no
   # information in the register for this particular trap.
   - name: H_trap_xtinst_zero_ok
-    coverpoint: ["ExceptionsH_cg/cp_xtinst_{breakpoint, ecall, illegalinstr, instr_access, instr_misaligned, load_access, load_misaligned, store_access, store_misaligned, virtinstr}"]
+    coverpoint:
+      [
+        "ExceptionsH_cg/cp_xtinst_{breakpoint, ecall, illegalinstr, instr_access, instr_misaligned, load_access, load_misaligned, store_access, store_misaligned, virtinstr}",
+      ]
 
   # The Addr. Offset field of a transformed instruction is the faulting virtual address minus the original one,
   # nonzero only for a misaligned access
