@@ -138,10 +138,7 @@ def _gen_status_vs_dirty(test_data: TestData, temp_reg: int, covergroup: str, pr
 
 
 def _gen_status_vs_off(test_data: TestData, temp_reg: int, covergroup: str, priv: str) -> list[str]:
-    """cp_xstatus_vs_off_arithmetic / cp_xstatus_vs_off_csr — both should trap.
-
-    misa is writable only in M-mode, so S-mode tests rely on misa.V being set at reset.
-    """
+    """cp_xstatus_vs_off_arithmetic / cp_xstatus_vs_off_csr — both should trap. misa.V is set at reset."""
     status = STATUS_CSR[priv]
     lines = [
         comment_banner(
@@ -149,14 +146,12 @@ def _gen_status_vs_off(test_data: TestData, temp_reg: int, covergroup: str, priv
             "VS=Off + misa.V active -> vector arithmetic traps illegal-instruction",
         ),
     ]
+    if priv == "M":  # the coverage model sees misa.V (misa_v_active) only once misa is accessed
+        lines.append(f"csrr x{temp_reg}, misa")
     lines.extend(set_status_fields(temp_reg, priv, vs=3))
     lines.append(_VSET_M1)
     lines.append("vmv.v.i v1, 1")
     lines.append("vmv.v.i v2, 2")
-    if priv == "M":  # misa is accessible only in M-mode
-        # Ensure misa.V set (best effort)
-        lines.append(f"LI(x{temp_reg}, 0x200000)  # misa.V mask")
-        lines.append(f"csrs misa, x{temp_reg}    # set misa.V if writable")
     lines.extend(set_status_fields(temp_reg, priv, vs=0))
     lines.append(test_data.add_testcase("vadd_vs_off", f"cp_{status}_vs_off_arithmetic", covergroup))
     lines.append("vadd.vv v3, v1, v2  # traps: VS=Off")
@@ -164,9 +159,6 @@ def _gen_status_vs_off(test_data: TestData, temp_reg: int, covergroup: str, priv
 
     lines.append(comment_banner(f"cp_{status}_vs_off_csr", "VS=Off -> vsetvli traps illegal-instruction"))
     lines.extend(set_status_fields(temp_reg, priv, vs=3))
-    if priv == "M":
-        lines.append(f"LI(x{temp_reg}, 0x200000)")
-        lines.append(f"csrs misa, x{temp_reg}")
     lines.extend(set_status_fields(temp_reg, priv, vs=0))
     lines.append(test_data.add_testcase("vsetvli_vs_off", f"cp_{status}_vs_off_csr", covergroup))
     lines.append(f"vsetvli x{temp_reg}, x0, e8, m1, tu, mu  # traps: VS=Off")
