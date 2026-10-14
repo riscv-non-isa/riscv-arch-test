@@ -12,6 +12,7 @@ normative_rule_definitions:
     coverpoint:
       [
         "{ZicfilpSm_cg,ZicfilpS_cg,ZicfilpU_cg}/{cp_zicfilp_indirect_elp_state_update,cp_zicfilp_indirect_elp_state_update_c} (jalr with rd=x1, c.jalr)",
+        "{ZicfilpSm_cg,ZicfilpS_cg,ZicfilpU_cg}/cp_zicfilp_direct_ct_no_elp (jal with rd=x1, c.jal: direct calls)",
       ]
 
   # The term return is used to refer to a jalr instruction with rd=x0 and with rs1=x1 or rs1=x5. A c.jr
@@ -52,6 +53,7 @@ normative_rule_definitions:
     coverpoint:
       [
         "{ZicfilpSm_cg,ZicfilpS_cg,ZicfilpU_cg}/{cp_zicfilp_indirect_elp_state_update,cp_zicfilp_indirect_elp_state_update_c}",
+        "{ZicfilpSm_cg,ZicfilpS_cg,ZicfilpU_cg}/cp_zicfilp_direct_ct_no_elp (direct jumps and taken branches do not set ELP)",
       ]
 
   # An indirect branch using jalr, c.jalr, or c.jr with rs1 as x7 is termed a software-guarded branch. Such
@@ -128,7 +130,10 @@ normative_rule_definitions:
       ]
   # Asynchronous interrupts.
   - name: Zicfilp_forward_trap_async_interrupt
-    coverpoint: ["The asynchronous interrupt case is not tested"]
+    coverpoint:
+      [
+        "ZicfilpSm_cg/cp_elp_async_interrupt_zicfilp (S-mode software interrupt taken right after an MRET that set ELP)",
+      ]
   # Synchronous exceptions with priority higher than that of a software-check exception
   # with xtval set to landing pad fault (code=2) (See &lt;&lt;norm:exc_priority&gt;&gt; of
   # Privileged Specification).
@@ -162,7 +167,6 @@ normative_rule_definitions:
   - name: cfi_mstatus_spelp_op
     coverpoint:
       [
-        "{ZicfilpS_cg,ZicfilpU_cg}/cp_zicfilp_lpad_label_exception_delivery",
         "ZicfilpS_cg/{cp_pelp_trap_entry_s_zicfilp,cp_elp_state_preservation_s_zicfilp,cp_pelp_trap_return_s_zicfilp}",
         "{ZicfilpS_cg,ZicfilpU_cg}/{cp_zicfilp_lpad_label_exception_delivery,cp_exception_priority_zicfilp}",
       ]

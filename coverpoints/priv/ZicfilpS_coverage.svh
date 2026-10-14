@@ -52,8 +52,11 @@ covergroup ZicfilpS_cg with function sample(ins_t ins);
     cp_zicfilp_indirect_elp_state_update: cross priv_mode_s, lpe, indirect_ct_prev, rs1_all_prev, lpad_dest;
 
     `ifdef ZCA_SUPPORTED
-        cp_zicfilp_indirect_elp_state_update_c: cross priv_mode_s, lpe, indirect_ct_prev_c, rs1_all_prev_c, lpad_dest;
+        cp_zicfilp_indirect_elp_state_update_c: cross priv_mode_s, lpe, indirect_ct_prev_c, rs1_all_prev, lpad_dest;
     `endif
+
+    // Direct jumps and taken branches are not Indirect_CTs: ELP stays clear at a non-LPAD target
+    cp_zicfilp_direct_ct_no_elp: cross priv_mode_s, lpe_enabled, direct_ct_prev, not_lpad;
 
     cp_zicfilp_lpad_zero_label_bypass: cross priv_mode_s, lpe_enabled, lp_branch_prev, lpad_lpl_zero, x7_label;
 
@@ -61,29 +64,16 @@ covergroup ZicfilpS_cg with function sample(ins_t ins);
 
     cp_zicfilp_lpad_missing_instruction_exception: cross priv_mode_s, lpe_enabled, lp_branch_prev, not_lpad;
 
-    cp_zicfilp_lpad_label_mismatch: cross priv_mode_s, lpe_enabled, lp_branch_prev, lpad_lpl_nonzero, lpl_match, x7_label, x7_low_bits {
-        // A matching LPL passes the check (cp_zicfilp_lpad_valid_execution covers it)
-        ignore_bins ig_match   = binsof(lpl_match.match);
-        // x7[31:12]=0 with LPL!=0 is the sc4_x7_label_zero bin of cp_zicfilp_lpad_label_match_mismatch
-        ignore_bins ig_x7_zero = binsof(x7_label.label_zero);
-    }
+    cp_zicfilp_lpad_label_mismatch: cross priv_mode_s, lpe_enabled, lp_branch_prev, lpad_lpl_nonzero, lpl_mismatch_only, x7_label_nonzero, x7_low_bits;
 
     cp_zicfilp_lpad_label_match_mismatch: cross priv_mode_s, lpe_enabled, lp_branch_prev, lpad_scenario;
 
-    cp_zicfilp_lpad_label_exception_delivery: cross priv_mode_s, lpe_enabled, lp_branch_prev, lpad_lpl_nonzero, lpl_match,
-                                                    x7_label, sw_check_exc, xtval_lpad, spelp {
-        // A matching LPL raises no exception, so there is no delivery to cover
-        ignore_bins ig_match   = binsof(lpl_match.match);
-        // x7[31:12]=0 with LPL!=0 is the sc4_x7_label_zero bin of cp_zicfilp_lpad_label_match_mismatch
-        ignore_bins ig_x7_zero = binsof(x7_label.label_zero);
-    }
+    cp_zicfilp_lpad_label_exception_delivery: cross priv_mode_s, lpe_enabled, lp_branch_prev, lpad_lpl_nonzero, lpl_mismatch_only,
+                                                    x7_label_nonzero, sw_check_exc, xtval_lpad, spelp;
 
     cp_disabled_zicfilp: cross priv_mode_s, lpe_disabled, lp_branch_prev, lpad_lpl_nonzero;
 
-    cp_lpad_no_sw_exception_elp_clear_zicfilp: cross priv_mode_s, lpe_enabled, lp_branch_prev, lpad_lpl_nonzero, lpl_match, pc_aligned {
-        // A mismatched LPL raises a software-check exception (cp_zicfilp_lpad_label_exception_delivery covers it)
-        ignore_bins ig_mismatch = binsof(lpl_match.mismatch);
-    }
+    cp_lpad_no_sw_exception_elp_clear_zicfilp: cross priv_mode_s, lpe_enabled, lp_branch_prev, lpad_lpl_nonzero, lpl_match_only, pc_aligned;
 
     cp_exception_priority_zicfilp: cross priv_mode_s, lpe_enabled, priority_case;
 
@@ -112,7 +102,7 @@ covergroup ZicfilpS_cg with function sample(ins_t ins);
     // saves SPELP=0
     cp_pelp_trap_entry_s_guarded_zicfilp: cross priv_mode_s, lpe_enabled, indirect_ct_prev, rs1_link_prev, ebreak;
     `ifdef ZCA_SUPPORTED
-        cp_pelp_trap_entry_s_guarded_zicfilp_c: cross priv_mode_s, lpe_enabled, indirect_ct_prev_c, rs1_link_prev_c, ebreak;
+        cp_pelp_trap_entry_s_guarded_zicfilp_c: cross priv_mode_s, lpe_enabled, indirect_ct_prev_c, rs1_link_prev, ebreak;
     `endif
 
     // A trap from U-mode into S-mode, at the non-LPAD target of an ELP-setting Indirect_CT or at an ecall

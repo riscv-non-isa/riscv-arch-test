@@ -48,15 +48,30 @@
             wildcard bins c_jr   = {C_JR};
             wildcard bins c_jalr = {C_JALR};
         }
-        rs1_all_prev_c: coverpoint `ZICFILP_RS1(ins.prev) {
-            ignore_bins x0 = {x0};
-        }
-        rs1_link_prev_c: coverpoint `ZICFILP_RS1(ins.prev) {
-            bins x1 = {x1};
-            bins x5 = {x5};
-            bins x7 = {x7};
-        }
     `endif
+
+    // Previous instruction was a direct jump or a taken branch (the current instruction is not at pc+2/pc+4):
+    // not an Indirect_CT, so ELP stays NO_LP_EXPECTED
+    direct_ct_prev: coverpoint (
+        (ins.prev.insn ==? JAL)                                                       ? 3'd1 :
+        `ifdef ZCA_SUPPORTED
+            (ins.prev.insn ==? C_J)                                                   ? 3'd2 :
+            `ifdef UDB_MXLEN_32
+                (ins.prev.insn ==? C_JAL)                                             ? 3'd3 :
+            `endif
+        `endif
+        (((ins.prev.insn ==? BEQ) || (ins.prev.insn ==? BNE) || (ins.prev.insn ==? BLT) ||
+          (ins.prev.insn ==? BGE) || (ins.prev.insn ==? BLTU) || (ins.prev.insn ==? BGEU)) &&
+         (ins.current.pc_rdata != ins.prev.pc_rdata + 4))                             ? 3'd4 : 3'd0) {
+        bins jal          = {3'd1};
+        `ifdef ZCA_SUPPORTED
+            bins c_j      = {3'd2};
+            `ifdef UDB_MXLEN_32
+                bins c_jal = {3'd3};
+            `endif
+        `endif
+        bins branch_taken = {3'd4};
+    }
 
     // Previous instruction was an Indirect_CT through a register other than x1/x5/x7:
     // with xLPE=1 the current instruction executes with ELP=LP_EXPECTED
@@ -124,6 +139,15 @@
     lpl_match: coverpoint (ins.current.insn[31:12] == ins.prev.x_wdata[7][31:12]) {
         bins mismatch = {1'b0};
         bins match    = {1'b1};
+    }
+    lpl_match_only: coverpoint (ins.current.insn[31:12] == ins.prev.x_wdata[7][31:12]) {
+        bins match    = {1'b1};
+    }
+    lpl_mismatch_only: coverpoint (ins.current.insn[31:12] == ins.prev.x_wdata[7][31:12]) {
+        bins mismatch = {1'b0};
+    }
+    x7_label_nonzero: coverpoint ins.prev.x_wdata[7][31:12] {
+        bins label_nonzero = {[20'h1:20'hFFFFF]};
     }
     // Only x7[31:12] takes part in the label check. Crossing a nonzero x7[11:0] into the label
     // match and mismatch cases keeps a DUT that compares the whole register, or x7[31:0]
