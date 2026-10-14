@@ -3,7 +3,7 @@
 #
 # U_V user-mode vector privileged test generator.
 # Vector CSR access from U-mode: read/write/walking-1s, plus the vset*, vstart and
-# mstatus.VS (through T-SBI) tests shared with Sm_V and S_V.
+# xstatus.VS (through T-SBI) tests shared with Sm_V and S_V.
 # Part of the U suite: U_V_*-NN.S in tests/priv/U, run only when Zve32x is also supported.
 # SPDX-License-Identifier: Apache-2.0
 ##################################
@@ -55,7 +55,6 @@ def _gen_uvcsrwalk(test_data: TestData, temp_reg: int, test_chunks: list[TestChu
 @add_priv_test_generator(
     "U",
     required_extensions=["U", "Zve32x"],
-    march_extensions=["Zve32x"],
     extra_defines=[
         "#define RVTEST_VECTOR",
         "#define RVTEST_SEW 0",
