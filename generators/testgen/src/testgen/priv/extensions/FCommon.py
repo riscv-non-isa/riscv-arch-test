@@ -1,46 +1,34 @@
 ##################################
-# SmF.py
+# priv/extensions/FCommon.py
 #
-# SmF floating-point from machine mode privileged extension test generator.
+# Shared floating-point CSR and xstatus.FS test generation for Sm_F (M-mode, mstatus.FS),
+# S_F (S-mode, sstatus.FS) and U_F (U-mode, sstatus.FS or mstatus.FS through T-SBI).
 # David_Harris@hmc.edu 1 March 2026
 # SPDX-License-Identifier: Apache-2.0
 ##################################
 
-"""SmF privileged extension test generator."""
+"""Functions for generating floating-point CSR and xstatus.FS tests in M-, S- and U-mode."""
 
 from testgen.asm.csr import gen_csr_read_sigupd
 from testgen.asm.helpers import comment_banner, load_float_reg
 from testgen.constants import INDENT
 from testgen.data.state import TestData
-from testgen.data.test_chunk import TestChunk
-from testgen.priv.registry import add_priv_test_generator
+from testgen.priv.extensions.PrivCommon import STATUS_CSR, gen_status_read_sigupd, set_status_fields
 
 
-def _gen_fs_init(fs: int, temp_reg: int) -> str:
-    """Initialize mstatus.FS"""
+def _gen_fp_csr_init(csr_name: str, value: int, temp_reg: int, priv: str) -> str:
+    """Initialize an FP CSR while xstatus.FS is Dirty."""
     lines = [
-        f"LI(x{temp_reg}, {3 << 13})  # 11 in bits 14:13",
-        f"csrc mstatus, x{temp_reg} # Clear mstatus.FS=00",
-        f"LI(x{temp_reg}, {fs << 13})  # put fs in bits 14:13",
-        f"csrs mstatus, x{temp_reg} # Set mstatus.FS to {fs}",
-    ]
-    return "\n".join(lines)
-
-
-def _gen_fp_csr_init(csr_name: str, value: int, temp_reg: int) -> str:
-    """Initialize an FP CSR while mstatus.FS is Dirty."""
-    lines = [
-        f"LI(x{temp_reg}, {3 << 13})",
-        f"csrs mstatus, x{temp_reg} # Set mstatus.FS to dirty",
+        *set_status_fields(temp_reg, priv, fs=3),
         f"LI(x{temp_reg}, {value})",
         f"csrw {csr_name}, x{temp_reg} # Initialize {csr_name}",
     ]
     return "\n".join(lines)
 
 
-def _generate_smfcsr_tests(test_data: TestData) -> list[str]:
-    """Generate CSR tests."""
-    covergroup = "SmF_cg"
+def gen_fcsr_tests(test_data: TestData, priv: str, covergroup: str) -> list[str]:
+    """Generate FP CSR and xstatus.FS tests in privilege mode priv ("M", "S" or "U")."""
+    status = STATUS_CSR[priv]
 
     # fp CSRs
     fcsrs = [("fcsr", None), ("frm", None), ("fflags", None)]
@@ -52,7 +40,7 @@ def _generate_smfcsr_tests(test_data: TestData) -> list[str]:
     lines.append(
         comment_banner(
             coverpoint,
-            "Read, write all 1s, write all 0s, set all 1s, set all 0s, restore all fp CSRs from machine mode with different mstatus.FS",
+            f"Read, write all 1s, write all 0s, set all 1s, set all 0s, restore all fp CSRs from {priv}-mode with different {status}.FS",
         )
     )
 
@@ -64,36 +52,36 @@ def _generate_smfcsr_tests(test_data: TestData) -> list[str]:
             csr_name, _mask = csr
             lines.extend(
                 [
-                    f"# Testcase: {csr_name} access with mstatus.FS={fs}: write 1s",
-                    _gen_fs_init(fs, temp_reg),
+                    f"# Testcase: {csr_name} access with {status}.FS={fs}: write 1s",
+                    *set_status_fields(temp_reg, priv, fs=fs),
                     f"csrr x{save_reg}, {csr_name}    # Save CSR",
-                    test_data.add_testcase(f"fs{fs}_{csr_name}_csrrw1_mstatus", coverpoint, covergroup),
+                    test_data.add_testcase(f"fs{fs}_{csr_name}_csrrw1_{status}", coverpoint, covergroup),
                     f"csrw {csr_name}, x{ones_reg}    # Write all 1s to CSR",
-                    gen_csr_read_sigupd(check_reg, ("mstatus", None), test_data),
+                    gen_status_read_sigupd(check_reg, test_data, priv),
                     test_data.add_testcase(f"fs{fs}_{csr_name}_csrrw1_csr", coverpoint, covergroup),
                     gen_csr_read_sigupd(check_reg, csr, test_data),
                     "",
-                    f"# Testcase: {csr_name} access with mstatus.FS={fs}: write 0s",
-                    _gen_fs_init(fs, temp_reg),
-                    test_data.add_testcase(f"fs{fs}_{csr_name}_csrrw0_mstatus", coverpoint, covergroup),
+                    f"# Testcase: {csr_name} access with {status}.FS={fs}: write 0s",
+                    *set_status_fields(temp_reg, priv, fs=fs),
+                    test_data.add_testcase(f"fs{fs}_{csr_name}_csrrw0_{status}", coverpoint, covergroup),
                     f"csrw {csr_name}, zero   # Write all 0s to CSR",
-                    gen_csr_read_sigupd(check_reg, ("mstatus", None), test_data),
+                    gen_status_read_sigupd(check_reg, test_data, priv),
                     test_data.add_testcase(f"fs{fs}_{csr_name}_csrrw0_csr", coverpoint, covergroup),
                     gen_csr_read_sigupd(check_reg, csr, test_data),
                     "",
-                    f"# Testcase: {csr_name} access with mstatus.FS={fs}: set all bits",
-                    _gen_fs_init(fs, temp_reg),
-                    test_data.add_testcase(f"fs{fs}_{csr_name}_csrs_all_mstatus", coverpoint, covergroup),
+                    f"# Testcase: {csr_name} access with {status}.FS={fs}: set all bits",
+                    *set_status_fields(temp_reg, priv, fs=fs),
+                    test_data.add_testcase(f"fs{fs}_{csr_name}_csrs_all_{status}", coverpoint, covergroup),
                     f"csrs {csr_name}, x{ones_reg}    # Set all CSR bits",
-                    gen_csr_read_sigupd(check_reg, ("mstatus", None), test_data),
+                    gen_status_read_sigupd(check_reg, test_data, priv),
                     test_data.add_testcase(f"fs{fs}_{csr_name}_csrs_all_csr", coverpoint, covergroup),
                     gen_csr_read_sigupd(check_reg, csr, test_data),
                     "",
-                    f"# Testcase: {csr_name} access with mstatus.FS={fs}: clear all bits",
-                    _gen_fs_init(fs, temp_reg),
-                    test_data.add_testcase(f"fs{fs}_{csr_name}_csrrc_all_mstatus", coverpoint, covergroup),
+                    f"# Testcase: {csr_name} access with {status}.FS={fs}: clear all bits",
+                    *set_status_fields(temp_reg, priv, fs=fs),
+                    test_data.add_testcase(f"fs{fs}_{csr_name}_csrrc_all_{status}", coverpoint, covergroup),
                     f"csrc {csr_name}, x{ones_reg}    # Clear all CSR bits",
-                    gen_csr_read_sigupd(check_reg, ("mstatus", None), test_data),
+                    gen_status_read_sigupd(check_reg, test_data, priv),
                     test_data.add_testcase(f"fs{fs}_{csr_name}_csrrc_all_csr", coverpoint, covergroup),
                     gen_csr_read_sigupd(check_reg, csr, test_data),
                     f"csrw {csr_name}, x{save_reg}       # Restore CSR",
@@ -102,12 +90,12 @@ def _generate_smfcsr_tests(test_data: TestData) -> list[str]:
             )
 
     ######################################
-    coverpoint = "cp_mstatus_FS_transition"
+    coverpoint = f"cp_{status}_FS_transition"
     ######################################
     lines.append(
         comment_banner(
             coverpoint,
-            "Attempt different types of fp instructions crossed with values of mstatus.FS",
+            f"Attempt different types of fp instructions crossed with values of {status}.FS",
         )
     )
 
@@ -174,21 +162,21 @@ def _generate_smfcsr_tests(test_data: TestData) -> list[str]:
                 else:
                     csr_name = "fflags"
                 setup_lines = [
-                    _gen_fp_csr_init(csr_name, 1 if "csrrc" in insn else 0, temp_reg),
-                    _gen_fs_init(fs, temp_reg),
+                    _gen_fp_csr_init(csr_name, 1 if "csrrc" in insn else 0, temp_reg, priv),
+                    *set_status_fields(temp_reg, priv, fs=fs),
                     f"LI(x{temp_reg}, 1) # make {insn} change {csr_name}",
                 ]
             else:
-                setup_lines = [_gen_fs_init(fs, temp_reg)]
+                setup_lines = set_status_fields(temp_reg, priv, fs=fs)
             cp = coverpoint_nd if insn in nondeterministic_initial_clean_insns else coverpoint
             lines.extend(
                 [
                     "",
-                    f"# Testcase: {insn} with mstatus.FS={fs}",
+                    f"# Testcase: {insn} with {status}.FS={fs}",
                     *setup_lines,
                     test_data.add_testcase(f"fs{fs}_{insn}", cp, covergroup),
-                    f"{insn} # execute instruction with mstatus.FS={fs}",
-                    gen_csr_read_sigupd(temp_reg, ("mstatus", None), test_data),
+                    f"{insn} # execute instruction with {status}.FS={fs}",
+                    gen_status_read_sigupd(temp_reg, test_data, priv),
                 ]
             )
         lines.append("\n#ifdef D_SUPPORTED")
@@ -196,11 +184,11 @@ def _generate_smfcsr_tests(test_data: TestData) -> list[str]:
             lines.extend(
                 [
                     "",
-                    f"# Testcase: {insn} with mstatus.FS={fs}",
-                    _gen_fs_init(fs, temp_reg),
+                    f"# Testcase: {insn} with {status}.FS={fs}",
+                    *set_status_fields(temp_reg, priv, fs=fs),
                     test_data.add_testcase(f"fs{fs}_{insn}", coverpoint, covergroup),
-                    f"{insn} # execute instruction with mstatus.FS={fs}",
-                    gen_csr_read_sigupd(temp_reg, ("mstatus", None), test_data),
+                    f"{insn} # execute instruction with {status}.FS={fs}",
+                    gen_status_read_sigupd(temp_reg, test_data, priv),
                 ]
             )
         lines.extend(
@@ -217,11 +205,11 @@ def _generate_smfcsr_tests(test_data: TestData) -> list[str]:
             lines.extend(
                 [
                     "",
-                    f"# Testcase: {insn} with mstatus.FS={fs}",
-                    _gen_fs_init(fs, temp_reg),
+                    f"# Testcase: {insn} with {status}.FS={fs}",
+                    *set_status_fields(temp_reg, priv, fs=fs),
                     test_data.add_testcase(f"fs{fs}_{insn}", cp, covergroup),
-                    f"{insn} # execute instruction with mstatus.FS={fs}",
-                    gen_csr_read_sigupd(temp_reg, ("mstatus", None), test_data),
+                    f"{insn} # execute instruction with {status}.FS={fs}",
+                    gen_status_read_sigupd(temp_reg, test_data, priv),
                 ]
             )
         lines.extend(
@@ -238,10 +226,10 @@ def _generate_smfcsr_tests(test_data: TestData) -> list[str]:
             lines.extend(
                 [
                     "",
-                    _gen_fs_init(fs, temp_reg),
+                    *set_status_fields(temp_reg, priv, fs=fs),
                     test_data.add_testcase(f"fs{fs}_{insn}", coverpoint, covergroup),
-                    f"{insn} # execute instruction with mstatus.FS={fs}",
-                    gen_csr_read_sigupd(temp_reg, ("mstatus", None), test_data),
+                    f"{insn} # execute instruction with {status}.FS={fs}",
+                    gen_status_read_sigupd(temp_reg, test_data, priv),
                 ]
             )
         lines.append("\n#endif")
@@ -249,21 +237,3 @@ def _generate_smfcsr_tests(test_data: TestData) -> list[str]:
     test_data.int_regs.return_registers([ones_reg, check_reg, temp_reg, scratch_reg, save_reg])
 
     return lines
-
-
-@add_priv_test_generator(
-    "SmF",
-    required_extensions=["Sm", "F"],
-    march_extensions=["F", "D", "Zfa"],
-    # TODO: Remove BOOT_TO_MMODE when converting this test to T-SBI.
-    extra_defines=["#define BOOT_TO_MMODE"],
-)
-def make_smf(test_data: TestData) -> list[TestChunk]:
-    """Generate tests for SmF machine-mode floating-point testsuite."""
-    test_chunks: list[TestChunk] = []
-    tc = test_data.begin_test_chunk()
-
-    tc.code.extend(_generate_smfcsr_tests(test_data))
-
-    test_chunks.append(test_data.end_test_chunk())
-    return test_chunks
