@@ -128,17 +128,8 @@
 `ifdef MISALIGN_COVERAGE
   `include "Misalign_coverage.svh"
 `endif
-`ifdef MISALIGND_COVERAGE
-  `include "MisalignD_coverage.svh"
-`endif
-`ifdef MISALIGNF_COVERAGE
-  `include "MisalignF_coverage.svh"
-`endif
 `ifdef MISALIGNV_COVERAGE
   `include "MisalignV_coverage.svh"
-`endif
-`ifdef MISALIGNZCA_COVERAGE
-  `include "MisalignZca_coverage.svh"
 `endif
 `ifdef PMPF_COVERAGE
   `include "PMPF_coverage.svh"
@@ -415,6 +406,9 @@
 `endif
 `ifdef ZFHMIN_COVERAGE
   `include "Zfhmin_coverage.svh"
+`endif
+`ifdef ZIBI_COVERAGE
+  `include "Zibi_coverage.svh"
 `endif
 `ifdef ZIC64BZICBOZ_COVERAGE
   `include "Zic64bZicboz_coverage.svh"

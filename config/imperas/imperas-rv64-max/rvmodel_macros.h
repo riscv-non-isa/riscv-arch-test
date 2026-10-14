@@ -111,4 +111,14 @@
 // Imperas implements tcontrol and gates M-mode triggers with action=0 on tcontrol.mte
 #define RVMODEL_SDTRIG_USE_TCONTROL
 
+##### Sscofpmf #####
+
+#define RVMODEL_HPM_COUNTER 3   // HPM counter used by the Sscofpmf tests (3 to 31)
+// No event code counts: there are no plans for Imperas to support HPM events, so this is
+// not expected to change in the foreseeable future.
+#define RVMODEL_MHPMEVENT_VAL 0x00000000
+#define RVMODEL_MHPMEVENT_CODE(_R1, _R2) \
+    nop
+
+
 #endif // _RVMODEL_MACROS_H

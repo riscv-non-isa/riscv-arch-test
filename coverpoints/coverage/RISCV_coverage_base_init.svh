@@ -166,21 +166,9 @@
         `cover_info("//      Misalign - Enabled");
         `include "Misalign_coverage_init.svh"
     `endif
-    `ifdef COVER_MISALIGND
-        `cover_info("//      MisalignD - Enabled");
-        `include "MisalignD_coverage_init.svh"
-    `endif
-    `ifdef COVER_MISALIGNF
-        `cover_info("//      MisalignF - Enabled");
-        `include "MisalignF_coverage_init.svh"
-    `endif
     `ifdef COVER_MISALIGNV
         `cover_info("//      MisalignV - Enabled");
         `include "MisalignV_coverage_init.svh"
-    `endif
-    `ifdef COVER_MISALIGNZCA
-        `cover_info("//      MisalignZca - Enabled");
-        `include "MisalignZca_coverage_init.svh"
     `endif
     `ifdef COVER_PMPF
         `cover_info("//      PMPF - Enabled");
@@ -549,6 +537,10 @@
     `ifdef COVER_ZFHMIN
         `cover_info("//      Zfhmin - Enabled");
         `include "Zfhmin_coverage_init.svh"
+    `endif
+    `ifdef COVER_ZIBI
+        `cover_info("//      Zibi - Enabled");
+        `include "Zibi_coverage_init.svh"
     `endif
     `ifdef COVER_ZIC64BZICBOZ
         `cover_info("//      Zic64bZicboz - Enabled");

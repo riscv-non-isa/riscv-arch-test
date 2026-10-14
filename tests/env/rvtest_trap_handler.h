@@ -74,9 +74,9 @@
 //    4. common_Xhandler: save T5, restore xSCRATCH, load tentry_addr, jr
 //    5. common_Xentry: save T4..T1, read xcause into T5
 //    6. Ecall detection -> T-SBI dispatch (if ecall and SBI call) OR normal trap sig
-//    7. Normal path: record trap signature (vect+mode, cause, epc/ip, tval/intID)
+//    7. Normal path: record trap signature (vect+mode, cause, epc/ip, tval)
 //    8. Exception: record xEPC, bump past trapping instruction
-//    9. Interrupt: clear interrupt source via dispatch table
+//    9. Interrupt: record xIP and xtval, clear interrupt source via dispatch table
 //   10. resto_Xrtn: restore T1..T6 and sp, xret to resume execution
 //
 //  T-SBI (TEST SUPERVISOR BINARY INTERFACE)
@@ -2214,6 +2214,128 @@ tsbi_instr_table:
                 sfence.vma                       // TSBI_SFENCE_VMA
                 ret
         #endif  // S_SUPPORTED
+        // Sscofpmf performance-monitoring CSRs
+        #ifdef SSCOFPMF_SUPPORTED
+        TSBI_CSR_INSTR_TABLE(0xB03) // mhpmcounter3
+        TSBI_CSR_INSTR_TABLE(0xDA0) // scountovf
+        TSBI_CSR_INSTR_TABLE(0x323) // mhpmevent3
+        TSBI_CSR_INSTR_TABLE(0x324) // mhpmevent4
+        TSBI_CSR_INSTR_TABLE(0x325) // mhpmevent5
+        TSBI_CSR_INSTR_TABLE(0x326) // mhpmevent6
+        TSBI_CSR_INSTR_TABLE(0x327) // mhpmevent7
+        TSBI_CSR_INSTR_TABLE(0x328) // mhpmevent8
+        TSBI_CSR_INSTR_TABLE(0x329) // mhpmevent9
+        TSBI_CSR_INSTR_TABLE(0x32A) // mhpmevent10
+        TSBI_CSR_INSTR_TABLE(0x32B) // mhpmevent11
+        TSBI_CSR_INSTR_TABLE(0x32C) // mhpmevent12
+        TSBI_CSR_INSTR_TABLE(0x32D) // mhpmevent13
+        TSBI_CSR_INSTR_TABLE(0x32E) // mhpmevent14
+        TSBI_CSR_INSTR_TABLE(0x32F) // mhpmevent15
+        TSBI_CSR_INSTR_TABLE(0x330) // mhpmevent16
+        TSBI_CSR_INSTR_TABLE(0x331) // mhpmevent17
+        TSBI_CSR_INSTR_TABLE(0x332) // mhpmevent18
+        TSBI_CSR_INSTR_TABLE(0x333) // mhpmevent19
+        TSBI_CSR_INSTR_TABLE(0x334) // mhpmevent20
+        TSBI_CSR_INSTR_TABLE(0x335) // mhpmevent21
+        TSBI_CSR_INSTR_TABLE(0x336) // mhpmevent22
+        TSBI_CSR_INSTR_TABLE(0x337) // mhpmevent23
+        TSBI_CSR_INSTR_TABLE(0x338) // mhpmevent24
+        TSBI_CSR_INSTR_TABLE(0x339) // mhpmevent25
+        TSBI_CSR_INSTR_TABLE(0x33A) // mhpmevent26
+        TSBI_CSR_INSTR_TABLE(0x33B) // mhpmevent27
+        TSBI_CSR_INSTR_TABLE(0x33C) // mhpmevent28
+        TSBI_CSR_INSTR_TABLE(0x33D) // mhpmevent29
+        TSBI_CSR_INSTR_TABLE(0x33E) // mhpmevent30
+        TSBI_CSR_INSTR_TABLE(0x33F) // mhpmevent31
+        TSBI_CSR_INSTR_TABLE(0xB04) // mhpmcounter4
+        TSBI_CSR_INSTR_TABLE(0xB05) // mhpmcounter5
+        TSBI_CSR_INSTR_TABLE(0xB06) // mhpmcounter6
+        TSBI_CSR_INSTR_TABLE(0xB07) // mhpmcounter7
+        TSBI_CSR_INSTR_TABLE(0xB08) // mhpmcounter8
+        TSBI_CSR_INSTR_TABLE(0xB09) // mhpmcounter9
+        TSBI_CSR_INSTR_TABLE(0xB0A) // mhpmcounter10
+        TSBI_CSR_INSTR_TABLE(0xB0B) // mhpmcounter11
+        TSBI_CSR_INSTR_TABLE(0xB0C) // mhpmcounter12
+        TSBI_CSR_INSTR_TABLE(0xB0D) // mhpmcounter13
+        TSBI_CSR_INSTR_TABLE(0xB0E) // mhpmcounter14
+        TSBI_CSR_INSTR_TABLE(0xB0F) // mhpmcounter15
+        TSBI_CSR_INSTR_TABLE(0xB10) // mhpmcounter16
+        TSBI_CSR_INSTR_TABLE(0xB11) // mhpmcounter17
+        TSBI_CSR_INSTR_TABLE(0xB12) // mhpmcounter18
+        TSBI_CSR_INSTR_TABLE(0xB13) // mhpmcounter19
+        TSBI_CSR_INSTR_TABLE(0xB14) // mhpmcounter20
+        TSBI_CSR_INSTR_TABLE(0xB15) // mhpmcounter21
+        TSBI_CSR_INSTR_TABLE(0xB16) // mhpmcounter22
+        TSBI_CSR_INSTR_TABLE(0xB17) // mhpmcounter23
+        TSBI_CSR_INSTR_TABLE(0xB18) // mhpmcounter24
+        TSBI_CSR_INSTR_TABLE(0xB19) // mhpmcounter25
+        TSBI_CSR_INSTR_TABLE(0xB1A) // mhpmcounter26
+        TSBI_CSR_INSTR_TABLE(0xB1B) // mhpmcounter27
+        TSBI_CSR_INSTR_TABLE(0xB1C) // mhpmcounter28
+        TSBI_CSR_INSTR_TABLE(0xB1D) // mhpmcounter29
+        TSBI_CSR_INSTR_TABLE(0xB1E) // mhpmcounter30
+        TSBI_CSR_INSTR_TABLE(0xB1F) // mhpmcounter31
+        #if (UDB_MXLEN==32)
+        TSBI_CSR_INSTR_TABLE(0x723) // mhpmevent3h
+        TSBI_CSR_INSTR_TABLE(0xB83) // mhpmcounter3h
+        TSBI_CSR_INSTR_TABLE(0x724) // mhpmevent4h
+        TSBI_CSR_INSTR_TABLE(0x725) // mhpmevent5h
+        TSBI_CSR_INSTR_TABLE(0x726) // mhpmevent6h
+        TSBI_CSR_INSTR_TABLE(0x727) // mhpmevent7h
+        TSBI_CSR_INSTR_TABLE(0x728) // mhpmevent8h
+        TSBI_CSR_INSTR_TABLE(0x729) // mhpmevent9h
+        TSBI_CSR_INSTR_TABLE(0x72A) // mhpmevent10h
+        TSBI_CSR_INSTR_TABLE(0x72B) // mhpmevent11h
+        TSBI_CSR_INSTR_TABLE(0x72C) // mhpmevent12h
+        TSBI_CSR_INSTR_TABLE(0x72D) // mhpmevent13h
+        TSBI_CSR_INSTR_TABLE(0x72E) // mhpmevent14h
+        TSBI_CSR_INSTR_TABLE(0x72F) // mhpmevent15h
+        TSBI_CSR_INSTR_TABLE(0x730) // mhpmevent16h
+        TSBI_CSR_INSTR_TABLE(0x731) // mhpmevent17h
+        TSBI_CSR_INSTR_TABLE(0x732) // mhpmevent18h
+        TSBI_CSR_INSTR_TABLE(0x733) // mhpmevent19h
+        TSBI_CSR_INSTR_TABLE(0x734) // mhpmevent20h
+        TSBI_CSR_INSTR_TABLE(0x735) // mhpmevent21h
+        TSBI_CSR_INSTR_TABLE(0x736) // mhpmevent22h
+        TSBI_CSR_INSTR_TABLE(0x737) // mhpmevent23h
+        TSBI_CSR_INSTR_TABLE(0x738) // mhpmevent24h
+        TSBI_CSR_INSTR_TABLE(0x739) // mhpmevent25h
+        TSBI_CSR_INSTR_TABLE(0x73A) // mhpmevent26h
+        TSBI_CSR_INSTR_TABLE(0x73B) // mhpmevent27h
+        TSBI_CSR_INSTR_TABLE(0x73C) // mhpmevent28h
+        TSBI_CSR_INSTR_TABLE(0x73D) // mhpmevent29h
+        TSBI_CSR_INSTR_TABLE(0x73E) // mhpmevent30h
+        TSBI_CSR_INSTR_TABLE(0x73F) // mhpmevent31h
+        TSBI_CSR_INSTR_TABLE(0xB84) // mhpmcounter4h
+        TSBI_CSR_INSTR_TABLE(0xB85) // mhpmcounter5h
+        TSBI_CSR_INSTR_TABLE(0xB86) // mhpmcounter6h
+        TSBI_CSR_INSTR_TABLE(0xB87) // mhpmcounter7h
+        TSBI_CSR_INSTR_TABLE(0xB88) // mhpmcounter8h
+        TSBI_CSR_INSTR_TABLE(0xB89) // mhpmcounter9h
+        TSBI_CSR_INSTR_TABLE(0xB8A) // mhpmcounter10h
+        TSBI_CSR_INSTR_TABLE(0xB8B) // mhpmcounter11h
+        TSBI_CSR_INSTR_TABLE(0xB8C) // mhpmcounter12h
+        TSBI_CSR_INSTR_TABLE(0xB8D) // mhpmcounter13h
+        TSBI_CSR_INSTR_TABLE(0xB8E) // mhpmcounter14h
+        TSBI_CSR_INSTR_TABLE(0xB8F) // mhpmcounter15h
+        TSBI_CSR_INSTR_TABLE(0xB90) // mhpmcounter16h
+        TSBI_CSR_INSTR_TABLE(0xB91) // mhpmcounter17h
+        TSBI_CSR_INSTR_TABLE(0xB92) // mhpmcounter18h
+        TSBI_CSR_INSTR_TABLE(0xB93) // mhpmcounter19h
+        TSBI_CSR_INSTR_TABLE(0xB94) // mhpmcounter20h
+        TSBI_CSR_INSTR_TABLE(0xB95) // mhpmcounter21h
+        TSBI_CSR_INSTR_TABLE(0xB96) // mhpmcounter22h
+        TSBI_CSR_INSTR_TABLE(0xB97) // mhpmcounter23h
+        TSBI_CSR_INSTR_TABLE(0xB98) // mhpmcounter24h
+        TSBI_CSR_INSTR_TABLE(0xB99) // mhpmcounter25h
+        TSBI_CSR_INSTR_TABLE(0xB9A) // mhpmcounter26h
+        TSBI_CSR_INSTR_TABLE(0xB9B) // mhpmcounter27h
+        TSBI_CSR_INSTR_TABLE(0xB9C) // mhpmcounter28h
+        TSBI_CSR_INSTR_TABLE(0xB9D) // mhpmcounter29h
+        TSBI_CSR_INSTR_TABLE(0xB9E) // mhpmcounter30h
+        TSBI_CSR_INSTR_TABLE(0xB9F) // mhpmcounter31h
+        #endif  // UDB_MXLEN==32
+        #endif  // SSCOFPMF_SUPPORTED
         .word 0 // sentinel to mark end of table
 
 .endif
@@ -2226,37 +2348,29 @@ tsbi_instr_table:
 // or a genuine ecall exception that should be recorded in the signature).
 //
 // This section:
-//   1. Calculates the trap signature entry size (3, 4, or 6 words)
+//   1. Calculates the trap signature entry size (4, or 6 words for M and HS with H)
 //   2. Pre-increments the trap signature pointer and checks for overrun
-//   3. Records: vect+mode word, xcause, xepc/xip, xtval/intID
+//   3. Records: vect+mode word, xcause, xepc/xip, xtval (with H, second trap value and xtinst)
 //   4. For exceptions: records xEPC and bumps past the trapping instruction
 //   5. For interrupts: dispatches to interrupt clearing routines
 //   6. Restores registers and returns via xret
 //==============================================================================
 
 \__MODE__\()trapsig_ptr_upd:                     // pre-update trap signature pointer
-        li      T2, 4*REGWIDTH                    // T2 = default entry size (4 words for exceptions)
-        bgez    T5, \__MODE__\()xcpt_sig_sv       // if xcause MSB=0 -> exception, keep 4-word size
+        li      T2, 4*REGWIDTH                    // T2 = entry size (4 words)
 
-\__MODE__\()int_sig_sv:                          // interrupt path: determine 3 or 4 word entry
-        slli    T3, T5, 1                          // T3 = xcause << 1 (remove MSB)
-        addi    T3, T3, -(IRQ_M_TIMER)<<1          // compare against timer interrupt threshold
-        bgez    T3, \__MODE__\()trap_sig_sv        // if cause >= timer -> external int (4 words, keep T2)
-        li      T2, 3*REGWIDTH                    // cause < timer -> SW or timer int (3 words)
-        j       \__MODE__\()trap_sig_sv            // go to pointer update
-
-\__MODE__\()xcpt_sig_sv:                          // exception: check for hypervisor (6-word entry)
-// M and HS exception entries add mtval2/htval and mtinst/htinst when H is supported.
+\__MODE__\()trap_sig_sz:                          // check for hypervisor (6-word entry)
+// M and HS entries add mtval2/htval and mtinst/htinst when H is supported.
 .ifc \__MODE__ , M
 #ifdef H_SUPPORTED
-        li      T2, 6*REGWIDTH                  // hypervisor build: 6-word exception entries
+        li      T2, 6*REGWIDTH                  // hypervisor build: 6-word entries
 #endif
 .else
   .ifc \__MODE__ , V
         // VS-mode entries keep 4 words
   .else
 #ifdef H_SUPPORTED
-        li      T2, 6*REGWIDTH                    // S/HS on a hypervisor build: 6-word exception entries
+        li      T2, 6*REGWIDTH                    // S/HS on a hypervisor build: 6-word entries
 #endif
   .endif
 .endif
@@ -2479,6 +2593,10 @@ adj_\__MODE__\()epc_rtn:
         csrw    CSR_XEPC, T3
 
 skp_adj_\__MODE__\()epc:
+// Words 3-5 are also recorded for interrupts, which write zero to xtval
+// (norm:mtval_other_traps_zero) and, with H, to the second trap value and
+// xtinst (norm:H_trap_xtinst_interrupt).
+sv_\__MODE__\()tval_words:
         csrr    T3, CSR_XTVAL                         // T3 = xtval (trap value: faulting addr or instruction)
 
 sv_\__MODE__\()tval:
@@ -2487,7 +2605,7 @@ sv_\__MODE__\()tval:
 skp_\__MODE__\()tval:
 
 // --- Hypervisor-specific fields: second trap value (word 4), xtinst (word 5) ---
-// Must match the entry width chosen in \__MODE__\()xcpt_sig_sv.
+// Must match the entry width chosen in \__MODE__\()trap_sig_sz.
 // xtinst may be written with zero instead of the transformed instruction.
   .ifc \__MODE__ , M
         #ifdef H_SUPPORTED
@@ -2512,6 +2630,7 @@ skp_\__MODE__\()tval:
   .endif
 
 1:
+        bltz    T5, dispatch_\__MODE__\()int_handler  // interrupt -> clear its source
 // --- Dispatch special exception handlers ---
 dispatch_\__MODE__\()spcl_excpt_handler:
         li      T2, int_hndlr_tblsz                // T2 = offset to exception dispatch table
@@ -2541,7 +2660,8 @@ dispatch_\__MODE__\()spcl_excpt_handler:
 
 //==============================================================================
 // INTERRUPT HANDLER
-// Clears the interrupt source and records xIP in the trap signature.
+// Records xIP and, through the exception path's word 3-5 code, xtval (and with
+// H, the second trap value and xtinst), then clears the interrupt source.
 //==============================================================================
 
 common_\__MODE__\()int_handler:
@@ -2554,6 +2674,9 @@ common_\__MODE__\()int_handler:
 sv_\__MODE__\()ip:
         TRAP_SIGUPD(T4, T3, 2, sv_\__MODE__\()ip, sv_\__MODE__\()ip_str) // write word 2: xIP
 
+        j       sv_\__MODE__\()tval_words           // words 3-5: xtval and, with H, second trap value and xtinst
+
+dispatch_\__MODE__\()int_handler:
         LI(     T2, 0)                               // T2 = 0 (offset for interrupt dispatch table)
 
 //==============================================================================
@@ -2787,8 +2910,10 @@ excpt_\__MODE__\()hndlr_tbl:
         la      T2, resto_\__MODE__\()rtn
         jr      T2
 
-\__MODE__\()clr_Lcof_int:                            // local counter overflow interrupt: xIP.LCOFIP already cleared
-        la      T2, resto_\__MODE__\()rtn
+\__MODE__\()clr_Lcof_int:                            // local counter overflow interrupt
+        LI(     T2, MIP_LCOFIP)
+        csrc    CSR_XIP, T2                           // xIP.LCOFIP is writable in mip and sip
+        LA(     T2, resto_\__MODE__\()rtn)
         jr      T2
 
 .popsection                                          // end of .text.rvmodel section
@@ -2934,6 +3059,8 @@ rtn_fm_mmode:
 //  lhu (not lw) is used because xEPC is only guaranteed 2-byte aligned; a
 //  4-byte lw at a 2 mod 4 address would misalign on cores without hardware
 //  misaligned-load support. bits[1:0] fit in the loaded 16 bits.
+//  Without Zca, IALIGN=32 and xEPC[1] is always zero, so the handler always
+//  advances by 4; advancing by 2 would return to the same instruction.
 //
 //  Register usage:
 //    a0, a1 (x10, x11) — the ONLY scratch registers (CSR reads, instruction
@@ -3022,6 +3149,7 @@ fast_Millegalinstruction:
         RVTEST_SIGUPD_FAST_TRAP(x2, a1, a0, CSR_MEPC, SIG_STRIDE, fast_Mepc_mismatch)
         RVTEST_SIGUPD_FAST_TRAP(x2, a1, a0, CSR_MTVAL, 2*SIG_STRIDE, fast_Mtval_mismatch)
         addi x2, x2, 3*SIG_STRIDE
+#ifdef ZCA_SUPPORTED
         // mepc advance using only a0 — reads bits[1:0] from *mepc using lhu
         // (lhu because mepc is only guaranteed 2-byte aligned).
         csrr a0, mepc
@@ -3033,6 +3161,7 @@ fast_Mcompressed:
         csrr a0, mepc
         addi a0, a0, 2                  // 16-bit instruction: advance mepc by 2
         j    fast_Mdone
+#endif
 fast_Muncompressed:
         csrr a0, mepc
         addi a0, a0, 4                  // 32-bit instruction: advance mepc by 4
@@ -3091,6 +3220,7 @@ fast_Sillegalinstruction:
         RVTEST_SIGUPD_FAST_TRAP(x2, a1, a0, CSR_SEPC, SIG_STRIDE, fast_Sepc_mismatch)
         RVTEST_SIGUPD_FAST_TRAP(x2, a1, a0, CSR_STVAL, 2*SIG_STRIDE, fast_Stval_mismatch)
         addi x2, x2, 3*SIG_STRIDE
+#ifdef ZCA_SUPPORTED
         // Width detection: lhu at sepc (2-byte aligned -> no misalign trap).
         csrr a0, sepc
         lhu  a0, 0(a0)                  // load lower 16 bits of faulting instruction
@@ -3101,6 +3231,7 @@ fast_Scompressed:
         csrr a0, sepc
         addi a0, a0, 2                  // 16-bit instruction: advance sepc by 2
         j    fast_Sdone
+#endif
 fast_Suncompressed:
         csrr a0, sepc
         addi a0, a0, 4                  // 32-bit instruction: advance sepc by 4
