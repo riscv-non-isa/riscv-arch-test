@@ -379,8 +379,8 @@ normative_rule_definitions:
   - names: [H_csrs_hs_not_vs, H_vscsrs_acc_vs, H_cause_virtual_instruction]
     coverpoint: ["H_vscsr_cg/cp_hcsr_virtualinstructionfault"]
 
-  # High-half H CSRs are illegal when XLEN > 32
-  - names: [H_illegal_high_half]
+  # For RV64, the addresses of all standard high-half CSRs are reserved (the hypervisor high-half CSRs)
+  - names: [Zicsr_high_half_rv64_rsv]
     coverpoint: ["H_vscsr_cg/cp_illegalupper", "H_ucsr_cg/cp_illegalupper"]
 
   # H and S CSRs are inaccessible from U-mode
