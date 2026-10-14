@@ -194,8 +194,14 @@ def render(
         name = str(e.get("name") or "")
         # A row may list several coverpoints, one per line; other lines are notes.
         cps = [ln.strip() for ln in name.split("\n") if re.fullmatch(r"\w+", ln.strip())]
+        # A row may name a family of crosses, e.g. cp_hedeleg for cp_hedeleg_*
+        declared = (cov or set()) | rules.keys()
+        cps = [
+            c
+            for cp in cps
+            for c in ([cp] if cp in declared else [cp, *sorted(d for d in declared if d.startswith(cp + "_"))])
+        ]
         if cov is not None:
-            # A row may name a family of crosses, e.g. cp_hedeleg for cp_hedeleg_*
             warnings += [
                 ("coverpoint", cp) for cp in cps if cp not in cov and not any(c.startswith(cp + "_") for c in cov)
             ]
