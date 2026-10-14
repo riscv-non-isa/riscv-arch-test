@@ -46,18 +46,43 @@
 // RVTEST_SIGUPD_FAST_TRAP(sigptr, tempreg, sigreg, csr, offset, mismatch)
 // Reads, records, or compares one CSR field without advancing sigptr.
 // Fast trap handlers use fixed offsets for their cause, EPC, and TVAL fields,
-// then advance sigptr once after all three fields. Both compile modes emit two
-// instructions so the signature and self-check ELFs have identical code layout.
+// then advance sigptr once after all three fields. Both compile modes emit the
+// same number of instructions so the signature and self-check ELFs have
+// identical code layout.
 #ifdef RVTEST_SELFCHECK
-  #define RVTEST_SIGUPD_FAST_TRAP(_SIG_PTR, _TMPREG, _R, _CSR, _OFF, _MISMATCH) \
-    csrr _R, _CSR                                                           ;\
+  #define RVTEST_FAST_TRAP_CHECK(_SIG_PTR, _TMPREG, _R, _OFF, _MISMATCH)      \
     LREG _TMPREG, _OFF(_SIG_PTR)                                           ;\
     bne _R, _TMPREG, _MISMATCH
 #else
-  #define RVTEST_SIGUPD_FAST_TRAP(_SIG_PTR, _TMPREG, _R, _CSR, _OFF, _MISMATCH) \
-    csrr _R, _CSR                                                           ;\
+  #define RVTEST_FAST_TRAP_CHECK(_SIG_PTR, _TMPREG, _R, _OFF, _MISMATCH)      \
     SREG _R, _OFF(_SIG_PTR)                                                ;\
     nop
+#endif
+
+#define RVTEST_SIGUPD_FAST_TRAP(_SIG_PTR, _TMPREG, _R, _CSR, _OFF, _MISMATCH) \
+  csrr _R, _CSR                                                             ;\
+  RVTEST_FAST_TRAP_CHECK(_SIG_PTR, _TMPREG, _R, _OFF, _MISMATCH)
+
+// RVTEST_SIGUPD_FAST_TRAP_TVAL(sigptr, tempreg, sigreg, csr, offset, mismatch)
+// Same as RVTEST_SIGUPD_FAST_TRAP for xTVAL on an illegal-instruction trap.
+// Without Zca, an encoding whose low two bits are not 11 may be reported either
+// as its 16-bit parcel or as the 32-bit word it begins: a hart without the
+// compressed extension may treat those encoding spaces as 32-bit instructions
+// (unprivileged ISA, Base Instruction-Length Encoding), and xTVAL holds the
+// actual faulting instruction. Keep only the 16-bit parcel so both are accepted.
+#ifdef ZCA_SUPPORTED
+  #define RVTEST_SIGUPD_FAST_TRAP_TVAL(_SIG_PTR, _TMPREG, _R, _CSR, _OFF, _MISMATCH) \
+    RVTEST_SIGUPD_FAST_TRAP(_SIG_PTR, _TMPREG, _R, _CSR, _OFF, _MISMATCH)
+#else
+  #define RVTEST_SIGUPD_FAST_TRAP_TVAL(_SIG_PTR, _TMPREG, _R, _CSR, _OFF, _MISMATCH) \
+    csrr _R, _CSR                                                           ;\
+    andi _TMPREG, _R, 3                                                     ;\
+    xori _TMPREG, _TMPREG, 3                                                ;\
+    beqz _TMPREG, 1f                  /* 32-bit encoding: keep all of it */ ;\
+    slli _R, _R, __riscv_xlen-16                                            ;\
+    srli _R, _R, __riscv_xlen-16                                            ;\
+  1:                                                                        ;\
+    RVTEST_FAST_TRAP_CHECK(_SIG_PTR, _TMPREG, _R, _OFF, _MISMATCH)
 #endif
 
 // TRAP_SIGUPD(tempreg, sigreg, offset, instptr, strptr)
