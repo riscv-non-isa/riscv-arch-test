@@ -2,7 +2,7 @@
 # priv/extensions/Sm_V.py
 #
 # Sm_V privileged test generator.
-# Vector CSR access, vsetvl* behavior, vill, vstart, mstatus.VS, misa.V.
+# Vector CSR access, vsetvl* behavior, vill, vstart, mstatus.VS.
 # Part of the Sm suite: Sm_V_*-NN.S in tests/priv/Sm, run only when Zve32x is also supported.
 # SPDX-License-Identifier: Apache-2.0
 ##################################
@@ -18,7 +18,6 @@ from testgen.priv.registry import add_priv_test_generator
 @add_priv_test_generator(
     "Sm",
     required_extensions=["Sm", "Zve32x"],
-    march_extensions=["Zve32x"],
     extra_defines=[
         "#define RVTEST_VECTOR",
         "#define RVTEST_SEW 0",
@@ -27,5 +26,5 @@ from testgen.priv.registry import add_priv_test_generator
     ],
 )
 def make_smv(test_data: TestData) -> list[TestChunk]:
-    """Generate Sm_V tests (vector CSRs, vsetvl* behavior, vill, vstart, mstatus.VS, misa.V)."""
+    """Generate Sm_V tests (vector CSRs, vsetvl* behavior, vill, vstart, mstatus.VS)."""
     return gen_v_tests(test_data, "M", "Sm_V_cg")

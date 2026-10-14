@@ -2,34 +2,26 @@
 # priv/extensions/FCommon.py
 #
 # Shared floating-point CSR and xstatus.FS test generation for Sm_F (M-mode, mstatus.FS),
-# S_F (S-mode, sstatus.FS) and U_F (U-mode, mstatus.FS through T-SBI).
+# S_F (S-mode, sstatus.FS) and U_F (U-mode, sstatus.FS or mstatus.FS through T-SBI).
 # David_Harris@hmc.edu 1 March 2026
 # SPDX-License-Identifier: Apache-2.0
 ##################################
 
 """Functions for generating floating-point CSR and xstatus.FS tests in M-, S- and U-mode."""
 
-from testgen.asm.csr import gen_csr_read_sigupd, gen_csr_read_sigupd_in_mode
+from testgen.asm.csr import gen_csr_read_sigupd
 from testgen.asm.helpers import comment_banner, load_float_reg
-from testgen.asm.tsbi import tsbi_call_or_direct
 from testgen.constants import INDENT
 from testgen.data.state import TestData
-from testgen.priv.extensions.PrivCommon import FS_MASK, STATUS_CSR, set_status_fields
-
-_MODE_NAME = {"M": "machine", "S": "supervisor", "U": "user"}
-
-
-def _gen_fs_init(fs: int, temp_reg: int, priv: str) -> str:
-    """Initialize xstatus.FS"""
-    return "\n".join(set_status_fields(temp_reg, priv, fs=fs))
+from testgen.priv.extensions.PrivCommon import STATUS_CSR, gen_status_read_sigupd, set_status_fields, status_csr_instr
 
 
 def _gen_fp_csr_init(csr_name: str, value: int, temp_reg: int, priv: str) -> str:
     """Initialize an FP CSR while xstatus.FS is Dirty."""
     status = STATUS_CSR[priv]
     lines = [
-        f"LI(x{temp_reg}, {FS_MASK})",
-        tsbi_call_or_direct(f"csrs {status}, x{temp_reg} # Set {status}.FS to dirty", priv),
+        f"LI(x{temp_reg}, MSTATUS_FS)",
+        status_csr_instr(f"csrs {status}, x{temp_reg} # Set {status}.FS to dirty", priv),
         f"LI(x{temp_reg}, {value})",
         f"csrw {csr_name}, x{temp_reg} # Initialize {csr_name}",
     ]
@@ -50,7 +42,7 @@ def gen_fcsr_tests(test_data: TestData, priv: str, covergroup: str) -> list[str]
     lines.append(
         comment_banner(
             coverpoint,
-            f"Read, write all 1s, write all 0s, set all 1s, set all 0s, restore all fp CSRs from {_MODE_NAME[priv]} mode with different {status}.FS",
+            f"Read, write all 1s, write all 0s, set all 1s, set all 0s, restore all fp CSRs from {priv}-mode with different {status}.FS",
         )
     )
 
@@ -63,35 +55,35 @@ def gen_fcsr_tests(test_data: TestData, priv: str, covergroup: str) -> list[str]
             lines.extend(
                 [
                     f"# Testcase: {csr_name} access with {status}.FS={fs}: write 1s",
-                    _gen_fs_init(fs, temp_reg, priv),
+                    *set_status_fields(temp_reg, priv, fs=fs),
                     f"csrr x{save_reg}, {csr_name}    # Save CSR",
                     test_data.add_testcase(f"fs{fs}_{csr_name}_csrrw1_{status}", coverpoint, covergroup),
                     f"csrw {csr_name}, x{ones_reg}    # Write all 1s to CSR",
-                    gen_csr_read_sigupd_in_mode(check_reg, (status, None), test_data, priv),
+                    gen_status_read_sigupd(check_reg, test_data, priv),
                     test_data.add_testcase(f"fs{fs}_{csr_name}_csrrw1_csr", coverpoint, covergroup),
                     gen_csr_read_sigupd(check_reg, csr, test_data),
                     "",
                     f"# Testcase: {csr_name} access with {status}.FS={fs}: write 0s",
-                    _gen_fs_init(fs, temp_reg, priv),
+                    *set_status_fields(temp_reg, priv, fs=fs),
                     test_data.add_testcase(f"fs{fs}_{csr_name}_csrrw0_{status}", coverpoint, covergroup),
                     f"csrw {csr_name}, zero   # Write all 0s to CSR",
-                    gen_csr_read_sigupd_in_mode(check_reg, (status, None), test_data, priv),
+                    gen_status_read_sigupd(check_reg, test_data, priv),
                     test_data.add_testcase(f"fs{fs}_{csr_name}_csrrw0_csr", coverpoint, covergroup),
                     gen_csr_read_sigupd(check_reg, csr, test_data),
                     "",
                     f"# Testcase: {csr_name} access with {status}.FS={fs}: set all bits",
-                    _gen_fs_init(fs, temp_reg, priv),
+                    *set_status_fields(temp_reg, priv, fs=fs),
                     test_data.add_testcase(f"fs{fs}_{csr_name}_csrs_all_{status}", coverpoint, covergroup),
                     f"csrs {csr_name}, x{ones_reg}    # Set all CSR bits",
-                    gen_csr_read_sigupd_in_mode(check_reg, (status, None), test_data, priv),
+                    gen_status_read_sigupd(check_reg, test_data, priv),
                     test_data.add_testcase(f"fs{fs}_{csr_name}_csrs_all_csr", coverpoint, covergroup),
                     gen_csr_read_sigupd(check_reg, csr, test_data),
                     "",
                     f"# Testcase: {csr_name} access with {status}.FS={fs}: clear all bits",
-                    _gen_fs_init(fs, temp_reg, priv),
+                    *set_status_fields(temp_reg, priv, fs=fs),
                     test_data.add_testcase(f"fs{fs}_{csr_name}_csrrc_all_{status}", coverpoint, covergroup),
                     f"csrc {csr_name}, x{ones_reg}    # Clear all CSR bits",
-                    gen_csr_read_sigupd_in_mode(check_reg, (status, None), test_data, priv),
+                    gen_status_read_sigupd(check_reg, test_data, priv),
                     test_data.add_testcase(f"fs{fs}_{csr_name}_csrrc_all_csr", coverpoint, covergroup),
                     gen_csr_read_sigupd(check_reg, csr, test_data),
                     f"csrw {csr_name}, x{save_reg}       # Restore CSR",
@@ -173,11 +165,11 @@ def gen_fcsr_tests(test_data: TestData, priv: str, covergroup: str) -> list[str]
                     csr_name = "fflags"
                 setup_lines = [
                     _gen_fp_csr_init(csr_name, 1 if "csrrc" in insn else 0, temp_reg, priv),
-                    _gen_fs_init(fs, temp_reg, priv),
+                    *set_status_fields(temp_reg, priv, fs=fs),
                     f"LI(x{temp_reg}, 1) # make {insn} change {csr_name}",
                 ]
             else:
-                setup_lines = [_gen_fs_init(fs, temp_reg, priv)]
+                setup_lines = set_status_fields(temp_reg, priv, fs=fs)
             cp = coverpoint_nd if insn in nondeterministic_initial_clean_insns else coverpoint
             lines.extend(
                 [
@@ -186,7 +178,7 @@ def gen_fcsr_tests(test_data: TestData, priv: str, covergroup: str) -> list[str]
                     *setup_lines,
                     test_data.add_testcase(f"fs{fs}_{insn}", cp, covergroup),
                     f"{insn} # execute instruction with {status}.FS={fs}",
-                    gen_csr_read_sigupd_in_mode(temp_reg, (status, None), test_data, priv),
+                    gen_status_read_sigupd(temp_reg, test_data, priv),
                 ]
             )
         lines.append("\n#ifdef D_SUPPORTED")
@@ -195,10 +187,10 @@ def gen_fcsr_tests(test_data: TestData, priv: str, covergroup: str) -> list[str]
                 [
                     "",
                     f"# Testcase: {insn} with {status}.FS={fs}",
-                    _gen_fs_init(fs, temp_reg, priv),
+                    *set_status_fields(temp_reg, priv, fs=fs),
                     test_data.add_testcase(f"fs{fs}_{insn}", coverpoint, covergroup),
                     f"{insn} # execute instruction with {status}.FS={fs}",
-                    gen_csr_read_sigupd_in_mode(temp_reg, (status, None), test_data, priv),
+                    gen_status_read_sigupd(temp_reg, test_data, priv),
                 ]
             )
         lines.extend(
@@ -216,10 +208,10 @@ def gen_fcsr_tests(test_data: TestData, priv: str, covergroup: str) -> list[str]
                 [
                     "",
                     f"# Testcase: {insn} with {status}.FS={fs}",
-                    _gen_fs_init(fs, temp_reg, priv),
+                    *set_status_fields(temp_reg, priv, fs=fs),
                     test_data.add_testcase(f"fs{fs}_{insn}", cp, covergroup),
                     f"{insn} # execute instruction with {status}.FS={fs}",
-                    gen_csr_read_sigupd_in_mode(temp_reg, (status, None), test_data, priv),
+                    gen_status_read_sigupd(temp_reg, test_data, priv),
                 ]
             )
         lines.extend(
@@ -236,10 +228,10 @@ def gen_fcsr_tests(test_data: TestData, priv: str, covergroup: str) -> list[str]
             lines.extend(
                 [
                     "",
-                    _gen_fs_init(fs, temp_reg, priv),
+                    *set_status_fields(temp_reg, priv, fs=fs),
                     test_data.add_testcase(f"fs{fs}_{insn}", coverpoint, covergroup),
                     f"{insn} # execute instruction with {status}.FS={fs}",
-                    gen_csr_read_sigupd_in_mode(temp_reg, (status, None), test_data, priv),
+                    gen_status_read_sigupd(temp_reg, test_data, priv),
                 ]
             )
         lines.append("\n#endif")

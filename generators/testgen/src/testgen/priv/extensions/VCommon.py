@@ -2,18 +2,18 @@
 # priv/extensions/VCommon.py
 #
 # Shared vector test generation for Sm_V (M-mode, mstatus.VS), S_V (S-mode, sstatus.VS) and
-# U_V (U-mode, mstatus.VS through T-SBI).
-# Vector CSR access, vsetvl* behavior, vill, vstart, xstatus.VS, misa.V (M-mode only).
+# U_V (U-mode, sstatus.VS or mstatus.VS through T-SBI).
+# Vector CSR access, vsetvl* behavior, vill, vstart, xstatus.VS.
 # SPDX-License-Identifier: Apache-2.0
 ##################################
 
 """Functions for generating vector CSR and vtype/vl/vstart tests in M-, S- and U-mode."""
 
-from testgen.asm.csr import gen_csr_read_sigupd, gen_csr_read_sigupd_in_mode, gen_csr_write_sigupd
+from testgen.asm.csr import gen_csr_read_sigupd, gen_csr_write_sigupd
 from testgen.asm.helpers import comment_banner, write_sigupd
 from testgen.data.state import TestData
 from testgen.data.test_chunk import TestChunk
-from testgen.priv.extensions.PrivCommon import STATUS_CSR, VS_MASK, set_status_fields
+from testgen.priv.extensions.PrivCommon import STATUS_CSR, gen_status_read_sigupd, set_status_fields
 
 # LMUL = 1 before the vmv.v.i v1/v2 setup: an earlier testcase leaves LMUL = 2, where v1 is a
 # misaligned register group (a reserved encoding) that only harts with Ssstrict must trap.
@@ -36,7 +36,6 @@ _VECTOR_CSRS_WR = ("vstart", "vxsat", "vxrm", "vcsr")
 
 def _gen_vcsrrswc(test_data: TestData, temp_reg: int, covergroup: str, priv: str) -> list[str]:
     """cp_vcsrrswc: csrrs/csrrc/csrrw against each of the 7 vector CSRs."""
-    status = STATUS_CSR[priv]
     coverpoint = "cp_vcsrrswc"
     lines = [
         comment_banner(
@@ -64,8 +63,8 @@ def _gen_vcsrrswc(test_data: TestData, temp_reg: int, covergroup: str, priv: str
                         *set_status_fields(temp_reg, priv, vs=vs),
                         test_data.add_testcase(f"{csr}_{op}_vs{vs}", coverpoint, covergroup),
                         f"{op} x0, {csr}, x{save_reg}",
-                        f"LI(x{temp_reg}, {VS_MASK})",
-                        gen_csr_read_sigupd_in_mode(check_reg, (status, VS_MASK), test_data, priv, temp_reg),
+                        f"LI(x{temp_reg}, MSTATUS_VS)",
+                        gen_status_read_sigupd(check_reg, test_data, priv, temp_reg),
                         gen_csr_read_sigupd(check_reg, (csr, None), test_data),
                     ]
                 )
@@ -125,7 +124,7 @@ def _gen_status_vs_dirty(test_data: TestData, temp_reg: int, covergroup: str, pr
         lines.extend(set_status_fields(temp_reg, priv, vs=vs))
         lines.append(test_data.add_testcase(f"vadd_vs{vs}", f"cp_{status}_vs_set_dirty_arithmetic", covergroup))
         lines.append("vadd.vv v3, v1, v2")
-        lines.append(gen_csr_read_sigupd_in_mode(check_reg, (status, None), test_data, priv))
+        lines.append(gen_status_read_sigupd(check_reg, test_data, priv))
 
     lines.append(comment_banner(f"cp_{status}_vs_set_dirty_csr", "VS=Initial/Clean -> vsetvli -> expect Dirty"))
     for vs in (1, 2):
@@ -133,7 +132,7 @@ def _gen_status_vs_dirty(test_data: TestData, temp_reg: int, covergroup: str, pr
         lines.extend(set_status_fields(temp_reg, priv, vs=vs))
         lines.append(test_data.add_testcase(f"vsetvli_vs{vs}", f"cp_{status}_vs_set_dirty_csr", covergroup))
         lines.append(f"vsetvli x{temp_reg}, x0, e16, m2, tu, mu")
-        lines.append(gen_csr_read_sigupd_in_mode(check_reg, (status, None), test_data, priv))
+        lines.append(gen_status_read_sigupd(check_reg, test_data, priv))
     test_data.int_regs.return_registers([check_reg])
     return lines
 
@@ -172,27 +171,6 @@ def _gen_status_vs_off(test_data: TestData, temp_reg: int, covergroup: str, priv
     lines.append(test_data.add_testcase("vsetvli_vs_off", f"cp_{status}_vs_off_csr", covergroup))
     lines.append(f"vsetvli x{temp_reg}, x0, e8, m1, tu, mu  # traps: VS=Off")
     lines.extend(set_status_fields(temp_reg, priv, vs=3))
-    return lines
-
-
-def _gen_misa_v(test_data: TestData, temp_reg: int, covergroup: str) -> list[str]:
-    """cp_misa_v_clear_set: csrrs/csrrc misa with rs1[21]=1."""
-    coverpoint = "cp_misa_v_clear_set"
-    lines = [
-        comment_banner(coverpoint, "csrrs/csrrc misa with rs1[21]=1 to attempt to clear/set V"),
-    ]
-    check_reg = test_data.int_regs.get_register()
-    lines.append(f"LI(x{temp_reg}, 0x200000)  # misa.V")
-    lines.append(test_data.add_testcase("misa_v_csrrc", coverpoint, covergroup))
-    lines.append(f"csrc misa, x{temp_reg}")
-    # No signature word here: whether misa.V can be cleared is implementation-defined
-    # (Sail keeps V set, QEMU clears it), so the value after the clear is not determined.
-    lines.append(test_data.add_testcase("misa_v_csrrs", coverpoint, covergroup))
-    lines.append(f"csrs misa, x{temp_reg}")
-    # After the set, V must read 1 on any machine that implements V, whether or not the
-    # clear above took effect. temp_reg already holds the bit-21 mask.
-    lines.append(gen_csr_read_sigupd(check_reg, ("misa", 0x200000), test_data, temp_reg))
-    test_data.int_regs.return_registers([check_reg])
     return lines
 
 
@@ -603,14 +581,9 @@ def gen_v_tests(test_data: TestData, priv: str, covergroup: str) -> list[TestChu
     tc = test_data.new_test_chunk(test_chunks, "V_vcsr")
     tc.code.extend(_gen_vstart_oob(test_data, temp_reg, covergroup, priv))
 
-    tc = test_data.new_test_chunk(test_chunks, "V_vset")
-    tc.code.extend(_gen_status_vs_dirty(test_data, temp_reg, covergroup, priv))
-    tc = test_data.new_test_chunk(test_chunks, "V_vset")
-    tc.code.extend(_gen_status_vs_off(test_data, temp_reg, covergroup, priv))
-    if priv == "M":  # misa is accessible only in M-mode
-        tc = test_data.new_test_chunk(test_chunks, "V_vset")
-        tc.code.extend(_gen_misa_v(test_data, temp_reg, covergroup))
     for gen in (
+        _gen_status_vs_dirty,
+        _gen_status_vs_off,
         _gen_sew_lmul_vsetvl,
         _gen_sew_lmul_vset_i_vli,
         _gen_vill_vsetvl,
