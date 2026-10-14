@@ -4,7 +4,7 @@
 normative_rule_definitions:
   # With medeleg = 0, every exception from VS and VU goes to M-mode whatever hedeleg holds
   - names: [H_trap_deleg, hedeleg_op]
-    coverpoint: ["ExceptionsHSm_cg/cp_hedeleg_*"]
+    coverpoint: ["ExceptionsHSm_cg/cp_hedeleg_{breakpoint, ecall, illegal_instruction, instr_access_fault, instr_misaligned_jalr, load_access_fault, load_misaligned, store_access_fault, store_misaligned}"]
 
   # When a trap is taken into M-mode, virtualization mode V gets set to 0, and fields MPV
   # and MPP in mstatus (or mstatush) are set according to . A trap into M-mode also writes
@@ -59,21 +59,21 @@ normative_rule_definitions:
   # trap is taken into M-mode, mtval2 is written with additional exception-specific
   # information, alongside mtval, to assist software in handling the trap.
   - name: mtval2_sz_acc_op
-    coverpoint: ["ExceptionsHSm_cg/cp_xtinst_*"]
+    coverpoint: ["ExceptionsHSm_cg/cp_xtinst_{breakpoint, ecall, illegalinstr, instr_access, instr_misaligned, load_access, load_misaligned, store_access, store_misaligned, virtinstr}"]
   # The mtinst register is an MXLEN-bit read/write register formatted as shown in . When a
   # trap is taken into M-mode, mtinst is written with a value that, if nonzero, provides
   # information about the instruction that trapped, to assist software in handling the
   # trap. The values that may be written to mtinst on a trap are documented in .
   - name: mtinst_sz_acc_op
-    coverpoint: ["ExceptionsHSm_cg/cp_xtinst_*"]
+    coverpoint: ["ExceptionsHSm_cg/cp_xtinst_{breakpoint, ecall, illegalinstr, instr_access, instr_misaligned, load_access, load_misaligned, store_access, store_misaligned, virtinstr}"]
   # On any trap into M-mode or HS-mode, one of these values is written automatically into
   # the appropriate trap instruction CSR, mtinst or htinst:
   - name: H_trap_xtinst
-    coverpoint: ["ExceptionsHSm_cg/cp_xtinst_*"]
+    coverpoint: ["ExceptionsHSm_cg/cp_xtinst_{breakpoint, ecall, illegalinstr, instr_access, instr_misaligned, load_access, load_misaligned, store_access, store_misaligned, virtinstr}"]
   # On a synchronous exception, if a nonzero value is written, one of the following shall
   # be true about the value:
   - name: H_trap_xtinst_exception_lead_in
-    coverpoint: ["ExceptionsHSm_cg/cp_xtinst_*"]
+    coverpoint: ["ExceptionsHSm_cg/cp_xtinst_{breakpoint, ecall, illegalinstr, instr_access, instr_misaligned, load_access, load_misaligned, store_access, store_misaligned, virtinstr}"]
   # Bit 0 is 1, and replacing bit 1 with 1 makes the value into a valid encoding of a
   # standard instruction. In this case, the instruction that trapped is the same kind as
   # indicated by the register value, and the register value is the transformation of the
@@ -87,7 +87,7 @@ normative_rule_definitions:
   # specified by this standard. The value is one of the special pseudoinstructions defined
   # later, all of which have bits 1:0 equal to 00.
   - name: H_trap_xtinst_exception_list
-    coverpoint: ["ExceptionsHSm_cg/cp_xtinst_*"]
+    coverpoint: ["ExceptionsHSm_cg/cp_xtinst_{breakpoint, ecall, illegalinstr, instr_access, instr_misaligned, load_access, load_misaligned, store_access, store_misaligned, virtinstr}"]
   # shows the values that may be automatically written to the trap instruction register
   # for each standard exception cause. For exceptions that prevent the fetching of an
   # instruction, only zero or a pseudoinstruction value may be written. A custom value may
@@ -95,9 +95,9 @@ normative_rule_definitions:
   # standard or extension may permit other values to be written, chosen from the set of
   # allowed values established earlier.
   - name: H_trap_xtinst_val
-    coverpoint: ["ExceptionsHSm_cg/cp_xtinst_*"]
+    coverpoint: ["ExceptionsHSm_cg/cp_xtinst_{breakpoint, ecall, illegalinstr, instr_access, instr_misaligned, load_access, load_misaligned, store_access, store_misaligned, virtinstr}"]
   # Except when a pseudoinstruction value is required (described later), the value written
   # to mtinst or htinst may always be zero, indicating that the hardware is providing no
   # information in the register for this particular trap.
   - name: H_trap_xtinst_zero_ok
-    coverpoint: ["ExceptionsHSm_cg/cp_xtinst_*"]
+    coverpoint: ["ExceptionsHSm_cg/cp_xtinst_{breakpoint, ecall, illegalinstr, instr_access, instr_misaligned, load_access, load_misaligned, store_access, store_misaligned, virtinstr}"]
