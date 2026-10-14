@@ -491,9 +491,6 @@
       "supported": false,
       "sfence_vma_illegal_if_svbare_only": true
     },
-    "Svukte": {
-      "supported": false
-    },
     "Svade": { "supported": false },
     "Svadu": { "supported": false },
     "Svnapot": { "supported": false },
