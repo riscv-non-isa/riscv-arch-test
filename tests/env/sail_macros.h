@@ -129,6 +129,7 @@
 #define RVMODEL_TIMER_INT_SOON_DELAY 5000 // Sail ticks once per instruction; T-SBI round trips in the *_INT_SOON macros cost up to ~1000 ticks
 
 #undef RVMODEL_SET_MEXT_INT
+#undef RVMODEL_SET_MEXT_INT_M
 #define RVMODEL_SET_MEXT_INT(_R1, _R2)        \
   li _R1, (1 << 31) | (1 << 11);               \
   li _R2, SAIL_SIG_ADDRESS;    \
@@ -157,6 +158,7 @@
 
 ##### Supervisor Interrupts #####
 #undef RVMODEL_SET_SEXT_INT
+#undef RVMODEL_SET_SEXT_INT_M
 #define RVMODEL_SET_SEXT_INT(_R1, _R2)        \
   li _R1, (1 << 31) | (1 << 9);               \
   li _R2, SAIL_SIG_ADDRESS;    \
@@ -179,5 +181,14 @@
   li _R1, (1 << 1);               \
   li _R2, SAIL_SIG_ADDRESS;    \
   sw _R1, 0(_R2)            ; /* Clear SSW interrupt */ \
+
+
+
+##### Sscofpmf #####
+# The reference build triggers Sail's own event counter instead of the DUT's.
+# The Sail model is configured to count fences.
+#undef RVMODEL_MHPMEVENT_CODE
+#define RVMODEL_MHPMEVENT_CODE(_R1, _R2) \
+  fence
 
 #endif // _SAIL_MACROS_H

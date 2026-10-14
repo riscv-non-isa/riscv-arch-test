@@ -89,8 +89,8 @@
 
 // Custom RVMODEL_BOOT_TO_MMODE overrides default RVTEST_BOOT_TO_MMODE
 // if defined.  For most DUTs, the default should work and this macro
-// should not be defined.  If no M-mode or CSRs are implemented, define this
-// macro as blank to bypass the boot process.  If a nonconforming
+// should not be defined.  If the DUT has no standard M-mode CSRs, do not
+// define STANDARD_SM_SUPPORTED.  If a nonconforming
 // M-mode is implemented, define this macro to set up the necessary
 // state in a fashion similar to RVTEST_BOOT_TO_MMODE.
 //#define RVMODEL_BOOT_TO_MMODE
@@ -178,8 +178,6 @@
 
 ##### Supervisor Interrupts #####
 
-#define WHISPER_SSIP_ADDRESS (CLINT_BASE_ADDRESS + 0xC000)
-
 // using the supervisor APLIC domain to trigger supervisor external interrupts
 // - source 2 is delegated from the machine domain to the supervisor domain (see RVMODEL_BOOT)
 // - writing source number 2 to ADDR_S_SETIPNUM sets the interrupt pending
@@ -194,5 +192,14 @@
   li      _R2, 2; \
   sw      _R2, 0(_R1); /* clear source 2 interrupt */
 
+
+##### Sscofpmf #####
+
+#define RVMODEL_HPM_COUNTER 3   // HPM counter used by the Sscofpmf tests (3 to 31)
+// Selector 12 is the Load event in whisper.json. The Sail reference counts EV_FENCE for the same
+// selector (sail.json) and triggers it with a fence (sail_macros.h).
+#define RVMODEL_MHPMEVENT_VAL  12
+#define RVMODEL_MHPMEVENT_CODE(_R1, _R2)  \
+    lw _R2, 0(_R1)
 
 #endif // _RVMODEL_MACROS_H
