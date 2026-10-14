@@ -29,7 +29,7 @@ vector_vector_arithmetic_fp_instruction: coverpoint ins.current.insn[14:0] {
 }
 
 vfmv_f_s : coverpoint ins.current.insn {
-    wildcard bins instruction = {32'b010000_?_?????_00000_001_?????_1010111};
+    wildcard bins instruction = {VFMV_F_S};
 }
 
 fflags_modified_after_clear : coverpoint (get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "fcsr", "fflags") == 0 & get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "fcsr", "fflags") != 0);
