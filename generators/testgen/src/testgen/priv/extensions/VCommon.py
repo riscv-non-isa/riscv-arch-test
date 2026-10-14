@@ -143,11 +143,9 @@ def _gen_status_vs_off(test_data: TestData, temp_reg: int, covergroup: str, priv
     lines = [
         comment_banner(
             f"cp_{status}_vs_off_arithmetic",
-            "VS=Off + misa.V active -> vector arithmetic traps illegal-instruction",
+            "VS=Off -> vector arithmetic traps illegal-instruction",
         ),
     ]
-    if priv == "M":  # the coverage model sees misa.V (misa_v_active) only once misa is accessed
-        lines.append(f"csrr x{temp_reg}, misa")
     lines.extend(set_status_fields(temp_reg, priv, vs=3))
     lines.append(_VSET_M1)
     lines.append("vmv.v.i v1, 1")
