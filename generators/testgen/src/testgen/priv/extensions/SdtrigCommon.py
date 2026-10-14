@@ -554,8 +554,8 @@ def _generate_native_triggers_tests(test_data: TestData, mode: str) -> list[Test
     return chunks
 
 
-def _generate_a_tests(test_data: TestData, mode: str) -> list[TestChunk]:
-    """Generate A-extension load/store/AMO matching tests."""
+def _generate_zalrsc_tests(test_data: TestData, mode: str) -> list[TestChunk]:
+    """Generate lr/sc matching tests."""
     covergroup = f"Sdtrig{mode}_a_cg"
     chunks: list[TestChunk] = []
 
@@ -568,7 +568,6 @@ def _generate_a_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     coverpoint = "cp_lrsc_addr"
     ######################################
     lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_sdtrig_")).code
-    lines.append("#ifdef ZALRSC_SUPPORTED")
     lines.append(
         comment_banner(
             coverpoint,
@@ -602,13 +601,11 @@ def _generate_a_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     #                     *_disable_trigger(temp_reg, trig_num, mode)
     #                 ]
     #             )
-    lines.append("#endif")
 
     ######################################
     coverpoint = "cp_lrsc_data"
     ######################################
     lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_sdtrig_")).code
-    lines.append("#ifdef ZALRSC_SUPPORTED")
     lines.append(
         comment_banner(
             coverpoint,
@@ -625,13 +622,22 @@ def _generate_a_tests(test_data: TestData, mode: str) -> list[TestChunk]:
                             _add_tc(test_data, binname, coverpoint, covergroup),
                         ]
                     )
-    lines.append("#endif")
+
+    test_data.int_regs.return_registers([sp_reg, addr_reg, data_reg, temp_reg])
+
+    chunks.append(test_data.end_test_chunk())
+    return chunks
+
+
+def _generate_zaamo_tests(test_data: TestData, mode: str) -> list[TestChunk]:
+    """Generate AMO matching tests."""
+    covergroup = f"Sdtrig{mode}_a_cg"
+    chunks: list[TestChunk] = []
 
     ######################################
     coverpoint = "cp_amo"
     ######################################
     lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_sdtrig_")).code
-    lines.append("#ifdef ZAAMO_SUPPORTED")
     lines.append(
         comment_banner(
             coverpoint,
@@ -648,16 +654,13 @@ def _generate_a_tests(test_data: TestData, mode: str) -> list[TestChunk]:
                             _add_tc(test_data, binname, coverpoint, covergroup),
                         ]
                     )
-    lines.append("#endif")
-
-    test_data.int_regs.return_registers([sp_reg, addr_reg, data_reg, temp_reg])
 
     chunks.append(test_data.end_test_chunk())
     return chunks
 
 
-def _generate_combined_accesses_tests(test_data: TestData, mode: str) -> list[TestChunk]:
-    """Generate multi-access (vector / cm.push-pop) instruction tests."""
+def _generate_vector_tests(test_data: TestData, mode: str) -> list[TestChunk]:
+    """Generate vector load/store matching tests."""
     covergroup = f"Sdtrig{mode}_combined_accesses_cg"
     chunks: list[TestChunk] = []
 
@@ -667,7 +670,6 @@ def _generate_combined_accesses_tests(test_data: TestData, mode: str) -> list[Te
     coverpoint = "cp_vector_load_store"
     ######################################
     lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_sdtrig_")).code
-    lines.append("#ifdef V_SUPPORTED")
     lines.append(
         comment_banner(
             coverpoint,
@@ -685,13 +687,11 @@ def _generate_combined_accesses_tests(test_data: TestData, mode: str) -> list[Te
                                 _add_tc(test_data, binname, coverpoint, covergroup),
                             ]
                         )
-    lines.append("#endif")
 
     ######################################
     coverpoint = "cp_vector_accesses"
     ######################################
     lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_sdtrig_")).code
-    lines.append("#ifdef V_SUPPORTED")
     lines.append(
         comment_banner(
             coverpoint,
@@ -709,13 +709,20 @@ def _generate_combined_accesses_tests(test_data: TestData, mode: str) -> list[Te
                                 _add_tc(test_data, binname, coverpoint, covergroup),
                             ]
                         )
-    lines.append("#endif")
+
+    chunks.append(test_data.end_test_chunk())
+    return chunks
+
+
+def _generate_zcmp_tests(test_data: TestData, mode: str) -> list[TestChunk]:
+    """Generate cm.push/cm.pop matching tests."""
+    covergroup = f"Sdtrig{mode}_combined_accesses_cg"
+    chunks: list[TestChunk] = []
 
     ######################################
     coverpoint = "cp_cm_pop_push"
     ######################################
     lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_sdtrig_")).code
-    lines.append("#ifdef ZCMP_SUPPORTED")
     lines.append(
         comment_banner(
             coverpoint,
@@ -727,20 +734,19 @@ def _generate_combined_accesses_tests(test_data: TestData, mode: str) -> list[Te
             for insn in ("cm_push", "cm_pop"):
                 for size in SIZE_ALL:
                     for perm in ("store", "load"):
-                        binname = f"trig_num_{trig_num}_addr_{addrval}_{insn}_size_{size}_{perm:03b}"
+                        binname = f"trig_num_{trig_num}_addr_{addrval}_{insn}_size_{size}_{perm}"
                         lines.extend(
                             [
                                 _add_tc(test_data, binname, coverpoint, covergroup),
                             ]
                         )
-    lines.append("#endif")
 
     chunks.append(test_data.end_test_chunk())
     return chunks
 
 
-def _generate_cache_operations_tests(test_data: TestData, mode: str) -> list[TestChunk]:
-    """Generate Zicbo* cache-operation matching tests."""
+def _generate_zicbom_tests(test_data: TestData, mode: str) -> list[TestChunk]:
+    """Generate cbo.clean/flush/inval matching tests."""
     covergroup = f"Sdtrig{mode}_cache_operations_cg"
     chunks: list[TestChunk] = []
 
@@ -748,7 +754,6 @@ def _generate_cache_operations_tests(test_data: TestData, mode: str) -> list[Tes
     coverpoint = "cp_cache_zicbom"
     ######################################
     lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_sdtrig_")).code
-    lines.append("#ifdef ZICBOM_SUPPORTED")
     lines.append(
         comment_banner(
             coverpoint,
@@ -760,19 +765,26 @@ def _generate_cache_operations_tests(test_data: TestData, mode: str) -> list[Tes
             for addrval in ("marker", "zero"):
                 for size in SIZE_ALL:
                     for perm in PERM_XSL:
-                        binname = f"trig_num_{trig_num}_{insn}_addr_{addrval}_size_{size}_perm_{perm:03b}"
+                        binname = f"trig_num_{trig_num}_{insn}_addr_{addrval}_size_{size}_perm_{perm}"
                         lines.extend(
                             [
                                 _add_tc(test_data, binname, coverpoint, covergroup),
                             ]
                         )
-    lines.append("#endif")
+
+    chunks.append(test_data.end_test_chunk())
+    return chunks
+
+
+def _generate_zicboz_tests(test_data: TestData, mode: str) -> list[TestChunk]:
+    """Generate cbo.zero matching tests."""
+    covergroup = f"Sdtrig{mode}_cache_operations_cg"
+    chunks: list[TestChunk] = []
 
     ######################################
     coverpoint = "cp_cache_zicboz"
     ######################################
     lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_sdtrig_")).code
-    lines.append("#ifdef ZICBOZ_SUPPORTED")
     lines.append(
         comment_banner(
             coverpoint,
@@ -782,19 +794,26 @@ def _generate_cache_operations_tests(test_data: TestData, mode: str) -> list[Tes
     for addrval in ("marker", "zero"):
         for size in SIZE_ALL:
             for perm in PERM_XSL:
-                binname = f"cbo_zero_addr_{addrval}_size_{size}_perm_{perm:03b}"
+                binname = f"cbo_zero_addr_{addrval}_size_{size}_perm_{perm}"
                 lines.extend(
                     [
                         _add_tc(test_data, binname, coverpoint, covergroup),
                     ]
                 )
-    lines.append("#endif")
+
+    chunks.append(test_data.end_test_chunk())
+    return chunks
+
+
+def _generate_zicbop_tests(test_data: TestData, mode: str) -> list[TestChunk]:
+    """Generate prefetch matching tests."""
+    covergroup = f"Sdtrig{mode}_cache_operations_cg"
+    chunks: list[TestChunk] = []
 
     ######################################
     coverpoint = "cp_cache_zicbop"
     ######################################
     lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_sdtrig_")).code
-    lines.append("#ifdef ZICBOP_SUPPORTED")
     lines.append(
         comment_banner(
             coverpoint,
@@ -808,7 +827,6 @@ def _generate_cache_operations_tests(test_data: TestData, mode: str) -> list[Tes
                 _add_tc(test_data, binname, coverpoint, covergroup),
             ]
         )
-    lines.append("#endif")
 
     chunks.append(test_data.end_test_chunk())
     return chunks
@@ -1917,8 +1935,12 @@ def register_sdtrig_suite(mode: str, required_extensions: list[str | list[str]],
         """itrigger tests."""
         return _generate_itrigger_tests(test_data, mode)
 
-    # Disabled sections and their extra required extensions:
-    #   _generate_a_tests: [["Zaamo", "Zalrsc"]]
-    #   _generate_combined_accesses_tests: [["V", "Zcmp"]]
-    #   _generate_cache_operations_tests: [["Zicbom", "Zicbop", "Zicboz"]]
+    # Disabled sections and their extra required extension:
+    #   _generate_zalrsc_tests: Zalrsc
+    #   _generate_zaamo_tests: Zaamo
+    #   _generate_vector_tests: Zvl32b
+    #   _generate_zcmp_tests: Zcmp
+    #   _generate_zicbom_tests: Zicbom
+    #   _generate_zicboz_tests: Zicboz
+    #   _generate_zicbop_tests: Zicbop
     #   _generate_address_matches_tests, _generate_csr_tests, _generate_etrigger_tests, _generate_textra_tests
