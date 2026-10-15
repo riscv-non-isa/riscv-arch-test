@@ -18,6 +18,7 @@ from act.build_types import COVERAGE_STEP_TIMEOUT_SECONDS, BuildTask, PythonActi
 from act.config import Config, CoverageSimulator, RefModelType, spike_isa_string
 from act.coverreport import generate_report, merge_summaries
 from act.parse_test_constraints import TestMetadata
+from act.parse_udb_config import get_implemented_extensions
 from act.sail_to_rvvi import sailLog2Trace
 from act.sig_modify import process_signature_file
 from act.toolchain import Toolchain
@@ -89,6 +90,7 @@ def _ref_model_sig_cmd(
     xlen: int,
     debug: bool,
     enable_experimental_extensions: bool,
+    implemented_extensions: frozenset[str] = frozenset(),
 ) -> list[str]:
     """Build the command for invoking the reference model to produce a signature file."""
     if config.ref_model_type == RefModelType.SAIL:
@@ -104,7 +106,7 @@ def _ref_model_sig_cmd(
         cmd.append(str(sig_elf))
         return cmd
     if config.ref_model_type == RefModelType.SPIKE:
-        cmd = [str(config.ref_model_exe), f"--isa={spike_isa_string(xlen)}"]
+        cmd = [str(config.ref_model_exe), f"--isa={spike_isa_string(xlen, implemented_extensions)}"]
         if debug:
             cmd.extend(["-l", "--log-commits", f"--log={sig_trace_file}"])
         cmd.extend(config.ref_model_type.signature_flags(sig_file, xlen // 8))
@@ -133,6 +135,7 @@ def gen_compile_tasks(
     debug: bool = False,
     fast: bool = False,
     enable_experimental_extensions: bool = False,
+    implemented_extensions: frozenset[str] = frozenset(),
 ) -> list[BuildTask]:
     """Generate BuildTasks for the compilation pipeline of a single test.
 
@@ -244,7 +247,14 @@ def gen_compile_tasks(
 
         # 2. sig – run reference model
         ref_model_cmd = _ref_model_sig_cmd(
-            config, sig_elf, sig_file, sig_trace_file, xlen, debug, enable_experimental_extensions
+            config,
+            sig_elf,
+            sig_file,
+            sig_trace_file,
+            xlen,
+            debug,
+            enable_experimental_extensions,
+            implemented_extensions,
         )
         ref_model_outputs = (sig_file, sig_trace_file) if debug else (sig_file,)
         tasks.append(
@@ -621,6 +631,10 @@ def generate_build_plan(
     signature_compile_flags = _sail_platform_defines(sail_config)
     if config.ref_model_type == RefModelType.SAIL:
         ref_model_inputs = (sail_config.absolute(),)
+    # Spike's --isa depends on the DUT extensions (see spike_isa_string).
+    implemented_extensions: frozenset[str] = frozenset()
+    if config.ref_model_type == RefModelType.SPIKE:
+        implemented_extensions = frozenset(get_implemented_extensions(config_wkdir / "env" / "extensions.txt"))
 
     for test_name_str, test_metadata in sorted(selected_tests.items()):
         test_name = Path(test_name_str)
@@ -642,6 +656,7 @@ def generate_build_plan(
                 debug,
                 fast,
                 enable_experimental_extensions,
+                implemented_extensions,
             )
         )
 

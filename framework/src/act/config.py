@@ -69,9 +69,19 @@ _SPIKE_ISA: dict[int, str] = {
 }
 
 
-def spike_isa_string(xlen: int) -> str:
-    """Return spike's ``--isa=`` string for the given XLEN."""
-    return _SPIKE_ISA[xlen]
+def spike_isa_string(xlen: int, implemented_extensions: frozenset[str] = frozenset()) -> str:
+    """Return spike's ``--isa=`` string for the given XLEN.
+
+    Zcmp is incompatible with Zcd, so a DUT with Zcmp gets a string without D, Zcd, and V (which requires D).
+    """
+    isa = _SPIKE_ISA[xlen]
+    if "Zcmp" not in implemented_extensions:
+        return isa
+    base, *multi = isa.split("_")
+    prefix, letters = base[:4], base[4:]
+    letters = letters.replace("d", "").replace("v", "")
+    multi = [ext for ext in multi if ext != "zcd" and not ext.startswith("zv")]
+    return "_".join([prefix + letters, *multi, "zcmp"])
 
 
 class CoverageSimulator(str, Enum):
