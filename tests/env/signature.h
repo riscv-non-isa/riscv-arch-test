@@ -218,20 +218,24 @@
 // TRAP_TVAL_BARE_CHECK
 // Part of the outside-image rule, which applies only with translation off. Jump to 6:
 // (exact compare) when satp.MODE is not Bare. The read is needed only when Sv32 or Sv39
-// exists. It reads satp, not vsatp: guest addresses take the exact compare in
-// TRAP_TVAL_OUTSIDE_IMAGE_CHECK, so the value read in that case does not matter.
-// An M handler trap from M mode with MPRV=0 is untranslated even when satp is not
-// Bare, so it skips the satp test.
-// TRAP_TVAL_READ_SATP serves the non-canonical rule, which needs the satp that
-// translated the address.
+// exists. The caller has already excluded guest addresses, so it reads satp, not vsatp.
+// An M handler trap from M mode is untranslated even when satp is not Bare if it is an
+// instruction fetch (causes 0 and 1, which MPRV does not affect) or MPRV=0. Those skip
+// the satp test.
 #if defined(SV32_SUPPORTED) || defined(SV39_SUPPORTED)
   #define TRAP_TVAL_BARE_CHECK                                    \
     .ifc \__MODE__ , M                                           ;\
       csrr T2, CSR_MSTATUS   /* mstatus */                       ;\
-      LI(  T6, (1<<MPRV_LSB)|MPP_MMODE)                          ;\
-      and  T2, T2, T6        /* keep MPRV and MPP */             ;\
       LI(  T6, MPP_MMODE)                                        ;\
-      beq  T2, T6, 7f        /* from M, MPRV=0: untranslated */  ;\
+      and  T2, T2, T6        /* keep MPP */                      ;\
+      bne  T2, T6, 2f        /* not from M: check satp */        ;\
+      sltiu T2, T5, 2        /* T2 = 1 for fetch causes 0, 1 */  ;\
+      bnez T2, 7f            /* M fetch: untranslated */         ;\
+      csrr T2, CSR_MSTATUS   /* mstatus */                       ;\
+      LI(  T6, 1<<MPRV_LSB)                                      ;\
+      and  T2, T2, T6        /* keep MPRV */                     ;\
+      beqz T2, 7f            /* from M, MPRV=0: untranslated */  ;\
+      2:                                                         ;\
     .endif                                                       ;\
     csrr T2, CSR_SATP        /* satp */                          ;\
     srli T2, T2, UDB_MXLEN-4 /* T2 = satp.MODE */                ;\
@@ -253,9 +257,9 @@
     addi T6, T5, -2              /* causes 2, 3 become 0, 1 */              ;\
     li   T2, 2                   /* limit for causes 2, 3 */                ;\
     bltu T6, T2, 6f              /* cause 2 or 3: exact compare */          ;\
-    TRAP_TVAL_BARE_CHECK                                                     \
     TRAP_TVAL_IS_GVA                                                         \
     bnez T2, 6f                  /* guest address: exact compare */         ;\
+    TRAP_TVAL_BARE_CHECK                                                     \
     LA(  T6, rvtest_entry_point) /* T6 = image start */                     ;\
     LA(  T2, _end)               /* T2 = image end */                       ;\
     bltu _TMPREG, T6, 5f         /* expected below image: invalid */        ;\
