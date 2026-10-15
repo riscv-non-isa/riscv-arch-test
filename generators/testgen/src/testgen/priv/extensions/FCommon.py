@@ -103,8 +103,6 @@ def gen_fcsr_tests(test_data: TestData, priv: str, covergroup: str) -> list[str]
     # can legally either leave FS unchanged or dirty it. Skip those cases.
     nondeterministic_initial_clean_insns = [
         f"fsw f1, 0(x{scratch_reg})",
-        f"fcvt.w.s x{temp_reg}, f0",
-        f"feq.s x{temp_reg}, f1, f2",
         f"fmv.x.w x{temp_reg}, f1",
         f"fclass.s x{temp_reg}, f3",
         f"csrr x{temp_reg}, fcsr",
@@ -122,6 +120,13 @@ def gen_fcsr_tests(test_data: TestData, priv: str, covergroup: str) -> list[str]
         f"csrrc x{temp_reg}, frm, x{temp_reg}",
         f"csrrc x{temp_reg}, fflags, x{temp_reg}",
     ]
+    # Integer-result instructions that raise fflags must dirty FS. Each operand set raises a flag
+    # (NV for feq.s with a signaling NaN and fcvt.wu.s of -1.0, NX for fcvt.w.s of 1.5).
+    flag_raising_insns = [
+        f"feq.s x{temp_reg}, f4, f4",
+        f"fcvt.w.s x{temp_reg}, f5",
+        f"fcvt.wu.s x{temp_reg}, f6",
+    ]
     deterministic_insns = [
         f"flw f0, 0(x{scratch_reg})",
         "fadd.s f0, f1, f2",
@@ -136,8 +141,8 @@ def gen_fcsr_tests(test_data: TestData, priv: str, covergroup: str) -> list[str]
         "fmin.s f0, f1, f2",
         f"add x{temp_reg}, x{temp_reg}, x{temp_reg}",
     ]
-    insns = [*nondeterministic_initial_clean_insns, *fp_csr_write_insns, *deterministic_insns]
-    # fsw, fcvt.w.s, feq.s, fmv.x.w, fclass.s, csrr of FP CSRs, and fmvh.x.d have their own cross
+    insns = [*nondeterministic_initial_clean_insns, *fp_csr_write_insns, *deterministic_insns, *flag_raising_insns]
+    # fsw, fmv.x.w, fclass.s, csrr of FP CSRs, and fmvh.x.d have their own cross
     coverpoint_nd = f"{coverpoint}_nondeterministic"
 
     lines.extend(
@@ -147,6 +152,9 @@ def gen_fcsr_tests(test_data: TestData, priv: str, covergroup: str) -> list[str]
             load_float_reg("1.0", 1, 0x3F800000, test_data, "single"),
             load_float_reg("3.0", 2, 0x40400000, test_data, "single"),
             load_float_reg("tiny", 3, 0x00800000, test_data, "single"),
+            load_float_reg("signaling NaN", 4, 0x7FA00000, test_data, "single"),
+            load_float_reg("1.5", 5, 0x3FC00000, test_data, "single"),
+            load_float_reg("-1.0", 6, 0xBF800000, test_data, "single"),
         ]
     )
 
@@ -165,6 +173,11 @@ def gen_fcsr_tests(test_data: TestData, priv: str, covergroup: str) -> list[str]
                     _gen_fp_csr_init(csr_name, 1 if "csrrc" in insn else 0, temp_reg, priv),
                     *set_status_fields(temp_reg, priv, fs=fs),
                     f"LI(x{temp_reg}, 1) # make {insn} change {csr_name}",
+                ]
+            elif insn in flag_raising_insns:
+                setup_lines = [
+                    _gen_fp_csr_init("fflags", 0, temp_reg, priv),  # clear fflags so the instruction must set a flag
+                    *set_status_fields(temp_reg, priv, fs=fs),
                 ]
             else:
                 setup_lines = set_status_fields(temp_reg, priv, fs=fs)
@@ -191,11 +204,20 @@ def gen_fcsr_tests(test_data: TestData, priv: str, covergroup: str) -> list[str]
                     gen_status_read_sigupd(temp_reg, test_data, priv),
                 ]
             )
+        # f4 holds a NaN-boxed single, which is a NaN as a double, so fcvtmod.w.d raises NV.
+        lines.append("\n#ifdef ZFA_SUPPORTED")
+        insn = f"fcvtmod.w.d x{temp_reg}, f4, rtz"
         lines.extend(
             [
                 "",
+                f"# Testcase: {insn} with {status}.FS={fs}",
+                _gen_fp_csr_init("fflags", 0, temp_reg, priv),  # clear fflags so the instruction must set a flag
+                *set_status_fields(temp_reg, priv, fs=fs),
+                test_data.add_testcase(f"fs{fs}_{insn}", coverpoint, covergroup),
+                f"{insn} # execute instruction with {status}.FS={fs}",
+                gen_status_read_sigupd(temp_reg, test_data, priv),
+                "",
                 "#if __riscv_xlen == 32",
-                "#ifdef ZFA_SUPPORTED",
             ]
         )
         for insn in [f"fmvh.x.d x{temp_reg}, f1", f"fmvp.d.x f0, x{temp_reg}, x{temp_reg}"]:
