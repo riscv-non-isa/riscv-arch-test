@@ -221,7 +221,7 @@ coverpoints:
       tdata2 = {scratch/0/PREFETCH.{i/r/w}}
       tdata1.select ={0/1} (adr)
       tdata1.size = 0
-      tdata1.XSL =111
+      tdata1.XSL = 011
       Perform PREFETCH.{i/r/w} to scratch
     expectation: No exceptions
     bins: 5 values * 2 selects * 3 ops
