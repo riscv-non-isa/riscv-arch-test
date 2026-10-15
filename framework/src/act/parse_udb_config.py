@@ -214,8 +214,8 @@ def generate_extension_list(udb_config_file: Path, output_dir: Path) -> None:
     _bundle_exec(generate_cmd, check=True, capture_output=True)
 
 
-def get_implemented_extensions(extension_list_file: Path) -> set[str]:
-    return set(extension_list_file.read_text().splitlines())
+def get_implemented_extensions(extension_list_file: Path) -> frozenset[str]:
+    return frozenset(extension_list_file.read_text().splitlines())
 
 
 def _generate_one_dut_header(udb_config_file: Path, output_file: Path, subcommand: str) -> None:

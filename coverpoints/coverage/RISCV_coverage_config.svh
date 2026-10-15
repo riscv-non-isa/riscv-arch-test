@@ -128,17 +128,8 @@
 `ifdef MISALIGN_COVERAGE
   `include "Misalign_coverage.svh"
 `endif
-`ifdef MISALIGND_COVERAGE
-  `include "MisalignD_coverage.svh"
-`endif
-`ifdef MISALIGNF_COVERAGE
-  `include "MisalignF_coverage.svh"
-`endif
 `ifdef MISALIGNV_COVERAGE
   `include "MisalignV_coverage.svh"
-`endif
-`ifdef MISALIGNZCA_COVERAGE
-  `include "MisalignZca_coverage.svh"
 `endif
 `ifdef PMPF_COVERAGE
   `include "PMPF_coverage.svh"
@@ -172,15 +163,6 @@
 `endif
 `ifdef SM_COVERAGE
   `include "Sm_coverage.svh"
-`endif
-`ifdef SMF_COVERAGE
-  `include "SmF_coverage.svh"
-`endif
-`ifdef SMV_COVERAGE
-  `include "SmV_coverage.svh"
-`endif
-`ifdef SMVF_COVERAGE
-  `include "SmVF_coverage.svh"
 `endif
 `ifdef SMMPM_COVERAGE
   `include "Smmpm_coverage.svh"
@@ -353,9 +335,6 @@
 `ifdef ZACAS_COVERAGE
   `include "Zacas_coverage.svh"
 `endif
-`ifdef ZACASZABHA_COVERAGE
-  `include "ZacasZabha_coverage.svh"
-`endif
 `ifdef ZALRSC_COVERAGE
   `include "Zalrsc_coverage.svh"
 `endif
@@ -398,15 +377,6 @@
 `ifdef ZCB_COVERAGE
   `include "Zcb_coverage.svh"
 `endif
-`ifdef ZCBM_COVERAGE
-  `include "ZcbM_coverage.svh"
-`endif
-`ifdef ZCBZBA_COVERAGE
-  `include "ZcbZba_coverage.svh"
-`endif
-`ifdef ZCBZBB_COVERAGE
-  `include "ZcbZbb_coverage.svh"
-`endif
 `ifdef ZCD_COVERAGE
   `include "Zcd_coverage.svh"
 `endif
@@ -416,20 +386,8 @@
 `ifdef ZCMOP_COVERAGE
   `include "Zcmop_coverage.svh"
 `endif
-`ifdef ZFAD_COVERAGE
-  `include "ZfaD_coverage.svh"
-`endif
-`ifdef ZFAF_COVERAGE
-  `include "ZfaF_coverage.svh"
-`endif
-`ifdef ZFAZFH_COVERAGE
-  `include "ZfaZfh_coverage.svh"
-`endif
-`ifdef ZFAZFHD_COVERAGE
-  `include "ZfaZfhD_coverage.svh"
-`endif
-`ifdef ZFAZVFH_COVERAGE
-  `include "ZfaZvfh_coverage.svh"
+`ifdef ZFA_COVERAGE
+  `include "Zfa_coverage.svh"
 `endif
 `ifdef ZFBFMIN_COVERAGE
   `include "Zfbfmin_coverage.svh"
@@ -437,14 +395,11 @@
 `ifdef ZFH_COVERAGE
   `include "Zfh_coverage.svh"
 `endif
-`ifdef ZFHD_COVERAGE
-  `include "ZfhD_coverage.svh"
-`endif
 `ifdef ZFHMIN_COVERAGE
   `include "Zfhmin_coverage.svh"
 `endif
-`ifdef ZFHMIND_COVERAGE
-  `include "ZfhminD_coverage.svh"
+`ifdef ZIBI_COVERAGE
+  `include "Zibi_coverage.svh"
 `endif
 `ifdef ZIC64BZICBOZ_COVERAGE
   `include "Zic64bZicboz_coverage.svh"
@@ -499,9 +454,6 @@
 `endif
 `ifdef ZIHINTNTL_COVERAGE
   `include "Zihintntl_coverage.svh"
-`endif
-`ifdef ZIHINTNTLZCA_COVERAGE
-  `include "ZihintntlZca_coverage.svh"
 `endif
 `ifdef ZIHINTPAUSE_COVERAGE
   `include "Zihintpause_coverage.svh"

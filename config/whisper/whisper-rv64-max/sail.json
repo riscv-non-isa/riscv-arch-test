@@ -430,7 +430,7 @@
     // `wfi_is_nop` is set to `true` above, it will still not be
     // available to User mode unless `wfi_available_to_user_mode` is
     // also `true`.
-    "wfi_available_to_user_mode": true,
+    "wfi_available_to_user_mode": false,
     // The maximum increment in the time CSR before a wait instruction
     // (e.g. WFI, WRS.NTO, WRS.STO) that is not a NOP expires its
     // wait. It is not possible to wait indefinitely.
@@ -465,7 +465,15 @@
     // the selector values should be unique.  These selector values
     // are always specified as 64-bit, but their values must fit the
     // width restrictions mentioned above.
-    "event_selectors": []
+    "event_selectors": [
+      {
+        "event": "EV_FENCE",
+        "selector": {
+          "len": 64,
+          "value": "0xC"
+        }
+      }
+    ]
   },
   "extensions": {
     "M": {
@@ -946,7 +954,7 @@
         // value is ignored when `etrigger` is not supported.
         "supported_exceptions": { "len": "xlen", "value": "0" }
       },
-      "hcontext": { "supported": false },
+      "hcontext": { "supported": true },
       // Triggers
       "icount": {
         "supported": true,
@@ -965,12 +973,12 @@
         "supported_interrupts": { "len": "xlen", "value": "0" }
       },
       // CSRs
-      "mcontext": { "supported": false },
+      "mcontext": { "supported": true },
       // The number of supported triggers.  This has to be
       // non-negative, and greater than 0 if Sdtrig is supported.
       // The model does not support more than 16 triggers.
       "num_triggers": 16,
-      "scontext": { "supported": false }
+      "scontext": { "supported": true }
     },
     "Smdbltrp": { "supported": true },
     "Ssdbltrp": { "supported": true },
