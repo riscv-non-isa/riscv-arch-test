@@ -63,11 +63,6 @@ rvtest_data_1:
   SAVE_AREA_SETUP(0x180000000, rvtest_code_begin, code, LEVEL2)
   SATP_SETUP_RV64(sv39)
   sfence.vma
-# Clear medeleg for instruction, load, and store/AMO page faults.
-  LI(x14, 0xb000)
-  # T-SBI call to execute instruction: csrc medeleg, x14
-  mv a1, x14
-  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MEDELEG)
 
 # unmapped supervisor-half address
   SUPERPAGE_PTE_SETUP_SV39(rvtest_data_1, (0), 0xffffffc000000000, LEVEL2)
@@ -360,11 +355,6 @@ SvukteS_cg_cp_not_svukte_qualified_addr_i_sv39_ukte_set_mapped_low_exec:
   SAVE_AREA_SETUP(0x30080000000, rvtest_code_begin, code, LEVEL3)
   SATP_SETUP_RV64(sv48)
   sfence.vma
-# Clear medeleg for instruction, load, and store/AMO page faults.
-  LI(x14, 0xb000)
-  # T-SBI call to execute instruction: csrc medeleg, x14
-  mv a1, x14
-  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MEDELEG)
 
 # unmapped supervisor-half address
   SUPERPAGE_PTE_SETUP_SV48(rvtest_data_1, (0), 0xffff800000000000, LEVEL3)
@@ -657,11 +647,6 @@ SvukteS_cg_cp_not_svukte_qualified_addr_i_sv48_ukte_set_mapped_low_exec:
   SAVE_AREA_SETUP(0x5000080000000, rvtest_code_begin, code, LEVEL4)
   SATP_SETUP_RV64(sv57)
   sfence.vma
-# Clear medeleg for instruction, load, and store/AMO page faults.
-  LI(x14, 0xb000)
-  # T-SBI call to execute instruction: csrc medeleg, x14
-  mv a1, x14
-  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MEDELEG)
 
 # unmapped supervisor-half address
   SUPERPAGE_PTE_SETUP_SV57(rvtest_data_1, (0), 0xff00000000000000, LEVEL4)

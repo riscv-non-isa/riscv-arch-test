@@ -13,7 +13,6 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from testgen.asm.helpers import comment_banner
-from testgen.asm.tsbi import tsbi_call
 from testgen.data.state import TestData
 from testgen.data.test_chunk import TestChunk
 from testgen.priv.extensions.SvukteCommon import (
@@ -202,11 +201,6 @@ def _mode_block(
     lines = [
         (f"# ---- {mode.name}: U-mode accesses qualified by senvcfg.UKTE ----"),
         *enable_s_stage(mode),
-        # Page faults from U-mode are delegated to S-mode by the standard boot.
-        # Clear those delegation bits so the M-mode handler can resume the test.
-        "# Clear medeleg for instruction, load, and store/AMO page faults.",
-        f"LI(x{regs.scratch}, 0xb000)",
-        tsbi_call(f"csrc medeleg, x{regs.scratch}"),
     ]
 
     for va, perms, cases, description in (
