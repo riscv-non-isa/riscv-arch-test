@@ -748,88 +748,144 @@ def _generate_zcmp_tests(test_data: TestData, mode: str) -> list[TestChunk]:
 def _generate_zicbom_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     """Generate cbo.clean/flush/inval matching tests."""
     covergroup = f"Sdtrig{mode}_cache_operations_cg"
-    chunks: list[TestChunk] = []
+    addr_reg, temp_reg = test_data.int_regs.get_registers(2, exclude_regs=[2], reg_range=list(range(8, 16)))
 
     ######################################
     coverpoint = "cp_cache_zicbom"
     ######################################
-    lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_sdtrig_")).code
-    lines.append(
-        comment_banner(
-            coverpoint,
-            "cbo.clean/flush/inval match as stores",
-        )
+    lines = test_data.begin_test_chunk("cache_zicbom").code
+    lines.extend(
+        [
+            *_global_ie(mode, True),
+            comment_banner(coverpoint, "cbo.clean/flush/inval match as stores"),
+            f"LA(x{addr_reg}, scratch) # cache block address",
+        ]
     )
     for trig_num in range(UDB_NUM_TRIGGERS):
-        for insn in ("cbo_clean", "cbo_flush", "cbo_inval"):
-            for addrval in ("marker", "zero"):
-                for size in SIZE_ALL:
-                    for perm in PERM_XSL:
-                        binname = f"trig_num_{trig_num}_{insn}_addr_{addrval}_size_{size}_perm_{perm}"
+        lines.append(f"\n#ifdef UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
+        for tdata2 in ("scratch", 0):
+            for select in (0, 1):
+                for size in range(7):
+                    if size == 1:
+                        lines.append("#ifdef UDB_SDTRIG_MCONTROL6_SIZE_AVAILABLE")
+                    for perm in (0b100, 0b010, 0b001):  # exec / store / load
+                        lines.extend(_xsl_ifdefs(perm))
                         lines.extend(
-                            [
-                                _add_tc(test_data, binname, coverpoint, covergroup),
-                            ]
+                            _config_mcontrol6(temp_reg, trig_num, tdata2, mode, xsl=perm, select=select, size=size)
                         )
+                        for insn in ("clean", "flush", "inval"):
+                            binname = f"trig_num_{trig_num}_td2_{tdata2}_select_{select}_size_{size}_perm_{perm:03b}_cbo_{insn}"
+                            lines.extend(
+                                [
+                                    _add_tc(test_data, binname, coverpoint, covergroup),
+                                    *_arch_guard(
+                                        f"cbo.{insn} (x{addr_reg}) # fire iff addr==tdata2, store, size=0, select=0",
+                                        ["zicbom"],
+                                    ),
+                                    "nop # spacer",
+                                ]
+                            )
+                        lines.append("#endif // UDB_SDTRIG_MCONTROL6_XSL_AVAILABLE")
+                lines.append("#endif // UDB_SDTRIG_MCONTROL6_SIZE_AVAILABLE")
+        lines.extend(_disable_trigger(temp_reg, trig_num, mode))
+        lines.append(f"#endif // UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
 
-    chunks.append(test_data.end_test_chunk())
-    return chunks
+    test_data.int_regs.return_registers([addr_reg, temp_reg])
+    return [test_data.end_test_chunk()]
 
 
 def _generate_zicboz_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     """Generate cbo.zero matching tests."""
     covergroup = f"Sdtrig{mode}_cache_operations_cg"
-    chunks: list[TestChunk] = []
+    addr_reg, temp_reg = test_data.int_regs.get_registers(2, exclude_regs=[2], reg_range=list(range(8, 16)))
 
     ######################################
     coverpoint = "cp_cache_zicboz"
     ######################################
-    lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_sdtrig_")).code
-    lines.append(
-        comment_banner(
-            coverpoint,
-            "cbo.zero matches as a store",
-        )
+    lines = test_data.begin_test_chunk("cache_zicboz").code
+    lines.extend(
+        [
+            *_global_ie(mode, True),
+            comment_banner(coverpoint, "cbo.zero matches as a store"),
+            f"LA(x{addr_reg}, scratch) # cache block address",
+        ]
     )
-    for addrval in ("marker", "zero"):
-        for size in SIZE_ALL:
-            for perm in PERM_XSL:
-                binname = f"cbo_zero_addr_{addrval}_size_{size}_perm_{perm}"
-                lines.extend(
-                    [
-                        _add_tc(test_data, binname, coverpoint, covergroup),
-                    ]
-                )
+    for trig_num in range(UDB_NUM_TRIGGERS):
+        lines.append(f"\n#ifdef UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
+        for tdata2 in ("scratch", 0):
+            for select in (0, 1):
+                for size in range(7):
+                    if size == 1:
+                        lines.append("#ifdef UDB_SDTRIG_MCONTROL6_SIZE_AVAILABLE")
+                    for perm in (0b100, 0b010, 0b001):  # exec / store / load
+                        binname = (
+                            f"trig_num_{trig_num}_td2_{tdata2}_select_{select}_size_{size}_perm_{perm:03b}_cbo_zero"
+                        )
+                        lines.extend(
+                            [
+                                *_xsl_ifdefs(perm),
+                                *_config_mcontrol6(
+                                    temp_reg, trig_num, tdata2, mode, xsl=perm, select=select, size=size
+                                ),
+                                _add_tc(test_data, binname, coverpoint, covergroup),
+                                *_arch_guard(
+                                    f"cbo.zero (x{addr_reg}) # fire iff addr==tdata2, store, size=0, select=0",
+                                    ["zicboz"],
+                                ),
+                                "nop # spacer",
+                                "#endif // UDB_SDTRIG_MCONTROL6_XSL_AVAILABLE",
+                            ]
+                        )
+                lines.append("#endif // UDB_SDTRIG_MCONTROL6_SIZE_AVAILABLE")
+        lines.extend(_disable_trigger(temp_reg, trig_num, mode))
+        lines.append(f"#endif // UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
 
-    chunks.append(test_data.end_test_chunk())
-    return chunks
+    test_data.int_regs.return_registers([addr_reg, temp_reg])
+    return [test_data.end_test_chunk()]
 
 
 def _generate_zicbop_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     """Generate prefetch matching tests."""
     covergroup = f"Sdtrig{mode}_cache_operations_cg"
-    chunks: list[TestChunk] = []
+    addr_reg, temp_reg = test_data.int_regs.get_registers(2, exclude_regs=[2], reg_range=list(range(8, 16)))
 
     ######################################
     coverpoint = "cp_cache_zicbop"
     ######################################
-    lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_sdtrig_")).code
-    lines.append(
-        comment_banner(
-            coverpoint,
-            "prefetch.i/r/w (HINTs) do not match",
-        )
+    prefetch_rs2 = {"i": 0, "r": 1, "w": 3}  # ori x0, rs1, 0 with rs2 field selecting i/r/w
+    prefetch_enc = [
+        (f"prefetch_{p}", rs2 << 20 | addr_reg << 15 | 0b110 << 12 | 0x13) for p, rs2 in prefetch_rs2.items()
+    ]
+    xsl_ifdefs = _xsl_ifdefs(0b011)
+    lines = test_data.begin_test_chunk("cache_zicbop").code
+    lines.extend(
+        [
+            *_global_ie(mode, True),
+            comment_banner(coverpoint, "prefetch.i/r/w (HINTs) do not match as loads or stores"),
+            f"LA(x{addr_reg}, scratch) # prefetch address",
+        ]
     )
-    for insn in ("prefetch_i", "prefetch_r", "prefetch_w"):
-        binname = f"{insn}"
-        lines.extend(
-            [
-                _add_tc(test_data, binname, coverpoint, covergroup),
-            ]
-        )
+    for trig_num in range(UDB_NUM_TRIGGERS):
+        lines.append(f"\n#ifdef UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
+        lines.extend(xsl_ifdefs)
+        for td2_name, tdata2 in [("scratch", "scratch"), ("zero", 0), *prefetch_enc]:
+            for select in (0, 1):
+                lines.extend(_config_mcontrol6(temp_reg, trig_num, tdata2, mode, xsl=0b011, select=select))
+                for p in prefetch_rs2:
+                    binname = f"trig_num_{trig_num}_td2_{td2_name}_select_{select}_prefetch_{p}"
+                    lines.extend(
+                        [
+                            _add_tc(test_data, binname, coverpoint, covergroup),
+                            *_arch_guard(f"prefetch.{p} 0(x{addr_reg}) # never matches as a load or store", ["zicbop"]),
+                            "nop # spacer",
+                        ]
+                    )
+        lines.extend(["#endif // UDB_SDTRIG_MCONTROL6_XSL_AVAILABLE"] * len(xsl_ifdefs))
+        lines.extend(_disable_trigger(temp_reg, trig_num, mode))
+        lines.append(f"#endif // UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
 
-    chunks.append(test_data.end_test_chunk())
-    return chunks
+    test_data.int_regs.return_registers([addr_reg, temp_reg])
+    return [test_data.end_test_chunk()]
 
 
 def _generate_address_matches_tests(test_data: TestData, mode: str) -> list[TestChunk]:
@@ -1935,12 +1991,30 @@ def register_sdtrig_suite(mode: str, required_extensions: list[str | list[str]],
         """itrigger tests."""
         return _generate_itrigger_tests(test_data, mode)
 
+    @add_priv_test_generator(
+        suite, required_extensions=[*required_extensions, "Zicbom"], march_extensions=[], extra_defines=extra_defines
+    )
+    def make_sdtrig_zicbom(test_data: TestData) -> list[TestChunk]:
+        """cbo.clean/flush/inval tests."""
+        return _generate_zicbom_tests(test_data, mode)
+
+    @add_priv_test_generator(
+        suite, required_extensions=[*required_extensions, "Zicboz"], march_extensions=[], extra_defines=extra_defines
+    )
+    def make_sdtrig_zicboz(test_data: TestData) -> list[TestChunk]:
+        """cbo.zero tests."""
+        return _generate_zicboz_tests(test_data, mode)
+
+    @add_priv_test_generator(
+        suite, required_extensions=[*required_extensions, "Zicbop"], march_extensions=[], extra_defines=extra_defines
+    )
+    def make_sdtrig_zicbop(test_data: TestData) -> list[TestChunk]:
+        """prefetch tests."""
+        return _generate_zicbop_tests(test_data, mode)
+
     # Disabled sections and their extra required extension:
     #   _generate_zalrsc_tests: Zalrsc
     #   _generate_zaamo_tests: Zaamo
     #   _generate_vector_tests: Zvl32b
     #   _generate_zcmp_tests: Zcmp
-    #   _generate_zicbom_tests: Zicbom
-    #   _generate_zicboz_tests: Zicboz
-    #   _generate_zicbop_tests: Zicbop
     #   _generate_address_matches_tests, _generate_csr_tests, _generate_etrigger_tests, _generate_textra_tests
