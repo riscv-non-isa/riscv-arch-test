@@ -132,9 +132,9 @@
 // xtval and may replace one invalid address with another. The check passes when
 // the DUT value equals the reference value, or when the reference value is an
 // invalid address and the DUT value is also an invalid address:
-//  - Access fault and misaligned causes with address translation off and V=0: an address
-//    is invalid when it lies below rvtest_entry_point or at or above rvtest_sig_end.
-//    The ELF image is the only memory the test knows to exist.
+//  - Access fault and misaligned causes with address translation off and a non-guest
+//    address: an address is invalid when it lies below rvtest_entry_point or at or above
+//    _end. The linked ELF image is the only memory the test knows to exist.
 //  - Page fault causes with Sv39/Sv48/Sv57 active (vsatp for a guest trap): an address
 //    is invalid when it is not a canonical virtual address.
 // Registers: T5 holds xcause. T2 and T6 are scratch. In the failure path T1
@@ -155,44 +155,45 @@
     beq  x0, x0, 9f            /* always pass (keeps layout equal) */ ;
 #endif
 
-// TRAP_TVAL_VIRT_M / TRAP_TVAL_VIRT_S
-// Set T2 to 1 when the trap came from V=1: mstatus.MPV (mstatush.MPV on RV32) in the
-// M handler, hstatus.SPV in the HS handler. Set T2 to 0 without H.
+// TRAP_TVAL_GVA_M / TRAP_TVAL_GVA_S
+// Set T2 to 1 when xtval holds a guest virtual address: mstatus.GVA (mstatush.GVA on
+// RV32) in the M handler, hstatus.GVA in the HS handler. This covers traps from V=1 and
+// HLV/HSV accesses made with V=0. Set T2 to 0 without H.
 #ifdef H_SUPPORTED
   #if (UDB_MXLEN == 64)
-    #define TRAP_TVAL_VIRT_M                                 \
-      csrr T2, CSR_MSTATUS    /* mstatus (MPV is bit 39) */ ;\
-      srli T2, T2, 32+MPV_LSB /* move MPV to bit 0 */       ;\
-      andi T2, T2, 1          /* T2 = MPV */                ;
+    #define TRAP_TVAL_GVA_M                                  \
+      csrr T2, CSR_MSTATUS    /* mstatus (GVA is bit 38) */ ;\
+      srli T2, T2, 32+GVA_LSB /* move GVA to bit 0 */       ;\
+      andi T2, T2, 1          /* T2 = GVA */                ;
   #elif defined(SM1P12P0_OR_LATER_SUPPORTED)
-    #define TRAP_TVAL_VIRT_M                               \
-      csrr T2, CSR_MSTATUSH /* mstatush (MPV is bit 7) */ ;\
-      srli T2, T2, MPV_LSB  /* move MPV to bit 0 */       ;\
-      andi T2, T2, 1        /* T2 = MPV */                ;
+    #define TRAP_TVAL_GVA_M                                \
+      csrr T2, CSR_MSTATUSH /* mstatush (GVA is bit 6) */ ;\
+      srli T2, T2, GVA_LSB  /* move GVA to bit 0 */       ;\
+      andi T2, T2, 1        /* T2 = GVA */                ;
   #else
-    #define TRAP_TVAL_VIRT_M li T2, 0 ;
+    #define TRAP_TVAL_GVA_M li T2, 0 ;
   #endif
-  #define TRAP_TVAL_VIRT_S                             \
-    csrr T2, CSR_HSTATUS /* hstatus (SPV is bit 7) */ ;\
-    srli T2, T2, MPV_LSB /* move SPV to bit 0 */      ;\
-    andi T2, T2, 1       /* T2 = SPV */               ;
+  #define TRAP_TVAL_GVA_S                              \
+    csrr T2, CSR_HSTATUS /* hstatus (GVA is bit 6) */ ;\
+    srli T2, T2, GVA_LSB /* move GVA to bit 0 */      ;\
+    andi T2, T2, 1       /* T2 = GVA */               ;
 #else
-  #define TRAP_TVAL_VIRT_M li T2, 0 ;
-  #define TRAP_TVAL_VIRT_S li T2, 0 ;
+  #define TRAP_TVAL_GVA_M li T2, 0 ;
+  #define TRAP_TVAL_GVA_S li T2, 0 ;
 #endif
-// TRAP_TVAL_IS_VIRT sets T2 nonzero when the trap came from a virtualized context
-// (V=1), where xtval is a guest virtual address. The VS handler is always virtualized.
-// M and HS handlers read mstatus.MPV and hstatus.SPV.
-#define TRAP_TVAL_IS_VIRT                    \
-    .ifc \__MODE__ , V                      ;\
-      li T2, 1 /* VS handler: always V=1 */ ;\
-    .else                                   ;\
-      .ifc \__MODE__ , M                    ;\
-        TRAP_TVAL_VIRT_M                     \
-      .else                                 ;\
-        TRAP_TVAL_VIRT_S                     \
-      .endif                                ;\
-    .endif                                  ;
+// TRAP_TVAL_IS_GVA sets T2 nonzero when xtval is a guest virtual address, which vsatp
+// translates and the physical-address rule does not cover. The VS handler only sees
+// traps from V=1. M and HS handlers read mstatus.GVA and hstatus.GVA.
+#define TRAP_TVAL_IS_GVA                       \
+    .ifc \__MODE__ , V                        ;\
+      li T2, 1 /* VS handler: always guest */ ;\
+    .else                                     ;\
+      .ifc \__MODE__ , M                      ;\
+        TRAP_TVAL_GVA_M                        \
+      .else                                   ;\
+        TRAP_TVAL_GVA_S                        \
+      .endif                                  ;\
+    .endif                                    ;
 
 // TRAP_TVAL_READ_SATP reads the satp that translated the faulting address into T2:
 // vsatp for a guest trap taken in M or HS mode. In the VS handler, satp already
@@ -202,9 +203,9 @@
     .ifc \__MODE__ , V                                   ;\
       csrr T2, CSR_SATP  /* VS handler: satp is vsatp */ ;\
     .else                                                ;\
-      TRAP_TVAL_IS_VIRT                                   \
-      beqz T2, 3f        /* V=0: use satp */             ;\
-      csrr T2, CSR_VSATP /* V=1: use vsatp */            ;\
+      TRAP_TVAL_IS_GVA                                    \
+      beqz T2, 3f        /* not guest: use satp */       ;\
+      csrr T2, CSR_VSATP /* guest: use vsatp */          ;\
       j    4f            /* done */                      ;\
       3:                                                 ;\
       csrr T2, CSR_SATP  /* satp */                      ;\
@@ -217,24 +218,35 @@
 // TRAP_TVAL_BARE_CHECK
 // Part of the outside-image rule, which applies only with translation off. Jump to 6:
 // (exact compare) when satp.MODE is not Bare. The read is needed only when Sv32 or Sv39
-// exists. It reads satp, not vsatp: V=1 traps take the exact compare in
+// exists. It reads satp, not vsatp: guest addresses take the exact compare in
 // TRAP_TVAL_OUTSIDE_IMAGE_CHECK, so the value read in that case does not matter.
+// An M handler trap from M mode with MPRV=0 is untranslated even when satp is not
+// Bare, so it skips the satp test.
 // TRAP_TVAL_READ_SATP serves the non-canonical rule, which needs the satp that
 // translated the address.
 #if defined(SV32_SUPPORTED) || defined(SV39_SUPPORTED)
   #define TRAP_TVAL_BARE_CHECK                                    \
+    .ifc \__MODE__ , M                                           ;\
+      csrr T2, CSR_MSTATUS   /* mstatus */                       ;\
+      LI(  T6, (1<<MPRV_LSB)|MPP_MMODE)                          ;\
+      and  T2, T2, T6        /* keep MPRV and MPP */             ;\
+      LI(  T6, MPP_MMODE)                                        ;\
+      beq  T2, T6, 7f        /* from M, MPRV=0: untranslated */  ;\
+    .endif                                                       ;\
     csrr T2, CSR_SATP        /* satp */                          ;\
     srli T2, T2, UDB_MXLEN-4 /* T2 = satp.MODE */                ;\
-    bnez T2, 6f              /* translation on: exact compare */ ;
+    bnez T2, 6f              /* translation on: exact compare */ ;\
+    7:                                                           ;
 #else
   #define TRAP_TVAL_BARE_CHECK
 #endif
 
 // TRAP_TVAL_OUTSIDE_IMAGE_CHECK(tempreg, sigreg)
 // Loosen for access fault and misaligned causes (0-7 except 2 and 3) when translation is
-// off and V=0. If the expected value (tempreg) lies inside [rvtest_entry_point,
-// rvtest_sig_end), jump to 6: (exact compare fails). Otherwise pass (jump to 9:) when
-// the actual value (sigreg) is also outside the image. Else fall through to 6:.
+// off and the address is not a guest address. If the expected value (tempreg) lies
+// inside [rvtest_entry_point, _end), jump to 6: (exact compare fails). Otherwise pass
+// (jump to 9:) when the actual value (sigreg) is also outside the image. Else fall
+// through to 6:.
 #define TRAP_TVAL_OUTSIDE_IMAGE_CHECK(_TMPREG, _R)                           \
     li   T2, 8                   /* causes >= 8 are not address faults */   ;\
     bgeu T5, T2, 6f              /* cause >= 8: exact compare */            ;\
@@ -242,10 +254,10 @@
     li   T2, 2                   /* limit for causes 2, 3 */                ;\
     bltu T6, T2, 6f              /* cause 2 or 3: exact compare */          ;\
     TRAP_TVAL_BARE_CHECK                                                     \
-    TRAP_TVAL_IS_VIRT                                                        \
-    bnez T2, 6f                  /* V=1: exact compare */                   ;\
+    TRAP_TVAL_IS_GVA                                                         \
+    bnez T2, 6f                  /* guest address: exact compare */         ;\
     LA(  T6, rvtest_entry_point) /* T6 = image start */                     ;\
-    LA(  T2, rvtest_sig_end)     /* T2 = image end */                       ;\
+    LA(  T2, _end)               /* T2 = image end */                       ;\
     bltu _TMPREG, T6, 5f         /* expected below image: invalid */        ;\
     bltu _TMPREG, T2, 6f         /* expected inside image: exact compare */ ;\
     5:                           /* expected below, or above image */       ;\
@@ -288,18 +300,18 @@
 #endif
 
 #define TRAP_SIGUPD_TVAL(_TMPREG, _R, _OFF, _INST_PTR, _STR_PTR) \
-    TRAP_SIGUPD_TVAL_PREFIX(_TMPREG, _R, _OFF)           \
-    TRAP_TVAL_OUTSIDE_IMAGE_CHECK(_TMPREG, _R)           \
-    6:                                                  ;\
-    TRAP_TVAL_NONCANONICAL_CHECK(_TMPREG, _R)            \
-    8:                                                  ;\
-    mv   T1, _R                    /* actual value */   ;\
-    mv   DEFAULT_TEMP_REG, _TMPREG /* expected value */ ;\
-    jal  T2, failedtest_trap_x7_x9 /* report failure */ ;\
-    RVTEST_WORD_PTR _INST_PTR                           ;\
-    RVTEST_WORD_PTR _STR_PTR                            ;\
-    .word CSR_XEPC                                      ;\
-    9:                                                  ;
+    TRAP_SIGUPD_TVAL_PREFIX(_TMPREG, _R, _OFF)                   \
+    TRAP_TVAL_OUTSIDE_IMAGE_CHECK(_TMPREG, _R)                   \
+    6:                                                          ;\
+    TRAP_TVAL_NONCANONICAL_CHECK(_TMPREG, _R)                    \
+    8:                                                          ;\
+    mv   T1, _R                    /* actual value */           ;\
+    mv   DEFAULT_TEMP_REG, _TMPREG /* expected value */         ;\
+    jal  T2, failedtest_trap_x7_x9 /* report failure */         ;\
+    RVTEST_WORD_PTR _INST_PTR                                   ;\
+    RVTEST_WORD_PTR _STR_PTR                                    ;\
+    .word CSR_XEPC                                              ;\
+    9:                                                          ;
 
 // RVTEST_SIGUPD_FFLAGS(sigptr, linkreg, tempreg, instptr, strptr)
 // Reads fflags and compares/stores it to the signature at 0(sigptr).
