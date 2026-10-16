@@ -986,7 +986,7 @@
         "ENVCFG": "CSRBit_Writable",
         "CONTEXT": "CSRBit_ReadOnlyZero",
         "P1P13": "CSRBit_ReadOnlyZero",
-        "SRMCFG": "CSRBit_Writable",
+        "SRMCFG": "CSRBit_ReadOnlyZero",
         "FCSR": "CSRBit_ReadOnlyZero",
         "C": "CSRBit_ReadOnlyZero"
       },
