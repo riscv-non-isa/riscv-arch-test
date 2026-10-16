@@ -115,7 +115,7 @@
       // not exist.
       "delegatable_bits": {
         "len": 64,
-        "value": "0x0000_0000_00f4_b7ff"
+        "value": "0x0000_0000_00f0_b7ff"
       }
     },
     "mideleg": {
