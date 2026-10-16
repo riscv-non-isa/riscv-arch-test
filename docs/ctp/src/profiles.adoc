@@ -54,9 +54,6 @@ All privileged suites require at least version 1.12 of the privileged specificat
 |D|Double|<<t-D-coverpoints>>|o||x|x|x
 |ZicsrF|Float CSRs|<<t-ZicsrF-coverpoints>>|o||x|x|x
 |Misalign|Misaligned Load/Store|<<t-Misalign-coverpoints>>|o|o|o|o|o
-|MisalignZca|Misaligned Compressed|<<t-MisalignZca-coverpoints>>|o|o|o|o|o
-|MisalignF|Misaligned Float|<<t-MisalignF-coverpoints>>|o||o|o|o
-|MisalignD|Misaligned Double|<<t-MisalignD-coverpoints>>|o||o|o|o
 |Zfh|Half|<<t-Zfh-coverpoints>>|||o|o|o
 |Zfhmin|Half Converts|<<t-Zfhmin-coverpoints>>|||x|o|x
 |Zfa|Additional Float|<<t-Zfa-coverpoints>>||||x|x
@@ -87,7 +84,6 @@ All privileged suites require at least version 1.12 of the privileged specificat
 |Sm|Machine CSRs|<<t-Sm-coverpoints>>||x|x|x|x
 |S|Supervisor CSRs|<<t-S-coverpoints>>|||x|x|x
 |U|User CSRs|<<t-U-coverpoints>>|||x|x|x
-|SmF|Float CSRs|<<t-SmF-coverpoints>>|o||x|x|x
 |UF|User Float CSRs|<<t-UF-coverpoints>>|||x|x|x
 |Zkr|Entropy CSR|<<t-Zkr-coverpoints>>|||o|o|o
 |ExceptionsSm|Machine Exceptions|<<t-ExceptionsSm-coverpoints>>||x|x|x|x
@@ -180,8 +176,6 @@ All privileged suites require at least version 1.12 of the privileged specificat
 |ExceptionsVx|Vector Integer Exceptions|<<t-ExceptionsVx-coverpoints>>|||o|o|x
 |ExceptionsVf|Vector Float Exceptions|<<t-ExceptionsVf-coverpoints>>|||o|o|x
 |ExceptionsVls|Vector Load/Store Exceptions|<<t-ExceptionsVls-coverpoints>>|||o|o|x
-|SmV|Vector CSRs|<<t-SmV-coverpoints>>|||o|o|x
-|SmVF|Vector FP CSRs|<<t-SmVF-coverpoints>>|||o|o|x
 |UV|User Vector CSRs|<<t-UV-coverpoints>>|||o|o|x
 |MisalignV|Vector Misalignment|<<t-MisalignV-coverpoints>>|||o|o|o
 |SsstrictV|Vector Strict|<<t-SsstrictV-coverpoints>>|||o|o|o

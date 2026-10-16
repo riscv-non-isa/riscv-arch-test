@@ -32,7 +32,7 @@ repos:
 
   # Format pyproject.toml files
   - repo: https://github.com/tox-dev/pyproject-fmt
-    rev: 59e7b26529dc6f15c43063064b8b06ded60d0910 # frozen: v2.29.4
+    rev: a72ae8edd6eeddb9d942168912362945651212f8 # frozen: v2.30.1
     hooks:
       - id: pyproject-fmt
 
@@ -64,7 +64,7 @@ repos:
 
   # Ensure uv lock file is up to date
   - repo: https://github.com/astral-sh/uv-pre-commit
-    rev: e0db454a41cc9086a0b33a5d5638e834cf8efe1a # frozen: 0.11.33
+    rev: 308b7fa26251088f0f2a9ad4a5b5d86e30ac5455 # frozen: 0.12.24
     hooks:
       - id: uv-lock
 
@@ -115,7 +115,7 @@ repos:
 
   # Validate Renovate configuration
   - repo: https://github.com/renovatebot/pre-commit-hooks
-    rev: 9d9eb861defcce16d342a0e77ff2f6cb65dc2841 # frozen: 44.116.0
+    rev: 2099203ca448c26d3280ca7c2970eb9762645904 # frozen: 44.134.2
     hooks:
       - id: renovate-config-validator
 
