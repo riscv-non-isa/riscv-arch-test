@@ -61,7 +61,12 @@ def wrs_resume_helper(
     r_cause, r_temp, r_temp2 = test_data.int_regs.get_registers(3)
 
     lower = priv != "M"
-    lines = [comment_banner(coverpoint, f"Generate {priv} mode WRS instruction resume when interrupt pending tests")]
+    # The resume is triggered by a timer interrupt, which needs Sstc below M-mode or a machine timer interrupt
+    guard = "#if defined(SSTC_SUPPORTED) || defined(UDB_MTI_INTR_IMPL)" if lower else "#ifdef UDB_MTI_INTR_IMPL"
+    lines = [
+        comment_banner(coverpoint, f"Generate {priv} mode WRS instruction resume when interrupt pending tests"),
+        guard,
+    ]
     if lower:
         sie_list = [0, 1]
         tw_list = [0]
@@ -196,6 +201,7 @@ def wrs_resume_helper(
                 "#endif",
             ]
         )
+    lines.append("#endif")
 
     test_data.int_regs.return_registers([r_cause, r_temp, r_temp2])
     return lines
