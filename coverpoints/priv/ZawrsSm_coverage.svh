@@ -86,7 +86,14 @@ covergroup ZawrsSm_cg with function sample(ins_t ins);
     `ifdef UDB_MTI_INTR_IMPL
         cp_wrs_resume:      cross priv_mode_m, mstatus_tw, mie_mtie_one, mstatus_mie, wrs_ops, lr_w;
     `endif
-    cp_wrs_no_mie:          cross priv_mode_m, mstatus_tw_zero, mstatus_mie_one, mie_zeros, mip_any_ones, wrs_sto, lr_w;
+    // mip_any_ones needs a machine interrupt that can be made pending
+    `ifdef UDB_MEI_INTR_IMPL
+        cp_wrs_no_mie:      cross priv_mode_m, mstatus_tw_zero, mstatus_mie_one, mie_zeros, mip_any_ones, wrs_sto, lr_w;
+    `elsif UDB_MSI_INTR_IMPL
+        cp_wrs_no_mie:      cross priv_mode_m, mstatus_tw_zero, mstatus_mie_one, mie_zeros, mip_any_ones, wrs_sto, lr_w;
+    `elsif UDB_MTI_INTR_IMPL
+        cp_wrs_no_mie:      cross priv_mode_m, mstatus_tw_zero, mstatus_mie_one, mie_zeros, mip_any_ones, wrs_sto, lr_w;
+    `endif
 
 endgroup
 

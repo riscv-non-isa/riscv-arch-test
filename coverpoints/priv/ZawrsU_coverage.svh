@@ -143,11 +143,17 @@ covergroup ZawrsU_cg with function sample(ins_t ins);
         `endif
         lr_w;
 
-    cp_wrs_no_mie:     cross mstatus_tw_one, mstatus_mie_one, mip_any_ones, priv_mode_u, mie_zeros, wrs_ops,
-        `ifdef S_SUPPORTED
-            mstatus_sie_one,
-        `endif
-        lr_w;
+    // mip_any_ones needs an interrupt that can be made pending, S-mode interrupts can be set through mip
+    `ifdef S_SUPPORTED
+        cp_wrs_no_mie:      cross mstatus_tw_one, mstatus_mie_one, mip_any_ones, priv_mode_u, mie_zeros, wrs_ops,
+            mstatus_sie_one, lr_w;
+    `elsif UDB_MEI_INTR_IMPL
+        cp_wrs_no_mie:      cross mstatus_tw_one, mstatus_mie_one, mip_any_ones, priv_mode_u, mie_zeros, wrs_ops, lr_w;
+    `elsif UDB_MSI_INTR_IMPL
+        cp_wrs_no_mie:      cross mstatus_tw_one, mstatus_mie_one, mip_any_ones, priv_mode_u, mie_zeros, wrs_ops, lr_w;
+    `elsif UDB_MTI_INTR_IMPL
+        cp_wrs_no_mie:      cross mstatus_tw_one, mstatus_mie_one, mip_any_ones, priv_mode_u, mie_zeros, wrs_ops, lr_w;
+    `endif
 
 
 endgroup

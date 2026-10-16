@@ -241,7 +241,11 @@ def wrs_no_mie_helper(
         f"execute {{WRS.NTO/WRS.STO}} in {priv} mode" if lower else "execute WRS.STO in M mode",
         "2 bins" if lower else "1 bin",
     ]
-    lines = [comment_banner(coverpoint, "\n".join(description))]
+    # Needs an interrupt that can be made pending, S-mode interrupts can be set through mip
+    guard = "#if defined(UDB_MEI_INTR_IMPL) || defined(UDB_MSI_INTR_IMPL) || defined(UDB_MTI_INTR_IMPL)"
+    if lower:
+        guard += " || defined(S_SUPPORTED)"
+    lines = [comment_banner(coverpoint, "\n".join(description)), guard]
     # wrs.nto can only be tested in non-M mode using TW = 1
     wrs_list = ["WRS.STO", "WRS.NTO"] if lower else ["WRS.STO"]
 
@@ -258,8 +262,12 @@ def wrs_no_mie_helper(
                 "#ifdef UDB_MEI_INTR_IMPL",
                 f"RVTEST_SET_MEXT_INT_{priv}",
                 "#endif",
+                "#ifdef UDB_MSI_INTR_IMPL",
                 f"RVTEST_SET_MSW_INT_{priv}",
+                "#endif",
+                "#ifdef UDB_MTI_INTR_IMPL",
                 f"RVTEST_SET_MTIME_INT_{priv}",
+                "#endif",
             ]
         )
         if lower:
@@ -330,10 +338,15 @@ def wrs_no_mie_helper(
                 "#ifdef UDB_MEI_INTR_IMPL",
                 f"RVTEST_CLR_MEXT_INT_{priv}",
                 "#endif",
+                "#ifdef UDB_MSI_INTR_IMPL",
                 f"RVTEST_CLR_MSW_INT_{priv}",
+                "#endif",
+                "#ifdef UDB_MTI_INTR_IMPL",
                 f"RVTEST_CLR_MTIME_INT_{priv}",
+                "#endif",
             ]
         )
+    lines.append("#endif")
     test_data.int_regs.return_registers([r_cause, r_temp, r_temp2])
     return lines
 
