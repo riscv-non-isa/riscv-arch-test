@@ -36,10 +36,7 @@ UDB_DEFINES = [
     "#define UDB_TDATA2_AVAILABLE",
     "#define UDB_TDATA3_AVAILABLE",
     "#define UDB_TINFO_AVAILABLE",
-    "#define UDB_SCONTEXT_AVAILABLE",
-    "#define UDB_MCONTEXT_AVAILABLE",
     "//#define UDB_TCONTROL_AVAILABLE",
-    "//#define UDB_HCONTEXT_AVAILABLE",
     "//#define UDB_MSCONTEXT_AVAILABLE",
     # MCONTROl6 params
     "#define UDB_SDTRIG_MCONTROL6_SUPPORTED0",
