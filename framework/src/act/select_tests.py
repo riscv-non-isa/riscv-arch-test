@@ -194,7 +194,7 @@ def prepare_configs_and_select_tests(
 
     results: list[tuple[Config, dict[str, ConfigParamValue], dict[str, TestMetadata]]] = []
     for config in configs:
-        implemented_extensions = get_implemented_extensions(workdir / config.name / "extensions.txt")
+        implemented_extensions = get_implemented_extensions(workdir / config.name / "env" / "extensions.txt")
         config_params = get_config_params(config.udb_config)
         selected_tests = select_tests(
             full_test_dict,
