@@ -1171,7 +1171,8 @@
         csrw mcountinhibit, zero
       #endif
 
-      // Initialize counter event selectors to 0.  They must be implemented.
+      // Initialize counter event selectors to 0.  All counters should be implemented, but a legal
+      // implementation is to make both the counter and its corresponding event selector be read-only 0.
       csrw mhpmevent3, zero
       csrw mhpmevent4, zero
       csrw mhpmevent5, zero
