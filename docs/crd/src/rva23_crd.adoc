@@ -65,10 +65,10 @@ The remainder of the document describes requirements for running certification t
 
 The RISC-V Certification Tests are used in the certification of a DUT.  Testing requires the following basic test harness capabilities to run tests and report results. See the Certification Test Plan for details, including definitions of the RVMODEL macros.
 
-* Load an ELF file into memory and begin execution.
-* Trigger and clear SEI and SSI interrupts through software (RVMODEL_SET_SEXT_INT, RVMODEL_SET_SSI_INT), if these interrupts are supported
+* Load an ELF file into memory and begin execution
 * Print characters that can be captured in a file to report test results (RVMODEL_IO_WRITE_STR)
 * Terminate a test with a success or failure code (RVMODEL_HALT_PASS/FAIL)
+* If a platform-specific interrupt controller generates SEI and SSI interrupts, trigger and clear these interrupts through software (RVMODEL_SET_SEXT_INT, RVMODEL_SET_SSI_INT)
 * Run tests on several harts at once, if the DUT has more than one, to exercise memory ordering and atomicity
 * Implement memory-mapped `mtime` register if it is not part of the DUT
 
