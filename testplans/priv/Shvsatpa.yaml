@@ -11,4 +11,4 @@ coverpoints:
     expectation: Matches reference model, which should accept same values as satp.mode
     bins: 2 or 4
     rules:
-      - All translation modes supported in satp must be supported in vsatp.
+      - Shvsatpa_satp_vsatp_modes

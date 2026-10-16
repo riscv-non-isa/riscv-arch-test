@@ -15,17 +15,6 @@ normative_rule_definitions:
         "Implicit: a fixed implementation parameter - every other coverpoint's vl/lmul arithmetic implicitly depends on it being correct",
       ]
 
-  # A small implementation supporting ELEN=32 requires only seven bits of state in
-  # vtype: two bits for ma and ta, two bits for vsew[1:0] and three bits for
-  # vlmul[2:0]. The illegal value represented by vill can be internally encoded
-  # using the illegal 64-bit combination in vsew[1:0] without requiring an
-  # additional storage bit to hold vill.
-  - name: vill_implicit_encoding
-    coverpoint:
-      [
-        "Implicit: internal vill encoding choice is exercised whenever any test produces and checks vill, regardless of how it's internally encoded",
-      ]
-
   # Implementations may also change mstatus.VS or vsstatus.VS from Initial or Clean
   # to Dirty at any time, even when there is no change in vector state.
   - name: hw_mstatus_vs_dirty_update
@@ -1338,14 +1327,6 @@ normative_rule_definitions:
   - name: V_fp_eew_rsv
     coverpoint: ["ExceptionsVf16_vfadd_vv_cg/cp_vill"]
 
-  # When adding a vector extension to the Zfinx/Zdinx/Zhinx extensions,
-  # floating-point scalar arguments are taken from the x registers. NaN-boxing is
-  # not supported in these extensions, and so operands narrower than XLEN bits are
-  # not checked for a NaN box; bits XLEN-1:EEW are ignored. For RV32_Zdinx, EEW=64
-  # scalar arguments are supplied by an x-register pair.
-  - name: V_zinx_fp_scalar
-    coverpoint: [""]
-
   # Vector arithmetic instructions are masked under control of the vm field.
   - name: V_masked
     coverpoint: ["Vx16_vadd_vv_cg/cp_masking_edges"]
@@ -2468,12 +2449,9 @@ normative_rule_definitions:
   # least-significant XLEN bits are transferred and the upper SEW-XLEN bits are
   # ignored. If SEW &lt; XLEN, the value is sign-extended to XLEN bits.
   - name: vmv-x-s_op
-    coverpoint: ["Vx16_vmv_x_s_cg/cp_rd"]
-
-  # insn:vmv.x.s[] performs its operation even if csr:vstart[] ≥ csr:vl[] or csr:vl[]=0.
-  - name: vmv-x-s_vstartgevl_vl0
     coverpoint:
       [
+        "Vx16_vmv_x_s_cg/cp_rd",
         "Vx16_vmv_x_s_cg/cp_custom_gprWriting_vstart_eq_vl",
         "Vx16_vmv_x_s_cg/cp_vl_0",
       ]
