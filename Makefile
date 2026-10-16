@@ -4,17 +4,14 @@
 # SPDX-License-Identifier: Apache-2.0
 
 ########## Runtime Options ##########
-# CONFIG_FILES is used as the default input configs when running `make` and will produce elfs in the `work/<config-name>/elfs` directory.
-# COVERAGE_CONFIG_FILES is used as the default input configs when running `make coverage` and will generate coverage reports in addition to the elfs.
-CONFIG_FILES ?= config/spike/spike-rv32-max/test_config.yaml config/spike/spike-rv64-max/test_config.yaml
-COVERAGE_CONFIG_FILES ?= config/sail/sail-rv64-max/test_config.yaml config/sail/sail-rv32-max/test_config.yaml
+# CONFIG_FILES is required when running `make` and will produce elfs in the `work/<config-name>/elfs` directory.
+# `make coverage` uses CONFIG_FILES if set, otherwise it defaults to the Sail max configs.
+CONFIG_FILES ?=
 
 # EXTENSIONS is a comma-separated list of extensions to generate tests for. Leave blank to generate for all tests.
 # EXCLUDE_EXTENSIONS overrides EXTENSIONS to exclude particular extensions from test generation. Applies as a negative filter after EXTENSIONS.
 # CERTIFICATE limits the selected tests to those relevant to the specified certificate.
 # ENABLE_EXPERIMENTAL_EXTENSIONS enables tests for extensions that are not ratified.
-# Default exclusion reasons:
-#  - Sm: Insufficient WARL configuration options.
 EXTENSIONS  ?=
 EXCLUDE_EXTENSIONS ?= SdtrigSm,SdtrigS,SdtrigU
 CERTIFICATE ?=
@@ -129,7 +126,7 @@ help:
 	  'elfs (default)'      'Generate tests and compile self-checking ELFs for $$(CONFIG_FILES)' \
 	  'tests'               'Generate assembly test sources only (no toolchain needed)' \
 	  'vector-tests'        'Generate vector test sources' \
-	  'coverage'            'Build with coverage instrumentation for $$(COVERAGE_CONFIG_FILES)' \
+	  'coverage'            'Build with coverage instrumentation for $$(CONFIG_FILES) (default: Sail max)' \
 	  'regression'          'Clean, run coverage, then every config with a run_cmd.txt' \
 	  'clean'               'Remove build artifacts (preserves extensions.txt and .validated)' \
 	@printf '\n\033[1mGenerators:\033[0m\n'
@@ -148,7 +145,7 @@ help:
 	@printf '    %s\n' $(ALL_RUN_TARGETS) | fold -s -w 76 | sed 's/^/  /'
 	@printf '\n\033[1mCommon variables:\033[0m\n'
 	@printf '  \033[36m%-20s\033[0m %s\n' \
-	  'CONFIG_FILES'        'Configs for the default elfs target' \
+	  'CONFIG_FILES'        'Configs to build (required; coverage defaults to Sail max)' \
 	  'EXTENSIONS'          'Comma-separated extensions to generate (default: all)' \
 	  'EXCLUDE_EXTENSIONS'  'Comma-separated extensions to skip' \
 	  'CERTIFICATE'         'Only select tests for the specified certificate' \
@@ -160,7 +157,7 @@ help:
 	  'VERBOSE'             'Implies DEBUG, JOBS=1, prints each command' \
 	  'COVERAGE_SIMULATOR'  'questa or vcs (used with make coverage)'
 	@printf '\n\033[1mExamples:\033[0m\n'
-	@printf '  make                                 # default: spike rv32+rv64\n'
+	@printf '  make CONFIG_FILES=config/spike/spike-rv64-max/test_config.yaml  # build ELFs for one config\n'
 	@printf '  make spike-rv64-max                  # build & run a single config\n'
 	@printf '  make tests EXTENSIONS=I,M            # generate just I and M tests\n'
 	@printf '  make EXCLUDE_EXTENSIONS=ExceptionsSm # skip an extension\n'
@@ -171,8 +168,15 @@ help:
 
 ########## Test compilation ##########
 .DEFAULT_GOAL := elfs
+.PHONY: check-config-files
+check-config-files:
+	@if [ -z "$(strip $(CONFIG_FILES))" ]; then \
+		echo "error: CONFIG_FILES is not set. Example: CONFIG_FILES=config/spike/spike-rv64-max/test_config.yaml make" >&2; \
+		exit 1; \
+	fi
+
 .PHONY: elfs
-elfs: tests
+elfs: check-config-files tests
 	@$(UV_RUN) act $(CONFIG_FILES) \
 		--workdir $(WORKDIR) \
 		--test-dir $(TESTDIR) \
@@ -235,7 +239,7 @@ vector-tests: covergroupgen vector-testgen
 # Just sets some variables and then runs the standard elfs target
 .PHONY: coverage
 coverage: COVERAGE := True
-coverage: CONFIG_FILES := $(COVERAGE_CONFIG_FILES)
+coverage: CONFIG_FILES := $(or $(CONFIG_FILES),config/sail/sail-rv64-max/test_config.yaml config/sail/sail-rv32-max/test_config.yaml)
 coverage: elfs
 
 
