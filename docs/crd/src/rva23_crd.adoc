@@ -63,7 +63,7 @@ The remainder of the document describes requirements for running certification t
 
 == Certification Test Execution Requirements
 
-The RISC-V Certification Tests are used in the certification of processors, not platforms.  Nevertheless, testing requires certain basic test harness capabilities to run tests and report results. Therefore, the hart being certified must be supported by a test harness that provides the following capabilities. See the Certification Test Plan for details, including definitions of the following RVMODEL macros.
+The RISC-V Certification Tests are used in the certification of a DUT.  Testing requires the following basic test harness capabilities to run tests and report results. See the Certification Test Plan for details, including definitions of the RVMODEL macros.
 
 * Load an ELF file into memory and begin execution.
 * Trigger and clear SEI and SSI interrupts through software (RVMODEL_SET_SEXT_INT, RVMODEL_SET_SSI_INT), if these interrupts are supported
