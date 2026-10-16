@@ -96,9 +96,7 @@ not directly test M-mode instructions or CSRs.
 
 RVA23 certification tests operate within a Test Supervisor Execution Environment (T-SEE) that consists of M-mode code including boot code and a M-mode trap handler. Certification tests come with a reference T-SEE (`rvtest_setup.h` and `rvtest_trap_handler.h`) compatible with Privileged Architecture version 1.13 (Sm1p13). Just like with OpenSBI, developers may modify the reference to handle implementation-specific boot code or to accommodate non-portable M-mode.
 
-NOTE
-----
-If the DUT is compatible with Sm1p13, the reference T-SEE will work out-of-the-box and the developer need only provide RVMODEL macros and DUT-specific boot code. Depending on the degree of difference, modification could be a substantial effort.
+NOTE: If the DUT is compatible with Sm1p13, the reference T-SEE will work out-of-the-box and the developer need only provide RVMODEL macros and DUT-specific boot code. Depending on the degree of difference, modification could be a substantial effort.
 
 The Test Supervisor Binary Interface (T-SBI) is a set of calls that let tests running below M-mode request services from the T-SEE, such as accessing protected memory and modifying machine-mode CSRs.  For example, the T-SBI supports RVA23's requirements to make an `ecall` to the T-SEE from S-mode and to provide a means to select PMLEN for Sspm.
 
