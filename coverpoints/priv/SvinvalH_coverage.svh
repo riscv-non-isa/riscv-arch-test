@@ -21,23 +21,16 @@ covergroup SvinvalH_cg with function sample(ins_t ins);
         wildcard bins hinval_vvma     = {HINVAL_VVMA};
         wildcard bins hinval_gvma     = {HINVAL_GVMA};
     }
-    cp_priv : coverpoint {ins.prev.mode_virt, ins.prev.mode} {
-        bins M_mode     = {3'b011};
-        bins S_mode     = {3'b001};
-        bins U_mode     = {3'b000};
-        bins VS_mode    = {3'b101};
-        bins VU_mode    = {3'b100};
-    }
     cp_tvm : coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "mstatus", "tvm")[0] {
     }
 
     cp_vtvm : coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "hstatus", "vtvm")[0] { // hstatus.VTVM
     }
 
-    cr_svinivalH : cross cp_instr, cp_priv, cp_tvm, cp_vtvm {
+    cr_svinivalH : cross cp_instr, priv_mode_m_hs_vs_u_vu, cp_tvm, cp_vtvm {
         // each instruction executed in each privilege mode with each TVM
     }
- endgroup
+endgroup
 
 // ---------------------
 function void svinvalh_sample(int hart, int issue, ins_t ins);
