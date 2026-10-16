@@ -54,57 +54,75 @@ covergroup ExceptionsSv_cg with function sample(ins_t ins);
     jalr: coverpoint ins.prev.insn {
         wildcard bins jalr = {JALR};
     }
-
-    d_page_table_entry_bad: coverpoint ins.current.pte_d[7:0] {
-        bins invalid = {8'b00000000}; // invalid
+    jalr_cross: coverpoint ((ins.current.insn ==? JALR) | (ins.prev.insn ==? JALR)) {
+        bins jalr = {1'b1};
     }
 
-    // stval holds the virtual address of the part of a misaligned access or fetch that faults:
-    // the last halfword of the first page or the start of the second page
-    fault_address: coverpoint ins.current.csr[CSR_STVAL][11:0] {
-        bins first  = {12'b111111111110};
-        bins second = {12'b000000000000};
-    }
-    lw_page_fault: coverpoint ins.current.csr[CSR_SCAUSE][31:0] {
-        bins load_page_fault = {32'd13};
-    }
-    sw_page_fault: coverpoint ins.current.csr[CSR_SCAUSE][31:0] {
-        bins store_page_fault = {32'd15};
-    }
-    jalr_page_fault: coverpoint ins.current.csr[CSR_SCAUSE][31:0] {
-        bins instr_page_fault = {32'd12};
-    }
-
-    i_page_table_entry_bad: coverpoint ins.current.pte_i[7:0] {
-        bins invalid = {8'b00000000}; // invalid
-    }
-
+    // A fetch, load or store that starts in the last halfword of a page, {scause written, scause, stval[11:0], address[11:0]}
+    // (for the fetch, also sepc[11:0], the start of the instruction):
+    // it completes, or takes a page fault on the part in the first page (stval at that halfword) or on the part
+    // in the second page (stval at its start).  Where both pages fail, the hart reports the part it accesses first.
+    `ifdef UDB_MISALIGNED_LDST
+        `define EXCEPTIONSSV_CROSS_LOAD
+        `define EXCEPTIONSSV_CROSS_STORE
+    `elsif UDB_MISALIGNED_LDST_EXCEPTION_PRIORITY_LOW
+        `ifdef UDB_REPORT_VA_IN_STVAL_ON_LOAD_PAGE_FAULT
+            `define EXCEPTIONSSV_CROSS_LOAD
+        `endif
+        `ifdef UDB_REPORT_VA_IN_STVAL_ON_STORE_AMO_PAGE_FAULT
+            `define EXCEPTIONSSV_CROSS_STORE
+        `endif
+    `endif
+    `ifdef EXCEPTIONSSV_CROSS_LOAD
+        lw_cross_outcome: coverpoint {ins.current.csr_wb[CSR_SCAUSE], ins.current.csr[CSR_SCAUSE][4:0], ins.current.csr[CSR_STVAL][11:0], ins.current.virt_adr_d[11:0]} {
+            `ifdef UDB_MISALIGNED_LDST
+                wildcard bins completes     = {30'b0_?????_????????????_111111111110};
+            `endif
+            `ifdef UDB_REPORT_VA_IN_STVAL_ON_LOAD_PAGE_FAULT
+                wildcard bins first_faults  = {30'b1_01101_111111111110_111111111110};
+                wildcard bins second_faults = {30'b1_01101_000000000000_111111111110};
+            `endif
+        }
+    `endif
+    `ifdef EXCEPTIONSSV_CROSS_STORE
+        sw_cross_outcome: coverpoint {ins.current.csr_wb[CSR_SCAUSE], ins.current.csr[CSR_SCAUSE][4:0], ins.current.csr[CSR_STVAL][11:0], ins.current.virt_adr_d[11:0]} {
+            `ifdef UDB_MISALIGNED_LDST
+                wildcard bins completes     = {30'b0_?????_????????????_111111111110};
+            `endif
+            `ifdef UDB_REPORT_VA_IN_STVAL_ON_STORE_AMO_PAGE_FAULT
+                wildcard bins first_faults  = {30'b1_01111_111111111110_111111111110};
+                wildcard bins second_faults = {30'b1_01111_000000000000_111111111110};
+            `endif
+        }
+    `endif
+    // The fetch of the jalr target, a 4-byte instruction.  A trace reports a fault on that fetch either in the
+    // jalr's own record or in the next one, so jalr_cross accepts the jalr as the current or the previous instruction.
+    `ifdef ZCA_SUPPORTED
+        jalr_cross_outcome: coverpoint {ins.current.csr_wb[CSR_SCAUSE], ins.current.csr[CSR_SCAUSE][4:0], ins.current.csr[CSR_STVAL][11:0],
+                                        ins.current.csr[CSR_SEPC][11:0], ins.current.pc_rdata[11:0]} {
+            wildcard bins completes     = {42'b0_?????_????????????_????????????_111111111110};
+            `ifdef UDB_REPORT_VA_IN_STVAL_ON_INSTRUCTION_PAGE_FAULT
+                wildcard bins first_faults  = {42'b1_01100_111111111110_111111111110_????????????};
+                wildcard bins second_faults = {42'b1_01100_000000000000_111111111110_????????????};
+            `endif
+        }
+    `endif
 
 
     // Main Coverpoints
     cp_instr_page_fault_s:           cross priv_mode_s, instr_page_fault;
     cp_load_page_fault_s:            cross priv_mode_s, load_page_fault;
     cp_store_page_fault_s:           cross priv_mode_s, store_page_fault;
-    // A misaligned lw or sw raises address-misaligned before translation when the hart does not support
-    // misaligned accesses and gives that exception high priority, and stval = 0 does not show which part faulted
-    `ifdef UDB_MISALIGNED_LDST
-        `define EXCEPTIONSSV_MISALIGNED_PAGE_FAULT
-    `elsif UDB_MISALIGNED_LDST_EXCEPTION_PRIORITY_LOW
-        `define EXCEPTIONSSV_MISALIGNED_PAGE_FAULT
+    // Misaligned accesses that span two pages.  Without misaligned support, a lw or sw with high-priority
+    // address-misaligned exceptions never translates; without Zca, the jalr raises instruction-address-misaligned.
+    `ifdef EXCEPTIONSSV_CROSS_LOAD
+        cp_misaligned_load_page_fault_s:  cross priv_mode_s, lw, lw_cross_outcome;
     `endif
-    `ifdef EXCEPTIONSSV_MISALIGNED_PAGE_FAULT
-        `ifdef UDB_REPORT_VA_IN_STVAL_ON_LOAD_PAGE_FAULT
-            cp_misaligned_load_page_fault_s:  cross priv_mode_s, d_page_table_entry_bad, fault_address, lw_page_fault, lw;
-        `endif
-        `ifdef UDB_REPORT_VA_IN_STVAL_ON_STORE_AMO_PAGE_FAULT
-            cp_misaligned_store_page_fault_s: cross priv_mode_s, d_page_table_entry_bad, fault_address, sw_page_fault, sw;
-        `endif
+    `ifdef EXCEPTIONSSV_CROSS_STORE
+        cp_misaligned_store_page_fault_s: cross priv_mode_s, sw, sw_cross_outcome;
     `endif
-    // Without Zca, the jalr raises instruction-address-misaligned instead of fetching the target
     `ifdef ZCA_SUPPORTED
-        `ifdef UDB_REPORT_VA_IN_STVAL_ON_INSTRUCTION_PAGE_FAULT
-            cp_misaligned_inst_page_fault_s: cross priv_mode_s, i_page_table_entry_bad, fault_address, jalr_page_fault, jalr;
-        `endif
+        cp_misaligned_instr_page_fault_s: cross priv_mode_s, jalr_cross, jalr_cross_outcome;
     `endif
     cp_instr_page_fault_u:           cross priv_mode_u, instr_page_fault;
     cp_load_page_fault_u:            cross priv_mode_u, load_page_fault;

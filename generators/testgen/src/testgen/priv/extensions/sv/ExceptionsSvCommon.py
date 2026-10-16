@@ -182,58 +182,82 @@ def _add_access(
     ]
 
 
-def _page_crossing_cases(test_data: TestData, sv: SvMode) -> list[str]:
-    """Access the last halfword of the first of two kilopages, one with RWX = 111 and the other a zero PTE.
+# The word that spans the two pages: jr ra (jalr x0, 0(ra)), which the fetch cases execute
+_CROSSING_WORD = 0x00008067
+# Each page passes (RWX = 111) or fails (zero PTE): (name, first page passes, second page passes)
+_CROSSING_COMBINATIONS = (
+    ("neither", True, True),
+    ("first", False, True),
+    ("second", True, False),
+    ("both", False, False),
+)
 
-    A lw, a sw and a jalr to a 4-byte instruction each span both pages. The store runs last, because a
-    store that faults in one page may still write the part that lies in the other page.
+
+def _page_crossing_cases(test_data: TestData, sv: SvMode) -> list[str]:
+    """Fetch, load and store across the boundary of two kilopages, for each combination of the pages passing or failing.
+
+    A page passes with RWX = 111 and fails with a zero PTE. A jalr to a 4-byte instruction, a lw and a sw each start
+    at the last halfword of the first page. The stores write back the word already there, so a store that faults
+    after writing the part in one page leaves memory unchanged. When neither page faults, the store first writes a
+    different word and a load reads it back.
     """
     covergroup = "ExceptionsSv_cg"
-    good, bad = PteFlags(), "0"
-    lines: list[str] = []
-    for name, first, second in (("first", bad, good), ("second", good, bad)):
+    # PTE_SETUP clobbers t0 and t1 (a0 and a1 are not in the privileged register pool)
+    addr, word, load = test_data.int_regs.get_registers(3, exclude_regs=[5, 6])
+    lines = [f"LI(x{word}, {_CROSSING_WORD:#x}) # jr ra, the word that spans the two pages"]
+    for name, first_passes, second_passes in _CROSSING_COMBINATIONS:
         labels = {
-            op: test_data.add_testcase(f"{name}_{op}", coverpoint, covergroup).removesuffix(":")
+            op: test_data.add_testcase(f"cross_{name}_fails_{op}", coverpoint, covergroup).removesuffix(":")
             for op, coverpoint in (
-                ("exec", "cp_misaligned_inst_page_fault_s"),
+                ("exec", "cp_misaligned_instr_page_fault_s"),
                 ("load", "cp_misaligned_load_page_fault_s"),
                 ("store", "cp_misaligned_store_page_fault_s"),
             )
         }
         lines.extend(
             [
-                f"// The {name} page faults",
+                "",
+                f"// Page crossing: {name} of the two pages {'fail' if name == 'both' else 'fails'}",
                 *create_page_mapping(
                     sv,
                     virtual_address="va_cross_1",
                     physical_address="rvtest_cross_page",
                     leaf_level=0,
-                    leaf_flags=first,
+                    leaf_flags=PteFlags() if first_passes else "0",
                 ),
                 create_leaf_pte(
                     sv,
                     level=0,
-                    flags=second,
+                    flags=PteFlags() if second_passes else "0",
                     virtual_address="va_cross_2",
                     physical_address="rvtest_cross_page + 4096",
                 ),
                 "sfence.vma",
-                "LI(a5, va_cross_2 - 2)",
-                "",
+                f"LI(x{addr}, va_cross_2 - 2)",
                 f"{labels['exec']}:",
-                "jalr ra, a5, 0",
+                f"jalr ra, x{addr}, 0",
                 "nop",
                 f"{labels['load']}:",
-                "lw a3, 0(a5)",
+                f"lw x{load}, 0(x{addr})",
                 "nop",
-                f"{labels['store']}:",
-                "sw a2, 0(a5)",
-                "nop",
-                "",
-                write_sigupd(13, test_data, label=labels["load"]),
-                "",
+                write_sigupd(load, test_data, label=labels["load"]),
             ]
         )
+        if first_passes and second_passes:
+            lines.extend(
+                [
+                    f"not x{load}, x{word} # a different word, read back after the store",
+                    f"{labels['store']}:",
+                    f"sw x{load}, 0(x{addr})",
+                    "nop",
+                    f"lw x{load}, 0(x{addr})",
+                    write_sigupd(load, test_data, label=labels["store"]),
+                    f"sw x{word}, 0(x{addr}) # restore jr ra",
+                ]
+            )
+        else:
+            lines.extend([f"{labels['store']}:", f"sw x{word}, 0(x{addr})", "nop"])
+    test_data.int_regs.return_registers([addr, word, load])
     return lines
 
 
