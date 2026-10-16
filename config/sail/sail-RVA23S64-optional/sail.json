@@ -1012,7 +1012,7 @@
       // hstateen0.SE0 is always writable.
       "hstateen0": {
         "ENVCFG": "CSRBit_Writable",
-        "CONTEXT": "CSRBit_Writable",
+        "CONTEXT": "CSRBit_ReadOnlyZero",
         "FCSR": "CSRBit_ReadOnlyZero",
         "C": "CSRBit_ReadOnlyZero"
       },

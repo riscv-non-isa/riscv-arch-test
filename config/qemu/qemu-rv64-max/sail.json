@@ -984,7 +984,7 @@
       "mstateen0": {
         "SE0": "CSRBit_Writable",
         "ENVCFG": "CSRBit_Writable",
-        "CONTEXT": "CSRBit_Writable",
+        "CONTEXT": "CSRBit_ReadOnlyZero",
         "P1P13": "CSRBit_ReadOnlyZero",
         "SRMCFG": "CSRBit_Writable",
         "FCSR": "CSRBit_ReadOnlyZero",
@@ -1004,7 +1004,7 @@
       // hstateen0.SE0 is always writable.
       "hstateen0": {
         "ENVCFG": "CSRBit_Writable",
-        "CONTEXT": "CSRBit_Writable",
+        "CONTEXT": "CSRBit_ReadOnlyZero",
         "FCSR": "CSRBit_ReadOnlyZero",
         "C": "CSRBit_ReadOnlyZero"
       },

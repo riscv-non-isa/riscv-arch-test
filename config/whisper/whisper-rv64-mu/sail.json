@@ -946,7 +946,7 @@
       "mstateen0": {
         "SE0": "CSRBit_Writable",
         "ENVCFG": "CSRBit_ReadOnlyZero",
-        "CONTEXT": "CSRBit_Writable",
+        "CONTEXT": "CSRBit_ReadOnlyZero",
         "P1P13": "CSRBit_ReadOnlyZero",
         "SRMCFG": "CSRBit_Writable",
         "FCSR": "CSRBit_ReadOnlyZero",
