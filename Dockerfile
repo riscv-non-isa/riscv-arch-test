@@ -122,9 +122,10 @@ RUN curl -fsSL https://mise.jdx.dev/install.sh | sh
 # mise and bundler need .mise.toml and the Gemfile(s); uv needs .python-version / pyproject.toml / uv.lock.
 COPY \
   .mise.toml \
-  framework/src/act/data/Gemfile framework/src/act/data/Gemfile.lock \
   .python-version pyproject.toml uv.lock README.md \
   /act4/
+# Must be at `deps.bundler.dir` from .mise.toml, otherwise `mise deps` silently skips installing the gems
+COPY framework/src/act/data/Gemfile framework/src/act/data/Gemfile.lock /act4/framework/src/act/data/
 # Copy files of other workspace members
 COPY framework/pyproject.toml /act4/framework/pyproject.toml
 COPY framework/src/act/__init__.py /act4/framework/src/act/__init__.py
