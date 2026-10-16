@@ -1111,7 +1111,7 @@
       // non-negative, and greater than 0 if Sdtrig is supported.
       // The model does not support more than 16 triggers.
       "num_triggers": 16,
-      "scontext": { "supported": false }
+      "scontext": { "supported": true }
     },
     // The double trap extensions are not enabled by default because
     // mstatus[MDT] is reset to 1. Unless the boot code clears it, the

@@ -1013,7 +1013,7 @@
       "breakpoint_reentrancy": "Use_interrupt_enables",
       // CSRs
       "mcontext": {
-        "supported": false
+        "supported": true
       },
       "hcontext": {
         "supported": false
