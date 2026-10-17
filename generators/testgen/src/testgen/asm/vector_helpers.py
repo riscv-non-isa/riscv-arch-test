@@ -852,9 +852,10 @@ def prep_vstart(
         case "vstart_gt_vl":
             # Prepare a vstart and vl such that 0 < vl < vstart < vlmax
             vl_reg, vlmax_reg = test_data.int_regs.get_registers(2, exclude_regs=[0])
-            # Ensure that these differ in the last bit and are at least 1
+            # Ensure that these differ in the last bit and are at least 1. Also, ensure that rand_vl will be
+            # non-zero mod vlmax (provided vlmax > 2, which is a requirement for the bounds we want)
             rand_vstart = random_range(1, VLEN_MAX - 1) | 1
-            rand_vl = random_range(2, VLEN_MAX - 1) & ~1
+            rand_vl = (random_range(2, VLEN_MAX - 1) & ~1) | 2
             lines.extend(
                 [
                     "# Load random values for vl and vstart, and get their remainder mod vlmax",
@@ -893,6 +894,6 @@ def write_sigupd_vstart(test_data: TestData) -> list[str]:
     label = test_data.current_testcase_label
 
     return [
-        "# Run SIGUPD to see if vxsat was correctly set",
+        "# Run SIGUPD to see if vstart was correctly set",
         f"RVTEST_SIGUPD_VSTART(x{sig_reg}, x{link_reg}, x{temp_reg}, {label}, {label}_str)",
     ]

@@ -240,7 +240,7 @@ def cp_vill(
     label_line = test_data.add_testcase("", coverpoint, f"{test_data.config.testsuite}_{instr_name}_cg")
 
     # We just need to get a valid test line
-    register_data = get_register_data_labels(instr_info, instr_type_config, 32, test_data)
+    register_data = get_register_data_labels(instr_info, instr_type_config, 8, test_data)
     params = generate_random_vector_params(
         test_data,
         instr_name,
