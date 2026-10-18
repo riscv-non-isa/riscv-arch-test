@@ -84,7 +84,7 @@ normative_rule_definitions:
     coverpoint:
       [
         "Sv_VA_cg/mode_supported",
-        "Svbare_cg/satp_bare",
+        "Svbare_cg/{satp_bare, cp_satp_bare_load, cp_satp_bare_store, cp_satp_bare_exec}",
         "TODO: write reserved and custom MODE values (see satp_mode_op_unsupported)",
       ]
 
