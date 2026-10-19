@@ -153,7 +153,7 @@ coverpoints:
       Perform v{l/s}e{8/16/32/64}.v to scratch
     expectation: |-
       Breakpoint exception if the tdata2 = scratch
-      Breakpoint exception when tdata2 = scratch+8 and Vector elements = 9
+      Breakpoint exception when tdata2 = scratch+8 and vl reaches it (AVL 9; vl = VLMAX < 9 for e64 at VLEN 128)
     bins: 3 address * 2 Vector Lengths * 4 SEW * 2 ops
     rules:
       - Sdtrig_mult_mem_access

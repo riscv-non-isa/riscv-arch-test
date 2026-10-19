@@ -13,6 +13,9 @@
     SdtrigSm_icount_cg = new();                SdtrigSm_icount_cg.set_inst_name("obj_SdtrigSm_icount");
     SdtrigSm_a_cg = new();                     SdtrigSm_a_cg.set_inst_name("obj_SdtrigSm_a");
     SdtrigSm_cache_operations_cg = new();      SdtrigSm_cache_operations_cg.set_inst_name("obj_SdtrigSm_cache_operations");
+    `ifdef ZVL32B_SUPPORTED
+        SdtrigSm_combined_accesses_cg = new(); SdtrigSm_combined_accesses_cg.set_inst_name("obj_SdtrigSm_combined_accesses");
+    `endif
     `ifdef S_SUPPORTED
         SdtrigSm_native_triggers_cg = new();   SdtrigSm_native_triggers_cg.set_inst_name("obj_SdtrigSm_native_triggers");
     `endif

@@ -451,6 +451,124 @@ covergroup SdtrigSm_cache_operations_cg with function sample(ins_t ins);
     `endif
 endgroup
 
+`ifdef ZVL32B_SUPPORTED
+// Element width in bytes of a unit-stride vector load/store (width field 000/101/110/111 = 8/16/32/64 bits)
+function automatic int sdtrig_vec_eew_bytes(logic [31:0] insn);
+    case (insn[14:12])
+        3'b000:  return 1;
+        3'b101:  return 2;
+        3'b110:  return 4;
+        default: return 8;
+    endcase
+endfunction
+// 1 when an mcontrol6 trigger with action = 0 fired on this unit-stride vector load/store exactly when it should:
+// each active element below vl is matched as its own access of SEW bytes (Sdtrig_mult_mem_access), so an address
+// match fires when tdata2 is the address of an accessed element, size is 0 or SEW, and the x/s/l bit fits the access.
+function automatic logic sdtrig_vec_as_expected(ins_t ins);
+    logic [XLEN-1:0] tdata1 = get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tdata1", "tdata1");
+    logic [XLEN-1:0] tdata2 = get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tdata2", "tdata2");
+    int vl = int'(get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "vl", "vl"));
+    int eew = sdtrig_vec_eew_bytes(ins.current.insn);
+    logic masked = !ins.current.insn[25];
+    logic store = ins.current.insn[6:0] == 7'b0100111;
+    logic size_ok, hit;
+    case (tdata1[18:16])
+        3'd0:    size_ok = 1'b1;
+        3'd1:    size_ok = eew == 1;
+        3'd2:    size_ok = eew == 2;
+        3'd3:    size_ok = eew == 4;
+        3'd5:    size_ok = eew == 8;
+        default: size_ok = 1'b0;
+    endcase
+    hit = 1'b0;
+    for (int i = 0; i < vl && i < `UDB_VLEN; i++)
+        if ((!masked || ins.current.v_wdata[0][i]) && tdata2 == ins.current.rs1_val + XLEN'(i * eew)) hit = 1'b1;
+    return sdtrig_bp_taken(ins) == (!tdata1[21] && size_ok && hit && (store ? tdata1[1] : tdata1[0]));
+endfunction
+
+covergroup SdtrigSm_combined_accesses_cg with function sample(ins_t ins);
+    option.per_instance = 0;
+    `include "general/RISCV_coverage_standard_coverpoints.svh"
+    `include "general/RISCV_coverage_sdtrig_coverpoints.svh"
+
+    vec_access: coverpoint ins.current.insn {
+        type_option.weight = 0;
+        wildcard bins vle8  = {VLE8_V};
+        wildcard bins vle16 = {VLE16_V};
+        wildcard bins vle32 = {VLE32_V};
+        wildcard bins vse8  = {VSE8_V};
+        wildcard bins vse16 = {VSE16_V};
+        wildcard bins vse32 = {VSE32_V};
+        `ifdef ZVE64X_SUPPORTED
+            wildcard bins vle64 = {VLE64_V};
+            wildcard bins vse64 = {VSE64_V};
+        `endif
+    }
+    // the trigger watches the direction of the access: load (x/s/l = 001) for vle, store (010) for vse
+    vec_xsl: coverpoint {ins.current.insn[6:0] == 7'b0100111, get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tdata1", "execute")[0],
+                         get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tdata1", "store")[0], get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tdata1", "load")[0]} {
+        type_option.weight = 0;
+        bins access_direction = {4'b0_001, 4'b1_010};
+    }
+    vec_unmasked: coverpoint ins.current.insn[25] {
+        type_option.weight = 0;
+        bins unmasked = {1'b1};
+    }
+    vec_masked: coverpoint ins.current.insn[25] {
+        type_option.weight = 0;
+        bins masked = {1'b0};
+    }
+    // vl = 1 accesses only the element at the base; vsetivli with AVL 9 gives a vl that reaches base + 8 (vl = VLMAX < 9
+    // for SEW 64 at VLEN 128)
+    vec_vl: coverpoint (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "vl", "vl") == 1 ? 2'd1 :
+                        get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "vl", "vl") * sdtrig_vec_eew_bytes(ins.current.insn) > 8 ? 2'd2 : 2'd0) {
+        type_option.weight = 0;
+        bins one       = {2'd1};
+        bins reaches_8 = {2'd2};
+    }
+    vec_vl_one: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "vl", "vl") {
+        type_option.weight = 0;
+        bins one = {1};
+    }
+    vec_vl_reaches_8: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "vl", "vl") * sdtrig_vec_eew_bytes(ins.current.insn) > 8 {
+        type_option.weight = 0;
+        bins reaches_8 = {1'b1};
+    }
+    // tdata2 relative to the base address in rs1
+    vec_tdata2: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tdata2", "tdata2") {
+        type_option.weight = 0;
+        wildcard bins base        = {'x} iff (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tdata2", "tdata2") == ins.current.rs1_val);
+        wildcard bins base_plus_8 = {'x} iff (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tdata2", "tdata2") == ins.current.rs1_val + 8);
+        bins zero                 = {'0};
+    }
+    vec_tdata2_base_zero: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tdata2", "tdata2") {
+        type_option.weight = 0;
+        wildcard bins base = {'x} iff (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tdata2", "tdata2") == ins.current.rs1_val);
+        bins zero          = {'0};
+    }
+    vec_tdata2_plus_8: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tdata2", "tdata2") {
+        type_option.weight = 0;
+        wildcard bins base_plus_8 = {'x} iff (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tdata2", "tdata2") == ins.current.rs1_val + 8);
+    }
+    // v0 mask bit of the element at base + 8
+    vec_element_8: coverpoint ins.current.v_wdata[0][8 / sdtrig_vec_eew_bytes(ins.current.insn)] {
+        type_option.weight = 0;
+        bins masked_off = {1'b0};
+        bins active     = {1'b1};
+    }
+    // fired (into M, mcause = 3) iff an active element below vl matches
+    vec_outcome: coverpoint sdtrig_vec_as_expected(ins) {
+        type_option.weight = 0;
+        bins as_expected = {1'b1};
+    }
+
+    // main coverpoints
+    cp_vector_load_store: cross priv_mode_m, triggernum, tdata1_type_mcontrol6, tdata1_m_on, tdata1_select_adr, vec_tdata2_base_zero, tdata1_size, vec_vl_one, vec_unmasked, vec_access, vec_xsl, vec_outcome;  // NTRIG * 2 tdata2 * sizes * 6 (Zve64x 8) accesses
+    cp_vector_accesses:   cross priv_mode_m, triggernum, tdata1_type_mcontrol6, tdata1_m_on, tdata1_select_adr, vec_tdata2, tdata1_size_any, vec_vl, vec_unmasked, vec_access, vec_xsl, vec_outcome;    // NTRIG * 3 tdata2 * 2 vl * 6 (8) accesses
+    cp_vector_mask:       cross priv_mode_m, triggernum, tdata1_type_mcontrol6, tdata1_m_on, tdata1_select_adr, vec_tdata2_plus_8, tdata1_size_any, vec_vl_reaches_8, vec_masked, vec_element_8, vec_access, vec_xsl, vec_outcome; // NTRIG * 2 mask states * 6 (8) accesses
+endgroup
+`endif
+
 `ifdef S_SUPPORTED
 covergroup SdtrigSm_native_triggers_cg with function sample(ins_t ins);
     option.per_instance = 0;
@@ -809,6 +927,9 @@ function void sdtrigsm_sample(int hart, int issue, ins_t ins);
     SdtrigSm_icount_cg.sample(ins);
     SdtrigSm_a_cg.sample(ins);
     SdtrigSm_cache_operations_cg.sample(ins);
+    `ifdef ZVL32B_SUPPORTED
+        SdtrigSm_combined_accesses_cg.sample(ins);
+    `endif
     `ifdef S_SUPPORTED
         SdtrigSm_native_triggers_cg.sample(ins);
     `endif
