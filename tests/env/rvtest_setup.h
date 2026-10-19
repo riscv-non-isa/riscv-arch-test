@@ -137,6 +137,7 @@
       jal     T2, failedtest_trap_x7_x9
       RVTEST_WORD_PTR check_trap_sig_offset
       RVTEST_WORD_PTR trap_sig_offset_mismatch
+      .word   CSR_MEPC
     #endif
     check_trap_sig_offset_done:
   #endif
