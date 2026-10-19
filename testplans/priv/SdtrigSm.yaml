@@ -420,10 +420,10 @@ coverpoints:
       tdata2 = {scratch}
       tdata1.select = 0 (adr)
       tdata1.XSL= 010
-      tdata1.m = {0/1}
-      Perform SW 0x12345678 to scratch
-    expectation: Breakpoint exception on instruction if tdata1.m = 1
-    bins: 2 priv bits
+      tdata1.m/s/u = {000/100/011} (none, m only, s and u only)
+      Perform SW to scratch
+    expectation: Breakpoint exception on instruction if tdata1.m = 1; none when only s/u are set
+    bins: 2 m (the s/u-only case falls in the m = 0 bin)
     rules:
       - Sdtrig_mcontrol6_m
     notes: "comments on test results: Exceptions when m.1"
@@ -941,6 +941,13 @@ coverpoints:
       - Sdtrig_textra32_sselect_scontext
       - Sdtrig_textra32_sbytemask
       - Sdtrig_textra64_sbytemask
+  - name: cp_textra_scontext_all
+    goal: With every scontext byte masked, the scontext compare always matches
+    description: |-
+      only run tests if SCONTEXT_AVAILABLE:
+      as cp_textra_scontext, with tdata3.sselect = 1 and tdata3.sbytemask = all ones (RV32 11, RV64 1111)
+    expectation: Breakpoint exception for every svalue
+    bins: 2 trigger types
   - name: cp_textra_double_context
     description: |-
       only run tests if MCONTEXT_AVAILABLE and SCONTEXT_AVAILABLE:

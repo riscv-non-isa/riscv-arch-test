@@ -1688,7 +1688,11 @@ normative_rule_definitions:
   # this field is 1, it causes bits 15:8 to be ignored in the comparison, when
   # sselect=1.
   - name: Sdtrig_textra32_sbytemask
-    coverpoint: ["SdtrigSm_textra_cg/cp_textra_scontext"]
+    coverpoint:
+      [
+        "SdtrigSm_textra_cg/cp_textra_scontext",
+        "SdtrigSm_textra_cg/cp_textra_scontext_all",
+      ]
 
   # This field should be tied to 0 when S-mode is not supported.
   - name: Sdtrig_textra32_svalue_no_s
@@ -1760,4 +1764,8 @@ normative_rule_definitions:
   # comparison of bits 15:8, third bit controls the comparison of bits 23:16, and
   # fourth bit controls the comparison of bits 31:24.
   - name: Sdtrig_textra64_sbytemask
-    coverpoint: ["SdtrigSm_textra_cg/cp_textra_scontext"]
+    coverpoint:
+      [
+        "SdtrigSm_textra_cg/cp_textra_scontext",
+        "SdtrigSm_textra_cg/cp_textra_scontext_all",
+      ]

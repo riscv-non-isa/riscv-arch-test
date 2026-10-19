@@ -17,6 +17,16 @@ function automatic logic sdtrigs_bp_taken(ins_t ins);
            ins.current.insn != EBREAK && !(ins.current.insn[1:0] != 2'b11 && ins.current.insn[15:0] == C_EBREAK[15:0]);
 endfunction
 
+// cp_mcontrol6_priv_bits_s: outcome of the sw that an mcontrol6 store trigger watches.
+//   1: the trigger's s bit is set and the breakpoint was taken (into S, or into M on harts that use tcontrol)
+//   2: s is clear, m or u is set, and no breakpoint was taken    0: anything else
+function automatic logic [1:0] sdtrigs_priv_bits_outcome(ins_t ins);
+    logic [XLEN-1:0] tdata1 = get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "tdata1", "tdata1");
+    if (tdata1[4] && sdtrigs_bp_taken(ins)) return 2'd1;
+    if (!tdata1[4] && (tdata1[6] || tdata1[3]) && !sdtrigs_bp_taken(ins)) return 2'd2;
+    return 2'd0;
+endfunction
+
 covergroup SdtrigS_cg with function sample(ins_t ins);
     option.per_instance = 0;
     `include "general/RISCV_coverage_standard_coverpoints.svh"
@@ -30,8 +40,24 @@ covergroup SdtrigS_cg with function sample(ins_t ins);
         bins mcontrol6 = {4'd6};
     }
 
+    // a sw to the address watched by an mcontrol6 store trigger (select = 0, store = 1)
+    priv_bits_sw: coverpoint ins.current.insn iff (
+            get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "tdata1", "type")[3:0] == 4'd6 &&
+            get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "tdata1", "store")[0] &&
+            !get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "tdata1", "select")[0] &&
+            get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "tdata2", "tdata2") == ins.current.rs1_val + ins.current.imm) {
+        type_option.weight = 0;
+        wildcard bins sw = {SW};
+    }
+    priv_bits_outcome: coverpoint sdtrigs_priv_bits_outcome(ins) {
+        type_option.weight = 0;
+        bins own_fired      = {2'd1};
+        bins others_no_fire = {2'd2};
+    }
+
     // main coverpoints
     cp_breakpoint_s: cross priv_mode_s, triggernum, bp_type;  // NTRIG * 2 types; handled in S (medeleg[3] = 1) or M (tcontrol)
+    cp_mcontrol6_priv_bits_s: cross priv_mode_s, triggernum, priv_bits_sw, priv_bits_outcome;  // NTRIG * 2 outcomes
 endgroup
 
 function void sdtrigs_sample(int hart, int issue, ins_t ins);

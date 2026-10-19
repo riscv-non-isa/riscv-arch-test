@@ -2064,9 +2064,13 @@ def _generate_mcontrol6_tests(test_data: TestData, mode: str) -> list[TestChunk]
     lines.append(
         comment_banner(
             coverpoint,
-            "mcontrol6 fires on a sw when the privilege bit corresponding to mode is enabled",
+            "mcontrol6 fires on a sw when the privilege bit corresponding to mode is enabled,\n"
+            "and not when only the other modes' m/s/u bits are set",
         )
     )
+    # m/s/u without the current mode's bit. A bit for a mode the hart lacks is hard-wired to 0, which leaves
+    # the trigger enabled in no mode: no fire either way, so this case needs no guard.
+    others = (MODE_PRIVBIT["Sm"] | MODE_PRIVBIT["S"] | MODE_PRIVBIT["U"]) & ~MODE_PRIVBIT[mode]
     for trig_num in range(UDB_NUM_TRIGGERS):
         lines.append(f"\n#ifdef UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
         for priv in (0, MODE_PRIVBIT[mode]):
@@ -2086,6 +2090,17 @@ def _generate_mcontrol6_tests(test_data: TestData, mode: str) -> list[TestChunk]
 
             if priv != 0:
                 lines.append(f"#endif // UDB_SDTRIG_{MODE_UDB_LETTER[mode]}_AVAILABLE")
+        # fixed data so that the random values of the later sections stay as they were
+        lines.extend(
+            [
+                _add_tc(test_data, f"trig_num_{trig_num}_priv_{others:05b}", coverpoint, covergroup),
+                *_config_mcontrol6(temp_reg, trig_num, "scratch", mode, privbits=others, xsl=0b010, select=0),
+                f"LA(x{addr_reg}, scratch)",
+                f"LI(x{data_reg}, 0x5A5A5A5A)",
+                f"sw x{data_reg}, 0(x{addr_reg}) # must not fire: the current mode's bit is clear",
+                "nop # spacer",
+            ]
+        )
         lines.extend(_disable_trigger(temp_reg, trig_num, mode))
         lines.append(f"#endif // UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
 

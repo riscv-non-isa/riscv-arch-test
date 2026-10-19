@@ -3,10 +3,30 @@ suite: SdtrigS
 source: https://docs.google.com/spreadsheets/d/1jvJCSf9vdZ23PEaaYETLxfwZoyq_PzpyJzIB1OhdhcQ/edit?gid=498263567#gid=498263567
 description: |
   Unless otherwise specified, run tests in S-Mode, with tdata1.s = 1
-  mideleg.breakpoint = 1
-  Unless otherwise specified, use SBI Calls to access trigger CSRs
+  medeleg[3] = 1 (breakpoints from triggers are taken in S-mode) unless the hart has no S-mode or uses tcontrol (medeleg[3] hard-wired to 0); then they are taken in M-mode
+  Unless otherwise specified, use T-SBI calls to access trigger CSRs: the access runs in M-mode, so it does not trap
   All other assumptions are inherited from SdtrigSm
-  Perform all tests defined in SdtrigSm
-  Expectations provided below differ from those in SdtrigSm
-  Note: cp_csr_access_common will trap on privileged registers.
-coverpoints: []
+  Perform all tests defined in SdtrigSm except the trigger module register (cp_tdata_write, cp_csr_access_global/local, cp_tselect_trigs,
+  cp_tdata1_mode_hardwired, cp_tinfo_read_only) and cross-privilege etrigger tests, which run only in SdtrigSm
+  The rows below are the S-mode coverpoints; the other tests are checked by their signatures
+  Note: inaccessibility of the M-mode trigger CSRs from S-mode is covered by cp_csr_insufficient_priv in the S suite
+coverpoints:
+  - name: cp_breakpoint_s
+    goal: Triggers enabled for S-mode fire in S-mode
+    description: |-
+      For each of UDB_SDTRIG_NUM_TRIGGERS in tselect, for each supported trigger type in {icount, mcontrol6}:
+      arm the trigger with tdata1.s = 1 (T-SBI)
+      run the S-mode instruction that matches it
+    expectation: Breakpoint exception taken from S-mode (into S-mode when medeleg[3] = 1, else into M-mode)
+    bins: NUM_TRIGGERS * 2 types
+  - name: cp_mcontrol6_priv_bits_s
+    goal: An mcontrol6 trigger fires in S-mode only when its s bit is set
+    description: |-
+      For each of UDB_SDTRIG_NUM_TRIGGERS in tselect:
+      mcontrol6 store address trigger on scratch (select = 0, XSL = 010)
+      tdata1.m/s/u = {s only, m and u only}
+      sw to scratch in S-mode
+    expectation: |-
+      Breakpoint exception when tdata1.s = 1
+      No breakpoint when only the other modes' bits are set
+    bins: NUM_TRIGGERS * 2 (own bit and fired, other bits only and not fired)
