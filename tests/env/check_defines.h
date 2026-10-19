@@ -57,8 +57,6 @@
 // If RVMODEL_ACCESS_FAULT_ADDRESS is not defined, no access faults are tested
 
 ##### MTIME #####
-// RVMODEL_MTIME_ADDRESS is required when machine timer interrupts are implemented (checked below), because
-// the tests arm mtimecmp relative to mtime. It can be omitted only on a platform without them.
 
 #ifdef RVTEST_EMULATE_TIME_CSR
   #ifndef RVMODEL_MTIME_ADDRESS
@@ -100,10 +98,8 @@
   #error "UDB_MEI_INTR_IMPL is set but RVMODEL_SET_MEXT_INT is not defined. Define it in rvmodel_macros.h."
 #endif
 
-#if defined(UDB_MTI_INTR_IMPL) && !defined(RVMODEL_MTIMECMP_ADDRESS)
-  #error "UDB_MTI_INTR_IMPL is set but RVMODEL_MTIMECMP_ADDRESS is not defined. Define it in rvmodel_macros.h."
-#endif
-
+// Machine timer interrupts are armed by writing mtimecmp relative to mtime, so they need
+// RVMODEL_MTIME_ADDRESS, which in turn requires RVMODEL_MTIMECMP_ADDRESS (checked above).
 #if defined(UDB_MTI_INTR_IMPL) && !defined(RVMODEL_MTIME_ADDRESS)
   #error "UDB_MTI_INTR_IMPL is set but RVMODEL_MTIME_ADDRESS is not defined. Define it in rvmodel_macros.h."
 #endif

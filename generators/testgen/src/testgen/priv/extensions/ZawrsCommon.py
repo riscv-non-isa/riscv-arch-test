@@ -62,7 +62,7 @@ def wrs_resume_helper(
 
     lower = priv != "M"
     # The resume is triggered by a timer interrupt: Sstc below M-mode when it is implemented, otherwise a machine
-    # timer interrupt, which is taken from S- and U-mode regardless of mstatus.MIE
+    # timer interrupt
     guard = "#if defined(SSTC_SUPPORTED) || defined(UDB_MTI_INTR_IMPL)" if lower else "#ifdef UDB_MTI_INTR_IMPL"
     lines = [
         comment_banner(coverpoint, f"Generate {priv} mode WRS instruction resume when interrupt pending tests"),
