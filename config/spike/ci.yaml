@@ -9,11 +9,14 @@ exclude_configs:
   - spike-rv64-experimental
 # Smstateen: spike-rv{32,64}-max implement scontext, so mstateen0.CONTEXT is writable, but Sail cannot
 #   model scontext (https://github.com/riscv/sail-riscv/issues/2013). The -mu configs pass.
-# Sdtrig*_Mcontrol6: Sail 0.15 lacks mcontrol6 triggers, so it expects an illegal-instruction trap where the hart takes the breakpoint (https://github.com/riscv/sail-riscv/issues/222)
-# Sscofpmf*: spike hardwires mhpmcounter3..31 to 0 but keeps mhpmevent3..31 writable
+# SdtrigSm_Mcontrol6: on the configs without S (-m, -mu), Spike implements tcontrol and fires an M-mode breakpoint
+#   trigger only when tcontrol.mte is set (riscv/triggers.cc, trigger_t::common_match). These configs do not
+#   declare tcontrol and the test never sets mte, so Sail takes breakpoints that Spike suppresses. The max configs pass.
+# SscofpmfSm_access (rv32-max), Sscofpmf{Sm,S,U}_inhibit, Sscofpmf{Sm,S}_mcounteren, Sscofpmf{Sm,S,U}_overflow,
+#   Sscofpmf{Sm,S}_shadow (the other groups pass): spike hardwires mhpmcounter3..31 to 0 but keeps mhpmevent3..31 writable
 #   (https://github.com/riscv-software-src/riscv-isa-sim/issues/2370). Sail's
 #   writable_hpm_counters makes both or neither writable, so no reference config matches.
-exclude_extensions: "Smstateen,SdtrigSm_Mcontrol6,SdtrigS_Mcontrol6,SdtrigU_Mcontrol6,SscofpmfSm,SscofpmfS,SscofpmfU"
+exclude_extensions: "Smstateen,SdtrigSm_Mcontrol6,SscofpmfSm_access,SscofpmfSm_inhibit,SscofpmfSm_mcounteren,SscofpmfSm_overflow,SscofpmfSm_shadow,SscofpmfS_inhibit,SscofpmfS_mcounteren,SscofpmfS_overflow,SscofpmfS_shadow,SscofpmfU_inhibit,SscofpmfU_overflow"
 install_script: ".github/scripts/install-spike.sh"
 apt_packages: "device-tree-compiler libboost-regex-dev libboost-system-dev"
 shards: 1
