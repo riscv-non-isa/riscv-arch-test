@@ -426,7 +426,6 @@ covergroup S_V_cg with function sample(ins_t ins);
     cp_sstatus_vs_set_dirty_csr         : cross priv_mode_s, std_vec,        vsetvli_instruction,                    sstatus_vs_initial_clean;
     cp_sstatus_vs_set_dirty_vcsr        : cross priv_mode_s, vcsrs_writable, csrops,                                 sstatus_vs_initial_clean;
 
-    // misa is not visible in S-mode, so unlike Sm_V these do not cross misa_v_active
     cp_sstatus_vs_off_arithmetic        : cross priv_mode_s, sstatus_vs_inactive,     vector_vector_arithmetic_instruction iff (get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "vtype", "vill") == 0 &
                                                                                                                                   get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "vstart", "vstart") == 0 &
                                                                                                                                   get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "vl", "vl") != 0 );

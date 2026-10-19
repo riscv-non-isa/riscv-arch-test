@@ -52,6 +52,7 @@ coverpoints:
       - sepc should be pointing two instructions ahead.
   - heading: SXL tested with EndianS
   - heading: "*** if other supervisor extensions are supported, ifdef them in to run in M-mode, such as sstc to test access to stimecmp."
+  # The S_F, S_V and S_VF rows mirror the Sm_F, Sm_V and Sm_VF rows in Sm.yaml; keep them in step.
   - heading: "S_F tests (S_F-NN.S): the floating-point CSRs and sstatus.FS from S-mode, run when F is also supported."
   - name: cp_fcsr_access
     goal: |-
@@ -62,16 +63,17 @@ coverpoints:
     goal: |-
       Writing to the CSR field
       (WARL)
-    description: Each different type of floating-point instruction crossed with four values of FS
+    description: Each different type of floating-point instruction crossed with four values of FS. Includes integer-result instructions that raise a flag after fflags is cleared (feq.s with a signaling NaN, fcvt.w.s of an inexact value, fcvt.wu.s of an out-of-range value, fcvtmod.w.d of a NaN).
     rules:
       - check FS becomes dirty where appropriate
+      - instructions that set fflags must set FS to dirty even if they write no floating-point register
   - name: cp_sstatus_FS_transition_nondeterministic
     goal: |-
       Writing to the CSR field
       (WARL)
-    description: Floating-point instructions that need not modify floating-point state (fsw, fcvt.w.s, feq.s, fmv.x.w, fclass.s, csrr of the FP CSRs, fmvh.x.d) crossed with sstatus.FS = Off and Dirty
+    description: Floating-point instructions that need not modify floating-point state (fsw, fmv.x.w, fclass.s, csrr of the FP CSRs, fmvh.x.d) crossed with sstatus.FS = Off and Dirty
     expectation: Illegal-instruction trap when FS = Off; FS stays Dirty when Dirty. Initial and Clean are omitted because these instructions may dirty FS imprecisely.
-  - heading: "S_V tests (S_V_*-NN.S): the vector CSRs, vset{i}vl{i}, vstart and sstatus.VS from S-mode, run when Zve32x is also supported."
+  - heading: "S_V tests (S_V_vcsr-NN.S, S_V_vset-NN.S, S_V_vl_walk-NN.S): the vector CSRs, vset{i}vl{i}, vstart and sstatus.VS from S-mode, run when Zve32x is also supported."
   - name: cp_vcsrrswc
     goal: Confirm that all vector CSR properties are properly set with regards to read write, clear, and set privileges with the csr instructions
     description: With each of the vector CSRs conduct a read, write, clear, and set operation on the CSR
@@ -110,16 +112,16 @@ coverpoints:
   - description: Analogous to the way in which the floating-point unit is handled, the sstatus.VS field may exist even if misa.V is clear.
     notes: "feature (coverpoint written): Untestable"
   - name: cp_sstatus_vs_off_arithmetic
-    goal: Confirm that when when misa.V is 1 and sstatus.VS is off, an arithmetic vector instruction raises an illegal instruction exception
-    description: With misa.V = 1 (misa is not writable in S-mode), set sstatus.VS = {00} and run a .vv vector instruction
+    goal: Confirm that when misa.V is 1 and sstatus.VS is off, an arithmetic vector instruction raises an illegal instruction exception
+    description: With misa.V = 1 (its reset value), set sstatus.VS = {00} and run a .vv vector instruction
     expectation: illegal instruction exception
     bins: "1"
     notes: |-
       test written: yes, confirm sig
       spec: Attempts to execute any vector instruction, or to access the vector CSRs, raise an illegal-instruction exception when mstatus.VS is set to Off.
   - name: cp_sstatus_vs_off_csr
-    goal: Confirm that when when misa.V is 1 and sstatus.VS is off, an csr vector instruction raises an illegal instruction exception
-    description: With misa.V = 1 (misa is not writable in S-mode), set sstatus.VS = {00} and run a vsetvli
+    goal: Confirm that when misa.V is 1 and sstatus.VS is off, an csr vector instruction raises an illegal instruction exception
+    description: With misa.V = 1 (its reset value), set sstatus.VS = {00} and run a vsetvli
     expectation: illegal instruction exception
     bins: "1"
     notes: |-
@@ -363,7 +365,7 @@ coverpoints:
     notes: "spec: Any vector floating-point instruction that modifies any floating-point extension state (i.e., floating-point CSRs or f registers) must set mstatus.FS to Dirty."
   - name: cp_vectorfp_sstatus_fs_state_affecting_csr
     goal: Confirm vector floating point instructions set sstatus.FS to dirty when modifying floating point csr state
-    description: Set sstatus.FS = {initial/clean} and run an instruction that would raise a fp flag after clearing the fp flags
+    description: Set sstatus.FS = {initial/clean} and run an instruction that would raise a fp flag after clearing the fp flags (vfdiv.vv divide by zero, vfadd.vv inf + -inf, and vmflt.vv with a NaN operand, which writes only a mask register)
     expectation: sstatus.FS is set to dirty
     bins: "1"
     notes: "spec: Any vector floating-point instruction that modifies any floating-point extension state (i.e., floating-point CSRs or f registers) must set mstatus.FS to Dirty."
