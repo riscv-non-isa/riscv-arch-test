@@ -182,7 +182,7 @@ jobs:
 
       - name: Upload logs
         if: always() && matrix.extensions != ''
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: ${{ matrix.config }}${{ matrix.shard_suffix }}-logs
           path: work/${{ matrix.config }}/logs
@@ -248,7 +248,7 @@ jobs:
 
       - name: Upload logs
         if: always()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: spike-rv64-experimental-logs
           path: work/spike-rv64-experimental/logs
@@ -285,7 +285,7 @@ jobs:
         run: cd docs/ctp && make docker-pull-latest && make -j6
 
       - name: Upload CTP
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: ctp
           path: |
@@ -306,7 +306,7 @@ jobs:
         run: cd docs/crd && make docker-pull-latest && make -j6
 
       - name: Upload CRD
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: crd
           path: |
@@ -371,6 +371,7 @@ jobs:
         run: |
           FAST=True \
           EXTENSIONS=I \
+          CONFIG_FILES="config/spike/spike-rv32-max/test_config.yaml config/spike/spike-rv64-max/test_config.yaml" \
           make
 
   # This is here so that the "Status checks that are required" Github
