@@ -15,7 +15,7 @@
 ##### END_TEST_CONFIG #####
 
 // Define the size of the signature region
-#define SIGUPD_COUNT 39
+#define SIGUPD_COUNT 38
 
 // Extra defines (if needed) to enable trap handlers, fpu, vector, etc.
 #define BOOT_TO_SMODE
@@ -399,25 +399,6 @@ ExceptionsSv_cg_cp_misaligned_store_page_fault_s_cross_second_fails_store:
   sw x8, 0(x9)
   nop
 
-// Page crossing: both of the two pages fail
-  PTE_SETUP_SV39(rvtest_slvl1_pg_tbl, (PTE_V), va_cross_1, LEVEL2)
-  PTE_SETUP_SV39(rvtest_slvl0_pg_tbl, (PTE_V), va_cross_1, LEVEL1)
-  PTE_SETUP_SV39(rvtest_cross_page, (0), va_cross_1, LEVEL0)
-  PTE_SETUP_SV39(rvtest_cross_page + 4096, (0), va_cross_2, LEVEL0)
-  sfence.vma
-  LI(x9, va_cross_2 - 2)
-ExceptionsSv_cg_cp_misaligned_instr_page_fault_s_cross_both_fails_exec:
-  jalr ra, x9, 0
-  nop
-ExceptionsSv_cg_cp_misaligned_load_page_fault_s_cross_both_fails_load:
-  lw x15, 0(x9)
-  nop
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, ExceptionsSv_cg_cp_misaligned_load_page_fault_s_cross_both_fails_load, ExceptionsSv_cg_cp_misaligned_load_page_fault_s_cross_both_fails_load_str)
-ExceptionsSv_cg_cp_misaligned_store_page_fault_s_cross_both_fails_store:
-  sw x8, 0(x9)
-  nop
-
 // Instantiate trap handlers and other epilog code, call RVMODEL_HALT at end of test
 RVTEST_CODE_END
 
@@ -490,9 +471,6 @@ ExceptionsSv_cg_cp_misaligned_store_page_fault_s_cross_first_fails_store_str: .s
 ExceptionsSv_cg_cp_misaligned_instr_page_fault_s_cross_second_fails_exec_str: .string "\"test: 31; cg: ExceptionsSv_cg; cp: cp_misaligned_instr_page_fault_s; bin: cross_second_fails_exec\""
 ExceptionsSv_cg_cp_misaligned_load_page_fault_s_cross_second_fails_load_str: .string "\"test: 32; cg: ExceptionsSv_cg; cp: cp_misaligned_load_page_fault_s; bin: cross_second_fails_load\""
 ExceptionsSv_cg_cp_misaligned_store_page_fault_s_cross_second_fails_store_str: .string "\"test: 33; cg: ExceptionsSv_cg; cp: cp_misaligned_store_page_fault_s; bin: cross_second_fails_store\""
-ExceptionsSv_cg_cp_misaligned_instr_page_fault_s_cross_both_fails_exec_str: .string "\"test: 34; cg: ExceptionsSv_cg; cp: cp_misaligned_instr_page_fault_s; bin: cross_both_fails_exec\""
-ExceptionsSv_cg_cp_misaligned_load_page_fault_s_cross_both_fails_load_str: .string "\"test: 35; cg: ExceptionsSv_cg; cp: cp_misaligned_load_page_fault_s; bin: cross_both_fails_load\""
-ExceptionsSv_cg_cp_misaligned_store_page_fault_s_cross_both_fails_store_str: .string "\"test: 36; cg: ExceptionsSv_cg; cp: cp_misaligned_store_page_fault_s; bin: cross_both_fails_store\""
 
 // End of test data section and model specific data
 RVTEST_DATA_END

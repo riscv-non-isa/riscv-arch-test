@@ -184,19 +184,19 @@ def _add_access(
 
 # The word that spans the two pages: jr ra (jalr x0, 0(ra)), which the fetch cases execute
 _CROSSING_WORD = 0x00008067
-# Each page passes (RWX = 111) or fails (zero PTE): (name, first page passes, second page passes)
+# Each page passes (RWX = 111) or fails (invalid PTE): (name, first page passes, second page passes).  Both pages
+# failing is left out: which part faults first is implementation-defined, so it would add no checkable outcome.
 _CROSSING_COMBINATIONS = (
     ("neither", True, True),
     ("first", False, True),
     ("second", True, False),
-    ("both", False, False),
 )
 
 
 def _page_crossing_cases(test_data: TestData, sv: SvMode) -> list[str]:
-    """Fetch, load and store across the boundary of two kilopages, for each combination of the pages passing or failing.
+    """Fetch, load and store across the boundary of two kilopages, with neither, the first or the second page failing.
 
-    A page passes with RWX = 111 and fails with a zero PTE. A jalr to a 4-byte instruction, a lw and a sw each start
+    A page passes with RWX = 111 and fails with an invalid PTE (flags 0). A jalr to a 4-byte instruction, a lw and a sw each start
     at the last halfword of the first page. The stores write back the word already there, so a store that faults
     after writing the part in one page leaves memory unchanged. When neither page faults, the store first writes a
     different word and a load reads it back.
@@ -217,7 +217,7 @@ def _page_crossing_cases(test_data: TestData, sv: SvMode) -> list[str]:
         lines.extend(
             [
                 "",
-                f"// Page crossing: {name} of the two pages {'fail' if name == 'both' else 'fails'}",
+                f"// Page crossing: {name} of the two pages fails",
                 *create_page_mapping(
                     sv,
                     virtual_address="va_cross_1",

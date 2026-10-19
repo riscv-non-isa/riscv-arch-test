@@ -19,14 +19,13 @@ coverpoints:
   - name: cp_misaligned_load_page_fault_s
     goal: Misaligned load that spans a page boundary, with each page passing or failing
     description: |-
-      Map two consecutive virtual kilopages, each either RWX=111 (passes) or a zero PTE (fails), in all four
-      combinations: neither, first, second or both pages fail. Issue lw at the last halfword of the first page.
+      Map two consecutive virtual kilopages, each either RWX=111 (passes) or an invalid PTE (fails), with neither, the
+      first or the second page failing. Issue lw at the last halfword of the first page. Both pages failing is not
+      tested: the hart reports the part it accesses first, which is implementation-defined.
     expectation: |-
       Neither fails: the load completes and returns the word that spans the two pages.
-      First or both fail: load page fault on the part in the first page, so a nonzero stval is the lw address.
+      First fails: load page fault on the part in the first page, so a nonzero stval is the lw address.
       Second fails: load page fault on the part in the second page, so a nonzero stval is the start of that page.
-      Both fail: the hart reports the part it accesses first, which is the second page if it accesses the parts
-      in decreasing order (Sail's misaligned.order_decreasing).
       A hart that does not support misaligned loads raises load-address-misaligned when neither page fails, and
       in every case if it gives that exception high priority, in which case the access is not translated.
       stval may be 0.
@@ -34,7 +33,7 @@ coverpoints:
   - name: cp_misaligned_store_page_fault_s
     goal: Misaligned store that spans a page boundary, with each page passing or failing
     description: |-
-      Same four combinations as cp_misaligned_load_page_fault_s, with sw at the last halfword of the first page.
+      Same three combinations as cp_misaligned_load_page_fault_s, with sw at the last halfword of the first page.
       Each faulting store writes the word already in memory, because a hart may write the part in the page that
       passes before it faults on the other. When neither page fails, the store writes a different word, which a
       load reads back, and then restores the original word.
@@ -43,12 +42,11 @@ coverpoints:
   - name: cp_misaligned_instr_page_fault_s
     goal: 4-byte instruction that spans a page boundary, with each page passing or failing
     description: |-
-      Same four combinations as cp_misaligned_load_page_fault_s. jalr to a 4-byte instruction (jr ra) at the last
+      Same three combinations as cp_misaligned_load_page_fault_s. jalr to a 4-byte instruction (jr ra) at the last
       halfword of the first page.
     expectation: |-
       Neither fails: the instruction executes.
-      First or both fail: instruction page fault on the first part, so a nonzero stval is the instruction address.
-      The hart takes the instruction length from the first halfword, so it reports the first part even when both fail.
+      First fails: instruction page fault on the first part, so a nonzero stval is the instruction address.
       Second fails: instruction page fault on the second part, so a nonzero stval is the start of the second page.
       sepc always holds the instruction address. stval may be 0.
       Without Zca, the jalr raises instruction-address-misaligned instead.
