@@ -104,10 +104,8 @@ UDB_DEFINES = [
     "#define UDB_SDTRIG_HIT_IMPLEMENTED",
     # Sims that do not follow Suggested Trigger Timing in spec or fires several cycles after will mismatch MEPC in trap handler
     "#define SDTRIG_IMPRECISE_XEPC",
-    # etrigger fires after the trap is taken, so xEPC is inside the S trap vector; the handler must not advance it
-    "#define SDTRIG_ETRIGGER_XEPC_IN_VECTOR",
-    # itrigger fires after the interrupt trap is taken, so xEPC is the original handler entry; do not advance it
-    "#define SDTRIG_ITRIGGER_XEPC_IN_VECTOR",
+    # itrigger/etrigger fire after the trap is taken, so xEPC is inside the S trap vector; the handler must not advance it
+    "#define SDTRIG_XEPC_IN_VECTOR",
     "#define UDB_ITRIGGER_TRIG0_AVAILABLE",
     "#define UDB_ITRIGGER_TRIG1_AVAILABLE",
 ]
@@ -586,24 +584,6 @@ def _clear_interrupt(code: int, mode: str) -> list[str]:
         f"#ifdef {guard}",
         f"RVTEST_CLR_{macro}_INT_{priv} # clear interrupt {code}",
         f"#endif // {guard}",
-    ]
-
-
-def _read_trigger_hit(temp_reg: int, trig_num: int, mode: str, test_data: TestData) -> list[str]:
-    """Read and sign tdata1.hit before disabling the trigger when it is implemented."""
-    return [
-        "#ifdef UDB_SDTRIG_HIT_IMPLEMENTED",
-        _load_reg(temp_reg, trig_num),
-        _csr_access(f"csrw tselect, x{temp_reg}", mode),
-        _csr_access(f"csrr x{temp_reg}, tdata1", mode),
-        "#if __riscv_xlen == 64",
-        f"srli x{temp_reg}, x{temp_reg}, 58 # tdata1.hit",
-        "#else",
-        f"srli x{temp_reg}, x{temp_reg}, 26 # tdata1.hit",
-        "#endif",
-        f"andi x{temp_reg}, x{temp_reg}, 1",
-        write_sigupd(temp_reg, test_data),
-        "#endif // UDB_SDTRIG_HIT_IMPLEMENTED",
     ]
 
 
