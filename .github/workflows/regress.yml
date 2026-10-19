@@ -6,6 +6,9 @@ name: ACT Regression
 on:
   merge_group:
   push:
+    branches:
+      - act4
+      - main
   pull_request:
 
 # Only run CI on the latest commit if a PR is updated
