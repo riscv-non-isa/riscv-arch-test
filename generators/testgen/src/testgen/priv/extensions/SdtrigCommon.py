@@ -2173,7 +2173,10 @@ def _generate_itrigger_tests(test_data: TestData, mode: str) -> list[TestChunk]:
                     for priv in (0, MODE_PRIVBIT[origin]):
                         binname = f"trig_num_{trig_num}_{origin.lower()}_code_{code}_deleg_{delegate}_priv_{priv:05b}"
                         lines.append(_add_tc(test_data, binname, coverpoint, covergroup))
-                        for cause in (code,) if code == TIMER_INTERRUPT_CODE else (code, TIMER_INTERRUPT_CODE):
+                        # negative case: a different interrupt is taken; from S/U pick a delegated S-level timer
+                        # so the trap is handled in S, where no re-entrancy option suppresses a wrong cause mask
+                        other = TIMER_INTERRUPT_CODE if origin == "Sm" else (5 if code != 5 else 1)
+                        for cause in (code,) if code == other else (code, other):
                             paired_cause_guard = None
                             if cause != code:
                                 paired_cause_guard = guard_symbol(_INT_TYPE[cause])
@@ -2182,11 +2185,11 @@ def _generate_itrigger_tests(test_data: TestData, mode: str) -> list[TestChunk]:
                             if cause_gated:
                                 lines.append("#ifdef S_SUPPORTED")
                             lines.extend(_global_ie(mode, enable=False))
-                            wait = [f"RVTEST_IDLE_FOR_INTERRUPT(x{t1})"] if cause == code and code in (3, 7, 11) else []
+                            wait = [f"RVTEST_IDLE_FOR_INTERRUPT(x{t1})"] if cause in (3, 7, 11) else []
                             if mode == "Sm":
                                 lines.append("csrci mstatus, 0x2 # SIE=0 while the source is prepared")
                                 if gated:
-                                    lines.extend(_set_itrigger_delegation(code, delegate, t1))
+                                    lines.extend(_set_itrigger_delegation(cause, delegate, t1))
                             lines.extend(
                                 [
                                     *_config_itrigger(
@@ -2196,7 +2199,15 @@ def _generate_itrigger_tests(test_data: TestData, mode: str) -> list[TestChunk]:
                                         mode,
                                         privbits=priv,
                                     ),
-                                    *_cause_interrupt(cause, origin, t1),
+                                    *(
+                                        [
+                                            _load_reg(t1, 1 << cause),
+                                            _csr_access(f"csrs mie, x{t1} # enable the non-matching interrupt", mode),
+                                        ]
+                                        if cause != code
+                                        else []
+                                    ),
+                                    *_cause_interrupt(cause, mode, t1),
                                     *wait,
                                     *_goto_itrigger_origin(origin),
                                     *_global_ie(origin, enable=True),
@@ -2204,7 +2215,7 @@ def _generate_itrigger_tests(test_data: TestData, mode: str) -> list[TestChunk]:
                                     *_global_ie(origin, enable=False),
                                 ]
                             )
-                            if mode == "Sm":
+                            if gated:
                                 lines.append("RVTEST_TSBI_GOTO_MMODE")
                             lines.extend(
                                 [
@@ -2214,7 +2225,7 @@ def _generate_itrigger_tests(test_data: TestData, mode: str) -> list[TestChunk]:
                                 ]
                             )
                             if mode == "Sm" and gated:
-                                lines.extend(_set_itrigger_delegation(code, 0, t1))
+                                lines.extend(_set_itrigger_delegation(cause, 0, t1))
                             if cause_gated:
                                 lines.append("#endif // S_SUPPORTED")
                             if paired_cause_guard is not None:
