@@ -22,10 +22,18 @@
 #   (fixed in Imperas-HMC101126-eng-build). The other configs pass.
 # - ExceptionsVx: https://solvnetplus.synopsys.com/s/case/500WQ000023l1CPYAY/vmvnrrv-does-not-raise-an-illegalinstruction-exception-when-vtypevill-1
 #   (fixed in Imperas-HMC101126-eng-build)
-# - SdtrigS, SdtrigU: Sail has no mcontrol/mcontrol6 (a type-6 tdata1 write reads back as type 15), so its
-#   expected signatures contain no breakpoints and the Mcontrol6 tests fail at the first trigger that fires
-#   (https://github.com/riscv/sail-riscv/issues/222). SdtrigSm passes, but only because no M-mode trigger fires
-#   (Imperas implements tcontrol and the test never sets tcontrol.mte), so it is no longer excluded.
+# - SdtrigSm, SdtrigS, SdtrigU (stock only): an icount trigger that fires with action=0 writes the PC to xtval
+#   instead of zero (norm:Sdtrig_icount_action0), so tests in which an icount trigger fires fail:
+#   https://solvnetplus.synopsys.com/s/case/500WQ00002BsufNYAR/an-icount-trigger-that-fires-with-action0-writes-the-pc-to-mtval-instead-of-zero
+#   (fixed in Imperas-HMC101126-eng-build). An itrigger on an interrupt sets tdata1.hit but takes no breakpoint
+#   once the handler's code has run before, so SdtrigSm_Itrigger fails on imperas-rv64-max and imperas-rv32gck:
+#   https://solvnetplus.synopsys.com/s/case/500WQ00002DmNGMYA3/itrigger-sets-tdata1hit-but-takes-no-breakpoint
+#   (fixed in Imperas-HMC101126-eng-build). mcontext, hcontext and scontext are kept per trigger instead of once
+#   per hart, so the Textra tests fail where textra context matching is claimed (imperas-rv32gck/gcv):
+#   https://solvnetplus.synopsys.com/s/case/500WQ00002Dmex7YAB/sdtrig-mcontext-hcontext-and-scontext-are-kept-per-trigger-selected-by-tselect-instead-of-once-per-hart
+#   (fixed in Imperas-HMC101126-eng-build). The imperas.ic files set amo_trigger=T, because AMOs must fire
+#   load/store address triggers, and tcontrol_undefined=T, because Sail cannot model tcontrol with a delegable
+#   medeleg[3].
 # - Sscofpmf*: there are no plans for Imperas to support HPM events, so this one is not
 #   expected to be resolved in the foreseeable future.
 # - Svnapot: Imperas accepts N=1 on superpage leaf PTEs instead of page faulting
@@ -69,6 +77,6 @@
 #
 ci_enabled: false
 # Stock ImperasDV Y-2026.09:
-# exclude_extensions: "SsstrictSm,SsstrictS,SsstrictU,Smstateen,ExceptionsVx,SdtrigS,SdtrigU,Svnapot,Ssnpm,SsnpmSm,Smmpm,SmnpmS,SmnpmSSm,SmnpmU,SmnpmUSm,SscofpmfSm,SscofpmfS,SscofpmfU,ZicfissU,ZicfissS,ZicfissSm"
+# exclude_extensions: "SsstrictSm,SsstrictS,SsstrictU,Smstateen,ExceptionsVx,SdtrigSm,SdtrigS,SdtrigU,Svnapot,Ssnpm,SsnpmSm,Smmpm,SmnpmS,SmnpmSSm,SmnpmU,SmnpmUSm,SscofpmfSm,SscofpmfS,SscofpmfU,ZicfissU,ZicfissS,ZicfissSm"
 # Imperas-HMC101126-eng-build:
-exclude_extensions: "SdtrigS,SdtrigU,Ssnpm,SsnpmSm,Smmpm,SmnpmS,SmnpmSSm,SmnpmU,SmnpmUSm,SscofpmfSm,SscofpmfS,SscofpmfU"
+exclude_extensions: "Ssnpm,SsnpmSm,Smmpm,SmnpmS,SmnpmSSm,SmnpmU,SmnpmUSm,SscofpmfSm,SscofpmfS,SscofpmfU"
