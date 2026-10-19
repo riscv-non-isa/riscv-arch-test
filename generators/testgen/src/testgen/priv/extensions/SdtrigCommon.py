@@ -28,6 +28,10 @@ ADDI_HINT = 0x00008013  # TODO Uses because U mode calls trigger on nops emitted
 TDATA2_NOFIRE = 0x2
 MODE_PRIVBIT = {"Sm": 0b10000, "S": 0b01000, "U": 0b00100, "Vs": 0b00010, "Vu": 0b00001}
 MODE_UDB_LETTER = {"Sm": "M", "S": "S", "U": "U", "Vs": "VS", "Vu": "VU"}
+# tdata2 values for the CBO tests, which operate on the block at scratch. scratch is .p2align 8 (rvtest_setup.h),
+# so for any cache block of at most 256 bytes it is the block base, and the three compare values that
+# norm:Sdtrig_cache_compare allows (every byte of the block / block base / effective address) all match
+# tdata2=scratch and none matches scratch-1 or the next block.
 CBO_TDATA2 = (
     ("scratch", "scratch"),
     ("below", "scratch-1"),
