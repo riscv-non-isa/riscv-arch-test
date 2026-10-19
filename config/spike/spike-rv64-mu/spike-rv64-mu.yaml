@@ -377,6 +377,6 @@ params:
   SUPPORTED_PMLEN_SMMPM: [0, 7, 16]
   SUPPORTED_PMLEN_SMNPM: [0, 7, 16]
   # Smstateen params
-  MSTATEEN_CONTEXT_TYPE: rw
+  MSTATEEN_CONTEXT_TYPE: read-only-0
   # Zawrs params
   ZAWRS_NTO_IS_NOP: true

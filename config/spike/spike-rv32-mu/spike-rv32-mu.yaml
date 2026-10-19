@@ -373,6 +373,6 @@ params:
   HCONTEXT_AVAILABLE: false
   MCONTEXT_AVAILABLE: true
   # Smstateen params
-  MSTATEEN_CONTEXT_TYPE: rw
+  MSTATEEN_CONTEXT_TYPE: read-only-0
   # Zawrs params
   ZAWRS_NTO_IS_NOP: true
