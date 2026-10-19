@@ -47,11 +47,6 @@
   },
 
   "csr": {
-    // With H, bit 31 of mstateen1h-3h (bit 63 of mstateen1-3) must be writable (norm:mstateen_bit_63_roz);
-    // Whisper makes it read-only zero
-    "mstateen1h": { "mask": "0x80000000", "poke_mask": "0x80000000" },
-    "mstateen2h": { "mask": "0x80000000", "poke_mask": "0x80000000" },
-    "mstateen3h": { "mask": "0x80000000", "poke_mask": "0x80000000" },
     "vstart": {
       "mask": "0xff",
       "poke_mask": "0xff"
@@ -88,7 +83,12 @@
     },
     "hstatus": {
       "mask": "0x0073f3c0" // VSBE read-only zero: VS-mode is little-endian (VS_MODE_ENDIANNESS)
-    }
+    },
+    // Whisper leaves bit 63 (SE) of mstateen1-3 read-only zero unless given a mask, but it must
+    // be writable with H (norm:mstateen_bit_63_roz).
+    "mstateen1h": { "mask": "0x80000000", "poke_mask": "0x80000000" },
+    "mstateen2h": { "mask": "0x80000000", "poke_mask": "0x80000000" },
+    "mstateen3h": { "mask": "0x80000000", "poke_mask": "0x80000000" }
   },
 
   "misaligned_has_priority": false,

@@ -27,6 +27,8 @@ ci_enabled: true
 #     (https://gitlab.com/qemu-project/qemu/-/work_items/4495), and ENVCFG, CSRIND, AIA and IMSIC without S
 #     (https://gitlab.com/qemu-project/qemu/-/work_items/4655). On the max configs CSRIND, AIA and IMSIC are
 #     legally writable, but Sail does not model Sscsrind or Ssaia.
+# Ssstateen (and Smstateen): on RV64, reserved bit 63 of sstateen1-3 is writable while mstateenN bit 63 is set,
+#     but sstateen1-3 have no defined bits and must read zero (https://gitlab.com/qemu-project/qemu/-/work_items/4726).
 # ZawrsU and ZawrsS fail on qemu due to stval mismatching, filed QEMU issue https://gitlab.com/qemu-project/qemu/-/work_items/4080
 # Sdtrig*: QEMU's trigger implementation has too many problems (tdata1 writes of 0 ignored, reserved types abort, icount hangs: https://gitlab.com/qemu-project/qemu/-/work_items/4665); revisit when QEMU's Sdtrig matures.
 # Sscofpmf*: qemu's mie write mask drops LCOFIE, so LCOFI is never taken: https://gitlab.com/qemu-project/qemu/-/work_items/3969
@@ -71,7 +73,7 @@ ci_enabled: true
 # same issue as ExceptionsZicboU/S and SvZicbo (https://gitlab.com/qemu-project/qemu/-/work_items/3501).
 # ZicntrSm/U fail on qemu because ecall, ebreak and illegal instruction increments minstret/instret. Filed QEMU issue: https://gitlab.com/qemu-project/qemu/-/work_items/4227
 # ZicntrSm/U fail on qemu because minstret/instret overcounts by 1 for wfi with a pending or taken interrupt. Filed QEMU issue: https://gitlab.com/qemu-project/qemu/-/work_items/4230
-exclude_extensions: "Sm,S,SsstrictSm,SsstrictS,SsstrictU,Zacas,InterruptsSm,InterruptsS,ExceptionsZalrsc,ExceptionsZicboU,ExceptionsZicboS,ExceptionsZicboSm,SvZicbo,ExceptionsZaamo,ExceptionsSvZalrsc,ExceptionsSvZalrscSm,Zama16b,SsstrictV,Smstateen,ZawrsS,ZawrsU,SdtrigSm,SdtrigS,SdtrigU,H,HSm,ExceptionsH,ExceptionsHSm,ExceptionsHF,ExceptionsHV,InterruptsH,InterruptsHSm,SstcH,SstcHSm,ZicntrH,SvinvalH,SvinvalHSm,Shvstvala,Shtvala,SvH,SvHSm,PMPH,SvHZicbo,SvHZicboSm,SmcntrpmfH,SsstateenH,SmstateenH,SsnpmH,ZicfilpH,ZicfilpSm,Ssnpm,SsnpmSm,Smmpm,SmnpmS,SmnpmSSm,SmnpmU,SmnpmUSm,ZicntrSm,ZicntrU,SscofpmfSm,SscofpmfS,SscofpmfU,ZicfilpS,ZicfilpU"
+exclude_extensions: "Sm,S,SsstrictSm,SsstrictS,SsstrictU,Zacas,InterruptsSm,InterruptsS,ExceptionsZalrsc,ExceptionsZicboU,ExceptionsZicboS,ExceptionsZicboSm,SvZicbo,ExceptionsZaamo,ExceptionsSvZalrsc,ExceptionsSvZalrscSm,Zama16b,SsstrictV,Smstateen,Ssstateen,ZawrsS,ZawrsU,SdtrigSm,SdtrigS,SdtrigU,H,HSm,ExceptionsH,ExceptionsHSm,ExceptionsHF,ExceptionsHV,InterruptsH,InterruptsHSm,SstcH,SstcHSm,ZicntrH,SvinvalH,SvinvalHSm,Shvstvala,Shtvala,SvH,SvHSm,PMPH,SvHZicbo,SvHZicboSm,SmcntrpmfH,SsstateenH,SmstateenH,SsnpmH,ZicfilpH,ZicfilpSm,Ssnpm,SsnpmSm,Smmpm,SmnpmS,SmnpmSSm,SmnpmU,SmnpmUSm,ZicntrSm,ZicntrU,SscofpmfSm,SscofpmfS,SscofpmfU,ZicfilpS,ZicfilpU"
 # qemu-rv32-mu, qemu-rv64-mu: U-mode cbo.zero/clean/flush/inval raise illegal-instruction without S-mode
 #   because check_zicbo_envcfg() also requires senvcfg, which does not exist
 #   (https://gitlab.com/qemu-project/qemu/-/work_items/4596)

@@ -1934,9 +1934,15 @@ tsbi_instr_table:
         TSBI_CSR_INSTR_TABLE(0x306) // mcounteren
         TSBI_CSR_INSTR_TABLE(0x30A) // menvcfg
         TSBI_CSR_INSTR_TABLE(0x30C) // mstateen0
+        TSBI_CSR_INSTR_TABLE(0x30D) // mstateen1
+        TSBI_CSR_INSTR_TABLE(0x30E) // mstateen2
+        TSBI_CSR_INSTR_TABLE(0x30F) // mstateen3
         TSBI_CSR_INSTR_TABLE(0x31C) // mstateen0h
         #if (UDB_MXLEN==32)
         TSBI_CSR_INSTR_TABLE(0x31A) // menvcfgh
+        TSBI_CSR_INSTR_TABLE(0x31D) // mstateen1h
+        TSBI_CSR_INSTR_TABLE(0x31E) // mstateen2h
+        TSBI_CSR_INSTR_TABLE(0x31F) // mstateen3h
         #endif
         TSBI_CSR_INSTR_TABLE(0x344) // mip
         TSBI_CSR_INSTR_TABLE(0x350) // miselect
