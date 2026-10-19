@@ -57,7 +57,6 @@ implemented_extensions:
   - { name: Zacas, version: "= 1.0.0" }
   - { name: Zalasr, version: "= 1.0.0" }
   - { name: Zalrsc, version: "= 1.0.0" }
-  - { name: Zama16b, version: "= 1.0.0" }
   - { name: Zawrs, version: "= 1.0.0" }
   - { name: Zba, version: "= 1.0.0" }
   - { name: Zbb, version: "= 1.0.0" }
@@ -436,7 +435,7 @@ params:
   DCSR_STEPIE_TYPE: rw
   DCSR_STOPCOUNT_TYPE: rw
   DCSR_STOPTIME_TYPE: rw
-  HCONTEXT_AVAILABLE: true
+  HCONTEXT_AVAILABLE: false
   MCONTEXT_AVAILABLE: true
   # Smstateen params
   MSTATEEN_ENVCFG_TYPE: rw

@@ -65,13 +65,13 @@ covergroup ZawrsU_cg with function sample(ins_t ins);
         bins one = {1};
     }
 
-    mip_any_ones: coverpoint (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "mip", "mtip") ||
-                           get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "mip", "meip") ||
-                           get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "mip", "msip")
+    mip_any_ones: coverpoint (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "mip", "mtip")[0] ||
+                           get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "mip", "meip")[0] ||
+                           get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "mip", "msip")[0]
                            `ifdef S_SUPPORTED
-                        || get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "mip", "stip") ||
-                           get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "mip", "seip") ||
-                           get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "mip", "ssip")
+                        || get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "mip", "stip")[0] ||
+                           get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "mip", "seip")[0] ||
+                           get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "mip", "ssip")[0]
                            `endif){
         bins any_ones = {1};
     }
@@ -123,16 +123,19 @@ covergroup ZawrsU_cg with function sample(ins_t ins);
             mstatus_sie_zero,
         `endif
         wrs_ops;
-    cp_wrs_resume:          cross mstatus_tw_zero,
-        `ifdef SSTC_SUPPORTED
-            sie_stie_one, menvcfg_STCE_one,
-        `else
-            mie_mtie_one,
-        `endif
-        `ifdef S_SUPPORTED
-            mstatus_sie,
-        `endif
-    mstatus_mie, priv_mode_u, wrs_ops, lr_w;
+    `ifdef SSTC_SUPPORTED
+        cp_wrs_resume:      cross mstatus_tw_zero, sie_stie_one, menvcfg_STCE_one,
+            `ifdef S_SUPPORTED
+                mstatus_sie,
+            `endif
+            mstatus_mie, priv_mode_u, wrs_ops, lr_w;
+    `elsif UDB_MTI_INTR_IMPL
+        cp_wrs_resume:      cross mstatus_tw_zero, mie_mtie_one,
+            `ifdef S_SUPPORTED
+                mstatus_sie,
+            `endif
+            mstatus_mie, priv_mode_u, wrs_ops, lr_w;
+    `endif
 
     cp_wrs_nto_timeout:     cross mstatus_tw_one, mstatus_mie_zero, priv_mode_u, mie_zeros, wrs_nto,
         `ifdef S_SUPPORTED
@@ -140,11 +143,17 @@ covergroup ZawrsU_cg with function sample(ins_t ins);
         `endif
         lr_w;
 
-    cp_wrs_no_mie:     cross mstatus_tw_one, mstatus_mie_one, mip_any_ones, priv_mode_u, mie_zeros, wrs_ops,
-        `ifdef S_SUPPORTED
-            mstatus_sie_one,
-        `endif
-        lr_w;
+    // mip_any_ones needs an interrupt that can be made pending, S-mode interrupts can be set through mip
+    `ifdef S_SUPPORTED
+        cp_wrs_no_mie:      cross mstatus_tw_one, mstatus_mie_one, mip_any_ones, priv_mode_u, mie_zeros, wrs_ops,
+            mstatus_sie_one, lr_w;
+    `elsif UDB_MEI_INTR_IMPL
+        cp_wrs_no_mie:      cross mstatus_tw_one, mstatus_mie_one, mip_any_ones, priv_mode_u, mie_zeros, wrs_ops, lr_w;
+    `elsif UDB_MSI_INTR_IMPL
+        cp_wrs_no_mie:      cross mstatus_tw_one, mstatus_mie_one, mip_any_ones, priv_mode_u, mie_zeros, wrs_ops, lr_w;
+    `elsif UDB_MTI_INTR_IMPL
+        cp_wrs_no_mie:      cross mstatus_tw_one, mstatus_mie_one, mip_any_ones, priv_mode_u, mie_zeros, wrs_ops, lr_w;
+    `endif
 
 
 endgroup
