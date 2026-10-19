@@ -1599,6 +1599,12 @@
         LA(a0, newlinestr)
         call rvmodel_io_write_str
 
+        // ---- Trap signature overflow: show the trap that overflowed it ----
+        la x16, trap_diag_fail_str_ptr
+        LREG x9, 0(x16)
+        la x16, trap_sig_overflowstr
+        beq x9, x16, trap_report_trap_context
+
         // ---- Subtype 0: Unknown / generic ----
         beqz x8, trap_report_generic
 
@@ -1833,6 +1839,7 @@
         LA(a0, trap_diag_generic_str)
         call rvmodel_io_write_str // print "Unrecognized trap failure..."
 
+    trap_report_trap_context:
         // Print instruction at saved mepc
         LREG a2, saved_xepc
         LA(a0, xepcinstrstr)
