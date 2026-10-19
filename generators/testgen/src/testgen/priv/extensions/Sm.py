@@ -2,6 +2,7 @@
 # Sm.py
 #
 # Sm machine mode privileged extension test generator.
+# Also generates the Sm_F, Sm_V and Sm_VF groups, run only when F, Zve32x or Zve32f is also supported.
 # jcarlin@hmc.edu Jan 2026
 # SPDX-License-Identifier: Apache-2.0
 ##################################
@@ -13,6 +14,7 @@ from testgen.asm.helpers import comment_banner, write_sigupd
 from testgen.constants import INDENT
 from testgen.data.state import TestData
 from testgen.data.test_chunk import TestChunk
+from testgen.priv.extensions.FCommon import gen_fcsr_tests
 from testgen.priv.extensions.PrivCommon import (
     S_CSR_SENVCFG,
     S_CSRS,
@@ -23,6 +25,8 @@ from testgen.priv.extensions.PrivCommon import (
     csr_ro_write_tests,
     xtval_value_tests,
 )
+from testgen.priv.extensions.VCommon import gen_v_tests
+from testgen.priv.extensions.VFCommon import gen_vf_tests
 from testgen.priv.registry import add_priv_test_generator
 
 # Address CSRs that must hold every valid virtual address: {csr: (held-low mask, {bit: gate define})}
@@ -1647,3 +1651,50 @@ def make_sm(test_data: TestData) -> list[TestChunk]:
     _generate_mcsr_tests(test_data, test_chunks)
 
     return test_chunks
+
+
+@add_priv_test_generator(
+    "Sm",
+    required_extensions=["Sm", "F"],
+    march_extensions=["F", "D", "Zfa"],
+    extra_defines=["#define BOOT_TO_MMODE"],
+)
+def make_smf(test_data: TestData) -> list[TestChunk]:
+    """Generate tests for Sm_F machine-mode floating-point testsuite."""
+    test_chunks: list[TestChunk] = []
+    tc = test_data.begin_test_chunk("F")
+
+    tc.code.extend(gen_fcsr_tests(test_data, "M", "Sm_F_cg"))
+
+    test_chunks.append(test_data.end_test_chunk())
+    return test_chunks
+
+
+@add_priv_test_generator(
+    "Sm",
+    required_extensions=["Sm", "Zve32x"],
+    extra_defines=[
+        "#define RVTEST_VECTOR",
+        "#define RVTEST_SEW 0",
+        "#define VDSEW 0",
+        "#define BOOT_TO_MMODE",
+    ],
+)
+def make_smv(test_data: TestData) -> list[TestChunk]:
+    """Generate Sm_V tests (vector CSRs, vsetvl* behavior, vill, vstart, mstatus.VS)."""
+    return gen_v_tests(test_data, "M", "Sm_V_cg")
+
+
+@add_priv_test_generator(
+    "Sm",
+    required_extensions=["Sm", "Zve32f"],
+    extra_defines=[
+        "#define RVTEST_VECTOR",
+        "#define RVTEST_SEW 0",
+        "#define VDSEW 0",
+        "#define BOOT_TO_MMODE",
+    ],
+)
+def make_smvf(test_data: TestData) -> list[TestChunk]:
+    """Generate Sm_VF tests (vector-FP x mstatus.FS state)."""
+    return gen_vf_tests(test_data, "M", "Sm_VF_cg")
