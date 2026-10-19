@@ -76,25 +76,6 @@ covergroup U_F_cg with function sample(ins_t ins);
     cp_fcsr_access:           cross priv_mode_u, fcsrname, csraccesses, mstatus_FS; // superset of ZicsrF cp_fcsr_access crossing with mstatus.FS
     cp_mstatus_FS_transition: cross priv_mode_u, deterministic_instrs, mstatus_FS;
     cp_mstatus_FS_transition_nondeterministic: cross priv_mode_u, nondeterministic_instrs, mstatus_FS_off_dirty;
-
-    // U-mode access to the floating-point CSRs (csraccesses comes from the shared include)
-    csrname : coverpoint ins.current.insn[31:20] {
-        bins fcsr      = {CSR_FCSR};
-        bins fflags    = {CSR_FFLAGS};
-        bins frm       = {CSR_FRM};
-    }
-
-    walking_ones: coverpoint $clog2(ins.current.rs1_val) iff ($onehot(ins.current.rs1_val)) {
-        bins b_1[] = { [0:`UDB_MXLEN-1] };
-    }
-
-    csrop: coverpoint ins.current.insn {
-        wildcard bins csrrs = {CSRRS};
-        wildcard bins csrrc = {CSRRC};
-    }
-
-    cp_ufcsr_access:           cross priv_mode_u, csrname, csraccesses;
-    cp_ufcsrwalk:              cross priv_mode_u, csrname, csrop, walking_ones;
 endgroup
 `endif
 
@@ -153,47 +134,12 @@ covergroup U_V_cg with function sample(ins_t ins);
     cp_mstatus_vs_set_dirty_csr         : cross priv_mode_u, std_vec,        vsetvli_instruction,                    mstatus_vs_initial_clean;
     cp_mstatus_vs_set_dirty_vcsr        : cross priv_mode_u, vcsrs_writable, csrops,                                 mstatus_vs_initial_clean;
 
-    // misa is not visible in U-mode, so unlike Sm_V these do not cross misa_v_active
     cp_mstatus_vs_off_arithmetic        : cross priv_mode_u, mstatus_vs_inactive,     vector_vector_arithmetic_instruction iff (get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "vtype", "vill") == 0 &
                                                                                                                                   get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "vstart", "vstart") == 0 &
                                                                                                                                   get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "vl", "vl") != 0 );
     cp_mstatus_vs_off_csr               : cross priv_mode_u, mstatus_vs_inactive,     vsetvli_instruction iff (get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "vtype", "vill") == 0 &
                                                                                                                  get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "vstart", "vstart") == 0 &
                                                                                                                  get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "vl", "vl") != 0 );
-
-    //////////////////////////////////////////////////////////////////////////////////
-    // U-mode access to the vector CSRs
-    //////////////////////////////////////////////////////////////////////////////////
-
-    csrname : coverpoint ins.current.insn[31:20] {
-        bins vstart = {CSR_VSTART};
-        bins vxsat  = {CSR_VXSAT};
-        bins vxrm   = {CSR_VXRM};
-        bins vcsr   = {CSR_VCSR};
-        bins vl     = {CSR_VL};
-        bins vtype  = {CSR_VTYPE};
-        bins vlenb  = {CSR_VLENB};
-    }
-
-    walking_ones: coverpoint $clog2(ins.current.rs1_val) iff ($onehot(ins.current.rs1_val)) {
-        bins b_1[] = { [0:`UDB_MXLEN-1] };
-    }
-
-    csrop: coverpoint ins.current.insn {
-        wildcard bins csrrs = {CSRRS};
-        wildcard bins csrrc = {CSRRC};
-    }
-
-    csraccesses : coverpoint ins.current.insn {
-        wildcard bins csrrc_all = {CSRRC} iff (ins.current.rs1_val == '1); // csrc all ones
-        wildcard bins csrrw0    = {CSRRW} iff (ins.current.rs1_val ==  0); // csrw all zeros
-        wildcard bins csrrw1    = {CSRRW} iff (ins.current.rs1_val == '1); // csrw all ones
-        wildcard bins csrrs_all = {CSRRS} iff (ins.current.rs1_val == '1); // csrs all ones
-        wildcard bins csrr      = {CSRR}  iff (ins.current.rs1_val ==  0); // csrr
-    }
-
-    cp_uvcsr_access:           cross priv_mode_u, csrname, csraccesses;
-    cp_uvcsrwalk:              cross priv_mode_u, csrname, csrop, walking_ones;
 endgroup
 `endif
 

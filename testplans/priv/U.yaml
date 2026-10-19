@@ -11,7 +11,7 @@ coverpoints:
   - name: cp_csr_ro
     description: Write User read-only CSRs C00-CFF
   - heading: User-mode access to the F and V CSRs is tested in the U_F and U_V rows below, and to the counters in Zicntr and Zihpm.
-  # U_F rows converted from https://docs.google.com/spreadsheets/d/10NX0T4MgueqA4p7JNg4whCq2k3YZ9R73UCV88MtcIUA/edit?gid=242878857#gid=242878857
+  # The U_F, U_V and U_VF rows mirror the Sm_F, Sm_V and Sm_VF rows in Sm.yaml; keep them in step.
   - heading: "U_F tests (U_F-NN.S): the floating-point CSRs and xstatus.FS from U-mode, run when F is also supported. xstatus.FS is written and read through T-SBI, in sstatus when S-mode is supported and otherwise in mstatus."
   - name: cp_fcsr_access
     goal: |-
@@ -22,23 +22,17 @@ coverpoints:
     goal: |-
       Writing to the CSR field
       (WARL)
-    description: Each different type of floating-point instruction crossed with four values of FS
+    description: Each different type of floating-point instruction crossed with four values of FS. Includes integer-result instructions that raise a flag after fflags is cleared (feq.s with a signaling NaN, fcvt.w.s of an inexact value, fcvt.wu.s of an out-of-range value, fcvtmod.w.d of a NaN).
     rules:
       - check FS becomes dirty where appropriate
+      - instructions that set fflags must set FS to dirty even if they write no floating-point register
   - name: cp_mstatus_FS_transition_nondeterministic
     goal: |-
       Writing to the CSR field
       (WARL)
-    description: Floating-point instructions that need not modify floating-point state (fsw, fcvt.w.s, feq.s, fmv.x.w, fclass.s, csrr of the FP CSRs, fmvh.x.d) crossed with mstatus.FS = Off and Dirty
+    description: Floating-point instructions that need not modify floating-point state (fsw, fmv.x.w, fclass.s, csrr of the FP CSRs, fmvh.x.d) crossed with mstatus.FS = Off and Dirty
     expectation: Illegal-instruction trap when FS = Off; FS stays Dirty when Dirty. Initial and Clean are omitted because these instructions may dirty FS imprecisely.
-  - name: cp_ufcsr_access
-    goal: CSR access
-    description: csr read, write all 1s, write all 0s, set all 1s, clear all 1s, write back initial value of each register below
-  - name: cp_ufcsrwalk
-    goal: CSR access
-    description: "Set and clear each bit of each writable CSR to exercise bitfields: fcsr, frm, fflags"
-  # U_V rows converted from https://docs.google.com/spreadsheets/d/10NX0T4MgueqA4p7JNg4whCq2k3YZ9R73UCV88MtcIUA/edit?gid=1488477674#gid=1488477674
-  - heading: "U_V tests (U_V_*-NN.S): the vector CSRs, vset{i}vl{i}, vstart and xstatus.VS from U-mode, run when Zve32x is also supported. xstatus.VS is written and read through T-SBI, in sstatus when S-mode is supported and otherwise in mstatus."
+  - heading: "U_V tests (U_V_vcsr-NN.S, U_V_vset-NN.S, U_V_vl_walk-NN.S): the vector CSRs, vset{i}vl{i}, vstart and xstatus.VS from U-mode, run when Zve32x is also supported. xstatus.VS is written and read through T-SBI, in sstatus when S-mode is supported and otherwise in mstatus."
   - name: cp_vcsrrswc
     goal: Confirm that all vector CSR properties are properly set with regards to read write, clear, and set privileges with the csr instructions
     description: With each of the vector CSRs conduct a read, write, clear, and set operation on the CSR
@@ -77,16 +71,16 @@ coverpoints:
   - description: Analogous to the way in which the floating-point unit is handled, the mstatus.VS field may exist even if misa.V is clear.
     notes: "feature (coverpoint written): Untestable"
   - name: cp_mstatus_vs_off_arithmetic
-    goal: Confirm that when when misa.V is 1 and mstatus.VS is off, an arithmetic vector instruction raises an illegal instruction exception
-    description: With misa.V = 1 (misa is not writable in U-mode), set mstatus.VS = {00} and run a .vv vector instruction
+    goal: Confirm that when misa.V is 1 and mstatus.VS is off, an arithmetic vector instruction raises an illegal instruction exception
+    description: With misa.V = 1 (its reset value), set mstatus.VS = {00} and run a .vv vector instruction
     expectation: illegal instruction exception
     bins: "1"
     notes: |-
       test written: yes, confirm sig
       spec: Attempts to execute any vector instruction, or to access the vector CSRs, raise an illegal-instruction exception when mstatus.VS is set to Off.
   - name: cp_mstatus_vs_off_csr
-    goal: Confirm that when when misa.V is 1 and mstatus.VS is off, an csr vector instruction raises an illegal instruction exception
-    description: With misa.V = 1 (misa is not writable in U-mode), set mstatus.VS = {00} and run a vsetvli
+    goal: Confirm that when misa.V is 1 and mstatus.VS is off, an csr vector instruction raises an illegal instruction exception
+    description: With misa.V = 1 (its reset value), set mstatus.VS = {00} and run a vsetvli
     expectation: illegal instruction exception
     bins: "1"
     notes: |-
@@ -320,13 +314,6 @@ coverpoints:
     notes: "feature (coverpoint written): covered by csr writing tests"
   - description: The vector extension must have a consistent state at reset. In particular, vtype and vl must have values that can be read and then restored with a single vsetvl instruction. (make sure reset is called)
     notes: "feature (coverpoint written): untestable"
-  - name: cp_uvcsrwalk
-    goal: CSR access
-    description: "Set and clear each bit of each writable CSR to exercise bitfields: vxrm, vxsat, vcsr. vstart"
-  - name: cp_uvcsr_access
-    goal: CSR access
-    description: "csr read, write all 1s, write all 0s, set all 1s, clear all 1s, write back initial value of each register: vxrm, vxsat, vcsr, vstart, vtype, vlenb, vl"
-    expectation: vtype, vlenb, vl are read-only and will throw illegal instruction if written
   - heading: "U_VF tests (U_VF-NN.S): vector floating-point instructions and xstatus.FS from U-mode, run when Zve32f is also supported. xstatus.FS and xstatus.VS are written and read through T-SBI, in sstatus when S-mode is supported and otherwise in mstatus."
   - heading: It should be understood that for most coverpoints that are based on arithmetic instructions, the coverpoints will check to make sure they're non-trivial, meaning that vl != 0, vstart=0, vill=0, and they do not trap. It may be useful to know that when using vsetvl{i} instructions if rd != x0 and rs1 = x0, vl = vlmax
   - name: cp_vectorfp_mstatus_fs_state_affecting_register
@@ -337,7 +324,7 @@ coverpoints:
     notes: "spec: Any vector floating-point instruction that modifies any floating-point extension state (i.e., floating-point CSRs or f registers) must set mstatus.FS to Dirty."
   - name: cp_vectorfp_mstatus_fs_state_affecting_csr
     goal: Confirm vector floating point instructions set mstatus.FS to dirty when modifying floating point csr state
-    description: Set mstatus.FS = {initial/clean} and run an instruction that would raise a fp flag after clearing the fp flags
+    description: Set mstatus.FS = {initial/clean} and run an instruction that would raise a fp flag after clearing the fp flags (vfdiv.vv divide by zero, vfadd.vv inf + -inf, and vmflt.vv with a NaN operand, which writes only a mask register)
     expectation: mstatus.FS is set to dirty
     bins: "1"
     notes: "spec: Any vector floating-point instruction that modifies any floating-point extension state (i.e., floating-point CSRs or f registers) must set mstatus.FS to Dirty."
