@@ -146,6 +146,134 @@ covergroup SdtrigSm_access_cg with function sample(ins_t ins);
     cp_csr_access_common: cross priv_mode_m, triggernum, tdata1_type, csr_common_reg, csr_access_common;  // NTRIG * 5 types * implemented CSRs (4-8) * 5 accesses
 endgroup
 
+// 1 when a trigger breakpoint was taken into M on this record: the trace logs the trap's mcause = 3 on the
+// record of the instruction it follows or replaces. A CSR instruction that names mcause, and ebreak, are not one.
+function automatic logic sdtrig_bp_taken(ins_t ins);
+    return ins.current.csr_wb[CSR_MCAUSE] && ins.current.csr[CSR_MCAUSE] == 3 &&
+           !(ins.current.insn[6:0] == 7'b1110011 && ins.current.insn[14:12] != 3'b000 && ins.current.insn[31:20] == CSR_MCAUSE) &&
+           ins.current.insn != EBREAK && !(ins.current.insn[1:0] != 2'b11 && ins.current.insn[15:0] == C_EBREAK[15:0]);
+endfunction
+
+// icount fields: count 23:10, m 9, pending 8, s 7, u 6, vs 26, vu 25
+function automatic logic [13:0] sdtrig_icount_count(logic [XLEN-1:0] tdata1);
+    return tdata1[23:10];
+endfunction
+// Outcome of a readback (csrr tdata1) of an icount trigger. tdata1 before the read is the value written to arm it,
+// because the trace does not log the count or pending changing; after the read it is the current value.
+//   1: m clear, count unchanged    2: m set, counted to 0 (hard-wired 1: m cleared) and fired (pending clear)
+//   3: count 0, pending stays clear 4: count 0, pending was set and firing cleared it    0: anything else
+function automatic logic [2:0] sdtrig_icount_outcome(ins_t ins);
+    logic [XLEN-1:0] armed = get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "tdata1", "tdata1");
+    logic [XLEN-1:0] now   = get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tdata1", "tdata1");
+    if (sdtrig_icount_count(armed) == 0) begin
+        if (!armed[8] && sdtrig_icount_count(now) == 0 && !now[8]) return 3'd3;
+        if (armed[8] && sdtrig_icount_count(now) == 0 && !now[8])  return 3'd4;
+    end else begin
+        if (!armed[9] && sdtrig_icount_count(now) == sdtrig_icount_count(armed)) return 3'd1;
+        `ifdef UDB_ICOUNT_HARDWIRED_1
+            if (armed[9] && sdtrig_icount_count(now) == 1 && !now[9] && !now[8]) return 3'd2;  // firing clears m instead
+        `else
+            if (armed[9] && sdtrig_icount_count(now) == 0 && !now[8])            return 3'd2;
+        `endif
+    end
+    return 3'd0;
+endfunction
+
+covergroup SdtrigSm_icount_cg with function sample(ins_t ins);
+    option.per_instance = 0;
+    `include "general/RISCV_coverage_standard_coverpoints.svh"
+    `include "general/RISCV_coverage_sdtrig_coverpoints.svh"
+
+    // csrr tdata1 of an armed icount trigger
+    icount_readback: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "tdata1", "type")[3:0] iff (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tdata1", "type")[3:0] == 4'd3) {
+        type_option.weight = 0;
+        bins icount = {4'd3};
+    }
+    // the breakpoint taken on this record while an icount trigger is armed
+    icount_fired: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tdata1", "type")[3:0] iff (sdtrig_bp_taken(ins)) {
+        type_option.weight = 0;
+        bins icount = {4'd3};
+    }
+    // armed count and pending, as written to tdata1 (before a readback, current on a fire record)
+    armed_gt1: coverpoint {sdtrig_icount_count(get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "tdata1", "tdata1")) > 1,
+                           get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "tdata1", "tdata1")[8]} {
+        type_option.weight = 0;
+        bins count_gt1 = {2'b10};
+    }
+    armed_one: coverpoint {sdtrig_icount_count(get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "tdata1", "tdata1")),
+                           get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "tdata1", "tdata1")[8]} {
+        type_option.weight = 0;
+        bins count_one = {15'b00000000000001_0};
+    }
+    armed_zero_m: coverpoint {sdtrig_icount_count(get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "tdata1", "tdata1")),
+                              get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "tdata1", "tdata1")[9]} {
+        type_option.weight = 0;
+        bins count_zero_m_set = {15'b00000000000000_1};
+    }
+    fired_gt1_m: coverpoint {sdtrig_icount_count(get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tdata1", "tdata1")) > 1,
+                             get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tdata1", "tdata1")[9]} {
+        type_option.weight = 0;
+        bins count_gt1_m_set = {2'b11};
+    }
+    fired_one_m: coverpoint {sdtrig_icount_count(get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tdata1", "tdata1")),
+                             get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tdata1", "tdata1")[9]} {
+        type_option.weight = 0;
+        bins count_one_m_set = {15'b00000000000001_1};
+    }
+    fired_zero_pending: coverpoint {sdtrig_icount_count(get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tdata1", "tdata1")),
+                                    get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tdata1", "tdata1")[8]} {
+        type_option.weight = 0;
+        bins count_zero_pending_set = {15'b00000000000000_1};
+    }
+    // count = 1 matched the trap; pending fires after the handler returns
+    mret: coverpoint ins.current.insn {
+        type_option.weight = 0;
+        bins mret = {MRET};
+    }
+    // tdata1 write that arms the pending trigger: it fires before the next instruction
+    csrw_tdata1: coverpoint ins.current.insn {
+        type_option.weight = 0;
+        wildcard bins csrw_tdata1 = {CSRW} iff (ins.current.insn[31:20] == CSR_TDATA1);
+    }
+    icount_count_result: coverpoint sdtrig_icount_outcome(ins) {
+        type_option.weight = 0;
+        bins m_clear_not_counted = {3'd1};
+        bins m_set_fired         = {3'd2};
+    }
+    icount_eq0_result: coverpoint sdtrig_icount_outcome(ins) {
+        type_option.weight = 0;
+        bins pending_clear_no_fire = {3'd3};
+        bins pending_set_fired     = {3'd4};
+    }
+    `ifdef UDB_ICOUNT_HARDWIRED_1
+        // count hard-wired to 1, armed with m/s/u/vs/vu all set: firing clears all five and pending
+        armed_hardwired: coverpoint {sdtrig_icount_count(get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "tdata1", "tdata1")),
+                                     get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "tdata1", "tdata1")[26:25],
+                                     get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "tdata1", "tdata1")[9],
+                                     get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "tdata1", "tdata1")[7:6]} {
+            type_option.weight = 0;
+            bins count_one_all_modes = {19'b00000000000001_11_1_11};
+        }
+        hardwired_result: coverpoint {get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tdata1", "tdata1")[26:25],
+                                      get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tdata1", "tdata1")[9:6]} {
+            type_option.weight = 0;
+            bins modes_and_pending_cleared = {6'b00_0000};
+        }
+    `endif
+
+    // main coverpoints
+    `ifdef UDB_ICOUNT_HARDWIRED_1
+        cp_icount_hardwired: cross priv_mode_m, triggernum, csrr, csr_tdata1, icount_readback, armed_hardwired, hardwired_result;  // NTRIG
+    `else
+        cp_icount_instr:      cross priv_mode_m, triggernum, csrr, csr_tdata1, icount_readback, armed_gt1, icount_count_result;  // NTRIG * 2 m
+        cp_icount_instr_fire: cross priv_mode_m, triggernum, icount_fired, fired_gt1_m;                                          // NTRIG
+        cp_icount_eq0:        cross priv_mode_m, triggernum, csrr, csr_tdata1, icount_readback, armed_zero_m, icount_eq0_result; // NTRIG * 2 pending
+        cp_icount_eq0_fire:   cross priv_mode_m, triggernum, icount_fired, fired_zero_pending, csrw_tdata1;                      // NTRIG
+    `endif
+    cp_icount_trap:           cross priv_mode_m, triggernum, csrr, csr_tdata1, icount_readback, armed_one, icount_count_result;   // NTRIG * 2 m
+    cp_icount_trap_fire:      cross priv_mode_m, triggernum, icount_fired, fired_one_m, mret;                                     // NTRIG
+endgroup
+
 `ifdef S_SUPPORTED
 covergroup SdtrigSm_native_triggers_cg with function sample(ins_t ins);
     option.per_instance = 0;
@@ -501,6 +629,7 @@ endgroup
 function void sdtrigsm_sample(int hart, int issue, ins_t ins);
     SdtrigSm_trig_module_reg_cg.sample(ins);
     SdtrigSm_access_cg.sample(ins);
+    SdtrigSm_icount_cg.sample(ins);
     `ifdef S_SUPPORTED
         SdtrigSm_native_triggers_cg.sample(ins);
     `endif

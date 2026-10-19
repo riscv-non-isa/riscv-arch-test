@@ -664,24 +664,43 @@ coverpoints:
       CSRR tdata1
       CSRR tval
     expectation: Count decreases when the instruction retires after having been fetched in M-mode and tdata1.m = 1. Tval=0 after firing, pending=0 after firing.
-    bins: 2 priv bits
+    bins: "2 priv bits (tdata1 readback: m clear and count unchanged, m set and counted to 0)"
     rules:
       - Sdtrig_icount_access
       - Sdtrig_icount_match1
       - Sdtrig_icount_match_gt1
       - Sdtrig_icount_pending
       - Sdtrig_icount_action0
+  - name: cp_icount_instr_fire
+    goal: icount fires after count instructions
+    description: |-
+      cp_icount_instr with tdata1.m = 1: the breakpoint taken while the icount trigger armed with count = 9 is selected
+    expectation: Breakpoint exception into M with tval = 0, before the instruction after the 9th
+    bins: "1"
+    rules:
+      - Sdtrig_icount_match1
+      - Sdtrig_icount_match_gt1
+      - Sdtrig_icount_action0
   - name: cp_icount_trap
     description: |-
       tdata1.count = 1
        perform illegal instruction trap in mmode, CSRR tdata1.count
     expectation: Count decreases when a trap is taken from a privilege mode where the trigger is enabled
-    bins: "1"
+    bins: "2 priv bits (tdata1 readback: m clear and count unchanged, m set and counted to 0)"
     rules:
       - Sdtrig_icount_match2
       - Sdtrig_icount_multiple_match
       - Sdtrig_icount_match_non_reexecuted
       - Sdtrig_icount_all_traps_match
+  - name: cp_icount_trap_fire
+    goal: A trap taken in a mode where the trigger is enabled is counted, and pending fires after the handler returns
+    description: |-
+      cp_icount_trap with tdata1.m = 1: the breakpoint taken on the mret that returns from the illegal-instruction trap
+    expectation: Breakpoint exception into M on return from the trap handler
+    bins: "1"
+    rules:
+      - Sdtrig_icount_match2
+      - Sdtrig_icount_pending_set
   - name: cp_icount_eq0
     description: |-
       tdata1.pending = {0/1}
@@ -691,9 +710,17 @@ coverpoints:
     expectation: |-
       Count stays at 0 until explicitly written
       Breakpoint exception occurs when tdata1.pending = 1
-    bins: 2 pending
+    bins: "2 pending (tdata1 readback: count stays 0, pending cleared)"
     rules:
       - Sdtrig_icount_count_zero
+  - name: cp_icount_eq0_fire
+    goal: A pending icount trigger fires before the next instruction
+    description: |-
+      cp_icount_eq0 with tdata1.pending = 1: the breakpoint taken right after the CSRW that writes count = 0, pending = 1
+    expectation: Breakpoint exception into M before the next instruction; pending is cleared
+    bins: "1"
+    rules:
+      - Sdtrig_icount_pending
   - name: "Itrigger tests: test fire and don't fire for each scenario"
     description: |-
       Repeat for each of UDB_SDTRIG_NUM_TRIGGERS if UDB_SDTRIG_ITRIGGER_SUPPORTED[i]:

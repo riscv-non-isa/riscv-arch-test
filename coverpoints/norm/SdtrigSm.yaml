@@ -1131,38 +1131,67 @@ normative_rule_definitions:
   # trigger is enabled. This explicitly includes all RET instructions from various
   # modes.
   - name: Sdtrig_icount_match1
-    coverpoint: ["SdtrigSm_icount_cg/cp_icount_instr"]
+    coverpoint:
+      [
+        "SdtrigSm_icount_cg/cp_icount_instr",
+        "SdtrigSm_icount_cg/cp_icount_instr_fire",
+      ]
 
   # A trap is taken from a privilege mode where the trigger is enabled. This
   # explicitly includes traps taken due to interrupts.
   - name: Sdtrig_icount_match2
-    coverpoint: ["SdtrigSm_icount_cg/cp_icount_trap"]
+    coverpoint:
+      [
+        "SdtrigSm_icount_cg/cp_icount_trap",
+        "SdtrigSm_icount_cg/cp_icount_trap_fire",
+      ]
 
   # If more than one of the above events occur during a single instruction
   # execution, the trigger still only matches once for that instruction.
   - name: Sdtrig_icount_multiple_match
-    coverpoint: ["SdtrigSm_icount_cg/cp_icount_trap"]
+    coverpoint:
+      [
+        "SdtrigSm_icount_cg/cp_icount_trap",
+        "SdtrigSm_icount_cg/cp_icount_trap_fire",
+      ]
 
   # For use in single step, icount must match for traps where the instruction will
   # not be reexecuted after the handler, such as illegal instructions that are
   # emulated by privileged software and the instruction being emulated never
   # retires.
   - name: Sdtrig_icount_match_non_reexecuted
-    coverpoint: ["SdtrigSm_icount_cg/cp_icount_trap"]
+    coverpoint:
+      [
+        "SdtrigSm_icount_cg/cp_icount_trap",
+        "SdtrigSm_icount_cg/cp_icount_trap_fire",
+      ]
 
   # the rule is simply that all traps match.
   - name: Sdtrig_icount_all_traps_match
-    coverpoint: ["SdtrigSm_icount_cg/cp_icount_trap"]
+    coverpoint:
+      [
+        "SdtrigSm_icount_cg/cp_icount_trap",
+        "SdtrigSm_icount_cg/cp_icount_trap_fire",
+      ]
 
   # When count is greater than 1 and the trigger matches, then count is decremented
   # by 1.
   - name: Sdtrig_icount_match_gt1
-    coverpoint: ["SdtrigSm_icount_cg/cp_icount_instr"]
+    coverpoint:
+      [
+        "SdtrigSm_icount_cg/cp_icount_instr",
+        "SdtrigSm_icount_cg/cp_icount_instr_fire",
+      ]
 
   # When count is 1 and the trigger matches, then pending becomes set. In addition
   # count will become 0 unless it is hard-wired to 1.
   - name: Sdtrig_icount_match_eq1
-    coverpoint: ["SdtrigSm_icount_cg/cp_icount_hardwired"]
+    coverpoint:
+      [
+        "SdtrigSm_icount_cg/cp_icount_trap",
+        "SdtrigSm_icount_cg/cp_icount_trap_fire",
+        "SdtrigSm_icount_cg/cp_icount_hardwired",
+      ]
 
   # The only exception to the above is when the instruction the trigger matched on
   # is a write to the icount trigger. In that case pending might or might not become
@@ -1179,12 +1208,23 @@ normative_rule_definitions:
   # is cleared. In addition, if count is hard-wired to 1 then m, s, u, vs, and vu
   # are all cleared.
   - name: Sdtrig_icount_pending
-    coverpoint: ["SdtrigSm_icount_cg/cp_icount_instr"]
+    coverpoint:
+      [
+        "SdtrigSm_icount_cg/cp_icount_eq0",
+        "SdtrigSm_icount_cg/cp_icount_eq0_fire",
+        "SdtrigSm_icount_cg/cp_icount_trap_fire",
+        "SdtrigSm_icount_cg/cp_icount_hardwired",
+      ]
 
   # If the trigger fires with action=0 then zero is written to the tval CSR on the
   # breakpoint trap.
   - name: Sdtrig_icount_action0
-    coverpoint: ["SdtrigSm_icount_cg/cp_icount_instr"]
+    coverpoint:
+      [
+        "SdtrigSm_icount_cg/cp_icount_instr_fire",
+        "SdtrigSm_icount_cg/cp_icount_trap_fire",
+        "SdtrigSm_icount_cg/cp_icount_eq0_fire",
+      ]
 
   # The intent of pending is to cleanly handle the case where action is 0, m is 0, u
   # is 1, count is 1, and the U-mode instruction being executed causes a trap into
@@ -1228,7 +1268,11 @@ normative_rule_definitions:
   # the trigger fires, which will happen just before executing the next instruction
   # in one of the enabled modes.
   - name: Sdtrig_icount_pending_set
-    coverpoint: ["SdtrigSm_icount_cg/cp_icount_instr"]
+    coverpoint:
+      [
+        "SdtrigSm_icount_cg/cp_icount_trap",
+        "SdtrigSm_icount_cg/cp_icount_trap_fire",
+      ]
 
   # When set, enable this trigger in S/HS-mode. This bit is hard-wired to 0 if the
   # hart does not support S-mode.
