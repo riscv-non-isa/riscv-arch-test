@@ -142,12 +142,12 @@ For more information or if you have issues installing the RISC-V toolchain, refe
 
 #### 4. RISC-V Sail Reference Model
 
-The ACTs use the RISC-V Sail model to generate expected results. It is currently compatible with version 0.15 of the model.
+The ACTs use the RISC-V Sail model to generate expected results. It is currently compatible with version 0.16 of the model.
 
 To install the sail model:
 
 ```bash
-curl --location https://github.com/riscv/sail-riscv/releases/download/0.15/sail-riscv-$(uname)-$(arch).tar.gz | sudo tar xvz --directory=/path/to/install --strip-components=1
+curl --location https://github.com/riscv/sail-riscv/releases/download/0.16/sail-riscv-$(uname)-$(arch).tar.gz | sudo tar xvz --directory=/path/to/install --strip-components=1
 ```
 
 > [!NOTE]
@@ -338,7 +338,7 @@ The following variables can be set on the command line to customize the build (e
 
 | Variable                         | Default                                         | Description                                                                                                                                                                                                                           |
 | -------------------------------- | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `CONFIG_FILES`                   | Spike rv32/rv64 max configs                     | Space-separated list of `test_config.yaml` paths to build ELFs for.                                                                                                                                                                   |
+| `CONFIG_FILES`                   | _(required)_                                    | Space-separated list of `test_config.yaml` paths to build ELFs for. `make coverage` defaults to the Sail rv32/rv64 max configs when unset.                                                                                            |
 | `WORKDIR`                        | `work`                                          | Directory where all build artifacts and ELFs are created.                                                                                                                                                                             |
 | `EXTENSIONS`                     | _(empty — all extensions)_                      | Comma-separated list of extensions to generate tests for. When empty, generates tests for all extensions in the UDB config.                                                                                                           |
 | `EXCLUDE_EXTENSIONS`             | _(see below)_                                   | Comma-separated list of extensions to exclude from test generation. Applied as a negative filter after `EXTENSIONS`.                                                                                                                  |
