@@ -3,7 +3,7 @@
 [Rocket](https://github.com/chipsalliance/rocket-chip) is the in-order RV64 core of rocket-chip. This
 configuration runs it with the [Saturn](https://github.com/ucb-bar/saturn-vectors) vector unit and
 the hypervisor extension, built through [Chipyard](https://github.com/ucb-bar/chipyard) 1.14.0
-(`0acc1e1`, rocket-chip `55bcad0`) with Saturn master (`8ef05c9`) and three local patches, and
+(`0acc1e1`, rocket-chip `55bcad0`) with Saturn master (`8ef05c9`) and four local patches, and
 simulated with Verilator 5.036.
 
 | Config                   | ISA                                                                | Modes               |
@@ -58,14 +58,20 @@ SEW 64 (PR #98), and builds with Chipyard 1.14.0 unchanged. It then applies the 
   `waddr` (the entry that hit), as the sectored refill does (`rocket/TLB.scala`). Without it, a
   VS/VU load or store whose VS-stage leaf is a 2 MiB or 1 GiB page and whose G-stage translation
   faults neither retires nor traps; three hypervisor tests that reach such a fault time out.
+- `rocket-chip-htimedelta.patch`: the CSR file implements `htimedelta` (and `htimedeltah` on RV32)
+  when the hypervisor extension is present (`rocket/CSR.scala`). The hypervisor extension lists
+  `htimedelta` among the CSRs it provides to HS-mode, but rocket-chip omits it because it does not
+  implement `time`, so every access raises an illegal-instruction exception. ACT writes
+  `htimedelta` while booting to S-mode, so without this patch every test that runs below M-mode
+  traps at boot.
 - `saturn-acc-done-valid.patch`: the permute/reduction sequencer clears `valid` on `acc_done` only
   while it holds an instruction (`backend/SpecialSequencer.scala`; related issue
   [ucb-bar/saturn-vectors#74](https://github.com/ucb-bar/saturn-vectors/issues/74)). Without it, a
   stale `acc`/`acc_done` pair drops a slide or reduction at dispatch and the vector unit deadlocks;
   115 Vx and Vls tests hang, and all of them pass with the patch.
 
-The two one-line fixes are not upstream; they let the suites run to completion so that the
-remaining exclusions in `ci.yaml` reflect the other behavior of the core.
+The TLB, `htimedelta` and Saturn fixes are not upstream; they let the suites run to completion so
+that the remaining exclusions in `ci.yaml` reflect the other behavior of the core.
 
 ## Building and running
 

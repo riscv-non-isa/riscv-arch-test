@@ -6,12 +6,13 @@
 # Cache key derives from sha256(this file); bump the pins below to invalidate. The patch
 # checksums are pinned here too, so a changed patch also changes the key.
 #
-# Chipyard 1.14.0 with its rocket-chip, Saturn master instead of Chipyard's Saturn pin, and three
+# Chipyard 1.14.0 with its rocket-chip, Saturn master instead of Chipyard's Saturn pin, and four
 # local patches from config/cores/rocket/patches/ (see config/cores/rocket/README.md):
 #  - rocket-chip PR #3820 (open), which Saturn master's .vf scalar NaN-box check (Saturn PR #88)
 #    depends on;
 #  - a one-line rocket-chip TLB fix for a livelock on a guest-page fault behind a VS-stage
 #    superpage, so that the hypervisor suites run to completion;
+#  - the htimedelta CSR, which rocket-chip omits and ACT writes while booting to S-mode;
 #  - a one-line Saturn fix for the permute/reduction sequencer deadlock (Saturn issue #74), so
 #    that the vector suites run to completion.
 #
@@ -47,6 +48,11 @@ RC_PATCH_SHA256="cc402d03d5d1f8f057231c237c78d2ee0b4d6fd89bd5b990082da9135c1385a
 # and whose G-stage translation faults neither retires nor traps. No upstream issue or PR.
 TLB_PATCH="rocket-chip-tlb-superpage-gpa.patch"
 TLB_PATCH_SHA256="a0adf68d71ccf5caba8dc4674384eceaa2fd3421ebcce2bce8fed59928658d00"
+# rocket-chip rocket/CSR.scala: implement htimedelta (and htimedeltah on RV32) with the hypervisor
+# extension. Without it every access raises an illegal-instruction exception, and every ACT test
+# that runs below M-mode traps at the htimedelta write in its boot code. No upstream issue or PR.
+HTIMEDELTA_PATCH="rocket-chip-htimedelta.patch"
+HTIMEDELTA_PATCH_SHA256="2f7867a8092987d2f464fc01972031bb1e34683b99481528341a205af6263bc0"
 # Saturn backend/SpecialSequencer.scala: clear the permute sequencer's valid on acc_done only
 # while it holds an instruction (https://github.com/ucb-bar/saturn-vectors/issues/74). Without it,
 # a stale acc/acc_done pair drops a slide or reduction at dispatch and the vector unit deadlocks.
@@ -87,9 +93,11 @@ git -C generators/saturn checkout --detach "$SATURN_COMMIT"
 (
   cd "$PATCH_DIR"
   printf '%s  %s\n' "$RC_PATCH_SHA256" "$RC_PATCH" "$TLB_PATCH_SHA256" "$TLB_PATCH" \
+    "$HTIMEDELTA_PATCH_SHA256" "$HTIMEDELTA_PATCH" \
     "$SATURN_PATCH_SHA256" "$SATURN_PATCH" | sha256sum -c -
 )
-git -C generators/rocket-chip apply "$PATCH_DIR/$RC_PATCH" "$PATCH_DIR/$TLB_PATCH"
+git -C generators/rocket-chip apply "$PATCH_DIR/$RC_PATCH" "$PATCH_DIR/$TLB_PATCH" \
+  "$PATCH_DIR/$HTIMEDELTA_PATCH"
 git -C generators/saturn apply "$PATCH_DIR/$SATURN_PATCH"
 git submodule update --init --depth 1 toolchains/riscv-tools/riscv-isa-sim
 

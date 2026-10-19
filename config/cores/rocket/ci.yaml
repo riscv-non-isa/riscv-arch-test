@@ -5,8 +5,8 @@
 # Measured on act4 ae6f7d362 with #2649, #2655, #2657 and #2658 (3071 tests selected, 2805 pass)
 # and on act4 96493a914 (the CI selection: 1777 tests, all pass), with the simulator from
 # .github/scripts/install-rocket.sh: RC = chipsalliance/rocket-chip@55bcad0f with PR #3820
-# (d1d2c5e7) and the TLB superpage-refill fix, SAT = ucb-bar/saturn-vectors@8ef05c9c with the
-# acc_done fix. With the exclusions below every remaining test passes.
+# (d1d2c5e7), the TLB superpage-refill fix and htimedelta, SAT = ucb-bar/saturn-vectors@8ef05c9c
+# with the acc_done fix. With the exclusions below every remaining test passes.
 
 ci_enabled: true
 
