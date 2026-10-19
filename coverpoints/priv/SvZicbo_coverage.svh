@@ -179,8 +179,8 @@ covergroup SvZicbo_cg with function sample(ins_t ins);
     }
 
     // A prefetch is a hint that need not translate, so it has no PTE or page type to cross with
-    cp_PTE_rwx_zicbop_s: cross zicbop_ins, mode, priv_mode_s;
-    cp_PTE_rwx_zicbop_u: cross zicbop_ins, mode, priv_mode_u;
+    cp_zicbop_no_fault_s: cross zicbop_ins, mode, priv_mode_s;
+    cp_zicbop_no_fault_u: cross zicbop_ins, mode, priv_mode_u;
 
     cp_PTE_inv_cbo_s: cross PTE_d_inv, PageType_d, store_page_fault, cbo_ins, priv_mode_s {
         ignore_bins ig1 = binsof(PTE_d_inv.leaflvl_u_w);
