@@ -776,3 +776,48 @@ def handle_vector_fp(setup: list[str], check: list[str], frm_val: int, test_data
             break
     else:
         check.insert(0, "fsrmi 0x0")
+
+
+def index_register_safety(
+    index_reg: int,
+    index_eew: int,
+    segments: int,
+    random_vl_reg: str,
+    test_data: TestData,
+    params: InstructionParams,
+    align_indices: bool = True,
+) -> list[str]:
+    assert params.lmul is not None, "LMUL must be set for vector instructions"
+    assert params.sew is not None, "SEW must be set for vector instructions"
+
+    lines = [
+        "# Ensure that the data in vs2 is within the range [0, 2*vlmax) and sew-aligned",
+        f"vsetvli x{params.temp_reg}, x0, e{params.sew}, m{get_lmul_flag(params.lmul)}, ta, ma",
+        f"add x{params.temp_reg}, x{params.temp_reg}, x{params.temp_reg}",
+    ]
+
+    index_emul = params.lmul * index_eew / params.sew
+    if params.vl == "vlmax":
+        temp_reg2 = test_data.int_regs.get_register(exclude_regs=[0])
+        lines.append(f"vsetvli x{temp_reg2}, x0, e{index_eew}, m{get_lmul_flag(index_emul)}, tu, mu")
+        test_data.int_regs.return_register(temp_reg2)
+    elif params.vl == "random":
+        lines.append(f"vsetvli x0, {random_vl_reg}, e{index_eew}, m{get_lmul_flag(index_emul)}, tu, mu")
+    else:
+        assert isinstance(params.vl, int)
+        lines.append(f"vsetivli x0, {params.vl}, e{index_eew}, m{get_lmul_flag(index_emul)}, tu, mu")
+
+    # Construct a factor that shifts an index so that the correct alignment is read
+    # This will not overflow the specified space as the vlmax calculation implicitly
+    # takes into account SEW
+    index_alignment_factor = params.sew // 8 * segments
+    # Turn this into a bit shift for the nearest power of 2
+    index_alignment_shift = index_alignment_factor.bit_length() - 1
+    if 2**index_alignment_shift < index_alignment_factor:
+        index_alignment_shift += 1
+
+    lines.append(f"vremu.vx v{index_reg}, v{index_reg}, x{params.temp_reg}")
+    if align_indices:
+        lines.append(f"vsll.vi v{index_reg}, v{index_reg}, {index_alignment_shift}")
+
+    return lines

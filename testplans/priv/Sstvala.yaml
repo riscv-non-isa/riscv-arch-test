@@ -9,7 +9,7 @@ coverpoints:
     expectation: fault, stval written with VA
     bins: "1"
     rules:
-      - stval must be written with the faulting virtual address for load, store, and instruction page-fault, access-fault, and misaligned exceptions, and for breakpoint exceptions other than those caused by execution of the ebreak or c.ebreak instructions. For illegal-instruction exceptions, stval must be written with the faulting instruction.
+      - Sstvala_stval_faulting_vaddr
   - name: cp_stval_store_page_fault
     goal: stval is written with faulting VA
     description: With VM enabled, cause store page fault.
@@ -21,51 +21,51 @@ coverpoints:
     expectation: fault, stval written with VA
     bins: "1"
     rules:
-      - stval must be written with the faulting virtual address for load, store, and instruction page-fault, access-fault, and misaligned exceptions, and for breakpoint exceptions other than those caused by execution of the ebreak or c.ebreak instructions. For illegal-instruction exceptions, stval must be written with the faulting instruction.
-  - name: cp_stval_load_access_fault
+      - Sstvala_stval_faulting_vaddr
+  - name: cp_load_access_fault
     goal: stval is written with faulting VA
     description: load from an illegal address
     expectation: fault, stval written with VA
     bins: "1"
     rules:
-      - stval must be written with the faulting virtual address for load, store, and instruction page-fault, access-fault, and misaligned exceptions, and for breakpoint exceptions other than those caused by execution of the ebreak or c.ebreak instructions. For illegal-instruction exceptions, stval must be written with the faulting instruction.
-  - name: cp_stval_store_access_fault
+      - Sstvala_stval_faulting_vaddr
+  - name: cp_store_access_fault
     goal: stval is written with faulting VA
     description: store to an illegal address
     expectation: fault, stval written with VA
     bins: "1"
     rules:
-      - stval must be written with the faulting virtual address for load, store, and instruction page-fault, access-fault, and misaligned exceptions, and for breakpoint exceptions other than those caused by execution of the ebreak or c.ebreak instructions. For illegal-instruction exceptions, stval must be written with the faulting instruction.
-  - name: cp_stval_instr_access_fault
+      - Sstvala_stval_faulting_vaddr
+  - name: cp_instr_access_fault
     goal: stval is written with faulting VA
     description: jump to an illegal address
     expectation: fault, stval written with VA
     bins: "1"
     rules:
-      - stval must be written with the faulting virtual address for load, store, and instruction page-fault, access-fault, and misaligned exceptions, and for breakpoint exceptions other than those caused by execution of the ebreak or c.ebreak instructions. For illegal-instruction exceptions, stval must be written with the faulting instruction.
-  - name: cp_stval_load_misaligned_fault
+      - Sstvala_stval_faulting_vaddr
+  - name: cp_load_address_misaligned
     goal: stval is written with faulting VA if misaligned fault occurs
     description: lw with misaligned address
     expectation: succeed, or fault with stval containing address
     rules:
-      - stval must be written with the faulting virtual address for load, store, and instruction page-fault, access-fault, and misaligned exceptions, and for breakpoint exceptions other than those caused by execution of the ebreak or c.ebreak instructions. For illegal-instruction exceptions, stval must be written with the faulting instruction.
-  - name: cp_stval_store_misaligned_fault
+      - Sstvala_stval_faulting_vaddr
+  - name: cp_store_address_misaligned
     goal: stval is written with faulting VA if misaligned fault occurs
     description: sw with misaligned address
     expectation: succeed, or fault with stval containing address
     rules:
-      - stval must be written with the faulting virtual address for load, store, and instruction page-fault, access-fault, and misaligned exceptions, and for breakpoint exceptions other than those caused by execution of the ebreak or c.ebreak instructions. For illegal-instruction exceptions, stval must be written with the faulting instruction.
-  - name: cp_stval_instr_misaligned_fault
+      - Sstvala_stval_faulting_vaddr
+  - name: cp_instr_adr_misaligned_jalr
     goal: stval is written with faulting VA if misaligned fault occurs
     description: jalr with misaligned address
     expectation: succeed, or fault with stval containing address
     rules:
-      - stval must be written with the faulting virtual address for load, store, and instruction page-fault, access-fault, and misaligned exceptions, and for breakpoint exceptions other than those caused by execution of the ebreak or c.ebreak instructions. For illegal-instruction exceptions, stval must be written with the faulting instruction.
-  - name: cp_stval_illegal_instr
+      - Sstvala_stval_faulting_vaddr
+  - name: cp_illegal_instruction
     goal: stval is written with the illegal instruction
     description: Execute 0xFFFFFFFF, 0x00000000
     expectation: Illegal instruction fault with stval = 0xFFFFFFFF, 0x00000000
     bins: "2"
     rules:
-      - stval must be written with the faulting virtual address for load, store, and instruction page-fault, access-fault, and misaligned exceptions, and for breakpoint exceptions other than those caused by execution of the ebreak or c.ebreak instructions. For illegal-instruction exceptions, stval must be written with the faulting instruction.
+      - Sstvala_stval_faulting_instruction
   - heading: "Note: breakpoints tested in SstvalaSdtrig because they are generated with debug triggers"

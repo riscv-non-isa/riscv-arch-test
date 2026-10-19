@@ -67,7 +67,11 @@ def _gen_fs_state_affecting_csr(test_data: TestData, temp_reg: int, covergroup: 
     status = STATUS_CSR[priv]
     coverpoint = f"cp_vectorfp_{status}_fs_state_affecting_csr"
     lines = [
-        comment_banner(coverpoint, "vfdiv.vv 1.0/0.0 under FS=Initial/Clean; sets DZ in fflags"),
+        comment_banner(
+            coverpoint,
+            "vfdiv.vv 1.0/0.0 (DZ), vfadd.vv inf + -inf (NV) and vmflt.vv with a NaN operand (NV)"
+            " under FS=Initial/Clean; must set FS=Dirty",
+        ),
     ]
     for fs in (1, 2):
         for trial in range(3):
@@ -82,7 +86,7 @@ def _gen_fs_state_affecting_csr(test_data: TestData, temp_reg: int, covergroup: 
             # xstatus first: reading fflags may itself dirty FS on a conservative DUT
             lines.append(gen_status_read_sigupd(temp_reg, test_data, priv))
             lines.append(write_sigupd(None, test_data, "fflags"))
-    # Also exercise an exception with vfadd inf-inf and vfmul 0*inf
+    # vfadd inf + -inf raises NV
     for fs in (1, 2):
         lines.extend(set_status_fields(temp_reg, priv, fs=3, vs=3))
         lines.extend(_load_v_zero_one(temp_reg))
@@ -95,6 +99,19 @@ def _gen_fs_state_affecting_csr(test_data: TestData, temp_reg: int, covergroup: 
         lines.extend(set_status_fields(temp_reg, priv, fs=fs, vs=3))
         lines.append(test_data.add_testcase(f"vfadd_inf_minf_fs{fs}", coverpoint, covergroup))
         lines.append("vfadd.vv v3, v6, v7  # inf + -inf -> NV flag")
+        lines.append(gen_status_read_sigupd(temp_reg, test_data, priv))
+        lines.append(write_sigupd(None, test_data, "fflags"))
+    # Mask-producing compare: writes no FP register, only fflags (NV for any NaN operand)
+    for fs in (1, 2):
+        lines.extend(set_status_fields(temp_reg, priv, fs=3, vs=3))
+        lines.extend(_load_v_zero_one(temp_reg))
+        lines.append(f"LI(x{temp_reg}, 0x7fc00000)  # quiet NaN")
+        lines.append(f"fmv.w.x f2, x{temp_reg}")
+        lines.append("vfmv.v.f v6, f2  # v6 = quiet NaN")
+        lines.append("csrwi fcsr, 0  # clear fcsr (fflags+frm) under FS=Dirty")
+        lines.extend(set_status_fields(temp_reg, priv, fs=fs, vs=3))
+        lines.append(test_data.add_testcase(f"vmflt_nan_fs{fs}", coverpoint, covergroup))
+        lines.append("vmflt.vv v8, v6, v1  # quiet NaN operand -> NV flag")
         lines.append(gen_status_read_sigupd(temp_reg, test_data, priv))
         lines.append(write_sigupd(None, test_data, "fflags"))
     return lines
