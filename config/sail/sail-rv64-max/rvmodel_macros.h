@@ -25,8 +25,8 @@
 
 // Custom RVMODEL_BOOT_TO_MMODE overrides default RVTEST_BOOT_TO_MMODE
 // if defined.  For most DUTs, the default should work and this macro
-// should not be defined.  If no M-mode or CSRs are implemented, define this
-// macro as blank to bypass the boot process.  If a nonconforming
+// should not be defined.  If the DUT has no standard M-mode CSRs, do not
+// define STANDARD_SM_SUPPORTED.  If a nonconforming
 // M-mode is implemented, define this macro to set up the necessary
 // state in a fashion similar to RVTEST_BOOT_TO_MMODE.
 //#define RVMODEL_BOOT_TO_MMODE
@@ -139,5 +139,14 @@
   li _R1, (1 << 1);               \
   li _R2, SIG_ADDRESS;    \
   sw _R1, 0(_R2)            ; /* Clear SSW interrupt */ \
+
+##### Sscofpmf #####
+
+#define RVMODEL_HPM_COUNTER 3   // HPM counter used by the Sscofpmf tests (3 to 31)
+// Selector 1 is mapped to EV_FENCE by base.event_selectors in sail.json. A fence raises
+// the event in every privilege mode and never traps.
+#define RVMODEL_MHPMEVENT_VAL 0x1
+#define RVMODEL_MHPMEVENT_CODE(_R1, _R2) \
+    fence
 
 #endif // _RVMODEL_MACROS_H

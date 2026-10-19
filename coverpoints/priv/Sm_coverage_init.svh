@@ -12,3 +12,12 @@
     Sm_mstatus_cg = new();     Sm_mstatus_cg.set_inst_name("obj_Sm_mstatus");
     Sm_mprivinst_cg = new();   Sm_mprivinst_cg.set_inst_name("obj_Sm_mprivinst");
     Sm_mcsr_cg = new();        Sm_mcsr_cg.set_inst_name("obj_Sm_mcsr");
+`ifdef F_SUPPORTED
+    Sm_F_cg = new();            Sm_F_cg.set_inst_name("obj_Sm_F");
+`endif
+`ifdef ZVE32X_SUPPORTED
+    Sm_V_cg = new();            Sm_V_cg.set_inst_name("obj_Sm_V");
+`endif
+`ifdef ZVE32F_SUPPORTED
+    Sm_VF_cg = new();           Sm_VF_cg.set_inst_name("obj_Sm_VF");
+`endif
