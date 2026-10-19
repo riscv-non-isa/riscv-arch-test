@@ -19,7 +19,7 @@
 
 // Extra defines (if needed) to enable trap handlers, fpu, vector, etc.
 #define BOOT_TO_SMODE
-#define TRAP_SIGUPD_COUNT 10
+#define TRAP_SIGUPD_COUNT 3
 
 // Include framework macros
 #include "riscv_arch_test.h"
@@ -82,6 +82,7 @@ main:
   slli t0, t0, 28
   ori t0, t0, PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V
   SREG t0, 0(a0)
+  sfence.vma
 
 // 4KB page at level 0
 

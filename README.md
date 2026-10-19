@@ -142,12 +142,12 @@ For more information or if you have issues installing the RISC-V toolchain, refe
 
 #### 4. RISC-V Sail Reference Model
 
-The ACTs use the RISC-V Sail model to generate expected results. It is currently compatible with version 0.14.1 of the model.
+The ACTs use the RISC-V Sail model to generate expected results. It is currently compatible with version 0.16 of the model.
 
 To install the sail model:
 
 ```bash
-curl --location https://github.com/riscv/sail-riscv/releases/download/0.14.1/sail-riscv-$(uname)-$(arch).tar.gz | sudo tar xvz --directory=/path/to/install --strip-components=1
+curl --location https://github.com/riscv/sail-riscv/releases/download/0.16/sail-riscv-$(uname)-$(arch).tar.gz | sudo tar xvz --directory=/path/to/install --strip-components=1
 ```
 
 > [!NOTE]
@@ -250,29 +250,39 @@ The ACT Framework uses a selection of assembly macros to run DUT-specific code t
 
 **Timer Macros**: Can be left blank if machine mode is not supported.
 
-- `RVMODEL_MTIME_ADDRESS` (can be omitted if MTIME is not implemented)
-- `RVMODEL_MTIMECMP_ADDRESS` (can be omitted if MTIMECMP is not implemented)
+- `RVMODEL_MTIME_ADDRESS` (required if machine timer interrupts are implemented, or if Sstc is implemented without Zicntr; otherwise can be omitted)
+- `RVMODEL_MTIMECMP_ADDRESS` (required if machine timer interrupts are implemented; otherwise can be omitted)
 - `RVMODEL_TIMER_INT_SOON_DELAY`
 
 **MSIP Macro**: Required only for Sm version 1.13 and above. Can be omitted if machine software interrupts are not supported.
 
 - `RVMODEL_MSIP_ADDRESS` (can be omitted if MSIP is not memory-mapped or not tested)
 
-**Interrupt Macros**: Defined if a platform-specific interrupt controller is used to set or clear. MSW and SSW preferably use `msip` and `mip.ssip` rather than a platform-specific controller, but are available to be defined for designs that only support a controller. _M flavors run in machine mode and do not use T-SBI. Others may be invoked from any mode and may need T-SBI if they access memory-mapped I/O that requires machine permissions. If the _M flavor is identical to the regular flavor, it does not need to be defined.
+**Interrupt Macros**: Defined if a platform-specific interrupt controller is used to set or clear. MSW and SSW preferably use `msip` and `mip.ssip` rather than a platform-specific controller, but are available to be defined for designs that only support a controller. \_M flavors run in machine mode and do not use T-SBI. Others may be invoked from any mode and may need T-SBI if they access memory-mapped I/O that requires machine permissions. If the \_M flavor is identical to the regular flavor, it does not need to be defined.
 
 - `RVMODEL_SET_MEXT_INT(_R1, _R2)`
+- `RVMODEL_SET_MEXT_INT_M(_R1, _R2)`
 - `RVMODEL_CLR_MEXT_INT(_R1, _R2)`
 - `RVMODEL_CLR_MEXT_INT_M(_R1, _R2)`
 - `RVMODEL_SET_MSW_INT(_R1, _R2)`
+- `RVMODEL_SET_MSW_INT_M(_R1, _R2)`
 - `RVMODEL_CLR_MSW_INT(_R1, _R2)`
 - `RVMODEL_CLR_MSW_INT_M(_R1, _R2)`
 - `RVMODEL_SET_SEXT_INT(_R1, _R2)`
+- `RVMODEL_SET_SEXT_INT_M(_R1, _R2)`
 - `RVMODEL_CLR_SEXT_INT(_R1, _R2)`
 - `RVMODEL_CLR_SEXT_INT_M(_R1, _R2)`
 - `RVMODEL_SET_SSW_INT(_R1, _R2)`
+- `RVMODEL_SET_SSW_INT_M(_R1, _R2)`
 - `RVMODEL_CLR_SSW_INT(_R1, _R2)`
 - `RVMODEL_CLR_SSW_INT_M(_R1, _R2)`
 - `RVMODEL_INTERRUPT_LATENCY`
+
+**Sscofpmf Macros**: Required if Sscofpmf is supported.
+
+- `RVMODEL_HPM_COUNTER`
+- `RVMODEL_MHPMEVENT_VAL`
+- `RVMODEL_MHPMEVENT_CODE(_R1, _R2)`
 
 Complete examples are available for an example DUT ([config/cores/cvw/cvw-rv64gc/rvmodel_macros.h](./config/cores/cvw/cvw-rv64gc/rvmodel_macros.h)) and for the RISC-V Sail reference model ([config/sail/sail-RVA23S64/rvmodel_macros.h](./config/sail/sail-RVA23S64/rvmodel_macros.h)).
 
@@ -330,7 +340,7 @@ The following variables can be set on the command line to customize the build (e
 
 | Variable                         | Default                                         | Description                                                                                                                                                                                                                           |
 | -------------------------------- | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `CONFIG_FILES`                   | Spike rv32/rv64 max configs                     | Space-separated list of `test_config.yaml` paths to build ELFs for.                                                                                                                                                                   |
+| `CONFIG_FILES`                   | _(required)_                                    | Space-separated list of `test_config.yaml` paths to build ELFs for. `make coverage` defaults to the Sail rv32/rv64 max configs when unset.                                                                                            |
 | `WORKDIR`                        | `work`                                          | Directory where all build artifacts and ELFs are created.                                                                                                                                                                             |
 | `EXTENSIONS`                     | _(empty — all extensions)_                      | Comma-separated list of extensions to generate tests for. When empty, generates tests for all extensions in the UDB config.                                                                                                           |
 | `EXCLUDE_EXTENSIONS`             | _(see below)_                                   | Comma-separated list of extensions to exclude from test generation. Applied as a negative filter after `EXTENSIONS`.                                                                                                                  |

@@ -2,6 +2,7 @@
 # Sm.py
 #
 # Sm machine mode privileged extension test generator.
+# Also generates the Sm_F, Sm_V and Sm_VF groups, run only when F, Zve32x or Zve32f is also supported.
 # jcarlin@hmc.edu Jan 2026
 # SPDX-License-Identifier: Apache-2.0
 ##################################
@@ -13,6 +14,7 @@ from testgen.asm.helpers import comment_banner, write_sigupd
 from testgen.constants import INDENT
 from testgen.data.state import TestData
 from testgen.data.test_chunk import TestChunk
+from testgen.priv.extensions.FCommon import gen_fcsr_tests
 from testgen.priv.extensions.PrivCommon import (
     S_CSR_SENVCFG,
     S_CSRS,
@@ -23,6 +25,8 @@ from testgen.priv.extensions.PrivCommon import (
     csr_ro_write_tests,
     xtval_value_tests,
 )
+from testgen.priv.extensions.VCommon import gen_v_tests
+from testgen.priv.extensions.VFCommon import gen_vf_tests
 from testgen.priv.registry import add_priv_test_generator
 
 # Address CSRs that must hold every valid virtual address: {csr: (held-low mask, {bit: gate define})}
@@ -76,7 +80,7 @@ def _generate_mcause_tests(test_data: TestData) -> list[str]:
     gated_exceptions = [
         (10, "#ifdef H_SUPPORTED"),  # ecall from VS-mode
         (14, "RESERVED"),
-        (16, "#ifdef SMDBLTRP_SUPPORTED"),  # Double trap
+        (16, "#ifdef SSDBLTRP_SUPPORTED"),  # Double trap, written to mcause only by Ssdbltrp
         (17, "RESERVED"),
         (18, "#if defined(ZICFILP_SUPPORTED) || defined(ZICFISS_SUPPORTED)"),  # software check
         (19, "#ifdef SM1P13P0_OR_LATER_SUPPORTED"),  # hardware error
@@ -624,7 +628,7 @@ def _generate_mcsr_tests(test_data: TestData, test_chunks: list) -> None:
         | (1 << 21)  # TW:   Timeout Wait
         | (1 << 22)  # TSR:  Trap SRET
         | (1 << 23)  # SPELP: Supervisor Previous Expect Landing Pad
-        | (0 << 24)  # SDT: not yet supported by Sail; TODO change to 1 when Ssdbltrp implemented
+        | (1 << 24)  # SDT: Supervisor Disable Trap
         | (1 << 31)  # SD for RV32 (probably shouldn't be tested for RV64, but seems to work ok)
         | (0 << 32)  # UXL:  User-Mode XLEN not supported by Sail.  Test in xlen suite.
         | (0 << 34)  # SXL:  Supervisor-Mode XLEN  not supported by Sail.  Test in xlen suite.
@@ -633,7 +637,7 @@ def _generate_mcsr_tests(test_data: TestData, test_chunks: list) -> None:
         | (1 << 38)
         | (1 << 39)
         | (1 << 41)  # MPELP: Machine Previous Expect Landing Pad
-        | (0 << 42)  # MDT:   not yet supported by Sail; TODO change to 1 when Smdbltrp implemented
+        | (1 << 42)  # MDT: Machine Disable Trap
         | (1 << 63)  # SD for RV64
     )
     mseccfg_mask = (
@@ -653,7 +657,7 @@ def _generate_mcsr_tests(test_data: TestData, test_chunks: list) -> None:
         | (1 << 6)  # CBCFE: Cache Block Clean and Flush Enable
         | (1 << 7)  # CBZE: Cache Block Zero Enable
         | (3 << 32)  # PMM: Pointer Masking
-        | (0 << 59)  # Double Trap not supported by Sail; TODO change to 1 when Smdbltrp implemented
+        | (1 << 59)  # DTE: Double Trap Enable
         | (0 << 60)  # Counter Delegation Smcdeleg not supported by Sail; TODO change to 1 when Smcdeleg implemented
         | (1 << 61)  # ADUE: A/D
         | (1 << 62)  # PBMTE: Page-Based Memory Type Enable
@@ -716,7 +720,8 @@ def _generate_mcsr_tests(test_data: TestData, test_chunks: list) -> None:
     # medelegh (0x312) by number: clang 20 does not accept the CSR name (gcc does).  All bits reserved/custom.
     csr_medelegh = ("0x312", 0x00000000)
     # Read-only CSRs
-    csrmro = [("mvendorid", None), ("mimpid", None), ("marchid", None), ("mhartid", None), ("mconfigptr", None)]
+    csrmro = [("mvendorid", None), ("mimpid", None), ("marchid", None), ("mhartid", None)]
+    csr_mconfigptr = ("mconfigptr", None)
 
     ######################################
     coverpoint = "cp_mcsr_access"
@@ -756,6 +761,9 @@ def _generate_mcsr_tests(test_data: TestData, test_chunks: list) -> None:
     tc.code.append("\n// Read-Only CSRs")
     for csr in csrmro:
         tc.code.extend(csr_access_test(test_data, csr, covergroup, coverpoint))
+    tc.code.append("\n#ifdef SM1P12P0_OR_LATER_SUPPORTED")
+    tc.code.extend(csr_access_test(test_data, csr_mconfigptr, covergroup, coverpoint))
+    tc.code.append("#endif")
 
     tc.code.extend(
         [
@@ -765,9 +773,8 @@ def _generate_mcsr_tests(test_data: TestData, test_chunks: list) -> None:
         ]
     )
 
-    tc.code.extend(csr_access_test(test_data, csr_mstatush, covergroup, coverpoint_masked, maskedwrites=True))
-
     tc.code.append("\n#ifdef SM1P12P0_OR_LATER_SUPPORTED")
+    tc.code.extend(csr_access_test(test_data, csr_mstatush, covergroup, coverpoint_masked, maskedwrites=True))
     tc.code.extend(csr_access_test(test_data, csr_menvcfgh, covergroup, coverpoint_masked, maskedwrites=True))
     tc.code.append("#endif //  SM1P12P0_OR_LATER_SUPPORTED")
     tc.code.append("\n#ifdef MSECCFG_SUPPORTED")
@@ -808,6 +815,43 @@ def _generate_mcsr_tests(test_data: TestData, test_chunks: list) -> None:
         )
     )
 
+    # The walk runs with menvcfg.DTE = 0 (set by the boot code), where SDT is read-only zero.
+    # Check that SDT is writable once DTE = 1.
+    tc = test_data.new_test_chunk(test_chunks)
+    r_envcfg, r_status, r_bit, r_check = test_data.int_regs.get_registers(4)
+    tc.code.extend(
+        [
+            "",
+            "#ifdef SSDBLTRP_SUPPORTED",
+            "# mstatus.SDT with menvcfg.DTE = 1",
+            "#if __riscv_xlen == 64",
+            f"csrr x{r_envcfg}, menvcfg",
+            f"LI(x{r_bit}, {1 << 59})",
+            f"csrs menvcfg, x{r_bit}    # DTE = 1",
+            "#else",
+            f"csrr x{r_envcfg}, menvcfgh",
+            f"LI(x{r_bit}, {1 << 27})",
+            f"csrs menvcfgh, x{r_bit}    # DTE = 1",
+            "#endif",
+            f"csrr x{r_status}, mstatus",
+            f"LI(x{r_bit}, {1 << 24})",
+            f"csrs mstatus, x{r_bit}    # SDT = 1",
+            test_data.add_testcase("csrs_sdt", "cp_mstatus_sdt_dte", covergroup),
+            gen_csr_read_sigupd(r_check, ("mstatus", 1 << 24), test_data, r_bit),
+            f"csrc mstatus, x{r_bit}    # SDT = 0",
+            test_data.add_testcase("csrc_sdt", "cp_mstatus_sdt_dte", covergroup),
+            gen_csr_read_sigupd(r_check, ("mstatus", 1 << 24), test_data, r_bit),
+            f"csrw mstatus, x{r_status}",
+            "#if __riscv_xlen == 64",
+            f"csrw menvcfg, x{r_envcfg}",
+            "#else",
+            f"csrw menvcfgh, x{r_envcfg}",
+            "#endif",
+            "#endif // SSDBLTRP_SUPPORTED",
+        ]
+    )
+    test_data.int_regs.return_registers([r_envcfg, r_status, r_bit, r_check])
+
     for csr in csrm:
         if csr[0] in SM_VADDR_CSRS:
             continue  # skip the virtual-address CSRs; they are walked in addr_csr_tests
@@ -841,8 +885,8 @@ def _generate_mcsr_tests(test_data: TestData, test_chunks: list) -> None:
         ]
     )
 
-    tc.code.extend(csr_walk_test(test_data, csr_mstatush, covergroup, coverpoint_masked, maskedwrites=True))
     tc.code.append("\n#ifdef SM1P12P0_OR_LATER_SUPPORTED")
+    tc.code.extend(csr_walk_test(test_data, csr_mstatush, covergroup, coverpoint_masked, maskedwrites=True))
     tc.code.extend(csr_walk_test(test_data, csr_menvcfgh, covergroup, coverpoint_masked, maskedwrites=True))
     tc.code.append("#endif // SM1P12P0_OR_LATER_SUPPORTED")
     tc.code.append("\n#ifdef MSECCFG_SUPPORTED")
@@ -1607,3 +1651,50 @@ def make_sm(test_data: TestData) -> list[TestChunk]:
     _generate_mcsr_tests(test_data, test_chunks)
 
     return test_chunks
+
+
+@add_priv_test_generator(
+    "Sm",
+    required_extensions=["Sm", "F"],
+    march_extensions=["F", "D", "Zfa"],
+    extra_defines=["#define BOOT_TO_MMODE"],
+)
+def make_smf(test_data: TestData) -> list[TestChunk]:
+    """Generate tests for Sm_F machine-mode floating-point testsuite."""
+    test_chunks: list[TestChunk] = []
+    tc = test_data.begin_test_chunk("F")
+
+    tc.code.extend(gen_fcsr_tests(test_data, "M", "Sm_F_cg"))
+
+    test_chunks.append(test_data.end_test_chunk())
+    return test_chunks
+
+
+@add_priv_test_generator(
+    "Sm",
+    required_extensions=["Sm", "Zve32x"],
+    extra_defines=[
+        "#define RVTEST_VECTOR",
+        "#define RVTEST_SEW 0",
+        "#define VDSEW 0",
+        "#define BOOT_TO_MMODE",
+    ],
+)
+def make_smv(test_data: TestData) -> list[TestChunk]:
+    """Generate Sm_V tests (vector CSRs, vsetvl* behavior, vill, vstart, mstatus.VS)."""
+    return gen_v_tests(test_data, "M", "Sm_V_cg")
+
+
+@add_priv_test_generator(
+    "Sm",
+    required_extensions=["Sm", "Zve32f"],
+    extra_defines=[
+        "#define RVTEST_VECTOR",
+        "#define RVTEST_SEW 0",
+        "#define VDSEW 0",
+        "#define BOOT_TO_MMODE",
+    ],
+)
+def make_smvf(test_data: TestData) -> list[TestChunk]:
+    """Generate Sm_VF tests (vector-FP x mstatus.FS state)."""
+    return gen_vf_tests(test_data, "M", "Sm_VF_cg")

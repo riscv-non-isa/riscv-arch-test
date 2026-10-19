@@ -60,7 +60,7 @@ covergroup Sm_mcause_cg with function sample(ins_t ins);
         bins b_13_load_page_fault = {13};
         //bins b_14_reserved = {14};
         bins b_15_store_page_fault = {15};
-        `ifdef SMDBLTRP_SUPPORTED
+        `ifdef SSDBLTRP_SUPPORTED
             bins b_16_double_trap = {16}; // never delegated to S mode
         `endif
         //bins b_17_reserved = {17};
@@ -220,7 +220,9 @@ covergroup Sm_mcsr_cg with function sample(ins_t ins);
         bins marchid    = {CSR_MARCHID};
         bins mimpid     = {CSR_MIMPID};
         bins mhartid    = {CSR_MHARTID};
-        bins mconfigptr = {CSR_MCONFIGPTR};
+        `ifdef SM1P12P0_OR_LATER_SUPPORTED
+            bins mconfigptr = {CSR_MCONFIGPTR};
+        `endif
     }
 
     csraccesses : coverpoint ins.current.insn {
@@ -249,8 +251,8 @@ covergroup Sm_mcsr_cg with function sample(ins_t ins);
             bins mseccfg = {CSR_MSECCFG};
         `endif
         `ifdef UDB_MXLEN_32
-            bins mstatush = {CSR_MSTATUSH};
             `ifdef SM1P12P0_OR_LATER_SUPPORTED
+                bins mstatush = {CSR_MSTATUSH};
                 bins menvcfgh = {CSR_MENVCFGH};
             `endif
             `ifdef MSECCFG_SUPPORTED
@@ -421,18 +423,18 @@ covergroup Sm_mcsr_cg with function sample(ins_t ins);
     }
 
     `ifdef UDB_MCOUNTINHIBIT_IMPLEMENTED
-    old_mcountinhibit_cy: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "mcountinhibit", "cy") {
-        bins zero = {1'b0};
-        `ifdef UDB_COUNTINHIBIT_EN_0
-            bins one = {1'b1}; // only if counter can be inhibited
-        `endif
-    }
-    old_mcountinhibit_ir: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "mcountinhibit", "ir") {
-        bins zero = {1'b0};
-        `ifdef UDB_COUNTINHIBIT_EN_2
-            bins one = {1'b1}; // only if counter can be inhibited
-        `endif
-    }
+        old_mcountinhibit_cy: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "mcountinhibit", "cy") {
+            bins zero = {1'b0};
+            `ifdef UDB_COUNTINHIBIT_EN_0
+                bins one = {1'b1}; // only if counter can be inhibited
+            `endif
+        }
+        old_mcountinhibit_ir: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "mcountinhibit", "ir") {
+            bins zero = {1'b0};
+            `ifdef UDB_COUNTINHIBIT_EN_2
+                bins one = {1'b1}; // only if counter can be inhibited
+            `endif
+        }
     `endif
 
     mcycle: coverpoint ins.current.insn[31:20] {
@@ -572,9 +574,9 @@ covergroup Sm_mcsr_cg with function sample(ins_t ins);
                 binsof(walking_ones) intersect {[0:7], [11:31], [34:63]};
         `endif
         `ifdef UDB_MXLEN_32
-            ignore_bins mstatush_not_walked = binsof(mcsrname_masked.mstatush) &&
-                binsof(walking_ones) intersect {[0:5], 8, [11:31]};
             `ifdef SM1P12P0_OR_LATER_SUPPORTED
+                ignore_bins mstatush_not_walked = binsof(mcsrname_masked.mstatush) &&
+                    binsof(walking_ones) intersect {[0:5], 8, [11:31]};
                 ignore_bins menvcfgh_not_walked = binsof(mcsrname_masked.menvcfgh) &&
                     binsof(walking_ones) intersect {[2:26]};
             `endif
@@ -584,6 +586,19 @@ covergroup Sm_mcsr_cg with function sample(ins_t ins);
             `endif
         `endif
     }
+    `ifdef SSDBLTRP_SUPPORTED
+        // mstatus.SDT is read-only zero while menvcfg.DTE = 0 (the walks, after boot) and writable with DTE = 1
+        mstatus_sdt_write : coverpoint ins.current.insn {
+            wildcard bins csrs_sdt = {CSRS} iff (ins.current.insn[31:20] == CSR_MSTATUS && ins.current.rs1_val[24]);
+            wildcard bins csrc_sdt = {CSRC} iff (ins.current.insn[31:20] == CSR_MSTATUS && ins.current.rs1_val[24]);
+        }
+        `ifdef UDB_MXLEN_32
+            old_menvcfg_dte : coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "menvcfgh", "dte")[0];
+        `else
+            old_menvcfg_dte : coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "menvcfg", "dte")[0];
+        `endif
+        cp_mstatus_sdt_dte :    cross priv_mode_m, mstatus_sdt_write, old_menvcfg_dte;
+    `endif
     cp_mtval_zero:              cross priv_mode_m, csrrw, mtval, mtval_zero;
     cp_mepc_vaddr_pc:           cross priv_mode_m, csrrw, mepc, xaddr_pc;
     cp_mepc_vaddr_scratch:      cross priv_mode_m, csrrw, mepc, xaddr_scratch;
@@ -747,7 +762,7 @@ covergroup Sm_mcsr_cg with function sample(ins_t ins);
         satp : coverpoint ins.current.insn[31:20] {
             bins satp = {CSR_SATP};
         }
-        mstatus_tvm : coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "mstatus", "tvm") {
+        mstatus_tvm : coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "mstatus", "tvm")[0] {
         }
 
         cp_scsr_from_m :            cross priv_mode_m, scsrname, csraccesses;
@@ -762,11 +777,141 @@ covergroup Sm_mcsr_cg with function sample(ins_t ins);
 
 endgroup
 
+// Sm_F, Sm_V and Sm_VF tests (Sm_F-NN.S, Sm_V_*-NN.S, Sm_VF-NN.S) are part of the Sm suite
+// and run only when F, Zve32x or Zve32f is also supported.
+`ifdef F_SUPPORTED
+covergroup Sm_F_cg with function sample(ins_t ins);
+    option.per_instance = 0;
+    `include "general/RISCV_coverage_standard_coverpoints.svh"
+    `include "general/RISCV_coverage_priv_f_coverpoints.svh"
+
+    mstatus_FS: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "mstatus", "fs")[1:0] {
+    }
+    mstatus_FS_off_dirty: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "mstatus", "fs")[1:0] {
+        bins off     = {2'b00};
+        bins dirty   = {2'b11};
+    }
+
+    // main coverpoints
+    cp_fcsr_access:           cross priv_mode_m, fcsrname, csraccesses, mstatus_FS; // superset of ZicsrF cp_fcsr_access crossing with mstatus.FS
+    cp_mstatus_FS_transition: cross priv_mode_m, deterministic_instrs, mstatus_FS;
+    cp_mstatus_FS_transition_nondeterministic: cross priv_mode_m, nondeterministic_instrs, mstatus_FS_off_dirty;
+endgroup
+`endif
+
+// Sm_V_cg and Sm_VF_cg written by James (Kaden) Cassidy jacassidy@hmc.edu May 29 2025
+`ifdef ZVE32X_SUPPORTED
+covergroup Sm_V_cg with function sample(ins_t ins);
+    option.per_instance = 0;
+    `include "general/RISCV_coverage_standard_coverpoints.svh"
+    `include "general/RISCV_coverage_priv_v_coverpoints.svh"
+
+    // crosses of the shared vector coverpoints
+    cp_vcsrrswc                 : cross priv_mode_m, vcsrs, csrops;
+    cp_vcsrs_walking1s          : cross priv_mode_m, writable_vcsrs, csrw, walking_ones_rs1;
+    cp_sew_lmul_vsetvl          : cross priv_mode_m, vsetvl_instruction, rs2_vtype_legal, rs2_lmul, rs2_sew;
+    cp_sew_lmul_vset_i_vli      : cross priv_mode_m, vset_i_vli_instructions, vset_sew, vset_lmul;
+    cp_vill_vsetvl              : cross priv_mode_m, vsetvl_instruction, vtype_prev_vill_set, rs2_vtype_legal, rs2_sew_all_supported, rs2_lmul_8;
+    cp_vill_vset_i_vli          : cross priv_mode_m, vset_i_vli_instructions, vtype_prev_vill_set, current_vset_sew_all_supported, current_vset_lmul_8;
+    cp_vill_vsetvl_rs2_vill     : cross priv_mode_m, vsetvl_instruction, vtype_prev_vill_set, rs2_vtype_legal_no_msb, rs2_sew_all_supported, rs2_lmul_8, rs2_vill_set;
+    cp_vsetvl_rs2_vill          : cross priv_mode_m, vsetvl_instruction, rs2_vill_set, rs2_sew_supported, rs2_lmul_1, rs2_vtype_legal_no_msb, vtype_prev_vill_clear;
+    cp_vtype_vill_set_vl_0      : cross priv_mode_m, vsetvl_instruction, rs1_non_zero, rs2_vill_set, vl_nonzero;
+    cp_vsetvl_i_rd_nx0_rs1_x0   : cross priv_mode_m, vsetvl_i_instructions, vl_not_max, rd_n0, rs1_x0, vtype_all_sew_supported, vtype_all_lmul_supported {
+        // SEW > LMUL*ELEN sets vill=1 and forces vtype.vsew/vlmul to 0,
+        // so these BEFORE-state (sew, lmul) pairs are architecturally unreachable.
+        ignore_bins illegal_sew_lmul =
+            (binsof(vtype_all_sew_supported.sixtyfour) && binsof(vtype_all_lmul_supported.half))   ||
+            (binsof(vtype_all_sew_supported.sixtyfour) && binsof(vtype_all_lmul_supported.fourth)) ||
+            (binsof(vtype_all_sew_supported.sixtyfour) && binsof(vtype_all_lmul_supported.eighth)) ||
+            (binsof(vtype_all_sew_supported.thirtytwo) && binsof(vtype_all_lmul_supported.fourth)) ||
+            (binsof(vtype_all_sew_supported.thirtytwo) && binsof(vtype_all_lmul_supported.eighth)) ||
+            (binsof(vtype_all_sew_supported.sixteen)   && binsof(vtype_all_lmul_supported.eighth));
+    }
+    cp_vsetvl_i_rd_x0_rs1_x0    : cross priv_mode_m, vsetvl_i_instructions, vl_nonzero, rd_x0, rs1_x0, vset_i_vli_vlmax_unchanged;
+    cp_vsetvl_i_avl_eq_zero     : cross priv_mode_m, vsetvl_i_instructions, rs1_eq_zero;
+    cp_vsetvl_i_avl_eq_vlmax    : cross priv_mode_m, vsetvl_i_instructions, rs1_eq_vlmax;
+    cp_vsetvl_i_avl_lt_2x_vlmax : cross priv_mode_m, vsetvl_i_instructions, rs1_lt_2x_vlmax_gt_vlmax;
+    cp_vsetvl_i_avl_eq_2x_vlmax : cross priv_mode_m, vsetvl_i_instructions, rs1_eq_2x_vlmax;
+    cp_vsetvl_i_avl_gt_2x_vlmax : cross priv_mode_m, vsetvl_i_instructions, rs1_gt_2x_vlmax;
+    cp_vsetivli_avl_edges       : cross priv_mode_m, vsetivli_instruction, vtype_all_sew_supported, imm5_edges, vtype_lmul_1;
+    cp_vstart_out_of_bounds     : cross priv_mode_m, vstart_csr, csr_write, rs1_2_to_16;
+    cp_vl_walking1s_sew_lmul    : cross priv_mode_m, vsetivli_prev_instruction, vsetivli_prev_sew_lmul, csrrw, csr_vl, walking_ones_rs1;
+
+    //////////////////////////////////////////////////////////////////////////////////
+    // cp_mstatus_vs_*
+    // tests mstatus ability to set clean and initial to dirty only when supposed to
+    //////////////////////////////////////////////////////////////////////////////////
+
+    mstatus_vs_initial_clean : coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "mstatus", "vs") {
+        bins first = {1};
+        bins clean  = {2};
+    }
+
+    mstatus_vs_inactive    : coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "mstatus", "vs") {
+        bins inactive = {0};
+    }
+
+    cp_mstatus_vs_set_dirty_arithmetic  : cross priv_mode_m, std_vec,        vector_vector_arithmetic_instruction,   mstatus_vs_initial_clean;
+    cp_mstatus_vs_set_dirty_csr         : cross priv_mode_m, std_vec,        vsetvli_instruction,                    mstatus_vs_initial_clean;
+    cp_mstatus_vs_set_dirty_vcsr        : cross priv_mode_m, vcsrs_writable, csrops,                                 mstatus_vs_initial_clean;
+
+    cp_mstatus_vs_off_arithmetic        : cross priv_mode_m, mstatus_vs_inactive,     vector_vector_arithmetic_instruction iff (get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "vtype", "vill") == 0 &
+                                                                                                                   get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "vstart", "vstart") == 0 &
+                                                                                                                   get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "vl", "vl") != 0 );
+    cp_mstatus_vs_off_csr               : cross priv_mode_m, mstatus_vs_inactive,     vsetvli_instruction iff (get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "vtype", "vill") == 0 &
+                                                                                                  get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "vstart", "vstart") == 0 &
+                                                                                                  get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "vl", "vl") != 0 );
+
+endgroup
+`endif
+
+`ifdef ZVE32F_SUPPORTED
+covergroup Sm_VF_cg with function sample(ins_t ins);
+    option.per_instance = 0;
+    `include "general/RISCV_coverage_standard_coverpoints.svh"
+    `include "general/RISCV_coverage_priv_vf_coverpoints.svh"
+
+    //cross vtype_prev_vill_clear, vstart_zero, vl_nonzero;
+    std_trap_vec : coverpoint {get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "vtype", "vill") == 0 &
+                        get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "vstart", "vstart") == 0 &
+                        get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "vl", "vl") != 0 &
+                        get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "mstatus", "vs") != 0
+                    }
+    {
+        bins true = {1'b1};
+    }
+
+    mstatus_fs_initial_clean : coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "mstatus", "fs") {
+        bins first_state = {1};
+        bins clean  = {2};
+    }
+
+    mstatus_fs_off : coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "mstatus", "fs") {
+        bins off = {0};
+    }
+
+    cp_vectorfp_mstatus_fs_state_affecting_register : cross priv_mode_m, std_vec, vfmv_f_s, mstatus_fs_initial_clean;
+    cp_vectorfp_mstatus_fs_state_affecting_csr      : cross priv_mode_m, std_vec, vector_vector_arithmetic_fp_instruction, mstatus_fs_initial_clean, fflags_modified_after_clear;
+    cp_vectorfp_mstatus_fs_state_nonaffecting       : cross priv_mode_m, std_vec, vector_vector_arithmetic_fp_instruction, mstatus_fs_initial_clean, vs1_zero, vs2_zero;
+    cp_vectorfp_mstatus_fs_off                      : cross priv_mode_m, std_trap_vec, vector_vector_arithmetic_fp_instruction, mstatus_fs_off, vs1_zero, vs2_zero;
+
+endgroup
+`endif
+
 function void sm_sample(int hart, int issue, ins_t ins);
     Sm_mcause_cg.sample(ins);
     Sm_mstatus_cg.sample(ins);
     Sm_mprivinst_cg.sample(ins);
     Sm_mcsr_cg.sample(ins);
+    `ifdef F_SUPPORTED
+        Sm_F_cg.sample(ins);
+    `endif
+    `ifdef ZVE32X_SUPPORTED
+        Sm_V_cg.sample(ins);
+    `endif
+    `ifdef ZVE32F_SUPPORTED
+        Sm_VF_cg.sample(ins);
+    `endif
     //$display("Sm_sample: PC = %h (%s) misa %b rs1 %b, misa_c0 %b, pc_1 %b",
     //    ins.current.pc_rdata, ins.current.disass, ins.current.insn[31:20] == CSR_MISA, ins.current.rs1_val[25:0],
     //    ins.current.rs1_val[2], ins.current.pc_rdata[1]);

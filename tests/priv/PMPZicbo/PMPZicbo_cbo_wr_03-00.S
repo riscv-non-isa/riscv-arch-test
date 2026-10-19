@@ -20,6 +20,7 @@
 
 // Extra defines (if needed) to enable trap handlers, fpu, vector, etc.
 #define BOOT_TO_MMODE
+#define TRAP_SIGUPD_COUNT 1500
 
 // Include framework macros
 #include "riscv_arch_test.h"
@@ -113,6 +114,8 @@ RETURN_INSTRUCTION:
   nop
   jr ra
   .option pop
+  .p2align 12
+  .p2align (UDB_PMP_GRANULARITY)
 
 // Testcase strings
 PMPZicbo_cp_cbo_entry0_lxwr1011_1_cbo_zero_str: .string "\"test: 9; cg: PMPZicbo; cp: cp_cbo; bin: entry0_lxwr1011_1_cbo.zero\""

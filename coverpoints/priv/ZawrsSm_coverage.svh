@@ -72,9 +72,9 @@ covergroup ZawrsSm_cg with function sample(ins_t ins);
         bins one = {1};
     }
 
-    mip_any_ones: coverpoint (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "mip", "mtip") ||
-                           get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "mip", "meip") ||
-                           get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "mip", "msip") ){
+    mip_any_ones: coverpoint (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "mip", "mtip")[0] ||
+                           get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "mip", "meip")[0] ||
+                           get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "mip", "msip")[0] ){
         bins any_ones = {1};
     }
 
@@ -83,8 +83,17 @@ covergroup ZawrsSm_cg with function sample(ins_t ins);
     // main coverpoints
     cp_wrs_sto_timeout:     cross priv_mode_m, wrs_sto, mstatus_tw, mstatus_mie_zero, mie_zeros, lr_w;
     cp_wrs_no_res:          cross priv_mode_m, mstatus_tw, mstatus_mie_zero, mie_zeros, sc_w, wrs_ops;
-    cp_wrs_resume:          cross priv_mode_m, mstatus_tw, mie_mtie_one, mstatus_mie, wrs_ops, lr_w;
-    cp_wrs_no_mie:          cross priv_mode_m, mstatus_tw_zero, mstatus_mie_one, mie_zeros, mip_any_ones, wrs_sto, lr_w;
+    `ifdef UDB_MTI_INTR_IMPL
+        cp_wrs_resume:      cross priv_mode_m, mstatus_tw, mie_mtie_one, mstatus_mie, wrs_ops, lr_w;
+    `endif
+    // mip_any_ones needs a machine interrupt that can be made pending
+    `ifdef UDB_MEI_INTR_IMPL
+        cp_wrs_no_mie:      cross priv_mode_m, mstatus_tw_zero, mstatus_mie_one, mie_zeros, mip_any_ones, wrs_sto, lr_w;
+    `elsif UDB_MSI_INTR_IMPL
+        cp_wrs_no_mie:      cross priv_mode_m, mstatus_tw_zero, mstatus_mie_one, mie_zeros, mip_any_ones, wrs_sto, lr_w;
+    `elsif UDB_MTI_INTR_IMPL
+        cp_wrs_no_mie:      cross priv_mode_m, mstatus_tw_zero, mstatus_mie_one, mie_zeros, mip_any_ones, wrs_sto, lr_w;
+    `endif
 
 endgroup
 
