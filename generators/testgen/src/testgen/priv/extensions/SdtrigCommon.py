@@ -2134,7 +2134,11 @@ def _generate_itrigger_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     lines.append(
         comment_banner(
             coverpoint,
-            "itrigger fires on each interrupt cause in the tdata2 mask",
+            "itrigger with tdata2 selecting one interrupt code and the origin mode's priv bit set or\n"
+            "clear; that interrupt, then a different one, is taken. In SdtrigSm, with the priv bit\n"
+            "set, the selected interrupt taken from S/U and delegated to S fires it into M; one\n"
+            "handled in M never does. In SdtrigS/U whether it fires depends on the hart's\n"
+            "re-entrancy option",
         )
     )
     origins = ("Sm", "S", "U") if mode == "Sm" else (mode,)
@@ -2238,8 +2242,10 @@ def _generate_etrigger_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     lines.append(
         comment_banner(
             coverpoint,
-            "etrigger fires (breakpoint) iff the raised exception code is set\n"
-            "in tdata2 AND tdata1.priv is set; tval is forced to 0 on match",
+            "etrigger with tdata2 selecting one exception code and tdata1.priv set or clear; that\n"
+            "exception or an illegal instruction is raised. An exception handled in M never fires\n"
+            "it, and whether one handled in S fires depends on the hart's re-entrancy option, so\n"
+            "bins name the exception raised. SdtrigSm_etrigger_cross_priv_s/u check firing",
         )
     )
 
@@ -2258,8 +2264,8 @@ def _generate_etrigger_tests(test_data: TestData, mode: str) -> list[TestChunk]:
             for priv_en in (0, 1):
                 privbits = MODE_PRIVBIT[mode] if priv_en else 0
                 for raised_code in raised_codes:
-                    outcome = "match" if raised_code == code else "mismatch"
-                    binname = f"trig_num_{trig_num}_code_{name}_priv{priv_en}_{outcome}"
+                    raised = ETRIGGER_EXCODE_NAMES[raised_code]
+                    binname = f"trig_num_{trig_num}_code_{name}_priv{priv_en}_raise_{raised}"
                     is_pf = raised_code in _PAGE_FAULT_CODES
 
                     lines.extend(
@@ -2313,9 +2319,10 @@ def etrigger_cross_priv_delegate_test(test_data: TestData, target_mode: str) -> 
     lines.append(
         comment_banner(
             coverpoint,
-            f"etrigger configured in M fires on a matching exception raised while\n"
-            f"executing in {target_mode}-mode, independent of medeleg[cause]; tdata1.priv\n"
-            f"gates the match and tval is forced to 0 on match",
+            f"etrigger configured in M, exception raised in {target_mode}-mode with medeleg[cause]\n"
+            f"set or clear and medeleg[3]=0. It fires into M when tdata2 selects the raised\n"
+            f"code, tdata1.priv is set and the exception is delegated to S; one handled in M\n"
+            f"never fires it. The trap record checks the breakpoint's mtval",
         )
     )
 
@@ -2348,14 +2355,13 @@ def etrigger_cross_priv_delegate_test(test_data: TestData, target_mode: str) -> 
                         ):
                             # RVTEST_TSBI_GOTO_MMODE returns to M with an ecall from the target mode.
                             # With that ecall delegated it is itself a matching exception: from U it
-                            # fires the trigger (so a mismatch case would fire), and from S the S-mode
-                            # T-SBI forwards it with another ecall that is delegated again (no way back).
+                            # fires the trigger (so a case raising another code would fire), and from S the
+                            # S-mode T-SBI forwards it with another ecall that is delegated again (no way back).
                             continue
-                        outcome = "match" if raised_code == code else "mismatch"
                         is_pf = raised_code in _PAGE_FAULT_CODES
                         binname = (
                             f"trig_num_{trig_num}_{target_mode.lower()}_code_{name}"
-                            f"_priv{priv_en}_medeleg{medeleg_en}_{outcome}"
+                            f"_priv{priv_en}_medeleg{medeleg_en}_raise_{ETRIGGER_EXCODE_NAMES[raised_code]}"
                         )
 
                         lines.extend(
