@@ -46,8 +46,10 @@ params:
   MISA_CSR_IMPLEMENTED: true # VERIFIED -- MISA CSR (0x301) in CSR map
 
   # A extension (Zalrsc / Zaamo) params (VERIFIED -- User Manual, Atomics and Exceptions and Interrupts)
-  MISALIGNED_AMO: false # VERIFIED -- misaligned AMO raises store/AMO address misaligned exception (code 6)
-  LRSC_MISALIGNED_BEHAVIOR: "always raise misaligned exception" # VERIFIED -- misaligned LR.W raises code 4, misaligned SC.W raises code 6
+  # Misaligned LR.W/SC.W/AMO raise access faults (codes 5/7) in the RTL, not the address-misaligned
+  # exceptions (codes 4/6) the User Manual documents: https://github.com/openhwfoundation/cv32e40x/issues/1000
+  MISALIGNED_AMO: false # MEASURED -- misaligned AMO raises store/AMO access fault (code 7)
+  LRSC_MISALIGNED_BEHAVIOR: "always raise access fault" # MEASURED -- misaligned LR.W raises code 5, misaligned SC.W raises code 7
   LRSC_FAIL_ON_VA_SYNONYM: false # VERIFIED -- no MMU; VA synonyms cannot occur
   LRSC_FAIL_ON_NON_EXACT_LRSC: true # ASSUMED -- reservation managed externally (atomics.rst); conservative exact-match assumed
   LRSC_RESERVATION_STRATEGY: "reserve exactly enough to cover the access" # ASSUMED -- external subsystem; standard simulation behaviour
