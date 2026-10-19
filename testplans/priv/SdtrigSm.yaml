@@ -139,8 +139,8 @@ coverpoints:
       tdata2 = {scratch/0}
       tdata1.size = {0/1/2/3/4/5/6}
       tdata1.select = 0 (adr)
-      tdata1.XSL = 010
-      Vsetivli x0, 1, e{8/16/32/64}, m1, ta, ma
+      tdata1.XSL = {010/001}
+      Vsetivli x0, 1, e{8/16/32/64}, m4, ta, ma (e64 only if ZVE64X_SUPPORTED)
       Perform v{l/s}e{8/16/32/64}.v to scratch
     expectation: Breakpoint exception if the tdata2 matches a address in the vector store and tdata1.size = SEW or 0
     bins: 2 address * 7 sizes * 4 SEW * 2 ops
@@ -152,8 +152,8 @@ coverpoints:
       if ZVL32B_SUPPORTED
       tdata2 = {scratch/scratch+8/0}
       tdata1.select = 0 (adr)
-      tdata1.XSL = 010
-      Vsetivli x0, {1/9}, e{8/16/32/64}, m1, ta, ma
+      tdata1.XSL = {010/001}
+      Vsetivli x0, {1/9}, e{8/16/32/64}, m4, ta, ma (e64 only if ZVE64X_SUPPORTED)
       Perform v{l/s}e{8/16/32/64}.v to scratch
     expectation: |-
       Breakpoint exception if the tdata2 = scratch
@@ -168,7 +168,7 @@ coverpoints:
       tdata2 = {scratch+8}
       tdata1.select = 0 (adr)
       tdata1.XSL = {010/001}
-      Vsetivli x0, 9, e{8/16/32/64}, m1, ta, mu
+      Vsetivli x0, 9, e{8/16/32/64}, m4, ta, mu (e64 only if ZVE64X_SUPPORTED)
       v0 = mask with the element at scratch+8 {active/inactive}
       Perform v{l/s}e{8/16/32/64}.v to scratch, v0.t
     expectation: |-
