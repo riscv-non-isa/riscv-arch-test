@@ -798,25 +798,20 @@ coverpoints:
       tdata2 = 0
       perform nop in machine mode
 
-      if ITRIGGER_SUPPORTED:
-      tdata1.type = 4 (itrigger)
-      tdata2[5] = 1
-      perform supervisor timer interrupt
-
-      if ETRIGGER_SUPPORTED:
-      tdata1.type = 5 (etrigger)
-      tdata2[2] = 1
-      perform illegal instruction (execute 0x11111111)
-
       if MCONTROL6_SUPPORTED
       tdata1.type = 6 (mcontrol6)
       tdata1.select = 1 (data)
       tdata2 = {0x12345678}
       perform SW  {0x12345678}
+
+      itrigger/etrigger are not used: with action=0 they cannot fire here (traps are taken with xIE=0).
+      After each case, rvtest_trap_count is written to the signature.
     expectation: Breakpoint exception if mhvalue equals mcontext
-    bins: 3 mhvalues * 4 trigger types
+    bins: 3 mhvalues * 2 trigger types (icount, mcontrol6)
     rules:
-      - Sdtrig_etrigger_textra
+      - Sdtrig_icount_textra
+      - Sdtrig_mcontrol6_textra
+      - Sdtrig_textra32_mhselect_mcontext
   - name: cp_textra_scontext
     description: |-
       only run tests if SCONTEXT_AVAILABLE:
@@ -837,29 +832,26 @@ coverpoints:
       tdata2 = 0
       perform nop in machine mode
 
-      if ITRIGGER_SUPPORTED:
-      tdata1.type = 4 (itrigger)
-      tdata2[5] = 1
-      perform supervisor timer interrupt
-
-      if ETRIGGER_SUPPORTED:
-      tdata1.type = 5 (etrigger)
-      tdata2[2] = 1
-      perform illegal instruction (execute 0x11111111)
-
       if MCONTROL6_SUPPORTED
       tdata1.type = 6 (mcontrol6)
       tdata1.select = 1 (data)
       tdata2 = {0x12345678}
       perform SW  {0x12345678}
+
+      itrigger/etrigger are not used: with action=0 they cannot fire here (traps are taken with xIE=0).
+      After each case, rvtest_trap_count is written to the signature.
     expectation: Breakpoint exception when svalue equals scontext and mask ignores A's
     bins: |-
       if RV32:
-      4 svalues * 4 masks * 4 trigger types
+      4 svalues * 4 masks * 2 trigger types
       if RV64:
-      6 svalues * 6 masks * 4 trigger types
+      6 svalues * 6 masks * 2 trigger types
     rules:
-      - Sdtrig_etrigger_textra
+      - Sdtrig_icount_textra
+      - Sdtrig_mcontrol6_textra
+      - Sdtrig_textra32_sselect_scontext
+      - Sdtrig_textra32_sbytemask
+      - Sdtrig_textra64_sbytemask
   - name: cp_textra_double_context
     description: |-
       only run tests if MCONTEXT_AVAILABLE and SCONTEXT_AVAILABLE:
@@ -888,25 +880,24 @@ coverpoints:
       tdata2 = 0
       perform nop in machine mode
 
-      if ITRIGGER_SUPPORTED:
-      tdata1.type = 4 (itrigger)
-      tdata2[5] = 1
-      perform supervisor timer interrupt
-
-      if ETRIGGER_SUPPORTED:
-      tdata1.type = 5 (etrigger)
-      tdata2[2] = 1
-      perform illegal instruction (execute 0x11111111)
-
       if MCONTROL6_SUPPORTED
       tdata1.type = 6 (mcontrol6)
       tdata1.select = 1 (data)
       tdata2 = {0x12345678}
       perform SW  {0x12345678}
+
+      itrigger/etrigger are not used: with action=0 they cannot fire here (traps are taken with xIE=0).
+      After each case, rvtest_trap_count is written to the signature.
     expectation: Breakpoint exception when all enabled context numbers match
     bins: 2 mhselect * 2 sselect * 2 mhvalue * 2 svalue
+    rules:
+      - Sdtrig_textra32_mhselect_mcontext
+      - Sdtrig_textra32_sselect_scontext
+      - Sdtrig_textra32_mhselect_ignore
+      - Sdtrig_textra32_sselect_ignore
   - name: cp_textra_asid
     description: |-
+      NOT GENERATED YET (needs satp.ASID set through T-SBI in U-mode and a satp value with a specified result).
       only run tests if SCONTEXT_AVAILABLE:
       repeat for each trigger type supported:
       tdata3.sselect = 2
@@ -944,6 +935,7 @@ coverpoints:
       - Sdtrig_textra32_sselect_asid
   - name: cp_smode_fields_hardwired
     description: |-
+      NOT GENERATED: svalue/sselect "should" (not must) be tied to 0 without S-mode, so a hart that implements them is legal.
       For each of UDB_SDTRIG_NUM_TRIGGERS in tselect:
       If TDATA3_EXISTS:
       If S_SUPPORTED = false:

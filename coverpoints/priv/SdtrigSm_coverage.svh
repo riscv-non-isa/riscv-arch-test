@@ -329,9 +329,113 @@ covergroup SdtrigSm_mcontrol6_cg with function sample(ins_t ins);
     cp_mcontrol6_chain_adr:       cross priv_mode_m, triggernum_chain, tdata1_type_mcontrol6, tdata1_m_on, tdata1_select_data, tdata1_chain_disabled, tdata1_match_equal, tdata1_size_any, tdata1_xsl_store, store_data_chain, store_offset, sw;                       // (NTRIG-1) * 2 data * 2 adr
 endgroup
 
+// textra32/textra64 (tdata3) context matching, sampled when tdata1 arms an icount or mcontrol6 trigger.
+// Field positions: textra64 mhvalue 63:51, mhselect 50:48, sbytemask 39:36, svalue 33:2, sselect 1:0;
+//                  textra32 mhvalue 31:26, mhselect 25:23, sbytemask 19:18, svalue 17:2, sselect 1:0.
+function automatic logic [2:0] sdtrig_textra_mhselect(logic [XLEN-1:0] t3);
+    return 3'((t3 >> ((XLEN == 64) ? 48 : 23)) & 'h7);
+endfunction
+function automatic logic [12:0] sdtrig_textra_mhvalue(logic [XLEN-1:0] t3);
+    return 13'((XLEN == 64) ? ((t3 >> 51) & 'h1fff) : ((t3 >> 26) & 'h3f));
+endfunction
+function automatic logic [1:0] sdtrig_textra_sselect(logic [XLEN-1:0] t3);
+    return 2'(t3 & 'h3);
+endfunction
+function automatic logic [3:0] sdtrig_textra_sbytemask(logic [XLEN-1:0] t3);
+    return 4'((XLEN == 64) ? ((t3 >> 36) & 'hf) : ((t3 >> 18) & 'h3));
+endfunction
+// 1 when mhvalue equals the low 13 (RV64) or 6 (RV32) bits of mcontext
+function automatic logic sdtrig_textra_mcontext_match(logic [XLEN-1:0] t3, logic [XLEN-1:0] mcontext);
+    return sdtrig_textra_mhvalue(t3) == 13'(mcontext & ((XLEN == 64) ? 'h1fff : 'h3f));
+endfunction
+// 1 when svalue equals scontext in every byte that sbytemask does not ignore
+function automatic logic sdtrig_textra_scontext_match(logic [XLEN-1:0] t3, logic [XLEN-1:0] scontext);
+    logic [31:0] svalue   = 32'((XLEN == 64) ? ((t3 >> 2) & 'hffffffff) : ((t3 >> 2) & 'hffff));
+    logic [31:0] ctx      = 32'(scontext & ((XLEN == 64) ? 'hffffffff : 'hffff));
+    logic [3:0]  bytemask = sdtrig_textra_sbytemask(t3);
+    for (int i = 0; i < 4; i++)
+        if (bytemask[i]) begin
+            svalue[8*i +: 8]  = '0;
+            ctx[8*i +: 8]    = '0;
+        end
+    return svalue == ctx;
+endfunction
+
+covergroup SdtrigSm_textra_cg with function sample(ins_t ins);
+    option.per_instance = 0;
+    `include "general/RISCV_coverage_standard_coverpoints.svh"
+    `include "general/RISCV_coverage_sdtrig_coverpoints.svh"
+
+    arm_type: coverpoint ins.current.rs1_val[XLEN-1:XLEN-4] {
+        bins icount    = {4'd3};
+        bins mcontrol6 = {4'd6};
+    }
+    mhselect: coverpoint sdtrig_textra_mhselect(ins.current.csr[CSR_TDATA3]) {
+        bins ignore   = {3'd0};
+        bins mcontext = {3'd4};
+    }
+    mhselect_mcontext: coverpoint sdtrig_textra_mhselect(ins.current.csr[CSR_TDATA3]) {
+        bins mcontext = {3'd4};
+    }
+    sselect: coverpoint sdtrig_textra_sselect(ins.current.csr[CSR_TDATA3]) {
+        bins ignore   = {2'd0};
+        bins scontext = {2'd1};
+    }
+    sselect_ignore: coverpoint sdtrig_textra_sselect(ins.current.csr[CSR_TDATA3]) {
+        bins ignore = {2'd0};
+    }
+    sselect_scontext: coverpoint sdtrig_textra_sselect(ins.current.csr[CSR_TDATA3]) {
+        bins scontext = {2'd1};
+    }
+    // bytes ignored by sbytemask; with every byte ignored the compare always matches (sbytemask_all)
+    sbytemask: coverpoint sdtrig_textra_sbytemask(ins.current.csr[CSR_TDATA3]) {
+        bins none  = {4'b0000};
+        bins byte0 = {4'b0001};
+        bins byte1 = {4'b0010};
+    `ifdef UDB_MXLEN_64
+        bins byte2 = {4'b0100};
+        bins byte3 = {4'b1000};
+    `endif
+    }
+    sbytemask_all: coverpoint sdtrig_textra_sbytemask(ins.current.csr[CSR_TDATA3]) {
+    `ifdef UDB_MXLEN_64
+        bins all = {4'b1111};
+    `else
+        bins all = {4'b0011};
+    `endif
+    }
+    mcontext_match: coverpoint sdtrig_textra_mcontext_match(ins.current.csr[CSR_TDATA3], ins.current.csr[CSR_MCONTEXT]) {
+        bins mismatch = {1'b0};
+        bins match    = {1'b1};
+    }
+    scontext_match: coverpoint sdtrig_textra_scontext_match(ins.current.csr[CSR_TDATA3], ins.current.csr[CSR_SCONTEXT]) {
+        bins mismatch = {1'b0};
+        bins match    = {1'b1};
+    }
+
+    scontext_match_only: coverpoint sdtrig_textra_scontext_match(ins.current.csr[CSR_TDATA3], ins.current.csr[CSR_SCONTEXT]) {
+        bins match = {1'b1};
+    }
+
+    // main coverpoints
+    `ifdef UDB_MCONTEXT_AVAILABLE
+        cp_textra_mcontext:       cross priv_mode_m, triggernum, csrw, csr_tdata1, arm_type, mhselect_mcontext, sselect_ignore, mcontext_match;                       // NTRIG * 2 types * 2
+    `endif
+    `ifdef UDB_SCONTEXT_AVAILABLE
+        cp_textra_scontext:       cross priv_mode_m, triggernum, csrw, csr_tdata1, arm_type, sselect_scontext, sbytemask, scontext_match;                          // NTRIG * 2 types * 5 (RV32 3) masks * 2
+        cp_textra_scontext_all:   cross priv_mode_m, triggernum, csrw, csr_tdata1, arm_type, sselect_scontext, sbytemask_all, scontext_match_only;                 // NTRIG * 2 types
+    `endif
+    `ifdef UDB_MCONTEXT_AVAILABLE
+    `ifdef UDB_SCONTEXT_AVAILABLE
+        cp_textra_double_context: cross priv_mode_m, triggernum, csrw, csr_tdata1, arm_type, mhselect, sselect, mcontext_match, scontext_match;              // NTRIG * 2 types * 16
+    `endif
+    `endif
+endgroup
+
 function void sdtrigsm_sample(int hart, int issue, ins_t ins);
     SdtrigSm_trig_module_reg_cg.sample(ins);
     SdtrigSm_mcontrol6_cg.sample(ins);
+    SdtrigSm_textra_cg.sample(ins);
     `ifdef UDB_TCONTROL_AVAILABLE
         SdtrigSm_tcontrol_cg.sample(ins);
     `endif

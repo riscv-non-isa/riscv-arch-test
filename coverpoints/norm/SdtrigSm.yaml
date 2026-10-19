@@ -828,7 +828,7 @@ normative_rule_definitions:
       [
         "SdtrigSm_textra_cg/cp_textra_mcontext",
         "SdtrigSm_textra_cg/cp_textra_scontext",
-        "SdtrigSm_textra_cg/cp_textra_asid",
+        "SdtrigSm_textra_cg/cp_textra_double_context",
       ]
 
   # If implemented, the TM updates this field every time the trigger fires.
@@ -1199,6 +1199,7 @@ normative_rule_definitions:
       [
         "SdtrigSm_textra_cg/cp_textra_mcontext",
         "SdtrigSm_textra_cg/cp_textra_scontext",
+        "SdtrigSm_textra_cg/cp_textra_double_context",
       ]
 
   # When set, enable this trigger in VS-mode. This bit is hard-wired to 0 if the
@@ -1284,9 +1285,7 @@ normative_rule_definitions:
   - name: Sdtrig_itrigger_textra
     coverpoint:
       [
-        "SdtrigSm_textra_cg/cp_textra_mcontext",
-        "SdtrigSm_textra_cg/cp_textra_scontext",
-        "SdtrigSm_textra_cg/cp_textra_asid",
+        "Not testable with action=0: itrigger/etrigger fire only into a mode with xIE=0 here, where reentrancy prevention suppresses them",
       ]
 
   # If this bit is implemented, the hardware sets it when this trigger matches. The
@@ -1366,9 +1365,7 @@ normative_rule_definitions:
   - name: Sdtrig_etrigger_textra
     coverpoint:
       [
-        "SdtrigSm_textra_cg/cp_textra_mcontext",
-        "SdtrigSm_textra_cg/cp_textra_scontext",
-        "SdtrigSm_textra_cg/cp_textra_asid",
+        "Not testable with action=0: itrigger/etrigger fire only into a mode with xIE=0 here, where reentrancy prevention suppresses them",
       ]
 
   # If this bit is implemented, the hardware sets it when this trigger matches. The
@@ -1498,7 +1495,7 @@ normative_rule_definitions:
       [
         "SdtrigSm_textra_cg/cp_textra_mcontext",
         "SdtrigSm_textra_cg/cp_textra_scontext",
-        "SdtrigSm_textra_cg/cp_textra_asid",
+        "SdtrigSm_textra_cg/cp_textra_double_context",
       ]
 
   # If DXLEN >= 64, then this register provides access to the low bits of each field
@@ -1521,13 +1518,13 @@ normative_rule_definitions:
   - name: Sdtrig_textra32_filter_modes
     coverpoint:
       [
-        "SdtrigSm_textra_cg/cp_textra_mcontext_smode",
-        "SdtrigSm_textra_cg/cp_textra_scontext_smode",
+        "SdtrigSm_textra_cg/cp_textra_mcontext",
+        "SdtrigSm_textra_cg/cp_textra_scontext",
       ]
 
   # Ignore mhvalue.
   - name: Sdtrig_textra32_mhselect_ignore
-    coverpoint: ["SdtrigSm_textra_cg/cp_textra_mcontext"]
+    coverpoint: ["SdtrigSm_textra_cg/cp_textra_double_context"]
 
   # This trigger will only match or fire if the low bits of mcontext/hcontext equal
   # mhvalue.
@@ -1555,22 +1552,23 @@ normative_rule_definitions:
 
   # If the H extension is not supported, the only legal values are 0 and 4.
   - name: Sdtrig_textra32_mhselect_no_h
-    coverpoint: ["SdtrigSm_textra_cg/cp_textra_mcontext"]
+    coverpoint:
+      ["WARL legalization of reserved/H-only mhselect values; not tested"]
 
   # When the least significant bit of this field is 1, it causes bits 7:0 in the
   # comparison to be ignored, when sselect=1. When the next most significant bit of
   # this field is 1, it causes bits 15:8 to be ignored in the comparison, when
   # sselect=1.
   - name: Sdtrig_textra32_sbytemask
-    coverpoint: ["SdtrigSm_textra_cg/cp_textra_mcontext"]
+    coverpoint: ["SdtrigSm_textra_cg/cp_textra_scontext"]
 
   # This field should be tied to 0 when S-mode is not supported.
   - name: Sdtrig_textra32_svalue_no_s
-    coverpoint: ["SdtrigSm_textra_cg/cp_smode_fields_hardwired"]
+    coverpoint: ["Recommendation (should), not a requirement; not tested"]
 
   # Ignore svalue.
   - name: Sdtrig_textra32_sselect_ignore
-    coverpoint: ["SdtrigSm_textra_cg/cp_textra_scontext"]
+    coverpoint: ["SdtrigSm_textra_cg/cp_textra_double_context"]
 
   # This trigger will only match or fire if the low bits of scontext equal svalue.
   - name: Sdtrig_textra32_sselect_scontext
@@ -1582,19 +1580,19 @@ normative_rule_definitions:
 
   # This trigger will only match or fire if:
   - name: Sdtrig_textra32_sselect_asid1
-    coverpoint: ["SdtrigSm_textra_cg/cp_textra_asid"]
+    coverpoint: ["ASID matching (sselect=2) not tested yet"]
   # the mode is VS-mode or VU-mode and ASID in vsatp equals the lower ASIDMAX (defined in
   # the Privileged Spec) bits of {textra32-svalue}.
   - name: Sdtrig_textra32_sselect_asid2
-    coverpoint: ["SdtrigSm_textra_cg/cp_textra_asid"]
+    coverpoint: ["ASID matching (sselect=2) not tested yet"]
   # in all other modes, ASID in satp equals the lower ASIDMAX (defined in the Privileged
   # Spec) bits of {textra32-svalue}.
   - name: Sdtrig_textra32_sselect_asid3
-    coverpoint: ["SdtrigSm_textra_cg/cp_textra_asid"]
+    coverpoint: ["ASID matching (sselect=2) not tested yet"]
 
   # This field should be tied to 0 when S-mode is not supported.
   - name: Sdtrig_textra32_sselect_no_s
-    coverpoint: ["SdtrigSm_textra_cg/cp_smode_fields_hardwired"]
+    coverpoint: ["Recommendation (should), not a requirement; not tested"]
 
   # This register provides access to the trigger selected by tselect.
   - name: Sdtrig_textra64
