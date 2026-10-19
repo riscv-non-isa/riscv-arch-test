@@ -20,7 +20,6 @@ from testgen.priv.registry import add_priv_test_generator
 # data
 PERM_XSL = ("exec", "store", "load")
 SIZE_ALL = ("any", "b8", "b16", "b32", "b48", "b64", "b128")
-SIZE_SEW = ("any", "s8", "s16", "s32", "s64", "s128")
 UDB_NUM_TRIGGERS = 2  # TODO: Relate to UDB
 NOP = 0x00000013
 C_NOP = 0x0001
@@ -698,53 +697,123 @@ def _generate_vector_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     covergroup = f"Sdtrig{mode}_combined_accesses_cg"
     chunks: list[TestChunk] = []
 
-    vsews = ("sew8", "sew16", "sew32", "sew64")
+    addr_reg, temp_reg = test_data.int_regs.get_registers(2, exclude_regs=[2], reg_range=list(range(8, 16)))
+    vreg = 8
+    vsews = (8, 16, 32, 64)
+    vops = {"load": ("vle", 0b001), "store": ("vse", 0b010)}
+
+    def chunk_prologue(coverpoint: str, description: str) -> list[str]:
+        lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_")).code
+        lines.extend(_global_ie(mode, True))
+        lines.append(comment_banner(coverpoint, description))
+        lines.extend(
+            [
+                f"LA(x{addr_reg}, scratch)",
+                *_arch_guard("vsetivli x0, 16, e8, m1, ta, ma", ["v"]),
+                *_arch_guard(f"vle8.v v{vreg}, (x{addr_reg}) # preload vector register before arming triggers", ["v"]),
+            ]
+        )
+        return lines
+
+    def vector_access(vinstr: str, sew: int, avl: int, comment: str, masked: bool = False) -> list[str]:
+        policy = "mu" if masked else "ma"
+        vm = ", v0.t" if masked else ""
+        return [
+            f"LA(x{addr_reg}, scratch) # vector access base address",
+            *_arch_guard(f"vsetivli x0, {avl}, e{sew}, m4, ta, {policy}", ["v"]),  # m4: scratch+8 in vl at VLEN=32
+            *_arch_guard(f"{vinstr}{sew}.v v{vreg}, (x{addr_reg}){vm} # {comment}", ["v"]),
+            "nop # spacer",
+        ]
 
     ######################################
     coverpoint = "cp_vector_load_store"
     ######################################
-    lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_")).code
-    lines.append(
-        comment_banner(
-            coverpoint,
-            "mcontrol6 matches each element of a vector load/store as an\nindividual SEW-sized access",
-        )
+    lines = chunk_prologue(
+        coverpoint, "mcontrol6 matches a vector load/store as if it performed a load/store of size SEW"
     )
     for trig_num in range(UDB_NUM_TRIGGERS):
-        for addrval in ("marker", "zero"):
-            for vsew in vsews:
-                for size in SIZE_SEW:
-                    for vperm in ("store", "load"):
-                        binname = f"trig_num_{trig_num}_addr_{addrval}_{vsew}_size_{size}_{vperm}"
-                        lines.extend(
-                            [
-                                _add_tc(test_data, binname, coverpoint, covergroup),
-                            ]
-                        )
+        lines.append(f"\n#ifdef UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
+        for vperm, (vinstr, xsl) in vops.items():
+            lines.extend(_xsl_ifdefs(xsl))
+            for tdata2 in ("scratch", 0):
+                for size in range(7):
+                    if size > 0:
+                        lines.append("#ifdef UDB_SDTRIG_MCONTROL6_SIZE_AVAILABLE")
+                    lines.extend(_config_mcontrol6(temp_reg, trig_num, tdata2, mode, xsl=xsl, select=0, size=size))
+                    for sew in vsews:
+                        lines.extend(["#ifdef ZVE64X_SUPPORTED"] if sew == 64 else [])
+                        binname = f"trig_num_{trig_num}_td2_{tdata2}_size_{size}_sew{sew}_{vperm}"
+                        lines.append(_add_tc(test_data, binname, coverpoint, covergroup))
+                        lines.extend(vector_access(vinstr, sew, 1, "fire iff addr==tdata2 and size in (0, SEW)"))
+                        lines.extend(["#endif // ZVE64X_SUPPORTED"] if sew == 64 else [])
+                    if size > 0:
+                        lines.append("#endif // UDB_SDTRIG_MCONTROL6_SIZE_AVAILABLE")
+            lines.extend(["#endif // UDB_SDTRIG_MCONTROL6_XSL_AVAILABLE"] * len(_xsl_ifdefs(xsl)))
+        lines.extend(_disable_trigger(temp_reg, trig_num, mode))
+        lines.append(f"#endif // UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
 
     ######################################
     coverpoint = "cp_vector_accesses"
     ######################################
-    lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_")).code
-    lines.append(
-        comment_banner(
-            coverpoint,
-            "vector accesses across scratch / scratch+8 / 0 tdata2 values",
-        )
+    lines = chunk_prologue(
+        coverpoint,
+        "mcontrol6 matches each element of a vector load/store as if it were an individual access\n"
+        "(scratch+8 only fires when vl covers it)",
     )
     for trig_num in range(UDB_NUM_TRIGGERS):
-        for addrval in ("marker", "marker8", "zero"):
-            for vsew in vsews:
-                for size in SIZE_SEW:
-                    for vperm in ("store", "load"):
-                        binname = f"trig_num_{trig_num}_addr_{addrval}_{vsew}_size_{size}_{vperm}"
-                        lines.extend(
-                            [
-                                _add_tc(test_data, binname, coverpoint, covergroup),
-                            ]
-                        )
+        lines.append(f"\n#ifdef UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
+        for vperm, (vinstr, xsl) in vops.items():
+            lines.extend(_xsl_ifdefs(xsl))
+            for tdata2_name, tdata2 in (("scratch", "scratch"), ("scratch8", "scratch+8"), ("0", 0)):
+                lines.extend(_config_mcontrol6(temp_reg, trig_num, tdata2, mode, xsl=xsl, select=0))
+                for avl in (1, 9):
+                    for sew in vsews:
+                        lines.extend(["#ifdef ZVE64X_SUPPORTED"] if sew == 64 else [])
+                        binname = f"trig_num_{trig_num}_td2_{tdata2_name}_vl_{avl}_sew{sew}_{vperm}"
+                        lines.append(_add_tc(test_data, binname, coverpoint, covergroup))
+                        lines.extend(vector_access(vinstr, sew, avl, "fire iff an accessed element addr==tdata2"))
+                        lines.extend(["#endif // ZVE64X_SUPPORTED"] if sew == 64 else [])
+            lines.extend(["#endif // UDB_SDTRIG_MCONTROL6_XSL_AVAILABLE"] * len(_xsl_ifdefs(xsl)))
+        lines.extend(_disable_trigger(temp_reg, trig_num, mode))
+        lines.append(f"#endif // UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
 
+    ######################################
+    coverpoint = "cp_vector_mask"
+    ######################################
+    lines = chunk_prologue(
+        coverpoint,
+        "mcontrol6 does not match a masked-off vector element\n"
+        "(tdata2 = scratch+8; v0 makes the element at scratch+8 active or masked off)",
+    )
+    for trig_num in range(UDB_NUM_TRIGGERS):
+        lines.append(f"\n#ifdef UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
+        for vperm, (vinstr, xsl) in vops.items():
+            lines.extend(_xsl_ifdefs(xsl))
+            lines.extend(_config_mcontrol6(temp_reg, trig_num, "scratch+8", mode, xsl=xsl, select=0))
+            for state in ("active", "masked"):
+                for sew in vsews:
+                    elem = 8 // (sew // 8)  # index of the element at scratch+8
+                    mask = 0xFFFF if state == "active" else 0xFFFF & ~(1 << elem)
+                    binname = f"trig_num_{trig_num}_td2_scratch8_{state}_sew{sew}_{vperm}"
+                    lines.extend(["#ifdef ZVE64X_SUPPORTED"] if sew == 64 else [])
+                    lines.extend(
+                        [
+                            _add_tc(test_data, binname, coverpoint, covergroup),
+                            f"LI(x{temp_reg}, 0x{mask:x}) # element {elem} {state}",
+                            *_arch_guard("vsetivli x0, 1, e16, m1, ta, ma", ["v"]),
+                            *_arch_guard(f"vmv.s.x v0, x{temp_reg}", ["v"]),
+                            *vector_access(vinstr, sew, 9, "fire iff the element at tdata2 is active", masked=True),
+                        ]
+                    )
+                    lines.extend(["#endif // ZVE64X_SUPPORTED"] if sew == 64 else [])
+            lines.extend(["#endif // UDB_SDTRIG_MCONTROL6_XSL_AVAILABLE"] * len(_xsl_ifdefs(xsl)))
+        lines.extend(_disable_trigger(temp_reg, trig_num, mode))
+        lines.append(f"#endif // UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
+
+    test_data.int_regs.return_registers([addr_reg, temp_reg])
     chunks.append(test_data.end_test_chunk())
+    for chunk in chunks:  # each coverpoint is its own file and enables MIE/SIE at its start
+        chunk.code.extend(_global_ie(mode, False))
     return chunks
 
 
@@ -2005,6 +2074,13 @@ def register_sdtrig_suite(mode: str, required_extensions: list[str | list[str]],
         return _generate_mcontrol6_tests(test_data, mode)
 
     @add_priv_test_generator(
+        suite, required_extensions=[*required_extensions, "Zvl32b"], march_extensions=[], extra_defines=extra_defines
+    )
+    def make_sdtrig_vector(test_data: TestData) -> list[TestChunk]:
+        """vector load/store tests."""
+        return _generate_vector_tests(test_data, mode)
+
+    @add_priv_test_generator(
         suite, required_extensions=[*required_extensions, "Zicbom"], march_extensions=[], extra_defines=extra_defines
     )
     def make_sdtrig_zicbom(test_data: TestData) -> list[TestChunk]:
@@ -2029,6 +2105,5 @@ def register_sdtrig_suite(mode: str, required_extensions: list[str | list[str]],
     #   _generate_native_triggers_tests, _generate_icount_tests, _generate_itrigger_tests: bodies not implemented yet
     #   _generate_zalrsc_tests: Zalrsc
     #   _generate_zaamo_tests: Zaamo
-    #   _generate_vector_tests: Zvl32b
     #   _generate_zcmp_tests: Zcmp
     #   _generate_address_matches_tests, _generate_csr_tests, _generate_etrigger_tests, _generate_textra_tests
