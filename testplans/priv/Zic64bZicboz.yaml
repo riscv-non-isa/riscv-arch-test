@@ -8,4 +8,4 @@ coverpoints:
     expectation: Match ref model. Only 64 bytes written. When offset is 64, they are in the second block.
     bins: "65"
     rules:
-      - Cache blocks must be 64 bytes in size, naturally aligned in the address space.
+      - Zic64b_cache_block_size

@@ -371,6 +371,7 @@ jobs:
         run: |
           FAST=True \
           EXTENSIONS=I \
+          CONFIG_FILES="config/spike/spike-rv32-max/test_config.yaml config/spike/spike-rv64-max/test_config.yaml" \
           make
 
   # This is here so that the "Status checks that are required" Github

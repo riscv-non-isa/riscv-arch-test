@@ -22,7 +22,7 @@ from act.certificate_tests import certificate_exists, get_certificate_extensions
 from act.config import CoverageSimulator
 from act.coverreport import print_coverage_summary
 from act.parse_test_constraints import TestYamlHeaderError, generate_test_dict
-from act.select_tests import prepare_configs_and_select_tests
+from act.select_tests import prepare_configs_and_select_tests, write_test_list
 
 # CLI interface setup
 act_app = typer.Typer(context_settings={"help_option_names": ["-h", "--help"]})
@@ -141,6 +141,10 @@ def run_act(
             raise TypeError(f"MXLEN must be an integer, got {type(mxlen)}: {mxlen!r}")
 
         config_names.append(config.name)
+        if not dry_run:
+            test_list_file = workdir / config.name / "test_list.md"
+            write_test_list(config.name, selected_tests, test_list_file)
+            rprint(f"[bold cyan]Selected test list:[/] {test_list_file}")
         tasks.extend(
             generate_build_plan(
                 config,

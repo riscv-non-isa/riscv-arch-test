@@ -59,6 +59,12 @@ When you run `make` in the `ctp` directory, the YAML file is parsed to build an
 ASCIIDoc file (in `ctp/norm`) with a table of normative rule names, definitions, and associated coverpoints. Include this file in the CTP with
 `include::norm/Sm_norm_rules.adoc[]`
 
+Every rule name must be a tag in the ISA manual snapshot's `norm-rules.json`, or
+the CTP build fails. A suite whose rules are not yet tagged in the ISA manual
+says where the tags are pending with a top-level key, such as
+`untagged_upstream: riscv/riscv-isa-manual#3416`. Its unknown names are then
+warnings instead of errors. Remove the key once the tags reach the snapshot.
+
 ### Parameter Lists
 
 Similar YAML files in coverpoints/param are used to make a list of the UDB parameters that apply to a test suite. Each parameter has a name (corresponding to the UDB), coverpoint (one or more coverpoints that it affects), and effect (string summarizing what it does, such as coverpoint only applying to certain parameter values, or result depending on the parameter value).
