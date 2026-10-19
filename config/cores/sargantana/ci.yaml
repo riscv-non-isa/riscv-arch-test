@@ -30,6 +30,8 @@ ci_enabled: true
 #                 mstatus.MPP and menvcfg.CBIE keep the reserved 0b10: csr:csr_bsc.sv#L1525, #L1595; mideleg.SGEI
 #                 is read-only one with GEILEN = 0: csr:csr_bsc.sv#L1559-L1560; misa.V is set without V
 #   SscofpmfSm    scountovf reads are masked by mcounteren in M mode too: https://github.com/bsc-loca/sargantana/issues/116
+#   U_F           feq.s of a signaling NaN raises NV but leaves mstatus.FS Initial instead of Dirty
+#                 (the flag-raising FS cases from #2829, which U_F now shares with Sm_F)
 #   S_scsr-, S_scsr_addr
 #                 sepc[1] is writable with IALIGN = 32: csr:csr_bsc.sv#L1244; senvcfg.CBIE keeps 0b10: #L1242
 #   InterruptsSm_priority_mideleg
@@ -49,7 +51,7 @@ ci_enabled: true
 #   H             hedeleg[10] and hedeleg[23:20] are writable but must be read-only zero: csr:csr_bsc.sv#L1320-L1339;
 #                 an hlv.d page fault in HS mode matches Sail's cause and tval but not the rest of its trap signature
 #                 (status/GVA/htinst; HS-mode trap CSR writes: csr:csr_bsc.sv#L2086-L2099)
-exclude_extensions: "F-fmadd.s,F-fmsub.s,F-fnmadd.s,F-fnmsub.s,ZicsrF,Zfa-fleq.s,Zfa-fltq.s,ZfaD-fcvtmod.w.d,ZfaD-fleq.d,ZfaD-fleq.s,ZfaD-fltq.d,ZfaD-fltq.s,ZfaD-fround.s,ZfaD-froundnx.s,ZfaD-fmaxm.s,ZfaD-fminm.s,Zfhmin-fcvt.h.s,Zfhmin-fcvt.s.h,ZfhminD-fcvt.d.h,ZfhminD-fcvt.h.d,ZfhminD-fcvt.s.h,Zicntr,ZicntrSm,ZicntrS,ZicntrU,Zifencei,Sm_F,Sm_mcsr_access,Sm_mcsr_walk,Sm_scsr,Sm_shadow,S_F,S_scsr-,S_scsr_addr,InterruptsSm_priority_mideleg,InterruptsSm_trigger,SscofpmfSm,Sv_sv39_canonical,Sv_sv39_nleaf_pte_DAU,Sv_sv39_pte_reserved,Sv_sv39_svnapot,Sv_sv39_svpbmt,SvZicbo_sv39_zicbom,SvZicbo_sv39_zicboz,ExceptionsSv,ExceptionsSvZalrsc,H"
+exclude_extensions: "F-fmadd.s,F-fmsub.s,F-fnmadd.s,F-fnmsub.s,ZicsrF,Zfa-fleq.s,Zfa-fltq.s,ZfaD-fcvtmod.w.d,ZfaD-fleq.d,ZfaD-fleq.s,ZfaD-fltq.d,ZfaD-fltq.s,ZfaD-fround.s,ZfaD-froundnx.s,ZfaD-fmaxm.s,ZfaD-fminm.s,Zfhmin-fcvt.h.s,Zfhmin-fcvt.s.h,ZfhminD-fcvt.d.h,ZfhminD-fcvt.h.d,ZfhminD-fcvt.s.h,Zicntr,ZicntrSm,ZicntrS,ZicntrU,Zifencei,Sm_F,Sm_mcsr_access,Sm_mcsr_walk,Sm_scsr,Sm_shadow,S_F,S_scsr-,S_scsr_addr,U_F,InterruptsSm_priority_mideleg,InterruptsSm_trigger,SscofpmfSm,Sv_sv39_canonical,Sv_sv39_nleaf_pte_DAU,Sv_sv39_pte_reserved,Sv_sv39_svnapot,Sv_sv39_svpbmt,SvZicbo_sv39_zicbom,SvZicbo_sv39_zicboz,ExceptionsSv,ExceptionsSvZalrsc,H"
 
 apt_packages: "autoconf flex bison help2man libfl-dev ccache device-tree-compiler libboost-dev libboost-regex-dev libboost-system-dev"
 install_script: ".github/scripts/install-sargantana.sh"
