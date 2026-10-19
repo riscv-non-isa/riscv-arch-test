@@ -88,3 +88,15 @@ normative_rule_definitions:
 
   - name: sret_presence
     coverpoint: ["U_uprivinst_cg/cp_uprivinst/sret"]
+
+  # The status fields are also updated during execution of instructions, regardless of
+  # privilege mode.
+  - name: mstatus_fs_vs_xs_update_indep_priv
+    # FP and vector instructions update FS and VS in M-, S- and U-mode (U reads mstatus back through T-SBI)
+    coverpoint:
+      [
+        "Sm_F_cg/cp_mstatus_FS_transition",
+        "U_F_cg/cp_mstatus_FS_transition",
+        "Sm_V_cg/cp_mstatus_vs_set_dirty_arithmetic",
+        "U_V_cg/cp_mstatus_vs_set_dirty_arithmetic",
+      ]
