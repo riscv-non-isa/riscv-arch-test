@@ -19,6 +19,7 @@
 
 // Extra defines (if needed) to enable trap handlers, fpu, vector, etc.
 #define BOOT_TO_SMODE
+#define TRAP_SIGUPD_COUNT 1500
 
 // Include framework macros
 #include "riscv_arch_test.h"
@@ -32,6 +33,8 @@ RVTEST_BEGIN
 // cp_sv57_Svnapot_Umode
 /////////////////////////////////
 
+
+main:
 
 // Virtual addresses for code and test regions
 
@@ -49,14 +52,13 @@ RVTEST_BEGIN
 // accessible, so the code is mapped again at va_rvtest_code_begin. Registering
 // that alias lets RVTEST_TSBI_GOTO_* resume in the mapping the mode it switches
 // to can fetch from.
-// SAVE_AREA_SETUP takes the M-mode save area in a0 and clobbers t0 and t1.
   LA(a0, Mtramptbl_sv)
   SAVE_AREA_SETUP(va_rvtest_code_begin, rvtest_code_begin, code, LEVEL4)
 
   SATP_SETUP_RV64(sv57) // Enable address translation.
   sfence.vma
 
-  LI(x13, 0x800) // Test signature initialization
+  LI(a2, 0x800) // Test signature initialization
 
 // 64 KiB NAPOT group of 16 PTEs
   PTE_SETUP_SV57(rvtest_slvl3_pg_tbl, (PTE_V), va_data, LEVEL4)
@@ -81,78 +83,87 @@ RVTEST_BEGIN
   PTE_SETUP_SV57(rvtest_data_1, (PTE_N | (1 << 13) | PTE_D | PTE_A | PTE_U | PTE_X | PTE_W | PTE_R | PTE_V), (va_data+0xF000), LEVEL0)
   sfence.vma
 
-  LI(x8, va_data)
-  addi x13, x13, 16
+  LI(a5, va_data)
+  RVTEST_TSBI_GOTO_UMODE
+  addi a2, a2, 16
 
 // Store
 Svnapot_cp_sv57_Svnapot_Umode_test1_access1_store:
-  sw x13, 20(x8)
+  sw a2, 20(a5)
   nop
 
 // Load
 Svnapot_cp_sv57_Svnapot_Umode_test1_access1_load:
-  lw x15, 20(x8)
+  lw a3, 20(a5)
   nop
 
 // Execute
 Svnapot_cp_sv57_Svnapot_Umode_test1_access1_exec:
-  jalr ra, x8, 0
+  jalr ra, a5, 0
   nop
 
+  RVTEST_TSBI_GOTO_SMODE
+
+  # Check if x12 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x12, Svnapot_cp_sv57_Svnapot_Umode_test1_access1_store, Svnapot_cp_sv57_Svnapot_Umode_test1_access1_store_str)
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Svnapot_cp_sv57_Svnapot_Umode_test1_access1_store, Svnapot_cp_sv57_Svnapot_Umode_test1_access1_store_str)
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, Svnapot_cp_sv57_Svnapot_Umode_test1_access1_load, Svnapot_cp_sv57_Svnapot_Umode_test1_access1_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x13, Svnapot_cp_sv57_Svnapot_Umode_test1_access1_load, Svnapot_cp_sv57_Svnapot_Umode_test1_access1_load_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x14, Svnapot_cp_sv57_Svnapot_Umode_test1_access1_exec, Svnapot_cp_sv57_Svnapot_Umode_test1_access1_exec_str)
 
-  LI(x8, va_data+0x2000)
-  addi x13, x13, 16
+  LI(a5, va_data+0x2000)
+  RVTEST_TSBI_GOTO_UMODE
+  addi a2, a2, 16
 
 // Store
 Svnapot_cp_sv57_Svnapot_Umode_test1_access2_store:
-  sw x13, 20(x8)
+  sw a2, 20(a5)
   nop
 
 // Load
 Svnapot_cp_sv57_Svnapot_Umode_test1_access2_load:
-  lw x15, 20(x8)
+  lw a3, 20(a5)
   nop
 
 // Execute
 Svnapot_cp_sv57_Svnapot_Umode_test1_access2_exec:
-  jalr ra, x8, 0
+  jalr ra, a5, 0
   nop
 
+  RVTEST_TSBI_GOTO_SMODE
+
+  # Check if x12 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x12, Svnapot_cp_sv57_Svnapot_Umode_test1_access2_store, Svnapot_cp_sv57_Svnapot_Umode_test1_access2_store_str)
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Svnapot_cp_sv57_Svnapot_Umode_test1_access2_store, Svnapot_cp_sv57_Svnapot_Umode_test1_access2_store_str)
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, Svnapot_cp_sv57_Svnapot_Umode_test1_access2_load, Svnapot_cp_sv57_Svnapot_Umode_test1_access2_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x13, Svnapot_cp_sv57_Svnapot_Umode_test1_access2_load, Svnapot_cp_sv57_Svnapot_Umode_test1_access2_load_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x14, Svnapot_cp_sv57_Svnapot_Umode_test1_access2_exec, Svnapot_cp_sv57_Svnapot_Umode_test1_access2_exec_str)
 
-  LI(x8, va_data+0xF000)
-  addi x13, x13, 16
+  LI(a5, va_data+0xF000)
+  RVTEST_TSBI_GOTO_UMODE
+  addi a2, a2, 16
 
 // Store
 Svnapot_cp_sv57_Svnapot_Umode_test1_access3_store:
-  sw x13, 20(x8)
+  sw a2, 20(a5)
   nop
 
 // Load
 Svnapot_cp_sv57_Svnapot_Umode_test1_access3_load:
-  lw x15, 20(x8)
+  lw a3, 20(a5)
   nop
 
 // Execute
 Svnapot_cp_sv57_Svnapot_Umode_test1_access3_exec:
-  jalr ra, x8, 0
+  jalr ra, a5, 0
   nop
 
+  RVTEST_TSBI_GOTO_SMODE
+
+  # Check if x12 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x12, Svnapot_cp_sv57_Svnapot_Umode_test1_access3_store, Svnapot_cp_sv57_Svnapot_Umode_test1_access3_store_str)
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Svnapot_cp_sv57_Svnapot_Umode_test1_access3_store, Svnapot_cp_sv57_Svnapot_Umode_test1_access3_store_str)
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, Svnapot_cp_sv57_Svnapot_Umode_test1_access3_load, Svnapot_cp_sv57_Svnapot_Umode_test1_access3_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x13, Svnapot_cp_sv57_Svnapot_Umode_test1_access3_load, Svnapot_cp_sv57_Svnapot_Umode_test1_access3_load_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x14, Svnapot_cp_sv57_Svnapot_Umode_test1_access3_exec, Svnapot_cp_sv57_Svnapot_Umode_test1_access3_exec_str)
 
@@ -170,7 +181,7 @@ RVTEST_DATA_BEGIN
   .p2align 16
 rvtest_data_1:
   nop
-  addi x14, x13, 4
+  addi a4, a2, 4
   jr ra
   nop
   .word 0xbeefcaf1          // Random word
@@ -178,7 +189,7 @@ rvtest_data_1:
   jr ra
   .skip (2 << 12) - (7*4)
   nop
-  addi x14, x13, 4
+  addi a4, a2, 4
   jr ra
   nop
   .word 0xbeefcaf3          // Random word
@@ -186,7 +197,7 @@ rvtest_data_1:
   jr ra
   .skip (13 << 12) - (7*4)
   nop
-  addi x14, x13, 4
+  addi a4, a2, 4
   jr ra
   nop
   .word 0xbeefcaf3          // Random word

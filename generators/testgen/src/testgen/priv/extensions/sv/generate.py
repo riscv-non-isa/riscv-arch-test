@@ -169,6 +169,8 @@ def keep_image_mapped(sv: SvMode, regs: SvRegs) -> list[str]:
                 ]
             )
         lines.append(f"SREG {pte}, 0({entry})")
+    # Order the stores before the walks that reach them once the test rewrites the root entry.
+    lines.append("sfence.vma")
     return lines
 
 

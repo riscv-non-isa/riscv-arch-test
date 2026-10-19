@@ -36,6 +36,8 @@ RVTEST_BEGIN
 #ifdef S1P12P0_OR_LATER_SUPPORTED
 
 
+main:
+
 // Virtual addresses for code and test regions
 
 // Virtual address of rvtest_data_1
@@ -52,25 +54,18 @@ RVTEST_BEGIN
 // accessible, so the code is mapped again at va_rvtest_code_begin. Registering
 // that alias lets RVTEST_TSBI_GOTO_* resume in the mapping the mode it switches
 // to can fetch from.
-// SAVE_AREA_SETUP takes the M-mode save area in a0 and clobbers t0 and t1.
   LA(a0, Mtramptbl_sv)
   SAVE_AREA_SETUP(va_rvtest_code_begin, rvtest_code_begin, code, LEVEL4)
 
   SATP_SETUP_RV64(sv57) // Enable address translation.
   sfence.vma
 
-  LI(x15, MENVCFG_PBMTE)
-  # T-SBI call to execute instruction: csrc menvcfg, x15
-  # Copy rs1 (x15) to a1 for T-SBI call
-  mv a1, x15
+  LI(t0, MENVCFG_PBMTE)
+  # T-SBI call to execute instruction: csrc menvcfg, t0
+  mv a1, x5
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MENVCFG)
 
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x30a5b073) # csrc menvcfg, x15
-  ecall # T-SBI call to execute instruction at suitable privilege level
-
-  LI(x13, 0x800) // Test signature initialization
+  LI(a2, 0x800) // Test signature initialization
 
 
 // 256TB page at level 4
@@ -79,34 +74,34 @@ RVTEST_BEGIN
   SUPERPAGE_PTE_SETUP_SV57(rvtest_data_1, ((1 << 61) | PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL4)
   sfence.vma
 
-  LI(x14, (va_data >> 48) << 48)
-  LA(x15, rvtest_data_1)
-  slli x15, x15, 16
-  srli x15, x15, 16
-  add x14, x14, x15
-  addi x13, x13, 16
+  LI(a5, (va_data >> 48) << 48)
+  LA(a0, rvtest_data_1)
+  slli a0, a0, 16
+  srli a0, a0, 16
+  add a5, a5, a0
+  addi a2, a2, 16
 
 // Store
 Sv_cp_sv57_svpbmt_disabled_Smode_test1_store:
-  sw x13, 20(x14)
+  sw a2, 20(a5)
   nop
 
 // Load
 Sv_cp_sv57_svpbmt_disabled_Smode_test1_load:
-  lw x8, 20(x14)
+  lw a3, 20(a5)
   nop
 
 // Execute
 Sv_cp_sv57_svpbmt_disabled_Smode_test1_exec:
-  jalr ra, x14, 0
+  jalr ra, a5, 0
   nop
 
+  # Check if x12 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x12, Sv_cp_sv57_svpbmt_disabled_Smode_test1_store, Sv_cp_sv57_svpbmt_disabled_Smode_test1_store_str)
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_cp_sv57_svpbmt_disabled_Smode_test1_store, Sv_cp_sv57_svpbmt_disabled_Smode_test1_store_str)
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_cp_sv57_svpbmt_disabled_Smode_test1_load, Sv_cp_sv57_svpbmt_disabled_Smode_test1_load_str)
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Sv_cp_sv57_svpbmt_disabled_Smode_test1_exec, Sv_cp_sv57_svpbmt_disabled_Smode_test1_exec_str)
+  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_cp_sv57_svpbmt_disabled_Smode_test1_load, Sv_cp_sv57_svpbmt_disabled_Smode_test1_load_str)
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, Sv_cp_sv57_svpbmt_disabled_Smode_test1_exec, Sv_cp_sv57_svpbmt_disabled_Smode_test1_exec_str)
 
 
 // 256TB page at level 4
@@ -115,34 +110,34 @@ Sv_cp_sv57_svpbmt_disabled_Smode_test1_exec:
   SUPERPAGE_PTE_SETUP_SV57(rvtest_data_1, ((2 << 61) | PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL4)
   sfence.vma
 
-  LI(x14, (va_data >> 48) << 48)
-  LA(x15, rvtest_data_1)
-  slli x15, x15, 16
-  srli x15, x15, 16
-  add x14, x14, x15
-  addi x13, x13, 16
+  LI(a5, (va_data >> 48) << 48)
+  LA(a0, rvtest_data_1)
+  slli a0, a0, 16
+  srli a0, a0, 16
+  add a5, a5, a0
+  addi a2, a2, 16
 
 // Store
 Sv_cp_sv57_svpbmt_disabled_Smode_test2_store:
-  sw x13, 20(x14)
+  sw a2, 20(a5)
   nop
 
 // Load
 Sv_cp_sv57_svpbmt_disabled_Smode_test2_load:
-  lw x8, 20(x14)
+  lw a3, 20(a5)
   nop
 
 // Execute
 Sv_cp_sv57_svpbmt_disabled_Smode_test2_exec:
-  jalr ra, x14, 0
+  jalr ra, a5, 0
   nop
 
+  # Check if x12 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x12, Sv_cp_sv57_svpbmt_disabled_Smode_test2_store, Sv_cp_sv57_svpbmt_disabled_Smode_test2_store_str)
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_cp_sv57_svpbmt_disabled_Smode_test2_store, Sv_cp_sv57_svpbmt_disabled_Smode_test2_store_str)
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_cp_sv57_svpbmt_disabled_Smode_test2_load, Sv_cp_sv57_svpbmt_disabled_Smode_test2_load_str)
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Sv_cp_sv57_svpbmt_disabled_Smode_test2_exec, Sv_cp_sv57_svpbmt_disabled_Smode_test2_exec_str)
+  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_cp_sv57_svpbmt_disabled_Smode_test2_load, Sv_cp_sv57_svpbmt_disabled_Smode_test2_load_str)
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, Sv_cp_sv57_svpbmt_disabled_Smode_test2_exec, Sv_cp_sv57_svpbmt_disabled_Smode_test2_exec_str)
 
 
 // 256TB page at level 4
@@ -151,34 +146,34 @@ Sv_cp_sv57_svpbmt_disabled_Smode_test2_exec:
   SUPERPAGE_PTE_SETUP_SV57(rvtest_data_1, ((3 << 61) | PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL4)
   sfence.vma
 
-  LI(x14, (va_data >> 48) << 48)
-  LA(x15, rvtest_data_1)
-  slli x15, x15, 16
-  srli x15, x15, 16
-  add x14, x14, x15
-  addi x13, x13, 16
+  LI(a5, (va_data >> 48) << 48)
+  LA(a0, rvtest_data_1)
+  slli a0, a0, 16
+  srli a0, a0, 16
+  add a5, a5, a0
+  addi a2, a2, 16
 
 // Store
 Sv_cp_sv57_svpbmt_disabled_Smode_test3_store:
-  sw x13, 20(x14)
+  sw a2, 20(a5)
   nop
 
 // Load
 Sv_cp_sv57_svpbmt_disabled_Smode_test3_load:
-  lw x8, 20(x14)
+  lw a3, 20(a5)
   nop
 
 // Execute
 Sv_cp_sv57_svpbmt_disabled_Smode_test3_exec:
-  jalr ra, x14, 0
+  jalr ra, a5, 0
   nop
 
+  # Check if x12 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x12, Sv_cp_sv57_svpbmt_disabled_Smode_test3_store, Sv_cp_sv57_svpbmt_disabled_Smode_test3_store_str)
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_cp_sv57_svpbmt_disabled_Smode_test3_store, Sv_cp_sv57_svpbmt_disabled_Smode_test3_store_str)
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_cp_sv57_svpbmt_disabled_Smode_test3_load, Sv_cp_sv57_svpbmt_disabled_Smode_test3_load_str)
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Sv_cp_sv57_svpbmt_disabled_Smode_test3_exec, Sv_cp_sv57_svpbmt_disabled_Smode_test3_exec_str)
+  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_cp_sv57_svpbmt_disabled_Smode_test3_load, Sv_cp_sv57_svpbmt_disabled_Smode_test3_load_str)
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, Sv_cp_sv57_svpbmt_disabled_Smode_test3_exec, Sv_cp_sv57_svpbmt_disabled_Smode_test3_exec_str)
 
 #endif
 
@@ -195,7 +190,7 @@ RVTEST_DATA_BEGIN
   .p2align 12
 rvtest_data_1:
   nop
-  addi x9, x13, 4
+  addi a4, a2, 4
   jr ra
   nop
   .word 0xbeefcaf1
