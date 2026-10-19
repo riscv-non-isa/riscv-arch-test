@@ -164,15 +164,6 @@
 `ifdef SM_COVERAGE
   `include "Sm_coverage.svh"
 `endif
-`ifdef SMF_COVERAGE
-  `include "SmF_coverage.svh"
-`endif
-`ifdef SMV_COVERAGE
-  `include "SmV_coverage.svh"
-`endif
-`ifdef SMVF_COVERAGE
-  `include "SmVF_coverage.svh"
-`endif
 `ifdef SMMPM_COVERAGE
   `include "Smmpm_coverage.svh"
 `endif
@@ -308,6 +299,9 @@
 `ifdef VF64_COVERAGE
   `include "Vf64_coverage.svh"
 `endif
+`ifdef VF8_COVERAGE
+  `include "Vf8_coverage.svh"
+`endif
 `ifdef VLS16_COVERAGE
   `include "Vls16_coverage.svh"
 `endif
@@ -406,6 +400,9 @@
 `endif
 `ifdef ZFHMIN_COVERAGE
   `include "Zfhmin_coverage.svh"
+`endif
+`ifdef ZIBI_COVERAGE
+  `include "Zibi_coverage.svh"
 `endif
 `ifdef ZIC64BZICBOZ_COVERAGE
   `include "Zic64bZicboz_coverage.svh"

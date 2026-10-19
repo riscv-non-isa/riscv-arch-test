@@ -15,6 +15,7 @@ where they should throw an Illegal Instruction exception if not implemented.
 ==== Sm Machine-Mode CSRs and Instructions
 
 These test CSRs and privileged instructions in machine mode.
+The Sm suite also contains the Sm_F, Sm_V, and Sm_VF tests of the floating-point and vector CSRs and `mstatus.FS`/`mstatus.VS`, which run only when F, Zve32x, or Zve32f is also supported.
 
 include::{testplansdir}/priv/Sm.adoc[]
 
@@ -46,14 +47,6 @@ These test additional CSRs that exist in user mode, and privileged instructions 
 include::{testplansdir}/priv/U.adoc[]
 
 include::norm/U_norm_rules.adoc[]
-
-==== SmF Floating-Point CSRs
-
-These test additional CSRs that exist when floating-point is supported.
-
-include::{testplansdir}/priv/SmF.adoc[]
-
-include::norm/SmF_norm_rules.adoc[]
 
 ==== UF User-Mode Floating-Point CSRs
 

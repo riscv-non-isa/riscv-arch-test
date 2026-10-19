@@ -214,18 +214,6 @@
         `cover_info("//      Sm - Enabled");
         `include "Sm_coverage_init.svh"
     `endif
-    `ifdef COVER_SMF
-        `cover_info("//      SmF - Enabled");
-        `include "SmF_coverage_init.svh"
-    `endif
-    `ifdef COVER_SMV
-        `cover_info("//      SmV - Enabled");
-        `include "SmV_coverage_init.svh"
-    `endif
-    `ifdef COVER_SMVF
-        `cover_info("//      SmVF - Enabled");
-        `include "SmVF_coverage_init.svh"
-    `endif
     `ifdef COVER_SMMPM
         `cover_info("//      Smmpm - Enabled");
         `include "Smmpm_coverage_init.svh"
@@ -406,6 +394,10 @@
         `cover_info("//      Vf64 - Enabled");
         `include "Vf64_coverage_init.svh"
     `endif
+    `ifdef COVER_VF8
+        `cover_info("//      Vf8 - Enabled");
+        `include "Vf8_coverage_init.svh"
+    `endif
     `ifdef COVER_VLS16
         `cover_info("//      Vls16 - Enabled");
         `include "Vls16_coverage_init.svh"
@@ -537,6 +529,10 @@
     `ifdef COVER_ZFHMIN
         `cover_info("//      Zfhmin - Enabled");
         `include "Zfhmin_coverage_init.svh"
+    `endif
+    `ifdef COVER_ZIBI
+        `cover_info("//      Zibi - Enabled");
+        `include "Zibi_coverage_init.svh"
     `endif
     `ifdef COVER_ZIC64BZICBOZ
         `cover_info("//      Zic64bZicboz - Enabled");
