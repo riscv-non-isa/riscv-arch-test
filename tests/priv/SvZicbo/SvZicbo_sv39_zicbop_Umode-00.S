@@ -34,8 +34,6 @@ RVTEST_BEGIN
 /////////////////////////////////
 
 
-main:
-
 // Virtual addresses for code and test regions
 
 // Virtual address of rvtest_data_1
@@ -52,35 +50,36 @@ main:
 // accessible, so the code is mapped again at va_rvtest_code_begin. Registering
 // that alias lets RVTEST_TSBI_GOTO_* resume in the mapping the mode it switches
 // to can fetch from.
+// SAVE_AREA_SETUP takes the M-mode save area in a0 and clobbers t0 and t1.
   LA(a0, Mtramptbl_sv)
   SAVE_AREA_SETUP(va_rvtest_code_begin, rvtest_code_begin, code, LEVEL2)
 
   SATP_SETUP_RV64(sv39) // Enable address translation.
   sfence.vma
 
-  LI(t0, MENVCFG_CBZE)
-  # T-SBI call to execute instruction: csrs menvcfg, t0
-  mv a1, x5
+  LI(x6, MENVCFG_CBZE)
+  # T-SBI call to execute instruction: csrs menvcfg, x6
+  mv a1, x6
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MENVCFG)
-  csrs senvcfg, t0
+  csrs senvcfg, x6
 
   SUPERPAGE_PTE_SETUP_SV39(rvtest_data_1, (PTE_D | PTE_A | PTE_U | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL2)
   sfence.vma
 
-  LI(a5, (va_data >> 30) << 30)
-  LA(a0, rvtest_data_1)
-  slli a0, a0, 34
-  srli a0, a0, 34
-  add a5, a5, a0
+  LI(x14, (va_data >> 30) << 30)
+  LA(x6, rvtest_data_1)
+  slli x6, x6, 34
+  srli x6, x6, 34
+  add x14, x14, x6
   RVTEST_TSBI_GOTO_UMODE
 SvZicbo_cg_cp_prefetch_test1_prefetch_i:
-  prefetch.i 0(a5)
+  prefetch.i 0(x14)
   nop
 SvZicbo_cg_cp_prefetch_test1_prefetch_r:
-  prefetch.r 0(a5)
+  prefetch.r 0(x14)
   nop
 SvZicbo_cg_cp_prefetch_test1_prefetch_w:
-  prefetch.w 0(a5)
+  prefetch.w 0(x14)
   nop
   RVTEST_TSBI_GOTO_SMODE
 
@@ -88,20 +87,20 @@ SvZicbo_cg_cp_prefetch_test1_prefetch_w:
   SUPERPAGE_PTE_SETUP_SV39(rvtest_data_1, (PTE_D | PTE_A | PTE_U | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL1)
   sfence.vma
 
-  LI(a5, (va_data >> 21) << 21)
-  LA(a0, rvtest_data_1)
-  slli a0, a0, 43
-  srli a0, a0, 43
-  add a5, a5, a0
+  LI(x14, (va_data >> 21) << 21)
+  LA(x6, rvtest_data_1)
+  slli x6, x6, 43
+  srli x6, x6, 43
+  add x14, x14, x6
   RVTEST_TSBI_GOTO_UMODE
 SvZicbo_cg_cp_prefetch_test2_prefetch_i:
-  prefetch.i 0(a5)
+  prefetch.i 0(x14)
   nop
 SvZicbo_cg_cp_prefetch_test2_prefetch_r:
-  prefetch.r 0(a5)
+  prefetch.r 0(x14)
   nop
 SvZicbo_cg_cp_prefetch_test2_prefetch_w:
-  prefetch.w 0(a5)
+  prefetch.w 0(x14)
   nop
   RVTEST_TSBI_GOTO_SMODE
 
@@ -110,20 +109,20 @@ SvZicbo_cg_cp_prefetch_test2_prefetch_w:
   PTE_SETUP_SV39(rvtest_data_1, (PTE_D | PTE_A | PTE_U | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL0)
   sfence.vma
 
-  LI(a5, (va_data >> 12) << 12)
-  LA(a0, rvtest_data_1)
-  slli a0, a0, 52
-  srli a0, a0, 52
-  add a5, a5, a0
+  LI(x14, (va_data >> 12) << 12)
+  LA(x6, rvtest_data_1)
+  slli x6, x6, 52
+  srli x6, x6, 52
+  add x14, x14, x6
   RVTEST_TSBI_GOTO_UMODE
 SvZicbo_cg_cp_prefetch_test3_prefetch_i:
-  prefetch.i 0(a5)
+  prefetch.i 0(x14)
   nop
 SvZicbo_cg_cp_prefetch_test3_prefetch_r:
-  prefetch.r 0(a5)
+  prefetch.r 0(x14)
   nop
 SvZicbo_cg_cp_prefetch_test3_prefetch_w:
-  prefetch.w 0(a5)
+  prefetch.w 0(x14)
   nop
   RVTEST_TSBI_GOTO_SMODE
 
@@ -141,7 +140,7 @@ RVTEST_DATA_BEGIN
   .p2align 12
 rvtest_data_1:
   nop
-  addi a4, a2, 4
+  addi x9, x15, 4
   jr ra
   nop
   .word 0xbeefcaf1
