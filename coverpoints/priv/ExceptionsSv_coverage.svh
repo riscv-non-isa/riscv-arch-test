@@ -61,6 +61,8 @@ covergroup ExceptionsSv_cg with function sample(ins_t ins);
     // A fetch, load or store that starts in the last halfword of a page, {trapped, page fault, stval[11:0], address[11:0]}
     // (for the fetch, also sepc[11:0], the start of the instruction): it completes, or takes a page fault on the part in
     // the first page (stval at that halfword) or on the part in the second page (stval at the start of that page).
+    // A trace marks the trap with the trap flag or with a write of scause (some report only a change), so either counts.
+    // The load and store address is rs1 + imm, since a trace may report the address of the part in the second page.
     `ifdef UDB_MISALIGNED_LDST
         `define EXCEPTIONSSV_CROSS_LOAD
         `define EXCEPTIONSSV_CROSS_STORE
@@ -73,10 +75,10 @@ covergroup ExceptionsSv_cg with function sample(ins_t ins);
         `endif
     `endif
     `ifdef EXCEPTIONSSV_CROSS_LOAD
-        lw_cross_outcome: coverpoint {ins.current.trap,
+        lw_cross_outcome: coverpoint {ins.current.trap | ins.current.csr_wb[CSR_SCAUSE],
                                       get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "scause", "code") == `UDB_MXLEN'(LOAD_PAGE_FAULT),
                                       get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "stval", "stval")[11:0],
-                                      ins.current.virt_adr_d[11:0]} {
+                                      {ins.current.rs1_val + ins.current.imm}[11:0]} {
             `ifdef UDB_MISALIGNED_LDST
                 wildcard bins completes     = {26'b0_?_????????????_111111111110};
             `endif
@@ -87,10 +89,10 @@ covergroup ExceptionsSv_cg with function sample(ins_t ins);
         }
     `endif
     `ifdef EXCEPTIONSSV_CROSS_STORE
-        sw_cross_outcome: coverpoint {ins.current.trap,
+        sw_cross_outcome: coverpoint {ins.current.trap | ins.current.csr_wb[CSR_SCAUSE],
                                       get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "scause", "code") == `UDB_MXLEN'(STORE_AMO_PAGE_FAULT),
                                       get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "stval", "stval")[11:0],
-                                      ins.current.virt_adr_d[11:0]} {
+                                      {ins.current.rs1_val + ins.current.imm}[11:0]} {
             `ifdef UDB_MISALIGNED_LDST
                 wildcard bins completes     = {26'b0_?_????????????_111111111110};
             `endif
@@ -103,7 +105,7 @@ covergroup ExceptionsSv_cg with function sample(ins_t ins);
     // The fetch of the jalr target, a 4-byte instruction.  A trace reports a fault on that fetch either in the
     // jalr's own record or in the next one, so jalr_cross accepts the jalr as the current or the previous instruction.
     `ifdef ZCA_SUPPORTED
-        jalr_cross_outcome: coverpoint {ins.current.trap,
+        jalr_cross_outcome: coverpoint {ins.current.trap | ins.current.csr_wb[CSR_SCAUSE],
                                         get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "scause", "code") == `UDB_MXLEN'(INSTRUCTION_PAGE_FAULT),
                                         get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "stval", "stval")[11:0],
                                         get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "sepc", "sepc")[11:0],
