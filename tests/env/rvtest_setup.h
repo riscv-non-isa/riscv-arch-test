@@ -236,6 +236,17 @@
     call rvmodel_io_write_str
     j       rvtest_fail_epilogs
 
+  // Failure entries for impossible interrupt causes: print the summary line, then clean up.
+  // rvtest_trap_fail_summary is for lower modes; the _mmode entry is for M-mode trap context.
+  rvtest_trap_fail_summary:
+    #ifdef STANDARD_SM_SUPPORTED
+      RVTEST_TSBI_GOTO_MMODE
+    #endif
+  rvtest_trap_fail_summary_mmode:
+    LA(a0, failstr)
+    call rvmodel_io_write_str
+    j       rvtest_fail_epilogs_mmode
+
   rvtest_trap_setup_failed:
     LA(a0, failstr)
     call rvmodel_io_write_str

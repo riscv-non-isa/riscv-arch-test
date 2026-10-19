@@ -1276,11 +1276,11 @@ rvtest_\__MODE__\()prolog_done:
 
 rvtest_\__MODE__\()endtest:                      // impossible cause landed here
 .ifc \__MODE__ , M
-        LA(     T1, rvtest_fail_epilogs_mmode)    // M-mode is already in trap context
+        LA(     T1, rvtest_trap_fail_summary_mmode) // M-mode is already in trap context
 .else
-        LA(     T1, rvtest_fail_epilogs)          // switch to M-mode before cleanup
+        LA(     T1, rvtest_trap_fail_summary)     // switch to M-mode before reporting
 .endif
-        jr      T1                                // long jump to failure cleanup
+        jr      T1                                // long jump to failure summary and cleanup
 
 //---------- Common Handler ----------
 // Entered via jal from per-cause stub. T6 has the stub's return address
@@ -1776,7 +1776,7 @@ tsbi_\__MODE__\()instr_dispatch:
           lwu     T3, 0(T2)                       // T3 = table instruction
         #endif
         beq     T3, a0, tsbi_\__MODE__\()instr_found
-        beqz    T3, tsbi_instr_not_found
+        beqz    T3, tsbi_\__MODE__\()instr_not_found
         addi    T2, T2, 8                          // skip instruction and ret
         j       1b
 tsbi_\__MODE__\()instr_found:
@@ -1788,8 +1788,19 @@ tsbi_\__MODE__\()instr_found:
         csrw    CSR_XEPC, T3                     // xepc += 4
         j       resto_\__MODE__\()rtn           // restore handler regs and xret
 
+.ifnc \__MODE__ , M
+
+tsbi_\__MODE__\()instr_not_found:
+        // Lower modes cannot print or run the M-mode epilogs: switch to M-mode first.
+        mv      T4, a0                             // T4 is preserved across the mode switch
+        RVTEST_TSBI_GOTO_MMODE
+        mv      a0, T4
+        j       tsbi_instr_not_found
+.endif
+
 .ifc \__MODE__ , M
 
+tsbi_Minstr_not_found:
 tsbi_instr_not_found:
         // Requested instruction is not in the table: print the offending encoding and
         // terminate the simulation. Registers may be clobbered freely: this never returns.
