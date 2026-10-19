@@ -253,6 +253,8 @@ RETURN_INSTRUCTION:
   nop
   jr ra
   .option pop
+  .p2align 12
+  .p2align (UDB_PMP_GRANULARITY)
 
 // Testcase strings
 PMPZicbo_cp_prefetch_entry5_lxwr1000_1_prefetch_i_str: .string "\"test: 1; cg: PMPZicbo; cp: cp_prefetch; bin: entry5_lxwr1000_1_prefetch.i\""

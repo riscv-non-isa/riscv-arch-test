@@ -33,7 +33,7 @@ coverpoints:
 
       NOTE: Unable to test this matches Sail until Sail supports hpm counter incrementing.
     rules:
-      - norm:mhpmevent_inh_op
+      - mhpmevent_inh_op
   - name: cp_of_set_on_overflow
     goal: |-
       OF bit is set when hpmcounter
@@ -61,11 +61,11 @@ coverpoints:
 
       NOTE: Unable to test this matches Sail until Sail supports hpm counter incrementing.
     rules:
-      - norm:mhpmevent_of_op,
-      - norm:mhpmevent_of_bit_set
-      - norm:hpmcounter_overflow
-      - norm:count_overflow_interrupt
-      - norm:LCOFIP_op
+      - mhpmevent_of_op
+      - mhpmevent_of_bit_set
+      - hpmcounter_overflow
+      - count_overflow_interrupt
+      - lcofip_op
   - name: cp_overflow_hw_only
     goal: |-
       Counter overflow interrupt triggered by hardware
@@ -82,7 +82,7 @@ coverpoints:
     expectation: OF stays 0
     bins: 2 modes
     rules:
-      - norm:count_overflow_trigger
+      - count_overflow_trigger
   - name: cp_lcofip_hw_only
     goal: counter overflow only results form hardware increments of counter registers.
     description: |-
@@ -96,7 +96,7 @@ coverpoints:
     expectation: mip.LCOFIP remains 0
     bins: "1"
     rules:
-      - norm:LCOFIP_op
+      - lcofip_op
   - name: cp_scountovf_shadow
     goal: scountovf shadows OF bits of mhpmenvent3:31
     description: |-
@@ -107,7 +107,7 @@ coverpoints:
     expectation: scountovf should match 1s in OF fields
     bins: "31"
     rules:
-      - norm:scountovf_op
+      - scountovf_op
   - name: cp_scountovf_mcounteren
     goal: scountovf masked by mcounteren
     description: |-
@@ -120,8 +120,8 @@ coverpoints:
       in S-mode, scountovf =value written & mcounteren (except bits 2:0 are always 0)
     bins: 3 OF * 31 mcounteren
     rules:
-      - norm:scountovf_mmode_read_access
-      - norm:scountovf_smode_read_access
+      - scountovf_mmode_read_access
+      - scountovf_smode_read_access
   - name: cp_sscofpmf_access
     goal: Access hpm CSRs
     description: |-
@@ -134,9 +134,9 @@ coverpoints:
       Other accesses should succeed
     bins: 5 accesses * 31 CSRs
     rules:
-      - norm:scountovf_mmode_read_access
-      - norm:scountovf_smode_read_access
-      - norm:mhpmeventh_presence
+      - scountovf_mmode_read_access
+      - scountovf_smode_read_access
+      - mhpmeventh_presence
   - name: cp_lcofi_m
     goal: Interrupt pending and enable
     description: |-
@@ -145,9 +145,9 @@ coverpoints:
     expectation: Trap to M mode if enabled and pending
     bins: 2 pending * 2 enabled * 2 deleg
     rules:
-      - norm:mip_lcofip_mie_lcofie_op
-      - norm:mip_lcofip_acc
-      - norm:sip_sie_Sscofpmf
+      - mip_lcofip_mie_lcofie_op
+      - mip_lcofip_acc
+      - sip_sie_Sscofpmf
   - name: cp_lcofi_sip_s
     goal: Interrupt from sip.LCOFIP
     description: |-
@@ -156,7 +156,7 @@ coverpoints:
     expectation: Trap to S if enabled and pending
     bins: 2 pending * 2 enabled
     rules:
-      - norm:sip_sie_Sscofpmf
+      - sip_sie_Sscofpmf
   - name: cp_lcofi_sip_u
     goal: Interrupt from sip.LCOFIP
     description: |-
@@ -168,7 +168,7 @@ coverpoints:
       else trap to M if enabled and pending
     bins: 2 pending * 2 enabled
     rules:
-      - norm:sip_sie_Sscofpmf
+      - sip_sie_Sscofpmf
   - name: |-
       cp_lcofip_priority_m
       cp_lcofip_priority_s
@@ -188,5 +188,5 @@ coverpoints:
     expectation: Highest priority interrupt fires.  LCOFIP only fires if none of the others are pending because it is lowest priority.
     bins: 7 interrupts
     rules:
-      - norm:intr_M_mode_pri
-      - norm:sip_sie_priority_bit_order
+      - intr_m_mode_pri
+      - sip_sie_priority_bit_order

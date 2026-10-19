@@ -11,5 +11,5 @@ coverpoints:
       -1 writes 1s to every bit with a non-read-only-zero hpmcounter, matching ref model
     bins: "2"
     rules:
-      - For any hpmcounter that is not read-only zero, the corresponding bit in hcounteren must be writable.
+      - Shcounterenw_hpmcounter_hcounteren
   - heading: check that hcounteren works with mcounteren and scounteren to control access to counters from lower privilege modes.
