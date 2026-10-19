@@ -8,9 +8,9 @@
 
 """SsstateenH test generator.
 
-The suite boots to HS-mode and leaves mstateen at its boot value, so it also runs on harts without Smstateen.
-hstateen0 controls VS-mode and VU-mode access but not HS-mode access.  An access that only hstateen0 forbids raises
-virtual instruction; so does any VU-mode access to an S or H CSR that HS-mode could make.
+The suite boots to HS-mode.  It sets mstateen0 through T-SBI and bit 63 of mstateen1-3 in M-mode, entered through
+T-SBI.  hstateen0 controls VS-mode and VU-mode access but not HS-mode access.  An access that only hstateen0 forbids
+raises virtual instruction; so does any VU-mode access to an S or H CSR that HS-mode could make.
 """
 
 from testgen.asm.csr import csr_walk_test
@@ -20,7 +20,10 @@ from testgen.data.test_chunk import TestChunk
 from testgen.priv.extensions.StateenHCommon import (
     HSTATEEN0_ENVCFG,
     HSTATEEN0_SE0,
+    access_csrs,
     hstateen0_bit,
+    hstateen123_bit63,
+    mstateen123_bit63,
     read_csrs,
     set_stateen_state,
 )
@@ -92,17 +95,49 @@ def _gate_tests(test_data: TestData, mode: str) -> list[str]:
 
 
 def _stateen123_tests(test_data: TestData, mode: str) -> list[str]:
-    """Read sstateen1-3 and hstateen1-3 (and the high halves) in mode, and in VS and VU modes hstateen0."""
+    """Access sstateen1-3 and hstateen1-3 (and the high halves) in mode for each reachable value of bit 63 of the
+    matching mstateen CSR and, in VS and VU modes, of the matching hstateen CSR.  In VS and VU modes, also read
+    hstateen0.
+
+    Bit 63 of hstateen1-3 is written from HS-mode while bit 63 of mstateen1-3 is 1, because it is read-only zero
+    otherwise, so the (mstateen, hstateen) states are (0, 0), (1, 0) and (1, 1).
+    """
     covergroup = _covergroup(mode)
+    coverpoint = f"cp_{mode}_stateen123"
+    if mode == "hs":
+        result = "Illegal instruction when mstateen bit 63 is 0, else the access succeeds and sstateen1-3 read 0"
+        states = [(0, None), (1, None)]
+    elif mode == "vs":
+        result = (
+            "Illegal instruction when mstateen bit 63 is 0.  Otherwise virtual instruction for hstateen1-3, and for\n"
+            "sstateen1-3 when hstateen bit 63 is 0; else the sstateen access succeeds and reads 0"
+        )
+        states = [(0, 0), (1, 0), (1, 1)]
+    else:
+        result = "Illegal instruction when mstateen bit 63 is 0, else virtual instruction"
+        states = [(0, 0), (1, 0), (1, 1)]
     lines = [
         comment_banner(
-            f"cp_{mode}_stateen123",
-            f"Read sstateen1-3 and hstateen1-3 in {mode.upper()}-mode.  Bit 63 of the matching mstateen and hstateen\n"
-            "CSRs controls access",
+            coverpoint,
+            f"Read, write, clear and set sstateen1-3 and hstateen1-3 in {mode.upper()}-mode for each value of bit 63\n"
+            f"of the matching mstateen{' and hstateen' if mode != 'hs' else ''} CSRs.\n{result}",
         ),
-        *([f"RVTEST_TSBI_GOTO_{mode.upper()}MODE"] if mode != "hs" else []),
-        *read_csrs(test_data, STATEEN123, mode, f"cp_{mode}_stateen123", covergroup),
     ]
+    for m, h in states:
+        lines.append(f"# mstateen1-3 bit 63 = {m}" + (f", hstateen1-3 bit 63 = {h}" if h is not None else ""))
+        if h is not None:
+            lines.extend([*mstateen123_bit63(test_data, 1), *hstateen123_bit63(test_data, h)])
+        lines.extend(
+            [
+                *(mstateen123_bit63(test_data, m) if h is None or not m else []),
+                *([f"RVTEST_TSBI_GOTO_{mode.upper()}MODE"] if mode != "hs" else []),
+                *access_csrs(
+                    test_data, STATEEN123, f"m{m}" + (f"_h{h}" if h is not None else ""), coverpoint, covergroup
+                ),
+                *(["RVTEST_TSBI_GOTO_SMODE"] if mode != "hs" else []),
+            ]
+        )
+    lines.extend([*mstateen123_bit63(test_data, 1), *hstateen123_bit63(test_data, 1)])
     if mode != "hs":
         lines.extend(
             [
@@ -111,6 +146,7 @@ def _stateen123_tests(test_data: TestData, mode: str) -> list[str]:
                     f"Read hstateen0 (and hstateen0h) in {mode.upper()}-mode.  Virtual instruction when HS-mode could\n"
                     "read it",
                 ),
+                f"RVTEST_TSBI_GOTO_{mode.upper()}MODE",
                 *read_csrs(test_data, ["hstateen0", "hstateen0h"], mode, f"cp_{mode}_hstateen0", covergroup),
                 "RVTEST_TSBI_GOTO_SMODE",
             ]

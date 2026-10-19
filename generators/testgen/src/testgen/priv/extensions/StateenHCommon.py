@@ -23,6 +23,10 @@ MSTATEEN0_SE0 = ("MSTATEEN_HSTATEEN", "MSTATEENH_HSTATEEN")
 MSTATEEN0_ENVCFG = ("MSTATEEN0_HENVCFG", "MSTATEEN0H_HENVCFG")
 MSTATEEN0_P1P13 = ("MSTATEEN0_PRIV113", "MSTATEEN0H_PRIV113")
 
+# Bit 63 of mstateen1-3 controls sstateen1-3 and hstateen1-3; bit 63 of hstateen1-3 controls VS-mode access to
+# sstateen1-3.  On RV32 they are bit 31 of the high-half CSRs.
+STATEEN123_N = (1, 2, 3)
+
 # Preprocessor conditions under which each gated CSR exists
 CSR_GATES = {
     "hstateen0h": "__riscv_xlen == 32",
@@ -155,3 +159,68 @@ def read_in_mode(
         *read_csrs(test_data, csrs, suffix, coverpoint, covergroup, either_causes),
         "RVTEST_TSBI_GOTO_SMODE",
     ]
+
+
+def mstateen123_bit63(test_data: TestData, value: int) -> list[str]:
+    """From HS-mode, set (value 1) or clear (value 0) bit 63 of mstateen1-3 in M-mode, then return to HS-mode."""
+    reg = test_data.int_regs.get_register()
+    op = "csrs" if value else "csrc"
+    lines = [
+        "RVTEST_TSBI_GOTO_MMODE",
+        "#if __riscv_xlen == 64",
+        f"LI(x{reg}, MSTATEEN_HSTATEEN)",
+        *[f"{op} mstateen{n}, x{reg}" for n in STATEEN123_N],
+        "#else",
+        f"LI(x{reg}, MSTATEENH_HSTATEEN)",
+        *[f"{op} mstateen{n}h, x{reg}" for n in STATEEN123_N],
+        "#endif",
+        "RVTEST_TSBI_GOTO_SMODE",
+    ]
+    test_data.int_regs.return_register(reg)
+    return lines
+
+
+def hstateen123_bit63(test_data: TestData, value: int) -> list[str]:
+    """Set (value 1) or clear (value 0) bit 63 of hstateen1-3 from HS-mode, with bit 63 of mstateen1-3 set."""
+    reg = test_data.int_regs.get_register()
+    op = "csrs" if value else "csrc"
+    lines = [
+        "#if __riscv_xlen == 64",
+        f"LI(x{reg}, HSTATEEN_SSTATEEN)",
+        *[f"{op} hstateen{n}, x{reg}" for n in STATEEN123_N],
+        "#else",
+        f"LI(x{reg}, HSTATEENH_SSTATEEN)",
+        *[f"{op} hstateen{n}h, x{reg}" for n in STATEEN123_N],
+        "#endif",
+    ]
+    test_data.int_regs.return_register(reg)
+    return lines
+
+
+def access_csrs(test_data: TestData, csrs: list[str], suffix: str, coverpoint: str, covergroup: str) -> list[str]:
+    """Read each CSR, then write, clear and set all 1s, reading it back after each.
+
+    A read that traps records 42 and the trap; a write that traps records the trap.
+    """
+    rd, rs = test_data.int_regs.get_registers(2)
+    lines = [f"LI(x{rs}, -1)"]
+    for csr in csrs:
+        body = [
+            f"LI(x{rd}, 42)",
+            test_data.add_testcase(f"{csr}_csrr_{suffix}", coverpoint, covergroup),
+            f"csrr x{rd}, {csr}",
+            write_sigupd(rd, test_data),
+        ]
+        for op in ("csrw", "csrc", "csrs"):
+            body.extend(
+                [
+                    test_data.add_testcase(f"{csr}_{op}_{suffix}", coverpoint, covergroup),
+                    f"{op} {csr}, x{rs}",
+                    f"LI(x{rd}, 42)",
+                    f"csrr x{rd}, {csr}",
+                    write_sigupd(rd, test_data),
+                ]
+            )
+        lines.extend(gated(body, CSR_GATES.get(csr)))
+    test_data.int_regs.return_registers([rd, rs])
+    return lines

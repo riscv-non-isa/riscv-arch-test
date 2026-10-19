@@ -47,6 +47,11 @@
   },
 
   "csr": {
+    // With H, bit 31 of mstateen1h-3h (bit 63 of mstateen1-3) must be writable (norm:mstateen_bit_63_roz);
+    // Whisper makes it read-only zero
+    "mstateen1h": { "mask": "0x80000000", "poke_mask": "0x80000000" },
+    "mstateen2h": { "mask": "0x80000000", "poke_mask": "0x80000000" },
+    "mstateen3h": { "mask": "0x80000000", "poke_mask": "0x80000000" },
     "vstart": {
       "mask": "0xff",
       "poke_mask": "0xff"

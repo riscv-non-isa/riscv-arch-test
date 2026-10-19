@@ -8,6 +8,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
+    SmstateenH_m_cg = new();     SmstateenH_m_cg.set_inst_name("obj_SmstateenH_m");
     SmstateenH_hs_cg = new();    SmstateenH_hs_cg.set_inst_name("obj_SmstateenH_hs");
     SmstateenH_vs_cg = new();    SmstateenH_vs_cg.set_inst_name("obj_SmstateenH_vs");
     SmstateenH_vu_cg = new();    SmstateenH_vu_cg.set_inst_name("obj_SmstateenH_vu");

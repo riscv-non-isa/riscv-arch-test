@@ -2,7 +2,7 @@
 //
 // RISC-V Architectural Functional Coverage Covergroups
 //
-// Smstateen hypervisor tests executed in HS, VS and VU modes.
+// Smstateen hypervisor tests executed in M, HS, VS and VU modes.
 // Written: David_Harris@hmc.edu 29 September 2026
 //
 // Copyright (C) 2026 Harvey Mudd College
@@ -78,6 +78,49 @@
         bins zero = {0}; \
         bins one  = {1}; \
     }
+
+// Bit 63 (bit 31 of mstateen1h-3h on RV32) of the mstateen CSR that controls hstateen CSR csr.  Bits 1:0 of the CSR
+// number give N.
+function bit smstateenh_mstateen_bit63(int hart, int issue, logic [11:0] csr);
+    string name;
+    `ifdef UDB_MXLEN_64
+        name = $sformatf("mstateen%0d", csr[1:0]);
+    `else
+        name = $sformatf("mstateen%0dh", csr[1:0]);
+    `endif
+    return get_csr_val(hart, issue, `SAMPLE_BEFORE, name, name)[`UDB_MXLEN-1];
+endfunction
+
+covergroup SmstateenH_m_cg with function sample(ins_t ins);
+    option.per_instance = 0;
+    `include "general/RISCV_coverage_standard_coverpoints.svh"
+
+    // Set and clear bit 63 of hstateen1-3 (bit 31 of hstateen1h-3h on RV32) with bit 63 of the matching mstateen CSR
+    // = 0 and 1.  The hstateen bit is writable when the mstateen bit is 1 and reads as zero when it is 0.
+    csrop: coverpoint ins.current.insn {
+        wildcard bins csrrs = {CSRRS};
+        wildcard bins csrrc = {CSRRC};
+    }
+    hstateen123 : coverpoint ins.current.insn[31:20] {
+        `ifdef UDB_MXLEN_64
+            bins hstateen1 = {CSR_HSTATEEN1};
+            bins hstateen2 = {CSR_HSTATEEN2};
+            bins hstateen3 = {CSR_HSTATEEN3};
+        `else
+            bins hstateen1h = {CSR_HSTATEEN1H};
+            bins hstateen2h = {CSR_HSTATEEN2H};
+            bins hstateen3h = {CSR_HSTATEEN3H};
+        `endif
+    }
+    rs1_bit63 : coverpoint ins.current.rs1_val[`UDB_MXLEN-1] {
+        bins one = {1};
+    }
+    mstateen123_se : coverpoint smstateenh_mstateen_bit63(ins.hart, ins.issue, ins.current.insn[31:20]) {
+        bins zero = {0};
+        bins one  = {1};
+    }
+    cp_m_hstateen123_bit63: cross priv_mode_m, csrop, hstateen123, rs1_bit63, mstateen123_se;
+endgroup
 
 covergroup SmstateenH_hs_cg with function sample(ins_t ins);
     option.per_instance = 0;
@@ -156,6 +199,7 @@ covergroup SmstateenH_vu_cg with function sample(ins_t ins);
 endgroup
 
 function void smstateenh_sample(int hart, int issue, ins_t ins);
+    SmstateenH_m_cg.sample(ins);
     SmstateenH_hs_cg.sample(ins);
     SmstateenH_vs_cg.sample(ins);
     SmstateenH_vu_cg.sample(ins);

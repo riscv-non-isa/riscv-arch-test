@@ -15,12 +15,14 @@ VS-mode or VU-mode access that hstateen0 or the H extension forbids raises virtu
 A VS-mode or VU-mode access to hedelegh (RV32) with mstateen0.P1P13 = 0 may raise either illegal instruction (the
 stateen rule) or virtual instruction (the high-half hypervisor CSR rule, since hedeleg is accessible in HS-mode
 whatever P1P13 is), so the test accepts both.
+
+In M-mode, bit 63 of mstateen1-3 makes bit 63 of the matching hstateen CSR writable (1) or read-only zero (0).
 """
 
 from itertools import product
 
 from testgen.asm.csr import csr_walk_test
-from testgen.asm.helpers import comment_banner
+from testgen.asm.helpers import comment_banner, write_sigupd
 from testgen.data.state import TestData
 from testgen.data.test_chunk import TestChunk
 from testgen.priv.extensions.StateenHCommon import (
@@ -29,6 +31,7 @@ from testgen.priv.extensions.StateenHCommon import (
     MSTATEEN0_ENVCFG,
     MSTATEEN0_P1P13,
     MSTATEEN0_SE0,
+    STATEEN123_N,
     hstateen0_bit,
     mstateen0_bit,
     read_in_mode,
@@ -145,6 +148,62 @@ def _hstateen0_roz_tests(test_data: TestData) -> list[str]:
     return lines
 
 
+def _hstateen123_m_tests(test_data: TestData) -> list[str]:
+    """In M-mode, set and clear bit 63 of hstateen1-3 with bit 63 of mstateen1-3 = 1 and then 0, reading both back.
+
+    Bit 63 of each hstateen CSR is writable while the matching mstateen bit is 1 and reads as zero while it is 0.  The
+    hstateen bit is set before mstateen bit 63 is cleared, so the first read with it clear shows the read-only zero.
+    Afterwards bit 63 of mstateen1-3 is set again and hstateen1-3 are left with an unspecified bit 63.
+    """
+    coverpoint = "cp_m_hstateen123_bit63"
+    covergroup = _covergroup("m")
+    rd, mask = test_data.int_regs.get_registers(2)
+    lines = [
+        comment_banner(
+            coverpoint,
+            "In M-mode, set and clear bit 63 of hstateen1-3 (bit 31 of hstateen1h-3h on RV32) with bit 63 of the\n"
+            "matching mstateen CSR = 1 and 0, and read both back.  The hstateen bit is writable when the mstateen bit\n"
+            "is 1, and reads as zero when it is 0",
+        ),
+        "RVTEST_TSBI_GOTO_MMODE",
+    ]
+    for xlen, half, bit in ((64, "", "MSTATEEN_HSTATEEN"), (32, "h", "MSTATEENH_HSTATEEN")):
+        lines.extend([f"#if __riscv_xlen == {xlen}", f"LI(x{mask}, {bit})"])
+        for n in STATEEN123_N:
+            mcsr, hcsr = f"mstateen{n}{half}", f"hstateen{n}{half}"
+            for m in (1, 0):
+                lines.extend(
+                    [
+                        f"{'csrs' if m else 'csrc'} {mcsr}, x{mask}",
+                        test_data.add_testcase(f"{mcsr}_m{m}", coverpoint, covergroup),
+                        f"csrr x{rd}, {mcsr}",
+                        write_sigupd(rd, test_data),
+                    ]
+                )
+                if not m:
+                    lines.extend(
+                        [
+                            test_data.add_testcase(f"{hcsr}_roz", coverpoint, covergroup),
+                            f"csrr x{rd}, {hcsr}",
+                            write_sigupd(rd, test_data),
+                        ]
+                    )
+                for op in ("csrc", "csrs") if m else ("csrs", "csrc"):
+                    lines.extend(
+                        [
+                            test_data.add_testcase(f"{hcsr}_{op}_m{m}", coverpoint, covergroup),
+                            f"{op} {hcsr}, x{mask}",
+                            f"csrr x{rd}, {hcsr}",
+                            write_sigupd(rd, test_data),
+                        ]
+                    )
+            lines.append(f"csrs {mcsr}, x{mask}")
+        lines.append("#endif")
+    lines.append("RVTEST_TSBI_GOTO_SMODE")
+    test_data.int_regs.return_registers([rd, mask])
+    return lines
+
+
 @add_priv_test_generator(
     "SmstateenH",
     required_extensions=["H", "Smstateen"],
@@ -160,6 +219,9 @@ def make_smstateenh(test_data: TestData) -> list[TestChunk]:
     for mode in ("vs", "vu"):
         tc = test_data.new_test_chunk(test_chunks, mode)
         tc.code.extend(_mode_tests(test_data, mode))
+
+    tc = test_data.new_test_chunk(test_chunks, "m")
+    tc.code.extend(_hstateen123_m_tests(test_data))
 
     test_chunks.append(test_data.end_test_chunk())
     return test_chunks

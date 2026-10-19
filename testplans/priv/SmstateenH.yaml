@@ -7,7 +7,8 @@ notes: |
   When the mstateen0 bit is 1, a VS-mode or VU-mode access that hstateen0 or the H extension forbids raises a
   virtual-instruction exception instead.  The hstateen0 bit is written while the mstateen0 bit is 1, so the
   (mstateen0, hstateen0) states tested are (0, 0), (1, 0) and (1, 1).  On RV32, SE0, ENVCFG and P1P13 are in
-  mstateen0h and hstateen0h.  Each read that traps records 42 and the trap.
+  mstateen0h and hstateen0h.  Each read that traps records 42 and the trap.  The M-mode tests of bit 63 of
+  hstateen1-3 enter M-mode through T-SBI.
 coverpoints:
   - heading: HS-mode (SmstateenH_hs_cg)
   - name: cp_hs_mstateen0_se0
@@ -62,3 +63,9 @@ coverpoints:
     description: RV32 with Sm1p13 only.  Read hedelegh in VU-mode with mstateen0.P1P13 = 0 and 1
     expectation: With P1P13 = 0, either illegal instruction (the stateen rule) or virtual instruction (hedeleg is accessible in HS-mode whatever P1P13 is, so the high-half hypervisor CSR rule applies); the test accepts either.  With P1P13 = 1, virtual instruction
     bins: 2 mstateen0.P1P13
+  - heading: M-mode (SmstateenH_m_cg)
+  - name: cp_m_hstateen123_bit63
+    goal: Bit 63 of mstateen1-3 makes bit 63 of the matching hstateen CSR writable or read-only zero
+    description: In M-mode, for each of hstateen1-3 (hstateen1h-3h on RV32, bit 31), set bit 63 of the matching mstateen CSR and clear and set bit 63 of hstateen with csrrc and csrrs; then clear the mstateen bit and set and clear the hstateen bit.  Read both CSRs back after each write.
+    expectation: mstateen bit 63 reads back as written (it may be read-only zero only without H).  The hstateen bit reads back as written while the mstateen bit is 1, and reads as zero while it is 0, including just after the mstateen bit is cleared with the hstateen bit set
+    bins: csrrs/csrrc * 3 CSRs * 2 mstateen bit 63

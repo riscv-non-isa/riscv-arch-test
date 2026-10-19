@@ -24,6 +24,7 @@ normative_rule_definitions:
   - name: stateen_illegal_state_access
     coverpoint:
       [
+        "SsstateenH_hs_cg/cp_hs_stateen123",
         "SsstateenH_vs_cg/{cp_vs_sstateen0, cp_vs_senvcfg, cp_vs_stateen123}",
         "SsstateenH_vu_cg/{cp_vu_sstateen0, cp_vu_senvcfg, cp_vu_stateen123}",
       ]
@@ -44,18 +45,26 @@ normative_rule_definitions:
     coverpoint: ["SsstateenH_hs_cg/cp_hs_hstateen0_walk"]
   # Likewise, all reserved bits not yet given a defined meaning are also read-only zeros.
   - name: stateen_reserved_roz
-    coverpoint: ["SsstateenH_hs_cg/cp_hs_hstateen0_walk"]
+    coverpoint:
+      [
+        "SsstateenH_hs_cg/{cp_hs_hstateen0_walk, cp_hs_stateen123}",
+        "SsstateenH_vs_cg/cp_vs_stateen123",
+      ]
   # For every bit in an hstateen CSR that is zero (whether read-only zero or set to zero),
   # the same bit appears as read-only zero in sstateen when accessed in VS-mode.
   - name: sstateen_vsmode_access_roz
     coverpoint: ["SsstateenH_vs_cg/cp_vs_sstateen0_roz"]
+  # For each mstateen CSR, bit 63 is defined to control access to the matching sstateen
+  # and hstateen CSRs.
+  - name: mstateen_bit_63_op
+    coverpoint: ["SsstateenH_{hs,vs,vu}_cg/cp_{hs,vs,vu}_stateen123"]
   # Likewise, bit 63 of each hstateen correspondingly controls access to the matching
   # sstateen CSR.
   - name: hstateen_bit_63_op
     coverpoint: ["SsstateenH_vs_cg/{cp_vs_sstateen0, cp_vs_stateen123}"]
   # Bit 63 of each hstateen CSR is always writable (not read-only).
   - name: hstateen_bit_63_writable
-    coverpoint: ["SsstateenH_hs_cg/cp_hs_hstateen0_walk"]
+    coverpoint: ["SsstateenH_hs_cg/{cp_hs_hstateen0_walk, cp_hs_stateen123}"]
   # Figure: Hypervisor State Enable 0 Register (hstateen0).
   - name: hstateen0_enc_img
     coverpoint: ["SsstateenH_hs_cg/cp_hs_hstateen0_walk"]

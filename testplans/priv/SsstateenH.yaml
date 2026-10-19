@@ -3,7 +3,8 @@ suite: SsstateenH
 source: https://docs.google.com/spreadsheets/d/1DWBEoprndjQzLTXQTzPI8jW1HydtkYRR3tg58q59fdk/edit?gid=311784014#gid=311784014
 notes: |
   SsstateenH boots to HS-mode.  It first sets mstateen0 and hstateen0 to enable only SE0, ENVCFG, JVT and FCSR
-  (with Zfinx), the state these suites control, and enters VS-mode and VU-mode from HS-mode.  hstateen0 controls
+  (with Zfinx), the state these suites control, and enters VS-mode and VU-mode from HS-mode.  It sets and clears
+  bit 63 of mstateen1-3 in M-mode, entered through T-SBI.  hstateen0 controls
   VS-mode and VU-mode access but not HS-mode access.  An access that only hstateen0 forbids raises a
   virtual-instruction exception, and so does any VU-mode access to an S or H CSR that HS-mode could make.
   On RV32, SE0 and ENVCFG are in hstateen0h.  Each read that traps records 42 and the trap.
@@ -26,9 +27,9 @@ coverpoints:
     bins: 2 hstateen0.ENVCFG
   - name: cp_hs_stateen123
     goal: Bit 63 of mstateen1-3 controls HS-mode access to sstateen1-3 and hstateen1-3
-    description: Read sstateen1-3 and hstateen1-3 (and hstateen1h-3h on RV32) in HS-mode
-    expectation: Illegal instruction when bit 63 of the matching mstateen CSR is 0, else the read succeeds
-    bins: 6 CSRs (9 on RV32)
+    description: Access sstateen1-3 and hstateen1-3 (and hstateen1h-3h on RV32) in HS-mode with csrr, and with csrw, csrc and csrs of all 1s each followed by a read, with bit 63 of the matching mstateen CSR (bit 31 of mstateen1h-3h on RV32) = 0 and 1
+    expectation: Illegal instruction when the mstateen bit is 0.  Otherwise the access succeeds; sstateen1-3 read as zero because they have no defined bits, and hstateen bit 63 is writable
+    bins: 4 accesses * 6 CSRs (9 on RV32) * 2 mstateen bit 63
   - heading: VS-mode (SsstateenH_vs_cg)
   - name: cp_vs_sstateen0
     goal: hstateen0.SE0 controls VS-mode access to sstateen0
@@ -42,9 +43,9 @@ coverpoints:
     bins: 2 hstateen0.ENVCFG
   - name: cp_vs_stateen123
     goal: Bit 63 of mstateen1-3 and hstateen1-3 controls VS-mode access
-    description: Read sstateen1-3 and hstateen1-3 (and hstateen1h-3h on RV32) in VS-mode
-    expectation: Illegal instruction when bit 63 of the matching mstateen CSR is 0.  Otherwise virtual instruction for hstateen1-3, and for sstateen1-3 when bit 63 of the matching hstateen CSR is 0; else the sstateen read succeeds
-    bins: 6 CSRs (9 on RV32)
+    description: Access sstateen1-3 and hstateen1-3 (and hstateen1h-3h on RV32) in VS-mode with csrr, and with csrw, csrc and csrs of all 1s each followed by a read, with bit 63 of the matching mstateen and hstateen CSRs (bit 31 of the high halves on RV32) = (0, 0), (1, 0) and (1, 1).  The hstateen bit is written from HS-mode while the mstateen bit is 1, because it reads as zero otherwise.
+    expectation: Illegal instruction when the mstateen bit is 0.  Otherwise virtual instruction for hstateen1-3, and for sstateen1-3 when the hstateen bit is 0; else the sstateen access succeeds and reads zero
+    bins: 4 accesses * 6 CSRs (9 on RV32) * 3 (mstateen, hstateen) bit 63 states
   - name: cp_vs_hstateen0
     goal: hstateen0 is never accessible from VS-mode
     description: Read hstateen0 (and hstateen0h on RV32) in VS-mode
@@ -68,9 +69,9 @@ coverpoints:
     bins: 2 hstateen0.ENVCFG
   - name: cp_vu_stateen123
     goal: sstateen1-3 and hstateen1-3 are not accessible from VU-mode
-    description: Read sstateen1-3 and hstateen1-3 (and hstateen1h-3h on RV32) in VU-mode
-    expectation: Virtual instruction when HS-mode could make the access (bit 63 of the matching mstateen CSR is 1), else illegal instruction
-    bins: 6 CSRs (9 on RV32)
+    description: Access sstateen1-3 and hstateen1-3 (and hstateen1h-3h on RV32) in VU-mode with csrr, and with csrw, csrc and csrs of all 1s each followed by a read, with bit 63 of the matching mstateen and hstateen CSRs = (0, 0), (1, 0) and (1, 1)
+    expectation: Illegal instruction when the mstateen bit is 0, else virtual instruction (HS-mode could make the access), whatever the hstateen bit is
+    bins: 4 accesses * 6 CSRs (9 on RV32) * 3 (mstateen, hstateen) bit 63 states
   - name: cp_vu_hstateen0
     goal: hstateen0 is not accessible from VU-mode
     description: Read hstateen0 (and hstateen0h on RV32) in VU-mode

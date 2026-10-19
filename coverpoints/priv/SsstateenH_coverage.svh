@@ -28,6 +28,18 @@
     `define SSSTATEENH_LOW_WRITABLE
 `endif
 
+// Bit 63 (bit 31 of the high half on RV32) of the mstateen or hstateen CSR (level "m" or "h") that controls the
+// stateen CSR numbered csr.  Bits 1:0 of the CSR number give N.
+function bit ssstateenh_bit63(int hart, int issue, string level, logic [11:0] csr);
+    string name;
+    `ifdef UDB_MXLEN_64
+        name = $sformatf("%sstateen%0d", level, csr[1:0]);
+    `else
+        name = $sformatf("%sstateen%0dh", level, csr[1:0]);
+    `endif
+    return get_csr_val(hart, issue, `SAMPLE_BEFORE, name, name)[`UDB_MXLEN-1];
+endfunction
+
 // A CSR read, the CSRs it targets, and hstateen0.SE0 and hstateen0.ENVCFG before the instruction
 `define SSSTATEENH_COMMON \
     csrr : coverpoint ins.current.insn { \
@@ -66,6 +78,22 @@
         `ifdef UDB_MXLEN_32 \
             bins hstateen0h = {CSR_HSTATEEN0H}; \
         `endif \
+    } \
+    csr_access : coverpoint ins.current.insn { \
+        wildcard bins csrr = {CSRR}; \
+        wildcard bins csrw = {CSRW}; \
+        wildcard bins csrs = {CSRS} iff (ins.current.insn[19:15] != 0); \
+        wildcard bins csrc = {CSRC} iff (ins.current.insn[19:15] != 0); \
+    } \
+    mstateen123_se : coverpoint ssstateenh_bit63(ins.hart, ins.issue, "m", ins.current.insn[31:20]) { \
+        bins zero = {0}; \
+        bins one  = {1}; \
+    } \
+    stateen123_se : coverpoint {ssstateenh_bit63(ins.hart, ins.issue, "m", ins.current.insn[31:20]), \
+                                ssstateenh_bit63(ins.hart, ins.issue, "h", ins.current.insn[31:20])} { \
+        bins m0    = {[2'b00:2'b01]}; /* hstateen bit 63 reads as zero */ \
+        bins m1_h0 = {2'b10}; \
+        bins m1_h1 = {2'b11}; \
     }
 
 covergroup SsstateenH_hs_cg with function sample(ins_t ins);
@@ -87,7 +115,7 @@ covergroup SsstateenH_hs_cg with function sample(ins_t ins);
     cp_hs_sstateen0:      cross priv_mode_hs, csrr, sstateen0, hstateen0_se0;
     cp_hs_senvcfg:        cross priv_mode_hs, csrr, senvcfg, hstateen0_envcfg;
     // Bit 63 of the matching mstateen CSR controls HS-mode access
-    cp_hs_stateen123:     cross priv_mode_hs, csrr, stateen123;
+    cp_hs_stateen123:     cross priv_mode_hs, csr_access, stateen123, mstateen123_se;
 endgroup
 
 covergroup SsstateenH_vs_cg with function sample(ins_t ins);
@@ -100,7 +128,7 @@ covergroup SsstateenH_vs_cg with function sample(ins_t ins);
     cp_vs_senvcfg:        cross priv_mode_vs, csrr, senvcfg, hstateen0_envcfg;
     // Bit 63 of the matching mstateen and hstateen CSRs controls VS-mode access to sstateen1-3; hstateen is never
     // accessible
-    cp_vs_stateen123:     cross priv_mode_vs, csrr, stateen123;
+    cp_vs_stateen123:     cross priv_mode_vs, csr_access, stateen123, stateen123_se;
     cp_vs_hstateen0:      cross priv_mode_vs, csrr, hstateen0;
 
     // sstateen0 bits whose hstateen0 bit is 0 read as zero in VS-mode
@@ -126,7 +154,8 @@ covergroup SsstateenH_vu_cg with function sample(ins_t ins);
     // Always virtual instruction when HS-mode could make the access
     cp_vu_sstateen0:      cross priv_mode_vu, csrr, sstateen0, hstateen0_se0;
     cp_vu_senvcfg:        cross priv_mode_vu, csrr, senvcfg, hstateen0_envcfg;
-    cp_vu_stateen123:     cross priv_mode_vu, csrr, stateen123;
+    // Illegal instruction when the matching mstateen bit 63 is 0, else virtual instruction
+    cp_vu_stateen123:     cross priv_mode_vu, csr_access, stateen123, stateen123_se;
     cp_vu_hstateen0:      cross priv_mode_vu, csrr, hstateen0;
 endgroup
 

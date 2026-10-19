@@ -21,7 +21,11 @@ normative_rule_definitions:
   # zero), the same bit appears as read-only zero in the matching hstateen and sstateen
   # CSRs.
   - name: mstateen_lower_priv_roz
-    coverpoint: ["SmstateenH_hs_cg/cp_hs_hstateen0_roz"]
+    coverpoint:
+      [
+        "SmstateenH_hs_cg/cp_hs_hstateen0_roz",
+        "SmstateenH_m_cg/cp_m_hstateen123_bit63",
+      ]
   # A bit in an hstateen CSR cannot be read-only one unless the same bit is read-only one
   # in the matching mstateen CSR.
   - name: hstateen_ro1_bits
@@ -30,9 +34,17 @@ normative_rule_definitions:
   # and hstateen CSRs.
   - name: mstateen_bit_63_op
     coverpoint: ["SmstateenH_{hs,vs,vu}_cg/cp_{hs,vs,vu}_mstateen0_se0"]
+  # Bit 63 of each mstateen CSR may be read-only zero only if the hypervisor extension is
+  # not implemented and the matching supervisor-level sstateen CSR is all read-only zeros.
+  - name: mstateen_bit_63_roz
+    coverpoint: ["SmstateenH_m_cg/cp_m_hstateen123_bit63"]
   # Bit 63 of each hstateen CSR is always writable (not read-only).
   - name: hstateen_bit_63_writable
-    coverpoint: ["SmstateenH_hs_cg/{cp_hs_hstateen0_roz, cp_hs_hstateen0_walk}"]
+    coverpoint:
+      [
+        "SmstateenH_hs_cg/{cp_hs_hstateen0_roz, cp_hs_hstateen0_walk}",
+        "SmstateenH_m_cg/cp_m_hstateen123_bit63",
+      ]
   # Figure: Hypervisor State Enable 0 Register (hstateen0).
   - name: hstateen0_enc_img
     coverpoint: ["SmstateenH_hs_cg/cp_hs_hstateen0_walk"]

@@ -15,7 +15,7 @@
 ##### END_TEST_CONFIG #####
 
 // Define the size of the signature region
-#define SIGUPD_COUNT 27
+#define SIGUPD_COUNT 126
 
 // Extra defines (if needed) to enable trap handlers, fpu, vector, etc.
 #define BOOT_TO_SMODE
@@ -35,11 +35,11 @@ RVTEST_BEGIN
 //   Virtual instruction when the hstateen0 bit is 0
 /////////////////////////////////
 #if __riscv_xlen == 64
-  LI(x13, HSTATEEN_SSTATEEN)
-  csrc hstateen0, x13
+  LI(x15, HSTATEEN_SSTATEEN)
+  csrc hstateen0, x15
 #else
-  LI(x13, HSTATEENH_SSTATEEN)
-  csrc hstateen0h, x13
+  LI(x15, HSTATEENH_SSTATEEN)
+  csrc hstateen0h, x15
 #endif
 #if __riscv_xlen == 64
   LI(x6, HSTATEEN0_SENVCFG)
@@ -49,102 +49,812 @@ RVTEST_BEGIN
   csrc hstateen0h, x6
 #endif
   RVTEST_TSBI_GOTO_VSMODE
-  LI(x13, 42)
-SsstateenH_vs_cg_cp_vs_sstateen0_sstateen0_hse0_0:
-  csrr x13, sstateen0
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, SsstateenH_vs_cg_cp_vs_sstateen0_sstateen0_hse0_0, SsstateenH_vs_cg_cp_vs_sstateen0_sstateen0_hse0_0_str)
-  LI(x9, 42)
-SsstateenH_vs_cg_cp_vs_senvcfg_senvcfg_henvcfg_0:
-  csrr x9, senvcfg
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, SsstateenH_vs_cg_cp_vs_senvcfg_senvcfg_henvcfg_0, SsstateenH_vs_cg_cp_vs_senvcfg_senvcfg_henvcfg_0_str)
-  RVTEST_TSBI_GOTO_SMODE
-#if __riscv_xlen == 64
-  LI(x6, HSTATEEN_SSTATEEN)
-  csrs hstateen0, x6
-#else
-  LI(x6, HSTATEENH_SSTATEEN)
-  csrs hstateen0h, x6
-#endif
-#if __riscv_xlen == 64
-  LI(x9, HSTATEEN0_SENVCFG)
-  csrs hstateen0, x9
-#else
-  LI(x9, HSTATEEN0H_SENVCFG)
-  csrs hstateen0h, x9
-#endif
-  RVTEST_TSBI_GOTO_VSMODE
   LI(x8, 42)
-SsstateenH_vs_cg_cp_vs_sstateen0_sstateen0_hse0_1:
+SsstateenH_vs_cg_cp_vs_sstateen0_sstateen0_hse0_0:
   csrr x8, sstateen0
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, SsstateenH_vs_cg_cp_vs_sstateen0_sstateen0_hse0_1, SsstateenH_vs_cg_cp_vs_sstateen0_sstateen0_hse0_1_str)
+  RVTEST_SIGUPD(x2, x5, x4, x8, SsstateenH_vs_cg_cp_vs_sstateen0_sstateen0_hse0_0, SsstateenH_vs_cg_cp_vs_sstateen0_sstateen0_hse0_0_str)
   LI(x15, 42)
-SsstateenH_vs_cg_cp_vs_senvcfg_senvcfg_henvcfg_1:
+SsstateenH_vs_cg_cp_vs_senvcfg_senvcfg_henvcfg_0:
   csrr x15, senvcfg
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, SsstateenH_vs_cg_cp_vs_senvcfg_senvcfg_henvcfg_1, SsstateenH_vs_cg_cp_vs_senvcfg_senvcfg_henvcfg_1_str)
+  RVTEST_SIGUPD(x2, x5, x4, x15, SsstateenH_vs_cg_cp_vs_senvcfg_senvcfg_henvcfg_0, SsstateenH_vs_cg_cp_vs_senvcfg_senvcfg_henvcfg_0_str)
+  RVTEST_TSBI_GOTO_SMODE
+#if __riscv_xlen == 64
+  LI(x13, HSTATEEN_SSTATEEN)
+  csrs hstateen0, x13
+#else
+  LI(x13, HSTATEENH_SSTATEEN)
+  csrs hstateen0h, x13
+#endif
+#if __riscv_xlen == 64
+  LI(x13, HSTATEEN0_SENVCFG)
+  csrs hstateen0, x13
+#else
+  LI(x13, HSTATEEN0H_SENVCFG)
+  csrs hstateen0h, x13
+#endif
+  RVTEST_TSBI_GOTO_VSMODE
+  LI(x14, 42)
+SsstateenH_vs_cg_cp_vs_sstateen0_sstateen0_hse0_1:
+  csrr x14, sstateen0
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, SsstateenH_vs_cg_cp_vs_sstateen0_sstateen0_hse0_1, SsstateenH_vs_cg_cp_vs_sstateen0_sstateen0_hse0_1_str)
+  LI(x13, 42)
+SsstateenH_vs_cg_cp_vs_senvcfg_senvcfg_henvcfg_1:
+  csrr x13, senvcfg
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, SsstateenH_vs_cg_cp_vs_senvcfg_senvcfg_henvcfg_1, SsstateenH_vs_cg_cp_vs_senvcfg_senvcfg_henvcfg_1_str)
   RVTEST_TSBI_GOTO_SMODE
 
 
 /////////////////////////////////
 // cp_vs_stateen123
-//   Read sstateen1-3 and hstateen1-3 in VS-mode.  Bit 63 of the matching mstateen and hstateen
-//   CSRs controls access
+//   Read, write, clear and set sstateen1-3 and hstateen1-3 in VS-mode for each value of bit 63
+//   of the matching mstateen and hstateen CSRs.
+//   Illegal instruction when mstateen bit 63 is 0.  Otherwise virtual instruction for hstateen1-3, and for
+//   sstateen1-3 when hstateen bit 63 is 0; else the sstateen access succeeds and reads 0
 /////////////////////////////////
+# mstateen1-3 bit 63 = 0, hstateen1-3 bit 63 = 0
+  RVTEST_TSBI_GOTO_MMODE
+#if __riscv_xlen == 64
+  LI(x15, MSTATEEN_HSTATEEN)
+  csrs mstateen1, x15
+  csrs mstateen2, x15
+  csrs mstateen3, x15
+#else
+  LI(x15, MSTATEENH_HSTATEEN)
+  csrs mstateen1h, x15
+  csrs mstateen2h, x15
+  csrs mstateen3h, x15
+#endif
+  RVTEST_TSBI_GOTO_SMODE
+#if __riscv_xlen == 64
+  LI(x13, HSTATEEN_SSTATEEN)
+  csrc hstateen1, x13
+  csrc hstateen2, x13
+  csrc hstateen3, x13
+#else
+  LI(x13, HSTATEENH_SSTATEEN)
+  csrc hstateen1h, x13
+  csrc hstateen2h, x13
+  csrc hstateen3h, x13
+#endif
+  RVTEST_TSBI_GOTO_MMODE
+#if __riscv_xlen == 64
+  LI(x13, MSTATEEN_HSTATEEN)
+  csrc mstateen1, x13
+  csrc mstateen2, x13
+  csrc mstateen3, x13
+#else
+  LI(x13, MSTATEENH_HSTATEEN)
+  csrc mstateen1h, x13
+  csrc mstateen2h, x13
+  csrc mstateen3h, x13
+#endif
+  RVTEST_TSBI_GOTO_SMODE
   RVTEST_TSBI_GOTO_VSMODE
+  LI(x14, -1)
+  LI(x15, 42)
+SsstateenH_vs_cg_cp_vs_stateen123_sstateen1_csrr_m0_h0:
+  csrr x15, sstateen1
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, SsstateenH_vs_cg_cp_vs_stateen123_sstateen1_csrr_m0_h0, SsstateenH_vs_cg_cp_vs_stateen123_sstateen1_csrr_m0_h0_str)
+SsstateenH_vs_cg_cp_vs_stateen123_sstateen1_csrw_m0_h0:
+  csrw sstateen1, x14
+  LI(x15, 42)
+  csrr x15, sstateen1
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, SsstateenH_vs_cg_cp_vs_stateen123_sstateen1_csrw_m0_h0, SsstateenH_vs_cg_cp_vs_stateen123_sstateen1_csrw_m0_h0_str)
+SsstateenH_vs_cg_cp_vs_stateen123_sstateen1_csrc_m0_h0:
+  csrc sstateen1, x14
+  LI(x15, 42)
+  csrr x15, sstateen1
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, SsstateenH_vs_cg_cp_vs_stateen123_sstateen1_csrc_m0_h0, SsstateenH_vs_cg_cp_vs_stateen123_sstateen1_csrc_m0_h0_str)
+SsstateenH_vs_cg_cp_vs_stateen123_sstateen1_csrs_m0_h0:
+  csrs sstateen1, x14
+  LI(x15, 42)
+  csrr x15, sstateen1
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, SsstateenH_vs_cg_cp_vs_stateen123_sstateen1_csrs_m0_h0, SsstateenH_vs_cg_cp_vs_stateen123_sstateen1_csrs_m0_h0_str)
+  LI(x15, 42)
+SsstateenH_vs_cg_cp_vs_stateen123_sstateen2_csrr_m0_h0:
+  csrr x15, sstateen2
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, SsstateenH_vs_cg_cp_vs_stateen123_sstateen2_csrr_m0_h0, SsstateenH_vs_cg_cp_vs_stateen123_sstateen2_csrr_m0_h0_str)
+SsstateenH_vs_cg_cp_vs_stateen123_sstateen2_csrw_m0_h0:
+  csrw sstateen2, x14
+  LI(x15, 42)
+  csrr x15, sstateen2
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, SsstateenH_vs_cg_cp_vs_stateen123_sstateen2_csrw_m0_h0, SsstateenH_vs_cg_cp_vs_stateen123_sstateen2_csrw_m0_h0_str)
+SsstateenH_vs_cg_cp_vs_stateen123_sstateen2_csrc_m0_h0:
+  csrc sstateen2, x14
+  LI(x15, 42)
+  csrr x15, sstateen2
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, SsstateenH_vs_cg_cp_vs_stateen123_sstateen2_csrc_m0_h0, SsstateenH_vs_cg_cp_vs_stateen123_sstateen2_csrc_m0_h0_str)
+SsstateenH_vs_cg_cp_vs_stateen123_sstateen2_csrs_m0_h0:
+  csrs sstateen2, x14
+  LI(x15, 42)
+  csrr x15, sstateen2
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, SsstateenH_vs_cg_cp_vs_stateen123_sstateen2_csrs_m0_h0, SsstateenH_vs_cg_cp_vs_stateen123_sstateen2_csrs_m0_h0_str)
+  LI(x15, 42)
+SsstateenH_vs_cg_cp_vs_stateen123_sstateen3_csrr_m0_h0:
+  csrr x15, sstateen3
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, SsstateenH_vs_cg_cp_vs_stateen123_sstateen3_csrr_m0_h0, SsstateenH_vs_cg_cp_vs_stateen123_sstateen3_csrr_m0_h0_str)
+SsstateenH_vs_cg_cp_vs_stateen123_sstateen3_csrw_m0_h0:
+  csrw sstateen3, x14
+  LI(x15, 42)
+  csrr x15, sstateen3
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, SsstateenH_vs_cg_cp_vs_stateen123_sstateen3_csrw_m0_h0, SsstateenH_vs_cg_cp_vs_stateen123_sstateen3_csrw_m0_h0_str)
+SsstateenH_vs_cg_cp_vs_stateen123_sstateen3_csrc_m0_h0:
+  csrc sstateen3, x14
+  LI(x15, 42)
+  csrr x15, sstateen3
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, SsstateenH_vs_cg_cp_vs_stateen123_sstateen3_csrc_m0_h0, SsstateenH_vs_cg_cp_vs_stateen123_sstateen3_csrc_m0_h0_str)
+SsstateenH_vs_cg_cp_vs_stateen123_sstateen3_csrs_m0_h0:
+  csrs sstateen3, x14
+  LI(x15, 42)
+  csrr x15, sstateen3
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, SsstateenH_vs_cg_cp_vs_stateen123_sstateen3_csrs_m0_h0, SsstateenH_vs_cg_cp_vs_stateen123_sstateen3_csrs_m0_h0_str)
+  LI(x15, 42)
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen1_csrr_m0_h0:
+  csrr x15, hstateen1
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, SsstateenH_vs_cg_cp_vs_stateen123_hstateen1_csrr_m0_h0, SsstateenH_vs_cg_cp_vs_stateen123_hstateen1_csrr_m0_h0_str)
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen1_csrw_m0_h0:
+  csrw hstateen1, x14
+  LI(x15, 42)
+  csrr x15, hstateen1
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, SsstateenH_vs_cg_cp_vs_stateen123_hstateen1_csrw_m0_h0, SsstateenH_vs_cg_cp_vs_stateen123_hstateen1_csrw_m0_h0_str)
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen1_csrc_m0_h0:
+  csrc hstateen1, x14
+  LI(x15, 42)
+  csrr x15, hstateen1
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, SsstateenH_vs_cg_cp_vs_stateen123_hstateen1_csrc_m0_h0, SsstateenH_vs_cg_cp_vs_stateen123_hstateen1_csrc_m0_h0_str)
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen1_csrs_m0_h0:
+  csrs hstateen1, x14
+  LI(x15, 42)
+  csrr x15, hstateen1
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, SsstateenH_vs_cg_cp_vs_stateen123_hstateen1_csrs_m0_h0, SsstateenH_vs_cg_cp_vs_stateen123_hstateen1_csrs_m0_h0_str)
+  LI(x15, 42)
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen2_csrr_m0_h0:
+  csrr x15, hstateen2
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, SsstateenH_vs_cg_cp_vs_stateen123_hstateen2_csrr_m0_h0, SsstateenH_vs_cg_cp_vs_stateen123_hstateen2_csrr_m0_h0_str)
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen2_csrw_m0_h0:
+  csrw hstateen2, x14
+  LI(x15, 42)
+  csrr x15, hstateen2
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, SsstateenH_vs_cg_cp_vs_stateen123_hstateen2_csrw_m0_h0, SsstateenH_vs_cg_cp_vs_stateen123_hstateen2_csrw_m0_h0_str)
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen2_csrc_m0_h0:
+  csrc hstateen2, x14
+  LI(x15, 42)
+  csrr x15, hstateen2
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, SsstateenH_vs_cg_cp_vs_stateen123_hstateen2_csrc_m0_h0, SsstateenH_vs_cg_cp_vs_stateen123_hstateen2_csrc_m0_h0_str)
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen2_csrs_m0_h0:
+  csrs hstateen2, x14
+  LI(x15, 42)
+  csrr x15, hstateen2
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, SsstateenH_vs_cg_cp_vs_stateen123_hstateen2_csrs_m0_h0, SsstateenH_vs_cg_cp_vs_stateen123_hstateen2_csrs_m0_h0_str)
+  LI(x15, 42)
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen3_csrr_m0_h0:
+  csrr x15, hstateen3
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, SsstateenH_vs_cg_cp_vs_stateen123_hstateen3_csrr_m0_h0, SsstateenH_vs_cg_cp_vs_stateen123_hstateen3_csrr_m0_h0_str)
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen3_csrw_m0_h0:
+  csrw hstateen3, x14
+  LI(x15, 42)
+  csrr x15, hstateen3
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, SsstateenH_vs_cg_cp_vs_stateen123_hstateen3_csrw_m0_h0, SsstateenH_vs_cg_cp_vs_stateen123_hstateen3_csrw_m0_h0_str)
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen3_csrc_m0_h0:
+  csrc hstateen3, x14
+  LI(x15, 42)
+  csrr x15, hstateen3
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, SsstateenH_vs_cg_cp_vs_stateen123_hstateen3_csrc_m0_h0, SsstateenH_vs_cg_cp_vs_stateen123_hstateen3_csrc_m0_h0_str)
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen3_csrs_m0_h0:
+  csrs hstateen3, x14
+  LI(x15, 42)
+  csrr x15, hstateen3
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, SsstateenH_vs_cg_cp_vs_stateen123_hstateen3_csrs_m0_h0, SsstateenH_vs_cg_cp_vs_stateen123_hstateen3_csrs_m0_h0_str)
+#if __riscv_xlen == 32
+  LI(x15, 42)
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen1h_csrr_m0_h0:
+  csrr x15, hstateen1h
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, SsstateenH_vs_cg_cp_vs_stateen123_hstateen1h_csrr_m0_h0, SsstateenH_vs_cg_cp_vs_stateen123_hstateen1h_csrr_m0_h0_str)
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen1h_csrw_m0_h0:
+  csrw hstateen1h, x14
+  LI(x15, 42)
+  csrr x15, hstateen1h
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, SsstateenH_vs_cg_cp_vs_stateen123_hstateen1h_csrw_m0_h0, SsstateenH_vs_cg_cp_vs_stateen123_hstateen1h_csrw_m0_h0_str)
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen1h_csrc_m0_h0:
+  csrc hstateen1h, x14
+  LI(x15, 42)
+  csrr x15, hstateen1h
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, SsstateenH_vs_cg_cp_vs_stateen123_hstateen1h_csrc_m0_h0, SsstateenH_vs_cg_cp_vs_stateen123_hstateen1h_csrc_m0_h0_str)
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen1h_csrs_m0_h0:
+  csrs hstateen1h, x14
+  LI(x15, 42)
+  csrr x15, hstateen1h
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, SsstateenH_vs_cg_cp_vs_stateen123_hstateen1h_csrs_m0_h0, SsstateenH_vs_cg_cp_vs_stateen123_hstateen1h_csrs_m0_h0_str)
+#endif // __riscv_xlen == 32
+#if __riscv_xlen == 32
+  LI(x15, 42)
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen2h_csrr_m0_h0:
+  csrr x15, hstateen2h
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, SsstateenH_vs_cg_cp_vs_stateen123_hstateen2h_csrr_m0_h0, SsstateenH_vs_cg_cp_vs_stateen123_hstateen2h_csrr_m0_h0_str)
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen2h_csrw_m0_h0:
+  csrw hstateen2h, x14
+  LI(x15, 42)
+  csrr x15, hstateen2h
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, SsstateenH_vs_cg_cp_vs_stateen123_hstateen2h_csrw_m0_h0, SsstateenH_vs_cg_cp_vs_stateen123_hstateen2h_csrw_m0_h0_str)
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen2h_csrc_m0_h0:
+  csrc hstateen2h, x14
+  LI(x15, 42)
+  csrr x15, hstateen2h
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, SsstateenH_vs_cg_cp_vs_stateen123_hstateen2h_csrc_m0_h0, SsstateenH_vs_cg_cp_vs_stateen123_hstateen2h_csrc_m0_h0_str)
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen2h_csrs_m0_h0:
+  csrs hstateen2h, x14
+  LI(x15, 42)
+  csrr x15, hstateen2h
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, SsstateenH_vs_cg_cp_vs_stateen123_hstateen2h_csrs_m0_h0, SsstateenH_vs_cg_cp_vs_stateen123_hstateen2h_csrs_m0_h0_str)
+#endif // __riscv_xlen == 32
+#if __riscv_xlen == 32
+  LI(x15, 42)
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen3h_csrr_m0_h0:
+  csrr x15, hstateen3h
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, SsstateenH_vs_cg_cp_vs_stateen123_hstateen3h_csrr_m0_h0, SsstateenH_vs_cg_cp_vs_stateen123_hstateen3h_csrr_m0_h0_str)
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen3h_csrw_m0_h0:
+  csrw hstateen3h, x14
+  LI(x15, 42)
+  csrr x15, hstateen3h
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, SsstateenH_vs_cg_cp_vs_stateen123_hstateen3h_csrw_m0_h0, SsstateenH_vs_cg_cp_vs_stateen123_hstateen3h_csrw_m0_h0_str)
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen3h_csrc_m0_h0:
+  csrc hstateen3h, x14
+  LI(x15, 42)
+  csrr x15, hstateen3h
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, SsstateenH_vs_cg_cp_vs_stateen123_hstateen3h_csrc_m0_h0, SsstateenH_vs_cg_cp_vs_stateen123_hstateen3h_csrc_m0_h0_str)
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen3h_csrs_m0_h0:
+  csrs hstateen3h, x14
+  LI(x15, 42)
+  csrr x15, hstateen3h
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, SsstateenH_vs_cg_cp_vs_stateen123_hstateen3h_csrs_m0_h0, SsstateenH_vs_cg_cp_vs_stateen123_hstateen3h_csrs_m0_h0_str)
+#endif // __riscv_xlen == 32
+  RVTEST_TSBI_GOTO_SMODE
+# mstateen1-3 bit 63 = 1, hstateen1-3 bit 63 = 0
+  RVTEST_TSBI_GOTO_MMODE
+#if __riscv_xlen == 64
+  LI(x14, MSTATEEN_HSTATEEN)
+  csrs mstateen1, x14
+  csrs mstateen2, x14
+  csrs mstateen3, x14
+#else
+  LI(x14, MSTATEENH_HSTATEEN)
+  csrs mstateen1h, x14
+  csrs mstateen2h, x14
+  csrs mstateen3h, x14
+#endif
+  RVTEST_TSBI_GOTO_SMODE
+#if __riscv_xlen == 64
+  LI(x9, HSTATEEN_SSTATEEN)
+  csrc hstateen1, x9
+  csrc hstateen2, x9
+  csrc hstateen3, x9
+#else
+  LI(x9, HSTATEENH_SSTATEEN)
+  csrc hstateen1h, x9
+  csrc hstateen2h, x9
+  csrc hstateen3h, x9
+#endif
+  RVTEST_TSBI_GOTO_VSMODE
+  LI(x15, -1)
+  LI(x8, 42)
+SsstateenH_vs_cg_cp_vs_stateen123_sstateen1_csrr_m1_h0:
+  csrr x8, sstateen1
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, SsstateenH_vs_cg_cp_vs_stateen123_sstateen1_csrr_m1_h0, SsstateenH_vs_cg_cp_vs_stateen123_sstateen1_csrr_m1_h0_str)
+SsstateenH_vs_cg_cp_vs_stateen123_sstateen1_csrw_m1_h0:
+  csrw sstateen1, x15
+  LI(x8, 42)
+  csrr x8, sstateen1
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, SsstateenH_vs_cg_cp_vs_stateen123_sstateen1_csrw_m1_h0, SsstateenH_vs_cg_cp_vs_stateen123_sstateen1_csrw_m1_h0_str)
+SsstateenH_vs_cg_cp_vs_stateen123_sstateen1_csrc_m1_h0:
+  csrc sstateen1, x15
+  LI(x8, 42)
+  csrr x8, sstateen1
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, SsstateenH_vs_cg_cp_vs_stateen123_sstateen1_csrc_m1_h0, SsstateenH_vs_cg_cp_vs_stateen123_sstateen1_csrc_m1_h0_str)
+SsstateenH_vs_cg_cp_vs_stateen123_sstateen1_csrs_m1_h0:
+  csrs sstateen1, x15
+  LI(x8, 42)
+  csrr x8, sstateen1
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, SsstateenH_vs_cg_cp_vs_stateen123_sstateen1_csrs_m1_h0, SsstateenH_vs_cg_cp_vs_stateen123_sstateen1_csrs_m1_h0_str)
+  LI(x8, 42)
+SsstateenH_vs_cg_cp_vs_stateen123_sstateen2_csrr_m1_h0:
+  csrr x8, sstateen2
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, SsstateenH_vs_cg_cp_vs_stateen123_sstateen2_csrr_m1_h0, SsstateenH_vs_cg_cp_vs_stateen123_sstateen2_csrr_m1_h0_str)
+SsstateenH_vs_cg_cp_vs_stateen123_sstateen2_csrw_m1_h0:
+  csrw sstateen2, x15
+  LI(x8, 42)
+  csrr x8, sstateen2
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, SsstateenH_vs_cg_cp_vs_stateen123_sstateen2_csrw_m1_h0, SsstateenH_vs_cg_cp_vs_stateen123_sstateen2_csrw_m1_h0_str)
+SsstateenH_vs_cg_cp_vs_stateen123_sstateen2_csrc_m1_h0:
+  csrc sstateen2, x15
+  LI(x8, 42)
+  csrr x8, sstateen2
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, SsstateenH_vs_cg_cp_vs_stateen123_sstateen2_csrc_m1_h0, SsstateenH_vs_cg_cp_vs_stateen123_sstateen2_csrc_m1_h0_str)
+SsstateenH_vs_cg_cp_vs_stateen123_sstateen2_csrs_m1_h0:
+  csrs sstateen2, x15
+  LI(x8, 42)
+  csrr x8, sstateen2
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, SsstateenH_vs_cg_cp_vs_stateen123_sstateen2_csrs_m1_h0, SsstateenH_vs_cg_cp_vs_stateen123_sstateen2_csrs_m1_h0_str)
+  LI(x8, 42)
+SsstateenH_vs_cg_cp_vs_stateen123_sstateen3_csrr_m1_h0:
+  csrr x8, sstateen3
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, SsstateenH_vs_cg_cp_vs_stateen123_sstateen3_csrr_m1_h0, SsstateenH_vs_cg_cp_vs_stateen123_sstateen3_csrr_m1_h0_str)
+SsstateenH_vs_cg_cp_vs_stateen123_sstateen3_csrw_m1_h0:
+  csrw sstateen3, x15
+  LI(x8, 42)
+  csrr x8, sstateen3
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, SsstateenH_vs_cg_cp_vs_stateen123_sstateen3_csrw_m1_h0, SsstateenH_vs_cg_cp_vs_stateen123_sstateen3_csrw_m1_h0_str)
+SsstateenH_vs_cg_cp_vs_stateen123_sstateen3_csrc_m1_h0:
+  csrc sstateen3, x15
+  LI(x8, 42)
+  csrr x8, sstateen3
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, SsstateenH_vs_cg_cp_vs_stateen123_sstateen3_csrc_m1_h0, SsstateenH_vs_cg_cp_vs_stateen123_sstateen3_csrc_m1_h0_str)
+SsstateenH_vs_cg_cp_vs_stateen123_sstateen3_csrs_m1_h0:
+  csrs sstateen3, x15
+  LI(x8, 42)
+  csrr x8, sstateen3
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, SsstateenH_vs_cg_cp_vs_stateen123_sstateen3_csrs_m1_h0, SsstateenH_vs_cg_cp_vs_stateen123_sstateen3_csrs_m1_h0_str)
+  LI(x8, 42)
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen1_csrr_m1_h0:
+  csrr x8, hstateen1
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, SsstateenH_vs_cg_cp_vs_stateen123_hstateen1_csrr_m1_h0, SsstateenH_vs_cg_cp_vs_stateen123_hstateen1_csrr_m1_h0_str)
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen1_csrw_m1_h0:
+  csrw hstateen1, x15
+  LI(x8, 42)
+  csrr x8, hstateen1
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, SsstateenH_vs_cg_cp_vs_stateen123_hstateen1_csrw_m1_h0, SsstateenH_vs_cg_cp_vs_stateen123_hstateen1_csrw_m1_h0_str)
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen1_csrc_m1_h0:
+  csrc hstateen1, x15
+  LI(x8, 42)
+  csrr x8, hstateen1
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, SsstateenH_vs_cg_cp_vs_stateen123_hstateen1_csrc_m1_h0, SsstateenH_vs_cg_cp_vs_stateen123_hstateen1_csrc_m1_h0_str)
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen1_csrs_m1_h0:
+  csrs hstateen1, x15
+  LI(x8, 42)
+  csrr x8, hstateen1
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, SsstateenH_vs_cg_cp_vs_stateen123_hstateen1_csrs_m1_h0, SsstateenH_vs_cg_cp_vs_stateen123_hstateen1_csrs_m1_h0_str)
+  LI(x8, 42)
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen2_csrr_m1_h0:
+  csrr x8, hstateen2
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, SsstateenH_vs_cg_cp_vs_stateen123_hstateen2_csrr_m1_h0, SsstateenH_vs_cg_cp_vs_stateen123_hstateen2_csrr_m1_h0_str)
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen2_csrw_m1_h0:
+  csrw hstateen2, x15
+  LI(x8, 42)
+  csrr x8, hstateen2
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, SsstateenH_vs_cg_cp_vs_stateen123_hstateen2_csrw_m1_h0, SsstateenH_vs_cg_cp_vs_stateen123_hstateen2_csrw_m1_h0_str)
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen2_csrc_m1_h0:
+  csrc hstateen2, x15
+  LI(x8, 42)
+  csrr x8, hstateen2
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, SsstateenH_vs_cg_cp_vs_stateen123_hstateen2_csrc_m1_h0, SsstateenH_vs_cg_cp_vs_stateen123_hstateen2_csrc_m1_h0_str)
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen2_csrs_m1_h0:
+  csrs hstateen2, x15
+  LI(x8, 42)
+  csrr x8, hstateen2
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, SsstateenH_vs_cg_cp_vs_stateen123_hstateen2_csrs_m1_h0, SsstateenH_vs_cg_cp_vs_stateen123_hstateen2_csrs_m1_h0_str)
+  LI(x8, 42)
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen3_csrr_m1_h0:
+  csrr x8, hstateen3
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, SsstateenH_vs_cg_cp_vs_stateen123_hstateen3_csrr_m1_h0, SsstateenH_vs_cg_cp_vs_stateen123_hstateen3_csrr_m1_h0_str)
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen3_csrw_m1_h0:
+  csrw hstateen3, x15
+  LI(x8, 42)
+  csrr x8, hstateen3
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, SsstateenH_vs_cg_cp_vs_stateen123_hstateen3_csrw_m1_h0, SsstateenH_vs_cg_cp_vs_stateen123_hstateen3_csrw_m1_h0_str)
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen3_csrc_m1_h0:
+  csrc hstateen3, x15
+  LI(x8, 42)
+  csrr x8, hstateen3
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, SsstateenH_vs_cg_cp_vs_stateen123_hstateen3_csrc_m1_h0, SsstateenH_vs_cg_cp_vs_stateen123_hstateen3_csrc_m1_h0_str)
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen3_csrs_m1_h0:
+  csrs hstateen3, x15
+  LI(x8, 42)
+  csrr x8, hstateen3
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, SsstateenH_vs_cg_cp_vs_stateen123_hstateen3_csrs_m1_h0, SsstateenH_vs_cg_cp_vs_stateen123_hstateen3_csrs_m1_h0_str)
+#if __riscv_xlen == 32
+  LI(x8, 42)
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen1h_csrr_m1_h0:
+  csrr x8, hstateen1h
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, SsstateenH_vs_cg_cp_vs_stateen123_hstateen1h_csrr_m1_h0, SsstateenH_vs_cg_cp_vs_stateen123_hstateen1h_csrr_m1_h0_str)
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen1h_csrw_m1_h0:
+  csrw hstateen1h, x15
+  LI(x8, 42)
+  csrr x8, hstateen1h
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, SsstateenH_vs_cg_cp_vs_stateen123_hstateen1h_csrw_m1_h0, SsstateenH_vs_cg_cp_vs_stateen123_hstateen1h_csrw_m1_h0_str)
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen1h_csrc_m1_h0:
+  csrc hstateen1h, x15
+  LI(x8, 42)
+  csrr x8, hstateen1h
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, SsstateenH_vs_cg_cp_vs_stateen123_hstateen1h_csrc_m1_h0, SsstateenH_vs_cg_cp_vs_stateen123_hstateen1h_csrc_m1_h0_str)
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen1h_csrs_m1_h0:
+  csrs hstateen1h, x15
+  LI(x8, 42)
+  csrr x8, hstateen1h
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, SsstateenH_vs_cg_cp_vs_stateen123_hstateen1h_csrs_m1_h0, SsstateenH_vs_cg_cp_vs_stateen123_hstateen1h_csrs_m1_h0_str)
+#endif // __riscv_xlen == 32
+#if __riscv_xlen == 32
+  LI(x8, 42)
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen2h_csrr_m1_h0:
+  csrr x8, hstateen2h
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, SsstateenH_vs_cg_cp_vs_stateen123_hstateen2h_csrr_m1_h0, SsstateenH_vs_cg_cp_vs_stateen123_hstateen2h_csrr_m1_h0_str)
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen2h_csrw_m1_h0:
+  csrw hstateen2h, x15
+  LI(x8, 42)
+  csrr x8, hstateen2h
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, SsstateenH_vs_cg_cp_vs_stateen123_hstateen2h_csrw_m1_h0, SsstateenH_vs_cg_cp_vs_stateen123_hstateen2h_csrw_m1_h0_str)
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen2h_csrc_m1_h0:
+  csrc hstateen2h, x15
+  LI(x8, 42)
+  csrr x8, hstateen2h
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, SsstateenH_vs_cg_cp_vs_stateen123_hstateen2h_csrc_m1_h0, SsstateenH_vs_cg_cp_vs_stateen123_hstateen2h_csrc_m1_h0_str)
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen2h_csrs_m1_h0:
+  csrs hstateen2h, x15
+  LI(x8, 42)
+  csrr x8, hstateen2h
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, SsstateenH_vs_cg_cp_vs_stateen123_hstateen2h_csrs_m1_h0, SsstateenH_vs_cg_cp_vs_stateen123_hstateen2h_csrs_m1_h0_str)
+#endif // __riscv_xlen == 32
+#if __riscv_xlen == 32
+  LI(x8, 42)
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen3h_csrr_m1_h0:
+  csrr x8, hstateen3h
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, SsstateenH_vs_cg_cp_vs_stateen123_hstateen3h_csrr_m1_h0, SsstateenH_vs_cg_cp_vs_stateen123_hstateen3h_csrr_m1_h0_str)
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen3h_csrw_m1_h0:
+  csrw hstateen3h, x15
+  LI(x8, 42)
+  csrr x8, hstateen3h
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, SsstateenH_vs_cg_cp_vs_stateen123_hstateen3h_csrw_m1_h0, SsstateenH_vs_cg_cp_vs_stateen123_hstateen3h_csrw_m1_h0_str)
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen3h_csrc_m1_h0:
+  csrc hstateen3h, x15
+  LI(x8, 42)
+  csrr x8, hstateen3h
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, SsstateenH_vs_cg_cp_vs_stateen123_hstateen3h_csrc_m1_h0, SsstateenH_vs_cg_cp_vs_stateen123_hstateen3h_csrc_m1_h0_str)
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen3h_csrs_m1_h0:
+  csrs hstateen3h, x15
+  LI(x8, 42)
+  csrr x8, hstateen3h
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, SsstateenH_vs_cg_cp_vs_stateen123_hstateen3h_csrs_m1_h0, SsstateenH_vs_cg_cp_vs_stateen123_hstateen3h_csrs_m1_h0_str)
+#endif // __riscv_xlen == 32
+  RVTEST_TSBI_GOTO_SMODE
+# mstateen1-3 bit 63 = 1, hstateen1-3 bit 63 = 1
+  RVTEST_TSBI_GOTO_MMODE
+#if __riscv_xlen == 64
+  LI(x9, MSTATEEN_HSTATEEN)
+  csrs mstateen1, x9
+  csrs mstateen2, x9
+  csrs mstateen3, x9
+#else
+  LI(x9, MSTATEENH_HSTATEEN)
+  csrs mstateen1h, x9
+  csrs mstateen2h, x9
+  csrs mstateen3h, x9
+#endif
+  RVTEST_TSBI_GOTO_SMODE
+#if __riscv_xlen == 64
+  LI(x6, HSTATEEN_SSTATEEN)
+  csrs hstateen1, x6
+  csrs hstateen2, x6
+  csrs hstateen3, x6
+#else
+  LI(x6, HSTATEENH_SSTATEEN)
+  csrs hstateen1h, x6
+  csrs hstateen2h, x6
+  csrs hstateen3h, x6
+#endif
+  RVTEST_TSBI_GOTO_VSMODE
+  LI(x14, -1)
   LI(x6, 42)
-SsstateenH_vs_cg_cp_vs_stateen123_sstateen1_vs:
+SsstateenH_vs_cg_cp_vs_stateen123_sstateen1_csrr_m1_h1:
   csrr x6, sstateen1
   # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, SsstateenH_vs_cg_cp_vs_stateen123_sstateen1_vs, SsstateenH_vs_cg_cp_vs_stateen123_sstateen1_vs_str)
+  RVTEST_SIGUPD(x2, x5, x4, x6, SsstateenH_vs_cg_cp_vs_stateen123_sstateen1_csrr_m1_h1, SsstateenH_vs_cg_cp_vs_stateen123_sstateen1_csrr_m1_h1_str)
+SsstateenH_vs_cg_cp_vs_stateen123_sstateen1_csrw_m1_h1:
+  csrw sstateen1, x14
   LI(x6, 42)
-SsstateenH_vs_cg_cp_vs_stateen123_sstateen2_vs:
+  csrr x6, sstateen1
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, SsstateenH_vs_cg_cp_vs_stateen123_sstateen1_csrw_m1_h1, SsstateenH_vs_cg_cp_vs_stateen123_sstateen1_csrw_m1_h1_str)
+SsstateenH_vs_cg_cp_vs_stateen123_sstateen1_csrc_m1_h1:
+  csrc sstateen1, x14
+  LI(x6, 42)
+  csrr x6, sstateen1
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, SsstateenH_vs_cg_cp_vs_stateen123_sstateen1_csrc_m1_h1, SsstateenH_vs_cg_cp_vs_stateen123_sstateen1_csrc_m1_h1_str)
+SsstateenH_vs_cg_cp_vs_stateen123_sstateen1_csrs_m1_h1:
+  csrs sstateen1, x14
+  LI(x6, 42)
+  csrr x6, sstateen1
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, SsstateenH_vs_cg_cp_vs_stateen123_sstateen1_csrs_m1_h1, SsstateenH_vs_cg_cp_vs_stateen123_sstateen1_csrs_m1_h1_str)
+  LI(x6, 42)
+SsstateenH_vs_cg_cp_vs_stateen123_sstateen2_csrr_m1_h1:
   csrr x6, sstateen2
   # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, SsstateenH_vs_cg_cp_vs_stateen123_sstateen2_vs, SsstateenH_vs_cg_cp_vs_stateen123_sstateen2_vs_str)
+  RVTEST_SIGUPD(x2, x5, x4, x6, SsstateenH_vs_cg_cp_vs_stateen123_sstateen2_csrr_m1_h1, SsstateenH_vs_cg_cp_vs_stateen123_sstateen2_csrr_m1_h1_str)
+SsstateenH_vs_cg_cp_vs_stateen123_sstateen2_csrw_m1_h1:
+  csrw sstateen2, x14
   LI(x6, 42)
-SsstateenH_vs_cg_cp_vs_stateen123_sstateen3_vs:
+  csrr x6, sstateen2
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, SsstateenH_vs_cg_cp_vs_stateen123_sstateen2_csrw_m1_h1, SsstateenH_vs_cg_cp_vs_stateen123_sstateen2_csrw_m1_h1_str)
+SsstateenH_vs_cg_cp_vs_stateen123_sstateen2_csrc_m1_h1:
+  csrc sstateen2, x14
+  LI(x6, 42)
+  csrr x6, sstateen2
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, SsstateenH_vs_cg_cp_vs_stateen123_sstateen2_csrc_m1_h1, SsstateenH_vs_cg_cp_vs_stateen123_sstateen2_csrc_m1_h1_str)
+SsstateenH_vs_cg_cp_vs_stateen123_sstateen2_csrs_m1_h1:
+  csrs sstateen2, x14
+  LI(x6, 42)
+  csrr x6, sstateen2
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, SsstateenH_vs_cg_cp_vs_stateen123_sstateen2_csrs_m1_h1, SsstateenH_vs_cg_cp_vs_stateen123_sstateen2_csrs_m1_h1_str)
+  LI(x6, 42)
+SsstateenH_vs_cg_cp_vs_stateen123_sstateen3_csrr_m1_h1:
   csrr x6, sstateen3
   # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, SsstateenH_vs_cg_cp_vs_stateen123_sstateen3_vs, SsstateenH_vs_cg_cp_vs_stateen123_sstateen3_vs_str)
+  RVTEST_SIGUPD(x2, x5, x4, x6, SsstateenH_vs_cg_cp_vs_stateen123_sstateen3_csrr_m1_h1, SsstateenH_vs_cg_cp_vs_stateen123_sstateen3_csrr_m1_h1_str)
+SsstateenH_vs_cg_cp_vs_stateen123_sstateen3_csrw_m1_h1:
+  csrw sstateen3, x14
   LI(x6, 42)
-SsstateenH_vs_cg_cp_vs_stateen123_hstateen1_vs:
+  csrr x6, sstateen3
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, SsstateenH_vs_cg_cp_vs_stateen123_sstateen3_csrw_m1_h1, SsstateenH_vs_cg_cp_vs_stateen123_sstateen3_csrw_m1_h1_str)
+SsstateenH_vs_cg_cp_vs_stateen123_sstateen3_csrc_m1_h1:
+  csrc sstateen3, x14
+  LI(x6, 42)
+  csrr x6, sstateen3
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, SsstateenH_vs_cg_cp_vs_stateen123_sstateen3_csrc_m1_h1, SsstateenH_vs_cg_cp_vs_stateen123_sstateen3_csrc_m1_h1_str)
+SsstateenH_vs_cg_cp_vs_stateen123_sstateen3_csrs_m1_h1:
+  csrs sstateen3, x14
+  LI(x6, 42)
+  csrr x6, sstateen3
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, SsstateenH_vs_cg_cp_vs_stateen123_sstateen3_csrs_m1_h1, SsstateenH_vs_cg_cp_vs_stateen123_sstateen3_csrs_m1_h1_str)
+  LI(x6, 42)
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen1_csrr_m1_h1:
   csrr x6, hstateen1
   # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, SsstateenH_vs_cg_cp_vs_stateen123_hstateen1_vs, SsstateenH_vs_cg_cp_vs_stateen123_hstateen1_vs_str)
+  RVTEST_SIGUPD(x2, x5, x4, x6, SsstateenH_vs_cg_cp_vs_stateen123_hstateen1_csrr_m1_h1, SsstateenH_vs_cg_cp_vs_stateen123_hstateen1_csrr_m1_h1_str)
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen1_csrw_m1_h1:
+  csrw hstateen1, x14
   LI(x6, 42)
-SsstateenH_vs_cg_cp_vs_stateen123_hstateen2_vs:
+  csrr x6, hstateen1
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, SsstateenH_vs_cg_cp_vs_stateen123_hstateen1_csrw_m1_h1, SsstateenH_vs_cg_cp_vs_stateen123_hstateen1_csrw_m1_h1_str)
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen1_csrc_m1_h1:
+  csrc hstateen1, x14
+  LI(x6, 42)
+  csrr x6, hstateen1
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, SsstateenH_vs_cg_cp_vs_stateen123_hstateen1_csrc_m1_h1, SsstateenH_vs_cg_cp_vs_stateen123_hstateen1_csrc_m1_h1_str)
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen1_csrs_m1_h1:
+  csrs hstateen1, x14
+  LI(x6, 42)
+  csrr x6, hstateen1
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, SsstateenH_vs_cg_cp_vs_stateen123_hstateen1_csrs_m1_h1, SsstateenH_vs_cg_cp_vs_stateen123_hstateen1_csrs_m1_h1_str)
+  LI(x6, 42)
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen2_csrr_m1_h1:
   csrr x6, hstateen2
   # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, SsstateenH_vs_cg_cp_vs_stateen123_hstateen2_vs, SsstateenH_vs_cg_cp_vs_stateen123_hstateen2_vs_str)
+  RVTEST_SIGUPD(x2, x5, x4, x6, SsstateenH_vs_cg_cp_vs_stateen123_hstateen2_csrr_m1_h1, SsstateenH_vs_cg_cp_vs_stateen123_hstateen2_csrr_m1_h1_str)
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen2_csrw_m1_h1:
+  csrw hstateen2, x14
   LI(x6, 42)
-SsstateenH_vs_cg_cp_vs_stateen123_hstateen3_vs:
+  csrr x6, hstateen2
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, SsstateenH_vs_cg_cp_vs_stateen123_hstateen2_csrw_m1_h1, SsstateenH_vs_cg_cp_vs_stateen123_hstateen2_csrw_m1_h1_str)
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen2_csrc_m1_h1:
+  csrc hstateen2, x14
+  LI(x6, 42)
+  csrr x6, hstateen2
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, SsstateenH_vs_cg_cp_vs_stateen123_hstateen2_csrc_m1_h1, SsstateenH_vs_cg_cp_vs_stateen123_hstateen2_csrc_m1_h1_str)
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen2_csrs_m1_h1:
+  csrs hstateen2, x14
+  LI(x6, 42)
+  csrr x6, hstateen2
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, SsstateenH_vs_cg_cp_vs_stateen123_hstateen2_csrs_m1_h1, SsstateenH_vs_cg_cp_vs_stateen123_hstateen2_csrs_m1_h1_str)
+  LI(x6, 42)
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen3_csrr_m1_h1:
   csrr x6, hstateen3
   # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, SsstateenH_vs_cg_cp_vs_stateen123_hstateen3_vs, SsstateenH_vs_cg_cp_vs_stateen123_hstateen3_vs_str)
+  RVTEST_SIGUPD(x2, x5, x4, x6, SsstateenH_vs_cg_cp_vs_stateen123_hstateen3_csrr_m1_h1, SsstateenH_vs_cg_cp_vs_stateen123_hstateen3_csrr_m1_h1_str)
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen3_csrw_m1_h1:
+  csrw hstateen3, x14
+  LI(x6, 42)
+  csrr x6, hstateen3
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, SsstateenH_vs_cg_cp_vs_stateen123_hstateen3_csrw_m1_h1, SsstateenH_vs_cg_cp_vs_stateen123_hstateen3_csrw_m1_h1_str)
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen3_csrc_m1_h1:
+  csrc hstateen3, x14
+  LI(x6, 42)
+  csrr x6, hstateen3
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, SsstateenH_vs_cg_cp_vs_stateen123_hstateen3_csrc_m1_h1, SsstateenH_vs_cg_cp_vs_stateen123_hstateen3_csrc_m1_h1_str)
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen3_csrs_m1_h1:
+  csrs hstateen3, x14
+  LI(x6, 42)
+  csrr x6, hstateen3
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, SsstateenH_vs_cg_cp_vs_stateen123_hstateen3_csrs_m1_h1, SsstateenH_vs_cg_cp_vs_stateen123_hstateen3_csrs_m1_h1_str)
 #if __riscv_xlen == 32
   LI(x6, 42)
-SsstateenH_vs_cg_cp_vs_stateen123_hstateen1h_vs:
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen1h_csrr_m1_h1:
   csrr x6, hstateen1h
   # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, SsstateenH_vs_cg_cp_vs_stateen123_hstateen1h_vs, SsstateenH_vs_cg_cp_vs_stateen123_hstateen1h_vs_str)
+  RVTEST_SIGUPD(x2, x5, x4, x6, SsstateenH_vs_cg_cp_vs_stateen123_hstateen1h_csrr_m1_h1, SsstateenH_vs_cg_cp_vs_stateen123_hstateen1h_csrr_m1_h1_str)
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen1h_csrw_m1_h1:
+  csrw hstateen1h, x14
+  LI(x6, 42)
+  csrr x6, hstateen1h
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, SsstateenH_vs_cg_cp_vs_stateen123_hstateen1h_csrw_m1_h1, SsstateenH_vs_cg_cp_vs_stateen123_hstateen1h_csrw_m1_h1_str)
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen1h_csrc_m1_h1:
+  csrc hstateen1h, x14
+  LI(x6, 42)
+  csrr x6, hstateen1h
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, SsstateenH_vs_cg_cp_vs_stateen123_hstateen1h_csrc_m1_h1, SsstateenH_vs_cg_cp_vs_stateen123_hstateen1h_csrc_m1_h1_str)
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen1h_csrs_m1_h1:
+  csrs hstateen1h, x14
+  LI(x6, 42)
+  csrr x6, hstateen1h
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, SsstateenH_vs_cg_cp_vs_stateen123_hstateen1h_csrs_m1_h1, SsstateenH_vs_cg_cp_vs_stateen123_hstateen1h_csrs_m1_h1_str)
 #endif // __riscv_xlen == 32
 #if __riscv_xlen == 32
   LI(x6, 42)
-SsstateenH_vs_cg_cp_vs_stateen123_hstateen2h_vs:
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen2h_csrr_m1_h1:
   csrr x6, hstateen2h
   # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, SsstateenH_vs_cg_cp_vs_stateen123_hstateen2h_vs, SsstateenH_vs_cg_cp_vs_stateen123_hstateen2h_vs_str)
+  RVTEST_SIGUPD(x2, x5, x4, x6, SsstateenH_vs_cg_cp_vs_stateen123_hstateen2h_csrr_m1_h1, SsstateenH_vs_cg_cp_vs_stateen123_hstateen2h_csrr_m1_h1_str)
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen2h_csrw_m1_h1:
+  csrw hstateen2h, x14
+  LI(x6, 42)
+  csrr x6, hstateen2h
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, SsstateenH_vs_cg_cp_vs_stateen123_hstateen2h_csrw_m1_h1, SsstateenH_vs_cg_cp_vs_stateen123_hstateen2h_csrw_m1_h1_str)
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen2h_csrc_m1_h1:
+  csrc hstateen2h, x14
+  LI(x6, 42)
+  csrr x6, hstateen2h
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, SsstateenH_vs_cg_cp_vs_stateen123_hstateen2h_csrc_m1_h1, SsstateenH_vs_cg_cp_vs_stateen123_hstateen2h_csrc_m1_h1_str)
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen2h_csrs_m1_h1:
+  csrs hstateen2h, x14
+  LI(x6, 42)
+  csrr x6, hstateen2h
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, SsstateenH_vs_cg_cp_vs_stateen123_hstateen2h_csrs_m1_h1, SsstateenH_vs_cg_cp_vs_stateen123_hstateen2h_csrs_m1_h1_str)
 #endif // __riscv_xlen == 32
 #if __riscv_xlen == 32
   LI(x6, 42)
-SsstateenH_vs_cg_cp_vs_stateen123_hstateen3h_vs:
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen3h_csrr_m1_h1:
   csrr x6, hstateen3h
   # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, SsstateenH_vs_cg_cp_vs_stateen123_hstateen3h_vs, SsstateenH_vs_cg_cp_vs_stateen123_hstateen3h_vs_str)
+  RVTEST_SIGUPD(x2, x5, x4, x6, SsstateenH_vs_cg_cp_vs_stateen123_hstateen3h_csrr_m1_h1, SsstateenH_vs_cg_cp_vs_stateen123_hstateen3h_csrr_m1_h1_str)
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen3h_csrw_m1_h1:
+  csrw hstateen3h, x14
+  LI(x6, 42)
+  csrr x6, hstateen3h
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, SsstateenH_vs_cg_cp_vs_stateen123_hstateen3h_csrw_m1_h1, SsstateenH_vs_cg_cp_vs_stateen123_hstateen3h_csrw_m1_h1_str)
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen3h_csrc_m1_h1:
+  csrc hstateen3h, x14
+  LI(x6, 42)
+  csrr x6, hstateen3h
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, SsstateenH_vs_cg_cp_vs_stateen123_hstateen3h_csrc_m1_h1, SsstateenH_vs_cg_cp_vs_stateen123_hstateen3h_csrc_m1_h1_str)
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen3h_csrs_m1_h1:
+  csrs hstateen3h, x14
+  LI(x6, 42)
+  csrr x6, hstateen3h
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, SsstateenH_vs_cg_cp_vs_stateen123_hstateen3h_csrs_m1_h1, SsstateenH_vs_cg_cp_vs_stateen123_hstateen3h_csrs_m1_h1_str)
 #endif // __riscv_xlen == 32
+  RVTEST_TSBI_GOTO_SMODE
+  RVTEST_TSBI_GOTO_MMODE
+#if __riscv_xlen == 64
+  LI(x8, MSTATEEN_HSTATEEN)
+  csrs mstateen1, x8
+  csrs mstateen2, x8
+  csrs mstateen3, x8
+#else
+  LI(x8, MSTATEENH_HSTATEEN)
+  csrs mstateen1h, x8
+  csrs mstateen2h, x8
+  csrs mstateen3h, x8
+#endif
+  RVTEST_TSBI_GOTO_SMODE
+#if __riscv_xlen == 64
+  LI(x6, HSTATEEN_SSTATEEN)
+  csrs hstateen1, x6
+  csrs hstateen2, x6
+  csrs hstateen3, x6
+#else
+  LI(x6, HSTATEENH_SSTATEEN)
+  csrs hstateen1h, x6
+  csrs hstateen2h, x6
+  csrs hstateen3h, x6
+#endif
 
 
 /////////////////////////////////
@@ -152,17 +862,18 @@ SsstateenH_vs_cg_cp_vs_stateen123_hstateen3h_vs:
 //   Read hstateen0 (and hstateen0h) in VS-mode.  Virtual instruction when HS-mode could
 //   read it
 /////////////////////////////////
-  LI(x8, 42)
+  RVTEST_TSBI_GOTO_VSMODE
+  LI(x6, 42)
 SsstateenH_vs_cg_cp_vs_hstateen0_hstateen0_vs:
-  csrr x8, hstateen0
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, SsstateenH_vs_cg_cp_vs_hstateen0_hstateen0_vs, SsstateenH_vs_cg_cp_vs_hstateen0_hstateen0_vs_str)
+  csrr x6, hstateen0
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, SsstateenH_vs_cg_cp_vs_hstateen0_hstateen0_vs, SsstateenH_vs_cg_cp_vs_hstateen0_hstateen0_vs_str)
 #if __riscv_xlen == 32
-  LI(x8, 42)
+  LI(x6, 42)
 SsstateenH_vs_cg_cp_vs_hstateen0_hstateen0h_vs:
-  csrr x8, hstateen0h
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, SsstateenH_vs_cg_cp_vs_hstateen0_hstateen0h_vs, SsstateenH_vs_cg_cp_vs_hstateen0_hstateen0h_vs_str)
+  csrr x6, hstateen0h
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, SsstateenH_vs_cg_cp_vs_hstateen0_hstateen0h_vs, SsstateenH_vs_cg_cp_vs_hstateen0_hstateen0h_vs_str)
 #endif // __riscv_xlen == 32
   RVTEST_TSBI_GOTO_SMODE
 
@@ -172,39 +883,39 @@ SsstateenH_vs_cg_cp_vs_hstateen0_hstateen0h_vs:
 //   With hstateen0.SE0 = 1, write all 1s to sstateen0 in HS-mode, then read it in VS-mode with hstateen0
 //   C, FCSR and JVT clear and set.  sstateen0 bits whose hstateen0 bit is 0 read as zero
 /////////////////////////////////
-  csrr x15, hstateen0
-  csrr x13, sstateen0
+  csrr x9, hstateen0
+  csrr x14, sstateen0
 #if __riscv_xlen == 64
-  LI(x8, HSTATEEN_SSTATEEN)
-  csrs hstateen0, x8
+  LI(x15, HSTATEEN_SSTATEEN)
+  csrs hstateen0, x15
 #else
-  LI(x8, HSTATEENH_SSTATEEN)
-  csrs hstateen0h, x8
+  LI(x15, HSTATEENH_SSTATEEN)
+  csrs hstateen0h, x15
 #endif
-  LI(x14, (HSTATEEN0_CS | HSTATEEN0_FCSR | HSTATEEN0_JVT))
-  csrs hstateen0, x14
-  LI(x14, -1)
-  csrw sstateen0, x14
-  LI(x14, (HSTATEEN0_CS | HSTATEEN0_FCSR | HSTATEEN0_JVT))
-  csrc hstateen0, x14
+  LI(x6, (HSTATEEN0_CS | HSTATEEN0_FCSR | HSTATEEN0_JVT))
+  csrs hstateen0, x6
+  LI(x6, -1)
+  csrw sstateen0, x6
+  LI(x6, (HSTATEEN0_CS | HSTATEEN0_FCSR | HSTATEEN0_JVT))
+  csrc hstateen0, x6
   RVTEST_TSBI_GOTO_VSMODE
-  LI(x9, 42)
+  LI(x13, 42)
 SsstateenH_vs_cg_cp_vs_sstateen0_roz_hlow_0:
-  csrr x9, sstateen0
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, SsstateenH_vs_cg_cp_vs_sstateen0_roz_hlow_0, SsstateenH_vs_cg_cp_vs_sstateen0_roz_hlow_0_str)
+  csrr x13, sstateen0
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, SsstateenH_vs_cg_cp_vs_sstateen0_roz_hlow_0, SsstateenH_vs_cg_cp_vs_sstateen0_roz_hlow_0_str)
   RVTEST_TSBI_GOTO_SMODE
-  LI(x14, (HSTATEEN0_CS | HSTATEEN0_FCSR | HSTATEEN0_JVT))
-  csrs hstateen0, x14
+  LI(x6, (HSTATEEN0_CS | HSTATEEN0_FCSR | HSTATEEN0_JVT))
+  csrs hstateen0, x6
   RVTEST_TSBI_GOTO_VSMODE
-  LI(x9, 42)
+  LI(x13, 42)
 SsstateenH_vs_cg_cp_vs_sstateen0_roz_hlow_1:
-  csrr x9, sstateen0
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, SsstateenH_vs_cg_cp_vs_sstateen0_roz_hlow_1, SsstateenH_vs_cg_cp_vs_sstateen0_roz_hlow_1_str)
+  csrr x13, sstateen0
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, SsstateenH_vs_cg_cp_vs_sstateen0_roz_hlow_1, SsstateenH_vs_cg_cp_vs_sstateen0_roz_hlow_1_str)
   RVTEST_TSBI_GOTO_SMODE
-  csrw sstateen0, x13
-  csrw hstateen0, x15
+  csrw sstateen0, x14
+  csrw hstateen0, x9
 
 // Instantiate trap handlers and other epilog code, call RVMODEL_HALT at end of test
 RVTEST_CODE_END
@@ -216,23 +927,122 @@ RVTEST_DATA_BEGIN
 
 
 // Testcase strings
-SsstateenH_vs_cg_cp_vs_sstateen0_sstateen0_hse0_0_str: .string "\"test: 270; cg: SsstateenH_vs_cg; cp: cp_vs_sstateen0; bin: sstateen0_hse0_0\""
-SsstateenH_vs_cg_cp_vs_senvcfg_senvcfg_henvcfg_0_str: .string "\"test: 271; cg: SsstateenH_vs_cg; cp: cp_vs_senvcfg; bin: senvcfg_henvcfg_0\""
-SsstateenH_vs_cg_cp_vs_sstateen0_sstateen0_hse0_1_str: .string "\"test: 272; cg: SsstateenH_vs_cg; cp: cp_vs_sstateen0; bin: sstateen0_hse0_1\""
-SsstateenH_vs_cg_cp_vs_senvcfg_senvcfg_henvcfg_1_str: .string "\"test: 273; cg: SsstateenH_vs_cg; cp: cp_vs_senvcfg; bin: senvcfg_henvcfg_1\""
-SsstateenH_vs_cg_cp_vs_stateen123_sstateen1_vs_str: .string "\"test: 274; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: sstateen1_vs\""
-SsstateenH_vs_cg_cp_vs_stateen123_sstateen2_vs_str: .string "\"test: 275; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: sstateen2_vs\""
-SsstateenH_vs_cg_cp_vs_stateen123_sstateen3_vs_str: .string "\"test: 276; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: sstateen3_vs\""
-SsstateenH_vs_cg_cp_vs_stateen123_hstateen1_vs_str: .string "\"test: 277; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen1_vs\""
-SsstateenH_vs_cg_cp_vs_stateen123_hstateen2_vs_str: .string "\"test: 278; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen2_vs\""
-SsstateenH_vs_cg_cp_vs_stateen123_hstateen3_vs_str: .string "\"test: 279; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen3_vs\""
-SsstateenH_vs_cg_cp_vs_stateen123_hstateen1h_vs_str: .string "\"test: 280; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen1h_vs\""
-SsstateenH_vs_cg_cp_vs_stateen123_hstateen2h_vs_str: .string "\"test: 281; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen2h_vs\""
-SsstateenH_vs_cg_cp_vs_stateen123_hstateen3h_vs_str: .string "\"test: 282; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen3h_vs\""
-SsstateenH_vs_cg_cp_vs_hstateen0_hstateen0_vs_str: .string "\"test: 283; cg: SsstateenH_vs_cg; cp: cp_vs_hstateen0; bin: hstateen0_vs\""
-SsstateenH_vs_cg_cp_vs_hstateen0_hstateen0h_vs_str: .string "\"test: 284; cg: SsstateenH_vs_cg; cp: cp_vs_hstateen0; bin: hstateen0h_vs\""
-SsstateenH_vs_cg_cp_vs_sstateen0_roz_hlow_0_str: .string "\"test: 285; cg: SsstateenH_vs_cg; cp: cp_vs_sstateen0_roz; bin: hlow_0\""
-SsstateenH_vs_cg_cp_vs_sstateen0_roz_hlow_1_str: .string "\"test: 286; cg: SsstateenH_vs_cg; cp: cp_vs_sstateen0_roz; bin: hlow_1\""
+SsstateenH_vs_cg_cp_vs_sstateen0_sstateen0_hse0_0_str: .string "\"test: 333; cg: SsstateenH_vs_cg; cp: cp_vs_sstateen0; bin: sstateen0_hse0_0\""
+SsstateenH_vs_cg_cp_vs_senvcfg_senvcfg_henvcfg_0_str: .string "\"test: 334; cg: SsstateenH_vs_cg; cp: cp_vs_senvcfg; bin: senvcfg_henvcfg_0\""
+SsstateenH_vs_cg_cp_vs_sstateen0_sstateen0_hse0_1_str: .string "\"test: 335; cg: SsstateenH_vs_cg; cp: cp_vs_sstateen0; bin: sstateen0_hse0_1\""
+SsstateenH_vs_cg_cp_vs_senvcfg_senvcfg_henvcfg_1_str: .string "\"test: 336; cg: SsstateenH_vs_cg; cp: cp_vs_senvcfg; bin: senvcfg_henvcfg_1\""
+SsstateenH_vs_cg_cp_vs_stateen123_sstateen1_csrr_m0_h0_str: .string "\"test: 337; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: sstateen1_csrr_m0_h0\""
+SsstateenH_vs_cg_cp_vs_stateen123_sstateen1_csrw_m0_h0_str: .string "\"test: 338; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: sstateen1_csrw_m0_h0\""
+SsstateenH_vs_cg_cp_vs_stateen123_sstateen1_csrc_m0_h0_str: .string "\"test: 339; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: sstateen1_csrc_m0_h0\""
+SsstateenH_vs_cg_cp_vs_stateen123_sstateen1_csrs_m0_h0_str: .string "\"test: 340; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: sstateen1_csrs_m0_h0\""
+SsstateenH_vs_cg_cp_vs_stateen123_sstateen2_csrr_m0_h0_str: .string "\"test: 341; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: sstateen2_csrr_m0_h0\""
+SsstateenH_vs_cg_cp_vs_stateen123_sstateen2_csrw_m0_h0_str: .string "\"test: 342; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: sstateen2_csrw_m0_h0\""
+SsstateenH_vs_cg_cp_vs_stateen123_sstateen2_csrc_m0_h0_str: .string "\"test: 343; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: sstateen2_csrc_m0_h0\""
+SsstateenH_vs_cg_cp_vs_stateen123_sstateen2_csrs_m0_h0_str: .string "\"test: 344; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: sstateen2_csrs_m0_h0\""
+SsstateenH_vs_cg_cp_vs_stateen123_sstateen3_csrr_m0_h0_str: .string "\"test: 345; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: sstateen3_csrr_m0_h0\""
+SsstateenH_vs_cg_cp_vs_stateen123_sstateen3_csrw_m0_h0_str: .string "\"test: 346; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: sstateen3_csrw_m0_h0\""
+SsstateenH_vs_cg_cp_vs_stateen123_sstateen3_csrc_m0_h0_str: .string "\"test: 347; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: sstateen3_csrc_m0_h0\""
+SsstateenH_vs_cg_cp_vs_stateen123_sstateen3_csrs_m0_h0_str: .string "\"test: 348; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: sstateen3_csrs_m0_h0\""
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen1_csrr_m0_h0_str: .string "\"test: 349; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen1_csrr_m0_h0\""
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen1_csrw_m0_h0_str: .string "\"test: 350; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen1_csrw_m0_h0\""
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen1_csrc_m0_h0_str: .string "\"test: 351; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen1_csrc_m0_h0\""
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen1_csrs_m0_h0_str: .string "\"test: 352; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen1_csrs_m0_h0\""
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen2_csrr_m0_h0_str: .string "\"test: 353; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen2_csrr_m0_h0\""
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen2_csrw_m0_h0_str: .string "\"test: 354; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen2_csrw_m0_h0\""
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen2_csrc_m0_h0_str: .string "\"test: 355; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen2_csrc_m0_h0\""
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen2_csrs_m0_h0_str: .string "\"test: 356; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen2_csrs_m0_h0\""
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen3_csrr_m0_h0_str: .string "\"test: 357; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen3_csrr_m0_h0\""
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen3_csrw_m0_h0_str: .string "\"test: 358; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen3_csrw_m0_h0\""
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen3_csrc_m0_h0_str: .string "\"test: 359; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen3_csrc_m0_h0\""
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen3_csrs_m0_h0_str: .string "\"test: 360; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen3_csrs_m0_h0\""
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen1h_csrr_m0_h0_str: .string "\"test: 361; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen1h_csrr_m0_h0\""
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen1h_csrw_m0_h0_str: .string "\"test: 362; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen1h_csrw_m0_h0\""
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen1h_csrc_m0_h0_str: .string "\"test: 363; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen1h_csrc_m0_h0\""
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen1h_csrs_m0_h0_str: .string "\"test: 364; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen1h_csrs_m0_h0\""
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen2h_csrr_m0_h0_str: .string "\"test: 365; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen2h_csrr_m0_h0\""
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen2h_csrw_m0_h0_str: .string "\"test: 366; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen2h_csrw_m0_h0\""
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen2h_csrc_m0_h0_str: .string "\"test: 367; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen2h_csrc_m0_h0\""
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen2h_csrs_m0_h0_str: .string "\"test: 368; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen2h_csrs_m0_h0\""
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen3h_csrr_m0_h0_str: .string "\"test: 369; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen3h_csrr_m0_h0\""
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen3h_csrw_m0_h0_str: .string "\"test: 370; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen3h_csrw_m0_h0\""
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen3h_csrc_m0_h0_str: .string "\"test: 371; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen3h_csrc_m0_h0\""
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen3h_csrs_m0_h0_str: .string "\"test: 372; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen3h_csrs_m0_h0\""
+SsstateenH_vs_cg_cp_vs_stateen123_sstateen1_csrr_m1_h0_str: .string "\"test: 373; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: sstateen1_csrr_m1_h0\""
+SsstateenH_vs_cg_cp_vs_stateen123_sstateen1_csrw_m1_h0_str: .string "\"test: 374; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: sstateen1_csrw_m1_h0\""
+SsstateenH_vs_cg_cp_vs_stateen123_sstateen1_csrc_m1_h0_str: .string "\"test: 375; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: sstateen1_csrc_m1_h0\""
+SsstateenH_vs_cg_cp_vs_stateen123_sstateen1_csrs_m1_h0_str: .string "\"test: 376; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: sstateen1_csrs_m1_h0\""
+SsstateenH_vs_cg_cp_vs_stateen123_sstateen2_csrr_m1_h0_str: .string "\"test: 377; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: sstateen2_csrr_m1_h0\""
+SsstateenH_vs_cg_cp_vs_stateen123_sstateen2_csrw_m1_h0_str: .string "\"test: 378; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: sstateen2_csrw_m1_h0\""
+SsstateenH_vs_cg_cp_vs_stateen123_sstateen2_csrc_m1_h0_str: .string "\"test: 379; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: sstateen2_csrc_m1_h0\""
+SsstateenH_vs_cg_cp_vs_stateen123_sstateen2_csrs_m1_h0_str: .string "\"test: 380; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: sstateen2_csrs_m1_h0\""
+SsstateenH_vs_cg_cp_vs_stateen123_sstateen3_csrr_m1_h0_str: .string "\"test: 381; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: sstateen3_csrr_m1_h0\""
+SsstateenH_vs_cg_cp_vs_stateen123_sstateen3_csrw_m1_h0_str: .string "\"test: 382; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: sstateen3_csrw_m1_h0\""
+SsstateenH_vs_cg_cp_vs_stateen123_sstateen3_csrc_m1_h0_str: .string "\"test: 383; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: sstateen3_csrc_m1_h0\""
+SsstateenH_vs_cg_cp_vs_stateen123_sstateen3_csrs_m1_h0_str: .string "\"test: 384; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: sstateen3_csrs_m1_h0\""
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen1_csrr_m1_h0_str: .string "\"test: 385; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen1_csrr_m1_h0\""
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen1_csrw_m1_h0_str: .string "\"test: 386; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen1_csrw_m1_h0\""
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen1_csrc_m1_h0_str: .string "\"test: 387; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen1_csrc_m1_h0\""
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen1_csrs_m1_h0_str: .string "\"test: 388; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen1_csrs_m1_h0\""
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen2_csrr_m1_h0_str: .string "\"test: 389; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen2_csrr_m1_h0\""
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen2_csrw_m1_h0_str: .string "\"test: 390; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen2_csrw_m1_h0\""
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen2_csrc_m1_h0_str: .string "\"test: 391; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen2_csrc_m1_h0\""
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen2_csrs_m1_h0_str: .string "\"test: 392; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen2_csrs_m1_h0\""
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen3_csrr_m1_h0_str: .string "\"test: 393; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen3_csrr_m1_h0\""
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen3_csrw_m1_h0_str: .string "\"test: 394; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen3_csrw_m1_h0\""
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen3_csrc_m1_h0_str: .string "\"test: 395; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen3_csrc_m1_h0\""
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen3_csrs_m1_h0_str: .string "\"test: 396; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen3_csrs_m1_h0\""
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen1h_csrr_m1_h0_str: .string "\"test: 397; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen1h_csrr_m1_h0\""
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen1h_csrw_m1_h0_str: .string "\"test: 398; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen1h_csrw_m1_h0\""
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen1h_csrc_m1_h0_str: .string "\"test: 399; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen1h_csrc_m1_h0\""
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen1h_csrs_m1_h0_str: .string "\"test: 400; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen1h_csrs_m1_h0\""
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen2h_csrr_m1_h0_str: .string "\"test: 401; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen2h_csrr_m1_h0\""
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen2h_csrw_m1_h0_str: .string "\"test: 402; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen2h_csrw_m1_h0\""
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen2h_csrc_m1_h0_str: .string "\"test: 403; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen2h_csrc_m1_h0\""
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen2h_csrs_m1_h0_str: .string "\"test: 404; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen2h_csrs_m1_h0\""
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen3h_csrr_m1_h0_str: .string "\"test: 405; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen3h_csrr_m1_h0\""
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen3h_csrw_m1_h0_str: .string "\"test: 406; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen3h_csrw_m1_h0\""
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen3h_csrc_m1_h0_str: .string "\"test: 407; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen3h_csrc_m1_h0\""
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen3h_csrs_m1_h0_str: .string "\"test: 408; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen3h_csrs_m1_h0\""
+SsstateenH_vs_cg_cp_vs_stateen123_sstateen1_csrr_m1_h1_str: .string "\"test: 409; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: sstateen1_csrr_m1_h1\""
+SsstateenH_vs_cg_cp_vs_stateen123_sstateen1_csrw_m1_h1_str: .string "\"test: 410; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: sstateen1_csrw_m1_h1\""
+SsstateenH_vs_cg_cp_vs_stateen123_sstateen1_csrc_m1_h1_str: .string "\"test: 411; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: sstateen1_csrc_m1_h1\""
+SsstateenH_vs_cg_cp_vs_stateen123_sstateen1_csrs_m1_h1_str: .string "\"test: 412; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: sstateen1_csrs_m1_h1\""
+SsstateenH_vs_cg_cp_vs_stateen123_sstateen2_csrr_m1_h1_str: .string "\"test: 413; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: sstateen2_csrr_m1_h1\""
+SsstateenH_vs_cg_cp_vs_stateen123_sstateen2_csrw_m1_h1_str: .string "\"test: 414; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: sstateen2_csrw_m1_h1\""
+SsstateenH_vs_cg_cp_vs_stateen123_sstateen2_csrc_m1_h1_str: .string "\"test: 415; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: sstateen2_csrc_m1_h1\""
+SsstateenH_vs_cg_cp_vs_stateen123_sstateen2_csrs_m1_h1_str: .string "\"test: 416; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: sstateen2_csrs_m1_h1\""
+SsstateenH_vs_cg_cp_vs_stateen123_sstateen3_csrr_m1_h1_str: .string "\"test: 417; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: sstateen3_csrr_m1_h1\""
+SsstateenH_vs_cg_cp_vs_stateen123_sstateen3_csrw_m1_h1_str: .string "\"test: 418; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: sstateen3_csrw_m1_h1\""
+SsstateenH_vs_cg_cp_vs_stateen123_sstateen3_csrc_m1_h1_str: .string "\"test: 419; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: sstateen3_csrc_m1_h1\""
+SsstateenH_vs_cg_cp_vs_stateen123_sstateen3_csrs_m1_h1_str: .string "\"test: 420; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: sstateen3_csrs_m1_h1\""
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen1_csrr_m1_h1_str: .string "\"test: 421; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen1_csrr_m1_h1\""
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen1_csrw_m1_h1_str: .string "\"test: 422; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen1_csrw_m1_h1\""
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen1_csrc_m1_h1_str: .string "\"test: 423; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen1_csrc_m1_h1\""
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen1_csrs_m1_h1_str: .string "\"test: 424; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen1_csrs_m1_h1\""
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen2_csrr_m1_h1_str: .string "\"test: 425; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen2_csrr_m1_h1\""
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen2_csrw_m1_h1_str: .string "\"test: 426; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen2_csrw_m1_h1\""
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen2_csrc_m1_h1_str: .string "\"test: 427; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen2_csrc_m1_h1\""
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen2_csrs_m1_h1_str: .string "\"test: 428; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen2_csrs_m1_h1\""
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen3_csrr_m1_h1_str: .string "\"test: 429; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen3_csrr_m1_h1\""
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen3_csrw_m1_h1_str: .string "\"test: 430; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen3_csrw_m1_h1\""
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen3_csrc_m1_h1_str: .string "\"test: 431; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen3_csrc_m1_h1\""
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen3_csrs_m1_h1_str: .string "\"test: 432; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen3_csrs_m1_h1\""
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen1h_csrr_m1_h1_str: .string "\"test: 433; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen1h_csrr_m1_h1\""
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen1h_csrw_m1_h1_str: .string "\"test: 434; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen1h_csrw_m1_h1\""
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen1h_csrc_m1_h1_str: .string "\"test: 435; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen1h_csrc_m1_h1\""
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen1h_csrs_m1_h1_str: .string "\"test: 436; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen1h_csrs_m1_h1\""
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen2h_csrr_m1_h1_str: .string "\"test: 437; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen2h_csrr_m1_h1\""
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen2h_csrw_m1_h1_str: .string "\"test: 438; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen2h_csrw_m1_h1\""
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen2h_csrc_m1_h1_str: .string "\"test: 439; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen2h_csrc_m1_h1\""
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen2h_csrs_m1_h1_str: .string "\"test: 440; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen2h_csrs_m1_h1\""
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen3h_csrr_m1_h1_str: .string "\"test: 441; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen3h_csrr_m1_h1\""
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen3h_csrw_m1_h1_str: .string "\"test: 442; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen3h_csrw_m1_h1\""
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen3h_csrc_m1_h1_str: .string "\"test: 443; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen3h_csrc_m1_h1\""
+SsstateenH_vs_cg_cp_vs_stateen123_hstateen3h_csrs_m1_h1_str: .string "\"test: 444; cg: SsstateenH_vs_cg; cp: cp_vs_stateen123; bin: hstateen3h_csrs_m1_h1\""
+SsstateenH_vs_cg_cp_vs_hstateen0_hstateen0_vs_str: .string "\"test: 445; cg: SsstateenH_vs_cg; cp: cp_vs_hstateen0; bin: hstateen0_vs\""
+SsstateenH_vs_cg_cp_vs_hstateen0_hstateen0h_vs_str: .string "\"test: 446; cg: SsstateenH_vs_cg; cp: cp_vs_hstateen0; bin: hstateen0h_vs\""
+SsstateenH_vs_cg_cp_vs_sstateen0_roz_hlow_0_str: .string "\"test: 447; cg: SsstateenH_vs_cg; cp: cp_vs_sstateen0_roz; bin: hlow_0\""
+SsstateenH_vs_cg_cp_vs_sstateen0_roz_hlow_1_str: .string "\"test: 448; cg: SsstateenH_vs_cg; cp: cp_vs_sstateen0_roz; bin: hlow_1\""
 
 // End of test data section and model specific data
 RVTEST_DATA_END
