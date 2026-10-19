@@ -274,6 +274,99 @@ covergroup SdtrigSm_icount_cg with function sample(ins_t ins);
     cp_icount_trap_fire:      cross priv_mode_m, triggernum, icount_fired, fired_one_m, mret;                                     // NTRIG
 endgroup
 
+// 1 when an mcontrol6 trigger with action = 0 fired on this lr/sc/AMO exactly when it should.
+// lr and the AMO read are loads, sc and the AMO write are stores. An address match compares rs1 (the access address).
+// A data match compares the sc store data (rs2), or for lr the loaded data: the test stores the nonzero tdata2 at the
+// address first, so lr matches exactly when tdata2 is nonzero.
+function automatic logic sdtrig_a_as_expected(ins_t ins);
+    logic [XLEN-1:0] tdata1 = get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tdata1", "tdata1");
+    logic [XLEN-1:0] tdata2 = get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tdata2", "tdata2");
+    logic is_lr  = ins.current.insn ==? LR_W  || ins.current.insn ==? LR_D;
+    logic is_sc  = ins.current.insn ==? SC_W  || ins.current.insn ==? SC_D;
+    logic is_amo = ins.current.insn[6:0] == 7'b0101111 && !is_lr && !is_sc;
+    logic match;
+    if (!tdata1[21])   match = tdata2 == ins.current.rs1_val;
+    else if (is_sc)    match = tdata2 == ins.current.rs2_val;
+    else               match = is_lr && tdata2 != '0;
+    return sdtrig_bp_taken(ins) == (match && (((is_lr || is_amo) && tdata1[0]) || ((is_sc || is_amo) && tdata1[1])));
+endfunction
+
+covergroup SdtrigSm_a_cg with function sample(ins_t ins);
+    option.per_instance = 0;
+    `include "general/RISCV_coverage_standard_coverpoints.svh"
+    `include "general/RISCV_coverage_sdtrig_coverpoints.svh"
+
+    a_xsl: coverpoint {get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tdata1", "execute")[0], get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tdata1", "store")[0], get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tdata1", "load")[0]} {
+        type_option.weight = 0;
+        bins execute = {3'b100};
+        bins store   = {3'b010};
+        bins load    = {3'b001};
+    }
+    a_tdata2_adr: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tdata2", "tdata2") {
+        type_option.weight = 0;
+        wildcard bins scratch = {'x} iff (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tdata2", "tdata2") == ins.current.rs1_val);
+        bins zero             = {'0};
+    }
+    a_tdata2_data: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tdata2", "tdata2") {
+        type_option.weight = 0;
+        wildcard bins value = {'x} iff (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tdata2", "tdata2") != '0);
+        bins zero           = {'0};
+    }
+    lrsc_op: coverpoint ins.current.insn {
+        type_option.weight = 0;
+        wildcard bins lr_w = {LR_W};
+        wildcard bins sc_w = {SC_W};
+        `ifdef UDB_MXLEN_64
+            wildcard bins lr_d = {LR_D};
+            wildcard bins sc_d = {SC_D};
+        `endif
+    }
+    // data matches with size = 0 are defined only for XLEN-wide accesses
+    lrsc_op_xlen: coverpoint ins.current.insn {
+        type_option.weight = 0;
+        `ifdef UDB_MXLEN_64
+            wildcard bins lr_d = {LR_D};
+            wildcard bins sc_d = {SC_D};
+        `else
+            wildcard bins lr_w = {LR_W};
+            wildcard bins sc_w = {SC_W};
+        `endif
+    }
+    amo_op: coverpoint ins.current.insn {
+        type_option.weight = 0;
+        wildcard bins amoswap_w = {AMOSWAP_W};
+        wildcard bins amoadd_w  = {AMOADD_W};
+        wildcard bins amoand_w  = {AMOAND_W};
+        wildcard bins amoor_w   = {AMOOR_W};
+        wildcard bins amoxor_w  = {AMOXOR_W};
+        wildcard bins amomax_w  = {AMOMAX_W};
+        wildcard bins amomaxu_w = {AMOMAXU_W};
+        wildcard bins amomin_w  = {AMOMIN_W};
+        wildcard bins amominu_w = {AMOMINU_W};
+        `ifdef UDB_MXLEN_64
+            wildcard bins amoswap_d = {AMOSWAP_D};
+            wildcard bins amoadd_d  = {AMOADD_D};
+            wildcard bins amoand_d  = {AMOAND_D};
+            wildcard bins amoor_d   = {AMOOR_D};
+            wildcard bins amoxor_d  = {AMOXOR_D};
+            wildcard bins amomax_d  = {AMOMAX_D};
+            wildcard bins amomaxu_d = {AMOMAXU_D};
+            wildcard bins amomin_d  = {AMOMIN_D};
+            wildcard bins amominu_d = {AMOMINU_D};
+        `endif
+    }
+    // fired (into M, mcause = 3) iff the trigger matches the access as a load or store
+    a_outcome: coverpoint sdtrig_a_as_expected(ins) {
+        type_option.weight = 0;
+        bins as_expected = {1'b1};
+    }
+
+    // main coverpoints
+    cp_lrsc_addr: cross priv_mode_m, triggernum, tdata1_type_mcontrol6, tdata1_m_on, tdata1_select_adr, a_tdata2_adr, a_xsl, lrsc_op, a_outcome;        // NTRIG * 2 tdata2 * 3 xsl * 2 (RV64 4) ops
+    cp_lrsc_data: cross priv_mode_m, triggernum, tdata1_type_mcontrol6, tdata1_m_on, tdata1_select_data, a_tdata2_data, a_xsl, lrsc_op_xlen, a_outcome; // NTRIG * 2 tdata2 * 3 xsl * 2 ops
+    cp_amo:       cross priv_mode_m, triggernum, tdata1_type_mcontrol6, tdata1_m_on, tdata1_select_adr, a_tdata2_adr, a_xsl, amo_op, a_outcome;         // NTRIG * 2 tdata2 * 3 xsl * 9 (RV64 18) ops
+endgroup
+
 `ifdef S_SUPPORTED
 covergroup SdtrigSm_native_triggers_cg with function sample(ins_t ins);
     option.per_instance = 0;
@@ -630,6 +723,7 @@ function void sdtrigsm_sample(int hart, int issue, ins_t ins);
     SdtrigSm_trig_module_reg_cg.sample(ins);
     SdtrigSm_access_cg.sample(ins);
     SdtrigSm_icount_cg.sample(ins);
+    SdtrigSm_a_cg.sample(ins);
     `ifdef S_SUPPORTED
         SdtrigSm_native_triggers_cg.sample(ins);
     `endif

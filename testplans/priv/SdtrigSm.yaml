@@ -103,11 +103,7 @@ coverpoints:
       Breakpoint exception when mem access data matches tdata2 and
       - sc is performed while Store = 1 or
       - lr is performed while Load = 1
-    bins: |-
-      if RV32:
-      2 address * 3 XSL * 2 ops
-      if RV64:
-      2 address * 3 XSL * 4 ops
+    bins: 2 tdata2 * 3 XSL * 2 ops (lr/sc of XLEN width; size=0 data matches are defined only for XLEN-wide accesses)
     rules:
       - Sdtrig_Aext_lr_op
       - Sdtrig_Aext_sc_op
@@ -118,9 +114,9 @@ coverpoints:
       tdata2 = {scratch/0}
       tdata1.select = 0 (adr)
       tdata1.XSL = {100/010/001}
-      Perform amoswap to scratch with rd != x0
-    expectation: Breakpoint exception if load or store are set and mem access data matches tdata2
-    bins: 2 address * 3 XSL
+      Perform each AMO (amoswap/add/and/or/xor/max/maxu/min/minu .w, and .d if RV64) to scratch with rd != x0
+    expectation: Breakpoint exception if load or store are set and the access address matches tdata2
+    bins: 2 address * 3 XSL * 9 (RV64 18) AMOs
     rules:
       - Sdtrig_AMO_read
       - Sdtrig_AMO_read_addr

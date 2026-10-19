@@ -11,6 +11,7 @@
     SdtrigSm_trig_module_reg_cg = new();       SdtrigSm_trig_module_reg_cg.set_inst_name("obj_SdtrigSm_trig_module_reg");
     SdtrigSm_access_cg = new();                SdtrigSm_access_cg.set_inst_name("obj_SdtrigSm_access");
     SdtrigSm_icount_cg = new();                SdtrigSm_icount_cg.set_inst_name("obj_SdtrigSm_icount");
+    SdtrigSm_a_cg = new();                     SdtrigSm_a_cg.set_inst_name("obj_SdtrigSm_a");
     `ifdef S_SUPPORTED
         SdtrigSm_native_triggers_cg = new();   SdtrigSm_native_triggers_cg.set_inst_name("obj_SdtrigSm_native_triggers");
     `endif
