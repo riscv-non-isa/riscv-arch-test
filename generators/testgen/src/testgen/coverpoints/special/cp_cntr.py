@@ -22,18 +22,24 @@ def make_cntr(instr_name: str, instr_type: str, coverpoint: str, test_data: Test
     r1, r2, r3 = test_data.int_regs.get_registers(3, exclude_regs=[0])
 
     if coverpoint == "cp_cntr":
-        tc.code.extend(
-            [
-                gen_cntr_test(instr_name, "cycle", r1, r2, r3, coverpoint, test_data),
-                gen_cntr_test(instr_name, "time", r1, r2, r3, coverpoint, test_data),
-                gen_cntr_test(instr_name, "instret", r1, r2, r3, coverpoint, test_data),
-                "#if __riscv_xlen == 32\n",
-                gen_cntr_test(instr_name, "cycleh", r1, r2, r3, coverpoint, test_data),
-                gen_cntr_test(instr_name, "timeh", r1, r2, r3, coverpoint, test_data),
-                gen_cntr_test(instr_name, "instreth", r1, r2, r3, coverpoint, test_data),
-                "#endif\n",
-            ]
-        )
+        # Unprivileged tests run in U-mode when it exists, where reading cycle, time, or instret also
+        # needs mcounteren (and scounteren with S-mode) to delegate the counter. Any of those bits may
+        # be read-only zero (norm:mcounteren_flds_rdonly0, norm:scounteren_acc), and then every read
+        # traps, so only the counters the configuration delegates are read. Otherwise the time loop
+        # would take illegal-instruction traps until the trap signature overflows.
+        # UDB_MCOUNTENABLE_EN_<n> and UDB_SCOUNTENABLE_EN_<n> come from the MCOUNTENABLE_EN and
+        # SCOUNTENABLE_EN parameters of the UDB config.
+        counters = ["cycle", "time", "instret"]
+        for bit, cntr in enumerate(counters):
+            tc.code.extend(
+                [cntr_guard(bit), gen_cntr_test(instr_name, cntr, r1, r2, r3, coverpoint, test_data), "#endif\n"]
+            )
+        tc.code.append("#if __riscv_xlen == 32\n")
+        for bit, cntr in enumerate(counters):
+            tc.code.extend(
+                [cntr_guard(bit), gen_cntr_test(instr_name, f"{cntr}h", r1, r2, r3, coverpoint, test_data), "#endif\n"]
+            )
+        tc.code.append("#endif\n")
     elif coverpoint == "cp_cntr_hpm":
         # hpmcounter3 through hpmcounter31, each guarded by whether the configuration implements
         # it. Zihpm permits any subset of the counters to be implemented, and accessing one that
@@ -59,6 +65,14 @@ def make_cntr(instr_name: str, instr_type: str, coverpoint: str, test_data: Test
     test_data.int_regs.return_registers([r1, r2, r3])
 
     return [test_data.end_test_chunk()]
+
+
+def cntr_guard(bit: int) -> str:
+    """Preprocessor condition that counter `bit` is readable from the mode unprivileged tests run in."""
+    return (
+        f"#if !defined(U_SUPPORTED) || (defined(UDB_MCOUNTENABLE_EN_{bit}) && "
+        f"(!defined(S_SUPPORTED) || defined(UDB_SCOUNTENABLE_EN_{bit})))\n"
+    )
 
 
 def gen_cntr_test(instr_name: str, cntr: str, r1: int, r2: int, r3: int, coverpoint: str, test_data: TestData) -> str:
