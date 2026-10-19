@@ -8,7 +8,7 @@
 set -euo pipefail
 
 INSTALL_DIR="${1:?Usage: install-cvw.sh <install-dir>}"
-CVW_COMMIT="2064ca2bb8a88e3e3ec43753be93d00bef49345b"
+CVW_COMMIT="712ee9719467e9e9987cebd55926ae8e01b08770"
 VERILATOR_VERSION="v5.036"
 
 # Install Verilator from source
@@ -35,7 +35,7 @@ git submodule update --init addins/verilog-ethernet
 export WALLY="$INSTALL_DIR/cvw"
 export PATH="$INSTALL_DIR/bin:$PATH" # Verilator was just `make install`ed here
 
-for WALLYCONF in rv32gc rv32imc rv64gc; do
+for WALLYCONF in rv32i rv64i rv32gc rv32imc rv64gc; do
   echo "Prebuilding Verilator model for $WALLYCONF ..."
   make -j"$(nproc)" -C "$WALLY/sim/verilator" \
     WALLYCONF="$WALLYCONF" \
