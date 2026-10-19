@@ -57,7 +57,6 @@
 // If RVMODEL_ACCESS_FAULT_ADDRESS is not defined, no access faults are tested
 
 ##### MTIME #####
-// If RVMODEL_MTIME_ADDRESS is not defined, no machine timer interrupts are tested
 
 #ifdef RVTEST_EMULATE_TIME_CSR
   #ifndef RVMODEL_MTIME_ADDRESS
@@ -99,8 +98,10 @@
   #error "UDB_MEI_INTR_IMPL is set but RVMODEL_SET_MEXT_INT is not defined. Define it in rvmodel_macros.h."
 #endif
 
-#if defined(UDB_MTI_INTR_IMPL) && !defined(RVMODEL_MTIMECMP_ADDRESS)
-  #error "UDB_MTI_INTR_IMPL is set but RVMODEL_MTIMECMP_ADDRESS is not defined. Define it in rvmodel_macros.h."
+// Machine timer interrupts are armed by writing mtimecmp relative to mtime, so they need
+// RVMODEL_MTIME_ADDRESS, which in turn requires RVMODEL_MTIMECMP_ADDRESS (checked above).
+#if defined(UDB_MTI_INTR_IMPL) && !defined(RVMODEL_MTIME_ADDRESS)
+  #error "UDB_MTI_INTR_IMPL is set but RVMODEL_MTIME_ADDRESS is not defined. Define it in rvmodel_macros.h."
 #endif
 
 #if defined(UDB_MSI_INTR_IMPL) && !defined(RVMODEL_MSIP_ADDRESS) && !defined(RVMODEL_SET_MSW_INT)
@@ -132,6 +133,11 @@
 #endif
 
 ##### Supervisor Interrupts #####
+// Sstc timer interrupts are armed relative to the time CSR (Zicntr), or to mtime without Zicntr.
+#if defined(SSTC_SUPPORTED) && !defined(ZICNTR_SUPPORTED) && !defined(RVMODEL_MTIME_ADDRESS)
+  #error "Sstc is implemented without Zicntr, so RVMODEL_MTIME_ADDRESS is needed to read the time. Define it in rvmodel_macros.h."
+#endif
+
 #ifdef S_SUPPORTED
   // RVMODEL_SET_SEXT_INT / RVMODEL_CLR_SEXT_INT are optional: platforms without a supervisor
   // external interrupt controller leave them undefined and the trap handler uses mip.SEIP.
