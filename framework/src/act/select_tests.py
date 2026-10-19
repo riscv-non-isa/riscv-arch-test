@@ -32,10 +32,13 @@ _COMPARISON_RE = re.compile(r"^(>=|<=|!=|==|>|<)\s*(0[xX][0-9a-fA-F]+|\d+)$")
 def _compare_param(test_value: object, config_value: object) -> bool:
     """Compare a test parameter requirement against a config parameter value.
 
+    A list config value (e.g. SUPPORTED_PMLEN_SMMPM: [0, 7, 16]) matches when it contains the test value.
     Supports comparison operator prefixes on strings with decimal or hex values.
     e.g. '>=128', '<= 64', '> 0', '<256', '!=0', '==64', '>=0x80', '<0xFF'.
     Falls back to exact equality if there is no comparison operator prefix.
     """
+    if isinstance(config_value, list):
+        return test_value in config_value
     if isinstance(test_value, str):
         match = _COMPARISON_RE.match(test_value)
         if match:
