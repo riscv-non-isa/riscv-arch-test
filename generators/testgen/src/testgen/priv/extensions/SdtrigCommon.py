@@ -128,8 +128,6 @@ UDB_DEFINES = [
     # TODO: Replace with UDB supported Etrigger and Exceptions parameters
     *[f"#define UDB_SDTRIG_ETRIGGER_SUPPORTED{i}" for i in range(UDB_NUM_TRIGGERS)],
     *[f"#define UDB_EXCEPTION_{name.upper()}_SUPPORTED" for name in ETRIGGER_EXCODE_NAMES.values()],
-    # TODO: replace with the UDB parameter once it exists. tdata1.hit is optional, so DUTs that do not implement it must be able to opt out.
-    "#define UDB_SDTRIG_HIT_IMPLEMENTED",
     # Sims that do not follow Suggested Trigger Timing in spec or fires several cycles after will mismatch MEPC in trap handler
     "#define SDTRIG_IMPRECISE_XEPC",
     # itrigger/etrigger fire after the trap is taken, so xEPC is inside the S trap vector; the handler must not advance it
@@ -494,27 +492,6 @@ def _etrigger_codes_to_test(mode: str, cross_priv: bool = False) -> dict[int, bo
 
     generated = set(_ETRIGGER_BASE_CODES) | set(_ETRIGGER_MISMATCH_ONLY_CODES) | set(_ETRIGGER_ECALL_CODE.values())
     return {code: code in raisable for code in sorted(generated)}
-
-
-def _read_trigger_hit(temp_reg: int, trig_num: int, mode: str, test_data: TestData) -> list[str]:
-    """Read and sign tdata1.hit before disabling the trigger when it is implemented.
-
-    hit is optional, so the read is guarded until UDB provides a configuration parameter for it.
-    """
-    return [
-        "#ifdef UDB_SDTRIG_HIT_IMPLEMENTED",
-        _load_reg(temp_reg, trig_num),
-        _csr_access(f"csrw tselect, x{temp_reg}", mode),
-        _csr_access(f"csrr x{temp_reg}, tdata1", mode),
-        "#if __riscv_xlen == 64",
-        f"srli x{temp_reg}, x{temp_reg}, 58 # tdata1.hit",
-        "#else",
-        f"srli x{temp_reg}, x{temp_reg}, 26 # tdata1.hit",
-        "#endif",
-        f"andi x{temp_reg}, x{temp_reg}, 1",
-        write_sigupd(temp_reg, test_data),
-        "#endif // UDB_SDTRIG_HIT_IMPLEMENTED",
-    ]
 
 
 def _cause_exception(
@@ -2861,7 +2838,7 @@ def _generate_itrigger_tests(test_data: TestData, mode: str) -> list[TestChunk]:
                             lines.extend(
                                 [
                                     *_clear_interrupt(cause, mode),
-                                    *_read_trigger_hit(t2, trig_num, mode, test_data),
+                                    *_sign_trap_count(t2, test_data),
                                     *_disable_trigger(t1, trig_num, mode),
                                 ]
                             )
@@ -2946,7 +2923,7 @@ def _generate_etrigger_tests(test_data: TestData, mode: str) -> list[TestChunk]:
                     )
                     if is_pf:
                         lines.extend(pf_mode_disarm(mode))
-                    lines.extend(_read_trigger_hit(data_reg, trig_num, mode, test_data))
+                    lines.extend(_sign_trap_count(data_reg, test_data))
             lines.append(f"#endif // UDB_EXCEPTION_{name.upper()}_SUPPORTED")
         lines.extend(_disable_trigger(temp_reg, trig_num, mode))
         lines.append(f"#endif // UDB_SDTRIG_ETRIGGER_SUPPORTED{trig_num}")
@@ -3041,7 +3018,7 @@ def etrigger_cross_priv_delegate_test(test_data: TestData, target_mode: str) -> 
                                 *_set_medeleg(temp_reg, code, False),
                             ]
                         )
-                        lines.extend(_read_trigger_hit(data_reg, trig_num, "Sm", test_data))
+                        lines.extend(_sign_trap_count(data_reg, test_data))
             lines.append(f"#endif // UDB_EXCEPTION_{name.upper()}_SUPPORTED")
         lines.extend(_disable_trigger(temp_reg, trig_num, "Sm"))
         lines.append(f"#endif // UDB_SDTRIG_ETRIGGER_SUPPORTED{trig_num}")
