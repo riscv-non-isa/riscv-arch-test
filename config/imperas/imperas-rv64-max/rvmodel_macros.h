@@ -108,6 +108,15 @@
 //#define RVMODEL_SET_SEXT_INT(_R1, _R2)        nop
 //#define RVMODEL_CLR_SEXT_INT(_R1, _R2)        nop
 
+##### Debug Triggers #####
+
+// Without S-mode (imperas-rv64-m, imperas-rv64-mu), Imperas implements tcontrol and gates M-mode triggers
+// with action=0 on tcontrol.mte. With S-mode, imperas.ic sets tcontrol_undefined=T, because Sail cannot
+// model tcontrol with a delegable medeleg[3].
+#ifndef S_SUPPORTED
+  #define RVMODEL_SDTRIG_USE_TCONTROL
+#endif
+
 ##### Sscofpmf #####
 
 #define RVMODEL_HPM_COUNTER 3   // HPM counter used by the Sscofpmf tests (3 to 31)

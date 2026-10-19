@@ -32,8 +32,9 @@
 #   per hart, so the Textra tests fail where textra context matching is claimed (imperas-rv32gck/gcv):
 #   https://solvnetplus.synopsys.com/s/case/500WQ00002Dmex7YAB/sdtrig-mcontext-hcontext-and-scontext-are-kept-per-trigger-selected-by-tselect-instead-of-once-per-hart
 #   (fixed in Imperas-HMC101126-eng-build). The imperas.ic files set amo_trigger=T, because AMOs must fire
-#   load/store address triggers, and tcontrol_undefined=T, because Sail cannot model tcontrol with a delegable
-#   medeleg[3].
+#   load/store address triggers. The configs with S-mode also set tcontrol_undefined=T, because Sail cannot
+#   model tcontrol with a delegable medeleg[3]; imperas-rv64-m and imperas-rv64-mu keep tcontrol and define
+#   RVMODEL_SDTRIG_USE_TCONTROL.
 # - Sscofpmf*: there are no plans for Imperas to support HPM events, so this one is not
 #   expected to be resolved in the foreseeable future.
 # - Svnapot: Imperas accepts N=1 on superpage leaf PTEs instead of page faulting
