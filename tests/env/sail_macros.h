@@ -141,12 +141,14 @@
 
 
 #undef RVMODEL_CLR_MEXT_INT
+#undef RVMODEL_CLR_MEXT_INT_M
 #define RVMODEL_CLR_MEXT_INT(_R1, _R2)        \
   li _R1, (1 << 11);               \
   li _R2, SAIL_SIG_ADDRESS;    \
   sw _R1, 0(_R2)            ; /* Clear MEXT interrupt */ \
 
 #undef RVMODEL_SET_MSW_INT
+#undef RVMODEL_SET_MSW_INT_M
 #define RVMODEL_SET_MSW_INT(_R1, _R2)        \
   li _R1, 1;                 \
   li _R2, SAIL_MSIP_ADDRESS;              \
@@ -154,6 +156,7 @@
 
 
 #undef RVMODEL_CLR_MSW_INT
+#undef RVMODEL_CLR_MSW_INT_M
 #define RVMODEL_CLR_MSW_INT(_R1, _R2)        \
   li _R2, SAIL_MSIP_ADDRESS;              \
   sw zero, 0(_R2);
@@ -169,18 +172,21 @@
   sw _R1, 0(_R2)            ; /* Set SEXT interrupt */ \
 
 #undef RVMODEL_CLR_SEXT_INT
+#undef RVMODEL_CLR_SEXT_INT_M
 #define RVMODEL_CLR_SEXT_INT(_R1, _R2)        \
   li _R1, (1 << 9);               \
   li _R2, SAIL_SIG_ADDRESS;    \
   sw _R1, 0(_R2)            ; /* Clear SEXT interrupt */ \
 
 #undef RVMODEL_SET_SSW_INT
+#undef RVMODEL_SET_SSW_INT_M
 #define RVMODEL_SET_SSW_INT(_R1, _R2)        \
   li _R1, (1 << 31) | (1 << 1);               \
   li _R2, SAIL_SIG_ADDRESS;    \
   sw _R1, 0(_R2)            ; /* Set SSW interrupt */ \
 
 #undef RVMODEL_CLR_SSW_INT
+#undef RVMODEL_CLR_SSW_INT_M
 #define RVMODEL_CLR_SSW_INT(_R1, _R2)        \
   li _R1, (1 << 1);               \
   li _R2, SAIL_SIG_ADDRESS;    \
