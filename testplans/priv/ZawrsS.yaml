@@ -111,7 +111,7 @@ coverpoints:
       mstatus.SIE = 1
       mie = all 0s
       mstatus.TW = 1
-      mip = {SSIP + SEIP + STIP + MSIP + MEIP}
+      mip = {SSIP + SEIP + STIP + MSIP + MEIP + MTIP (without Sstc)}
       execute WRS.NTO and WRS.STO in S mode
     expectation: WRS does not stop when interrupt pending, WRS.NTO causes illegal instruction
     bins: 2 bins

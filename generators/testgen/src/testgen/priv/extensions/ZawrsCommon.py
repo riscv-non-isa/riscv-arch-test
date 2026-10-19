@@ -47,15 +47,6 @@ def _disable_interrupts(priv: str, r_temp: int) -> list[str]:
     return lines
 
 
-# Below M-mode the resume tests are woken by the supervisor timer (Sstc). Without Sstc, nothing a
-# lower-mode test can arm raises an interrupt later, while WRS is stalled: mip.STIP written through
-# T-SBI is pending as soon as the call returns, before WRS. The only other timer is the machine timer,
-# so these cores (for example M+U cores, which have no S-mode) use mtimecmp through T-SBI, which needs
-# a standard M-mode that raises the machine timer interrupt. RVA23 mandates Sstc, so it never takes
-# this path.
-LOWER_TIMER_GUARD = "#if defined(SSTC_SUPPORTED) || (defined(STANDARD_SM_SUPPORTED) && defined(UDB_MTI_INTR_IMPL))"
-
-
 def wrs_resume_helper(
     test_data: TestData,
     priv: str,
@@ -100,8 +91,6 @@ def wrs_resume_helper(
         for tw_val in tw_list:
             for sie_val in sie_list:
                 for mie_val in [0, 1]:
-                    if lower:
-                        lines.append(LOWER_TIMER_GUARD)
                     lines.extend(
                         [
                             "#### Setup ####",
@@ -201,8 +190,8 @@ def wrs_resume_helper(
                         ]
                     )
                     # Disarm the timer that was armed so no pending interrupt carries into the next testcase.
-                    # With Sstc the machine timer was never armed, and mtimecmp should not be written through
-                    # T-SBI, because machine timer interrupts are not part of a supervisor-mode profile.
+                    # Below M-mode that is the supervisor timer with Sstc, and mtimecmp is written through T-SBI
+                    # only without Sstc (for example on M+U cores). RVA23 mandates Sstc, so it never does.
                     if lower:
                         lines.extend(
                             [
@@ -211,7 +200,6 @@ def wrs_resume_helper(
                                 "#else",
                                 f"RVTEST_CLR_MTIME_INT_{priv}",
                                 "#endif",
-                                "#endif // timer available",
                             ]
                         )
                     else:
@@ -254,11 +242,14 @@ def wrs_no_mie_helper(
         *([f"mstatus.SIE = 1{' (if S supported)' if priv == 'U' else ''}"] if lower else []),
         "mie = all 0s",
         "mstatus.TW = 1" if lower else "mstatus.TW = 0",
-        "mip = {SSIP + SEIP + STIP + MSIP + MEIP}" if lower else "mip = {MSIP + MEIP + MTIP}",
+        "mip = {SSIP + SEIP + STIP + MSIP + MEIP + MTIP (without Sstc)}" if lower else "mip = {MSIP + MEIP + MTIP}",
         f"execute {{WRS.NTO/WRS.STO}} in {priv} mode" if lower else "execute WRS.STO in M mode",
         "2 bins" if lower else "1 bin",
     ]
     lines = [comment_banner(coverpoint, "\n".join(description))]
+    # Below M-mode the machine timer is raised only without Sstc: with Sstc (as in RVA23) mtimecmp is not
+    # written through T-SBI, because machine timer interrupts are not part of a supervisor-mode profile
+    mtime_guard = "#ifndef SSTC_SUPPORTED" if lower else ""
     # wrs.nto can only be tested in non-M mode using TW = 1
     wrs_list = ["WRS.STO", "WRS.NTO"] if lower else ["WRS.STO"]
 
@@ -272,17 +263,11 @@ def wrs_no_mie_helper(
                 f"LI(x{r_temp}, 0xAA)",
                 tsbi_call_or_direct(f"csrs mstatus, x{r_temp}", priv),
                 "# Set all M mode interrupts pending",
-                # Below M-mode the T-SBI routines that raise them exist only with a standard M-mode
-                *(["#ifdef STANDARD_SM_SUPPORTED"] if lower else []),
                 "#ifdef UDB_MEI_INTR_IMPL",
                 f"RVTEST_SET_MEXT_INT_{priv}",
                 "#endif",
                 f"RVTEST_SET_MSW_INT_{priv}",
-                # Below M-mode the machine timer is left out: mtimecmp should not be written through T-SBI,
-                # because machine timer interrupts are not part of a supervisor-mode profile
-                # f"RVTEST_SET_MTIME_INT_{priv}",
-                *([] if lower else ["RVTEST_SET_MTIME_INT_M"]),
-                *(["#endif // STANDARD_SM_SUPPORTED"] if lower else []),
+                *([mtime_guard, f"RVTEST_SET_MTIME_INT_{priv}", "#endif"] if lower else ["RVTEST_SET_MTIME_INT_M"]),
             ]
         )
         if lower:
@@ -350,15 +335,11 @@ def wrs_no_mie_helper(
         lines.extend(
             [
                 "# Clear M mode interrupts",
-                *(["#ifdef STANDARD_SM_SUPPORTED"] if lower else []),
                 "#ifdef UDB_MEI_INTR_IMPL",
                 f"RVTEST_CLR_MEXT_INT_{priv}",
                 "#endif",
                 f"RVTEST_CLR_MSW_INT_{priv}",
-                # Not armed below M-mode (see the set above), so there is nothing to clear
-                # f"RVTEST_CLR_MTIME_INT_{priv}",
-                *([] if lower else ["RVTEST_CLR_MTIME_INT_M"]),
-                *(["#endif // STANDARD_SM_SUPPORTED"] if lower else []),
+                *([mtime_guard, f"RVTEST_CLR_MTIME_INT_{priv}", "#endif"] if lower else ["RVTEST_CLR_MTIME_INT_M"]),
             ]
         )
     test_data.int_regs.return_registers([r_cause, r_temp, r_temp2])
