@@ -56,7 +56,7 @@ coverpoints:
       - "done:"
       - "*** need to use mtvec and mcause if S not supported"
     notes: |-
-      Not generated without a timer interrupt (needs RVMODEL_MTIME_ADDRESS and either Sstc or MTI_INTR_IMPL).
+      Not generated without a timer interrupt (needs Sstc or MTI_INTR_IMPL).
   - name: cp_wrs_nto_timeout
     goal: WRS.NTO timeout when TW = 1
     description: |-
