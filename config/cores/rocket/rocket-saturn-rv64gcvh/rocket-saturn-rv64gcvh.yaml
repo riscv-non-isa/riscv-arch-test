@@ -53,8 +53,9 @@ implemented_extensions:
   - { name: Zicsr, version: "= 2.0" }
   - { name: Zifencei, version: "= 2.0.0" }
   # Zicntr is not declared: cycle and instret exist but time does not ("rdtime[h] is not
-  # implemented, and could be provided by software emulation", RC/src/main/scala/tile/BaseTile.scala#L136),
-  # and ACT cannot emulate time on a hart with the hypervisor extension (tests/env/check_defines.h).
+  # implemented, and could be provided by software emulation", RC/src/main/scala/tile/BaseTile.scala#L136).
+  # ACT can emulate time on this hart, but with Zicntr declared ZicntrS, ZicntrU and ZicntrSm fail on
+  # instret counts (one more retirement than the reference model across an ecall).
   - { name: Zihpm, version: "= 2.0.0" }
   # V 1.0 from Saturn: VLEN 128, ELEN 64, with vfLen 64 and vfh = true.
   #   SAT/src/main/scala/rocket/Configs.scala#L29-L40

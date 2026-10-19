@@ -16,8 +16,9 @@ simulated with Verilator 5.036.
 - PMP: 8 regions, 4 KiB granule (the hypervisor extension raises it from 4 bytes), OFF/TOR/NAPOT.
 - 29 HPM counters, 40 bits wide.
 - `Zicntr` is not claimed: `time` is not implemented (chipsalliance/rocket-chip#3207). act4 can
-  emulate it on a hart with the hypervisor extension since riscv/riscv-arch-test#2651; this
-  configuration does not use the emulation yet.
+  emulate it on a hart with the hypervisor extension since riscv/riscv-arch-test#2651, but with
+  `Zicntr` claimed, ZicntrS, ZicntrU and ZicntrSm fail on `instret` counts (one more retirement than
+  the reference model across an `ecall`).
 - `B` is not claimed: Zba, Zbb and Zbs are implemented, but `misa.B` reads 0.
 
 ## Chipyard configuration
