@@ -32,14 +32,14 @@ coverpoints:
       At least one trigger must be supported
     description: |-
       For each of UDB_SDTRIG_NUM_TRIGGERS in tselect:
-      For i each supported type in {0, 3, 4, 5, 6, 15}
+      For i each supported type in {3, 4, 5, 6, 15}
       tdata1.type = i
       For x register in {tdata1,tdata2,tdata3,tinfo}, and in {tcontrol,hcontext,mcontext,scontext} if UDB_x_AVAILABLE:
       csr read, write all 1s, write all 0s, set all 1s, clear all 1s, write back initial value of each register:
     expectation: |-
       WARL
       illegal instruction exception on CSR access if it is not implemented by any trigger
-    bins: UDB_SDTRIG_NUM_TRIGGERS * 6 types * 9 regs * 6 accesses
+    bins: UDB_SDTRIG_NUM_TRIGGERS * 5 types * implemented regs (4-8) * 5 accesses
     rules:
       - Sdtrig_csr_mode
       - Sdtrig_num_trigs_ge1

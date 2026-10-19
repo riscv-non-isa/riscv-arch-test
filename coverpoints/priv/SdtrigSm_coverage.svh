@@ -107,9 +107,9 @@ covergroup SdtrigSm_access_cg with function sample(ins_t ins);
     `include "general/RISCV_coverage_standard_coverpoints.svh"
     `include "general/RISCV_coverage_sdtrig_coverpoints.svh"
 
-    // supported standard trigger types; 1 and 2 are legacy, 7 is tmexttrigger, 8-11 are reserved, 12-14 are custom
+    // supported standard trigger types; 1 and 2 are legacy, 7 is tmexttrigger, 8-11 are reserved, 12-14 are custom.
+    // 0 means no trigger at this tselect, which no implemented trigger (triggernum) can read back.
     tdata1_type: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "tdata1", "type")[3:0] {
-        bins none      = {4'd0};
         bins icount    = {4'd3};
         bins itrigger  = {4'd4};
         bins etrigger  = {4'd5};
@@ -143,7 +143,7 @@ covergroup SdtrigSm_access_cg with function sample(ins_t ins);
     }
 
     // main coverpoints
-    cp_csr_access_common: cross priv_mode_m, triggernum, tdata1_type, csr_common_reg, csr_access_common;  // NTRIG * 6 types * 8 CSRs * 5 accesses
+    cp_csr_access_common: cross priv_mode_m, triggernum, tdata1_type, csr_common_reg, csr_access_common;  // NTRIG * 5 types * implemented CSRs (4-8) * 5 accesses
 endgroup
 
 `ifdef S_SUPPORTED
