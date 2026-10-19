@@ -97,6 +97,12 @@ SEW_DEPENDENT_CPS = {
     "cr_vl_lmul",
 }
 
+# Coverpoints whose template name would otherwise match SEW_DEPENDENT_CPS, but are not
+SEW_INDEPENDENT_CPS = {
+    "cp_custom_vindexCorners_ei16",
+    "cp_custom_vindexVV_ei16",
+}
+
 # Vector extension prefixes used to identify vector architectures.
 VECTOR_PREFIXES = ("Vx", "Zv", "Vls", "Vf")
 
@@ -578,7 +584,7 @@ def _resolve_coverpoint(cp: str, arch: str, instr: str) -> str | None:
         cp = re.sub(r"_sew_ge\d+$", "", cp)
 
     # Append SEW suffix for SEW-dependent coverpoints.
-    if any(sew_cp in cp for sew_cp in SEW_DEPENDENT_CPS):
+    if any(sew_cp in cp and cp not in SEW_INDEPENDENT_CPS for sew_cp in SEW_DEPENDENT_CPS):
         cp = cp + "_sew" + _get_effew(arch)
 
     # _eew_eq_sew[_lte{N}]: only emit when the indexed-LS EEW equals the arch SEW.

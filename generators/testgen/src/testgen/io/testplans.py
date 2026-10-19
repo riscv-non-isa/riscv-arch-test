@@ -182,6 +182,10 @@ def expand_coverpoints(coverpoints: list[str]) -> list[str]:
         ],
         "cp_custom_shift_wi_all": [],  # Generates unique coverage, but not unique testgen
         "cp_custom_vindexVV": ["cp_custom_vindexedges_index_ge_vlmax", "cp_custom_vindexedges_index_gt_vl_lt_vlmax"],
+        "cp_custom_vindexVV_ei16": [
+            "cp_custom_vindexedges_index_ge_vlmax",
+            "cp_custom_vindexedges_index_gt_vl_lt_vlmax",
+        ],
         "cp_custom_vindexVX": [],  # Edge cases for VX-type gather/slide are covered by cp_rs1_edges.
         "cp_custom_maskwrite_masked": ["cp_custom_vmask_write_lmulge1", "cp_custom_vmask_write_v0_masked"],
         "cp_custom_maskwrite_unmasked": ["cp_custom_vmask_write_lmulge1"],
