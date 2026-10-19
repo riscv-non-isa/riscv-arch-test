@@ -11,4 +11,5 @@ coverpoints:
     expectation: Matches reference model, which should accept same values as satp.mode
     bins: 2 or 4
     rules:
-      - For each supported virtual memory scheme SvNN supported in satp, the corresponding hgatp SvNNx4 mode must be supported. The hgatp mode Bare must also be supported.
+      - Shgatpa_satp_hgatp_mode_support
+      - Shgatpa_hgatp_bare_mode
