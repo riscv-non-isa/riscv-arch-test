@@ -57,6 +57,7 @@ UDB_DEFINES = [
     # ICOUNT params
     *[f"#define UDB_ICOUNT_TRIG{n}_AVAILABLE" for n in range(UDB_NUM_TRIGGERS)],
     "//#define UDB_ICOUNT_HARDWIRED_1",
+    # Sims that do not follow Suggested Trigger Timing in spec or fires several cycles after will mismatch MEPC in trap handler
     "#define SDTRIG_IMPRECISE_XEPC",
 ]
 
@@ -765,22 +766,22 @@ def _generate_zaamo_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     ######################################
     coverpoint = "cp_amo"
     ######################################
-    lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_")).code
-    lines.extend(_global_ie(mode, True))
-    lines.append(
-        comment_banner(
-            coverpoint,
-            "mcontrol6 fires when amo address == tdata2 (select=address)",
-        )
-    )
     randval = random_int(32, signed=False, nonzero=True)
-    for trig_num in range(UDB_NUM_TRIGGERS):
-        lines.append(f"\n#ifdef UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
-        for tdata2 in ("scratch", 0):
-            for perm in perms:  # perm_xsl
-                lines.extend(_xsl_ifdefs(perm))
-                for width in ("w", "d"):
-                    for op in ZAAMO_OPS:
+    for op in ZAAMO_OPS:  # one file per op keeps the S/U files under 100k dynamic instructions
+        lines = test_data.new_test_chunk(chunks, f"amo_{op}").code
+        lines.extend(_global_ie(mode, True))
+        lines.append(
+            comment_banner(
+                coverpoint,
+                f"mcontrol6 fires when {op} address == tdata2 (select=address)",
+            )
+        )
+        for trig_num in range(UDB_NUM_TRIGGERS):
+            lines.append(f"\n#ifdef UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
+            for tdata2 in ("scratch", 0):
+                for perm in perms:  # perm_xsl
+                    lines.extend(_xsl_ifdefs(perm))
+                    for width in ("w", "d"):
                         insn = f"{op}.{width}"
                         lines.extend(_ifdef_guard(insn))
                         binname = f"trig_num_{trig_num}_td2_{tdata2}_{op}_{width}_perm_{perm:03b}"
@@ -800,9 +801,9 @@ def _generate_zaamo_tests(test_data: TestData, mode: str) -> list[TestChunk]:
                             ]
                         )
                         lines.extend(_ifdef_guard(insn, closing=True))
-                lines.extend(["#endif // UDB_SDTRIG_MCONTROL6_XSL_AVAILABLE"] * len(_xsl_ifdefs(perm)))
-        lines.extend(_disable_trigger(temp_reg, trig_num, mode))
-        lines.append(f"#endif // UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
+                    lines.extend(["#endif // UDB_SDTRIG_MCONTROL6_XSL_AVAILABLE"] * len(_xsl_ifdefs(perm)))
+            lines.extend(_disable_trigger(temp_reg, trig_num, mode))
+            lines.append(f"#endif // UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
 
     test_data.int_regs.return_registers([dest_reg, addr_reg, data_reg, temp_reg])
 
@@ -1770,7 +1771,8 @@ def _generate_icount_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     ######################################
     coverpoint = "cp_icount_hardwired"
     ######################################
-    lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_")).code
+    # Shares the icount_instr file: a DUT gets exactly one of hardwired and instr, so neither file is ever empty.
+    lines = test_data.new_test_chunk(chunks, "icount_instr").code
     lines.extend(_global_ie(mode, True))
     lines.append(
         comment_banner(
@@ -1801,7 +1803,7 @@ def _generate_icount_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     ######################################
     coverpoint = "cp_icount_instr"
     ######################################
-    lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_")).code
+    lines = test_data.new_test_chunk(chunks, "icount_instr").code
     lines.extend(_global_ie(mode, True))
     lines.append(
         comment_banner(
@@ -2087,10 +2089,29 @@ def register_sdtrig_suite(mode: str, required_extensions: list[str | list[str]],
         """mcontrol6 tests."""
         return _generate_mcontrol6_tests(test_data, mode)
 
+    @add_priv_test_generator(
+        suite, required_extensions=required_extensions, march_extensions=[], extra_defines=extra_defines
+    )
+    def make_sdtrig_icount(test_data: TestData) -> list[TestChunk]:
+        """icount tests."""
+        return _generate_icount_tests(test_data, mode)
+
+    @add_priv_test_generator(
+        suite, required_extensions=[*required_extensions, "Zalrsc"], march_extensions=[], extra_defines=extra_defines
+    )
+    def make_sdtrig_zalrsc(test_data: TestData) -> list[TestChunk]:
+        """lr/sc tests."""
+        return _generate_zalrsc_tests(test_data, mode)
+
+    @add_priv_test_generator(
+        suite, required_extensions=[*required_extensions, "Zaamo"], march_extensions=[], extra_defines=extra_defines
+    )
+    def make_sdtrig_zaamo(test_data: TestData) -> list[TestChunk]:
+        """AMO tests."""
+        return _generate_zaamo_tests(test_data, mode)
+
     # Disabled sections and their extra required extension:
-    #   _generate_native_triggers_tests, _generate_icount_tests, _generate_itrigger_tests: bodies not implemented yet
-    #   _generate_zalrsc_tests: Zalrsc
-    #   _generate_zaamo_tests: Zaamo
+    #   _generate_native_triggers_tests, _generate_itrigger_tests: bodies not implemented yet
     #   _generate_vector_tests: Zvl32b
     #   _generate_zcmp_tests: Zcmp
     #   _generate_zicbom_tests: Zicbom
