@@ -54,7 +54,8 @@ CBO_TDATA2 = (
 )
 
 _PAGE_FAULT_CODES = (12, 13, 15)
-# Page faults need translation: Sv39 on RV64, Sv32 on RV32. A hart without it may have no satp (no S-mode).
+# Page faults need translation: Sv39 on RV64, Sv32 on RV32. A hart without it may have no satp (no S-mode), and
+# VA_TARGET is then a physical address that may be RAM (it is on rv32 harts), so no page fault can be raised.
 _PAGING_GUARD = "#if (__riscv_xlen == 64 && defined(SV39_SUPPORTED)) || (__riscv_xlen == 32 && defined(SV32_SUPPORTED))"
 
 # MPRV=1, MPP=U: next M-mode load/store is translated as U-mode (needed for codes 13/15 when mode="Sm").
@@ -2929,6 +2930,8 @@ def _generate_etrigger_tests(test_data: TestData, mode: str) -> list[TestChunk]:
                     binname = f"trig_num_{trig_num}_code_{name}_priv{priv_en}_raise_{raised}"
                     is_pf = raised_code in _PAGE_FAULT_CODES
 
+                    if is_pf:
+                        lines.append(_PAGING_GUARD)
                     lines.extend(
                         [
                             _add_tc(test_data, binname, coverpoint, covergroup),
@@ -2951,6 +2954,8 @@ def _generate_etrigger_tests(test_data: TestData, mode: str) -> list[TestChunk]:
                     if is_pf:
                         lines.extend(pf_mode_disarm(mode))
                     lines.extend(_sign_trap_count(data_reg, test_data))
+                    if is_pf:
+                        lines.append("#endif // paging")
             lines.append(f"#endif // UDB_EXCEPTION_{name.upper()}_SUPPORTED")
         lines.extend(_disable_trigger(temp_reg, trig_num, mode))
         lines.append(f"#endif // UDB_SDTRIG_ETRIGGER_SUPPORTED{trig_num}")
@@ -3025,6 +3030,8 @@ def etrigger_cross_priv_delegate_test(test_data: TestData, target_mode: str) -> 
                             f"_priv{priv_en}_medeleg{medeleg_en}_raise_{ETRIGGER_EXCODE_NAMES[raised_code]}"
                         )
 
+                        if is_pf:
+                            lines.append(_PAGING_GUARD)
                         lines.extend(
                             [
                                 _add_tc(test_data, binname, coverpoint, covergroup),
@@ -3046,6 +3053,8 @@ def etrigger_cross_priv_delegate_test(test_data: TestData, target_mode: str) -> 
                             ]
                         )
                         lines.extend(_sign_trap_count(data_reg, test_data))
+                        if is_pf:
+                            lines.append("#endif // paging")
             lines.append(f"#endif // UDB_EXCEPTION_{name.upper()}_SUPPORTED")
         lines.extend(_disable_trigger(temp_reg, trig_num, "Sm"))
         lines.append(f"#endif // UDB_SDTRIG_ETRIGGER_SUPPORTED{trig_num}")
