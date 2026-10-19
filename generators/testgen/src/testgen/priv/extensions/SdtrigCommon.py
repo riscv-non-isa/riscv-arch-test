@@ -806,6 +806,7 @@ def _generate_zicbom_tests(test_data: TestData, mode: str) -> list[TestChunk]:
         lines.extend(_disable_trigger(temp_reg, trig_num, mode))
         lines.append(f"#endif // UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
 
+    lines.extend(_global_ie(mode, False))
     test_data.int_regs.return_registers([addr_reg, temp_reg])
     return [test_data.end_test_chunk()]
 
@@ -856,6 +857,7 @@ def _generate_zicboz_tests(test_data: TestData, mode: str) -> list[TestChunk]:
         lines.extend(_disable_trigger(temp_reg, trig_num, mode))
         lines.append(f"#endif // UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
 
+    lines.extend(_global_ie(mode, False))
     test_data.int_regs.return_registers([addr_reg, temp_reg])
     return [test_data.end_test_chunk()]
 
@@ -896,6 +898,7 @@ def _generate_zicbop_tests(test_data: TestData, mode: str) -> list[TestChunk]:
         lines.extend(_disable_trigger(temp_reg, trig_num, mode))
         lines.append(f"#endif // UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
 
+    lines.extend(_global_ie(mode, False))
     test_data.int_regs.return_registers([addr_reg, temp_reg])
     return [test_data.end_test_chunk()]
 
