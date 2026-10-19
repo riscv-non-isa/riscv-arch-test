@@ -139,6 +139,21 @@ def _load_tdata1(reg: int, trig_type: int, mode: str, lowfields: int = 0) -> lis
     return lines
 
 
+def _arm_type(reg: int, trig_type: int, mode: str) -> list[str]:
+    """Set tdata1.type = trig_type the way Sdtrig.adoc says a debugger should.
+
+    Write 0 to tdata1, then a tdata2 legal for every type, then tdata1. A trigger
+    that already holds another type may legally ignore a direct type change
+    (Sail keeps it), and an access to tdata1 itself changes the type, so the
+    type is re-armed before every access that the coverage samples.
+    """
+    return [
+        _csr_access("csrw tdata1, x0 # disable trigger", mode),
+        _csr_access("csrw tdata2, x0 # tdata2 legal for every type", mode),
+        *_load_tdata1(reg, trig_type, mode),
+    ]
+
+
 def _global_ie(mode: str, enable: bool) -> list[str]:
     """Arm or disarm action=0 triggers in ``mode``.
 
@@ -500,12 +515,15 @@ def _generate_access_tests(test_data: TestData, mode: str) -> list[TestChunk]:
                         _add_tc(test_data, binname, coverpoint, covergroup),
                         f"LI x{temp_reg}, {trig_num} # load trig_num value",
                         _csr_access(f"csrw tselect, x{temp_reg} # set tselect = trig_num", mode),
-                        *_load_tdata1(type_reg, trig_type, mode),  # load tdata1 with the type
+                        *_arm_type(type_reg, trig_type, mode),
                         f"LI x{temp_reg}, -1 # load all 1's value",
                         _csr_access(f"csrr x{save_reg}, {csr} # save original value", mode),
                         _csr_access(f"csrw {csr}, x{temp_reg} # write all-1s", mode),
+                        *_arm_type(type_reg, trig_type, mode),
                         _csr_access(f"csrw {csr}, x0 # write all-0s", mode),
+                        *_arm_type(type_reg, trig_type, mode),
                         _csr_access(f"csrs {csr}, x{temp_reg} # set all-1s", mode),
+                        *_arm_type(type_reg, trig_type, mode),
                         _csr_access(f"csrc {csr}, x{temp_reg} # clear all-1s", mode),
                         _csr_access(f"csrw {csr}, x{save_reg} # write back original value", mode),
                     ]
