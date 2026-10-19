@@ -1325,39 +1325,6 @@ covergroup Vf8_vfwcvt_f_x_v_cg with function sample(ins_t ins);
         bins count[]  = {1};
     }
 
-    //////////////////////////////////////////////////////////////////////////////////
-    // cp_custom_vfp_NaN_input
-    //////////////////////////////////////////////////////////////////////////////////
-
-// At SEW=8 vs2 holds 8-bit integers (Zvfh conversions to binary16), so there is no NaN input
-`ifndef COVER_VFCUSTOM8
-`ifndef COVER_VFCUSTOM64
-    vs2_element0_sqNAN : coverpoint get_vr_element_zero(ins.hart, ins.issue, ins.current.vs2_val) {
-        `ifdef COVER_VFCUSTOM16
-            bins vs2_0_qNaN = {64'h0000_0000_0000_7E00}; // qNaN input (canonical half)
-            bins vs2_0_sNaN = {64'h0000_0000_0000_7D00}; // sNaN input (half)
-        `endif
-        `ifdef COVER_VFCUSTOM32
-            bins vs2_0_qNaN = {64'h0000_0000_7FC0_0000}; // qNaN input (canonical single)
-            bins vs2_0_sNaN = {64'h0000_0000_7FA0_0000}; // sNaN input (single)
-        `endif
-    }
-
-    cp_custom_vfp_NaN_input : cross std_vec, vs2_element0_sqNAN;
-`else
-    `ifdef D_SUPPORTED
-    vs2_element0_sqNAN : coverpoint get_vr_element_zero(ins.hart, ins.issue, ins.current.vs2_val) {
-            bins vs2_0_qNaN = {64'h7FF8_0000_0000_0000}; // qNaN input (canonical double)
-            bins vs2_0_sNaN = {64'h7FF0_0000_0000_0001}; // sNaN input (double)
-    }
-
-    cp_custom_vfp_NaN_input : cross std_vec, vs2_element0_sqNAN;
-    `endif
-`endif
-`endif
-
-    //// end cp_custom_vfp_NaN_input////////////////////////////////////////////////
-
     cp_masking_edges : coverpoint mask_edges_check(ins.hart, ins.issue, ins.prev.v_wdata[0])  iff (ins.trap == 0 & ins.current.vm == 0)  {
         // Edges values of v0 (vector mask register)
         bins zero           = {mask_zero            };
@@ -1408,11 +1375,11 @@ covergroup Vf8_vfwcvt_f_x_v_cg with function sample(ins_t ins);
     //// end cp_vs2////////////////////////////////////////////////
 
     //////////////////////////////////////////////////////////////////////////////////
-    // cp_vs2_edges_f_sew8
+    // cp_vs2_edges
     //////////////////////////////////////////////////////////////////////////////////
 
-    cp_vs2_edges_f_sew8 : coverpoint vs_edges_check(ins.hart, ins.issue, ins.current.vs2_val, "1")  iff (ins.trap == 0 )  {
-        // Integer edges: at SEW=8 the only Vf instructions are Zvfh conversions from 8-bit integers
+    cp_vs2_edges : coverpoint vs_edges_check(ins.hart, ins.issue, ins.current.vs2_val, "1")  iff (ins.trap == 0 )  {
+        // Edges values of vs2, assuming vl = 1
         bins zero       = {vs_zero      };   //  = {(`SEW){1'b0}},
         bins one        = {vs_one       };   //  = {(`SEW-1){1'b0}, {1'b1}},
         bins two        = {vs_two       };   //  = {(`SEW-2){1'b0}, {2'b10}},
@@ -1427,7 +1394,7 @@ covergroup Vf8_vfwcvt_f_x_v_cg with function sample(ins_t ins);
         bins random     = {vs_random    };   //  = {(SEW){random}}
     }
 
-    //// end cp_vs2_edges_f_sew8////////////////////////////////////////////////
+    //// end cp_vs2_edges////////////////////////////////////////////////
 
     //////////////////////////////////////////////////////////////////////////////////
     // cr_vl_lmul_sew8_lmul4max
@@ -1508,39 +1475,6 @@ covergroup Vf8_vfwcvt_f_xu_v_cg with function sample(ins_t ins);
         bins count[]  = {1};
     }
 
-    //////////////////////////////////////////////////////////////////////////////////
-    // cp_custom_vfp_NaN_input
-    //////////////////////////////////////////////////////////////////////////////////
-
-// At SEW=8 vs2 holds 8-bit integers (Zvfh conversions to binary16), so there is no NaN input
-`ifndef COVER_VFCUSTOM8
-`ifndef COVER_VFCUSTOM64
-    vs2_element0_sqNAN : coverpoint get_vr_element_zero(ins.hart, ins.issue, ins.current.vs2_val) {
-        `ifdef COVER_VFCUSTOM16
-            bins vs2_0_qNaN = {64'h0000_0000_0000_7E00}; // qNaN input (canonical half)
-            bins vs2_0_sNaN = {64'h0000_0000_0000_7D00}; // sNaN input (half)
-        `endif
-        `ifdef COVER_VFCUSTOM32
-            bins vs2_0_qNaN = {64'h0000_0000_7FC0_0000}; // qNaN input (canonical single)
-            bins vs2_0_sNaN = {64'h0000_0000_7FA0_0000}; // sNaN input (single)
-        `endif
-    }
-
-    cp_custom_vfp_NaN_input : cross std_vec, vs2_element0_sqNAN;
-`else
-    `ifdef D_SUPPORTED
-    vs2_element0_sqNAN : coverpoint get_vr_element_zero(ins.hart, ins.issue, ins.current.vs2_val) {
-            bins vs2_0_qNaN = {64'h7FF8_0000_0000_0000}; // qNaN input (canonical double)
-            bins vs2_0_sNaN = {64'h7FF0_0000_0000_0001}; // sNaN input (double)
-    }
-
-    cp_custom_vfp_NaN_input : cross std_vec, vs2_element0_sqNAN;
-    `endif
-`endif
-`endif
-
-    //// end cp_custom_vfp_NaN_input////////////////////////////////////////////////
-
     cp_masking_edges : coverpoint mask_edges_check(ins.hart, ins.issue, ins.prev.v_wdata[0])  iff (ins.trap == 0 & ins.current.vm == 0)  {
         // Edges values of v0 (vector mask register)
         bins zero           = {mask_zero            };
@@ -1591,11 +1525,11 @@ covergroup Vf8_vfwcvt_f_xu_v_cg with function sample(ins_t ins);
     //// end cp_vs2////////////////////////////////////////////////
 
     //////////////////////////////////////////////////////////////////////////////////
-    // cp_vs2_edges_f_sew8
+    // cp_vs2_edges
     //////////////////////////////////////////////////////////////////////////////////
 
-    cp_vs2_edges_f_sew8 : coverpoint vs_edges_check(ins.hart, ins.issue, ins.current.vs2_val, "1")  iff (ins.trap == 0 )  {
-        // Integer edges: at SEW=8 the only Vf instructions are Zvfh conversions from 8-bit integers
+    cp_vs2_edges : coverpoint vs_edges_check(ins.hart, ins.issue, ins.current.vs2_val, "1")  iff (ins.trap == 0 )  {
+        // Edges values of vs2, assuming vl = 1
         bins zero       = {vs_zero      };   //  = {(`SEW){1'b0}},
         bins one        = {vs_one       };   //  = {(`SEW-1){1'b0}, {1'b1}},
         bins two        = {vs_two       };   //  = {(`SEW-2){1'b0}, {2'b10}},
@@ -1610,7 +1544,7 @@ covergroup Vf8_vfwcvt_f_xu_v_cg with function sample(ins_t ins);
         bins random     = {vs_random    };   //  = {(SEW){random}}
     }
 
-    //// end cp_vs2_edges_f_sew8////////////////////////////////////////////////
+    //// end cp_vs2_edges////////////////////////////////////////////////
 
     //////////////////////////////////////////////////////////////////////////////////
     // cr_vl_lmul_sew8_lmul4max

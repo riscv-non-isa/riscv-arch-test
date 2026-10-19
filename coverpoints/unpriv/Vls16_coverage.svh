@@ -11010,10 +11010,6 @@ covergroup Vls16_vlseg3e32ff_v_cg with function sample(ins_t ins);
                 bins masked = {1'b0};
             }
 
-            ffLS_vtype_lmul_1: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "vtype", "vlmul") {
-                bins one = {0};
-            }
-
             ffLS_vl_ge2: coverpoint (get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "vl", "vl")) {
                 bins ge2 = {[2:$]};
             }
@@ -12126,10 +12122,6 @@ covergroup Vls16_vlseg4e32ff_v_cg with function sample(ins_t ins);
                 bins masked = {1'b0};
             }
 
-            ffLS_vtype_lmul_1: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "vtype", "vlmul") {
-                bins one = {0};
-            }
-
             ffLS_vl_ge2: coverpoint (get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "vl", "vl")) {
                 bins ge2 = {[2:$]};
             }
@@ -13221,10 +13213,6 @@ covergroup Vls16_vlseg5e32ff_v_cg with function sample(ins_t ins);
 
             ffLS_mask_enabled: coverpoint ins.current.insn[25] {
                 bins masked = {1'b0};
-            }
-
-            ffLS_vtype_lmul_1: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "vtype", "vlmul") {
-                bins one = {0};
             }
 
             ffLS_vl_ge2: coverpoint (get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "vl", "vl")) {
@@ -14324,10 +14312,6 @@ covergroup Vls16_vlseg6e32ff_v_cg with function sample(ins_t ins);
 
             ffLS_mask_enabled: coverpoint ins.current.insn[25] {
                 bins masked = {1'b0};
-            }
-
-            ffLS_vtype_lmul_1: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "vtype", "vlmul") {
-                bins one = {0};
             }
 
             ffLS_vl_ge2: coverpoint (get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "vl", "vl")) {
@@ -15435,10 +15419,6 @@ covergroup Vls16_vlseg7e32ff_v_cg with function sample(ins_t ins);
 
             ffLS_mask_enabled: coverpoint ins.current.insn[25] {
                 bins masked = {1'b0};
-            }
-
-            ffLS_vtype_lmul_1: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "vtype", "vlmul") {
-                bins one = {0};
             }
 
             ffLS_vl_ge2: coverpoint (get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "vl", "vl")) {
@@ -16554,10 +16534,6 @@ covergroup Vls16_vlseg8e32ff_v_cg with function sample(ins_t ins);
 
             ffLS_mask_enabled: coverpoint ins.current.insn[25] {
                 bins masked = {1'b0};
-            }
-
-            ffLS_vtype_lmul_1: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "vtype", "vlmul") {
-                bins one = {0};
             }
 
             ffLS_vl_ge2: coverpoint (get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "vl", "vl")) {
