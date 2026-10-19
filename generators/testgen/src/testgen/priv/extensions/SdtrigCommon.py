@@ -32,14 +32,7 @@ MODE_UDB_LETTER = {"Sm": "M", "S": "S", "U": "U", "Vs": "VS", "Vu": "VU"}
 UDB_DEFINES = [
     f"#define UDB_NUM_TRIGGERS {UDB_NUM_TRIGGERS}",
     # CSR Params
-    "#define UDB_TDATA1_AVAILABLE",
-    "#define UDB_TDATA2_AVAILABLE",
-    "#define UDB_TDATA3_AVAILABLE",
-    "#define UDB_TINFO_AVAILABLE",
-    "#define UDB_SCONTEXT_AVAILABLE",
-    "#define UDB_MCONTEXT_AVAILABLE",
     "//#define UDB_TCONTROL_AVAILABLE",
-    "//#define UDB_HCONTEXT_AVAILABLE",
     "//#define UDB_MSCONTEXT_AVAILABLE",
     # MCONTROl6 params
     "#define UDB_SDTRIG_MCONTROL6_SUPPORTED0",
@@ -147,10 +140,19 @@ def _load_tdata1(reg: int, trig_type: int, mode: str, lowfields: int = 0) -> lis
 
 
 def _global_ie(mode: str, enable: bool) -> list[str]:
-    """TODO REMOVE ONCE SAIL IMPLEMENTED: globally enable/disable interrupts to arm triggers."""
+    """Arm or disarm action=0 triggers in ``mode``.
+
+    Harts gate these triggers on mstatus.MIE/SIE or, in M-mode, on tcontrol.mte (the two Sdtrig
+    reentrancy options). Set the bit each option uses; the DUT defines RVMODEL_SDTRIG_USE_TCONTROL for the second.
+    """
     op, why = ("csrsi", "arm") if enable else ("csrci", "disarm")
     if mode == "Sm":
-        return [f"{op} mstatus, 0x8 # MIE={int(enable)} to {why} M-mode triggers"]
+        return [
+            f"{op} mstatus, 0x8 # MIE={int(enable)} to {why} M-mode triggers",
+            "#ifdef RVMODEL_SDTRIG_USE_TCONTROL",
+            f"{op} tcontrol, 0x8 # MTE={int(enable)} to {why} M-mode triggers",
+            "#endif",
+        ]
     if mode == "S":
         return [f"{op} sstatus, 0x2 # SIE={int(enable)} to {why} S-mode triggers"]
     return []
@@ -479,7 +481,9 @@ def _generate_access_tests(test_data: TestData, mode: str) -> list[TestChunk]:
             "Should not cause any illegal instruction exceptions on implemented triggers",
         )
     )
+    # tdata1-3 and tinfo exist whenever Sdtrig is tested; the rest are optional.
     csrs = ("tdata1", "tdata2", "tdata3", "tinfo", "tcontrol", "scontext", "mcontext", "hcontext")
+    optional_csrs = ("tcontrol", "scontext", "mcontext", "hcontext")
 
     type_reg, save_reg, temp_reg = test_data.int_regs.get_registers(
         3, exclude_regs=[10, 11]
@@ -488,7 +492,8 @@ def _generate_access_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     for trig_num in range(UDB_NUM_TRIGGERS):
         for trig_type in range(16):
             for csr in csrs:
-                lines.append(f"#ifdef UDB_{csr}_AVAILABLE")
+                if csr in optional_csrs:
+                    lines.append(f"#ifdef UDB_{csr.upper()}_AVAILABLE")
                 binname = f"tselect_{trig_num}_type_{trig_type}_csr_{csr}"
                 lines.extend(
                     [
@@ -505,7 +510,8 @@ def _generate_access_tests(test_data: TestData, mode: str) -> list[TestChunk]:
                         _csr_access(f"csrw {csr}, x{save_reg} # write back original value", mode),
                     ]
                 )
-                lines.append("#endif")
+                if csr in optional_csrs:
+                    lines.append("#endif")
 
     test_data.int_regs.return_registers([type_reg, save_reg, temp_reg])
     return [test_data.end_test_chunk()]

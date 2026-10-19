@@ -34,7 +34,7 @@ coverpoints:
       For each of UDB_SDTRIG_NUM_TRIGGERS in tselect:
       For i each supported type in {0, 3, 4, 5, 6, 15}
       tdata1.type = i
-      For x register in {tdata1,tdata2,tdata3,tinfo,tcontrol,hcontext,mcontext,scontext} if x_AVAILABLE:
+      For x register in {tdata1,tdata2,tdata3,tinfo}, and in {tcontrol,hcontext,mcontext,scontext} if UDB_x_AVAILABLE:
       csr read, write all 1s, write all 0s, set all 1s, clear all 1s, write back initial value of each register:
     expectation: |-
       WARL
@@ -43,7 +43,7 @@ coverpoints:
     rules:
       - Sdtrig_csr_mode
       - Sdtrig_num_trigs_ge1
-    notes: "comments on test results: No exceptions. Tcontrol, mscontext, hcontext not implemented on spike"
+    notes: "comments on test results: No exceptions. Tcontrol and mscontext not implemented on spike"
   - heading: "Note: Use CSRW/CSRR to access registers in all modes"
   - heading: Native Triggers
   - name: cp_breakpoint_delegate
