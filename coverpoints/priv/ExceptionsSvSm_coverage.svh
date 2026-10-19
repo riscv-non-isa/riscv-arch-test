@@ -89,14 +89,16 @@ covergroup ExceptionsSvSm_cg with function sample(ins_t ins);
 
     // Access fault coverpoints
     `ifdef RVMODEL_ACCESS_FAULT_ADDRESS
-        // The data accesses use an offset into the faulting region, which is at least 128 bytes
-        `ifdef UDB_MXLEN_64 // Number of physical address bits is different by XLEN, either 34 or 56
-            d_phys_address_nonexistent: coverpoint ((64'(ins.current.phys_adr_d) - 64'(`RVMODEL_ACCESS_FAULT_ADDRESS)) < 64'd128) {
-                // auto fill 1/0 for the physical address being valid
+        // Each access goes through a leaf PTE at the root level (an Sv39 gigapage or Sv32 megapage), so the address
+        // that PTE maps it to is the PTE's superpage number and the low virtual-address bits, even when the PTE is
+        // invalid and no physical access happens.  The faulting region is at least 128 bytes.
+        `ifdef UDB_MXLEN_64
+            d_phys_address_nonexistent: coverpoint (({8'b0, ins.current.pte_d[53:28], ins.current.virt_adr_d[29:0]} - 64'(`RVMODEL_ACCESS_FAULT_ADDRESS)) < 64'd128) {
+                // auto fill 1/0 for the PTE mapping the access into the faulting region
             }
         `else
-            d_phys_address_nonexistent: coverpoint ((64'(ins.current.phys_adr_d) - 64'(`RVMODEL_ACCESS_FAULT_ADDRESS)) < 64'd128) {
-                // auto fill 1/0 for the physical address being valid
+            d_phys_address_nonexistent: coverpoint (({30'b0, ins.current.pte_d[31:20], ins.current.virt_adr_d[21:0]} - 64'(`RVMODEL_ACCESS_FAULT_ADDRESS)) < 64'd128) {
+                // auto fill 1/0 for the PTE mapping the access into the faulting region
             }
         `endif
         cp_misaligned_priority_m:       cross priv_mode_m, memops, d_virt_adr_misaligned, d_phys_address_nonexistent, d_page_table_entry_invalid {

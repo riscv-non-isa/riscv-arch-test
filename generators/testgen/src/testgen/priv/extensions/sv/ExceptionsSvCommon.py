@@ -14,6 +14,7 @@ from testgen.asm.helpers import lrsc_retry_loop, write_sigupd
 from testgen.data.state import TestData
 from testgen.data.test_chunk import TestChunk, trap_sigupd_count
 from testgen.priv.extensions.sv.access import add_rwx_test, mode_switch, virtual_address
+from testgen.priv.extensions.sv.assembly import DATA_REGION
 from testgen.priv.extensions.sv.generate import begin_sv_test, sv_data
 from testgen.priv.extensions.sv.page_tables import PteFlags, SvMode, create_page_mapping
 from testgen.priv.extensions.sv.Sv import MPRV_CLEANUP, mstatus_setup
@@ -21,6 +22,9 @@ from testgen.priv.extensions.sv.Sv import MPRV_CLEANUP, mstatus_setup
 # medeleg[9] would delegate the S-mode ecall that T-SBI uses to enter M-mode.
 _MEDELEG_VALUES = (*(1 << bit for bit in range(9)), 1 << 12, 1 << 13, 1 << 15, 0xB1FF)
 _INVALID_VA = {"sv32": "0x90807000", "sv39": "0x1c0802000"}
+# DATA_REGION with a first word whose upper halfword is c.nop, so that on a Zca hart the misaligned fetch at
+# rvtest_data_1 + 2 runs a valid instruction and then the addi at rvtest_data_1 + 4, as the aligned fetch does.
+_DATA_REGION = DATA_REGION.replace("rvtest_data_1:\nnop\n", "rvtest_data_1:\n.word 0x00010713 # mv a4, sp\n", 1)
 _BASE_CASES = (
     (True, "rvtest_data_1", False),
     (True, "rvtest_data_1", True),
@@ -244,7 +248,7 @@ def _make_mode_test(
         chunk.code.append(f"csrw medeleg, x{saved_medeleg}")
         test_data.int_regs.return_registers([saved_medeleg, medeleg_value])
 
-    chunk.raw_data.extend(sv_data(sv))
+    chunk.raw_data.extend(sv_data(sv, data_region_body=_DATA_REGION))
     chunk.trap_sigupd_count = trap_sigupd_count(200)
     return test_data.end_test_chunk()
 

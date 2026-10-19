@@ -89,20 +89,22 @@ covergroup ExceptionsSv_cg with function sample(ins_t ins);
 
     // Access fault coverpoints
     `ifdef RVMODEL_ACCESS_FAULT_ADDRESS
-        // Accesses land at an offset into the faulting region, which is at least 128 bytes
-        `ifdef UDB_MXLEN_64 // Number of physical address bits is different by XLEN, either 34 or 56
-            i_phys_address_nonexistent: coverpoint ((64'(ins.current.phys_adr_i) - 64'(`RVMODEL_ACCESS_FAULT_ADDRESS)) < 64'd128) {
-                // auto fill 1/0 for the physical address being valid
+        // Each access goes through a leaf PTE at the root level (an Sv39 gigapage or Sv32 megapage), so the address
+        // that PTE maps it to is the PTE's superpage number and the low virtual-address bits, even when the PTE is
+        // invalid and no physical access happens.  The faulting region is at least 128 bytes.
+        `ifdef UDB_MXLEN_64
+            i_phys_address_nonexistent: coverpoint (({8'b0, ins.current.pte_i[53:28], ins.current.pc_rdata[29:0]} - 64'(`RVMODEL_ACCESS_FAULT_ADDRESS)) < 64'd128) {
+                // auto fill 1/0 for the PTE mapping the access into the faulting region
             }
-            d_phys_address_nonexistent: coverpoint ((64'(ins.current.phys_adr_d) - 64'(`RVMODEL_ACCESS_FAULT_ADDRESS)) < 64'd128) {
-                // auto fill 1/0 for the physical address being valid
+            d_phys_address_nonexistent: coverpoint (({8'b0, ins.current.pte_d[53:28], ins.current.virt_adr_d[29:0]} - 64'(`RVMODEL_ACCESS_FAULT_ADDRESS)) < 64'd128) {
+                // auto fill 1/0 for the PTE mapping the access into the faulting region
             }
         `else
-            i_phys_address_nonexistent: coverpoint ((64'(ins.current.phys_adr_i) - 64'(`RVMODEL_ACCESS_FAULT_ADDRESS)) < 64'd128) {
-                // auto fill 1/0 for the physical address being valid
+            i_phys_address_nonexistent: coverpoint (({30'b0, ins.current.pte_i[31:20], ins.current.pc_rdata[21:0]} - 64'(`RVMODEL_ACCESS_FAULT_ADDRESS)) < 64'd128) {
+                // auto fill 1/0 for the PTE mapping the access into the faulting region
             }
-            d_phys_address_nonexistent: coverpoint ((64'(ins.current.phys_adr_d) - 64'(`RVMODEL_ACCESS_FAULT_ADDRESS)) < 64'd128) {
-                // auto fill 1/0 for the physical address being valid
+            d_phys_address_nonexistent: coverpoint (({30'b0, ins.current.pte_d[31:20], ins.current.virt_adr_d[21:0]} - 64'(`RVMODEL_ACCESS_FAULT_ADDRESS)) < 64'd128) {
+                // auto fill 1/0 for the PTE mapping the access into the faulting region
             }
         `endif
         cp_misaligned_priority_s:        cross priv_mode_s, memops, d_virt_adr_misaligned, d_page_table_entry_invalid, d_phys_address_nonexistent {
@@ -113,7 +115,12 @@ covergroup ExceptionsSv_cg with function sample(ins_t ins);
                 `endif
             `endif
         }
-        cp_misaligned_priority_fetch_s:  cross priv_mode_s, jalr,   i_virt_adr_misaligned, i_page_table_entry_invalid, i_phys_address_nonexistent;
+        cp_misaligned_priority_fetch_s:  cross priv_mode_s, jalr,   i_virt_adr_misaligned, i_page_table_entry_invalid, i_phys_address_nonexistent {
+            `ifndef ZCA_SUPPORTED
+                // Without Zca, a jalr to a misaligned target raises instruction-address-misaligned on the jalr
+                ignore_bins misaligned_target = binsof(i_virt_adr_misaligned.misaligned);
+            `endif
+        }
         cp_misaligned_priority_u:        cross priv_mode_u, memops, d_virt_adr_misaligned, d_page_table_entry_invalid, d_phys_address_nonexistent {
             `ifdef UDB_MISALIGNED_LDST_EXCEPTION_PRIORITY_HIGH
                 `ifndef UDB_MISALIGNED_LDST
@@ -122,7 +129,12 @@ covergroup ExceptionsSv_cg with function sample(ins_t ins);
                 `endif
             `endif
         }
-        cp_misaligned_priority_fetch_u:  cross priv_mode_u, jalr,   i_virt_adr_misaligned, i_page_table_entry_invalid, i_phys_address_nonexistent;
+        cp_misaligned_priority_fetch_u:  cross priv_mode_u, jalr,   i_virt_adr_misaligned, i_page_table_entry_invalid, i_phys_address_nonexistent {
+            `ifndef ZCA_SUPPORTED
+                // Without Zca, a jalr to a misaligned target raises instruction-address-misaligned on the jalr
+                ignore_bins misaligned_target = binsof(i_virt_adr_misaligned.misaligned);
+            `endif
+        }
     `endif
 
 endgroup
