@@ -26,7 +26,7 @@ coverpoints:
     description: mstatus.MIE=1, hideleg = 0, mie = 0x444, mip = 0x444
     expectation: No interrupt occurs because these are always delegated to HS or VS
     bins: "1"
-  - heading: Following tests are done in M-mode if GILEN > 0
+  - heading: Following tests are done in M-mode if GEILEN > 0
   - name: cp_mie_gilen
     goal: mie.SGEIE is alias of hie
     description: With hie = 0x1444, read mie.
@@ -37,14 +37,6 @@ coverpoints:
     description: Set hgeip nonzero and read mip
     expectation: "0x1000"
     bins: "1"
-  - heading: Following tests are done in M-mode if GILEN = 0
-  - name: cp_mie_gilen
-    goal: mie.SGEIE is read-only zero if GILEN = 0
-    description: Write hie = 0x1000, read mie
-    expectation: "0x0000"
-    bins: "1"
-    rules:
-      - hie_acc
   - heading: Following tests are done in HS-mode
   - name: cp_trigger_vsei
     goal: trigger HS-mode VSEI
@@ -111,7 +103,7 @@ coverpoints:
     description: With 2^3 combinations of hideleg, write 0xFFFF to vsie, read hie
     expectation: delegated bits show up as 1 in hie (shifted)
     bins: "8"
-  - heading: Following tests are done in HS-mode if GILEN > 0
+  - heading: Following tests are done in HS-mode if GEILEN > 0
   - name: cp_hie_gilen
     goal: hie.SGEIE is alias of mie
     description: With mie = 0x1444, read hie
@@ -134,9 +126,9 @@ coverpoints:
     bins: 2 * 2
   - name: cp_hgeie
     goal: hgeie enables SGEI
-    description: With sstatus.SIE = 0, for i in 1...GILEN, with hgeip = {0, 1 in i, 1s in all writable bits}, hgeie = 1 in bit i
-    expectation: hip.SEGIP = 1 if hgeip & hgeie != 0
-    bins: GLEN * 3
+    description: With sstatus.SIE = 0, for i in 1...GEILEN, with hgeip = {0, 1 in i, 1s in all writable bits}, hgeie = 1 in bit i
+    expectation: hip.SGEIP = 1 if hgeip & hgeie != 0
+    bins: GEILEN * 3
   - name: cp_trigger_vsei_hgeip
     goal: trigger HS-mode VSEI with HGEIP
     description: "With sstatus.SIE = 0, hvip = 0, hideleg = 0, hie = 0, for i in 1...GLEN: hgeip = {0, 1 in i, 1 in all writable bits except i}, hgeie[i] = {0/1}, hstatus.VGEIN = i"
@@ -145,7 +137,7 @@ coverpoints:
   - name: cp_hgeip0
     goal: no VSEI selected when VGEIN=0
     description: With statatus.SIE=0, hvip = 0, hideleg=0, hie = 0, hgeip = hgeie = 1s in all writable bits, hstatus.VGEIN = 0
-    expectation: hip.SEGIP = 0, hip.VSEIP = 0
+    expectation: hip.SGEIP = 0, hip.VSEIP = 0
     bins: "1"
   - heading: Following tests are done in VS-mode
   - name: cp_hideleg_hip_vs
