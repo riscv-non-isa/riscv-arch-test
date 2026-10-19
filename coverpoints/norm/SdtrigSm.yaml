@@ -10,7 +10,7 @@ normative_rule_definitions:
     coverpoint:
       [
         "SdtrigSm_access_cg/cp_csr_access_common",
-        "SdtrigSm_csr_cg/cp_tselect_trigs",
+        "SdtrigSm_trig_module_reg_cg/cp_tselect_trigs",
       ]
 
   # Accessing trigger CSRs that are not used by any of the implemented triggers must
@@ -251,21 +251,33 @@ normative_rule_definitions:
   # including any high bits. An implementation may be able to optimize the storage
   # required, depending on the widest addresses it supports.
   - name: Sdtrig_tdata2_addr_sz1
-    coverpoint: ["SdtrigSm_address_matches_cg/cp_tdata2_translate"]
+    coverpoint:
+      [
+        "Not tested yet: no tdata2 test across translation modes (cp_tdata2_translate)",
+      ]
 
   # If physical addresses are less than XLEN bits wide, they are zero-extended.
   - name: Sdtrig_pmem
-    coverpoint: ["SdtrigSm_address_matches_cg/cp_tdata2_translate"]
+    coverpoint:
+      [
+        "Not tested yet: no tdata2 test across translation modes (cp_tdata2_translate)",
+      ]
 
   # If virtual addresses are less than XLEN bits wide, they are sign-extended.
   - name: Sdtrig_vmem
-    coverpoint: ["SdtrigSm_address_matches_cg/cp_tdata2_translate"]
+    coverpoint:
+      [
+        "Not tested yet: no tdata2 test across translation modes (cp_tdata2_translate)",
+      ]
 
   # tdata2 must be implemented with enough bits of storage to represent the full
   # range of supported physical and virtual address values when read by software and
   # used by hardware.
   - name: Sdtrig_csr_tdata2_sz2
-    coverpoint: ["SdtrigSm_address_matches_cg/cp_tdata2_translate"]
+    coverpoint:
+      [
+        "Not tested yet: no tdata2 test across translation modes (cp_tdata2_translate)",
+      ]
 
   # If tdata2 can hold any invalid addresses, then writes of an invalid address that
   # can not be represented as-is should be converted to a different invalid address
@@ -293,7 +305,7 @@ normative_rule_definitions:
   # registers, nor the configuration of any trigger besides the one that is
   # currently selected.
   - name: Sdtrig_tdata_write
-    coverpoint: ["SdtrigSm_csr_cg/cp_tdata_write"]
+    coverpoint: ["SdtrigSm_trig_module_reg_cg/cp_tdata_write"]
 
   # To help with this situation, it is guaranteed that writing 0 to tdata1 disables
   # the trigger, and leaves it in a state where tdata2 and tdata3 can be written
@@ -310,7 +322,12 @@ normative_rule_definitions:
   # accessible in machine and Debug Mode to prevent untrusted user code from causing
   # entry into Debug Mode without the OS's permission.
   - name: Sdtrig_trigger_modes
-    coverpoint: ["SdtrigSm_csr_cg/cp_csr_access"]
+    coverpoint:
+      [
+        "SdtrigSm_trig_module_reg_cg/cp_csr_access_global",
+        "SdtrigSm_trig_module_reg_cg/cp_csr_access_local",
+        "Accesses from S/U are in the SdtrigS/SdtrigU tests, which have no covergroup",
+      ]
 
   # On systems where XLEN values can differ between modes, this is handled as
   # follows.
@@ -335,11 +352,11 @@ normative_rule_definitions:
   # This register determines which trigger is accessible through the other Trigger
   # Module registers.
   - name: Sdtrig_tselect
-    coverpoint: ["SdtrigSm_csr_cg/cp_tselect_trigs"]
+    coverpoint: ["SdtrigSm_trig_module_reg_cg/cp_tselect_trigs"]
 
   # The set of accessible triggers must start at 0, and be contiguous.
   - name: Sdtrig_tselect_access
-    coverpoint: ["SdtrigSm_csr_cg/cp_tselect_trigs"]
+    coverpoint: ["SdtrigSm_trig_module_reg_cg/cp_tselect_trigs"]
 
   # This register is WARL.
   - name: Sdtrig_tselect_warl
@@ -378,7 +395,7 @@ normative_rule_definitions:
 
   # If type is 0, then this bit is hard-wired to 0.
   - name: Sdtrig_tdata1_dmode_type_0
-    coverpoint: ["SdtrigSm_csr_cg/cp_tdata1_mode_hardwired"]
+    coverpoint: ["SdtrigSm_trig_module_reg_cg/cp_tdata1_mode_hardwired"]
 
   # Both Debug and M-mode can write the tdata registers at the selected tselect.
   - name: Sdtrig_tdata1_dmode_0
@@ -395,7 +412,7 @@ normative_rule_definitions:
 
   # If type is 0, then this field is hard-wired to 0.
   - name: Sdtrig_tdata1_data
-    coverpoint: ["SdtrigSm_csr_cg/cp_tdata1_mode_hardwired"]
+    coverpoint: ["SdtrigSm_trig_module_reg_cg/cp_tdata1_mode_hardwired"]
 
   # This register provides access to the trigger selected by tselect.
   - name: Sdtrig_tdata2
@@ -462,7 +479,7 @@ normative_rule_definitions:
   # N. If the bit is set, then that type is supported by the currently selected
   # trigger.
   - name: Sdtrig_tinfo_support
-    coverpoint: ["SdtrigSm_csr_cg/cp_tinfo_read_only"]
+    coverpoint: ["SdtrigSm_trig_module_reg_cg/cp_tinfo_read_only"]
 
   # If the currently selected trigger doesn't exist, this field contains 1.
   - name: Sdtrig_tinfo_no_trigger
@@ -475,23 +492,23 @@ normative_rule_definitions:
 
   # When any trap into M-mode is taken, mpte is set to the value of mte.
   - name: Sdtrig_tcontrol_mpte
-    coverpoint: ["SdtrigSm_csr_cg/cp_tcontrol_mtrap"]
+    coverpoint: ["SdtrigSm_tcontrol_cg/cp_tcontrol_mtrap"]
 
   # Triggers with action=0 do not match/fire while the hart is in M-mode.
   - name: Sdtrig_tcontrol_mte_disabled
-    coverpoint: ["SdtrigSm_csr_cg/cp_tcontrol_enable"]
+    coverpoint: ["SdtrigSm_tcontrol_cg/cp_tcontrol_enable"]
 
   # Triggers do match/fire while the hart is in M-mode.
   - name: Sdtrig_tcontrol_mte_enabled
-    coverpoint: ["SdtrigSm_csr_cg/cp_tcontrol_enable"]
+    coverpoint: ["SdtrigSm_tcontrol_cg/cp_tcontrol_enable"]
 
   # When any trap into M-mode is taken, mte is set to 0.
   - name: Sdtrig_tcontrol_mte
-    coverpoint: ["SdtrigSm_csr_cg/cp_tcontrol_mtrap"]
+    coverpoint: ["SdtrigSm_tcontrol_cg/cp_tcontrol_mtrap"]
 
   # When mret is executed, mte is set to the value of mpte.
   - name: Sdtrig_tcontrol_mte_mret
-    coverpoint: ["SdtrigSm_csr_cg/cp_tcontrol_mret"]
+    coverpoint: ["SdtrigSm_tcontrol_cg/cp_tcontrol_mret"]
 
   # This optional register may be implemented only if the H extension is
   # implemented. If it is implemented, mcontext must also be implemented.
@@ -515,7 +532,11 @@ normative_rule_definitions:
   # This optional register is only accessible in S/HS-mode, VS-mode, M-mode and
   # Debug Mode.
   - name: Sdtrig_scontext_access
-    coverpoint: ["SdtrigSm_csr_cg/cp_csr_access"]
+    coverpoint:
+      [
+        "SdtrigSm_trig_module_reg_cg/cp_csr_access_global",
+        "Accesses from S are in the SdtrigS tests, which have no covergroup",
+      ]
 
   # Accessibility of this CSR is controlled by mstateenzero[57] and hstateenzero[57]
   # in the Smstateen extension.
@@ -534,7 +555,11 @@ normative_rule_definitions:
 
   # It is only accessible in M-mode and Debug mode.
   - name: Sdtrig_mcontext_access
-    coverpoint: ["SdtrigSm_csr_cg/cp_mcontext_smode"]
+    coverpoint:
+      [
+        "SdtrigSm_trig_module_reg_cg/cp_csr_access_global",
+        "Accesses from S/U are in the SdtrigS/SdtrigU tests, which have no covergroup",
+      ]
 
   # M-Mode or HS-Mode (using hcontext) software can write a context number to this
   # register, which can be used to set triggers that only fire in that specific
