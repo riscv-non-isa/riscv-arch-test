@@ -49,8 +49,8 @@ coverpoints:
       csrrci x*, seed, 0
     expectation: Illegal instruction exception
     bins: 4 csr ops
-    rules:
-      - "*** this could be reserved and should be moved to an Zkr spreadsheet for all priv modes"
+    notes: |-
+      *** this could be reserved and should be moved to an Zkr spreadsheet for all priv modes
   - name: cp_breakpoint
     goal: Breakpoint
     description: |-

@@ -1,6 +1,9 @@
 # Normative rule to coverpoint mappings
 # Generated from the Sdtrig normative rules and SdtrigSm test plan
 
+# Remove once the Sdtrig tags reach the ISA manual snapshot
+untagged_upstream: riscv/riscv-isa-manual#3416
+
 normative_rule_definitions:
   # If Sdtrig is implemented, the Trigger Module must support at least one trigger.
   - name: Sdtrig_num_trigs_ge1
@@ -357,41 +360,6 @@ normative_rule_definitions:
   # changing type to 15.
   - name: Sdtrig_tdata1_multiple_types
     coverpoint: ["WARL write-any-read-legal behavior not separately tested"]
-
-  # The trigger is an address/data match trigger. The remaining bits in this
-  # register act as described in mcontrol.
-  - name: Sdtrig_tdata1_type_mcontrol
-    coverpoint: ["Deprecated mcontrol type 2 trigger; not implemented"]
-
-  # The trigger is an instruction count trigger. The remaining bits in this register
-  # act as described in icount.
-  - name: Sdtrig_tdata1_type_icount
-    coverpoint:
-      [
-        "SdtrigSm_icount_cg/cp_icount_instr",
-        "SdtrigSm_icount_cg/cp_icount_trap",
-      ]
-
-  # The trigger is an interrupt trigger. The remaining bits in this register act as
-  # described in itrigger.
-  - name: Sdtrig_tdata1_type_itrigger
-    coverpoint: ["SdtrigSm_itrigger_cg/cp_itrigger"]
-
-  # The trigger is an exception trigger. The remaining bits in this register act as
-  # described in etrigger.
-  - name: Sdtrig_tdata1_type_etrigger
-    coverpoint: ["SdtrigSm_etrigger_cg/cp_etrigger"]
-
-  # The trigger is an address/data match trigger. The remaining bits in this
-  # register act as described in mcontrol6.
-  - name: Sdtrig_tdata1_type_mcontrol6
-    coverpoint: ["SdtrigSm_mcontrol6_cg/cp_mcontrol6_priv_mode"]
-
-  # The trigger is a trigger source external to the TM. The remaining bits in this
-  # register act as described in tmexttrigger.
-  - name: Sdtrig_tdata1_type_tmexttrigger
-    coverpoint:
-      ["Tmexttrigger relies on implementation-specific external inputs"]
 
   # This trigger is disabled. In this state, {csr-tdata2} and {csr-tdata3} can be written
   # with any value that is supported for any of the types this trigger implements. The

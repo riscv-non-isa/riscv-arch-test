@@ -16,7 +16,7 @@ normative_rule_definitions:
   # register rs1 into csr:frm[]. insn:frflags[] and insn:fsflags[] are defined
   # analogously for the Accrued Exception Flags field csr:fflags[] (csr:fcsr[] bits
   # 4&#8205;&#8211;&#8205;0).
-  - name: fflags_frm_op_sz_acc
+  - names: [fflags_op_sz_acc, frm_op_sz_acc]
     coverpoint: ["UF_ufcsr_cg/cp_ufcsrwalk"]
   # Bits 31&#8205;&#8211;&#8205;8 of the csr:fcsr[] are reserved for other standard
   # extensions. If these extensions are not present, implementations shall ignore writes

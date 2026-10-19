@@ -93,7 +93,7 @@
   rvtest_code_end:
 
   // Restore xTVEC, trampoline, regs for each mode in opposite order that they were saved.
-  // The RVTEST_GOTO_MMODE sits BELOW the cleanup_epilogs label (not at rvtest_code_end)
+  // The RVTEST_TSBI_GOTO_MMODE sits BELOW the cleanup_epilogs label (not at rvtest_code_end)
   // because cleanup_epilogs is also reached from abort_test and from the default
   // unexpected-interrupt handlers, which can run in S/U/VS/VU mode. The epilogs read
   // mscratch and other M-mode CSRs, so every entry path must switch to M-mode first.
@@ -275,29 +275,15 @@
       RVMODEL_IO_INIT(T1, T2, T3)
     #endif
 
-    // Boot to the lowest supported privilege mode unless a test requests M-mode or S-mode.
-    RVTEST_BOOT_TO_MMODE
-    // The BOOT_TO_MMODE symbol will be defined in any tests that should run in M-mode.
-    // Otherwise continue to a lower privilege mode (if one exists) depending on the type of test
-    #ifndef BOOT_TO_MMODE
-      #ifdef S_SUPPORTED
-        RVTEST_BOOT_TO_SMODE
-      #endif
-      // The BOOT_TO_SMODE symbol will be defined in any tests that should run in S-mode.
-      // Otherwise continue to U-mode if U-mode supported
-      #ifndef BOOT_TO_SMODE
-        #ifdef U_SUPPORTED
-          RVTEST_BOOT_TO_UMODE
-        #endif
-      #endif
-    #endif
-
     #ifdef S_SUPPORTED
       rvtest_identity_map:
         // Identity maps rvtest_data_begin, forming an aligned Sv32 megapage,
         // Sv39 gigapage, Sv48 terapage and Sv57 petapage.
         // This allows the S-mode trap handler and save area to be accessed
         // without requiring prior page table entries setup.
+        // The map is written in M-mode before the boot mode switch, so sfence.vma can legally
+        // order the stores before the implicit page-table reads of later translations.
+        // The fence is needed even on harts without PMP, where boot does no other sfence.vma.
         LA(T1, rvtest_Sroot_pg_tbl)
         LA(T2, rvtest_data_begin)
         #if __riscv_xlen == 32
@@ -321,6 +307,24 @@
             sd   T4, 0(T3)
           .endr
         #endif
+        RVTEST_SFENCE_VMA_IF_SUPPORTED
+    #endif
+
+    // Boot to the lowest supported privilege mode unless a test requests M-mode or S-mode.
+    RVTEST_BOOT_TO_MMODE
+    // The BOOT_TO_MMODE symbol will be defined in any tests that should run in M-mode.
+    // Otherwise continue to a lower privilege mode (if one exists) depending on the type of test
+    #ifndef BOOT_TO_MMODE
+      #ifdef S_SUPPORTED
+        RVTEST_BOOT_TO_SMODE
+      #endif
+      // The BOOT_TO_SMODE symbol will be defined in any tests that should run in S-mode.
+      // Otherwise continue to U-mode if U-mode supported
+      #ifndef BOOT_TO_SMODE
+        #ifdef U_SUPPORTED
+          RVTEST_BOOT_TO_UMODE
+        #endif
+      #endif
     #endif
 
     // Clear the global trap counter at the end of boot code
@@ -370,7 +374,7 @@
   // RVMODEL_INTERRUPT_LATENCY iterations, so the interrupt is not taken again
   // when the test next enables it. The _SU flavor reads mip through T-SBI.
   .macro RVTEST_WAIT_MIP_CLEAR_M mask
-    LI(a2, RVMODEL_INTERRUPT_LATENCY)
+    LA(a2, RVMODEL_INTERRUPT_LATENCY)
     1:
     csrr a0, mip
     andi a0, a0, \mask
@@ -382,7 +386,7 @@
   .endm
 
   .macro RVTEST_WAIT_MIP_CLEAR_SU mask
-    LI(a2, RVMODEL_INTERRUPT_LATENCY)
+    LA(a2, RVMODEL_INTERRUPT_LATENCY)
     1:
     RVTEST_TSBI_CSR_READ(CSR_MIP) // a0 = mip; a2 is preserved
     andi a0, a0, \mask
@@ -826,11 +830,20 @@
 /**** - Save areas for each priv mode trap handler                                      ****/
 /**** - Defines the start of the test data region                                       ****/
 /*******************************************************************************************/
+// Size of the scratch region in bytes. The default 264 bytes = 33 doublewords is enough for
+// atomic reservation tests with offsets up to 256 bytes. A test that loads or stores at larger
+// offsets defines SCRATCH_SIZE before including riscv_arch_test.h.
+#ifndef SCRATCH_SIZE
+  #define SCRATCH_SIZE 264
+#endif
+#if SCRATCH_SIZE < 264
+  #error "SCRATCH_SIZE must be at least 264"
+#endif
+
 .macro RVTEST_DATA_BEGIN
   // Scratch region of memory for tests (ie for loads/stores that are not part of signature)
-  // Initialized with distinct values so tests can detect unintended zeroing or aliasing,
-  // while remaining obviously recognizable as uninitialized scratch defaults.
-  // 264 bytes = 33 doublewords (needed for atomic reservation tests with offsets up to 256 bytes)
+  // The first 264 bytes are initialized with distinct values so tests can detect unintended
+  // zeroing or aliasing, while remaining obviously recognizable as uninitialized scratch defaults.
   .data
   .p2align 8
   scratch:
@@ -851,6 +864,7 @@
     .dword 0xDEAD001DFFE2BEEF, 0xDEAD001EFFE1BEEF
     .dword 0xDEAD001FFFE0BEEF, 0xDEAD0020FFDFBEEF
     .dword 0xDEAD0021FFDEBEEF
+    .fill SCRATCH_SIZE - 264, 1, 0 // rest of a larger SCRATCH_SIZE
 
   // Temporary memory for RVTEST_SIGUPD_F.
   .p2align 4
@@ -1157,7 +1171,8 @@
         csrw mcountinhibit, zero
       #endif
 
-      // Initialize counter event selectors to 0.  They must be implemented.
+      // Initialize counter event selectors to 0.  All counters should be implemented, but a legal
+      // implementation is to make both the counter and its corresponding event selector be read-only 0.
       csrw mhpmevent3, zero
       csrw mhpmevent4, zero
       csrw mhpmevent5, zero
