@@ -685,7 +685,7 @@ def _generate_vector_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     vops = {"load": ("vle", 0b001), "store": ("vse", 0b010)}
 
     def chunk_prologue(coverpoint: str, description: str) -> list[str]:
-        lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_sdtrig_")).code
+        lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_")).code
         lines.extend(_global_ie(mode, True))
         lines.append(comment_banner(coverpoint, description))
         lines.extend(
