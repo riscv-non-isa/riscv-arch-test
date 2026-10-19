@@ -786,9 +786,10 @@ def _generate_vector_tests(test_data: TestData, mode: str) -> list[TestChunk]:
         lines.extend(_disable_trigger(temp_reg, trig_num, mode))
         lines.append(f"#endif // UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
 
-    lines.extend(_global_ie(mode, False))
     test_data.int_regs.return_registers([addr_reg, temp_reg])
     chunks.append(test_data.end_test_chunk())
+    for chunk in chunks:  # each coverpoint is its own file and enables MIE/SIE at its start
+        chunk.code.extend(_global_ie(mode, False))
     return chunks
 
 
