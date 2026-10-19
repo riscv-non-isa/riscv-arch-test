@@ -659,22 +659,11 @@ def _lrsc_pair(
         ]
     )
     if data_match:
-        loaded = (
-            [
-                "#if __riscv_xlen == 64",
-                f"addiw x{lr_reg}, x{data_reg}, 0",
-                "#else",
-                f"mv x{lr_reg}, x{data_reg}",
-                "#endif",
-            ]
-            if width == "w"
-            else [f"mv x{lr_reg}, x{data_reg}"]
-        )
         lines.extend(
             [
                 f"LI(x{temp_reg}, 0x{LRSC_SENTINEL:x})",
                 f"bne x{lr_reg}, x{temp_reg}, 1f # lr ran",
-                *loaded,
+                f"mv x{lr_reg}, x{data_reg} # data matches use XLEN-wide lr only, so lr loads all of dataval",
                 f"1: # x{lr_reg} = what lr loaded, whether the trigger fired before or after it",
             ]
         )
@@ -795,6 +784,8 @@ def _generate_zalrsc_tests(test_data: TestData, mode: str) -> list[TestChunk]:
                 for width in ("w", "d"):
                     tdata2 = td2_base & 0xFFFFFFFF if width == "w" else td2_base
                     lines.extend(_ifdef_guard(f"lr.{width}"))
+                    if width == "w":  # size=0 data matches are defined only for XLEN-wide accesses
+                        lines.append("#if __riscv_xlen == 32 // norm:Sdtrig_mcontrol6_size_any")
                     lines.extend(
                         [
                             f"\n# trigger {trig_num}: tdata2={td2_name} xsl={perm:03b} on lr.{width}/sc.{width} data",
@@ -819,6 +810,8 @@ def _generate_zalrsc_tests(test_data: TestData, mode: str) -> list[TestChunk]:
                             ),
                         ]
                     )
+                    if width == "w":
+                        lines.append("#endif // __riscv_xlen == 32")
                     lines.extend(_ifdef_guard(f"lr.{width}", closing=True))
                 lines.extend(["#endif // UDB_SDTRIG_MCONTROL6_XSL_AVAILABLE"] * len(_xsl_ifdefs(perm)))
         lines.extend(_disable_trigger(temp_reg, trig_num, mode))
@@ -1936,10 +1929,11 @@ def _generate_icount_tests(test_data: TestData, mode: str) -> list[TestChunk]:
             lines.extend(
                 [
                     _add_tc(test_data, binname, coverpoint, covergroup),
+                    f"LI(x{addr_reg}, 0) # marker sum",
                     *_config_icount(temp_reg, trig_num, 1, mode, privbits=privbits),
                     f".4byte 0xf1101073 # csrrw x0, mvendorid, x0 is illegal from {mode}: the trap matches",
-                    "nop # fire trigger",
-                    "nop # landing pad",
+                    *[f"addi x{addr_reg}, x{addr_reg}, {i} # marker {i}" for i in (1, 2, 4)],
+                    write_sigupd(addr_reg, test_data),  # 7 = no fire, 6 = fired after the trap, 5 = trap not counted
                     _csr_access(f"csrr x{data_reg}, tdata1 # count and pending after the trap", mode),
                     *_sigupd_masked(data_reg, temp_reg, 0x1000000, test_data, "icount hit bit (bit 24)"),
                     *_disable_trigger(temp_reg, trig_num, mode),
@@ -1966,9 +1960,10 @@ def _generate_icount_tests(test_data: TestData, mode: str) -> list[TestChunk]:
             lines.extend(
                 [
                     _add_tc(test_data, binname, coverpoint, covergroup),
+                    f"LI(x{addr_reg}, 0) # marker sum",
                     *_config_icount(temp_reg, trig_num, 0, mode, pending=pending),
-                    "nop # pending=1 fires before this",
-                    "nop # landing pad",
+                    *[f"addi x{addr_reg}, x{addr_reg}, {i} # marker {i}" for i in (1, 2, 4)],
+                    write_sigupd(addr_reg, test_data),  # 7 = no fire, 6 = pending fired first, 5 = fired late
                     *["nop # count stays 0, so nothing matches again"] * 8,
                     _csr_access(f"csrr x{data_reg}, tdata1 # count still 0, pending cleared", mode),
                     *_sigupd_masked(data_reg, temp_reg, 0x1000000, test_data, "icount hit bit (bit 24)"),
