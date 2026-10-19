@@ -32,10 +32,13 @@ _COMPARISON_RE = re.compile(r"^(>=|<=|!=|==|>|<)\s*(0[xX][0-9a-fA-F]+|\d+)$")
 def _compare_param(test_value: object, config_value: object) -> bool:
     """Compare a test parameter requirement against a config parameter value.
 
+    A list config value (e.g. SUPPORTED_PMLEN_SMMPM: [0, 7, 16]) matches when it contains the test value.
     Supports comparison operator prefixes on strings with decimal or hex values.
     e.g. '>=128', '<= 64', '> 0', '<256', '!=0', '==64', '>=0x80', '<0xFF'.
     Falls back to exact equality if there is no comparison operator prefix.
     """
+    if isinstance(config_value, list):
+        return test_value in config_value
     if isinstance(test_value, str):
         match = _COMPARISON_RE.match(test_value)
         if match:
@@ -160,6 +163,24 @@ def _print_skipped_suites(
         print(f"  {suite:<{name_width}}  {skipped:>4} of {total:>4} tests")
 
 
+def write_test_list(config_name: str, selected_tests: dict[str, TestMetadata], output_file: Path) -> None:
+    """Write the selected suites and their test counts as a Markdown table."""
+    suite_counts = Counter(Path(name).parent.name for name in selected_tests)
+    rows = [(suite, str(count)) for suite, count in sorted(suite_counts.items())]
+    suite_width = max([len("Suite")] + [len(suite) for suite, _ in rows])
+    count_width = max([len("Tests")] + [len(count) for _, count in rows])
+    lines = [
+        f"# Selected tests for {config_name}",
+        "",
+        f"| {'Suite':<{suite_width}} | {'Tests':>{count_width}} |",
+        f"| {'-' * suite_width} | {'-' * (count_width - 1)}: |",
+    ]
+    lines.extend(f"| {suite:<{suite_width}} | {count:>{count_width}} |" for suite, count in rows)
+
+    output_file.parent.mkdir(parents=True, exist_ok=True)
+    output_file.write_text("\n".join(lines) + "\n")
+
+
 def prepare_configs_and_select_tests(
     config_files: Sequence[Path],
     certificate: str | None,
@@ -194,7 +215,7 @@ def prepare_configs_and_select_tests(
 
     results: list[tuple[Config, dict[str, ConfigParamValue], dict[str, TestMetadata]]] = []
     for config in configs:
-        implemented_extensions = get_implemented_extensions(workdir / config.name / "extensions.txt")
+        implemented_extensions = get_implemented_extensions(workdir / config.name / "env" / "extensions.txt")
         config_params = get_config_params(config.udb_config)
         selected_tests = select_tests(
             full_test_dict,
