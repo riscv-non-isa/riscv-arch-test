@@ -615,6 +615,89 @@ def _generate_native_triggers_tests(test_data: TestData, mode: str) -> list[Test
     return chunks
 
 
+LRSC_SENTINEL = 0xBAD5EED  # preloaded into the lr/sc rd: no load of scratch or SC result writes it
+LRSC_SIG_KEY = 0x5A5A5A5A  # xor'd into recorded lr/sc words so none equals 0 or dataval, which a data trigger may watch
+
+
+def _lrsc_pair(
+    test_data: TestData,
+    coverpoint: str,
+    covergroup: str,
+    bins: tuple[str, str],
+    regs: tuple[int, int, int, int, int],
+    width: str,
+    comments: tuple[str, str],
+    *,
+    data_match: bool = False,
+) -> list[str]:
+    """Emit one lr; nop; sc; nop sequence (an LR bin and an SC bin) after the trigger is configured.
+
+    The LR and SC stay contiguous, so the pair is a constrained LR/SC sequence. Afterwards the signature
+    records LR's result (the sentinel if the trigger skipped the LR) and whether the trigger skipped the SC
+    (its rd still holds the sentinel). The SC result itself is not recorded: after a skipped or trapped LR
+    it is implementation-defined.
+
+    Address matches fire before the access on every hart (the suggested timing), so the skips tell an LR
+    fire from an SC fire. A data match may fire before or after the access (Whisper fires load data before,
+    Sail after), so with ``data_match`` a skipped LR records the value it would have loaded, and the SC flag
+    is not recorded; the trap records still count the fires.
+    """
+    lr_reg, sc_reg, addr_reg, data_reg, temp_reg = regs
+    lines = [
+        f"LI(x{lr_reg}, 0x{LRSC_SENTINEL:x}) # sentinel: still here if the trigger skips the lr",
+        f"LI(x{sc_reg}, 0x{LRSC_SENTINEL:x}) # sentinel: still here if the trigger skips the sc",
+        _add_tc(test_data, bins[0], coverpoint, covergroup),
+    ]
+    lr_label = test_data.current_testcase_label
+    lines.extend(
+        [
+            *_arch_guard(f"lr.{width} x{lr_reg}, (x{addr_reg}) # {comments[0]}", ["zalrsc"]),
+            "nop # spacer (lands here after a trigger that fires after the lr)",
+            _add_tc(test_data, bins[1], coverpoint, covergroup),
+            *_arch_guard(f"sc.{width} x{sc_reg}, x{data_reg}, (x{addr_reg}) # {comments[1]}", ["zalrsc"]),
+            "nop # spacer (lands here after a trigger that fires after the sc)",
+        ]
+    )
+    if data_match:
+        loaded = (
+            [
+                "#if __riscv_xlen == 64",
+                f"addiw x{lr_reg}, x{data_reg}, 0",
+                "#else",
+                f"mv x{lr_reg}, x{data_reg}",
+                "#endif",
+            ]
+            if width == "w"
+            else [f"mv x{lr_reg}, x{data_reg}"]
+        )
+        lines.extend(
+            [
+                f"LI(x{temp_reg}, 0x{LRSC_SENTINEL:x})",
+                f"bne x{lr_reg}, x{temp_reg}, 1f # lr ran",
+                *loaded,
+                f"1: # x{lr_reg} = what lr loaded, whether the trigger fired before or after it",
+            ]
+        )
+    lines.extend(
+        [
+            f"LI(x{temp_reg}, 0x{LRSC_SIG_KEY:x}) # key for the recorded words",
+            f"xor x{lr_reg}, x{lr_reg}, x{temp_reg} # lr result ^ key",
+            write_sigupd(lr_reg, test_data, label=lr_label),
+        ]
+    )
+    if not data_match:
+        lines.extend(
+            [
+                f"LI(x{lr_reg}, 0x{LRSC_SENTINEL:x})",
+                f"sub x{sc_reg}, x{sc_reg}, x{lr_reg}",
+                f"seqz x{sc_reg}, x{sc_reg} # 1 = trigger skipped the sc",
+                f"xor x{sc_reg}, x{sc_reg}, x{temp_reg} # sc-skipped flag ^ key",
+                write_sigupd(sc_reg, test_data),
+            ]
+        )
+    return lines
+
+
 def _generate_zalrsc_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     """Generate lr/sc matching tests."""
     covergroup = f"Sdtrig{mode}_a_cg"
@@ -622,11 +705,15 @@ def _generate_zalrsc_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     chunks: list[TestChunk] = []
 
     # setup registers
-    dest_reg, addr_reg, data_reg, temp_reg = test_data.int_regs.get_registers(
-        4, exclude_regs=[2], reg_range=list(range(8, 16))
+    lr_reg, sc_reg, addr_reg, data_reg, temp_reg = test_data.int_regs.get_registers(
+        5, exclude_regs=[2], reg_range=list(range(8, 16))
     )
+    regs = (lr_reg, sc_reg, addr_reg, data_reg, temp_reg)
 
-    dataval = random_int(32, signed=False, nonzero=True) << 32 | random_int(32, signed=False, nonzero=True)
+    # bit 31 set so lr.w on RV64 shows the sign extension of the loaded word
+    dataval = random_int(32, signed=False, nonzero=True) << 32 | random_int(32, signed=False) | 0x80000000
+    recorded = {LRSC_SIG_KEY, LRSC_SIG_KEY ^ 1, LRSC_SENTINEL ^ LRSC_SIG_KEY}
+    assert not recorded & {0, dataval & 0xFFFFFFFF}, "a recorded lr/sc word would fire a data trigger"
     perms = (0b100, 0b010, 0b001)  # exec / store / load
 
     ######################################
@@ -640,6 +727,13 @@ def _generate_zalrsc_tests(test_data: TestData, mode: str) -> list[TestChunk]:
             "mcontrol6 fires when lr/sc address == tdata2 (select=address)",
         )
     )
+    lines.extend(
+        [
+            f"LA(x{addr_reg}, scratch) # x{addr_reg} = &scratch",
+            _load_reg(data_reg, dataval),
+            f"SREG x{data_reg}, 0(x{addr_reg}) # scratch = dataval before any trigger is armed; sc only rewrites it",
+        ]
+    )
     for trig_num in range(UDB_NUM_TRIGGERS):
         lines.append(f"\n#ifdef UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
         for tdata2 in ("scratch", 0):
@@ -647,33 +741,27 @@ def _generate_zalrsc_tests(test_data: TestData, mode: str) -> list[TestChunk]:
                 lines.extend(_xsl_ifdefs(perm))
                 for width in ("w", "d"):
                     lines.extend(_ifdef_guard(f"lr.{width}"))
-                    binname = f"trig_num_{trig_num}_td2_{tdata2}_lr_{width}_perm_{perm:03b}"
                     lines.extend(
                         [
-                            _add_tc(test_data, binname, coverpoint, covergroup),
+                            f"\n# trigger {trig_num}: tdata2={tdata2} xsl={perm:03b} on lr.{width}/sc.{width}",
                             f"LA(x{addr_reg}, scratch) # x{addr_reg} = &scratch",
                             _load_reg(data_reg, dataval),
                             *_config_mcontrol6(temp_reg, trig_num, tdata2, mode, xsl=perm, select=0),
-                            *_arch_guard(
-                                f"lr.{width} x{dest_reg}, (x{addr_reg}) # fire iff addr==tdata2 and xsl has load bit",
-                                ["zalrsc"],
+                            *_lrsc_pair(
+                                test_data,
+                                coverpoint,
+                                covergroup,
+                                (
+                                    f"trig_num_{trig_num}_td2_{tdata2}_lr_{width}_perm_{perm:03b}",
+                                    f"trig_num_{trig_num}_td2_{tdata2}_sc_{width}_perm_{perm:03b}",
+                                ),
+                                regs,
+                                width,
+                                (
+                                    "fire iff addr==tdata2 and xsl has load bit",
+                                    "fire iff addr==tdata2 and xsl has store bit",
+                                ),
                             ),
-                            "nop # spacer",
-                            f"LI(x{dest_reg}, 1) # separator, prevent sigupd from firing trigger",
-                            write_sigupd(dest_reg, test_data),
-                        ]
-                    )
-                    binname = f"trig_num_{trig_num}_td2_{tdata2}_sc_{width}_perm_{perm:03b}"
-                    lines.extend(
-                        [
-                            _add_tc(test_data, binname, coverpoint, covergroup),
-                            *_arch_guard(
-                                f"sc.{width} x{temp_reg}, x{data_reg}, (x{addr_reg}) # fire iff addr==tdata2 and xsl has store bit",
-                                ["zalrsc"],
-                            ),
-                            "nop # spacer",
-                            f"LI(x{dest_reg}, 1) # separator, prevent sigupd from firing trigger",
-                            write_sigupd(dest_reg, test_data),
                         ]
                     )
                     lines.extend(_ifdef_guard(f"lr.{width}", closing=True))
@@ -707,33 +795,28 @@ def _generate_zalrsc_tests(test_data: TestData, mode: str) -> list[TestChunk]:
                 for width in ("w", "d"):
                     tdata2 = td2_base & 0xFFFFFFFF if width == "w" else td2_base
                     lines.extend(_ifdef_guard(f"lr.{width}"))
-                    binname = f"trig_num_{trig_num}_td2_{td2_name}_lr_{width}_perm_{perm:03b}"
                     lines.extend(
                         [
-                            _add_tc(test_data, binname, coverpoint, covergroup),
+                            f"\n# trigger {trig_num}: tdata2={td2_name} xsl={perm:03b} on lr.{width}/sc.{width} data",
                             f"LA(x{addr_reg}, scratch) # x{addr_reg} = &scratch",
                             _load_reg(data_reg, dataval),
                             *_config_mcontrol6(temp_reg, trig_num, tdata2, mode, xsl=perm, select=1),
-                            *_arch_guard(
-                                f"lr.{width} x{dest_reg}, (x{addr_reg}) # fire iff data==tdata2 and xsl has load bit",
-                                ["zalrsc"],
+                            *_lrsc_pair(
+                                test_data,
+                                coverpoint,
+                                covergroup,
+                                (
+                                    f"trig_num_{trig_num}_td2_{td2_name}_lr_{width}_perm_{perm:03b}",
+                                    f"trig_num_{trig_num}_td2_{td2_name}_sc_{width}_perm_{perm:03b}",
+                                ),
+                                regs,
+                                width,
+                                (
+                                    "fire iff data==tdata2 and xsl has load bit",
+                                    "fire iff data==tdata2 and xsl has store bit",
+                                ),
+                                data_match=True,
                             ),
-                            "nop # spacer (data match fires after)",
-                            f"LI(x{dest_reg}, 1) # separator, prevent sigupd from firing trigger",
-                            write_sigupd(dest_reg, test_data),
-                        ]
-                    )
-                    binname = f"trig_num_{trig_num}_td2_{td2_name}_sc_{width}_perm_{perm:03b}"
-                    lines.extend(
-                        [
-                            _add_tc(test_data, binname, coverpoint, covergroup),
-                            *_arch_guard(
-                                f"sc.{width} x{temp_reg}, x{data_reg}, (x{addr_reg}) # fire iff data==tdata2 and xsl has store bit",
-                                ["zalrsc"],
-                            ),
-                            "nop # spacer (data match fires after)",
-                            f"LI(x{dest_reg}, 1) # separator, prevent sigupd from firing trigger",
-                            write_sigupd(dest_reg, test_data),
                         ]
                     )
                     lines.extend(_ifdef_guard(f"lr.{width}", closing=True))
@@ -741,7 +824,7 @@ def _generate_zalrsc_tests(test_data: TestData, mode: str) -> list[TestChunk]:
         lines.extend(_disable_trigger(temp_reg, trig_num, mode))
         lines.append(f"#endif // UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
 
-    test_data.int_regs.return_registers([dest_reg, addr_reg, data_reg, temp_reg])
+    test_data.int_regs.return_registers([lr_reg, sc_reg, addr_reg, data_reg, temp_reg])
 
     chunks.append(test_data.end_test_chunk())
     for chunk in chunks:  # each section is its own file and enables MIE/SIE at its start
