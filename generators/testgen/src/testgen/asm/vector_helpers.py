@@ -170,12 +170,14 @@ def write_sigupd_v_len(
     maskprod_flag = 1 if mask_producing else 0
     vcompress_flag = 1 if vcompress else 0
     scalar_dst_flag = 1 if scalar_dest else 0
+    force_ta_ma_flag = 1 if params.vd_different_eew_overlap else 0
 
     lines = [
         f"# Check if v{params.vd} contains the expected result. x{sig_reg} is the signature ptr, x{link_reg} is the link ptr, x{temp_reg}, x{temp_reg2}, and x{temp_reg3} are a temp regs.",
         f"# v{vtmp} will hold the signature result, v{mtmp3}, v{mtmp2}, and v{mtmp} are temporary mask registers holding the masks to aid error detection. v{vs1} was VS1 in the instruction",
         f"# under test and is used to compute the evl for vcompress, v{mask_reg} is the register holding the mask for the instruction under test. In order the flags are: mask_producing,",
-        f"# masked and vcompress. VDSEW={vdsew}, signature lmul = {max(1, lmul)}, and finally a flag for if the destinitation register is used as a scalar vector register.",
+        f"# masked and vcompress. VDSEW={vdsew}, signature lmul = {max(1, lmul)}, a flag for if the destination register is used as a scalar vector register, and a flag to force the",
+        "# instruction to be tail and mask agnostic.",
     ]
 
     if segments != 1:
@@ -186,7 +188,7 @@ def write_sigupd_v_len(
     for i in range(segments):
         register_to_check = check_reg + i * int(max(lmul, 1))
         lines.append(
-            f"RVTEST_SIGUPD_V_LEN(x{sig_reg}, x{link_reg}, x{temp_reg}, x{temp_reg2}, x{temp_reg3}, v{vtmp}, v{mtmp3}, v{mtmp2}, v{mtmp}, v{register_to_check}, v{vs1}, v{mask_reg}, {maskprod_flag}, {masked_flag}, {vcompress_flag}, {vdsew}, {int(max(lmul, 1))}, {scalar_dst_flag}, {label}, {label}_str)",
+            f"RVTEST_SIGUPD_V_LEN(x{sig_reg}, x{link_reg}, x{temp_reg}, x{temp_reg2}, x{temp_reg3}, v{vtmp}, v{mtmp3}, v{mtmp2}, v{mtmp}, v{register_to_check}, v{vs1}, v{mask_reg}, {maskprod_flag}, {masked_flag}, {vcompress_flag}, {vdsew}, {int(max(lmul, 1))}, {scalar_dst_flag}, {force_ta_ma_flag}, {label}, {label}_str)",
         )
 
     test_data.int_regs.return_registers([temp_reg2, temp_reg3])
@@ -774,3 +776,48 @@ def handle_vector_fp(setup: list[str], check: list[str], frm_val: int, test_data
             break
     else:
         check.insert(0, "fsrmi 0x0")
+
+
+def index_register_safety(
+    index_reg: int,
+    index_eew: int,
+    segments: int,
+    random_vl_reg: str,
+    test_data: TestData,
+    params: InstructionParams,
+    align_indices: bool = True,
+) -> list[str]:
+    assert params.lmul is not None, "LMUL must be set for vector instructions"
+    assert params.sew is not None, "SEW must be set for vector instructions"
+
+    lines = [
+        "# Ensure that the data in vs2 is within the range [0, 2*vlmax) and sew-aligned",
+        f"vsetvli x{params.temp_reg}, x0, e{params.sew}, m{get_lmul_flag(params.lmul)}, ta, ma",
+        f"add x{params.temp_reg}, x{params.temp_reg}, x{params.temp_reg}",
+    ]
+
+    index_emul = params.lmul * index_eew / params.sew
+    if params.vl == "vlmax":
+        temp_reg2 = test_data.int_regs.get_register(exclude_regs=[0])
+        lines.append(f"vsetvli x{temp_reg2}, x0, e{index_eew}, m{get_lmul_flag(index_emul)}, tu, mu")
+        test_data.int_regs.return_register(temp_reg2)
+    elif params.vl == "random":
+        lines.append(f"vsetvli x0, {random_vl_reg}, e{index_eew}, m{get_lmul_flag(index_emul)}, tu, mu")
+    else:
+        assert isinstance(params.vl, int)
+        lines.append(f"vsetivli x0, {params.vl}, e{index_eew}, m{get_lmul_flag(index_emul)}, tu, mu")
+
+    # Construct a factor that shifts an index so that the correct alignment is read
+    # This will not overflow the specified space as the vlmax calculation implicitly
+    # takes into account SEW
+    index_alignment_factor = params.sew // 8 * segments
+    # Turn this into a bit shift for the nearest power of 2
+    index_alignment_shift = index_alignment_factor.bit_length() - 1
+    if 2**index_alignment_shift < index_alignment_factor:
+        index_alignment_shift += 1
+
+    lines.append(f"vremu.vx v{index_reg}, v{index_reg}, x{params.temp_reg}")
+    if align_indices:
+        lines.append(f"vsll.vi v{index_reg}, v{index_reg}, {index_alignment_shift}")
+
+    return lines

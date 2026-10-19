@@ -11,7 +11,7 @@
 from random import seed
 
 from testgen.asm.helpers import comment_banner, reproducible_hash, write_sigupd
-from testgen.asm.tsbi import tsbi_call
+from testgen.asm.tsbi import tsbi_call_or_direct
 from testgen.data.random import random_int
 from testgen.data.state import TestData
 from testgen.data.test_chunk import TestChunk
@@ -39,14 +39,7 @@ CBO_TDATA2 = (
 UDB_DEFINES = [
     f"#define UDB_NUM_TRIGGERS {UDB_NUM_TRIGGERS}",
     # CSR Params
-    "#define UDB_TDATA1_AVAILABLE",
-    "#define UDB_TDATA2_AVAILABLE",
-    "#define UDB_TDATA3_AVAILABLE",
-    "#define UDB_TINFO_AVAILABLE",
-    "#define UDB_SCONTEXT_AVAILABLE",
-    "#define UDB_MCONTEXT_AVAILABLE",
     "//#define UDB_TCONTROL_AVAILABLE",
-    "//#define UDB_HCONTEXT_AVAILABLE",
     "//#define UDB_MSCONTEXT_AVAILABLE",
     # MCONTROl6 params
     "#define UDB_SDTRIG_MCONTROL6_SUPPORTED0",
@@ -103,6 +96,8 @@ INSTR_IFDEFS = {
     "fld": ["#ifdef D_SUPPORTED"],
     "fsh": ["#ifdef ZFH_SUPPORTED"],
     "flh": ["#ifdef ZFH_SUPPORTED"],
+    "fsq": ["#ifdef Q_SUPPORTED"],
+    "flq": ["#ifdef Q_SUPPORTED"],
     "c.sw": ["#ifdef ZCA_SUPPORTED"],
     "c.lw": ["#ifdef ZCA_SUPPORTED"],
     "c.swsp": ["#ifdef ZCA_SUPPORTED"],
@@ -135,10 +130,7 @@ def _add_tc(test_data: TestData, binname: str, coverpoint: str, covergroup: str)
 
 def _csr_access(instr: str, mode: str) -> str:
     """Accesses a CSR using an T-SBI or CSR operation based on mode"""
-    if mode == "Sm":
-        return instr
-    else:
-        return tsbi_call(instr)
+    return tsbi_call_or_direct(instr, MODE_UDB_LETTER[mode])
 
 
 def _load_tdata1(reg: int, trig_type: int, mode: str, lowfields: int = 0) -> list[str]:
@@ -155,10 +147,19 @@ def _load_tdata1(reg: int, trig_type: int, mode: str, lowfields: int = 0) -> lis
 
 
 def _global_ie(mode: str, enable: bool) -> list[str]:
-    """TODO REMOVE ONCE SAIL IMPLEMENTED: globally enable/disable interrupts to arm triggers."""
+    """Arm or disarm action=0 triggers in ``mode``.
+
+    Harts gate these triggers on mstatus.MIE/SIE or, in M-mode, on tcontrol.mte (the two Sdtrig
+    reentrancy options). Set the bit each option uses; the DUT defines RVMODEL_SDTRIG_USE_TCONTROL for the second.
+    """
     op, why = ("csrsi", "arm") if enable else ("csrci", "disarm")
     if mode == "Sm":
-        return [f"{op} mstatus, 0x8 # MIE={int(enable)} to {why} M-mode triggers"]
+        return [
+            f"{op} mstatus, 0x8 # MIE={int(enable)} to {why} M-mode triggers",
+            "#ifdef RVMODEL_SDTRIG_USE_TCONTROL",
+            f"{op} tcontrol, 0x8 # MTE={int(enable)} to {why} M-mode triggers",
+            "#endif",
+        ]
     if mode == "S":
         return [f"{op} sstatus, 0x2 # SIE={int(enable)} to {why} S-mode triggers"]
     return []
@@ -477,7 +478,7 @@ def _generate_access_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     chunks: list[TestChunk] = []
 
     ######################################
-    coverpoint = "cp_sdtrig_csr_access_common"
+    coverpoint = "cp_csr_access_common"
     ######################################
     lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_sdtrig_")).code
     lines.append(
@@ -487,7 +488,9 @@ def _generate_access_tests(test_data: TestData, mode: str) -> list[TestChunk]:
             "Should not cause any illegal instruction exceptions on implemented triggers",
         )
     )
+    # tdata1-3 and tinfo exist whenever Sdtrig is tested; the rest are optional.
     csrs = ("tdata1", "tdata2", "tdata3", "tinfo", "tcontrol", "scontext", "mcontext", "hcontext")
+    optional_csrs = ("tcontrol", "scontext", "mcontext", "hcontext")
 
     type_reg, save_reg, temp_reg = test_data.int_regs.get_registers(
         3, exclude_regs=[10, 11]
@@ -496,7 +499,8 @@ def _generate_access_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     for trig_num in range(UDB_NUM_TRIGGERS):
         for trig_type in range(16):
             for csr in csrs:
-                lines.append(f"#ifdef UDB_{csr}_AVAILABLE")
+                if csr in optional_csrs:
+                    lines.append(f"#ifdef UDB_{csr.upper()}_AVAILABLE")
                 binname = f"tselect_{trig_num}_type_{trig_type}_csr_{csr}"
                 lines.extend(
                     [
@@ -513,7 +517,8 @@ def _generate_access_tests(test_data: TestData, mode: str) -> list[TestChunk]:
                         _csr_access(f"csrw {csr}, x{save_reg} # write back original value", mode),
                     ]
                 )
-                lines.append("#endif")
+                if csr in optional_csrs:
+                    lines.append("#endif")
 
     test_data.int_regs.return_registers([type_reg, save_reg, temp_reg])
     chunks.append(test_data.end_test_chunk())
@@ -526,7 +531,7 @@ def _generate_native_triggers_tests(test_data: TestData, mode: str) -> list[Test
     chunks: list[TestChunk] = []
 
     ######################################
-    coverpoint = "cp_sdtrig_breakpoint_delegate"
+    coverpoint = "cp_breakpoint_delegate"
     ######################################
     lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_sdtrig_")).code
     lines.append("#ifdef S_SUPPORTED")
@@ -572,7 +577,7 @@ def _generate_zalrsc_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     )
 
     ######################################
-    coverpoint = "cp_sdtrig_lrsc_addr"
+    coverpoint = "cp_lrsc_addr"
     ######################################
     lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_sdtrig_")).code
     lines.append(
@@ -610,7 +615,7 @@ def _generate_zalrsc_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     #             )
 
     ######################################
-    coverpoint = "cp_sdtrig_lrsc_data"
+    coverpoint = "cp_lrsc_data"
     ######################################
     lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_sdtrig_")).code
     lines.append(
@@ -642,7 +647,7 @@ def _generate_zaamo_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     chunks: list[TestChunk] = []
 
     ######################################
-    coverpoint = "cp_sdtrig_amo"
+    coverpoint = "cp_amo"
     ######################################
     lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_sdtrig_")).code
     lines.append(
@@ -674,7 +679,7 @@ def _generate_vector_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     vsews = ("sew8", "sew16", "sew32", "sew64")
 
     ######################################
-    coverpoint = "cp_sdtrig_vector_load_store"
+    coverpoint = "cp_vector_load_store"
     ######################################
     lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_sdtrig_")).code
     lines.append(
@@ -696,7 +701,7 @@ def _generate_vector_tests(test_data: TestData, mode: str) -> list[TestChunk]:
                         )
 
     ######################################
-    coverpoint = "cp_sdtrig_vector_accesses"
+    coverpoint = "cp_vector_accesses"
     ######################################
     lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_sdtrig_")).code
     lines.append(
@@ -727,7 +732,7 @@ def _generate_zcmp_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     chunks: list[TestChunk] = []
 
     ######################################
-    coverpoint = "cp_sdtrig_cm_pop_push"
+    coverpoint = "cp_cm_pop_push"
     ######################################
     lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_sdtrig_")).code
     lines.append(
@@ -758,7 +763,7 @@ def _generate_zicbom_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     addr_reg, temp_reg = test_data.int_regs.get_registers(2, exclude_regs=[2], reg_range=list(range(8, 16)))
 
     ######################################
-    coverpoint = "cp_sdtrig_cache_zicbom"
+    coverpoint = "cp_cache_zicbom"
     ######################################
     lines = test_data.begin_test_chunk("cache_zicbom").code
     lines.extend(
@@ -807,7 +812,7 @@ def _generate_zicboz_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     addr_reg, temp_reg = test_data.int_regs.get_registers(2, exclude_regs=[2], reg_range=list(range(8, 16)))
 
     ######################################
-    coverpoint = "cp_sdtrig_cache_zicboz"
+    coverpoint = "cp_cache_zicboz"
     ######################################
     lines = test_data.begin_test_chunk("cache_zicboz").code
     lines.extend(
@@ -857,7 +862,7 @@ def _generate_zicbop_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     addr_reg, temp_reg = test_data.int_regs.get_registers(2, exclude_regs=[2], reg_range=list(range(8, 16)))
 
     ######################################
-    coverpoint = "cp_sdtrig_cache_zicbop"
+    coverpoint = "cp_cache_zicbop"
     ######################################
     xsl_ifdefs = _xsl_ifdefs(0b011)
     lines = test_data.begin_test_chunk("cache_zicbop").code
@@ -897,7 +902,7 @@ def _generate_address_matches_tests(test_data: TestData, mode: str) -> list[Test
     chunks: list[TestChunk] = []
 
     ######################################
-    coverpoint = "cp_sdtrig_tdata2_translate"
+    coverpoint = "cp_tdata2_translate"
     ######################################
     lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_sdtrig_")).code
     lines.append(
@@ -927,7 +932,7 @@ def _generate_csr_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     chunks: list[TestChunk] = []
 
     ######################################
-    coverpoint = "cp_sdtrig_tselect_trigs"
+    coverpoint = "cp_tselect_trigs"
     ######################################
     lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_sdtrig_")).code
     lines.append(
@@ -944,7 +949,7 @@ def _generate_csr_tests(test_data: TestData, mode: str) -> list[TestChunk]:
         )
 
     ######################################
-    coverpoint = "cp_sdtrig_tdata_write"
+    coverpoint = "cp_tdata_write"
     ######################################
     lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_sdtrig_")).code
     lines.append(
@@ -963,7 +968,7 @@ def _generate_csr_tests(test_data: TestData, mode: str) -> list[TestChunk]:
             )
 
     ######################################
-    coverpoint = "cp_sdtrig_csr_smode_access"
+    coverpoint = "cp_csr_smode_access"
     ######################################
     lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_sdtrig_")).code
     lines.append(
@@ -982,7 +987,7 @@ def _generate_csr_tests(test_data: TestData, mode: str) -> list[TestChunk]:
             )
 
     ######################################
-    coverpoint = "cp_sdtrig_tdata1_mode_hardwired"
+    coverpoint = "cp_tdata1_mode_hardwired"
     ######################################
     lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_sdtrig_")).code
     lines.append(
@@ -1001,7 +1006,7 @@ def _generate_csr_tests(test_data: TestData, mode: str) -> list[TestChunk]:
             )
 
     ######################################
-    coverpoint = "cp_sdtrig_tinfo_read_only"
+    coverpoint = "cp_tinfo_read_only"
     ######################################
     lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_sdtrig_")).code
     lines.append(
@@ -1018,7 +1023,7 @@ def _generate_csr_tests(test_data: TestData, mode: str) -> list[TestChunk]:
         )
 
     ######################################
-    coverpoint = "cp_sdtrig_tcontrol_enable"
+    coverpoint = "cp_tcontrol_enable"
     ######################################
     lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_sdtrig_")).code
     lines.append(
@@ -1037,7 +1042,7 @@ def _generate_csr_tests(test_data: TestData, mode: str) -> list[TestChunk]:
             )
 
     ######################################
-    coverpoint = "cp_sdtrig_tcontrol_mtrap"
+    coverpoint = "cp_tcontrol_mtrap"
     ######################################
     lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_sdtrig_")).code
     lines.append(
@@ -1057,7 +1062,7 @@ def _generate_csr_tests(test_data: TestData, mode: str) -> list[TestChunk]:
                 )
 
     ######################################
-    coverpoint = "cp_sdtrig_tcontrol_mret"
+    coverpoint = "cp_tcontrol_mret"
     ######################################
     lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_sdtrig_")).code
     lines.append(
@@ -1077,7 +1082,7 @@ def _generate_csr_tests(test_data: TestData, mode: str) -> list[TestChunk]:
                 )
 
     ######################################
-    coverpoint = "cp_sdtrig_mscontext_alias"
+    coverpoint = "cp_mscontext_alias"
     ######################################
     lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_sdtrig_")).code
     lines.append(
@@ -1093,7 +1098,7 @@ def _generate_csr_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     )
 
     ######################################
-    coverpoint = "cp_sdtrig_mcontext_smode"
+    coverpoint = "cp_mcontext_smode"
     ######################################
     lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_sdtrig_")).code
     lines.append(
@@ -1124,7 +1129,7 @@ def _generate_mcontrol6_tests(test_data: TestData, mode: str) -> list[TestChunk]
     )
 
     ######################################
-    coverpoint = "cp_sdtrig_mcontrol6_priv_mode"
+    coverpoint = "cp_mcontrol6_priv_mode"
     ######################################
     lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_sdtrig_")).code
     lines.extend(_global_ie(mode, True))
@@ -1157,7 +1162,7 @@ def _generate_mcontrol6_tests(test_data: TestData, mode: str) -> list[TestChunk]
         lines.append(f"#endif // UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
 
     ######################################
-    coverpoint = "cp_sdtrig_mcontrol6_execute_adr"
+    coverpoint = "cp_mcontrol6_execute_adr"
     ######################################
     lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_sdtrig_")).code
     lines.extend(_global_ie(mode, True))
@@ -1194,7 +1199,7 @@ def _generate_mcontrol6_tests(test_data: TestData, mode: str) -> list[TestChunk]
         lines.append(f"#endif // UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
 
     ######################################
-    coverpoint = "cp_sdtrig_mcontrol6_load_store_adr"
+    coverpoint = "cp_mcontrol6_load_store_adr"
     ######################################
     lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_sdtrig_")).code
     lines.extend(_global_ie(mode, True))
@@ -1206,28 +1211,29 @@ def _generate_mcontrol6_tests(test_data: TestData, mode: str) -> list[TestChunk]
     )
     for trig_num in range(UDB_NUM_TRIGGERS):
         lines.append(f"\n#ifdef UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
-        for tdata2 in ("scratch", 0):
+        for tdata2_name, tdata2 in (("scratch", "scratch"), ("scratch_plus_8", "scratch+8"), ("0", 0)):
             for perm in range(8):  # perm_xsl
                 lines.extend(_xsl_ifdefs(perm))
-                binname = f"trig_num_{trig_num}_td2_{tdata2}_perm_{perm:03b}"
-                lines.extend(
-                    [
-                        _add_tc(test_data, binname, coverpoint, covergroup),
-                        *_config_mcontrol6(temp_reg, trig_num, tdata2, mode, xsl=perm, select=0),
-                        f"LA(x{addr_reg}, scratch) # x{addr_reg} = &scratch",
-                        f"LI(x{data_reg}, {random_int(32, signed=False)})",
-                        f"sw x{data_reg}, 0(x{addr_reg}) # store: breakpoint iff addr==tdata2 and xsl has store bit",
-                        "nop # spacer",
-                        f"lw x{data_reg}, 0(x{addr_reg}) # fire iff addr==tdata2 and xsl has load bit",
-                        "nop # spacer",
-                    ]
-                )
+                for offset in (0, 8):
+                    binname = f"trig_num_{trig_num}_td2_{tdata2_name}_offset_{offset}_perm_{perm:03b}"
+                    lines.extend(
+                        [
+                            _add_tc(test_data, binname, coverpoint, covergroup),
+                            *_config_mcontrol6(temp_reg, trig_num, tdata2, mode, xsl=perm, select=0),
+                            f"LA(x{addr_reg}, scratch) # x{addr_reg} = &scratch",
+                            f"LI(x{data_reg}, {random_int(32, signed=False)})",
+                            f"sw x{data_reg}, {offset}(x{addr_reg}) # store: breakpoint iff addr==tdata2 and xsl has store bit",
+                            "nop # spacer",
+                            f"lw x{data_reg}, {offset}(x{addr_reg}) # fire iff addr==tdata2 and xsl has load bit",
+                            "nop # spacer",
+                        ]
+                    )
                 lines.extend(["#endif // UDB_SDTRIG_MCONTROL6_XSL_AVAILABLE"] * len(_xsl_ifdefs(perm)))
         lines.extend(_disable_trigger(temp_reg, trig_num, mode))
         lines.append(f"#endif // UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
 
     ######################################
-    coverpoint = "cp_sdtrig_mcontrol6_execute_data"
+    coverpoint = "cp_mcontrol6_execute_data"
     ######################################
     lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_sdtrig_")).code
     lines.extend(_global_ie(mode, True))
@@ -1257,7 +1263,7 @@ def _generate_mcontrol6_tests(test_data: TestData, mode: str) -> list[TestChunk]
         lines.append(f"#endif // UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
 
     ######################################
-    coverpoint = "cp_sdtrig_mcontrol6_load_store_data"
+    coverpoint = "cp_mcontrol6_load_store_data"
     ######################################
     lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_sdtrig_")).code
     lines.extend(_global_ie(mode, True))
@@ -1292,7 +1298,7 @@ def _generate_mcontrol6_tests(test_data: TestData, mode: str) -> list[TestChunk]
         lines.append(f"#endif // UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
 
     ######################################
-    coverpoint = "cp_sdtrig_mcontrol6_execute_size"
+    coverpoint = "cp_mcontrol6_execute_size"
     ######################################
     lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_sdtrig_")).code
     lines.extend(_global_ie(mode, True))
@@ -1304,7 +1310,7 @@ def _generate_mcontrol6_tests(test_data: TestData, mode: str) -> list[TestChunk]
     )
     for trig_num in range(UDB_NUM_TRIGGERS):
         lines.append(f"\n#ifdef UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
-        lines.append("\n#ifdef UDB_SDTRIG_MCONTROL6_EXECUTE_AVAILABLE")
+        lines.extend(_xsl_ifdefs(0b111))
         for tdata2 in (ADDI_HINT, C_NOP):  # tdata2 sizes: 32-bit and 16-bit targets
             for size in range(7):
                 lines.append(f"\n# Size = {size}")
@@ -1315,7 +1321,7 @@ def _generate_mcontrol6_tests(test_data: TestData, mode: str) -> list[TestChunk]
                 lines.extend(
                     [
                         _add_tc(test_data, bin1, coverpoint, covergroup),
-                        *_config_mcontrol6(temp_reg, trig_num, tdata2, mode, xsl=0b100, select=1, size=size),
+                        *_config_mcontrol6(temp_reg, trig_num, tdata2, mode, xsl=0b111, select=1, size=size),
                         "addi x0, x1, 0 # 32-bit target; fires iff tdata2 matches",
                         # "nop # spacer (does not match tdata2)",
                     ]
@@ -1324,7 +1330,7 @@ def _generate_mcontrol6_tests(test_data: TestData, mode: str) -> list[TestChunk]
                     [
                         "#ifdef ZCA_SUPPORTED",
                         _add_tc(test_data, bin2, coverpoint, covergroup),
-                        *_config_mcontrol6(temp_reg, trig_num, tdata2, mode, xsl=0b100, select=1, size=size),
+                        *_config_mcontrol6(temp_reg, trig_num, tdata2, mode, xsl=0b111, select=1, size=size),
                         *_arch_guard("c.nop", ["zca"]),
                         "nop # spacer (does not match tdata2)",
                         "#endif",
@@ -1332,12 +1338,12 @@ def _generate_mcontrol6_tests(test_data: TestData, mode: str) -> list[TestChunk]
                 )
                 if size > 0:
                     lines.append("#endif // UDB_SDTRIG_MCONTROL6_SIZE_AVAILABLE")
-        lines.append("#endif // UDB_SDTRIG_MCONTROL6_EXECUTE_AVAILABLE")
+        lines.extend(["#endif // UDB_SDTRIG_MCONTROL6_XSL_AVAILABLE"] * len(_xsl_ifdefs(0b111)))
         lines.extend(_disable_trigger(temp_reg, trig_num, mode))
         lines.append(f"#endif // UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
 
     ######################################
-    coverpoint = "cp_sdtrig_mcontrol6_load_store_size"
+    coverpoint = "cp_mcontrol6_load_store_size"
     ######################################
     lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_sdtrig_")).code
     lines.extend(_global_ie(mode, True))
@@ -1376,6 +1382,8 @@ def _generate_mcontrol6_tests(test_data: TestData, mode: str) -> list[TestChunk]
         "fld": [f"fld f{data_reg}, 0(x{addr_reg})", ["d"]],
         "fsh": [f"fsh f{data_reg}, 0(x{addr_reg})", ["zfh"]],
         "flh": [f"flh f{data_reg}, 0(x{addr_reg})", ["zfh"]],
+        "fsq": [f"fsq f{data_reg}, 0(x{addr_reg})", ["q"]],
+        "flq": [f"flq f{data_reg}, 0(x{addr_reg})", ["q"]],
         "c.sw": [f"c.sw x{data_reg}, 0(x{addr_reg})", ["zca"]],
         "c.lw": [f"c.lw x{data_reg}, 0(x{addr_reg})", ["zca"]],
         "c.swsp": [f"c.swsp x{data_reg}, 0(sp)", ["zca"]],
@@ -1439,7 +1447,7 @@ def _generate_mcontrol6_tests(test_data: TestData, mode: str) -> list[TestChunk]
         lines.append(f"#endif // UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
 
     ######################################
-    coverpoint = "cp_sdtrig_mcontrol6_match"
+    coverpoint = "cp_mcontrol6_match"
     ######################################
     lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_sdtrig_")).code
     lines.extend(_global_ie(mode, True))
@@ -1451,7 +1459,7 @@ def _generate_mcontrol6_tests(test_data: TestData, mode: str) -> list[TestChunk]
     )
     for trig_num in range(UDB_NUM_TRIGGERS):
         lines.append(f"\n#ifdef UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
-        lines.extend(_xsl_ifdefs(0b011))
+        lines.extend(_xsl_ifdefs(0b010))
         for match in (0, 2, 3, 8):
             lines.append(f"\n# Match = {match}")
             if match > 0:
@@ -1463,7 +1471,7 @@ def _generate_mcontrol6_tests(test_data: TestData, mode: str) -> list[TestChunk]
                 lines.extend(
                     [
                         _add_tc(test_data, binname, coverpoint, covergroup),
-                        *_config_mcontrol6(temp_reg, trig_num, tdata2, mode, xsl=0b011, match=match, select=1),
+                        *_config_mcontrol6(temp_reg, trig_num, tdata2, mode, xsl=0b010, match=match, select=1),
                         f"LA(x{addr_reg}, scratch) # store address",
                         f"LI(x{data_reg}, {data}) # store data value",
                         f"sw x{data_reg}, 0(x{addr_reg})",
@@ -1483,7 +1491,7 @@ def _generate_mcontrol6_tests(test_data: TestData, mode: str) -> list[TestChunk]
                 lines.extend(
                     [
                         _add_tc(test_data, binname, coverpoint, covergroup),
-                        *_config_mcontrol6(temp_reg, trig_num, tdata2, mode, xsl=0b011, match=match, select=1),
+                        *_config_mcontrol6(temp_reg, trig_num, tdata2, mode, xsl=0b010, match=match, select=1),
                         f"LA(x{addr_reg}, scratch)",
                         f"LI(x{data_reg}, {data})",
                         f"sd x{data_reg}, 0(x{addr_reg})",
@@ -1493,12 +1501,12 @@ def _generate_mcontrol6_tests(test_data: TestData, mode: str) -> list[TestChunk]
             lines.append("#endif // __riscv_xlen")
             if match > 0:
                 lines.append("#endif // UDB_SDTRIG_MCONTROL6_MATCH_AVAILABLE")
-        lines.extend(["#endif // UDB_SDTRIG_MCONTROL6_XSL_AVAILABLE"] * len(_xsl_ifdefs(0b011)))
+        lines.extend(["#endif // UDB_SDTRIG_MCONTROL6_XSL_AVAILABLE"] * len(_xsl_ifdefs(0b010)))
         lines.extend(_disable_trigger(temp_reg, trig_num, mode))
         lines.append(f"#endif // UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
 
     ######################################
-    coverpoint = "cp_sdtrig_mcontrol6_match_napot"
+    coverpoint = "cp_mcontrol6_match_napot"
     ######################################
     lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_sdtrig_")).code
     lines.extend(_global_ie(mode, True))
@@ -1509,61 +1517,46 @@ def _generate_mcontrol6_tests(test_data: TestData, mode: str) -> list[TestChunk]
         )
     )
 
-    def walking_zeros(xlen: int) -> list[str]:
-        values = []
-        all_ones = (1 << xlen) - 1  # e.g. 0xFFFF...F for xlen bits
-        for i in range(xlen):
-            values.append(hex(all_ones & ~(1 << i)))  # clear bit i
-        return values
-
     for trig_num in range(UDB_NUM_TRIGGERS):
         lines.append(f"\n#ifdef UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
-        lines.extend(_xsl_ifdefs(0b011))
+        lines.extend(_xsl_ifdefs(0b010))
         lines.append("\n#ifdef UDB_SDTRIG_MCONTROL6_MATCH_AVAILABLE")
         for match in (1, 9):
             lines.append(f"\n# Match = {match}")
-            lines.append("#if __riscv_xlen == 32")
-            for data in (0x00000000, 0x12345678, 0xFFFFFFFF, *walking_zeros(32)):
-                binname = f"RV32_trig_num_{trig_num}_match_{match}_data_{data}"
-                tdata2 = 0xFFFFFFFF
-                lines.extend(
-                    [
-                        _add_tc(test_data, binname, coverpoint, covergroup),
-                        *_config_mcontrol6(temp_reg, trig_num, tdata2, mode, xsl=0b011, match=match, select=1),
-                        f"LA(x{addr_reg}, scratch)",
-                        f"LI(x{data_reg}, {data})",
-                        f"sw x{data_reg}, 0(x{addr_reg})",
-                        "nop # spacer (data match fires after)",
-                    ]
-                )
-            lines.append("#endif")
-            lines.append("#if __riscv_xlen == 64")
-            for data in (
-                0x0000000000000000,
-                0x123456789ABCDEF0,
-                0xFFFFFFFFFFFFFFFF,
-                *walking_zeros(64),
-            ):  # TODO match top M bits but not lower bits, not match top M bits in one place but does match lower bits
-                binname = f"RV64_trig_num_{trig_num}_match_{match}_data_{data}"
-                tdata2 = 0xFFFFFFFFFFFFFFFF  # TODO Walk zeros
-                lines.extend(
-                    [
-                        _add_tc(test_data, binname, coverpoint, covergroup),
-                        *_config_mcontrol6(temp_reg, trig_num, tdata2, mode, xsl=0b011, match=match, select=1),
-                        f"LA(x{addr_reg}, scratch)",
-                        f"LI(x{data_reg}, {data})",
-                        f"sd x{data_reg}, 0(x{addr_reg})",
-                        "nop # spacer (data match fires after)",
-                    ]
-                )
-            lines.append("#endif")
+            for xlen, store, store_values in (
+                (32, "sw", (0x00000000, 0x12345678, 0xFFFFFFFF)),
+                (64, "sd", (0x0000000000000000, 0x123456789ABCDEF0, 0xFFFFFFFFFFFFFFFF)),
+            ):
+                lines.append(f"#if __riscv_xlen == {xlen}")
+                # tdata2 is all ones except bit zero_bit; legal NAPOT sizes need 1 <= zero_bit <= min(maskmax6, XLEN-1) - 1
+                for zero_bit in range(1, xlen - 1):
+                    tdata2 = ((1 << xlen) - 1) & ~(1 << zero_bit)
+                    lines.extend(
+                        [
+                            f"\n#if UDB_SDTRIG_MASKMAX6 > {zero_bit}",
+                            *_config_mcontrol6(temp_reg, trig_num, tdata2, mode, xsl=0b010, match=match, select=1),
+                            f"LA(x{addr_reg}, scratch)",
+                        ]
+                    )
+                    for data in store_values:
+                        binname = f"RV{xlen}_trig_num_{trig_num}_match_{match}_zero_bit_{zero_bit}_data_{data:x}"
+                        lines.extend(
+                            [
+                                _add_tc(test_data, binname, coverpoint, covergroup),
+                                f"LI(x{data_reg}, 0x{data:x})",
+                                f"{store} x{data_reg}, 0(x{addr_reg})",
+                                "nop # spacer (data match fires after)",
+                            ]
+                        )
+                    lines.append("#endif // UDB_SDTRIG_MASKMAX6")
+                lines.append("#endif // __riscv_xlen")
         lines.append("#endif // UDB_SDTRIG_MCONTROL6_MATCH_AVAILABLE")
-        lines.extend(["#endif // UDB_SDTRIG_MCONTROL6_XSL_AVAILABLE"] * len(_xsl_ifdefs(0b011)))
+        lines.extend(["#endif // UDB_SDTRIG_MCONTROL6_XSL_AVAILABLE"] * len(_xsl_ifdefs(0b010)))
         lines.extend(_disable_trigger(temp_reg, trig_num, mode))
         lines.append(f"#endif // UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
 
     ######################################
-    coverpoint = "cp_sdtrig_mcontrol6_match_mask"
+    coverpoint = "cp_mcontrol6_match_mask"
     ######################################
     lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_sdtrig_")).code
     lines.extend(_global_ie(mode, True))
@@ -1573,54 +1566,57 @@ def _generate_mcontrol6_tests(test_data: TestData, mode: str) -> list[TestChunk]
             "mcontrol6 mask-low / mask-high match types",
         )
     )
+    # Mask cases for the current RV length, with the correct length store operation, and test case values.
+    mask_cases = (
+        (
+            32,
+            "sw",
+            0xF0F0_A0B0,
+            (0x0000_0000, 0xF0F0_A0B0, 0xFFFF_FFFF)
+            + (0x0000_A0B0, 0x0000_A1B2, 0x0000_F0F0, 0x0001_A0B0)
+            + (0xA0B0_0000, 0xA1B2_0000, 0xF0F0_0000, 0xA0B0_0001),
+        ),
+        (
+            64,
+            "sd",
+            0xF0F0F0F0_A0B0C0D0,
+            (0x00000000_00000000, 0xF0F0F0F0_A0B0C0D0, 0xFFFFFFFF_FFFFFFFF)
+            + (0x00000000_A0B0C0D0, 0x00000000_A1B2C3D4, 0x00000000_F0F0F0F0, 0x00000001_A0B0C0D0)
+            + (0xA0B0C0D0_00000000, 0xA1B2C3D4_00000000, 0xF0F0F0F0_00000000, 0xA0B0C0D0_00000001),
+        ),
+    )
     for trig_num in range(UDB_NUM_TRIGGERS):
         lines.append(f"\n#ifdef UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
-        lines.extend(_xsl_ifdefs(0b011))
+        lines.extend(_xsl_ifdefs(0b010))
         lines.append("\n#ifdef UDB_SDTRIG_MCONTROL6_MATCH_AVAILABLE")
         for match in (4, 5, 12, 13):  # 4: mask low, 5: mask high, 12: not mask low, 13: not mask high
             lines.append(f"\n# Match = {match}")
-            lines.append("#if __riscv_xlen == 32")
-            for data in (0x00000000, 0x12345678, 0xFFFF5678, 0x1234FFFF, 0xFFFFFFFF):
-                binname = f"RV32_trig_num_{trig_num}_match_{match}_data_{data}"
-                tdata2 = 0x12345678
+            for xlen, store, tdata2, store_values in mask_cases:
                 lines.extend(
                     [
-                        _add_tc(test_data, binname, coverpoint, covergroup),
-                        *_config_mcontrol6(temp_reg, trig_num, tdata2, mode, xsl=0b011, match=match, select=1),
+                        f"#if __riscv_xlen == {xlen}",
+                        *_config_mcontrol6(temp_reg, trig_num, tdata2, mode, xsl=0b010, match=match, select=1),
                         f"LA(x{addr_reg}, scratch)",
-                        f"LI(x{data_reg}, {data})",
-                        f"sw x{data_reg}, 0(x{addr_reg})",
-                        "nop # spacer (data match fires after)",
                     ]
                 )
-            lines.append("#else // XLEN == 64")
-            for data in (
-                0x0000000000000000,
-                0x123456789ABCDEF0,
-                0xFFFFFFFF9ABCDEF0,
-                0x12345678FFFFFFFF,
-                0xFFFFFFFFFFFFFFFF,
-            ):
-                binname = f"RV64_trig_num_{trig_num}_match_{match}_data_{data}"
-                tdata2 = 0x123456789ABCDEF0
-                lines.extend(
-                    [
-                        _add_tc(test_data, binname, coverpoint, covergroup),
-                        *_config_mcontrol6(temp_reg, trig_num, tdata2, mode, xsl=0b011, match=match, select=1),
-                        f"LA(x{addr_reg}, scratch)",
-                        f"LI(x{data_reg}, {data})",
-                        f"sd x{data_reg}, 0(x{addr_reg})",
-                        "nop # spacer (data match fires after)",
-                    ]
-                )
-            lines.append("#endif")
+                for data in store_values:
+                    binname = f"RV{xlen}_trig_num_{trig_num}_match_{match}_data_{data:x}"
+                    lines.extend(
+                        [
+                            _add_tc(test_data, binname, coverpoint, covergroup),
+                            f"LI(x{data_reg}, 0x{data:x})",
+                            f"{store} x{data_reg}, 0(x{addr_reg})",
+                            "nop # spacer (data match fires after)",
+                        ]
+                    )
+                lines.append("#endif // __riscv_xlen")
         lines.append("#endif // UDB_SDTRIG_MCONTROL6_MATCH_AVAILABLE")
-        lines.extend(["#endif // UDB_SDTRIG_MCONTROL6_XSL_AVAILABLE"] * len(_xsl_ifdefs(0b011)))
+        lines.extend(["#endif // UDB_SDTRIG_MCONTROL6_XSL_AVAILABLE"] * len(_xsl_ifdefs(0b010)))
         lines.extend(_disable_trigger(temp_reg, trig_num, mode))
         lines.append(f"#endif // UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
 
     ######################################
-    coverpoint = "cp_sdtrig_mcontrol6_chain_adr"
+    coverpoint = "cp_mcontrol6_chain_adr"
     ######################################
     lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_sdtrig_")).code
     lines.extend(_global_ie(mode, True))
@@ -1681,7 +1677,7 @@ def _generate_icount_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     )  # exclude a0, a1 because they are used in SBI
 
     ######################################
-    coverpoint = "cp_sdtrig_icount_hardwired"
+    coverpoint = "cp_icount_hardwired"
     ######################################
     lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_sdtrig_")).code
     lines.append(
@@ -1708,7 +1704,7 @@ def _generate_icount_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     # lines.append("#endif")
 
     ######################################
-    coverpoint = "cp_sdtrig_icount_instr"
+    coverpoint = "cp_icount_instr"
     ######################################
     lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_sdtrig_")).code
     lines.append(
@@ -1736,7 +1732,7 @@ def _generate_icount_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     #     lines.append(f"#endif // UDB_ICOUNT_TRIG{trig_num}_AVAILABLE")
 
     ######################################
-    coverpoint = "cp_sdtrig_icount_trap"
+    coverpoint = "cp_icount_trap"
     ######################################
     lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_sdtrig_")).code
     lines.append(
@@ -1764,7 +1760,7 @@ def _generate_icount_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     #     lines.append(f"#endif // UDB_ICOUNT_TRIG{trig_num}_AVAILABLE")
 
     ######################################
-    coverpoint = "cp_sdtrig_icount_eq0"
+    coverpoint = "cp_icount_eq0"
     ######################################
     lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_sdtrig_")).code
     lines.append(
@@ -1804,7 +1800,7 @@ def _generate_itrigger_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     t1, t2, t3, t4 = test_data.int_regs.get_registers(4, exclude_regs=[2], reg_range=list(range(8, 16)))
 
     ######################################
-    coverpoint = "cp_sdtrig_itrigger"
+    coverpoint = "cp_itrigger"
     ######################################
     lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_sdtrig_")).code
     lines.append(
@@ -1841,7 +1837,7 @@ def _generate_etrigger_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     chunks: list[TestChunk] = []
 
     ######################################
-    coverpoint = "cp_sdtrig_etrigger"
+    coverpoint = "cp_etrigger"
     ######################################
     lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_sdtrig_")).code
     lines.append("#ifdef UDB_ETRIGGER_SUPPORTED")
@@ -1880,7 +1876,7 @@ def _generate_textra_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     svalue_asid = ("below", "equal", "above")
 
     ######################################
-    coverpoint = "cp_sdtrig_textra_mcontext"
+    coverpoint = "cp_textra_mcontext"
     ######################################
     lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_sdtrig_")).code
     lines.append(
@@ -1900,7 +1896,7 @@ def _generate_textra_tests(test_data: TestData, mode: str) -> list[TestChunk]:
                 )
 
     ######################################
-    coverpoint = "cp_sdtrig_textra_scontext"
+    coverpoint = "cp_textra_scontext"
     ######################################
     lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_sdtrig_")).code
     lines.append(
@@ -1921,7 +1917,7 @@ def _generate_textra_tests(test_data: TestData, mode: str) -> list[TestChunk]:
                     )
 
     ######################################
-    coverpoint = "cp_sdtrig_textra_asid"
+    coverpoint = "cp_textra_asid"
     ######################################
     lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_sdtrig_")).code
     lines.append(
@@ -1941,7 +1937,7 @@ def _generate_textra_tests(test_data: TestData, mode: str) -> list[TestChunk]:
                 )
 
     ######################################
-    coverpoint = "cp_sdtrig_smode_fields_hardwired"
+    coverpoint = "cp_smode_fields_hardwired"
     ######################################
     lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_sdtrig_")).code
     lines.append(
