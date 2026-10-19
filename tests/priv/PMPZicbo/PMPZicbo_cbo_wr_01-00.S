@@ -114,6 +114,8 @@ RETURN_INSTRUCTION:
   nop
   jr ra
   .option pop
+  .p2align 12
+  .p2align (UDB_PMP_GRANULARITY)
 
 // Testcase strings
 PMPZicbo_cp_cbo_entry0_lxwr1000_1_cbo_zero_str: .string "\"test: 1; cg: PMPZicbo; cp: cp_cbo; bin: entry0_lxwr1000_1_cbo.zero\""
