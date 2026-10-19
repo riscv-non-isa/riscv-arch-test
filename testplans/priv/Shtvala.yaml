@@ -11,7 +11,7 @@ coverpoints:
     expectation: htval written with GPA
     bins: "1"
     rules:
-      - htval must be written with the faulting guest physical address in all circumstances permitted by the ISA
+      - Shtvala_htval_faulting_gpa
   - name: cp_store_guest_page_fault
     goal: Fault writes GPA >> 2 to htval
     description: Cause store guest-page fault
