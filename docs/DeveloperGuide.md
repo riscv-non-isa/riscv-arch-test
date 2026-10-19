@@ -59,6 +59,12 @@ When you run `make` in the `ctp` directory, the YAML file is parsed to build an
 ASCIIDoc file (in `ctp/norm`) with a table of normative rule names, definitions, and associated coverpoints. Include this file in the CTP with
 `include::norm/Sm_norm_rules.adoc[]`
 
+Every rule name must be a tag in the ISA manual snapshot's `norm-rules.json`, or
+the CTP build fails. A suite whose rules are not yet tagged in the ISA manual
+says where the tags are pending with a top-level key, such as
+`untagged_upstream: riscv/riscv-isa-manual#3416`. Its unknown names are then
+warnings instead of errors. Remove the key once the tags reach the snapshot.
+
 ### Parameter Lists
 
 Similar YAML files in coverpoints/param are used to make a list of the UDB parameters that apply to a test suite. Each parameter has a name (corresponding to the UDB), coverpoint (one or more coverpoints that it affects), and effect (string summarizing what it does, such as coverpoint only applying to certain parameter values, or result depending on the parameter value).
@@ -84,7 +90,7 @@ test suite
 
 - **Test file**: A complete `.S` assembly file that is compiled into a self-checking ELF. Each test file contains one or more test chunks. When an instruction has many testcases (e.g., hundreds of register/immediate combinations), the framework splits the chunks across multiple test files using `TESTCASES_PER_FILE` as the limit. Test files are named like `I-add-00.S`, `I-add-01.S`, etc., where the suffix indicates the file index. Privileged tests use the same length-based splitting (limit `TESTCASES_PER_PRIV_FILE`) and can additionally be split into named groups — see [Splitting Privileged Tests](#splitting-privileged-tests).
 
-- **Test suite**: All test files in a given directory. Each test suite corresponds to one extension or combination of extensions (e.g., `I`, `Zcb`, `MisalignD`, `ExceptionsSm`) and maps to a single coverage file. Unprivileged test suites contain one or more test files per instruction. For privileged tests, a test suite contains one or more test files covering all coverpoints for that feature — a single file unless splitting kicks in.
+- **Test suite**: All test files in a given directory. Each test suite corresponds to one extension or combination of extensions (e.g., `I`, `Zcb`, `Misalign`, `ExceptionsSm`) and maps to a single coverage file. Unprivileged test suites contain one or more test files per instruction. For privileged tests, a test suite contains one or more test files covering all coverpoints for that feature — a single file unless splitting kicks in.
 
 ## Test YAML Header
 
@@ -753,6 +759,8 @@ To opt in to named splits, pass a name to `test_data.begin_test_chunk(split_name
 - Reusing a name after a different name has already closed that group (i.e. non-contiguous reuse) raises an error.
 
 Length-based splitting still applies _within_ each named group, so a large named scope can still become `<testsuite>_<split_name>-00.S`, `<testsuite>_<split_name>-01.S`, etc.
+
+A suite can also hold tests that need an extension beyond the suite's own, such as the floating-point tests of Sm. Register their generator under the base suite with its own `required_extensions`, e.g. `add_priv_test_generator("Sm", required_extensions=["Sm", "F"])`, and start its split names with the group, so its tests are `tests/priv/Sm/Sm_F-00.S` or `Sm_V_vcsr-00.S` and run only where the extra extension is supported. Name its covergroup `<suite>_<group>_cg` (`Sm_F_cg`) in the base suite's coverage file under `` `ifdef F_SUPPORTED ``, and put its test plan rows under a heading in the base suite's test plan, `testplans/priv/Sm.yaml`.
 
 ## Debugging Coverage
 

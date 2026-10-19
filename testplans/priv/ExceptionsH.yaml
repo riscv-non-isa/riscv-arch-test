@@ -16,8 +16,8 @@ coverpoints:
       8 faults * 5 priv modes  * 2 medeleg * 9 hedeleg
       *** might be too many
     id: "*** a version of this is needed in VMH for page faults.  Umer doing this."
-    rules:
-      - Also covers {m/h}status.GVA; see also cp_gva
+    notes: |-
+      Also covers {m/h}status.GVA; see also cp_gva
   - name: cp_ecall_to_vs
     goal: ecall to VS sets status bits
     description: Delegate ecalls from VU to VS with medeleg and hedeleg.  Make ecall from VU to VS. Check vsstatus.SPP, vsstatus.SPIE, vsstatus.SIE.
@@ -34,8 +34,8 @@ coverpoints:
     expectation: status bits written per spec
     bins: "5"
     id: mode x medeleg ecall bits 0 x mstatus
-    rules:
-      - "note: medelg ecall bits 0 (check for this)"
+    notes: |-
+      note: medelg ecall bits 0 (check for this)
   - name: cp_ebreak_to_m
     goal: ebreak to M sets status bits
     description: No delegation of ebreak.  Make ebreak from M/HS/U/VS/VU to M.  Check mstatus.MPV/MPP/GVA/MPIE/MIE
@@ -46,14 +46,14 @@ coverpoints:
     description: Delegate ecall from {VU, VS} to VS with medeleg and hedeleg. Point vstvec to a different trap handler than stvec.  Make ecall to VS from VU/VS
     expectation: Goes to vstvec handler
     bins: "2"
-    rules:
-      - Should this move to SvH because of page faults?
+    notes: |-
+      Should this move to SvH because of page faults?
   - name: cp_priority
     goal: priority of illegal/virtual instruction, misaligned, access fault
     description: Execute {hlv.w / hsv.w} x {legal/illegal address} x {addr[1:0] = 00/01} x {priv=M/HS/VS/VU/U} x hstatus.HU={0/1} to cause all combinations of illegal, virtual, access fault misaligned
     expectation: Highest priority exception should occur
     bins: 2 instr * 2 access * 2 misaligned * 5 priv * 2 HU
-  - name: cp_virtual_instruction_vs
+  - name: cp_virtual_instr_vs
     goal: exercise all ways to trigger virtual-instruction exceptions from VS
     description: |-
       read instret with hcounteren[2] = 0, mcounteren[2] = 1
@@ -69,7 +69,7 @@ coverpoints:
     expectation: virtual instruction exception
     bins: 14+
     id: "*** check which fences belong in each."
-  - name: cp_virtual_instruction_vu
+  - name: cp_virtual_instr_vu
     goal: exercise all ways to trigger virtual-instruction exceptions from VU
     description: |-
       in VU:
