@@ -2265,9 +2265,9 @@ skpsv_\__MODE__\()epc:
         j skp_adj_\__MODE__\()epc
 
 adj_\__MODE__\()epc_rtn:
-#ifdef SDTRIG_IMPRECISE_XEPC
+#ifdef SDTRIG_ITRIGGER_XEPC_IN_VECTOR
   .ifc \__MODE__ , M
-        // An itrigger or etrigger breakpoint leaves xEPC at the trap handler entry of the
+        // An itrigger breakpoint leaves xEPC at the trap handler entry of the
         // original trap, which has not executed yet: return there without advancing.
         csrr    T2, CSR_XCAUSE
         LI(     T6, CAUSE_BREAKPOINT)
@@ -2275,8 +2275,6 @@ adj_\__MODE__\()epc_rtn:
         csrr    T2, tdata1                           // tselect selects the trigger under test
         srli    T2, T2, UDB_MXLEN-4                  // tdata1.type
         LI(     T6, 4)                               // itrigger
-        beq     T2, T6, skp_adj_\__MODE__\()epc
-        LI(     T6, 5)                               // etrigger
         beq     T2, T6, skp_adj_\__MODE__\()epc
 2:
   .endif

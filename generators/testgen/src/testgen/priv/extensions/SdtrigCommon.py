@@ -106,15 +106,10 @@ UDB_DEFINES = [
     "#define SDTRIG_IMPRECISE_XEPC",
     # etrigger fires after the trap is taken, so xEPC is inside the S trap vector; the handler must not advance it
     "#define SDTRIG_ETRIGGER_XEPC_IN_VECTOR",
+    # itrigger fires after the interrupt trap is taken, so xEPC is the original handler entry; do not advance it
+    "#define SDTRIG_ITRIGGER_XEPC_IN_VECTOR",
     "#define UDB_ITRIGGER_TRIG0_AVAILABLE",
     "#define UDB_ITRIGGER_TRIG1_AVAILABLE",
-    "#define UDB_INTERRUPT1_SUPPORTED",
-    "#define UDB_INTERRUPT3_SUPPORTED",
-    "#define UDB_INTERRUPT5_SUPPORTED",
-    "#define UDB_INTERRUPT7_SUPPORTED",
-    "#define UDB_INTERRUPT9_SUPPORTED",
-    "#define UDB_INTERRUPT11_SUPPORTED",
-    "#define UDB_INTERRUPT13_SUPPORTED",
 ]
 
 XSL_UDB_NAMES = ("LOAD", "STORE", "EXECUTE")  # mcontrol6 xsl bits 0, 1, 2
@@ -604,7 +599,7 @@ def _read_trigger_hit(temp_reg: int, trig_num: int, mode: str, test_data: TestDa
         "#if __riscv_xlen == 64",
         f"srli x{temp_reg}, x{temp_reg}, 58 # tdata1.hit",
         "#else",
-        f"srli x{temp_reg}, x{temp_reg}, 26 # tdata.hit",
+        f"srli x{temp_reg}, x{temp_reg}, 26 # tdata1.hit",
         "#endif",
         f"andi x{temp_reg}, x{temp_reg}, 1",
         write_sigupd(temp_reg, test_data),
@@ -2125,7 +2120,7 @@ def _generate_icount_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     return chunks
 
 
-INTERRUPT_CODES = (1, 3, 5, 7, 9, 11, 13)  # SSI, MSI, STI, MTI, SEI, MEI
+INTERRUPT_CODES = (1, 3, 5, 7, 9, 11, 13)  # SSI, MSI, STI, MTI, SEI, MEI, LCOFI
 LOWER_MODE_INTERRUPT_CODES = (1, 5, 9, 13)
 TIMER_INTERRUPT_CODE = 7
 
