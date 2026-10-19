@@ -175,7 +175,7 @@ def gen_compile_tasks(
         "-mcmodel=medany",
         "-nostdlib",
         f"-I{env_dir}",
-        f"-I{base_dir.absolute()}",
+        f"-I{base_dir.absolute() / 'env'}",
     ]
     if enable_experimental_extensions:
         compile_prefix.append("-DENABLE_EXPERIMENTAL_EXTENSIONS")
@@ -417,6 +417,7 @@ def gen_coverage_tasks(
     verbose: bool = False,
     dry_run: bool = False,
     enable_experimental_extensions: bool = False,
+    exclude_sm: bool = False,
 ) -> list[BuildTask]:
     """Generate BuildTasks for coverage UCDB generation, reports, and summary merging."""
     tasks: list[BuildTask] = []
@@ -491,6 +492,8 @@ def gen_coverage_tasks(
             coverage_define_list.append("FCOV_VERBOSE")
         if enable_experimental_extensions:
             coverage_define_list.append("ENABLE_EXPERIMENTAL_EXTENSIONS")
+        if exclude_sm:
+            coverage_define_list.append("EXCLUDE_SM")
         coverage_defines = " ".join(coverage_define_list)
         if coverage_simulator == CoverageSimulator.QUESTA:
             do_script = (
@@ -582,6 +585,7 @@ def generate_build_plan(
     verbose: bool = False,
     dry_run: bool = False,
     enable_experimental_extensions: bool = False,
+    exclude_sm: bool = False,
 ) -> list[BuildTask]:
     """Build the full DAG of tasks for a single config."""
     if coverage_enabled and config.ref_model_type != RefModelType.SAIL:
@@ -606,7 +610,7 @@ def generate_build_plan(
     env_files = tuple(sorted(p.absolute() for p in env_dir.iterdir() if p.is_file()))
     c_runtime_sources = tuple((env_dir / name).absolute() for name in ("c_test_start.S", "c_test_support.c"))
     dut_headers = tuple(sorted(p.absolute() for p in config.dut_include_dir.iterdir() if p.suffix == ".h"))
-    udb_headers = tuple(sorted(p.absolute() for p in config_wkdir.iterdir() if p.suffix == ".h"))
+    udb_headers = tuple(sorted(p.absolute() for p in (config_wkdir / "env").iterdir() if p.suffix == ".h"))
     compile_inputs = (*env_files, *dut_headers, *udb_headers, config.linker_script.absolute())
 
     # Sail config affects reference model output (Spike has no equivalent file).
@@ -683,12 +687,13 @@ def generate_build_plan(
                 coverpoint_dir,
                 config_coverage_dir,
                 config_report_dir,
-                config_wkdir,
+                config_wkdir / "env",
                 tests_dir / "env",
                 coverage_simulator,
                 verbose,
                 dry_run,
                 enable_experimental_extensions,
+                exclude_sm,
             )
         )
 

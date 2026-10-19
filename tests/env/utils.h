@@ -60,8 +60,8 @@
   #endif
 #endif
 
-// Execute an sfence.vma if supported by the DUT. Primarily used in PMP tests.
-// A hypervisor test also synchronizes guest translations with the PMP settings (hypervisor.adoc,
+// Execute an sfence.vma if supported by the DUT.
+// With H, also synchronize guest translations with the PMP settings (hypervisor.adoc,
 // "Memory-Management Fences").
 .macro RVTEST_SFENCE_VMA_IF_SUPPORTED
   #if defined(SV32_SUPPORTED) || defined(SV39_SUPPORTED)

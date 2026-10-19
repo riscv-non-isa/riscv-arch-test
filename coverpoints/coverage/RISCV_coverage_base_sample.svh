@@ -349,12 +349,6 @@
     `ifdef COVER_U
         u_sample(hart, issue, ins);
     `endif
-    `ifdef COVER_UF
-        uf_sample(hart, issue, ins);
-    `endif
-    `ifdef COVER_UV
-        uv_sample(hart, issue, ins);
-    `endif
     `ifdef COVER_VF16
         vf16_sample(hart, issue, ins);
     `endif
@@ -363,6 +357,9 @@
     `endif
     `ifdef COVER_VF64
         vf64_sample(hart, issue, ins);
+    `endif
+    `ifdef COVER_VF8
+        vf8_sample(hart, issue, ins);
     `endif
     `ifdef COVER_VLS16
         vls16_sample(hart, issue, ins);

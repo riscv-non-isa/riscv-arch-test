@@ -15,21 +15,24 @@
 
 REPO_ROOT := $(shell git rev-parse --show-toplevel)
 
-# Python runs through uv (from mise or installed directly), or in an activated
-# venv set up as the README describes
-ifneq ($(shell command -v mise 2> /dev/null),)
-  PYTHON_RUNNER := mise exec -- uv run
+# Tool management — use mise if available, fall back to direct tool detection
+MISE := $(shell command -v mise 2> /dev/null)
+ifneq ($(MISE),)
+  PYTHON_RUNNER := $(MISE) exec -- uv run
 else
-  ifneq ($(shell command -v uv 2> /dev/null),)
-    PYTHON_RUNNER := uv run
-  else ifneq ($(VIRTUAL_ENV),)
-    PYTHON_RUNNER := python
+  # Check for uv (needed for Python dependencies if not using mise)
+  UV := $(shell command -v uv 2> /dev/null)
+  ifneq ($(UV),)
+    PYTHON_RUNNER := $(UV) run
   else
-    $(error Neither mise nor uv found, and no Python venv is active. See the README)
+    PYTHON_RUNNER :=
+    $(warning "Warning: Neither mise nor uv found. Running without uv, but there may be dependency issues. See the README for more information.")
   endif
-  # The parameter tables read UDB through Bundler, which mise would otherwise provide
-  ifeq ($(shell command -v bundle 2> /dev/null),)
-    $(error Neither mise nor bundle found. Ruby and Bundler are required for UDB. See the README)
+
+  # Check for Ruby/Bundler (needed for UDB gem when not using mise)
+  BUNDLE := $(shell command -v bundle 2> /dev/null)
+  ifeq ($(BUNDLE),)
+    $(error "Error: Neither mise nor bundle found. Ruby and Bundler are required for UDB. See the README for more information.")
   endif
 endif
 
@@ -131,8 +134,11 @@ REQUIRES := --require=asciidoctor-diagram \
 
 all: build
 
-ifeq ($(wildcard ../docs-resources/global-config.adoc),)
-  $(error The docs/docs-resources submodule is missing. Run 'git submodule update --init docs/docs-resources')
+# Check if the docs-resources/global-config.adoc file exists. If not, the user forgot to check out submodules.
+ifeq ("$(wildcard ../docs-resources/global-config.adoc)","")
+  $(warning You must clone with --recurse-submodules to automatically populate the submodule 'docs-resources'.")
+  $(warning Checking out submodules for you via 'git submodule update --init --recursive'...)
+  $(shell git submodule update --init --recursive)
 endif
 
 build-pdf: $(DOCS_PDF)
@@ -160,8 +166,7 @@ NORM_RULES_URL := https://riscv.github.io/riscv-isa-manual/snapshot/norm-rules/n
 NORM_RULES_JSON := $(REPO_ROOT)/coverpoints/norm/norm-rules.json
 
 $(NORM_RULES_JSON): FORCE
-	curl -fsSL --retry 3 -o $@.tmp $(NORM_RULES_URL)
-	mv $@.tmp $@
+	curl -fsSL --retry 3 -o $@ $(NORM_RULES_URL)
 
 # Unprivileged CSV test plans become asciidoc tables with one instruction per
 # column and at most 12 instructions per table.  A privileged suite with a YAML
