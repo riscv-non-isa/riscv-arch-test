@@ -723,9 +723,11 @@ def _generate_vector_tests(test_data: TestData, mode: str) -> list[TestChunk]:
                         lines.append("#ifdef UDB_SDTRIG_MCONTROL6_SIZE_AVAILABLE")
                     lines.extend(_config_mcontrol6(temp_reg, trig_num, tdata2, mode, xsl=xsl, select=0, size=size))
                     for sew in vsews:
+                        lines.extend(["#ifdef ZVE64X_SUPPORTED"] if sew == 64 else [])
                         binname = f"trig_num_{trig_num}_td2_{tdata2}_size_{size}_sew{sew}_{vperm}"
                         lines.append(_add_tc(test_data, binname, coverpoint, covergroup))
                         lines.extend(vector_access(vinstr, sew, 1, "fire iff addr==tdata2 and size in (0, SEW)"))
+                        lines.extend(["#endif // ZVE64X_SUPPORTED"] if sew == 64 else [])
                     if size > 0:
                         lines.append("#endif // UDB_SDTRIG_MCONTROL6_SIZE_AVAILABLE")
             lines.extend(["#endif // UDB_SDTRIG_MCONTROL6_XSL_AVAILABLE"] * len(_xsl_ifdefs(xsl)))
@@ -748,9 +750,11 @@ def _generate_vector_tests(test_data: TestData, mode: str) -> list[TestChunk]:
                 lines.extend(_config_mcontrol6(temp_reg, trig_num, tdata2, mode, xsl=xsl, select=0))
                 for avl in (1, 9):
                     for sew in vsews:
+                        lines.extend(["#ifdef ZVE64X_SUPPORTED"] if sew == 64 else [])
                         binname = f"trig_num_{trig_num}_td2_{tdata2_name}_vl_{avl}_sew{sew}_{vperm}"
                         lines.append(_add_tc(test_data, binname, coverpoint, covergroup))
                         lines.extend(vector_access(vinstr, sew, avl, "fire iff an accessed element addr==tdata2"))
+                        lines.extend(["#endif // ZVE64X_SUPPORTED"] if sew == 64 else [])
             lines.extend(["#endif // UDB_SDTRIG_MCONTROL6_XSL_AVAILABLE"] * len(_xsl_ifdefs(xsl)))
         lines.extend(_disable_trigger(temp_reg, trig_num, mode))
         lines.append(f"#endif // UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
@@ -773,6 +777,7 @@ def _generate_vector_tests(test_data: TestData, mode: str) -> list[TestChunk]:
                     elem = 8 // (sew // 8)  # index of the element at scratch+8
                     mask = 0xFFFF if state == "active" else 0xFFFF & ~(1 << elem)
                     binname = f"trig_num_{trig_num}_td2_scratch8_{state}_sew{sew}_{vperm}"
+                    lines.extend(["#ifdef ZVE64X_SUPPORTED"] if sew == 64 else [])
                     lines.extend(
                         [
                             _add_tc(test_data, binname, coverpoint, covergroup),
@@ -782,6 +787,7 @@ def _generate_vector_tests(test_data: TestData, mode: str) -> list[TestChunk]:
                             *vector_access(vinstr, sew, 9, "fire iff the element at tdata2 is active", masked=True),
                         ]
                     )
+                    lines.extend(["#endif // ZVE64X_SUPPORTED"] if sew == 64 else [])
             lines.extend(["#endif // UDB_SDTRIG_MCONTROL6_XSL_AVAILABLE"] * len(_xsl_ifdefs(xsl)))
         lines.extend(_disable_trigger(temp_reg, trig_num, mode))
         lines.append(f"#endif // UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
