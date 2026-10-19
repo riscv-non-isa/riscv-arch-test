@@ -25,6 +25,7 @@ from testgen.priv.extensions.InterruptsCommon import (
     guard_symbol,
     int_coverpoint,
     int_macro,
+    label_coverpoint,
     machine_ints,
     mode_enter,
     mode_exit,
@@ -76,9 +77,9 @@ def _generate_cp_trigger_sm(
     for int_type in [*machine_ints, *supervisor_ints, *reg_ints, *sstc_ints]:
         macro = int_macro[int_type]
         guard = guard_symbol(int_type)
-        cp = int_coverpoint.get(int_type, "cp_trigger")
         for mideleg in [0, -1]:
             delegstr = "zeros" if mideleg == 0 else "ones"
+            cp = label_coverpoint(suite, int_coverpoint.get(int_type, "cp_trigger"), priv, int_type, mideleg == -1)
             # mideleg only exists with S-mode. Without it the mideleg = zeros cases still run and just
             # skip the write, while the mideleg = ones cases are meaningless and are left out entirely.
             case_open = ["#ifdef S_SUPPORTED // only test delegation if S_SUPPORTED"] if mideleg == -1 else []
@@ -108,6 +109,22 @@ def _generate_cp_trigger_sm(
                             f"{miecmd} mstatus, x{tmp_reg} # mstatus.MIE = {mie}",
                             f"LI(x{tmp_reg}, 0x22) # SIE, SPIE",
                             f"{siecmd} mstatus, x{tmp_reg} # mstatus.SIE = {sie}",
+                            # Leave a nonzero xtval so the trap handler's xtval == 0 check sees the interrupt write it.
+                            # The T-SBI ecall into S or U zeroes mtval again; it does not touch stval.
+                            f"auipc x{tmp_reg}, 0 # nonzero valid address",
+                            f"csrw mtval, x{tmp_reg} # mtval = nonzero",
+                            "#ifdef S_SUPPORTED",
+                            f"csrw stval, x{tmp_reg} # stval = nonzero",
+                            "#endif // S_SUPPORTED",
+                            # Likewise the second trap value and xtinst. The ecall zeroes mtval2 and mtinst but
+                            # not htval and htinst. xtinst gets a transformed load, lw x1, 0(x0).
+                            "#ifdef H_SUPPORTED",
+                            f"csrw mtval2, x{tmp_reg} # mtval2 = nonzero",
+                            f"csrw htval, x{tmp_reg} # htval = nonzero",
+                            f"LI(x{tmp_reg}, 0x2083) # transformed lw x1, 0(x0)",
+                            f"csrw mtinst, x{tmp_reg} # mtinst = nonzero",
+                            f"csrw htinst, x{tmp_reg} # htinst = nonzero",
+                            "#endif // H_SUPPORTED",
                             test_data.add_testcase(
                                 f"priv_{priv}_{int_type}_mideleg_{delegstr}_mode_{mode}_sie_{sie}_mie_{mie}",
                                 cp,
@@ -158,7 +175,12 @@ def _generate_cp_write_stip_sstc(
         for stip, stip_macro in [(0, "CLR"), (1, "SET")]:
             tc.code += [
                 f"RVTEST_{stimecmp_macro}_SSTC_INT_{priv} # stimecmp = {stimecmp}",
-                test_data.add_testcase(f"priv_{priv}_stimecmp_{stimecmp}_STIP_{stip}", coverpoint, COVERGROUP),
+                # RVTEST_SET_STIME_INT writes mip.STIP with csrs, RVTEST_CLR_STIME_INT with csrc
+                test_data.add_testcase(
+                    f"priv_{priv}_stimecmp_{stimecmp}_STIP_{stip}",
+                    f"{coverpoint}_{'csrrs' if stip else 'csrrc'}",
+                    COVERGROUP,
+                ),
                 f"RVTEST_{stip_macro}_STIME_INT_{priv} # Write mip.STIP = {stip}",
                 f"csrr x{tmp_reg}, mip # mip.STIP = 1 only when stimecmp = 0s",
                 f"andi x{tmp_reg}, x{tmp_reg}, 0x20 # STIP",

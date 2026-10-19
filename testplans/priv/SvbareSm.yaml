@@ -12,7 +12,7 @@ coverpoints:
       = 2 bins on RV64, 2 on RV32
     id: mstatus_mprv_ldst_op
     rules:
-      - "[norm:mstatus_mprv_ldst_op]"
+      - mstatus_mprv_ldst_op
   - name: cp_satp_bare_mprv_store
     goal: Verify an M-mode store with MPRV=1 and satp.MODE=Bare uses the physical address
     description: "M-mode with satp = 0: set mstatus.MPRV=1 with MPP=S, then MPP=U, reading mstatus back each time. Store (sw) to the page at the physical address of rvtest_data_1."
@@ -22,7 +22,7 @@ coverpoints:
       = 2 bins on RV64, 2 on RV32
     id: mstatus_mprv_ldst_op
     rules:
-      - "[norm:mstatus_mprv_ldst_op]"
+      - mstatus_mprv_ldst_op
   - name: cp_satp_bare_mprv_exec
     goal: Verify an M-mode instruction fetch with MPRV=1 and satp.MODE=Bare uses the physical address
     description: "M-mode with satp = 0: set mstatus.MPRV=1 with MPP=S, then MPP=U, reading mstatus back each time. Jump (jalr) into the page at the physical address of rvtest_data_1."
@@ -32,4 +32,4 @@ coverpoints:
       = 2 bins on RV64, 2 on RV32
     id: mstatus_mprv_inst_xlat_op
     rules:
-      - "[norm:mstatus_mprv_inst_xlat_op]"
+      - mstatus_mprv_inst_xlat_op
