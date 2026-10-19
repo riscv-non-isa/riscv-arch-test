@@ -338,8 +338,10 @@ coverpoints:
     expectation: Non-supported mode bits read back as zero after writing all-ones
     bins: NTRIGGERS
     rules:
-      - Sdtrig_tdata1_dmode_type_0
-      - Sdtrig_tdata1_data
+      - Sdtrig_mcontrol6_s
+      - Sdtrig_mcontrol6_u
+      - Sdtrig_mcontrol6_vs
+      - Sdtrig_mcontrol6_vu
     notes: |-
       coverpoint drafted: 9/10
       coverpoint reviewed: 9/10
