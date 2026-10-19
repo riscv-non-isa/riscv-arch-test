@@ -800,7 +800,7 @@ coverpoints:
       - Sdtrig_etrigger_timing
       - Sdtrig_etrigger_action0
       - Sdtrig_etrigger_m
-  - name: Textra
+  - name: "Textra tests: test fire and don't fire for each scenario"
     description: |-
       Repeat for each of UDB_SDTRIG_NUM_TRIGGERS if UDB_TDATA3_EXISTS[i]:
       tselect = i
@@ -929,7 +929,8 @@ coverpoints:
       - Sdtrig_textra32_sselect_scontext
       - Sdtrig_textra32_mhselect_ignore
       - Sdtrig_textra32_sselect_ignore
-  - name: cp_textra_asid
+  - name: cp_textra_asid (not generated)
+    status: "Not generated: ASID matching (sselect=2) is not generated yet"
     description: |-
       NOT GENERATED YET (needs satp.ASID set through T-SBI in U-mode and a satp value with a specified result).
       only run tests if SCONTEXT_AVAILABLE:
@@ -966,8 +967,11 @@ coverpoints:
     expectation: Breakpoint exception if ASID in satp equals the lower ASIDMAX bits of svalue.
     bins: 5 svalues * 4 trigger types
     rules:
-      - Sdtrig_textra32_sselect_asid
-  - name: cp_smode_fields_hardwired
+      - Sdtrig_textra32_sselect_asid1
+      - Sdtrig_textra32_sselect_asid2
+      - Sdtrig_textra32_sselect_asid3
+  - name: cp_smode_fields_hardwired (not generated)
+    status: "Not generated: the textra tests do not check svalue/sselect on harts without S"
     description: |-
       NOT GENERATED: svalue/sselect "should" (not must) be tied to 0 without S-mode, so a hart that implements them is legal.
       For each of UDB_SDTRIG_NUM_TRIGGERS in tselect:
