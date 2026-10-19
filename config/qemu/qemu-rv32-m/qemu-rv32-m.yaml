@@ -142,7 +142,7 @@ params:
   MEI_INTR_IMPL: true
   MSI_INTR_IMPL: true
   MTI_INTR_IMPL: true
-  WFI_FINITE: true
+  WFI_FINITE: false
   WFI_U_MODE: false # no U-mode
   MXLEN: 32
   PRECISE_SYNCHRONOUS_EXCEPTIONS: true
@@ -363,7 +363,7 @@ params:
   DCSR_STEPIE_TYPE: rw
   DCSR_STOPCOUNT_TYPE: rw
   DCSR_STOPTIME_TYPE: rw
-  HCONTEXT_AVAILABLE: true
+  HCONTEXT_AVAILABLE: false
   MCONTEXT_AVAILABLE: true
   # Zawrs params
   ZAWRS_NTO_IS_NOP: true
