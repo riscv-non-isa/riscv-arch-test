@@ -87,6 +87,7 @@ def _make_napot(test_data: TestData, sv: SvMode, mode: str) -> TestChunk:
                     0,
                     f"test1_access{access}",
                     crosses=crosses,
+                    driver_mode="Smode",
                     address=[f"LI(a5, va_data{offset})"],
                 ),
                 "",
