@@ -127,17 +127,8 @@
     `ifdef COVER_MISALIGN
         misalign_sample(hart, issue, ins);
     `endif
-    `ifdef COVER_MISALIGND
-        misalignd_sample(hart, issue, ins);
-    `endif
-    `ifdef COVER_MISALIGNF
-        misalignf_sample(hart, issue, ins);
-    `endif
     `ifdef COVER_MISALIGNV
         misalignv_sample(hart, issue, ins);
-    `endif
-    `ifdef COVER_MISALIGNZCA
-        misalignzca_sample(hart, issue, ins);
     `endif
     `ifdef COVER_PMPF
         pmpf_sample(hart, issue, ins);
@@ -171,15 +162,6 @@
     `endif
     `ifdef COVER_SM
         sm_sample(hart, issue, ins);
-    `endif
-    `ifdef COVER_SMF
-        smf_sample(hart, issue, ins);
-    `endif
-    `ifdef COVER_SMV
-        smv_sample(hart, issue, ins);
-    `endif
-    `ifdef COVER_SMVF
-        smvf_sample(hart, issue, ins);
     `endif
     `ifdef COVER_SMMPM
         smmpm_sample(hart, issue, ins);
@@ -301,12 +283,6 @@
     `ifdef COVER_U
         u_sample(hart, issue, ins);
     `endif
-    `ifdef COVER_UF
-        uf_sample(hart, issue, ins);
-    `endif
-    `ifdef COVER_UV
-        uv_sample(hart, issue, ins);
-    `endif
     `ifdef COVER_VF16
         vf16_sample(hart, issue, ins);
     `endif
@@ -315,6 +291,9 @@
     `endif
     `ifdef COVER_VF64
         vf64_sample(hart, issue, ins);
+    `endif
+    `ifdef COVER_VF8
+        vf8_sample(hart, issue, ins);
     `endif
     `ifdef COVER_VLS16
         vls16_sample(hart, issue, ins);
@@ -414,6 +393,9 @@
     `endif
     `ifdef COVER_ZFHMIN
         zfhmin_sample(hart, issue, ins);
+    `endif
+    `ifdef COVER_ZIBI
+        zibi_sample(hart, issue, ins);
     `endif
     `ifdef COVER_ZIC64BZICBOZ
         zic64bzicboz_sample(hart, issue, ins);
