@@ -367,6 +367,90 @@ covergroup SdtrigSm_a_cg with function sample(ins_t ins);
     cp_amo:       cross priv_mode_m, triggernum, tdata1_type_mcontrol6, tdata1_m_on, tdata1_select_adr, a_tdata2_adr, a_xsl, amo_op, a_outcome;         // NTRIG * 2 tdata2 * 3 xsl * 9 (RV64 18) ops
 endgroup
 
+// 1 when an mcontrol6 trigger with action = 0 fired on this cache operation exactly when it should: cbo.* match as
+// stores on the address in rs1 with select = 0 and size = 0; with select = 1 (no data) or another size they do not,
+// and prefetches never match. rs1 is the block base, so every allowed compare address agrees (Sdtrig_cache_compare_opts).
+function automatic logic sdtrig_cbo_as_expected(ins_t ins);
+    logic [XLEN-1:0] tdata1 = get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tdata1", "tdata1");
+    logic [XLEN-1:0] tdata2 = get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tdata2", "tdata2");
+    logic is_cbo = ins.current.insn ==? CBO_CLEAN || ins.current.insn ==? CBO_FLUSH ||
+                   ins.current.insn ==? CBO_INVAL || ins.current.insn ==? CBO_ZERO;
+    return sdtrig_bp_taken(ins) == (is_cbo && !tdata1[21] && tdata1[18:16] == 3'd0 && tdata1[1] && tdata2 == ins.current.rs1_val);
+endfunction
+
+covergroup SdtrigSm_cache_operations_cg with function sample(ins_t ins);
+    option.per_instance = 0;
+    `include "general/RISCV_coverage_standard_coverpoints.svh"
+    `include "general/RISCV_coverage_sdtrig_coverpoints.svh"
+
+    cbo_xsl: coverpoint {get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tdata1", "execute")[0], get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tdata1", "store")[0], get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tdata1", "load")[0]} {
+        type_option.weight = 0;
+        bins execute = {3'b100};
+        bins store   = {3'b010};
+        bins load    = {3'b001};
+    }
+    prefetch_xsl: coverpoint {get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tdata1", "execute")[0], get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tdata1", "store")[0], get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tdata1", "load")[0]} {
+        type_option.weight = 0;
+        bins load_store = {3'b011};
+    }
+    cbo_select: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tdata1", "select")[0] {
+        type_option.weight = 0;
+        bins address = {1'b0};
+        bins data    = {1'b1};
+    }
+    // tdata2 relative to the cache block address in rs1
+    cbo_tdata2: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tdata2", "tdata2") {
+        type_option.weight = 0;
+        wildcard bins block      = {'x} iff (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tdata2", "tdata2") == ins.current.rs1_val);
+        wildcard bins below      = {'x} iff (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tdata2", "tdata2") == ins.current.rs1_val - 1);
+        wildcard bins next_block = {'x} iff (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tdata2", "tdata2") == ins.current.rs1_val + `UDB_CACHE_BLOCK_SIZE);
+        bins zero                = {'0};
+    }
+    prefetch_tdata2: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tdata2", "tdata2") {
+        type_option.weight = 0;
+        wildcard bins address = {'x} iff (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tdata2", "tdata2") == ins.current.rs1_val);
+        bins zero             = {'0};
+    }
+    // fired (into M, mcause = 3) iff the operation matches as a store
+    cbo_outcome: coverpoint sdtrig_cbo_as_expected(ins) {
+        type_option.weight = 0;
+        bins as_expected = {1'b1};
+    }
+    `ifdef ZICBOM_SUPPORTED
+        cbom_op: coverpoint ins.current.insn {
+            type_option.weight = 0;
+            wildcard bins cbo_clean = {CBO_CLEAN};
+            wildcard bins cbo_flush = {CBO_FLUSH};
+            wildcard bins cbo_inval = {CBO_INVAL};
+        }
+    `endif
+    `ifdef ZICBOZ_SUPPORTED
+        cboz_op: coverpoint ins.current.insn {
+            type_option.weight = 0;
+            wildcard bins cbo_zero = {CBO_ZERO};
+        }
+    `endif
+    `ifdef ZICBOP_SUPPORTED
+        prefetch_op: coverpoint ins.current.insn {
+            type_option.weight = 0;
+            wildcard bins prefetch_i = {PREFETCH_I};
+            wildcard bins prefetch_r = {PREFETCH_R};
+            wildcard bins prefetch_w = {PREFETCH_W};
+        }
+    `endif
+
+    // main coverpoints
+    `ifdef ZICBOM_SUPPORTED
+        cp_cache_zicbom: cross priv_mode_m, triggernum, tdata1_type_mcontrol6, tdata1_m_on, cbo_tdata2, cbo_select, tdata1_size, cbo_xsl, cbom_op, cbo_outcome;                  // NTRIG * 4 tdata2 * 2 select * sizes * 3 xsl * 3 ops
+    `endif
+    `ifdef ZICBOZ_SUPPORTED
+        cp_cache_zicboz: cross priv_mode_m, triggernum, tdata1_type_mcontrol6, tdata1_m_on, cbo_tdata2, cbo_select, tdata1_size, cbo_xsl, cboz_op, cbo_outcome;                  // NTRIG * 4 tdata2 * 2 select * sizes * 3 xsl
+    `endif
+    `ifdef ZICBOP_SUPPORTED
+        cp_cache_zicbop: cross priv_mode_m, triggernum, tdata1_type_mcontrol6, tdata1_m_on, prefetch_tdata2, cbo_select, tdata1_size_any, prefetch_xsl, prefetch_op, cbo_outcome; // NTRIG * 2 tdata2 * 2 select * 3 ops
+    `endif
+endgroup
+
 `ifdef S_SUPPORTED
 covergroup SdtrigSm_native_triggers_cg with function sample(ins_t ins);
     option.per_instance = 0;
@@ -724,6 +808,7 @@ function void sdtrigsm_sample(int hart, int issue, ins_t ins);
     SdtrigSm_access_cg.sample(ins);
     SdtrigSm_icount_cg.sample(ins);
     SdtrigSm_a_cg.sample(ins);
+    SdtrigSm_cache_operations_cg.sample(ins);
     `ifdef S_SUPPORTED
         SdtrigSm_native_triggers_cg.sample(ins);
     `endif
