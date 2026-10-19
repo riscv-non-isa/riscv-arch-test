@@ -702,7 +702,7 @@ def _generate_vector_tests(test_data: TestData, mode: str) -> list[TestChunk]:
         vm = ", v0.t" if masked else ""
         return [
             f"LA(x{addr_reg}, scratch) # vector access base address",
-            *_arch_guard(f"vsetivli x0, {avl}, e{sew}, m1, ta, {policy}", ["v"]),
+            *_arch_guard(f"vsetivli x0, {avl}, e{sew}, m4, ta, {policy}", ["v"]),  # m4: scratch+8 in vl at VLEN=32
             *_arch_guard(f"{vinstr}{sew}.v v{vreg}, (x{addr_reg}){vm} # {comment}", ["v"]),
             "nop # spacer",
         ]
