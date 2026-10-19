@@ -4,6 +4,7 @@
 name: ACT Regression
 
 on:
+  merge_group:
   push:
   pull_request:
 
