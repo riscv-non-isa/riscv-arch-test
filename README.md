@@ -265,6 +265,7 @@ The ACT Framework uses a selection of assembly macros to run DUT-specific code t
 - `RVMODEL_CLR_MEXT_INT(_R1, _R2)`
 - `RVMODEL_CLR_MEXT_INT_M(_R1, _R2)`
 - `RVMODEL_SET_MSW_INT(_R1, _R2)`
+- `RVMODEL_SET_MSW_INT_M(_R1, _R2)`
 - `RVMODEL_CLR_MSW_INT(_R1, _R2)`
 - `RVMODEL_CLR_MSW_INT_M(_R1, _R2)`
 - `RVMODEL_SET_SEXT_INT(_R1, _R2)`
@@ -272,6 +273,7 @@ The ACT Framework uses a selection of assembly macros to run DUT-specific code t
 - `RVMODEL_CLR_SEXT_INT(_R1, _R2)`
 - `RVMODEL_CLR_SEXT_INT_M(_R1, _R2)`
 - `RVMODEL_SET_SSW_INT(_R1, _R2)`
+- `RVMODEL_SET_SSW_INT_M(_R1, _R2)`
 - `RVMODEL_CLR_SSW_INT(_R1, _R2)`
 - `RVMODEL_CLR_SSW_INT_M(_R1, _R2)`
 - `RVMODEL_INTERRUPT_LATENCY`

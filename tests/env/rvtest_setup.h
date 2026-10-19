@@ -491,8 +491,8 @@
         LA(a1, RVMODEL_MSIP_ADDRESS)
         li a2, 1
         sw a2, 0(a1) // normal way to set MSI is to write a 1 to MSIP
-      #elif defined(RVMODEL_SET_MSW_INT)
-        RVMODEL_SET_MSW_INT(a0, a1) // if normal way isn't supported, use platform-specific method
+      #elif defined(RVMODEL_SET_MSW_INT_M)
+        RVMODEL_SET_MSW_INT_M(a0, a1) // if normal way isn't supported, use platform-specific method
       #endif
       ret
 
@@ -590,8 +590,8 @@
 
       rvtest_set_ssw_int_m:
         // trigger with platform-specific interrupt controller if it exists, otherwise with mip.SSIP
-        #ifdef RVMODEL_SET_SSW_INT
-          RVMODEL_SET_SSW_INT(a0, a1)
+        #ifdef RVMODEL_SET_SSW_INT_M
+          RVMODEL_SET_SSW_INT_M(a0, a1)
         #else
           csrsi mip, 1<<1 // Trigger mip.SSIP
         #endif
