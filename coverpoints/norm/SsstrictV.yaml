@@ -120,7 +120,11 @@ normative_rule_definitions:
     coverpoint: ["ExceptionsVx_vsaddu_vv_cg/cp_vstart_gt_vl"]
   - name: vtype_lmul_fval_rsv
     coverpoint:
-      ["Sm_V_cg/cp_vtype_vill_set_vl_0", "U_V_cg/cp_vtype_vill_set_vl_0"]
+      [
+        "Sm_V_cg/cp_vtype_vill_set_vl_0",
+        "U_V_cg/cp_vtype_vill_set_vl_0",
+        "S_V_cg/cp_vtype_vill_set_vl_0",
+      ]
   - name: vtype_vset_rsv
     coverpoint:
       [
