@@ -23,8 +23,8 @@
 
 // Custom RVMODEL_BOOT_TO_MMODE overrides default RVTEST_BOOT_TO_MMODE
 // if defined.  For most DUTs, the default should work and this macro
-// should not be defined.  If no M-mode or CSRs are implemented, define this
-// macro as blank to bypass the boot process.  If a nonconforming
+// should not be defined.  If the DUT has no standard M-mode CSRs, do not
+// define STANDARD_SM_SUPPORTED.  If a nonconforming
 // M-mode is implemented, define this macro to set up the necessary
 // state in a fashion similar to RVTEST_BOOT_TO_MMODE.
 //#define RVMODEL_BOOT_TO_MMODE
@@ -181,5 +181,13 @@
   li _R2, PLIC_SCLAIM_ADDRESS;                    \
   lw _R1, 0(_R2);                               \
   sw _R1, 0(_R2);
+
+##### Sscofpmf ######
+// No event code counts yet: spike does not increment HPM counters
+// (https://github.com/riscv-software-src/riscv-isa-sim/issues/2370)
+#define RVMODEL_HPM_COUNTER 3   // HPM counter used by the Sscofpmf tests (3 to 31)
+#define RVMODEL_MHPMEVENT_VAL 0x0
+#define RVMODEL_MHPMEVENT_CODE(_R1, _R2) \
+    nop
 
 #endif // _RVMODEL_MACROS_H

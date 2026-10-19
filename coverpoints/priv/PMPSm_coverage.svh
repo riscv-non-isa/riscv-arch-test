@@ -10,6 +10,9 @@
 
 `define COVER_PMPSM
 `define PMP_NAPOT_PRIORITY_REGION_START ((`PMP_REGION_START & ~(64*`g_napot - 1)) + 64*`g_napot)
+// The priority tests write pmpaddr while the entry is OFF, which reads (and traces) pmpaddr[G-1:0]
+// as 0 at granularity G >= 1, so compare those registers on bits >= G only.
+`define PMP_PMPADDR_GRAINMASK (`PMP_PMPADDR_LOWMASK & `READ_ZERO_MASK)
 
 covergroup PMPSm_cg with function sample(
                     ins_t ins,
@@ -424,7 +427,7 @@ covergroup PMPSm_cg with function sample(
 
     // pmpaddr[0] here is compared against an all-ones value, not a region address, so it needs no mask.
     pmp_addr_for_tor_nonoverlap3: coverpoint (((pmpaddr[1] & `PMP_PMPADDR_LOWMASK)==((`PMP_REGION_START>>2) & `PMP_PMPADDR_LOWMASK)) &&
-                                              (pmpaddr[0]==({$bits(pmpaddr[0][`EFFECTIVE_PMPADDR:0]){1'b1}} & `READ_ZERO_MASK))) { // pmpaddr0 >= pmpaddr1.
+                                              (pmpaddr[0]==(`UDB_MXLEN'({$bits(pmpaddr[0][`EFFECTIVE_PMPADDR:0]){1'b1}}) & `READ_ZERO_MASK))) { // pmpaddr0 >= pmpaddr1.
       bins range3 = {1};
     }
 
@@ -888,15 +891,16 @@ covergroup PMPSm_cg with function sample(
   // 7 overlapping NAPOT regions all based at PMP_NAPOT_PRIORITY_REGION_START, with
   // sizes g_napot, 2x, 4x, 8x, 16x, 32x, 64x. The base is aligned to the
   // largest region size so every NAPOT entry is naturally aligned.
-  // pmpaddr[i] = (PMP_NAPOT_PRIORITY_REGION_START >> 2) | ((1<<i) * g_napot/8 - 1)
+  // pmpaddr[i] = (PMP_NAPOT_PRIORITY_REGION_START >> 2) | ((1<<i) * g_napot/8 - 1),
+  // compared on bits >= G because each is written while its entry is OFF.
   napot_priority_regions: coverpoint (
-                   ((pmpaddr[6] & `PMP_PMPADDR_LOWMASK) == (((`PMP_NAPOT_PRIORITY_REGION_START >> 2) | (64*(2**`k)-1)) & `PMP_PMPADDR_LOWMASK)) &&
-                   ((pmpaddr[5] & `PMP_PMPADDR_LOWMASK) == (((`PMP_NAPOT_PRIORITY_REGION_START >> 2) | (32*(2**`k)-1)) & `PMP_PMPADDR_LOWMASK)) &&
-                   ((pmpaddr[4] & `PMP_PMPADDR_LOWMASK) == (((`PMP_NAPOT_PRIORITY_REGION_START >> 2) | (16*(2**`k)-1)) & `PMP_PMPADDR_LOWMASK)) &&
-                   ((pmpaddr[3] & `PMP_PMPADDR_LOWMASK) == (((`PMP_NAPOT_PRIORITY_REGION_START >> 2) | ( 8*(2**`k)-1)) & `PMP_PMPADDR_LOWMASK)) &&
-                   ((pmpaddr[2] & `PMP_PMPADDR_LOWMASK) == (((`PMP_NAPOT_PRIORITY_REGION_START >> 2) | ( 4*(2**`k)-1)) & `PMP_PMPADDR_LOWMASK)) &&
-                   ((pmpaddr[1] & `PMP_PMPADDR_LOWMASK) == (((`PMP_NAPOT_PRIORITY_REGION_START >> 2) | ( 2*(2**`k)-1)) & `PMP_PMPADDR_LOWMASK)) &&
-                   ((pmpaddr[0] & `PMP_PMPADDR_LOWMASK) == (((`PMP_NAPOT_PRIORITY_REGION_START >> 2) | ( 1*(2**`k)-1)) & `PMP_PMPADDR_LOWMASK))
+                   ((pmpaddr[6] & `PMP_PMPADDR_GRAINMASK) == (((`PMP_NAPOT_PRIORITY_REGION_START >> 2) | (64*(2**`k)-1)) & `PMP_PMPADDR_GRAINMASK)) &&
+                   ((pmpaddr[5] & `PMP_PMPADDR_GRAINMASK) == (((`PMP_NAPOT_PRIORITY_REGION_START >> 2) | (32*(2**`k)-1)) & `PMP_PMPADDR_GRAINMASK)) &&
+                   ((pmpaddr[4] & `PMP_PMPADDR_GRAINMASK) == (((`PMP_NAPOT_PRIORITY_REGION_START >> 2) | (16*(2**`k)-1)) & `PMP_PMPADDR_GRAINMASK)) &&
+                   ((pmpaddr[3] & `PMP_PMPADDR_GRAINMASK) == (((`PMP_NAPOT_PRIORITY_REGION_START >> 2) | ( 8*(2**`k)-1)) & `PMP_PMPADDR_GRAINMASK)) &&
+                   ((pmpaddr[2] & `PMP_PMPADDR_GRAINMASK) == (((`PMP_NAPOT_PRIORITY_REGION_START >> 2) | ( 4*(2**`k)-1)) & `PMP_PMPADDR_GRAINMASK)) &&
+                   ((pmpaddr[1] & `PMP_PMPADDR_GRAINMASK) == (((`PMP_NAPOT_PRIORITY_REGION_START >> 2) | ( 2*(2**`k)-1)) & `PMP_PMPADDR_GRAINMASK)) &&
+                   ((pmpaddr[0] & `PMP_PMPADDR_GRAINMASK) == (((`PMP_NAPOT_PRIORITY_REGION_START >> 2) | ( 1*(2**`k)-1)) & `PMP_PMPADDR_GRAINMASK))
                    ) {
     bins napot_regions = {1};
   }
@@ -922,11 +926,12 @@ covergroup PMPSm_cg with function sample(
 
   // pmpaddr0 and pmpaddr2 are OFF but set to the access address (PMP_NAPOT_REGION_START >> 2),
   // verifying they are ignored. pmpaddr1 and pmpaddr3 are NAPOT covering PMP_NAPOT_REGION_START.
+  // All four are written while OFF, so they are compared on bits >= G.
   first_four_pmp_entries: coverpoint (
-                    ((pmpaddr[0] & `PMP_PMPADDR_LOWMASK) == ((`PMP_NAPOT_REGION_START >> 2) & `PMP_PMPADDR_LOWMASK)) &&
-                    ((pmpaddr[1] & `PMP_PMPADDR_LOWMASK) == (((`PMP_NAPOT_REGION_START >> 2) | ((2**`k)-1)) & `PMP_PMPADDR_LOWMASK)) &&
-                    ((pmpaddr[2] & `PMP_PMPADDR_LOWMASK) == ((`PMP_NAPOT_REGION_START >> 2) & `PMP_PMPADDR_LOWMASK)) &&
-                    ((pmpaddr[3] & `PMP_PMPADDR_LOWMASK) == (((`PMP_NAPOT_REGION_START >> 2) | ((2**`k)-1)) & `PMP_PMPADDR_LOWMASK))
+                    ((pmpaddr[0] & `PMP_PMPADDR_GRAINMASK) == ((`PMP_NAPOT_REGION_START >> 2) & `PMP_PMPADDR_GRAINMASK)) &&
+                    ((pmpaddr[1] & `PMP_PMPADDR_GRAINMASK) == (((`PMP_NAPOT_REGION_START >> 2) | ((2**`k)-1)) & `PMP_PMPADDR_GRAINMASK)) &&
+                    ((pmpaddr[2] & `PMP_PMPADDR_GRAINMASK) == ((`PMP_NAPOT_REGION_START >> 2) & `PMP_PMPADDR_GRAINMASK)) &&
+                    ((pmpaddr[3] & `PMP_PMPADDR_GRAINMASK) == (((`PMP_NAPOT_REGION_START >> 2) | ((2**`k)-1)) & `PMP_PMPADDR_GRAINMASK))
                     ) {
     bins pmp_entries = {1};
   }
@@ -1104,7 +1109,7 @@ function void pmpsm_sample(int hart, int issue, ins_t ins);
   `ifdef UDB_MXLEN_32
       // Each pmpcfg CSR holds 4 region configs in 32-bit (4x 8-bit)
       for (int i = 0; i < 16; i++) begin
-        logic [31:0] cfg_word = get_csr_val_addr(ins.hart, ins.issue, `SAMPLE_AFTER, CSR_PMPCFG0 + i, "pmpcfg", "pmpcfg");
+        logic [31:0] cfg_word = get_csr_val_addr(ins.hart, ins.issue, `SAMPLE_AFTER, int'(CSR_PMPCFG0) + i, "pmpcfg", "pmpcfg");
         pmpcfg[i*4 + 0] = cfg_word[7:0];
         pmpcfg[i*4 + 1] = cfg_word[15:8];
         pmpcfg[i*4 + 2] = cfg_word[23:16];
@@ -1113,7 +1118,7 @@ function void pmpsm_sample(int hart, int issue, ins_t ins);
   `elsif UDB_MXLEN_64
       // Each pmpcfg CSR holds 8 region configs in 64-bit (8x 8-bit)
     for (int i = 0; i < 8; i++) begin
-      logic [63:0] cfg_word = get_csr_val_addr(ins.hart, ins.issue, `SAMPLE_AFTER, CSR_PMPCFG0 + 2*i, "pmpcfg", "pmpcfg");
+      logic [63:0] cfg_word = get_csr_val_addr(ins.hart, ins.issue, `SAMPLE_AFTER, int'(CSR_PMPCFG0) + 2*i, "pmpcfg", "pmpcfg");
       pmpcfg[i*8 + 0] = cfg_word[7:0];
       pmpcfg[i*8 + 1] = cfg_word[15:8];
       pmpcfg[i*8 + 2] = cfg_word[23:16];
@@ -1126,7 +1131,7 @@ function void pmpsm_sample(int hart, int issue, ins_t ins);
   `endif
 
   for (int j = 0; j < 63; j++) begin
-    pmpaddr[j] = get_csr_val_addr(ins.hart, ins.issue, `SAMPLE_AFTER, CSR_PMPADDR0 + j, "pmpaddr", "pmpaddr");
+    pmpaddr[j] = get_csr_val_addr(ins.hart, ins.issue, `SAMPLE_AFTER, int'(CSR_PMPADDR0) + j, "pmpaddr", "pmpaddr");
   end
 
   for (int k = 0; k < 15; k++) begin  // Check for first 15 PMP regions
