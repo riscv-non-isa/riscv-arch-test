@@ -29,8 +29,14 @@ ci_enabled: true
 #     legally writable, but Sail does not model Sscsrind or Ssaia.
 # ZawrsU and ZawrsS fail on qemu due to stval mismatching, filed QEMU issue https://gitlab.com/qemu-project/qemu/-/work_items/4080
 # Sdtrig*: QEMU's trigger implementation has too many problems (tdata1 writes of 0 ignored, reserved types abort, icount hangs: https://gitlab.com/qemu-project/qemu/-/work_items/4665); revisit when QEMU's Sdtrig matures.
-# Sscofpmf{Sm,S,U}_interrupt, _overflow: qemu's mie write mask drops LCOFIE, so LCOFI is never taken: https://gitlab.com/qemu-project/qemu/-/work_items/3969
-#   Sscofpmf{Sm,S,U}_inhibit_lo and SscofpmfSm_access also fail (not root-caused); the other Sscofpmf groups pass.
+# Sscofpmf{Sm,S,U}_interrupt: mie/sie drop LCOFIE and sip neither writes nor reads LCOFIP, so LCOFI is never taken
+#   (https://gitlab.com/qemu-project/qemu/-/work_items/3969); on RV32 overflows are also lost
+#   (https://gitlab.com/qemu-project/qemu/-/work_items/4723).
+# Sscofpmf{Sm,S,U}_inhibit_lo, _overflow: RVMODEL_MHPMEVENT_VAL 0x02 counts instructions on QEMU, but sail.json maps no
+#   event selector, so Sail never counts. Beyond that, overflow needs 3969 fixed, and on RV32 also 4723 and
+#   https://gitlab.com/qemu-project/qemu/-/work_items/4724 (mhpmcounterNh reads wrong).
+# SscofpmfSm_access (RV32): mhpmevent[57:56] (WPRI) are writable (https://gitlab.com/qemu-project/qemu/-/work_items/4722).
+#   The other Sscofpmf groups pass.
 # H: mstatus.MPV and mstatus.GVA are read-only zero, so mret never enters VS/VU: a guest's
 #    ecall is reported as cause 9/8 instead of 10, and a hypervisor CSR access from VS raises
 #    an illegal instruction instead of a virtual instruction exception
