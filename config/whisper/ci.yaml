@@ -7,14 +7,12 @@
 #   mstateen0.CSRIND, AIA and IMSIC are writable, but Sail does not model those extensions
 #   (https://github.com/riscv/sail-riscv/issues/1134, https://github.com/riscv/sail-riscv/pull/1874).
 # SsstrictS_CSR: Sail traps on siselect/stopi accesses that Whisper permits with mstateen0 enabled.
-# SdtrigSm_Mcontrol6, SdtrigU_Mcontrol6: the -m and -mu whisper.json files list no trigger_types, so Whisper drops
-#   type-6 tdata1 writes (tdata1 reads back type 15) and takes none of the breakpoints Sail takes. The max configs pass.
 # Ssnpm_sv*_pmm00_sweep, Ssnpm_sv*_pmm10_sweep, SmnpmS_sv*_pmm00_sweep, SmnpmS_sv*_pmm10_sweep (rv64-max; the other
 #   pointer-masking groups and suites pass): on sv39 Whisper reports a store/AMO access fault where Sail reports a
 #   store/AMO page fault (https://github.com/tenstorrent/whisper/issues/200); the sv48 and sv57 sweeps end with a
 #   signature offset mismatch.
 ci_enabled: true
-exclude_extensions: "SsstrictSm_CSR,SsstrictS_CSR,Smstateen,SdtrigSm_Mcontrol6,SdtrigU_Mcontrol6,Ssnpm_sv39_pmm00_sweep,Ssnpm_sv39_pmm10_sweep,Ssnpm_sv48_pmm00_sweep,Ssnpm_sv48_pmm10_sweep,Ssnpm_sv57_pmm00_sweep,Ssnpm_sv57_pmm10_sweep,SmnpmS_sv39_pmm00_sweep,SmnpmS_sv39_pmm10_sweep,SmnpmS_sv48_pmm00_sweep,SmnpmS_sv48_pmm10_sweep,SmnpmS_sv57_pmm00_sweep,SmnpmS_sv57_pmm10_sweep"
+exclude_extensions: "SsstrictSm_CSR,SsstrictS_CSR,Smstateen,Ssnpm_sv39_pmm00_sweep,Ssnpm_sv39_pmm10_sweep,Ssnpm_sv48_pmm00_sweep,Ssnpm_sv48_pmm10_sweep,Ssnpm_sv57_pmm00_sweep,Ssnpm_sv57_pmm10_sweep,SmnpmS_sv39_pmm00_sweep,SmnpmS_sv39_pmm10_sweep,SmnpmS_sv48_pmm00_sweep,SmnpmS_sv48_pmm10_sweep,SmnpmS_sv57_pmm00_sweep,SmnpmS_sv57_pmm10_sweep"
 exclude_configs:
   - whisper-rv32-max-spike-ref
   - whisper-rv64-max-spike-ref
