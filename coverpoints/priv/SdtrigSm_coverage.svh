@@ -403,7 +403,7 @@ covergroup SdtrigSm_cache_operations_cg with function sample(ins_t ins);
         type_option.weight = 0;
         wildcard bins block      = {'x} iff (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tdata2", "tdata2") == ins.current.rs1_val);
         wildcard bins below      = {'x} iff (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tdata2", "tdata2") == ins.current.rs1_val - 1);
-        wildcard bins next_block = {'x} iff (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tdata2", "tdata2") == ins.current.rs1_val + `UDB_CACHE_BLOCK_SIZE);
+        wildcard bins next_block = {'x} iff (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tdata2", "tdata2") == ins.current.rs1_val + XLEN'(`UDB_CACHE_BLOCK_SIZE));
         bins zero                = {'0};
     }
     prefetch_tdata2: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tdata2", "tdata2") {
@@ -1113,8 +1113,8 @@ function automatic logic sdtrig_textra_mcontext_match(logic [XLEN-1:0] t3, logic
 endfunction
 // 1 when svalue equals scontext in every byte that sbytemask does not ignore
 function automatic logic sdtrig_textra_scontext_match(logic [XLEN-1:0] t3, logic [XLEN-1:0] scontext);
-    logic [31:0] svalue   = 32'((XLEN == 64) ? ((t3 >> 2) & 'hffffffff) : ((t3 >> 2) & 'hffff));
-    logic [31:0] ctx      = 32'(scontext & ((XLEN == 64) ? 'hffffffff : 'hffff));
+    logic [31:0] svalue   = 32'((XLEN == 64) ? (t3 >> 2) : ((t3 >> 2) & 'hffff));
+    logic [31:0] ctx      = 32'((XLEN == 64) ? scontext : (scontext & 'hffff));
     logic [3:0]  bytemask = sdtrig_textra_sbytemask(t3);
     for (int i = 0; i < 4; i++)
         if (bytemask[i]) begin
