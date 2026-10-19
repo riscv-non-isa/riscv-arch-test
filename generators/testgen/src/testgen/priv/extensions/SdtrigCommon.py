@@ -2361,6 +2361,16 @@ def etrigger_cross_priv_delegate_test(test_data: TestData, target_mode: str) -> 
                         # reference delegates in hardware and fires.
                         continue
                     for raised_code in raised_codes:
+                        if (
+                            medeleg_en
+                            and code == _ETRIGGER_ECALL_CODE[target_mode]
+                            and (target_mode == "S" or raised_code != code)
+                        ):
+                            # RVTEST_TSBI_GOTO_MMODE returns to M with an ecall from the target mode.
+                            # With that ecall delegated it is itself a matching exception: from U it
+                            # fires the trigger (so a mismatch case would fire), and from S the S-mode
+                            # T-SBI forwards it with another ecall that is delegated again (no way back).
+                            continue
                         outcome = "match" if raised_code == code else "mismatch"
                         is_pf = raised_code in _PAGE_FAULT_CODES
                         binname = (
@@ -2384,7 +2394,7 @@ def etrigger_cross_priv_delegate_test(test_data: TestData, target_mode: str) -> 
                             lines.extend(pf_mode_disarm(target_mode))
                         lines.extend(
                             [
-                                "RVTEST_GOTO_DELEGATED_MMODE" if code in (8, 9) else "RVTEST_TSBI_GOTO_MMODE",
+                                "RVTEST_TSBI_GOTO_MMODE",
                                 *_set_medeleg(temp_reg, code, False),
                             ]
                         )
