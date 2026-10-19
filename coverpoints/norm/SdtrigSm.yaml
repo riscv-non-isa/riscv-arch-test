@@ -10,7 +10,7 @@ normative_rule_definitions:
     coverpoint:
       [
         "SdtrigSm_access_cg/cp_csr_access_common",
-        "SdtrigSm_csr_cg/cp_tselect_trigs",
+        "SdtrigSm_trig_module_reg_cg/cp_tselect_trigs",
       ]
 
   # Accessing trigger CSRs that are not used by any of the implemented triggers must
@@ -179,7 +179,7 @@ normative_rule_definitions:
         "SdtrigSm_combined_accesses_cg/cp_vector_load_store",
         "SdtrigSm_combined_accesses_cg/cp_vector_accesses",
         "SdtrigSm_combined_accesses_cg/cp_vector_mask",
-        "SdtrigSm_combined_accesses_cg/cp_cm_pop_push",
+        "cm.push/cm.pop (Zcmp) not tested yet: no generator",
       ]
 
   # For the purposes of debug triggers, two classes of cache operations must match as
@@ -251,21 +251,33 @@ normative_rule_definitions:
   # including any high bits. An implementation may be able to optimize the storage
   # required, depending on the widest addresses it supports.
   - name: Sdtrig_tdata2_addr_sz1
-    coverpoint: ["SdtrigSm_address_matches_cg/cp_tdata2_translate"]
+    coverpoint:
+      [
+        "Not tested yet: no tdata2 test across translation modes (cp_tdata2_translate)",
+      ]
 
   # If physical addresses are less than XLEN bits wide, they are zero-extended.
   - name: Sdtrig_pmem
-    coverpoint: ["SdtrigSm_address_matches_cg/cp_tdata2_translate"]
+    coverpoint:
+      [
+        "Not tested yet: no tdata2 test across translation modes (cp_tdata2_translate)",
+      ]
 
   # If virtual addresses are less than XLEN bits wide, they are sign-extended.
   - name: Sdtrig_vmem
-    coverpoint: ["SdtrigSm_address_matches_cg/cp_tdata2_translate"]
+    coverpoint:
+      [
+        "Not tested yet: no tdata2 test across translation modes (cp_tdata2_translate)",
+      ]
 
   # tdata2 must be implemented with enough bits of storage to represent the full
   # range of supported physical and virtual address values when read by software and
   # used by hardware.
   - name: Sdtrig_csr_tdata2_sz2
-    coverpoint: ["SdtrigSm_address_matches_cg/cp_tdata2_translate"]
+    coverpoint:
+      [
+        "Not tested yet: no tdata2 test across translation modes (cp_tdata2_translate)",
+      ]
 
   # If tdata2 can hold any invalid addresses, then writes of an invalid address that
   # can not be represented as-is should be converted to a different invalid address
@@ -293,7 +305,7 @@ normative_rule_definitions:
   # registers, nor the configuration of any trigger besides the one that is
   # currently selected.
   - name: Sdtrig_tdata_write
-    coverpoint: ["SdtrigSm_csr_cg/cp_tdata_write"]
+    coverpoint: ["SdtrigSm_trig_module_reg_cg/cp_tdata_write"]
 
   # To help with this situation, it is guaranteed that writing 0 to tdata1 disables
   # the trigger, and leaves it in a state where tdata2 and tdata3 can be written
@@ -310,7 +322,12 @@ normative_rule_definitions:
   # accessible in machine and Debug Mode to prevent untrusted user code from causing
   # entry into Debug Mode without the OS's permission.
   - name: Sdtrig_trigger_modes
-    coverpoint: ["SdtrigSm_csr_cg/cp_csr_access"]
+    coverpoint:
+      [
+        "SdtrigSm_trig_module_reg_cg/cp_csr_access_global",
+        "SdtrigSm_trig_module_reg_cg/cp_csr_access_local",
+        "Accesses from S/U are in the SdtrigS/SdtrigU tests, which have no covergroup",
+      ]
 
   # On systems where XLEN values can differ between modes, this is handled as
   # follows.
@@ -335,11 +352,11 @@ normative_rule_definitions:
   # This register determines which trigger is accessible through the other Trigger
   # Module registers.
   - name: Sdtrig_tselect
-    coverpoint: ["SdtrigSm_csr_cg/cp_tselect_trigs"]
+    coverpoint: ["SdtrigSm_trig_module_reg_cg/cp_tselect_trigs"]
 
   # The set of accessible triggers must start at 0, and be contiguous.
   - name: Sdtrig_tselect_access
-    coverpoint: ["SdtrigSm_csr_cg/cp_tselect_trigs"]
+    coverpoint: ["SdtrigSm_trig_module_reg_cg/cp_tselect_trigs"]
 
   # This register is WARL.
   - name: Sdtrig_tselect_warl
@@ -378,7 +395,7 @@ normative_rule_definitions:
 
   # If type is 0, then this bit is hard-wired to 0.
   - name: Sdtrig_tdata1_dmode_type_0
-    coverpoint: ["SdtrigSm_csr_cg/cp_tdata1_mode_hardwired"]
+    coverpoint: ["SdtrigSm_trig_module_reg_cg/cp_tdata1_mode_hardwired"]
 
   # Both Debug and M-mode can write the tdata registers at the selected tselect.
   - name: Sdtrig_tdata1_dmode_0
@@ -395,7 +412,7 @@ normative_rule_definitions:
 
   # If type is 0, then this field is hard-wired to 0.
   - name: Sdtrig_tdata1_data
-    coverpoint: ["SdtrigSm_csr_cg/cp_tdata1_mode_hardwired"]
+    coverpoint: ["SdtrigSm_trig_module_reg_cg/cp_tdata1_mode_hardwired"]
 
   # This register provides access to the trigger selected by tselect.
   - name: Sdtrig_tdata2
@@ -462,7 +479,7 @@ normative_rule_definitions:
   # N. If the bit is set, then that type is supported by the currently selected
   # trigger.
   - name: Sdtrig_tinfo_support
-    coverpoint: ["SdtrigSm_csr_cg/cp_tinfo_read_only"]
+    coverpoint: ["SdtrigSm_trig_module_reg_cg/cp_tinfo_read_only"]
 
   # If the currently selected trigger doesn't exist, this field contains 1.
   - name: Sdtrig_tinfo_no_trigger
@@ -475,23 +492,23 @@ normative_rule_definitions:
 
   # When any trap into M-mode is taken, mpte is set to the value of mte.
   - name: Sdtrig_tcontrol_mpte
-    coverpoint: ["SdtrigSm_csr_cg/cp_tcontrol_mtrap"]
+    coverpoint: ["SdtrigSm_tcontrol_cg/cp_tcontrol_mtrap"]
 
   # Triggers with action=0 do not match/fire while the hart is in M-mode.
   - name: Sdtrig_tcontrol_mte_disabled
-    coverpoint: ["SdtrigSm_csr_cg/cp_tcontrol_enable"]
+    coverpoint: ["SdtrigSm_tcontrol_cg/cp_tcontrol_enable"]
 
   # Triggers do match/fire while the hart is in M-mode.
   - name: Sdtrig_tcontrol_mte_enabled
-    coverpoint: ["SdtrigSm_csr_cg/cp_tcontrol_enable"]
+    coverpoint: ["SdtrigSm_tcontrol_cg/cp_tcontrol_enable"]
 
   # When any trap into M-mode is taken, mte is set to 0.
   - name: Sdtrig_tcontrol_mte
-    coverpoint: ["SdtrigSm_csr_cg/cp_tcontrol_mtrap"]
+    coverpoint: ["SdtrigSm_tcontrol_cg/cp_tcontrol_mtrap"]
 
   # When mret is executed, mte is set to the value of mpte.
   - name: Sdtrig_tcontrol_mte_mret
-    coverpoint: ["SdtrigSm_csr_cg/cp_tcontrol_mret"]
+    coverpoint: ["SdtrigSm_tcontrol_cg/cp_tcontrol_mret"]
 
   # This optional register may be implemented only if the H extension is
   # implemented. If it is implemented, mcontext must also be implemented.
@@ -515,7 +532,11 @@ normative_rule_definitions:
   # This optional register is only accessible in S/HS-mode, VS-mode, M-mode and
   # Debug Mode.
   - name: Sdtrig_scontext_access
-    coverpoint: ["SdtrigSm_csr_cg/cp_csr_access"]
+    coverpoint:
+      [
+        "SdtrigSm_trig_module_reg_cg/cp_csr_access_global",
+        "Accesses from S are in the SdtrigS tests, which have no covergroup",
+      ]
 
   # Accessibility of this CSR is controlled by mstateenzero[57] and hstateenzero[57]
   # in the Smstateen extension.
@@ -534,7 +555,11 @@ normative_rule_definitions:
 
   # It is only accessible in M-mode and Debug mode.
   - name: Sdtrig_mcontext_access
-    coverpoint: ["SdtrigSm_csr_cg/cp_mcontext_smode"]
+    coverpoint:
+      [
+        "SdtrigSm_trig_module_reg_cg/cp_csr_access_global",
+        "Accesses from S/U are in the SdtrigS/SdtrigU tests, which have no covergroup",
+      ]
 
   # M-Mode or HS-Mode (using hcontext) software can write a context number to this
   # register, which can be used to set triggers that only fire in that specific
@@ -829,7 +854,7 @@ normative_rule_definitions:
       [
         "SdtrigSm_textra_cg/cp_textra_mcontext",
         "SdtrigSm_textra_cg/cp_textra_scontext",
-        "SdtrigSm_textra_cg/cp_textra_asid",
+        "SdtrigSm_textra_cg/cp_textra_double_context",
       ]
 
   # If implemented, the TM updates this field every time the trigger fires.
@@ -1131,38 +1156,67 @@ normative_rule_definitions:
   # trigger is enabled. This explicitly includes all RET instructions from various
   # modes.
   - name: Sdtrig_icount_match1
-    coverpoint: ["SdtrigSm_icount_cg/cp_icount_instr"]
+    coverpoint:
+      [
+        "SdtrigSm_icount_cg/cp_icount_instr",
+        "SdtrigSm_icount_cg/cp_icount_instr_fire",
+      ]
 
   # A trap is taken from a privilege mode where the trigger is enabled. This
   # explicitly includes traps taken due to interrupts.
   - name: Sdtrig_icount_match2
-    coverpoint: ["SdtrigSm_icount_cg/cp_icount_trap"]
+    coverpoint:
+      [
+        "SdtrigSm_icount_cg/cp_icount_trap",
+        "SdtrigSm_icount_cg/cp_icount_trap_fire",
+      ]
 
   # If more than one of the above events occur during a single instruction
   # execution, the trigger still only matches once for that instruction.
   - name: Sdtrig_icount_multiple_match
-    coverpoint: ["SdtrigSm_icount_cg/cp_icount_trap"]
+    coverpoint:
+      [
+        "SdtrigSm_icount_cg/cp_icount_trap",
+        "SdtrigSm_icount_cg/cp_icount_trap_fire",
+      ]
 
   # For use in single step, icount must match for traps where the instruction will
   # not be reexecuted after the handler, such as illegal instructions that are
   # emulated by privileged software and the instruction being emulated never
   # retires.
   - name: Sdtrig_icount_match_non_reexecuted
-    coverpoint: ["SdtrigSm_icount_cg/cp_icount_trap"]
+    coverpoint:
+      [
+        "SdtrigSm_icount_cg/cp_icount_trap",
+        "SdtrigSm_icount_cg/cp_icount_trap_fire",
+      ]
 
   # the rule is simply that all traps match.
   - name: Sdtrig_icount_all_traps_match
-    coverpoint: ["SdtrigSm_icount_cg/cp_icount_trap"]
+    coverpoint:
+      [
+        "SdtrigSm_icount_cg/cp_icount_trap",
+        "SdtrigSm_icount_cg/cp_icount_trap_fire",
+      ]
 
   # When count is greater than 1 and the trigger matches, then count is decremented
   # by 1.
   - name: Sdtrig_icount_match_gt1
-    coverpoint: ["SdtrigSm_icount_cg/cp_icount_instr"]
+    coverpoint:
+      [
+        "SdtrigSm_icount_cg/cp_icount_instr",
+        "SdtrigSm_icount_cg/cp_icount_instr_fire",
+      ]
 
   # When count is 1 and the trigger matches, then pending becomes set. In addition
   # count will become 0 unless it is hard-wired to 1.
   - name: Sdtrig_icount_match_eq1
-    coverpoint: ["SdtrigSm_icount_cg/cp_icount_hardwired"]
+    coverpoint:
+      [
+        "SdtrigSm_icount_cg/cp_icount_trap",
+        "SdtrigSm_icount_cg/cp_icount_trap_fire",
+        "SdtrigSm_icount_cg/cp_icount_hardwired",
+      ]
 
   # The only exception to the above is when the instruction the trigger matched on
   # is a write to the icount trigger. In that case pending might or might not become
@@ -1179,12 +1233,23 @@ normative_rule_definitions:
   # is cleared. In addition, if count is hard-wired to 1 then m, s, u, vs, and vu
   # are all cleared.
   - name: Sdtrig_icount_pending
-    coverpoint: ["SdtrigSm_icount_cg/cp_icount_instr"]
+    coverpoint:
+      [
+        "SdtrigSm_icount_cg/cp_icount_eq0",
+        "SdtrigSm_icount_cg/cp_icount_eq0_fire",
+        "SdtrigSm_icount_cg/cp_icount_trap_fire",
+        "SdtrigSm_icount_cg/cp_icount_hardwired",
+      ]
 
   # If the trigger fires with action=0 then zero is written to the tval CSR on the
   # breakpoint trap.
   - name: Sdtrig_icount_action0
-    coverpoint: ["SdtrigSm_icount_cg/cp_icount_instr"]
+    coverpoint:
+      [
+        "SdtrigSm_icount_cg/cp_icount_instr_fire",
+        "SdtrigSm_icount_cg/cp_icount_trap_fire",
+        "SdtrigSm_icount_cg/cp_icount_eq0_fire",
+      ]
 
   # The intent of pending is to cleanly handle the case where action is 0, m is 0, u
   # is 1, count is 1, and the U-mode instruction being executed causes a trap into
@@ -1200,6 +1265,7 @@ normative_rule_definitions:
       [
         "SdtrigSm_textra_cg/cp_textra_mcontext",
         "SdtrigSm_textra_cg/cp_textra_scontext",
+        "SdtrigSm_textra_cg/cp_textra_double_context",
       ]
 
   # When set, enable this trigger in VS-mode. This bit is hard-wired to 0 if the
@@ -1227,7 +1293,11 @@ normative_rule_definitions:
   # the trigger fires, which will happen just before executing the next instruction
   # in one of the enabled modes.
   - name: Sdtrig_icount_pending_set
-    coverpoint: ["SdtrigSm_icount_cg/cp_icount_instr"]
+    coverpoint:
+      [
+        "SdtrigSm_icount_cg/cp_icount_trap",
+        "SdtrigSm_icount_cg/cp_icount_trap_fire",
+      ]
 
   # When set, enable this trigger in S/HS-mode. This bit is hard-wired to 0 if the
   # hart does not support S-mode.
@@ -1285,9 +1355,7 @@ normative_rule_definitions:
   - name: Sdtrig_itrigger_textra
     coverpoint:
       [
-        "SdtrigSm_textra_cg/cp_textra_mcontext",
-        "SdtrigSm_textra_cg/cp_textra_scontext",
-        "SdtrigSm_textra_cg/cp_textra_asid",
+        "Not testable with action=0: itrigger/etrigger fire only into a mode with xIE=0 here, where reentrancy prevention suppresses them",
       ]
 
   # If this bit is implemented, the hardware sets it when this trigger matches. The
@@ -1367,9 +1435,7 @@ normative_rule_definitions:
   - name: Sdtrig_etrigger_textra
     coverpoint:
       [
-        "SdtrigSm_textra_cg/cp_textra_mcontext",
-        "SdtrigSm_textra_cg/cp_textra_scontext",
-        "SdtrigSm_textra_cg/cp_textra_asid",
+        "Not testable with action=0: itrigger/etrigger fire only into a mode with xIE=0 here, where reentrancy prevention suppresses them",
       ]
 
   # If this bit is implemented, the hardware sets it when this trigger matches. The
@@ -1499,7 +1565,7 @@ normative_rule_definitions:
       [
         "SdtrigSm_textra_cg/cp_textra_mcontext",
         "SdtrigSm_textra_cg/cp_textra_scontext",
-        "SdtrigSm_textra_cg/cp_textra_asid",
+        "SdtrigSm_textra_cg/cp_textra_double_context",
       ]
 
   # If DXLEN >= 64, then this register provides access to the low bits of each field
@@ -1522,13 +1588,13 @@ normative_rule_definitions:
   - name: Sdtrig_textra32_filter_modes
     coverpoint:
       [
-        "SdtrigSm_textra_cg/cp_textra_mcontext_smode",
-        "SdtrigSm_textra_cg/cp_textra_scontext_smode",
+        "SdtrigSm_textra_cg/cp_textra_mcontext",
+        "SdtrigSm_textra_cg/cp_textra_scontext",
       ]
 
   # Ignore mhvalue.
   - name: Sdtrig_textra32_mhselect_ignore
-    coverpoint: ["SdtrigSm_textra_cg/cp_textra_mcontext"]
+    coverpoint: ["SdtrigSm_textra_cg/cp_textra_double_context"]
 
   # This trigger will only match or fire if the low bits of mcontext/hcontext equal
   # mhvalue.
@@ -1556,22 +1622,23 @@ normative_rule_definitions:
 
   # If the H extension is not supported, the only legal values are 0 and 4.
   - name: Sdtrig_textra32_mhselect_no_h
-    coverpoint: ["SdtrigSm_textra_cg/cp_textra_mcontext"]
+    coverpoint:
+      ["WARL legalization of reserved/H-only mhselect values; not tested"]
 
   # When the least significant bit of this field is 1, it causes bits 7:0 in the
   # comparison to be ignored, when sselect=1. When the next most significant bit of
   # this field is 1, it causes bits 15:8 to be ignored in the comparison, when
   # sselect=1.
   - name: Sdtrig_textra32_sbytemask
-    coverpoint: ["SdtrigSm_textra_cg/cp_textra_mcontext"]
+    coverpoint: ["SdtrigSm_textra_cg/cp_textra_scontext"]
 
   # This field should be tied to 0 when S-mode is not supported.
   - name: Sdtrig_textra32_svalue_no_s
-    coverpoint: ["SdtrigSm_textra_cg/cp_smode_fields_hardwired"]
+    coverpoint: ["Recommendation (should), not a requirement; not tested"]
 
   # Ignore svalue.
   - name: Sdtrig_textra32_sselect_ignore
-    coverpoint: ["SdtrigSm_textra_cg/cp_textra_scontext"]
+    coverpoint: ["SdtrigSm_textra_cg/cp_textra_double_context"]
 
   # This trigger will only match or fire if the low bits of scontext equal svalue.
   - name: Sdtrig_textra32_sselect_scontext
@@ -1583,19 +1650,19 @@ normative_rule_definitions:
 
   # This trigger will only match or fire if:
   - name: Sdtrig_textra32_sselect_asid1
-    coverpoint: ["SdtrigSm_textra_cg/cp_textra_asid"]
+    coverpoint: ["ASID matching (sselect=2) not tested yet"]
   # the mode is VS-mode or VU-mode and ASID in vsatp equals the lower ASIDMAX (defined in
   # the Privileged Spec) bits of {textra32-svalue}.
   - name: Sdtrig_textra32_sselect_asid2
-    coverpoint: ["SdtrigSm_textra_cg/cp_textra_asid"]
+    coverpoint: ["ASID matching (sselect=2) not tested yet"]
   # in all other modes, ASID in satp equals the lower ASIDMAX (defined in the Privileged
   # Spec) bits of {textra32-svalue}.
   - name: Sdtrig_textra32_sselect_asid3
-    coverpoint: ["SdtrigSm_textra_cg/cp_textra_asid"]
+    coverpoint: ["ASID matching (sselect=2) not tested yet"]
 
   # This field should be tied to 0 when S-mode is not supported.
   - name: Sdtrig_textra32_sselect_no_s
-    coverpoint: ["SdtrigSm_textra_cg/cp_smode_fields_hardwired"]
+    coverpoint: ["Recommendation (should), not a requirement; not tested"]
 
   # This register provides access to the trigger selected by tselect.
   - name: Sdtrig_textra64
