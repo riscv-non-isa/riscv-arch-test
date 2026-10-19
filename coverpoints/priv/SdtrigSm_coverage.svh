@@ -14,6 +14,14 @@
     `define UDB_SDTRIG_MASKMAX6 63
 `endif
 
+// A context CSR that this hart does not implement (cp_csr_unimplemented)
+`ifndef UDB_MCONTEXT_AVAILABLE
+    `define SDTRIG_CSR_UNIMPLEMENTED
+`endif
+`ifndef UDB_HCONTEXT_AVAILABLE
+    `define SDTRIG_CSR_UNIMPLEMENTED
+`endif
+
 covergroup SdtrigSm_trig_module_reg_cg with function sample(ins_t ins);
     option.per_instance = 0;
     `include "general/RISCV_coverage_standard_coverpoints.svh"
@@ -65,6 +73,28 @@ covergroup SdtrigSm_trig_module_reg_cg with function sample(ins_t ins);
         wildcard bins csrrw1 = {CSRRW} iff (ins.current.rs1_val == '1);
     }
 
+    `ifdef SDTRIG_CSR_UNIMPLEMENTED
+        csr_unimplemented: coverpoint ins.current.insn[31:20] {
+            type_option.weight = 0;
+            `ifndef UDB_MCONTEXT_AVAILABLE
+                bins mcontext = {CSR_MCONTEXT};
+            `endif
+            `ifndef UDB_HCONTEXT_AVAILABLE
+                bins hcontext = {CSR_HCONTEXT};
+            `endif
+        }
+        csr_read_write: coverpoint ins.current.insn {
+            type_option.weight = 0;
+            wildcard bins csrr = {CSRR};
+            wildcard bins csrw = {CSRW};
+        }
+        // illegal-instruction trap into M taken on this record
+        illegal_insn_trap: coverpoint ins.current.csr[CSR_MCAUSE] iff (ins.current.csr_wb[CSR_MCAUSE]) {
+            type_option.weight = 0;
+            bins illegal = {2};
+        }
+    `endif
+
     // main coverpoints
     cp_tdata_write:           cross priv_mode_m, triggernum, type_disabled, csr_tdata, csr_access;          // NTRIG * 3 CSRs * 2 values
     cp_csr_access_global:     cross priv_mode_m, csr_global_reg, csr_access;                                // implemented global CSRs * 2 values
@@ -72,6 +102,9 @@ covergroup SdtrigSm_trig_module_reg_cg with function sample(ins_t ins);
     cp_tselect_trigs:         cross priv_mode_m, triggernum, csrr, csr_tselect;                             // NTRIG
     cp_tdata1_mode_hardwired: cross priv_mode_m, triggernum, csrw, csr_tdata1, tdata1_type_six, priv_bits;  // NTRIG
     cp_tinfo_read_only:       cross priv_mode_m, triggernum, csr_tinfo, csr_access;                         // NTRIG
+    `ifdef SDTRIG_CSR_UNIMPLEMENTED
+        cp_csr_unimplemented: cross priv_mode_m, csr_unimplemented, csr_read_write, illegal_insn_trap;     // unimplemented context CSRs * 2 accesses
+    `endif
 endgroup
 
 `ifdef UDB_TCONTROL_AVAILABLE

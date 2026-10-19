@@ -7,7 +7,7 @@ description: |
   Unless otherwise specified, use T-SBI calls to access trigger CSRs: the access runs in M-mode, so it does not trap
   All other assumptions are inherited from SdtrigSm
   Perform all tests defined in SdtrigSm except the trigger module register (cp_tdata_write, cp_csr_access_global/local, cp_tselect_trigs,
-  cp_tdata1_mode_hardwired, cp_tinfo_read_only) and cross-privilege etrigger tests, which run only in SdtrigSm
+  cp_tdata1_mode_hardwired, cp_tinfo_read_only, cp_csr_unimplemented) and cross-privilege etrigger tests, which run only in SdtrigSm
   The rows below are the U-mode coverpoints; the other tests are checked by their signatures
   Note: inaccessibility of the M-mode trigger CSRs from U-mode is covered by cp_csr_insufficient_priv in the U suite
 coverpoints:

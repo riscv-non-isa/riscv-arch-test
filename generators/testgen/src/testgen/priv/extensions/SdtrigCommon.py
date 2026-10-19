@@ -1793,6 +1793,30 @@ def _generate_csr_tests(test_data: TestData, mode: str) -> list[TestChunk]:
         )
 
     ######################################
+    coverpoint = "cp_csr_unimplemented"
+    ######################################
+    # Same file as cp_csr_access_global, so a hart with every context CSR gets no empty test.
+    lines.append(
+        comment_banner(
+            coverpoint,
+            "Read and write each trigger CSR that the hart does not implement from M-mode: illegal instruction.\n"
+            "Only mcontext and hcontext have a presence parameter today; tcontrol, tdata3 and scontext wait for\n"
+            "TCONTROL_IMPLEMENTED, TDATA3_IMPLEMENTED and SCONTEXT_IMPLEMENTED (riscv-unified-db#2069)",
+        )
+    )
+    for csr in ("mcontext", "hcontext"):
+        lines.extend(
+            [
+                f"\n#ifndef UDB_{csr.upper()}_AVAILABLE",
+                _add_tc(test_data, f"{csr}_read", coverpoint, covergroup),
+                f"csrr x{data_reg}, {csr} # not implemented: illegal instruction",
+                _add_tc(test_data, f"{csr}_write", coverpoint, covergroup),
+                f"csrw {csr}, x0 # not implemented: illegal instruction",
+                f"#endif // UDB_{csr.upper()}_AVAILABLE",
+            ]
+        )
+
+    ######################################
     coverpoint = "cp_csr_access_local"
     ######################################
     lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_")).code

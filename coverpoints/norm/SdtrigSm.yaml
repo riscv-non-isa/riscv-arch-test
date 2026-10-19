@@ -16,7 +16,11 @@ normative_rule_definitions:
   # Accessing trigger CSRs that are not used by any of the implemented triggers must
   # result in an illegal instruction exception.
   - name: Sdtrig_unimp_csr_illegal
-    coverpoint: ["Implementation-specific behavior; not tested in this suite"]
+    coverpoint:
+      [
+        "SdtrigSm_trig_module_reg_cg/cp_csr_unimplemented",
+        "Only mcontext and hcontext have presence parameters so far; tcontrol, tdata3 and scontext need TCONTROL_IMPLEMENTED, TDATA3_IMPLEMENTED and SCONTEXT_IMPLEMENTED (riscv-unified-db#2069)",
+      ]
 
   # M-Mode and Debug Mode accesses to trigger CSRs that are used by any of the
   # implemented triggers must succeed, regardless of the current type of the
@@ -324,7 +328,11 @@ normative_rule_definitions:
   # Attempts to access an unimplemented Trigger Module Register raise an illegal
   # instruction exception.
   - name: Sdtrig_unimplemented_register
-    coverpoint: ["Unpredictable behavior on this access; not tested"]
+    coverpoint:
+      [
+        "SdtrigSm_trig_module_reg_cg/cp_csr_unimplemented",
+        "Only mcontext and hcontext have presence parameters so far; tcontrol, tdata3 and scontext need TCONTROL_IMPLEMENTED, TDATA3_IMPLEMENTED and SCONTEXT_IMPLEMENTED (riscv-unified-db#2069)",
+      ]
 
   # The Trigger Module registers, except mscontext, scontext, and hcontext, are only
   # accessible in machine and Debug Mode to prevent untrusted user code from causing
@@ -527,7 +535,11 @@ normative_rule_definitions:
   # This optional register may be implemented only if the H extension is
   # implemented. If it is implemented, mcontext must also be implemented.
   - name: Sdtrig_hcontext_implemented
-    coverpoint: ["Hypervisor extension not implemented, so not testable"]
+    coverpoint:
+      [
+        "SdtrigSm_trig_module_reg_cg/cp_csr_unimplemented",
+        "Without H, hcontext is not implemented and raises an illegal instruction; behavior with H is deferred to an SdtrigH suite",
+      ]
 
   # This register is only accessible in HS-Mode, M-mode and Debug Mode.
   - name: Sdtrig_hcontext_access
