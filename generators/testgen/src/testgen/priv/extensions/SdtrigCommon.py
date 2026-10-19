@@ -26,6 +26,20 @@ NOP = 0x00000013
 C_NOP = 0x0001
 ADDI_HINT = 0x00008013  # TODO Uses because U mode calls trigger on nops emitted by tsbi callss
 TDATA2_NOFIRE = 0x2
+TDATA_CSRS = ("tdata1", "tdata2", "tdata3")
+# tdata1.type values
+TRIG_TYPE_ICOUNT = 3
+TRIG_TYPE_ITRIGGER = 4
+TRIG_TYPE_ETRIGGER = 5
+MCONTROL6_TYPE = 6
+TDATA1_TYPE_DISABLED = 15
+# mcontrol6 mode bits; with all five set, bits 26:0 match priv_bits in SdtrigSm_trig_module_reg_cg
+MCONTROL6_VS = 1 << 24
+MCONTROL6_VU = 1 << 23
+MCONTROL6_M = 1 << 6
+MCONTROL6_S = 1 << 4
+MCONTROL6_U = 1 << 3
+MCONTROL6_ALL_PRIV = MCONTROL6_VS | MCONTROL6_VU | MCONTROL6_M | MCONTROL6_S | MCONTROL6_U
 MODE_PRIVBIT = {"Sm": 0b10000, "S": 0b01000, "U": 0b00100, "Vs": 0b00010, "Vu": 0b00001}
 MODE_UDB_LETTER = {"Sm": "M", "S": "S", "U": "U", "Vs": "VS", "Vu": "VU"}
 # tdata2 values for the CBO tests, which operate on the block at scratch. scratch is .p2align 8 (rvtest_setup.h),
@@ -1675,10 +1689,50 @@ def _generate_address_matches_tests(test_data: TestData, mode: str) -> list[Test
     return chunks
 
 
+def _li_xlen(reg: int, rv64: int, rv32: int, comment: str) -> list[str]:
+    """LI an XLEN-dependent constant."""
+    return [
+        "#if __riscv_xlen == 64",
+        f"LI(x{reg}, 0x{rv64:x}) # {comment}",
+        "#else",
+        f"LI(x{reg}, 0x{rv32:x}) # {comment}",
+        "#endif",
+    ]
+
+
+def _select_trigger(reg: int, trig_num: int, mode: str) -> list[str]:
+    """Write tselect = trig_num."""
+    return [
+        f"LI(x{reg}, {trig_num})",
+        _csr_access(f"csrw tselect, x{reg} # tselect = {trig_num}", mode),
+    ]
+
+
+def _clear_tdata(mode: str) -> list[str]:
+    """Disable the selected trigger (tdata1 = 0 first, so any tdata2/3 value is then legal) and zero tdata2/3."""
+    return [
+        _csr_access("csrw tdata1, x0 # disable trigger", mode),
+        _csr_access("csrw tdata2, x0", mode),
+        _csr_access("csrw tdata3, x0", mode),
+    ]
+
+
 def _generate_csr_tests(test_data: TestData, mode: str) -> list[TestChunk]:
-    """Generate trigger-module register semantics tests."""
-    covergroup = f"Sdtrig{mode}_csr_cg"
+    """Generate trigger-module register (tselect, tdata1-3, tinfo and the global trigger CSRs) tests.
+
+    The signature records only what the Debug spec pins down: an implemented tselect index reads back as
+    written, tinfo has the bits of the types this trigger is configured to support and info != 1, a write
+    to one tdata register leaves the other two unchanged and a write to tinfo has no effect (before ^ after
+    = 0), a disabled trigger takes tdata2 = tdata3 = 0, and an mcontrol6 tdata1 keeps type and m while the
+    mode bits of absent modes stay hard-wired to 0. Values that are WARL choices are not recorded:
+    Sail 0.16, Spike, Whisper and Imperas differ on tselect after an all-ones write, on the ignored bits
+    of an all-ones tdata1 (type 15), and on tinfo.version and type 2.
+    """
+    covergroup = f"Sdtrig{mode}_trig_module_reg_cg"
     chunks: list[TestChunk] = []
+    data_reg, temp_reg, ones_reg, old1_reg, old2_reg = test_data.int_regs.get_registers(
+        5, exclude_regs=[10, 11]
+    )  # exclude a0, a1 because they are used in SBI
 
     ######################################
     coverpoint = "cp_tselect_trigs"
@@ -1687,15 +1741,121 @@ def _generate_csr_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     lines.append(
         comment_banner(
             coverpoint,
-            "tselect selects contiguous triggers starting at 0; read tinfo",
+            "Select each trigger 0..UDB_NUM_TRIGGERS-1: tselect reads back the index (triggers start at 0 and\n"
+            "are contiguous), tinfo.info != 1 (the trigger exists) and has the bits of the configured types",
         )
     )
     for trig_num in range(UDB_NUM_TRIGGERS):
+        type_guards = (
+            (TRIG_TYPE_ICOUNT, f"UDB_ICOUNT_TRIG{trig_num}_AVAILABLE"),
+            (TRIG_TYPE_ITRIGGER, f"UDB_ITRIGGER_TRIG{trig_num}_AVAILABLE"),
+            (TRIG_TYPE_ETRIGGER, f"UDB_SDTRIG_ETRIGGER_SUPPORTED{trig_num}"),
+            (MCONTROL6_TYPE, f"UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}"),
+        )
         lines.extend(
             [
-                _add_tc(test_data, f"trig_num_{trig_num}_tinfo", coverpoint, covergroup),
+                _add_tc(test_data, f"trig_num_{trig_num}", coverpoint, covergroup),
+                *_select_trigger(temp_reg, trig_num, mode),
+                _csr_access(f"csrr x{data_reg}, tselect # an implemented index reads back as written", mode),
+                write_sigupd(data_reg, test_data),
+                _csr_access(f"csrr x{old1_reg}, tinfo", mode),
+                f"LI(x{data_reg}, 0xffff)",
+                f"and x{data_reg}, x{old1_reg}, x{data_reg} # tinfo.info",
+                f"addi x{data_reg}, x{data_reg}, -1",
+                f"seqz x{data_reg}, x{data_reg} # 1 if info == 1 (no trigger here)",
+                write_sigupd(data_reg, test_data),
+                f"LI(x{ones_reg}, 0) # tinfo bits of the types configured for this trigger",
             ]
         )
+        for trig_type, guard in type_guards:
+            lines.extend([f"#ifdef {guard}", f"ori x{ones_reg}, x{ones_reg}, 0x{1 << trig_type:x}", "#endif"])
+        lines.extend(
+            [
+                f"and x{data_reg}, x{old1_reg}, x{ones_reg} # other types and tinfo.version are not checked",
+                write_sigupd(data_reg, test_data),
+            ]
+        )
+
+    ######################################
+    coverpoint = "cp_csr_access_global"
+    ######################################
+    lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_")).code
+    lines.append(
+        comment_banner(
+            coverpoint,
+            "Write all 0s and all 1s to tselect and to each implemented global trigger CSR from M-mode.\n"
+            "All 1s is past the trigger count of any hart. tselect is WARL and the Debug spec leaves what it\n"
+            "then holds open (Sail 0.16 reads 3, Spike/Whisper/Imperas 0), so only the absence of a trap and\n"
+            "the restore to index 0 are checked",
+        )
+    )
+    lines.extend(
+        [
+            f"LI(x{ones_reg}, -1) # all 1s",
+            _add_tc(test_data, "tselect", coverpoint, covergroup),
+            _csr_access("csrw tselect, x0 # write all 0s", mode),
+            _csr_access(f"csrr x{data_reg}, tselect", mode),
+            write_sigupd(data_reg, test_data),
+            _csr_access(f"csrw tselect, x{ones_reg} # write all 1s: past the trigger count", mode),
+            _csr_access("csrw tselect, x0 # back to a valid index", mode),
+            _csr_access(f"csrr x{data_reg}, tselect", mode),
+            write_sigupd(data_reg, test_data),
+        ]
+    )
+    for csr in ("tcontrol", "mcontext", "scontext", "hcontext"):
+        lines.extend(
+            [
+                f"\n#ifdef UDB_{csr.upper()}_AVAILABLE",
+                _add_tc(test_data, csr, coverpoint, covergroup),
+                _csr_access(f"csrr x{old1_reg}, {csr} # save", mode),
+                _csr_access(f"csrw {csr}, x0 # write all 0s", mode),
+                _csr_access(f"csrw {csr}, x{ones_reg} # write all 1s (WARL: not checked)", mode),
+                _csr_access(f"csrw {csr}, x{old1_reg} # restore", mode),
+                f"#endif // UDB_{csr.upper()}_AVAILABLE",
+            ]
+        )
+
+    ######################################
+    coverpoint = "cp_csr_access_local"
+    ######################################
+    lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_")).code
+    lines.append(
+        comment_banner(
+            coverpoint,
+            "For each trigger, write all 0s and all 1s to tdata1, tdata2, tdata3 and tinfo from M-mode, with the\n"
+            "trigger disabled first. A disabled trigger takes tdata2 = tdata3 = 0; tinfo ignores the writes;\n"
+            "the all-1s results are WARL and not checked",
+        )
+    )
+    lines.append(f"LI(x{ones_reg}, -1) # all 1s")
+    for trig_num in range(UDB_NUM_TRIGGERS):
+        lines.extend(_select_trigger(temp_reg, trig_num, mode))
+        for csr in (*TDATA_CSRS, "tinfo"):
+            lines.extend(
+                [
+                    _add_tc(test_data, f"trig_num_{trig_num}_{csr}", coverpoint, covergroup),
+                    *_clear_tdata(mode),
+                    _csr_access(f"csrr x{old1_reg}, tinfo", mode),
+                    _csr_access(f"csrw {csr}, x0 # write all 0s", mode),
+                ]
+            )
+            if csr in ("tdata2", "tdata3"):
+                lines.extend(
+                    [
+                        _csr_access(f"csrr x{data_reg}, {csr} # 0 is legal for every type", mode),
+                        write_sigupd(data_reg, test_data),
+                    ]
+                )
+            lines.append(_csr_access(f"csrw {csr}, x{ones_reg} # write all 1s", mode))
+            if csr == "tinfo":
+                lines.extend(
+                    [
+                        _csr_access(f"csrr x{data_reg}, tinfo", mode),
+                        f"xor x{data_reg}, x{data_reg}, x{old1_reg} # 0 if tinfo unchanged",
+                        write_sigupd(data_reg, test_data),
+                    ]
+                )
+        lines.extend(_clear_tdata(mode))
 
     ######################################
     coverpoint = "cp_tdata_write"
@@ -1704,36 +1864,34 @@ def _generate_csr_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     lines.append(
         comment_banner(
             coverpoint,
-            "writing one tdata register does not disturb the others",
+            "With the trigger disabled (tdata1.type = 15), write all 0s and then all 1s to one tdata\n"
+            "register; the other two must not change (each before ^ after is recorded and must be 0)",
         )
     )
+    lines.append(f"LI(x{ones_reg}, -1) # all 1s")
     for trig_num in range(UDB_NUM_TRIGGERS):
-        for csr in ("tdata1", "tdata2", "tdata3"):
-            binname = f"trig_num_{trig_num}_write_{csr}"
+        lines.extend(_select_trigger(temp_reg, trig_num, mode))
+        for csr in TDATA_CSRS:
+            others = [c for c in TDATA_CSRS if c != csr]
             lines.extend(
                 [
-                    _add_tc(test_data, binname, coverpoint, covergroup),
+                    _add_tc(test_data, f"trig_num_{trig_num}_{csr}", coverpoint, covergroup),
+                    *_clear_tdata(mode),
+                    *_li_xlen(temp_reg, TDATA1_TYPE_DISABLED << 60, TDATA1_TYPE_DISABLED << 28, "tdata1.type = 15"),
+                    _csr_access(f"csrw tdata1, x{temp_reg} # disabled: tdata2/3 take any supported value", mode),
+                    _csr_access(f"csrr x{old1_reg}, {others[0]} # before", mode),
+                    _csr_access(f"csrr x{old2_reg}, {others[1]} # before", mode),
+                    _csr_access(f"csrw {csr}, x0 # write all 0s", mode),
+                    _csr_access(f"csrw {csr}, x{ones_reg} # write all 1s", mode),
+                    _csr_access(f"csrr x{data_reg}, {others[0]} # after", mode),
+                    f"xor x{data_reg}, x{data_reg}, x{old1_reg} # 0 if {others[0]} unchanged",
+                    write_sigupd(data_reg, test_data),
+                    _csr_access(f"csrr x{data_reg}, {others[1]} # after", mode),
+                    f"xor x{data_reg}, x{data_reg}, x{old2_reg} # 0 if {others[1]} unchanged",
+                    write_sigupd(data_reg, test_data),
                 ]
             )
-
-    ######################################
-    coverpoint = "cp_csr_smode_access"
-    ######################################
-    lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_")).code
-    lines.append(
-        comment_banner(
-            coverpoint,
-            "S-mode access to M-only trigger CSRs raises illegal instruction",
-        )
-    )
-    for trig_num in range(UDB_NUM_TRIGGERS):
-        for csr in ("tdata1", "tdata2", "tdata3", "tinfo", "tcontrol", "mcontext", "hcontext"):
-            binname = f"trig_num_{trig_num}_smode_{csr}"
-            lines.extend(
-                [
-                    _add_tc(test_data, binname, coverpoint, covergroup),
-                ]
-            )
+        lines.extend(_clear_tdata(mode))
 
     ######################################
     coverpoint = "cp_tdata1_mode_hardwired"
@@ -1742,17 +1900,52 @@ def _generate_csr_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     lines.append(
         comment_banner(
             coverpoint,
-            "type-0 dmode/data fields hard-wired to 0",
+            "Write an mcontrol6 tdata1 with m/s/u/vs/vu all set (no execute/store/load, so it never fires) and\n"
+            "read it back. Recorded: type and m, plus s, u and vs/vu on harts without S, U or H, where the\n"
+            "Debug spec hard-wires them to 0. Implemented modes' bits are WARL and not recorded",
         )
     )
+    lines.extend(
+        [
+            *_li_xlen(
+                ones_reg,
+                (0xF << 60) | MCONTROL6_M,
+                (0xF << 28) | MCONTROL6_M,
+                "type and m",
+            ),
+            "#ifndef S_SUPPORTED",
+            f"ori x{ones_reg}, x{ones_reg}, 0x{MCONTROL6_S:x} # s hard-wired to 0",
+            "#endif",
+            "#ifndef U_SUPPORTED",
+            f"ori x{ones_reg}, x{ones_reg}, 0x{MCONTROL6_U:x} # u hard-wired to 0",
+            "#endif",
+            "#ifndef H_SUPPORTED",
+            f"LI(x{temp_reg}, 0x{MCONTROL6_VS | MCONTROL6_VU:x})",
+            f"or x{ones_reg}, x{ones_reg}, x{temp_reg} # vs, vu hard-wired to 0",
+            "#endif",
+        ]
+    )
     for trig_num in range(UDB_NUM_TRIGGERS):
-        for priv in range(32):  # priv_all: all 32 m/s/u/vs/vu enable combinations
-            binname = f"trig_num_{trig_num}_priv_{priv:05b}"
-            lines.extend(
-                [
-                    _add_tc(test_data, binname, coverpoint, covergroup),
-                ]
-            )
+        lines.extend(
+            [
+                f"\n#ifdef UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}",
+                _add_tc(test_data, f"trig_num_{trig_num}", coverpoint, covergroup),
+                *_select_trigger(temp_reg, trig_num, mode),
+                *_clear_tdata(mode),
+                *_li_xlen(
+                    data_reg,
+                    (MCONTROL6_TYPE << 60) | MCONTROL6_ALL_PRIV,
+                    (MCONTROL6_TYPE << 28) | MCONTROL6_ALL_PRIV,
+                    "mcontrol6, m/s/u/vs/vu = 1",
+                ),
+                _csr_access(f"csrw tdata1, x{data_reg} # all mode bits set", mode),
+                _csr_access(f"csrr x{data_reg}, tdata1", mode),
+                f"and x{data_reg}, x{data_reg}, x{ones_reg} # recorded fields",
+                write_sigupd(data_reg, test_data),
+                _csr_access("csrw tdata1, x0 # disable trigger", mode),
+                f"#endif // UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}",
+            ]
+        )
 
     ######################################
     coverpoint = "cp_tinfo_read_only"
@@ -1761,16 +1954,34 @@ def _generate_csr_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     lines.append(
         comment_banner(
             coverpoint,
-            "tinfo is read-only",
+            "Write all 0s and all 1s to tinfo; it is read-only, so before ^ after is recorded and must be 0",
         )
     )
+    lines.append(f"LI(x{ones_reg}, -1) # all 1s")
     for trig_num in range(UDB_NUM_TRIGGERS):
         lines.extend(
             [
-                _add_tc(test_data, f"trig_num_{trig_num}_tinfo", coverpoint, covergroup),
+                _add_tc(test_data, f"trig_num_{trig_num}", coverpoint, covergroup),
+                *_select_trigger(temp_reg, trig_num, mode),
+                _csr_access(f"csrr x{old1_reg}, tinfo # before", mode),
+                _csr_access("csrw tinfo, x0 # write all 0s", mode),
+                _csr_access(f"csrw tinfo, x{ones_reg} # write all 1s", mode),
+                _csr_access(f"csrr x{data_reg}, tinfo # after", mode),
+                f"xor x{data_reg}, x{data_reg}, x{old1_reg} # 0 if tinfo unchanged",
+                write_sigupd(data_reg, test_data),
             ]
         )
+    lines.append(_csr_access("csrw tselect, x0 # restore tselect", mode))
 
+    test_data.int_regs.return_registers([data_reg, temp_reg, ones_reg, old1_reg, old2_reg])
+    chunks.append(test_data.end_test_chunk())
+    return chunks
+
+
+def _generate_tcontrol_tests(test_data: TestData, mode: str) -> list[TestChunk]:
+    """Generate tcontrol tests (labels only; needs UDB_TCONTROL_AVAILABLE)."""
+    covergroup = f"Sdtrig{mode}_tcontrol_cg"
+    chunks: list[TestChunk] = []
     ######################################
     coverpoint = "cp_tcontrol_enable"
     ######################################
@@ -1829,38 +2040,6 @@ def _generate_csr_tests(test_data: TestData, mode: str) -> list[TestChunk]:
                         _add_tc(test_data, binname, coverpoint, covergroup),
                     ]
                 )
-
-    ######################################
-    coverpoint = "cp_mscontext_alias"
-    ######################################
-    lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_")).code
-    lines.append(
-        comment_banner(
-            coverpoint,
-            "mscontext aliases scontext",
-        )
-    )
-    lines.extend(
-        [
-            _add_tc(test_data, "alias", coverpoint, covergroup),
-        ]
-    )
-
-    ######################################
-    coverpoint = "cp_mcontext_smode"
-    ######################################
-    lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_")).code
-    lines.append(
-        comment_banner(
-            coverpoint,
-            "S-mode access to mcontext raises illegal instruction",
-        )
-    )
-    lines.extend(
-        [
-            _add_tc(test_data, "mcontext", coverpoint, covergroup),
-        ]
-    )
 
     chunks.append(test_data.end_test_chunk())
     return chunks
@@ -3025,6 +3204,16 @@ def register_sdtrig_suite(mode: str, required_extensions: list[str | list[str]],
         """Access tests."""
         return _generate_access_tests(test_data, mode)
 
+    if mode == "Sm":
+        # The trigger module registers are M-mode only, and SdtrigSm_trig_module_reg_cg samples M-mode accesses.
+
+        @add_priv_test_generator(
+            suite, required_extensions=required_extensions, march_extensions=[], extra_defines=extra_defines
+        )
+        def make_sdtrig_csr(test_data: TestData) -> list[TestChunk]:
+            """Trigger-module register tests."""
+            return _generate_csr_tests(test_data, mode)
+
     @add_priv_test_generator(
         suite, required_extensions=required_extensions, march_extensions=[], extra_defines=extra_defines
     )
@@ -3114,6 +3303,6 @@ def register_sdtrig_suite(mode: str, required_extensions: list[str | list[str]],
     register_sdtrig_textra(mode, required_extensions, extra_defines)
 
     # Disabled sections and their extra required extension:
-    #   _generate_native_triggers_tests: body not implemented yet
+    #   _generate_native_triggers_tests, _generate_address_matches_tests: bodies not implemented yet
+    #   _generate_tcontrol_tests: body not implemented yet; needs UDB_TCONTROL_AVAILABLE
     #   _generate_zcmp_tests: Zcmp
-    #   _generate_address_matches_tests, _generate_csr_tests
