@@ -177,7 +177,8 @@ coverpoints:
     bins: 2 mask states * 4 SEW * 2 ops
     rules:
       - Sdtrig_mult_mem_access
-  - name: cp_cm_pop_push
+  - name: cp_cm_pop_push (not generated)
+    status: "Not generated: _generate_zcmp_tests is a stub and is not registered"
     goal: Accesses match as if happened individually
     description: |-
       if ZCMP_SUPPORTED
@@ -200,7 +201,9 @@ coverpoints:
       Repeat for each of UDB_SDTRIG_NUM_TRIGGERS if UDB_SDTRIG_MCONTROL6_SUPPORTED[i]:
       tselect = i
     rules:
-      - "For all: Sdtrig_caches_stores"
+      - Sdtrig_caches_stores_1
+      - Sdtrig_caches_stores_2
+      - Sdtrig_caches_stores_3
   - name: cp_cache_zicbom
     goal: cbo.clean, cbo.flush, and cbo.inval match as if they are stores
     description: |-
@@ -241,7 +244,8 @@ coverpoints:
     rules:
       - Sdtrig_prefetch
   - heading: Address Matches
-  - name: cp_tdata2_translate
+  - name: cp_tdata2_translate (not generated)
+    status: "Not generated: _generate_address_matches_tests is a stub and is not registered"
     goal: tdata2 can hold valid addresses in all supported translation modes
     description: |-
       For each of UDB_SDTRIG_NUM_TRIGGERS in tselect
@@ -287,24 +291,32 @@ coverpoints:
     notes: |-
       coverpoint drafted: 9/10
       coverpoint reviewed: 9/10
-  - name: cp_csr_access
+  - name: cp_csr_access_global
     goal: The Trigger Module registers, except scontext, and hcontext, are only accessible in machine and Debug Mode
     description: |-
-      each of UDB_SDTRIG_NUM_TRIGGERS in tselect:
-      For x register in {tdata1,tdata2,tdata3,tinfo} if x_AVAILABLE:
-      csr read, write all 1s write back initial value of each register
-
-      For x register in {tcontrol, hcontext,scontect,mcontext} if x_AVAILABLE:
-      csr read, write all 1s write back initial value of each register
+      For x register in {tselect, and tcontrol, mcontext, scontext, hcontext if x_AVAILABLE}:
+      csr write all 0s, write all 1s
     expectation: |-
       No exceptions
       All registers can be accessed from M-mode
-    bins: NUM_TRIGGERS * 4 regs + 5 regs
+    bins: 1 + implemented global registers, * 2 values
     rules:
       - Sdtrig_trigger_modes
     notes: |-
       coverpoint drafted: 9/10
       coverpoint reviewed: 9/10
+  - name: cp_csr_access_local
+    goal: The Trigger Module registers are only accessible in machine and Debug Mode
+    description: |-
+      each of UDB_SDTRIG_NUM_TRIGGERS in tselect:
+      For x register in {tdata1, tdata2, tdata3, tinfo}:
+      csr write all 0s, write all 1s
+    expectation: |-
+      No exceptions
+      All registers can be accessed from M-mode
+    bins: NUM_TRIGGERS * 4 regs * 2 values
+    rules:
+      - Sdtrig_trigger_modes
   - name: cp_tselect_trigs
     goal: The set of triggers must start at 0 and be contiguous
     description: |-
@@ -388,8 +400,7 @@ coverpoints:
     bins: 2 mpte * 2 mte
     rules:
       - Sdtrig_tcontrol_mte_mret
-  - name: Mcontrol
-    description: Deprecated and not tested.
+  - heading: "Mcontrol (type 2): deprecated and not tested"
   - name: "Mcontrol6 tests: test fire and don't fire for each scenario"
     description: |-
       Repeat for each of UDB_SDTRIG_NUM_TRIGGERS if UDB_SDTRIG_MCONTROL6_SUPPORTED[i]:
@@ -1012,5 +1023,4 @@ coverpoints:
     rules:
       - Sdtrig_textra32_svalue_no_s
       - Sdtrig_textra32_sselect_no_s
-  - name: Actions
-    description: Only action 0 (breakpoint) supported in this file (sufficient for RVA23).  Eventually add SdtrigSdext with action 1, SdtrigEtrace for Trace 2-4, SdtrigExternal for 8-9
+  - heading: "Actions: only action 0 (breakpoint) is tested here (sufficient for RVA23). Eventually add SdtrigSdext with action 1, SdtrigEtrace for Trace 2-4, SdtrigExternal for 8-9"
