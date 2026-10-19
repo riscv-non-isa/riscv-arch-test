@@ -1003,7 +1003,7 @@
       // The number of supported triggers.  This has to be
       // non-negative, and greater than 0 if Sdtrig is supported.
       // The model does not support more than 16 triggers.
-      "num_triggers": 16,
+      "num_triggers": 4,
       // `breakpoint_reentrancy` must be one of the below strings:
       // . `Use_tcontrol`: use the `mte` and `mpte` bits in the `tcontrol` CSR (this also makes the `tcontrol` CSR available)
       // . `Use_interrupt_enables`: use `mstatus.MIE` and the `SIE` bits in `sstatus` and `vsstatus`
@@ -1084,8 +1084,8 @@
         // The number of implemented `mhvalue` and `svalue` bits. Bits
         // above these are read only zero. At most 6 and 16 on RV32,
         // 13 and 32 on RV64.
-        "mhvalue_len": 6,
-        "svalue_len": 16
+        "mhvalue_len": 0,
+        "svalue_len": 0
       }
     },
     // The double trap extensions are not enabled by default because

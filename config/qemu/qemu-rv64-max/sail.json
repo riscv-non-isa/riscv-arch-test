@@ -1080,22 +1080,22 @@
         "mhselect": {
           // Values 1, 4 and 5, match on `mcontext`. Requires the
           // `mcontext` CSR. Values 1 and 5 also require H.
-          "mcontext_match": false,
+          "mcontext_match": true,
           // Values 2 and 6, match on the VMID in `hgatp`. Requires H.
-          "vmid_match": true
+          "vmid_match": false
         },
         "sselect": {
           // Value 1, match on `scontext`. Requires S and the `scontext`
           // CSR.
           "scontext_match": false,
           // Value 2, match on the ASID in `satp` or `vsatp`. Requires S.
-          "asid_match": true
+          "asid_match": false
         },
         // The number of implemented `mhvalue` and `svalue` bits. Bits
         // above these are read only zero. At most 6 and 16 on RV32,
         // 13 and 32 on RV64.
         "mhvalue_len": 13,
-        "svalue_len": 32
+        "svalue_len": 0
       },
       // CSRs
       "mcontext": { "supported": true },
