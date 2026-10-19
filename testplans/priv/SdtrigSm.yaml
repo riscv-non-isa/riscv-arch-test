@@ -706,30 +706,46 @@ coverpoints:
       unless otherwise specified:
       tdata1.m/s/u/vs/vu = (1 for current mode, e.g. 1 in m)
       Perform an interrupt that causes trigger to fire/not fire
-  - name: cp_itrigger
+  - name: cp_itrigger_m
+    goal: An itrigger never fires on an interrupt handled in M
     description: |-
-      for x in {1,3,5,7,9,11,13} if INTERRUPTx_SUPPORTED:
-      1-  tdata1.m = {0/1},
-      mideleg[x] = 0 , medelg[3] = 0
-      trigger interrupt of code {x, timer interrupt} while executing in M-mode.
-
-      2-  tdata1.s =    {0/1}
-      mideleg[x] = {0/1} , medeleg[3] = {0}
-      trigger interrupt of code {x, timer interrupt} while executing in S-mode.
-
-      3- tdata1.u = {0/1}
-      mideleg[x] = {0/1} , medeleg[3] = {0}
-      trigger interrupt of code {x, timer interrupt} while executing in U-mode.
-                                                                                                                                                                                                           CSRR tval
-      If HIT_IMPLEMENTED: CSRR tdata1.hit.
-    expectation: Breakpoint exception when the interrupt matches the interrupt number enabled in tdata2 and the corresponding privilege-mode bit (tdata1.m/s/u) is set. The trigger shall not fire when the corresponding privilege-mode bit is cleared. tval shall be set to 0 on a trigger match, and if HIT_IMPLEMENTED, hit shall be 1. Trigger firing shall be suppressed where required by the implemented reentrancy solution.
-    bins: 7 interrupt codes * 2 priv bits* 2 interrupts
-    rules:
-      - Sdtrig_itrigger_access
-      - Sdtrig_itrigger_fire
-      - Sdtrig_itrigger_enable_num
-      - Sdtrig_itrigger_timing
-      - Sdtrig_itrigger_action0
+      tdata2[x] = 1 for x in {1,3,5,7,9,11,13} if INTERRUPTx_SUPPORTED (1,5,9,13 need S)
+      tdata1.m = {0/1}, mideleg[x] = 0
+      take interrupt x while executing in M-mode
+    expectation: No breakpoint (both reentrancy options prevent it in M)
+    bins: NTRIG * 7 interrupts * 2 m bits
+  - name: cp_itrigger_m_other
+    goal: An itrigger does not fire on an interrupt tdata2 does not select
+    description: |-
+      as cp_itrigger_m, taking the machine timer interrupt instead of x
+    expectation: No breakpoint
+    bins: NTRIG * 2 m bits
+  - name: cp_itrigger_s
+    goal: An itrigger fires on a selected interrupt taken from S and handled in S
+    description: |-
+      tdata2[x] = 1 for x in {1,5,9,13} if INTERRUPTx_SUPPORTED
+      tdata1.s = {0/1}, mideleg[x] = 1, medeleg[3] = 0
+      take interrupt x while executing in S-mode
+    expectation: Breakpoint into M just before the first instruction of the S-mode handler, tval = 0, iff tdata1.s = 1
+    bins: NTRIG * 4 interrupts * {s clear and no breakpoint, s set and breakpoint}
+  - name: cp_itrigger_s_other
+    goal: An itrigger does not fire on an interrupt tdata2 does not select
+    description: |-
+      as cp_itrigger_s, taking another delegated S-level interrupt (5, or 1 when x = 5) instead of x
+    expectation: No breakpoint
+    bins: NTRIG * 2 s bits
+  - name: cp_itrigger_u
+    goal: An itrigger fires on a selected interrupt taken from U and handled in S
+    description: |-
+      as cp_itrigger_s, with tdata1.u = {0/1}, taking interrupt x while executing in U-mode
+    expectation: Breakpoint into M just before the first instruction of the S-mode handler, tval = 0, iff tdata1.u = 1
+    bins: NTRIG * 4 interrupts * {u clear and no breakpoint, u set and breakpoint}
+  - name: cp_itrigger_u_other
+    goal: An itrigger does not fire on an interrupt tdata2 does not select
+    description: |-
+      as cp_itrigger_u, taking another delegated S-level interrupt instead of x
+    expectation: No breakpoint
+    bins: NTRIG * 2 u bits
   - name: "Etrigger tests: test fire and don't fire for each scenario"
     description: |-
       Repeat for each of UDB_SDTRIG_NUM_TRIGGERS if UDB_SDTRIG_ETRIGGER_SUPPORTED[i]:
@@ -741,31 +757,70 @@ coverpoints:
       tdata1.action = 0 (breakpoint)
       unless otherwise specified:
       tdata1.m/s/u/vs/vu = (1 for current mode, e.g. 1 in m)
-  - name: cp_etrigger
+  - name: cp_etrigger_m
+    goal: An etrigger never fires on an exception raised and handled in M
     description: |-
-      for x in {0-9/11/12/13/15/16/18} if EXCEPTIONx_SUPPORTED
-      tdata2[x] = 1
-      1-  tdata1.m = {0/1},
-      perform exception of code {x, illegal instruction (0x11111111)} while executing in M-mode
-
-      2-  tdata1.s =    {0/1}
-      medeleg[x] = {0/1} , medeleg[3] = {0}
-      perform exception of code {x, illegal instruction (0x11111111)} while executing in S-mode.
-
-      3- tdata1.u = {0/1}
-      medeleg[x] = {0/1} , medeleg[3] = {0}
-      perform exception of code {x, illegal instruction (0x11111111)} while executing in U-mode
-
-      CSRR tval.
-      If HIT_IMPLEMENTED: CSRR tdata1.hit.
-    expectation: Breakpoint exception when the exception matches the exception number enabled in tdata2 and the corresponding privilege-mode bit (tdata1.m/s/u) is set. The trigger shall not fire when the corresponding privilege-mode bit is cleared. tval shall be set to 0 on a trigger match, and if HIT_IMPLEMENTED, hit shall be 1. Trigger firing shall be suppressed where required by the implemented reentrancy solution.
-    bins: 17 exception codes * 2 priv bits * 2 exceptions
-    rules:
-      - Sdtrig_etrigger_access
-      - Sdtrig_etrigger_config
-      - Sdtrig_etrigger_timing
-      - Sdtrig_etrigger_action0
-      - Sdtrig_etrigger_m
+      tdata2[x] = 1 for x in {1,2,5,7,11, and 13,15 with Sv (MPRV=1, MPP=U)}
+      tdata1.m = {0/1}
+      raise exception x while executing in M-mode
+    expectation: No breakpoint (both reentrancy options prevent it in M)
+    bins: NTRIG * 7 exceptions * 2 m bits
+  - name: cp_etrigger_m_other
+    goal: An etrigger does not fire on an exception tdata2 does not select
+    description: |-
+      tdata2[x] = 1 for each x above and x in {0,3,4,6,8,9}, tdata1.m = {0/1}
+      raise an illegal instruction while executing in M-mode
+    expectation: No breakpoint
+    bins: NTRIG * 2 m bits
+  - name: cp_etrigger_s
+    goal: An etrigger never fires on an exception raised in S and handled in M
+    description: |-
+      tdata2[x] = 1 for x in {1,2,5,7,9, and 12,13,15 with Sv}
+      tdata1.s = {0/1}, medeleg[x] = 0
+      raise exception x while executing in S-mode
+    expectation: No breakpoint
+    bins: NTRIG * 8 exceptions * 2 s bits
+  - name: cp_etrigger_s_deleg
+    goal: An etrigger fires on a selected exception raised in S and handled in S
+    description: |-
+      tdata2[x] = 1 for x in {1,5,7, and 12,13,15 with Sv}
+      tdata1.s = {0/1}, medeleg[x] = 1, medeleg[3] = 0
+      raise exception x while executing in S-mode
+      Not generated: ecall from S (the T-SBI return to M is itself an ecall) and illegal instruction with tdata1.s = 1
+      (a DUT that emulates the time CSR forwards it in software)
+    expectation: Breakpoint into M just before the first instruction of the S-mode handler, tval = 0, iff tdata1.s = 1
+    bins: NTRIG * 6 exceptions * {s clear and no breakpoint, s set and breakpoint}
+  - name: cp_etrigger_s_other
+    goal: An etrigger does not fire on an exception tdata2 does not select
+    description: |-
+      tdata2[x] = 1 for each x tested from S, tdata1.s = {0/1}, medeleg[2] = 0
+      raise an illegal instruction while executing in S-mode
+    expectation: No breakpoint
+    bins: NTRIG * 2 s bits
+  - name: cp_etrigger_u
+    goal: An etrigger never fires on an exception raised in U and handled in M
+    description: |-
+      tdata2[x] = 1 for x in {1,2,5,7,8, and 12,13,15 with Sv}
+      tdata1.u = {0/1}, medeleg[x] = 0
+      raise exception x while executing in U-mode
+    expectation: No breakpoint
+    bins: NTRIG * 8 exceptions * 2 u bits
+  - name: cp_etrigger_u_deleg
+    goal: An etrigger fires on a selected exception raised in U and handled in S
+    description: |-
+      tdata2[x] = 1 for x in {1,5,7,8, and 12,13,15 with Sv}
+      tdata1.u = {0/1}, medeleg[x] = 1, medeleg[3] = 0
+      raise exception x while executing in U-mode
+      Not generated: illegal instruction with tdata1.u = 1 (as in cp_etrigger_s_deleg)
+    expectation: Breakpoint into M just before the first instruction of the S-mode handler, tval = 0, iff tdata1.u = 1
+    bins: NTRIG * 7 exceptions * {u clear and no breakpoint, u set and breakpoint}
+  - name: cp_etrigger_u_other
+    goal: An etrigger does not fire on an exception tdata2 does not select
+    description: |-
+      tdata2[x] = 1 for each x tested from U, tdata1.u = {0/1}, medeleg[2] = 0
+      raise an illegal instruction while executing in U-mode
+    expectation: No breakpoint
+    bins: NTRIG * 2 u bits
   - name: Textra
     description: |-
       Repeat for each of UDB_SDTRIG_NUM_TRIGGERS if UDB_TDATA3_EXISTS[i]:

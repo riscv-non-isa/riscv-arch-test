@@ -1252,13 +1252,23 @@ normative_rule_definitions:
 
   # This trigger can fire when an interrupt trap is taken.
   - name: Sdtrig_itrigger_fire
-    coverpoint: ["TODO: no itrigger covergroup; checked by test signatures"]
+    coverpoint:
+      [
+        "SdtrigSm_itrigger_cg/cp_itrigger_s",
+        "SdtrigSm_itrigger_cg/cp_itrigger_u",
+      ]
 
   # It can be enabled for individual interrupt numbers by setting the bit
   # corresponding to the interrupt number in tdata2. The interrupt number is
   # interpreted in the mode that the trap handler executes in.
   - name: Sdtrig_itrigger_enable_num
-    coverpoint: ["TODO: no itrigger covergroup; checked by test signatures"]
+    coverpoint:
+      [
+        "SdtrigSm_itrigger_cg/cp_itrigger_s",
+        "SdtrigSm_itrigger_cg/cp_itrigger_s_other",
+        "SdtrigSm_itrigger_cg/cp_itrigger_u",
+        "SdtrigSm_itrigger_cg/cp_itrigger_u_other",
+      ]
 
   # In addition the trigger can be enabled for non-maskable interrupts using nmi.
   - name: Sdtrig_itrigger_enable_nmi
@@ -1272,12 +1282,20 @@ normative_rule_definitions:
   # When the trigger matches, it fires after the trap occurs, just before the first
   # instruction of the trap handler is executed.
   - name: Sdtrig_itrigger_timing
-    coverpoint: ["TODO: no itrigger covergroup; checked by test signatures"]
+    coverpoint:
+      [
+        "SdtrigSm_itrigger_cg/cp_itrigger_s",
+        "SdtrigSm_itrigger_cg/cp_itrigger_u",
+      ]
 
   # If action=0, the standard CSRs are updated for taking the breakpoint trap, and
   # zero is written to the relevant tval CSR.
   - name: Sdtrig_itrigger_action0
-    coverpoint: ["TODO: no itrigger covergroup; checked by test signatures"]
+    coverpoint:
+      [
+        "SdtrigSm_itrigger_cg/cp_itrigger_s",
+        "SdtrigSm_itrigger_cg/cp_itrigger_u",
+      ]
 
   # If textra32 or textra64 are implemented for this trigger, it only matches when
   # the conditions set there are satisfied.
@@ -1313,17 +1331,29 @@ normative_rule_definitions:
 
   # When set, enable this trigger for interrupts that are taken from M mode.
   - name: Sdtrig_itrigger_m
-    coverpoint: ["TODO: no itrigger covergroup; checked by test signatures"]
+    coverpoint:
+      [
+        "SdtrigSm_itrigger_cg/cp_itrigger_m",
+        "SdtrigSm_itrigger_cg/cp_itrigger_m_other",
+      ]
 
   # When set, enable this trigger for interrupts that are taken from S/HS mode. This
   # bit is hard-wired to 0 if the hart does not support S-mode.
   - name: Sdtrig_itrigger_s
-    coverpoint: ["TODO: no itrigger covergroup; checked by test signatures"]
+    coverpoint:
+      [
+        "SdtrigSm_itrigger_cg/cp_itrigger_s",
+        "SdtrigSm_itrigger_cg/cp_itrigger_s_other",
+      ]
 
   # When set, enable this trigger for interrupts that are taken from U mode. This
   # bit is hard-wired to 0 if the hart does not support U-mode.
   - name: Sdtrig_itrigger_u
-    coverpoint: ["TODO: no itrigger covergroup; checked by test signatures"]
+    coverpoint:
+      [
+        "SdtrigSm_itrigger_cg/cp_itrigger_u",
+        "SdtrigSm_itrigger_cg/cp_itrigger_u_other",
+      ]
 
   # This register provides access to the trigger selected by tselect.
   - name: Sdtrig_etrigger
@@ -1344,7 +1374,13 @@ normative_rule_definitions:
 
   # Those causes are configured by writing the corresponding bit in tdata2.
   - name: Sdtrig_etrigger_config
-    coverpoint: ["TODO: no etrigger covergroup; checked by test signatures"]
+    coverpoint:
+      [
+        "SdtrigSm_etrigger_cg/cp_etrigger_s_deleg",
+        "SdtrigSm_etrigger_cg/cp_etrigger_s_other",
+        "SdtrigSm_etrigger_cg/cp_etrigger_u_deleg",
+        "SdtrigSm_etrigger_cg/cp_etrigger_u_other",
+      ]
 
   # If XLEN is 32, then it is not possible to set a trigger on Exception Codes
   # higher than 31.
@@ -1354,12 +1390,20 @@ normative_rule_definitions:
   # When the trigger matches, it fires after the trap occurs, just before the first
   # instruction of the trap handler is executed.
   - name: Sdtrig_etrigger_timing
-    coverpoint: ["TODO: no etrigger covergroup; checked by test signatures"]
+    coverpoint:
+      [
+        "SdtrigSm_etrigger_cg/cp_etrigger_s_deleg",
+        "SdtrigSm_etrigger_cg/cp_etrigger_u_deleg",
+      ]
 
   # If action=0, the standard CSRs are updated for taking the breakpoint trap, and
   # zero is written to the relevant tval CSR.
   - name: Sdtrig_etrigger_action0
-    coverpoint: ["TODO: no etrigger covergroup; checked by test signatures"]
+    coverpoint:
+      [
+        "SdtrigSm_etrigger_cg/cp_etrigger_s_deleg",
+        "SdtrigSm_etrigger_cg/cp_etrigger_u_deleg",
+      ]
 
   # If textra32 or textra64 are implemented for this trigger, it only matches when
   # the conditions set there are satisfied.
@@ -1390,17 +1434,31 @@ normative_rule_definitions:
 
   # When set, enable this trigger for exceptions that are taken from M mode.
   - name: Sdtrig_etrigger_m
-    coverpoint: ["TODO: no etrigger covergroup; checked by test signatures"]
+    coverpoint:
+      [
+        "SdtrigSm_etrigger_cg/cp_etrigger_m",
+        "SdtrigSm_etrigger_cg/cp_etrigger_m_other",
+      ]
 
   # When set, enable this trigger for exceptions that are taken from S/HS mode. This
   # bit is hard-wired to 0 if the hart does not support S-mode.
   - name: Sdtrig_etrigger_s
-    coverpoint: ["TODO: no etrigger covergroup; checked by test signatures"]
+    coverpoint:
+      [
+        "SdtrigSm_etrigger_cg/cp_etrigger_s",
+        "SdtrigSm_etrigger_cg/cp_etrigger_s_deleg",
+        "SdtrigSm_etrigger_cg/cp_etrigger_s_other",
+      ]
 
   # When set, enable this trigger for exceptions that are taken from U mode. This
   # bit is hard-wired to 0 if the hart does not support U-mode.
   - name: Sdtrig_etrigger_u
-    coverpoint: ["TODO: no etrigger covergroup; checked by test signatures"]
+    coverpoint:
+      [
+        "SdtrigSm_etrigger_cg/cp_etrigger_u",
+        "SdtrigSm_etrigger_cg/cp_etrigger_u_deleg",
+        "SdtrigSm_etrigger_cg/cp_etrigger_u_other",
+      ]
 
   # This register provides access to the trigger selected by tselect.
   - name: Sdtrig_tmexttrigger
