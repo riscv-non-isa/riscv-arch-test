@@ -125,14 +125,15 @@ coverpoints:
     goal: |-
       Writing to the CSR field
       (WARL)
-    description: Each different type of floating-point instruction crossed with four values of FS
+    description: Each different type of floating-point instruction crossed with four values of FS. Includes integer-result instructions that raise a flag after fflags is cleared (feq.s with a signaling NaN, fcvt.w.s of an inexact value, fcvt.wu.s of an out-of-range value, fcvtmod.w.d of a NaN).
     rules:
       - check FS becomes dirty where appropriate
+      - instructions that set fflags must set FS to dirty even if they write no floating-point register
   - name: cp_mstatus_FS_transition_nondeterministic
     goal: |-
       Writing to the CSR field
       (WARL)
-    description: Floating-point instructions that need not modify floating-point state (fsw, fcvt.w.s, feq.s, fmv.x.w, fclass.s, csrr of the FP CSRs, fmvh.x.d) crossed with mstatus.FS = Off and Dirty
+    description: Floating-point instructions that need not modify floating-point state (fsw, fmv.x.w, fclass.s, csrr of the FP CSRs, fmvh.x.d) crossed with mstatus.FS = Off and Dirty
     expectation: Illegal-instruction trap when FS = Off; FS stays Dirty when Dirty. Initial and Clean are omitted because these instructions may dirty FS imprecisely.
   # Sm_V rows converted from https://docs.google.com/spreadsheets/d/11VGlIA__UYr7H47ZNqXtyYnGH5Fb41E8P9h53rN72ok/edit?gid=416753800#gid=416753800
   - heading: "Sm_V tests (Sm_V_vcsr-NN.S, Sm_V_vset-NN.S): the vector CSRs, vset{i}vl{i}, vstart and mstatus.VS, run when Zve32x is also supported."
@@ -428,7 +429,7 @@ coverpoints:
     notes: "spec: Any vector floating-point instruction that modifies any floating-point extension state (i.e., floating-point CSRs or f registers) must set mstatus.FS to Dirty."
   - name: cp_vectorfp_mstatus_fs_state_affecting_csr
     goal: Confirm vector floating point instructions set mstatus.FS to dirty when modifying floating point csr state
-    description: Set mstatus.FS = {initial/clean} and run an instruction that would raise a fp flag after clearing the fp flags
+    description: Set mstatus.FS = {initial/clean} and run an instruction that would raise a fp flag after clearing the fp flags (vfdiv.vv divide by zero, vfadd.vv inf + -inf, and vmflt.vv with a NaN operand, which writes only a mask register)
     expectation: mstatus.FS is set to dirty
     bins: "1"
     notes: "spec: Any vector floating-point instruction that modifies any floating-point extension state (i.e., floating-point CSRs or f registers) must set mstatus.FS to Dirty."
