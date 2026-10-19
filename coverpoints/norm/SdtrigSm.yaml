@@ -850,7 +850,7 @@ normative_rule_definitions:
   # Implementing this trigger as described here requires that version is 1 or
   # higher, which in turn means tinfo must be implemented.
   - name: Sdtrig_mcontrol6_dependence
-    coverpoint: ["Only ratified version 1.0 supported; version assumed"]
+    coverpoint: ["SdtrigSm_trig_module_reg_cg/cp_tselect_trigs"]
 
   # A chain of triggers must only fire if every trigger in the chain was matched by
   # the same instruction.

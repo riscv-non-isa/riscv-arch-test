@@ -1702,12 +1702,13 @@ def _generate_csr_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     """Generate trigger-module register (tselect, tdata1-3, tinfo and the global trigger CSRs) tests.
 
     The signature records only what the Debug spec pins down: an implemented tselect index reads back as
-    written, tinfo has the bits of the types this trigger is configured to support and info != 1, a write
+    written, tinfo has the bits of the types this trigger is configured to support and info != 1, tinfo.version
+    is at least 1 on a trigger that supports mcontrol6 (norm:Sdtrig_mcontrol6_dependence), a write
     to one tdata register leaves the other two unchanged and a write to tinfo has no effect (before ^ after
     = 0), a disabled trigger takes tdata2 = tdata3 = 0, and an mcontrol6 tdata1 keeps type and m while the
     mode bits of absent modes stay hard-wired to 0. Values that are WARL choices are not recorded:
     Sail 0.16, Spike, Whisper and Imperas differ on tselect after an all-ones write, on the ignored bits
-    of an all-ones tdata1 (type 15), and on tinfo.version and type 2.
+    of an all-ones tdata1 (type 15), and on whether tinfo has type 2.
     """
     covergroup = f"Sdtrig{mode}_trig_module_reg_cg"
     chunks: list[TestChunk] = []
@@ -1752,8 +1753,15 @@ def _generate_csr_tests(test_data: TestData, mode: str) -> list[TestChunk]:
             lines.extend([f"#ifdef {guard}", f"ori x{ones_reg}, x{ones_reg}, 0x{1 << trig_type:x}", "#endif"])
         lines.extend(
             [
-                f"and x{data_reg}, x{old1_reg}, x{ones_reg} # other types and tinfo.version are not checked",
+                f"and x{data_reg}, x{old1_reg}, x{ones_reg} # other types are not checked",
                 write_sigupd(data_reg, test_data),
+                # mcontrol6 as specified needs tinfo.version >= 1 (norm:Sdtrig_mcontrol6_dependence)
+                f"#ifdef UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}",
+                f"srli x{data_reg}, x{old1_reg}, 24",
+                f"andi x{data_reg}, x{data_reg}, 0xff",
+                f"snez x{data_reg}, x{data_reg} # 1 if tinfo.version >= 1",
+                write_sigupd(data_reg, test_data),
+                "#endif",
             ]
         )
 

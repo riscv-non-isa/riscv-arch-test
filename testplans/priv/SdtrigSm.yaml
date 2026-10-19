@@ -319,13 +319,16 @@ coverpoints:
       For tselect = 0 to UDB_SDTRIG_NUM_TRIGGERS -1
       CSRR tinfo
       check tinfo.info != 1
+      if the trigger supports mcontrol6: check tinfo.version >= 1
     expectation: |-
       No exceptions
       tinfo.info != 1 for all trigger < NUM_TRIGGERS
+      tinfo.version >= 1 on every trigger that supports mcontrol6
     bins: NUM_TRIGGERS
     rules:
       - Sdtrig_num_trigs_ge1
       - Sdtrig_tselect_access
+      - Sdtrig_mcontrol6_dependence
     notes: |-
       coverpoint drafted: 9/10
       coverpoint reviewed: 9/10
