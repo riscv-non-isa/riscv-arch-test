@@ -54,6 +54,8 @@ CBO_TDATA2 = (
 )
 
 _PAGE_FAULT_CODES = (12, 13, 15)
+# Page faults need translation: Sv39 on RV64, Sv32 on RV32. A hart without it may have no satp (no S-mode).
+_PAGING_GUARD = "#if (__riscv_xlen == 64 && defined(SV39_SUPPORTED)) || (__riscv_xlen == 32 && defined(SV32_SUPPORTED))"
 
 # MPRV=1, MPP=U: next M-mode load/store is translated as U-mode (needed for codes 13/15 when mode="Sm").
 _MSTATUS_MPP_MASK = 0x1800
@@ -405,12 +407,12 @@ def pf_data_section() -> list[str]:
 
 def pf_mode_arm(mode: str) -> list[str]:
     """Point satp at an invalid target PTE. U-mode also elevates to S first,
-    maps its own code page, and drops back to U at the end."""
+    maps its own code page, and drops back to U at the end. Nothing without paging (no satp)."""
 
     if mode not in ("Sm", "S", "U"):
         raise ValueError(f"pf_mode_arm: mode must be 'Sm', 'S' or 'U', got {mode!r}")
 
-    lines = [f"\n# pf_mode_arm: set up page-fault PTEs for {mode}-mode"]
+    lines = [f"\n# pf_mode_arm: set up page-fault PTEs for {mode}-mode", _PAGING_GUARD]
     if mode == "U":
         lines.append("RVTEST_TSBI_GOTO_SMODE")
     lines += [
@@ -446,15 +448,16 @@ def pf_mode_arm(mode: str) -> list[str]:
     ]
     if mode == "U":
         lines.append("RVTEST_TSBI_GOTO_UMODE")
+    lines.append("#endif // paging")
     return lines
 
 
 def pf_mode_disarm(mode: str) -> list[str]:
-    """Clear satp. U-mode elevates to S first since U can't touch satp itself."""
+    """Clear satp. U-mode elevates to S first since U can't touch satp itself. Nothing without paging."""
     if mode not in ("Sm", "S", "U"):
         raise ValueError(f"pf_mode_disarm: mode must be 'Sm', 'S' or 'U', got {mode!r}")
 
-    lines = [f"\n# pf_mode_disarm: clear page tables for {mode}-mode"]
+    lines = [f"\n# pf_mode_disarm: clear page tables for {mode}-mode", _PAGING_GUARD]
     if mode == "U":
         lines.append("RVTEST_TSBI_GOTO_SMODE")
     lines.extend(
@@ -472,7 +475,7 @@ def pf_mode_disarm(mode: str) -> list[str]:
                 "RVTEST_TSBI_GOTO_UMODE",
             ]
         )
-
+    lines.append("#endif // paging")
     return lines
 
 
