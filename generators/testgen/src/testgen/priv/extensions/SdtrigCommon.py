@@ -2523,8 +2523,38 @@ def register_sdtrig_suite(mode: str, required_extensions: list[str | list[str]],
         """mcontrol6 tests."""
         return _generate_mcontrol6_tests(test_data, mode)
 
+    @add_priv_test_generator(
+        suite, required_extensions=required_extensions, march_extensions=[], extra_defines=extra_defines
+    )
+    def make_sdtrig_itrigger(test_data: TestData) -> list[TestChunk]:
+        """itrigger tests."""
+        return _generate_itrigger_tests(test_data, mode)
+
+    @add_priv_test_generator(
+        suite, required_extensions=required_extensions, march_extensions=[], extra_defines=extra_defines
+    )
+    def make_sdtrig_etrigger(test_data: TestData) -> list[TestChunk]:
+        """etrigger tests."""
+        return _generate_etrigger_tests(test_data, mode)
+
+    if mode == "Sm":
+
+        @add_priv_test_generator(
+            suite, required_extensions=required_extensions, march_extensions=[], extra_defines=extra_defines
+        )
+        def make_sdtrig_etrigger_cross_priv_s(test_data: TestData) -> list[TestChunk]:
+            """etrigger configured in M, exceptions raised in S."""
+            return etrigger_cross_priv_delegate_test(test_data, "S")
+
+        @add_priv_test_generator(
+            suite, required_extensions=required_extensions, march_extensions=[], extra_defines=extra_defines
+        )
+        def make_sdtrig_etrigger_cross_priv_u(test_data: TestData) -> list[TestChunk]:
+            """etrigger configured in M, exceptions raised in U."""
+            return etrigger_cross_priv_delegate_test(test_data, "U")
+
     # Disabled sections and their extra required extension:
-    #   _generate_native_triggers_tests, _generate_icount_tests, _generate_itrigger_tests: bodies not implemented yet
+    #   _generate_native_triggers_tests, _generate_icount_tests: bodies not implemented yet
     #   _generate_zalrsc_tests: Zalrsc
     #   _generate_zaamo_tests: Zaamo
     #   _generate_vector_tests: Zvl32b
@@ -2532,4 +2562,4 @@ def register_sdtrig_suite(mode: str, required_extensions: list[str | list[str]],
     #   _generate_zicbom_tests: Zicbom
     #   _generate_zicboz_tests: Zicboz
     #   _generate_zicbop_tests: Zicbop
-    #   _generate_address_matches_tests, _generate_csr_tests, _generate_etrigger_tests, _generate_textra_tests
+    #   _generate_address_matches_tests, _generate_csr_tests, _generate_textra_tests
