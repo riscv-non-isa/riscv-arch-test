@@ -4,8 +4,7 @@ source: https://docs.google.com/spreadsheets/d/1DWBEoprndjQzLTXQTzPI8jW1HydtkYRR
 notes: |
   SsstateenH boots to HS-mode.  It first sets mstateen0 and hstateen0 to enable only SE0, ENVCFG, JVT and FCSR
   (with Zfinx), the state these suites control, and enters VS-mode and VU-mode from HS-mode.  It sets and clears
-  bit 63 of mstateen1-3 in M-mode, entered through T-SBI.  hstateen0 controls
-  VS-mode and VU-mode access but not HS-mode access.  An access that only hstateen0 forbids raises a
+  bit 63 of mstateen1-3 through T-SBI.  hstateen0 controls VS-mode and VU-mode access but not HS-mode access.  An access that only hstateen0 forbids raises a
   virtual-instruction exception, and so does any VU-mode access to an S or H CSR that HS-mode could make.
   On RV32, SE0 and ENVCFG are in hstateen0h.  Each read that traps records 42 and the trap.
 coverpoints:

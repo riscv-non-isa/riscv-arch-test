@@ -79,17 +79,15 @@
         bins one  = {1}; \
     }
 
-// Bit 63 (bit 31 of mstateen1h-3h on RV32) of the mstateen CSR that controls hstateen CSR csr.  Bits 1:0 of the CSR
-// number give N.
-function bit smstateenh_mstateen_bit63(int hart, int issue, logic [11:0] csr);
-    string name;
-    `ifdef UDB_MXLEN_64
-        name = $sformatf("mstateen%0d", csr[1:0]);
-    `else
-        name = $sformatf("mstateen%0dh", csr[1:0]);
-    `endif
-    return get_csr_val(hart, issue, `SAMPLE_BEFORE, name, name)[`UDB_MXLEN-1];
-endfunction
+// Bit 63 (bit 31 of mstateen1h-3h on RV32) of the mstateen CSR that controls the hstateen CSR the instruction
+// accesses.  Bits 1:0 of the CSR number give N.
+`ifdef UDB_MXLEN_64
+    `define SMSTATEENH_MSTATEEN_SE get_csr_val_addr(ins.hart, ins.issue, `SAMPLE_BEFORE, \
+        int'(CSR_MSTATEEN0) + int'(ins.current.insn[21:20]), "mstateen", "mstateen")[63]
+`else
+    `define SMSTATEENH_MSTATEEN_SE get_csr_val_addr(ins.hart, ins.issue, `SAMPLE_BEFORE, \
+        int'(CSR_MSTATEEN0H) + int'(ins.current.insn[21:20]), "mstateenh", "mstateenh")[31]
+`endif
 
 covergroup SmstateenH_m_cg with function sample(ins_t ins);
     option.per_instance = 0;
@@ -115,7 +113,7 @@ covergroup SmstateenH_m_cg with function sample(ins_t ins);
     rs1_bit63 : coverpoint ins.current.rs1_val[`UDB_MXLEN-1] {
         bins one = {1};
     }
-    mstateen123_se : coverpoint smstateenh_mstateen_bit63(ins.hart, ins.issue, ins.current.insn[31:20]) {
+    mstateen123_se : coverpoint `SMSTATEENH_MSTATEEN_SE {
         bins zero = {0};
         bins one  = {1};
     }

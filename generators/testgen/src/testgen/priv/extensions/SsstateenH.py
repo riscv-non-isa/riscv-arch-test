@@ -8,8 +8,7 @@
 
 """SsstateenH test generator.
 
-The suite boots to HS-mode.  It sets mstateen0 through T-SBI and bit 63 of mstateen1-3 in M-mode, entered through
-T-SBI.  hstateen0 controls VS-mode and VU-mode access but not HS-mode access.  An access that only hstateen0 forbids
+The suite boots to HS-mode and sets mstateen0 and bit 63 of mstateen1-3 through T-SBI.  hstateen0 controls VS-mode and VU-mode access but not HS-mode access.  An access that only hstateen0 forbids
 raises virtual instruction; so does any VU-mode access to an S or H CSR that HS-mode could make.
 """
 

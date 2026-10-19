@@ -28,17 +28,22 @@
     `define SSSTATEENH_LOW_WRITABLE
 `endif
 
-// Bit 63 (bit 31 of the high half on RV32) of the mstateen or hstateen CSR (level "m" or "h") that controls the
-// stateen CSR numbered csr.  Bits 1:0 of the CSR number give N.
-function bit ssstateenh_bit63(int hart, int issue, string level, logic [11:0] csr);
-    string name;
-    `ifdef UDB_MXLEN_64
-        name = $sformatf("%sstateen%0d", level, csr[1:0]);
-    `else
-        name = $sformatf("%sstateen%0dh", level, csr[1:0]);
-    `endif
-    return get_csr_val(hart, issue, `SAMPLE_BEFORE, name, name)[`UDB_MXLEN-1];
-endfunction
+// Bit 63 (bit 31 of the high half on RV32) of the mstateen or hstateen CSR that controls the stateen CSR the
+// instruction accesses.  Bits 1:0 of the CSR number give N.
+`ifdef UDB_MXLEN_64
+    `define SSSTATEENH_SE(base) get_csr_val_addr(ins.hart, ins.issue, `SAMPLE_BEFORE, \
+        int'(base) + int'(ins.current.insn[21:20]), "stateen", "stateen")[63]
+`else
+    `define SSSTATEENH_SE(base) get_csr_val_addr(ins.hart, ins.issue, `SAMPLE_BEFORE, \
+        int'(base) + int'(ins.current.insn[21:20]), "stateen", "stateen")[31]
+`endif
+`ifdef UDB_MXLEN_64
+    `define SSSTATEENH_MSTATEEN_BASE CSR_MSTATEEN0
+    `define SSSTATEENH_HSTATEEN_BASE CSR_HSTATEEN0
+`else
+    `define SSSTATEENH_MSTATEEN_BASE CSR_MSTATEEN0H
+    `define SSSTATEENH_HSTATEEN_BASE CSR_HSTATEEN0H
+`endif
 
 // A CSR read, the CSRs it targets, and hstateen0.SE0 and hstateen0.ENVCFG before the instruction
 `define SSSTATEENH_COMMON \
@@ -85,12 +90,12 @@ endfunction
         wildcard bins csrs = {CSRS} iff (ins.current.insn[19:15] != 0); \
         wildcard bins csrc = {CSRC} iff (ins.current.insn[19:15] != 0); \
     } \
-    mstateen123_se : coverpoint ssstateenh_bit63(ins.hart, ins.issue, "m", ins.current.insn[31:20]) { \
+    mstateen123_se : coverpoint `SSSTATEENH_SE(`SSSTATEENH_MSTATEEN_BASE) { \
         bins zero = {0}; \
         bins one  = {1}; \
     } \
-    stateen123_se : coverpoint {ssstateenh_bit63(ins.hart, ins.issue, "m", ins.current.insn[31:20]), \
-                                ssstateenh_bit63(ins.hart, ins.issue, "h", ins.current.insn[31:20])} { \
+    stateen123_se : coverpoint {`SSSTATEENH_SE(`SSSTATEENH_MSTATEEN_BASE), \
+                                `SSSTATEENH_SE(`SSSTATEENH_HSTATEEN_BASE)} { \
         bins m0    = {[2'b00:2'b01]}; /* hstateen bit 63 reads as zero */ \
         bins m1_h0 = {2'b10}; \
         bins m1_h1 = {2'b11}; \

@@ -14,6 +14,7 @@ word, so RV32 writes the high-half CSR.
 """
 
 from testgen.asm.helpers import write_sigupd
+from testgen.asm.tsbi import tsbi_call
 from testgen.data.state import TestData
 from testgen.priv.extensions.HCommon import gated
 
@@ -162,19 +163,17 @@ def read_in_mode(
 
 
 def mstateen123_bit63(test_data: TestData, value: int) -> list[str]:
-    """From HS-mode, set (value 1) or clear (value 0) bit 63 of mstateen1-3 in M-mode, then return to HS-mode."""
+    """Set (value 1) or clear (value 0) bit 63 of mstateen1-3 through T-SBI."""
     reg = test_data.int_regs.get_register()
     op = "csrs" if value else "csrc"
     lines = [
-        "RVTEST_TSBI_GOTO_MMODE",
         "#if __riscv_xlen == 64",
         f"LI(x{reg}, MSTATEEN_HSTATEEN)",
-        *[f"{op} mstateen{n}, x{reg}" for n in STATEEN123_N],
+        *[tsbi_call(f"{op} mstateen{n}, x{reg}") for n in STATEEN123_N],
         "#else",
         f"LI(x{reg}, MSTATEENH_HSTATEEN)",
-        *[f"{op} mstateen{n}h, x{reg}" for n in STATEEN123_N],
+        *[tsbi_call(f"{op} mstateen{n}h, x{reg}") for n in STATEEN123_N],
         "#endif",
-        "RVTEST_TSBI_GOTO_SMODE",
     ]
     test_data.int_regs.return_register(reg)
     return lines

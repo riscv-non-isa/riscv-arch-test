@@ -2069,19 +2069,29 @@ SsstateenH_hs_cg_cp_hs_senvcfg_senvcfg_henvcfg_1:
 //   Illegal instruction when mstateen bit 63 is 0, else the access succeeds and sstateen1-3 read 0
 /////////////////////////////////
 # mstateen1-3 bit 63 = 0
-  RVTEST_TSBI_GOTO_MMODE
 #if __riscv_xlen == 64
   LI(x8, MSTATEEN_HSTATEEN)
-  csrc mstateen1, x8
-  csrc mstateen2, x8
-  csrc mstateen3, x8
+  # T-SBI call to execute instruction: csrc mstateen1, x8
+  mv a1, x8
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MSTATEEN1)
+  # T-SBI call to execute instruction: csrc mstateen2, x8
+  mv a1, x8
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MSTATEEN2)
+  # T-SBI call to execute instruction: csrc mstateen3, x8
+  mv a1, x8
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MSTATEEN3)
 #else
   LI(x8, MSTATEENH_HSTATEEN)
-  csrc mstateen1h, x8
-  csrc mstateen2h, x8
-  csrc mstateen3h, x8
+  # T-SBI call to execute instruction: csrc mstateen1h, x8
+  mv a1, x8
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MSTATEEN1H)
+  # T-SBI call to execute instruction: csrc mstateen2h, x8
+  mv a1, x8
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MSTATEEN2H)
+  # T-SBI call to execute instruction: csrc mstateen3h, x8
+  mv a1, x8
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MSTATEEN3H)
 #endif
-  RVTEST_TSBI_GOTO_SMODE
   LI(x6, -1)
   LI(x13, 42)
 SsstateenH_hs_cg_cp_hs_stateen123_sstateen1_csrr_m0:
@@ -2297,19 +2307,29 @@ SsstateenH_hs_cg_cp_hs_stateen123_hstateen3h_csrs_m0:
   RVTEST_SIGUPD(x2, x5, x4, x13, SsstateenH_hs_cg_cp_hs_stateen123_hstateen3h_csrs_m0, SsstateenH_hs_cg_cp_hs_stateen123_hstateen3h_csrs_m0_str)
 #endif // __riscv_xlen == 32
 # mstateen1-3 bit 63 = 1
-  RVTEST_TSBI_GOTO_MMODE
 #if __riscv_xlen == 64
   LI(x13, MSTATEEN_HSTATEEN)
-  csrs mstateen1, x13
-  csrs mstateen2, x13
-  csrs mstateen3, x13
+  # T-SBI call to execute instruction: csrs mstateen1, x13
+  mv a1, x13
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MSTATEEN1)
+  # T-SBI call to execute instruction: csrs mstateen2, x13
+  mv a1, x13
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MSTATEEN2)
+  # T-SBI call to execute instruction: csrs mstateen3, x13
+  mv a1, x13
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MSTATEEN3)
 #else
   LI(x13, MSTATEENH_HSTATEEN)
-  csrs mstateen1h, x13
-  csrs mstateen2h, x13
-  csrs mstateen3h, x13
+  # T-SBI call to execute instruction: csrs mstateen1h, x13
+  mv a1, x13
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MSTATEEN1H)
+  # T-SBI call to execute instruction: csrs mstateen2h, x13
+  mv a1, x13
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MSTATEEN2H)
+  # T-SBI call to execute instruction: csrs mstateen3h, x13
+  mv a1, x13
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MSTATEEN3H)
 #endif
-  RVTEST_TSBI_GOTO_SMODE
   LI(x6, -1)
   LI(x9, 42)
 SsstateenH_hs_cg_cp_hs_stateen123_sstateen1_csrr_m1:
@@ -2524,19 +2544,29 @@ SsstateenH_hs_cg_cp_hs_stateen123_hstateen3h_csrs_m1:
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, SsstateenH_hs_cg_cp_hs_stateen123_hstateen3h_csrs_m1, SsstateenH_hs_cg_cp_hs_stateen123_hstateen3h_csrs_m1_str)
 #endif // __riscv_xlen == 32
-  RVTEST_TSBI_GOTO_MMODE
 #if __riscv_xlen == 64
   LI(x9, MSTATEEN_HSTATEEN)
-  csrs mstateen1, x9
-  csrs mstateen2, x9
-  csrs mstateen3, x9
+  # T-SBI call to execute instruction: csrs mstateen1, x9
+  mv a1, x9
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MSTATEEN1)
+  # T-SBI call to execute instruction: csrs mstateen2, x9
+  mv a1, x9
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MSTATEEN2)
+  # T-SBI call to execute instruction: csrs mstateen3, x9
+  mv a1, x9
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MSTATEEN3)
 #else
   LI(x9, MSTATEENH_HSTATEEN)
-  csrs mstateen1h, x9
-  csrs mstateen2h, x9
-  csrs mstateen3h, x9
+  # T-SBI call to execute instruction: csrs mstateen1h, x9
+  mv a1, x9
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MSTATEEN1H)
+  # T-SBI call to execute instruction: csrs mstateen2h, x9
+  mv a1, x9
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MSTATEEN2H)
+  # T-SBI call to execute instruction: csrs mstateen3h, x9
+  mv a1, x9
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MSTATEEN3H)
 #endif
-  RVTEST_TSBI_GOTO_SMODE
 #if __riscv_xlen == 64
   LI(x8, HSTATEEN_SSTATEEN)
   csrs hstateen1, x8
