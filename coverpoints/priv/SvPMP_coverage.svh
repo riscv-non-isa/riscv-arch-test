@@ -64,55 +64,31 @@ covergroup SvPMP_cg with function sample(ins_t ins);
         }
     `endif
 
-    // Page type for a PMP fault on a page table. The test skips the top-level leaf when PMP_GRANULARITY >= 12,
-    // where the PMP region covers the whole root table and so blocks every translation.
+    // Page level (0 = 4 KiB leaf) for a PMP fault on a page table. The test skips the top-level leaf when
+    // PMP_GRANULARITY >= 12, where the PMP region covers the whole root table and so blocks every translation.
     `ifdef UDB_MXLEN_64
         PageType_pte_i: coverpoint ins.current.page_type_i {
             `ifdef SV48_SUPPORTED
-                `ifdef PMP_GRANULARITY_BELOW_PAGE
-                    bins sv48_tera = {2'b11} iff (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "satp", "mode")[3:0] == 4'b1001);
-                `endif
-                bins sv48_giga = {2'b10} iff (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "satp", "mode")[3:0] == 4'b1001);
-                bins sv48_mega = {2'b01} iff (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "satp", "mode")[3:0] == 4'b1001);
-                bins sv48_kilo = {2'b00} iff (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "satp", "mode")[3:0] == 4'b1001);
+                bins sv48[] = {[0:3]} with (item < 3 || `UDB_PMP_GRANULARITY < 12) iff (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "satp", "mode")[3:0] == 4'b1001);
             `endif
             `ifdef SV39_SUPPORTED
-                `ifdef PMP_GRANULARITY_BELOW_PAGE
-                    bins sv39_giga = {2'b10} iff (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "satp", "mode")[3:0] == 4'b1000);
-                `endif
-                bins sv39_mega = {2'b01} iff (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "satp", "mode")[3:0] == 4'b1000);
-                bins sv39_kilo = {2'b00} iff (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "satp", "mode")[3:0] == 4'b1000);
+                bins sv39[] = {[0:2]} with (item < 2 || `UDB_PMP_GRANULARITY < 12) iff (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "satp", "mode")[3:0] == 4'b1000);
             `endif
         }
         PageType_pte_d: coverpoint ins.current.page_type_d {
             `ifdef SV48_SUPPORTED
-                `ifdef PMP_GRANULARITY_BELOW_PAGE
-                    bins sv48_tera = {2'b11} iff (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "satp", "mode")[3:0] == 4'b1001);
-                `endif
-                bins sv48_giga = {2'b10} iff (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "satp", "mode")[3:0] == 4'b1001);
-                bins sv48_mega = {2'b01} iff (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "satp", "mode")[3:0] == 4'b1001);
-                bins sv48_kilo = {2'b00} iff (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "satp", "mode")[3:0] == 4'b1001);
+                bins sv48[] = {[0:3]} with (item < 3 || `UDB_PMP_GRANULARITY < 12) iff (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "satp", "mode")[3:0] == 4'b1001);
             `endif
             `ifdef SV39_SUPPORTED
-                `ifdef PMP_GRANULARITY_BELOW_PAGE
-                    bins sv39_giga = {2'b10} iff (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "satp", "mode")[3:0] == 4'b1000);
-                `endif
-                bins sv39_mega = {2'b01} iff (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "satp", "mode")[3:0] == 4'b1000);
-                bins sv39_kilo = {2'b00} iff (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "satp", "mode")[3:0] == 4'b1000);
+                bins sv39[] = {[0:2]} with (item < 2 || `UDB_PMP_GRANULARITY < 12) iff (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "satp", "mode")[3:0] == 4'b1000);
             `endif
         }
     `else
         PageType_pte_i: coverpoint ins.current.page_type_i {
-            `ifdef PMP_GRANULARITY_BELOW_PAGE
-                bins sv32_mega = {2'b01} iff (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "satp", "mode")[0] == 1'b1);
-            `endif
-            bins sv32_kilo = {2'b00} iff (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "satp", "mode")[0] == 1'b1);
+            bins sv32[] = {[0:1]} with (item < 1 || `UDB_PMP_GRANULARITY < 12) iff (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "satp", "mode")[0] == 1'b1);
         }
         PageType_pte_d: coverpoint ins.current.page_type_d {
-            `ifdef PMP_GRANULARITY_BELOW_PAGE
-                bins sv32_mega = {2'b01} iff (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "satp", "mode")[0] == 1'b1);
-            `endif
-            bins sv32_kilo = {2'b00} iff (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "satp", "mode")[0] == 1'b1);
+            bins sv32[] = {[0:1]} with (item < 1 || `UDB_PMP_GRANULARITY < 12) iff (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "satp", "mode")[0] == 1'b1);
         }
     `endif
 
