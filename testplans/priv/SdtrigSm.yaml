@@ -663,6 +663,8 @@ coverpoints:
       unless otherwise specified:
       tdata1.m/s/u/vs/vu = (1 for current mode, e.g. 1 in m)
       Perform an instruction that causes trigger to fire/not fire
+      After each case, the tdata1 readback (without hit, which is optional and not checked) and rvtest_trap_count
+      are written to the signature, so a fire or missing fire is reported at that case.
   - name: cp_icount_hardwired
     description: |-
       if UDB_COUNT_HARDWIRED_1 = true:

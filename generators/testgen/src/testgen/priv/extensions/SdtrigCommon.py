@@ -2635,7 +2635,11 @@ def _generate_mcontrol6_tests(test_data: TestData, mode: str) -> list[TestChunk]
 
 
 def _generate_icount_tests(test_data: TestData, mode: str) -> list[TestChunk]:
-    """Generate icount instruction-count trigger tests."""
+    """Generate icount instruction-count trigger tests.
+
+    Each case signs a marker sum (which instructions ran), the tdata1 readback without hit, which is optional,
+    and rvtest_trap_count, so a fire or missing fire is reported at that case.
+    """
     covergroup = f"Sdtrig{mode}_icount_cg"
     seed(reproducible_hash(covergroup))
     chunks: list[TestChunk] = []
@@ -2670,8 +2674,9 @@ def _generate_icount_tests(test_data: TestData, mode: str) -> list[TestChunk]:
                 "nop # fire trigger",
                 "nop # landing pad",
                 _csr_access(f"csrr x{data_reg}, tdata1 # firing clears m/s/u/vs/vu when count is hard-wired", mode),
-                *_sigupd_masked(data_reg, temp_reg, 0x1000000, test_data, "icount hit bit (bit 24)"),
+                *_sigupd_masked(data_reg, temp_reg, 0x1000000, test_data, "hit (bit 24) is optional: not signed"),
                 *_disable_trigger(temp_reg, trig_num, mode),
+                *_sign_trap_count(data_reg, test_data),
             ]
         )
         lines.append(f"#endif // UDB_ICOUNT_TRIG{trig_num}_AVAILABLE")
@@ -2704,8 +2709,9 @@ def _generate_icount_tests(test_data: TestData, mode: str) -> list[TestChunk]:
                     ],  # has extra markers that act as spacers
                     write_sigupd(addr_reg, test_data),
                     _csr_access(f"csrr x{data_reg}, tdata1 # read back count/pending after firing", mode),
-                    *_sigupd_masked(data_reg, temp_reg, 0x1000000, test_data, "icount hit bit (bit 24)"),
+                    *_sigupd_masked(data_reg, temp_reg, 0x1000000, test_data, "hit (bit 24) is optional: not signed"),
                     *_disable_trigger(temp_reg, trig_num, mode),
+                    *_sign_trap_count(data_reg, test_data),
                 ]
             )
         lines.append(f"#endif // UDB_ICOUNT_TRIG{trig_num}_AVAILABLE")
@@ -2736,8 +2742,9 @@ def _generate_icount_tests(test_data: TestData, mode: str) -> list[TestChunk]:
                     *[f"addi x{addr_reg}, x{addr_reg}, {i} # marker {i}" for i in (1, 2, 4)],
                     write_sigupd(addr_reg, test_data),  # 7 = no fire, 6 = fired after the trap, 5 = trap not counted
                     _csr_access(f"csrr x{data_reg}, tdata1 # count and pending after the trap", mode),
-                    *_sigupd_masked(data_reg, temp_reg, 0x1000000, test_data, "icount hit bit (bit 24)"),
+                    *_sigupd_masked(data_reg, temp_reg, 0x1000000, test_data, "hit (bit 24) is optional: not signed"),
                     *_disable_trigger(temp_reg, trig_num, mode),
+                    *_sign_trap_count(data_reg, test_data),
                 ]
             )
         lines.append(f"#endif // UDB_ICOUNT_TRIG{trig_num}_AVAILABLE")
@@ -2767,8 +2774,9 @@ def _generate_icount_tests(test_data: TestData, mode: str) -> list[TestChunk]:
                     write_sigupd(addr_reg, test_data),  # 7 = no fire, 6 = pending fired first, 5 = fired late
                     *["nop # count stays 0, so nothing matches again"] * 8,
                     _csr_access(f"csrr x{data_reg}, tdata1 # count still 0, pending cleared", mode),
-                    *_sigupd_masked(data_reg, temp_reg, 0x1000000, test_data, "icount hit bit (bit 24)"),
+                    *_sigupd_masked(data_reg, temp_reg, 0x1000000, test_data, "hit (bit 24) is optional: not signed"),
                     *_disable_trigger(temp_reg, trig_num, mode),
+                    *_sign_trap_count(data_reg, test_data),
                 ]
             )
         lines.append(f"#endif // UDB_ICOUNT_TRIG{trig_num}_AVAILABLE")

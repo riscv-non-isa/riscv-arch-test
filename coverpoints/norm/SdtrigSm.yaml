@@ -1348,7 +1348,10 @@ normative_rule_definitions:
   # trigger(s) fires. If the bit is not implemented, it is always 0 and writing it
   # has no effect.
   - name: Sdtrig_icount_hit
-    coverpoint: ["Optional WARL field (hit/uncertain bits); not tested"]
+    coverpoint:
+      [
+        "hit is optional and not checked (masked out of the tdata1 readback); fire/no-fire is checked through rvtest_trap_count",
+      ]
 
   # When set, enable this trigger in M-mode.
   - name: Sdtrig_icount_m
