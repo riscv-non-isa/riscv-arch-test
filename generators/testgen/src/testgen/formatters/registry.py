@@ -51,7 +51,8 @@ class VectorTypeConfig:
         scalar_regs: Set of registers used as scalar registers
         widened_regs: Set of registers that are widened
         random_element_generator: Add custom random element generation (used in unordered operations)
-        egs: Element Group Size
+        egs: Element group size (used in vector crypto instructions)
+        index_register: Register used to store index variables (e.g. vs1 for vrgatherei16)
         require_zero_vstart: Nonzero vstart will trap with an illegal instruction exception
     """
 
@@ -62,6 +63,7 @@ class VectorTypeConfig:
     widened_regs: set[str] = field(default_factory=set)
     random_element_generator: Callable[[int, int, str], list[int]] | None = None
     egs: int = 1
+    index_register: str | None = None
     require_zero_vstart: bool = False
 
 

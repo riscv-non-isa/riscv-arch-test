@@ -13,6 +13,7 @@ from dataclasses import dataclass
 from functools import cache
 
 from testgen.constants import ELEN_MAX, MIN_SEW_MIN
+from testgen.formatters.registry import VectorTypeConfig
 
 
 @dataclass(frozen=True)
@@ -39,15 +40,15 @@ class VectorInstructionInfo:
     vext_multiplier: float | None
     whole_registers: int | None
 
-    def get_size_multiplier(self, register: str, sew: int, widened_regs: set[str]) -> int | float:
+    def get_size_multiplier(self, register: str, sew: int, vector_config: VectorTypeConfig) -> int | float:
         """Return a register's size multiplier relative to SEW."""
         if self.vext_multiplier and register == "vs2":
             return self.vext_multiplier
-        if self.index_eew and register == "vs2":
+        if self.index_eew and register == vector_config.index_register:
             return self.index_eew / sew
         if self.load_store_eew and register in ["vs3", "vd"]:
             return self.load_store_eew / sew
-        if register in widened_regs:
+        if register in vector_config.widened_regs:
             return 2
         return 1
 

@@ -75,7 +75,7 @@ def get_register_data_labels(
     vd_val_ptr = (
         get_data_label(
             "vd",
-            int(sew * instr_info.get_size_multiplier("vd", sew, instr_type_config.vector_data.widened_regs)),
+            int(sew * instr_info.get_size_multiplier("vd", sew, instr_type_config.vector_data)),
             instr_type_config,
             test_data,
         )
@@ -85,7 +85,7 @@ def get_register_data_labels(
     vs1_val_ptr = (
         get_data_label(
             "vs1",
-            int(sew * instr_info.get_size_multiplier("vs1", sew, instr_type_config.vector_data.widened_regs)),
+            int(sew * instr_info.get_size_multiplier("vs1", sew, instr_type_config.vector_data)),
             instr_type_config,
             test_data,
         )
@@ -95,7 +95,7 @@ def get_register_data_labels(
     vs2_val_ptr = (
         get_data_label(
             "vs2",
-            int(sew * instr_info.get_size_multiplier("vs2", sew, instr_type_config.vector_data.widened_regs)),
+            int(sew * instr_info.get_size_multiplier("vs2", sew, instr_type_config.vector_data)),
             instr_type_config,
             test_data,
         )
@@ -105,7 +105,7 @@ def get_register_data_labels(
     vs3_val_ptr = (
         get_data_label(
             "vs3",
-            int(sew * instr_info.get_size_multiplier("vs3", sew, instr_type_config.vector_data.widened_regs)),
+            int(sew * instr_info.get_size_multiplier("vs3", sew, instr_type_config.vector_data)),
             instr_type_config,
             test_data,
         )
@@ -147,7 +147,7 @@ def cp_vstart(
     instr_info = parse_vector_instruction_info(instr_name, instr_type)
 
     max_multiplier = max(
-        instr_info.get_size_multiplier(reg, sew, instr_type_config.vector_data.widened_regs)
+        instr_info.get_size_multiplier(reg, sew, instr_type_config.vector_data)
         for sew in sews_supported
         for reg in instr_type_config.required_params
     )
