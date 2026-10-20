@@ -6,7 +6,6 @@
 ci_enabled: true
 # Status as of QEMU v11.1.1:
 # Sm: Multiple issues:
-#     need H support in Sail
 #     menvcfg.CBIE can be written with reserved 0b10 QEMU #4216
 #     minstret one too high after wraparound (still fails with QEMU #4087 closed)
 #     mcycleh write dropped (#4219)
@@ -21,7 +20,7 @@ ci_enabled: true
 # ExceptionsZaamo/Zama16b: QEMU zama16b handling is incomplete: misaligned Zabha/Zacas AMOs fault,
 #        but cross-granule word/doubleword AMOs execute instead of trapping
 #        (https://gitlab.com/qemu-project/qemu/-/work_items/4101).
-# SsstrictSm/SsstrictS/SsstrictU: Sail does not implement H, qemu#4200, qemu#4201
+# SsstrictSm/SsstrictS/SsstrictU: qemu#4200, qemu#4201
 # TODO: Remove SsstrictV when sail SsstrictV is implemented
 # Smstateen: mstateen0 bits are writable for state the hart lacks: P1P13 on RV64 and on RV32 without H
 #     (https://gitlab.com/qemu-project/qemu/-/work_items/4495), and ENVCFG, CSRIND, AIA and IMSIC without S

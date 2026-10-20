@@ -44,7 +44,7 @@ ci_enabled: true
 #                 Hypervisor-branch suites, not yet triaged on Sargantana: the same hedeleg[10] bug (HSm_hcsr_walk),
 #                 trap signature, htval and mtval2 mismatches on HS- and VS-mode traps, and hangs in two-stage
 #                 translation (SvH, SvHSm)
-exclude_extensions: "F,ZicsrF,Zfa,Zfhmin,Zicntr,ZicntrSm,ZicntrS,ZicntrU,Zifencei,Sm,S,U,InterruptsSm,SscofpmfSm,Sv,SvZicbo,ExceptionsSv,ExceptionsSvZalrsc,H,ExceptionsH,ExceptionsHSm,HSm,InterruptsH,InterruptsHSm,Shtvala,Shvstvala,SvH,SvHSm,SvHZicbo,ZicntrH"
+exclude_extensions: "F,ZicsrF,Zfa,Zfhmin,Zicntr,ZicntrSm,ZicntrS,ZicntrU,Zifencei,Sm,S,U,InterruptsSm,SscofpmfSm,Sv,SvZicbo,ExceptionsSv,ExceptionsSvSm,ExceptionsSvZalrsc,H,ExceptionsH,ExceptionsHSm,HSm,InterruptsH,InterruptsHSm,Shtvala,Shvstvala,SvH,SvHSm,SvHZicbo,ZicntrH"
 
 apt_packages: "autoconf flex bison help2man libfl-dev ccache device-tree-compiler libboost-dev libboost-regex-dev libboost-system-dev"
 install_script: ".github/scripts/install-sargantana.sh"

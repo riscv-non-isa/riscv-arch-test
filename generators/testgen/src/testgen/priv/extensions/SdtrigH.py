@@ -372,14 +372,16 @@ def _textra_asid_tests(test_data: TestData) -> list[str]:
                 *_enter_guest(mode, temp_reg),
             ]
         )
-        for case_name, sv in _TEXTRA_ASID_CASES:
+        for case_name, sv, masked in _TEXTRA_ASID_CASES:
             sv64 = sv.replace("ASIDMAX", "16").replace("X", _VSATP_ASID)
             sv32 = sv.replace("ASIDMAX", "9").replace("X", _VSATP_ASID)
+            mask64 = f" | 0x{_textra3(64, sbytemask=0xF):x}" if masked else ""
+            mask32 = f" | 0x{_textra3(32, sbytemask=0x3):x}" if masked else ""
             tdata3 = [
                 "#if __riscv_xlen == 64",
-                f"LI(x{cfg_reg}, ((({sv64}) & 0xFFFFFFFF) << 2) | 2)",
+                f"LI(x{cfg_reg}, ((({sv64}) & 0xFFFFFFFF) << 2){mask64} | 2)",
                 "#else",
-                f"LI(x{cfg_reg}, ((({sv32}) & 0xFFFF) << 2) | 2)",
+                f"LI(x{cfg_reg}, ((({sv32}) & 0xFFFF) << 2){mask32} | 2)",
                 "#endif",
             ]
             lines.extend(
