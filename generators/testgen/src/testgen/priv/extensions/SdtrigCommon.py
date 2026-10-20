@@ -33,6 +33,8 @@ TRIG_TYPE_ITRIGGER = 4
 TRIG_TYPE_ETRIGGER = 5
 MCONTROL6_TYPE = 6
 TDATA1_TYPE_DISABLED = 15
+# types cp_csr_access_common bins (the testplan's {3, 4, 5, 6, 15}); the others are legacy, reserved or custom
+ACCESS_TYPES = (TRIG_TYPE_ICOUNT, TRIG_TYPE_ITRIGGER, TRIG_TYPE_ETRIGGER, MCONTROL6_TYPE, TDATA1_TYPE_DISABLED)
 # mcontrol6 mode bits; with all five set, bits 26:0 match priv_bits in SdtrigSm_trig_module_reg_cg
 MCONTROL6_VS = 1 << 24
 MCONTROL6_VU = 1 << 23
@@ -144,14 +146,16 @@ XSL_UDB_NAMES = ("LOAD", "STORE", "EXECUTE")  # mcontrol6 xsl bits 0, 1, 2
 # Per-trigger type availability for the textra cases. TODO: replace with UDB parameters.
 _TEXTRA_TYPE_GUARDS = {
     "icount": ["#ifdef UDB_ICOUNT_TRIG{trig_num}_AVAILABLE"],
-    # the mcontrol6 cases use a data (select=1) store (xsl=010) match
+    # the mcontrol6 cases use a data (select=1) store (xsl=010) match enabled in the running mode
     "mcontrol6": [
         "#ifdef UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}",
+        "#ifdef UDB_SDTRIG_{mode_letter}_AVAILABLE",
         "#ifdef UDB_SDTRIG_MCONTROL6_SELECT_AVAILABLE",
         "#ifdef UDB_SDTRIG_MCONTROL6_STORE_AVAILABLE",
     ],
 }
 
+_TEXTRA_DATA = 0x12345678  # the textra mcontrol6 cases' store data match (_xlen_value widens it on RV64)
 _MCONTEXT_TEST_VALUE_RV32 = 0b010101
 _MCONTEXT_TEST_VALUE_RV64 = 0x1AAA
 _SCONTEXT_TEST_VALUE_RV32 = 0x1234
@@ -187,6 +191,33 @@ _TEXTRA_MCONTEXT_CASES = (
     ("zero", 0b000000, 0x0000),
     ("other", 0b111111, 0x0AAA),
 )
+
+
+def _type_guard(trig_type: int, trig_num: int) -> str | None:
+    """The define saying trigger ``trig_num`` supports ``trig_type``; None for type 15 (disabled), which every trigger has."""
+    return {
+        TRIG_TYPE_ICOUNT: f"UDB_ICOUNT_TRIG{trig_num}_AVAILABLE",
+        TRIG_TYPE_ITRIGGER: f"UDB_ITRIGGER_TRIG{trig_num}_AVAILABLE",
+        TRIG_TYPE_ETRIGGER: f"UDB_SDTRIG_ETRIGGER_SUPPORTED{trig_num}",
+        MCONTROL6_TYPE: f"UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}",
+    }.get(trig_type)
+
+
+def _mcontrol6_gates(trig_num: int, mode: str, *, select: int = 0) -> list[str]:
+    """``#ifdef``s for an mcontrol6 arm on ``trig_num`` from ``mode``: the trigger supports mcontrol6, the mode's
+    m/s/u bit is implemented and, for select=1, data matching is. Close them with _close_gates().
+
+    Writing an unsupported WARL value has an unpredictable result, so no field value is written outside its gate.
+    """
+    gates = [f"UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}", f"UDB_SDTRIG_{MODE_UDB_LETTER[mode]}_AVAILABLE"]
+    if select:
+        gates.append("UDB_SDTRIG_MCONTROL6_SELECT_AVAILABLE")
+    return [f"\n#ifdef {gates[0]}", *(f"#ifdef {g}" for g in gates[1:])]
+
+
+def _close_gates(gates: list[str]) -> list[str]:
+    """``#endif``s for the ``#ifdef`` lines in ``gates``, innermost first."""
+    return [f"#endif // {g.split()[-1]}" for g in reversed(gates)]
 
 
 def _xsl_ifdefs(xsl: int) -> list[str]:
@@ -861,8 +892,13 @@ def _config_etrigger(
 
 
 # Trigger types _fire_supported_trigger can fire, with the defines that enable each on trigger {trig_num}
+# armed for the running mode {mode_letter} (mcontrol6 writes that mode's m/s/u bit and a store match)
 _FIRE_TYPE_GUARDS = {
-    "mcontrol6": ["#ifdef UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}", "#ifdef UDB_SDTRIG_MCONTROL6_STORE_AVAILABLE"],
+    "mcontrol6": [
+        "#ifdef UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}",
+        "#ifdef UDB_SDTRIG_{mode_letter}_AVAILABLE",
+        "#ifdef UDB_SDTRIG_MCONTROL6_STORE_AVAILABLE",
+    ],
     "icount": ["#ifdef UDB_ICOUNT_TRIG{trig_num}_AVAILABLE"],
 }
 
@@ -919,12 +955,22 @@ def _xlen_li(reg: int, val32: int, val64: int) -> list[str]:
     return ["#if __riscv_xlen == 64", f"LI(x{reg}, 0x{val64:x})", "#else", f"LI(x{reg}, 0x{val32:x})", "#endif"]
 
 
+def _xlen_value(val32: int) -> tuple[int, int]:
+    """(RV32, RV64) data values for a select = data match: val32, and on RV64 val32 with its complement above it.
+
+    With size = 0 (any) a data match is only well-defined when the access is XLEN wide (norm:Sdtrig_mcontrol6_size_any),
+    so these are stored and loaded with SREG/LREG, and the upper half on RV64 makes the whole register count.
+    """
+    return val32, ((~val32 & 0xFFFFFFFF) << 32) | val32
+
+
 def _config_textra(reg: int, trig_num: int, trig_type: str, tdata3_lines: list[str], mode: str) -> list[str]:
     """Configure trig_num as trig_type with the given tdata3 load, reusing each type's own configurator."""
     if trig_type == "icount":
         return _config_icount(reg, trig_num, 1, mode, tdata3=tdata3_lines)
     if trig_type == "mcontrol6":
-        return _config_mcontrol6(reg, trig_num, 0x12345678, mode, xsl=0b010, select=1, tdata3=tdata3_lines)
+        tdata2 = _xlen_li(reg, *_xlen_value(_TEXTRA_DATA))
+        return _config_mcontrol6(reg, trig_num, tdata2, mode, xsl=0b010, select=1, tdata3=tdata3_lines)
     raise ValueError(f"unsupported textra trigger type: {trig_type}")
 
 
@@ -938,8 +984,8 @@ def _fire_textra_trigger(trig_type: str, mode: str, cfg_reg: int, addr_reg: int,
     if trig_type == "mcontrol6":
         return [
             f"LA(x{addr_reg}, scratch)",
-            f"LI(x{data_reg}, 0x12345678)",
-            f"sw x{data_reg}, 0(x{addr_reg}) # mcontrol6 data-store trigger",
+            *_xlen_li(data_reg, *_xlen_value(_TEXTRA_DATA)),
+            f"SREG x{data_reg}, 0(x{addr_reg}) # mcontrol6 XLEN-wide data-store trigger",
             "nop # spacer (data match fires after)",
         ]
     raise ValueError(f"unsupported textra trigger type: {trig_type}")
@@ -964,6 +1010,8 @@ def _load_value_or_lines(reg: int, val: int | str | list[str]) -> list[str]:
 
 def _generate_access_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     """Generate common trigger-CSR access tests."""
+    if mode != "Sm":
+        return _generate_access_trap_tests(test_data, mode)
     covergroup = f"Sdtrig{mode}_access_cg"
     chunks: list[TestChunk] = []
 
@@ -974,7 +1022,7 @@ def _generate_access_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     lines.append(
         comment_banner(
             coverpoint,
-            "Access every trigger CSR across all triggers and trigger types\n"
+            "Access every trigger CSR across all triggers and the types {3, 4, 5, 6, 15} each supports\n"
             "Should not cause any illegal instruction exceptions on implemented triggers",
         )
     )
@@ -987,7 +1035,10 @@ def _generate_access_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     )  # exclude a0, a1 because they are used in SBI
 
     for trig_num in range(UDB_NUM_TRIGGERS):
-        for trig_type in range(16):
+        for trig_type in ACCESS_TYPES:
+            guard = _type_guard(trig_type, trig_num)
+            if guard:
+                lines.append(f"\n#ifdef {guard}")
             for csr in csrs:
                 if csr in optional_csrs:
                     lines.append(f"#ifdef UDB_{csr.upper()}_AVAILABLE")
@@ -1012,8 +1063,48 @@ def _generate_access_tests(test_data: TestData, mode: str) -> list[TestChunk]:
                 )
                 if csr in optional_csrs:
                     lines.append("#endif")
+            if guard:
+                lines.append(f"#endif // {guard}")
 
     test_data.int_regs.return_registers([type_reg, save_reg, temp_reg])
+    chunks.append(test_data.end_test_chunk())
+    return chunks
+
+
+def _generate_access_trap_tests(test_data: TestData, mode: str) -> list[TestChunk]:
+    """SdtrigS/U access tests: a direct S/U-mode read or write of an M-level trigger CSR raises an illegal-instruction exception.
+
+    Going through T-SBI would only repeat the SdtrigSm accesses in M-mode, so these access the CSRs directly.
+    scontext and hcontext are S/H-level and gated by mstateen0.CONTEXT; Smstateen/Ssstateen test those.
+    """
+    covergroup = f"Sdtrig{mode}_cg"
+    chunks: list[TestChunk] = []
+
+    ######################################
+    coverpoint = f"cp_csr_access_trap_{mode.lower()}"
+    ######################################
+    lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_")).code
+    lines.append(
+        comment_banner(
+            coverpoint, f"Direct {mode}-mode reads and writes of the M-level trigger CSRs raise illegal instruction"
+        )
+    )
+    (data_reg,) = test_data.int_regs.get_registers(1, exclude_regs=[10, 11])
+    for csr in ("tselect", "tdata1", "tdata2", "tdata3", "tinfo", "tcontrol", "mcontext"):
+        optional = csr in ("tcontrol", "mcontext")
+        if optional:
+            lines.append(f"#ifdef UDB_{csr.upper()}_AVAILABLE")
+        lines.extend(
+            [
+                _add_tc(test_data, csr, coverpoint, covergroup),
+                f"LI(x{data_reg}, 0)",
+                f"csrr x{data_reg}, {csr} # illegal from {mode}-mode",
+                f"csrw {csr}, x{data_reg} # illegal from {mode}-mode",
+            ]
+        )
+        if optional:
+            lines.append("#endif")
+    test_data.int_regs.return_registers([data_reg])
     chunks.append(test_data.end_test_chunk())
     return chunks
 
@@ -1056,7 +1147,7 @@ def _generate_native_triggers_tests(test_data: TestData, mode: str) -> list[Test
         )
         for trig_num in range(UDB_NUM_TRIGGERS):
             for trig_type, type_guards in _FIRE_TYPE_GUARDS.items():
-                guards = [g.format(trig_num=trig_num) for g in type_guards]
+                guards = [g.format(trig_num=trig_num, mode_letter=MODE_UDB_LETTER[mode]) for g in type_guards]
                 lines.extend(
                     [
                         *guards,
@@ -1184,7 +1275,8 @@ def _generate_zalrsc_tests(test_data: TestData, mode: str) -> list[TestChunk]:
         ]
     )
     for trig_num in range(UDB_NUM_TRIGGERS):
-        lines.append(f"\n#ifdef UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
+        gates = _mcontrol6_gates(trig_num, mode)
+        lines.extend(gates)
         for tdata2 in ("scratch", 0):
             for perm in perms:  # perm_xsl
                 lines.extend(_xsl_ifdefs(perm))
@@ -1216,7 +1308,7 @@ def _generate_zalrsc_tests(test_data: TestData, mode: str) -> list[TestChunk]:
                     lines.extend(_ifdef_guard(f"lr.{width}", closing=True))
                 lines.extend(["#endif // UDB_SDTRIG_MCONTROL6_XSL_AVAILABLE"] * len(_xsl_ifdefs(perm)))
         lines.extend(_disable_trigger(temp_reg, trig_num, mode))
-        lines.append(f"#endif // UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
+        lines.extend(_close_gates(gates))
 
     ######################################
     coverpoint = "cp_lrsc_data"
@@ -1237,7 +1329,8 @@ def _generate_zalrsc_tests(test_data: TestData, mode: str) -> list[TestChunk]:
         ]
     )
     for trig_num in range(UDB_NUM_TRIGGERS):
-        lines.append(f"\n#ifdef UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
+        gates = _mcontrol6_gates(trig_num, mode, select=1)
+        lines.extend(gates)
         for td2_name, td2_base in (("dataval", dataval), ("zero", 0)):
             for perm in perms:  # perm_xsl
                 lines.extend(_xsl_ifdefs(perm))
@@ -1275,7 +1368,7 @@ def _generate_zalrsc_tests(test_data: TestData, mode: str) -> list[TestChunk]:
                     lines.extend(_ifdef_guard(f"lr.{width}", closing=True))
                 lines.extend(["#endif // UDB_SDTRIG_MCONTROL6_XSL_AVAILABLE"] * len(_xsl_ifdefs(perm)))
         lines.extend(_disable_trigger(temp_reg, trig_num, mode))
-        lines.append(f"#endif // UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
+        lines.extend(_close_gates(gates))
 
     test_data.int_regs.return_registers([lr_reg, sc_reg, addr_reg, data_reg, temp_reg])
 
@@ -1313,7 +1406,8 @@ def _generate_zaamo_tests(test_data: TestData, mode: str) -> list[TestChunk]:
             )
         )
         for trig_num in range(UDB_NUM_TRIGGERS):
-            lines.append(f"\n#ifdef UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
+            gates = _mcontrol6_gates(trig_num, mode)
+            lines.extend(gates)
             for tdata2 in ("scratch", 0):
                 for perm in perms:  # perm_xsl
                     lines.extend(_xsl_ifdefs(perm))
@@ -1339,7 +1433,7 @@ def _generate_zaamo_tests(test_data: TestData, mode: str) -> list[TestChunk]:
                         lines.extend(_ifdef_guard(insn, closing=True))
                     lines.extend(["#endif // UDB_SDTRIG_MCONTROL6_XSL_AVAILABLE"] * len(_xsl_ifdefs(perm)))
             lines.extend(_disable_trigger(temp_reg, trig_num, mode))
-            lines.append(f"#endif // UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
+            lines.extend(_close_gates(gates))
 
     test_data.int_regs.return_registers([dest_reg, addr_reg, data_reg, temp_reg])
 
@@ -1389,7 +1483,8 @@ def _generate_vector_tests(test_data: TestData, mode: str) -> list[TestChunk]:
         coverpoint, "mcontrol6 matches a vector load/store as if it performed a load/store of size SEW"
     )
     for trig_num in range(UDB_NUM_TRIGGERS):
-        lines.append(f"\n#ifdef UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
+        gates = _mcontrol6_gates(trig_num, mode)
+        lines.extend(gates)
         for vperm, (vinstr, xsl) in vops.items():
             lines.extend(_xsl_ifdefs(xsl))
             for tdata2 in ("scratch", 0):
@@ -1407,7 +1502,7 @@ def _generate_vector_tests(test_data: TestData, mode: str) -> list[TestChunk]:
                         lines.append("#endif // UDB_SDTRIG_MCONTROL6_SIZE_AVAILABLE")
             lines.extend(["#endif // UDB_SDTRIG_MCONTROL6_XSL_AVAILABLE"] * len(_xsl_ifdefs(xsl)))
         lines.extend(_disable_trigger(temp_reg, trig_num, mode))
-        lines.append(f"#endif // UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
+        lines.extend(_close_gates(gates))
 
     ######################################
     coverpoint = "cp_vector_accesses"
@@ -1418,7 +1513,8 @@ def _generate_vector_tests(test_data: TestData, mode: str) -> list[TestChunk]:
         "(scratch+8 only fires when vl covers it)",
     )
     for trig_num in range(UDB_NUM_TRIGGERS):
-        lines.append(f"\n#ifdef UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
+        gates = _mcontrol6_gates(trig_num, mode)
+        lines.extend(gates)
         for vperm, (vinstr, xsl) in vops.items():
             lines.extend(_xsl_ifdefs(xsl))
             for tdata2_name, tdata2 in (("scratch", "scratch"), ("scratch8", "scratch+8"), ("0", 0)):
@@ -1432,7 +1528,7 @@ def _generate_vector_tests(test_data: TestData, mode: str) -> list[TestChunk]:
                         lines.extend(["#endif // ZVE64X_SUPPORTED"] if sew == 64 else [])
             lines.extend(["#endif // UDB_SDTRIG_MCONTROL6_XSL_AVAILABLE"] * len(_xsl_ifdefs(xsl)))
         lines.extend(_disable_trigger(temp_reg, trig_num, mode))
-        lines.append(f"#endif // UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
+        lines.extend(_close_gates(gates))
 
     ######################################
     coverpoint = "cp_vector_mask"
@@ -1443,7 +1539,8 @@ def _generate_vector_tests(test_data: TestData, mode: str) -> list[TestChunk]:
         "(tdata2 = scratch+8; v0 makes the element at scratch+8 active or masked off)",
     )
     for trig_num in range(UDB_NUM_TRIGGERS):
-        lines.append(f"\n#ifdef UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
+        gates = _mcontrol6_gates(trig_num, mode)
+        lines.extend(gates)
         for vperm, (vinstr, xsl) in vops.items():
             lines.extend(_xsl_ifdefs(xsl))
             lines.extend(_config_mcontrol6(temp_reg, trig_num, "scratch+8", mode, xsl=xsl, select=0))
@@ -1465,7 +1562,7 @@ def _generate_vector_tests(test_data: TestData, mode: str) -> list[TestChunk]:
                     lines.extend(["#endif // ZVE64X_SUPPORTED"] if sew == 64 else [])
             lines.extend(["#endif // UDB_SDTRIG_MCONTROL6_XSL_AVAILABLE"] * len(_xsl_ifdefs(xsl)))
         lines.extend(_disable_trigger(temp_reg, trig_num, mode))
-        lines.append(f"#endif // UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
+        lines.extend(_close_gates(gates))
 
     test_data.int_regs.return_registers([addr_reg, temp_reg])
     chunks.append(test_data.end_test_chunk())
@@ -1522,9 +1619,12 @@ def _generate_zicbom_tests(test_data: TestData, mode: str) -> list[TestChunk]:
         ]
     )
     for trig_num in range(UDB_NUM_TRIGGERS):
-        lines.append(f"\n#ifdef UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
+        gates = _mcontrol6_gates(trig_num, mode)
+        lines.extend(gates)
         for td2_name, tdata2 in CBO_TDATA2:
             for select in (0, 1):
+                if select:
+                    lines.append("#ifdef UDB_SDTRIG_MCONTROL6_SELECT_AVAILABLE")
                 for size in range(7):
                     if size == 1:
                         lines.append("#ifdef UDB_SDTRIG_MCONTROL6_SIZE_AVAILABLE")
@@ -1547,8 +1647,10 @@ def _generate_zicbom_tests(test_data: TestData, mode: str) -> list[TestChunk]:
                             )
                         lines.append("#endif // UDB_SDTRIG_MCONTROL6_XSL_AVAILABLE")
                 lines.append("#endif // UDB_SDTRIG_MCONTROL6_SIZE_AVAILABLE")
+                if select:
+                    lines.append("#endif // UDB_SDTRIG_MCONTROL6_SELECT_AVAILABLE")
         lines.extend(_disable_trigger(temp_reg, trig_num, mode))
-        lines.append(f"#endif // UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
+        lines.extend(_close_gates(gates))
 
     lines.extend(_global_ie(mode, False))
     test_data.int_regs.return_registers([addr_reg, temp_reg])
@@ -1572,9 +1674,12 @@ def _generate_zicboz_tests(test_data: TestData, mode: str) -> list[TestChunk]:
         ]
     )
     for trig_num in range(UDB_NUM_TRIGGERS):
-        lines.append(f"\n#ifdef UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
+        gates = _mcontrol6_gates(trig_num, mode)
+        lines.extend(gates)
         for td2_name, tdata2 in CBO_TDATA2:
             for select in (0, 1):
+                if select:
+                    lines.append("#ifdef UDB_SDTRIG_MCONTROL6_SELECT_AVAILABLE")
                 for size in range(7):
                     if size == 1:
                         lines.append("#ifdef UDB_SDTRIG_MCONTROL6_SIZE_AVAILABLE")
@@ -1598,8 +1703,10 @@ def _generate_zicboz_tests(test_data: TestData, mode: str) -> list[TestChunk]:
                             ]
                         )
                 lines.append("#endif // UDB_SDTRIG_MCONTROL6_SIZE_AVAILABLE")
+                if select:
+                    lines.append("#endif // UDB_SDTRIG_MCONTROL6_SELECT_AVAILABLE")
         lines.extend(_disable_trigger(temp_reg, trig_num, mode))
-        lines.append(f"#endif // UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
+        lines.extend(_close_gates(gates))
 
     lines.extend(_global_ie(mode, False))
     test_data.int_regs.return_registers([addr_reg, temp_reg])
@@ -1624,10 +1731,13 @@ def _generate_zicbop_tests(test_data: TestData, mode: str) -> list[TestChunk]:
         ]
     )
     for trig_num in range(UDB_NUM_TRIGGERS):
-        lines.append(f"\n#ifdef UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
+        gates = _mcontrol6_gates(trig_num, mode)
+        lines.extend(gates)
         lines.extend(xsl_ifdefs)
         for td2_name, tdata2 in (("scratch", "scratch"), ("zero", 0)):
             for select in (0, 1):
+                if select:
+                    lines.append("#ifdef UDB_SDTRIG_MCONTROL6_SELECT_AVAILABLE")
                 lines.extend(_config_mcontrol6(temp_reg, trig_num, tdata2, mode, xsl=0b011, select=select))
                 for p in ("i", "r", "w"):
                     binname = f"trig_num_{trig_num}_td2_{td2_name}_select_{select}_prefetch_{p}"
@@ -1638,9 +1748,11 @@ def _generate_zicbop_tests(test_data: TestData, mode: str) -> list[TestChunk]:
                             "nop # spacer",
                         ]
                     )
+                if select:
+                    lines.append("#endif // UDB_SDTRIG_MCONTROL6_SELECT_AVAILABLE")
         lines.extend(["#endif // UDB_SDTRIG_MCONTROL6_XSL_AVAILABLE"] * len(xsl_ifdefs))
         lines.extend(_disable_trigger(temp_reg, trig_num, mode))
-        lines.append(f"#endif // UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
+        lines.extend(_close_gates(gates))
 
     lines.extend(_global_ie(mode, False))
     test_data.int_regs.return_registers([addr_reg, temp_reg])
@@ -1705,6 +1817,7 @@ def _generate_address_matches_tests(test_data: TestData, mode: str) -> list[Test
         lines.extend([f"\n# satp.MODE = {satp}", *guards, *satp_lines])
         for trig_num in range(UDB_NUM_TRIGGERS):
             lines.append(f"#ifdef UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
+            lines.extend(_xsl_ifdefs(0b100))
             for value_name, value_lines in values:
                 lines.extend(
                     [
@@ -1717,6 +1830,7 @@ def _generate_address_matches_tests(test_data: TestData, mode: str) -> list[Test
                     ]
                 )
             lines.extend(_disable_trigger(cfg_reg, trig_num, mode))
+            lines.extend(["#endif // UDB_SDTRIG_MCONTROL6_XSL_AVAILABLE"] * len(_xsl_ifdefs(0b100)))
             lines.append(f"#endif // UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
         if guards:
             lines.extend(["csrw satp, x0 # back to Bare", "sfence.vma", "#endif", "#endif"])
@@ -1865,12 +1979,6 @@ def _generate_csr_tests(test_data: TestData, mode: str) -> list[TestChunk]:
         )
     )
     for trig_num in range(UDB_NUM_TRIGGERS):
-        type_guards = (
-            (TRIG_TYPE_ICOUNT, f"UDB_ICOUNT_TRIG{trig_num}_AVAILABLE"),
-            (TRIG_TYPE_ITRIGGER, f"UDB_ITRIGGER_TRIG{trig_num}_AVAILABLE"),
-            (TRIG_TYPE_ETRIGGER, f"UDB_SDTRIG_ETRIGGER_SUPPORTED{trig_num}"),
-            (MCONTROL6_TYPE, f"UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}"),
-        )
         lines.extend(
             [
                 _add_tc(test_data, f"trig_num_{trig_num}", coverpoint, covergroup),
@@ -1886,7 +1994,8 @@ def _generate_csr_tests(test_data: TestData, mode: str) -> list[TestChunk]:
                 f"LI(x{ones_reg}, 0) # tinfo bits of the types configured for this trigger",
             ]
         )
-        for trig_type, guard in type_guards:
+        for trig_type in ACCESS_TYPES[:-1]:  # the types with a per-trigger define (not 15, disabled)
+            guard = _type_guard(trig_type, trig_num)
             lines.extend([f"#ifdef {guard}", f"ori x{ones_reg}, x{ones_reg}, 0x{1 << trig_type:x}", "#endif"])
         lines.extend(
             [
@@ -2109,16 +2218,22 @@ def _generate_csr_tests(test_data: TestData, mode: str) -> list[TestChunk]:
             "reads back 0; only dmode is recorded",
         )
     )
-    dmode_types = (
-        ("mcontrol6", MCONTROL6_TYPE, MCONTROL6_M, "UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}"),
-        ("icount", TRIG_TYPE_ICOUNT, 1 << 10, "UDB_ICOUNT_TRIG{trig_num}_AVAILABLE"),  # count = 1
+    dmode_types = (  # the mcontrol6 case writes m = 1, so it also needs the m bit
+        (
+            "mcontrol6",
+            MCONTROL6_TYPE,
+            MCONTROL6_M,
+            ["UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}", "UDB_SDTRIG_M_AVAILABLE"],
+        ),
+        ("icount", TRIG_TYPE_ICOUNT, 1 << 10, ["UDB_ICOUNT_TRIG{trig_num}_AVAILABLE"]),  # count = 1
     )
     for trig_num in range(UDB_NUM_TRIGGERS):
-        for type_name, trig_type, lowfields, guard in dmode_types:
-            guard = guard.format(trig_num=trig_num)
+        for type_name, trig_type, lowfields, guards in dmode_types:
+            gates = [f"#ifdef {g.format(trig_num=trig_num)}" for g in guards]
+            gates[0] = "\n" + gates[0]
             lines.extend(
                 [
-                    f"\n#ifdef {guard}",
+                    *gates,
                     _add_tc(test_data, f"trig_num_{trig_num}_{type_name}", coverpoint, covergroup),
                     *_select_trigger(temp_reg, trig_num, mode),
                     *_clear_tdata(mode),
@@ -2138,7 +2253,7 @@ def _generate_csr_tests(test_data: TestData, mode: str) -> list[TestChunk]:
                     f"andi x{data_reg}, x{data_reg}, 1 # dmode",
                     write_sigupd(data_reg, test_data),
                     _csr_access("csrw tdata1, x0 # disable trigger", mode),
-                    f"#endif // {guard}",
+                    *_close_gates(gates),
                 ]
             )
 
@@ -2268,6 +2383,7 @@ def _generate_mcontrol6_tests(test_data: TestData, mode: str) -> list[TestChunk]
     others = (MODE_PRIVBIT["Sm"] | MODE_PRIVBIT["S"] | MODE_PRIVBIT["U"]) & ~MODE_PRIVBIT[mode]
     for trig_num in range(UDB_NUM_TRIGGERS):
         lines.append(f"\n#ifdef UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
+        lines.extend(_xsl_ifdefs(0b010))
         for priv in (0, MODE_PRIVBIT[mode]):
             if priv != 0:
                 lines.append(f"\n#ifdef UDB_SDTRIG_{MODE_UDB_LETTER[mode]}_AVAILABLE")
@@ -2297,6 +2413,7 @@ def _generate_mcontrol6_tests(test_data: TestData, mode: str) -> list[TestChunk]
             ]
         )
         lines.extend(_disable_trigger(temp_reg, trig_num, mode))
+        lines.extend(["#endif // UDB_SDTRIG_MCONTROL6_XSL_AVAILABLE"] * len(_xsl_ifdefs(0b010)))
         lines.append(f"#endif // UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
 
     ######################################
@@ -2311,7 +2428,8 @@ def _generate_mcontrol6_tests(test_data: TestData, mode: str) -> list[TestChunk]
         )
     )
     for trig_num in range(UDB_NUM_TRIGGERS):
-        lines.append(f"\n#ifdef UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
+        gates = _mcontrol6_gates(trig_num, mode)
+        lines.extend(gates)
         for perm in range(8):  # perm_xsl
             lines.extend(_xsl_ifdefs(perm))
             label = f"exec_adr_trig_num_{trig_num}_xls_{perm:03b}"
@@ -2334,7 +2452,7 @@ def _generate_mcontrol6_tests(test_data: TestData, mode: str) -> list[TestChunk]
             )
             lines.extend(["#endif // UDB_SDTRIG_MCONTROL6_XSL_AVAILABLE"] * len(_xsl_ifdefs(perm)))
         lines.extend(_disable_trigger(temp_reg, trig_num, mode))
-        lines.append(f"#endif // UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
+        lines.extend(_close_gates(gates))
 
     ######################################
     coverpoint = "cp_mcontrol6_load_store_adr"
@@ -2348,7 +2466,8 @@ def _generate_mcontrol6_tests(test_data: TestData, mode: str) -> list[TestChunk]
         )
     )
     for trig_num in range(UDB_NUM_TRIGGERS):
-        lines.append(f"\n#ifdef UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
+        gates = _mcontrol6_gates(trig_num, mode)
+        lines.extend(gates)
         for tdata2_name, tdata2 in (("scratch", "scratch"), ("scratch_plus_8", "scratch+8"), ("0", 0)):
             for perm in range(8):  # perm_xsl
                 lines.extend(_xsl_ifdefs(perm))
@@ -2368,7 +2487,7 @@ def _generate_mcontrol6_tests(test_data: TestData, mode: str) -> list[TestChunk]
                     )
                 lines.extend(["#endif // UDB_SDTRIG_MCONTROL6_XSL_AVAILABLE"] * len(_xsl_ifdefs(perm)))
         lines.extend(_disable_trigger(temp_reg, trig_num, mode))
-        lines.append(f"#endif // UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
+        lines.extend(_close_gates(gates))
 
     ######################################
     coverpoint = "cp_mcontrol6_execute_data"
@@ -2378,11 +2497,13 @@ def _generate_mcontrol6_tests(test_data: TestData, mode: str) -> list[TestChunk]
     lines.append(
         comment_banner(
             coverpoint,
-            "mcontrol6 fires when instruction encoding == tdata2 (select=data)",
+            "mcontrol6 fires when instruction encoding == tdata2 (select=data)\n"
+            "size=0 with a 32-bit instruction on RV64: relies on the zero-extension in norm:Sdtrig_mcontrol6_select_data",
         )
     )
     for trig_num in range(UDB_NUM_TRIGGERS):
-        lines.append(f"\n#ifdef UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
+        gates = _mcontrol6_gates(trig_num, mode, select=1)
+        lines.extend(gates)
         for tdata2 in (ADDI_HINT, TDATA2_NOFIRE):
             for perm in range(8):  # perm_xsl
                 lines.extend(_xsl_ifdefs(perm))
@@ -2398,7 +2519,7 @@ def _generate_mcontrol6_tests(test_data: TestData, mode: str) -> list[TestChunk]
                 )
                 lines.extend(["#endif // UDB_SDTRIG_MCONTROL6_XSL_AVAILABLE"] * len(_xsl_ifdefs(perm)))
         lines.extend(_disable_trigger(temp_reg, trig_num, mode))
-        lines.append(f"#endif // UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
+        lines.extend(_close_gates(gates))
 
     ######################################
     coverpoint = "cp_mcontrol6_load_store_data"
@@ -2412,28 +2533,30 @@ def _generate_mcontrol6_tests(test_data: TestData, mode: str) -> list[TestChunk]
         )
     )
     for trig_num in range(UDB_NUM_TRIGGERS):
-        lines.append(f"\n#ifdef UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
-        match_val = random_int(32, signed=False)
-        nofire_val = (match_val ^ 1) & 0xFFFFFFFF
+        gates = _mcontrol6_gates(trig_num, mode, select=1)
+        lines.extend(gates)
+        match_val = _xlen_value(random_int(32, signed=False))
+        # no-fire values differ in bit 0 (RV32) or only in the upper half (RV64), so the whole register is compared
+        nofire_val = (match_val[0] ^ 1, match_val[1] ^ (1 << 32))
         for case, tdata2 in [("Fire", match_val), ("NoFire", nofire_val)]:
             for perm in range(8):  # perm_xsl
                 lines.extend(_xsl_ifdefs(perm))
-                binname = f"trig_num_{trig_num}_td2_{tdata2}_{case}_perm_{perm:03b}"
+                binname = f"trig_num_{trig_num}_{case}_perm_{perm:03b}"
                 lines.extend(
                     [
                         _add_tc(test_data, binname, coverpoint, covergroup),
-                        *_config_mcontrol6(temp_reg, trig_num, tdata2, mode, xsl=perm, select=1),
+                        *_config_mcontrol6(temp_reg, trig_num, _xlen_li(temp_reg, *tdata2), mode, xsl=perm, select=1),
                         f"LA(x{addr_reg}, scratch) # x{addr_reg} = &scratch",
-                        f"LI(x{data_reg}, {match_val})",
-                        f"sw x{data_reg}, 0(x{addr_reg}) # store: breakpoint iff data==tdata2 and xsl has store bit",
+                        *_xlen_li(data_reg, *match_val),
+                        f"SREG x{data_reg}, 0(x{addr_reg}) # XLEN-wide store: breakpoint iff data==tdata2 and xsl has store bit",
                         "nop # spacer (data match fires after)",
-                        f"lw x{data_reg}, 0(x{addr_reg}) # fire iff data==tdata2 and xsl has load bit",
+                        f"LREG x{data_reg}, 0(x{addr_reg}) # XLEN-wide load: fire iff data==tdata2 and xsl has load bit",
                         "nop # spacer (data match fires after)",
                     ]
                 )
                 lines.extend(["#endif // UDB_SDTRIG_MCONTROL6_XSL_AVAILABLE"] * len(_xsl_ifdefs(perm)))
         lines.extend(_disable_trigger(temp_reg, trig_num, mode))
-        lines.append(f"#endif // UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
+        lines.extend(_close_gates(gates))
 
     ######################################
     coverpoint = "cp_mcontrol6_execute_size"
@@ -2443,11 +2566,13 @@ def _generate_mcontrol6_tests(test_data: TestData, mode: str) -> list[TestChunk]
     lines.append(
         comment_banner(
             coverpoint,
-            "mcontrol6 execute match across access sizes",
+            "mcontrol6 execute match across access sizes\n"
+            "size=0 with c.nop, or addi on RV64: relies on the zero-extension in norm:Sdtrig_mcontrol6_select_data",
         )
     )
     for trig_num in range(UDB_NUM_TRIGGERS):
-        lines.append(f"\n#ifdef UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
+        gates = _mcontrol6_gates(trig_num, mode, select=1)
+        lines.extend(gates)
         lines.extend(_xsl_ifdefs(0b111))
         for tdata2 in (ADDI_HINT, C_NOP):  # tdata2 sizes: 32-bit and 16-bit targets
             for size in range(7):
@@ -2478,7 +2603,7 @@ def _generate_mcontrol6_tests(test_data: TestData, mode: str) -> list[TestChunk]
                     lines.append("#endif // UDB_SDTRIG_MCONTROL6_SIZE_AVAILABLE")
         lines.extend(["#endif // UDB_SDTRIG_MCONTROL6_XSL_AVAILABLE"] * len(_xsl_ifdefs(0b111)))
         lines.extend(_disable_trigger(temp_reg, trig_num, mode))
-        lines.append(f"#endif // UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
+        lines.extend(_close_gates(gates))
 
     ######################################
     coverpoint = "cp_mcontrol6_load_store_size"
@@ -2548,7 +2673,8 @@ def _generate_mcontrol6_tests(test_data: TestData, mode: str) -> list[TestChunk]
     sp_teardown_asm = [f"mv sp, x{sp_reg}"]
 
     for trig_num in range(UDB_NUM_TRIGGERS):
-        lines.append(f"\n#ifdef UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
+        gates = _mcontrol6_gates(trig_num, mode)
+        lines.extend(gates)
         lines.extend(_xsl_ifdefs(0b011))
         for tdata2 in ("scratch", 0):
             for size in (0, 1, 2, 3, 5):
@@ -2582,7 +2708,7 @@ def _generate_mcontrol6_tests(test_data: TestData, mode: str) -> list[TestChunk]
                     lines.append("#endif // UDB_SDTRIG_MCONTROL6_SIZE_AVAILABLE")
         lines.extend(["#endif // UDB_SDTRIG_MCONTROL6_XSL_AVAILABLE"] * len(_xsl_ifdefs(0b011)))
         lines.extend(_disable_trigger(temp_reg, trig_num, mode))
-        lines.append(f"#endif // UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
+        lines.extend(_close_gates(gates))
 
     ######################################
     coverpoint = "cp_mcontrol6_match"
@@ -2596,7 +2722,8 @@ def _generate_mcontrol6_tests(test_data: TestData, mode: str) -> list[TestChunk]
         )
     )
     for trig_num in range(UDB_NUM_TRIGGERS):
-        lines.append(f"\n#ifdef UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
+        gates = _mcontrol6_gates(trig_num, mode, select=1)
+        lines.extend(gates)
         lines.extend(_xsl_ifdefs(0b010))
         for match in (0, 2, 3, 8):
             lines.append(f"\n# Match = {match}")
@@ -2641,7 +2768,7 @@ def _generate_mcontrol6_tests(test_data: TestData, mode: str) -> list[TestChunk]
                 lines.append("#endif // UDB_SDTRIG_MCONTROL6_MATCH_AVAILABLE")
         lines.extend(["#endif // UDB_SDTRIG_MCONTROL6_XSL_AVAILABLE"] * len(_xsl_ifdefs(0b010)))
         lines.extend(_disable_trigger(temp_reg, trig_num, mode))
-        lines.append(f"#endif // UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
+        lines.extend(_close_gates(gates))
 
     ######################################
     coverpoint = "cp_mcontrol6_match_napot"
@@ -2656,7 +2783,8 @@ def _generate_mcontrol6_tests(test_data: TestData, mode: str) -> list[TestChunk]
     )
 
     for trig_num in range(UDB_NUM_TRIGGERS):
-        lines.append(f"\n#ifdef UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
+        gates = _mcontrol6_gates(trig_num, mode, select=1)
+        lines.extend(gates)
         lines.extend(_xsl_ifdefs(0b010))
         lines.append("\n#ifdef UDB_SDTRIG_MCONTROL6_MATCH_AVAILABLE")
         for match in (1, 9):
@@ -2691,7 +2819,7 @@ def _generate_mcontrol6_tests(test_data: TestData, mode: str) -> list[TestChunk]
         lines.append("#endif // UDB_SDTRIG_MCONTROL6_MATCH_AVAILABLE")
         lines.extend(["#endif // UDB_SDTRIG_MCONTROL6_XSL_AVAILABLE"] * len(_xsl_ifdefs(0b010)))
         lines.extend(_disable_trigger(temp_reg, trig_num, mode))
-        lines.append(f"#endif // UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
+        lines.extend(_close_gates(gates))
 
     ######################################
     coverpoint = "cp_mcontrol6_match_mask"
@@ -2724,7 +2852,8 @@ def _generate_mcontrol6_tests(test_data: TestData, mode: str) -> list[TestChunk]
         ),
     )
     for trig_num in range(UDB_NUM_TRIGGERS):
-        lines.append(f"\n#ifdef UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
+        gates = _mcontrol6_gates(trig_num, mode, select=1)
+        lines.extend(gates)
         lines.extend(_xsl_ifdefs(0b010))
         lines.append("\n#ifdef UDB_SDTRIG_MCONTROL6_MATCH_AVAILABLE")
         for match in (4, 5, 12, 13):  # 4: mask low, 5: mask high, 12: not mask low, 13: not mask high
@@ -2751,7 +2880,7 @@ def _generate_mcontrol6_tests(test_data: TestData, mode: str) -> list[TestChunk]
         lines.append("#endif // UDB_SDTRIG_MCONTROL6_MATCH_AVAILABLE")
         lines.extend(["#endif // UDB_SDTRIG_MCONTROL6_XSL_AVAILABLE"] * len(_xsl_ifdefs(0b010)))
         lines.extend(_disable_trigger(temp_reg, trig_num, mode))
-        lines.append(f"#endif // UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
+        lines.extend(_close_gates(gates))
 
     ######################################
     coverpoint = "cp_mcontrol6_chain_adr"
@@ -2765,38 +2894,41 @@ def _generate_mcontrol6_tests(test_data: TestData, mode: str) -> list[TestChunk]
             "instruction (trigN chain=1 address, trigN+1 chain=0 data)",
         )
     )
-    match_val = random_int(32, signed=False)
+    match_val = _xlen_value(random_int(32, signed=False))
 
     for trig_num in range(UDB_NUM_TRIGGERS - 1):
-        lines.append(f"\n#ifdef UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
-        lines.append(f"#ifdef UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num + 1}")
-        lines.append("#ifdef UDB_SDTRIG_MCONTROL6_CHAIN_AVAILABLE")
+        gates = [  # trigger trig_num + 1 is the select=1 one
+            *_mcontrol6_gates(trig_num, mode, select=1),
+            f"#ifdef UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num + 1}",
+            "#ifdef UDB_SDTRIG_MCONTROL6_CHAIN_AVAILABLE",
+        ]
+        lines.extend(gates)
         lines.extend(_xsl_ifdefs(0b010))
         lines.extend(
             [
                 *_config_mcontrol6(temp_reg, trig_num, "scratch", mode, xsl=0b010, select=0, chain=1),
-                *_config_mcontrol6(temp_reg, trig_num + 1, match_val, mode, xsl=0b010, select=1, chain=0),
+                *_config_mcontrol6(
+                    temp_reg, trig_num + 1, _xlen_li(temp_reg, *match_val), mode, xsl=0b010, select=1, chain=0
+                ),
                 f"LA(x{addr_reg}, scratch)",
             ]
         )
         # sweep data-match x addr-match; only both-match fires the chained pair
-        for data_case, data in [("Fire", match_val), ("NoFire", 0)]:
+        for data_case, data in [("Fire", match_val), ("NoFire", (0, 0))]:
             for adr_case, offset in [("Fire", 0), ("NoFire", 8)]:
                 binname = f"trig_nums_{trig_num}_{trig_num + 1}_data_{data_case}_adr_{adr_case}"
                 lines.extend(
                     [
                         _add_tc(test_data, binname, coverpoint, covergroup),
-                        f"LI(x{data_reg}, {data})",
-                        f"sw x{data_reg}, {offset}(x{addr_reg}) # fire trigger when both triggers match",
+                        *_xlen_li(data_reg, *data),
+                        f"SREG x{data_reg}, {offset}(x{addr_reg}) # XLEN-wide store: fire when both triggers match",
                         "nop # spacer (data match fires after)",
                     ]
                 )
         lines.extend(["#endif // UDB_SDTRIG_MCONTROL6_XSL_AVAILABLE"] * len(_xsl_ifdefs(0b010)))
-        lines.append("#endif // UDB_SDTRIG_MCONTROL6_CHAIN_AVAILABLE")
         lines.extend(_disable_trigger(temp_reg, trig_num, mode))
         lines.extend(_disable_trigger(temp_reg, trig_num + 1, mode))
-        lines.append(f"#endif // UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num + 1}")
-        lines.append(f"#endif // UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
+        lines.extend(_close_gates(gates))
 
     test_data.int_regs.return_registers([sp_reg, addr_reg, data_reg, temp_reg])
     chunks.append(test_data.end_test_chunk())
@@ -3416,7 +3548,9 @@ def _generate_textra_tests(test_data: TestData, mode: str) -> list[TestChunk]:
         ]
 
     def per_type(trig_num: int, trig_type: str, body: list[str]) -> list[str]:
-        guards = [g.format(trig_num=trig_num) for g in _TEXTRA_TYPE_GUARDS[trig_type]]
+        guards = [
+            g.format(trig_num=trig_num, mode_letter=MODE_UDB_LETTER[mode]) for g in _TEXTRA_TYPE_GUARDS[trig_type]
+        ]
         return [f"\n# trig_num {trig_num}, {trig_type}", *guards, *body, *(["#endif"] * len(guards))]
 
     def set_context(csr: str, val32: int, val64: int) -> list[str]:

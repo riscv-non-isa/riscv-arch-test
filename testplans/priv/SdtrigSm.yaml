@@ -119,6 +119,9 @@ coverpoints:
       tselect = i
     bins: UDB_VECTOR_SEW
   - name: cp_vector_load_store
+    status: >-
+      Partly gated: the size 1-6 cases and bins are compiled only with UDB_SDTRIG_MCONTROL6_SIZE_AVAILABLE
+      (pending riscv-unified-db#2069); only size = 0 (any) runs today
     goal: Accesses match as if it performed a load/store of size SEW
     description: |-
       if ZVL32B_SUPPORTED
@@ -191,6 +194,9 @@ coverpoints:
       - Sdtrig_caches_stores_2
       - Sdtrig_caches_stores_3
   - name: cp_cache_zicbom
+    status: >-
+      Partly gated: the size 1-6 cases and bins are compiled only with UDB_SDTRIG_MCONTROL6_SIZE_AVAILABLE
+      (pending riscv-unified-db#2069); only size = 0 (any) runs today
     goal: cbo.clean, cbo.flush, and cbo.inval match as if they are stores
     description: |-
       if ZICBOM_SUPPORTED
@@ -204,6 +210,9 @@ coverpoints:
     rules:
       - Sdtrig_cache_clears
   - name: cp_cache_zicboz
+    status: >-
+      Partly gated: the size 1-6 cases and bins are compiled only with UDB_SDTRIG_MCONTROL6_SIZE_AVAILABLE
+      (pending riscv-unified-db#2069); only size = 0 (any) runs today
     goal: cbo.zero matches as if it is a store
     description: |-
       if ZICBOZ_SUPPORTED
@@ -382,7 +391,10 @@ coverpoints:
     expectation: Illegal instruction exception on every access
     bins: unimplemented context CSRs * 2 accesses (none on a hart with mcontext and hcontext)
   - heading: Trigger Control
-  - name: cp_tcontrol_enable
+  - name: cp_tcontrol_enable (not generated)
+    status: >-
+      Not generated: _generate_tcontrol_tests emits labels only and is not registered, and SdtrigSm_tcontrol_cg
+      is compiled only with UDB_TCONTROL_AVAILABLE (TCONTROL_IMPLEMENTED, riscv-unified-db#2069)
     goal: tcontrol.mte enables debug triggers in M-mode
     description: |-
       if UDB_TCONTROL_AVAILABLE
@@ -394,7 +406,8 @@ coverpoints:
     rules:
       - Sdtrig_tcontrol_mte_disabled
       - Sdtrig_tcontrol_mte_enabled
-  - name: cp_tcontrol_mtrap
+  - name: cp_tcontrol_mtrap (not generated)
+    status: "Not generated: see cp_tcontrol_enable"
     goal: tcontrol.mte/mpte on trap into M-mode
     description: |-
       if UDB_TCONTROL_AVAILABLE
@@ -406,7 +419,9 @@ coverpoints:
     bins: 2 mpte * 2 mte
     rules:
       - Sdtrig_tcontrol_mte
-  - name: cp_tcontrol_mret
+      - Sdtrig_tcontrol_mpte
+  - name: cp_tcontrol_mret (not generated)
+    status: "Not generated: see cp_tcontrol_enable"
     goal: tcontrol.mte on mret
     description: |-
       if UDB_TCONTROL_AVAILABLE
@@ -486,6 +501,7 @@ coverpoints:
       tdata1.XSL = 8 combinations
       perform addi x0, x1, 0
       (not nop, whose opcode also appears in the test environment's own code; no instruction in the test encodes as 0x2)
+      on RV64, size = 0 with a 32-bit instruction relies on the zero-extension in Sdtrig_mcontrol6_select_data
     expectation: Breakpoint exception on fetched instruction if tdata2 matches opcode and tdata1.execute = 1
     bins: 2 values * 8 XSL
     rules:
@@ -496,13 +512,14 @@ coverpoints:
     notes: "comments on test results: Exceptions when tdata2 = 0x00008013, and execute = 1"
   - name: cp_mcontrol6_load_store_data
     description: |-
-      tdata2 = {random value}
+      tdata2 = {random XLEN-wide value / the same value with bit 0 (RV32) or bit 32 (RV64) flipped}
       tdata1.select = 1 (data)
       tdata1.XSL = 8 combinations
-      perform {SW/ LW random value} to scratch
+      perform {SW/LW (RV32), SD/LD (RV64)} of the value to scratch
+      (XLEN-wide accesses: with size = 0 a data match is only well-defined when the access size is XLEN)
     expectation: |-
-      Breakpoint exception on LW if access data matches tdata2 and tdata1.load = 1
-      Breakpoint exception on SW if access data matches tdata2 and tdata1.store = 1
+      Breakpoint exception on the load if access data matches tdata2 and tdata1.load = 1
+      Breakpoint exception on the store if access data matches tdata2 and tdata1.store = 1
     bins: 8 XSL * 2 ops (tdata2 values not binned because the data a load reads is not visible to coverage)
     rules:
       - Sdtrig_mcontrol6_select_data
@@ -511,6 +528,9 @@ coverpoints:
       - Sdtrig_mcontrol6_load
     notes: "comments on test results: Exceptions when td2 = the stored value, and XSL = 1/2/3"
   - name: cp_mcontrol6_execute_size
+    status: >-
+      Partly gated: the size 1-6 cases and bins are compiled only with UDB_SDTRIG_MCONTROL6_SIZE_AVAILABLE
+      (pending riscv-unified-db#2069); only size = 0 (any) runs today
     description: |-
       tdata2 = {addi x0, x1, 0 opcode/c.nop opcode}
       tdata1.select = 1 (data)
@@ -519,6 +539,7 @@ coverpoints:
       perform addi x0, x1, 0
       if ZCA_SUPPORTED
       perform c.nop
+      size = 0 with c.nop, or with addi on RV64, relies on the zero-extension in Sdtrig_mcontrol6_select_data
     expectation: Breakpoint exception if the size of the instruction matches the trigger size in mcontrol6 and tdata1.execute = 1
     bins: 2 values * 7 sizes * 2 ops
     rules:
@@ -530,6 +551,9 @@ coverpoints:
       - Sdtrig_mcontrol6_size_128bit
     notes: "comments on test results: Exceptions when td2 = op, size = 0. Note: warls size to zero"
   - name: cp_mcontrol6_load_store_size
+    status: >-
+      Partly gated: the size 1, 2, 3 and 5 cases and bins are compiled only with UDB_SDTRIG_MCONTROL6_SIZE_AVAILABLE
+      (pending riscv-unified-db#2069); only size = 0 (any) runs today
     description: |-
       tdata2 = {scratch/0}
       tdata1.select = 0 (adr)
@@ -556,6 +580,9 @@ coverpoints:
       - Sdtrig_mcontrol6_size_128bit
     notes: Sizes 4 (48-bit) and 6 (128-bit) are not tested
   - name: cp_mcontrol6_match
+    status: >-
+      Partly gated: the ge, lt and not-equal cases and bins are compiled only with
+      UDB_SDTRIG_MCONTROL6_MATCH_AVAILABLE (pending riscv-unified-db#2069); only match = 0 (equal) runs today
     goal: Test boundaries for match conditions
     description: |-
       tdata1.select = 1 (data)
@@ -574,7 +601,10 @@ coverpoints:
       - Sdtrig_mcontrol6_match_ge
       - Sdtrig_mcontrol6_match_lt
       - Sdtrig_mcontrol6_match_not_equal
-  - name: cp_mcontrol6_match_napot
+  - name: cp_mcontrol6_match_napot (gated)
+    status: >-
+      Gated off: every case and the cross are compiled only with UDB_SDTRIG_MCONTROL6_MATCH_AVAILABLE, which is
+      not defined until riscv-unified-db#2069 provides it, so the row runs nowhere
     description: |-
       tdata1.select = 1 (data)
       tdata1.XSL= 010
@@ -594,7 +624,10 @@ coverpoints:
     rules:
       - Sdtrig_mcontrol6_match_napot
       - Sdtrig_mcontrol6_match_not_napot
-  - name: cp_mcontrol6_match_mask
+      - Sdtrig_mcontrol6_match_napot_legal
+      - Sdtrig_mcontrol6_match_napot_mask
+  - name: cp_mcontrol6_match_mask (gated)
+    status: "Gated off: as cp_mcontrol6_match_napot (UDB_SDTRIG_MCONTROL6_MATCH_AVAILABLE)"
     description: |-
       tdata1.select = 1 (data)
       tdata1.XSL= 010
@@ -645,10 +678,10 @@ coverpoints:
       Trigger i+1 (Tselect = i + 1):
       tdata1.select = 1 (data)
       tdata1.chain = 0
-      tdata2 = {0x12345678}
+      tdata2 = {random XLEN-wide value}
 
       tdata1.XSL = 010
-      perform SW  {0x012345678/0} to {scratch/scratch+8}
+      perform SW (RV32) / SD (RV64) {the value/0} to {scratch/scratch+8} (XLEN-wide, as size = 0 needs)
     expectation: Breakpoint exception from final trigger in chain if all triggers match simultaneously
     bins: 2 store values * 2 addresses
     rules:
@@ -673,7 +706,11 @@ coverpoints:
       Perform an instruction that causes trigger to fire/not fire
       After each case, the tdata1 readback (without hit, which is optional and not checked) and rvtest_trap_count
       are written to the signature, so a fire or missing fire is reported at that case.
-  - name: cp_icount_hardwired
+  - name: cp_icount_hardwired (gated)
+    status: >-
+      Gated off: the test and the cross are compiled only with UDB_ICOUNT_HARDWIRED_1, which is never defined yet
+      (pending riscv-unified-db#2069), so the row runs nowhere. imperas-rv64-max sets count_hardwired_one in its
+      sail.json, so there cp_icount_instr and cp_icount_eq0 run against a hard-wired-1 reference instead
     description: |-
       if UDB_COUNT_HARDWIRED_1 = true:
       tdata1.m/s/u/vs/vu = 11111
@@ -914,8 +951,8 @@ coverpoints:
       if MCONTROL6_SUPPORTED
       tdata1.type = 6 (mcontrol6)
       tdata1.select = 1 (data)
-      tdata2 = {0x12345678}
-      perform SW  {0x12345678}
+      tdata2 = {0x12345678 (RV32) / 0xEDCBA98712345678 (RV64)}
+      perform SW (RV32) / SD (RV64) of the same value (an XLEN-wide access, as size = 0 needs)
 
       itrigger/etrigger are not used here (their traps are taken with xIE=0); see cp_textra_itrigger/etrigger.
       After each case, rvtest_trap_count is written to the signature.
@@ -948,8 +985,8 @@ coverpoints:
       if MCONTROL6_SUPPORTED
       tdata1.type = 6 (mcontrol6)
       tdata1.select = 1 (data)
-      tdata2 = {0x12345678}
-      perform SW  {0x12345678}
+      tdata2 = {0x12345678 (RV32) / 0xEDCBA98712345678 (RV64)}
+      perform SW (RV32) / SD (RV64) of the same value (an XLEN-wide access, as size = 0 needs)
 
       itrigger/etrigger are not used here (their traps are taken with xIE=0); see cp_textra_itrigger/etrigger.
       After each case, rvtest_trap_count is written to the signature.
@@ -1003,8 +1040,8 @@ coverpoints:
       if MCONTROL6_SUPPORTED
       tdata1.type = 6 (mcontrol6)
       tdata1.select = 1 (data)
-      tdata2 = {0x12345678}
-      perform SW  {0x12345678}
+      tdata2 = {0x12345678 (RV32) / 0xEDCBA98712345678 (RV64)}
+      perform SW (RV32) / SD (RV64) of the same value (an XLEN-wide access, as size = 0 needs)
 
       itrigger/etrigger are not used here (their traps are taken with xIE=0); see cp_textra_itrigger/etrigger.
       After each case, rvtest_trap_count is written to the signature.
@@ -1035,8 +1072,8 @@ coverpoints:
       if MCONTROL6_SUPPORTED
       tdata1.type = 6 (mcontrol6)
       tdata1.select = 1 (data)
-      tdata2 = {0x12345678}
-      perform SW  {0x12345678}
+      tdata2 = {0x12345678 (RV32) / 0xEDCBA98712345678 (RV64)}
+      perform SW (RV32) / SD (RV64) of the same value (an XLEN-wide access, as size = 0 needs)
     expectation: Breakpoint exception if ASID in satp equals the lower ASIDMAX bits of svalue.
     bins: 2 types * 2 asid_match
     rules:
