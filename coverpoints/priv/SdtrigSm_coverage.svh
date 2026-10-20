@@ -1248,6 +1248,123 @@ covergroup SdtrigSm_textra_cg with function sample(ins_t ins);
     `endif
 endgroup
 
+// cp_tdata2_translate: a tdata2 value read back in M while satp.MODE selects the mode it is valid in.
+// 1/2: Sv39 largest VA with the sign bit clear / smallest with it set, 3/4: Sv48, 5/6: Sv57, 7/8: Sv32,
+// 9: Bare and the largest PA (zero-extended), 0: anything else.
+function automatic logic [3:0] sdtrig_tdata2_xlate_value(ins_t ins);
+    logic [XLEN-1:0] v = ins.current.rd_val;
+`ifdef UDB_MXLEN_64
+    logic [3:0] mode = ins.current.csr[CSR_SATP][63:60];
+    if (mode == 4'd8  && v == 64'h0000_003F_FFFF_FFFF) return 4'd1;
+    if (mode == 4'd8  && v == 64'hFFFF_FFC0_0000_0000) return 4'd2;
+    if (mode == 4'd9  && v == 64'h0000_7FFF_FFFF_FFFF) return 4'd3;
+    if (mode == 4'd9  && v == 64'hFFFF_8000_0000_0000) return 4'd4;
+    if (mode == 4'd10 && v == 64'h00FF_FFFF_FFFF_FFFF) return 4'd5;
+    if (mode == 4'd10 && v == 64'hFF00_0000_0000_0000) return 4'd6;
+    if (mode == 4'd0  && v == (64'd1 << `UDB_PHYS_ADDR_WIDTH) - 64'd1) return 4'd9;
+`else
+    logic bare = !ins.current.csr[CSR_SATP][31];
+    if (!bare && v == 32'h7FFF_FFFF) return 4'd7;
+    if (!bare && v == 32'h8000_0000) return 4'd8;
+    if (bare && v == ((`UDB_PHYS_ADDR_WIDTH >= 32) ? 32'hFFFF_FFFF : 32'((64'd1 << `UDB_PHYS_ADDR_WIDTH) - 64'd1))) return 4'd9;
+`endif
+    return 4'd0;
+endfunction
+// satp.MODE: RV64 satp[63:60]; RV32 1 = Sv32
+function automatic logic [3:0] sdtrig_satp_mode(ins_t ins);
+`ifdef UDB_MXLEN_64
+    return ins.current.csr[CSR_SATP][63:60];
+`else
+    return {3'b0, ins.current.csr[CSR_SATP][31]};
+`endif
+endfunction
+// cp_tdata2_translate_exec, for code run through the alias superpage in the last root slot (VA bits above the
+// superpage offset all 1): 1 = an execute trigger fired with tdata2 = the matched instruction's VA there;
+// 2 = an instruction ran there with tdata2 = its PA (same superpage offset, identity mapped) and nothing fired.
+function automatic logic [1:0] sdtrig_tdata2_xlate_exec(ins_t ins);
+    logic [XLEN-1:0] tdata2 = ins.current.csr[CSR_TDATA2];
+    logic [XLEN-1:0] offset_mask;
+    case (sdtrig_satp_mode(ins))
+`ifdef UDB_MXLEN_64
+        4'd8:    offset_mask = (XLEN'(1) << 30) - 1;
+        4'd9:    offset_mask = (XLEN'(1) << 39) - 1;
+        4'd10:   offset_mask = (XLEN'(1) << 48) - 1;
+`else
+        4'd1:    offset_mask = (XLEN'(1) << 22) - 1;
+`endif
+        default: return 2'd0;
+    endcase
+    if (sdtrig_exec_fired(ins))
+        return (ins.current.csr[CSR_MEPC] == tdata2 && (tdata2 | offset_mask) == '1) ? 2'd1 : 2'd0;
+    if ((ins.current.pc_rdata | offset_mask) == '1 && tdata2 != ins.current.pc_rdata &&
+        ((tdata2 ^ ins.current.pc_rdata) & offset_mask) == '0)
+        return 2'd2;
+    return 2'd0;
+endfunction
+
+covergroup SdtrigSm_address_matches_cg with function sample(ins_t ins);
+    option.per_instance = 0;
+    `include "general/RISCV_coverage_standard_coverpoints.svh"
+    `include "general/RISCV_coverage_sdtrig_coverpoints.svh"
+
+    csr_tdata2: coverpoint ins.current.insn[31:20] {
+        type_option.weight = 0;
+        bins tdata2 = {CSR_TDATA2};
+    }
+    tdata2_xlate_value: coverpoint sdtrig_tdata2_xlate_value(ins) {
+        type_option.weight = 0;
+        bins bare_max_pa = {4'd9};
+    `ifdef UDB_MXLEN_64
+        `ifdef SV39_SUPPORTED
+            bins sv39_msb_0 = {4'd1};
+            bins sv39_msb_1 = {4'd2};
+        `endif
+        `ifdef SV48_SUPPORTED
+            bins sv48_msb_0 = {4'd3};
+            bins sv48_msb_1 = {4'd4};
+        `endif
+        `ifdef SV57_SUPPORTED
+            bins sv57_msb_0 = {4'd5};
+            bins sv57_msb_1 = {4'd6};
+        `endif
+    `else
+        `ifdef SV32_SUPPORTED
+            bins sv32_msb_0 = {4'd7};
+            bins sv32_msb_1 = {4'd8};
+        `endif
+    `endif
+    }
+    satp_xlate_mode: coverpoint sdtrig_satp_mode(ins) {
+        type_option.weight = 0;
+    `ifdef UDB_MXLEN_64
+        `ifdef SV39_SUPPORTED
+            bins sv39 = {4'd8};
+        `endif
+        `ifdef SV48_SUPPORTED
+            bins sv48 = {4'd9};
+        `endif
+        `ifdef SV57_SUPPORTED
+            bins sv57 = {4'd10};
+        `endif
+    `else
+        `ifdef SV32_SUPPORTED
+            bins sv32 = {4'd1};
+        `endif
+    `endif
+    }
+    tdata2_xlate_exec: coverpoint sdtrig_tdata2_xlate_exec(ins) {
+        type_option.weight = 0;
+        bins va_fired     = {2'd1};
+        bins pa_not_fired = {2'd2};
+    }
+
+    // main coverpoints
+    cp_tdata2_translate:          cross priv_mode_m, triggernum, csrr, csr_tdata2, tdata1_type_mcontrol6, tdata1_select_adr, tdata2_xlate_value;                       // NTRIG * (2 * VA modes + 1)
+    `ifdef S_SUPPORTED
+        cp_tdata2_translate_exec: cross priv_mode_s, triggernum, tdata1_type_mcontrol6, tdata1_select_adr, tdata1_execute_on, satp_xlate_mode, tdata2_xlate_exec; // NTRIG * VA modes * 2
+    `endif
+endgroup
+
 function void sdtrigsm_sample(int hart, int issue, ins_t ins);
     SdtrigSm_trig_module_reg_cg.sample(ins);
     SdtrigSm_access_cg.sample(ins);
@@ -1264,6 +1381,7 @@ function void sdtrigsm_sample(int hart, int issue, ins_t ins);
     SdtrigSm_etrigger_cg.sample(ins);
     SdtrigSm_mcontrol6_cg.sample(ins);
     SdtrigSm_textra_cg.sample(ins);
+    SdtrigSm_address_matches_cg.sample(ins);
     `ifdef UDB_TCONTROL_AVAILABLE
         SdtrigSm_tcontrol_cg.sample(ins);
     `endif

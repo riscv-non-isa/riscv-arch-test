@@ -240,32 +240,40 @@ coverpoints:
     rules:
       - Sdtrig_prefetch
   - heading: Address Matches
-  - name: cp_tdata2_translate (not generated)
-    status: "Not generated: _generate_address_matches_tests is a stub and is not registered"
+  - name: cp_tdata2_translate
     goal: tdata2 can hold valid addresses in all supported translation modes
     description: |-
-      For each of UDB_SDTRIG_NUM_TRIGGERS in tselect
-      Turn on Virtual memory
-      CSRW tdata2 = all 0's
-      if sv57 supported:
-      CSRW tdata2 walking 0's and 1's bits 55:0
-      else if sv48 supported:
-      CSRW tdata2 walking 0's and 1's bits 46:0
-      else if sv39 supported:
-      CSRW tdata2 walking 0's and 1's bits 37:0
-      else if sv32 supported:
-      CSRW tdata2 walking 0's and 1's bits 31:0
-      else BARE and (PLEN < XLEN):
-      CSRW tdata2 walking 0's and 1's bits PLEN-1:0
-
+      For each of UDB_SDTRIG_NUM_TRIGGERS in tselect if UDB_SDTRIG_MCONTROL6_SUPPORTED[i]:
+      tdata1 = mcontrol6, select = 0, match = 0, execute = 1, m/s/u/vs/vu = 0 (never fires)
+      satp.MODE = Bare: CSRW tdata2 = largest PA (2^min(PHYS_ADDR_WIDTH, XLEN) - 1)
+      for each mode in {Sv39, Sv48, Sv57 on RV64, Sv32 on RV32} if supported:
+      satp.MODE = mode (root table), CSRW tdata2 = {largest VA with the sign bit clear, smallest VA with it set},
+      e.g. Sv39 0x0000003FFFFFFFFF, 0xFFFFFFC000000000
       CSRR tdata2 after each write
     expectation: |-
       Read value matches written
-      Results are sign extended
-    bins: SVMODE * 2
+      VAs are sign-extended and PAs zero-extended
+    bins: NTRIG * (1 + 2 * supported VA modes)
     rules:
       - Sdtrig_tdata2_addr_sz1
+      - Sdtrig_csr_tdata2_sz2
       - Sdtrig_pmem
+      - Sdtrig_vmem
+  - name: cp_tdata2_translate_exec
+    goal: An execute trigger matches the virtual address of a translated fetch, not its physical address
+    description: |-
+      if S_SUPPORTED, for each mode in {Sv39, Sv48, Sv57 on RV64, Sv32 on RV32} if supported:
+      map the superpage holding a target (nop; jr ra) a second time at the last root slot (a negative VA),
+      satp.MODE = mode, medeleg[3] = 0
+      For each of UDB_SDTRIG_NUM_TRIGGERS in tselect if UDB_SDTRIG_MCONTROL6_SUPPORTED[i]:
+      tdata1 = mcontrol6, select = 0, execute = 1, s = 1
+      tdata2 = {target VA in the alias, target PA (also its identity-mapped VA)}
+      in S-mode, call the target at its alias VA
+      After each case, rvtest_trap_count is written to the signature.
+    expectation: Breakpoint into M with mepc = the alias VA iff tdata2 = VA
+    bins: NTRIG * supported VA modes * 2
+    rules:
+      - Sdtrig_csr_tdata2_sz2
       - Sdtrig_vmem
   - heading: Trigger Module Registers
   - name: cp_tdata_write

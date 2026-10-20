@@ -255,23 +255,18 @@ normative_rule_definitions:
   # including any high bits. An implementation may be able to optimize the storage
   # required, depending on the widest addresses it supports.
   - name: Sdtrig_tdata2_addr_sz1
-    coverpoint:
-      [
-        "Not tested yet: no tdata2 test across translation modes (cp_tdata2_translate)",
-      ]
+    coverpoint: ["SdtrigSm_address_matches_cg/cp_tdata2_translate"]
 
   # If physical addresses are less than XLEN bits wide, they are zero-extended.
   - name: Sdtrig_pmem
-    coverpoint:
-      [
-        "Not tested yet: no tdata2 test across translation modes (cp_tdata2_translate)",
-      ]
+    coverpoint: ["SdtrigSm_address_matches_cg/cp_tdata2_translate"]
 
   # If virtual addresses are less than XLEN bits wide, they are sign-extended.
   - name: Sdtrig_vmem
     coverpoint:
       [
-        "Not tested yet: no tdata2 test across translation modes (cp_tdata2_translate)",
+        "SdtrigSm_address_matches_cg/cp_tdata2_translate",
+        "SdtrigSm_address_matches_cg/cp_tdata2_translate_exec",
       ]
 
   # tdata2 must be implemented with enough bits of storage to represent the full
@@ -280,7 +275,8 @@ normative_rule_definitions:
   - name: Sdtrig_csr_tdata2_sz2
     coverpoint:
       [
-        "Not tested yet: no tdata2 test across translation modes (cp_tdata2_translate)",
+        "SdtrigSm_address_matches_cg/cp_tdata2_translate",
+        "SdtrigSm_address_matches_cg/cp_tdata2_translate_exec",
       ]
 
   # If tdata2 can hold any invalid addresses, then writes of an invalid address that
