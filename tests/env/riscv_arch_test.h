@@ -11,6 +11,11 @@
 #endif
 #include "utils.h"
 #include "rvmodel_macros.h"
+// hgeip is read-only, so only the platform can raise a guest external interrupt, through the
+// optional RVMODEL_SET_GUEST_EXT_INT. UDB has no parameter for this, so key it on that hook.
+#if defined(H_SUPPORTED) && defined(RVMODEL_SET_GUEST_EXT_INT)
+  #define UDB_SGEI_INTR_IMPL
+#endif
 #ifndef RVTEST_SELFCHECK
   #include "sail_macros.h"
 #endif

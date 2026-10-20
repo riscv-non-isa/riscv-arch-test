@@ -835,6 +835,70 @@
     #endif // SSTC_SUPPORTED
   #endif // S_SUPPORTED
 
+  // VS-level timer through vstimecmp, which is compared with time + htimedelta.
+  // Assumes menvcfg.STCE = 1 and henvcfg.STCE = 1. The _ms routines run in M-mode or HS-mode,
+  // and the _m and _s ones in the mode they name. Every caller implements the time CSR, which
+  // HS-mode reads with mcounteren.TM = 1.
+  #if defined(H_SUPPORTED) && defined(SSTC_SUPPORTED) && defined(STANDARD_SM_SUPPORTED)
+    rvtest_set_vsstc_int_soon_ms:
+      #if UDB_MXLEN == 32
+        li a0, -1
+        csrw vstimecmph, a0 // vstimecmp high word = all 1s so the split update cannot fire early
+      1:
+        csrr a2, timeh
+        csrr a0, time
+        csrr a1, timeh
+        bne a1, a2, 1b // timeh changed between the reads
+        csrr a1, htimedelta
+        add a0, a0, a1
+        sltu a1, a0, a1 // carry
+        add a2, a2, a1
+        LI(a1, RVMODEL_TIMER_INT_SOON_DELAY)
+        add a0, a0, a1
+        sltu a1, a0, a1 // carry
+        add a2, a2, a1
+        csrw vstimecmp, a0
+        csrr a1, htimedeltah
+        add a2, a2, a1
+        csrw vstimecmph, a2
+      #else
+        csrr a0, time
+        csrr a1, htimedelta
+        add a0, a0, a1
+        LI(a1, RVMODEL_TIMER_INT_SOON_DELAY)
+        add a0, a0, a1
+        csrw vstimecmp, a0
+      #endif
+      ret
+
+    // time + htimedelta >= 0 always holds (unsigned), so vstimecmp = 0 raises VSTIP at once
+    rvtest_set_vsstc_int_ms:
+      #if UDB_MXLEN == 32
+        csrw vstimecmph, zero
+      #endif
+      csrw vstimecmp, zero
+      ret
+
+    // All 1s in vstimecmp clears VSTIP unless time + htimedelta is all 1s
+    rvtest_clr_vsstc_int_m:
+      li a1, -1
+      #if UDB_MXLEN == 32
+        csrw vstimecmph, a1 // upper word first, which is what clears VSTIP
+      #endif
+      csrw vstimecmp, a1
+      RVTEST_WAIT_MIP_CLEAR_M 0x40 // mip.VSTIP
+      ret
+
+    rvtest_clr_vsstc_int_s:
+      li a1, -1
+      #if UDB_MXLEN == 32
+        csrw vstimecmph, a1 // upper word first, which is what clears VSTIP
+      #endif
+      csrw vstimecmp, a1
+      RVTEST_WAIT_MIP_CLEAR_SU 0x40 // mip.VSTIP
+      ret
+  #endif
+
   nop // Padding to ensure valid memory at the edge of the section
 
   .popsection

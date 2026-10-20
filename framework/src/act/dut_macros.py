@@ -19,12 +19,19 @@ _MIRRORED_DEFINES: list[str] = [
     "RVMODEL_ACCESS_FAULT_ADDRESS",
 ]
 
+# Optional hooks whose presence gates tests. Each one that rvmodel_macros.h defines
+# is emitted as a valueless `define, so coverage is gated on the same hook.
+_MIRRORED_HOOKS: list[str] = [
+    "RVMODEL_SET_GUEST_EXT_INT",
+]
+
 # Defines mirrored as plain decimal numbers, so SystemVerilog can paste them into a name.
 _MIRRORED_INDEX_DEFINES: list[str] = [
     "RVMODEL_HPM_COUNTER",
 ]
 
 _DEFINE_RE = re.compile(r"^\s*#define\s+(\w+)\s+(0[xX][0-9a-fA-F]+|\d+)\b")
+_HOOK_RE = re.compile(r"^\s*#define\s+(\w+)")
 
 
 def _scan_h_defines(h_path: Path, names: list[str]) -> dict[str, str]:
@@ -46,14 +53,25 @@ def _scan_h_defines(h_path: Path, names: list[str]) -> dict[str, str]:
     return found
 
 
+def _scan_h_hooks(h_path: Path, names: list[str]) -> set[str]:
+    """Return the names that h_path defines with an active #define, with or without arguments."""
+    defined = {m.group(1) for m in map(_HOOK_RE.match, h_path.read_text().splitlines()) if m}
+    return defined & set(names)
+
+
 def generate_rvmodel_svh(dut_include_dir: Path, output_dir: Path) -> None:
-    """Generate rvmodel_macros.svh in output_dir derived from rvmodel_macros.h."""
+    """Generate rvmodel_macros.svh in output_dir derived from rvmodel_macros.h.
+
+    Emits a `define for each macro in _MIRRORED_DEFINES, _MIRRORED_INDEX_DEFINES and _MIRRORED_HOOKS that
+    has an active `#define` in the input header.
+    """
     input_h = dut_include_dir / "rvmodel_macros.h"
     output_svh = output_dir / "rvmodel_macros.svh"
     if not input_h.exists():
         raise FileNotFoundError(f"rvmodel_macros.h not found at {input_h}")
 
     defines = _scan_h_defines(input_h, _MIRRORED_DEFINES + _MIRRORED_INDEX_DEFINES)
+    hooks = _scan_h_hooks(input_h, _MIRRORED_HOOKS)
 
     guard = f"_RVMODEL_MACROS_SVH_{dut_include_dir.name.upper().replace('-', '_')}_"
     lines = [
@@ -72,6 +90,7 @@ def generate_rvmodel_svh(dut_include_dir: Path, output_dir: Path) -> None:
     for name in _MIRRORED_INDEX_DEFINES:
         if name in defines:
             lines.append(f"`define {name} {int(defines[name], 0)}")
+    lines += [f"`define {name}" for name in _MIRRORED_HOOKS if name in hooks]
     lines += ["", f"`endif // {guard}", ""]
 
     output_svh.write_text("\n".join(lines))
