@@ -632,6 +632,7 @@ coverpoints:
       - Sdtrig_mcontrol6_match_not_napot
       - Sdtrig_mcontrol6_match_napot_legal
       - Sdtrig_mcontrol6_match_napot_mask
+      - Sdtrig_mcontrol6_napot_range
   - name: cp_mcontrol6_match_mask (gated)
     status: "Gated off: as cp_mcontrol6_match_napot (UDB_SDTRIG_MCONTROL6_MATCH_AVAILABLE)"
     description: |-
@@ -1008,6 +1009,8 @@ coverpoints:
       - Sdtrig_textra32_sselect_scontext
       - Sdtrig_textra32_sbytemask
       - Sdtrig_textra64_sbytemask
+      - Sdtrig_textra32_byte_granular
+      - Sdtrig_textra64_byte_granular
   - name: cp_textra_scontext_all
     goal: With every scontext byte masked, the scontext compare always matches
     description: |-
