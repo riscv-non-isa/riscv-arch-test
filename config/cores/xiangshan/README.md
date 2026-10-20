@@ -13,9 +13,9 @@ pinned to `e7bab53`, as the SimTop difftest emulator built with Verilator.
   default, is a TileLink system on which the Zicbom/Zicboz instructions raise illegal-instruction
   exceptions. Privileged 1.13, VLEN 128, ELEN 64, 32 of 64 PMP entries with a
   4 KiB grain (no NA4), 48-bit physical addresses, Sv39x4/Sv48x4 G-stage, GEILEN 7.
-- AIA (Smaia/Ssaia with IMSIC), Smstateen, Sscofpmf, Sstc, Svnapot, Svpbmt, Svinval, Zicbo\*,
-  pointer masking and Sdtrig are declared. Smrnmi is implemented but not declared, because the
-  Sail reference model does not implement it.
+- Smaia/Ssaia, Smrnmi, Smstateen, Sscofpmf, Sstc, Svnapot, Svpbmt, Svinval, Zicbo\*, pointer
+  masking and Sdtrig are declared. SimTop has no usable IMSIC, so external interrupts come from
+  the PLIC.
 
 ## Building and running
 
@@ -30,9 +30,9 @@ make CONFIG_FILES=config/cores/xiangshan/xiangshan-kmhv2/test_config.yaml   # ge
   work/xiangshan-kmhv2/elfs
 ```
 
-Add `EXTENSIONS=<suites>` to the `make` command to build a subset. A test takes from 2 minutes to
+Add `EXTENSIONS=<suites>` to the `make` command to build a subset. A test takes from 30 seconds to
 more than an hour at a few hundred cycles per second, so pass `--timeout` to `run_tests.py` as above:
-`make xiangshan-kmhv2` runs the same command with the 300 s default timeout, which most tests exceed.
+`make xiangshan-kmhv2` runs the same command with the 300 s default timeout, which many tests exceed.
 `run-xiangshan.sh` also takes a cycle limit (`XIANGSHAN_CYCLES`, default 20 M).
 
 The build needs mill 0.12.3 (downloaded by the script), a JDK 11 or newer, clang, and about 24 GB

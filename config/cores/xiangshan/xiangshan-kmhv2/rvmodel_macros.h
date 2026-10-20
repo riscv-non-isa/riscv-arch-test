@@ -24,17 +24,8 @@
 ##### STARTUP #####
 
 # The reset vector is the simulated flash at 0x1000_0000, whose default image sets
-# mnstatus.NMIE, clears mstatus.MDT and jumps to 0x8000_0000.
+# mnstatus.NMIE, clears mstatus.MDT and jumps to 0x8000_0000. No RVMODEL_BOOT is needed.
 #   https://github.com/OpenXiangShan/difftest/blob/3729300ae233816d332d057f170472ebe35147b0/src/test/csrc/common/flash.cpp#L64
-# vcsr resets to 7 (vxrm = 3, vxsat = 1), which the vector spec allows ("The vstart, vxrm, vxsat
-# CSRs can have arbitrary values at reset."), but the reference model starts from 0 and some tests
-# use vxrm or read vxsat before writing them, so vcsr and fcsr are cleared here.
-#define RVMODEL_BOOT       \
-  li t0, 0x6600           ;\
-  csrs mstatus, t0        ;\
-  csrwi vcsr, 0           ;\
-  csrwi fcsr, 0           ;\
-  csrc mstatus, t0        ;
 
 ##### TERMINATION #####
 
@@ -90,6 +81,11 @@
 
 ##### Machine Interrupts #####
 
+# The hart implements Smaia/Ssaia, but SimTop has no usable IMSIC: a load or store to the M-level
+# interrupt file at 0x3A80_0000 never completes (the AIA/IMSIC integration is in XSNoCTop, not the
+# SimTop used for simulation). The PLIC still drives mip.MEIP, so machine external interrupts
+# go through the PLIC and RVMODEL_SET_GUEST_EXT_INT is not defined.
+#   https://github.com/OpenXiangShan/XiangShan/issues/6366
 # External interrupts: interrupt-generator bit 0 drives PLIC source 1. Context 0 is hart 0 M-mode.
 # The generator applies a nonzero write after 1000 cycles and a zero write immediately.
 #   https://github.com/OpenXiangShan/XiangShan/blob/e7bab53e66dfb3c4a1d11cf9519b0396f8576cae/src/main/scala/device/AXI4IntrGenerator.scala#L60
@@ -128,5 +124,18 @@
 
 # Left undefined: the trap handler raises and clears supervisor software and external
 # interrupts through mip.SSIP and mip.SEIP.
+
+##### Sscofpmf #####
+
+# mhpmcounter3-10 count frontend events, 11-18 backend, 19-26 MemBlock and 27-31 L2
+# (NewCSR/NewCSR.scala:1293-1296). mhpmevent[9:0] selects the first event of the counter's set,
+# and the zero op fields OR it with the empty event 0 (utility/HardwarePerfMonitor.scala:52-74).
+# Backend event 55 is rob_commitInstrLoad, a committed load (backend/Backend.scala:939-955; the
+# index is printed as "backend perfEvents Set" during elaboration). The Sail reference counts
+# EV_FENCE for the same selector (sail.json) and triggers it with a fence (sail_macros.h).
+#define RVMODEL_HPM_COUNTER 11
+#define RVMODEL_MHPMEVENT_VAL 55
+#define RVMODEL_MHPMEVENT_CODE(_R1, _R2) \
+    lw _R2, 0(_R1)
 
 #endif // _RVMODEL_MACROS_H
