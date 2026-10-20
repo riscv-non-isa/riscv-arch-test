@@ -45,17 +45,7 @@ coverpoints:
       - Sdtrig_num_trigs_ge1
     notes: "comments on test results: No exceptions. Tcontrol and mscontext not implemented on spike"
   - heading: "Note: Use CSRW/CSRR to access registers in all modes"
-  - heading: Native Triggers
-  - name: cp_breakpoint_delegate
-    goal: Breakpoints caused by triggers can be delegated
-    description: |-
-      if S_SUPPORTED
-      medeleg[3] = {0/1}
-      cause a supported trigger to fire
-    expectation: Trap to M mode if medeleg[3] = 0, trap to S mode of medeleg[3] = 1, when in a mode < M
-    bins: 2 medeleg
-    rules:
-      - Sdtrig_breakpoint_delegated
+  - heading: "Native Triggers: breakpoint delegation from S/U-mode is tested in SdtrigS and SdtrigU (cp_breakpoint_delegate_s/u)"
   - name: A Extension
     description: |-
       Repeat for each of UDB_SDTRIG_NUM_TRIGGERS if UDB_SDTRIG_MCONTROL6_SUPPORTED[i]:

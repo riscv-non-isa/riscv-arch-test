@@ -614,25 +614,6 @@ covergroup SdtrigSm_combined_accesses_cg with function sample(ins_t ins);
 endgroup
 `endif
 
-`ifdef S_SUPPORTED
-covergroup SdtrigSm_native_triggers_cg with function sample(ins_t ins);
-    option.per_instance = 0;
-    `include "general/RISCV_coverage_standard_coverpoints.svh"
-    `include "general/RISCV_coverage_sdtrig_coverpoints.svh"
-
-    tdata1_s_on: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tdata1", "s")[0] {
-        bins on = {1'b1};
-    }
-    medeleg_breakpoint: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "medeleg", "medeleg")[3] {
-        bins not_delegated = {1'b0};
-        bins delegated     = {1'b1};
-    }
-
-    // main coverpoints
-    cp_breakpoint_delegate: cross priv_mode_s, tdata1_type_mcontrol6, tdata1_s_on, tdata1_execute_on, tdata1_action_breakpoint, tdata2_pc, medeleg_breakpoint;  // 2 medeleg
-endgroup
-`endif
-
 // Traps seen by itrigger/etrigger. The trace puts an interrupt or exception, and a trigger that fires on it
 // (mcause = 3 with the breakpoint taken into M), on the record of the instruction the trap follows or replaces.
 // A CSR instruction that names xcause also logs it, so only other records count as trap entries.
@@ -1287,9 +1268,6 @@ function void sdtrigsm_sample(int hart, int issue, ins_t ins);
     SdtrigSm_cache_operations_cg.sample(ins);
     `ifdef ZVL32B_SUPPORTED
         SdtrigSm_combined_accesses_cg.sample(ins);
-    `endif
-    `ifdef S_SUPPORTED
-        SdtrigSm_native_triggers_cg.sample(ins);
     `endif
     SdtrigSm_itrigger_cg.sample(ins);
     SdtrigSm_etrigger_cg.sample(ins);

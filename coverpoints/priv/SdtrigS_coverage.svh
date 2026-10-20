@@ -55,9 +55,18 @@ covergroup SdtrigS_cg with function sample(ins_t ins);
         bins others_no_fire = {2'd2};
     }
 
+    // cp_breakpoint_delegate_s: medeleg[3] and the mode the breakpoint taken from S-mode was handled in
+    bp_routing: coverpoint {get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "medeleg", "medeleg")[3], ins.current.csr_wb[CSR_SCAUSE]} iff (sdtrigs_bp_taken(ins)) {
+        bins not_delegated_to_m = {2'b00};
+        bins delegated_to_s     = {2'b11};
+    }
+
     // main coverpoints
     cp_breakpoint_s: cross priv_mode_s, triggernum, bp_type;  // NTRIG * 2 types; handled in S (medeleg[3] = 1) or M (tcontrol)
     cp_mcontrol6_priv_bits_s: cross priv_mode_s, triggernum, priv_bits_sw, priv_bits_outcome;  // NTRIG * 2 outcomes
+    `ifdef S_SUPPORTED
+        cp_breakpoint_delegate_s: cross priv_mode_s, triggernum, bp_type, bp_routing;  // NTRIG * 2 types * 2 (medeleg[3] = 0 into M, 1 into S)
+    `endif
 endgroup
 
 function void sdtrigs_sample(int hart, int issue, ins_t ins);

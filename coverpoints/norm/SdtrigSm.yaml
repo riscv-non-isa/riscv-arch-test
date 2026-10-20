@@ -132,7 +132,11 @@ normative_rule_definitions:
   # to a less privileged mode. However, it is possible for triggers to fire in the
   # same mode that the resulting exception will be handled in.
   - name: Sdtrig_breakpoint_delegated
-    coverpoint: ["SdtrigSm_native_triggers_cg/cp_breakpoint_delegate"]
+    coverpoint:
+      [
+        "SdtrigS_cg/cp_breakpoint_delegate_s",
+        "SdtrigU_cg/cp_breakpoint_delegate_u",
+      ]
 
   # lr instructions are loads.
   - name: Sdtrig_Aext_lr_op
