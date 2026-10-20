@@ -62,7 +62,7 @@ normative_rule_definitions:
     coverpoint:
       [
         "{ZicfilpSm_cg,ZicfilpS_cg,ZicfilpU_cg}/{cp_zicfilp_indirect_elp_state_update,cp_zicfilp_indirect_elp_state_update_c} (rs1 = x1, x5, x7 bins)",
-        "ZicfilpSm_cg/{cp_pelp_trap_entry_m_guarded_zicfilp,cp_pelp_trap_entry_m_guarded_zicfilp_c}",
+        "ZicfilpSm_cg/{cp_pelp_trap_entry_guarded_zicfilp,cp_pelp_trap_entry_guarded_zicfilp_c}",
       ]
 
   # To support labeled landing pads, the indirect call/jump sites establish an expected landing pad label
@@ -159,7 +159,7 @@ normative_rule_definitions:
       [
         "{ZicfilpSm_cg,ZicfilpS_cg,ZicfilpU_cg}/{cp_zicfilp_lpad_missing_instruction_exception,cp_zicfilp_lpad_label_exception_delivery}",
         "ZicfilpSm_cg/cp_elp_state_preservation_zicfilp (from S/U-mode to M-mode)",
-        "ZicfilpS_cg/cp_elp_state_preservation_s_zicfilp (from U-mode to S-mode)",
+        "ZicfilpS_cg/cp_elp_state_preservation_zicfilp (from U-mode to S-mode)",
       ]
 
   # To store the previous ELP state on trap delivery to S/HS-mode, an csr::[spelp] bit is
@@ -167,7 +167,7 @@ normative_rule_definitions:
   - name: cfi_mstatus_spelp_op
     coverpoint:
       [
-        "ZicfilpS_cg/{cp_pelp_trap_entry_s_zicfilp,cp_elp_state_preservation_s_zicfilp,cp_pelp_trap_return_s_zicfilp}",
+        "ZicfilpS_cg/{cp_pelp_trap_entry_zicfilp,cp_elp_state_preservation_zicfilp,cp_pelp_trap_return_zicfilp}",
         "{ZicfilpS_cg,ZicfilpU_cg}/{cp_zicfilp_lpad_label_exception_delivery,cp_exception_priority_zicfilp}",
       ]
   # The csr::[spelp] bit in mstatus can be accessed through the csr:sstatus[] CSR.
@@ -175,7 +175,7 @@ normative_rule_definitions:
     coverpoint:
       [
         "{ZicfilpS_cg,ZicfilpU_cg}/cp_zicfilp_lpad_label_exception_delivery",
-        "ZicfilpS_cg/{cp_pelp_trap_entry_s_zicfilp,cp_elp_state_preservation_s_zicfilp,cp_pelp_trap_return_s_zicfilp}",
+        "ZicfilpS_cg/{cp_pelp_trap_entry_zicfilp,cp_elp_state_preservation_zicfilp,cp_pelp_trap_return_zicfilp}",
       ]
 
   # To store the previous ELP state on traps to VS-mode, a csr::[spelp] bit is defined in
@@ -199,8 +199,8 @@ normative_rule_definitions:
   - name: Zicfilp_pelp_trap
     coverpoint:
       [
-        "ZicfilpSm_cg/{cp_pelp_trap_entry_m_zicfilp,cp_pelp_trap_entry_m_guarded_zicfilp,cp_pelp_trap_entry_m_guarded_zicfilp_c,cp_elp_state_preservation_zicfilp}",
-        "ZicfilpS_cg/{cp_pelp_trap_entry_s_zicfilp,cp_pelp_trap_entry_s_guarded_zicfilp,cp_pelp_trap_entry_s_guarded_zicfilp_c,cp_elp_state_preservation_s_zicfilp}",
+        "ZicfilpSm_cg/{cp_pelp_trap_entry_zicfilp,cp_pelp_trap_entry_guarded_zicfilp,cp_pelp_trap_entry_guarded_zicfilp_c,cp_elp_state_preservation_zicfilp}",
+        "ZicfilpS_cg/{cp_pelp_trap_entry_zicfilp,cp_pelp_trap_entry_guarded_zicfilp,cp_pelp_trap_entry_guarded_zicfilp_c,cp_elp_state_preservation_zicfilp}",
         "{ZicfilpSm_cg,ZicfilpS_cg,ZicfilpU_cg}/{cp_zicfilp_lpad_label_exception_delivery,cp_exception_priority_zicfilp}",
       ]
 
@@ -210,8 +210,8 @@ normative_rule_definitions:
   - name: Zicfilp_pelp_trap_return
     coverpoint:
       [
-        "ZicfilpSm_cg/cp_pelp_trap_return_m_zicfilp (MRET)",
-        "ZicfilpS_cg/cp_pelp_trap_return_s_zicfilp (SRET)",
+        "ZicfilpSm_cg/cp_pelp_trap_return_zicfilp (MRET)",
+        "ZicfilpS_cg/cp_pelp_trap_return_zicfilp (SRET)",
         "xPELP=NO_LP_EXPECTED after an xRET to the same mode is checked in the signature",
       ]
 
@@ -222,8 +222,8 @@ normative_rule_definitions:
     coverpoint:
       [
         "{ZicfilpS_cg,ZicfilpU_cg}/{cp_zicfilp_lpad_label_exception_delivery,cp_exception_priority_zicfilp}",
-        "ZicfilpS_cg/{cp_pelp_trap_entry_s_zicfilp,cp_elp_state_preservation_s_zicfilp,cp_pelp_trap_return_s_zicfilp}",
-        "ZicfilpSm_cg/{cp_zicfilp_lpad_label_exception_delivery,cp_pelp_trap_entry_m_zicfilp,cp_elp_state_preservation_zicfilp,cp_pelp_trap_return_m_zicfilp}",
+        "ZicfilpS_cg/{cp_pelp_trap_entry_zicfilp,cp_elp_state_preservation_zicfilp,cp_pelp_trap_return_zicfilp}",
+        "ZicfilpSm_cg/{cp_zicfilp_lpad_label_exception_delivery,cp_pelp_trap_entry_zicfilp,cp_elp_state_preservation_zicfilp,cp_pelp_trap_return_zicfilp}",
       ]
 
   # To store the previous ELP state on trap delivery to M-mode, an csr::[mpelp] bit is
@@ -231,15 +231,15 @@ normative_rule_definitions:
   - name: cfi_mstatus_mpelp_op
     coverpoint:
       [
-        "ZicfilpSm_cg/{cp_zicfilp_lpad_label_exception_delivery,cp_pelp_trap_entry_m_zicfilp,cp_elp_state_preservation_zicfilp,cp_pelp_trap_return_m_zicfilp}",
+        "ZicfilpSm_cg/{cp_zicfilp_lpad_label_exception_delivery,cp_pelp_trap_entry_zicfilp,cp_elp_state_preservation_zicfilp,cp_pelp_trap_return_zicfilp}",
       ]
 
   # The x`PELP` fields are encoded as follows:
   - name: mstatus_spelp_mpelp_enc_lead_in
     coverpoint:
       [
-        "ZicfilpSm_cg/{cp_pelp_trap_entry_m_zicfilp,cp_elp_state_preservation_zicfilp}",
-        "ZicfilpS_cg/{cp_pelp_trap_entry_s_zicfilp,cp_pelp_trap_return_s_zicfilp}",
+        "ZicfilpSm_cg/{cp_pelp_trap_entry_zicfilp,cp_elp_state_preservation_zicfilp}",
+        "ZicfilpS_cg/{cp_pelp_trap_entry_zicfilp,cp_pelp_trap_return_zicfilp}",
         "{ZicfilpS_cg,ZicfilpU_cg}/cp_zicfilp_lpad_label_exception_delivery",
       ]
   # 0 - NO_LP_EXPECTED - no landing pad instruction expected. 1 - LP_EXPECTED - a landing
@@ -247,8 +247,8 @@ normative_rule_definitions:
   - name: mstatus_spelp_mpelp_enc_list
     coverpoint:
       [
-        "ZicfilpSm_cg/{cp_pelp_trap_entry_m_zicfilp,cp_elp_state_preservation_zicfilp}",
-        "ZicfilpS_cg/{cp_pelp_trap_entry_s_zicfilp,cp_pelp_trap_return_s_zicfilp}",
+        "ZicfilpSm_cg/{cp_pelp_trap_entry_zicfilp,cp_elp_state_preservation_zicfilp}",
+        "ZicfilpS_cg/{cp_pelp_trap_entry_zicfilp,cp_pelp_trap_return_zicfilp}",
         "{ZicfilpS_cg,ZicfilpU_cg}/cp_zicfilp_lpad_label_exception_delivery",
       ]
 
@@ -309,7 +309,7 @@ normative_rule_definitions:
     coverpoint:
       [
         "{ZicfilpS_cg,ZicfilpU_cg}/cp_zicfilp_lpad_label_exception_delivery (V=0)",
-        "ZicfilpS_cg/cp_pelp_trap_return_s_zicfilp (SPELP written through sstatus)",
+        "ZicfilpS_cg/cp_pelp_trap_return_zicfilp (SPELP written through sstatus)",
       ]
 
   # The Zicfilp extension adds the LPE field in senvcfg. When the LPE field is set to 1,

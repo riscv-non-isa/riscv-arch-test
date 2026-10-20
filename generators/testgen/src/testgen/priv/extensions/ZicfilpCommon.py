@@ -35,22 +35,6 @@ RESUME = [
 # Mode guards for the modes a test may run in or return to
 MODE_GUARD = {"M": None, "S": "S_SUPPORTED", "U": "U_SUPPORTED"}
 
-# Trap-entry and return coverpoints of the suites that handle traps themselves (ZicfilpSm and ZicfilpS)
-TRAP_COVERPOINTS = {
-    "M": {
-        "preservation": "cp_elp_state_preservation_zicfilp",
-        "entry": "cp_pelp_trap_entry_m_zicfilp",
-        "guarded": "cp_pelp_trap_entry_m_guarded_zicfilp",
-        "return": "cp_pelp_trap_return_m_zicfilp",
-    },
-    "S": {
-        "preservation": "cp_elp_state_preservation_s_zicfilp",
-        "entry": "cp_pelp_trap_entry_s_zicfilp",
-        "guarded": "cp_pelp_trap_entry_s_guarded_zicfilp",
-        "return": "cp_pelp_trap_return_s_zicfilp",
-    },
-}
-
 
 def csr_access(priv: str, instr: str, csr_priv: str) -> str:
     """CSR instruction for a csr_priv-level CSR; a T-SBI call when the test runs below that level."""
@@ -498,7 +482,7 @@ def _trap_instr(priv: str) -> list[str]:
 
 def trap_entry_tests(test_data: TestData, priv: str, covergroup: str) -> TestChunk:
     """A trap taken with ELP=NO_LP_EXPECTED saves xPELP=0, so xRET does not restore ELP."""
-    coverpoint = TRAP_COVERPOINTS[priv]["entry"]
+    coverpoint = "cp_pelp_trap_entry_zicfilp"
     temp_reg = test_data.int_regs.get_register()
     tc = test_data.begin_test_chunk()
     trap = "ecall" if priv == "M" else "ebreak"
@@ -525,7 +509,7 @@ def trap_entry_tests(test_data: TestData, priv: str, covergroup: str) -> TestChu
 
 def guarded_trap_entry_tests(test_data: TestData, priv: str, covergroup: str) -> TestChunk:
     """Software-guarded branches (rs1 = x1/x5/x7) do not set ELP, so a trap at the target saves xPELP=0."""
-    coverpoint = TRAP_COVERPOINTS[priv]["guarded"]
+    coverpoint = "cp_pelp_trap_entry_guarded_zicfilp"
     save_reg, temp_reg = test_data.int_regs.get_registers(2)
     link_reg = test_data.int_regs.link_reg
     trap = "ecall" if priv == "M" else "ebreak"
@@ -570,7 +554,7 @@ def guarded_trap_entry_tests(test_data: TestData, priv: str, covergroup: str) ->
 
 def elp_state_preservation_tests(test_data: TestData, priv: str, covergroup: str) -> TestChunk:
     """Traps from a lower mode into `priv` save ELP in xPELP; xRET restores it."""
-    coverpoint = TRAP_COVERPOINTS[priv]["preservation"]
+    coverpoint = "cp_elp_state_preservation_zicfilp"
     origins = ("S", "U") if priv == "M" else ("U",)
     jump_reg, temp_reg = test_data.int_regs.get_registers(2)
     tc = test_data.begin_test_chunk()
@@ -670,7 +654,7 @@ def _trap_return_cases(
     mask_reg: int,
 ) -> list[str]:
     """xRET to each target x every combination of the xLPE bits in lpe_modes x xPELP."""
-    coverpoint = TRAP_COVERPOINTS[priv]["return"]
+    coverpoint = "cp_pelp_trap_return_zicfilp"
     xret = "mret" if priv == "M" else "sret"
     xepc = "mepc" if priv == "M" else "sepc"
     lines: list[str] = []
@@ -756,7 +740,7 @@ def async_interrupt_tests(test_data: TestData, covergroup: str) -> TestChunk:
 
 def trap_return_tests(test_data: TestData, priv: str, covergroup: str) -> TestChunk:
     """xRET sets ELP=xPELP only if xLPE of the new mode is 1, and clears xPELP."""
-    coverpoint = TRAP_COVERPOINTS[priv]["return"]
+    coverpoint = "cp_pelp_trap_return_zicfilp"
     temp_reg, mask_reg = test_data.int_regs.get_registers(2)
     tc = test_data.begin_test_chunk()
     lines = [

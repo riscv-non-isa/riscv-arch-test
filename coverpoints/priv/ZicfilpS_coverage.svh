@@ -96,20 +96,20 @@ covergroup ZicfilpS_cg with function sample(ins_t ins);
     }
 
     // An EBREAK in S-mode with ELP=NO_LP_EXPECTED traps into S-mode and saves SPELP=0
-    cp_pelp_trap_entry_s_zicfilp: cross priv_mode_s, lpe_enabled, elp_before, ebreak;
+    cp_pelp_trap_entry_zicfilp: cross priv_mode_s, lpe_enabled, elp_before, ebreak;
 
     // A software-guarded branch (rs1 = x1/x5/x7) with menvcfg.LPE=1 leaves ELP clear, so an EBREAK at its target
     // saves SPELP=0
-    cp_pelp_trap_entry_s_guarded_zicfilp: cross priv_mode_s, lpe_enabled, indirect_ct_prev, rs1_link_prev, ebreak;
+    cp_pelp_trap_entry_guarded_zicfilp: cross priv_mode_s, lpe_enabled, indirect_ct_prev, rs1_link_prev, ebreak;
     `ifdef ZCA_SUPPORTED
-        cp_pelp_trap_entry_s_guarded_zicfilp_c: cross priv_mode_s, lpe_enabled, indirect_ct_prev_c, rs1_link_prev, ebreak;
+        cp_pelp_trap_entry_guarded_zicfilp_c: cross priv_mode_s, lpe_enabled, indirect_ct_prev_c, rs1_link_prev, ebreak;
     `endif
 
     // A trap from U-mode into S-mode, at the non-LPAD target of an ELP-setting Indirect_CT or at an ecall
     u_lpe_enabled: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_CURRENT, "senvcfg", "lpe") {
         bins enabled = {1};
     }
-    cp_elp_state_preservation_s_zicfilp: cross priv_mode_u, u_lpe_enabled, trap_case;
+    cp_elp_state_preservation_zicfilp: cross priv_mode_u, u_lpe_enabled, trap_case;
 
     // SRET to a non-LPAD instruction, sampled at that instruction:
     // mode returned to x menvcfg.LPE x senvcfg.LPE x SPELP before the SRET
@@ -129,7 +129,7 @@ covergroup ZicfilpS_cg with function sample(ins_t ins);
         bins no_lp_expected = {0};
         bins lp_expected    = {1};
     }
-    cp_pelp_trap_return_s_zicfilp: cross priv_mode_s_u, sret_prev, menvcfg_lpe, senvcfg_lpe, spelp_before_sret, not_lpad;
+    cp_pelp_trap_return_zicfilp: cross priv_mode_s_u, sret_prev, menvcfg_lpe, senvcfg_lpe, spelp_before_sret, not_lpad;
 
 endgroup
 

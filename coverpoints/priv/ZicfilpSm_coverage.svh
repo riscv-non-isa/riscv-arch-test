@@ -120,12 +120,12 @@ covergroup ZicfilpSm_cg with function sample(ins_t ins);
     }
 
     // An ECALL in M-mode with ELP=NO_LP_EXPECTED traps into M-mode and saves MPELP=0
-    cp_pelp_trap_entry_m_zicfilp: cross priv_mode_m, lpe_enabled, elp_before, ecall;
+    cp_pelp_trap_entry_zicfilp: cross priv_mode_m, lpe_enabled, elp_before, ecall;
 
     // A software-guarded branch (rs1 = x1/x5/x7) with MLPE=1 leaves ELP clear, so an ECALL at its target saves MPELP=0
-    cp_pelp_trap_entry_m_guarded_zicfilp: cross priv_mode_m, lpe_enabled, indirect_ct_prev, rs1_link_prev, ecall;
+    cp_pelp_trap_entry_guarded_zicfilp: cross priv_mode_m, lpe_enabled, indirect_ct_prev, rs1_link_prev, ecall;
     `ifdef ZCA_SUPPORTED
-        cp_pelp_trap_entry_m_guarded_zicfilp_c: cross priv_mode_m, lpe_enabled, indirect_ct_prev_c, rs1_link_prev, ecall;
+        cp_pelp_trap_entry_guarded_zicfilp_c: cross priv_mode_m, lpe_enabled, indirect_ct_prev_c, rs1_link_prev, ecall;
     `endif
 
     // MRET to a non-LPAD instruction, sampled at that instruction:
@@ -158,12 +158,12 @@ covergroup ZicfilpSm_cg with function sample(ins_t ins);
             bins disabled = {0};
             bins enabled  = {1};
         }
-        cp_pelp_trap_return_m_zicfilp: cross priv_mode_m_s_u, mret_prev, mseccfg_mlpe, menvcfg_lpe, senvcfg_lpe,
+        cp_pelp_trap_return_zicfilp: cross priv_mode_m_s_u, mret_prev, mseccfg_mlpe, menvcfg_lpe, senvcfg_lpe,
                                              mpelp_before_mret, not_lpad;
     `elsif U_SUPPORTED
-        cp_pelp_trap_return_m_zicfilp: cross priv_mode_m_u, mret_prev, mseccfg_mlpe, menvcfg_lpe, mpelp_before_mret, not_lpad;
+        cp_pelp_trap_return_zicfilp: cross priv_mode_m_u, mret_prev, mseccfg_mlpe, menvcfg_lpe, mpelp_before_mret, not_lpad;
     `else
-        cp_pelp_trap_return_m_zicfilp: cross priv_mode_m, mret_prev, mseccfg_mlpe, mpelp_before_mret, not_lpad;
+        cp_pelp_trap_return_zicfilp: cross priv_mode_m, mret_prev, mseccfg_mlpe, mpelp_before_mret, not_lpad;
     `endif
 
     // An S-mode software interrupt pending, enabled and not delegated at an MRET to S-mode with MPELP=1 and
