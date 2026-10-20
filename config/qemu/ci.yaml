@@ -6,7 +6,6 @@
 ci_enabled: true
 # Status as of QEMU v11.1.1:
 # Sm: Multiple issues:
-#     need H support in Sail
 #     menvcfg.CBIE can be written with reserved 0b10 QEMU #4216
 #     minstret one too high after wraparound (still fails with QEMU #4087 closed)
 #     mcycleh write dropped (#4219)
@@ -21,14 +20,14 @@ ci_enabled: true
 # ExceptionsZaamo/Zama16b: QEMU zama16b handling is incomplete: misaligned Zabha/Zacas AMOs fault,
 #        but cross-granule word/doubleword AMOs execute instead of trapping
 #        (https://gitlab.com/qemu-project/qemu/-/work_items/4101).
-# SsstrictSm/SsstrictS/SsstrictU: Sail does not implement H, qemu#4200, qemu#4201
+# SsstrictSm/SsstrictS/SsstrictU: qemu#4200, qemu#4201
 # TODO: Remove SsstrictV when sail SsstrictV is implemented
 # Smstateen: mstateen0 bits are writable for state the hart lacks: P1P13 on RV64 and on RV32 without H
 #     (https://gitlab.com/qemu-project/qemu/-/work_items/4495), and ENVCFG, CSRIND, AIA and IMSIC without S
 #     (https://gitlab.com/qemu-project/qemu/-/work_items/4655). On the max configs CSRIND, AIA and IMSIC are
 #     legally writable, but Sail does not model Sscsrind or Ssaia.
 # ZawrsU and ZawrsS fail on qemu due to stval mismatching, filed QEMU issue https://gitlab.com/qemu-project/qemu/-/work_items/4080
-# Sdtrig*: Sail does not implement Sdtrig yet (https://github.com/riscv/sail-riscv/issues/222)
+# Sdtrig*: QEMU's trigger implementation has too many problems (tdata1 writes of 0 ignored, reserved types abort, icount hangs: https://gitlab.com/qemu-project/qemu/-/work_items/4665); revisit when QEMU's Sdtrig matures.
 # Sscofpmf*: qemu's mie write mask drops LCOFIE, so LCOFI is never taken: https://gitlab.com/qemu-project/qemu/-/work_items/3969
 # H: mstatus.MPV and mstatus.GVA are read-only zero, so mret never enters VS/VU: a guest's
 #    ecall is reported as cause 9/8 instead of 10, and a hypervisor CSR access from VS raises

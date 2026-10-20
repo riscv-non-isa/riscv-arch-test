@@ -2,10 +2,10 @@
 //
 // RISC-V Architectural Functional Coverage Covergroups Initialization File
 //
-// Copyright (C) 2024 Harvey Mudd College, 10x Engineers, UET Lahore, Habib University
+// Copyright (C) 2026 Harvey Mudd College, 10x Engineers, UET Lahore, Habib University
 //
 // SPDX-License-Identifier: Apache-2.0
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    UF_ufcsr_cg = new();         UF_ufcsr_cg.set_inst_name("obj_UF");
+    SdtrigS_cg = new();    SdtrigS_cg.set_inst_name("obj_SdtrigS");

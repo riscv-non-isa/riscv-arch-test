@@ -10,7 +10,7 @@ set -euo pipefail
 INSTALL_DIR="${1:?Usage: install-ibex.sh <install-dir>}"
 IBEX_REPO="https://github.com/lowRISC/ibex.git"
 IBEX_COMMIT="e9f55342edbd27e9e17a0e41b1c95a81abb5eac8"
-VERILATOR_VERSION="v5.052"
+VERILATOR_VERSION="v5.036"
 
 mkdir -p "$INSTALL_DIR/bin"
 
