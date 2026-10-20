@@ -12,9 +12,9 @@ The suite boots to HS-mode and writes mstateen0 through T-SBI.  An mstateen0 bit
 bit read-only zero and makes the state it controls illegal to access below M-mode.  When the mstateen0 bit is 1, a
 VS-mode or VU-mode access that hstateen0 or the H extension forbids raises virtual instruction instead.
 
-A VS-mode or VU-mode access to hedelegh (RV32) with mstateen0.P1P13 = 0 raises illegal instruction, as in Sail,
-Spike, Whisper and Imperas.  A literal reading of the high-half hypervisor CSR rule calls for virtual instruction
-instead, because hedeleg is accessible in HS-mode whatever P1P13 is (riscv/riscv-isa-manual#3459).
+A VS-mode or VU-mode access to hedelegh (RV32) with mstateen0.P1P13 = 0 raises illegal instruction: hedelegh then
+does not exist, so the high-half hypervisor CSR rule does not apply and the usual HS-qualified rule does
+(riscv/riscv-isa-manual#3459).
 
 In M-mode, bit 63 of mstateen1-3 makes bit 63 of the matching hstateen CSR writable (1) or read-only zero (0).
 """
