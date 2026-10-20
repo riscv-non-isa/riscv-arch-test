@@ -26,8 +26,10 @@ setup:
         write mtvec.MODE = {00, 01} if each supported
       S: Same as Sm
       U: Same as Sm
-      VS: "***"
-      VU: "***"
+      VS: |-
+        Same as Sm
+        mideleg.VS*I are read-only 1 and hideleg boots with 0s, so VS-level interrupts trap to HS
+      VU: Same as VS
     - step: trigger_interrupts <type>
       Sm: |-
         RVTEST_SET_<type>_INT_<priv>

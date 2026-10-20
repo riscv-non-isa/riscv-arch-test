@@ -15,7 +15,7 @@ from itertools import combinations
 
 from testgen.asm.csr import write_stce
 from testgen.asm.helpers import comment_banner, write_sigupd
-from testgen.asm.tsbi import tsbi_call_or_direct
+from testgen.asm.tsbi import tsbi_call, tsbi_call_or_direct
 from testgen.data.state import TestData
 from testgen.data.test_chunk import TestChunk
 
@@ -26,12 +26,16 @@ reg_ints = {"MIP_SEIP": 9, "MIP_SSIP": 1, "SIP_SSIP": 1, "SIP_LCOFIP": 13}
 # STI raised through stimecmp with menvcfg.STCE = 1, and with STCE = 0, where the same stimecmp
 # write must not raise it (cp_trigger_sti_sstc)
 sstc_ints = {"SSTC_STCE0": 5, "SSTC_STCE1": 5}
+# VS-level interrupts, raised through hvip. hideleg is left at its boot value of 0, so they trap to HS-mode.
+vs_ints = {"VSEI": 10, "VSTI": 6, "VSSI": 2}
 # mip/mie bit position of every interrupt type
-int_bit = machine_ints | supervisor_ints | reg_ints | sstc_ints
+int_bit = machine_ints | supervisor_ints | reg_ints | sstc_ints | vs_ints
 # Guard symbol and coverpoint for types that do not use the UDB_<int>_INTR_IMPL / cp_trigger defaults
 int_guard = {"MIP_SEIP": "UDB_SEI_INTR_IMPL", "MIP_SSIP": "UDB_SSI_INTR_IMPL", "SIP_SSIP": "UDB_SSI_INTR_IMPL"}
 int_guard |= {"LCOFI": "SSCOFPMF_SUPPORTED", "SIP_LCOFIP": "SSCOFPMF_SUPPORTED"}
 int_guard |= {name: "SSTC_SUPPORTED" for name in sstc_ints}
+# H makes every hvip bit writable, so each VS-level interrupt can be raised whenever H is implemented
+int_guard |= {name: "H_SUPPORTED" for name in vs_ints}
 # sip.LCOFIP writes land in the plain cp_trigger cross; the other register writes have their own crosses.
 int_coverpoint = {
     "MIP_SEIP": "cp_trigger_reg_mip_seip",
@@ -49,22 +53,26 @@ def label_coverpoint(
     ``priv`` cannot reach its pending bit). Mirrors the tsbi ignore_bins of <suite>_coverage.svh.
     """
     lower = priv != suite.boot
+    # Below HS, VS-mode and VU-mode reach the interrupt sources as U-mode does, and the VS-level
+    # interrupts are raised through T-SBI because only M-mode and HS-mode write hvip.
+    below_s = priv in ("U", "VS", "VU")
     if suite.boot == "M":  # InterruptsSm
         tsbi = {
             "cp_trigger": (lower and int_type in ("MSI", "MTI"))
-            or (priv == "U" and int_type in ("STI", "LCOFI", "SIP_LCOFIP"))
+            or (below_s and int_type in ("STI", "LCOFI", "SIP_LCOFIP", *vs_ints))
             or (priv == "S" and int_type in ("LCOFI", "SIP_LCOFIP") and not delegated),
-            "cp_trigger_sti_sstc": priv == "U" and int_type == "SSTC_STCE1",
-            "cp_enable_one": lower and int_type in ("MSI", "MTI", "STI", "LCOFI"),
+            "cp_trigger_sti_sstc": below_s and int_type == "SSTC_STCE1",
+            "cp_enable_one": (lower and int_type in ("MSI", "MTI", "STI", "LCOFI"))
+            or (below_s and int_type in vs_ints),
             "cp_priority_mip": lower,
             "cp_priority_mie": lower,
             "cp_priority_mideleg": lower,
         }
     else:  # InterruptsS
         tsbi = {
-            "cp_trigger": priv == "U" and int_type in ("STI", "LCOFI", "SIP_LCOFIP"),
-            "cp_trigger_sti_sstc": priv == "U" and int_type == "SSTC_STCE1",
-            "cp_enable_one": int_type in ("STI", "LCOFI"),
+            "cp_trigger": below_s and int_type in ("STI", "LCOFI", "SIP_LCOFIP", *vs_ints),
+            "cp_trigger_sti_sstc": below_s and int_type == "SSTC_STCE1",
+            "cp_enable_one": int_type in ("STI", "LCOFI") or (below_s and int_type in vs_ints),
             "cp_priority_sip": lower,
             "cp_priority_sie": lower,
         }
@@ -81,6 +89,16 @@ def guard_symbol(int_type: str) -> str:
 # _M hooks (raw csrw, no T-SBI) are used for both raise and claim.
 int_macro = {"MEI": "MEXT", "MTI": "MTIME", "MSI": "MSW", "SEI": "SEXT", "STI": "STIME", "SSI": "SSW"}
 int_macro |= {name: name for name in ["LCOFI", *reg_ints, *sstc_ints]}
+int_macro |= {"VSEI": "VSEXT", "VSTI": "VSTIME", "VSSI": "VSSW"}
+
+
+def flavor(priv: str) -> str:
+    """Mode whose RVTEST_SET/CLR_<name>_INT_<mode> macros and CSR accesses a test running in ``priv`` uses.
+
+    VS-mode and VU-mode act as U-mode: the S-level CSR names reach the VS CSRs there, so the HS-mode
+    and M-mode interrupt CSRs are reached through T-SBI.
+    """
+    return "U" if priv in ("VS", "VU") else priv
 
 
 @dataclass(frozen=True)
@@ -96,6 +114,7 @@ class InterruptSuite:
     status: dict  # global enable written in the boot mode: csr, mask, field
     wfi: dict  # cp_wfi timer: guard, timer macro, ie (name, mask), ip (csr, name, mask), stce
     deleg: list[str]  # default delegation setup before each case
+    hie: bool = False  # also write the enables to hie, which holds the VS-level enables that sie cannot reach
 
     @property
     def covergroup(self) -> str:
@@ -104,6 +123,14 @@ class InterruptSuite:
 
 
 Generator = Callable[[TestData, list[TestChunk], InterruptSuite, str], None]
+
+
+def write_ie(suite: InterruptSuite, reg: int, comment: str) -> list[str]:
+    """Write x``reg`` to the suite's enable CSR and, with H, to hie, whose VS-level bits share their positions."""
+    lines = [f"csrw {suite.ie}, x{reg} # {suite.ie} = {comment}"]
+    if suite.hie:
+        lines += ["#ifdef H_SUPPORTED", f"csrw hie, x{reg} # hie = {comment}", "#endif // H_SUPPORTED"]
+    return lines
 
 
 def mode_enter(suite: InterruptSuite, priv: str) -> list[str]:
@@ -151,16 +178,16 @@ def generate_cp_enable(test_data: TestData, test_chunks: list[TestChunk], suite:
                 f"LI(x{tmp_reg}, {status['mask']:#x})",
                 f"csrs {status['csr']}, x{tmp_reg} # {status['csr']}.{status['field']} = 1",
                 f"LI(x{tmp_reg}, {ie_val})",
-                f"csrw {ie}, x{tmp_reg} # {ie} = {int_type} {enable}",
+                *write_ie(suite, tmp_reg, f"{int_type} {enable}"),
                 test_data.add_testcase(
                     f"priv_{priv}_{int_type}_{ie}_{enable}",
                     label_coverpoint(suite, "cp_enable_one", priv, int_type) if enable == "only" else "cp_enable_zero",
                     suite.covergroup,
                 ),
                 *mode_enter(suite, priv),
-                f"RVTEST_SET_{macro}_INT_{priv} # Set the interrupt",
+                f"RVTEST_SET_{macro}_INT_{flavor(priv)} # Set the interrupt",
                 f"RVTEST_IDLE_FOR_INTERRUPT(x{tmp_reg}) # Wait for interrupt to fire",
-                f"RVTEST_CLR_{macro}_INT_{priv} # Clear the interrupt if the interrupt handler hasn't done so",
+                f"RVTEST_CLR_{macro}_INT_{flavor(priv)} # Clear the interrupt if the interrupt handler hasn't done so",
                 *mode_exit(suite, priv),
                 f"#endif // {guard}",
                 "",
@@ -179,12 +206,52 @@ def _raise(raised: list[str], pair: list[str], op: str, priv: str) -> list[str]:
     """
     lines = []
     for int_type in raised:
-        line = f"RVTEST_{op}_{int_macro[int_type]}_INT_{priv} # {op} {int_type}"
+        line = f"RVTEST_{op}_{int_macro[int_type]}_INT_{flavor(priv)} # {op} {int_type}"
         if int_type in pair:
             lines.append(line)
         else:
             lines += [f"#ifdef {guard_symbol(int_type)}", line, f"#endif // {guard_symbol(int_type)}"]
     return lines
+
+
+def _enable_pair(suite: InterruptSuite, reg: int, value: int, pair: list[str], priv: str) -> list[str]:
+    """Write x``reg`` to the enable CSR from ``priv`` and, with H in the S suite, to hie.
+
+    Both members of the pair must be enabled by one write so that they are arbitrated together. When
+    they share a CSR, the other CSR is written first and theirs last. When one is in sie and the other
+    in hie, a single T-SBI set of mie (which holds both) enables them; sie and hie are 0 beforehand.
+    """
+    ie_line = tsbi_call_or_direct(f"csrw {suite.ie}, x{reg} # {suite.ie} = {value:#x}", flavor(priv))
+    if not suite.hie:
+        return [ie_line]
+    if _split_pair(suite, pair):
+        # the case is already inside the H_SUPPORTED guard of its VS-level member
+        mask = value & sum(1 << int_bit[int_type] for int_type in suite.types)
+        return [
+            f"LI(x{reg}, {mask:#x})",
+            tsbi_call(f"csrs mie, x{reg} # mie |= {mask:#x}: sie and hie at once"),
+        ]
+    hie_lines = [
+        "#ifdef H_SUPPORTED",
+        tsbi_call_or_direct(f"csrw hie, x{reg} # hie = {value:#x}", flavor(priv)),
+        "#endif // H_SUPPORTED",
+    ]
+    return [ie_line, *hie_lines] if pair[0] in vs_ints else [*hie_lines, ie_line]
+
+
+def _split_pair(suite: InterruptSuite, pair: list[str]) -> bool:
+    """With H in the S suite, whether one member of ``pair`` is enabled in sie and the other in hie."""
+    in_hie = [int_type in vs_ints for int_type in pair]
+    return suite.hie and any(in_hie) and not all(in_hie)
+
+
+def _priority_label(suite: InterruptSuite, coverpoint: str, priv: str, pair: list[str]) -> str:
+    """Coverpoint a priority testcase label names. An S-mode test enables a split pair through T-SBI
+    (_enable_pair), so the coverage model records it on the mret in <coverpoint>_split_tsbi.
+    """
+    if priv == suite.boot and _split_pair(suite, pair):
+        return f"{coverpoint}_split_tsbi"
+    return label_coverpoint(suite, coverpoint, priv)
 
 
 def generate_cp_priority(
@@ -209,6 +276,9 @@ def generate_cp_priority(
     tmp_reg, check_reg = test_data.int_regs.get_registers(2)
 
     types = suite.priority_types
+    if vary == "mideleg":
+        # H makes the VS-level bits of mideleg read-only one, so only pairs of other interrupts vary it
+        types = [int_type for int_type in types if int_type not in vs_ints]
     # delegated interrupts are only taken in S-mode with sstatus.SIE set
     status_mask = status["mask"] | 0x22 if vary == "mideleg" else status["mask"]
     # Only S-level interrupts can be delegated; the register-triggered ones share their bit positions
@@ -250,18 +320,28 @@ def generate_cp_priority(
                 f"LI(x{tmp_reg}, {status_mask:#x})",
                 f"csrs {status['csr']}, x{tmp_reg} # {status['csr']}.{status['field']} = 1",
                 f"LI(x{tmp_reg}, 0)",
-                f"csrw {ie}, x{tmp_reg} # {ie} = 0",
+                *write_ie(suite, tmp_reg, "0"),
                 *mode_enter(suite, priv),
                 *_raise(raised, pair, "SET", priv),
                 f"RVTEST_IDLE_FOR_INTERRUPT(x{tmp_reg}) # Wait until every raised interrupt is pending",
-                test_data.add_testcase(bin_name, label_coverpoint(suite, coverpoint, priv), suite.covergroup),
-                tsbi_call_or_direct(f"csrr x{check_reg}, {suite.ip}", priv),
+                test_data.add_testcase(bin_name, _priority_label(suite, coverpoint, priv, pair), suite.covergroup),
+                tsbi_call_or_direct(f"csrr x{check_reg}, {suite.ip}", flavor(priv)),
+                *(
+                    [
+                        "#ifdef H_SUPPORTED",
+                        tsbi_call_or_direct(f"csrr x{tmp_reg}, hip", flavor(priv)),
+                        f"or x{check_reg}, x{check_reg}, x{tmp_reg} # the VS-level pending bits are in hip",
+                        "#endif // H_SUPPORTED",
+                    ]
+                    if suite.hie
+                    else []
+                ),
                 f"LI(x{tmp_reg}, {raised_mask:#x})",
                 f"and x{check_reg}, x{check_reg}, x{tmp_reg} # raised interrupts that are pending",
                 write_sigupd(check_reg, test_data),
                 # Enable last, so the pending interrupts are arbitrated together and taken in priority order
                 f"LI(x{tmp_reg}, {ie_after})",
-                tsbi_call_or_direct(f"csrw {ie}, x{tmp_reg} # {ie} = {ie_after:#x}", priv),
+                *_enable_pair(suite, tmp_reg, ie_after, pair, priv),
                 *_raise(raised, pair, "CLR", priv),
                 *mode_exit(suite, priv),
                 f"#endif // {guard_symbol(second)}",

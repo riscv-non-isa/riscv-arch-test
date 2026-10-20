@@ -24,8 +24,10 @@ setup:
         write sie = 1s
         write stvec.MODE = {00, 01} if each supported
       U: Same as S
-      VS: "***"
-      VU: "***"
+      VS: |-
+        Same as S, and also write hie = 1s
+        hideleg boots with 0s, so every interrupt traps to HS
+      VU: Same as VS
     - step: trigger_interrupts <type>
       S: |-
         RVTEST_SET_<type>_INT
