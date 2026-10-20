@@ -876,6 +876,23 @@ covergroup ZicntrSm_cg with function sample(ins_t ins);
         cp_instret_wrs_sto: cross priv_mode_m, wrs_sto, prev_minstret_read;
     `endif
 
+    // memory-mapped mtime is visible in the time CSR
+    `ifdef RVMODEL_MTIME_ADDRESS
+        csrr: coverpoint ins.current.insn {
+            wildcard bins csrr = {CSRR};
+        }
+        time_csr: coverpoint ins.current.insn[31:20] {
+            bins time_csr = {CSR_TIME};
+        }
+        cp_mtime_write: cross priv_mode_m, csrr, time_csr; // assumes mtime has been written
+        `ifdef UDB_MXLEN_32
+            timeh_csr: coverpoint ins.current.insn[31:20] {
+                bins timeh_csr = {CSR_TIMEH};
+            }
+            cp_mtimeh_write: cross priv_mode_m, csrr, timeh_csr; // assumes mtimeh has been written
+        `endif
+    `endif
+
 endgroup
 
 

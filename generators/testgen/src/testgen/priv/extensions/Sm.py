@@ -1470,42 +1470,6 @@ def _generate_mcsr_cntr_tests(test_data: TestData) -> list[str]:
         ]
     )
 
-    ######################################
-    coverpoint = "cp_mtime_write"
-    ######################################
-    lines.append(
-        comment_banner(
-            coverpoint,
-            "Write mtime and read back time if supported",
-        ),
-    )
-    lines.extend(
-        [
-            "#if defined(RVMODEL_MTIME_ADDRESS) && defined(ZICNTR_SUPPORTED)",
-            f"LI(x{r1}, 42)        # value to write to mtime",
-            f"LA(x{r2}, RVMODEL_MTIME_ADDRESS)        # load address of mtime",
-            f"SREG x{r1}, 0(x{r2})        # write mtime = 42 using memory-mapped I/O",
-            "fence o, i        # order the mtime write before the time read",
-            test_data.add_testcase("", coverpoint, covergroup),
-            f"csrr x{r2}, time        # read time",
-            f"sub x{r2}, x{r2}, x{r1}          # difference should be small",
-            f"sltiu x{r2}, x{r2}, 100          # signature is 1 only if time is within 100 above the written value",
-            write_sigupd(r2, test_data),
-            "",
-            "#if __riscv_xlen == 32",
-            f"LI(x{r1}, 67)        # value to write to mtimeh",
-            f"LA(x{r2}, RVMODEL_MTIME_ADDRESS)        # load address of mtimeh",
-            f"SREG x{r1}, 4(x{r2})        # write mtimeh = 67 using memory-mapped I/O",
-            "fence o, i        # order the mtimeh write before the timeh read",
-            test_data.add_testcase("h", coverpoint, covergroup),
-            f"csrr x{r2}, timeh        # read timeh",
-            f"sub x{r2}, x{r2}, x{r1}          # difference should be zero",
-            write_sigupd(r2, test_data),
-            "#endif",
-            "#endif",
-        ]
-    )
-
     test_data.int_regs.return_registers([r1, r2])
 
     # Counter Wraparound Verification

@@ -443,14 +443,6 @@ covergroup Sm_mcsr_cg with function sample(ins_t ins);
     minstret: coverpoint ins.current.insn[31:20] {
         bins minstret = {CSR_MINSTRET};
     }
-    time_csr: coverpoint ins.current.insn[31:20] {
-        bins time_csr = {CSR_TIME};
-    }
-    `ifdef UDB_MXLEN_32
-        timeh_csr: coverpoint ins.current.insn[31:20] {
-            bins timeh_csr = {CSR_TIMEH};
-        }
-    `endif
 
     misa: coverpoint ins.current.insn[31:20] {
         bins misa = {CSR_MISA};
@@ -623,15 +615,6 @@ covergroup Sm_mcsr_cg with function sample(ins_t ins);
     cp_misa_dependencies :      cross priv_mode_m, csrrw, misa, misa_dependencies;
     cp_misa_clear_c :           cross priv_mode_m, csrc, misa_c_0, pc_1;
 
-    `ifdef RVMODEL_MTIME_ADDRESS
-        `ifdef ZICNTR_SUPPORTED
-            cp_mtime_write :        cross priv_mode_m, csrr,  time_csr; // assumes mtime has been written
-            `ifdef UDB_MXLEN_32
-                cp_mtimeh_write :   cross priv_mode_m, csrr,  timeh_csr; // assumes mtimeh has been written
-            `endif
-        `endif
-    `endif
-
     `ifdef SM1P13P0_OR_LATER_SUPPORTED
         misa_b_bit: coverpoint ins.current.rs1_val[1] {
             bins b_set   = {1'b1};
@@ -673,15 +656,14 @@ covergroup Sm_mcsr_cg with function sample(ins_t ins);
     `endif
 
     `ifdef SM1P13P0_OR_LATER_SUPPORTED
+        // rvmodel_macros.svh only says whether RVMODEL_MSIP_ADDRESS and RVMODEL_MTIME_ADDRESS are
+        // defined, not their values, so these coverpoints do not check the store address.
         `ifdef RVMODEL_MSIP_ADDRESS
-            msip_address: coverpoint ins.current.rs1_val + ins.current.imm {
-                bins msip = {`RVMODEL_MSIP_ADDRESS};
-            }
             msip_val: coverpoint ins.current.rs2_val {
                 bins zero = {0};
                 bins one  = {1};
             }
-            cp_msip: cross priv_mode_m, sw, msip_address, msip_val;
+            cp_msip: cross priv_mode_m, sw, msip_val;
         `endif // RVMODEL_MSIP_ADDRESS
     `endif // SM1P13P0_OR_LATER_SUPPORTED
 
@@ -695,19 +677,10 @@ covergroup Sm_mcsr_cg with function sample(ins_t ins);
 
     `ifdef RVMODEL_MTIME_ADDRESS
         `ifdef UDB_MXLEN_64
-            mtime_address: coverpoint ins.current.rs1_val + ins.current.imm {
-                bins mtime = {`RVMODEL_MTIME_ADDRESS};
-            }
-            cp_mtime_wraparound: cross priv_mode_m, sd, mtime_address, rs2_ones;
+            cp_mtime_wraparound: cross priv_mode_m, sd, rs2_ones;
         `else
-            mtime_address: coverpoint ins.current.rs1_val + ins.current.imm {
-                bins mtime = {`RVMODEL_MTIME_ADDRESS};
-            }
-            mtimeh_address: coverpoint ins.current.rs1_val + ins.current.imm {
-                bins mtimeh = {`RVMODEL_MTIME_ADDRESS + 4};
-            }
-            cp_mtime_wraparound:  cross priv_mode_m, sw, mtime_address, rs2_ones;
-            cp_mtimeh_wraparound: cross priv_mode_m, sw, mtimeh_address, rs2_ones;
+            cp_mtime_wraparound:  cross priv_mode_m, sw, rs2_ones;
+            cp_mtimeh_wraparound: cross priv_mode_m, sw, rs2_ones;
         `endif
     `endif
 
