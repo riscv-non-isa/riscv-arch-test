@@ -1955,7 +1955,8 @@ def _generate_csr_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     The signature records only what the Debug spec pins down: an implemented tselect index reads back as
     written, tinfo has the bits of the types this trigger is configured to support and info != 1, tinfo.version
     is at least 1 on a trigger that supports mcontrol6 (norm:Sdtrig_mcontrol6_dependence), a write
-    to one tdata register leaves the other two unchanged and a write to tinfo has no effect (before ^ after
+    to one tdata register leaves the other two and the other trigger's tdata registers unchanged and a write
+    to tinfo has no effect (before ^ after
     = 0), a disabled trigger takes tdata2 = tdata3 = 0, an mcontrol6 tdata1 keeps type and m while the
     mode bits of absent modes stay hard-wired to 0, and dmode reads 0 after an M-mode write of 1. Values that are WARL choices are not recorded:
     Sail 0.16, Spike, Whisper and Imperas differ on tselect after an all-ones write, on the ignored bits
@@ -2124,7 +2125,8 @@ def _generate_csr_tests(test_data: TestData, mode: str) -> list[TestChunk]:
         comment_banner(
             coverpoint,
             "With the trigger disabled (tdata1.type = 15), write all 0s and then all 1s to one tdata\n"
-            "register; the other two must not change (each before ^ after is recorded and must be 0)",
+            "register; the other two must not change (each before ^ after is recorded and must be 0).\n"
+            "Then write each tdata register of trigger 1 the same way; trigger 0's tdata1/2/3 must not change",
         )
     )
     lines.append(f"LI(x{ones_reg}, -1) # all 1s")
@@ -2151,6 +2153,49 @@ def _generate_csr_tests(test_data: TestData, mode: str) -> list[TestChunk]:
                 ]
             )
         lines.extend(_clear_tdata(mode))
+    # Nor does it change any trigger besides the selected one: trigger 0 is disabled with tdata2 set (to scratch,
+    # an address mcontrol6 supports), then each tdata register of trigger 1 is written all 0s and all 1s
+    if UDB_NUM_TRIGGERS >= 2:
+        (old3_reg,) = test_data.int_regs.get_registers(1, exclude_regs=[10, 11])
+        lines.extend(
+            [
+                *_select_trigger(temp_reg, 0, mode),
+                *_clear_tdata(mode),
+                *_li_xlen(temp_reg, TDATA1_TYPE_DISABLED << 60, TDATA1_TYPE_DISABLED << 28, "tdata1.type = 15"),
+                _csr_access(f"csrw tdata1, x{temp_reg} # trigger 0 disabled", mode),
+                "#ifdef UDB_SDTRIG_MCONTROL6_SUPPORTED0",
+                f"LA(x{temp_reg}, scratch)",
+                _csr_access(f"csrw tdata2, x{temp_reg} # trigger 0 tdata2 = scratch", mode),
+                "#endif",
+            ]
+        )
+        for csr in TDATA_CSRS:
+            lines.extend(
+                [
+                    _add_tc(test_data, f"trig_num_1_{csr}_trig_num_0", coverpoint, covergroup),
+                    *_select_trigger(temp_reg, 0, mode),
+                    _csr_access(f"csrr x{old1_reg}, tdata1 # trigger 0 before", mode),
+                    _csr_access(f"csrr x{old2_reg}, tdata2 # trigger 0 before", mode),
+                    _csr_access(f"csrr x{old3_reg}, tdata3 # trigger 0 before", mode),
+                    *_select_trigger(temp_reg, 1, mode),
+                    *_clear_tdata(mode),
+                    *_li_xlen(temp_reg, TDATA1_TYPE_DISABLED << 60, TDATA1_TYPE_DISABLED << 28, "tdata1.type = 15"),
+                    _csr_access(f"csrw tdata1, x{temp_reg} # trigger 1 disabled", mode),
+                    _csr_access(f"csrw {csr}, x0 # trigger 1: write all 0s", mode),
+                    _csr_access(f"csrw {csr}, x{ones_reg} # trigger 1: write all 1s", mode),
+                    *_select_trigger(temp_reg, 0, mode),
+                ]
+            )
+            for other, before_reg in zip(TDATA_CSRS, (old1_reg, old2_reg, old3_reg), strict=True):
+                lines.extend(
+                    [
+                        _csr_access(f"csrr x{data_reg}, {other} # trigger 0 after", mode),
+                        f"xor x{data_reg}, x{data_reg}, x{before_reg} # 0 if trigger 0's {other} unchanged",
+                        write_sigupd(data_reg, test_data),
+                    ]
+                )
+        lines.extend([*_clear_tdata(mode), *_select_trigger(temp_reg, 1, mode), *_clear_tdata(mode)])
+        test_data.int_regs.return_registers([old3_reg])
 
     ######################################
     coverpoint = "cp_tdata1_mode_hardwired"
