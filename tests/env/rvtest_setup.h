@@ -967,10 +967,12 @@
   rvtest_trap_count:
     .dword 0
 
-  // Scratch word for the trap handler's xtinst check: nonzero when the recorded value is not the
-  // transformation of the trapping instruction.
-  rvtest_xtinst_mismatch:
-    .dword 0
+  #ifdef H_SUPPORTED
+    // Scratch word for the trap handler's xtinst check: nonzero when the recorded value is not the
+    // transformation of the trapping instruction.
+    rvtest_xtinst_mismatch:
+      .dword 0
+  #endif
 
   .p2align 4
 

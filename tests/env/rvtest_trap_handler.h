@@ -119,14 +119,11 @@
 //                     forwards GOTO_M, M-mode CSR_ACCESS, and loads/stores to M-mode via ecall
 //    VS-mode handler: receives calls from VU-mode when hedeleg[8]=1. It handles
 //                     ECALL_TEST, ECALL_RECORD and GOTO_VS/VU locally and forwards everything
-//                     else to HS-mode via ecall. A forwarded GOTO_M/S/U (or legacy
-//                     a0=0 call) leaves the guest: the HS handler recognizes the
-//                     ecall at tsbi_Vforward_goto_ecall and resumes the VU caller
+//                     else to HS-mode via ecall. A forwarded GOTO_M/S/U leaves the
+//                     guest: the HS handler recognizes the ecall at
+//                     tsbi_Vforward_goto_ecall and resumes the VU caller
 //                     instead of the VS handler. An ecall from VS-mode (cause 10)
 //                     always goes to HS-mode because hedeleg[10] is read-only 0.
-//
-//  CSR_ACCESS from a guest runs in HS-mode, so S-mode CSR numbers access the
-//  HS-mode CSRs. A guest must use the vs* CSR numbers to access its own state.
 //
 //  CSR_ACCESS from a guest runs in HS-mode, so S-mode CSR numbers access the
 //  HS-mode CSRs. A guest must use the vs* CSR numbers to access its own state.
@@ -424,7 +421,7 @@
 //
 // Each direction checks that xEPC really lies in the mapping it is moving out of, so
 // a test that registers an alias but resumes somewhere else is left alone, as is one
-// that never registers an alias. Uses T1-T4 and T6; a0 = GOTO operation code.
+// that never registers an alias. Uses T2-T4; a0 = GOTO operation code.
 //
 // M and S service different callers, so they get different halves:
 //   M handles GOTO_UMODE, whose caller runs in the code region, and it is the only
@@ -1563,9 +1560,9 @@ tsbi_\__MODE__\()goto_vu:
 // VS-MODE HANDLER:
 //   - ECALL_TEST, ECALL_RECORD, GOTO_VSMODE (vsstatus.SPP=1) and GOTO_VUMODE
 //     (vsstatus.SPP=0) are handled locally.
-//   - GOTO_MMODE/SMODE/UMODE and the legacy a0=0 call leave the guest, which
-//     only HS-mode can do: tsbi_Vforward_goto makes the call from
-//     tsbi_Vforward_goto_ecall, where the HS handler resumes the VU caller.
+//   - GOTO_MMODE/SMODE/UMODE leave the guest, which only HS-mode can do:
+//     tsbi_Vforward_goto makes the call from tsbi_Vforward_goto_ecall, where
+//     the HS handler resumes the VU caller.
 //   - Everything else is forwarded to HS-mode, which returns to the VS handler.
 //
 // FORWARDING MECHANISM:
