@@ -19,6 +19,8 @@
     `ifdef S_SUPPORTED
         SdtrigSm_native_triggers_cg = new();   SdtrigSm_native_triggers_cg.set_inst_name("obj_SdtrigSm_native_triggers");
     `endif
+    SdtrigSm_itrigger_cg = new();              SdtrigSm_itrigger_cg.set_inst_name("obj_SdtrigSm_itrigger");
+    SdtrigSm_etrigger_cg = new();              SdtrigSm_etrigger_cg.set_inst_name("obj_SdtrigSm_etrigger");
     SdtrigSm_mcontrol6_cg = new();             SdtrigSm_mcontrol6_cg.set_inst_name("obj_SdtrigSm_mcontrol6");
     SdtrigSm_textra_cg = new();                SdtrigSm_textra_cg.set_inst_name("obj_SdtrigSm_textra");
     `ifdef UDB_TCONTROL_AVAILABLE
