@@ -6,13 +6,14 @@
 
 normative_rule_definitions:
   - name: sstateen_rv64_csrs
-    coverpoint: ["{Smstateen_cg,Ssstateen_cg}/{cp_walking_ones}"]
+    coverpoint:
+      ["Ssstateen_cg/cp_csr_illegal_accesses", "Ssstateen_cg/cp_walking_ones"]
 
   - name: sstateen_user_access_control
     coverpoint: ["Ssstateen_cg/{cp_jvt, cp_fcsr_lower}"]
 
   - name: sstateen_ro1_bits
-    coverpoint: ["{Smstateen_cg,Ssstateen_cg}/{cp_walking_ones}"]
+    coverpoint: ["Ssstateen_cg/cp_walking_ones"]
 
   # Figure: Supervisor State Enable 0 Register (sstateen0).
   - name: sstateen0_enc_img
