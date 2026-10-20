@@ -61,9 +61,17 @@
 #endif
 
 // Execute an sfence.vma if supported by the DUT.
+// With H, also synchronize guest translations with the PMP settings (hypervisor.adoc,
+// "Memory-Management Fences").
 .macro RVTEST_SFENCE_VMA_IF_SUPPORTED
   #if defined(SV32_SUPPORTED) || defined(SV39_SUPPORTED)
     sfence.vma
+  #endif
+  #ifdef H_SUPPORTED
+    .option push
+    .option arch, +h
+    hfence.gvma
+    .option pop
   #endif
 .endm
 
