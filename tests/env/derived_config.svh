@@ -147,4 +147,14 @@
   `endif
 `endif
 
+// UDB_SGEI_INTR_IMPL: mirrors derived_config.h (H with GEILEN > 0). Configs without H do not
+// emit UDB_NUM_EXTERNAL_GUEST_INTERRUPTS at all; GEILEN = 0 emits the _0 form.
+`ifdef H_SUPPORTED
+  `ifdef UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
+    `ifndef UDB_NUM_EXTERNAL_GUEST_INTERRUPTS_0
+      `define UDB_SGEI_INTR_IMPL
+    `endif
+  `endif
+`endif
+
 `endif // DERIVED_CONFIG_SVH

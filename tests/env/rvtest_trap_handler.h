@@ -913,8 +913,8 @@
 
 // VS-level interrupts need no RVMODEL macros: they are raised and cleared through
 // hvip (RVTEST_SET/CLR_VS*_INT_* in utils.h). A guest external interrupt (hgeip bit
-// _GEI) can only be raised by the platform, through the optional
-// RVMODEL_SET_GUEST_EXT_INT(_GEI, _R1, _R2) and RVMODEL_CLR_GUEST_EXT_INT(_GEI, _R1, _R2).
+// _GEI) can only be raised by the platform, through RVMODEL_SET_GUEST_EXT_INT(_GEI, _R1, _R2)
+// and RVMODEL_CLR_GUEST_EXT_INT(_GEI, _R1, _R2), which check_defines.h requires when GEILEN > 0.
 
 
 //==============================================================================
