@@ -396,6 +396,10 @@ coverpoints:
       SCONTEXT_IMPLEMENTED in riscv-unified-db#2069) and are not tested yet
     expectation: Illegal instruction exception on every access
     bins: unimplemented context CSRs * 2 accesses (none on a hart with mcontext and hcontext)
+    rules:
+      - Sdtrig_unimp_csr_illegal
+      - Sdtrig_unimplemented_register
+      - Sdtrig_hcontext_implemented
   - heading: Trigger Control
   - name: cp_tcontrol_enable (not generated)
     status: >-
