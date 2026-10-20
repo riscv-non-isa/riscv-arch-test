@@ -40,18 +40,45 @@ PRIV_TRAP_SIGUPD_COUNT = 1500
 
 EXPERIMENTAL_EXTENSIONS = frozenset({"Zibi"})
 
-# Extensions that should generate RV32E/RV64E variants
+# Extensions that should generate RV32E/RV64E variants. The F-family and Zibi are left out
+# until an E configuration can run them.
 # TODO: Add Zcmp and Zcmt when implemented
 E_EXTENSION_TESTS = frozenset(
     {
         "I",
         "M",
-        "Zmmul",
-        "Zca",
-        "Zcb",
+        "Misalign",
+        "Zaamo",
+        "Zabha",
+        "Zacas",
+        "Zalrsc",
         "Zba",
         "Zbb",
+        "Zbc",
+        "Zbkb",
+        "Zbkc",
+        "Zbkx",
         "Zbs",
+        "Zca",
+        "Zcb",
+        "Zcmop",
+        "Zicbom",
+        "Zicbop",
+        "Zicboz",
+        "Zicntr",
+        "Zicond",
+        "Zicsr",
+        "Zifencei",
+        "Zihintntl",
+        "Zihintpause",
+        "Zihpm",
+        "Zimop",
+        "Zknd",
+        "Zkne",
+        "Zknh",
+        "Zksed",
+        "Zksh",
+        "Zmmul",
     }
 )
 
