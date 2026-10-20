@@ -916,19 +916,10 @@
 #endif
 // RVMODEL_CLR_SEXT_INT has no default: when undefined, rvtest_clr_sext_int_* clear mip.SEIP instead
 
-// VS-mode interrupt defaults
-#ifndef RVMODEL_SET_VSW_INT
-        #define  RVMODEL_SET_VSW_INT     RVTEST_DFLT_INT_HNDLR  // VS-mode SW interrupt set: abort
-#endif
-#ifndef RVMODEL_CLR_VSW_INT
-        #define  RVMODEL_CLR_VSW_INT     RVTEST_DFLT_INT_HNDLR  // VS-mode SW interrupt clear: abort
-#endif
-#ifndef RVMODEL_CLR_VTIMER_INT
-        #define  RVMODEL_CLR_VTIMER_INT  RVTEST_DFLT_INT_HNDLR  // VS-mode timer interrupt clear: abort
-#endif
-#ifndef RVMODEL_CLR_VEXT_INT
-        #define  RVMODEL_CLR_VEXT_INT    RVTEST_DFLT_INT_HNDLR  // VS-mode ext interrupt clear: abort
-#endif
+// VS-level interrupts need no RVMODEL macros: they are raised and cleared through
+// hvip (RVTEST_SET/CLR_VS*_INT_* in utils.h). A guest external interrupt (hgeip bit
+// _GEI) can only be raised by the platform, through the optional
+// RVMODEL_SET_GUEST_EXT_INT(_GEI, _R1, _R2) and RVMODEL_CLR_GUEST_EXT_INT(_GEI, _R1, _R2).
 
 
 //==============================================================================
@@ -2008,6 +1999,7 @@ tsbi_instr_table:
         TSBI_CSR_INSTR_TABLE(0x25C) // vstopei
         #endif
   #if (UDB_MXLEN==32)
+        TSBI_CSR_INSTR_TABLE(0x25D) // vstimecmph
         TSBI_CSR_INSTR_TABLE(0x612) // hedelegh
         TSBI_CSR_INSTR_TABLE(0x615) // htimedeltah
         TSBI_CSR_INSTR_TABLE(0x618) // hvienh
@@ -2278,12 +2270,24 @@ sv_\__MODE__\()vect:
         li      T3, 0xf                             // T3 = mask for cause[3:0]
         and     T3, T5, T3                          // T3 = cause number (low 4 bits)
         csrr    T4, CSR_XIE                         // T4 = xIE register
+  .ifc \__MODE__ , S
+    #ifdef H_SUPPORTED
+        csrr    T2, CSR_HIE                         // the VS-level and SGEI enables are in hie,
+        or      T4, T4, T2                          //   which never shares a bit with sie
+    #endif
+  .endif
         srl     T4, T4, T3                          // shift xIE so cause bit is at position 0
         andi    T4, T4, 1                           // T4 = xIE[cause] (0 or 1)
         slli    T4, T4, 11                          // position at bit 11
         or      T6, T6, T4                          // merge xIE bit
 
         csrr    T4, CSR_XIP                         // T4 = xIP register
+  .ifc \__MODE__ , S
+    #ifdef H_SUPPORTED
+        csrr    T2, CSR_HIP                         // the VS-level and SGEI pending bits are in hip
+        or      T4, T4, T2
+    #endif
+  .endif
         srl     T4, T4, T3                          // shift xIP so cause bit is at position 0
         andi    T4, T4, 1                           // T4 = xIP[cause] (0 or 1)
         slli    T4, T4, 12                          // position at bit 12
@@ -2850,7 +2854,24 @@ common_\__MODE__\()int_handler:
         andi    T2, T5, INT_CAUSE_MSK                // T2 = cause[4:0] (interrupt cause index)
         sll     T3, T3, T2                           // T3 = 1 << cause (bit mask for this interrupt)
         csrrc   T4, CSR_XIE, T3                      // read xIE, then clear this interrupt's enable bit
+  .ifc \__MODE__ , S
+    #ifdef H_SUPPORTED
+        // HS-mode takes the VS-level interrupts that hideleg does not delegate, and SGEI.
+        // Their enables and pending bits are in hie and hip, not sie and sip, and only
+        // hip.VSSIP (an alias of hvip.VSSIP) is writable.
+        csrrc   T4, CSR_HIE, T3
+        csrrc   T6, CSR_HIP, T3
         csrrc   T3, CSR_XIP, T3                      // read xIP, then attempt to clear pending bit
+        or      T3, T3, T6                           // record sip | hip
+    #else
+        csrrc   T3, CSR_XIP, T3                      // read xIP, then attempt to clear pending bit
+    #endif
+  .else
+        // mie and mip hold the VS-level bits. In the VS handler, sie and sip are vsie
+        // and vsip, where VS-level interrupts are causes 1, 5 and 9 and vsip.SSIP is an
+        // alias of hvip.VSSIP.
+        csrrc   T3, CSR_XIP, T3                      // read xIP, then attempt to clear pending bit
+  .endif
 
 sv_\__MODE__\()ip:
         TRAP_SIGUPD(T4, T3, 2, sv_\__MODE__\()ip, sv_\__MODE__\()ip_str) // write word 2: xIP
@@ -2903,6 +2924,21 @@ spcl_\__MODE__\()dispatch:
 
 clrint_\__MODE__\()tbl:
 #if defined(H_SUPPORTED)
+  .ifc \__MODE__ , V
+        // VS-mode sees the VS-level interrupts that hideleg delegates as causes 1, 5 and 9
+        .dword  0                                    // cause  0: reserved -> abort
+        .dword  \__MODE__\()clr_Vsw_int              // cause  1: VS-mode software interrupt
+        .dword  0                                    // cause  2: never delegated to VS-mode
+        .dword  0                                    // cause  3: never delegated to VS-mode
+        .dword  0                                    // cause  4: reserved -> abort
+        .dword  \__MODE__\()clr_Vtmr_int             // cause  5: VS-mode timer interrupt
+        .dword  0                                    // cause  6: never delegated to VS-mode
+        .dword  0                                    // cause  7: never delegated to VS-mode
+        .dword  0                                    // cause  8: reserved -> abort
+        .dword  \__MODE__\()clr_Vext_int             // cause  9: VS-mode external interrupt
+        .dword  0                                    // cause 10: never delegated to VS-mode
+        .dword  0                                    // cause 11: never delegated to VS-mode
+  .else
         .dword  0                                    // cause  0: reserved -> abort
         .dword  \__MODE__\()clr_Ssw_int              // cause  1: S-mode software interrupt
         .dword  \__MODE__\()clr_Vsw_int              // cause  2: VS-mode software interrupt
@@ -2915,6 +2951,7 @@ clrint_\__MODE__\()tbl:
         .dword  \__MODE__\()clr_Sext_int             // cause  9: S-mode external interrupt
         .dword  \__MODE__\()clr_Vext_int             // cause 10: VS-mode external interrupt
         .dword  \__MODE__\()clr_Mext_int             // cause 11: M-mode external interrupt
+  .endif
 #else
   #if defined(S_SUPPORTED)
         .dword  0                                    // cause  0: reserved
@@ -2945,7 +2982,11 @@ clrint_\__MODE__\()tbl:
   #endif
 #endif
 
+#if defined(H_SUPPORTED)
+        .dword  \__MODE__\()clr_Sgei_int             // cause 12: supervisor guest external interrupt
+#else
         .dword  1                                    // cause 12: SGEI -> default return
+#endif
         .dword  \__MODE__\()clr_Lcof_int             // cause 13: local counter overflow interrupt
  .rept NUM_SPECD_INTCAUSES-0xE
         .dword  1                                    // causes 14..23: reserved -> default return
@@ -3076,20 +3117,42 @@ excpt_\__MODE__\()hndlr_tbl:
 
 #endif
 
-\__MODE__\()clr_Vsw_int:                             // VS-mode software interrupt
-        RVMODEL_CLR_VSW_INT
-        la      T2, resto_\__MODE__\()rtn
-        jr      T2
+#ifdef H_SUPPORTED
+// VS-level interrupts are raised through hvip, which M-mode and HS-mode clear
+// directly and the VS handler clears through T-SBI. A VS-level timer interrupt
+// from vstimecmp or a guest external interrupt from hgeip stays pending; the
+// handler has already masked it in hie (vsie).
+\__MODE__\()clr_Vsw_int:                             // VS-level software interrupt: hvip.VSSIP
+        CLR_INT_ENTER
+  .ifc \__MODE__ , V
+        RVTEST_CLR_VSSW_INT_U
+  .else
+        RVTEST_CLR_VSSW_INT_M
+  .endif
+        CLR_INT_RETURN \__MODE__
 
-\__MODE__\()clr_Vtmr_int:                            // VS-mode timer interrupt
-        RVMODEL_CLR_VTIMER_INT
-        la      T2, resto_\__MODE__\()rtn
-        jr      T2
+\__MODE__\()clr_Vtmr_int:                            // VS-level timer interrupt: hvip.VSTIP
+        CLR_INT_ENTER
+  .ifc \__MODE__ , V
+        RVTEST_CLR_VSTIME_INT_U
+  .else
+        RVTEST_CLR_VSTIME_INT_M
+  .endif
+        CLR_INT_RETURN \__MODE__
 
-\__MODE__\()clr_Vext_int:                            // VS-mode external interrupt: clear + save intID
-        RVMODEL_CLR_VEXT_INT
-        la      T2, resto_\__MODE__\()rtn
+\__MODE__\()clr_Vext_int:                            // VS-level external interrupt: hvip.VSEIP
+        CLR_INT_ENTER
+  .ifc \__MODE__ , V
+        RVTEST_CLR_VSEXT_INT_U
+  .else
+        RVTEST_CLR_VSEXT_INT_M
+  .endif
+        CLR_INT_RETURN \__MODE__
+
+\__MODE__\()clr_Sgei_int:                            // guest external interrupt: hgeip stays set until
+        la      T2, resto_\__MODE__\()rtn            //   RVMODEL_CLR_GUEST_EXT_INT; hie.SGEIE is masked
         jr      T2
+#endif
 
 \__MODE__\()clr_Lcof_int:                            // local counter overflow interrupt
         LI(     T2, MIP_LCOFIP)
