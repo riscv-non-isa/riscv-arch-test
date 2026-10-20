@@ -27,8 +27,9 @@ from testgen.coverpoints.vector import _redusum_model as model
 from testgen.data.state import TestData
 from testgen.data.test_chunk import TestChunk
 
-_VL_SWEEP = (1, 2, 3, 4, 8, 16, 32, 64, 128, 256, 512)
-_DETERMINISM_VLS = (3, 8, 16, 512)
+# 7 is the largest vl below every possible VLMAX at LMUL=8; 8, 16, ... 512 reach VLMAX
+_VL_SWEEP = (1, 2, 3, 4, 7, 8, 16, 32, 64, 128, 256, 512)
+_DETERMINISM_VLS = (3, 7)
 _LMUL = 8
 _VLEN_MAX = 1024
 _MASK_BITS = 8 * _VLEN_MAX // 16  # VLMAX at SEW=16, LMUL=8 and the largest VLEN ACT supports
@@ -208,12 +209,19 @@ def _same(a: model.Result, b: model.Result) -> bool:
 # ---------------------------------------------------------------------------------------------------------------
 
 
-def _guard(ctx: _Ctx, n: int) -> list[str]:
-    return [f"#if (UDB_VLEN * {_LMUL} / {ctx.sew}) >= {n}"] if n > _LMUL else []
+def _vlmax_expr(ctx: _Ctx) -> str:
+    return f"(UDB_VLEN * {_LMUL} / {ctx.sew})"
 
 
-def _endguard(ctx: _Ctx, n: int) -> list[str]:
-    return ["#endif"] if _guard(ctx, n) else []
+def _guard(ctx: _Ctx, n: int, exact: bool = False) -> list[str]:
+    """Compile a testcase only if vl = n fits (or, if exact, only if n is VLMAX). VLMAX >= 8 at LMUL=8."""
+    if exact:
+        return [f"#if {_vlmax_expr(ctx)} == {n}"]
+    return [f"#if {_vlmax_expr(ctx)} >= {n}"] if n > _LMUL else []
+
+
+def _endguard(ctx: _Ctx, n: int, exact: bool = False) -> list[str]:
+    return ["#endif"] if _guard(ctx, n, exact) else []
 
 
 def _load(
@@ -368,7 +376,7 @@ def cp_custom_vfredusum_sweep(
     instr_name: str, instr_type: str, coverpoint: str, test_data: TestData
 ) -> list[TestChunk]:
     """
-    vl = 1, 2, 3, 4, 8, 16, ... VLMAX at every rounding mode, unmasked, with a pseudo-random mask and with no
+    vl = 1, 2, 3, 4, 7, 8, 16, ... VLMAX at every rounding mode, unmasked, with a pseudo-random mask and with no
     active elements, for data whose sum is the same for every tree (exact), differs by a few ulps by tree (mild),
     or ranges from 0 to well above the exact sum by tree (cancel). Exact data also runs scaled into the subnormal
     and top-binade ranges.
@@ -535,7 +543,7 @@ def cp_custom_vfredusum_noactive(
     instr_name: str, instr_type: str, coverpoint: str, test_data: TestData
 ) -> list[TestChunk]:
     """
-    No active elements: vl = 1 and 8 with an all-zero mask and signaling-NaN elements, for every vs1[0] class, at
+    No active elements: vl = 1 and 7 with an all-zero mask and signaling-NaN elements, for every vs1[0] class, at
     RNE and RDN (whose additive identities differ). vd[0] must be vs1[0]; a NaN scalar may instead become the
     canonical NaN, with NV only if it was signaling. Also vl = 0, which must leave vd and fflags unchanged.
     """
@@ -548,7 +556,7 @@ def cp_custom_vfredusum_noactive(
     zero_mask = (f"{ctx.prefix}_mask_zero", [0] * (_MASK_BITS // 8), 8)
     el = (f"{ctx.prefix}_elems_snan8", snans, ctx.sew)
     for cls, scalar in avals.items():
-        for n in (1, 8):
+        for n in (1, 7):
             for mode in (model.RNE, model.RDN):
                 res = model.reduce_bits(scalar, [], mode, ctx.sew, ctx.widening)
                 _data_case(
@@ -595,7 +603,8 @@ def cp_custom_vfredusum_determinism(
     ctx = _Ctx(instr_name, coverpoint, test_data)
     if ctx.skip():
         return []
-    for n in (v for v in _DETERMINISM_VLS if v <= ctx.vlmax):
+    vlmaxes = [n for n in _VL_SWEEP if n >= _LMUL and n <= ctx.vlmax]
+    for n, exact in [(n, False) for n in _DETERMINISM_VLS] + [(n, True) for n in vlmaxes]:
         for fam in ("cancel", "mild"):
             if fam == "cancel":
                 k = -3 if ctx.widening else 3
@@ -603,7 +612,7 @@ def cp_custom_vfredusum_determinism(
             else:
                 k = 3
                 d, ds, dn = (_mild_family(ctx), _mild_family(ctx, k), _mild_family(ctx, 0, True))
-            _determinism_case(ctx, fam, n, k, d, ds, dn)
+            _determinism_case(ctx, fam, n, k, d, ds, dn, exact)
     return ctx.chunks
 
 
@@ -615,7 +624,9 @@ def _determinism_case(
     d: tuple[int, list[int]],
     ds: tuple[int, list[int]],
     dn: tuple[int, list[int]],
+    exact: bool,
 ) -> None:
+    """Determinism checks at vl = n; if exact, only in configurations where n is VLMAX."""
     lines = ctx.begin()
     labels = {}
     for tag, (scalar, elems) in (("d", d), ("s", ds), ("n", dn)):
@@ -625,8 +636,8 @@ def _determinism_case(
             ctx.data(f"det_{fam}_{tag}_elems{suffix}", elems[: max(n, 1)] if fam == "cancel" else elems, ctx.sew),
         )
     r = ctx.regs
-    lines.append(f"# Testcase determinism, {fam} data, vl={n}")
-    lines += _guard(ctx, n)
+    lines.append(f"# Testcase determinism, {fam} data, vl={n}{' = VLMAX' if exact else ''}")
+    lines += _guard(ctx, n, exact)
 
     def run(
         tag: str, mode: int, bin_name: str, flags: str = "f", vs2: int = _VS2, vs1: int = _VS1, vd: int = _VD
@@ -683,5 +694,5 @@ def _determinism_case(
     lines += run("n", model.RUP, f"{fam}_vl{n}_rup_negated")
     lines += [*_sign_lines(ctx), f"vxor.vv v3, v{_SAVE_RDN}, v2 # negated RDN result"]
     lines += compare(3, _VD, "f2")
-    lines += _endguard(ctx, n)
+    lines += _endguard(ctx, n, exact)
     ctx.end(lines)

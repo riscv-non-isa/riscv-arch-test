@@ -490,12 +490,12 @@ typedef enum {
   vred_vl_2,
   vred_vl_3,
   vred_vl_4,
-  vred_vl_8,
+  vred_vl_7,
   vred_vl_vlmax,
   vred_vl_other
 } vred_vl_t;
 
-// vl = 1, 2, 3 and 4 take precedence over VLMAX, which takes precedence over 8
+// vl = 7 is below every VLMAX at LMUL=8, so its bin and the VLMAX bin are both reachable
 function vred_vl_t vred_vl_class(int hart, int issue);
   int vl = int'(get_csr_val(hart, issue, `SAMPLE_BEFORE, "vl", "vl"));
   int vlmax = get_vtype_vlmax(hart, issue, `SAMPLE_BEFORE);
@@ -504,10 +504,10 @@ function vred_vl_t vred_vl_class(int hart, int issue);
     2: return vred_vl_2;
     3: return vred_vl_3;
     4: return vred_vl_4;
+    7: return vred_vl_7;
     default: ;
   endcase
   if (vl == vlmax) return vred_vl_vlmax;
-  if (vl == 8)     return vred_vl_8;
   return vred_vl_other;
 endfunction
 

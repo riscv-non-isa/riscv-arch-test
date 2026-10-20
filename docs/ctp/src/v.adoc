@@ -241,10 +241,31 @@ The tests use LMUL=8; cases with vl > VLMAX are compiled out.
 [%AUTOWIDTH]
 |===
 |Coverpoint|# Bins|Definition
-|cp_custom_vfredusum_sweep|6*5*3|vl={1, 2, 3, 4, 8, VLMAX} x frm x {unmasked, random mask, no active elements}. Tests run vl = 1, 2, 3, 4, 8, 16, ... VLMAX for three data sets: small integers (same result in any order), vs1[0] = 2^t with elements of 0.75 ulp (results differ by a few ulps), and +B, -B and small elements of 3/8 ulp(B) (results range from 0 to well above the exact sum)
-|cp_custom_vfredusum_specials|12*12|vs1[0] x vs2[0] from {±0, ±inf, canonical qNaN, other qNaN, sNaN, ±largest, smallest subnormal, -1, 1+ulp}, plus short lists producing inf - inf, overflow and exact zero sums
-|cp_custom_vfredusum_noactive|12*2|vs1[0] class x frm={rne, rdn} with no active elements: vd[0] = vs1[0], or the canonical NaN (with NV if signaling) for a NaN; also vl=0 leaves vd unchanged
-|cp_custom_vfredusum_determinism|3*3|vl={3, 8, VLMAX} x frm={rne, rdn, rup}: repeating, scaling by 2^k or negating the data must repeat, scale or negate the result (norm:vfredusum_redtree)
+|cp_custom_vfredusum_sweep|6*5*3
+a|vl={1, 2, 3, 4, 7, VLMAX} x frm={rne, rtz, rdn, rup, rmm} x {unmasked, random mask, no active elements}.
+Tests: every vl in {1, 2, 3, 4, 7, 8, 16, ... VLMAX} x every frm x {unmasked, fixed pseudo-random mask with elements 0 and 2 active and 1 inactive, all-zero mask}, with:
+
+* exact data: vs1[0] and elements are random integers small enough that every partial sum is exact; vd[0] must be the exact sum with no flags. Also scaled into the subnormal range and the top binade (unmasked, rne).
+* mild data: vs1[0] = 2^t and every element = 0.75 ulp(2^t).
+* cancellation data: vs2[0] = +B, vs2[vl-1] = -B, up to eight elements t = 3/8 ulp(B) spaced between them, alternating +0 and -0 elsewhere, vs1[0] = t.
+|cp_custom_vfredusum_specials|12*12
+a|vs1[0] x vs2[0], each from {+0, -0, +inf, -inf, canonical qNaN, other qNaN, sNaN, +largest, -largest, smallest subnormal, -1, 1+ulp}. Tests:
+
+* every pair at vl=1;
+* vs1[0] in {+0, -0, +inf, qNaN, sNaN, +largest, -largest, smallest subnormal} with vs2 = {+inf, -inf}, {+inf, +inf}, {+largest, +largest}, {+largest, -largest}, {-largest, -inf}, {qNaN, +inf, -inf}, {sNaN, -inf}, {-0, -0}, {+0, -0}, {smallest subnormal, smallest subnormal}, {1+ulp, -1} or {+largest, +largest, -largest, -largest}.
+
+Each runs at rne and at every other frm whose legal outcomes differ. A NaN result must be the canonical NaN.
+|cp_custom_vfredusum_noactive|12*2
+a|vs1[0] class x frm={rne, rdn}, no active elements. Tests: every vs1[0] class, vl = 1 and 7, all-zero mask, sNaN elements. vd[0] must equal vs1[0] with no flags; a NaN vs1[0] may instead become the canonical NaN, with NV exactly when it was signaling. vl=0, masked and unmasked: vd and fflags unchanged.
+|cp_custom_vfredusum_determinism|3*3
+a|vl={3, 7, VLMAX} x frm={rne, rdn, rup}, unmasked. Tests: cancellation and mild data D at vl = 3, 7 and VLMAX. With r = vd[0] of D at rne and s = vd[0] of D at rdn, each checked to be legal:
+
+* D at rne, with vs2, vs1 and vd in other registers, gives r;
+* 2^k*D at rne gives 2^k*r (k = 3, or -3 for widening cancellation data);
+* -D at rne gives -r (r if r is zero);
+* -D at rup gives -s.
+
+Each also raises the same fflags as r or s.
 |===
 
 [[skipped-vector-tests]]

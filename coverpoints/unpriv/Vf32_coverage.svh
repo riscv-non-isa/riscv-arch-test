@@ -15505,7 +15505,7 @@ covergroup Vf32_vfredusum_vs_cg with function sample(ins_t ins);
 
     vfredusum_det_vl : coverpoint vred_vl_class(ins.hart, ins.issue) {
         bins three = {vred_vl_3};
-        bins eight = {vred_vl_8};
+        bins seven = {vred_vl_7};
         bins vlmax = {vred_vl_vlmax};
     }
 
@@ -15609,7 +15609,7 @@ covergroup Vf32_vfredusum_vs_cg with function sample(ins_t ins);
         bins two   = {vred_vl_2};
         bins three = {vred_vl_3};
         bins four  = {vred_vl_4};
-        bins eight = {vred_vl_8};
+        bins seven = {vred_vl_7};
         bins vlmax = {vred_vl_vlmax};
     }
 
@@ -26680,7 +26680,7 @@ covergroup Vf32_vfwredusum_vs_cg with function sample(ins_t ins);
 
     vfredusum_det_vl : coverpoint vred_vl_class(ins.hart, ins.issue) {
         bins three = {vred_vl_3};
-        bins eight = {vred_vl_8};
+        bins seven = {vred_vl_7};
         bins vlmax = {vred_vl_vlmax};
     }
 
@@ -26784,7 +26784,7 @@ covergroup Vf32_vfwredusum_vs_cg with function sample(ins_t ins);
         bins two   = {vred_vl_2};
         bins three = {vred_vl_3};
         bins four  = {vred_vl_4};
-        bins eight = {vred_vl_8};
+        bins seven = {vred_vl_7};
         bins vlmax = {vred_vl_vlmax};
     }
 

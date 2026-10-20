@@ -5,7 +5,7 @@
 
     vfredusum_det_vl : coverpoint vred_vl_class(ins.hart, ins.issue) {
         bins three = {vred_vl_3};
-        bins eight = {vred_vl_8};
+        bins seven = {vred_vl_7};
         bins vlmax = {vred_vl_vlmax};
     }
 

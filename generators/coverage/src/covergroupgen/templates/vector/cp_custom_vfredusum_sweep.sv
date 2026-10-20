@@ -8,7 +8,7 @@
         bins two   = {vred_vl_2};
         bins three = {vred_vl_3};
         bins four  = {vred_vl_4};
-        bins eight = {vred_vl_8};
+        bins seven = {vred_vl_7};
         bins vlmax = {vred_vl_vlmax};
     }
 
