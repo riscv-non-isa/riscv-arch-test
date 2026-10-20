@@ -123,7 +123,8 @@
 `endif
 
 // ---- PMP_GRANULARITY_BELOW_PAGE ----
-// The PMP grain is smaller than a 4 KiB page (PMP_GRANULARITY < 12).
+// The PMP grain is smaller than a 4 KiB page (PMP_GRANULARITY < 12). A range over the
+// UDB_PMP_GRANULARITY_<n> value macros cannot be written in a single `ifdef at each guard.
 `ifdef UDB_PMP_GRANULARITY_2
   `define PMP_GRANULARITY_BELOW_PAGE
 `endif
@@ -153,14 +154,6 @@
 `endif
 `ifdef UDB_PMP_GRANULARITY_11
   `define PMP_GRANULARITY_BELOW_PAGE
-`endif
-
-// ---- SV_SUPPORTED ----
-// Some page-based translation mode is implemented (Sv48 and Sv57 imply Sv39).
-`ifdef SV32_SUPPORTED
-  `define SV_SUPPORTED
-`elsif SV39_SUPPORTED
-  `define SV_SUPPORTED
 `endif
 
 // Cumulative privileged ISA version defines
