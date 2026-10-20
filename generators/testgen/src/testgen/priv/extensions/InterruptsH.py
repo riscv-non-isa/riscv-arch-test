@@ -449,14 +449,14 @@ def _user_tests(test_data: TestData) -> list[str]:
 def _wfi_tests(test_data: TestData) -> list[str]:
     """WFI in VS-mode and VU-mode for each mstatus.TW and hstatus.VTW.
 
-    Where the spec lets WFI either complete or raise an exception, RVTEST_OPTIONAL_TRAP accepts both, so any other
-    exception fails.  mstatus.TW = 1 makes WFI in VS or VU raise illegal instruction unless it completes, and takes
-    precedence over VTW.  With TW = 0, VTW = 1 makes WFI in VS raise virtual instruction unless it completes, and WFI
-    in VU always raises virtual instruction.  With TW = VTW = 0, WFI in VS never traps; a VS-level interrupt that is
-    pending and enabled in vsie but masked by vsstatus.SIE = 0 makes it complete rather than wait.  VS-level
-    interrupts are never masked in VU, so the VU cases have none pending.
+    mstatus.TW = 1 makes WFI in VS or VU raise illegal instruction unless it completes within a bounded time, and
+    takes precedence over VTW.  With TW = 0, VTW = 1 makes WFI in VS raise virtual instruction unless it completes,
+    and WFI in VU always raises virtual instruction.  Whether a WFI that may trap completes instead is the
+    implementation's choice, which the Sail options wfi_is_nop and max_time_to_wait match, so nothing is pending
+    then: a pending interrupt would let it complete at once.  With TW = VTW = 0, WFI in VS never traps; a VS-level
+    interrupt that is pending and enabled in vsie but masked by vsstatus.SIE = 0 makes it complete rather than wait.
     """
-    tmp_reg, trap_reg = test_data.int_regs.get_registers(2)
+    tmp_reg = test_data.int_regs.get_register()
     lines = []
     for mode in ("vs", "vu"):
         coverpoint = f"cp_wfi_{mode}"
@@ -464,19 +464,17 @@ def _wfi_tests(test_data: TestData) -> list[str]:
             comment_banner(
                 coverpoint,
                 f"Execute WFI in {mode.upper()}-mode with mstatus.TW = 0/1 and hstatus.VTW = 0/1"
-                + (", with VSSI pending and\nenabled in vsie but masked by vsstatus.SIE = 0" if mode == "vs" else ""),
+                + (
+                    ".  With TW = VTW = 0, VSSI is\npending and enabled in vsie but masked by vsstatus.SIE = 0"
+                    if mode == "vs"
+                    else ""
+                ),
             )
         )
         for tw in (0, 1):
             for vtw in (0, 1):
-                if tw:
-                    cause = "CAUSE_ILLEGAL_INSTRUCTION"
-                elif mode == "vs" and vtw:
-                    cause = "CAUSE_VIRTUAL_INSTRUCTION"
-                else:
-                    cause = None  # VS completes; VU always raises virtual instruction
                 label = test_data.add_testcase(f"tw{tw}_vtw{vtw}", coverpoint, _CG)
-                pending = "MIP_VSSIP" if mode == "vs" else "0"
+                pending = "MIP_VSSIP" if mode == "vs" and not tw and not vtw else "0"
                 lines.extend(
                     [
                         f"LI(x{tmp_reg}, MIP_VSSIP)",
@@ -490,11 +488,9 @@ def _wfi_tests(test_data: TestData) -> list[str]:
                         f"csr{'s' if vtw else 'c'} hstatus, x{tmp_reg}",
                         f"LI(x{tmp_reg}, MSTATUS_TW)",
                         tsbi_call(f"csr{'s' if tw else 'c'} mstatus, x{tmp_reg}"),
-                        *([f"RVTEST_OPTIONAL_TRAP(x{tmp_reg}, x{trap_reg}, {label[:-1]}, {cause})"] if cause else []),
                         f"RVTEST_TSBI_GOTO_{mode.upper()}MODE",
                         label,
                         "wfi",
-                        *([f"RVTEST_OPTIONAL_TRAP_END(x{tmp_reg})"] if cause else []),
                         "RVTEST_TSBI_GOTO_SMODE",
                         f"csrr x{tmp_reg}, hip",
                         write_sigupd(tmp_reg, test_data),
@@ -511,7 +507,7 @@ def _wfi_tests(test_data: TestData) -> list[str]:
             "csrw hie, zero",
         ]
     )
-    test_data.int_regs.return_registers([tmp_reg, trap_reg])
+    test_data.int_regs.return_register(tmp_reg)
     return lines
 
 

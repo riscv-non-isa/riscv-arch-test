@@ -37,220 +37,220 @@ RVTEST_BEGIN
 /////////////////////////////////
   RVTEST_TSBI_GOTO_MMODE
 #if __riscv_xlen == 64
-  LI(x9, MSTATEEN_HSTATEEN)
-  csrs mstateen1, x9
+  LI(x13, MSTATEEN_HSTATEEN)
+  csrs mstateen1, x13
 SmstateenH_m_cg_cp_m_hstateen123_bit63_mstateen1_m1:
-  csrr x6, mstateen1
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, SmstateenH_m_cg_cp_m_hstateen123_bit63_mstateen1_m1, SmstateenH_m_cg_cp_m_hstateen123_bit63_mstateen1_m1_str)
+  csrr x9, mstateen1
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, SmstateenH_m_cg_cp_m_hstateen123_bit63_mstateen1_m1, SmstateenH_m_cg_cp_m_hstateen123_bit63_mstateen1_m1_str)
 SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen1_csrc_m1:
-  csrc hstateen1, x9
-  csrr x6, hstateen1
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen1_csrc_m1, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen1_csrc_m1_str)
+  csrc hstateen1, x13
+  csrr x9, hstateen1
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen1_csrc_m1, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen1_csrc_m1_str)
 SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen1_csrs_m1:
-  csrs hstateen1, x9
-  csrr x6, hstateen1
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen1_csrs_m1, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen1_csrs_m1_str)
-  csrc mstateen1, x9
+  csrs hstateen1, x13
+  csrr x9, hstateen1
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen1_csrs_m1, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen1_csrs_m1_str)
+  csrc mstateen1, x13
 SmstateenH_m_cg_cp_m_hstateen123_bit63_mstateen1_m0:
-  csrr x6, mstateen1
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, SmstateenH_m_cg_cp_m_hstateen123_bit63_mstateen1_m0, SmstateenH_m_cg_cp_m_hstateen123_bit63_mstateen1_m0_str)
+  csrr x9, mstateen1
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, SmstateenH_m_cg_cp_m_hstateen123_bit63_mstateen1_m0, SmstateenH_m_cg_cp_m_hstateen123_bit63_mstateen1_m0_str)
 SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen1_roz:
-  csrr x6, hstateen1
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen1_roz, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen1_roz_str)
+  csrr x9, hstateen1
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen1_roz, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen1_roz_str)
 SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen1_csrs_m0:
-  csrs hstateen1, x9
-  csrr x6, hstateen1
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen1_csrs_m0, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen1_csrs_m0_str)
+  csrs hstateen1, x13
+  csrr x9, hstateen1
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen1_csrs_m0, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen1_csrs_m0_str)
 SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen1_csrc_m0:
-  csrc hstateen1, x9
-  csrr x6, hstateen1
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen1_csrc_m0, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen1_csrc_m0_str)
-  csrs mstateen1, x9
-  csrs mstateen2, x9
+  csrc hstateen1, x13
+  csrr x9, hstateen1
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen1_csrc_m0, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen1_csrc_m0_str)
+  csrs mstateen1, x13
+  csrs mstateen2, x13
 SmstateenH_m_cg_cp_m_hstateen123_bit63_mstateen2_m1:
-  csrr x6, mstateen2
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, SmstateenH_m_cg_cp_m_hstateen123_bit63_mstateen2_m1, SmstateenH_m_cg_cp_m_hstateen123_bit63_mstateen2_m1_str)
+  csrr x9, mstateen2
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, SmstateenH_m_cg_cp_m_hstateen123_bit63_mstateen2_m1, SmstateenH_m_cg_cp_m_hstateen123_bit63_mstateen2_m1_str)
 SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen2_csrc_m1:
-  csrc hstateen2, x9
-  csrr x6, hstateen2
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen2_csrc_m1, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen2_csrc_m1_str)
+  csrc hstateen2, x13
+  csrr x9, hstateen2
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen2_csrc_m1, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen2_csrc_m1_str)
 SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen2_csrs_m1:
-  csrs hstateen2, x9
-  csrr x6, hstateen2
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen2_csrs_m1, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen2_csrs_m1_str)
-  csrc mstateen2, x9
+  csrs hstateen2, x13
+  csrr x9, hstateen2
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen2_csrs_m1, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen2_csrs_m1_str)
+  csrc mstateen2, x13
 SmstateenH_m_cg_cp_m_hstateen123_bit63_mstateen2_m0:
-  csrr x6, mstateen2
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, SmstateenH_m_cg_cp_m_hstateen123_bit63_mstateen2_m0, SmstateenH_m_cg_cp_m_hstateen123_bit63_mstateen2_m0_str)
+  csrr x9, mstateen2
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, SmstateenH_m_cg_cp_m_hstateen123_bit63_mstateen2_m0, SmstateenH_m_cg_cp_m_hstateen123_bit63_mstateen2_m0_str)
 SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen2_roz:
-  csrr x6, hstateen2
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen2_roz, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen2_roz_str)
+  csrr x9, hstateen2
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen2_roz, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen2_roz_str)
 SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen2_csrs_m0:
-  csrs hstateen2, x9
-  csrr x6, hstateen2
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen2_csrs_m0, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen2_csrs_m0_str)
+  csrs hstateen2, x13
+  csrr x9, hstateen2
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen2_csrs_m0, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen2_csrs_m0_str)
 SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen2_csrc_m0:
-  csrc hstateen2, x9
-  csrr x6, hstateen2
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen2_csrc_m0, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen2_csrc_m0_str)
-  csrs mstateen2, x9
-  csrs mstateen3, x9
+  csrc hstateen2, x13
+  csrr x9, hstateen2
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen2_csrc_m0, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen2_csrc_m0_str)
+  csrs mstateen2, x13
+  csrs mstateen3, x13
 SmstateenH_m_cg_cp_m_hstateen123_bit63_mstateen3_m1:
-  csrr x6, mstateen3
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, SmstateenH_m_cg_cp_m_hstateen123_bit63_mstateen3_m1, SmstateenH_m_cg_cp_m_hstateen123_bit63_mstateen3_m1_str)
+  csrr x9, mstateen3
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, SmstateenH_m_cg_cp_m_hstateen123_bit63_mstateen3_m1, SmstateenH_m_cg_cp_m_hstateen123_bit63_mstateen3_m1_str)
 SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen3_csrc_m1:
-  csrc hstateen3, x9
-  csrr x6, hstateen3
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen3_csrc_m1, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen3_csrc_m1_str)
+  csrc hstateen3, x13
+  csrr x9, hstateen3
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen3_csrc_m1, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen3_csrc_m1_str)
 SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen3_csrs_m1:
-  csrs hstateen3, x9
-  csrr x6, hstateen3
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen3_csrs_m1, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen3_csrs_m1_str)
-  csrc mstateen3, x9
+  csrs hstateen3, x13
+  csrr x9, hstateen3
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen3_csrs_m1, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen3_csrs_m1_str)
+  csrc mstateen3, x13
 SmstateenH_m_cg_cp_m_hstateen123_bit63_mstateen3_m0:
-  csrr x6, mstateen3
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, SmstateenH_m_cg_cp_m_hstateen123_bit63_mstateen3_m0, SmstateenH_m_cg_cp_m_hstateen123_bit63_mstateen3_m0_str)
+  csrr x9, mstateen3
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, SmstateenH_m_cg_cp_m_hstateen123_bit63_mstateen3_m0, SmstateenH_m_cg_cp_m_hstateen123_bit63_mstateen3_m0_str)
 SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen3_roz:
-  csrr x6, hstateen3
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen3_roz, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen3_roz_str)
+  csrr x9, hstateen3
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen3_roz, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen3_roz_str)
 SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen3_csrs_m0:
-  csrs hstateen3, x9
-  csrr x6, hstateen3
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen3_csrs_m0, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen3_csrs_m0_str)
+  csrs hstateen3, x13
+  csrr x9, hstateen3
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen3_csrs_m0, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen3_csrs_m0_str)
 SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen3_csrc_m0:
-  csrc hstateen3, x9
-  csrr x6, hstateen3
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen3_csrc_m0, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen3_csrc_m0_str)
-  csrs mstateen3, x9
+  csrc hstateen3, x13
+  csrr x9, hstateen3
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen3_csrc_m0, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen3_csrc_m0_str)
+  csrs mstateen3, x13
 #endif
 #if __riscv_xlen == 32
-  LI(x9, MSTATEENH_HSTATEEN)
-  csrs mstateen1h, x9
+  LI(x13, MSTATEENH_HSTATEEN)
+  csrs mstateen1h, x13
 SmstateenH_m_cg_cp_m_hstateen123_bit63_mstateen1h_m1:
-  csrr x6, mstateen1h
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, SmstateenH_m_cg_cp_m_hstateen123_bit63_mstateen1h_m1, SmstateenH_m_cg_cp_m_hstateen123_bit63_mstateen1h_m1_str)
+  csrr x9, mstateen1h
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, SmstateenH_m_cg_cp_m_hstateen123_bit63_mstateen1h_m1, SmstateenH_m_cg_cp_m_hstateen123_bit63_mstateen1h_m1_str)
 SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen1h_csrc_m1:
-  csrc hstateen1h, x9
-  csrr x6, hstateen1h
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen1h_csrc_m1, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen1h_csrc_m1_str)
+  csrc hstateen1h, x13
+  csrr x9, hstateen1h
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen1h_csrc_m1, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen1h_csrc_m1_str)
 SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen1h_csrs_m1:
-  csrs hstateen1h, x9
-  csrr x6, hstateen1h
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen1h_csrs_m1, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen1h_csrs_m1_str)
-  csrc mstateen1h, x9
+  csrs hstateen1h, x13
+  csrr x9, hstateen1h
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen1h_csrs_m1, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen1h_csrs_m1_str)
+  csrc mstateen1h, x13
 SmstateenH_m_cg_cp_m_hstateen123_bit63_mstateen1h_m0:
-  csrr x6, mstateen1h
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, SmstateenH_m_cg_cp_m_hstateen123_bit63_mstateen1h_m0, SmstateenH_m_cg_cp_m_hstateen123_bit63_mstateen1h_m0_str)
+  csrr x9, mstateen1h
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, SmstateenH_m_cg_cp_m_hstateen123_bit63_mstateen1h_m0, SmstateenH_m_cg_cp_m_hstateen123_bit63_mstateen1h_m0_str)
 SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen1h_roz:
-  csrr x6, hstateen1h
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen1h_roz, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen1h_roz_str)
+  csrr x9, hstateen1h
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen1h_roz, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen1h_roz_str)
 SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen1h_csrs_m0:
-  csrs hstateen1h, x9
-  csrr x6, hstateen1h
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen1h_csrs_m0, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen1h_csrs_m0_str)
+  csrs hstateen1h, x13
+  csrr x9, hstateen1h
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen1h_csrs_m0, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen1h_csrs_m0_str)
 SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen1h_csrc_m0:
-  csrc hstateen1h, x9
-  csrr x6, hstateen1h
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen1h_csrc_m0, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen1h_csrc_m0_str)
-  csrs mstateen1h, x9
-  csrs mstateen2h, x9
+  csrc hstateen1h, x13
+  csrr x9, hstateen1h
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen1h_csrc_m0, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen1h_csrc_m0_str)
+  csrs mstateen1h, x13
+  csrs mstateen2h, x13
 SmstateenH_m_cg_cp_m_hstateen123_bit63_mstateen2h_m1:
-  csrr x6, mstateen2h
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, SmstateenH_m_cg_cp_m_hstateen123_bit63_mstateen2h_m1, SmstateenH_m_cg_cp_m_hstateen123_bit63_mstateen2h_m1_str)
+  csrr x9, mstateen2h
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, SmstateenH_m_cg_cp_m_hstateen123_bit63_mstateen2h_m1, SmstateenH_m_cg_cp_m_hstateen123_bit63_mstateen2h_m1_str)
 SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen2h_csrc_m1:
-  csrc hstateen2h, x9
-  csrr x6, hstateen2h
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen2h_csrc_m1, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen2h_csrc_m1_str)
+  csrc hstateen2h, x13
+  csrr x9, hstateen2h
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen2h_csrc_m1, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen2h_csrc_m1_str)
 SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen2h_csrs_m1:
-  csrs hstateen2h, x9
-  csrr x6, hstateen2h
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen2h_csrs_m1, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen2h_csrs_m1_str)
-  csrc mstateen2h, x9
+  csrs hstateen2h, x13
+  csrr x9, hstateen2h
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen2h_csrs_m1, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen2h_csrs_m1_str)
+  csrc mstateen2h, x13
 SmstateenH_m_cg_cp_m_hstateen123_bit63_mstateen2h_m0:
-  csrr x6, mstateen2h
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, SmstateenH_m_cg_cp_m_hstateen123_bit63_mstateen2h_m0, SmstateenH_m_cg_cp_m_hstateen123_bit63_mstateen2h_m0_str)
+  csrr x9, mstateen2h
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, SmstateenH_m_cg_cp_m_hstateen123_bit63_mstateen2h_m0, SmstateenH_m_cg_cp_m_hstateen123_bit63_mstateen2h_m0_str)
 SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen2h_roz:
-  csrr x6, hstateen2h
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen2h_roz, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen2h_roz_str)
+  csrr x9, hstateen2h
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen2h_roz, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen2h_roz_str)
 SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen2h_csrs_m0:
-  csrs hstateen2h, x9
-  csrr x6, hstateen2h
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen2h_csrs_m0, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen2h_csrs_m0_str)
+  csrs hstateen2h, x13
+  csrr x9, hstateen2h
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen2h_csrs_m0, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen2h_csrs_m0_str)
 SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen2h_csrc_m0:
-  csrc hstateen2h, x9
-  csrr x6, hstateen2h
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen2h_csrc_m0, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen2h_csrc_m0_str)
-  csrs mstateen2h, x9
-  csrs mstateen3h, x9
+  csrc hstateen2h, x13
+  csrr x9, hstateen2h
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen2h_csrc_m0, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen2h_csrc_m0_str)
+  csrs mstateen2h, x13
+  csrs mstateen3h, x13
 SmstateenH_m_cg_cp_m_hstateen123_bit63_mstateen3h_m1:
-  csrr x6, mstateen3h
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, SmstateenH_m_cg_cp_m_hstateen123_bit63_mstateen3h_m1, SmstateenH_m_cg_cp_m_hstateen123_bit63_mstateen3h_m1_str)
+  csrr x9, mstateen3h
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, SmstateenH_m_cg_cp_m_hstateen123_bit63_mstateen3h_m1, SmstateenH_m_cg_cp_m_hstateen123_bit63_mstateen3h_m1_str)
 SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen3h_csrc_m1:
-  csrc hstateen3h, x9
-  csrr x6, hstateen3h
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen3h_csrc_m1, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen3h_csrc_m1_str)
+  csrc hstateen3h, x13
+  csrr x9, hstateen3h
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen3h_csrc_m1, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen3h_csrc_m1_str)
 SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen3h_csrs_m1:
-  csrs hstateen3h, x9
-  csrr x6, hstateen3h
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen3h_csrs_m1, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen3h_csrs_m1_str)
-  csrc mstateen3h, x9
+  csrs hstateen3h, x13
+  csrr x9, hstateen3h
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen3h_csrs_m1, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen3h_csrs_m1_str)
+  csrc mstateen3h, x13
 SmstateenH_m_cg_cp_m_hstateen123_bit63_mstateen3h_m0:
-  csrr x6, mstateen3h
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, SmstateenH_m_cg_cp_m_hstateen123_bit63_mstateen3h_m0, SmstateenH_m_cg_cp_m_hstateen123_bit63_mstateen3h_m0_str)
+  csrr x9, mstateen3h
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, SmstateenH_m_cg_cp_m_hstateen123_bit63_mstateen3h_m0, SmstateenH_m_cg_cp_m_hstateen123_bit63_mstateen3h_m0_str)
 SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen3h_roz:
-  csrr x6, hstateen3h
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen3h_roz, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen3h_roz_str)
+  csrr x9, hstateen3h
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen3h_roz, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen3h_roz_str)
 SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen3h_csrs_m0:
-  csrs hstateen3h, x9
-  csrr x6, hstateen3h
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen3h_csrs_m0, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen3h_csrs_m0_str)
+  csrs hstateen3h, x13
+  csrr x9, hstateen3h
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen3h_csrs_m0, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen3h_csrs_m0_str)
 SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen3h_csrc_m0:
-  csrc hstateen3h, x9
-  csrr x6, hstateen3h
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen3h_csrc_m0, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen3h_csrc_m0_str)
-  csrs mstateen3h, x9
+  csrc hstateen3h, x13
+  csrr x9, hstateen3h
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen3h_csrc_m0, SmstateenH_m_cg_cp_m_hstateen123_bit63_hstateen3h_csrc_m0_str)
+  csrs mstateen3h, x13
 #endif
   RVTEST_TSBI_GOTO_SMODE
 

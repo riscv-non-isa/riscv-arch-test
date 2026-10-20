@@ -31,8 +31,8 @@ RVTEST_BEGIN
 
 /////////////////////////////////
 // cp_wfi_vs
-//   Execute WFI in VS-mode with mstatus.TW = 0/1 and hstatus.VTW = 0/1, with VSSI pending and
-//   enabled in vsie but masked by vsstatus.SIE = 0
+//   Execute WFI in VS-mode with mstatus.TW = 0/1 and hstatus.VTW = 0/1.  With TW = VTW = 0, VSSI is
+//   pending and enabled in vsie but masked by vsstatus.SIE = 0
 /////////////////////////////////
   LI(x8, MIP_VSSIP)
   csrw hideleg, x8
@@ -58,7 +58,7 @@ InterruptsH_hs_cg_cp_wfi_vs_tw0_vtw0:
   LI(x8, MIP_VSSIP)
   csrw hideleg, x8
   csrw hie, x8
-  LI(x8, MIP_VSSIP)
+  LI(x8, 0)
   csrw hvip, x8
   LI(x8, SSTATUS_SIE)
   csrc vsstatus, x8
@@ -68,11 +68,9 @@ InterruptsH_hs_cg_cp_wfi_vs_tw0_vtw0:
   # T-SBI call to execute instruction: csrc mstatus, x8
   mv a1, x8
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MSTATUS)
-  RVTEST_OPTIONAL_TRAP(x8, x15, InterruptsH_hs_cg_cp_wfi_vs_tw0_vtw1, CAUSE_VIRTUAL_INSTRUCTION)
   RVTEST_TSBI_GOTO_VSMODE
 InterruptsH_hs_cg_cp_wfi_vs_tw0_vtw1:
   wfi
-  RVTEST_OPTIONAL_TRAP_END(x8)
   RVTEST_TSBI_GOTO_SMODE
   csrr x8, hip
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
@@ -81,7 +79,7 @@ InterruptsH_hs_cg_cp_wfi_vs_tw0_vtw1:
   LI(x8, MIP_VSSIP)
   csrw hideleg, x8
   csrw hie, x8
-  LI(x8, MIP_VSSIP)
+  LI(x8, 0)
   csrw hvip, x8
   LI(x8, SSTATUS_SIE)
   csrc vsstatus, x8
@@ -91,11 +89,9 @@ InterruptsH_hs_cg_cp_wfi_vs_tw0_vtw1:
   # T-SBI call to execute instruction: csrs mstatus, x8
   mv a1, x8
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MSTATUS)
-  RVTEST_OPTIONAL_TRAP(x8, x15, InterruptsH_hs_cg_cp_wfi_vs_tw1_vtw0, CAUSE_ILLEGAL_INSTRUCTION)
   RVTEST_TSBI_GOTO_VSMODE
 InterruptsH_hs_cg_cp_wfi_vs_tw1_vtw0:
   wfi
-  RVTEST_OPTIONAL_TRAP_END(x8)
   RVTEST_TSBI_GOTO_SMODE
   csrr x8, hip
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
@@ -104,7 +100,7 @@ InterruptsH_hs_cg_cp_wfi_vs_tw1_vtw0:
   LI(x8, MIP_VSSIP)
   csrw hideleg, x8
   csrw hie, x8
-  LI(x8, MIP_VSSIP)
+  LI(x8, 0)
   csrw hvip, x8
   LI(x8, SSTATUS_SIE)
   csrc vsstatus, x8
@@ -114,11 +110,9 @@ InterruptsH_hs_cg_cp_wfi_vs_tw1_vtw0:
   # T-SBI call to execute instruction: csrs mstatus, x8
   mv a1, x8
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MSTATUS)
-  RVTEST_OPTIONAL_TRAP(x8, x15, InterruptsH_hs_cg_cp_wfi_vs_tw1_vtw1, CAUSE_ILLEGAL_INSTRUCTION)
   RVTEST_TSBI_GOTO_VSMODE
 InterruptsH_hs_cg_cp_wfi_vs_tw1_vtw1:
   wfi
-  RVTEST_OPTIONAL_TRAP_END(x8)
   RVTEST_TSBI_GOTO_SMODE
   csrr x8, hip
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
@@ -185,11 +179,9 @@ InterruptsH_hs_cg_cp_wfi_vu_tw0_vtw1:
   # T-SBI call to execute instruction: csrs mstatus, x8
   mv a1, x8
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MSTATUS)
-  RVTEST_OPTIONAL_TRAP(x8, x15, InterruptsH_hs_cg_cp_wfi_vu_tw1_vtw0, CAUSE_ILLEGAL_INSTRUCTION)
   RVTEST_TSBI_GOTO_VUMODE
 InterruptsH_hs_cg_cp_wfi_vu_tw1_vtw0:
   wfi
-  RVTEST_OPTIONAL_TRAP_END(x8)
   RVTEST_TSBI_GOTO_SMODE
   csrr x8, hip
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
@@ -208,11 +200,9 @@ InterruptsH_hs_cg_cp_wfi_vu_tw1_vtw0:
   # T-SBI call to execute instruction: csrs mstatus, x8
   mv a1, x8
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MSTATUS)
-  RVTEST_OPTIONAL_TRAP(x8, x15, InterruptsH_hs_cg_cp_wfi_vu_tw1_vtw1, CAUSE_ILLEGAL_INSTRUCTION)
   RVTEST_TSBI_GOTO_VUMODE
 InterruptsH_hs_cg_cp_wfi_vu_tw1_vtw1:
   wfi
-  RVTEST_OPTIONAL_TRAP_END(x8)
   RVTEST_TSBI_GOTO_SMODE
   csrr x8, hip
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.

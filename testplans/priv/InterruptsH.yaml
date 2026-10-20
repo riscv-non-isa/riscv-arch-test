@@ -182,7 +182,7 @@ coverpoints:
     bins: 10 interrupts
   - name: cp_wfi_vs
     goal: WFI in VS-mode follows mstatus.TW and hstatus.VTW
-    description: Execute WFI in VS-mode with mstatus.TW = {0/1} and hstatus.VTW = {0/1}, with VSSI pending and enabled in vsie (hideleg.VSSI = hie.VSSIE = hvip.VSSIP = 1) but masked by vsstatus.SIE = 0, so a WFI that does not trap completes rather than waits.
+    description: Execute WFI in VS-mode with mstatus.TW = {0/1} and hstatus.VTW = {0/1}. With TW = VTW = 0, VSSI is pending and enabled in vsie (hideleg.VSSI = hie.VSSIE = hvip.VSSIP = 1) but masked by vsstatus.SIE = 0, so the WFI completes rather than waits; otherwise no interrupt is pending, so a WFI that may trap does not complete at once.
     expectation: |-
       TW = 1: completes or raises illegal instruction.
       TW = 0, VTW = 1: completes or raises virtual instruction.
@@ -215,7 +215,7 @@ coverpoints:
     goal: WFI in VU-mode follows mstatus.TW
     description: Execute WFI in VU-mode with mstatus.TW = {0/1} and hstatus.VTW = {0/1}, with no interrupt pending.
     expectation: |-
-      TW = 1: completes or raises illegal instruction (either is accepted; any other exception fails).
+      TW = 1: completes or raises illegal instruction.
       TW = 0: virtual instruction, whatever VTW.
     bins: 2 TW * 2 VTW
   - heading: Following tests are done in U-mode
