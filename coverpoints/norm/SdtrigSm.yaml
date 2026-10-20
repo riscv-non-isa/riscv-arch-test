@@ -143,7 +143,11 @@ normative_rule_definitions:
   # to a less privileged mode. However, it is possible for triggers to fire in the
   # same mode that the resulting exception will be handled in.
   - name: Sdtrig_breakpoint_delegated
-    coverpoint: ["SdtrigSm_native_triggers_cg/cp_breakpoint_delegate"]
+    coverpoint:
+      [
+        "SdtrigS_cg/cp_breakpoint_delegate_s",
+        "SdtrigU_cg/cp_breakpoint_delegate_u",
+      ]
 
   # lr instructions are loads.
   - name: Sdtrig_Aext_lr_op
@@ -434,7 +438,7 @@ normative_rule_definitions:
 
   # This bit is only writable from Debug Mode.
   - name: Sdtrig_tdata1_dmode_writable
-    coverpoint: ["Requires Sdext external debug support; not implemented"]
+    coverpoint: ["SdtrigSm_trig_module_reg_cg/cp_tdata1_dmode"]
 
   # If type is 0, then this field is hard-wired to 0.
   - name: Sdtrig_tdata1_data
@@ -1380,7 +1384,10 @@ normative_rule_definitions:
   # trigger(s) fires. If the bit is not implemented, it is always 0 and writing it
   # has no effect.
   - name: Sdtrig_icount_hit
-    coverpoint: ["Optional WARL field (hit/uncertain bits); not tested"]
+    coverpoint:
+      [
+        "hit is optional and not checked (masked out of the tdata1 readback); fire/no-fire is checked through rvtest_trap_count",
+      ]
 
   # When set, enable this trigger in M-mode.
   - name: Sdtrig_icount_m
@@ -1757,7 +1764,11 @@ normative_rule_definitions:
 
   # Byte masking only applies to scontext comparison; i.e when sselect is 1.
   - name: Sdtrig_textra32_byte_mask_applies
-    coverpoint: ["SdtrigSm_textra_cg/cp_textra_scontext"]
+    coverpoint:
+      [
+        "SdtrigSm_textra_cg/cp_textra_scontext",
+        "SdtrigSm_textra_cg/cp_textra_asid_sbytemask",
+      ]
 
   # Note that sselect and mhselect filtering apply in all modes, including M-mode
   # and S-mode.
@@ -1800,8 +1811,7 @@ normative_rule_definitions:
 
   # If the H extension is not supported, the only legal values are 0 and 4.
   - name: Sdtrig_textra32_mhselect_no_h
-    coverpoint:
-      ["WARL legalization of reserved/H-only mhselect values; not tested"]
+    coverpoint: ["SdtrigSm_textra_cg/cp_textra_mhselect_no_h"]
 
   # When the least significant bit of this field is 1, it causes bits 7:0 in the
   # comparison to be ignored, when sselect=1. When the next most significant bit of
@@ -1880,7 +1890,11 @@ normative_rule_definitions:
 
   # Byte masking only applies to scontext comparison; i.e when sselect is 1.
   - name: Sdtrig_textra64_byte_mask_applies
-    coverpoint: ["SdtrigSm_textra_cg/cp_textra_scontext"]
+    coverpoint:
+      [
+        "SdtrigSm_textra_cg/cp_textra_scontext",
+        "SdtrigSm_textra_cg/cp_textra_asid_sbytemask",
+      ]
 
   # When the least significant bit of this field is 1, it causes bits 7:0 in the
   # comparison to be ignored, when sselect=1. Likewise, the second bit controls the

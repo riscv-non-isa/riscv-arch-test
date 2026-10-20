@@ -36,6 +36,17 @@ covergroup SdtrigSm_trig_module_reg_cg with function sample(ins_t ins);
     priv_bits: coverpoint ins.current.rs1_val[26:0] {
         bins priv = {27'b001_1000_0000_0000_0000_0101_1000};
     }
+    // cp_tdata1_dmode: an M-mode write of dmode = 1 with a supported type leaves dmode = 0
+    tdata1_type_dmode: coverpoint ins.current.rs1_val[XLEN-1:XLEN-4] {
+        bins icount    = {4'd3};
+        bins mcontrol6 = {4'd6};
+    }
+    dmode_written: coverpoint ins.current.rs1_val[XLEN-5] {
+        bins set = {1'b1};
+    }
+    dmode_after: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tdata1", "dmode")[0] {
+        bins clear = {1'b0};
+    }
     csr_tselect:  coverpoint ins.current.insn[31:20] {
         bins tselect = {CSR_TSELECT};
     }
@@ -102,6 +113,7 @@ covergroup SdtrigSm_trig_module_reg_cg with function sample(ins_t ins);
     cp_tselect_trigs:         cross priv_mode_m, triggernum, csrr, csr_tselect;                             // NTRIG
     cp_tdata1_mode_hardwired: cross priv_mode_m, triggernum, csrw, csr_tdata1, tdata1_type_six, priv_bits;  // NTRIG
     cp_tinfo_read_only:       cross priv_mode_m, triggernum, csr_tinfo, csr_access;                         // NTRIG
+    cp_tdata1_dmode:          cross priv_mode_m, triggernum, csrw, csr_tdata1, tdata1_type_dmode, dmode_written, dmode_after;  // NTRIG * 2 types
     `ifdef SDTRIG_CSR_UNIMPLEMENTED
         cp_csr_unimplemented: cross priv_mode_m, csr_unimplemented, csr_read_write, illegal_insn_trap;     // unimplemented context CSRs * 2 accesses
     `endif
@@ -599,25 +611,6 @@ covergroup SdtrigSm_combined_accesses_cg with function sample(ins_t ins);
     cp_vector_load_store: cross priv_mode_m, triggernum, tdata1_type_mcontrol6, tdata1_m_on, tdata1_select_adr, vec_tdata2_base_zero, tdata1_size, vec_vl_one, vec_unmasked, vec_access, vec_xsl, vec_outcome;  // NTRIG * 2 tdata2 * sizes * 6 (Zve64x 8) accesses
     cp_vector_accesses:   cross priv_mode_m, triggernum, tdata1_type_mcontrol6, tdata1_m_on, tdata1_select_adr, vec_tdata2, tdata1_size_any, vec_vl, vec_unmasked, vec_access, vec_xsl, vec_outcome;    // NTRIG * 3 tdata2 * 2 vl * 6 (8) accesses
     cp_vector_mask:       cross priv_mode_m, triggernum, tdata1_type_mcontrol6, tdata1_m_on, tdata1_select_adr, vec_tdata2_plus_8, tdata1_size_any, vec_vl_reaches_8, vec_masked, vec_element_8, vec_access, vec_xsl, vec_outcome; // NTRIG * 2 mask states * 6 (8) accesses
-endgroup
-`endif
-
-`ifdef S_SUPPORTED
-covergroup SdtrigSm_native_triggers_cg with function sample(ins_t ins);
-    option.per_instance = 0;
-    `include "general/RISCV_coverage_standard_coverpoints.svh"
-    `include "general/RISCV_coverage_sdtrig_coverpoints.svh"
-
-    tdata1_s_on: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tdata1", "s")[0] {
-        bins on = {1'b1};
-    }
-    medeleg_breakpoint: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "medeleg", "medeleg")[3] {
-        bins not_delegated = {1'b0};
-        bins delegated     = {1'b1};
-    }
-
-    // main coverpoints
-    cp_breakpoint_delegate: cross priv_mode_s, tdata1_type_mcontrol6, tdata1_s_on, tdata1_execute_on, tdata1_action_breakpoint, tdata2_pc, medeleg_breakpoint;  // 2 medeleg
 endgroup
 `endif
 
@@ -1226,6 +1219,21 @@ covergroup SdtrigSm_textra_cg with function sample(ins_t ins);
         bins match    = {1'b1};
     }
 
+    // cp_textra_mhselect_no_h: a tdata3 write of an mhselect value that needs H, on a trigger armed as icount or mcontrol6
+    csr_tdata3: coverpoint ins.current.insn[31:20] {
+        bins tdata3 = {CSR_TDATA3};
+    }
+    armed_type: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tdata1", "type")[3:0] {
+        bins icount    = {4'd3};
+        bins mcontrol6 = {4'd6};
+    }
+    mhselect_written: coverpoint sdtrig_textra_mhselect(ins.current.rs1_val) {
+        bins h_only[] = {3'd1, 3'd2, 3'd3, 3'd5, 3'd6, 3'd7};
+    }
+    mhselect_legal: coverpoint sdtrig_textra_mhselect(ins.current.csr[CSR_TDATA3]) {
+        bins legal = {3'd0, 3'd4};
+    }
+
     scontext_match_only: coverpoint sdtrig_textra_scontext_match(ins.current.csr[CSR_TDATA3], ins.current.csr[CSR_SCONTEXT]) {
         bins match = {1'b1};
     }
@@ -1245,6 +1253,10 @@ covergroup SdtrigSm_textra_cg with function sample(ins_t ins);
     `endif
     `ifdef S_SUPPORTED
         cp_textra_asid:           cross priv_mode_m, triggernum, csrw, csr_tdata1, arm_type, mhselect_ignore, sselect_asid, asid_match;                      // NTRIG * 2 types * 2
+        cp_textra_asid_sbytemask: cross priv_mode_m, triggernum, csrw, csr_tdata1, arm_type, mhselect_ignore, sselect_asid, sbytemask_all, asid_match;       // NTRIG * 2 types * 2
+    `endif
+    `ifndef H_SUPPORTED
+        cp_textra_mhselect_no_h:  cross priv_mode_m, triggernum, csrw, csr_tdata3, armed_type, mhselect_written, mhselect_legal;                             // NTRIG * 2 types * 6
     `endif
 endgroup
 
@@ -1256,9 +1268,6 @@ function void sdtrigsm_sample(int hart, int issue, ins_t ins);
     SdtrigSm_cache_operations_cg.sample(ins);
     `ifdef ZVL32B_SUPPORTED
         SdtrigSm_combined_accesses_cg.sample(ins);
-    `endif
-    `ifdef S_SUPPORTED
-        SdtrigSm_native_triggers_cg.sample(ins);
     `endif
     SdtrigSm_itrigger_cg.sample(ins);
     SdtrigSm_etrigger_cg.sample(ins);

@@ -45,17 +45,7 @@ coverpoints:
       - Sdtrig_num_trigs_ge1
     notes: "comments on test results: No exceptions. Tcontrol and mscontext not implemented on spike"
   - heading: "Note: Use CSRW/CSRR to access registers in all modes"
-  - heading: Native Triggers
-  - name: cp_breakpoint_delegate
-    goal: Breakpoints caused by triggers can be delegated
-    description: |-
-      if S_SUPPORTED
-      medeleg[3] = {0/1}
-      cause a supported trigger to fire
-    expectation: Trap to M mode if medeleg[3] = 0, trap to S mode of medeleg[3] = 1, when in a mode < M
-    bins: 2 medeleg
-    rules:
-      - Sdtrig_breakpoint_delegated
+  - heading: "Native Triggers: breakpoint delegation from S/U-mode is tested in SdtrigS and SdtrigU (cp_breakpoint_delegate_s/u)"
   - name: A Extension
     description: |-
       Repeat for each of UDB_SDTRIG_NUM_TRIGGERS if UDB_SDTRIG_MCONTROL6_SUPPORTED[i]:
@@ -348,6 +338,16 @@ coverpoints:
     notes: |-
       coverpoint drafted: 9/10
       coverpoint reviewed: 9/10
+  - name: cp_tdata1_dmode
+    goal: dmode is writable only from Debug Mode
+    description: |-
+      For each of UDB_SDTRIG_NUM_TRIGGERS in tselect, for each supported type in {icount, mcontrol6}:
+      CSRW tdata1 with dmode = 1 and that type (icount: count = 1, m = 0; mcontrol6: m = 1, XSL = 000, so neither fires)
+      CSRR tdata1 and check dmode
+    expectation: dmode reads back 0 after an M-mode write of 1
+    bins: NTRIGGERS * 2 types
+    rules:
+      - Sdtrig_tdata1_dmode_writable
   - name: cp_tinfo_read_only
     goal: Writing tinfo has no effect
     description: |-
@@ -663,6 +663,8 @@ coverpoints:
       unless otherwise specified:
       tdata1.m/s/u/vs/vu = (1 for current mode, e.g. 1 in m)
       Perform an instruction that causes trigger to fire/not fire
+      After each case, the tdata1 readback (without hit, which is optional and not checked) and rvtest_trap_count
+      are written to the signature, so a fire or missing fire is reported at that case.
   - name: cp_icount_hardwired
     description: |-
       if UDB_COUNT_HARDWIRED_1 = true:
@@ -1032,6 +1034,29 @@ coverpoints:
     rules:
       - Sdtrig_textra32_sselect_asid1
       - Sdtrig_textra32_sselect_asid3
+  - name: cp_textra_asid_sbytemask
+    goal: sbytemask applies only with sselect = 1
+    description: |-
+      as cp_textra_asid, with tdata3.sbytemask = all ones (RV32 11, RV64 1111) and tdata3.svalue = {X / X^1}
+    expectation: |-
+      Breakpoint exception if ASID in satp equals the lower ASIDMAX bits of svalue.
+      sbytemask is ignored with sselect = 2, so it does not hide the mismatch in svalue = X^1
+    bins: 2 types * 2 asid_match
+    rules:
+      - Sdtrig_textra32_byte_mask_applies
+      - Sdtrig_textra64_byte_mask_applies
+  - name: cp_textra_mhselect_no_h
+    goal: Without H, mhselect holds only 0 or 4
+    description: |-
+      only run tests if H is not supported; runs in M-mode only.
+      repeat for each trigger type supported:
+      arm the trigger so it never fires (icount: count = 1, m = 0; mcontrol6: select = 1, XSL = 000)
+      CSRW tdata3.mhselect = {1/2/3/5/6/7}
+      CSRR tdata3 and check mhselect
+    expectation: mhselect reads back 0 or 4 (which of the two is implementation-defined, so only that is recorded)
+    bins: 2 types * 6 mhselect values
+    rules:
+      - Sdtrig_textra32_mhselect_no_h
   - name: cp_smode_fields_hardwired (not generated)
     status: "Not generated: the textra tests do not check svalue/sselect on harts without S"
     description: |-
