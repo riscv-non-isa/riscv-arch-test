@@ -17,20 +17,29 @@ covergroup Sstc_cg with function sample(ins_t ins);
     `include "general/RISCV_coverage_standard_coverpoints.svh"
 
     // building blocks for the main coverpoints
+    // mcounteren.TM and scounteren.TM can be read-only 0 (MCOUNTENABLE_EN[1], SCOUNTENABLE_EN[1])
     mcounteren_tm: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "mcounteren", "tm") {
         bins zero = {0};
-        bins one  = {1};
+        `ifdef UDB_MCOUNTENABLE_EN_1
+            bins one  = {1};
+        `endif
     }
-    mcounteren_tm_one: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "mcounteren", "tm") {
-        bins one = {1};
-    }
+    `ifdef UDB_MCOUNTENABLE_EN_1
+        mcounteren_tm_one: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "mcounteren", "tm") {
+            bins one = {1};
+        }
+    `endif
     scounteren_tm: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "scounteren", "tm") {
         bins zero = {0};
-        bins one  = {1};
+        `ifdef UDB_SCOUNTENABLE_EN_1
+            bins one  = {1};
+        `endif
     }
-    scounteren_tm_one: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "scounteren", "tm") {
-        bins one = {1};
-    }
+    `ifdef UDB_SCOUNTENABLE_EN_1
+        scounteren_tm_one: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "scounteren", "tm") {
+            bins one = {1};
+        }
+    `endif
     `ifdef UDB_MXLEN_64
         menvcfg_stce: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "menvcfg", "stce") {
             bins zero = {0};
@@ -55,11 +64,16 @@ covergroup Sstc_cg with function sample(ins_t ins);
         bins read_stimecmp = {CSR_STIMECMP};
     }
 
-    // main coverpoints: each crosses one of mcounteren.TM and menvcfg.STCE with the other held at 1
+    // main coverpoints: each crosses one of mcounteren.TM and menvcfg.STCE with the other held at 1.
+    // The _stce crosses need the TM bits to be writable.
     cp_supervisor_tm:   cross priv_mode_s, csrr, stimecmp, mcounteren_tm, menvcfg_stce_one;
-    cp_supervisor_stce: cross priv_mode_s, csrr, stimecmp, menvcfg_stce, mcounteren_tm_one;
     cp_user_tm:         cross priv_mode_u, csrr, stimecmp, mcounteren_tm, scounteren_tm, menvcfg_stce_one;
-    cp_user_stce:       cross priv_mode_u, csrr, stimecmp, menvcfg_stce, mcounteren_tm_one, scounteren_tm_one;
+    `ifdef UDB_MCOUNTENABLE_EN_1
+        cp_supervisor_stce: cross priv_mode_s, csrr, stimecmp, menvcfg_stce, mcounteren_tm_one;
+        `ifdef UDB_SCOUNTENABLE_EN_1
+            cp_user_stce:   cross priv_mode_u, csrr, stimecmp, menvcfg_stce, mcounteren_tm_one, scounteren_tm_one;
+        `endif
+    `endif
 
     // also read stimecmph for RV32
     `ifdef UDB_MXLEN_32
@@ -67,9 +81,13 @@ covergroup Sstc_cg with function sample(ins_t ins);
             bins read_stimecmph = {CSR_STIMECMPH};
         }
         cp_supervisor_tm_h:   cross priv_mode_s, csrr, stimecmph, mcounteren_tm, menvcfg_stce_one;
-        cp_supervisor_stce_h: cross priv_mode_s, csrr, stimecmph, menvcfg_stce, mcounteren_tm_one;
         cp_user_tm_h:         cross priv_mode_u, csrr, stimecmph, mcounteren_tm, scounteren_tm, menvcfg_stce_one;
-        cp_user_stce_h:       cross priv_mode_u, csrr, stimecmph, menvcfg_stce, mcounteren_tm_one, scounteren_tm_one;
+        `ifdef UDB_MCOUNTENABLE_EN_1
+            cp_supervisor_stce_h: cross priv_mode_s, csrr, stimecmph, menvcfg_stce, mcounteren_tm_one;
+            `ifdef UDB_SCOUNTENABLE_EN_1
+                cp_user_stce_h:   cross priv_mode_u, csrr, stimecmph, menvcfg_stce, mcounteren_tm_one, scounteren_tm_one;
+            `endif
+        `endif
     `endif
 endgroup
 

@@ -92,25 +92,6 @@ covergroup ZawrsU_cg with function sample(ins_t ins);
             bins one = {1};
         }
     `endif
-    `ifdef SSTC_SUPPORTED
-        sie_stie_one: coverpoint (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "sie", "stie")) {
-            bins one = {1};
-        }
-        `ifdef UDB_MXLEN_64
-            menvcfg_STCE_one: coverpoint (get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "menvcfg", "stce")) {
-                bins one  = {1};
-            }
-
-        `else
-            menvcfg_STCE_one: coverpoint (get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "menvcfgh", "stce")) {
-                bins one  = {1};
-            }
-        `endif
-    `else
-        mie_mtie_one: coverpoint (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "mie", "mtie")) {
-            bins one = {1};
-        }
-    `endif
 
     // main coverpoints
     cp_wrs_sto_timeout:     cross wrs_sto, mstatus_tw, mstatus_mie_zero, priv_mode_u, mie_zeros,
@@ -123,13 +104,35 @@ covergroup ZawrsU_cg with function sample(ins_t ins);
             mstatus_sie_zero,
         `endif
         wrs_ops;
+    // The resume comes from the Sstc timer when S-mode can write stimecmp (mcounteren.TM writable),
+    // otherwise from the machine timer. Sstc implies S.
     `ifdef SSTC_SUPPORTED
-        cp_wrs_resume:      cross mstatus_tw_zero, sie_stie_one, menvcfg_STCE_one,
-            `ifdef S_SUPPORTED
-                mstatus_sie,
+        `ifdef UDB_MCOUNTENABLE_EN_1
+            sie_stie_one: coverpoint (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "sie", "stie")) {
+                bins one = {1};
+            }
+            `ifdef UDB_MXLEN_64
+                menvcfg_STCE_one: coverpoint (get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "menvcfg", "stce")) {
+                    bins one  = {1};
+                }
+            `else
+                menvcfg_STCE_one: coverpoint (get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "menvcfgh", "stce")) {
+                    bins one  = {1};
+                }
             `endif
-            mstatus_mie, priv_mode_u, wrs_ops, lr_w;
+            cp_wrs_resume:      cross mstatus_tw_zero, sie_stie_one, menvcfg_STCE_one,
+                mstatus_sie, mstatus_mie, priv_mode_u, wrs_ops, lr_w;
+        `elsif UDB_MTI_INTR_IMPL
+            mie_mtie_one: coverpoint (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "mie", "mtie")) {
+                bins one = {1};
+            }
+            cp_wrs_resume:      cross mstatus_tw_zero, mie_mtie_one,
+                mstatus_sie, mstatus_mie, priv_mode_u, wrs_ops, lr_w;
+        `endif
     `elsif UDB_MTI_INTR_IMPL
+        mie_mtie_one: coverpoint (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "mie", "mtie")) {
+            bins one = {1};
+        }
         cp_wrs_resume:      cross mstatus_tw_zero, mie_mtie_one,
             `ifdef S_SUPPORTED
                 mstatus_sie,

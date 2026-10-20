@@ -17,13 +17,18 @@ covergroup SstcSm_cg with function sample(ins_t ins);
     `include "general/RISCV_coverage_standard_coverpoints.svh"
 
     // building blocks for the main coverpoints
+    // mcounteren.TM can be read-only 0 (MCOUNTENABLE_EN[1])
     mcounteren_tm: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "mcounteren", "tm") {
         bins zero = {0};
-        bins one  = {1};
+        `ifdef UDB_MCOUNTENABLE_EN_1
+            bins one  = {1};
+        `endif
     }
-    mcounteren_tm_one: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "mcounteren", "tm") {
-        bins one = {1};
-    }
+    `ifdef UDB_MCOUNTENABLE_EN_1
+        mcounteren_tm_one: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "mcounteren", "tm") {
+            bins one = {1};
+        }
+    `endif
     `ifdef UDB_MXLEN_64
         menvcfg_stce: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "menvcfg", "stce") {
             bins zero = {0};
@@ -50,7 +55,12 @@ covergroup SstcSm_cg with function sample(ins_t ins);
 
     // main coverpoints: each crosses one of mcounteren.TM and menvcfg.STCE with the other held at 1
     cp_machine_tm:   cross priv_mode_m, csrr, stimecmp, mcounteren_tm, menvcfg_stce_one;
-    cp_machine_stce: cross priv_mode_m, csrr, stimecmp, menvcfg_stce, mcounteren_tm_one;
+    // mcounteren.TM does not gate M-mode, so with TM read-only 0 STCE is crossed alone
+    `ifdef UDB_MCOUNTENABLE_EN_1
+        cp_machine_stce: cross priv_mode_m, csrr, stimecmp, menvcfg_stce, mcounteren_tm_one;
+    `else
+        cp_machine_stce: cross priv_mode_m, csrr, stimecmp, menvcfg_stce;
+    `endif
 
     // also read stimecmph for RV32
     `ifdef UDB_MXLEN_32
@@ -58,7 +68,11 @@ covergroup SstcSm_cg with function sample(ins_t ins);
             bins read_stimecmph = {CSR_STIMECMPH};
         }
         cp_machine_tm_h:   cross priv_mode_m, csrr, stimecmph, mcounteren_tm, menvcfg_stce_one;
-        cp_machine_stce_h: cross priv_mode_m, csrr, stimecmph, menvcfg_stce, mcounteren_tm_one;
+        `ifdef UDB_MCOUNTENABLE_EN_1
+            cp_machine_stce_h: cross priv_mode_m, csrr, stimecmph, menvcfg_stce, mcounteren_tm_one;
+        `else
+            cp_machine_stce_h: cross priv_mode_m, csrr, stimecmph, menvcfg_stce;
+        `endif
     `endif
 endgroup
 

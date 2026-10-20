@@ -213,22 +213,33 @@ covergroup InterruptsS_cg with function sample(ins_t ins);
         bins seip = {'h200};
     }
 
-    // Building blocks for the Sstc crosses
+    // Building blocks for the Sstc crosses. The STCE = 1 cases write stimecmp from S-mode, which needs
+    // mcounteren.TM; with TM read-only 0 only the STCE = 0 cases (armed from M-mode) run.
     `ifdef SSTC_SUPPORTED
         // STCE is menvcfg bit 63, which lands in the high half of the CSR when MXLEN is 32
         `ifdef UDB_MXLEN_64
-            menvcfg_stce_one: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "menvcfg", "stce")[0] {
-                bins one = {1};
-            }
+            `ifdef UDB_MCOUNTENABLE_EN_1
+                menvcfg_stce_one: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "menvcfg", "stce")[0] {
+                    bins one = {1};
+                }
+            `endif
             menvcfg_stce: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "menvcfg", "stce")[0] {
-                // autofill 0/1
+                bins zero = {0};
+                `ifdef UDB_MCOUNTENABLE_EN_1
+                    bins one  = {1};
+                `endif
             }
         `else
-            menvcfg_stce_one: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "menvcfgh", "stce")[0] {
-                bins one = {1};
-            }
+            `ifdef UDB_MCOUNTENABLE_EN_1
+                menvcfg_stce_one: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "menvcfgh", "stce")[0] {
+                    bins one = {1};
+                }
+            `endif
             menvcfg_stce: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "menvcfgh", "stce")[0] {
-                // autofill 0/1
+                bins zero = {0};
+                `ifdef UDB_MCOUNTENABLE_EN_1
+                    bins one  = {1};
+                `endif
             }
         `endif
 
@@ -239,17 +250,21 @@ covergroup InterruptsS_cg with function sample(ins_t ins);
                 bins min = {'0};
                 bins max = {'1};
             }
-            stimecmp_min: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "stimecmp", "stimecmp") {
-                bins min = {'0};
-            }
+            `ifdef UDB_MCOUNTENABLE_EN_1
+                stimecmp_min: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "stimecmp", "stimecmp") {
+                    bins min = {'0};
+                }
+            `endif
         `else
             stimecmp_max_min: coverpoint {get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "stimecmph", "stimecmph"), get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "stimecmp", "stimecmp")} {
                 bins min = {'0};
                 bins max = {'1};
             }
-            stimecmp_min: coverpoint {get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "stimecmph", "stimecmph"), get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "stimecmp", "stimecmp")} {
-                bins min = {'0};
-            }
+            `ifdef UDB_MCOUNTENABLE_EN_1
+                stimecmp_min: coverpoint {get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "stimecmph", "stimecmph"), get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "stimecmp", "stimecmp")} {
+                    bins min = {'0};
+                }
+            `endif
         `endif
     `endif
 
@@ -297,7 +312,10 @@ covergroup InterruptsS_cg with function sample(ins_t ins);
             // so the generator skips U-mode STCE = 0; InterruptsSm covers it from M-mode.
             ignore_bins u_min = binsof(priv_mode_interrupts.U_mode) && binsof(stimecmp_max_min.min);
         }
-        cp_trigger_sti_sstc_tsbi: cross tsbi_return_u, menvcfg_stce_one, stimecmp_min, sstatus_sie_on_return, sie_ones, mideleg_s_ones, stvec_both;
+        // The S handler writes stimecmp for U, which needs mcounteren.TM
+        `ifdef UDB_MCOUNTENABLE_EN_1
+            cp_trigger_sti_sstc_tsbi: cross tsbi_return_u, menvcfg_stce_one, stimecmp_min, sstatus_sie_on_return, sie_ones, mideleg_s_ones, stvec_both;
+        `endif
     `endif
 
     // can not check whether the conditions correspond to each other
@@ -333,8 +351,11 @@ covergroup InterruptsS_cg with function sample(ins_t ins);
 
     // WFI wakes on the Sstc supervisor timer whether or not SIE is set. Not tested in U-mode: with
     // S-mode implemented, U-mode WFI traps after a bounded time (cp_wfi_timeout).
+    // S-mode arms the timer by writing stimecmp, which needs mcounteren.TM.
     `ifdef SSTC_SUPPORTED
-        cp_wfi:                 cross priv_mode_s, sstatus_sie, sie_stie_one, mstatus_tw_zero, menvcfg_stce_one, mideleg_s_ones, wfi;
+        `ifdef UDB_MCOUNTENABLE_EN_1
+            cp_wfi:             cross priv_mode_s, sstatus_sie, sie_stie_one, mstatus_tw_zero, menvcfg_stce_one, mideleg_s_ones, wfi;
+        `endif
     `endif
 
     // mstatus.TW = 1 traps WFI in S and U. U-mode WFI also times out with TW = 0 because S exists.

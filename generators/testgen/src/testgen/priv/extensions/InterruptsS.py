@@ -41,8 +41,15 @@ SUITE = InterruptSuite(
     ip="sip",
     ie="sie",
     status={"csr": "sstatus", "mask": 0x22, "field": "SIE"},
-    # cp_wfi: wake on the Sstc supervisor timer, enabled by sie.STIE, pending in sip.STIP
-    wfi={"guard": "SSTC_SUPPORTED", "timer": "SSTC", "ie": ("STIE", 0x20), "ip": ("sip", "STIP", 0x20), "stce": True},
+    # cp_wfi: wake on the Sstc supervisor timer, enabled by sie.STIE, pending in sip.STIP. S-mode arms it by
+    # writing stimecmp, which needs mcounteren.TM to be writable.
+    wfi={
+        "guard": "defined(SSTC_SUPPORTED) && defined(UDB_MCOUNTENABLE_EN_1)",
+        "timer": "SSTC",
+        "ie": ("STIE", 0x20),
+        "ip": ("sip", "STIP", 0x20),
+        "stce": True,
+    },
     deleg=[],
 )
 COVERGROUP = SUITE.covergroup
@@ -72,7 +79,11 @@ def _generate_cp_trigger_s(test_data: TestData, test_chunks: list[TestChunk], su
             # medeleg = 0, so the same request reaches M mode where stimecmp is accessible.
             continue
         macro = int_macro[int_type]
-        guard = guard_symbol(int_type)
+        guard = f"#ifdef {guard_symbol(int_type)}"
+        if int_type == "SSTC_STCE1":
+            # S-mode writes stimecmp itself (on U's behalf in the S handler), which traps when
+            # mcounteren.TM is read-only 0; in the handler that trap would corrupt the saved context.
+            guard = "#if defined(SSTC_SUPPORTED) && defined(UDB_MCOUNTENABLE_EN_1)"
         cp = label_coverpoint(suite, int_coverpoint.get(int_type, "cp_trigger"), priv, int_type)
         for mode in [0, 1]:
             for enable in [0, 1]:
@@ -80,7 +91,7 @@ def _generate_cp_trigger_s(test_data: TestData, test_chunks: list[TestChunk], su
                 modecmd = "csrs" if mode == 1 else "csrc"
                 enablecmd = "csrs" if enable == 1 else "csrc"
                 tc.code += [
-                    f"#ifdef {guard}",
+                    guard,
                     f"#ifdef UDB_STVEC_MODES_{mode}",
                     f"LI(x{tmp_reg}, -1)",
                     f"csrw sie, x{tmp_reg} # sie = 1s",
@@ -102,7 +113,7 @@ def _generate_cp_trigger_s(test_data: TestData, test_chunks: list[TestChunk], su
                     f"RVTEST_CLR_{macro}_INT_{priv} # Clear the interrupt if the handler hasn't done so",
                     *mode_exit(suite, priv),
                     f"#endif // UDB_STVEC_MODES_{mode}",
-                    f"#endif // {guard}",
+                    "#endif",
                     "",
                 ]
 

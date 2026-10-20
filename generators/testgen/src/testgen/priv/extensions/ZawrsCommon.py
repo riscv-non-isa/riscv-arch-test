@@ -61,9 +61,13 @@ def wrs_resume_helper(
     r_cause, r_temp, r_temp2 = test_data.int_regs.get_registers(3)
 
     lower = priv != "M"
-    # The resume is triggered by a timer interrupt: Sstc below M-mode when it is implemented, otherwise a machine
-    # timer interrupt
-    guard = "#if defined(SSTC_SUPPORTED) || defined(UDB_MTI_INTR_IMPL)" if lower else "#ifdef UDB_MTI_INTR_IMPL"
+    # The resume is triggered by a timer interrupt: Sstc below M-mode when it is implemented and S-mode can write
+    # stimecmp (mcounteren.TM writable), otherwise a machine timer interrupt
+    guard = (
+        "#if (defined(SSTC_SUPPORTED) && defined(UDB_MCOUNTENABLE_EN_1)) || defined(UDB_MTI_INTR_IMPL)"
+        if lower
+        else "#ifdef UDB_MTI_INTR_IMPL"
+    )
     lines = [
         comment_banner(coverpoint, f"Generate {priv} mode WRS instruction resume when interrupt pending tests"),
         guard,
@@ -78,7 +82,7 @@ def wrs_resume_helper(
     if lower:
         lines.extend(
             [
-                "#ifdef SSTC_SUPPORTED",
+                "#if defined(SSTC_SUPPORTED) && defined(UDB_MCOUNTENABLE_EN_1)",
                 "# Enable Sstc (menvcfg.STCE) so stimecmp drives sip.STIP, then disarm the comparator",
                 "# so whatever stimecmp held before does not raise STIP once STIE is set",
                 *write_stce(test_data, True, priv),
@@ -107,7 +111,7 @@ def wrs_resume_helper(
                         lines.extend(
                             [
                                 *_sstatus_sie(priv, r_temp, sie_val),
-                                "#ifdef SSTC_SUPPORTED",
+                                "#if defined(SSTC_SUPPORTED) && defined(UDB_MCOUNTENABLE_EN_1)",
                                 "# Set sie.STIE",
                                 f"LI(x{r_temp}, 0x20)",
                                 tsbi_call_or_direct(f"csrs sie, x{r_temp}", priv),
@@ -173,7 +177,7 @@ def wrs_resume_helper(
                     if (priv == "S") & (sie_val == 0):
                         lines.extend(
                             [
-                                "#ifdef SSTC_SUPPORTED",
+                                "#if defined(SSTC_SUPPORTED) && defined(UDB_MCOUNTENABLE_EN_1)",
                                 "# Only moves on if SIE = 0 and sip.STIP = 1, expect no interrupt should be taken",
                                 f"csrr x{r_temp}, sip",
                                 f"andi x{r_temp}, x{r_temp}, 0x20  # Extract sip.STIP",
@@ -194,7 +198,7 @@ def wrs_resume_helper(
                     if lower:
                         lines.extend(
                             [
-                                "#ifdef SSTC_SUPPORTED",
+                                "#if defined(SSTC_SUPPORTED) && defined(UDB_MCOUNTENABLE_EN_1)",
                                 f"RVTEST_CLR_SSTC_INT_{priv}",
                                 "#else",
                                 f"RVTEST_CLR_MTIME_INT_{priv}",
@@ -207,7 +211,7 @@ def wrs_resume_helper(
     if lower:
         lines.extend(
             [
-                "#ifdef SSTC_SUPPORTED",
+                "#if defined(SSTC_SUPPORTED) && defined(UDB_MCOUNTENABLE_EN_1)",
                 "# Restore the boot value of menvcfg.STCE so mip.STIP is writable again",
                 *write_stce(test_data, False, priv),
                 "#endif",
