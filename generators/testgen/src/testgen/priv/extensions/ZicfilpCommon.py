@@ -32,9 +32,6 @@ RESUME = [
     "lpad 0         # resume point after a software-check exception on the nop",
 ]
 
-# Mode guards for the modes a test may run in or return to
-MODE_GUARD = {"M": None, "S": "S_SUPPORTED", "U": "U_SUPPORTED"}
-
 
 def csr_access(priv: str, instr: str, csr_priv: str) -> str:
     """CSR instruction for a csr_priv-level CSR; a T-SBI call when the test runs below that level."""
@@ -568,7 +565,7 @@ def elp_state_preservation_tests(test_data: TestData, priv: str, covergroup: str
         )
     ]
     for origin in origins:
-        guard = MODE_GUARD[origin] if priv == "M" else None
+        guard = f"{origin}_SUPPORTED" if priv == "M" else None
         body = [
             "",
             *set_lpe(priv, origin, temp_reg, True),
@@ -659,7 +656,7 @@ def _trap_return_cases(
     xepc = "mepc" if priv == "M" else "sepc"
     lines: list[str] = []
     for target in targets:
-        guard = MODE_GUARD[target] if priv == "M" and suffix == "" else None
+        guard = f"{target}_SUPPORTED" if priv == "M" and suffix == "" and target != "M" else None
         body: list[str] = []
         for lpes in product((0, 1), repeat=len(lpe_modes)):
             lpe_name = "_".join(f"{mode.lower()}lpe{lpe}" for mode, lpe in zip(lpe_modes, lpes))
