@@ -370,6 +370,8 @@ def generate_cp_wfi(test_data: TestData, test_chunks: list[TestChunk], suite: In
     """WFI waits for a timer interrupt whether or not the interrupt is globally enabled.
 
     Not for U-mode when S-mode is implemented: U-mode WFI then traps after a bounded time (cp_wfi_timeout).
+    Not for VU-mode either, where WFI with mstatus.TW = 0 always raises a virtual-instruction exception.
+    VS-mode WFI waits with hstatus.VTW = 0 (cp_wfi_vs).
     """
 
     ######################################
@@ -403,20 +405,21 @@ def generate_cp_wfi(test_data: TestData, test_chunks: list[TestChunk], suite: In
                 *(write_stce(test_data, True, boot) if wfi["stce"] else []),
                 f"LI(x{tmp_reg}, 0x200000)",
                 tsbi_call_or_direct(f"{twcmd} mstatus, x{tmp_reg} # mstatus.TW = {tw}", boot),
+                *(_write_vtw(tmp_reg, 0, boot) if priv == "VS" else []),
                 f"LI(x{tmp_reg}, {status['mask']:#x})",
                 f"{enablecmd} {status['csr']}, x{tmp_reg} # {status['csr']}.{status['field']} = {enable}",
                 f"LI(x{tmp_reg}, {ie_mask:#x})",
                 f"csrw {suite.ie}, x{tmp_reg} # {suite.ie}.{ie_name} = 1",
                 test_data.add_testcase(
                     f"priv_{priv}_tw_{tw}_{status['field']}_{enable}",
-                    # InterruptsSm records M-mode WFI in cp_wfi_m
-                    "cp_wfi_m" if priv == "M" else coverpoint,
+                    # InterruptsSm records M-mode WFI in cp_wfi_m; both suites record VS-mode WFI in cp_wfi_vs
+                    {"M": "cp_wfi_m", "VS": "cp_wfi_vs"}.get(priv, coverpoint),
                     suite.covergroup,
                 ),
                 *mode_enter(suite, priv),
                 # Below M-mode the SOON macro reaches the timer through T-SBI traps; RVMODEL_TIMER_INT_SOON_DELAY
                 # is sized so the interrupt cannot fire before those return and the trap count is sampled.
-                f"RVTEST_SET_{wfi['timer']}_INT_SOON_{priv} # timer interrupt after RVMODEL_TIMER_INT_SOON_DELAY",
+                f"RVTEST_SET_{wfi['timer']}_INT_SOON_{flavor(priv)} # timer interrupt after RVMODEL_TIMER_INT_SOON_DELAY",
                 # Every trap, including the interrupt, bumps rvtest_trap_count. Sample it after the last
                 # trap of the setup so that any later change means the timer interrupt was taken.
                 f"LA(x{count_reg}, rvtest_trap_count)",
@@ -442,7 +445,7 @@ def generate_cp_wfi(test_data: TestData, test_chunks: list[TestChunk], suite: In
                 "wfi",
                 "j 1b",
                 "2:",
-                f"RVTEST_CLR_{wfi['timer']}_INT_{priv} # Clear the timer interrupt",
+                f"RVTEST_CLR_{wfi['timer']}_INT_{flavor(priv)} # Clear the timer interrupt",
                 *mode_exit(suite, priv),
                 f"#endif // {wfi['guard']}",
                 "",
@@ -453,13 +456,36 @@ def generate_cp_wfi(test_data: TestData, test_chunks: list[TestChunk], suite: In
         tc.code.append("#endif // S_SUPPORTED")
 
 
+def _write_vtw(reg: int, vtw: int, boot: str) -> list[str]:
+    """Set or clear hstatus.VTW from the boot mode."""
+    return [
+        f"LI(x{reg}, HSTATUS_VTW)",
+        tsbi_call_or_direct(f"{'csrs' if vtw else 'csrc'} hstatus, x{reg} # hstatus.VTW = {vtw}", boot),
+    ]
+
+
+# (mstatus.TW, hstatus.VTW) cases of cp_wfi_timeout in each mode, and the coverpoint of each case.  None leaves
+# VTW alone.  Below M, TW = 1 makes WFI time out and raise illegal instruction.  U-mode WFI also times out with
+# TW = 0 when S-mode is implemented.  VS-mode WFI with TW = 0 and VTW = 1 times out and raises virtual
+# instruction; with VTW = 0 it waits (cp_wfi_vs).  VU-mode WFI with TW = 0 raises virtual instruction whatever
+# VTW is.
+_WFI_TIMEOUT_CASES = {
+    "S": [(1, None, "cp_wfi_timeout")],
+    "U": [(1, None, "cp_wfi_timeout"), (0, None, "cp_wfi_timeout_tw_zero")],
+    "VS": [(1, 0, "cp_wfi_timeout_vs"), (1, 1, "cp_wfi_timeout_vs"), (0, 1, "cp_wfi_timeout_vs_vtw_one")],
+    "VU": [
+        (1, 0, "cp_wfi_timeout_vu"),
+        (1, 1, "cp_wfi_timeout_vu"),
+        (0, 0, "cp_wfi_timeout_vu"),
+        (0, 1, "cp_wfi_timeout_vu"),
+    ],
+}
+
+
 def generate_cp_wfi_timeout(
     test_data: TestData, test_chunks: list[TestChunk], suite: InterruptSuite, priv: str
 ) -> None:
-    """With nothing pending, WFI below M-mode times out and traps as an illegal instruction.
-
-    mstatus.TW = 1 makes any lower mode trap; with S-mode implemented, U-mode traps even with TW = 0.
-    """
+    """With nothing pending, WFI below M-mode times out and traps (see _WFI_TIMEOUT_CASES)."""
 
     ######################################
     coverpoint = "cp_wfi_timeout"
@@ -473,32 +499,33 @@ def generate_cp_wfi_timeout(
     )
     tmp_reg = test_data.int_regs.get_register()
 
-    for tw in [1, 0] if priv == "U" else [1]:
+    for tw, vtw, case_coverpoint in _WFI_TIMEOUT_CASES[priv]:
         twcmd = "csrs" if tw == 1 else "csrc"
+        # U-mode WFI only times out with TW = 0 when S-mode exists
+        guard = priv == "U" and tw == 0
+        vtw_name = "" if vtw is None else f"_vtw_{vtw}"
         for enable in [0, 1]:
             for ie in [0, 1]:
                 enablecmd = "csrs" if enable == 1 else "csrc"
                 tc.code += [
-                    *(
-                        ["#ifdef S_SUPPORTED // U-mode WFI also times out with TW = 0 when S-mode exists"]
-                        if tw == 0
-                        else []
-                    ),
+                    *(["#ifdef S_SUPPORTED"] if guard else []),
                     f"LI(x{tmp_reg}, 0x200000)",
                     tsbi_call_or_direct(f"{twcmd} mstatus, x{tmp_reg} # mstatus.TW = {tw}", suite.boot),
+                    *([] if vtw is None else _write_vtw(tmp_reg, vtw, suite.boot)),
                     f"LI(x{tmp_reg}, {status['mask']:#x})",
                     f"{enablecmd} {status['csr']}, x{tmp_reg} # {status['csr']}.{status['field']} = {enable}",
                     f"LI(x{tmp_reg}, {ie * ie_mask:#x})",
                     f"csrw {suite.ie}, x{tmp_reg} # {suite.ie}.{ie_name} = {ie}",
                     test_data.add_testcase(
-                        f"priv_{priv}_tw_{tw}_{status['field']}_{enable}_{ie_name}_{ie}",
-                        coverpoint if tw == 1 else "cp_wfi_timeout_tw_zero",
+                        f"priv_{priv}_tw_{tw}{vtw_name}_{status['field']}_{enable}_{ie_name}_{ie}",
+                        case_coverpoint,
                         suite.covergroup,
                     ),
                     *mode_enter(suite, priv),
-                    "wfi # nothing is pending, so this times out and traps as an illegal instruction",
+                    "wfi # nothing is pending, so this times out and traps",
                     *mode_exit(suite, priv),
-                    *(["#endif // S_SUPPORTED"] if tw == 0 else []),
+                    *([] if vtw is None else _write_vtw(tmp_reg, 0, suite.boot)),
+                    *(["#endif // S_SUPPORTED"] if guard else []),
                     "",
                 ]
 

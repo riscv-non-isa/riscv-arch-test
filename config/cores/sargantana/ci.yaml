@@ -40,9 +40,9 @@ ci_enabled: true
 #   H             hedeleg[10] and hedeleg[23:20] are writable but must be read-only zero: csr:csr_bsc.sv#L1320-L1339;
 #                 an hlv.d page fault in HS mode matches Sail's cause and tval but not the rest of its trap signature
 #                 (status/GVA/htinst; HS-mode trap CSR writes: csr:csr_bsc.sv#L2086-L2099)
-#   InterruptsS   The VS and VU tests: an interrupt taken from VS or VU into HS sets hstatus.GVA = 1, copied from the
-#                 interrupted instruction's exception record: csr:csr_bsc.sv#L2099,
-#                 core:datapath/rtl/interface_csr/rtl/csr_interface.sv#L231. The S and U tests pass.
+#   InterruptsS   The VS and VU tests: an interrupt taken from VS or VU into HS sets hstatus.GVA = 1:
+#                 core:datapath/rtl/datapath.sv#L913 (https://github.com/bsc-loca/sargantana/issues/119).
+#                 The S and U tests pass.
 exclude_extensions: "F,ZicsrF,Zfa,Zfhmin,Zicntr,ZicntrSm,ZicntrS,ZicntrU,Zifencei,Sm,S,U,InterruptsSm,InterruptsS,SscofpmfSm,Sv,SvZicbo,ExceptionsSv,ExceptionsSvSm,ExceptionsSvZalrsc,H"
 
 apt_packages: "autoconf flex bison help2man libfl-dev ccache device-tree-compiler libboost-dev libboost-regex-dev libboost-system-dev"

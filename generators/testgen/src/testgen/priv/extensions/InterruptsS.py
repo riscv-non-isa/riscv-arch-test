@@ -145,14 +145,16 @@ def make_interruptss_u(test_data: TestData) -> list[TestChunk]:
     return emit_interrupts(test_data, SUITE, "U", generators)
 
 
-# WFI in VS and VU modes also depends on hstatus.VTW, so InterruptsH tests it.
 @add_priv_test_generator(SUITE.name, required_extensions=["H"], extra_defines=["#define BOOT_TO_SMODE"])
 def make_interruptss_vs(test_data: TestData) -> list[TestChunk]:
     """InterruptsS tests that run in VS-mode."""
-    return emit_interrupts(test_data, SUITE, "VS", _COMMON_GENERATORS)
+    generators = _COMMON_GENERATORS + [generate_cp_wfi, generate_cp_wfi_timeout]
+    return emit_interrupts(test_data, SUITE, "VS", generators)
 
 
 @add_priv_test_generator(SUITE.name, required_extensions=["H"], extra_defines=["#define BOOT_TO_SMODE"])
 def make_interruptss_vu(test_data: TestData) -> list[TestChunk]:
     """InterruptsS tests that run in VU-mode."""
-    return emit_interrupts(test_data, SUITE, "VU", _COMMON_GENERATORS)
+    # VU-mode WFI never waits: it raises virtual instruction with TW = 0, so only test the timeout.
+    generators = _COMMON_GENERATORS + [generate_cp_wfi_timeout]
+    return emit_interrupts(test_data, SUITE, "VU", generators)

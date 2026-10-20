@@ -186,6 +186,7 @@ _CSR_ALIASES = {
     "mip": 0x344,
     "scontext": 0x5A8,
     "scountovf": 0xDA0,
+    "hstatus": 0x600,
     "hie": 0x604,
     "hcounteren": 0x606,
     "hip": 0x644,

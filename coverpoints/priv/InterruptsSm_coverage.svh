@@ -43,6 +43,18 @@ covergroup InterruptsSm_cg with function sample(ins_t ins);
     mstatus_tw_one: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "mstatus", "tw")[0] {
         bins one = {1}; // WFI outside M mode traps after the implementation-defined timeout
     }
+    `ifdef H_SUPPORTED
+        // hstatus.VTW: with mstatus.TW = 0, VS-mode WFI raises virtual instruction after a bounded time when set
+        hstatus_vtw: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "hstatus", "vtw")[0] {
+            // autofill 0/1
+        }
+        hstatus_vtw_zero: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "hstatus", "vtw")[0] {
+            bins zero = {0};
+        }
+        hstatus_vtw_one: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "hstatus", "vtw")[0] {
+            bins one = {1};
+        }
+    `endif
 
     // Privilege modes this config implements.
     priv_mode_interrupts: coverpoint {ins.prev.mode_virt, ins.prev.mode} {
@@ -516,7 +528,6 @@ covergroup InterruptsSm_cg with function sample(ins_t ins);
     `endif
     cp_wfi_m:                   cross priv_mode_m, mstatus_mie, mstatus_tw, wfi, mideleg_zeros;
 
-    // H modes not included as wfi behavior is additionally affected by hstatus.VTW - TODO: test in InterruptsH
     // WFI with TW = 0 is exercised in the most privileged mode below M that this config implements.
     // The mode is selected with a macro rather than an `ifdef inside the cross argument list: on a hart
     // with neither S nor U (cv32e20 implements Sm and no lower mode) the inline form leaves a cross with
@@ -530,6 +541,10 @@ covergroup InterruptsSm_cg with function sample(ins_t ins);
     `ifdef SM_WFI_PRIV
         cp_wfi:                 cross `SM_WFI_PRIV, mstatus_mie, mie_mtie_one, mstatus_tw_zero, wfi, mideleg_zeros;
     `endif
+    // VS-mode WFI waits only with hstatus.VTW = 0; VU-mode WFI never waits.
+    `ifdef H_SUPPORTED
+        cp_wfi_vs:              cross priv_mode_vs, mstatus_mie, mie_mtie_one, mstatus_tw_zero, hstatus_vtw_zero, wfi, mideleg_zeros;
+    `endif
 
     // mstatus.TW = 1 traps WFI in every mode below M, so the timeout applies whenever any lower mode
     // exists, not only when S does. S-mode implies U-mode, so S_SUPPORTED means both bins of
@@ -540,6 +555,13 @@ covergroup InterruptsSm_cg with function sample(ins_t ins);
         cp_wfi_timeout_tw_zero:             cross priv_mode_u, mstatus_mie, mie_mtie, mstatus_tw_zero, wfi;
     `elsif U_SUPPORTED
         cp_wfi_timeout:                     cross priv_mode_u, mstatus_mie, mie_mtie, mstatus_tw_one, wfi;
+    `endif
+    // In VS-mode, TW = 1 raises illegal instruction whatever VTW is, and TW = 0 with VTW = 1 raises
+    // virtual instruction. In VU-mode, TW = 0 raises virtual instruction whatever VTW is.
+    `ifdef H_SUPPORTED
+        cp_wfi_timeout_vs:                  cross priv_mode_vs, mstatus_mie, mie_mtie, mstatus_tw_one, hstatus_vtw, wfi;
+        cp_wfi_timeout_vs_vtw_one:          cross priv_mode_vs, mstatus_mie, mie_mtie, mstatus_tw_zero, hstatus_vtw_one, wfi;
+        cp_wfi_timeout_vu:                  cross priv_mode_vu, mstatus_mie, mie_mtie, mstatus_tw, hstatus_vtw, wfi;
     `endif
 
     `ifdef SSTC_SUPPORTED // need to modify this one to check more stuff

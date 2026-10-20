@@ -39,6 +39,21 @@ covergroup InterruptsS_cg with function sample(ins_t ins);
     mstatus_tw_one: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "mstatus", "tw")[0] {
         bins one = {1}; // WFI in S/U traps after the implementation-defined timeout
     }
+    mstatus_tw: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "mstatus", "tw")[0] {
+        // autofill 0/1
+    }
+    `ifdef H_SUPPORTED
+        // hstatus.VTW: with mstatus.TW = 0, VS-mode WFI raises virtual instruction after a bounded time when set
+        hstatus_vtw: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "hstatus", "vtw")[0] {
+            // autofill 0/1
+        }
+        hstatus_vtw_zero: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "hstatus", "vtw")[0] {
+            bins zero = {0};
+        }
+        hstatus_vtw_one: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "hstatus", "vtw")[0] {
+            bins one = {1};
+        }
+    `endif
 
     // Privilege modes below M this config implements
     priv_mode_interrupts: coverpoint {ins.prev.mode_virt, ins.prev.mode} {
@@ -404,14 +419,25 @@ covergroup InterruptsS_cg with function sample(ins_t ins);
     `endif
 
     // WFI wakes on the Sstc supervisor timer whether or not SIE is set. Not tested in U-mode: with
-    // S-mode implemented, U-mode WFI traps after a bounded time (cp_wfi_timeout).
+    // S-mode implemented, U-mode WFI traps after a bounded time (cp_wfi_timeout). VS-mode WFI waits
+    // only with hstatus.VTW = 0; VU-mode WFI never waits.
     `ifdef SSTC_SUPPORTED
         cp_wfi:                 cross priv_mode_s, sstatus_sie, sie_stie_one, mstatus_tw_zero, menvcfg_stce_one, mideleg_s_ones, wfi;
+        `ifdef H_SUPPORTED
+            cp_wfi_vs:          cross priv_mode_vs, sstatus_sie, sie_stie_one, mstatus_tw_zero, hstatus_vtw_zero, menvcfg_stce_one, mideleg_s_ones, wfi;
+        `endif
     `endif
 
     // mstatus.TW = 1 traps WFI in S and U. U-mode WFI also times out with TW = 0 because S exists.
     cp_wfi_timeout:             cross priv_mode_s_u, sstatus_sie, sie_stie, mstatus_tw_one, wfi;
     cp_wfi_timeout_tw_zero:     cross priv_mode_u, sstatus_sie, sie_stie, mstatus_tw_zero, wfi;
+    // In VS-mode, TW = 1 raises illegal instruction whatever VTW is, and TW = 0 with VTW = 1 raises
+    // virtual instruction. In VU-mode, TW = 0 raises virtual instruction whatever VTW is.
+    `ifdef H_SUPPORTED
+        cp_wfi_timeout_vs:          cross priv_mode_vs, sstatus_sie, sie_stie, mstatus_tw_one, hstatus_vtw, wfi;
+        cp_wfi_timeout_vs_vtw_one:  cross priv_mode_vs, sstatus_sie, sie_stie, mstatus_tw_zero, hstatus_vtw_one, wfi;
+        cp_wfi_timeout_vu:          cross priv_mode_vu, sstatus_sie, sie_stie, mstatus_tw, hstatus_vtw, wfi;
+    `endif
 
 endgroup
 
