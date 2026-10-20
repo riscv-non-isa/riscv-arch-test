@@ -1238,6 +1238,21 @@ covergroup SdtrigSm_textra_cg with function sample(ins_t ins);
         bins match    = {1'b1};
     }
 
+    // cp_textra_mhselect_no_h: a tdata3 write of an mhselect value that needs H, on a trigger armed as icount or mcontrol6
+    csr_tdata3: coverpoint ins.current.insn[31:20] {
+        bins tdata3 = {CSR_TDATA3};
+    }
+    armed_type: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tdata1", "type")[3:0] {
+        bins icount    = {4'd3};
+        bins mcontrol6 = {4'd6};
+    }
+    mhselect_written: coverpoint sdtrig_textra_mhselect(ins.current.rs1_val) {
+        bins h_only[] = {3'd1, 3'd2, 3'd3, 3'd5, 3'd6, 3'd7};
+    }
+    mhselect_legal: coverpoint sdtrig_textra_mhselect(ins.current.csr[CSR_TDATA3]) {
+        bins legal = {3'd0, 3'd4};
+    }
+
     scontext_match_only: coverpoint sdtrig_textra_scontext_match(ins.current.csr[CSR_TDATA3], ins.current.csr[CSR_SCONTEXT]) {
         bins match = {1'b1};
     }
@@ -1257,6 +1272,10 @@ covergroup SdtrigSm_textra_cg with function sample(ins_t ins);
     `endif
     `ifdef S_SUPPORTED
         cp_textra_asid:           cross priv_mode_m, triggernum, csrw, csr_tdata1, arm_type, mhselect_ignore, sselect_asid, asid_match;                      // NTRIG * 2 types * 2
+        cp_textra_asid_sbytemask: cross priv_mode_m, triggernum, csrw, csr_tdata1, arm_type, mhselect_ignore, sselect_asid, sbytemask_all, asid_match;       // NTRIG * 2 types * 2
+    `endif
+    `ifndef H_SUPPORTED
+        cp_textra_mhselect_no_h:  cross priv_mode_m, triggernum, csrw, csr_tdata3, armed_type, mhselect_written, mhselect_legal;                             // NTRIG * 2 types * 6
     `endif
 endgroup
 

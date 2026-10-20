@@ -1715,7 +1715,11 @@ normative_rule_definitions:
 
   # Byte masking only applies to scontext comparison; i.e when sselect is 1.
   - name: Sdtrig_textra32_byte_mask_applies
-    coverpoint: ["SdtrigSm_textra_cg/cp_textra_scontext"]
+    coverpoint:
+      [
+        "SdtrigSm_textra_cg/cp_textra_scontext",
+        "SdtrigSm_textra_cg/cp_textra_asid_sbytemask",
+      ]
 
   # Note that sselect and mhselect filtering apply in all modes, including M-mode
   # and S-mode.
@@ -1756,8 +1760,7 @@ normative_rule_definitions:
 
   # If the H extension is not supported, the only legal values are 0 and 4.
   - name: Sdtrig_textra32_mhselect_no_h
-    coverpoint:
-      ["WARL legalization of reserved/H-only mhselect values; not tested"]
+    coverpoint: ["SdtrigSm_textra_cg/cp_textra_mhselect_no_h"]
 
   # When the least significant bit of this field is 1, it causes bits 7:0 in the
   # comparison to be ignored, when sselect=1. When the next most significant bit of
@@ -1833,7 +1836,11 @@ normative_rule_definitions:
 
   # Byte masking only applies to scontext comparison; i.e when sselect is 1.
   - name: Sdtrig_textra64_byte_mask_applies
-    coverpoint: ["SdtrigSm_textra_cg/cp_textra_scontext"]
+    coverpoint:
+      [
+        "SdtrigSm_textra_cg/cp_textra_scontext",
+        "SdtrigSm_textra_cg/cp_textra_asid_sbytemask",
+      ]
 
   # When the least significant bit of this field is 1, it causes bits 7:0 in the
   # comparison to be ignored, when sselect=1. Likewise, the second bit controls the
