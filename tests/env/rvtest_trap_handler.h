@@ -1763,20 +1763,18 @@ tsbi_\__MODE__\()handle_forwarded:
 // and return a result in a0.
 //
 // CSR instructions are found by a binary search over tsbi_csr_table, whose 32-byte groups (one per
-// CSR) are sorted by CSR address; the few other instructions are in tsbi_instr_table, searched in
-// order. A hash table would need a generator step or make whoever adds a CSR work out its bucket;
-// binary search takes at most 8 probes and keeps one sorted list that the assembler checks.
+// CSR) are sorted by CSR address; the few other instructions are in tsbi_instr_table, searched in order.
 //
 // REGISTER STATE: uses T1..T5, which common_Xentry saved and resto_Xrtn restores. Nothing after
 // this point needs xcause (T5).
 //==============================================================================
 
 tsbi_\__MODE__\()instr_dispatch:
-        andi    T3, a0, 0x7F                      // T3 = opcode
-        li      T4, 0x73                          // T4 = SYSTEM opcode
+        andi    T3, a0, INSN_FIELD_OPCODE         // T3 = opcode
+        li      T4, MATCH_CSRRW & INSN_FIELD_OPCODE // T4 = SYSTEM opcode
         bne     T3, T4, tsbi_\__MODE__\()instr_other // load/store -> tsbi_instr_table
         srli    T3, a0, 12
-        andi    T3, T3, 0x7                       // T3 = funct3
+        andi    T3, T3, INSN_FIELD_FUNCT3 >> 12   // T3 = funct3
         beqz    T3, tsbi_\__MODE__\()instr_other  // sfence.vma -> tsbi_instr_table
         srli    T4, a0, 20                        // T4 = key = CSR address
         li      T3, CSR_MSTATUS                   // mstatus is the most-used T-SBI CSR: go straight to its group
