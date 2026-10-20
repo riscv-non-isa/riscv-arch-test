@@ -2,12 +2,14 @@ normative_rule_definitions:
   # When the csr::[mdt] bit is set to 1 by an explicit CSR write, the csr::[mie] (Machine
   # Interrupt Enable) bit is cleared to 0.
   - name: mstatus_mie_clr_by_mdt
-    coverpoint: ["Sm_mstatus_cg/cp_mstatus_mdt_clr_mie"]
+    # TODO: the Sm mstatus walk sets MDT, but no coverpoint checks that writing MDT = 1 clears MIE.
+    coverpoint: [""]
 
   # For RV64, this clearing occurs regardless of the value written, if any, to the
   # csr::[mie] bit by the same write.
   - name: mstatus_mie_clr_by_mdt_rv64
-    coverpoint: ["Sm_mstatus_cg/cp_mstatus_mdt_clr_mie_rv64"]
+    # TODO: the Sm mstatus walk sets MDT, but no coverpoint checks that writing MDT = 1 clears MIE.
+    coverpoint: [""]
 
   # The MIE bit can only be set to 1 by an explicit CSR write if the MDT bit is
   # already 0

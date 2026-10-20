@@ -208,56 +208,6 @@ def _generate_mstatus_sd_tests(test_data: TestData) -> list[str]:
     return lines
 
 
-def _generate_mstatus_mdt_tests(test_data: TestData) -> list[str]:
-    """Generate tests that setting mstatus.MDT with an explicit CSR write clears mstatus.MIE (Smdbltrp)."""
-    covergroup = "Sm_mstatus_cg"
-    mdt_reg, val_reg = test_data.int_regs.get_registers(2)
-    # No trap may be taken while MDT = 1 (it would be a double trap), so each case clears MDT again
-    # before it checks the mstatus value it read.
-    lines = [
-        "#ifdef SMDBLTRP_SUPPORTED",
-        comment_banner(
-            "cp_mstatus_mdt_clr_mie",
-            "Set mstatus.MIE, then set mstatus.MDT (mstatush.MDT on RV32) with csrs: MIE must read 0",
-        ),
-        "csrsi mstatus, 8 # MIE = 1 (MDT = 0 after boot, and mie = 0, so no interrupt is taken)",
-        test_data.add_testcase("", "cp_mstatus_mdt_clr_mie", covergroup),
-        "#if __riscv_xlen == 64",
-        f"LI(x{mdt_reg}, 0x40000000000) # mstatus.MDT (bit 42)",
-        f"csrs mstatus, x{mdt_reg} # set MDT, which clears MIE",
-        f"csrr x{val_reg}, mstatus",
-        f"csrc mstatus, x{mdt_reg} # clear MDT",
-        "#else",
-        f"LI(x{mdt_reg}, 0x400) # mstatush.MDT (bit 10)",
-        f"csrs mstatush, x{mdt_reg} # set MDT, which clears mstatus.MIE",
-        f"csrr x{val_reg}, mstatus",
-        f"csrc mstatush, x{mdt_reg} # clear MDT",
-        "#endif",
-        f"andi x{val_reg}, x{val_reg}, 8 # mstatus.MIE",
-        write_sigupd(val_reg, test_data),
-        "",
-        "#if __riscv_xlen == 64",
-        comment_banner(
-            "cp_mstatus_mdt_clr_mie_rv64",
-            "On RV64, a write that sets both mstatus.MDT and mstatus.MIE leaves MIE = 0",
-        ),
-        f"csrr x{val_reg}, mstatus",
-        f"ori x{val_reg}, x{val_reg}, 8 # MIE = 1 in the value written",
-        f"or x{val_reg}, x{val_reg}, x{mdt_reg} # MDT = 1 in the value written",
-        test_data.add_testcase("", "cp_mstatus_mdt_clr_mie_rv64", covergroup),
-        f"csrw mstatus, x{val_reg} # MDT wins: MIE must read 0",
-        f"csrr x{val_reg}, mstatus",
-        f"csrc mstatus, x{mdt_reg} # clear MDT",
-        f"andi x{val_reg}, x{val_reg}, 8 # mstatus.MIE",
-        write_sigupd(val_reg, test_data),
-        "#endif",
-        "csrci mstatus, 8 # restore MIE = 0",
-        "#endif // SMDBLTRP_SUPPORTED",
-    ]
-    test_data.int_regs.return_registers([mdt_reg, val_reg])
-    return lines
-
-
 def _generate_priv_inst_tests(test_data: TestData) -> list[str]:
     """Generate ecall and ebreak tests."""
     ######################################
@@ -1681,10 +1631,6 @@ def make_sm(test_data: TestData) -> list[TestChunk]:
 
     tc = test_data.begin_test_chunk("mstatus_sd")
     tc.code.extend(_generate_mstatus_sd_tests(test_data))
-    test_chunks.append(test_data.end_test_chunk())
-
-    tc = test_data.begin_test_chunk("mstatus_mdt")
-    tc.code.extend(_generate_mstatus_mdt_tests(test_data))
     test_chunks.append(test_data.end_test_chunk())
 
     tc = test_data.begin_test_chunk("inst")

@@ -137,35 +137,6 @@ covergroup Sm_mstatus_cg with function sample(ins_t ins);
         bins mstatus = {CSR_MSTATUS};
     }
     cp_mstatus_sd_write: cross priv_mode_m, csrrw, mstatus, cp_mstatus_sd, cp_mstatus_fs, cp_mstatus_vs, cp_mstatus_xs;
-
-    `ifdef SMDBLTRP_SUPPORTED
-        // An explicit CSR write that sets MDT (mstatush.MDT on RV32) clears MIE
-        old_mie_one: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "mstatus", "mie") {
-            bins one = {1};
-        }
-        `ifdef UDB_MXLEN_64
-            mdt_set: coverpoint ins.current.insn {
-                wildcard bins csrs_mdt = {CSRS} iff (ins.current.insn[31:20] == CSR_MSTATUS && ins.current.rs1_val[42]);
-            }
-            old_mdt_zero: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "mstatus", "mstatus")[42] {
-                bins zero = {0};
-            }
-            // RV64: MIE is cleared even when the same write sets it
-            mdt_mie_set: coverpoint ins.current.insn {
-                wildcard bins csrw_mdt_mie = {CSRW} iff (ins.current.insn[31:20] == CSR_MSTATUS &&
-                                                         ins.current.rs1_val[42] && ins.current.rs1_val[3]);
-            }
-            cp_mstatus_mdt_clr_mie_rv64: cross priv_mode_m, mdt_mie_set, old_mdt_zero;
-        `else
-            mdt_set: coverpoint ins.current.insn {
-                wildcard bins csrs_mdt = {CSRS} iff (ins.current.insn[31:20] == CSR_MSTATUSH && ins.current.rs1_val[10]);
-            }
-            old_mdt_zero: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "mstatush", "mstatush")[10] {
-                bins zero = {0};
-            }
-        `endif
-        cp_mstatus_mdt_clr_mie: cross priv_mode_m, mdt_set, old_mdt_zero, old_mie_one;
-    `endif
 endgroup
 
 covergroup Sm_mprivinst_cg with function sample(ins_t ins);

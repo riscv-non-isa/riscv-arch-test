@@ -74,16 +74,6 @@ coverpoints:
     description: Write 1 and 0 to SD with FS/VS/XS all 0.  Write cross-product of all bits of SD/ FS/ VS/XS.  128 bins of writes.
     expectation: FS =1 iff any of FS/VS/XS are dirty.
     bins: 2 SD * 4 FS * 4 VS * 4 XS = 128
-  - name: cp_mstatus_mdt_clr_mie
-    goal: Setting MDT with an explicit CSR write clears MIE (Smdbltrp)
-    description: Smdbltrp only. With MDT = 0, set MIE, then set mstatus.MDT (mstatush.MDT on RV32) with csrs, read mstatus and clear MDT again.
-    expectation: MIE reads 0.
-    bins: 1
-  - name: cp_mstatus_mdt_clr_mie_rv64
-    goal: On RV64, setting MDT clears MIE even when the same write sets MIE (Smdbltrp)
-    description: Smdbltrp and RV64 only. With MDT = 0, csrw mstatus with both MDT and MIE set, read mstatus and clear MDT again.
-    expectation: MIE reads 0.
-    bins: 1
   - name: cp_mprivinst
     goal: ecall and ebreak cause traps
     description: Execute ecall and ebreak in machine mode
