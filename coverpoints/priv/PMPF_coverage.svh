@@ -21,15 +21,23 @@ covergroup PMPF_cg with function sample(ins_t ins,logic [7:0] pmpcfg [63:0],logi
   }
 
   read_fp_instr: coverpoint ins.current.insn {
+  `ifdef ZFHMIN_SUPPORTED
     wildcard bins flh = {FLH};
+  `endif
     wildcard bins flw = {FLW};
+  `ifdef D_SUPPORTED
     wildcard bins fld = {FLD};
+  `endif
   }
 
   write_fp_instr: coverpoint ins.current.insn {
+  `ifdef ZFHMIN_SUPPORTED
     wildcard bins fsh = {FSH};
+  `endif
     wildcard bins fsw = {FSW};
+  `ifdef D_SUPPORTED
     wildcard bins fsd = {FSD};
+  `endif
   }
 
   legal_lxwr: coverpoint {pmpcfg[0],pmpcfg[1],pmpcfg[2],pmpcfg[3],pmpcfg[4],pmpcfg[5],pmp_hit[5:0]} {
