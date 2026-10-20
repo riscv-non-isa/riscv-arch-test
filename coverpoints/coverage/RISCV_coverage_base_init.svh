@@ -206,9 +206,17 @@
         `cover_info("//      S - Enabled");
         `include "S_coverage_init.svh"
     `endif
+    `ifdef COVER_SDTRIGS
+        `cover_info("//      SdtrigS - Enabled");
+        `include "SdtrigS_coverage_init.svh"
+    `endif
     `ifdef COVER_SDTRIGSM
         `cover_info("//      SdtrigSm - Enabled");
         `include "SdtrigSm_coverage_init.svh"
+    `endif
+    `ifdef COVER_SDTRIGU
+        `cover_info("//      SdtrigU - Enabled");
+        `include "SdtrigU_coverage_init.svh"
     `endif
     `ifdef COVER_SM
         `cover_info("//      Sm - Enabled");
@@ -374,14 +382,6 @@
         `cover_info("//      U - Enabled");
         `include "U_coverage_init.svh"
     `endif
-    `ifdef COVER_UF
-        `cover_info("//      UF - Enabled");
-        `include "UF_coverage_init.svh"
-    `endif
-    `ifdef COVER_UV
-        `cover_info("//      UV - Enabled");
-        `include "UV_coverage_init.svh"
-    `endif
     `ifdef COVER_VF16
         `cover_info("//      Vf16 - Enabled");
         `include "Vf16_coverage_init.svh"
@@ -393,6 +393,10 @@
     `ifdef COVER_VF64
         `cover_info("//      Vf64 - Enabled");
         `include "Vf64_coverage_init.svh"
+    `endif
+    `ifdef COVER_VF8
+        `cover_info("//      Vf8 - Enabled");
+        `include "Vf8_coverage_init.svh"
     `endif
     `ifdef COVER_VLS16
         `cover_info("//      Vls16 - Enabled");
