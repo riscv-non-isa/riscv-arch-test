@@ -903,13 +903,6 @@
   rvtest_trap_count:
     .dword 0
 
-  // Address of an instruction that may legally either complete or raise an exception, followed by the two
-  // causes it may raise (RVTEST_OPTIONAL_TRAP, RVTEST_OPTIONAL_TRAP2). The address is 0 when no instruction
-  // is armed. Lives in .data with rvtest_trap_count and is read by every mode's trap handler.
-  .global rvtest_optional_trap
-  rvtest_optional_trap:
-    .dword 0, 0, 0
-
   .p2align 4
 
   // Create separate save areas for each priv mode trap handler
