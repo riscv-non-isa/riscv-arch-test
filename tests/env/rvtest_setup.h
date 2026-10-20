@@ -903,6 +903,11 @@
   rvtest_trap_count:
     .dword 0
 
+  // Scratch word for the trap handler's xtinst check: nonzero when the recorded value is not the
+  // transformation of the trapping instruction.
+  rvtest_xtinst_mismatch:
+    .dword 0
+
   .p2align 4
 
   // Create separate save areas for each priv mode trap handler
