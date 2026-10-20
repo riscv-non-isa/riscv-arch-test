@@ -77,8 +77,8 @@
         SREG DEFAULT_TEMP_REG, 280(x9) # expected_value = expected value
         mv DEFAULT_TEMP_REG, x9        # move scratch base into DEFAULT_TEMP_REG
         mv DEFAULT_LINK_REG, x7        # move return address into DEFAULT_LINK_REG
-        li x1, 4                       # x1 and x9 are already saved/consumed; x16 must stay intact
-        la x9, trap_diag_mode
+        LI(x1, 4)                      # x1 and x9 are already saved/consumed; x16 must stay intact
+        LA(x9, trap_diag_mode)
         sw x1, 0(x9)                   # unknown trap mode until the string is decoded
         # now DEFAULT_LINK_REG has the return address of jal from the failure and DEFAULT_TEMP_REG is a vacant temporary register.
         # NOTE: do NOT read mcause/mtval/mstatus here.  This entry point is
@@ -1194,7 +1194,7 @@
         li x8, 9                                     # subtype: offset mismatch
         la x16, trap_diag_subtype
         sw x8, 0(x16)
-        la x16, trap_diag_mode
+        LA(x16, trap_diag_mode)
         sw zero, 0(x16)                              # this check runs in M-mode
 
         j failedtest_saveresults_common
@@ -1911,9 +1911,12 @@
         LA(a0, endstr)
         call rvmodel_io_write_str
 
+    # Only a type 3 failure detected by the M-mode handler (trap_diag_mode 0) or by the
+    # M-mode offset check is known to run in M-mode. Every other failure switches to M-mode
+    # first; the switch is harmless if the hart is already in M-mode.
     failedtest_terminate:
         lw a0, failure_type
-        li a1, 3
+        LI(a1, 3)
         bne a0, a1, failedtest_terminate_lower_mode
         lw a0, trap_diag_mode
         bnez a0, failedtest_terminate_lower_mode

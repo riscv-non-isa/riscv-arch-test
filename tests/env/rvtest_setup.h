@@ -138,7 +138,7 @@
       call rvmodel_io_write_str
       LA(a0, endstr)
       call rvmodel_io_write_str
-      j       rvtest_fail_epilogs
+      j       rvtest_fail_epilogs_mmode // already in M-mode after the switch above
     check_regular_sig_offset_done:
   #endif
 
@@ -154,7 +154,7 @@
       call rvmodel_io_write_str
       LA(a0, endstr)
       call rvmodel_io_write_str
-      j       rvtest_fail_epilogs
+      j       rvtest_fail_epilogs_mmode // already in M-mode after the switch above
 
     // Check trap signature offset to make sure the correct number of traps occurred.
     // This is a trap-framework diagnostic, not a normal signature check. Pass the
@@ -248,8 +248,10 @@
     j       rvtest_fail_epilogs_mmode
 
   rvtest_trap_setup_failed:
+    bnez T5, 1f                       // failure path already printed failstr
     LA(a0, failstr)
     call rvmodel_io_write_str
+1:
     LA(a0, rvtest_trap_prolog_error)
     LREG a0, 0(a0)
     call rvmodel_io_write_str

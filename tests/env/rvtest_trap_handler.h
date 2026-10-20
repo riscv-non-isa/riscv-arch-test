@@ -1272,7 +1272,7 @@ rvtest_\__MODE__\()prolog_done:
   .endr
 //---------- End-of-test trampoline ----------
 // Reached for impossible/unhandled interrupt causes.
-// Long-jumps to rvtest_Xend which is the epilog cleanup entry.
+// Long-jumps to the failure summary entry, which prints the summary and runs the epilogs.
 
 rvtest_\__MODE__\()endtest:                      // impossible cause landed here
 .ifc \__MODE__ , M
@@ -1792,9 +1792,18 @@ tsbi_\__MODE__\()instr_found:
 
 tsbi_\__MODE__\()instr_not_found:
         // Lower modes cannot print or run the M-mode epilogs: switch to M-mode first.
-        mv      T4, a0                             // T4 is preserved across the mode switch
+        // Leave the handler (restore regs and sp) before the ecall, as tsbi_forward_goto_m does,
+        // so the mode switch is not nested in a live trap context. a1 keeps the encoding.
+        mv      a1, a0
+        LREG    T1, trap_sv_off+1*REGWIDTH(sp)    // restore T1 (x6)
+        LREG    T2, trap_sv_off+2*REGWIDTH(sp)    // restore T2 (x7)
+        LREG    T3, trap_sv_off+3*REGWIDTH(sp)    // restore T3 (x8)
+        LREG    T4, trap_sv_off+4*REGWIDTH(sp)    // restore T4 (x9)
+        LREG    T5, trap_sv_off+5*REGWIDTH(sp)    // restore T5 (x14)
+        LREG    T6, trap_sv_off+6*REGWIDTH(sp)    // restore T6 (x15)
+        LREG    sp, trap_sv_off+7*REGWIDTH(sp)    // restore original sp (undo the xSCRATCH swap)
         RVTEST_TSBI_GOTO_MMODE
-        mv      a0, T4
+        mv      a0, a1
         j       tsbi_instr_not_found
 .endif
 
