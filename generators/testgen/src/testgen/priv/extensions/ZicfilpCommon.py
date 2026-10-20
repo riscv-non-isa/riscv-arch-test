@@ -10,8 +10,8 @@
 
 from itertools import product
 
-from testgen.asm.helpers import comment_banner, write_sigupd
-from testgen.asm.tsbi import tsbi_call
+from testgen.asm.helpers import arch_block, comment_banner, write_sigupd
+from testgen.asm.tsbi import tsbi_call_or_direct
 from testgen.data.state import TestData
 from testgen.data.test_chunk import TestChunk
 
@@ -33,12 +33,6 @@ RESUME = [
 ]
 
 
-def csr_access(priv: str, instr: str, csr_priv: str) -> str:
-    """CSR instruction for a csr_priv-level CSR; a T-SBI call when the test runs below that level."""
-    direct = priv == "M" or (priv == "S" and csr_priv == "S")
-    return instr if direct else tsbi_call(instr)
-
-
 def set_lpe(priv: str, mode: str, reg: int, enable: bool) -> list[str]:
     """Set or clear xLPE of `mode` from a test running in `priv`."""
     op = "csrs" if enable else "csrc"
@@ -47,32 +41,24 @@ def set_lpe(priv: str, mode: str, reg: int, enable: bool) -> list[str]:
         return [
             f"# {action} landing pads in M-mode (mseccfg.MLPE)",
             f"LI(x{reg}, MSECCFG_MLPE)",
-            csr_access(priv, f"{op} mseccfg, x{reg}", "M"),
+            tsbi_call_or_direct(f"{op} mseccfg, x{reg}", priv),
         ]
     if mode == "S":
         return [
             f"# {action} landing pads in S-mode (menvcfg.LPE)",
             f"LI(x{reg}, MENVCFG_LPE)",
-            csr_access(priv, f"{op} menvcfg, x{reg}", "M"),
+            tsbi_call_or_direct(f"{op} menvcfg, x{reg}", priv),
         ]
     return [
         f"# {action} landing pads in U-mode (senvcfg.LPE with S-mode, menvcfg.LPE without)",
         "#ifdef S_SUPPORTED",
         f"LI(x{reg}, SENVCFG_LPE)",
-        csr_access(priv, f"{op} senvcfg, x{reg}", "S"),
+        tsbi_call_or_direct(f"{op} senvcfg, x{reg}", priv),
         "#else",
         f"LI(x{reg}, MENVCFG_LPE)",
-        csr_access(priv, f"{op} menvcfg, x{reg}", "M"),
+        tsbi_call_or_direct(f"{op} menvcfg, x{reg}", priv),
         "#endif",
     ]
-
-
-def jump(kind: str, rs1: int, rd: int = 0) -> str:
-    """Indirect jump through rs1. Compressed jumps are raw halfwords because Zca is not in the suite's march."""
-    if kind == "jalr":
-        return f"jalr x{rd}, 0(x{rs1})"
-    encoding = (0x8002 if kind == "c.jr" else 0x9002) | (rs1 << 7)
-    return f".hword 0x{encoding:04x} # {kind} x{rs1}"
 
 
 def check_trap_count(test_data: TestData, reg: int) -> list[str]:
@@ -108,7 +94,7 @@ def jump_to_target(
         [
             f"LA(x{rs1}, {target_label})",
             label,
-            jump(kind, rs1, rd),
+            *(arch_block([f"{kind} x{rs1}"], "zca") if kind != "jalr" else [f"jalr x{rd}, 0(x{rs1})"]),
             ".p2align 2",
             f"{target_label}:",
             *target,
@@ -388,7 +374,7 @@ def lpad_alignment_tests(test_data: TestData, priv: str, covergroup: str) -> Tes
                 "",
                 f"LA(x{jump_reg}, {label}_target)",
                 f"{label}:",
-                jump(kind, jump_reg),
+                *(arch_block([f"{kind} x{jump_reg}"], "zca") if kind != "jalr" else [f"jalr x0, 0(x{jump_reg})"]),
                 ".p2align 2",
                 ".hword 0x0001 # c.nop, never executed: puts the lpad at pc[1:0]=2",
                 f"{label}_target:",
@@ -532,7 +518,7 @@ def guarded_trap_entry_tests(test_data: TestData, priv: str, covergroup: str) ->
                     *(["LI(a0, TSBI_ECALL_TEST) # T-SBI ecall test operation"] if priv == "M" else []),
                     f"LA(x{rs1}, {label}_target)",
                     f"{label}:",
-                    jump(kind, rs1),
+                    *(arch_block([f"{kind} x{rs1}"], "zca") if kind != "jalr" else [f"jalr x0, 0(x{rs1})"]),
                     ".p2align 2",
                     f"{label}_target:",
                     *_trap_instr(priv),
