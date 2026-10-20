@@ -1648,21 +1648,25 @@ def insertTemplate(test, signatureWords, name, sew=0, vdsew=0, test_data="", pri
       ext_parts_no_I = ['M', 'V', 'Zicsr']
       ext_str_no_I = "_M_V_Zicsr_Zifencei"
       # Vector-FP priv suites need scalar/vector FP extensions in -march so the
-      # assembler accepts flh/flw/fld and the matching SEW vector-FP ops. Mirror
-      # the unpriv vfloat path: F + Zfhmin (+ D when flen>32) for SEW>=16, plus
-      # Zvfh for SEW=16 vector half-FP. ExceptionsVfmin runs at SEW=16.
+      # assembler accepts flh/flw/fld and the matching SEW vector-FP ops: F (+ D
+      # when flen>32), plus Zfhmin and Zvfh for SEW=16 vector half-FP, which loads
+      # its scalar operands with flh. ExceptionsVfmin runs at SEW=16 but uses only
+      # the Zvfhmin conversions and no scalar half-precision loads.
       vf_match = re.search(r"ExceptionsVf(\d+)$", test)
       is_vfmin = (test == "ExceptionsVfmin")
       if vf_match or is_vfmin:
         sew = int(vf_match.group(1)) if vf_match else 16
-        fp_exts = ['F', 'Zfhmin']
-        fp_exts_str = "_F_Zfhmin"
+        fp_exts = ['F']
+        fp_exts_str = "_F"
         if flen > 32:
-          fp_exts = ['F', 'D', 'Zfhmin']
-          fp_exts_str = "_F_D_Zfhmin"
-        if sew == 16:
-          fp_exts.append('Zvfh')
-          fp_exts_str += "_Zvfh"
+          fp_exts = ['F', 'D']
+          fp_exts_str = "_F_D"
+        if is_vfmin:
+          fp_exts.append('Zvfhmin')
+          fp_exts_str += "_Zvfhmin"
+        elif sew == 16:
+          fp_exts += ['Zfhmin', 'Zvfh']
+          fp_exts_str += "_Zfhmin_Zvfh"
         ext_parts_no_I = fp_exts + ext_parts_no_I
         ext_str_no_I = fp_exts_str + ext_str_no_I
       # Reserved vector encodings trap only on harts with Ssstrict, as in the scalar Ssstrict

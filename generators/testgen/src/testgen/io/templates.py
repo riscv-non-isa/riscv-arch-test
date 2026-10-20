@@ -217,15 +217,8 @@ def get_vector_base_extension(testsuite: str, instr_name: str, xlen: int, sew: i
 
         # All Zve* extensions support all vector permutation instructions (31.1.16. Vector Permutation Instructions),
         # except that Zve32x and Zve64x do not include those with floating-point operands, and Zve64f does not include
-        # those with EEW=64 floating-point operands.
-        # The first part of this requirement is handled by placing those operands into Vf.
-        if (
-            zve_ext in mapped
-            and instr_name in ["vfmv.f.s", "vfmv.s.f", "vfslide1up.vf", "vfslide1down.vf"]
-            and sew == 64
-        ):
-            mapped.remove(zve_ext)
-            mapped.append("V")
+        # those with EEW=64 floating-point operands. Both cases are already handled: the floating-point permutes are
+        # in Vf, and Vf64 requires Zve64d, which includes the EEW=64 floating-point permutes.
 
     if "Zve32x" in mapped and instr_name.startswith(("vw", "vn")) and sew == 32:
         # Zve32x allows for an ELEN of 32, so a widening instruction at sew = 32 would widen to an eew of 64, which
