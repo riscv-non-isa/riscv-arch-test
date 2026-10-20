@@ -19,11 +19,10 @@ COVERGROUP = "SmnpmUSm_cg"
 
 @add_priv_test_generator(
     "SmnpmUSm",
-    required_extensions=["Smnpm", "U"],
+    required_extensions=["Smnpm"],
     forbidden_extensions=["S"],
     march_extensions=["I", "A", "F", "D", "V", "Zabha", "Zacas", "Zicbom", "Zicbop", "Zicboz"],
     extra_defines=["#define BOOT_TO_MMODE"],
-    params=["MXLEN: 64"],
 )
 def make_smnpmusm(test_data: TestData) -> list[TestChunk]:
     """M-mode half of SmnpmU: MPRV=1 with MPP=U on a hart without S-mode.

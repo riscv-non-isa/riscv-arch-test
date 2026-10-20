@@ -22,7 +22,6 @@ COVERGROUP = "SmnpmSSm_cg"
     required_extensions=["Smnpm", "S"],
     march_extensions=["I", "A", "F", "D", "V", "Zabha", "Zacas", "Zicbom", "Zicbop", "Zicboz"],
     extra_defines=["#define BOOT_TO_MMODE"],
-    params=["MXLEN: 64"],
 )
 def make_smnpmssm(test_data: TestData) -> list[TestChunk]:
     """M-mode half of SmnpmS: MPRV=1 with MPP=S.

@@ -67,7 +67,6 @@ def _smnpms_sweep(test_data: TestData, pmm: int) -> list[TestChunk]:
     required_extensions=["Smnpm", "S"],
     march_extensions=["I", "A", "F", "D", "V", "Zabha", "Zacas", "Zicbom", "Zicbop", "Zicboz", "Zicfiss"],
     extra_defines=["#define BOOT_TO_SMODE"],
-    params=["MXLEN: 64"],
 )
 def make_smnpms_pmm00(test_data: TestData) -> list[TestChunk]:
     return _smnpms_sweep(test_data, 0b00)
@@ -78,7 +77,7 @@ def make_smnpms_pmm00(test_data: TestData) -> list[TestChunk]:
     required_extensions=["Smnpm", "S"],
     march_extensions=["I", "A", "F", "D", "V", "Zabha", "Zacas", "Zicbom", "Zicbop", "Zicboz", "Zicfiss"],
     extra_defines=["#define BOOT_TO_SMODE"],
-    params=["MXLEN: 64", "SUPPORTED_PMLEN_SMNPM: 7"],
+    params=["SUPPORTED_PMLEN_SMNPM: 7"],
 )
 def make_smnpms_pmm10(test_data: TestData) -> list[TestChunk]:
     return _smnpms_sweep(test_data, 0b10)
@@ -89,7 +88,7 @@ def make_smnpms_pmm10(test_data: TestData) -> list[TestChunk]:
     required_extensions=["Smnpm", "S"],
     march_extensions=["I", "A", "F", "D", "V", "Zabha", "Zacas", "Zicbom", "Zicbop", "Zicboz", "Zicfiss"],
     extra_defines=["#define BOOT_TO_SMODE"],
-    params=["MXLEN: 64", "SUPPORTED_PMLEN_SMNPM: 16"],
+    params=["SUPPORTED_PMLEN_SMNPM: 16"],
 )
 def make_smnpms_pmm11(test_data: TestData) -> list[TestChunk]:
     return _smnpms_sweep(test_data, 0b11)
