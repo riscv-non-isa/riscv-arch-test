@@ -708,15 +708,19 @@ SstcH_hs_cg_cp_vstimecmp_int_hideleg0_soon:
   RVTEST_SET_VSSTC_INT_SOON_S
   LA(x15, rvtest_trap_count)
   LREG x15, 0(x15)
-  LI(x14, RVTEST_TIMER_INT_SOON_DELAY_CYCLES)
+  LA(x14, RVMODEL_TIMER_INT_SOON_DELAY)
+  slli x14, x14, 1
   LA(x8, RVMODEL_INTERRUPT_LATENCY)
   add x14, x14, x8
+  csrr x8, time
+  add x14, x14, x8    # deadline = time + 2 * delay + latency
 1:
   LA(x8, rvtest_trap_count)
   LREG x8, 0(x8)
   bne x8, x15, 2f    # interrupt taken
-  addi x14, x14, -1
-  bnez x14, 1b
+  csrr x8, time
+  sub x8, x8, x14
+  bltz x8, 1b    # deadline not reached
 2:
   csrci sstatus, SSTATUS_SIE
   RVTEST_CLR_VSSTC_INT_S
@@ -739,15 +743,19 @@ SstcH_hs_cg_cp_vstimecmp_int_hideleg1_soon:
   RVTEST_TSBI_GOTO_VSMODE
   LA(x14, rvtest_trap_count)
   LREG x14, 0(x14)
-  LI(x13, RVTEST_TIMER_INT_SOON_DELAY_CYCLES)
+  LA(x13, RVMODEL_TIMER_INT_SOON_DELAY)
+  slli x13, x13, 1
   LA(x8, RVMODEL_INTERRUPT_LATENCY)
   add x13, x13, x8
+  csrr x8, time
+  add x13, x13, x8    # deadline = time + 2 * delay + latency
 1:
   LA(x8, rvtest_trap_count)
   LREG x8, 0(x8)
   bne x8, x14, 2f    # interrupt taken
-  addi x13, x13, -1
-  bnez x13, 1b
+  csrr x8, time
+  sub x8, x8, x13
+  bltz x8, 1b    # deadline not reached
 2:
   RVTEST_TSBI_GOTO_SMODE
   RVTEST_CLR_VSSTC_INT_S

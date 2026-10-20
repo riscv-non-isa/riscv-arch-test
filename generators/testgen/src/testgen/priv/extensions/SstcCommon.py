@@ -98,25 +98,35 @@ def access_cross(test_data: TestData, coverpoint: str, covergroup: str, mode: st
 def wait_for_trap(test_data: TestData) -> list[str]:
     """Wait until the trap handler has counted another trap, such as a timer interrupt armed to fire soon.
 
-    The wait gives up after RVTEST_TIMER_INT_SOON_DELAY_CYCLES + RVMODEL_INTERRUPT_LATENCY iterations, each at
-    least one cycle, so a missing interrupt shows up as a trap signature mismatch instead of a hang.
+    The wait ends at a deadline on the timer, so a missing interrupt shows up as a trap signature mismatch instead
+    of a hang.  The arm macro read time before this wait does, so the compare value is at most
+    RVMODEL_TIMER_INT_SOON_DELAY ticks past the time read here.  The deadline allows that, plus RVMODEL_INTERRUPT_LATENCY ticks (no fewer than
+    its cycles, since the timer ticks no faster than the hart's clock), plus another RVMODEL_TIMER_INT_SOON_DELAY
+    of slack so the deadline never decides a passing run.  Time must be readable in the waiting mode: the callers
+    wait in HS-mode or VS-mode with mcounteren.TM = hcounteren.TM = 1.  The loop compares time with the deadline
+    by the sign of their difference, so htimedelta does not matter, a wrap is harmless, and the low word of time
+    is enough on RV32.
     """
-    count_reg, bound_reg, tmp_reg = test_data.int_regs.get_registers(3)
+    count_reg, deadline_reg, tmp_reg = test_data.int_regs.get_registers(3)
     lines = [
         f"LA(x{count_reg}, rvtest_trap_count)",
         f"LREG x{count_reg}, 0(x{count_reg})",
-        f"LI(x{bound_reg}, RVTEST_TIMER_INT_SOON_DELAY_CYCLES)",
+        f"LA(x{deadline_reg}, RVMODEL_TIMER_INT_SOON_DELAY)",
+        f"slli x{deadline_reg}, x{deadline_reg}, 1",
         f"LA(x{tmp_reg}, RVMODEL_INTERRUPT_LATENCY)",
-        f"add x{bound_reg}, x{bound_reg}, x{tmp_reg}",
+        f"add x{deadline_reg}, x{deadline_reg}, x{tmp_reg}",
+        f"csrr x{tmp_reg}, time",
+        f"add x{deadline_reg}, x{deadline_reg}, x{tmp_reg}    # deadline = time + 2 * delay + latency",
         "1:",
         f"LA(x{tmp_reg}, rvtest_trap_count)",
         f"LREG x{tmp_reg}, 0(x{tmp_reg})",
         f"bne x{tmp_reg}, x{count_reg}, 2f    # interrupt taken",
-        f"addi x{bound_reg}, x{bound_reg}, -1",
-        f"bnez x{bound_reg}, 1b",
+        f"csrr x{tmp_reg}, time",
+        f"sub x{tmp_reg}, x{tmp_reg}, x{deadline_reg}",
+        f"bltz x{tmp_reg}, 1b    # deadline not reached",
         "2:",
     ]
-    test_data.int_regs.return_registers([count_reg, bound_reg, tmp_reg])
+    test_data.int_regs.return_registers([count_reg, deadline_reg, tmp_reg])
     return lines
 
 
