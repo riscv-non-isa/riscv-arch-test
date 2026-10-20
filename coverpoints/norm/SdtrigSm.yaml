@@ -270,7 +270,11 @@ normative_rule_definitions:
   # including any high bits. An implementation may be able to optimize the storage
   # required, depending on the widest addresses it supports.
   - name: Sdtrig_tdata2_addr_sz1
-    coverpoint: ["SdtrigSm_address_matches_cg/cp_tdata2_translate"]
+    coverpoint:
+      [
+        "SdtrigSm_address_matches_cg/cp_tdata2_translate",
+        "SdtrigS_address_matches_cg/cp_tdata2_translate",
+      ]
 
   # If physical addresses are less than XLEN bits wide, they are zero-extended.
   - name: Sdtrig_pmem
@@ -282,6 +286,8 @@ normative_rule_definitions:
       [
         "SdtrigSm_address_matches_cg/cp_tdata2_translate",
         "SdtrigSm_address_matches_cg/cp_tdata2_translate_exec",
+        "SdtrigS_address_matches_cg/cp_tdata2_translate",
+        "SdtrigS_address_matches_cg/cp_tdata2_translate_exec",
       ]
 
   # tdata2 must be implemented with enough bits of storage to represent the full
@@ -292,6 +298,8 @@ normative_rule_definitions:
       [
         "SdtrigSm_address_matches_cg/cp_tdata2_translate",
         "SdtrigSm_address_matches_cg/cp_tdata2_translate_exec",
+        "SdtrigS_address_matches_cg/cp_tdata2_translate",
+        "SdtrigS_address_matches_cg/cp_tdata2_translate_exec",
       ]
 
   # If tdata2 can hold any invalid addresses, then writes of an invalid address that
@@ -353,8 +361,8 @@ normative_rule_definitions:
       [
         "SdtrigSm_trig_module_reg_cg/cp_csr_access_global",
         "SdtrigSm_trig_module_reg_cg/cp_csr_access_local",
-        "SdtrigS_cg/cp_csr_access_trap_s",
-        "SdtrigU_cg/cp_csr_access_trap_u",
+        "SdtrigS_access_cg/cp_csr_access_trap_s",
+        "SdtrigU_access_cg/cp_csr_access_trap_u",
         "From S and U, cp_csr_insufficient_priv of the S and U suites also reads every M-mode CSR (0x7A0-0x7A9 included) and expects an illegal instruction",
       ]
 
@@ -525,8 +533,8 @@ normative_rule_definitions:
     coverpoint:
       [
         "SdtrigSm_access_cg/cp_csr_access_common",
-        "SdtrigS_cg/cp_csr_access_trap_s",
-        "SdtrigU_cg/cp_csr_access_trap_u",
+        "SdtrigS_access_cg/cp_csr_access_trap_s",
+        "SdtrigU_access_cg/cp_csr_access_trap_u",
         "The tcontrol accesses and bins need UDB_TCONTROL_AVAILABLE (TCONTROL_IMPLEMENTED, riscv-unified-db#2069); from S and U, cp_csr_insufficient_priv of the S and U suites also reads tcontrol (0x7A5) and expects an illegal instruction",
       ]
 
@@ -611,8 +619,8 @@ normative_rule_definitions:
     coverpoint:
       [
         "SdtrigSm_trig_module_reg_cg/cp_csr_access_global",
-        "SdtrigS_cg/cp_csr_access_trap_s",
-        "SdtrigU_cg/cp_csr_access_trap_u",
+        "SdtrigS_access_cg/cp_csr_access_trap_s",
+        "SdtrigU_access_cg/cp_csr_access_trap_u",
         "From S and U, cp_csr_insufficient_priv of the S and U suites also reads mcontext (0x7A8) and expects an illegal instruction",
       ]
 
@@ -1201,9 +1209,11 @@ normative_rule_definitions:
   - name: Sdtrig_mcontrol6_s
     coverpoint:
       [
-        "SdtrigS_cg/cp_mcontrol6_priv_bits_s",
+        "SdtrigS_mcontrol6_cg/cp_mcontrol6_priv_bits_s",
         "SdtrigS_cg/cp_breakpoint_s",
         "SdtrigSm_trig_module_reg_cg/cp_tdata1_mode_hardwired",
+        "SdtrigS_mcontrol6_cg/cp_mcontrol6_execute_adr",
+        "SdtrigS_mcontrol6_cg/cp_mcontrol6_load_store_adr",
       ]
 
   # When set, enable this trigger in U-mode. This bit is hard-wired to 0 if the hart
@@ -1211,9 +1221,11 @@ normative_rule_definitions:
   - name: Sdtrig_mcontrol6_u
     coverpoint:
       [
-        "SdtrigU_cg/cp_mcontrol6_priv_bits_u",
+        "SdtrigU_mcontrol6_cg/cp_mcontrol6_priv_bits_u",
         "SdtrigU_cg/cp_breakpoint_u",
         "SdtrigSm_trig_module_reg_cg/cp_tdata1_mode_hardwired",
+        "SdtrigU_mcontrol6_cg/cp_mcontrol6_execute_adr",
+        "SdtrigU_mcontrol6_cg/cp_mcontrol6_load_store_adr",
       ]
 
   # When set, the trigger fires on the virtual address or opcode of an instruction
@@ -1418,6 +1430,8 @@ normative_rule_definitions:
     coverpoint:
       [
         "SdtrigS_cg/cp_breakpoint_s",
+        "SdtrigS_icount_cg/cp_icount_instr",
+        "SdtrigS_icount_cg/cp_icount_instr_fire",
         "No case with only the other modes' bits set yet",
       ]
 
@@ -1427,6 +1441,8 @@ normative_rule_definitions:
     coverpoint:
       [
         "SdtrigU_cg/cp_breakpoint_u",
+        "SdtrigU_icount_cg/cp_icount_instr",
+        "SdtrigU_icount_cg/cp_icount_instr_fire",
         "No case with only the other modes' bits set yet",
       ]
 
@@ -1543,6 +1559,8 @@ normative_rule_definitions:
       [
         "SdtrigSm_itrigger_cg/cp_itrigger_s",
         "SdtrigSm_itrigger_cg/cp_itrigger_s_other",
+        "SdtrigS_itrigger_cg/cp_itrigger_s",
+        "SdtrigS_itrigger_cg/cp_itrigger_s_other",
       ]
 
   # When set, enable this trigger for interrupts that are taken from U mode. This
@@ -1552,6 +1570,8 @@ normative_rule_definitions:
       [
         "SdtrigSm_itrigger_cg/cp_itrigger_u",
         "SdtrigSm_itrigger_cg/cp_itrigger_u_other",
+        "SdtrigU_itrigger_cg/cp_itrigger_u",
+        "SdtrigU_itrigger_cg/cp_itrigger_u_other",
       ]
 
   # This register provides access to the trigger selected by tselect.
@@ -1648,6 +1668,8 @@ normative_rule_definitions:
         "SdtrigSm_etrigger_cg/cp_etrigger_s",
         "SdtrigSm_etrigger_cg/cp_etrigger_s_deleg",
         "SdtrigSm_etrigger_cg/cp_etrigger_s_other",
+        "SdtrigS_etrigger_cg/cp_etrigger_s",
+        "SdtrigS_etrigger_cg/cp_etrigger_s_other",
       ]
 
   # When set, enable this trigger for exceptions that are taken from U mode. This
@@ -1658,6 +1680,8 @@ normative_rule_definitions:
         "SdtrigSm_etrigger_cg/cp_etrigger_u",
         "SdtrigSm_etrigger_cg/cp_etrigger_u_deleg",
         "SdtrigSm_etrigger_cg/cp_etrigger_u_other",
+        "SdtrigU_etrigger_cg/cp_etrigger_u",
+        "SdtrigU_etrigger_cg/cp_etrigger_u_other",
       ]
 
   # This register provides access to the trigger selected by tselect.
@@ -1779,6 +1803,7 @@ normative_rule_definitions:
       [
         "SdtrigSm_textra_cg/cp_textra_scontext",
         "SdtrigSm_textra_cg/cp_textra_asid_sbytemask",
+        "SdtrigS_textra_cg/cp_textra_asid_sbytemask",
       ]
 
   # Note that sselect and mhselect filtering apply in all modes, including M-mode
@@ -1788,6 +1813,10 @@ normative_rule_definitions:
       [
         "SdtrigSm_textra_cg/cp_textra_mcontext",
         "SdtrigSm_textra_cg/cp_textra_scontext",
+        "SdtrigS_textra_cg/cp_textra_mcontext",
+        "SdtrigS_textra_cg/cp_textra_scontext",
+        "SdtrigU_textra_cg/cp_textra_mcontext",
+        "SdtrigU_textra_cg/cp_textra_scontext",
       ]
 
   # Ignore mhvalue.
@@ -1853,7 +1882,8 @@ normative_rule_definitions:
 
   # This trigger will only match or fire if:
   - name: Sdtrig_textra32_sselect_asid1
-    coverpoint: ["SdtrigSm_textra_cg/cp_textra_asid"]
+    coverpoint:
+      ["SdtrigSm_textra_cg/cp_textra_asid", "SdtrigS_textra_cg/cp_textra_asid"]
   # the mode is VS-mode or VU-mode and ASID in vsatp equals the lower ASIDMAX (defined in
   # the Privileged Spec) bits of {textra32-svalue}.
   - name: Sdtrig_textra32_sselect_asid2
@@ -1864,7 +1894,8 @@ normative_rule_definitions:
   # in all other modes, ASID in satp equals the lower ASIDMAX (defined in the Privileged
   # Spec) bits of {textra32-svalue}.
   - name: Sdtrig_textra32_sselect_asid3
-    coverpoint: ["SdtrigSm_textra_cg/cp_textra_asid"]
+    coverpoint:
+      ["SdtrigSm_textra_cg/cp_textra_asid", "SdtrigS_textra_cg/cp_textra_asid"]
 
   # This field should be tied to 0 when S-mode is not supported.
   - name: Sdtrig_textra32_sselect_no_s
@@ -1905,6 +1936,7 @@ normative_rule_definitions:
       [
         "SdtrigSm_textra_cg/cp_textra_scontext",
         "SdtrigSm_textra_cg/cp_textra_asid_sbytemask",
+        "SdtrigS_textra_cg/cp_textra_asid_sbytemask",
       ]
 
   # When the least significant bit of this field is 1, it causes bits 7:0 in the

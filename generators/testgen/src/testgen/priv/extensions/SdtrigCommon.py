@@ -2444,9 +2444,7 @@ def _generate_mcontrol6_tests(test_data: TestData, mode: str) -> list[TestChunk]
     # the trigger enabled in no mode: no fire either way, so this case needs no guard.
     others = (MODE_PRIVBIT["Sm"] | MODE_PRIVBIT["S"] | MODE_PRIVBIT["U"]) & ~MODE_PRIVBIT[mode]
     # in SdtrigS/U these cases fill cp_mcontrol6_priv_bits_s/u
-    label_cg, label_cp = (
-        (covergroup, coverpoint) if mode == "Sm" else (f"Sdtrig{mode}_cg", f"cp_mcontrol6_priv_bits_{mode.lower()}")
-    )
+    label_cp = coverpoint if mode == "Sm" else f"cp_mcontrol6_priv_bits_{mode.lower()}"
     for trig_num in range(UDB_NUM_TRIGGERS):
         lines.append(f"\n#ifdef UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
         lines.extend(_xsl_ifdefs(0b010))
@@ -2457,7 +2455,7 @@ def _generate_mcontrol6_tests(test_data: TestData, mode: str) -> list[TestChunk]
             binname = f"trig_num_{trig_num}_priv_{priv:05b}"
             lines.extend(
                 [
-                    _add_tc(test_data, binname, label_cp, label_cg),
+                    _add_tc(test_data, binname, label_cp, covergroup),
                     *_config_mcontrol6(temp_reg, trig_num, "scratch", mode, privbits=priv, xsl=0b010, select=0),
                     f"LA(x{addr_reg}, scratch)",
                     f"LI(x{data_reg}, {random_int(32, signed=False)})",
@@ -2470,7 +2468,7 @@ def _generate_mcontrol6_tests(test_data: TestData, mode: str) -> list[TestChunk]
         # fixed data so that the random values of the later sections stay as they were
         lines.extend(
             [
-                _add_tc(test_data, f"trig_num_{trig_num}_priv_{others:05b}", label_cp, label_cg),
+                _add_tc(test_data, f"trig_num_{trig_num}_priv_{others:05b}", label_cp, covergroup),
                 *_config_mcontrol6(temp_reg, trig_num, "scratch", mode, privbits=others, xsl=0b010, select=0),
                 f"LA(x{addr_reg}, scratch)",
                 f"LI(x{data_reg}, 0x5A5A5A5A)",
