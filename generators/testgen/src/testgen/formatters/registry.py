@@ -53,6 +53,7 @@ class VectorTypeConfig:
         random_element_generator: Add custom random element generation (used in unordered operations)
         egs: Element group size (used in vector crypto instructions)
         index_register: Register used to store index variables (e.g. vs1 for vrgatherei16)
+        require_zero_vstart: Nonzero vstart will trap with an illegal instruction exception
     """
 
     overlap_constraints: set[tuple[str, str]] = field(default_factory=set)
@@ -63,6 +64,7 @@ class VectorTypeConfig:
     random_element_generator: Callable[[int, int, str], list[int]] | None = None
     egs: int = 1
     index_register: str | None = None
+    require_zero_vstart: bool = False
 
 
 @dataclass
