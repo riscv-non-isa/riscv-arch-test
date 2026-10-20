@@ -1310,8 +1310,8 @@ common_\__MODE__\()handler:                      // entered with T6 = vector add
 //
 // The jr T5 above is an indirect jump through a register other than x1/x5/x7,
 // so when Zicfilp is enabled in this mode it sets ELP=LP_EXPECTED. The entry
-// therefore starts with a 4-byte-aligned lpad 0 (auipc x0, 0), which is a HINT
-// that executes as a no-op when Zicfilp is not implemented or not enabled.
+// therefore starts with a 4-byte-aligned lpad 0 (auipc x0, 0), which is a
+// no-op when Zicfilp is not implemented or not enabled.
 
         .p2align 2                               // landing pad must be 4-byte aligned
 common_\__MODE__\()entry:                       // common entry for all traps in this mode
