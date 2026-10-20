@@ -33,7 +33,7 @@ RVTEST_BEGIN
 // cp_cntr
 /////////////////////////////////
 
-#if !defined(U_SUPPORTED) || (defined(UDB_MCOUNTENABLE_EN_0) && (!defined(S_SUPPORTED) || defined(UDB_SCOUNTENABLE_EN_0)))
+#if (!defined(U_SUPPORTED) || (defined(UDB_MCOUNTENABLE_EN_0) && (!defined(S_SUPPORTED) || defined(UDB_SCOUNTENABLE_EN_0))))
 
 # Testcase: cp_cntr (cycle)
 # Read two consecutive times to check if counter increments
@@ -54,7 +54,7 @@ Zicntr_csrrs_cg_cp_cntr_cycle:
 
 #endif
 
-#if !defined(U_SUPPORTED) || (defined(UDB_MCOUNTENABLE_EN_1) && (!defined(S_SUPPORTED) || defined(UDB_SCOUNTENABLE_EN_1)))
+#if (!defined(U_SUPPORTED) || (defined(UDB_MCOUNTENABLE_EN_1) && (!defined(S_SUPPORTED) || defined(UDB_SCOUNTENABLE_EN_1))))
 
 # Testcase: cp_cntr (time)
 # Loop until time increments, or fail if it does not
@@ -73,7 +73,7 @@ Zicntr_csrrs_cg_cp_cntr_time:
 
 #endif
 
-#if !defined(U_SUPPORTED) || (defined(UDB_MCOUNTENABLE_EN_2) && (!defined(S_SUPPORTED) || defined(UDB_SCOUNTENABLE_EN_2)))
+#if (!defined(U_SUPPORTED) || (defined(UDB_MCOUNTENABLE_EN_2) && (!defined(S_SUPPORTED) || defined(UDB_SCOUNTENABLE_EN_2))))
 
 # Testcase: cp_cntr (instret)
 # Read two consecutive times to check if counter increments
@@ -95,7 +95,7 @@ Zicntr_csrrs_cg_cp_cntr_instret:
 
 #if __riscv_xlen == 32
 
-#if !defined(U_SUPPORTED) || (defined(UDB_MCOUNTENABLE_EN_0) && (!defined(S_SUPPORTED) || defined(UDB_SCOUNTENABLE_EN_0)))
+#if (!defined(U_SUPPORTED) || (defined(UDB_MCOUNTENABLE_EN_0) && (!defined(S_SUPPORTED) || defined(UDB_SCOUNTENABLE_EN_0))))
 
 # Testcase: cp_cntr (cycleh)
 # Read two consecutive times to check if counter increments
@@ -115,7 +115,7 @@ Zicntr_csrrs_cg_cp_cntr_cycleh:
 
 #endif
 
-#if !defined(U_SUPPORTED) || (defined(UDB_MCOUNTENABLE_EN_1) && (!defined(S_SUPPORTED) || defined(UDB_SCOUNTENABLE_EN_1)))
+#if (!defined(U_SUPPORTED) || (defined(UDB_MCOUNTENABLE_EN_1) && (!defined(S_SUPPORTED) || defined(UDB_SCOUNTENABLE_EN_1))))
 
 # Testcase: cp_cntr (timeh)
 # Read two consecutive times to check if counter increments
@@ -135,7 +135,7 @@ Zicntr_csrrs_cg_cp_cntr_timeh:
 
 #endif
 
-#if !defined(U_SUPPORTED) || (defined(UDB_MCOUNTENABLE_EN_2) && (!defined(S_SUPPORTED) || defined(UDB_SCOUNTENABLE_EN_2)))
+#if (!defined(U_SUPPORTED) || (defined(UDB_MCOUNTENABLE_EN_2) && (!defined(S_SUPPORTED) || defined(UDB_SCOUNTENABLE_EN_2))))
 
 # Testcase: cp_cntr (instreth)
 # Read two consecutive times to check if counter increments

@@ -180,17 +180,12 @@
         "load_store": { "None": null },
         // SCHEMA-REQUIRED: no V extension.
         "vector": { "None": null },
-        // A misaligned LR.W raises a load access fault (code 5) and a misaligned SC.W or AMO
-        // raises a store/AMO access fault (code 7): the RTL maps the atomic alignment-check
-        // error to the access-fault causes.
-        //   https://github.com/openhwfoundation/cv32e40x/blob/d952cd63bc1b4eb58cd893c28ef8283c781e345e/rtl/cv32e40x_controller_fsm.sv#L356-L357
-        // The ISA allows either an address-misaligned or an access-fault exception
-        // (norm:lr_sc_alignment, norm:amo_alignment). The User Manual documents codes 4/6
-        // instead; that mismatch is https://github.com/openhwfoundation/cv32e40x/issues/1000.
-        // The testbench leaves PMA_NUM_REGIONS=0, so all memory supports atomics and no PMA
-        // atomic-support fault is involved.
-        "lrsc": { "Some": "AccessFault" },
-        "amo": { "Some": "AccessFault" }
+        // LR.W/SC.W with non-naturally aligned address raises address misaligned exception
+        // (User Manual, Exceptions and Interrupts: exception codes 4/6).
+        // Access fault takes priority if the region has no atomic support (PMA).
+        "lrsc": { "Some": "AlignmentException" },
+        // Misaligned AMO raises store/AMO address misaligned (code 6).
+        "amo": { "Some": "AlignmentException" }
       },
       "default_allowed_within_exp": 0,
       "byte_by_byte": false,
