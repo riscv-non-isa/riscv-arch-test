@@ -5,6 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 ##################################
 
+from testgen.asm.helpers import write_sigupd
 from testgen.asm.vector_helpers import (
     VectorLoad,
     compute_egs_vlen,
@@ -15,7 +16,6 @@ from testgen.asm.vector_helpers import (
     prep_mask_v,
     write_sigupd_v,
     write_sigupd_v_len,
-    write_sigupd_vxsat,
 )
 from testgen.data.params import InstructionParams
 from testgen.data.state import TestData
@@ -121,7 +121,7 @@ def format_vvi_sat(
 ) -> tuple[list[str], list[str], list[str]]:
     setup, test, check = format_vvi_like_type(instr_str, test_data, params, "VVI_SAT")
     setup = ["csrwi vxsat, 0"] + setup
-    check = write_sigupd_vxsat(test_data) + check
+    check = [write_sigupd(None, test_data, "vxsat")] + check
     return setup, test, check
 
 
