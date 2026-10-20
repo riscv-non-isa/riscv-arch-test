@@ -358,6 +358,14 @@ covergroup S_F_cg with function sample(ins_t ins);
     `include "general/RISCV_coverage_priv_f_coverpoints.svh"
 
     sstatus_FS: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "sstatus", "fs")[1:0] {
+        bins off     = {2'b00};
+        `ifdef UDB_MSTATUS_FS_LEGAL_VALUES_1
+            bins initial_state = {2'b01};
+        `endif
+        `ifdef UDB_MSTATUS_FS_LEGAL_VALUES_2
+            bins clean   = {2'b10};
+        `endif
+        bins dirty   = {2'b11};
     }
     sstatus_FS_off_dirty: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "sstatus", "fs")[1:0] {
         bins off     = {2'b00};
@@ -414,20 +422,14 @@ covergroup S_V_cg with function sample(ins_t ins);
     //////////////////////////////////////////////////////////////////////////////////
 
     // Only with an Initial or Clean VS state (MSTATUS_VS_LEGAL_VALUES includes 1 or 2)
-    `ifdef UDB_MSTATUS_VS_LEGAL_VALUES_1
+    `ifdef MSTATUS_VS_INITIAL_OR_CLEAN
         sstatus_vs_initial_clean : coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "sstatus", "vs") {
-            bins first = {1};
+            `ifdef UDB_MSTATUS_VS_LEGAL_VALUES_1
+                bins first = {1};
+            `endif
             `ifdef UDB_MSTATUS_VS_LEGAL_VALUES_2
                 bins clean  = {2};
             `endif
-        }
-
-        cp_sstatus_vs_set_dirty_arithmetic  : cross priv_mode_s, std_vec,        vector_vector_arithmetic_instruction,   sstatus_vs_initial_clean;
-        cp_sstatus_vs_set_dirty_csr         : cross priv_mode_s, std_vec,        vsetvli_instruction,                    sstatus_vs_initial_clean;
-        cp_sstatus_vs_set_dirty_vcsr        : cross priv_mode_s, vcsrs_writable, csrops,                                 sstatus_vs_initial_clean;
-    `elsif UDB_MSTATUS_VS_LEGAL_VALUES_2
-        sstatus_vs_initial_clean : coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "sstatus", "vs") {
-            bins clean  = {2};
         }
 
         cp_sstatus_vs_set_dirty_arithmetic  : cross priv_mode_s, std_vec,        vector_vector_arithmetic_instruction,   sstatus_vs_initial_clean;
@@ -465,18 +467,26 @@ covergroup S_VF_cg with function sample(ins_t ins);
         bins true = {1'b1};
     }
 
-    sstatus_fs_initial_clean : coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "sstatus", "fs") {
-        bins first_state = {1};
-        bins clean  = {2};
-    }
-
     sstatus_fs_off : coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "sstatus", "fs") {
         bins off = {0};
     }
 
-    cp_vectorfp_sstatus_fs_state_affecting_register : cross priv_mode_s, std_vec, vfmv_f_s, sstatus_fs_initial_clean;
-    cp_vectorfp_sstatus_fs_state_affecting_csr      : cross priv_mode_s, std_vec, vector_vector_arithmetic_fp_instruction, sstatus_fs_initial_clean, fflags_modified_after_clear;
-    cp_vectorfp_sstatus_fs_state_nonaffecting       : cross priv_mode_s, std_vec, vector_vector_arithmetic_fp_instruction, sstatus_fs_initial_clean, vs1_zero, vs2_zero;
+    // Only with an Initial or Clean FS state (MSTATUS_FS_LEGAL_VALUES includes 1 or 2)
+    `ifdef MSTATUS_FS_INITIAL_OR_CLEAN
+        sstatus_fs_initial_clean : coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "sstatus", "fs") {
+            `ifdef UDB_MSTATUS_FS_LEGAL_VALUES_1
+                bins first_state = {1};
+            `endif
+            `ifdef UDB_MSTATUS_FS_LEGAL_VALUES_2
+                bins clean  = {2};
+            `endif
+        }
+
+        cp_vectorfp_sstatus_fs_state_affecting_register : cross priv_mode_s, std_vec, vfmv_f_s, sstatus_fs_initial_clean;
+        cp_vectorfp_sstatus_fs_state_affecting_csr      : cross priv_mode_s, std_vec, vector_vector_arithmetic_fp_instruction, sstatus_fs_initial_clean, fflags_modified_after_clear;
+        cp_vectorfp_sstatus_fs_state_nonaffecting       : cross priv_mode_s, std_vec, vector_vector_arithmetic_fp_instruction, sstatus_fs_initial_clean, vs1_zero, vs2_zero;
+    `endif
+
     cp_vectorfp_sstatus_fs_off                      : cross priv_mode_s, std_trap_vec, vector_vector_arithmetic_fp_instruction, sstatus_fs_off, vs1_zero, vs2_zero;
 
 endgroup

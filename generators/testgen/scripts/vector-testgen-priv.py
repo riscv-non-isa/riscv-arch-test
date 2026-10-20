@@ -211,9 +211,6 @@ def make_vstart(instruction, maxlmul = 8):
             lmul = 1
         else:
             lmul = 2 ** randint(1, int(math.log2(maxlmul))) # pick random integer LMUL to ensure that coverpoints are hit
-            if vstartval != "one":
-                # Largest VLMAX, so VLMAX-1, VLMAX/2 and the random vstart stay distinct from 1 and each other
-                lmul = maxlmul
 
         # We can't use masks because sigupd runs a base suite check
         # maskval = randomizeMask(instruction)
