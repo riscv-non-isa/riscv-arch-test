@@ -71,7 +71,9 @@ normative_rule_definitions:
   # Send a signal to TM external trigger output 0 or 1 (respectively).
   - name: Sdtrig_action8_9
     coverpoint:
-      ["Requires tmexttrigger external trigger inputs; implementation specific"]
+      [
+        "Actions 8 and 9 drive TM external trigger outputs, which a test cannot observe",
+      ]
 
   # Reserved for future use.
   - name: Sdtrig_action_rsv
@@ -101,7 +103,10 @@ normative_rule_definitions:
   # If more than one of these triggers has action=0 then tval is updated in
   # accordance with one of them, but which one is UNSPECIFIED.
   - name: Sdtrig_tval
-    coverpoint: ["Trigger priority not tested; triggers assumed imprecise"]
+    coverpoint:
+      [
+        "Which of several firing action=0 triggers sets tval is UNSPECIFIED; not tested",
+      ]
 
   # If one of these triggers has the "enter Debug Mode" action (1) and another
   # trigger has the "raise a breakpoint exception" action (0), the preferred
@@ -110,23 +115,29 @@ normative_rule_definitions:
   # external debugger doesn't affect execution and that a trigger set by user code
   # doesn't affect the external debugger.
   - name: Sdtrig_debug_breakpoint
-    coverpoint: ["Trigger priority not tested; triggers assumed imprecise"]
+    coverpoint:
+      ["Needs action=1 (enter Debug Mode), which requires Sdext; not tested"]
 
   # If this is not implemented, then the hart must enter Debug Mode and ignore the
   # breakpoint exception.
   - name: Sdtrig_simul_debug_breakpoint_fallback
-    coverpoint: ["Trigger priority not tested; triggers assumed imprecise"]
+    coverpoint:
+      ["Needs action=1 (enter Debug Mode), which requires Sdext; not tested"]
 
   # In the latter case, hit of the trigger whose action is 0 must still be set,
   # giving a debugger an opportunity to handle this case.
   - name: Sdtrig_hit_set_on_action0
-    coverpoint: ["Trigger priority not tested; triggers assumed imprecise"]
+    coverpoint:
+      ["Needs action=1 (enter Debug Mode), which requires Sdext; not tested"]
 
   # Since triggers that have an action other than 0 or 1 don't affect the execution
   # of the hart, they are not mentioned in the priority table. Such triggers fire
   # independently from those that have an action of 0 or 1.
   - name: Sdtrig_independent_trigs
-    coverpoint: ["Trigger priority not tested; triggers assumed imprecise"]
+    coverpoint:
+      [
+        "Concerns triggers with action 2 or more (trace or external outputs), which a test cannot observe",
+      ]
 
   # That breakpoint exception can either be taken in M-mode or it can be delegated
   # to a less privileged mode. However, it is possible for triggers to fire in the
@@ -287,7 +298,7 @@ normative_rule_definitions:
   # can not be represented as-is should be converted to a different invalid address
   # that can be represented.
   - name: Sdtrig_csr_tdata2_invalid
-    coverpoint: ["WARL write-any-read-legal behavior not separately tested"]
+    coverpoint: ["Recommendation (should), not a requirement; not tested"]
 
   # An instruction that performs multiple architectural state changes (e.g.,
   # register updates and/or memory accesses) might cause a trigger to fire at an
@@ -393,7 +404,7 @@ normative_rule_definitions:
   # If this trigger supports multiple types, then the hardware should disable it by
   # changing type to 15.
   - name: Sdtrig_tdata1_multiple_types
-    coverpoint: ["WARL write-any-read-legal behavior not separately tested"]
+    coverpoint: ["Recommendation (should), not a requirement; not tested"]
 
   # This trigger is disabled. In this state, {csr-tdata2} and {csr-tdata3} can be written
   # with any value that is supported for any of the types this trigger implements. The
@@ -414,7 +425,7 @@ normative_rule_definitions:
 
   # Both Debug and M-mode can write the tdata registers at the selected tselect.
   - name: Sdtrig_tdata1_dmode_0
-    coverpoint: ["Requires Sdext external debug support; not implemented"]
+    coverpoint: ["SdtrigSm_access_cg/cp_csr_access_common"]
 
   # Only Debug Mode can write the tdata registers at the selected tselect. Writes
   # from other modes are ignored.
@@ -482,7 +493,7 @@ normative_rule_definitions:
 
   # Contains the version of the Sdtrig extension implemented.
   - name: Sdtrig_tinfo_version
-    coverpoint: ["Only ratified version 1.0 supported; version assumed"]
+    coverpoint: ["SdtrigSm_trig_module_reg_cg/cp_tselect_trigs"]
 
   # Supports triggers as described in this spec at commit 5a5c078, made on February
   # 2, 2023.
@@ -538,22 +549,25 @@ normative_rule_definitions:
     coverpoint:
       [
         "SdtrigSm_trig_module_reg_cg/cp_csr_unimplemented",
-        "Without H, hcontext is not implemented and raises an illegal instruction; behavior with H is deferred to an SdtrigH suite",
+        "Without H, hcontext is not implemented and raises an illegal instruction; behavior with H is deferred to the SdtrigH suite on the hypervisor branch",
       ]
 
   # This register is only accessible in HS-Mode, M-mode and Debug Mode.
   - name: Sdtrig_hcontext_access
-    coverpoint: ["Hypervisor extension not implemented, so not testable"]
+    coverpoint:
+      ["Needs H; deferred to the SdtrigH suite on the hypervisor branch"]
 
   # If Smstateen is implemented, then accessibility of in HS-Mode is controlled by
   # mstateenzero[57].
   - name: Sdtrig_hcontext_smstateen
-    coverpoint: ["Hypervisor extension not implemented, so not testable"]
+    coverpoint:
+      ["Needs H; deferred to the SdtrigH suite on the hypervisor branch"]
 
   # This register is an alias of the mcontext register, providing access to the
   # hcontext field from HS-Mode.
   - name: Sdtrig_hcontext
-    coverpoint: ["Hypervisor extension not implemented, so not testable"]
+    coverpoint:
+      ["Needs H; deferred to the SdtrigH suite on the hypervisor branch"]
 
   # This optional register is only accessible in S/HS-mode, VS-mode, M-mode and
   # Debug Mode.
@@ -562,7 +576,7 @@ normative_rule_definitions:
       [
         "SdtrigSm_trig_module_reg_cg/cp_csr_access_global",
         "Smstateen_cg/cp_context",
-        "From U, cp_csr_insufficient_priv of the U suite reads scontext (0x5A8) and expects an illegal instruction; VS-mode access is deferred to an SdtrigH suite",
+        "From U, cp_csr_insufficient_priv of the U suite reads scontext (0x5A8) and expects an illegal instruction; VS-mode access is deferred to the SdtrigH suite on the hypervisor branch",
       ]
 
   # Accessibility of this CSR is controlled by mstateenzero[57] and hstateenzero[57]
@@ -571,7 +585,7 @@ normative_rule_definitions:
     coverpoint:
       [
         "Smstateen_cg/cp_context",
-        "hstateen0 (VS-mode access) is deferred to an SdtrigH suite",
+        "hstateen0 (VS-mode access) is deferred to the SdtrigH suite on the hypervisor branch",
       ]
 
   # Supervisor mode software can write a context number to this register, which can
@@ -582,7 +596,8 @@ normative_rule_definitions:
   # This register must be implemented if hcontext is implemented, and is optional
   # otherwise.
   - name: Sdtrig_mcontext_implementation
-    coverpoint: ["Hypervisor extension not implemented, so not testable"]
+    coverpoint:
+      ["Needs H; deferred to the SdtrigH suite on the hypervisor branch"]
 
   # It is only accessible in M-mode and Debug mode.
   - name: Sdtrig_mcontext_access
@@ -923,7 +938,7 @@ normative_rule_definitions:
     coverpoint:
       [
         "SdtrigSm_trig_module_reg_cg/cp_tdata1_mode_hardwired",
-        "Firing in VS-mode is deferred to an SdtrigH suite",
+        "Firing in VS-mode is deferred to the SdtrigH suite on the hypervisor branch",
       ]
 
   # When set, enable this trigger in VU-mode. This bit is hard-wired to 0 if the
@@ -932,7 +947,7 @@ normative_rule_definitions:
     coverpoint:
       [
         "SdtrigSm_trig_module_reg_cg/cp_tdata1_mode_hardwired",
-        "Firing in VU-mode is deferred to an SdtrigH suite",
+        "Firing in VU-mode is deferred to the SdtrigH suite on the hypervisor branch",
       ]
 
   # If they are implemented, hit1 (MSB) and hit0 (LSB) combine into a single 2-bit
@@ -948,22 +963,34 @@ normative_rule_definitions:
   # xepc or dpc (depending on action) must be set to the virtual address of the
   # instruction that matched.
   - name: Sdtrig_mcontrol6_hit0_1
-    coverpoint: ["Optional WARL field (hit/uncertain bits); not tested"]
+    coverpoint:
+      [
+        "xEPC timing rule: the tests do not check xEPC on trigger breakpoints (SDTRIG_IMPRECISE_XEPC); not tested",
+      ]
 
   # xepc or dpc (depending on action) must be set to the virtual address of the next
   # instruction that must be executed to preserve the program flow.
   - name: Sdtrig_mcontrol6_hit0_2
-    coverpoint: ["Optional WARL field (hit/uncertain bits); not tested"]
+    coverpoint:
+      [
+        "xEPC timing rule: the tests do not check xEPC on trigger breakpoints (SDTRIG_IMPRECISE_XEPC); not tested",
+      ]
 
   # xepc or dpc (depending on action) must be set to the virtual address of the next
   # instruction that must be executed to preserve the program flow.
   - name: Sdtrig_mcontrol6_hit0_3
-    coverpoint: ["Optional WARL field (hit/uncertain bits); not tested"]
+    coverpoint:
+      [
+        "xEPC timing rule: the tests do not check xEPC on trigger breakpoints (SDTRIG_IMPRECISE_XEPC); not tested",
+      ]
 
   # If the instruction performed multiple memory accesses, all of them have been
   # completed.
   - name: Sdtrig_mcontrol6_hit0_multiple_accesses
-    coverpoint: ["Optional WARL field (hit/uncertain bits); not tested"]
+    coverpoint:
+      [
+        "Trigger timing (the instruction's accesses complete before the trap) is not observable from a test; not tested",
+      ]
 
   # There is at least one compare value and it contains the lowest virtual address
   # of the access.
@@ -1138,7 +1165,10 @@ normative_rule_definitions:
   # further reduced, and comparisons only look at the lower N bits of the compare
   # values and of tdata2.
   - name: Sdtrig_mcontrol6_comparisons
-    coverpoint: ["XLEN-dependent behavior not tested; single XLEN assumed"]
+    coverpoint:
+      [
+        "Compares at a narrower current-mode XLEN need a writable UXL/SXL, and the lower-N-bit compare for select=1 needs mcontrol6 size values (riscv-unified-db#2069); not tested",
+      ]
 
   # When set, enable this trigger in M-mode.
   - name: Sdtrig_mcontrol6_m
@@ -1336,12 +1366,14 @@ normative_rule_definitions:
   # When set, enable this trigger in VS-mode. This bit is hard-wired to 0 if the
   # hart does not support virtualization mode.
   - name: Sdtrig_icount_vs
-    coverpoint: ["Hypervisor extension not implemented, so not testable"]
+    coverpoint:
+      ["Needs H; deferred to the SdtrigH suite on the hypervisor branch"]
 
   # When set, enable this trigger in VU-mode. This bit is hard-wired to 0 if the
   # hart does not support virtualization mode.
   - name: Sdtrig_icount_vu
-    coverpoint: ["Hypervisor extension not implemented, so not testable"]
+    coverpoint:
+      ["Needs H; deferred to the SdtrigH suite on the hypervisor branch"]
 
   # If this bit is implemented, the hardware sets it when this trigger fires. The
   # trigger's user can set or clear it at any time. It is used to determine which
@@ -1416,7 +1448,10 @@ normative_rule_definitions:
 
   # In addition the trigger can be enabled for non-maskable interrupts using nmi.
   - name: Sdtrig_itrigger_enable_nmi
-    coverpoint: ["Non-maskable interrupts not defined by the specifications"]
+    coverpoint:
+      [
+        "A test cannot raise a non-maskable interrupt (NMIs come from outside the hart); not tested",
+      ]
 
   # If XLEN is 32, then it is not possible to set a trigger for interrupts with
   # Exception Code larger than 31.
@@ -1459,17 +1494,22 @@ normative_rule_definitions:
   # When set, enable this trigger for interrupts that are taken from VS mode. This
   # bit is hard-wired to 0 if the hart does not support virtualization mode.
   - name: Sdtrig_itrigger_vs
-    coverpoint: ["Hypervisor extension not implemented, so not testable"]
+    coverpoint:
+      ["Needs H; deferred to the SdtrigH suite on the hypervisor branch"]
 
   # When set, enable this trigger for interrupts that are taken from VU mode. This
   # bit is hard-wired to 0 if the hart does not support virtualization mode.
   - name: Sdtrig_itrigger_vu
-    coverpoint: ["Hypervisor extension not implemented, so not testable"]
+    coverpoint:
+      ["Needs H; deferred to the SdtrigH suite on the hypervisor branch"]
 
   # When set, non-maskable interrupts cause this trigger to fire if the trigger is
   # enabled for the current mode.
   - name: Sdtrig_itrigger_nmi
-    coverpoint: ["Non-maskable interrupts not defined by the specifications"]
+    coverpoint:
+      [
+        "A test cannot raise a non-maskable interrupt (NMIs come from outside the hart); not tested",
+      ]
 
   # When set, enable this trigger for interrupts that are taken from M mode.
   - name: Sdtrig_itrigger_m
@@ -1565,12 +1605,14 @@ normative_rule_definitions:
   # When set, enable this trigger for exceptions that are taken from VS mode. This
   # bit is hard-wired to 0 if the hart does not support virtualization mode.
   - name: Sdtrig_etrigger_vs
-    coverpoint: ["Hypervisor extension not implemented, so not testable"]
+    coverpoint:
+      ["Needs H; deferred to the SdtrigH suite on the hypervisor branch"]
 
   # When set, enable this trigger for exceptions that are taken from VU mode. This
   # bit is hard-wired to 0 if the hart does not support virtualization mode.
   - name: Sdtrig_etrigger_vu
-    coverpoint: ["Hypervisor extension not implemented, so not testable"]
+    coverpoint:
+      ["Needs H; deferred to the SdtrigH suite on the hypervisor branch"]
 
   # When set, enable this trigger for exceptions that are taken from M mode.
   - name: Sdtrig_etrigger_m
@@ -1703,7 +1745,10 @@ normative_rule_definitions:
   # defined in textra64. Writes to this register will clear the high bits of the
   # corresponding fields in textra64.
   - name: Sdtrig_textra32_dxlen64
-    coverpoint: ["Descriptive spec text with no separately testable behavior"]
+    coverpoint:
+      [
+        "Needs a narrower XLEN view of textra64 (mixed XLEN), which the tests do not switch to; not tested",
+      ]
 
   # Byte-granular comparison of scontext to svalue allows scontext to be defined to
   # include more than one element of comparison.
@@ -1739,13 +1784,15 @@ normative_rule_definitions:
   # 1, 5 (mcontext_select): This trigger will only match or fire if the low bits of
   # mcontext/hcontext equal {mhvalue, mhselect[2]}.
   - name: Sdtrig_textra32_mhselect_mctx_sel
-    coverpoint: ["Hypervisor extension not implemented, so not testable"]
+    coverpoint:
+      ["Needs H; deferred to the SdtrigH suite on the hypervisor branch"]
 
   # 2, 6 (vmid_select): This trigger will only match or fire if VMID in hgatp equals
   # the lower VMIDMAX (defined in the Privileged Spec) bits of {mhvalue,
   # mhselect[2]}.
   - name: Sdtrig_textra32_mhselect_vmid_sel
-    coverpoint: ["Hypervisor extension not implemented, so not testable"]
+    coverpoint:
+      ["Needs H; deferred to the SdtrigH suite on the hypervisor branch"]
 
   # 3, 7 (reserved): Reserved.
   - name: Sdtrig_textra32_mhselect_rsv
@@ -1789,7 +1836,10 @@ normative_rule_definitions:
   # the mode is VS-mode or VU-mode and ASID in vsatp equals the lower ASIDMAX (defined in
   # the Privileged Spec) bits of {textra32-svalue}.
   - name: Sdtrig_textra32_sselect_asid2
-    coverpoint: ["vsatp ASID matching (VS/VU-mode) not tested yet"]
+    coverpoint:
+      [
+        "vsatp ASID matching in VS/VU-mode needs H; deferred to the SdtrigH suite on the hypervisor branch",
+      ]
   # in all other modes, ASID in satp equals the lower ASIDMAX (defined in the Privileged
   # Spec) bits of {textra32-svalue}.
   - name: Sdtrig_textra32_sselect_asid3
