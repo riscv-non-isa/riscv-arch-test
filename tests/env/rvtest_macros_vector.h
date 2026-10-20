@@ -40,6 +40,11 @@
     #endif
 #endif
 
+// Generated vector tests size their data and signature regions for VLEN <= RVTEST_VLEN_MAX.
+#if defined(RVTEST_VLEN_MAX) && (UDB_VLEN > RVTEST_VLEN_MAX)
+    #error "UDB_VLEN exceeds RVTEST_VLEN_MAX, the largest VLEN the vector test generator supports"
+#endif
+
 // Per-test fractional LMUL support based on RVTEST_SEW (set in each test) and UDB_ELEN.
 // The testgen-emitted #if guards in the test source run BEFORE this header is included,
 // at which point UDB_ELEN is still undefined, so the test-source defines never fire.
