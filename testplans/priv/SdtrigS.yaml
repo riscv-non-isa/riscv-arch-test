@@ -40,3 +40,14 @@ coverpoints:
       Breakpoint exception when tdata1.s = 1
       No breakpoint when only the other modes' bits are set
     bins: NUM_TRIGGERS * 2 (own bit and fired, other bits only and not fired)
+  - name: cp_breakpoint_delegate_s
+    goal: Breakpoints caused by triggers can be delegated
+    description: |-
+      if S_SUPPORTED
+      medeleg[3] = {0/1} (written in M-mode: T-SBI does not write medeleg)
+      For each of UDB_SDTRIG_NUM_TRIGGERS in tselect, for each supported trigger type in {icount, mcontrol6}:
+      arm the trigger with tdata1.s = 1 (T-SBI)
+      run the S-mode instruction that fires it; sstatus.SIE = 1
+      After each case, rvtest_trap_count is written to the signature
+    expectation: Breakpoint exception taken into M when medeleg[3] = 0 and into S when medeleg[3] = 1
+    bins: NUM_TRIGGERS * 2 types * 2 medeleg

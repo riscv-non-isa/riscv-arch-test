@@ -61,6 +61,12 @@ covergroup SdtrigU_cg with function sample(ins_t ins);
         bins others_no_fire = {2'd2};
     }
 
+    // cp_breakpoint_delegate_u: medeleg[3] and the mode the breakpoint taken from U-mode was handled in
+    bp_routing: coverpoint {get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "medeleg", "medeleg")[3], ins.current.csr_wb[CSR_SCAUSE]} iff (sdtrigu_bp_taken(ins)) {
+        bins not_delegated_to_m = {2'b00};
+        bins delegated_to_s     = {2'b11};
+    }
+
     // a direct U-mode csrr or csrw of an M-level trigger CSR, which raises an illegal-instruction exception
     // (into S when medeleg[2] = 1, else into M). scontext and hcontext are S/H-level CSRs.
     csr_trigger_mlevel: coverpoint ins.current.insn[31:20] {
@@ -91,6 +97,9 @@ covergroup SdtrigU_cg with function sample(ins_t ins);
     cp_csr_access_trap_u: cross priv_mode_u, csr_read_write, csr_trigger_mlevel, illegal_insn_trap;  // 2 accesses * implemented M-level trigger CSRs (5-7)
     cp_breakpoint_u: cross priv_mode_u, triggernum, bp_type;  // NTRIG * 2 types; handled in S (medeleg[3] = 1) or M (tcontrol)
     cp_mcontrol6_priv_bits_u: cross priv_mode_u, triggernum, priv_bits_sw, priv_bits_outcome;  // NTRIG * 2 outcomes
+    `ifdef S_SUPPORTED
+        cp_breakpoint_delegate_u: cross priv_mode_u, triggernum, bp_type, bp_routing;  // NTRIG * 2 types * 2 (medeleg[3] = 0 into M, 1 into S)
+    `endif
 endgroup
 
 function void sdtrigu_sample(int hart, int issue, ins_t ins);
