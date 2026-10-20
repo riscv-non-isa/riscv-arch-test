@@ -628,6 +628,15 @@ covergroup Sm_mcsr_cg with function sample(ins_t ins);
         cp_misa_b: cross priv_mode_m, misa, csrop, misa_b_bit;
         cp_misa_v: cross priv_mode_m, misa, csrop, misa_v_bit;
 
+        // rvmodel_macros.svh only records whether RVMODEL_MSIP_ADDRESS is defined, not its value, so
+        // cp_msip does not check the store address.
+        `ifdef RVMODEL_MSIP_ADDRESS
+            msip_val: coverpoint ins.current.rs2_val {
+                bins zero = {0};
+                bins one  = {1};
+            }
+            cp_msip: cross priv_mode_m, sw, msip_val;
+        `endif // RVMODEL_MSIP_ADDRESS
     `endif // SM1P13P0_OR_LATER_SUPPORTED
 
     csrrw_allones: coverpoint ins.current.insn {
@@ -655,18 +664,6 @@ covergroup Sm_mcsr_cg with function sample(ins_t ins);
         }
     `endif
 
-    `ifdef SM1P13P0_OR_LATER_SUPPORTED
-        // rvmodel_macros.svh only says whether RVMODEL_MSIP_ADDRESS and RVMODEL_MTIME_ADDRESS are
-        // defined, not their values, so these coverpoints do not check the store address.
-        `ifdef RVMODEL_MSIP_ADDRESS
-            msip_val: coverpoint ins.current.rs2_val {
-                bins zero = {0};
-                bins one  = {1};
-            }
-            cp_msip: cross priv_mode_m, sw, msip_val;
-        `endif // RVMODEL_MSIP_ADDRESS
-    `endif // SM1P13P0_OR_LATER_SUPPORTED
-
     cp_mcycle_wraparound:   cross priv_mode_m, csrrw_allones, mcycle;
     cp_minstret_wraparound: cross priv_mode_m, csrrw_allones, minstret;
 
@@ -675,12 +672,13 @@ covergroup Sm_mcsr_cg with function sample(ins_t ins);
         cp_minstreth_wraparound: cross priv_mode_m, csrrw_allones, minstreth;
     `endif
 
-    `ifdef RVMODEL_MTIME_ADDRESS
+    // check_defines.h requires RVMODEL_MTIME_ADDRESS when MTI is implemented. The store address is
+    // not checked.
+    `ifdef UDB_MTI_INTR_IMPL
         `ifdef UDB_MXLEN_64
             cp_mtime_wraparound: cross priv_mode_m, sd, rs2_ones;
         `else
-            cp_mtime_wraparound:  cross priv_mode_m, sw, rs2_ones;
-            cp_mtimeh_wraparound: cross priv_mode_m, sw, rs2_ones;
+            cp_mtime_wraparound: cross priv_mode_m, sw, rs2_ones; // mtime and mtimeh
         `endif
     `endif
 

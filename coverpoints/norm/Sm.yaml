@@ -1646,7 +1646,7 @@ normative_rule_definitions:
   - name: mtime_sz
     coverpoint:
       [
-        "Sm_mcsr_cg/cp_mtimeh_wraparound",
+        "Sm_mcsr_cg/cp_mtime_wraparound",
         "ZicntrSm_cg/cp_mtimeh_write",
         "TODO: on RV64, check that mtime bits 63:32 are writable",
       ]

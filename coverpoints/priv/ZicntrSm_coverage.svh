@@ -876,8 +876,9 @@ covergroup ZicntrSm_cg with function sample(ins_t ins);
         cp_instret_wrs_sto: cross priv_mode_m, wrs_sto, prev_minstret_read;
     `endif
 
-    // memory-mapped mtime is visible in the time CSR
-    `ifdef RVMODEL_MTIME_ADDRESS
+    // memory-mapped mtime is visible in the time CSR (check_defines.h requires RVMODEL_MTIME_ADDRESS
+    // when MTI is implemented)
+    `ifdef UDB_MTI_INTR_IMPL
         csrr: coverpoint ins.current.insn {
             wildcard bins csrr = {CSRR};
         }
@@ -891,7 +892,7 @@ covergroup ZicntrSm_cg with function sample(ins_t ins);
             }
             cp_mtimeh_write: cross priv_mode_m, csrr, timeh_csr; // assumes mtimeh has been written
         `endif
-    `endif
+    `endif // UDB_MTI_INTR_IMPL
 
 endgroup
 
