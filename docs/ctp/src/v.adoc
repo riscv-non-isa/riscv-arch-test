@@ -226,8 +226,60 @@ include::{testplansdir}/Vf.adoc[]
 
 include::norm/Vf_norm_rules.adoc[]
 
-[NOTE]
-vfredusum.vs is difficult to test because the results depend on the ordering.  It may eventually need to exclude testing for multi-element vectors, but is presently passing multi-element vectors on the simulators tested.
+[[unordered-reductions]]
+==== Unordered Floating-Point Sum Reductions
+
+`vfredusum.vs` and `vfwredusum.vs` are the only reductions whose results depend on the order of evaluation.
+The integer reductions use wrapping arithmetic or bitwise operations, which are associative and commutative.
+`vfredosum.vs` and `vfwredosum.vs` have a fixed order.
+`vfredmax.vs` and `vfredmin.vs` use `maximumNumber` and `minimumNumber`, which give the same value and flags in any order.
+The indexed-unordered loads and stores reorder memory accesses, not arithmetic.
+
+norm:vfredusum_op allows any binary tree over vs1[0] and the active elements of vs2.
+Each node may round its exact sum to any format with at least the precision and exponent range of the accumulator format A, which is SEW for `vfredusum.vs` and 2*SEW for `vfwredusum.vs`.
+Nodes fed only by masked-off or tail elements may add the additive identity (norm:vfredusum_additive_impl), which rounds the other input again.
+The root is then rounded to A.
+The flags depend on the tree in the same way as the result.
+
+The generic coverpoints compare vd[0] with the reference model, so they only use data whose sum is exact in every order.
+The cp_custom_vfredusum coverpoints instead accept every legal outcome.
+At generation time, the testgen module `_redusum_model.py` computes the legal outcomes of each testcase.
+It interprets every tree and every node format abstractly, tracking:
+
+* the lowest and highest finite results, with signed zeros;
+* whether +inf, -inf or NaN is possible;
+* the flags that may be raised, and the flags that every legal outcome raises.
+
+The model is exact per node.
+It may admit a few unreachable values, mainly at RMM, because it assumes identity nodes can be inserted anywhere.
+It was validated against brute-force enumeration of trees and node formats, and against random legal trees on the test data.
+
+Each testcase checks in assembly that vd[0] is one of the legal values.
+It maps vd[0] to an unsigned key that orders -inf < negative values < -0 < +0 < positive values < +inf, and compares the key with the precomputed lowest and highest keys.
+It accepts +inf, -inf or the canonical NaN separately when the model allows them.
+NaN results produced by an addition must be the canonical NaN.
+With no active elements, vd[0] may instead be vs1[0] unchanged with no flags, or the canonical NaN with NV exactly when vs1[0] is a signaling NaN.
+fflags must contain every required flag and no flag outside the allowed set.
+A passing check records 0 in the signature.
+A failing check records vd[0] (forced nonzero) and fflags | 0x100.
+The reductions use LMUL=8.
+A testcase with vl greater than VLMAX = 8*VLEN/SEW is compiled out.
+
+[[t-vfredusum-coverpoints]]
+.Unordered Floating-Point Sum Reduction Coverpoints
+[cols="2,1,5" options=header]
+[%AUTOWIDTH]
+|===
+|Coverpoint|# Bins|Definition
+|cp_custom_vfredusum_sweep|6*5*3|vl={1, 2, 3, 4, 8, VLMAX} x frm={rne, rtz, rdn, rup, rmm} x {unmasked, pseudo-random mask with some active elements, no active elements}. The tests use vl = 1, 2, 3, 4, 8, 16, 32, ... VLMAX, every mode, unmasked, with a fixed pseudo-random mask (elements 0 and 2 active, element 1 inactive, then about half active) and with an all-zero mask, for three data sets. Exact data: small integers whose every partial sum is exact, so the result is the exact sum with no flags; also scaled into the subnormal and top-binade ranges at RNE. Mild data: vs1[0] = 2^t and every element 0.75 ulp(2^t), so the result varies by up to about one ulp per four elements with the tree. Cancellation data: vs2[0] = +B, vs2[vl-1] = -B, up to eight elements t = 3/8 ulp(B) between them, alternating signed zeros elsewhere, and vs1[0] = t, so the legal results range from 0 to well above the exact sum.
+|cp_custom_vfredusum_specials|12*12|Class of vs1[0] x class of vs2[0], from {+0, -0, +inf, -inf, canonical qNaN, other qNaN, sNaN, largest finite, its negation, smallest subnormal, -1, 1+ulp}, vm=1. The tests cover every pair at vl=1. They also run vs1[0] in {+0, -0, +inf, qNaN, sNaN, +largest, -largest, smallest subnormal} with these element lists: {+inf, -inf}, {+inf, +inf}, {+largest, +largest}, {+largest, -largest}, {-largest, -inf}, {qNaN, +inf, -inf}, {sNaN, -inf}, {-0, -0}, {+0, -0}, {subnormal, subnormal}, {1+ulp, -1} and {+largest, +largest, -largest, -largest}. These cover NaN from +inf + -inf, overflow, overflow that a wider intermediate avoids, and the sign of exact zero sums. Each list runs at RNE and at every other mode with different legal outcomes. For `vfwredusum.vs`, vs1[0] has width 2*SEW.
+|cp_custom_vfredusum_noactive|12*2|Class of vs1[0] x frm={rne, rdn} with no active elements: vl = 1 and 8, mask all 0, elements all signaling NaN. vd[0] must be vs1[0] with no flags. A NaN scalar may instead become the canonical NaN, with NV exactly when it was signaling (norm:vfredusum_additive_impl). The tests also run vl=0, masked and unmasked, which must leave vd and fflags unchanged.
+|cp_custom_vfredusum_determinism|3*3|vl={3, 8, VLMAX} x frm={rne, rdn, rup}, vm=1. For cancellation and mild data D at vl = 3, 8, 16 and 512 (when they fit), the tests check the identities that any fixed tree satisfies (norm:vfredusum_redtree). Repeating D from other registers gives the same bits. 2^k*D gives 2^k times the result, with k=3, or k=-3 for widening cancellation data. -D gives the negated result at RNE. -D at RUP gives the negation of the RDN result for D. The flags must match. The first RNE and RDN results are also range-checked.
+|===
+
+The reduction tree cannot be deduced from results in general.
+A tree whose nodes all round to a wide enough format computes the exactly rounded sum, which is the same for every tree shape.
+Determinism is therefore checked through invariances that hold for any single tree whose node formats are fixed for a given vtype and vl, rather than by identifying the tree.
 
 [[skipped-vector-tests]]
 ==== Temporarily Skipped Vector Tests
