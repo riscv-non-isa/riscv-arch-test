@@ -85,8 +85,8 @@ covergroup ZicfilpS_cg with function sample(ins_t ins);
 
     // S-mode trap entry and return
 
-    ebreak: coverpoint ins.current.insn {
-        bins ebreak = {EBREAK};
+    illegal: coverpoint ins.current.insn {
+        bins zeros = {32'h00000000};
     }
 
     // ELP before the current instruction: the previous instruction set it
@@ -95,14 +95,15 @@ covergroup ZicfilpS_cg with function sample(ins_t ins);
         bins no_lp_expected = {1'b0};
     }
 
-    // An EBREAK in S-mode with ELP=NO_LP_EXPECTED traps into S-mode and saves SPELP=0
-    cp_pelp_trap_entry_zicfilp: cross priv_mode_s, lpe_enabled, elp_before, ebreak;
+    // An illegal instruction in S-mode with ELP=NO_LP_EXPECTED traps into S-mode and saves SPELP=0
+    cp_pelp_trap_entry_zicfilp: cross priv_mode_s, lpe_enabled, elp_before, illegal;
 
-    // A software-guarded branch (rs1 = x1/x5/x7) with menvcfg.LPE=1 leaves ELP clear, so an EBREAK at its target
-    // saves SPELP=0
-    cp_pelp_trap_entry_guarded_zicfilp: cross priv_mode_s, lpe_enabled, indirect_ct_prev, rs1_link_prev, ebreak;
+    // A software-guarded branch (rs1 = x1/x5/x7) with menvcfg.LPE=1 leaves ELP clear, so an illegal instruction
+    // at its target saves SPELP=0
+    cp_pelp_trap_entry_guarded_zicfilp: cross priv_mode_s, lpe_enabled, indirect_ct_prev, rs1_link_prev, illegal;
     `ifdef ZCA_SUPPORTED
-        cp_pelp_trap_entry_guarded_zicfilp_c: cross priv_mode_s, lpe_enabled, indirect_ct_prev_c, rs1_link_prev, ebreak;
+        cp_pelp_trap_entry_guarded_zicfilp_c:
+            cross priv_mode_s, lpe_enabled, indirect_ct_prev_c, rs1_link_prev, illegal;
     `endif
 
     // A trap from U-mode into S-mode, at the non-LPAD target of an ELP-setting Indirect_CT or at an ecall

@@ -91,8 +91,8 @@ covergroup ZicfilpSm_cg with function sample(ins_t ins);
 
     // M-mode trap entry and return
 
-    ecall: coverpoint ins.current.insn {
-        bins ecall = {ECALL};
+    illegal: coverpoint ins.current.insn {
+        bins zeros = {32'h00000000};
     }
 
     // A trap from S/U-mode into M-mode, at the non-LPAD target of an ELP-setting Indirect_CT or at an ecall,
@@ -119,13 +119,15 @@ covergroup ZicfilpSm_cg with function sample(ins_t ins);
         bins no_lp_expected = {1'b0};
     }
 
-    // An ECALL in M-mode with ELP=NO_LP_EXPECTED traps into M-mode and saves MPELP=0
-    cp_pelp_trap_entry_zicfilp: cross priv_mode_m, lpe_enabled, elp_before, ecall;
+    // An illegal instruction in M-mode with ELP=NO_LP_EXPECTED traps into M-mode and saves MPELP=0
+    cp_pelp_trap_entry_zicfilp: cross priv_mode_m, lpe_enabled, elp_before, illegal;
 
-    // A software-guarded branch (rs1 = x1/x5/x7) with MLPE=1 leaves ELP clear, so an ECALL at its target saves MPELP=0
-    cp_pelp_trap_entry_guarded_zicfilp: cross priv_mode_m, lpe_enabled, indirect_ct_prev, rs1_link_prev, ecall;
+    // A software-guarded branch (rs1 = x1/x5/x7) with MLPE=1 leaves ELP clear, so an illegal instruction at its target
+    // saves MPELP=0
+    cp_pelp_trap_entry_guarded_zicfilp: cross priv_mode_m, lpe_enabled, indirect_ct_prev, rs1_link_prev, illegal;
     `ifdef ZCA_SUPPORTED
-        cp_pelp_trap_entry_guarded_zicfilp_c: cross priv_mode_m, lpe_enabled, indirect_ct_prev_c, rs1_link_prev, ecall;
+        cp_pelp_trap_entry_guarded_zicfilp_c:
+            cross priv_mode_m, lpe_enabled, indirect_ct_prev_c, rs1_link_prev, illegal;
     `endif
 
     // MRET to a non-LPAD instruction, sampled at that instruction:
