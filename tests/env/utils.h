@@ -728,7 +728,7 @@
 #define RVTEST_CLR_SSTC_STCE1_INT_U RVTEST_CLR_SSTC_STCE0_INT_S
 
 
-// V-mode interrupts not yet supported in Sail reference model
+// Raising VS-level interrupts is not implemented in these macros yet
 // Define as empty to prevent assembly errors
 #define RVTEST_SET_VSW_INT
 #define RVTEST_CLR_VSW_INT
