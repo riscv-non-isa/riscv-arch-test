@@ -176,8 +176,14 @@
 `ifdef S_COVERAGE
   `include "S_coverage.svh"
 `endif
+`ifdef SDTRIGS_COVERAGE
+  `include "SdtrigS_coverage.svh"
+`endif
 `ifdef SDTRIGSM_COVERAGE
   `include "SdtrigSm_coverage.svh"
+`endif
+`ifdef SDTRIGU_COVERAGE
+  `include "SdtrigU_coverage.svh"
 `endif
 `ifdef SHCOUNTERENW_COVERAGE
   `include "Shcounterenw_coverage.svh"

@@ -84,15 +84,14 @@
 # - Zama16b is not declared. The model has no misaligned atomicity granule: Zam=T performs every
 #   misaligned AMO, including SSAMOSWAP (riscv-isa-manual#3426), so the configs use Zam=F, where
 #   misaligned AMOs, SSAMOSWAP and LR/SC raise store/AMO access faults.
-# - Ssnpm,SsnpmSm,Smmpm,SmnpmS,SmnpmSSm,SmnpmU,SmnpmUSm:Imperas still applies pointer masking when MXR is set, contradicting the spec rule.
-#   Issue filed (https://solvnetplus.synopsys.com/s/case/500WQ000025qNCkYAM/pointer-masking-should-be-disabled-when-mxr1)
-#   The MXR part is fixed in Imperas-HMC101126-eng-build. These suites still fail on their xtval checks: for a faulting
-#   address at or above 2^PHYS_ADDR_WIDTH, Imperas writes the full address and Sail truncates it
-#   (https://github.com/riscv/sail-riscv/issues/1962); norm:mtval_inv_addr_conv allows both, so the tests are
-#   over-strict. With Sail's physaddr_bits raised to 64, all seven pass on Imperas.
+# - Ssnpm, SsnpmSm, SmnpmS, SmnpmSSm (stock only): Imperas applies pointer masking when MXR is set:
+#   https://solvnetplus.synopsys.com/s/case/500WQ000025qNCkYAM/pointer-masking-should-be-disabled-when-mxr1
+#   (fixed in Imperas-HMC101126-eng-build). Smmpm, SmnpmU and SmnpmUSm pass on both. The xtval mismatches on
+#   faulting addresses at or above 2^PHYS_ADDR_WIDTH were a Sail bug (https://github.com/riscv/sail-riscv/issues/1962),
+#   fixed in Sail 0.16.
 #
 ci_enabled: false
 # Stock ImperasDV Y-2026.09:
-# exclude_extensions: "SsstrictSm,SsstrictS,SsstrictU,Smstateen,ExceptionsVx,SdtrigSm,SdtrigS,SdtrigU,PMPH,SvH,SvHZicbo,InterruptsH,SstcH,SstcHSm,SmstateenH,SsnpmH,ZicfilpSm,ZicfilpS,ZicfilpH,Svnapot,Ssnpm,SsnpmSm,Smmpm,SmnpmS,SmnpmSSm,SmnpmU,SmnpmUSm,SscofpmfSm,SscofpmfS,SscofpmfU"
+# exclude_extensions: "SsstrictSm,SsstrictS,SsstrictU,Smstateen,ExceptionsVx,SdtrigSm,SdtrigS,SdtrigU,PMPH,SvH,SvHZicbo,InterruptsH,SstcH,SstcHSm,SmstateenH,SsnpmH,ZicfilpSm,ZicfilpS,ZicfilpH,Svnapot,Ssnpm,SsnpmSm,SmnpmS,SmnpmSSm,SscofpmfSm,SscofpmfS,SscofpmfU"
 # Imperas-HMC101126-eng-build:
-exclude_extensions: "Smstateen,Ssnpm,SsnpmSm,Smmpm,SmnpmS,SmnpmSSm,SmnpmU,SmnpmUSm,SscofpmfSm,SscofpmfS,SscofpmfU"
+exclude_extensions: "Smstateen,SscofpmfSm,SscofpmfS,SscofpmfU"
