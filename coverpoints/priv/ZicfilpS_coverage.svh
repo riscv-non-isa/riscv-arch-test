@@ -34,7 +34,7 @@ covergroup ZicfilpS_cg with function sample(ins_t ins);
     // The current instruction trapped into S-mode (sepc written with its own PC)
     sw_check_exc: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "scause", "code")
                   iff (ins.current.csr_wb[CSR_SEPC] &&
-                       (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "sepc", "sepc") == ins.current.pc_rdata)) {
+                      (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "sepc", "sepc") == ins.current.pc_rdata)) {
         bins software_check = {SOFTWARE_CHECK};
     }
     xtval_lpad: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "stval", "stval") {
