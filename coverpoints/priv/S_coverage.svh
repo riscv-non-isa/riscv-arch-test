@@ -413,18 +413,31 @@ covergroup S_V_cg with function sample(ins_t ins);
     // tests sstatus ability to set clean and initial to dirty only when supposed to
     //////////////////////////////////////////////////////////////////////////////////
 
-    sstatus_vs_initial_clean : coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "sstatus", "vs") {
-        bins first = {1};
-        bins clean  = {2};
-    }
+    // Only with an Initial or Clean VS state (MSTATUS_VS_LEGAL_VALUES includes 1 or 2)
+    `ifdef UDB_MSTATUS_VS_LEGAL_VALUES_1
+        sstatus_vs_initial_clean : coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "sstatus", "vs") {
+            bins first = {1};
+            `ifdef UDB_MSTATUS_VS_LEGAL_VALUES_2
+                bins clean  = {2};
+            `endif
+        }
+
+        cp_sstatus_vs_set_dirty_arithmetic  : cross priv_mode_s, std_vec,        vector_vector_arithmetic_instruction,   sstatus_vs_initial_clean;
+        cp_sstatus_vs_set_dirty_csr         : cross priv_mode_s, std_vec,        vsetvli_instruction,                    sstatus_vs_initial_clean;
+        cp_sstatus_vs_set_dirty_vcsr        : cross priv_mode_s, vcsrs_writable, csrops,                                 sstatus_vs_initial_clean;
+    `elsif UDB_MSTATUS_VS_LEGAL_VALUES_2
+        sstatus_vs_initial_clean : coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "sstatus", "vs") {
+            bins clean  = {2};
+        }
+
+        cp_sstatus_vs_set_dirty_arithmetic  : cross priv_mode_s, std_vec,        vector_vector_arithmetic_instruction,   sstatus_vs_initial_clean;
+        cp_sstatus_vs_set_dirty_csr         : cross priv_mode_s, std_vec,        vsetvli_instruction,                    sstatus_vs_initial_clean;
+        cp_sstatus_vs_set_dirty_vcsr        : cross priv_mode_s, vcsrs_writable, csrops,                                 sstatus_vs_initial_clean;
+    `endif
 
     sstatus_vs_inactive    : coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "sstatus", "vs") {
         bins inactive = {0};
     }
-
-    cp_sstatus_vs_set_dirty_arithmetic  : cross priv_mode_s, std_vec,        vector_vector_arithmetic_instruction,   sstatus_vs_initial_clean;
-    cp_sstatus_vs_set_dirty_csr         : cross priv_mode_s, std_vec,        vsetvli_instruction,                    sstatus_vs_initial_clean;
-    cp_sstatus_vs_set_dirty_vcsr        : cross priv_mode_s, vcsrs_writable, csrops,                                 sstatus_vs_initial_clean;
 
     cp_sstatus_vs_off_arithmetic        : cross priv_mode_s, sstatus_vs_inactive,     vector_vector_arithmetic_instruction iff (get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "vtype", "vill") == 0 &
                                                                                                                                   get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "vstart", "vstart") == 0 &

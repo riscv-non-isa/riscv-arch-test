@@ -545,6 +545,62 @@ def _ffLS_feasible(instr: str, sew: int) -> bool:
     return emul * nf <= 8
 
 
+def _vstart_bin_gates(arch: str, instr: str, cp: str) -> dict[str, str]:
+    """Return {bin name: ZVL macro} for ExceptionsVls vstart bins that need a minimum VLEN.
+
+    Mirrors the priv vector generator (vector-testgen-priv.py make_vstart and
+    make_vstart_gt_vl), which runs EEW-suffixed loads/stores at SEW = EEW and
+    caps LMUL at 8 / NFIELDS (1 for whole-register and mask loads/stores), so
+    VLMAX = VLEN * LMUL / SEW. cp_vstart uses the largest LMUL for VLMAX-1,
+    VLMAX/2 and a random vstart in [2, VLMAX/2): they are distinct from 1 and
+    each other only when VLMAX >= 4 (VLMAX-1, VLMAX/2) or VLMAX >= 8 (random).
+    cp_vstart_gt_vl uses LMUL = min(4, cap) and, except for vlm/vsm, runs only when VLMAX >= 4.
+    The other priv vector suites have VLMAX >= 8 whenever VLEN >= 128, which V requires.
+    """
+    if arch != "ExceptionsVls":
+        return {}
+    eew_m = re.search(r"e(?:i)?(\d+)(?:ff)?\.v$", instr)
+    sew = int(eew_m.group(1)) if eew_m else 8
+    seg_m = re.search(r"seg(\d)", instr)
+    whole_or_mask = bool(re.match(r"v(l\dre\d+|s\dr|lm|sm)\.v$", instr))
+    max_lmul = 1 if whole_or_mask else 8 // int(seg_m.group(1)) if seg_m else 8
+
+    def zvl(min_vlen: int) -> str | None:
+        return f"ZVL{min_vlen}B_SUPPORTED" if min_vlen > 128 else None
+
+    if cp == "cp_vstart":
+        gates = {
+            "vstart_vlmaxm1": zvl(4 * sew // max_lmul),
+            "vstart_vlmaxd2": zvl(4 * sew // max_lmul),
+            "vstart_legal": zvl(8 * sew // max_lmul),
+        }
+    elif cp == "cp_vstart_gt_vl" and instr not in ("vlm.v", "vsm.v"):
+        gates = {"true": zvl(4 * sew // min(4, max_lmul))}
+    else:
+        gates = {}
+    return {name: gate for name, gate in gates.items() if gate}
+
+
+def _gate_bins(rendered: str, gates: dict[str, str]) -> str:
+    """Wrap each `bins <name>` line of a rendered coverpoint in `ifdef gates[name].
+
+    When one macro gates every bin, wrap the whole coverpoint instead, since a
+    coverpoint without bins would get automatic bins.
+    """
+    bin_names = re.findall(r"^\s*bins\s+(\w+)\b", rendered, re.MULTILINE)
+    if bin_names and all(name in gates for name in bin_names) and len({gates[n] for n in bin_names}) == 1:
+        return f"`ifdef {gates[bin_names[0]]}\n{rendered}`endif\n"
+    lines = []
+    for line in rendered.split("\n"):
+        m = re.match(r"(\s*)bins\s+(\w+)\b", line)
+        if m and m.group(2) in gates:
+            ind = m.group(1)
+            lines += [f"{ind}`ifdef {gates[m.group(2)]}", f"    {line}", f"{ind}`endif"]
+        else:
+            lines.append(line)
+    return "\n".join(lines)
+
+
 ##################################
 # Content generation
 ##################################
@@ -675,6 +731,7 @@ def _gen_instrs(
             if resolved is None:
                 continue
             rendered = customize_template(templates, resolved, arch, instr) + "\n"
+            rendered = _gate_bins(rendered, _vstart_bin_gates(arch, instr, resolved))
             covergroup_lines.append(_filter_per_operand_crosses(rendered, has_vd, has_vs1, has_vs2, max_lmul))
 
         # Instruction footer
