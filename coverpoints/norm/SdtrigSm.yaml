@@ -532,28 +532,31 @@ normative_rule_definitions:
   - name: Sdtrig_tcontrol_mte_mret
     coverpoint: ["SdtrigSm_tcontrol_cg/cp_tcontrol_mret"]
 
+  # On the hypervisor branch the H rules below map to SdtrigH coverpoints. act4 gives them the reason
+  # "Deferred to SdtrigH on the hypervisor branch"; when act4 is merged in, keep the SdtrigH mappings.
   # This optional register may be implemented only if the H extension is
   # implemented. If it is implemented, mcontext must also be implemented.
   - name: Sdtrig_hcontext_implemented
     coverpoint:
       [
         "SdtrigSm_trig_module_reg_cg/cp_csr_unimplemented",
-        "Without H, hcontext is not implemented and raises an illegal instruction; behavior with H is deferred to an SdtrigH suite",
+        "SdtrigH_context_cg/{cp_hcontext_hs, cp_hcontext_m}",
       ]
 
   # This register is only accessible in HS-Mode, M-mode and Debug Mode.
   - name: Sdtrig_hcontext_access
-    coverpoint: ["Hypervisor extension not implemented, so not testable"]
+    coverpoint:
+      ["SdtrigH_context_cg/{cp_hcontext_hs, cp_hcontext_m, cp_context_access}"]
 
   # If Smstateen is implemented, then accessibility of in HS-Mode is controlled by
   # mstateenzero[57].
   - name: Sdtrig_hcontext_smstateen
-    coverpoint: ["Hypervisor extension not implemented, so not testable"]
+    coverpoint: ["SdtrigH_context_cg/cp_hs_context_stateen"]
 
   # This register is an alias of the mcontext register, providing access to the
   # hcontext field from HS-Mode.
   - name: Sdtrig_hcontext
-    coverpoint: ["Hypervisor extension not implemented, so not testable"]
+    coverpoint: ["SdtrigH_context_cg/{cp_hcontext_hs, cp_hcontext_m}"]
 
   # This optional register is only accessible in S/HS-mode, VS-mode, M-mode and
   # Debug Mode.
@@ -562,7 +565,8 @@ normative_rule_definitions:
       [
         "SdtrigSm_trig_module_reg_cg/cp_csr_access_global",
         "Smstateen_cg/cp_context",
-        "From U, cp_csr_insufficient_priv of the U suite reads scontext (0x5A8) and expects an illegal instruction; VS-mode access is deferred to an SdtrigH suite",
+        "SdtrigH_context_cg/cp_context_access",
+        "From U, cp_csr_insufficient_priv of the U suite reads scontext (0x5A8) and expects an illegal instruction",
       ]
 
   # Accessibility of this CSR is controlled by mstateenzero[57] and hstateenzero[57]
@@ -571,7 +575,7 @@ normative_rule_definitions:
     coverpoint:
       [
         "Smstateen_cg/cp_context",
-        "hstateen0 (VS-mode access) is deferred to an SdtrigH suite",
+        "SdtrigH_context_cg/{cp_hs_context_stateen, cp_vs_context_stateen, cp_vu_context_stateen}",
       ]
 
   # Supervisor mode software can write a context number to this register, which can
@@ -582,7 +586,7 @@ normative_rule_definitions:
   # This register must be implemented if hcontext is implemented, and is optional
   # otherwise.
   - name: Sdtrig_mcontext_implementation
-    coverpoint: ["Hypervisor extension not implemented, so not testable"]
+    coverpoint: ["SdtrigH_context_cg/{cp_hcontext_hs, cp_hcontext_m}"]
 
   # It is only accessible in M-mode and Debug mode.
   - name: Sdtrig_mcontext_access
@@ -596,7 +600,11 @@ normative_rule_definitions:
   # register, which can be used to set triggers that only fire in that specific
   # context.
   - name: Sdtrig_mcontext_hcontext_data
-    coverpoint: ["SdtrigSm_access_cg/cp_csr_access_common"]
+    coverpoint:
+      [
+        "SdtrigSm_access_cg/cp_csr_access_common",
+        "SdtrigH_context_cg/cp_hcontext_hs",
+      ]
 
   # This optional register is an alias for scontext.
   - name: Sdtrig_mscontext
@@ -923,7 +931,7 @@ normative_rule_definitions:
     coverpoint:
       [
         "SdtrigSm_trig_module_reg_cg/cp_tdata1_mode_hardwired",
-        "Firing in VS-mode is deferred to an SdtrigH suite",
+        "SdtrigH_mcontrol6_cg/cp_mcontrol6_vs",
       ]
 
   # When set, enable this trigger in VU-mode. This bit is hard-wired to 0 if the
@@ -932,7 +940,7 @@ normative_rule_definitions:
     coverpoint:
       [
         "SdtrigSm_trig_module_reg_cg/cp_tdata1_mode_hardwired",
-        "Firing in VU-mode is deferred to an SdtrigH suite",
+        "SdtrigH_mcontrol6_cg/cp_mcontrol6_vu",
       ]
 
   # If they are implemented, hit1 (MSB) and hit0 (LSB) combine into a single 2-bit
@@ -1336,12 +1344,12 @@ normative_rule_definitions:
   # When set, enable this trigger in VS-mode. This bit is hard-wired to 0 if the
   # hart does not support virtualization mode.
   - name: Sdtrig_icount_vs
-    coverpoint: ["Hypervisor extension not implemented, so not testable"]
+    coverpoint: ["SdtrigH_icount_cg/cp_icount_vs"]
 
   # When set, enable this trigger in VU-mode. This bit is hard-wired to 0 if the
   # hart does not support virtualization mode.
   - name: Sdtrig_icount_vu
-    coverpoint: ["Hypervisor extension not implemented, so not testable"]
+    coverpoint: ["SdtrigH_icount_cg/cp_icount_vu"]
 
   # If this bit is implemented, the hardware sets it when this trigger fires. The
   # trigger's user can set or clear it at any time. It is used to determine which
@@ -1459,12 +1467,12 @@ normative_rule_definitions:
   # When set, enable this trigger for interrupts that are taken from VS mode. This
   # bit is hard-wired to 0 if the hart does not support virtualization mode.
   - name: Sdtrig_itrigger_vs
-    coverpoint: ["Hypervisor extension not implemented, so not testable"]
+    coverpoint: ["SdtrigH_itrigger_cg/cp_itrigger_vs"]
 
   # When set, enable this trigger for interrupts that are taken from VU mode. This
   # bit is hard-wired to 0 if the hart does not support virtualization mode.
   - name: Sdtrig_itrigger_vu
-    coverpoint: ["Hypervisor extension not implemented, so not testable"]
+    coverpoint: ["SdtrigH_itrigger_cg/cp_itrigger_vu"]
 
   # When set, non-maskable interrupts cause this trigger to fire if the trigger is
   # enabled for the current mode.
@@ -1565,12 +1573,12 @@ normative_rule_definitions:
   # When set, enable this trigger for exceptions that are taken from VS mode. This
   # bit is hard-wired to 0 if the hart does not support virtualization mode.
   - name: Sdtrig_etrigger_vs
-    coverpoint: ["Hypervisor extension not implemented, so not testable"]
+    coverpoint: ["SdtrigH_etrigger_cg/cp_etrigger_vs"]
 
   # When set, enable this trigger for exceptions that are taken from VU mode. This
   # bit is hard-wired to 0 if the hart does not support virtualization mode.
   - name: Sdtrig_etrigger_vu
-    coverpoint: ["Hypervisor extension not implemented, so not testable"]
+    coverpoint: ["SdtrigH_etrigger_cg/cp_etrigger_vu"]
 
   # When set, enable this trigger for exceptions that are taken from M mode.
   - name: Sdtrig_etrigger_m
@@ -1721,6 +1729,7 @@ normative_rule_definitions:
       [
         "SdtrigSm_textra_cg/cp_textra_mcontext",
         "SdtrigSm_textra_cg/cp_textra_scontext",
+        "SdtrigH_textra_cg/{cp_textra_mctx_sel, cp_textra_vmid_sel, cp_textra_vsatp_asid}",
       ]
 
   # Ignore mhvalue.
@@ -1739,13 +1748,13 @@ normative_rule_definitions:
   # 1, 5 (mcontext_select): This trigger will only match or fire if the low bits of
   # mcontext/hcontext equal {mhvalue, mhselect[2]}.
   - name: Sdtrig_textra32_mhselect_mctx_sel
-    coverpoint: ["Hypervisor extension not implemented, so not testable"]
+    coverpoint: ["SdtrigH_textra_cg/cp_textra_mctx_sel"]
 
   # 2, 6 (vmid_select): This trigger will only match or fire if VMID in hgatp equals
   # the lower VMIDMAX (defined in the Privileged Spec) bits of {mhvalue,
   # mhselect[2]}.
   - name: Sdtrig_textra32_mhselect_vmid_sel
-    coverpoint: ["Hypervisor extension not implemented, so not testable"]
+    coverpoint: ["SdtrigH_textra_cg/cp_textra_vmid_sel"]
 
   # 3, 7 (reserved): Reserved.
   - name: Sdtrig_textra32_mhselect_rsv
@@ -1789,7 +1798,7 @@ normative_rule_definitions:
   # the mode is VS-mode or VU-mode and ASID in vsatp equals the lower ASIDMAX (defined in
   # the Privileged Spec) bits of {textra32-svalue}.
   - name: Sdtrig_textra32_sselect_asid2
-    coverpoint: ["vsatp ASID matching (VS/VU-mode) not tested yet"]
+    coverpoint: ["SdtrigH_textra_cg/cp_textra_vsatp_asid"]
   # in all other modes, ASID in satp equals the lower ASIDMAX (defined in the Privileged
   # Spec) bits of {textra32-svalue}.
   - name: Sdtrig_textra32_sselect_asid3

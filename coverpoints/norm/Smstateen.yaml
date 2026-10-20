@@ -168,7 +168,7 @@ normative_rule_definitions:
     coverpoint: ["Smstateen_cg/cp_context"]
 
   - name: hstateen0_context_op
-    coverpoint: [""]
+    coverpoint: ["SdtrigH_context_cg/cp_vs_context_stateen"]
 
   - name: mstateen0_p1p13_op
     coverpoint: ["Smstateen_cg/cp_p1p13"]

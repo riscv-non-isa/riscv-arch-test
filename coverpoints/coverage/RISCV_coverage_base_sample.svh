@@ -175,6 +175,9 @@
     `ifdef COVER_S
         s_sample(hart, issue, ins);
     `endif
+    `ifdef COVER_SDTRIGH
+        sdtrigh_sample(hart, issue, ins);
+    `endif
     `ifdef COVER_SDTRIGS
         sdtrigs_sample(hart, issue, ins);
     `endif

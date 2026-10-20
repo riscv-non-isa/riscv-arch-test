@@ -176,6 +176,9 @@
 `ifdef S_COVERAGE
   `include "S_coverage.svh"
 `endif
+`ifdef SDTRIGH_COVERAGE
+  `include "SdtrigH_coverage.svh"
+`endif
 `ifdef SDTRIGS_COVERAGE
   `include "SdtrigS_coverage.svh"
 `endif
