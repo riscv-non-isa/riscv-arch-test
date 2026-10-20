@@ -107,10 +107,11 @@ def make_smmpm_pmm11(test_data: TestData) -> list[TestChunk]:
 # governs. The MPP=U and MPP=S cases are governed by senvcfg.PMM and
 # menvcfg.PMM, which come from Ssnpm and Smnpm, and live in SsnpmSm and
 # SmnpmSSm. This chunk sweeps every PMLEN, so it uses inline guards and no params.
-# MPRV is read-only 0 without U-mode, so the chunk requires U.
+# Without U-mode MPRV is read-only 0, but with MPP=M the effective privilege is M either way,
+# so the chunk still runs there; only its MPRV coverpoints need U.
 @add_priv_test_generator(
     "Smmpm",
-    required_extensions=["Smmpm", "U"],
+    required_extensions=["Smmpm"],
     march_extensions=["I", "A", "F", "D", "V", "Zabha", "Zacas", "Zicbom", "Zicbop", "Zicboz"],
     extra_defines=["#define BOOT_TO_MMODE"],
 )
