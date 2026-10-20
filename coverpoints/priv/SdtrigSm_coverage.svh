@@ -1118,7 +1118,8 @@ covergroup SdtrigSm_mcontrol6_cg with function sample(ins_t ins);
     cp_mcontrol6_chain_adr:       cross priv_mode_m, triggernum_chain, tdata1_type_mcontrol6, tdata1_m_on, tdata1_select_data, tdata1_chain_disabled, tdata1_match_equal, tdata1_size_any, tdata1_xsl_store, store_data_chain, store_offset, sw;                       // (NTRIG-1) * 2 data * 2 adr
 endgroup
 
-// textra32/textra64 (tdata3) context matching, sampled when tdata1 arms an icount or mcontrol6 trigger.
+// textra32/textra64 (tdata3) context matching, sampled when tdata1 arms an icount or mcontrol6 trigger, and on the
+// S-handled traps that an itrigger or etrigger watches.
 // Field positions: textra64 mhvalue 63:51, mhselect 50:48, sbytemask 39:36, svalue 33:2, sselect 1:0;
 //                  textra32 mhvalue 31:26, mhselect 25:23, sbytemask 19:18, svalue 17:2, sselect 1:0.
 function automatic logic [2:0] sdtrig_textra_mhselect(logic [XLEN-1:0] t3);
@@ -1156,10 +1157,30 @@ function automatic logic sdtrig_textra_asid_match(logic [XLEN-1:0] t3, logic [XL
                         : (((t3 >> 2) & 'h1ff) == ((satp >> 22) & 'h1ff));
 endfunction
 
+// cp_textra_itrigger/etrigger: a trap handled in S with the origin mode's tdata1 bit set (sdtrig_trap_result 01_1_x),
+// where the itrigger/etrigger fired exactly when its textra condition holds. {1, match}: mhselect = 4, sselect = 0;
+// {2, match}: sselect = 1 (scontext), mhselect = 0, sbytemask = 0; 0: anything else, or the wrong outcome.
+function automatic logic [2:0] sdtrig_textra_trap_outcome(ins_t ins);
+    logic [XLEN-1:0] t3     = ins.current.csr[CSR_TDATA3];
+    logic [3:0]      result = sdtrig_trap_result(ins);
+    logic [1:0]      sel;
+    logic            match;
+    if (result[3:1] != 3'b01_1) return 3'd0;
+    if (sdtrig_textra_mhselect(t3) == 3'd4 && sdtrig_textra_sselect(t3) == 2'd0) begin
+        sel   = 2'd1;
+        match = sdtrig_textra_mcontext_match(t3, ins.current.csr[CSR_MCONTEXT]);
+    end else if (sdtrig_textra_mhselect(t3) == 3'd0 && sdtrig_textra_sselect(t3) == 2'd1 && sdtrig_textra_sbytemask(t3) == 4'd0) begin
+        sel   = 2'd2;
+        match = sdtrig_textra_scontext_match(t3, ins.current.csr[CSR_SCONTEXT]);
+    end else return 3'd0;
+    return (result[0] == match) ? {sel, match} : 3'd0;
+endfunction
+
 covergroup SdtrigSm_textra_cg with function sample(ins_t ins);
     option.per_instance = 0;
     `include "general/RISCV_coverage_standard_coverpoints.svh"
     `include "general/RISCV_coverage_sdtrig_coverpoints.svh"
+    `include "general/RISCV_coverage_sdtrig_trap_coverpoints.svh"
 
     arm_type: coverpoint ins.current.rs1_val[XLEN-1:XLEN-4] {
         bins icount    = {4'd3};
@@ -1238,6 +1259,26 @@ covergroup SdtrigSm_textra_cg with function sample(ins_t ins);
         bins match = {1'b1};
     }
 
+    // itrigger/etrigger textra: the trap the trigger watches, handled in S, fired into M iff the context matches
+    itrigger_interrupt: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "tdata1", "type")[3:0] iff (sdtrig_trap_interrupt(ins)) {
+        type_option.weight = 0;
+        bins itrigger = {4'd4};
+    }
+    etrigger_exception: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "tdata1", "type")[3:0] iff (sdtrig_trap_exception(ins)) {
+        type_option.weight = 0;
+        bins etrigger = {4'd5};
+    }
+    textra_trap_mcontext: coverpoint sdtrig_textra_trap_outcome(ins) {
+        type_option.weight = 0;
+        bins mismatch_suppressed = {3'b01_0};
+        bins match_fired         = {3'b01_1};
+    }
+    textra_trap_scontext: coverpoint sdtrig_textra_trap_outcome(ins) {
+        type_option.weight = 0;
+        bins mismatch_suppressed = {3'b10_0};
+        bins match_fired         = {3'b10_1};
+    }
+
     // main coverpoints
     `ifdef UDB_MCONTEXT_AVAILABLE
         cp_textra_mcontext:       cross priv_mode_m, triggernum, csrw, csr_tdata1, arm_type, mhselect_mcontext, sselect_ignore, mcontext_match;                       // NTRIG * 2 types * 2
@@ -1254,9 +1295,135 @@ covergroup SdtrigSm_textra_cg with function sample(ins_t ins);
     `ifdef S_SUPPORTED
         cp_textra_asid:           cross priv_mode_m, triggernum, csrw, csr_tdata1, arm_type, mhselect_ignore, sselect_asid, asid_match;                      // NTRIG * 2 types * 2
         cp_textra_asid_sbytemask: cross priv_mode_m, triggernum, csrw, csr_tdata1, arm_type, mhselect_ignore, sselect_asid, sbytemask_all, asid_match;       // NTRIG * 2 types * 2
+        `ifdef UDB_MCONTEXT_AVAILABLE
+            cp_textra_itrigger_mcontext: cross trap_from_s, triggernum, itrigger_interrupt, trap_delegated, trap_selected, textra_trap_mcontext;     // NTRIG * 2
+            cp_textra_etrigger_mcontext: cross trap_from_s, triggernum, etrigger_exception, trap_delegated, trap_selected, textra_trap_mcontext;     // NTRIG * 2
+        `endif
+        `ifdef UDB_SCONTEXT_AVAILABLE
+            cp_textra_itrigger_scontext: cross trap_from_s, triggernum, itrigger_interrupt, trap_delegated, trap_selected, textra_trap_scontext;     // NTRIG * 2
+            cp_textra_etrigger_scontext: cross trap_from_s, triggernum, etrigger_exception, trap_delegated, trap_selected, textra_trap_scontext;     // NTRIG * 2
+        `endif
     `endif
     `ifndef H_SUPPORTED
         cp_textra_mhselect_no_h:  cross priv_mode_m, triggernum, csrw, csr_tdata3, armed_type, mhselect_written, mhselect_legal;                             // NTRIG * 2 types * 6
+    `endif
+endgroup
+
+// cp_tdata2_translate: a tdata2 value read back in M while satp.MODE selects the mode it is valid in.
+// 1/2: Sv39 largest VA with the sign bit clear / smallest with it set, 3/4: Sv48, 5/6: Sv57, 7/8: Sv32,
+// 9: Bare and the largest PA (zero-extended), 0: anything else.
+function automatic logic [3:0] sdtrig_tdata2_xlate_value(ins_t ins);
+    logic [XLEN-1:0] v = ins.current.rd_val;
+`ifdef UDB_MXLEN_64
+    logic [3:0] mode = ins.current.csr[CSR_SATP][63:60];
+    if (mode == 4'd8  && v == 64'h0000_003F_FFFF_FFFF) return 4'd1;
+    if (mode == 4'd8  && v == 64'hFFFF_FFC0_0000_0000) return 4'd2;
+    if (mode == 4'd9  && v == 64'h0000_7FFF_FFFF_FFFF) return 4'd3;
+    if (mode == 4'd9  && v == 64'hFFFF_8000_0000_0000) return 4'd4;
+    if (mode == 4'd10 && v == 64'h00FF_FFFF_FFFF_FFFF) return 4'd5;
+    if (mode == 4'd10 && v == 64'hFF00_0000_0000_0000) return 4'd6;
+    if (mode == 4'd0  && v == (64'd1 << `UDB_PHYS_ADDR_WIDTH) - 64'd1) return 4'd9;
+`else
+    logic bare = !ins.current.csr[CSR_SATP][31];
+    if (!bare && v == 32'h7FFF_FFFF) return 4'd7;
+    if (!bare && v == 32'h8000_0000) return 4'd8;
+    if (bare && v == ((`UDB_PHYS_ADDR_WIDTH >= 32) ? 32'hFFFF_FFFF : 32'((64'd1 << `UDB_PHYS_ADDR_WIDTH) - 64'd1))) return 4'd9;
+`endif
+    return 4'd0;
+endfunction
+// satp.MODE: RV64 satp[63:60]; RV32 1 = Sv32
+function automatic logic [3:0] sdtrig_satp_mode(ins_t ins);
+`ifdef UDB_MXLEN_64
+    return ins.current.csr[CSR_SATP][63:60];
+`else
+    return {3'b0, ins.current.csr[CSR_SATP][31]};
+`endif
+endfunction
+// cp_tdata2_translate_exec, for code run through the alias superpage in the last root slot (VA bits above the
+// superpage offset all 1): 1 = an execute trigger fired with tdata2 = the matched instruction's VA there;
+// 2 = an instruction ran there with tdata2 = its PA (same superpage offset, identity mapped) and nothing fired.
+function automatic logic [1:0] sdtrig_tdata2_xlate_exec(ins_t ins);
+    logic [XLEN-1:0] tdata2 = ins.current.csr[CSR_TDATA2];
+    logic [XLEN-1:0] offset_mask;
+    case (sdtrig_satp_mode(ins))
+`ifdef UDB_MXLEN_64
+        4'd8:    offset_mask = (XLEN'(1) << 30) - 1;
+        4'd9:    offset_mask = (XLEN'(1) << 39) - 1;
+        4'd10:   offset_mask = (XLEN'(1) << 48) - 1;
+`else
+        4'd1:    offset_mask = (XLEN'(1) << 22) - 1;
+`endif
+        default: return 2'd0;
+    endcase
+    // the fire is logged on the jump into the alias, so mepc is not the next sequential PC (sdtrig_exec_fired)
+    if (sdtrig_trap_fired(ins))
+        return (ins.current.csr[CSR_MEPC] == tdata2 && (tdata2 | offset_mask) == '1) ? 2'd1 : 2'd0;
+    if ((ins.current.pc_rdata | offset_mask) == '1 && tdata2 != ins.current.pc_rdata &&
+        ((tdata2 ^ ins.current.pc_rdata) & offset_mask) == '0)
+        return 2'd2;
+    return 2'd0;
+endfunction
+
+covergroup SdtrigSm_address_matches_cg with function sample(ins_t ins);
+    option.per_instance = 0;
+    `include "general/RISCV_coverage_standard_coverpoints.svh"
+    `include "general/RISCV_coverage_sdtrig_coverpoints.svh"
+
+    csr_tdata2: coverpoint ins.current.insn[31:20] {
+        type_option.weight = 0;
+        bins tdata2 = {CSR_TDATA2};
+    }
+    tdata2_xlate_value: coverpoint sdtrig_tdata2_xlate_value(ins) {
+        type_option.weight = 0;
+        bins bare_max_pa = {4'd9};
+    `ifdef UDB_MXLEN_64
+        `ifdef SV39_SUPPORTED
+            bins sv39_msb_0 = {4'd1};
+            bins sv39_msb_1 = {4'd2};
+        `endif
+        `ifdef SV48_SUPPORTED
+            bins sv48_msb_0 = {4'd3};
+            bins sv48_msb_1 = {4'd4};
+        `endif
+        `ifdef SV57_SUPPORTED
+            bins sv57_msb_0 = {4'd5};
+            bins sv57_msb_1 = {4'd6};
+        `endif
+    `else
+        `ifdef SV32_SUPPORTED
+            bins sv32_msb_0 = {4'd7};
+            bins sv32_msb_1 = {4'd8};
+        `endif
+    `endif
+    }
+    satp_xlate_mode: coverpoint sdtrig_satp_mode(ins) {
+        type_option.weight = 0;
+    `ifdef UDB_MXLEN_64
+        `ifdef SV39_SUPPORTED
+            bins sv39 = {4'd8};
+        `endif
+        `ifdef SV48_SUPPORTED
+            bins sv48 = {4'd9};
+        `endif
+        `ifdef SV57_SUPPORTED
+            bins sv57 = {4'd10};
+        `endif
+    `else
+        `ifdef SV32_SUPPORTED
+            bins sv32 = {4'd1};
+        `endif
+    `endif
+    }
+    tdata2_xlate_exec: coverpoint sdtrig_tdata2_xlate_exec(ins) {
+        type_option.weight = 0;
+        bins va_fired     = {2'd1};
+        bins pa_not_fired = {2'd2};
+    }
+
+    // main coverpoints
+    cp_tdata2_translate:          cross priv_mode_m, triggernum, csrr, csr_tdata2, tdata1_type_mcontrol6, tdata1_select_adr, tdata2_xlate_value;                       // NTRIG * (2 * VA modes + 1)
+    `ifdef S_SUPPORTED
+        cp_tdata2_translate_exec: cross priv_mode_s, triggernum, tdata1_type_mcontrol6, tdata1_select_adr, tdata1_execute_on, satp_xlate_mode, tdata2_xlate_exec; // NTRIG * VA modes * 2
     `endif
 endgroup
 
@@ -1273,6 +1440,7 @@ function void sdtrigsm_sample(int hart, int issue, ins_t ins);
     SdtrigSm_etrigger_cg.sample(ins);
     SdtrigSm_mcontrol6_cg.sample(ins);
     SdtrigSm_textra_cg.sample(ins);
+    SdtrigSm_address_matches_cg.sample(ins);
     `ifdef UDB_TCONTROL_AVAILABLE
         SdtrigSm_tcontrol_cg.sample(ins);
     `endif
