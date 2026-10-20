@@ -50,47 +50,16 @@ covergroup InterruptsS_cg with function sample(ins_t ins);
         `endif
     }
 
-    // S-level interrupt bits this config implements: SEI, STI, SSI, and LCOFI with Sscofpmf.
-    // The sip, sie, and mideleg bits of an interrupt that is not implemented are read-only zero.
-    `ifdef UDB_SEI_INTR_IMPL
-        `define INTS_SEI 16'h0200
-    `else
-        `define INTS_SEI 16'h0000
-    `endif
-    `ifdef UDB_STI_INTR_IMPL
-        `define INTS_STI 16'h0020
-    `else
-        `define INTS_STI 16'h0000
-    `endif
-    `ifdef UDB_SSI_INTR_IMPL
-        `define INTS_SSI 16'h0002
-    `else
-        `define INTS_SSI 16'h0000
-    `endif
-    `ifdef SSCOFPMF_SUPPORTED
-        `define INTS_LCOFI 16'h2000
-    `else
-        `define INTS_LCOFI 16'h0000
-    `endif
-    `define INTS_NOH_MASK (`INTS_LCOFI | `INTS_SEI | `INTS_STI | `INTS_SSI)
-
-    // Interrupt bits this config supports below M: the S-level bits, plus VSEI, VSTI, and VSSI with H
-    `ifdef H_SUPPORTED
-        `define INTS_MASK (`INTS_NOH_MASK | 16'h0444)
-    `else
-        `define INTS_MASK `INTS_NOH_MASK
-    `endif
-
-    // mideleg delegates every S-level interrupt, as it does from boot. Bits outside INTS_NOH_MASK are
+    // mideleg delegates every S-level interrupt, as it does from boot. Bits outside INTR_S_LEVEL are
     // don't care: the tests never delegate M-level interrupts, and H hardwires the VS bits to 1.
-    mideleg_s_ones: coverpoint ((get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "mideleg", "mideleg")[15:0] & `INTS_NOH_MASK) == `INTS_NOH_MASK) {
+    mideleg_s_ones: coverpoint ((get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "mideleg", "mideleg")[15:0] & `INTR_S_LEVEL) == `INTR_S_LEVEL) {
         bins ones = {1'b1};
     }
 
     // sie written all 1s: every S-level enable is set. The VS enables live in hie, which a write to
     // sie cannot reach, so they are left out; requiring them would make every cross below that
     // uses sie_ones unreachable on a config with H.
-    sie_ones: coverpoint ((get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "mie", "mie")[15:0] & `INTS_NOH_MASK) == `INTS_NOH_MASK) {
+    sie_ones: coverpoint ((get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "mie", "mie")[15:0] & `INTR_S_LEVEL) == `INTR_S_LEVEL) {
         bins ones = {1'b1};
     }
 
@@ -106,9 +75,9 @@ covergroup InterruptsS_cg with function sample(ins_t ins);
         }
     `endif
 
-    // Exactly one interrupt in INTS_MASK enabled. M-level enables are not touched by writes to sie
+    // Exactly one interrupt in INTR_BELOW_M enabled. M-level enables are not touched by writes to sie
     // or hie, so they are masked off.
-    walking_sie_one: coverpoint (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "mie", "mie")[15:0] & `INTS_MASK) {
+    walking_sie_one: coverpoint (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "mie", "mie")[15:0] & `INTR_BELOW_M) {
         `ifdef UDB_SEI_INTR_IMPL
             bins seie = {16'h0200};
         `endif
@@ -128,10 +97,10 @@ covergroup InterruptsS_cg with function sample(ins_t ins);
         `endif
     }
 
-    // Every S-level interrupt enabled except one: the complement of mie, masked to INTS_NOH_MASK,
+    // Every S-level interrupt enabled except one: the complement of mie, masked to INTR_S_LEVEL,
     // is one-hot. The bin names the single interrupt left disabled. As in sie_ones, the VS enables
     // are in hie rather than sie, so they are masked off.
-    walking_sie_zero: coverpoint ((~get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "mie", "mie")[15:0]) & `INTS_NOH_MASK) {
+    walking_sie_zero: coverpoint ((~get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "mie", "mie")[15:0]) & `INTR_S_LEVEL) {
         `ifdef UDB_SEI_INTR_IMPL
             bins seie = {16'h0200};
         `endif
@@ -147,26 +116,26 @@ covergroup InterruptsS_cg with function sample(ins_t ins);
     }
 
     // The single enabled interrupt in walking_sie_one is pending
-    sip_matches_sie_one: coverpoint ((get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "mip", "mip")[15:0] & get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "mie", "mie")[15:0] & `INTS_MASK) != 16'h0) {
+    sip_matches_sie_one: coverpoint ((get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "mip", "mip")[15:0] & get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "mie", "mie")[15:0] & `INTR_BELOW_M) != 16'h0) {
         bins pending = {1'b1};
     }
 
     // The single disabled interrupt in walking_sie_zero is pending
-    sip_matches_sie_zero: coverpoint ((get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "mip", "mip")[15:0] & ~get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "mie", "mie")[15:0] & `INTS_NOH_MASK) != 16'h0) {
+    sip_matches_sie_zero: coverpoint ((get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "mip", "mip")[15:0] & ~get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "mie", "mie")[15:0] & `INTR_S_LEVEL) != 16'h0) {
         bins pending = {1'b1};
     }
 
-    // Exactly two interrupts in INTS_MASK enabled. One bin per pair: 3 for S, 6 for S+Sscofpmf,
+    // Exactly two interrupts in INTR_BELOW_M enabled. One bin per pair: 3 for S, 6 for S+Sscofpmf,
     // 15 for S+H, and 21 for S+H+Sscofpmf.
-    sie_pairs: coverpoint (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "mie", "mie")[15:0] & `INTS_MASK) {
+    sie_pairs: coverpoint (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "mie", "mie")[15:0] & `INTR_BELOW_M) {
         // The second term drops pairs naming a bit this config does not implement, which would
         // otherwise be declared as bins that can never be hit.
-        bins pairs[] = {[0:$]} with ($countones(item) == 2 && (item & ~`INTS_MASK) == 0);
+        bins pairs[] = {[0:$]} with ($countones(item) == 2 && (item & ~`INTR_BELOW_M) == 0);
     }
 
-    // One interrupt in INTS_MASK pending at a time. M-level bits are masked off: the tests neither
+    // One interrupt in INTR_BELOW_M pending at a time. M-level bits are masked off: the tests neither
     // raise nor depend on them.
-    sip_walking: coverpoint (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "mip", "mip")[15:0] & `INTS_MASK) {
+    sip_walking: coverpoint (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "mip", "mip")[15:0] & `INTR_BELOW_M) {
         `ifdef UDB_SEI_INTR_IMPL
             bins seip = {16'h0200};
         `endif
@@ -186,14 +155,14 @@ covergroup InterruptsS_cg with function sample(ins_t ins);
         `endif
     }
 
-    // Exactly two interrupts in INTS_MASK pending at once. One bin per pair, counted as in sie_pairs.
-    sip_pairs: coverpoint (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "mip", "mip")[15:0] & `INTS_MASK) {
-        bins pairs[] = {[0:$]} with ($countones(item) == 2 && (item & ~`INTS_MASK) == 0);
+    // Exactly two interrupts in INTR_BELOW_M pending at once. One bin per pair, counted as in sie_pairs.
+    sip_pairs: coverpoint (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "mip", "mip")[15:0] & `INTR_BELOW_M) {
+        bins pairs[] = {[0:$]} with ($countones(item) == 2 && (item & ~`INTR_BELOW_M) == 0);
     }
 
     // Every S-level interrupt pending at once. The VS pending bits are raised through hvip, which is
     // out of reach of the S-level macros, so they are masked off as in sie_ones.
-    sip_all_ones: coverpoint ((get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "mip", "mip")[15:0] & `INTS_NOH_MASK) == `INTS_NOH_MASK) {
+    sip_all_ones: coverpoint ((get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "mip", "mip")[15:0] & `INTR_S_LEVEL) == `INTR_S_LEVEL) {
         bins ones = {1'b1};
     }
 
@@ -398,12 +367,6 @@ covergroup InterruptsS_cg with function sample(ins_t ins);
 
 endgroup
 
-`undef INTS_MASK
-`undef INTS_NOH_MASK
-`undef INTS_SEI
-`undef INTS_STI
-`undef INTS_SSI
-`undef INTS_LCOFI
 
 function void interruptss_sample(int hart, int issue, ins_t ins);
     InterruptsS_cg.sample(ins);
