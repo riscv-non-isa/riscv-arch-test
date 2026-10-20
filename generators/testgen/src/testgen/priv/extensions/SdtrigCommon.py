@@ -33,6 +33,8 @@ TRIG_TYPE_ITRIGGER = 4
 TRIG_TYPE_ETRIGGER = 5
 MCONTROL6_TYPE = 6
 TDATA1_TYPE_DISABLED = 15
+# types cp_csr_access_common bins (the testplan's {3, 4, 5, 6, 15}); the others are legacy, reserved or custom
+ACCESS_TYPES = (TRIG_TYPE_ICOUNT, TRIG_TYPE_ITRIGGER, TRIG_TYPE_ETRIGGER, MCONTROL6_TYPE, TDATA1_TYPE_DISABLED)
 # mcontrol6 mode bits; with all five set, bits 26:0 match priv_bits in SdtrigSm_trig_module_reg_cg
 MCONTROL6_VS = 1 << 24
 MCONTROL6_VU = 1 << 23
@@ -173,6 +175,16 @@ _TEXTRA_MCONTEXT_CASES = (
     ("zero", 0b000000, 0x0000),
     ("other", 0b111111, 0x0AAA),
 )
+
+
+def _type_guard(trig_type: int, trig_num: int) -> str | None:
+    """The define saying trigger ``trig_num`` supports ``trig_type``; None for type 15 (disabled), which every trigger has."""
+    return {
+        TRIG_TYPE_ICOUNT: f"UDB_ICOUNT_TRIG{trig_num}_AVAILABLE",
+        TRIG_TYPE_ITRIGGER: f"UDB_ITRIGGER_TRIG{trig_num}_AVAILABLE",
+        TRIG_TYPE_ETRIGGER: f"UDB_SDTRIG_ETRIGGER_SUPPORTED{trig_num}",
+        MCONTROL6_TYPE: f"UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}",
+    }.get(trig_type)
 
 
 def _xsl_ifdefs(xsl: int) -> list[str]:
@@ -985,7 +997,7 @@ def _generate_access_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     lines.append(
         comment_banner(
             coverpoint,
-            "Access every trigger CSR across all triggers and trigger types\n"
+            "Access every trigger CSR across all triggers and the types {3, 4, 5, 6, 15} each supports\n"
             "Should not cause any illegal instruction exceptions on implemented triggers",
         )
     )
@@ -998,7 +1010,10 @@ def _generate_access_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     )  # exclude a0, a1 because they are used in SBI
 
     for trig_num in range(UDB_NUM_TRIGGERS):
-        for trig_type in range(16):
+        for trig_type in ACCESS_TYPES:
+            guard = _type_guard(trig_type, trig_num)
+            if guard:
+                lines.append(f"\n#ifdef {guard}")
             for csr in csrs:
                 if csr in optional_csrs:
                     lines.append(f"#ifdef UDB_{csr.upper()}_AVAILABLE")
@@ -1023,6 +1038,8 @@ def _generate_access_tests(test_data: TestData, mode: str) -> list[TestChunk]:
                 )
                 if csr in optional_csrs:
                     lines.append("#endif")
+            if guard:
+                lines.append(f"#endif // {guard}")
 
     test_data.int_regs.return_registers([type_reg, save_reg, temp_reg])
     chunks.append(test_data.end_test_chunk())
@@ -1768,12 +1785,6 @@ def _generate_csr_tests(test_data: TestData, mode: str) -> list[TestChunk]:
         )
     )
     for trig_num in range(UDB_NUM_TRIGGERS):
-        type_guards = (
-            (TRIG_TYPE_ICOUNT, f"UDB_ICOUNT_TRIG{trig_num}_AVAILABLE"),
-            (TRIG_TYPE_ITRIGGER, f"UDB_ITRIGGER_TRIG{trig_num}_AVAILABLE"),
-            (TRIG_TYPE_ETRIGGER, f"UDB_SDTRIG_ETRIGGER_SUPPORTED{trig_num}"),
-            (MCONTROL6_TYPE, f"UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}"),
-        )
         lines.extend(
             [
                 _add_tc(test_data, f"trig_num_{trig_num}", coverpoint, covergroup),
@@ -1789,7 +1800,8 @@ def _generate_csr_tests(test_data: TestData, mode: str) -> list[TestChunk]:
                 f"LI(x{ones_reg}, 0) # tinfo bits of the types configured for this trigger",
             ]
         )
-        for trig_type, guard in type_guards:
+        for trig_type in ACCESS_TYPES[:-1]:  # the types with a per-trigger define (not 15, disabled)
+            guard = _type_guard(trig_type, trig_num)
             lines.extend([f"#ifdef {guard}", f"ori x{ones_reg}, x{ones_reg}, 0x{1 << trig_type:x}", "#endif"])
         lines.extend(
             [
