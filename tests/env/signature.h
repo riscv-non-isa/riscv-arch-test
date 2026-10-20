@@ -127,84 +127,11 @@
     4:                                                          ;
 #endif
 
-// TRAP_SIGUPD_INVALID_ADDR(tempreg, sigreg, offset, instptr, strptr)
-// TRAP_SIGUPD for xepc or xtval when the trap may report an invalid virtual address.  An address is
-// invalid when its bits XLEN-1 to INVALID_VA_WIDTH-1 are not all equal.  xepc and xtval need not hold
-// every invalid address, and an implementation may write some other invalid address in its place
-// (norm:mepc_inv_addr_conv, sepc_acc_invalid_addr, mtval_inv_addr_conv, stval_inv_addr_conv; vsepc and
-// vstval hold the same values as sepc and stval).  In Self Check mode the value passes if it matches the
-// reference, or if the reference and the value are both invalid.  T2 is scratch.  Each pass path
-// executes ten instructions, so the handler's instruction count does not depend on which legal value
-// the hart wrote.  Both compile modes emit the same instructions so the signature and self-check ELFs
-// have identical code layout.
-#ifdef RVTEST_SELFCHECK
-  #define TRAP_SIGUPD_INVALID_ADDR(_TMPREG, _R, _OFF, _INST_PTR, _STR_PTR) \
-    .option push                                                ;\
-    .option norvc                                               ;\
-    LREG _TMPREG, _OFF*REGWIDTH(T1)                             ;\
-    beq  _TMPREG, _R, 1f                                        ;\
-    srai T2, _TMPREG, INVALID_VA_WIDTH-1                        ;\
-    addi T2, T2, 1                                              ;\
-    sltiu T2, T2, 2                                             ;\
-    bnez T2, 3f                                                 ;\
-    srai T2, _R, INVALID_VA_WIDTH-1                             ;\
-    addi T2, T2, 1                                              ;\
-    sltiu T2, T2, 2                                             ;\
-    beqz T2, 2f                                                 ;\
-    3:                                                          ;\
-    mv   T1, _R                                                 ;\
-    mv   DEFAULT_TEMP_REG, _TMPREG                              ;\
-    jal  T2, failedtest_trap_x7_x9                              ;\
-    RVTEST_WORD_PTR _INST_PTR                                   ;\
-    RVTEST_WORD_PTR _STR_PTR                                    ;\
-    .word CSR_XEPC                                              ;\
-    1:                                                          ;\
-    nop                                                         ;\
-    nop                                                         ;\
-    nop                                                         ;\
-    nop                                                         ;\
-    nop                                                         ;\
-    nop                                                         ;\
-    nop                                                         ;\
-    nop                                                         ;\
-    2:                                                          ;\
-    .option pop
-#else
-  #define TRAP_SIGUPD_INVALID_ADDR(_TMPREG, _R, _OFF, _INST_PTR, _STR_PTR) \
-    .option push                                                ;\
-    .option norvc                                               ;\
-    SREG _R, _OFF*REGWIDTH(T1)                                  ;\
-    beq  x0, x0, 1f                                             ;\
-    nop                                                         ;\
-    nop                                                         ;\
-    nop                                                         ;\
-    nop                                                         ;\
-    nop                                                         ;\
-    nop                                                         ;\
-    nop                                                         ;\
-    nop                                                         ;\
-    mv   T1, _R                                                 ;\
-    mv   DEFAULT_TEMP_REG, _TMPREG                              ;\
-    jal  T2, failedtest_trap_x7_x9                              ;\
-    RVTEST_WORD_PTR _INST_PTR                                   ;\
-    RVTEST_WORD_PTR _STR_PTR                                    ;\
-    .word CSR_XEPC                                              ;\
-    1:                                                          ;\
-    nop                                                         ;\
-    nop                                                         ;\
-    nop                                                         ;\
-    nop                                                         ;\
-    nop                                                         ;\
-    nop                                                         ;\
-    nop                                                         ;\
-    nop                                                         ;\
-    2:                                                          ;\
-    .option pop
-#endif
-
 // TRAP_SIGUPD_TVAL(tempreg, sigreg, offset, instptr, strptr)
-// TRAP_SIGUPD for xtval. An implementation need not hold every invalid address in
-// xtval and may replace one invalid address with another. The check passes when
+// TRAP_SIGUPD_EPC(tempreg, sigreg, offset, instptr, strptr)
+// TRAP_SIGUPD for xtval and xepc. An implementation need not hold every invalid address
+// in xtval or xepc and may replace one invalid address with another (norm:mtval_inv_addr_conv,
+// stval_inv_addr_conv, mepc_inv_addr_conv, sepc_acc_invalid_addr). The check passes when
 // the DUT value equals the reference value, or when the reference value is an
 // invalid address and the DUT value is also an invalid address:
 //  - Access fault and misaligned causes with address translation off and a non-guest
@@ -212,6 +139,9 @@
 //    _end. The linked ELF image is the only memory the test knows to exist.
 //  - Page fault causes with Sv39/Sv48/Sv57 active (vsatp for a guest trap): an address
 //    is invalid when it is not a canonical virtual address.
+// xepc holds an address only the trapping instruction could not fetch, so TRAP_SIGUPD_EPC
+// applies the first rule to instruction access faults and the second to instruction page
+// faults; for every other cause xepc is the address of an instruction that was fetched.
 // Registers: T5 holds xcause. T2 and T6 are scratch. In the failure path T1
 // carries the actual value and DEFAULT_TEMP_REG the expected value.
 // Both compile modes emit the same instructions so the signature and self-check
@@ -320,18 +250,12 @@
   #define TRAP_TVAL_BARE_CHECK
 #endif
 
-// TRAP_TVAL_OUTSIDE_IMAGE_CHECK(tempreg, sigreg)
-// Loosen for access fault and misaligned causes (0-7 except 2 and 3) when translation is
-// off and the address is not a guest address. If the expected value (tempreg) lies
-// inside [rvtest_entry_point, _end), jump to 6: (exact compare fails). Otherwise pass
-// (jump to 9:) when the actual value (sigreg) is also outside the image. Else fall
-// through to 6:.
-#define TRAP_TVAL_OUTSIDE_IMAGE_CHECK(_TMPREG, _R)                           \
-    li   T2, 8                   /* causes >= 8 are not address faults */   ;\
-    bgeu T5, T2, 6f              /* cause >= 8: exact compare */            ;\
-    addi T6, T5, -2              /* causes 2, 3 become 0, 1 */              ;\
-    li   T2, 2                   /* limit for causes 2, 3 */                ;\
-    bltu T6, T2, 6f              /* cause 2 or 3: exact compare */          ;\
+// TRAP_OUTSIDE_IMAGE_RULE(tempreg, sigreg)
+// Loosen when translation is off and the address is not a guest address. If the expected
+// value (tempreg) lies inside [rvtest_entry_point, _end), jump to 6: (exact compare
+// fails). Otherwise pass (jump to 9:) when the actual value (sigreg) is also outside the
+// image. Else fall through to 6:.
+#define TRAP_OUTSIDE_IMAGE_RULE(_TMPREG, _R)                                 \
     TRAP_TVAL_IS_GVA                                                         \
     bnez T2, 6f                  /* guest address: exact compare */         ;\
     TRAP_TVAL_BARE_CHECK                                                     \
@@ -343,22 +267,35 @@
     bltu _R, T6, 9f              /* actual below image: pass */             ;\
     bgeu _R, T2, 9f              /* actual above image: pass */             ;
 
-// TRAP_TVAL_NONCANONICAL_CHECK(tempreg, sigreg)
-// Page-fault rule: causes 12, 13 and 15 with Sv39, Sv48 or Sv57 active (vsatp for a
-// guest trap). A virtual address with VA_BITS = 39, 48 or 57 is canonical when bits
+// TRAP_TVAL_OUTSIDE_IMAGE_CHECK(tempreg, sigreg)
+// The outside-image rule for xtval on access fault and misaligned causes (0-7 except 2
+// and 3). Other causes jump to 6: (exact compare).
+#define TRAP_TVAL_OUTSIDE_IMAGE_CHECK(_TMPREG, _R)                           \
+    li   T2, 8                   /* causes >= 8 are not address faults */   ;\
+    bgeu T5, T2, 6f              /* cause >= 8: exact compare */            ;\
+    addi T6, T5, -2              /* causes 2, 3 become 0, 1 */              ;\
+    li   T2, 2                   /* limit for causes 2, 3 */                ;\
+    bltu T6, T2, 6f              /* cause 2 or 3: exact compare */          ;\
+    TRAP_OUTSIDE_IMAGE_RULE(_TMPREG, _R)
+
+// TRAP_EPC_OUTSIDE_IMAGE_CHECK(tempreg, sigreg)
+// The outside-image rule for xepc on an instruction access fault (cause 1). Other causes
+// jump to 6: (exact compare).
+#define TRAP_EPC_OUTSIDE_IMAGE_CHECK(_TMPREG, _R)                            \
+    li   T2, CAUSE_FETCH_ACCESS  /* the only cause with a fetch address */  ;\
+    bne  T5, T2, 6f              /* other cause: exact compare */           ;\
+    TRAP_OUTSIDE_IMAGE_RULE(_TMPREG, _R)
+
+// TRAP_NONCANONICAL_RULE(tempreg, sigreg)
+// Page-fault rule: Sv39, Sv48 or Sv57 active (vsatp for a guest trap). A virtual address with VA_BITS = 39, 48 or 57 is canonical when bits
 // XLEN-1:VA_BITS-1 are all equal, so sign-extending from bit VA_BITS-1 gives the same value.
-// Jump to 8: (fail) when the cause or satp.MODE is not covered by this rule, or when the
+// Jump to 8: (fail) when satp.MODE is not covered by this rule, or when the
 // expected value is canonical. Otherwise if the expected value is non-canonical: jump to 9:
 // (pass) when the actual value is also non-canonical, else fall through to fail.
 // Sign-extension uses shift = XLEN - VA_BITS = 25, 16, 7: (x << shift) >>s shift == x.
 // The shift is computed as 25 - 9*(MODE-8), where MODE is 8, 9, 10 for Sv39, Sv48, Sv57.
 #if defined(SV39_SUPPORTED)
-  #define TRAP_TVAL_NONCANONICAL_CHECK(_TMPREG, _R)                          \
-    addi T2, T5, -12     /* T2 = cause - 12 */                              ;\
-    li   T6, 3           /* highest offset: cause 15 */                     ;\
-    bgtu T2, T6, 8f      /* cause not 12-15: fail */                        ;\
-    li   T6, 2           /* offset of cause 14 */                           ;\
-    beq  T2, T6, 8f      /* cause 14 is reserved: fail */                   ;\
+  #define TRAP_NONCANONICAL_RULE(_TMPREG, _R)                                \
     TRAP_TVAL_READ_SATP                                                      \
     srli T2, T2, 60      /* T2 = satp.MODE */                               ;\
     addi T2, T2, -8      /* T2 = MODE - 8 (0 = Sv39) */                     ;\
@@ -374,8 +311,27 @@
     sll  T6, _R, T2      /* shift out bits above the VA top bit */          ;\
     sra  T6, T6, T2      /* canonical form of actual */                     ;\
     bne  T6, _R, 9f      /* actual non-canonical: pass */                   ;
+
+// TRAP_TVAL_NONCANONICAL_CHECK(tempreg, sigreg)
+// The page-fault rule for xtval on causes 12, 13 and 15. Other causes jump to 8: (fail).
+  #define TRAP_TVAL_NONCANONICAL_CHECK(_TMPREG, _R)                          \
+    addi T2, T5, -12     /* T2 = cause - 12 */                              ;\
+    li   T6, 3           /* highest offset: cause 15 */                     ;\
+    bgtu T2, T6, 8f      /* cause not 12-15: fail */                        ;\
+    li   T6, 2           /* offset of cause 14 */                           ;\
+    beq  T2, T6, 8f      /* cause 14 is reserved: fail */                   ;\
+    TRAP_NONCANONICAL_RULE(_TMPREG, _R)
+
+// TRAP_EPC_NONCANONICAL_CHECK(tempreg, sigreg)
+// The page-fault rule for xepc on an instruction page fault (cause 12). Other causes jump
+// to 8: (fail).
+  #define TRAP_EPC_NONCANONICAL_CHECK(_TMPREG, _R)                           \
+    li   T2, CAUSE_FETCH_PAGE_FAULT /* the only cause with a fetch address */ ;\
+    bne  T5, T2, 8f                 /* other cause: fail */                 ;\
+    TRAP_NONCANONICAL_RULE(_TMPREG, _R)
 #else
   #define TRAP_TVAL_NONCANONICAL_CHECK(_TMPREG, _R)
+  #define TRAP_EPC_NONCANONICAL_CHECK(_TMPREG, _R)
 #endif
 
 #define TRAP_SIGUPD_TVAL(_TMPREG, _R, _OFF, _INST_PTR, _STR_PTR) \
@@ -383,6 +339,20 @@
     TRAP_TVAL_OUTSIDE_IMAGE_CHECK(_TMPREG, _R)                   \
     6:                                                          ;\
     TRAP_TVAL_NONCANONICAL_CHECK(_TMPREG, _R)                    \
+    8:                                                          ;\
+    mv   T1, _R                    /* actual value */           ;\
+    mv   DEFAULT_TEMP_REG, _TMPREG /* expected value */         ;\
+    jal  T2, failedtest_trap_x7_x9 /* report failure */         ;\
+    RVTEST_WORD_PTR _INST_PTR                                   ;\
+    RVTEST_WORD_PTR _STR_PTR                                    ;\
+    .word CSR_XEPC                                              ;\
+    9:                                                          ;
+
+#define TRAP_SIGUPD_EPC(_TMPREG, _R, _OFF, _INST_PTR, _STR_PTR)  \
+    TRAP_SIGUPD_TVAL_PREFIX(_TMPREG, _R, _OFF)                   \
+    TRAP_EPC_OUTSIDE_IMAGE_CHECK(_TMPREG, _R)                    \
+    6:                                                          ;\
+    TRAP_EPC_NONCANONICAL_CHECK(_TMPREG, _R)                     \
     8:                                                          ;\
     mv   T1, _R                    /* actual value */           ;\
     mv   DEFAULT_TEMP_REG, _TMPREG /* expected value */         ;\
