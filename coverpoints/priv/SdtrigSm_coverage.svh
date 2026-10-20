@@ -850,6 +850,12 @@ function automatic logic sdtrig_textra_scontext_match(logic [XLEN-1:0] t3, logic
     return svalue == ctx;
 endfunction
 
+// 1 when the low ASIDMAX (RV64 16, RV32 9) bits of svalue equal satp.ASID
+function automatic logic sdtrig_textra_asid_match(logic [XLEN-1:0] t3, logic [XLEN-1:0] satp);
+    return (XLEN == 64) ? (((t3 >> 2) & 'hffff) == ((satp >> 44) & 'hffff))
+                        : (((t3 >> 2) & 'h1ff) == ((satp >> 22) & 'h1ff));
+endfunction
+
 covergroup SdtrigSm_textra_cg with function sample(ins_t ins);
     option.per_instance = 0;
     `include "general/RISCV_coverage_standard_coverpoints.svh"
@@ -869,6 +875,9 @@ covergroup SdtrigSm_textra_cg with function sample(ins_t ins);
     sselect: coverpoint sdtrig_textra_sselect(ins.current.csr[CSR_TDATA3]) {
         bins ignore   = {2'd0};
         bins scontext = {2'd1};
+    }
+    mhselect_ignore: coverpoint sdtrig_textra_mhselect(ins.current.csr[CSR_TDATA3]) {
+        bins ignore = {3'd0};
     }
     sselect_ignore: coverpoint sdtrig_textra_sselect(ins.current.csr[CSR_TDATA3]) {
         bins ignore = {2'd0};
@@ -902,6 +911,14 @@ covergroup SdtrigSm_textra_cg with function sample(ins_t ins);
         bins match    = {1'b1};
     }
 
+    sselect_asid: coverpoint sdtrig_textra_sselect(ins.current.csr[CSR_TDATA3]) {
+        bins asid = {2'd2};
+    }
+    asid_match: coverpoint sdtrig_textra_asid_match(ins.current.csr[CSR_TDATA3], ins.current.csr[CSR_SATP]) {
+        bins mismatch = {1'b0};
+        bins match    = {1'b1};
+    }
+
     scontext_match_only: coverpoint sdtrig_textra_scontext_match(ins.current.csr[CSR_TDATA3], ins.current.csr[CSR_SCONTEXT]) {
         bins match = {1'b1};
     }
@@ -918,6 +935,9 @@ covergroup SdtrigSm_textra_cg with function sample(ins_t ins);
     `ifdef UDB_SCONTEXT_AVAILABLE
         cp_textra_double_context: cross priv_mode_m, triggernum, csrw, csr_tdata1, arm_type, mhselect, sselect, mcontext_match, scontext_match;              // NTRIG * 2 types * 16
     `endif
+    `endif
+    `ifdef S_SUPPORTED
+        cp_textra_asid:           cross priv_mode_m, triggernum, csrw, csr_tdata1, arm_type, mhselect_ignore, sselect_asid, asid_match;                      // NTRIG * 2 types * 2
     `endif
 endgroup
 

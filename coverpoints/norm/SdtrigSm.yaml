@@ -855,6 +855,7 @@ normative_rule_definitions:
         "SdtrigSm_textra_cg/cp_textra_mcontext",
         "SdtrigSm_textra_cg/cp_textra_scontext",
         "SdtrigSm_textra_cg/cp_textra_double_context",
+        "SdtrigSm_textra_cg/cp_textra_asid",
       ]
 
   # If implemented, the TM updates this field every time the trigger fires.
@@ -1266,6 +1267,7 @@ normative_rule_definitions:
         "SdtrigSm_textra_cg/cp_textra_mcontext",
         "SdtrigSm_textra_cg/cp_textra_scontext",
         "SdtrigSm_textra_cg/cp_textra_double_context",
+        "SdtrigSm_textra_cg/cp_textra_asid",
       ]
 
   # When set, enable this trigger in VS-mode. This bit is hard-wired to 0 if the
@@ -1650,15 +1652,15 @@ normative_rule_definitions:
 
   # This trigger will only match or fire if:
   - name: Sdtrig_textra32_sselect_asid1
-    coverpoint: ["ASID matching (sselect=2) not tested yet"]
+    coverpoint: ["SdtrigSm_textra_cg/cp_textra_asid"]
   # the mode is VS-mode or VU-mode and ASID in vsatp equals the lower ASIDMAX (defined in
   # the Privileged Spec) bits of {textra32-svalue}.
   - name: Sdtrig_textra32_sselect_asid2
-    coverpoint: ["ASID matching (sselect=2) not tested yet"]
+    coverpoint: ["vsatp ASID matching (VS/VU-mode) not tested yet"]
   # in all other modes, ASID in satp equals the lower ASIDMAX (defined in the Privileged
   # Spec) bits of {textra32-svalue}.
   - name: Sdtrig_textra32_sselect_asid3
-    coverpoint: ["ASID matching (sselect=2) not tested yet"]
+    coverpoint: ["SdtrigSm_textra_cg/cp_textra_asid"]
 
   # This field should be tied to 0 when S-mode is not supported.
   - name: Sdtrig_textra32_sselect_no_s

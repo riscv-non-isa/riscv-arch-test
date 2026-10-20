@@ -100,6 +100,17 @@ _TEXTRA_SCONTEXT_RV64 = [
 _DOUBLE_MCONTEXT = (0b111111, 0x1FFF)
 _DOUBLE_SCONTEXT = (0xFFFF, 0xFFFFFFFF)
 
+# cp_textra_asid: satp.ASID = X = 2^ASID_WIDTH - 2, and svalue (an assembler expression in X and ASIDMAX, which
+# is 9 on RV32 and 16 on RV64) gives a match, a miss, a near miss, and a match whose svalue bits above ASIDMAX
+# are ignored (norm:Sdtrig_textra32_sselect_asid3)
+_ASID_X = "((1 << UDB_ASID_WIDTH) - 2)"
+_TEXTRA_ASID_CASES = (
+    ("match", "X"),
+    ("zero", "0"),
+    ("bit0_flipped", "(X ^ 1)"),
+    ("above_asidmax", "(X | (1 << ASIDMAX))"),
+)
+
 # (case name, rv32 mhvalue, rv64 mhvalue), per the test plan
 _TEXTRA_MCONTEXT_CASES = (
     ("match", 0b010101, 0x1AAA),
@@ -2420,8 +2431,61 @@ def _generate_textra_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     lines.append("#endif // UDB_SCONTEXT_AVAILABLE")
     lines.append("#endif // UDB_MCONTEXT_AVAILABLE")
 
-    # cp_textra_asid is not generated yet: it needs satp.ASID set through T-SBI in U-mode and a satp value
-    # whose result is specified (MODE=Bare with a nonzero ASID is UNSPECIFIED).
+    ######################################
+    coverpoint = "cp_textra_asid"
+    ######################################
+    # Sm only: M-mode fetches and accesses are not translated, so satp can select a paging mode (with the
+    # zeroed framework root table) and ASID X without a page table. satp.MODE=Bare with a nonzero ASID is
+    # UNSPECIFIED, and an S/U suite would need an identity map for both the test and its S-mode trap handler.
+    if mode == "Sm":
+        lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_")).code
+        lines.append(
+            comment_banner(coverpoint, "textra sselect=2: the low ASIDMAX bits of svalue compared with satp.ASID")
+        )
+        lines.append("#if defined(S_SUPPORTED) && UDB_ASID_WIDTH >= 2")
+        lines.append(
+            "#if (__riscv_xlen == 64 && defined(SV39_SUPPORTED)) || (__riscv_xlen == 32 && defined(SV32_SUPPORTED))"
+        )
+        lines.extend(_global_ie(mode, True))
+        lines.extend(
+            [
+                f"LA(x{temp_reg}, rvtest_Sroot_pg_tbl)",
+                f"srli x{temp_reg}, x{temp_reg}, 12 # root PPN; never walked from M-mode",
+                "#if __riscv_xlen == 64",
+                f"LI(x{data_reg}, (SATP_MODE_SV39 << 60) | ({_ASID_X} << 44))",
+                "#else",
+                f"LI(x{data_reg}, SATP32_MODE | ({_ASID_X} << 22))",
+                "#endif",
+                f"or x{temp_reg}, x{temp_reg}, x{data_reg}",
+                f"csrw satp, x{temp_reg} # satp.ASID = X",
+            ]
+        )
+        for trig_num in range(UDB_NUM_TRIGGERS):
+            for trig_type in trig_types:
+                body = []
+                for case_name, sv in _TEXTRA_ASID_CASES:
+                    sv64 = sv.replace("ASIDMAX", "16").replace("X", _ASID_X)
+                    sv32 = sv.replace("ASIDMAX", "9").replace("X", _ASID_X)
+                    tdata3 = [
+                        "#if __riscv_xlen == 64",
+                        f"LI(x{cfg_reg}, ((({sv64}) & 0xFFFFFFFF) << 2) | 2)",
+                        "#else",
+                        f"LI(x{cfg_reg}, ((({sv32}) & 0xFFFF) << 2) | 2)",
+                        "#endif",
+                    ]
+                    body += case(
+                        f"trig_num_{trig_num}_type_{trig_type}_svalue_{case_name}",
+                        coverpoint,
+                        trig_num,
+                        trig_type,
+                        tdata3,
+                    )
+                lines.extend(per_type(trig_num, trig_type, body))
+        lines.extend(["csrw satp, x0 # back to Bare", "sfence.vma"])
+        lines.extend(_global_ie(mode, False))
+        lines.append("#endif // SV39_SUPPORTED / SV32_SUPPORTED")
+        lines.append("#endif // S_SUPPORTED && UDB_ASID_WIDTH >= 2")
+
     # cp_smode_fields_hardwired is not generated: svalue/sselect "should" be tied to 0 without S-mode
     # (Sdtrig_textra32_svalue_no_s, Sdtrig_textra32_sselect_no_s), so a hart that implements them is legal.
 
