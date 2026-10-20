@@ -497,6 +497,9 @@ coverpoints:
       tdata1.XSL = 8 combinations
       perform addi x0, x1, 0
       (not nop, whose opcode also appears in the test environment's own code; no instruction in the test encodes as 0x2)
+      tdata1.size = 0 (any) is only well-defined for an XLEN-wide access, which a 32-bit instruction is not on RV64:
+      there, with UDB_SDTRIG_MCONTROL6_SIZE_AVAILABLE, tdata1.size = 3 (32-bit); without it, size = 0 relies on
+      the zero-extension of the instruction (Sdtrig_mcontrol6_select_data)
     expectation: Breakpoint exception on fetched instruction if tdata2 matches opcode and tdata1.execute = 1
     bins: 2 values * 8 XSL
     rules:
@@ -507,13 +510,14 @@ coverpoints:
     notes: "comments on test results: Exceptions when tdata2 = 0x00008013, and execute = 1"
   - name: cp_mcontrol6_load_store_data
     description: |-
-      tdata2 = {random value}
+      tdata2 = {random XLEN-wide value / the same value with bit 0 (RV32) or bit 32 (RV64) flipped}
       tdata1.select = 1 (data)
       tdata1.XSL = 8 combinations
-      perform {SW/ LW random value} to scratch
+      perform {SW/LW (RV32), SD/LD (RV64)} of the value to scratch
+      (XLEN-wide accesses: with size = 0 a data match is only well-defined when the access size is XLEN)
     expectation: |-
-      Breakpoint exception on LW if access data matches tdata2 and tdata1.load = 1
-      Breakpoint exception on SW if access data matches tdata2 and tdata1.store = 1
+      Breakpoint exception on the load if access data matches tdata2 and tdata1.load = 1
+      Breakpoint exception on the store if access data matches tdata2 and tdata1.store = 1
     bins: 8 XSL * 2 ops (tdata2 values not binned because the data a load reads is not visible to coverage)
     rules:
       - Sdtrig_mcontrol6_select_data
@@ -533,6 +537,9 @@ coverpoints:
       perform addi x0, x1, 0
       if ZCA_SUPPORTED
       perform c.nop
+      size = 0 is only well-defined for an XLEN-wide access, which c.nop never is and addi is not on RV64; in those
+      cases harts with UDB_SDTRIG_MCONTROL6_SIZE_AVAILABLE use size = 2 (c.nop) or 3 (addi) instead, and the size = 0
+      bins are only kept without it, where the result relies on the zero-extension (Sdtrig_mcontrol6_select_data)
     expectation: Breakpoint exception if the size of the instruction matches the trigger size in mcontrol6 and tdata1.execute = 1
     bins: 2 values * 7 sizes * 2 ops
     rules:
@@ -671,10 +678,10 @@ coverpoints:
       Trigger i+1 (Tselect = i + 1):
       tdata1.select = 1 (data)
       tdata1.chain = 0
-      tdata2 = {0x12345678}
+      tdata2 = {random XLEN-wide value}
 
       tdata1.XSL = 010
-      perform SW  {0x012345678/0} to {scratch/scratch+8}
+      perform SW (RV32) / SD (RV64) {the value/0} to {scratch/scratch+8} (XLEN-wide, as size = 0 needs)
     expectation: Breakpoint exception from final trigger in chain if all triggers match simultaneously
     bins: 2 store values * 2 addresses
     rules:
@@ -942,8 +949,8 @@ coverpoints:
       if MCONTROL6_SUPPORTED
       tdata1.type = 6 (mcontrol6)
       tdata1.select = 1 (data)
-      tdata2 = {0x12345678}
-      perform SW  {0x12345678}
+      tdata2 = {0x12345678 (RV32) / 0xEDCBA98712345678 (RV64)}
+      perform SW (RV32) / SD (RV64) of the same value (an XLEN-wide access, as size = 0 needs)
 
       itrigger/etrigger are not used: with action=0 they cannot fire here (traps are taken with xIE=0).
       After each case, rvtest_trap_count is written to the signature.
@@ -976,8 +983,8 @@ coverpoints:
       if MCONTROL6_SUPPORTED
       tdata1.type = 6 (mcontrol6)
       tdata1.select = 1 (data)
-      tdata2 = {0x12345678}
-      perform SW  {0x12345678}
+      tdata2 = {0x12345678 (RV32) / 0xEDCBA98712345678 (RV64)}
+      perform SW (RV32) / SD (RV64) of the same value (an XLEN-wide access, as size = 0 needs)
 
       itrigger/etrigger are not used: with action=0 they cannot fire here (traps are taken with xIE=0).
       After each case, rvtest_trap_count is written to the signature.
@@ -1031,8 +1038,8 @@ coverpoints:
       if MCONTROL6_SUPPORTED
       tdata1.type = 6 (mcontrol6)
       tdata1.select = 1 (data)
-      tdata2 = {0x12345678}
-      perform SW  {0x12345678}
+      tdata2 = {0x12345678 (RV32) / 0xEDCBA98712345678 (RV64)}
+      perform SW (RV32) / SD (RV64) of the same value (an XLEN-wide access, as size = 0 needs)
 
       itrigger/etrigger are not used: with action=0 they cannot fire here (traps are taken with xIE=0).
       After each case, rvtest_trap_count is written to the signature.
@@ -1076,8 +1083,8 @@ coverpoints:
       if MCONTROL6_SUPPORTED
       tdata1.type = 6 (mcontrol6)
       tdata1.select = 1 (data)
-      tdata2 = {0x12345678}
-      perform SW  {0x12345678}
+      tdata2 = {0x12345678 (RV32) / 0xEDCBA98712345678 (RV64)}
+      perform SW (RV32) / SD (RV64) of the same value (an XLEN-wide access, as size = 0 needs)
     expectation: Breakpoint exception if ASID in satp equals the lower ASIDMAX bits of svalue.
     bins: 5 svalues * 4 trigger types
     rules:

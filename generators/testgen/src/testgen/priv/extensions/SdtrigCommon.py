@@ -154,6 +154,7 @@ _TEXTRA_TYPE_GUARDS = {
     ],
 }
 
+_TEXTRA_DATA = 0x12345678  # the textra mcontrol6 cases' store data match (_xlen_value widens it on RV64)
 _MCONTEXT_TEST_VALUE_RV32 = 0b010101
 _MCONTEXT_TEST_VALUE_RV64 = 0x1AAA
 _SCONTEXT_TEST_VALUE_RV32 = 0x1234
@@ -678,7 +679,7 @@ def _clear_interrupt(code: int, mode: str) -> list[str]:
 def _config_mcontrol6(
     reg: int,
     tselect: int,
-    tdata2: int | str,
+    tdata2: int | str | list[str],
     mode: str,
     *,
     privbits: int | None = None,
@@ -720,7 +721,7 @@ def _config_mcontrol6(
             _load_reg(reg, tselect),
             _csr_access(f"csrw tselect, x{reg}", mode),
             _csr_access("csrw tdata1, x0 # disable before configuring", mode),
-            _load_reg(reg, tdata2),
+            *_load_value_or_lines(reg, tdata2),
             _csr_access(f"csrw tdata2, x{reg} # match value", mode),
             *_load_value_or_lines(reg, tdata3),
             _csr_access(f"csrw tdata3, x{reg} # textra context matching ", mode),
@@ -940,12 +941,45 @@ def _xlen_li(reg: int, val32: int, val64: int) -> list[str]:
     return ["#if __riscv_xlen == 64", f"LI(x{reg}, 0x{val64:x})", "#else", f"LI(x{reg}, 0x{val32:x})", "#endif"]
 
 
+def _xlen_value(val32: int) -> tuple[int, int]:
+    """(RV32, RV64) data values for a select = data match: val32, and on RV64 val32 with its complement above it.
+
+    With size = 0 (any) a data match is only well-defined when the access is XLEN wide (norm:Sdtrig_mcontrol6_size_any),
+    so these are stored and loaded with SREG/LREG, and the upper half on RV64 makes the whole register count.
+    """
+    return val32, ((~val32 & 0xFFFFFFFF) << 32) | val32
+
+
+def _config_exec_data(reg: int, trig_num: int, tdata2: int, mode: str, *, xsl: int, size: int, ilen: int) -> list[str]:
+    """Configure an mcontrol6 execute data match (select = 1) aimed at an ilen-bit instruction.
+
+    size = 0 (any) is only well-defined for an XLEN-wide access (norm:Sdtrig_mcontrol6_size_any), which a 32-bit
+    instruction is only on RV32 and a 16-bit one never is. Where it is not, harts with UDB_SDTRIG_MCONTROL6_SIZE_AVAILABLE
+    use the instruction's explicit size instead (2 = 16-bit, 3 = 32-bit).
+    """
+    if size != 0:
+        return _config_mcontrol6(reg, trig_num, tdata2, mode, xsl=xsl, select=1, size=size)
+    if ilen == 16:
+        undefined = "#ifdef UDB_SDTRIG_MCONTROL6_SIZE_AVAILABLE"
+    else:
+        undefined = "#if defined(UDB_SDTRIG_MCONTROL6_SIZE_AVAILABLE) && __riscv_xlen == 64"
+    return [
+        undefined,
+        *_config_mcontrol6(reg, trig_num, tdata2, mode, xsl=xsl, select=1, size=3 if ilen == 32 else 2),
+        "#else",
+        f"# size=0 with a {ilen}-bit instruction{' on RV64' if ilen == 32 else ''}: relies on the zero-extension in norm:Sdtrig_mcontrol6_select_data",
+        *_config_mcontrol6(reg, trig_num, tdata2, mode, xsl=xsl, select=1, size=0),
+        "#endif",
+    ]
+
+
 def _config_textra(reg: int, trig_num: int, trig_type: str, tdata3_lines: list[str], mode: str) -> list[str]:
     """Configure trig_num as trig_type with the given tdata3 load, reusing each type's own configurator."""
     if trig_type == "icount":
         return _config_icount(reg, trig_num, 1, mode, tdata3=tdata3_lines)
     if trig_type == "mcontrol6":
-        return _config_mcontrol6(reg, trig_num, 0x12345678, mode, xsl=0b010, select=1, tdata3=tdata3_lines)
+        tdata2 = _xlen_li(reg, *_xlen_value(_TEXTRA_DATA))
+        return _config_mcontrol6(reg, trig_num, tdata2, mode, xsl=0b010, select=1, tdata3=tdata3_lines)
     raise ValueError(f"unsupported textra trigger type: {trig_type}")
 
 
@@ -959,8 +993,8 @@ def _fire_textra_trigger(trig_type: str, mode: str, cfg_reg: int, addr_reg: int,
     if trig_type == "mcontrol6":
         return [
             f"LA(x{addr_reg}, scratch)",
-            f"LI(x{data_reg}, 0x12345678)",
-            f"sw x{data_reg}, 0(x{addr_reg}) # mcontrol6 data-store trigger",
+            *_xlen_li(data_reg, *_xlen_value(_TEXTRA_DATA)),
+            f"SREG x{data_reg}, 0(x{addr_reg}) # mcontrol6 XLEN-wide data-store trigger",
             "nop # spacer (data match fires after)",
         ]
     raise ValueError(f"unsupported textra trigger type: {trig_type}")
@@ -2260,7 +2294,7 @@ def _generate_mcontrol6_tests(test_data: TestData, mode: str) -> list[TestChunk]
                 lines.extend(
                     [
                         _add_tc(test_data, binname, coverpoint, covergroup),
-                        *_config_mcontrol6(temp_reg, trig_num, tdata2, mode, xsl=perm, select=1),
+                        *_config_exec_data(temp_reg, trig_num, tdata2, mode, xsl=perm, size=0, ilen=32),
                         "addi x0, x1, 0 # fire trigger when opcode==tdata2",
                         "nop # spacer (does not match tdata2)",
                         "nop # spacer (does not match tdata2)",
@@ -2283,21 +2317,22 @@ def _generate_mcontrol6_tests(test_data: TestData, mode: str) -> list[TestChunk]
     )
     for trig_num in range(UDB_NUM_TRIGGERS):
         lines.append(f"\n#ifdef UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
-        match_val = random_int(32, signed=False)
-        nofire_val = (match_val ^ 1) & 0xFFFFFFFF
+        match_val = _xlen_value(random_int(32, signed=False))
+        # no-fire values differ in bit 0 (RV32) or only in the upper half (RV64), so the whole register is compared
+        nofire_val = (match_val[0] ^ 1, match_val[1] ^ (1 << 32))
         for case, tdata2 in [("Fire", match_val), ("NoFire", nofire_val)]:
             for perm in range(8):  # perm_xsl
                 lines.extend(_xsl_ifdefs(perm))
-                binname = f"trig_num_{trig_num}_td2_{tdata2}_{case}_perm_{perm:03b}"
+                binname = f"trig_num_{trig_num}_{case}_perm_{perm:03b}"
                 lines.extend(
                     [
                         _add_tc(test_data, binname, coverpoint, covergroup),
-                        *_config_mcontrol6(temp_reg, trig_num, tdata2, mode, xsl=perm, select=1),
+                        *_config_mcontrol6(temp_reg, trig_num, _xlen_li(temp_reg, *tdata2), mode, xsl=perm, select=1),
                         f"LA(x{addr_reg}, scratch) # x{addr_reg} = &scratch",
-                        f"LI(x{data_reg}, {match_val})",
-                        f"sw x{data_reg}, 0(x{addr_reg}) # store: breakpoint iff data==tdata2 and xsl has store bit",
+                        *_xlen_li(data_reg, *match_val),
+                        f"SREG x{data_reg}, 0(x{addr_reg}) # XLEN-wide store: breakpoint iff data==tdata2 and xsl has store bit",
                         "nop # spacer (data match fires after)",
-                        f"lw x{data_reg}, 0(x{addr_reg}) # fire iff data==tdata2 and xsl has load bit",
+                        f"LREG x{data_reg}, 0(x{addr_reg}) # XLEN-wide load: fire iff data==tdata2 and xsl has load bit",
                         "nop # spacer (data match fires after)",
                     ]
                 )
@@ -2329,7 +2364,7 @@ def _generate_mcontrol6_tests(test_data: TestData, mode: str) -> list[TestChunk]
                 lines.extend(
                     [
                         _add_tc(test_data, bin1, coverpoint, covergroup),
-                        *_config_mcontrol6(temp_reg, trig_num, tdata2, mode, xsl=0b111, select=1, size=size),
+                        *_config_exec_data(temp_reg, trig_num, tdata2, mode, xsl=0b111, size=size, ilen=32),
                         "addi x0, x1, 0 # 32-bit target; fires iff tdata2 matches",
                         # "nop # spacer (does not match tdata2)",
                     ]
@@ -2338,7 +2373,7 @@ def _generate_mcontrol6_tests(test_data: TestData, mode: str) -> list[TestChunk]
                     [
                         "#ifdef ZCA_SUPPORTED",
                         _add_tc(test_data, bin2, coverpoint, covergroup),
-                        *_config_mcontrol6(temp_reg, trig_num, tdata2, mode, xsl=0b111, select=1, size=size),
+                        *_config_exec_data(temp_reg, trig_num, tdata2, mode, xsl=0b111, size=size, ilen=16),
                         *_arch_guard("c.nop", ["zca"]),
                         "nop # spacer (does not match tdata2)",
                         "#endif",
@@ -2635,7 +2670,7 @@ def _generate_mcontrol6_tests(test_data: TestData, mode: str) -> list[TestChunk]
             "instruction (trigN chain=1 address, trigN+1 chain=0 data)",
         )
     )
-    match_val = random_int(32, signed=False)
+    match_val = _xlen_value(random_int(32, signed=False))
 
     for trig_num in range(UDB_NUM_TRIGGERS - 1):
         lines.append(f"\n#ifdef UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
@@ -2645,19 +2680,21 @@ def _generate_mcontrol6_tests(test_data: TestData, mode: str) -> list[TestChunk]
         lines.extend(
             [
                 *_config_mcontrol6(temp_reg, trig_num, "scratch", mode, xsl=0b010, select=0, chain=1),
-                *_config_mcontrol6(temp_reg, trig_num + 1, match_val, mode, xsl=0b010, select=1, chain=0),
+                *_config_mcontrol6(
+                    temp_reg, trig_num + 1, _xlen_li(temp_reg, *match_val), mode, xsl=0b010, select=1, chain=0
+                ),
                 f"LA(x{addr_reg}, scratch)",
             ]
         )
         # sweep data-match x addr-match; only both-match fires the chained pair
-        for data_case, data in [("Fire", match_val), ("NoFire", 0)]:
+        for data_case, data in [("Fire", match_val), ("NoFire", (0, 0))]:
             for adr_case, offset in [("Fire", 0), ("NoFire", 8)]:
                 binname = f"trig_nums_{trig_num}_{trig_num + 1}_data_{data_case}_adr_{adr_case}"
                 lines.extend(
                     [
                         _add_tc(test_data, binname, coverpoint, covergroup),
-                        f"LI(x{data_reg}, {data})",
-                        f"sw x{data_reg}, {offset}(x{addr_reg}) # fire trigger when both triggers match",
+                        *_xlen_li(data_reg, *data),
+                        f"SREG x{data_reg}, {offset}(x{addr_reg}) # XLEN-wide store: fire when both triggers match",
                         "nop # spacer (data match fires after)",
                     ]
                 )
