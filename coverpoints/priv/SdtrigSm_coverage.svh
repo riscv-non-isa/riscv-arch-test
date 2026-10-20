@@ -1343,7 +1343,8 @@ function automatic logic [1:0] sdtrig_tdata2_xlate_exec(ins_t ins);
 `endif
         default: return 2'd0;
     endcase
-    if (sdtrig_exec_fired(ins))
+    // the fire is logged on the jump into the alias, so mepc is not the next sequential PC (sdtrig_exec_fired)
+    if (sdtrig_trap_fired(ins))
         return (ins.current.csr[CSR_MEPC] == tdata2 && (tdata2 | offset_mask) == '1) ? 2'd1 : 2'd0;
     if ((ins.current.pc_rdata | offset_mask) == '1 && tdata2 != ins.current.pc_rdata &&
         ((tdata2 ^ ins.current.pc_rdata) & offset_mask) == '0)
