@@ -60,11 +60,6 @@ RVTEST_BEGIN
 
   RVTEST_PMP_SET_BACKGROUND x4
 
-#if defined(U_SUPPORTED) && defined(SM1P12P0_OR_LATER_SUPPORTED)
-  LI(t0, 0xF0)
-  csrrs zero, menvcfg, t0
-#endif
-
 // PMP configuration 1: L = 1, No permissions, entry 0
   LA(x5, REGIONSTART)
   srl x5, x5, PMP_SHIFT

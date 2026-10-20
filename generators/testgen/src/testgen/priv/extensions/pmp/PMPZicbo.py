@@ -22,13 +22,6 @@ from testgen.priv.extensions.pmp.probes import (
 )
 from testgen.priv.registry import add_priv_test_generator
 
-# menvcfg exists only with U-mode; M-mode cache-block instructions do not depend on it.
-_ENABLE_CBO = [
-    "#if defined(U_SUPPORTED) && defined(SM1P12P0_OR_LATER_SUPPORTED)",
-    "LI(t0, 0xF0)",
-    "csrrs zero, menvcfg, t0",
-    "#endif",
-]
 # The locked NAPOT region is max(page, grain) bytes from TEST_FOR_EXECUTION; pad to its end so that
 # nothing the trap handler writes (e.g. the trap signature) shares it at grains above a page.
 _PAGE_REGION = [*make_exec_region(("1024", "nop"), pad=None), ".p2align 12", ".p2align (UDB_PMP_GRANULARITY)"]
@@ -55,7 +48,6 @@ def make_pmpzicbo_cbo(test_data: TestData) -> list[TestChunk]:
                 gen_cbo,
                 "cp_cbo",
                 first=number,
-                extra_setup=_ENABLE_CBO,
                 napot_mask=napot_mask_defines(12),
             )
         )
@@ -82,7 +74,6 @@ def make_pmpzicbo_prefetch(test_data: TestData) -> list[TestChunk]:
             "napot",
             gen_prefetch,
             "cp_prefetch",
-            extra_setup=_ENABLE_CBO,
             napot_mask=napot_mask_defines(12),
         )
     )
