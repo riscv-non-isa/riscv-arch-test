@@ -10,7 +10,8 @@ import math
 from pathlib import Path
 from typing import Literal
 
-from testgen.asm.vector_helpers import prep_vstart, write_sigupd_vstart
+from testgen.asm.helpers import write_sigupd
+from testgen.asm.vector_helpers import prep_vstart
 from testgen.constants import VLEN_MAX
 from testgen.data.state import TestData, return_testcase_registers
 from testgen.data.test_chunk import TestChunk
@@ -193,7 +194,7 @@ def cp_vstart(
             pre_vstart = "\n".join(prep_vstart(test_data, params, vstart_val))
             post_vstart = "\n".join(
                 [
-                    *write_sigupd_vstart(test_data),
+                    write_sigupd(None, test_data, "vstart"),
                     "csrw vstart, x0",
                 ]
             )

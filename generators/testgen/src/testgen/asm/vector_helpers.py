@@ -483,22 +483,6 @@ def load_vxrm(vxrm: str) -> list[str]:
     ]
 
 
-def write_sigupd_vxsat(test_data: TestData) -> list[str]:
-    assert test_data.test_chunk is not None, "No active test chunk — call begin_test_chunk() first"
-
-    test_data.test_chunk.sigupd_count += 1
-
-    sig_reg = test_data.int_regs.sig_reg
-    link_reg = test_data.int_regs.link_reg
-    temp_reg = test_data.int_regs.temp_reg
-    label = test_data.current_testcase_label
-
-    return [
-        "# Run SIGUPD to see if vxsat was correctly set",
-        f"RVTEST_SIGUPD_VXSAT(x{sig_reg}, x{link_reg}, x{temp_reg}, {label}, {label}_str)",
-    ]
-
-
 @dataclass
 class VectorLoad:
     """
@@ -880,23 +864,6 @@ def prep_vstart(
     test_data.int_regs.return_register(vstart_reg)
 
     return lines
-
-
-def write_sigupd_vstart(test_data: TestData) -> list[str]:
-    """Generates a SIGUPD for the value in vstart"""
-    assert test_data.test_chunk is not None, "No active test chunk — call begin_test_chunk() first"
-
-    test_data.test_chunk.sigupd_count += 1
-
-    sig_reg = test_data.int_regs.sig_reg
-    link_reg = test_data.int_regs.link_reg
-    temp_reg = test_data.int_regs.temp_reg
-    label = test_data.current_testcase_label
-
-    return [
-        "# Run SIGUPD to see if vstart was correctly set",
-        f"RVTEST_SIGUPD_VSTART(x{sig_reg}, x{link_reg}, x{temp_reg}, {label}, {label}_str)",
-    ]
 
 
 def index_register_safety(
