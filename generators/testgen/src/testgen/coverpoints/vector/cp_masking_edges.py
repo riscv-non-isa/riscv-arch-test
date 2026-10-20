@@ -27,7 +27,7 @@ def make_mask_edges(instr_name: str, instr_type: str, coverpoint: str, test_data
     config = get_instruction_type_config(instr_type)
     assert config.vector_data is not None
     if not config.vector_data.maskable:
-        return []
+        raise ValueError(f"{coverpoint} requires a maskable instruction, got {instr_name} ({instr_type})")
 
     cp_masking_edges_data = [
         PresetMask.ONES,

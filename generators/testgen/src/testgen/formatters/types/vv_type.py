@@ -35,9 +35,12 @@ vm_config = InstructionTypeConfig(
     ),
 )
 vv_config = InstructionTypeConfig(required_params={"vd", "vs2"}, vector_data=VectorTypeConfig())
-vv_egs4_config = InstructionTypeConfig(required_params={"vd", "vs2"}, vector_data=VectorTypeConfig(egs=4))
+vv_egs4_config = InstructionTypeConfig(
+    required_params={"vd", "vs2"}, vector_data=VectorTypeConfig(egs=4, maskable=False)
+)
 vs_egs4_config = InstructionTypeConfig(
-    required_params={"vd", "vs2"}, vector_data=VectorTypeConfig(overlap_constraints={("vd", "vs2")}, egs=4)
+    required_params={"vd", "vs2"},
+    vector_data=VectorTypeConfig(overlap_constraints={("vd", "vs2")}, egs=4, maskable=False),
 )
 
 
