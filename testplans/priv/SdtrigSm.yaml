@@ -915,7 +915,7 @@ coverpoints:
       tdata2 = {0x12345678}
       perform SW  {0x12345678}
 
-      itrigger/etrigger are not used: with action=0 they cannot fire here (traps are taken with xIE=0).
+      itrigger/etrigger are not used here (their traps are taken with xIE=0); see cp_textra_itrigger/etrigger.
       After each case, rvtest_trap_count is written to the signature.
     expectation: Breakpoint exception if mhvalue equals mcontext
     bins: 3 mhvalues * 2 trigger types (icount, mcontrol6)
@@ -949,7 +949,7 @@ coverpoints:
       tdata2 = {0x12345678}
       perform SW  {0x12345678}
 
-      itrigger/etrigger are not used: with action=0 they cannot fire here (traps are taken with xIE=0).
+      itrigger/etrigger are not used here (their traps are taken with xIE=0); see cp_textra_itrigger/etrigger.
       After each case, rvtest_trap_count is written to the signature.
     expectation: Breakpoint exception when svalue equals scontext and mask ignores A's
     bins: |-
@@ -1004,7 +1004,7 @@ coverpoints:
       tdata2 = {0x12345678}
       perform SW  {0x12345678}
 
-      itrigger/etrigger are not used: with action=0 they cannot fire here (traps are taken with xIE=0).
+      itrigger/etrigger are not used here (their traps are taken with xIE=0); see cp_textra_itrigger/etrigger.
       After each case, rvtest_trap_count is written to the signature.
     expectation: Breakpoint exception when all enabled context numbers match
     bins: 2 mhselect * 2 sselect * 2 mhvalue * 2 svalue
@@ -1040,6 +1040,34 @@ coverpoints:
     rules:
       - Sdtrig_textra32_sselect_asid1
       - Sdtrig_textra32_sselect_asid3
+  - name: |-
+      cp_textra_itrigger_mcontext
+      cp_textra_itrigger_scontext
+    goal: An itrigger only fires when its textra condition is satisfied
+    description: |-
+      only run tests if S is supported, as cp_itrigger_s with x = 1 (supervisor software interrupt):
+      tdata2[1] = 1, tdata1.s = 1, mideleg[1] = 1, medeleg[3] = 0, take the interrupt while executing in S-mode
+      if MCONTEXT_AVAILABLE: mcontext as in cp_textra_mcontext, tdata3.mhselect = 4, tdata3.mhvalue = {mcontext / other}
+      if SCONTEXT_AVAILABLE: scontext as in cp_textra_scontext, tdata3.sselect = 1, tdata3.svalue = {scontext / 0}
+      After each case, rvtest_trap_count is written to the signature.
+    expectation: Breakpoint into M just before the first instruction of the S-mode handler iff the context matches
+    bins: NTRIG * 2 per available context
+    rules:
+      - Sdtrig_itrigger_textra
+  - name: |-
+      cp_textra_etrigger_mcontext
+      cp_textra_etrigger_scontext
+    goal: An etrigger only fires when its textra condition is satisfied
+    description: |-
+      only run tests if S is supported, as cp_etrigger_s_deleg with x = 5 (load access fault):
+      tdata2[5] = 1, tdata1.s = 1, medeleg[5] = 1, medeleg[3] = 0, raise the exception while executing in S-mode
+      if MCONTEXT_AVAILABLE: mcontext as in cp_textra_mcontext, tdata3.mhselect = 4, tdata3.mhvalue = {mcontext / other}
+      if SCONTEXT_AVAILABLE: scontext as in cp_textra_scontext, tdata3.sselect = 1, tdata3.svalue = {scontext / 0}
+      After each case, rvtest_trap_count is written to the signature.
+    expectation: Breakpoint into M just before the first instruction of the S-mode handler iff the context matches
+    bins: NTRIG * 2 per available context
+    rules:
+      - Sdtrig_etrigger_textra
   - name: cp_smode_fields_hardwired (not generated)
     status: "Not generated: the textra tests do not check svalue/sselect on harts without S"
     description: |-

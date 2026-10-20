@@ -1442,7 +1442,8 @@ normative_rule_definitions:
   - name: Sdtrig_itrigger_textra
     coverpoint:
       [
-        "Not tested yet: testable with the cases whose interrupt is handled in S-mode (delegated, medeleg[3] = 0), where the itrigger fires into M-mode; no generator yet",
+        "SdtrigSm_textra_cg/cp_textra_itrigger_mcontext",
+        "SdtrigSm_textra_cg/cp_textra_itrigger_scontext",
       ]
 
   # If this bit is implemented, the hardware sets it when this trigger matches. The
@@ -1548,7 +1549,8 @@ normative_rule_definitions:
   - name: Sdtrig_etrigger_textra
     coverpoint:
       [
-        "Not tested yet: testable with the cases whose exception is handled in S-mode (delegated, medeleg[3] = 0), where the etrigger fires into M-mode; no generator yet",
+        "SdtrigSm_textra_cg/cp_textra_etrigger_mcontext",
+        "SdtrigSm_textra_cg/cp_textra_etrigger_scontext",
       ]
 
   # If this bit is implemented, the hardware sets it when this trigger matches. The

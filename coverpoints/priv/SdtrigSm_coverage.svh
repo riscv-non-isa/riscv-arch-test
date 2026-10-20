@@ -1125,7 +1125,8 @@ covergroup SdtrigSm_mcontrol6_cg with function sample(ins_t ins);
     cp_mcontrol6_chain_adr:       cross priv_mode_m, triggernum_chain, tdata1_type_mcontrol6, tdata1_m_on, tdata1_select_data, tdata1_chain_disabled, tdata1_match_equal, tdata1_size_any, tdata1_xsl_store, store_data_chain, store_offset, sw;                       // (NTRIG-1) * 2 data * 2 adr
 endgroup
 
-// textra32/textra64 (tdata3) context matching, sampled when tdata1 arms an icount or mcontrol6 trigger.
+// textra32/textra64 (tdata3) context matching, sampled when tdata1 arms an icount or mcontrol6 trigger, and on the
+// S-handled traps that an itrigger or etrigger watches.
 // Field positions: textra64 mhvalue 63:51, mhselect 50:48, sbytemask 39:36, svalue 33:2, sselect 1:0;
 //                  textra32 mhvalue 31:26, mhselect 25:23, sbytemask 19:18, svalue 17:2, sselect 1:0.
 function automatic logic [2:0] sdtrig_textra_mhselect(logic [XLEN-1:0] t3);
@@ -1163,10 +1164,30 @@ function automatic logic sdtrig_textra_asid_match(logic [XLEN-1:0] t3, logic [XL
                         : (((t3 >> 2) & 'h1ff) == ((satp >> 22) & 'h1ff));
 endfunction
 
+// cp_textra_itrigger/etrigger: a trap handled in S with the origin mode's tdata1 bit set (sdtrig_trap_result 01_1_x),
+// where the itrigger/etrigger fired exactly when its textra condition holds. {1, match}: mhselect = 4, sselect = 0;
+// {2, match}: sselect = 1 (scontext), mhselect = 0, sbytemask = 0; 0: anything else, or the wrong outcome.
+function automatic logic [2:0] sdtrig_textra_trap_outcome(ins_t ins);
+    logic [XLEN-1:0] t3     = ins.current.csr[CSR_TDATA3];
+    logic [3:0]      result = sdtrig_trap_result(ins);
+    logic [1:0]      sel;
+    logic            match;
+    if (result[3:1] != 3'b01_1) return 3'd0;
+    if (sdtrig_textra_mhselect(t3) == 3'd4 && sdtrig_textra_sselect(t3) == 2'd0) begin
+        sel   = 2'd1;
+        match = sdtrig_textra_mcontext_match(t3, ins.current.csr[CSR_MCONTEXT]);
+    end else if (sdtrig_textra_mhselect(t3) == 3'd0 && sdtrig_textra_sselect(t3) == 2'd1 && sdtrig_textra_sbytemask(t3) == 4'd0) begin
+        sel   = 2'd2;
+        match = sdtrig_textra_scontext_match(t3, ins.current.csr[CSR_SCONTEXT]);
+    end else return 3'd0;
+    return (result[0] == match) ? {sel, match} : 3'd0;
+endfunction
+
 covergroup SdtrigSm_textra_cg with function sample(ins_t ins);
     option.per_instance = 0;
     `include "general/RISCV_coverage_standard_coverpoints.svh"
     `include "general/RISCV_coverage_sdtrig_coverpoints.svh"
+    `include "general/RISCV_coverage_sdtrig_trap_coverpoints.svh"
 
     arm_type: coverpoint ins.current.rs1_val[XLEN-1:XLEN-4] {
         bins icount    = {4'd3};
@@ -1230,6 +1251,26 @@ covergroup SdtrigSm_textra_cg with function sample(ins_t ins);
         bins match = {1'b1};
     }
 
+    // itrigger/etrigger textra: the trap the trigger watches, handled in S, fired into M iff the context matches
+    itrigger_interrupt: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "tdata1", "type")[3:0] iff (sdtrig_trap_interrupt(ins)) {
+        type_option.weight = 0;
+        bins itrigger = {4'd4};
+    }
+    etrigger_exception: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "tdata1", "type")[3:0] iff (sdtrig_trap_exception(ins)) {
+        type_option.weight = 0;
+        bins etrigger = {4'd5};
+    }
+    textra_trap_mcontext: coverpoint sdtrig_textra_trap_outcome(ins) {
+        type_option.weight = 0;
+        bins mismatch_suppressed = {3'b01_0};
+        bins match_fired         = {3'b01_1};
+    }
+    textra_trap_scontext: coverpoint sdtrig_textra_trap_outcome(ins) {
+        type_option.weight = 0;
+        bins mismatch_suppressed = {3'b10_0};
+        bins match_fired         = {3'b10_1};
+    }
+
     // main coverpoints
     `ifdef UDB_MCONTEXT_AVAILABLE
         cp_textra_mcontext:       cross priv_mode_m, triggernum, csrw, csr_tdata1, arm_type, mhselect_mcontext, sselect_ignore, mcontext_match;                       // NTRIG * 2 types * 2
@@ -1245,6 +1286,14 @@ covergroup SdtrigSm_textra_cg with function sample(ins_t ins);
     `endif
     `ifdef S_SUPPORTED
         cp_textra_asid:           cross priv_mode_m, triggernum, csrw, csr_tdata1, arm_type, mhselect_ignore, sselect_asid, asid_match;                      // NTRIG * 2 types * 2
+        `ifdef UDB_MCONTEXT_AVAILABLE
+            cp_textra_itrigger_mcontext: cross trap_from_s, triggernum, itrigger_interrupt, trap_delegated, trap_selected, textra_trap_mcontext;     // NTRIG * 2
+            cp_textra_etrigger_mcontext: cross trap_from_s, triggernum, etrigger_exception, trap_delegated, trap_selected, textra_trap_mcontext;     // NTRIG * 2
+        `endif
+        `ifdef UDB_SCONTEXT_AVAILABLE
+            cp_textra_itrigger_scontext: cross trap_from_s, triggernum, itrigger_interrupt, trap_delegated, trap_selected, textra_trap_scontext;     // NTRIG * 2
+            cp_textra_etrigger_scontext: cross trap_from_s, triggernum, etrigger_exception, trap_delegated, trap_selected, textra_trap_scontext;     // NTRIG * 2
+        `endif
     `endif
 endgroup
 

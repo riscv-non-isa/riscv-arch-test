@@ -2929,6 +2929,46 @@ def _goto_itrigger_origin(origin: str) -> list[str]:
     return [f"RVTEST_TSBI_GOTO_{origin}MODE"]
 
 
+def _trap_textra_blocks(reg: int, temp_reg: int) -> list[tuple[str, list[str], list[str], list[tuple[str, list[str]]]]]:
+    """(context, context-set lines, context-clear lines, [(case, tdata3 load into x{reg})]) for the itrigger/etrigger
+    textra cases: mhselect=4 with mhvalue equal to or different from mcontext, and sselect=1 with svalue equal to or
+    different from scontext. Each block runs under #ifdef UDB_<CONTEXT>_AVAILABLE."""
+    mh = {name: (v32, v64) for name, v32, v64 in _TEXTRA_MCONTEXT_CASES}
+    return [
+        (
+            "mcontext",
+            [*_xlen_li(temp_reg, _MCONTEXT_TEST_VALUE_RV32, _MCONTEXT_TEST_VALUE_RV64), f"csrw mcontext, x{temp_reg}"],
+            ["csrw mcontext, x0 # clear the test context"],
+            [
+                (
+                    f"mhvalue_{name}",
+                    _xlen_li(
+                        reg,
+                        _textra3(32, mhselect=4, mhvalue=mh[name][0]),
+                        _textra3(64, mhselect=4, mhvalue=mh[name][1]),
+                    ),
+                )
+                for name in ("match", "other")
+            ],
+        ),
+        (
+            "scontext",
+            [*_xlen_li(temp_reg, _SCONTEXT_TEST_VALUE_RV32, _SCONTEXT_TEST_VALUE_RV64), f"csrw scontext, x{temp_reg}"],
+            ["csrw scontext, x0 # clear the test context"],
+            [
+                (
+                    f"svalue_{name}",
+                    _xlen_li(reg, _textra3(32, sselect=1, svalue=sv32), _textra3(64, sselect=1, svalue=sv64)),
+                )
+                for name, sv32, sv64 in (
+                    ("match", _SCONTEXT_TEST_VALUE_RV32, _SCONTEXT_TEST_VALUE_RV64),
+                    ("zero", 0, 0),
+                )
+            ],
+        ),
+    ]
+
+
 def _generate_itrigger_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     """Generate itrigger interrupt trigger tests."""
 
@@ -3030,6 +3070,51 @@ def _generate_itrigger_tests(test_data: TestData, mode: str) -> list[TestChunk]:
             lines.append("#endif")  # UDB_ITRIGGER_TRIGn_AVAILABLE
         if gated:
             lines.append("#endif  // S_SUPPORTED")
+
+    ######################################
+    coverpoint = "cp_textra_itrigger"
+    ######################################
+    # SdtrigSm only: the S-handled interrupts of cp_itrigger_s fire the trigger into M (medeleg[3]=0), so a
+    # textra condition decides whether it fires. The supervisor software interrupt stands in for every code.
+    if mode == "Sm":
+        lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_")).code
+        lines.append(
+            comment_banner(
+                coverpoint,
+                "itrigger with tdata1.s = 1 on the supervisor software interrupt, taken from S and delegated\n"
+                "to S, with textra mhselect=4 or sselect=1: it fires into M only when the context matches",
+            )
+        )
+        lines.extend(["#ifdef S_SUPPORTED", f"#ifdef {guard_symbol(_INT_TYPE[1])}"])
+        for ctx, set_ctx, clear_ctx, cases in _trap_textra_blocks(t1, t2):
+            lines.extend([f"\n#ifdef UDB_{ctx.upper()}_AVAILABLE", *set_ctx])
+            for trig_num in range(UDB_NUM_TRIGGERS):
+                lines.append(f"#ifdef UDB_ITRIGGER_TRIG{trig_num}_AVAILABLE")
+                for case, tdata3 in cases:
+                    lines.extend(
+                        [
+                            _add_tc(
+                                test_data, f"trig_num_{trig_num}_{ctx}_{case}", coverpoint, f"Sdtrig{mode}_textra_cg"
+                            ),
+                            *_global_ie(mode, enable=False),
+                            "csrci mstatus, 0x2 # SIE=0 while the source is prepared",
+                            *_set_itrigger_delegation(1, 1, t1),
+                            *_config_itrigger(t1, trig_num, 1 << 1, mode, privbits=MODE_PRIVBIT["S"], tdata3=tdata3),
+                            *_cause_interrupt(1, mode, t1),
+                            "RVTEST_TSBI_GOTO_SMODE",
+                            *_global_ie("S", enable=True),
+                            "nop # allow the pending interrupt to be taken",
+                            *_global_ie("S", enable=False),
+                            "RVTEST_TSBI_GOTO_MMODE",
+                            *_clear_interrupt(1, mode),
+                            *_sign_trap_count(t2, test_data),
+                            *_disable_trigger(t1, trig_num, mode),
+                            *_set_itrigger_delegation(1, 0, t1),
+                        ]
+                    )
+                lines.append(f"#endif // UDB_ITRIGGER_TRIG{trig_num}_AVAILABLE")
+            lines.extend([*clear_ctx, f"#endif // UDB_{ctx.upper()}_AVAILABLE"])
+        lines.extend([f"#endif // {guard_symbol(_INT_TYPE[1])}", "#endif // S_SUPPORTED"])
 
     test_data.int_regs.return_registers([t1, t2])
 
@@ -3207,8 +3292,48 @@ def etrigger_cross_priv_delegate_test(test_data: TestData, target_mode: str) -> 
             lines.append(f"#endif // UDB_EXCEPTION_{name.upper()}_SUPPORTED")
         lines.extend(_disable_trigger(temp_reg, trig_num, "Sm"))
         lines.append(f"#endif // UDB_SDTRIG_ETRIGGER_SUPPORTED{trig_num}")
-
     lines.append("#endif // S_SUPPORTED")
+
+    ######################################
+    coverpoint = "cp_textra_etrigger"
+    ######################################
+    # The S-handled exceptions of cp_etrigger_s_deleg fire the trigger into M (medeleg[3]=0), so a textra
+    # condition decides whether it fires. A delegated load access fault stands in for every code.
+    if target_mode == "S":
+        lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_")).code
+        lines.append(
+            comment_banner(
+                coverpoint,
+                "etrigger with tdata1.s = 1 on a load access fault raised in S and delegated to S, with\n"
+                "textra mhselect=4 or sselect=1: it fires into M only when the context matches",
+            )
+        )
+        lines.extend(["#ifdef S_SUPPORTED", "#ifdef UDB_EXCEPTION_LACC_SUPPORTED"])
+        for ctx, set_ctx, clear_ctx, cases in _trap_textra_blocks(cfg_reg, temp_reg):
+            lines.extend([f"\n#ifdef UDB_{ctx.upper()}_AVAILABLE", *set_ctx])
+            for trig_num in range(UDB_NUM_TRIGGERS):
+                lines.append(f"#ifdef UDB_SDTRIG_ETRIGGER_SUPPORTED{trig_num}")
+                for case, tdata3 in cases:
+                    lines.extend(
+                        [
+                            _add_tc(test_data, f"trig_num_{trig_num}_{ctx}_{case}", coverpoint, "SdtrigSm_textra_cg"),
+                            *_config_etrigger(
+                                cfg_reg, trig_num, 1 << 5, "Sm", privbits=MODE_PRIVBIT["S"], tdata3=tdata3
+                            ),
+                            *_set_medeleg(temp_reg, 5, True),
+                            *_set_medeleg(temp_reg, 3, False),  # Trigger -> Breakpoint handled in M-mode
+                            "RVTEST_TSBI_GOTO_SMODE",
+                            *_cause_exception(5, "S", data_reg, temp_reg),
+                            "RVTEST_TSBI_GOTO_MMODE",
+                            *_set_medeleg(temp_reg, 5, False),
+                            *_sign_trap_count(data_reg, test_data),
+                        ]
+                    )
+                lines.extend(_disable_trigger(temp_reg, trig_num, "Sm"))
+                lines.append(f"#endif // UDB_SDTRIG_ETRIGGER_SUPPORTED{trig_num}")
+            lines.extend([*clear_ctx, f"#endif // UDB_{ctx.upper()}_AVAILABLE"])
+        lines.extend(["#endif // UDB_EXCEPTION_LACC_SUPPORTED", "#endif // S_SUPPORTED"])
+
     test_data.int_regs.return_registers([cfg_reg, data_reg, temp_reg])
     chunks.append(test_data.end_test_chunk())
     return chunks
@@ -3221,8 +3346,9 @@ def _generate_textra_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     performs the triggering action, disarms it, and signs rvtest_trap_count, so a case that fires when it
     should not (or the reverse) is reported at that case. tdata3 is accessed unconditionally (as in the
     Access tests); a hart without textra reads it as 0 and the reference model is configured to match.
-    itrigger/etrigger are omitted: with action=0 they cannot fire here, because every interrupt and
-    exception is taken with xIE=0 (into M, or into S with medeleg[3]=1).
+    itrigger/etrigger are omitted here: with action=0 they cannot fire in these cases, because every interrupt and
+    exception is taken with xIE=0 (into M, or into S with medeleg[3]=1). cp_textra_itrigger and cp_textra_etrigger
+    test them on S-handled traps instead.
     """
     covergroup = f"Sdtrig{mode}_textra_cg"
     chunks: list[TestChunk] = []
