@@ -148,8 +148,10 @@
 `endif
 
 // PMP_ENTRY<n>_BELOW_BACKGROUND: PMP entry n lies below the background entry
-// (NUM_USABLE_PMP_ENTRIES - 1), so PMP tests can configure and probe it. A derived
-// macro because the condition is a numeric range over UDB_NUM_USABLE_PMP_ENTRIES_<n>.
+// (NUM_USABLE_PMP_ENTRIES - 1), so PMP tests can configure and probe it. Most uses guard
+// individual bins, which only the preprocessor can remove, and `ifdef cannot compare
+// UDB_NUM_USABLE_PMP_ENTRIES with n, so the range is spelled out over the one-hot
+// UDB_NUM_USABLE_PMP_ENTRIES_<n> macros.
 // check_defines.h requires at least 8 usable entries, so entries 0-6 always qualify.
 // Each level holds when NUM_USABLE_PMP_ENTRIES > n + 1, so the checks nest.
 `ifndef UDB_NUM_USABLE_PMP_ENTRIES_8
