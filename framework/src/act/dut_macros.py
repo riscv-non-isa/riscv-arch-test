@@ -77,8 +77,9 @@ def generate_rvmodel_svh(dut_include_dir: Path, output_dir: Path) -> None:
             hex_value = value[2:] if value.lower().startswith("0x") else f"{int(value):x}"
             lines.append(f"`define {name} 64'h{hex_value}")
     for name in _MIRRORED_INDEX_DEFINES:
-        if defines.get(name) is not None:
-            lines.append(f"`define {name} {int(defines[name], 0)}")
+        value = defines.get(name)
+        if value is not None:
+            lines.append(f"`define {name} {int(value, 0)}")
     for name in _MIRRORED_FLAG_DEFINES:
         if name in defines:
             lines.append(f"`define {name}")
