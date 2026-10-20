@@ -122,6 +122,47 @@
   `define MSECCFG_SUPPORTED
 `endif
 
+// ---- PMP_GRANULARITY_BELOW_PAGE ----
+// The PMP grain is smaller than a 4 KiB page (PMP_GRANULARITY < 12).
+`ifdef UDB_PMP_GRANULARITY_2
+  `define PMP_GRANULARITY_BELOW_PAGE
+`endif
+`ifdef UDB_PMP_GRANULARITY_3
+  `define PMP_GRANULARITY_BELOW_PAGE
+`endif
+`ifdef UDB_PMP_GRANULARITY_4
+  `define PMP_GRANULARITY_BELOW_PAGE
+`endif
+`ifdef UDB_PMP_GRANULARITY_5
+  `define PMP_GRANULARITY_BELOW_PAGE
+`endif
+`ifdef UDB_PMP_GRANULARITY_6
+  `define PMP_GRANULARITY_BELOW_PAGE
+`endif
+`ifdef UDB_PMP_GRANULARITY_7
+  `define PMP_GRANULARITY_BELOW_PAGE
+`endif
+`ifdef UDB_PMP_GRANULARITY_8
+  `define PMP_GRANULARITY_BELOW_PAGE
+`endif
+`ifdef UDB_PMP_GRANULARITY_9
+  `define PMP_GRANULARITY_BELOW_PAGE
+`endif
+`ifdef UDB_PMP_GRANULARITY_10
+  `define PMP_GRANULARITY_BELOW_PAGE
+`endif
+`ifdef UDB_PMP_GRANULARITY_11
+  `define PMP_GRANULARITY_BELOW_PAGE
+`endif
+
+// ---- SV_SUPPORTED ----
+// Some page-based translation mode is implemented (Sv48 and Sv57 imply Sv39).
+`ifdef SV32_SUPPORTED
+  `define SV_SUPPORTED
+`elsif SV39_SUPPORTED
+  `define SV_SUPPORTED
+`endif
+
 // Cumulative privileged ISA version defines
 `ifdef S1P13P0_SUPPORTED
   `define S1P12P0_OR_LATER_SUPPORTED

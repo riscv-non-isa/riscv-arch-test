@@ -209,3 +209,8 @@
     #error "DUTs with fewer than 8 usable PMP entries are not currently supported by ACTs. Please report this as an issue on the riscv/riscv-arch-test repository."
   #endif
 #endif
+
+// Boot and the S/U-mode tests write satp = 0 to run untranslated
+#if defined(S_SUPPORTED) && !defined(UDB_SATP_MODE_BARE)
+  #error "DUTs with S-mode but without satp.MODE = Bare (SATP_MODE_BARE: false) are not currently supported by ACTs. Please report this as an issue on the riscv/riscv-arch-test repository."
+#endif

@@ -56,6 +56,9 @@ covergroup SvSm_mstatus_mprv_cg with function sample(ins_t ins);
 
     cp_tvm_exception_s: cross tvm_mstatus, priv_mode_s, Mcause, cp_ins; //ms.1
 
+    // MPRV and SBE need page-based translation; with only Bare, the mstatus.TVM test alone selects this suite
+    `ifdef SV_SUPPORTED
+
     mprv_mstatus: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "mstatus", "mprv")[0] {
         bins set = {1};
     }
@@ -194,6 +197,7 @@ covergroup SvSm_mstatus_mprv_cg with function sample(ins_t ins);
 
     cp_mstatus_sbe_read: cross read_acc, PTE_sbe_d, PageType_d, sbe_mstatus; //ms.5
     cp_mstatus_sbe_write: cross write_acc, PTE_sbe_d, PageType_d, sbe_mstatus; //ms.5
+    `endif // SV_SUPPORTED
 
 endgroup
 

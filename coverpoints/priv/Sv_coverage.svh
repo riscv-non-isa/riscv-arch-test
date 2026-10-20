@@ -26,14 +26,17 @@ covergroup Sv_satp_cg with function sample(ins_t ins);
         }
     `endif
 
-    `ifdef UDB_MXLEN_64
-        asid_length: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "satp", "asid")[15:0] { //sat.5
-            bins values = {16'h0001, 16'h0002, 16'h0004, 16'h0008, 16'h0010, 16'h0020, 16'h0040, 16'h0080, 16'h0100, 16'h0200, 16'h0400, 16'h0800, 16'h1000, 16'h2000, 16'h0400, 16'h8000};
-        }
-    `else
-        asid_length: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "satp", "asid")[8:0] {
-            bins values = {9'h001, 9'h002, 9'h004, 9'h008, 9'h010, 9'h020, 9'h040, 9'h080, 9'h100};
-        }
+    // satp.ASID reads 0 when ASIDLEN = 0
+    `ifndef UDB_ASID_WIDTH_0
+        `ifdef UDB_MXLEN_64
+            asid_length: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "satp", "asid")[15:0] { //sat.5
+                bins values = {16'h0001, 16'h0002, 16'h0004, 16'h0008, 16'h0010, 16'h0020, 16'h0040, 16'h0080, 16'h0100, 16'h0200, 16'h0400, 16'h0800, 16'h1000, 16'h2000, 16'h4000, 16'h8000};
+            }
+        `else
+            asid_length: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "satp", "asid")[8:0] {
+                bins values = {9'h001, 9'h002, 9'h004, 9'h008, 9'h010, 9'h020, 9'h040, 9'h080, 9'h100};
+            }
+        `endif
     `endif
 
     tvm_mstatus: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "mstatus", "tvm")[0]{
@@ -759,8 +762,11 @@ covergroup Sv_add_feature_cg with function sample(ins_t ins);
             bins reserved_bit_56 = {7'b0000100};
             bins reserved_bit_57 = {7'b0001000};
             bins reserved_bit_58 = {7'b0010000};
-            bins reserved_bit_59 = {7'b0100000};
-            bins reserved_bit_60 = {7'b1000000};
+            // With Svrsw60t59b, bits 60:59 are ignored and the access does not fault
+            `ifndef SVRSW60T59B_SUPPORTED
+                bins reserved_bit_59 = {7'b0100000};
+                bins reserved_bit_60 = {7'b1000000};
+            `endif
         }
         reserved_PTE_d: coverpoint ins.current.pte_d[60:54] {
             bins reserved_bit_54 = {7'b0000001};
@@ -768,9 +774,23 @@ covergroup Sv_add_feature_cg with function sample(ins_t ins);
             bins reserved_bit_56 = {7'b0000100};
             bins reserved_bit_57 = {7'b0001000};
             bins reserved_bit_58 = {7'b0010000};
-            bins reserved_bit_59 = {7'b0100000};
-            bins reserved_bit_60 = {7'b1000000};
+            // With Svrsw60t59b, bits 60:59 are ignored and the access does not fault
+            `ifndef SVRSW60T59B_SUPPORTED
+                bins reserved_bit_59 = {7'b0100000};
+                bins reserved_bit_60 = {7'b1000000};
+            `endif
         }
+
+        `ifdef SVRSW60T59B_SUPPORTED
+            rsw60t59b_PTE_i: coverpoint ins.current.pte_i[60:54] {
+                bins rsw_bit_59 = {7'b0100000};
+                bins rsw_bit_60 = {7'b1000000};
+            }
+            rsw60t59b_PTE_d: coverpoint ins.current.pte_d[60:54] {
+                bins rsw_bit_59 = {7'b0100000};
+                bins rsw_bit_60 = {7'b1000000};
+            }
+        `endif
 
         PBMTE_unset: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "menvcfg", "pbmte")[0] {
             bins not_set = {1'b0};
@@ -832,6 +852,13 @@ covergroup Sv_add_feature_cg with function sample(ins_t ins);
         cp_reserved_read_fault:  cross reserved_PTE_d, load_page_fault, read_acc, mode;
         cp_reserved_write_fault: cross reserved_PTE_d, store_page_fault, write_acc, mode;
         cp_reserved_exec_fault:  cross reserved_PTE_i, ins_page_fault, exec_acc, mode;
+
+        //pte.20 with Svrsw60t59b: bits 60:59 are for software and do not fault
+        `ifdef SVRSW60T59B_SUPPORTED
+            cp_rsw60t59b_read_nofault:  cross rsw60t59b_PTE_d, read_acc, mode;
+            cp_rsw60t59b_write_nofault: cross rsw60t59b_PTE_d, write_acc, mode;
+            cp_rsw60t59b_exec_nofault:  cross rsw60t59b_PTE_i, exec_acc, mode;
+        `endif
 
         //pte.17&19&20
         cp_read_nofault:  cross zeros_PTE_d, read_acc, mode;
