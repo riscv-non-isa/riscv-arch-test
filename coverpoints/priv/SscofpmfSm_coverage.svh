@@ -13,6 +13,7 @@
 `define COVER_SSCOFPMFSM
 
 // mie.MEIE/MTIE/MSIE are read-only 0 when the interrupt is not implemented, so match them as don't-care.
+// A wildcard bin value cannot contain `ifdef, hence these per-bit values.
 `ifdef UDB_MEI_INTR_IMPL
     `define SSCOFPMF_MEIE 1'b1
 `else

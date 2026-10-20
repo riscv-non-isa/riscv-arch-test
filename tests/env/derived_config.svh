@@ -150,6 +150,8 @@
 // ---- MCOUNTEREN_WRITABLE ----
 // 32-bit mask of the mcounteren bits that are writable (MCOUNTENABLE_EN); the rest are read-only 0.
 // Coverpoints compare counteren values against it, since writing all 1s reads back as this mask.
+// A bin value cannot contain `ifdef, so the per-bit parameters are assembled into one value here; the
+// same holds for SCOUNTEREN_WRITABLE, HCOUNTEREN_WRITABLE and HPM_COUNTER_IMPL below.
 `ifdef UDB_MCOUNTENABLE_EN_0
   `define MCOUNTEREN_WRITABLE_0 1'b1
 `else
