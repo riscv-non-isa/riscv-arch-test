@@ -2569,6 +2569,6 @@
         .asciz  "RVCP:       configuration (mtime/mtimecmp), and delegation settings.\n"
 
     tsbi_instr_not_found_str:
-        .string "\nT-SBI ERROR: requested instruction not found in tsbi_instr_table: "
+        .string "\nT-SBI ERROR: requested instruction not found in the T-SBI instruction table: "
 
 .endm
