@@ -755,7 +755,7 @@
 // Assume menvcfg.STCE = 1 and henvcfg.STCE = 1.
 
 #define RVTEST_SET_VSSTC_INT_SOON_M \
-  jal rvtest_set_vsstc_int_soon_ms    /* Trigger VS-level timer interrupt with Sstc after a delay */
+  jal rvtest_set_vsstc_int_soon_m     /* Trigger VS-level timer interrupt with Sstc after a delay */
 
 #define RVTEST_SET_VSSTC_INT_M \
   jal rvtest_set_vsstc_int_ms         /* Trigger VS-level timer interrupt with Sstc */
@@ -764,7 +764,7 @@
   jal rvtest_clr_vsstc_int_m          /* Clear VS-level timer interrupt with Sstc */
 
 #define RVTEST_SET_VSSTC_INT_SOON_S \
-  jal rvtest_set_vsstc_int_soon_ms    /* Trigger VS-level timer interrupt with Sstc after a delay */
+  jal rvtest_set_vsstc_int_soon_s     /* Trigger VS-level timer interrupt with Sstc after a delay */
 
 #define RVTEST_SET_VSSTC_INT_S \
   jal rvtest_set_vsstc_int_ms         /* Trigger VS-level timer interrupt with Sstc */

@@ -837,38 +837,46 @@
 
   // VS-level timer through vstimecmp, which is compared with time + htimedelta.
   // Assumes menvcfg.STCE = 1 and henvcfg.STCE = 1. The _ms routines run in M-mode or HS-mode,
-  // and the _m and _s ones in the mode they name. Every caller implements the time CSR, which
-  // HS-mode reads with mcounteren.TM = 1.
+  // and the _m and _s ones in the mode they name. The time is read with RVTEST_READ_TIME, so
+  // a hart without Zicntr reads mtime instead.
   #if defined(H_SUPPORTED) && defined(SSTC_SUPPORTED) && defined(STANDARD_SM_SUPPORTED)
-    rvtest_set_vsstc_int_soon_ms:
+    // vstimecmp = time + htimedelta + RVMODEL_TIMER_INT_SOON_DELAY. On RV32 the low word is
+    // written first, with the high word all 1s so the split update cannot fire early, and the
+    // carries out of the low-word sums are added to the high word.
+    .macro RVTEST_SET_VSSTC_INT_SOON mode
       #if UDB_MXLEN == 32
         li a0, -1
-        csrw vstimecmph, a0 // vstimecmp high word = all 1s so the split update cannot fire early
-      1:
-        csrr a2, timeh
-        csrr a0, time
-        csrr a1, timeh
-        bne a1, a2, 1b // timeh changed between the reads
+        csrw vstimecmph, a0
+        RVTEST_READ_TIME \mode, lo // a0 = time low word
         csrr a1, htimedelta
         add a0, a0, a1
-        sltu a1, a0, a1 // carry
-        add a2, a2, a1
+        sltu a2, a0, a1 // a2 = carry
         LI(a1, RVMODEL_TIMER_INT_SOON_DELAY)
         add a0, a0, a1
-        sltu a1, a0, a1 // carry
-        add a2, a2, a1
+        sltu a1, a0, a1
+        add a2, a2, a1 // a2 = both carries
         csrw vstimecmp, a0
+        RVTEST_READ_TIME \mode, hi // a0 = time high word; a2 is preserved
+        add a2, a2, a0
         csrr a1, htimedeltah
         add a2, a2, a1
         csrw vstimecmph, a2
       #else
-        csrr a0, time
+        RVTEST_READ_TIME \mode // a0 = time
         csrr a1, htimedelta
         add a0, a0, a1
         LI(a1, RVMODEL_TIMER_INT_SOON_DELAY)
         add a0, a0, a1
         csrw vstimecmp, a0
       #endif
+    .endm
+
+    rvtest_set_vsstc_int_soon_m:
+      RVTEST_SET_VSSTC_INT_SOON M
+      ret
+
+    rvtest_set_vsstc_int_soon_s:
+      RVTEST_SET_VSSTC_INT_SOON S
       ret
 
     // time + htimedelta >= 0 always holds (unsigned), so vstimecmp = 0 raises VSTIP at once
