@@ -13,6 +13,7 @@ module testbench;
 
   // Load configuration
   `include "rvtest_config.svh"
+  `include "derived_config.svh"
 
   // Set up variable lengths
   localparam XLEN = `UDB_MXLEN;
@@ -25,12 +26,7 @@ module testbench;
     localparam FLEN = 32;
   `endif
 
-  // UDB_VLEN is defined only when the DUT implements a vector extension
-  `ifdef ZVL32B_SUPPORTED
-    localparam VLEN = `UDB_VLEN;
-  `else
-    localparam VLEN = 32;
-  `endif
+  localparam VLEN = `UDB_VLEN;
 
   localparam PA_BITS = (XLEN==32 ? 32'd34 : 32'd56);
   localparam PPN_BITS = (XLEN==32 ? 32'd22 : 32'd44);
