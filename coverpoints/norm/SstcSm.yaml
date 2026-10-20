@@ -31,6 +31,7 @@ normative_rule_definitions:
     coverpoint:
       [
         "SstcSm_cg/cp_machine_stce",
+        "SstcSm_cg/cp_vstip",
         "InterruptsSm_cg/cp_trigger_sti_sstc",
         "InterruptsSm_cg/cp_write_stip_sstc",
       ]
@@ -40,6 +41,7 @@ normative_rule_definitions:
     coverpoint:
       [
         "SstcSm_cg/cp_machine_stce",
+        "SstcSm_cg/cp_vstip",
         "InterruptsSm_cg/cp_trigger_sti_sstc",
         "InterruptsSm_cg/cp_write_stip_sstc",
       ]
@@ -77,3 +79,28 @@ normative_rule_definitions:
         "InterruptsSm_cg/cp_trigger_sti_sstc",
         "InterruptsSm_cg/cp_write_stip_sstc",
       ]
+
+  # Bits hip.VSTIP and hie.VSTIE are the interrupt-pending and interrupt-enable bits for
+  # VS-level timer interrupts. VSTIP is read-only in hip, and is the logical-OR of hvip.VSTIP
+  # and, when the Sstc extension is implemented, the timer interrupt signal resulting from
+  # vstimecmp.
+  - names: [hip_vstip_acc, hip_vstip_vstie_acc_op]
+    coverpoint: ["SstcSm_cg/{cp_vstip, cp_vstimecmp_int}"]
+
+  # A virtual supervisor timer interrupt becomes pending, as reflected in the VSTIP bit in the
+  # hip register, whenever (time + htimedelta), truncated to 64 bits, contains a value greater
+  # than or equal to vstimecmp, treating the values as unsigned integers. The interrupt remains
+  # posted until vstimecmp becomes greater than (time + htimedelta).
+  - names: [hip_vstip_op, hip_vstip_vstimecmp_op, hip_vstip_clear]
+    coverpoint: ["SstcSm_cg/cp_htimedelta"]
+  # The htimedelta CSR is a 64-bit read/write register; htimedeltah aliases its bits 63:32 when XLEN=32
+  - names: [htimedelta_sz_acc_op, htimedeltah_sz_acc_op]
+    coverpoint: ["SstcSm_cg/cp_htimedelta"]
+
+  # M-mode reaches vstimecmp whatever the enables hold
+  - names: [vstimecmp_exist, vstimecmp_sz, vstimecmp_acc]
+    coverpoint: ["SstcSm_cg/{cp_machine_vstimecmp, cp_machine_vstimecmp_write}"]
+
+  # The vstimecmp interrupt is taken under the usual enable and delegation rules
+  - names: [hip_vstip_enable, hideleg_op]
+    coverpoint: ["SstcSm_cg/cp_vstimecmp_int"]

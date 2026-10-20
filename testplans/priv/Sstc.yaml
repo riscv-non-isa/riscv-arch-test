@@ -3,7 +3,7 @@ suite: Sstc
 source: https://docs.google.com/spreadsheets/d/1gBymMadMSRy4SW_nYUmglFAe1-LtjaqOA6aXcrxCAsk/edit?gid=618999433#gid=618999433
 notes: |
   * for RV32, also access stimcmph
-  Boot to S-mode.  Run S and U-mode tests.
+  Boot to S-mode.  Run S and U-mode tests, and with H, HS, VS, VU and U-mode tests of vstimecmp.
 coverpoints:
   - heading: In supervisor mode
   - name: cp_supervisor_tm
@@ -35,3 +35,48 @@ coverpoints:
     check: Check against RM
     status: To be Done
     coverage: Uncovered
+  - heading: In HS-mode (H implemented)
+  - name: cp_supervisor_vstimecmp
+    goal: Access vstimecmp from HS-mode
+    description: Read vstimecmp with menvcfg.STCE = {0/1} x henvcfg.STCE = {0/1} x mcounteren.TM = {0/1} x hcounteren.TM = {0/1} (henvcfg.STCE is read-only 0 while menvcfg.STCE = 0).  For RV32, also access vstimecmph
+    expectation: vstimecmp readable in HS-mode if menvcfg.STCE = mcounteren.TM = 1, else illegal instruction; henvcfg.STCE and hcounteren.TM do not matter
+    bins: 3 STCE * 4 TM * up to 2 regs
+  - name: cp_supervisor_vstimecmp_write
+    goal: All types of access to vstimecmp from HS-mode
+    description: With menvcfg.STCE = mcounteren.TM = 1 and henvcfg.STCE = hcounteren.TM = 0, write 1s and 0s to, set and clear vstimecmp.  For RV32, also vstimecmph
+    expectation: vstimecmp is a 64-bit read/write register
+    bins: 5 accesses * up to 2 regs
+  - name: cp_vstimecmp_int
+    goal: vstimecmp raises VSTIP
+    description: With menvcfg.STCE = henvcfg.STCE = 1, htimedelta = 0, hie.VSTIE = 1, sstatus.SIE = 1 and hideleg.VSTI = {0/1}, write vstimecmp = 0 (at once) or time + htimedelta + RVMODEL_TIMER_INT_SOON_DELAY (soon) in HS-mode
+    expectation: hideleg.VSTI = 0 takes VSTI in HS-mode; hideleg.VSTI = 1 takes STI in VS-mode
+    bins: 2 hideleg * 2 arm
+  - heading: In VS-mode (H implemented)
+  - name: cp_vs_stimecmp
+    goal: Access stimecmp (really vstimecmp) from VS-mode
+    description: With stimecmp and vstimecmp holding different values, read stimecmp in VS-mode with menvcfg.STCE = {0/1} x henvcfg.STCE = {0/1} x mcounteren.TM = {0/1} x hcounteren.TM = {0/1}.  For RV32, also access stimecmph
+    expectation: illegal instruction if menvcfg.STCE = 0 or mcounteren.TM = 0, else virtual instruction if henvcfg.STCE = 0 or hcounteren.TM = 0, else returns vstimecmp
+    bins: 3 STCE * 4 TM * up to 2 regs
+  - name: cp_vs_vstimecmp
+    goal: vstimecmp is not accessible by its own name from VS-mode
+    description: Read vstimecmp in VS-mode with menvcfg.STCE = {0/1} x henvcfg.STCE = {0/1} x mcounteren.TM = {0/1} x hcounteren.TM = {0/1}.  For RV32, also access vstimecmph
+    expectation: virtual instruction if HS-mode could access it (menvcfg.STCE = mcounteren.TM = 1), else illegal instruction
+    bins: 3 STCE * 4 TM * up to 2 regs
+  - name: cp_vs_stimecmp_write
+    goal: stimecmp in VS-mode writes vstimecmp
+    description: With menvcfg.STCE = henvcfg.STCE = mcounteren.TM = hcounteren.TM = 1, write 1s and 0s to, set and clear stimecmp in VS-mode, then write it and read stimecmp and vstimecmp in HS-mode.  For RV32, also stimecmph
+    expectation: The writes reach vstimecmp, not stimecmp
+    bins: 5 accesses * up to 2 regs
+  - heading: In VU-mode and U-mode (H implemented)
+  - name: |-
+      cp_vu_stimecmp
+      cp_vu_vstimecmp
+    goal: stimecmp and vstimecmp are not accessible from VU-mode
+    description: Read stimecmp and vstimecmp in VU-mode with menvcfg.STCE = {0/1} x henvcfg.STCE = {0/1} x mcounteren.TM = {0/1} x hcounteren.TM = {0/1}.  For RV32, also stimecmph and vstimecmph
+    expectation: virtual instruction if HS-mode could access them (menvcfg.STCE = mcounteren.TM = 1), else illegal instruction
+    bins: 3 STCE * 4 TM * up to 4 regs
+  - name: cp_user_vstimecmp
+    goal: vstimecmp is not accessible from U-mode
+    description: Read vstimecmp in U-mode with menvcfg.STCE = {0/1} x henvcfg.STCE = {0/1} x mcounteren.TM = {0/1} x hcounteren.TM = {0/1}.  For RV32, also vstimecmph
+    expectation: illegal instruction
+    bins: 3 STCE * 4 TM * up to 2 regs

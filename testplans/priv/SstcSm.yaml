@@ -19,3 +19,29 @@ coverpoints:
     check: Check against RM
     status: To be Done
     coverage: Uncovered
+  - heading: In machine mode (H implemented)
+  - name: cp_machine_vstimecmp
+    goal: Access vstimecmp from M-mode
+    description: Read vstimecmp with menvcfg.STCE = {0/1} x henvcfg.STCE = {0/1} x mcounteren.TM = {0/1} x hcounteren.TM = {0/1} (henvcfg.STCE is read-only 0 while menvcfg.STCE = 0).  For RV32, also access vstimecmph
+    expectation: vstimecmp always readable in machine mode
+    bins: 3 STCE * 4 TM * up to 2 regs
+  - name: cp_machine_vstimecmp_write
+    goal: All types of access to vstimecmp from M-mode
+    description: With menvcfg.STCE = 1 and henvcfg.STCE = mcounteren.TM = hcounteren.TM = 0, write 1s and 0s to, set and clear vstimecmp.  For RV32, also vstimecmph
+    expectation: vstimecmp is a 64-bit read/write register
+    bins: 5 accesses * up to 2 regs
+  - name: cp_vstip
+    goal: hip.VSTIP is the OR of hvip.VSTIP and the vstimecmp comparison
+    description: With htimedelta = 0, menvcfg.STCE = {0/1} x henvcfg.STCE = {0/1} x hvip.VSTIP = {0/1} x vstimecmp = {0, all 1s}, read hip
+    expectation: hip.VSTIP = hvip.VSTIP | (menvcfg.STCE = henvcfg.STCE = 1 and vstimecmp = 0)
+    bins: 3 STCE * 2 hvip * 2 vstimecmp
+  - name: cp_htimedelta
+    goal: htimedelta offsets the vstimecmp comparison
+    description: With menvcfg.STCE = henvcfg.STCE = 1 and hvip.VSTIP = 0, htimedelta = {0, 2^30, 2^32-1, 2^60, -1, -2^30, -2^60} x vstimecmp = {0, 2^29, 2^31, 2^61, -2^29, -2^31, -2^61}, read hip.  For RV32, htimedeltah and vstimecmph are involved
+    expectation: hip.VSTIP = ((time + htimedelta) mod 2^64 >= vstimecmp), unsigned
+    bins: 7 htimedelta * 7 vstimecmp
+  - name: cp_vstimecmp_int
+    goal: vstimecmp raises VSTIP
+    description: With menvcfg.STCE = henvcfg.STCE = 1, htimedelta = 0, hie.VSTIE = 1, vsstatus.SIE = 1 and hideleg.VSTI = {0/1}, write vstimecmp = 0 (at once) or time + htimedelta + RVMODEL_TIMER_INT_SOON_DELAY (soon) in M-mode, then enter VS-mode
+    expectation: hideleg.VSTI = 0 takes VSTI in HS-mode; hideleg.VSTI = 1 takes STI in VS-mode
+    bins: 2 hideleg * 2 arm
