@@ -52,9 +52,10 @@ def _smnpmu_sweep(test_data: TestData, pmm: int) -> list[TestChunk]:
 # One generator per PMLEN. The header params select the file only when the config supports that PMLEN.
 @add_priv_test_generator(
     "SmnpmU",
-    required_extensions=["Smnpm"],
+    required_extensions=["Smnpm", "U"],
     forbidden_extensions=["S"],
     march_extensions=["I", "A", "F", "D", "V", "Zabha", "Zacas", "Zicbom", "Zicbop", "Zicboz"],
+    params=["MXLEN: 64"],
 )
 def make_smnpmu_pmm00(test_data: TestData) -> list[TestChunk]:
     return _smnpmu_sweep(test_data, 0b00)
@@ -62,10 +63,10 @@ def make_smnpmu_pmm00(test_data: TestData) -> list[TestChunk]:
 
 @add_priv_test_generator(
     "SmnpmU",
-    required_extensions=["Smnpm"],
+    required_extensions=["Smnpm", "U"],
     forbidden_extensions=["S"],
     march_extensions=["I", "A", "F", "D", "V", "Zabha", "Zacas", "Zicbom", "Zicbop", "Zicboz"],
-    params=["SUPPORTED_PMLEN_SMNPM: 7"],
+    params=["MXLEN: 64", "SUPPORTED_PMLEN_SMNPM: 7"],
 )
 def make_smnpmu_pmm10(test_data: TestData) -> list[TestChunk]:
     return _smnpmu_sweep(test_data, 0b10)
@@ -73,10 +74,10 @@ def make_smnpmu_pmm10(test_data: TestData) -> list[TestChunk]:
 
 @add_priv_test_generator(
     "SmnpmU",
-    required_extensions=["Smnpm"],
+    required_extensions=["Smnpm", "U"],
     forbidden_extensions=["S"],
     march_extensions=["I", "A", "F", "D", "V", "Zabha", "Zacas", "Zicbom", "Zicbop", "Zicboz"],
-    params=["SUPPORTED_PMLEN_SMNPM: 16"],
+    params=["MXLEN: 64", "SUPPORTED_PMLEN_SMNPM: 16"],
 )
 def make_smnpmu_pmm11(test_data: TestData) -> list[TestChunk]:
     return _smnpmu_sweep(test_data, 0b11)

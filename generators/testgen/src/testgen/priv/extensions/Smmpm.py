@@ -76,6 +76,7 @@ def _smmpm_sweep(test_data: TestData, pmm: int) -> list[TestChunk]:
     required_extensions=["Smmpm"],
     march_extensions=["I", "A", "F", "D", "V", "Zabha", "Zacas", "Zicbom", "Zicbop", "Zicboz"],
     extra_defines=["#define BOOT_TO_MMODE"],
+    params=["MXLEN: 64"],
 )
 def make_smmpm_pmm00(test_data: TestData) -> list[TestChunk]:
     return _smmpm_sweep(test_data, 0b00)
@@ -86,7 +87,7 @@ def make_smmpm_pmm00(test_data: TestData) -> list[TestChunk]:
     required_extensions=["Smmpm"],
     march_extensions=["I", "A", "F", "D", "V", "Zabha", "Zacas", "Zicbom", "Zicbop", "Zicboz"],
     extra_defines=["#define BOOT_TO_MMODE"],
-    params=["SUPPORTED_PMLEN_SMMPM: 7"],
+    params=["MXLEN: 64", "SUPPORTED_PMLEN_SMMPM: 7"],
 )
 def make_smmpm_pmm10(test_data: TestData) -> list[TestChunk]:
     return _smmpm_sweep(test_data, 0b10)
@@ -97,7 +98,7 @@ def make_smmpm_pmm10(test_data: TestData) -> list[TestChunk]:
     required_extensions=["Smmpm"],
     march_extensions=["I", "A", "F", "D", "V", "Zabha", "Zacas", "Zicbom", "Zicbop", "Zicboz"],
     extra_defines=["#define BOOT_TO_MMODE"],
-    params=["SUPPORTED_PMLEN_SMMPM: 16"],
+    params=["MXLEN: 64", "SUPPORTED_PMLEN_SMMPM: 16"],
 )
 def make_smmpm_pmm11(test_data: TestData) -> list[TestChunk]:
     return _smmpm_sweep(test_data, 0b11)
@@ -106,12 +107,14 @@ def make_smmpm_pmm11(test_data: TestData) -> list[TestChunk]:
 # MPRV with MPP=M only: the effective privilege stays M, so mseccfg.PMM
 # governs. The MPP=U and MPP=S cases are governed by senvcfg.PMM and
 # menvcfg.PMM, which come from Ssnpm and Smnpm, and live in SsnpmSm and
-# SmnpmSSm. This chunk sweeps every PMLEN, so it uses inline guards and no params.
+# SmnpmSSm. This chunk sweeps every PMLEN, so it uses inline guards and no PMLEN params.
+# MPRV is read-only 0 without U-mode, so the chunk requires U.
 @add_priv_test_generator(
     "Smmpm",
-    required_extensions=["Smmpm"],
+    required_extensions=["Smmpm", "U"],
     march_extensions=["I", "A", "F", "D", "V", "Zabha", "Zacas", "Zicbom", "Zicbop", "Zicboz"],
     extra_defines=["#define BOOT_TO_MMODE"],
+    params=["MXLEN: 64"],
 )
 def make_smmpm_mprv(test_data: TestData) -> list[TestChunk]:
     tc = test_data.begin_test_chunk(split_name="mprv")
