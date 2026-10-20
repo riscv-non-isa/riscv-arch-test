@@ -1600,7 +1600,9 @@ tsbi_\__MODE__\()goto_vu:
 
         // The VS handler forwarded a VU caller's GOTO_M/S/U: resume that caller at vsepc,
         // and undo the VU->VS trap as the VS handler's sret would have (vsstatus.SIE = SPIE,
-        // SPIE = 1, SPP = 0) and as a VU->HS trap would have left hstatus (SPVP = 0).
+        // SPIE = 1, SPP = 0, and SDT = 0 with Ssdbltrp and SPELP = 0 with Zicfilp) and as a
+        // VU->HS trap would have left hstatus (SPVP = 0). The caller's ELP, which sret would
+        // restore from SPELP, is NO_LP_EXPECTED: it executed an ecall, not a landing pad.
         csrr    T3, CSR_VSEPC
         csrw    CSR_XEPC, T3
         csrr    T3, CSR_VSSTATUS
@@ -1609,6 +1611,10 @@ tsbi_\__MODE__\()goto_vu:
         andi    T3, T3, ~(SSTATUS_SIE | SSTATUS_SPP)
         ori     T3, T3, SSTATUS_SPIE
         or      T3, T3, T2
+    #if defined(SSDBLTRP_SUPPORTED) || defined(ZICFILP_SUPPORTED)
+        LI(     T2, ~(SSTATUS_SDT | SSTATUS_SPELP))  // read-only zero when not implemented
+        and     T3, T3, T2
+    #endif
         csrw    CSR_VSSTATUS, T3
         LI(     T3, HSTATUS_SPVP)
         csrc    CSR_HSTATUS, T3
