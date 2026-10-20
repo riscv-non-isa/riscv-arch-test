@@ -496,6 +496,7 @@ def _gen_twostage_teardown(test_data: TestData, check: int) -> list[str]:
     "H",
     required_extensions=["H"],
     extra_defines=["#define BOOT_TO_SMODE"],
+    params=["TRAP_ON_ECALL_FROM_VS: true"],
 )
 def make_h(test_data: TestData) -> list[TestChunk]:
     """Generate the HS, VS and VU-mode trap handler and T-SBI tests."""
@@ -520,7 +521,7 @@ def make_h(test_data: TestData) -> list[TestChunk]:
     "H",
     required_extensions=["H"],
     extra_defines=["#define BOOT_TO_SMODE"],
-    params=["MXLEN: 64"],
+    params=["MXLEN: 64", "SV39X4_TRANSLATION: true", "SV39_VSMODE_TRANSLATION: true", "TRAP_ON_ECALL_FROM_VS: true"],
 )
 def make_h_twostage(test_data: TestData) -> list[TestChunk]:
     """Generate the two-stage translation tests (Sv39x4 G-stage over Sv39 VS-stage)."""
