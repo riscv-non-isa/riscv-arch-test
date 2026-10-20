@@ -46,7 +46,11 @@ coverpoints:
     notes: "comments on test results: No exceptions. Tcontrol and mscontext not implemented on spike"
   - heading: "Note: Use CSRW/CSRR to access registers in all modes"
   - heading: Native Triggers
-  - name: cp_breakpoint_delegate
+  - name: cp_breakpoint_delegate (not generated)
+    status: >-
+      Not generated: _generate_native_triggers_tests has its body commented out and is not registered.
+      Whether the breakpoint can be taken in S also depends on the hart's reentrancy option, which needs the
+      SDTRIG_BREAKPOINT_REENTRANCY parameter (ACT issue 2871)
     goal: Breakpoints caused by triggers can be delegated
     description: |-
       if S_SUPPORTED
@@ -129,6 +133,9 @@ coverpoints:
       tselect = i
     bins: UDB_VECTOR_SEW
   - name: cp_vector_load_store
+    status: >-
+      Partly gated: the size 1-6 cases and bins are compiled only with UDB_SDTRIG_MCONTROL6_SIZE_AVAILABLE
+      (pending riscv-unified-db#2069); only size = 0 (any) runs today
     goal: Accesses match as if it performed a load/store of size SEW
     description: |-
       if ZVL32B_SUPPORTED
@@ -201,6 +208,9 @@ coverpoints:
       - Sdtrig_caches_stores_2
       - Sdtrig_caches_stores_3
   - name: cp_cache_zicbom
+    status: >-
+      Partly gated: the size 1-6 cases and bins are compiled only with UDB_SDTRIG_MCONTROL6_SIZE_AVAILABLE
+      (pending riscv-unified-db#2069); only size = 0 (any) runs today
     goal: cbo.clean, cbo.flush, and cbo.inval match as if they are stores
     description: |-
       if ZICBOM_SUPPORTED
@@ -214,6 +224,9 @@ coverpoints:
     rules:
       - Sdtrig_cache_clears
   - name: cp_cache_zicboz
+    status: >-
+      Partly gated: the size 1-6 cases and bins are compiled only with UDB_SDTRIG_MCONTROL6_SIZE_AVAILABLE
+      (pending riscv-unified-db#2069); only size = 0 (any) runs today
     goal: cbo.zero matches as if it is a store
     description: |-
       if ZICBOZ_SUPPORTED
@@ -319,13 +332,16 @@ coverpoints:
       For tselect = 0 to UDB_SDTRIG_NUM_TRIGGERS -1
       CSRR tinfo
       check tinfo.info != 1
+      if the trigger supports mcontrol6: check tinfo.version >= 1
     expectation: |-
       No exceptions
       tinfo.info != 1 for all trigger < NUM_TRIGGERS
+      tinfo.version >= 1 on every trigger that supports mcontrol6
     bins: NUM_TRIGGERS
     rules:
       - Sdtrig_num_trigs_ge1
       - Sdtrig_tselect_access
+      - Sdtrig_mcontrol6_dependence
     notes: |-
       coverpoint drafted: 9/10
       coverpoint reviewed: 9/10
@@ -338,8 +354,10 @@ coverpoints:
     expectation: Non-supported mode bits read back as zero after writing all-ones
     bins: NTRIGGERS
     rules:
-      - Sdtrig_tdata1_dmode_type_0
-      - Sdtrig_tdata1_data
+      - Sdtrig_mcontrol6_s
+      - Sdtrig_mcontrol6_u
+      - Sdtrig_mcontrol6_vs
+      - Sdtrig_mcontrol6_vu
     notes: |-
       coverpoint drafted: 9/10
       coverpoint reviewed: 9/10
@@ -359,8 +377,20 @@ coverpoints:
     notes: |-
       coverpoint drafted: 9/10
       coverpoint reviewed: 9/10
+  - name: cp_csr_unimplemented
+    goal: Accessing a trigger CSR that the hart does not implement raises an illegal instruction exception
+    description: |-
+      For x in {mcontext if not UDB_MCONTEXT_AVAILABLE, hcontext if not UDB_HCONTEXT_AVAILABLE}:
+      csrr x, csrw x from M-mode
+      tcontrol, tdata3 and scontext need presence parameters (TCONTROL_IMPLEMENTED, TDATA3_IMPLEMENTED,
+      SCONTEXT_IMPLEMENTED in riscv-unified-db#2069) and are not tested yet
+    expectation: Illegal instruction exception on every access
+    bins: unimplemented context CSRs * 2 accesses (none on a hart with mcontext and hcontext)
   - heading: Trigger Control
-  - name: cp_tcontrol_enable
+  - name: cp_tcontrol_enable (not generated)
+    status: >-
+      Not generated: _generate_tcontrol_tests emits labels only and is not registered, and SdtrigSm_tcontrol_cg
+      is compiled only with UDB_TCONTROL_AVAILABLE (TCONTROL_IMPLEMENTED, riscv-unified-db#2069)
     goal: tcontrol.mte enables debug triggers in M-mode
     description: |-
       if UDB_TCONTROL_AVAILABLE
@@ -372,7 +402,8 @@ coverpoints:
     rules:
       - Sdtrig_tcontrol_mte_disabled
       - Sdtrig_tcontrol_mte_enabled
-  - name: cp_tcontrol_mtrap
+  - name: cp_tcontrol_mtrap (not generated)
+    status: "Not generated: see cp_tcontrol_enable"
     goal: tcontrol.mte/mpte on trap into M-mode
     description: |-
       if UDB_TCONTROL_AVAILABLE
@@ -384,7 +415,9 @@ coverpoints:
     bins: 2 mpte * 2 mte
     rules:
       - Sdtrig_tcontrol_mte
-  - name: cp_tcontrol_mret
+      - Sdtrig_tcontrol_mpte
+  - name: cp_tcontrol_mret (not generated)
+    status: "Not generated: see cp_tcontrol_enable"
     goal: tcontrol.mte on mret
     description: |-
       if UDB_TCONTROL_AVAILABLE
@@ -420,10 +453,10 @@ coverpoints:
       tdata2 = {scratch}
       tdata1.select = 0 (adr)
       tdata1.XSL= 010
-      tdata1.m = {0/1}
-      Perform SW 0x12345678 to scratch
-    expectation: Breakpoint exception on instruction if tdata1.m = 1
-    bins: 2 priv bits
+      tdata1.m/s/u = {000/100/011} (none, m only, s and u only)
+      Perform SW to scratch
+    expectation: Breakpoint exception on instruction if tdata1.m = 1; none when only s/u are set
+    bins: 2 m (the s/u-only case falls in the m = 0 bin)
     rules:
       - Sdtrig_mcontrol6_m
     notes: "comments on test results: Exceptions when m.1"
@@ -464,6 +497,7 @@ coverpoints:
       tdata1.XSL = 8 combinations
       perform addi x0, x1, 0
       (not nop, whose opcode also appears in the test environment's own code; no instruction in the test encodes as 0x2)
+      on RV64, size = 0 with a 32-bit instruction relies on the zero-extension in Sdtrig_mcontrol6_select_data
     expectation: Breakpoint exception on fetched instruction if tdata2 matches opcode and tdata1.execute = 1
     bins: 2 values * 8 XSL
     rules:
@@ -474,13 +508,14 @@ coverpoints:
     notes: "comments on test results: Exceptions when tdata2 = 0x00008013, and execute = 1"
   - name: cp_mcontrol6_load_store_data
     description: |-
-      tdata2 = {random value}
+      tdata2 = {random XLEN-wide value / the same value with bit 0 (RV32) or bit 32 (RV64) flipped}
       tdata1.select = 1 (data)
       tdata1.XSL = 8 combinations
-      perform {SW/ LW random value} to scratch
+      perform {SW/LW (RV32), SD/LD (RV64)} of the value to scratch
+      (XLEN-wide accesses: with size = 0 a data match is only well-defined when the access size is XLEN)
     expectation: |-
-      Breakpoint exception on LW if access data matches tdata2 and tdata1.load = 1
-      Breakpoint exception on SW if access data matches tdata2 and tdata1.store = 1
+      Breakpoint exception on the load if access data matches tdata2 and tdata1.load = 1
+      Breakpoint exception on the store if access data matches tdata2 and tdata1.store = 1
     bins: 8 XSL * 2 ops (tdata2 values not binned because the data a load reads is not visible to coverage)
     rules:
       - Sdtrig_mcontrol6_select_data
@@ -489,6 +524,9 @@ coverpoints:
       - Sdtrig_mcontrol6_load
     notes: "comments on test results: Exceptions when td2 = the stored value, and XSL = 1/2/3"
   - name: cp_mcontrol6_execute_size
+    status: >-
+      Partly gated: the size 1-6 cases and bins are compiled only with UDB_SDTRIG_MCONTROL6_SIZE_AVAILABLE
+      (pending riscv-unified-db#2069); only size = 0 (any) runs today
     description: |-
       tdata2 = {addi x0, x1, 0 opcode/c.nop opcode}
       tdata1.select = 1 (data)
@@ -497,6 +535,7 @@ coverpoints:
       perform addi x0, x1, 0
       if ZCA_SUPPORTED
       perform c.nop
+      size = 0 with c.nop, or with addi on RV64, relies on the zero-extension in Sdtrig_mcontrol6_select_data
     expectation: Breakpoint exception if the size of the instruction matches the trigger size in mcontrol6 and tdata1.execute = 1
     bins: 2 values * 7 sizes * 2 ops
     rules:
@@ -508,6 +547,9 @@ coverpoints:
       - Sdtrig_mcontrol6_size_128bit
     notes: "comments on test results: Exceptions when td2 = op, size = 0. Note: warls size to zero"
   - name: cp_mcontrol6_load_store_size
+    status: >-
+      Partly gated: the size 1, 2, 3 and 5 cases and bins are compiled only with UDB_SDTRIG_MCONTROL6_SIZE_AVAILABLE
+      (pending riscv-unified-db#2069); only size = 0 (any) runs today
     description: |-
       tdata2 = {scratch/0}
       tdata1.select = 0 (adr)
@@ -534,6 +576,9 @@ coverpoints:
       - Sdtrig_mcontrol6_size_128bit
     notes: Sizes 4 (48-bit) and 6 (128-bit) are not tested
   - name: cp_mcontrol6_match
+    status: >-
+      Partly gated: the ge, lt and not-equal cases and bins are compiled only with
+      UDB_SDTRIG_MCONTROL6_MATCH_AVAILABLE (pending riscv-unified-db#2069); only match = 0 (equal) runs today
     goal: Test boundaries for match conditions
     description: |-
       tdata1.select = 1 (data)
@@ -552,7 +597,10 @@ coverpoints:
       - Sdtrig_mcontrol6_match_ge
       - Sdtrig_mcontrol6_match_lt
       - Sdtrig_mcontrol6_match_not_equal
-  - name: cp_mcontrol6_match_napot
+  - name: cp_mcontrol6_match_napot (gated)
+    status: >-
+      Gated off: every case and the cross are compiled only with UDB_SDTRIG_MCONTROL6_MATCH_AVAILABLE, which is
+      not defined until riscv-unified-db#2069 provides it, so the row runs nowhere
     description: |-
       tdata1.select = 1 (data)
       tdata1.XSL= 010
@@ -572,7 +620,10 @@ coverpoints:
     rules:
       - Sdtrig_mcontrol6_match_napot
       - Sdtrig_mcontrol6_match_not_napot
-  - name: cp_mcontrol6_match_mask
+      - Sdtrig_mcontrol6_match_napot_legal
+      - Sdtrig_mcontrol6_match_napot_mask
+  - name: cp_mcontrol6_match_mask (gated)
+    status: "Gated off: as cp_mcontrol6_match_napot (UDB_SDTRIG_MCONTROL6_MATCH_AVAILABLE)"
     description: |-
       tdata1.select = 1 (data)
       tdata1.XSL= 010
@@ -623,10 +674,10 @@ coverpoints:
       Trigger i+1 (Tselect = i + 1):
       tdata1.select = 1 (data)
       tdata1.chain = 0
-      tdata2 = {0x12345678}
+      tdata2 = {random XLEN-wide value}
 
       tdata1.XSL = 010
-      perform SW  {0x012345678/0} to {scratch/scratch+8}
+      perform SW (RV32) / SD (RV64) {the value/0} to {scratch/scratch+8} (XLEN-wide, as size = 0 needs)
     expectation: Breakpoint exception from final trigger in chain if all triggers match simultaneously
     bins: 2 store values * 2 addresses
     rules:
@@ -649,7 +700,11 @@ coverpoints:
       unless otherwise specified:
       tdata1.m/s/u/vs/vu = (1 for current mode, e.g. 1 in m)
       Perform an instruction that causes trigger to fire/not fire
-  - name: cp_icount_hardwired
+  - name: cp_icount_hardwired (gated)
+    status: >-
+      Gated off: the test and the cross are compiled only with UDB_ICOUNT_HARDWIRED_1, which is never defined yet
+      (pending riscv-unified-db#2069), so the row runs nowhere. imperas-rv64-max sets count_hardwired_one in its
+      sail.json, so there cp_icount_instr and cp_icount_eq0 run against a hard-wired-1 reference instead
     description: |-
       if UDB_COUNT_HARDWIRED_1 = true:
       tdata1.m/s/u/vs/vu = 11111
@@ -740,30 +795,46 @@ coverpoints:
       unless otherwise specified:
       tdata1.m/s/u/vs/vu = (1 for current mode, e.g. 1 in m)
       Perform an interrupt that causes trigger to fire/not fire
-  - name: cp_itrigger
+  - name: cp_itrigger_m
+    goal: An itrigger never fires on an interrupt handled in M
     description: |-
-      for x in {1,3,5,7,9,11,13} if INTERRUPTx_SUPPORTED:
-      1-  tdata1.m = {0/1},
-      mideleg[x] = 0 , medelg[3] = 0
-      trigger interrupt of code {x, timer interrupt} while executing in M-mode.
-
-      2-  tdata1.s =    {0/1}
-      mideleg[x] = {0/1} , medeleg[3] = {0}
-      trigger interrupt of code {x, timer interrupt} while executing in S-mode.
-
-      3- tdata1.u = {0/1}
-      mideleg[x] = {0/1} , medeleg[3] = {0}
-      trigger interrupt of code {x, timer interrupt} while executing in U-mode.
-                                                                                                                                                                                                           CSRR tval
-      If HIT_IMPLEMENTED: CSRR tdata1.hit.
-    expectation: Breakpoint exception when the interrupt matches the interrupt number enabled in tdata2 and the corresponding privilege-mode bit (tdata1.m/s/u) is set. The trigger shall not fire when the corresponding privilege-mode bit is cleared. tval shall be set to 0 on a trigger match, and if HIT_IMPLEMENTED, hit shall be 1. Trigger firing shall be suppressed where required by the implemented reentrancy solution.
-    bins: 7 interrupt codes * 2 priv bits* 2 interrupts
-    rules:
-      - Sdtrig_itrigger_access
-      - Sdtrig_itrigger_fire
-      - Sdtrig_itrigger_enable_num
-      - Sdtrig_itrigger_timing
-      - Sdtrig_itrigger_action0
+      tdata2[x] = 1 for x in {1,3,5,7,9,11,13} if INTERRUPTx_SUPPORTED (1,5,9,13 need S)
+      tdata1.m = {0/1}, mideleg[x] = 0
+      take interrupt x while executing in M-mode
+    expectation: No breakpoint (both reentrancy options prevent it in M)
+    bins: NTRIG * 7 interrupts * 2 m bits
+  - name: cp_itrigger_m_other
+    goal: An itrigger does not fire on an interrupt tdata2 does not select
+    description: |-
+      as cp_itrigger_m, taking the machine timer interrupt instead of x
+    expectation: No breakpoint
+    bins: NTRIG * 2 m bits
+  - name: cp_itrigger_s
+    goal: An itrigger fires on a selected interrupt taken from S and handled in S
+    description: |-
+      tdata2[x] = 1 for x in {1,5,9,13} if INTERRUPTx_SUPPORTED
+      tdata1.s = {0/1}, mideleg[x] = 1, medeleg[3] = 0
+      take interrupt x while executing in S-mode
+    expectation: Breakpoint into M just before the first instruction of the S-mode handler, tval = 0, iff tdata1.s = 1
+    bins: NTRIG * 4 interrupts * {s clear and no breakpoint, s set and breakpoint}
+  - name: cp_itrigger_s_other
+    goal: An itrigger does not fire on an interrupt tdata2 does not select
+    description: |-
+      as cp_itrigger_s, taking another delegated S-level interrupt (5, or 1 when x = 5) instead of x
+    expectation: No breakpoint
+    bins: NTRIG * 2 s bits
+  - name: cp_itrigger_u
+    goal: An itrigger fires on a selected interrupt taken from U and handled in S
+    description: |-
+      as cp_itrigger_s, with tdata1.u = {0/1}, taking interrupt x while executing in U-mode
+    expectation: Breakpoint into M just before the first instruction of the S-mode handler, tval = 0, iff tdata1.u = 1
+    bins: NTRIG * 4 interrupts * {u clear and no breakpoint, u set and breakpoint}
+  - name: cp_itrigger_u_other
+    goal: An itrigger does not fire on an interrupt tdata2 does not select
+    description: |-
+      as cp_itrigger_u, taking another delegated S-level interrupt instead of x
+    expectation: No breakpoint
+    bins: NTRIG * 2 u bits
   - name: "Etrigger tests: test fire and don't fire for each scenario"
     description: |-
       Repeat for each of UDB_SDTRIG_NUM_TRIGGERS if UDB_SDTRIG_ETRIGGER_SUPPORTED[i]:
@@ -775,31 +846,70 @@ coverpoints:
       tdata1.action = 0 (breakpoint)
       unless otherwise specified:
       tdata1.m/s/u/vs/vu = (1 for current mode, e.g. 1 in m)
-  - name: cp_etrigger
+  - name: cp_etrigger_m
+    goal: An etrigger never fires on an exception raised and handled in M
     description: |-
-      for x in {0-9/11/12/13/15/16/18} if EXCEPTIONx_SUPPORTED
-      tdata2[x] = 1
-      1-  tdata1.m = {0/1},
-      perform exception of code {x, illegal instruction (0x11111111)} while executing in M-mode
-
-      2-  tdata1.s =    {0/1}
-      medeleg[x] = {0/1} , medeleg[3] = {0}
-      perform exception of code {x, illegal instruction (0x11111111)} while executing in S-mode.
-
-      3- tdata1.u = {0/1}
-      medeleg[x] = {0/1} , medeleg[3] = {0}
-      perform exception of code {x, illegal instruction (0x11111111)} while executing in U-mode
-
-      CSRR tval.
-      If HIT_IMPLEMENTED: CSRR tdata1.hit.
-    expectation: Breakpoint exception when the exception matches the exception number enabled in tdata2 and the corresponding privilege-mode bit (tdata1.m/s/u) is set. The trigger shall not fire when the corresponding privilege-mode bit is cleared. tval shall be set to 0 on a trigger match, and if HIT_IMPLEMENTED, hit shall be 1. Trigger firing shall be suppressed where required by the implemented reentrancy solution.
-    bins: 17 exception codes * 2 priv bits * 2 exceptions
-    rules:
-      - Sdtrig_etrigger_access
-      - Sdtrig_etrigger_config
-      - Sdtrig_etrigger_timing
-      - Sdtrig_etrigger_action0
-      - Sdtrig_etrigger_m
+      tdata2[x] = 1 for x in {1,2,5,7,11, and 13,15 with Sv (MPRV=1, MPP=U)}
+      tdata1.m = {0/1}
+      raise exception x while executing in M-mode
+    expectation: No breakpoint (both reentrancy options prevent it in M)
+    bins: NTRIG * 7 exceptions * 2 m bits
+  - name: cp_etrigger_m_other
+    goal: An etrigger does not fire on an exception tdata2 does not select
+    description: |-
+      tdata2[x] = 1 for each x above and x in {0,3,4,6,8,9}, tdata1.m = {0/1}
+      raise an illegal instruction while executing in M-mode
+    expectation: No breakpoint
+    bins: NTRIG * 2 m bits
+  - name: cp_etrigger_s
+    goal: An etrigger never fires on an exception raised in S and handled in M
+    description: |-
+      tdata2[x] = 1 for x in {1,2,5,7,9, and 12,13,15 with Sv}
+      tdata1.s = {0/1}, medeleg[x] = 0
+      raise exception x while executing in S-mode
+    expectation: No breakpoint
+    bins: NTRIG * 8 exceptions * 2 s bits
+  - name: cp_etrigger_s_deleg
+    goal: An etrigger fires on a selected exception raised in S and handled in S
+    description: |-
+      tdata2[x] = 1 for x in {1,5,7, and 12,13,15 with Sv}
+      tdata1.s = {0/1}, medeleg[x] = 1, medeleg[3] = 0
+      raise exception x while executing in S-mode
+      Not generated: ecall from S (the T-SBI return to M is itself an ecall) and illegal instruction with tdata1.s = 1
+      (a DUT that emulates the time CSR forwards it in software)
+    expectation: Breakpoint into M just before the first instruction of the S-mode handler, tval = 0, iff tdata1.s = 1
+    bins: NTRIG * 6 exceptions * {s clear and no breakpoint, s set and breakpoint}
+  - name: cp_etrigger_s_other
+    goal: An etrigger does not fire on an exception tdata2 does not select
+    description: |-
+      tdata2[x] = 1 for each x tested from S, tdata1.s = {0/1}, medeleg[2] = 0
+      raise an illegal instruction while executing in S-mode
+    expectation: No breakpoint
+    bins: NTRIG * 2 s bits
+  - name: cp_etrigger_u
+    goal: An etrigger never fires on an exception raised in U and handled in M
+    description: |-
+      tdata2[x] = 1 for x in {1,2,5,7,8, and 12,13,15 with Sv}
+      tdata1.u = {0/1}, medeleg[x] = 0
+      raise exception x while executing in U-mode
+    expectation: No breakpoint
+    bins: NTRIG * 8 exceptions * 2 u bits
+  - name: cp_etrigger_u_deleg
+    goal: An etrigger fires on a selected exception raised in U and handled in S
+    description: |-
+      tdata2[x] = 1 for x in {1,5,7,8, and 12,13,15 with Sv}
+      tdata1.u = {0/1}, medeleg[x] = 1, medeleg[3] = 0
+      raise exception x while executing in U-mode
+      Not generated: illegal instruction with tdata1.u = 1 (as in cp_etrigger_s_deleg)
+    expectation: Breakpoint into M just before the first instruction of the S-mode handler, tval = 0, iff tdata1.u = 1
+    bins: NTRIG * 7 exceptions * {u clear and no breakpoint, u set and breakpoint}
+  - name: cp_etrigger_u_other
+    goal: An etrigger does not fire on an exception tdata2 does not select
+    description: |-
+      tdata2[x] = 1 for each x tested from U, tdata1.u = {0/1}, medeleg[2] = 0
+      raise an illegal instruction while executing in U-mode
+    expectation: No breakpoint
+    bins: NTRIG * 2 u bits
   - name: "Textra tests: test fire and don't fire for each scenario"
     description: |-
       Repeat for each of UDB_SDTRIG_NUM_TRIGGERS if UDB_TDATA3_EXISTS[i]:
@@ -835,8 +945,8 @@ coverpoints:
       if MCONTROL6_SUPPORTED
       tdata1.type = 6 (mcontrol6)
       tdata1.select = 1 (data)
-      tdata2 = {0x12345678}
-      perform SW  {0x12345678}
+      tdata2 = {0x12345678 (RV32) / 0xEDCBA98712345678 (RV64)}
+      perform SW (RV32) / SD (RV64) of the same value (an XLEN-wide access, as size = 0 needs)
 
       itrigger/etrigger are not used: with action=0 they cannot fire here (traps are taken with xIE=0).
       After each case, rvtest_trap_count is written to the signature.
@@ -869,8 +979,8 @@ coverpoints:
       if MCONTROL6_SUPPORTED
       tdata1.type = 6 (mcontrol6)
       tdata1.select = 1 (data)
-      tdata2 = {0x12345678}
-      perform SW  {0x12345678}
+      tdata2 = {0x12345678 (RV32) / 0xEDCBA98712345678 (RV64)}
+      perform SW (RV32) / SD (RV64) of the same value (an XLEN-wide access, as size = 0 needs)
 
       itrigger/etrigger are not used: with action=0 they cannot fire here (traps are taken with xIE=0).
       After each case, rvtest_trap_count is written to the signature.
@@ -886,6 +996,13 @@ coverpoints:
       - Sdtrig_textra32_sselect_scontext
       - Sdtrig_textra32_sbytemask
       - Sdtrig_textra64_sbytemask
+  - name: cp_textra_scontext_all
+    goal: With every scontext byte masked, the scontext compare always matches
+    description: |-
+      only run tests if SCONTEXT_AVAILABLE:
+      as cp_textra_scontext, with tdata3.sselect = 1 and tdata3.sbytemask = all ones (RV32 11, RV64 1111)
+    expectation: Breakpoint exception for every svalue
+    bins: 2 trigger types
   - name: cp_textra_double_context
     description: |-
       only run tests if MCONTEXT_AVAILABLE and SCONTEXT_AVAILABLE:
@@ -917,8 +1034,8 @@ coverpoints:
       if MCONTROL6_SUPPORTED
       tdata1.type = 6 (mcontrol6)
       tdata1.select = 1 (data)
-      tdata2 = {0x12345678}
-      perform SW  {0x12345678}
+      tdata2 = {0x12345678 (RV32) / 0xEDCBA98712345678 (RV64)}
+      perform SW (RV32) / SD (RV64) of the same value (an XLEN-wide access, as size = 0 needs)
 
       itrigger/etrigger are not used: with action=0 they cannot fire here (traps are taken with xIE=0).
       After each case, rvtest_trap_count is written to the signature.
@@ -962,8 +1079,8 @@ coverpoints:
       if MCONTROL6_SUPPORTED
       tdata1.type = 6 (mcontrol6)
       tdata1.select = 1 (data)
-      tdata2 = {0x12345678}
-      perform SW  {0x12345678}
+      tdata2 = {0x12345678 (RV32) / 0xEDCBA98712345678 (RV64)}
+      perform SW (RV32) / SD (RV64) of the same value (an XLEN-wide access, as size = 0 needs)
     expectation: Breakpoint exception if ASID in satp equals the lower ASIDMAX bits of svalue.
     bins: 5 svalues * 4 trigger types
     rules:
