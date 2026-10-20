@@ -8,12 +8,13 @@
 #   (https://github.com/riscv/sail-riscv/issues/1134, https://github.com/riscv/sail-riscv/pull/1874).
 # SsstrictS: Sail traps on siselect/stopi accesses that Whisper permits with mstateen0 enabled.
 # Ssnpm,SsnpmSm,Smmpm,SmnpmS: Failing due to mismatch in scause/mcause ,Issue Link (https://github.com/tenstorrent/whisper/issues/200)
-# SdtrigSm: on RV32, Whisper replaces tdata2 = 0xFFFFFFFF with the NAPOT mask on an mcontrol6 trigger that
-#   does not use NAPOT, so SdtrigSm_tdata2_translate fails (https://github.com/tenstorrent/whisper/issues/218,
-#   fix https://github.com/tenstorrent/whisper/pull/219). Narrow this to SdtrigSm_tdata2_translate once
-#   group exclusions (#2792) land, and drop it when the Whisper pin includes the fix.
+# SdtrigSm,SdtrigS: on RV32, Whisper replaces tdata2 = 0xFFFFFFFF with the NAPOT mask on an mcontrol6 trigger that
+#   does not use NAPOT, so SdtrigSm_tdata2_translate and SdtrigS_tdata2_translate fail
+#   (https://github.com/tenstorrent/whisper/issues/218, fix https://github.com/tenstorrent/whisper/pull/219).
+#   Narrow this to the two tdata2_translate tests once group exclusions (#2792) land, and drop it when the
+#   Whisper pin includes the fix.
 ci_enabled: true
-exclude_extensions: "SdtrigSm,SsstrictSm,SsstrictS,Smstateen,Ssnpm,SsnpmSm,Smmpm,SmnpmS,SmnpmSSm,SmnpmU,SmnpmUSm"
+exclude_extensions: "SdtrigSm,SdtrigS,SsstrictSm,SsstrictS,Smstateen,Ssnpm,SsnpmSm,Smmpm,SmnpmS,SmnpmSSm,SmnpmU,SmnpmUSm"
 exclude_configs:
   - whisper-rv32-max-spike-ref
   - whisper-rv64-max-spike-ref
