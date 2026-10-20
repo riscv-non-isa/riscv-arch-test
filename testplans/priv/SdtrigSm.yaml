@@ -167,7 +167,11 @@ coverpoints:
     rules:
       - Sdtrig_mult_mem_access
   - name: cp_cm_pop_push (not generated)
-    status: "Not generated: _generate_zcmp_tests is a stub and is not registered"
+    status: >-
+      Not generated until the Sail reference model supports Zcmp: Sail 0.16 has no Zcmp extension
+      (model/core/extensions.sail has no Ext_Zcmp; riscv/sail-riscv#730 adds it and is open), and no CI
+      configuration claims both Zcmp and Sdtrig. With #730, cm.push and cm.pop make one vmem_write or vmem_read
+      per register, which Sail's per-access trigger matching (model/sys/vmem_utils.sail) checks individually
     goal: Accesses match as if happened individually
     description: |-
       if ZCMP_SUPPORTED

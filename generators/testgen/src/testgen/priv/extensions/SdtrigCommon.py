@@ -3993,4 +3993,4 @@ def register_sdtrig_suite(mode: str, required_extensions: list[str | list[str]],
 
     # Disabled sections and their extra required extension:
     #   _generate_tcontrol_tests: body not implemented yet; needs UDB_TCONTROL_AVAILABLE
-    #   _generate_zcmp_tests: Zcmp
+    #   _generate_zcmp_tests: Zcmp; waits for Zcmp in the Sail reference model (riscv/sail-riscv#730)

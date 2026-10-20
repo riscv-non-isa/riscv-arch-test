@@ -198,7 +198,7 @@ normative_rule_definitions:
         "SdtrigSm_combined_accesses_cg/cp_vector_load_store",
         "SdtrigSm_combined_accesses_cg/cp_vector_accesses",
         "SdtrigSm_combined_accesses_cg/cp_vector_mask",
-        "cm.push/cm.pop (Zcmp) not tested yet: no generator",
+        "cm.push/cm.pop not tested until Sail supports Zcmp (riscv/sail-riscv#730)",
       ]
 
   # For the purposes of debug triggers, two classes of cache operations must match as
