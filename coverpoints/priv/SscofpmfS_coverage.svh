@@ -95,34 +95,198 @@ covergroup SscofpmfS_cg with function sample(ins_t ins);
         }
     `endif
 
-    mcounteren_all_ones_state: coverpoint (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "mcounteren", "enable")[28:0] == '1) {
+    mcounteren_all_ones_state: coverpoint (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "mcounteren", "enable")[28:0] == 29'(`MCOUNTEREN_WRITABLE >> 3)) {
             bins yes = {1};
     }
 
     mcounteren_stimulus_pattern_state: coverpoint (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "mcounteren", "enable")[28:0]) {
         bins all_zeros = {29'h0};
-        bins all_ones  = {29'h1FFFFFFF};
-        bins walking[] = {29'h1, 29'h2, 29'h4, 29'h8, 29'h10, 29'h20, 29'h40, 29'h80,
-                           29'h100, 29'h200, 29'h400, 29'h800, 29'h1000, 29'h2000,
-                           29'h4000, 29'h8000, 29'h10000, 29'h20000, 29'h40000,
-                           29'h80000, 29'h100000, 29'h200000, 29'h400000, 29'h800000,
-                           29'h1000000, 29'h2000000, 29'h4000000, 29'h8000000, 29'h10000000};
+        bins all_ones  = {29'(`MCOUNTEREN_WRITABLE >> 3)};
+        `ifdef UDB_MCOUNTENABLE_EN_3
+            bins walking_3 = {29'h1};
+        `endif
+        `ifdef UDB_MCOUNTENABLE_EN_4
+            bins walking_4 = {29'h2};
+        `endif
+        `ifdef UDB_MCOUNTENABLE_EN_5
+            bins walking_5 = {29'h4};
+        `endif
+        `ifdef UDB_MCOUNTENABLE_EN_6
+            bins walking_6 = {29'h8};
+        `endif
+        `ifdef UDB_MCOUNTENABLE_EN_7
+            bins walking_7 = {29'h10};
+        `endif
+        `ifdef UDB_MCOUNTENABLE_EN_8
+            bins walking_8 = {29'h20};
+        `endif
+        `ifdef UDB_MCOUNTENABLE_EN_9
+            bins walking_9 = {29'h40};
+        `endif
+        `ifdef UDB_MCOUNTENABLE_EN_10
+            bins walking_10 = {29'h80};
+        `endif
+        `ifdef UDB_MCOUNTENABLE_EN_11
+            bins walking_11 = {29'h100};
+        `endif
+        `ifdef UDB_MCOUNTENABLE_EN_12
+            bins walking_12 = {29'h200};
+        `endif
+        `ifdef UDB_MCOUNTENABLE_EN_13
+            bins walking_13 = {29'h400};
+        `endif
+        `ifdef UDB_MCOUNTENABLE_EN_14
+            bins walking_14 = {29'h800};
+        `endif
+        `ifdef UDB_MCOUNTENABLE_EN_15
+            bins walking_15 = {29'h1000};
+        `endif
+        `ifdef UDB_MCOUNTENABLE_EN_16
+            bins walking_16 = {29'h2000};
+        `endif
+        `ifdef UDB_MCOUNTENABLE_EN_17
+            bins walking_17 = {29'h4000};
+        `endif
+        `ifdef UDB_MCOUNTENABLE_EN_18
+            bins walking_18 = {29'h8000};
+        `endif
+        `ifdef UDB_MCOUNTENABLE_EN_19
+            bins walking_19 = {29'h10000};
+        `endif
+        `ifdef UDB_MCOUNTENABLE_EN_20
+            bins walking_20 = {29'h20000};
+        `endif
+        `ifdef UDB_MCOUNTENABLE_EN_21
+            bins walking_21 = {29'h40000};
+        `endif
+        `ifdef UDB_MCOUNTENABLE_EN_22
+            bins walking_22 = {29'h80000};
+        `endif
+        `ifdef UDB_MCOUNTENABLE_EN_23
+            bins walking_23 = {29'h100000};
+        `endif
+        `ifdef UDB_MCOUNTENABLE_EN_24
+            bins walking_24 = {29'h200000};
+        `endif
+        `ifdef UDB_MCOUNTENABLE_EN_25
+            bins walking_25 = {29'h400000};
+        `endif
+        `ifdef UDB_MCOUNTENABLE_EN_26
+            bins walking_26 = {29'h800000};
+        `endif
+        `ifdef UDB_MCOUNTENABLE_EN_27
+            bins walking_27 = {29'h1000000};
+        `endif
+        `ifdef UDB_MCOUNTENABLE_EN_28
+            bins walking_28 = {29'h2000000};
+        `endif
+        `ifdef UDB_MCOUNTENABLE_EN_29
+            bins walking_29 = {29'h4000000};
+        `endif
+        `ifdef UDB_MCOUNTENABLE_EN_30
+            bins walking_30 = {29'h8000000};
+        `endif
+        `ifdef UDB_MCOUNTENABLE_EN_31
+            bins walking_31 = {29'h10000000};
+        `endif
     }
 
     of_stimulus_pattern: coverpoint (`OF_VEC) {
         bins all_zeros = {29'h0};
-        bins all_ones  = {29'h1FFFFFFF};
-        bins walking[] = {29'h1, 29'h2, 29'h4, 29'h8, 29'h10, 29'h20, 29'h40, 29'h80,
-                           29'h100, 29'h200, 29'h400, 29'h800, 29'h1000, 29'h2000,
-                           29'h4000, 29'h8000, 29'h10000, 29'h20000, 29'h40000,
-                           29'h80000, 29'h100000, 29'h200000, 29'h400000, 29'h800000,
-                           29'h1000000, 29'h2000000, 29'h4000000, 29'h8000000, 29'h10000000};
+        bins all_ones  = {29'(`HPM_COUNTER_IMPL >> 3)};
+        `ifdef UDB_HPM_COUNTER_EN_3
+            bins walking_3 = {29'h1};
+        `endif
+        `ifdef UDB_HPM_COUNTER_EN_4
+            bins walking_4 = {29'h2};
+        `endif
+        `ifdef UDB_HPM_COUNTER_EN_5
+            bins walking_5 = {29'h4};
+        `endif
+        `ifdef UDB_HPM_COUNTER_EN_6
+            bins walking_6 = {29'h8};
+        `endif
+        `ifdef UDB_HPM_COUNTER_EN_7
+            bins walking_7 = {29'h10};
+        `endif
+        `ifdef UDB_HPM_COUNTER_EN_8
+            bins walking_8 = {29'h20};
+        `endif
+        `ifdef UDB_HPM_COUNTER_EN_9
+            bins walking_9 = {29'h40};
+        `endif
+        `ifdef UDB_HPM_COUNTER_EN_10
+            bins walking_10 = {29'h80};
+        `endif
+        `ifdef UDB_HPM_COUNTER_EN_11
+            bins walking_11 = {29'h100};
+        `endif
+        `ifdef UDB_HPM_COUNTER_EN_12
+            bins walking_12 = {29'h200};
+        `endif
+        `ifdef UDB_HPM_COUNTER_EN_13
+            bins walking_13 = {29'h400};
+        `endif
+        `ifdef UDB_HPM_COUNTER_EN_14
+            bins walking_14 = {29'h800};
+        `endif
+        `ifdef UDB_HPM_COUNTER_EN_15
+            bins walking_15 = {29'h1000};
+        `endif
+        `ifdef UDB_HPM_COUNTER_EN_16
+            bins walking_16 = {29'h2000};
+        `endif
+        `ifdef UDB_HPM_COUNTER_EN_17
+            bins walking_17 = {29'h4000};
+        `endif
+        `ifdef UDB_HPM_COUNTER_EN_18
+            bins walking_18 = {29'h8000};
+        `endif
+        `ifdef UDB_HPM_COUNTER_EN_19
+            bins walking_19 = {29'h10000};
+        `endif
+        `ifdef UDB_HPM_COUNTER_EN_20
+            bins walking_20 = {29'h20000};
+        `endif
+        `ifdef UDB_HPM_COUNTER_EN_21
+            bins walking_21 = {29'h40000};
+        `endif
+        `ifdef UDB_HPM_COUNTER_EN_22
+            bins walking_22 = {29'h80000};
+        `endif
+        `ifdef UDB_HPM_COUNTER_EN_23
+            bins walking_23 = {29'h100000};
+        `endif
+        `ifdef UDB_HPM_COUNTER_EN_24
+            bins walking_24 = {29'h200000};
+        `endif
+        `ifdef UDB_HPM_COUNTER_EN_25
+            bins walking_25 = {29'h400000};
+        `endif
+        `ifdef UDB_HPM_COUNTER_EN_26
+            bins walking_26 = {29'h800000};
+        `endif
+        `ifdef UDB_HPM_COUNTER_EN_27
+            bins walking_27 = {29'h1000000};
+        `endif
+        `ifdef UDB_HPM_COUNTER_EN_28
+            bins walking_28 = {29'h2000000};
+        `endif
+        `ifdef UDB_HPM_COUNTER_EN_29
+            bins walking_29 = {29'h4000000};
+        `endif
+        `ifdef UDB_HPM_COUNTER_EN_30
+            bins walking_30 = {29'h8000000};
+        `endif
+        `ifdef UDB_HPM_COUNTER_EN_31
+            bins walking_31 = {29'h10000000};
+        `endif
     }
 
     of_write_pattern: coverpoint (`OF_VEC) {
-            bins all_ones     = {29'h1FFFFFFF};
-            bins checker_even = {29'b1_0101_0101_0101_0101_0101_0101_0101}; // even-indexed OF bits set
-            bins checker_odd  = {29'b0_1010_1010_1010_1010_1010_1010_1010}; // odd-indexed OF bits set
+            bins all_ones     = {29'(`HPM_COUNTER_IMPL >> 3)};
+            bins checker_even = {29'b1_0101_0101_0101_0101_0101_0101_0101 & 29'(`HPM_COUNTER_IMPL >> 3)}; // even-indexed OF bits set
+            bins checker_odd  = {29'b0_1010_1010_1010_1010_1010_1010_1010 & 29'(`HPM_COUNTER_IMPL >> 3)}; // odd-indexed OF bits set
     }
 
     hpm_csr_target: coverpoint ins.current.insn[31:20] {
