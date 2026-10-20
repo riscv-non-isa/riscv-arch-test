@@ -35,6 +35,10 @@ SM_VADDR_CSRS = {
     "mtval": (0b00, {}),
 }
 
+# Sail cannot model a read-only zero misa (MISA_CSR_IMPLEMENTED false), so the misa tests are skipped there.
+# Their coverpoints stay so the gap is reported.
+MISA_GATE = "UDB_MISA_CSR_IMPLEMENTED"
+
 
 def _gen_misa_dependencies(
     misa: str, mask: str, cpbin: str, comment: str, coverpoint: str, covergroup: str, test_data: TestData
@@ -1034,6 +1038,7 @@ def _generate_mcsr_tests(test_data: TestData, test_chunks: list) -> None:
 
     tc.code.extend(
         [
+            f"#ifdef {MISA_GATE}",
             "# Save misa",
             f"csrr x{rmisasave}, misa      # save misa",
             "# Load 1s into msb and msb-1 corresponding to misa.MXL bitfields",
@@ -1080,6 +1085,7 @@ def _generate_mcsr_tests(test_data: TestData, test_chunks: list) -> None:
             write_sigupd(rr, test_data),
             "",
             f"csrw misa, x{rmisasave}    # restore misa",
+            f"#endif // {MISA_GATE}",
         ]
     )
 
@@ -1098,6 +1104,7 @@ def _generate_mcsr_tests(test_data: TestData, test_chunks: list) -> None:
 
     tc.code.extend(
         [
+            f"#ifdef {MISA_GATE}",
             _gen_misa_dependencies(
                 "0b00000000000000000100010000",
                 "0b00000000000000000100010000",
@@ -1161,6 +1168,7 @@ def _generate_mcsr_tests(test_data: TestData, test_chunks: list) -> None:
                 covergroup,
                 test_data,
             ),
+            f"#endif // {MISA_GATE}",
         ]
     )
 
@@ -1179,6 +1187,7 @@ def _generate_mcsr_tests(test_data: TestData, test_chunks: list) -> None:
 
     tc.code.extend(
         [
+            f"#ifdef {MISA_GATE}",
             f"csrr x{rmisasave}, misa   # save misa",
             f"LI(x{rc}, 0b100)      # bitmask for C extension bit in misa",
             "",
@@ -1208,6 +1217,7 @@ def _generate_mcsr_tests(test_data: TestData, test_chunks: list) -> None:
             write_sigupd(r2, test_data),
             "#endif",
             f"csrw misa, x{rmisasave}    # restore misa",
+            f"#endif // {MISA_GATE}",
         ]
     )
 
@@ -1227,6 +1237,7 @@ def _generate_mcsr_tests(test_data: TestData, test_chunks: list) -> None:
 
     tc.code.extend(
         [
+            f"#ifdef {MISA_GATE}",
             f"csrr x{rmisasave3}, misa       # save misa before Sm1p13 B/V tests",
             f"LI(x{rb}, 0x2)                 # bitmask for misa.B (bit 1)",
             f"LI(x{rv}, 0x200000)            # bitmask for misa.V (bit 21)",
@@ -1260,6 +1271,7 @@ def _generate_mcsr_tests(test_data: TestData, test_chunks: list) -> None:
             write_sigupd(rr3, test_data),
             "",
             f"csrw misa, x{rmisasave3}      # restore misa after B/V tests",
+            f"#endif // {MISA_GATE}",
         ]
     )
 
