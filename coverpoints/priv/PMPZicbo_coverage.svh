@@ -18,7 +18,14 @@ covergroup PMPZicbo_cg with function sample(ins_t ins, logic [7:0] pmpcfg [63:0]
     option.per_instance = 0;
     `include "general/RISCV_coverage_standard_coverpoints.svh"
 
+    // The test sets menvcfg.{CBZE, CBCFE, CBIE} only where menvcfg exists (U-mode and Sm 1.12 or later).
+    // Without it the crosses leave out cfg_for_menvcfg: M-mode cache-block instructions do not depend on it.
 `ifdef U_SUPPORTED
+  `ifdef SM1P12P0_OR_LATER_SUPPORTED
+    `define PMPZICBO_MENVCFG
+  `endif
+`endif
+`ifdef PMPZICBO_MENVCFG
     // menvcfg.{CBZE, CBCFE, CBIE} = 1 for each one that is implemented
     cfg_for_menvcfg: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "menvcfg", "menvcfg")[7:4] {
     `ifdef ZICBOZ_SUPPORTED
@@ -33,11 +40,9 @@ covergroup PMPZicbo_cg with function sample(ins_t ins, logic [7:0] pmpcfg [63:0]
         bins configuration = {4'b0000};
     `endif
     }
+    `define PMPZICBO_CFG cfg_for_menvcfg,
 `else
-    // menvcfg exists only with U-mode; M-mode cache-block instructions do not depend on it.
-    cfg_for_menvcfg: coverpoint 1'b1 {
-        bins configuration = {1'b1};
-    }
+    `define PMPZICBO_CFG
 `endif
 
     // Compare above the grain: the test writes pmpaddr0 while the entry is OFF, so the trace
@@ -105,16 +110,16 @@ covergroup PMPZicbo_cg with function sample(ins_t ins, logic [7:0] pmpcfg [63:0]
 `endif
 `endif
 
-    cp_prefetch_w: cross priv_mode_m, legal_lxwr, cfg_for_menvcfg, prefetch_w_instr, addr_in_region;
-    cp_prefetch_r: cross priv_mode_m, legal_lxwr, cfg_for_menvcfg, prefetch_r_instr, addr_in_region;
-    cp_prefetch_i: cross priv_mode_m, legal_lxwr, cfg_for_menvcfg, prefetch_i_instr, addr_in_region;
+    cp_prefetch_w: cross priv_mode_m, legal_lxwr, `PMPZICBO_CFG prefetch_w_instr, addr_in_region;
+    cp_prefetch_r: cross priv_mode_m, legal_lxwr, `PMPZICBO_CFG prefetch_r_instr, addr_in_region;
+    cp_prefetch_i: cross priv_mode_m, legal_lxwr, `PMPZICBO_CFG prefetch_i_instr, addr_in_region;
 
 `ifdef ZICBOM_SUPPORTED
 `ifdef ZICBOZ_SUPPORTED
-    cp_cbo_zero:  cross priv_mode_m, wr_combinations, pmpaddr_region, cfg_for_menvcfg, cbo_zero_instr;
-    cp_cbo_inval: cross priv_mode_m, wr_combinations, pmpaddr_region, cfg_for_menvcfg, cbo_inval_instr;
-    cp_cbo_flush: cross priv_mode_m, wr_combinations, pmpaddr_region, cfg_for_menvcfg, cbo_flush_instr;
-    cp_cbo_clean: cross priv_mode_m, wr_combinations, pmpaddr_region, cfg_for_menvcfg, cbo_clean_instr;
+    cp_cbo_zero:  cross priv_mode_m, wr_combinations, pmpaddr_region, `PMPZICBO_CFG cbo_zero_instr;
+    cp_cbo_inval: cross priv_mode_m, wr_combinations, pmpaddr_region, `PMPZICBO_CFG cbo_inval_instr;
+    cp_cbo_flush: cross priv_mode_m, wr_combinations, pmpaddr_region, `PMPZICBO_CFG cbo_flush_instr;
+    cp_cbo_clean: cross priv_mode_m, wr_combinations, pmpaddr_region, `PMPZICBO_CFG cbo_clean_instr;
 `endif
 `endif
 
