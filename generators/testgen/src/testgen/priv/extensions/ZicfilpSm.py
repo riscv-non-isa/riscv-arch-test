@@ -32,9 +32,9 @@ def make_zicfilpsm(test_data: TestData) -> list[TestChunk]:
     """Generate Zicfilp landing pad tests in M-mode."""
     return [
         *make_zicfilp_tests(test_data, "M", covergroup),
-        elp_state_preservation_tests(test_data, "M", covergroup),
         trap_entry_tests(test_data, "M", covergroup),
         guarded_trap_entry_tests(test_data, "M", covergroup),
+        elp_state_preservation_tests(test_data, "M", covergroup),
         trap_return_tests(test_data, "M", covergroup),
         async_interrupt_tests(test_data, covergroup),
     ]
