@@ -1513,97 +1513,90 @@
 /**** Switch into S-mode                                                                ****/
 /*******************************************************************************************/
 .macro RVTEST_BOOT_TO_SMODE
-  // We start in M-mode after initial boot but cannot assume it is standard
-  // so access to M-mode features must be through a SBI
+  // Runs in M-mode at boot, as the reference T-SEE's M-level setup for S-mode: it writes the
+  // M-mode delegation CSRs directly, initializes the S-mode CSRs, and enters S-mode through
+  // T-SBI. The M-mode boot already set up the S, HS and VS trap handlers if applicable. A DUT
+  // with a nonstandard M-mode replaces the T-SEE rather than this macro.
+  rvtest_boot_to_smode:
 
-  // Run custom RVMODEL flavor if the DUT provides it to override this default boot
-  #ifdef RVMODEL_BOOT_TO_SMODE
-    RVMODEL_BOOT_TO_SMODE
-  #else
-    rvtest_boot_to_smode:
-    // Default implementation assumes standard M-mode
-    // We are in M-mode now at initial boot time
-    // The M-mode boot already set up S, HS, VS trap handlers if applicable.
+  // Delegate exceptions to S-mode, except those that must be directed to M-mode
+  // medeleg[0] = 1: delegate instruction address misaligned exception
+  // medeleg[1] = 1: delegate instruction access fault exception
+  // medeleg[2] = 1: logically delegate illegal instruction exceptions to S-mode.
+  //                 See RVTEST_SAVE_MEDELEG_ILLEGAL and RVTEST_RESTORE_MEDELEG_ILLEGAL
+  //                 in rvtest_trap_handler.h for details on medeleg[2] emulation.
+  // medeleg[3] = 1: delegate breakpoint exception
+  // medeleg[4] = 1: delegate load address misaligned exception
+  // medeleg[5] = 1: delegate load access fault exception
+  // medeleg[6] = 1: delegate store/AMO address misaligned exception
+  // medeleg[7] = 1: delegate store/AMO access fault exception
+  // medeleg[8] = 1: delegate environment call from U-mode exception
+  // medeleg[9] = 0: do not delegate environment call from S/HS-mode exception because SBI needs to reach M-mode
+  // medeleg[10] = 1: delegate environment call from VS-mode exception
+  // medeleg[11] = 0: do not delegate environment call from M-mode because that makes no sense
+  // medeleg[12] = 1: delegate instruction page fault exception
+  // medeleg[13] = 1: delegate load page fault exception
+  // medeleg[14] = 0: reserved
+  // medeleg[15] = 1: delegate store/AMO page fault exception
+  // medeleg[16] = 0: do not delegate double trap because this is a M-mode feature
+  // medeleg[17] = 0: reserved
+  // medeleg[18] = 1: delegate software check
+  // medeleg[19] = 1: delegate hardware check
+  // medeleg[20] = 1: delegate instruction guest-page fault
+  // medeleg[21] = 1: delegate load guest-page fault
+  // medeleg[22] = 1: delegate virtual instruction
+  // medeleg[23] = 1: delegate store guest-page fault
+  // higher bits are reserved or custom
+  li t0, 0x0FCB5FF
+  csrw medeleg, t0
 
-    // Delegate exceptions to S-mode, except those that must be directed to M-mode
-    // medeleg[0] = 1: delegate instruction address misaligned exception
-    // medeleg[1] = 1: delegate instruction access fault exception
-    // medeleg[2] = 1: logically delegate illegal instruction exceptions to S-mode.
-    //                 See RVTEST_SAVE_MEDELEG_ILLEGAL and RVTEST_RESTORE_MEDELEG_ILLEGAL
-    //                 in rvtest_trap_handler.h for details on medeleg[2] emulation.
-    // medeleg[3] = 1: delegate breakpoint exception
-    // medeleg[4] = 1: delegate load address misaligned exception
-    // medeleg[5] = 1: delegate load access fault exception
-    // medeleg[6] = 1: delegate store/AMO address misaligned exception
-    // medeleg[7] = 1: delegate store/AMO access fault exception
-    // medeleg[8] = 1: delegate environment call from U-mode exception
-    // medeleg[9] = 0: do not delegate environment call from S/HS-mode exception because SBI needs to reach M-mode
-    // medeleg[10] = 1: delegate environment call from VS-mode exception
-    // medeleg[11] = 0: do not delegate environment call from M-mode because that makes no sense
-    // medeleg[12] = 1: delegate instruction page fault exception
-    // medeleg[13] = 1: delegate load page fault exception
-    // medeleg[14] = 0: reserved
-    // medeleg[15] = 1: delegate store/AMO page fault exception
-    // medeleg[16] = 0: do not delegate double trap because this is a M-mode feature
-    // medeleg[17] = 0: reserved
-    // medeleg[18] = 1: delegate software check
-    // medeleg[19] = 1: delegate hardware check
-    // medeleg[20] = 1: delegate instruction guest-page fault
-    // medeleg[21] = 1: delegate load guest-page fault
-    // medeleg[22] = 1: delegate virtual instruction
-    // medeleg[23] = 1: delegate store guest-page fault
-    // higher bits are reserved or custom
-    li t0, 0x0FCB5FF
-    csrw medeleg, t0
+  // Delegate supervisor interrupts to S-mode. Do not delege M-mode interrupts.
+  // mideleg.SSIP = 1: delegate supervisor software interrupts
+  // mideleg.STIP = 1: delegate supervisor timer interrupts
+  // mideleg.SEIP = 1: delegate supervisor external interrupts
+  // mideleg.VSSIP = 1: delegate virtual supervisor software interrupts if applicable
+  // mideleg.VSTIP = 1: delegate virtual supervisor timer interrupts if applicable
+  // mideleg.VSEIP = 1: delegate virtual supervisor external interrupts if applicable
+  // mideleg.LCOFIP = 1: delegate counter overflow interrupts if applicable
+  // mideleg.SGEIP = 1: delegate supervisor guest external interrupts if applicable
+  // mideleg.MSIP = 0: don't delegate machine software interrupts
+  // mideleg.MTIP = 0: don't delegate machine timer interrupts
+  // mideleg.MEIP = 0: don't delegate machine external interrupts
+  li t0, 0x3666
+  csrw mideleg, t0
 
-    // Delegate supervisor interrupts to S-mode. Do not delege M-mode interrupts.
-    // mideleg.SSIP = 1: delegate supervisor software interrupts
-    // mideleg.STIP = 1: delegate supervisor timer interrupts
-    // mideleg.SEIP = 1: delegate supervisor external interrupts
-    // mideleg.VSSIP = 1: delegate virtual supervisor software interrupts if applicable
-    // mideleg.VSTIP = 1: delegate virtual supervisor timer interrupts if applicable
-    // mideleg.VSEIP = 1: delegate virtual supervisor external interrupts if applicable
-    // mideleg.LCOFIP = 1: delegate counter overflow interrupts if applicable
-    // mideleg.SGEIP = 1: delegate supervisor guest external interrupts if applicable
-    // mideleg.MSIP = 0: don't delegate machine software interrupts
-    // mideleg.MTIP = 0: don't delegate machine timer interrupts
-    // mideleg.MEIP = 0: don't delegate machine external interrupts
-    li t0, 0x3666
-    csrw mideleg, t0
-
-    // Enable necessary state for access from lower privilege modes
-    // sstateen0.JVT = 1: Enable jvt for Zcmt
-    // sstateen0.FCSR = 1: Enable access to floating-point CSRs for Zfinx
-    // Keep custom state and reserved bits disabled.
-    #ifdef SSSTATEEN_SUPPORTED
-      li t0, SSTATEEN0_JVT | SSTATEEN0_FCSR
-      csrs sstateen0, t0 // enable access from lower privilege mode
-    #endif
-
-    // Initialize S-mode CSRs
-
-    // make counters accessible to a lower privilege mode if one exists
-    li t0, -1
-    csrw scounteren, t0 // Enable all counters for access from next lower priv mode
-
-    // Disable all privileged environment configuration, and enable unprivileged configuration
-    // Privileged tests that want to use these features should turn them on
-    // Unprivileged tests don't make SBI calls so the features should already be enabled
-    // senvcfg.PMM = 00: Disable Smnpm pointer masking at next lower privilege mode (RV64 only)
-    // senvcfg.SSE = 0: Disable Zicfiss shadow stacks
-    // senvcfg.LPE = 0: Disable Zicfilp landing pads
-    // senvcfg.FIOM = 0: Disable Fence of I/O Implies Memory
-    // senvcfg.CBZE = 1: Enable Zicboz cache block zero instructions
-    // senvcfg.CBCFE = 1: Enable Zicbom cache block clean/flush instructions
-    // senvcfg.CBIE = 11: Enable Zicbom cache block invalidate instructions to perform invalidate operation
-    #ifdef S1P12P0_OR_LATER_SUPPORTED
-      li t0, SENVCFG_CBIE | SENVCFG_CBCFE | SENVCFG_CBZE
-      csrw senvcfg, t0
-    #endif
-
-    // Boot into S-mode
-    RVTEST_TSBI_GOTO_SMODE
+  // Enable necessary state for access from lower privilege modes
+  // sstateen0.JVT = 1: Enable jvt for Zcmt
+  // sstateen0.FCSR = 1: Enable access to floating-point CSRs for Zfinx
+  // Keep custom state and reserved bits disabled.
+  #ifdef SSSTATEEN_SUPPORTED
+    li t0, SSTATEEN0_JVT | SSTATEEN0_FCSR
+    csrs sstateen0, t0 // enable access from lower privilege mode
   #endif
+
+  // Initialize S-mode CSRs
+
+  // make counters accessible to a lower privilege mode if one exists
+  li t0, -1
+  csrw scounteren, t0 // Enable all counters for access from next lower priv mode
+
+  // Disable all privileged environment configuration, and enable unprivileged configuration
+  // Privileged tests that want to use these features should turn them on
+  // Unprivileged tests don't make SBI calls so the features should already be enabled
+  // senvcfg.PMM = 00: Disable Smnpm pointer masking at next lower privilege mode (RV64 only)
+  // senvcfg.SSE = 0: Disable Zicfiss shadow stacks
+  // senvcfg.LPE = 0: Disable Zicfilp landing pads
+  // senvcfg.FIOM = 0: Disable Fence of I/O Implies Memory
+  // senvcfg.CBZE = 1: Enable Zicboz cache block zero instructions
+  // senvcfg.CBCFE = 1: Enable Zicbom cache block clean/flush instructions
+  // senvcfg.CBIE = 11: Enable Zicbom cache block invalidate instructions to perform invalidate operation
+  #ifdef S1P12P0_OR_LATER_SUPPORTED
+    li t0, SENVCFG_CBIE | SENVCFG_CBCFE | SENVCFG_CBZE
+    csrw senvcfg, t0
+  #endif
+
+  // Boot into S-mode
+  RVTEST_TSBI_GOTO_SMODE
 .endm
 
 /************************************ RVTEST_BOOT_TO_U_MODE ********************************/
@@ -1611,15 +1604,8 @@
 /*******************************************************************************************/
 .macro RVTEST_BOOT_TO_UMODE
   // We arrive here in S-mode if S_SUPPORTED, else in M-mode.
-
-  // Run custom RVMODEL flavor if the DUT provides it to override this default boot
-  #ifdef RVMODEL_BOOT_TO_UMODE
-    RVMODEL_BOOT_TO_UMODE
-  #else
-    rvtest_boot_to_umode:
-    // Boot into U-mode
-    RVTEST_TSBI_GOTO_UMODE
-  #endif
+  rvtest_boot_to_umode:
+  RVTEST_TSBI_GOTO_UMODE // Boot into U-mode
   nop
 .endm
 
