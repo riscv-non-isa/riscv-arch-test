@@ -271,6 +271,8 @@ Then:
 * -D at rup gives -s.
 
 Each also raises the same fflags as the reference result it is compared with.
+
+RVV 1.0 requires the reduction tree structure to be deterministic for a given vtype and vl. These checks also treat each node's range and precision, the identity-or-copy choice for nodes fed only by inactive or tail elements, and the optional final additive identity as part of that structure, so they must repeat between executions with the same vtype and vl.
 |===
 
 [[skipped-vector-tests]]
