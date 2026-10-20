@@ -342,7 +342,9 @@ normative_rule_definitions:
       [
         "SdtrigSm_trig_module_reg_cg/cp_csr_access_global",
         "SdtrigSm_trig_module_reg_cg/cp_csr_access_local",
-        "From S and U, cp_csr_insufficient_priv of the S and U suites reads every M-mode CSR (0x7A0-0x7A9 included) and expects an illegal instruction; the SdtrigS and SdtrigU tests access trigger CSRs only through T-SBI calls, which run in M",
+        "SdtrigS_cg/cp_csr_access_trap_s",
+        "SdtrigU_cg/cp_csr_access_trap_u",
+        "From S and U, cp_csr_insufficient_priv of the S and U suites also reads every M-mode CSR (0x7A0-0x7A9 included) and expects an illegal instruction",
       ]
 
   # On systems where XLEN values can differ between modes, this is handled as
@@ -509,7 +511,9 @@ normative_rule_definitions:
     coverpoint:
       [
         "SdtrigSm_access_cg/cp_csr_access_common",
-        "tcontrol accesses need UDB_TCONTROL_AVAILABLE (TCONTROL_IMPLEMENTED, riscv-unified-db#2069); from S and U, cp_csr_insufficient_priv of the S and U suites reads tcontrol (0x7A5) and expects an illegal instruction",
+        "SdtrigS_cg/cp_csr_access_trap_s",
+        "SdtrigU_cg/cp_csr_access_trap_u",
+        "The tcontrol accesses and bins need UDB_TCONTROL_AVAILABLE (TCONTROL_IMPLEMENTED, riscv-unified-db#2069); from S and U, cp_csr_insufficient_priv of the S and U suites also reads tcontrol (0x7A5) and expects an illegal instruction",
       ]
 
   # When any trap into M-mode is taken, mpte is set to the value of mte.
@@ -589,7 +593,9 @@ normative_rule_definitions:
     coverpoint:
       [
         "SdtrigSm_trig_module_reg_cg/cp_csr_access_global",
-        "From S and U, cp_csr_insufficient_priv of the S and U suites reads mcontext (0x7A8) and expects an illegal instruction",
+        "SdtrigS_cg/cp_csr_access_trap_s",
+        "SdtrigU_cg/cp_csr_access_trap_u",
+        "From S and U, cp_csr_insufficient_priv of the S and U suites also reads mcontext (0x7A8) and expects an illegal instruction",
       ]
 
   # M-Mode or HS-Mode (using hcontext) software can write a context number to this

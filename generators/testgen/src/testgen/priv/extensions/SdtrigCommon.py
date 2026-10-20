@@ -973,6 +973,8 @@ def _load_value_or_lines(reg: int, val: int | str | list[str]) -> list[str]:
 
 def _generate_access_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     """Generate common trigger-CSR access tests."""
+    if mode != "Sm":
+        return _generate_access_trap_tests(test_data, mode)
     covergroup = f"Sdtrig{mode}_access_cg"
     chunks: list[TestChunk] = []
 
@@ -1023,6 +1025,44 @@ def _generate_access_tests(test_data: TestData, mode: str) -> list[TestChunk]:
                     lines.append("#endif")
 
     test_data.int_regs.return_registers([type_reg, save_reg, temp_reg])
+    chunks.append(test_data.end_test_chunk())
+    return chunks
+
+
+def _generate_access_trap_tests(test_data: TestData, mode: str) -> list[TestChunk]:
+    """SdtrigS/U access tests: a direct S/U-mode read or write of an M-level trigger CSR raises an illegal-instruction exception.
+
+    Going through T-SBI would only repeat the SdtrigSm accesses in M-mode, so these access the CSRs directly.
+    scontext and hcontext are S/H-level and gated by mstateen0.CONTEXT; Smstateen/Ssstateen test those.
+    """
+    covergroup = f"Sdtrig{mode}_cg"
+    chunks: list[TestChunk] = []
+
+    ######################################
+    coverpoint = f"cp_csr_access_trap_{mode.lower()}"
+    ######################################
+    lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_")).code
+    lines.append(
+        comment_banner(
+            coverpoint, f"Direct {mode}-mode reads and writes of the M-level trigger CSRs raise illegal instruction"
+        )
+    )
+    (data_reg,) = test_data.int_regs.get_registers(1, exclude_regs=[10, 11])
+    for csr in ("tselect", "tdata1", "tdata2", "tdata3", "tinfo", "tcontrol", "mcontext"):
+        optional = csr in ("tcontrol", "mcontext")
+        if optional:
+            lines.append(f"#ifdef UDB_{csr.upper()}_AVAILABLE")
+        lines.extend(
+            [
+                _add_tc(test_data, csr, coverpoint, covergroup),
+                f"LI(x{data_reg}, 0)",
+                f"csrr x{data_reg}, {csr} # illegal from {mode}-mode",
+                f"csrw {csr}, x{data_reg} # illegal from {mode}-mode",
+            ]
+        )
+        if optional:
+            lines.append("#endif")
+    test_data.int_regs.return_registers([data_reg])
     chunks.append(test_data.end_test_chunk())
     return chunks
 
