@@ -2,7 +2,7 @@ normative_rule_definitions:
   # The S-mode-disable-trap (SDT) bit is a WARL field introduced by the Ssdbltrp extension
   # to address double trap (see Ssdbltrp) at privilege modes lower than M.
   - name: sstatus_sdt
-    coverpoint: ["TODO: covered by the Ssdbltrp suite (not yet written)"]
+    coverpoint: ["Sm_mcsr_cg/cp_mstatus_sdt_dte"]
 
   # When the SDT bit is set to 1 by an explicit CSR write, the SIE (Supervisor
   # Interrupt Enable) bit is cleared to 0. This clearing occurs regardless of the
@@ -65,5 +65,6 @@ normative_rule_definitions:
   - name: menvcfg_dte_op
     coverpoint:
       [
-        "TODO: covered by the Ssdbltrp suite (not yet written): Ssdbltrp with menvcfg.DTE = 0 and 1",
+        "Sm_mcsr_cg/cp_mstatus_sdt_dte",
+        "TODO: covered by the Ssdbltrp suite (not yet written): traps into S-mode and SRET with menvcfg.DTE = 0 and 1",
       ]
