@@ -13,8 +13,9 @@
 --override iss/cpu0/simulateexceptions=T
 --override iss/cpu0/defaultsemihost=F
 
-# Guest external interrupts.
---override cpu*/GEILEN=6
+# Guest external interrupts. hgeip is driven only by the model's guest external interrupt nets, which nothing
+# connects in this standalone run, so the platform has no guest interrupt files: GEILEN = 0.
+--override cpu*/GEILEN=0
 
 # Bit manipulation
 --override cpu*/add_Extensions=B
