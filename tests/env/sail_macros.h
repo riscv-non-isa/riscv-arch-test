@@ -197,17 +197,17 @@
 // Replaced only when the DUT defines them, so that check_defines.h still reports a DUT that has
 // GEILEN > 0 without them. The Sail config's extensions.H.geilen must match the DUT's GEILEN.
 #ifdef RVMODEL_SET_GUEST_EXT_INT
-#undef RVMODEL_SET_GUEST_EXT_INT
-#define RVMODEL_SET_GUEST_EXT_INT(_GEI, _R1, _R2)        \
-  li _R1, (1 << 31) | (_GEI);               \
-  li _R2, SAIL_SIG_GUEST_ADDRESS;    \
-  sw _R1, 0(_R2)            ; /* Set hgeip bit _GEI */ \
+  #undef RVMODEL_SET_GUEST_EXT_INT
+  #define RVMODEL_SET_GUEST_EXT_INT(_GEI, _R1, _R2)        \
+    li _R1, (1 << 31) | (_GEI);               \
+    li _R2, SAIL_SIG_GUEST_ADDRESS;    \
+    sw _R1, 0(_R2)            ; /* Set hgeip bit _GEI */ \
 
-#undef RVMODEL_CLR_GUEST_EXT_INT
-#define RVMODEL_CLR_GUEST_EXT_INT(_GEI, _R1, _R2)        \
-  li _R1, (_GEI);               \
-  li _R2, SAIL_SIG_GUEST_ADDRESS;    \
-  sw _R1, 0(_R2)            ; /* Clear hgeip bit _GEI */ \
+  #undef RVMODEL_CLR_GUEST_EXT_INT
+  #define RVMODEL_CLR_GUEST_EXT_INT(_GEI, _R1, _R2)        \
+    li _R1, (_GEI);               \
+    li _R2, SAIL_SIG_GUEST_ADDRESS;    \
+    sw _R1, 0(_R2)            ; /* Clear hgeip bit _GEI */ \
 
 #endif
 

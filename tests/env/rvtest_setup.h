@@ -1419,86 +1419,86 @@
       #endif // PMP
 
       #ifdef H_SUPPORTED
-      // Initialize the HS-mode CSRs, whose reset values are UNSPECIFIED, and the CSRs that grant
-      // VS/VU-mode access (hcounteren, henvcfg and hstateen0). This runs for every test, including
-      // those that stay in M-mode: M-mode tests enter VS/VU-mode directly through T-SBI, so the
-      // VS/VU permissions are set here rather than in RVTEST_BOOT_TO_SMODE beside their S-mode
-      // counterparts. Tests that need other values set them themselves.
-      // hstatus: every field zero except VSXL = 64 on RV64 (HUPMM exists only on RV64).
-      LI(t0, HSTATUS_VSBE | HSTATUS_GVA | HSTATUS_SPV | HSTATUS_SPVP | HSTATUS_HU | \
-             HSTATUS_VGEIN | HSTATUS_VTVM | HSTATUS_VTW | HSTATUS_VTSR | HSTATUS_HUKTE)
-      csrc hstatus, t0
-      #if __riscv_xlen == 64
-        csrr t1, hstatus
-        LI(t0, ~(HSTATUS_VSXL | HSTATUS_HUPMM))
-        and t1, t1, t0
-        LI(t0, 0x0000000200000000)  // VSXL = 2
-        or t1, t1, t0
-        csrw hstatus, t1
-      #endif
-
-      // vsstatus: every field zero except UXL = 64 on RV64 and FS/VS dirty when supported.
-      li t0, 0
-      #if __riscv_xlen == 64
-        LI(t0, 0x0000000200000000)  // UXL = 2
-      #endif
-      #ifdef F_SUPPORTED
-        LI(t1, SSTATUS_FS)
-        or t0, t0, t1
-      #endif
-      #ifdef ZVL32B_SUPPORTED
-        LI(t1, SSTATUS_VS)
-        or t0, t0, t1
-      #endif
-      csrw vsstatus, t0
-
-      csrw htimedelta, zero
-      #if __riscv_xlen == 32
-        csrw htimedeltah, zero
-      #endif
-
-      // No pending virtual interrupts and no guest external interrupts enabled.
-      // hedeleg and hideleg are saved and cleared by RVTEST_TRAP_PROLOG S.
-      csrw hvip, zero
-      csrw hgeie, zero
-
-      // Make counters accessible from VS/VU-mode
-      li t0, -1
-      csrw hcounteren, t0
-
-      // henvcfg mirrors senvcfg: unprivileged configuration enabled, privileged features disabled.
-      #ifdef S1P12P0_OR_LATER_SUPPORTED
-        li t0, HENVCFG_CBIE | HENVCFG_CBCFE | HENVCFG_CBZE
-        csrw henvcfg, t0
-      #endif
-
-      // hstateen0 enables VS/VU-mode access to standard state, matching mstateen0 above.
-      // hstateen0.SE0 = 1: Enable access to sstateen0
-      // hstateen0.ENVCFG = 1: Enable access to senvcfg
-      // hstateen0.CSRIND = 1: Enable access to supervisor indirect CSR state
-      // hstateen0.AIA = 1: Enable access to Ssaia advanced interrupt architecture state
-      // hstateen0.IMSIC = 1: Enable access to IMSIC state
-      // hstateen0.SCONTEXT = 1: Enable access to scontext
-      // hstateen0.CTR = 1: Enable access to control transfer record state
-      // hstateen0.JVT = 1: Enable access to jvt for Zcmt
-      // hstateen0.FCSR = 1: Enable access to floating-point CSRs for Zfinx
-      // Keep custom state and reserved bits disabled. hstateen0 has no P1P13 or SRMCFG
-      // bit; that state is M-level only. A bit whose feature is not implemented reads
-      // as zero, so enabling the whole set costs nothing on a smaller hart.
-      #ifdef SSSTATEEN_SUPPORTED
+        // Initialize the HS-mode CSRs, whose reset values are UNSPECIFIED, and the CSRs that grant
+        // VS/VU-mode access (hcounteren, henvcfg and hstateen0). This runs for every test, including
+        // those that stay in M-mode: M-mode tests enter VS/VU-mode directly through T-SBI, so the
+        // VS/VU permissions are set here rather than in RVTEST_BOOT_TO_SMODE beside their S-mode
+        // counterparts. Tests that need other values set them themselves.
+        // hstatus: every field zero except VSXL = 64 on RV64 (HUPMM exists only on RV64).
+        LI(t0, HSTATUS_VSBE | HSTATUS_GVA | HSTATUS_SPV | HSTATUS_SPVP | HSTATUS_HU | \
+               HSTATUS_VGEIN | HSTATUS_VTVM | HSTATUS_VTW | HSTATUS_VTSR | HSTATUS_HUKTE)
+        csrc hstatus, t0
         #if __riscv_xlen == 64
-          LI(t0, HSTATEEN_SSTATEEN | HSTATEEN0_SENVCFG | HSTATEEN0_CSRIND | HSTATEEN0_AIA | \
-                 HSTATEEN0_IMSIC | HSTATEEN0_SCONTEXT | HSTATEEN0_CTR | HSTATEEN0_JVT | \
-                 HSTATEEN0_FCSR)
-          csrw hstateen0, t0
-        #else    // RV32
-          LI(t0, HSTATEENH_SSTATEEN | HSTATEEN0H_SENVCFG | HSTATEEN0H_CSRIND | HSTATEEN0H_AIA | \
-                 HSTATEEN0H_IMSIC | HSTATEEN0H_SCONTEXT | HSTATEEN0H_CTR)
-          csrw hstateen0h, t0
-          LI(t0, HSTATEEN0_JVT | HSTATEEN0_FCSR)
-          csrw hstateen0, t0
+          csrr t1, hstatus
+          LI(t0, ~(HSTATUS_VSXL | HSTATUS_HUPMM))
+          and t1, t1, t0
+          LI(t0, 0x0000000200000000)  // VSXL = 2
+          or t1, t1, t0
+          csrw hstatus, t1
         #endif
-      #endif
+
+        // vsstatus: every field zero except UXL = 64 on RV64 and FS/VS dirty when supported.
+        li t0, 0
+        #if __riscv_xlen == 64
+          LI(t0, 0x0000000200000000)  // UXL = 2
+        #endif
+        #ifdef F_SUPPORTED
+          LI(t1, SSTATUS_FS)
+          or t0, t0, t1
+        #endif
+        #ifdef ZVL32B_SUPPORTED
+          LI(t1, SSTATUS_VS)
+          or t0, t0, t1
+        #endif
+        csrw vsstatus, t0
+
+        csrw htimedelta, zero
+        #if __riscv_xlen == 32
+          csrw htimedeltah, zero
+        #endif
+
+        // No pending virtual interrupts and no guest external interrupts enabled.
+        // hedeleg and hideleg are saved and cleared by RVTEST_TRAP_PROLOG S.
+        csrw hvip, zero
+        csrw hgeie, zero
+
+        // Make counters accessible from VS/VU-mode
+        li t0, -1
+        csrw hcounteren, t0
+
+        // henvcfg mirrors senvcfg: unprivileged configuration enabled, privileged features disabled.
+        #ifdef S1P12P0_OR_LATER_SUPPORTED
+          li t0, HENVCFG_CBIE | HENVCFG_CBCFE | HENVCFG_CBZE
+          csrw henvcfg, t0
+        #endif
+
+        // hstateen0 enables VS/VU-mode access to standard state, matching mstateen0 above.
+        // hstateen0.SE0 = 1: Enable access to sstateen0
+        // hstateen0.ENVCFG = 1: Enable access to senvcfg
+        // hstateen0.CSRIND = 1: Enable access to supervisor indirect CSR state
+        // hstateen0.AIA = 1: Enable access to Ssaia advanced interrupt architecture state
+        // hstateen0.IMSIC = 1: Enable access to IMSIC state
+        // hstateen0.SCONTEXT = 1: Enable access to scontext
+        // hstateen0.CTR = 1: Enable access to control transfer record state
+        // hstateen0.JVT = 1: Enable access to jvt for Zcmt
+        // hstateen0.FCSR = 1: Enable access to floating-point CSRs for Zfinx
+        // Keep custom state and reserved bits disabled. hstateen0 has no P1P13 or SRMCFG
+        // bit; that state is M-level only. A bit whose feature is not implemented reads
+        // as zero, so enabling the whole set costs nothing on a smaller hart.
+        #ifdef SSSTATEEN_SUPPORTED
+          #if __riscv_xlen == 64
+            LI(t0, HSTATEEN_SSTATEEN | HSTATEEN0_SENVCFG | HSTATEEN0_CSRIND | HSTATEEN0_AIA | \
+                   HSTATEEN0_IMSIC | HSTATEEN0_SCONTEXT | HSTATEEN0_CTR | HSTATEEN0_JVT | \
+                   HSTATEEN0_FCSR)
+            csrw hstateen0, t0
+          #else    // RV32
+            LI(t0, HSTATEENH_SSTATEEN | HSTATEEN0H_SENVCFG | HSTATEEN0H_CSRIND | HSTATEEN0H_AIA | \
+                   HSTATEEN0H_IMSIC | HSTATEEN0H_SCONTEXT | HSTATEEN0H_CTR)
+            csrw hstateen0h, t0
+            LI(t0, HSTATEEN0_JVT | HSTATEEN0_FCSR)
+            csrw hstateen0, t0
+          #endif
+        #endif
       #endif // H_SUPPORTED
     #endif // STANDARD_SM_SUPPORTED
 
