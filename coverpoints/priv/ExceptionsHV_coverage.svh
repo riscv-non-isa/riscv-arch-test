@@ -32,12 +32,8 @@ covergroup ExceptionsHV_cg with function sample(ins_t ins);
     }
 
     vsstatus_vs_active : coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "vsstatus", "vs") {
-        `ifdef UDB_MSTATUS_VS_LEGAL_VALUES_1
-            bins init   = {1};
-        `endif
-        `ifdef UDB_MSTATUS_VS_LEGAL_VALUES_2
-            bins clean  = {2};
-        `endif
+        bins init   = {1};
+        bins clean  = {2};
         bins dirty  = {3};
     }
 
@@ -49,12 +45,8 @@ covergroup ExceptionsHV_cg with function sample(ins_t ins);
     //////////////////////////////////////////////////////////////////////////////////
 
     mstatus_vs_active    : coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "mstatus", "vs") {
-        `ifdef UDB_MSTATUS_VS_LEGAL_VALUES_1
-            bins init   = {1};
-        `endif
-        `ifdef UDB_MSTATUS_VS_LEGAL_VALUES_2
-            bins clean  = {2};
-        `endif
+        bins init   = {1};
+        bins clean  = {2};
         bins dirty  = {3};
     }
 
