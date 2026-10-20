@@ -41,8 +41,9 @@
 #endif
 
 // Generated vector tests size their data and signature regions for VLEN <= RVTEST_VLEN_MAX.
+// Larger VLENs are legal but not yet supported; an issue tells us how much they are needed.
 #if defined(RVTEST_VLEN_MAX) && (UDB_VLEN > RVTEST_VLEN_MAX)
-    #error "UDB_VLEN exceeds RVTEST_VLEN_MAX, the largest VLEN the vector test generator supports"
+    #error "UDB_VLEN exceeds RVTEST_VLEN_MAX, the largest VLEN the vector tests support. Please open an issue at https://github.com/riscv/riscv-arch-test/issues with your VLEN so that support can be prioritized."
 #endif
 
 // Per-test fractional LMUL support based on RVTEST_SEW (set in each test) and UDB_ELEN.
