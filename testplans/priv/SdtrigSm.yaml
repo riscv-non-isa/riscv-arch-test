@@ -497,9 +497,7 @@ coverpoints:
       tdata1.XSL = 8 combinations
       perform addi x0, x1, 0
       (not nop, whose opcode also appears in the test environment's own code; no instruction in the test encodes as 0x2)
-      tdata1.size = 0 (any) is only well-defined for an XLEN-wide access, which a 32-bit instruction is not on RV64:
-      there, with UDB_SDTRIG_MCONTROL6_SIZE_AVAILABLE, tdata1.size = 3 (32-bit); without it, size = 0 relies on
-      the zero-extension of the instruction (Sdtrig_mcontrol6_select_data)
+      on RV64, size = 0 with a 32-bit instruction relies on the zero-extension in Sdtrig_mcontrol6_select_data
     expectation: Breakpoint exception on fetched instruction if tdata2 matches opcode and tdata1.execute = 1
     bins: 2 values * 8 XSL
     rules:
@@ -537,9 +535,7 @@ coverpoints:
       perform addi x0, x1, 0
       if ZCA_SUPPORTED
       perform c.nop
-      size = 0 is only well-defined for an XLEN-wide access, which c.nop never is and addi is not on RV64; in those
-      cases harts with UDB_SDTRIG_MCONTROL6_SIZE_AVAILABLE use size = 2 (c.nop) or 3 (addi) instead, and the size = 0
-      bins are only kept without it, where the result relies on the zero-extension (Sdtrig_mcontrol6_select_data)
+      size = 0 with c.nop, or with addi on RV64, relies on the zero-extension in Sdtrig_mcontrol6_select_data
     expectation: Breakpoint exception if the size of the instruction matches the trigger size in mcontrol6 and tdata1.execute = 1
     bins: 2 values * 7 sizes * 2 ops
     rules:

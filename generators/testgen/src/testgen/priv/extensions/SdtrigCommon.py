@@ -950,29 +950,6 @@ def _xlen_value(val32: int) -> tuple[int, int]:
     return val32, ((~val32 & 0xFFFFFFFF) << 32) | val32
 
 
-def _config_exec_data(reg: int, trig_num: int, tdata2: int, mode: str, *, xsl: int, size: int, ilen: int) -> list[str]:
-    """Configure an mcontrol6 execute data match (select = 1) aimed at an ilen-bit instruction.
-
-    size = 0 (any) is only well-defined for an XLEN-wide access (norm:Sdtrig_mcontrol6_size_any), which a 32-bit
-    instruction is only on RV32 and a 16-bit one never is. Where it is not, harts with UDB_SDTRIG_MCONTROL6_SIZE_AVAILABLE
-    use the instruction's explicit size instead (2 = 16-bit, 3 = 32-bit).
-    """
-    if size != 0:
-        return _config_mcontrol6(reg, trig_num, tdata2, mode, xsl=xsl, select=1, size=size)
-    if ilen == 16:
-        undefined = "#ifdef UDB_SDTRIG_MCONTROL6_SIZE_AVAILABLE"
-    else:
-        undefined = "#if defined(UDB_SDTRIG_MCONTROL6_SIZE_AVAILABLE) && __riscv_xlen == 64"
-    return [
-        undefined,
-        *_config_mcontrol6(reg, trig_num, tdata2, mode, xsl=xsl, select=1, size=3 if ilen == 32 else 2),
-        "#else",
-        f"# size=0 with a {ilen}-bit instruction{' on RV64' if ilen == 32 else ''}: relies on the zero-extension in norm:Sdtrig_mcontrol6_select_data",
-        *_config_mcontrol6(reg, trig_num, tdata2, mode, xsl=xsl, select=1, size=0),
-        "#endif",
-    ]
-
-
 def _config_textra(reg: int, trig_num: int, trig_type: str, tdata3_lines: list[str], mode: str) -> list[str]:
     """Configure trig_num as trig_type with the given tdata3 load, reusing each type's own configurator."""
     if trig_type == "icount":
@@ -2282,7 +2259,8 @@ def _generate_mcontrol6_tests(test_data: TestData, mode: str) -> list[TestChunk]
     lines.append(
         comment_banner(
             coverpoint,
-            "mcontrol6 fires when instruction encoding == tdata2 (select=data)",
+            "mcontrol6 fires when instruction encoding == tdata2 (select=data)\n"
+            "size=0 with a 32-bit instruction on RV64: relies on the zero-extension in norm:Sdtrig_mcontrol6_select_data",
         )
     )
     for trig_num in range(UDB_NUM_TRIGGERS):
@@ -2294,7 +2272,7 @@ def _generate_mcontrol6_tests(test_data: TestData, mode: str) -> list[TestChunk]
                 lines.extend(
                     [
                         _add_tc(test_data, binname, coverpoint, covergroup),
-                        *_config_exec_data(temp_reg, trig_num, tdata2, mode, xsl=perm, size=0, ilen=32),
+                        *_config_mcontrol6(temp_reg, trig_num, tdata2, mode, xsl=perm, select=1),
                         "addi x0, x1, 0 # fire trigger when opcode==tdata2",
                         "nop # spacer (does not match tdata2)",
                         "nop # spacer (does not match tdata2)",
@@ -2348,7 +2326,8 @@ def _generate_mcontrol6_tests(test_data: TestData, mode: str) -> list[TestChunk]
     lines.append(
         comment_banner(
             coverpoint,
-            "mcontrol6 execute match across access sizes",
+            "mcontrol6 execute match across access sizes\n"
+            "size=0 with c.nop, or addi on RV64: relies on the zero-extension in norm:Sdtrig_mcontrol6_select_data",
         )
     )
     for trig_num in range(UDB_NUM_TRIGGERS):
@@ -2364,7 +2343,7 @@ def _generate_mcontrol6_tests(test_data: TestData, mode: str) -> list[TestChunk]
                 lines.extend(
                     [
                         _add_tc(test_data, bin1, coverpoint, covergroup),
-                        *_config_exec_data(temp_reg, trig_num, tdata2, mode, xsl=0b111, size=size, ilen=32),
+                        *_config_mcontrol6(temp_reg, trig_num, tdata2, mode, xsl=0b111, select=1, size=size),
                         "addi x0, x1, 0 # 32-bit target; fires iff tdata2 matches",
                         # "nop # spacer (does not match tdata2)",
                     ]
@@ -2373,7 +2352,7 @@ def _generate_mcontrol6_tests(test_data: TestData, mode: str) -> list[TestChunk]
                     [
                         "#ifdef ZCA_SUPPORTED",
                         _add_tc(test_data, bin2, coverpoint, covergroup),
-                        *_config_exec_data(temp_reg, trig_num, tdata2, mode, xsl=0b111, size=size, ilen=16),
+                        *_config_mcontrol6(temp_reg, trig_num, tdata2, mode, xsl=0b111, select=1, size=size),
                         *_arch_guard("c.nop", ["zca"]),
                         "nop # spacer (does not match tdata2)",
                         "#endif",
