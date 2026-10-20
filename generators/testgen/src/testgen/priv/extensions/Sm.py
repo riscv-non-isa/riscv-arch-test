@@ -1481,7 +1481,7 @@ def _generate_mcsr_cntr_tests(test_data: TestData) -> list[str]:
     )
     lines.extend(
         [
-            "#ifdef RVMODEL_MTIME_ADDRESS",
+            "#if defined(RVMODEL_MTIME_ADDRESS) && defined(ZICNTR_SUPPORTED)",
             f"LI(x{r1}, 42)        # value to write to mtime",
             f"LA(x{r2}, RVMODEL_MTIME_ADDRESS)        # load address of mtime",
             f"SREG x{r1}, 0(x{r2})        # write mtime = 42 using memory-mapped I/O",

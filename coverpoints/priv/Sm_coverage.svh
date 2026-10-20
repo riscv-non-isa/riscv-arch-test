@@ -623,9 +623,13 @@ covergroup Sm_mcsr_cg with function sample(ins_t ins);
     cp_misa_dependencies :      cross priv_mode_m, csrrw, misa, misa_dependencies;
     cp_misa_clear_c :           cross priv_mode_m, csrc, misa_c_0, pc_1;
 
-    cp_mtime_write :            cross priv_mode_m, csrr,  time_csr; // assumes mtime has been written
-    `ifdef UDB_MXLEN_32
-        cp_mtimeh_write :       cross priv_mode_m, csrr,  timeh_csr; // assumes mtimeh has been written
+    `ifdef RVMODEL_MTIME_ADDRESS
+        `ifdef ZICNTR_SUPPORTED
+            cp_mtime_write :        cross priv_mode_m, csrr,  time_csr; // assumes mtime has been written
+            `ifdef UDB_MXLEN_32
+                cp_mtimeh_write :   cross priv_mode_m, csrr,  timeh_csr; // assumes mtimeh has been written
+            `endif
+        `endif
     `endif
 
     `ifdef SM1P13P0_OR_LATER_SUPPORTED
@@ -641,17 +645,6 @@ covergroup Sm_mcsr_cg with function sample(ins_t ins);
         cp_misa_b: cross priv_mode_m, misa, csrop, misa_b_bit;
         cp_misa_v: cross priv_mode_m, misa, csrop, misa_v_bit;
 
-
-        `ifdef RVMODEL_MSIP_ADDRESS
-            msip_address: coverpoint ins.current.rs1_val {
-                bin msip = {`RVMODEL_MSIP_ADDRESS};
-            }
-            msip_val: coverpoint ins.current.rs2_val {
-                bin zero = {0};
-                bin one  = {1};
-            }
-            cp_msip: cross priv_mode_m, sw, msip_address, msip_val;
-        `endif // RVMODEL_MSIP_ADDRESS
     `endif // SM1P13P0_OR_LATER_SUPPORTED
 
     csrrw_allones: coverpoint ins.current.insn {
@@ -678,6 +671,19 @@ covergroup Sm_mcsr_cg with function sample(ins_t ins);
             wildcard bins sd = {SD};
         }
     `endif
+
+    `ifdef SM1P13P0_OR_LATER_SUPPORTED
+        `ifdef RVMODEL_MSIP_ADDRESS
+            msip_address: coverpoint ins.current.rs1_val + ins.current.imm {
+                bins msip = {`RVMODEL_MSIP_ADDRESS};
+            }
+            msip_val: coverpoint ins.current.rs2_val {
+                bins zero = {0};
+                bins one  = {1};
+            }
+            cp_msip: cross priv_mode_m, sw, msip_address, msip_val;
+        `endif // RVMODEL_MSIP_ADDRESS
+    `endif // SM1P13P0_OR_LATER_SUPPORTED
 
     cp_mcycle_wraparound:   cross priv_mode_m, csrrw_allones, mcycle;
     cp_minstret_wraparound: cross priv_mode_m, csrrw_allones, minstret;
