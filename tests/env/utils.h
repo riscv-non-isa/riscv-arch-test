@@ -448,14 +448,6 @@
     99: addi _R1, _R1, -1; \
         bnez _R1, 99b;
 
-// For the models that have timer running slower than the core clock, converts from timer ticks to cycles
-#define RVTEST_TIMER_INT_SOON_DELAY_CYCLES (RVMODEL_TIMER_INT_SOON_DELAY * RVMODEL_MAX_CYCLES_PER_TIMER_TICK)
-
-#define RVTEST_IDLE_FOR_TIMER_INTERRUPT(_R1) \
-    LI(_R1, RVTEST_TIMER_INT_SOON_DELAY_CYCLES); \
-    99: addi _R1, _R1, -1; \
-        bnez _R1, 99b;
-
 // Using generic RVTEST macros that can be invoked by tests, which then jump to the appropriate RVMODEL macros that implement the interrupt setup for the specific target platform.
 // This allows tests to be portable across different platforms with different interrupt implementations.
 
