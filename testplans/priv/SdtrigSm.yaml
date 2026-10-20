@@ -348,6 +348,16 @@ coverpoints:
     notes: |-
       coverpoint drafted: 9/10
       coverpoint reviewed: 9/10
+  - name: cp_tdata1_dmode
+    goal: dmode is writable only from Debug Mode
+    description: |-
+      For each of UDB_SDTRIG_NUM_TRIGGERS in tselect, for each supported type in {icount, mcontrol6}:
+      CSRW tdata1 with dmode = 1 and that type (icount: count = 1, m = 0; mcontrol6: m = 1, XSL = 000, so neither fires)
+      CSRR tdata1 and check dmode
+    expectation: dmode reads back 0 after an M-mode write of 1
+    bins: NTRIGGERS * 2 types
+    rules:
+      - Sdtrig_tdata1_dmode_writable
   - name: cp_tinfo_read_only
     goal: Writing tinfo has no effect
     description: |-

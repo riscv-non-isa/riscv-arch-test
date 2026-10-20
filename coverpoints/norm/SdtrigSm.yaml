@@ -423,7 +423,7 @@ normative_rule_definitions:
 
   # This bit is only writable from Debug Mode.
   - name: Sdtrig_tdata1_dmode_writable
-    coverpoint: ["Requires Sdext external debug support; not implemented"]
+    coverpoint: ["SdtrigSm_trig_module_reg_cg/cp_tdata1_dmode"]
 
   # If type is 0, then this field is hard-wired to 0.
   - name: Sdtrig_tdata1_data

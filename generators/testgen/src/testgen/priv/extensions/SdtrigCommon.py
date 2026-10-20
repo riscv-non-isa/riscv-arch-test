@@ -1716,8 +1716,8 @@ def _generate_csr_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     written, tinfo has the bits of the types this trigger is configured to support and info != 1, tinfo.version
     is at least 1 on a trigger that supports mcontrol6 (norm:Sdtrig_mcontrol6_dependence), a write
     to one tdata register leaves the other two unchanged and a write to tinfo has no effect (before ^ after
-    = 0), a disabled trigger takes tdata2 = tdata3 = 0, and an mcontrol6 tdata1 keeps type and m while the
-    mode bits of absent modes stay hard-wired to 0. Values that are WARL choices are not recorded:
+    = 0), a disabled trigger takes tdata2 = tdata3 = 0, an mcontrol6 tdata1 keeps type and m while the
+    mode bits of absent modes stay hard-wired to 0, and dmode reads 0 after an M-mode write of 1. Values that are WARL choices are not recorded:
     Sail 0.16, Spike, Whisper and Imperas differ on tselect after an all-ones write, on the ignored bits
     of an all-ones tdata1 (type 15), and on whether tinfo has type 2.
     """
@@ -1970,6 +1970,51 @@ def _generate_csr_tests(test_data: TestData, mode: str) -> list[TestChunk]:
                 f"#endif // UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}",
             ]
         )
+
+    ######################################
+    coverpoint = "cp_tdata1_dmode"
+    ######################################
+    lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_")).code
+    lines.append(
+        comment_banner(
+            coverpoint,
+            "Write tdata1 with dmode = 1 and a type the trigger supports (mcontrol6 with no execute/store/load,\n"
+            "icount with m = 0, so neither fires) from M-mode. dmode is writable only from Debug Mode, so it\n"
+            "reads back 0; only dmode is recorded",
+        )
+    )
+    dmode_types = (
+        ("mcontrol6", MCONTROL6_TYPE, MCONTROL6_M, "UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}"),
+        ("icount", TRIG_TYPE_ICOUNT, 1 << 10, "UDB_ICOUNT_TRIG{trig_num}_AVAILABLE"),  # count = 1
+    )
+    for trig_num in range(UDB_NUM_TRIGGERS):
+        for type_name, trig_type, lowfields, guard in dmode_types:
+            guard = guard.format(trig_num=trig_num)
+            lines.extend(
+                [
+                    f"\n#ifdef {guard}",
+                    _add_tc(test_data, f"trig_num_{trig_num}_{type_name}", coverpoint, covergroup),
+                    *_select_trigger(temp_reg, trig_num, mode),
+                    *_clear_tdata(mode),
+                    *_li_xlen(
+                        data_reg,
+                        (trig_type << 60) | (1 << 59) | lowfields,
+                        (trig_type << 28) | (1 << 27) | lowfields,
+                        f"{type_name}, dmode = 1",
+                    ),
+                    _csr_access(f"csrw tdata1, x{data_reg} # dmode is not writable from M-mode", mode),
+                    _csr_access(f"csrr x{data_reg}, tdata1", mode),
+                    "#if __riscv_xlen == 64",
+                    f"srli x{data_reg}, x{data_reg}, 59",
+                    "#else",
+                    f"srli x{data_reg}, x{data_reg}, 27",
+                    "#endif",
+                    f"andi x{data_reg}, x{data_reg}, 1 # dmode",
+                    write_sigupd(data_reg, test_data),
+                    _csr_access("csrw tdata1, x0 # disable trigger", mode),
+                    f"#endif // {guard}",
+                ]
+            )
 
     ######################################
     coverpoint = "cp_tinfo_read_only"

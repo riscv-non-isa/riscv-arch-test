@@ -36,6 +36,17 @@ covergroup SdtrigSm_trig_module_reg_cg with function sample(ins_t ins);
     priv_bits: coverpoint ins.current.rs1_val[26:0] {
         bins priv = {27'b001_1000_0000_0000_0000_0101_1000};
     }
+    // cp_tdata1_dmode: an M-mode write of dmode = 1 with a supported type leaves dmode = 0
+    tdata1_type_dmode: coverpoint ins.current.rs1_val[XLEN-1:XLEN-4] {
+        bins icount    = {4'd3};
+        bins mcontrol6 = {4'd6};
+    }
+    dmode_written: coverpoint ins.current.rs1_val[XLEN-5] {
+        bins set = {1'b1};
+    }
+    dmode_after: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tdata1", "dmode")[0] {
+        bins clear = {1'b0};
+    }
     csr_tselect:  coverpoint ins.current.insn[31:20] {
         bins tselect = {CSR_TSELECT};
     }
@@ -102,6 +113,7 @@ covergroup SdtrigSm_trig_module_reg_cg with function sample(ins_t ins);
     cp_tselect_trigs:         cross priv_mode_m, triggernum, csrr, csr_tselect;                             // NTRIG
     cp_tdata1_mode_hardwired: cross priv_mode_m, triggernum, csrw, csr_tdata1, tdata1_type_six, priv_bits;  // NTRIG
     cp_tinfo_read_only:       cross priv_mode_m, triggernum, csr_tinfo, csr_access;                         // NTRIG
+    cp_tdata1_dmode:          cross priv_mode_m, triggernum, csrw, csr_tdata1, tdata1_type_dmode, dmode_written, dmode_after;  // NTRIG * 2 types
     `ifdef SDTRIG_CSR_UNIMPLEMENTED
         cp_csr_unimplemented: cross priv_mode_m, csr_unimplemented, csr_read_write, illegal_insn_trap;     // unimplemented context CSRs * 2 accesses
     `endif
