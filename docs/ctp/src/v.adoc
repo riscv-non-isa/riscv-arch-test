@@ -258,14 +258,19 @@ Each runs at rne and at every other frm whose legal outcomes differ. A NaN resul
 |cp_custom_vfredusum_noactive|12*2
 a|vs1[0] class x frm={rne, rdn}, no active elements. Tests: every vs1[0] class, vl = 1 and 7, all-zero mask, sNaN elements. vd[0] must equal vs1[0] with no flags; a NaN vs1[0] may instead become the canonical NaN, with NV exactly when it was signaling. vl=0, masked and unmasked: vd and fflags unchanged.
 |cp_custom_vfredusum_determinism|3*3
-a|vl={3, 7, VLMAX} x frm={rne, rdn, rup}, unmasked. Tests: cancellation and mild data D at vl = 3, 7 and VLMAX. With r = vd[0] of D at rne and s = vd[0] of D at rdn, each checked to be legal:
+a|vl={3, 7, VLMAX} x frm={rne, rdn, rup}, unmasked. Tests: cancellation and mild data D at vl = 3, 7 and VLMAX. Two reference results, each checked to be legal:
+
+* r: vd[0] of D reduced at rne;
+* s: vd[0] of D reduced at rdn.
+
+Then:
 
 * D at rne, with vs2, vs1 and vd in other registers, gives r;
 * 2^k*D at rne gives 2^k*r (k = 3, or -3 for widening cancellation data);
 * -D at rne gives -r (r if r is zero);
 * -D at rup gives -s.
 
-Each also raises the same fflags as r or s.
+Each also raises the same fflags as the reference result it is compared with.
 |===
 
 [[skipped-vector-tests]]
