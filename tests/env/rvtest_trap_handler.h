@@ -1778,10 +1778,16 @@ tsbi_\__MODE__\()instr_dispatch:
         srli    T3, a0, 12
         andi    T3, T3, 0x7                       // T3 = funct3
         beqz    T3, tsbi_\__MODE__\()instr_other  // sfence.vma -> tsbi_instr_table
-        // Binary search for the CSR's group in [T1, T2); the table is never empty
-        LA(     T1, tsbi_csr_table)               // T1 = lo: first group still in range
-        LA(     T2, tsbi_csr_table_end)           // T2 = hi: one past the last group in range
         srli    T4, a0, 20                        // T4 = key = CSR address
+        li      T3, CSR_MSTATUS                   // mstatus is the most-used T-SBI CSR: go straight to its group
+        bne     T4, T3, 6f
+        la      T3, tsbi_csr_mstatus
+        j       3f
+6:
+        // Binary search for the CSR's group in [T1, T2); the table is never empty
+        la      T1, tsbi_csr_table                // T1 = lo: first group still in range
+                                                  // (plain la: handler code is norvc and norelax, so LA's nop padding only costs time)
+        la      T2, tsbi_csr_table_end            // T2 = hi: one past the last group in range
 1:
         sub     T3, T2, T1                        // T3 = range size in bytes (32 per group)
         srli    T3, T3, 6
@@ -1818,7 +1824,7 @@ tsbi_\__MODE__\()instr_dispatch:
 
         // Other instructions: search tsbi_instr_table in order
 tsbi_\__MODE__\()instr_other:
-        LA(     T2, tsbi_instr_table)             // T2 = instruction table base
+        la      T2, tsbi_instr_table              // T2 = instruction table base
 5:
         #if (UDB_MXLEN==32)
           lw      T3, 0(T2)                       // T3 = table instruction
@@ -1921,6 +1927,7 @@ tsbi_csr_table:
         TSBI_CSR_INSTR_TABLE(0x280) // vsatp
 #endif // H_SUPPORTED
         // M-mode CSRs
+tsbi_csr_mstatus:                                 // dispatcher fast path
         TSBI_CSR_INSTR_TABLE(0x300) // mstatus
         //TSBI_CSR_INSTR_TABLE(0x302) // medeleg - shouldn't be changed below M-mode.
         //TSBI_CSR_INSTR_TABLE(0x303) // mideleg - shouldn't be changed below M-mode.
