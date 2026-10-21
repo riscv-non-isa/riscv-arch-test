@@ -13,8 +13,8 @@
 
 `define COVER_INTERRUPTSHGEI
 
-// Guest external interrupts need the optional RVMODEL_SET_GUEST_EXT_INT hook; without it the covergroups are empty
-`ifdef RVMODEL_SET_GUEST_EXT_INT
+// Guest external interrupts exist when H has GEILEN > 0 (UDB_SGEI_INTR_IMPL); without them the covergroups are empty
+`ifdef UDB_SGEI_INTR_IMPL
 
 // Read mip from M-mode with a guest external interrupt pending
 covergroup InterruptsHGei_m_cg with function sample(ins_t ins);
@@ -125,10 +125,10 @@ covergroup InterruptsHGei_hs_cg with function sample(ins_t ins);
     cp_hgeip0:             cross priv_mode_hs, csrr, hip, vgein_zero, hgeip_nonzero, sgei_pending;
 endgroup
 
-`endif // RVMODEL_SET_GUEST_EXT_INT
+`endif // UDB_SGEI_INTR_IMPL
 
 function void interruptshgei_sample(int hart, int issue, ins_t ins);
-    `ifdef RVMODEL_SET_GUEST_EXT_INT
+    `ifdef UDB_SGEI_INTR_IMPL
         InterruptsHGei_m_cg.sample(ins);
         InterruptsHGei_hs_cg.sample(ins);
     `endif

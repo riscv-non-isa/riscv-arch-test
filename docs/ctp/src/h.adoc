@@ -56,10 +56,10 @@ priorities and delivery to HS-mode and VS-mode.  It also executes WFI in VS-mode
 and hstatus.VTW.  Where the specification lets WFI either complete or raise an exception, nothing is pending, and
 the Sail options wfi_is_nop and max_time_to_wait select the implementation's outcome.  InterruptsHGei covers guest external interrupts: hgeip, hgeie,
 hip.SGEIP, hstatus.VGEIN, the SGEI priority and mip.SGEIP from M-mode.  hgeip is read-only, so only the platform
-can raise a guest external interrupt, through the optional RVMODEL_SET_GUEST_EXT_INT and
-RVMODEL_CLR_GUEST_EXT_INT hooks.  Without them, InterruptsHGei has no testcases.  The Sail configurations raise them
-through the simple interrupt generator, and the Spike, QEMU and Whisper configurations through IMSIC guest
-interrupt files.
+can raise a guest external interrupt, through the RVMODEL_SET_GUEST_EXT_INT and RVMODEL_CLR_GUEST_EXT_INT
+hooks, which a DUT with GEILEN > 0 must define.  With GEILEN = 0, InterruptsHGei has no testcases.  The Sail
+configurations raise them through the simple interrupt generator, and the Spike, QEMU and Whisper configurations
+through IMSIC guest interrupt files.
 
 include::{testplansdir}/priv/InterruptsH.adoc[]
 

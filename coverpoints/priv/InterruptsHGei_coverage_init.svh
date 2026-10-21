@@ -8,7 +8,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    `ifdef RVMODEL_SET_GUEST_EXT_INT
+    `ifdef UDB_SGEI_INTR_IMPL
         InterruptsHGei_m_cg = new();  InterruptsHGei_m_cg.set_inst_name("obj_InterruptsHGei_m");
         InterruptsHGei_hs_cg = new(); InterruptsHGei_hs_cg.set_inst_name("obj_InterruptsHGei_hs");
     `endif
