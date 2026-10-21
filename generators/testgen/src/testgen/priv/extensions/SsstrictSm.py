@@ -43,7 +43,6 @@ _M_CSR_SKIP: frozenset[int] = frozenset(
         0x340,  # mscratch: corrupts trap stack
         0x305,  # mtvec: corrupts trap stack
         0x747,  # mseccfg: confuses M-mode
-        0x5A8,  # scontext ignore, sail does not support it but other sims do
     }
 )
 

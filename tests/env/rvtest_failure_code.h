@@ -30,7 +30,14 @@
 // This is instantiated after test code near the end of RVTEST_CODE_END in test_setup.h
 .macro RVTEST_FAILURE_CODE
     # Log failure. DEFAULT_LINK_REG (x5) contains return address of jal from the failure and DEFAULT_TEMP_REG (x4) is a vacant temporary register
+    # The canary check reaches this entry with jalr through DEFAULT_DATA_REG (x3), which sets ELP when
+    # xLPE=1 (Zicfilp), so it starts with a 4-byte-aligned lpad 0. A jal arrives with ELP clear, where it is a no-op.
+    .option push
+    .option norvc
+    .p2align 2
     failedtest_x5_x4:
+        auipc x0, 0                                 # lpad 0
+    .option pop
         la DEFAULT_TEMP_REG, begin_failure_scratch
         SREG DEFAULT_LINK_REG, 40(DEFAULT_TEMP_REG) # store return address
         SREG x1, 8(DEFAULT_TEMP_REG)                # save x1 early (used for failure_type)
@@ -333,6 +340,39 @@
         mv DEFAULT_LINK_REG, x14
         j failedtest_saveregs
 
+    # vstart failure entry points (failure_type = 6)
+    failedtest_vstart_x5_x4:
+        la DEFAULT_TEMP_REG, begin_failure_scratch
+        SREG DEFAULT_LINK_REG, 40(DEFAULT_TEMP_REG)
+        SREG x1, 8(DEFAULT_TEMP_REG)
+        LI (x1, 6)
+        sw x1, 0(DEFAULT_TEMP_REG)                  # failure_type = 6 (vstart)
+        j failedtest_saveregs
+
+    failedtest_vstart_x8_x7:
+        la x7, begin_failure_scratch
+        SREG x8, 64(x7)
+        SREG DEFAULT_TEMP_REG, 32(x7)
+        SREG DEFAULT_LINK_REG, 40(x7)
+        SREG x1, 8(x7)
+        LI (x1, 6)
+        sw x1, 0(x7)                                # failure_type = 6 (vstart)
+        mv DEFAULT_TEMP_REG, x7
+        mv DEFAULT_LINK_REG, x8
+        j failedtest_saveregs
+
+    failedtest_vstart_x14_x13:
+        la x13, begin_failure_scratch
+        SREG x14, 104(x13)
+        SREG DEFAULT_TEMP_REG, 32(x13)
+        SREG DEFAULT_LINK_REG, 40(x13)
+        SREG x1, 8(x13)
+        LI (x1, 6)
+        sw x1, 0(x13)                               # failure_type = 6 (vstart)
+        mv DEFAULT_TEMP_REG, x13
+        mv DEFAULT_LINK_REG, x14
+        j failedtest_saveregs
+
 #endif // RVTEST_VECTOR
 
     # for the rest of this code, DEFAULT_LINK_REG contains return address of jal from the failure, DEFAULT_TEMP_REG points to scratch space
@@ -353,6 +393,7 @@
         SREG x13, 104(DEFAULT_TEMP_REG)
         SREG x14, 112(DEFAULT_TEMP_REG)
         SREG x15, 120(DEFAULT_TEMP_REG)
+    #ifndef E_SUPPORTED
         SREG x16, 128(DEFAULT_TEMP_REG)
         SREG x17, 136(DEFAULT_TEMP_REG)
         SREG x18, 144(DEFAULT_TEMP_REG)
@@ -369,73 +410,75 @@
         SREG x29, 232(DEFAULT_TEMP_REG)
         SREG x30, 240(DEFAULT_TEMP_REG)
         SREG x31, 248(DEFAULT_TEMP_REG)
+    #endif
 
     #ifdef RVTEST_VECTOR
         # We need to ensure that VS is set in mstatus here, as VS off is an exceptions test
         RVTEST_TSBI_CSR_SET(CSR_MSTATUS, 0x600)
         la x6, vecreg_scratch              # vecreg_scratch base address
+        li x7, VLEN_BYTES                  # too large for an addi immediate once VLEN >= 16384
         vs1r.v v0, (x6)
-        addi x6, x6, VLEN_BYTES            # increment by one vector's bytes
+        add x6, x6, x7                     # increment by one vector's bytes
         vs1r.v v1, (x6)
-        addi x6, x6, VLEN_BYTES
+        add x6, x6, x7
         vs1r.v v2, (x6)
-        addi x6, x6, VLEN_BYTES
+        add x6, x6, x7
         vs1r.v v3, (x6)
-        addi x6, x6, VLEN_BYTES
+        add x6, x6, x7
         vs1r.v v4, (x6)
-        addi x6, x6, VLEN_BYTES
+        add x6, x6, x7
         vs1r.v v5, (x6)
-        addi x6, x6, VLEN_BYTES
+        add x6, x6, x7
         vs1r.v v6, (x6)
-        addi x6, x6, VLEN_BYTES
+        add x6, x6, x7
         vs1r.v v7, (x6)
-        addi x6, x6, VLEN_BYTES
+        add x6, x6, x7
         vs1r.v v8, (x6)
-        addi x6, x6, VLEN_BYTES
+        add x6, x6, x7
         vs1r.v v9, (x6)
-        addi x6, x6, VLEN_BYTES
+        add x6, x6, x7
         vs1r.v v10, (x6)
-        addi x6, x6, VLEN_BYTES
+        add x6, x6, x7
         vs1r.v v11, (x6)
-        addi x6, x6, VLEN_BYTES
+        add x6, x6, x7
         vs1r.v v12, (x6)
-        addi x6, x6, VLEN_BYTES
+        add x6, x6, x7
         vs1r.v v13, (x6)
-        addi x6, x6, VLEN_BYTES
+        add x6, x6, x7
         vs1r.v v14, (x6)
-        addi x6, x6, VLEN_BYTES
+        add x6, x6, x7
         vs1r.v v15, (x6)
-        addi x6, x6, VLEN_BYTES
+        add x6, x6, x7
         vs1r.v v16, (x6)
-        addi x6, x6, VLEN_BYTES
+        add x6, x6, x7
         vs1r.v v17, (x6)
-        addi x6, x6, VLEN_BYTES
+        add x6, x6, x7
         vs1r.v v18, (x6)
-        addi x6, x6, VLEN_BYTES
+        add x6, x6, x7
         vs1r.v v19, (x6)
-        addi x6, x6, VLEN_BYTES
+        add x6, x6, x7
         vs1r.v v20, (x6)
-        addi x6, x6, VLEN_BYTES
+        add x6, x6, x7
         vs1r.v v21, (x6)
-        addi x6, x6, VLEN_BYTES
+        add x6, x6, x7
         vs1r.v v22, (x6)
-        addi x6, x6, VLEN_BYTES
+        add x6, x6, x7
         vs1r.v v23, (x6)
-        addi x6, x6, VLEN_BYTES
+        add x6, x6, x7
         vs1r.v v24, (x6)
-        addi x6, x6, VLEN_BYTES
+        add x6, x6, x7
         vs1r.v v25, (x6)
-        addi x6, x6, VLEN_BYTES
+        add x6, x6, x7
         vs1r.v v26, (x6)
-        addi x6, x6, VLEN_BYTES
+        add x6, x6, x7
         vs1r.v v27, (x6)
-        addi x6, x6, VLEN_BYTES
+        add x6, x6, x7
         vs1r.v v28, (x6)
-        addi x6, x6, VLEN_BYTES
+        add x6, x6, x7
         vs1r.v v29, (x6)
-        addi x6, x6, VLEN_BYTES
+        add x6, x6, x7
         vs1r.v v30, (x6)
-        addi x6, x6, VLEN_BYTES
+        add x6, x6, x7
         vs1r.v v31, (x6)
     #endif // RVTEST_VECTOR
 
@@ -453,6 +496,8 @@
         beq x9, x10, failedtest_saveresults_vector
         li x10, 5
         beq x9, x10, failedtest_saveresults_vxsat
+        li x10, 6
+        beq x9, x10, failedtest_saveresults_vstart
 #endif // RVTEST_VECTOR
         li x10, 3
         beq x9, x10, failedtest_saveresults_trap
@@ -885,7 +930,14 @@
         # Re-read vxsat for bad value (hasn't changed since failure).
         csrr x6, vxsat
         SREG x6, 272(DEFAULT_TEMP_REG)    # failing_value
+        j failedtest_vector_csr_common
 
+    failedtest_saveresults_vstart:
+        # Re-read vstart for bad value (no vector instructions have retired since failure).
+        csrr x6, vstart
+        SREG x6, 272(DEFAULT_TEMP_REG)    # failing_value
+
+    failedtest_vector_csr_common:
         # Extract load instruction at -12 for expected value (same approach as integer)
         lhu x6, -10(DEFAULT_LINK_REG)
         lhu x7, -12(DEFAULT_LINK_REG)
@@ -968,8 +1020,8 @@
         // Load the failure string pointer from the embedded data
         //--------------------------------------------------------------
         FAILURE_LOAD_LINK_PTR(REGWIDTH)
-        la x16, trap_diag_fail_str_ptr
-        SREG x6, 0(x16)                            # save for later printing
+        la x7, trap_diag_fail_str_ptr
+        SREG x6, 0(x7)                             # save for later printing
 
         //--------------------------------------------------------------
         // Load the address of the failing check (instruction pointer)
@@ -983,8 +1035,8 @@
         // This tells us which word of the trap signature mismatched and
         // which privilege mode the trap was being handled in.
         //--------------------------------------------------------------
-        la x16, trap_diag_fail_str_ptr
-        LREG x6, 0(x16)                             # reload fail string ptr
+        la x7, trap_diag_fail_str_ptr
+        LREG x6, 0(x7)                              # reload fail string ptr
 
         // ---- Check for trap_sig_offset_mismatch (from RVTEST_CODE_END) ----
         la x7, trap_sig_offset_mismatch
@@ -997,8 +1049,8 @@
 
         // Default: unknown subtype, just record the string and skip to common print
         li x8, 0                                     # subtype = 0 (unknown)
-        la x16, trap_diag_subtype
-        sw x8, 0(x16)
+        la x7, trap_diag_subtype
+        sw x8, 0(x7)
 
         //--- M-mode trap signature field checks ---
         la x7, sv_Mvect_str
@@ -1188,8 +1240,8 @@
         //--------------------------------------------------------------
     trap_diag_offset_mismatch:
         li x8, 9                                     # subtype: offset mismatch
-        la x16, trap_diag_subtype
-        sw x8, 0(x16)
+        la x7, trap_diag_subtype
+        sw x8, 0(x7)
 
         j failedtest_saveresults_common
 
@@ -1197,16 +1249,16 @@
         // FIELD IDENTIFIED: subtype in x8, mode in x9
         //--------------------------------------------------------------
     trap_diag_field_identified:
-        la x16, trap_diag_subtype
-        sw x8, 0(x16)
-        la x16, trap_diag_mode
-        sw x9, 0(x16)
+        la x7, trap_diag_subtype
+        sw x8, 0(x7)
+        la x7, trap_diag_mode
+        sw x9, 0(x7)
         j failedtest_saveresults_common
 
     trap_diag_generic_report:
         // Unknown trap failure string -- fall through to common with subtype 0
-        la x16, trap_diag_subtype
-        sw zero, 0(x16)
+        la x7, trap_diag_subtype
+        sw zero, 0(x7)
         j failedtest_saveresults_common
 
 
@@ -1303,6 +1355,8 @@
         beq a0, a1, failedtest_report_vecreg
         li a1, 5
         beq a0, a1, failedtest_report_vxsat
+        li a1, 6
+        beq a0, a1, failedtest_report_vstart
         # fflags: print "fflags\n"
         LA(a0, fflagsstr)
         call rvmodel_io_write_str
@@ -1326,6 +1380,10 @@
         j failedtest_report_print_regstr
     failedtest_report_vxsat:
         LA(a0, vxsatstr)
+        call rvmodel_io_write_str
+        j failedtest_report_after_reg
+    failedtest_report_vstart:
+        LA(a0, vstartstr)
         call rvmodel_io_write_str
         j failedtest_report_after_reg
     failedtest_report_print_regstr:
@@ -1587,8 +1645,8 @@
         // Print the original failure description string
         LA(a0, trap_diag_origstr_label)
         call rvmodel_io_write_str
-        la x16, trap_diag_fail_str_ptr
-        LREG a0, 0(x16)
+        la a0, trap_diag_fail_str_ptr
+        LREG a0, 0(a0)
         call rvmodel_io_write_str
         LA(a0, newlinestr)
         call rvmodel_io_write_str
@@ -2449,6 +2507,8 @@
 #endif
     vxsatstr:
         .string "vxsat\n"
+    vstartstr:
+        .string "vstart\n"
     regstr:
         .string "RVCP: Register: "
     badvalstr:

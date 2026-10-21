@@ -206,25 +206,21 @@
         `cover_info("//      S - Enabled");
         `include "S_coverage_init.svh"
     `endif
+    `ifdef COVER_SDTRIGS
+        `cover_info("//      SdtrigS - Enabled");
+        `include "SdtrigS_coverage_init.svh"
+    `endif
     `ifdef COVER_SDTRIGSM
         `cover_info("//      SdtrigSm - Enabled");
         `include "SdtrigSm_coverage_init.svh"
     `endif
+    `ifdef COVER_SDTRIGU
+        `cover_info("//      SdtrigU - Enabled");
+        `include "SdtrigU_coverage_init.svh"
+    `endif
     `ifdef COVER_SM
         `cover_info("//      Sm - Enabled");
         `include "Sm_coverage_init.svh"
-    `endif
-    `ifdef COVER_SMF
-        `cover_info("//      SmF - Enabled");
-        `include "SmF_coverage_init.svh"
-    `endif
-    `ifdef COVER_SMV
-        `cover_info("//      SmV - Enabled");
-        `include "SmV_coverage_init.svh"
-    `endif
-    `ifdef COVER_SMVF
-        `cover_info("//      SmVF - Enabled");
-        `include "SmVF_coverage_init.svh"
     `endif
     `ifdef COVER_SMMPM
         `cover_info("//      Smmpm - Enabled");
@@ -386,14 +382,6 @@
         `cover_info("//      U - Enabled");
         `include "U_coverage_init.svh"
     `endif
-    `ifdef COVER_UF
-        `cover_info("//      UF - Enabled");
-        `include "UF_coverage_init.svh"
-    `endif
-    `ifdef COVER_UV
-        `cover_info("//      UV - Enabled");
-        `include "UV_coverage_init.svh"
-    `endif
     `ifdef COVER_VF16
         `cover_info("//      Vf16 - Enabled");
         `include "Vf16_coverage_init.svh"
@@ -405,6 +393,10 @@
     `ifdef COVER_VF64
         `cover_info("//      Vf64 - Enabled");
         `include "Vf64_coverage_init.svh"
+    `endif
+    `ifdef COVER_VF8
+        `cover_info("//      Vf8 - Enabled");
+        `include "Vf8_coverage_init.svh"
     `endif
     `ifdef COVER_VLS16
         `cover_info("//      Vls16 - Enabled");
@@ -538,6 +530,10 @@
         `cover_info("//      Zfhmin - Enabled");
         `include "Zfhmin_coverage_init.svh"
     `endif
+    `ifdef COVER_ZIBI
+        `cover_info("//      Zibi - Enabled");
+        `include "Zibi_coverage_init.svh"
+    `endif
     `ifdef COVER_ZIC64BZICBOZ
         `cover_info("//      Zic64bZicboz - Enabled");
         `include "Zic64bZicboz_coverage_init.svh"
@@ -557,10 +553,6 @@
     `ifdef COVER_ZICFILPS
         `cover_info("//      ZicfilpS - Enabled");
         `include "ZicfilpS_coverage_init.svh"
-    `endif
-    `ifdef COVER_ZICFILPSU
-        `cover_info("//      ZicfilpSU - Enabled");
-        `include "ZicfilpSU_coverage_init.svh"
     `endif
     `ifdef COVER_ZICFILPSM
         `cover_info("//      ZicfilpSm - Enabled");
