@@ -431,6 +431,7 @@ coverpoints:
     expectation: |-
       When M-mode trap taken, mpte is set to mte, mte is set = 0
       The handler's mret then sets mte = mpte, so tcontrol holds the old mte in both fields
+      (only mpte = old mte is observable here; cp_icount_trap_fire observes mte = 0 in the handler with Use_tcontrol)
     bins: 2 mpte * 2 mte
     rules:
       - Sdtrig_tcontrol_mte
@@ -818,18 +819,20 @@ coverpoints:
     bins: "2 priv bits (tdata1 readback: m clear and count unchanged, m set and counted to 0)"
     rules:
       - Sdtrig_icount_match2
-      - Sdtrig_icount_multiple_match
       - Sdtrig_icount_match_non_reexecuted
       - Sdtrig_icount_all_traps_match
   - name: cp_icount_trap_fire
     goal: A trap taken in a mode where the trigger is enabled is counted, and pending fires after the handler returns
     description: |-
       cp_icount_trap with tdata1.m = 1: the breakpoint taken on the mret that returns from the illegal-instruction trap
-    expectation: Breakpoint exception into M on return from the trap handler
+    expectation: |-
+      Breakpoint exception into M on return from the trap handler
+      (with Use_tcontrol, this also needs the trap to clear tcontrol.mte, so the breakpoint waits for the mret)
     bins: "1"
     rules:
       - Sdtrig_icount_match2
       - Sdtrig_icount_pending_set
+      - Sdtrig_tcontrol_mte
   - name: cp_icount_eq0
     description: |-
       tdata1.pending = {0/1}

@@ -38,7 +38,11 @@ normative_rule_definitions:
   # address of the next instruction that must be executed to preserve the program
   # flow.
   - name: Sdtrig_action0
-    coverpoint: ["SdtrigSm_mcontrol6_cg/cp_mcontrol6_priv_mode"]
+    coverpoint:
+      [
+        "SdtrigSm_mcontrol6_cg/cp_mcontrol6_priv_mode",
+        "xepc is not checked: with SDTRIG_IMPRECISE_XEPC the trap handler does not record xEPC for breakpoints, because DUTs that do not follow the suggested trigger timing take them at another instruction; only the breakpoint exception is checked",
+      ]
 
   # Enter Debug Mode. dpc must contain the virtual address of the next instruction
   # that must be executed to preserve the program flow. This action is only legal
@@ -553,7 +557,12 @@ normative_rule_definitions:
 
   # When any trap into M-mode is taken, mte is set to 0.
   - name: Sdtrig_tcontrol_mte
-    coverpoint: ["SdtrigSm_tcontrol_cg/cp_tcontrol_mtrap"]
+    coverpoint:
+      [
+        "SdtrigSm_tcontrol_cg/cp_tcontrol_mtrap",
+        "SdtrigSm_icount_cg/cp_icount_trap_fire",
+        "mte = 0 while the M-mode handler runs is observed only on harts with Use_tcontrol, where the pending breakpoint of cp_icount_trap_fire must wait for the handler's mret; cp_tcontrol_mtrap signs tcontrol after that mret, so it checks only that the trap copies mte to mpte",
+      ]
 
   # When mret is executed, mte is set to the value of mpte.
   - name: Sdtrig_tcontrol_mte_mret
@@ -607,7 +616,11 @@ normative_rule_definitions:
   # Supervisor mode software can write a context number to this register, which can
   # be used to set triggers that only fire in that specific context.
   - name: Sdtrig_scontext_data
-    coverpoint: ["SdtrigSm_access_cg/cp_csr_access_common"]
+    coverpoint:
+      [
+        "SdtrigSm_access_cg/cp_csr_access_common",
+        "SdtrigSm_textra_cg/cp_textra_scontext",
+      ]
 
   # This register must be implemented if hcontext is implemented, and is optional
   # otherwise.
@@ -629,7 +642,11 @@ normative_rule_definitions:
   # register, which can be used to set triggers that only fire in that specific
   # context.
   - name: Sdtrig_mcontext_hcontext_data
-    coverpoint: ["SdtrigSm_access_cg/cp_csr_access_common"]
+    coverpoint:
+      [
+        "SdtrigSm_access_cg/cp_csr_access_common",
+        "SdtrigSm_textra_cg/cp_textra_mcontext",
+      ]
 
   # This optional register is an alias for scontext.
   - name: Sdtrig_mscontext
@@ -1031,6 +1048,7 @@ normative_rule_definitions:
       [
         "SdtrigSm_mcontrol6_cg/cp_mcontrol6_execute_data",
         "SdtrigSm_mcontrol6_cg/cp_mcontrol6_load_store_data",
+        "SdtrigSm_mcontrol6_cg/cp_mcontrol6_size_data",
       ]
 
   # The trigger will attempt to match against an access of any size. The behavior is
@@ -1209,7 +1227,7 @@ normative_rule_definitions:
     coverpoint:
       [
         "SdtrigSm_mcontrol6_cg/cp_mcontrol6_size_data",
-        "The lower-N-bit compare of tdata2 is not tested: Sail 0.16 compares the zero-extended access data with all of tdata2. Compares at a narrower current-mode XLEN need a writable UXL/SXL; not tested",
+        "The lower-N-bit compare of tdata2 is not tested (tdata2 bits above N are never set): Sail 0.16 compares the zero-extended access data with all of tdata2 (sail-riscv#2038, ACT #2921). Compares at a narrower current-mode XLEN need a writable UXL/SXL; not tested",
       ]
 
   # When set, enable this trigger in M-mode.
@@ -1312,8 +1330,7 @@ normative_rule_definitions:
   - name: Sdtrig_icount_multiple_match
     coverpoint:
       [
-        "SdtrigSm_icount_cg/cp_icount_trap",
-        "SdtrigSm_icount_cg/cp_icount_trap_fire",
+        "Not tested: the trap cases use count = 1, where a second match in the same instruction is not visible, and with count > 1 whether the M-mode handler's instructions are counted depends on the reentrancy option",
       ]
 
   # For use in single step, icount must match for traps where the instruction will
@@ -1371,6 +1388,7 @@ normative_rule_definitions:
   - name: Sdtrig_icount_pending
     coverpoint:
       [
+        "SdtrigSm_icount_cg/cp_icount_instr",
         "SdtrigSm_icount_cg/cp_icount_eq0",
         "SdtrigSm_icount_cg/cp_icount_eq0_fire",
         "SdtrigSm_icount_cg/cp_icount_trap_fire",
@@ -1382,6 +1400,7 @@ normative_rule_definitions:
   - name: Sdtrig_icount_action0
     coverpoint:
       [
+        "SdtrigSm_icount_cg/cp_icount_instr",
         "SdtrigSm_icount_cg/cp_icount_instr_fire",
         "SdtrigSm_icount_cg/cp_icount_trap_fire",
         "SdtrigSm_icount_cg/cp_icount_eq0_fire",
@@ -1563,6 +1582,7 @@ normative_rule_definitions:
       [
         "SdtrigSm_itrigger_cg/cp_itrigger_m",
         "SdtrigSm_itrigger_cg/cp_itrigger_m_other",
+        "Only that the trigger does not fire is checked: with action = 0 a trap handled in M never fires it (mstatus.MIE or tcontrol.mte is 0 in the handler under both reentrancy options)",
       ]
 
   # When set, enable this trigger for interrupts that are taken from S/HS mode. This
@@ -1667,6 +1687,7 @@ normative_rule_definitions:
       [
         "SdtrigSm_etrigger_cg/cp_etrigger_m",
         "SdtrigSm_etrigger_cg/cp_etrigger_m_other",
+        "Only that the trigger does not fire is checked: with action = 0 a trap handled in M never fires it (mstatus.MIE or tcontrol.mte is 0 in the handler under both reentrancy options)",
       ]
 
   # When set, enable this trigger for exceptions that are taken from S/HS mode. This
