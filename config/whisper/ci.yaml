@@ -12,14 +12,11 @@
 #   fault on Whisper where Sail reports a store/AMO page fault (https://github.com/tenstorrent/whisper/issues/200).
 #   On sv48 and sv57 the S-mode failure report then page-faults on the console, which the test's image map leaves
 #   unmapped, and recurses until the trap signature overflows, so those sweeps report a signature offset mismatch.
-# SdtrigSm_tdata2_translate: on RV32, Whisper replaces tdata2 = 0xFFFFFFFF with the NAPOT mask on an
-#   mcontrol6 trigger that does not use NAPOT (https://github.com/tenstorrent/whisper/issues/218, fix
-#   https://github.com/tenstorrent/whisper/pull/219). Drop it when the Whisper pin includes the fix.
 # SdtrigSm_csr_access_common, SdtrigSm_csr_access_global, SdtrigSm_tcontrol (max configs): Whisper implements tcontrol
 #   while using mstatus.MIE/SIE for breakpoint reentrancy, which Sail cannot model (it has tcontrol only with
-#   Use_tcontrol), so the tcontrol accesses there differ from the reference.
+#   Use_tcontrol, https://github.com/riscv/sail-riscv/issues/2039), so the reference traps on the tcontrol accesses.
 ci_enabled: true
-exclude_extensions: "SdtrigSm_tdata2_translate,SdtrigSm_csr_access_common,SdtrigSm_csr_access_global,SdtrigSm_tcontrol,SsstrictSm_CSR,SsstrictS_CSR,Smstateen,Ssnpm_sv39_pmm00_sweep,Ssnpm_sv39_pmm10_sweep,Ssnpm_sv48_pmm00_sweep,Ssnpm_sv48_pmm10_sweep,Ssnpm_sv57_pmm00_sweep,Ssnpm_sv57_pmm10_sweep,SmnpmS_sv39_pmm00_sweep,SmnpmS_sv39_pmm10_sweep,SmnpmS_sv48_pmm00_sweep,SmnpmS_sv48_pmm10_sweep,SmnpmS_sv57_pmm00_sweep,SmnpmS_sv57_pmm10_sweep"
+exclude_extensions: "SdtrigSm_csr_access_common,SdtrigSm_csr_access_global,SdtrigSm_tcontrol,SsstrictSm_CSR,SsstrictS_CSR,Smstateen,Ssnpm_sv39_pmm00_sweep,Ssnpm_sv39_pmm10_sweep,Ssnpm_sv48_pmm00_sweep,Ssnpm_sv48_pmm10_sweep,Ssnpm_sv57_pmm00_sweep,Ssnpm_sv57_pmm10_sweep,SmnpmS_sv39_pmm00_sweep,SmnpmS_sv39_pmm10_sweep,SmnpmS_sv48_pmm00_sweep,SmnpmS_sv48_pmm10_sweep,SmnpmS_sv57_pmm00_sweep,SmnpmS_sv57_pmm10_sweep"
 exclude_configs:
   - whisper-rv32-max-spike-ref
   - whisper-rv64-max-spike-ref
