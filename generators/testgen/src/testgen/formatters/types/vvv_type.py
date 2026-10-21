@@ -5,6 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 ##################################
 
+from testgen.asm.helpers import write_sigupd
 from testgen.asm.vector_helpers import (
     VectorLoad,
     compute_egs_vlen,
@@ -15,7 +16,6 @@ from testgen.asm.vector_helpers import (
     prep_mask_v,
     write_sigupd_v,
     write_sigupd_v_len,
-    write_sigupd_vxsat,
 )
 from testgen.data.params import InstructionParams
 from testgen.data.state import TestData
@@ -58,7 +58,9 @@ vvvp_config = InstructionTypeConfig(
 )
 vcompress_config = InstructionTypeConfig(
     required_params={"vd", "vs1", "vs2"},
-    vector_data=VectorTypeConfig(overlap_constraints={("vd", "vs1"), ("vd", "vs2"), ("vs1", "vs2")}),
+    vector_data=VectorTypeConfig(
+        overlap_constraints={("vd", "vs1"), ("vd", "vs2"), ("vs1", "vs2")}, require_zero_vstart=True
+    ),
 )
 vvv_egs4_config = InstructionTypeConfig(
     required_params={"vd", "vs1", "vs2"},
@@ -148,7 +150,7 @@ def format_vvv_sat(
     setup, test, check = format_vvv_like_type(instr_str, test_data, params, "VVV_SAT")
     setup = ["csrwi vxsat, 0"] + setup
 
-    check = write_sigupd_vxsat(test_data) + check
+    check = [write_sigupd(None, test_data, "vxsat")] + check
 
     return setup, test, check
 

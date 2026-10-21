@@ -157,8 +157,14 @@
     `ifdef COVER_S
         s_sample(hart, issue, ins);
     `endif
+    `ifdef COVER_SDTRIGS
+        sdtrigs_sample(hart, issue, ins);
+    `endif
     `ifdef COVER_SDTRIGSM
         sdtrigsm_sample(hart, issue, ins);
+    `endif
+    `ifdef COVER_SDTRIGU
+        sdtrigu_sample(hart, issue, ins);
     `endif
     `ifdef COVER_SM
         sm_sample(hart, issue, ins);
@@ -282,12 +288,6 @@
     `endif
     `ifdef COVER_U
         u_sample(hart, issue, ins);
-    `endif
-    `ifdef COVER_UF
-        uf_sample(hart, issue, ins);
-    `endif
-    `ifdef COVER_UV
-        uv_sample(hart, issue, ins);
     `endif
     `ifdef COVER_VF16
         vf16_sample(hart, issue, ins);

@@ -136,7 +136,7 @@ coverpoints:
     description: Floating-point instructions that need not modify floating-point state (fsw, fmv.x.w, fclass.s, csrr of the FP CSRs, fmvh.x.d) crossed with mstatus.FS = Off and Dirty
     expectation: Illegal-instruction trap when FS = Off; FS stays Dirty when Dirty. Initial and Clean are omitted because these instructions may dirty FS imprecisely.
   # Sm_V rows converted from https://docs.google.com/spreadsheets/d/11VGlIA__UYr7H47ZNqXtyYnGH5Fb41E8P9h53rN72ok/edit?gid=416753800#gid=416753800
-  - heading: "Sm_V tests (Sm_V_vcsr-NN.S, Sm_V_vset-NN.S): the vector CSRs, vset{i}vl{i}, vstart and mstatus.VS, run when Zve32x is also supported."
+  - heading: "Sm_V tests (Sm_V_vcsr-NN.S, Sm_V_vset-NN.S, Sm_V_vl_walk-NN.S): the vector CSRs, vset{i}vl{i}, vstart and mstatus.VS, run when Zve32x is also supported."
   - name: cp_vcsrrswc
     goal: Confirm that all vector CSR properties are properly set with regards to read write, clear, and set privileges with the csr instructions
     description: With each of the vector CSRs conduct a read, write, clear, and set operation on the CSR
