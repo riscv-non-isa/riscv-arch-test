@@ -34,6 +34,9 @@ int_bit = machine_ints | supervisor_ints | reg_ints | sstc_ints | vs_ints
 int_guard = {"MIP_SEIP": "UDB_SEI_INTR_IMPL", "MIP_SSIP": "UDB_SSI_INTR_IMPL", "SIP_SSIP": "UDB_SSI_INTR_IMPL"}
 int_guard |= {"LCOFI": "SSCOFPMF_SUPPORTED", "SIP_LCOFIP": "SSCOFPMF_SUPPORTED"}
 int_guard |= {name: "SSTC_SUPPORTED" for name in sstc_ints}
+# H makes the VS-level interrupts writable in hvip, so they are raisable wherever H is.  Not
+# UDB_VS*_INTR_IMPL: the shared configs leave UDB's VSEI_INTR_IMPL and VSSI_INTR_IMPL false.
+int_guard |= {name: "H_SUPPORTED" for name in ("VSEI", "VSTI", "VSSI")}
 # sip.LCOFIP writes land in the plain cp_trigger cross; the other register writes have their own crosses.
 int_coverpoint = {
     "MIP_SEIP": "cp_trigger_reg_mip_seip",

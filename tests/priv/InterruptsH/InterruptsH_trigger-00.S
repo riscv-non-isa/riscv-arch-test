@@ -464,7 +464,7 @@ InterruptsH_hs_cg_cp_htinst_ssi:
   csrw sie, zero
   csrw hie, zero
 #endif // UDB_SSI_INTR_IMPL
-#ifdef UDB_VSEI_INTR_IMPL
+#ifdef H_SUPPORTED
 #if __riscv_xlen == 64
   LI(x13, 0x3000)
 #else
@@ -486,8 +486,8 @@ InterruptsH_hs_cg_cp_htinst_vsei:
   RVTEST_CLR_VSEXT_INT_M
   csrw sie, zero
   csrw hie, zero
-#endif // UDB_VSEI_INTR_IMPL
-#ifdef UDB_VSTI_INTR_IMPL
+#endif // H_SUPPORTED
+#ifdef H_SUPPORTED
 #if __riscv_xlen == 64
   LI(x13, 0x3000)
 #else
@@ -509,8 +509,8 @@ InterruptsH_hs_cg_cp_htinst_vsti:
   RVTEST_CLR_VSTIME_INT_M
   csrw sie, zero
   csrw hie, zero
-#endif // UDB_VSTI_INTR_IMPL
-#ifdef UDB_VSSI_INTR_IMPL
+#endif // H_SUPPORTED
+#ifdef H_SUPPORTED
 #if __riscv_xlen == 64
   LI(x13, 0x3000)
 #else
@@ -532,7 +532,7 @@ InterruptsH_hs_cg_cp_htinst_vssi:
   RVTEST_CLR_VSSW_INT_M
   csrw sie, zero
   csrw hie, zero
-#endif // UDB_VSSI_INTR_IMPL
+#endif // H_SUPPORTED
 #ifdef SSCOFPMF_SUPPORTED
 #if __riscv_xlen == 64
   LI(x13, 0x3000)
