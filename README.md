@@ -247,6 +247,9 @@ The ACT Framework uses a selection of assembly macros to run DUT-specific code t
 - `RVMODEL_BOOT` (can be omitted if not needed)
 - `RVMODEL_ACCESS_FAULT_ADDRESS` (can be omitted if DUT does not generate some/all access faults)
 - `RVMODEL_INVISIBLE_TRAP_HANDLER(_PC_REG, _INSTRUCTION_REG, _ACTION_REG, _DEST_REG, _VALUE_REG)` (can be omitted if the DUT does not trap and emulate instructions)
+- `RVMODEL_FENCEI` (can be omitted to use `fence.i`, or `nop` without Zifencei)
+- `RVMODEL_BOOT_TO_MMODE` (omit unless the DUT has a custom M-mode that cannot run the default M-mode boot)
+- `RVMODEL_SDTRIG_USE_TCONTROL` (temporary; define if M-mode Sdtrig triggers fire only while `tcontrol.mte` is 1)
 
 **Timer Macros**: Can be left blank if machine mode is not supported.
 
@@ -276,6 +279,8 @@ The ACT Framework uses a selection of assembly macros to run DUT-specific code t
 - `RVMODEL_SET_SSW_INT_M(_R1, _R2)`
 - `RVMODEL_CLR_SSW_INT(_R1, _R2)`
 - `RVMODEL_CLR_SSW_INT_M(_R1, _R2)`
+- `RVMODEL_SET_GUEST_EXT_INT(_GEI, _R1, _R2)` (sets `hgeip` bit \_GEI; required when H is supported with GEILEN > 0, and has no \_M flavor)
+- `RVMODEL_CLR_GUEST_EXT_INT(_GEI, _R1, _R2)` (clears `hgeip` bit \_GEI; required with `RVMODEL_SET_GUEST_EXT_INT`)
 - `RVMODEL_INTERRUPT_LATENCY`
 
 **Sscofpmf Macros**: Required if Sscofpmf is supported.

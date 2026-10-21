@@ -242,7 +242,8 @@
   #elif defined(S_SUPPORTED)
     #define RVTEST_TEST_CSR sepc
     #define BOOT_TO_SMODE
-  #elif defined(ZICNTR_SUPPORTED) && defined(U_SUPPORTED)
+  #elif defined(ZICNTR_SUPPORTED) && defined(U_SUPPORTED) && defined(UDB_MCOUNTENABLE_EN_2)
+    // instret is read from U-mode, so mcounteren.IR must be writable (boot sets mcounteren to all 1s)
     #define RVTEST_TEST_CSR instret
     #define RVTEST_READ_ONLY_TEST_CSR
   #else
@@ -440,40 +441,11 @@
     LI(_R, 0x80000000)
 #endif
 
-// Arm the 4-byte instruction at _LABEL, for which the spec allows either completing or raising exception
-// _CAUSE. If it raises that exception, the trap handler disarms it and resumes after it without recording a
-// trap, so both outcomes give the same signature; any other trap is recorded as usual.
-// RVTEST_OPTIONAL_TRAP2 accepts either of two exceptions, _CAUSE1 or _CAUSE2, in the same way.
-// RVTEST_OPTIONAL_TRAP_END disarms it in case it completed. The macros clobber only their register arguments.
-#define RVTEST_OPTIONAL_TRAP2(_R1, _R2, _LABEL, _CAUSE1, _CAUSE2) \
-    LA(_R1, rvtest_optional_trap); \
-    LI(_R2, _CAUSE1); \
-    SREG _R2, REGWIDTH(_R1); \
-    LI(_R2, _CAUSE2); \
-    SREG _R2, 2*REGWIDTH(_R1); \
-    LA(_R2, _LABEL); \
-    SREG _R2, 0(_R1);
-
-#define RVTEST_OPTIONAL_TRAP(_R1, _R2, _LABEL, _CAUSE) \
-    RVTEST_OPTIONAL_TRAP2(_R1, _R2, _LABEL, _CAUSE, _CAUSE)
-
-#define RVTEST_OPTIONAL_TRAP_END(_R1) \
-    LA(_R1, rvtest_optional_trap); \
-    SREG zero, 0(_R1);
-
 // Interrupt Macros
 // Idle for interrupt latency
 // using LA to ensure that the tests have consistent code length across different simulators
 #define RVTEST_IDLE_FOR_INTERRUPT(_R1) \
     LA(_R1, RVMODEL_INTERRUPT_LATENCY); \
-    99: addi _R1, _R1, -1; \
-        bnez _R1, 99b;
-
-// For the models that have timer running slower than the core clock, converts from timer ticks to cycles
-#define RVTEST_TIMER_INT_SOON_DELAY_CYCLES (RVMODEL_TIMER_INT_SOON_DELAY * RVMODEL_MAX_CYCLES_PER_TIMER_TICK)
-
-#define RVTEST_IDLE_FOR_TIMER_INTERRUPT(_R1) \
-    LI(_R1, RVTEST_TIMER_INT_SOON_DELAY_CYCLES); \
     99: addi _R1, _R1, -1; \
         bnez _R1, 99b;
 
@@ -511,6 +483,17 @@
 
 #define RVTEST_CLR_SSTC_INT_M \
   jal rvtest_clr_sstc_int_m      /* Clear supervisor timer interrupt with Sstc */
+
+// VS-level timer interrupt through vstimecmp (Sstc), compared with time + htimedelta.
+// Assume menvcfg.STCE = 1 and henvcfg.STCE = 1.
+#define RVTEST_SET_VSSTC_INT_SOON_M \
+  jal rvtest_set_vsstc_int_soon_m     /* Trigger VS-level timer interrupt with Sstc after a delay */
+
+#define RVTEST_SET_VSSTC_INT_M \
+  jal rvtest_set_vsstc_int_ms         /* Trigger VS-level timer interrupt with Sstc */
+
+#define RVTEST_CLR_VSSTC_INT_M \
+  jal rvtest_clr_vsstc_int_m          /* Clear VS-level timer interrupt with Sstc */
 
 #define RVTEST_SET_STIME_INT_M \
   jal rvtest_set_stime_int_m     /* Trigger supervisor timer interrupt */
@@ -561,6 +544,15 @@
 
 #define RVTEST_CLR_SSTC_INT_S \
   jal rvtest_clr_sstc_int_s      /* Clear supervisor timer interrupt with Sstc */
+
+#define RVTEST_SET_VSSTC_INT_SOON_S \
+  jal rvtest_set_vsstc_int_soon_s     /* Trigger VS-level timer interrupt with Sstc after a delay */
+
+#define RVTEST_SET_VSSTC_INT_S \
+  jal rvtest_set_vsstc_int_ms         /* Trigger VS-level timer interrupt with Sstc */
+
+#define RVTEST_CLR_VSSTC_INT_S \
+  jal rvtest_clr_vsstc_int_s          /* Clear VS-level timer interrupt with Sstc */
 
 #define RVTEST_SET_STIME_INT_S \
   jal rvtest_set_stime_int_su     /* Trigger supervisor timer interrupt */
@@ -713,6 +705,30 @@
 #define RVTEST_CLR_SIP_LCOFIP_INT_U \
   RVTEST_TSBI_CSR_CLEAR(CSR_SIP, MIP_LCOFIP)
 
+// VS-level interrupts, raised through hvip. M-mode and HS-mode write hvip directly with the _M
+// and _S flavors; U-mode, VS-mode and VU-mode use the _U flavor, which goes through T-SBI.
+
+#define RVTEST_SET_VSSW_INT_M   li a1, MIP_VSSIP; csrs CSR_HVIP, a1  /* Trigger VS-level software interrupt */
+#define RVTEST_CLR_VSSW_INT_M   li a1, MIP_VSSIP; csrc CSR_HVIP, a1  /* Clear VS-level software interrupt */
+#define RVTEST_SET_VSTIME_INT_M li a1, MIP_VSTIP; csrs CSR_HVIP, a1  /* Trigger VS-level timer interrupt */
+#define RVTEST_CLR_VSTIME_INT_M li a1, MIP_VSTIP; csrc CSR_HVIP, a1  /* Clear VS-level timer interrupt */
+#define RVTEST_SET_VSEXT_INT_M  li a1, MIP_VSEIP; csrs CSR_HVIP, a1  /* Trigger VS-level external interrupt */
+#define RVTEST_CLR_VSEXT_INT_M  li a1, MIP_VSEIP; csrc CSR_HVIP, a1  /* Clear VS-level external interrupt */
+
+#define RVTEST_SET_VSSW_INT_S   RVTEST_SET_VSSW_INT_M
+#define RVTEST_CLR_VSSW_INT_S   RVTEST_CLR_VSSW_INT_M
+#define RVTEST_SET_VSTIME_INT_S RVTEST_SET_VSTIME_INT_M
+#define RVTEST_CLR_VSTIME_INT_S RVTEST_CLR_VSTIME_INT_M
+#define RVTEST_SET_VSEXT_INT_S  RVTEST_SET_VSEXT_INT_M
+#define RVTEST_CLR_VSEXT_INT_S  RVTEST_CLR_VSEXT_INT_M
+
+#define RVTEST_SET_VSSW_INT_U   RVTEST_TSBI_CSR_SET(CSR_HVIP, MIP_VSSIP)
+#define RVTEST_CLR_VSSW_INT_U   RVTEST_TSBI_CSR_CLEAR(CSR_HVIP, MIP_VSSIP)
+#define RVTEST_SET_VSTIME_INT_U RVTEST_TSBI_CSR_SET(CSR_HVIP, MIP_VSTIP)
+#define RVTEST_CLR_VSTIME_INT_U RVTEST_TSBI_CSR_CLEAR(CSR_HVIP, MIP_VSTIP)
+#define RVTEST_SET_VSEXT_INT_U  RVTEST_TSBI_CSR_SET(CSR_HVIP, MIP_VSEIP)
+#define RVTEST_CLR_VSEXT_INT_U  RVTEST_TSBI_CSR_CLEAR(CSR_HVIP, MIP_VSEIP)
+
 // Supervisor timer interrupt through stimecmp with menvcfg.STCE = 0 or 1; clearing also
 // restores STCE = 0. menvcfg is M-only, so S and U reach STCE through T-SBI. stimecmp is
 // S-accessible only when STCE = 1, so S writes it directly then and through T-SBI otherwise.
@@ -756,51 +772,6 @@
 
 #define RVTEST_CLR_SSTC_STCE1_INT_U RVTEST_CLR_SSTC_STCE0_INT_S
 
-
-// VS-level interrupts, raised through hvip. M-mode and HS-mode write hvip directly with the _M
-// and _S flavors; U-mode, VS-mode and VU-mode use the _U flavor, which goes through T-SBI.
-
-#define RVTEST_SET_VSSW_INT_M   li a1, MIP_VSSIP; csrs CSR_HVIP, a1  /* Trigger VS-level software interrupt */
-#define RVTEST_CLR_VSSW_INT_M   li a1, MIP_VSSIP; csrc CSR_HVIP, a1  /* Clear VS-level software interrupt */
-#define RVTEST_SET_VSTIME_INT_M li a1, MIP_VSTIP; csrs CSR_HVIP, a1  /* Trigger VS-level timer interrupt */
-#define RVTEST_CLR_VSTIME_INT_M li a1, MIP_VSTIP; csrc CSR_HVIP, a1  /* Clear VS-level timer interrupt */
-#define RVTEST_SET_VSEXT_INT_M  li a1, MIP_VSEIP; csrs CSR_HVIP, a1  /* Trigger VS-level external interrupt */
-#define RVTEST_CLR_VSEXT_INT_M  li a1, MIP_VSEIP; csrc CSR_HVIP, a1  /* Clear VS-level external interrupt */
-
-#define RVTEST_SET_VSSW_INT_S   RVTEST_SET_VSSW_INT_M
-#define RVTEST_CLR_VSSW_INT_S   RVTEST_CLR_VSSW_INT_M
-#define RVTEST_SET_VSTIME_INT_S RVTEST_SET_VSTIME_INT_M
-#define RVTEST_CLR_VSTIME_INT_S RVTEST_CLR_VSTIME_INT_M
-#define RVTEST_SET_VSEXT_INT_S  RVTEST_SET_VSEXT_INT_M
-#define RVTEST_CLR_VSEXT_INT_S  RVTEST_CLR_VSEXT_INT_M
-
-#define RVTEST_SET_VSSW_INT_U   RVTEST_TSBI_CSR_SET(CSR_HVIP, MIP_VSSIP)
-#define RVTEST_CLR_VSSW_INT_U   RVTEST_TSBI_CSR_CLEAR(CSR_HVIP, MIP_VSSIP)
-#define RVTEST_SET_VSTIME_INT_U RVTEST_TSBI_CSR_SET(CSR_HVIP, MIP_VSTIP)
-#define RVTEST_CLR_VSTIME_INT_U RVTEST_TSBI_CSR_CLEAR(CSR_HVIP, MIP_VSTIP)
-#define RVTEST_SET_VSEXT_INT_U  RVTEST_TSBI_CSR_SET(CSR_HVIP, MIP_VSEIP)
-#define RVTEST_CLR_VSEXT_INT_U  RVTEST_TSBI_CSR_CLEAR(CSR_HVIP, MIP_VSEIP)
-
-// VS-level timer interrupt through vstimecmp (Sstc), which is compared with time + htimedelta.
-// Assume menvcfg.STCE = 1 and henvcfg.STCE = 1.
-
-#define RVTEST_SET_VSSTC_INT_SOON_M \
-  jal rvtest_set_vsstc_int_soon_ms    /* Trigger VS-level timer interrupt with Sstc after a delay */
-
-#define RVTEST_SET_VSSTC_INT_M \
-  jal rvtest_set_vsstc_int_ms         /* Trigger VS-level timer interrupt with Sstc */
-
-#define RVTEST_CLR_VSSTC_INT_M \
-  jal rvtest_clr_vsstc_int_m          /* Clear VS-level timer interrupt with Sstc */
-
-#define RVTEST_SET_VSSTC_INT_SOON_S \
-  jal rvtest_set_vsstc_int_soon_ms    /* Trigger VS-level timer interrupt with Sstc after a delay */
-
-#define RVTEST_SET_VSSTC_INT_S \
-  jal rvtest_set_vsstc_int_ms         /* Trigger VS-level timer interrupt with Sstc */
-
-#define RVTEST_CLR_VSSTC_INT_S \
-  jal rvtest_clr_vsstc_int_s          /* Clear VS-level timer interrupt with Sstc */
 
 // Timer interrupts (no parameters)
 #define RVTEST_CLR_STIMER_INT

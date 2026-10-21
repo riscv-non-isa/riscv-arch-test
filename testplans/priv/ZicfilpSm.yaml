@@ -19,9 +19,9 @@ description: |
   - This sheet additionally covers M-mode specific trap entry and return
     coverpoints not present in other sheets:
       cp_elp_state_preservation_zicfilp
-      cp_pelp_trap_entry_m_zicfilp
-      cp_pelp_trap_entry_m_guarded_zicfilp
-      cp_pelp_trap_return_m_zicfilp
+      cp_pelp_trap_entry_zicfilp
+      cp_pelp_trap_entry_guarded_zicfilp
+      cp_pelp_trap_return_zicfilp
   - All other assumptions, instruction types, and execution conditions
     are identical to the Zicfilp_Common sheet.
 
@@ -45,7 +45,7 @@ coverpoints:
     id: cfi_mstatus-mpelp_op
     rules:
       - "[norm:mstatus-mpelp_op]"
-  - name: cp_pelp_trap_entry_m_zicfilp
+  - name: cp_pelp_trap_entry_zicfilp
     goal: Verify xPELP and ELP on trap entry to M-mode
     description: |-
       Test Environment:
@@ -56,7 +56,7 @@ coverpoints:
     id: Zicfilp_pelp_trap
     rules:
       - "[norm:Zicfilp_pelp_trap]"
-  - name: cp_pelp_trap_entry_m_guarded_zicfilp
+  - name: cp_pelp_trap_entry_guarded_zicfilp
     goal: Verify xPELP and ELP on trap entry from software-guarded branch
     description: |-
       Test Environment:
@@ -67,7 +67,7 @@ coverpoints:
     id: Zicfilp_pelp_trap
     rules:
       - "[norm:Zicfilp_pelp_trap]"
-  - name: cp_pelp_trap_return_m_zicfilp
+  - name: cp_pelp_trap_return_zicfilp
     goal: Verify behavior of return from trap via MRET
     description: |-
       Test Environment:

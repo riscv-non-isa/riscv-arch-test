@@ -7,10 +7,14 @@ ci_enabled: true
 # Run experimental extensions in their dedicated workflow job.
 exclude_configs:
   - spike-rv64-experimental
+# Smstateen: the -max configs declare Smaia and Ssaia (for the IMSIC guest interrupt files), so mstateen0.IMSIC, AIA and
+#   CSRIND are writable, but Sail does not model those extensions (https://github.com/riscv/sail-riscv/issues/1134).
+#   The exclusion applies to every Spike config, so the -mu configs, which pass, lose Smstateen too until
+#   exclusions can be given per config.
 # Sscofpmf*: spike hardwires mhpmcounter3..31 to 0 but keeps mhpmevent3..31 writable
 #   (https://github.com/riscv-software-src/riscv-isa-sim/issues/2370). Sail's
 #   writable_hpm_counters makes both or neither writable, so no reference config matches.
-exclude_extensions: "SscofpmfSm,SscofpmfS,SscofpmfU"
+exclude_extensions: "Smstateen,SscofpmfSm,SscofpmfS,SscofpmfU"
 install_script: ".github/scripts/install-spike.sh"
 apt_packages: "device-tree-compiler libboost-regex-dev libboost-system-dev"
 shards: 1
