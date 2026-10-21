@@ -11,7 +11,7 @@
 import re
 from pathlib import Path
 
-from testgen.constants import INDENT, TESTCASES_PER_FILE, get_flen_for_extensions
+from testgen.constants import INDENT, TESTCASES_PER_FILE, VLEN_MAX, get_flen_for_extensions
 from testgen.coverpoints import generate_tests_for_coverpoint
 from testgen.data.config import TestConfig
 from testgen.data.registers import IntegerRegisterFile
@@ -193,6 +193,7 @@ def _generate_unpriv_tests_for_instruction(
                 "#define RVTEST_VECTOR",
                 f"#define RVTEST_SEW {sew}",
                 f"#define VDSEW {vdsew}",
+                f"#define RVTEST_VLEN_MAX {VLEN_MAX}",
             ]
         else:
             extra_defines = []

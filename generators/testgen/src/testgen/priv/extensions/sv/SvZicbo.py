@@ -13,7 +13,7 @@ from testgen.asm.tsbi import tsbi_call
 from testgen.data.state import TestData
 from testgen.data.test_chunk import TestChunk
 from testgen.priv.extensions.sv.access import virtual_address
-from testgen.priv.extensions.sv.generate import begin_sv_test, sv_data
+from testgen.priv.extensions.sv.generate import SvRegs, begin_sv_test, end_sv_test, sv_data
 from testgen.priv.extensions.sv.page_tables import (
     SV32,
     SV39,
@@ -30,15 +30,16 @@ from testgen.priv.registry import add_priv_test_generator
 
 
 def _add_operation(
-    test_data: TestData, sv: SvMode, family: str, mode: str, address: list[str], number: int, cross: str
+    test_data: TestData, regs: SvRegs, family: str, mode: str, address: list[str], number: int, cross: str
 ) -> list[str]:
     lines = [*address, *([] if mode == "Smode" else [f"RVTEST_TSBI_GOTO_{mode.upper()}"])]
+    value, addr = f"x{regs.value}", f"x{regs.addr}"
     if family == "zicbop":
         for operation in ("prefetch.i", "prefetch.r", "prefetch.w"):
             lines.extend(
                 [
                     test_data.add_testcase(f"test{number}_{operation.replace('.', '_')}", cross, "SvZicbo_cg"),
-                    f"{operation} 0(a5)",
+                    f"{operation} 0({addr})",
                     "nop",
                 ]
             )
@@ -47,16 +48,14 @@ def _add_operation(
             operation: test_data.add_testcase(f"test{number}_{operation}", cross, "SvZicbo_cg").removesuffix(":")
             for operation in ("clean", "flush", "inval")
         }
-        lines.extend(["addi a2, a2, 16"])
-        for operation, register in (("clean", "a2"), ("flush", "a3"), ("inval", "a4")):
-            lines.extend([f"{labels[operation]}:", f"cbo.{operation} (a5)", f"addi {register}, a2, 4"])
+        results = (("clean", regs.value), ("flush", regs.load), ("inval", regs.result))
+        lines.extend([f"addi {value}, {value}, 16"])
+        for operation, register in results:
+            lines.extend([f"{labels[operation]}:", f"cbo.{operation} ({addr})", f"addi x{register}, {value}, 4"])
         lines.extend(
             [
                 *([] if mode == "Smode" else ["RVTEST_TSBI_GOTO_SMODE"]),
-                *(
-                    write_sigupd(reg, test_data, label=labels[op])
-                    for op, reg in (("clean", 12), ("flush", 13), ("inval", 14))
-                ),
+                *(write_sigupd(reg, test_data, label=labels[op]) for op, reg in results),
             ]
         )
         return lines
@@ -64,12 +63,12 @@ def _add_operation(
         label = test_data.add_testcase(f"test{number}_zero", cross, "SvZicbo_cg").removesuffix(":")
         lines.extend(
             [
-                "addi a2, a2, 16",
+                f"addi {value}, {value}, 16",
                 f"{label}:",
-                "cbo.zero (a5)",
-                "addi a4, a2, 4",
+                f"cbo.zero ({addr})",
+                f"addi x{regs.result}, {value}, 4",
                 *([] if mode == "Smode" else ["RVTEST_TSBI_GOTO_SMODE"]),
-                write_sigupd(14, test_data, label=label),
+                write_sigupd(regs.result, test_data, label=label),
             ]
         )
         return lines
@@ -77,7 +76,9 @@ def _add_operation(
     return lines
 
 
-def _add_exception_cases(test_data: TestData, chunk: TestChunk, sv: SvMode, mode: str, family: str) -> None:
+def _add_exception_cases(
+    test_data: TestData, chunk: TestChunk, sv: SvMode, regs: SvRegs, mode: str, family: str
+) -> None:
     """Add the cache-block exception cases for each page-table level."""
     number = 0
     m = mode[0].lower()
@@ -119,11 +120,13 @@ def _add_exception_cases(test_data: TestData, chunk: TestChunk, sv: SvMode, mode
                 sv,
                 "va_data",
                 level,
+                destination=regs.addr,
+                scratch=regs.scratch,
                 physical_address=physical_address,
                 physical_address_is_label=False,
             )
             if physical_address is not None
-            else virtual_address(sv, "va_data", level)
+            else virtual_address(sv, "va_data", level, destination=regs.addr, scratch=regs.scratch)
         )
         lines = [
             f"  // Test case {number}: {description} | Test in {mode[0]}-Mode | expected = {expected}",
@@ -131,7 +134,7 @@ def _add_exception_cases(test_data: TestData, chunk: TestChunk, sv: SvMode, mode
             "  sfence.vma",
             *before,
             "",
-            *_add_operation(test_data, sv, family, mode, address, number, cross),
+            *_add_operation(test_data, regs, family, mode, address, number, cross),
             *after,
         ]
         if ifdef:
@@ -193,8 +196,8 @@ def _add_exception_cases(test_data: TestData, chunk: TestChunk, sv: SvMode, mode
                 "RX permissions with sstatus.SUM set",
                 "Store page fault",
                 no_write,
-                before=("  LI(t0, MSTATUS_SUM)", "  csrs sstatus, t0"),
-                after=("  LI(t0, MSTATUS_SUM)", "  csrc sstatus, t0"),
+                before=(f"  LI(x{regs.scratch}, MSTATUS_SUM)", f"  csrs sstatus, x{regs.scratch}"),
+                after=(f"  LI(x{regs.scratch}, MSTATUS_SUM)", f"  csrc sstatus, x{regs.scratch}"),
             )
             add_standard(
                 level, PteFlags(user=True), "User page from S-Mode", "Store page fault", "cp_upage_sumunset_cbo_s"
@@ -291,34 +294,39 @@ def _add_exception_cases(test_data: TestData, chunk: TestChunk, sv: SvMode, mode
                 )
 
 
-def _begin_test(test_data: TestData, sv: SvMode, mode: str, family: str) -> TestChunk:
+def _begin_test(test_data: TestData, regs: SvRegs, sv: SvMode, mode: str, family: str) -> TestChunk:
     envmask = "MENVCFG_CBCFE | MENVCFG_CBIE" if family == "zicbom" else "MENVCFG_CBZE"
-    setup = [f"LI(t0, {envmask})", tsbi_call("csrs menvcfg, t0")]
+    scratch = f"x{regs.scratch}"
+    # T-SBI calls preserve every register but a0-a2, so the mask survives for senvcfg.
+    setup = [f"LI({scratch}, {envmask})", tsbi_call(f"csrs menvcfg, {scratch}")]
     if mode == "Umode":
-        setup.append("csrs senvcfg, t0")
+        setup.append(f"csrs senvcfg, {scratch}")
     qualifier = "_exceptions" if family != "zicbop" else ""
     return begin_sv_test(
         test_data,
+        regs,
         sv,
         mode,
         f"{sv.name}_{family}{qualifier}_{mode}",
         coverpoint=f"cp_PTE_rwx_zicbop_{mode[0].lower()}"
         if family == "zicbop"
         else f"SvZicbo {family} exception crosses",
-        sig_init="" if family == "zicbop" else "LI(a2, 0x800) // Test signature initialization",
+        sig_init=None if family == "zicbop" else "0x800",
         setup_asm=tuple(setup),
     )
 
 
 def _make_exceptions(test_data: TestData, sv: SvMode, mode: str, family: str) -> TestChunk:
-    chunk = _begin_test(test_data, sv, mode, family)
-    _add_exception_cases(test_data, chunk, sv, mode, family)
-    chunk.raw_data.extend(sv_data(sv))
-    return test_data.end_test_chunk()
+    regs = SvRegs.allocate(test_data)
+    chunk = _begin_test(test_data, regs, sv, mode, family)
+    _add_exception_cases(test_data, chunk, sv, regs, mode, family)
+    chunk.raw_data.extend(sv_data(sv, regs))
+    return end_sv_test(test_data, regs)
 
 
 def _make_prefetch(test_data: TestData, sv: SvMode, mode: str) -> TestChunk:
-    chunk = _begin_test(test_data, sv, mode, "zicbop")
+    regs = SvRegs.allocate(test_data)
+    chunk = _begin_test(test_data, regs, sv, mode, "zicbop")
     permissions = PteFlags(user=mode == "Umode")
     for number, level in enumerate(sv.levels_desc, start=1):
         chunk.code.extend(
@@ -332,19 +340,19 @@ def _make_prefetch(test_data: TestData, sv: SvMode, mode: str) -> TestChunk:
                 "",
                 *_add_operation(
                     test_data,
-                    sv,
+                    regs,
                     "zicbop",
                     mode,
-                    virtual_address(sv, "va_data", level),
+                    virtual_address(sv, "va_data", level, destination=regs.addr, scratch=regs.scratch),
                     number,
                     f"cp_PTE_rwx_zicbop_{mode[0].lower()}",
                 ),
                 "",
             ]
         )
-    chunk.raw_data.extend(sv_data(sv))
+    chunk.raw_data.extend(sv_data(sv, regs))
     chunk.trap_sigupd_count = 3
-    return test_data.end_test_chunk()
+    return end_sv_test(test_data, regs)
 
 
 def _make_svzicbo(test_data: TestData, sv: SvMode, family: str) -> list[TestChunk]:
