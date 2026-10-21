@@ -17,7 +17,8 @@
 #   https://github.com/tenstorrent/whisper/pull/219). Drop it when the Whisper pin includes the fix.
 # Sstc_hs, SstcSm_vstimecmp, SstcSm_vstip: on whisper-rv64-max, which has no time CSR, hip.VSTIP never follows
 #   vstimecmp: with menvcfg.STCE = henvcfg.STCE = 1 and vstimecmp = 0, hip.VSTIP reads 0 (mip.VSTIP is right).
-#   CsRegs::virtTimerExpired() requires the time CSR (https://github.com/tenstorrent/whisper/issues/220).
+#   CsRegs::virtTimerExpired() requires the time CSR (https://github.com/tenstorrent/whisper/issues/220, fix
+#   https://github.com/tenstorrent/whisper/pull/221). Drop it when the Whisper pin includes the fix.
 ci_enabled: true
 exclude_extensions: "SdtrigSm_tdata2_translate,SsstrictSm_CSR,SsstrictS_CSR,Smstateen,Sstc_hs,SstcSm_vstimecmp,SstcSm_vstip,Ssnpm_sv39_pmm00_sweep,Ssnpm_sv39_pmm10_sweep,Ssnpm_sv48_pmm00_sweep,Ssnpm_sv48_pmm10_sweep,Ssnpm_sv57_pmm00_sweep,Ssnpm_sv57_pmm10_sweep,SmnpmS_sv39_pmm00_sweep,SmnpmS_sv39_pmm10_sweep,SmnpmS_sv48_pmm00_sweep,SmnpmS_sv48_pmm10_sweep,SmnpmS_sv57_pmm00_sweep,SmnpmS_sv57_pmm10_sweep"
 exclude_configs:
