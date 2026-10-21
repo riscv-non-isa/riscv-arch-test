@@ -45,21 +45,21 @@ RVTEST_BEGIN
   LI(x19, 2)  # two runs; the second is timed
 1:
   RVTEST_TESTDATA_LOAD_INT(x3, x8) # load rs1: x8 = 0x00000000
-  addi x3, x3, -1*SIG_STRIDE  # rewind data for the second run
-  xor x20, x8, x8             # drain: loads finish first
-  .balign 64                  # keep the timed window in one cache line
-  csrr x20, RVTEST_CYCLE_CSR  # first cycle read
-  sltu x6, x20, x0            # dep = 0, ready only after the first cycle read
-  or x8, x8, x6               # operand now depends on the first cycle read
+  addi x3, x3, -1*SIG_STRIDE    # rewind data for the second run
+  xor x20, x8, x8               # drain: loads finish first
+  .balign 64                    # keep the timed window in one cache line
+  csrr x20, RVTEST_CYCLE_CSR    # first cycle read
+  sltu x6, x20, x0              # dep = 0, ready only after the first cycle read
+  or x8, x8, x6                 # operand now depends on the first cycle read
 ZktZbb_rori_cg_cp_zkt_rs1_rs1val_0x0:
   rori x29, x8, 17 # perform operation
-  csrr x18, RVTEST_CYCLE_CSR  # second cycle read
+  csrr x18, RVTEST_CYCLE_CSR    # second cycle read
   addi x19, x19, -1
   bnez x19, 1b
-  addi x3, x3, 1*SIG_STRIDE  # advance past this testcase's data
-  sub x18, x18, x20          # latency of the second run
-  mv x17, x18                # first testcase sets the baseline
-  sub x18, x18, x17          # 0 on data-independent hardware
+  addi x3, x3, 1*SIG_STRIDE     # advance past this testcase's data
+  sub x18, x18, x20             # latency of the second run
+  mv x17, x18                   # first testcase sets the baseline
+  sub x18, x18, x17             # 0 on data-independent hardware
   # Check if x29 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x29, ZktZbb_rori_cg_cp_zkt_rs1_rs1val_0x0, ZktZbb_rori_cg_cp_zkt_rs1_rs1val_0x0_str)
   # Check if x18 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
@@ -69,20 +69,20 @@ ZktZbb_rori_cg_cp_zkt_rs1_rs1val_0x0:
   LI(x19, 2)  # two runs; the second is timed
 1:
   RVTEST_TESTDATA_LOAD_INT(x3, x8) # load rs1: x8 = 0x00000001
-  addi x3, x3, -1*SIG_STRIDE  # rewind data for the second run
-  xor x20, x8, x8             # drain: loads finish first
-  .balign 64                  # keep the timed window in one cache line
-  csrr x20, RVTEST_CYCLE_CSR  # first cycle read
-  sltu x6, x20, x0            # dep = 0, ready only after the first cycle read
-  or x8, x8, x6               # operand now depends on the first cycle read
+  addi x3, x3, -1*SIG_STRIDE    # rewind data for the second run
+  xor x20, x8, x8               # drain: loads finish first
+  .balign 64                    # keep the timed window in one cache line
+  csrr x20, RVTEST_CYCLE_CSR    # first cycle read
+  sltu x6, x20, x0              # dep = 0, ready only after the first cycle read
+  or x8, x8, x6                 # operand now depends on the first cycle read
 ZktZbb_rori_cg_cp_zkt_rs1_rs1val_0x1:
   rori x29, x8, 17 # perform operation
-  csrr x18, RVTEST_CYCLE_CSR  # second cycle read
+  csrr x18, RVTEST_CYCLE_CSR    # second cycle read
   addi x19, x19, -1
   bnez x19, 1b
-  addi x3, x3, 1*SIG_STRIDE  # advance past this testcase's data
-  sub x18, x18, x20          # latency of the second run
-  sub x18, x18, x17          # 0 on data-independent hardware
+  addi x3, x3, 1*SIG_STRIDE     # advance past this testcase's data
+  sub x18, x18, x20             # latency of the second run
+  sub x18, x18, x17             # 0 on data-independent hardware
   # Check if x29 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x29, ZktZbb_rori_cg_cp_zkt_rs1_rs1val_0x1, ZktZbb_rori_cg_cp_zkt_rs1_rs1val_0x1_str)
   # Check if x18 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
@@ -92,20 +92,20 @@ ZktZbb_rori_cg_cp_zkt_rs1_rs1val_0x1:
   LI(x19, 2)  # two runs; the second is timed
 1:
   RVTEST_TESTDATA_LOAD_INT(x3, x8) # load rs1: x8 = 0x00000002
-  addi x3, x3, -1*SIG_STRIDE  # rewind data for the second run
-  xor x20, x8, x8             # drain: loads finish first
-  .balign 64                  # keep the timed window in one cache line
-  csrr x20, RVTEST_CYCLE_CSR  # first cycle read
-  sltu x6, x20, x0            # dep = 0, ready only after the first cycle read
-  or x8, x8, x6               # operand now depends on the first cycle read
+  addi x3, x3, -1*SIG_STRIDE    # rewind data for the second run
+  xor x20, x8, x8               # drain: loads finish first
+  .balign 64                    # keep the timed window in one cache line
+  csrr x20, RVTEST_CYCLE_CSR    # first cycle read
+  sltu x6, x20, x0              # dep = 0, ready only after the first cycle read
+  or x8, x8, x6                 # operand now depends on the first cycle read
 ZktZbb_rori_cg_cp_zkt_rs1_rs1val_0x2:
   rori x29, x8, 17 # perform operation
-  csrr x18, RVTEST_CYCLE_CSR  # second cycle read
+  csrr x18, RVTEST_CYCLE_CSR    # second cycle read
   addi x19, x19, -1
   bnez x19, 1b
-  addi x3, x3, 1*SIG_STRIDE  # advance past this testcase's data
-  sub x18, x18, x20          # latency of the second run
-  sub x18, x18, x17          # 0 on data-independent hardware
+  addi x3, x3, 1*SIG_STRIDE     # advance past this testcase's data
+  sub x18, x18, x20             # latency of the second run
+  sub x18, x18, x17             # 0 on data-independent hardware
   # Check if x29 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x29, ZktZbb_rori_cg_cp_zkt_rs1_rs1val_0x2, ZktZbb_rori_cg_cp_zkt_rs1_rs1val_0x2_str)
   # Check if x18 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
@@ -115,20 +115,20 @@ ZktZbb_rori_cg_cp_zkt_rs1_rs1val_0x2:
   LI(x19, 2)  # two runs; the second is timed
 1:
   RVTEST_TESTDATA_LOAD_INT(x3, x8) # load rs1: x8 = 0x80000000
-  addi x3, x3, -1*SIG_STRIDE  # rewind data for the second run
-  xor x20, x8, x8             # drain: loads finish first
-  .balign 64                  # keep the timed window in one cache line
-  csrr x20, RVTEST_CYCLE_CSR  # first cycle read
-  sltu x6, x20, x0            # dep = 0, ready only after the first cycle read
-  or x8, x8, x6               # operand now depends on the first cycle read
+  addi x3, x3, -1*SIG_STRIDE    # rewind data for the second run
+  xor x20, x8, x8               # drain: loads finish first
+  .balign 64                    # keep the timed window in one cache line
+  csrr x20, RVTEST_CYCLE_CSR    # first cycle read
+  sltu x6, x20, x0              # dep = 0, ready only after the first cycle read
+  or x8, x8, x6                 # operand now depends on the first cycle read
 ZktZbb_rori_cg_cp_zkt_rs1_rs1val_0x80000000:
   rori x29, x8, 17 # perform operation
-  csrr x18, RVTEST_CYCLE_CSR  # second cycle read
+  csrr x18, RVTEST_CYCLE_CSR    # second cycle read
   addi x19, x19, -1
   bnez x19, 1b
-  addi x3, x3, 1*SIG_STRIDE  # advance past this testcase's data
-  sub x18, x18, x20          # latency of the second run
-  sub x18, x18, x17          # 0 on data-independent hardware
+  addi x3, x3, 1*SIG_STRIDE     # advance past this testcase's data
+  sub x18, x18, x20             # latency of the second run
+  sub x18, x18, x17             # 0 on data-independent hardware
   # Check if x29 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x29, ZktZbb_rori_cg_cp_zkt_rs1_rs1val_0x80000000, ZktZbb_rori_cg_cp_zkt_rs1_rs1val_0x80000000_str)
   # Check if x18 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
@@ -138,20 +138,20 @@ ZktZbb_rori_cg_cp_zkt_rs1_rs1val_0x80000000:
   LI(x19, 2)  # two runs; the second is timed
 1:
   RVTEST_TESTDATA_LOAD_INT(x3, x8) # load rs1: x8 = 0x80000001
-  addi x3, x3, -1*SIG_STRIDE  # rewind data for the second run
-  xor x20, x8, x8             # drain: loads finish first
-  .balign 64                  # keep the timed window in one cache line
-  csrr x20, RVTEST_CYCLE_CSR  # first cycle read
-  sltu x6, x20, x0            # dep = 0, ready only after the first cycle read
-  or x8, x8, x6               # operand now depends on the first cycle read
+  addi x3, x3, -1*SIG_STRIDE    # rewind data for the second run
+  xor x20, x8, x8               # drain: loads finish first
+  .balign 64                    # keep the timed window in one cache line
+  csrr x20, RVTEST_CYCLE_CSR    # first cycle read
+  sltu x6, x20, x0              # dep = 0, ready only after the first cycle read
+  or x8, x8, x6                 # operand now depends on the first cycle read
 ZktZbb_rori_cg_cp_zkt_rs1_rs1val_0x80000001:
   rori x29, x8, 17 # perform operation
-  csrr x18, RVTEST_CYCLE_CSR  # second cycle read
+  csrr x18, RVTEST_CYCLE_CSR    # second cycle read
   addi x19, x19, -1
   bnez x19, 1b
-  addi x3, x3, 1*SIG_STRIDE  # advance past this testcase's data
-  sub x18, x18, x20          # latency of the second run
-  sub x18, x18, x17          # 0 on data-independent hardware
+  addi x3, x3, 1*SIG_STRIDE     # advance past this testcase's data
+  sub x18, x18, x20             # latency of the second run
+  sub x18, x18, x17             # 0 on data-independent hardware
   # Check if x29 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x29, ZktZbb_rori_cg_cp_zkt_rs1_rs1val_0x80000001, ZktZbb_rori_cg_cp_zkt_rs1_rs1val_0x80000001_str)
   # Check if x18 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
@@ -161,20 +161,20 @@ ZktZbb_rori_cg_cp_zkt_rs1_rs1val_0x80000001:
   LI(x19, 2)  # two runs; the second is timed
 1:
   RVTEST_TESTDATA_LOAD_INT(x3, x8) # load rs1: x8 = 0x7fffffff
-  addi x3, x3, -1*SIG_STRIDE  # rewind data for the second run
-  xor x20, x8, x8             # drain: loads finish first
-  .balign 64                  # keep the timed window in one cache line
-  csrr x20, RVTEST_CYCLE_CSR  # first cycle read
-  sltu x6, x20, x0            # dep = 0, ready only after the first cycle read
-  or x8, x8, x6               # operand now depends on the first cycle read
+  addi x3, x3, -1*SIG_STRIDE    # rewind data for the second run
+  xor x20, x8, x8               # drain: loads finish first
+  .balign 64                    # keep the timed window in one cache line
+  csrr x20, RVTEST_CYCLE_CSR    # first cycle read
+  sltu x6, x20, x0              # dep = 0, ready only after the first cycle read
+  or x8, x8, x6                 # operand now depends on the first cycle read
 ZktZbb_rori_cg_cp_zkt_rs1_rs1val_0x7fffffff:
   rori x29, x8, 17 # perform operation
-  csrr x18, RVTEST_CYCLE_CSR  # second cycle read
+  csrr x18, RVTEST_CYCLE_CSR    # second cycle read
   addi x19, x19, -1
   bnez x19, 1b
-  addi x3, x3, 1*SIG_STRIDE  # advance past this testcase's data
-  sub x18, x18, x20          # latency of the second run
-  sub x18, x18, x17          # 0 on data-independent hardware
+  addi x3, x3, 1*SIG_STRIDE     # advance past this testcase's data
+  sub x18, x18, x20             # latency of the second run
+  sub x18, x18, x17             # 0 on data-independent hardware
   # Check if x29 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x29, ZktZbb_rori_cg_cp_zkt_rs1_rs1val_0x7fffffff, ZktZbb_rori_cg_cp_zkt_rs1_rs1val_0x7fffffff_str)
   # Check if x18 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
@@ -184,20 +184,20 @@ ZktZbb_rori_cg_cp_zkt_rs1_rs1val_0x7fffffff:
   LI(x19, 2)  # two runs; the second is timed
 1:
   RVTEST_TESTDATA_LOAD_INT(x3, x8) # load rs1: x8 = 0x7ffffffe
-  addi x3, x3, -1*SIG_STRIDE  # rewind data for the second run
-  xor x20, x8, x8             # drain: loads finish first
-  .balign 64                  # keep the timed window in one cache line
-  csrr x20, RVTEST_CYCLE_CSR  # first cycle read
-  sltu x6, x20, x0            # dep = 0, ready only after the first cycle read
-  or x8, x8, x6               # operand now depends on the first cycle read
+  addi x3, x3, -1*SIG_STRIDE    # rewind data for the second run
+  xor x20, x8, x8               # drain: loads finish first
+  .balign 64                    # keep the timed window in one cache line
+  csrr x20, RVTEST_CYCLE_CSR    # first cycle read
+  sltu x6, x20, x0              # dep = 0, ready only after the first cycle read
+  or x8, x8, x6                 # operand now depends on the first cycle read
 ZktZbb_rori_cg_cp_zkt_rs1_rs1val_0x7ffffffe:
   rori x29, x8, 17 # perform operation
-  csrr x18, RVTEST_CYCLE_CSR  # second cycle read
+  csrr x18, RVTEST_CYCLE_CSR    # second cycle read
   addi x19, x19, -1
   bnez x19, 1b
-  addi x3, x3, 1*SIG_STRIDE  # advance past this testcase's data
-  sub x18, x18, x20          # latency of the second run
-  sub x18, x18, x17          # 0 on data-independent hardware
+  addi x3, x3, 1*SIG_STRIDE     # advance past this testcase's data
+  sub x18, x18, x20             # latency of the second run
+  sub x18, x18, x17             # 0 on data-independent hardware
   # Check if x29 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x29, ZktZbb_rori_cg_cp_zkt_rs1_rs1val_0x7ffffffe, ZktZbb_rori_cg_cp_zkt_rs1_rs1val_0x7ffffffe_str)
   # Check if x18 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
@@ -207,20 +207,20 @@ ZktZbb_rori_cg_cp_zkt_rs1_rs1val_0x7ffffffe:
   LI(x19, 2)  # two runs; the second is timed
 1:
   RVTEST_TESTDATA_LOAD_INT(x3, x8) # load rs1: x8 = 0xffffffff
-  addi x3, x3, -1*SIG_STRIDE  # rewind data for the second run
-  xor x20, x8, x8             # drain: loads finish first
-  .balign 64                  # keep the timed window in one cache line
-  csrr x20, RVTEST_CYCLE_CSR  # first cycle read
-  sltu x6, x20, x0            # dep = 0, ready only after the first cycle read
-  or x8, x8, x6               # operand now depends on the first cycle read
+  addi x3, x3, -1*SIG_STRIDE    # rewind data for the second run
+  xor x20, x8, x8               # drain: loads finish first
+  .balign 64                    # keep the timed window in one cache line
+  csrr x20, RVTEST_CYCLE_CSR    # first cycle read
+  sltu x6, x20, x0              # dep = 0, ready only after the first cycle read
+  or x8, x8, x6                 # operand now depends on the first cycle read
 ZktZbb_rori_cg_cp_zkt_rs1_rs1val_0xffffffff:
   rori x29, x8, 17 # perform operation
-  csrr x18, RVTEST_CYCLE_CSR  # second cycle read
+  csrr x18, RVTEST_CYCLE_CSR    # second cycle read
   addi x19, x19, -1
   bnez x19, 1b
-  addi x3, x3, 1*SIG_STRIDE  # advance past this testcase's data
-  sub x18, x18, x20          # latency of the second run
-  sub x18, x18, x17          # 0 on data-independent hardware
+  addi x3, x3, 1*SIG_STRIDE     # advance past this testcase's data
+  sub x18, x18, x20             # latency of the second run
+  sub x18, x18, x17             # 0 on data-independent hardware
   # Check if x29 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x29, ZktZbb_rori_cg_cp_zkt_rs1_rs1val_0xffffffff, ZktZbb_rori_cg_cp_zkt_rs1_rs1val_0xffffffff_str)
   # Check if x18 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
@@ -230,20 +230,20 @@ ZktZbb_rori_cg_cp_zkt_rs1_rs1val_0xffffffff:
   LI(x19, 2)  # two runs; the second is timed
 1:
   RVTEST_TESTDATA_LOAD_INT(x3, x8) # load rs1: x8 = 0xfffffffe
-  addi x3, x3, -1*SIG_STRIDE  # rewind data for the second run
-  xor x20, x8, x8             # drain: loads finish first
-  .balign 64                  # keep the timed window in one cache line
-  csrr x20, RVTEST_CYCLE_CSR  # first cycle read
-  sltu x6, x20, x0            # dep = 0, ready only after the first cycle read
-  or x8, x8, x6               # operand now depends on the first cycle read
+  addi x3, x3, -1*SIG_STRIDE    # rewind data for the second run
+  xor x20, x8, x8               # drain: loads finish first
+  .balign 64                    # keep the timed window in one cache line
+  csrr x20, RVTEST_CYCLE_CSR    # first cycle read
+  sltu x6, x20, x0              # dep = 0, ready only after the first cycle read
+  or x8, x8, x6                 # operand now depends on the first cycle read
 ZktZbb_rori_cg_cp_zkt_rs1_rs1val_0xfffffffe:
   rori x29, x8, 17 # perform operation
-  csrr x18, RVTEST_CYCLE_CSR  # second cycle read
+  csrr x18, RVTEST_CYCLE_CSR    # second cycle read
   addi x19, x19, -1
   bnez x19, 1b
-  addi x3, x3, 1*SIG_STRIDE  # advance past this testcase's data
-  sub x18, x18, x20          # latency of the second run
-  sub x18, x18, x17          # 0 on data-independent hardware
+  addi x3, x3, 1*SIG_STRIDE     # advance past this testcase's data
+  sub x18, x18, x20             # latency of the second run
+  sub x18, x18, x17             # 0 on data-independent hardware
   # Check if x29 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x29, ZktZbb_rori_cg_cp_zkt_rs1_rs1val_0xfffffffe, ZktZbb_rori_cg_cp_zkt_rs1_rs1val_0xfffffffe_str)
   # Check if x18 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
@@ -253,20 +253,20 @@ ZktZbb_rori_cg_cp_zkt_rs1_rs1val_0xfffffffe:
   LI(x19, 2)  # two runs; the second is timed
 1:
   RVTEST_TESTDATA_LOAD_INT(x3, x8) # load rs1: x8 = 0x5bbc8872
-  addi x3, x3, -1*SIG_STRIDE  # rewind data for the second run
-  xor x20, x8, x8             # drain: loads finish first
-  .balign 64                  # keep the timed window in one cache line
-  csrr x20, RVTEST_CYCLE_CSR  # first cycle read
-  sltu x6, x20, x0            # dep = 0, ready only after the first cycle read
-  or x8, x8, x6               # operand now depends on the first cycle read
+  addi x3, x3, -1*SIG_STRIDE    # rewind data for the second run
+  xor x20, x8, x8               # drain: loads finish first
+  .balign 64                    # keep the timed window in one cache line
+  csrr x20, RVTEST_CYCLE_CSR    # first cycle read
+  sltu x6, x20, x0              # dep = 0, ready only after the first cycle read
+  or x8, x8, x6                 # operand now depends on the first cycle read
 ZktZbb_rori_cg_cp_zkt_rs1_rs1val_0x5bbc8872:
   rori x29, x8, 17 # perform operation
-  csrr x18, RVTEST_CYCLE_CSR  # second cycle read
+  csrr x18, RVTEST_CYCLE_CSR    # second cycle read
   addi x19, x19, -1
   bnez x19, 1b
-  addi x3, x3, 1*SIG_STRIDE  # advance past this testcase's data
-  sub x18, x18, x20          # latency of the second run
-  sub x18, x18, x17          # 0 on data-independent hardware
+  addi x3, x3, 1*SIG_STRIDE     # advance past this testcase's data
+  sub x18, x18, x20             # latency of the second run
+  sub x18, x18, x17             # 0 on data-independent hardware
   # Check if x29 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x29, ZktZbb_rori_cg_cp_zkt_rs1_rs1val_0x5bbc8872, ZktZbb_rori_cg_cp_zkt_rs1_rs1val_0x5bbc8872_str)
   # Check if x18 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
@@ -276,20 +276,20 @@ ZktZbb_rori_cg_cp_zkt_rs1_rs1val_0x5bbc8872:
   LI(x19, 2)  # two runs; the second is timed
 1:
   RVTEST_TESTDATA_LOAD_INT(x3, x8) # load rs1: x8 = 0xaaaaaaaa
-  addi x3, x3, -1*SIG_STRIDE  # rewind data for the second run
-  xor x20, x8, x8             # drain: loads finish first
-  .balign 64                  # keep the timed window in one cache line
-  csrr x20, RVTEST_CYCLE_CSR  # first cycle read
-  sltu x6, x20, x0            # dep = 0, ready only after the first cycle read
-  or x8, x8, x6               # operand now depends on the first cycle read
+  addi x3, x3, -1*SIG_STRIDE    # rewind data for the second run
+  xor x20, x8, x8               # drain: loads finish first
+  .balign 64                    # keep the timed window in one cache line
+  csrr x20, RVTEST_CYCLE_CSR    # first cycle read
+  sltu x6, x20, x0              # dep = 0, ready only after the first cycle read
+  or x8, x8, x6                 # operand now depends on the first cycle read
 ZktZbb_rori_cg_cp_zkt_rs1_rs1val_0xaaaaaaaa:
   rori x29, x8, 17 # perform operation
-  csrr x18, RVTEST_CYCLE_CSR  # second cycle read
+  csrr x18, RVTEST_CYCLE_CSR    # second cycle read
   addi x19, x19, -1
   bnez x19, 1b
-  addi x3, x3, 1*SIG_STRIDE  # advance past this testcase's data
-  sub x18, x18, x20          # latency of the second run
-  sub x18, x18, x17          # 0 on data-independent hardware
+  addi x3, x3, 1*SIG_STRIDE     # advance past this testcase's data
+  sub x18, x18, x20             # latency of the second run
+  sub x18, x18, x17             # 0 on data-independent hardware
   # Check if x29 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x29, ZktZbb_rori_cg_cp_zkt_rs1_rs1val_0xaaaaaaaa, ZktZbb_rori_cg_cp_zkt_rs1_rs1val_0xaaaaaaaa_str)
   # Check if x18 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
@@ -299,20 +299,20 @@ ZktZbb_rori_cg_cp_zkt_rs1_rs1val_0xaaaaaaaa:
   LI(x19, 2)  # two runs; the second is timed
 1:
   RVTEST_TESTDATA_LOAD_INT(x3, x8) # load rs1: x8 = 0x55555555
-  addi x3, x3, -1*SIG_STRIDE  # rewind data for the second run
-  xor x20, x8, x8             # drain: loads finish first
-  .balign 64                  # keep the timed window in one cache line
-  csrr x20, RVTEST_CYCLE_CSR  # first cycle read
-  sltu x6, x20, x0            # dep = 0, ready only after the first cycle read
-  or x8, x8, x6               # operand now depends on the first cycle read
+  addi x3, x3, -1*SIG_STRIDE    # rewind data for the second run
+  xor x20, x8, x8               # drain: loads finish first
+  .balign 64                    # keep the timed window in one cache line
+  csrr x20, RVTEST_CYCLE_CSR    # first cycle read
+  sltu x6, x20, x0              # dep = 0, ready only after the first cycle read
+  or x8, x8, x6                 # operand now depends on the first cycle read
 ZktZbb_rori_cg_cp_zkt_rs1_rs1val_0x55555555:
   rori x29, x8, 17 # perform operation
-  csrr x18, RVTEST_CYCLE_CSR  # second cycle read
+  csrr x18, RVTEST_CYCLE_CSR    # second cycle read
   addi x19, x19, -1
   bnez x19, 1b
-  addi x3, x3, 1*SIG_STRIDE  # advance past this testcase's data
-  sub x18, x18, x20          # latency of the second run
-  sub x18, x18, x17          # 0 on data-independent hardware
+  addi x3, x3, 1*SIG_STRIDE     # advance past this testcase's data
+  sub x18, x18, x20             # latency of the second run
+  sub x18, x18, x17             # 0 on data-independent hardware
   # Check if x29 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x29, ZktZbb_rori_cg_cp_zkt_rs1_rs1val_0x55555555, ZktZbb_rori_cg_cp_zkt_rs1_rs1val_0x55555555_str)
   # Check if x18 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.

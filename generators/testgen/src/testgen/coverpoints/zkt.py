@@ -7,46 +7,8 @@
 
 """Zkt data-independent execution latency coverpoint generators (cp_zkt_*).
 
-Zkt requires the listed instructions to take the same time for any operand data. Each testcase
-times one instruction with RVTEST_CYCLE_CSR, which utils.h defines as cycle when Zicntr is supported
-and as mcycle otherwise. The mcycle tests boot to M-mode; the cycle tests boot to the lowest mode.
-
-    LI(runs, 2)
-  1: load the operands
-    xor start, rs1, rs2            # drain: the loads complete before timing starts
-    .balign 64
-    csrr start, RVTEST_CYCLE_CSR
-    sltu dep, start, x0            # dep = 0, but it is ready only after the first cycle read
-    or src, src, dep               # src keeps its value and now depends on the first cycle read
-    <instruction under test>       # reads src
-    csrr end, RVTEST_CYCLE_CSR
-    addi runs, runs, -1
-    bnez runs, 1b                  # run twice and time the second run
-
-Run twice: the first run fills the instruction cache and corrects the branch predictor. A tagless
-BTB can hold an entry from unrelated code at the same index and mispredict an instruction in the
-window. Only the warm second run is timed.
-
-.balign 64: an instruction-cache miss on the line after the window stalls fetch, and in a simple
-pipeline the stall delays the second cycle read. Starting the window at a 64-byte boundary keeps
-the window and the instructions after it in one line.
-
-Dependency: without it, an out-of-order core could execute the instruction under test before the
-first cycle read and hide its latency. sltu and or are themselves Zkt instructions, so they add a
-constant time that cancels below. One source carries the dependency; the instruction cannot start
-until it is ready. Instructions without data operands (cp_zkt_pc) have nothing to depend on.
-
-The second read cannot take a dependency: csrrs with rs1 != x0 writes the CSR. Writing cycle
-raises an illegal-instruction exception, and writing mcycle changes the count. The method therefore
-assumes that CSR reads execute in order at commit, as is typical. A core that reads the counter
-early loses sensitivity but does not fail falsely. FENCE does not order CSR reads against
-arithmetic instructions, so it is not used.
-
-Signature: reference models count one cycle per instruction, while real cores differ, so a raw
-cycle count is not portable. The first testcase's latency is the baseline, and every testcase
-writes latency - baseline, which is 0 on any implementation whose latency does not depend on the
-data. Registers and immediates are part of the encoding and may legally affect latency, so they are
-fixed for each instruction and only the data varies.
+The timing method and its assumptions are described in the Zkt Principle of Operation
+(docs/ctp/src/k.adoc, zkt-principle-of-operation).
 """
 
 from dataclasses import replace
@@ -60,18 +22,11 @@ from testgen.formatters import format_instruction
 from testgen.instructions.params import generate_random_params
 
 
-def _comment_block(lines: list[tuple[str, str]]) -> list[str]:
-    """Format (code, comment) pairs with the comments in one column."""
-    width = max(len(code) for code, _ in lines)
-    return [f"{code:<{width}}  # {comment}" if comment else code for code, comment in lines]
-
-
-@add_coverpoint_generator("cp_zkt_rs1_rs2", "cp_zkt_rs1", "cp_zkt_rs2", "cp_zkt_pc")
+@add_coverpoint_generator("cp_zkt")
 def make_cp_zkt(instr_name: str, instr_type: str, coverpoint: str, test_data: TestData) -> list[TestChunk]:
     """Time the instruction with cycle or mcycle across edge values of its source operands."""
     tc = test_data.begin_test_chunk()
     start, end, baseline, runs, dep = test_data.int_regs.get_registers(5, exclude_regs=[0])
-    # x0 is excluded because rd=x0 forms are HINTs, which Zkt does not cover
     params = generate_random_params(test_data, instr_type, exclude_regs=[0])
     if params.immval == 0:
         params.immval = 1  # a zero immediate makes c.addi a HINT
@@ -104,63 +59,55 @@ def make_cp_zkt(instr_name: str, instr_type: str, coverpoint: str, test_data: Te
             "# A dependency on the first cycle read stops the instruction from starting early.",
             "# .balign 64 keeps the timed window in one cache line.",
             "# The second cycle read has no dependency. Writing cycle or mcycle is illegal or changes the count.",
-            "",
         ]
     )
 
     for case, values in enumerate(operand_values):
         case_params = replace(params, **values)
         bin_name = ", ".join(f"{name}={value:#x}" for name, value in values.items()) or "timed"
-        if case:
-            tc.code.append("")
-        tc.code.append(f"# Testcase {coverpoint} ({bin_name})")
+        tc.code.append(f"\n# Testcase {coverpoint} ({bin_name})")
         label_line = test_data.add_testcase(bin_name, coverpoint)
         data_count = len(tc.data_values)
         setup, test, check = format_instruction(instr_name, instr_type, test_data, case_params)
         data_bytes = f"{len(tc.data_values) - data_count}*SIG_STRIDE"
-        # Run twice and time the second run (see the module docstring)
-        tc.code.extend(_comment_block([(f"LI(x{runs}, 2)", "two runs; the second is timed")]))
+        # Run twice and time the second run (see the CTP)
+        tc.code.append(f"LI(x{runs}, 2)  # two runs; the second is timed")
         tc.code.append("1:")
         if setup:
             tc.code.append(setup)
         # Rewind the data pointer so the second run loads the same values
-        pre_timing = []
         if setup:
-            pre_timing.append((f"addi x{data_reg}, x{data_reg}, -{data_bytes}", "rewind data for the second run"))
+            rewind = f"addi x{data_reg}, x{data_reg}, -{data_bytes}"
+            tc.code.append(f"{rewind:<28}  # rewind data for the second run")
         if loaded_regs:
-            pre_timing.append((f"xor x{start}, x{loaded_regs[0]}, x{loaded_regs[-1]}", "drain: loads finish first"))
-        if pre_timing:
-            tc.code.extend(_comment_block(pre_timing))
+            drain = f"xor x{start}, x{loaded_regs[0]}, x{loaded_regs[-1]}"
+            tc.code.append(f"{drain:<28}  # drain: loads finish first")
         # Zero-valued dependency on the first cycle read
-        window = [
-            (".balign 64", "keep the timed window in one cache line"),
-            (f"csrr x{start}, RVTEST_CYCLE_CSR", "first cycle read"),
-        ]
+        balign = ".balign 64"
+        read = f"csrr x{start}, RVTEST_CYCLE_CSR"
+        tc.code.append(f"{balign:<28}  # keep the timed window in one cache line")
+        tc.code.append(f"{read:<28}  # first cycle read")
         if dep_src is not None:
-            window += [
-                (f"sltu x{dep}, x{start}, x0", "dep = 0, ready only after the first cycle read"),
-                (f"or x{dep_src}, x{dep_src}, x{dep}", "operand now depends on the first cycle read"),
-            ]
-        tc.code.extend(_comment_block(window))
+            sltu = f"sltu x{dep}, x{start}, x0"
+            dep_op = f"or x{dep_src}, x{dep_src}, x{dep}"
+            tc.code.append(f"{sltu:<28}  # dep = 0, ready only after the first cycle read")
+            tc.code.append(f"{dep_op:<28}  # operand now depends on the first cycle read")
         tc.code.append(label_line)
         tc.code.append(test)
-        tc.code.extend(
-            _comment_block(
-                [
-                    (f"csrr x{end}, RVTEST_CYCLE_CSR", "second cycle read"),
-                    (f"addi x{runs}, x{runs}, -1", ""),
-                    (f"bnez x{runs}, 1b", ""),
-                ]
-            )
-        )
-        post = []
+        read_end = f"csrr x{end}, RVTEST_CYCLE_CSR"
+        tc.code.append(f"{read_end:<28}  # second cycle read")
+        tc.code.append(f"addi x{runs}, x{runs}, -1")
+        tc.code.append(f"bnez x{runs}, 1b")
         if setup:
-            post.append((f"addi x{data_reg}, x{data_reg}, {data_bytes}", "advance past this testcase's data"))
-        post.append((f"sub x{end}, x{end}, x{start}", "latency of the second run"))
+            advance = f"addi x{data_reg}, x{data_reg}, {data_bytes}"
+            tc.code.append(f"{advance:<28}  # advance past this testcase's data")
+        latency = f"sub x{end}, x{end}, x{start}"
+        tc.code.append(f"{latency:<28}  # latency of the second run")
         if case == 0:
-            post.append((f"mv x{baseline}, x{end}", "first testcase sets the baseline"))
-        post.append((f"sub x{end}, x{end}, x{baseline}", "0 on data-independent hardware"))
-        tc.code.extend(_comment_block(post))
+            mv = f"mv x{baseline}, x{end}"
+            tc.code.append(f"{mv:<28}  # first testcase sets the baseline")
+        subtract = f"sub x{end}, x{end}, x{baseline}"
+        tc.code.append(f"{subtract:<28}  # 0 on data-independent hardware")
         if check:
             tc.code.append(check)
         tc.code.append(write_sigupd(end, test_data, "int"))
