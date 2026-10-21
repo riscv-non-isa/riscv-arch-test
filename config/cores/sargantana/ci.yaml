@@ -51,10 +51,17 @@ ci_enabled: true
 #   H             hedeleg[10] and hedeleg[23:20] are writable but must be read-only zero: csr:csr_bsc.sv#L1320-L1339;
 #                 an hlv.d page fault in HS mode matches Sail's cause and tval but not the rest of its trap signature
 #                 (status/GVA/htinst; HS-mode trap CSR writes: csr:csr_bsc.sv#L2086-L2099)
-#   InterruptsS   The VS and VU groups: an interrupt taken from VS or VU into HS sets hstatus.GVA = 1:
-#                 core:datapath/rtl/datapath.sv#L913 (https://github.com/bsc-loca/sargantana/issues/119).
-#                 The S and U groups pass.
-exclude_extensions: "F-fmadd.s,F-fmsub.s,F-fnmadd.s,F-fnmsub.s,ZicsrF,Zfa-fleq.s,Zfa-fltq.s,ZfaD-fcvtmod.w.d,ZfaD-fleq.d,ZfaD-fleq.s,ZfaD-fltq.d,ZfaD-fltq.s,ZfaD-fround.s,ZfaD-froundnx.s,ZfaD-fmaxm.s,ZfaD-fminm.s,Zfhmin-fcvt.h.s,Zfhmin-fcvt.s.h,ZfhminD-fcvt.d.h,ZfhminD-fcvt.h.d,ZfhminD-fcvt.s.h,Zicntr,ZicntrSm,ZicntrS,ZicntrU,Sm_F,Sm_mcsr_access,Sm_mcsr_walk,Sm_scsr,Sm_shadow,S_F,S_scsr-,S_scsr_addr,U_F,InterruptsSm_priority_mideleg,InterruptsSm_trigger,InterruptsS_enable_VS,InterruptsS_enable_VU,InterruptsS_priority_sie_VS,InterruptsS_priority_sie_VU,InterruptsS_priority_sip_VS,InterruptsS_priority_sip_VU,InterruptsS_trigger_VS,InterruptsS_trigger_VU,InterruptsS_wfi_VS,InterruptsS_wfi_timeout_VS,InterruptsS_wfi_timeout_VU,SscofpmfSm_mcounteren,Sv_sv39_canonical,Sv_sv39_nleaf_pte_DAU,Sv_sv39_pte_reserved,Sv_sv39_svnapot,Sv_sv39_svpbmt,SvZicbo_sv39_zicbom,SvZicbo_sv39_zicboz,ExceptionsSv,ExceptionsSvSm,ExceptionsSvZalrsc,H"
+#   InterruptsS_trigger_VS/VU, InterruptsS_enable_VS/VU
+#                 An interrupt taken from VS or VU into HS sets hstatus.GVA = 1:
+#                 core:datapath/rtl/datapath.sv#L913 (https://github.com/bsc-loca/sargantana/issues/119)
+#   InterruptsS_priority_sie, InterruptsS_priority_sip
+#                 With LCOFI and VSEI both pending and enabled into HS, LCOFI is taken first, but VSEI has the
+#                 higher priority (SEI, SSI, STI, SGEI, VSEI, VSSI, VSTI, LCOFI); the VS and VU groups also hit
+#                 the GVA bug (no issue filed)
+#   InterruptsS_wfi_timeout_VU
+#                 WFI in VU-mode with mstatus.TW = 1 raises virtual instruction instead of illegal instruction
+#                 (no issue filed)
+exclude_extensions: "F-fmadd.s,F-fmsub.s,F-fnmadd.s,F-fnmsub.s,ZicsrF,Zfa-fleq.s,Zfa-fltq.s,ZfaD-fcvtmod.w.d,ZfaD-fleq.d,ZfaD-fleq.s,ZfaD-fltq.d,ZfaD-fltq.s,ZfaD-fround.s,ZfaD-froundnx.s,ZfaD-fmaxm.s,ZfaD-fminm.s,Zfhmin-fcvt.h.s,Zfhmin-fcvt.s.h,ZfhminD-fcvt.d.h,ZfhminD-fcvt.h.d,ZfhminD-fcvt.s.h,Zicntr,ZicntrSm,ZicntrS,ZicntrU,Sm_F,Sm_mcsr_access,Sm_mcsr_walk,Sm_scsr,Sm_shadow,S_F,S_scsr-,S_scsr_addr,U_F,InterruptsSm_priority_mideleg,InterruptsSm_trigger,InterruptsS_enable_VS,InterruptsS_enable_VU,InterruptsS_priority_sie,InterruptsS_priority_sip,InterruptsS_trigger_VS,InterruptsS_trigger_VU,InterruptsS_wfi_timeout_VU,SscofpmfSm_mcounteren,Sv_sv39_canonical,Sv_sv39_nleaf_pte_DAU,Sv_sv39_pte_reserved,Sv_sv39_svnapot,Sv_sv39_svpbmt,SvZicbo_sv39_zicbom,SvZicbo_sv39_zicboz,ExceptionsSv,ExceptionsSvSm,ExceptionsSvZalrsc,H"
 
 apt_packages: "autoconf flex bison help2man libfl-dev ccache device-tree-compiler libboost-dev libboost-regex-dev libboost-system-dev"
 install_script: ".github/scripts/install-sargantana.sh"
