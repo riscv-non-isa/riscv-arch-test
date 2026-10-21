@@ -36,8 +36,6 @@ RVTEST_BEGIN
 #ifdef S1P12P0_OR_LATER_SUPPORTED
 
 
-main:
-
 // Virtual addresses for code and test regions
 
 // Virtual address of rvtest_data_1
@@ -54,13 +52,14 @@ main:
 // accessible, so the code is mapped again at va_rvtest_code_begin. Registering
 // that alias lets RVTEST_TSBI_GOTO_* resume in the mapping the mode it switches
 // to can fetch from.
+// SAVE_AREA_SETUP takes the M-mode save area in a0 and clobbers t0 and t1.
   LA(a0, Mtramptbl_sv)
   SAVE_AREA_SETUP(va_rvtest_code_begin, rvtest_code_begin, code, LEVEL4)
 
   SATP_SETUP_RV64(sv57) // Enable address translation.
   sfence.vma
 
-  LI(a2, 0x800) // Test signature initialization
+  LI(x15, 0x800) // Test signature initialization
 
 
 // 4KB page at level 0
@@ -73,32 +72,32 @@ main:
   PTE_SETUP_SV57(rvtest_data_1, (PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL0)
   sfence.vma
 
-  LI(a5, (va_data >> 12) << 12)
-  LA(a0, rvtest_data_1)
-  slli a0, a0, 52
-  srli a0, a0, 52
-  add a5, a5, a0
-  addi a2, a2, 16
+  LI(x9, (va_data >> 12) << 12)
+  LA(x6, rvtest_data_1)
+  slli x6, x6, 52
+  srli x6, x6, 52
+  add x9, x9, x6
+  addi x15, x15, 16
 
 // Store
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test1_store:
-  sw a2, 20(a5)
+  sw x15, 20(x9)
   nop
 
 // Load
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test1_load:
-  lw a3, 20(a5)
+  lw x8, 20(x9)
   nop
 
 // Execute
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test1_exec:
-  jalr ra, a5, 0
+  jalr ra, x9, 0
   nop
 
-  # Check if x12 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x12, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test1_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test1_store_str)
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test1_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test1_load_str)
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test1_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test1_store_str)
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test1_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test1_load_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x14, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test1_exec, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test1_exec_str)
 
@@ -113,32 +112,32 @@ Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test1_exec:
   PTE_SETUP_SV57(rvtest_data_1, (PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL0)
   sfence.vma
 
-  LI(a5, (va_data >> 12) << 12)
-  LA(a0, rvtest_data_1)
-  slli a0, a0, 52
-  srli a0, a0, 52
-  add a5, a5, a0
-  addi a2, a2, 16
+  LI(x9, (va_data >> 12) << 12)
+  LA(x6, rvtest_data_1)
+  slli x6, x6, 52
+  srli x6, x6, 52
+  add x9, x9, x6
+  addi x15, x15, 16
 
 // Store
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test2_store:
-  sw a2, 20(a5)
+  sw x15, 20(x9)
   nop
 
 // Load
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test2_load:
-  lw a3, 20(a5)
+  lw x8, 20(x9)
   nop
 
 // Execute
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test2_exec:
-  jalr ra, a5, 0
+  jalr ra, x9, 0
   nop
 
-  # Check if x12 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x12, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test2_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test2_store_str)
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test2_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test2_load_str)
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test2_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test2_store_str)
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test2_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test2_load_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x14, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test2_exec, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test2_exec_str)
 
@@ -153,32 +152,32 @@ Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test2_exec:
   PTE_SETUP_SV57(rvtest_data_1, (PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL0)
   sfence.vma
 
-  LI(a5, (va_data >> 12) << 12)
-  LA(a0, rvtest_data_1)
-  slli a0, a0, 52
-  srli a0, a0, 52
-  add a5, a5, a0
-  addi a2, a2, 16
+  LI(x9, (va_data >> 12) << 12)
+  LA(x6, rvtest_data_1)
+  slli x6, x6, 52
+  srli x6, x6, 52
+  add x9, x9, x6
+  addi x15, x15, 16
 
 // Store
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test3_store:
-  sw a2, 20(a5)
+  sw x15, 20(x9)
   nop
 
 // Load
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test3_load:
-  lw a3, 20(a5)
+  lw x8, 20(x9)
   nop
 
 // Execute
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test3_exec:
-  jalr ra, a5, 0
+  jalr ra, x9, 0
   nop
 
-  # Check if x12 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x12, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test3_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test3_store_str)
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test3_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test3_load_str)
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test3_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test3_store_str)
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test3_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test3_load_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x14, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test3_exec, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test3_exec_str)
 
@@ -193,32 +192,32 @@ Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test3_exec:
   PTE_SETUP_SV57(rvtest_data_1, (PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL0)
   sfence.vma
 
-  LI(a5, (va_data >> 12) << 12)
-  LA(a0, rvtest_data_1)
-  slli a0, a0, 52
-  srli a0, a0, 52
-  add a5, a5, a0
-  addi a2, a2, 16
+  LI(x9, (va_data >> 12) << 12)
+  LA(x6, rvtest_data_1)
+  slli x6, x6, 52
+  srli x6, x6, 52
+  add x9, x9, x6
+  addi x15, x15, 16
 
 // Store
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test4_store:
-  sw a2, 20(a5)
+  sw x15, 20(x9)
   nop
 
 // Load
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test4_load:
-  lw a3, 20(a5)
+  lw x8, 20(x9)
   nop
 
 // Execute
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test4_exec:
-  jalr ra, a5, 0
+  jalr ra, x9, 0
   nop
 
-  # Check if x12 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x12, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test4_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test4_store_str)
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test4_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test4_load_str)
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test4_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test4_store_str)
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test4_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test4_load_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x14, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test4_exec, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test4_exec_str)
 
@@ -233,32 +232,32 @@ Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test4_exec:
   PTE_SETUP_SV57(rvtest_data_1, (PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL0)
   sfence.vma
 
-  LI(a5, (va_data >> 12) << 12)
-  LA(a0, rvtest_data_1)
-  slli a0, a0, 52
-  srli a0, a0, 52
-  add a5, a5, a0
-  addi a2, a2, 16
+  LI(x9, (va_data >> 12) << 12)
+  LA(x6, rvtest_data_1)
+  slli x6, x6, 52
+  srli x6, x6, 52
+  add x9, x9, x6
+  addi x15, x15, 16
 
 // Store
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test5_store:
-  sw a2, 20(a5)
+  sw x15, 20(x9)
   nop
 
 // Load
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test5_load:
-  lw a3, 20(a5)
+  lw x8, 20(x9)
   nop
 
 // Execute
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test5_exec:
-  jalr ra, a5, 0
+  jalr ra, x9, 0
   nop
 
-  # Check if x12 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x12, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test5_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test5_store_str)
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test5_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test5_load_str)
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test5_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test5_store_str)
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test5_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test5_load_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x14, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test5_exec, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test5_exec_str)
 
@@ -273,32 +272,32 @@ Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test5_exec:
   PTE_SETUP_SV57(rvtest_data_1, (PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL0)
   sfence.vma
 
-  LI(a5, (va_data >> 12) << 12)
-  LA(a0, rvtest_data_1)
-  slli a0, a0, 52
-  srli a0, a0, 52
-  add a5, a5, a0
-  addi a2, a2, 16
+  LI(x9, (va_data >> 12) << 12)
+  LA(x6, rvtest_data_1)
+  slli x6, x6, 52
+  srli x6, x6, 52
+  add x9, x9, x6
+  addi x15, x15, 16
 
 // Store
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test6_store:
-  sw a2, 20(a5)
+  sw x15, 20(x9)
   nop
 
 // Load
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test6_load:
-  lw a3, 20(a5)
+  lw x8, 20(x9)
   nop
 
 // Execute
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test6_exec:
-  jalr ra, a5, 0
+  jalr ra, x9, 0
   nop
 
-  # Check if x12 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x12, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test6_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test6_store_str)
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test6_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test6_load_str)
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test6_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test6_store_str)
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test6_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test6_load_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x14, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test6_exec, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test6_exec_str)
 
@@ -313,32 +312,32 @@ Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test6_exec:
   PTE_SETUP_SV57(rvtest_data_1, (PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL0)
   sfence.vma
 
-  LI(a5, (va_data >> 12) << 12)
-  LA(a0, rvtest_data_1)
-  slli a0, a0, 52
-  srli a0, a0, 52
-  add a5, a5, a0
-  addi a2, a2, 16
+  LI(x9, (va_data >> 12) << 12)
+  LA(x6, rvtest_data_1)
+  slli x6, x6, 52
+  srli x6, x6, 52
+  add x9, x9, x6
+  addi x15, x15, 16
 
 // Store
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test7_store:
-  sw a2, 20(a5)
+  sw x15, 20(x9)
   nop
 
 // Load
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test7_load:
-  lw a3, 20(a5)
+  lw x8, 20(x9)
   nop
 
 // Execute
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test7_exec:
-  jalr ra, a5, 0
+  jalr ra, x9, 0
   nop
 
-  # Check if x12 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x12, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test7_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test7_store_str)
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test7_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test7_load_str)
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test7_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test7_store_str)
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test7_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test7_load_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x14, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test7_exec, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test7_exec_str)
 
@@ -353,32 +352,32 @@ Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test7_exec:
   PTE_SETUP_SV57(rvtest_data_1, (PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL0)
   sfence.vma
 
-  LI(a5, (va_data >> 12) << 12)
-  LA(a0, rvtest_data_1)
-  slli a0, a0, 52
-  srli a0, a0, 52
-  add a5, a5, a0
-  addi a2, a2, 16
+  LI(x9, (va_data >> 12) << 12)
+  LA(x6, rvtest_data_1)
+  slli x6, x6, 52
+  srli x6, x6, 52
+  add x9, x9, x6
+  addi x15, x15, 16
 
 // Store
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test8_store:
-  sw a2, 20(a5)
+  sw x15, 20(x9)
   nop
 
 // Load
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test8_load:
-  lw a3, 20(a5)
+  lw x8, 20(x9)
   nop
 
 // Execute
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test8_exec:
-  jalr ra, a5, 0
+  jalr ra, x9, 0
   nop
 
-  # Check if x12 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x12, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test8_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test8_store_str)
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test8_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test8_load_str)
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test8_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test8_store_str)
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test8_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test8_load_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x14, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test8_exec, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test8_exec_str)
 
@@ -393,32 +392,32 @@ Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test8_exec:
   PTE_SETUP_SV57(rvtest_data_1, (PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL0)
   sfence.vma
 
-  LI(a5, (va_data >> 12) << 12)
-  LA(a0, rvtest_data_1)
-  slli a0, a0, 52
-  srli a0, a0, 52
-  add a5, a5, a0
-  addi a2, a2, 16
+  LI(x9, (va_data >> 12) << 12)
+  LA(x6, rvtest_data_1)
+  slli x6, x6, 52
+  srli x6, x6, 52
+  add x9, x9, x6
+  addi x15, x15, 16
 
 // Store
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test9_store:
-  sw a2, 20(a5)
+  sw x15, 20(x9)
   nop
 
 // Load
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test9_load:
-  lw a3, 20(a5)
+  lw x8, 20(x9)
   nop
 
 // Execute
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test9_exec:
-  jalr ra, a5, 0
+  jalr ra, x9, 0
   nop
 
-  # Check if x12 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x12, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test9_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test9_store_str)
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test9_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test9_load_str)
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test9_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test9_store_str)
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test9_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test9_load_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x14, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test9_exec, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test9_exec_str)
 
@@ -433,32 +432,32 @@ Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test9_exec:
   PTE_SETUP_SV57(rvtest_data_1, (PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL0)
   sfence.vma
 
-  LI(a5, (va_data >> 12) << 12)
-  LA(a0, rvtest_data_1)
-  slli a0, a0, 52
-  srli a0, a0, 52
-  add a5, a5, a0
-  addi a2, a2, 16
+  LI(x9, (va_data >> 12) << 12)
+  LA(x6, rvtest_data_1)
+  slli x6, x6, 52
+  srli x6, x6, 52
+  add x9, x9, x6
+  addi x15, x15, 16
 
 // Store
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test10_store:
-  sw a2, 20(a5)
+  sw x15, 20(x9)
   nop
 
 // Load
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test10_load:
-  lw a3, 20(a5)
+  lw x8, 20(x9)
   nop
 
 // Execute
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test10_exec:
-  jalr ra, a5, 0
+  jalr ra, x9, 0
   nop
 
-  # Check if x12 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x12, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test10_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test10_store_str)
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test10_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test10_load_str)
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test10_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test10_store_str)
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test10_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test10_load_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x14, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test10_exec, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test10_exec_str)
 
@@ -473,32 +472,32 @@ Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test10_exec:
   PTE_SETUP_SV57(rvtest_data_1, (PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL0)
   sfence.vma
 
-  LI(a5, (va_data >> 12) << 12)
-  LA(a0, rvtest_data_1)
-  slli a0, a0, 52
-  srli a0, a0, 52
-  add a5, a5, a0
-  addi a2, a2, 16
+  LI(x9, (va_data >> 12) << 12)
+  LA(x6, rvtest_data_1)
+  slli x6, x6, 52
+  srli x6, x6, 52
+  add x9, x9, x6
+  addi x15, x15, 16
 
 // Store
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test11_store:
-  sw a2, 20(a5)
+  sw x15, 20(x9)
   nop
 
 // Load
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test11_load:
-  lw a3, 20(a5)
+  lw x8, 20(x9)
   nop
 
 // Execute
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test11_exec:
-  jalr ra, a5, 0
+  jalr ra, x9, 0
   nop
 
-  # Check if x12 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x12, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test11_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test11_store_str)
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test11_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test11_load_str)
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test11_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test11_store_str)
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test11_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test11_load_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x14, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test11_exec, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test11_exec_str)
 
@@ -513,32 +512,32 @@ Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test11_exec:
   PTE_SETUP_SV57(rvtest_data_1, (PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL0)
   sfence.vma
 
-  LI(a5, (va_data >> 12) << 12)
-  LA(a0, rvtest_data_1)
-  slli a0, a0, 52
-  srli a0, a0, 52
-  add a5, a5, a0
-  addi a2, a2, 16
+  LI(x9, (va_data >> 12) << 12)
+  LA(x6, rvtest_data_1)
+  slli x6, x6, 52
+  srli x6, x6, 52
+  add x9, x9, x6
+  addi x15, x15, 16
 
 // Store
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test12_store:
-  sw a2, 20(a5)
+  sw x15, 20(x9)
   nop
 
 // Load
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test12_load:
-  lw a3, 20(a5)
+  lw x8, 20(x9)
   nop
 
 // Execute
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test12_exec:
-  jalr ra, a5, 0
+  jalr ra, x9, 0
   nop
 
-  # Check if x12 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x12, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test12_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test12_store_str)
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test12_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test12_load_str)
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test12_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test12_store_str)
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test12_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test12_load_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x14, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test12_exec, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test12_exec_str)
 
@@ -553,32 +552,32 @@ Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test12_exec:
   PTE_SETUP_SV57(rvtest_data_1, (PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL0)
   sfence.vma
 
-  LI(a5, (va_data >> 12) << 12)
-  LA(a0, rvtest_data_1)
-  slli a0, a0, 52
-  srli a0, a0, 52
-  add a5, a5, a0
-  addi a2, a2, 16
+  LI(x9, (va_data >> 12) << 12)
+  LA(x6, rvtest_data_1)
+  slli x6, x6, 52
+  srli x6, x6, 52
+  add x9, x9, x6
+  addi x15, x15, 16
 
 // Store
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test13_store:
-  sw a2, 20(a5)
+  sw x15, 20(x9)
   nop
 
 // Load
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test13_load:
-  lw a3, 20(a5)
+  lw x8, 20(x9)
   nop
 
 // Execute
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test13_exec:
-  jalr ra, a5, 0
+  jalr ra, x9, 0
   nop
 
-  # Check if x12 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x12, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test13_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test13_store_str)
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test13_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test13_load_str)
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test13_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test13_store_str)
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test13_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test13_load_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x14, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test13_exec, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test13_exec_str)
 
@@ -593,32 +592,32 @@ Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test13_exec:
   PTE_SETUP_SV57(rvtest_data_1, (PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL0)
   sfence.vma
 
-  LI(a5, (va_data >> 12) << 12)
-  LA(a0, rvtest_data_1)
-  slli a0, a0, 52
-  srli a0, a0, 52
-  add a5, a5, a0
-  addi a2, a2, 16
+  LI(x9, (va_data >> 12) << 12)
+  LA(x6, rvtest_data_1)
+  slli x6, x6, 52
+  srli x6, x6, 52
+  add x9, x9, x6
+  addi x15, x15, 16
 
 // Store
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test14_store:
-  sw a2, 20(a5)
+  sw x15, 20(x9)
   nop
 
 // Load
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test14_load:
-  lw a3, 20(a5)
+  lw x8, 20(x9)
   nop
 
 // Execute
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test14_exec:
-  jalr ra, a5, 0
+  jalr ra, x9, 0
   nop
 
-  # Check if x12 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x12, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test14_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test14_store_str)
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test14_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test14_load_str)
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test14_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test14_store_str)
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test14_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test14_load_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x14, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test14_exec, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test14_exec_str)
 
@@ -633,32 +632,32 @@ Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test14_exec:
   PTE_SETUP_SV57(rvtest_data_1, (PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL0)
   sfence.vma
 
-  LI(a5, (va_data >> 12) << 12)
-  LA(a0, rvtest_data_1)
-  slli a0, a0, 52
-  srli a0, a0, 52
-  add a5, a5, a0
-  addi a2, a2, 16
+  LI(x9, (va_data >> 12) << 12)
+  LA(x6, rvtest_data_1)
+  slli x6, x6, 52
+  srli x6, x6, 52
+  add x9, x9, x6
+  addi x15, x15, 16
 
 // Store
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test15_store:
-  sw a2, 20(a5)
+  sw x15, 20(x9)
   nop
 
 // Load
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test15_load:
-  lw a3, 20(a5)
+  lw x8, 20(x9)
   nop
 
 // Execute
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test15_exec:
-  jalr ra, a5, 0
+  jalr ra, x9, 0
   nop
 
-  # Check if x12 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x12, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test15_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test15_store_str)
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test15_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test15_load_str)
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test15_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test15_store_str)
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test15_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test15_load_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x14, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test15_exec, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test15_exec_str)
 
@@ -673,32 +672,32 @@ Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test15_exec:
   PTE_SETUP_SV57(rvtest_data_1, (PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL0)
   sfence.vma
 
-  LI(a5, (va_data >> 12) << 12)
-  LA(a0, rvtest_data_1)
-  slli a0, a0, 52
-  srli a0, a0, 52
-  add a5, a5, a0
-  addi a2, a2, 16
+  LI(x9, (va_data >> 12) << 12)
+  LA(x6, rvtest_data_1)
+  slli x6, x6, 52
+  srli x6, x6, 52
+  add x9, x9, x6
+  addi x15, x15, 16
 
 // Store
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test16_store:
-  sw a2, 20(a5)
+  sw x15, 20(x9)
   nop
 
 // Load
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test16_load:
-  lw a3, 20(a5)
+  lw x8, 20(x9)
   nop
 
 // Execute
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test16_exec:
-  jalr ra, a5, 0
+  jalr ra, x9, 0
   nop
 
-  # Check if x12 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x12, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test16_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test16_store_str)
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test16_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test16_load_str)
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test16_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test16_store_str)
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test16_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test16_load_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x14, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test16_exec, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test16_exec_str)
 
@@ -713,32 +712,32 @@ Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test16_exec:
   PTE_SETUP_SV57(rvtest_data_1, (PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL0)
   sfence.vma
 
-  LI(a5, (va_data >> 12) << 12)
-  LA(a0, rvtest_data_1)
-  slli a0, a0, 52
-  srli a0, a0, 52
-  add a5, a5, a0
-  addi a2, a2, 16
+  LI(x9, (va_data >> 12) << 12)
+  LA(x6, rvtest_data_1)
+  slli x6, x6, 52
+  srli x6, x6, 52
+  add x9, x9, x6
+  addi x15, x15, 16
 
 // Store
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test17_store:
-  sw a2, 20(a5)
+  sw x15, 20(x9)
   nop
 
 // Load
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test17_load:
-  lw a3, 20(a5)
+  lw x8, 20(x9)
   nop
 
 // Execute
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test17_exec:
-  jalr ra, a5, 0
+  jalr ra, x9, 0
   nop
 
-  # Check if x12 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x12, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test17_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test17_store_str)
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test17_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test17_load_str)
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test17_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test17_store_str)
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test17_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test17_load_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x14, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test17_exec, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test17_exec_str)
 
@@ -753,32 +752,32 @@ Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test17_exec:
   PTE_SETUP_SV57(rvtest_data_1, (PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL0)
   sfence.vma
 
-  LI(a5, (va_data >> 12) << 12)
-  LA(a0, rvtest_data_1)
-  slli a0, a0, 52
-  srli a0, a0, 52
-  add a5, a5, a0
-  addi a2, a2, 16
+  LI(x9, (va_data >> 12) << 12)
+  LA(x6, rvtest_data_1)
+  slli x6, x6, 52
+  srli x6, x6, 52
+  add x9, x9, x6
+  addi x15, x15, 16
 
 // Store
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test18_store:
-  sw a2, 20(a5)
+  sw x15, 20(x9)
   nop
 
 // Load
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test18_load:
-  lw a3, 20(a5)
+  lw x8, 20(x9)
   nop
 
 // Execute
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test18_exec:
-  jalr ra, a5, 0
+  jalr ra, x9, 0
   nop
 
-  # Check if x12 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x12, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test18_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test18_store_str)
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test18_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test18_load_str)
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test18_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test18_store_str)
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test18_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test18_load_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x14, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test18_exec, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test18_exec_str)
 
@@ -793,32 +792,32 @@ Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test18_exec:
   PTE_SETUP_SV57(rvtest_data_1, (PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL0)
   sfence.vma
 
-  LI(a5, (va_data >> 12) << 12)
-  LA(a0, rvtest_data_1)
-  slli a0, a0, 52
-  srli a0, a0, 52
-  add a5, a5, a0
-  addi a2, a2, 16
+  LI(x9, (va_data >> 12) << 12)
+  LA(x6, rvtest_data_1)
+  slli x6, x6, 52
+  srli x6, x6, 52
+  add x9, x9, x6
+  addi x15, x15, 16
 
 // Store
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test19_store:
-  sw a2, 20(a5)
+  sw x15, 20(x9)
   nop
 
 // Load
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test19_load:
-  lw a3, 20(a5)
+  lw x8, 20(x9)
   nop
 
 // Execute
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test19_exec:
-  jalr ra, a5, 0
+  jalr ra, x9, 0
   nop
 
-  # Check if x12 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x12, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test19_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test19_store_str)
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test19_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test19_load_str)
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test19_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test19_store_str)
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test19_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test19_load_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x14, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test19_exec, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test19_exec_str)
 
@@ -833,32 +832,32 @@ Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test19_exec:
   PTE_SETUP_SV57(rvtest_data_1, (PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL0)
   sfence.vma
 
-  LI(a5, (va_data >> 12) << 12)
-  LA(a0, rvtest_data_1)
-  slli a0, a0, 52
-  srli a0, a0, 52
-  add a5, a5, a0
-  addi a2, a2, 16
+  LI(x9, (va_data >> 12) << 12)
+  LA(x6, rvtest_data_1)
+  slli x6, x6, 52
+  srli x6, x6, 52
+  add x9, x9, x6
+  addi x15, x15, 16
 
 // Store
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test20_store:
-  sw a2, 20(a5)
+  sw x15, 20(x9)
   nop
 
 // Load
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test20_load:
-  lw a3, 20(a5)
+  lw x8, 20(x9)
   nop
 
 // Execute
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test20_exec:
-  jalr ra, a5, 0
+  jalr ra, x9, 0
   nop
 
-  # Check if x12 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x12, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test20_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test20_store_str)
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test20_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test20_load_str)
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test20_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test20_store_str)
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test20_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test20_load_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x14, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test20_exec, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test20_exec_str)
 
@@ -873,32 +872,32 @@ Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test20_exec:
   PTE_SETUP_SV57(rvtest_data_1, (PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL0)
   sfence.vma
 
-  LI(a5, (va_data >> 12) << 12)
-  LA(a0, rvtest_data_1)
-  slli a0, a0, 52
-  srli a0, a0, 52
-  add a5, a5, a0
-  addi a2, a2, 16
+  LI(x9, (va_data >> 12) << 12)
+  LA(x6, rvtest_data_1)
+  slli x6, x6, 52
+  srli x6, x6, 52
+  add x9, x9, x6
+  addi x15, x15, 16
 
 // Store
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test21_store:
-  sw a2, 20(a5)
+  sw x15, 20(x9)
   nop
 
 // Load
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test21_load:
-  lw a3, 20(a5)
+  lw x8, 20(x9)
   nop
 
 // Execute
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test21_exec:
-  jalr ra, a5, 0
+  jalr ra, x9, 0
   nop
 
-  # Check if x12 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x12, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test21_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test21_store_str)
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test21_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test21_load_str)
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test21_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test21_store_str)
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test21_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test21_load_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x14, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test21_exec, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test21_exec_str)
 
@@ -913,32 +912,32 @@ Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test21_exec:
   PTE_SETUP_SV57(rvtest_data_1, (PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL0)
   sfence.vma
 
-  LI(a5, (va_data >> 12) << 12)
-  LA(a0, rvtest_data_1)
-  slli a0, a0, 52
-  srli a0, a0, 52
-  add a5, a5, a0
-  addi a2, a2, 16
+  LI(x9, (va_data >> 12) << 12)
+  LA(x6, rvtest_data_1)
+  slli x6, x6, 52
+  srli x6, x6, 52
+  add x9, x9, x6
+  addi x15, x15, 16
 
 // Store
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test22_store:
-  sw a2, 20(a5)
+  sw x15, 20(x9)
   nop
 
 // Load
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test22_load:
-  lw a3, 20(a5)
+  lw x8, 20(x9)
   nop
 
 // Execute
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test22_exec:
-  jalr ra, a5, 0
+  jalr ra, x9, 0
   nop
 
-  # Check if x12 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x12, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test22_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test22_store_str)
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test22_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test22_load_str)
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test22_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test22_store_str)
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test22_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test22_load_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x14, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test22_exec, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test22_exec_str)
 
@@ -953,32 +952,32 @@ Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test22_exec:
   PTE_SETUP_SV57(rvtest_data_1, (PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL0)
   sfence.vma
 
-  LI(a5, (va_data >> 12) << 12)
-  LA(a0, rvtest_data_1)
-  slli a0, a0, 52
-  srli a0, a0, 52
-  add a5, a5, a0
-  addi a2, a2, 16
+  LI(x9, (va_data >> 12) << 12)
+  LA(x6, rvtest_data_1)
+  slli x6, x6, 52
+  srli x6, x6, 52
+  add x9, x9, x6
+  addi x15, x15, 16
 
 // Store
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test23_store:
-  sw a2, 20(a5)
+  sw x15, 20(x9)
   nop
 
 // Load
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test23_load:
-  lw a3, 20(a5)
+  lw x8, 20(x9)
   nop
 
 // Execute
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test23_exec:
-  jalr ra, a5, 0
+  jalr ra, x9, 0
   nop
 
-  # Check if x12 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x12, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test23_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test23_store_str)
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test23_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test23_load_str)
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test23_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test23_store_str)
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test23_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test23_load_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x14, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test23_exec, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test23_exec_str)
 
@@ -993,32 +992,32 @@ Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test23_exec:
   PTE_SETUP_SV57(rvtest_data_1, (PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL0)
   sfence.vma
 
-  LI(a5, (va_data >> 12) << 12)
-  LA(a0, rvtest_data_1)
-  slli a0, a0, 52
-  srli a0, a0, 52
-  add a5, a5, a0
-  addi a2, a2, 16
+  LI(x9, (va_data >> 12) << 12)
+  LA(x6, rvtest_data_1)
+  slli x6, x6, 52
+  srli x6, x6, 52
+  add x9, x9, x6
+  addi x15, x15, 16
 
 // Store
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test24_store:
-  sw a2, 20(a5)
+  sw x15, 20(x9)
   nop
 
 // Load
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test24_load:
-  lw a3, 20(a5)
+  lw x8, 20(x9)
   nop
 
 // Execute
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test24_exec:
-  jalr ra, a5, 0
+  jalr ra, x9, 0
   nop
 
-  # Check if x12 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x12, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test24_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test24_store_str)
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test24_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test24_load_str)
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test24_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test24_store_str)
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test24_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test24_load_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x14, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test24_exec, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test24_exec_str)
 
@@ -1033,32 +1032,32 @@ Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test24_exec:
   PTE_SETUP_SV57(rvtest_data_1, (PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL0)
   sfence.vma
 
-  LI(a5, (va_data >> 12) << 12)
-  LA(a0, rvtest_data_1)
-  slli a0, a0, 52
-  srli a0, a0, 52
-  add a5, a5, a0
-  addi a2, a2, 16
+  LI(x9, (va_data >> 12) << 12)
+  LA(x6, rvtest_data_1)
+  slli x6, x6, 52
+  srli x6, x6, 52
+  add x9, x9, x6
+  addi x15, x15, 16
 
 // Store
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test25_store:
-  sw a2, 20(a5)
+  sw x15, 20(x9)
   nop
 
 // Load
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test25_load:
-  lw a3, 20(a5)
+  lw x8, 20(x9)
   nop
 
 // Execute
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test25_exec:
-  jalr ra, a5, 0
+  jalr ra, x9, 0
   nop
 
-  # Check if x12 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x12, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test25_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test25_store_str)
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test25_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test25_load_str)
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test25_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test25_store_str)
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test25_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test25_load_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x14, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test25_exec, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test25_exec_str)
 
@@ -1073,32 +1072,32 @@ Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test25_exec:
   PTE_SETUP_SV57(rvtest_data_1, (PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL0)
   sfence.vma
 
-  LI(a5, (va_data >> 12) << 12)
-  LA(a0, rvtest_data_1)
-  slli a0, a0, 52
-  srli a0, a0, 52
-  add a5, a5, a0
-  addi a2, a2, 16
+  LI(x9, (va_data >> 12) << 12)
+  LA(x6, rvtest_data_1)
+  slli x6, x6, 52
+  srli x6, x6, 52
+  add x9, x9, x6
+  addi x15, x15, 16
 
 // Store
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test26_store:
-  sw a2, 20(a5)
+  sw x15, 20(x9)
   nop
 
 // Load
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test26_load:
-  lw a3, 20(a5)
+  lw x8, 20(x9)
   nop
 
 // Execute
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test26_exec:
-  jalr ra, a5, 0
+  jalr ra, x9, 0
   nop
 
-  # Check if x12 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x12, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test26_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test26_store_str)
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test26_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test26_load_str)
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test26_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test26_store_str)
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test26_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test26_load_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x14, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test26_exec, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test26_exec_str)
 
@@ -1113,32 +1112,32 @@ Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test26_exec:
   PTE_SETUP_SV57(rvtest_data_1, (PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL0)
   sfence.vma
 
-  LI(a5, (va_data >> 12) << 12)
-  LA(a0, rvtest_data_1)
-  slli a0, a0, 52
-  srli a0, a0, 52
-  add a5, a5, a0
-  addi a2, a2, 16
+  LI(x9, (va_data >> 12) << 12)
+  LA(x6, rvtest_data_1)
+  slli x6, x6, 52
+  srli x6, x6, 52
+  add x9, x9, x6
+  addi x15, x15, 16
 
 // Store
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test27_store:
-  sw a2, 20(a5)
+  sw x15, 20(x9)
   nop
 
 // Load
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test27_load:
-  lw a3, 20(a5)
+  lw x8, 20(x9)
   nop
 
 // Execute
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test27_exec:
-  jalr ra, a5, 0
+  jalr ra, x9, 0
   nop
 
-  # Check if x12 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x12, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test27_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test27_store_str)
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test27_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test27_load_str)
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test27_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test27_store_str)
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test27_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test27_load_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x14, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test27_exec, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test27_exec_str)
 
@@ -1153,32 +1152,32 @@ Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test27_exec:
   PTE_SETUP_SV57(rvtest_data_1, (PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL0)
   sfence.vma
 
-  LI(a5, (va_data >> 12) << 12)
-  LA(a0, rvtest_data_1)
-  slli a0, a0, 52
-  srli a0, a0, 52
-  add a5, a5, a0
-  addi a2, a2, 16
+  LI(x9, (va_data >> 12) << 12)
+  LA(x6, rvtest_data_1)
+  slli x6, x6, 52
+  srli x6, x6, 52
+  add x9, x9, x6
+  addi x15, x15, 16
 
 // Store
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test28_store:
-  sw a2, 20(a5)
+  sw x15, 20(x9)
   nop
 
 // Load
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test28_load:
-  lw a3, 20(a5)
+  lw x8, 20(x9)
   nop
 
 // Execute
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test28_exec:
-  jalr ra, a5, 0
+  jalr ra, x9, 0
   nop
 
-  # Check if x12 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x12, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test28_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test28_store_str)
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test28_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test28_load_str)
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test28_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test28_store_str)
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test28_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test28_load_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x14, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test28_exec, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test28_exec_str)
 
@@ -1193,32 +1192,32 @@ Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test28_exec:
   PTE_SETUP_SV57(rvtest_data_1, (PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL0)
   sfence.vma
 
-  LI(a5, (va_data >> 12) << 12)
-  LA(a0, rvtest_data_1)
-  slli a0, a0, 52
-  srli a0, a0, 52
-  add a5, a5, a0
-  addi a2, a2, 16
+  LI(x9, (va_data >> 12) << 12)
+  LA(x6, rvtest_data_1)
+  slli x6, x6, 52
+  srli x6, x6, 52
+  add x9, x9, x6
+  addi x15, x15, 16
 
 // Store
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test29_store:
-  sw a2, 20(a5)
+  sw x15, 20(x9)
   nop
 
 // Load
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test29_load:
-  lw a3, 20(a5)
+  lw x8, 20(x9)
   nop
 
 // Execute
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test29_exec:
-  jalr ra, a5, 0
+  jalr ra, x9, 0
   nop
 
-  # Check if x12 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x12, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test29_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test29_store_str)
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test29_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test29_load_str)
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test29_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test29_store_str)
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test29_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test29_load_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x14, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test29_exec, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test29_exec_str)
 
@@ -1233,32 +1232,32 @@ Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test29_exec:
   PTE_SETUP_SV57(rvtest_data_1, (PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL0)
   sfence.vma
 
-  LI(a5, (va_data >> 12) << 12)
-  LA(a0, rvtest_data_1)
-  slli a0, a0, 52
-  srli a0, a0, 52
-  add a5, a5, a0
-  addi a2, a2, 16
+  LI(x9, (va_data >> 12) << 12)
+  LA(x6, rvtest_data_1)
+  slli x6, x6, 52
+  srli x6, x6, 52
+  add x9, x9, x6
+  addi x15, x15, 16
 
 // Store
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test30_store:
-  sw a2, 20(a5)
+  sw x15, 20(x9)
   nop
 
 // Load
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test30_load:
-  lw a3, 20(a5)
+  lw x8, 20(x9)
   nop
 
 // Execute
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test30_exec:
-  jalr ra, a5, 0
+  jalr ra, x9, 0
   nop
 
-  # Check if x12 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x12, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test30_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test30_store_str)
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test30_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test30_load_str)
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test30_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test30_store_str)
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test30_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test30_load_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x14, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test30_exec, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test30_exec_str)
 
@@ -1273,32 +1272,32 @@ Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test30_exec:
   PTE_SETUP_SV57(rvtest_data_1, (PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL0)
   sfence.vma
 
-  LI(a5, (va_data >> 12) << 12)
-  LA(a0, rvtest_data_1)
-  slli a0, a0, 52
-  srli a0, a0, 52
-  add a5, a5, a0
-  addi a2, a2, 16
+  LI(x9, (va_data >> 12) << 12)
+  LA(x6, rvtest_data_1)
+  slli x6, x6, 52
+  srli x6, x6, 52
+  add x9, x9, x6
+  addi x15, x15, 16
 
 // Store
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test31_store:
-  sw a2, 20(a5)
+  sw x15, 20(x9)
   nop
 
 // Load
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test31_load:
-  lw a3, 20(a5)
+  lw x8, 20(x9)
   nop
 
 // Execute
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test31_exec:
-  jalr ra, a5, 0
+  jalr ra, x9, 0
   nop
 
-  # Check if x12 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x12, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test31_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test31_store_str)
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test31_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test31_load_str)
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test31_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test31_store_str)
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test31_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test31_load_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x14, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test31_exec, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test31_exec_str)
 
@@ -1313,32 +1312,32 @@ Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test31_exec:
   PTE_SETUP_SV57(rvtest_data_1, (PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL0)
   sfence.vma
 
-  LI(a5, (va_data >> 12) << 12)
-  LA(a0, rvtest_data_1)
-  slli a0, a0, 52
-  srli a0, a0, 52
-  add a5, a5, a0
-  addi a2, a2, 16
+  LI(x9, (va_data >> 12) << 12)
+  LA(x6, rvtest_data_1)
+  slli x6, x6, 52
+  srli x6, x6, 52
+  add x9, x9, x6
+  addi x15, x15, 16
 
 // Store
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test32_store:
-  sw a2, 20(a5)
+  sw x15, 20(x9)
   nop
 
 // Load
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test32_load:
-  lw a3, 20(a5)
+  lw x8, 20(x9)
   nop
 
 // Execute
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test32_exec:
-  jalr ra, a5, 0
+  jalr ra, x9, 0
   nop
 
-  # Check if x12 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x12, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test32_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test32_store_str)
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test32_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test32_load_str)
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test32_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test32_store_str)
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test32_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test32_load_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x14, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test32_exec, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test32_exec_str)
 
@@ -1353,32 +1352,32 @@ Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test32_exec:
   PTE_SETUP_SV57(rvtest_data_1, (PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL0)
   sfence.vma
 
-  LI(a5, (va_data >> 12) << 12)
-  LA(a0, rvtest_data_1)
-  slli a0, a0, 52
-  srli a0, a0, 52
-  add a5, a5, a0
-  addi a2, a2, 16
+  LI(x9, (va_data >> 12) << 12)
+  LA(x6, rvtest_data_1)
+  slli x6, x6, 52
+  srli x6, x6, 52
+  add x9, x9, x6
+  addi x15, x15, 16
 
 // Store
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test33_store:
-  sw a2, 20(a5)
+  sw x15, 20(x9)
   nop
 
 // Load
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test33_load:
-  lw a3, 20(a5)
+  lw x8, 20(x9)
   nop
 
 // Execute
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test33_exec:
-  jalr ra, a5, 0
+  jalr ra, x9, 0
   nop
 
-  # Check if x12 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x12, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test33_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test33_store_str)
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test33_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test33_load_str)
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test33_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test33_store_str)
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test33_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test33_load_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x14, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test33_exec, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test33_exec_str)
 
@@ -1393,32 +1392,32 @@ Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test33_exec:
   PTE_SETUP_SV57(rvtest_data_1, (PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL0)
   sfence.vma
 
-  LI(a5, (va_data >> 12) << 12)
-  LA(a0, rvtest_data_1)
-  slli a0, a0, 52
-  srli a0, a0, 52
-  add a5, a5, a0
-  addi a2, a2, 16
+  LI(x9, (va_data >> 12) << 12)
+  LA(x6, rvtest_data_1)
+  slli x6, x6, 52
+  srli x6, x6, 52
+  add x9, x9, x6
+  addi x15, x15, 16
 
 // Store
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test34_store:
-  sw a2, 20(a5)
+  sw x15, 20(x9)
   nop
 
 // Load
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test34_load:
-  lw a3, 20(a5)
+  lw x8, 20(x9)
   nop
 
 // Execute
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test34_exec:
-  jalr ra, a5, 0
+  jalr ra, x9, 0
   nop
 
-  # Check if x12 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x12, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test34_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test34_store_str)
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test34_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test34_load_str)
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test34_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test34_store_str)
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test34_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test34_load_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x14, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test34_exec, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test34_exec_str)
 
@@ -1433,32 +1432,32 @@ Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test34_exec:
   PTE_SETUP_SV57(rvtest_data_1, (PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL0)
   sfence.vma
 
-  LI(a5, (va_data >> 12) << 12)
-  LA(a0, rvtest_data_1)
-  slli a0, a0, 52
-  srli a0, a0, 52
-  add a5, a5, a0
-  addi a2, a2, 16
+  LI(x9, (va_data >> 12) << 12)
+  LA(x6, rvtest_data_1)
+  slli x6, x6, 52
+  srli x6, x6, 52
+  add x9, x9, x6
+  addi x15, x15, 16
 
 // Store
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test35_store:
-  sw a2, 20(a5)
+  sw x15, 20(x9)
   nop
 
 // Load
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test35_load:
-  lw a3, 20(a5)
+  lw x8, 20(x9)
   nop
 
 // Execute
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test35_exec:
-  jalr ra, a5, 0
+  jalr ra, x9, 0
   nop
 
-  # Check if x12 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x12, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test35_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test35_store_str)
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test35_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test35_load_str)
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test35_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test35_store_str)
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test35_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test35_load_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x14, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test35_exec, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test35_exec_str)
 
@@ -1473,32 +1472,32 @@ Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test35_exec:
   PTE_SETUP_SV57(rvtest_data_1, (PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL0)
   sfence.vma
 
-  LI(a5, (va_data >> 12) << 12)
-  LA(a0, rvtest_data_1)
-  slli a0, a0, 52
-  srli a0, a0, 52
-  add a5, a5, a0
-  addi a2, a2, 16
+  LI(x9, (va_data >> 12) << 12)
+  LA(x6, rvtest_data_1)
+  slli x6, x6, 52
+  srli x6, x6, 52
+  add x9, x9, x6
+  addi x15, x15, 16
 
 // Store
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test36_store:
-  sw a2, 20(a5)
+  sw x15, 20(x9)
   nop
 
 // Load
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test36_load:
-  lw a3, 20(a5)
+  lw x8, 20(x9)
   nop
 
 // Execute
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test36_exec:
-  jalr ra, a5, 0
+  jalr ra, x9, 0
   nop
 
-  # Check if x12 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x12, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test36_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test36_store_str)
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test36_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test36_load_str)
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test36_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test36_store_str)
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test36_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test36_load_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x14, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test36_exec, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test36_exec_str)
 
@@ -1513,32 +1512,32 @@ Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test36_exec:
   PTE_SETUP_SV57(rvtest_data_1, (PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL0)
   sfence.vma
 
-  LI(a5, (va_data >> 12) << 12)
-  LA(a0, rvtest_data_1)
-  slli a0, a0, 52
-  srli a0, a0, 52
-  add a5, a5, a0
-  addi a2, a2, 16
+  LI(x9, (va_data >> 12) << 12)
+  LA(x6, rvtest_data_1)
+  slli x6, x6, 52
+  srli x6, x6, 52
+  add x9, x9, x6
+  addi x15, x15, 16
 
 // Store
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test37_store:
-  sw a2, 20(a5)
+  sw x15, 20(x9)
   nop
 
 // Load
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test37_load:
-  lw a3, 20(a5)
+  lw x8, 20(x9)
   nop
 
 // Execute
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test37_exec:
-  jalr ra, a5, 0
+  jalr ra, x9, 0
   nop
 
-  # Check if x12 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x12, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test37_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test37_store_str)
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test37_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test37_load_str)
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test37_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test37_store_str)
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test37_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test37_load_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x14, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test37_exec, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test37_exec_str)
 
@@ -1553,32 +1552,32 @@ Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test37_exec:
   PTE_SETUP_SV57(rvtest_data_1, (PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL0)
   sfence.vma
 
-  LI(a5, (va_data >> 12) << 12)
-  LA(a0, rvtest_data_1)
-  slli a0, a0, 52
-  srli a0, a0, 52
-  add a5, a5, a0
-  addi a2, a2, 16
+  LI(x9, (va_data >> 12) << 12)
+  LA(x6, rvtest_data_1)
+  slli x6, x6, 52
+  srli x6, x6, 52
+  add x9, x9, x6
+  addi x15, x15, 16
 
 // Store
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test38_store:
-  sw a2, 20(a5)
+  sw x15, 20(x9)
   nop
 
 // Load
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test38_load:
-  lw a3, 20(a5)
+  lw x8, 20(x9)
   nop
 
 // Execute
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test38_exec:
-  jalr ra, a5, 0
+  jalr ra, x9, 0
   nop
 
-  # Check if x12 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x12, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test38_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test38_store_str)
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test38_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test38_load_str)
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test38_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test38_store_str)
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test38_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test38_load_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x14, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test38_exec, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test38_exec_str)
 
@@ -1593,32 +1592,32 @@ Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test38_exec:
   PTE_SETUP_SV57(rvtest_data_1, (PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL0)
   sfence.vma
 
-  LI(a5, (va_data >> 12) << 12)
-  LA(a0, rvtest_data_1)
-  slli a0, a0, 52
-  srli a0, a0, 52
-  add a5, a5, a0
-  addi a2, a2, 16
+  LI(x9, (va_data >> 12) << 12)
+  LA(x6, rvtest_data_1)
+  slli x6, x6, 52
+  srli x6, x6, 52
+  add x9, x9, x6
+  addi x15, x15, 16
 
 // Store
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test39_store:
-  sw a2, 20(a5)
+  sw x15, 20(x9)
   nop
 
 // Load
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test39_load:
-  lw a3, 20(a5)
+  lw x8, 20(x9)
   nop
 
 // Execute
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test39_exec:
-  jalr ra, a5, 0
+  jalr ra, x9, 0
   nop
 
-  # Check if x12 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x12, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test39_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test39_store_str)
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test39_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test39_load_str)
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test39_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test39_store_str)
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test39_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test39_load_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x14, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test39_exec, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test39_exec_str)
 
@@ -1633,32 +1632,32 @@ Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test39_exec:
   PTE_SETUP_SV57(rvtest_data_1, (PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL0)
   sfence.vma
 
-  LI(a5, (va_data >> 12) << 12)
-  LA(a0, rvtest_data_1)
-  slli a0, a0, 52
-  srli a0, a0, 52
-  add a5, a5, a0
-  addi a2, a2, 16
+  LI(x9, (va_data >> 12) << 12)
+  LA(x6, rvtest_data_1)
+  slli x6, x6, 52
+  srli x6, x6, 52
+  add x9, x9, x6
+  addi x15, x15, 16
 
 // Store
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test40_store:
-  sw a2, 20(a5)
+  sw x15, 20(x9)
   nop
 
 // Load
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test40_load:
-  lw a3, 20(a5)
+  lw x8, 20(x9)
   nop
 
 // Execute
 Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test40_exec:
-  jalr ra, a5, 0
+  jalr ra, x9, 0
   nop
 
-  # Check if x12 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x12, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test40_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test40_store_str)
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test40_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test40_load_str)
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test40_store, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_write_s_test40_store_str)
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test40_load, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_read_s_test40_load_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x14, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test40_exec, Sv_vm_permissions_cg_cp_PTE_rsv_nleaf_exec_s_test40_exec_str)
 
@@ -1677,7 +1676,7 @@ RVTEST_DATA_BEGIN
   .p2align 12
 rvtest_data_1:
   nop
-  addi a4, a2, 4
+  addi x14, x15, 4
   jr ra
   nop
   .word 0xbeefcaf1
