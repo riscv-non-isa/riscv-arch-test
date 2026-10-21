@@ -743,8 +743,8 @@ params:
   # Sdtrig and Zkr seed parameters added for riscv-unified-db#2069 (values from sail.json)
   SSEED_READ_ONLY_ZERO: false
   USEED_READ_ONLY_ZERO: false
-  SDTRIG_NUM_TRIGGERS: 16
-  SDTRIG_BREAKPOINT_REENTRANCY: Use_interrupt_enables
+  SDTRIG_NUM_TRIGGERS: 2
+  SDTRIG_BREAKPOINT_REENTRANCY: No_reentrancy_support
   TCONTROL_IMPLEMENTED: false
   TDATA2_IMPLEMENTED: true
   TDATA3_IMPLEMENTED: true
@@ -754,87 +754,15 @@ params:
   SDTRIG_VS_WRITABLE: true
   SDTRIG_VU_WRITABLE: true
   SCONTEXT_IMPLEMENTED: false
-  SDTRIG_MCONTROL6_SUPPORTED_TRIGGERS:
-    [
-      true,
-      true,
-      true,
-      true,
-      true,
-      true,
-      true,
-      true,
-      true,
-      true,
-      true,
-      true,
-      true,
-      true,
-      true,
-      true,
-    ]
-  SDTRIG_ICOUNT_SUPPORTED_TRIGGERS:
-    [
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-    ]
-  SDTRIG_ITRIGGER_SUPPORTED_TRIGGERS:
-    [
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-    ]
-  SDTRIG_ETRIGGER_SUPPORTED_TRIGGERS:
-    [
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-    ]
+  SDTRIG_MCONTROL6_SUPPORTED_TRIGGERS: [true, true]
+  SDTRIG_ICOUNT_SUPPORTED_TRIGGERS: [false, false]
+  SDTRIG_ITRIGGER_SUPPORTED_TRIGGERS: [false, false]
+  SDTRIG_ETRIGGER_SUPPORTED_TRIGGERS: [false, false]
   SDTRIG_MCONTROL6_MASKMAX6: 63
-  SDTRIG_MAX_CHAIN_LENGTH: 4
-  SDTRIG_MCONTROL6_MATCH_LEGAL_VALUES: [0, 1, 2, 3, 4, 5, 8, 9, 12, 13]
-  SDTRIG_MCONTROL6_SIZE_LEGAL_VALUES: [0, 1, 2, 3, 4, 5, 6]
-  SDTRIG_MCONTROL6_SELECT_WRITABLE: true
+  SDTRIG_MAX_CHAIN_LENGTH: 1
+  SDTRIG_MCONTROL6_MATCH_LEGAL_VALUES: [0]
+  SDTRIG_MCONTROL6_SIZE_LEGAL_VALUES: [0, 1, 2, 3, 5]
+  SDTRIG_MCONTROL6_SELECT_WRITABLE: false
   SDTRIG_MCONTROL6_EXECUTE_WRITABLE: true
   SDTRIG_MCONTROL6_LOAD_WRITABLE: true
   SDTRIG_MCONTROL6_STORE_WRITABLE: true
