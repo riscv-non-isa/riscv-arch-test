@@ -207,8 +207,6 @@ UDB_DEFINES = [
     # ICOUNT params
     *[f"#define UDB_ICOUNT_TRIG{n}_AVAILABLE" for n in range(UDB_NUM_TRIGGERS)],
     "//#define UDB_ICOUNT_HARDWIRED_1",
-    # ICOUNT params
-    *[f"#define UDB_ICOUNT_TRIG{n}_AVAILABLE" for n in range(UDB_NUM_TRIGGERS)],
     # TODO: Replace with UDB supported Etrigger and Exceptions parameters
     *[f"#define UDB_SDTRIG_ETRIGGER_SUPPORTED{i}" for i in range(UDB_NUM_TRIGGERS)],
     *[f"#define UDB_EXCEPTION_{name.upper()}_SUPPORTED" for name in ETRIGGER_EXCODE_NAMES.values()],
@@ -480,7 +478,7 @@ def _cause_exception(
             raise ValueError("addr_reg is required for instruction access fault")
 
         return [
-            f"la x{addr_reg}, RVMODEL_ACCESS_FAULT_ADDRESS",
+            f"LA(x{addr_reg}, RVMODEL_ACCESS_FAULT_ADDRESS)",
             f"jalr ra, 0(x{addr_reg})",
             "nop # spacer; trap handler returns here",
         ]
