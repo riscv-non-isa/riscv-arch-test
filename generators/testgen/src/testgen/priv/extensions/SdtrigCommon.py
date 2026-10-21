@@ -18,14 +18,10 @@ from testgen.data.test_chunk import TestChunk
 from testgen.priv.extensions.InterruptsCommon import guard_symbol
 from testgen.priv.registry import add_priv_test_generator
 
-# data
-PERM_XSL = ("exec", "store", "load")
-SIZE_ALL = ("any", "b8", "b16", "b32", "b48", "b64", "b128")
+### DATA
+
+# ── Trigger module ──────────────────────────────────────────────────────────
 UDB_NUM_TRIGGERS = 2  # TODO: Relate to UDB
-NOP = 0x00000013
-C_NOP = 0x0001
-ADDI_HINT = 0x00008013  # TODO Uses because U mode calls trigger on nops emitted by tsbi callss
-TDATA2_NOFIRE = 0x2
 TDATA_CSRS = ("tdata1", "tdata2", "tdata3")
 # tdata1.type values
 TRIG_TYPE_ICOUNT = 3
@@ -35,15 +31,22 @@ MCONTROL6_TYPE = 6
 TDATA1_TYPE_DISABLED = 15
 # types cp_csr_access_common bins (the testplan's {3, 4, 5, 6, 15}); the others are legacy, reserved or custom
 ACCESS_TYPES = (TRIG_TYPE_ICOUNT, TRIG_TYPE_ITRIGGER, TRIG_TYPE_ETRIGGER, MCONTROL6_TYPE, TDATA1_TYPE_DISABLED)
-# mcontrol6 mode bits; with all five set, bits 26:0 match priv_bits in SdtrigSm_trig_module_reg_cg
+MODE_PRIVBIT = {"Sm": 0b10000, "S": 0b01000, "U": 0b00100, "Vs": 0b00010, "Vu": 0b00001}
+MODE_UDB_LETTER = {"Sm": "M", "S": "S", "U": "U", "Vs": "VS", "Vu": "VU"}
+
+# ── mcontrol6 ───────────────────────────────────────────────────────────────
+# mode bits; with all five set, bits 26:0 match priv_bits in SdtrigSm_trig_module_reg_cg
 MCONTROL6_VS = 1 << 24
 MCONTROL6_VU = 1 << 23
 MCONTROL6_M = 1 << 6
 MCONTROL6_S = 1 << 4
 MCONTROL6_U = 1 << 3
 MCONTROL6_ALL_PRIV = MCONTROL6_VS | MCONTROL6_VU | MCONTROL6_M | MCONTROL6_S | MCONTROL6_U
-MODE_PRIVBIT = {"Sm": 0b10000, "S": 0b01000, "U": 0b00100, "Vs": 0b00010, "Vu": 0b00001}
-MODE_UDB_LETTER = {"Sm": "M", "S": "S", "U": "U", "Vs": "VS", "Vu": "VU"}
+XSL_UDB_NAMES = ("LOAD", "STORE", "EXECUTE")  # xsl bits 0, 1, 2
+SIZE_ALL = ("any", "b8", "b16", "b32", "b48", "b64", "b128")
+C_NOP = 0x0001
+ADDI_HINT = 0x00008013  # TODO: used because U-mode fires triggers on the nops that T-SBI calls emit
+TDATA2_NOFIRE = 0x2
 # tdata2 values for the CBO tests, which operate on the block at scratch. scratch is .p2align 8 (rvtest_setup.h),
 # so for any cache block of at most 256 bytes it is the block base, and the three compare values that
 # norm:Sdtrig_cache_compare allows (every byte of the block / block base / effective address) all match
@@ -55,36 +58,49 @@ CBO_TDATA2 = (
     ("0", 0),
 )
 
-_PAGE_FAULT_CODES = (12, 13, 15)
-# Page faults need translation: Sv39 on RV64, Sv32 on RV32. A hart without it may have no satp (no S-mode), and
-# VA_TARGET is then a physical address that may be RAM (it is on rv32 harts), so no page fault can be raised.
-_PAGING_GUARD = "#if (__riscv_xlen == 64 && defined(SV39_SUPPORTED)) || (__riscv_xlen == 32 && defined(SV32_SUPPORTED))"
+# ── Load/store instructions ─────────────────────────────────────────────────
+ZAAMO_OPS = ("amoswap", "amoadd", "amoand", "amoor", "amoxor", "amomax", "amomaxu", "amomin", "amominu")
+_RV64_ONLY = ["#if __riscv_xlen == 64"]
+# instruction -> the #if/#ifdef lines it needs
+INSTR_IFDEFS: dict[str, list[str]] = {
+    **{i: [] for i in ("sb", "sh", "sw", "lb", "lbu", "lh", "lhu", "lw", "lr.w", "sc.w")},
+    **{f"{op}.w": [] for op in ZAAMO_OPS},
+    **{i: _RV64_ONLY for i in ("lr.d", "sc.d", "sd", "lwu", "ld")},
+    **{f"{op}.d": _RV64_ONLY for op in ZAAMO_OPS},
+    **{
+        i: [f"#ifdef {ext}_SUPPORTED"]
+        for ext, instrs in (
+            ("F", ("fsw", "flw")),
+            ("D", ("fsd", "fld")),
+            ("ZFH", ("fsh", "flh")),
+            ("Q", ("fsq", "flq")),
+            ("ZCA", ("c.sw", "c.lw", "c.swsp", "c.lwsp")),
+            ("ZCB", ("c.sb", "c.sh", "c.lbu", "c.lh", "c.lhu")),
+            ("ZCF", ("c.fsw", "c.flw", "c.fswsp", "c.flwsp")),
+            ("ZCD", ("c.fsd", "c.fld", "c.fsdsp", "c.fldsp")),
+        )
+        for i in instrs
+    },
+    **{i: ["#ifdef ZCA_SUPPORTED", *_RV64_ONLY] for i in ("c.sd", "c.ld", "c.sdsp", "c.ldsp")},
+}
+LRSC_SENTINEL = 0xBAD5EED  # preloaded into the lr/sc rd: no load of scratch or SC result writes it
+LRSC_SIG_KEY = 0x5A5A5A5A  # xor'd into recorded lr/sc words so none equals 0 or dataval, which a data trigger may watch
 
-# MPRV=1, MPP=U: next M-mode load/store is translated as U-mode (needed for codes 13/15 when mode="Sm").
-_MSTATUS_MPP_MASK = 0x1800
-_MSTATUS_MPRV = 0x20000
-
-VA_TARGET_RV32 = 0x90407000
-VA2_TARGET_RV32 = 0x90807000
-VA_TARGET_RV64 = 0x140802000
-VA2_TARGET_RV64 = 0x180802000
-
-_PTE_INVALID = "PTE_D | PTE_A | PTE_U | PTE_X | PTE_W | PTE_R"  # no PTE_V
-# Backing page the invalid target PTE points at
-_PF_DATA_SECTION = (".pushsection .data", ".p2align 12", "pf_target_page:", "jr ra", ".zero 4096", ".popsection")
+# ── Address translation ─────────────────────────────────────────────────────
+# cp_tdata2_translate: (name, XLEN, VA width, satp setup, superpage PTE macro, root level, alias VA, superpage shift).
+# The alias is the last root slot, so it is a negative (sign-extended) VA and never the boot identity map's slot.
+_XLATE_MODES = (
+    ("sv39", 64, 39, "SATP_SETUP_RV64(sv39)", "SUPERPAGE_PTE_SETUP_SV39", "LEVEL2", 0xFFFFFFFFC0000000, 30),
+    ("sv48", 64, 48, "SATP_SETUP_RV64(sv48)", "SUPERPAGE_PTE_SETUP_SV48", "LEVEL3", 0xFFFFFF8000000000, 39),
+    ("sv57", 64, 57, "SATP_SETUP_RV64(sv57)", "SUPERPAGE_PTE_SETUP_SV57", "LEVEL4", 0xFFFF000000000000, 48),
+    ("sv32", 32, 32, "SATP_SETUP_SV32", "SUPERPAGE_PTE_SETUP_SV32", "LEVEL1", 0xFFC00000, 22),
+)
+_PTE_SPAGE = "PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V"
 _PTE_UPAGE = "PTE_D | PTE_A | PTE_U | PTE_X | PTE_W | PTE_R | PTE_V"
+_PTE_INVALID = "PTE_D | PTE_A | PTE_U | PTE_X | PTE_W | PTE_R"  # no PTE_V
 
-# Codes where the exception itself is raised (match case) in every mode. ipf is not raisable in Sm.
-_ETRIGGER_BASE_CODES = (1, 2, 5, 7, 12, 13, 15)
-# Codes tested with a mismatch case only (an illegal instruction is raised while tdata2 selects the code),
-# because the code itself cannot be raised portably:
-#   0 iam: jalr clears bit 0, and with Zca it cannot occur. 3 bp: medeleg[3]=0 sends ebreak to M.
-#   4/6 lam/sam: Spike, Sail and Whisper handle misaligned accesses in hardware.
-_ETRIGGER_MISMATCH_ONLY_CODES = (0, 3, 4, 6)
-_ETRIGGER_ECALL_CODE = {"Sm": 11, "S": 9, "U": 8}  # each mode raises only its own ecall
-_ETRIGGER_NOT_DELEGATABLE = (3, 11)  # medeleg[3] must stay 0 (trigger breakpoint goes to M); medeleg[11] is read-only 0
-
-# maps mcause exception code -> short mnemonic used in binnames / ifdef names
+# ── Exceptions (etrigger) ───────────────────────────────────────────────────
+# mcause exception code -> short mnemonic used in binnames / ifdef names
 ETRIGGER_EXCODE_NAMES = {
     0: "iam",  # instruction address misaligned
     1: "iacc",  # instruction access fault
@@ -101,7 +117,74 @@ ETRIGGER_EXCODE_NAMES = {
     13: "lpf",  # load page fault
     15: "spf",  # store/AMO page fault
 }
+# Codes where the exception itself is raised (match case) in every mode. ipf is not raisable in Sm.
+_ETRIGGER_BASE_CODES = (1, 2, 5, 7, 12, 13, 15)
+# Codes tested with a mismatch case only (an illegal instruction is raised while tdata2 selects the code),
+# because the code itself cannot be raised portably:
+#   0 iam: jalr clears bit 0, and with Zca it cannot occur. 3 bp: medeleg[3]=0 sends ebreak to M.
+#   4/6 lam/sam: Spike, Sail and Whisper handle misaligned accesses in hardware.
+_ETRIGGER_MISMATCH_ONLY_CODES = (0, 3, 4, 6)
+_ETRIGGER_ECALL_CODE = {"Sm": 11, "S": 9, "U": 8}  # each mode raises only its own ecall
+_ETRIGGER_NOT_DELEGATABLE = (3, 11)  # medeleg[3] must stay 0 (trigger breakpoint goes to M); medeleg[11] is read-only 0
+_PAGE_FAULT_CODES = (12, 13, 15)
+# Page faults need translation: Sv39 on RV64, Sv32 on RV32. A hart without it may have no satp (no S-mode), and
+# VA_TARGET is then a physical address that may be RAM (it is on rv32 harts), so no page fault can be raised.
+_PAGING_GUARD = "#if (__riscv_xlen == 64 && defined(SV39_SUPPORTED)) || (__riscv_xlen == 32 && defined(SV32_SUPPORTED))"
+VA_TARGET_RV32 = 0x90407000
+VA2_TARGET_RV32 = 0x90807000
+VA_TARGET_RV64 = 0x140802000
+VA2_TARGET_RV64 = 0x180802000
+# Backing page the invalid target PTE points at
+_PF_DATA_SECTION = (".pushsection .data", ".p2align 12", "pf_target_page:", "jr ra", ".zero 4096", ".popsection")
+# MPRV=1, MPP=U: next M-mode load/store is translated as U-mode (needed for codes 13/15 when mode="Sm").
+_MSTATUS_MPP_MASK = 0x1800
+_MSTATUS_MPRV = 0x20000
 
+# ── Interrupts (itrigger) ───────────────────────────────────────────────────
+INTERRUPT_CODES = (1, 3, 5, 7, 9, 11, 13)  # SSI, MSI, STI, MTI, SEI, MEI, LCOFI
+LOWER_MODE_INTERRUPT_CODES = (1, 5, 9, 13)
+TIMER_INTERRUPT_CODE = 7
+# interrupt code -> ACT4 RVTEST_{SET,CLR}_<macro>_INT name, and the interrupt type guard_symbol() takes
+_INT_MACRO = {1: "SSW", 3: "MSW", 5: "STIME", 7: "MTIME", 9: "SEXT", 11: "MEXT", 13: "LCOFI"}
+_INT_TYPE = {1: "SSI", 3: "MSI", 5: "STI", 7: "MTI", 9: "SEI", 11: "MEI", 13: "LCOFI"}
+
+# ── textra (tdata3) ─────────────────────────────────────────────────────────
+_TEXTRA_DATA = 0x12345678  # the textra mcontrol6 cases' store data match (_xlen_value widens it on RV64)
+_MCONTEXT_TEST_VALUE_RV32 = 0b010101
+_MCONTEXT_TEST_VALUE_RV64 = 0x1AAA
+_SCONTEXT_TEST_VALUE_RV32 = 0x1234
+_SCONTEXT_TEST_VALUE_RV64 = 0x12345678
+# (case name, rv32 mhvalue, rv64 mhvalue), per the test plan
+_TEXTRA_MCONTEXT_CASES = (
+    ("match", 0b010101, 0x1AAA),
+    ("zero", 0b000000, 0x0000),
+    ("other", 0b111111, 0x0AAA),
+)
+# cp_textra_scontext (#2591): svalue x sbytemask; a masked byte is ignored in the compare
+_TEXTRA_SCONTEXT_RV32 = [(sv, m) for sv in (0x0000, 0x0034, 0x1200, 0x1234) for m in (0b00, 0b01, 0b10, 0b11)]
+_TEXTRA_SCONTEXT_RV64 = [
+    (sv, m)
+    for sv in (0x00000000, 0x12345600, 0x12340078, 0x12005678, 0x00345678, 0x12345678)
+    for m in (0b0000, 0b0001, 0b0010, 0b0100, 0b1000, 0b1111)
+]
+# cp_textra_double_context (#2646): mcontext and scontext matched together
+_DOUBLE_MCONTEXT = (0b111111, 0x1FFF)
+_DOUBLE_SCONTEXT = (0xFFFF, 0xFFFFFFFF)
+# cp_textra_asid: satp.ASID = X = 2^ASID_WIDTH - 2, and svalue (an assembler expression in X and ASIDMAX, which
+# is 9 on RV32 and 16 on RV64) gives a match, a miss, a near miss, and a match whose svalue bits above ASIDMAX
+# are ignored (norm:Sdtrig_textra32_sselect_asid3)
+_ASID_X = "((1 << UDB_ASID_WIDTH) - 2)"
+_TEXTRA_ASID_CASES = (
+    ("match", "X", False),
+    ("zero", "0", False),
+    ("bit0_flipped", "(X ^ 1)", False),
+    ("above_asidmax", "(X | (1 << ASIDMAX))", False),
+    # sbytemask = all ones is ignored with sselect=2 (norm:Sdtrig_textra32_byte_mask_applies), so it hides no mismatch
+    ("match_sbytemask", "X", True),
+    ("bit0_flipped_sbytemask", "(X ^ 1)", True),
+)
+
+# ── UDB parameters ──────────────────────────────────────────────────────────
 # TODO: replace this with UDB-autogenerated parameters.
 UDB_DEFINES = [
     f"#define UDB_NUM_TRIGGERS {UDB_NUM_TRIGGERS}",
@@ -143,60 +226,8 @@ UDB_DEFINES = [
     "#define UDB_ITRIGGER_TRIG1_AVAILABLE",
 ]
 
-XSL_UDB_NAMES = ("LOAD", "STORE", "EXECUTE")  # mcontrol6 xsl bits 0, 1, 2
 
-_TEXTRA_DATA = 0x12345678  # the textra mcontrol6 cases' store data match (_xlen_value widens it on RV64)
-_MCONTEXT_TEST_VALUE_RV32 = 0b010101
-_MCONTEXT_TEST_VALUE_RV64 = 0x1AAA
-_SCONTEXT_TEST_VALUE_RV32 = 0x1234
-_SCONTEXT_TEST_VALUE_RV64 = 0x12345678
-# cp_textra_scontext (#2591): svalue x sbytemask; a masked byte is ignored in the compare
-_TEXTRA_SCONTEXT_RV32 = [(sv, m) for sv in (0x0000, 0x0034, 0x1200, 0x1234) for m in (0b00, 0b01, 0b10, 0b11)]
-_TEXTRA_SCONTEXT_RV64 = [
-    (sv, m)
-    for sv in (0x00000000, 0x12345600, 0x12340078, 0x12005678, 0x00345678, 0x12345678)
-    for m in (0b0000, 0b0001, 0b0010, 0b0100, 0b1000, 0b1111)
-]
-# cp_textra_double_context (#2646): mcontext and scontext matched together
-_DOUBLE_MCONTEXT = (0b111111, 0x1FFF)
-_DOUBLE_SCONTEXT = (0xFFFF, 0xFFFFFFFF)
-
-# cp_textra_asid: satp.ASID = X = 2^ASID_WIDTH - 2, and svalue (an assembler expression in X and ASIDMAX, which
-# is 9 on RV32 and 16 on RV64) gives a match, a miss, a near miss, and a match whose svalue bits above ASIDMAX
-# are ignored (norm:Sdtrig_textra32_sselect_asid3)
-_ASID_X = "((1 << UDB_ASID_WIDTH) - 2)"
-_TEXTRA_ASID_CASES = (
-    ("match", "X", False),
-    ("zero", "0", False),
-    ("bit0_flipped", "(X ^ 1)", False),
-    ("above_asidmax", "(X | (1 << ASIDMAX))", False),
-    # sbytemask = all ones is ignored with sselect=2 (norm:Sdtrig_textra32_byte_mask_applies), so it hides no mismatch
-    ("match_sbytemask", "X", True),
-    ("bit0_flipped_sbytemask", "(X ^ 1)", True),
-)
-
-# (case name, rv32 mhvalue, rv64 mhvalue), per the test plan
-_TEXTRA_MCONTEXT_CASES = (
-    ("match", 0b010101, 0x1AAA),
-    ("zero", 0b000000, 0x0000),
-    ("other", 0b111111, 0x0AAA),
-)
-
-
-LRSC_SENTINEL = 0xBAD5EED  # preloaded into the lr/sc rd: no load of scratch or SC result writes it
-LRSC_SIG_KEY = 0x5A5A5A5A  # xor'd into recorded lr/sc words so none equals 0 or dataval, which a data trigger may watch
-# cp_tdata2_translate: (name, XLEN, VA width, satp setup, superpage PTE macro, root level, alias VA, superpage shift).
-# The alias is the last root slot, so it is a negative (sign-extended) VA and never the boot identity map's slot.
-_XLATE_MODES = (
-    ("sv39", 64, 39, "SATP_SETUP_RV64(sv39)", "SUPERPAGE_PTE_SETUP_SV39", "LEVEL2", 0xFFFFFFFFC0000000, 30),
-    ("sv48", 64, 48, "SATP_SETUP_RV64(sv48)", "SUPERPAGE_PTE_SETUP_SV48", "LEVEL3", 0xFFFFFF8000000000, 39),
-    ("sv57", 64, 57, "SATP_SETUP_RV64(sv57)", "SUPERPAGE_PTE_SETUP_SV57", "LEVEL4", 0xFFFF000000000000, 48),
-    ("sv32", 32, 32, "SATP_SETUP_SV32", "SUPERPAGE_PTE_SETUP_SV32", "LEVEL1", 0xFFC00000, 22),
-)
-_PTE_SPAGE = "PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V"
-INTERRUPT_CODES = (1, 3, 5, 7, 9, 11, 13)  # SSI, MSI, STI, MTI, SEI, MEI, LCOFI
-LOWER_MODE_INTERRUPT_CODES = (1, 5, 9, 13)
-TIMER_INTERRUPT_CODE = 7
+### HELPERS
 
 
 def _type_guard(trig_type: int, trig_num: int) -> str | None:
@@ -250,84 +281,6 @@ def _xsl_ifdefs(xsl: int) -> list[str]:
                 prefix = "\n" if not ifdefs else ""
                 ifdefs.append(f"{prefix}#ifdef UDB_SDTRIG_MCONTROL6_{name}_AVAILABLE")
     return ifdefs
-
-
-INSTR_IFDEFS = {
-    "sb": [],
-    "sh": [],
-    "sw": [],
-    "lb": [],
-    "lbu": [],
-    "lh": [],
-    "lhu": [],
-    "lw": [],
-    "lr.w": [],
-    "sc.w": [],
-    "amoswap.w": [],
-    "amoadd.w": [],
-    "amoand.w": [],
-    "amoor.w": [],
-    "amoxor.w": [],
-    "amomax.w": [],
-    "amomaxu.w": [],
-    "amomin.w": [],
-    "amominu.w": [],
-    "lr.d": ["#if __riscv_xlen == 64"],
-    "sc.d": ["#if __riscv_xlen == 64"],
-    "amoswap.d": ["#if __riscv_xlen == 64"],
-    "amoadd.d": ["#if __riscv_xlen == 64"],
-    "amoand.d": ["#if __riscv_xlen == 64"],
-    "amoor.d": ["#if __riscv_xlen == 64"],
-    "amoxor.d": ["#if __riscv_xlen == 64"],
-    "amomax.d": ["#if __riscv_xlen == 64"],
-    "amomaxu.d": ["#if __riscv_xlen == 64"],
-    "amomin.d": ["#if __riscv_xlen == 64"],
-    "amominu.d": ["#if __riscv_xlen == 64"],
-    "sd": ["#if __riscv_xlen == 64"],
-    "lwu": ["#if __riscv_xlen == 64"],
-    "ld": ["#if __riscv_xlen == 64"],
-    "fsw": ["#ifdef F_SUPPORTED"],
-    "flw": ["#ifdef F_SUPPORTED"],
-    "fsd": ["#ifdef D_SUPPORTED"],
-    "fld": ["#ifdef D_SUPPORTED"],
-    "fsh": ["#ifdef ZFH_SUPPORTED"],
-    "flh": ["#ifdef ZFH_SUPPORTED"],
-    "fsq": ["#ifdef Q_SUPPORTED"],
-    "flq": ["#ifdef Q_SUPPORTED"],
-    "c.sw": ["#ifdef ZCA_SUPPORTED"],
-    "c.lw": ["#ifdef ZCA_SUPPORTED"],
-    "c.swsp": ["#ifdef ZCA_SUPPORTED"],
-    "c.lwsp": ["#ifdef ZCA_SUPPORTED"],
-    "c.sd": ["#ifdef ZCA_SUPPORTED", "#if __riscv_xlen == 64"],
-    "c.ld": ["#ifdef ZCA_SUPPORTED", "#if __riscv_xlen == 64"],
-    "c.sdsp": ["#ifdef ZCA_SUPPORTED", "#if __riscv_xlen == 64"],
-    "c.ldsp": ["#ifdef ZCA_SUPPORTED", "#if __riscv_xlen == 64"],
-    "c.sb": ["#ifdef ZCB_SUPPORTED"],
-    "c.sh": ["#ifdef ZCB_SUPPORTED"],
-    "c.lbu": ["#ifdef ZCB_SUPPORTED"],
-    "c.lh": ["#ifdef ZCB_SUPPORTED"],
-    "c.lhu": ["#ifdef ZCB_SUPPORTED"],
-    "c.fsw": ["#ifdef ZCF_SUPPORTED"],
-    "c.flw": ["#ifdef ZCF_SUPPORTED"],
-    "c.fswsp": ["#ifdef ZCF_SUPPORTED"],
-    "c.flwsp": ["#ifdef ZCF_SUPPORTED"],
-    "c.fsd": ["#ifdef ZCD_SUPPORTED"],
-    "c.fld": ["#ifdef ZCD_SUPPORTED"],
-    "c.fsdsp": ["#ifdef ZCD_SUPPORTED"],
-    "c.fldsp": ["#ifdef ZCD_SUPPORTED"],
-}
-
-ZAAMO_OPS = (
-    "amoswap",
-    "amoadd",
-    "amoand",
-    "amoor",
-    "amoxor",
-    "amomax",
-    "amomaxu",
-    "amomin",
-    "amominu",
-)
 
 
 def _add_tc(test_data: TestData, binname: str, coverpoint: str, covergroup: str) -> str:
@@ -659,26 +612,6 @@ def _cause_interrupt(code: int, mode: str, r1: int) -> list[str]:
     if code == 11:  # machine external interrupt (PLIC MEIP; M-mode only)
         return [f"RVTEST_SET_MEXT_INT_{flavor}"]
     raise ValueError(f"unsupported interrupt code {code}")
-
-
-_INT_MACRO = {
-    1: "SSW",
-    3: "MSW",
-    5: "STIME",
-    7: "MTIME",
-    9: "SEXT",
-    11: "MEXT",
-    13: "LCOFI",
-}
-_INT_TYPE = {
-    1: "SSI",
-    3: "MSI",
-    5: "STI",
-    7: "MTI",
-    9: "SEI",
-    11: "MEI",
-    13: "LCOFI",
-}
 
 
 def _clear_interrupt(code: int, mode: str) -> list[str]:
