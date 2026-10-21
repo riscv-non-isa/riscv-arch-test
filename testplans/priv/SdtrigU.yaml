@@ -17,7 +17,7 @@ coverpoints:
   - name: cp_csr_access_trap_u
     goal: The M-level trigger CSRs are not accessible from U-mode
     description: |-
-      For x in {tselect, tdata1, tdata2, tdata3, tinfo}, and tcontrol if UDB_TCONTROL_AVAILABLE and mcontext if UDB_MCONTEXT_IMPLEMENTED:
+      For x in {tselect, tdata1, tdata2, tdata3, tinfo}, and tcontrol if UDB_TCONTROL_IMPLEMENTED and mcontext if UDB_MCONTEXT_IMPLEMENTED:
       csrr x, then csrw x, directly from U-mode (not through T-SBI)
     expectation: Illegal instruction exception on every access (into S-mode when medeleg[2] = 1, else into M-mode)
     bins: 2 accesses * implemented M-level trigger CSRs (5-7)

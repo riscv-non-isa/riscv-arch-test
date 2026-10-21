@@ -16,11 +16,7 @@ normative_rule_definitions:
   # Accessing trigger CSRs that are not used by any of the implemented triggers must
   # result in an illegal instruction exception.
   - name: Sdtrig_unimp_csr_illegal
-    coverpoint:
-      [
-        "SdtrigSm_trig_module_reg_cg/cp_csr_unimplemented",
-        "Only mcontext and hcontext have presence parameters so far; tcontrol, tdata3 and scontext need TCONTROL_IMPLEMENTED, TDATA3_IMPLEMENTED and SCONTEXT_IMPLEMENTED (riscv-unified-db#2069)",
-      ]
+    coverpoint: ["SdtrigSm_trig_module_reg_cg/cp_csr_unimplemented"]
 
   # M-Mode and Debug Mode accesses to trigger CSRs that are used by any of the
   # implemented triggers must succeed, regardless of the current type of the
@@ -339,11 +335,7 @@ normative_rule_definitions:
   # Attempts to access an unimplemented Trigger Module Register raise an illegal
   # instruction exception.
   - name: Sdtrig_unimplemented_register
-    coverpoint:
-      [
-        "SdtrigSm_trig_module_reg_cg/cp_csr_unimplemented",
-        "Only mcontext and hcontext have presence parameters so far; tcontrol, tdata3 and scontext need TCONTROL_IMPLEMENTED, TDATA3_IMPLEMENTED and SCONTEXT_IMPLEMENTED (riscv-unified-db#2069)",
-      ]
+    coverpoint: ["SdtrigSm_trig_module_reg_cg/cp_csr_unimplemented"]
 
   # The Trigger Module registers, except mscontext, scontext, and hcontext, are only
   # accessible in machine and Debug Mode to prevent untrusted user code from causing
@@ -422,7 +414,8 @@ normative_rule_definitions:
   - name: Sdtrig_tdata1_dmode_type_0
     coverpoint:
       [
-        "Not tested: type 0 means there is no trigger at this tselect, so it can be read only after selecting a nonexistent trigger, whose tselect legalization is implementation-specific; needs SDTRIG_NUM_TRIGGERS (riscv-unified-db#2069)",
+        "SdtrigSm_trig_module_reg_cg/cp_tselect_nonexistent",
+        "tselect is WARL and no DUT here keeps a nonexistent index (Sail 0.16 legalizes it to the last trigger), so the rule is checked only on a hart that keeps it",
       ]
 
   # Both Debug and M-mode can write the tdata registers at the selected tselect.
@@ -442,7 +435,8 @@ normative_rule_definitions:
   - name: Sdtrig_tdata1_data
     coverpoint:
       [
-        "Not tested: type 0 means there is no trigger at this tselect, so it can be read only after selecting a nonexistent trigger, whose tselect legalization is implementation-specific; needs SDTRIG_NUM_TRIGGERS (riscv-unified-db#2069)",
+        "SdtrigSm_trig_module_reg_cg/cp_tselect_nonexistent",
+        "tselect is WARL and no DUT here keeps a nonexistent index (Sail 0.16 legalizes it to the last trigger), so the rule is checked only on a hart that keeps it",
       ]
 
   # This register provides access to the trigger selected by tselect.
@@ -510,11 +504,19 @@ normative_rule_definitions:
   # N. If the bit is set, then that type is supported by the currently selected
   # trigger.
   - name: Sdtrig_tinfo_support
-    coverpoint: ["SdtrigSm_trig_module_reg_cg/cp_tinfo_read_only"]
+    coverpoint:
+      [
+        "SdtrigSm_trig_module_reg_cg/cp_tselect_trigs",
+        "SdtrigSm_trig_module_reg_cg/cp_tinfo_read_only",
+      ]
 
   # If the currently selected trigger doesn't exist, this field contains 1.
   - name: Sdtrig_tinfo_no_trigger
-    coverpoint: ["WARL tselect; nonexistent-trigger reporting not tested"]
+    coverpoint:
+      [
+        "SdtrigSm_trig_module_reg_cg/cp_tselect_nonexistent",
+        "tselect is WARL and no DUT here keeps a nonexistent index (Sail 0.16 legalizes it to the last trigger), so the rule is checked only on a hart that keeps it",
+      ]
 
   # This optional register is only accessible in M-mode and Debug Mode and provides
   # various control bits related to triggers.
@@ -522,9 +524,10 @@ normative_rule_definitions:
     coverpoint:
       [
         "SdtrigSm_access_cg/cp_csr_access_common",
+        "SdtrigSm_trig_module_reg_cg/cp_csr_access_global",
         "SdtrigS_cg/cp_csr_access_trap_s",
         "SdtrigU_cg/cp_csr_access_trap_u",
-        "The tcontrol accesses and bins need UDB_TCONTROL_AVAILABLE (TCONTROL_IMPLEMENTED, riscv-unified-db#2069); from S and U, cp_csr_insufficient_priv of the S and U suites also reads tcontrol (0x7A5) and expects an illegal instruction",
+        "The tcontrol accesses and bins need TCONTROL_IMPLEMENTED; from S and U, cp_csr_insufficient_priv of the S and U suites also reads tcontrol (0x7A5) and expects an illegal instruction",
       ]
 
   # When any trap into M-mode is taken, mpte is set to the value of mte.
@@ -876,7 +879,11 @@ normative_rule_definitions:
   # A chain of triggers must only fire if every trigger in the chain was matched by
   # the same instruction.
   - name: Sdtrig_mcontrol6_chain
-    coverpoint: ["SdtrigSm_mcontrol6_cg/cp_mcontrol6_chain_adr"]
+    coverpoint:
+      [
+        "SdtrigSm_mcontrol6_cg/cp_mcontrol6_chain_adr",
+        "SdtrigSm_mcontrol6_cg/cp_mcontrol6_chain_long",
+      ]
 
   # The Privileged Spec says that breakpoint exceptions that occur on instruction
   # fetches, loads, or stores update the tval CSR with either zero or the faulting
@@ -911,7 +918,7 @@ normative_rule_definitions:
   # All NAPOT ranges between stem:[2^1] and stem:[2^maskmax6] are supported where
   # stem:[maskmax6 >= 1].
   - name: Sdtrig_mcontrol6_napot_range
-    coverpoint: ["NAPOT range support is optional; not required here"]
+    coverpoint: ["SdtrigSm_mcontrol6_cg/cp_mcontrol6_match_napot"]
 
   # If textra32 or textra64 are implemented for this trigger, it only matches when
   # the conditions set there are satisfied.
@@ -1086,7 +1093,11 @@ normative_rule_definitions:
   # While this trigger does not match, it prevents the trigger with the next index
   # from matching.
   - name: Sdtrig_mcontrol6_chain_enabled
-    coverpoint: ["SdtrigSm_mcontrol6_cg/cp_mcontrol6_chain_adr"]
+    coverpoint:
+      [
+        "SdtrigSm_mcontrol6_cg/cp_mcontrol6_chain_adr",
+        "SdtrigSm_mcontrol6_cg/cp_mcontrol6_chain_long",
+      ]
 
   # A trigger chain starts on the first trigger with chain=1 after a trigger with
   # chain=0, or simply on the first trigger if that has chain=1. It ends on the
@@ -1095,7 +1106,11 @@ normative_rule_definitions:
   # final trigger will be taken if and only if all the triggers in the chain match
   # at the same time.
   - name: Sdtrig_mcontrol6_chain_start
-    coverpoint: ["SdtrigSm_mcontrol6_cg/cp_mcontrol6_chain_adr"]
+    coverpoint:
+      [
+        "SdtrigSm_mcontrol6_cg/cp_mcontrol6_chain_adr",
+        "SdtrigSm_mcontrol6_cg/cp_mcontrol6_chain_long",
+      ]
 
   # Because chain affects the next trigger, hardware must zero it in writes to
   # mcontrol6 that set dmode to 0 if the next trigger has dmode of 1.
@@ -1173,7 +1188,8 @@ normative_rule_definitions:
   - name: Sdtrig_mcontrol6_comparisons
     coverpoint:
       [
-        "Compares at a narrower current-mode XLEN need a writable UXL/SXL, and the lower-N-bit compare for select=1 needs mcontrol6 size values (riscv-unified-db#2069); not tested",
+        "SdtrigSm_mcontrol6_cg/cp_mcontrol6_size_data",
+        "The lower-N-bit compare of tdata2 is not tested: Sail 0.16 compares the zero-extended access data with all of tdata2. Compares at a narrower current-mode XLEN need a writable UXL/SXL; not tested",
       ]
 
   # When set, enable this trigger in M-mode.
@@ -1322,7 +1338,7 @@ normative_rule_definitions:
   # is a write to the icount trigger. In that case pending might or might not become
   # set if count was 1. Afterwards count contains the newly written value.
   - name: Sdtrig_icount_exception
-    coverpoint: ["WARL write-any-read-legal behavior not separately tested"]
+    coverpoint: ["SdtrigSm_icount_cg/cp_icount_self_write"]
 
   # When count is 0 it stays at 0 until explicitly written.
   - name: Sdtrig_icount_count_zero
