@@ -128,17 +128,8 @@
 `ifdef MISALIGN_COVERAGE
   `include "Misalign_coverage.svh"
 `endif
-`ifdef MISALIGND_COVERAGE
-  `include "MisalignD_coverage.svh"
-`endif
-`ifdef MISALIGNF_COVERAGE
-  `include "MisalignF_coverage.svh"
-`endif
 `ifdef MISALIGNV_COVERAGE
   `include "MisalignV_coverage.svh"
-`endif
-`ifdef MISALIGNZCA_COVERAGE
-  `include "MisalignZca_coverage.svh"
 `endif
 `ifdef PMPF_COVERAGE
   `include "PMPF_coverage.svh"
@@ -167,20 +158,17 @@
 `ifdef S_COVERAGE
   `include "S_coverage.svh"
 `endif
+`ifdef SDTRIGS_COVERAGE
+  `include "SdtrigS_coverage.svh"
+`endif
 `ifdef SDTRIGSM_COVERAGE
   `include "SdtrigSm_coverage.svh"
 `endif
+`ifdef SDTRIGU_COVERAGE
+  `include "SdtrigU_coverage.svh"
+`endif
 `ifdef SM_COVERAGE
   `include "Sm_coverage.svh"
-`endif
-`ifdef SMF_COVERAGE
-  `include "SmF_coverage.svh"
-`endif
-`ifdef SMV_COVERAGE
-  `include "SmV_coverage.svh"
-`endif
-`ifdef SMVF_COVERAGE
-  `include "SmVF_coverage.svh"
 `endif
 `ifdef SMMPM_COVERAGE
   `include "Smmpm_coverage.svh"
@@ -302,12 +290,6 @@
 `ifdef U_COVERAGE
   `include "U_coverage.svh"
 `endif
-`ifdef UF_COVERAGE
-  `include "UF_coverage.svh"
-`endif
-`ifdef UV_COVERAGE
-  `include "UV_coverage.svh"
-`endif
 `ifdef VF16_COVERAGE
   `include "Vf16_coverage.svh"
 `endif
@@ -316,6 +298,9 @@
 `endif
 `ifdef VF64_COVERAGE
   `include "Vf64_coverage.svh"
+`endif
+`ifdef VF8_COVERAGE
+  `include "Vf8_coverage.svh"
 `endif
 `ifdef VLS16_COVERAGE
   `include "Vls16_coverage.svh"
@@ -416,6 +401,9 @@
 `ifdef ZFHMIN_COVERAGE
   `include "Zfhmin_coverage.svh"
 `endif
+`ifdef ZIBI_COVERAGE
+  `include "Zibi_coverage.svh"
+`endif
 `ifdef ZIC64BZICBOZ_COVERAGE
   `include "Zic64bZicboz_coverage.svh"
 `endif
@@ -430,9 +418,6 @@
 `endif
 `ifdef ZICFILPS_COVERAGE
   `include "ZicfilpS_coverage.svh"
-`endif
-`ifdef ZICFILPSU_COVERAGE
-  `include "ZicfilpSU_coverage.svh"
 `endif
 `ifdef ZICFILPSM_COVERAGE
   `include "ZicfilpSm_coverage.svh"

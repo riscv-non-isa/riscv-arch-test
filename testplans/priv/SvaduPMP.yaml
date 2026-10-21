@@ -12,7 +12,8 @@ coverpoints:
       = 7 bins on RV64, 2 on RV32
     id: Svadu_hw_update_a_d_bits pmp_check_pagetable_access
     rules:
-      - "[norm:Svadu_hw_update_a_d_bits] [norm:pmp_check_pagetable_access]"
+      - Svadu_hw_update_a_d_bits
+      - pmp_check_pagetable_access
   - name: Abit_unset_pmpW_unset_exec_u
     goal: Verify PMP applies to the hardware PTE.A update of an instruction fetch from U-mode
     description: "U-mode: menvcfg.ADUE=1; page tables in a PMP region with W=0; leaf PTE with A=0 and PTE.U=1; satp points at each top-level table in turn. Jump (jalr) into the page through va_data."
@@ -22,7 +23,8 @@ coverpoints:
       = 7 bins on RV64, 2 on RV32
     id: Svadu_hw_update_a_d_bits pmp_check_pagetable_access
     rules:
-      - "[norm:Svadu_hw_update_a_d_bits] [norm:pmp_check_pagetable_access]"
+      - Svadu_hw_update_a_d_bits
+      - pmp_check_pagetable_access
   - name: Abit_unset_pmpW_unset_read_s
     goal: Verify PMP applies to the hardware PTE.A update of a load from S-mode
     description: "S-mode: menvcfg.ADUE=1; page tables in a PMP region with W=0; leaf PTE with A=0 and PTE.U=0; satp points at each top-level table in turn. Load (lw) from the page through va_data."
@@ -32,7 +34,8 @@ coverpoints:
       = 7 bins on RV64, 2 on RV32
     id: Svadu_hw_update_a_d_bits pmp_check_pagetable_access
     rules:
-      - "[norm:Svadu_hw_update_a_d_bits] [norm:pmp_check_pagetable_access]"
+      - Svadu_hw_update_a_d_bits
+      - pmp_check_pagetable_access
   - name: Abit_unset_pmpW_unset_read_u
     goal: Verify PMP applies to the hardware PTE.A update of a load from U-mode
     description: "U-mode: menvcfg.ADUE=1; page tables in a PMP region with W=0; leaf PTE with A=0 and PTE.U=1; satp points at each top-level table in turn. Load (lw) from the page through va_data."
@@ -42,7 +45,8 @@ coverpoints:
       = 7 bins on RV64, 2 on RV32
     id: Svadu_hw_update_a_d_bits pmp_check_pagetable_access
     rules:
-      - "[norm:Svadu_hw_update_a_d_bits] [norm:pmp_check_pagetable_access]"
+      - Svadu_hw_update_a_d_bits
+      - pmp_check_pagetable_access
   - name: Abit_unset_pmpW_unset_write_s
     goal: Verify PMP applies to the hardware PTE.A update of a store from S-mode
     description: "S-mode: menvcfg.ADUE=1; page tables in a PMP region with W=0; leaf PTE with A=0 and PTE.U=0; satp points at each top-level table in turn. Store (sw) to the page through va_data."
@@ -52,7 +56,8 @@ coverpoints:
       = 7 bins on RV64, 2 on RV32
     id: Svadu_hw_update_a_d_bits pmp_check_pagetable_access
     rules:
-      - "[norm:Svadu_hw_update_a_d_bits] [norm:pmp_check_pagetable_access]"
+      - Svadu_hw_update_a_d_bits
+      - pmp_check_pagetable_access
   - name: Abit_unset_pmpW_unset_write_u
     goal: Verify PMP applies to the hardware PTE.A update of a store from U-mode
     description: "U-mode: menvcfg.ADUE=1; page tables in a PMP region with W=0; leaf PTE with A=0 and PTE.U=1; satp points at each top-level table in turn. Store (sw) to the page through va_data."
@@ -62,7 +67,8 @@ coverpoints:
       = 7 bins on RV64, 2 on RV32
     id: Svadu_hw_update_a_d_bits pmp_check_pagetable_access
     rules:
-      - "[norm:Svadu_hw_update_a_d_bits] [norm:pmp_check_pagetable_access]"
+      - Svadu_hw_update_a_d_bits
+      - pmp_check_pagetable_access
   - name: Dbit_unset_pmpW_unset_write_s
     goal: Verify PMP applies to the hardware PTE.D update of a store from S-mode
     description: "S-mode: menvcfg.ADUE=1; page tables in a PMP region with W=0; leaf PTE with A=1, D=0 and PTE.U=0. Store (sw) through va_data."
@@ -72,7 +78,8 @@ coverpoints:
       = 7 bins on RV64, 2 on RV32
     id: Svadu_hw_update_a_d_bits pmp_check_pagetable_access
     rules:
-      - "[norm:Svadu_hw_update_a_d_bits] [norm:pmp_check_pagetable_access]"
+      - Svadu_hw_update_a_d_bits
+      - pmp_check_pagetable_access
   - name: Dbit_unset_pmpW_unset_write_u
     goal: Verify PMP applies to the hardware PTE.D update of a store from U-mode
     description: "U-mode: menvcfg.ADUE=1; page tables in a PMP region with W=0; leaf PTE with A=1, D=0 and PTE.U=1. Store (sw) through va_data."
@@ -82,4 +89,5 @@ coverpoints:
       = 7 bins on RV64, 2 on RV32
     id: Svadu_hw_update_a_d_bits pmp_check_pagetable_access
     rules:
-      - "[norm:Svadu_hw_update_a_d_bits] [norm:pmp_check_pagetable_access]"
+      - Svadu_hw_update_a_d_bits
+      - pmp_check_pagetable_access

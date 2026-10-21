@@ -50,6 +50,27 @@ def gen_csr_read_sigupd(check_reg: int, csr: tuple, test_data: TestData, mask_re
         )
 
 
+def gen_csr_read_sigupd_in_mode(
+    check_reg: int, csr: tuple, test_data: TestData, mode: str, mask_reg: int | None = None
+) -> str:
+    """
+    Like gen_csr_read_sigupd, for code running in mode ("M", "S", "U", ...).
+
+    Reads the CSR directly when mode may access it, and otherwise through a T-SBI call.
+    """
+    csr_name, mask = csr
+    read = f"csrr x{check_reg}, {csr_name}"
+    tsbi_read = tsbi_call_or_direct(read, mode)
+    if tsbi_read == read:
+        return gen_csr_read_sigupd(check_reg, csr, test_data, mask_reg)
+    lines = [tsbi_read]
+    if mask is not None:
+        assert mask_reg is not None, "mask_reg must be provided when csr mask is not None"
+        lines.append(f"and x{check_reg}, x{check_reg}, x{mask_reg}    # keep only masked bits {mask:#x}")
+    lines.append(write_sigupd(check_reg, test_data))
+    return "\n".join(lines)
+
+
 def gen_csr_write_sigupd(check_reg: int, csr_name: str, test_data: TestData) -> str:
     """
     Generate assembly to write CSR, read it back, and check against expected.
