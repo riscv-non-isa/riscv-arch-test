@@ -112,6 +112,11 @@ repos:
     hooks:
       - id: markdown-link-check
         args: [-q, -c .markdown-link-check.config]
+      # docs.openhwfoundation.org rate-limits CI, so check its links separately and accept HTTP 429 only there
+      - id: markdown-link-check
+        name: Markdown Link Check (docs.openhwfoundation.org)
+        alias: markdown-link-check-openhw
+        args: [-q, -c .markdown-link-check-openhw.config]
 
   # Validate Renovate configuration
   - repo: https://github.com/renovatebot/pre-commit-hooks
