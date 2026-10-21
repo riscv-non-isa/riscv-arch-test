@@ -34,8 +34,6 @@ RVTEST_BEGIN
 /////////////////////////////////
 
 
-main:
-
 // Virtual addresses for code and test regions
 
 // Virtual address of rvtest_data_1
@@ -53,147 +51,148 @@ main:
 // accessible, so the code is mapped again at va_rvtest_code_begin. Registering
 // that alias lets RVTEST_TSBI_GOTO_* resume in the mapping the mode it switches
 // to can fetch from.
+// SAVE_AREA_SETUP takes the M-mode save area in a0 and clobbers t0 and t1.
   LA(a0, Mtramptbl_sv)
   SAVE_AREA_SETUP(va_rvtest_code_begin, rvtest_code_begin, code, LEVEL1)
 
   SATP_SETUP_SV32 // Enable address translation.
   sfence.vma
 
-  LI(t0, MENVCFGH_ADUE)
-  # T-SBI call to execute instruction: csrs menvcfgh, t0
-  mv a1, x5
+  LI(x6, MENVCFGH_ADUE)
+  # T-SBI call to execute instruction: csrs menvcfgh, x6
+  mv a1, x6
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MENVCFGH)
 
-  LI(a2, 0x800) // Test signature initialization
+  LI(x8, 0x800) // Test signature initialization
 
 // Test case 1: Misaligned superpage at level 1 | A=0 D=0 | expected = RWX page fault, D unchanged
   PTE_SETUP_SV32(rvtest_data_1, (PTE_X | PTE_W | PTE_R | PTE_V), va_misaligned, LEVEL1)
 
-  LI(a5, (va_misaligned >> 22) << 22)
-  LA(a0, rvtest_data_1)
-  slli a0, a0, 10
-  srli a0, a0, 10
-  add a5, a5, a0
+  LI(x14, (va_misaligned >> 22) << 22)
+  LA(x6, rvtest_data_1)
+  slli x6, x6, 10
+  srli x6, x6, 10
+  add x14, x14, x6
   sfence.vma
-  addi a2, a2, 16
+  addi x8, x8, 16
 
 // Store
 Svadu_cg_cp_ad_fault_no_update_test1_store:
-  sw a2, 20(a5)
+  sw x8, 20(x14)
   nop
   sfence.vma
 
 // Load
 Svadu_cg_cp_ad_fault_no_update_test1_load:
-  lw a3, 20(a5)
+  lw x15, 20(x14)
   nop
   sfence.vma
 
 // Execute
 Svadu_cg_cp_ad_fault_no_update_test1_exec:
-  jalr ra, a5, 0
+  jalr ra, x14, 0
   nop
 
-  # Check if x12 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x12, Svadu_cg_cp_ad_fault_no_update_test1_store, Svadu_cg_cp_ad_fault_no_update_test1_store_str)
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Svadu_cg_cp_ad_fault_no_update_test1_load, Svadu_cg_cp_ad_fault_no_update_test1_load_str)
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Svadu_cg_cp_ad_fault_no_update_test1_exec, Svadu_cg_cp_ad_fault_no_update_test1_exec_str)
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, Svadu_cg_cp_ad_fault_no_update_test1_store, Svadu_cg_cp_ad_fault_no_update_test1_store_str)
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, Svadu_cg_cp_ad_fault_no_update_test1_load, Svadu_cg_cp_ad_fault_no_update_test1_load_str)
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_cp_ad_fault_no_update_test1_exec, Svadu_cg_cp_ad_fault_no_update_test1_exec_str)
 
 // The PTE must still have D=0. A may have been set speculatively, so clear it before the check.
-  LA(a0, rvtest_Sroot_pg_tbl)
-  LI(t0, 2308)
-  add a0, a0, t0
+  LA(x6, rvtest_Sroot_pg_tbl)
+  LI(x9, 2308)
+  add x6, x6, x9
 Svadu_cg_cp_ad_fault_no_update_test1_read_pte:
-  LREG a4, 0(a0)
-  andi a4, a4, ~PTE_A
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Svadu_cg_cp_ad_fault_no_update_test1_read_pte, Svadu_cg_cp_ad_fault_no_update_test1_read_pte_str)
+  LREG x9, 0(x6)
+  andi x9, x9, ~PTE_A
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_cp_ad_fault_no_update_test1_read_pte, Svadu_cg_cp_ad_fault_no_update_test1_read_pte_str)
 
 // Test case 2: U page accessed from S-mode with SUM=0 | A=0 D=0 | expected = RWX page fault, D unchanged
   PTE_SETUP_SV32(rvtest_slvl0_pg_tbl, (PTE_V), va_data, LEVEL1)
   PTE_SETUP_SV32(rvtest_data_1, (PTE_U | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL0)
 
-  LI(a5, va_data)
+  LI(x14, va_data)
   sfence.vma
-  addi a2, a2, 16
+  addi x8, x8, 16
 
 // Store
 Svadu_cg_cp_ad_fault_no_update_test2_store:
-  sw a2, 20(a5)
+  sw x8, 20(x14)
   nop
   sfence.vma
 
 // Load
 Svadu_cg_cp_ad_fault_no_update_test2_load:
-  lw a3, 20(a5)
+  lw x15, 20(x14)
   nop
   sfence.vma
 
 // Execute
 Svadu_cg_cp_ad_fault_no_update_test2_exec:
-  jalr ra, a5, 0
+  jalr ra, x14, 0
   nop
 
-  # Check if x12 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x12, Svadu_cg_cp_ad_fault_no_update_test2_store, Svadu_cg_cp_ad_fault_no_update_test2_store_str)
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Svadu_cg_cp_ad_fault_no_update_test2_load, Svadu_cg_cp_ad_fault_no_update_test2_load_str)
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Svadu_cg_cp_ad_fault_no_update_test2_exec, Svadu_cg_cp_ad_fault_no_update_test2_exec_str)
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, Svadu_cg_cp_ad_fault_no_update_test2_store, Svadu_cg_cp_ad_fault_no_update_test2_store_str)
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, Svadu_cg_cp_ad_fault_no_update_test2_load, Svadu_cg_cp_ad_fault_no_update_test2_load_str)
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_cp_ad_fault_no_update_test2_exec, Svadu_cg_cp_ad_fault_no_update_test2_exec_str)
 
 // The PTE must still have D=0. A may have been set speculatively, so clear it before the check.
-  LA(a0, rvtest_slvl0_pg_tbl)
-  LI(t0, 28)
-  add a0, a0, t0
+  LA(x6, rvtest_slvl0_pg_tbl)
+  LI(x9, 28)
+  add x6, x6, x9
 Svadu_cg_cp_ad_fault_no_update_test2_read_pte:
-  LREG a4, 0(a0)
-  andi a4, a4, ~PTE_A
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Svadu_cg_cp_ad_fault_no_update_test2_read_pte, Svadu_cg_cp_ad_fault_no_update_test2_read_pte_str)
+  LREG x9, 0(x6)
+  andi x9, x9, ~PTE_A
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_cp_ad_fault_no_update_test2_read_pte, Svadu_cg_cp_ad_fault_no_update_test2_read_pte_str)
 
 // Test case 3: Reserved encoding W=1 R=0 | A=0 D=0 | expected = RWX page fault, D unchanged
   PTE_SETUP_SV32(rvtest_slvl0_pg_tbl, (PTE_V), va_data, LEVEL1)
   PTE_SETUP_SV32(rvtest_data_1, (PTE_X | PTE_W | PTE_V), va_data, LEVEL0)
 
-  LI(a5, va_data)
+  LI(x14, va_data)
   sfence.vma
-  addi a2, a2, 16
+  addi x8, x8, 16
 
 // Store
 Svadu_cg_cp_ad_fault_no_update_test3_store:
-  sw a2, 20(a5)
+  sw x8, 20(x14)
   nop
   sfence.vma
 
 // Load
 Svadu_cg_cp_ad_fault_no_update_test3_load:
-  lw a3, 20(a5)
+  lw x15, 20(x14)
   nop
   sfence.vma
 
 // Execute
 Svadu_cg_cp_ad_fault_no_update_test3_exec:
-  jalr ra, a5, 0
+  jalr ra, x14, 0
   nop
 
-  # Check if x12 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x12, Svadu_cg_cp_ad_fault_no_update_test3_store, Svadu_cg_cp_ad_fault_no_update_test3_store_str)
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Svadu_cg_cp_ad_fault_no_update_test3_load, Svadu_cg_cp_ad_fault_no_update_test3_load_str)
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Svadu_cg_cp_ad_fault_no_update_test3_exec, Svadu_cg_cp_ad_fault_no_update_test3_exec_str)
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, Svadu_cg_cp_ad_fault_no_update_test3_store, Svadu_cg_cp_ad_fault_no_update_test3_store_str)
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, Svadu_cg_cp_ad_fault_no_update_test3_load, Svadu_cg_cp_ad_fault_no_update_test3_load_str)
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_cp_ad_fault_no_update_test3_exec, Svadu_cg_cp_ad_fault_no_update_test3_exec_str)
 
 // The PTE must still have D=0. A may have been set speculatively, so clear it before the check.
-  LA(a0, rvtest_slvl0_pg_tbl)
-  LI(t0, 28)
-  add a0, a0, t0
+  LA(x6, rvtest_slvl0_pg_tbl)
+  LI(x9, 28)
+  add x6, x6, x9
 Svadu_cg_cp_ad_fault_no_update_test3_read_pte:
-  LREG a4, 0(a0)
-  andi a4, a4, ~PTE_A
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Svadu_cg_cp_ad_fault_no_update_test3_read_pte, Svadu_cg_cp_ad_fault_no_update_test3_read_pte_str)
+  LREG x9, 0(x6)
+  andi x9, x9, ~PTE_A
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_cp_ad_fault_no_update_test3_read_pte, Svadu_cg_cp_ad_fault_no_update_test3_read_pte_str)
 
 
 // Instantiate trap handlers and other epilog code, call RVMODEL_HALT at end of test
@@ -209,7 +208,7 @@ RVTEST_DATA_BEGIN
   .p2align 12
 rvtest_data_1:
   nop
-  addi a4, a2, 4
+  addi x9, x8, 4
   jr ra
   nop
   .word 0xbeefcaf1
