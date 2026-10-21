@@ -138,84 +138,10 @@
     .option pop
 #endif
 
-// TRAP_SIGUPD_INVALID_ADDR(tempreg, sigreg, offset, instptr, strptr)
-// TRAP_SIGUPD for xepc or xtval when the trap may report an invalid virtual address.  An address is
-// invalid when its bits XLEN-1 to INVALID_VA_WIDTH-1 are not all equal.  xepc and xtval need not hold
-// every invalid address, and an implementation may write some other invalid address in its place
-// (norm:mepc_inv_addr_conv, sepc_acc_invalid_addr, mtval_inv_addr_conv, stval_inv_addr_conv; vsepc and
-// vstval hold the same values as sepc and stval).  In Self Check mode the value passes if it matches the
-// reference, or if the reference and the value are both invalid.  T2 is scratch.  Each pass path
-// executes ten instructions, so the handler's instruction count does not depend on which legal value
-// the hart wrote.  Both compile modes emit the same instructions so the signature and self-check ELFs
-// have identical code layout.
-#ifdef RVTEST_SELFCHECK
-  #define TRAP_SIGUPD_INVALID_ADDR(_TMPREG, _R, _OFF, _INST_PTR, _STR_PTR) \
-    .option push                                                ;\
-    .option norvc                                               ;\
-    LREG _TMPREG, _OFF*REGWIDTH(T1)                             ;\
-    beq  _TMPREG, _R, 1f                                        ;\
-    srai T2, _TMPREG, INVALID_VA_WIDTH-1                        ;\
-    addi T2, T2, 1                                              ;\
-    sltiu T2, T2, 2                                             ;\
-    bnez T2, 3f                                                 ;\
-    srai T2, _R, INVALID_VA_WIDTH-1                             ;\
-    addi T2, T2, 1                                              ;\
-    sltiu T2, T2, 2                                             ;\
-    beqz T2, 2f                                                 ;\
-    3:                                                          ;\
-    mv   T1, _R                                                 ;\
-    mv   DEFAULT_TEMP_REG, _TMPREG                              ;\
-    jal  T2, failedtest_trap_x7_x9                              ;\
-    RVTEST_WORD_PTR _INST_PTR                                   ;\
-    RVTEST_WORD_PTR _STR_PTR                                    ;\
-    .word CSR_XEPC                                              ;\
-    1:                                                          ;\
-    nop                                                         ;\
-    nop                                                         ;\
-    nop                                                         ;\
-    nop                                                         ;\
-    nop                                                         ;\
-    nop                                                         ;\
-    nop                                                         ;\
-    nop                                                         ;\
-    2:                                                          ;\
-    .option pop
-#else
-  #define TRAP_SIGUPD_INVALID_ADDR(_TMPREG, _R, _OFF, _INST_PTR, _STR_PTR) \
-    .option push                                                ;\
-    .option norvc                                               ;\
-    SREG _R, _OFF*REGWIDTH(T1)                                  ;\
-    beq  x0, x0, 1f                                             ;\
-    nop                                                         ;\
-    nop                                                         ;\
-    nop                                                         ;\
-    nop                                                         ;\
-    nop                                                         ;\
-    nop                                                         ;\
-    nop                                                         ;\
-    nop                                                         ;\
-    mv   T1, _R                                                 ;\
-    mv   DEFAULT_TEMP_REG, _TMPREG                              ;\
-    jal  T2, failedtest_trap_x7_x9                              ;\
-    RVTEST_WORD_PTR _INST_PTR                                   ;\
-    RVTEST_WORD_PTR _STR_PTR                                    ;\
-    .word CSR_XEPC                                              ;\
-    1:                                                          ;\
-    nop                                                         ;\
-    nop                                                         ;\
-    nop                                                         ;\
-    nop                                                         ;\
-    nop                                                         ;\
-    nop                                                         ;\
-    nop                                                         ;\
-    nop                                                         ;\
-    2:                                                          ;\
-    .option pop
-#endif
-
-// TRAP_SIGUPD_TVAL(tempreg, sigreg, offset, instptr, strptr)
-// TRAP_SIGUPD for xtval. An implementation need not hold every invalid address in
-// xtval and may replace one invalid address with another. The check passes when
+// TRAP_SIGUPD_ADDR(tempreg, sigreg, offset, instptr, strptr)
+// TRAP_SIGUPD for xtval and xepc. An implementation need not hold every invalid address
+// in xtval or xepc and may replace one invalid address with another (norm:mtval_inv_addr_conv,
+// stval_inv_addr_conv, mepc_inv_addr_conv, sepc_acc_invalid_addr). The check passes when
 // the DUT value equals the reference value, or when the reference value is an
 // invalid address and the DUT value is also an invalid address:
 //  - Access fault and misaligned causes with address translation off and a non-guest
@@ -223,21 +149,24 @@
 //    _end. The linked ELF image is the only memory the test knows to exist.
 //  - Page fault causes with Sv39/Sv48/Sv57 active (vsatp for a guest trap): an address
 //    is invalid when it is not a canonical virtual address.
+// xepc is the address of an instruction the reference fetched, so it is valid and compared
+// exactly, except for an instruction access fault (cause 1) or page fault (cause 12) on an
+// invalid address.
 // Registers: T5 holds xcause. T2 and T6 are scratch. In the failure path T1
 // carries the actual value and DEFAULT_TEMP_REG the expected value.
 // Both compile modes emit the same instructions so the signature and self-check
 // ELFs have identical code layout; only the first two differ.
 
-// TRAP_SIGUPD_TVAL_PREFIX(tempreg, sigreg, offset)
+// TRAP_SIGUPD_ADDR_PREFIX(tempreg, sigreg, offset)
 // Exact compare. Self-check: load the expected value into tempreg and jump to 9: when
 // it equals the actual value. Signature build: store the actual value and jump to 9:.
 #ifdef RVTEST_SELFCHECK
-  #define TRAP_SIGUPD_TVAL_PREFIX(_TMPREG, _R, _OFF)                     \
-    LREG _TMPREG, _OFF*REGWIDTH(T1) /* expected xtval from signature */ ;\
+  #define TRAP_SIGUPD_ADDR_PREFIX(_TMPREG, _R, _OFF)                     \
+    LREG _TMPREG, _OFF*REGWIDTH(T1) /* expected value from signature */ ;\
     beq  _TMPREG, _R, 9f            /* exact match: pass */             ;
 #else
-  #define TRAP_SIGUPD_TVAL_PREFIX(_TMPREG, _R, _OFF)                   \
-    SREG _R, _OFF*REGWIDTH(T1) /* record actual xtval */              ;\
+  #define TRAP_SIGUPD_ADDR_PREFIX(_TMPREG, _R, _OFF)                   \
+    SREG _R, _OFF*REGWIDTH(T1) /* record actual value */              ;\
     beq  x0, x0, 9f            /* always pass (keeps layout equal) */ ;
 #endif
 
@@ -389,8 +318,8 @@
   #define TRAP_TVAL_NONCANONICAL_CHECK(_TMPREG, _R)
 #endif
 
-#define TRAP_SIGUPD_TVAL(_TMPREG, _R, _OFF, _INST_PTR, _STR_PTR) \
-    TRAP_SIGUPD_TVAL_PREFIX(_TMPREG, _R, _OFF)                   \
+#define TRAP_SIGUPD_ADDR(_TMPREG, _R, _OFF, _INST_PTR, _STR_PTR) \
+    TRAP_SIGUPD_ADDR_PREFIX(_TMPREG, _R, _OFF)                   \
     TRAP_TVAL_OUTSIDE_IMAGE_CHECK(_TMPREG, _R)                   \
     6:                                                          ;\
     TRAP_TVAL_NONCANONICAL_CHECK(_TMPREG, _R)                    \

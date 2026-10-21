@@ -119,14 +119,11 @@
 //                     forwards GOTO_M, M-mode CSR_ACCESS, and loads/stores to M-mode via ecall
 //    VS-mode handler: receives calls from VU-mode when hedeleg[8]=1. It handles
 //                     ECALL_TEST, ECALL_RECORD and GOTO_VS/VU locally and forwards everything
-//                     else to HS-mode via ecall. A forwarded GOTO_M/S/U (or legacy
-//                     a0=0 call) leaves the guest: the HS handler recognizes the
-//                     ecall at tsbi_Vforward_goto_ecall and resumes the VU caller
+//                     else to HS-mode via ecall. A forwarded GOTO_M/S/U leaves the
+//                     guest: the HS handler recognizes the ecall at
+//                     tsbi_Vforward_goto_ecall and resumes the VU caller
 //                     instead of the VS handler. An ecall from VS-mode (cause 10)
 //                     always goes to HS-mode because hedeleg[10] is read-only 0.
-//
-//  CSR_ACCESS from a guest runs in HS-mode, so S-mode CSR numbers access the
-//  HS-mode CSRs. A guest must use the vs* CSR numbers to access its own state.
 //
 //  CSR_ACCESS from a guest runs in HS-mode, so S-mode CSR numbers access the
 //  HS-mode CSRs. A guest must use the vs* CSR numbers to access its own state.
@@ -424,7 +421,7 @@
 //
 // Each direction checks that xEPC really lies in the mapping it is moving out of, so
 // a test that registers an alias but resumes somewhere else is left alone, as is one
-// that never registers an alias. Uses T1-T4 and T6; a0 = GOTO operation code.
+// that never registers an alias. Uses T2-T4; a0 = GOTO operation code.
 //
 // M and S service different callers, so they get different halves:
 //   M handles GOTO_UMODE, whose caller runs in the code region, and it is the only
@@ -718,11 +715,17 @@
 
 // Switch to M-mode via T-SBI.
 // After this macro, the processor is in M-mode and a0 is undefined.
+// The S-mode handler forwards a GOTO_MMODE from U, VS or VU to M-mode and then
+// resumes here in M-mode with jr a0, which sets ELP when mseccfg.MLPE=1 (Zicfilp).
+// So the instruction after the ecall is a 4-byte-aligned lpad 0, which is a no-op
+// when the handler returns here with mret instead.
 .macro RVTEST_TSBI_GOTO_MMODE
   .option push
+  .p2align 2                                     // align the lpad below (c.nop padding if needed)
   .option norvc                                  // ensure consistent code size
   li   a0, TSBI_GOTO_MMODE                      // a0 = 1 (GOTO_MMODE operation code)
   ecall                                          // trap to handler; handler sets MPP=M, mrets
+  auipc x0, 0                                    // lpad 0: landing pad for the forwarded jr a0
   .option pop
 .endm
 
@@ -910,16 +913,14 @@
         #define  RVMODEL_CLR_MEXT_INT(_R1, _R2) RVTEST_DFLT_INT_HNDLR  // M-mode ext interrupt clear: abort
 #endif
 
-// S-mode interrupt defaults
-#ifndef RVMODEL_CLR_STIMER_INT
-        #define  RVMODEL_CLR_STIMER_INT  RVTEST_DFLT_INT_HNDLR  // S-mode timer interrupt clear: abort
-#endif
+// The S-mode timer interrupt has no RVMODEL macro: mip.STIP comes from stimecmp (Sstc) or an
+// M-mode write, never from a platform controller, and clr_Stmr_int leaves clearing it to the test.
 // RVMODEL_CLR_SEXT_INT has no default: when undefined, rvtest_clr_sext_int_* clear mip.SEIP instead
 
 // VS-level interrupts need no RVMODEL macros: they are raised and cleared through
 // hvip (RVTEST_SET/CLR_VS*_INT_* in utils.h). A guest external interrupt (hgeip bit
-// _GEI) can only be raised by the platform, through the optional
-// RVMODEL_SET_GUEST_EXT_INT(_GEI, _R1, _R2) and RVMODEL_CLR_GUEST_EXT_INT(_GEI, _R1, _R2).
+// _GEI) can only be raised by the platform, through RVMODEL_SET_GUEST_EXT_INT(_GEI, _R1, _R2)
+// and RVMODEL_CLR_GUEST_EXT_INT(_GEI, _R1, _R2), which check_defines.h requires when GEILEN > 0.
 
 
 //==============================================================================
@@ -1134,8 +1135,8 @@ endcopy_\__MODE__\()tramp:
 abort\__MODE__\()test:
         LA(     T6, rvtest_trap_prolog_error)
         SREG    T5, 0(T6)
-        LA(     T6, exit_\__MODE__\()cleanup)        // load address of cleanup label
-        jr      T6                                   // long jump to cleanup (may be too far for branch)
+        LA(     T2, exit_\__MODE__\()cleanup)        // load address of cleanup label
+        jr      T2                                   // long jump to cleanup; x7 does not set ELP (Zicfilp)
 
 rvtest_\__MODE__\()prolog_done:
         nop                                          // prevent label from collapsing with next section
@@ -1295,8 +1296,8 @@ rvtest_\__MODE__\()prolog_done:
 // Long-jumps to rvtest_Xend which is the epilog cleanup entry.
 
 rvtest_\__MODE__\()endtest:                      // impossible cause landed here
-        LA(     T1, rvtest_\__MODE__\()end)      // load epilog cleanup address (may be far away)
-        jr      T1                                // long jump to epilog cleanup
+        LA(     T2, rvtest_\__MODE__\()end)      // load epilog cleanup address (may be far away)
+        jr      T2                                // long jump to epilog cleanup; x7 does not set ELP (Zicfilp)
 
 //---------- Common Handler ----------
 // Entered via jal from per-cause stub. T6 has the stub's return address
@@ -1321,8 +1322,15 @@ common_\__MODE__\()handler:                      // entered with T6 = vector add
 //   T6 (x15) saved at trap_sv_off+6*REGWIDTH(sp) (by per-cause stub above)
 //   orig sp saved at trap_sv_off+7*REGWIDTH(sp)
 //   a0/a1  untouched — they carry the T-SBI operation code/argument (if any)
+//
+// The jr T5 above is an indirect jump through a register other than x1/x5/x7,
+// so when Zicfilp is enabled in this mode it sets ELP=LP_EXPECTED. The entry
+// therefore starts with a 4-byte-aligned lpad 0 (auipc x0, 0), which is a
+// no-op when Zicfilp is not implemented or not enabled.
 
+        .p2align 2                               // landing pad must be 4-byte aligned
 common_\__MODE__\()entry:                       // common entry for all traps in this mode
+        auipc   x0, 0                            // lpad 0: landing pad for the jr T5 above
         SREG    T4, trap_sv_off+4*REGWIDTH(sp)  // save T4 (x9)
         SREG    T3, trap_sv_off+3*REGWIDTH(sp)  // save T3 (x8)
         SREG    T2, trap_sv_off+2*REGWIDTH(sp)  // save T2 (x7)
@@ -1335,12 +1343,14 @@ common_\__MODE__\()entry:                       // common entry for all traps in
   .ifc \__MODE__ , M
       LI(T4, CAUSE_ILLEGAL_INSTRUCTION)
       bne T5, T4, invisible_Mcontinue
+      // Jump through T2 (x7), which was saved above: a jump through x7 does not set
+      // ELP, so neither target needs a Zicfilp landing pad.
       #ifdef RVTEST_INVISIBLE_TRAP_HANDLER
-          LA(T4, invisible_Mhandler)
+          LA(T2, invisible_Mhandler)
       #else
-          LA(T4, invisible_Mcontinue)
+          LA(T2, invisible_Mcontinue)
       #endif
-      jr T4
+      jr T2
       invisible_Mcontinue:
   .endif
 
@@ -1563,9 +1573,9 @@ tsbi_\__MODE__\()goto_vu:
 // VS-MODE HANDLER:
 //   - ECALL_TEST, ECALL_RECORD, GOTO_VSMODE (vsstatus.SPP=1) and GOTO_VUMODE
 //     (vsstatus.SPP=0) are handled locally.
-//   - GOTO_MMODE/SMODE/UMODE and the legacy a0=0 call leave the guest, which
-//     only HS-mode can do: tsbi_Vforward_goto makes the call from
-//     tsbi_Vforward_goto_ecall, where the HS handler resumes the VU caller.
+//   - GOTO_MMODE/SMODE/UMODE leave the guest, which only HS-mode can do:
+//     tsbi_Vforward_goto makes the call from tsbi_Vforward_goto_ecall, where
+//     the HS handler resumes the VU caller.
 //   - Everything else is forwarded to HS-mode, which returns to the VS handler.
 //
 // FORWARDING MECHANISM:
@@ -1603,7 +1613,9 @@ tsbi_\__MODE__\()goto_vu:
 
         // The VS handler forwarded a VU caller's GOTO_M/S/U: resume that caller at vsepc,
         // and undo the VU->VS trap as the VS handler's sret would have (vsstatus.SIE = SPIE,
-        // SPIE = 1, SPP = 0) and as a VU->HS trap would have left hstatus (SPVP = 0).
+        // SPIE = 1, SPP = 0, and SDT = 0 with Ssdbltrp and SPELP = 0 with Zicfilp) and as a
+        // VU->HS trap would have left hstatus (SPVP = 0). The caller's ELP, which sret would
+        // restore from SPELP, is NO_LP_EXPECTED: it executed an ecall, not a landing pad.
         csrr    T3, CSR_VSEPC
         csrw    CSR_XEPC, T3
         csrr    T3, CSR_VSSTATUS
@@ -1612,6 +1624,10 @@ tsbi_\__MODE__\()goto_vu:
         andi    T3, T3, ~(SSTATUS_SIE | SSTATUS_SPP)
         ori     T3, T3, SSTATUS_SPIE
         or      T3, T3, T2
+    #if defined(SSDBLTRP_SUPPORTED) || defined(ZICFILP_SUPPORTED)
+        LI(     T2, ~(SSTATUS_SDT | SSTATUS_SPELP))  // read-only zero when not implemented
+        and     T3, T3, T2
+    #endif
         csrw    CSR_VSSTATUS, T3
         LI(     T3, HSTATUS_SPVP)
         csrc    CSR_HSTATUS, T3
@@ -1785,7 +1801,8 @@ tsbi_\__MODE__\()forward_goto_m:
         LREG    sp, trap_sv_off+7*REGWIDTH(sp)    // restore original sp (undo the xSCRATCH swap)
         ecall                                      // trap to M-mode; M sets MPP=M and mrets back HERE in M-mode
         csrr    a0, CSR_XEPC                       // caller's ecall+4 (bumped before forwarding)
-        jr      a0                                 // continue at the caller, in M-mode
+        jr      a0                                 // continue at the caller, in M-mode, at the lpad 0
+                                                   // that RVTEST_TSBI_GOTO_MMODE places after its ecall
 
         //--- S-mode CSR_ACCESS ---
 tsbi_\__MODE__\()csr_access:
@@ -2171,25 +2188,7 @@ tsbi_instr_table:
 //   6. Restores registers and returns via xret
 //==============================================================================
 
-\__MODE__\()trapsig_ptr_upd:
-        // An instruction armed by RVTEST_OPTIONAL_TRAP(2) may legally either complete or raise one of two
-        // exceptions. When it raises one of them, disarm it and resume after the instruction without recording
-        // a trap, so the signature is the same for every such outcome. Any other trap is recorded as usual.
-        LA(     T3, rvtest_optional_trap)
-        LREG    T4, 0(T3)                          // T4 = armed instruction address (0 when disarmed)
-        csrr    T2, CSR_XEPC
-        bne     T2, T4, \__MODE__\()record_trap
-        LREG    T4, REGWIDTH(T3)                   // T4 = an exception it may raise
-        beq     T5, T4, \__MODE__\()optional_trap  // interrupts never match: xcause MSB is set
-        LREG    T4, 2*REGWIDTH(T3)                 // T4 = the other exception it may raise
-        bne     T5, T4, \__MODE__\()record_trap
-\__MODE__\()optional_trap:
-        SREG    zero, 0(T3)                        // disarm
-        addi    T2, T2, 4                          // the armed instruction is 4 bytes
-        csrw    CSR_XEPC, T2
-        j       resto_\__MODE__\()rtn
-
-\__MODE__\()record_trap:                         // pre-update trap signature pointer
+\__MODE__\()trapsig_ptr_upd:                      // pre-update trap signature pointer
         LA(     T1, rvtest_trap_count)            // T1 = address of trap_count
         LREG    T2, 0(T1)                         // T2 = current count
         addi    T2, T2, 1                         // count++
@@ -2370,11 +2369,7 @@ sv_\__MODE__\()epc:
         LI(     T6, CAUSE_BREAKPOINT)                 //   at a slightly different instr) -> don't record xEPC for
         beq     T2, T6, skpsv_\__MODE__\()epc         //   mcause==3, else self-check mismatches on word 2
 #endif
-#ifdef INVALID_VA_WIDTH
-        TRAP_SIGUPD_INVALID_ADDR(T4, T3, 2, sv_\__MODE__\()epc, sv_\__MODE__\()epc_str) // word 2: xEPC, may be converted
-#else
-        TRAP_SIGUPD(T4, T3, 2, sv_\__MODE__\()epc, sv_\__MODE__\()epc_str) // write word 2: xEPC
-#endif
+        TRAP_SIGUPD_ADDR(T4, T3, 2, sv_\__MODE__\()epc, sv_\__MODE__\()epc_str) // write word 2: xEPC
 skpsv_\__MODE__\()epc:
         csrr    T3, CSR_XEPC                          // reload xEPC (TRAP_SIGUPD may clobber T3 on its failure path)
 
@@ -2495,20 +2490,16 @@ sv_\__MODE__\()tval_words:
         csrr    T3, CSR_XTVAL                         // T3 = xtval (trap value: faulting addr or instruction)
 
 sv_\__MODE__\()tval:
-#ifdef INVALID_VA_WIDTH
-        TRAP_SIGUPD_INVALID_ADDR(T4, T3, 3, sv_\__MODE__\()tval, sv_\__MODE__\()tval_str) // word 3: xtval, may be converted
-#else
-  #ifdef H_SUPPORTED
-    .ifnc \__MODE__ , V
-        SREG    T6, trap_sv_off+0*REGWIDTH(sp)       // TRAP_SIGUPD_TVAL uses T6; keep the instruction for xtinst
-    .endif
-  #endif
-        TRAP_SIGUPD_TVAL(T4, T3, 3, sv_\__MODE__\()tval, sv_\__MODE__\()tval_str) // write word 3: xtval
-  #ifdef H_SUPPORTED
-    .ifnc \__MODE__ , V
+#ifdef H_SUPPORTED
+  .ifnc \__MODE__ , V
+        SREG    T6, trap_sv_off+0*REGWIDTH(sp)       // TRAP_SIGUPD_ADDR uses T6; keep the instruction for xtinst
+  .endif
+#endif
+        TRAP_SIGUPD_ADDR(T4, T3, 3, sv_\__MODE__\()tval, sv_\__MODE__\()tval_str) // write word 3: xtval
+#ifdef H_SUPPORTED
+  .ifnc \__MODE__ , V
         LREG    T6, trap_sv_off+0*REGWIDTH(sp)       // T6 = trapping instruction again
-    .endif
-  #endif
+  .endif
 #endif
 
 skp_\__MODE__\()tval:
@@ -2920,19 +2911,22 @@ spcl_\__MODE__\()handler:
         slli    T2, T5, 3                            // T2 = cause * 8 (dword-aligned index)
         add     T3, T3, T2                           // T3 = table_base + cause*8
         andi    T3, T3, -8                           // align to dword boundary
-        LREG    T3, 0(T3)                            // T3 = dispatch table entry (handler addr or special value)
+        LREG    T2, 0(T3)                            // T2 = dispatch table entry (handler addr or special value)
 
 spcl_\__MODE__\()dispatch_handling:
-        beqz    T3, 1f                  // if address is 0, this is an error, exit test
-        slli    T2, T3, UDB_MXLEN-1     // look at LSB and dispatch if even
-        bge     T2, x0, spcl_\__MODE__\()dispatch
-        srli    T3, T3,1                //odd entry>0, remove LSB, normalizing to cause range
-        beq     T5, T3, resto_\__MODE__\()rtn // case range matches, not an error, just noop
+        beqz    T2, 1f                  // if address is 0, this is an error, exit test
+        slli    T3, T2, UDB_MXLEN-1     // look at LSB and dispatch if even
+        bge     T3, x0, spcl_\__MODE__\()dispatch
+        srli    T2, T2,1                //odd entry>0, remove LSB, normalizing to cause range
+        beq     T5, T2, resto_\__MODE__\()rtn // case range matches, not an error, just noop
 1:
         j       abort_test
 
+// The entry is in T2 (x7) because a jump through x7 does not set ELP (Zicfilp), so the
+// handler routines need no landing pad. The 15*4 offset above counts the instructions
+// from the auipc to the table, so keep this sequence the same length.
 spcl_\__MODE__\()dispatch:
-        jr      T3                                   // jump to handler routine (clr_Msw_int, etc.)
+        jr      T2                                   // jump to handler routine (clr_Msw_int, etc.)
 
 //==============================================================================
 // INTERRUPT DISPATCH TABLES

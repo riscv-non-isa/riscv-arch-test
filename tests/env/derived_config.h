@@ -56,4 +56,13 @@
   #define UDB_SCONTEXT_AVAILABLE
 #endif
 
+// UDB_SGEI_INTR_IMPL: supervisor guest external interrupts exist when H is implemented with
+// GEILEN (NUM_EXTERNAL_GUEST_INTERRUPTS) > 0. check_defines.h then requires
+// RVMODEL_SET/CLR_GUEST_EXT_INT, since hgeip is read-only and only the platform can raise it.
+#if defined(H_SUPPORTED) && defined(UDB_NUM_EXTERNAL_GUEST_INTERRUPTS)
+  #if UDB_NUM_EXTERNAL_GUEST_INTERRUPTS > 0
+    #define UDB_SGEI_INTR_IMPL
+  #endif
+#endif
+
 #endif // DERIVED_CONFIG_H

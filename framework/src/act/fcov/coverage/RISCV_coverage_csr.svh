@@ -226,6 +226,16 @@ function `XLEN_BITS get_csr_val_addr(int hart, int issue, int prev, int addr, st
 `endif
       default: $fatal(1, "get_csr_val: RV%0d CSR %s has no field %s", `UDB_MXLEN, name, field);
     endcase
+  end else if (name == "henvcfgh") begin
+    case(field)
+`ifdef UDB_MXLEN_32
+      "dte" : val = (val >> 27) & 32'h1;
+      "adue" : val = (val >> 29) & 32'h1;
+      "pbmte" : val = (val >> 30) & 32'h1;
+      "stce" : val = (val >> 31) & 32'h1;
+`endif
+      default: $fatal(1, "get_csr_val: RV%0d CSR %s has no field %s", `UDB_MXLEN, name, field);
+    endcase
   end else if (name == "hgatp") begin
     case(field)
 `ifdef UDB_MXLEN_32
@@ -468,11 +478,13 @@ function `XLEN_BITS get_csr_val_addr(int hart, int issue, int prev, int addr, st
     endcase
   end else if (name == "mcyclecfgh") begin
     case(field)
+`ifdef UDB_MXLEN_32
       "minh" : val = (val >> 30) & 32'h1;
       "sinh" : val = (val >> 29) & 32'h1;
       "uinh" : val = (val >> 28) & 32'h1;
       "vsinh" : val = (val >> 27) & 32'h1;
       "vuinh" : val = (val >> 26) & 32'h1;
+`endif
       default: $fatal(1, "get_csr_val: RV%0d CSR %s has no field %s", `UDB_MXLEN, name, field);
     endcase
   end else if (name == "medeleg") begin
@@ -549,11 +561,13 @@ function `XLEN_BITS get_csr_val_addr(int hart, int issue, int prev, int addr, st
     endcase
   end else if (name == "minstretcfgh") begin
     case(field)
+`ifdef UDB_MXLEN_32
       "minh" : val = (val >> 30) & 32'h1;
       "sinh" : val = (val >> 29) & 32'h1;
       "uinh" : val = (val >> 28) & 32'h1;
       "vsinh" : val = (val >> 27) & 32'h1;
       "vuinh" : val = (val >> 26) & 32'h1;
+`endif
       default: $fatal(1, "get_csr_val: RV%0d CSR %s has no field %s", `UDB_MXLEN, name, field);
     endcase
   end else if (name == "mip") begin
