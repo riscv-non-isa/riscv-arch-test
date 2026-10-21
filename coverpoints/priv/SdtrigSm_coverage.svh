@@ -86,6 +86,28 @@
         `define SDTRIG_EXEC_ADR_SIZE
     `endif
 `endif
+// cp_mcontrol6_match_size_*: select = 1 triggers on stores, loads (any data size) and execution (sizes 2 and 3)
+`ifdef UDB_SDTRIG_MCONTROL6_SELECT_WRITABLE
+    `ifdef SDTRIG_SIZE_DATA
+        `ifdef UDB_SDTRIG_MCONTROL6_STORE_WRITABLE
+            `define SDTRIG_MATCH_SIZE_STORE
+        `endif
+        `ifdef UDB_SDTRIG_MCONTROL6_LOAD_WRITABLE
+            `define SDTRIG_MATCH_SIZE_LOAD
+        `endif
+    `endif
+    `ifdef UDB_SDTRIG_MCONTROL6_EXECUTE_WRITABLE
+        `ifdef UDB_SDTRIG_MCONTROL6_SIZE_LEGAL_VALUES_3
+            `define SDTRIG_MATCH_SIZE_EXEC
+        `endif
+        `ifdef ZCA_SUPPORTED
+            `ifdef UDB_SDTRIG_MCONTROL6_SIZE_LEGAL_VALUES_2
+                `define SDTRIG_MATCH_SIZE_EXEC
+                `define SDTRIG_MATCH_SIZE_EXEC16
+            `endif
+        `endif
+    `endif
+`endif
 // textra context matches with value bits to compare (the generator's _MCONTEXT_MATCH_GATE, _SCONTEXT_MATCH_GATE)
 `ifdef UDB_SDTRIG_TEXTRA_MHSELECT_MCONTEXT_MATCH
     `ifndef UDB_SDTRIG_TEXTRA_MHVALUE_LEN_0
@@ -1029,6 +1051,50 @@ function automatic logic [1:0] sdtrig_size_data_case(ins_t ins);
     return ((ins.current.rs2_val & mask) == ins.current.csr[CSR_TDATA2]) ? 2'd1 : 2'd2;
 endfunction
 
+// cp_mcontrol6_match_size_*: an execute fire is sampled on the record before the matched instruction (see
+// sdtrig_exec_fired), where tdata1 is read after; every other record reads tdata1 from before it, so a target that
+// itself rewrites tdata1 (a csrw tdata1 that does not fire) is sampled with the trigger that saw it
+function automatic int sdtrig_ms_when(ins_t ins);
+    return sdtrig_exec_fired(ins) ? `SAMPLE_AFTER : `SAMPLE_BEFORE;
+endfunction
+// For an armed select = 1 mcontrol6 trigger whose x/s/l bits are exactly xsl (execute = 3'b100, store = 3'b010,
+// load = 3'b001): 1 = an access of the trigger's size fired it, 2 = an access of that size did not, 3 = an access of
+// another width did not; 0 = anything else. Execution counts only the test's targets: addi/slti x0 hints, c.nop
+// hints and CSR instructions on tdata1/tdata3 (which include the csrw tdata1, x0 that disarms the trigger)
+function automatic logic [1:0] sdtrig_ms_case(ins_t ins, logic [2:0] xsl);
+    int when = sdtrig_ms_when(ins);
+    int bytes, size_bytes;
+    logic fired;
+    if (get_csr_val(ins.hart, ins.issue, when, "tdata1", "type")[3:0] != 4'd6 ||
+        get_csr_val(ins.hart, ins.issue, when, "tdata1", "m")[0] != 1'b1 ||
+        get_csr_val(ins.hart, ins.issue, when, "tdata1", "chain")[0] != 1'b0 ||
+        get_csr_val(ins.hart, ins.issue, when, "tdata1", "select")[0] != 1'b1 ||
+        {get_csr_val(ins.hart, ins.issue, when, "tdata1", "execute")[0], get_csr_val(ins.hart, ins.issue, when, "tdata1", "store")[0],
+         get_csr_val(ins.hart, ins.issue, when, "tdata1", "load")[0]} != xsl) return 2'd0;
+    case (get_csr_val(ins.hart, ins.issue, when, "tdata1", "size")[2:0])
+        3'd1:    size_bytes = 1;
+        3'd2:    size_bytes = 2;
+        3'd3:    size_bytes = 4;
+        3'd5:    size_bytes = 8;
+        default: return 2'd0;
+    endcase
+    if (xsl == 3'b100) begin
+        if (sdtrig_exec_fired(ins)) return 2'd1;  // only an instruction of the trigger's size can fire it
+        if (!(ins.current.insn[14:0] == 15'h0013 || ins.current.insn[14:0] == 15'h2013 ||
+              (ins.current.insn[6:0] == 7'h73 && ins.current.insn[31:20] inside {12'h7A1, 12'h7A3}) ||
+              (ins.current.insn[1:0] == 2'b01 && ins.current.insn[15:13] == 3'b000 && ins.current.insn[11:7] == 5'd0)))
+            return 2'd0;
+        bytes = (ins.current.insn[1:0] == 2'b11) ? 4 : 2;
+        fired = 1'b0;
+    end else begin
+        if (ins.current.insn[6:0] != ((xsl == 3'b010) ? 7'b0100011 : 7'b0000011) || ins.current.insn[14]) return 2'd0;
+        bytes = 1 << ins.current.insn[13:12];
+        fired = sdtrig_bp_taken(ins);
+    end
+    if (bytes == size_bytes) return fired ? 2'd1 : 2'd2;
+    return fired ? 2'd0 : 2'd3;
+endfunction
+
 covergroup SdtrigSm_mcontrol6_cg with function sample(ins_t ins);
     option.per_instance = 0;
     `include "general/RISCV_coverage_standard_coverpoints.svh"
@@ -1329,6 +1395,78 @@ covergroup SdtrigSm_mcontrol6_cg with function sample(ins_t ins);
     size_data_outcome: coverpoint sdtrig_bp_taken(ins) == (sdtrig_size_data_case(ins) == 2'd1) {
         bins as_expected = {1'b1};
     }
+    // cp_mcontrol6_match_size_*: the match, size and case of a select = 1 trigger (sdtrig_ms_case)
+    `ifdef SDTRIG_SIZE_DATA
+        ms_match: coverpoint get_csr_val(ins.hart, ins.issue, sdtrig_ms_when(ins), "tdata1", "match")[3:0] {
+            bins equal = {4'd0};
+            `ifdef UDB_SDTRIG_MCONTROL6_MATCH_LEGAL_VALUES_1  bins napot         = {4'd1};  `endif
+            `ifdef UDB_SDTRIG_MCONTROL6_MATCH_LEGAL_VALUES_2  bins ge            = {4'd2};  `endif
+            `ifdef UDB_SDTRIG_MCONTROL6_MATCH_LEGAL_VALUES_3  bins lt            = {4'd3};  `endif
+            `ifdef UDB_SDTRIG_MCONTROL6_MATCH_LEGAL_VALUES_4  bins mask_low      = {4'd4};  `endif
+            `ifdef UDB_SDTRIG_MCONTROL6_MATCH_LEGAL_VALUES_5  bins mask_high     = {4'd5};  `endif
+            `ifdef UDB_SDTRIG_MCONTROL6_MATCH_LEGAL_VALUES_8  bins not_equal     = {4'd8};  `endif
+            `ifdef UDB_SDTRIG_MCONTROL6_MATCH_LEGAL_VALUES_9  bins not_napot     = {4'd9};  `endif
+            `ifdef UDB_SDTRIG_MCONTROL6_MATCH_LEGAL_VALUES_12 bins not_mask_low  = {4'd12}; `endif
+            `ifdef UDB_SDTRIG_MCONTROL6_MATCH_LEGAL_VALUES_13 bins not_mask_high = {4'd13}; `endif
+        }
+        ms_size_data: coverpoint get_csr_val(ins.hart, ins.issue, sdtrig_ms_when(ins), "tdata1", "size")[2:0] {
+            `ifdef UDB_SDTRIG_MCONTROL6_SIZE_LEGAL_VALUES_1 bins b8  = {3'd1}; `endif
+            `ifdef UDB_SDTRIG_MCONTROL6_SIZE_LEGAL_VALUES_2 bins b16 = {3'd2}; `endif
+            `ifdef UDB_SDTRIG_MCONTROL6_SIZE_LEGAL_VALUES_3 bins b32 = {3'd3}; `endif
+            `ifdef UDB_MXLEN_64
+                `ifdef UDB_SDTRIG_MCONTROL6_SIZE_LEGAL_VALUES_5 bins b64 = {3'd5}; `endif
+            `endif
+        }
+        ms_store_case: coverpoint sdtrig_ms_case(ins, 3'b010) {
+            bins size_fired     = {2'd1};
+            bins size_not_fired = {2'd2};
+            bins other_width    = {2'd3};
+        }
+        ms_load_case: coverpoint sdtrig_ms_case(ins, 3'b001) {
+            bins size_fired     = {2'd1};
+            bins size_not_fired = {2'd2};
+            bins other_width    = {2'd3};
+        }
+    `endif
+    `ifdef SDTRIG_MATCH_SIZE_EXEC
+        // On RV64 the high half of an instruction is 0, so mask high (5) and not mask high (13) on a 32-bit
+        // instruction either fire on every instruction, including the csrw that disarms the trigger, or on none:
+        // only the never-firing groups are tested, and the cross leaves those matches out
+        ms_match_exec: coverpoint get_csr_val(ins.hart, ins.issue, sdtrig_ms_when(ins), "tdata1", "match")[3:0] {
+            bins equal = {4'd0};
+            `ifdef UDB_SDTRIG_MCONTROL6_MATCH_LEGAL_VALUES_1  bins napot         = {4'd1};  `endif
+            `ifdef UDB_SDTRIG_MCONTROL6_MATCH_LEGAL_VALUES_2  bins ge            = {4'd2};  `endif
+            `ifdef UDB_SDTRIG_MCONTROL6_MATCH_LEGAL_VALUES_3  bins lt            = {4'd3};  `endif
+            `ifdef UDB_SDTRIG_MCONTROL6_MATCH_LEGAL_VALUES_4  bins mask_low      = {4'd4};  `endif
+            `ifndef UDB_MXLEN_64
+                `ifdef UDB_SDTRIG_MCONTROL6_MATCH_LEGAL_VALUES_5  bins mask_high     = {4'd5};  `endif
+            `endif
+            `ifdef UDB_SDTRIG_MCONTROL6_MATCH_LEGAL_VALUES_8  bins not_equal     = {4'd8};  `endif
+            `ifdef UDB_SDTRIG_MCONTROL6_MATCH_LEGAL_VALUES_9  bins not_napot     = {4'd9};  `endif
+            `ifdef UDB_SDTRIG_MCONTROL6_MATCH_LEGAL_VALUES_12 bins not_mask_low  = {4'd12}; `endif
+            `ifndef UDB_MXLEN_64
+                `ifdef UDB_SDTRIG_MCONTROL6_MATCH_LEGAL_VALUES_13 bins not_mask_high = {4'd13}; `endif
+            `endif
+        }
+        ms_size_exec: coverpoint get_csr_val(ins.hart, ins.issue, sdtrig_ms_when(ins), "tdata1", "size")[2:0] {
+            `ifdef SDTRIG_MATCH_SIZE_EXEC16 bins b16 = {3'd2}; `endif
+            `ifdef UDB_SDTRIG_MCONTROL6_SIZE_LEGAL_VALUES_3 bins b32 = {3'd3}; `endif
+        }
+        ms_exec_case: coverpoint sdtrig_ms_case(ins, 3'b100) {
+            bins size_fired     = {2'd1};
+            bins size_not_fired = {2'd2};
+        }
+        `ifdef SDTRIG_MATCH_SIZE_EXEC16
+            // a 32-bit instruction against a size = 2 trigger: a 32-bit trigger's own disarming csrw rules out
+            // some tdata2 values for 16-bit instructions on size = 3, so only this direction is required
+            ms_size_exec16: coverpoint get_csr_val(ins.hart, ins.issue, sdtrig_ms_when(ins), "tdata1", "size")[2:0] {
+                bins b16 = {3'd2};
+            }
+            ms_exec_other: coverpoint sdtrig_ms_case(ins, 3'b100) {
+                bins other_width = {2'd3};
+            }
+        `endif
+    `endif
     // cp_mcontrol6_chain_long: the XLEN-wide store of x0 to the address the chain's last trigger watches, and
     // whether the breakpoint was taken on it
     chain_store_x0: coverpoint ins.current.insn[24:20] {
@@ -1366,6 +1504,18 @@ covergroup SdtrigSm_mcontrol6_cg with function sample(ins_t ins);
     `endif
     `ifdef SDTRIG_SIZE_DATA
         cp_mcontrol6_size_data: cross priv_mode_m, triggernum_mcontrol6, tdata1_type_mcontrol6, tdata1_m_on, tdata1_chain_disabled, tdata1_select_data, tdata1_xsl_store, tdata1_size_data, size_data_case, size_data_outcome; // NTRIG * sizes * 3
+    `endif
+    `ifdef SDTRIG_MATCH_SIZE_STORE
+        cp_mcontrol6_match_size_store:   cross priv_mode_m, triggernum_mcontrol6, ms_match, ms_size_data, ms_store_case;  // NTRIG * legal matches * legal sizes * 3
+    `endif
+    `ifdef SDTRIG_MATCH_SIZE_LOAD
+        cp_mcontrol6_match_size_load:    cross priv_mode_m, triggernum_mcontrol6, ms_match, ms_size_data, ms_load_case;   // NTRIG * legal matches * legal sizes * 3
+    `endif
+    `ifdef SDTRIG_MATCH_SIZE_EXEC
+        cp_mcontrol6_match_size_execute: cross priv_mode_m, triggernum_mcontrol6, ms_match_exec, ms_size_exec, ms_exec_case; // NTRIG * legal matches * sizes 2/3 * 2
+        `ifdef SDTRIG_MATCH_SIZE_EXEC16
+            cp_mcontrol6_match_size_execute_other: cross priv_mode_m, triggernum_mcontrol6, ms_match, ms_size_exec16, ms_exec_other; // NTRIG * legal matches
+        `endif
     `endif
     `ifdef SDTRIG_CHAIN_3
         cp_mcontrol6_chain_long: cross priv_mode_m, triggernum_chain_end, tdata1_type_mcontrol6, tdata1_m_on, tdata1_chain_disabled, tdata1_select_adr, tdata1_size_any, tdata1_xsl_store, store_xlen, chain_store_x0, chain_store_adr, chain_fired; // chain lengths * 2
