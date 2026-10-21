@@ -60,7 +60,7 @@
     },
     "hcounteren_writable_bits": {
       "len": 32,
-      "value": "0xFFFF_FFFF"
+      "value": "0x0000_0000"
     },
     // `mtvec.{direct,vectored}.supported` indicates whether the
     // corresponding mode is supported for `mtvec`.  At least one mode
@@ -631,8 +631,8 @@
     },
 
     "H": {
-      "mutable_misa": false,
-      "supported": false,
+      "mutable_misa": true,
+      "supported": true,
       "geilen": 63,
       // Whether an implicit access to a VS-stage PTE sets the D bit of a writable G-stage PTE
       "implicit_vs_pte_access_sets_gstage_d": false,
@@ -669,7 +669,7 @@
     "Shvstvala": { "supported": false },
     "Shvstvecd": { "supported": false },
     "Sstvecd": { "supported": false },
-    "Svukte": { "supported": false },
+    "Svukte": { "supported": true },
     "Zilx": { "supported": false },
     "Zibi": {
       "supported": true
@@ -963,10 +963,10 @@
       "supported": true
     },
     "Sv48": {
-      "supported": false
+      "supported": true
     },
     "Sv57": {
-      "supported": false
+      "supported": true
     },
     "Stateen": {
       "Smstateen": {
