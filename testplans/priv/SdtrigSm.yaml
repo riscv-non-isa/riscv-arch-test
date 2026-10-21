@@ -743,15 +743,23 @@ coverpoints:
       tdata1.select = 1 (data), tdata1.XSL = 010
       tdata1.size = {1/2/3/5} (legal sizes; 5 on RV64 only), tdata2 = an N-bit value (zero-extended)
       perform {sb/sh/sw/sd} of a register whose low N bits are {the value / the value with bit 0 flipped} and
-      whose other bits are set, and a store of another width of the value
+      whose other bits are set, a store of another width of the value, and the next wider store (sh/sw/sd; RV64 for
+      sd) of the value with no other bits set, which writes tdata2 zero-extended
+      for size = {2/3/5}: tdata2 = a value that fits in the next narrower store, and a store of size N and the narrower
+      store (sb/sh/sw) of that value with no other bits set
       After each case, rvtest_trap_count is written to the signature.
     expectation: |-
-      Breakpoint exception only for the store of size N whose low N bits equal tdata2
+      Breakpoint exception only for the store of size N whose low N bits equal tdata2 (not for the wider or narrower
+      store, whose data equals tdata2 zero-extended but whose size differs)
       tdata2 bits above N are not tested: Sail 0.16 compares the zero-extended access data with all of tdata2
-    bins: NTRIG * legal sizes (up to 4) * 3 cases
+    bins: NTRIG * legal sizes (up to 4) * 3 cases (the wider and narrower stores fall in the other-width bin)
     rules:
       - Sdtrig_mcontrol6_comparisons
       - Sdtrig_mcontrol6_select_data
+      - Sdtrig_mcontrol6_size_8bit
+      - Sdtrig_mcontrol6_size_16bit
+      - Sdtrig_mcontrol6_size_32bit
+      - Sdtrig_mcontrol6_size_64bit
   - heading: "Notes:"
   - heading: uncertain and uncertainen not tested because optional and unpredictable
   - heading: vs, vu deferred to SdtrigH

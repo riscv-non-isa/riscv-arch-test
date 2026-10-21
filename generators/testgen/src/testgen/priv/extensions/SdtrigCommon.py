@@ -3290,6 +3290,37 @@ def _generate_mcontrol6_tests(test_data: TestData, mode: str) -> list[TestChunk]
                         *_sign_trap_count(data_reg, test_data),
                     ]
                 )
+            # The next wider store of the value with no other bits set writes tdata2 zero-extended, so only the size
+            # keeps the trigger from firing (a hart that ignores size on data matches fires here)
+            wider = {1: "sh", 2: "sw", 3: "sd"}.get(size)
+            if wider:
+                lines.extend(
+                    [
+                        *(["#if __riscv_xlen == 64"] if wider == "sd" else []),
+                        _add_tc(test_data, f"trig_num_{trig_num}_size_{size}_wider_same_value", coverpoint, covergroup),
+                        f"LI(x{data_reg}, 0x{value:x}) # no bits above the low {bits}",
+                        f"{wider} x{data_reg}, 0(x{addr_reg}) # writes tdata2 zero-extended: must not fire (size = {bits} bits)",
+                        "nop # spacer (data match fires after)",
+                        *_sign_trap_count(data_reg, test_data),
+                        *(["#endif"] if wider == "sd" else []),
+                    ]
+                )
+            # The next narrower store, with tdata2 a value that fits in it: the size-N store of that value fires, and
+            # the narrower store of it, which writes tdata2 zero-extended, must not
+            narrower = {2: ("sb", 0x5A), 3: ("sh", 0xA55A), 5: ("sw", 0x1234A55A)}.get(size)
+            if narrower:
+                narrow_store, small = narrower
+                lines.extend(_config_mcontrol6(temp_reg, trig_num, small, mode, xsl=0b010, select=1, size=size))
+                for case, insn in (("small_value", store), ("narrower_same_value", narrow_store)):
+                    lines.extend(
+                        [
+                            _add_tc(test_data, f"trig_num_{trig_num}_size_{size}_{case}", coverpoint, covergroup),
+                            f"LI(x{data_reg}, 0x{small:x}) # tdata2, no other bits set",
+                            f"{insn} x{data_reg}, 0(x{addr_reg}) # writes tdata2 zero-extended: fires iff {store}",
+                            "nop # spacer (data match fires after)",
+                            *_sign_trap_count(data_reg, test_data),
+                        ]
+                    )
             lines.extend(_size_close(size))
         lines.extend(_disable_trigger(temp_reg, trig_num, mode))
         lines.extend(_close_gates(gates))
