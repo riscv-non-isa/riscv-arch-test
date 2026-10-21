@@ -65,7 +65,9 @@ covergroup SdtrigS_cg with function sample(ins_t ins);
     // cp_breakpoint_delegate_s: medeleg[3] and the mode the breakpoint taken from S-mode was handled in
     bp_routing: coverpoint {get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "medeleg", "medeleg")[3], ins.current.csr_wb[CSR_SCAUSE]} iff (sdtrigs_bp_taken(ins)) {
         bins not_delegated_to_m = {2'b00};
-        bins delegated_to_s     = {2'b11};
+        `ifdef UDB_MEDELEG_DELEGATABLE_3  // medeleg[3] is read-only 0 on a hart that uses tcontrol for reentrancy
+            bins delegated_to_s = {2'b11};
+        `endif
     }
 
     // a direct S-mode csrr or csrw of an M-level trigger CSR, which raises an illegal-instruction exception
