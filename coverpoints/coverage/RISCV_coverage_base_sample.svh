@@ -157,8 +157,14 @@
     `ifdef COVER_S
         s_sample(hart, issue, ins);
     `endif
+    `ifdef COVER_SDTRIGS
+        sdtrigs_sample(hart, issue, ins);
+    `endif
     `ifdef COVER_SDTRIGSM
         sdtrigsm_sample(hart, issue, ins);
+    `endif
+    `ifdef COVER_SDTRIGU
+        sdtrigu_sample(hart, issue, ins);
     `endif
     `ifdef COVER_SM
         sm_sample(hart, issue, ins);
@@ -411,9 +417,6 @@
     `endif
     `ifdef COVER_ZICFILPS
         zicfilps_sample(hart, issue, ins);
-    `endif
-    `ifdef COVER_ZICFILPSU
-        zicfilpsu_sample(hart, issue, ins);
     `endif
     `ifdef COVER_ZICFILPSM
         zicfilpsm_sample(hart, issue, ins);
