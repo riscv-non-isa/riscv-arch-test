@@ -1,13 +1,14 @@
 # Normative rule to coverpoint mappings
 # Generated from riscv-isa-manual normative rule definitions
 #
+# The rules about the supervisor-level sstateen CSRs are in Ssstateen.yaml.  The rules that
+# apply to every level of stateen CSR (stateen_*, stateen0_*) stay here, as does
+# sstateen_vsmode_access_roz, which is about hstateen gating sstateen in VS-mode.
+#
 # The empty hstateen* rules and sstateen_vsmode_access_roz need hypervisor tests (TODO).
 
 normative_rule_definitions:
   - name: mstateen_rv64_csrs
-    coverpoint: ["{Smstateen_cg,Ssstateen_cg}/{cp_walking_ones}"]
-
-  - name: sstateen_rv64_csrs
     coverpoint: ["{Smstateen_cg,Ssstateen_cg}/{cp_walking_ones}"]
 
   - name: hstateen_rv64_csrs
@@ -32,9 +33,6 @@ normative_rule_definitions:
 
   - name: stateen_implicit_state_update
     coverpoint: ["Not tested: either behavior is permitted"]
-
-  - name: sstateen_user_access_control
-    coverpoint: ["Ssstateen_cg/{cp_jvt, cp_fcsr_lower}"]
 
   - name: mstateen_bit_correspondence
     coverpoint: ["{Smstateen_cg,Ssstateen_cg}/{cp_walking_ones}"]
@@ -66,9 +64,6 @@ normative_rule_definitions:
 
   - name: sstateen_vsmode_access_roz
     coverpoint: [""]
-
-  - name: sstateen_ro1_bits
-    coverpoint: ["{Smstateen_cg,Ssstateen_cg}/{cp_walking_ones}"]
 
   - name: hstateen_ro1_bits
     coverpoint: [""]
@@ -104,10 +99,6 @@ normative_rule_definitions:
   # Figure: Hypervisor State Enable 0 Register (hstateen0).
   - name: hstateen0_enc_img
     coverpoint: ["TODO: walk hstateen0 in hypervisor tests"]
-
-  # Figure: Supervisor State Enable 0 Register (sstateen0).
-  - name: sstateen0_enc_img
-    coverpoint: ["Ssstateen_cg/cp_walking_ones"]
 
   - name: stateen0_c_op
     coverpoint: ["Not tested: custom state is non-standard and not certified"]
