@@ -329,6 +329,7 @@ normative_rule_definitions:
     coverpoint:
       [
         "SdtrigSm_trig_module_reg_cg/cp_tdata_write",
+        "SdtrigSm_trig_module_reg_cg/cp_csr_access_local",
         "SdtrigSm_access_cg/cp_csr_access_common",
       ]
 
@@ -393,7 +394,11 @@ normative_rule_definitions:
 
   # Writing 0 to this register must result in a trigger that is disabled.
   - name: Sdtrig_tdata1_write0
-    coverpoint: ["SdtrigSm_trig_module_reg_cg/cp_tdata_write"]
+    coverpoint:
+      [
+        "SdtrigSm_trig_module_reg_cg/cp_tdata_write",
+        "SdtrigSm_icount_cg/cp_icount_self_write",
+      ]
 
   # If this trigger supports multiple types, then the hardware should disable it by
   # changing type to 15.
@@ -450,7 +455,11 @@ normative_rule_definitions:
   # If the trigger is disabled, then this register can be written with any value
   # supported by any of the trigger types supported by this trigger.
   - name: Sdtrig_tdata2_disabled
-    coverpoint: ["SdtrigSm_trig_module_reg_cg/cp_tdata_write"]
+    coverpoint:
+      [
+        "SdtrigSm_trig_module_reg_cg/cp_tdata_write",
+        "SdtrigSm_trig_module_reg_cg/cp_csr_access_local",
+      ]
 
   # If XLEN is less than DXLEN, writes to this register are sign-extended.
   - name: Sdtrig_tdata2_sign_extend

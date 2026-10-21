@@ -2210,6 +2210,18 @@ def _generate_csr_tests(test_data: TestData, mode: str) -> list[TestChunk]:
                         write_sigupd(data_reg, test_data),
                     ]
                 )
+            if csr == "tdata2":  # a disabled trigger takes any tdata2 its types support (norm:Sdtrig_tdata2_disabled)
+                lines.extend(
+                    [
+                        f"#ifdef UDB_SDTRIG_MCONTROL6_SUPPORTED_TRIGGERS_{trig_num}",
+                        f"LA(x{temp_reg}, scratch) # an address, which mcontrol6 supports",
+                        _csr_access(f"csrw tdata2, x{temp_reg} # trigger still disabled (tdata1 = 0)", mode),
+                        _csr_access(f"csrr x{data_reg}, tdata2", mode),
+                        f"xor x{data_reg}, x{data_reg}, x{temp_reg} # 0 if tdata2 holds the address",
+                        write_sigupd(data_reg, test_data),
+                        "#endif",
+                    ]
+                )
             lines.append(_csr_access(f"csrw {csr}, x{ones_reg} # write all 1s", mode))
             if csr == "tinfo":
                 lines.extend(
@@ -3476,6 +3488,13 @@ def _generate_icount_tests(test_data: TestData, mode: str) -> list[TestChunk]:
                     *_config_icount(temp_reg, trig_num, 1, mode),
                     f"csrw tdata1, x{data_reg} # matched with count = 1: pending set iff SELF_WRITE_SETS_PENDING",
                     "nop # spacer: the breakpoint is taken here if pending was set",
+                    # count holds the new value, less the few instructions since: 1 if it is still above 1
+                    f"csrr x{data_reg}, tdata1",
+                    f"srli x{data_reg}, x{data_reg}, 10",
+                    f"andi x{data_reg}, x{data_reg}, 0x3ff # count[9:0]: 100 less the instructions since the write",
+                    f"sltiu x{data_reg}, x{data_reg}, 2",
+                    f"xori x{data_reg}, x{data_reg}, 1 # 1 if count > 1",
+                    write_sigupd(data_reg, test_data),
                     *_disable_trigger(temp_reg, trig_num, mode),
                     *_sign_trap_count(data_reg, test_data),
                     *_close_gates(gates),

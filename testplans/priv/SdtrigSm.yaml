@@ -304,13 +304,17 @@ coverpoints:
     description: |-
       each of UDB_SDTRIG_NUM_TRIGGERS in tselect:
       For x register in {tdata1, tdata2, tdata3, tinfo}:
-      csr write all 0s, write all 1s
+      tdata1 = 0 (disabled), csr write all 0s, write all 1s
+      if the trigger supports mcontrol6: with tdata1 = 0, CSRW tdata2 = scratch, CSRR tdata2
     expectation: |-
       No exceptions
       All registers can be accessed from M-mode
+      A disabled trigger reads tdata2 = tdata3 = 0 after writing 0, and keeps tdata2 = scratch, an address mcontrol6 supports
     bins: NUM_TRIGGERS * 4 regs * 2 values
     rules:
       - Sdtrig_trigger_modes
+      - Sdtrig_disable_trig
+      - Sdtrig_tdata2_disabled
   - name: cp_tselect_trigs
     goal: The set of triggers must start at 0 and be contiguous
     description: |-
@@ -852,14 +856,16 @@ coverpoints:
       if not UDB_SDTRIG_ICOUNT_COUNT_HARDWIRED_1
       tdata1.count = 1, tdata1.m = 1
       the next instruction is CSRW tdata1 = icount with count = 100, m = 1
-      After each case, rvtest_trap_count is written to the signature.
+      CSRR tdata1 after the next instruction; whether count is above 1 is written to the signature, then the trigger is
+      disabled and rvtest_trap_count is written to the signature.
     expectation: |-
-      count holds the newly written value afterwards, so the trigger does not fire later
+      count holds the newly written value afterwards (less the instructions since), so the trigger does not fire later
       pending becomes set, and a breakpoint exception is taken right after the CSRW, only if
       UDB_SDTRIG_ICOUNT_SELF_WRITE_SETS_PENDING
     bins: NTRIG
     rules:
       - Sdtrig_icount_exception
+      - Sdtrig_tdata1_write0
   - name: "Itrigger tests: test fire and don't fire for each scenario"
     description: |-
       Repeat for each of UDB_SDTRIG_NUM_TRIGGERS if UDB_SDTRIG_ITRIGGER_SUPPORTED_TRIGGERS[i]:
