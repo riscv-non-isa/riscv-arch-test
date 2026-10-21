@@ -19,14 +19,13 @@ Usage:
 """
 
 import argparse
-import json
 import re
 import sys
 from collections import defaultdict
 from pathlib import Path
 from typing import Any
 
-from generate_norm_table import build_coverpoint_groups
+from generate_norm_table import NormYamlError, load_norm_rules, load_norm_yaml
 from ruamel.yaml import YAML
 
 FIELDS = (
@@ -92,8 +91,9 @@ def covergroup_suites(coverage_dir: Path) -> dict[str, str]:
     return owners
 
 
-def rule_map(norm_dir: Path, coverage_dir: Path) -> dict[str, dict[str, list[str]]]:
-    """suite -> coverpoint -> [rule names], inverted from every coverpoints/norm/*.yaml.
+def rule_map(norm_dir: Path, coverage_dir: Path) -> tuple[dict[str, dict[str, list[str]]], set[str]]:
+    """suite -> coverpoint -> [rule names], inverted from every coverpoints/norm/*.yaml, and the
+    rule names of suites whose tags are not yet in the ISA manual.
 
     A rule belongs to the suite whose <suite>_coverage.svh declares the covergroup it names.
     A covergroup that no coverage file declares belongs to the suite its name starts with
@@ -101,18 +101,24 @@ def rule_map(norm_dir: Path, coverage_dir: Path) -> dict[str, dict[str, list[str
     """
     owners = covergroup_suites(coverage_dir)
     out: dict[str, dict[str, list[str]]] = defaultdict(lambda: defaultdict(list))
+    untagged: set[str] = set()
     for f in sorted(norm_dir.glob("*.yaml")):
-        for group in build_coverpoint_groups(load_yaml(f)):
-            mappings = group["coverpoint"] or []
-            for mapping in [mappings] if isinstance(mappings, str) else mappings:
+        try:
+            norm = load_norm_yaml(f)
+        except NormYamlError as err:
+            sys.exit(f"Error: {err}")
+        for names, mappings in norm.groups:
+            if norm.untagged_upstream:
+                untagged.update(names)
+            for mapping in mappings:
                 try:
-                    pairs = coverpoints_of(str(mapping))
+                    pairs = coverpoints_of(mapping)
                 except ValueError as err:
-                    sys.exit(f"{f}: {err}")
+                    sys.exit(f"Error: {f}: {err}")
                 for covergroup, coverpoint in pairs:
                     rules = out[owners.get(covergroup, covergroup.split("_")[0])][coverpoint]
-                    rules += [n for n in group["names"] if n not in rules]
-    return out
+                    rules += [n for n in names if n not in rules]
+    return out, untagged
 
 
 def coverage_names(coverage_dir: Path | None, suite: str) -> set[str] | None:
@@ -188,8 +194,17 @@ def render(
         name = str(e.get("name") or "")
         # A row may list several coverpoints, one per line; other lines are notes.
         cps = [ln.strip() for ln in name.split("\n") if re.fullmatch(r"\w+", ln.strip())]
+        # A row may name a family of crosses, e.g. cp_hedeleg for cp_hedeleg_*
+        declared = (cov or set()) | rules.keys()
+        cps = [
+            c
+            for cp in cps
+            for c in ([cp] if cp in declared else [cp, *sorted(d for d in declared if d.startswith(cp + "_"))])
+        ]
         if cov is not None:
-            warnings += [("coverpoint", cp) for cp in cps if cp not in cov]
+            warnings += [
+                ("coverpoint", cp) for cp in cps if cp not in cov and not any(c.startswith(cp + "_") for c in cov)
+            ]
         cells = [esc(name)]
         for k in used:
             if k == "rules":
@@ -199,7 +214,7 @@ def render(
                     if r not in names:
                         names.append(r)
                 for r in names:
-                    if known_rules and r not in known_rules:
+                    if r not in known_rules:
                         warnings.append(("rule", r))
                     if r in unplaced:
                         unplaced.remove(r)
@@ -225,6 +240,7 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--plans", default="testplans/priv", type=Path)
     ap.add_argument("--norm", default="coverpoints/norm", type=Path)
+    ap.add_argument("--json", required=True, type=Path, help="the ISA manual's norm-rules.json")
     ap.add_argument(
         "--coverage",
         default="coverpoints/priv",
@@ -234,19 +250,14 @@ def main() -> None:
     ap.add_argument("--out", default="docs/ctp/build/generated/testplans/priv", type=Path)
     a = ap.parse_args()
 
-    rules = rule_map(a.norm, a.coverage)
-    known: set[str] = set()
-    cache = a.norm / "norm-rules.json"
-    if cache.exists():
-        known = {
-            r["name"] for r in json.loads(cache.read_text(encoding="utf-8")).get("normative_rules", []) if r.get("name")
-        }
+    rules, untagged = rule_map(a.norm, a.coverage)
+    known = set(load_norm_rules(a.json)) | untagged
     a.out.mkdir(parents=True, exist_ok=True)
     grouped: dict[tuple[str, str], list[str]] = defaultdict(list)
     for f in sorted(a.plans.glob("*.yaml")):
         plan = load_yaml(f)
         if not isinstance(plan, dict):
-            sys.exit(f"{f}: expected a mapping")
+            sys.exit(f"Error: {f}: expected a mapping")
         suite = plan["suite"]
         text, warnings = render(plan, rules.get(suite, {}), known, coverage_names(a.coverage, suite), f)
         (a.out / f"{suite}.adoc").write_text(text, encoding="utf-8")

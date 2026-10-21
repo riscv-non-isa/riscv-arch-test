@@ -20,6 +20,7 @@ from testgen.priv.extensions.SsstrictCommon import (
     H_CUSTOM_CSR_RANGES,
     M_CUSTOM_CSR_RANGES,
     S_CUSTOM_CSR_RANGES,
+    SCRATCH_SIZE_DEFINE,
     USER_CUSTOM_CSR_RANGES,
     csr_range_set,
     generate_ssstrict_suite,
@@ -42,7 +43,6 @@ _M_CSR_SKIP: frozenset[int] = frozenset(
         0x340,  # mscratch: corrupts trap stack
         0x305,  # mtvec: corrupts trap stack
         0x747,  # mseccfg: confuses M-mode
-        0x5A8,  # scontext ignore, sail does not support it but other sims do
     }
 )
 
@@ -57,7 +57,7 @@ _M_CSR_SKIP: frozenset[int] = frozenset(
         "I",
         "V",
     ],
-    extra_defines=["#define RVTEST_USE_FAST_TRAP_HANDLER", "#define BOOT_TO_MMODE"],
+    extra_defines=["#define RVTEST_USE_FAST_TRAP_HANDLER", SCRATCH_SIZE_DEFINE, "#define BOOT_TO_MMODE"],
 )
 def make_ssstrictsm(test_data: TestData) -> list[TestChunk]:
     """SsstrictSm — machine-mode strict compliance tests."""

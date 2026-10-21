@@ -22,13 +22,16 @@ from testgen.priv.extensions.pmp.helpers import (
     zero_pmp_regs,
 )
 from testgen.priv.extensions.pmp.probes import (
+    Cross,
     gen_cbo,
     gen_prefetch,
 )
 from testgen.priv.registry import add_priv_test_generator
 
 _ENABLE_CBO = ["LI(t0, 0xF0)", "csrrs zero, menvcfg, t0"]
-_PAGE_REGION = make_exec_region(("1024", "nop"), pad=None)
+# The locked NAPOT region is max(page, grain) bytes from TEST_FOR_EXECUTION; pad to its end so that
+# nothing the trap handler writes (e.g. the trap signature) shares it at grains above a page.
+_PAGE_REGION = [*make_exec_region(("1024", "nop"), pad=None), ".p2align 12", ".p2align (UDB_PMP_GRANULARITY)"]
 
 #: The region under test followed by a region of the same size that a locked entry covers in
 #: cp_none_cbo, so nothing else the test uses lies there.
@@ -42,7 +45,7 @@ _NONE_REGIONS = [
 ]
 
 
-def _gen_cbo_readback(test_data: TestData, case: str, coverpoint: str, region: str) -> list[str]:
+def _gen_cbo_readback(test_data: TestData, case: str, coverpoint: Cross, region: str) -> list[str]:
     return gen_cbo(test_data, case, coverpoint, region, readback=True)
 
 
@@ -58,13 +61,17 @@ def _make_unlocked_chunk(test_data: TestData) -> TestChunk:
             [("0000", 0), ("0001", 0)],
             "napot",
             _gen_cbo_readback,
-            "cp_cfg_L_access_cbo",
+            lambda instruction: f"cp_cfg_L_access_cbo_{instruction.removeprefix('cbo.')}",
             extra_setup=_ENABLE_CBO,
             napot_mask=napot_mask_defines(12),
         )
     )
     chunk.raw_data.extend(_PAGE_REGION)
     return test_data.end_test_chunk()
+
+
+def _none_cbo(instruction: str) -> str:
+    return f"cp_none_cbo_{instruction.removeprefix('cbo.')}"
 
 
 def _make_none_chunk(test_data: TestData) -> TestChunk:
@@ -85,14 +92,14 @@ def _make_none_chunk(test_data: TestData) -> TestChunk:
             *_ENABLE_CBO,
             "",
             "// PMP configuration 1: every entry off",
-            *gen_cbo(test_data, "off", "cp_none_cbo", readback=True),
+            *gen_cbo(test_data, "off", _none_cbo, readback=True),
             "",
             "// PMP configuration 2: entry 0 = L=1, XWR=000 just above the region; entry 1 = L=0, XWR=000 just below it",
             *set_pmpaddr("napot", 0, "PMPZICBO_ABOVE"),
             *set_pmpaddr("napot", 1, "TEST_FOR_EXECUTION - (1 << PMP_REGION_SHIFT)"),
             *set_pmpcfg(0, neighbors),
             "RVTEST_SFENCE_VMA_IF_SUPPORTED",
-            *gen_cbo(test_data, "active", "cp_none_cbo", readback=True),
+            *gen_cbo(test_data, "active", _none_cbo, readback=True),
         ]
     )
     chunk.raw_data.extend(_NONE_REGIONS)
@@ -110,7 +117,8 @@ def make_pmpzicbo_cbo(test_data: TestData) -> list[TestChunk]:
     for number, lxwr in ((1, "1000"), (2, "1001"), (3, "1011")):
         chunk = test_data.begin_test_chunk(f"cbo_wr_{number:02d}")
         chunk.section_header = comment_banner(
-            "cp_cbo", f"cbo.zero/clean/flush/inval against a locked page-sized NAPOT region with WR = {lxwr[2:]}."
+            "cp_cbo_zero, cp_cbo_clean, cp_cbo_flush and cp_cbo_inval",
+            f"cbo.zero/clean/flush/inval against a locked page-sized NAPOT region with WR = {lxwr[2:]}.",
         )
         chunk.code.extend(
             lxwr_walk_body(
@@ -118,7 +126,7 @@ def make_pmpzicbo_cbo(test_data: TestData) -> list[TestChunk]:
                 [(lxwr, 0)],
                 "napot",
                 gen_cbo,
-                "cp_cbo",
+                lambda instruction: f"cp_cbo_{instruction.removeprefix('cbo.')}",
                 first=number,
                 extra_setup=_ENABLE_CBO,
                 napot_mask=napot_mask_defines(12),
@@ -140,7 +148,8 @@ def make_pmpzicbo_cbo(test_data: TestData) -> list[TestChunk]:
 def make_pmpzicbo_prefetch(test_data: TestData) -> list[TestChunk]:
     chunk = test_data.begin_test_chunk("prefetch")
     chunk.section_header = comment_banner(
-        "cp_prefetch", "prefetch.i/r/w against a locked page-sized NAPOT region with each legal XWR; never faults."
+        "cp_prefetch_i, cp_prefetch_r and cp_prefetch_w",
+        "prefetch.i/r/w against a locked page-sized NAPOT region with each legal XWR; never faults.",
     )
     chunk.code.extend(
         lxwr_walk_body(
@@ -148,7 +157,7 @@ def make_pmpzicbo_prefetch(test_data: TestData) -> list[TestChunk]:
             LOCKED_LXWR_CASES,
             "napot",
             gen_prefetch,
-            "cp_prefetch",
+            lambda instruction: f"cp_prefetch_{instruction.removeprefix('prefetch.')}",
             extra_setup=_ENABLE_CBO,
             napot_mask=napot_mask_defines(12),
         )

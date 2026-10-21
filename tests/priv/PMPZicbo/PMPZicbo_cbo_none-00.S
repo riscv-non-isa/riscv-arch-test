@@ -65,25 +65,25 @@ RVTEST_BEGIN
   LA(a4, TEST_FOR_EXECUTION)
   LI(a5, -1)
   sw a5, 0(a4)
-PMPZicbo_cp_none_cbo_off_1_cbo_zero:
+PMPZicbo_cg_cp_none_cbo_zero_off_1_cbo_zero:
   cbo.zero (a4)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, PMPZicbo_cp_none_cbo_off_1_cbo_zero, PMPZicbo_cp_none_cbo_off_1_cbo_zero_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, PMPZicbo_cg_cp_none_cbo_zero_off_1_cbo_zero, PMPZicbo_cg_cp_none_cbo_zero_off_1_cbo_zero_str)
   lw a5, 0(a4)
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, PMPZicbo_cp_none_cbo_off_1_cbo_zero, PMPZicbo_cp_none_cbo_off_1_cbo_zero_str)
-PMPZicbo_cp_none_cbo_off_2_cbo_clean:
+  RVTEST_SIGUPD(x2, x5, x4, x15, PMPZicbo_cg_cp_none_cbo_zero_off_1_cbo_zero, PMPZicbo_cg_cp_none_cbo_zero_off_1_cbo_zero_str)
+PMPZicbo_cg_cp_none_cbo_clean_off_2_cbo_clean:
   cbo.clean (a4)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, PMPZicbo_cp_none_cbo_off_2_cbo_clean, PMPZicbo_cp_none_cbo_off_2_cbo_clean_str)
-PMPZicbo_cp_none_cbo_off_3_cbo_flush:
+  RVTEST_SIGUPD(x2, x5, x4, x14, PMPZicbo_cg_cp_none_cbo_clean_off_2_cbo_clean, PMPZicbo_cg_cp_none_cbo_clean_off_2_cbo_clean_str)
+PMPZicbo_cg_cp_none_cbo_flush_off_3_cbo_flush:
   cbo.flush (a4)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, PMPZicbo_cp_none_cbo_off_3_cbo_flush, PMPZicbo_cp_none_cbo_off_3_cbo_flush_str)
-PMPZicbo_cp_none_cbo_off_4_cbo_inval:
+  RVTEST_SIGUPD(x2, x5, x4, x14, PMPZicbo_cg_cp_none_cbo_flush_off_3_cbo_flush, PMPZicbo_cg_cp_none_cbo_flush_off_3_cbo_flush_str)
+PMPZicbo_cg_cp_none_cbo_inval_off_4_cbo_inval:
   cbo.inval (a4)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, PMPZicbo_cp_none_cbo_off_4_cbo_inval, PMPZicbo_cp_none_cbo_off_4_cbo_inval_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, PMPZicbo_cg_cp_none_cbo_inval_off_4_cbo_inval, PMPZicbo_cg_cp_none_cbo_inval_off_4_cbo_inval_str)
 
 // PMP configuration 2: entry 0 = L=1, XWR=000 just above the region; entry 1 = L=0, XWR=000 just below it
   LA(x5, PMPZICBO_ABOVE)
@@ -107,25 +107,25 @@ PMPZicbo_cp_none_cbo_off_4_cbo_inval:
   LA(a4, TEST_FOR_EXECUTION)
   LI(a5, -1)
   sw a5, 0(a4)
-PMPZicbo_cp_none_cbo_active_1_cbo_zero:
+PMPZicbo_cg_cp_none_cbo_zero_active_1_cbo_zero:
   cbo.zero (a4)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, PMPZicbo_cp_none_cbo_active_1_cbo_zero, PMPZicbo_cp_none_cbo_active_1_cbo_zero_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, PMPZicbo_cg_cp_none_cbo_zero_active_1_cbo_zero, PMPZicbo_cg_cp_none_cbo_zero_active_1_cbo_zero_str)
   lw a5, 0(a4)
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, PMPZicbo_cp_none_cbo_active_1_cbo_zero, PMPZicbo_cp_none_cbo_active_1_cbo_zero_str)
-PMPZicbo_cp_none_cbo_active_2_cbo_clean:
+  RVTEST_SIGUPD(x2, x5, x4, x15, PMPZicbo_cg_cp_none_cbo_zero_active_1_cbo_zero, PMPZicbo_cg_cp_none_cbo_zero_active_1_cbo_zero_str)
+PMPZicbo_cg_cp_none_cbo_clean_active_2_cbo_clean:
   cbo.clean (a4)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, PMPZicbo_cp_none_cbo_active_2_cbo_clean, PMPZicbo_cp_none_cbo_active_2_cbo_clean_str)
-PMPZicbo_cp_none_cbo_active_3_cbo_flush:
+  RVTEST_SIGUPD(x2, x5, x4, x14, PMPZicbo_cg_cp_none_cbo_clean_active_2_cbo_clean, PMPZicbo_cg_cp_none_cbo_clean_active_2_cbo_clean_str)
+PMPZicbo_cg_cp_none_cbo_flush_active_3_cbo_flush:
   cbo.flush (a4)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, PMPZicbo_cp_none_cbo_active_3_cbo_flush, PMPZicbo_cp_none_cbo_active_3_cbo_flush_str)
-PMPZicbo_cp_none_cbo_active_4_cbo_inval:
+  RVTEST_SIGUPD(x2, x5, x4, x14, PMPZicbo_cg_cp_none_cbo_flush_active_3_cbo_flush, PMPZicbo_cg_cp_none_cbo_flush_active_3_cbo_flush_str)
+PMPZicbo_cg_cp_none_cbo_inval_active_4_cbo_inval:
   cbo.inval (a4)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, PMPZicbo_cp_none_cbo_active_4_cbo_inval, PMPZicbo_cp_none_cbo_active_4_cbo_inval_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, PMPZicbo_cg_cp_none_cbo_inval_active_4_cbo_inval, PMPZicbo_cg_cp_none_cbo_inval_active_4_cbo_inval_str)
 
 // Instantiate trap handlers and other epilog code, call RVMODEL_HALT at end of test
 RVTEST_CODE_END
@@ -143,14 +143,14 @@ PMPZICBO_ABOVE:
   .space (1 << PMP_REGION_SHIFT)
 
 // Testcase strings
-PMPZicbo_cp_none_cbo_off_1_cbo_zero_str: .string "\"test: 21; cg: PMPZicbo; cp: cp_none_cbo; bin: off_1_cbo.zero\""
-PMPZicbo_cp_none_cbo_off_2_cbo_clean_str: .string "\"test: 22; cg: PMPZicbo; cp: cp_none_cbo; bin: off_2_cbo.clean\""
-PMPZicbo_cp_none_cbo_off_3_cbo_flush_str: .string "\"test: 23; cg: PMPZicbo; cp: cp_none_cbo; bin: off_3_cbo.flush\""
-PMPZicbo_cp_none_cbo_off_4_cbo_inval_str: .string "\"test: 24; cg: PMPZicbo; cp: cp_none_cbo; bin: off_4_cbo.inval\""
-PMPZicbo_cp_none_cbo_active_1_cbo_zero_str: .string "\"test: 25; cg: PMPZicbo; cp: cp_none_cbo; bin: active_1_cbo.zero\""
-PMPZicbo_cp_none_cbo_active_2_cbo_clean_str: .string "\"test: 26; cg: PMPZicbo; cp: cp_none_cbo; bin: active_2_cbo.clean\""
-PMPZicbo_cp_none_cbo_active_3_cbo_flush_str: .string "\"test: 27; cg: PMPZicbo; cp: cp_none_cbo; bin: active_3_cbo.flush\""
-PMPZicbo_cp_none_cbo_active_4_cbo_inval_str: .string "\"test: 28; cg: PMPZicbo; cp: cp_none_cbo; bin: active_4_cbo.inval\""
+PMPZicbo_cg_cp_none_cbo_zero_off_1_cbo_zero_str: .string "\"test: 21; cg: PMPZicbo_cg; cp: cp_none_cbo_zero; bin: off_1_cbo.zero\""
+PMPZicbo_cg_cp_none_cbo_clean_off_2_cbo_clean_str: .string "\"test: 22; cg: PMPZicbo_cg; cp: cp_none_cbo_clean; bin: off_2_cbo.clean\""
+PMPZicbo_cg_cp_none_cbo_flush_off_3_cbo_flush_str: .string "\"test: 23; cg: PMPZicbo_cg; cp: cp_none_cbo_flush; bin: off_3_cbo.flush\""
+PMPZicbo_cg_cp_none_cbo_inval_off_4_cbo_inval_str: .string "\"test: 24; cg: PMPZicbo_cg; cp: cp_none_cbo_inval; bin: off_4_cbo.inval\""
+PMPZicbo_cg_cp_none_cbo_zero_active_1_cbo_zero_str: .string "\"test: 25; cg: PMPZicbo_cg; cp: cp_none_cbo_zero; bin: active_1_cbo.zero\""
+PMPZicbo_cg_cp_none_cbo_clean_active_2_cbo_clean_str: .string "\"test: 26; cg: PMPZicbo_cg; cp: cp_none_cbo_clean; bin: active_2_cbo.clean\""
+PMPZicbo_cg_cp_none_cbo_flush_active_3_cbo_flush_str: .string "\"test: 27; cg: PMPZicbo_cg; cp: cp_none_cbo_flush; bin: active_3_cbo.flush\""
+PMPZicbo_cg_cp_none_cbo_inval_active_4_cbo_inval_str: .string "\"test: 28; cg: PMPZicbo_cg; cp: cp_none_cbo_inval; bin: active_4_cbo.inval\""
 
 // End of test data section and model specific data
 RVTEST_DATA_END

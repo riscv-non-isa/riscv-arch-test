@@ -79,25 +79,25 @@ RVTEST_BEGIN
   LA(a4, TEST_FOR_EXECUTION)
   LI(a5, -1)
   sw a5, 0(a4)
-PMPZicbo_cp_cfg_L_access_cbo_entry0_lxwr0000_1_cbo_zero:
+PMPZicbo_cg_cp_cfg_L_access_cbo_zero_entry0_lxwr0000_1_cbo_zero:
   cbo.zero (a4)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, PMPZicbo_cp_cfg_L_access_cbo_entry0_lxwr0000_1_cbo_zero, PMPZicbo_cp_cfg_L_access_cbo_entry0_lxwr0000_1_cbo_zero_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, PMPZicbo_cg_cp_cfg_L_access_cbo_zero_entry0_lxwr0000_1_cbo_zero, PMPZicbo_cg_cp_cfg_L_access_cbo_zero_entry0_lxwr0000_1_cbo_zero_str)
   lw a5, 0(a4)
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, PMPZicbo_cp_cfg_L_access_cbo_entry0_lxwr0000_1_cbo_zero, PMPZicbo_cp_cfg_L_access_cbo_entry0_lxwr0000_1_cbo_zero_str)
-PMPZicbo_cp_cfg_L_access_cbo_entry0_lxwr0000_2_cbo_clean:
+  RVTEST_SIGUPD(x2, x5, x4, x15, PMPZicbo_cg_cp_cfg_L_access_cbo_zero_entry0_lxwr0000_1_cbo_zero, PMPZicbo_cg_cp_cfg_L_access_cbo_zero_entry0_lxwr0000_1_cbo_zero_str)
+PMPZicbo_cg_cp_cfg_L_access_cbo_clean_entry0_lxwr0000_2_cbo_clean:
   cbo.clean (a4)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, PMPZicbo_cp_cfg_L_access_cbo_entry0_lxwr0000_2_cbo_clean, PMPZicbo_cp_cfg_L_access_cbo_entry0_lxwr0000_2_cbo_clean_str)
-PMPZicbo_cp_cfg_L_access_cbo_entry0_lxwr0000_3_cbo_flush:
+  RVTEST_SIGUPD(x2, x5, x4, x14, PMPZicbo_cg_cp_cfg_L_access_cbo_clean_entry0_lxwr0000_2_cbo_clean, PMPZicbo_cg_cp_cfg_L_access_cbo_clean_entry0_lxwr0000_2_cbo_clean_str)
+PMPZicbo_cg_cp_cfg_L_access_cbo_flush_entry0_lxwr0000_3_cbo_flush:
   cbo.flush (a4)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, PMPZicbo_cp_cfg_L_access_cbo_entry0_lxwr0000_3_cbo_flush, PMPZicbo_cp_cfg_L_access_cbo_entry0_lxwr0000_3_cbo_flush_str)
-PMPZicbo_cp_cfg_L_access_cbo_entry0_lxwr0000_4_cbo_inval:
+  RVTEST_SIGUPD(x2, x5, x4, x14, PMPZicbo_cg_cp_cfg_L_access_cbo_flush_entry0_lxwr0000_3_cbo_flush, PMPZicbo_cg_cp_cfg_L_access_cbo_flush_entry0_lxwr0000_3_cbo_flush_str)
+PMPZicbo_cg_cp_cfg_L_access_cbo_inval_entry0_lxwr0000_4_cbo_inval:
   cbo.inval (a4)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, PMPZicbo_cp_cfg_L_access_cbo_entry0_lxwr0000_4_cbo_inval, PMPZicbo_cp_cfg_L_access_cbo_entry0_lxwr0000_4_cbo_inval_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, PMPZicbo_cg_cp_cfg_L_access_cbo_inval_entry0_lxwr0000_4_cbo_inval, PMPZicbo_cg_cp_cfg_L_access_cbo_inval_entry0_lxwr0000_4_cbo_inval_str)
 
 // PMP configuration 2: L = 0, R permissions, entry 0
   LA(x5, REGIONSTART)
@@ -114,25 +114,25 @@ PMPZicbo_cp_cfg_L_access_cbo_entry0_lxwr0000_4_cbo_inval:
   LA(a4, TEST_FOR_EXECUTION)
   LI(a5, -1)
   sw a5, 0(a4)
-PMPZicbo_cp_cfg_L_access_cbo_entry0_lxwr0001_1_cbo_zero:
+PMPZicbo_cg_cp_cfg_L_access_cbo_zero_entry0_lxwr0001_1_cbo_zero:
   cbo.zero (a4)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, PMPZicbo_cp_cfg_L_access_cbo_entry0_lxwr0001_1_cbo_zero, PMPZicbo_cp_cfg_L_access_cbo_entry0_lxwr0001_1_cbo_zero_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, PMPZicbo_cg_cp_cfg_L_access_cbo_zero_entry0_lxwr0001_1_cbo_zero, PMPZicbo_cg_cp_cfg_L_access_cbo_zero_entry0_lxwr0001_1_cbo_zero_str)
   lw a5, 0(a4)
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, PMPZicbo_cp_cfg_L_access_cbo_entry0_lxwr0001_1_cbo_zero, PMPZicbo_cp_cfg_L_access_cbo_entry0_lxwr0001_1_cbo_zero_str)
-PMPZicbo_cp_cfg_L_access_cbo_entry0_lxwr0001_2_cbo_clean:
+  RVTEST_SIGUPD(x2, x5, x4, x15, PMPZicbo_cg_cp_cfg_L_access_cbo_zero_entry0_lxwr0001_1_cbo_zero, PMPZicbo_cg_cp_cfg_L_access_cbo_zero_entry0_lxwr0001_1_cbo_zero_str)
+PMPZicbo_cg_cp_cfg_L_access_cbo_clean_entry0_lxwr0001_2_cbo_clean:
   cbo.clean (a4)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, PMPZicbo_cp_cfg_L_access_cbo_entry0_lxwr0001_2_cbo_clean, PMPZicbo_cp_cfg_L_access_cbo_entry0_lxwr0001_2_cbo_clean_str)
-PMPZicbo_cp_cfg_L_access_cbo_entry0_lxwr0001_3_cbo_flush:
+  RVTEST_SIGUPD(x2, x5, x4, x14, PMPZicbo_cg_cp_cfg_L_access_cbo_clean_entry0_lxwr0001_2_cbo_clean, PMPZicbo_cg_cp_cfg_L_access_cbo_clean_entry0_lxwr0001_2_cbo_clean_str)
+PMPZicbo_cg_cp_cfg_L_access_cbo_flush_entry0_lxwr0001_3_cbo_flush:
   cbo.flush (a4)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, PMPZicbo_cp_cfg_L_access_cbo_entry0_lxwr0001_3_cbo_flush, PMPZicbo_cp_cfg_L_access_cbo_entry0_lxwr0001_3_cbo_flush_str)
-PMPZicbo_cp_cfg_L_access_cbo_entry0_lxwr0001_4_cbo_inval:
+  RVTEST_SIGUPD(x2, x5, x4, x14, PMPZicbo_cg_cp_cfg_L_access_cbo_flush_entry0_lxwr0001_3_cbo_flush, PMPZicbo_cg_cp_cfg_L_access_cbo_flush_entry0_lxwr0001_3_cbo_flush_str)
+PMPZicbo_cg_cp_cfg_L_access_cbo_inval_entry0_lxwr0001_4_cbo_inval:
   cbo.inval (a4)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, PMPZicbo_cp_cfg_L_access_cbo_entry0_lxwr0001_4_cbo_inval, PMPZicbo_cp_cfg_L_access_cbo_entry0_lxwr0001_4_cbo_inval_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, PMPZicbo_cg_cp_cfg_L_access_cbo_inval_entry0_lxwr0001_4_cbo_inval, PMPZicbo_cg_cp_cfg_L_access_cbo_inval_entry0_lxwr0001_4_cbo_inval_str)
 
 // Instantiate trap handlers and other epilog code, call RVMODEL_HALT at end of test
 RVTEST_CODE_END
@@ -155,16 +155,18 @@ RETURN_INSTRUCTION:
   nop
   jr ra
   .option pop
+  .p2align 12
+  .p2align (UDB_PMP_GRANULARITY)
 
 // Testcase strings
-PMPZicbo_cp_cfg_L_access_cbo_entry0_lxwr0000_1_cbo_zero_str: .string "\"test: 13; cg: PMPZicbo; cp: cp_cfg_L_access_cbo; bin: entry0_lxwr0000_1_cbo.zero\""
-PMPZicbo_cp_cfg_L_access_cbo_entry0_lxwr0000_2_cbo_clean_str: .string "\"test: 14; cg: PMPZicbo; cp: cp_cfg_L_access_cbo; bin: entry0_lxwr0000_2_cbo.clean\""
-PMPZicbo_cp_cfg_L_access_cbo_entry0_lxwr0000_3_cbo_flush_str: .string "\"test: 15; cg: PMPZicbo; cp: cp_cfg_L_access_cbo; bin: entry0_lxwr0000_3_cbo.flush\""
-PMPZicbo_cp_cfg_L_access_cbo_entry0_lxwr0000_4_cbo_inval_str: .string "\"test: 16; cg: PMPZicbo; cp: cp_cfg_L_access_cbo; bin: entry0_lxwr0000_4_cbo.inval\""
-PMPZicbo_cp_cfg_L_access_cbo_entry0_lxwr0001_1_cbo_zero_str: .string "\"test: 17; cg: PMPZicbo; cp: cp_cfg_L_access_cbo; bin: entry0_lxwr0001_1_cbo.zero\""
-PMPZicbo_cp_cfg_L_access_cbo_entry0_lxwr0001_2_cbo_clean_str: .string "\"test: 18; cg: PMPZicbo; cp: cp_cfg_L_access_cbo; bin: entry0_lxwr0001_2_cbo.clean\""
-PMPZicbo_cp_cfg_L_access_cbo_entry0_lxwr0001_3_cbo_flush_str: .string "\"test: 19; cg: PMPZicbo; cp: cp_cfg_L_access_cbo; bin: entry0_lxwr0001_3_cbo.flush\""
-PMPZicbo_cp_cfg_L_access_cbo_entry0_lxwr0001_4_cbo_inval_str: .string "\"test: 20; cg: PMPZicbo; cp: cp_cfg_L_access_cbo; bin: entry0_lxwr0001_4_cbo.inval\""
+PMPZicbo_cg_cp_cfg_L_access_cbo_zero_entry0_lxwr0000_1_cbo_zero_str: .string "\"test: 13; cg: PMPZicbo_cg; cp: cp_cfg_L_access_cbo_zero; bin: entry0_lxwr0000_1_cbo.zero\""
+PMPZicbo_cg_cp_cfg_L_access_cbo_clean_entry0_lxwr0000_2_cbo_clean_str: .string "\"test: 14; cg: PMPZicbo_cg; cp: cp_cfg_L_access_cbo_clean; bin: entry0_lxwr0000_2_cbo.clean\""
+PMPZicbo_cg_cp_cfg_L_access_cbo_flush_entry0_lxwr0000_3_cbo_flush_str: .string "\"test: 15; cg: PMPZicbo_cg; cp: cp_cfg_L_access_cbo_flush; bin: entry0_lxwr0000_3_cbo.flush\""
+PMPZicbo_cg_cp_cfg_L_access_cbo_inval_entry0_lxwr0000_4_cbo_inval_str: .string "\"test: 16; cg: PMPZicbo_cg; cp: cp_cfg_L_access_cbo_inval; bin: entry0_lxwr0000_4_cbo.inval\""
+PMPZicbo_cg_cp_cfg_L_access_cbo_zero_entry0_lxwr0001_1_cbo_zero_str: .string "\"test: 17; cg: PMPZicbo_cg; cp: cp_cfg_L_access_cbo_zero; bin: entry0_lxwr0001_1_cbo.zero\""
+PMPZicbo_cg_cp_cfg_L_access_cbo_clean_entry0_lxwr0001_2_cbo_clean_str: .string "\"test: 18; cg: PMPZicbo_cg; cp: cp_cfg_L_access_cbo_clean; bin: entry0_lxwr0001_2_cbo.clean\""
+PMPZicbo_cg_cp_cfg_L_access_cbo_flush_entry0_lxwr0001_3_cbo_flush_str: .string "\"test: 19; cg: PMPZicbo_cg; cp: cp_cfg_L_access_cbo_flush; bin: entry0_lxwr0001_3_cbo.flush\""
+PMPZicbo_cg_cp_cfg_L_access_cbo_inval_entry0_lxwr0001_4_cbo_inval_str: .string "\"test: 20; cg: PMPZicbo_cg; cp: cp_cfg_L_access_cbo_inval; bin: entry0_lxwr0001_4_cbo.inval\""
 
 // End of test data section and model specific data
 RVTEST_DATA_END

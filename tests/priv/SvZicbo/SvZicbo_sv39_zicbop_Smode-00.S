@@ -30,7 +30,7 @@ RVTEST_BEGIN
 
 
 /////////////////////////////////
-// cp_zicbop
+// cp_PTE_rwx_zicbop_s
 /////////////////////////////////
 
 
@@ -60,14 +60,8 @@ main:
 
   LI(t0, MENVCFG_CBZE)
   # T-SBI call to execute instruction: csrs menvcfg, t0
-  # Copy rs1 (x5) to a1 for T-SBI call
   mv a1, x5
-
-  # Copy rs2 (x0) to a2 for T-SBI call
-  mv a2, x0
-
-  LI(a0, 0x30a5a073) # csrs menvcfg, t0
-  ecall # T-SBI call to execute instruction at suitable privilege level
+  RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MENVCFG)
 
   SUPERPAGE_PTE_SETUP_SV39(rvtest_data_1, (PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL2)
   sfence.vma
@@ -77,13 +71,13 @@ main:
   slli a0, a0, 34
   srli a0, a0, 34
   add a5, a5, a0
-SvZicbo_cg_cp_prefetch_test1_prefetch_i:
+SvZicbo_cg_cp_PTE_rwx_zicbop_s_test1_prefetch_i:
   prefetch.i 0(a5)
   nop
-SvZicbo_cg_cp_prefetch_test1_prefetch_r:
+SvZicbo_cg_cp_PTE_rwx_zicbop_s_test1_prefetch_r:
   prefetch.r 0(a5)
   nop
-SvZicbo_cg_cp_prefetch_test1_prefetch_w:
+SvZicbo_cg_cp_PTE_rwx_zicbop_s_test1_prefetch_w:
   prefetch.w 0(a5)
   nop
 
@@ -96,13 +90,13 @@ SvZicbo_cg_cp_prefetch_test1_prefetch_w:
   slli a0, a0, 43
   srli a0, a0, 43
   add a5, a5, a0
-SvZicbo_cg_cp_prefetch_test2_prefetch_i:
+SvZicbo_cg_cp_PTE_rwx_zicbop_s_test2_prefetch_i:
   prefetch.i 0(a5)
   nop
-SvZicbo_cg_cp_prefetch_test2_prefetch_r:
+SvZicbo_cg_cp_PTE_rwx_zicbop_s_test2_prefetch_r:
   prefetch.r 0(a5)
   nop
-SvZicbo_cg_cp_prefetch_test2_prefetch_w:
+SvZicbo_cg_cp_PTE_rwx_zicbop_s_test2_prefetch_w:
   prefetch.w 0(a5)
   nop
 
@@ -116,13 +110,13 @@ SvZicbo_cg_cp_prefetch_test2_prefetch_w:
   slli a0, a0, 52
   srli a0, a0, 52
   add a5, a5, a0
-SvZicbo_cg_cp_prefetch_test3_prefetch_i:
+SvZicbo_cg_cp_PTE_rwx_zicbop_s_test3_prefetch_i:
   prefetch.i 0(a5)
   nop
-SvZicbo_cg_cp_prefetch_test3_prefetch_r:
+SvZicbo_cg_cp_PTE_rwx_zicbop_s_test3_prefetch_r:
   prefetch.r 0(a5)
   nop
-SvZicbo_cg_cp_prefetch_test3_prefetch_w:
+SvZicbo_cg_cp_PTE_rwx_zicbop_s_test3_prefetch_w:
   prefetch.w 0(a5)
   nop
 
@@ -157,15 +151,15 @@ rvtest_slvl1_pg_tbl:
   .skip(4096)
 
 // Testcase strings
-SvZicbo_cg_cp_prefetch_test1_prefetch_i_str: .string "\"test: 1; cg: SvZicbo_cg; cp: cp_prefetch; bin: test1_prefetch_i\""
-SvZicbo_cg_cp_prefetch_test1_prefetch_r_str: .string "\"test: 2; cg: SvZicbo_cg; cp: cp_prefetch; bin: test1_prefetch_r\""
-SvZicbo_cg_cp_prefetch_test1_prefetch_w_str: .string "\"test: 3; cg: SvZicbo_cg; cp: cp_prefetch; bin: test1_prefetch_w\""
-SvZicbo_cg_cp_prefetch_test2_prefetch_i_str: .string "\"test: 4; cg: SvZicbo_cg; cp: cp_prefetch; bin: test2_prefetch_i\""
-SvZicbo_cg_cp_prefetch_test2_prefetch_r_str: .string "\"test: 5; cg: SvZicbo_cg; cp: cp_prefetch; bin: test2_prefetch_r\""
-SvZicbo_cg_cp_prefetch_test2_prefetch_w_str: .string "\"test: 6; cg: SvZicbo_cg; cp: cp_prefetch; bin: test2_prefetch_w\""
-SvZicbo_cg_cp_prefetch_test3_prefetch_i_str: .string "\"test: 7; cg: SvZicbo_cg; cp: cp_prefetch; bin: test3_prefetch_i\""
-SvZicbo_cg_cp_prefetch_test3_prefetch_r_str: .string "\"test: 8; cg: SvZicbo_cg; cp: cp_prefetch; bin: test3_prefetch_r\""
-SvZicbo_cg_cp_prefetch_test3_prefetch_w_str: .string "\"test: 9; cg: SvZicbo_cg; cp: cp_prefetch; bin: test3_prefetch_w\""
+SvZicbo_cg_cp_PTE_rwx_zicbop_s_test1_prefetch_i_str: .string "\"test: 1; cg: SvZicbo_cg; cp: cp_PTE_rwx_zicbop_s; bin: test1_prefetch_i\""
+SvZicbo_cg_cp_PTE_rwx_zicbop_s_test1_prefetch_r_str: .string "\"test: 2; cg: SvZicbo_cg; cp: cp_PTE_rwx_zicbop_s; bin: test1_prefetch_r\""
+SvZicbo_cg_cp_PTE_rwx_zicbop_s_test1_prefetch_w_str: .string "\"test: 3; cg: SvZicbo_cg; cp: cp_PTE_rwx_zicbop_s; bin: test1_prefetch_w\""
+SvZicbo_cg_cp_PTE_rwx_zicbop_s_test2_prefetch_i_str: .string "\"test: 4; cg: SvZicbo_cg; cp: cp_PTE_rwx_zicbop_s; bin: test2_prefetch_i\""
+SvZicbo_cg_cp_PTE_rwx_zicbop_s_test2_prefetch_r_str: .string "\"test: 5; cg: SvZicbo_cg; cp: cp_PTE_rwx_zicbop_s; bin: test2_prefetch_r\""
+SvZicbo_cg_cp_PTE_rwx_zicbop_s_test2_prefetch_w_str: .string "\"test: 6; cg: SvZicbo_cg; cp: cp_PTE_rwx_zicbop_s; bin: test2_prefetch_w\""
+SvZicbo_cg_cp_PTE_rwx_zicbop_s_test3_prefetch_i_str: .string "\"test: 7; cg: SvZicbo_cg; cp: cp_PTE_rwx_zicbop_s; bin: test3_prefetch_i\""
+SvZicbo_cg_cp_PTE_rwx_zicbop_s_test3_prefetch_r_str: .string "\"test: 8; cg: SvZicbo_cg; cp: cp_PTE_rwx_zicbop_s; bin: test3_prefetch_r\""
+SvZicbo_cg_cp_PTE_rwx_zicbop_s_test3_prefetch_w_str: .string "\"test: 9; cg: SvZicbo_cg; cp: cp_PTE_rwx_zicbop_s; bin: test3_prefetch_w\""
 
 // End of test data section and model specific data
 RVTEST_DATA_END

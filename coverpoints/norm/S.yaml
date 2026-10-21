@@ -399,6 +399,7 @@ normative_rule_definitions:
   # For other traps, stval is set to zero, but a future standard may redefine
   # stval’s setting for other traps.
   # ecall from S traps to M, so it does not show this; a delegated ecall from U is not recorded.
+  # Interrupt entries record stval; cp_trigger leaves it nonzero before each interrupt.
   - name: stval_op_other_traps
     coverpoint: ["InterruptsS_cg/cp_trigger"]
 
@@ -479,7 +480,15 @@ normative_rule_definitions:
   # although CSRs and instructions are associated with one privilege level, they are
   # also accessible at all higher privilege levels.
   - name: Zicsr_higher_priv
-    coverpoint: ["Sm_mcsr_cg/cp_scsr_from_m", "S_scsr_cg/cp_ucsr_from_s"]
+    coverpoint:
+      [
+        "Sm_mcsr_cg/cp_scsr_from_m",
+        "S_scsr_cg/cp_ucsr_from_s",
+        "Sm_F_cg/cp_fcsr_access",
+        "S_F_cg/cp_fcsr_access",
+        "Sm_V_cg/cp_vcsrrswc",
+        "S_V_cg/cp_vcsrrswc",
+      ]
 
   # The top two bits (csr[11:10]) indicate whether the register is read/write
   # (00,01, or 10) or read-only (11).
