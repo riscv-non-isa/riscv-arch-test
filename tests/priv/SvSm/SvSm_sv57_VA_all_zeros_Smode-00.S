@@ -30,7 +30,7 @@ RVTEST_BEGIN
 
 
 /////////////////////////////////
-// cp_sv57_VA_all_zeros_Smode
+// cp_VA_d_mode, cp_VA_i_mode
 /////////////////////////////////
 
 
@@ -74,17 +74,17 @@ main:
   RVTEST_TSBI_GOTO_SMODE
   LI(a5, va_data)
   addi a2, a2, 16
-SvSm_cp_sv57_VA_all_zeros_Smode_test1_store:
+Sv_VA_cg_cp_VA_d_mode_test1_store:
   sb a2, 0(a5)
   nop
-SvSm_cp_sv57_VA_all_zeros_Smode_test1_load:
+Sv_VA_cg_cp_VA_d_mode_test1_load:
   lbu a3, 0(a5)
   nop
   RVTEST_TSBI_GOTO_MMODE
   # Check if x12 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x12, SvSm_cp_sv57_VA_all_zeros_Smode_test1_store, SvSm_cp_sv57_VA_all_zeros_Smode_test1_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x12, Sv_VA_cg_cp_VA_d_mode_test1_store, Sv_VA_cg_cp_VA_d_mode_test1_store_str)
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, SvSm_cp_sv57_VA_all_zeros_Smode_test1_load, SvSm_cp_sv57_VA_all_zeros_Smode_test1_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_VA_cg_cp_VA_d_mode_test1_load, Sv_VA_cg_cp_VA_d_mode_test1_load_str)
 
 
 // 4KB page at level 0
@@ -99,12 +99,12 @@ SvSm_cp_sv57_VA_all_zeros_Smode_test1_load:
 
   RVTEST_TSBI_GOTO_SMODE
   LI(a5, va_data)
-SvSm_cp_sv57_VA_all_zeros_Smode_test2_exec:
+Sv_VA_cg_cp_VA_i_mode_test2_exec:
   jalr ra, a5, 0
   nop
   RVTEST_TSBI_GOTO_MMODE
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, SvSm_cp_sv57_VA_all_zeros_Smode_test2_exec, SvSm_cp_sv57_VA_all_zeros_Smode_test2_exec_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, Sv_VA_cg_cp_VA_i_mode_test2_exec, Sv_VA_cg_cp_VA_i_mode_test2_exec_str)
 
 
 // Instantiate trap handlers and other epilog code, call RVMODEL_HALT at end of test
@@ -150,9 +150,9 @@ rvtest_slvl3_pg_tbl:
   .skip(4096)
 
 // Testcase strings
-SvSm_cp_sv57_VA_all_zeros_Smode_test1_store_str: .string "\"test: 61; cg: SvSm; cp: cp_sv57_VA_all_zeros_Smode; bin: test1_store\""
-SvSm_cp_sv57_VA_all_zeros_Smode_test1_load_str: .string "\"test: 62; cg: SvSm; cp: cp_sv57_VA_all_zeros_Smode; bin: test1_load\""
-SvSm_cp_sv57_VA_all_zeros_Smode_test2_exec_str: .string "\"test: 63; cg: SvSm; cp: cp_sv57_VA_all_zeros_Smode; bin: test2_exec\""
+Sv_VA_cg_cp_VA_d_mode_test1_store_str: .string "\"test: 61; cg: Sv_VA_cg; cp: cp_VA_d_mode; bin: test1_store\""
+Sv_VA_cg_cp_VA_d_mode_test1_load_str: .string "\"test: 62; cg: Sv_VA_cg; cp: cp_VA_d_mode; bin: test1_load\""
+Sv_VA_cg_cp_VA_i_mode_test2_exec_str: .string "\"test: 63; cg: Sv_VA_cg; cp: cp_VA_i_mode; bin: test2_exec\""
 
 // End of test data section and model specific data
 RVTEST_DATA_END

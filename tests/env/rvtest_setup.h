@@ -333,8 +333,8 @@
 
     RVTEST_INIT_REGS // Put deterministic values in each register
 
-    LA (T1, rvtest_code_begin)
-    jr T1                         // Jump back to the start of the test
+    LA (T2, rvtest_code_begin)
+    jr T2                         // Jump back to the start of the test; x7 does not set ELP (Zicfilp)
 
   rvmodel_io_write_str:
     // a0 = string pointer; T1-T3 (x6-x8) are scratch. Clobbers ra.
@@ -397,6 +397,43 @@
     2:
   .endm
 
+  // Read the time that stimecmp is compared against into a0: the low (word = lo) or high (word = hi)
+  // word on RV32, or all of it on RV64. With Zicntr this is the time CSR (natively, or emulated from
+  // mtime by the invisible trap handler); otherwise it is mtime, read directly in M-mode or through
+  // T-SBI from S- and U-mode. Clobbers a1; a2 is preserved.
+  .macro RVTEST_READ_TIME mode, word=lo
+    #ifdef ZICNTR_SUPPORTED
+      .ifc \word, hi
+        csrr a0, timeh
+      .else
+        csrr a0, time
+      .endif
+    #else
+      LA(a1, RVMODEL_MTIME_ADDRESS)
+      .ifc \mode, M
+        #if UDB_MXLEN == 32
+          .ifc \word, hi
+            lw a0, 4(a1)
+          .else
+            lw a0, 0(a1)
+          .endif
+        #else
+          ld a0, 0(a1)
+        #endif
+      .else
+        #if UDB_MXLEN == 32
+          .ifc \word, hi
+            RVTEST_TSBI_LWP4 // lw a0, 4(a1)
+          .else
+            RVTEST_TSBI_LW // lw a0, 0(a1)
+          .endif
+        #else
+          RVTEST_TSBI_LD // ld a0, 0(a1)
+        #endif
+      .endif
+    #endif
+  .endm
+
   // Flavors to run from M-mode
 
   #ifdef STANDARD_SM_SUPPORTED
@@ -454,8 +491,8 @@
         LA(a1, RVMODEL_MSIP_ADDRESS)
         li a2, 1
         sw a2, 0(a1) // normal way to set MSI is to write a 1 to MSIP
-      #elif defined(RVMODEL_SET_MSW_INT)
-        RVMODEL_SET_MSW_INT(a0, a1) // if normal way isn't supported, use platform-specific method
+      #elif defined(RVMODEL_SET_MSW_INT_M)
+        RVMODEL_SET_MSW_INT_M(a0, a1) // if normal way isn't supported, use platform-specific method
       #endif
       ret
 
@@ -483,28 +520,23 @@
 
     #ifdef SSTC_SUPPORTED
       rvtest_set_sstc_int_soon_m:
-        #if defined(RVMODEL_MTIME_ADDRESS) && defined(RVMODEL_TIMER_INT_SOON_DELAY)
-          LA(a1, RVMODEL_MTIME_ADDRESS)
-          LI(a2, RVMODEL_TIMER_INT_SOON_DELAY)
-          #if UDB_MXLEN == 32
-            li a0, -1
-            csrw stimecmph, a0 // stimecmp high word = all 1s so the split update cannot fire early
-            lw a0, 0(a1) // read mtime low word
-            add a1, a0, a2 // add delay to mtime low word
-            csrw stimecmp, a1 // write low word of timer compare
-            mv a2, a1 // save stimecmp low word
-            LA(a1, RVMODEL_MTIME_ADDRESS)
-            lw a0, 4(a1) // read mtime high word
-            LI(a1, RVMODEL_TIMER_INT_SOON_DELAY)
-            bgeu a2, a1, 1f // skip if didn't wrap
-            addi a0, a0, 1 // increment mtime high word
-            1:
-            csrw stimecmph, a0 // write high word of timer compare
-          #else
-            ld a0, 0(a1) // read mtime
-            add a1, a2, a0 // add delay to mtime
-            csrw stimecmp, a1 // write to timer compare
-          #endif
+        LI(a2, RVMODEL_TIMER_INT_SOON_DELAY)
+        #if UDB_MXLEN == 32
+          li a0, -1
+          csrw stimecmph, a0 // stimecmp high word = all 1s so the split update cannot fire early
+          RVTEST_READ_TIME M, lo // a0 = time low word
+          add a2, a0, a2 // stimecmp low word = time low word + delay
+          csrw stimecmp, a2 // write low word of timer compare
+          RVTEST_READ_TIME M, hi // a0 = time high word
+          LI(a1, RVMODEL_TIMER_INT_SOON_DELAY)
+          bgeu a2, a1, 1f // skip if didn't wrap
+          addi a0, a0, 1 // increment time high word
+          1:
+          csrw stimecmph, a0 // write high word of timer compare
+        #else
+          RVTEST_READ_TIME M // a0 = time
+          add a1, a2, a0 // add delay to time
+          csrw stimecmp, a1 // write to timer compare
         #endif
         ret
 
@@ -558,8 +590,8 @@
 
       rvtest_set_ssw_int_m:
         // trigger with platform-specific interrupt controller if it exists, otherwise with mip.SSIP
-        #ifdef RVMODEL_SET_SSW_INT
-          RVMODEL_SET_SSW_INT(a0, a1)
+        #ifdef RVMODEL_SET_SSW_INT_M
+          RVMODEL_SET_SSW_INT_M(a0, a1)
         #else
           csrsi mip, 1<<1 // Trigger mip.SSIP
         #endif
@@ -690,27 +722,23 @@
   #ifdef S_SUPPORTED
     #ifdef SSTC_SUPPORTED
       rvtest_set_sstc_int_soon_s:
-        #if defined(RVMODEL_MTIME_ADDRESS) && defined(RVMODEL_TIMER_INT_SOON_DELAY)
-          LA(a1, RVMODEL_MTIME_ADDRESS)
-          LI(a2, RVMODEL_TIMER_INT_SOON_DELAY)
-          #if UDB_MXLEN == 32
-            li a0, -1
-            csrw stimecmph, a0 // stimecmp high word = all 1s so the split update cannot fire early
-            RVTEST_TSBI_LW // lw a0, 0(a1) // read mtime low word
-            add a0, a0, a2 // add delay to mtime low word
-            csrw stimecmp, a0 // write low word of timer compare
-            mv a2, a0 // save stimecmp low word
-            RVTEST_TSBI_LWP4 // lw a0, 4(a1) // read mtime high word
-            LI(a1, RVMODEL_TIMER_INT_SOON_DELAY)
-            bgeu a2, a1, 1f // skip if didn't wrap
-            addi a0, a0, 1 // increment mtime high word
-            1:
-            csrw stimecmph, a0 // write high word of timer compare
-          #else
-            RVTEST_TSBI_LD // ld a0, 0(a1) // read mtime
-            add a1, a2, a0 // add delay to mtime
-            csrw stimecmp, a1 // write to timer compare
-          #endif
+        LI(a2, RVMODEL_TIMER_INT_SOON_DELAY)
+        #if UDB_MXLEN == 32
+          li a0, -1
+          csrw stimecmph, a0 // stimecmp high word = all 1s so the split update cannot fire early
+          RVTEST_READ_TIME S, lo // a0 = time low word
+          add a2, a0, a2 // stimecmp low word = time low word + delay
+          csrw stimecmp, a2 // write low word of timer compare
+          RVTEST_READ_TIME S, hi // a0 = time high word
+          LI(a1, RVMODEL_TIMER_INT_SOON_DELAY)
+          bgeu a2, a1, 1f // skip if didn't wrap
+          addi a0, a0, 1 // increment time high word
+          1:
+          csrw stimecmph, a0 // write high word of timer compare
+        #else
+          RVTEST_READ_TIME S // a0 = time
+          add a1, a2, a0 // add delay to time
+          csrw stimecmp, a1 // write to timer compare
         #endif
         ret
     #endif // SSTC_SUPPORTED
@@ -763,30 +791,25 @@
 
     #ifdef SSTC_SUPPORTED
       rvtest_set_sstc_int_soon_u:
-        #if defined(RVMODEL_MTIME_ADDRESS) && defined(RVMODEL_TIMER_INT_SOON_DELAY)
-          LI(a2, RVMODEL_TIMER_INT_SOON_DELAY)
-          #if UDB_MXLEN == 32
-            li a1, -1
-            RVTEST_TSBI_CSR_WRITE_A1(CSR_STIMECMPH) // stimecmp high word = all 1s so the split update cannot fire early
-            LA(a1, RVMODEL_MTIME_ADDRESS)
-            RVTEST_TSBI_LW // lw a0, 0(a1) // read mtime low word
-            add a2, a0, a2 // stimecmp low word = mtime low word + delay
-            mv a1, a2
-            RVTEST_TSBI_CSR_WRITE_A1(CSR_STIMECMP) // write low word of timer compare
-            LA(a1, RVMODEL_MTIME_ADDRESS)
-            RVTEST_TSBI_LWP4 // lw a0, 4(a1) // read mtime high word
-            LI(a1, RVMODEL_TIMER_INT_SOON_DELAY)
-            bgeu a2, a1, 1f // skip if didn't wrap
-            addi a0, a0, 1 // increment mtime high word
-            1:
-            mv a1, a0
-            RVTEST_TSBI_CSR_WRITE_A1(CSR_STIMECMPH) // write high word of timer compare
-          #else
-            LA(a1, RVMODEL_MTIME_ADDRESS)
-            RVTEST_TSBI_LD // ld a0, 0(a1) // read mtime
-            add a1, a2, a0 // add delay to mtime
-            RVTEST_TSBI_CSR_WRITE_A1(CSR_STIMECMP) // write timer compare
-          #endif
+        LI(a2, RVMODEL_TIMER_INT_SOON_DELAY)
+        #if UDB_MXLEN == 32
+          li a1, -1
+          RVTEST_TSBI_CSR_WRITE_A1(CSR_STIMECMPH) // stimecmp high word = all 1s so the split update cannot fire early
+          RVTEST_READ_TIME U, lo // a0 = time low word
+          add a2, a0, a2 // stimecmp low word = time low word + delay
+          mv a1, a2
+          RVTEST_TSBI_CSR_WRITE_A1(CSR_STIMECMP) // write low word of timer compare
+          RVTEST_READ_TIME U, hi // a0 = time high word
+          LI(a1, RVMODEL_TIMER_INT_SOON_DELAY)
+          bgeu a2, a1, 1f // skip if didn't wrap
+          addi a0, a0, 1 // increment time high word
+          1:
+          mv a1, a0
+          RVTEST_TSBI_CSR_WRITE_A1(CSR_STIMECMPH) // write high word of timer compare
+        #else
+          RVTEST_READ_TIME U // a0 = time
+          add a1, a2, a0 // add delay to time
+          RVTEST_TSBI_CSR_WRITE_A1(CSR_STIMECMP) // write timer compare
         #endif
         ret
 
