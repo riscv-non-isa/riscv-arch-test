@@ -3835,17 +3835,6 @@ def _generate_textra_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     return chunks
 
 
-def register_sdtrig_textra(mode: str, required_extensions: list[str | list[str]], extra_defines: list[str]) -> None:
-    """Register the textra (tdata3 context-match) section for ``mode`` as its own generator of suite ``Sdtrig{mode}``."""
-
-    @add_priv_test_generator(
-        f"Sdtrig{mode}", required_extensions=required_extensions, march_extensions=[], extra_defines=extra_defines
-    )
-    def make_sdtrig_textra(test_data: TestData) -> list[TestChunk]:
-        """textra context-match tests."""
-        return _generate_textra_tests(test_data, mode)
-
-
 # ── Suite registration ─────────────────────────────────────────────────────
 
 
@@ -3976,7 +3965,12 @@ def register_sdtrig_suite(mode: str, required_extensions: list[str | list[str]],
             """Breakpoint delegation tests."""
             return _generate_native_triggers_tests(test_data, mode)
 
-    register_sdtrig_textra(mode, required_extensions, extra_defines)
+    @add_priv_test_generator(
+        suite, required_extensions=required_extensions, march_extensions=[], extra_defines=extra_defines
+    )
+    def make_sdtrig_textra(test_data: TestData) -> list[TestChunk]:
+        """textra context-match tests."""
+        return _generate_textra_tests(test_data, mode)
 
     # Disabled sections and their extra required extension:
     #   _generate_tcontrol_tests: body not implemented yet; needs UDB_TCONTROL_AVAILABLE
