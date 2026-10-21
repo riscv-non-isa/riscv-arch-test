@@ -555,8 +555,26 @@ coverpoints:
       - Sdtrig_mcontrol6_size_32bit
       - Sdtrig_mcontrol6_size_48bit
       - Sdtrig_mcontrol6_size_64bit
-      - Sdtrig_mcontrol6_size_128bit
     notes: "comments on test results: Exceptions when td2 = op, size = 0. Note: warls size to zero"
+  - name: cp_mcontrol6_execute_adr_size
+    goal: A select = 0 execute trigger with size = N matches only the execution of an N-bit instruction
+    description: |-
+      tdata2 = {PC of addi x0, x1, 0 / PC of c.nop}
+      tdata1.select = 0 (adr)
+      tdata1.XSL = 100
+      tdata1.size = {1/2/3/4/5} (legal sizes of at most XLEN bits)
+      perform addi x0, x1, 0 (sizes 1, 3, 4, 5)
+      if ZCA_SUPPORTED
+      perform c.nop (sizes 1, 2, 4, 5)
+      Not generated: size 2 on addi and size 3 on c.nop, which Sail 0.16 fires (sail-riscv#2033)
+    expectation: Breakpoint exception for size 2 on c.nop and size 3 on addi; none for sizes 1, 4 and 5
+    bins: NTRIG * legal (size, instruction) pairs (up to 8)
+    rules:
+      - Sdtrig_mcontrol6_size_8bit
+      - Sdtrig_mcontrol6_size_16bit
+      - Sdtrig_mcontrol6_size_32bit
+      - Sdtrig_mcontrol6_size_48bit
+      - Sdtrig_mcontrol6_size_64bit
   - name: cp_mcontrol6_load_store_size
     description: |-
       tdata2 = {scratch/0}
@@ -581,8 +599,7 @@ coverpoints:
       - Sdtrig_mcontrol6_size_16bit
       - Sdtrig_mcontrol6_size_32bit
       - Sdtrig_mcontrol6_size_64bit
-      - Sdtrig_mcontrol6_size_128bit
-    notes: Sizes 4 (48-bit) and 6 (128-bit) are not tested
+    notes: Sizes 4 (48-bit) and 6 (128-bit) are not tested; size 6 is never written (Sail 0.16 disables sizes above XLEN)
   - name: cp_mcontrol6_match
     goal: Test boundaries for match conditions
     description: |-

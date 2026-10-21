@@ -2773,6 +2773,59 @@ def _generate_mcontrol6_tests(test_data: TestData, mode: str) -> list[TestChunk]
         lines.extend(_close_gates(gates))
 
     ######################################
+    coverpoint = "cp_mcontrol6_execute_adr_size"
+    ######################################
+    # A select = 0 execute trigger with size = N matches only the execution of N-bit instructions. Sail 0.16 fires one
+    # with size = 2 or 3 on an instruction of either width (sail-riscv#2033), so only the cases where it agrees with
+    # the Debug spec are generated: size 2 on c.nop and size 3 on addi fire, and sizes 1, 4 and 5 fire on neither.
+    # Add size 2 on addi and size 3 on c.nop once Sail honors size (ACT #2921). A c.nop target sits at an address
+    # that is 2 mod 4 and an addi target at 0 mod 4, which the coverage uses to tell them apart when a breakpoint
+    # replaces the target.
+    lines = test_data.new_test_chunk(chunks, "mcontrol6_execute_adr_size").code
+    lines.extend(_global_ie(mode, True))
+    lines.append(
+        comment_banner(
+            coverpoint,
+            "mcontrol6 execute address (select=0) match with size = N: fires only on an N-bit instruction at tdata2\n"
+            "(size 2 on c.nop and size 3 on addi fire; sizes 1, 4 and 5 fire on neither)",
+        )
+    )
+    exec_adr_size_cases = ((1, "addi"), (1, "c.nop"), (2, "c.nop"), (3, "addi"), (4, "addi"), (4, "c.nop"))
+    exec_adr_size_cases += ((5, "addi"), (5, "c.nop"))
+    for trig_num in TRIGGERS:
+        gates = [*_mcontrol6_gates(trig_num, mode), *_xsl_ifdefs(0b100)]
+        lines.extend(gates)
+        for size, insn in exec_adr_size_cases:
+            label = f"exec_adr_size_trig_num_{trig_num}_size_{size}_{insn.replace('.', '_')}"
+            compressed = insn == "c.nop"
+            lines.extend(_size_open(size))
+            if compressed:
+                lines.append("#ifdef ZCA_SUPPORTED")
+            lines.extend(
+                [
+                    _add_tc(test_data, f"trig_num_{trig_num}_size_{size}_insn_{insn}", coverpoint, covergroup),
+                    *_config_mcontrol6(temp_reg, trig_num, label, mode, xsl=0b100, select=0, size=size),
+                    ".p2align 2",
+                ]
+            )
+            if compressed:
+                lines.extend(
+                    [
+                        *_arch_guard("c.nop # filler: the target is at an address that is 2 mod 4", ["zca"]),
+                        f"{label}:",
+                        *_arch_guard(f"c.nop # PC == tdata2: fires iff size = {size} is 2 (16 bits)", ["zca"]),
+                    ]
+                )
+            else:
+                lines.extend([f"{label}:", f"addi x0, x1, 0 # PC == tdata2: fires iff size = {size} is 3 (32 bits)"])
+            lines.append("nop # spacer")
+            if compressed:
+                lines.append("#endif // ZCA_SUPPORTED")
+            lines.extend(_size_close(size))
+        lines.extend(_disable_trigger(temp_reg, trig_num, mode))
+        lines.extend(_close_gates(gates))
+
+    ######################################
     coverpoint = "cp_mcontrol6_load_store_size"
     ######################################
     lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_")).code

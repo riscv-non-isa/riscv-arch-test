@@ -1039,6 +1039,7 @@ normative_rule_definitions:
       [
         "SdtrigSm_mcontrol6_cg/cp_mcontrol6_load_store_size",
         "SdtrigSm_mcontrol6_cg/cp_mcontrol6_execute_size",
+        "SdtrigSm_mcontrol6_cg/cp_mcontrol6_execute_adr_size",
       ]
 
   # The trigger will only match against 16-bit memory accesses or execution of
@@ -1048,6 +1049,8 @@ normative_rule_definitions:
       [
         "SdtrigSm_mcontrol6_cg/cp_mcontrol6_execute_size",
         "SdtrigSm_mcontrol6_cg/cp_mcontrol6_load_store_size",
+        "SdtrigSm_mcontrol6_cg/cp_mcontrol6_execute_adr_size",
+        "A select = 0 execute trigger with size = 2 on a 32-bit instruction is not tested: Sail 0.16 fires it (sail-riscv#2033, ACT #2921)",
       ]
 
   # The trigger will only match against 32-bit memory accesses or execution of
@@ -1057,11 +1060,18 @@ normative_rule_definitions:
       [
         "SdtrigSm_mcontrol6_cg/cp_mcontrol6_execute_size",
         "SdtrigSm_mcontrol6_cg/cp_mcontrol6_load_store_size",
+        "SdtrigSm_mcontrol6_cg/cp_mcontrol6_execute_adr_size",
+        "A select = 0 execute trigger with size = 3 on a 16-bit instruction is not tested: Sail 0.16 fires it (sail-riscv#2033, ACT #2921)",
       ]
 
   # The trigger will only match against execution of 48-bit instructions.
   - name: Sdtrig_mcontrol6_size_48bit
-    coverpoint: ["SdtrigSm_mcontrol6_cg/cp_mcontrol6_execute_size"]
+    coverpoint:
+      [
+        "SdtrigSm_mcontrol6_cg/cp_mcontrol6_execute_size",
+        "SdtrigSm_mcontrol6_cg/cp_mcontrol6_execute_adr_size",
+        "Only that no 16- or 32-bit instruction matches is tested, on RV64: the tests have no 48-bit instruction, and on RV32 size = 4 is never written because Sail 0.16 disables a trigger whose size exceeds XLEN",
+      ]
 
   # The trigger will only match against 64-bit memory accesses or execution of
   # 64-bit instructions.
@@ -1070,6 +1080,8 @@ normative_rule_definitions:
       [
         "SdtrigSm_mcontrol6_cg/cp_mcontrol6_execute_size",
         "SdtrigSm_mcontrol6_cg/cp_mcontrol6_load_store_size",
+        "SdtrigSm_mcontrol6_cg/cp_mcontrol6_execute_adr_size",
+        "On RV32 size = 5 is never written, so 64-bit fld/fsd and vector accesses are not tested there: Sail 0.16 disables a trigger whose size exceeds XLEN (sail-riscv#2034, ACT #2921)",
       ]
 
   # The trigger will only match against 128-bit memory accesses or execution of
@@ -1077,8 +1089,7 @@ normative_rule_definitions:
   - name: Sdtrig_mcontrol6_size_128bit
     coverpoint:
       [
-        "SdtrigSm_mcontrol6_cg/cp_mcontrol6_execute_size",
-        "SdtrigSm_mcontrol6_cg/cp_mcontrol6_load_store_size",
+        "Not tested: size = 6 is never written, so flq/fsq and 128-bit vector accesses are not tested with it, because Sail 0.16 disables a trigger whose size exceeds XLEN (as in sail-riscv#2034)",
       ]
 
   # An implementation must support the value of 0, but all other values are

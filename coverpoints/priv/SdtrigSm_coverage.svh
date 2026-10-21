@@ -65,6 +65,27 @@
         `define SDTRIG_SIZE_DATA
     `endif
 `endif
+// cp_mcontrol6_execute_adr_size: a legal size the generator writes on an execute address trigger (sizes above XLEN
+// are never written; size 2 has only a c.nop case)
+`ifdef UDB_SDTRIG_MCONTROL6_SIZE_LEGAL_VALUES_1
+    `define SDTRIG_EXEC_ADR_SIZE
+`endif
+`ifdef UDB_SDTRIG_MCONTROL6_SIZE_LEGAL_VALUES_3
+    `define SDTRIG_EXEC_ADR_SIZE
+`endif
+`ifdef ZCA_SUPPORTED
+    `ifdef UDB_SDTRIG_MCONTROL6_SIZE_LEGAL_VALUES_2
+        `define SDTRIG_EXEC_ADR_SIZE
+    `endif
+`endif
+`ifdef UDB_MXLEN_64
+    `ifdef UDB_SDTRIG_MCONTROL6_SIZE_LEGAL_VALUES_4
+        `define SDTRIG_EXEC_ADR_SIZE
+    `endif
+    `ifdef UDB_SDTRIG_MCONTROL6_SIZE_LEGAL_VALUES_5
+        `define SDTRIG_EXEC_ADR_SIZE
+    `endif
+`endif
 // textra context matches with value bits to compare (the generator's _MCONTEXT_MATCH_GATE, _SCONTEXT_MATCH_GATE)
 `ifdef UDB_SDTRIG_TEXTRA_MHSELECT_MCONTEXT_MATCH
     `ifndef UDB_SDTRIG_TEXTRA_MHVALUE_LEN_0
@@ -977,6 +998,18 @@ function automatic logic [1:0] sdtrig_exec_size_target(ins_t ins);
     if (ins.current.insn[1:0] != 2'b11 && ins.current.insn[15:0] == 16'h0001) return 2'd2;
     return 2'd0;
 endfunction
+// cp_mcontrol6_execute_adr_size, for a select = 0 execute trigger: {size, 0} for addi x0, x1, 0 and {size, 1} for c.nop
+// at tdata2, seen retiring or as the breakpoint that replaced it; 0 for anything else. The test puts a c.nop target at
+// an address that is 2 mod 4 and an addi target at 0 mod 4, so tdata2[1] names a target that did not retire.
+function automatic logic [3:0] sdtrig_exec_adr_size_case(ins_t ins);
+    logic [2:0] size = get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tdata1", "size")[2:0];
+    if (sdtrig_exec_fired(ins) && ins.current.csr[CSR_MEPC] == ins.current.csr[CSR_TDATA2])
+        return {size, ins.current.csr[CSR_TDATA2][1]};
+    if (ins.current.pc_rdata != ins.current.csr[CSR_TDATA2]) return 4'd0;
+    if (ins.current.insn == 32'h00008013) return {size, 1'b0};
+    if (ins.current.insn[1:0] != 2'b11 && ins.current.insn[15:0] == 16'h0001) return {size, 1'b1};
+    return 4'd0;
+endfunction
 // cp_mcontrol6_size_data, for an sb/sh/sw/sd: 1 = the store has the trigger's size N and its low N bits (the data it
 // writes) equal tdata2, 2 = it has that size and they differ, 3 = it has another width; 0 = anything else
 function automatic logic [1:0] sdtrig_size_data_case(ins_t ins);
@@ -1167,6 +1200,29 @@ covergroup SdtrigSm_mcontrol6_cg with function sample(ins_t ins);
             bins c_nop = {2'd2};
         `endif
     }
+    `ifdef SDTRIG_EXEC_ADR_SIZE
+        // the size and target pairs on which Sail 0.16 and the Debug spec agree (sail-riscv#2033): one bin each
+        exec_adr_size_case: coverpoint sdtrig_exec_adr_size_case(ins) {
+            `ifdef UDB_SDTRIG_MCONTROL6_SIZE_LEGAL_VALUES_1
+                bins size_1_addi = {4'd2};
+                `ifdef ZCA_SUPPORTED bins size_1_c_nop = {4'd3}; `endif
+            `endif
+            `ifdef ZCA_SUPPORTED
+                `ifdef UDB_SDTRIG_MCONTROL6_SIZE_LEGAL_VALUES_2 bins size_2_c_nop = {4'd5}; `endif
+            `endif
+            `ifdef UDB_SDTRIG_MCONTROL6_SIZE_LEGAL_VALUES_3 bins size_3_addi = {4'd6}; `endif
+            `ifdef UDB_MXLEN_64
+                `ifdef UDB_SDTRIG_MCONTROL6_SIZE_LEGAL_VALUES_4
+                    bins size_4_addi = {4'd8};
+                    `ifdef ZCA_SUPPORTED bins size_4_c_nop = {4'd9}; `endif
+                `endif
+                `ifdef UDB_SDTRIG_MCONTROL6_SIZE_LEGAL_VALUES_5
+                    bins size_5_addi = {4'd10};
+                    `ifdef ZCA_SUPPORTED bins size_5_c_nop = {4'd11}; `endif
+                `endif
+            `endif
+        }
+    `endif
     sw: coverpoint ins.current.insn {
         wildcard bins sw = {SW};
     }
@@ -1296,6 +1352,9 @@ covergroup SdtrigSm_mcontrol6_cg with function sample(ins_t ins);
     cp_mcontrol6_execute_data:    cross priv_mode_m, triggernum_mcontrol6, tdata1_type_mcontrol6, tdata1_m_on, tdata1_chain_disabled, tdata1_match_equal, tdata1_size_any, tdata1_select_data, tdata1_xsl, exec_data_target;                                                     // NTRIG * 8 xsl * 2 tdata2
     cp_mcontrol6_load_store_data: cross priv_mode_m, triggernum_mcontrol6, tdata1_type_mcontrol6, tdata1_m_on, tdata1_chain_disabled, tdata1_match_equal, tdata1_size_any, tdata1_select_data, tdata1_xsl, load_store_xlen;                                                            // NTRIG * 8 xsl * 2 instrs
     cp_mcontrol6_execute_size:    cross priv_mode_m, triggernum_mcontrol6, tdata1_type_mcontrol6, tdata1_m_on, tdata1_chain_disabled, tdata1_match_equal, tdata1_select_data, tdata1_xsl_load_store_execute, tdata1_size, tdata2_exec_size, exec_size_target;              // NTRIG * 7 sizes * 2 tdata2 * 2 instrs
+    `ifdef SDTRIG_EXEC_ADR_SIZE
+        cp_mcontrol6_execute_adr_size: cross priv_mode_m, triggernum_mcontrol6, tdata1_type_mcontrol6, tdata1_m_on, tdata1_chain_disabled, tdata1_match_equal, tdata1_select_adr, tdata1_execute_on, exec_adr_size_case; // NTRIG * legal (size, instruction) pairs (up to 8)
+    `endif
     cp_mcontrol6_load_store_size: cross priv_mode_m, triggernum_mcontrol6, tdata1_type_mcontrol6, tdata1_m_on, tdata1_chain_disabled, tdata1_match_equal, tdata1_select_adr, tdata1_xsl_load_store, tdata1_size_ls, tdata2_adr, load_store_instr;               // NTRIG * 5 sizes * 2 tdata2 * instrs
     cp_mcontrol6_match:           cross priv_mode_m, triggernum_mcontrol6, tdata1_type_mcontrol6, tdata1_m_on, tdata1_chain_disabled, tdata1_size_any, tdata1_select_data, tdata1_xsl_store, tdata1_match_cmp, store_data_cmp, store_xlen;                   // NTRIG * 4 match * 5 values
     `ifdef SDTRIG_MATCH_NAPOT
