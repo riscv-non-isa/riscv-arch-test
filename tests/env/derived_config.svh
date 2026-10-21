@@ -137,4 +137,21 @@
   `define SM1P12P0_OR_LATER_SUPPORTED
 `endif
 
+// ---- UDB_VLEN ----
+// UDB defines UDB_VLEN only when the DUT implements a vector extension. Default it to 0, as
+// tests/env/utils.h does, so code that sizes vector registers also elaborates without one.
+`ifndef UDB_VLEN
+  `define UDB_VLEN 0
+`endif
+
+// UDB_SCONTEXT_AVAILABLE: mirrors derived_config.h; remove once UDB emits it
+// (https://github.com/riscv/riscv-unified-db/pull/2069).
+`ifdef SDTRIG_SUPPORTED
+  `ifdef S_SUPPORTED
+    `ifndef UDB_SCONTEXT_AVAILABLE
+      `define UDB_SCONTEXT_AVAILABLE
+    `endif
+  `endif
+`endif
+
 `endif // DERIVED_CONFIG_SVH
