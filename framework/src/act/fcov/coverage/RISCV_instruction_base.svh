@@ -239,7 +239,7 @@ class RISCV_instruction
       "a4": return x14;
       "x15": return x15;
       "a5": return x15;
-`ifndef COVER_E
+`ifndef E_SUPPORTED
       "x16": return x16;
       "a6": return x16;
       "x17": return x17;
