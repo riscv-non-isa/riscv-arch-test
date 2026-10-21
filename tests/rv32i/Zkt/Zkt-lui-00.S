@@ -36,20 +36,24 @@ RVTEST_BEGIN
 # Each testcase times the instruction twice, counted down in
 # x21, and writes the second run's latency (x31 - x24) minus the
 # first testcase's (x6), which must be 0. See the Zkt section of the CTP.
+# The first run warms the instruction cache and branch predictor. Only the second run is timed.
+# A dependency on the first cycle read stops the instruction from starting early.
+# .balign 64 keeps the timed window in one cache line.
+# The second cycle read has no dependency. Writing cycle or mcycle is illegal or changes the count.
 
 # Testcase cp_zkt_pc (timed)
-  LI(x21, 2)
+  LI(x21, 2)  # two runs; the second is timed
 1:
-  .balign 64
-  csrr x24, RVTEST_CYCLE_CSR
+  .balign 64                  # keep the timed window in one cache line
+  csrr x24, RVTEST_CYCLE_CSR  # first cycle read
 Zkt_lui_cg_cp_zkt_pc_timed:
   lui x18, 248040 # perform operation
-  csrr x31, RVTEST_CYCLE_CSR
+  csrr x31, RVTEST_CYCLE_CSR  # second cycle read
   addi x21, x21, -1
   bnez x21, 1b
-  sub x31, x31, x24
-  mv x6, x31
-  sub x31, x31, x6
+  sub x31, x31, x24  # latency of the second run
+  mv x6, x31         # first testcase sets the baseline
+  sub x31, x31, x6   # 0 on data-independent hardware
   # Check if x18 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x18, Zkt_lui_cg_cp_zkt_pc_timed, Zkt_lui_cg_cp_zkt_pc_timed_str)
   # Check if x31 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.

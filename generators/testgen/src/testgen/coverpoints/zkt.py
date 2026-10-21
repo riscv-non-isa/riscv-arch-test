@@ -60,6 +60,12 @@ from testgen.formatters import format_instruction
 from testgen.instructions.params import generate_random_params
 
 
+def _comment_block(lines: list[tuple[str, str]]) -> list[str]:
+    """Format (code, comment) pairs with the comments in one column."""
+    width = max(len(code) for code, _ in lines)
+    return [f"{code:<{width}}  # {comment}" if comment else code for code, comment in lines]
+
+
 @add_coverpoint_generator("cp_zkt_rs1_rs2", "cp_zkt_rs1", "cp_zkt_rs2", "cp_zkt_pc")
 def make_cp_zkt(instr_name: str, instr_type: str, coverpoint: str, test_data: TestData) -> list[TestChunk]:
     """Time the instruction with cycle or mcycle across edge values of its source operands."""
@@ -94,6 +100,10 @@ def make_cp_zkt(instr_name: str, instr_type: str, coverpoint: str, test_data: Te
             "# Each testcase times the instruction twice, counted down in",
             f"# x{runs}, and writes the second run's latency (x{end} - x{start}) minus the",
             f"# first testcase's (x{baseline}), which must be 0. See the Zkt section of the CTP.",
+            "# The first run warms the instruction cache and branch predictor. Only the second run is timed.",
+            "# A dependency on the first cycle read stops the instruction from starting early.",
+            "# .balign 64 keeps the timed window in one cache line.",
+            "# The second cycle read has no dependency. Writing cycle or mcycle is illegal or changes the count.",
             "",
         ]
     )
@@ -109,31 +119,48 @@ def make_cp_zkt(instr_name: str, instr_type: str, coverpoint: str, test_data: Te
         setup, test, check = format_instruction(instr_name, instr_type, test_data, case_params)
         data_bytes = f"{len(tc.data_values) - data_count}*SIG_STRIDE"
         # Run twice and time the second run (see the module docstring)
-        tc.code.extend([f"LI(x{runs}, 2)", "1:"])
+        tc.code.extend(_comment_block([(f"LI(x{runs}, 2)", "two runs; the second is timed")]))
+        tc.code.append("1:")
         if setup:
-            # Rewind the data pointer so the second run loads the same values
-            tc.code.extend([setup, f"addi x{data_reg}, x{data_reg}, -{data_bytes}"])
+            tc.code.append(setup)
+        # Rewind the data pointer so the second run loads the same values
+        pre_timing = []
+        if setup:
+            pre_timing.append((f"addi x{data_reg}, x{data_reg}, -{data_bytes}", "rewind data for the second run"))
         if loaded_regs:
-            tc.code.append(f"xor x{start}, x{loaded_regs[0]}, x{loaded_regs[-1]}")  # drain the loads
-        tc.code.extend([".balign 64", f"csrr x{start}, RVTEST_CYCLE_CSR"])
+            pre_timing.append((f"xor x{start}, x{loaded_regs[0]}, x{loaded_regs[-1]}", "drain: loads finish first"))
+        if pre_timing:
+            tc.code.extend(_comment_block(pre_timing))
+        # Zero-valued dependency on the first cycle read
+        window = [
+            (".balign 64", "keep the timed window in one cache line"),
+            (f"csrr x{start}, RVTEST_CYCLE_CSR", "first cycle read"),
+        ]
         if dep_src is not None:
-            # Zero-valued dependency on the first cycle read
-            tc.code.extend([f"sltu x{dep}, x{start}, x0", f"or x{dep_src}, x{dep_src}, x{dep}"])
-        tc.code.extend(
-            [
-                label_line,
-                test,
-                f"csrr x{end}, RVTEST_CYCLE_CSR",
-                f"addi x{runs}, x{runs}, -1",
-                f"bnez x{runs}, 1b",
+            window += [
+                (f"sltu x{dep}, x{start}, x0", "dep = 0, ready only after the first cycle read"),
+                (f"or x{dep_src}, x{dep_src}, x{dep}", "operand now depends on the first cycle read"),
             ]
+        tc.code.extend(_comment_block(window))
+        tc.code.append(label_line)
+        tc.code.append(test)
+        tc.code.extend(
+            _comment_block(
+                [
+                    (f"csrr x{end}, RVTEST_CYCLE_CSR", "second cycle read"),
+                    (f"addi x{runs}, x{runs}, -1", ""),
+                    (f"bnez x{runs}, 1b", ""),
+                ]
+            )
         )
+        post = []
         if setup:
-            tc.code.append(f"addi x{data_reg}, x{data_reg}, {data_bytes}")
-        tc.code.append(f"sub x{end}, x{end}, x{start}")
+            post.append((f"addi x{data_reg}, x{data_reg}, {data_bytes}", "advance past this testcase's data"))
+        post.append((f"sub x{end}, x{end}, x{start}", "latency of the second run"))
         if case == 0:
-            tc.code.append(f"mv x{baseline}, x{end}")
-        tc.code.append(f"sub x{end}, x{end}, x{baseline}")
+            post.append((f"mv x{baseline}, x{end}", "first testcase sets the baseline"))
+        post.append((f"sub x{end}, x{end}, x{baseline}", "0 on data-independent hardware"))
+        tc.code.extend(_comment_block(post))
         if check:
             tc.code.append(check)
         tc.code.append(write_sigupd(end, test_data, "int"))
