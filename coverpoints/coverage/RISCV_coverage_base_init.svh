@@ -206,9 +206,17 @@
         `cover_info("//      S - Enabled");
         `include "S_coverage_init.svh"
     `endif
+    `ifdef COVER_SDTRIGS
+        `cover_info("//      SdtrigS - Enabled");
+        `include "SdtrigS_coverage_init.svh"
+    `endif
     `ifdef COVER_SDTRIGSM
         `cover_info("//      SdtrigSm - Enabled");
         `include "SdtrigSm_coverage_init.svh"
+    `endif
+    `ifdef COVER_SDTRIGU
+        `cover_info("//      SdtrigU - Enabled");
+        `include "SdtrigU_coverage_init.svh"
     `endif
     `ifdef COVER_SM
         `cover_info("//      Sm - Enabled");
@@ -545,10 +553,6 @@
     `ifdef COVER_ZICFILPS
         `cover_info("//      ZicfilpS - Enabled");
         `include "ZicfilpS_coverage_init.svh"
-    `endif
-    `ifdef COVER_ZICFILPSU
-        `cover_info("//      ZicfilpSU - Enabled");
-        `include "ZicfilpSU_coverage_init.svh"
     `endif
     `ifdef COVER_ZICFILPSM
         `cover_info("//      ZicfilpSm - Enabled");

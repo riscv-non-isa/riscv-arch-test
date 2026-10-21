@@ -6,7 +6,6 @@
 ci_enabled: true
 # Status as of QEMU v11.1.2, by test group (other groups of these suites pass):
 # Sm_mcsr_access, Sm_mcsr_cntr, Sm_mcsr_walk, Sm_shadow, Sm_xret: Multiple issues:
-#     need H support in Sail
 #     menvcfg.CBIE can be written with reserved 0b10 QEMU #4216
 #     minstret one too high after wraparound (still fails with QEMU #4087 closed)
 #     mcycleh write dropped (#4219)
@@ -21,7 +20,7 @@ ci_enabled: true
 # ExceptionsZaamo/Zama16b: QEMU zama16b handling is incomplete: misaligned Zabha/Zacas AMOs fault,
 #        but cross-granule word/doubleword AMOs execute instead of trapping
 #        (https://gitlab.com/qemu-project/qemu/-/work_items/4101).
-# SsstrictSm/SsstrictS _CSR and _IllegalInstr, SsstrictU_IllegalInstr: Sail does not implement H, qemu#4200, qemu#4201
+# SsstrictSm/SsstrictS _CSR and _IllegalInstr, SsstrictU_IllegalInstr: qemu#4200, qemu#4201
 # TODO: Remove SsstrictV when sail SsstrictV is implemented
 # Smstateen: mstateen0 bits are writable for state the hart lacks: P1P13 on RV64 and on RV32 without H
 #     (https://gitlab.com/qemu-project/qemu/-/work_items/4495), and ENVCFG, CSRIND, AIA and IMSIC without S
@@ -49,7 +48,15 @@ ci_enabled: true
 # (https://gitlab.com/qemu-project/qemu/-/work_items/4721).
 # ZicntrSm fails on qemu because ecall, ebreak and illegal instruction increments minstret/instret. Filed QEMU issue: https://gitlab.com/qemu-project/qemu/-/work_items/4227
 # ZicntrSm fails on qemu because minstret/instret overcounts by 1 for wfi with a pending or taken interrupt. Filed QEMU issue: https://gitlab.com/qemu-project/qemu/-/work_items/4230
-exclude_extensions: "Sm_mcsr_access,Sm_mcsr_cntr,Sm_mcsr_walk,Sm_shadow,Sm_xret,S-,S_scsr-,SsstrictSm_CSR,SsstrictSm_IllegalInstr,SsstrictS_CSR,SsstrictS_IllegalInstr,SsstrictU_IllegalInstr,Zacas,InterruptsSm_enable,InterruptsSm_priority,InterruptsSm_trigger,InterruptsS_enable,InterruptsS_priority,InterruptsS_trigger,ExceptionsZalrsc,ExceptionsZicboU,ExceptionsZicboS,ExceptionsZicboSm,SvZicbo_sv32_zicbom,SvZicbo_sv32_zicbop_Umode,SvZicbo_sv32_zicboz_exceptions_Umode,SvZicbo_sv39_zicbom,SvZicbo_sv48_zicbom,SvZicbo_sv57_zicbom,ExceptionsZaamo,ExceptionsSvZalrsc,ExceptionsSvZalrscSm_sv32_exceptions,ExceptionsSvZalrscSm_sv39_exceptions,Zama16b,SsstrictV,Smstateen,ZawrsS,ZawrsU,SdtrigSm,SdtrigS,SdtrigU,H,Ssnpm_bare_pmm00_sweep,Ssnpm_bare_pmm10_sweep,Ssnpm_sv39_pmm00_sweep,Ssnpm_sv39_pmm10_sweep,Ssnpm_sv39_pmm11_sweep,Ssnpm_sv48_pmm00_sweep,Ssnpm_sv48_pmm10_sweep,Ssnpm_sv48_pmm11_sweep,Ssnpm_sv57_pmm00_sweep,Ssnpm_sv57_pmm10_sweep,Ssnpm_sv57_pmm11_sweep,Smmpm_pmm00_sweep,Smmpm_pmm10_sweep,SmnpmS_bare_pmm00_sweep,SmnpmS_bare_pmm10_sweep,SmnpmS_sv39_pmm00_sweep,SmnpmS_sv39_pmm10_sweep,SmnpmS_sv39_pmm11_sweep,SmnpmS_sv48_pmm00_sweep,SmnpmS_sv48_pmm10_sweep,SmnpmS_sv48_pmm11_sweep,SmnpmS_sv57_pmm00_sweep,SmnpmS_sv57_pmm10_sweep,SmnpmS_sv57_pmm11_sweep,SmnpmU,SmnpmUSm,ZicntrSm,SscofpmfSm_access,SscofpmfSm_inhibit_lo,SscofpmfSm_interrupt,SscofpmfSm_overflow,SscofpmfS_inhibit_lo,SscofpmfS_interrupt,SscofpmfS_overflow,SscofpmfU_inhibit_lo,SscofpmfU_interrupt,SscofpmfU_overflow"
+# ZicfilpSm: an RV32 mstatus write clears mstatush.MPELP, so MRET does not restore ELP
+#     (https://gitlab.com/qemu-project/qemu/-/work_items/4488), and mstatush.MPELP is not
+#     writable (https://gitlab.com/qemu-project/qemu/-/work_items/4220).
+# ZicfilpS, ZicfilpU: on RV32 a write to mstateen0 clears mstateen0h.ENVCFG
+#     (https://gitlab.com/qemu-project/qemu/-/issues/4611). Boot writes mstateen0, so an
+#     S-mode access to senvcfg then raises an illegal instruction (cause 2, xtval holding the
+#     csrrc encoding) and the landing-pad tests diverge from the reference on senvcfg.LPE.
+# All three suites pass on qemu-rv64-max, but exclusions apply to every QEMU config.
+exclude_extensions: "Sm_mcsr_access,Sm_mcsr_cntr,Sm_mcsr_walk,Sm_shadow,Sm_xret,S-,S_scsr-,SsstrictSm_CSR,SsstrictSm_IllegalInstr,SsstrictS_CSR,SsstrictS_IllegalInstr,SsstrictU_IllegalInstr,Zacas,InterruptsSm_enable,InterruptsSm_priority,InterruptsSm_trigger,InterruptsS_enable,InterruptsS_priority,InterruptsS_trigger,ExceptionsZalrsc,ExceptionsZicboU,ExceptionsZicboS,ExceptionsZicboSm,SvZicbo_sv32_zicbom,SvZicbo_sv32_zicbop_Umode,SvZicbo_sv32_zicboz_exceptions_Umode,SvZicbo_sv39_zicbom,SvZicbo_sv48_zicbom,SvZicbo_sv57_zicbom,ExceptionsZaamo,ExceptionsSvZalrsc,ExceptionsSvZalrscSm_sv32_exceptions,ExceptionsSvZalrscSm_sv39_exceptions,Zama16b,SsstrictV,Smstateen,ZawrsS,ZawrsU,SdtrigSm,SdtrigS,SdtrigU,H,Ssnpm_bare_pmm00_sweep,Ssnpm_bare_pmm10_sweep,Ssnpm_sv39_pmm00_sweep,Ssnpm_sv39_pmm10_sweep,Ssnpm_sv39_pmm11_sweep,Ssnpm_sv48_pmm00_sweep,Ssnpm_sv48_pmm10_sweep,Ssnpm_sv48_pmm11_sweep,Ssnpm_sv57_pmm00_sweep,Ssnpm_sv57_pmm10_sweep,Ssnpm_sv57_pmm11_sweep,Smmpm_pmm00_sweep,Smmpm_pmm10_sweep,SmnpmS_bare_pmm00_sweep,SmnpmS_bare_pmm10_sweep,SmnpmS_sv39_pmm00_sweep,SmnpmS_sv39_pmm10_sweep,SmnpmS_sv39_pmm11_sweep,SmnpmS_sv48_pmm00_sweep,SmnpmS_sv48_pmm10_sweep,SmnpmS_sv48_pmm11_sweep,SmnpmS_sv57_pmm00_sweep,SmnpmS_sv57_pmm10_sweep,SmnpmS_sv57_pmm11_sweep,SmnpmU,SmnpmUSm,ZicntrSm,SscofpmfSm_access,SscofpmfSm_inhibit_lo,SscofpmfSm_interrupt,SscofpmfSm_overflow,SscofpmfS_inhibit_lo,SscofpmfS_interrupt,SscofpmfS_overflow,SscofpmfU_inhibit_lo,SscofpmfU_interrupt,SscofpmfU_overflow,ZicfilpSm,ZicfilpS,ZicfilpU"
 # qemu-rv32-mu, qemu-rv64-mu: U-mode cbo.zero/clean/flush/inval raise illegal-instruction without S-mode
 #   because check_zicbo_envcfg() also requires senvcfg, which does not exist
 #   (https://gitlab.com/qemu-project/qemu/-/work_items/4596)
