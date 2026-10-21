@@ -37,7 +37,6 @@ Zkt requires the instructions it lists to have data-independent execution latenc
 The suite measures latency with a cycle counter.
 If the hart implements Zicntr, the tests read `cycle` and run in the lowest implemented privilege mode.
 Otherwise, they read `mcycle` and run in M-mode.
-`RVTEST_CYCLE_CSR` in `utils.h` selects the counter and the boot mode, as `RVTEST_TEST_CSR` does for Zicsr.
 Each row outside the base ISA requires the extension of its instruction, so the suite times every listed instruction the hart implements.
 An instruction in two extensions, such as `ror` in Zbb and Zbkb, has a row for each, and a hart with both runs both.
 
@@ -50,7 +49,7 @@ Each testcase times one instruction with this sequence, where `cycle` is `mcycle
 ----
   1: load the operands
      <op>  rA, rs1, rs2      # reads the loaded operands, so the loads complete before timing starts
-     .balign 64
+     .balign 64              # align to 64-byte boundary to avoid cache line splits
      csrr  rA, cycle
      sltu  rZ, rA, x0        # rZ = 0, ready only after the first cycle read
      or    rs1, rs1, rZ      # rs1 (rs2 for c.mv) keeps its value and depends on the first read
@@ -85,12 +84,12 @@ The method assumes that:
 
 * CSR reads execute in order at commit, as is typical even for out-of-order cores.
 * The instruction fetches in the timed window have a deterministic delay: after the first run they hit in the instruction cache and TLB, and nothing else, such as another hart or a DMA engine, delays them.
-* Microarchitectural optimizations such as fusion or cracking are deterministic and do not depend on operand data, as zkt.adoc requires.
+* Microarchitectural optimizations such as fusion or cracking are deterministic and do not depend on operand data, as Zkt requires.
 
 Known limitations:
 
 * A core that reads the counter before older instructions complete loses sensitivity: it may pass with data-dependent latency, but it does not fail falsely.
-* Value prediction and other data-dependent speculation are out of scope, as zkt.adoc notes.
+* Value prediction and other data-dependent speculation are out of scope, as Zkt notes.
 * The suite checks the latency of a single instruction in isolation, not its throughput or its interaction with neighboring instructions.
 
 include::{testplansdir}/Zkt.adoc[]
