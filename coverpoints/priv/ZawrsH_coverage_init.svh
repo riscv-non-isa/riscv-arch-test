@@ -1,0 +1,8 @@
+///////////////////////////////////////////
+//
+// RISC-V Architectural Functional Coverage Covergroups Initialization File
+//
+// SPDX-License-Identifier: Apache-2.0
+///////////////////////////////////////////////////////////////////////////////////////////
+
+   ZawrsH_cg = new();         ZawrsH_cg.set_inst_name("obj_ZawrsH");

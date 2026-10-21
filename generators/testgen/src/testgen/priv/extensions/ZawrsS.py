@@ -35,7 +35,6 @@ def make_zawrss(test_data: TestData) -> list[TestChunk]:
     tc.code.extend(wrs_no_res_helper(test_data, "S", covergroup))
     tc.code.extend(wrs_timeout_helper(test_data, "S", covergroup, timeout="short"))
     tc.code.extend(wrs_timeout_helper(test_data, "S", covergroup, timeout="no"))
-    tc.code.extend(wrs_timeout_helper(test_data, "S", covergroup, timeout="no", virtualized=True))
     tc.code.extend(wrs_no_mie_helper(test_data, "S", covergroup))
     tc.code.extend(wrs_resume_helper(test_data, "S", covergroup))
 

@@ -344,6 +344,9 @@
 `ifdef ZAMA16B_COVERAGE
   `include "Zama16b_coverage.svh"
 `endif
+`ifdef ZAWRSH_COVERAGE
+  `include "ZawrsH_coverage.svh"
+`endif
 `ifdef ZAWRSS_COVERAGE
   `include "ZawrsS_coverage.svh"
 `endif
