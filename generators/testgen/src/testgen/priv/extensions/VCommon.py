@@ -59,7 +59,6 @@ def _gen_vcsrrswc(test_data: TestData, temp_reg: int, covergroup: str, priv: str
             for vs in (1, 2):
                 lines.extend(
                     [
-                        f"#ifdef UDB_MSTATUS_VS_LEGAL_VALUES_{vs}",
                         f"csrwi {csr}, {1 if op == 'csrrc' else 0}  # preset so {op} changes {csr}",
                         *set_status_fields(temp_reg, priv, vs=vs),
                         test_data.add_testcase(f"{csr}_{op}_vs{vs}", coverpoint, covergroup),
@@ -67,7 +66,6 @@ def _gen_vcsrrswc(test_data: TestData, temp_reg: int, covergroup: str, priv: str
                         f"LI(x{temp_reg}, MSTATUS_VS)",
                         gen_status_read_sigupd(check_reg, test_data, priv, temp_reg),
                         gen_csr_read_sigupd(check_reg, (csr, None), test_data),
-                        "#endif",
                     ]
                 )
     lines.extend(set_status_fields(temp_reg, priv, vs=3))
@@ -119,7 +117,6 @@ def _gen_status_vs_dirty(test_data: TestData, temp_reg: int, covergroup: str, pr
         ),
     ]
     for vs in (1, 2):
-        lines.append(f"#ifdef UDB_MSTATUS_VS_LEGAL_VALUES_{vs}")
         lines.extend(set_status_fields(temp_reg, priv, vs=3))
         lines.append(_VSET_M1)
         lines.append("vmv.v.i v1, 1")
@@ -128,17 +125,14 @@ def _gen_status_vs_dirty(test_data: TestData, temp_reg: int, covergroup: str, pr
         lines.append(test_data.add_testcase(f"vadd_vs{vs}", f"cp_{status}_vs_set_dirty_arithmetic", covergroup))
         lines.append("vadd.vv v3, v1, v2")
         lines.append(gen_status_read_sigupd(check_reg, test_data, priv))
-        lines.append("#endif")
 
     lines.append(comment_banner(f"cp_{status}_vs_set_dirty_csr", "VS=Initial/Clean -> vsetvli -> expect Dirty"))
     for vs in (1, 2):
-        lines.append(f"#ifdef UDB_MSTATUS_VS_LEGAL_VALUES_{vs}")
         lines.extend(set_status_fields(temp_reg, priv, vs=3))
         lines.extend(set_status_fields(temp_reg, priv, vs=vs))
         lines.append(test_data.add_testcase(f"vsetvli_vs{vs}", f"cp_{status}_vs_set_dirty_csr", covergroup))
         lines.append(f"vsetvli x{temp_reg}, x0, e16, m2, tu, mu")
         lines.append(gen_status_read_sigupd(check_reg, test_data, priv))
-        lines.append("#endif")
     test_data.int_regs.return_registers([check_reg])
     return lines
 

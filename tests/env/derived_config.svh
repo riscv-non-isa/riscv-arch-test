@@ -154,17 +154,4 @@
   `endif
 `endif
 
-// mstatus.FS / mstatus.VS can hold Initial or Clean, not only Off and Dirty
-// (MSTATUS_FS_LEGAL_VALUES / MSTATUS_VS_LEGAL_VALUES include 1 or 2).
-`ifdef UDB_MSTATUS_FS_LEGAL_VALUES_1
-  `define MSTATUS_FS_INITIAL_OR_CLEAN
-`elsif UDB_MSTATUS_FS_LEGAL_VALUES_2
-  `define MSTATUS_FS_INITIAL_OR_CLEAN
-`endif
-`ifdef UDB_MSTATUS_VS_LEGAL_VALUES_1
-  `define MSTATUS_VS_INITIAL_OR_CLEAN
-`elsif UDB_MSTATUS_VS_LEGAL_VALUES_2
-  `define MSTATUS_VS_INITIAL_OR_CLEAN
-`endif
-
 `endif // DERIVED_CONFIG_SVH
