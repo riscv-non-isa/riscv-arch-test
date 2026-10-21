@@ -30,7 +30,7 @@ RVTEST_BEGIN
 
 
 /////////////////////////////////
-// cp_sv39_pte_reserved_field_Smode
+// cp_reserved_write_fault, cp_reserved_read_fault, cp_reserved_exec_fault
 /////////////////////////////////
 
 #ifdef S1P12P0_OR_LATER_SUPPORTED
@@ -76,26 +76,26 @@ RVTEST_BEGIN
   addi x8, x8, 16
 
 // Store
-Sv_cp_sv39_pte_reserved_field_Smode_test1_store:
+Sv_add_feature_cg_cp_reserved_write_fault_test1_store:
   sw x8, 20(x15)
   nop
 
 // Load
-Sv_cp_sv39_pte_reserved_field_Smode_test1_load:
+Sv_add_feature_cg_cp_reserved_read_fault_test1_load:
   lw x14, 20(x15)
   nop
 
 // Execute
-Sv_cp_sv39_pte_reserved_field_Smode_test1_exec:
+Sv_add_feature_cg_cp_reserved_exec_fault_test1_exec:
   jalr ra, x15, 0
   nop
 
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_cp_sv39_pte_reserved_field_Smode_test1_store, Sv_cp_sv39_pte_reserved_field_Smode_test1_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_add_feature_cg_cp_reserved_write_fault_test1_store, Sv_add_feature_cg_cp_reserved_write_fault_test1_store_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Sv_cp_sv39_pte_reserved_field_Smode_test1_load, Sv_cp_sv39_pte_reserved_field_Smode_test1_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, Sv_add_feature_cg_cp_reserved_read_fault_test1_load, Sv_add_feature_cg_cp_reserved_read_fault_test1_load_str)
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_cp_sv39_pte_reserved_field_Smode_test1_exec, Sv_cp_sv39_pte_reserved_field_Smode_test1_exec_str)
+  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_add_feature_cg_cp_reserved_exec_fault_test1_exec, Sv_add_feature_cg_cp_reserved_exec_fault_test1_exec_str)
 
 
 // 1GB page at level 2
@@ -112,26 +112,26 @@ Sv_cp_sv39_pte_reserved_field_Smode_test1_exec:
   addi x8, x8, 16
 
 // Store
-Sv_cp_sv39_pte_reserved_field_Smode_test2_store:
+Sv_add_feature_cg_cp_reserved_write_fault_test2_store:
   sw x8, 20(x15)
   nop
 
 // Load
-Sv_cp_sv39_pte_reserved_field_Smode_test2_load:
+Sv_add_feature_cg_cp_reserved_read_fault_test2_load:
   lw x14, 20(x15)
   nop
 
 // Execute
-Sv_cp_sv39_pte_reserved_field_Smode_test2_exec:
+Sv_add_feature_cg_cp_reserved_exec_fault_test2_exec:
   jalr ra, x15, 0
   nop
 
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_cp_sv39_pte_reserved_field_Smode_test2_store, Sv_cp_sv39_pte_reserved_field_Smode_test2_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_add_feature_cg_cp_reserved_write_fault_test2_store, Sv_add_feature_cg_cp_reserved_write_fault_test2_store_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Sv_cp_sv39_pte_reserved_field_Smode_test2_load, Sv_cp_sv39_pte_reserved_field_Smode_test2_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, Sv_add_feature_cg_cp_reserved_read_fault_test2_load, Sv_add_feature_cg_cp_reserved_read_fault_test2_load_str)
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_cp_sv39_pte_reserved_field_Smode_test2_exec, Sv_cp_sv39_pte_reserved_field_Smode_test2_exec_str)
+  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_add_feature_cg_cp_reserved_exec_fault_test2_exec, Sv_add_feature_cg_cp_reserved_exec_fault_test2_exec_str)
 
 
 // 1GB page at level 2
@@ -148,26 +148,26 @@ Sv_cp_sv39_pte_reserved_field_Smode_test2_exec:
   addi x8, x8, 16
 
 // Store
-Sv_cp_sv39_pte_reserved_field_Smode_test3_store:
+Sv_add_feature_cg_cp_reserved_write_fault_test3_store:
   sw x8, 20(x15)
   nop
 
 // Load
-Sv_cp_sv39_pte_reserved_field_Smode_test3_load:
+Sv_add_feature_cg_cp_reserved_read_fault_test3_load:
   lw x14, 20(x15)
   nop
 
 // Execute
-Sv_cp_sv39_pte_reserved_field_Smode_test3_exec:
+Sv_add_feature_cg_cp_reserved_exec_fault_test3_exec:
   jalr ra, x15, 0
   nop
 
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_cp_sv39_pte_reserved_field_Smode_test3_store, Sv_cp_sv39_pte_reserved_field_Smode_test3_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_add_feature_cg_cp_reserved_write_fault_test3_store, Sv_add_feature_cg_cp_reserved_write_fault_test3_store_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Sv_cp_sv39_pte_reserved_field_Smode_test3_load, Sv_cp_sv39_pte_reserved_field_Smode_test3_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, Sv_add_feature_cg_cp_reserved_read_fault_test3_load, Sv_add_feature_cg_cp_reserved_read_fault_test3_load_str)
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_cp_sv39_pte_reserved_field_Smode_test3_exec, Sv_cp_sv39_pte_reserved_field_Smode_test3_exec_str)
+  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_add_feature_cg_cp_reserved_exec_fault_test3_exec, Sv_add_feature_cg_cp_reserved_exec_fault_test3_exec_str)
 
 
 // 1GB page at level 2
@@ -184,26 +184,26 @@ Sv_cp_sv39_pte_reserved_field_Smode_test3_exec:
   addi x8, x8, 16
 
 // Store
-Sv_cp_sv39_pte_reserved_field_Smode_test4_store:
+Sv_add_feature_cg_cp_reserved_write_fault_test4_store:
   sw x8, 20(x15)
   nop
 
 // Load
-Sv_cp_sv39_pte_reserved_field_Smode_test4_load:
+Sv_add_feature_cg_cp_reserved_read_fault_test4_load:
   lw x14, 20(x15)
   nop
 
 // Execute
-Sv_cp_sv39_pte_reserved_field_Smode_test4_exec:
+Sv_add_feature_cg_cp_reserved_exec_fault_test4_exec:
   jalr ra, x15, 0
   nop
 
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_cp_sv39_pte_reserved_field_Smode_test4_store, Sv_cp_sv39_pte_reserved_field_Smode_test4_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_add_feature_cg_cp_reserved_write_fault_test4_store, Sv_add_feature_cg_cp_reserved_write_fault_test4_store_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Sv_cp_sv39_pte_reserved_field_Smode_test4_load, Sv_cp_sv39_pte_reserved_field_Smode_test4_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, Sv_add_feature_cg_cp_reserved_read_fault_test4_load, Sv_add_feature_cg_cp_reserved_read_fault_test4_load_str)
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_cp_sv39_pte_reserved_field_Smode_test4_exec, Sv_cp_sv39_pte_reserved_field_Smode_test4_exec_str)
+  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_add_feature_cg_cp_reserved_exec_fault_test4_exec, Sv_add_feature_cg_cp_reserved_exec_fault_test4_exec_str)
 
 
 // 1GB page at level 2
@@ -220,26 +220,26 @@ Sv_cp_sv39_pte_reserved_field_Smode_test4_exec:
   addi x8, x8, 16
 
 // Store
-Sv_cp_sv39_pte_reserved_field_Smode_test5_store:
+Sv_add_feature_cg_cp_reserved_write_fault_test5_store:
   sw x8, 20(x15)
   nop
 
 // Load
-Sv_cp_sv39_pte_reserved_field_Smode_test5_load:
+Sv_add_feature_cg_cp_reserved_read_fault_test5_load:
   lw x14, 20(x15)
   nop
 
 // Execute
-Sv_cp_sv39_pte_reserved_field_Smode_test5_exec:
+Sv_add_feature_cg_cp_reserved_exec_fault_test5_exec:
   jalr ra, x15, 0
   nop
 
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_cp_sv39_pte_reserved_field_Smode_test5_store, Sv_cp_sv39_pte_reserved_field_Smode_test5_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_add_feature_cg_cp_reserved_write_fault_test5_store, Sv_add_feature_cg_cp_reserved_write_fault_test5_store_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Sv_cp_sv39_pte_reserved_field_Smode_test5_load, Sv_cp_sv39_pte_reserved_field_Smode_test5_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, Sv_add_feature_cg_cp_reserved_read_fault_test5_load, Sv_add_feature_cg_cp_reserved_read_fault_test5_load_str)
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_cp_sv39_pte_reserved_field_Smode_test5_exec, Sv_cp_sv39_pte_reserved_field_Smode_test5_exec_str)
+  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_add_feature_cg_cp_reserved_exec_fault_test5_exec, Sv_add_feature_cg_cp_reserved_exec_fault_test5_exec_str)
 
 
 // 1GB page at level 2
@@ -256,26 +256,26 @@ Sv_cp_sv39_pte_reserved_field_Smode_test5_exec:
   addi x8, x8, 16
 
 // Store
-Sv_cp_sv39_pte_reserved_field_Smode_test6_store:
+Sv_add_feature_cg_cp_reserved_write_fault_test6_store:
   sw x8, 20(x15)
   nop
 
 // Load
-Sv_cp_sv39_pte_reserved_field_Smode_test6_load:
+Sv_add_feature_cg_cp_reserved_read_fault_test6_load:
   lw x14, 20(x15)
   nop
 
 // Execute
-Sv_cp_sv39_pte_reserved_field_Smode_test6_exec:
+Sv_add_feature_cg_cp_reserved_exec_fault_test6_exec:
   jalr ra, x15, 0
   nop
 
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_cp_sv39_pte_reserved_field_Smode_test6_store, Sv_cp_sv39_pte_reserved_field_Smode_test6_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_add_feature_cg_cp_reserved_write_fault_test6_store, Sv_add_feature_cg_cp_reserved_write_fault_test6_store_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Sv_cp_sv39_pte_reserved_field_Smode_test6_load, Sv_cp_sv39_pte_reserved_field_Smode_test6_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, Sv_add_feature_cg_cp_reserved_read_fault_test6_load, Sv_add_feature_cg_cp_reserved_read_fault_test6_load_str)
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_cp_sv39_pte_reserved_field_Smode_test6_exec, Sv_cp_sv39_pte_reserved_field_Smode_test6_exec_str)
+  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_add_feature_cg_cp_reserved_exec_fault_test6_exec, Sv_add_feature_cg_cp_reserved_exec_fault_test6_exec_str)
 
 
 // 1GB page at level 2
@@ -292,26 +292,26 @@ Sv_cp_sv39_pte_reserved_field_Smode_test6_exec:
   addi x8, x8, 16
 
 // Store
-Sv_cp_sv39_pte_reserved_field_Smode_test7_store:
+Sv_add_feature_cg_cp_reserved_write_fault_test7_store:
   sw x8, 20(x15)
   nop
 
 // Load
-Sv_cp_sv39_pte_reserved_field_Smode_test7_load:
+Sv_add_feature_cg_cp_reserved_read_fault_test7_load:
   lw x14, 20(x15)
   nop
 
 // Execute
-Sv_cp_sv39_pte_reserved_field_Smode_test7_exec:
+Sv_add_feature_cg_cp_reserved_exec_fault_test7_exec:
   jalr ra, x15, 0
   nop
 
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_cp_sv39_pte_reserved_field_Smode_test7_store, Sv_cp_sv39_pte_reserved_field_Smode_test7_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_add_feature_cg_cp_reserved_write_fault_test7_store, Sv_add_feature_cg_cp_reserved_write_fault_test7_store_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Sv_cp_sv39_pte_reserved_field_Smode_test7_load, Sv_cp_sv39_pte_reserved_field_Smode_test7_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, Sv_add_feature_cg_cp_reserved_read_fault_test7_load, Sv_add_feature_cg_cp_reserved_read_fault_test7_load_str)
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_cp_sv39_pte_reserved_field_Smode_test7_exec, Sv_cp_sv39_pte_reserved_field_Smode_test7_exec_str)
+  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_add_feature_cg_cp_reserved_exec_fault_test7_exec, Sv_add_feature_cg_cp_reserved_exec_fault_test7_exec_str)
 
 #endif
 
@@ -345,27 +345,27 @@ rvtest_slvl1_pg_tbl:
   .skip(4096)
 
 // Testcase strings
-Sv_cp_sv39_pte_reserved_field_Smode_test1_store_str: .string "\"test: 271; cg: Sv; cp: cp_sv39_pte_reserved_field_Smode; bin: test1_store\""
-Sv_cp_sv39_pte_reserved_field_Smode_test1_load_str: .string "\"test: 272; cg: Sv; cp: cp_sv39_pte_reserved_field_Smode; bin: test1_load\""
-Sv_cp_sv39_pte_reserved_field_Smode_test1_exec_str: .string "\"test: 273; cg: Sv; cp: cp_sv39_pte_reserved_field_Smode; bin: test1_exec\""
-Sv_cp_sv39_pte_reserved_field_Smode_test2_store_str: .string "\"test: 274; cg: Sv; cp: cp_sv39_pte_reserved_field_Smode; bin: test2_store\""
-Sv_cp_sv39_pte_reserved_field_Smode_test2_load_str: .string "\"test: 275; cg: Sv; cp: cp_sv39_pte_reserved_field_Smode; bin: test2_load\""
-Sv_cp_sv39_pte_reserved_field_Smode_test2_exec_str: .string "\"test: 276; cg: Sv; cp: cp_sv39_pte_reserved_field_Smode; bin: test2_exec\""
-Sv_cp_sv39_pte_reserved_field_Smode_test3_store_str: .string "\"test: 277; cg: Sv; cp: cp_sv39_pte_reserved_field_Smode; bin: test3_store\""
-Sv_cp_sv39_pte_reserved_field_Smode_test3_load_str: .string "\"test: 278; cg: Sv; cp: cp_sv39_pte_reserved_field_Smode; bin: test3_load\""
-Sv_cp_sv39_pte_reserved_field_Smode_test3_exec_str: .string "\"test: 279; cg: Sv; cp: cp_sv39_pte_reserved_field_Smode; bin: test3_exec\""
-Sv_cp_sv39_pte_reserved_field_Smode_test4_store_str: .string "\"test: 280; cg: Sv; cp: cp_sv39_pte_reserved_field_Smode; bin: test4_store\""
-Sv_cp_sv39_pte_reserved_field_Smode_test4_load_str: .string "\"test: 281; cg: Sv; cp: cp_sv39_pte_reserved_field_Smode; bin: test4_load\""
-Sv_cp_sv39_pte_reserved_field_Smode_test4_exec_str: .string "\"test: 282; cg: Sv; cp: cp_sv39_pte_reserved_field_Smode; bin: test4_exec\""
-Sv_cp_sv39_pte_reserved_field_Smode_test5_store_str: .string "\"test: 283; cg: Sv; cp: cp_sv39_pte_reserved_field_Smode; bin: test5_store\""
-Sv_cp_sv39_pte_reserved_field_Smode_test5_load_str: .string "\"test: 284; cg: Sv; cp: cp_sv39_pte_reserved_field_Smode; bin: test5_load\""
-Sv_cp_sv39_pte_reserved_field_Smode_test5_exec_str: .string "\"test: 285; cg: Sv; cp: cp_sv39_pte_reserved_field_Smode; bin: test5_exec\""
-Sv_cp_sv39_pte_reserved_field_Smode_test6_store_str: .string "\"test: 286; cg: Sv; cp: cp_sv39_pte_reserved_field_Smode; bin: test6_store\""
-Sv_cp_sv39_pte_reserved_field_Smode_test6_load_str: .string "\"test: 287; cg: Sv; cp: cp_sv39_pte_reserved_field_Smode; bin: test6_load\""
-Sv_cp_sv39_pte_reserved_field_Smode_test6_exec_str: .string "\"test: 288; cg: Sv; cp: cp_sv39_pte_reserved_field_Smode; bin: test6_exec\""
-Sv_cp_sv39_pte_reserved_field_Smode_test7_store_str: .string "\"test: 289; cg: Sv; cp: cp_sv39_pte_reserved_field_Smode; bin: test7_store\""
-Sv_cp_sv39_pte_reserved_field_Smode_test7_load_str: .string "\"test: 290; cg: Sv; cp: cp_sv39_pte_reserved_field_Smode; bin: test7_load\""
-Sv_cp_sv39_pte_reserved_field_Smode_test7_exec_str: .string "\"test: 291; cg: Sv; cp: cp_sv39_pte_reserved_field_Smode; bin: test7_exec\""
+Sv_add_feature_cg_cp_reserved_write_fault_test1_store_str: .string "\"test: 271; cg: Sv_add_feature_cg; cp: cp_reserved_write_fault; bin: test1_store\""
+Sv_add_feature_cg_cp_reserved_read_fault_test1_load_str: .string "\"test: 272; cg: Sv_add_feature_cg; cp: cp_reserved_read_fault; bin: test1_load\""
+Sv_add_feature_cg_cp_reserved_exec_fault_test1_exec_str: .string "\"test: 273; cg: Sv_add_feature_cg; cp: cp_reserved_exec_fault; bin: test1_exec\""
+Sv_add_feature_cg_cp_reserved_write_fault_test2_store_str: .string "\"test: 274; cg: Sv_add_feature_cg; cp: cp_reserved_write_fault; bin: test2_store\""
+Sv_add_feature_cg_cp_reserved_read_fault_test2_load_str: .string "\"test: 275; cg: Sv_add_feature_cg; cp: cp_reserved_read_fault; bin: test2_load\""
+Sv_add_feature_cg_cp_reserved_exec_fault_test2_exec_str: .string "\"test: 276; cg: Sv_add_feature_cg; cp: cp_reserved_exec_fault; bin: test2_exec\""
+Sv_add_feature_cg_cp_reserved_write_fault_test3_store_str: .string "\"test: 277; cg: Sv_add_feature_cg; cp: cp_reserved_write_fault; bin: test3_store\""
+Sv_add_feature_cg_cp_reserved_read_fault_test3_load_str: .string "\"test: 278; cg: Sv_add_feature_cg; cp: cp_reserved_read_fault; bin: test3_load\""
+Sv_add_feature_cg_cp_reserved_exec_fault_test3_exec_str: .string "\"test: 279; cg: Sv_add_feature_cg; cp: cp_reserved_exec_fault; bin: test3_exec\""
+Sv_add_feature_cg_cp_reserved_write_fault_test4_store_str: .string "\"test: 280; cg: Sv_add_feature_cg; cp: cp_reserved_write_fault; bin: test4_store\""
+Sv_add_feature_cg_cp_reserved_read_fault_test4_load_str: .string "\"test: 281; cg: Sv_add_feature_cg; cp: cp_reserved_read_fault; bin: test4_load\""
+Sv_add_feature_cg_cp_reserved_exec_fault_test4_exec_str: .string "\"test: 282; cg: Sv_add_feature_cg; cp: cp_reserved_exec_fault; bin: test4_exec\""
+Sv_add_feature_cg_cp_reserved_write_fault_test5_store_str: .string "\"test: 283; cg: Sv_add_feature_cg; cp: cp_reserved_write_fault; bin: test5_store\""
+Sv_add_feature_cg_cp_reserved_read_fault_test5_load_str: .string "\"test: 284; cg: Sv_add_feature_cg; cp: cp_reserved_read_fault; bin: test5_load\""
+Sv_add_feature_cg_cp_reserved_exec_fault_test5_exec_str: .string "\"test: 285; cg: Sv_add_feature_cg; cp: cp_reserved_exec_fault; bin: test5_exec\""
+Sv_add_feature_cg_cp_reserved_write_fault_test6_store_str: .string "\"test: 286; cg: Sv_add_feature_cg; cp: cp_reserved_write_fault; bin: test6_store\""
+Sv_add_feature_cg_cp_reserved_read_fault_test6_load_str: .string "\"test: 287; cg: Sv_add_feature_cg; cp: cp_reserved_read_fault; bin: test6_load\""
+Sv_add_feature_cg_cp_reserved_exec_fault_test6_exec_str: .string "\"test: 288; cg: Sv_add_feature_cg; cp: cp_reserved_exec_fault; bin: test6_exec\""
+Sv_add_feature_cg_cp_reserved_write_fault_test7_store_str: .string "\"test: 289; cg: Sv_add_feature_cg; cp: cp_reserved_write_fault; bin: test7_store\""
+Sv_add_feature_cg_cp_reserved_read_fault_test7_load_str: .string "\"test: 290; cg: Sv_add_feature_cg; cp: cp_reserved_read_fault; bin: test7_load\""
+Sv_add_feature_cg_cp_reserved_exec_fault_test7_exec_str: .string "\"test: 291; cg: Sv_add_feature_cg; cp: cp_reserved_exec_fault; bin: test7_exec\""
 
 // End of test data section and model specific data
 RVTEST_DATA_END

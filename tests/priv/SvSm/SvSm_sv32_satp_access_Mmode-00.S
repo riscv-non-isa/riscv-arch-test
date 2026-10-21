@@ -36,17 +36,17 @@ RVTEST_BEGIN
   LI(x9, SATP_MODE_SV32 << 31)
   LI(x15, 1 << 22)
   csrw satp, x9
-SvSm_cg_cp_satp_access_m_csrw:
+SvSm_satp_cg_cp_access_m_m_csrw:
   # Read satp into x13 and check against expected.
-  RVTEST_SIGUPD_CSR_READ(satp, x13, SvSm_cg_cp_satp_access_m_csrw, SvSm_cg_cp_satp_access_m_csrw_str)
+  RVTEST_SIGUPD_CSR_READ(satp, x13, SvSm_satp_cg_cp_access_m_m_csrw, SvSm_satp_cg_cp_access_m_m_csrw_str)
   csrs satp, x15
-SvSm_cg_cp_satp_access_m_csrs:
+SvSm_satp_cg_cp_access_m_m_csrs:
   # Read satp into x13 and check against expected.
-  RVTEST_SIGUPD_CSR_READ(satp, x13, SvSm_cg_cp_satp_access_m_csrs, SvSm_cg_cp_satp_access_m_csrs_str)
+  RVTEST_SIGUPD_CSR_READ(satp, x13, SvSm_satp_cg_cp_access_m_m_csrs, SvSm_satp_cg_cp_access_m_m_csrs_str)
   csrc satp, x15
-SvSm_cg_cp_satp_access_m_csrc:
+SvSm_satp_cg_cp_access_m_m_csrc:
   # Read satp into x13 and check against expected.
-  RVTEST_SIGUPD_CSR_READ(satp, x13, SvSm_cg_cp_satp_access_m_csrc, SvSm_cg_cp_satp_access_m_csrc_str)
+  RVTEST_SIGUPD_CSR_READ(satp, x13, SvSm_satp_cg_cp_access_m_m_csrc, SvSm_satp_cg_cp_access_m_m_csrc_str)
   csrw satp, zero
 
 // Instantiate trap handlers and other epilog code, call RVMODEL_HALT at end of test
@@ -59,9 +59,9 @@ RVTEST_DATA_BEGIN
 
 
 // Testcase strings
-SvSm_cg_cp_satp_access_m_csrw_str: .string "\"test: 25; cg: SvSm_cg; cp: cp_satp_access; bin: m_csrw\""
-SvSm_cg_cp_satp_access_m_csrs_str: .string "\"test: 26; cg: SvSm_cg; cp: cp_satp_access; bin: m_csrs\""
-SvSm_cg_cp_satp_access_m_csrc_str: .string "\"test: 27; cg: SvSm_cg; cp: cp_satp_access; bin: m_csrc\""
+SvSm_satp_cg_cp_access_m_m_csrw_str: .string "\"test: 25; cg: SvSm_satp_cg; cp: cp_access_m; bin: m_csrw\""
+SvSm_satp_cg_cp_access_m_m_csrs_str: .string "\"test: 26; cg: SvSm_satp_cg; cp: cp_access_m; bin: m_csrs\""
+SvSm_satp_cg_cp_access_m_m_csrc_str: .string "\"test: 27; cg: SvSm_satp_cg; cp: cp_access_m; bin: m_csrc\""
 
 // End of test data section and model specific data
 RVTEST_DATA_END

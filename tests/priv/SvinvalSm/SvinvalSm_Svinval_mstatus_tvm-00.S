@@ -68,8 +68,8 @@ SvinvalSm_cg_cp_svinval_test3_sfence_vma:
   RVTEST_TSBI_GOTO_MMODE
   LI(x9, MSTATUS_TVM)
   csrs mstatus, x9
-SvinvalSm_cg_cp_svinval_tvm_tvm:
-  RVTEST_SIGUPD_CSR_READ(mstatus, x9, SvinvalSm_cg_cp_svinval_tvm_tvm, SvinvalSm_cg_cp_svinval_tvm_tvm_str)
+SvinvalSm_cg_cp_tvm_tvm:
+  RVTEST_SIGUPD_CSR_READ(mstatus, x9, SvinvalSm_cg_cp_tvm_tvm, SvinvalSm_cg_cp_tvm_tvm_str)
 SvinvalSm_cg_cp_svinval_test4_sfence_w_inval:
   sfence.w.inval
 
@@ -120,7 +120,7 @@ RVTEST_DATA_BEGIN
 
 
 // Testcase strings
-SvinvalSm_cg_cp_svinval_tvm_tvm_str: .string "\"test: 1; cg: SvinvalSm_cg; cp: cp_svinval_tvm; bin: tvm\""
+SvinvalSm_cg_cp_tvm_tvm_str: .string "\"test: 1; cg: SvinvalSm_cg; cp: cp_tvm; bin: tvm\""
 SvinvalSm_cg_cp_svinval_test1_sfence_w_inval_str: .string "\"test: 2; cg: SvinvalSm_cg; cp: cp_svinval; bin: test1_sfence_w_inval\""
 SvinvalSm_cg_cp_svinval_test1_sinval_vma_str: .string "\"test: 3; cg: SvinvalSm_cg; cp: cp_svinval; bin: test1_sinval_vma\""
 SvinvalSm_cg_cp_svinval_test1_sfence_inval_ir_str: .string "\"test: 4; cg: SvinvalSm_cg; cp: cp_svinval; bin: test1_sfence_inval_ir\""

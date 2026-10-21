@@ -30,7 +30,7 @@ RVTEST_BEGIN
 
 
 /////////////////////////////////
-// cp_sv39_nleaf_pte_level0_Smode
+// cp_PTE_nonleaf_lvl0_s_d_write, cp_PTE_nonleaf_lvl0_s_d_read, cp_PTE_nonleaf_lvl0_s_i_exec
 /////////////////////////////////
 
 
@@ -72,26 +72,26 @@ RVTEST_BEGIN
   addi x15, x15, 16
 
 // Store
-Sv_cp_sv39_nleaf_pte_level0_Smode_test1_store:
+Sv_vm_permissions_cg_cp_PTE_nonleaf_lvl0_s_d_write_test1_store:
   sw x15, 20(x14)
   nop
 
 // Load
-Sv_cp_sv39_nleaf_pte_level0_Smode_test1_load:
+Sv_vm_permissions_cg_cp_PTE_nonleaf_lvl0_s_d_read_test1_load:
   lw x13, 20(x14)
   nop
 
 // Execute
-Sv_cp_sv39_nleaf_pte_level0_Smode_test1_exec:
+Sv_vm_permissions_cg_cp_PTE_nonleaf_lvl0_s_i_exec_test1_exec:
   jalr ra, x14, 0
   nop
 
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, Sv_cp_sv39_nleaf_pte_level0_Smode_test1_store, Sv_cp_sv39_nleaf_pte_level0_Smode_test1_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x15, Sv_vm_permissions_cg_cp_PTE_nonleaf_lvl0_s_d_write_test1_store, Sv_vm_permissions_cg_cp_PTE_nonleaf_lvl0_s_d_write_test1_store_str)
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_cp_sv39_nleaf_pte_level0_Smode_test1_load, Sv_cp_sv39_nleaf_pte_level0_Smode_test1_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_vm_permissions_cg_cp_PTE_nonleaf_lvl0_s_d_read_test1_load, Sv_vm_permissions_cg_cp_PTE_nonleaf_lvl0_s_d_read_test1_load_str)
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_cp_sv39_nleaf_pte_level0_Smode_test1_exec, Sv_cp_sv39_nleaf_pte_level0_Smode_test1_exec_str)
+  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_vm_permissions_cg_cp_PTE_nonleaf_lvl0_s_i_exec_test1_exec, Sv_vm_permissions_cg_cp_PTE_nonleaf_lvl0_s_i_exec_test1_exec_str)
 
 
 // Instantiate trap handlers and other epilog code, call RVMODEL_HALT at end of test
@@ -124,9 +124,9 @@ rvtest_slvl1_pg_tbl:
   .skip(4096)
 
 // Testcase strings
-Sv_cp_sv39_nleaf_pte_level0_Smode_test1_store_str: .string "\"test: 157; cg: Sv; cp: cp_sv39_nleaf_pte_level0_Smode; bin: test1_store\""
-Sv_cp_sv39_nleaf_pte_level0_Smode_test1_load_str: .string "\"test: 158; cg: Sv; cp: cp_sv39_nleaf_pte_level0_Smode; bin: test1_load\""
-Sv_cp_sv39_nleaf_pte_level0_Smode_test1_exec_str: .string "\"test: 159; cg: Sv; cp: cp_sv39_nleaf_pte_level0_Smode; bin: test1_exec\""
+Sv_vm_permissions_cg_cp_PTE_nonleaf_lvl0_s_d_write_test1_store_str: .string "\"test: 157; cg: Sv_vm_permissions_cg; cp: cp_PTE_nonleaf_lvl0_s_d_write; bin: test1_store\""
+Sv_vm_permissions_cg_cp_PTE_nonleaf_lvl0_s_d_read_test1_load_str: .string "\"test: 158; cg: Sv_vm_permissions_cg; cp: cp_PTE_nonleaf_lvl0_s_d_read; bin: test1_load\""
+Sv_vm_permissions_cg_cp_PTE_nonleaf_lvl0_s_i_exec_test1_exec_str: .string "\"test: 159; cg: Sv_vm_permissions_cg; cp: cp_PTE_nonleaf_lvl0_s_i_exec; bin: test1_exec\""
 
 // End of test data section and model specific data
 RVTEST_DATA_END

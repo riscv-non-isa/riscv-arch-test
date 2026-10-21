@@ -31,7 +31,7 @@ RVTEST_BEGIN
 
 
 /////////////////////////////////
-// cp_pmp_zicbo
+// cp_PA_PMP_rw_unset_cbo_s
 /////////////////////////////////
 
 #if UDB_PMP_GRANULARITY > 5
@@ -79,9 +79,9 @@ RVTEST_BEGIN
   csrs menvcfg, x9
 
   LI(x4, (((PMP_X | PMP_NAPOT) & 0xFF) << PMP_CFG_SHIFT(0)))
-SvPMPZicbo_cp_pmpcfg_pmpcfg0_x:
+SvPMPZicbo_cg_PMP_perm_pmpcfg0_x:
   # Write x4 to pmpcfg0, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(pmpcfg0, x4, SvPMPZicbo_cp_pmpcfg_pmpcfg0_x, SvPMPZicbo_cp_pmpcfg_pmpcfg0_x_str)
+  RVTEST_SIGUPD_CSR_WRITE(pmpcfg0, x4, SvPMPZicbo_cg_PMP_perm_pmpcfg0_x, SvPMPZicbo_cg_PMP_perm_pmpcfg0_x_str)
   sfence.vma
 
   SUPERPAGE_PTE_SETUP_SV32(rvtest_data_1, (PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL1)
@@ -93,7 +93,7 @@ SvPMPZicbo_cp_pmpcfg_pmpcfg0_x:
   srli x9, x9, 10
   add x14, x14, x9
   RVTEST_TSBI_GOTO_SMODE
-SvPMPZicbo_cg_cp_pmp_zicbo_test1_cbo_zero:
+SvPMPZicbo_cg_cp_PA_PMP_rw_unset_cbo_s_test1_cbo_zero:
   cbo.zero (x14)
   nop
   RVTEST_TSBI_GOTO_MMODE
@@ -104,7 +104,7 @@ SvPMPZicbo_cg_cp_pmp_zicbo_test1_cbo_zero:
 
   LI(x14, va_data)
   RVTEST_TSBI_GOTO_SMODE
-SvPMPZicbo_cg_cp_pmp_zicbo_test2_cbo_zero:
+SvPMPZicbo_cg_cp_PA_PMP_rw_unset_cbo_s_test2_cbo_zero:
   cbo.zero (x14)
   nop
   RVTEST_TSBI_GOTO_MMODE
@@ -140,9 +140,9 @@ rvtest_slvl0_pg_tbl:
   .skip(4096)
 
 // Testcase strings
-SvPMPZicbo_cp_pmpcfg_pmpcfg0_x_str: .string "\"test: 1; cg: SvPMPZicbo; cp: cp_pmpcfg; bin: pmpcfg0_x\""
-SvPMPZicbo_cg_cp_pmp_zicbo_test1_cbo_zero_str: .string "\"test: 2; cg: SvPMPZicbo_cg; cp: cp_pmp_zicbo; bin: test1_cbo_zero\""
-SvPMPZicbo_cg_cp_pmp_zicbo_test2_cbo_zero_str: .string "\"test: 3; cg: SvPMPZicbo_cg; cp: cp_pmp_zicbo; bin: test2_cbo_zero\""
+SvPMPZicbo_cg_PMP_perm_pmpcfg0_x_str: .string "\"test: 1; cg: SvPMPZicbo_cg; cp: PMP_perm; bin: pmpcfg0_x\""
+SvPMPZicbo_cg_cp_PA_PMP_rw_unset_cbo_s_test1_cbo_zero_str: .string "\"test: 2; cg: SvPMPZicbo_cg; cp: cp_PA_PMP_rw_unset_cbo_s; bin: test1_cbo_zero\""
+SvPMPZicbo_cg_cp_PA_PMP_rw_unset_cbo_s_test2_cbo_zero_str: .string "\"test: 3; cg: SvPMPZicbo_cg; cp: cp_PA_PMP_rw_unset_cbo_s; bin: test2_cbo_zero\""
 
 // End of test data section and model specific data
 RVTEST_DATA_END

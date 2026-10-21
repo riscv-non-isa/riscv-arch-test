@@ -31,7 +31,7 @@ RVTEST_BEGIN
 
 
 /////////////////////////////////
-// cp_sv32_pmp_on_pte_Umode
+// pmp0_pte_nowrite_u, pmp0_pte_noread_u, pmp0_pte_noexec_u
 /////////////////////////////////
 
 #define PMP_REGION_SIZE (((1 << (UDB_PMP_GRANULARITY - 2)) - 1) >> 1)
@@ -73,9 +73,9 @@ RVTEST_BEGIN
   csrw pmpaddr0, x5
 
   LI(x4, (((PMP_X | PMP_NAPOT) & 0xFF) << PMP_CFG_SHIFT(0)))
-SvPMP_cp_pmpcfg_write_pmpcfg0:
+SvPMP_cg_PMP0_PTE_write_pmpcfg0:
   # Write x4 to pmpcfg0, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(pmpcfg0, x4, SvPMP_cp_pmpcfg_write_pmpcfg0, SvPMP_cp_pmpcfg_write_pmpcfg0_str)
+  RVTEST_SIGUPD_CSR_WRITE(pmpcfg0, x4, SvPMP_cg_PMP0_PTE_write_pmpcfg0, SvPMP_cg_PMP0_PTE_write_pmpcfg0_str)
   sfence.vma
   .if (UDB_PMP_GRANULARITY < 12)
 // Test case 1: PMP blocks the level 1 page table
@@ -91,28 +91,28 @@ SvPMP_cp_pmpcfg_write_pmpcfg0:
   addi x8, x8, 16
 
 // Store
-SvPMP_cp_sv32_pmp_on_pte_Umode_test1_store:
+SvPMP_cg_pmp0_pte_nowrite_u_test1_store:
   sw x8, 20(x15)
   nop
 
 // Load
-SvPMP_cp_sv32_pmp_on_pte_Umode_test1_load:
+SvPMP_cg_pmp0_pte_noread_u_test1_load:
   lw x13, 20(x15)
   nop
 
 // Execute
-SvPMP_cp_sv32_pmp_on_pte_Umode_test1_exec:
+SvPMP_cg_pmp0_pte_noexec_u_test1_exec:
   jalr ra, x15, 0
   nop
 
   RVTEST_TSBI_GOTO_MMODE
 
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, SvPMP_cp_sv32_pmp_on_pte_Umode_test1_store, SvPMP_cp_sv32_pmp_on_pte_Umode_test1_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x8, SvPMP_cg_pmp0_pte_nowrite_u_test1_store, SvPMP_cg_pmp0_pte_nowrite_u_test1_store_str)
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, SvPMP_cp_sv32_pmp_on_pte_Umode_test1_load, SvPMP_cp_sv32_pmp_on_pte_Umode_test1_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x13, SvPMP_cg_pmp0_pte_noread_u_test1_load, SvPMP_cg_pmp0_pte_noread_u_test1_load_str)
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, SvPMP_cp_sv32_pmp_on_pte_Umode_test1_exec, SvPMP_cp_sv32_pmp_on_pte_Umode_test1_exec_str)
+  RVTEST_SIGUPD(x2, x5, x4, x9, SvPMP_cg_pmp0_pte_noexec_u_test1_exec, SvPMP_cg_pmp0_pte_noexec_u_test1_exec_str)
   .endif
 
   LA(x5, rvtest_slvl0_pg_tbl)
@@ -135,28 +135,28 @@ SvPMP_cp_sv32_pmp_on_pte_Umode_test1_exec:
   addi x8, x8, 16
 
 // Store
-SvPMP_cp_sv32_pmp_on_pte_Umode_test2_store:
+SvPMP_cg_pmp0_pte_nowrite_u_test2_store:
   sw x8, 20(x15)
   nop
 
 // Load
-SvPMP_cp_sv32_pmp_on_pte_Umode_test2_load:
+SvPMP_cg_pmp0_pte_noread_u_test2_load:
   lw x13, 20(x15)
   nop
 
 // Execute
-SvPMP_cp_sv32_pmp_on_pte_Umode_test2_exec:
+SvPMP_cg_pmp0_pte_noexec_u_test2_exec:
   jalr ra, x15, 0
   nop
 
   RVTEST_TSBI_GOTO_MMODE
 
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, SvPMP_cp_sv32_pmp_on_pte_Umode_test2_store, SvPMP_cp_sv32_pmp_on_pte_Umode_test2_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x8, SvPMP_cg_pmp0_pte_nowrite_u_test2_store, SvPMP_cg_pmp0_pte_nowrite_u_test2_store_str)
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, SvPMP_cp_sv32_pmp_on_pte_Umode_test2_load, SvPMP_cp_sv32_pmp_on_pte_Umode_test2_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x13, SvPMP_cg_pmp0_pte_noread_u_test2_load, SvPMP_cg_pmp0_pte_noread_u_test2_load_str)
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, SvPMP_cp_sv32_pmp_on_pte_Umode_test2_exec, SvPMP_cp_sv32_pmp_on_pte_Umode_test2_exec_str)
+  RVTEST_SIGUPD(x2, x5, x4, x9, SvPMP_cg_pmp0_pte_noexec_u_test2_exec, SvPMP_cg_pmp0_pte_noexec_u_test2_exec_str)
 
 
 // Instantiate trap handlers and other epilog code, call RVMODEL_HALT at end of test
@@ -187,13 +187,13 @@ rvtest_slvl0_pg_tbl:
   .p2align (UDB_PMP_GRANULARITY)
 
 // Testcase strings
-SvPMP_cp_pmpcfg_write_pmpcfg0_str: .string "\"test: 50; cg: SvPMP; cp: cp_pmpcfg; bin: write_pmpcfg0\""
-SvPMP_cp_sv32_pmp_on_pte_Umode_test1_store_str: .string "\"test: 51; cg: SvPMP; cp: cp_sv32_pmp_on_pte_Umode; bin: test1_store\""
-SvPMP_cp_sv32_pmp_on_pte_Umode_test1_load_str: .string "\"test: 52; cg: SvPMP; cp: cp_sv32_pmp_on_pte_Umode; bin: test1_load\""
-SvPMP_cp_sv32_pmp_on_pte_Umode_test1_exec_str: .string "\"test: 53; cg: SvPMP; cp: cp_sv32_pmp_on_pte_Umode; bin: test1_exec\""
-SvPMP_cp_sv32_pmp_on_pte_Umode_test2_store_str: .string "\"test: 54; cg: SvPMP; cp: cp_sv32_pmp_on_pte_Umode; bin: test2_store\""
-SvPMP_cp_sv32_pmp_on_pte_Umode_test2_load_str: .string "\"test: 55; cg: SvPMP; cp: cp_sv32_pmp_on_pte_Umode; bin: test2_load\""
-SvPMP_cp_sv32_pmp_on_pte_Umode_test2_exec_str: .string "\"test: 56; cg: SvPMP; cp: cp_sv32_pmp_on_pte_Umode; bin: test2_exec\""
+SvPMP_cg_PMP0_PTE_write_pmpcfg0_str: .string "\"test: 50; cg: SvPMP_cg; cp: PMP0_PTE; bin: write_pmpcfg0\""
+SvPMP_cg_pmp0_pte_nowrite_u_test1_store_str: .string "\"test: 51; cg: SvPMP_cg; cp: pmp0_pte_nowrite_u; bin: test1_store\""
+SvPMP_cg_pmp0_pte_noread_u_test1_load_str: .string "\"test: 52; cg: SvPMP_cg; cp: pmp0_pte_noread_u; bin: test1_load\""
+SvPMP_cg_pmp0_pte_noexec_u_test1_exec_str: .string "\"test: 53; cg: SvPMP_cg; cp: pmp0_pte_noexec_u; bin: test1_exec\""
+SvPMP_cg_pmp0_pte_nowrite_u_test2_store_str: .string "\"test: 54; cg: SvPMP_cg; cp: pmp0_pte_nowrite_u; bin: test2_store\""
+SvPMP_cg_pmp0_pte_noread_u_test2_load_str: .string "\"test: 55; cg: SvPMP_cg; cp: pmp0_pte_noread_u; bin: test2_load\""
+SvPMP_cg_pmp0_pte_noexec_u_test2_exec_str: .string "\"test: 56; cg: SvPMP_cg; cp: pmp0_pte_noexec_u; bin: test2_exec\""
 
 // End of test data section and model specific data
 RVTEST_DATA_END

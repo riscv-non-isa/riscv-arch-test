@@ -30,7 +30,7 @@ RVTEST_BEGIN
 
 
 /////////////////////////////////
-// cp_sv32_misaligned_page_Umode
+// cp_misaligned_write_u, cp_misaligned_read_u, cp_misaligned_exec_u
 /////////////////////////////////
 
 
@@ -75,28 +75,28 @@ RVTEST_BEGIN
   addi x14, x14, 16
 
 // Store
-Sv_cp_sv32_misaligned_page_Umode_test1_store:
+Sv_vm_permissions_cg_cp_misaligned_write_u_test1_store:
   sw x14, 20(x8)
   nop
 
 // Load
-Sv_cp_sv32_misaligned_page_Umode_test1_load:
+Sv_vm_permissions_cg_cp_misaligned_read_u_test1_load:
   lw x15, 20(x8)
   nop
 
 // Execute
-Sv_cp_sv32_misaligned_page_Umode_test1_exec:
+Sv_vm_permissions_cg_cp_misaligned_exec_u_test1_exec:
   jalr ra, x8, 0
   nop
 
   RVTEST_TSBI_GOTO_SMODE
 
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Sv_cp_sv32_misaligned_page_Umode_test1_store, Sv_cp_sv32_misaligned_page_Umode_test1_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, Sv_vm_permissions_cg_cp_misaligned_write_u_test1_store, Sv_vm_permissions_cg_cp_misaligned_write_u_test1_store_str)
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, Sv_cp_sv32_misaligned_page_Umode_test1_load, Sv_cp_sv32_misaligned_page_Umode_test1_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x15, Sv_vm_permissions_cg_cp_misaligned_read_u_test1_load, Sv_vm_permissions_cg_cp_misaligned_read_u_test1_load_str)
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Sv_cp_sv32_misaligned_page_Umode_test1_exec, Sv_cp_sv32_misaligned_page_Umode_test1_exec_str)
+  RVTEST_SIGUPD(x2, x5, x4, x9, Sv_vm_permissions_cg_cp_misaligned_exec_u_test1_exec, Sv_vm_permissions_cg_cp_misaligned_exec_u_test1_exec_str)
 
 
 // Instantiate trap handlers and other epilog code, call RVMODEL_HALT at end of test
@@ -126,9 +126,9 @@ rvtest_slvl0_pg_tbl:
   .skip(4096)
 
 // Testcase strings
-Sv_cp_sv32_misaligned_page_Umode_test1_store_str: .string "\"test: 40; cg: Sv; cp: cp_sv32_misaligned_page_Umode; bin: test1_store\""
-Sv_cp_sv32_misaligned_page_Umode_test1_load_str: .string "\"test: 41; cg: Sv; cp: cp_sv32_misaligned_page_Umode; bin: test1_load\""
-Sv_cp_sv32_misaligned_page_Umode_test1_exec_str: .string "\"test: 42; cg: Sv; cp: cp_sv32_misaligned_page_Umode; bin: test1_exec\""
+Sv_vm_permissions_cg_cp_misaligned_write_u_test1_store_str: .string "\"test: 40; cg: Sv_vm_permissions_cg; cp: cp_misaligned_write_u; bin: test1_store\""
+Sv_vm_permissions_cg_cp_misaligned_read_u_test1_load_str: .string "\"test: 41; cg: Sv_vm_permissions_cg; cp: cp_misaligned_read_u; bin: test1_load\""
+Sv_vm_permissions_cg_cp_misaligned_exec_u_test1_exec_str: .string "\"test: 42; cg: Sv_vm_permissions_cg; cp: cp_misaligned_exec_u; bin: test1_exec\""
 
 // End of test data section and model specific data
 RVTEST_DATA_END

@@ -30,7 +30,7 @@ RVTEST_BEGIN
 
 
 /////////////////////////////////
-// cp_sv32_mstatus_mprv_Smode
+// cp_mprv_store, cp_mprv_load, cp_mprv_ins
 /////////////////////////////////
 
 
@@ -80,18 +80,18 @@ RVTEST_BEGIN
   addi x8, x8, 16
 
 // Store
-SvSm_cp_sv32_mstatus_mprv_Smode_test1_store:
+SvSm_mstatus_mprv_cg_cp_mprv_store_test1_store:
   sw x8, 20(x9)
   nop
 
 // Load
-SvSm_cp_sv32_mstatus_mprv_Smode_test1_load:
+SvSm_mstatus_mprv_cg_cp_mprv_load_test1_load:
   lw x13, 20(x9)
   nop
   LA(x9, rvtest_data_1)
 
 // Execute
-SvSm_cp_sv32_mstatus_mprv_Smode_test1_exec:
+SvSm_mstatus_mprv_cg_cp_mprv_ins_test1_exec:
   jalr ra, x9, 0
   nop
 
@@ -99,11 +99,11 @@ SvSm_cp_sv32_mstatus_mprv_Smode_test1_exec:
   csrc mstatus, x15
 
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, SvSm_cp_sv32_mstatus_mprv_Smode_test1_store, SvSm_cp_sv32_mstatus_mprv_Smode_test1_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x8, SvSm_mstatus_mprv_cg_cp_mprv_store_test1_store, SvSm_mstatus_mprv_cg_cp_mprv_store_test1_store_str)
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, SvSm_cp_sv32_mstatus_mprv_Smode_test1_load, SvSm_cp_sv32_mstatus_mprv_Smode_test1_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x13, SvSm_mstatus_mprv_cg_cp_mprv_load_test1_load, SvSm_mstatus_mprv_cg_cp_mprv_load_test1_load_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, SvSm_cp_sv32_mstatus_mprv_Smode_test1_exec, SvSm_cp_sv32_mstatus_mprv_Smode_test1_exec_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, SvSm_mstatus_mprv_cg_cp_mprv_ins_test1_exec, SvSm_mstatus_mprv_cg_cp_mprv_ins_test1_exec_str)
 
 
 // 4KB page at level 0
@@ -123,18 +123,18 @@ SvSm_cp_sv32_mstatus_mprv_Smode_test1_exec:
   addi x8, x8, 16
 
 // Store
-SvSm_cp_sv32_mstatus_mprv_Smode_test2_store:
+SvSm_mstatus_mprv_cg_cp_mprv_store_test2_store:
   sw x8, 20(x9)
   nop
 
 // Load
-SvSm_cp_sv32_mstatus_mprv_Smode_test2_load:
+SvSm_mstatus_mprv_cg_cp_mprv_load_test2_load:
   lw x13, 20(x9)
   nop
   LA(x9, rvtest_data_1)
 
 // Execute
-SvSm_cp_sv32_mstatus_mprv_Smode_test2_exec:
+SvSm_mstatus_mprv_cg_cp_mprv_ins_test2_exec:
   jalr ra, x9, 0
   nop
 
@@ -142,11 +142,11 @@ SvSm_cp_sv32_mstatus_mprv_Smode_test2_exec:
   csrc mstatus, x15
 
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, SvSm_cp_sv32_mstatus_mprv_Smode_test2_store, SvSm_cp_sv32_mstatus_mprv_Smode_test2_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x8, SvSm_mstatus_mprv_cg_cp_mprv_store_test2_store, SvSm_mstatus_mprv_cg_cp_mprv_store_test2_store_str)
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, SvSm_cp_sv32_mstatus_mprv_Smode_test2_load, SvSm_cp_sv32_mstatus_mprv_Smode_test2_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x13, SvSm_mstatus_mprv_cg_cp_mprv_load_test2_load, SvSm_mstatus_mprv_cg_cp_mprv_load_test2_load_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, SvSm_cp_sv32_mstatus_mprv_Smode_test2_exec, SvSm_cp_sv32_mstatus_mprv_Smode_test2_exec_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, SvSm_mstatus_mprv_cg_cp_mprv_ins_test2_exec, SvSm_mstatus_mprv_cg_cp_mprv_ins_test2_exec_str)
 
 
 // Instantiate trap handlers and other epilog code, call RVMODEL_HALT at end of test
@@ -176,12 +176,12 @@ rvtest_slvl0_pg_tbl:
   .skip(4096)
 
 // Testcase strings
-SvSm_cp_sv32_mstatus_mprv_Smode_test1_store_str: .string "\"test: 1; cg: SvSm; cp: cp_sv32_mstatus_mprv_Smode; bin: test1_store\""
-SvSm_cp_sv32_mstatus_mprv_Smode_test1_load_str: .string "\"test: 2; cg: SvSm; cp: cp_sv32_mstatus_mprv_Smode; bin: test1_load\""
-SvSm_cp_sv32_mstatus_mprv_Smode_test1_exec_str: .string "\"test: 3; cg: SvSm; cp: cp_sv32_mstatus_mprv_Smode; bin: test1_exec\""
-SvSm_cp_sv32_mstatus_mprv_Smode_test2_store_str: .string "\"test: 4; cg: SvSm; cp: cp_sv32_mstatus_mprv_Smode; bin: test2_store\""
-SvSm_cp_sv32_mstatus_mprv_Smode_test2_load_str: .string "\"test: 5; cg: SvSm; cp: cp_sv32_mstatus_mprv_Smode; bin: test2_load\""
-SvSm_cp_sv32_mstatus_mprv_Smode_test2_exec_str: .string "\"test: 6; cg: SvSm; cp: cp_sv32_mstatus_mprv_Smode; bin: test2_exec\""
+SvSm_mstatus_mprv_cg_cp_mprv_store_test1_store_str: .string "\"test: 1; cg: SvSm_mstatus_mprv_cg; cp: cp_mprv_store; bin: test1_store\""
+SvSm_mstatus_mprv_cg_cp_mprv_load_test1_load_str: .string "\"test: 2; cg: SvSm_mstatus_mprv_cg; cp: cp_mprv_load; bin: test1_load\""
+SvSm_mstatus_mprv_cg_cp_mprv_ins_test1_exec_str: .string "\"test: 3; cg: SvSm_mstatus_mprv_cg; cp: cp_mprv_ins; bin: test1_exec\""
+SvSm_mstatus_mprv_cg_cp_mprv_store_test2_store_str: .string "\"test: 4; cg: SvSm_mstatus_mprv_cg; cp: cp_mprv_store; bin: test2_store\""
+SvSm_mstatus_mprv_cg_cp_mprv_load_test2_load_str: .string "\"test: 5; cg: SvSm_mstatus_mprv_cg; cp: cp_mprv_load; bin: test2_load\""
+SvSm_mstatus_mprv_cg_cp_mprv_ins_test2_exec_str: .string "\"test: 6; cg: SvSm_mstatus_mprv_cg; cp: cp_mprv_ins; bin: test2_exec\""
 
 // End of test data section and model specific data
 RVTEST_DATA_END

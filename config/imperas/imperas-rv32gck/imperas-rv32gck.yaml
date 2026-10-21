@@ -29,7 +29,7 @@ implemented_extensions:
   - { name: Ssaia, version: "= 1.0.0" }
   - { name: Ssccfg, version: "= 1.0.0" }
   - { name: Ssccptr, version: "= 1.0.0" }
-  - { name: Sscofpmf, version: "= 1.0.0" }
+  # - { name: Sscofpmf, version: "= 1.0.0" } # Imperas implements no HPM counters, which Sscofpmf requires
   - { name: Sscounterenw, version: "= 1.0.0" }
   - { name: Sscsrind, version: "= 1.0.0" }
   - { name: Ssctr, version: "= 1.0.0" }

@@ -30,7 +30,7 @@ RVTEST_BEGIN
 
 
 /////////////////////////////////
-// cp_sv39_Svpbmt_nonleaf_Umode
+// nonleaf_PTE_pbmt_write_u, nonleaf_PTE_pbmt_read_u, nonleaf_PTE_pbmt_exec_u
 /////////////////////////////////
 
 
@@ -79,28 +79,28 @@ RVTEST_BEGIN
   addi x9, x9, 16
 
 // Store
-Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test1_store:
+Svpbmt_cg_nonleaf_PTE_pbmt_write_u_test1_store:
   sw x9, 20(x8)
   nop
 
 // Load
-Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test1_load:
+Svpbmt_cg_nonleaf_PTE_pbmt_read_u_test1_load:
   lw x15, 20(x8)
   nop
 
 // Execute
-Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test1_exec:
+Svpbmt_cg_nonleaf_PTE_pbmt_exec_u_test1_exec:
   jalr ra, x8, 0
   nop
 
   RVTEST_TSBI_GOTO_SMODE
 
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test1_store, Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test1_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x9, Svpbmt_cg_nonleaf_PTE_pbmt_write_u_test1_store, Svpbmt_cg_nonleaf_PTE_pbmt_write_u_test1_store_str)
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test1_load, Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test1_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x15, Svpbmt_cg_nonleaf_PTE_pbmt_read_u_test1_load, Svpbmt_cg_nonleaf_PTE_pbmt_read_u_test1_load_str)
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test1_exec, Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test1_exec_str)
+  RVTEST_SIGUPD(x2, x5, x4, x13, Svpbmt_cg_nonleaf_PTE_pbmt_exec_u_test1_exec, Svpbmt_cg_nonleaf_PTE_pbmt_exec_u_test1_exec_str)
 
 // Test case 2: PBMT=2 in the non-leaf PTE at level 2
   PTE_SETUP_SV39(rvtest_slvl1_pg_tbl, ((2 << 61) | PTE_V), va_data, LEVEL2)
@@ -116,28 +116,28 @@ Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test1_exec:
   addi x9, x9, 16
 
 // Store
-Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test2_store:
+Svpbmt_cg_nonleaf_PTE_pbmt_write_u_test2_store:
   sw x9, 20(x8)
   nop
 
 // Load
-Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test2_load:
+Svpbmt_cg_nonleaf_PTE_pbmt_read_u_test2_load:
   lw x15, 20(x8)
   nop
 
 // Execute
-Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test2_exec:
+Svpbmt_cg_nonleaf_PTE_pbmt_exec_u_test2_exec:
   jalr ra, x8, 0
   nop
 
   RVTEST_TSBI_GOTO_SMODE
 
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test2_store, Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test2_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x9, Svpbmt_cg_nonleaf_PTE_pbmt_write_u_test2_store, Svpbmt_cg_nonleaf_PTE_pbmt_write_u_test2_store_str)
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test2_load, Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test2_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x15, Svpbmt_cg_nonleaf_PTE_pbmt_read_u_test2_load, Svpbmt_cg_nonleaf_PTE_pbmt_read_u_test2_load_str)
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test2_exec, Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test2_exec_str)
+  RVTEST_SIGUPD(x2, x5, x4, x13, Svpbmt_cg_nonleaf_PTE_pbmt_exec_u_test2_exec, Svpbmt_cg_nonleaf_PTE_pbmt_exec_u_test2_exec_str)
 
 // Test case 3: PBMT=3 in the non-leaf PTE at level 2
   PTE_SETUP_SV39(rvtest_slvl1_pg_tbl, ((3 << 61) | PTE_V), va_data, LEVEL2)
@@ -153,28 +153,28 @@ Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test2_exec:
   addi x9, x9, 16
 
 // Store
-Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test3_store:
+Svpbmt_cg_nonleaf_PTE_pbmt_write_u_test3_store:
   sw x9, 20(x8)
   nop
 
 // Load
-Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test3_load:
+Svpbmt_cg_nonleaf_PTE_pbmt_read_u_test3_load:
   lw x15, 20(x8)
   nop
 
 // Execute
-Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test3_exec:
+Svpbmt_cg_nonleaf_PTE_pbmt_exec_u_test3_exec:
   jalr ra, x8, 0
   nop
 
   RVTEST_TSBI_GOTO_SMODE
 
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test3_store, Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test3_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x9, Svpbmt_cg_nonleaf_PTE_pbmt_write_u_test3_store, Svpbmt_cg_nonleaf_PTE_pbmt_write_u_test3_store_str)
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test3_load, Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test3_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x15, Svpbmt_cg_nonleaf_PTE_pbmt_read_u_test3_load, Svpbmt_cg_nonleaf_PTE_pbmt_read_u_test3_load_str)
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test3_exec, Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test3_exec_str)
+  RVTEST_SIGUPD(x2, x5, x4, x13, Svpbmt_cg_nonleaf_PTE_pbmt_exec_u_test3_exec, Svpbmt_cg_nonleaf_PTE_pbmt_exec_u_test3_exec_str)
 
 // Test case 4: PBMT=1 in the non-leaf PTE at level 1
   PTE_SETUP_SV39(rvtest_slvl1_pg_tbl, (PTE_V), va_data, LEVEL2)
@@ -191,28 +191,28 @@ Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test3_exec:
   addi x9, x9, 16
 
 // Store
-Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test4_store:
+Svpbmt_cg_nonleaf_PTE_pbmt_write_u_test4_store:
   sw x9, 20(x8)
   nop
 
 // Load
-Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test4_load:
+Svpbmt_cg_nonleaf_PTE_pbmt_read_u_test4_load:
   lw x15, 20(x8)
   nop
 
 // Execute
-Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test4_exec:
+Svpbmt_cg_nonleaf_PTE_pbmt_exec_u_test4_exec:
   jalr ra, x8, 0
   nop
 
   RVTEST_TSBI_GOTO_SMODE
 
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test4_store, Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test4_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x9, Svpbmt_cg_nonleaf_PTE_pbmt_write_u_test4_store, Svpbmt_cg_nonleaf_PTE_pbmt_write_u_test4_store_str)
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test4_load, Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test4_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x15, Svpbmt_cg_nonleaf_PTE_pbmt_read_u_test4_load, Svpbmt_cg_nonleaf_PTE_pbmt_read_u_test4_load_str)
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test4_exec, Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test4_exec_str)
+  RVTEST_SIGUPD(x2, x5, x4, x13, Svpbmt_cg_nonleaf_PTE_pbmt_exec_u_test4_exec, Svpbmt_cg_nonleaf_PTE_pbmt_exec_u_test4_exec_str)
 
 // Test case 5: PBMT=2 in the non-leaf PTE at level 1
   PTE_SETUP_SV39(rvtest_slvl1_pg_tbl, (PTE_V), va_data, LEVEL2)
@@ -229,28 +229,28 @@ Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test4_exec:
   addi x9, x9, 16
 
 // Store
-Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test5_store:
+Svpbmt_cg_nonleaf_PTE_pbmt_write_u_test5_store:
   sw x9, 20(x8)
   nop
 
 // Load
-Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test5_load:
+Svpbmt_cg_nonleaf_PTE_pbmt_read_u_test5_load:
   lw x15, 20(x8)
   nop
 
 // Execute
-Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test5_exec:
+Svpbmt_cg_nonleaf_PTE_pbmt_exec_u_test5_exec:
   jalr ra, x8, 0
   nop
 
   RVTEST_TSBI_GOTO_SMODE
 
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test5_store, Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test5_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x9, Svpbmt_cg_nonleaf_PTE_pbmt_write_u_test5_store, Svpbmt_cg_nonleaf_PTE_pbmt_write_u_test5_store_str)
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test5_load, Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test5_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x15, Svpbmt_cg_nonleaf_PTE_pbmt_read_u_test5_load, Svpbmt_cg_nonleaf_PTE_pbmt_read_u_test5_load_str)
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test5_exec, Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test5_exec_str)
+  RVTEST_SIGUPD(x2, x5, x4, x13, Svpbmt_cg_nonleaf_PTE_pbmt_exec_u_test5_exec, Svpbmt_cg_nonleaf_PTE_pbmt_exec_u_test5_exec_str)
 
 // Test case 6: PBMT=3 in the non-leaf PTE at level 1
   PTE_SETUP_SV39(rvtest_slvl1_pg_tbl, (PTE_V), va_data, LEVEL2)
@@ -267,28 +267,28 @@ Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test5_exec:
   addi x9, x9, 16
 
 // Store
-Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test6_store:
+Svpbmt_cg_nonleaf_PTE_pbmt_write_u_test6_store:
   sw x9, 20(x8)
   nop
 
 // Load
-Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test6_load:
+Svpbmt_cg_nonleaf_PTE_pbmt_read_u_test6_load:
   lw x15, 20(x8)
   nop
 
 // Execute
-Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test6_exec:
+Svpbmt_cg_nonleaf_PTE_pbmt_exec_u_test6_exec:
   jalr ra, x8, 0
   nop
 
   RVTEST_TSBI_GOTO_SMODE
 
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test6_store, Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test6_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x9, Svpbmt_cg_nonleaf_PTE_pbmt_write_u_test6_store, Svpbmt_cg_nonleaf_PTE_pbmt_write_u_test6_store_str)
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test6_load, Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test6_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x15, Svpbmt_cg_nonleaf_PTE_pbmt_read_u_test6_load, Svpbmt_cg_nonleaf_PTE_pbmt_read_u_test6_load_str)
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test6_exec, Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test6_exec_str)
+  RVTEST_SIGUPD(x2, x5, x4, x13, Svpbmt_cg_nonleaf_PTE_pbmt_exec_u_test6_exec, Svpbmt_cg_nonleaf_PTE_pbmt_exec_u_test6_exec_str)
 
 #endif
 
@@ -322,24 +322,24 @@ rvtest_slvl1_pg_tbl:
   .skip(4096)
 
 // Testcase strings
-Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test1_store_str: .string "\"test: 73; cg: Svpbmt; cp: cp_sv39_Svpbmt_nonleaf_Umode; bin: test1_store\""
-Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test1_load_str: .string "\"test: 74; cg: Svpbmt; cp: cp_sv39_Svpbmt_nonleaf_Umode; bin: test1_load\""
-Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test1_exec_str: .string "\"test: 75; cg: Svpbmt; cp: cp_sv39_Svpbmt_nonleaf_Umode; bin: test1_exec\""
-Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test2_store_str: .string "\"test: 76; cg: Svpbmt; cp: cp_sv39_Svpbmt_nonleaf_Umode; bin: test2_store\""
-Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test2_load_str: .string "\"test: 77; cg: Svpbmt; cp: cp_sv39_Svpbmt_nonleaf_Umode; bin: test2_load\""
-Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test2_exec_str: .string "\"test: 78; cg: Svpbmt; cp: cp_sv39_Svpbmt_nonleaf_Umode; bin: test2_exec\""
-Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test3_store_str: .string "\"test: 79; cg: Svpbmt; cp: cp_sv39_Svpbmt_nonleaf_Umode; bin: test3_store\""
-Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test3_load_str: .string "\"test: 80; cg: Svpbmt; cp: cp_sv39_Svpbmt_nonleaf_Umode; bin: test3_load\""
-Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test3_exec_str: .string "\"test: 81; cg: Svpbmt; cp: cp_sv39_Svpbmt_nonleaf_Umode; bin: test3_exec\""
-Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test4_store_str: .string "\"test: 82; cg: Svpbmt; cp: cp_sv39_Svpbmt_nonleaf_Umode; bin: test4_store\""
-Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test4_load_str: .string "\"test: 83; cg: Svpbmt; cp: cp_sv39_Svpbmt_nonleaf_Umode; bin: test4_load\""
-Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test4_exec_str: .string "\"test: 84; cg: Svpbmt; cp: cp_sv39_Svpbmt_nonleaf_Umode; bin: test4_exec\""
-Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test5_store_str: .string "\"test: 85; cg: Svpbmt; cp: cp_sv39_Svpbmt_nonleaf_Umode; bin: test5_store\""
-Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test5_load_str: .string "\"test: 86; cg: Svpbmt; cp: cp_sv39_Svpbmt_nonleaf_Umode; bin: test5_load\""
-Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test5_exec_str: .string "\"test: 87; cg: Svpbmt; cp: cp_sv39_Svpbmt_nonleaf_Umode; bin: test5_exec\""
-Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test6_store_str: .string "\"test: 88; cg: Svpbmt; cp: cp_sv39_Svpbmt_nonleaf_Umode; bin: test6_store\""
-Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test6_load_str: .string "\"test: 89; cg: Svpbmt; cp: cp_sv39_Svpbmt_nonleaf_Umode; bin: test6_load\""
-Svpbmt_cp_sv39_Svpbmt_nonleaf_Umode_test6_exec_str: .string "\"test: 90; cg: Svpbmt; cp: cp_sv39_Svpbmt_nonleaf_Umode; bin: test6_exec\""
+Svpbmt_cg_nonleaf_PTE_pbmt_write_u_test1_store_str: .string "\"test: 73; cg: Svpbmt_cg; cp: nonleaf_PTE_pbmt_write_u; bin: test1_store\""
+Svpbmt_cg_nonleaf_PTE_pbmt_read_u_test1_load_str: .string "\"test: 74; cg: Svpbmt_cg; cp: nonleaf_PTE_pbmt_read_u; bin: test1_load\""
+Svpbmt_cg_nonleaf_PTE_pbmt_exec_u_test1_exec_str: .string "\"test: 75; cg: Svpbmt_cg; cp: nonleaf_PTE_pbmt_exec_u; bin: test1_exec\""
+Svpbmt_cg_nonleaf_PTE_pbmt_write_u_test2_store_str: .string "\"test: 76; cg: Svpbmt_cg; cp: nonleaf_PTE_pbmt_write_u; bin: test2_store\""
+Svpbmt_cg_nonleaf_PTE_pbmt_read_u_test2_load_str: .string "\"test: 77; cg: Svpbmt_cg; cp: nonleaf_PTE_pbmt_read_u; bin: test2_load\""
+Svpbmt_cg_nonleaf_PTE_pbmt_exec_u_test2_exec_str: .string "\"test: 78; cg: Svpbmt_cg; cp: nonleaf_PTE_pbmt_exec_u; bin: test2_exec\""
+Svpbmt_cg_nonleaf_PTE_pbmt_write_u_test3_store_str: .string "\"test: 79; cg: Svpbmt_cg; cp: nonleaf_PTE_pbmt_write_u; bin: test3_store\""
+Svpbmt_cg_nonleaf_PTE_pbmt_read_u_test3_load_str: .string "\"test: 80; cg: Svpbmt_cg; cp: nonleaf_PTE_pbmt_read_u; bin: test3_load\""
+Svpbmt_cg_nonleaf_PTE_pbmt_exec_u_test3_exec_str: .string "\"test: 81; cg: Svpbmt_cg; cp: nonleaf_PTE_pbmt_exec_u; bin: test3_exec\""
+Svpbmt_cg_nonleaf_PTE_pbmt_write_u_test4_store_str: .string "\"test: 82; cg: Svpbmt_cg; cp: nonleaf_PTE_pbmt_write_u; bin: test4_store\""
+Svpbmt_cg_nonleaf_PTE_pbmt_read_u_test4_load_str: .string "\"test: 83; cg: Svpbmt_cg; cp: nonleaf_PTE_pbmt_read_u; bin: test4_load\""
+Svpbmt_cg_nonleaf_PTE_pbmt_exec_u_test4_exec_str: .string "\"test: 84; cg: Svpbmt_cg; cp: nonleaf_PTE_pbmt_exec_u; bin: test4_exec\""
+Svpbmt_cg_nonleaf_PTE_pbmt_write_u_test5_store_str: .string "\"test: 85; cg: Svpbmt_cg; cp: nonleaf_PTE_pbmt_write_u; bin: test5_store\""
+Svpbmt_cg_nonleaf_PTE_pbmt_read_u_test5_load_str: .string "\"test: 86; cg: Svpbmt_cg; cp: nonleaf_PTE_pbmt_read_u; bin: test5_load\""
+Svpbmt_cg_nonleaf_PTE_pbmt_exec_u_test5_exec_str: .string "\"test: 87; cg: Svpbmt_cg; cp: nonleaf_PTE_pbmt_exec_u; bin: test5_exec\""
+Svpbmt_cg_nonleaf_PTE_pbmt_write_u_test6_store_str: .string "\"test: 88; cg: Svpbmt_cg; cp: nonleaf_PTE_pbmt_write_u; bin: test6_store\""
+Svpbmt_cg_nonleaf_PTE_pbmt_read_u_test6_load_str: .string "\"test: 89; cg: Svpbmt_cg; cp: nonleaf_PTE_pbmt_read_u; bin: test6_load\""
+Svpbmt_cg_nonleaf_PTE_pbmt_exec_u_test6_exec_str: .string "\"test: 90; cg: Svpbmt_cg; cp: nonleaf_PTE_pbmt_exec_u; bin: test6_exec\""
 
 // End of test data section and model specific data
 RVTEST_DATA_END

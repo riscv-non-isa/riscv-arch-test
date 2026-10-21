@@ -12,12 +12,21 @@ from testgen.asm.csr import gen_csr_read_sigupd
 from testgen.asm.helpers import write_sigupd
 from testgen.data.state import TestData
 from testgen.data.test_chunk import TestChunk
+from testgen.priv.extensions.sv.access import Crosses
 from testgen.priv.extensions.sv.generate import SvRegs, data_region, end_sv_test
 from testgen.priv.registry import add_priv_test_generator
 
+BARE_CROSSES = Crosses("Svbare_cg", "cp_satp_bare_store", "cp_satp_bare_load", "cp_satp_bare_exec")
+
 
 def bare_rwx(
-    test_data: TestData, regs: SvRegs, name: str, *, enter: tuple[str, ...] = (), leave: tuple[str, ...] = ()
+    test_data: TestData,
+    regs: SvRegs,
+    name: str,
+    *,
+    crosses: Crosses = BARE_CROSSES,
+    enter: tuple[str, ...] = (),
+    leave: tuple[str, ...] = (),
 ) -> list[str]:
     value, addr = f"x{regs.value}", f"x{regs.addr}"
     lines = [*enter, f"LA({addr}, rvtest_data_1)", f"addi {value}, {value}, 16"]
@@ -26,7 +35,9 @@ def bare_rwx(
         ("load", regs.load, f"lw x{regs.load}, 20({addr})"),
         ("exec", regs.result, f"jalr ra, {addr}, 0"),
     ):
-        lines.append(test_data.add_testcase(f"{name}_{operation}", "cp_bare_access", f"{test_data.testsuite}_cg"))
+        lines.append(
+            test_data.add_testcase(f"{name}_{operation}", crosses.by_operation()[operation], crosses.covergroup)
+        )
         lines.extend([instruction, write_sigupd(register, test_data, label=test_data.current_testcase_label)])
     lines.extend(leave)
     return lines
@@ -34,7 +45,8 @@ def bare_rwx(
 
 def begin_bare_test(test_data: TestData, regs: SvRegs, split_name: str) -> TestChunk:
     chunk = test_data.begin_test_chunk(split_name)
-    satp_label = test_data.add_testcase("satp_bare", "cp_satp", f"{test_data.testsuite}_cg")
+    # The satp readback checks the setup that the satp_bare coverpoint samples.
+    satp_label = test_data.add_testcase("satp_bare", "satp_bare", f"{test_data.testsuite}_cg")
     chunk.code.extend(
         [
             f"LI(x{regs.value}, 0x800)",

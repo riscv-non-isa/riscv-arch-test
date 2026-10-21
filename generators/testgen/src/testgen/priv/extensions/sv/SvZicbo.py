@@ -30,7 +30,7 @@ from testgen.priv.registry import add_priv_test_generator
 
 
 def _add_operation(
-    test_data: TestData, regs: SvRegs, family: str, mode: str, address: list[str], number: int
+    test_data: TestData, regs: SvRegs, family: str, mode: str, address: list[str], number: int, cross: str
 ) -> list[str]:
     lines = [*address, *([] if mode == "Smode" else [f"RVTEST_TSBI_GOTO_{mode.upper()}"])]
     value, addr = f"x{regs.value}", f"x{regs.addr}"
@@ -38,14 +38,14 @@ def _add_operation(
         for operation in ("prefetch.i", "prefetch.r", "prefetch.w"):
             lines.extend(
                 [
-                    test_data.add_testcase(f"test{number}_{operation.replace('.', '_')}", "cp_prefetch", "SvZicbo_cg"),
+                    test_data.add_testcase(f"test{number}_{operation.replace('.', '_')}", cross, "SvZicbo_cg"),
                     f"{operation} 0({addr})",
                     "nop",
                 ]
             )
     elif family == "zicbom":
         labels = {
-            operation: test_data.add_testcase(f"test{number}_{operation}", "cp_zicbom", "SvZicbo_cg").removesuffix(":")
+            operation: test_data.add_testcase(f"test{number}_{operation}", cross, "SvZicbo_cg").removesuffix(":")
             for operation in ("clean", "flush", "inval")
         }
         results = (("clean", regs.value), ("flush", regs.load), ("inval", regs.result))
@@ -60,7 +60,7 @@ def _add_operation(
         )
         return lines
     else:
-        label = test_data.add_testcase(f"test{number}_zero", "cp_zicboz", "SvZicbo_cg").removesuffix(":")
+        label = test_data.add_testcase(f"test{number}_zero", cross, "SvZicbo_cg").removesuffix(":")
         lines.extend(
             [
                 f"addi {value}, {value}, 16",
@@ -81,6 +81,10 @@ def _add_exception_cases(
 ) -> None:
     """Add the cache-block exception cases for each page-table level."""
     number = 0
+    m = mode[0].lower()
+    # Zicbom needs read or write permission and ignores PTE.D; Zicboz needs write permission and PTE.D.
+    no_write = f"cp_PTE_r_set_w_unset_zicbom_{m}" if family == "zicbom" else f"cp_PTE_w_unset_zicboz_{m}"
+    dirty_unset = f"cp_Dbit_unset_{family}_{m}"
 
     def leaf(
         permissions: PteExpression,
@@ -101,6 +105,7 @@ def _add_exception_cases(
         level: int,
         description: str,
         expected: str,
+        cross: str,
         pte_lines: list[str],
         *,
         physical_address: str | None = None,
@@ -129,7 +134,7 @@ def _add_exception_cases(
             "  sfence.vma",
             *before,
             "",
-            *_add_operation(test_data, regs, family, mode, address, number),
+            *_add_operation(test_data, regs, family, mode, address, number, cross),
             *after,
         ]
         if ifdef:
@@ -141,6 +146,7 @@ def _add_exception_cases(
         permissions: PteExpression,
         description: str,
         expected: str,
+        cross: str,
         *,
         before: tuple[str, ...] = (),
         after: tuple[str, ...] = (),
@@ -150,6 +156,7 @@ def _add_exception_cases(
             level,
             description,
             expected,
+            cross,
             [*create_page_walk(sv, leaf_level=level), leaf(permissions, level)],
             before=before,
             after=after,
@@ -162,12 +169,13 @@ def _add_exception_cases(
         leaf_permissions = PteFlags(user=umode)
         walk_fault_permissions = f"PTE_A | PTE_D | {'PTE_U | ' if umode else ''}PTE_X | PTE_W | PTE_R | PTE_V"
 
-        add_standard(level, PteFlags(user=umode, valid=False), "PTE.V unset", "Store page fault")
+        add_standard(level, PteFlags(user=umode, valid=False), "PTE.V unset", "Store page fault", f"cp_PTE_inv_cbo_{m}")
         add_standard(
             level,
             PteFlags(user=umode, read=False),
             "Reserved W+X without R",
             "Store page fault",
+            f"cp_PTE_res_rwx_cbo_{m}",
             ifdef="S1P12P0_OR_LATER_SUPPORTED",
         )
         add_standard(
@@ -175,30 +183,37 @@ def _add_exception_cases(
             PteFlags(user=umode, read=False, execute=False),
             "Reserved W without R",
             "Store page fault",
+            f"cp_PTE_res_rwx_cbo_{m}",
             ifdef="S1P12P0_OR_LATER_SUPPORTED",
         )
-        add_standard(level, PteFlags(user=umode, write=False), "RX permissions", "Store page fault")
+        add_standard(level, PteFlags(user=umode, write=False), "RX permissions", "Store page fault", no_write)
         if umode:
-            add_standard(level, PteFlags(), "Supervisor page from U-Mode", "Store page fault")
+            add_standard(level, PteFlags(), "Supervisor page from U-Mode", "Store page fault", "cp_spage_rwx_cbo_u")
         else:
             add_standard(
                 level,
                 PteFlags(write=False),
                 "RX permissions with sstatus.SUM set",
                 "Store page fault",
+                no_write,
                 before=(f"  LI(x{regs.scratch}, MSTATUS_SUM)", f"  csrs sstatus, x{regs.scratch}"),
                 after=(f"  LI(x{regs.scratch}, MSTATUS_SUM)", f"  csrc sstatus, x{regs.scratch}"),
             )
-            add_standard(level, PteFlags(user=True), "User page from S-Mode", "Store page fault")
+            add_standard(
+                level, PteFlags(user=True), "User page from S-Mode", "Store page fault", "cp_upage_sumunset_cbo_s"
+            )
         if family == "zicbom":
             add_standard(
                 level,
                 PteFlags(user=umode, read=False, write=False),
                 "Execute-only page",
                 "Store page fault",
+                f"cp_PTE_rw_unset_zicbom_{m}",
             )
-        add_standard(level, PteFlags(user=umode, accessed=False), "PTE.A unset", "Store page fault")
-        add_standard(level, PteFlags(user=umode, dirty=False), "PTE.D unset", "No fault")
+        add_standard(
+            level, PteFlags(user=umode, accessed=False), "PTE.A unset", "Store page fault", f"cp_Abit_unset_cbo_{m}"
+        )
+        add_standard(level, PteFlags(user=umode, dirty=False), "PTE.D unset", "No fault", dirty_unset)
 
         walk = create_page_walk(sv, leaf_level=level)
         if level > 0:
@@ -206,6 +221,7 @@ def _add_exception_cases(
                 level,
                 "Misaligned superpage",
                 "Store page fault",
+                f"cp_misaligned_page_cbo_{m}",
                 [*walk, leaf(leaf_permissions, level, superpage=False)],
                 physical_address="0x0",
             )
@@ -214,6 +230,7 @@ def _add_exception_cases(
                 level,
                 "Pointer encoding (V only) in the leaf",
                 "Store page fault",
+                f"cp_PTE_nonleaf_lvl0_cbo_{m}",
                 [*walk, leaf(PteFlags.nonleaf("PTE_U") if umode else PteFlags.nonleaf(), level)],
             )
 
@@ -222,6 +239,7 @@ def _add_exception_cases(
                 level,
                 "Access fault on the page-table walk",
                 "Store access fault",
+                "cp_nonleaf_PTE_to_nonexistent_pa_cbo",
                 [
                     *create_page_walk(
                         sv,
@@ -237,6 +255,7 @@ def _add_exception_cases(
                 level,
                 "Access fault on the page-table walk",
                 "Store access fault",
+                "cp_nonleaf_PTE_to_nonexistent_pa_cbo",
                 [
                     *create_page_walk(
                         sv,
@@ -252,6 +271,7 @@ def _add_exception_cases(
             level,
             "Leaf PTE points to the access-fault region",
             "Store access fault",
+            f"cp_leaf_PTE_to_nonexistent_pa_cbo_{m}",
             [*walk, leaf(leaf_permissions, level, physical_address="RVMODEL_ACCESS_FAULT_ADDRESS")],
             physical_address="RVMODEL_ACCESS_FAULT_ADDRESS",
             ifdef="RVMODEL_ACCESS_FAULT_ADDRESS",
@@ -265,6 +285,7 @@ def _add_exception_cases(
                     level,
                     f"Non-leaf PTE with {bit.removeprefix('PTE_')} bit set",
                     "Store page fault",
+                    "cp_PTE_nonleaf_DAU_cbo",
                     [
                         *create_page_walk(sv, leaf_level=level, overrides={level + 1: PteFlags.nonleaf(bit)}),
                         leaf(leaf_permissions, leaf_level),
@@ -287,7 +308,9 @@ def _begin_test(test_data: TestData, regs: SvRegs, sv: SvMode, mode: str, family
         sv,
         mode,
         f"{sv.name}_{family}{qualifier}_{mode}",
-        coverpoint=f"cp_{family}",
+        coverpoint=f"cp_PTE_rwx_zicbop_{mode[0].lower()}"
+        if family == "zicbop"
+        else f"SvZicbo {family} exception crosses",
         sig_init=None if family == "zicbop" else "0x800",
         setup_asm=tuple(setup),
     )
@@ -322,6 +345,7 @@ def _make_prefetch(test_data: TestData, sv: SvMode, mode: str) -> TestChunk:
                     mode,
                     virtual_address(sv, "va_data", level, destination=regs.addr, scratch=regs.scratch),
                     number,
+                    f"cp_PTE_rwx_zicbop_{mode[0].lower()}",
                 ),
                 "",
             ]

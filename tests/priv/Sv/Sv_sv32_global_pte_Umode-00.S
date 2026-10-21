@@ -30,7 +30,7 @@ RVTEST_BEGIN
 
 
 /////////////////////////////////
-// cp_sv32_global_pte_Umode
+// cp_global_write_u, cp_global_read_u, cp_global_exec_u
 /////////////////////////////////
 
 
@@ -75,28 +75,28 @@ RVTEST_BEGIN
   addi x8, x8, 16
 
 // Store
-Sv_cp_sv32_global_pte_Umode_test1_access1_store:
+Sv_res_global_pte_cg_cp_global_write_u_test1_access1_store:
   sw x8, 20(x15)
   nop
 
 // Load
-Sv_cp_sv32_global_pte_Umode_test1_access1_load:
+Sv_res_global_pte_cg_cp_global_read_u_test1_access1_load:
   lw x9, 20(x15)
   nop
 
 // Execute
-Sv_cp_sv32_global_pte_Umode_test1_access1_exec:
+Sv_res_global_pte_cg_cp_global_exec_u_test1_access1_exec:
   jalr ra, x15, 0
   nop
 
   RVTEST_TSBI_GOTO_SMODE
 
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_cp_sv32_global_pte_Umode_test1_access1_store, Sv_cp_sv32_global_pte_Umode_test1_access1_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_res_global_pte_cg_cp_global_write_u_test1_access1_store, Sv_res_global_pte_cg_cp_global_write_u_test1_access1_store_str)
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Sv_cp_sv32_global_pte_Umode_test1_access1_load, Sv_cp_sv32_global_pte_Umode_test1_access1_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x9, Sv_res_global_pte_cg_cp_global_read_u_test1_access1_load, Sv_res_global_pte_cg_cp_global_read_u_test1_access1_load_str)
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_cp_sv32_global_pte_Umode_test1_access1_exec, Sv_cp_sv32_global_pte_Umode_test1_access1_exec_str)
+  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_res_global_pte_cg_cp_global_exec_u_test1_access1_exec, Sv_res_global_pte_cg_cp_global_exec_u_test1_access1_exec_str)
 
   // Flush the TLB for the current ASID and access again
   csrr  x14, satp
@@ -113,28 +113,28 @@ Sv_cp_sv32_global_pte_Umode_test1_access1_exec:
   addi x8, x8, 16
 
 // Store
-Sv_cp_sv32_global_pte_Umode_test1_access2_store:
+Sv_res_global_pte_cg_cp_global_write_u_test1_access2_store:
   sw x8, 20(x15)
   nop
 
 // Load
-Sv_cp_sv32_global_pte_Umode_test1_access2_load:
+Sv_res_global_pte_cg_cp_global_read_u_test1_access2_load:
   lw x9, 20(x15)
   nop
 
 // Execute
-Sv_cp_sv32_global_pte_Umode_test1_access2_exec:
+Sv_res_global_pte_cg_cp_global_exec_u_test1_access2_exec:
   jalr ra, x15, 0
   nop
 
   RVTEST_TSBI_GOTO_SMODE
 
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_cp_sv32_global_pte_Umode_test1_access2_store, Sv_cp_sv32_global_pte_Umode_test1_access2_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_res_global_pte_cg_cp_global_write_u_test1_access2_store, Sv_res_global_pte_cg_cp_global_write_u_test1_access2_store_str)
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Sv_cp_sv32_global_pte_Umode_test1_access2_load, Sv_cp_sv32_global_pte_Umode_test1_access2_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x9, Sv_res_global_pte_cg_cp_global_read_u_test1_access2_load, Sv_res_global_pte_cg_cp_global_read_u_test1_access2_load_str)
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_cp_sv32_global_pte_Umode_test1_access2_exec, Sv_cp_sv32_global_pte_Umode_test1_access2_exec_str)
+  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_res_global_pte_cg_cp_global_exec_u_test1_access2_exec, Sv_res_global_pte_cg_cp_global_exec_u_test1_access2_exec_str)
 
 
 // 4KB page at level 0
@@ -149,28 +149,28 @@ Sv_cp_sv32_global_pte_Umode_test1_access2_exec:
   addi x8, x8, 16
 
 // Store
-Sv_cp_sv32_global_pte_Umode_test2_access1_store:
+Sv_res_global_pte_cg_cp_global_write_u_test2_access1_store:
   sw x8, 20(x15)
   nop
 
 // Load
-Sv_cp_sv32_global_pte_Umode_test2_access1_load:
+Sv_res_global_pte_cg_cp_global_read_u_test2_access1_load:
   lw x9, 20(x15)
   nop
 
 // Execute
-Sv_cp_sv32_global_pte_Umode_test2_access1_exec:
+Sv_res_global_pte_cg_cp_global_exec_u_test2_access1_exec:
   jalr ra, x15, 0
   nop
 
   RVTEST_TSBI_GOTO_SMODE
 
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_cp_sv32_global_pte_Umode_test2_access1_store, Sv_cp_sv32_global_pte_Umode_test2_access1_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_res_global_pte_cg_cp_global_write_u_test2_access1_store, Sv_res_global_pte_cg_cp_global_write_u_test2_access1_store_str)
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Sv_cp_sv32_global_pte_Umode_test2_access1_load, Sv_cp_sv32_global_pte_Umode_test2_access1_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x9, Sv_res_global_pte_cg_cp_global_read_u_test2_access1_load, Sv_res_global_pte_cg_cp_global_read_u_test2_access1_load_str)
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_cp_sv32_global_pte_Umode_test2_access1_exec, Sv_cp_sv32_global_pte_Umode_test2_access1_exec_str)
+  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_res_global_pte_cg_cp_global_exec_u_test2_access1_exec, Sv_res_global_pte_cg_cp_global_exec_u_test2_access1_exec_str)
 
   // Flush the TLB for the current ASID and access again
   csrr  x14, satp
@@ -183,28 +183,28 @@ Sv_cp_sv32_global_pte_Umode_test2_access1_exec:
   addi x8, x8, 16
 
 // Store
-Sv_cp_sv32_global_pte_Umode_test2_access2_store:
+Sv_res_global_pte_cg_cp_global_write_u_test2_access2_store:
   sw x8, 20(x15)
   nop
 
 // Load
-Sv_cp_sv32_global_pte_Umode_test2_access2_load:
+Sv_res_global_pte_cg_cp_global_read_u_test2_access2_load:
   lw x9, 20(x15)
   nop
 
 // Execute
-Sv_cp_sv32_global_pte_Umode_test2_access2_exec:
+Sv_res_global_pte_cg_cp_global_exec_u_test2_access2_exec:
   jalr ra, x15, 0
   nop
 
   RVTEST_TSBI_GOTO_SMODE
 
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_cp_sv32_global_pte_Umode_test2_access2_store, Sv_cp_sv32_global_pte_Umode_test2_access2_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_res_global_pte_cg_cp_global_write_u_test2_access2_store, Sv_res_global_pte_cg_cp_global_write_u_test2_access2_store_str)
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Sv_cp_sv32_global_pte_Umode_test2_access2_load, Sv_cp_sv32_global_pte_Umode_test2_access2_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x9, Sv_res_global_pte_cg_cp_global_read_u_test2_access2_load, Sv_res_global_pte_cg_cp_global_read_u_test2_access2_load_str)
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_cp_sv32_global_pte_Umode_test2_access2_exec, Sv_cp_sv32_global_pte_Umode_test2_access2_exec_str)
+  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_res_global_pte_cg_cp_global_exec_u_test2_access2_exec, Sv_res_global_pte_cg_cp_global_exec_u_test2_access2_exec_str)
 
 
 // Instantiate trap handlers and other epilog code, call RVMODEL_HALT at end of test
@@ -234,18 +234,18 @@ rvtest_slvl0_pg_tbl:
   .skip(4096)
 
 // Testcase strings
-Sv_cp_sv32_global_pte_Umode_test1_access1_store_str: .string "\"test: 25; cg: Sv; cp: cp_sv32_global_pte_Umode; bin: test1_access1_store\""
-Sv_cp_sv32_global_pte_Umode_test1_access1_load_str: .string "\"test: 26; cg: Sv; cp: cp_sv32_global_pte_Umode; bin: test1_access1_load\""
-Sv_cp_sv32_global_pte_Umode_test1_access1_exec_str: .string "\"test: 27; cg: Sv; cp: cp_sv32_global_pte_Umode; bin: test1_access1_exec\""
-Sv_cp_sv32_global_pte_Umode_test1_access2_store_str: .string "\"test: 28; cg: Sv; cp: cp_sv32_global_pte_Umode; bin: test1_access2_store\""
-Sv_cp_sv32_global_pte_Umode_test1_access2_load_str: .string "\"test: 29; cg: Sv; cp: cp_sv32_global_pte_Umode; bin: test1_access2_load\""
-Sv_cp_sv32_global_pte_Umode_test1_access2_exec_str: .string "\"test: 30; cg: Sv; cp: cp_sv32_global_pte_Umode; bin: test1_access2_exec\""
-Sv_cp_sv32_global_pte_Umode_test2_access1_store_str: .string "\"test: 31; cg: Sv; cp: cp_sv32_global_pte_Umode; bin: test2_access1_store\""
-Sv_cp_sv32_global_pte_Umode_test2_access1_load_str: .string "\"test: 32; cg: Sv; cp: cp_sv32_global_pte_Umode; bin: test2_access1_load\""
-Sv_cp_sv32_global_pte_Umode_test2_access1_exec_str: .string "\"test: 33; cg: Sv; cp: cp_sv32_global_pte_Umode; bin: test2_access1_exec\""
-Sv_cp_sv32_global_pte_Umode_test2_access2_store_str: .string "\"test: 34; cg: Sv; cp: cp_sv32_global_pte_Umode; bin: test2_access2_store\""
-Sv_cp_sv32_global_pte_Umode_test2_access2_load_str: .string "\"test: 35; cg: Sv; cp: cp_sv32_global_pte_Umode; bin: test2_access2_load\""
-Sv_cp_sv32_global_pte_Umode_test2_access2_exec_str: .string "\"test: 36; cg: Sv; cp: cp_sv32_global_pte_Umode; bin: test2_access2_exec\""
+Sv_res_global_pte_cg_cp_global_write_u_test1_access1_store_str: .string "\"test: 25; cg: Sv_res_global_pte_cg; cp: cp_global_write_u; bin: test1_access1_store\""
+Sv_res_global_pte_cg_cp_global_read_u_test1_access1_load_str: .string "\"test: 26; cg: Sv_res_global_pte_cg; cp: cp_global_read_u; bin: test1_access1_load\""
+Sv_res_global_pte_cg_cp_global_exec_u_test1_access1_exec_str: .string "\"test: 27; cg: Sv_res_global_pte_cg; cp: cp_global_exec_u; bin: test1_access1_exec\""
+Sv_res_global_pte_cg_cp_global_write_u_test1_access2_store_str: .string "\"test: 28; cg: Sv_res_global_pte_cg; cp: cp_global_write_u; bin: test1_access2_store\""
+Sv_res_global_pte_cg_cp_global_read_u_test1_access2_load_str: .string "\"test: 29; cg: Sv_res_global_pte_cg; cp: cp_global_read_u; bin: test1_access2_load\""
+Sv_res_global_pte_cg_cp_global_exec_u_test1_access2_exec_str: .string "\"test: 30; cg: Sv_res_global_pte_cg; cp: cp_global_exec_u; bin: test1_access2_exec\""
+Sv_res_global_pte_cg_cp_global_write_u_test2_access1_store_str: .string "\"test: 31; cg: Sv_res_global_pte_cg; cp: cp_global_write_u; bin: test2_access1_store\""
+Sv_res_global_pte_cg_cp_global_read_u_test2_access1_load_str: .string "\"test: 32; cg: Sv_res_global_pte_cg; cp: cp_global_read_u; bin: test2_access1_load\""
+Sv_res_global_pte_cg_cp_global_exec_u_test2_access1_exec_str: .string "\"test: 33; cg: Sv_res_global_pte_cg; cp: cp_global_exec_u; bin: test2_access1_exec\""
+Sv_res_global_pte_cg_cp_global_write_u_test2_access2_store_str: .string "\"test: 34; cg: Sv_res_global_pte_cg; cp: cp_global_write_u; bin: test2_access2_store\""
+Sv_res_global_pte_cg_cp_global_read_u_test2_access2_load_str: .string "\"test: 35; cg: Sv_res_global_pte_cg; cp: cp_global_read_u; bin: test2_access2_load\""
+Sv_res_global_pte_cg_cp_global_exec_u_test2_access2_exec_str: .string "\"test: 36; cg: Sv_res_global_pte_cg; cp: cp_global_exec_u; bin: test2_access2_exec\""
 
 // End of test data section and model specific data
 RVTEST_DATA_END

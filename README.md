@@ -250,8 +250,8 @@ The ACT Framework uses a selection of assembly macros to run DUT-specific code t
 
 **Timer Macros**: Can be left blank if machine mode is not supported.
 
-- `RVMODEL_MTIME_ADDRESS` (can be omitted if MTIME is not implemented)
-- `RVMODEL_MTIMECMP_ADDRESS` (can be omitted if MTIMECMP is not implemented)
+- `RVMODEL_MTIME_ADDRESS` (required if machine timer interrupts are implemented, or if Sstc is implemented without Zicntr; otherwise can be omitted)
+- `RVMODEL_MTIMECMP_ADDRESS` (required if machine timer interrupts are implemented; otherwise can be omitted)
 - `RVMODEL_TIMER_INT_SOON_DELAY`
 
 **MSIP Macro**: Required only for Sm version 1.13 and above. Can be omitted if machine software interrupts are not supported.
@@ -265,6 +265,7 @@ The ACT Framework uses a selection of assembly macros to run DUT-specific code t
 - `RVMODEL_CLR_MEXT_INT(_R1, _R2)`
 - `RVMODEL_CLR_MEXT_INT_M(_R1, _R2)`
 - `RVMODEL_SET_MSW_INT(_R1, _R2)`
+- `RVMODEL_SET_MSW_INT_M(_R1, _R2)`
 - `RVMODEL_CLR_MSW_INT(_R1, _R2)`
 - `RVMODEL_CLR_MSW_INT_M(_R1, _R2)`
 - `RVMODEL_SET_SEXT_INT(_R1, _R2)`
@@ -272,6 +273,7 @@ The ACT Framework uses a selection of assembly macros to run DUT-specific code t
 - `RVMODEL_CLR_SEXT_INT(_R1, _R2)`
 - `RVMODEL_CLR_SEXT_INT_M(_R1, _R2)`
 - `RVMODEL_SET_SSW_INT(_R1, _R2)`
+- `RVMODEL_SET_SSW_INT_M(_R1, _R2)`
 - `RVMODEL_CLR_SSW_INT(_R1, _R2)`
 - `RVMODEL_CLR_SSW_INT_M(_R1, _R2)`
 - `RVMODEL_INTERRUPT_LATENCY`

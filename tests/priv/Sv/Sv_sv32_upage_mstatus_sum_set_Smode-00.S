@@ -30,7 +30,7 @@ RVTEST_BEGIN
 
 
 /////////////////////////////////
-// cp_sv32_upage_mstatus_sum_set_Smode
+// cp_upage_smode_sumset_write_s, cp_upage_smode_sumset_read_s, cp_upage_smode_sumset_noexec_s
 /////////////////////////////////
 
 
@@ -76,26 +76,26 @@ RVTEST_BEGIN
   addi x9, x9, 16
 
 // Store
-Sv_cp_sv32_upage_mstatus_sum_set_Smode_test1_store:
+Sv_vm_permissions_cg_cp_upage_smode_sumset_write_s_test1_store:
   sw x9, 20(x8)
   nop
 
 // Load
-Sv_cp_sv32_upage_mstatus_sum_set_Smode_test1_load:
+Sv_vm_permissions_cg_cp_upage_smode_sumset_read_s_test1_load:
   lw x15, 20(x8)
   nop
 
 // Execute
-Sv_cp_sv32_upage_mstatus_sum_set_Smode_test1_exec:
+Sv_vm_permissions_cg_cp_upage_smode_sumset_noexec_s_test1_exec:
   jalr ra, x8, 0
   nop
 
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Sv_cp_sv32_upage_mstatus_sum_set_Smode_test1_store, Sv_cp_sv32_upage_mstatus_sum_set_Smode_test1_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x9, Sv_vm_permissions_cg_cp_upage_smode_sumset_write_s_test1_store, Sv_vm_permissions_cg_cp_upage_smode_sumset_write_s_test1_store_str)
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, Sv_cp_sv32_upage_mstatus_sum_set_Smode_test1_load, Sv_cp_sv32_upage_mstatus_sum_set_Smode_test1_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x15, Sv_vm_permissions_cg_cp_upage_smode_sumset_read_s_test1_load, Sv_vm_permissions_cg_cp_upage_smode_sumset_read_s_test1_load_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Sv_cp_sv32_upage_mstatus_sum_set_Smode_test1_exec, Sv_cp_sv32_upage_mstatus_sum_set_Smode_test1_exec_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, Sv_vm_permissions_cg_cp_upage_smode_sumset_noexec_s_test1_exec, Sv_vm_permissions_cg_cp_upage_smode_sumset_noexec_s_test1_exec_str)
 
 
 // 4MB page at level 1
@@ -114,26 +114,26 @@ Sv_cp_sv32_upage_mstatus_sum_set_Smode_test1_exec:
   addi x9, x9, 16
 
 // Store
-Sv_cp_sv32_upage_mstatus_sum_set_Smode_test2_store:
+Sv_vm_permissions_cg_cp_upage_smode_sumset_write_s_test2_store:
   sw x9, 20(x8)
   nop
 
 // Load
-Sv_cp_sv32_upage_mstatus_sum_set_Smode_test2_load:
+Sv_vm_permissions_cg_cp_upage_smode_sumset_read_s_test2_load:
   lw x15, 20(x8)
   nop
 
 // Execute
-Sv_cp_sv32_upage_mstatus_sum_set_Smode_test2_exec:
+Sv_vm_permissions_cg_cp_upage_smode_sumset_noexec_s_test2_exec:
   jalr ra, x8, 0
   nop
 
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Sv_cp_sv32_upage_mstatus_sum_set_Smode_test2_store, Sv_cp_sv32_upage_mstatus_sum_set_Smode_test2_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x9, Sv_vm_permissions_cg_cp_upage_smode_sumset_write_s_test2_store, Sv_vm_permissions_cg_cp_upage_smode_sumset_write_s_test2_store_str)
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, Sv_cp_sv32_upage_mstatus_sum_set_Smode_test2_load, Sv_cp_sv32_upage_mstatus_sum_set_Smode_test2_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x15, Sv_vm_permissions_cg_cp_upage_smode_sumset_read_s_test2_load, Sv_vm_permissions_cg_cp_upage_smode_sumset_read_s_test2_load_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Sv_cp_sv32_upage_mstatus_sum_set_Smode_test2_exec, Sv_cp_sv32_upage_mstatus_sum_set_Smode_test2_exec_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, Sv_vm_permissions_cg_cp_upage_smode_sumset_noexec_s_test2_exec, Sv_vm_permissions_cg_cp_upage_smode_sumset_noexec_s_test2_exec_str)
 
 
 // 4MB page at level 1
@@ -152,26 +152,26 @@ Sv_cp_sv32_upage_mstatus_sum_set_Smode_test2_exec:
   addi x9, x9, 16
 
 // Store
-Sv_cp_sv32_upage_mstatus_sum_set_Smode_test3_store:
+Sv_vm_permissions_cg_cp_upage_smode_sumset_write_s_test3_store:
   sw x9, 20(x8)
   nop
 
 // Load
-Sv_cp_sv32_upage_mstatus_sum_set_Smode_test3_load:
+Sv_vm_permissions_cg_cp_upage_smode_sumset_read_s_test3_load:
   lw x15, 20(x8)
   nop
 
 // Execute
-Sv_cp_sv32_upage_mstatus_sum_set_Smode_test3_exec:
+Sv_vm_permissions_cg_cp_upage_smode_sumset_noexec_s_test3_exec:
   jalr ra, x8, 0
   nop
 
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Sv_cp_sv32_upage_mstatus_sum_set_Smode_test3_store, Sv_cp_sv32_upage_mstatus_sum_set_Smode_test3_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x9, Sv_vm_permissions_cg_cp_upage_smode_sumset_write_s_test3_store, Sv_vm_permissions_cg_cp_upage_smode_sumset_write_s_test3_store_str)
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, Sv_cp_sv32_upage_mstatus_sum_set_Smode_test3_load, Sv_cp_sv32_upage_mstatus_sum_set_Smode_test3_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x15, Sv_vm_permissions_cg_cp_upage_smode_sumset_read_s_test3_load, Sv_vm_permissions_cg_cp_upage_smode_sumset_read_s_test3_load_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Sv_cp_sv32_upage_mstatus_sum_set_Smode_test3_exec, Sv_cp_sv32_upage_mstatus_sum_set_Smode_test3_exec_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, Sv_vm_permissions_cg_cp_upage_smode_sumset_noexec_s_test3_exec, Sv_vm_permissions_cg_cp_upage_smode_sumset_noexec_s_test3_exec_str)
 
 
 // 4MB page at level 1
@@ -190,26 +190,26 @@ Sv_cp_sv32_upage_mstatus_sum_set_Smode_test3_exec:
   addi x9, x9, 16
 
 // Store
-Sv_cp_sv32_upage_mstatus_sum_set_Smode_test4_store:
+Sv_vm_permissions_cg_cp_upage_smode_sumset_write_s_test4_store:
   sw x9, 20(x8)
   nop
 
 // Load
-Sv_cp_sv32_upage_mstatus_sum_set_Smode_test4_load:
+Sv_vm_permissions_cg_cp_upage_smode_sumset_read_s_test4_load:
   lw x15, 20(x8)
   nop
 
 // Execute
-Sv_cp_sv32_upage_mstatus_sum_set_Smode_test4_exec:
+Sv_vm_permissions_cg_cp_upage_smode_sumset_noexec_s_test4_exec:
   jalr ra, x8, 0
   nop
 
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Sv_cp_sv32_upage_mstatus_sum_set_Smode_test4_store, Sv_cp_sv32_upage_mstatus_sum_set_Smode_test4_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x9, Sv_vm_permissions_cg_cp_upage_smode_sumset_write_s_test4_store, Sv_vm_permissions_cg_cp_upage_smode_sumset_write_s_test4_store_str)
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, Sv_cp_sv32_upage_mstatus_sum_set_Smode_test4_load, Sv_cp_sv32_upage_mstatus_sum_set_Smode_test4_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x15, Sv_vm_permissions_cg_cp_upage_smode_sumset_read_s_test4_load, Sv_vm_permissions_cg_cp_upage_smode_sumset_read_s_test4_load_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Sv_cp_sv32_upage_mstatus_sum_set_Smode_test4_exec, Sv_cp_sv32_upage_mstatus_sum_set_Smode_test4_exec_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, Sv_vm_permissions_cg_cp_upage_smode_sumset_noexec_s_test4_exec, Sv_vm_permissions_cg_cp_upage_smode_sumset_noexec_s_test4_exec_str)
 
 
 // 4MB page at level 1
@@ -228,26 +228,26 @@ Sv_cp_sv32_upage_mstatus_sum_set_Smode_test4_exec:
   addi x9, x9, 16
 
 // Store
-Sv_cp_sv32_upage_mstatus_sum_set_Smode_test5_store:
+Sv_vm_permissions_cg_cp_upage_smode_sumset_write_s_test5_store:
   sw x9, 20(x8)
   nop
 
 // Load
-Sv_cp_sv32_upage_mstatus_sum_set_Smode_test5_load:
+Sv_vm_permissions_cg_cp_upage_smode_sumset_read_s_test5_load:
   lw x15, 20(x8)
   nop
 
 // Execute
-Sv_cp_sv32_upage_mstatus_sum_set_Smode_test5_exec:
+Sv_vm_permissions_cg_cp_upage_smode_sumset_noexec_s_test5_exec:
   jalr ra, x8, 0
   nop
 
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Sv_cp_sv32_upage_mstatus_sum_set_Smode_test5_store, Sv_cp_sv32_upage_mstatus_sum_set_Smode_test5_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x9, Sv_vm_permissions_cg_cp_upage_smode_sumset_write_s_test5_store, Sv_vm_permissions_cg_cp_upage_smode_sumset_write_s_test5_store_str)
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, Sv_cp_sv32_upage_mstatus_sum_set_Smode_test5_load, Sv_cp_sv32_upage_mstatus_sum_set_Smode_test5_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x15, Sv_vm_permissions_cg_cp_upage_smode_sumset_read_s_test5_load, Sv_vm_permissions_cg_cp_upage_smode_sumset_read_s_test5_load_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Sv_cp_sv32_upage_mstatus_sum_set_Smode_test5_exec, Sv_cp_sv32_upage_mstatus_sum_set_Smode_test5_exec_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, Sv_vm_permissions_cg_cp_upage_smode_sumset_noexec_s_test5_exec, Sv_vm_permissions_cg_cp_upage_smode_sumset_noexec_s_test5_exec_str)
 
 
 // 4KB page at level 0
@@ -263,26 +263,26 @@ Sv_cp_sv32_upage_mstatus_sum_set_Smode_test5_exec:
   addi x9, x9, 16
 
 // Store
-Sv_cp_sv32_upage_mstatus_sum_set_Smode_test6_store:
+Sv_vm_permissions_cg_cp_upage_smode_sumset_write_s_test6_store:
   sw x9, 20(x8)
   nop
 
 // Load
-Sv_cp_sv32_upage_mstatus_sum_set_Smode_test6_load:
+Sv_vm_permissions_cg_cp_upage_smode_sumset_read_s_test6_load:
   lw x15, 20(x8)
   nop
 
 // Execute
-Sv_cp_sv32_upage_mstatus_sum_set_Smode_test6_exec:
+Sv_vm_permissions_cg_cp_upage_smode_sumset_noexec_s_test6_exec:
   jalr ra, x8, 0
   nop
 
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Sv_cp_sv32_upage_mstatus_sum_set_Smode_test6_store, Sv_cp_sv32_upage_mstatus_sum_set_Smode_test6_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x9, Sv_vm_permissions_cg_cp_upage_smode_sumset_write_s_test6_store, Sv_vm_permissions_cg_cp_upage_smode_sumset_write_s_test6_store_str)
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, Sv_cp_sv32_upage_mstatus_sum_set_Smode_test6_load, Sv_cp_sv32_upage_mstatus_sum_set_Smode_test6_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x15, Sv_vm_permissions_cg_cp_upage_smode_sumset_read_s_test6_load, Sv_vm_permissions_cg_cp_upage_smode_sumset_read_s_test6_load_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Sv_cp_sv32_upage_mstatus_sum_set_Smode_test6_exec, Sv_cp_sv32_upage_mstatus_sum_set_Smode_test6_exec_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, Sv_vm_permissions_cg_cp_upage_smode_sumset_noexec_s_test6_exec, Sv_vm_permissions_cg_cp_upage_smode_sumset_noexec_s_test6_exec_str)
 
 
 // 4KB page at level 0
@@ -298,26 +298,26 @@ Sv_cp_sv32_upage_mstatus_sum_set_Smode_test6_exec:
   addi x9, x9, 16
 
 // Store
-Sv_cp_sv32_upage_mstatus_sum_set_Smode_test7_store:
+Sv_vm_permissions_cg_cp_upage_smode_sumset_write_s_test7_store:
   sw x9, 20(x8)
   nop
 
 // Load
-Sv_cp_sv32_upage_mstatus_sum_set_Smode_test7_load:
+Sv_vm_permissions_cg_cp_upage_smode_sumset_read_s_test7_load:
   lw x15, 20(x8)
   nop
 
 // Execute
-Sv_cp_sv32_upage_mstatus_sum_set_Smode_test7_exec:
+Sv_vm_permissions_cg_cp_upage_smode_sumset_noexec_s_test7_exec:
   jalr ra, x8, 0
   nop
 
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Sv_cp_sv32_upage_mstatus_sum_set_Smode_test7_store, Sv_cp_sv32_upage_mstatus_sum_set_Smode_test7_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x9, Sv_vm_permissions_cg_cp_upage_smode_sumset_write_s_test7_store, Sv_vm_permissions_cg_cp_upage_smode_sumset_write_s_test7_store_str)
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, Sv_cp_sv32_upage_mstatus_sum_set_Smode_test7_load, Sv_cp_sv32_upage_mstatus_sum_set_Smode_test7_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x15, Sv_vm_permissions_cg_cp_upage_smode_sumset_read_s_test7_load, Sv_vm_permissions_cg_cp_upage_smode_sumset_read_s_test7_load_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Sv_cp_sv32_upage_mstatus_sum_set_Smode_test7_exec, Sv_cp_sv32_upage_mstatus_sum_set_Smode_test7_exec_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, Sv_vm_permissions_cg_cp_upage_smode_sumset_noexec_s_test7_exec, Sv_vm_permissions_cg_cp_upage_smode_sumset_noexec_s_test7_exec_str)
 
 
 // 4KB page at level 0
@@ -333,26 +333,26 @@ Sv_cp_sv32_upage_mstatus_sum_set_Smode_test7_exec:
   addi x9, x9, 16
 
 // Store
-Sv_cp_sv32_upage_mstatus_sum_set_Smode_test8_store:
+Sv_vm_permissions_cg_cp_upage_smode_sumset_write_s_test8_store:
   sw x9, 20(x8)
   nop
 
 // Load
-Sv_cp_sv32_upage_mstatus_sum_set_Smode_test8_load:
+Sv_vm_permissions_cg_cp_upage_smode_sumset_read_s_test8_load:
   lw x15, 20(x8)
   nop
 
 // Execute
-Sv_cp_sv32_upage_mstatus_sum_set_Smode_test8_exec:
+Sv_vm_permissions_cg_cp_upage_smode_sumset_noexec_s_test8_exec:
   jalr ra, x8, 0
   nop
 
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Sv_cp_sv32_upage_mstatus_sum_set_Smode_test8_store, Sv_cp_sv32_upage_mstatus_sum_set_Smode_test8_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x9, Sv_vm_permissions_cg_cp_upage_smode_sumset_write_s_test8_store, Sv_vm_permissions_cg_cp_upage_smode_sumset_write_s_test8_store_str)
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, Sv_cp_sv32_upage_mstatus_sum_set_Smode_test8_load, Sv_cp_sv32_upage_mstatus_sum_set_Smode_test8_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x15, Sv_vm_permissions_cg_cp_upage_smode_sumset_read_s_test8_load, Sv_vm_permissions_cg_cp_upage_smode_sumset_read_s_test8_load_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Sv_cp_sv32_upage_mstatus_sum_set_Smode_test8_exec, Sv_cp_sv32_upage_mstatus_sum_set_Smode_test8_exec_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, Sv_vm_permissions_cg_cp_upage_smode_sumset_noexec_s_test8_exec, Sv_vm_permissions_cg_cp_upage_smode_sumset_noexec_s_test8_exec_str)
 
 
 // 4KB page at level 0
@@ -368,26 +368,26 @@ Sv_cp_sv32_upage_mstatus_sum_set_Smode_test8_exec:
   addi x9, x9, 16
 
 // Store
-Sv_cp_sv32_upage_mstatus_sum_set_Smode_test9_store:
+Sv_vm_permissions_cg_cp_upage_smode_sumset_write_s_test9_store:
   sw x9, 20(x8)
   nop
 
 // Load
-Sv_cp_sv32_upage_mstatus_sum_set_Smode_test9_load:
+Sv_vm_permissions_cg_cp_upage_smode_sumset_read_s_test9_load:
   lw x15, 20(x8)
   nop
 
 // Execute
-Sv_cp_sv32_upage_mstatus_sum_set_Smode_test9_exec:
+Sv_vm_permissions_cg_cp_upage_smode_sumset_noexec_s_test9_exec:
   jalr ra, x8, 0
   nop
 
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Sv_cp_sv32_upage_mstatus_sum_set_Smode_test9_store, Sv_cp_sv32_upage_mstatus_sum_set_Smode_test9_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x9, Sv_vm_permissions_cg_cp_upage_smode_sumset_write_s_test9_store, Sv_vm_permissions_cg_cp_upage_smode_sumset_write_s_test9_store_str)
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, Sv_cp_sv32_upage_mstatus_sum_set_Smode_test9_load, Sv_cp_sv32_upage_mstatus_sum_set_Smode_test9_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x15, Sv_vm_permissions_cg_cp_upage_smode_sumset_read_s_test9_load, Sv_vm_permissions_cg_cp_upage_smode_sumset_read_s_test9_load_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Sv_cp_sv32_upage_mstatus_sum_set_Smode_test9_exec, Sv_cp_sv32_upage_mstatus_sum_set_Smode_test9_exec_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, Sv_vm_permissions_cg_cp_upage_smode_sumset_noexec_s_test9_exec, Sv_vm_permissions_cg_cp_upage_smode_sumset_noexec_s_test9_exec_str)
 
 
 // 4KB page at level 0
@@ -403,26 +403,26 @@ Sv_cp_sv32_upage_mstatus_sum_set_Smode_test9_exec:
   addi x9, x9, 16
 
 // Store
-Sv_cp_sv32_upage_mstatus_sum_set_Smode_test10_store:
+Sv_vm_permissions_cg_cp_upage_smode_sumset_write_s_test10_store:
   sw x9, 20(x8)
   nop
 
 // Load
-Sv_cp_sv32_upage_mstatus_sum_set_Smode_test10_load:
+Sv_vm_permissions_cg_cp_upage_smode_sumset_read_s_test10_load:
   lw x15, 20(x8)
   nop
 
 // Execute
-Sv_cp_sv32_upage_mstatus_sum_set_Smode_test10_exec:
+Sv_vm_permissions_cg_cp_upage_smode_sumset_noexec_s_test10_exec:
   jalr ra, x8, 0
   nop
 
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Sv_cp_sv32_upage_mstatus_sum_set_Smode_test10_store, Sv_cp_sv32_upage_mstatus_sum_set_Smode_test10_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x9, Sv_vm_permissions_cg_cp_upage_smode_sumset_write_s_test10_store, Sv_vm_permissions_cg_cp_upage_smode_sumset_write_s_test10_store_str)
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, Sv_cp_sv32_upage_mstatus_sum_set_Smode_test10_load, Sv_cp_sv32_upage_mstatus_sum_set_Smode_test10_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x15, Sv_vm_permissions_cg_cp_upage_smode_sumset_read_s_test10_load, Sv_vm_permissions_cg_cp_upage_smode_sumset_read_s_test10_load_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Sv_cp_sv32_upage_mstatus_sum_set_Smode_test10_exec, Sv_cp_sv32_upage_mstatus_sum_set_Smode_test10_exec_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, Sv_vm_permissions_cg_cp_upage_smode_sumset_noexec_s_test10_exec, Sv_vm_permissions_cg_cp_upage_smode_sumset_noexec_s_test10_exec_str)
 
 
 // Instantiate trap handlers and other epilog code, call RVMODEL_HALT at end of test
@@ -452,36 +452,36 @@ rvtest_slvl0_pg_tbl:
   .skip(4096)
 
 // Testcase strings
-Sv_cp_sv32_upage_mstatus_sum_set_Smode_test1_store_str: .string "\"test: 253; cg: Sv; cp: cp_sv32_upage_mstatus_sum_set_Smode; bin: test1_store\""
-Sv_cp_sv32_upage_mstatus_sum_set_Smode_test1_load_str: .string "\"test: 254; cg: Sv; cp: cp_sv32_upage_mstatus_sum_set_Smode; bin: test1_load\""
-Sv_cp_sv32_upage_mstatus_sum_set_Smode_test1_exec_str: .string "\"test: 255; cg: Sv; cp: cp_sv32_upage_mstatus_sum_set_Smode; bin: test1_exec\""
-Sv_cp_sv32_upage_mstatus_sum_set_Smode_test2_store_str: .string "\"test: 256; cg: Sv; cp: cp_sv32_upage_mstatus_sum_set_Smode; bin: test2_store\""
-Sv_cp_sv32_upage_mstatus_sum_set_Smode_test2_load_str: .string "\"test: 257; cg: Sv; cp: cp_sv32_upage_mstatus_sum_set_Smode; bin: test2_load\""
-Sv_cp_sv32_upage_mstatus_sum_set_Smode_test2_exec_str: .string "\"test: 258; cg: Sv; cp: cp_sv32_upage_mstatus_sum_set_Smode; bin: test2_exec\""
-Sv_cp_sv32_upage_mstatus_sum_set_Smode_test3_store_str: .string "\"test: 259; cg: Sv; cp: cp_sv32_upage_mstatus_sum_set_Smode; bin: test3_store\""
-Sv_cp_sv32_upage_mstatus_sum_set_Smode_test3_load_str: .string "\"test: 260; cg: Sv; cp: cp_sv32_upage_mstatus_sum_set_Smode; bin: test3_load\""
-Sv_cp_sv32_upage_mstatus_sum_set_Smode_test3_exec_str: .string "\"test: 261; cg: Sv; cp: cp_sv32_upage_mstatus_sum_set_Smode; bin: test3_exec\""
-Sv_cp_sv32_upage_mstatus_sum_set_Smode_test4_store_str: .string "\"test: 262; cg: Sv; cp: cp_sv32_upage_mstatus_sum_set_Smode; bin: test4_store\""
-Sv_cp_sv32_upage_mstatus_sum_set_Smode_test4_load_str: .string "\"test: 263; cg: Sv; cp: cp_sv32_upage_mstatus_sum_set_Smode; bin: test4_load\""
-Sv_cp_sv32_upage_mstatus_sum_set_Smode_test4_exec_str: .string "\"test: 264; cg: Sv; cp: cp_sv32_upage_mstatus_sum_set_Smode; bin: test4_exec\""
-Sv_cp_sv32_upage_mstatus_sum_set_Smode_test5_store_str: .string "\"test: 265; cg: Sv; cp: cp_sv32_upage_mstatus_sum_set_Smode; bin: test5_store\""
-Sv_cp_sv32_upage_mstatus_sum_set_Smode_test5_load_str: .string "\"test: 266; cg: Sv; cp: cp_sv32_upage_mstatus_sum_set_Smode; bin: test5_load\""
-Sv_cp_sv32_upage_mstatus_sum_set_Smode_test5_exec_str: .string "\"test: 267; cg: Sv; cp: cp_sv32_upage_mstatus_sum_set_Smode; bin: test5_exec\""
-Sv_cp_sv32_upage_mstatus_sum_set_Smode_test6_store_str: .string "\"test: 268; cg: Sv; cp: cp_sv32_upage_mstatus_sum_set_Smode; bin: test6_store\""
-Sv_cp_sv32_upage_mstatus_sum_set_Smode_test6_load_str: .string "\"test: 269; cg: Sv; cp: cp_sv32_upage_mstatus_sum_set_Smode; bin: test6_load\""
-Sv_cp_sv32_upage_mstatus_sum_set_Smode_test6_exec_str: .string "\"test: 270; cg: Sv; cp: cp_sv32_upage_mstatus_sum_set_Smode; bin: test6_exec\""
-Sv_cp_sv32_upage_mstatus_sum_set_Smode_test7_store_str: .string "\"test: 271; cg: Sv; cp: cp_sv32_upage_mstatus_sum_set_Smode; bin: test7_store\""
-Sv_cp_sv32_upage_mstatus_sum_set_Smode_test7_load_str: .string "\"test: 272; cg: Sv; cp: cp_sv32_upage_mstatus_sum_set_Smode; bin: test7_load\""
-Sv_cp_sv32_upage_mstatus_sum_set_Smode_test7_exec_str: .string "\"test: 273; cg: Sv; cp: cp_sv32_upage_mstatus_sum_set_Smode; bin: test7_exec\""
-Sv_cp_sv32_upage_mstatus_sum_set_Smode_test8_store_str: .string "\"test: 274; cg: Sv; cp: cp_sv32_upage_mstatus_sum_set_Smode; bin: test8_store\""
-Sv_cp_sv32_upage_mstatus_sum_set_Smode_test8_load_str: .string "\"test: 275; cg: Sv; cp: cp_sv32_upage_mstatus_sum_set_Smode; bin: test8_load\""
-Sv_cp_sv32_upage_mstatus_sum_set_Smode_test8_exec_str: .string "\"test: 276; cg: Sv; cp: cp_sv32_upage_mstatus_sum_set_Smode; bin: test8_exec\""
-Sv_cp_sv32_upage_mstatus_sum_set_Smode_test9_store_str: .string "\"test: 277; cg: Sv; cp: cp_sv32_upage_mstatus_sum_set_Smode; bin: test9_store\""
-Sv_cp_sv32_upage_mstatus_sum_set_Smode_test9_load_str: .string "\"test: 278; cg: Sv; cp: cp_sv32_upage_mstatus_sum_set_Smode; bin: test9_load\""
-Sv_cp_sv32_upage_mstatus_sum_set_Smode_test9_exec_str: .string "\"test: 279; cg: Sv; cp: cp_sv32_upage_mstatus_sum_set_Smode; bin: test9_exec\""
-Sv_cp_sv32_upage_mstatus_sum_set_Smode_test10_store_str: .string "\"test: 280; cg: Sv; cp: cp_sv32_upage_mstatus_sum_set_Smode; bin: test10_store\""
-Sv_cp_sv32_upage_mstatus_sum_set_Smode_test10_load_str: .string "\"test: 281; cg: Sv; cp: cp_sv32_upage_mstatus_sum_set_Smode; bin: test10_load\""
-Sv_cp_sv32_upage_mstatus_sum_set_Smode_test10_exec_str: .string "\"test: 282; cg: Sv; cp: cp_sv32_upage_mstatus_sum_set_Smode; bin: test10_exec\""
+Sv_vm_permissions_cg_cp_upage_smode_sumset_write_s_test1_store_str: .string "\"test: 253; cg: Sv_vm_permissions_cg; cp: cp_upage_smode_sumset_write_s; bin: test1_store\""
+Sv_vm_permissions_cg_cp_upage_smode_sumset_read_s_test1_load_str: .string "\"test: 254; cg: Sv_vm_permissions_cg; cp: cp_upage_smode_sumset_read_s; bin: test1_load\""
+Sv_vm_permissions_cg_cp_upage_smode_sumset_noexec_s_test1_exec_str: .string "\"test: 255; cg: Sv_vm_permissions_cg; cp: cp_upage_smode_sumset_noexec_s; bin: test1_exec\""
+Sv_vm_permissions_cg_cp_upage_smode_sumset_write_s_test2_store_str: .string "\"test: 256; cg: Sv_vm_permissions_cg; cp: cp_upage_smode_sumset_write_s; bin: test2_store\""
+Sv_vm_permissions_cg_cp_upage_smode_sumset_read_s_test2_load_str: .string "\"test: 257; cg: Sv_vm_permissions_cg; cp: cp_upage_smode_sumset_read_s; bin: test2_load\""
+Sv_vm_permissions_cg_cp_upage_smode_sumset_noexec_s_test2_exec_str: .string "\"test: 258; cg: Sv_vm_permissions_cg; cp: cp_upage_smode_sumset_noexec_s; bin: test2_exec\""
+Sv_vm_permissions_cg_cp_upage_smode_sumset_write_s_test3_store_str: .string "\"test: 259; cg: Sv_vm_permissions_cg; cp: cp_upage_smode_sumset_write_s; bin: test3_store\""
+Sv_vm_permissions_cg_cp_upage_smode_sumset_read_s_test3_load_str: .string "\"test: 260; cg: Sv_vm_permissions_cg; cp: cp_upage_smode_sumset_read_s; bin: test3_load\""
+Sv_vm_permissions_cg_cp_upage_smode_sumset_noexec_s_test3_exec_str: .string "\"test: 261; cg: Sv_vm_permissions_cg; cp: cp_upage_smode_sumset_noexec_s; bin: test3_exec\""
+Sv_vm_permissions_cg_cp_upage_smode_sumset_write_s_test4_store_str: .string "\"test: 262; cg: Sv_vm_permissions_cg; cp: cp_upage_smode_sumset_write_s; bin: test4_store\""
+Sv_vm_permissions_cg_cp_upage_smode_sumset_read_s_test4_load_str: .string "\"test: 263; cg: Sv_vm_permissions_cg; cp: cp_upage_smode_sumset_read_s; bin: test4_load\""
+Sv_vm_permissions_cg_cp_upage_smode_sumset_noexec_s_test4_exec_str: .string "\"test: 264; cg: Sv_vm_permissions_cg; cp: cp_upage_smode_sumset_noexec_s; bin: test4_exec\""
+Sv_vm_permissions_cg_cp_upage_smode_sumset_write_s_test5_store_str: .string "\"test: 265; cg: Sv_vm_permissions_cg; cp: cp_upage_smode_sumset_write_s; bin: test5_store\""
+Sv_vm_permissions_cg_cp_upage_smode_sumset_read_s_test5_load_str: .string "\"test: 266; cg: Sv_vm_permissions_cg; cp: cp_upage_smode_sumset_read_s; bin: test5_load\""
+Sv_vm_permissions_cg_cp_upage_smode_sumset_noexec_s_test5_exec_str: .string "\"test: 267; cg: Sv_vm_permissions_cg; cp: cp_upage_smode_sumset_noexec_s; bin: test5_exec\""
+Sv_vm_permissions_cg_cp_upage_smode_sumset_write_s_test6_store_str: .string "\"test: 268; cg: Sv_vm_permissions_cg; cp: cp_upage_smode_sumset_write_s; bin: test6_store\""
+Sv_vm_permissions_cg_cp_upage_smode_sumset_read_s_test6_load_str: .string "\"test: 269; cg: Sv_vm_permissions_cg; cp: cp_upage_smode_sumset_read_s; bin: test6_load\""
+Sv_vm_permissions_cg_cp_upage_smode_sumset_noexec_s_test6_exec_str: .string "\"test: 270; cg: Sv_vm_permissions_cg; cp: cp_upage_smode_sumset_noexec_s; bin: test6_exec\""
+Sv_vm_permissions_cg_cp_upage_smode_sumset_write_s_test7_store_str: .string "\"test: 271; cg: Sv_vm_permissions_cg; cp: cp_upage_smode_sumset_write_s; bin: test7_store\""
+Sv_vm_permissions_cg_cp_upage_smode_sumset_read_s_test7_load_str: .string "\"test: 272; cg: Sv_vm_permissions_cg; cp: cp_upage_smode_sumset_read_s; bin: test7_load\""
+Sv_vm_permissions_cg_cp_upage_smode_sumset_noexec_s_test7_exec_str: .string "\"test: 273; cg: Sv_vm_permissions_cg; cp: cp_upage_smode_sumset_noexec_s; bin: test7_exec\""
+Sv_vm_permissions_cg_cp_upage_smode_sumset_write_s_test8_store_str: .string "\"test: 274; cg: Sv_vm_permissions_cg; cp: cp_upage_smode_sumset_write_s; bin: test8_store\""
+Sv_vm_permissions_cg_cp_upage_smode_sumset_read_s_test8_load_str: .string "\"test: 275; cg: Sv_vm_permissions_cg; cp: cp_upage_smode_sumset_read_s; bin: test8_load\""
+Sv_vm_permissions_cg_cp_upage_smode_sumset_noexec_s_test8_exec_str: .string "\"test: 276; cg: Sv_vm_permissions_cg; cp: cp_upage_smode_sumset_noexec_s; bin: test8_exec\""
+Sv_vm_permissions_cg_cp_upage_smode_sumset_write_s_test9_store_str: .string "\"test: 277; cg: Sv_vm_permissions_cg; cp: cp_upage_smode_sumset_write_s; bin: test9_store\""
+Sv_vm_permissions_cg_cp_upage_smode_sumset_read_s_test9_load_str: .string "\"test: 278; cg: Sv_vm_permissions_cg; cp: cp_upage_smode_sumset_read_s; bin: test9_load\""
+Sv_vm_permissions_cg_cp_upage_smode_sumset_noexec_s_test9_exec_str: .string "\"test: 279; cg: Sv_vm_permissions_cg; cp: cp_upage_smode_sumset_noexec_s; bin: test9_exec\""
+Sv_vm_permissions_cg_cp_upage_smode_sumset_write_s_test10_store_str: .string "\"test: 280; cg: Sv_vm_permissions_cg; cp: cp_upage_smode_sumset_write_s; bin: test10_store\""
+Sv_vm_permissions_cg_cp_upage_smode_sumset_read_s_test10_load_str: .string "\"test: 281; cg: Sv_vm_permissions_cg; cp: cp_upage_smode_sumset_read_s; bin: test10_load\""
+Sv_vm_permissions_cg_cp_upage_smode_sumset_noexec_s_test10_exec_str: .string "\"test: 282; cg: Sv_vm_permissions_cg; cp: cp_upage_smode_sumset_noexec_s; bin: test10_exec\""
 
 // End of test data section and model specific data
 RVTEST_DATA_END

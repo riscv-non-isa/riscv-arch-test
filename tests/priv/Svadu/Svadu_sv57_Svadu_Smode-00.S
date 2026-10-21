@@ -30,7 +30,7 @@ RVTEST_BEGIN
 
 
 /////////////////////////////////
-// cp_ad_update
+// Abit_unset_write_s, Abit_unset_read_s, Abit_unset_exec_s, Dbit_unset_write_s
 /////////////////////////////////
 
 
@@ -100,34 +100,34 @@ RVTEST_BEGIN
   srli x8, x8, 16
   add x15, x15, x8
   addi x14, x14, 16
-Svadu_cg_cp_ad_update_test1_store:
+Svadu_cg_Abit_unset_write_s_test1_store:
   sw x14, 20(x6)
   nop
-Svadu_cg_cp_ad_update_test1_load:
+Svadu_cg_Abit_unset_read_s_test1_load:
   lw x8, 20(x13)
   nop
-Svadu_cg_cp_ad_update_test1_exec:
+Svadu_cg_Abit_unset_exec_s_test1_exec:
   jalr ra, x15, 0
   nop
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Svadu_cg_cp_ad_update_test1_store, Svadu_cg_cp_ad_update_test1_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, Svadu_cg_Abit_unset_write_s_test1_store, Svadu_cg_Abit_unset_write_s_test1_store_str)
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, Svadu_cg_cp_ad_update_test1_load, Svadu_cg_cp_ad_update_test1_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x8, Svadu_cg_Abit_unset_read_s_test1_load, Svadu_cg_Abit_unset_read_s_test1_load_str)
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_cp_ad_update_test1_exec, Svadu_cg_cp_ad_update_test1_exec_str)
+  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_Abit_unset_exec_s_test1_exec, Svadu_cg_Abit_unset_exec_s_test1_exec_str)
   LA(x13, rvtest_Sroot_pg_tbl)
-Svadu_cg_cp_ad_update_test1_read_store_pte:
+Svadu_cg_Abit_unset_write_s_test1_read_store_pte:
   ld x9, 8(x13)
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_cp_ad_update_test1_read_store_pte, Svadu_cg_cp_ad_update_test1_read_store_pte_str)
-Svadu_cg_cp_ad_update_test1_read_load_pte:
+  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_Abit_unset_write_s_test1_read_store_pte, Svadu_cg_Abit_unset_write_s_test1_read_store_pte_str)
+Svadu_cg_Abit_unset_read_s_test1_read_load_pte:
   ld x9, 16(x13)
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_cp_ad_update_test1_read_load_pte, Svadu_cg_cp_ad_update_test1_read_load_pte_str)
-Svadu_cg_cp_ad_update_test1_read_exec_pte:
+  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_Abit_unset_read_s_test1_read_load_pte, Svadu_cg_Abit_unset_read_s_test1_read_load_pte_str)
+Svadu_cg_Abit_unset_exec_s_test1_read_exec_pte:
   ld x9, 24(x13)
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_cp_ad_update_test1_read_exec_pte, Svadu_cg_cp_ad_update_test1_read_exec_pte_str)
+  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_Abit_unset_exec_s_test1_read_exec_pte, Svadu_cg_Abit_unset_exec_s_test1_read_exec_pte_str)
 
 // Test case 2: PTE.D unset at level 4
   SUPERPAGE_PTE_SETUP_SV57(rvtest_data_1, (PTE_A | PTE_X | PTE_W | PTE_R | PTE_V), va_data_l4_w, LEVEL4)
@@ -151,34 +151,34 @@ Svadu_cg_cp_ad_update_test1_read_exec_pte:
   srli x8, x8, 16
   add x15, x15, x8
   addi x14, x14, 16
-Svadu_cg_cp_ad_update_test2_store:
+Svadu_cg_Dbit_unset_write_s_test2_store:
   sw x14, 20(x6)
   nop
-Svadu_cg_cp_ad_update_test2_load:
+Svadu_cg_Abit_unset_read_s_test2_load:
   lw x8, 20(x13)
   nop
-Svadu_cg_cp_ad_update_test2_exec:
+Svadu_cg_Abit_unset_exec_s_test2_exec:
   jalr ra, x15, 0
   nop
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Svadu_cg_cp_ad_update_test2_store, Svadu_cg_cp_ad_update_test2_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, Svadu_cg_Dbit_unset_write_s_test2_store, Svadu_cg_Dbit_unset_write_s_test2_store_str)
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, Svadu_cg_cp_ad_update_test2_load, Svadu_cg_cp_ad_update_test2_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x8, Svadu_cg_Abit_unset_read_s_test2_load, Svadu_cg_Abit_unset_read_s_test2_load_str)
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_cp_ad_update_test2_exec, Svadu_cg_cp_ad_update_test2_exec_str)
+  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_Abit_unset_exec_s_test2_exec, Svadu_cg_Abit_unset_exec_s_test2_exec_str)
   LA(x13, rvtest_Sroot_pg_tbl)
-Svadu_cg_cp_ad_update_test2_read_store_pte:
+Svadu_cg_Dbit_unset_write_s_test2_read_store_pte:
   ld x9, 8(x13)
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_cp_ad_update_test2_read_store_pte, Svadu_cg_cp_ad_update_test2_read_store_pte_str)
-Svadu_cg_cp_ad_update_test2_read_load_pte:
+  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_Dbit_unset_write_s_test2_read_store_pte, Svadu_cg_Dbit_unset_write_s_test2_read_store_pte_str)
+Svadu_cg_Abit_unset_read_s_test2_read_load_pte:
   ld x9, 16(x13)
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_cp_ad_update_test2_read_load_pte, Svadu_cg_cp_ad_update_test2_read_load_pte_str)
-Svadu_cg_cp_ad_update_test2_read_exec_pte:
+  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_Abit_unset_read_s_test2_read_load_pte, Svadu_cg_Abit_unset_read_s_test2_read_load_pte_str)
+Svadu_cg_Abit_unset_exec_s_test2_read_exec_pte:
   ld x9, 24(x13)
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_cp_ad_update_test2_read_exec_pte, Svadu_cg_cp_ad_update_test2_read_exec_pte_str)
+  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_Abit_unset_exec_s_test2_read_exec_pte, Svadu_cg_Abit_unset_exec_s_test2_read_exec_pte_str)
 
 // Test case 3: PTE.A and PTE.D unset at level 4
   SUPERPAGE_PTE_SETUP_SV57(rvtest_data_1, (PTE_X | PTE_W | PTE_R | PTE_V), va_data_l4_w, LEVEL4)
@@ -202,34 +202,34 @@ Svadu_cg_cp_ad_update_test2_read_exec_pte:
   srli x8, x8, 16
   add x15, x15, x8
   addi x14, x14, 16
-Svadu_cg_cp_ad_update_test3_store:
+Svadu_cg_Abit_unset_write_s_test3_store:
   sw x14, 20(x6)
   nop
-Svadu_cg_cp_ad_update_test3_load:
+Svadu_cg_Abit_unset_read_s_test3_load:
   lw x8, 20(x13)
   nop
-Svadu_cg_cp_ad_update_test3_exec:
+Svadu_cg_Abit_unset_exec_s_test3_exec:
   jalr ra, x15, 0
   nop
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Svadu_cg_cp_ad_update_test3_store, Svadu_cg_cp_ad_update_test3_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, Svadu_cg_Abit_unset_write_s_test3_store, Svadu_cg_Abit_unset_write_s_test3_store_str)
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, Svadu_cg_cp_ad_update_test3_load, Svadu_cg_cp_ad_update_test3_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x8, Svadu_cg_Abit_unset_read_s_test3_load, Svadu_cg_Abit_unset_read_s_test3_load_str)
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_cp_ad_update_test3_exec, Svadu_cg_cp_ad_update_test3_exec_str)
+  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_Abit_unset_exec_s_test3_exec, Svadu_cg_Abit_unset_exec_s_test3_exec_str)
   LA(x13, rvtest_Sroot_pg_tbl)
-Svadu_cg_cp_ad_update_test3_read_store_pte:
+Svadu_cg_Abit_unset_write_s_test3_read_store_pte:
   ld x9, 8(x13)
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_cp_ad_update_test3_read_store_pte, Svadu_cg_cp_ad_update_test3_read_store_pte_str)
-Svadu_cg_cp_ad_update_test3_read_load_pte:
+  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_Abit_unset_write_s_test3_read_store_pte, Svadu_cg_Abit_unset_write_s_test3_read_store_pte_str)
+Svadu_cg_Abit_unset_read_s_test3_read_load_pte:
   ld x9, 16(x13)
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_cp_ad_update_test3_read_load_pte, Svadu_cg_cp_ad_update_test3_read_load_pte_str)
-Svadu_cg_cp_ad_update_test3_read_exec_pte:
+  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_Abit_unset_read_s_test3_read_load_pte, Svadu_cg_Abit_unset_read_s_test3_read_load_pte_str)
+Svadu_cg_Abit_unset_exec_s_test3_read_exec_pte:
   ld x9, 24(x13)
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_cp_ad_update_test3_read_exec_pte, Svadu_cg_cp_ad_update_test3_read_exec_pte_str)
+  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_Abit_unset_exec_s_test3_read_exec_pte, Svadu_cg_Abit_unset_exec_s_test3_read_exec_pte_str)
 
 // Test case 4: PTE.A unset at level 3
   PTE_SETUP_SV57(rvtest_slvl3_pg_tbl, (PTE_V), va_data_l3_w, LEVEL4)
@@ -254,34 +254,34 @@ Svadu_cg_cp_ad_update_test3_read_exec_pte:
   srli x8, x8, 25
   add x15, x15, x8
   addi x14, x14, 16
-Svadu_cg_cp_ad_update_test4_store:
+Svadu_cg_Abit_unset_write_s_test4_store:
   sw x14, 20(x6)
   nop
-Svadu_cg_cp_ad_update_test4_load:
+Svadu_cg_Abit_unset_read_s_test4_load:
   lw x8, 20(x13)
   nop
-Svadu_cg_cp_ad_update_test4_exec:
+Svadu_cg_Abit_unset_exec_s_test4_exec:
   jalr ra, x15, 0
   nop
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Svadu_cg_cp_ad_update_test4_store, Svadu_cg_cp_ad_update_test4_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, Svadu_cg_Abit_unset_write_s_test4_store, Svadu_cg_Abit_unset_write_s_test4_store_str)
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, Svadu_cg_cp_ad_update_test4_load, Svadu_cg_cp_ad_update_test4_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x8, Svadu_cg_Abit_unset_read_s_test4_load, Svadu_cg_Abit_unset_read_s_test4_load_str)
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_cp_ad_update_test4_exec, Svadu_cg_cp_ad_update_test4_exec_str)
+  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_Abit_unset_exec_s_test4_exec, Svadu_cg_Abit_unset_exec_s_test4_exec_str)
   LA(x13, rvtest_slvl3_pg_tbl)
-Svadu_cg_cp_ad_update_test4_read_store_pte:
+Svadu_cg_Abit_unset_write_s_test4_read_store_pte:
   ld x9, 8(x13)
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_cp_ad_update_test4_read_store_pte, Svadu_cg_cp_ad_update_test4_read_store_pte_str)
-Svadu_cg_cp_ad_update_test4_read_load_pte:
+  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_Abit_unset_write_s_test4_read_store_pte, Svadu_cg_Abit_unset_write_s_test4_read_store_pte_str)
+Svadu_cg_Abit_unset_read_s_test4_read_load_pte:
   ld x9, 16(x13)
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_cp_ad_update_test4_read_load_pte, Svadu_cg_cp_ad_update_test4_read_load_pte_str)
-Svadu_cg_cp_ad_update_test4_read_exec_pte:
+  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_Abit_unset_read_s_test4_read_load_pte, Svadu_cg_Abit_unset_read_s_test4_read_load_pte_str)
+Svadu_cg_Abit_unset_exec_s_test4_read_exec_pte:
   ld x9, 24(x13)
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_cp_ad_update_test4_read_exec_pte, Svadu_cg_cp_ad_update_test4_read_exec_pte_str)
+  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_Abit_unset_exec_s_test4_read_exec_pte, Svadu_cg_Abit_unset_exec_s_test4_read_exec_pte_str)
 
 // Test case 5: PTE.D unset at level 3
   PTE_SETUP_SV57(rvtest_slvl3_pg_tbl, (PTE_V), va_data_l3_w, LEVEL4)
@@ -306,34 +306,34 @@ Svadu_cg_cp_ad_update_test4_read_exec_pte:
   srli x8, x8, 25
   add x15, x15, x8
   addi x14, x14, 16
-Svadu_cg_cp_ad_update_test5_store:
+Svadu_cg_Dbit_unset_write_s_test5_store:
   sw x14, 20(x6)
   nop
-Svadu_cg_cp_ad_update_test5_load:
+Svadu_cg_Abit_unset_read_s_test5_load:
   lw x8, 20(x13)
   nop
-Svadu_cg_cp_ad_update_test5_exec:
+Svadu_cg_Abit_unset_exec_s_test5_exec:
   jalr ra, x15, 0
   nop
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Svadu_cg_cp_ad_update_test5_store, Svadu_cg_cp_ad_update_test5_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, Svadu_cg_Dbit_unset_write_s_test5_store, Svadu_cg_Dbit_unset_write_s_test5_store_str)
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, Svadu_cg_cp_ad_update_test5_load, Svadu_cg_cp_ad_update_test5_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x8, Svadu_cg_Abit_unset_read_s_test5_load, Svadu_cg_Abit_unset_read_s_test5_load_str)
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_cp_ad_update_test5_exec, Svadu_cg_cp_ad_update_test5_exec_str)
+  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_Abit_unset_exec_s_test5_exec, Svadu_cg_Abit_unset_exec_s_test5_exec_str)
   LA(x13, rvtest_slvl3_pg_tbl)
-Svadu_cg_cp_ad_update_test5_read_store_pte:
+Svadu_cg_Dbit_unset_write_s_test5_read_store_pte:
   ld x9, 8(x13)
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_cp_ad_update_test5_read_store_pte, Svadu_cg_cp_ad_update_test5_read_store_pte_str)
-Svadu_cg_cp_ad_update_test5_read_load_pte:
+  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_Dbit_unset_write_s_test5_read_store_pte, Svadu_cg_Dbit_unset_write_s_test5_read_store_pte_str)
+Svadu_cg_Abit_unset_read_s_test5_read_load_pte:
   ld x9, 16(x13)
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_cp_ad_update_test5_read_load_pte, Svadu_cg_cp_ad_update_test5_read_load_pte_str)
-Svadu_cg_cp_ad_update_test5_read_exec_pte:
+  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_Abit_unset_read_s_test5_read_load_pte, Svadu_cg_Abit_unset_read_s_test5_read_load_pte_str)
+Svadu_cg_Abit_unset_exec_s_test5_read_exec_pte:
   ld x9, 24(x13)
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_cp_ad_update_test5_read_exec_pte, Svadu_cg_cp_ad_update_test5_read_exec_pte_str)
+  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_Abit_unset_exec_s_test5_read_exec_pte, Svadu_cg_Abit_unset_exec_s_test5_read_exec_pte_str)
 
 // Test case 6: PTE.A and PTE.D unset at level 3
   PTE_SETUP_SV57(rvtest_slvl3_pg_tbl, (PTE_V), va_data_l3_w, LEVEL4)
@@ -358,34 +358,34 @@ Svadu_cg_cp_ad_update_test5_read_exec_pte:
   srli x8, x8, 25
   add x15, x15, x8
   addi x14, x14, 16
-Svadu_cg_cp_ad_update_test6_store:
+Svadu_cg_Abit_unset_write_s_test6_store:
   sw x14, 20(x6)
   nop
-Svadu_cg_cp_ad_update_test6_load:
+Svadu_cg_Abit_unset_read_s_test6_load:
   lw x8, 20(x13)
   nop
-Svadu_cg_cp_ad_update_test6_exec:
+Svadu_cg_Abit_unset_exec_s_test6_exec:
   jalr ra, x15, 0
   nop
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Svadu_cg_cp_ad_update_test6_store, Svadu_cg_cp_ad_update_test6_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, Svadu_cg_Abit_unset_write_s_test6_store, Svadu_cg_Abit_unset_write_s_test6_store_str)
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, Svadu_cg_cp_ad_update_test6_load, Svadu_cg_cp_ad_update_test6_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x8, Svadu_cg_Abit_unset_read_s_test6_load, Svadu_cg_Abit_unset_read_s_test6_load_str)
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_cp_ad_update_test6_exec, Svadu_cg_cp_ad_update_test6_exec_str)
+  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_Abit_unset_exec_s_test6_exec, Svadu_cg_Abit_unset_exec_s_test6_exec_str)
   LA(x13, rvtest_slvl3_pg_tbl)
-Svadu_cg_cp_ad_update_test6_read_store_pte:
+Svadu_cg_Abit_unset_write_s_test6_read_store_pte:
   ld x9, 8(x13)
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_cp_ad_update_test6_read_store_pte, Svadu_cg_cp_ad_update_test6_read_store_pte_str)
-Svadu_cg_cp_ad_update_test6_read_load_pte:
+  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_Abit_unset_write_s_test6_read_store_pte, Svadu_cg_Abit_unset_write_s_test6_read_store_pte_str)
+Svadu_cg_Abit_unset_read_s_test6_read_load_pte:
   ld x9, 16(x13)
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_cp_ad_update_test6_read_load_pte, Svadu_cg_cp_ad_update_test6_read_load_pte_str)
-Svadu_cg_cp_ad_update_test6_read_exec_pte:
+  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_Abit_unset_read_s_test6_read_load_pte, Svadu_cg_Abit_unset_read_s_test6_read_load_pte_str)
+Svadu_cg_Abit_unset_exec_s_test6_read_exec_pte:
   ld x9, 24(x13)
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_cp_ad_update_test6_read_exec_pte, Svadu_cg_cp_ad_update_test6_read_exec_pte_str)
+  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_Abit_unset_exec_s_test6_read_exec_pte, Svadu_cg_Abit_unset_exec_s_test6_read_exec_pte_str)
 
 // Test case 7: PTE.A unset at level 2
   PTE_SETUP_SV57(rvtest_slvl3_pg_tbl, (PTE_V), va_data_l2_w, LEVEL4)
@@ -411,34 +411,34 @@ Svadu_cg_cp_ad_update_test6_read_exec_pte:
   srli x8, x8, 34
   add x15, x15, x8
   addi x14, x14, 16
-Svadu_cg_cp_ad_update_test7_store:
+Svadu_cg_Abit_unset_write_s_test7_store:
   sw x14, 20(x6)
   nop
-Svadu_cg_cp_ad_update_test7_load:
+Svadu_cg_Abit_unset_read_s_test7_load:
   lw x8, 20(x13)
   nop
-Svadu_cg_cp_ad_update_test7_exec:
+Svadu_cg_Abit_unset_exec_s_test7_exec:
   jalr ra, x15, 0
   nop
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Svadu_cg_cp_ad_update_test7_store, Svadu_cg_cp_ad_update_test7_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, Svadu_cg_Abit_unset_write_s_test7_store, Svadu_cg_Abit_unset_write_s_test7_store_str)
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, Svadu_cg_cp_ad_update_test7_load, Svadu_cg_cp_ad_update_test7_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x8, Svadu_cg_Abit_unset_read_s_test7_load, Svadu_cg_Abit_unset_read_s_test7_load_str)
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_cp_ad_update_test7_exec, Svadu_cg_cp_ad_update_test7_exec_str)
+  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_Abit_unset_exec_s_test7_exec, Svadu_cg_Abit_unset_exec_s_test7_exec_str)
   LA(x13, rvtest_slvl2_pg_tbl)
-Svadu_cg_cp_ad_update_test7_read_store_pte:
+Svadu_cg_Abit_unset_write_s_test7_read_store_pte:
   ld x9, 8(x13)
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_cp_ad_update_test7_read_store_pte, Svadu_cg_cp_ad_update_test7_read_store_pte_str)
-Svadu_cg_cp_ad_update_test7_read_load_pte:
+  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_Abit_unset_write_s_test7_read_store_pte, Svadu_cg_Abit_unset_write_s_test7_read_store_pte_str)
+Svadu_cg_Abit_unset_read_s_test7_read_load_pte:
   ld x9, 16(x13)
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_cp_ad_update_test7_read_load_pte, Svadu_cg_cp_ad_update_test7_read_load_pte_str)
-Svadu_cg_cp_ad_update_test7_read_exec_pte:
+  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_Abit_unset_read_s_test7_read_load_pte, Svadu_cg_Abit_unset_read_s_test7_read_load_pte_str)
+Svadu_cg_Abit_unset_exec_s_test7_read_exec_pte:
   ld x9, 24(x13)
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_cp_ad_update_test7_read_exec_pte, Svadu_cg_cp_ad_update_test7_read_exec_pte_str)
+  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_Abit_unset_exec_s_test7_read_exec_pte, Svadu_cg_Abit_unset_exec_s_test7_read_exec_pte_str)
 
 // Test case 8: PTE.D unset at level 2
   PTE_SETUP_SV57(rvtest_slvl3_pg_tbl, (PTE_V), va_data_l2_w, LEVEL4)
@@ -464,34 +464,34 @@ Svadu_cg_cp_ad_update_test7_read_exec_pte:
   srli x8, x8, 34
   add x15, x15, x8
   addi x14, x14, 16
-Svadu_cg_cp_ad_update_test8_store:
+Svadu_cg_Dbit_unset_write_s_test8_store:
   sw x14, 20(x6)
   nop
-Svadu_cg_cp_ad_update_test8_load:
+Svadu_cg_Abit_unset_read_s_test8_load:
   lw x8, 20(x13)
   nop
-Svadu_cg_cp_ad_update_test8_exec:
+Svadu_cg_Abit_unset_exec_s_test8_exec:
   jalr ra, x15, 0
   nop
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Svadu_cg_cp_ad_update_test8_store, Svadu_cg_cp_ad_update_test8_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, Svadu_cg_Dbit_unset_write_s_test8_store, Svadu_cg_Dbit_unset_write_s_test8_store_str)
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, Svadu_cg_cp_ad_update_test8_load, Svadu_cg_cp_ad_update_test8_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x8, Svadu_cg_Abit_unset_read_s_test8_load, Svadu_cg_Abit_unset_read_s_test8_load_str)
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_cp_ad_update_test8_exec, Svadu_cg_cp_ad_update_test8_exec_str)
+  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_Abit_unset_exec_s_test8_exec, Svadu_cg_Abit_unset_exec_s_test8_exec_str)
   LA(x13, rvtest_slvl2_pg_tbl)
-Svadu_cg_cp_ad_update_test8_read_store_pte:
+Svadu_cg_Dbit_unset_write_s_test8_read_store_pte:
   ld x9, 8(x13)
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_cp_ad_update_test8_read_store_pte, Svadu_cg_cp_ad_update_test8_read_store_pte_str)
-Svadu_cg_cp_ad_update_test8_read_load_pte:
+  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_Dbit_unset_write_s_test8_read_store_pte, Svadu_cg_Dbit_unset_write_s_test8_read_store_pte_str)
+Svadu_cg_Abit_unset_read_s_test8_read_load_pte:
   ld x9, 16(x13)
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_cp_ad_update_test8_read_load_pte, Svadu_cg_cp_ad_update_test8_read_load_pte_str)
-Svadu_cg_cp_ad_update_test8_read_exec_pte:
+  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_Abit_unset_read_s_test8_read_load_pte, Svadu_cg_Abit_unset_read_s_test8_read_load_pte_str)
+Svadu_cg_Abit_unset_exec_s_test8_read_exec_pte:
   ld x9, 24(x13)
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_cp_ad_update_test8_read_exec_pte, Svadu_cg_cp_ad_update_test8_read_exec_pte_str)
+  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_Abit_unset_exec_s_test8_read_exec_pte, Svadu_cg_Abit_unset_exec_s_test8_read_exec_pte_str)
 
 // Test case 9: PTE.A and PTE.D unset at level 2
   PTE_SETUP_SV57(rvtest_slvl3_pg_tbl, (PTE_V), va_data_l2_w, LEVEL4)
@@ -517,34 +517,34 @@ Svadu_cg_cp_ad_update_test8_read_exec_pte:
   srli x8, x8, 34
   add x15, x15, x8
   addi x14, x14, 16
-Svadu_cg_cp_ad_update_test9_store:
+Svadu_cg_Abit_unset_write_s_test9_store:
   sw x14, 20(x6)
   nop
-Svadu_cg_cp_ad_update_test9_load:
+Svadu_cg_Abit_unset_read_s_test9_load:
   lw x8, 20(x13)
   nop
-Svadu_cg_cp_ad_update_test9_exec:
+Svadu_cg_Abit_unset_exec_s_test9_exec:
   jalr ra, x15, 0
   nop
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Svadu_cg_cp_ad_update_test9_store, Svadu_cg_cp_ad_update_test9_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, Svadu_cg_Abit_unset_write_s_test9_store, Svadu_cg_Abit_unset_write_s_test9_store_str)
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, Svadu_cg_cp_ad_update_test9_load, Svadu_cg_cp_ad_update_test9_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x8, Svadu_cg_Abit_unset_read_s_test9_load, Svadu_cg_Abit_unset_read_s_test9_load_str)
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_cp_ad_update_test9_exec, Svadu_cg_cp_ad_update_test9_exec_str)
+  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_Abit_unset_exec_s_test9_exec, Svadu_cg_Abit_unset_exec_s_test9_exec_str)
   LA(x13, rvtest_slvl2_pg_tbl)
-Svadu_cg_cp_ad_update_test9_read_store_pte:
+Svadu_cg_Abit_unset_write_s_test9_read_store_pte:
   ld x9, 8(x13)
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_cp_ad_update_test9_read_store_pte, Svadu_cg_cp_ad_update_test9_read_store_pte_str)
-Svadu_cg_cp_ad_update_test9_read_load_pte:
+  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_Abit_unset_write_s_test9_read_store_pte, Svadu_cg_Abit_unset_write_s_test9_read_store_pte_str)
+Svadu_cg_Abit_unset_read_s_test9_read_load_pte:
   ld x9, 16(x13)
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_cp_ad_update_test9_read_load_pte, Svadu_cg_cp_ad_update_test9_read_load_pte_str)
-Svadu_cg_cp_ad_update_test9_read_exec_pte:
+  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_Abit_unset_read_s_test9_read_load_pte, Svadu_cg_Abit_unset_read_s_test9_read_load_pte_str)
+Svadu_cg_Abit_unset_exec_s_test9_read_exec_pte:
   ld x9, 24(x13)
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_cp_ad_update_test9_read_exec_pte, Svadu_cg_cp_ad_update_test9_read_exec_pte_str)
+  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_Abit_unset_exec_s_test9_read_exec_pte, Svadu_cg_Abit_unset_exec_s_test9_read_exec_pte_str)
 
 // Test case 10: PTE.A unset at level 1
   PTE_SETUP_SV57(rvtest_slvl3_pg_tbl, (PTE_V), va_data_l1_w, LEVEL4)
@@ -571,34 +571,34 @@ Svadu_cg_cp_ad_update_test9_read_exec_pte:
   srli x8, x8, 43
   add x15, x15, x8
   addi x14, x14, 16
-Svadu_cg_cp_ad_update_test10_store:
+Svadu_cg_Abit_unset_write_s_test10_store:
   sw x14, 20(x6)
   nop
-Svadu_cg_cp_ad_update_test10_load:
+Svadu_cg_Abit_unset_read_s_test10_load:
   lw x8, 20(x13)
   nop
-Svadu_cg_cp_ad_update_test10_exec:
+Svadu_cg_Abit_unset_exec_s_test10_exec:
   jalr ra, x15, 0
   nop
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Svadu_cg_cp_ad_update_test10_store, Svadu_cg_cp_ad_update_test10_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, Svadu_cg_Abit_unset_write_s_test10_store, Svadu_cg_Abit_unset_write_s_test10_store_str)
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, Svadu_cg_cp_ad_update_test10_load, Svadu_cg_cp_ad_update_test10_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x8, Svadu_cg_Abit_unset_read_s_test10_load, Svadu_cg_Abit_unset_read_s_test10_load_str)
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_cp_ad_update_test10_exec, Svadu_cg_cp_ad_update_test10_exec_str)
+  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_Abit_unset_exec_s_test10_exec, Svadu_cg_Abit_unset_exec_s_test10_exec_str)
   LA(x13, rvtest_slvl1_pg_tbl)
-Svadu_cg_cp_ad_update_test10_read_store_pte:
+Svadu_cg_Abit_unset_write_s_test10_read_store_pte:
   ld x9, 8(x13)
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_cp_ad_update_test10_read_store_pte, Svadu_cg_cp_ad_update_test10_read_store_pte_str)
-Svadu_cg_cp_ad_update_test10_read_load_pte:
+  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_Abit_unset_write_s_test10_read_store_pte, Svadu_cg_Abit_unset_write_s_test10_read_store_pte_str)
+Svadu_cg_Abit_unset_read_s_test10_read_load_pte:
   ld x9, 16(x13)
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_cp_ad_update_test10_read_load_pte, Svadu_cg_cp_ad_update_test10_read_load_pte_str)
-Svadu_cg_cp_ad_update_test10_read_exec_pte:
+  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_Abit_unset_read_s_test10_read_load_pte, Svadu_cg_Abit_unset_read_s_test10_read_load_pte_str)
+Svadu_cg_Abit_unset_exec_s_test10_read_exec_pte:
   ld x9, 24(x13)
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_cp_ad_update_test10_read_exec_pte, Svadu_cg_cp_ad_update_test10_read_exec_pte_str)
+  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_Abit_unset_exec_s_test10_read_exec_pte, Svadu_cg_Abit_unset_exec_s_test10_read_exec_pte_str)
 
 // Test case 11: PTE.D unset at level 1
   PTE_SETUP_SV57(rvtest_slvl3_pg_tbl, (PTE_V), va_data_l1_w, LEVEL4)
@@ -625,34 +625,34 @@ Svadu_cg_cp_ad_update_test10_read_exec_pte:
   srli x8, x8, 43
   add x15, x15, x8
   addi x14, x14, 16
-Svadu_cg_cp_ad_update_test11_store:
+Svadu_cg_Dbit_unset_write_s_test11_store:
   sw x14, 20(x6)
   nop
-Svadu_cg_cp_ad_update_test11_load:
+Svadu_cg_Abit_unset_read_s_test11_load:
   lw x8, 20(x13)
   nop
-Svadu_cg_cp_ad_update_test11_exec:
+Svadu_cg_Abit_unset_exec_s_test11_exec:
   jalr ra, x15, 0
   nop
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Svadu_cg_cp_ad_update_test11_store, Svadu_cg_cp_ad_update_test11_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, Svadu_cg_Dbit_unset_write_s_test11_store, Svadu_cg_Dbit_unset_write_s_test11_store_str)
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, Svadu_cg_cp_ad_update_test11_load, Svadu_cg_cp_ad_update_test11_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x8, Svadu_cg_Abit_unset_read_s_test11_load, Svadu_cg_Abit_unset_read_s_test11_load_str)
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_cp_ad_update_test11_exec, Svadu_cg_cp_ad_update_test11_exec_str)
+  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_Abit_unset_exec_s_test11_exec, Svadu_cg_Abit_unset_exec_s_test11_exec_str)
   LA(x13, rvtest_slvl1_pg_tbl)
-Svadu_cg_cp_ad_update_test11_read_store_pte:
+Svadu_cg_Dbit_unset_write_s_test11_read_store_pte:
   ld x9, 8(x13)
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_cp_ad_update_test11_read_store_pte, Svadu_cg_cp_ad_update_test11_read_store_pte_str)
-Svadu_cg_cp_ad_update_test11_read_load_pte:
+  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_Dbit_unset_write_s_test11_read_store_pte, Svadu_cg_Dbit_unset_write_s_test11_read_store_pte_str)
+Svadu_cg_Abit_unset_read_s_test11_read_load_pte:
   ld x9, 16(x13)
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_cp_ad_update_test11_read_load_pte, Svadu_cg_cp_ad_update_test11_read_load_pte_str)
-Svadu_cg_cp_ad_update_test11_read_exec_pte:
+  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_Abit_unset_read_s_test11_read_load_pte, Svadu_cg_Abit_unset_read_s_test11_read_load_pte_str)
+Svadu_cg_Abit_unset_exec_s_test11_read_exec_pte:
   ld x9, 24(x13)
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_cp_ad_update_test11_read_exec_pte, Svadu_cg_cp_ad_update_test11_read_exec_pte_str)
+  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_Abit_unset_exec_s_test11_read_exec_pte, Svadu_cg_Abit_unset_exec_s_test11_read_exec_pte_str)
 
 // Test case 12: PTE.A and PTE.D unset at level 1
   PTE_SETUP_SV57(rvtest_slvl3_pg_tbl, (PTE_V), va_data_l1_w, LEVEL4)
@@ -679,34 +679,34 @@ Svadu_cg_cp_ad_update_test11_read_exec_pte:
   srli x8, x8, 43
   add x15, x15, x8
   addi x14, x14, 16
-Svadu_cg_cp_ad_update_test12_store:
+Svadu_cg_Abit_unset_write_s_test12_store:
   sw x14, 20(x6)
   nop
-Svadu_cg_cp_ad_update_test12_load:
+Svadu_cg_Abit_unset_read_s_test12_load:
   lw x8, 20(x13)
   nop
-Svadu_cg_cp_ad_update_test12_exec:
+Svadu_cg_Abit_unset_exec_s_test12_exec:
   jalr ra, x15, 0
   nop
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Svadu_cg_cp_ad_update_test12_store, Svadu_cg_cp_ad_update_test12_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, Svadu_cg_Abit_unset_write_s_test12_store, Svadu_cg_Abit_unset_write_s_test12_store_str)
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, Svadu_cg_cp_ad_update_test12_load, Svadu_cg_cp_ad_update_test12_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x8, Svadu_cg_Abit_unset_read_s_test12_load, Svadu_cg_Abit_unset_read_s_test12_load_str)
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_cp_ad_update_test12_exec, Svadu_cg_cp_ad_update_test12_exec_str)
+  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_Abit_unset_exec_s_test12_exec, Svadu_cg_Abit_unset_exec_s_test12_exec_str)
   LA(x13, rvtest_slvl1_pg_tbl)
-Svadu_cg_cp_ad_update_test12_read_store_pte:
+Svadu_cg_Abit_unset_write_s_test12_read_store_pte:
   ld x9, 8(x13)
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_cp_ad_update_test12_read_store_pte, Svadu_cg_cp_ad_update_test12_read_store_pte_str)
-Svadu_cg_cp_ad_update_test12_read_load_pte:
+  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_Abit_unset_write_s_test12_read_store_pte, Svadu_cg_Abit_unset_write_s_test12_read_store_pte_str)
+Svadu_cg_Abit_unset_read_s_test12_read_load_pte:
   ld x9, 16(x13)
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_cp_ad_update_test12_read_load_pte, Svadu_cg_cp_ad_update_test12_read_load_pte_str)
-Svadu_cg_cp_ad_update_test12_read_exec_pte:
+  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_Abit_unset_read_s_test12_read_load_pte, Svadu_cg_Abit_unset_read_s_test12_read_load_pte_str)
+Svadu_cg_Abit_unset_exec_s_test12_read_exec_pte:
   ld x9, 24(x13)
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_cp_ad_update_test12_read_exec_pte, Svadu_cg_cp_ad_update_test12_read_exec_pte_str)
+  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_Abit_unset_exec_s_test12_read_exec_pte, Svadu_cg_Abit_unset_exec_s_test12_read_exec_pte_str)
 
 // Test case 13: PTE.A unset at level 0
   PTE_SETUP_SV57(rvtest_slvl3_pg_tbl, (PTE_V), va_data_l0_w, LEVEL4)
@@ -734,34 +734,34 @@ Svadu_cg_cp_ad_update_test12_read_exec_pte:
   srli x8, x8, 52
   add x15, x15, x8
   addi x14, x14, 16
-Svadu_cg_cp_ad_update_test13_store:
+Svadu_cg_Abit_unset_write_s_test13_store:
   sw x14, 20(x6)
   nop
-Svadu_cg_cp_ad_update_test13_load:
+Svadu_cg_Abit_unset_read_s_test13_load:
   lw x8, 20(x13)
   nop
-Svadu_cg_cp_ad_update_test13_exec:
+Svadu_cg_Abit_unset_exec_s_test13_exec:
   jalr ra, x15, 0
   nop
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Svadu_cg_cp_ad_update_test13_store, Svadu_cg_cp_ad_update_test13_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, Svadu_cg_Abit_unset_write_s_test13_store, Svadu_cg_Abit_unset_write_s_test13_store_str)
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, Svadu_cg_cp_ad_update_test13_load, Svadu_cg_cp_ad_update_test13_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x8, Svadu_cg_Abit_unset_read_s_test13_load, Svadu_cg_Abit_unset_read_s_test13_load_str)
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_cp_ad_update_test13_exec, Svadu_cg_cp_ad_update_test13_exec_str)
+  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_Abit_unset_exec_s_test13_exec, Svadu_cg_Abit_unset_exec_s_test13_exec_str)
   LA(x13, rvtest_slvl0_pg_tbl)
-Svadu_cg_cp_ad_update_test13_read_store_pte:
+Svadu_cg_Abit_unset_write_s_test13_read_store_pte:
   ld x9, 8(x13)
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_cp_ad_update_test13_read_store_pte, Svadu_cg_cp_ad_update_test13_read_store_pte_str)
-Svadu_cg_cp_ad_update_test13_read_load_pte:
+  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_Abit_unset_write_s_test13_read_store_pte, Svadu_cg_Abit_unset_write_s_test13_read_store_pte_str)
+Svadu_cg_Abit_unset_read_s_test13_read_load_pte:
   ld x9, 16(x13)
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_cp_ad_update_test13_read_load_pte, Svadu_cg_cp_ad_update_test13_read_load_pte_str)
-Svadu_cg_cp_ad_update_test13_read_exec_pte:
+  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_Abit_unset_read_s_test13_read_load_pte, Svadu_cg_Abit_unset_read_s_test13_read_load_pte_str)
+Svadu_cg_Abit_unset_exec_s_test13_read_exec_pte:
   ld x9, 24(x13)
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_cp_ad_update_test13_read_exec_pte, Svadu_cg_cp_ad_update_test13_read_exec_pte_str)
+  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_Abit_unset_exec_s_test13_read_exec_pte, Svadu_cg_Abit_unset_exec_s_test13_read_exec_pte_str)
 
 // Test case 14: PTE.D unset at level 0
   PTE_SETUP_SV57(rvtest_slvl3_pg_tbl, (PTE_V), va_data_l0_w, LEVEL4)
@@ -789,34 +789,34 @@ Svadu_cg_cp_ad_update_test13_read_exec_pte:
   srli x8, x8, 52
   add x15, x15, x8
   addi x14, x14, 16
-Svadu_cg_cp_ad_update_test14_store:
+Svadu_cg_Dbit_unset_write_s_test14_store:
   sw x14, 20(x6)
   nop
-Svadu_cg_cp_ad_update_test14_load:
+Svadu_cg_Abit_unset_read_s_test14_load:
   lw x8, 20(x13)
   nop
-Svadu_cg_cp_ad_update_test14_exec:
+Svadu_cg_Abit_unset_exec_s_test14_exec:
   jalr ra, x15, 0
   nop
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Svadu_cg_cp_ad_update_test14_store, Svadu_cg_cp_ad_update_test14_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, Svadu_cg_Dbit_unset_write_s_test14_store, Svadu_cg_Dbit_unset_write_s_test14_store_str)
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, Svadu_cg_cp_ad_update_test14_load, Svadu_cg_cp_ad_update_test14_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x8, Svadu_cg_Abit_unset_read_s_test14_load, Svadu_cg_Abit_unset_read_s_test14_load_str)
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_cp_ad_update_test14_exec, Svadu_cg_cp_ad_update_test14_exec_str)
+  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_Abit_unset_exec_s_test14_exec, Svadu_cg_Abit_unset_exec_s_test14_exec_str)
   LA(x13, rvtest_slvl0_pg_tbl)
-Svadu_cg_cp_ad_update_test14_read_store_pte:
+Svadu_cg_Dbit_unset_write_s_test14_read_store_pte:
   ld x9, 8(x13)
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_cp_ad_update_test14_read_store_pte, Svadu_cg_cp_ad_update_test14_read_store_pte_str)
-Svadu_cg_cp_ad_update_test14_read_load_pte:
+  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_Dbit_unset_write_s_test14_read_store_pte, Svadu_cg_Dbit_unset_write_s_test14_read_store_pte_str)
+Svadu_cg_Abit_unset_read_s_test14_read_load_pte:
   ld x9, 16(x13)
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_cp_ad_update_test14_read_load_pte, Svadu_cg_cp_ad_update_test14_read_load_pte_str)
-Svadu_cg_cp_ad_update_test14_read_exec_pte:
+  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_Abit_unset_read_s_test14_read_load_pte, Svadu_cg_Abit_unset_read_s_test14_read_load_pte_str)
+Svadu_cg_Abit_unset_exec_s_test14_read_exec_pte:
   ld x9, 24(x13)
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_cp_ad_update_test14_read_exec_pte, Svadu_cg_cp_ad_update_test14_read_exec_pte_str)
+  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_Abit_unset_exec_s_test14_read_exec_pte, Svadu_cg_Abit_unset_exec_s_test14_read_exec_pte_str)
 
 // Test case 15: PTE.A and PTE.D unset at level 0
   PTE_SETUP_SV57(rvtest_slvl3_pg_tbl, (PTE_V), va_data_l0_w, LEVEL4)
@@ -844,34 +844,34 @@ Svadu_cg_cp_ad_update_test14_read_exec_pte:
   srli x8, x8, 52
   add x15, x15, x8
   addi x14, x14, 16
-Svadu_cg_cp_ad_update_test15_store:
+Svadu_cg_Abit_unset_write_s_test15_store:
   sw x14, 20(x6)
   nop
-Svadu_cg_cp_ad_update_test15_load:
+Svadu_cg_Abit_unset_read_s_test15_load:
   lw x8, 20(x13)
   nop
-Svadu_cg_cp_ad_update_test15_exec:
+Svadu_cg_Abit_unset_exec_s_test15_exec:
   jalr ra, x15, 0
   nop
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Svadu_cg_cp_ad_update_test15_store, Svadu_cg_cp_ad_update_test15_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, Svadu_cg_Abit_unset_write_s_test15_store, Svadu_cg_Abit_unset_write_s_test15_store_str)
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, Svadu_cg_cp_ad_update_test15_load, Svadu_cg_cp_ad_update_test15_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x8, Svadu_cg_Abit_unset_read_s_test15_load, Svadu_cg_Abit_unset_read_s_test15_load_str)
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_cp_ad_update_test15_exec, Svadu_cg_cp_ad_update_test15_exec_str)
+  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_Abit_unset_exec_s_test15_exec, Svadu_cg_Abit_unset_exec_s_test15_exec_str)
   LA(x13, rvtest_slvl0_pg_tbl)
-Svadu_cg_cp_ad_update_test15_read_store_pte:
+Svadu_cg_Abit_unset_write_s_test15_read_store_pte:
   ld x9, 8(x13)
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_cp_ad_update_test15_read_store_pte, Svadu_cg_cp_ad_update_test15_read_store_pte_str)
-Svadu_cg_cp_ad_update_test15_read_load_pte:
+  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_Abit_unset_write_s_test15_read_store_pte, Svadu_cg_Abit_unset_write_s_test15_read_store_pte_str)
+Svadu_cg_Abit_unset_read_s_test15_read_load_pte:
   ld x9, 16(x13)
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_cp_ad_update_test15_read_load_pte, Svadu_cg_cp_ad_update_test15_read_load_pte_str)
-Svadu_cg_cp_ad_update_test15_read_exec_pte:
+  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_Abit_unset_read_s_test15_read_load_pte, Svadu_cg_Abit_unset_read_s_test15_read_load_pte_str)
+Svadu_cg_Abit_unset_exec_s_test15_read_exec_pte:
   ld x9, 24(x13)
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_cp_ad_update_test15_read_exec_pte, Svadu_cg_cp_ad_update_test15_read_exec_pte_str)
+  RVTEST_SIGUPD(x2, x5, x4, x9, Svadu_cg_Abit_unset_exec_s_test15_read_exec_pte, Svadu_cg_Abit_unset_exec_s_test15_read_exec_pte_str)
 
 
 // Instantiate trap handlers and other epilog code, call RVMODEL_HALT at end of test
@@ -910,96 +910,96 @@ rvtest_slvl3_pg_tbl:
   .skip(4096)
 
 // Testcase strings
-Svadu_cg_cp_ad_update_test1_store_str: .string "\"test: 1; cg: Svadu_cg; cp: cp_ad_update; bin: test1_store\""
-Svadu_cg_cp_ad_update_test1_load_str: .string "\"test: 2; cg: Svadu_cg; cp: cp_ad_update; bin: test1_load\""
-Svadu_cg_cp_ad_update_test1_exec_str: .string "\"test: 3; cg: Svadu_cg; cp: cp_ad_update; bin: test1_exec\""
-Svadu_cg_cp_ad_update_test1_read_store_pte_str: .string "\"test: 4; cg: Svadu_cg; cp: cp_ad_update; bin: test1_read_store_pte\""
-Svadu_cg_cp_ad_update_test1_read_load_pte_str: .string "\"test: 5; cg: Svadu_cg; cp: cp_ad_update; bin: test1_read_load_pte\""
-Svadu_cg_cp_ad_update_test1_read_exec_pte_str: .string "\"test: 6; cg: Svadu_cg; cp: cp_ad_update; bin: test1_read_exec_pte\""
-Svadu_cg_cp_ad_update_test2_store_str: .string "\"test: 7; cg: Svadu_cg; cp: cp_ad_update; bin: test2_store\""
-Svadu_cg_cp_ad_update_test2_load_str: .string "\"test: 8; cg: Svadu_cg; cp: cp_ad_update; bin: test2_load\""
-Svadu_cg_cp_ad_update_test2_exec_str: .string "\"test: 9; cg: Svadu_cg; cp: cp_ad_update; bin: test2_exec\""
-Svadu_cg_cp_ad_update_test2_read_store_pte_str: .string "\"test: 10; cg: Svadu_cg; cp: cp_ad_update; bin: test2_read_store_pte\""
-Svadu_cg_cp_ad_update_test2_read_load_pte_str: .string "\"test: 11; cg: Svadu_cg; cp: cp_ad_update; bin: test2_read_load_pte\""
-Svadu_cg_cp_ad_update_test2_read_exec_pte_str: .string "\"test: 12; cg: Svadu_cg; cp: cp_ad_update; bin: test2_read_exec_pte\""
-Svadu_cg_cp_ad_update_test3_store_str: .string "\"test: 13; cg: Svadu_cg; cp: cp_ad_update; bin: test3_store\""
-Svadu_cg_cp_ad_update_test3_load_str: .string "\"test: 14; cg: Svadu_cg; cp: cp_ad_update; bin: test3_load\""
-Svadu_cg_cp_ad_update_test3_exec_str: .string "\"test: 15; cg: Svadu_cg; cp: cp_ad_update; bin: test3_exec\""
-Svadu_cg_cp_ad_update_test3_read_store_pte_str: .string "\"test: 16; cg: Svadu_cg; cp: cp_ad_update; bin: test3_read_store_pte\""
-Svadu_cg_cp_ad_update_test3_read_load_pte_str: .string "\"test: 17; cg: Svadu_cg; cp: cp_ad_update; bin: test3_read_load_pte\""
-Svadu_cg_cp_ad_update_test3_read_exec_pte_str: .string "\"test: 18; cg: Svadu_cg; cp: cp_ad_update; bin: test3_read_exec_pte\""
-Svadu_cg_cp_ad_update_test4_store_str: .string "\"test: 19; cg: Svadu_cg; cp: cp_ad_update; bin: test4_store\""
-Svadu_cg_cp_ad_update_test4_load_str: .string "\"test: 20; cg: Svadu_cg; cp: cp_ad_update; bin: test4_load\""
-Svadu_cg_cp_ad_update_test4_exec_str: .string "\"test: 21; cg: Svadu_cg; cp: cp_ad_update; bin: test4_exec\""
-Svadu_cg_cp_ad_update_test4_read_store_pte_str: .string "\"test: 22; cg: Svadu_cg; cp: cp_ad_update; bin: test4_read_store_pte\""
-Svadu_cg_cp_ad_update_test4_read_load_pte_str: .string "\"test: 23; cg: Svadu_cg; cp: cp_ad_update; bin: test4_read_load_pte\""
-Svadu_cg_cp_ad_update_test4_read_exec_pte_str: .string "\"test: 24; cg: Svadu_cg; cp: cp_ad_update; bin: test4_read_exec_pte\""
-Svadu_cg_cp_ad_update_test5_store_str: .string "\"test: 25; cg: Svadu_cg; cp: cp_ad_update; bin: test5_store\""
-Svadu_cg_cp_ad_update_test5_load_str: .string "\"test: 26; cg: Svadu_cg; cp: cp_ad_update; bin: test5_load\""
-Svadu_cg_cp_ad_update_test5_exec_str: .string "\"test: 27; cg: Svadu_cg; cp: cp_ad_update; bin: test5_exec\""
-Svadu_cg_cp_ad_update_test5_read_store_pte_str: .string "\"test: 28; cg: Svadu_cg; cp: cp_ad_update; bin: test5_read_store_pte\""
-Svadu_cg_cp_ad_update_test5_read_load_pte_str: .string "\"test: 29; cg: Svadu_cg; cp: cp_ad_update; bin: test5_read_load_pte\""
-Svadu_cg_cp_ad_update_test5_read_exec_pte_str: .string "\"test: 30; cg: Svadu_cg; cp: cp_ad_update; bin: test5_read_exec_pte\""
-Svadu_cg_cp_ad_update_test6_store_str: .string "\"test: 31; cg: Svadu_cg; cp: cp_ad_update; bin: test6_store\""
-Svadu_cg_cp_ad_update_test6_load_str: .string "\"test: 32; cg: Svadu_cg; cp: cp_ad_update; bin: test6_load\""
-Svadu_cg_cp_ad_update_test6_exec_str: .string "\"test: 33; cg: Svadu_cg; cp: cp_ad_update; bin: test6_exec\""
-Svadu_cg_cp_ad_update_test6_read_store_pte_str: .string "\"test: 34; cg: Svadu_cg; cp: cp_ad_update; bin: test6_read_store_pte\""
-Svadu_cg_cp_ad_update_test6_read_load_pte_str: .string "\"test: 35; cg: Svadu_cg; cp: cp_ad_update; bin: test6_read_load_pte\""
-Svadu_cg_cp_ad_update_test6_read_exec_pte_str: .string "\"test: 36; cg: Svadu_cg; cp: cp_ad_update; bin: test6_read_exec_pte\""
-Svadu_cg_cp_ad_update_test7_store_str: .string "\"test: 37; cg: Svadu_cg; cp: cp_ad_update; bin: test7_store\""
-Svadu_cg_cp_ad_update_test7_load_str: .string "\"test: 38; cg: Svadu_cg; cp: cp_ad_update; bin: test7_load\""
-Svadu_cg_cp_ad_update_test7_exec_str: .string "\"test: 39; cg: Svadu_cg; cp: cp_ad_update; bin: test7_exec\""
-Svadu_cg_cp_ad_update_test7_read_store_pte_str: .string "\"test: 40; cg: Svadu_cg; cp: cp_ad_update; bin: test7_read_store_pte\""
-Svadu_cg_cp_ad_update_test7_read_load_pte_str: .string "\"test: 41; cg: Svadu_cg; cp: cp_ad_update; bin: test7_read_load_pte\""
-Svadu_cg_cp_ad_update_test7_read_exec_pte_str: .string "\"test: 42; cg: Svadu_cg; cp: cp_ad_update; bin: test7_read_exec_pte\""
-Svadu_cg_cp_ad_update_test8_store_str: .string "\"test: 43; cg: Svadu_cg; cp: cp_ad_update; bin: test8_store\""
-Svadu_cg_cp_ad_update_test8_load_str: .string "\"test: 44; cg: Svadu_cg; cp: cp_ad_update; bin: test8_load\""
-Svadu_cg_cp_ad_update_test8_exec_str: .string "\"test: 45; cg: Svadu_cg; cp: cp_ad_update; bin: test8_exec\""
-Svadu_cg_cp_ad_update_test8_read_store_pte_str: .string "\"test: 46; cg: Svadu_cg; cp: cp_ad_update; bin: test8_read_store_pte\""
-Svadu_cg_cp_ad_update_test8_read_load_pte_str: .string "\"test: 47; cg: Svadu_cg; cp: cp_ad_update; bin: test8_read_load_pte\""
-Svadu_cg_cp_ad_update_test8_read_exec_pte_str: .string "\"test: 48; cg: Svadu_cg; cp: cp_ad_update; bin: test8_read_exec_pte\""
-Svadu_cg_cp_ad_update_test9_store_str: .string "\"test: 49; cg: Svadu_cg; cp: cp_ad_update; bin: test9_store\""
-Svadu_cg_cp_ad_update_test9_load_str: .string "\"test: 50; cg: Svadu_cg; cp: cp_ad_update; bin: test9_load\""
-Svadu_cg_cp_ad_update_test9_exec_str: .string "\"test: 51; cg: Svadu_cg; cp: cp_ad_update; bin: test9_exec\""
-Svadu_cg_cp_ad_update_test9_read_store_pte_str: .string "\"test: 52; cg: Svadu_cg; cp: cp_ad_update; bin: test9_read_store_pte\""
-Svadu_cg_cp_ad_update_test9_read_load_pte_str: .string "\"test: 53; cg: Svadu_cg; cp: cp_ad_update; bin: test9_read_load_pte\""
-Svadu_cg_cp_ad_update_test9_read_exec_pte_str: .string "\"test: 54; cg: Svadu_cg; cp: cp_ad_update; bin: test9_read_exec_pte\""
-Svadu_cg_cp_ad_update_test10_store_str: .string "\"test: 55; cg: Svadu_cg; cp: cp_ad_update; bin: test10_store\""
-Svadu_cg_cp_ad_update_test10_load_str: .string "\"test: 56; cg: Svadu_cg; cp: cp_ad_update; bin: test10_load\""
-Svadu_cg_cp_ad_update_test10_exec_str: .string "\"test: 57; cg: Svadu_cg; cp: cp_ad_update; bin: test10_exec\""
-Svadu_cg_cp_ad_update_test10_read_store_pte_str: .string "\"test: 58; cg: Svadu_cg; cp: cp_ad_update; bin: test10_read_store_pte\""
-Svadu_cg_cp_ad_update_test10_read_load_pte_str: .string "\"test: 59; cg: Svadu_cg; cp: cp_ad_update; bin: test10_read_load_pte\""
-Svadu_cg_cp_ad_update_test10_read_exec_pte_str: .string "\"test: 60; cg: Svadu_cg; cp: cp_ad_update; bin: test10_read_exec_pte\""
-Svadu_cg_cp_ad_update_test11_store_str: .string "\"test: 61; cg: Svadu_cg; cp: cp_ad_update; bin: test11_store\""
-Svadu_cg_cp_ad_update_test11_load_str: .string "\"test: 62; cg: Svadu_cg; cp: cp_ad_update; bin: test11_load\""
-Svadu_cg_cp_ad_update_test11_exec_str: .string "\"test: 63; cg: Svadu_cg; cp: cp_ad_update; bin: test11_exec\""
-Svadu_cg_cp_ad_update_test11_read_store_pte_str: .string "\"test: 64; cg: Svadu_cg; cp: cp_ad_update; bin: test11_read_store_pte\""
-Svadu_cg_cp_ad_update_test11_read_load_pte_str: .string "\"test: 65; cg: Svadu_cg; cp: cp_ad_update; bin: test11_read_load_pte\""
-Svadu_cg_cp_ad_update_test11_read_exec_pte_str: .string "\"test: 66; cg: Svadu_cg; cp: cp_ad_update; bin: test11_read_exec_pte\""
-Svadu_cg_cp_ad_update_test12_store_str: .string "\"test: 67; cg: Svadu_cg; cp: cp_ad_update; bin: test12_store\""
-Svadu_cg_cp_ad_update_test12_load_str: .string "\"test: 68; cg: Svadu_cg; cp: cp_ad_update; bin: test12_load\""
-Svadu_cg_cp_ad_update_test12_exec_str: .string "\"test: 69; cg: Svadu_cg; cp: cp_ad_update; bin: test12_exec\""
-Svadu_cg_cp_ad_update_test12_read_store_pte_str: .string "\"test: 70; cg: Svadu_cg; cp: cp_ad_update; bin: test12_read_store_pte\""
-Svadu_cg_cp_ad_update_test12_read_load_pte_str: .string "\"test: 71; cg: Svadu_cg; cp: cp_ad_update; bin: test12_read_load_pte\""
-Svadu_cg_cp_ad_update_test12_read_exec_pte_str: .string "\"test: 72; cg: Svadu_cg; cp: cp_ad_update; bin: test12_read_exec_pte\""
-Svadu_cg_cp_ad_update_test13_store_str: .string "\"test: 73; cg: Svadu_cg; cp: cp_ad_update; bin: test13_store\""
-Svadu_cg_cp_ad_update_test13_load_str: .string "\"test: 74; cg: Svadu_cg; cp: cp_ad_update; bin: test13_load\""
-Svadu_cg_cp_ad_update_test13_exec_str: .string "\"test: 75; cg: Svadu_cg; cp: cp_ad_update; bin: test13_exec\""
-Svadu_cg_cp_ad_update_test13_read_store_pte_str: .string "\"test: 76; cg: Svadu_cg; cp: cp_ad_update; bin: test13_read_store_pte\""
-Svadu_cg_cp_ad_update_test13_read_load_pte_str: .string "\"test: 77; cg: Svadu_cg; cp: cp_ad_update; bin: test13_read_load_pte\""
-Svadu_cg_cp_ad_update_test13_read_exec_pte_str: .string "\"test: 78; cg: Svadu_cg; cp: cp_ad_update; bin: test13_read_exec_pte\""
-Svadu_cg_cp_ad_update_test14_store_str: .string "\"test: 79; cg: Svadu_cg; cp: cp_ad_update; bin: test14_store\""
-Svadu_cg_cp_ad_update_test14_load_str: .string "\"test: 80; cg: Svadu_cg; cp: cp_ad_update; bin: test14_load\""
-Svadu_cg_cp_ad_update_test14_exec_str: .string "\"test: 81; cg: Svadu_cg; cp: cp_ad_update; bin: test14_exec\""
-Svadu_cg_cp_ad_update_test14_read_store_pte_str: .string "\"test: 82; cg: Svadu_cg; cp: cp_ad_update; bin: test14_read_store_pte\""
-Svadu_cg_cp_ad_update_test14_read_load_pte_str: .string "\"test: 83; cg: Svadu_cg; cp: cp_ad_update; bin: test14_read_load_pte\""
-Svadu_cg_cp_ad_update_test14_read_exec_pte_str: .string "\"test: 84; cg: Svadu_cg; cp: cp_ad_update; bin: test14_read_exec_pte\""
-Svadu_cg_cp_ad_update_test15_store_str: .string "\"test: 85; cg: Svadu_cg; cp: cp_ad_update; bin: test15_store\""
-Svadu_cg_cp_ad_update_test15_load_str: .string "\"test: 86; cg: Svadu_cg; cp: cp_ad_update; bin: test15_load\""
-Svadu_cg_cp_ad_update_test15_exec_str: .string "\"test: 87; cg: Svadu_cg; cp: cp_ad_update; bin: test15_exec\""
-Svadu_cg_cp_ad_update_test15_read_store_pte_str: .string "\"test: 88; cg: Svadu_cg; cp: cp_ad_update; bin: test15_read_store_pte\""
-Svadu_cg_cp_ad_update_test15_read_load_pte_str: .string "\"test: 89; cg: Svadu_cg; cp: cp_ad_update; bin: test15_read_load_pte\""
-Svadu_cg_cp_ad_update_test15_read_exec_pte_str: .string "\"test: 90; cg: Svadu_cg; cp: cp_ad_update; bin: test15_read_exec_pte\""
+Svadu_cg_Abit_unset_write_s_test1_store_str: .string "\"test: 1; cg: Svadu_cg; cp: Abit_unset_write_s; bin: test1_store\""
+Svadu_cg_Abit_unset_read_s_test1_load_str: .string "\"test: 2; cg: Svadu_cg; cp: Abit_unset_read_s; bin: test1_load\""
+Svadu_cg_Abit_unset_exec_s_test1_exec_str: .string "\"test: 3; cg: Svadu_cg; cp: Abit_unset_exec_s; bin: test1_exec\""
+Svadu_cg_Abit_unset_write_s_test1_read_store_pte_str: .string "\"test: 4; cg: Svadu_cg; cp: Abit_unset_write_s; bin: test1_read_store_pte\""
+Svadu_cg_Abit_unset_read_s_test1_read_load_pte_str: .string "\"test: 5; cg: Svadu_cg; cp: Abit_unset_read_s; bin: test1_read_load_pte\""
+Svadu_cg_Abit_unset_exec_s_test1_read_exec_pte_str: .string "\"test: 6; cg: Svadu_cg; cp: Abit_unset_exec_s; bin: test1_read_exec_pte\""
+Svadu_cg_Dbit_unset_write_s_test2_store_str: .string "\"test: 7; cg: Svadu_cg; cp: Dbit_unset_write_s; bin: test2_store\""
+Svadu_cg_Abit_unset_read_s_test2_load_str: .string "\"test: 8; cg: Svadu_cg; cp: Abit_unset_read_s; bin: test2_load\""
+Svadu_cg_Abit_unset_exec_s_test2_exec_str: .string "\"test: 9; cg: Svadu_cg; cp: Abit_unset_exec_s; bin: test2_exec\""
+Svadu_cg_Dbit_unset_write_s_test2_read_store_pte_str: .string "\"test: 10; cg: Svadu_cg; cp: Dbit_unset_write_s; bin: test2_read_store_pte\""
+Svadu_cg_Abit_unset_read_s_test2_read_load_pte_str: .string "\"test: 11; cg: Svadu_cg; cp: Abit_unset_read_s; bin: test2_read_load_pte\""
+Svadu_cg_Abit_unset_exec_s_test2_read_exec_pte_str: .string "\"test: 12; cg: Svadu_cg; cp: Abit_unset_exec_s; bin: test2_read_exec_pte\""
+Svadu_cg_Abit_unset_write_s_test3_store_str: .string "\"test: 13; cg: Svadu_cg; cp: Abit_unset_write_s; bin: test3_store\""
+Svadu_cg_Abit_unset_read_s_test3_load_str: .string "\"test: 14; cg: Svadu_cg; cp: Abit_unset_read_s; bin: test3_load\""
+Svadu_cg_Abit_unset_exec_s_test3_exec_str: .string "\"test: 15; cg: Svadu_cg; cp: Abit_unset_exec_s; bin: test3_exec\""
+Svadu_cg_Abit_unset_write_s_test3_read_store_pte_str: .string "\"test: 16; cg: Svadu_cg; cp: Abit_unset_write_s; bin: test3_read_store_pte\""
+Svadu_cg_Abit_unset_read_s_test3_read_load_pte_str: .string "\"test: 17; cg: Svadu_cg; cp: Abit_unset_read_s; bin: test3_read_load_pte\""
+Svadu_cg_Abit_unset_exec_s_test3_read_exec_pte_str: .string "\"test: 18; cg: Svadu_cg; cp: Abit_unset_exec_s; bin: test3_read_exec_pte\""
+Svadu_cg_Abit_unset_write_s_test4_store_str: .string "\"test: 19; cg: Svadu_cg; cp: Abit_unset_write_s; bin: test4_store\""
+Svadu_cg_Abit_unset_read_s_test4_load_str: .string "\"test: 20; cg: Svadu_cg; cp: Abit_unset_read_s; bin: test4_load\""
+Svadu_cg_Abit_unset_exec_s_test4_exec_str: .string "\"test: 21; cg: Svadu_cg; cp: Abit_unset_exec_s; bin: test4_exec\""
+Svadu_cg_Abit_unset_write_s_test4_read_store_pte_str: .string "\"test: 22; cg: Svadu_cg; cp: Abit_unset_write_s; bin: test4_read_store_pte\""
+Svadu_cg_Abit_unset_read_s_test4_read_load_pte_str: .string "\"test: 23; cg: Svadu_cg; cp: Abit_unset_read_s; bin: test4_read_load_pte\""
+Svadu_cg_Abit_unset_exec_s_test4_read_exec_pte_str: .string "\"test: 24; cg: Svadu_cg; cp: Abit_unset_exec_s; bin: test4_read_exec_pte\""
+Svadu_cg_Dbit_unset_write_s_test5_store_str: .string "\"test: 25; cg: Svadu_cg; cp: Dbit_unset_write_s; bin: test5_store\""
+Svadu_cg_Abit_unset_read_s_test5_load_str: .string "\"test: 26; cg: Svadu_cg; cp: Abit_unset_read_s; bin: test5_load\""
+Svadu_cg_Abit_unset_exec_s_test5_exec_str: .string "\"test: 27; cg: Svadu_cg; cp: Abit_unset_exec_s; bin: test5_exec\""
+Svadu_cg_Dbit_unset_write_s_test5_read_store_pte_str: .string "\"test: 28; cg: Svadu_cg; cp: Dbit_unset_write_s; bin: test5_read_store_pte\""
+Svadu_cg_Abit_unset_read_s_test5_read_load_pte_str: .string "\"test: 29; cg: Svadu_cg; cp: Abit_unset_read_s; bin: test5_read_load_pte\""
+Svadu_cg_Abit_unset_exec_s_test5_read_exec_pte_str: .string "\"test: 30; cg: Svadu_cg; cp: Abit_unset_exec_s; bin: test5_read_exec_pte\""
+Svadu_cg_Abit_unset_write_s_test6_store_str: .string "\"test: 31; cg: Svadu_cg; cp: Abit_unset_write_s; bin: test6_store\""
+Svadu_cg_Abit_unset_read_s_test6_load_str: .string "\"test: 32; cg: Svadu_cg; cp: Abit_unset_read_s; bin: test6_load\""
+Svadu_cg_Abit_unset_exec_s_test6_exec_str: .string "\"test: 33; cg: Svadu_cg; cp: Abit_unset_exec_s; bin: test6_exec\""
+Svadu_cg_Abit_unset_write_s_test6_read_store_pte_str: .string "\"test: 34; cg: Svadu_cg; cp: Abit_unset_write_s; bin: test6_read_store_pte\""
+Svadu_cg_Abit_unset_read_s_test6_read_load_pte_str: .string "\"test: 35; cg: Svadu_cg; cp: Abit_unset_read_s; bin: test6_read_load_pte\""
+Svadu_cg_Abit_unset_exec_s_test6_read_exec_pte_str: .string "\"test: 36; cg: Svadu_cg; cp: Abit_unset_exec_s; bin: test6_read_exec_pte\""
+Svadu_cg_Abit_unset_write_s_test7_store_str: .string "\"test: 37; cg: Svadu_cg; cp: Abit_unset_write_s; bin: test7_store\""
+Svadu_cg_Abit_unset_read_s_test7_load_str: .string "\"test: 38; cg: Svadu_cg; cp: Abit_unset_read_s; bin: test7_load\""
+Svadu_cg_Abit_unset_exec_s_test7_exec_str: .string "\"test: 39; cg: Svadu_cg; cp: Abit_unset_exec_s; bin: test7_exec\""
+Svadu_cg_Abit_unset_write_s_test7_read_store_pte_str: .string "\"test: 40; cg: Svadu_cg; cp: Abit_unset_write_s; bin: test7_read_store_pte\""
+Svadu_cg_Abit_unset_read_s_test7_read_load_pte_str: .string "\"test: 41; cg: Svadu_cg; cp: Abit_unset_read_s; bin: test7_read_load_pte\""
+Svadu_cg_Abit_unset_exec_s_test7_read_exec_pte_str: .string "\"test: 42; cg: Svadu_cg; cp: Abit_unset_exec_s; bin: test7_read_exec_pte\""
+Svadu_cg_Dbit_unset_write_s_test8_store_str: .string "\"test: 43; cg: Svadu_cg; cp: Dbit_unset_write_s; bin: test8_store\""
+Svadu_cg_Abit_unset_read_s_test8_load_str: .string "\"test: 44; cg: Svadu_cg; cp: Abit_unset_read_s; bin: test8_load\""
+Svadu_cg_Abit_unset_exec_s_test8_exec_str: .string "\"test: 45; cg: Svadu_cg; cp: Abit_unset_exec_s; bin: test8_exec\""
+Svadu_cg_Dbit_unset_write_s_test8_read_store_pte_str: .string "\"test: 46; cg: Svadu_cg; cp: Dbit_unset_write_s; bin: test8_read_store_pte\""
+Svadu_cg_Abit_unset_read_s_test8_read_load_pte_str: .string "\"test: 47; cg: Svadu_cg; cp: Abit_unset_read_s; bin: test8_read_load_pte\""
+Svadu_cg_Abit_unset_exec_s_test8_read_exec_pte_str: .string "\"test: 48; cg: Svadu_cg; cp: Abit_unset_exec_s; bin: test8_read_exec_pte\""
+Svadu_cg_Abit_unset_write_s_test9_store_str: .string "\"test: 49; cg: Svadu_cg; cp: Abit_unset_write_s; bin: test9_store\""
+Svadu_cg_Abit_unset_read_s_test9_load_str: .string "\"test: 50; cg: Svadu_cg; cp: Abit_unset_read_s; bin: test9_load\""
+Svadu_cg_Abit_unset_exec_s_test9_exec_str: .string "\"test: 51; cg: Svadu_cg; cp: Abit_unset_exec_s; bin: test9_exec\""
+Svadu_cg_Abit_unset_write_s_test9_read_store_pte_str: .string "\"test: 52; cg: Svadu_cg; cp: Abit_unset_write_s; bin: test9_read_store_pte\""
+Svadu_cg_Abit_unset_read_s_test9_read_load_pte_str: .string "\"test: 53; cg: Svadu_cg; cp: Abit_unset_read_s; bin: test9_read_load_pte\""
+Svadu_cg_Abit_unset_exec_s_test9_read_exec_pte_str: .string "\"test: 54; cg: Svadu_cg; cp: Abit_unset_exec_s; bin: test9_read_exec_pte\""
+Svadu_cg_Abit_unset_write_s_test10_store_str: .string "\"test: 55; cg: Svadu_cg; cp: Abit_unset_write_s; bin: test10_store\""
+Svadu_cg_Abit_unset_read_s_test10_load_str: .string "\"test: 56; cg: Svadu_cg; cp: Abit_unset_read_s; bin: test10_load\""
+Svadu_cg_Abit_unset_exec_s_test10_exec_str: .string "\"test: 57; cg: Svadu_cg; cp: Abit_unset_exec_s; bin: test10_exec\""
+Svadu_cg_Abit_unset_write_s_test10_read_store_pte_str: .string "\"test: 58; cg: Svadu_cg; cp: Abit_unset_write_s; bin: test10_read_store_pte\""
+Svadu_cg_Abit_unset_read_s_test10_read_load_pte_str: .string "\"test: 59; cg: Svadu_cg; cp: Abit_unset_read_s; bin: test10_read_load_pte\""
+Svadu_cg_Abit_unset_exec_s_test10_read_exec_pte_str: .string "\"test: 60; cg: Svadu_cg; cp: Abit_unset_exec_s; bin: test10_read_exec_pte\""
+Svadu_cg_Dbit_unset_write_s_test11_store_str: .string "\"test: 61; cg: Svadu_cg; cp: Dbit_unset_write_s; bin: test11_store\""
+Svadu_cg_Abit_unset_read_s_test11_load_str: .string "\"test: 62; cg: Svadu_cg; cp: Abit_unset_read_s; bin: test11_load\""
+Svadu_cg_Abit_unset_exec_s_test11_exec_str: .string "\"test: 63; cg: Svadu_cg; cp: Abit_unset_exec_s; bin: test11_exec\""
+Svadu_cg_Dbit_unset_write_s_test11_read_store_pte_str: .string "\"test: 64; cg: Svadu_cg; cp: Dbit_unset_write_s; bin: test11_read_store_pte\""
+Svadu_cg_Abit_unset_read_s_test11_read_load_pte_str: .string "\"test: 65; cg: Svadu_cg; cp: Abit_unset_read_s; bin: test11_read_load_pte\""
+Svadu_cg_Abit_unset_exec_s_test11_read_exec_pte_str: .string "\"test: 66; cg: Svadu_cg; cp: Abit_unset_exec_s; bin: test11_read_exec_pte\""
+Svadu_cg_Abit_unset_write_s_test12_store_str: .string "\"test: 67; cg: Svadu_cg; cp: Abit_unset_write_s; bin: test12_store\""
+Svadu_cg_Abit_unset_read_s_test12_load_str: .string "\"test: 68; cg: Svadu_cg; cp: Abit_unset_read_s; bin: test12_load\""
+Svadu_cg_Abit_unset_exec_s_test12_exec_str: .string "\"test: 69; cg: Svadu_cg; cp: Abit_unset_exec_s; bin: test12_exec\""
+Svadu_cg_Abit_unset_write_s_test12_read_store_pte_str: .string "\"test: 70; cg: Svadu_cg; cp: Abit_unset_write_s; bin: test12_read_store_pte\""
+Svadu_cg_Abit_unset_read_s_test12_read_load_pte_str: .string "\"test: 71; cg: Svadu_cg; cp: Abit_unset_read_s; bin: test12_read_load_pte\""
+Svadu_cg_Abit_unset_exec_s_test12_read_exec_pte_str: .string "\"test: 72; cg: Svadu_cg; cp: Abit_unset_exec_s; bin: test12_read_exec_pte\""
+Svadu_cg_Abit_unset_write_s_test13_store_str: .string "\"test: 73; cg: Svadu_cg; cp: Abit_unset_write_s; bin: test13_store\""
+Svadu_cg_Abit_unset_read_s_test13_load_str: .string "\"test: 74; cg: Svadu_cg; cp: Abit_unset_read_s; bin: test13_load\""
+Svadu_cg_Abit_unset_exec_s_test13_exec_str: .string "\"test: 75; cg: Svadu_cg; cp: Abit_unset_exec_s; bin: test13_exec\""
+Svadu_cg_Abit_unset_write_s_test13_read_store_pte_str: .string "\"test: 76; cg: Svadu_cg; cp: Abit_unset_write_s; bin: test13_read_store_pte\""
+Svadu_cg_Abit_unset_read_s_test13_read_load_pte_str: .string "\"test: 77; cg: Svadu_cg; cp: Abit_unset_read_s; bin: test13_read_load_pte\""
+Svadu_cg_Abit_unset_exec_s_test13_read_exec_pte_str: .string "\"test: 78; cg: Svadu_cg; cp: Abit_unset_exec_s; bin: test13_read_exec_pte\""
+Svadu_cg_Dbit_unset_write_s_test14_store_str: .string "\"test: 79; cg: Svadu_cg; cp: Dbit_unset_write_s; bin: test14_store\""
+Svadu_cg_Abit_unset_read_s_test14_load_str: .string "\"test: 80; cg: Svadu_cg; cp: Abit_unset_read_s; bin: test14_load\""
+Svadu_cg_Abit_unset_exec_s_test14_exec_str: .string "\"test: 81; cg: Svadu_cg; cp: Abit_unset_exec_s; bin: test14_exec\""
+Svadu_cg_Dbit_unset_write_s_test14_read_store_pte_str: .string "\"test: 82; cg: Svadu_cg; cp: Dbit_unset_write_s; bin: test14_read_store_pte\""
+Svadu_cg_Abit_unset_read_s_test14_read_load_pte_str: .string "\"test: 83; cg: Svadu_cg; cp: Abit_unset_read_s; bin: test14_read_load_pte\""
+Svadu_cg_Abit_unset_exec_s_test14_read_exec_pte_str: .string "\"test: 84; cg: Svadu_cg; cp: Abit_unset_exec_s; bin: test14_read_exec_pte\""
+Svadu_cg_Abit_unset_write_s_test15_store_str: .string "\"test: 85; cg: Svadu_cg; cp: Abit_unset_write_s; bin: test15_store\""
+Svadu_cg_Abit_unset_read_s_test15_load_str: .string "\"test: 86; cg: Svadu_cg; cp: Abit_unset_read_s; bin: test15_load\""
+Svadu_cg_Abit_unset_exec_s_test15_exec_str: .string "\"test: 87; cg: Svadu_cg; cp: Abit_unset_exec_s; bin: test15_exec\""
+Svadu_cg_Abit_unset_write_s_test15_read_store_pte_str: .string "\"test: 88; cg: Svadu_cg; cp: Abit_unset_write_s; bin: test15_read_store_pte\""
+Svadu_cg_Abit_unset_read_s_test15_read_load_pte_str: .string "\"test: 89; cg: Svadu_cg; cp: Abit_unset_read_s; bin: test15_read_load_pte\""
+Svadu_cg_Abit_unset_exec_s_test15_read_exec_pte_str: .string "\"test: 90; cg: Svadu_cg; cp: Abit_unset_exec_s; bin: test15_read_exec_pte\""
 
 // End of test data section and model specific data
 RVTEST_DATA_END

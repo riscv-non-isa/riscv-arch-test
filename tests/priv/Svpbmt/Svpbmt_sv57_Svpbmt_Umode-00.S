@@ -30,7 +30,7 @@ RVTEST_BEGIN
 
 
 /////////////////////////////////
-// cp_sv57_Svpbmt_Umode
+// leaf_PTE_pbmt_write_u, leaf_PTE_pbmt_read_u, leaf_PTE_pbmt_exec_u, leaf_PTE_pbmt_reserved_enc_write_u, leaf_PTE_pbmt_reserved_enc_read_u, leaf_PTE_pbmt_reserved_enc_exec_u
 /////////////////////////////////
 
 
@@ -77,28 +77,28 @@ RVTEST_BEGIN
   addi x8, x8, 16
 
 // Store
-Svpbmt_cp_sv57_Svpbmt_Umode_test1_store:
+Svpbmt_cg_leaf_PTE_pbmt_write_u_test1_store:
   sw x8, 20(x13)
   nop
 
 // Load
-Svpbmt_cp_sv57_Svpbmt_Umode_test1_load:
+Svpbmt_cg_leaf_PTE_pbmt_read_u_test1_load:
   lw x14, 20(x13)
   nop
 
 // Execute
-Svpbmt_cp_sv57_Svpbmt_Umode_test1_exec:
+Svpbmt_cg_leaf_PTE_pbmt_exec_u_test1_exec:
   jalr ra, x13, 0
   nop
 
   RVTEST_TSBI_GOTO_SMODE
 
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, Svpbmt_cp_sv57_Svpbmt_Umode_test1_store, Svpbmt_cp_sv57_Svpbmt_Umode_test1_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x8, Svpbmt_cg_leaf_PTE_pbmt_write_u_test1_store, Svpbmt_cg_leaf_PTE_pbmt_write_u_test1_store_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Svpbmt_cp_sv57_Svpbmt_Umode_test1_load, Svpbmt_cp_sv57_Svpbmt_Umode_test1_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, Svpbmt_cg_leaf_PTE_pbmt_read_u_test1_load, Svpbmt_cg_leaf_PTE_pbmt_read_u_test1_load_str)
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, Svpbmt_cp_sv57_Svpbmt_Umode_test1_exec, Svpbmt_cp_sv57_Svpbmt_Umode_test1_exec_str)
+  RVTEST_SIGUPD(x2, x5, x4, x15, Svpbmt_cg_leaf_PTE_pbmt_exec_u_test1_exec, Svpbmt_cg_leaf_PTE_pbmt_exec_u_test1_exec_str)
 
 // Test case 2: PBMT=2 leaf PTE
   SUPERPAGE_PTE_SETUP_SV57(rvtest_data_1, ((2 << 61) | PTE_D | PTE_A | PTE_U | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL4)
@@ -113,28 +113,28 @@ Svpbmt_cp_sv57_Svpbmt_Umode_test1_exec:
   addi x8, x8, 16
 
 // Store
-Svpbmt_cp_sv57_Svpbmt_Umode_test2_store:
+Svpbmt_cg_leaf_PTE_pbmt_write_u_test2_store:
   sw x8, 20(x13)
   nop
 
 // Load
-Svpbmt_cp_sv57_Svpbmt_Umode_test2_load:
+Svpbmt_cg_leaf_PTE_pbmt_read_u_test2_load:
   lw x14, 20(x13)
   nop
 
 // Execute
-Svpbmt_cp_sv57_Svpbmt_Umode_test2_exec:
+Svpbmt_cg_leaf_PTE_pbmt_exec_u_test2_exec:
   jalr ra, x13, 0
   nop
 
   RVTEST_TSBI_GOTO_SMODE
 
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, Svpbmt_cp_sv57_Svpbmt_Umode_test2_store, Svpbmt_cp_sv57_Svpbmt_Umode_test2_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x8, Svpbmt_cg_leaf_PTE_pbmt_write_u_test2_store, Svpbmt_cg_leaf_PTE_pbmt_write_u_test2_store_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Svpbmt_cp_sv57_Svpbmt_Umode_test2_load, Svpbmt_cp_sv57_Svpbmt_Umode_test2_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, Svpbmt_cg_leaf_PTE_pbmt_read_u_test2_load, Svpbmt_cg_leaf_PTE_pbmt_read_u_test2_load_str)
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, Svpbmt_cp_sv57_Svpbmt_Umode_test2_exec, Svpbmt_cp_sv57_Svpbmt_Umode_test2_exec_str)
+  RVTEST_SIGUPD(x2, x5, x4, x15, Svpbmt_cg_leaf_PTE_pbmt_exec_u_test2_exec, Svpbmt_cg_leaf_PTE_pbmt_exec_u_test2_exec_str)
 
 #ifdef S1P12P0_OR_LATER_SUPPORTED
 // Test case 3: PBMT=3 leaf PTE
@@ -150,28 +150,28 @@ Svpbmt_cp_sv57_Svpbmt_Umode_test2_exec:
   addi x8, x8, 16
 
 // Store
-Svpbmt_cp_sv57_Svpbmt_Umode_test3_store:
+Svpbmt_cg_leaf_PTE_pbmt_reserved_enc_write_u_test3_store:
   sw x8, 20(x13)
   nop
 
 // Load
-Svpbmt_cp_sv57_Svpbmt_Umode_test3_load:
+Svpbmt_cg_leaf_PTE_pbmt_reserved_enc_read_u_test3_load:
   lw x14, 20(x13)
   nop
 
 // Execute
-Svpbmt_cp_sv57_Svpbmt_Umode_test3_exec:
+Svpbmt_cg_leaf_PTE_pbmt_reserved_enc_exec_u_test3_exec:
   jalr ra, x13, 0
   nop
 
   RVTEST_TSBI_GOTO_SMODE
 
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, Svpbmt_cp_sv57_Svpbmt_Umode_test3_store, Svpbmt_cp_sv57_Svpbmt_Umode_test3_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x8, Svpbmt_cg_leaf_PTE_pbmt_reserved_enc_write_u_test3_store, Svpbmt_cg_leaf_PTE_pbmt_reserved_enc_write_u_test3_store_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Svpbmt_cp_sv57_Svpbmt_Umode_test3_load, Svpbmt_cp_sv57_Svpbmt_Umode_test3_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, Svpbmt_cg_leaf_PTE_pbmt_reserved_enc_read_u_test3_load, Svpbmt_cg_leaf_PTE_pbmt_reserved_enc_read_u_test3_load_str)
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, Svpbmt_cp_sv57_Svpbmt_Umode_test3_exec, Svpbmt_cp_sv57_Svpbmt_Umode_test3_exec_str)
+  RVTEST_SIGUPD(x2, x5, x4, x15, Svpbmt_cg_leaf_PTE_pbmt_reserved_enc_exec_u_test3_exec, Svpbmt_cg_leaf_PTE_pbmt_reserved_enc_exec_u_test3_exec_str)
 #endif
 
 // Test case 4: PBMT=1 leaf PTE
@@ -188,28 +188,28 @@ Svpbmt_cp_sv57_Svpbmt_Umode_test3_exec:
   addi x8, x8, 16
 
 // Store
-Svpbmt_cp_sv57_Svpbmt_Umode_test4_store:
+Svpbmt_cg_leaf_PTE_pbmt_write_u_test4_store:
   sw x8, 20(x13)
   nop
 
 // Load
-Svpbmt_cp_sv57_Svpbmt_Umode_test4_load:
+Svpbmt_cg_leaf_PTE_pbmt_read_u_test4_load:
   lw x14, 20(x13)
   nop
 
 // Execute
-Svpbmt_cp_sv57_Svpbmt_Umode_test4_exec:
+Svpbmt_cg_leaf_PTE_pbmt_exec_u_test4_exec:
   jalr ra, x13, 0
   nop
 
   RVTEST_TSBI_GOTO_SMODE
 
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, Svpbmt_cp_sv57_Svpbmt_Umode_test4_store, Svpbmt_cp_sv57_Svpbmt_Umode_test4_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x8, Svpbmt_cg_leaf_PTE_pbmt_write_u_test4_store, Svpbmt_cg_leaf_PTE_pbmt_write_u_test4_store_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Svpbmt_cp_sv57_Svpbmt_Umode_test4_load, Svpbmt_cp_sv57_Svpbmt_Umode_test4_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, Svpbmt_cg_leaf_PTE_pbmt_read_u_test4_load, Svpbmt_cg_leaf_PTE_pbmt_read_u_test4_load_str)
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, Svpbmt_cp_sv57_Svpbmt_Umode_test4_exec, Svpbmt_cp_sv57_Svpbmt_Umode_test4_exec_str)
+  RVTEST_SIGUPD(x2, x5, x4, x15, Svpbmt_cg_leaf_PTE_pbmt_exec_u_test4_exec, Svpbmt_cg_leaf_PTE_pbmt_exec_u_test4_exec_str)
 
 // Test case 5: PBMT=2 leaf PTE
   PTE_SETUP_SV57(rvtest_slvl3_pg_tbl, (PTE_V), va_data, LEVEL4)
@@ -225,28 +225,28 @@ Svpbmt_cp_sv57_Svpbmt_Umode_test4_exec:
   addi x8, x8, 16
 
 // Store
-Svpbmt_cp_sv57_Svpbmt_Umode_test5_store:
+Svpbmt_cg_leaf_PTE_pbmt_write_u_test5_store:
   sw x8, 20(x13)
   nop
 
 // Load
-Svpbmt_cp_sv57_Svpbmt_Umode_test5_load:
+Svpbmt_cg_leaf_PTE_pbmt_read_u_test5_load:
   lw x14, 20(x13)
   nop
 
 // Execute
-Svpbmt_cp_sv57_Svpbmt_Umode_test5_exec:
+Svpbmt_cg_leaf_PTE_pbmt_exec_u_test5_exec:
   jalr ra, x13, 0
   nop
 
   RVTEST_TSBI_GOTO_SMODE
 
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, Svpbmt_cp_sv57_Svpbmt_Umode_test5_store, Svpbmt_cp_sv57_Svpbmt_Umode_test5_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x8, Svpbmt_cg_leaf_PTE_pbmt_write_u_test5_store, Svpbmt_cg_leaf_PTE_pbmt_write_u_test5_store_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Svpbmt_cp_sv57_Svpbmt_Umode_test5_load, Svpbmt_cp_sv57_Svpbmt_Umode_test5_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, Svpbmt_cg_leaf_PTE_pbmt_read_u_test5_load, Svpbmt_cg_leaf_PTE_pbmt_read_u_test5_load_str)
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, Svpbmt_cp_sv57_Svpbmt_Umode_test5_exec, Svpbmt_cp_sv57_Svpbmt_Umode_test5_exec_str)
+  RVTEST_SIGUPD(x2, x5, x4, x15, Svpbmt_cg_leaf_PTE_pbmt_exec_u_test5_exec, Svpbmt_cg_leaf_PTE_pbmt_exec_u_test5_exec_str)
 
 #ifdef S1P12P0_OR_LATER_SUPPORTED
 // Test case 6: PBMT=3 leaf PTE
@@ -263,28 +263,28 @@ Svpbmt_cp_sv57_Svpbmt_Umode_test5_exec:
   addi x8, x8, 16
 
 // Store
-Svpbmt_cp_sv57_Svpbmt_Umode_test6_store:
+Svpbmt_cg_leaf_PTE_pbmt_reserved_enc_write_u_test6_store:
   sw x8, 20(x13)
   nop
 
 // Load
-Svpbmt_cp_sv57_Svpbmt_Umode_test6_load:
+Svpbmt_cg_leaf_PTE_pbmt_reserved_enc_read_u_test6_load:
   lw x14, 20(x13)
   nop
 
 // Execute
-Svpbmt_cp_sv57_Svpbmt_Umode_test6_exec:
+Svpbmt_cg_leaf_PTE_pbmt_reserved_enc_exec_u_test6_exec:
   jalr ra, x13, 0
   nop
 
   RVTEST_TSBI_GOTO_SMODE
 
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, Svpbmt_cp_sv57_Svpbmt_Umode_test6_store, Svpbmt_cp_sv57_Svpbmt_Umode_test6_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x8, Svpbmt_cg_leaf_PTE_pbmt_reserved_enc_write_u_test6_store, Svpbmt_cg_leaf_PTE_pbmt_reserved_enc_write_u_test6_store_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Svpbmt_cp_sv57_Svpbmt_Umode_test6_load, Svpbmt_cp_sv57_Svpbmt_Umode_test6_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, Svpbmt_cg_leaf_PTE_pbmt_reserved_enc_read_u_test6_load, Svpbmt_cg_leaf_PTE_pbmt_reserved_enc_read_u_test6_load_str)
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, Svpbmt_cp_sv57_Svpbmt_Umode_test6_exec, Svpbmt_cp_sv57_Svpbmt_Umode_test6_exec_str)
+  RVTEST_SIGUPD(x2, x5, x4, x15, Svpbmt_cg_leaf_PTE_pbmt_reserved_enc_exec_u_test6_exec, Svpbmt_cg_leaf_PTE_pbmt_reserved_enc_exec_u_test6_exec_str)
 #endif
 
 // Test case 7: PBMT=1 leaf PTE
@@ -302,28 +302,28 @@ Svpbmt_cp_sv57_Svpbmt_Umode_test6_exec:
   addi x8, x8, 16
 
 // Store
-Svpbmt_cp_sv57_Svpbmt_Umode_test7_store:
+Svpbmt_cg_leaf_PTE_pbmt_write_u_test7_store:
   sw x8, 20(x13)
   nop
 
 // Load
-Svpbmt_cp_sv57_Svpbmt_Umode_test7_load:
+Svpbmt_cg_leaf_PTE_pbmt_read_u_test7_load:
   lw x14, 20(x13)
   nop
 
 // Execute
-Svpbmt_cp_sv57_Svpbmt_Umode_test7_exec:
+Svpbmt_cg_leaf_PTE_pbmt_exec_u_test7_exec:
   jalr ra, x13, 0
   nop
 
   RVTEST_TSBI_GOTO_SMODE
 
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, Svpbmt_cp_sv57_Svpbmt_Umode_test7_store, Svpbmt_cp_sv57_Svpbmt_Umode_test7_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x8, Svpbmt_cg_leaf_PTE_pbmt_write_u_test7_store, Svpbmt_cg_leaf_PTE_pbmt_write_u_test7_store_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Svpbmt_cp_sv57_Svpbmt_Umode_test7_load, Svpbmt_cp_sv57_Svpbmt_Umode_test7_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, Svpbmt_cg_leaf_PTE_pbmt_read_u_test7_load, Svpbmt_cg_leaf_PTE_pbmt_read_u_test7_load_str)
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, Svpbmt_cp_sv57_Svpbmt_Umode_test7_exec, Svpbmt_cp_sv57_Svpbmt_Umode_test7_exec_str)
+  RVTEST_SIGUPD(x2, x5, x4, x15, Svpbmt_cg_leaf_PTE_pbmt_exec_u_test7_exec, Svpbmt_cg_leaf_PTE_pbmt_exec_u_test7_exec_str)
 
 // Test case 8: PBMT=2 leaf PTE
   PTE_SETUP_SV57(rvtest_slvl3_pg_tbl, (PTE_V), va_data, LEVEL4)
@@ -340,28 +340,28 @@ Svpbmt_cp_sv57_Svpbmt_Umode_test7_exec:
   addi x8, x8, 16
 
 // Store
-Svpbmt_cp_sv57_Svpbmt_Umode_test8_store:
+Svpbmt_cg_leaf_PTE_pbmt_write_u_test8_store:
   sw x8, 20(x13)
   nop
 
 // Load
-Svpbmt_cp_sv57_Svpbmt_Umode_test8_load:
+Svpbmt_cg_leaf_PTE_pbmt_read_u_test8_load:
   lw x14, 20(x13)
   nop
 
 // Execute
-Svpbmt_cp_sv57_Svpbmt_Umode_test8_exec:
+Svpbmt_cg_leaf_PTE_pbmt_exec_u_test8_exec:
   jalr ra, x13, 0
   nop
 
   RVTEST_TSBI_GOTO_SMODE
 
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, Svpbmt_cp_sv57_Svpbmt_Umode_test8_store, Svpbmt_cp_sv57_Svpbmt_Umode_test8_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x8, Svpbmt_cg_leaf_PTE_pbmt_write_u_test8_store, Svpbmt_cg_leaf_PTE_pbmt_write_u_test8_store_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Svpbmt_cp_sv57_Svpbmt_Umode_test8_load, Svpbmt_cp_sv57_Svpbmt_Umode_test8_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, Svpbmt_cg_leaf_PTE_pbmt_read_u_test8_load, Svpbmt_cg_leaf_PTE_pbmt_read_u_test8_load_str)
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, Svpbmt_cp_sv57_Svpbmt_Umode_test8_exec, Svpbmt_cp_sv57_Svpbmt_Umode_test8_exec_str)
+  RVTEST_SIGUPD(x2, x5, x4, x15, Svpbmt_cg_leaf_PTE_pbmt_exec_u_test8_exec, Svpbmt_cg_leaf_PTE_pbmt_exec_u_test8_exec_str)
 
 #ifdef S1P12P0_OR_LATER_SUPPORTED
 // Test case 9: PBMT=3 leaf PTE
@@ -379,28 +379,28 @@ Svpbmt_cp_sv57_Svpbmt_Umode_test8_exec:
   addi x8, x8, 16
 
 // Store
-Svpbmt_cp_sv57_Svpbmt_Umode_test9_store:
+Svpbmt_cg_leaf_PTE_pbmt_reserved_enc_write_u_test9_store:
   sw x8, 20(x13)
   nop
 
 // Load
-Svpbmt_cp_sv57_Svpbmt_Umode_test9_load:
+Svpbmt_cg_leaf_PTE_pbmt_reserved_enc_read_u_test9_load:
   lw x14, 20(x13)
   nop
 
 // Execute
-Svpbmt_cp_sv57_Svpbmt_Umode_test9_exec:
+Svpbmt_cg_leaf_PTE_pbmt_reserved_enc_exec_u_test9_exec:
   jalr ra, x13, 0
   nop
 
   RVTEST_TSBI_GOTO_SMODE
 
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, Svpbmt_cp_sv57_Svpbmt_Umode_test9_store, Svpbmt_cp_sv57_Svpbmt_Umode_test9_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x8, Svpbmt_cg_leaf_PTE_pbmt_reserved_enc_write_u_test9_store, Svpbmt_cg_leaf_PTE_pbmt_reserved_enc_write_u_test9_store_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Svpbmt_cp_sv57_Svpbmt_Umode_test9_load, Svpbmt_cp_sv57_Svpbmt_Umode_test9_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, Svpbmt_cg_leaf_PTE_pbmt_reserved_enc_read_u_test9_load, Svpbmt_cg_leaf_PTE_pbmt_reserved_enc_read_u_test9_load_str)
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, Svpbmt_cp_sv57_Svpbmt_Umode_test9_exec, Svpbmt_cp_sv57_Svpbmt_Umode_test9_exec_str)
+  RVTEST_SIGUPD(x2, x5, x4, x15, Svpbmt_cg_leaf_PTE_pbmt_reserved_enc_exec_u_test9_exec, Svpbmt_cg_leaf_PTE_pbmt_reserved_enc_exec_u_test9_exec_str)
 #endif
 
 // Test case 10: PBMT=1 leaf PTE
@@ -419,28 +419,28 @@ Svpbmt_cp_sv57_Svpbmt_Umode_test9_exec:
   addi x8, x8, 16
 
 // Store
-Svpbmt_cp_sv57_Svpbmt_Umode_test10_store:
+Svpbmt_cg_leaf_PTE_pbmt_write_u_test10_store:
   sw x8, 20(x13)
   nop
 
 // Load
-Svpbmt_cp_sv57_Svpbmt_Umode_test10_load:
+Svpbmt_cg_leaf_PTE_pbmt_read_u_test10_load:
   lw x14, 20(x13)
   nop
 
 // Execute
-Svpbmt_cp_sv57_Svpbmt_Umode_test10_exec:
+Svpbmt_cg_leaf_PTE_pbmt_exec_u_test10_exec:
   jalr ra, x13, 0
   nop
 
   RVTEST_TSBI_GOTO_SMODE
 
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, Svpbmt_cp_sv57_Svpbmt_Umode_test10_store, Svpbmt_cp_sv57_Svpbmt_Umode_test10_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x8, Svpbmt_cg_leaf_PTE_pbmt_write_u_test10_store, Svpbmt_cg_leaf_PTE_pbmt_write_u_test10_store_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Svpbmt_cp_sv57_Svpbmt_Umode_test10_load, Svpbmt_cp_sv57_Svpbmt_Umode_test10_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, Svpbmt_cg_leaf_PTE_pbmt_read_u_test10_load, Svpbmt_cg_leaf_PTE_pbmt_read_u_test10_load_str)
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, Svpbmt_cp_sv57_Svpbmt_Umode_test10_exec, Svpbmt_cp_sv57_Svpbmt_Umode_test10_exec_str)
+  RVTEST_SIGUPD(x2, x5, x4, x15, Svpbmt_cg_leaf_PTE_pbmt_exec_u_test10_exec, Svpbmt_cg_leaf_PTE_pbmt_exec_u_test10_exec_str)
 
 // Test case 11: PBMT=2 leaf PTE
   PTE_SETUP_SV57(rvtest_slvl3_pg_tbl, (PTE_V), va_data, LEVEL4)
@@ -458,28 +458,28 @@ Svpbmt_cp_sv57_Svpbmt_Umode_test10_exec:
   addi x8, x8, 16
 
 // Store
-Svpbmt_cp_sv57_Svpbmt_Umode_test11_store:
+Svpbmt_cg_leaf_PTE_pbmt_write_u_test11_store:
   sw x8, 20(x13)
   nop
 
 // Load
-Svpbmt_cp_sv57_Svpbmt_Umode_test11_load:
+Svpbmt_cg_leaf_PTE_pbmt_read_u_test11_load:
   lw x14, 20(x13)
   nop
 
 // Execute
-Svpbmt_cp_sv57_Svpbmt_Umode_test11_exec:
+Svpbmt_cg_leaf_PTE_pbmt_exec_u_test11_exec:
   jalr ra, x13, 0
   nop
 
   RVTEST_TSBI_GOTO_SMODE
 
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, Svpbmt_cp_sv57_Svpbmt_Umode_test11_store, Svpbmt_cp_sv57_Svpbmt_Umode_test11_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x8, Svpbmt_cg_leaf_PTE_pbmt_write_u_test11_store, Svpbmt_cg_leaf_PTE_pbmt_write_u_test11_store_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Svpbmt_cp_sv57_Svpbmt_Umode_test11_load, Svpbmt_cp_sv57_Svpbmt_Umode_test11_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, Svpbmt_cg_leaf_PTE_pbmt_read_u_test11_load, Svpbmt_cg_leaf_PTE_pbmt_read_u_test11_load_str)
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, Svpbmt_cp_sv57_Svpbmt_Umode_test11_exec, Svpbmt_cp_sv57_Svpbmt_Umode_test11_exec_str)
+  RVTEST_SIGUPD(x2, x5, x4, x15, Svpbmt_cg_leaf_PTE_pbmt_exec_u_test11_exec, Svpbmt_cg_leaf_PTE_pbmt_exec_u_test11_exec_str)
 
 #ifdef S1P12P0_OR_LATER_SUPPORTED
 // Test case 12: PBMT=3 leaf PTE
@@ -498,28 +498,28 @@ Svpbmt_cp_sv57_Svpbmt_Umode_test11_exec:
   addi x8, x8, 16
 
 // Store
-Svpbmt_cp_sv57_Svpbmt_Umode_test12_store:
+Svpbmt_cg_leaf_PTE_pbmt_reserved_enc_write_u_test12_store:
   sw x8, 20(x13)
   nop
 
 // Load
-Svpbmt_cp_sv57_Svpbmt_Umode_test12_load:
+Svpbmt_cg_leaf_PTE_pbmt_reserved_enc_read_u_test12_load:
   lw x14, 20(x13)
   nop
 
 // Execute
-Svpbmt_cp_sv57_Svpbmt_Umode_test12_exec:
+Svpbmt_cg_leaf_PTE_pbmt_reserved_enc_exec_u_test12_exec:
   jalr ra, x13, 0
   nop
 
   RVTEST_TSBI_GOTO_SMODE
 
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, Svpbmt_cp_sv57_Svpbmt_Umode_test12_store, Svpbmt_cp_sv57_Svpbmt_Umode_test12_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x8, Svpbmt_cg_leaf_PTE_pbmt_reserved_enc_write_u_test12_store, Svpbmt_cg_leaf_PTE_pbmt_reserved_enc_write_u_test12_store_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Svpbmt_cp_sv57_Svpbmt_Umode_test12_load, Svpbmt_cp_sv57_Svpbmt_Umode_test12_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, Svpbmt_cg_leaf_PTE_pbmt_reserved_enc_read_u_test12_load, Svpbmt_cg_leaf_PTE_pbmt_reserved_enc_read_u_test12_load_str)
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, Svpbmt_cp_sv57_Svpbmt_Umode_test12_exec, Svpbmt_cp_sv57_Svpbmt_Umode_test12_exec_str)
+  RVTEST_SIGUPD(x2, x5, x4, x15, Svpbmt_cg_leaf_PTE_pbmt_reserved_enc_exec_u_test12_exec, Svpbmt_cg_leaf_PTE_pbmt_reserved_enc_exec_u_test12_exec_str)
 #endif
 
 // Test case 13: PBMT=1 leaf PTE
@@ -539,28 +539,28 @@ Svpbmt_cp_sv57_Svpbmt_Umode_test12_exec:
   addi x8, x8, 16
 
 // Store
-Svpbmt_cp_sv57_Svpbmt_Umode_test13_store:
+Svpbmt_cg_leaf_PTE_pbmt_write_u_test13_store:
   sw x8, 20(x13)
   nop
 
 // Load
-Svpbmt_cp_sv57_Svpbmt_Umode_test13_load:
+Svpbmt_cg_leaf_PTE_pbmt_read_u_test13_load:
   lw x14, 20(x13)
   nop
 
 // Execute
-Svpbmt_cp_sv57_Svpbmt_Umode_test13_exec:
+Svpbmt_cg_leaf_PTE_pbmt_exec_u_test13_exec:
   jalr ra, x13, 0
   nop
 
   RVTEST_TSBI_GOTO_SMODE
 
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, Svpbmt_cp_sv57_Svpbmt_Umode_test13_store, Svpbmt_cp_sv57_Svpbmt_Umode_test13_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x8, Svpbmt_cg_leaf_PTE_pbmt_write_u_test13_store, Svpbmt_cg_leaf_PTE_pbmt_write_u_test13_store_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Svpbmt_cp_sv57_Svpbmt_Umode_test13_load, Svpbmt_cp_sv57_Svpbmt_Umode_test13_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, Svpbmt_cg_leaf_PTE_pbmt_read_u_test13_load, Svpbmt_cg_leaf_PTE_pbmt_read_u_test13_load_str)
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, Svpbmt_cp_sv57_Svpbmt_Umode_test13_exec, Svpbmt_cp_sv57_Svpbmt_Umode_test13_exec_str)
+  RVTEST_SIGUPD(x2, x5, x4, x15, Svpbmt_cg_leaf_PTE_pbmt_exec_u_test13_exec, Svpbmt_cg_leaf_PTE_pbmt_exec_u_test13_exec_str)
 
 // Test case 14: PBMT=2 leaf PTE
   PTE_SETUP_SV57(rvtest_slvl3_pg_tbl, (PTE_V), va_data, LEVEL4)
@@ -579,28 +579,28 @@ Svpbmt_cp_sv57_Svpbmt_Umode_test13_exec:
   addi x8, x8, 16
 
 // Store
-Svpbmt_cp_sv57_Svpbmt_Umode_test14_store:
+Svpbmt_cg_leaf_PTE_pbmt_write_u_test14_store:
   sw x8, 20(x13)
   nop
 
 // Load
-Svpbmt_cp_sv57_Svpbmt_Umode_test14_load:
+Svpbmt_cg_leaf_PTE_pbmt_read_u_test14_load:
   lw x14, 20(x13)
   nop
 
 // Execute
-Svpbmt_cp_sv57_Svpbmt_Umode_test14_exec:
+Svpbmt_cg_leaf_PTE_pbmt_exec_u_test14_exec:
   jalr ra, x13, 0
   nop
 
   RVTEST_TSBI_GOTO_SMODE
 
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, Svpbmt_cp_sv57_Svpbmt_Umode_test14_store, Svpbmt_cp_sv57_Svpbmt_Umode_test14_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x8, Svpbmt_cg_leaf_PTE_pbmt_write_u_test14_store, Svpbmt_cg_leaf_PTE_pbmt_write_u_test14_store_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Svpbmt_cp_sv57_Svpbmt_Umode_test14_load, Svpbmt_cp_sv57_Svpbmt_Umode_test14_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, Svpbmt_cg_leaf_PTE_pbmt_read_u_test14_load, Svpbmt_cg_leaf_PTE_pbmt_read_u_test14_load_str)
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, Svpbmt_cp_sv57_Svpbmt_Umode_test14_exec, Svpbmt_cp_sv57_Svpbmt_Umode_test14_exec_str)
+  RVTEST_SIGUPD(x2, x5, x4, x15, Svpbmt_cg_leaf_PTE_pbmt_exec_u_test14_exec, Svpbmt_cg_leaf_PTE_pbmt_exec_u_test14_exec_str)
 
 #ifdef S1P12P0_OR_LATER_SUPPORTED
 // Test case 15: PBMT=3 leaf PTE
@@ -620,28 +620,28 @@ Svpbmt_cp_sv57_Svpbmt_Umode_test14_exec:
   addi x8, x8, 16
 
 // Store
-Svpbmt_cp_sv57_Svpbmt_Umode_test15_store:
+Svpbmt_cg_leaf_PTE_pbmt_reserved_enc_write_u_test15_store:
   sw x8, 20(x13)
   nop
 
 // Load
-Svpbmt_cp_sv57_Svpbmt_Umode_test15_load:
+Svpbmt_cg_leaf_PTE_pbmt_reserved_enc_read_u_test15_load:
   lw x14, 20(x13)
   nop
 
 // Execute
-Svpbmt_cp_sv57_Svpbmt_Umode_test15_exec:
+Svpbmt_cg_leaf_PTE_pbmt_reserved_enc_exec_u_test15_exec:
   jalr ra, x13, 0
   nop
 
   RVTEST_TSBI_GOTO_SMODE
 
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, Svpbmt_cp_sv57_Svpbmt_Umode_test15_store, Svpbmt_cp_sv57_Svpbmt_Umode_test15_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x8, Svpbmt_cg_leaf_PTE_pbmt_reserved_enc_write_u_test15_store, Svpbmt_cg_leaf_PTE_pbmt_reserved_enc_write_u_test15_store_str)
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, Svpbmt_cp_sv57_Svpbmt_Umode_test15_load, Svpbmt_cp_sv57_Svpbmt_Umode_test15_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, Svpbmt_cg_leaf_PTE_pbmt_reserved_enc_read_u_test15_load, Svpbmt_cg_leaf_PTE_pbmt_reserved_enc_read_u_test15_load_str)
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, Svpbmt_cp_sv57_Svpbmt_Umode_test15_exec, Svpbmt_cp_sv57_Svpbmt_Umode_test15_exec_str)
+  RVTEST_SIGUPD(x2, x5, x4, x15, Svpbmt_cg_leaf_PTE_pbmt_reserved_enc_exec_u_test15_exec, Svpbmt_cg_leaf_PTE_pbmt_reserved_enc_exec_u_test15_exec_str)
 #endif
 
 
@@ -681,51 +681,51 @@ rvtest_slvl3_pg_tbl:
   .skip(4096)
 
 // Testcase strings
-Svpbmt_cp_sv57_Svpbmt_Umode_test1_store_str: .string "\"test: 82; cg: Svpbmt; cp: cp_sv57_Svpbmt_Umode; bin: test1_store\""
-Svpbmt_cp_sv57_Svpbmt_Umode_test1_load_str: .string "\"test: 83; cg: Svpbmt; cp: cp_sv57_Svpbmt_Umode; bin: test1_load\""
-Svpbmt_cp_sv57_Svpbmt_Umode_test1_exec_str: .string "\"test: 84; cg: Svpbmt; cp: cp_sv57_Svpbmt_Umode; bin: test1_exec\""
-Svpbmt_cp_sv57_Svpbmt_Umode_test2_store_str: .string "\"test: 85; cg: Svpbmt; cp: cp_sv57_Svpbmt_Umode; bin: test2_store\""
-Svpbmt_cp_sv57_Svpbmt_Umode_test2_load_str: .string "\"test: 86; cg: Svpbmt; cp: cp_sv57_Svpbmt_Umode; bin: test2_load\""
-Svpbmt_cp_sv57_Svpbmt_Umode_test2_exec_str: .string "\"test: 87; cg: Svpbmt; cp: cp_sv57_Svpbmt_Umode; bin: test2_exec\""
-Svpbmt_cp_sv57_Svpbmt_Umode_test3_store_str: .string "\"test: 88; cg: Svpbmt; cp: cp_sv57_Svpbmt_Umode; bin: test3_store\""
-Svpbmt_cp_sv57_Svpbmt_Umode_test3_load_str: .string "\"test: 89; cg: Svpbmt; cp: cp_sv57_Svpbmt_Umode; bin: test3_load\""
-Svpbmt_cp_sv57_Svpbmt_Umode_test3_exec_str: .string "\"test: 90; cg: Svpbmt; cp: cp_sv57_Svpbmt_Umode; bin: test3_exec\""
-Svpbmt_cp_sv57_Svpbmt_Umode_test4_store_str: .string "\"test: 91; cg: Svpbmt; cp: cp_sv57_Svpbmt_Umode; bin: test4_store\""
-Svpbmt_cp_sv57_Svpbmt_Umode_test4_load_str: .string "\"test: 92; cg: Svpbmt; cp: cp_sv57_Svpbmt_Umode; bin: test4_load\""
-Svpbmt_cp_sv57_Svpbmt_Umode_test4_exec_str: .string "\"test: 93; cg: Svpbmt; cp: cp_sv57_Svpbmt_Umode; bin: test4_exec\""
-Svpbmt_cp_sv57_Svpbmt_Umode_test5_store_str: .string "\"test: 94; cg: Svpbmt; cp: cp_sv57_Svpbmt_Umode; bin: test5_store\""
-Svpbmt_cp_sv57_Svpbmt_Umode_test5_load_str: .string "\"test: 95; cg: Svpbmt; cp: cp_sv57_Svpbmt_Umode; bin: test5_load\""
-Svpbmt_cp_sv57_Svpbmt_Umode_test5_exec_str: .string "\"test: 96; cg: Svpbmt; cp: cp_sv57_Svpbmt_Umode; bin: test5_exec\""
-Svpbmt_cp_sv57_Svpbmt_Umode_test6_store_str: .string "\"test: 97; cg: Svpbmt; cp: cp_sv57_Svpbmt_Umode; bin: test6_store\""
-Svpbmt_cp_sv57_Svpbmt_Umode_test6_load_str: .string "\"test: 98; cg: Svpbmt; cp: cp_sv57_Svpbmt_Umode; bin: test6_load\""
-Svpbmt_cp_sv57_Svpbmt_Umode_test6_exec_str: .string "\"test: 99; cg: Svpbmt; cp: cp_sv57_Svpbmt_Umode; bin: test6_exec\""
-Svpbmt_cp_sv57_Svpbmt_Umode_test7_store_str: .string "\"test: 100; cg: Svpbmt; cp: cp_sv57_Svpbmt_Umode; bin: test7_store\""
-Svpbmt_cp_sv57_Svpbmt_Umode_test7_load_str: .string "\"test: 101; cg: Svpbmt; cp: cp_sv57_Svpbmt_Umode; bin: test7_load\""
-Svpbmt_cp_sv57_Svpbmt_Umode_test7_exec_str: .string "\"test: 102; cg: Svpbmt; cp: cp_sv57_Svpbmt_Umode; bin: test7_exec\""
-Svpbmt_cp_sv57_Svpbmt_Umode_test8_store_str: .string "\"test: 103; cg: Svpbmt; cp: cp_sv57_Svpbmt_Umode; bin: test8_store\""
-Svpbmt_cp_sv57_Svpbmt_Umode_test8_load_str: .string "\"test: 104; cg: Svpbmt; cp: cp_sv57_Svpbmt_Umode; bin: test8_load\""
-Svpbmt_cp_sv57_Svpbmt_Umode_test8_exec_str: .string "\"test: 105; cg: Svpbmt; cp: cp_sv57_Svpbmt_Umode; bin: test8_exec\""
-Svpbmt_cp_sv57_Svpbmt_Umode_test9_store_str: .string "\"test: 106; cg: Svpbmt; cp: cp_sv57_Svpbmt_Umode; bin: test9_store\""
-Svpbmt_cp_sv57_Svpbmt_Umode_test9_load_str: .string "\"test: 107; cg: Svpbmt; cp: cp_sv57_Svpbmt_Umode; bin: test9_load\""
-Svpbmt_cp_sv57_Svpbmt_Umode_test9_exec_str: .string "\"test: 108; cg: Svpbmt; cp: cp_sv57_Svpbmt_Umode; bin: test9_exec\""
-Svpbmt_cp_sv57_Svpbmt_Umode_test10_store_str: .string "\"test: 109; cg: Svpbmt; cp: cp_sv57_Svpbmt_Umode; bin: test10_store\""
-Svpbmt_cp_sv57_Svpbmt_Umode_test10_load_str: .string "\"test: 110; cg: Svpbmt; cp: cp_sv57_Svpbmt_Umode; bin: test10_load\""
-Svpbmt_cp_sv57_Svpbmt_Umode_test10_exec_str: .string "\"test: 111; cg: Svpbmt; cp: cp_sv57_Svpbmt_Umode; bin: test10_exec\""
-Svpbmt_cp_sv57_Svpbmt_Umode_test11_store_str: .string "\"test: 112; cg: Svpbmt; cp: cp_sv57_Svpbmt_Umode; bin: test11_store\""
-Svpbmt_cp_sv57_Svpbmt_Umode_test11_load_str: .string "\"test: 113; cg: Svpbmt; cp: cp_sv57_Svpbmt_Umode; bin: test11_load\""
-Svpbmt_cp_sv57_Svpbmt_Umode_test11_exec_str: .string "\"test: 114; cg: Svpbmt; cp: cp_sv57_Svpbmt_Umode; bin: test11_exec\""
-Svpbmt_cp_sv57_Svpbmt_Umode_test12_store_str: .string "\"test: 115; cg: Svpbmt; cp: cp_sv57_Svpbmt_Umode; bin: test12_store\""
-Svpbmt_cp_sv57_Svpbmt_Umode_test12_load_str: .string "\"test: 116; cg: Svpbmt; cp: cp_sv57_Svpbmt_Umode; bin: test12_load\""
-Svpbmt_cp_sv57_Svpbmt_Umode_test12_exec_str: .string "\"test: 117; cg: Svpbmt; cp: cp_sv57_Svpbmt_Umode; bin: test12_exec\""
-Svpbmt_cp_sv57_Svpbmt_Umode_test13_store_str: .string "\"test: 118; cg: Svpbmt; cp: cp_sv57_Svpbmt_Umode; bin: test13_store\""
-Svpbmt_cp_sv57_Svpbmt_Umode_test13_load_str: .string "\"test: 119; cg: Svpbmt; cp: cp_sv57_Svpbmt_Umode; bin: test13_load\""
-Svpbmt_cp_sv57_Svpbmt_Umode_test13_exec_str: .string "\"test: 120; cg: Svpbmt; cp: cp_sv57_Svpbmt_Umode; bin: test13_exec\""
-Svpbmt_cp_sv57_Svpbmt_Umode_test14_store_str: .string "\"test: 121; cg: Svpbmt; cp: cp_sv57_Svpbmt_Umode; bin: test14_store\""
-Svpbmt_cp_sv57_Svpbmt_Umode_test14_load_str: .string "\"test: 122; cg: Svpbmt; cp: cp_sv57_Svpbmt_Umode; bin: test14_load\""
-Svpbmt_cp_sv57_Svpbmt_Umode_test14_exec_str: .string "\"test: 123; cg: Svpbmt; cp: cp_sv57_Svpbmt_Umode; bin: test14_exec\""
-Svpbmt_cp_sv57_Svpbmt_Umode_test15_store_str: .string "\"test: 124; cg: Svpbmt; cp: cp_sv57_Svpbmt_Umode; bin: test15_store\""
-Svpbmt_cp_sv57_Svpbmt_Umode_test15_load_str: .string "\"test: 125; cg: Svpbmt; cp: cp_sv57_Svpbmt_Umode; bin: test15_load\""
-Svpbmt_cp_sv57_Svpbmt_Umode_test15_exec_str: .string "\"test: 126; cg: Svpbmt; cp: cp_sv57_Svpbmt_Umode; bin: test15_exec\""
+Svpbmt_cg_leaf_PTE_pbmt_write_u_test1_store_str: .string "\"test: 82; cg: Svpbmt_cg; cp: leaf_PTE_pbmt_write_u; bin: test1_store\""
+Svpbmt_cg_leaf_PTE_pbmt_read_u_test1_load_str: .string "\"test: 83; cg: Svpbmt_cg; cp: leaf_PTE_pbmt_read_u; bin: test1_load\""
+Svpbmt_cg_leaf_PTE_pbmt_exec_u_test1_exec_str: .string "\"test: 84; cg: Svpbmt_cg; cp: leaf_PTE_pbmt_exec_u; bin: test1_exec\""
+Svpbmt_cg_leaf_PTE_pbmt_write_u_test2_store_str: .string "\"test: 85; cg: Svpbmt_cg; cp: leaf_PTE_pbmt_write_u; bin: test2_store\""
+Svpbmt_cg_leaf_PTE_pbmt_read_u_test2_load_str: .string "\"test: 86; cg: Svpbmt_cg; cp: leaf_PTE_pbmt_read_u; bin: test2_load\""
+Svpbmt_cg_leaf_PTE_pbmt_exec_u_test2_exec_str: .string "\"test: 87; cg: Svpbmt_cg; cp: leaf_PTE_pbmt_exec_u; bin: test2_exec\""
+Svpbmt_cg_leaf_PTE_pbmt_reserved_enc_write_u_test3_store_str: .string "\"test: 88; cg: Svpbmt_cg; cp: leaf_PTE_pbmt_reserved_enc_write_u; bin: test3_store\""
+Svpbmt_cg_leaf_PTE_pbmt_reserved_enc_read_u_test3_load_str: .string "\"test: 89; cg: Svpbmt_cg; cp: leaf_PTE_pbmt_reserved_enc_read_u; bin: test3_load\""
+Svpbmt_cg_leaf_PTE_pbmt_reserved_enc_exec_u_test3_exec_str: .string "\"test: 90; cg: Svpbmt_cg; cp: leaf_PTE_pbmt_reserved_enc_exec_u; bin: test3_exec\""
+Svpbmt_cg_leaf_PTE_pbmt_write_u_test4_store_str: .string "\"test: 91; cg: Svpbmt_cg; cp: leaf_PTE_pbmt_write_u; bin: test4_store\""
+Svpbmt_cg_leaf_PTE_pbmt_read_u_test4_load_str: .string "\"test: 92; cg: Svpbmt_cg; cp: leaf_PTE_pbmt_read_u; bin: test4_load\""
+Svpbmt_cg_leaf_PTE_pbmt_exec_u_test4_exec_str: .string "\"test: 93; cg: Svpbmt_cg; cp: leaf_PTE_pbmt_exec_u; bin: test4_exec\""
+Svpbmt_cg_leaf_PTE_pbmt_write_u_test5_store_str: .string "\"test: 94; cg: Svpbmt_cg; cp: leaf_PTE_pbmt_write_u; bin: test5_store\""
+Svpbmt_cg_leaf_PTE_pbmt_read_u_test5_load_str: .string "\"test: 95; cg: Svpbmt_cg; cp: leaf_PTE_pbmt_read_u; bin: test5_load\""
+Svpbmt_cg_leaf_PTE_pbmt_exec_u_test5_exec_str: .string "\"test: 96; cg: Svpbmt_cg; cp: leaf_PTE_pbmt_exec_u; bin: test5_exec\""
+Svpbmt_cg_leaf_PTE_pbmt_reserved_enc_write_u_test6_store_str: .string "\"test: 97; cg: Svpbmt_cg; cp: leaf_PTE_pbmt_reserved_enc_write_u; bin: test6_store\""
+Svpbmt_cg_leaf_PTE_pbmt_reserved_enc_read_u_test6_load_str: .string "\"test: 98; cg: Svpbmt_cg; cp: leaf_PTE_pbmt_reserved_enc_read_u; bin: test6_load\""
+Svpbmt_cg_leaf_PTE_pbmt_reserved_enc_exec_u_test6_exec_str: .string "\"test: 99; cg: Svpbmt_cg; cp: leaf_PTE_pbmt_reserved_enc_exec_u; bin: test6_exec\""
+Svpbmt_cg_leaf_PTE_pbmt_write_u_test7_store_str: .string "\"test: 100; cg: Svpbmt_cg; cp: leaf_PTE_pbmt_write_u; bin: test7_store\""
+Svpbmt_cg_leaf_PTE_pbmt_read_u_test7_load_str: .string "\"test: 101; cg: Svpbmt_cg; cp: leaf_PTE_pbmt_read_u; bin: test7_load\""
+Svpbmt_cg_leaf_PTE_pbmt_exec_u_test7_exec_str: .string "\"test: 102; cg: Svpbmt_cg; cp: leaf_PTE_pbmt_exec_u; bin: test7_exec\""
+Svpbmt_cg_leaf_PTE_pbmt_write_u_test8_store_str: .string "\"test: 103; cg: Svpbmt_cg; cp: leaf_PTE_pbmt_write_u; bin: test8_store\""
+Svpbmt_cg_leaf_PTE_pbmt_read_u_test8_load_str: .string "\"test: 104; cg: Svpbmt_cg; cp: leaf_PTE_pbmt_read_u; bin: test8_load\""
+Svpbmt_cg_leaf_PTE_pbmt_exec_u_test8_exec_str: .string "\"test: 105; cg: Svpbmt_cg; cp: leaf_PTE_pbmt_exec_u; bin: test8_exec\""
+Svpbmt_cg_leaf_PTE_pbmt_reserved_enc_write_u_test9_store_str: .string "\"test: 106; cg: Svpbmt_cg; cp: leaf_PTE_pbmt_reserved_enc_write_u; bin: test9_store\""
+Svpbmt_cg_leaf_PTE_pbmt_reserved_enc_read_u_test9_load_str: .string "\"test: 107; cg: Svpbmt_cg; cp: leaf_PTE_pbmt_reserved_enc_read_u; bin: test9_load\""
+Svpbmt_cg_leaf_PTE_pbmt_reserved_enc_exec_u_test9_exec_str: .string "\"test: 108; cg: Svpbmt_cg; cp: leaf_PTE_pbmt_reserved_enc_exec_u; bin: test9_exec\""
+Svpbmt_cg_leaf_PTE_pbmt_write_u_test10_store_str: .string "\"test: 109; cg: Svpbmt_cg; cp: leaf_PTE_pbmt_write_u; bin: test10_store\""
+Svpbmt_cg_leaf_PTE_pbmt_read_u_test10_load_str: .string "\"test: 110; cg: Svpbmt_cg; cp: leaf_PTE_pbmt_read_u; bin: test10_load\""
+Svpbmt_cg_leaf_PTE_pbmt_exec_u_test10_exec_str: .string "\"test: 111; cg: Svpbmt_cg; cp: leaf_PTE_pbmt_exec_u; bin: test10_exec\""
+Svpbmt_cg_leaf_PTE_pbmt_write_u_test11_store_str: .string "\"test: 112; cg: Svpbmt_cg; cp: leaf_PTE_pbmt_write_u; bin: test11_store\""
+Svpbmt_cg_leaf_PTE_pbmt_read_u_test11_load_str: .string "\"test: 113; cg: Svpbmt_cg; cp: leaf_PTE_pbmt_read_u; bin: test11_load\""
+Svpbmt_cg_leaf_PTE_pbmt_exec_u_test11_exec_str: .string "\"test: 114; cg: Svpbmt_cg; cp: leaf_PTE_pbmt_exec_u; bin: test11_exec\""
+Svpbmt_cg_leaf_PTE_pbmt_reserved_enc_write_u_test12_store_str: .string "\"test: 115; cg: Svpbmt_cg; cp: leaf_PTE_pbmt_reserved_enc_write_u; bin: test12_store\""
+Svpbmt_cg_leaf_PTE_pbmt_reserved_enc_read_u_test12_load_str: .string "\"test: 116; cg: Svpbmt_cg; cp: leaf_PTE_pbmt_reserved_enc_read_u; bin: test12_load\""
+Svpbmt_cg_leaf_PTE_pbmt_reserved_enc_exec_u_test12_exec_str: .string "\"test: 117; cg: Svpbmt_cg; cp: leaf_PTE_pbmt_reserved_enc_exec_u; bin: test12_exec\""
+Svpbmt_cg_leaf_PTE_pbmt_write_u_test13_store_str: .string "\"test: 118; cg: Svpbmt_cg; cp: leaf_PTE_pbmt_write_u; bin: test13_store\""
+Svpbmt_cg_leaf_PTE_pbmt_read_u_test13_load_str: .string "\"test: 119; cg: Svpbmt_cg; cp: leaf_PTE_pbmt_read_u; bin: test13_load\""
+Svpbmt_cg_leaf_PTE_pbmt_exec_u_test13_exec_str: .string "\"test: 120; cg: Svpbmt_cg; cp: leaf_PTE_pbmt_exec_u; bin: test13_exec\""
+Svpbmt_cg_leaf_PTE_pbmt_write_u_test14_store_str: .string "\"test: 121; cg: Svpbmt_cg; cp: leaf_PTE_pbmt_write_u; bin: test14_store\""
+Svpbmt_cg_leaf_PTE_pbmt_read_u_test14_load_str: .string "\"test: 122; cg: Svpbmt_cg; cp: leaf_PTE_pbmt_read_u; bin: test14_load\""
+Svpbmt_cg_leaf_PTE_pbmt_exec_u_test14_exec_str: .string "\"test: 123; cg: Svpbmt_cg; cp: leaf_PTE_pbmt_exec_u; bin: test14_exec\""
+Svpbmt_cg_leaf_PTE_pbmt_reserved_enc_write_u_test15_store_str: .string "\"test: 124; cg: Svpbmt_cg; cp: leaf_PTE_pbmt_reserved_enc_write_u; bin: test15_store\""
+Svpbmt_cg_leaf_PTE_pbmt_reserved_enc_read_u_test15_load_str: .string "\"test: 125; cg: Svpbmt_cg; cp: leaf_PTE_pbmt_reserved_enc_read_u; bin: test15_load\""
+Svpbmt_cg_leaf_PTE_pbmt_reserved_enc_exec_u_test15_exec_str: .string "\"test: 126; cg: Svpbmt_cg; cp: leaf_PTE_pbmt_reserved_enc_exec_u; bin: test15_exec\""
 
 // End of test data section and model specific data
 RVTEST_DATA_END

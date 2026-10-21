@@ -30,7 +30,7 @@ RVTEST_BEGIN
 
 
 /////////////////////////////////
-// cp_sv48_canonical_Smode
+// cp_canonical_write_s, cp_canonical_read_s, cp_canonical_exec_s
 /////////////////////////////////
 
 
@@ -74,26 +74,26 @@ RVTEST_BEGIN
   addi x13, x13, 16
 
 // Store
-Sv_cp_sv48_canonical_Smode_test1_store:
+Sv_vm_permissions_cg_cp_canonical_write_s_test1_store:
   sw x13, 20(x14)
   nop
 
 // Load
-Sv_cp_sv48_canonical_Smode_test1_load:
+Sv_vm_permissions_cg_cp_canonical_read_s_test1_load:
   lw x15, 20(x14)
   nop
 
 // Execute
-Sv_cp_sv48_canonical_Smode_test1_exec:
+Sv_vm_permissions_cg_cp_canonical_exec_s_test1_exec:
   jalr ra, x14, 0
   nop
 
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_cp_sv48_canonical_Smode_test1_store, Sv_cp_sv48_canonical_Smode_test1_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_vm_permissions_cg_cp_canonical_write_s_test1_store, Sv_vm_permissions_cg_cp_canonical_write_s_test1_store_str)
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, Sv_cp_sv48_canonical_Smode_test1_load, Sv_cp_sv48_canonical_Smode_test1_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x15, Sv_vm_permissions_cg_cp_canonical_read_s_test1_load, Sv_vm_permissions_cg_cp_canonical_read_s_test1_load_str)
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_cp_sv48_canonical_Smode_test1_exec, Sv_cp_sv48_canonical_Smode_test1_exec_str)
+  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_vm_permissions_cg_cp_canonical_exec_s_test1_exec, Sv_vm_permissions_cg_cp_canonical_exec_s_test1_exec_str)
 
 
 // 1GB page at level 2
@@ -111,26 +111,26 @@ Sv_cp_sv48_canonical_Smode_test1_exec:
   addi x13, x13, 16
 
 // Store
-Sv_cp_sv48_canonical_Smode_test2_store:
+Sv_vm_permissions_cg_cp_canonical_write_s_test2_store:
   sw x13, 20(x14)
   nop
 
 // Load
-Sv_cp_sv48_canonical_Smode_test2_load:
+Sv_vm_permissions_cg_cp_canonical_read_s_test2_load:
   lw x15, 20(x14)
   nop
 
 // Execute
-Sv_cp_sv48_canonical_Smode_test2_exec:
+Sv_vm_permissions_cg_cp_canonical_exec_s_test2_exec:
   jalr ra, x14, 0
   nop
 
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_cp_sv48_canonical_Smode_test2_store, Sv_cp_sv48_canonical_Smode_test2_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_vm_permissions_cg_cp_canonical_write_s_test2_store, Sv_vm_permissions_cg_cp_canonical_write_s_test2_store_str)
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, Sv_cp_sv48_canonical_Smode_test2_load, Sv_cp_sv48_canonical_Smode_test2_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x15, Sv_vm_permissions_cg_cp_canonical_read_s_test2_load, Sv_vm_permissions_cg_cp_canonical_read_s_test2_load_str)
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_cp_sv48_canonical_Smode_test2_exec, Sv_cp_sv48_canonical_Smode_test2_exec_str)
+  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_vm_permissions_cg_cp_canonical_exec_s_test2_exec, Sv_vm_permissions_cg_cp_canonical_exec_s_test2_exec_str)
 
 
 // 2MB page at level 1
@@ -149,26 +149,26 @@ Sv_cp_sv48_canonical_Smode_test2_exec:
   addi x13, x13, 16
 
 // Store
-Sv_cp_sv48_canonical_Smode_test3_store:
+Sv_vm_permissions_cg_cp_canonical_write_s_test3_store:
   sw x13, 20(x14)
   nop
 
 // Load
-Sv_cp_sv48_canonical_Smode_test3_load:
+Sv_vm_permissions_cg_cp_canonical_read_s_test3_load:
   lw x15, 20(x14)
   nop
 
 // Execute
-Sv_cp_sv48_canonical_Smode_test3_exec:
+Sv_vm_permissions_cg_cp_canonical_exec_s_test3_exec:
   jalr ra, x14, 0
   nop
 
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_cp_sv48_canonical_Smode_test3_store, Sv_cp_sv48_canonical_Smode_test3_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_vm_permissions_cg_cp_canonical_write_s_test3_store, Sv_vm_permissions_cg_cp_canonical_write_s_test3_store_str)
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, Sv_cp_sv48_canonical_Smode_test3_load, Sv_cp_sv48_canonical_Smode_test3_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x15, Sv_vm_permissions_cg_cp_canonical_read_s_test3_load, Sv_vm_permissions_cg_cp_canonical_read_s_test3_load_str)
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_cp_sv48_canonical_Smode_test3_exec, Sv_cp_sv48_canonical_Smode_test3_exec_str)
+  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_vm_permissions_cg_cp_canonical_exec_s_test3_exec, Sv_vm_permissions_cg_cp_canonical_exec_s_test3_exec_str)
 
 
 // 4KB page at level 0
@@ -188,26 +188,26 @@ Sv_cp_sv48_canonical_Smode_test3_exec:
   addi x13, x13, 16
 
 // Store
-Sv_cp_sv48_canonical_Smode_test4_store:
+Sv_vm_permissions_cg_cp_canonical_write_s_test4_store:
   sw x13, 20(x14)
   nop
 
 // Load
-Sv_cp_sv48_canonical_Smode_test4_load:
+Sv_vm_permissions_cg_cp_canonical_read_s_test4_load:
   lw x15, 20(x14)
   nop
 
 // Execute
-Sv_cp_sv48_canonical_Smode_test4_exec:
+Sv_vm_permissions_cg_cp_canonical_exec_s_test4_exec:
   jalr ra, x14, 0
   nop
 
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_cp_sv48_canonical_Smode_test4_store, Sv_cp_sv48_canonical_Smode_test4_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x13, Sv_vm_permissions_cg_cp_canonical_write_s_test4_store, Sv_vm_permissions_cg_cp_canonical_write_s_test4_store_str)
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, Sv_cp_sv48_canonical_Smode_test4_load, Sv_cp_sv48_canonical_Smode_test4_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x15, Sv_vm_permissions_cg_cp_canonical_read_s_test4_load, Sv_vm_permissions_cg_cp_canonical_read_s_test4_load_str)
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_cp_sv48_canonical_Smode_test4_exec, Sv_cp_sv48_canonical_Smode_test4_exec_str)
+  RVTEST_SIGUPD(x2, x5, x4, x8, Sv_vm_permissions_cg_cp_canonical_exec_s_test4_exec, Sv_vm_permissions_cg_cp_canonical_exec_s_test4_exec_str)
 
 
 // Instantiate trap handlers and other epilog code, call RVMODEL_HALT at end of test
@@ -243,18 +243,18 @@ rvtest_slvl2_pg_tbl:
   .skip(4096)
 
 // Testcase strings
-Sv_cp_sv48_canonical_Smode_test1_store_str: .string "\"test: 25; cg: Sv; cp: cp_sv48_canonical_Smode; bin: test1_store\""
-Sv_cp_sv48_canonical_Smode_test1_load_str: .string "\"test: 26; cg: Sv; cp: cp_sv48_canonical_Smode; bin: test1_load\""
-Sv_cp_sv48_canonical_Smode_test1_exec_str: .string "\"test: 27; cg: Sv; cp: cp_sv48_canonical_Smode; bin: test1_exec\""
-Sv_cp_sv48_canonical_Smode_test2_store_str: .string "\"test: 28; cg: Sv; cp: cp_sv48_canonical_Smode; bin: test2_store\""
-Sv_cp_sv48_canonical_Smode_test2_load_str: .string "\"test: 29; cg: Sv; cp: cp_sv48_canonical_Smode; bin: test2_load\""
-Sv_cp_sv48_canonical_Smode_test2_exec_str: .string "\"test: 30; cg: Sv; cp: cp_sv48_canonical_Smode; bin: test2_exec\""
-Sv_cp_sv48_canonical_Smode_test3_store_str: .string "\"test: 31; cg: Sv; cp: cp_sv48_canonical_Smode; bin: test3_store\""
-Sv_cp_sv48_canonical_Smode_test3_load_str: .string "\"test: 32; cg: Sv; cp: cp_sv48_canonical_Smode; bin: test3_load\""
-Sv_cp_sv48_canonical_Smode_test3_exec_str: .string "\"test: 33; cg: Sv; cp: cp_sv48_canonical_Smode; bin: test3_exec\""
-Sv_cp_sv48_canonical_Smode_test4_store_str: .string "\"test: 34; cg: Sv; cp: cp_sv48_canonical_Smode; bin: test4_store\""
-Sv_cp_sv48_canonical_Smode_test4_load_str: .string "\"test: 35; cg: Sv; cp: cp_sv48_canonical_Smode; bin: test4_load\""
-Sv_cp_sv48_canonical_Smode_test4_exec_str: .string "\"test: 36; cg: Sv; cp: cp_sv48_canonical_Smode; bin: test4_exec\""
+Sv_vm_permissions_cg_cp_canonical_write_s_test1_store_str: .string "\"test: 25; cg: Sv_vm_permissions_cg; cp: cp_canonical_write_s; bin: test1_store\""
+Sv_vm_permissions_cg_cp_canonical_read_s_test1_load_str: .string "\"test: 26; cg: Sv_vm_permissions_cg; cp: cp_canonical_read_s; bin: test1_load\""
+Sv_vm_permissions_cg_cp_canonical_exec_s_test1_exec_str: .string "\"test: 27; cg: Sv_vm_permissions_cg; cp: cp_canonical_exec_s; bin: test1_exec\""
+Sv_vm_permissions_cg_cp_canonical_write_s_test2_store_str: .string "\"test: 28; cg: Sv_vm_permissions_cg; cp: cp_canonical_write_s; bin: test2_store\""
+Sv_vm_permissions_cg_cp_canonical_read_s_test2_load_str: .string "\"test: 29; cg: Sv_vm_permissions_cg; cp: cp_canonical_read_s; bin: test2_load\""
+Sv_vm_permissions_cg_cp_canonical_exec_s_test2_exec_str: .string "\"test: 30; cg: Sv_vm_permissions_cg; cp: cp_canonical_exec_s; bin: test2_exec\""
+Sv_vm_permissions_cg_cp_canonical_write_s_test3_store_str: .string "\"test: 31; cg: Sv_vm_permissions_cg; cp: cp_canonical_write_s; bin: test3_store\""
+Sv_vm_permissions_cg_cp_canonical_read_s_test3_load_str: .string "\"test: 32; cg: Sv_vm_permissions_cg; cp: cp_canonical_read_s; bin: test3_load\""
+Sv_vm_permissions_cg_cp_canonical_exec_s_test3_exec_str: .string "\"test: 33; cg: Sv_vm_permissions_cg; cp: cp_canonical_exec_s; bin: test3_exec\""
+Sv_vm_permissions_cg_cp_canonical_write_s_test4_store_str: .string "\"test: 34; cg: Sv_vm_permissions_cg; cp: cp_canonical_write_s; bin: test4_store\""
+Sv_vm_permissions_cg_cp_canonical_read_s_test4_load_str: .string "\"test: 35; cg: Sv_vm_permissions_cg; cp: cp_canonical_read_s; bin: test4_load\""
+Sv_vm_permissions_cg_cp_canonical_exec_s_test4_exec_str: .string "\"test: 36; cg: Sv_vm_permissions_cg; cp: cp_canonical_exec_s; bin: test4_exec\""
 
 // End of test data section and model specific data
 RVTEST_DATA_END

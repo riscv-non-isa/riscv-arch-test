@@ -11,7 +11,7 @@
 from testgen.asm.tsbi import tsbi_call
 from testgen.data.state import TestData
 from testgen.data.test_chunk import TestChunk, trap_sigupd_count
-from testgen.priv.extensions.sv.access import add_rwx_test
+from testgen.priv.extensions.sv.access import ad_crosses, add_rwx_test, cross_names
 from testgen.priv.extensions.sv.generate import SvRegs, begin_sv_test, end_sv_test, sv_data
 from testgen.priv.extensions.sv.page_tables import SV32, SV39, SV48, SV57, PteFlags, SvMode, create_page_mapping
 from testgen.priv.registry import add_priv_test_generator
@@ -33,7 +33,9 @@ def _make_svade_mode(test_data: TestData, sv: SvMode, mode: str) -> TestChunk:
         sv,
         mode,
         f"{sv.name}_Svade_{mode}",
-        coverpoint="cp_ad_update",
+        coverpoint=cross_names(
+            ad_crosses("Svade_cg", mode, accessed=False), ad_crosses("Svade_cg", mode, accessed=True)
+        ),
         setup_asm=(f"LI(x{regs.scratch}, {mask})", tsbi_call(f"csrc {csr}, x{regs.scratch}")),
     )
 
@@ -65,6 +67,7 @@ def _make_svade_mode(test_data: TestData, sv: SvMode, mode: str) -> TestChunk:
                         level,
                         f"test{number}",
                         driver_mode="Smode",
+                        crosses=ad_crosses("Svade_cg", mode, accessed="PTE_A" in ad_bits),
                     ),
                     "",
                 ]

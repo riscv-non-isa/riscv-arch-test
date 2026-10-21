@@ -30,7 +30,7 @@ RVTEST_BEGIN
 
 
 /////////////////////////////////
-// cp_sv32_mstatus_sbe_and_sum_set_Smode
+// cp_mstatus_sbe_write, cp_mstatus_sbe_read
 /////////////////////////////////
 
 
@@ -121,21 +121,21 @@ RVTEST_BEGIN
   addi x8, x8, 16
 
 // Store
-SvSm_cp_sv32_mstatus_sbe_and_sum_set_Smode_test1_store:
+SvSm_mstatus_mprv_cg_cp_mstatus_sbe_write_test1_store:
   sw x8, 20(x14)
   nop
 
 // Load
-SvSm_cp_sv32_mstatus_sbe_and_sum_set_Smode_test1_load:
+SvSm_mstatus_mprv_cg_cp_mstatus_sbe_read_test1_load:
   lw x15, 20(x14)
   nop
 
   RVTEST_TSBI_GOTO_MMODE
 
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, SvSm_cp_sv32_mstatus_sbe_and_sum_set_Smode_test1_store, SvSm_cp_sv32_mstatus_sbe_and_sum_set_Smode_test1_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x8, SvSm_mstatus_mprv_cg_cp_mstatus_sbe_write_test1_store, SvSm_mstatus_mprv_cg_cp_mstatus_sbe_write_test1_store_str)
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, SvSm_cp_sv32_mstatus_sbe_and_sum_set_Smode_test1_load, SvSm_cp_sv32_mstatus_sbe_and_sum_set_Smode_test1_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x15, SvSm_mstatus_mprv_cg_cp_mstatus_sbe_read_test1_load, SvSm_mstatus_mprv_cg_cp_mstatus_sbe_read_test1_load_str)
 
 
 // 4KB page at level 0
@@ -172,21 +172,21 @@ SvSm_cp_sv32_mstatus_sbe_and_sum_set_Smode_test1_load:
   addi x8, x8, 16
 
 // Store
-SvSm_cp_sv32_mstatus_sbe_and_sum_set_Smode_test2_store:
+SvSm_mstatus_mprv_cg_cp_mstatus_sbe_write_test2_store:
   sw x8, 20(x14)
   nop
 
 // Load
-SvSm_cp_sv32_mstatus_sbe_and_sum_set_Smode_test2_load:
+SvSm_mstatus_mprv_cg_cp_mstatus_sbe_read_test2_load:
   lw x15, 20(x14)
   nop
 
   RVTEST_TSBI_GOTO_MMODE
 
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, SvSm_cp_sv32_mstatus_sbe_and_sum_set_Smode_test2_store, SvSm_cp_sv32_mstatus_sbe_and_sum_set_Smode_test2_store_str)
+  RVTEST_SIGUPD(x2, x5, x4, x8, SvSm_mstatus_mprv_cg_cp_mstatus_sbe_write_test2_store, SvSm_mstatus_mprv_cg_cp_mstatus_sbe_write_test2_store_str)
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, SvSm_cp_sv32_mstatus_sbe_and_sum_set_Smode_test2_load, SvSm_cp_sv32_mstatus_sbe_and_sum_set_Smode_test2_load_str)
+  RVTEST_SIGUPD(x2, x5, x4, x15, SvSm_mstatus_mprv_cg_cp_mstatus_sbe_read_test2_load, SvSm_mstatus_mprv_cg_cp_mstatus_sbe_read_test2_load_str)
 
 
 // Instantiate trap handlers and other epilog code, call RVMODEL_HALT at end of test
@@ -216,10 +216,10 @@ rvtest_slvl0_pg_tbl:
   .skip(4096)
 
 // Testcase strings
-SvSm_cp_sv32_mstatus_sbe_and_sum_set_Smode_test1_store_str: .string "\"test: 7; cg: SvSm; cp: cp_sv32_mstatus_sbe_and_sum_set_Smode; bin: test1_store\""
-SvSm_cp_sv32_mstatus_sbe_and_sum_set_Smode_test1_load_str: .string "\"test: 8; cg: SvSm; cp: cp_sv32_mstatus_sbe_and_sum_set_Smode; bin: test1_load\""
-SvSm_cp_sv32_mstatus_sbe_and_sum_set_Smode_test2_store_str: .string "\"test: 9; cg: SvSm; cp: cp_sv32_mstatus_sbe_and_sum_set_Smode; bin: test2_store\""
-SvSm_cp_sv32_mstatus_sbe_and_sum_set_Smode_test2_load_str: .string "\"test: 10; cg: SvSm; cp: cp_sv32_mstatus_sbe_and_sum_set_Smode; bin: test2_load\""
+SvSm_mstatus_mprv_cg_cp_mstatus_sbe_write_test1_store_str: .string "\"test: 7; cg: SvSm_mstatus_mprv_cg; cp: cp_mstatus_sbe_write; bin: test1_store\""
+SvSm_mstatus_mprv_cg_cp_mstatus_sbe_read_test1_load_str: .string "\"test: 8; cg: SvSm_mstatus_mprv_cg; cp: cp_mstatus_sbe_read; bin: test1_load\""
+SvSm_mstatus_mprv_cg_cp_mstatus_sbe_write_test2_store_str: .string "\"test: 9; cg: SvSm_mstatus_mprv_cg; cp: cp_mstatus_sbe_write; bin: test2_store\""
+SvSm_mstatus_mprv_cg_cp_mstatus_sbe_read_test2_load_str: .string "\"test: 10; cg: SvSm_mstatus_mprv_cg; cp: cp_mstatus_sbe_read; bin: test2_load\""
 
 // End of test data section and model specific data
 RVTEST_DATA_END
