@@ -214,3 +214,9 @@
 #if defined(S_SUPPORTED) && !defined(UDB_SATP_MODE_BARE)
   #error "DUTs with S-mode but without satp.MODE = Bare (SATP_MODE_BARE: false) are not currently supported by ACTs. Please report this as an issue on the riscv/riscv-arch-test repository."
 #endif
+
+// Generated vector tests size their data and signature regions for VLEN <= RVTEST_VLEN_MAX.
+// Larger VLENs are legal but not yet supported.
+#if defined(RVTEST_VLEN_MAX) && (UDB_VLEN > RVTEST_VLEN_MAX)
+    #error "UDB_VLEN exceeds RVTEST_VLEN_MAX, the largest VLEN the vector tests currently support. Please open an issue at https://github.com/riscv/riscv-arch-test/issues with your VLEN so that support can be prioritized."
+#endif

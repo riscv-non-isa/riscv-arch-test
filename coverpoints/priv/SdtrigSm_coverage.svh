@@ -14,6 +14,14 @@
     `define UDB_SDTRIG_MASKMAX6 63
 `endif
 
+// A context CSR that this hart does not implement (cp_csr_unimplemented)
+`ifndef UDB_MCONTEXT_AVAILABLE
+    `define SDTRIG_CSR_UNIMPLEMENTED
+`endif
+`ifndef UDB_HCONTEXT_AVAILABLE
+    `define SDTRIG_CSR_UNIMPLEMENTED
+`endif
+
 covergroup SdtrigSm_trig_module_reg_cg with function sample(ins_t ins);
     option.per_instance = 0;
     `include "general/RISCV_coverage_standard_coverpoints.svh"
@@ -27,6 +35,17 @@ covergroup SdtrigSm_trig_module_reg_cg with function sample(ins_t ins);
     }
     priv_bits: coverpoint ins.current.rs1_val[26:0] {
         bins priv = {27'b001_1000_0000_0000_0000_0101_1000};
+    }
+    // cp_tdata1_dmode: an M-mode write of dmode = 1 with a supported type leaves dmode = 0
+    tdata1_type_dmode: coverpoint ins.current.rs1_val[XLEN-1:XLEN-4] {
+        bins icount    = {4'd3};
+        bins mcontrol6 = {4'd6};
+    }
+    dmode_written: coverpoint ins.current.rs1_val[XLEN-5] {
+        bins set = {1'b1};
+    }
+    dmode_after: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tdata1", "dmode")[0] {
+        bins clear = {1'b0};
     }
     csr_tselect:  coverpoint ins.current.insn[31:20] {
         bins tselect = {CSR_TSELECT};
@@ -65,6 +84,28 @@ covergroup SdtrigSm_trig_module_reg_cg with function sample(ins_t ins);
         wildcard bins csrrw1 = {CSRRW} iff (ins.current.rs1_val == '1);
     }
 
+    `ifdef SDTRIG_CSR_UNIMPLEMENTED
+        csr_unimplemented: coverpoint ins.current.insn[31:20] {
+            type_option.weight = 0;
+            `ifndef UDB_MCONTEXT_AVAILABLE
+                bins mcontext = {CSR_MCONTEXT};
+            `endif
+            `ifndef UDB_HCONTEXT_AVAILABLE
+                bins hcontext = {CSR_HCONTEXT};
+            `endif
+        }
+        csr_read_write: coverpoint ins.current.insn {
+            type_option.weight = 0;
+            wildcard bins csrr = {CSRR};
+            wildcard bins csrw = {CSRW};
+        }
+        // illegal-instruction trap into M taken on this record
+        illegal_insn_trap: coverpoint ins.current.csr[CSR_MCAUSE] iff (ins.current.csr_wb[CSR_MCAUSE]) {
+            type_option.weight = 0;
+            bins illegal = {2};
+        }
+    `endif
+
     // main coverpoints
     cp_tdata_write:           cross priv_mode_m, triggernum, type_disabled, csr_tdata, csr_access;          // NTRIG * 3 CSRs * 2 values
     cp_csr_access_global:     cross priv_mode_m, csr_global_reg, csr_access;                                // implemented global CSRs * 2 values
@@ -72,6 +113,10 @@ covergroup SdtrigSm_trig_module_reg_cg with function sample(ins_t ins);
     cp_tselect_trigs:         cross priv_mode_m, triggernum, csrr, csr_tselect;                             // NTRIG
     cp_tdata1_mode_hardwired: cross priv_mode_m, triggernum, csrw, csr_tdata1, tdata1_type_six, priv_bits;  // NTRIG
     cp_tinfo_read_only:       cross priv_mode_m, triggernum, csr_tinfo, csr_access;                         // NTRIG
+    cp_tdata1_dmode:          cross priv_mode_m, triggernum, csrw, csr_tdata1, tdata1_type_dmode, dmode_written, dmode_after;  // NTRIG * 2 types
+    `ifdef SDTRIG_CSR_UNIMPLEMENTED
+        cp_csr_unimplemented: cross priv_mode_m, csr_unimplemented, csr_read_write, illegal_insn_trap;     // unimplemented context CSRs * 2 accesses
+    `endif
 endgroup
 
 `ifdef UDB_TCONTROL_AVAILABLE
@@ -403,7 +448,7 @@ covergroup SdtrigSm_cache_operations_cg with function sample(ins_t ins);
         type_option.weight = 0;
         wildcard bins block      = {'x} iff (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tdata2", "tdata2") == ins.current.rs1_val);
         wildcard bins below      = {'x} iff (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tdata2", "tdata2") == ins.current.rs1_val - 1);
-        wildcard bins next_block = {'x} iff (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tdata2", "tdata2") == ins.current.rs1_val + `UDB_CACHE_BLOCK_SIZE);
+        wildcard bins next_block = {'x} iff (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tdata2", "tdata2") == ins.current.rs1_val + XLEN'(`UDB_CACHE_BLOCK_SIZE));
         bins zero                = {'0};
     }
     prefetch_tdata2: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tdata2", "tdata2") {
@@ -569,24 +614,280 @@ covergroup SdtrigSm_combined_accesses_cg with function sample(ins_t ins);
 endgroup
 `endif
 
-`ifdef S_SUPPORTED
-covergroup SdtrigSm_native_triggers_cg with function sample(ins_t ins);
+// Traps seen by itrigger/etrigger. The trace puts an interrupt or exception, and a trigger that fires on it
+// (mcause = 3 with the breakpoint taken into M), on the record of the instruction the trap follows or replaces.
+// A CSR instruction that names xcause also logs it, so only other records count as trap entries.
+function automatic logic sdtrig_trap_wrote(ins_t ins, logic [11:0] addr);
+    return ins.current.csr_wb[addr] &&
+           !(ins.current.insn[6:0] == 7'b1110011 && ins.current.insn[14:12] != 3'b000 && ins.current.insn[31:20] == addr);
+endfunction
+// 1 when a trigger breakpoint was taken into M on this record
+function automatic logic sdtrig_trap_fired(ins_t ins);
+    return sdtrig_trap_wrote(ins, CSR_MCAUSE) && ins.current.csr[CSR_MCAUSE] == 3 &&
+           ins.current.insn != EBREAK && !(ins.current.insn[1:0] != 2'b11 && ins.current.insn[15:0] == C_EBREAK[15:0]);
+endfunction
+// Mode that handled the interrupt or exception taken on this record: 3 = M, 1 = S, 2 = none
+function automatic logic [1:0] sdtrig_trap_handler(ins_t ins);
+    if (sdtrig_trap_wrote(ins, CSR_SCAUSE)) return 2'd1;
+    if (sdtrig_trap_wrote(ins, CSR_MCAUSE) && !sdtrig_trap_fired(ins)) return 2'd3;
+    return 2'd2;
+endfunction
+function automatic logic [XLEN-1:0] sdtrig_trap_cause(ins_t ins);
+    return (sdtrig_trap_handler(ins) == 2'd1) ? ins.current.csr[CSR_SCAUSE] : ins.current.csr[CSR_MCAUSE];
+endfunction
+// 1 when an interrupt (0 when an exception) was taken on this record
+function automatic logic sdtrig_trap_interrupt(ins_t ins);
+    return sdtrig_trap_handler(ins) != 2'd2 && sdtrig_trap_cause(ins)[XLEN-1];
+endfunction
+function automatic logic sdtrig_trap_exception(ins_t ins);
+    return sdtrig_trap_handler(ins) != 2'd2 && !sdtrig_trap_cause(ins)[XLEN-1];
+endfunction
+// Mode the trap was taken from: an interrupt taken on an xRET record is taken in the mode the xRET returns to
+function automatic logic [1:0] sdtrig_trap_origin(ins_t ins);
+    if (ins.current.insn == MRET) return get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "mstatus", "mpp")[1:0];
+    if (ins.current.insn == SRET) return {1'b0, get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "mstatus", "spp")[0]};
+    return ins.prev.mode;
+endfunction
+// {handler, tdata1 priv bit for the origin mode (itrigger/etrigger m 9, s 7, u 6), fired}
+function automatic logic [3:0] sdtrig_trap_result(ins_t ins);
+    logic [XLEN-1:0] tdata1 = get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "tdata1", "tdata1");
+    logic priv_bit;
+    case (sdtrig_trap_origin(ins))
+        2'd3:    priv_bit = tdata1[9];
+        2'd1:    priv_bit = tdata1[7];
+        default: priv_bit = tdata1[6];
+    endcase
+    return {sdtrig_trap_handler(ins), priv_bit, sdtrig_trap_fired(ins)};
+endfunction
+// 1 when tdata2 selects the cause taken on this record
+function automatic logic sdtrig_trap_selected(ins_t ins);
+    logic [XLEN-1:0] tdata2 = get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "tdata2", "tdata2");
+    return tdata2[sdtrig_trap_cause(ins)[$clog2(XLEN)-1:0]];
+endfunction
+// 1 when xdeleg (mideleg for an interrupt, medeleg for an exception) delegates the cause taken on this record
+function automatic logic sdtrig_trap_delegated(ins_t ins);
+    logic [XLEN-1:0] deleg = sdtrig_trap_cause(ins)[XLEN-1] ? get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "mideleg", "mideleg") :
+                                                              get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "medeleg", "medeleg");
+    return deleg[sdtrig_trap_cause(ins)[$clog2(XLEN)-1:0]];
+endfunction
+
+covergroup SdtrigSm_itrigger_cg with function sample(ins_t ins);
     option.per_instance = 0;
     `include "general/RISCV_coverage_standard_coverpoints.svh"
     `include "general/RISCV_coverage_sdtrig_coverpoints.svh"
+    `include "general/RISCV_coverage_sdtrig_trap_coverpoints.svh"
 
-    tdata1_s_on: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tdata1", "s")[0] {
-        bins on = {1'b1};
+    // the selected trigger is an itrigger and an interrupt was taken on this record
+    itrigger_interrupt: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "tdata1", "type")[3:0] iff (sdtrig_trap_interrupt(ins)) {
+        type_option.weight = 0;
+        bins itrigger = {4'd4};
     }
-    medeleg_breakpoint: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "medeleg", "medeleg")[3] {
-        bins not_delegated = {1'b0};
-        bins delegated     = {1'b1};
+    // interrupts taken in M from M
+    itrigger_code_m: coverpoint sdtrig_trap_cause(ins)[7:0] {
+        type_option.weight = 0;
+        `ifdef UDB_MSI_INTR_IMPL
+            bins msi = {8'd3};
+        `endif
+        `ifdef UDB_MTI_INTR_IMPL
+            bins mti = {8'd7};
+        `endif
+        `ifdef UDB_MEI_INTR_IMPL
+            bins mei = {8'd11};
+        `endif
+        `ifdef S_SUPPORTED
+            `ifdef UDB_SSI_INTR_IMPL
+                bins ssi = {8'd1};
+            `endif
+            `ifdef UDB_STI_INTR_IMPL
+                bins sti = {8'd5};
+            `endif
+            `ifdef UDB_SEI_INTR_IMPL
+                bins sei = {8'd9};
+            `endif
+            `ifdef SSCOFPMF_SUPPORTED
+                bins lcofi = {8'd13};
+            `endif
+        `endif
+    }
+    // S-level interrupts delegated to S
+    itrigger_code_s: coverpoint sdtrig_trap_cause(ins)[7:0] {
+        type_option.weight = 0;
+        `ifdef UDB_SSI_INTR_IMPL
+            bins ssi = {8'd1};
+        `endif
+        `ifdef UDB_STI_INTR_IMPL
+            bins sti = {8'd5};
+        `endif
+        `ifdef UDB_SEI_INTR_IMPL
+            bins sei = {8'd9};
+        `endif
+        `ifdef SSCOFPMF_SUPPORTED
+            bins lcofi = {8'd13};
+        `endif
     }
 
     // main coverpoints
-    cp_breakpoint_delegate: cross priv_mode_s, tdata1_type_mcontrol6, tdata1_s_on, tdata1_execute_on, tdata1_action_breakpoint, tdata2_pc, medeleg_breakpoint;  // 2 medeleg
+    cp_itrigger_m:           cross trap_from_m, triggernum, itrigger_interrupt, itrigger_code_m, trap_not_delegated, trap_selected, trap_result_m;           // NTRIG * interrupts * 2 m
+    cp_itrigger_m_other:     cross trap_from_m, triggernum, itrigger_interrupt, trap_not_delegated, trap_not_selected, trap_result_m;                         // NTRIG * 2 m
+    `ifdef S_SUPPORTED
+        cp_itrigger_s:       cross trap_from_s, triggernum, itrigger_interrupt, itrigger_code_s, trap_delegated, trap_selected, trap_result_s;               // NTRIG * S interrupts * 2 s
+        cp_itrigger_s_other: cross trap_from_s, triggernum, itrigger_interrupt, trap_delegated, trap_not_selected, trap_result_s_other;                       // NTRIG * 2 s
+        `ifdef U_SUPPORTED
+            cp_itrigger_u:       cross trap_from_u, triggernum, itrigger_interrupt, itrigger_code_s, trap_delegated, trap_selected, trap_result_s;           // NTRIG * S interrupts * 2 u
+            cp_itrigger_u_other: cross trap_from_u, triggernum, itrigger_interrupt, trap_delegated, trap_not_selected, trap_result_s_other;                   // NTRIG * 2 u
+        `endif
+    `endif
 endgroup
-`endif
+
+covergroup SdtrigSm_etrigger_cg with function sample(ins_t ins);
+    option.per_instance = 0;
+    `include "general/RISCV_coverage_standard_coverpoints.svh"
+    `include "general/RISCV_coverage_sdtrig_coverpoints.svh"
+    `include "general/RISCV_coverage_sdtrig_trap_coverpoints.svh"
+
+    // the selected trigger is an etrigger and an exception was taken on this record
+    etrigger_exception: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "tdata1", "type")[3:0] iff (sdtrig_trap_exception(ins)) {
+        type_option.weight = 0;
+        bins etrigger = {4'd5};
+    }
+    // exceptions raised in M. Page faults come from loads and stores with MPRV = 1, MPP = U.
+    etrigger_code_m: coverpoint sdtrig_trap_cause(ins)[7:0] {
+        type_option.weight = 0;
+        bins iacc = {8'd1};
+        bins ill  = {8'd2};
+        bins lacc = {8'd5};
+        bins sacc = {8'd7};
+        bins ecm  = {8'd11};
+        `ifdef UDB_MXLEN_64
+            `ifdef SV39_SUPPORTED
+                bins lpf = {8'd13};
+                bins spf = {8'd15};
+            `endif
+        `else
+            `ifdef SV32_SUPPORTED
+                bins lpf = {8'd13};
+                bins spf = {8'd15};
+            `endif
+        `endif
+    }
+    // exceptions raised in S, handled in M
+    etrigger_code_s: coverpoint sdtrig_trap_cause(ins)[7:0] {
+        type_option.weight = 0;
+        bins iacc = {8'd1};
+        bins ill  = {8'd2};
+        bins lacc = {8'd5};
+        bins sacc = {8'd7};
+        bins ecs  = {8'd9};
+        `ifdef UDB_MXLEN_64
+            `ifdef SV39_SUPPORTED
+                bins ipf = {8'd12};
+                bins lpf = {8'd13};
+                bins spf = {8'd15};
+            `endif
+        `else
+            `ifdef SV32_SUPPORTED
+                bins ipf = {8'd12};
+                bins lpf = {8'd13};
+                bins spf = {8'd15};
+            `endif
+        `endif
+    }
+    // exceptions raised in U, handled in M
+    etrigger_code_u: coverpoint sdtrig_trap_cause(ins)[7:0] {
+        type_option.weight = 0;
+        bins iacc = {8'd1};
+        bins ill  = {8'd2};
+        bins lacc = {8'd5};
+        bins sacc = {8'd7};
+        bins ecu  = {8'd8};
+        `ifdef UDB_MXLEN_64
+            `ifdef SV39_SUPPORTED
+                bins ipf = {8'd12};
+                bins lpf = {8'd13};
+                bins spf = {8'd15};
+            `endif
+        `else
+            `ifdef SV32_SUPPORTED
+                bins ipf = {8'd12};
+                bins lpf = {8'd13};
+                bins spf = {8'd15};
+            `endif
+        `endif
+    }
+    // exceptions raised in S and delegated to S. ecall from S is not: the T-SBI return to M is itself one.
+    // A delegated illegal instruction is not either: a DUT that emulates the time CSR forwards it in software.
+    etrigger_code_s_deleg: coverpoint sdtrig_trap_cause(ins)[7:0] {
+        type_option.weight = 0;
+        bins iacc = {8'd1};
+        bins lacc = {8'd5};
+        bins sacc = {8'd7};
+        `ifdef UDB_MXLEN_64
+            `ifdef SV39_SUPPORTED
+                bins ipf = {8'd12};
+                bins lpf = {8'd13};
+                bins spf = {8'd15};
+            `endif
+        `else
+            `ifdef SV32_SUPPORTED
+                bins ipf = {8'd12};
+                bins lpf = {8'd13};
+                bins spf = {8'd15};
+            `endif
+        `endif
+    }
+    // exceptions raised in U and delegated to S
+    etrigger_code_u_deleg: coverpoint sdtrig_trap_cause(ins)[7:0] {
+        type_option.weight = 0;
+        bins iacc = {8'd1};
+        bins lacc = {8'd5};
+        bins sacc = {8'd7};
+        bins ecu  = {8'd8};
+        `ifdef UDB_MXLEN_64
+            `ifdef SV39_SUPPORTED
+                bins ipf = {8'd12};
+                bins lpf = {8'd13};
+                bins spf = {8'd15};
+            `endif
+        `else
+            `ifdef SV32_SUPPORTED
+                bins ipf = {8'd12};
+                bins lpf = {8'd13};
+                bins spf = {8'd15};
+            `endif
+        `endif
+    }
+
+    // main coverpoints
+    cp_etrigger_m:               cross trap_from_m, triggernum, etrigger_exception, etrigger_code_m, trap_selected, trap_result_m;                             // NTRIG * M exceptions * 2 m
+    cp_etrigger_m_other:         cross trap_from_m, triggernum, etrigger_exception, trap_not_selected, trap_result_m;                                           // NTRIG * 2 m
+    `ifdef S_SUPPORTED
+        cp_etrigger_s:           cross trap_from_s, triggernum, etrigger_exception, etrigger_code_s, trap_not_delegated, trap_selected, trap_result_m;         // NTRIG * S exceptions * 2 s
+        cp_etrigger_s_deleg:     cross trap_from_s, triggernum, etrigger_exception, etrigger_code_s_deleg, trap_delegated, trap_selected, trap_result_s;       // NTRIG * delegated S exceptions * 2 s
+        cp_etrigger_s_other:     cross trap_from_s, triggernum, etrigger_exception, trap_not_delegated, trap_not_selected, trap_result_m;                       // NTRIG * 2 s
+        `ifdef U_SUPPORTED
+            cp_etrigger_u:       cross trap_from_u, triggernum, etrigger_exception, etrigger_code_u, trap_not_delegated, trap_selected, trap_result_m;     // NTRIG * U exceptions * 2 u
+            cp_etrigger_u_deleg: cross trap_from_u, triggernum, etrigger_exception, etrigger_code_u_deleg, trap_delegated, trap_selected, trap_result_s;   // NTRIG * delegated U exceptions * 2 u
+            cp_etrigger_u_other: cross trap_from_u, triggernum, etrigger_exception, trap_not_delegated, trap_not_selected, trap_result_m;                   // NTRIG * 2 u
+        `endif
+    `endif
+endgroup
+
+// An execute trigger that fires takes the breakpoint instead of executing the instruction it matches, which never
+// retires. The trace logs that breakpoint (mcause = 3, mepc = the matched instruction's PC) on the record before it,
+// so an execute fire is sampled there: 1 when a trigger breakpoint was taken on the instruction after this record.
+function automatic logic sdtrig_exec_fired(ins_t ins);
+    return sdtrig_trap_fired(ins) &&
+           ins.current.csr[CSR_MEPC] == ins.current.pc_rdata + ((ins.current.insn[1:0] == 2'b11) ? 4 : 2);
+endfunction
+// cp_mcontrol6_execute_size target: 1 = addi x0, x1, 0 (the 32-bit hint), 2 = c.nop. A fire on a select = data trigger
+// with match = equal identifies the target by tdata2; otherwise the target is the instruction that retired.
+function automatic logic [1:0] sdtrig_exec_size_target(ins_t ins);
+    if (sdtrig_exec_fired(ins))
+        return (ins.current.csr[CSR_TDATA2] == 32'h00008013) ? 2'd1 : (ins.current.csr[CSR_TDATA2] == 'h0001) ? 2'd2 : 2'd0;
+    if (ins.current.insn == 32'h00008013) return 2'd1;
+    if (ins.current.insn[1:0] != 2'b11 && ins.current.insn[15:0] == 16'h0001) return 2'd2;
+    return 2'd0;
+endfunction
 
 covergroup SdtrigSm_mcontrol6_cg with function sample(ins_t ins);
     option.per_instance = 0;
@@ -617,9 +918,13 @@ covergroup SdtrigSm_mcontrol6_cg with function sample(ins_t ins);
             bins not_equal = {4'd8};
         `endif
     }
-    tdata2_exec_adr: coverpoint (ins.current.csr[CSR_TDATA2] == ins.current.pc_rdata) {
-        bins pc   = {1'b1};
-        bins zero = {1'b0} iff (ins.current.csr[CSR_TDATA2] == '0);
+    // add x0, x1, x2 at tdata2 (pc) or with tdata2 = 0 (zero): seen retiring, or as the breakpoint that replaced it
+    exec_adr_target: coverpoint (sdtrig_exec_fired(ins) && ins.current.csr[CSR_MEPC] == ins.current.csr[CSR_TDATA2]) ? 2'd1 :
+                                (ins.current.insn != 32'h00208033)                    ? 2'd0 :
+                                (ins.current.pc_rdata == ins.current.csr[CSR_TDATA2]) ? 2'd1 :
+                                (ins.current.csr[CSR_TDATA2] == '0)                   ? 2'd2 : 2'd0 {
+        bins pc   = {2'd1};
+        bins zero = {2'd2};
     }
     tdata2_ls_adr: coverpoint (ins.current.csr[CSR_TDATA2] == ins.current.rs1_val     ? 2'd0 :
                                ins.current.csr[CSR_TDATA2] == ins.current.rs1_val + 8 ? 2'd1 :
@@ -637,7 +942,8 @@ covergroup SdtrigSm_mcontrol6_cg with function sample(ins_t ins);
             bins b64 = {3'd5};
         `endif
     }
-    tdata2_exec_data: coverpoint ins.current.csr[CSR_TDATA2] {
+    // addi x0, x1, 0 seen retiring, or as the breakpoint that replaced it
+    exec_data_target: coverpoint ins.current.csr[CSR_TDATA2] iff (sdtrig_exec_fired(ins) || ins.current.insn == 32'h00008013) {
         bins addi_hint = {32'h00008013};
         bins nofire    = {2}; // no instruction in the test has this encoding
     }
@@ -709,16 +1015,10 @@ covergroup SdtrigSm_mcontrol6_cg with function sample(ins_t ins);
         bins scratch        = {0};
         bins scratch_plus_8 = {8};
     }
-    addi_hint: coverpoint ins.current.insn {
-        bins addi_hint = {32'h00008013};
-    }
-    exec_adr_target: coverpoint ins.current.insn {
-        bins add_x0 = {32'h00208033};  // add x0, x1, x2
-    }
-    exec_size_instr: coverpoint ins.current.insn {
-        bins addi_hint = {32'h00008013};
+    exec_size_target: coverpoint sdtrig_exec_size_target(ins) {
+        bins addi_hint = {2'd1};
         `ifdef ZCA_SUPPORTED
-            wildcard bins c_nop = {C_NOP};
+            bins c_nop = {2'd2};
         `endif
     }
     sw: coverpoint ins.current.insn {
@@ -727,6 +1027,16 @@ covergroup SdtrigSm_mcontrol6_cg with function sample(ins_t ins);
     lw_sw: coverpoint ins.current.insn {
         wildcard bins sw = {SW};
         wildcard bins lw = {LW};
+    }
+    // XLEN-wide load and store, for select = data matches with size = 0 (any)
+    load_store_xlen: coverpoint ins.current.insn {
+        `ifdef UDB_MXLEN_64
+            wildcard bins sd = {SD};
+            wildcard bins ld = {LD};
+        `else
+            wildcard bins sw = {SW};
+            wildcard bins lw = {LW};
+        `endif
     }
     store_xlen: coverpoint ins.current.insn {
         `ifdef UDB_MXLEN_64
@@ -804,21 +1114,22 @@ covergroup SdtrigSm_mcontrol6_cg with function sample(ins_t ins);
     cp_mcontrol6_priv_mode: cross priv_mode_m, triggernum, tdata1_type_mcontrol6, tdata1_m, tdata1_chain_disabled, tdata1_match_equal, tdata1_size_any, tdata1_select_adr, tdata1_xsl_store, tdata2_adr, sw { // NTRIG * 2 m modes
         ignore_bins no_match = binsof(tdata2_adr.zero);
     }
-    cp_mcontrol6_execute_adr:     cross priv_mode_m, triggernum, tdata1_type_mcontrol6, tdata1_m_on, tdata1_chain_disabled, tdata1_match_equal, tdata1_size_any, tdata1_select_adr, tdata1_xsl, tdata2_exec_adr, exec_adr_target;                                            // NTRIG * 8 xsl * 2 tdata2
+    cp_mcontrol6_execute_adr:     cross priv_mode_m, triggernum, tdata1_type_mcontrol6, tdata1_m_on, tdata1_chain_disabled, tdata1_match_equal, tdata1_size_any, tdata1_select_adr, tdata1_xsl, exec_adr_target;                                                             // NTRIG * 8 xsl * 2 tdata2
     cp_mcontrol6_load_store_adr:  cross priv_mode_m, triggernum, tdata1_type_mcontrol6, tdata1_m_on, tdata1_chain_disabled, tdata1_match_equal, tdata1_size_any, tdata1_select_adr, tdata1_xsl, tdata2_ls_adr, store_offset, lw_sw;                                    // NTRIG * 8 xsl * 3 tdata2 * 2 offsets * 2 instrs
-    cp_mcontrol6_execute_data:    cross priv_mode_m, triggernum, tdata1_type_mcontrol6, tdata1_m_on, tdata1_chain_disabled, tdata1_match_equal, tdata1_size_any, tdata1_select_data, tdata1_xsl, tdata2_exec_data, addi_hint;                                          // NTRIG * 8 xsl * 2 tdata2
-    cp_mcontrol6_load_store_data: cross priv_mode_m, triggernum, tdata1_type_mcontrol6, tdata1_m_on, tdata1_chain_disabled, tdata1_match_equal, tdata1_size_any, tdata1_select_data, tdata1_xsl, lw_sw;                                                                // NTRIG * 8 xsl * 2 instrs
-    cp_mcontrol6_execute_size:    cross priv_mode_m, triggernum, tdata1_type_mcontrol6, tdata1_m_on, tdata1_chain_disabled, tdata1_match_equal, tdata1_select_data, tdata1_xsl_load_store_execute, tdata1_size, tdata2_exec_size, exec_size_instr;               // NTRIG * 7 sizes * 2 tdata2 * 2 instrs
+    cp_mcontrol6_execute_data:    cross priv_mode_m, triggernum, tdata1_type_mcontrol6, tdata1_m_on, tdata1_chain_disabled, tdata1_match_equal, tdata1_size_any, tdata1_select_data, tdata1_xsl, exec_data_target;                                                     // NTRIG * 8 xsl * 2 tdata2
+    cp_mcontrol6_load_store_data: cross priv_mode_m, triggernum, tdata1_type_mcontrol6, tdata1_m_on, tdata1_chain_disabled, tdata1_match_equal, tdata1_size_any, tdata1_select_data, tdata1_xsl, load_store_xlen;                                                            // NTRIG * 8 xsl * 2 instrs
+    cp_mcontrol6_execute_size:    cross priv_mode_m, triggernum, tdata1_type_mcontrol6, tdata1_m_on, tdata1_chain_disabled, tdata1_match_equal, tdata1_select_data, tdata1_xsl_load_store_execute, tdata1_size, tdata2_exec_size, exec_size_target;              // NTRIG * 7 sizes * 2 tdata2 * 2 instrs
     cp_mcontrol6_load_store_size: cross priv_mode_m, triggernum, tdata1_type_mcontrol6, tdata1_m_on, tdata1_chain_disabled, tdata1_match_equal, tdata1_select_adr, tdata1_xsl_load_store, tdata1_size_ls, tdata2_adr, load_store_instr;               // NTRIG * 5 sizes * 2 tdata2 * instrs
     cp_mcontrol6_match:           cross priv_mode_m, triggernum, tdata1_type_mcontrol6, tdata1_m_on, tdata1_chain_disabled, tdata1_size_any, tdata1_select_data, tdata1_xsl_store, tdata1_match_cmp, store_data_cmp, store_xlen;                   // NTRIG * 4 match * 5 values
     `ifdef UDB_SDTRIG_MCONTROL6_MATCH_AVAILABLE
         cp_mcontrol6_match_napot: cross priv_mode_m, triggernum, tdata1_type_mcontrol6, tdata1_m_on, tdata1_chain_disabled, tdata1_size_any, tdata1_select_data, tdata1_xsl_store, tdata1_match_napot, tdata2_napot, store_data_napot, store_xlen; // NTRIG * 2 match * (min(maskmax6, XLEN-1) - 1) tdata2 * 3 values
         cp_mcontrol6_match_mask:  cross priv_mode_m, triggernum, tdata1_type_mcontrol6, tdata1_m_on, tdata1_chain_disabled, tdata1_size_any, tdata1_select_data, tdata1_xsl_store, tdata1_match_mask, store_data_mask, store_xlen;                 // NTRIG * 4 match * 11 values
     `endif
-    cp_mcontrol6_chain_adr:       cross priv_mode_m, triggernum_chain, tdata1_type_mcontrol6, tdata1_m_on, tdata1_select_data, tdata1_chain_disabled, tdata1_match_equal, tdata1_size_any, tdata1_xsl_store, store_data_chain, store_offset, sw;                       // (NTRIG-1) * 2 data * 2 adr
+    cp_mcontrol6_chain_adr:       cross priv_mode_m, triggernum_chain, tdata1_type_mcontrol6, tdata1_m_on, tdata1_select_data, tdata1_chain_disabled, tdata1_match_equal, tdata1_size_any, tdata1_xsl_store, store_data_chain, store_offset, store_xlen;                    // (NTRIG-1) * 2 data * 2 adr
 endgroup
 
-// textra32/textra64 (tdata3) context matching, sampled when tdata1 arms an icount or mcontrol6 trigger.
+// textra32/textra64 (tdata3) context matching, sampled when tdata1 arms an icount or mcontrol6 trigger, and on the
+// S-handled traps that an itrigger or etrigger watches.
 // Field positions: textra64 mhvalue 63:51, mhselect 50:48, sbytemask 39:36, svalue 33:2, sselect 1:0;
 //                  textra32 mhvalue 31:26, mhselect 25:23, sbytemask 19:18, svalue 17:2, sselect 1:0.
 function automatic logic [2:0] sdtrig_textra_mhselect(logic [XLEN-1:0] t3);
@@ -839,8 +1150,8 @@ function automatic logic sdtrig_textra_mcontext_match(logic [XLEN-1:0] t3, logic
 endfunction
 // 1 when svalue equals scontext in every byte that sbytemask does not ignore
 function automatic logic sdtrig_textra_scontext_match(logic [XLEN-1:0] t3, logic [XLEN-1:0] scontext);
-    logic [31:0] svalue   = 32'((XLEN == 64) ? ((t3 >> 2) & 'hffffffff) : ((t3 >> 2) & 'hffff));
-    logic [31:0] ctx      = 32'(scontext & ((XLEN == 64) ? 'hffffffff : 'hffff));
+    logic [31:0] svalue   = 32'((XLEN == 64) ? (t3 >> 2) : ((t3 >> 2) & 'hffff));
+    logic [31:0] ctx      = 32'((XLEN == 64) ? scontext : (scontext & 'hffff));
     logic [3:0]  bytemask = sdtrig_textra_sbytemask(t3);
     for (int i = 0; i < 4; i++)
         if (bytemask[i]) begin
@@ -850,10 +1161,36 @@ function automatic logic sdtrig_textra_scontext_match(logic [XLEN-1:0] t3, logic
     return svalue == ctx;
 endfunction
 
+// 1 when the low ASIDMAX (RV64 16, RV32 9) bits of svalue equal satp.ASID
+function automatic logic sdtrig_textra_asid_match(logic [XLEN-1:0] t3, logic [XLEN-1:0] satp);
+    return (XLEN == 64) ? (((t3 >> 2) & 'hffff) == ((satp >> 44) & 'hffff))
+                        : (((t3 >> 2) & 'h1ff) == ((satp >> 22) & 'h1ff));
+endfunction
+
+// cp_textra_itrigger/etrigger: a trap handled in S with the origin mode's tdata1 bit set (sdtrig_trap_result 01_1_x),
+// where the itrigger/etrigger fired exactly when its textra condition holds. {1, match}: mhselect = 4, sselect = 0;
+// {2, match}: sselect = 1 (scontext), mhselect = 0, sbytemask = 0; 0: anything else, or the wrong outcome.
+function automatic logic [2:0] sdtrig_textra_trap_outcome(ins_t ins);
+    logic [XLEN-1:0] t3     = ins.current.csr[CSR_TDATA3];
+    logic [3:0]      result = sdtrig_trap_result(ins);
+    logic [1:0]      sel;
+    logic            match;
+    if (result[3:1] != 3'b01_1) return 3'd0;
+    if (sdtrig_textra_mhselect(t3) == 3'd4 && sdtrig_textra_sselect(t3) == 2'd0) begin
+        sel   = 2'd1;
+        match = sdtrig_textra_mcontext_match(t3, ins.current.csr[CSR_MCONTEXT]);
+    end else if (sdtrig_textra_mhselect(t3) == 3'd0 && sdtrig_textra_sselect(t3) == 2'd1 && sdtrig_textra_sbytemask(t3) == 4'd0) begin
+        sel   = 2'd2;
+        match = sdtrig_textra_scontext_match(t3, ins.current.csr[CSR_SCONTEXT]);
+    end else return 3'd0;
+    return (result[0] == match) ? {sel, match} : 3'd0;
+endfunction
+
 covergroup SdtrigSm_textra_cg with function sample(ins_t ins);
     option.per_instance = 0;
     `include "general/RISCV_coverage_standard_coverpoints.svh"
     `include "general/RISCV_coverage_sdtrig_coverpoints.svh"
+    `include "general/RISCV_coverage_sdtrig_trap_coverpoints.svh"
 
     arm_type: coverpoint ins.current.rs1_val[XLEN-1:XLEN-4] {
         bins icount    = {4'd3};
@@ -869,6 +1206,9 @@ covergroup SdtrigSm_textra_cg with function sample(ins_t ins);
     sselect: coverpoint sdtrig_textra_sselect(ins.current.csr[CSR_TDATA3]) {
         bins ignore   = {2'd0};
         bins scontext = {2'd1};
+    }
+    mhselect_ignore: coverpoint sdtrig_textra_mhselect(ins.current.csr[CSR_TDATA3]) {
+        bins ignore = {3'd0};
     }
     sselect_ignore: coverpoint sdtrig_textra_sselect(ins.current.csr[CSR_TDATA3]) {
         bins ignore = {2'd0};
@@ -902,8 +1242,51 @@ covergroup SdtrigSm_textra_cg with function sample(ins_t ins);
         bins match    = {1'b1};
     }
 
+    sselect_asid: coverpoint sdtrig_textra_sselect(ins.current.csr[CSR_TDATA3]) {
+        bins asid = {2'd2};
+    }
+    asid_match: coverpoint sdtrig_textra_asid_match(ins.current.csr[CSR_TDATA3], ins.current.csr[CSR_SATP]) {
+        bins mismatch = {1'b0};
+        bins match    = {1'b1};
+    }
+
+    // cp_textra_mhselect_no_h: a tdata3 write of an mhselect value that needs H, on a trigger armed as icount or mcontrol6
+    csr_tdata3: coverpoint ins.current.insn[31:20] {
+        bins tdata3 = {CSR_TDATA3};
+    }
+    armed_type: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tdata1", "type")[3:0] {
+        bins icount    = {4'd3};
+        bins mcontrol6 = {4'd6};
+    }
+    mhselect_written: coverpoint sdtrig_textra_mhselect(ins.current.rs1_val) {
+        bins h_only[] = {3'd1, 3'd2, 3'd3, 3'd5, 3'd6, 3'd7};
+    }
+    mhselect_legal: coverpoint sdtrig_textra_mhselect(ins.current.csr[CSR_TDATA3]) {
+        bins legal = {3'd0, 3'd4};
+    }
+
     scontext_match_only: coverpoint sdtrig_textra_scontext_match(ins.current.csr[CSR_TDATA3], ins.current.csr[CSR_SCONTEXT]) {
         bins match = {1'b1};
+    }
+
+    // itrigger/etrigger textra: the trap the trigger watches, handled in S, fired into M iff the context matches
+    itrigger_interrupt: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "tdata1", "type")[3:0] iff (sdtrig_trap_interrupt(ins)) {
+        type_option.weight = 0;
+        bins itrigger = {4'd4};
+    }
+    etrigger_exception: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "tdata1", "type")[3:0] iff (sdtrig_trap_exception(ins)) {
+        type_option.weight = 0;
+        bins etrigger = {4'd5};
+    }
+    textra_trap_mcontext: coverpoint sdtrig_textra_trap_outcome(ins) {
+        type_option.weight = 0;
+        bins mismatch_suppressed = {3'b01_0};
+        bins match_fired         = {3'b01_1};
+    }
+    textra_trap_scontext: coverpoint sdtrig_textra_trap_outcome(ins) {
+        type_option.weight = 0;
+        bins mismatch_suppressed = {3'b10_0};
+        bins match_fired         = {3'b10_1};
     }
 
     // main coverpoints
@@ -919,6 +1302,139 @@ covergroup SdtrigSm_textra_cg with function sample(ins_t ins);
         cp_textra_double_context: cross priv_mode_m, triggernum, csrw, csr_tdata1, arm_type, mhselect, sselect, mcontext_match, scontext_match;              // NTRIG * 2 types * 16
     `endif
     `endif
+    `ifdef S_SUPPORTED
+        cp_textra_asid:           cross priv_mode_m, triggernum, csrw, csr_tdata1, arm_type, mhselect_ignore, sselect_asid, asid_match;                      // NTRIG * 2 types * 2
+        cp_textra_asid_sbytemask: cross priv_mode_m, triggernum, csrw, csr_tdata1, arm_type, mhselect_ignore, sselect_asid, sbytemask_all, asid_match;       // NTRIG * 2 types * 2
+        `ifdef UDB_MCONTEXT_AVAILABLE
+            cp_textra_itrigger_mcontext: cross trap_from_s, triggernum, itrigger_interrupt, trap_delegated, trap_selected, textra_trap_mcontext;     // NTRIG * 2
+            cp_textra_etrigger_mcontext: cross trap_from_s, triggernum, etrigger_exception, trap_delegated, trap_selected, textra_trap_mcontext;     // NTRIG * 2
+        `endif
+        `ifdef UDB_SCONTEXT_AVAILABLE
+            cp_textra_itrigger_scontext: cross trap_from_s, triggernum, itrigger_interrupt, trap_delegated, trap_selected, textra_trap_scontext;     // NTRIG * 2
+            cp_textra_etrigger_scontext: cross trap_from_s, triggernum, etrigger_exception, trap_delegated, trap_selected, textra_trap_scontext;     // NTRIG * 2
+        `endif
+    `endif
+    `ifndef H_SUPPORTED
+        cp_textra_mhselect_no_h:  cross priv_mode_m, triggernum, csrw, csr_tdata3, armed_type, mhselect_written, mhselect_legal;                             // NTRIG * 2 types * 6
+    `endif
+endgroup
+
+// cp_tdata2_translate: a tdata2 value read back in M while satp.MODE selects the mode it is valid in.
+// 1/2: Sv39 largest VA with the sign bit clear / smallest with it set, 3/4: Sv48, 5/6: Sv57, 7/8: Sv32,
+// 9: Bare and the largest PA (zero-extended), 0: anything else.
+function automatic logic [3:0] sdtrig_tdata2_xlate_value(ins_t ins);
+    logic [XLEN-1:0] v = ins.current.rd_val;
+`ifdef UDB_MXLEN_64
+    logic [3:0] mode = ins.current.csr[CSR_SATP][63:60];
+    if (mode == 4'd8  && v == 64'h0000_003F_FFFF_FFFF) return 4'd1;
+    if (mode == 4'd8  && v == 64'hFFFF_FFC0_0000_0000) return 4'd2;
+    if (mode == 4'd9  && v == 64'h0000_7FFF_FFFF_FFFF) return 4'd3;
+    if (mode == 4'd9  && v == 64'hFFFF_8000_0000_0000) return 4'd4;
+    if (mode == 4'd10 && v == 64'h00FF_FFFF_FFFF_FFFF) return 4'd5;
+    if (mode == 4'd10 && v == 64'hFF00_0000_0000_0000) return 4'd6;
+    if (mode == 4'd0  && v == (64'd1 << `UDB_PHYS_ADDR_WIDTH) - 64'd1) return 4'd9;
+`else
+    logic bare = !ins.current.csr[CSR_SATP][31];
+    if (!bare && v == 32'h7FFF_FFFF) return 4'd7;
+    if (!bare && v == 32'h8000_0000) return 4'd8;
+    if (bare && v == ((`UDB_PHYS_ADDR_WIDTH >= 32) ? 32'hFFFF_FFFF : 32'((64'd1 << `UDB_PHYS_ADDR_WIDTH) - 64'd1))) return 4'd9;
+`endif
+    return 4'd0;
+endfunction
+// satp.MODE: RV64 satp[63:60]; RV32 1 = Sv32
+function automatic logic [3:0] sdtrig_satp_mode(ins_t ins);
+`ifdef UDB_MXLEN_64
+    return ins.current.csr[CSR_SATP][63:60];
+`else
+    return {3'b0, ins.current.csr[CSR_SATP][31]};
+`endif
+endfunction
+// cp_tdata2_translate_exec, for code run through the alias superpage in the last root slot (VA bits above the
+// superpage offset all 1): 1 = an execute trigger fired with tdata2 = the matched instruction's VA there;
+// 2 = an instruction ran there with tdata2 = its PA (same superpage offset, identity mapped) and nothing fired.
+function automatic logic [1:0] sdtrig_tdata2_xlate_exec(ins_t ins);
+    logic [XLEN-1:0] tdata2 = ins.current.csr[CSR_TDATA2];
+    logic [XLEN-1:0] offset_mask;
+    case (sdtrig_satp_mode(ins))
+`ifdef UDB_MXLEN_64
+        4'd8:    offset_mask = (XLEN'(1) << 30) - 1;
+        4'd9:    offset_mask = (XLEN'(1) << 39) - 1;
+        4'd10:   offset_mask = (XLEN'(1) << 48) - 1;
+`else
+        4'd1:    offset_mask = (XLEN'(1) << 22) - 1;
+`endif
+        default: return 2'd0;
+    endcase
+    // the fire is logged on the jump into the alias, so mepc is not the next sequential PC (sdtrig_exec_fired)
+    if (sdtrig_trap_fired(ins))
+        return (ins.current.csr[CSR_MEPC] == tdata2 && (tdata2 | offset_mask) == '1) ? 2'd1 : 2'd0;
+    if ((ins.current.pc_rdata | offset_mask) == '1 && tdata2 != ins.current.pc_rdata &&
+        ((tdata2 ^ ins.current.pc_rdata) & offset_mask) == '0)
+        return 2'd2;
+    return 2'd0;
+endfunction
+
+covergroup SdtrigSm_address_matches_cg with function sample(ins_t ins);
+    option.per_instance = 0;
+    `include "general/RISCV_coverage_standard_coverpoints.svh"
+    `include "general/RISCV_coverage_sdtrig_coverpoints.svh"
+
+    csr_tdata2: coverpoint ins.current.insn[31:20] {
+        type_option.weight = 0;
+        bins tdata2 = {CSR_TDATA2};
+    }
+    tdata2_xlate_value: coverpoint sdtrig_tdata2_xlate_value(ins) {
+        type_option.weight = 0;
+        bins bare_max_pa = {4'd9};
+    `ifdef UDB_MXLEN_64
+        `ifdef SV39_SUPPORTED
+            bins sv39_msb_0 = {4'd1};
+            bins sv39_msb_1 = {4'd2};
+        `endif
+        `ifdef SV48_SUPPORTED
+            bins sv48_msb_0 = {4'd3};
+            bins sv48_msb_1 = {4'd4};
+        `endif
+        `ifdef SV57_SUPPORTED
+            bins sv57_msb_0 = {4'd5};
+            bins sv57_msb_1 = {4'd6};
+        `endif
+    `else
+        `ifdef SV32_SUPPORTED
+            bins sv32_msb_0 = {4'd7};
+            bins sv32_msb_1 = {4'd8};
+        `endif
+    `endif
+    }
+    satp_xlate_mode: coverpoint sdtrig_satp_mode(ins) {
+        type_option.weight = 0;
+    `ifdef UDB_MXLEN_64
+        `ifdef SV39_SUPPORTED
+            bins sv39 = {4'd8};
+        `endif
+        `ifdef SV48_SUPPORTED
+            bins sv48 = {4'd9};
+        `endif
+        `ifdef SV57_SUPPORTED
+            bins sv57 = {4'd10};
+        `endif
+    `else
+        `ifdef SV32_SUPPORTED
+            bins sv32 = {4'd1};
+        `endif
+    `endif
+    }
+    tdata2_xlate_exec: coverpoint sdtrig_tdata2_xlate_exec(ins) {
+        type_option.weight = 0;
+        bins va_fired     = {2'd1};
+        bins pa_not_fired = {2'd2};
+    }
+
+    // main coverpoints
+    cp_tdata2_translate:          cross priv_mode_m, triggernum, csrr, csr_tdata2, tdata1_type_mcontrol6, tdata1_select_adr, tdata2_xlate_value;                       // NTRIG * (2 * VA modes + 1)
+    `ifdef S_SUPPORTED
+        cp_tdata2_translate_exec: cross priv_mode_s, triggernum, tdata1_type_mcontrol6, tdata1_select_adr, tdata1_execute_on, satp_xlate_mode, tdata2_xlate_exec; // NTRIG * VA modes * 2
+    `endif
 endgroup
 
 function void sdtrigsm_sample(int hart, int issue, ins_t ins);
@@ -930,11 +1446,11 @@ function void sdtrigsm_sample(int hart, int issue, ins_t ins);
     `ifdef ZVL32B_SUPPORTED
         SdtrigSm_combined_accesses_cg.sample(ins);
     `endif
-    `ifdef S_SUPPORTED
-        SdtrigSm_native_triggers_cg.sample(ins);
-    `endif
+    SdtrigSm_itrigger_cg.sample(ins);
+    SdtrigSm_etrigger_cg.sample(ins);
     SdtrigSm_mcontrol6_cg.sample(ins);
     SdtrigSm_textra_cg.sample(ins);
+    SdtrigSm_address_matches_cg.sample(ins);
     `ifdef UDB_TCONTROL_AVAILABLE
         SdtrigSm_tcontrol_cg.sample(ins);
     `endif
