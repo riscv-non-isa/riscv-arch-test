@@ -229,6 +229,49 @@ function automatic logic [1:0] sdtrig_size_data_case(ins_t ins);
     mask = (8 * bytes >= XLEN) ? '1 : ((XLEN'(1) << (8 * bytes)) - 1);
     return ((ins.current.rs2_val & mask) == ins.current.csr[CSR_TDATA2]) ? 2'd1 : 2'd2;
 endfunction
+// cp_mcontrol6_match_size_*: an execute fire is sampled on the record before the matched instruction (see
+// sdtrig_exec_fired), where tdata1 is read after; every other record reads tdata1 from before it, so a target that
+// itself rewrites tdata1 (a csrw tdata1 that does not fire) is sampled with the trigger that saw it
+function automatic int sdtrig_ms_when(ins_t ins);
+    return sdtrig_exec_fired(ins) ? `SAMPLE_AFTER : `SAMPLE_BEFORE;
+endfunction
+// For an armed select = 1 mcontrol6 trigger whose x/s/l bits are exactly xsl (execute = 3'b100, store = 3'b010,
+// load = 3'b001): 1 = an access of the trigger's size fired it, 2 = an access of that size did not, 3 = an access of
+// another width did not; 0 = anything else. Execution counts only the test's targets: addi/slti x0 hints, c.nop
+// hints and CSR instructions on tdata1/tdata3 (which include the csrw tdata1, x0 that disarms the trigger)
+function automatic logic [1:0] sdtrig_ms_case(ins_t ins, logic [2:0] xsl);
+    int when = sdtrig_ms_when(ins);
+    int bytes, size_bytes;
+    logic fired;
+    if (get_csr_val(ins.hart, ins.issue, when, "tdata1", "type")[3:0] != 4'd6 ||
+        get_csr_val(ins.hart, ins.issue, when, "tdata1", "m")[0] != 1'b1 ||
+        get_csr_val(ins.hart, ins.issue, when, "tdata1", "chain")[0] != 1'b0 ||
+        get_csr_val(ins.hart, ins.issue, when, "tdata1", "select")[0] != 1'b1 ||
+        {get_csr_val(ins.hart, ins.issue, when, "tdata1", "execute")[0], get_csr_val(ins.hart, ins.issue, when, "tdata1", "store")[0],
+         get_csr_val(ins.hart, ins.issue, when, "tdata1", "load")[0]} != xsl) return 2'd0;
+    case (get_csr_val(ins.hart, ins.issue, when, "tdata1", "size")[2:0])
+        3'd1:    size_bytes = 1;
+        3'd2:    size_bytes = 2;
+        3'd3:    size_bytes = 4;
+        3'd5:    size_bytes = 8;
+        default: return 2'd0;
+    endcase
+    if (xsl == 3'b100) begin
+        if (sdtrig_exec_fired(ins)) return 2'd1;  // only an instruction of the trigger's size can fire it
+        if (!(ins.current.insn[14:0] == 15'h0013 || ins.current.insn[14:0] == 15'h2013 ||
+              (ins.current.insn[6:0] == 7'h73 && ins.current.insn[31:20] inside {12'h7A1, 12'h7A3}) ||
+              (ins.current.insn[1:0] == 2'b01 && ins.current.insn[15:13] == 3'b000 && ins.current.insn[11:7] == 5'd0)))
+            return 2'd0;
+        bytes = (ins.current.insn[1:0] == 2'b11) ? 4 : 2;
+        fired = 1'b0;
+    end else begin
+        if (ins.current.insn[6:0] != ((xsl == 3'b010) ? 7'b0100011 : 7'b0000011) || ins.current.insn[14]) return 2'd0;
+        bytes = 1 << ins.current.insn[13:12];
+        fired = sdtrig_bp_taken(ins);
+    end
+    if (bytes == size_bytes) return fired ? 2'd1 : 2'd2;
+    return fired ? 2'd0 : 2'd3;
+endfunction
 
 // textra32/textra64 (tdata3) context matching, sampled when tdata1 arms an icount or mcontrol6 trigger, and on the
 // S-handled traps that an itrigger or etrigger watches.
