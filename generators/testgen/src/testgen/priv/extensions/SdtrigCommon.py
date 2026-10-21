@@ -2082,42 +2082,86 @@ def _generate_csr_tests(test_data: TestData, mode: str) -> list[TestChunk]:
 
 
 def _generate_tcontrol_tests(test_data: TestData, mode: str) -> list[TestChunk]:
-    """Generate tcontrol tests (labels only; needs UDB_TCONTROL_AVAILABLE)."""
+    """Generate tcontrol tests; each file is empty unless UDB_TCONTROL_AVAILABLE."""
     covergroup = f"Sdtrig{mode}_tcontrol_cg"
     chunks: list[TestChunk] = []
+    addr_reg, data_reg, temp_reg = test_data.int_regs.get_registers(3, exclude_regs=[2], reg_range=list(range(8, 16)))
 
     ######################################
     coverpoint = "cp_tcontrol_enable"
     ######################################
     lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_")).code
-    lines.append(comment_banner(coverpoint, "tcontrol.mte gates M-mode trigger firing"))
+    lines.extend(comment_banner(coverpoint, "tcontrol.mte gates M-mode trigger firing"))
+    lines.append("#ifdef UDB_TCONTROL_AVAILABLE")
     for trig_num in range(UDB_NUM_TRIGGERS):
+        gates = _mcontrol6_gates(trig_num, mode)
+        lines.extend([*gates, *_xsl_ifdefs(0b100)])
         for mte in (0, 1):  # tcontrol[3]
-            binname = f"trig_num_{trig_num}_mte_{mte}"
-            lines.append(_add_tc(test_data, binname, coverpoint, covergroup))
+            label = f"tcontrol_enable_trig_num_{trig_num}_mte_{mte}"
+            lines.extend(
+                [
+                    f"{'csrsi' if mte else 'csrci'} tcontrol, 0x8 # mte={mte}",
+                    _add_tc(test_data, f"trig_num_{trig_num}_mte_{mte}", coverpoint, covergroup),
+                    *_config_mcontrol6(temp_reg, trig_num, label, mode, xsl=0b100),
+                    f"{label}:",
+                    f"add x0, x1, x2 # PC == tdata2; {'breakpoint' if mte else 'no breakpoint'}",
+                ]
+            )
+        lines.extend(_disable_trigger(temp_reg, trig_num, mode))
+        lines.append("#endif // UDB_SDTRIG_MCONTROL6_EXECUTE_AVAILABLE")
+        lines.extend(_close_gates(gates))
+    lines.append("#endif // UDB_TCONTROL_AVAILABLE")
 
     ######################################
     coverpoint = "cp_tcontrol_mtrap"
     ######################################
     lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_")).code
-    lines.append(comment_banner(coverpoint, "mte/mpte updated on trap into M-mode"))
-    for trig_num in range(UDB_NUM_TRIGGERS):
-        for mte in (0, 1):  # tcontrol[3]
-            for mpte in (0, 1):  # tcontrol[7]
-                binname = f"trig_num_{trig_num}_mte_{mte}_mpte_{mpte}"
-                lines.append(_add_tc(test_data, binname, coverpoint, covergroup))
+    lines.extend(comment_banner(coverpoint, "mte/mpte updated on trap into M-mode"))
+    lines.append("#ifdef UDB_TCONTROL_AVAILABLE")
+    for mte in (0, 1):  # tcontrol[3]
+        for mpte in (0, 1):  # tcontrol[7]
+            lines.extend(
+                [
+                    f"LI(x{temp_reg}, {hex(mpte << 7 | mte << 3)})",
+                    f"csrw tcontrol, x{temp_reg} # mpte={mpte}, mte={mte}",
+                    _add_tc(test_data, f"mte_{mte}_mpte_{mpte}", coverpoint, covergroup),
+                    ".word 0xffffffff # illegal instruction: mpte = mte, mte = 0",
+                    f"csrr x{data_reg}, tcontrol",
+                    f"andi x{data_reg}, x{data_reg}, 0x88 # mpte, mte",
+                    write_sigupd(data_reg, test_data),
+                ]
+            )
+    lines.append("#endif // UDB_TCONTROL_AVAILABLE")
 
     ######################################
     coverpoint = "cp_tcontrol_mret"
     ######################################
     lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_")).code
     lines.append(comment_banner(coverpoint, "mte restored from mpte on mret"))
-    for trig_num in range(UDB_NUM_TRIGGERS):
-        for mte in (0, 1):  # tcontrol[3]
-            for mpte in (0, 1):  # tcontrol[7]
-                binname = f"trig_num_{trig_num}_mte_{mte}_mpte_{mpte}"
-                lines.append(_add_tc(test_data, binname, coverpoint, covergroup))
+    lines.append("#ifdef UDB_TCONTROL_AVAILABLE")
+    for mte in (0, 1):  # tcontrol[3]
+        for mpte in (0, 1):  # tcontrol[7]
+            lines.extend(
+                [
+                    f"LI(x{temp_reg}, {hex(mpte << 7 | mte << 3)})",
+                    f"csrw tcontrol, x{temp_reg} # mpte={mpte}, mte={mte}",
+                    f"csrr x{addr_reg}, mstatus # save; mret rewrites MIE/MPIE",
+                    f"LI(x{temp_reg}, {hex(_MSTATUS_MPP_MASK)})",
+                    f"csrs mstatus, x{temp_reg} # MPP=M: mret stays in M-mode",
+                    f"LA(x{temp_reg}, 1f)",
+                    f"csrw mepc, x{temp_reg}",
+                    _add_tc(test_data, f"mte_{mte}_mpte_{mpte}", coverpoint, covergroup),
+                    "mret # mte = mpte",
+                    "1:",
+                    f"csrw mstatus, x{addr_reg}",
+                    f"csrr x{data_reg}, tcontrol",
+                    f"andi x{data_reg}, x{data_reg}, 0x88 # mpte, mte",
+                    write_sigupd(data_reg, test_data),
+                ]
+            )
+    lines.append("#endif // UDB_TCONTROL_AVAILABLE")
 
+    test_data.int_regs.return_registers([addr_reg, data_reg, temp_reg])
     chunks.append(test_data.end_test_chunk())
     return chunks
 
@@ -3457,6 +3501,13 @@ def register_sdtrig_suite(mode: str, required_extensions: list[str | list[str]],
             """tdata2 address storage and translated execute-trigger tests."""
             return _generate_address_matches_tests(test_data, mode)
 
+        @add_priv_test_generator(
+            suite, required_extensions=required_extensions, march_extensions=[], extra_defines=extra_defines
+        )
+        def make_sdtrig_tcontrol(test_data: TestData) -> list[TestChunk]:
+            """tcontrol mte/mpte tests."""
+            return _generate_tcontrol_tests(test_data, mode)
+
     @add_priv_test_generator(
         suite, required_extensions=required_extensions, march_extensions=[], extra_defines=extra_defines
     )
@@ -3563,6 +3614,5 @@ def register_sdtrig_suite(mode: str, required_extensions: list[str | list[str]],
         """textra context-match tests."""
         return _generate_textra_tests(test_data, mode)
 
-    # Disabled sections and their extra required extension:
-    #   _generate_tcontrol_tests: body not implemented yet; needs UDB_TCONTROL_AVAILABLE
+    # Disabled section and its extra required extension:
     #   _generate_zcmp_tests: Zcmp

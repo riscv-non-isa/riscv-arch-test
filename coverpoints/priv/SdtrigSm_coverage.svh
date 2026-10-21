@@ -141,7 +141,7 @@ covergroup SdtrigSm_tcontrol_cg with function sample(ins_t ins);
         bins enabled  = {1'b1};
     }
     illegal_insn: coverpoint ins.current.insn iff (ins.current.trap) {
-        bins zero = {32'h0};
+        bins ones = {32'hffffffff};
     }
     mret: coverpoint ins.current.insn {
         bins mret = {MRET};

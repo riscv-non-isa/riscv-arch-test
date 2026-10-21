@@ -401,10 +401,10 @@ coverpoints:
       - Sdtrig_unimplemented_register
       - Sdtrig_hcontext_implemented
   - heading: Trigger Control
-  - name: cp_tcontrol_enable (not generated)
+  - name: cp_tcontrol_enable (gated)
     status: >-
-      Not generated: _generate_tcontrol_tests emits labels only and is not registered, and SdtrigSm_tcontrol_cg
-      is compiled only with UDB_TCONTROL_AVAILABLE (TCONTROL_IMPLEMENTED, riscv-unified-db#2069)
+      Gated off: the test and SdtrigSm_tcontrol_cg are compiled only with UDB_TCONTROL_AVAILABLE, which is not
+      defined until riscv-unified-db#2069 provides TCONTROL_IMPLEMENTED, so the row runs nowhere
     goal: tcontrol.mte enables debug triggers in M-mode
     description: |-
       if UDB_TCONTROL_AVAILABLE
@@ -416,22 +416,22 @@ coverpoints:
     rules:
       - Sdtrig_tcontrol_mte_disabled
       - Sdtrig_tcontrol_mte_enabled
-  - name: cp_tcontrol_mtrap (not generated)
-    status: "Not generated: see cp_tcontrol_enable"
+  - name: cp_tcontrol_mtrap (gated)
+    status: "Gated off: see cp_tcontrol_enable"
     goal: tcontrol.mte/mpte on trap into M-mode
     description: |-
       if UDB_TCONTROL_AVAILABLE
       tcontrol.mpte = {0/1}
       tcontrol.mte = {0/1}
-      trap to M-moded (perform illegal instruction 0x0)
+      trap to M-mode (perform illegal instruction 0xffffffff)
       CSRR tcontrol
     expectation: When M-mode trap taken, mpte is set to mte, mte is set = 0
     bins: 2 mpte * 2 mte
     rules:
       - Sdtrig_tcontrol_mte
       - Sdtrig_tcontrol_mpte
-  - name: cp_tcontrol_mret (not generated)
-    status: "Not generated: see cp_tcontrol_enable"
+  - name: cp_tcontrol_mret (gated)
+    status: "Gated off: see cp_tcontrol_enable"
     goal: tcontrol.mte on mret
     description: |-
       if UDB_TCONTROL_AVAILABLE
