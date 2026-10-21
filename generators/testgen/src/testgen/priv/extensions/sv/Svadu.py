@@ -229,7 +229,11 @@ def _pte_address(sv: SvMode, regs: SvRegs, va: str, level: int) -> list[str]:
     index_bits = 10 if sv.xlen == 32 else 9
     offset = ((int(va, 16) >> sv.page_offset_bits(level)) & ((1 << index_bits) - 1)) * (sv.xlen // 8)
     scratch, temp = f"x{regs.scratch}", f"x{regs.result}"
-    return [f"LA({scratch}, {sv.page_table_label(level)})", f"LI({temp}, {offset})", f"add {scratch}, {scratch}, {temp}"]
+    return [
+        f"LA({scratch}, {sv.page_table_label(level)})",
+        f"LI({temp}, {offset})",
+        f"add {scratch}, {scratch}, {temp}",
+    ]
 
 
 def _make_svadu_fault(test_data: TestData, sv: SvMode) -> TestChunk:
