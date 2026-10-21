@@ -71,43 +71,45 @@ def make_cp_zkt(instr_name: str, instr_type: str, coverpoint: str, test_data: Te
         setup, test, check = format_instruction(instr_name, instr_type, test_data, case_params)
         data_bytes = f"{len(tc.data_values) - data_count}*SIG_STRIDE"
         # Run twice and time the second run (see the CTP)
-        tc.code.append(f"LI(x{runs}, 2)  # two runs; the second is timed")
-        tc.code.append("1:")
+        tc.code.extend([f"LI(x{runs}, 2)  # two runs; the second is timed", "1:"])
         if setup:
-            tc.code.append(setup)
-        # Rewind the data pointer so the second run loads the same values
-        if setup:
-            rewind = f"addi x{data_reg}, x{data_reg}, -{data_bytes}"
-            tc.code.append(f"{rewind:<28}  # rewind data for the second run")
+            tc.code.extend(
+                [
+                    setup,
+                    f"addi x{data_reg}, x{data_reg}, -{data_bytes}    # rewind data for the second run",
+                ]
+            )
         if loaded_regs:
-            drain = f"xor x{start}, x{loaded_regs[0]}, x{loaded_regs[-1]}"
-            tc.code.append(f"{drain:<28}  # drain: loads finish first")
+            tc.code.append(f"xor x{start}, x{loaded_regs[0]}, x{loaded_regs[-1]}           # drain: loads finish first")
         # Zero-valued dependency on the first cycle read
-        balign = ".balign 64"
-        read = f"csrr x{start}, RVTEST_CYCLE_CSR"
-        tc.code.append(f"{balign:<28}  # keep the timed window in one cache line")
-        tc.code.append(f"{read:<28}  # first cycle read")
+        tc.code.extend(
+            [
+                ".balign 64                  # keep the timed window in one cache line",
+                f"csrr x{start}, RVTEST_CYCLE_CSR  # first cycle read",
+            ]
+        )
         if dep_src is not None:
-            sltu = f"sltu x{dep}, x{start}, x0"
-            dep_op = f"or x{dep_src}, x{dep_src}, x{dep}"
-            tc.code.append(f"{sltu:<28}  # dep = 0, ready only after the first cycle read")
-            tc.code.append(f"{dep_op:<28}  # operand now depends on the first cycle read")
-        tc.code.append(label_line)
-        tc.code.append(test)
-        read_end = f"csrr x{end}, RVTEST_CYCLE_CSR"
-        tc.code.append(f"{read_end:<28}  # second cycle read")
-        tc.code.append(f"addi x{runs}, x{runs}, -1")
-        tc.code.append(f"bnez x{runs}, 1b")
+            tc.code.extend(
+                [
+                    f"sltu x{dep}, x{start}, x0           # dep = 0, ready after the first cycle read",
+                    f"or x{dep_src}, x{dep_src}, x{dep}            # operand depends on the first cycle read",
+                ]
+            )
+        tc.code.extend(
+            [
+                label_line,
+                test,
+                f"csrr x{end}, RVTEST_CYCLE_CSR  # second cycle read",
+                f"addi x{runs}, x{runs}, -1",
+                f"bnez x{runs}, 1b",
+            ]
+        )
         if setup:
-            advance = f"addi x{data_reg}, x{data_reg}, {data_bytes}"
-            tc.code.append(f"{advance:<28}  # advance past this testcase's data")
-        latency = f"sub x{end}, x{end}, x{start}"
-        tc.code.append(f"{latency:<28}  # latency of the second run")
+            tc.code.append(f"addi x{data_reg}, x{data_reg}, {data_bytes}   # advance past this testcase's data")
+        tc.code.append(f"sub x{end}, x{end}, x{start}           # latency of the second run")
         if case == 0:
-            mv = f"mv x{baseline}, x{end}"
-            tc.code.append(f"{mv:<28}  # first testcase sets the baseline")
-        subtract = f"sub x{end}, x{end}, x{baseline}"
-        tc.code.append(f"{subtract:<28}  # 0 on data-independent hardware")
+            tc.code.append(f"mv x{baseline}, x{end}                 # first testcase sets the baseline")
+        tc.code.append(f"sub x{end}, x{end}, x{baseline}           # 0 on data-independent hardware")
         if check:
             tc.code.append(check)
         tc.code.append(write_sigupd(end, test_data, "int"))

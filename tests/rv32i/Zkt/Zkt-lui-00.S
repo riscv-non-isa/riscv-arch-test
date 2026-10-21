@@ -44,16 +44,16 @@ RVTEST_BEGIN
 # Testcase cp_zkt_pc (timed)
   LI(x21, 2)  # two runs; the second is timed
 1:
-  .balign 64                    # keep the timed window in one cache line
-  csrr x24, RVTEST_CYCLE_CSR    # first cycle read
+  .balign 64                  # keep the timed window in one cache line
+  csrr x24, RVTEST_CYCLE_CSR  # first cycle read
 Zkt_lui_cg_cp_zkt_pc_timed:
   lui x18, 248040 # perform operation
-  csrr x31, RVTEST_CYCLE_CSR    # second cycle read
+  csrr x31, RVTEST_CYCLE_CSR  # second cycle read
   addi x21, x21, -1
   bnez x21, 1b
-  sub x31, x31, x24             # latency of the second run
-  mv x6, x31                    # first testcase sets the baseline
-  sub x31, x31, x6              # 0 on data-independent hardware
+  sub x31, x31, x24           # latency of the second run
+  mv x6, x31                 # first testcase sets the baseline
+  sub x31, x31, x6           # 0 on data-independent hardware
   # Check if x18 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x18, Zkt_lui_cg_cp_zkt_pc_timed, Zkt_lui_cg_cp_zkt_pc_timed_str)
   # Check if x31 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
