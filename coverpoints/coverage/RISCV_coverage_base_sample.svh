@@ -124,9 +124,6 @@
     `ifdef COVER_M
         m_sample(hart, issue, ins);
     `endif
-    `ifdef COVER_MISALIGN
-        misalign_sample(hart, issue, ins);
-    `endif
     `ifdef COVER_MISALIGNV
         misalignv_sample(hart, issue, ins);
     `endif
@@ -414,6 +411,9 @@
     `endif
     `ifdef COVER_ZICBOZ
         zicboz_sample(hart, issue, ins);
+    `endif
+    `ifdef COVER_ZICCLSM
+        zicclsm_sample(hart, issue, ins);
     `endif
     `ifdef COVER_ZICFILPS
         zicfilps_sample(hart, issue, ins);
