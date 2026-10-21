@@ -120,6 +120,9 @@
         mv DEFAULT_LINK_REG, x14
         j failedtest_saveregs
 
+#endif // F_SUPPORTED
+
+#if defined(F_SUPPORTED) || defined(ZFINX_SUPPORTED)
     # fflags failure entry points (failure_type = 2)
     failedtest_fflags_x5_x4:
         la DEFAULT_TEMP_REG, begin_failure_scratch
@@ -444,8 +447,10 @@
         # Dispatch based on failure type
         lw x9, failure_type
 #if defined(F_SUPPORTED) || defined(ZFINX_SUPPORTED)
+  #ifdef F_SUPPORTED
         li x10, 1
         beq x9, x10, failedtest_saveresults_fp
+  #endif
         li x10, 2
         beq x9, x10, failedtest_saveresults_fflags
 #endif // F_SUPPORTED
@@ -560,6 +565,9 @@
         SREG x6, 280(DEFAULT_TEMP_REG)    # record expected value
         j failedtest_saveresults_common
 
+  #endif // F_SUPPORTED || ZFINX_SUPPORTED
+
+  #ifdef F_SUPPORTED
     failedtest_saveresults_fp:
         # Extract FP register number from FSREG instruction at -20 from return address
         # FSREG is S-type: imm[11:5] | rs2[24:20] | rs1[19:15] | funct3 | imm[4:0] | opcode

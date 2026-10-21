@@ -1,0 +1,145 @@
+# SPDX-License-Identifier: Apache-2.0
+normative_rule_definitions:
+  - name: Zfinx_F_instrs
+    coverpoint: ["Zfinx_fadd_s_cg/cp_asm_count"]
+  - name: Zfinx_x_regs
+    coverpoint:
+      ["Zfinx_fadd_s_cg/{cp_rd, cp_rs1}", "Zfinx_fmadd_s_cg/{cp_rs2, cp_rs3}"]
+  - name: Zfinx_narrow_operands
+    coverpoint:
+      [
+        "Zfinx_fadd_s_cg/cp_finx_upper_rs1",
+        "Zfinx_fmadd_s_cg/{cp_finx_upper_rs2, cp_finx_upper_rs3}",
+      ]
+  - name: Zfinx_narrow_result
+    coverpoint: ["Zfinx_fsgnj_s_cg/{cp_finx_rs1_edges, cp_finx_upper_rs1}"]
+  - name: Zfinx_Zdinx_incompatible_F_D
+    coverpoint: ["Definition, checked through UDB"]
+  - name: F_ieee_compliance
+    coverpoint:
+      [
+        "Zfinx_fadd_s_cg/cr_finx_rs1_rs2_edges_frm",
+        "Zfinx_fmadd_s_cg/cr_finx_rs1_rs2_edges_frm4",
+      ]
+  - name: roundingmode_dynamic
+    coverpoint:
+      ["Zfinx_fadd_s_cg/{cp_frm_3, cp_csr_frm, cp_finx_directed_fadd_s}"]
+  - name: dyn_round_enc
+    coverpoint: ["Zfinx_fadd_s_cg/{cp_frm_3, cp_csr_frm}"]
+  - name: canonical_nan
+    coverpoint: ["Zfinx_fadd_s_cg/cr_finx_rs1_rs2_edges_frm"]
+  - name: F_canonical_nan
+    coverpoint: ["Zfinx_fsqrt_s_cg/cp_finx_rs1_edges"]
+  - name: ieee_std_subnormal
+    coverpoint: ["Zfinx_fmul_s_cg/cr_finx_rs1_rs2_edges_frm"]
+  - name: ieee_std_tininess
+    coverpoint:
+      [
+        "Zfinx_fmul_s_cg/cp_finx_directed_fmul_s",
+        "Zfinx_fmadd_s_cg/cp_finx_directed_fmadd_s",
+      ]
+  - name: fadd-s_fmul-s_op
+    coverpoint: ["{Zfinx_fadd_s_cg, Zfinx_fmul_s_cg}/cr_finx_rs1_rs2_edges_frm"]
+  - name: fsub-s_op
+    coverpoint: ["Zfinx_fsub_s_cg/cr_finx_rs1_rs2_edges_frm"]
+  - name: fdiv-s_op
+    coverpoint: ["Zfinx_fdiv_s_cg/cr_finx_rs1_rs2_edges_frm"]
+  - name: fsqrt-s_op
+    coverpoint: ["Zfinx_fsqrt_s_cg/cr_finx_rs1_edges_frm"]
+  - name: fp_rd
+    coverpoint: ["Zfinx_fadd_s_cg/cp_rd"]
+  - name: F_fmt_single
+    coverpoint: ["Zfinx_fadd_s_cg/cp_asm_count"]
+  - name: F_rm_field
+    coverpoint: ["Zfinx_fadd_s_cg/cp_frm_3"]
+  - name: fmin-s_fmax-s_op
+    coverpoint: ["{Zfinx_fmin_s_cg, Zfinx_fmax_s_cg}/cr_finx_rs1_rs2_edges"]
+  - name: fmin-s_fmax-s_zero_compare
+    coverpoint: ["{Zfinx_fmin_s_cg, Zfinx_fmax_s_cg}/cr_finx_rs1_rs2_edges"]
+  - name: fmin-s_fmax-s_both_nan_input
+    coverpoint: ["{Zfinx_fmin_s_cg, Zfinx_fmax_s_cg}/cr_finx_rs1_rs2_edges"]
+  - name: fmin-s_fmax-s_one_nan_input
+    coverpoint: ["{Zfinx_fmin_s_cg, Zfinx_fmax_s_cg}/cr_finx_rs1_rs2_edges"]
+  - name: fmin-s_fmax-s_signaling_nan_nv
+    coverpoint: ["{Zfinx_fmin_s_cg, Zfinx_fmax_s_cg}/cp_csr_fflags_v"]
+  - name: fma_rs3
+    coverpoint: ["Zfinx_fmadd_s_cg/{cp_rs3, cp_finx_rs3_edges}"]
+  - name: fmadd-s_op
+    coverpoint:
+      [
+        "Zfinx_fmadd_s_cg/{cr_finx_rs1_rs2_edges_frm4, cp_finx_directed_fmadd_s}",
+      ]
+  - name: fmsub-s_op
+    coverpoint:
+      [
+        "Zfinx_fmsub_s_cg/{cr_finx_rs1_rs2_edges_frm4, cp_finx_directed_fmsub_s}",
+      ]
+  - name: fnmsub-s_op
+    coverpoint:
+      [
+        "Zfinx_fnmsub_s_cg/{cr_finx_rs1_rs2_edges_frm4, cp_finx_directed_fnmsub_s}",
+      ]
+  - name: fnmadd-s_op
+    coverpoint:
+      [
+        "Zfinx_fnmadd_s_cg/{cr_finx_rs1_rs2_edges_frm4, cp_finx_directed_fnmadd_s}",
+      ]
+  - name: fma_nv_flag
+    coverpoint: ["Zfinx_fmadd_s_cg/cp_finx_directed_fmadd_s"]
+  - name: fcvt-l-s_fcvt-w-s_op
+    coverpoint:
+      [
+        "Zfinx_fcvt_l_s_cg/cp_finx_directed_fcvt_l_s",
+        "Zfinx_fcvt_w_s_cg/cp_finx_directed_fcvt_w_s",
+      ]
+  - name: fcvt-s-w_fcvt-s-l_op
+    coverpoint:
+      ["Zfinx_fcvt_s_w_cg/cp_rs1_edges", "Zfinx_fcvt_s_l_cg/cp_rs1_edges"]
+  - name: fcvt-wu-s_fcvt-lu-s_fcvt-s-wu_fcvt-s-lu_op
+    coverpoint:
+      [
+        "Zfinx_fcvt_wu_s_cg/cp_finx_directed_fcvt_wu_s",
+        "Zfinx_fcvt_s_lu_cg/cp_rs1_edges",
+      ]
+  - name: fcvt_long_float_rv64_only
+    coverpoint:
+      ["Definition, checked through test headers and RV64-only CSV rows"]
+  - name: fcvt_unrepresentable_nv
+    coverpoint:
+      [
+        "Zfinx_fcvt_w_s_cg/cp_finx_directed_fcvt_w_s",
+        "Zfinx_fcvt_lu_s_cg/cp_finx_directed_fcvt_lu_s",
+      ]
+  - name: fcvt_int_float_valid_input
+    coverpoint:
+      [
+        "Zfinx_fcvt_w_s_cg/cp_finx_directed_fcvt_w_s",
+        "Zfinx_fcvt_l_s_cg/cp_finx_directed_fcvt_l_s",
+      ]
+  - name: fcvt_round
+    coverpoint: ["Zfinx_fcvt_w_s_cg/{cp_frm_2, cp_csr_frm}"]
+  - name: fcvt_nx
+    coverpoint: ["Zfinx_fcvt_w_s_cg/cp_csr_fflags_vn"]
+  - name: fsgnj-s_fsgnjn-s_fsgnjx-s_op
+    coverpoint:
+      [
+        "Zfinx_fsgnj_s_cg/cp_finx_directed_fsgnj_s",
+        "Zfinx_fsgnjn_s_cg/cp_finx_directed_fsgnjn_s",
+        "Zfinx_fsgnjx_s_cg/cp_finx_directed_fsgnjx_s",
+      ]
+  - name: feq-s_flt-s_fle-s_op
+    coverpoint:
+      ["{Zfinx_feq_s_cg, Zfinx_flt_s_cg, Zfinx_fle_s_cg}/cr_finx_rs1_rs2_edges"]
+  - name: flt-s_fle-s_signaling
+    coverpoint:
+      [
+        "Zfinx_flt_s_cg/cp_finx_directed_flt_s",
+        "Zfinx_fle_s_cg/cp_finx_directed_fle_s",
+      ]
+  - name: feq-s_quiet
+    coverpoint: ["Zfinx_feq_s_cg/cp_finx_directed_feq_s"]
+  - name: feq-s_flt-s_fle-s_nan_input
+    coverpoint:
+      ["{Zfinx_feq_s_cg, Zfinx_flt_s_cg, Zfinx_fle_s_cg}/cr_finx_rs1_rs2_edges"]
+  - name: fclass-s_op
+    coverpoint: ["Zfinx_fclass_s_cg/cp_fclass"]

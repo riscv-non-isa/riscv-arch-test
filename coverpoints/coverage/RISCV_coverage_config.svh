@@ -407,6 +407,12 @@
 `ifdef ZFHMIN_COVERAGE
   `include "Zfhmin_coverage.svh"
 `endif
+`ifdef ZFINX_COVERAGE
+  `include "Zfinx_coverage.svh"
+`endif
+`ifdef ZFINXSM_COVERAGE
+  `include "ZfinxSm_coverage.svh"
+`endif
 `ifdef ZIC64BZICBOZ_COVERAGE
   `include "Zic64bZicboz_coverage.svh"
 `endif

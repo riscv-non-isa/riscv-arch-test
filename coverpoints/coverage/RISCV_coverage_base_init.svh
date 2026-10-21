@@ -538,6 +538,14 @@
         `cover_info("//      Zfhmin - Enabled");
         `include "Zfhmin_coverage_init.svh"
     `endif
+    `ifdef COVER_ZFINX
+        `cover_info("//      Zfinx - Enabled");
+        `include "Zfinx_coverage_init.svh"
+    `endif
+    `ifdef COVER_ZFINXSM
+        `cover_info("//      ZfinxSm - Enabled");
+        `include "ZfinxSm_coverage_init.svh"
+    `endif
     `ifdef COVER_ZIC64BZICBOZ
         `cover_info("//      Zic64bZicboz - Enabled");
         `include "Zic64bZicboz_coverage_init.svh"

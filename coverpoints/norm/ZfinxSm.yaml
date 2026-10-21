@@ -1,0 +1,6 @@
+# SPDX-License-Identifier: Apache-2.0
+normative_rule_definitions:
+  - name: Zfinx_mstatus_fs_zero
+    coverpoint: ["ZfinxSm_cg/{cp_mstatus_fs, cp_fcsr_fs_off, cp_fp_fs_off}"]
+  - name: Zfinx_misa_F_D_Q_zero
+    coverpoint: ["ZfinxSm_cg/cp_misa_F_D_Q"]

@@ -1,0 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+parameter_definitions:
+  - name: MISA_CSR_IMPLEMENTED
+    coverpoint: ["ZfinxSm_cg/cp_misa_F_D_Q"]
+    effect: The misa read-only-zero check requires the standard misa CSR.

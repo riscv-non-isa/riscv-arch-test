@@ -768,11 +768,17 @@ def _gen_instruction_samples(
 ) -> str:
     """Generate instruction sample case entries (the decode switch body)."""
     lines: list[str] = []
+    finx_instructions = {instr for instr, instr_type in instr_keys if instr_type.startswith("FINX_")}
     for instr, _instr_type in instr_keys:
         cps = tp[(instr, _instr_type)]
         if not _matches_xlen(cps, has_rv32, has_rv64):
             continue
-        lines.extend(customize_template(templates, cp, arch, instr) for cp in cps if cp.startswith("sample_"))
+        samples = "".join(customize_template(templates, cp, arch, instr) for cp in cps if cp.startswith("sample_"))
+        # F and Zfinx share mnemonics, but sample different architectural register files.
+        if instr in finx_instructions:
+            guard = "ifdef" if _instr_type.startswith("FINX_") else "ifndef"
+            samples = f"`{guard} ZFINX_SUPPORTED\n{samples}`endif\n"
+        lines.append(samples)
     return "".join(lines)
 
 

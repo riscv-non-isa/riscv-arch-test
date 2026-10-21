@@ -633,11 +633,23 @@
             ins.add_fs1(1);
             ins.add_fs2(2);
         end
+`ifdef ZFINX_SUPPORTED
+// SPDX-License-Identifier: Apache-2.0
+        "fadd.s" : begin
+            ins.add_rd(0);
+            ins.add_rs1(1);
+            ins.add_fs1(1, 1);
+            ins.add_rs2(2);
+            ins.add_fs2(2, 1);
+        end
+`endif
+`ifndef ZFINX_SUPPORTED
         "fadd.s"     : begin
             ins.add_fd(0);
             ins.add_fs1(1);
             ins.add_fs2(2);
         end
+`endif
         "fclass.d"     : begin
             ins.add_rd(0);
             ins.add_fs1(1);
@@ -646,10 +658,20 @@
             ins.add_rd(0);
             ins.add_fs1(1);
         end
+`ifdef ZFINX_SUPPORTED
+// SPDX-License-Identifier: Apache-2.0
+        "fclass.s" : begin
+            ins.add_rd(0);
+            ins.add_rs1(1);
+            ins.add_fs1(1, 1);
+        end
+`endif
+`ifndef ZFINX_SUPPORTED
         "fclass.s"     : begin
             ins.add_rd(0);
             ins.add_fs1(1);
         end
+`endif
         "fcvt.bf16.s"     : begin
             ins.add_fd(0);
             ins.add_fs1(1);
@@ -698,14 +720,34 @@
             ins.add_fd(0);
             ins.add_fs1(1);
         end
+`ifdef ZFINX_SUPPORTED
+// SPDX-License-Identifier: Apache-2.0
+        "fcvt.s.w" : begin
+            ins.add_rd(0);
+            ins.add_rs1(1);
+            ins.add_fs1(1, 1);
+        end
+`endif
+`ifndef ZFINX_SUPPORTED
         "fcvt.s.w"     : begin
             ins.add_fd(0);
             ins.add_rs1(1);
         end
+`endif
+`ifdef ZFINX_SUPPORTED
+// SPDX-License-Identifier: Apache-2.0
+        "fcvt.s.wu" : begin
+            ins.add_rd(0);
+            ins.add_rs1(1);
+            ins.add_fs1(1, 1);
+        end
+`endif
+`ifndef ZFINX_SUPPORTED
         "fcvt.s.wu"     : begin
             ins.add_fd(0);
             ins.add_rs1(1);
         end
+`endif
         "fcvt.w.d"     : begin
             ins.add_rd(0);
             ins.add_fs1(1);
@@ -714,10 +756,20 @@
             ins.add_rd(0);
             ins.add_fs1(1);
         end
+`ifndef ZFINX_SUPPORTED
         "fcvt.w.s"     : begin
             ins.add_rd(0);
             ins.add_fs1(1);
         end
+`endif
+`ifdef ZFINX_SUPPORTED
+// SPDX-License-Identifier: Apache-2.0
+        "fcvt.w.s" : begin
+            ins.add_rd(0);
+            ins.add_rs1(1);
+            ins.add_fs1(1, 1);
+        end
+`endif
         "fcvt.wu.d"     : begin
             ins.add_rd(0);
             ins.add_fs1(1);
@@ -726,10 +778,20 @@
             ins.add_rd(0);
             ins.add_fs1(1);
         end
+`ifndef ZFINX_SUPPORTED
         "fcvt.wu.s"     : begin
             ins.add_rd(0);
             ins.add_fs1(1);
         end
+`endif
+`ifdef ZFINX_SUPPORTED
+// SPDX-License-Identifier: Apache-2.0
+        "fcvt.wu.s" : begin
+            ins.add_rd(0);
+            ins.add_rs1(1);
+            ins.add_fs1(1, 1);
+        end
+`endif
         "fcvtmod.w.d"     : begin
             ins.add_rd(0);
             ins.add_fs1(1);
@@ -744,11 +806,23 @@
             ins.add_fs1(1);
             ins.add_fs2(2);
         end
+`ifdef ZFINX_SUPPORTED
+// SPDX-License-Identifier: Apache-2.0
+        "fdiv.s" : begin
+            ins.add_rd(0);
+            ins.add_rs1(1);
+            ins.add_fs1(1, 1);
+            ins.add_rs2(2);
+            ins.add_fs2(2, 1);
+        end
+`endif
+`ifndef ZFINX_SUPPORTED
         "fdiv.s"     : begin
             ins.add_fd(0);
             ins.add_fs1(1);
             ins.add_fs2(2);
         end
+`endif
         "fence"     : begin
         end
         "fence.i"     : begin
@@ -766,11 +840,23 @@
             ins.add_fs1(1);
             ins.add_fs2(2);
         end
+`ifndef ZFINX_SUPPORTED
         "feq.s"     : begin
             ins.add_rd(0);
             ins.add_fs1(1);
             ins.add_fs2(2);
         end
+`endif
+`ifdef ZFINX_SUPPORTED
+// SPDX-License-Identifier: Apache-2.0
+        "feq.s" : begin
+            ins.add_rd(0);
+            ins.add_rs1(1);
+            ins.add_fs1(1, 1);
+            ins.add_rs2(2);
+            ins.add_fs2(2, 1);
+        end
+`endif
         "fld"     : begin
             ins.add_fd(0);
             ins.add_mem_offset(1);
@@ -788,11 +874,23 @@
             ins.add_fs1(1);
             ins.add_fs2(2);
         end
+`ifndef ZFINX_SUPPORTED
         "fle.s"     : begin
             ins.add_rd(0);
             ins.add_fs1(1);
             ins.add_fs2(2);
         end
+`endif
+`ifdef ZFINX_SUPPORTED
+// SPDX-License-Identifier: Apache-2.0
+        "fle.s" : begin
+            ins.add_rd(0);
+            ins.add_rs1(1);
+            ins.add_fs1(1, 1);
+            ins.add_rs2(2);
+            ins.add_fs2(2, 1);
+        end
+`endif
         "fleq.d"     : begin
             ins.add_rd(0);
             ins.add_fs1(1);
@@ -834,11 +932,23 @@
             ins.add_fs1(1);
             ins.add_fs2(2);
         end
+`ifndef ZFINX_SUPPORTED
         "flt.s"     : begin
             ins.add_rd(0);
             ins.add_fs1(1);
             ins.add_fs2(2);
         end
+`endif
+`ifdef ZFINX_SUPPORTED
+// SPDX-License-Identifier: Apache-2.0
+        "flt.s" : begin
+            ins.add_rd(0);
+            ins.add_rs1(1);
+            ins.add_fs1(1, 1);
+            ins.add_rs2(2);
+            ins.add_fs2(2, 1);
+        end
+`endif
         "fltq.d"     : begin
             ins.add_rd(0);
             ins.add_fs1(1);
@@ -873,12 +983,26 @@
             ins.add_fs2(2);
             ins.add_fs3(3);
         end
+`ifdef ZFINX_SUPPORTED
+// SPDX-License-Identifier: Apache-2.0
+        "fmadd.s" : begin
+            ins.add_rd(0);
+            ins.add_rs1(1);
+            ins.add_fs1(1, 1);
+            ins.add_rs2(2);
+            ins.add_fs2(2, 1);
+            ins.add_rs3(3);
+            ins.add_fs3(3, 1);
+        end
+`endif
+`ifndef ZFINX_SUPPORTED
         "fmadd.s"     : begin
             ins.add_fd(0);
             ins.add_fs1(1);
             ins.add_fs2(2);
             ins.add_fs3(3);
         end
+`endif
         "fmax.d"     : begin
             ins.add_fd(0);
             ins.add_fs1(1);
@@ -889,11 +1013,23 @@
             ins.add_fs1(1);
             ins.add_fs2(2);
         end
+`ifdef ZFINX_SUPPORTED
+// SPDX-License-Identifier: Apache-2.0
+        "fmax.s" : begin
+            ins.add_rd(0);
+            ins.add_rs1(1);
+            ins.add_fs1(1, 1);
+            ins.add_rs2(2);
+            ins.add_fs2(2, 1);
+        end
+`endif
+`ifndef ZFINX_SUPPORTED
         "fmax.s"     : begin
             ins.add_fd(0);
             ins.add_fs1(1);
             ins.add_fs2(2);
         end
+`endif
         "fmaxm.d"     : begin
             ins.add_fd(0);
             ins.add_fs1(1);
@@ -919,11 +1055,23 @@
             ins.add_fs1(1);
             ins.add_fs2(2);
         end
+`ifdef ZFINX_SUPPORTED
+// SPDX-License-Identifier: Apache-2.0
+        "fmin.s" : begin
+            ins.add_rd(0);
+            ins.add_rs1(1);
+            ins.add_fs1(1, 1);
+            ins.add_rs2(2);
+            ins.add_fs2(2, 1);
+        end
+`endif
+`ifndef ZFINX_SUPPORTED
         "fmin.s"     : begin
             ins.add_fd(0);
             ins.add_fs1(1);
             ins.add_fs2(2);
         end
+`endif
         "fminm.d"     : begin
             ins.add_fd(0);
             ins.add_fs1(1);
@@ -951,12 +1099,26 @@
             ins.add_fs2(2);
             ins.add_fs3(3);
         end
+`ifdef ZFINX_SUPPORTED
+// SPDX-License-Identifier: Apache-2.0
+        "fmsub.s" : begin
+            ins.add_rd(0);
+            ins.add_rs1(1);
+            ins.add_fs1(1, 1);
+            ins.add_rs2(2);
+            ins.add_fs2(2, 1);
+            ins.add_rs3(3);
+            ins.add_fs3(3, 1);
+        end
+`endif
+`ifndef ZFINX_SUPPORTED
         "fmsub.s"     : begin
             ins.add_fd(0);
             ins.add_fs1(1);
             ins.add_fs2(2);
             ins.add_fs3(3);
         end
+`endif
         "fmul.d"     : begin
             ins.add_fd(0);
             ins.add_fs1(1);
@@ -967,11 +1129,23 @@
             ins.add_fs1(1);
             ins.add_fs2(2);
         end
+`ifdef ZFINX_SUPPORTED
+// SPDX-License-Identifier: Apache-2.0
+        "fmul.s" : begin
+            ins.add_rd(0);
+            ins.add_rs1(1);
+            ins.add_fs1(1, 1);
+            ins.add_rs2(2);
+            ins.add_fs2(2, 1);
+        end
+`endif
+`ifndef ZFINX_SUPPORTED
         "fmul.s"     : begin
             ins.add_fd(0);
             ins.add_fs1(1);
             ins.add_fs2(2);
         end
+`endif
         "fmv.h.x"     : begin
             ins.add_fd(0);
             ins.add_rs1(1);
@@ -1000,12 +1174,26 @@
             ins.add_fs2(2);
             ins.add_fs3(3);
         end
+`ifdef ZFINX_SUPPORTED
+// SPDX-License-Identifier: Apache-2.0
+        "fnmadd.s" : begin
+            ins.add_rd(0);
+            ins.add_rs1(1);
+            ins.add_fs1(1, 1);
+            ins.add_rs2(2);
+            ins.add_fs2(2, 1);
+            ins.add_rs3(3);
+            ins.add_fs3(3, 1);
+        end
+`endif
+`ifndef ZFINX_SUPPORTED
         "fnmadd.s"     : begin
             ins.add_fd(0);
             ins.add_fs1(1);
             ins.add_fs2(2);
             ins.add_fs3(3);
         end
+`endif
         "fnmsub.d"     : begin
             ins.add_fd(0);
             ins.add_fs1(1);
@@ -1018,12 +1206,26 @@
             ins.add_fs2(2);
             ins.add_fs3(3);
         end
+`ifdef ZFINX_SUPPORTED
+// SPDX-License-Identifier: Apache-2.0
+        "fnmsub.s" : begin
+            ins.add_rd(0);
+            ins.add_rs1(1);
+            ins.add_fs1(1, 1);
+            ins.add_rs2(2);
+            ins.add_fs2(2, 1);
+            ins.add_rs3(3);
+            ins.add_fs3(3, 1);
+        end
+`endif
+`ifndef ZFINX_SUPPORTED
         "fnmsub.s"     : begin
             ins.add_fd(0);
             ins.add_fs1(1);
             ins.add_fs2(2);
             ins.add_fs3(3);
         end
+`endif
         "fround.d"     : begin
             ins.add_fd(0);
             ins.add_fs1(1);
@@ -1065,11 +1267,23 @@
             ins.add_fs1(1);
             ins.add_fs2(2);
         end
+`ifdef ZFINX_SUPPORTED
+// SPDX-License-Identifier: Apache-2.0
+        "fsgnj.s" : begin
+            ins.add_rd(0);
+            ins.add_rs1(1);
+            ins.add_fs1(1, 1);
+            ins.add_rs2(2);
+            ins.add_fs2(2, 1);
+        end
+`endif
+`ifndef ZFINX_SUPPORTED
         "fsgnj.s"     : begin
             ins.add_fd(0);
             ins.add_fs1(1);
             ins.add_fs2(2);
         end
+`endif
         "fsgnjn.d"     : begin
             ins.add_fd(0);
             ins.add_fs1(1);
@@ -1080,11 +1294,23 @@
             ins.add_fs1(1);
             ins.add_fs2(2);
         end
+`ifdef ZFINX_SUPPORTED
+// SPDX-License-Identifier: Apache-2.0
+        "fsgnjn.s" : begin
+            ins.add_rd(0);
+            ins.add_rs1(1);
+            ins.add_fs1(1, 1);
+            ins.add_rs2(2);
+            ins.add_fs2(2, 1);
+        end
+`endif
+`ifndef ZFINX_SUPPORTED
         "fsgnjn.s"     : begin
             ins.add_fd(0);
             ins.add_fs1(1);
             ins.add_fs2(2);
         end
+`endif
         "fsgnjx.d"     : begin
             ins.add_fd(0);
             ins.add_fs1(1);
@@ -1095,11 +1321,23 @@
             ins.add_fs1(1);
             ins.add_fs2(2);
         end
+`ifdef ZFINX_SUPPORTED
+// SPDX-License-Identifier: Apache-2.0
+        "fsgnjx.s" : begin
+            ins.add_rd(0);
+            ins.add_rs1(1);
+            ins.add_fs1(1, 1);
+            ins.add_rs2(2);
+            ins.add_fs2(2, 1);
+        end
+`endif
+`ifndef ZFINX_SUPPORTED
         "fsgnjx.s"     : begin
             ins.add_fd(0);
             ins.add_fs1(1);
             ins.add_fs2(2);
         end
+`endif
         "fsh"     : begin
             ins.add_fs2(0);
             ins.add_mem_offset(1);
@@ -1115,10 +1353,20 @@
             ins.add_fd(0);
             ins.add_fs1(1);
         end
+`ifndef ZFINX_SUPPORTED
         "fsqrt.s"     : begin
             ins.add_fd(0);
             ins.add_fs1(1);
         end
+`endif
+`ifdef ZFINX_SUPPORTED
+// SPDX-License-Identifier: Apache-2.0
+        "fsqrt.s" : begin
+            ins.add_rd(0);
+            ins.add_rs1(1);
+            ins.add_fs1(1, 1);
+        end
+`endif
         "fsub.d"     : begin
             ins.add_fd(0);
             ins.add_fs1(1);
@@ -1129,11 +1377,23 @@
             ins.add_fs1(1);
             ins.add_fs2(2);
         end
+`ifdef ZFINX_SUPPORTED
+// SPDX-License-Identifier: Apache-2.0
+        "fsub.s" : begin
+            ins.add_rd(0);
+            ins.add_rs1(1);
+            ins.add_fs1(1, 1);
+            ins.add_rs2(2);
+            ins.add_fs2(2, 1);
+        end
+`endif
+`ifndef ZFINX_SUPPORTED
         "fsub.s"     : begin
             ins.add_fd(0);
             ins.add_fs1(1);
             ins.add_fs2(2);
         end
+`endif
         "fsw"     : begin
             ins.add_fs2(0);
             ins.add_mem_offset(1);
@@ -6431,10 +6691,20 @@
             ins.add_rd(0);
             ins.add_fs1(1);
         end
+`ifndef ZFINX_SUPPORTED
         "fcvt.l.s"     : begin
             ins.add_rd(0);
             ins.add_fs1(1);
         end
+`endif
+`ifdef ZFINX_SUPPORTED
+// SPDX-License-Identifier: Apache-2.0
+        "fcvt.l.s" : begin
+            ins.add_rd(0);
+            ins.add_rs1(1);
+            ins.add_fs1(1, 1);
+        end
+`endif
         "fcvt.lu.d"     : begin
             ins.add_rd(0);
             ins.add_fs1(1);
@@ -6443,18 +6713,48 @@
             ins.add_rd(0);
             ins.add_fs1(1);
         end
+`ifndef ZFINX_SUPPORTED
         "fcvt.lu.s"     : begin
             ins.add_rd(0);
             ins.add_fs1(1);
         end
+`endif
+`ifdef ZFINX_SUPPORTED
+// SPDX-License-Identifier: Apache-2.0
+        "fcvt.lu.s" : begin
+            ins.add_rd(0);
+            ins.add_rs1(1);
+            ins.add_fs1(1, 1);
+        end
+`endif
+`ifdef ZFINX_SUPPORTED
+// SPDX-License-Identifier: Apache-2.0
+        "fcvt.s.l" : begin
+            ins.add_rd(0);
+            ins.add_rs1(1);
+            ins.add_fs1(1, 1);
+        end
+`endif
+`ifndef ZFINX_SUPPORTED
         "fcvt.s.l"     : begin
             ins.add_fd(0);
             ins.add_rs1(1);
         end
+`endif
+`ifdef ZFINX_SUPPORTED
+// SPDX-License-Identifier: Apache-2.0
+        "fcvt.s.lu" : begin
+            ins.add_rd(0);
+            ins.add_rs1(1);
+            ins.add_fs1(1, 1);
+        end
+`endif
+`ifndef ZFINX_SUPPORTED
         "fcvt.s.lu"     : begin
             ins.add_fd(0);
             ins.add_rs1(1);
         end
+`endif
         "fmv.d.x"     : begin
             ins.add_fd(0);
             ins.add_rs1(1);

@@ -1,0 +1,30 @@
+# SPDX-License-Identifier: Apache-2.0
+# yaml-language-server: $schema=testplan.schema.json
+suite: ZfinxSm
+source: https://docs.riscv.org/reference/isa/v20260120/unpriv/zfinx.html
+description: Zfinx state and CSR access tested in machine mode with FS hardwired to zero.
+coverpoints:
+  - name: cp_mstatus_fs
+    goal: FS is read-only zero.
+    description: Attempt to set each FS value and read back the masked FS field.
+    expectation: Zero for every attempted value.
+    bins: "4 attempted FS values"
+    rules: [Zfinx_mstatus_fs_zero]
+  - name: cp_misa_F_D_Q
+    goal: misa.F, misa.D and misa.Q are read-only zero.
+    description: Attempt to set every combination of the three bits and read back the masked bits.
+    expectation: Zero for every attempted combination.
+    bins: "8 attempted bit combinations"
+    rules: [Zfinx_misa_F_D_Q_zero]
+  - name: cp_fcsr_fs_off
+    goal: Floating-point CSR accesses succeed with FS off.
+    description: Write and read fflags, legal frm values and representative combined fcsr values.
+    expectation: CSR value matches the written value without a trap.
+    bins: "32 fflags values, 5 frm values, 4 fcsr values"
+    rules: [Zfinx_mstatus_fs_zero]
+  - name: cp_fp_fs_off
+    goal: Floating-point computation succeeds and raises flags with FS off.
+    description: Divide one by zero, targeting an allocated register and x0.
+    expectation: Positive infinity for a nonzero destination and DZ set for both destinations.
+    bins: "2 destination classes"
+    rules: [Zfinx_mstatus_fs_zero]
