@@ -11,7 +11,9 @@ include::norm/Sscofpmf_norm_rules.adoc[]
 
 include::{testplansdir}/priv/Ssstateen.adoc[]
 
-The same normative rules apply to Ssstateen as to Smstateen (see <<t-Smstateen-normative-rules>>).
+include::norm/Ssstateen_norm_rules.adoc[]
+
+The normative rules that apply to every level of stateen CSR are listed with Smstateen (see <<t-Smstateen-normative-rules>>).
 
 ==== Ssu64xl 64-bit User Mode
 
