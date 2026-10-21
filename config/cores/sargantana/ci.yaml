@@ -62,7 +62,12 @@ ci_enabled: true
 #   InterruptsS_wfi_timeout_VU
 #                 WFI in VU-mode with mstatus.TW = 1 raises virtual instruction instead of illegal instruction:
 #                 csr:csr_bsc.sv#L2536-L2541 (https://github.com/bsc-loca/sargantana/issues/121)
-exclude_extensions: "F-fmadd.s,F-fmsub.s,F-fnmadd.s,F-fnmsub.s,ZicsrF,Zfa-fleq.s,Zfa-fltq.s,ZfaD-fcvtmod.w.d,ZfaD-fleq.d,ZfaD-fleq.s,ZfaD-fltq.d,ZfaD-fltq.s,ZfaD-fround.s,ZfaD-froundnx.s,ZfaD-fmaxm.s,ZfaD-fminm.s,Zfhmin-fcvt.h.s,Zfhmin-fcvt.s.h,ZfhminD-fcvt.d.h,ZfhminD-fcvt.h.d,ZfhminD-fcvt.s.h,Zicntr,ZicntrSm,ZicntrS,ZicntrU,Sm_F,Sm_mcsr_access,Sm_mcsr_walk,Sm_scsr,Sm_shadow,S_F,S_scsr-,S_scsr_addr,U_F,InterruptsSm_priority_mideleg,InterruptsSm_trigger,InterruptsS_enable_VS,InterruptsS_enable_VU,InterruptsS_priority_sie,InterruptsS_priority_sip,InterruptsS_trigger_VS,InterruptsS_trigger_VU,InterruptsS_wfi_timeout_VU,SscofpmfSm_mcounteren,Sv_sv39_canonical,Sv_sv39_nleaf_pte_DAU,Sv_sv39_pte_reserved,Sv_sv39_svnapot,Sv_sv39_svpbmt,SvZicbo_sv39_zicbom,SvZicbo_sv39_zicboz,ExceptionsSv,ExceptionsSvSm,ExceptionsSvZalrsc,H"
+#   InterruptsSm_enable_VS/VU, InterruptsSm_priority_mie_VS/VU, InterruptsSm_priority_mip_VS/VU
+#                 An interrupt taken into M-mode from VS or VU sets mstatus.GVA = 1, the same bug:
+#                 csr:csr_bsc.sv#L2145 (https://github.com/bsc-loca/sargantana/issues/119)
+#   InterruptsSm_wfi_timeout_VU
+#                 Same as InterruptsS_wfi_timeout_VU (https://github.com/bsc-loca/sargantana/issues/121)
+exclude_extensions: "F-fmadd.s,F-fmsub.s,F-fnmadd.s,F-fnmsub.s,ZicsrF,Zfa-fleq.s,Zfa-fltq.s,ZfaD-fcvtmod.w.d,ZfaD-fleq.d,ZfaD-fleq.s,ZfaD-fltq.d,ZfaD-fltq.s,ZfaD-fround.s,ZfaD-froundnx.s,ZfaD-fmaxm.s,ZfaD-fminm.s,Zfhmin-fcvt.h.s,Zfhmin-fcvt.s.h,ZfhminD-fcvt.d.h,ZfhminD-fcvt.h.d,ZfhminD-fcvt.s.h,Zicntr,ZicntrSm,ZicntrS,ZicntrU,Sm_F,Sm_mcsr_access,Sm_mcsr_walk,Sm_scsr,Sm_shadow,S_F,S_scsr-,S_scsr_addr,U_F,InterruptsSm_priority_mideleg,InterruptsSm_trigger,InterruptsSm_enable_VS,InterruptsSm_enable_VU,InterruptsSm_priority_mie_VS,InterruptsSm_priority_mie_VU,InterruptsSm_priority_mip_VS,InterruptsSm_priority_mip_VU,InterruptsSm_wfi_timeout_VU,InterruptsS_enable_VS,InterruptsS_enable_VU,InterruptsS_priority_sie,InterruptsS_priority_sip,InterruptsS_trigger_VS,InterruptsS_trigger_VU,InterruptsS_wfi_timeout_VU,SscofpmfSm_mcounteren,Sv_sv39_canonical,Sv_sv39_nleaf_pte_DAU,Sv_sv39_pte_reserved,Sv_sv39_svnapot,Sv_sv39_svpbmt,SvZicbo_sv39_zicbom,SvZicbo_sv39_zicboz,ExceptionsSv,ExceptionsSvSm,ExceptionsSvZalrsc,H"
 
 apt_packages: "autoconf flex bison help2man libfl-dev ccache device-tree-compiler libboost-dev libboost-regex-dev libboost-system-dev"
 install_script: ".github/scripts/install-sargantana.sh"
