@@ -609,21 +609,34 @@ coverpoints:
       tdata1.match = {1/9} (each value in UDB_SDTRIG_MCONTROL6_MATCH_LEGAL_VALUES)
       if RV32:
       tdata2 = 0xFFFFFFFF
-      for x in 1:min(UDB_SDTRIG_MCONTROL6_MASKMAX6, XLEN-1)-1 tdata2[x] = 0 (legal NAPOT sizes only)
+      for x in 0:min(UDB_SDTRIG_MCONTROL6_MASKMAX6, XLEN-1)-1 tdata2[x] = 0 (legal NAPOT sizes only)
       perform SW{0x0}, {0x12345678}, {0xFFFFFFFF} to scratch
       if RV64:
       tdata2 = 0xFFFFFFFFFFFFFFFF
-      for x in 1:min(UDB_SDTRIG_MCONTROL6_MASKMAX6, XLEN-1)-1 tdata2[x] = 0 (legal NAPOT sizes only)
+      for x in 0:min(UDB_SDTRIG_MCONTROL6_MASKMAX6, XLEN-1)-1 tdata2[x] = 0 (legal NAPOT sizes only)
       perform SD{0x0}, {0x123456789ABCDEF0},{0xFFFFFFFFFFFFFFFF} to scratch
     expectation: |-
       Breakpoint exception if the store data meets the condition set by tdata1.match
-      The legalization of a tdata2 whose bits maskmax6-1:0 are all ones is not tested: only Sail clears exactly
-      bit maskmax6-1 (Spike and QEMU never clear it, Whisper only for all XLEN bits, Imperas RV32 clears every low bit)
-    bins: legal matches (up to 2) * (min(UDB_SDTRIG_MCONTROL6_MASKMAX6, XLEN-1)-1) values * 3 ops
+      (zero bit x is a NAPOT range of 2^(x+1) bytes, so every range from 2^1 to 2^min(maskmax6, XLEN-1) is tested)
+    bins: legal matches (up to 2) * min(UDB_SDTRIG_MCONTROL6_MASKMAX6, XLEN-1) values * 3 ops
     rules:
       - Sdtrig_mcontrol6_match_napot
       - Sdtrig_mcontrol6_match_not_napot
       - Sdtrig_mcontrol6_match_napot_legal
+      - Sdtrig_mcontrol6_napot_range
+  - name: cp_mcontrol6_napot_allones
+    goal: An all-ones write to bits maskmax6-1:0 of tdata2 clears bit maskmax6-1
+    description: |-
+      if UDB_TDATA2_IMPLEMENTED and UDB_SDTRIG_MCONTROL6_MASKMAX6 < XLEN
+      For each of UDB_SDTRIG_NUM_TRIGGERS if UDB_SDTRIG_MCONTROL6_SUPPORTED_TRIGGERS[i]:
+      for match = {1/9} (each value in UDB_SDTRIG_MCONTROL6_MATCH_LEGAL_VALUES):
+      CSRW tdata1 = 0, CSRW tdata2 = 0, CSRW tdata1 = mcontrol6 with that match, XSL = 000 (never fires)
+      CSRW tdata2 = all ones, CSRR tdata2
+      Runs in SdtrigSm only (the legalization does not depend on the mode the CSRs are written from)
+    expectation: |-
+      Bit maskmax6-1 of tdata2 reads 0; only that bit is signed (bits maskmax6-2:0 are UNSPECIFIED)
+    bins: NTRIG * legal matches (up to 2)
+    rules:
       - Sdtrig_mcontrol6_match_napot_mask
   - name: cp_mcontrol6_match_mask
     description: |-

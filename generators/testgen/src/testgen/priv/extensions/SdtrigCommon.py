@@ -2961,8 +2961,9 @@ def _generate_mcontrol6_tests(test_data: TestData, mode: str) -> list[TestChunk]
                 (64, "sd", (0x0000000000000000, 0x123456789ABCDEF0, 0xFFFFFFFFFFFFFFFF)),
             ):
                 lines.append(f"#if __riscv_xlen == {xlen}")
-                # tdata2 is all ones except bit zero_bit; legal NAPOT sizes need 1 <= zero_bit <= min(maskmax6, XLEN-1) - 1
-                for zero_bit in range(1, xlen - 1):
+                # tdata2 is all ones except bit zero_bit, a NAPOT range of 2^(zero_bit+1) bytes; every range from 2^1
+                # to 2^maskmax6 is supported (norm:Sdtrig_mcontrol6_napot_range), and M > 0 needs zero_bit < XLEN-1
+                for zero_bit in range(xlen - 1):
                     tdata2 = ((1 << xlen) - 1) & ~(1 << zero_bit)
                     lines.extend(
                         [
@@ -2987,6 +2988,44 @@ def _generate_mcontrol6_tests(test_data: TestData, mode: str) -> list[TestChunk]
         lines.extend(["#endif // UDB_SDTRIG_MCONTROL6_XSL_WRITABLE"] * len(_xsl_ifdefs(0b010)))
         lines.extend(_disable_trigger(temp_reg, trig_num, mode))
         lines.extend(_close_gates(gates))
+
+    ######################################
+    coverpoint = "cp_mcontrol6_napot_allones"
+    ######################################
+    # SdtrigSm only: tdata2 legalization does not depend on the mode the trigger CSRs are written from. Its own file,
+    # so a DUT that keeps the all-ones value can exclude just this group. The arm writes tdata1 = 0, tdata2 = 0, then
+    # tdata1 with the match type, as the Debug spec's maskmax6 discovery sequence does; xsl = 000, so it never fires.
+    if mode == "Sm":
+        lines = test_data.new_test_chunk(chunks, "mcontrol6_napot_allones").code
+        lines.append(
+            comment_banner(
+                coverpoint,
+                "Write all ones to tdata2 of an mcontrol6 trigger with match = 1 (NAPOT) or 9 (not NAPOT) and read\n"
+                "it back: bit maskmax6-1 reads 0 (norm:Sdtrig_mcontrol6_match_napot_mask). Bits maskmax6-2:0 are\n"
+                "UNSPECIFIED and the bits above are WARL, so only bit maskmax6-1 is signed",
+            )
+        )
+        lines.append("#if defined(UDB_TDATA2_IMPLEMENTED) && UDB_SDTRIG_MCONTROL6_MASKMAX6 < __riscv_xlen")
+        for trig_num in TRIGGERS:
+            lines.append(f"\n#ifdef UDB_SDTRIG_MCONTROL6_SUPPORTED_TRIGGERS_{trig_num}")
+            for match in (1, 9):
+                lines.extend(
+                    [
+                        f"#ifdef {_match_legal(match)}",
+                        _add_tc(test_data, f"trig_num_{trig_num}_match_{match}", coverpoint, covergroup),
+                        *_config_mcontrol6(temp_reg, trig_num, 0, mode, privbits=0, xsl=0b000, match=match),
+                        f"LI(x{data_reg}, -1)",
+                        _csr_access(f"csrw tdata2, x{data_reg} # bits maskmax6-1:0 written with all ones", mode),
+                        _csr_access(f"csrr x{data_reg}, tdata2", mode),
+                        f"srli x{data_reg}, x{data_reg}, UDB_SDTRIG_MCONTROL6_MASKMAX6 - 1",
+                        f"andi x{data_reg}, x{data_reg}, 1 # bit maskmax6-1, which must read 0",
+                        write_sigupd(data_reg, test_data),
+                        f"#endif // {_match_legal(match)}",
+                    ]
+                )
+            lines.extend(_disable_trigger(temp_reg, trig_num, mode))
+            lines.append(f"#endif // UDB_SDTRIG_MCONTROL6_SUPPORTED_TRIGGERS_{trig_num}")
+        lines.append("#endif // UDB_TDATA2_IMPLEMENTED && maskmax6 < XLEN")
 
     ######################################
     coverpoint = "cp_mcontrol6_match_mask"

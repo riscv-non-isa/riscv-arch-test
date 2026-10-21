@@ -1103,12 +1103,21 @@ covergroup SdtrigSm_mcontrol6_cg with function sample(ins_t ins);
             `ifdef UDB_SDTRIG_MCONTROL6_MATCH_LEGAL_VALUES_9 bins not_napot = {4'd9}; `endif
         }
         tdata2_napot: coverpoint $clog2(~ins.current.csr[CSR_TDATA2] & (ins.current.csr[CSR_TDATA2] + 1)) iff (ins.current.csr[CSR_TDATA2] != '1) {
-            bins zero_bit[] = {[1:((`UDB_SDTRIG_MCONTROL6_MASKMAX6 < XLEN-1) ? `UDB_SDTRIG_MCONTROL6_MASKMAX6 : XLEN-1) - 1]};
+            bins zero_bit[] = {[0:((`UDB_SDTRIG_MCONTROL6_MASKMAX6 < XLEN-1) ? `UDB_SDTRIG_MCONTROL6_MASKMAX6 : XLEN-1) - 1]};
         }
         store_data_napot: coverpoint ins.current.rs2_val {
             bins zero           = {'0};
             wildcard bins other = {'x} iff (ins.current.rs2_val != '0 && ins.current.rs2_val != '1);
             bins ones           = {'1};
+        }
+        // cp_mcontrol6_napot_allones: a csrw of all ones to tdata2
+        csr_tdata2_napot: coverpoint ins.current.insn[31:20] {
+            type_option.weight = 0;
+            bins tdata2 = {CSR_TDATA2};
+        }
+        tdata2_write_ones: coverpoint ins.current.rs1_val {
+            type_option.weight = 0;
+            bins ones = {'1};
         }
     `endif
     `ifdef SDTRIG_MATCH_MASK
@@ -1290,7 +1299,8 @@ covergroup SdtrigSm_mcontrol6_cg with function sample(ins_t ins);
     cp_mcontrol6_load_store_size: cross priv_mode_m, triggernum_mcontrol6, tdata1_type_mcontrol6, tdata1_m_on, tdata1_chain_disabled, tdata1_match_equal, tdata1_select_adr, tdata1_xsl_load_store, tdata1_size_ls, tdata2_adr, load_store_instr;               // NTRIG * 5 sizes * 2 tdata2 * instrs
     cp_mcontrol6_match:           cross priv_mode_m, triggernum_mcontrol6, tdata1_type_mcontrol6, tdata1_m_on, tdata1_chain_disabled, tdata1_size_any, tdata1_select_data, tdata1_xsl_store, tdata1_match_cmp, store_data_cmp, store_xlen;                   // NTRIG * 4 match * 5 values
     `ifdef SDTRIG_MATCH_NAPOT
-        cp_mcontrol6_match_napot: cross priv_mode_m, triggernum_mcontrol6, tdata1_type_mcontrol6, tdata1_m_on, tdata1_chain_disabled, tdata1_size_any, tdata1_select_data, tdata1_xsl_store, tdata1_match_napot, tdata2_napot, store_data_napot, store_xlen; // NTRIG * 2 match * (min(maskmax6, XLEN-1) - 1) tdata2 * 3 values
+        cp_mcontrol6_match_napot: cross priv_mode_m, triggernum_mcontrol6, tdata1_type_mcontrol6, tdata1_m_on, tdata1_chain_disabled, tdata1_size_any, tdata1_select_data, tdata1_xsl_store, tdata1_match_napot, tdata2_napot, store_data_napot, store_xlen; // NTRIG * 2 match * min(maskmax6, XLEN-1) tdata2 * 3 values
+        cp_mcontrol6_napot_allones: cross priv_mode_m, triggernum_mcontrol6, csrw, csr_tdata2_napot, tdata1_type_mcontrol6, tdata1_match_napot, tdata2_write_ones; // NTRIG * 2 match
     `endif
     `ifdef SDTRIG_MATCH_MASK
         cp_mcontrol6_match_mask:  cross priv_mode_m, triggernum_mcontrol6, tdata1_type_mcontrol6, tdata1_m_on, tdata1_chain_disabled, tdata1_size_any, tdata1_select_data, tdata1_xsl_store, tdata1_match_mask, store_data_mask, store_xlen;                 // NTRIG * 4 match * 11 values

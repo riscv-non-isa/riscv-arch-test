@@ -1134,7 +1134,7 @@ normative_rule_definitions:
   # if bits maskmax6-1:0 are written with all ones then bit maskmax6-1 will be set
   # to 0 while the values of bits maskmax6-2:0 are UNSPECIFIED.
   - name: Sdtrig_mcontrol6_match_napot_mask
-    coverpoint: ["SdtrigSm_mcontrol6_cg/cp_mcontrol6_match_napot"]
+    coverpoint: ["SdtrigSm_mcontrol6_cg/cp_mcontrol6_napot_allones"]
 
   # Legal values for tdata2 require M maskmax6 >= XLEN and M > 0. See above for how
   # to determine maskmax6.
