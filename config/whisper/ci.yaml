@@ -15,8 +15,11 @@
 # SdtrigSm_csr_access_common, SdtrigSm_csr_access_global, SdtrigSm_tcontrol (max configs): Whisper implements tcontrol
 #   while using mstatus.MIE/SIE for breakpoint reentrancy, which Sail cannot model (it has tcontrol only with
 #   Use_tcontrol, https://github.com/riscv/sail-riscv/issues/2039), so the reference traps on the tcontrol accesses.
+# SdtrigSm_mcontrol6_size_data, SdtrigS_mcontrol6_size_data, SdtrigU_mcontrol6_size_data: Whisper ignores mcontrol6 size
+#   on load/store data matches, so a select = 1 trigger fires on a wider or narrower store whose data equals tdata2
+#   (https://github.com/tenstorrent/whisper/issues/222). Drop it when the Whisper pin includes the fix.
 ci_enabled: true
-exclude_extensions: "SdtrigSm_csr_access_common,SdtrigSm_csr_access_global,SdtrigSm_tcontrol,SsstrictSm_CSR,SsstrictS_CSR,Smstateen,Ssnpm_sv39_pmm00_sweep,Ssnpm_sv39_pmm10_sweep,Ssnpm_sv48_pmm00_sweep,Ssnpm_sv48_pmm10_sweep,Ssnpm_sv57_pmm00_sweep,Ssnpm_sv57_pmm10_sweep,SmnpmS_sv39_pmm00_sweep,SmnpmS_sv39_pmm10_sweep,SmnpmS_sv48_pmm00_sweep,SmnpmS_sv48_pmm10_sweep,SmnpmS_sv57_pmm00_sweep,SmnpmS_sv57_pmm10_sweep"
+exclude_extensions: "SdtrigSm_mcontrol6_size_data,SdtrigS_mcontrol6_size_data,SdtrigU_mcontrol6_size_data,SdtrigSm_csr_access_common,SdtrigSm_csr_access_global,SdtrigSm_tcontrol,SsstrictSm_CSR,SsstrictS_CSR,Smstateen,Ssnpm_sv39_pmm00_sweep,Ssnpm_sv39_pmm10_sweep,Ssnpm_sv48_pmm00_sweep,Ssnpm_sv48_pmm10_sweep,Ssnpm_sv57_pmm00_sweep,Ssnpm_sv57_pmm10_sweep,SmnpmS_sv39_pmm00_sweep,SmnpmS_sv39_pmm10_sweep,SmnpmS_sv48_pmm00_sweep,SmnpmS_sv48_pmm10_sweep,SmnpmS_sv57_pmm00_sweep,SmnpmS_sv57_pmm10_sweep"
 exclude_configs:
   - whisper-rv32-max-spike-ref
   - whisper-rv64-max-spike-ref
