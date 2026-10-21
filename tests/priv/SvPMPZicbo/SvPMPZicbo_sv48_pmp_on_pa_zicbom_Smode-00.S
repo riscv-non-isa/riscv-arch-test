@@ -31,7 +31,7 @@ RVTEST_BEGIN
 
 
 /////////////////////////////////
-// cp_pmp_zicbo
+// cp_PA_PMP_rw_unset_cbo_s
 /////////////////////////////////
 
 #if UDB_PMP_GRANULARITY > 5
@@ -42,9 +42,7 @@ RVTEST_BEGIN
 #define PMP_REGION_SIZE (((1 << (PMP_REGION_SHIFT - 2)) - 1) >> 1)
 #define PMP_MASK        ~PMP_REGION_SIZE
 
-main:
-
-  RVTEST_PMP_SET_BACKGROUND x4
+  RVTEST_PMP_SET_BACKGROUND x6
 
   LA(x5, rvtest_data_1)
   srl x5, x5, PMP_SHIFT
@@ -70,38 +68,39 @@ main:
 // accessible, so the code is mapped again at va_rvtest_code_begin. Registering
 // that alias lets RVTEST_TSBI_GOTO_* resume in the mapping the mode it switches
 // to can fetch from.
+// SAVE_AREA_SETUP takes the M-mode save area in a0 and clobbers t0 and t1.
   LA(a0, Mtramptbl_sv)
   SAVE_AREA_SETUP(va_rvtest_code_begin, rvtest_code_begin, code, LEVEL3)
 
   SATP_SETUP_RV64(sv48) // Enable address translation.
   sfence.vma
 
-  LI(t0, MENVCFG_CBCFE | MENVCFG_CBIE)
-  csrs menvcfg, t0
+  LI(x6, MENVCFG_CBCFE | MENVCFG_CBIE)
+  csrs menvcfg, x6
 
   LI(x4, (((PMP_X | PMP_NAPOT) & 0xFF) << PMP_CFG_SHIFT(0)))
-SvPMPZicbo_cp_pmpcfg_pmpcfg0_x:
+SvPMPZicbo_cg_PMP_perm_pmpcfg0_x:
   # Write x4 to pmpcfg0, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(pmpcfg0, x4, SvPMPZicbo_cp_pmpcfg_pmpcfg0_x, SvPMPZicbo_cp_pmpcfg_pmpcfg0_x_str)
+  RVTEST_SIGUPD_CSR_WRITE(pmpcfg0, x4, SvPMPZicbo_cg_PMP_perm_pmpcfg0_x, SvPMPZicbo_cg_PMP_perm_pmpcfg0_x_str)
   sfence.vma
 
   SUPERPAGE_PTE_SETUP_SV48(rvtest_data_1, (PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL3)
   sfence.vma
 
-  LI(a5, (va_data >> 39) << 39)
-  LA(a0, rvtest_data_1)
-  slli a0, a0, 25
-  srli a0, a0, 25
-  add a5, a5, a0
+  LI(x14, (va_data >> 39) << 39)
+  LA(x6, rvtest_data_1)
+  slli x6, x6, 25
+  srli x6, x6, 25
+  add x14, x14, x6
   RVTEST_TSBI_GOTO_SMODE
-SvPMPZicbo_cg_cp_pmp_zicbo_test1_cbo_clean:
-  cbo.clean (a5)
+SvPMPZicbo_cg_cp_PA_PMP_rw_unset_cbo_s_test1_cbo_clean:
+  cbo.clean (x14)
   nop
-SvPMPZicbo_cg_cp_pmp_zicbo_test1_cbo_flush:
-  cbo.flush (a5)
+SvPMPZicbo_cg_cp_PA_PMP_rw_unset_cbo_s_test1_cbo_flush:
+  cbo.flush (x14)
   nop
-SvPMPZicbo_cg_cp_pmp_zicbo_test1_cbo_inval:
-  cbo.inval (a5)
+SvPMPZicbo_cg_cp_PA_PMP_rw_unset_cbo_s_test1_cbo_inval:
+  cbo.inval (x14)
   nop
   RVTEST_TSBI_GOTO_MMODE
 
@@ -109,20 +108,20 @@ SvPMPZicbo_cg_cp_pmp_zicbo_test1_cbo_inval:
   SUPERPAGE_PTE_SETUP_SV48(rvtest_data_1, (PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL2)
   sfence.vma
 
-  LI(a5, (va_data >> 30) << 30)
-  LA(a0, rvtest_data_1)
-  slli a0, a0, 34
-  srli a0, a0, 34
-  add a5, a5, a0
+  LI(x14, (va_data >> 30) << 30)
+  LA(x6, rvtest_data_1)
+  slli x6, x6, 34
+  srli x6, x6, 34
+  add x14, x14, x6
   RVTEST_TSBI_GOTO_SMODE
-SvPMPZicbo_cg_cp_pmp_zicbo_test2_cbo_clean:
-  cbo.clean (a5)
+SvPMPZicbo_cg_cp_PA_PMP_rw_unset_cbo_s_test2_cbo_clean:
+  cbo.clean (x14)
   nop
-SvPMPZicbo_cg_cp_pmp_zicbo_test2_cbo_flush:
-  cbo.flush (a5)
+SvPMPZicbo_cg_cp_PA_PMP_rw_unset_cbo_s_test2_cbo_flush:
+  cbo.flush (x14)
   nop
-SvPMPZicbo_cg_cp_pmp_zicbo_test2_cbo_inval:
-  cbo.inval (a5)
+SvPMPZicbo_cg_cp_PA_PMP_rw_unset_cbo_s_test2_cbo_inval:
+  cbo.inval (x14)
   nop
   RVTEST_TSBI_GOTO_MMODE
 
@@ -131,20 +130,20 @@ SvPMPZicbo_cg_cp_pmp_zicbo_test2_cbo_inval:
   SUPERPAGE_PTE_SETUP_SV48(rvtest_data_1, (PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL1)
   sfence.vma
 
-  LI(a5, (va_data >> 21) << 21)
-  LA(a0, rvtest_data_1)
-  slli a0, a0, 43
-  srli a0, a0, 43
-  add a5, a5, a0
+  LI(x14, (va_data >> 21) << 21)
+  LA(x6, rvtest_data_1)
+  slli x6, x6, 43
+  srli x6, x6, 43
+  add x14, x14, x6
   RVTEST_TSBI_GOTO_SMODE
-SvPMPZicbo_cg_cp_pmp_zicbo_test3_cbo_clean:
-  cbo.clean (a5)
+SvPMPZicbo_cg_cp_PA_PMP_rw_unset_cbo_s_test3_cbo_clean:
+  cbo.clean (x14)
   nop
-SvPMPZicbo_cg_cp_pmp_zicbo_test3_cbo_flush:
-  cbo.flush (a5)
+SvPMPZicbo_cg_cp_PA_PMP_rw_unset_cbo_s_test3_cbo_flush:
+  cbo.flush (x14)
   nop
-SvPMPZicbo_cg_cp_pmp_zicbo_test3_cbo_inval:
-  cbo.inval (a5)
+SvPMPZicbo_cg_cp_PA_PMP_rw_unset_cbo_s_test3_cbo_inval:
+  cbo.inval (x14)
   nop
   RVTEST_TSBI_GOTO_MMODE
 
@@ -154,20 +153,20 @@ SvPMPZicbo_cg_cp_pmp_zicbo_test3_cbo_inval:
   PTE_SETUP_SV48(rvtest_data_1, (PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL0)
   sfence.vma
 
-  LI(a5, (va_data >> 12) << 12)
-  LA(a0, rvtest_data_1)
-  slli a0, a0, 52
-  srli a0, a0, 52
-  add a5, a5, a0
+  LI(x14, (va_data >> 12) << 12)
+  LA(x6, rvtest_data_1)
+  slli x6, x6, 52
+  srli x6, x6, 52
+  add x14, x14, x6
   RVTEST_TSBI_GOTO_SMODE
-SvPMPZicbo_cg_cp_pmp_zicbo_test4_cbo_clean:
-  cbo.clean (a5)
+SvPMPZicbo_cg_cp_PA_PMP_rw_unset_cbo_s_test4_cbo_clean:
+  cbo.clean (x14)
   nop
-SvPMPZicbo_cg_cp_pmp_zicbo_test4_cbo_flush:
-  cbo.flush (a5)
+SvPMPZicbo_cg_cp_PA_PMP_rw_unset_cbo_s_test4_cbo_flush:
+  cbo.flush (x14)
   nop
-SvPMPZicbo_cg_cp_pmp_zicbo_test4_cbo_inval:
-  cbo.inval (a5)
+SvPMPZicbo_cg_cp_PA_PMP_rw_unset_cbo_s_test4_cbo_inval:
+  cbo.inval (x14)
   nop
   RVTEST_TSBI_GOTO_MMODE
 
@@ -186,7 +185,7 @@ RVTEST_DATA_BEGIN
   .p2align (UDB_PMP_GRANULARITY)
 rvtest_data_1:
   nop
-  addi a4, a2, 4
+  addi x9, x15, 4
   jr ra
   nop
   .word 0xbeefcaf1          // Random word
@@ -208,19 +207,19 @@ rvtest_slvl2_pg_tbl:
   .skip(4096)
 
 // Testcase strings
-SvPMPZicbo_cp_pmpcfg_pmpcfg0_x_str: .string "\"test: 1; cg: SvPMPZicbo; cp: cp_pmpcfg; bin: pmpcfg0_x\""
-SvPMPZicbo_cg_cp_pmp_zicbo_test1_cbo_clean_str: .string "\"test: 2; cg: SvPMPZicbo_cg; cp: cp_pmp_zicbo; bin: test1_cbo_clean\""
-SvPMPZicbo_cg_cp_pmp_zicbo_test1_cbo_flush_str: .string "\"test: 3; cg: SvPMPZicbo_cg; cp: cp_pmp_zicbo; bin: test1_cbo_flush\""
-SvPMPZicbo_cg_cp_pmp_zicbo_test1_cbo_inval_str: .string "\"test: 4; cg: SvPMPZicbo_cg; cp: cp_pmp_zicbo; bin: test1_cbo_inval\""
-SvPMPZicbo_cg_cp_pmp_zicbo_test2_cbo_clean_str: .string "\"test: 5; cg: SvPMPZicbo_cg; cp: cp_pmp_zicbo; bin: test2_cbo_clean\""
-SvPMPZicbo_cg_cp_pmp_zicbo_test2_cbo_flush_str: .string "\"test: 6; cg: SvPMPZicbo_cg; cp: cp_pmp_zicbo; bin: test2_cbo_flush\""
-SvPMPZicbo_cg_cp_pmp_zicbo_test2_cbo_inval_str: .string "\"test: 7; cg: SvPMPZicbo_cg; cp: cp_pmp_zicbo; bin: test2_cbo_inval\""
-SvPMPZicbo_cg_cp_pmp_zicbo_test3_cbo_clean_str: .string "\"test: 8; cg: SvPMPZicbo_cg; cp: cp_pmp_zicbo; bin: test3_cbo_clean\""
-SvPMPZicbo_cg_cp_pmp_zicbo_test3_cbo_flush_str: .string "\"test: 9; cg: SvPMPZicbo_cg; cp: cp_pmp_zicbo; bin: test3_cbo_flush\""
-SvPMPZicbo_cg_cp_pmp_zicbo_test3_cbo_inval_str: .string "\"test: 10; cg: SvPMPZicbo_cg; cp: cp_pmp_zicbo; bin: test3_cbo_inval\""
-SvPMPZicbo_cg_cp_pmp_zicbo_test4_cbo_clean_str: .string "\"test: 11; cg: SvPMPZicbo_cg; cp: cp_pmp_zicbo; bin: test4_cbo_clean\""
-SvPMPZicbo_cg_cp_pmp_zicbo_test4_cbo_flush_str: .string "\"test: 12; cg: SvPMPZicbo_cg; cp: cp_pmp_zicbo; bin: test4_cbo_flush\""
-SvPMPZicbo_cg_cp_pmp_zicbo_test4_cbo_inval_str: .string "\"test: 13; cg: SvPMPZicbo_cg; cp: cp_pmp_zicbo; bin: test4_cbo_inval\""
+SvPMPZicbo_cg_PMP_perm_pmpcfg0_x_str: .string "\"test: 1; cg: SvPMPZicbo_cg; cp: PMP_perm; bin: pmpcfg0_x\""
+SvPMPZicbo_cg_cp_PA_PMP_rw_unset_cbo_s_test1_cbo_clean_str: .string "\"test: 2; cg: SvPMPZicbo_cg; cp: cp_PA_PMP_rw_unset_cbo_s; bin: test1_cbo_clean\""
+SvPMPZicbo_cg_cp_PA_PMP_rw_unset_cbo_s_test1_cbo_flush_str: .string "\"test: 3; cg: SvPMPZicbo_cg; cp: cp_PA_PMP_rw_unset_cbo_s; bin: test1_cbo_flush\""
+SvPMPZicbo_cg_cp_PA_PMP_rw_unset_cbo_s_test1_cbo_inval_str: .string "\"test: 4; cg: SvPMPZicbo_cg; cp: cp_PA_PMP_rw_unset_cbo_s; bin: test1_cbo_inval\""
+SvPMPZicbo_cg_cp_PA_PMP_rw_unset_cbo_s_test2_cbo_clean_str: .string "\"test: 5; cg: SvPMPZicbo_cg; cp: cp_PA_PMP_rw_unset_cbo_s; bin: test2_cbo_clean\""
+SvPMPZicbo_cg_cp_PA_PMP_rw_unset_cbo_s_test2_cbo_flush_str: .string "\"test: 6; cg: SvPMPZicbo_cg; cp: cp_PA_PMP_rw_unset_cbo_s; bin: test2_cbo_flush\""
+SvPMPZicbo_cg_cp_PA_PMP_rw_unset_cbo_s_test2_cbo_inval_str: .string "\"test: 7; cg: SvPMPZicbo_cg; cp: cp_PA_PMP_rw_unset_cbo_s; bin: test2_cbo_inval\""
+SvPMPZicbo_cg_cp_PA_PMP_rw_unset_cbo_s_test3_cbo_clean_str: .string "\"test: 8; cg: SvPMPZicbo_cg; cp: cp_PA_PMP_rw_unset_cbo_s; bin: test3_cbo_clean\""
+SvPMPZicbo_cg_cp_PA_PMP_rw_unset_cbo_s_test3_cbo_flush_str: .string "\"test: 9; cg: SvPMPZicbo_cg; cp: cp_PA_PMP_rw_unset_cbo_s; bin: test3_cbo_flush\""
+SvPMPZicbo_cg_cp_PA_PMP_rw_unset_cbo_s_test3_cbo_inval_str: .string "\"test: 10; cg: SvPMPZicbo_cg; cp: cp_PA_PMP_rw_unset_cbo_s; bin: test3_cbo_inval\""
+SvPMPZicbo_cg_cp_PA_PMP_rw_unset_cbo_s_test4_cbo_clean_str: .string "\"test: 11; cg: SvPMPZicbo_cg; cp: cp_PA_PMP_rw_unset_cbo_s; bin: test4_cbo_clean\""
+SvPMPZicbo_cg_cp_PA_PMP_rw_unset_cbo_s_test4_cbo_flush_str: .string "\"test: 12; cg: SvPMPZicbo_cg; cp: cp_PA_PMP_rw_unset_cbo_s; bin: test4_cbo_flush\""
+SvPMPZicbo_cg_cp_PA_PMP_rw_unset_cbo_s_test4_cbo_inval_str: .string "\"test: 13; cg: SvPMPZicbo_cg; cp: cp_PA_PMP_rw_unset_cbo_s; bin: test4_cbo_inval\""
 
 // End of test data section and model specific data
 RVTEST_DATA_END
