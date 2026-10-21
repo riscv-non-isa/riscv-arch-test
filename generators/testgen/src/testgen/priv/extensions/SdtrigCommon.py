@@ -3561,7 +3561,7 @@ def _generate_textra_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     ######################################
     lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_")).code
     lines.append(comment_banner(coverpoint, "textra mhselect=4: the trigger fires only when mhvalue equals mcontext"))
-    lines.append("#ifdef UDB_MCONTEXT_AVAILABLE")
+    lines.append("#ifdef UDB_MCONTEXT_IMPLEMENTED")
     lines.extend(_global_ie(mode, True))
     lines.extend(set_context("mcontext", _MCONTEXT_TEST_VALUE_RV32, _MCONTEXT_TEST_VALUE_RV64))
     for trig_num in range(UDB_NUM_TRIGGERS):
@@ -3577,7 +3577,7 @@ def _generate_textra_tests(test_data: TestData, mode: str) -> list[TestChunk]:
             lines.extend(per_type(trig_num, trig_type, body))
     lines.append(_csr_access("csrw mcontext, x0 # clear the test context", mode))
     lines.extend(_global_ie(mode, False))
-    lines.append("#endif // UDB_MCONTEXT_AVAILABLE")
+    lines.append("#endif // UDB_MCONTEXT_IMPLEMENTED")
 
     ######################################
     coverpoint = "cp_textra_scontext"
@@ -3624,7 +3624,7 @@ def _generate_textra_tests(test_data: TestData, mode: str) -> list[TestChunk]:
             coverpoint, "mhselect/mhvalue and sselect/svalue together: fires only when every enabled context matches"
         )
     )
-    lines.append("#ifdef UDB_MCONTEXT_AVAILABLE")
+    lines.append("#ifdef UDB_MCONTEXT_IMPLEMENTED")
     lines.append("#ifdef UDB_SCONTEXT_AVAILABLE")
     lines.extend(_global_ie(mode, True))
     lines.extend(set_context("mcontext", *_DOUBLE_MCONTEXT))
@@ -3653,7 +3653,7 @@ def _generate_textra_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     lines.append(_csr_access("csrw scontext, x0 # clear the test context", mode))
     lines.extend(_global_ie(mode, False))
     lines.append("#endif // UDB_SCONTEXT_AVAILABLE")
-    lines.append("#endif // UDB_MCONTEXT_AVAILABLE")
+    lines.append("#endif // UDB_MCONTEXT_IMPLEMENTED")
 
     ######################################
     coverpoint = "cp_textra_asid"

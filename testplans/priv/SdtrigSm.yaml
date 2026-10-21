@@ -384,7 +384,7 @@ coverpoints:
   - name: cp_csr_unimplemented
     goal: Accessing a trigger CSR that the hart does not implement raises an illegal instruction exception
     description: |-
-      For x in {mcontext if not UDB_MCONTEXT_AVAILABLE, hcontext if not UDB_HCONTEXT_AVAILABLE}:
+      For x in {mcontext if not UDB_MCONTEXT_IMPLEMENTED, hcontext if not UDB_HCONTEXT_IMPLEMENTED}:
       csrr x, csrw x from M-mode
       tcontrol, tdata3 and scontext need presence parameters (TCONTROL_IMPLEMENTED, TDATA3_IMPLEMENTED,
       SCONTEXT_IMPLEMENTED in riscv-unified-db#2069) and are not tested yet
@@ -932,7 +932,7 @@ coverpoints:
       Perform an instruction that causes trigger to fire/not fire
   - name: cp_textra_mcontext
     description: |-
-      only run tests if MCONTEXT_AVAILABLE:
+      only run tests if MCONTEXT_IMPLEMENTED:
       repeat for each trigger type supported:
       tdata3.mhselect = 4
       if RV32:
@@ -1011,7 +1011,7 @@ coverpoints:
     bins: 2 trigger types
   - name: cp_textra_double_context
     description: |-
-      only run tests if MCONTEXT_AVAILABLE and SCONTEXT_AVAILABLE:
+      only run tests if MCONTEXT_IMPLEMENTED and SCONTEXT_AVAILABLE:
       repeat for each trigger type supported:
       tdata3.mhselect = {0/4}
       tdata3.sselect = {0/1}
@@ -1109,7 +1109,7 @@ coverpoints:
     description: |-
       only run tests if S is supported, as cp_itrigger_s with x = 1 (supervisor software interrupt):
       tdata2[1] = 1, tdata1.s = 1, mideleg[1] = 1, medeleg[3] = 0, take the interrupt while executing in S-mode
-      if MCONTEXT_AVAILABLE: mcontext as in cp_textra_mcontext, tdata3.mhselect = 4, tdata3.mhvalue = {mcontext / other}
+      if MCONTEXT_IMPLEMENTED: mcontext as in cp_textra_mcontext, tdata3.mhselect = 4, tdata3.mhvalue = {mcontext / other}
       if SCONTEXT_AVAILABLE: scontext as in cp_textra_scontext, tdata3.sselect = 1, tdata3.svalue = {scontext / 0}
       After each case, rvtest_trap_count is written to the signature.
     expectation: Breakpoint into M just before the first instruction of the S-mode handler iff the context matches
@@ -1123,7 +1123,7 @@ coverpoints:
     description: |-
       only run tests if S is supported, as cp_etrigger_s_deleg with x = 5 (load access fault):
       tdata2[5] = 1, tdata1.s = 1, medeleg[5] = 1, medeleg[3] = 0, raise the exception while executing in S-mode
-      if MCONTEXT_AVAILABLE: mcontext as in cp_textra_mcontext, tdata3.mhselect = 4, tdata3.mhvalue = {mcontext / other}
+      if MCONTEXT_IMPLEMENTED: mcontext as in cp_textra_mcontext, tdata3.mhselect = 4, tdata3.mhvalue = {mcontext / other}
       if SCONTEXT_AVAILABLE: scontext as in cp_textra_scontext, tdata3.sselect = 1, tdata3.svalue = {scontext / 0}
       After each case, rvtest_trap_count is written to the signature.
     expectation: Breakpoint into M just before the first instruction of the S-mode handler iff the context matches

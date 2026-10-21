@@ -15,10 +15,10 @@
 `endif
 
 // A context CSR that this hart does not implement (cp_csr_unimplemented)
-`ifndef UDB_MCONTEXT_AVAILABLE
+`ifndef UDB_MCONTEXT_IMPLEMENTED
     `define SDTRIG_CSR_UNIMPLEMENTED
 `endif
-`ifndef UDB_HCONTEXT_AVAILABLE
+`ifndef UDB_HCONTEXT_IMPLEMENTED
     `define SDTRIG_CSR_UNIMPLEMENTED
 `endif
 
@@ -63,13 +63,13 @@ covergroup SdtrigSm_trig_module_reg_cg with function sample(ins_t ins);
         `ifdef UDB_TCONTROL_AVAILABLE
             bins tcontrol = {CSR_TCONTROL};
         `endif
-        `ifdef UDB_MCONTEXT_AVAILABLE
+        `ifdef UDB_MCONTEXT_IMPLEMENTED
             bins mcontext = {CSR_MCONTEXT};
         `endif
         `ifdef UDB_SCONTEXT_AVAILABLE
             bins scontext = {CSR_SCONTEXT};
         `endif
-        `ifdef UDB_HCONTEXT_AVAILABLE
+        `ifdef UDB_HCONTEXT_IMPLEMENTED
             bins hcontext = {CSR_HCONTEXT};
         `endif
     }
@@ -87,10 +87,10 @@ covergroup SdtrigSm_trig_module_reg_cg with function sample(ins_t ins);
     `ifdef SDTRIG_CSR_UNIMPLEMENTED
         csr_unimplemented: coverpoint ins.current.insn[31:20] {
             type_option.weight = 0;
-            `ifndef UDB_MCONTEXT_AVAILABLE
+            `ifndef UDB_MCONTEXT_IMPLEMENTED
                 bins mcontext = {CSR_MCONTEXT};
             `endif
-            `ifndef UDB_HCONTEXT_AVAILABLE
+            `ifndef UDB_HCONTEXT_IMPLEMENTED
                 bins hcontext = {CSR_HCONTEXT};
             `endif
         }
@@ -169,13 +169,13 @@ covergroup SdtrigSm_access_cg with function sample(ins_t ins);
         `ifdef UDB_TCONTROL_AVAILABLE
             bins tcontrol = {CSR_TCONTROL};
         `endif
-        `ifdef UDB_MCONTEXT_AVAILABLE
+        `ifdef UDB_MCONTEXT_IMPLEMENTED
             bins mcontext = {CSR_MCONTEXT};
         `endif
         `ifdef UDB_SCONTEXT_AVAILABLE
             bins scontext = {CSR_SCONTEXT};
         `endif
-        `ifdef UDB_HCONTEXT_AVAILABLE
+        `ifdef UDB_HCONTEXT_IMPLEMENTED
             bins hcontext = {CSR_HCONTEXT};
         `endif
     }
@@ -1290,14 +1290,14 @@ covergroup SdtrigSm_textra_cg with function sample(ins_t ins);
     }
 
     // main coverpoints
-    `ifdef UDB_MCONTEXT_AVAILABLE
+    `ifdef UDB_MCONTEXT_IMPLEMENTED
         cp_textra_mcontext:       cross priv_mode_m, triggernum, csrw, csr_tdata1, arm_type, mhselect_mcontext, sselect_ignore, mcontext_match;                       // NTRIG * 2 types * 2
     `endif
     `ifdef UDB_SCONTEXT_AVAILABLE
         cp_textra_scontext:       cross priv_mode_m, triggernum, csrw, csr_tdata1, arm_type, sselect_scontext, sbytemask, scontext_match;                          // NTRIG * 2 types * 5 (RV32 3) masks * 2
         cp_textra_scontext_all:   cross priv_mode_m, triggernum, csrw, csr_tdata1, arm_type, sselect_scontext, sbytemask_all, scontext_match_only;                 // NTRIG * 2 types
     `endif
-    `ifdef UDB_MCONTEXT_AVAILABLE
+    `ifdef UDB_MCONTEXT_IMPLEMENTED
     `ifdef UDB_SCONTEXT_AVAILABLE
         cp_textra_double_context: cross priv_mode_m, triggernum, csrw, csr_tdata1, arm_type, mhselect, sselect, mcontext_match, scontext_match;              // NTRIG * 2 types * 16
     `endif
@@ -1305,7 +1305,7 @@ covergroup SdtrigSm_textra_cg with function sample(ins_t ins);
     `ifdef S_SUPPORTED
         cp_textra_asid:           cross priv_mode_m, triggernum, csrw, csr_tdata1, arm_type, mhselect_ignore, sselect_asid, asid_match;                      // NTRIG * 2 types * 2
         cp_textra_asid_sbytemask: cross priv_mode_m, triggernum, csrw, csr_tdata1, arm_type, mhselect_ignore, sselect_asid, sbytemask_all, asid_match;       // NTRIG * 2 types * 2
-        `ifdef UDB_MCONTEXT_AVAILABLE
+        `ifdef UDB_MCONTEXT_IMPLEMENTED
             cp_textra_itrigger_mcontext: cross trap_from_s, triggernum, itrigger_interrupt, trap_delegated, trap_selected, textra_trap_mcontext;     // NTRIG * 2
             cp_textra_etrigger_mcontext: cross trap_from_s, triggernum, etrigger_exception, trap_delegated, trap_selected, textra_trap_mcontext;     // NTRIG * 2
         `endif

@@ -79,7 +79,7 @@ covergroup SdtrigU_cg with function sample(ins_t ins);
         `ifdef UDB_TCONTROL_AVAILABLE
             bins tcontrol = {CSR_TCONTROL};
         `endif
-        `ifdef UDB_MCONTEXT_AVAILABLE
+        `ifdef UDB_MCONTEXT_IMPLEMENTED
             bins mcontext = {CSR_MCONTEXT};
         `endif
     }
