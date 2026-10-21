@@ -5,7 +5,8 @@
 ci_enabled: true
 
 # Wren6991/Hazard3 ba0c83c; paths are under https://github.com/Wren6991/Hazard3/blob/ba0c83c657a21f2e9946cf02cbc6c8d3d9a7dab6/
-#   ExceptionsZalrsc  sc.w with no reservation fails without a bus access, so it cannot fault: doc/sections/bus_behaviour.adoc#L63
+#   ExceptionsZalrsc  sc.w with no reservation fails without a bus access, so an sc.w to an inaccessible address retires
+#                     with rd = 1 instead of raising a store access fault (norm:sc_retire_permission): doc/sections/bus_behaviour.adoc#L63 (https://github.com/Wren6991/Hazard3/issues/53)
 #   ZicntrSm,ZicntrU  a load that takes a bus-error access fault is still counted in minstret: hdl/hazard3_core.v#L1138 (https://github.com/Wren6991/Hazard3/issues/49)
 exclude_extensions: "ExceptionsZalrsc,ZicntrSm,ZicntrU"
 
