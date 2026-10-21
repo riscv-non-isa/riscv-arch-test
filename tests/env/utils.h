@@ -234,7 +234,8 @@
   #elif defined(S_SUPPORTED)
     #define RVTEST_TEST_CSR sepc
     #define BOOT_TO_SMODE
-  #elif defined(ZICNTR_SUPPORTED) && defined(U_SUPPORTED)
+  #elif defined(ZICNTR_SUPPORTED) && defined(U_SUPPORTED) && defined(UDB_MCOUNTENABLE_EN_2)
+    // instret is read from U-mode, so mcounteren.IR must be writable (boot sets mcounteren to all 1s)
     #define RVTEST_TEST_CSR instret
     #define RVTEST_READ_ONLY_TEST_CSR
   #else
