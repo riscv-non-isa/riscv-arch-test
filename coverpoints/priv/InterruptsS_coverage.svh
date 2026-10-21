@@ -658,8 +658,9 @@ endgroup
 
 `undef INTERRUPTSH_VS
 
-// Guest external interrupts need the optional RVMODEL_SET_GUEST_EXT_INT hook; without it the covergroups are empty
-`ifdef RVMODEL_SET_GUEST_EXT_INT
+// Guest external interrupts exist when H is implemented with GEILEN > 0 (UDB_SGEI_INTR_IMPL, derived_config.svh);
+// the DUT then provides RVMODEL_SET/CLR_GUEST_EXT_INT to raise them
+`ifdef UDB_SGEI_INTR_IMPL
 
 // Read mip from M-mode with a guest external interrupt pending
 covergroup InterruptsS_gei_m_cg with function sample(ins_t ins);
@@ -770,7 +771,7 @@ covergroup InterruptsS_gei_cg with function sample(ins_t ins);
     cp_hgeip0:             cross priv_mode_hs, csrr, hip, vgein_zero, hgeip_nonzero, sgei_pending;
 endgroup
 
-`endif // RVMODEL_SET_GUEST_EXT_INT
+`endif // UDB_SGEI_INTR_IMPL
 
 `endif // H_SUPPORTED
 
@@ -778,7 +779,7 @@ function void interruptss_sample(int hart, int issue, ins_t ins);
     InterruptsS_cg.sample(ins);
     `ifdef H_SUPPORTED
         InterruptsS_h_cg.sample(ins);
-        `ifdef RVMODEL_SET_GUEST_EXT_INT
+        `ifdef UDB_SGEI_INTR_IMPL
             InterruptsS_gei_m_cg.sample(ins);
             InterruptsS_gei_cg.sample(ins);
         `endif

@@ -8,9 +8,9 @@
 
 """InterruptsS guest external interrupt test generator (from the hypervisor branch's InterruptsHGei).
 
-hgeip is read-only, so only the platform can raise a guest external interrupt, through the optional
-RVMODEL_SET/CLR_GUEST_EXT_INT hooks (UDB_SGEI_INTR_IMPL).  Every test here uses those hooks, so they are kept apart
-in their own files and covergroups and produce no testcases when the hooks are undefined.
+hgeip is read-only, so only the platform can raise a guest external interrupt, through the RVMODEL_SET/CLR_GUEST_EXT_INT
+hooks that a DUT with H and GEILEN > 0 (UDB_SGEI_INTR_IMPL) must define.  Every test here uses those hooks, so they are
+kept in their own files and covergroups and produce no testcases when GEILEN = 0.
 
 InterruptsS boots to HS-mode.  The gei_m file reads mip from M-mode with a guest external interrupt pending.  The gei_hs file
 covers hgeip and hgeie, hip.SGEIP, hstatus.VGEIN and the SGEI priority.  The hooks may reach IMSIC state below
