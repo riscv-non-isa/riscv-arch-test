@@ -12,8 +12,13 @@
 #   does not use NAPOT, so SdtrigSm_tdata2_translate fails (https://github.com/tenstorrent/whisper/issues/218,
 #   fix https://github.com/tenstorrent/whisper/pull/219). Narrow this to SdtrigSm_tdata2_translate once
 #   group exclusions (#2792) land, and drop it when the Whisper pin includes the fix.
+#   The max configs also implement tcontrol while using mstatus.MIE/SIE for breakpoint reentrancy, which Sail
+#   cannot model (it has tcontrol only with Use_tcontrol), so the tcontrol accesses there differ from the reference.
+# SdtrigS,SdtrigU: Whisper ignores mcontrol6.size on execute (select = data) matches (Trigger::matchInstOpcode in
+#   Triggers.cpp), so a size = 8/16/64-bit trigger fires on a 32-bit instruction and Sdtrig*_mcontrol6_execute_size
+#   fails. Narrow this to those files once group exclusions (#2792) land.
 ci_enabled: true
-exclude_extensions: "SdtrigSm,SsstrictSm,SsstrictS,Smstateen,Ssnpm,SsnpmSm,Smmpm,SmnpmS,SmnpmSSm,SmnpmU,SmnpmUSm"
+exclude_extensions: "SdtrigSm,SdtrigS,SdtrigU,SsstrictSm,SsstrictS,Smstateen,Ssnpm,SsnpmSm,Smmpm,SmnpmS,SmnpmSSm,SmnpmU,SmnpmUSm"
 exclude_configs:
   - whisper-rv32-max-spike-ref
   - whisper-rv64-max-spike-ref

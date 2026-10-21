@@ -8,6 +8,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
 `define COVER_SDTRIGU
+`include "general/RISCV_coverage_sdtrig_derived.svh"
 
 // mcause/scause = 3 written by a trap on this record (not by a CSR instruction naming xcause, and not an ebreak)
 function automatic logic sdtrigu_bp_taken(ins_t ins);
@@ -76,7 +77,7 @@ covergroup SdtrigU_cg with function sample(ins_t ins);
         bins tdata2  = {CSR_TDATA2};
         bins tdata3  = {CSR_TDATA3};
         bins tinfo   = {CSR_TINFO};
-        `ifdef UDB_TCONTROL_AVAILABLE
+        `ifdef UDB_TCONTROL_IMPLEMENTED
             bins tcontrol = {CSR_TCONTROL};
         `endif
         `ifdef UDB_MCONTEXT_IMPLEMENTED
@@ -96,7 +97,9 @@ covergroup SdtrigU_cg with function sample(ins_t ins);
     // main coverpoints
     cp_csr_access_trap_u: cross priv_mode_u, csr_read_write, csr_trigger_mlevel, illegal_insn_trap;  // 2 accesses * implemented M-level trigger CSRs (5-7)
     cp_breakpoint_u: cross priv_mode_u, triggernum, bp_type;  // NTRIG * 2 types; handled in S (medeleg[3] = 1) or M (tcontrol)
-    cp_mcontrol6_priv_bits_u: cross priv_mode_u, triggernum, priv_bits_sw, priv_bits_outcome;  // NTRIG * 2 outcomes
+    `ifdef SDTRIG_MCONTROL6_ANY
+        cp_mcontrol6_priv_bits_u: cross priv_mode_u, triggernum_mcontrol6, priv_bits_sw, priv_bits_outcome;  // NTRIG * 2 outcomes
+    `endif
     `ifdef S_SUPPORTED
         cp_breakpoint_delegate_u: cross priv_mode_u, triggernum, bp_type, bp_routing;  // NTRIG * 2 types * 2 (medeleg[3] = 0 into M, 1 into S)
     `endif
