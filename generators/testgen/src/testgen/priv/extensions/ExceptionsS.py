@@ -123,9 +123,7 @@ def _generate_xstatus_ie_tests(test_data: TestData, mode_tag: str, priv_mode: in
             lines.extend(
                 [
                     test_data.add_testcase(tag, coverpoint, covergroup),
-                    "RVTEST_TSBI_ECALL_TEST  # test ecall to execution environment that just returns",
-                    "# ecall returns xepc in a0 (x10).  Store a0 in signature as proof ecall took place.",
-                    write_sigupd(10, test_data),
+                    "RVTEST_TSBI_ECALL_TEST  # ecall to the execution environment, recorded in the trap signature",
                 ]
             )
 
